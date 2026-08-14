@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-14T09:14:00Z",
+  "purpose": "Implement the predeclared Gate-5 N=50 full-input per-replica extraction and complete-family manifest gate",
+  "code_parent": "05564cfd512eae42d3eedc245967e17720c32f4a",
+  "architecture": {
+    "nominal_extractor_modified": false,
+    "why": "extract_fullevent_fps.py is Gate-4 pinned; the dedicated adapter calls its model reconstruction, engine reweight, coverage checks, xsec arithmetic, and atomic writer without changing those bytes",
+    "two_runtime_stages": [
+      "TensorFlow/A100 full-inventory push",
+      "ROOT CPU cross-section extraction in the same array task"
+    ],
+    "collision_isolation": "replicas/replica_XX/extraction with no-clobber guards and one writer per replica",
+    "complete_manifest_policy": "afterany terminal validator reports the declared family as a whole; 49/50 is BLOCK, never a selected subset",
+    "C_stat": null
+  },
+  "gate5_contract": {
+    "declared_members": 50,
+    "replica_indices": "0..49",
+    "bootstrap_seed_policy": "50000 + replica_index",
+    "full_signal_factor": "canonical replay required; applied to every truth count and to completeness/reporting-mask construction",
+    "background_factor": "canonical replay required; bound to the per-replica Stay-Positive target already used for training; no background row enters truth-space xsec binning",
+    "full_ordered_coverage": "w_push and mc_indices must cover exactly arange(49152885)",
+    "promoted_training_inventory": "GATE5_TRAINING_ARTIFACTS_PASS at 50/50 from job 56933831"
+  },
+  "code_sha256": {
+    "replica_extractor": "62b5ca43330b129b21c4b7b8bbdee5c8c6c9a6e4453425326692a63b7de56e3e",
+    "family_validator": "148c7a77aeea3195ce72a487f4b2364bebfbbd98c0f7b2b5b5f0a09477b77c8e",
+    "array_launcher": "27b5ca467a021e3aad60e8c0b55a0a577854722836621d13dab30c0fd28d6ac5",
+    "validator_launcher": "bd46d514be7a287379241bc1ec7867743ad38307178f0480fef36234827effd6",
+    "submit_controller": "bdddbf76bd4d192c769d895e720e31e2c81af18e6913b881c66692aae0d95395",
+    "new_tests": "f05fc3cf9beaa91369a72179db95bcece9dba45d9a1f4a291212551ca9ff44ca",
+    "unchanged_gate4_nominal_extractor": "de0f044b612782edb58e152205b426e6dbbca7637b7f3f342a1373fe4dc7d51a",
+    "loader": "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1"
+  },
+  "acceptance": {
+    "command": "module load tensorflow/2.15.0 && python3 -m pytest -q nd-unfolding/tests/test_gate5_replica_extraction.py nd-unfolding/tests/test_gate5_replica_driver.py nd-unfolding/tests/test_fullevent_extract.py nd-unfolding/tests/test_fullevent_fps.py nd-unfolding/tests/test_reconcile_gate5_family.py",
+    "revision_scope": "implementation worktree at code_parent 05564cf plus the files hash-bound above",
+    "result": "181 passed in 5.97s",
+    "return_code": 0,
+    "real_artifact_preflight": {
+      "replica_index": 0,
+      "bootstrap_seed": 50000,
+      "signal_rows": 49152885,
+      "canonical_factor_replay": "PASS",
+      "signal_factor_sha256": "892d1531b7db788a9782ce2dad470b1514b13c1f1f393af9a0f84f32ea68642f"
+    }
+  },
+  "resource_route": {
+    "array": "50 A100 tasks, at most 10 concurrent, 2h wall each; measured analogous full push completed within a 14m06s diagnostic job and used about 6.9 GiB MaxRSS",
+    "manifest": "single CPU task afterany(array), 1h wall",
+    "interactive_rejected": "the declared 50-member family needs ten concurrent independent GPUs and durable completion beyond one interactive allocation; batch is the dependency-safe route"
+  },
+  "verdict": "IMPLEMENTATION_ACCEPTANCE_PASS_EXTRACTION_NOT_YET_LAUNCHED",
+  "subset_selected": false,
+  "gate6_or_C_ML_action": false,
+  "reset_credit_consumed": false
+}

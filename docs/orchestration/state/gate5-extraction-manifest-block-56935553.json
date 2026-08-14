@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-14T10:02:09Z",
+  "campaign": "Gate-5 N=50 original full-input extraction complete-family validation",
+  "verdict": "GATE5_EXTRACTION_FAMILY_BLOCKED",
+  "event": {
+    "path": "docs/orchestration/state/waker/events/evt-gate5-extraction-manifest-56935553.json",
+    "sha256": "38592f2d95b456546afb3b8360375ff4e428a77bbf2651f1ad2df78682de10a1",
+    "size_bytes": 434,
+    "watch_id": "gate5-extraction-manifest-56935553",
+    "event_type": "slurm-job-error",
+    "observed_at_utc": "2026-08-14T10:00:22+00:00",
+    "validated": true,
+    "read_exactly_once": true,
+    "already_reconciled_before_this_turn": false
+  },
+  "accounting": {
+    "job_id": "56935553",
+    "job_name": "g5xmanifest",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:00:43",
+    "start": "2026-08-14T02:57:51",
+    "end": "2026-08-14T02:58:34",
+    "node": "nid004095",
+    "allocated_cpus": 36,
+    "interpretation": "expected nonzero exit for the fail-closed BLOCK verdict, not a missing-report wrapper failure"
+  },
+  "artifacts": {
+    "manifest": {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/validation/GATE5_EXTRACTION_FAMILY_MANIFEST.slurm-56935553.json",
+      "sha256": "b0066ad6b0878de76b7da1bc5a82989b4f12158505136b0457c853eecaae41ef",
+      "size_bytes": 19393,
+      "mtime_epoch": 1786701511
+    },
+    "marker": {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/validation/GATE5_EXTRACTION_FAMILY_MANIFEST.slurm-56935553.json.done",
+      "sha256": "6ad8473d678a819e35b91520a85d0e51512303b39d8fcfe2801da1603e527b77",
+      "size_bytes": 325,
+      "output_size": 19393,
+      "output_mtime_epoch": 1786701511,
+      "output_path_matches": true,
+      "valid": true
+    },
+    "stdout": {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/logs/extraction_family_validate_56935553.out",
+      "sha256": "7938d6bd6d4e429be2aaafe6efeff682be1b9fdfba2228e888ffe8b93f5c9827",
+      "size_bytes": 342,
+      "printed_verdict": "GATE5_EXTRACTION_FAMILY_BLOCKED",
+      "printed_passing": 0
+    },
+    "stderr": {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/logs/extraction_family_validate_56935553.err",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    }
+  },
+  "manifest": {
+    "source_array_job_id": "56935552",
+    "immutable_head": "7dc8c34d3eefdefc6eeddf7b1e977411a9241723",
+    "source_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "declared_inventory": 50,
+    "members_present_and_passing": 0,
+    "members_failing": [
+      0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+      10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+      20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+      30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+      40, 41, 42, 43, 44, 45, 46, 47, 48, 49
+    ],
+    "replica_0_failures": [
+      "runtime code HEAD mismatch",
+      "source array job mismatch",
+      "code pin mismatch: replica_extractor_sha256"
+    ],
+    "replicas_1_through_49_failures": [
+      "push: missing or invalid completion marker",
+      "xsec: missing or invalid completion marker",
+      "summary: missing or invalid completion marker",
+      "receipt: missing or invalid completion marker"
+    ],
+    "replica_0_context": "The changed r2 task 56936015_0 completed before this original-family validator ran and atomically published r2 xsec/summary/receipt into the shared member namespace. The original validator correctly rejected them because they bind to r2 job 56936015, repaired HEAD 2f65a36, and repaired extractor 21df679d rather than original job 56935552, HEAD 7dc8c34, and extractor 62b5ca43.",
+    "subset_selected": false,
+    "C_stat": null
+  },
+  "promotion": {
+    "original_family_promoted": false,
+    "unchanged_retry_submitted": false,
+    "why_no_retry": "A dependency-fenced, explicit-data-root changed continuation already exists as array 56936015 and manifest 56936016; the blocked original family is terminal evidence, not a retry candidate."
+  },
+  "changed_continuation_snapshot": {
+    "array_job_id": "56936015",
+    "task_0_slurm_job_id": "56936019",
+    "task_0_state": "COMPLETED",
+    "task_0_exit_code": "0:0",
+    "task_0_elapsed": "00:02:05",
+    "tasks_1_through_49_state": "PENDING_PRIORITY",
+    "manifest_job_id": "56936016",
+    "manifest_state": "PENDING_DEPENDENCY",
+    "terminal_watch_id": "gate5-extraction-r2-56936015",
+    "manifest_watch_id": "gate5-extraction-r2-manifest-56936016"
+  },
+  "capacity": {
+    "observed_at_utc": "2026-08-14T10:01:03+00:00",
+    "gate_ok": true,
+    "codex_personal_seven_day_remaining_percent": 1.0,
+    "codex_personal_resets_at_utc": "2026-08-20T04:43:03+00:00",
+    "codex_school_seven_day_remaining_percent": 0.0,
+    "codex_school_resets_at_utc": "2026-08-18T12:41:31+00:00",
+    "full_reset_credits_available": 0,
+    "claude_capacity": "unknown",
+    "agy_capacity": "unknown"
+  },
+  "gate6_or_C_ML_action": false,
+  "provider_dispatch": false,
+  "reset_credit_consumed": false,
+  "worker_uuid_changed": false,
+  "next_authorized_action": "Let changed extraction array 56936015 and changed manifest 56936016 execute under their already armed terminal watches; promote only after exactly 50/50 PASS."
+}

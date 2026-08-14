@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-14T09:47:20Z",
+  "campaign": "Gate-5 N=50 coherent PET full-input extraction",
+  "verdict": "CHANGED_LAUNCHER_DATA_ROOT_BLOCKER",
+  "event": {
+    "path": "docs/orchestration/state/waker/events/evt-gate5-extraction-56935552.json",
+    "sha256": "58eca833a650b4b265ac757c3e03416eada6b9e712741aec0ec3f2a5b7459fc3",
+    "size_bytes": 8161,
+    "watch_id": "gate5-extraction-56935552",
+    "type": "slurm-array-error",
+    "observed_at_utc": "2026-08-14T09:40:49Z",
+    "validated": true,
+    "read_exactly_once": true,
+    "already_reconciled_before_this_turn": false,
+    "context_correction": "The emitted event was an early task-error wake, not an aggregate-terminal receipt: task 0 had failed while task 1 was running and tasks 2-49 were pending."
+  },
+  "source_array": {
+    "job_id": "56935552",
+    "immutable_head": "7dc8c34d3eefdefc6eeddf7b1e977411a9241723",
+    "snapshot": {
+      "task_0": {
+        "logical_job_id": "56935552_0",
+        "slurm_job_id": "56935558",
+        "state": "FAILED",
+        "exit_code": "1:0",
+        "elapsed": "00:15:04",
+        "node": "nid003172"
+      },
+      "task_1": {
+        "logical_job_id": "56935552_1",
+        "slurm_job_id": "56935658",
+        "state": "RUNNING",
+        "node": "nid003385"
+      },
+      "tasks_2_through_49": {
+        "count": 48,
+        "state": "PENDING",
+        "reason": "Priority",
+        "published_artifacts": 0
+      }
+    },
+    "cancellation": {
+      "command": "scancel 56935552",
+      "performed": true,
+      "reason": "Every untouched task carried the same deterministic flux-path defect; stopping active and pending members prevented 49 unchanged failures and duplicate continuation writers.",
+      "confirmation": "task 1 entered COMPLETING; no replacement was permitted to write until afterany:56935552"
+    }
+  },
+  "replica_0": {
+    "stdout": {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/logs/extract_56935552_0.out",
+      "sha256": "add5293c85c03f1cdf89d0b86291d163cbaf903036d38a57215b9df187794a76",
+      "size_bytes": 9978
+    },
+    "stderr": {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/logs/extract_56935552_0.err",
+      "sha256": "a814f0cd9afc6b9be328cd417c02e8ded3f9fdf0839be41097e90db364d0dc91",
+      "size_bytes": 6699
+    },
+    "completed_push": {
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_00/extraction/GATE5_REPLICA_FULL_PUSH.npz",
+      "sha256": "4cb93ea0c4dd842e5de2a21b86b4e50e2ea010b977cac779320f476acd94b276",
+      "size_bytes": 257123356,
+      "marker_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_00/extraction/GATE5_REPLICA_FULL_PUSH.npz.done",
+      "marker_sha256": "978866509709c28e9b3eada80b6c1e92f000cf540314612d3aae71b89f9ad116",
+      "marker_size_bytes": 331,
+      "marker_valid": true,
+      "ordered_rows": 49152885,
+      "full_ordered_coverage_verified": true,
+      "reusable": true
+    },
+    "final_products": {
+      "xsec": null,
+      "summary": null,
+      "receipt": null
+    },
+    "failure": {
+      "stage": "xsec pre-open",
+      "exception": "OSError",
+      "missing_path": "/pscratch/sd/j/josephrb/gate5-extraction-frozen-7dc8c34/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+      "root_cause": "The driver default derived an off-repository flux-data path from the immutable code worktree. The launcher did not pass the canonical DATA_ROOT flux path explicitly.",
+      "science_or_factor_failure": false
+    }
+  },
+  "declared_family": {
+    "members_passing": 0,
+    "declared_members": 50,
+    "valid_for_promotion": false,
+    "subset_selected": false,
+    "C_stat": null,
+    "gate6_or_C_ML_action": false
+  },
+  "preserved_original_manifest": {
+    "job_id": "56935553",
+    "dependency": "afterany:56935552",
+    "watch_id": "gate5-extraction-manifest-56935553",
+    "preserved": true,
+    "expected_role": "truthfully publish a BLOCK report for the original partial family"
+  },
+  "changed_continuation": {
+    "policy": "reuse an existing push only when its atomic completion marker revalidates; otherwise compute it once; always run the xsec stage with the explicit canonical DATA_ROOT flux",
+    "predecessor_dependency": "afterany:56935552",
+    "replica_extractor_sha256": "21df679d2eae4cef67ae060a106c32eeb9039c0fa7bf5435ef3c3ab6070e174c",
+    "array_launcher_sha256": "90759f87ea532c5e03c9ad081ff300ea5f512b44ef95f1bb530643f1d2b2f17e",
+    "submit_controller_sha256": "2496885b3dc51975fe4961ad88401bf3c270fefd3fc233401e5ad83ca5dce425",
+    "tests": "184 passed in 6.29s under tensorflow/2.15.0",
+    "unchanged_retry": false,
+    "duplicate_writer_created": false
+  },
+  "provider_dispatch": false,
+  "reset_credit_consumed": false,
+  "worker_uuid_changed": false
+}

@@ -114,9 +114,16 @@ and lane A directly rather than arbitrated.
 
 The wider family D identified — *the check ran and told you nothing* — has at least four distinct causes, each
 with its own remedy: `BEN-173` (a control on one sibling and none on the other), `BEN-180` (a band tested only
-on the side the data is not on), `BEN-185` / this row (did not execute / executed stale), and a fourth D
-announced as `BEN-186` (a check fed input built by the code it re-derives with) which **was not yet filed when
-this was written** — check the ledger rather than trusting this pointer. The taxonomy and the probe method
+on the side the data is not on), `BEN-185` / this row (did not execute / executed stale), and `BEN-186` (a check
+fed input built by the code it re-derives with — filed by lane D at `a2b98e7`, long-form
+`FINDING-20260814-a-check-fed-its-own-output-is-vacuous.md`).
+
+> **This sentence previously read that `BEN-186` "was not yet filed when this was written." That was verified
+> and it was wrong by the time it published** — `a2b98e7` filed `BEN-186` and the rebase that landed this file
+> replayed it onto that commit seven seconds later. **`BEN-225`**, and it is a fifth cause in the table below,
+> found by lane D on review.
+
+The taxonomy and the probe method
 live in `CONVENTION-verifying-a-check-is-deployed.md` rather than in a fifth ledger row, because `FINDINGS.md`
 is already the index and a row whose only content is pointing at rows earns nothing.
 

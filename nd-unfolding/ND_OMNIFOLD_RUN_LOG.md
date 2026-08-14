@@ -6954,3 +6954,251 @@ false alarm. Filed as BEN-129, which closes Lane B's block `100-129`.
 
 Also adopted this turn: lane A's OI-* block table at `e4db2e2`. **Lane B's OI block is `80-89`.** No OI id
 was allocated by this work — OI-3 is an existing row and was edited in place, not renumbered.
+
+### 2026-08-14 — codex's mutation test: my prediction was wrong, and the fix is the only check with power over the applied data factor (lane C, BEN-230)
+
+Codex asked whether any stage's validation has power over the data factor or is merely comparing the
+builder to itself. **Codex was right and I had committed the opposite prediction to a receipt
+beforehand**, which is the only reason the error is on the record rather than quietly absorbed.
+
+**What I predicted:** a sum-changing mutation *"WILL be caught by `n_data_effective` and by `R`"`.
+**Measured: it is not.** A `+137`-count mutation of the LOADER-applied factor, propagated exactly as the
+loader propagates it (`n_data_effective` → numerator → `R` → normalisation) with the builder's
+`data_factor_sha256` untouched, **passed 57 of 57 checks and shifted `R` by 13.6%.**
+
+**Why.** The loader computes `R` *from* `n_data_effective` (`dataloader:971`), so a mutated factor gives
+a mutated `n_data_effective` and a mutated `R` that re-derive from each other exactly. The R check
+confirms arithmetic the mutation already made self-consistent. `n_data_effective` existed in the tool
+only as an **operand** of that derivation, compared to nothing. **I reasoned from where a quantity comes
+from to whether it is checked — different questions, and the gap between them is where this class
+lives.**
+
+**The fix ties it outside the receipt's own arithmetic.** The loader computes `n_data_effective` at
+`:951` as `float(df.sum())` from the array it actually received, shape-guarded at `:949`, and it is
+persisted — so comparing it to the sum of *our* redraw is **the only check anywhere with power over the
+loader's applied data factor**. The same mutation now **FAILS, on that check alone**, and a test asserts
+the R checks still do not fire so the power is not misattributed.
+
+**Proves length and sum, not identity.** A permutation still passes — pinned as a **test** rather than
+left as a caveat, and demonstrated live: `replica_03` and `replica_08` share `n_data_effective =
+4114512` with differing `data_factor_sha256`. Closing identity is producer-side and stays with OI-60.
+
+**A third fixture defect exposed.** The new check failed on **every honest fixture**, 55 of 108 tests:
+`_build_target_receipt` hardcoded `n_data_effective = 1010.0` against `N_DATA = 1000` — internally
+consistent and unrelated to the fixture's own draw. **Every fixture already modelled the state the
+mutation creates, so the suite could not have caught this class.** Fixed by deriving it as the loader
+does. 108 tests pass.
+
+**Live impact: none, and that is measured, not assumed.** `sum(canonical draw) == n_data_effective` holds
+for all 50 target receipts (measured earlier tonight for OI-60), which is exactly what the new check
+compares — so it passes the live family. The deployed copy is now stale by this commit and must be
+re-synced before any promotion run, per the standing rule.
+
+**Block `230-239` taken** and written into the table in this same commit as `BEN-230`, its first filing;
+`130-159` is exhausted. Rule 2 and the allocate-forward paragraph were pointing at `230-239` and now
+point at `240-249`, updated by the lane that took the block, as rule 4 requires.
+
+**The generalisation:** *a receipt whose numbers all re-derive is evidence of arithmetic, not of
+measurement.* Publishing operands lets a reader recompute a verdict; it does not make it falsifiable.
+Falsifiability needs an anchor the producer did not also compute. That is `BEN-077` one turn further on.
+
+Campaign: 36 receipts of 50, 4 PENDING / 10 RUNNING, no failures, `PARTIAL`, `C_stat` null.
+
+### 2026-08-14 08:44 UTC — Gate-5 training terminal preflight; independent artifact gate added
+
+Wake `evt-gate5-training-56857233` was valid and had no prior terminal-family receipt. Same-turn
+accounting independently found all 50 logical tasks `COMPLETED/0:0` (first end 2026-08-13 07:42 UTC,
+last end 2026-08-14 01:33 UTC), agreeing with the event. The runtime namespace contains all 50
+training receipts, weights NPZs, both marker families, and both task-log families. This is terminal
+inventory evidence, not yet family promotion and not a `C_stat` result.
+
+The already repaired/deployed family reconciler independently replays the three Poisson streams and
+checks receipt/file/marker/code continuity, but its training leg does not open the NPZ content.
+`validate_gate5_training_artifacts.py` closes that separate evidence layer: exact fixed policy and
+independently regenerated 2M-row subsample, 2 base plus 4 annealed optimizer fits, full canonical
+signal factor and exact subset restriction, full ordered background factor, source/target/identity
+bindings, all task logs/accounting, and collision-isolated namespaces. Six focused power/contract
+tests pass; the batch wrapper is syntax-clean and fail-closes on immutable HEAD and three code hashes.
+
+The route is intentionally a short CPU batch rather than a login-node run: it redraws 50 complete
+factor streams and reads 50 compressed training artifacts, while no interactive allocation exists.
+It writes job-scoped reports and a promotion marker only if both validators pass. It contains no
+extraction or covariance code. No subset, `C_stat`, Gate-6/C_ML action, provider dispatch, reset credit,
+or UUID change occurred. Exact preflight:
+`../docs/orchestration/state/gate5-training-terminal-preflight-56857233.json`.
+
+**Launch addendum, 08:46 UTC.** The validation route landed and pushed at `987a45c`; job `56933831`
+was submitted from that immutable detached worktree with exact HEAD and three code-hash guards. It is
+pending on CPU resources with a 30-minute wall, writes only job-scoped validation outputs, and has
+terminal watch `gate5-family-validate-56933831` armed. The absence of a live interactive allocation
+made this short durable batch the collision-free route; no duplicate validator or replica writer was
+created. Receipt: `../docs/orchestration/state/gate5-family-validator-active-56933831.json`.
+### 2026-08-14 ~01:45 PDT — GATE 5 FAMILY IS 50/50 AND THE VERDICT IS `FAMILY_COMPLETE_PASS` AT FULL STRENGTH (lane C)
+
+Both arrays terminal. `56857232` 50 COMPLETED, `56857233` 50 COMPLETED, **queue fully drained, zero
+failures at any point in either array.** 50 target receipts, 50 training receipts, 50 weights `.npz`,
+every artifact carrying its `.done` marker.
+
+**Parity verified in the SAME TURN as the run, before it, not hours earlier** — 2 of 2 `CURRENT`, exit 0,
+repo `d2bc94b`, and `git log HEAD..origin/main` empty over both deployed paths. *A 50/50 pass from a copy
+whose parity was not checked is not evidence* is my own sentence and it applies to my own output.
+
+**The run was full strength: no `--skip-replay`, `--source-npz` supplied.** The three-stream re-draw
+actually ran — ~49M signal variates per member across 50 members. Exit 0, stderr empty.
+
+```
+verdict            FAMILY_COMPLETE_PASS        <-- BARE, no suffix
+weakened_axes      []
+is_full_strength   True
+replay_performed   True
+targets            50 PRESENT / 50 PASS        58 checks per row
+trainings          50 PRESENT / 50 PASS        24 checks per row
+name mismatches    0
+family failures    NONE
+C_stat             null
+```
+
+`58` checks per target row is worth reading against history: **50** at the pre-repair promotion, **54**
+after R1–R4 with replay skipped, **58** with the replay performed. The gate the family passed tonight is
+materially stronger than the one it would have passed this morning.
+
+**Evidence rescued off scratch immediately**, because tonight's own lesson was a promotion report living
+only on purgeable scratch with its digest bound in four places. Doing that twice would be inexcusable.
+`state/gate5-family-promotion-evidence-20260814/`, report `ca99effa…` (277,601 B) **re-verified after the
+copy**, and **the verdict re-derived from the committed copy rather than from the scratch read**.
+
+**The draw is live across the whole family** — 50 of 50 distinct on target digests, all three factor-hash
+streams, and weights digests; 50 distinct `R` from `1.1225496…` to `1.1253110…` with the nominal
+`1.1240802949941018` **strictly inside**. A collapsed draw would show identical values. Diagnostic of the
+draw, **not** a component of `C_stat`.
+
+**`BEN-230`'s check ran on 50 of 50 members and agreed 50 of 50** — its first exercise on the full live
+family, hours after codex's mutation test showed 57 of 57 checks passing a 13.6% shift in `R`. Its limit
+is unchanged and stated: length and sum, **not identity**; `replica_03` and `replica_08` still share
+`n_data_effective = 4114512` with differing hashes, so the bound is real in this very family.
+
+**What tonight does NOT do, stated because a pass invites over-reading.** `C_stat` is still `null` and
+this lane did not construct it — the reconciler has no covariance code by design, and that design does
+not stop applying now that the family is complete. `FAMILY_COMPLETE_PASS` is the
+completeness-and-coherence gate; **extraction and centring on the replica mean are the next step and a
+separate, reviewable action.** It does not close `OI-60`, and no run of this tool can. Five residuals are
+carried forward explicitly in the receipt rather than allowed to drift into looking closed.
+
+`GATE5_CODE_ROOT` was never touched, across the whole campaign.
+
+### 2026-08-14 08:57 UTC — Gate-5 training family promoted after job-specific NPZ validation
+
+The one-shot event for read-only CPU job `56933831` was valid and the event had not already been
+reconciled. Lane C had independently committed the full-strength family replay at `bed45a3`, so that
+expensive work was not duplicated. The remaining job-specific evidence was reconciled: `COMPLETED/0:0`
+in 2m18s, empty stderr, immutable validator HEAD `987a45c`, and every promotion-marker hash binding
+re-derived.
+
+The family report is the bare `FAMILY_COMPLETE_PASS`, full strength, replay performed, 50/50 targets
+and 50/50 trainings, zero failures. The independent artifact report is
+`GATE5_TRAINING_ARTIFACTS_PASS`: 50/50 members and zero failed checks, covering the frozen subsample,
+2+4 optimizer schedule, complete signal/background factors, source/target/identity bindings, logs,
+accounting, and collision isolation. The scratch reports were hash-preserved into the repository; the
+family report is byte-identical to Lane C's committed `ca99effa…` copy.
+
+Promotion verdict: `GATE5_TRAINING_FAMILY_PROMOTION_PASS`. This is a training-family promotion only.
+`C_stat` is still null, no subset is selected, and Gate 6 remains unchanged. The next dependency-ready
+action is the predeclared 50-member full-input extraction and complete manifest. Receipt:
+`../docs/orchestration/state/gate5-training-family-promotion-56933831.json`.
+
+### 2026-08-14 09:14 UTC — Gate-5 full-input extraction implementation accepted
+
+The dedicated replica extractor was implemented without changing the Gate-4-pinned nominal extractor.
+It calls the nominal path's model rebuild, engine reweight, ordered-coverage checks, xsec arithmetic and
+atomic writer. Its Gate-5-only adapter replays the persisted full factors and applies the full signal
+draw to both truth counts and completeness/reporting-mask construction. The background draw remains
+bound to the already-verified per-replica Stay-Positive target; background rows do not enter the final
+truth-space binning.
+
+The terminal validator is fail-closed on the declared family: 49/50 produces a BLOCK report and never a
+49-member covariance. The actual TensorFlow-runtime acceptance command passed 181/181 tests. A real
+replica-0 preflight independently replayed all 49,152,885 signal factors and recovered factor hash
+`892d1531…`. Batch was selected over interactive because this is a 50-member, ten-concurrent-GPU family
+that must outlive a single interactive allocation. `C_stat` remains null. Receipt:
+`../docs/orchestration/state/gate5-extraction-implementation-20260814.json`.
+
+### 2026-08-14 09:16 UTC — Gate-5 extraction submission attempt refused before job creation
+
+The first submit call from immutable HEAD `d0a07cf` created no job: Slurm rejected the array request
+because explicit `--mem=64G` raised the billing allocation to 38 CPU cores for one A100, while
+`gpu_shared_ss11` permits 32 cores per GPU. This is a changed prestart launcher blocker, not an
+extraction failure. The analogous full-input push used about 6.9 GiB MaxRSS, and the existing accepted
+Gate-5 training launcher uses the queue's memory default, so the correction removes the explicit memory
+request while retaining 32 CPUs, one A100 and the 2h wall. No output or job ID exists from this attempt;
+the retry must run from a new immutable commit.
+
+### 2026-08-14 09:20 UTC — Gate-5 extraction array and complete-family validator launched
+
+The changed launcher was committed/pushed at `7dc8c34` and frozen in an immutable clean worktree.
+Slurm accepted extraction array `56935552_[0-49]`: one A100 and 32 CPUs per task, queue-default
+57,472 MiB, 2h wall and at most ten concurrent. Every task owns only
+`fullevent_cstat_n50/replicas/replica_XX/extraction/`; all product and marker paths were absent before
+submission and every writer refuses collisions.
+
+CPU job `56935553` depends `afterany:56935552` so it writes a truthful family BLOCK report even if a
+member fails; only `GATE5_EXTRACTION_FAMILY_COMPLETE_PASS` at 50/50 promotes. External terminal watches
+`gate5-extraction-56935552` and `gate5-extraction-manifest-56935553` are armed. Batch, rather than
+interactive, is the correct route for this 50-GPU-task family and lets Slurm plus the detached waker
+advance without LLM turns. `C_stat` remains null. Receipt:
+`../docs/orchestration/state/gate5-extraction-active-56935552.json`.
+
+### 2026-08-14 09:47 UTC — Gate-5 extraction array changed launcher/data-root failure
+
+The external error event was valid but early, not aggregate-terminal: task 0 was `FAILED/1:0`, task 1
+was running, and tasks 2-49 remained prestart-pending. Every extant task log and output namespace was
+inventoried once. Replica 0 completed and atomically published its full ordered 49,152,885-row push;
+its payload and marker revalidate. It then failed before any xsec write because the driver's default
+`mcfile` was derived from immutable code worktree `7dc8c34`, while the flux ROOT is off-repository under
+the canonical data root. There is no xsec, summary, task receipt, family promotion, or science verdict.
+
+Because every untouched member carried that same deterministic launcher defect, exact array `56935552`
+was canceled rather than allowed to consume 49 GPUs on unchanged failures. Its original after-any CPU
+validator `56935553` and watch are preserved to publish the truthful partial-family BLOCK. The changed
+continuation requires the flux path explicitly, reuses a push only after its atomic marker passes, keeps
+all final collision guards, and waits for the predecessor to terminate before writing. The repaired
+runtime battery passes 184/184. No subset, `C_stat`, Gate-6/`C_ML`, provider dispatch, reset credit, or
+worker replacement occurred. Receipt:
+`../docs/orchestration/state/gate5-extraction-failure-56935552.json`.
+
+### 2026-08-14 09:51 UTC — Changed Gate-5 extraction continuation launched
+
+The repair and failure evidence were committed and pushed at `2f65a36`, then checked out into immutable
+clean worktree `gate5-extraction-r2-frozen-2f65a36`. Submission preflight found exactly one published
+extraction artifact pair: replica 0's valid complete push and marker. No xsec, summary, task receipt, or
+other replica push existed. Changed array `56936015_[0-49]` depends `afterany:56935552`, retains the
+ten-A100 concurrency cap, and will reuse replica 0 only after the runtime marker/content gate passes.
+Every other member performs its full push once. Every xsec call receives the canonical data-root flux
+explicitly.
+
+Changed CPU manifest `56936016` depends `afterany:56936015` and still requires a bare 50/50 family PASS.
+Original manifest `56935553` was not canceled or repurposed: it remains independently watched and will
+record the first array's partial-family BLOCK. Watches `gate5-extraction-r2-56936015` and
+`gate5-extraction-r2-manifest-56936016` are armed. `C_stat` remains null; no subset, provider dispatch,
+reset credit, UUID change, Gate-6, or `C_ML` action occurred. Active receipt:
+`../docs/orchestration/state/gate5-extraction-r2-active-56936015.json`.
+
+### 2026-08-14 10:02 UTC — Original Gate-5 complete-family manifest BLOCKED 0/50
+
+After-any validator `56935553` ran from the original immutable `7dc8c34` worktree for 43 seconds and
+exited `1:0`. This is the validator's intentional fail-closed return for its atomically written
+`GATE5_EXTRACTION_FAMILY_BLOCKED` report: stderr is empty, the stdout verdict is 0/50, and the completion
+marker matches the report path, size and mtime. All members 0-49 are listed explicitly as failures;
+`C_stat` is null and no subset is selected.
+
+Members 1-49 have no valid push, xsec, summary, or receipt from the original array. Member 0 needs the
+more precise reading: changed r2 task `56936015_0` completed `0:0` before the old validator started and
+published r2 final products into the shared member namespace. The old validator did not misattribute
+them: its runtime-HEAD, source-array-job and extractor-code pins all fail against those r2 products.
+Thus the original family remains terminally BLOCKED even though reusable scientific work is being
+continued under a separately pinned attempt.
+
+No original-family promotion, unchanged retry, subset, `C_stat`, Gate-6/`C_ML`, provider dispatch,
+reset credit, or worker replacement occurred. At the reconciliation snapshot, r2 task 0 was complete,
+r2 tasks 1-49 were pending Priority, and changed manifest `56936016` remained dependency-held. Their
+terminal watches remain the dependency-ready continuation. Receipt:
+`../docs/orchestration/state/gate5-extraction-manifest-block-56935553.json`.

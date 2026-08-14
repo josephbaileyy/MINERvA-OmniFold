@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-14T09:50:58Z",
+  "purpose": "Gate-5 changed N=50 complete extraction-family terminal validator",
+  "job_id": "56936016",
+  "cpus_per_task": "8 requested",
+  "memory_per_task": "64G",
+  "time_limit": "01:00:00",
+  "qos": "shared",
+  "state_at_receipt": "PENDING_DEPENDENCY",
+  "dependency": "afterany:56936015",
+  "source_array_job_id": "56936015",
+  "immutable_code_head": "2f65a3622f2dfc88ecc3b4caa5fac2021693c39b",
+  "validator_sha256": "148c7a77aeea3195ce72a487f4b2364bebfbbd98c0f7b2b5b5f0a09477b77c8e",
+  "output": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/validation/GATE5_EXTRACTION_FAMILY_MANIFEST.slurm-56936016.json",
+  "acceptance": "GATE5_EXTRACTION_FAMILY_COMPLETE_PASS and exactly 50/50; any missing or failing member blocks the declared family",
+  "watch": {
+    "watch_id": "gate5-extraction-r2-manifest-56936016",
+    "state": "armed"
+  },
+  "original_manifest_job_56935553_preserved": true,
+  "C_stat": null,
+  "subset_selected": false,
+  "reset_credit_consumed": false
+}

@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "campaign": "Publication closeout: scalar 5D P4 and PET remediation",
-  "current_dag_node": "Gate 5 coherent statistical replicas — N=50 two-stage execution",
-  "state": "Gate-5 target stage is PROMOTED PASS: immutable validator 56873858 independently verified the exact source plus all three factor streams and all 50 learned targets. Sole-writer training array 56857233_[0-49] remains active and watched; the full family and C_stat remain prohibited until 50/50 training PASS.",
+  "current_dag_node": "Gate 5 coherent statistical replicas — full-input extraction and complete 50-member manifest",
+  "state": "Original Gate-5 extraction family 56935552 is terminally BLOCKED at 0/50 by atomically marked validator 56935553; no subset is selected. Changed array 56936015_[0-49] continues from immutable HEAD 2f65a36 with explicit canonical flux and validated complete-push reuse; task 0 is complete and tasks 1-49 are pending. Changed manifest 56936016 requires exactly 50/50. C_stat remains null.",
   "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
   "owners": [
     {
@@ -33,18 +33,29 @@
   ],
   "jobs": [
     {
-      "job_id": "56857233",
+      "job_id": "56936015",
       "tasks": "0-49",
-      "receipt": "docs/orchestration/state/gate5-training-array-active-56857233.json"
+      "receipt": "docs/orchestration/state/gate5-extraction-r2-active-56936015.json"
+    },
+    {
+      "job_id": "56936016",
+      "tasks": "0",
+      "single_job": true,
+      "receipt": "docs/orchestration/state/gate5-extraction-r2-manifest-active-56936016.json"
+    },
+    {
+      "job_id": "56863958",
+      "tasks": "2-5",
+      "receipt": "docs/orchestration/state/gate6-floor-replication-partial-56863958.json"
     }
   ],
   "blockers": [
-    "Gate 5 target stage is promoted, but full family promotion requires all 50 training receipts. A partial training family cannot be centred or promoted as C_stat.",
+    "Original extraction family 56935552 is terminally BLOCKED at 0/50 by validator 56935553; its r2-bound member-0 products are not original-family evidence and no subset may be promoted.",
+    "C_stat remains prohibited until changed array 56936015 and changed validator 56936016 return GATE5_EXTRACTION_FAMILY_COMPLETE_PASS at exactly 50/50.",
     "Gate 6 Leg 1 is durably BLOCKED at 19585b7: no retry, passing-subset selection, C_ML construction, central move, or Leg 2.",
-    "The producer code checkout must remain fixed at b82ac63 while training array 56857233 is active; every task fails closed on HEAD and content-hash drift.",
     "Gate 4's estimator-arm disposition remains an independent user decision and is not changed by Gate 5 execution."
   ],
-  "next_authorized_action": "Let Slurm execute sole-writer training array 56857233 under its existing terminal watch. On its real terminal event, reconcile all 50 task receipts and target bindings; promote the family only after 50/50 PASS, without selecting a subset or constructing C_stat early.",
+  "next_authorized_action": "Let changed array 56936015 and after-any validator 56936016 execute under their armed terminal watches. Promote only on changed exact 50/50 PASS; otherwise record the changed member-specific blocker without subset selection or unchanged retry.",
   "canonical_science": [
     "docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md",
     "nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md",
@@ -57,6 +68,11 @@
     "docs/orchestration/PREDECLARATION-20260813-gate6-member-trajectories.md",
     "docs/orchestration/state/gate6-member-trajectories-result-56847059.json",
     "docs/orchestration/PREDECLARATION-20260813-gate5-coherent-replicas-n50.md",
+    "docs/orchestration/state/gate5-training-family-promotion-56933831.json",
+    "docs/orchestration/state/gate5-extraction-active-56935552.json",
+    "docs/orchestration/state/gate5-extraction-failure-56935552.json",
+    "docs/orchestration/state/gate5-extraction-manifest-block-56935553.json",
+    "docs/orchestration/state/gate5-extraction-r2-active-56936015.json",
     "nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json"
   ],
   "append_only_history": [

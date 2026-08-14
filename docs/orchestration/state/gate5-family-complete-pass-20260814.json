@@ -1,0 +1,105 @@
+{
+  "artifact": "gate5-family-complete-pass-20260814.json",
+  "lane": "C (PET), owner of Gate 5 / P5B.1 / C_stat",
+  "observed_pdt": "2026-08-14 ~01:45 PDT",
+  "purpose": "The Gate-5 C_stat replica family is 50/50 and the reconciler returns FAMILY_COMPLETE_PASS at FULL STRENGTH. This artifact records the verdict, its operands, the preconditions that were satisfied, and what has NOT been done.",
+
+  "HEADLINE": "FAMILY_COMPLETE_PASS -- the BARE verdict, no suffix. weakened_axes == [], is_full_strength == true, replay_performed == true. 50 of 50 targets passing and 50 of 50 trainings passing, zero family failures, zero name mismatches. C_stat is still null and this artifact does NOT construct it.",
+
+  "THE_ARRAYS_ARE_TERMINAL": {
+    "targets_56857232": "50 COMPLETED",
+    "training_56857233": "50 COMPLETED, queue fully drained (squeue returns nothing for the array)",
+    "failures_in_either_array": "none, at any point",
+    "artifacts_on_disk": "50 target receipts, 50 training receipts, 50 GATE5_REPLICA_WEIGHTS.npz, 192 replica .done markers (50+50 target, 46+46 -> now 50+50 training) -- every artifact carries its marker"
+  },
+
+  "PARITY_VERIFIED_IN_THE_SAME_TURN_AS_THE_RUN": {
+    "why_this_is_recorded_first": "A 50/50 pass from a copy whose parity was not checked is not evidence -- my own sentence, and the standard the mediator held me to. Checked BEFORE the run, in this turn, not hours earlier.",
+    "repo_head": "d2bc94b46ca6af056eee2618d07eb22cedb9d46a",
+    "result": "2 of 2 CURRENT, exit 0",
+    "deployed_digests": {
+      "reconcile_gate5_family.py": "e0e8d39eed85b910f66a127f93b8eca84196fd312546ffff4559170ffe7013e5",
+      "atomic_write.py": "71527c2af7a5c039d1ab103e000909f4b2ce793f9788e426369ef53c44c5395e"
+    },
+    "and_no_incoming_commit_touched_either_file": "git log HEAD..origin/main over both paths was empty at run time."
+  },
+
+  "THE_RUN": {
+    "command": "--n 50 --nominal-target-sha 544b2f6a... --source-npz /pscratch/.../G2_FPS_MEFHC_P12.npz --out family-20260814-FULLSTRENGTH-50of50.json",
+    "NO_skip_replay": "The three-stream factor re-draw actually ran: ~49M signal variates per member across 50 members.",
+    "exit": 0,
+    "stderr": "empty",
+    "report_bytes": 277601,
+    "report_sha256": "ca99effa8e07bdfe2f0f0f2b73bba13c118624751a497d63971a831481380760"
+  },
+
+  "EVIDENCE_RESCUED_OFF_SCRATCH_IMMEDIATELY": {
+    "why": "Tonight's own lesson: the previous promotion report sat only on purgeable scratch with its digest bound in four places. Doing that twice would be inexcusable.",
+    "destination": "docs/orchestration/state/gate5-family-promotion-evidence-20260814/",
+    "files": [
+      {"name": "family-20260814-FULLSTRENGTH-50of50.json", "bytes": 277601, "sha256": "ca99effa8e07bdfe2f0f0f2b73bba13c118624751a497d63971a831481380760"},
+      {"name": "fullstrength-50of50.stdout", "bytes": 336, "sha256": "39f9894d9196a0e8a4d3beea2a180567f0bee2c3e70afc6c287477e9fe41fb06"}
+    ],
+    "digest_verified_after_copy": "The report re-hashes to ca99effa in the repo, byte-identical to the value measured on scratch."
+  },
+
+  "VERDICT_RE_DERIVED_FROM_THE_COMMITTED_COPY_not_from_the_scratch_read": {
+    "verdict": "FAMILY_COMPLETE_PASS",
+    "bare_no_suffix": true,
+    "weakened_axes": [],
+    "is_full_strength": true,
+    "replay_performed": true,
+    "declared_inventory": 50,
+    "declared_inventory_is_pinned_in_tool": true,
+    "targets": "50 PRESENT, 50 PASS",
+    "trainings": "50 PRESENT, 50 PASS",
+    "trainings_name_mismatch": 0,
+    "family_failures": "NONE",
+    "checks_per_target_row": 58,
+    "checks_per_training_row": 24,
+    "note_on_58": "50 at the pre-repair promotion, 54 after R1-R4 with --skip-replay, 58 with the replay actually performed. The increase is the three redraw comparisons plus BEN-230's new check."
+  },
+
+  "THE_DRAW_IS_LIVE_ACROSS_THE_WHOLE_FAMILY_diagnostic_not_a_component": {
+    "target_digests_distinct": "50 of 50",
+    "data_factor_hashes_distinct": "50 of 50",
+    "signal_factor_hashes_distinct": "50 of 50",
+    "background_factor_hashes_distinct": "50 of 50",
+    "weights_digests_distinct": "50 of 50",
+    "R": {"distinct": "50 of 50", "min": 1.1225496079885524, "max": 1.1253110723074478,
+          "nominal": 1.1240802949941018, "nominal_strictly_inside": true},
+    "reading": "50 distinct class ratios straddling the nominal is independent quantitative evidence the measured-side Poisson draw is live across every member. A collapsed draw would show identical values. This is a DIAGNOSTIC of the draw and NOT a component of C_stat."
+  },
+
+  "BEN_230_S_CHECK_RAN_ON_EVERY_MEMBER": {
+    "why_this_matters_more_than_the_pass": "It was added hours ago after codex's mutation test showed 57 of 57 checks passing a 13.6% shift in R. It is the only check anywhere with power over the data factor the LOADER applied, and this is its first exercise on the full live family.",
+    "n_data_effective_equals_sum_of_REDRAWN_data_factor": "present on 50 of 50 target rows",
+    "sum_redrawn_equals_recorded": "50 of 50",
+    "and_its_limit_is_unchanged": "Proves length and sum, not identity. A sum-conserving permutation would still pass. replica_03 and replica_08 share n_data_effective = 4114512 with differing data_factor_sha256, so that bound is real in THIS family. Array identity remains OI-60, producer-side, riding the next launcher."
+  },
+
+  "SOURCE_IDENTITY": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+    "sha256_RECOMPUTED_this_run": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "bytes": 9897374636,
+    "matches_EXPECTED_INPUT_SHA": true,
+    "OI_58": "This is the citable source-identity evidence. Do NOT quote inputs_sha256 out of a replica artifact -- train_fullevent_replica.py:112 copies a claim into a field named for a measurement (BEN-149). See also state/gate5-source-npz-verified-20260813.json."
+  },
+
+  "WHAT_THIS_ARTIFACT_DOES_NOT_DO": [
+    "It does NOT construct, centre or summarise C_stat. The reconciler contains no covariance code by design, precisely so a partial or unverified family cannot produce a number by accident -- and that design does not stop applying now that the family is complete.",
+    "It does NOT declare Gate 5 promoted. FAMILY_COMPLETE_PASS is the completeness-and-coherence gate. Extraction and centring on the replica mean are the NEXT step and they are a separate, reviewable action.",
+    "It does NOT close OI-60: array identity of the loader's applied data factors is still unverified, and no run of this tool can close it.",
+    "It does NOT touch GATE5_CODE_ROOT, which stayed untouched throughout the campaign."
+  ],
+
+  "RESIDUALS_CARRIED_FORWARD_stated_so_they_do_not_drift_into_looking_closed": [
+    "atomic_write.is_complete compares int(st_mtime) -- whole seconds. A same-size same-second rewrite is invisible to it and therefore to this tool.",
+    "No receipt is hashed against anything: a receipt's only integrity evidence is its marker.",
+    "artifact.completion_marker_valid is a hardcoded producer literal and is deliberately not read as evidence (C's OI-66).",
+    "The data factor's ARRAY IDENTITY is evidenced only to length and sum (BEN-230, OI-60).",
+    "train_fullevent_replica.py:112 still copies a sha into a _verified_ field (OI-57/OI-58), unrepaired by design pending the next launch with a CODE_ROOT sync."
+  ],
+
+  "WHAT_A_REVIEWER_SHOULD_CHECK_FIRST": "Re-run the derivation over the committed report rather than trusting this summary: docs/orchestration/state/gate5-family-promotion-evidence-20260814/family-20260814-FULLSTRENGTH-50of50.json. Every number above is in it, and the two that would matter most if this artifact were wrong are `weakened_axes` (must be []) and `family_checks.failures` (must be empty)."
+}

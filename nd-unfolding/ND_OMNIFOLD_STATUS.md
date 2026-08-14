@@ -1,17 +1,32 @@
 # N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
-**Last updated**: 2026-08-13. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
+**Last updated**: 2026-08-14. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
 verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 and work remaining in `../docs/OPEN_ITEMS.md`.
 
-**Gate 5 coherent statistical replicas are now in flight under the predeclared N=50 design.** The
-dedicated two-stage path was committed at `670e62d`, repaired at `56d35af` after the preserved agy
-verifier caught missing full-inventory signal-factor persistence, and made scheduler-valid at
-`b82ac63`. CPU target array `56857232_[0-49]` feeds A100 training array `56857233_[0-49]` through
-task-correlated `aftercorr`; both are capped at ten concurrent tasks and use isolated replica
-namespaces. Terminal watches are armed. No `C_stat` may be built from fewer than 50 valid replicas.
-Exact launch receipts: `../docs/orchestration/state/gate5-target-array-active-56857232.json` and
-`../docs/orchestration/state/gate5-training-array-active-56857233.json`.
+**Gate 5 coherent-replica training family is PROMOTED PASS at 50/50.** Job `56933831` independently
+confirmed the bare full-strength `FAMILY_COMPLETE_PASS` and returned
+`GATE5_TRAINING_ARTIFACTS_PASS`: 50/50 NPZ members, exact fixed subsample, 2+4 realized LR fits,
+full/subset signal factors, full background factors, bindings, logs, accounting, and collision
+isolation all pass with zero failed checks. `C_stat` remains null; the next action is full-input
+per-replica extraction followed by a complete 50-member manifest. That dedicated extraction path is
+now implemented and acceptance-tested (184/184 after the terminal repair, plus a real 49,152,885-row factor replay) without
+editing the Gate-4-pinned nominal extractor. The first submission created no job because 64 GiB made
+Slurm bill 38 cores against the 32-core/GPU queue cap; the changed launcher now uses the accepted queue
+default. Array `56935552_[0-49]` then exposed a changed launcher defect: replica 0 finished its complete
+49,152,885-row push but xsec lookup incorrectly rooted the off-repository flux file in the immutable code
+worktree. No xsec/summary/receipt was published. The array was canceled before the remaining identical
+failures; original after-any validator `56935553` and its watch are preserved to record the partial-family
+BLOCK. That validator has now returned the expected atomically marked `GATE5_EXTRACTION_FAMILY_BLOCKED`
+at 0/50: member 0's r2-bound final products are correctly rejected by original-family job/HEAD/code pins,
+and members 1-49 have no original extraction products. A changed continuation explicitly binds the canonical data-root flux and reuses only atomically
+complete pushes after validation. It is now submitted as array `56936015_[0-49]` from immutable HEAD
+`2f65a36`, with changed after-any manifest `56936016`; both terminal watches are armed. Replica 0 is the
+only pre-existing complete push. `C_stat` remains null. Exact active receipt:
+`../docs/orchestration/state/gate5-extraction-r2-active-56936015.json`. Exact failure receipt:
+`../docs/orchestration/state/gate5-extraction-failure-56935552.json`. Exact original-manifest BLOCK:
+`../docs/orchestration/state/gate5-extraction-manifest-block-56935553.json`. Exact training promotion receipt:
+`../docs/orchestration/state/gate5-training-family-promotion-56933831.json`.
 
 **Gate 6 PET ML ensemble is BLOCKED by its predeclared no-training convergence control.** Array
 `56847059_[1-5]` completed `0:0` in all five members with Gate A/B, reproduction, code pins, and the

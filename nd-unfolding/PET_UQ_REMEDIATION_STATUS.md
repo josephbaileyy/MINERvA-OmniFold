@@ -406,6 +406,60 @@ different central/mask/order/fingerprint.
 
 ## Gate 5 — F7 coherent statistical replicas
 
+**Update 2026-08-14 10:02 UTC — ORIGINAL EXTRACTION MANIFEST BLOCKED 0/50.** Original after-any
+validator `56935553` completed its intended fail-closed path: accounting is `FAILED/1:0` because the
+marked report verdict is `GATE5_EXTRACTION_FAMILY_BLOCKED`, not because publication failed. The marker
+matches the 19,393-byte report exactly and stderr is empty. Members 1-49 lack all four original
+extraction products. Member 0 is also rejected: changed r2 task 0 had already published repaired products
+into the shared member namespace, and the original validator correctly detects its r2 job, HEAD and code
+bindings rather than misattributing them to `56935552`. The original family is terminal and unpromoted;
+no subset or unchanged retry is permitted, and `C_stat` remains null. Changed array `56936015` continues
+under its existing terminal watch. Receipt:
+[`state/gate5-extraction-manifest-block-56935553.json`](../docs/orchestration/state/gate5-extraction-manifest-block-56935553.json).
+
+**Update 2026-08-14 09:47 UTC — FIRST EXTRACTION ARRAY BLOCKED; CHANGED CONTINUATION ACCEPTED.**
+The emitted error wake corrected its own aggregate-terminal claim: task 0 had failed, task 1 was still
+running, and tasks 2-49 were pending. Replica 0's full ordered 49,152,885-row push and atomic marker are
+valid, but the xsec stage defaulted the flux path into immutable code worktree `7dc8c34`, where the
+off-repository ROOT does not exist. This is a launcher/data-root defect, not a factor, refinement, push,
+or science failure. The exact array was canceled so the remaining tasks could not repeat the unchanged
+failure. Original after-any validator `56935553` and its watch remain intact and must truthfully BLOCK the
+partial family. The changed path passes 184/184 tests, requires an explicit canonical data-root `--mcfile`,
+and reuses a push only after its completion marker revalidates. No subset is selected and `C_stat` is null.
+Receipt: [`state/gate5-extraction-failure-56935552.json`](../docs/orchestration/state/gate5-extraction-failure-56935552.json).
+The repaired code and evidence landed at `2f65a36`; changed array `56936015_[0-49]` now depends
+`afterany:56935552`, so no replacement can overlap the predecessor. Changed manifest `56936016` depends
+after-any on that array. Both new terminal watches are armed, while original manifest/watch `56935553`
+remain preserved. At submission only replica 0 had a reusable complete push; all final products remained
+absent. Active receipt:
+[`state/gate5-extraction-r2-active-56936015.json`](../docs/orchestration/state/gate5-extraction-r2-active-56936015.json).
+
+**Update 2026-08-14 09:14 UTC — FULL-INPUT EXTRACTION IMPLEMENTATION ACCEPTANCE PASS.** A dedicated
+replica adapter leaves the Gate-4-pinned nominal extractor byte-unchanged and calls its engine
+reweight, coverage checks and xsec arithmetic. It independently replays the full signal/background
+factors, applies the signal factor to both truth counts and completeness/reporting-mask construction,
+and publishes a receipt last. The after-any terminal validator requires exactly 50/50 and never
+selects a subset. The actual TensorFlow-runtime battery is 181/181 PASS; replica 0's 49,152,885-row
+signal draw replays exactly. `C_stat` remains null. Implementation receipt:
+[`state/gate5-extraction-implementation-20260814.json`](../docs/orchestration/state/gate5-extraction-implementation-20260814.json).
+The first submit call then created no job: explicit 64 GiB raised the request to 38 billed cores against
+the queue's 32-core/A100 cap. The changed retry removes that request and uses the same default-memory
+footing as accepted Gate-5 training; receipt:
+[`state/gate5-extraction-submit-prestart-refused-20260814.json`](../docs/orchestration/state/gate5-extraction-submit-prestart-refused-20260814.json).
+Changed submission is active: extraction array `56935552_[0-49]` (A100, `%10`, 2h) writes only
+member-scoped `extraction/` namespaces, and CPU job `56935553` runs the 50/50 terminal validator
+after any aggregate result. Both terminal watches are armed. `C_stat` remains null. Launch receipt:
+[`state/gate5-extraction-active-56935552.json`](../docs/orchestration/state/gate5-extraction-active-56935552.json).
+
+**Update 2026-08-14 08:57 UTC — TRAINING FAMILY PROMOTED PASS after the independent NPZ gate.**
+Read-only job `56933831` completed `0:0` with empty stderr. Its full-strength family replay is
+byte-identical to the already committed `ca99effa…` report, and the distinct artifact validator returned
+`GATE5_TRAINING_ARTIFACTS_PASS`: 50 members present, 50 passing, zero failed member checks, and 111/111
+family checks. Its hash-bound promotion marker re-derives the family, artifact, and 50-row accounting
+digests. This promotes the complete training family, **not `C_stat`**; full-input extraction and a complete
+50-member manifest precede centering on the replica mean. Receipt:
+[`state/gate5-training-family-promotion-56933831.json`](../docs/orchestration/state/gate5-training-family-promotion-56933831.json).
+
 **Active 2026-08-13:** target array `56857232_[0-49]` is terminal at 50/50 `COMPLETED/0:0`; all 50
 collision-isolated target/receipt/marker quartets are present and a same-turn structural pass reports
 50/50 target checks passing. Read-only validator `56872614` failed before validation when its mutable
@@ -418,6 +472,21 @@ writer with its terminal watch armed. The declared ensemble remains invalid unti
 target verdict and all 50 training receipts pass; the target verdict is now satisfied, while the
 training condition is not. No subset or `C_stat` is permitted. Promotion
 receipt: [`state/gate5-target-family-promotion-56873858.json`](../docs/orchestration/state/gate5-target-family-promotion-56873858.json).
+
+**Update 2026-08-14 ~01:45 PDT — GATE 5 FAMILY 50/50, `FAMILY_COMPLETE_PASS` AT FULL STRENGTH. `C_stat` still not constructed.**
+Both arrays terminal with **zero failures at any point**; queue drained. The run was full strength — no
+`--skip-replay`, `--source-npz` supplied, so the ~49M-variate three-stream re-draw actually ran — and
+parity was verified **in the same turn, before the run** (2 of 2 `CURRENT`, repo `d2bc94b`). Verdict is
+the **bare** `FAMILY_COMPLETE_PASS`: `weakened_axes []`, `is_full_strength true`, 50/50 targets and 50/50
+trainings passing, zero name mismatches, zero family failures, **58 checks per target row** (50 at the
+pre-repair promotion, 54 after R1–R4 with replay skipped). 50-of-50 distinct on target digests, all three
+factor streams and weights digests; 50 distinct `R` straddling the nominal. **`BEN-230`'s check ran and
+agreed on 50 of 50** — its first exercise on the full family — with its length-and-sum limit restated.
+Evidence rescued off scratch immediately and the verdict **re-derived from the committed copy**
+(`ca99effa…`, 277,601 B). **`C_stat` is null and was not constructed:** this is the
+completeness-and-coherence gate, and extraction plus centring on the replica mean is the next step and a
+separate reviewable action. `OI-60` is not closed. Receipt
+[`state/gate5-family-complete-pass-20260814.json`](../docs/orchestration/state/gate5-family-complete-pass-20260814.json).
 
 **Update 2026-08-13 ~18:40 PDT — the repaired reconciler is DEPLOYED and parity is MEASURED; still `PARTIAL` at 25 of 50.**
 Parity both directions in one turn: BEFORE `STALE_BUT_COMMITTED` + `atomic_write.py` **MISSING** (exit

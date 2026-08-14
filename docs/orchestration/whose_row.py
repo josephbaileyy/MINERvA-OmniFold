@@ -568,6 +568,35 @@ def check_oi_ids(items) -> int:
       * A WAIVER THAT IS NO LONGER NEEDED -> also a failure. A stale waiver silently authorizes the next
         genuine collision on that same id forever, so a guard that outlives its reason becomes a hole.
         This is the direction that gets left out, and it is the one that turns a fix into a trap.
+
+    A KNOWN ASYMMETRY IN THE BLOCK ARM, raised by lane D 2026-08-14 and left OPEN deliberately, with the
+    reason, because an undocumented asymmetry is the BEN-173 / BEN-180 shape (a control on one side and
+    none on its mirror):
+
+        reject direction  -- a lane that forgets `git -c` and files OUTSIDE the fallback block fails
+                             LOUDLY, and now gets a NOTE naming the `git -c` form.
+        accept direction  -- a lane that forgets `git -c` and files INSIDE the fallback block
+                             (120-129) is ACCEPTED SILENTLY, attributed to the fallback, not to itself.
+
+    Why it is not closed here rather than being overlooked:
+
+      1. COLLISION SAFETY IS ALREADY COVERED. Two parties both defaulting to the fallback and both
+         running max+1 would collide, and the DUPLICATE arm catches that. What the accept case loses is
+         ATTRIBUTION, not collision-safety, and attribution is OI-62(c) -- three parties sharing one git
+         identity -- which is WAITING-USER.
+      2. "ACCEPT BUT WARN" IS NOT IMPLEMENTABLE IN A HOOK. `.githooks/pre-commit`'s `run()` captures each
+         check's output and `cat`s it ONLY on non-zero exit, so a passing check's output is discarded
+         (BEN-226, measured with a control). The only available behaviours are fail or nothing.
+         A third branch -- RECORD, write the observation and have something else surface it -- was raised
+         and collapses: into the tree mid-commit it touches unstaged files and would corrupt this arm's own
+         HEAD-vs-staged diff; outside the tree it is a channel nobody watches; and to a destination that IS
+         watched it is simply the "put it in a test" remedy, not a third option.
+      3. FAILING WOULD BLOCK A LEGITIMATE COMMITTER. Joseph filing in his own block is correct, and
+         D's admitting rule -- a committer who did nothing wrong can always make it pass -- forbids it.
+
+    THE TRIGGER THAT UNLOCKS THE FIX, so this is a conditional TODO and not a vague someday: if OI-62(c)
+    is resolved such that every committer carries a lane identity, then NOBODY legitimately files into the
+    fallback block, and an id arriving there becomes free to detect as an error. Revisit then, not before.
     """
     if not items.exists():
         print("CANNOT CHECK :: docs/OPEN_ITEMS.md absent")
@@ -616,6 +645,14 @@ def check_oi_ids(items) -> int:
         span = ", ".join(f"{lo}-{hi}" for _, lo, hi in owned) or "NONE"
         print(f"  [committer {who!r} -> block {span}; {len(added)} id(s) added vs HEAD: "
               f"{added or '-'}]")
+        # A MANUAL run reads the repo's default identity, while the hook reads the `git -c user.name=`
+        # override the lane commits with -- so pre-flighting this by hand can report a FAIL on an id that
+        # is correctly inside your own block. Said here because the failure text otherwise reads as "your
+        # id is wrong" when the real answer is "this process is not your commit".
+        if added and owned and owned[0][0] == OI_FALLBACK_LANE:
+            print(f"  NOTE :: {who!r} matched no lane block, so the fallback applies. If you are a lane "
+                  f"pre-flighting by hand, re-run as `git -c user.name=\"Lane X (...)\" ...` or just "
+                  f"commit -- the hook sees your per-commit identity, this process sees the repo default.")
         for n in added:
             if n <= OI_PRE_BLOCK_MAX:
                 fail.append(f"OI-{n} BACKFILLS the closed pre-block range 1-{OI_PRE_BLOCK_MAX} -- a new "

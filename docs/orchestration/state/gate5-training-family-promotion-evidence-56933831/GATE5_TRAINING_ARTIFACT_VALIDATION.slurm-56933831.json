@@ -1,0 +1,1546 @@
+{
+  "C_stat": null,
+  "array_job_id": "56857233",
+  "declared_inventory": 50,
+  "family_report": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/validation/GATE5_FAMILY_RECONCILIATION.slurm-56933831.json",
+    "sha256": "ca99effa8e07bdfe2f0f0f2b73bba13c118624751a497d63971a831481380760"
+  },
+  "frozen_policy": {
+    "batch_size": 512,
+    "epochs": 8,
+    "estimator_seed": 42,
+    "lr_policy": {
+      "annealed_lr": 1e-05,
+      "applies_from_iteration": 1,
+      "base_lr": 0.0001,
+      "mechanism": "MultiFold subclass overriding CompileModel at fit time; omnifold.py is NOT edited",
+      "schedule": "fit-time-anneal-after-iteration-0"
+    },
+    "niter": 3,
+    "subsample_seed": 0,
+    "train_events": 2000000
+  },
+  "members": [
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_00/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "3ad3a3547698597a8e128b9b9f84d88f5ced300867c7663fe5f3ca05df628863",
+        "size_bytes": 26207790
+      },
+      "bootstrap_seed": 50000,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "6b426b4b093cf183061cde643847225e3bb8dfd3f04de9d59cfff14caeefd04f",
+        "stdout": "c517b0efb27569209964a588ecfd9f654c79260a89cd6c785f0bfe79c34811c2"
+      },
+      "replica_index": 0,
+      "target_sha256": "13d46574b8f8e904aee0d544b33ce0f4fcd3fd5a119b0a2fd64071c70c650c03",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_01/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "128420f519bfc2ec1bab672c205c38c02d61440c075ab4db0a04ce18d45afc09",
+        "size_bytes": 26298480
+      },
+      "bootstrap_seed": 50001,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "b8ef9cfe8f86955be1b506de3409e6de33e523662996c6d98f5d76aaa7d7b8ee",
+        "stdout": "30c6f378c17dfd9e746e813d35e3fe3c85485e317da4688d6761521ef2915bcc"
+      },
+      "replica_index": 1,
+      "target_sha256": "4f4d7eaf7ff5aa53f26dfef21b7911f3cb69ecb0931ac71316143e409fdf2074",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_02/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "c88480598edad742ca5d26ae247a2ec9cf6667bf30bf860e187000ab586681d8",
+        "size_bytes": 26352153
+      },
+      "bootstrap_seed": 50002,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "fd66eddefcd9c2fee09db36760d29d2cbc66edc6ffdd90f47a7fc0e3be6d924b",
+        "stdout": "bc7ba62990eebae3eb1cfba74652df60df27c45709337980e31060069c207014"
+      },
+      "replica_index": 2,
+      "target_sha256": "94299d026b4ba07243cea870aafab78c518a05c600340b78f68a4947ec5c1bfd",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_03/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "3b4c4b5fb2d55db0242d8792864f1b1a9fb3882cd94fe20191f98023ec16aa92",
+        "size_bytes": 26241721
+      },
+      "bootstrap_seed": 50003,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "72ea841ee670dd126e7ac459f3950e8e95e2eb247d987f10129bba2f9041f882",
+        "stdout": "4817060bcd90fd177f46e14cf04fd35a456ff032eabce395fd258134a8587949"
+      },
+      "replica_index": 3,
+      "target_sha256": "18715b68fbcc12ae960d0e5bcaf6afdc2f6a5d88971c573c66c43daa36587753",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_04/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "0dfd06e2a080ca9c4c641908b492b0d8e3aea3d34377692b03e3ae617d8cbb0d",
+        "size_bytes": 26267641
+      },
+      "bootstrap_seed": 50004,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "b03bc8bac1f82b50cba0c60a4e5798161bd123bc346773206667094bc90de319",
+        "stdout": "637bcf6a2bb4774c86e7b45a7b5b720579af1bbaeb31bec80703d1fef44446a9"
+      },
+      "replica_index": 4,
+      "target_sha256": "b0ca100424f0606bf743c1a10049568c310e0c88dac6e5728108fbbaa2e500f5",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_05/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "aff4a98c92eade42736c0d630154b5d6b788587ad8fc188fec756a3036e2fb5d",
+        "size_bytes": 26296036
+      },
+      "bootstrap_seed": 50005,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "11c2edf44cb4bbe0fc6f35855fb544f5fa0f3edf6c84c2e05e46f4609b5e2fee",
+        "stdout": "6c24b4b3b66ed5f969c22c0b3ebb681c32101bb41b2f0f7180deab52ee5c6ec9"
+      },
+      "replica_index": 5,
+      "target_sha256": "b8d626897f7462c12898b0cf373487e6ffd61581bd04344efeb971bd5ca3d818",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_06/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "58fbe12bc1849791966db8dbdda1ba4755f798fd08e849c6050e9d64b1b36299",
+        "size_bytes": 26295256
+      },
+      "bootstrap_seed": 50006,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "7b8480f2271697be2bdaf3d638c347c2eba1781da0eaaa8e3de015f83b04fb78",
+        "stdout": "50a74c5be9d95a599fd04a453d98162a67e94bc94e4f7de66cceb16fab3d6b5c"
+      },
+      "replica_index": 6,
+      "target_sha256": "9472cde435ef6f078165f67dd5d6bdb4364a73770f94d0f3dc6abbf70f7acf81",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_07/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "48487d8ab06898c16d343d20e8174fa023fc3df7b07f6030ff1fda7f7f238eaa",
+        "size_bytes": 26237149
+      },
+      "bootstrap_seed": 50007,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "893570f98060e1c77646da86586fc4f9e75dfe081164a9f80f7f51e0ae114797",
+        "stdout": "9f35c33d3474f8f7e38a66f63bd9a74df9da5327630ff05c9421eaa4572779cc"
+      },
+      "replica_index": 7,
+      "target_sha256": "c00bbc87634d6f9883213249fb9186638fa7fb0be69cd4b2714f877b692b2f7f",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_08/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "1a40e4c8c231500e770fc0bf1297ada117a71c09b26110a62889ce285bafe4cb",
+        "size_bytes": 26250688
+      },
+      "bootstrap_seed": 50008,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "cab92a518c38a8e7c0aa585b8a2b95ad322784699539ff065183e6c64bcde114",
+        "stdout": "249d95258dbd7fe24779b1c1aae4c2daefdc300ce43386d7118a3a1b1157f1c0"
+      },
+      "replica_index": 8,
+      "target_sha256": "b1d2a83caf15accc7d851f12e3fcfa5a56c5f7aec6126e5cdeb207683e6a4c8b",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_09/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "7a6363da160872c5abb0bce377c9149d3420bfa7ea1496e1abcdd014fb915336",
+        "size_bytes": 26267112
+      },
+      "bootstrap_seed": 50009,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "cede3868ea3981124a0589720b38ac1635f413fdf80268710074d013568b9505",
+        "stdout": "d2d0b9390b12c845c7077c9d69f29b614cff8d9e5161bc8f5e28fe953674a086"
+      },
+      "replica_index": 9,
+      "target_sha256": "4ea981a74d1eb0dfc5958e7f95d32bdc053463469df900f9b6b21931ea1199cf",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_10/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "5e9e2c9e45f84f964910bc7e1f5f8af82e5a5022feb6606cb01f37b6b489024b",
+        "size_bytes": 26333940
+      },
+      "bootstrap_seed": 50010,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "d75ea8b6b091edc8c7ac0ca9fba837907f4f9a173e54ca3df47f44f169ef86f5",
+        "stdout": "08152cd1e3c63ec9834f0d2c84ab579115e5f38f92ca662c2301e6e0350411ff"
+      },
+      "replica_index": 10,
+      "target_sha256": "58e71c41564c797aee435ddcacdd60e4f507e3775afb56aaad29b2d1e75a6266",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_11/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "19b2c7187c915f12a445ca54fa5bf0fb57057d21a1b556b6c29ce178b6a7ba2d",
+        "size_bytes": 26449032
+      },
+      "bootstrap_seed": 50011,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "80cebf37334c3c563e6cb4910a40f3503bdf23b4b879d7a7506ea1b6789d5691",
+        "stdout": "f977a7d1fd8b6a633f8bd3a0fc9497ce14f95fbef1374f1e484af10053cdb0c6"
+      },
+      "replica_index": 11,
+      "target_sha256": "9d83b7911c56f1f4ad00d14102bb1d3ef0c52c49f7d6c2bdf3a305de8b519226",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_12/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "e1ecd2154fd0c44421833f755970b3ebe0722b2c2b74d48087ec529573b886a4",
+        "size_bytes": 26392618
+      },
+      "bootstrap_seed": 50012,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "414fe11cd814a50bd03c84aadd701b9638ce4f8a239d81621d795363360f70b5",
+        "stdout": "d73c9821de668d31b144019a6c9f555463848aeea83e9d5c7887791b2f8f5450"
+      },
+      "replica_index": 12,
+      "target_sha256": "356bb6b9988b1178b5f1be5ac54460dc85c1fd66b8808cf47d299c56fe6931ad",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_13/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "747d8f6f9b5ae97007aed387674af1c720103f8e0b9af61e0402be071f36ef63",
+        "size_bytes": 26334268
+      },
+      "bootstrap_seed": 50013,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "e03b6723a0b0271861c10b150037410378a2089932dff47a8fb18b8fd0433588",
+        "stdout": "3ad47d89499f41dd5b78bad112421d9ef2c6927e032df02c8ef846c2ae2b4743"
+      },
+      "replica_index": 13,
+      "target_sha256": "11a1e75e7dfdbf954e277aba50335893e40e9fc9836bff4e2d766a4af141e285",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_14/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "6f34e2885e14fef0b188421c0c4dfc985525d2908ec0cf38885b0fef6a7f0bd7",
+        "size_bytes": 26260348
+      },
+      "bootstrap_seed": 50014,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "23e6e0dece353591f404d0e963645995305b58dc5b2d808e3d9b0d752de4d08d",
+        "stdout": "c6ac121f38c613c045970680d3cce78c8c5af638a1b61e499c190e729ad31396"
+      },
+      "replica_index": 14,
+      "target_sha256": "60cc1d9c9943978d766fc0d7ba3d44c9b7a9f5b4d37b424b01627f65eb6cdc1c",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_15/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "89935975a047f2023a183309416cd3fe6d63c364a9bdca1327b03fcab23f8b03",
+        "size_bytes": 26341051
+      },
+      "bootstrap_seed": 50015,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "6fa0515aff434ec79cd7d26c29c8c65e0e49f5fa3f4bfc400d4e857c9222bf22",
+        "stdout": "f01dac3aa00b49191a6dd565b4100904a2e814f14ff9c912d14a749bdd8703b9"
+      },
+      "replica_index": 15,
+      "target_sha256": "61cef356289c1029561f98b00c89f1c3c2a07e758e951236d189b01f6606d7cf",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_16/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "5387fb310fc4d3b6c721b4b077f3b7615f253059a8f89d1053a2d203322205a6",
+        "size_bytes": 26260186
+      },
+      "bootstrap_seed": 50016,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "70ec421f28c90c604dc904d342497aac0f3c450dc4395dda3417c98e7bedef66",
+        "stdout": "0535a08960695fe9c8554c9c8655327514b71368af792826ec0f5b72ce547f86"
+      },
+      "replica_index": 16,
+      "target_sha256": "54890e53d8c3324095cca37c2e7b3aa79531b18a97049a3f8e6c0c065582c5f8",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_17/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "59253b8c5391cfea9af8cfd261a9236d036c6cda81a73a6c2b276c8e6f8677f6",
+        "size_bytes": 26288995
+      },
+      "bootstrap_seed": 50017,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "d4737fbd517262fccf5dc4c18439e77189aa0ffc7646988977005f4d71344a03",
+        "stdout": "ccece466f239b20df02b0c7f01301b9a7858bda0defde4bc033a0792fc7dc02e"
+      },
+      "replica_index": 17,
+      "target_sha256": "15f49ca098b9431a2dd43d7483dc4a8d82e2653c3b7849c91707cc80adb36489",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_18/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "1fa6633a4994a35e5f0076aec7f098c12a034906ecbfca052d96b0009ee6733d",
+        "size_bytes": 26321311
+      },
+      "bootstrap_seed": 50018,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "6379b00b94a98d2375d75f4d458fd4ae12ca3062c0413a415589398e18e9516c",
+        "stdout": "2d3fd9193cc2d431b8e9b4f0e88b93db358fb8af11e6e2456e4de5bd08b2d90e"
+      },
+      "replica_index": 18,
+      "target_sha256": "0508a44937bd7ebc180bbeff6a3aca0c18708e608229e440c37addf9592400fc",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_19/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "0ff643a8795241cc22d844251c8f6eea1d5d42c99e8b5545d36a82f82cfbb126",
+        "size_bytes": 26154088
+      },
+      "bootstrap_seed": 50019,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "1f859a85bc5a9b1968d6af9ab31153b62d7d7a2e126185705eac1291ff3f43aa",
+        "stdout": "0381abc5bffd4f1178c636ba221b1eccf8bbc3fb23e7cb03fb17ad272cb3ec54"
+      },
+      "replica_index": 19,
+      "target_sha256": "daea38e2cd5c2c91e337d387f6687564787bea542d9342265f0bffb9e09889ce",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_20/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "335d84741b6b18eb0528c279bed926c4c1959af4e53ca027bb2b83f437ff041c",
+        "size_bytes": 26302697
+      },
+      "bootstrap_seed": 50020,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "1ef72452d4a8f1a2682d62324e390c5d52e0e3eed0a9fea585811dcc8d01d553",
+        "stdout": "dd142c8c291fedaf4b7167737eec881ad3f9650c026b8c0f4e964e0c164f2304"
+      },
+      "replica_index": 20,
+      "target_sha256": "2b6d13b39f4fabd68b6423e775c062d0ac3da64d61af6f24542c2b30edce0d7b",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_21/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "88e38108805c9578ba5b955ef7ee40365ca002bf35353e7f4354ce53ea0e224c",
+        "size_bytes": 26247601
+      },
+      "bootstrap_seed": 50021,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "06906207d46093db1d0bb5471d6a22de6ae5c044f11514c68cebe7c28b3fd2f7",
+        "stdout": "a92b34b7915e66864ad93b4e1a0dd0023f14536a0a62156030298d198c83640e"
+      },
+      "replica_index": 21,
+      "target_sha256": "3d9329563d3c974c1f9069efefe767612bf50c30fd36457f972ff606ae44ce54",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_22/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "1446ad139398fd6af48d53b3742ffd651f632ba4a5eb2e4d85eaa0827a1accfe",
+        "size_bytes": 26328608
+      },
+      "bootstrap_seed": 50022,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "337f38813dc585cd6b6607ee40ad9b6ebe6740f9133fb7ac0ef6e5f8167ead9c",
+        "stdout": "26bd2b6a87eb8cd5054f4c580fbd2e29b45070ec9abd21427106970f9cea483b"
+      },
+      "replica_index": 22,
+      "target_sha256": "42c4df78bf42d9db5d6814af0618a547d16cf3abee967ead7cc8db8db8b33e2c",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_23/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "d085ad1b2b99c419d0a477cbfc827d9ba970c9517a90d7de5d72e53df8805bac",
+        "size_bytes": 26298724
+      },
+      "bootstrap_seed": 50023,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "0c0998a486ed7f2f579328a8152f04d98f8880ef01175ac6af516121121b8ad1",
+        "stdout": "71915b2725bcfa4919cf81749edd6a31f8e38ac6ec07fc9a8e4737fb6f4b5ea4"
+      },
+      "replica_index": 23,
+      "target_sha256": "e6795ae3186747b12be3013daaaa394012c0ffebefc87745e59603dab36c0328",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_24/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "4c5dc20786e161317b2c8cbde7c60313822f5a6b0b78126aeecb2db49469a9e3",
+        "size_bytes": 26417244
+      },
+      "bootstrap_seed": 50024,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "4ebcce4d913647825dfb0e8b1285864c8db92682f9f74ede215f423392814271",
+        "stdout": "51be4ea5d27b4ea36ebf7d3408af2a7682d6811bc18eea79bae36b46e8dffe1e"
+      },
+      "replica_index": 24,
+      "target_sha256": "cd5e24bf5866be8e19653924f9f16f089eb24c3805acc31d74eb46befec7b6c6",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_25/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "b9a27bf43375e5eb7c20b7006ca3166d6cc68401eadf4d38de65a4d49e5d812d",
+        "size_bytes": 26171090
+      },
+      "bootstrap_seed": 50025,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "b8d33576be8055cb0c7205108b77460849fe53a27418ce04ac7ec11f94d1fc34",
+        "stdout": "5950b48ac12e011edb23c17422076358ee8dadc95e0f38fa53d28bb8157cdf6c"
+      },
+      "replica_index": 25,
+      "target_sha256": "a8c9df6c41a448ffcdd9ccd8dfa257827f336ca83edf8684f66eda3c8028377c",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_26/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "fd9a92d91919477171063f64871d9b317fa3c8bf38a2ca15b21f69b940c2d264",
+        "size_bytes": 26472540
+      },
+      "bootstrap_seed": 50026,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "70e0f925ef0a805e741cf90593c1aaefe00baf8573790b212d86c89527ccacf5",
+        "stdout": "f58cb75192a5ab24e29ec87783e0ab17b33ffabad62da1bef7524102e870df8a"
+      },
+      "replica_index": 26,
+      "target_sha256": "714d0c07800518e90e8f7c3fc070efd4af9799f3788d9277bd7e86378efd61fb",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_27/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "c2ecb470f7f9a94fd3b28909377924ecafe18bdab3dfdfb3575515aa5c7c610e",
+        "size_bytes": 26372109
+      },
+      "bootstrap_seed": 50027,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "3cce720adf357ae040ec77a8ded6d81ca05b20d112150cceb326ec93ff53d644",
+        "stdout": "de31e31fadf3af35e240f55ac821c8c3660ae037bceb0b76b890a0fd369f399c"
+      },
+      "replica_index": 27,
+      "target_sha256": "f912f625d049c0724e8e00bd162585a689fbab759f7c7640683402ed4aae7c84",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_28/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "a30687ebeff37c15eccd58e5fc8ae2cc36784be1125b917b200db450a4f895d6",
+        "size_bytes": 26402099
+      },
+      "bootstrap_seed": 50028,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "9d896e6ac6c9bf8d14b081e13bc8e028f109d5474e5106df904aa69af04cd043",
+        "stdout": "3b67d67886f9daeb6e2d9b9e88ea428f06d00c6e395341159a44bcb094d99aed"
+      },
+      "replica_index": 28,
+      "target_sha256": "2efdc08c9c895e2412dd60fbac27748b0296134c9ad1f05de4f38bddf963a3ec",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_29/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "d516f90d71262ddcb3cd93db4671b7d1d64c924749d2b2ba3dd83648479cbb87",
+        "size_bytes": 26295158
+      },
+      "bootstrap_seed": 50029,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "901949d3c3638bdce76f07bef8d881f7a72c765a260ca088c3ae89982c05d07b",
+        "stdout": "a54120e24d75cb45bacdebc2f0125e5d809556bff62275775bfe47e3a205728f"
+      },
+      "replica_index": 29,
+      "target_sha256": "7017aa2d7abc9c990f0cc3d92b6d31fb58de6f03db5e9980ae2282c3a9fff518",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_30/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "9a7f6e0ac58dfb5a9d58583f889b483e094d8b1e4c94ceb78e4cb89bb01145e5",
+        "size_bytes": 26293318
+      },
+      "bootstrap_seed": 50030,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "7302795856949466e61bb7195e5eb23dbb77b1ea68354b6fd8d7363db90b2bb2",
+        "stdout": "ff2e4c1156d0a12ac67d86f16f8692647be3ac1028821a4ae846fb0827af7c67"
+      },
+      "replica_index": 30,
+      "target_sha256": "bc92dbd499267118bc9f5f9bc14f5c79a7bea4836894a262c0b3c919ea7a0652",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_31/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "b0dadca8a1f6006a0b4d815ae5a4867e8e55df456d4048f8ee784a24b893355c",
+        "size_bytes": 26348323
+      },
+      "bootstrap_seed": 50031,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "2093ef8cb112180d134bd2e07d43f453de5fb2e79ed18b28a59a2c1fc9c332f2",
+        "stdout": "c7a851f11b4c2003bd1ba3a887055e2fdbe561257ccb3727aec8934dbe39c6bf"
+      },
+      "replica_index": 31,
+      "target_sha256": "73b285aea0309e62b9fa698bbeeaa9bffbb9b11fc67dbe090ea317ce9a1a9332",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_32/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "06504c7b938269747ccdbd14b5b41bd5959230a463b96fb2f9272e472a45c115",
+        "size_bytes": 26320279
+      },
+      "bootstrap_seed": 50032,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "8f0f498f4d87c38146a2ef80ec78843e8b632464d511af9d1f907a41bbc5f86f",
+        "stdout": "f203f7d2a708e9e465b115c755ff3e81d647038916563c7aaea151e94ed49c08"
+      },
+      "replica_index": 32,
+      "target_sha256": "493f7a0c94d64e44058f1d8e58087f5fc2da5f2a5e63649133d17de053af00b4",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_33/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "2a479bb942f9973da9db82d71b4e6a94b78987b1363c43bfbdb3b2918a9ccfb1",
+        "size_bytes": 26320535
+      },
+      "bootstrap_seed": 50033,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "f490e762b606431b2a94bfd69fa8d70f59866494636e15900c22fdea6ff27a6a",
+        "stdout": "1cf7b2c2c1eaa9786bbd899cb47c8d8361eec6493e9948063652acf108b0537c"
+      },
+      "replica_index": 33,
+      "target_sha256": "dd8345c1cde30b2c3aabb1d02e3850c9cdf1cae77767a332df0ff2afc8b908e5",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_34/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "63ef5854b86a3dae6289e696856255550bf9768cca1d47ee1fe05c95877234d8",
+        "size_bytes": 26199097
+      },
+      "bootstrap_seed": 50034,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "7e1433f0d62ff906f80a15741bb932421bcb95508e00a39963689d9b148a53d8",
+        "stdout": "fd2f5403640850198b352c86ebc801cbd16b4c3909240520257f66d65836912c"
+      },
+      "replica_index": 34,
+      "target_sha256": "72bb4be7e077f678ec080839b4643cff3fe9e04220ab89b0d143a30add58a4e9",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_35/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "132922cf8527cb6e598399c0c4d9bce026b7c1f2867945669ca67053b48838fc",
+        "size_bytes": 26373839
+      },
+      "bootstrap_seed": 50035,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "38c1024b27ff2c583df88fce099deed6e161c9c349feb58d1d332059372de21b",
+        "stdout": "9a126b8c8144c8a773ca6964ff3a103c7616bc55507b31fb59dabe8625a6ed17"
+      },
+      "replica_index": 35,
+      "target_sha256": "93bafa990bcd842cb0e1a07e817a4bef2b3310f5497a2dce582fd98e5822bd8f",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_36/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "0edf44bef587bddd7d6f028be606aa942476fb5679c1672804484708ba013ffa",
+        "size_bytes": 26312219
+      },
+      "bootstrap_seed": 50036,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "6838199f822a5ba231dc96313301e9a6f312b850dc5b2ba26604659b5b4ac0e4",
+        "stdout": "403368ea28af3fc408fe3cfe55eab360c78f4a18e067136c66627d9c014cff5d"
+      },
+      "replica_index": 36,
+      "target_sha256": "a8d89e9b15aaa26fd0e0201a3a013f4ab5477abbaa3ed62a2f62bdf99bbf4e67",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_37/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "c45fa823eefd914510d8a50bb0fb48884e0ae4d32a9a7af2897ecd9135321d02",
+        "size_bytes": 26318594
+      },
+      "bootstrap_seed": 50037,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "89d1dc357273a42aaa966c1ef612b32d1458ab928b272a0135adbd7966d6984f",
+        "stdout": "86f4f789138b76b68bdcf2c9877cbb1bada29d3d96a73bc94d26b9e3c4ac266b"
+      },
+      "replica_index": 37,
+      "target_sha256": "45f744b08852c83e054a23bbbc477b6ee4724030c5c1fa69c415d9458b95db3d",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_38/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "66d4b42dab74c69eabee99d735f14d558aad0c51f395c5a146c4d4f282abee4d",
+        "size_bytes": 26411730
+      },
+      "bootstrap_seed": 50038,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "ee30c6aa7a6edbd61f7aaaec207837c088c4c616df8faa8ae300bd36f2e6e289",
+        "stdout": "fa42b204ec47b8f92da274df1c261ff0add6bdd488e9bc63c54195cde2bea25a"
+      },
+      "replica_index": 38,
+      "target_sha256": "9afc89d886df66f9625bf1659880faac5fd6c5d3e875b4045a4d79adb4185c74",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_39/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "810d6796b8b39bc434d12c0ee94d5c9da16869640d381f9ad1ff05d55bb38c98",
+        "size_bytes": 26339013
+      },
+      "bootstrap_seed": 50039,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "da9eed529d681c27014c185c8c3772eee0b73bc989efc14671cf01b9ba85a0db",
+        "stdout": "e5dd7d48e1e174f10b66f0ab510d314590a0f6fe395c3c6f8fa4839f7dc79186"
+      },
+      "replica_index": 39,
+      "target_sha256": "adc33689e3762c2d3e1cbba265b8d9eca64b0d3daa5734d235cc9d695cd7f1a3",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_40/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "0f64b4c2868ae6b669f2ad3c8cf56c204e620ece15caa35cbeb483a35db7ca8a",
+        "size_bytes": 26318748
+      },
+      "bootstrap_seed": 50040,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "87b4c213b7e000a24c0be6b37ec3cc75ac7c100fd8c7eea568dc8a856945963c",
+        "stdout": "2872eb0522d4389f7ade09c8e697325b8a253985ab9ff47e22b0ecc9be1316b4"
+      },
+      "replica_index": 40,
+      "target_sha256": "be6900c4869a7b8a6427ea66dd6c2aa45c3eee444f35ea10bb689660275568ae",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_41/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "0588153ac672d4a9827f4df60b6c27bac9931ff3b6a333e638af97b088875c73",
+        "size_bytes": 26210491
+      },
+      "bootstrap_seed": 50041,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "c1250572b592979a5ca4fcec5786909f419e2e1658cf1c8f1e0942868d3d6db6",
+        "stdout": "62b89d7a0f67f0c6cd9ea3f98d51f71a6bec52e02fcb353bdc900a76d4dce9a1"
+      },
+      "replica_index": 41,
+      "target_sha256": "6c680032efe32e3012c82a9c8f61219ee68d56c10360a1adfa5acc7b3e439eff",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_42/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "f534939a043d38c0f234e49705ab5d43341473c07d0556dbcfda0acb2eaf3fd3",
+        "size_bytes": 26338885
+      },
+      "bootstrap_seed": 50042,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "b34754e6a6a664d1d1dffae37bd03b2bf5143dade5c3fa7313990af7ca5aaee6",
+        "stdout": "e3b72febe3588fbecd56420b37b2124ad5c017142bf5d79d87920e6769987799"
+      },
+      "replica_index": 42,
+      "target_sha256": "a6adae6401b3d835a2bad5b4b7d0c280d59ea9edf3b0f5c069458ff861a70097",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_43/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "949e57c9b93b42ae95fd437b984bec1927d0b4072de5d9f29d0e9253b60da522",
+        "size_bytes": 26325096
+      },
+      "bootstrap_seed": 50043,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "f9ad33610efd60058b98813216ce7282a1a084e0b069ec5e6cce193bff7225b9",
+        "stdout": "4f277302979ab21f42926e1f0d43a24002d0356126e9e8b458cef848b578021d"
+      },
+      "replica_index": 43,
+      "target_sha256": "eff73f332f93de5f244a39305757995d5d6586ee574c562ebca53a858fee5d6b",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_44/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "cd3cbc5be86c0c015325f16d1c90443671779be2eb2d88c4e91812eb0ce9ef3f",
+        "size_bytes": 26409708
+      },
+      "bootstrap_seed": 50044,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "c894c8e403206a06b36822a5cddb016df0fac156a754ad06f60f1033df3a72be",
+        "stdout": "57c80c0d5dce09454ad23657ff297a93d0d9054ee1edd4593576cbc1070deb9e"
+      },
+      "replica_index": 44,
+      "target_sha256": "30e0d1a5436727b460a74b03dd54db839230fb47f202a9fe98fd97680a255f4d",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_45/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "22e346d6c0d6e5976f886a0a9f1001786e54e9710b94fa37700bc1860de947a0",
+        "size_bytes": 26326887
+      },
+      "bootstrap_seed": 50045,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "3eb1bc9d3b39d96febe1a7ab71d1b7dd7b700af2f833cf06dd40e3468aed6b96",
+        "stdout": "c5b8f2a030fa7eceb0cfdbcf9607d55a780bd6d2878e8d9ad4a71e74d7dbccb8"
+      },
+      "replica_index": 45,
+      "target_sha256": "70a599c545fd233432bf8f60690f2837b07868bef153b2cae7640844fe0557a5",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_46/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "9ee77e04732048f8bbceb4106eba7f8fc11d96b4517c0c0a4984f1027762442d",
+        "size_bytes": 26381510
+      },
+      "bootstrap_seed": 50046,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "1536af9ed2dd78857061bd70524866446005d7c679071bd1e83c33980818f040",
+        "stdout": "c8500950de06f7aa32d6046d96f2181657feade1851d3367c55fb68a13ca9faf"
+      },
+      "replica_index": 46,
+      "target_sha256": "940357a21c45b6abb4c7e141914d8958423e9f78cbc35b2311526f092224744a",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_47/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "03f31c1a8cbbae2b7a164965d8b2ff9cd1c3a85f0ae36d51ffa024ebf8a90694",
+        "size_bytes": 26307298
+      },
+      "bootstrap_seed": 50047,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "dccc7c5b4840967592ab3b5d576332df741b75c9b366f1f578aa5cb6189c472d",
+        "stdout": "3eed9a07e3a9e4230d97203fbd893a3e35149f081ccbf671c47a7a7cb7a14f37"
+      },
+      "replica_index": 47,
+      "target_sha256": "d0f9b876e210fce640c143c5ea10fa0e1ea97f6bcc05112bfef9385c53fd5d17",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_48/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "1ad566b74c498848e827a165c16332d3efbc73bdf71c2d72de4cae23c4783a23",
+        "size_bytes": 26192989
+      },
+      "bootstrap_seed": 50048,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "369d0345fcf8b79adbdc74c5ee430964ad80b2841f010a8b285e23d5df81131a",
+        "stdout": "d332dd8364034ce53d4ae38b6772f33b50f715cdefe3baf6c96c34a7f80154eb"
+      },
+      "replica_index": 48,
+      "target_sha256": "4c82bd420a85b031f5df700c7d4553ffb36b6d5988d3aacfe175217747cbc414",
+      "verdict": "PASS"
+    },
+    {
+      "artifact": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_49/training/GATE5_REPLICA_WEIGHTS.npz",
+        "sha256": "06f4fcdd36a98a1fa4aaa8b353adb395c25ce26250b6451a3bc5595b87094593",
+        "size_bytes": 26270412
+      },
+      "bootstrap_seed": 50049,
+      "checks": {
+        "failures": [],
+        "n_failed": 0,
+        "n_passed": 98
+      },
+      "log_sha256": {
+        "stderr": "59b561dbe01a775fd316138c784d6d871060f8eadfee8e01994ab53cba063d88",
+        "stdout": "29d7703a8a12e6cdebbc979b41a687ab20316494518eb10e01c68fb93f0cef18"
+      },
+      "replica_index": 49,
+      "target_sha256": "c7b1d89b214d1b49e9c8a011f256b7c290c2c738d2e051e8149b62347a982a2b",
+      "verdict": "PASS"
+    }
+  ],
+  "sacct": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/validation/GATE5_TRAINING_SACCT.slurm-56933831.psv",
+    "rows": {
+      "0": {
+        "elapsed": "03:01:20",
+        "end": "2026-08-13T07:42:02",
+        "exit_code": "0:0",
+        "job_id": "56857233_0",
+        "job_id_raw": "56857235",
+        "node": "nid008604",
+        "start": "2026-08-13T04:40:42",
+        "state": "COMPLETED"
+      },
+      "1": {
+        "elapsed": "02:58:59",
+        "end": "2026-08-13T07:42:22",
+        "exit_code": "0:0",
+        "job_id": "56857233_1",
+        "job_id_raw": "56857236",
+        "node": "nid002409",
+        "start": "2026-08-13T04:43:23",
+        "state": "COMPLETED"
+      },
+      "2": {
+        "elapsed": "03:01:01",
+        "end": "2026-08-13T07:50:19",
+        "exit_code": "0:0",
+        "job_id": "56857233_2",
+        "job_id_raw": "56857237",
+        "node": "nid001437",
+        "start": "2026-08-13T04:49:18",
+        "state": "COMPLETED"
+      },
+      "3": {
+        "elapsed": "02:59:43",
+        "end": "2026-08-13T07:58:37",
+        "exit_code": "0:0",
+        "job_id": "56857233_3",
+        "job_id_raw": "56857238",
+        "node": "nid002661",
+        "start": "2026-08-13T04:58:54",
+        "state": "COMPLETED"
+      },
+      "4": {
+        "elapsed": "02:59:29",
+        "end": "2026-08-13T07:58:23",
+        "exit_code": "0:0",
+        "job_id": "56857233_4",
+        "job_id_raw": "56857239",
+        "node": "nid004000",
+        "start": "2026-08-13T04:58:54",
+        "state": "COMPLETED"
+      },
+      "5": {
+        "elapsed": "03:03:03",
+        "end": "2026-08-13T08:16:13",
+        "exit_code": "0:0",
+        "job_id": "56857233_5",
+        "job_id_raw": "56857240",
+        "node": "nid002688",
+        "start": "2026-08-13T05:13:10",
+        "state": "COMPLETED"
+      },
+      "6": {
+        "elapsed": "03:00:31",
+        "end": "2026-08-13T08:13:41",
+        "exit_code": "0:0",
+        "job_id": "56857233_6",
+        "job_id_raw": "56857241",
+        "node": "nid002692",
+        "start": "2026-08-13T05:13:10",
+        "state": "COMPLETED"
+      },
+      "7": {
+        "elapsed": "03:00:21",
+        "end": "2026-08-13T08:22:55",
+        "exit_code": "0:0",
+        "job_id": "56857233_7",
+        "job_id_raw": "56857242",
+        "node": "nid008201",
+        "start": "2026-08-13T05:22:34",
+        "state": "COMPLETED"
+      },
+      "8": {
+        "elapsed": "02:59:55",
+        "end": "2026-08-13T08:23:12",
+        "exit_code": "0:0",
+        "job_id": "56857233_8",
+        "job_id_raw": "56857243",
+        "node": "nid003241",
+        "start": "2026-08-13T05:23:17",
+        "state": "COMPLETED"
+      },
+      "9": {
+        "elapsed": "03:05:19",
+        "end": "2026-08-13T08:34:31",
+        "exit_code": "0:0",
+        "job_id": "56857233_9",
+        "job_id_raw": "56857244",
+        "node": "nid001677",
+        "start": "2026-08-13T05:29:12",
+        "state": "COMPLETED"
+      },
+      "10": {
+        "elapsed": "03:00:01",
+        "end": "2026-08-13T10:51:50",
+        "exit_code": "0:0",
+        "job_id": "56857233_10",
+        "job_id_raw": "56858995",
+        "node": "nid008264",
+        "start": "2026-08-13T07:51:49",
+        "state": "COMPLETED"
+      },
+      "11": {
+        "elapsed": "02:59:02",
+        "end": "2026-08-13T10:50:51",
+        "exit_code": "0:0",
+        "job_id": "56857233_11",
+        "job_id_raw": "56859063",
+        "node": "nid008625",
+        "start": "2026-08-13T07:51:49",
+        "state": "COMPLETED"
+      },
+      "12": {
+        "elapsed": "03:00:14",
+        "end": "2026-08-13T10:54:37",
+        "exit_code": "0:0",
+        "job_id": "56857233_12",
+        "job_id_raw": "56859255",
+        "node": "nid008264",
+        "start": "2026-08-13T07:54:23",
+        "state": "COMPLETED"
+      },
+      "13": {
+        "elapsed": "03:01:25",
+        "end": "2026-08-13T11:02:09",
+        "exit_code": "0:0",
+        "job_id": "56857233_13",
+        "job_id_raw": "56859576",
+        "node": "nid008264",
+        "start": "2026-08-13T08:00:44",
+        "state": "COMPLETED"
+      },
+      "14": {
+        "elapsed": "03:01:10",
+        "end": "2026-08-13T11:14:35",
+        "exit_code": "0:0",
+        "job_id": "56857233_14",
+        "job_id_raw": "56859577",
+        "node": "nid008629",
+        "start": "2026-08-13T08:13:25",
+        "state": "COMPLETED"
+      },
+      "15": {
+        "elapsed": "03:03:22",
+        "end": "2026-08-13T11:21:01",
+        "exit_code": "0:0",
+        "job_id": "56857233_15",
+        "job_id_raw": "56860201",
+        "node": "nid008604",
+        "start": "2026-08-13T08:17:39",
+        "state": "COMPLETED"
+      },
+      "16": {
+        "elapsed": "02:58:48",
+        "end": "2026-08-13T11:30:56",
+        "exit_code": "0:0",
+        "job_id": "56857233_16",
+        "job_id_raw": "56860202",
+        "node": "nid008556",
+        "start": "2026-08-13T08:32:08",
+        "state": "COMPLETED"
+      },
+      "17": {
+        "elapsed": "03:03:28",
+        "end": "2026-08-13T11:53:35",
+        "exit_code": "0:0",
+        "job_id": "56857233_17",
+        "job_id_raw": "56860679",
+        "node": "nid008209",
+        "start": "2026-08-13T08:50:07",
+        "state": "COMPLETED"
+      },
+      "18": {
+        "elapsed": "02:59:23",
+        "end": "2026-08-13T11:49:30",
+        "exit_code": "0:0",
+        "job_id": "56857233_18",
+        "job_id_raw": "56860692",
+        "node": "nid008625",
+        "start": "2026-08-13T08:50:07",
+        "state": "COMPLETED"
+      },
+      "19": {
+        "elapsed": "03:00:49",
+        "end": "2026-08-13T12:24:16",
+        "exit_code": "0:0",
+        "job_id": "56857233_19",
+        "job_id_raw": "56861016",
+        "node": "nid008376",
+        "start": "2026-08-13T09:23:27",
+        "state": "COMPLETED"
+      },
+      "20": {
+        "elapsed": "03:02:59",
+        "end": "2026-08-13T14:21:50",
+        "exit_code": "0:0",
+        "job_id": "56857233_20",
+        "job_id_raw": "56869570",
+        "node": "nid002332",
+        "start": "2026-08-13T11:18:51",
+        "state": "COMPLETED"
+      },
+      "21": {
+        "elapsed": "03:03:03",
+        "end": "2026-08-13T14:42:48",
+        "exit_code": "0:0",
+        "job_id": "56857233_21",
+        "job_id_raw": "56869571",
+        "node": "nid004000",
+        "start": "2026-08-13T11:39:45",
+        "state": "COMPLETED"
+      },
+      "22": {
+        "elapsed": "03:00:29",
+        "end": "2026-08-13T14:46:56",
+        "exit_code": "0:0",
+        "job_id": "56857233_22",
+        "job_id_raw": "56869752",
+        "node": "nid008376",
+        "start": "2026-08-13T11:46:27",
+        "state": "COMPLETED"
+      },
+      "23": {
+        "elapsed": "03:02:14",
+        "end": "2026-08-13T15:18:51",
+        "exit_code": "0:0",
+        "job_id": "56857233_23",
+        "job_id_raw": "56870479",
+        "node": "nid003312",
+        "start": "2026-08-13T12:16:37",
+        "state": "COMPLETED"
+      },
+      "24": {
+        "elapsed": "03:00:26",
+        "end": "2026-08-13T15:35:19",
+        "exit_code": "0:0",
+        "job_id": "56857233_24",
+        "job_id_raw": "56888352",
+        "node": "nid001436",
+        "start": "2026-08-13T12:34:53",
+        "state": "COMPLETED"
+      },
+      "25": {
+        "elapsed": "03:00:24",
+        "end": "2026-08-13T18:31:34",
+        "exit_code": "0:0",
+        "job_id": "56857233_25",
+        "job_id_raw": "56906472",
+        "node": "nid002664",
+        "start": "2026-08-13T15:31:10",
+        "state": "COMPLETED"
+      },
+      "26": {
+        "elapsed": "03:00:40",
+        "end": "2026-08-13T18:47:35",
+        "exit_code": "0:0",
+        "job_id": "56857233_26",
+        "job_id_raw": "56906853",
+        "node": "nid002332",
+        "start": "2026-08-13T15:46:55",
+        "state": "COMPLETED"
+      },
+      "27": {
+        "elapsed": "03:00:27",
+        "end": "2026-08-13T18:59:17",
+        "exit_code": "0:0",
+        "job_id": "56857233_27",
+        "job_id_raw": "56907605",
+        "node": "nid002004",
+        "start": "2026-08-13T15:58:50",
+        "state": "COMPLETED"
+      },
+      "28": {
+        "elapsed": "02:59:58",
+        "end": "2026-08-13T19:18:30",
+        "exit_code": "0:0",
+        "job_id": "56857233_28",
+        "job_id_raw": "56908049",
+        "node": "nid002577",
+        "start": "2026-08-13T16:18:32",
+        "state": "COMPLETED"
+      },
+      "29": {
+        "elapsed": "03:08:01",
+        "end": "2026-08-13T19:28:47",
+        "exit_code": "0:0",
+        "job_id": "56857233_29",
+        "job_id_raw": "56909346",
+        "node": "nid003465",
+        "start": "2026-08-13T16:20:46",
+        "state": "COMPLETED"
+      },
+      "30": {
+        "elapsed": "03:01:29",
+        "end": "2026-08-13T19:24:16",
+        "exit_code": "0:0",
+        "job_id": "56857233_30",
+        "job_id_raw": "56909521",
+        "node": "nid001436",
+        "start": "2026-08-13T16:22:47",
+        "state": "COMPLETED"
+      },
+      "31": {
+        "elapsed": "02:59:12",
+        "end": "2026-08-13T19:25:03",
+        "exit_code": "0:0",
+        "job_id": "56857233_31",
+        "job_id_raw": "56909701",
+        "node": "nid001436",
+        "start": "2026-08-13T16:25:51",
+        "state": "COMPLETED"
+      },
+      "32": {
+        "elapsed": "03:01:13",
+        "end": "2026-08-13T19:32:02",
+        "exit_code": "0:0",
+        "job_id": "56857233_32",
+        "job_id_raw": "56909819",
+        "node": "nid002297",
+        "start": "2026-08-13T16:30:49",
+        "state": "COMPLETED"
+      },
+      "33": {
+        "elapsed": "03:00:30",
+        "end": "2026-08-13T19:40:32",
+        "exit_code": "0:0",
+        "job_id": "56857233_33",
+        "job_id_raw": "56910168",
+        "node": "nid002657",
+        "start": "2026-08-13T16:40:02",
+        "state": "COMPLETED"
+      },
+      "34": {
+        "elapsed": "03:00:28",
+        "end": "2026-08-13T19:41:33",
+        "exit_code": "0:0",
+        "job_id": "56857233_34",
+        "job_id_raw": "56910665",
+        "node": "nid001528",
+        "start": "2026-08-13T16:41:05",
+        "state": "COMPLETED"
+      },
+      "35": {
+        "elapsed": "02:59:15",
+        "end": "2026-08-13T21:31:34",
+        "exit_code": "0:0",
+        "job_id": "56857233_35",
+        "job_id_raw": "56910731",
+        "node": "nid002664",
+        "start": "2026-08-13T18:32:19",
+        "state": "COMPLETED"
+      },
+      "36": {
+        "elapsed": "03:02:20",
+        "end": "2026-08-13T21:50:28",
+        "exit_code": "0:0",
+        "job_id": "56857233_36",
+        "job_id_raw": "56915632",
+        "node": "nid002332",
+        "start": "2026-08-13T18:48:08",
+        "state": "COMPLETED"
+      },
+      "37": {
+        "elapsed": "03:01:06",
+        "end": "2026-08-13T22:00:29",
+        "exit_code": "0:0",
+        "job_id": "56857233_37",
+        "job_id_raw": "56916267",
+        "node": "nid002857",
+        "start": "2026-08-13T18:59:23",
+        "state": "COMPLETED"
+      },
+      "38": {
+        "elapsed": "03:01:55",
+        "end": "2026-08-13T22:22:05",
+        "exit_code": "0:0",
+        "job_id": "56857233_38",
+        "job_id_raw": "56916702",
+        "node": "nid003689",
+        "start": "2026-08-13T19:20:10",
+        "state": "COMPLETED"
+      },
+      "39": {
+        "elapsed": "03:02:39",
+        "end": "2026-08-13T22:27:29",
+        "exit_code": "0:0",
+        "job_id": "56857233_39",
+        "job_id_raw": "56917476",
+        "node": "nid001436",
+        "start": "2026-08-13T19:24:50",
+        "state": "COMPLETED"
+      },
+      "40": {
+        "elapsed": "03:03:09",
+        "end": "2026-08-13T22:30:07",
+        "exit_code": "0:0",
+        "job_id": "56857233_40",
+        "job_id_raw": "56917668",
+        "node": "nid001273",
+        "start": "2026-08-13T19:26:58",
+        "state": "COMPLETED"
+      },
+      "41": {
+        "elapsed": "03:11:05",
+        "end": "2026-08-13T22:40:49",
+        "exit_code": "0:0",
+        "job_id": "56857233_41",
+        "job_id_raw": "56917737",
+        "node": "nid003465",
+        "start": "2026-08-13T19:29:44",
+        "state": "COMPLETED"
+      },
+      "42": {
+        "elapsed": "03:00:48",
+        "end": "2026-08-13T22:33:21",
+        "exit_code": "0:0",
+        "job_id": "56857233_42",
+        "job_id_raw": "56917858",
+        "node": "nid001437",
+        "start": "2026-08-13T19:32:33",
+        "state": "COMPLETED"
+      },
+      "43": {
+        "elapsed": "03:01:36",
+        "end": "2026-08-13T22:42:32",
+        "exit_code": "0:0",
+        "job_id": "56857233_43",
+        "job_id_raw": "56917960",
+        "node": "nid002657",
+        "start": "2026-08-13T19:40:56",
+        "state": "COMPLETED"
+      },
+      "44": {
+        "elapsed": "02:59:47",
+        "end": "2026-08-13T22:45:23",
+        "exit_code": "0:0",
+        "job_id": "56857233_44",
+        "job_id_raw": "56918369",
+        "node": "nid001412",
+        "start": "2026-08-13T19:45:36",
+        "state": "COMPLETED"
+      },
+      "45": {
+        "elapsed": "03:01:06",
+        "end": "2026-08-14T00:33:03",
+        "exit_code": "0:0",
+        "job_id": "56857233_45",
+        "job_id_raw": "56918606",
+        "node": "nid002664",
+        "start": "2026-08-13T21:31:57",
+        "state": "COMPLETED"
+      },
+      "46": {
+        "elapsed": "03:03:22",
+        "end": "2026-08-14T00:54:06",
+        "exit_code": "0:0",
+        "job_id": "56857233_46",
+        "job_id_raw": "56923791",
+        "node": "nid002332",
+        "start": "2026-08-13T21:50:44",
+        "state": "COMPLETED"
+      },
+      "47": {
+        "elapsed": "03:01:38",
+        "end": "2026-08-14T01:02:14",
+        "exit_code": "0:0",
+        "job_id": "56857233_47",
+        "job_id_raw": "56924283",
+        "node": "nid001677",
+        "start": "2026-08-13T22:00:36",
+        "state": "COMPLETED"
+      },
+      "48": {
+        "elapsed": "03:00:42",
+        "end": "2026-08-14T01:23:44",
+        "exit_code": "0:0",
+        "job_id": "56857233_48",
+        "job_id_raw": "56925012",
+        "node": "nid003689",
+        "start": "2026-08-13T22:23:02",
+        "state": "COMPLETED"
+      },
+      "49": {
+        "elapsed": "03:01:06",
+        "end": "2026-08-14T01:33:51",
+        "exit_code": "0:0",
+        "job_id": "56857233_49",
+        "job_id_raw": "56857233",
+        "node": "nid002644",
+        "start": "2026-08-13T22:32:45",
+        "state": "COMPLETED"
+      }
+    },
+    "sha256": "26372e3b9218ac47f6bb9cc76dd4541ee60df5ec1e5588faac715a610ffa4aa0"
+  },
+  "source_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+  "summary": {
+    "checks": {
+      "failures": [],
+      "n_failed": 0,
+      "n_passed": 111
+    },
+    "members_failing": [],
+    "members_passing": 50,
+    "members_present": 50
+  },
+  "tool": "validate_gate5_training_artifacts.py",
+  "verdict": "GATE5_TRAINING_ARTIFACTS_PASS",
+  "why_C_stat_is_null": "This terminal gate validates training artifacts only. Full-input extraction and mean-centered covariance construction are separate predeclared stages."
+}

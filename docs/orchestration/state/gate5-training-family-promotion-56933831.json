@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-14T08:57:00Z",
+  "purpose": "Promote the Gate-5 N=50 training family after the job-specific independent NPZ/content gate",
+  "wake_event": {
+    "path": "docs/orchestration/state/waker/events/evt-gate5-family-validate-56933831.json",
+    "sha256": "4ba17dc539dc4fc0dc04261fa0d71bb684d0848427832334d66cb2812d0b099a",
+    "read_exactly_once": true,
+    "valid": true,
+    "event_type": "slurm-job-complete",
+    "observed_at_utc": "2026-08-14T08:55:19+00:00"
+  },
+  "duplicate_reconciliation_check": {
+    "family_replay_already_committed": true,
+    "family_replay_commit": "bed45a3595c62ad2b6b1e1bb859ce1d146f7ece4",
+    "job_56933831_artifact_gate_already_reconciled": false,
+    "decision": "Reconcile only the distinct job-specific NPZ/log/accounting gate; do not rerun or duplicate the full-strength family replay."
+  },
+  "job": {
+    "job_id": "56933831",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:02:18",
+    "node": "nid004088",
+    "stderr_bytes": 0,
+    "stdout_sha256": "57ff4cb01efd8ff05bc1bc1fddd7fe652e5bca170fc1222b742f55e14c65e8e7",
+    "immutable_validator_head": "987a45c5bf1435e53aecf026c4925f4faeacc125"
+  },
+  "validators": {
+    "family": {
+      "verdict": "FAMILY_COMPLETE_PASS",
+      "full_strength": true,
+      "weakened_axes": [],
+      "replay_performed": true,
+      "declared_inventory": 50,
+      "targets_passing": 50,
+      "trainings_passing": 50,
+      "family_checks_passed": 48,
+      "family_checks_failed": 0,
+      "report_sha256": "ca99effa8e07bdfe2f0f0f2b73bba13c118624751a497d63971a831481380760",
+      "committed_byte_identical_report": "docs/orchestration/state/gate5-family-promotion-evidence-20260814/family-20260814-FULLSTRENGTH-50of50.json"
+    },
+    "training_artifacts": {
+      "verdict": "GATE5_TRAINING_ARTIFACTS_PASS",
+      "declared_inventory": 50,
+      "members_present": 50,
+      "members_passing": 50,
+      "members_failing": [],
+      "family_checks_passed": 111,
+      "family_checks_failed": 0,
+      "every_member_has_zero_failed_checks": true,
+      "report_sha256": "c5784101f864d42e3ac5b00ca46ea40fe7b49b93d71690986f368f04823f99b2",
+      "committed_report": "docs/orchestration/state/gate5-training-family-promotion-evidence-56933831/GATE5_TRAINING_ARTIFACT_VALIDATION.slurm-56933831.json"
+    },
+    "accounting": {
+      "source_array_job_id": "56857233",
+      "rows": 50,
+      "completed_0_0": 50,
+      "unique_task_ids": 50,
+      "sha256": "26372e3b9218ac47f6bb9cc76dd4541ee60df5ec1e5588faac715a610ffa4aa0",
+      "committed_report": "docs/orchestration/state/gate5-training-family-promotion-evidence-56933831/GATE5_TRAINING_SACCT.slurm-56933831.psv"
+    }
+  },
+  "promotion_marker": {
+    "verdict": "GATE5_TRAINING_FAMILY_PROMOTION_PASS",
+    "sha256": "9f9d68576efcad14a3db984c3c2dd263c39f2e91fafd2cafc53ccbeed6e288e3",
+    "all_report_hash_bindings_rederived": true,
+    "counts": {
+      "targets": 50,
+      "trainings": 50,
+      "passing": 50,
+      "failing": 0
+    },
+    "committed_marker": "docs/orchestration/state/gate5-training-family-promotion-evidence-56933831/GATE5_TRAINING_FAMILY_PROMOTION.slurm-56933831.done"
+  },
+  "independent_aggregate_verdict": "PASS",
+  "promotion_verdict": "GATE5_TRAINING_FAMILY_PROMOTION_PASS",
+  "C_stat": null,
+  "why_C_stat_is_null": "This promotes the complete coherent training family only. Full-input extraction and centering on the replica mean are separate predeclared actions.",
+  "subset_selected": false,
+  "gate6_or_C_ML_action": false,
+  "reset_credit_consumed": false,
+  "worker_uuid_replaced": false,
+  "next_authorized_action": "Launch collision-isolated full-input extraction for all 50 promoted replicas, then validate a complete 50-member extraction manifest before constructing C_stat."
+}

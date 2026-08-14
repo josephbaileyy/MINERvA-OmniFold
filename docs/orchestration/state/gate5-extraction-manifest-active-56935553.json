@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-14T09:20:00Z",
+  "purpose": "Gate-5 N=50 complete extraction-family terminal validator",
+  "job_id": "56935553",
+  "cpus_per_task": "8 requested",
+  "memory_per_task": "64G",
+  "time_limit": "01:00:00",
+  "qos": "shared",
+  "state_at_receipt": "PENDING_DEPENDENCY",
+  "dependency": "afterany:56935552",
+  "source_array_job_id": "56935552",
+  "immutable_code_head": "7dc8c34d3eefdefc6eeddf7b1e977411a9241723",
+  "validator_sha256": "148c7a77aeea3195ce72a487f4b2364bebfbbd98c0f7b2b5b5f0a09477b77c8e",
+  "output": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/validation/GATE5_EXTRACTION_FAMILY_MANIFEST.slurm-56935553.json",
+  "acceptance": "GATE5_EXTRACTION_FAMILY_COMPLETE_PASS and exactly 50/50; afterany writes a BLOCK report rather than hiding partial failure",
+  "watch": {
+    "watch_id": "gate5-extraction-manifest-56935553",
+    "state": "armed"
+  },
+  "C_stat": null,
+  "subset_selected": false,
+  "reset_credit_consumed": false
+}
