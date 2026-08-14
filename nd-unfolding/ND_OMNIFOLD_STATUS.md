@@ -37,8 +37,15 @@ selected, no `C_ML` is constructed, the nominal central is unchanged, Leg 2 is n
 unchanged retry is allowed. Gate 4's estimator-arm disposition remains an independent user decision.
 Canonical numbers: `../VALIDATION_LEDGER.md`; exact receipt:
 `../docs/orchestration/state/gate6-member-trajectories-result-56847059.json`.
-**A retry design is written and awaits Joseph's decision; nothing in it is executed and it constructs
-no `C_ML`:** `../docs/orchestration/PLAN-20260813-gate6-cml-retry-design.md`. Three of the four member
+**The retry design is AUTHORIZED by Joseph (2026-08-14) and Gate 6 REMAINS BLOCKED; nothing in it is
+executed by this authorization and it constructs no `C_ML`:**
+`../docs/orchestration/PLAN-20260813-gate6-cml-retry-design.md`, recorded verbatim at
+`../docs/orchestration/AUTHORIZATION-20260814-gate6-retry.md`. **All five prohibitions at `19585b7` remain
+live and none is cleared** — `do_not_retry_unchanged` forbids an *unchanged* retry, so a changed retry was
+never in its scope and there was nothing to lift; what the authorization supplies is the user go to spend
+compute. **Leg 0 (inference-only, no training) comes first by the PLAN's forced ordering; Leg X remains
+authorized-in-readout, held, and unsubmitted; `C_ML` still needs a separate decision Joseph has not made.**
+The mediator sequences the legs, not a lane. Three of the four member
 failures are robust — member 3's sole failing margin is `+0.001098` at the one trajectory step that
 compares a best-epoch checkpoint against a `_final` one (VL122–VL126), so **the family still blocks**.
 

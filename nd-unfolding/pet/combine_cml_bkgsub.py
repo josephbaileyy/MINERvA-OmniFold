@@ -76,14 +76,35 @@ def main():
     ap.add_argument("--floor", default="products/pet/bkgsub/pet_floor_bkgsub_5d_diagnostic.json")
     ap.add_argument("--out", default="products/pet/bkgsub/pet_cml_bkgsub_5d.npz")
     ap.add_argument("--expect", type=int, default=12)
+    ap.add_argument("--allow-incomplete-family", action="store_true",
+                    help="Build from an INCOMPLETE family anyway, for a diagnostic or an "
+                         "intermediate. The product is written to a NONQUOTABLE-DIAGNOSTIC.-prefixed "
+                         "path and its summary carries quotable=false. Never use for publication.")
     args = ap.parse_args()
 
     cv = np.asarray(np.load(args.cv)["xsec_flat"], float)
     rep = cv > 0
     paths = glob.glob(args.glob)
-    if len(paths) != args.expect:
-        print(f"[cml][WARN] found {len(paths)} members, expected {args.expect} "
-              f"(building from available; NOT final until complete)")
+    # FAIL CLOSED ON AN INCOMPLETE FAMILY (BEN-244, 2026-08-14). This was a `print` warning that
+    # built from whatever it found. With Gate 6 at `passing_members [1]` of five, that made
+    # `do_not_select_passing_subset` a rule on people only: the builder would have produced C_ML
+    # from the one passing member, exit 0, into a log this filesystem block-buffers for hours
+    # (BEN-028). Measured before the fix, at 1 member of 12: exit 0, BOTH files written, and
+    # `n-1 = 0` so the covariance was ENTIRELY NaN while the two-way decomposition printed
+    # `subsample=0.000 estimator=0.000 interaction=0.000` -- a NaN matrix at the publication path
+    # under a summary that reads clean. Regression: tests/test_cml_family_completeness_fails_closed.py
+    family_complete = len(paths) == args.expect
+    if not family_complete:
+        detail = (f"found {len(paths)} members, expected {args.expect}. An incomplete C_ML family is "
+                  f"a SUBSET, and building the covariance from a subset is what "
+                  f"do_not_select_passing_subset forbids. Pass --allow-incomplete-family to build a "
+                  f"NON-QUOTABLE diagnostic instead.")
+        if not args.allow_incomplete_family:
+            raise SystemExit(f"[cml][FAIL] {detail}")
+        print(f"[cml][WARN] {detail}")
+        print("[cml][WARN] --allow-incomplete-family given: this product is NON-QUOTABLE.")
+        args.out = os.path.join(os.path.dirname(os.path.abspath(args.out)),
+                                "NONQUOTABLE-DIAGNOSTIC." + os.path.basename(args.out))
     S, E, X = load_members(paths)
     if X.shape[1] != cv.shape[0]:
         raise SystemExit(f"[FAIL] member nbins {X.shape[1]} != cv {cv.shape[0]}")
@@ -105,6 +126,11 @@ def main():
                         cv=cv, sigma=sig)
     summary = {
         "campaign": "PET bkgsub 5D corrected C_ml (Phase 5)",
+        # DECLARED, not inferred: a consumer must be able to gate on completeness without
+        # recomputing it, and `quotable` must be false on the page it is false on.
+        "family_complete": bool(family_complete),
+        "quotable": bool(family_complete),
+        "allow_incomplete_family": bool(args.allow_incomplete_family),
         "n_members": int(X.shape[0]), "expected": args.expect,
         "sub_seeds": S.tolist(), "est_seeds": E.tolist(),
         "n_reported_bins": int(rep.sum()),

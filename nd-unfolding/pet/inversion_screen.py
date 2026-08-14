@@ -55,7 +55,26 @@ EXPECTED_FOLD_FORWARD = 0.7367462501305516
 
 def _assert_artifact_identity(d, tol=1e-9):
     """Fail loudly if this is not the 08-08 artifact. A wrong number is worse than an exception."""
-    got = float(d["fold_forward_sum_w_push_reco"]) / float(d["fold_forward_sum_w_reco"])
+    # REFUSE, DO NOT TRACEBACK, when the fields are absent or unusable (added 2026-08-14, BEN-244).
+    # A missing field is a SCHEMA difference, not a typo: lane C measured that the pre-anneal and
+    # annealed artifacts differ by schema and not merely by field value, so "no fold-forward fields"
+    # is a real artifact this guard can be handed. A KeyError from inside a guard reports the
+    # DIAGNOSTIC as broken; an unverifiable artifact must report the ARTIFACT as unverifiable.
+    try:
+        _num = float(d["fold_forward_sum_w_push_reco"])
+        _den = float(d["fold_forward_sum_w_reco"])
+    except KeyError as exc:
+        raise SystemExit(
+            f"[identity] REFUSING TO RUN: the loaded artifact carries no {exc.args[0]!r}, so its "
+            f"identity cannot be asserted from its own contents. An artifact whose identity cannot "
+            f"be established is refused, not assumed.\n"
+            f"           artifact: {ART}")
+    if _den == 0.0:
+        raise SystemExit(
+            f"[identity] REFUSING TO RUN: fold_forward_sum_w_reco is zero, so the fold-forward ratio "
+            f"is undefined and identity cannot be asserted.\n"
+            f"           artifact: {ART}")
+    got = _num / _den
     if abs(got - EXPECTED_FOLD_FORWARD) > tol:
         raise SystemExit(
             f"[identity] REFUSING TO RUN: this diagnostic is about the 2026-08-08 artifact "

@@ -7560,3 +7560,125 @@ superseded it, and its `declaration` pointer `state/waker/BLOCKED-ON-USER.json` 
 **Nothing was executed and nothing is unblocked by this entry.** Gate 6's five prohibitions at
 `19585b7` remain live, Leg X remains unsubmitted pending Joseph's answer, and correcting a stale
 blocker citation is not authorization to pass the blocker it was standing in front of.
+
+## 2026-08-14 — lane A, documentary: Joseph AUTHORIZES the Gate-6 retry, and Gate 6 stays blocked
+
+**Nothing was executed, nothing was submitted, and nothing on the cluster was touched.** Lane A wrote a
+verbatim authorization record and three bookkeeping corrections. The mediator sequences the legs.
+
+**The authorization, verbatim and complete** — `docs/orchestration/AUTHORIZATION-20260814-gate6-retry.md`:
+
+> Also yes I authorize the gate 6 retry
+
+Transcribed by `personal-orchestrator` (peer session `minerva-omnifold-58`) from Joseph's typed message
+immediately preceding its dispatch. **Lane A copy-pasted the block and cannot see the original; it attests
+only that its text matches what it received** — the same division of attestation as the 08-12 and 08-13
+records, and written before acting per `HANDOFF-20260812-1145Z.md:126`.
+
+**ALL FIVE PROHIBITIONS AT `19585b7` REMAIN LIVE AND THE AUTHORIZATION CLEARS NONE OF THEM.** Verified this
+turn at `state/gate6-member-trajectories-result-56847059.json:112-118`. The natural misreading is that a
+retry authorization discharges `do_not_retry_unchanged`; it does not, and the reason is worth keeping:
+**`do_not_retry_unchanged` forbids an *unchanged* retry, so a changed retry was never inside its scope and
+there was never anything to lift.** What Joseph supplied is the user go to spend compute — the thing
+`ND_OMNIFOLD_STATUS.md:40` said was missing. **The prohibition set is unchanged at five, and any later record
+showing four has expanded scope without authority.** Family state also re-verified from `:109-111`:
+`BLOCK_GATE6_ML_ENSEMBLE`, `passing_members [1]`, `failing_members [2, 3, 4, 5]`.
+
+**Not authorized, each verified rather than relayed:** not Leg X (which `STATUS:59` correctly calls
+*"authorized"* — it holds a *readout* authorization and is nonetheless deliberately unsubmitted; this record
+changes neither half); not skipping Leg 0, whose ordering `PLAN-20260813-gate6-cml-retry-design.md:144-146`
+calls *"forced, not stylistic"*; not `C_ML`; not member selection, **including member 1, the only passing
+member and the one a convenient reading would take**; not the VL100 quotability question.
+
+**A `C_ML` CITATION VERIFIED, A DEFECT RE-DERIVED, AND `OI-72` WITHDRAWN THE SAME HOUR IT WAS FILED.**
+`combine_cml_bkgsub.py:75` defaults `--cv` to the nominal extraction product and `:81-82` takes **both its
+reference and its positivity mask** from it, so `C_ML` genuinely needs that product — that part stands.
+**The rest was wrong twice over and is corrected here rather than quietly adjusted.** Lane A measured the
+member-count guard as a `[cml][WARN]` that built anyway and filed `OI-72` as a new find. It was **not new** —
+already documented as part of `BEN-244` at `FINDING-20260814-a-decision…:96` and in the lane-B entry above at
+`:7531` — and lane A **did not grep for whether the defect was already known before filing it**, which is
+*"inference from absence needs a covering search"* applied to novelty instead of existence. It was also **no
+longer open**: lane B fixed it at **`4d04ceb`, 2026-08-14 19:45:25**, fail-closed by default with an explicit
+`--allow-incomplete-family` escape that rewrites the output to a `NONQUOTABLE-DIAGNOSTIC.` path, plus
+`tests/test_cml_family_completeness_fails_closed.py`. **Lane B's diagnosis is worse than lane A's:** at 1
+member of 12 the builder exited **0** with **both files written**, and with `n−1 = 0` the covariance was
+**entirely NaN** while the decomposition printed `subsample=0.000 estimator=0.000 interaction=0.000` — a NaN
+matrix at the publication path under a clean-reading summary, into a log this filesystem block-buffers for
+hours (`BEN-028`). **`OI-72` is withdrawn, and its id is kept rather than reused** because it is cited in a
+landed commit message (`BEN-216`/`BEN-219`). **Lane A's measurement was correct where it was taken** —
+`git show c29e3522:nd-unfolding/pet/combine_cml_bkgsub.py` still shows the `WARN` — and `4d04ceb` arrived in
+the rebase between commit and push. **That is the second `BEN-225` instance tonight, and both were caught by
+that finding's own remedy:** re-run every count, absence and line number after `git pull --rebase` and before
+`git push`.
+
+**Three bookkeeping items, all three of which the 08-14 lane-B entry above had already diagnosed:**
+
+1. **`OI-23` DISCHARGED**, and **its residual was transferred rather than dropped.** Its own next-action cell
+   said discharge was *"contingent only on `56563761` REMAINING the final nominal … (`artifact_promoted:
+   False`)"* — a **superseded field value**: `annealed-nominal-complete-56563761.json:144` has read
+   `artifact_promoted: true` since the promotion at `6b68d12`, `promoted_at_utc 2026-08-13T02:52:32Z`,
+   **36 hours before this entry**. **But the row's *"contingent only on"* is wrong, and the promotion receipt
+   says so in the same breath as the promotion:** `p3f-pet-gate4-nominal-promotion-56563761.json:102` lists
+   *"That `OI-23` is discharged"* under `explicitly_not_claimed`, naming a **second** residual the row never
+   mentioned — the closure's `quotable: False`. **So the row and the receipt disagreed, and the receipt is
+   right.** `OI-23` is discharged on the configuration question only, with that residual carried to `OI-71`
+   under its own id. Discharging it while silently dropping the receipt's stated reason would have been
+   `BEN-244` committed knowingly.
+2. **`OI-71` FILED** — the quotability of `VL100 = 0.512603276`, the recovery number the annealed physics
+   argument rests on, from closure `56552326` whose every artifact is prefixed `NONQUOTABLE-DIAGNOSTIC.`.
+   Tracked under **no id at all** before tonight; `WAITING-USER`, and **a tracker, not a verdict** — the
+   assistant lane is determining quotability separately and lane A did not attempt to answer it.
+3. **`next_dependency` CORRECTED** in `annealed-nominal-complete-56563761.json`, which carried
+   `state: BLOCKED_ON_USER` eight lines below the `artifact_promoted: true` that superseded it. **Which of
+   its three offered branches was taken is now recorded: branch 2**, *"accept the current production path as
+   authoritative and separately authorize its promotion"* — evidenced by the promotion receipt, `verdict
+   PROMOTED`, `6b68d12`. Branch 1 (the paired implementation-ablation) is recorded as **declined**, because
+   the predeclaration declines it in its own words — *"No fourth run… A fourth run would refine `sd 0.0247`
+   without changing any decision"* — the code-path finding having been retracted at `535668d`. Superseded in
+   place using the file's own dated idiom, **value-only and additive, so `:152-156` still resolves** for the
+   two entries that cite it by that span; per `BEN-219` both are left alone, having been correct when written.
+   **AND THE POINTER CLAIM IS CORRECTED, INCLUDING THE VERSION IN THE LANE-B ENTRY ABOVE AND IN THE DISPATCH
+   THAT ASKED FOR THE FIX.** Both describe `state/waker/BLOCKED-ON-USER.json` as, in effect, gone —
+   *"does not exist (untracked at `a45f17b`)"*. The absence is confirmed (`git ls-tree -r origin/main` on
+   `state/waker/` returns nothing, so it is tree-based and not a worktree artefact), **but *"no referent"* is
+   wrong, and reading `a45f17b`'s body rather than its subject is what shows it.** That untracking was
+   **Joseph's decision**: `.gitignore:11` ignores the `state/waker/` runtime spool, gitignore does not apply
+   to already-tracked files, and this was the lone versioned file inside it — it *"collided on every
+   shared-tree merge"* and was in the list that blocked the P4 cluster run. The commit body **preserves the
+   contents** at `/pscratch/sd/j/josephrb/BLOCKED-ON-USER.preserved-20260811.json` and warns that pulling the
+   commit **removes each checkout's working copy**, which is exactly why it is absent here. **So the referent
+   exists, was named on purpose, and is merely unreadable from a local checkout — a deliberate decision, not
+   drift.** Lane A did not read it (nothing in this dispatch went near the cluster) and invented nothing.
+
+4. **A FOURTH ITEM, NOT DISPATCHED — a digest in a promotion receipt was already wrong, and the check that
+   exists for exactly this said `ALL BINDINGS INTACT` while it was.** Found because correcting item 3 changes
+   the edited file's sha256, so lane A went looking for who records it.
+   `p3f-pet-gate4-nominal-promotion-56563761.json:74` read *"versus the git record `fc4fcbe863963b22…`"* —
+   **and that value was stale before tonight's edit, not because of it.** Measured: the file at `c29e3522`
+   hashes to `67c487cd0190…`. The receipt was edited after the note was written and the note did not follow.
+   **`verify_hash_bindings.py` resolved 175 bindings and reported `ALL BINDINGS INTACT` with that digest
+   wrong**, because **a sha256 written into prose is not a binding** — there is no `files`/`sha256` pair to
+   resolve, so the one check built for this failure cannot see it, and neither can the receipt-binding floor
+   of 140. Same shape as a green count being a statement about what ran rather than what was checked.
+   **Corrected in lane A's own file** (`annealed-nominal-complete-56563761.json:150` assigns this receipt to
+   Session A — *"Session A writes the separate promotion receipt against this commit's sha"* — so this is the
+   one edit tonight that needed no ownership disclosure) **by removing the point value rather than refreshing
+   it** — a digest of a concurrently-edited document is stale at its next edit, and refreshing it restarts the
+   same clock. Replaced with the derivation (`git show <ref>:<path> | shasum -a 256`) plus both observed
+   values **quoted with their refs**, which is the part that was missing. The cluster-side digest
+   `81849396…` is left exactly as recorded and **explicitly not re-measured** — nothing went near the cluster.
+   **Not filed as a `BEN-*` row or an `OI-*`**: it is one prose digest, now corrected, and the generalisation
+   is already written in `CONVENTION-verifying-a-check-is-deployed.md`. Flagged to the mediator instead, since
+   whether the verifier should learn to resolve prose digests is a scope question and not lane A's to settle.
+
+**AND A SELF-INFLICTED VARIANT OF THE SAME TRAP, worth one sentence because it needs no concurrency at all.**
+Two of this entry's citations were falsified **by this entry's own edits**: `STATUS:52` became `:59` because
+the STATUS one-liner above it grew by seven lines, and the promotion receipt's `:95` became `:102` because
+item 4 inserted a block above it. **`BEN-225` needs a rebase and another lane; this needs neither** — a line
+citation into a file you are editing in the same commit is stale the moment you edit it, and it will not be
+caught by re-running anything after the rebase unless the line numbers are re-derived rather than re-used.
+Both corrected; caught by re-deriving every cited line with `grep -n` rather than trusting the numbers
+recorded 40 minutes earlier.
+
+**Nothing is unblocked by this entry.** Gate 6 is blocked at `19585b7`, all five prohibitions stand, Leg 0
+runs first, and **an authorization to retry is an authorization to gather evidence, not a verdict.**

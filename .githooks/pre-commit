@@ -20,6 +20,34 @@
 # always fires is a check nobody reads, and putting it in a hook would train every lane to --no-verify.
 # merge_guard.sh is also absent: it needs a lane argument and belongs at merge time, not commit time.
 #
+# DECLINED FOR NOW, WITH A NAMED UNLOCK TRIGGER: nd-unfolding/pet/check_canonical_designation.py.
+# Added to this header 2026-08-14 by lane B because it was in NEITHER list -- the exact condition the
+# paragraph below was written about after verify_hash_bindings.py, second instance, and this time in
+# the namespace that comment came from (BEN-244). The defect was the silence; declaring it closes that.
+#
+#   WHAT IT IS. The fail-closed postcondition for the canonical-nominal DESIGNATION: promotion here
+#   moves no bytes, so the whole safety argument is that the reference inventory be COMPLETE. On
+#   substance it is exactly verify_hash_bindings.py's shape -- a whole-tree freeze invariant, unscoped
+#   on purpose -- and it PASSED at exit=0 on 2026-08-11 (VERDICTS-20260811-session-D.md:452).
+#
+#   WHY IT IS NOT IN THE RUN LIST TODAY, measured at 849b70f rather than recalled: EXIT 1 -- 8
+#   unaccounted files, 1 COUNT DRIFT (state/annealed-nominal-complete-56563761.json, expected 1 found 2
+#   at lines 63/226), 2 stale inventory entries. It went red at the 2026-08-13 designation and the two
+#   records of that designation are themselves among the occurrences it cannot account for. So a
+#   committer who did nothing wrong CANNOT make it pass, which fails this dispatcher's admitting rule
+#   at line 11 -- not because the check is wrong, but because the tree is.
+#
+#   AND IT CANNOT BE WIRED AS AN ADVISORY. `run()` discards a passing check's output, so a hook has
+#   exactly two channels, silence and failure (BEN-226). "Wire it but only warn" does not exist here.
+#
+#   THE RED IS LEFT FOR ITS OWNER, DELIBERATELY. Making a check pass by editing its input is worse
+#   than not having the check: it converts a real finding into a green tick. The inventory is the PET
+#   lane's (the script is Session C's).
+#
+#   UNLOCK TRIGGER, single and checkable: when `python3 nd-unfolding/pet/check_canonical_designation.py`
+#   exits 0 on a clean tree, move this to the run list as check 7. No other condition, no judgement
+#   call -- run the command.
+#
 # THIS LIST IS THE ROOT CAUSE OF OI-64 AND IS NOW EXHAUSTIVE BY CONTRACT. Documenting exactly two
 # exclusions made "never considered" indistinguishable from "considered and rejected":
 # verify_hash_bindings.py was in neither list, so a Gate-4 code binding stayed broken ~18 h across four
