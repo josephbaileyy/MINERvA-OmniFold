@@ -1,0 +1,75 @@
+{
+  "artifact": "gate5-data-factor-persistence-20260814.json",
+  "lane": "C (PET)",
+  "observed_pdt": "2026-08-13 ~21:00 PDT (2026-08-14 UTC)",
+  "purpose": "Answer the deadline question behind OI-60: does the CURRENTLY-RUNNING array persist the data-factor stream, or is it being discarded 35 members at a time? Strictly read-only w.r.t. the campaign. GATE5_CODE_ROOT not touched.",
+
+  "ANSWER": "(b) NOT PERSISTED AS AN ARRAY, BUT EXACTLY RECOVERABLE -- and stronger than the outcome (b) as posed: recovery is proven on all 50 members, not one, and the loader's OWN telemetry independently ties the applied factors to the canonical draw. Nothing is being lost. No hold is warranted and none is recommended.",
+
+  "A_CORRECTION_TO_THE_TASK_AS_RELAYED": {
+    "the_message_said": "\"the Gate-5 data-factor stream (signal and background factors)\"",
+    "why_that_is_backwards": "OI-60 and BEN-151 are about the DATA factors. Signal and background are the two streams that ARE handled: replay-compared at the target stage (build_fullevent_replica_target.py:219-222) and re-hashed at the training stage (train_fullevent_replica.py validate_artifact). The DATA stream is the one with no array-compare anywhere, and it is the one that generates C_stat's measured-side variance -- which is BEN-151's whole point: verification coverage followed the data flow, not physics importance, and the two orderings were opposite.",
+    "why_it_matters_for_the_answer": "Had I answered the question as phrased I would have reported the already-verified streams as the exposure and missed the actual one."
+  },
+
+  "WHERE_IT_IS_COMPUTED": {
+    "file_line": "nd-unfolding/pet/fullevent_fps_dataloader.py:614-625, coherent_bootstrap_factors",
+    "the_data_draw": ":621  data_factor = np.random.default_rng(int(seed)).poisson(1.0, int(n_data)).astype(np.uint8)",
+    "called_from": ":1321 in the loader's replica path"
+  },
+
+  "WHERE_IT_IS_AND_IS_NOT_WRITTEN": {
+    "the_ARRAY_is_written_NOWHERE": "Confirmed by listing every file a completed member produced, not by reading code. replica_00 contains exactly: target receipt + its .done, training receipt + its .done, GATE5_REPLICA_WEIGHTS.npz + its .done, and 11 w_nominal checkpoint files. There is no factor .npy or .npz of any kind.",
+    "the_HASH_is_written": "build_fullevent_replica_target.py:284  \"data_factor_sha256\": hash_array(data_factor)  (with :285-286 for signal and background). Read out of the live artifact: bootstrap.data_factor_sha256 = d151dd197c9662da4604c9609d761887d38437d510484efdf851c8de1028ca37 for replica_00.",
+    "and_so_are_the_recovery_inputs": "bootstrap_seed (top level), bootstrap.n_data_full = 4116128, bootstrap.n_sig_full = 49152885, bootstrap.n_bkg_full = 564591, and bootstrap.factor_hash_contract = 'sha256(dtype || JSON(shape) || contiguous raw bytes)'. Every input the recovery needs is in the receipt."
+  },
+
+  "THE_RECOVERY_EXHIBITED_ON_REAL_DATA_all_50_members": {
+    "method": "Run LOCALLY, off the cluster tree entirely, reimplementing only what the receipt itself declares. A match therefore cannot be an artefact of reading the producing code's own state.",
+    "data_factor_sha256_reproduced_from_seed": "50 of 50",
+    "positive_controls": "signal (49.2M variates) and background hashes also reproduce 50/50, so the reproduction is of the whole contract rather than a coincidence on one stream. Had these failed, my numpy's PCG64 would have been the suspect rather than the receipts.",
+    "negative_control_wrong_seed": "seed+1 gives 66bf451c... != recorded. Does not match.",
+    "negative_control_truncated_inventory": "n_data-1 gives ebcf7c47... != recorded. Does not match.",
+    "reading": "The recorded hash IS the canonical draw for the declared (seed, n_data), for every member."
+  },
+
+  "THE_PART_THAT_GOES_BEYOND_RECOVERY_and_it_is_the_real_content_of_OI_60": {
+    "what_re_hashing_does_NOT_establish": "That the LOADER actually applied those factors to the data rows. BEN-151 recorded this as unclosable without loader-side persistence. That was too pessimistic and this is the correction.",
+    "the_chain_that_closes_it": [
+      "fullevent_fps_dataloader.py:948-951 -- df = np.asarray(data_factor, float); shape-guarded to (n_data_rows,) at :949-950; n_data_eff = float(df.sum())",
+      ":971 -- R = step1_class_ratio(n_data=n_data_eff, ...)",
+      "both n_data_effective and R are persisted in the target receipt"
+    ],
+    "so_n_data_effective_is_a_FUNCTION_of_the_factors_the_loader_actually_used": true,
+    "MEASURED": "sum(canonical draw) == recorded n_data_effective for 50 of 50 members, exactly, with no tolerance.",
+    "example": "replica_00: sum = 4118323, recorded n_data_effective = 4118323.0",
+    "WHAT_THIS_PROVES_AND_WHAT_IT_DOES_NOT": "It proves the applied array had the same LENGTH (the :949 shape guard) and the same SUM as the canonical draw. It does NOT prove array identity: a permutation, or any change conserving the total, would pass. Stated as a limit rather than rounded up to 'verified', because rounding it up is the BEN-149 move.",
+    "AND_THE_LIMIT_IS_DEMONSTRATED_NOT_ARGUED": "Only 49 of the 50 n_data_effective values are distinct. replica_03 and replica_08 share n_data_effective = 4114512 while their data_factor_sha256 differ (c71887a1... vs 799ee663...). Two real members the sum check cannot separate and the hash can -- so the strength ordering is exhibited on this family rather than asserted.",
+    "corroboration": "n_data_effective ranges 4111517..4120618, spread 9101 rows against sqrt(4116128) = 2029. The expected range of 50 gaussian draws is ~4.5 sd = ~9100, so the spread is what independent Poisson draws should give. A collapsed or repeated draw would not look like this."
+  },
+
+  "CONSEQUENCE_FOR_THE_35_COMPLETED_MEMBERS": "Nothing is lost and nothing needs re-running. Every completed member carries the seed, the inventory sizes, the hash contract and the three factor hashes, which is sufficient to regenerate all three factor arrays bit-exactly, plus n_data_effective as an independent tie to the arrays the loader used. This is outcome (b), so it is NOT a decision for Joseph tonight and the array should NOT be held.",
+
+  "WHAT_OI_60_SHOULD_NOW_SAY": {
+    "the_row_currently_claims": "the data-factor stream 'is persisted nowhere, so it cannot be verified by any stage'",
+    "first_clause_is_right_second_is_wrong": "The ARRAY is persisted nowhere -- true. 'Cannot be verified' -- false: it is fully recoverable from persisted values, and my reconciler has been re-drawing and comparing it against the recorded hash since the first family pass. The 50/50 target leg passes that check.",
+    "what_remains_genuinely_open": "Array IDENTITY of the factors the loader applied, as opposed to their length and sum. Closing that needs loader-side persistence of the data factors or of a hash computed inside the loader -- a producer-side change, and it should ride the next launch with OI-57/OI-58 rather than being retrofitted mid-family.",
+    "recommended_rewording": "Downgrade OI-60 from 'cannot be verified' to 'verified by recovery and by n_data_effective; array identity of the loader's applied factors remains unverified'. That is a materially smaller item and it does not block promotion."
+  },
+
+  "CONSTRAINTS_HONOURED": [
+    "Strictly read-only w.r.t. the campaign: receipts read, file inventory listed, nothing written to any campaign path.",
+    "GATE5_CODE_ROOT (/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059) NOT touched.",
+    "No scancel, no resubmit, no scontrol update. No hold requested -- the answer is (b), so a hold would cost members for nothing.",
+    "Nothing inferred from a variable name or a log line: the persistence question was answered by listing a completed member's files and its receipt's keys."
+  ],
+
+  "CAMPAIGN_STATE_MEASURED_THIS_TURN": {
+    "training_56857233_squeue_r": "5 PENDING, 10 RUNNING",
+    "training_receipts_on_disk": 35,
+    "targets": "50 of 50",
+    "failures": "none",
+    "verdict": "PARTIAL",
+    "C_stat": null
+  }
+}

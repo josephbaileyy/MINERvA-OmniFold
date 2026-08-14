@@ -6757,3 +6757,55 @@ earlier is the same defect one step removed.
 `GATE5_CODE_ROOT` untouched (three digests were READ through the receipts' recorded paths, nothing
 written). The two unowned non-lane-C copies untouched. Campaign: 25 COMPLETED / 10 RUNNING / 15
 PENDING, no failures, `PARTIAL`, `C_stat` null.
+
+### 2026-08-14 ~21:00 PDT(-1) — OI-60 answered: the data factors are recoverable, and the loader's own telemetry ties them (lane C)
+
+Routed with a deadline attached, because the array is still writing members. **Answer: (b) — not
+persisted as an array, exactly recoverable, nothing being lost, no hold warranted.** Read-only
+throughout; `GATE5_CODE_ROOT` untouched.
+
+**First, a correction to the task as relayed.** It described the stream as *"the Gate-5 data-factor
+stream (signal and background factors)"*. That is backwards: signal and background are the two streams
+that **are** handled — replay-compared at the target stage and re-hashed at the training stage. The
+**data** stream is the one with no array-compare anywhere, and it is the one generating `C_stat`'s
+measured-side variance. That inversion is `BEN-151`'s whole point, and answering the question as phrased
+would have reported the already-verified streams as the exposure and missed the real one.
+
+**Where it is computed:** `fullevent_fps_dataloader.py:621`, inside `coherent_bootstrap_factors`
+(`:614-625`), called at `:1321`.
+
+**Where it is written — established by listing a completed member's files, not by reading code.**
+`replica_00` contains exactly the two receipts and their `.done` markers, `GATE5_REPLICA_WEIGHTS.npz`
+and its marker, and 11 `w_nominal` checkpoints. **There is no factor array of any kind.** What *is*
+written is the hash: `build_fullevent_replica_target.py:284`, plus the seed, all three inventory sizes,
+and the hash contract — every input the recovery needs.
+
+**Recovery exhibited on real data, all 50 members, run locally off the cluster tree** so a match cannot
+be an artefact of reading the producing code's own state. 50/50 data hashes reproduce. Signal (49.2M
+variates) and background reproduce too — positive controls proving the whole contract reproduces rather
+than one stream coinciding; had they failed, my numpy's PCG64 would have been the suspect. Negative
+controls: seed+1 and n_data−1 both fail to match.
+
+**And the part that goes beyond recovery, which is the real content of OI-60.** BEN-151 recorded that
+re-hashing cannot prove the *loader applied* those factors, and called that unclosable without
+loader-side persistence. **That was too pessimistic.** At `:948-951` the loader computes
+`n_data_eff = float(df.sum())` from the array it actually received, shape-guarded to `(n_data_rows,)`,
+and `:971` builds `R` from it — and both `n_data_effective` and `R` are persisted. **Measured:
+`sum(canonical draw) == recorded n_data_effective` exactly, 50 of 50.**
+
+**What that proves and what it does not:** the applied array had the same **length** and the same
+**sum** as the canonical draw. It does **not** prove array identity — a permutation, or any change
+conserving the total, would pass. And the limit is **demonstrated rather than argued**: only 49 of the
+50 `n_data_effective` values are distinct. `replica_03` and `replica_08` share `4114512` while their
+`data_factor_sha256` differ, so there are two real members in this family the sum cannot separate and
+the hash can. Corroboration: the spread is 9101 rows against `sqrt(4116128) = 2029`, and the expected
+range of 50 draws is ~4.5 sd ≈ 9100 — what independent Poisson draws should give.
+
+**Consequence for the 35 completed members: nothing is lost, nothing needs re-running, and this is not
+a decision for Joseph tonight.** OI-60's first clause stands and its second is withdrawn — *"cannot be
+verified by any stage"* is false, since the reconciler has been re-drawing and comparing this hash
+since the first family pass. What remains genuinely open is array identity of the loader's applied
+factors, which needs a producer-side change and should ride the next launch with OI-57/OI-58 rather
+than being retrofitted mid-family. Row narrowed accordingly.
+
+Campaign: 35 receipts of 50, 5 PENDING / 10 RUNNING, no failures, `PARTIAL`, `C_stat` null.
