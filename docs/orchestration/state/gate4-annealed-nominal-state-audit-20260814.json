@@ -1,0 +1,141 @@
+{
+  "artifact": "gate4-annealed-nominal-state-audit-20260814.json",
+  "lane": "C (PET)",
+  "commissioned_by": "minerva-omnifold-58 (mediator), as the ARTIFACT/STATE-side audit of the Gate-4 estimator-arm disposition. Lane B audits the same question from the documentary side, deliberately without coordination.",
+  "observed_utc": "2026-08-14, all claims from commands run in the same turn",
+  "constraints_honoured": [
+    "read-only on the campaign: no scancel, no resubmit, no scontrol update, no new jobs",
+    "/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059 NOT touched",
+    "no coordination with lane B on this question"
+  ],
+
+  "HEADLINE": "NO JOSEPH DECISION IS OUTSTANDING on the annealed nominal. Both required acts are recorded with verbatim authority, and `nominal_pet_training_allowed` was never the blocker -- it has been True since 2026-08-10. What is incomplete is the RECORD, in three specific places, and one of them is executable and currently FAILING: check_canonical_designation.py exits 1. Promotion propagated to the step-1 DIAGNOSTIC layer but NOT to the extraction layer, because the nominal extraction has never run at all.",
+
+  "Q1_WHICH_NOMINAL_IS_CANONICAL_AND_BY_WHAT_MECHANISM": {
+    "the_mechanism_EXISTS_and_is_named": "nd-unfolding/pet/check_canonical_designation.py",
+    "what_it_is": "a fail-closed postcondition on the canonical-nominal DESIGNATION. Its docstring states the promotion model explicitly: 'Promoting a full-event PET nominal by DESIGNATION (rather than by moving bytes -- see BEN-133 for why moving is unsafe here) means the string `fullevent_nominal` stops being a synonym for canonical.' So designation, not byte-movement, IS the intended promotion mechanism, and its safety rests on the reference inventory being COMPLETE.",
+    "SO_THERE_IS_AN_EXECUTABLE_REFERENT": "contrary to the hypothesis in the dispatch, promotion here is not referent-free. It has one, it is version-controlled, and it is runnable.",
+    "AND_IT_CURRENTLY_FAILS": {
+      "command": "python3 nd-unfolding/pet/check_canonical_designation.py",
+      "exit_code": 1,
+      "scan": "59 files, 184 namespace occurrences, 54 inventory entries",
+      "failures": [
+        "UNACCOUNTED FILE docs/OPEN_ITEMS-ARCHIVE-2026-08.md (3 occurrences, first :303)",
+        "UNACCOUNTED FILE docs/orchestration/AUTHORIZATION-20260813-gate4-estimator-disposition.md (1, :271)",
+        "UNACCOUNTED FILE docs/orchestration/FINDINGS-INDEX-ARCHIVE-2026-08.md (1, :44)",
+        "COUNT DRIFT docs/orchestration/state/annealed-nominal-complete-56563761.json [RECORD-FROZEN]: expected 1, found 2 (lines 63, 226)",
+        "UNACCOUNTED FILE docs/orchestration/state/cluster-ignored-set-walk-20260812.tsv (65, :2527)",
+        "UNACCOUNTED FILE docs/orchestration/state/cluster-uncommitted-inventory-20260812.tsv (5, :549)",
+        "UNACCOUNTED FILE docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260813.json (1, :206)",
+        "UNACCOUNTED FILE docs/orchestration/state/p3f-pet-gate4-nominal-promotion-56563761.json (1, :67)",
+        "STALE INVENTORY ENTRY docs/OPEN_ITEMS.md -- listed, matches nothing",
+        "STALE INVENTORY ENTRY docs/orchestration/FINDINGS.md -- listed, matches nothing"
+      ],
+      "why_this_matters_and_it_is_the_sharpest_Q1_finding": "the tool's own stated purpose is that 'the safety of that choice rests ENTIRELY on the reference inventory being COMPLETE'. It is not complete. So the promotion-by-designation is currently in the state its own guard was built to forbid -- not because a pointer is wrong, but because completeness is unproven. This is a RECORD defect with an executable symptom, which makes it cheap to close and impossible to argue about.",
+      "note_on_reading_it": "piping this tool through `tail` returns EXIT=0 and hides the failure -- the shell reports tail's status. Measured both ways this turn; the real code is 1. Same trap as BEN-233."
+    },
+    "class_5_blind_spot_declared_by_the_tool_itself": "the namespace also arrives from a DATA FILE at run time: train_fullevent_nominal.py:529,534 stamps weights_folder and step2_checkpoint as ABSOLUTE paths into the artifact's own inference_contract, and extract_fullevent_fps.py:243,253 reads and loads them. No source-text matcher can see that, by construction. VERIFIED on both artifacts -- see Q3.",
+    "digest_pin_asymmetry_measured": {
+      "annealed_sha256_559a1020": "appears in exactly ONE file in the tree: its own completion receipt docs/orchestration/state/annealed-nominal-complete-56563761.json. In no launcher, no gate receipt, no manifest.",
+      "old_baseline_sha256_58f664cd": "appears in SIX files, including the launcher nd-unfolding/pet/sbatch_finalize_annealed_shape_validation.sh and three NONQUOTABLE-DIAGNOSTIC manifests.",
+      "reading": "by digest-pinning, the PRE-ANNEAL artifact is the one that is load-bearing in executable context. The annealed artifact is pinned nowhere but in the record of its own completion."
+    }
+  },
+
+  "Q2_IS_56563761_THE_ANNEALED_ARM_PHYSICALLY": {
+    "verdict": "CONFIRMED from the artifact, not from prose.",
+    "method": "loaded both weights NPZs on the cluster and read seed_policy and inference_contract directly",
+    "annealed": {
+      "path": "/pscratch/.../nd-unfolding/pet/fullevent_nominal_annealed/pet_fullevent_nominal_weights.npz",
+      "bytes": 10001677,
+      "done_marker_present": true,
+      "seed_policy.lr_policy": {
+        "schedule": "fit-time-anneal-after-iteration-0",
+        "base_lr": 0.0001, "annealed_lr": 1e-05, "applies_from_iteration": 1,
+        "mechanism": "MultiFold subclass overriding CompileModel at fit time; omnifold.py is NOT edited"
+      },
+      "estimator_seed": 42, "niter": 3, "epochs": 8, "batch_size": 512
+    },
+    "old_baseline": {
+      "path": "/pscratch/.../nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz",
+      "bytes": 10127331,
+      "done_marker_present": true,
+      "seed_policy": "{batch_size, epochs, estimator_seed: 42, niter: 3, subsample_seed, train_events} -- NO lr_policy KEY AT ALL"
+    },
+    "the_discriminator_is_structural_not_a_value": "the pre-anneal artifact has no lr_policy key whatsoever, so the two arms are distinguishable by SCHEMA and not merely by a field value. A confusion between them is therefore detectable rather than plausible.",
+    "sizes_corroborate_both_receipts": "10,001,677 matches p3f-pet-gate4-nominal-promotion-56563761.json /promoted_artifact/size_bytes; 10,127,331 matches the 'preserved baseline' figure in the supersession block.",
+    "accounting_job_id": "56563761, state COMPLETED, exit 0:0, elapsed 06:00:36, node nid003192"
+  },
+
+  "Q3_DOES_ANYTHING_DOWNSTREAM_CONSUME_IT": {
+    "verdict": "PARTIALLY -- and the dispatch's binary framing (annealed vs pre-anneal) does not fit. It is layered.",
+    "PROPAGATED_to_the_step1_diagnostic_layer": {
+      "consumers_defaulting_to_the_annealed_artifact": [
+        "nd-unfolding/pet/gate_ab_push_provenance.py:95 -- DEFAULT_ART = os.path.join(HERE, \"fullevent_nominal_annealed\", ...)",
+        "nd-unfolding/pet/step1_pull_push_decomposition.py:74 -- DEFAULT_ART likewise",
+        "nd-unfolding/pet/sbatch_step1_trajectory_annealed.sh:60 -- ANN=\"${PET}/fullevent_nominal_annealed\""
+      ],
+      "products_that_exist_in_the_annealed_directory": [
+        "GATE_AB_PUSH_PROVENANCE.slurm-56691812.json / .slurm-56818470.json",
+        "STEP1_DECOMPOSITION.slurm-56691812.json / .slurm-56818470.json",
+        "STEP1_TRAJECTORY.slurm-56691812.json / .control-prenneal.* ",
+        "w_nominal/ and w_floor/ checkpoint dirs"
+      ],
+      "so_the_promotion_DID_reach_executable_context": "two diagnostic tools take the annealed artifact as their DEFAULT input. That is real propagation and it contradicts a flat 'nothing consumes it'."
+    },
+    "NOT_PROPAGATED_to_the_extraction_layer_and_the_reason_is_stronger_than_staleness": {
+      "no_xsec_or_push_products_in_the_annealed_directory": "find over the annealed dir for *xsec* / *push* returns NOTHING (only the GATE_AB_PUSH_PROVENANCE receipts, which are step-1 diagnostics, not cross-sections).",
+      "the_only_nominal_cross_section_on_disk_used_the_PRE_ANNEAL_weights": {
+        "manifest": "nd-unfolding/pet/fullevent_diagnostic_nonquotable/NONQUOTABLE-DIAGNOSTIC.manifest.slurm-56527676.json",
+        "weights_path": "/pscratch/.../nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz",
+        "weights_sha256": "58f664cdef266d09cbae22a55698f6ff0059ecde4bef80681df9f907f2f51084",
+        "reading": "the one existing nominal xsec descends from the OLD artifact, and its own filename declares it NONQUOTABLE-DIAGNOSTIC."
+      },
+      "and_the_governing_reason": "the nominal extraction has NEVER RUN for either arm. state/annealed-nominal-complete-56563761.json records scope.extraction_run = False and scope.cross_section_run = False. So the extraction layer does not consume the OLD artifact either -- it consumes nothing. 'Downstream still reads the old one' would overstate the case in the other direction.",
+      "consequence_for_a_separate_question": "this is also why the P5A central/mask/order that RUNBOOK:213 makes every P5B component conform to does not exist: a frozen central vector and reported-bin mask are PRODUCTS of extraction. Recorded independently by lane C as CSTAT-O3."
+    },
+    "class_5_verified_rather_than_assumed": "each artifact's inference_contract.step2_checkpoint is an ABSOLUTE path into its OWN directory -- annealed -> fullevent_nominal_annealed/w_nominal/...iter2_step2_final.weights.h5, baseline -> fullevent_nominal/w_nominal/... . So there is no indirection a promotion could re-point: a consumer resolves to whichever artifact it was handed. That makes 'which artifact is passed in' the whole of the question, and it is why the digest-pin asymmetry in Q1 is the informative measurement."
+  },
+
+  "Q4_IS_A_JOSEPH_DECISION_OUTSTANDING": {
+    "verdict": "NO. A decision is not outstanding; the RECORD is incomplete in three places. These need different remedies and the dispatch was right that conflating them is expensive.",
+    "the_decision_chain_is_COMPLETE": [
+      "PHYSICS DECISION (which arm): DONE. AUTHORIZATION-20260813-gate4-estimator-disposition.md carries Joseph verbatim 'Okay do the annealed', and the promotion receipt quotes the same string at /authority/joseph_verbatim_physics_decision.",
+      "PROCEDURAL GO (the promotion): DONE, and DELEGATED rather than made by him. Joseph verbatim: 'if all you need is a go command, feel free to authorize it yourself'. Executed by the mediator; recorded at p3f-pet-gate4-nominal-promotion-56563761.json with verdict PROMOTED, promoted_at_utc 2026-08-13T02:52:32Z.",
+      "AND THE RECEIPT ITSELF FORBIDS THE OVERCLAIM: /authority/DO_NOT_RECORD_AS = 'Joseph authorized the promotion. He did NOT. He delegated the go, and separately made the PHYSICS decision. Two acts, two parties.' That distinction is preserved here.",
+      "THE FLAG WAS NEVER THE BLOCKER: nominal_pet_training_allowed is True in all four Gate-4 code-gate receipts and has been since 2026-08-10 (PET_UQ_REMEDIATION_STATUS.md:145-147, itself a correction against a prose-propagated 'stays false').",
+      "THE VERDICT THAT MADE IT 'WITH JOSEPH' WAS SUPERSEDED FIRST, DELIBERATELY: the promotion receipt records an ordering precondition -- the supersession of FINDING_CODE_PATHS_DISAGREE had to land BEFORE the promotion 'so that no interval exists in which the record reads promoted while a live FINDING stood' (supersede commit 156d1d6), and notes it was imposed by Session A rather than required by the instruction."
+    ],
+    "WHAT_IS_ACTUALLY_INCOMPLETE_all_record_not_decision": [
+      "(a) PET_UQ_REMEDIATION_STATUS.md:341-342 still reads 'Gate 4 remains blocked on Joseph's explicit estimator disposition and subsequent nominal-launch authorization.' This is the sentence Gate-6 documents quote. It sits inside a block headed '2026-08-10 one-liner' -- it was TRUE when written, three days before the disposition, and it is correctly dated. It is stale, not wrong-at-origin. The same file already carries the answer at :139-141: 'Gate 4's estimator disposition is answered (the annealed arm)'.",
+      "(b) The correction block at :143-154 is ITSELF now stale. It ends 'That is with Joseph' and lists artifact_promoted: False and status COMPLETE_PREDECLARED_FINDING_CODE_PATHS_DISAGREE_NO_DOWNSTREAM -- all three superseded later the same day by the supersession block and the promotion. A reader who stops there concludes the decision is pending. Its own closing advice is the fix: 'Read the gate receipt, not this file, if they ever disagree again.'",
+      "(c) check_canonical_designation.py EXITS 1 (Q1). Since promotion here is BY DESIGNATION, its completeness postcondition is the promotion's safety condition, and it does not currently hold."
+    ],
+    "A_CONTRADICTION_I_NEARLY_REPORTED_AND_DID_NOT": {
+      "the_apparent_conflict": "PET_UQ_REMEDIATION_STATUS.md:139 reads 'Still NOT authorized by this promotion: promotion of any PET nominal to canonical' -- which looks like it denies the 2026-08-13T02:52 nominal promotion recorded as PROMOTED.",
+      "resolution": "that sentence sits in the '## Gate 2 -- literal negweight-refined target' section, and 'this promotion' scopes GATE 2's promotion, not Gate 4's. It correctly says Gate 2's promotion does not extend to promoting a nominal. There is no conflict.",
+      "why_it_is_recorded": "the dispatch warned that a reversal must be right rather than plausible. This is the one place a careless read produces the opposite verdict, and the disambiguation is a section heading 27 lines above the sentence."
+    },
+    "WHAT_I_COULD_NOT_ESTABLISH_stated_rather_than_inferred": {
+      "the_second_act_named_in_the_08_10_blocker": "'subsequent nominal-launch authorization' has no locatable referent beyond that one dated sentence -- grep for 'nominal-launch' returns only unrelated hits on test_pet_fullevent_nominal_launcher.py. And it is at least partly MOOT by ordering: the annealed nominal was TRAINED 2026-08-10 (job 56563761), three days BEFORE the 08-13 disposition that selected its arm, so a launch authorization for the training cannot still be pending on something that already ran.",
+      "what_I_cannot_rule_out": "that the phrase was intended to gate the nominal EXTRACTION run, which has never happened. If so, the outstanding item is an authorization to EXTRACT rather than an estimator-arm decision -- a different question with a different owner, and one this audit did not resolve. check_canonical_designation.py's docstring does note in passing that extraction is 'the operation prohibited without authorization', which is consistent with that reading but is a comment in a checker rather than a gate.",
+      "why_I_am_not_inferring_past_it": "the dispatch's own caution -- D's R/push proxy inverted an ordering on exactly this move. The honest boundary is: the ESTIMATOR-ARM disposition is closed; whether a separate EXTRACTION authorization is owed is not established either way by the artifacts."
+    }
+  },
+
+  "RECOMMENDED_REMEDIES_distinguished_by_kind": {
+    "record_not_decision": [
+      "Banner PET_UQ_REMEDIATION_STATUS.md:341-342 as superseded in place, pointing at :139-141 and the two 2026-08-13 receipts. Do NOT delete it -- it is correctly dated history, and Gate-6 documents cite it.",
+      "Banner the :143-154 correction block's 'That is with Joseph' as discharged, naming the supersession and the promotion.",
+      "Fix check_canonical_designation.py's inventory: 8 unaccounted files, 1 count drift, 2 stale entries. This is the only one with an executable pass/fail, so it is the only one that cannot silently rot again."
+    ],
+    "genuinely_open_and_NOT_lane_C_to_settle": "whether a nominal EXTRACTION authorization is owed, per the gap above. Routes to Joseph via the mediator if anyone wants P5A extracted -- which several downstream things (RUNBOOK:213's central/mask/order, hence CSTAT-O3) need."
+  },
+
+  "WHAT_THIS_AUDIT_DOES_NOT_DO": [
+    "It does not touch, banner, or edit any of the three stale records -- it reports them. Two are other lanes' text and the third is an inventory whose owner is not established.",
+    "It does not run the P5A extraction or authorize it.",
+    "It does not coordinate with lane B, per the dispatch.",
+    "It makes no claim about whether the annealed arm was the RIGHT physics choice. The authorization record is explicit that the reasoning is the mediator's [CLAUDE]-class argument endorsed by Joseph, not authored by him, and that an error in it routes back through the mediator rather than being re-decided by a lane."
+  ]
+}
