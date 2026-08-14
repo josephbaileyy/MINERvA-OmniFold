@@ -33,6 +33,7 @@ buried in run-log prose.
 | 42 | CRITICAL | OPEN | A failed scrontab listing makes wakerctl install-cron replace the table with only its managed block. | [issue detail](docs/known-issues/ISSUE-42-wakerctl-install-cron-fail-open.md) | 2026-08-11 |
 | 43 | LOW | WONTFIX | cron-tick.log records crashes rather than successful ticks, so its staleness means health and its growth means failure. | [issue detail](docs/known-issues/ISSUE-43-cron-tick-log-semantics.md) | 2026-08-11 |
 | 45 | MEDIUM | OPEN | The Gate-3 queue-latency receipt pins a historical wakerctl revision and has no declared current disposition. | [issue detail](docs/known-issues/ISSUE-45-wakerctl-gate3-pin-lapsed.md) | 2026-08-11 |
+| 46 | MEDIUM | OPEN | The lateral-FPS matrix validator reports a PSD flag an exact-zero eigenvalue satisfies and infers the reported-bin count from the diagonal, so a rank-deficient covariance and an undercounted n_reported both pass. | [issue detail](docs/known-issues/ISSUE-46-mat-gates-records-without-gating-and-infers-a-declared-count.md) | 2026-08-14 |
 
 ## Resolved traps that WILL bite again if forgotten
 

@@ -205,7 +205,10 @@ silently:**
 
 Both will report PASS. The rank must therefore be **declared and recorded by the builder**, not left
 to be caught downstream. Note `p4_validate_active_lateral_fps.py:67` *does* record
-`min_over_max_eig` — the evidence gets written, only the threshold is missing.
+`min_over_max_eig` — the evidence gets written, only the threshold is missing. **Both arms of that
+validator's defect are now filed as `ISSUE-46`** (`docs/known-issues/`), so they no longer live only in
+this document; the fix is a threshold decision for that file's owner, not a mechanical edit, and not
+mine.
 
 **And one live inconsistency worth C's attention:** the declared threshold is `1e-10 λ_max`
 (`COLLABORATOR_QUESTIONS.md:38-39`), but `_ours_only_chi2.py:123` reports rank at `1e-12 λ_max` and

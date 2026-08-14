@@ -67,6 +67,32 @@ Concretely, for any conflict recorded between lanes:
 - **Retracting a premature closure costs one edit. Defending one costs the record** — and a closed
   section stops attracting the attention that would have produced the third option.
 
+## The mechanism has a second half, and it is the half a future lane will actually meet
+
+The account above puts the error entirely in my reading of a relayed position. **That is incomplete, and
+the mediator supplied the missing part unprompted:** it relayed D's concession to C with the words
+*"your shape is right"* — endorsing a twenty-minute position **as settled** — and I then recorded it as
+resolved partly on the strength of a mediator treating it as such.
+
+So the full mechanism is two steps, and neither party is doing anything obviously wrong at its own step:
+
+1. A lane concedes. That is a *position*, and a reasonable one.
+2. A relay carries the concession forward in **outcome language**. That is where the transformation
+   happens — *"D is realigning"* and *"your shape is right"* are different claims, and only the first is
+   what D said.
+3. The receiving lane writes it down as a resolution, because by the time it arrives it is already
+   phrased as one.
+
+**The lesson for a future lane is therefore not only "do not close on a concession" but "a relay's
+phrasing is not evidence about the underlying state."** A relayed endorsement is the cheapest thing in
+the system to produce and the hardest to trace back, because the intermediate hop leaves no artifact.
+The structural fix below still works — name the decider, and a relay cannot be mistaken for one — and it
+is the reason naming X matters more than recording a status: **`OPEN` with no named decider degrades into
+`RESOLVED` at the first confident-sounding relay.**
+
+Recorded with attribution because the mediator volunteered its own contribution before I noticed it, and
+a mechanism described with only one of its two steps would have taught the wrong lesson.
+
 ## What made it recoverable
 
 The mediator flagged it explicitly as time-sensitive, in terms — *"I would rather you not record a
