@@ -789,7 +789,7 @@ verdict `GATE2_CANONICAL_RUNTIME_PASS_INDEPENDENT_PROMOTION_PENDING`.
 | VL86 | `negative_signed_cells` | 0 |
 | VL87 | refined target sha256 | `544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9` |
 | VL88 | refined target rows / bytes | 4,680,719 / 18,723,004 |
-| VL89 | receipt sha256 | `336e8e27fc8afce813f3ee743c6466ea047243c6e4f457e1d040868d5800792f` |
+| VL89 | receipt sha256 — of the **2026-08-05 re-issued** receipt at `gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json`, recoverable at commit `8a9d22c`. **No file currently on disk carries this digest** (the archived copy was annotated as part of being archived; the live one is the 08-13 re-run's own receipt). Value unchanged — see `BEN-158`. | `336e8e27fc8afce813f3ee743c6466ea047243c6e4f457e1d040868d5800792f` |
 | VL90 | refiner | `u2d.refine_stay_positive`, `refinement_is_learned_production: true` |
 
 **Two corroborations worth recording, because each closes a way this could have been wrong.**

@@ -1,0 +1,87 @@
+{
+ "schema_version": 1,
+ "what_this_is": "Joseph's decision on the Leg X readout, recorded BEFORE either new cell exists and BEFORE the launcher is submitted. Written so the record shows the restriction was decided in advance, not discovered afterwards.",
+ "recorded_at_pdt": "2026-08-13T15:2x",
+ "decision": {
+  "question_put_to_him": "a 2x2 with one run per cell has no replication. At iteration 0 the same-seed floor is 89.6% of the five-member spread, so main effects there would be indistinguishable from process noise; at iteration 2 it is 15.1%. Either the 2x2 gets replication, or its readout is restricted to iteration 2 with the floor quoted alongside. Which?",
+  "answer_verbatim_and_complete": "Sure, do iteration 2.",
+  "relayed_by": "personal-orchestrator",
+  "resolves_to": "readout restricted to iteration 2; NO replication; one run per cell",
+  "prior_authorization_of_the_leg_itself": "Yes yes to the other B decision"
+ },
+ "WHY_THE_RESTRICTION_EXISTS_stated_because_a_reader_in_six_months_will_otherwise_assume_nobody_noticed": {
+  "the_measurement_it_rests_on": "Leg F, the across-process floor at the single fixed seed pair (42,0), array 56863958",
+  "same_seed_spread_as_a_fraction_of_the_five_member_spread": {
+   "iteration_0": {
+    "F_range_n3_provisional": 0.6794325534395745,
+    "S_range": 0.7580408493406813,
+    "fraction": 0.8963
+   },
+   "iteration_1": {
+    "F_range_n3_provisional": 0.1883387264806543,
+    "S_range": 0.38136901675657797,
+    "fraction": 0.4938
+   },
+   "iteration_2": {
+    "F_range_n3_provisional": 0.0523993868023519,
+    "S_range": 0.3480059774601819,
+    "fraction": 0.1506
+   }
+  },
+  "the_argument": "at iteration 0 process variation alone accounts for ~90% of the spread the five members showed, so a 2x2 read there would report seed main effects indistinguishable from process noise -- and would report them with the same apparent precision as a real result, which is the failure mode rather than the absence of one. At iteration 2 the same-seed spread is 15.1%, and iteration 2 is where the Gate-6 band applies and where Leg F's own verdict is defined.",
+  "THE_RESTRICTION_IS_WHAT_MAKES_THE_DESIGN_SOUND_NOT_A_LIMITATION_OF_IT": true,
+  "the_honest_half": "nothing licenses an iteration-0 or iteration-1 claim from Leg X. Those values are computed and persisted by the same trajectory script and are INELIGIBLE for the effect estimates by construction. The launcher deliberately does not filter them, because suppressing them would hide the caveat instead of stating it.",
+  "provisional_caveat": "the three fractions above come from the n=3 partial floor. They are provisional and are not quotable as the floor; the rule they justify does not depend on their exact values, only on the ordering 0 >> 1 > 2, which is already unambiguous."
+ },
+ "what_was_committed_before_submission": {
+  "predeclaration": "docs/orchestration/PREDECLARATION-20260813-gate6-legX-2x2.md",
+  "launcher": "nd-unfolding/pet/sbatch_pet_fullevent_legx_2x2_array.sh",
+  "tests": "nd-unfolding/tests/test_legx_2x2_launcher.py -- 32 passing, 18/18 mutations caught, launcher restored byte-identical",
+  "submitted": false,
+  "why_not_yet": "the floor is not closed. Tasks 4 and 5 of 56863958 are still PENDING."
+ },
+ "SEQUENCING_IS_ENFORCED_BY_CODE_NOT_BY_MEMORY": {
+  "rule": "the launcher refuses to start unless a Leg F result receipt reports n=5, zero invalid draws, a terminal FLOOR_* verdict, and a positive F_sd[2]",
+  "where": "before mkdir, before the writer lock, before the module load, before any GPU work",
+  "why_executable": "'floor first' is Joseph's standing instruction and Lane B's own argument; a rule that depends on an operator remembering it is a rule the 03:00 session inherits and forgets. CLAUDE.md: prefer the executable form of any rule you are tempted to write down.",
+  "rejection_set_tested": [
+   "absent receipt",
+   "n<5 partial",
+   "an invalid draw at n=5",
+   "non-terminal verdict at n=5",
+   "missing F_sd[2]",
+   "zero F_sd[2]"
+  ],
+  "acceptance_tested_as_a_negative_control": "a closed receipt passes the gate and prints the MDE -- without this test the six rejection tests would all pass on a gate that refuses everything",
+  "the_obvious_workaround_is_named_in_the_failure_message": "G6_LEGX_FLOOR_RESULT must not be pointed at a partial receipt"
+ },
+ "two_defects_this_work_found_in_itself": {
+  "launcher_ordering": "the first version ran mkdir -p BEFORE the sequencing gate. Its own battery caught that the gate then never executed off-cluster, and that a refused submission would still have created an empty cell directory. Fixed; the ordering is now asserted as gate < mkdir < lock < module < train.",
+  "two_gaps_in_my_own_battery_found_by_mutation": "a mutation replacing only the FIRST of the launcher's two t(4) occurrences -- the one in the failure message, leaving the arithmetic correct -- passed a test that asserted mere presence; and a mutation deleting the operator-facing ineligibility notice passed a test that asserted the word INELIGIBLE, which also appears in a sidecar key. Both tests now count occurrences and anchor on the specific line."
+ },
+ "prohibitions_still_live": [
+  "do_not_select_passing_subset",
+  "do_not_construct_C_ML",
+  "do_not_move_central",
+  "do_not_start_leg_2",
+  "do_not_retry_unchanged"
+ ],
+ "gate6_unblocked_by_this_decision": false,
+ "c_ml_construction_allowed": false,
+ "is_a_step_toward_c_ml": false,
+ "what_leg_x_is": "a diagnostic answering seed-versus-estimator, a question the executed diagonal member table (42,0)...(46,4) makes unanswerable because estimator init and training subsample are perfectly confounded there",
+ "members_retrained": 0,
+ "members_re_verdicted": 0,
+ "subsets_selected": 0,
+ "reset_credits_consumed": 0,
+ "independent_audit_expected": "session D, at Joseph's request. The two claims it should try hardest to break are that the floor statistics code was authored and mutation-tested while draws 4 and 5 were queued so thresholds could not be tuned to data, and that F_range[2] = 0.0523993868023519 > 0.05 excludes branch 1 as a deduction from the frozen rule rather than as a new rule.",
+ "DEPLOYMENT_PARITY_BEN_156": {
+  "the_trap": "lane C's BEN-156 -- a commit lands and everyone believes the executing copy changed; nothing copied it, and the natural defence ('is the running file's content in the repo?') PASSES on exactly the file you were trying to catch, because the stale version is also committed.",
+  "how_it_applies_here_measured_not_assumed": "the Leg X launcher is committed and is NOT on the cluster. No copy has been made, deliberately: nothing is submitted until the floor closes. There is therefore no deployed copy to diverge from this one YET, which is the safe state and not an exemption.",
+  "what_must_happen_before_submission": "scp nd-unfolding/pet/sbatch_pet_fullevent_legx_2x2_array.sh to the cluster and verify sha256 byte-identity on BOTH sides in the same turn -- the procedure Leg F's launcher and gate6_floor_statistics.py both used and recorded. A `git pull` on the cluster is NOT the route, and the binding reason is OI-57's HEAD check at sbatch_gate5_replica_train_array.sh, which fails every remaining Gate-5 task closed on a HEAD move -- NOT, as this field first said, uncommitted work in the science repo. See the correction below.",
+  "why_the_sequencing_gate_does_not_cover_this": "a launcher submitted from a stale cluster copy predating the gate would not HAVE the gate. The gate cannot defend its own absence, so the digest check is not optional.",
+  "credit": "lane C, BEN-156, second instance of the class in one day",
+  "MY_ORIGINAL_REASON_WAS_WRONG_AND_IS_CORRECTED": "CORRECTED 2026-08-13 16:0x. The reason first recorded here -- 'the cluster's fullevent_fps_dataloader.py is modified-but-uncommitted and load-bearing for the live Gate-5 array' -- is FALSE. Measured across all three checkouts this leg touches: GATE5_CODE_ROOT (gate6traj-reconcile-56847059) is CLEAN at HEAD b82ac63 with its HEAD blob for that file equal to e1402370cdb8bd63, so Gate 5 is NOT training against uncommitted code. The dirty tree is a different one, /pscratch/sd/j/josephrb/MINERvA-OmniFold at HEAD 683bdcc, and the decisive measurement is its HEAD BLOB: 57f33f87b07e0c6b (the old version) against a working file of e1402370cdb8bd63 (the current one, confirmed committed on origin/main, last touched at 6a4b903). So git status reports 'M' because that tree's HEAD predates the Gate-5 replica-architecture change, NOT because the file is uncommitted. State is STALE_BUT_COMMITTED. NOTHING IS AT RISK ON SCRATCH AND THERE IS NO LOST WORK -- a future lane reading the original wording would go looking for work to rescue and find none. THE OPERATIONAL CONCLUSION IS UNCHANGED: scp single files and sha256-verify both sides in the same turn; do not git pull on the cluster. The binding reason is OI-57, verified in source this turn: sbatch_gate5_replica_train_array.sh reads [[ \"$(git -C \"$CODE_ROOT\" rev-parse HEAD)\" == \"$EXPECTED_HEAD\" ]] || die 'code HEAD drift', so a pull in CODE_ROOT fails every remaining Gate-5 task closed; three digest checks follow it, including EXPECTED_LOADER_SHA. Scope stated honestly: only the loader was characterized, so 'do not pull in the science repo either' stands on precaution rather than measurement. This is a live independent instance of lane C's BEN-156 from the OPPOSITE direction -- C's case is 'is it committed?' returning true on a stale executing file; this is git status returning 'modified' on a file byte-identical to origin/main. Filed as BEN-127. Neither leg was ever at risk, because both launchers bind CONTENT and not HEAD: they sha256sum the loader against e1402370 and die on mismatch, which is why a stale HEAD in the science repo they train from cannot reach them.",
+  "this_leg_was_never_at_risk_because_the_launcher_binds_content_not_head": "sbatch_pet_fullevent_legx_2x2_array.sh sha256sums the loader against e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1 and dies on mismatch, so a stale HEAD in the science repo it trains from is invisible to it. The four-state committed/deployed confusion BEN-156 is about cannot be seen by a `git status` check and cannot be reached through a digest check -- which is the argument for using the digest."
+ }
+}

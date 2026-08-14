@@ -26,6 +26,15 @@ reasoning hash pins exist to reject."
 | `G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy` | `544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9` | 18723004 |
 | `G2_GATE2_TARGET_RUNTIME_RECEIPT.json` | `336e8e27fc8afce813f3ee743c6466ea047243c6e4f457e1d040868d5800792f` | 12051 |
 
+> **Do not check the receipt digest above against the receipt in THIS directory — it has never matched, and that is not corruption.** The `.npy` row is byte-faithful and can be checked here. The receipt row cannot: `336e8e27` is the receipt as it stood at the **live** path in commit `8a9d22c`, and the copy archived here was annotated *as part of* being archived — its `sha256` keys were renamed to `sha256_at_issue` in the same commit that created this directory (`fb3a4f9`), so it landed at `23935993`. Marking `status: SUPERSEDED` on 2026-08-13 moved it again to `c959a3a8`. **Every digest inside the file is preserved verbatim; it is the file's own hash that moved.** To verify `336e8e27`, read the bytes it certifies:
+>
+> ```
+> git show 8a9d22c:nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json \
+>   | sha256sum
+> ```
+>
+> The tension is real and worth naming: **a retirement convention that annotates a file in place cannot coexist with a ledger digest that certifies that file's bytes.** `BEN-158`.
+
 The `.npy` digest is also `VL87` in `VALIDATION_LEDGER.md` and the receipt digest is `VL89`, so both
 are independently recorded outside this directory.
 

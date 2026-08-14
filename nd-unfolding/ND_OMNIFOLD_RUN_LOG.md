@@ -6192,8 +6192,10 @@ had two. The self-cap has not been raised, no task has been resubmitted, and `--
 lowered. `GATE5_CODE_ROOT` (`/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059`) was not read,
 written, synced or cleaned, and a test asserts the launcher never references it. The cluster repo was
 not synced either — `gate6_floor_statistics.py` was `scp`'d as a single file and verified byte-identical
-on both sides, because the cluster's `fullevent_fps_dataloader.py` is modified-but-uncommitted and
-load-bearing for the live Gate-5 array.
+on both sides. **The reason first written here — *"the cluster's `fullevent_fps_dataloader.py` is
+modified-but-uncommitted and load-bearing for the live Gate-5 array"* — is FALSE and is corrected in the
+2026-08-13 16:0x entry below.** The `scp`-not-pull conclusion is unchanged; its actual binding reason is
+`OI-57`'s HEAD check.
 
 **Two tooling traps, both filed.** `sacct -j 56863958` lists tasks 2, 3 and 5 but **not** task 4,
 whose pending element Slurm split under a new `JobIDRaw` (`56883015`) — a resume guard enumerating
@@ -6260,3 +6262,390 @@ or cleaned; all three copies were already `CURRENT`.
 
 **The check has no caller yet — `OI-64`, stated rather than implied.** An unwired check is a check
 nobody runs, which is how this class got two instances in one day.
+
+## 2026-08-13 — Gate 6 Leg X: readout fixed at iteration 2 by Joseph, predeclared and NOT submitted
+
+Lane B put a design question to Joseph after Leg F's first wave and he answered it: *"Sure, do iteration
+2."* So Leg X — the `{42,46}×{0,4}` 2×2 — keeps **one run per cell, no replication, read at iteration 2
+only.** The predeclaration, launcher and tests are committed **before either new cell exists and before
+anything is submitted**, which is the same discipline Leg F used and the reason its numbers are usable.
+
+**Why the restriction exists, on the face of the record, because a reader in six months will otherwise
+see an unreplicated 2×2 and assume nobody noticed.** Leg F measured the across-process spread at one
+fixed seed pair. As a fraction of the five-member spread it is **89.6%** at iteration 0, 49.4% at
+iteration 1 and **15.1%** at iteration 2. At iteration 0 process variation alone accounts for ~90% of
+what the five members showed, so a 2×2 read there would report seed main effects indistinguishable from
+process noise — **and would report them with the same apparent precision as a real result**, which is
+the failure mode rather than the absence of one. Iteration 2 is also where the Gate-6 band applies and
+where Leg F's verdict is defined. **The restriction is what makes the design sound, not a limitation of
+it.** The honest half: nothing licenses an iteration-0 or -1 claim from Leg X, and the launcher
+deliberately does **not** filter those values out of the receipt, because suppressing them would hide
+the caveat instead of stating it.
+
+**The reference scale is the whole reason the floor runs first, and it is now arithmetic rather than
+assertion.** Every cell is one draw, so `Var(E) = ¼(4σ²) = σ²` — each main effect and the interaction
+has standard error **exactly** the across-process `σ`, which a 2×2 with one run per cell cannot supply
+from inside itself. `σ̂ = F_sd[2]` from the completed Leg F carries **4 degrees of freedom**, so the
+threshold is `t_{0.975,4} = 2.7764451051977987 × σ̂` — the multiplier is fixed now and `σ̂` is substituted
+later. A gaussian `1.96` would be optimistic here and a round `2` unmotivated; both are the kind of
+number that gets chosen after seeing the data. **One effect carries the verdict** (the estimator-seed
+main effect, named before any value exists because it is the axis Joseph's question names); the
+subsample main effect and the interaction are reported only. A null is reported as
+`ESTIMATOR_INIT_EFFECT_NOT_RESOLVED_AT_MDE` **with its MDE published**, never as "no effect" — BEN-213
+is exactly this trap, and pre-registration is not power.
+
+**Sequencing is enforced by code, not by memory.** The launcher refuses to start unless a Leg F result
+receipt reports `n=5`, zero invalid draws, a terminal `FLOOR_*` verdict and a positive `F_sd[2]` — before
+`mkdir`, before the writer lock, before the module load, before any GPU work. Six rejection cases are
+tested (absent, `n<5`, an invalid draw at `n=5`, non-terminal verdict, missing `σ`, zero `σ`) plus an
+acceptance case as the negative control, without which all six would pass on a gate that refuses
+everything. The obvious workaround is named in the failure message. *"Floor first"* is Joseph's standing
+instruction and Lane B's own argument, and `CLAUDE.md` is explicit that the executable form of a rule
+beats the written one.
+
+**Clause 5 had to change shape from Leg F's, and the change is a positive control.** Leg F could demand
+`mc_indices` equality with member 1 because every draw shared `subsample_seed=0`. Leg X cannot: half its
+cells sit at `subsample_seed=4`, so equality is required **by level** — a cell must match the existing
+member at its own level and must **differ** from the other. Measured this turn on the two existing
+cells: **`1,999,982` of `2,000,000` rows differ**, so the axis the design exists to separate genuinely
+moves. A 2×2 whose subsample axis does not move is not a 2×2, and now that is a check rather than a hope.
+
+**Two defects this work found in itself.** The first version of the launcher ran `mkdir -p` **before**
+the sequencing gate; its own battery caught that the gate then never executed off-cluster at all, and
+that a refused submission would still have created an empty cell directory. The ordering is now asserted
+as `gate < mkdir < lock < module < train`. And mutation testing found **two gaps in my own battery**: a
+mutation replacing only the *first* of the launcher's two `t(4)` occurrences — the one in the failure
+message, leaving the arithmetic correct — passed a test that asserted mere presence; and a mutation
+deleting the operator-facing ineligibility notice passed a test that asserted the word `INELIGIBLE`,
+which also appears in a sidecar key. **A half-substituted constant and a word that appears twice are the
+same defect class**: presence is not the property you meant to assert. Both tests now count occurrences
+and anchor on the specific line. Final: 32 tests, 18/18 mutations caught, launcher byte-identical after.
+
+**Gate 6 is not unblocked and this is not a step toward `C_ML`.** All five prohibitions at `19585b7`
+remain live. Leg X answers seed-versus-estimator — a question the executed diagonal table
+`(42,0)…(46,4)` makes *unanswerable*, because estimator init and subsample are perfectly confounded
+there. `C_ML` needs a separate decision from Joseph that he has not made, and Gate 4's estimator-arm
+disposition blocks construction independently. No member is retrained: cells `(42,0)` and `(46,4)` are
+`member_1` and `member_5`, read-only, and both a range guard and an independent anti-diagonal guard
+refuse to train them. **Nothing is submitted** — the floor is not closed, and `shared_gpu_ss11` is
+saturated, so queueing Leg X early to gain position would compete with Lane B's own floor and with
+Gate 5. Authorization receipt:
+`docs/orchestration/state/gate6-legx-readout-authorization-20260813.json`.
+
+Floor progress at 15:24 PDT: task 4 **started** on `nid008332` — a different node from tasks 2 and 3,
+which both ran on `nid008264`, so the across-node coverage the first wave lacked is now being filled.
+Task 5 remains queued.
+
+## 2026-08-13 16:0x — correction: nothing on scratch is uncommitted. `git status` said "modified" on a file that is byte-current
+
+**Right conclusion, wrong reason, and the wrong reason is the dangerous half.** Twice today Lane B wrote
+that the cluster's `fullevent_fps_dataloader.py` is *"modified-but-uncommitted and load-bearing for the
+live Gate-5 array."* The mediator declined to relay that unverified and measured it; Lane B then measured
+it independently rather than take the correction on trust. **Both measurements agree and Lane B's original
+claim is false.** A future lane reading "uncommitted work on purgeable scratch" would go looking for work
+to rescue and find none — which is why this is corrected in place rather than left as a footnote.
+
+Measured across the three checkouts this leg touches, one command, this turn:
+
+| checkout | HEAD | `status --porcelain` | working file | **HEAD blob** |
+|---|---|---|---|---|
+| `gate6traj-reconcile-56847059` = `GATE5_CODE_ROOT` | `b82ac63` | 1 line, an untracked log | `e1402370…` | **`e1402370…`** |
+| `MINERvA-OmniFold` (the science repo) | `683bdcc` | 748 lines, `M` on the loader `+38/−5` | `e1402370…` | **`57f33f87…`** |
+| `gate6-reconcile-56834281` (diagnostics) | `4d96acf` | 1 line, an untracked json | `e1402370…` | **`e1402370…`** |
+
+**`GATE5_CODE_ROOT` is clean and Gate 5 is not training against uncommitted code.** The dirty tree is a
+different one, and the decisive measurement is its **HEAD blob**: `57f33f87…` is the *old* version while
+the working file is `e1402370…`, which `git show origin/main:` confirms is the **committed** current
+version, last touched at `6a4b903`. So `git status` reports `M` because that tree's HEAD predates the
+Gate-5 replica-architecture change, **not** because the file is uncommitted. The state is
+`STALE_BUT_COMMITTED`. Nothing is at risk on scratch and there is no lost work.
+
+**This is a live independent instance of lane C's BEN-156, arriving from the opposite direction, and it
+confirms C's design was not over-engineering.** C built a four-state model because *"is it committed?"*
+returns **true** on a stale executing file. This is the mirror: **`git status` returns "modified" on a
+file that is byte-identical to `origin/main`.** A two-state view misleads in both directions, and C's
+classifier gets this right where the reflexive check does not. Filed as BEN-127, pointing at C's long form.
+
+**The `scp`-not-`git pull` conclusion is unchanged; the binding reason is `OI-57`, verified in source this
+turn.** `sbatch_gate5_replica_train_array.sh` reads
+`[[ "$(git -C "$CODE_ROOT" rev-parse HEAD)" == "$EXPECTED_HEAD" ]] || die "code HEAD drift"`, so a pull in
+`CODE_ROOT` fails **every remaining Gate-5 task closed**. Three digest checks follow it — replica driver,
+pinned nominal driver, and `EXPECTED_LOADER_SHA` — so the guard is layered rather than single. **Scope
+honestly stated: only the loader was characterized.** The science repo's other 747 porcelain entries were
+not, so "do not pull there either" stands on precaution, not on measurement.
+
+**And the reason this never threatened Leg F or Leg X: both launchers bind CONTENT, not HEAD.** They
+`sha256sum` the loader against `e1402370…` and die on mismatch, which is exactly why a stale HEAD in the
+science repo they train from cannot affect them — the property Gate-2 provenance already relies on
+(`assert_target_provenance` binds by content, not receipt identity). The four-state confusion is
+invisible to a digest check, which is the argument for using one.
+
+**Floor progress, and the mediator is right that this is more than a caveat.** Tasks 2 and 3 both ran on
+`nid008264`, so **the first wave was not measuring across-node variance at all** — which is the thing an
+*across-process* floor exists to expose. Lane B recorded that as an honest caveat; the sharper statement
+is that the first wave could not have been the answer even at `n=5`. Task 4 is running on `nid008332` and
+is filling it rather than having it assumed.
+### 2026-08-13 ~15:50 PDT — codex's audit of the Gate-5 reconciler: seven items, all confirmed (lane C, BEN-157, OI-65)
+
+**Promotion is BLOCKED and I accept the block.** Codex's independent read-only audit of
+`reconcile_gate5_family.py` — a tool this lane wrote — reports seven defects. **Every one confirmed;
+none refuted.** Five reproduced by running the tool on synthetic families built from its own fixtures,
+two by reading code whose behaviour is not in doubt. Three carry qualifications and every qualification
+makes the finding **sharper**, not weaker. Nothing repaired: part 7 is pending, and a fix aimed at a
+milestone risks the wrong line.
+
+**The tool whose only job is to refuse a partial family passes on zero members.** `:528` is
+`--n type=int` with no floor and every completeness comparison is against it: `--n 0` on an empty
+directory returns **rc=0 and the exact `FAMILY_COMPLETE_PASS`**, and a real 3-member family passes at
+`--n 3` while being `PARTIAL` at `--n 50` — **the artifacts unchanged, only the caller's claim about
+how many there should be.** The file's own `:7` states the principle its parser does not enforce.
+
+**And my tests do not merely miss it; they are written in its idiom.** The complete-family test uses
+`n=3`, the clean-name test `n=2`, and `test_partial_family_is_PARTIAL_and_never_PASS` builds 2 and runs
+`n=3` — proving 2/3 ≠ 3/3, never 49/50 ≠ a *fixed* 50. **No test anywhere asserts `n` must be 50.**
+
+**The single sharpest line in the audit: `completion_marker_valid` is never read.** Grep returns two
+hits in the whole tree — the producer writing it at `train_fullevent_replica.py:358`, and **my own
+fixture copying it** at `test_reconcile_gate5_family.py:194`. Zero in the reconciler. The receipt
+asserts its own marker validity and nothing checks the assertion, so **a receipt declaring itself
+invalid passes.**
+
+**Yesterday's `NAME_MISMATCH` guard is routed around structurally.** The stray scan is reachable only
+inside `if not os.path.exists(rec)`, so a receipt at the *correct* name never enters it: rename the
+weights, update the receipt, and you get an exact pass with `name_mismatch=0` and the canonical
+filename absent from disk. **The guard catches a file that disagrees with the launcher; it cannot catch
+a receipt that agrees with a wrong file.** The guard itself is still sound — clean names stay silent,
+no false positive found — it is aimed one branch too narrowly. The asymmetry is inside one file I
+wrote: the target stage has the anchor at `:324`, the training stage has none.
+
+**The verifier checks a claim where the launcher checks content.** The producer records **three**
+digests (`:367-374`), the launcher checks all three plus HEAD (`:41-44`), and the reconciler checks
+`head_at_runtime` — **itself a claim in the receipt, not a measurement** — plus one loader sha. "The
+launcher checks them" is not a defence: `BEN-156`, filed this morning in this same tool, established
+that the executing copy can differ from the committed one, which is precisely the class an independent
+verifier exists for.
+
+**Required inputs are optional and their checks evaporate.** Null `R` and its operands, with the
+marker re-stamped so nothing else fires: `rc=0`, exact pass, **43 passed / 0 failed**,
+`r_derivation: {"R_recorded": null}`. Four checks vanished and nothing reported their absence — while
+`--skip-replay`, fifteen lines away, already implements the correct behaviour by downgrading the
+verdict to a named suffix. **I built the right mechanism for one optional check and applied it to none
+of the others.**
+
+**And the name-pin test never opens the launcher.** `test_expected_names_match_the_launcher` asserts
+the constants against **string literals duplicated in the test file**, under a docstring promising it
+pins them to the Slurm-captured batch script. **I described these to a peer as "constants pinned by a
+test to the launcher." That was false and is withdrawn here** — the test pins the constants to a copy
+of themselves, `BEN-149` exactly, inside the test written to prevent the filename defect I fixed at
+`69c577b`.
+
+**One invariant, not seven patches:** the reconciler derives every quantity it checks from the
+filesystem at canonical paths and from constants pinned in the tool, **never from the receipt's account
+of itself** — with the corollary that a required input which is absent **fails closed or downgrades the
+verdict**, and never silently removes its own check. Lane B reached the same sentence from provenance:
+both launchers **bind content, not HEAD**. B's HEAD-blob measurement also confirmed this morning's
+four-state classifier **from the direction it was not built for** — `git status` saying "modified" on a
+file byte-identical to `origin/main`, where mine says `STALE_BUT_COMMITTED` on one `git status` calls
+clean.
+
+**What is not invalidated:** 50 target receipts and 24 training receipts are real and passed their
+checks, and every campaign run used the default `n=50` and correctly reported `PARTIAL`. **What is
+blocked:** using this tool to *declare* promotability, because at a genuine 50/50 its exact pass is
+indistinguishable **in the artifact** from one emitted at a caller-chosen `n`, or on receipt-only
+trainings, or with the R checks never run. Not a wrong answer — **an unfalsifiable one**, the condition
+this tool exists to prevent elsewhere. **I will not run a promotion pass on the current tool even at
+50/50.**
+
+**Four of my own probes failed first, and the fourth is the one to keep.** The fixture writes markers
+with no `mtime`; my first `mtime` attempt landed in the same second as `mark_complete`; without `--out`
+the tool prints a condensed summary with no per-replica rows, so my probe printed `check failures:
+NONE` — **true of an empty dict, not of the run**; and my first null-R probe changed the receipt's byte
+size, so a marker check fired and returned `BLOCK`, **which would have read as refuting item 6**. I
+caught that, re-stamped, re-ran, and confirmed. Codex flagged the same confound independently and we
+agree — the coherent run was already done. Had I sent the confounded result it would have been
+`BEN-207` aimed at my own refutation.
+
+**The uncomfortable part, stated plainly: I could not have found this by auditing myself, because my
+tests share the tool's blind spot** — same idiom, same fixtures, same reasoning. That is a stronger
+argument for an independent lane than any process document.
+
+Campaign measured this turn: `squeue -r` 25 PENDING / 1 RUNNING, **24 training receipts** of 50, 50/50
+targets. `PARTIAL`, `C_stat` null. Nothing re-run against the campaign, nothing re-deployed, no code or
+test modified, `GATE5_CODE_ROOT` untouched.
+
+### 2026-08-13 ~16:10 PDT — BEN-157 R1 landed: the declared inventory is pinned, not passed (lane C)
+
+Codex's part 7 closed the audit against commit `6d3660f` rather than against a message, and the repair
+was authorized. **R1 only.** R2/R3/R4 remain unapplied and **promotion remains BLOCKED**.
+
+`DECLARED_INVENTORY = 50` is now pinned in the tool. The number was **already** declared in the file —
+`SEED_POLICY` reads `gate5-cstat-n50-v1` — and simply unenforced, so an import-time assertion **binds
+the two** rather than introducing a second source of truth: change one without the other and it is a
+hard error, not a silently different gate. `--n` survives as an **assertion only**, checked before any
+artifact is read, and a disagreeing value writes **no report at all** — a caller who asked the wrong
+question must not receive a well-formed artifact measured against their own premise, because that
+artifact is what a promotion decision would later rest on.
+
+Measured both directions on the real tool. **Before:** `--n 0` on an empty root → rc=0 and the exact
+`FAMILY_COMPLETE_PASS`. **After:** rc=**3**, stderr naming the pinned value and the policy string, no
+report. And the honest run still reports honestly — no `--n`, empty root → rc=**2**, `PARTIAL`,
+`targets_present 0 want 50`. A check that rejected every `--n` would also have "rejected" the wrong
+ones, so both the pinned value and the omitted flag were confirmed to still work.
+
+**Usage is exit 3, not 2, and this corrected my own proposal.** I had proposed 2, copying the sibling
+`verify_executing_copy_is_committed.py`. That would have been wrong here: `2` already meant *the family
+is not complete*, so reusing it would have collapsed **"could not look"** into **"looked and found it
+short"** — the exact distinction I insisted on when writing the sibling. The two tools now use opposite
+assignments, documented at both sites, because preserving this tool's contract with its launcher
+outranks cosmetic consistency between tools.
+
+**The test half is the load-bearing part and it landed in the same commit.** The suite did not merely
+miss the defect — it was written in the defect's idiom: complete-family at `n=3`, clean-name at `n=2`,
+and `test_partial_family_is_PARTIAL_and_never_PASS` building 2 and running `--n 3`, which proves
+2/3 ≠ 3/3 and says nothing about 49/50 against a **fixed** 50. `_run_main` no longer takes a size; it
+runs as production does, with no `--n`. Every test meaning "complete" builds `DECLARED_INVENTORY`, every
+test meaning "short" builds fewer, **and there is no `--n` left to move.** Three small fixtures were
+deliberately left small — they call `reconcile_target`/`reconcile_training` directly and never reach
+`main()`, so they are unit-level rather than the idiom. **73 → 90 tests in this file, 110 across both
+suites.** New coverage includes the defect in its *general* form (`test_a_short_family_has_NO_n_that_
+makes_it_pass` over sizes 0/1/49, not merely `--n 0`), that a bad `--n` against a **nonexistent** root
+is still usage rather than `PARTIAL`, and that usage and incomplete carry different exit codes.
+
+**Two defects I introduced and caught, both recorded rather than quietly fixed.** A mechanical
+`args.n` → `DECLARED_INVENTORY` rewrite also hit **`args.nominal_target_sha`**, because `args.n` is its
+prefix — `BEN-032`'s shape, a substring filter over a set that is not defined by substrings; caught by
+grepping the result instead of trusting the replace count. And `_run_main` returned the report by
+opening a fixed path, so `rep is None` meant *"no file there"* rather than *"this run wrote none"* — in
+a test that runs twice, the second run, **the one asserted to write nothing**, read the first run's
+report. Four tests failed and were right to. Fixed by deleting the output path *before* running, so the
+file's presence afterwards is evidence about this run: the write-condition rule, inside the helper
+written to check for it.
+
+**R1 deliberately creates deployment drift, and the receipt records it as a falsifiable prediction.**
+All three deployed copies read `CURRENT` before this commit, because HEAD's blob was still the
+pre-repair version; after it lands they must read `STALE_BUT_COMMITTED` with exit 3, and if they read
+`CURRENT` the parity tool is broken. Nothing was deployed — that is a separate, verified step, two of
+the three copies are unowned (`OI-64`), and a re-deploy must also update
+`GATE5_RECON_EXPECTED_VALIDATOR_SHA`, which pins the validator by content and will therefore refuse a
+stale-or-unannounced copy. New tool sha `85ca74f3…`, superseding `11e4f440…`.
+
+**Not fixed by R1:** receipt-supplied artifact paths with no canonical anchor, no training-stage
+`.done`, `completion_marker_valid` never read, marker `mtime` omitted, one of three driver digests
+compared, checks that evaporate when their input is absent, and the name-pin test asserting against a
+copy of its own string. R1 closes the **headline** — the tool can now tell a complete family from an
+empty one — **not the class.**
+
+Campaign measured this turn: `squeue -r` 24 PENDING / 1 RUNNING, **25 training receipts** of 50 — half
+the family has landed. `PARTIAL`, `C_stat` null. Nothing run against the campaign, nothing deployed,
+`GATE5_CODE_ROOT` untouched.
+
+### 2026-08-13 ~16:45 PDT — an archived Gate-2 receipt marked in its directory but not in itself (lane C, BEN-158)
+
+Routed from lane A. `gate2/final/superseded-20260813-pre-gate5-rerun/G2_GATE2_TARGET_RUNTIME_RECEIPT.json`
+sat inside a `superseded-*` directory with **`status: PASS`**. The supersession was recorded in the
+directory name and in `NOTE.md` and **never in the file**, so anything reading the file rather than the
+path read it as live — and a reader grepping `PASS` is doing precisely that. A's Gate-4 defect was the
+**mirror image**: a successor that named its predecessor while the predecessor was never marked. Same
+failure, opposite half.
+
+A's template used verbatim rather than reinvented: `status: SUPERSEDED` + `superseded_by`/`_on`/`_why`,
+`code` → `code_at_issue`, digests preserved — and **asserted, not claimed**: the conversion refuses to
+write unless the digest multiset is byte-identical (13 values, unchanged). `verdict` deliberately left
+alone; it states what that run found, which is still true, while `status` is the live-vs-retired axis.
+`test_archived_gate2_receipts_hold_no_live_bindings` now passes, 6 of 6 in that file.
+
+**The half that was not on the ticket, and the reason this got a finding.** `VALIDATION_LEDGER.md`
+`VL89` certifies the receipt at `336e8e27`. Measured across every version that has existed: the
+archived copy hashed **`23935993` on its first commit** — the `sha256` → `sha256_at_issue` rename
+happened *as part of* the archiving, in the same commit that created the directory. **The archive was
+never byte-identical to the certified digest**, twelve hours before I touched it; my marking moved it
+again to `c959a3a8`. And `NOTE.md` publishes that digest in a table headed *"so the bit-identity claim
+can be checked against these rather than against a memory of them"* — inviting a reader to compare it
+against the neighbouring file, which would show a mismatch and read as corruption.
+
+**VL89 is not wrong.** It certifies the 08-05 re-issued receipt and those bytes remain recoverable at
+`8a9d22c` — verified rather than asserted, `git show … | sha256sum` reproduces `336e8e27` exactly. What
+was wrong is that nothing on disk said so. **No digit of any digest was changed:** VL89's *quantity*
+cell now names which receipt, which commit, and that no file on disk carries it; `NOTE.md` carries the
+caveat and the recovery command.
+
+**The durable tension, stated because it will recur: a retirement convention that annotates a file in
+place cannot coexist with a ledger digest that certifies that file's bytes** — and it must not be the
+digest that gives. A's template never hit this because `docs/orchestration/state/*.json` is not
+digest-certified; Gate-2 runtime receipts are. Re-digesting the ledger row was rejected outright as the
+antipattern every hash gate here exists to catch. The general form is the day's recurring lesson: **an
+archive's provenance has to travel in the artifact, not in its neighbourhood** — and a directory name, a
+sibling `NOTE.md`, and a successor's commit message are all neighbourhood.
+
+Campaign untouched by any of this: 25 of 50 training receipts, `PARTIAL`, `C_stat` null, R2/R3/R4
+unapplied and promotion still blocked.
+
+### 2026-08-13 ~17:20 PDT — BEN-157 R2: derive from the filesystem, never from the receipt's account of itself (lane C)
+
+One treatment for audit items 2–5 rather than four patches, which is the mediator's point that seven
+patches would leave an eighth. **R3 and R4 remain unapplied; promotion remains BLOCKED.**
+
+**Item 3.** The training stage hashed `art['path']` straight from the receipt, compared against
+nothing. It now hashes the canonical `GATE5_REPLICA_WEIGHTS.npz` and adds `artifact_path_is_canonical`,
+testing the receipt's path claim against the launcher's name. Codex's attack — rename the weights,
+update the receipt to match — produced an **exact pass** before and **fails** now. The asymmetry was
+inside one file I wrote: the target stage already had this anchor at `:324`.
+
+**Item 2.** The target stage read two `.done` sentinels; the training stage read none. It now checks
+the weights marker and the receipt's own.
+
+**Item 4.** The hand-rolled `done_*` size comparison is replaced by a **call** to
+`atomic_write.is_complete`, which compares size *and* mtime — so divergence becomes impossible rather
+than merely fixed once. One hand-rolled check is retained because it adds what the primitive cannot do:
+`is_complete` derives the marker path from the subject, so **a marker copied from another replica with
+matching size and mtime would satisfy it.** The import is **fail-loud**: this file deploys to scratch as
+a single script, and the tempting *"if atomic_write is missing, do the size-only check"* fallback **is**
+the defect, so it exits 3 naming the file to copy.
+
+**Item 5.** The tool read `head_at_runtime` — itself a *claim* in the receipt, not a measurement — plus
+one loader sha, while the producer records **three** digests and the launcher checks all three. Now all
+three are required present, re-hashed from their recorded paths where those resolve, and required
+**constant across the family**. Constancy rather than a pin because the driver digests **float by
+design** (OI-57/OI-58): a pin matches every member equally and so cannot catch a driver that changed
+*mid-flight*, which is the actual exposure. Named `code_<role>_matches_disk`, deliberately not
+`..._is_the_right_driver` — it proves the file at a recorded path matches its record, nothing more.
+
+**One check I drafted and deleted before running anything.** Codex reported that a receipt declaring
+itself invalid passes. True, but the sharper form is that **no receipt from this producer can declare
+itself invalid** — `train_fullevent_replica.py:358` writes the Python literal `True`. Requiring it would
+be a check that cannot fail, which is the class this whole repair is about. `weights_marker_is_complete`
+is the measurement it gestures at. Filed as `OI-66`.
+
+**And a check of mine that could not fail, caught by its own power test.** I put the training code
+digests at the row's top level; `constant_across_family` reads `row['invariants']`, so **every member
+resolved to `None`, producing one group — indistinguishable from unanimous agreement.** The invariant
+certified the family while measuring nothing. `test_a_driver_that_changed_MID_FAMILY_is_caught` failed
+because only the per-member check fired. Had I written the positive half alone this would have shipped
+green. The wider fix: `constant_across_family` now reports whether the path **resolved**, and both loops
+assert it — a latent trap that covered the twelve pre-existing target invariants too, not just mine.
+
+**Verified against the live family before landing, because fixtures prove logic and not
+deployability.** If any new assumption disagreed with production, R2 would fail all 50 members and block
+the campaign it exists to certify. Read-only: real `artifact.path` **is** canonical; both training
+markers **do** exist in production (the producer always wrote them — item 2 was a verifier gap, not a
+producer gap); all three code paths resolve inside `CODE_ROOT`, so the disk re-hash runs for all three
+including the loader; and **`is_complete` is false for 0 of 150 real subjects**, so delegating to the
+primitive does not reject the live family. Had any of those been false the right move was to hold R2,
+not weaken it.
+
+**Fixtures had three defects that hid these items**, repaired in the same commit: markers hand-written
+with no `mtime` (so the mtime axis was never exercised and the primitive rejected fixture markers for
+unrelated reasons), **no training `.done` at all** — codex's part-7 observation — and `code` digests with
+no `path`, so the disk re-hash would have silently skipped on every fixture.
+
+**90 → 100 tests.** Full suite 1297 passed / 4 failed, down from 7: all three hash-binding tests are
+green after lane A's Gate-4 retirement and this lane's Gate-2 one. The remaining four are pre-existing
+and outside my diff (shell-file count 354→357, a tensorflow config-gate leak, an absent `/pscratch`
+path, a temp-path assertion).
+
+**New deployment constraint created by R2:** `atomic_write.py` must be copied beside the reconciler.
+That belongs in the re-deployment step rather than being discovered during it (`OI-64`).
+
+Campaign this turn: `squeue -r` 17 PENDING / **8 RUNNING** — concurrency recovered from 2 as the
+partition freed up, which is external and keeps the ETA bounds rather than a time. 25 receipts of 50,
+`PARTIAL`, `C_stat` null. Nothing deployed, `CODE_ROOT` untouched, campaign not re-run.

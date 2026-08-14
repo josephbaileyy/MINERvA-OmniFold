@@ -56,6 +56,24 @@ Run it from anywhere with numpy; it only reads the campaign tree.
 Add `--skip-replay` to drop check 2 (the signal draw is ~49M variates per replica); the family
 verdict then downgrades to reflect the weaker evidence rather than silently claiming the same
 thing.
+
+THE INVENTORY SIZE IS NOT AN ARGUMENT (BEN-157, R1)
+---------------------------------------------------
+`DECLARED_INVENTORY` is pinned in this file and bound by assertion to `SEED_POLICY`, which already
+names it (`gate5-cstat-n50-v1`). `--n` survives only as an *assertion*: passing a value that
+disagrees is a usage error and no report is written at all.
+
+Until this repair `--n` was an unconstrained int and every completeness comparison was against it,
+so `--n 0` on an empty directory returned rc=0 and the exact `FAMILY_COMPLETE_PASS`. The verdict was
+not wrong so much as UNFALSIFIABLE: a pass at 50/50 and a pass at a caller-chosen size produced
+reports that looked alike. `declared_inventory_is_pinned_in_tool` in the report exists so a reader
+can tell those apart.
+
+Exit codes:  0 complete  |  2 measured and NOT complete  |  3 usage / bad declaration.
+`2` and `3` are distinct on purpose -- "looked and found it short" must never be confusable with
+"could not look". The remaining items of the BEN-157 audit (receipt-supplied artifact paths, marker
+`mtime`, driver digests, checks that vanish when their input is absent) are tracked in `OI-65` and
+are NOT yet repaired.
 """
 
 from __future__ import annotations
@@ -69,6 +87,30 @@ import sys
 
 import numpy as np
 
+# BEN-157 R2: the completion primitive is IMPORTED, never re-implemented.
+#
+# This tool used to compare a `.done` sentinel's recorded `size` to the file on disk by hand, and
+# omitted `mtime` -- which `atomic_write.is_complete` checks. The reconciler was therefore strictly
+# MORE PERMISSIVE than the primitive it stood in for, and nothing said so. Calling the primitive makes
+# that class of divergence impossible rather than merely unlikely: there is one implementation.
+#
+# The import is FAIL-LOUD on purpose. This file is deployed to scratch as a single script, so the
+# tempting fallback is "if atomic_write is missing, do the size-only check". That fallback is the
+# defect. A missing primitive means the tool CANNOT perform the check it claims, and it must refuse to
+# run rather than quietly downgrade. Deployment must copy atomic_write.py alongside this file.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+try:
+    import atomic_write as _aw
+except ImportError as _exc:  # pragma: no cover - exercised by test_missing_atomic_write_is_fatal
+    sys.stderr.write(
+        "reconcile: cannot import atomic_write, which owns the completion-marker contract "
+        f"({_exc}).\n"
+        "           This tool will NOT fall back to a weaker marker check -- that divergence is\n"
+        "           exactly the defect BEN-157 item 4 recorded. Copy atomic_write.py next to this\n"
+        "           script (both live in nd-unfolding/pet/) and re-run.\n"
+    )
+    raise SystemExit(3)
+
 # ---------------------------------------------------------------------------
 # Contracts copied from the producing code, with their sources named so a
 # reader can diff them rather than trust this file.
@@ -77,6 +119,34 @@ import numpy as np
 # build_fullevent_replica_target.py:35
 SEED_POLICY = "gate5-cstat-n50-v1: bootstrap_seed=50000+replica_index"
 SEED_BASE = 50000
+
+# THE DECLARED INVENTORY SIZE, PINNED HERE AND NOT SUPPLIED BY THE CALLER.
+#
+# Until BEN-157 this was `--n`, an unconstrained int defaulting to 50, and every completeness
+# comparison was against it. `--n 0` on an empty directory therefore returned rc=0 and the exact
+# FAMILY_COMPLETE_PASS, and a real 3-member family passed at `--n 3` while being PARTIAL at `--n 50`
+# with the artifacts unchanged. The file's own docstring states the principle its parser did not
+# enforce: 49 of 50 is not a 49-replica ensemble.
+#
+# The number was already declared in this file -- SEED_POLICY reads `n50` -- and simply unenforced,
+# so the assertion below binds the two rather than introducing a second source of truth. If the
+# campaign's declared size ever changes, BOTH must change, and the mismatch is a hard error at
+# import rather than a silently different gate.
+DECLARED_INVENTORY = 50
+assert f"n{DECLARED_INVENTORY}" in SEED_POLICY, (
+    f"DECLARED_INVENTORY={DECLARED_INVENTORY} disagrees with SEED_POLICY={SEED_POLICY!r}; "
+    "the inventory size is declared in two places and they have drifted"
+)
+
+# Exit codes. `2` already meant "the family is not complete" before BEN-157 and is left alone, so
+# EXIT_USAGE is a THIRD code rather than a reuse of it: a caller asking the wrong question must
+# never be confusable with a family that was measured and found short. (The sibling tool
+# verify_executing_copy_is_committed.py uses 2 for usage and 3 for its bad finding -- the opposite
+# assignment. Deliberate: preserving this tool's existing contract with its launcher outranks
+# cosmetic consistency between tools, and both are documented where they are used.)
+EXIT_COMPLETE = 0
+EXIT_NOT_COMPLETE = 2
+EXIT_USAGE = 3
 
 # The nominal target this family is centred ON, and must never equal. Deliberately NOT hardcoded:
 # it is supplied via --nominal-target-sha, measured from the Gate-2 promoted receipt at call time.
@@ -219,6 +289,43 @@ def load_done(path):
         return json.load(fh)
 
 
+def check_marker(c, label, subject):
+    """Validate `subject`'s completion marker by CALLING the canonical primitive, plus one extra.
+
+    Two checks, and the split is the point:
+
+      `..._marker_is_complete` is `atomic_write.is_complete`, unmodified. It compares the marker's
+      recorded size AND mtime to the file on disk. Before BEN-157 R2 this tool compared size only, so
+      it accepted post-marker mutations the primitive rejects. Delegating removes the possibility of
+      divergence rather than fixing one instance of it.
+
+      `..._marker_names_current_subject` is the one thing `is_complete` does NOT do: it reads the
+      marker's `output` field and requires it to name THIS replica's file. `is_complete` derives the
+      marker path from the subject path, so a marker copied from another replica -- same size, same
+      mtime, wrong `output` -- would satisfy it. That is why this check stays hand-rolled: it adds
+      evidence the primitive does not carry, rather than restating it.
+
+    KNOWN RESIDUAL, recorded rather than papered over: `is_complete` compares `int(st_mtime)`, i.e.
+    WHOLE SECONDS. A same-size rewrite inside the same second is invisible to it, and therefore to
+    this check. Closing that would mean changing the primitive, which is a separate decision with
+    other callers (`lib/resume_guard.sh` mirrors it).
+    """
+    marker = _aw.completion_marker_path(subject)
+    c.truth(f"{label}_marker_present", os.path.exists(marker), note=marker)
+    if not os.path.exists(marker):
+        return
+    c.truth(f"{label}_marker_is_complete", _aw.is_complete(subject),
+            note="atomic_write.is_complete: marker's recorded size AND mtime still describe the "
+                 "file. Called, not re-implemented, so this tool cannot be more permissive than "
+                 "the primitive (BEN-157 item 4)")
+    dj = load_done(marker)
+    if dj is not None:
+        c.eq(f"{label}_marker_names_current_subject", os.path.realpath(dj.get("output", "")),
+             os.path.realpath(subject),
+             note="the one thing is_complete does not check: a marker copied from another replica "
+                  "with matching size and mtime would satisfy the primitive")
+
+
 def reconcile_target(idx, root, replay, cache):
     d = os.path.join(root, "replicas", f"replica_{idx:02d}", "target")
     npy = os.path.join(d, "GATE5_REPLICA_TARGET.npy")
@@ -254,15 +361,9 @@ def reconcile_target(idx, root, replay, cache):
          note="hashed from disk this run; the receipt's value is the claim being tested")
     c.eq("target_npy_size_on_disk", measured_size, w.get("size_bytes"))
 
-    # --- .done sentinels: check what they can actually prove. ---
-    for label, path, subject in (("npy", npy + ".done", npy), ("receipt", rec + ".done", rec)):
-        dj = load_done(path)
-        if dj is not None:
-            c.eq(f"done_{label}_names_current_subject", os.path.realpath(dj.get("output", "")),
-                 os.path.realpath(subject),
-                 note="binds the marker to this replica's file rather than presence alone")
-            c.eq(f"done_{label}_records_current_size", dj.get("size"), os.path.getsize(subject),
-                 note="a sentinel size differing from disk means the file changed after completion")
+    # --- .done sentinels: delegate to the primitive, then add what it does not do. ---
+    for label, subject in (("npy", npy), ("receipt", rec)):
+        check_marker(c, label, subject)
 
     # --- Pins and shared inputs. ---
     c.eq("input_sha256", r.get("input_preflight", {}).get("sha256"), EXPECTED_INPUT_SHA)
@@ -482,16 +583,75 @@ def reconcile_training(idx, root, target_row):
     c.eq("seed_policy_string", r.get("seed_policy"), SEED_POLICY)
     c.eq("head_at_runtime", r.get("execution", {}).get("head_at_runtime"), EXPECTED_HEAD)
     c.eq("slurm_array_task_id", str(r.get("execution", {}).get("slurm_array_task_id")), str(idx))
-    c.eq("loader_sha256", r.get("code", {}).get("loader", {}).get("sha256"), EXPECTED_LOADER_SHA)
 
+    # --- All THREE code digests the producer records, not just the loader. -----------------------
+    #
+    # BEN-157 item 5. `train_fullevent_replica.py:367-374` records replica_driver,
+    # nominal_driver_unmodified and loader. `sbatch_gate5_replica_train_array.sh:41-44` checks all
+    # three plus HEAD. This tool checked `head_at_runtime` and the loader only -- and
+    # `head_at_runtime` is ITSELF a claim in the receipt, not a measurement, so the verifier's whole
+    # provenance rested on two self-reported strings, one standing in for two digests recorded right
+    # beside it. "The launcher checks them" is not a defence: BEN-156 established that the executing
+    # copy can differ from the committed one, which is the class an independent verifier exists for.
+    #
+    # Only the loader has a pinned expectation. The two driver digests FLOAT BY DESIGN -- they ride the
+    # next launch with a CODE_ROOT sync (OI-57/OI-58) -- so pinning a value here would be wrong. What
+    # is checkable without a pin: re-hash each recorded path from disk, and require constancy across
+    # the family (family-level, below). Named so neither claims more than it does: `..._matches_disk`
+    # is deliberately not `..._is_the_right_driver`.
+    code = r.get("code", {})
+    c.eq("loader_sha256", code.get("loader", {}).get("sha256"), EXPECTED_LOADER_SHA)
+    for role in ("replica_driver", "nominal_driver_unmodified", "loader"):
+        info = code.get(role) or {}
+        claimed, cpath = info.get("sha256"), info.get("path")
+        c.truth(f"code_{role}_digest_recorded",
+                isinstance(claimed, str) and len(claimed) == 64,
+                note="a digest the producer records but this tool never reads is a digest nobody "
+                     "checks; an absent one cannot be checked at all")
+        if isinstance(cpath, str) and os.path.isfile(cpath):
+            c.eq(f"code_{role}_matches_disk", sha256_file(cpath), claimed,
+                 note="re-hashed from the path the receipt names. Proves the file THERE now matches "
+                      "what was recorded; does NOT prove the path is the right one, which is what "
+                      "the family-constancy check adds")
+
+    # --- The artifact, at the CANONICAL path rather than the one the receipt names. -------------
+    #
+    # BEN-157 item 3. This used to hash `art["path"]` straight from the receipt, compared against
+    # nothing. Codex moved the weights to UNEXPECTED_WEIGHTS.npz, updated the receipt to match, and
+    # got an exact pass with trainings_name_mismatch=0 -- because the NAME_MISMATCH stray scan is
+    # reachable only when the receipt is ABSENT, so a receipt at the correct name never enters it.
+    # The guard catches a file that disagrees with the launcher; it could not catch a receipt that
+    # AGREES with a wrong file.
+    #
+    # The fix is the R2 invariant: hash the canonical path, and treat the receipt's path as a CLAIM
+    # to be tested against it. The target stage already did exactly this at
+    # `step1_feed_path_is_this_replica_target`; the training stage did not, in the same file.
     art = r.get("artifact", {})
-    path = art.get("path")
-    if path and os.path.exists(path):
-        c.eq("artifact_sha256_RECOMPUTED_vs_receipt", sha256_file(path), art.get("sha256"),
-             note="hashed from disk this run")
-        c.eq("artifact_size_on_disk", os.path.getsize(path), art.get("size_bytes"))
+    canonical = os.path.join(d, TRAIN_ARTIFACT_NAME)
+    c.eq("artifact_path_is_canonical", os.path.realpath(str(art.get("path", ""))),
+         os.path.realpath(canonical),
+         note="the receipt's own path claim, tested against the launcher's name rather than "
+              "trusted; a receipt agreeing with a wrongly-named file fails here")
+    if os.path.exists(canonical):
+        c.eq("artifact_sha256_RECOMPUTED_vs_receipt", sha256_file(canonical), art.get("sha256"),
+             note="hashed from the CANONICAL path this run, not from the path the receipt names")
+        c.eq("artifact_size_on_disk", os.path.getsize(canonical), art.get("size_bytes"))
+        check_marker(c, "weights", canonical)
     else:
-        c.truth("artifact_present_on_disk", False, note=f"{path} missing")
+        c.truth("artifact_present_at_canonical_path", False, note=f"{canonical} missing")
+
+    # `artifact.completion_marker_valid` is deliberately NOT read as evidence.
+    # `train_fullevent_replica.py:358` writes the Python literal `True`, so it is a decoration rather
+    # than a measurement and REQUIRING IT WOULD BE A CHECK THAT CANNOT FAIL -- which is the class this
+    # whole repair is about, and adding one here would be a self-inflicted example. The measurement it
+    # gestures at is `weights_marker_is_complete` above. Vocabulary defect filed as OI-66.
+    #
+    # (Codex reported this as "a receipt declaring itself invalid passes". True, but the sharper form
+    # is that no receipt from this producer CAN declare itself invalid: the field is a constant.)
+
+    # The receipt's own marker, at the training stage. The target stage checked two markers; this
+    # stage checked none (BEN-157 item 2).
+    check_marker(c, "train_receipt", rec)
 
     # THE BINDING THAT MATTERS: this training must have consumed THIS replica's target.
     tgt = r.get("target", {})
@@ -503,6 +663,16 @@ def reconcile_training(idx, root, target_row):
     return {"stage": "training", "replica_index": idx, "state": "PRESENT",
             "artifact_sha256": art.get("sha256"),
             "target_sha256": tgt.get("sha256"),
+            # Under "invariants" because that is where constant_across_family() looks. Exposed so the
+            # family stage can require these constant across members: per-member re-hashing proves the
+            # file at a recorded path matches its record, but only cross-member constancy catches a
+            # driver that changed MID-FLIGHT, which is the risk a floating pin leaves open (item 5).
+            "invariants": {
+                "code": {role: (code.get(role) or {}).get("sha256")
+                         for role in ("replica_driver", "nominal_driver_unmodified", "loader")},
+                "code_paths": {role: (code.get(role) or {}).get("path")
+                               for role in ("replica_driver", "nominal_driver_unmodified", "loader")},
+            },
             "evidence": r.get("evidence"),
             "timing_seconds": r.get("timing", {}).get("total_seconds"),
             "checks": c.summary(),
@@ -510,22 +680,40 @@ def reconcile_training(idx, root, target_row):
 
 
 def constant_across_family(rows, path):
-    """Group replicas by the value of a nested key. Anything the family shares MUST be constant;
-    returning the grouping (not a boolean) means a violation names its members."""
-    groups = {}
+    """Group replicas by the value of a nested key under `row["invariants"]`.
+
+    Anything the family shares MUST be constant; returning the grouping rather than a boolean means a
+    violation names its members.
+
+    A MISSPELLED OR MISPLACED PATH USED TO CERTIFY THE FAMILY. Every row resolved to None, so the
+    result was a single group and the check passed -- indistinguishable from genuine agreement. That
+    is how the R2 training invariants shipped broken in their first draft: the values were put at the
+    row's top level instead of under `invariants`, every member resolved to None, and the check could
+    not fail. Caught by its own power test, which is the argument for having one.
+
+    `resolves` is therefore returned alongside the grouping: False when the path is absent from every
+    row, so the caller can fail loudly instead of reading a vacuous pass as a result.
+    """
+    groups, resolved_any = {}, False
     for row in rows:
         cur = row.get("invariants", {})
         for part in path:
             cur = (cur or {}).get(part) if isinstance(cur, dict) else None
+        if cur is not None:
+            resolved_any = True
         groups.setdefault(json.dumps(cur, sort_keys=True), []).append(row["replica_index"])
-    return groups
+    return groups, (resolved_any or not rows)
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", required=True, help="campaign dir containing replicas/")
-    ap.add_argument("--n", type=int, default=50, help="declared inventory size (predeclared)")
+    ap.add_argument("--n", type=int, default=DECLARED_INVENTORY,
+                    help=f"ASSERTION ONLY: must equal the pinned DECLARED_INVENTORY "
+                         f"({DECLARED_INVENTORY}). It cannot change the gate; it exists so a "
+                         f"caller who believes the inventory is some other size finds out here "
+                         f"instead of getting a pass measured against their own belief (BEN-157).")
     ap.add_argument("--nominal-target-sha", default=None,
                     help="sha256 of the promoted nominal target; every replica must differ from it")
     ap.add_argument("--out", default=None, help="write the full JSON report here")
@@ -537,10 +725,25 @@ def main():
                     help="skip the three-stream factor re-draw (weakens the verdict, and says so)")
     args = ap.parse_args()
 
+    # BEN-157 R1: the declaration is pinned, and --n may only agree with it. Checked BEFORE any
+    # artifact is read, so a caller who asked the wrong question gets no report at all rather than
+    # a well-formed one measured against their own premise.
+    if args.n != DECLARED_INVENTORY:
+        print(
+            f"reconcile: --n {args.n} does not match the pinned declared inventory "
+            f"{DECLARED_INVENTORY} ({SEED_POLICY}).\n"
+            f"           --n is an assertion, not a parameter: completeness is measured against "
+            f"the predeclaration, never against the caller.\n"
+            f"           If the campaign's declared size really changed, change "
+            f"DECLARED_INVENTORY and SEED_POLICY together and re-run the tests.",
+            file=sys.stderr,
+        )
+        return EXIT_USAGE
+
     replay = not args.skip_replay
     cache = {}
     targets, trainings = [], []
-    for idx in range(args.n):
+    for idx in range(DECLARED_INVENTORY):
         t = reconcile_target(idx, args.root, replay, cache)
         targets.append(t)
         trainings.append(reconcile_training(idx, args.root, t))
@@ -560,11 +763,11 @@ def main():
                        "the wrong place; a count of 0 present would then be a statement about the "
                        "SEARCH, not about the campaign")
 
-    family.eq("targets_present", len(present_t), args.n)
+    family.eq("targets_present", len(present_t), DECLARED_INVENTORY)
     family.eq("target_replicas_failing_own_checks",
               sorted(t["replica_index"] for t in present_t if t["verdict"] != "PASS"), [])
     if args.stage == "family":
-        family.eq("trainings_present", len(present_r), args.n)
+        family.eq("trainings_present", len(present_r), DECLARED_INVENTORY)
         family.eq("training_replicas_failing_own_checks",
                   sorted(r["replica_index"] for r in present_r if r["verdict"] != "PASS"), [])
 
@@ -609,20 +812,46 @@ def main():
     ]
     invariants_report = {}
     for path in invariant_paths:
-        groups = constant_across_family(present_t, list(path))
+        groups, resolves = constant_across_family(present_t, list(path))
         name = ".".join(path)
         invariants_report[name] = {json.loads(k): v for k, v in groups.items()} \
             if len(groups) > 1 else json.loads(next(iter(groups))) if groups else None
+        # A path absent from every row groups into ONE null bucket and would otherwise read as
+        # unanimous agreement. Assert it resolves before believing the grouping.
+        family.truth(f"invariant_path_resolves[{name}]", resolves,
+                     note="absent from every replica: the check below would pass vacuously")
         family.eq(f"invariant_constant_across_family[{name}]", len(groups), 1 if present_t else 0,
                   note="more than one group means the family is not one inventory")
+
+    # Training-side invariants: the three code digests and their paths must be identical across every
+    # member. Per-member re-hashing proves each recorded path still matches its record; only this
+    # catches a driver or loader that changed MID-FLIGHT, which is precisely what a floating pin
+    # (OI-57/OI-58) leaves open and what no pinned constant could detect. Runs only at the family
+    # stage, where trainings are expected at all.
+    if args.stage == "family":
+        for role in ("replica_driver", "nominal_driver_unmodified", "loader"):
+            for block in ("code", "code_paths"):
+                groups, resolves = constant_across_family(present_r, [block, role])
+                name = f"training.{block}.{role}"
+                invariants_report[name] = (
+                    {json.loads(k): v for k, v in groups.items()} if len(groups) > 1
+                    else json.loads(next(iter(groups))) if groups else None
+                )
+                family.truth(f"invariant_path_resolves[{name}]", resolves,
+                             note="absent from every replica: the check below would pass vacuously")
+                family.eq(f"invariant_constant_across_family[{name}]", len(groups),
+                          1 if present_r else 0,
+                          note="more than one group means the training code changed mid-family; a "
+                               "floating pin cannot catch this and a pinned constant would not "
+                               "either, because it would match every member equally")
 
     seeds = sorted(t["bootstrap_seed"] for t in present_t)
     family.eq("seeds_are_contiguous_from_base",
               seeds, [SEED_BASE + t["replica_index"] for t in
                       sorted(present_t, key=lambda x: x["replica_index"])])
 
-    target_complete = len(present_t) == args.n and not family.failed
-    family_complete = target_complete and len(present_r) == args.n
+    target_complete = len(present_t) == DECLARED_INVENTORY and not family.failed
+    family_complete = target_complete and len(present_r) == DECLARED_INVENTORY
     if args.stage == "target" and target_complete:
         verdict = "TARGETS_COMPLETE_PASS" if replay else "TARGETS_COMPLETE_PASS_REPLAY_SKIPPED"
     elif args.stage == "family" and family_complete:
@@ -640,14 +869,20 @@ def main():
         verdict = "PARTIAL"
     # A completeness shortfall alone is PARTIAL, never BLOCK; a coherence failure is BLOCK even
     # when the family is still filling, because more replicas cannot repair it.
-    if verdict == "PARTIAL" and (len(present_t) < args.n or len(present_r) < args.n):
+    if verdict == "PARTIAL" and (len(present_t) < DECLARED_INVENTORY or len(present_r) < DECLARED_INVENTORY):
         pass
 
     report = {
         "tool": "reconcile_gate5_family.py",
         "root": os.path.abspath(args.root),
         "stage": args.stage,
-        "declared_inventory": args.n,
+        "declared_inventory": DECLARED_INVENTORY,
+        # The artifact must record WHERE the declaration came from, not just its value. Before
+        # BEN-157 a pass at 50/50 and a pass at a caller-chosen n produced byte-identical-looking
+        # reports, so the artifact could not contradict a wrong verdict -- which made the verdict
+        # unfalsifiable rather than wrong. These two fields are what let a reader check that.
+        "declared_inventory_is_pinned_in_tool": True,
+        "declared_inventory_policy_string": SEED_POLICY,
         "replay_performed": replay,
         "source_input_measurement": source_measurement,
         "verdict": verdict,
@@ -683,7 +918,9 @@ def main():
         "family_failures": family.failed,
         "C_stat": None,
     }, indent=2, sort_keys=True, default=str))
-    return 0 if verdict.startswith(("FAMILY_COMPLETE", "TARGETS_COMPLETE")) else 2
+    if verdict.startswith(("FAMILY_COMPLETE", "TARGETS_COMPLETE")):
+        return EXIT_COMPLETE
+    return EXIT_NOT_COMPLETE
 
 
 if __name__ == "__main__":

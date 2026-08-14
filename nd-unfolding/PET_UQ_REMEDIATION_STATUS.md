@@ -419,6 +419,59 @@ target verdict and all 50 training receipts pass; the target verdict is now sati
 training condition is not. No subset or `C_stat` is permitted. Promotion
 receipt: [`state/gate5-target-family-promotion-56873858.json`](../docs/orchestration/state/gate5-target-family-promotion-56873858.json).
 
+**Update 2026-08-13 ~17:20 PDT — BEN-157 R2 landed; R3/R4 open, promotion still BLOCKED.**
+One treatment for audit items 2–5, not four patches. The training stage now hashes the **canonical**
+artifact path and tests the receipt's path claim against it (`artifact_path_is_canonical`), so codex's
+rename-plus-matching-receipt attack — an **exact pass** before — now fails; it reads its own `.done`
+markers, where it previously read none; `atomic_write.is_complete` is **called** rather than
+re-implemented, with one hand-rolled check retained for the thing the primitive cannot do (a marker
+naming another replica's file); and **all three** code digests are read, re-hashed from disk where the
+path resolves, and required constant across the family — constancy rather than a pin, because the driver
+digests float by design and a pin matches every member equally. **Verified against the live family
+before landing: 150 real markers, `is_complete` false for 0**; real `artifact.path` canonical; all three
+code paths resolving. `completion_marker_valid` is deliberately **not** required — the producer writes
+the literal `True`, so it would be a check that cannot fail (`OI-66`); I drafted that check and removed
+it. **One invariant of mine could not fail and its own power test caught it** (values at the row's top
+level, so every member resolved to `None` and one group read as unanimous); `constant_across_family` now
+reports whether the path resolved, which also covers the twelve pre-existing target invariants. 90 → 100
+tests; full suite 1297/4, down from 7 failures. **New deployment constraint: `atomic_write.py` must be
+copied beside the reconciler**, and the import is fail-loud rather than degrading. Receipt
+[`state/gate5-reconciler-r2-repair-20260813.json`](../docs/orchestration/state/gate5-reconciler-r2-repair-20260813.json).
+
+**Update 2026-08-13 ~16:10 PDT — BEN-157 R1 landed; promotion still BLOCKED pending R2/R3/R4.**
+`DECLARED_INVENTORY = 50` is pinned in the tool and bound by import-time assertion to `SEED_POLICY`,
+which already named it. `--n` is an **assertion only**, checked before any artifact is read, and a
+disagreeing value writes **no report at all**. Measured both ways: `--n 0` on an empty root went from
+**rc=0 with the exact `FAMILY_COMPLETE_PASS`** to **rc=3 with no report**, while the honest run still
+returns rc=2 `PARTIAL` with `targets_present 0 want 50`. Usage is exit **3** rather than 2 — correcting
+my own proposal, since 2 already meant *incomplete* here and reusing it would have collapsed "could not
+look" into "looked and found it short". **The suite was de-idiomed in the same commit** (73 → 90 tests;
+`_run_main` no longer takes a size; complete-family tests build `DECLARED_INVENTORY`; three unit-level
+fixtures deliberately left small). The report now carries `declared_inventory_is_pinned_in_tool`, so a
+pass at 50/50 is distinguishable **in the artifact** from one at a caller-chosen size — which is what
+made the old pass unfalsifiable rather than wrong. **R1 closes the headline, not the class:** items 2–7
+are untouched and `OI-65` holds them. New tool sha `85ca74f3…`; all three deployed copies are now
+deliberately stale and re-deployment is a separate verified step (`OI-64`, `BEN-156`). Receipt
+[`state/gate5-reconciler-r1-repair-20260813.json`](../docs/orchestration/state/gate5-reconciler-r1-repair-20260813.json).
+
+**Update 2026-08-13 ~15:50 PDT — PROMOTION BLOCKED: codex's audit found seven defects in the reconciler and all seven are confirmed.**
+The verifier this lane wrote cannot currently tell a complete family from an empty one. `--n` is
+caller-supplied with no floor, so **`--n 0` on an empty directory returns rc=0 and the exact
+`FAMILY_COMPLETE_PASS`**, and a real 3-member family passes at `--n 3` while `PARTIAL` at `--n 50` with
+the artifacts unchanged. Training `PRESENT` is receipt-only and **`completion_marker_valid` is never
+read anywhere in the tool**; the `NAME_MISMATCH` guard is blind to a receipt that *agrees* with a wrong
+file; the `.done` check omits `mtime` and **no receipt is hashed against anything**; the verifier checks
+a HEAD *claim* where the producer records three content digests and the launcher checks all three; R
+checks evaporate on a null `R` (43 passed / 0 failed, `R_recorded: null`); and the name-pin test asserts
+against duplicated literals rather than opening the launcher — a claim I had made to a peer in the
+opposite form and withdraw here. **73 tests could not have found any of it: they are written in the
+tool's own idiom.** No emitted verdict is invalidated — every campaign run used the default `n=50` and
+returned `PARTIAL` — but **Gate 5 does not advance to extraction or centering until the verifier is
+repaired and retested, and no promotion pass will be run on the current tool even at 50/50.** One
+invariant, not seven patches: derive from the filesystem and pinned constants, never from the receipt's
+account of itself; required inputs fail closed rather than disappear. `BEN-157`, `OI-65`; receipt
+[`state/gate5-reconciler-audit-confirmation-20260813.json`](../docs/orchestration/state/gate5-reconciler-audit-confirmation-20260813.json).
+
 **Update 2026-08-13 15:12 PDT — deployment parity checked and clean; still `PARTIAL` at 23 of 50.**
 Family state unchanged (50/50 targets, 23 training receipts, 23 weights `.npz`, `C_stat` null), so the
 reconciler was deliberately **not** re-run — the count has not moved, and a re-run costs ~23 × 49M-variate

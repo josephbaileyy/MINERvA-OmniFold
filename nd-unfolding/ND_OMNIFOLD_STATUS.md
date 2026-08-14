@@ -37,6 +37,16 @@ the other two branches are live. **Gate 6 is not unblocked by this leg and the f
 `{42,46}×{0,4}` 2×2 (Leg X) is authorized and deliberately **not** submitted until the floor completes.
 Numbers VL127–VL129; receipt `../docs/orchestration/state/gate6-floor-replication-partial-56863958.json`.
 
+**Leg X is predeclared and NOT submitted.** Joseph fixed the readout at **iteration 2 only**, one run per
+cell, no replication — because Leg F measured the same-seed spread at 89.6% of the five-member spread at
+iteration 0 against 15.1% at iteration 2, so **the restriction is what makes an unreplicated 2×2 sound
+rather than a limitation of it**. Two of the four cells already exist (`member_1`, `member_5`) and are
+read-only; only `(42,4)` and `(46,0)` would train. The threshold is `t_{0.975,4} × F_sd[2]` — fixed now,
+`σ̂` substituted from the closed floor — and a null ships its MDE. `sbatch_pet_fullevent_legx_2x2_array.sh`
+**refuses to start** until a Leg F receipt shows `n=5`, zero invalid draws and a terminal verdict, so
+"floor first" is a mechanism rather than a promise. Rule:
+`../docs/orchestration/PREDECLARATION-20260813-gate6-legX-2x2.md`.
+
 Publication execution is indexed, without duplicating scientific facts, in
 [the dependency/rerun map](../docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md) and
 [the publication runbook](../docs/PUBLICATION_COMPLETION_RUNBOOK.md).
