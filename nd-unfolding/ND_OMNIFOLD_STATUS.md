@@ -11,7 +11,9 @@ full/subset signal factors, full background factors, bindings, logs, accounting,
 isolation all pass with zero failed checks. `C_stat` remains null; the next action is full-input
 per-replica extraction followed by a complete 50-member manifest. That dedicated extraction path is
 now implemented and acceptance-tested (181/181 plus a real 49,152,885-row factor replay) without
-editing the Gate-4-pinned nominal extractor; submission follows from an immutable worktree. Exact promotion receipt:
+editing the Gate-4-pinned nominal extractor. The first submission created no job because 64 GiB made
+Slurm bill 38 cores against the 32-core/GPU queue cap; the changed launcher now uses the accepted queue
+default and will be resubmitted from a new immutable commit. Exact promotion receipt:
 `../docs/orchestration/state/gate5-training-family-promotion-56933831.json`.
 
 **Gate 6 PET ML ensemble is BLOCKED by its predeclared no-training convergence control.** Array

@@ -414,6 +414,10 @@ and publishes a receipt last. The after-any terminal validator requires exactly 
 selects a subset. The actual TensorFlow-runtime battery is 181/181 PASS; replica 0's 49,152,885-row
 signal draw replays exactly. `C_stat` remains null. Implementation receipt:
 [`state/gate5-extraction-implementation-20260814.json`](../docs/orchestration/state/gate5-extraction-implementation-20260814.json).
+The first submit call then created no job: explicit 64 GiB raised the request to 38 billed cores against
+the queue's 32-core/A100 cap. The changed retry removes that request and uses the same default-memory
+footing as accepted Gate-5 training; receipt:
+[`state/gate5-extraction-submit-prestart-refused-20260814.json`](../docs/orchestration/state/gate5-extraction-submit-prestart-refused-20260814.json).
 
 **Update 2026-08-14 08:57 UTC — TRAINING FAMILY PROMOTED PASS after the independent NPZ gate.**
 Read-only job `56933831` completed `0:0` with empty stderr. Its full-strength family replay is

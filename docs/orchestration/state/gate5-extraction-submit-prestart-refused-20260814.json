@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-14T09:16:00Z",
+  "action": "First submission attempt for the Gate-5 N=50 full-input extraction array",
+  "code_head": "d0a07cfd7fb924883dd63da07431512b4e3888a8",
+  "result": "REFUSED_BEFORE_JOB_CREATION",
+  "return_code": 1,
+  "job_id": null,
+  "output_created": false,
+  "exact_blocker": "Logical queue gpu_shared_ss11 requires 32.0 cores per GPU; explicit 64G memory adjusted the one-A100 request to 38 cores",
+  "changed_fix": "Remove the explicit memory request and use the queue default for 32 CPUs/one A100; retain the 2h wall and 10-task concurrency cap",
+  "launcher_sha256": {
+    "refused_attempt": "27b5ca467a021e3aad60e8c0b55a0a577854722836621d13dab30c0fd28d6ac5",
+    "changed_retry": "dfec02a5756e42c18934da88ec78f08cf922971c958dea359005ce2cc1923125"
+  },
+  "resource_evidence": {
+    "analogous_job": "56525297",
+    "analogous_full_input_push_elapsed_with_later_ROOT_failure": "00:14:06",
+    "analogous_batch_step_MaxRSS": "6891088K",
+    "accepted_gate5_training_launcher_uses_explicit_mem": false
+  },
+  "unchanged_retry": false,
+  "C_stat": null,
+  "subset_selected": false,
+  "reset_credit_consumed": false
+}

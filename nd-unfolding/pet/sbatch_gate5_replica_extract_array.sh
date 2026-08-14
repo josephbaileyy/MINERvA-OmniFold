@@ -7,7 +7,6 @@
 #SBATCH --ntasks=1
 #SBATCH --gpus=1
 #SBATCH --cpus-per-task=32
-#SBATCH --mem=64G
 #SBATCH --time=02:00:00
 #SBATCH --array=0-49%10
 #SBATCH --export=ALL,HOME=/global/homes/j/josephrb

@@ -7121,3 +7121,13 @@ replica-0 preflight independently replayed all 49,152,885 signal factors and rec
 `892d1531…`. Batch was selected over interactive because this is a 50-member, ten-concurrent-GPU family
 that must outlive a single interactive allocation. `C_stat` remains null. Receipt:
 `../docs/orchestration/state/gate5-extraction-implementation-20260814.json`.
+
+### 2026-08-14 09:16 UTC — Gate-5 extraction submission attempt refused before job creation
+
+The first submit call from immutable HEAD `d0a07cf` created no job: Slurm rejected the array request
+because explicit `--mem=64G` raised the billing allocation to 38 CPU cores for one A100, while
+`gpu_shared_ss11` permits 32 cores per GPU. This is a changed prestart launcher blocker, not an
+extraction failure. The analogous full-input push used about 6.9 GiB MaxRSS, and the existing accepted
+Gate-5 training launcher uses the queue's memory default, so the correction removes the explicit memory
+request while retaining 32 CPUs, one A100 and the 2h wall. No output or job ID exists from this attempt;
+the retry must run from a new immutable commit.
