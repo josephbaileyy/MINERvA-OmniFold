@@ -1,8 +1,31 @@
 # REQUIREMENTS — what `C_stat` must look like to compose into the P5B assembly
 
-**Author:** Lane B (Gate 6), builder 1 under `OI-121`. **Date:** 2026-08-14.
-**Status:** INPUT TO LANE C'S SPEC. Written *before* any implementation, deliberately — `OI-121`'s
-dual-construction value dies if builder 1 codes first and the spec becomes a rubber stamp of it.
+**Author:** Lane B (Gate 6), **the sole builder** under `OI-121`. **Date:** 2026-08-14.
+**Status:** INPUT TO LANE C'S SPEC. Written *before* any implementation, deliberately.
+
+> **AMENDED 2026-08-14 — THE DUAL BUILD IS DROPPED. Joseph, verbatim: *"Okay yeah drop the second
+> builder"*.** This document was written as builder 1's input to a two-builder design. **There is now
+> one builder and there was never a second.** Four reasons, all measured: (1) lane D established that
+> `Xc.T @ Xc` and `np.einsum` are **bitwise identical** because NumPy routes both to the same BLAS
+> `dgemm` — reproduced independently by the mediator at `0.000e+00` (`BEN-188`); (2) C's spec pins
+> `dof`, `centering`, `ravel_order` and member selection, which were the only decisions two builders
+> could genuinely have diverged on; (3) both `codex` accounts are out of quota; and (4) **I had already
+> read and quoted the in-tree recipe** (`combine_cstat_bkgsub.py:57-58`) in §0.3 while auditing for
+> exactly this leak, so I cannot serve as an implementation independent of it.
+>
+> **WHAT THE RECEIPT MAY AND MAY NOT CLAIM — the part that outlives this decision.**
+> **MAY:** spec conformance; a regression comparison against the established in-tree recipe; and that
+> D's element-wise harness found no ordering or permutation defect — a real result, because D measured
+> that a permutation is invisible to trace, to the eigenvalue spectrum, and to every structural
+> property, and is caught **only** by per-cell comparison.
+> **MAY NOT:** independent construction, independent verification, or that two implementations agreed.
+> **They did not; there was one.** The two-builder machinery will remain in git history looking like it
+> proved something, so **an ambiguous receipt will be read as the stronger claim.** State it in plain
+> words.
+>
+> §0.3 below is retained unedited as the audit that produced reason (4). Its conclusion was right and
+> its consequence was larger than I drew — it did not merely weaken the dual build, it disqualified me
+> as its second arm.
 
 **What this document is not.** It contains no covariance code and no implementation. Every convention
 below is either (a) already fixed by a committed artifact or executable check, cited by file and line,
@@ -86,7 +109,14 @@ trap: `mask_hash` and `mask_fingerprint` (`:161`, `:168`) are two different func
 different strings for the same mask (`mask_hash` appends `:n266/285`). A builder that picks the wrong
 one gets a plausible hex string that binds nothing.
 
-### 0.2 The blocking sub-question bites — and it is neither new nor a reason to delay the builders
+### 0.2 The rank question — CLOSED. Read this section as the derivation of a settled answer, not an open item
+
+> **CLOSED 2026-08-14.** It was predeclared before launch
+> (`PREDECLARATION-20260813-gate5-coherent-replicas-n50.md`: *"Rank is not the criterion"*), the
+> treatment is field-normal for multisim covariances, and the number that settled it is the trace
+> fraction in point 3 below: **`C_stat` + `C_ML` + norm are 0.323% of the total variance trace.** Do not
+> re-open it. What follows is the derivation, kept because a settled answer with no recoverable
+> derivation is the thing this repo keeps having to rebuild.
 
 The peer flagged: 50 replicas ⇒ rank ≤ 49; if bins > 49 the matrix is singular. **It is singular, by a
 wide margin, and the repo already knows.**
@@ -391,11 +421,14 @@ Required, with the reason each one is required:
 | `layout_fingerprint` | 64-hex | §1.3 |
 | `central_sha256` | 64-hex | binds the mask to the central that defined it |
 | `n_replicas`, `replica_ids` | int, int array | inventory completeness is auditable; precedent `combine_cstat_bkgsub.py:68,72` |
+| `n_reported` | int, **declared from the mask** | **NEVER inferred from `diag > 0`.** `p4_validate_active_lateral_fps.py:72` does infer it that way, and a reported cell with zero replica variance (all 50 draws identical — possible in a low-occupancy cell) then silently undercounts. See §3.1 |
 | `dof` | int, `= n_replicas - 1` | the rank bound is stated, not inferred |
 | `rank_at_1em10_lambda_max` | int | §0.2 — the declared threshold, recorded so the consumer need not rediscover it |
 | `ravel_order` | `"C"` | §1.1 |
 | `centering` | string, `"replica_mean"` | §5 |
 | `units` | string | §2 |
+| **`asymmetry_before_symmetrisation`** | float | **REQUIRED, promoted by C on D's catch.** "Symmetrise, then check symmetry" is **vacuous** — post-symmetrisation every artifact passes by construction. The *pre*-symmetrisation value is the only informative one: `~1e-16` is healthy, `1e-9` means a plumbing defect nothing downstream can see |
+| **`member_sha256`** | list of 50 hex digests | **REQUIRED, not optional.** The digest of each `GATE5_REPLICA_XSEC.npz` actually read. **`replica_ids` proves what you believe you used; digests prove what you read.** Live reason: the failed r1 array `56935552` and the live r2 array `56936015` **write to the same output root**. Nothing is contaminated (r1 died before writing any product; the directory holds 17 products, all in r2's window) — but a glob would have taken r1's output had it existed |
 
 **Symmetry.** `(Z.T @ Z)` is symmetric up to floating-point summation order only. The existing gates
 demand `rel_asymmetry <= 1e-9` (`p4_validate_active_lateral_fps.py:66,123`) and
@@ -408,7 +441,74 @@ TH2D (the FPS/GBDT convention, `combine_seedscan_split.py:99`, hist name suffix 
 chain is npz and pure-numpy login-node-runnable, which I'd prefer for a dual-build comparison because
 element-wise comparison by D is trivial on npz and needs ROOT on TH2D. **C's call.**
 
-### 3.1 A REAL DISAGREEMENT with lane D's comparator predeclaration — surface this before builders start
+### 3.1 A REAL DISAGREEMENT with lane D's comparator predeclaration — **OPEN, awaiting C's ruling**
+
+> **STATUS: OPEN.** An earlier revision of this section recorded it as *"resolved-not-adopted"* in
+> favour of `(n_reported, n_reported)`, on the basis that D was realigning its harness. **That was D's
+> position for about twenty minutes and I should not have written its epitaph.** Retracting a premature
+> closure is cheaper than defending one, and this is the second time today I have asserted something
+> settled that was not (`BEN-241` was the first, and both share a shape: **I treated the absence of a
+> visible counter-position as a resolution**).
+>
+> **THERE ARE NOW THREE PROPOSALS, and the third is the mediator's recommendation to C:**
+>
+> | # | Proposal | Origin |
+> |---|---|---|
+> | 1 | `(n_reported, n_reported)` only | this document's §3, and every existing component |
+> | 2 | `(285,285)` + boolean mask only | D's comparator predeclaration `:168` |
+> | 3 | **BOTH** — `(285,285)` + mask **and** the reduced `(n_reported, n_reported)` derived from it | D, on reconsideration; endorsed by the mediator |
+>
+> **D's argument for (3) is correct and it is the one that should decide this.** If only the full form
+> is compared while the *published* object is the reduced one, **the reduction is verified by nobody** —
+> and the reduction is precisely the operation D and I independently identified as error-prone, because
+> the reported set is contiguous only within rows. *"The comparison passed"* would then be a true
+> statement about an object that is not the deliverable. That is `BEN-185`'s shape exactly: a property
+> proved on the wrong object, reported inside a passing suite.
+>
+> **Recorded because it bears on how D's input should be weighted:** D disclosed unprompted that its
+> harness was already written for `(285,285)`, so it is **not neutral** on this question — and then
+> argued for the option that costs it rework, on the ground that *"the published object should be the
+> verified object, and my convenience is not a reason to verify the intermediate instead."* An interest
+> declared and then argued against is stronger evidence than a position with no interest at all.
+>
+> **MY ONE ADDITION, because emitting both is necessary and not yet sufficient.** Shipping two arrays
+> does not by itself verify their *relationship*; it verifies each against whatever reference the
+> comparator has. The check that makes (3) pay for itself is an **exact, bit-identical internal
+> consistency assertion inside the artifact's own gates**:
+>
+> ```
+> C_reduced  ==  C_full[np.ix_(mask, mask)]        exactly, not to a tolerance
+> ```
+>
+> Three reasons it must be bit-identical rather than `allclose`: it is a pure gather with no arithmetic,
+> so any difference at all is a defect and not float noise; it needs no reference artifact, so it has
+> power even if the regression comparison is unavailable; and it is the *only* check that fires on the
+> specific failure D named — a correct full matrix reduced through a wrong index set. **A tolerance here
+> would convert the one exact check in the chain into an approximate one**, which is the family the repo
+> already recorded when an `atol=1e-8` default met cross sections of `~1e-38`
+> (`combine_cstat_bkgsub_100rep.py:20-22`).
+>
+> **And one trap that (3) creates, which I would not have seen under (1) or (2).** With a reduced form in
+> play, `n_reported` becomes inferrable from the diagonal — and an existing validator already does
+> exactly that: `p4_validate_active_lateral_fps.py:72` sets `n_reported = int(np.sum(d > 0))`. **That is
+> not the reported-bin count.** A cell can be *reported* (`comp > 0`) and still have **zero replica
+> variance** if all 50 draws land on the same value, which is not impossible in a low-occupancy cell; its
+> diagonal entry is then `0.0` and the inferred `n_reported` silently undercounts. **`n_reported` must be
+> read from the shipped mask and declared, never inferred from `diag > 0`** — and a zero on the reduced
+> diagonal is a fact to report, not a cell to drop.
+>
+> **The requirement that survives under all three proposals is D's, not mine:** the reduction must be
+> expressed by a **shipped boolean mask, never an index range** (`:50-51`). And **`BEN-189` bites on any
+> full-grid form** — relative eigenvalue metrics divide `~1e-18` by `~1e-18` there and return `~1.0` for
+> any input, so absolute-scaled-by `|λ_max|` is the only correct form on the `(285,285)` array.
+>
+> **Whether §3.1 came out my way is not the point and I have no preference to defend here.** (3) is
+> better than my (1) on the merits: it keeps the single well-defined comparison dimension I argued for,
+> keeps the assembler's no-translation-step property C needs, and puts the error-prone step inside the
+> verified scope — for one numpy line and ~650 KB. **C rules; I will diff the spec against this section
+> and report before writing code.**
+
+
 
 The table above says the component lives on the **reported sub-space**,
 `(n_reported, n_reported)`, because that is what every existing component is and what
@@ -634,9 +734,13 @@ Per the peer's request that mismatches be found now rather than by D at comparis
    is built against a mask that a later `C_syst` could contradict. **`RUNBOOK:213-214` should win, and
    the spec should say so explicitly**, because the assembler's code currently says `C_syst`.
 3. **npz vs ROOT TH2D** (§3). Affects how expensive D's element-wise comparison is.
-3a. **`(285,285)` vs `(n_reported, n_reported)` — a live conflict with D's already-committed comparator
-   predeclaration, with a proposed reconciliation at §3.1.** This is the one item on this list that is
-   not a question awaiting an answer but two committed documents wanting different artifacts.
+3a. **The artifact shape — THREE live proposals, §3.1, OPEN and awaiting C's ruling.** `(n_reported,
+   n_reported)` only (this document), `(285,285)` + mask only (D's committed predeclaration `:168`), or
+   **both** (D on reconsideration, the mediator's recommendation to C). The third is better than my own
+   on the merits because it puts the reduction — the error-prone step — inside the verified scope. **It
+   needs the exact bit-identity assertion in §3.1 to pay for itself**, and it creates the `n_reported`
+   inference trap recorded there. This is the one item on this list that is not a question awaiting an
+   answer but committed documents wanting different artifacts.
 4. **Whether the shared prior implementation counts as an independence leak** (§0.3), and if so what
    the two builders are actually being asked to independently derive.
 5. **My §4.4 rank arithmetic implies the P5B total is rank-deficient regardless of `C_stat`.** If that
