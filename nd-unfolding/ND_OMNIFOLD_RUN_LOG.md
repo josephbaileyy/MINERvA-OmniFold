@@ -6702,3 +6702,58 @@ copy whose parity had not been checked.
 
 Campaign this turn: `squeue -r` 15 PENDING / **10 RUNNING** — concurrency back to the full array
 throttle. 25 receipts of 50, no failures in either array, `PARTIAL`, `C_stat` null.
+
+### 2026-08-13 ~18:40 PDT — the repaired reconciler is deployed, parity measured, and exercised live (lane C)
+
+Deployment authorized with five conditions, all honoured. The standard applied is my own sentence
+quoted back at me: **a 50/50 pass from a copy whose parity has not been checked is not evidence.**
+
+**Parity measured in both directions in one turn.** BEFORE: the reconciler read
+`STALE_BUT_COMMITTED` (head blob `1d33a229` vs executing `590affaf`) and `atomic_write.py` read
+**MISSING** — exit 3. AFTER: **2 of 2 CURRENT**, exit 0. The BEFORE state is stated rather than
+implied, because a deployment whose prior state you cannot name is one whose effect you cannot
+attribute. Cluster and local `sha256sum` agree for both files independently of the parity tool's
+blob-oid path.
+
+**The fail-loud import was tested on the real deployment, deliberately.** The reconciler went over
+FIRST with `atomic_write.py` absent, and running it against the live campaign root returned **exit 3,
+no report**, naming the missing module and the file to copy. R2 made that dependency hard and refuses
+to fall back to the weaker size-only marker check; until now that refusal existed only as an
+unexercised branch and a comment. This is its negative control, on the actual deployment.
+
+**First live exercise of R1–R4 — a diagnostic, not a promotion pass.** `PARTIAL`, exit 2. **50 targets
+present and all 50 passing; 25 trainings present and all 25 passing**, with 10 correctly reported
+`IN_PROGRESS` and 15 `NOT_STARTED`. The only family failure is `trainings_present 25 != 50`.
+
+**And I checked that the new checks RAN rather than merely not failing**, because "nothing failed" is
+compatible with "nothing ran" — today's own R2 draft shipped an invariant that resolved to `None` for
+every member and therefore could not fail. **54 checks per target row, uniform** (was 47 before the
+repair — R3's five R-field checks and R2's marker changes account for it); 24 per training row; **six
+training invariants, each resolving to a single group, with zero `invariant_path_resolves` failures.**
+All three driver digests agree across all 25 members. `weakened_axes` correctly reads
+`['REPLAY_SKIPPED', 'SOURCE_UNHASHED']` and `is_full_strength` false, so the run does not claim more
+than it did.
+
+**A scare I checked and dropped, which is worth more here than a clean bill of health.** All 25
+replicas record `nominal_driver_unmodified = 91144bee`, while `p3f-pet-gate4-launch-code-gate-20260812.json`
+pins the nominal driver at `5fda80df`. Read alone that says the Gate-5 family trained against a driver
+Gate 4 never certified — and the field is literally named `_unmodified`. **It is not true:** the 20260812
+gate is `SUPERSEDED`, and its successor pins `91144bee`, exactly what the replicas ran. What stopped
+the false report was **lane A's retirement marking** — the predecessor said `SUPERSEDED`, which is why I
+looked for a successor instead of treating its pin as live. Same shape as today's `BEN-158` from the
+reader's side, and direct evidence that marking a predecessor pays off in a way no test measures.
+
+**No new `BEN` filed and block `230-239` deliberately NOT claimed.** `FINDINGS.md`'s own rule is to
+write a block into the table in the same commit as the first filing into it. This deployment produced
+no failure — the fail-loud import, the parity flip and the check counts are all positive results.
+Claiming a ten-block to hold nothing would make the table describe an allocation no finding justifies,
+which is the shape the block system exists to prevent. I will take it at my next real finding.
+
+**What a promotion pass will still require:** 50 of 50, `FAMILY_COMPLETE_PASS` with `weakened_axes ==
+[]` and `is_full_strength` true — so no `--skip-replay` and `--source-npz` supplied — **and parity
+re-checked at that moment**, because the repo may move again and a pass from a copy verified hours
+earlier is the same defect one step removed.
+
+`GATE5_CODE_ROOT` untouched (three digests were READ through the receipts' recorded paths, nothing
+written). The two unowned non-lane-C copies untouched. Campaign: 25 COMPLETED / 10 RUNNING / 15
+PENDING, no failures, `PARTIAL`, `C_stat` null.

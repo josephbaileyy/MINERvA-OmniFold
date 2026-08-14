@@ -419,6 +419,20 @@ target verdict and all 50 training receipts pass; the target verdict is now sati
 training condition is not. No subset or `C_stat` is permitted. Promotion
 receipt: [`state/gate5-target-family-promotion-56873858.json`](../docs/orchestration/state/gate5-target-family-promotion-56873858.json).
 
+**Update 2026-08-13 ~18:40 PDT — the repaired reconciler is DEPLOYED and parity is MEASURED; still `PARTIAL` at 25 of 50.**
+Parity both directions in one turn: BEFORE `STALE_BUT_COMMITTED` + `atomic_write.py` **MISSING** (exit
+3), AFTER **2 of 2 CURRENT** (exit 0), with cluster and local `sha256sum` agreeing independently of the
+parity tool. **The fail-loud import was tested on the real deployment** — reconciler copied first with
+`atomic_write.py` absent gives exit 3 and no report, which is R2's refusal to degrade, exercised rather
+than asserted. First live run of R1–R4: **50/50 targets passing, 25/25 trainings passing**, 10
+`IN_PROGRESS`, 15 `NOT_STARTED`, only failure `trainings_present 25 != 50`. **The new checks were
+confirmed to have RUN, not merely not failed**: 54 checks per target row (was 47), 24 per training row,
+six training invariants each resolving to one group, zero `invariant_path_resolves` failures.
+`weakened_axes = ['REPLAY_SKIPPED','SOURCE_UNHASHED']`, `is_full_strength` false — the run does not
+claim more than it did. A promotion pass still needs 50/50 **at full strength** (no `--skip-replay`,
+`--source-npz` supplied) **and parity re-checked at that moment**. Receipt
+[`state/gate5-reconciler-deployment-20260813.json`](../docs/orchestration/state/gate5-reconciler-deployment-20260813.json).
+
 **Update 2026-08-13 ~18:05 PDT — BEN-157 R3+R4 landed: ALL SEVEN audit items repaired in code. Promotion still unauthorised, and not because of the code.**
 **R3:** absent *tool inputs* downgrade the verdict with a named token (`SOURCE_UNHASHED`,
 `NOMINAL_UNCHECKED`, joining `REPLAY_SKIPPED`) and are reported as `weakened_axes` + `is_full_strength`
