@@ -2500,6 +2500,123 @@ I measured.
 - **61 passed / 39 passed+1 skipped are this checkout's results at `866cec4`.** On the cluster, where
   the NPZ exists, the skipped test would run — and would still only check a marker.
 
+---
+
+# V52 — OI-22 leg (a): schema parity PROVED on the real input; leakage re-scoped, and the re-scope is mine
+
+Dispatched after V51. Read-only: the NPZ was **read**, nothing was written into any pinned tree, no
+campaign mutated, `gate6traj-reconcile-56847059` untouched. Receipt:
+[`state/oi22-legA-real-input-verification-20260814.json`](state/oi22-legA-real-input-verification-20260814.json).
+Probes: [`schema-parity`](state/probe-oi22-schema-parity-real-input-20260814.py),
+[`leakage`](state/probe-oi22-leakage-real-input-20260814.py).
+
+## Object discipline first, because that is what this whole item is
+
+Fast-forwarded `464b903 → 7066d92` before measuring. **The cluster tree is at `683bdcca`, not my
+`7066d92`** — but both modules used are **byte-identical across the two trees**
+(`fullevent_dump_contract.py` `64f5359c…`, `fullevent_fps_dataloader.py` `e1402370…`, measured on both
+sides). So the code I audited in V51 is the code that ran. Recorded because binding counts are
+tree-dependent and `BEN-183` was mine.
+
+**The ROOT/TF split does not bite**, confirmed as instructed: the TF module gives Python 3.9.18 +
+numpy 1.26.3, and leg (a) needs numpy only. (The login default is Python 3.6.15 / numpy 1.17.3 — too
+old; `module load tensorflow/2.15.0` is required and sufficient.)
+
+## The object is bound, not named
+
+```
+sha256 measured : fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625
+sha256 receipt  : fa6b3463…  (g2-gate1b-npz-validation-20260719.json)   MATCH
+size            : 9,897,374,636 bytes                                    MATCH
+```
+
+**Third, independent corroboration that this is the publication input:** the same digest is the
+hardcoded `EXPECTED_INPUT_SHA` at `submit_gate5_replica_n50.sh:14` — the one pin in that launcher the
+author did *not* compute at submit time, which I found in an unrelated audit earlier this campaign.
+
+## Leg (a1) — schema parity: PROVED ON REAL INPUT
+
+Header-only: each member's `.npy` header is read, the 29.03 GB of payload never materialised. The
+archive is DEFLATE-compressed (9.897 GB on disk → 29.03 GB uncompressed, 42 members).
+
+| check | result |
+|---|---|
+| `assert_g2_schema` on the real markers | **PASS** — `g2-fullevent-v1`, `hasFullEventSchema=1`, `fullPhaseSpace=1` |
+| `REQUIRED_KEYS` (36) present | **all 36, none missing** |
+| signal row counts, 12 blocks | all `49,152,885` — consistent |
+| data row counts, 6 blocks | all `4,116,128` — consistent |
+| background row counts, 7 blocks | all `564,591` — consistent |
+
+**Reused rather than restated:** `REQUIRED_KEYS` and `assert_g2_schema` are imported from the
+production `fullevent_dump_contract`, whose digest is in the receipt.
+
+**All four positive controls fired**, against deliberately broken *copies* of the metadata — the file
+was never touched:
+
+| control | fired |
+|---|---|
+| C1 `petSchemaVersion` → `g2-fullevent-v0` | **yes** — `ValueError [G2-SCHEMA] … (fail closed)` |
+| C2 `hasFullEventSchema` → 0 | **yes** — `ValueError [G2-SCHEMA] hasFullEventSchema=0 != 1` |
+| C3 drop a `REQUIRED_KEY` | **yes** |
+| C4 perturb one signal row count | **yes** |
+
+**Scope limit, stated because it is the one that matters:** row-count consistency is **necessary and
+not sufficient** for alignment. `build_bkgsub_pointcloud_input.py` says it in terms — *"equal counts
+alone are NOT proof."* This closes schema parity. It does not touch order or alignment.
+
+## Leg (a2) — no-truth-leakage: RE-SCOPED, and the bad estimate was mine
+
+**I scoped leg (a) as "numpy-only, one streaming pass, cheap." Half of that was right.**
+
+Schema parity is a property **of the NPZ**, and it is cheap. **No-truth-leakage is a property of the
+LOADER'S OUTPUT.** `assert_no_truth_leakage(event_reco, …)` takes `event_reco`, and that array is not
+in the NPZ — it is derived. So "run the leakage check on the real input" has two readings:
+
+- **(A) build `event_reco` here, then assert.** Statement 2 (PURITY) rebuilds from the same reco
+  blocks with the same code and demands an exact match — so on unmodified input it passes **by
+  construction**. L1 below proves nothing.
+- **(B) run the production `build_fullevent_loaders` on the real NPZ and check its output.**
+  Non-circular, and the only reading under which statement 2 means anything. That is a full loader
+  pass over 49,152,885 events — a compute job, not a read.
+
+**What I did run, and what it is worth.** Reading `assert_no_truth_leakage`'s own three statements
+first, then a 2,000,000-event contiguous slice of the real blocks (peak RSS ≈ one decompressed member):
+
+| arm | expected | observed |
+|---|---|---|
+| L1 real slice, unmodified | PASS | **PASS** — and this is the circular one; it proves nothing |
+| L2 truth pT injected into the reco leg | FIRE | **FIRED** — *"event_reco is NOT a pure function of the reco blocks+pass_reco (leak?)"* |
+| L3 all-NaN `event_reco` | FIRE | **FIRED** — the finiteness guard, ahead of the dissimilarity test |
+
+**3/3 as predeclared, and the useful one is L2.** It fired *through statement 2* — so the purity
+statement is vacuous on unmodified self-built input and is exactly what catches a corruption of it.
+**The detector demonstrably engages the real object's own arrays**, which is what was asked and is
+strictly more than the fixture-only status it had. It is **not** a whole-object proof, and the
+production loader's output was never checked.
+
+**One error of mine, caught by the code:** my first call passed `measured_blocks=None` and
+`build_event_features` failed closed at `assert_finite_event_scalars` — *"no event-feature source
+blocks supplied."* The loader was right and my call signature was wrong; the data inventory is
+mandatory. Fixed and re-run.
+
+## Per-property verdict, the four rows asked for
+
+| property | status |
+|---|---|
+| **schema parity** | **PROVED-ON-REAL-INPUT** — digest-bound, 4/4 controls fired |
+| **no-truth-leakage** | **PROVED-ON-FIXTURE-ONLY** — detector shown to fire on real-object arrays; loader output unchecked |
+| **order / read-through** | **PROVED-ON-FIXTURE-ONLY** — not in leg (a) scope, unchanged from V51 |
+| **event-by-event alignment** | **NOT PROVED** on any object — leg (b) / P5B, not dispatched, not started |
+
+## What closing leakage actually costs, now measured rather than guessed
+
+Route (B), the only non-vacuous one. `DEFAULT_EVT_FEATURES` is 13 wide and needs `reco_scalars`
+(786 MB) + `reco_muon` (1,376 MB) + `reco_vertex` (590 MB), plus `truth_scalars` (786 MB) and
+`pass_reco` (49 MB) — ~3.6 GB of source. `raw`, `rebuilt` and `event_reco` are each
+49,152,885 × 13 × 4 B ≈ **2.56 GB**, so ~11–13 GB resident before the rest of the loader. That is a
+compute-node job under the standing 12 h approval, not a login-node read, and it should be run through
+the **production loader** or it repeats L1's circularity at full scale.
+
 ## Gate 5 and Gate 6 — deliberately not reported
 
 The commissioning message relayed job-state counts and said *"if you report them, re-run them yourself."*

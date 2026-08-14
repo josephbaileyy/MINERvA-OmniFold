@@ -1,0 +1,196 @@
+{
+ "PER_PROPERTY_VERDICT": {
+  "event_by_event_alignment": "NOT PROVED on any object -- leg (b) / P5B, not dispatched",
+  "no_truth_leakage": "PROVED-ON-FIXTURE-ONLY -- the detector is demonstrated to FIRE on real-object arrays (L2, L3), but the production loader's output on this NPZ was never checked",
+  "order_read_through": "PROVED-ON-FIXTURE-ONLY (not in leg (a) scope)",
+  "schema_parity": "PROVED-ON-REAL-INPUT"
+ },
+ "SCOPE_CORRECTION_OWNED_BY_LANE_D": "I scoped leg (a) as 'numpy-only, one streaming pass, cheap'. Half of that was right. SCHEMA PARITY is a property OF THE NPZ and is cheap -- proved here. NO-TRUTH-LEAKAGE is a property of the LOADER'S OUTPUT, which the NPZ does not contain, so closing it requires a production build_fullevent_loaders pass over 49,152,885 events: a compute job, not a read.",
+ "cluster_tree": {
+  "fullevent_dump_contract.py.sha256": "64f5359cd428c604c057e797819ebd58210e51ab3c896fc59d5e42f1d037f9e4",
+  "fullevent_fps_dataloader.py.sha256": "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1",
+  "head": "683bdcca",
+  "note": "cluster HEAD differs from local, but BOTH modules used are byte-identical across the two trees -- recorded because binding counts are tree-dependent",
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+ },
+ "leg_a1_schema_parity": {
+  "code_bound": {
+   "fullevent_dump_contract.py.sha256": "64f5359cd428c604c057e797819ebd58210e51ab3c896fc59d5e42f1d037f9e4",
+   "head": null,
+   "repo": "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+  },
+  "members": {
+   "count": 42,
+   "header_summary": {
+    "bkg_current": "int64(564591,)",
+    "bkg_identity_hash": "<U64()",
+    "bkg_indices": "int64(564591,)",
+    "bkg_inttype": "int64(564591,)",
+    "bkg_muon": "float32(564591, 7)",
+    "bkg_nuPDG": "int64(564591,)",
+    "bkg_part_reco": "float32(564591, 12, 3)",
+    "bkg_reco_scalars": "float32(564591, 4)",
+    "bkg_time": "float32(564591, 12)",
+    "bkg_vertex": "float32(564591, 3)",
+    "bkg_view": "float32(564591, 12)",
+    "data_identity_hash": "<U64()",
+    "data_muon": "float32(4116128, 7)",
+    "data_pot": "float64()",
+    "data_time": "float32(4116128, 12)",
+    "data_vertex": "float32(4116128, 3)",
+    "data_view": "float32(4116128, 12)",
+    "edges_0": "float64(16,)",
+    "edges_1": "float64(20,)",
+    "estimator_fingerprint": "<U20()",
+    "fullPhaseSpace": "int64()",
+    "hasFullEventSchema": "int64()",
+    "mc_pot": "float64()",
+    "measured_pc": "float32(4116128, 12, 3)",
+    "measured_scalars": "float32(4116128, 4)",
+    "num_part": "int64()",
+    "part_gen": "float32(49152885, 12, 5)",
+    "part_reco": "float32(49152885, 12, 3)",
+    "pass_reco": "bool(49152885,)",
+    "pass_truth": "bool(49152885,)",
+    "petSchemaVersion": "<U15()",
+    "pot_scale": "float64()",
+    "reco_muon": "float32(49152885, 7)",
+    "reco_scalars": "float32(49152885, 4)",
+    "reco_time": "float32(49152885, 12)",
+    "reco_vertex": "float32(49152885, 3)",
+    "reco_view": "float32(49152885, 12)",
+    "sig_identity_hash": "<U64()",
+    "truth_scalars": "float32(49152885, 4)",
+    "w_bkg": "float32(564591,)",
+    "w_reco": "float32(49152885,)",
+    "w_truth": "float32(49152885,)"
+   }
+  },
+  "object": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+   "sha256_matches_receipt": true,
+   "sha256_measured": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+   "sha256_receipt_g2_gate1b": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+   "size_bytes": 9897374636
+  },
+  "parity": {
+   "assert_g2_schema": true,
+   "markers": {
+    "data_identity_hash": "fd2b14c6f3dbbd7c8747edfd36fcf24c35f29a629350cac84e07027d398e3fc7",
+    "estimator_fingerprint": "pet-fullevent-fps-v1",
+    "fullPhaseSpace": 1,
+    "hasFullEventSchema": 1,
+    "petSchemaVersion": "g2-fullevent-v1",
+    "sig_identity_hash": "5ade9c49a026cfa619ba71870087990fbbddc5dcad4c95f0f459c3c893783af1"
+   },
+   "required_keys_missing": [],
+   "required_keys_total": 36,
+   "row_counts": {
+    "background": {
+     "bkg_muon": 564591,
+     "bkg_part_reco": 564591,
+     "bkg_reco_scalars": 564591,
+     "bkg_time": 564591,
+     "bkg_vertex": 564591,
+     "bkg_view": 564591,
+     "w_bkg": 564591
+    },
+    "data": {
+     "data_muon": 4116128,
+     "data_time": 4116128,
+     "data_vertex": 4116128,
+     "data_view": 4116128,
+     "measured_pc": 4116128,
+     "measured_scalars": 4116128
+    },
+    "signal": {
+     "part_gen": 49152885,
+     "part_reco": 49152885,
+     "pass_reco": 49152885,
+     "pass_truth": 49152885,
+     "reco_muon": 49152885,
+     "reco_scalars": 49152885,
+     "reco_time": 49152885,
+     "reco_vertex": 49152885,
+     "reco_view": 49152885,
+     "truth_scalars": 49152885,
+     "w_reco": 49152885,
+     "w_truth": 49152885
+    }
+   },
+   "row_counts_consistent": {
+    "background": true,
+    "data": true,
+    "signal": true
+   }
+  },
+  "positive_controls": {
+   "C1": {
+    "detail": "ValueError: [G2-SCHEMA] petSchemaVersion 'g2-fullevent-v0' != 'g2-fullevent-v1' (fail closed)",
+    "fired": true
+   },
+   "C2": {
+    "detail": "ValueError: [G2-SCHEMA] hasFullEventSchema=0 != 1 (fail closed)",
+    "fired": true
+   },
+   "C3": {
+    "detail": "",
+    "fired": true
+   },
+   "C4": {
+    "detail": "",
+    "fired": true
+   }
+  },
+  "produced_by": "Lane D (verifier), read-only; nothing written into any pinned tree",
+  "scope_limits": [
+   "Row-count consistency is NECESSARY, NOT SUFFICIENT for event-by-event alignment -- build_bkgsub_pointcloud_input.py states the principle: equal counts alone are NOT proof.",
+   "This closes SCHEMA PARITY only. Order and alignment are untouched here.",
+   "No-truth-leakage is NOT closed by this run -- see the re-scope in the report."
+  ],
+  "verdict": {
+   "all_controls_fired": true,
+   "digest_binds": true,
+   "schema_parity_on_real_input": "PROVED"
+  },
+  "what": "OI-22 leg (a1): sha256 bind + schema parity on the REAL publication input"
+ },
+ "leg_a2_leakage": {
+  "WHAT_THIS_DOES_NOT_PROVE": [
+   "Statement 2 (PURITY) is VACUOUS here: event_reco was built by the same code the assert rebuilds with, so an exact match is guaranteed by construction. Only the production loader's output can make statement 2 meaningful.",
+   "This is a 2000000-event contiguous slice, not all 49,152,885 events. It is a demonstration that the detector engages the real object, NOT a whole-object proof.",
+   "no-truth-leakage on the real publication input therefore remains NOT PROVED."
+  ],
+  "WHAT_THIS_PROVES": [
+   "The leakage detector RUNS and FIRES on real-object data, not only on fixtures -- L2 and L3 are the demonstrated failing directions on this NPZ's own arrays.",
+   "Statement 3 (DISSIMILARITY on shared columns) is a real property of the real data and holds on this slice."
+  ],
+  "all_arms_as_predeclared": true,
+  "arms": {
+   "L1": {
+    "as_predeclared": true,
+    "detail": "returned without raising",
+    "fired": false
+   },
+   "L2": {
+    "as_predeclared": true,
+    "detail": "AssertionError: event_reco is NOT a pure function of the reco blocks+pass_reco (leak?)",
+    "fired": true
+   },
+   "L3": {
+    "as_predeclared": true,
+    "detail": "AssertionError: [EVT-FINITE] event_reco has 26000000 non-finite entries; the no-truth-leakage comparison below is a dissimilarity test and NaN differs from everything",
+    "fired": true
+   }
+  },
+  "object": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+  "of_total_events": 49152885,
+  "slice_events": 2000000,
+  "what": "OI-22 leg (a2): leakage detector exercised on REAL-OBJECT data (contiguous slice)"
+ },
+ "local_repo_head_at_authoring": "7066d92",
+ "measured_utc_date": "2026-08-14",
+ "produced_by": "Lane D (verifier). Read-only: the NPZ was read; nothing was written into any pinned tree.",
+ "schema_version": "oi22-legA-v1",
+ "what": "OI-22 leg (a): schema parity PROVED and no-truth-leakage RE-SCOPED, on the real publication input"
+}
