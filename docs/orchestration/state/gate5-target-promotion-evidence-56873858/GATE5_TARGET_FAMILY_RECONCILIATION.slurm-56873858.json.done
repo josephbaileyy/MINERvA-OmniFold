@@ -1,0 +1,8 @@
+{
+  "job": "56873858",
+  "marked_at": "2026-08-13T15:59:36.113922+00:00",
+  "output": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/validation/GATE5_TARGET_FAMILY_RECONCILIATION.slurm-56873858.json",
+  "sha256": "388f5447249b398297a77f63699bb1a445daa9e24799d0b5d50232253e063329",
+  "size": 168512,
+  "verdict": "TARGETS_COMPLETE_PASS"
+}

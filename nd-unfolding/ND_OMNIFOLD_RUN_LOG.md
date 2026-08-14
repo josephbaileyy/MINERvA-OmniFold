@@ -6809,3 +6809,58 @@ factors, which needs a producer-side change and should ride the next launch with
 than being retrofitted mid-family. Row narrowed accordingly.
 
 Campaign: 35 receipts of 50, 5 PENDING / 10 RUNNING, no failures, `PARTIAL`, `C_stat` null.
+
+### 2026-08-14 ~21:30 PDT(-1) — the Gate-5 promotion evidence is now IN the repo, and its four claims re-derive from the copy (lane C)
+
+Codex's advisory item 2, routed urgent and correctly so: **scratch turnover is the only failure here
+that cannot be undone.** The 168,512-byte report carried the 50 per-target check lists, the 150 replay
+values, the distinct-hash counts and the empty failure lists that `TARGETS_COMPLETE_PASS` rests on — its
+digest was bound in **four** places and the object was in none of them. That is `BEN-077`'s
+unfalsifiable-receipt shape with a purge timer attached.
+
+**Rescued into `state/gate5-target-promotion-evidence-56873858/`, original filenames preserved**, and
+**all three digests re-verified after the copy**: report `388f5447…` (168,512 B, equal to the bound
+value), marker `4d7bce7e…`, stdout `41dd3d08…`. A copy that did not hash to `388f5447` would have been
+worthless, so that is stated as a measurement rather than as a step performed.
+
+**All four claims re-derived from the committed copy alone**, no cluster access: 50/50 PASS; **150
+replay values, 150 of 150 equal to the recorded hash**; data/signal/background hashes 50/50 distinct
+each, target digests 50/50 distinct; failure lists empty at both family and row level. Independent
+cross-check: the report's `data_factor_sha256_REDRAWN` for `replica_00` equals the value I re-derived
+locally off-cluster in this session's OI-60 work — two independent redraws, one contract.
+
+**My first extraction got claim 2 wrong and it is recorded.** I looked for boolean flags, found 50, and
+printed `DERIVED 150: False`. The 150 are three *redrawn hashes* per member, not booleans. Wrong
+extraction, not a defect in the promotion — and the third time today that a zero of mine was a statement
+about my search rather than about the tree.
+
+**A caveat found while re-deriving, and it is the useful part.** The promotion ran on the **pre-repair**
+validator (`11e4f440`, before R1–R4). Five of the seven defects cannot reach it — `--n` was passed as 50
+over 50 real rows, items 2/3/5 are training-stage receipt-trust defects and this run is `stage=target`,
+item 7 is test-only. **Two could:** the marker check compared size but not `mtime`, and
+`no_replica_target_equals_the_nominal_target` is **absent from the report's check names**, so
+`--nominal-target-sha` was never supplied and under R3 this run would read
+`TARGETS_COMPLETE_PASS_NOMINAL_UNCHECKED`. (`--source-npz` *was* supplied — the 9.9 GB source was
+independently re-hashed to `fa6b3463…`.)
+
+**Both gaps are already closed by measurement rather than argument:** the repaired tool was run over the
+same 50 targets earlier this session *with* the nominal sha supplied, and all 50 passed at **54 checks
+per row against the promotion run's 50**, including markers now delegated to `atomic_write.is_complete`
+(size **and** mtime). So the target promotion is not invalidated and now rests on stronger evidence than
+it originally did.
+
+**Item 4, the stale preflight, reconciled.** Top-level verdict read `..._INDEPENDENT_REPLAY_PENDING`
+while the receipt's own `changed_attempt_2` recorded job `56873858` COMPLETED with
+`TARGETS_COMPLETE_PASS`. Advanced to `..._INDEPENDENT_REPLAY_COMPLETE` with the original string
+preserved verbatim in `verdict_at_issue` — a receipt that silently rewrites its own history is worse
+than one that is stale — and the advance is guarded by an assertion that attempt 2 really is a completed
+pass. Same class as `BEN-158`: state recorded in one place and not the other.
+
+**`RUNS.tsv:296` routed, not edited.** *"all data/signal/background factors independently verified"* is
+accurate for signal and background, accurate for the data **hash**, and overstated for the loader's
+**use** of the data factors, where the evidence is length and sum via `n_data_effective` rather than
+array identity. Recommended narrowing recorded in the receipt; it is a durable cross-lane ledger row and
+editing it unilaterally is the overreach I declined on the OI-id collision.
+
+`GATE5_CODE_ROOT` untouched; scratch originals left in place; three reads and no writes to the cluster.
+Campaign: 35 receipts of 50, `PARTIAL`, `C_stat` null.
