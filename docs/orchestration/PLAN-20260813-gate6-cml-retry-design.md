@@ -252,10 +252,24 @@ second.
 | **total** | **6** | **≈18** | **3 waves** | |
 
 Every wave is a single job under 12 h. **None of this constructs `C_ML`, and none of it is sufficient
-to.** Gate 4's estimator-arm disposition is an independent user decision that blocks construction
+to.** ~~Gate 4's estimator-arm disposition is an independent user decision that blocks construction
 regardless of how these legs come out — stated in the predeclaration, the receipt
 (`gate4_user_disposition_remains_independent: true`), the ledger and the status file, and repeated
-here so nobody reads a green Leg F as an unblock.
+here so nobody reads a green Leg F as an unblock.~~
+
+**STRUCK 2026-08-14 BY ITS OWN AUTHOR — the disposition was already closed when I wrote this, and the
+receipt I cited does not say what I made it say.** Measured this turn: the arm was selected
+2026-08-13 (`AUTHORIZATION-20260813-gate4-estimator-disposition.md:12`, Joseph verbatim *"Okay do the
+annealed"*) and `56563761` was promoted to canonical at `6b68d12`, `2026-08-13T02:52:32Z`
+(`state/p3f-pet-gate4-nominal-promotion-56563761.json`, `verdict: PROMOTED`) — **9 h 51 m before this
+sentence was committed** (`17dfe94`, 12:54 UTC). And
+`gate4_user_disposition_remains_independent: true` is a **scope**-independence field, the only Gate-4
+mention in that receipt; *"blocks construction"* is mine, not its. **The conclusion of this section
+is unchanged and is now better supported:** none of these legs constructs `C_ML`, because the live
+blocker is `family_verdict BLOCK_GATE6_ML_ENSEMBLE` with `passing_members [1]`
+(`state/gate6-member-trajectories-result-56847059.json:109-118`) plus two missing inputs —
+`combine_cml_bkgsub.py:75` needs a nominal *extraction* product (`extraction_run: false`, and
+extraction is unauthorized) and `--expect 12` crossed members against Leg 1's five. `BEN-244`.
 
 ## 6. What Joseph is being asked to decide
 
