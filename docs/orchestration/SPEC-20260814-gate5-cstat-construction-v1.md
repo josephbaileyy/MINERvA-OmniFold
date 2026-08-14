@@ -49,13 +49,20 @@ requirements the builder must satisfy. `CSTAT-D*` are declarations the spec make
 not. `CSTAT-P*` are predeclarations binding **consumers**. `CSTAT-N*` are notes answering a question that
 was asked. `CSTAT-O*` is reserved for what returns to Joseph.
 
-> **ONE ESCALATION IS OPEN: `CSTAT-O2`** — whether this object is entitled to the name `C_stat` at all.
-> It was found while writing this spec, it blocks **publishing** rather than **building**, and it is the
-> only item here that needs Joseph.
+> **NOTHING IN THIS SPEC NOW REQUIRES A DECISION FROM JOSEPH.** Both items that did have closed, and
+> both closed because a premise I asserted turned out to be checkable and wrong. **Read §7 and §8 before
+> re-deriving either.**
 >
-> **`CSTAT-O1` (rank) is CLOSED and was never open** — it was dispositioned before launch by the `N=50`
-> predeclaration. **If you have just derived that rank ≤ 49 against 262 cells is a problem, read §7 before
-> writing anything**: you are the fifth to derive it and it is settled.
+> **`CSTAT-O1` (rank) is CLOSED and was never open** — dispositioned before launch by the `N=50`
+> predeclaration. **If you have just derived that rank ≤ 49 against 262 cells is a problem, read §7 first**:
+> you are the fifth to derive it and it is settled.
+>
+> **`CSTAT-O2` (the name) is CLOSED — `C_stat` is correctly named.** I claimed the per-replica network was
+> unseeded and that the component therefore double-counted `C_ML`. **The estimator seed is pinned at 42 on
+> all 50 members and enforced per member**; the claim was false and §8 records both the refutation and how
+> a `grep` for `set_seed` failed to find `set_random_seed`. What survives is a physics question, not a
+> naming one: the spread is **~90×** naive counting, which is now attributable to amplification by the
+> unfolding (`OI-94`), and `CSTAT-O2a` is still worth running to measure the GPU non-determinism floor.
 
 ---
 
@@ -326,6 +333,32 @@ above* — `min_over_max_eig` at `:67` — so what is missing is a rank threshol
 scope for this spec** (another lane's validator path, and `CSTAT-O1a` already forbids the builder from making
 the matrix invertible), but recorded in `KNOWN_ISSUES.md` so the next reader of that file does not take
 `psd=True` as evidence of full rank.
+
+**`CSTAT-D0f` — THERE IS A THIRD MASK, IT IS NOT CONSTANT, AND ITS SIZE COLLIDES WITH THE EXTRACTION
+INTERSECTION AT 259 WHILE BEING A DIFFERENT SET.** Adopted from B as a hard constraint and then measured,
+which changed it:
+
+**No consumer may take a training artifact's `reported_bin_mask` as the reporting domain.** B established
+the constraint and gave the mask as **259** cells (`h_prior > 0` on the 2M subsample), nesting
+`259 ⊂ 262 ⊂ 266`, the difference being a subsample effect rather than physics. The constraint is right and
+is adopted. **Two corrections from measuring all 50 training artifacts:**
+
+1. **It is not a fixed 259 — it varies per member.** Sizes across the 50 weights artifacts:
+   **`{257: 3, 258: 21, 259: 26}`**, union **259**, intersection **256**, and *not* identical across
+   members. So "the training mask is 259" is its **union** (equivalently its modal value), not a constant —
+   a *fourth* per-member-varying mask in this campaign, alongside `BEN-231`'s reporting mask and
+   `n_cells_masked_zero_acceptance`.
+2. **The two 259s are different sets.** The training-mask **union** is 259 cells and the extraction
+   **intersection** is also 259 cells, and they are **not the same 259**. Measured: training-union ⊂
+   extraction-union (correctly), but the extraction union holds **three cells the training union does not —
+   flat `{254, 281, 284}`** — and `254` is one of the three flickering cells of `CSTAT-D3`. Nor does the
+   training union equal the extraction intersection.
+
+**Why this is worth a clause rather than a footnote.** Two distinct quantities in the same campaign both
+equal 259, and a consumer who reaches for whichever one is at hand — because the count matches — gets a
+domain wrong by three cells with every structural check passing. **A matching count is not a matching
+set**, and the only safe operation is a set comparison. This is the third mask in a question already ruled
+on twice; named here so nobody rediscovers it a fourth time. `BEN-236`.
 
 **`CSTAT-D0c`** The nesting result is retained and remains useful even though `266` is not adopted: D
 committed the containment check at `b9d0803` showing **PET's 262 is a strict subset of FPS's 266**, the four
@@ -648,101 +681,159 @@ owns the assembly and already has the 222/266 number on the 266-cell lgbm mask, 
 spec's 262-cell full-event domain, so the two are not directly comparable and reconciling them is B's
 call, not a `C_stat` spec's. **Nothing in this spec depends on the answer.**
 
-## 8. `CSTAT-O2` — **IS THIS OBJECT ENTITLED TO THE NAME `C_stat`? OPEN. Returns to Joseph.**
+## 8. `CSTAT-O2` — **RESOLVED. `C_stat` IS CORRECTLY NAMED. My premise was false and I am recording how.**
 
-**This was found while writing this spec, it is not in anyone's dispatch, and C considers it more
-serious than `CSTAT-O1`.**
+**An earlier version of this section claimed the per-replica network was unseeded, and concluded that the
+object is `C_stat + C_train`, inseparable, and that `C_total` double-counts `C_ML`. All of that is
+REFUTED.** The refutation came from the mediator and I verified it independently rather than accept it on
+relay, in the same way I should have verified the original claim:
 
-The across-replica spread of the extracted cross section is **~90× larger than counting statistics can
-account for**:
+1. `sbatch_gate5_replica_train_array.sh:63-71` passes **only** `--bootstrap-seed` and `--replica-index`.
+2. `train_fullevent_replica.py:236` calls `nominal.main([...])` **without** `--estimator-seed`, so
+   `train_fullevent_nominal.py:335` takes its default `NOMINAL_SEED_POLICY["estimator_seed"]` = **42**
+   (`:69`), and `:376` executes `tf.keras.utils.set_random_seed(42)`. The call *is* on the replica path —
+   the replica driver monkey-patches three nominal functions and then delegates to nominal's own `main()`.
+3. **Measured from the artifacts, which is stronger than either code read:** all **50**
+   `GATE5_REPLICA_WEIGHTS.npz` carry exactly **one** `seed_policy`, with `estimator_seed: 42`. And
+   `train_fullevent_replica.py:275` **fail-closes** — `if seed_policy != nominal.NOMINAL_SEED_POLICY: raise
+   SystemExit` — so agreement is *enforced per member*, not coincidental.
 
-| quantity | value |
+**How I got it wrong, because the mechanism is reusable and it is worse than a typo.** I ran
+`grep -rln "set_seed" nd-unfolding/ omnifold_nn/`, got nothing, and reported *"`set_seed` appears
+nowhere."* The API is **`tf.keras.utils.set_random_seed`**, and **`"set_random_seed"` does not contain the
+substring `"set_seed"`**. My other patterns — `tf.random`, `np.random.seed`, `TF_DETERMINISTIC`,
+`PYTHONHASHSEED` — all miss `tf.keras.utils.*` too. So the search could not have found the thing whose
+absence I then reported as a finding. **An inference from absence is only as strong as the search that
+would have refuted it**, and mine was strictly weaker than the claim I drew from it. `BEN-235`.
+
+### `CSTAT-D4` — the `C_stat` + `C_ML` disjointness proof, which is the real gap I found
+
+**The double-count claim was wrong; the observation underneath it was not.** `C_stat + C_ML` is the one
+component pair in this chain with **no written disjointness proof**, while
+`assemble_ctotal_bkgsub.py:10-20` carries an explicit one for `C_syst + C_retrain` — including a statement
+of the construction that *would* have failed (*"Had `Delta_u` been `x_retrain − CV` it WOULD
+double-count"*). That standard exists and this pair did not meet it. **Written here so it does:**
+
+> **`C_stat` and `C_ML` measure disjoint quantities, by construction and by enforcement.**
+> `C_stat` varies the coherent data/signal/background **Poisson draw** across 50 members while the
+> estimator seed is **pinned at 42** for every member — passed by nobody, defaulted at
+> `train_fullevent_nominal.py:335` from `NOMINAL_SEED_POLICY` (`:69`), applied at `:376`, and
+> **fail-closed per member** at `train_fullevent_replica.py:275`. Measured: 50/50 members carry one
+> `seed_policy` with `estimator_seed: 42`.
+> `C_ML` is defined complementarily by `RUNBOOK:223-224` — **"no Poisson variation … a predeclared crossed
+> seed design"** — i.e. it varies the estimator seed with the draw held fixed.
+> **The two therefore vary disjoint inputs and their sum does not double-count.**
+
+**Note that this is enforced rather than lucky**, which is a stronger statement than the construction
+merely happening to be right: `:275` would abort a member whose seed policy drifted, so a future edit that
+started varying the estimator seed per replica would **fail the family**, not silently corrupt the sum.
+
+**The residual, stated rather than glossed:** `set_random_seed` does **not** defeat GPU non-determinism
+(cuDNN atomics, non-deterministic reductions) unless determinism ops are enabled, and they are not. So a
+small amount of training variance leaks into `C_stat` despite the pin. Its size is **unmeasured** and
+`CSTAT-O2a` now measures exactly it — see below.
+
+### `CSTAT-O4` — the ~90× gap, now DECOMPOSED
+
+**As of 2026-08-14 this is no longer an open observation; it is a measured split with one unexplained
+term.** Lane B closed the normalization axis without the extraction stage at all — noticing that
+`σ_tot`'s denominator (flux · POT · `n_nucleons`) is identical across Leg F draws, so the *relative* spread
+of the total equals that of the numerator `T_d = Σ_j w_truth[j]·push_d[j]`, and `weights_push` with a
+bit-identical `mc_indices` is already in the artifacts. **I re-derived every figure independently and they
+reproduce to rounding:**
+
+| term | spread | vs Poisson | share of family VARIANCE |
+|---|---|---|---|
+| family (across replicas) | **4.478 %** | 90.8× | 100 % |
+| process non-determinism floor (`VL130`) | **1.918 %** | 38.9× | **18.35 %** |
+| quadrature residual | **4.046 %** | 82.1 % → 82.1× | **81.65 %** |
+| Poisson, `n_data = 4,116,128` | 0.0493 % | 1× | — |
+
+Shares sum to **100.00 %**. Negative control holds: `cap_saturation_frac = 0.0` on every draw, so this is
+not a logit-clipping artefact, and the mechanism is directly visible in per-draw `mean(push)` —
+`1.0776 / 1.0913 / 1.0472 / 1.0825`.
+
+**So the gap is neither an unseeded network nor counting statistics.** **18.35 % of the family's variance is
+measured process non-determinism**, and **81.65 % is unexplained.** B's reading — which it explicitly
+declines to assert, and I will not assert either — is that the residual is the **learned map's response to
+the Poisson draw**, i.e. the legitimate intended content of `C_stat` for an unfolding estimator. **If that
+is right the object deserves its name**, with the caveat that ~18 % of its variance is non-determinism
+rather than data statistics. **That caveat belongs in the receipt either way**, and `CSTAT-R7` is not the
+only disclosure this component owes.
+
+**Three caveats travel with the decomposition and must not be dropped when it is quoted:**
+
+1. The floor is measured on the **2M-subsample numerator**, not on the published full-inventory total.
+2. The quadrature split **assumes independence** of the two terms.
+3. `n = 4`, so each sd carries **40.8 %** fractional uncertainty — improving to **35.4 %** when floor draw 5
+   lands. The `1/√k` premise behind that is recorded as an **assumption**, not a result: for GPU
+   reduction-order non-determinism it is empirical and `n=4` cannot test it.
+
+**Ledger note:** `VL130` has been **relabelled** — it read "across-process training noise" and is in fact
+the residual that *survives a full seed pin*, which is a **stronger** claim than the old label, not a
+weaker one. `VL131` is filed for the normalization axis. Both are lane B's corrections.
+
+### What this leaves as the physics question
+
+**The measurement is unaffected and still wants an explanation.** Relative sd of the total cross section
+across published members is **4.478%**; Poisson on `n_data = 4,116,128` predicts **0.0493%**. With the
+estimator seed now known to be **pinned**, the training-stochasticity explanation is gone and what remains
+is that **the unfolding amplifies the statistical fluctuation by ~90× over naive counting.** That was the
+alternative reading this section always named and declined to rule out; it is now the surviving one.
+
+**This is not a defect claim and I am not making one.** All the varying inputs are legitimately
+statistical draws — the data Poisson factor, the signal and background factors, and the per-replica
+Stay-Positive target rebuild — so a spread larger than `1/√n_data` is expected. Amplification is what an
+iterative, flexible-estimator unfolding *does*. **What is not established is whether ~90× is the right
+size**, and that is a real question about `niter = 3` as a regularization choice, which
+`docs/OPEN_ITEMS.md` items (d)/(e) already record as owing a bias-variance justification rather than a
+gate-behaviour one. **`OI-94`.** It does not block construction and it is not a naming problem.
+
+For scale, from the same family: `R` (the step-1 class ratio) spans **1.1225–1.1253**, a **0.25%** range,
+while the total spans **4.5%** — so roughly **18×** between the class-ratio input and the extracted total.
+Recorded as an ingredient, not a derivation.
+
+### `CSTAT-O2a` — **RELEASED. Run it, sequenced AFTER `56936015` drains, and `nice` it.**
+
+I had this queued as ~5 tasks to measure the residual non-determinism floor. **Do not run it**, and the
+reason is that Gate-6 **Leg F already is that measurement.** Verified in the launcher rather than taken on
+relay: `sbatch_pet_fullevent_floor_replicate_array.sh:48-50` sets `EST=42` and `SUB=0` under the comment
+*"THE POLICY. Identical for every draw — that is the whole point of this leg,"* and `:185-186` passes
+exactly those two. Draws run at `bootstrap_seed = -1` on identical inputs and identical 2,000,000-row
+`mc_indices`. **So every source of variation in Leg F is pinned except process, node and GPU — which makes
+`VL130` the residual GPU/process non-determinism floor that survives a full seed pin**, not
+"across-process training noise" as its ledger label said. That mislabel is lane B's and B is correcting it
+as a strengthening.
+
+The committed numbers, at `n=4` (each sd carrying 40.8% fractional uncertainty; **draw 5 is in flight** and
+takes it to 35.4% for free):
+
+| domain | median |
 |---|---|
-| relative sd of `total_sigma` across members `[N=14]` | **4.478 %** |
-| (max − min) / mean `[N=14]` | 18.187 % |
-| median abs deviation / mean `[N=14]` | 1.676 % |
-| Poisson expectation, `n_data = 4,116,128` | **0.0493 %** |
-| Poisson expectation, `n_sig = 49,152,885` | 0.0143 % |
-| per-cell relative sd, median / max `[N=14]` | 0.151 / 0.794 |
+| top occupancy quartile (65 bins, 71.3% of spectrum) | **2.17 %** |
+| bins holding 90% of the spectrum (115 bins) | 2.52 % |
+| lowest occupancy quartile (65 bins, 0.52%) | 28.12 % |
+| L2 aggregate over 259 | **5.26 %** |
 
-A counting-only spread on an integrated quantity over 4.1M data events is **~0.05%**. The measured
-spread is **4.5%**. The distribution is heavy-tailed rather than uniformly wide — median deviation
-1.68% with `replica_08` at **+9.96%** and `replica_09` at **−8.23%** — which is itself a shape that
-counting statistics does not produce.
+**It was briefly held and the hold is released, because the test's shape improved.** I had it queued to
+*establish* the non-determinism floor; Leg F already pins the **no-draw** floor. So `CSTAT-O2a` no longer
+establishes a baseline — **it pins the WITH-DRAW floor against an existing one, and the difference is the
+map's response to the draw.** That is one comparison rather than a fresh measurement, and it is the thing
+that decides whether the 81.65% residual below is real content.
 
-**And the network is not seeded.** `grep` for `set_seed` across `nd-unfolding/` and `omnifold_nn/`
-returns **nothing**; no `tf.random.set_seed`, no `np.random.seed`, no `TF_DETERMINISTIC_OPS` in
-`train_fullevent_replica.py` or the extractor. The `bootstrap_seed` plumbing that *is* present
-(`:150-173`, `:315-321`) governs the **draw and its provenance validation**, not weight
-initialization, batch shuffling, or GPU reduction order.
+**Sequencing is a condition, not a preference: run it only after `56936015` drains, and `nice` the tasks.**
+Extraction is the critical path for the whole family and the Leg-F floor draw 5 is still in flight; putting
+5 tasks ahead of either would trade the critical path for a diagnostic. Extraction is deterministic given
+weights, so **the repeat must be of training.**
 
-**Consequence:** each member differs from every other in **two** ways at once — its Poisson draw *and*
-its free-running training stochasticity. The published matrix is therefore
-**`C_stat` + `C_train` + cross terms**, and **the two are not separable from this family**, because no
-two members share a draw and no member was repeated under a different initialization. Naming that
-matrix `C_stat` asserts a decomposition the family cannot support. This repo has a name for the shape —
-`BEN-149`, a field named for one thing carrying another.
+### The naming decision, closed
 
-C is **not** claiming which term dominates, and will not: an alternative explanation is genuine
-amplification of the data fluctuation by the iterative unfolding, which would be legitimately
-statistical and would itself be a significant result. **Both readings are consistent with every number
-above, and distinguishing them is one measurement, not an argument:**
-
-**`CSTAT-O2a` — the discriminating test.** Re-**train** one replica index twice at the **same**
-`bootstrap_seed`, then extract both. Extraction is deterministic given weights, so a repeat of
-extraction alone measures nothing — **the repeat must be of training.** Non-zero spread between that
-pair is `C_train` with the draw held fixed, measured directly and at the cost of a couple of
-14-minute tasks. A small pair (3–5 same-seed retrains) bounds `C_train` well enough to state what
-fraction of the published matrix is not statistical.
-
-### `CSTAT-O2` as a concrete decision — three candidate names, and the reason it is not a naming quibble
-
-**THE REASON IT MATTERS IS A POSSIBLE DOUBLE-COUNT, NOT A LABEL.** `RUNBOOK:223-224` defines the sibling
-component: **"`C_ML`: no Poisson variation. Use a predeclared crossed seed design and compare with the P5A
-floor."** That is training/seed variance **with the draw held fixed.** `C_stat` as built has the draw
-varying **and the network unseeded**. So **`C_stat` as built contains the `C_ML` quantity, and
-`C_total = C_syst + C_stat + C_ml + C_retrain` would count it twice.**
-
-This campaign already takes that hazard seriously for a different pair: `assemble_ctotal_bkgsub.py:10-20`
-carries an explicit no-double-counting **proof** for `C_syst + C_retrain`, built by defining `C_retrain`
-relative to the frozen map rather than to nominal, and it even names the shape that *would* have
-double-counted (*"Had `Delta_u` been `x_retrain − CV` it WOULD double-count"*). **`C_stat + C_ML` is the
-one pair with no such proof, and it is the pair where the overlap is not by construction but by
-omission — an unseeded network.**
-
-**The double-count is contingent on which reading of `CSTAT-O2` holds**, which is why one measurement
-settles both:
-
-| if the 4.478% spread is… | then `C_stat + C_ML` | and the right name is |
-|---|---|---|
-| **training-dominated** | **double-counts** the ML term | not `C_stat` alone |
-| **amplification-dominated** (the iterative unfolding genuinely amplifying the data fluctuation) | does **not** double-count | `C_stat`, and the amplification factor is itself a result |
-
-**The three candidate names:**
-
-1. **`C_stat`, unchanged and undeclared.** Zero churn. Asserts a decomposition the family cannot support,
-   leaves the `C_ML` overlap unexamined, and puts a "statistical" row ~90× counting into the technote where
-   the first referee to divide by `√n_data` finds it. **Not recommended.**
-2. **Rename to `C_replica` / `C_stat+train`.** Honest about content. But it breaks a **locked estimator
-   decision** — `RUNBOOK:210` calls it F7 `C_stat`, the N=50 predeclaration calls it `C_stat`, and
-   `assemble_ctotal_bkgsub.py` keys the assembler slot on `C_stat`. Renaming a locked label across the
-   runbook, the predeclarations and the assembler to describe a *split nobody has measured yet* is churn
-   ahead of evidence. **Not recommended, yet.**
-3. **Keep `C_stat` for the slot, declare the composition in the receipt, and run `CSTAT-O2a`.**
-   **RECOMMENDED.** The name stays where three documents already put it; the receipt records that the
-   component is `C_stat + C_train` with the split **unmeasured**, and names the `C_ML` overlap as an open
-   question rather than resolving it silently. Then ~5 same-seed retrains bound `C_train` and the name
-   becomes a measurement instead of a choice. **Cost: ~5 tasks at ~14.5 min. It is the cheapest item on
-   this gate and it decides both the name and whether the total double-counts.**
-
-**Note what `CSTAT-O2a` actually is:** retraining one index twice at the same `bootstrap_seed` is *exactly*
-a one-point measurement of the `C_ML` quantity. So the test does not merely settle a naming question — it
-produces a number the `C_ML` component needs anyway, which is why it is worth running whichever way the
-name goes.
-
-**This does not block writing the builders** — the construction is identical whatever the matrix turns
-out to be entitled to be called. **It blocks publishing the number under the name `C_stat`,** and it
-should be settled before the technote quotes it.
+**Keep `C_stat`.** It carries Poisson variation, which is what the name says. The slot name in
+`assemble_ctotal_bkgsub.py`, `RUNBOOK:210`'s F7 label, and the N=50 predeclaration all agree, and nothing
+needs to change. **No Joseph turn is required** — the option that was contingent on the double-count is
+moot rather than deferred. The receipt still declares the composition and now carries `CSTAT-D4`'s
+disjointness proof, because *"correctly named"* should be a stated and checkable property rather than an
+assumption a reader has to reconstruct.
 
 ## 9. `CSTAT-R4` — OUTPUT CONTRACT
 
@@ -867,6 +958,27 @@ copies a claim into a field named for a measurement (`BEN-149`, `OI-57`/`OI-58`)
 **`CSTAT-R5b`** `artifact.completion_marker_valid` in the member receipts is a **hardcoded producer
 literal** (lane C's `OI-66`) and MUST NOT be read as evidence. Call `is_complete` yourself.
 
+## 10b. `CSTAT-R7` — REQUIRED LIMITATION: the `N=50` precision shortfall must be stated, not implied
+
+**The receipt MUST carry this sentence, or its equivalent:**
+
+> The statistical component is estimated from **50** coherent replicas, giving a fractional uncertainty on
+> the estimated standard deviation of `1/√(2(N−1))` = **10.1%**, not the **7.1%** that
+> `PREDECLARATION-20260812-fullevent-cstat-100-replicas.md` targeted at `N=100`.
+
+**This is not optional and it is not a caveat added out of caution.** The earlier `N=100` predeclaration
+demands it in exchange at `:52-54`; the campaign settled on `N=50` on a stated precision criterion
+against a component measured at **0.669%/bin versus `C_syst`'s 7.27%**. **Stating the shortfall is the
+obligation that the downward revision was accepted under.** Dropping it silently would leave the
+inventory reduced and the disclosure that justified it absent — at which point the objection that this
+was a quiet walk-back becomes correct, and it would be correct.
+
+**Recorded here because it is the builder's receipt that has to carry it**, and because whether the
+earlier predeclaration is formally retired is a separate question that is **not** lane C's to settle
+(see `OI-122`, which assigns ratification to Joseph). **The disclosure does not wait on the retirement:**
+it is additive, honest, and true regardless of how the supersession is recorded — and publishing the
+number without it is the only ordering that would be wrong.
+
 ## 11. Out of scope — named explicitly
 
 A builder that does any of these has exceeded the spec:
@@ -900,7 +1012,7 @@ A builder that does any of these has exceeded the spec:
 | 2 | family validator `56936016` reports `GATE5_EXTRACTION_FAMILY_COMPLETE_PASS`, exactly 50/50 | **NOT MET** — PENDING on `afterany:56936015` |
 | 3 | `[N=14]` numbers re-measured at 50/50 | **NOT MET** — structure stable over 14 → 18 (§0) |
 | 4 | ~~`CSTAT-O1` rank treatment~~ | **CLOSED, never open** — dispositioned pre-launch (§7) |
-| 5 | `CSTAT-O2` naming settled, or `CSTAT-O2a` run | **OPEN** — blocks publication, not build |
+| 5 | ~~`CSTAT-O2` naming settled~~ | **CLOSED** — `C_stat` is correctly named; the premise was refuted (§8). `CSTAT-O2a` is still worth running, now to measure the non-determinism floor, and blocks nothing. |
 | 6 | ~~common mask confirmed against `C_syst`~~ | **WITHDRAWN** — the assembler that check belongs to is 5D and cannot consume this object (`CSTAT-D0b`). Superseded by `CSTAT-O3`, which blocks assembly, not this build. |
 
 Preconditions 1–3 gate **construction**. 4–5 gate **publication**. Builders may be written and their

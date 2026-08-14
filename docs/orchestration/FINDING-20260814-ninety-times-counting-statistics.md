@@ -1,145 +1,143 @@
-# FINDING 2026-08-14 — Ninety times counting statistics, and fifty members that all agreed
+# FINDING 2026-08-14 — Ninety times counting statistics, a wrong explanation, and a grep that could not have found the truth
 
-**`BEN-232`.** Lane C (PET), owner of Gate 5 / P5B.1 / `C_stat`.
-**Status:** OPEN — `OI-92`, `CSTAT-O2`. Returns to Joseph. **Does not block building; blocks publishing.**
-**Found:** while writing `SPEC-20260814-gate5-cstat-construction-v1.md`, not while looking for it.
+**`BEN-232`** (the measurement and the retracted explanation) and **`BEN-235`** (the reusable mechanism).
+Lane C (PET). **Status: the explanation is REFUTED — by me, the same day, after the mediator flagged it.**
 **Evidence:** [`state/gate5-cstat-spec-measurements-20260814.json`](state/gate5-cstat-spec-measurements-20260814.json)
-and the five scripts + verbatim stdout in
+and the scripts and verbatim stdout in
 [`state/gate5-cstat-spec-measurements-20260814/`](state/gate5-cstat-spec-measurements-20260814/).
+
+> **Read this first.** This file originally argued that the Gate-5 replica network was **unseeded**, that
+> the covariance was therefore `C_stat + C_train` and inseparable, and — in a later commit — that
+> `C_total` **double-counts** `C_ML`. **Every one of those conclusions was false.** The measurement they
+> rested on is fine. What was wrong was a single factual premise that two greps would have settled, and
+> the interesting content of this finding is now **why my search could not have found it**, plus **what
+> the measurement means once the wrong explanation is removed.**
 
 ---
 
-## The number
-
-The Gate-5 N=50 coherent replica family exists for exactly one purpose: to produce `C_stat`, the
-statistical covariance of the extracted cross section. Measured across the 14 published extractions:
+## 1. The measurement, which is unaffected
 
 | quantity | value |
 |---|---|
 | relative sd of `total_sigma_cm2_per_nucleon` across members | **4.478 %** |
 | Poisson expectation, `n_data = 4,116,128` | **0.0493 %** |
 | **ratio** | **≈ 90×** |
-| Poisson expectation, `n_sig = 49,152,885` | 0.0143 % |
 | (max − min) / mean | 18.187 % |
 | median abs deviation / mean | 1.676 % |
 | per-cell relative sd, median / max | 0.151 / 0.794 |
 
-An integrated quantity over 4.1M data events cannot fluctuate by 4.5% from counting. And the
-*distribution shape* is wrong independently of the width: median deviation 1.68% with `replica_08` at
-**+9.96%** and `replica_09` at **−8.23%**. Counting statistics on millions of events produces a tight
-gaussian, not a tight core with 8–10% tails.
+Nothing here is retracted. An integrated quantity over 4.1M data events fluctuating by 4.5% is a real,
+large, and initially surprising number, and it deserved the attention it got.
 
-## The cause
+## 2. The explanation I gave, and its refutation
 
-`grep` for `set_seed` across `nd-unfolding/` and `omnifold_nn/` returns **nothing**. No
-`tf.random.set_seed`, no `np.random.seed`, no `TF_DETERMINISTIC_OPS` — not in
-`train_fullevent_replica.py`, not in the extractor.
+**I claimed:** `set_seed` appears nowhere in `nd-unfolding/` or `omnifold_nn/`, so weight initialization,
+batch shuffling and reduction order are free-running; each member therefore differs by its Poisson draw
+**and** by training stochasticity; the object is `C_stat + C_train`, inseparable from this family.
 
-The `bootstrap_seed` plumbing that *is* present is extensive and correct, and that is precisely what
-makes it misleading: `:150-153` threads the seed into the loader, `:157` and `:167-168` validate the
-loader's bootstrap evidence carries it, `:319-321` enforces `bootstrap_seed == 50000 + replica_index`.
-All of it governs **the draw and the provenance of the draw.** None of it governs **weight
-initialization, batch shuffling, or GPU reduction order.**
+**The estimator seed is pinned at 42 for every member.** Verified three ways, the third being the one that
+settles it:
 
-So each of the 50 members differs from every other in **two** ways at once:
+1. `sbatch_gate5_replica_train_array.sh:63-71` passes **only** `--bootstrap-seed` and `--replica-index`.
+2. `train_fullevent_replica.py:236` calls `nominal.main([...])` **without** `--estimator-seed` — so
+   `train_fullevent_nominal.py:335` takes its default `NOMINAL_SEED_POLICY["estimator_seed"]` = **42**
+   (`:69`), and `:376` executes `tf.keras.utils.set_random_seed(42)`. The seeding *is* on the replica path:
+   the replica driver monkey-patches three nominal functions and then delegates to nominal's own `main()`.
+3. **Measured from the artifacts.** All **50** `GATE5_REPLICA_WEIGHTS.npz` carry exactly **one**
+   `seed_policy`, containing `estimator_seed: 42`. And `train_fullevent_replica.py:275` is
+   `if seed_policy != nominal.NOMINAL_SEED_POLICY: raise SystemExit` — so the agreement is **enforced per
+   member**, not coincidental.
 
-1. its Poisson draw — the intended axis, worth ~0.05%; and
-2. free-running training stochasticity — unseeded, unmeasured, and plausibly the bulk of 4.5%.
+So the members differ in **one** way, not two, and `C_stat` is correctly named.
 
-The published matrix is therefore `C_stat + C_train + cross terms`. **The two are not separable from
-this family**, because no two members share a draw and no member was ever repeated under a different
-initialization. There is no lever in the existing 50 artifacts that holds one fixed while the other
-varies.
+## 3. `BEN-235` — why the search could not have found it, which is the transferable part
 
-## What I am *not* claiming
+I ran:
 
-Not that `C_train` dominates. A second reading fits every number above: the iterative unfolding may
-genuinely **amplify** the data fluctuation, and a network with enough capacity to fit per-replica noise
-can amplify a 0.05% input by a large factor. If that is what is happening, the spread is legitimately
-statistical, `C_stat` is the right name, and **the amplification factor is itself a significant result**
-that belongs in the technote — arguably a more interesting one than the covariance.
+```
+grep -rln "set_seed" nd-unfolding/ omnifold_nn/          -> no output
+```
 
-Both readings are consistent with all of the evidence. I am not going to argue between them, because
-arguing is the wrong instrument:
+and reported *"`set_seed` appears **nowhere**."* The call is **`tf.keras.utils.set_random_seed`**, and
 
-## `CSTAT-O2a` — the discriminating test, which is one measurement
+```
+"set_random_seed".find("set_seed")  ->  -1
+```
 
-**Re-train one replica index twice at the same `bootstrap_seed`, then extract both.**
+**`"set_random_seed"` does not contain the substring `"set_seed"`.** The intervening `random_` breaks it.
+My other patterns were no better: `tf.random` misses `tf.keras.utils.*`; `np.random.seed` is a different
+library; `TF_DETERMINISTIC_OPS` and `PYTHONHASHSEED` are environment knobs that were never the mechanism.
+**Not one of my patterns could have matched the line that refutes me.**
 
-The subtlety worth stating, because it is the way to get this wrong cheaply: **extraction is
-deterministic given weights**, so repeating *extraction* measures exactly zero. The repeat must be of
-**training**. Non-zero spread between two same-seed retrains is `C_train` with the draw held fixed,
-measured directly. Three to five such pairs at ~14 min/task bound it well enough to state what fraction
-of the published matrix is not statistical.
+That is the generalisable defect, and it is sharper than "I made a typo":
 
-## Why this sat under fifty passing checks
+> **An inference from absence is only as strong as the search that would have refuted it.** A negative
+> result is evidence *about the search*, and only becomes evidence about the world once the search is
+> known to cover the thing being denied. Mine did not, so the silence carried no information at all — and
+> I converted it into a headline finding, a long-form document, an `OI` addressed to Joseph, and
+> eventually a claim that the published covariance double-counts another component.
 
-This is the part I want a future agent to read, because the campaign's verification was not weak — it
-was *thorough on the wrong axis*.
+**Two cheap habits that would each have caught it:**
 
-The Gate-5 family passed `FAMILY_COMPLETE_PASS` at full strength: 58 checks per target row, 50/50
-targets, 50/50 trainings, zero failures, zero name mismatches, 50-of-50 distinct on target digests, all
-three factor-hash streams, and weights digests, with 50 distinct `R` straddling the nominal. Every one
-of those checks compared **the family against itself** or against a recorded expectation derived from
-the same producer.
+- **Grep the API family, not the API.** `grep -rn "seed" nd-unfolding/pet/train_fullevent_nominal.py` is
+  noisier and would have returned `:69`, `:335`, `:376` immediately. When the conclusion is *"X is
+  absent"*, widen until the search would obviously find X if present, then narrow.
+- **Prefer asserting the positive from an artifact.** The weights NPZ recorded
+  `estimator_seed: 42` on all 50 members the entire time. **The refutation was sitting inside the very
+  files I had already been measuring all day** — I had read `seed_policy` out of them for a different
+  check. A claim about what the code does is best settled by what the products record.
 
-**The uncontrolled variable was uncontrolled identically in all fifty members**, so no comparison
-*among* them could reveal it. Fifty-way unanimity is exactly what an unseeded network produces: every
-member is stochastic in the same way, so every member agrees that this is normal.
+There is an uncomfortable symmetry worth keeping: **`BEN-234`, filed hours earlier, is that tagging a
+claim UNVERIFIED is not the same as not relying on it.** This is the same failure with the label removed —
+I did not even tag this one, because a `grep` returning nothing *feels* like a measurement. It is not.
 
-What exposed it was one division by `sqrt(n_data)` — **a comparison against an external scale that
-lives outside the campaign's artifacts entirely.** That scale was available from the first replica. It
-cost one line and no compute.
+## 4. What survives, and it is a physics question
 
-This is `BEN-230`'s lesson arriving from the other direction. There, a receipt whose numbers all
-re-derived was evidence of arithmetic and not of measurement. Here, a family whose members all agree is
-evidence of *homogeneity* and not of *correctness*. **The generalisation: internal agreement, at any
-count, has no power over a defect shared by every member.** Distinct hashes prove the draw is live; they
-say nothing about whether the spread they produce means what its name says.
+With training held fixed, the 4.478% is the **statistical draw propagated through the unfolding** — i.e.
+**the unfolding amplifies the fluctuation by ~90× over naive counting.** That was always the alternative
+reading this file named and declined to rule out; it is now the surviving one.
 
-And the naming half is `BEN-149`'s shape — `train_fullevent_replica.py:112` copying a claim into a field
-named for a measurement, one directory away in the same campaign. Same defect at a different scale: a
-label asserting a property of its contents that nothing established. The field there was
-`inputs_sha256_verified`. The label here is `C_stat`.
+**This is not a defect claim.** Every varying input is a legitimate statistical draw — the data Poisson
+factor, the signal and background factors, and the per-replica Stay-Positive target rebuild — so a spread
+exceeding `1/√n_data` is expected, and amplification is what an iterative, flexible-estimator unfolding
+does. **What is not established is whether ~90× is the right size**, and that question lands squarely on
+`niter = 3` as a regularization choice — which `docs/OPEN_ITEMS.md` items (d)/(e) already record as owing
+a **bias-variance** justification rather than a gate-behaviour one. A regularization parameter chosen
+because closure passed is exactly what an amplification factor would expose. **`OI-94`.**
 
-## The stake is a double-count, and it was not obvious until the sibling component was read
+Ingredient, not a derivation: in the same family `R` spans **1.1225–1.1253** (a 0.25% range) while the
+total spans **4.5%** — roughly **18×** between the class-ratio input and the extracted total.
 
-**Added after the first draft of this finding, which framed this as a naming problem. It is worse than
-that.** `RUNBOOK:223-224` defines the sibling component: **"`C_ML`: no Poisson variation. Use a
-predeclared crossed seed design and compare with the P5A floor."** That is training/seed variance **with
-the draw held fixed** — which is *precisely* the quantity the unseeded network is injecting into `C_stat`.
+## 5. What also survives: the pair really had no disjointness proof
 
-So in `C_total = C_syst + C_stat + C_ml + C_retrain`, **`C_stat` as built already contains the `C_ML`
-quantity, and the sum counts it twice.**
+The double-count claim was wrong, but the observation under it was not. **`C_stat` + `C_ML` is the one
+component pair in this chain with no written disjointness proof**, while
+`assemble_ctotal_bkgsub.py:10-20` carries an explicit one for `C_syst + C_retrain` — including a statement
+of the construction that *would* have failed. That standard existed and this pair had not met it.
+`SPEC` `CSTAT-D4` now supplies it: `C_stat` varies the Poisson draw with the estimator seed pinned and
+**enforced**; `C_ML` varies the estimator seed with the draw fixed (`RUNBOOK:223-224`); disjoint inputs,
+so the sum does not double-count. **Enforced rather than lucky** — `:275` would abort a member whose seed
+policy drifted, so a future edit that started varying the seed per replica would fail the family instead
+of silently corrupting the sum.
 
-The reason this is damning rather than merely unlucky: **this campaign has already done exactly this
-analysis for a different pair, and documented it.** `assemble_ctotal_bkgsub.py:10-20` carries an explicit
-no-double-counting proof for `C_syst + C_retrain`, constructed by defining `C_retrain` relative to the
-frozen map rather than to nominal, and it even names the shape that *would* have failed: *"Had `Delta_u`
-been `x_retrain − CV` it WOULD double-count."* The rigour exists. **`C_stat + C_ML` is the one pair with
-no such proof — and the difference is that the other overlaps were avoided *by construction*, whereas
-this one was created *by omission*: a missing `set_seed`.**
+## 6. Residual, and the test that is still worth running
 
-It is contingent on which reading of the 4.478% holds, which is why one measurement settles both:
+`set_random_seed` does **not** defeat GPU non-determinism (cuDNN atomics, non-deterministic reductions)
+unless determinism ops are enabled, and they are not. So some training variance still leaks into `C_stat`
+despite the pin, and its size is **unmeasured**.
 
-| if the spread is… | `C_stat + C_ML` | the name |
-|---|---|---|
-| training-dominated | **double-counts** | not `C_stat` alone |
-| amplification-dominated | does not | `C_stat`, and the amplification is itself a result |
+**`CSTAT-O2a` therefore keeps its cost and changes its justification.** Re-**train** one index twice at
+the same `bootstrap_seed` and extract both: a fully deterministic pipeline returns bit-identical results,
+and the departure from that measures the **non-determinism floor** — a number `C_ML` wants independently
+as the floor its crossed-seed spread must clear, and which bounds how much of the 4.478% is not the draw.
+Extraction is deterministic given weights, so the repeat must be of **training**. ~5 tasks, ~14.5 min each.
 
-**And `CSTAT-O2a` is not merely a test — retraining one index twice at the same `bootstrap_seed` is a
-one-point measurement of the `C_ML` quantity itself.** So it produces a number the `C_ML` component needs
-regardless of how the naming question is answered, which is why it is worth running either way.
+## 7. Disposition
 
-## Disposition
-
-- **`OI-92` / `CSTAT-O2`** — open, WAITING-USER, Joseph's call.
-- **The spec proceeds.** The construction is identical whatever the matrix is entitled to be called, so
-  both builders can be written and tested now. `SPEC-…-v1.md` §8 states the issue and §12 lists it as a
-  **publication** precondition, not a construction one.
-- **Not fixed by C, and deliberately.** Adding `set_seed` would change the training driver *mid-family*
-  and invalidate the 50 members already produced. The repair, if Joseph wants determinism, belongs with
-  the next launch alongside `OI-57`/`OI-58` and the CODE_ROOT sync — the same queue as
-  `train_fullevent_replica.py:112`, for the same reason.
-- **Do not "fix" this by re-running the family with seeds.** That answers a different question. The
-  measurement that resolves the *current* family is `CSTAT-O2a`, and it costs ~5 tasks.
+- **`OI-92` CLOSED.** `C_stat` is correctly named; no decision needed from Joseph.
+- **`OI-94` OPEN** — the ~90× amplification, coupled to the `niter = 3` regularization justification.
+- **`BEN-235` filed** for the search-vs-absence mechanism, which is the part with reuse value.
+- **`CSTAT-D4` written** into the spec, converting the disjointness from an unstated construction into a
+  documented and enforced one.
+- **Nothing was retracted from the measurement**, and nothing about the family's own validation changed:
+  the 50/50 `FAMILY_COMPLETE_PASS` never depended on any of this.

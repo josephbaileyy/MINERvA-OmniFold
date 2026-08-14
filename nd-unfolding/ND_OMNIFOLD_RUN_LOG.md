@@ -7372,3 +7372,77 @@ is measured:** the **failed** r1 array `56935552` and the live r2 `56936015` **w
 root.** r1 died before writing any product so nothing is contaminated — **but a glob would have taken its
 products had any existed, which is luck rather than design.** Digests catch a stale duplicate within one
 array; the array id catches a clean product from the wrong array.
+
+### 2026-08-14 ~06:10 PDT — `BEN-232` IS REFUTED AND THE GREP IS THE FINDING (lane C)
+
+**I reported that the Gate-5 replica network was unseeded. It is not. The estimator seed is pinned at 42
+on all 50 members and enforced per member.** The mediator flagged it; I verified rather than accepted:
+the launcher (`sbatch_gate5_replica_train_array.sh:63-71`) passes only `--bootstrap-seed`/`--replica-index`;
+`train_fullevent_replica.py:236` calls `nominal.main()` **without** `--estimator-seed`, so `:335` defaults
+from `NOMINAL_SEED_POLICY` (`:69` = 42) and `:376` runs `tf.keras.utils.set_random_seed(42)`; and
+**measured, all 50 `GATE5_REPLICA_WEIGHTS.npz` carry ONE `seed_policy` with `estimator_seed: 42`**, with
+`:275` fail-closing on drift. So agreement is enforced, not coincidental.
+
+**Why the search could not have worked, which is the part with reuse value (`BEN-235`).** I ran
+`grep -rln "set_seed"`, got nothing, and published *"`set_seed` appears nowhere."* The API is
+**`set_random_seed`**, and **`"set_random_seed"` does not contain the substring `"set_seed"`** — the
+intervening `random_` breaks it. `tf.random`, `np.random.seed`, `TF_DETERMINISTIC_OPS`, `PYTHONHASHSEED`
+all miss `tf.keras.utils.*` as well. **Not one pattern could have matched the line that refutes me**, so the
+silence carried no information and I converted it into a headline finding, a long-form document, an `OI` to
+Joseph, and a claim that the published total double-counts a component. **An inference from absence is only
+as strong as the search that would have refuted it.** Worse than `BEN-234`, filed hours earlier, because I
+did not even label this one — a `grep` returning nothing *feels* like a measurement.
+
+**The refutation is in every place the claim was**, not annotated: `BEN-232`'s row rewritten, its long-form
+retitled and rebuilt, `OI-92` CLOSED, `SPEC` §8 replaced wholesale, and the contract's `CSTAT-O2` block
+replaced. **`C_stat` is correctly named and no Joseph turn is needed.**
+
+**What survives is a physics question, and it is now DECOMPOSED rather than merely narrowed.** Leg F pins
+`EST=42`/`SUB=0` for every draw at `bootstrap_seed = -1`
+(`sbatch_pet_fullevent_floor_replicate_array.sh:48-50,185-186`, read directly), so **`VL130` is the residual
+GPU/process non-determinism floor that survives a full seed pin** — a stronger claim than its old
+"across-process training noise" label, and B has relabelled it. B then closed the normalization axis in
+**2.6 s of numpy**, without the extraction stage, by seeing that `σ_tot`'s denominator is identical across
+draws so the relative spread of the total equals that of the numerator `Σ_j w_truth·push_d`. **I re-derived
+every figure and they reproduce to rounding:**
+
+```
+family spread          4.478%   = 90.8x Poisson    100.00% of variance
+non-determinism floor  1.918%   = 38.9x Poisson     18.35% of variance
+quadrature residual    4.046%   = 82.1x Poisson     81.65% of variance
+Poisson n_data=4116128 0.0493%                      shares sum to 100.00%
+```
+
+Negative control holds — `cap_saturation_frac = 0.0` on every draw, so not a logit-clipping artefact — and
+the mechanism shows directly in per-draw `mean(push)`: `1.0776 / 1.0913 / 1.0472 / 1.0825`. **So the gap is
+neither an unseeded network nor counting statistics: 18.35% is measured process non-determinism and 81.65%
+is unexplained.** B's reading, which neither of us asserts, is the learned map's response to the draw — the
+legitimate content of `C_stat` for an unfolding estimator. **If so the name is right, and ~18% of the
+component's variance being non-determinism rather than data statistics belongs in the receipt either way.**
+Three caveats travel with it: the floor is on the **2M-subsample numerator** not the published total; the
+quadrature split **assumes independence**; and `n=4` carries **40.8%** fractional uncertainty per sd
+(→35.4% when draw 5 lands), with `1/√k` recorded as an **assumption** because `n=4` cannot test it.
+
+**`CSTAT-O2a` is RELEASED and its shape improved.** I had queued it to *establish* the floor; Leg F pins the
+**no-draw** floor, so the test now pins the **with-draw** floor against an existing baseline and **the
+difference is the map response** — one comparison, not a fresh measurement, and it is what decides whether
+the 81.65% is real content. **Sequenced after `56936015` drains and `nice`d**, because extraction is the
+critical path and floor draw 5 is still in flight.
+
+**And the pair really did lack a proof, so `CSTAT-D4` now writes it.** `C_stat` varies the Poisson draw
+with the seed pinned and enforced; `C_ML` varies the seed with the draw fixed (`RUNBOOK:223-224`). Disjoint
+inputs, no double count — **enforced rather than lucky**, since `:275` would fail a family whose seed policy
+drifted. That was the real gap under a wrong claim, and it is closed.
+
+**`BEN-236` — a third mask, and a set collision at 259.** Adopting B's constraint (no consumer may use a
+training artifact's `reported_bin_mask` as the reporting domain) and then measuring it changed it twice: the
+training mask is **not constant** (`{257:3, 258:21, 259:26}` over 50 members, union 259, intersection 256),
+and **the training union's 259 is a DIFFERENT SET from the extraction intersection's 259** — the extraction
+union holds `{254, 281, 284}` besides, and `254` is a flickering cell. **A matching count is not a matching
+set.**
+
+**`CSTAT-R7` added, and it is the one `OI-122` obligation that is mine:** the receipt MUST state that
+`N=50` gives **10.1%** fractional uncertainty on the estimated sd, not the **7.1%** the `N=100`
+predeclaration targeted. That disclosure is what the downward revision was accepted under, it is additive
+and true regardless of how the supersession is recorded, and publishing the number without it is the only
+ordering that would be wrong.
