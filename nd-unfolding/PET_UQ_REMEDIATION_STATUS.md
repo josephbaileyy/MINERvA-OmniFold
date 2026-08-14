@@ -406,6 +406,15 @@ different central/mask/order/fingerprint.
 
 ## Gate 5 — F7 coherent statistical replicas
 
+**Update 2026-08-14 09:14 UTC — FULL-INPUT EXTRACTION IMPLEMENTATION ACCEPTANCE PASS.** A dedicated
+replica adapter leaves the Gate-4-pinned nominal extractor byte-unchanged and calls its engine
+reweight, coverage checks and xsec arithmetic. It independently replays the full signal/background
+factors, applies the signal factor to both truth counts and completeness/reporting-mask construction,
+and publishes a receipt last. The after-any terminal validator requires exactly 50/50 and never
+selects a subset. The actual TensorFlow-runtime battery is 181/181 PASS; replica 0's 49,152,885-row
+signal draw replays exactly. `C_stat` remains null. Implementation receipt:
+[`state/gate5-extraction-implementation-20260814.json`](../docs/orchestration/state/gate5-extraction-implementation-20260814.json).
+
 **Update 2026-08-14 08:57 UTC — TRAINING FAMILY PROMOTED PASS after the independent NPZ gate.**
 Read-only job `56933831` completed `0:0` with empty stderr. Its full-strength family replay is
 byte-identical to the already committed `ca99effa…` report, and the distinct artifact validator returned

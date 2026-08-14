@@ -7105,3 +7105,19 @@ Promotion verdict: `GATE5_TRAINING_FAMILY_PROMOTION_PASS`. This is a training-fa
 `C_stat` is still null, no subset is selected, and Gate 6 remains unchanged. The next dependency-ready
 action is the predeclared 50-member full-input extraction and complete manifest. Receipt:
 `../docs/orchestration/state/gate5-training-family-promotion-56933831.json`.
+
+### 2026-08-14 09:14 UTC — Gate-5 full-input extraction implementation accepted
+
+The dedicated replica extractor was implemented without changing the Gate-4-pinned nominal extractor.
+It calls the nominal path's model rebuild, engine reweight, ordered-coverage checks, xsec arithmetic and
+atomic writer. Its Gate-5-only adapter replays the persisted full factors and applies the full signal
+draw to both truth counts and completeness/reporting-mask construction. The background draw remains
+bound to the already-verified per-replica Stay-Positive target; background rows do not enter the final
+truth-space binning.
+
+The terminal validator is fail-closed on the declared family: 49/50 produces a BLOCK report and never a
+49-member covariance. The actual TensorFlow-runtime acceptance command passed 181/181 tests. A real
+replica-0 preflight independently replayed all 49,152,885 signal factors and recovered factor hash
+`892d1531…`. Batch was selected over interactive because this is a 50-member, ten-concurrent-GPU family
+that must outlive a single interactive allocation. `C_stat` remains null. Receipt:
+`../docs/orchestration/state/gate5-extraction-implementation-20260814.json`.

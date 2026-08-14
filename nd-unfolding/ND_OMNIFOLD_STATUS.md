@@ -9,7 +9,9 @@ confirmed the bare full-strength `FAMILY_COMPLETE_PASS` and returned
 `GATE5_TRAINING_ARTIFACTS_PASS`: 50/50 NPZ members, exact fixed subsample, 2+4 realized LR fits,
 full/subset signal factors, full background factors, bindings, logs, accounting, and collision
 isolation all pass with zero failed checks. `C_stat` remains null; the next action is full-input
-per-replica extraction followed by a complete 50-member manifest. Exact promotion receipt:
+per-replica extraction followed by a complete 50-member manifest. That dedicated extraction path is
+now implemented and acceptance-tested (181/181 plus a real 49,152,885-row factor replay) without
+editing the Gate-4-pinned nominal extractor; submission follows from an immutable worktree. Exact promotion receipt:
 `../docs/orchestration/state/gate5-training-family-promotion-56933831.json`.
 
 **Gate 6 PET ML ensemble is BLOCKED by its predeclared no-training convergence control.** Array
