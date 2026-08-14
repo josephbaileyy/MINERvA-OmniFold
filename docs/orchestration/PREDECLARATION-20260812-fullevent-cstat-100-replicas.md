@@ -1,5 +1,70 @@
 # PREDECLARATION 2026-08-12 — the 100-replica `C_stat` is declared against the FULL-EVENT estimator, and is NOT launched
 
+> ## `status: SUPERSEDED` — 2026-08-14
+>
+> **Superseded by
+> [`PREDECLARATION-20260813-gate5-coherent-replicas-n50.md`](PREDECLARATION-20260813-gate5-coherent-replicas-n50.md)**
+> (committed `6bd3707`, 2026-08-12 23:29), which predeclares `n_replicas = 50` and carries Joseph's
+> verbatim *"sounds good, get N=50 up and running"*.
+>
+> **Retired by:** Joseph, 2026-08-14, verbatim **"Yes I authorize it"**, answering *"do you authorize
+> marking `PREDECLARATION-20260812-fullevent-cstat-100-replicas.md` as SUPERSEDED, naming the N=50
+> document, retiring rather than deleting it?"* — relayed by `personal-orchestrator` and **committed at
+> `4d28e78` before this annotation was made**, per `BEN-082(v)`. Executed by lane C (PET), which owns the
+> Gate-5 predeclaration chain. Tracked as `OI-122`.
+>
+> ### The ground is AUTHORITY, not precision
+>
+> **This file never authorized anything and nothing was ever launched under it.** Its own `:10` reads
+> **"NOTHING IS LAUNCHED BY THIS FILE AND NOTHING MAY BE"**, and its §4 launch gate — *"all four, and
+> none is satisfied today"* — includes a condition 4 that says of itself **"This file is not that
+> authorization."** So the supersession does not overrule a decision this document had the standing to
+> make; it records that the standing was never exercised and has now passed to its successor.
+>
+> **It is explicitly NOT grounded in "50 is precise enough."** That framing would invite a reader to
+> compare `1/√(2(N−1))` at 50 against 100 and adjudicate a numerical trade, which is not what happened
+> and is the weaker argument by a distance.
+>
+> ### The `INSUFFICIENT` branch never armed — read this before concluding otherwise
+>
+> **`:73` pre-registers `INSUFFICIENT` for *"fewer than 100 complete manifests at assembly"*, "not
+> repaired by rescaling", and `:79` requires *"100 complete"* for `PASS`. That clause is why this file
+> read as a live conflict with the N=50 campaign** — independently, to two readers, for most of
+> 2026-08-14. **It never armed, because its trigger is *at assembly* and no assembly ever occurred under
+> this file.** The verdict branches describe a run this predeclaration gated and never released.
+>
+> **And the branches that are about QUALITY rather than COUNT were met by the successor family, not
+> dodged by it** — which is the part a reader should have:
+>
+> | this file's branch | N=50 family |
+> |---|---|
+> | **SEED LEAK** — *"any replica whose estimator seed differs from the fixed value; fail closed"* | **PASSES.** Measured: all 50 `GATE5_REPLICA_WEIGHTS.npz` carry one `seed_policy` with `estimator_seed: 42`, and `train_fullevent_replica.py:275` fail-closes on drift — so the fail-closed behaviour this branch demanded is *implemented*, not merely observed. |
+> | **CENTRING ERROR** — *"centred on nominal rather than replica mean … the one most likely to recur"* | **PASSES.** The replica mean is the declared centring (`SPEC-20260814-gate5-cstat-construction-v1.md` §4), independently required by `RUNBOOK:213` and already implemented in `combine_cstat_bkgsub.py:57-58`. |
+> | **NON-PSD** | not yet evaluable — `C_stat` is not constructed. |
+> | **INSUFFICIENT** — fewer than 100 | **the only branch that differs**, and it is the inventory size the successor predeclared and Joseph authorized. |
+>
+> **So the disagreement between the two documents was never about estimator quality.** It was about
+> inventory size alone, and that is the axis the successor changed in the open, before launch, with a
+> stated criterion.
+>
+> ### The obligation this retirement carries
+>
+> **`N=50` gives a fractional uncertainty on the estimated standard deviation of `1/√(2(N−1))` = 10.1%,
+> against the 7.1% this document targeted at `N=100`. That shortfall MUST be stated as a limitation in
+> the `C_stat` receipt** — it is required by this file at `:52-54` and is enforced as `CSTAT-R7` in the
+> construction spec. **Retiring this document does not discharge that obligation; it is what the
+> downward revision was accepted under.**
+>
+> ### Retired, not deleted — and why that is the point
+>
+> Joseph's reasoning, which belongs here rather than only in a ledger: **a predeclaration you delete when
+> it becomes inconvenient is not a predeclaration.** Keeping a superseded one visible is what proves the
+> supersession happened in the open. **Everything below this header is preserved exactly as committed on
+> 2026-08-12 — no sentence of it has been edited, and no digest of this file's bytes exists anywhere in
+> the tree** (checked before annotating: all references to it are by path, so `BEN-158`'s
+> annotate-in-place hazard does not apply here).
+
+
 **Owner:** Session C (PET). **Authority:** Joseph, 2026-08-12, relayed by Session A, verbatim:
 
 > *"Keep the existing 20-replica `C_stat` only for the disclosed, quarantined recoil-PET diagnostic; do
