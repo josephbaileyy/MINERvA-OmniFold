@@ -9,6 +9,7 @@ This test fails on any NEW mismatch. The four pre-existing drifts are allowed by
 the verifier's KNOWN_PREEXISTING list; run it with --strict to see those too.
 """
 import os
+import re
 import subprocess
 import sys
 
@@ -41,11 +42,41 @@ def test_no_new_broken_hash_bindings():
 # The floor is the same device as verify_hash_bindings.SHELL_PIN_FLOOR: a discoverer that silently
 # matches nothing is the failure mode this file exists to catch. Raise it when a launch-code gate is
 # added; lowering it needs the same justification as deleting a guard, because that is what it does.
-_LAUNCH_CODE_FLOOR = 2
+#
+# WAS `_LAUNCH_CODE_FLOOR = 2`, A SCALAR, REPLACED 2026-08-13 (OI-64(g), lane A, against its own commit).
+# Two independent defects, and the second is why this is a semantics fix rather than a floor adjustment:
+#
+#  1. ZERO MARGIN, on a floor whose failure message could not name the real problem. Retiring
+#     `…gate4-…20260812.json` that morning took the live count 3 -> 2, exactly the floor.
+#     CORRECTION, and lane A's OI-64(g) overstated this: a re-issue-AND-retire does NOT trip it, because
+#     the successor adds one live receipt as the predecessor drops one -- net zero, live stays 2. The real
+#     trigger is narrower: a retirement with NO same-commit successor, which is the shape of retiring a
+#     finished gate's receipt. At zero margin that trips a scalar floor whose message says "expected at
+#     least 2" -- arbitrary, and its cheapest exit is lowering a guard this comment calls equivalent to
+#     deleting one. The per-family form fails the same case with the message that is actually true:
+#     "gate4's code freeze is checked by NOTHING." Same trigger, legible cause, no floor to lower.
+#  2. THE SCALAR WAS STRICTLY WEAKER THAN ITS OWN STATED INTENT. "A discoverer that silently matches
+#     nothing" is a per-family property: `>= 2` is satisfied by TWO Gate-4 receipts and ZERO Gate-3 ones,
+#     which is exactly the blindness it exists to prevent. The test's own name says
+#     `gate3_and_gate4`, and the scalar could not express the `and`.
+#
+# So families are DISCOVERED from every launch-code receipt on disk (live or superseded) and each one is
+# required to have at least one LIVE receipt. That is self-maintaining -- a Gate-5 launch-code gate is
+# covered the day its first receipt lands, with no constant to remember to raise -- and immune to the
+# margin problem, because retiring a predecessor never takes a family's live count below the one its
+# successor holds. `_LAUNCH_CODE_REQUIRED` is the residual floor against the whole directory vanishing or
+# the filename grammar drifting, which discovery alone cannot catch.
+_LAUNCH_CODE_REQUIRED = ("gate3", "gate4")
+_LAUNCH_CODE_FAMILY = re.compile(r"-(gate\d+)-launch-code-gate-")
 
 
-def _launch_code_receipts():
-    """(name, payload) for every LIVE launch-code-gate receipt in state/."""
+def _launch_code_receipts(live_only=True):
+    """(name, payload) per launch-code-gate receipt in state/. live_only filters the retired ones.
+
+    `live_only=False` is what makes family discovery possible: a family whose every receipt is
+    superseded is invisible to the live set, and that is precisely the case the per-family assertion
+    has to catch.
+    """
     import glob
     import json
     out = []
@@ -55,9 +86,18 @@ def _launch_code_receipts():
             payload = json.load(open(p))
         except (json.JSONDecodeError, OSError):
             continue
-        if payload.get("status") == "SUPERSEDED" or "files" not in payload:
+        if live_only and (payload.get("status") == "SUPERSEDED" or "files" not in payload):
             continue
         out.append((os.path.basename(p), payload))
+    return out
+
+
+def _families(names):
+    """{family: [name, ...]} off the FILENAME grammar. Unparseable names are returned under None."""
+    out = {}
+    for n in names:
+        m = _LAUNCH_CODE_FAMILY.search(n)
+        out.setdefault(m.group(1) if m else None, []).append(n)
     return out
 
 
@@ -66,11 +106,29 @@ def test_gate3_and_gate4_launch_code_freezes_specifically():
     """The launch-code gates are the ones a refactor is most likely to touch."""
     import hashlib
     receipts = _launch_code_receipts()
-    assert len(receipts) >= _LAUNCH_CODE_FLOOR, (
-        f"found only {len(receipts)} live launch-code-gate receipt(s), expected at least "
-        f"{_LAUNCH_CODE_FLOOR}. Either a gate lost its receipt or every candidate was filtered out "
-        f"as superseded -- a discoverer that matches nothing reports success. Found: "
-        f"{[n for n, _ in receipts]}")
+    all_fams = _families(n for n, _ in _launch_code_receipts(live_only=False))
+    live_fams = _families(n for n, _ in receipts)
+
+    # The filename grammar is the discoverer here, so a name it cannot parse is a blind spot rather
+    # than a curiosity -- it would drop that family out of BOTH sets and cancel silently.
+    assert None not in all_fams, (
+        f"launch-code receipt name(s) do not match {_LAUNCH_CODE_FAMILY.pattern!r}, so their family "
+        f"cannot be determined and they would be silently uncovered: {all_fams[None]}")
+
+    # Residual floor: discovery alone cannot notice the whole directory vanishing.
+    missing_required = [f for f in _LAUNCH_CODE_REQUIRED if f not in all_fams]
+    assert not missing_required, (
+        f"no launch-code receipt AT ALL for {missing_required} -- expected families "
+        f"{list(_LAUNCH_CODE_REQUIRED)}. Either the directory moved or the naming changed; a "
+        f"discoverer that matches nothing reports success. Found families: {sorted(all_fams)}")
+
+    # The per-family assertion, which is what the scalar floor could not express.
+    dead = {f: v for f, v in all_fams.items() if f not in live_fams}
+    assert not dead, (
+        f"every launch-code receipt for {sorted(dead)} is superseded or has no `files` block, so that "
+        f"gate's code freeze is checked by NOTHING while the suite stays green. A re-issue must land "
+        f"its successor in the same commit that retires its predecessor. Retired: "
+        f"{ {f: v for f, v in dead.items()} }. Live: { {f: v for f, v in live_fams.items()} }")
     for receipt, payload in receipts:
         for role, info in payload["files"].items():
             if not isinstance(info, dict) or "path" not in info:
