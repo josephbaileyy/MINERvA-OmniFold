@@ -7,10 +7,25 @@
 # WHY: findings_row_lint.py, whose_row.py and merge_guard.sh all existed and none ran unless a lane
 # remembered to run it -- the convention-that-requires-remembering problem one level down.
 #
+# THE ADMITTING RULE, which this header did not state until 2026-08-13 and should have:
+#     a check belongs here iff a committer who did nothing wrong can always make it pass.
+# Lane D's formulation (OI-64). It admits whole-tree invariants and still forbids gating on, say, a
+# dirty unwaived tree. An earlier lane-A proposal -- "iff it can only fail on what THIS commit
+# changed" -- was WRONG and is recorded because it is the plausible one: it generalised from the two
+# exclusions below to *scope*, when their actual reasons are inescapability and wrong phase. Neither
+# is about scope, and that rule forbids whole-tree invariants by construction.
+#
 # NOT RUN HERE, deliberately: generate_live_state.py --check-freshness, which returns 1 whenever
 # LIVE-STATE.md's sha is not HEAD's -- a condition it CANNOT ESCAPE (BEN-191/BEN-199). A check that
 # always fires is a check nobody reads, and putting it in a hook would train every lane to --no-verify.
 # merge_guard.sh is also absent: it needs a lane argument and belongs at merge time, not commit time.
+#
+# THIS LIST IS THE ROOT CAUSE OF OI-64 AND IS NOW EXHAUSTIVE BY CONTRACT. Documenting exactly two
+# exclusions made "never considered" indistinguishable from "considered and rejected":
+# verify_hash_bindings.py was in neither list, so a Gate-4 code binding stayed broken ~18 h across four
+# lanes' commits, every one of which printed "pre-commit: N checks passed". If you decline a check, say
+# so HERE -- an unlisted check is not a decision, and the whole point of the omission being cheap to
+# fix is that nobody could tell it had happened.
 set -uo pipefail
 cd "$(git rev-parse --show-toplevel)" || exit 2
 
@@ -21,7 +36,17 @@ run "findings long-form pointers" python3 docs/orchestration/findings_row_lint.p
 run "ledger VL ids"               python3 docs/orchestration/whose_row.py --check-ledger-ids
 run "row-owner side table"        python3 docs/orchestration/whose_row.py --check-owners
 run "whose_row self-test"         python3 docs/orchestration/whose_row.py --self-test
+# WHOLE-TREE AND UNSCOPED, on purpose. Added 2026-08-13 (OI-64; Joseph authorized, lane D reviewed,
+# receipt: AUTHORIZATION-20260813-hash-binding-gate-in-precommit.md). It guards every gate's code
+# freeze, it is the reason the 2026-07-28 de-rooting refactor's six broken bindings were findable, and
+# it was on no path anything took. 0.563 s measured, so scoping it to the staged diff would buy only
+# blast-radius containment -- and for a freeze gate, containing the blast radius is a synonym for
+# letting the break persist. IF THIS FAILS ON A RECEIPT YOU DID NOT TOUCH, that is the gate working:
+# a broken freeze is the tree's problem, not its author's. Do not --no-verify past it and do not edit a
+# digest to make it green -- re-issue or retire the owning receipt (files -> files_at_issue,
+# sha256 -> sha256_at_issue, every digest preserved verbatim).
+run "receipt+shell hash bindings"  python3 docs/orchestration/verify_hash_bindings.py
 
 rm -f /tmp/.hook.$$
-[ "$fail" -eq 0 ] && echo "pre-commit: 4 checks passed"
+[ "$fail" -eq 0 ] && echo "pre-commit: 5 checks passed"
 exit "$fail"
