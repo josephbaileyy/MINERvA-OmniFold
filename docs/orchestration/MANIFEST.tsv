@@ -35,7 +35,7 @@ docs/orchestration/CLAIMS-ARCHIVE-2026-08.md	ARCHIVAL	document	fe-fps-campaign		
 docs/orchestration/CLAIMS.md	LIVE	ledger	fe-fps-campaign		open		route-only	docs/orchestration/generate_manifest.py;docs/orchestration/whose_row.py;nd-unfolding/pet/extract_fullevent_fps.py;nd-unfolding/tests/test_fullevent_extract.py	no	56	23	8601
 docs/orchestration/CLAIMS.template.md	DEAD	template			superseded	docs/orchestration/CLAIMS.md	never		yes	1	11	496
 docs/orchestration/CLAUDE.project-template.md	DEAD	document			superseded	CLAUDE.md	never		yes	2	49	2841
-docs/orchestration/COMPARATOR-PREDECLARATION-20260814-cstat.md	ARCHIVAL	document		20260814	terminal		exact-path-only	docs/orchestration/state/compare_cstat_implementations.py;docs/orchestration/state/probe-cstat-comparator-mutations-20260814.py;docs/orchestration/state/probe-cstat-single-artifact-mutations-20260814.py	yes	8	508	33122
+docs/orchestration/COMPARATOR-PREDECLARATION-20260814-cstat.md	ARCHIVAL	document		20260814	terminal		exact-path-only	docs/orchestration/state/build_cstat_crosscheck_laned.py;docs/orchestration/state/compare_cstat_implementations.py;docs/orchestration/state/probe-cstat-comparator-mutations-20260814.py;docs/orchestration/state/probe-cstat-single-artifact-mutations-20260814.py	yes	9	508	33122
 docs/orchestration/CONSULT-20260806-fresh-context-distance-to-goal.md	ARCHIVAL	document		20260806	terminal		exact-path-only		yes	1	128	18204
 docs/orchestration/CONSULT-20260806-fresh-context-powered-closure.md	ARCHIVAL	document		20260806	terminal		exact-path-only		yes	1	126	13042
 docs/orchestration/CONVENTION-document-retention.md	LIVE	document			open	None	route-only		no	3	79	4689
@@ -135,8 +135,8 @@ docs/orchestration/INTERIM-HANDBACK.md	ARCHIVAL	document			terminal		exact-path-
 docs/orchestration/LIVE-STATE.md	LIVE	live-status			generated		always	docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_g2_dump_resume.sh;docs/orchestration/watch_slurm_array_resume.sh	no	34	74	7869
 docs/orchestration/LIVE-USAGE.md	LIVE	live-status			open		route-only		no	15	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	4	48	3049
-docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	9	720	115047
-docs/orchestration/METHOD-DECLARATION-20260814-lane-d-cstat-crosscheck.md	ARCHIVAL	document		20260814	terminal		exact-path-only		yes	0	78	5188
+docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	9	721	115285
+docs/orchestration/METHOD-DECLARATION-20260814-lane-d-cstat-crosscheck.md	ARCHIVAL	document		20260814	terminal		exact-path-only	docs/orchestration/state/build_cstat_crosscheck_laned.py	yes	1	78	5188
 docs/orchestration/MIGRATION-DELTA.md	ARCHIVAL	document			terminal		exact-path-only		yes	11	67	4450
 docs/orchestration/MIGRATION-HANDOFF.md	ARCHIVAL	document			terminal		exact-path-only		yes	19	146	9653
 docs/orchestration/MIGRATION-TAKEOVER-STATUS.md	ARCHIVAL	document			terminal		exact-path-only		yes	30	157	20741
@@ -472,6 +472,7 @@ docs/orchestration/state/ben106-stamp-verify-complete-56695424.json	MACHINE	stat
 docs/orchestration/state/branchc-traj-annealed-batch-active-56691812.json	MACHINE	state-artifact			generated		exact-path-only		yes	3	24	1126
 docs/orchestration/state/branchc-traj-annealed-complete-56691812.json	MACHINE	state-artifact			generated		exact-path-only		yes	3	113	4227
 docs/orchestration/state/branchc-traj-annealed-srun-error-56693776.json	MACHINE	state-artifact			generated		exact-path-only		yes	3	56	2459
+docs/orchestration/state/build_cstat_crosscheck_laned.py	MACHINE	state-artifact			generated		exact-path-only		yes	0	185	9394
 docs/orchestration/state/claude-status-and-E-migration-20260719.json	MACHINE	state-artifact		20260719	generated		exact-path-only		yes	2	40	1856
 docs/orchestration/state/cluster-ignored-set-walk-20260812.json	MACHINE	state-artifact		20260812	generated		exact-path-only	nd-unfolding/uq_5d/sbatch_digest_quoted_products.sh;nd-unfolding/uq_5d/sbatch_hpss_protect_quoted_products.sh	yes	3	497	16680
 docs/orchestration/state/cluster-ignored-set-walk-20260812.tsv	MACHINE	state-artifact		20260812	generated		exact-path-only		yes	2	19538	1592110
