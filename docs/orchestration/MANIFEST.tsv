@@ -135,7 +135,7 @@ docs/orchestration/INTERIM-HANDBACK.md	ARCHIVAL	document			terminal		exact-path-
 docs/orchestration/LIVE-STATE.md	LIVE	live-status			generated		always	docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_g2_dump_resume.sh;docs/orchestration/watch_slurm_array_resume.sh	no	34	74	7869
 docs/orchestration/LIVE-USAGE.md	LIVE	live-status			open		route-only		no	15	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	4	48	3049
-docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	9	712	113929
+docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	9	703	112397
 docs/orchestration/METHOD-DECLARATION-20260814-lane-d-cstat-crosscheck.md	ARCHIVAL	document		20260814	terminal		exact-path-only		yes	0	78	5188
 docs/orchestration/MIGRATION-DELTA.md	ARCHIVAL	document			terminal		exact-path-only		yes	11	67	4450
 docs/orchestration/MIGRATION-HANDOFF.md	ARCHIVAL	document			terminal		exact-path-only		yes	19	146	9653
@@ -176,7 +176,7 @@ docs/orchestration/RECEIPT-20260812-hpss-space-audit.md	ARCHIVAL	document	non-ca
 docs/orchestration/REPAIR4-DEFECT-STATUS-20260807.md	ARCHIVAL	document		20260807	terminal		exact-path-only	nd-unfolding/run_p4_standard.sh	yes	9	201	13579
 docs/orchestration/REPAIR5-PATTERN-SWEEP-20260807.md	ARCHIVAL	document		20260807	terminal		exact-path-only		yes	1	65	7072
 docs/orchestration/REPAIR6-RECORDED-NOT-CHECKED-INVENTORY.md	ARCHIVAL	document			terminal		exact-path-only	nd-unfolding/p4_evidence.py;nd-unfolding/tests/test_p4_sweep_snapshots.py	yes	6	405	29488
-docs/orchestration/REQUIREMENTS-20260814-cstat-assembly-conventions.md	ARCHIVAL	document		20260814	terminal		exact-path-only	docs/orchestration/state/compare_cstat_implementations.py;docs/orchestration/state/probe-cstat-mask-nesting-20260814.py	yes	8	759	52770
+docs/orchestration/REQUIREMENTS-20260814-cstat-assembly-conventions.md	ARCHIVAL	document		20260814	terminal		exact-path-only	docs/orchestration/state/compare_cstat_implementations.py;docs/orchestration/state/probe-cstat-mask-nesting-20260814.py	yes	8	779	54474
 docs/orchestration/RESTORE-2026-08-03.md	ARCHIVAL	document			terminal		exact-path-only	lib/enumerate_backfill_families.py;nd-unfolding/pet/closure_fullevent_fps.py;nd-unfolding/pet/fullevent_fps_dataloader.py;nd-unfolding/pet/stress_closure_muon.py;nd-unfolding/pet/validate_pet_nominal_gate4.py;nd-unfolding/tests/test_b1_normalization_fix.py;nd-unfolding/tests/test_pet_nominal_gate4_validator.py	yes	41	1428	90534
 docs/orchestration/REVIEW-20260808-clm012-independent-rederivation.md	ARCHIVAL	review		20260808	terminal		exact-path-only		yes	4	211	14377
 docs/orchestration/ROLLOUT-PLAN.md	ARCHIVAL	document	fe-fps-campaign		terminal		exact-path-only		yes	13	124	8494
@@ -198,11 +198,8 @@ docs/orchestration/VALIDATOR-TOLERANCE-UNITS-20260808.md	ARCHIVAL	document		2026
 docs/orchestration/VERDICTS-20260811-session-D.md	ARCHIVAL	verdict		20260811	terminal		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	10	2629	180256
 docs/orchestration/WAKER.md	LIVE	document			open		route-only	docs/orchestration/generate_live_state.py;docs/orchestration/wakerctl.py	no	10	262	15686
 docs/orchestration/__pycache__/agentctl.cpython-312.pyc	MACHINE	cache			generated		exact-path-only		yes	0	148	31220
-docs/orchestration/__pycache__/audit_gates_that_cannot_fail.cpython-312.pyc	MACHINE	cache			generated		exact-path-only		yes	0	144	21023
-docs/orchestration/__pycache__/audit_validator_tolerance_units.cpython-312.pyc	MACHINE	cache			generated		exact-path-only		yes	0	109	17221
 docs/orchestration/__pycache__/slurm_array_status.cpython-312.pyc	MACHINE	cache			generated		exact-path-only		yes	0	52	9183
-docs/orchestration/__pycache__/verify_hash_bindings.cpython-312.pyc	MACHINE	cache			generated		exact-path-only		yes	0	103	13704
-docs/orchestration/__pycache__/wakerctl.cpython-312.pyc	MACHINE	cache			generated		exact-path-only		yes	0	441	80891
+docs/orchestration/__pycache__/whose_row.cpython-312.pyc	MACHINE	cache			generated		exact-path-only		yes	0	111	17444
 docs/orchestration/agentctl.py	MACHINE	script			generated		exact-path-only	docs/orchestration/generate_live_state.py;docs/orchestration/pipeline_post_reset_verifiers.sh;docs/orchestration/resume_after_school_reset.sh;docs/orchestration/resume_after_school_reset_1800.sh;docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py	no	33	611	22259
 docs/orchestration/analyze_dispatch_history.py	MACHINE	script			generated		exact-path-only		no	2	147	5340
 docs/orchestration/analyze_slurm_history.py	MACHINE	script			generated		exact-path-only		no	2	146	5355
@@ -528,15 +525,10 @@ docs/orchestration/state/gate2-queue-hedge-armed-20260719.json	MACHINE	state-art
 docs/orchestration/state/gate2-queue-hedge-recovery-armed-20260719.json	MACHINE	state-artifact		20260719	generated		exact-path-only		yes	2	57	3010
 docs/orchestration/state/gate2-target-r4-reconciliation-20260719.json	MACHINE	state-artifact		20260719	generated		exact-path-only		yes	4	51	3025
 docs/orchestration/state/gate5-cstat-spec-measurements-20260814.json	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	5	338	16190
-docs/orchestration/state/gate5-cstat-spec-measurements-20260814/centring.out	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	1	20	797
 docs/orchestration/state/gate5-cstat-spec-measurements-20260814/centring.py	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	1	51	2698
-docs/orchestration/state/gate5-cstat-spec-measurements-20260814/flicker.out	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	2	31	1216
 docs/orchestration/state/gate5-cstat-spec-measurements-20260814/flicker.py	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	1	58	3192
-docs/orchestration/state/gate5-cstat-spec-measurements-20260814/measure_bins.out	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	1	45	3625
 docs/orchestration/state/gate5-cstat-spec-measurements-20260814/measure_bins.py	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	1	47	2348
-docs/orchestration/state/gate5-cstat-spec-measurements-20260814/measure_family.out	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	1	44	1710
 docs/orchestration/state/gate5-cstat-spec-measurements-20260814/measure_family.py	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	1	82	4121
-docs/orchestration/state/gate5-cstat-spec-measurements-20260814/spread_and_nominal.out	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	1	64	3997
 docs/orchestration/state/gate5-cstat-spec-measurements-20260814/spread_and_nominal.py	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	1	53	2714
 docs/orchestration/state/gate5-cstat-spec-measurements-20260814/zero_cells.py	MACHINE	state-artifact	gate5-cstat-spec-measurements-20260814		generated		exact-path-only		yes	1	75	4028
 docs/orchestration/state/gate5-data-factor-persistence-20260814.json	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	2	75	8052
@@ -568,7 +560,6 @@ docs/orchestration/state/gate5-target-array-active-56857232.json	MACHINE	state-a
 docs/orchestration/state/gate5-target-family-promotion-56873858.json	MACHINE	state-artifact			generated		exact-path-only		yes	4	135	5627
 docs/orchestration/state/gate5-target-promotion-evidence-56873858/GATE5_TARGET_FAMILY_RECONCILIATION.slurm-56873858.json	MACHINE	state-artifact	gate5-target-promotion-evidence-56873858		generated		exact-path-only		yes	4	3923	168512
 docs/orchestration/state/gate5-target-promotion-evidence-56873858/GATE5_TARGET_FAMILY_RECONCILIATION.slurm-56873858.json.done	MACHINE	state-artifact	gate5-target-promotion-evidence-56873858		generated		exact-path-only		yes	3	8	370
-docs/orchestration/state/gate5-target-promotion-evidence-56873858/target_reconcile_56873858.out	MACHINE	state-artifact	gate5-target-promotion-evidence-56873858		generated		exact-path-only		yes	3	17	807
 docs/orchestration/state/gate5-target-validator-active-56872614.json	MACHINE	state-artifact			generated		exact-path-only		yes	2	83	3594
 docs/orchestration/state/gate5-target-validator-active-56873858.json	MACHINE	state-artifact			generated		exact-path-only		yes	1	64	2951
 docs/orchestration/state/gate5-target-validator-failure-56872614.json	MACHINE	state-artifact			generated		exact-path-only		yes	1	57	2761

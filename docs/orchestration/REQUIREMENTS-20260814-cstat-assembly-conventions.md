@@ -113,10 +113,30 @@ one gets a plausible hex string that binds nothing.
 
 > **CLOSED 2026-08-14.** It was predeclared before launch
 > (`PREDECLARATION-20260813-gate5-coherent-replicas-n50.md`: *"Rank is not the criterion"*), the
-> treatment is field-normal for multisim covariances, and the number that settled it is the trace
+> ~~treatment is field-normal for multisim covariances~~ **[RETRACTED — see below]**, and the number that settled it is the trace
 > fraction in point 3 below: **`C_stat` + `C_ML` + norm are 0.323% of the total variance trace.** Do not
 > re-open it. What follows is the derivation, kept because a settled answer with no recoverable
 > derivation is the thing this repo keeps having to rebuild.
+>
+> **RETRACTION, 2026-08-14 — the external-precedent clause above was FALSE and I repeated it from a
+> relay without checking a single paper.** The mediator relayed that rank-deficient covariances are
+> field-normal, that MINERvA releases them as-calculated, and that ~100/~50 universes are typical. It
+> then checked the actual sources and **none of it is supported**: one citation was the wrong paper
+> entirely; the MINERvA toolkit paper contains **zero** occurrences of `rank`, `singular`, `invert` or
+> `regulari`; and **Hartlap 2007 argues the opposite** — it is the canonical proof that a sample
+> covariance is singular when `P > N`, so beside our matrix it is evidence *against* comfort, not for it.
+>
+> **The closure is unaffected and that is the point worth keeping.** §0.2 rests on our own
+> predeclaration and on the 0.323% trace fraction, **neither of which ever depended on outside
+> precedent** — which is why the false clause could be deleted without touching the conclusion. What is
+> gone is only the reassurance that everyone else does this too. A measurement of a real released
+> MINERvA covariance is running to settle it properly.
+>
+> **Why this is struck in place rather than removed:** I accepted a comforting external claim into a
+> document whose every other number I had measured myself, and the clause's only function was
+> reassurance. **A claim that does no work in an argument is the one least likely to be checked** — and
+> it is the third time today this lane has recorded something on the strength of a relay rather than a
+> read (`BEN-241` a document, `BEN-243` an objection, this a citation). Same operation, third object.
 
 The peer flagged: 50 replicas ⇒ rank ≤ 49; if bins > 49 the matrix is singular. **It is singular, by a
 wide margin, and the repo already knows.**
