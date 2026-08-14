@@ -7202,3 +7202,54 @@ reset credit, or worker replacement occurred. At the reconciliation snapshot, r2
 r2 tasks 1-49 were pending Priority, and changed manifest `56936016` remained dependency-held. Their
 terminal watches remain the dependency-ready continuation. Receipt:
 `../docs/orchestration/state/gate5-extraction-manifest-block-56935553.json`.
+
+### 2026-08-14 ~05:00 PDT — THE `C_stat` SPEC IS COMMITTED, AND WRITING IT SURFACED TWO BLOCKERS (lane C)
+
+`OI-121` authorized — Joseph's *"go ahead"*, relayed. **Read the scope, not the word:** the authorization
+is for **two independent implementations from one written spec**, compared element-wise. Builder 1 is lane
+B, builder 2 a cold `codex` session, comparator D, judge `codex` background. **Lane C is the spec and does
+not write the covariance code** — C kept covariance out of the extractor on purpose
+(`extract_fullevent_replica.py:350,412`, `validate_gate5_extraction_family.py:194,260`,
+`submit_gate5_extraction_r2_n50.sh:34`) and should not be the one to erode that property.
+
+Landed: [`SPEC-20260814-gate5-cstat-construction-v1.md`](../docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md)
+plus the machine contract [`pet/gate5_cstat_contract.json`](pet/gate5_cstat_contract.json). **No
+implementation in either.** Decided so no builder decides: the covaried key (`xsec`), the binning, the
+flattening string, replica ordering, centring, normalization, and the reporting domain. **Left open on
+purpose:** rank and the object's name.
+
+**Three measurements drove it, all from the published artifacts, none from a document.**
+
+1. **The grid is `15 × 19 = 285`, not the 224-cell paper grid in `AGENTS.md:345-351`** — the source dump
+   is extended-FPS (`pT` to 30.0; `p∥` 0–0.75 and 60–120). A builder trusting the documented grid
+   produces a 224-cell object and **every element of the comparison misaligns.** Stated first in the spec
+   for that reason.
+2. **The reporting mask is drawn per replica and the flicker OCCURS.** D found the mechanism
+   (`extract_fullevent_replica.py:190-196` puts the signal Poisson factor *inside* `completeness_2d`;
+   `:517-518` hard-zeroes `comp > 0` failures) and was explicit it had not measured an occurrence. **C
+   measured it: 3 cells reported in some but not all of 14 members, one in only 9 of 14**, with
+   `n_cells_populated` telemetry varying `260/261/262`. In such a cell part of the "variance" is the mask
+   switching off. **Both builders compute the identical wrong number there and agree perfectly** —
+   element-wise agreement has no power over a defect in the input to both, which is exactly why it is
+   declared in the spec rather than left to code. `BEN-231`.
+3. **The spread is ~90× counting statistics and the network is unseeded.** `4.478%` relative sd on the
+   total cross section against `0.0493%` Poisson on 4.1M data events; `set_seed` appears **nowhere** in
+   `nd-unfolding/` or `omnifold_nn/`. Members differ by their draw **and** by free-running training
+   stochasticity, so the object is `C_stat + C_train`, **inseparable from this family.** `BEN-232`,
+   `OI-92`, and the long-form
+   [`FINDING-20260814-ninety-times-counting-statistics.md`](../docs/orchestration/FINDING-20260814-ninety-times-counting-statistics.md).
+
+**Centring was decided, with a number rather than a preference.** Replica mean. Nominal-centring inflates
+the trace **6.013×**, and the excess is *exactly* the offset term `N/(N-1)·‖mean−nominal‖²` — a **bias**,
+not a fluctuation, with the replica mean `+7.56%` above that nominal. And the only 285-cell nominal
+artifact on disk is named `NONQUOTABLE-DIAGNOSTIC`, so nominal-centring was never an available option.
+
+**Two corrections to the state I was handed, both inference-for-measurement.** The array's throttle is
+`ArrayTaskThrottle=10`, **not 2** — two concurrent tasks was observed occupancy under `(Priority)`, so
+raising the cap buys nothing. And **I nearly reported a 7-hour throughput collapse that never happened**:
+`sacct` prints local time while I had asked `date -u`, and the gap was *exactly* 7 h. Task 13 finished two
+minutes before I looked. `BEN-233`.
+
+**Nothing was constructed.** 14 of 50 extractions published at spec time; the spec was written *during*
+the wait precisely so nobody starts early. `GATE5_CODE_ROOT` untouched, no `scancel`/`scontrol`/resubmit,
+`OI-60` and `OI-66` not closed.

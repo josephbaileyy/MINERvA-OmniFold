@@ -1,0 +1,235 @@
+{
+  "contract": "gate5_cstat_contract.json",
+  "contract_version": 1,
+  "spec": "docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md",
+  "authority": "The prose spec is authoritative for REASONS; this file is authoritative for VALUES. Where a number appears in both and they disagree, that is a defect to report, not a choice to make.",
+  "lane": "C (PET), owner of Gate 5 / P5B.1 / C_stat -- spec author, NOT a builder",
+  "authorized_by": "OI-121; Joseph's 'go ahead' relayed by personal-orchestrator 2026-08-14",
+  "contains_no_implementation": true,
+
+  "input": {
+    "member_glob": "<root>/replicas/replica_*/extraction/GATE5_REPLICA_XSEC.npz",
+    "root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50",
+    "required_schema_string": "pet-fullevent-fps-gate5-replica-xsec-v1",
+    "reject_schema_strings": ["pet-fullevent-fps-xsec-v1"],
+    "reject_schema_reason": "the nominal-path schema; a differently-produced object that a loose glob will pick up",
+    "covaried_key": "xsec",
+    "covaried_dtype": "float64",
+    "covaried_shape": [15, 19],
+    "quantity": "d2sigma/dpT dp_parallel -- a DENSITY, not a bin-integrated yield",
+    "units": "cm^2 / nucleon / (GeV/c)^2",
+    "forbidden_path": "nd-unfolding/pet/fullevent_diagnostic_nonquotable/NONQUOTABLE-DIAGNOSTIC.xsec.slurm-56527676.npz",
+    "forbidden_path_reason": "CSTAT-D1a: the only 285-cell nominal-like artifact on disk, and its own filename declares it non-quotable. Named here so a builder that finds it by glob refuses it."
+  },
+
+  "binning": {
+    "n_pt_bins": 15,
+    "n_pparallel_bins": 19,
+    "n_cells": 285,
+    "edges_pt": [0.0, 0.07, 0.15, 0.25, 0.33, 0.4, 0.47, 0.55, 0.7, 0.85, 1.0, 1.25, 1.5, 2.5, 4.5, 30.0],
+    "edges_pparallel": [0.0, 0.75, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0, 60.0, 120.0],
+    "edges_must_be_bit_identical_across_members": true,
+    "bin_order_string_TO_ASSERT": "pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel",
+    "bin_order_equivalent_to": "numpy C-order ravel",
+    "assert_the_string_not_the_convention": true,
+    "existing_consumers_that_fail_closed_on_this_string": [
+      "validate_pet_nominal_gate4.py:102", "validate_pet_nominal_gate4.py:514",
+      "preflight_powered_closure.py:188", "acceptance_map_fullevent_fps.py:201",
+      "test_pet_nominal_gate4_validator.py:68"
+    ],
+    "NOT_the_paper_grid": {
+      "agents_md_paper_grid": "14 x 16 = 224 bins (AGENTS.md:345-351)",
+      "artifacts_carry": "15 x 19 = 285 bins (extended FPS: pT to 30.0; p_parallel 0-0.75 and 60-120)",
+      "consequence": "a builder trusting the documented paper grid produces a 224-cell object and every element of the comparison is misaligned"
+    }
+  },
+
+  "members": {
+    "n_members_required": 50,
+    "seed_policy": "gate5-cstat-n50-v1: bootstrap_seed = 50000 + replica_index",
+    "replica_index_source": "the scalar INSIDE each NPZ -- never the filename, glob order, or readdir order",
+    "assert_indices_equal": "sorted(replica_index) == list(range(50))",
+    "assert_rows_ascending_by_replica_index": true,
+    "assert_atomic_marker_per_member": true,
+    "assert_members_mutually_distinct_by_xsec_digest": true,
+    "marker_known_limit": "atomic_write.is_complete compares size and int(st_mtime) at WHOLE-SECOND resolution; a same-size same-second rewrite is invisible to it",
+    "do_not_trust": {
+      "field": "artifact.completion_marker_valid",
+      "why": "a hardcoded producer literal (lane C OI-66); call is_complete yourself"
+    }
+  },
+
+  "estimator": {
+    "centring": "replica_mean",
+    "centring_decided_not_deferred": true,
+    "normalization": "1/(N-1)",
+    "ddof": 1,
+    "width_weighting_applied": false,
+    "width_weighting_note": "CSTAT-R1b: xsec is a density, so C has units cm^4/nucleon^2/(GeV/c)^4 and is NOT the covariance of the bin-integrated cross section; the two differ by diag(w) C diag(w) with w = outer(dpt, dpp) flattened"
+  },
+
+  "domain": {
+    "construct_over": "UNION -- cells reported in >= 1 member",
+    "why_union_not_intersection": "the intersection silently deletes cells and its deletion set depends on N, so the published dimension would change with the member count",
+    "reported_test": "xsec != 0.0 (unreported cells are HARD-ZEROED at extract_fullevent_fps.py:517-518)",
+    "publish_per_cell_n_replicas_reported": true,
+    "quotable_sub_block": "n_replicas_reported == 50",
+    "cells_below_50_treatment": "present in the published matrix, FLAGGED, excluded from any downstream inversion or chi2, cell list recorded by index -- not deleted, because deleting them would hide that the question was asked",
+    "must_report_flicker_count_even_when_zero": true,
+    "mask_is_replica_dependent": {
+      "mechanism": "extract_fullevent_replica.py:190-196 monkey-patches completeness_2d so the replica signal Poisson factor multiplies weights INSIDE the completeness computation; comp > 0 is therefore a per-replica draw",
+      "found_by": "D",
+      "measured_by": "C, on the 14 published members",
+      "occurrence": "CONFIRMED, not hypothetical",
+      "n_replicas_reported_histogram_at_N14": {"14": 259, "13": 2, "9": 1, "0": 23},
+      "telemetry_n_cells_populated_observed": [260, 261, 262],
+      "why_it_matters": "both builders given identical member vectors compute the identical wrong variance in a flickering cell and agree perfectly; element-wise agreement has NO power over this"
+    }
+  },
+
+  "measurements_provisional_at_N14": {
+    "WARNING": "measured on 14 of 50 members while array 56936015 was mid-flight; MUST be re-measured at 50/50 before publication. Quoted because the DECISIONS they drive are stable under the remaining 36.",
+    "observed_pdt": "2026-08-14 ~05:00 PDT",
+    "n_members_measured": 14,
+    "union_cells": 262,
+    "intersection_cells": 259,
+    "never_reported_cells": 23,
+    "never_reported_matches_n_cells_no_denominator": true,
+    "trace_mean_centred": 1.848970e-76,
+    "trace_nominal_centred": 1.111802e-75,
+    "trace_ratio": 6.013,
+    "offset_term_N_over_N_minus_1_times_sq_norm": 9.269051e-76,
+    "offset_term_equals_trace_difference": true,
+    "total_sigma_mean": 1.792355e-37,
+    "total_sigma_sd_ddof1": 8.026862e-39,
+    "total_sigma_relative_sd_percent": 4.478,
+    "total_sigma_max_minus_min_over_mean_percent": 18.187,
+    "total_sigma_median_abs_dev_over_mean_percent": 1.676,
+    "replica_mean_above_nonquotable_nominal_percent": 7.562,
+    "matrix_rank_at_N14": 13,
+    "matrix_rank_ceiling_at_N14": 13,
+    "per_cell_relative_sd_median": 0.1508,
+    "per_cell_relative_sd_max": 0.7944
+  },
+
+  "open_returns_to_joseph": {
+    "CSTAT-O1_rank": {
+      "state": "OPEN -- no builder may resolve",
+      "n_members": 50,
+      "rank_ceiling": 49,
+      "D_full_grid": 285,
+      "D_union": 262,
+      "D_intersection": 259,
+      "singular_against_every_candidate_domain": true,
+      "singular_factor_union": 5.35,
+      "reported_dimension_measured_as_asked": "262 -- the mediator asked for the count against the REPORTED dimension rather than 285, because that is the number that decides whether it is a problem. It does not change the answer.",
+      "NARROWED_by_OI_122": "OI-122 records that TWO agents have already re-opened the rank question and escalated it as novel, when 'rank is not the criterion ... the rank-deficient GoF treatment is already disclosed under OI-29'. This is NOT a third instance: OI-29 is a DIFFERENT object (the 1431-bin 3D-plus covariance, owner collaborators, awaiting endorsement of an EXISTING treatment). This object is the 285-cell / 262-reported full-event Gate-5 C_stat, whose dimension was unknown until measured 2026-08-14 and which has no declared treatment of its own.",
+      "the_single_question_returning_to_joseph": "does OI-29's already-disclosed treatment extend to this 262-cell object, or does this object need its own declaration? If it extends, OI-91 closes by reference and nothing new is decided.",
+      "builder_must_record": "rank_treatment: 'UNDECLARED -- see CSTAT-O1'",
+      "builder_must_not": ["invert", "pseudo-invert", "regularize", "shrink", "diagonal-load", "condition", "clip negative eigenvalues"],
+      "candidate_treatments_named_none_chosen": [
+        "rebin to <= 49 cells",
+        "shrinkage or diagonal loading with a declared, justified regularizer",
+        "restrict inference to a declared low-dimensional projection",
+        "raise N",
+        "use only the diagonal and declare correlations unmeasured"
+      ],
+      "blocks": "publication, not build"
+    },
+    "CSTAT-O2_is_it_entitled_to_the_name_C_stat": {
+      "state": "OPEN -- found by C while writing this spec; in C's judgement the more serious of the two",
+      "measured_relative_sd_percent": 4.478,
+      "counting_expectation_percent": 0.0493,
+      "ratio": 90.8,
+      "network_is_unseeded": "grep for set_seed across nd-unfolding/ and omnifold_nn/ returns NOTHING -- no tf.random.set_seed, no np.random.seed, no TF_DETERMINISTIC_OPS",
+      "bootstrap_seed_governs": "the draw and its provenance validation, NOT weight initialization, batch shuffling, or GPU reduction order",
+      "consequence": "each member differs in TWO ways at once -- its Poisson draw AND free-running training stochasticity. The matrix is C_stat + C_train + cross terms, and the two are NOT separable from this family: no two members share a draw and no member was repeated under a different initialization.",
+      "C_is_not_claiming_which_dominates": true,
+      "alternative_reading": "genuine amplification of the data fluctuation by the iterative unfolding, which would be legitimately statistical and would itself be a significant result",
+      "discriminating_test_CSTAT-O2a": "re-TRAIN one replica index twice at the SAME bootstrap_seed, then extract both. Extraction is deterministic given weights, so repeating extraction alone measures nothing -- the repeat must be of TRAINING. 3-5 same-seed retrains bound C_train at ~14 min per task.",
+      "blocks": "publication under the name C_stat, not build"
+    }
+  },
+
+  "output": {
+    "npz_path": "<root>/cstat/BUILDER_<B1|B2>/GATE5_CSTAT.npz",
+    "receipt_path": "<root>/cstat/BUILDER_<B1|B2>/GATE5_CSTAT_RECEIPT.json",
+    "separate_paths_per_builder": true,
+    "writer": "atomic_write.atomic_savez_compressed(overwrite=False, fsync=True, mark=True)",
+    "receipt_published_last": true,
+    "schema_string": "pet-fullevent-fps-gate5-cstat-v1",
+    "keys": {
+      "cstat_schema": {"dtype": "str", "shape": "scalar"},
+      "C": {"dtype": "float64", "shape": ["D", "D"]},
+      "mean": {"dtype": "float64", "shape": ["D"]},
+      "n_members": {"dtype": "int64", "shape": "scalar", "must_equal": 50},
+      "D": {"dtype": "int64", "shape": "scalar"},
+      "cell_index": {"dtype": "int64", "shape": ["D"]},
+      "n_replicas_reported": {"dtype": "int64", "shape": ["D"]},
+      "quotable_mask": {"dtype": "bool", "shape": ["D"]},
+      "replica_index": {"dtype": "int64", "shape": [50]},
+      "bootstrap_seed": {"dtype": "int64", "shape": [50]},
+      "edges_pt": {"dtype": "float64", "shape": [16]},
+      "edges_pparallel": {"dtype": "float64", "shape": [20]},
+      "bin_order": {"dtype": "str", "shape": "scalar"},
+      "member_xsec_sha256": {"dtype": "str", "shape": [50]},
+      "centring": {"dtype": "str", "shape": "scalar", "must_equal": "replica_mean"},
+      "normalization": {"dtype": "str", "shape": "scalar", "must_equal": "1/(N-1)"},
+      "width_weighting_applied": {"dtype": "bool", "shape": "scalar", "must_equal": false},
+      "rank_treatment": {"dtype": "str", "shape": "scalar", "must_equal": "UNDECLARED -- see CSTAT-O1"}
+    },
+    "assertions": {
+      "symmetry": "C == C.T BITWISE, enforced by construction, NOT by symmetrizing a nearly-symmetric result",
+      "symmetry_reason": "a builder that symmetrizes hides whether its two triangles agreed",
+      "report_max_abs_asymmetry": true,
+      "all_finite": true,
+      "diag_non_negative": true,
+      "eigenvalues_reported_not_clipped": "the smallest will be zero or numerically negative and that is EXPECTED per CSTAT-O1",
+      "no_clobber": true
+    }
+  },
+
+  "receipt_ingredients_required": [
+    "all 50 member paths, their xsec sha256, replica_index, bootstrap_seed, and the is_complete result per member",
+    "the centring vector mean, AND total_sigma per member separately, so mean and sd are recomputable independently of C",
+    "trace(C) and diag(C) in full -- trace must be re-derivable from diag",
+    "the offset term ||mean - x||^2 * N/(N-1) against any comparison point mentioned, whose exact identity to (trace_alt - trace_mean) is the check",
+    "n_replicas_reported, union size, intersection size, flicker count EVEN IF 0, and the flickering cell ids",
+    "matrix_rank(C), the full eigenvalue spectrum, and D, with rank <= 49 stated as an expectation that was CHECKED not discovered",
+    "sha256 of the builder script and of every module it imports from this repo",
+    "max|C - C.T| as a measured number",
+    "the producing extraction's three code digests copied from the member receipts: replica_extractor_sha256, gate4_pinned_nominal_extractor_sha256, loader_sha256"
+  ],
+  "receipt_convention": "docs/orchestration/CONVENTION-receipt-ingredients.md (BEN-077): every derived quantity ships its ingredients, enough that the reported numbers can contradict each other",
+
+  "source_identity": {
+    "cite": ["docs/orchestration/state/gate5-source-npz-verified-20260813.json",
+             "docs/orchestration/state/gate5-family-complete-pass-20260814.json"],
+    "recomputed_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "do_NOT_quote": "inputs_sha256 out of a replica artifact as verified provenance",
+    "why": "train_fullevent_replica.py:112 copies a claim into a field named for a measurement (BEN-149, OI-57/OI-58); that line is DELIBERATELY unrepaired and rides the next launch with a CODE_ROOT sync"
+  },
+
+  "out_of_scope": [
+    "any inversion, pseudo-inversion, regularization, shrinkage, diagonal loading, conditioning, or eigenvalue clipping",
+    "chi2, GoF, p-value, or any fit",
+    "C_syst or any other uncertainty component, or any combination with one",
+    "the acceptance-supported vs model-dependent tiering decision (OPEN_ITEMS:430-438)",
+    "rebinning, projection to the 224-cell paper grid, or width-weighting",
+    "promotion, Gate-5 sign-off, or any VALIDATION_LEDGER entry -- construction is not promotion",
+    "any access to /pscratch/sd/j/josephrb/gate6traj-reconcile-56847059 (GATE5_CODE_ROOT: named for a different, already-complete job, so it looks disposable and is not)",
+    "repairing train_fullevent_replica.py:112, and re-using the WITHDRAWN 'it would break GATE5_EXPECTED_TRAIN_DRIVER_SHA' reason -- the pin floats by design",
+    "scancel, scontrol update, or resubmission of 56936015 / 56936016",
+    "constructing anything from a partial family -- exactly 50, each index once"
+  ],
+
+  "preconditions": [
+    {"n": 1, "gate": "construction", "text": "extraction array 56936015 terminal at 50/50", "state_at_spec": "NOT MET -- 14 COMPLETED, 1 RUNNING, 35 PENDING"},
+    {"n": 2, "gate": "construction", "text": "validator 56936016 reports GATE5_EXTRACTION_FAMILY_COMPLETE_PASS, exactly 50/50", "state_at_spec": "NOT MET -- PENDING on afterany:56936015"},
+    {"n": 3, "gate": "construction", "text": "the N=14 numbers in this contract re-measured at 50/50", "state_at_spec": "NOT MET"},
+    {"n": 4, "gate": "publication", "text": "CSTAT-O1 rank treatment declared by Joseph", "state_at_spec": "OPEN"},
+    {"n": 5, "gate": "publication", "text": "CSTAT-O2 naming settled, or CSTAT-O2a run", "state_at_spec": "OPEN"}
+  ],
+  "builders_may": "be written and their harnesses tested against fixtures while preconditions 1-3 are outstanding",
+  "builders_may_not": "construct anything from the partial family"
+}

@@ -473,6 +473,22 @@ target verdict and all 50 training receipts pass; the target verdict is now sati
 training condition is not. No subset or `C_stat` is permitted. Promotion
 receipt: [`state/gate5-target-family-promotion-56873858.json`](../docs/orchestration/state/gate5-target-family-promotion-56873858.json).
 
+**Update 2026-08-14 ~05:00 PDT — `C_stat` SPEC COMMITTED (`OI-121`). TWO BLOCKERS RAISED. NOTHING CONSTRUCTED.**
+`OI-121` authorized as **two independent builders from one written spec**; **lane C is the spec author and
+not a builder.** `SPEC-20260814-gate5-cstat-construction-v1.md` + `pet/gate5_cstat_contract.json` pin the
+covaried key (`xsec`), the **`15 × 19 = 285`** grid (**not** `AGENTS.md`'s 224-cell paper grid — the dump is
+extended-FPS), the flattening string, replica ordering, **centring on the replica mean** (nominal-centring
+measured at **6.013×** the trace, the excess being exactly the bias offset, and the only nominal artifact is
+named `NONQUOTABLE-DIAGNOSTIC`), `1/(N-1)`, and the reporting domain. **Two items return to Joseph and both
+gate publication rather than build:** `OI-91` — rank ≤ 49 against **262** reported cells, singular by
+**5.35×**, no inversion treatment declared; and `OI-92` — the spread is **4.478%** where counting predicts
+**0.0493%** and `set_seed` appears **nowhere**, so the object is `C_stat + C_train`, inseparable from this
+family (`BEN-232`). D's replica-dependent mask hazard **measured and confirmed**: 3 flickering cells in 14
+members, one reported in 9 of 14 (`BEN-231`). Extraction array `56936015` was **14/50** — nothing
+constructed, and the spec was written during the wait so nothing is. Receipt
+[`state/gate5-cstat-spec-measurements-20260814.json`](../docs/orchestration/state/gate5-cstat-spec-measurements-20260814.json),
+25 internal-consistency checks, 0 failed.
+
 **Update 2026-08-14 ~01:45 PDT — GATE 5 FAMILY 50/50, `FAMILY_COMPLETE_PASS` AT FULL STRENGTH. `C_stat` still not constructed.**
 Both arrays terminal with **zero failures at any point**; queue drained. The run was full strength — no
 `--skip-replay`, `--source-npz` supplied, so the ~49M-variate three-stream re-draw actually ran — and
