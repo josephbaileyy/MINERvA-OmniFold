@@ -1,0 +1,771 @@
+{
+ "F_range": 0.06452911345365375,
+ "_LANE_B_RESULT_RECEIPT": {
+  "FROZEN_THRESHOLD_TRANSCRIPTION": {
+   "agree_to_16_decimals": true,
+   "bit_identical": false,
+   "cannot_change_any_verdict": true,
+   "delta_frozen_minus_recomputed": 5.551115123125783e-17,
+   "note": "unchanged from the n=3 partial receipt; the frozen literal governs and is one float step stricter than the exact half-range."
+  },
+  "F_range_as_fraction_of_member_spread": 0.18542459173063763,
+  "GATE_6_IS_NOT_UNBLOCKED": {
+   "c_ml_construction_allowed": false,
+   "gate6_unblocked_by_any_outcome": false,
+   "note": "this leg was a MEASUREMENT, not a retry. No outcome of it could have unblocked Gate 6, and this one does not.",
+   "prohibitions_still_live": [
+    "do_not_select_passing_subset",
+    "do_not_construct_C_ML",
+    "do_not_move_central",
+    "do_not_start_leg_2",
+    "do_not_retry_unchanged"
+   ]
+  },
+  "LEG_X_MDE_DERIVED_FROM_THIS_FLOOR": {
+   "F_sd_ddof1": 0.02506515073050877,
+   "MDE": 0.0695920150567661,
+   "MDE_as_fraction_of_member_spread": 0.19997357983532357,
+   "meaning": "Leg X's predeclared primary estimator has one run per cell, so the SE of every effect equals this across-process sd. Leg X can resolve an estimator-init effect of 0.0696 or larger at 95%; it cannot resolve a smaller one, and a null result at this MDE is NOT evidence of no effect (BEN-213: pre-registration is not power).",
+   "t_crit_0975_4df": 2.7764451051977987
+  },
+  "SUPERSEDES": "docs/orchestration/state/gate6-floor-replication-partial-56863958.json (n=3, NO VERDICT)",
+  "S_range_iter2_five_members": 0.3480059774601819,
+  "VALIDITY": {
+   "clauses_failing": "none on any of draws 2,3,4,5",
+   "clauses_per_new_draw": 8,
+   "draws_invalid": [],
+   "draws_valid": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "n": 5,
+   "no_subset_was_selected": true,
+   "premise_checkpoint_tier_homogeneity": true
+  },
+  "VERDICT": "FLOOR_INTERMEDIATE",
+  "WHAT_NO_ONE_MAY_DO_WITH_THIS": [
+   "re-verdict any Gate-6 member, including member 3",
+   "construct C_ML",
+   "move the central",
+   "start Leg 2",
+   "select a passing subset",
+   "retry the family unchanged",
+   "read FLOOR_INTERMEDIATE as a soft pass \u2014 it is the declared middle and licenses nothing"
+  ],
+  "WHAT_THE_N3_PARTIAL_GOT_RIGHT": "branch 1 was already declared unreachable at n=3 by monotonicity of max-min, because F_range was already 0.0523993868023519 > 0.05. That deduction holds: the terminal 0.06452911345365375 is larger still.",
+  "WHAT_THE_VERDICT_MEANS": "F_range = 0.06452911345365375 sits BETWEEN the two frozen thresholds: ABOVE the 0.05 that would have declared the five-member spread seed-determined, and BELOW the 0.174002988730091 (half the member range) that would have declared it process-determined. Neither predeclared branch fires. The predeclaration anticipated this outcome and attaches NO licence to it.",
+  "array": "56863958",
+  "draw5": {
+   "completed_at_utc": "2026-08-14T16:02:09Z",
+   "elapsed": "03:17:24",
+   "exit_code": "0:0",
+   "node": "nid001425",
+   "state": "COMPLETED"
+  },
+  "exit_code": 0,
+  "prior_draw_elapsed": [
+   "03:15:09",
+   "03:15:26",
+   "03:12:35"
+  ],
+  "produced_by": "nd-unfolding/pet/gate6_floor_statistics.py RUN UNCHANGED",
+  "schema": "gate6-floor-replication-result-v1",
+  "script_sha256_frozen": "637ee33d2c36270ae084e17ebb8696f081f77bd7f9f6712738764a989904b7cc",
+  "script_sha256_verified_on_cluster_before_running": true,
+  "status": "TERMINAL \u2014 all 5 draws present and valid; replaces the provisional n=3 partial receipt"
+ },
+ "branch1_band_condition_met": true,
+ "branch1_range_condition_met": false,
+ "branch2_condition_met": false,
+ "c_ml_construction_allowed": false,
+ "draw_1": {
+  "source": "EXISTING member_1 artifact, reused unmodified, NOT retrained",
+  "trajectory_receipt": "nd-unfolding/pet/fullevent_ml_ensemble/member_1/trajectory/STEP1_TRAJECTORY.slurm-56847059_1.json",
+  "v": [
+   1.5194819600196279,
+   1.124000976719287,
+   0.9806897311812962
+  ]
+ },
+ "draws": [
+  {
+   "clauses": {
+    "1_completed": {
+     "ingredients": {
+      "completion_marker_present": true,
+      "sacct_exit_code": "0:0",
+      "sacct_state": "COMPLETED"
+     },
+     "ok": true
+    },
+    "2_target_provenance": {
+     "ingredients": {
+      "launcher_preflight_identity_line_present": true,
+      "launcher_preflight_target_prefix": "544b2f6a2451480a",
+      "target_provenance": "PASS",
+      "target_sha256_in_log": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
+      "target_sha256_required": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9"
+     },
+     "ok": true
+    },
+    "3_realized_policy": {
+     "ingredients": {
+      "mismatches": {},
+      "realized": {
+       "batch_size": 512,
+       "epochs": 8,
+       "estimator_seed": 42,
+       "niter": 3,
+       "subsample_seed": 0,
+       "train_events": 2000000
+      },
+      "required": {
+       "batch_size": 512,
+       "epochs": 8,
+       "estimator_seed": 42,
+       "niter": 3,
+       "subsample_seed": 0,
+       "train_events": 2000000
+      }
+     },
+     "ok": true
+    },
+    "4_class_ratio": {
+     "ingredients": {
+      "R_from_artifact": 1.1240802949941018,
+      "R_from_trajectory_receipt": 1.1240802949941018,
+      "R_required_exactly": 1.1240802949941018
+     },
+     "ok": true
+    },
+    "5_mc_indices": {
+     "ingredients": {
+      "array_equal_to_member1": true,
+      "n_differing_rows": 0,
+      "n_rows": 2000000
+     },
+     "ok": true
+    },
+    "6_gates": {
+     "ingredients": {
+      "gate_A1_mc_indices_bit_exact": true,
+      "gate_A2_truth_norm_bit_exact": true,
+      "gate_Bi_pass": true,
+      "gate_verdict": "GATE_AB_PASSED",
+      "reproduction_gate_all_zero": true,
+      "reproduction_gate_rel_dev": {
+       "increment1": 0.0,
+       "push_final": 0.0,
+       "push_prev": 0.0
+      }
+     },
+     "ok": true
+    },
+    "7_checkpoints": {
+     "ingredients": {
+      "checkpoints": [
+       "OmniFold_fe_nominal_nominal_iter0_step1.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter0_step2.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter1_step1.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter1_step2.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter2_step1.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter2_step2.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5"
+      ],
+      "n_weights_h5": 8,
+      "paths_shared_with_another_draw": [],
+      "required": 8
+     },
+     "ok": true
+    },
+    "8_execution_environment": {
+     "ingredients": {
+      "bound_target_npy": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
+      "missing_bound_digests": [],
+      "missing_execution_fields": [],
+      "present": {
+       "code_head_at_runtime": "4d96acf0f877d65cfe0fd81a343e0089c52ea0fb",
+       "gpu_identity": "GPU-515c021e-5b42-e610-3aef-fccc28486e73, NVIDIA A100-SXM4-80GB;",
+       "host": "nid008264",
+       "science_head_at_runtime": "683bdccad5a94d13ef231bf0729758085634a178",
+       "slurm_array_job_id": "56863958",
+       "slurm_array_task_id": "2",
+       "slurm_job_id": "56863959"
+      }
+     },
+     "ok": true
+    }
+   },
+   "decomposition_verdict_field_is_not_a_validity_clause": "INDETERMINATE",
+   "dir": "nd-unfolding/pet/fullevent_floor_42_0/draw_2",
+   "draw": 2,
+   "execution": {
+    "code_head_at_runtime": "4d96acf0f877d65cfe0fd81a343e0089c52ea0fb",
+    "gpu_identity": "GPU-515c021e-5b42-e610-3aef-fccc28486e73, NVIDIA A100-SXM4-80GB;",
+    "host": "nid008264",
+    "science_head_at_runtime": "683bdccad5a94d13ef231bf0729758085634a178",
+    "slurm_array_job_id": "56863958",
+    "slurm_array_task_id": "2",
+    "slurm_job_id": "56863959",
+    "started_at_utc": "2026-08-13T17:54:26Z"
+   },
+   "failed_clauses": [],
+   "present": true,
+   "valid": true
+  },
+  {
+   "clauses": {
+    "1_completed": {
+     "ingredients": {
+      "completion_marker_present": true,
+      "sacct_exit_code": "0:0",
+      "sacct_state": "COMPLETED"
+     },
+     "ok": true
+    },
+    "2_target_provenance": {
+     "ingredients": {
+      "launcher_preflight_identity_line_present": true,
+      "launcher_preflight_target_prefix": "544b2f6a2451480a",
+      "target_provenance": "PASS",
+      "target_sha256_in_log": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
+      "target_sha256_required": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9"
+     },
+     "ok": true
+    },
+    "3_realized_policy": {
+     "ingredients": {
+      "mismatches": {},
+      "realized": {
+       "batch_size": 512,
+       "epochs": 8,
+       "estimator_seed": 42,
+       "niter": 3,
+       "subsample_seed": 0,
+       "train_events": 2000000
+      },
+      "required": {
+       "batch_size": 512,
+       "epochs": 8,
+       "estimator_seed": 42,
+       "niter": 3,
+       "subsample_seed": 0,
+       "train_events": 2000000
+      }
+     },
+     "ok": true
+    },
+    "4_class_ratio": {
+     "ingredients": {
+      "R_from_artifact": 1.1240802949941018,
+      "R_from_trajectory_receipt": 1.1240802949941018,
+      "R_required_exactly": 1.1240802949941018
+     },
+     "ok": true
+    },
+    "5_mc_indices": {
+     "ingredients": {
+      "array_equal_to_member1": true,
+      "n_differing_rows": 0,
+      "n_rows": 2000000
+     },
+     "ok": true
+    },
+    "6_gates": {
+     "ingredients": {
+      "gate_A1_mc_indices_bit_exact": true,
+      "gate_A2_truth_norm_bit_exact": true,
+      "gate_Bi_pass": true,
+      "gate_verdict": "GATE_AB_PASSED",
+      "reproduction_gate_all_zero": true,
+      "reproduction_gate_rel_dev": {
+       "increment1": 0.0,
+       "push_final": 0.0,
+       "push_prev": 0.0
+      }
+     },
+     "ok": true
+    },
+    "7_checkpoints": {
+     "ingredients": {
+      "checkpoints": [
+       "OmniFold_fe_nominal_nominal_iter0_step1.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter0_step2.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter1_step1.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter1_step2.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter2_step1.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter2_step2.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5"
+      ],
+      "n_weights_h5": 8,
+      "paths_shared_with_another_draw": [],
+      "required": 8
+     },
+     "ok": true
+    },
+    "8_execution_environment": {
+     "ingredients": {
+      "bound_target_npy": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
+      "missing_bound_digests": [],
+      "missing_execution_fields": [],
+      "present": {
+       "code_head_at_runtime": "4d96acf0f877d65cfe0fd81a343e0089c52ea0fb",
+       "gpu_identity": "GPU-e4d3ed21-e163-085f-bb7d-45915dd39f08, NVIDIA A100-SXM4-80GB;",
+       "host": "nid008264",
+       "science_head_at_runtime": "683bdccad5a94d13ef231bf0729758085634a178",
+       "slurm_array_job_id": "56863958",
+       "slurm_array_task_id": "3",
+       "slurm_job_id": "56863960"
+      }
+     },
+     "ok": true
+    }
+   },
+   "decomposition_verdict_field_is_not_a_validity_clause": "INDETERMINATE",
+   "dir": "nd-unfolding/pet/fullevent_floor_42_0/draw_3",
+   "draw": 3,
+   "execution": {
+    "code_head_at_runtime": "4d96acf0f877d65cfe0fd81a343e0089c52ea0fb",
+    "gpu_identity": "GPU-e4d3ed21-e163-085f-bb7d-45915dd39f08, NVIDIA A100-SXM4-80GB;",
+    "host": "nid008264",
+    "science_head_at_runtime": "683bdccad5a94d13ef231bf0729758085634a178",
+    "slurm_array_job_id": "56863958",
+    "slurm_array_task_id": "3",
+    "slurm_job_id": "56863960",
+    "started_at_utc": "2026-08-13T18:02:15Z"
+   },
+   "failed_clauses": [],
+   "present": true,
+   "valid": true
+  },
+  {
+   "clauses": {
+    "1_completed": {
+     "ingredients": {
+      "completion_marker_present": true,
+      "sacct_exit_code": "0:0",
+      "sacct_state": "COMPLETED"
+     },
+     "ok": true
+    },
+    "2_target_provenance": {
+     "ingredients": {
+      "launcher_preflight_identity_line_present": true,
+      "launcher_preflight_target_prefix": "544b2f6a2451480a",
+      "target_provenance": "PASS",
+      "target_sha256_in_log": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
+      "target_sha256_required": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9"
+     },
+     "ok": true
+    },
+    "3_realized_policy": {
+     "ingredients": {
+      "mismatches": {},
+      "realized": {
+       "batch_size": 512,
+       "epochs": 8,
+       "estimator_seed": 42,
+       "niter": 3,
+       "subsample_seed": 0,
+       "train_events": 2000000
+      },
+      "required": {
+       "batch_size": 512,
+       "epochs": 8,
+       "estimator_seed": 42,
+       "niter": 3,
+       "subsample_seed": 0,
+       "train_events": 2000000
+      }
+     },
+     "ok": true
+    },
+    "4_class_ratio": {
+     "ingredients": {
+      "R_from_artifact": 1.1240802949941018,
+      "R_from_trajectory_receipt": 1.1240802949941018,
+      "R_required_exactly": 1.1240802949941018
+     },
+     "ok": true
+    },
+    "5_mc_indices": {
+     "ingredients": {
+      "array_equal_to_member1": true,
+      "n_differing_rows": 0,
+      "n_rows": 2000000
+     },
+     "ok": true
+    },
+    "6_gates": {
+     "ingredients": {
+      "gate_A1_mc_indices_bit_exact": true,
+      "gate_A2_truth_norm_bit_exact": true,
+      "gate_Bi_pass": true,
+      "gate_verdict": "GATE_AB_PASSED",
+      "reproduction_gate_all_zero": true,
+      "reproduction_gate_rel_dev": {
+       "increment1": 0.0,
+       "push_final": 0.0,
+       "push_prev": 0.0
+      }
+     },
+     "ok": true
+    },
+    "7_checkpoints": {
+     "ingredients": {
+      "checkpoints": [
+       "OmniFold_fe_nominal_nominal_iter0_step1.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter0_step2.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter1_step1.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter1_step2.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter2_step1.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter2_step2.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5"
+      ],
+      "n_weights_h5": 8,
+      "paths_shared_with_another_draw": [],
+      "required": 8
+     },
+     "ok": true
+    },
+    "8_execution_environment": {
+     "ingredients": {
+      "bound_target_npy": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
+      "missing_bound_digests": [],
+      "missing_execution_fields": [],
+      "present": {
+       "code_head_at_runtime": "4d96acf0f877d65cfe0fd81a343e0089c52ea0fb",
+       "gpu_identity": "GPU-b1c138a3-4642-43b4-a727-f1cddcd53f1d, NVIDIA A100-SXM4-80GB;",
+       "host": "nid008332",
+       "science_head_at_runtime": "683bdccad5a94d13ef231bf0729758085634a178",
+       "slurm_array_job_id": "56863958",
+       "slurm_array_task_id": "4",
+       "slurm_job_id": "56883015"
+      }
+     },
+     "ok": true
+    }
+   },
+   "decomposition_verdict_field_is_not_a_validity_clause": "INDETERMINATE",
+   "dir": "nd-unfolding/pet/fullevent_floor_42_0/draw_4",
+   "draw": 4,
+   "execution": {
+    "code_head_at_runtime": "4d96acf0f877d65cfe0fd81a343e0089c52ea0fb",
+    "gpu_identity": "GPU-b1c138a3-4642-43b4-a727-f1cddcd53f1d, NVIDIA A100-SXM4-80GB;",
+    "host": "nid008332",
+    "science_head_at_runtime": "683bdccad5a94d13ef231bf0729758085634a178",
+    "slurm_array_job_id": "56863958",
+    "slurm_array_task_id": "4",
+    "slurm_job_id": "56883015",
+    "started_at_utc": "2026-08-13T22:24:07Z"
+   },
+   "failed_clauses": [],
+   "present": true,
+   "valid": true
+  },
+  {
+   "clauses": {
+    "1_completed": {
+     "ingredients": {
+      "completion_marker_present": true,
+      "sacct_exit_code": "0:0",
+      "sacct_state": "COMPLETED"
+     },
+     "ok": true
+    },
+    "2_target_provenance": {
+     "ingredients": {
+      "launcher_preflight_identity_line_present": true,
+      "launcher_preflight_target_prefix": "544b2f6a2451480a",
+      "target_provenance": "PASS",
+      "target_sha256_in_log": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
+      "target_sha256_required": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9"
+     },
+     "ok": true
+    },
+    "3_realized_policy": {
+     "ingredients": {
+      "mismatches": {},
+      "realized": {
+       "batch_size": 512,
+       "epochs": 8,
+       "estimator_seed": 42,
+       "niter": 3,
+       "subsample_seed": 0,
+       "train_events": 2000000
+      },
+      "required": {
+       "batch_size": 512,
+       "epochs": 8,
+       "estimator_seed": 42,
+       "niter": 3,
+       "subsample_seed": 0,
+       "train_events": 2000000
+      }
+     },
+     "ok": true
+    },
+    "4_class_ratio": {
+     "ingredients": {
+      "R_from_artifact": 1.1240802949941018,
+      "R_from_trajectory_receipt": 1.1240802949941018,
+      "R_required_exactly": 1.1240802949941018
+     },
+     "ok": true
+    },
+    "5_mc_indices": {
+     "ingredients": {
+      "array_equal_to_member1": true,
+      "n_differing_rows": 0,
+      "n_rows": 2000000
+     },
+     "ok": true
+    },
+    "6_gates": {
+     "ingredients": {
+      "gate_A1_mc_indices_bit_exact": true,
+      "gate_A2_truth_norm_bit_exact": true,
+      "gate_Bi_pass": true,
+      "gate_verdict": "GATE_AB_PASSED",
+      "reproduction_gate_all_zero": true,
+      "reproduction_gate_rel_dev": {
+       "increment1": 0.0,
+       "push_final": 0.0,
+       "push_prev": 0.0
+      }
+     },
+     "ok": true
+    },
+    "7_checkpoints": {
+     "ingredients": {
+      "checkpoints": [
+       "OmniFold_fe_nominal_nominal_iter0_step1.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter0_step2.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter1_step1.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter1_step2.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter2_step1.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter2_step2.weights.h5",
+       "OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5"
+      ],
+      "n_weights_h5": 8,
+      "paths_shared_with_another_draw": [],
+      "required": 8
+     },
+     "ok": true
+    },
+    "8_execution_environment": {
+     "ingredients": {
+      "bound_target_npy": "544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9",
+      "missing_bound_digests": [],
+      "missing_execution_fields": [],
+      "present": {
+       "code_head_at_runtime": "4d96acf0f877d65cfe0fd81a343e0089c52ea0fb",
+       "gpu_identity": "GPU-48862b4e-e2bd-3c1c-3f51-4c8a7bc21e2f, NVIDIA A100-SXM4-40GB;",
+       "host": "nid001425",
+       "science_head_at_runtime": "683bdccad5a94d13ef231bf0729758085634a178",
+       "slurm_array_job_id": "56863958",
+       "slurm_array_task_id": "5",
+       "slurm_job_id": "56863958"
+      }
+     },
+     "ok": true
+    }
+   },
+   "decomposition_verdict_field_is_not_a_validity_clause": "INDETERMINATE",
+   "dir": "nd-unfolding/pet/fullevent_floor_42_0/draw_5",
+   "draw": 5,
+   "execution": {
+    "code_head_at_runtime": "4d96acf0f877d65cfe0fd81a343e0089c52ea0fb",
+    "gpu_identity": "GPU-48862b4e-e2bd-3c1c-3f51-4c8a7bc21e2f, NVIDIA A100-SXM4-40GB;",
+    "host": "nid001425",
+    "science_head_at_runtime": "683bdccad5a94d13ef231bf0729758085634a178",
+    "slurm_array_job_id": "56863958",
+    "slurm_array_task_id": "5",
+    "slurm_job_id": "56863958",
+    "started_at_utc": "2026-08-14T12:45:28Z"
+   },
+   "failed_clauses": [],
+   "present": true,
+   "valid": true
+  }
+ ],
+ "evaluated_at_iteration": 2,
+ "frozen_threshold_check": {
+  "agree_to_16_decimals": true,
+  "bit_identical": false,
+  "delta_frozen_minus_recomputed": 5.551115123125783e-17,
+  "frozen_literal_governs": 0.174002988730091,
+  "member_max_iter2": 1.1014828481277632,
+  "member_min_iter2": 0.7534768706675813,
+  "member_range_iter2": 0.3480059774601819,
+  "member_receipts": [
+   "nd-unfolding/pet/fullevent_ml_ensemble/member_1/trajectory/STEP1_TRAJECTORY.slurm-56847059_1.json",
+   "nd-unfolding/pet/fullevent_ml_ensemble/member_2/trajectory/STEP1_TRAJECTORY.slurm-56847059_2.json",
+   "nd-unfolding/pet/fullevent_ml_ensemble/member_3/trajectory/STEP1_TRAJECTORY.slurm-56847059_3.json",
+   "nd-unfolding/pet/fullevent_ml_ensemble/member_4/trajectory/STEP1_TRAJECTORY.slurm-56847059_4.json",
+   "nd-unfolding/pet/fullevent_ml_ensemble/member_5/trajectory/STEP1_TRAJECTORY.slurm-56847059_5.json"
+  ],
+  "note": "the frozen literal is 1 float step ABOVE the recomputed half-range, so the process-determined branch is very slightly stricter than the exact half-range. 5.55e-17 against a 0.174 threshold; it cannot change any verdict.",
+  "recomputed_from_member_receipts": 0.17400298873009096
+ },
+ "gate6_unblocked_by_any_outcome": false,
+ "inventory": {
+  "draws_invalid": [],
+  "draws_present": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "draws_required": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "draws_valid": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "n": 5
+ },
+ "predeclaration": "docs/orchestration/PREDECLARATION-20260813-gate6-floor-replication.md",
+ "premise_checks": {
+  "checkpoint_tier_homogeneity": {
+   "observed": {
+    "1": [
+     "best-epoch",
+     "best-epoch",
+     "final(BEN-043)"
+    ],
+    "2": [
+     "best-epoch",
+     "best-epoch",
+     "final(BEN-043)"
+    ],
+    "3": [
+     "best-epoch",
+     "best-epoch",
+     "final(BEN-043)"
+    ],
+    "4": [
+     "best-epoch",
+     "best-epoch",
+     "final(BEN-043)"
+    ],
+    "5": [
+     "best-epoch",
+     "best-epoch",
+     "final(BEN-043)"
+    ]
+   },
+   "ok": true,
+   "required_pattern": [
+    "best-epoch",
+    "best-epoch",
+    "final(BEN-043)"
+   ],
+   "why_it_matters": "the predeclaration's like-for-like claim is that every draw reads iterations 0/1 from best-epoch and iteration 2 from _final. If a draw departs, F_range mixes tiers and that claim is void."
+  }
+ },
+ "prohibitions_still_live": [
+  "do_not_select_passing_subset",
+  "do_not_construct_C_ML",
+  "do_not_move_central",
+  "do_not_start_leg_2",
+  "do_not_retry_unchanged"
+ ],
+ "schema": "gate6-leg-F-floor-statistics-v1",
+ "statistics": {
+  "0": {
+   "F_range": 0.7800143891364347,
+   "F_sd_ddof1": 0.30098473726598485,
+   "d_by_draw": {
+    "1": 0.5194819600196279,
+    "2": 0.3772732412607531,
+    "3": 0.15995059341994666,
+    "4": 0.36102036824346606,
+    "5": 0.6200637957164881
+   },
+   "max": 1.620063795716488,
+   "mean": 1.3435777543640777,
+   "min": 0.8400494065800533,
+   "n": 5,
+   "values_by_draw": {
+    "1": 1.5194819600196279,
+    "2": 1.3772732412607531,
+    "3": 0.8400494065800533,
+    "4": 1.361020368243466,
+    "5": 1.620063795716488
+   }
+  },
+  "1": {
+   "F_range": 0.21447032141994493,
+   "F_sd_ddof1": 0.08636063439138986,
+   "d_by_draw": {
+    "1": 0.12400097671928689,
+    "2": 0.1103230946149727,
+    "3": 0.06433774976136741,
+    "4": 0.1191625195108752,
+    "5": 0.15013257165857752
+   },
+   "max": 1.1501325716585775,
+   "mean": 1.087856282548469,
+   "min": 0.9356622502386326,
+   "n": 5,
+   "values_by_draw": {
+    "1": 1.124000976719287,
+    "2": 1.1103230946149727,
+    "3": 0.9356622502386326,
+    "4": 1.1191625195108752,
+    "5": 1.1501325716585775
+   }
+  },
+  "2": {
+   "F_range": 0.06452911345365375,
+   "F_sd_ddof1": 0.02506515073050877,
+   "d_by_draw": {
+    "1": 0.01931026881870379,
+    "2": 0.004480133791572527,
+    "3": 0.056879520593924426,
+    "4": 0.03236558713597104,
+    "5": 0.007649592859729326
+   },
+   "max": 1.0076495928597293,
+   "mean": 0.9789228165039117,
+   "min": 0.9431204794060756,
+   "n": 5,
+   "values_by_draw": {
+    "1": 0.9806897311812962,
+    "2": 0.9955198662084275,
+    "3": 0.9431204794060756,
+    "4": 0.967634412864029,
+    "5": 1.0076495928597293
+   }
+  }
+ },
+ "this_leg_does_not": [
+  "re-verdict any Gate-6 member, including member 3",
+  "calibrate the best-epoch vs _final checkpoint-tier gap (that is Leg 0, unauthorized)",
+  "attribute variance between estimator init and subsample (that is Leg X)",
+  "license C_ML, move the central, start Leg 2, or select a subset"
+ ],
+ "thresholds_frozen": {
+  "band": 0.1,
+  "process_determined_range_min": 0.174002988730091,
+  "seed_determined_range_max": 0.05
+ },
+ "verdict": "FLOOR_INTERMEDIATE"
+}

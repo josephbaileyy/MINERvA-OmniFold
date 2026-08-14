@@ -473,6 +473,21 @@ target verdict and all 50 training receipts pass; the target verdict is now sati
 training condition is not. No subset or `C_stat` is permitted. Promotion
 receipt: [`state/gate5-target-family-promotion-56873858.json`](../docs/orchestration/state/gate5-target-family-promotion-56873858.json).
 
+**Update 2026-08-14 ~06:30 PDT — `OI-122` EXECUTED: the `N=100` predeclaration is RETIRED IN PLACE.**
+Joseph's verbatim **"Yes I authorize it"**, committed at `4d28e78` **before** the act per `BEN-082(v)`. I had
+declined this an hour earlier on three grounds — the row assigns ratification to Joseph, the act overrides a
+committed verdict clause and so is scientific not clerical, and lane B had already declined it — and **all
+three held**. **Purely additive: 65 insertions, 0 deletions**, no digest of the file's bytes anywhere
+(`BEN-158` checked first), classified `ARCHIVAL` + `superseded` + `canonical_successor` and **deliberately
+not `DEAD`**, because a deleted predeclaration is not a predeclaration. **Grounded in AUTHORITY** — the
+file's `:10` forbids launching and §4 condition 4 says *"This file is not that authorization"* — **not** in
+"50 is precise enough". The header **defuses** the `:73` `INSUFFICIENT` clause (its trigger is *at assembly*
+and no assembly occurred under this file) rather than leaving that trap armed, and records that the
+document's **quality** branches were **met** by the successor: `SEED LEAK` passes on measurement (50/50 at
+`estimator_seed: 42`, `:275` fail-closing), `CENTRING ERROR` passes (replica mean). `INSUFFICIENT` is the
+only branch that differs, so the conflict was about inventory size alone. `CSTAT-R7` (action 2) already
+carried the `N=50` → **10.1%** disclosure obligation.
+
 **Update 2026-08-14 ~06:10 PDT — `BEN-232` REFUTED BY ME: THE NETWORK IS SEEDED, `C_stat` IS CORRECTLY NAMED.**
 The estimator seed is **pinned at 42 on all 50 members and enforced per member** (`:275` fail-closes);
 measured from all 50 weights artifacts, one `seed_policy`. My `grep set_seed` **could not match

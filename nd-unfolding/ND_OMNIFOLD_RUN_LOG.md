@@ -7446,3 +7446,45 @@ set.**
 predeclaration targeted. That disclosure is what the downward revision was accepted under, it is additive
 and true regardless of how the supersession is recorded, and publishing the number without it is the only
 ordering that would be wrong.
+
+### 2026-08-14 ~06:30 PDT — `OI-122` EXECUTED: THE `N=100` PREDECLARATION IS RETIRED IN PLACE (lane C)
+
+**I declined this an hour ago and was right to; Joseph then authorized it and I executed.** Verbatim
+**"Yes I authorize it"**, answering the exact question *"do you authorize marking … as SUPERSEDED, naming
+the N=50 document, retiring rather than deleting it?"*, and **committed at `4d28e78` BEFORE the act** per
+`BEN-082(v)`. My three grounds for declining all held and none was overridden: the row assigned ratification
+to Joseph; the act overrides a committed verdict clause and so is scientific rather than clerical; and lane
+B had already declined the same task, so being asked next was routing around a declining lane. **The
+mediator recorded that last one against itself in the ledger.**
+
+**The retirement is purely additive: 65 insertions, 0 deletions.** No sentence of the 2026-08-12 document
+was edited. Checked before annotating that **no `sha256` of its bytes exists anywhere** — all references are
+by path — so `BEN-158`'s annotate-in-place hazard does not apply. Classified `ARCHIVAL` + `superseded` +
+`canonical_successor`, **deliberately not `DEAD`**: Joseph's own reasoning is that *a predeclaration you
+delete when it becomes inconvenient is not a predeclaration*, and a visible superseded one is what proves
+the supersession happened in the open.
+
+**Grounded in AUTHORITY, not precision.** The file's `:10` reads *"NOTHING IS LAUNCHED BY THIS FILE AND
+NOTHING MAY BE"* and its §4 condition 4 says of itself *"This file is not that authorization."* So the
+supersession records that the standing was **never exercised**, rather than overruling a decision the
+document had standing to make. Grounding it in *"50 is precise enough"* would have invited a referee to
+adjudicate `1/√(2(N−1))` at 50 against 100, which is not what happened.
+
+**The header defuses the `:73` `INSUFFICIENT` clause rather than merely superseding it.** That sentence —
+*"fewer than 100 complete manifests at assembly … not repaired by rescaling"* — is what made this look like
+a live conflict to two independent readers for most of today. **Its trigger is *at assembly*, and no
+assembly ever occurred under this file.** A header saying only "superseded" leaves that trap armed.
+
+**And one thing the ratification did not ask for, which a cold reader needs: the document's QUALITY
+branches were MET by the successor, not dodged.** `SEED LEAK` — *"any replica whose estimator seed differs
+from the fixed value; fail closed"* — **passes**, and I can measure it: all 50 weights artifacts carry one
+`seed_policy` with `estimator_seed: 42`, and `train_fullevent_replica.py:275` fail-closes on drift, so the
+fail-closed behaviour the branch demanded is *implemented* rather than merely observed. `CENTRING ERROR`
+**passes** — replica mean, independently required by `RUNBOOK:213`. `NON-PSD` is not yet evaluable.
+**`INSUFFICIENT` is the only branch that differs.** So the two documents never disagreed about estimator
+quality; they disagreed about inventory size alone, which is the axis the successor changed in the open,
+before launch, with a stated criterion.
+
+**Action 2 was already done and correctly did not wait for him** — `CSTAT-R7` requires the receipt to state
+`N=50` → **10.1%** against the **7.1%** targeted at `N=100`. Retiring the document does not discharge that;
+it is what the downward revision was accepted under.
