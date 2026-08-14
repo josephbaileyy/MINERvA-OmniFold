@@ -6809,3 +6809,94 @@ factors, which needs a producer-side change and should ride the next launch with
 than being retrofitted mid-family. Row narrowed accordingly.
 
 Campaign: 35 receipts of 50, 5 PENDING / 10 RUNNING, no failures, `PARTIAL`, `C_stat` null.
+
+## 2026-08-13 21:3x — `C_syst` scoped: 124 endpoints, ~402 GPU-h at k=1, and the blocker is a code gate
+
+Written while Gate 6 Leg F's draw 5 sits queued behind our **own** Gate-5 array. Draws 2, 3 and 4 are
+`COMPLETED 0:0` (`03:15:09` / `03:15:26` / `03:12:35`; `nid008264`, `nid008264`, **`nid008332`**), so the
+across-node coverage the first wave lacked is now in. **Design only: nothing submitted, no cluster state
+mutated, and the floor verdict work is deliberately NOT started** — that runs when draw 5 lands.
+
+**`C_syst` was the only P5B component where the campaign could not state what it would take.** It now can.
+`docs/orchestration/SCOPING-20260813-csyst-joint-nuisance-retraining.md`.
+
+**The inventory is 124 endpoints**, from the code rather than from prose: 12 knob bands
+(`pet_systematics_5d.py:42-43`) × 2 `±1σ` endpoints each = 24, plus **100** PPFX flux universes
+(`N_FLUX` at `unified_throw.py:52`, gate `require_truth_ratio_bank(..., expected_flux=100)`). The 10
+lateral endpoints are a separate component and are excluded from that count.
+
+**The crux resolves against us, and the repo already contained the measurement.** `unified_throw.py:19-22`
+calls the 124 *"VERTICAL (weight-only)"* bands — which is a statement about the **event loop**, not a
+frozen-map exemption. Weight-only means cloud membership is unchanged, so verticals need no new event loop,
+no per-endpoint merge and none of `C_lateral`'s ~1.1 TB. It does not mean the learned map is unchanged: in
+OmniFold step 1 the classifier separates data from MC-reco *using the MC weights*, so changing the prior
+changes the map. And `products/pet/bkgsub/pet_joint_vs_additive_retrain.json` measures it — over the 5
+universes with both operands stored, **`‖Δ‖` is comparable to `‖s‖` and LARGER for `MaCCQE`**
+(`1.28115e-38` vs `1.02987e-38`). **So `C_syst` does not reweight away; it is the schedule-dominating
+component.** Recoil numbers, therefore not quotable — the transferable part is the structure.
+
+**Cost, with the operands so it can be contradicted.** Per-retrain wall measured this turn from `sacct`:
+Gate 5 `10866.7 s = 3.0185 h` mean over **n=35** COMPLETED (min `2:58:48`, max `3:08:01`); Leg F's draws,
+which include the three diagnostic stages a `C_syst` endpoint also needs, `11663.3 s = 3.2398 h`. Using
+the latter: `124 × 3.2398 = 401.7 GPU-h`, `40.2 h` wall at the observed concurrency of 10 — and **that
+division is arithmetic, not a schedule**, which today's queue proves. Flux alone is `324 GPU-h`, **81%** of
+the total. `k` replicates per endpoint multiply everything.
+
+**The `k` question is where the cost is actually decided, and there is a nearly free way to settle it.**
+Phase 7's `null` identity-retrain control gives `‖Δ_null‖ = 2.3124629464350753e-41` against a 5-band joint
+`√tr` of `1.7315713222649896e-38` — `749×`, so `k=1` looks ample. But that control is within-process, and
+`VL126` already measured within-vs-across at `128.6×`. **Illustration, explicitly not a derivation** (the
+two are in different units and are not commensurable): at that inflation the weakest band's margin falls
+from `177×` to `1.38×` — not resolved. **Gate 6 Leg F's five draws are exactly the across-process
+identity-retrain control this needs, in the full-event representation, and each has already written a
+complete weights npz** — extracting the xsec vector from them would settle `k` for **zero additional GPU
+time**. That is outside Leg F's predeclared rule, so it is listed as a decision and **not done.**
+
+**The structural blocker, and it is why this component had no design rather than a partial one.**
+`train_fullevent_nominal.py` cannot retrain on a universe prior — its whole CLI was read, and there is
+**no `--universe`, no truth-ratio bank, no per-event reweight.** `phase7_retrain_universe.py` has all of
+it and is recoil-era (`niter=2`, recoil inputs, produces the **increment** not the joint shift, extraction
+*"uses the nominal cloud"*). And the obvious fix is gated: verified against the live receipt,
+`state/p3f-pet-gate4-launch-code-gate-20260813.json` is `PASS_CODE_ONLY`, `superseded_by: null`, and its
+`files.driver.path` **is** `train_fullevent_nominal.py` at `91144bee…` — the digest Leg F and Leg X pin. So
+adding a universe axis is a **code-gate re-issue**, not an edit. **A decision, not an engineering task.**
+
+**Two citation defects found in my own draft, both by checking rather than by review.** The `≥100 GPU-h`
+and `170–250` figures are at `OPEN_ITEMS-ARCHIVE-2026-08.md:696`, **not** the live `OPEN_ITEMS.md` the
+determination cites — **I repeated the stale pointer before checking it**, and caught it only by grepping
+for the *number* instead of the claim. That is a third variant of the citation-rot class: unlike BEN-215
+(commit verified as a string) and BEN-216 (file never existed), here **both the file and the number still
+exist — just not together**, because the item was archived. Filed as BEN-128. I did **not** fix the
+determination's pointer: that file is another lane's, and editing a peer's document to correct my reading
+of it is the BEN-204 shape. Separately I dropped an "861 pins" figure carried from memory and replaced it
+with the live receipt's measured **19 `files` entries**, plus the note that
+`verify_hash_bindings.collect()` harvests any `path`+`sha256` dict so the blast radius exceeds the 19.
+
+**Seven things the scoping states it cannot establish**, each as "needs X" rather than as a hedge — chiefly
+the across-process noise floor in xsec units, the retraining response for the 7 unmeasured knob bands and
+99 of 100 flux universes, and whether any nuisance qualifies for the frozen-map exception at all. **No
+nuisance has such a proof today.**
+
+Gate 6 remains **BLOCKED** at `19585b7`, five prohibitions live. Leg X remains authorized and unsubmitted.
+Cause 5 remains **OPEN** — measuring what a construction would cost is not building it.
+
+**Addendum, same turn — a near-miss that belongs in the record rather than in a finding.** Before pulling,
+my tree showed **two** Gate-4 launch-code-gate receipts, `20260812` and `20260813`, *both* with
+`superseded_by: null`, binding `train_fullevent_nominal.py` to **different** digests (`5fda80df…` vs
+`91144bee…`). That would have made "the live receipt" ambiguous and undercut the scoping's §4.1. It was
+**already repaired on `origin/main`, 25 commits ahead of me** — `20260812` now carries `superseded_by`,
+`files: 0` and `files_at_issue: 17` with `5fda80df…` preserved verbatim, which is exactly the repair the
+pre-commit hook's own text prescribes (*"re-issue or retire the owning receipt … every digest preserved
+verbatim"*). Merging origin/main took the verifier from `*** BINDINGS BROKEN ***` (2 mismatches, the other
+being lane C's reconciler, also already fixed) to `ALL BINDINGS INTACT`, with no action from me.
+
+Two mechanisms combined to make a stale snapshot look like a live defect, and the mediator's note names
+the second: the whole-tree binding arm was added to the hook on 2026-08-13, and **the hook FILE is the
+main checkout's while the CHECKS it runs are the worktree's own copy** (the dispatcher `cd`s to
+`git rev-parse --show-toplevel`). So a newly added arm is **inert in a worktree until that worktree
+pulls** — which is why my two earlier commits printed "4 checks passed" and this one hit six. **Pull
+before reporting a tree-wide condition.** One command, and it is the difference between a finding and a
+false alarm. Filed as BEN-129, which closes Lane B's block `100-129`.
+
+Also adopted this turn: lane A's OI-* block table at `e4db2e2`. **Lane B's OI block is `80-89`.** No OI id
+was allocated by this work — OI-3 is an existing row and was edited in place, not renumbered.
