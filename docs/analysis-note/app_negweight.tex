@@ -252,3 +252,112 @@ not change it. What is withdrawn is the \emph{footing}: negative-weight injectio
 is the intended baseline for the extended-fiducial analysis, not the one behind
 the number quoted here. (Audit finding J22,
 \texttt{docs/orchestration/AUDIT-FINDINGS-20260731.md}, tier A.)
+
+\subsection{Which footing each production chain stands on}
+\label{sec:negweight-footing}
+
+The two constructions above are validated against one another; that does not make
+the choice between them arbitrary, and the two production chains of this analysis
+do not make it the same way. This subsection records which chain stands on which
+footing, on what measured basis, and --- because over-reading that basis is the
+reason the subsection is written at all --- what it does \emph{not} establish.
+
+\paragraph{The standard \(N\)-dimensional chain is purity-footed.}
+The whole standard (five-dimensional) chain --- the central unfold, the $169$
+vertical-band unfolds, the $18$ detector unfolds and the $10$ active-lateral
+endpoint unfolds --- uses the binned purity correction of
+\S\ref{sec:method-algo}. It is positively identified as purity-footed rather
+than merely unstamped: neither producing launcher passes \texttt{-{}-bkg-mode},
+the driver's default for that flag is \texttt{purity}, and the driver announces
+its mode only on the negative-weight branches, so the lateral logs carry the
+purity branch's own signature line and no mode announcement anywhere. Both the
+flag and those announcements predate the files, so the absence of an
+announcement is informative rather than a version gap.
+
+\textbf{This is a recorded choice, not a silent default.} It was raised as a
+question --- whether the locked instruction that $N$-D production runs
+\texttt{negweight-refined} reaches the standard-phase-space chain, or only its
+extended-fiducial form --- and answered in favour of purity on 2026-08-07 and
+again, after the alternative was costed, on 2026-08-15
+(\texttt{docs/orchestration/RUNBOOK-20260807-gbdt-closeout.md} \S2.1--2.2;
+\texttt{docs/orchestration/DECISION-20260815-joseph-oi6-oi8-oi126.md}). Two
+grounds carried it. First, mixing footings inside one covariance is worse than
+either consistent choice: dropping a negative-weight-footed lateral block into a
+purity-footed central and vertical set is a footing mismatch, not an upgrade.
+Second, the alternative required re-running every unfold named above, which would
+have invalidated the flux-corrected (J28) covariance adopted immediately
+beforehand --- and it is that consequence, not the cost, that decided it. The
+decision carries an explicit obligation to revisit the footing before
+submission. It is recorded as such, and nothing in this subsection discharges it.
+
+\paragraph{So the published pair is a measurement and a matched control at
+different footings.} The extended-fiducial lane's designated publication footing
+is negative-weight injection with the Stay-Positive refinement
+(\texttt{nd-unfolding/fps\_provenance.py}, \texttt{PUBLICATION\_BKG\_MODE}),
+enforced there by a gate that fails closed on any endpoint whose recorded mode
+differs or is missing; what the number quoted in \S\ref{sec:fps} actually used is
+the separate matter stated immediately above. The standard chain is purity-footed
+throughout. Each side is therefore internally consistent in its footing, which is
+what we claim, rather than uniform across both, which we do not.
+
+\paragraph{The measured size of the choice.}
+It has been measured at full statistics with the adopted estimator on the 2D
+ME~FHC measurement, and it is one to two percent on the covariance. The
+$187$-universe systematic covariance agrees to a $\sqrt{\mathrm{Tr}}$ ratio of
+$\nwSystRatio$, from \SI{2.9828e-39}{cm^2/nucleon} negative-weight against
+\SI{3.0242e-39}{cm^2/nucleon} purity; the statistical covariance on matched
+bootstrap seeds agrees to $\nwStatRatio$, from \SI{1.7260e-40}{cm^2/nucleon}
+against \SI{1.7576e-40}{cm^2/nucleon}; and the real-data totals agree to
+\SI{\nwPctTot}{\percent}, with per-bin median $\nwMedianBin$ and
+\SI{\nwRmsBin}{\percent} RMS. These are the comparisons of
+\S\ref{sec:negweight-2d} and \S\ref{sec:negweight-uq}, restated here with the
+operands of each ratio so that the ratios can be checked rather than taken.
+
+\paragraph{Why the agreement is structural rather than two lucky universes.}
+\S\ref{sec:negweight-binned} makes the two constructions the same estimand,
+$\rho_1=D-B$, so what separates them is the finite-classifier residual, and at
+this measurement's sub-percent genuine-background scale that residual is a shift
+of order \SI{0.1}{\percent} per universe. A systematic covariance is the spread
+\emph{across} universes about their own mean. A footing change that displaces
+every universe by the same small amount therefore leaves that spread almost
+unchanged: the two covariances agree by construction, not by coincidence, which
+is why the $187$-universe ratio lands at $\nwSystRatio$ rather than anywhere near
+the size of the purity correction itself (${\sim}\SI{3}{\percent}$). A reader is
+entitled to ask how a comparison on a handful of universes can support a
+statement about a $187$-universe object; the displacement argument is the reason
+it can, and the full $187$-universe rebuild of \S\ref{sec:negweight-uq} is that
+reasoning's test at 2D, which it passes.
+
+\paragraph{What this does not establish, and must not be edited into
+establishing.} \textbf{There is no full five-dimensional $187$-universe
+both-footing comparison at the publication configuration} ($5$ iterations,
+\texttt{lgbm}). The five-dimensional evidence is a two-universe spot check at one
+iteration on the \texttt{hist} backend --- on the on-disk five-dimensional
+universe file, \texttt{2p2h:0} gives $3.014\times10^{-38}$ under both footings
+with per-bin median $1.0005$, and \texttt{MaCCQE:0} differs by
+\SI{-0.03}{\percent} with median $0.9990$ --- together with the displacement
+argument above and the full-statistics 2D result. That is ample for quoting the
+standard chain on purity and saying so, which is what this subsection does. It is
+\emph{not} ample for the stronger statement that the background footing is
+irrelevant in five dimensions, and \textbf{that statement should not be
+introduced here by a later edit}: it would require the comparison named at the
+head of this paragraph, and that comparison has not been run. The same limit
+applies to the one estimator caveat: raw negative weights destabilise the
+\texttt{exact} backend (\S\ref{sec:negweight-estimator}) and the standard chain
+runs \texttt{lgbm}, so neither footing risks that pathology here --- which is a
+reason the choice is safe, not evidence that it is immaterial.
+
+\paragraph{The footing question is settled; the adoption gate is a different
+one.} \textbf{Nothing here adopts the standard five-dimensional covariance}, and
+this subsection must not be read as doing so. That covariance remains a candidate
+(\S\ref{sec:uq-combine}) because its selection-complete active-lateral component
+is not built: the ten purity-footed endpoint unfolds named above exist but carry
+no completion receipt and were produced by a since-retired launcher, and building
+the component from them is gated by an internal verifier that has not authorised
+it. That verifier's current verdict
+(\texttt{docs/orchestration/runs/standard-p4-verifier/}\allowbreak
+\texttt{20260810T012645Z-repair7-verdict.json}) is \texttt{BLOCK}, with fourteen
+defects outstanding, and it does not authorise the covariance-construction
+stages. The two questions are independent, and settling the footing removes a
+decision that was blocking while leaving every other precondition on that
+component exactly where it stood.
