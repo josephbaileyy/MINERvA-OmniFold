@@ -73,3 +73,38 @@ The mediator caused the duplication and reported it as its own failure. **Lane A
 correct diagnosis**, unprompted, in the same message in which it reported losing the work — that
 the holder of a task is a hand-maintained fact with no machine-derivable source, and that the
 mediator could not have derived it from where it sat. That is the formulation this row carries.
+
+## The general form — why a fact with no source survives being wrong
+
+Unifies `BEN-228` (a hand-maintained index of a machine-derivable fact goes stale silently) and
+`BEN-244` (a stale blocker produces no error and no symptom, only work that never starts):
+
+> **Consensus among restatements of a single source is not corroboration** — whether the
+> restatements are citations, index cells, or two lanes each believing they hold a task.
+
+This is what makes the class survive review. Lane A nearly filed a duplicate `BEN-229` row because
+**two independent-looking statements agreed** that a finding had no ledger row — `FINDINGS.md`'s
+index cell and the finding file's own header, 200 lines apart. They read as mutual confirmation and
+were two copies of one claim, with **one author and one moment of truth between them**. The stale
+Gate-4 blocker had eleven such copies and three readers, including this mediator, each of whom
+checked and found agreement.
+
+For a task holder the count is two — the dispatcher's belief and the lane's — and they are not
+independent either: both derive from the same dispatch message, which is not durable state.
+
+**Operational form:** before treating agreement as evidence, ask whether the agreeing statements
+have *separate origins*. If they trace to one act, one author, or one moment, they are one
+statement written down more than once, and the count is 1.
+
+## A tell, supplied by lane A
+
+> *A claim that cannot be wrong at the next reading is usually a claim about the wrong object.*
+
+`BEN-229` v1 said *"`sacct` is not authoritative for an array that has not started"* — satisfied by
+every reading available when it was written, which is why it felt finished. The corrected form is
+per **task** (invisible from split until start), and it is falsifiable: it says what the next
+reading will show. **A mechanism tells you what you would see somewhere you have not looked; a
+symptom only tells you what you already saw.**
+
+Recorded here rather than in `BEN-229` because lane A declined to write a competing version of a
+line it knew this lane held — an application of this finding, twenty minutes after it was filed.
