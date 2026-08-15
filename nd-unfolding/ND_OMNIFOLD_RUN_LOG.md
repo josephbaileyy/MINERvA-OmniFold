@@ -8818,3 +8818,25 @@ in `defects_outstanding` and needs **no lane work** — only Joseph's packet dec
 `scancel` or `scontrol`; PET array `57038937` untouched; `gate6traj-reconcile-56847059` untouched; no
 `p4_*` source edited — reviewing, not repairing. The sweep snapshot was **not** `--update`d. The five
 Gate-6 prohibitions at `19585b7` are untouched and nothing entered `docs/analysis-note/`.
+
+**ADDENDUM, same session, measured after the commit landed — `HEAD` moved under this review and the
+receipt is deliberately NOT being edited.** The repair-8 verdict declares `code_rev 7d884da`, which is
+the tree it actually read. Its commit's parent is **`4a10adf`**, not `7d884da`: a peer lane pushed
+*"The OI-8 precondition is REFUTED IN CODE…"* mid-review. **Measured, not assumed:**
+`paths_unchanged_between('7d884da', HEAD, review_scope)` → **1 of 19 files differ**, and that one file
+is `P4_STANDARD_STATUS.md`. **No code file in scope changed**, so every closure and every
+still-open code defect in the verdict stands exactly as written.
+
+`4a10adf` rewrote 79 lines of that status file (`BEN-352`: G-1 is on the cluster checkout and stage 3
+already ran post-G-1). **Defect #9 was therefore re-verified against `HEAD` after the drift, not left
+on the pre-drift reading** — and it holds: the headline still reads *"REPAIR round 3 complete; NO
+covariance candidate exists"* (now line 71, was 56), which remains false at `HEAD`, and
+`git ls-files | grep 56495756` still returns **0** tracked paths. The peer's edit concerned stage 3 and
+G-1, not the candidate-exists claim, so the two findings do not collide.
+
+**The receipt is left byte-identical on purpose.** A verdict records what was found at a moment; editing
+a committed one to absorb later events is how a receipt stops being evidence. The drift belongs in the
+append-only chronology, which is here. **And it is a live instance of the very defect the verdict
+carries as #5:** the reviewed revision stopped being `HEAD` while the review was still running, and
+nothing in the gate would have noticed — a verdict citing a symbolic `code_rev` would have papered over
+exactly this and reported zero differing files.
