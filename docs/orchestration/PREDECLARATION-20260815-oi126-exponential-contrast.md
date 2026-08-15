@@ -45,13 +45,13 @@ substitution of the statistic voids this predeclaration.
 ## 3. The boundary — numeric, two-sided, and applied IN CODE
 
 ```
-arm mean of per-replica band medians, 95% t-interval entirely ABOVE  2.2985  ->  (a)
-arm mean of per-replica band medians, 95% t-interval entirely BELOW  2.2985  ->  (b)
-interval CONTAINS 2.2985                                                    ->  UNRESOLVED
+arm mean of per-replica band medians, 95% t-interval entirely ABOVE  2.3042  ->  (a)
+arm mean of per-replica band medians, 95% t-interval entirely BELOW  2.3042  ->  (b)
+interval CONTAINS 2.3042                                                    ->  UNRESOLVED
 ```
 
-`2.2985` is the midpoint of the measured (a) truth `3.59690668865833` and the assumed (b) null
-`1.0`. The threshold is written as a constant in the evaluation script **before** the arm is run, and
+`2.3042` is the midpoint of the measured (a) truth `3.59690668865833` and the **measured** (b) null
+`1.0114` (the control region's median `R_push`; see §5a, which supersedes the earlier assumed `1.0`). The threshold is written as a constant in the evaluation script **before** the arm is run, and
 the verdict is emitted by that code, not by a reader.
 
 > **THE `4.0` BOUNDARY IS RETIRED, and the reason is recorded so it cannot be reinstated.** It sat
@@ -88,38 +88,57 @@ B's table:
 25     0.972                             162.8 GPU-h
 ```
 
-**ADOPTED: n = 15 per arm, `97.6` GPU-h both arms, power `0.828`** — conditional on §5a below.
+**ADOPTED: n = 15 per arm, `97.6` GPU-h both arms, power `0.824` at the measured boundary** — the
+§5a condition has been discharged and the sizing is now unconditional.
 
 Marginal reasoning, stated so it can be checked: `9 -> 15` buys **+26** points of power for 39 GPU-h;
 `15 -> 19` buys **+8.6** for a further 26. The curve turns at 15. `n = 9` is rejected outright — with
 no cost ceiling, spending 59 GPU-h for a coin flip is the worst of the options, because it most likely
 returns exactly what Track B yields for free.
 
-### 5a. THE BOUNDARY MUST BE RE-DERIVED FIRST, AND IT CAN BE, FOR FREE
+### 5a. RESOLVED 2026-08-15: the (b) null is NOT an assumption. **My own §5a premise was malformed.**
 
-**Every number in the table above is computed against a boundary that may move**, because `2.2985` is
-the midpoint of a *measured* `3.59690668865833` and an *assumed* `1.0`. Measured sensitivity:
+I asked for a free measurement of "the nominal's band statistic" to replace the assumed `1.0`. **That
+request was ill-formed and I withdraw it.** Reading B's probe rather than reasoning about it
+(`probe-oi126-band-Rpush-sigma-20260815.py:75`):
 
-```
-(b) null   boundary   distance   power n=15   n for 0.90 power   cost at that n
-1.00       2.2985     1.2985     0.828         19                123.7 GPU-h
-1.15       2.3735     1.2235     0.782         21                136.7 GPU-h
-1.30       2.4485     1.1485     0.729         23                149.7 GPU-h
-1.50       2.5485     1.0485     0.651         27                175.8 GPU-h
+```python
+r = T_n[bc] / T_k[bc]        # NOMINAL / REPLICA, per band cell; then median over cells
 ```
 
-**So the assumed null is worth ~5 points of power per 0.15 of displacement, and ~4 replicas to
-restore.** Material, not fatal — but it means the sizing is provisional until the null is fixed.
+**`R_push` is the ratio of the nominal to the replica.** So a replica that reproduces the nominal
+gives **exactly `1.0`** — the (b) null is the **definitional fixed point of the statistic**, not an
+assumed value. There is nothing to measure: the nominal against itself is `1` by construction.
 
-**AND THE (b) NULL DOES NOT HAVE TO BE ASSUMED.** Under (b) the zero atom is the *entire* cause, so
-an Exponential arm should reproduce the **nominal, non-bootstrapped** fit's band statistic. That
-quantity is measurable from products that already exist — the nominal extraction `56978466`, the same
-object B compared against `replica_00`. **Measuring it converts the boundary from
-midpoint-of-measured-and-assumed into midpoint-of-two-measured values, at zero cost.**
+What *is* a genuine open quantity is how far the Exponential arm's own **legitimate** variance
+response moves it off unity — `Exponential(1)` still injects variance `1`, so under (b) the arm lands
+*near* `1`, not *at* it. Best available anchors, all measured:
 
-**Required before any n is committed:** compute the nominal extraction's band statistic under §2's
-definition and set the (b) null to it. If the re-derived boundary leaves the distance below ~`1.15`,
-**n = 19 becomes the honest choice and this document must be amended before the run**, not after.
+```
+(b) null anchor                              value    boundary   distance   power n=15
+definitional fixed point                     1.0000   2.2985     1.2985     0.828
+control-region median R_push (replica_00)     1.0114   2.3042     1.2928     0.824
+band family MINIMUM over all 50 replicas      1.0859   2.3414     1.2555     0.802
+```
+
+**ADOPTED (b) null: `1.0114`** — the control region's measured median `R_push` (`p_par < 6`, 128
+cells), i.e. the empirical value of "the estimator responds to measured-leg resampling *benignly*",
+which is exactly what (b) predicts for the band. It is preferred to the definitional `1.0` because it
+is measured rather than idealised, and to the family minimum because that is an extremum rather than a
+central value.
+
+**BOUNDARY: `2.3042`. DISTANCE: `1.2928`.**
+
+**Consequence for the sizing: the boundary moves `0.0057` and power at n=15 changes by `0.0033`.**
+Even the pessimistic family-minimum anchor gives `0.802`. **So the conditional in this lane's vote —
+"switch to n=19 if the re-derived distance falls below ~1.25" — CANNOT TRIGGER**, and the vote resolves
+to **unconditional n = 15**. The `1.30` case that would have forced n≥23 is not reachable from any
+measured anchor.
+
+**Recorded because it is the useful part:** the earlier claim that "the (a) hypothesis was anchored on
+a high draw; the (b) hypothesis is anchored on nothing" was **half wrong**. The (a) half was right and
+B corrected it. The (b) half was wrong — (b) was anchored on the definition all along, and I did not
+see it because I reasoned about the statistic instead of reading the four lines that compute it.
 
 ### 5b. Which branch the money actually buys, stated because it bears on "best option"
 
@@ -168,7 +187,9 @@ arm.** The (a) hypothesis was anchored on a high draw; **the (b) hypothesis is a
 Consequence, computed in advance:
 
 ```
-(b) truly at 1.0  ->  boundary 2.2985, distance 1.2984  ->  n >=  9
+(b) truly at 1.0  ->  boundary 2.2985, distance 1.2984  ->  n >=  9   [SUPERSEDED by 5a: the
+                     null is measured at 1.0114, boundary 2.3042; these rows are the withdrawn
+                     half-width criterion and are kept only to show the sd/null scaling]
 (b) truly at 1.5  ->  boundary 2.5485, distance 1.0485  ->  n >= 12
 (b) truly at 2.0  ->  boundary 2.7985, distance 0.7985  ->  n >= 19
 ```
@@ -245,7 +266,7 @@ recommending a schedule around it.**
 1. **The Poisson control arm fails to reproduce `3.5969 ± ` its own interval** → the harness is
    wrong; the Exponential arm is **not read**, whatever it printed.
 2. **`n = 9` inadequate against the arm's own measured `sd`** → `UNRESOLVED — UNDERPOWERED` (§6i).
-3. **Interval contains `2.2985`** → `UNRESOLVED`, feeds Track B (§4).
+3. **Interval contains the §3 boundary `2.3042`** → `UNRESOLVED`, feeds Track B (§4).
 4. **Any task exiting other than 0** → not a result.
 5. **The realized `data_factor` is not `float64`, or contains an exact zero** → the arm did not test
    what it claims; fail closed.
