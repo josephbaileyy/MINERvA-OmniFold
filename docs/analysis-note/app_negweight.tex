@@ -267,12 +267,24 @@ The whole standard (five-dimensional) chain --- the central unfold, the $169$
 vertical-band unfolds, the $18$ detector unfolds and the $10$ active-lateral
 endpoint unfolds --- uses the binned purity correction of
 \S\ref{sec:method-algo}. It is positively identified as purity-footed rather
-than merely unstamped: neither producing launcher passes \texttt{-{}-bkg-mode},
-the driver's default for that flag is \texttt{purity}, and the driver announces
-its mode only on the negative-weight branches, so the lateral logs carry the
-purity branch's own signature line and no mode announcement anywhere. Both the
-flag and those announcements predate the files, so the absence of an
-announcement is informative rather than a version gap.
+than merely unstamped, and the evidence differs between the unfolds that already
+exist and the chain as it is run today. \emph{For the existing endpoint unfolds},
+produced in 2026-07, the identification is by elimination: neither launcher that
+could have produced them passes \texttt{-{}-bkg-mode}, the driver's default for
+that flag is \texttt{purity}, and the driver announces its mode only on the
+negative-weight branches --- so the lateral logs carry the purity branch's own
+signature line and no mode announcement anywhere. Both the flag and those
+announcements predate the files, so the absence of an announcement is
+informative rather than a version gap. \emph{For the chain as it now stands},
+the footing is no longer inferred at all: it is pinned in code
+(\texttt{nd-unfolding/p4\_lib.py}, \texttt{STANDARD\_BKG\_MODE}, whose
+configuration object refuses to validate against any other mode), the canonical
+launcher passes \texttt{-{}-bkg-mode} explicitly from that pinned configuration
+rather than inheriting the default, and the value is stamped into every endpoint
+receipt as it is written. That change is a provenance change and a physics
+no-op, since the value it asserts is the default it replaces; its effect is that
+a future component's footing is provable from the component instead of from the
+absence of a flag.
 
 \textbf{This is a recorded choice, not a silent default.} It was raised as a
 question --- whether the locked instruction that $N$-D production runs
