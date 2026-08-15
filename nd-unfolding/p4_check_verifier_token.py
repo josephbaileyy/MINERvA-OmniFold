@@ -17,16 +17,32 @@ The token must resolve to a verdict that is:
                                                                working tree, and reviewing it is
                                                                reviewing what authorized the run)
   3. `verdict == "PASS"`                                       (BLOCK/absent authorizes nothing)
-  4a. `code_rev` is an ANCESTOR of HEAD                        (the verdict came from this
-                                                               history, not a foreign branch)
-  4b. every file the verdict REVIEWED is byte-identical        (a PASS cannot authorize code the
-      between that commit and HEAD                              verifier never saw)
+  4a. `code_rev` is a LITERAL 40-hex sha AND an ANCESTOR       (the verdict came from this
+      of HEAD                                                  history, not a foreign branch)
+  4b. every file in scope is byte-identical between that       (a PASS cannot authorize code the
+      commit and HEAD                                           verifier never saw)
+  4c. every file in scope is byte-identical between that       (the chain executes the working
+      commit and the WORKING TREE                                tree, not the commit)
 
 Rule 4 was originally `code_rev == HEAD`, which broke on correct behaviour: any push by another
 lane between the PASS and stages 4-6 invalidated a good verdict over commits touching nothing
 reviewed. 4a+4b is strictly stronger -- it checks what the rule protects instead of a proxy that
-unrelated commits perturb. Scope comes from the verdict's `review_scope` if declared, else the
-whole standard-P4 surface, which is the wider and safer default.
+unrelated commits perturb.
+
+REPAIR-9 closes the two ways this rule was still vacuous or evadable (repair-8 verdict, defects
+#5 and #4 -- they compound, so they are fixed together):
+
+  * a SYMBOLIC `code_rev` made 4a and 4b vacuous, not merely weak. `merge-base --is-ancestor HEAD
+    HEAD` succeeds, and 4b then compared HEAD against HEAD: zero differing files, for every file,
+    forever. Measured True for 'HEAD', 'main', 'HEAD~0' and 'HEAD~3'. Only a literal sha names an
+    immutable tree, so that is now required.
+  * the declared `review_scope` was trusted VERBATIM, so the scope could be arbitrarily narrow --
+    one unrelated file satisfied 4b trivially -- and the execution surface was never consulted at
+    all when a scope was declared. Scope is now the UNION: the execution surface ALWAYS applies
+    and a declared scope can only ADD to it. A verifier may review more than the chain executes;
+    it may not authorize less.
+
+Neither of these can be satisfied by reviewing less, which is the property that was missing.
 
 That still does not make forgery impossible -- someone can commit a fake verdict -- but it moves
 the act from "set a variable nobody will ever see" to "commit a falsified receipt into the
@@ -107,29 +123,68 @@ def resolve(token):
     if not cr:
         raise P.P4GateError(f"{rel} records no code_rev; cannot tell which patch it passed")
     cr = str(cr).strip()
+    # REPAIR-9, verifier defect #5. `code_rev` must be a LITERAL 40-hex commit id. A symbolic
+    # revision made this whole rule vacuous rather than merely weak: "HEAD" passes 4a because
+    # `merge-base --is-ancestor HEAD HEAD` succeeds, and 4b then compares HEAD against HEAD and
+    # finds zero differing files -- for every file, forever. Measured by repair-8:
+    # code_rev_in_history was True for each of 'HEAD', 'main', 'HEAD~0', 'HEAD~3'.
+    if not P.is_literal_commit_sha(cr):
+        raise P.P4GateError(
+            f"{rel} records code_rev={cr!r}, which is not a literal 40-hex commit sha. A symbolic "
+            f"revision resolves against the tree it is checked against, so it would make rules 4a "
+            f"and 4b compare HEAD with HEAD and pass for every file, forever. Stamp the resolved "
+            f"`git rev-parse HEAD` of the reviewed tree.")
     if not P.code_rev_in_history(cr):
         raise P.P4GateError(
             f"{rel} passed code_rev {cr[:12]}, which is not an ancestor of HEAD ({head[:12]}). "
             f"That verdict did not come from this repository's history.")
 
+    # REPAIR-9, verifier defect #4. The declared `review_scope` was trusted VERBATIM: any
+    # non-empty list became the whole scope, the execution surface was never consulted, and no
+    # minimum was enforced -- so a verdict declaring one unrelated file satisfied 4b trivially.
+    # The scope is now a mandatory UNION: the execution surface ALWAYS applies, and a declared
+    # scope can only ADD to it. A verifier may review more than the chain executes; it may not
+    # authorize less.
+    # The surface itself is derived from the IMPORT GRAPH plus the scripts the shell drivers
+    # INVOKE (REPAIR-7 item 2 covered imports; repair-9 adds the shell leg, which is how
+    # p3s_manifest_summary.py sat outside an 18-module surface).
+    surface = P.standard_p4_execution_surface()
+    if not surface:
+        raise P.P4GateError(
+            "could not derive the standard-P4 execution surface; refusing to authorize blind")
     scope = v.get("review_scope")
+    declared = []
     if isinstance(scope, list) and scope:
-        paths, scope_src = sorted(str(x) for x in scope), "declared review_scope"
-    else:
-        # REPAIR-7 item 2: derived from the IMPORT GRAPH, not a filename glob. The glob omitted
-        # uq_math, project_cov_nd, unfold_nd_omnifold_unbinned, xsec_nd and omnifold -- i.e. the
-        # code that actually runs -- so a verdict could authorize materially changed execution.
-        paths = P.standard_p4_execution_surface()
-        scope_src = "default standard-P4 EXECUTION surface (%d tracked modules)" % len(paths)
-    if not paths:
-        raise P.P4GateError("could not resolve a review scope; refusing to authorize blind")
+        for x in scope:
+            if not isinstance(x, str) or not x.strip():
+                raise P.P4GateError(
+                    f"{rel} declares a review_scope entry that is not a path ({x!r}); a scope the "
+                    f"gate cannot read is not a scope")
+            declared.append(x.strip())
+    paths = sorted(set(surface) | set(declared))
+    extra = sorted(set(declared) - set(surface))
+    scope_src = ("UNION of the standard-P4 EXECUTION surface (%d tracked paths) and the verdict's "
+                 "declared review_scope (%d declared, %d beyond the surface)"
+                 % (len(surface), len(declared), len(extra)))
     ok, differing = P.paths_unchanged_between(cr, head, paths)
     if not ok:
+        off = sorted(set(differing) - set(declared))
         raise P.P4GateError(
-            f"{rel} reviewed {cr[:12]}, but {len(differing)} file(s) it covered have CHANGED at "
+            f"{rel} reviewed {cr[:12]}, but {len(differing)} file(s) in its scope have CHANGED at "
             f"HEAD ({head[:12]}): {', '.join(differing[:4])}"
-            f"{' ...' if len(differing) > 4 else ''}. A PASS cannot authorize code the verifier "
-            f"never saw; re-run the verifier.")
+            f"{' ...' if len(differing) > 4 else ''}. {len(off)} of them are on the execution "
+            f"surface but NOT in the declared review_scope. A PASS cannot authorize code the "
+            f"verifier never saw; re-run the verifier.")
+    # (4c) REPAIR-9, verifier defect #5 second half. 4b compares two COMMITS, so an UNCOMMITTED
+    # edit to a reviewed file was invisible: rule (2) above compares the working tree against the
+    # committed blob, but only for the verdict file itself. The chain executes the WORKING TREE.
+    ok_wt, dirty = P.paths_unchanged_vs_worktree(cr, paths)
+    if not ok_wt:
+        raise P.P4GateError(
+            f"{rel} reviewed {cr[:12]}, but {len(dirty)} file(s) in its scope differ from that "
+            f"commit IN THE WORKING TREE: {', '.join(dirty[:4])}"
+            f"{' ...' if len(dirty) > 4 else ''}. The chain runs the working tree, not the commit; "
+            f"commit or revert the edit and re-run the verifier.")
     v["_resolved_review_scope"] = scope_src
     if v.get("authorizes_covariance_stages_4_6") is False:
         raise P.P4GateError(f"{rel} explicitly sets authorizes_covariance_stages_4_6=false")
@@ -146,7 +201,13 @@ def main():
         print(f"TOKEN-REJECT :: {e}"); sys.exit(1)
     except Exception as e:
         print(f"TOKEN-REJECT :: unexpected {type(e).__name__}: {e}"); sys.exit(1)
-    print(f"TOKEN-OK :: {rel} (verdict=PASS, code_rev={v.get('code_rev')})")
+    # The scope is REPORTED, not merely enforced: `run_p4_standard.sh:99` echoes this line into the
+    # run log, so an accepted token leaves behind what it was checked against. An authorization
+    # that does not ship the scope it enforced is unfalsifiable -- see
+    # docs/orchestration/CONVENTION-receipt-ingredients.md (BEN-077). It matters more now that the
+    # scope is a union: "the gate accepted it" and "the gate checked 20 paths" are different claims.
+    print(f"TOKEN-OK :: {rel} (verdict=PASS, code_rev={v.get('code_rev')}, "
+          f"scope={v.get('_resolved_review_scope')})")
     sys.exit(0)
 
 

@@ -11,7 +11,7 @@ Nothing here BUILDS or ADOPTS a covariance; it only validates/guards. Candidate
 construction is authorized only after the standard-p4-verifier returns PASS.
 """
 from __future__ import annotations
-import hashlib, json, math, os, subprocess
+import hashlib, json, math, os, re, subprocess
 import numpy as np
 
 # Canonical standard lateral inventory (exactly these; order fixed).
@@ -828,13 +828,51 @@ STANDARD_P4_ENTRYPOINTS = (
 # is out of scope for a source-identity check.
 _IMPORT_SEARCH_DIRS = ("nd-unfolding", "2d-unfolding", "unbinned_unfolding/python", ".")
 
+# repair-9 (verifier defect #4, second half): a `.py` path NAMED inside an executed shell driver.
+# The import walk below reaches only what a Python entrypoint IMPORTS, and the shell leg used to
+# add only `run_p4_*.sh` itself, so a module the shell INVOKES was reached by neither -- measured
+# by repair-8 on `p3s_manifest_summary.py` (run_p4_merge_audit_std.sh:58) and true also of
+# `2d-unfolding/uq/hadd_universes_full.py` (:26). The character class excludes `:` so that
+# `HEAD:nd-unfolding/x.py` yields the path, and includes `${}` so a `${VAR}/`-prefixed path is
+# matched and then stripped segment-wise.
+_SHELL_PY_TOKEN = re.compile(r"[A-Za-z0-9_.${}/-]*\.py\b")
+
+
+def _shell_invoked_scripts(shell_paths, tracked):
+    """Tracked `.py` files named inside the given shell drivers, resolved to repo-relative paths.
+
+    Deliberately scans the WHOLE file including comments. Over-inclusion costs a verifier re-run;
+    under-inclusion authorizes code the verifier never saw, which is the defect this closes. A
+    token that resolves to nothing tracked is dropped, so this cannot invent paths."""
+    found = set()
+    for sh in sorted(shell_paths):
+        try:
+            text = (REPO_ROOT_PATH / sh).read_text(errors="replace")
+        except Exception:
+            continue
+        shdir = os.path.dirname(sh)
+        for m in _SHELL_PY_TOKEN.finditer(text):
+            segs = [s for s in m.group(0).split("/") if s and s != "." and "$" not in s]
+            if not segs:
+                continue
+            rel = "/".join(segs)
+            for cand in (rel, f"{shdir}/{rel}" if shdir else rel):
+                if cand in tracked:
+                    found.add(cand)
+                    break
+    return found
+
 
 def standard_p4_execution_surface(entrypoints=None, max_depth=6):
     """Every tracked first-party module reachable from the chain's entrypoints, by IMPORT.
 
     Derived, not curated: the previous surface was a filename-prefix glob and silently omitted
     the modules that do the work. Falls back to the glob surface if git is unavailable, and the
-    caller must treat an empty result as a refusal rather than an empty scope."""
+    caller must treat an empty result as a refusal rather than an empty scope.
+
+    repair-9: the shell drivers are also scanned for the scripts they INVOKE, and those are used
+    as additional import-walk roots -- otherwise a shell-invoked module and everything it imports
+    is outside the surface entirely (verifier defect #4)."""
     import ast
     tracked = set()
     try:
@@ -850,7 +888,15 @@ def standard_p4_execution_surface(entrypoints=None, max_depth=6):
                 return cand
         return None
 
-    seen, frontier = set(), list(entrypoints or STANDARD_P4_ENTRYPOINTS)
+    # the shell drivers are executed, not imported. They are part of the surface AND they name
+    # further entrypoints; resolve them BEFORE the walk so the scripts they invoke contribute
+    # their own imports too, instead of being bolted on afterwards as leaves.
+    shell = sorted(p for p in tracked
+                   if p.startswith("nd-unfolding/run_p4_") and p.endswith(".sh"))
+    roots = list(entrypoints or STANDARD_P4_ENTRYPOINTS)
+    roots += sorted(_shell_invoked_scripts(shell, tracked) - set(roots))
+
+    seen, frontier = set(), roots
     for _ in range(max_depth):
         nxt = []
         for rel in frontier:
@@ -874,8 +920,7 @@ def standard_p4_execution_surface(entrypoints=None, max_depth=6):
         if not nxt:
             break
         frontier = nxt
-    # the shell drivers are executed, not imported, so add them explicitly
-    seen.update(p for p in tracked if p.startswith("nd-unfolding/run_p4_") and p.endswith(".sh"))
+    seen.update(shell)
     return sorted(seen)
 
 
@@ -916,13 +961,63 @@ def paths_unchanged_between(rev_a, rev_b, paths):
     return (not differing), differing
 
 
+_LITERAL_SHA = re.compile(r"\A[0-9a-fA-F]{40}\Z")
+
+
+def is_literal_commit_sha(rev):
+    """True iff `rev` is a 40-hex commit id and not a SYMBOLIC revision.
+
+    repair-9, verifier defect #5. `HEAD`, `main`, `HEAD~0` and `HEAD~3` are all valid git
+    revisions and all of them RESOLVE AGAINST THE TREE THEY ARE BEING CHECKED AGAINST, which is
+    what made the token gate's staleness check vacuous: `merge-base --is-ancestor HEAD HEAD`
+    succeeds and `paths_unchanged_between('HEAD', HEAD, ...)` then finds zero differing files,
+    by construction, for every file, forever. A recorded provenance claim has to name ONE
+    immutable object, so only a literal full sha is acceptable. Abbreviations are refused too:
+    both producers stamp `git rev-parse HEAD`, so a short id means something hand-edited."""
+    return bool(isinstance(rev, str) and _LITERAL_SHA.match(rev.strip()))
+
+
+def paths_unchanged_vs_worktree(rev, paths):
+    """Every path in `paths` has, in the WORKING TREE, the blob it had at `rev`.
+
+    repair-9, verifier defect #5 second half. `paths_unchanged_between` compares two COMMITS, so
+    an uncommitted edit to a reviewed file is invisible to it: rule (2) of the token gate does
+    compare the working tree against the committed blob, but only for the verdict FILE, never for
+    the code the verdict reviewed. Returns (ok, [differing paths]) and fails CLOSED -- a path git
+    cannot resolve at `rev`, or that is missing/unreadable in the working tree, counts as
+    differing, because an unverifiable claim is not a satisfied one."""
+    differing = []
+    for p in paths:
+        try:
+            a = subprocess.check_output(["git", "rev-parse", f"{rev}:{p}"], cwd=REPO_ROOT,
+                                        text=True, stderr=subprocess.DEVNULL).strip()
+        except Exception:
+            a = None
+        b = None
+        if (REPO_ROOT_PATH / p).is_file():
+            try:
+                b = subprocess.check_output(["git", "hash-object", "--", p], cwd=REPO_ROOT,
+                                            text=True, stderr=subprocess.DEVNULL).strip()
+            except Exception:
+                b = None
+        if a is None or b is None or a != b:
+            differing.append(p)
+    return (not differing), differing
+
+
 def code_rev_in_history(rev, head=None):
     """True iff `rev` is reachable from HEAD in this repository (ancestor of, or equal to).
 
     Deliberately reachability rather than equality -- see the note in validate_endpoint_receipt.
     Fails CLOSED: if git cannot answer, the answer is False, because an unverifiable provenance
-    claim is not a satisfied one."""
-    if not isinstance(rev, str) or not rev.strip():
+    claim is not a satisfied one.
+
+    repair-9: a SYMBOLIC rev is now refused here as well, not only by the token gate, because
+    `validate_endpoint_receipt` calls this on a receipt's `code_rev` and a receipt saying
+    `code_rev: "HEAD"` would have been accepted for the same vacuous reason. Both producers
+    (`run_p4_standard.sh:70`, `run_p4_unfold_std.sh:42`) stamp `git rev-parse HEAD`, so nothing
+    that is produced correctly is rejected by this. See is_literal_commit_sha."""
+    if not is_literal_commit_sha(rev):
         return False
     try:
         subprocess.check_call(["git", "merge-base", "--is-ancestor", rev.strip(), head or "HEAD"],
