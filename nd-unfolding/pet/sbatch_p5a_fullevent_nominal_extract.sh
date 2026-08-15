@@ -62,9 +62,54 @@
 # been falsified."  Nothing above depends on the wider claim, and the narrower one is enough: the
 # physics ground is the one that would have licensed quoting this run's product.
 #
+# ---------------------------------------------------------------------------------------------
+# REPAIR 2026-08-14 AFTER JOB 56978466 FAILED 6:0 AT 00:12:57.  Recorded here because the failure
+# was NOT a physics or identity failure and the next reader must not go looking for one.
+#
+# ALL SIX GUARDS G0-G5 PASSED: right arm, right weights sha, right inputs sha.  The expensive work
+# also SUCCEEDED -- the full-inventory reweight ran to 100% over 49,152,885 rows, wrote its push
+# payload, and its subsample-agreement check passed at max_rel_dev 2.554037696012494e-05 against a
+# tolerance of 1e-3.  The run then died, from the .err:
+#
+#   extract_fullevent_fps.py:463   import unfold_2d_omnifold_unbinned as u2d
+#   2d-unfolding/unfold_2d_omnifold_unbinned.py:21   import ROOT
+#   ModuleNotFoundError: No module named 'ROOT'
+#
+# THE CAUSE IS AN INTERPRETER CHOICE, and this file's own driver already documents it.
+# extract_fullevent_fps.py:16-19 states the two stages need DIFFERENT interpreters -- `push` "needs
+# TensorFlow, wants a GPU", `xsec` "needs ROOT and numpy, no TensorFlow, no GPU" -- and :21-23 says
+# they are split "because the push pass costs GPU time that must not be re-spent".  This launcher
+# ran `--stage all` under `module load tensorflow/2.15.0`, which carries no ROOT, so it spent the
+# GPU time and THEN discovered it could not finish.  There is a standing decision in this repo that
+# no combined ROOT/TF environment exists, so the split is the only available shape.
+#
+# THE REPAIR IS THE TWO-ENVIRONMENT SPLIT PROVEN AT 50/50 by sbatch_gate5_replica_extract_array.sh
+# (read as a template only; that file is hash-bound by an active receipt and is NOT edited here):
+# TF python for `--stage push`, the root_6_28 prefix python for `--stage xsec`, and a ROOT import
+# preflight before any long work.  Two things this file adds beyond that template, both because
+# 56978466 taught them:
+#
+#   * THE PREFLIGHT RUNS BEFORE THE PUSH STAGE, NOT BETWEEN THE STAGES (G7).  Ordering it after the
+#     reweight is what made this a 13-minute failure instead of a 5-second one.  That is the whole
+#     generalisable lesson and it is a guard, not a comment.
+#   * `$ROOT_PY -c 'import ROOT'` IS NOT SUFFICIENT ON ITS OWN.  Measured 2026-08-14 on a login
+#     node: invoking that interpreter directly SEGFAULTS (rc=139, cling "cannot extract standard
+#     library include paths") unless setup_salloc_env.sh has activated the env by full prefix
+#     first.  A preflight written the naive way would pass in an salloc and crash in batch, or vice
+#     versa.  So the preflight runs through the SAME env helper the real xsec stage uses, which is
+#     what makes it a test of the real thing rather than a lookalike.
+#
+# THE PUSH PAYLOAD IS REUSED, NOT RECOMPUTED (G6).  13 minutes of A100 is already on disk and the
+# payload has been re-validated independently.  Reuse is gated on identity, never on existence --
+# see G6 for why that distinction is load-bearing here.
+#
 # USAGE
-#   bash sbatch_p5a_fullevent_nominal_extract.sh --check-only   # run G1..G5 and exit; no job, no GPU
-#   sbatch sbatch_p5a_fullevent_nominal_extract.sh              # the real run
+#   bash sbatch_p5a_fullevent_nominal_extract.sh --check-only   # run G0..G7 and exit; no job, no GPU
+#   sbatch sbatch_p5a_fullevent_nominal_extract.sh              # full run: push on GPU, then xsec
+#
+#   # consume 56978466's surviving push payload instead of re-spending the GPU:
+#   P5A_PUSH_REUSE=<path to the .push npz> sbatch sbatch_p5a_fullevent_nominal_extract.sh
+#   # ...which needs no GPU at all, so that submission should also override the resource request.
 set -eo pipefail
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
@@ -182,38 +227,220 @@ case "$(realpath -m "$OUTDIR")" in
 esac
 echo "[p5a] G5 PASS  outputs are outside the promoted arm: ${OUTDIR}"
 
+# =============================================================================================
+# G6 and G7 are the 56978466 repair.  They are APPENDED, deliberately: G0-G5 are unchanged, in
+# their original order, with their original numbering and text.  They all passed and none of them
+# is what failed, so none of them is touched.
+# =============================================================================================
+
+# ---------------------------------------------------------------------------------------------
+# G6  PUSH REUSE BY IDENTITY, NEVER BY EXISTENCE.  56978466's push stage completed and its payload
+#     survives on disk, so the GPU reweight is reusable.  But adopting a push by PATH is exactly
+#     the failure BEN-023 records -- `[[ -s $OUT ]] && skip` let 7 partial slabs permanently block
+#     their own repair -- and a push payload is worse than a slab, because a partial or wrong-arm
+#     one produces a complete-looking cross section with nothing downstream able to notice.
+#
+#     So reuse is gated on FOUR independent facts, not on the file being there:
+#       * a regular non-empty file, not a symlink;
+#       * a non-empty `.done` marker beside it (atomic_write's completeness signal -- absence of
+#         the marker means PARTIAL, which is the case existence-testing cannot see);
+#       * a sha256 PIN, so a different payload cannot be substituted silently;
+#       * the driver's own schema, fingerprint, inputs-identity and coverage validators (the driver
+#         re-validates coverage itself when it reads the payload, so this is a second independent
+#         instrument rather than a replacement for one).
+#
+#     Reuse is EXPLICIT and opt-in.  The push filename embeds the Slurm JOB id, so a fresh job
+#     cannot discover a previous job's payload by accident -- which is a property worth keeping.
+# ---------------------------------------------------------------------------------------------
+PUSH_REUSE="${P5A_PUSH_REUSE:-}"
+# sha256 of 56978466's surviving payload, measured 2026-08-14 on the file itself (sha256sum, and
+# re-derived through numpy by loading it and recomputing w_push min/max/mean against the telemetry
+# the run printed).  Override only with a payload whose provenance you have established the same way.
+EXPECTED_PUSH_SHA="${P5A_EXPECTED_PUSH_SHA:-a1debdb7105f3e531ec2e6ec5e08192d026238d5bac7eb5fe389e7e8f71bb9c9}"
+REUSE_PUSH=0
+if [[ -n "$PUSH_REUSE" ]]; then
+  [[ -f "$PUSH_REUSE" && ! -L "$PUSH_REUSE" && -s "$PUSH_REUSE" ]] \
+    || die "G6: P5A_PUSH_REUSE is missing, empty, or a symlink: $PUSH_REUSE" 7
+  [[ -s "${PUSH_REUSE}.done" && ! -L "${PUSH_REUSE}.done" ]] \
+    || die "G6: push payload carries no non-empty .done marker, so it must be treated as PARTIAL: ${PUSH_REUSE}.done" 7
+  GOT_P="$(sha256sum "$PUSH_REUSE" | awk '{print $1}')"
+  [[ "$GOT_P" == "$EXPECTED_PUSH_SHA" ]] \
+    || die "G6: push payload sha mismatch: $GOT_P != $EXPECTED_PUSH_SHA" 7
+  python3 - "$PUSH_REUSE" "$INPUTS" "$EXPECTED_INPUTS_SHA" "$PET" <<'PY' || die "G6 push payload validation failed" 7
+import os, sys
+import numpy as np
+
+push, inputs, expected_inputs_sha, pet = sys.argv[1:5]
+sys.path.insert(0, pet)
+import extract_fullevent_fps as E
+with np.load(push, allow_pickle=True) as z:
+    schema = str(np.asarray(z["push_schema"]))
+    if schema != E.PUSH_SCHEMA:
+        sys.exit(f"[p5a] G6: push payload schema is {schema!r}, expected {E.PUSH_SCHEMA!r}")
+    fp = str(np.asarray(z["estimator_fingerprint"]))
+    if fp != E.ESTIMATOR_FINGERPRINT:
+        sys.exit(f"[p5a] G6: estimator fingerprint is {fp!r}, expected {E.ESTIMATOR_FINGERPRINT!r}")
+    w = np.asarray(z["w_push"], np.float64)
+    mi = np.asarray(z["mc_indices"])
+    got_inputs_sha = str(np.asarray(z["inputs_sha256"]))
+    src_w = str(np.asarray(z["source_weights"]))
+    agree = np.asarray(z["subsample_agreement"], dtype=object).item()
+
+# The payload must have been built from the SAME inputs this run is gated on (G4).  Without this,
+# a valid push over a different dump would pass every other test here.
+if got_inputs_sha != expected_inputs_sha:
+    sys.exit(f"[p5a] G6: push payload was built from inputs {got_inputs_sha}, "
+             f"but this run is gated on {expected_inputs_sha}. Refusing.")
+
+# Row count must match the inputs actually on disk, not a remembered number.
+with np.load(inputs, allow_pickle=True, mmap_mode="r") as d:
+    n = int(np.asarray(d["pass_truth"]).shape[0])
+problems = E.validate_push_coverage(w, mi, n)
+if problems:
+    sys.exit(f"[p5a] G6: push coverage problems: {problems}")
+if not np.isfinite(w).all():
+    sys.exit("[p5a] G6: push payload carries non-finite weights")
+
+# The reused payload's OWN agreement check must have run and passed.  A vacuous or absent check is
+# not a pass -- the driver records `subsample_agreement_is_vacuous` precisely so this is decidable.
+if not agree.get("checked"):
+    sys.exit(f"[p5a] G6: push payload's subsample agreement was never checked: {agree}")
+if not (agree["max_rel_dev"] <= agree["tolerance"]):
+    sys.exit(f"[p5a] G6: push payload FAILED its own subsample agreement: {agree}")
+
+print(f"[p5a] G6 PASS  push schema={schema} fingerprint={fp}")
+print(f"[p5a] G6 also  n_rows={w.size} coverage=exact-arange finite=True "
+      f"w_push min/max/mean={w.min():.16g}/{w.max():.16g}/{w.mean():.16g}")
+print(f"[p5a] G6 also  subsample_agreement max_rel_dev={agree['max_rel_dev']:.6g} "
+      f"tolerance={agree['tolerance']:.6g} n_shared_rows={agree['n_shared_rows']}")
+print(f"[p5a] G6 also  payload source_weights={src_w}")
+PY
+  echo "[p5a] G6 PASS  push payload sha256 = $GOT_P  (REUSING; the GPU push stage will NOT re-run)"
+  REUSE_PUSH=1
+else
+  GOT_P=""
+  echo "[p5a] G6 n/a   P5A_PUSH_REUSE unset: the push stage WILL run and will spend GPU time"
+fi
+
+# ---------------------------------------------------------------------------------------------
+# G7  THE GUARD THIS SCRIPT DID NOT HAVE, and the only reason 56978466 cost 13 minutes rather than
+#     5 seconds.  Prove the ROOT interpreter can import the xsec chain BEFORE any long work.
+#
+#     `root_env_run` is the single definition of "the ROOT 6.28 environment", used by BOTH this
+#     preflight and the real xsec stage below.  That sharing is the point: a preflight that builds
+#     its environment differently from the run it guards is a lookalike, and this specific
+#     interpreter fails in exactly that gap -- invoked directly it segfaults in cling, and only the
+#     full-prefix conda activation in setup_salloc_env.sh makes it work.
+#
+#     It runs in a SUBSHELL so the conda activation cannot leak into the TensorFlow push stage, and
+#     with `set +e` because sourcing that env script is not written to be `-e` clean; the exit
+#     status of the subshell is the python call's own, so failures still propagate to `die`.
+# ---------------------------------------------------------------------------------------------
+ROOT628_PREFIX="${ROOT628_PREFIX:-/global/homes/j/josephrb/.conda/envs/root_6_28}"
+ROOT_PY="${ROOT628_PREFIX}/bin/python3"
+[[ -x "$ROOT_PY" ]] || die "G7: ROOT python is unavailable at $ROOT_PY" 8
+
+root_env_run() {
+  ( set +e
+    source "${REPO}/setup_salloc_env.sh"
+    export MNV_REPO="$REPO"
+    export PYTHONPATH="${REPO}/omnifold_nn:${REPO}/2d-unfolding:${REPO}/nd-unfolding:${PET}:${PYTHONPATH:-}"
+    "$@" )
+}
+
+# Preflight the EXACT import that failed, not a proxy for it: ROOT, then the u2d module whose
+# module-level `import ROOT` raised at unfold_2d_omnifold_unbinned.py:21, then the driver itself.
+root_env_run "$ROOT_PY" -c 'import ROOT, numpy; assert ROOT.gROOT; print("[p5a] G7 ROOT " + ROOT.gROOT.GetVersion() + " numpy " + numpy.__version__)' \
+  || die "G7: ROOT/numpy import preflight failed -- refusing to spend GPU time" 8
+root_env_run "$ROOT_PY" -c 'import unfold_2d_omnifold_unbinned; print("[p5a] G7 u2d imported (this is the exact chain that failed in 56978466)")' \
+  || die "G7: unfold_2d_omnifold_unbinned import preflight failed -- refusing to spend GPU time" 8
+root_env_run "$ROOT_PY" -c 'import extract_fullevent_fps as e; print("[p5a] G7 driver importable under ROOT python, xsec schema " + e.XSEC_SCHEMA)' \
+  || die "G7: extraction driver is not importable under the ROOT interpreter" 8
+echo "[p5a] G7 PASS  the ROOT interpreter imports the whole xsec chain"
+
 if [[ "$CHECK_ONLY" == "1" ]]; then
-  echo "[p5a] --check-only: G0..G5 all PASS, no job submitted, no GPU used."
+  echo "[p5a] --check-only: G0..G7 all PASS, no job submitted, no GPU used."
   exit 0
 fi
 
 JOB="${SLURM_JOB_ID:-nojob}"
-PUSH_OUT="${OUTDIR}/${MARK}.push.slurm-${JOB}.npz"
 XSEC_OUT="${OUTDIR}/${MARK}.xsec.slurm-${JOB}.npz"
 SUMMARY="${OUTDIR}/${MARK}.xsec.slurm-${JOB}.summary.json"
+
+# A reused payload keeps its ORIGINATING job's filename.  That is deliberate: renaming or copying it
+# under this job's id would launder 56978466's product into looking like this run's own, and the
+# provenance of a 13-minute GPU pass is exactly the thing that must stay attributable.
+if [[ "$REUSE_PUSH" == 1 ]]; then
+  PUSH_OUT="$PUSH_REUSE"
+else
+  PUSH_OUT="${OUTDIR}/${MARK}.push.slurm-${JOB}.npz"
+fi
+
+# No-clobber on the products this run will write.  The push payload is deliberately NOT in this list
+# when it is being reused -- that one is meant to already exist.
+for f in "$XSEC_OUT" "${XSEC_OUT}.done" "$SUMMARY"; do
+  [[ ! -e "$f" && ! -L "$f" ]] || die "no-clobber: $f already exists" 9
+done
 
 echo "[p5a] START $(date -u +%Y-%m-%dT%H:%M:%SZ) job=${JOB}"
 echo "[p5a] arm     ${ARM_DIR}"
 echo "[p5a] outdir  ${OUTDIR}"
+echo "[p5a] push    ${PUSH_OUT}$([[ "$REUSE_PUSH" == 1 ]] && echo '  (REUSED, G6-verified)')"
 
-python3 "${PET}/extract_fullevent_fps.py" \
-  --stage all \
-  --weights "$WEIGHTS" \
+# ---------------------------------------------------------------------------------------------
+# STAGE 1 -- push.  TensorFlow interpreter, GPU.  Skipped entirely when a G6-verified payload is
+# being reused, which is the whole point of the driver's stage split (extract_fullevent_fps.py:21-23:
+# "the push pass costs GPU time that must not be re-spent when the extraction recipe changes").
+#
+# This runs under the plain `python3` of the tensorflow/2.15.0 module loaded at G1 -- i.e. the exact
+# interpreter in which 56978466's reweight succeeded over all 49,152,885 rows.  Nothing about the
+# push stage is changed by this repair, because nothing about it failed.
+# ---------------------------------------------------------------------------------------------
+if [[ "$REUSE_PUSH" == 1 ]]; then
+  echo "[p5a] STAGE push SKIPPED -- consuming the G6-verified payload, no GPU reweight"
+else
+  TF_PY="$(command -v python3 || true)"
+  [[ -n "$TF_PY" && -x "$TF_PY" ]] || die "TensorFlow python3 is unavailable" 6
+  "$TF_PY" -c 'import tensorflow, omnifold' \
+    || die "TensorFlow/omnifold import preflight failed" 6
+  echo "[p5a] STAGE push  $(date -u +%Y-%m-%dT%H:%M:%SZ)  interpreter=$TF_PY"
+  "$TF_PY" -u "${PET}/extract_fullevent_fps.py" \
+    --stage push \
+    --weights "$WEIGHTS" \
+    --inputs "$INPUTS" \
+    --push-out "$PUSH_OUT" \
+    || die "push stage failed" 6
+fi
+
+# ---------------------------------------------------------------------------------------------
+# STAGE 2 -- xsec.  ROOT interpreter, no TensorFlow, no GPU.  This is the stage that failed in
+# 56978466 for want of `import ROOT`, and it is now run under the interpreter G7 already proved can
+# import it.  `--weights` is deliberately NOT passed: the driver does not read it in this stage, and
+# passing an ignored argument would misrepresent it as consumed.  The weights identity that matters
+# here is already pinned by G3 and independently recorded inside the push payload's own
+# `source_weights` key, which G6 printed.
+# ---------------------------------------------------------------------------------------------
+echo "[p5a] STAGE xsec  $(date -u +%Y-%m-%dT%H:%M:%SZ)  interpreter=$ROOT_PY"
+root_env_run "$ROOT_PY" -u "${PET}/extract_fullevent_fps.py" \
+  --stage xsec \
   --inputs "$INPUTS" \
   --push-out "$PUSH_OUT" \
   --out "$XSEC_OUT" \
   --summary "$SUMMARY" \
   --mcfile "$MCFILE" \
   --flux-hist "$FLUX_HIST" \
-  || die "extraction driver failed" 6
+  || die "xsec stage failed" 6
 
 # ---------------------------------------------------------------------------------------------
 # CONDITION 1's third enforcement: the products say what they are not.
 # ---------------------------------------------------------------------------------------------
-python3 - "$OUTDIR" "$MARK" "$JOB" "$WEIGHTS" "$GOT_W" "$XSEC_OUT" "$PUSH_OUT" "$SUMMARY" <<'PY'
+python3 - "$OUTDIR" "$MARK" "$JOB" "$WEIGHTS" "$GOT_W" "$XSEC_OUT" "$PUSH_OUT" "$SUMMARY" \
+         "$REUSE_PUSH" "$GOT_P" "$EXPECTED_PUSH_SHA" <<'PY'
 import hashlib, json, os, sys
+import numpy as np
 
 outdir, mark, job, weights, wsha, xsec, push, summary = sys.argv[1:9]
+reuse_push, push_sha, expected_push_sha = sys.argv[9], sys.argv[10], sys.argv[11]
 
 def sha(p):
     h = hashlib.sha256()
@@ -266,10 +493,87 @@ doc = {
         "G3_weights_identity": wsha,
         "G4_inputs_identity": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
         "G5_outputs_outside_the_arm": True,
+        "G6_push_payload_identity": (push_sha if push_sha else
+                                     "n/a -- this run computed its own push, nothing was reused"),
+        "G7_root_interpreter_preflight": "ROOT, unfold_2d_omnifold_unbinned and the driver all "
+                                        "imported under the root_6_28 prefix python BEFORE any GPU "
+                                        "time was spent",
     },
     "job": job,
     "weights": {"path": weights, "sha256": wsha},
     "products": {},
+}
+
+# ------------------------------------------------------------------------------------------------
+# PUSH PROVENANCE.  Per CONVENTION-receipt-ingredients (BEN-077): ship the ingredients, not just the
+# verdict, so the reported numbers can CONTRADICT each other.  A reader who cannot re-derive
+# w_push_mean from this block, or who finds the recomputed sha differing from the pin, has caught a
+# real defect -- which a "push reuse: OK" line would have hidden.
+# ------------------------------------------------------------------------------------------------
+prov = {
+    "reused_an_existing_payload": reuse_push == "1",
+    "path": os.path.abspath(push),
+    "sha256_measured_this_run": push_sha or None,
+    "sha256_pin": expected_push_sha if reuse_push == "1" else None,
+    "pin_matched": (bool(push_sha) and push_sha == expected_push_sha) if reuse_push == "1" else None,
+}
+if reuse_push == "1":
+    prov["why_reused"] = (
+        "job 56978466 FAILED 6:0 in the xsec stage for want of `import ROOT`, but its push stage had "
+        "already completed over all 49,152,885 rows and written this payload. The driver splits the "
+        "stages (extract_fullevent_fps.py:16-23) precisely so this GPU pass is not re-spent. The "
+        "payload's filename retains 56978466's job id on purpose: the reweight is ITS product, not "
+        f"job {job}'s."
+    )
+    prov["originating_job"] = "56978466"
+try:
+    with np.load(push, allow_pickle=True) as pz:
+        w = np.asarray(pz["w_push"], np.float64)
+        prov["ingredients"] = {
+            "push_schema": str(np.asarray(pz["push_schema"])),
+            "estimator_fingerprint": str(np.asarray(pz["estimator_fingerprint"])),
+            "n_rows": int(w.size),
+            "source_weights": str(np.asarray(pz["source_weights"])),
+            "inputs_sha256": str(np.asarray(pz["inputs_sha256"])),
+            "w_push_min": float(w.min()),
+            "w_push_max": float(w.max()),
+            "w_push_mean": float(w.mean()),
+            "reweight_telemetry": np.asarray(pz["reweight_telemetry"], dtype=object).item(),
+            "subsample_agreement": np.asarray(pz["subsample_agreement"], dtype=object).item(),
+        }
+        prov["ingredients"]["recomputed_here_vs_telemetry"] = (
+            "w_push_min/max/mean above are recomputed from the payload by THIS script; "
+            "reweight_telemetry carries the values the producing run printed. They must agree."
+        )
+except Exception as exc:                     # never let receipt-writing mask a completed run
+    prov["ingredients_error"] = f"{type(exc).__name__}: {exc}"
+doc["push_provenance"] = prov
+
+# ------------------------------------------------------------------------------------------------
+# THE OWED VL100 ANNOTATION, discharged here.  It was authored into this launcher at dc4bb8e but job
+# 56978466 died before writing any receipt, so it has never actually reached disk.  It is a TOP-LEVEL
+# key rather than only a line inside promotion_would_require because the distinction it draws is the
+# one most likely to be flattened by someone quoting it second-hand -- which is exactly what happened
+# once already (the mediator over-relayed it, and lane A caught it).
+# ------------------------------------------------------------------------------------------------
+doc["vl100_quotability_scope"] = {
+    "what_IS_falsified": "VL100's PHYSICS ground.",
+    "by_what": "lane D's shape-dependence test, 2026-08-14, commit f4267b4: the fold-forward deficit "
+               "is SHAPE-dependent, per-cell ratio 0.173 -> 1.420, relative sd 47% against a 0.69% "
+               "noise expectation -- 68x clear of noise, with structure in p_parallel.",
+    "what_is_NOT_falsified": "the VL100 quotability argument AS A WHOLE. Saying 'the quotability "
+                             "argument is falsified' is an OVERSTATEMENT and is not supported.",
+    "why_not": "VL100 rests on FOUR grounds. D examined ONE of them -- the physics ground -- and D's "
+               "own scope note records the other THREE as HYGIENE grounds which were NOT examined. "
+               "Nothing has been measured about them either way, so they are open, not refuted.",
+    "why_the_narrow_claim_still_suffices_here": "the physics ground is the one that would have "
+        "licensed quoting this run's product. Falsifying it is enough to withhold quotability, and "
+        "no part of this receipt depends on the wider claim.",
+    "consequences_for_this_product": [
+        "the 'normalization divides out of unit-normalized spectra' argument is NOT available",
+        "how far VL100 moves is UNRECOMPUTED",
+        "the ANNEALED arm's own per-cell fold-forward behaviour has not been measured by anyone",
+    ],
 }
 for label, p in (("xsec", xsec), ("push", push), ("summary", summary)):
     if os.path.isfile(p):

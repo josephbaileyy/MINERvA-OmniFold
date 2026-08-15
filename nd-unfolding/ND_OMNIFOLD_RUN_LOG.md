@@ -7787,3 +7787,63 @@ Threshold `0.0010978917643007513` re-derived here from the committed receipt's o
 `absolute_deviation_from_one` array, not taken from the brief; all five rows of the PLAN's section-1a table
 reproduce from that receipt. Products summary:
 `docs/orchestration/state/gate6-leg0-tier-calibration-prepared-20260814.json`.
+
+## 2026-08-14 — P5A annealed extraction: `56978466` diagnosed, launcher repaired to the two-environment split, HELD UNSUBMITTED
+
+Job `56978466` (`p5a_ann_extract`, `nid001585`) FAILED `6:0` after `00:12:57`, 2026-08-14
+17:26:56–17:39:53 PDT = 2026-08-15T00:26:56–00:39:53Z. Timezone frame established rather than assumed:
+`sacct` reports Pacific, the launcher's `[p5a]` lines and the `.done` sidecar report UTC, and the
+sidecar's epoch `1786754388` reconciles the two.
+
+**Neither a physics nor an identity failure, and the record should say so plainly.** All six guards
+`G0`–`G5` passed — arm-by-schema (`lr_policy.schedule = fit-time-anneal-after-iteration-0`), weights
+`559a1020570929169a83e26dd9eea937bb34d6f4ecb230e332b792165ef6eb3e`, inputs
+`fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625`, checkpoint contained, outputs
+outside the arm. Exit 6 is `sbatch_p5a_fullevent_nominal_extract.sh`'s "extraction driver failed".
+
+**The expensive work succeeded and is on disk.** The reweight completed `49152885/49152885` and wrote
+`fullevent_nominal_annealed_extraction_unpromoted/P5A-ANNEALED-UNPROMOTED.push.slurm-56978466.npz`;
+its own subsample-agreement check passed at `max_rel_dev 2.554037696012494e-05` against `tolerance
+1e-3`, with `subsample_agreement_is_vacuous: false`. Re-verified independently this turn: `sha256
+a1debdb7105f3e531ec2e6ec5e08192d026238d5bac7eb5fe389e7e8f71bb9c9`, 262448947 bytes, regular file,
+zip intact, 11 keys, `w_push` 49152885 float64 all-finite, `mc_indices` exactly `arange`,
+`validate_push_coverage → []`, `inputs_sha256` equal to `G4`'s pin, `source_weights` resolving to the
+annealed arm. Recomputed `w_push` min/max/mean `0.3674599826335907 / 8.050625801086426 /
+1.0630889183749077` reproduce the stored telemetry exactly.
+
+**The failure was an interpreter choice.** `extract_fullevent_fps.py:463` → `2d-unfolding/
+unfold_2d_omnifold_unbinned.py:21` → `ModuleNotFoundError: No module named 'ROOT'`. The driver's own
+header (`:16-23`) already states that `xsec` "needs ROOT and numpy, no TensorFlow, no GPU" and that the
+stages are split so the GPU push is not re-spent; the launcher ran `--stage all` under
+`tensorflow/2.15.0`, which carries no ROOT.
+
+**Repair (`cd31545859e58ecde1f0fecec59dbac76bd7e91d185057045c9b3c50e4f03d11`).** Two-environment split
+after `sbatch_gate5_replica_extract_array.sh`, which was **read as a template only** — it is hash-bound
+by an active receipt and editing it would fail `verify_hash_bindings.py`. `G0`–`G5` are **byte-identical**
+to the version that ran (region diff empty, 83 lines both sides; the exact ran-bytes remain recoverable
+at `git show HEAD~:…` = `5da812f8ca3ab955ba568efa656f9379c5c948d195d1f051a4f466888583ba8b`). Added
+strictly on top: `G6` push reuse gated on identity not existence (`BEN-023`'s class — sha pin, `.done`
+marker, schema/fingerprint/coverage, inputs-sha agreement, non-vacuous agreement check) and `G7` a ROOT
+import preflight ordered **before any long work**, sharing one `root_env_run` definition with the real
+`xsec` stage.
+
+**Measured, and it is why the naive repair would have been wrong:** invoking
+`$ROOT628_PREFIX/bin/python3 -c 'import ROOT'` directly **segfaults** (rc=139, cling "cannot extract
+standard library include paths"); it works only once `setup_salloc_env.sh` has activated the env by full
+prefix. Verified working combination: ROOT `6.28/12`, numpy `1.26.4`, `unfold_2d_omnifold_unbinned` and
+the driver both importable.
+
+**Power tests, both new guards, both directions:** wrong sha pin → `rc=7` with zero `G6 PASS` lines;
+payload with no `.done` → `rc=7` "must be treated as PARTIAL"; `ROOT628_PREFIX=/usr` → `rc=8`
+reproducing `56978466`'s exact `ModuleNotFoundError` in seconds at zero GPU cost. Real payload + real
+env → `rc=0`, `G0..G7 all PASS, no job submitted, no GPU used`.
+
+**NOT SUBMITTED — the report precedes the submission by instruction, and the mediator's go is pending.**
+No `scancel`, no `scontrol update`, no other lane's job touched; `56978466` was read via `sacct` only.
+`/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059` untouched. **Promotion is NOT authorized and
+nothing here performs it:** outputs stay in `fullevent_nominal_annealed_extraction_unpromoted/`,
+`MARK=P5A-ANNEALED-UNPROMOTED`, and `NOT_CANONICAL.json` is still written — now also carrying the push
+provenance sha and, discharged for the first time, the OWED VL100 scope annotation (D's **physics**
+ground falsified at `f4267b4`, per-cell ratio 0.173→1.420, 68× clear of noise; the other **three**
+grounds are hygiene and were **not** examined, so the argument as a whole is **not** falsified).
+Finding: `BEN-280`.

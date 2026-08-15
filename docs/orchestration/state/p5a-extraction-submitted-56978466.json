@@ -23,8 +23,8 @@
       "the_generalisable_remedy": "bind historical bytes to an IMMUTABLE COMMIT rather than to a live path. A commit-recoverable digest is checkable forever and never drifts, where a path+sha pair is a claim about the present that a legitimate edit falsifies. This is BEN-158's remedy (VL89's bytes recoverable at 8a9d22c) applied to submit-time provenance, and it would let the four existing KNOWN_PREEXISTING entries be retired rather than carried -- not done here, because they are other lanes' receipts."
     },
     "launcher_current": "nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh",
-    "launcher_current_sha256": "5da812f8ca3ab955ba568efa656f9379c5c948d195d1f051a4f466888583ba8b",
-    "launcher_current_note": "the CORRECTED launcher, for future runs. This pair IS a live binding and verify_hash_bindings should hold it."
+    "launcher_current_sha256": "cd31545859e58ecde1f0fecec59dbac76bd7e91d185057045c9b3c50e4f03d11",
+    "launcher_current_note": "the CORRECTED launcher, for future runs. This pair IS a live binding and verify_hash_bindings should hold it. | UPDATED 2026-08-14 by the P5A extraction repair lane. This field is a LIVE POINTER by its own name -- `launcher_current`, not `launcher_as_submitted` -- and it is the pair verify_hash_bindings collects, so it must track the file. The frozen historical claim is `sha256_as_submitted` (509279c1...), which is deliberately NOT a path+sha pair and is NOT touched here. Updating this pointer therefore loses nothing: BOTH prior versions were re-verified recoverable this turn -- `git show c3ff900:` hashes to 509279c1 and `git show dc4bb8e:` hashes to 5da812f8, both checked, not asserted. The repair is the two-environment ROOT/TF split; 56978466's own bytes are unchanged and unchangeable (Slurm snapshotted them at submission). See BEN-280."
   },
   "THE_QUEUE_CHECK_THE_MEDIATOR_REQUIRED": {
     "rule_given": "submit only if the array is draining; if RUNNING=0 with tasks still PENDING, that is a stall and I should hold and report instead",
@@ -68,10 +68,18 @@
     "why_the_queued_job_cannot_be_fixed_in_place": "MEASURED, not assumed: `scontrol write batch_script 56978466 -` hashes to 509279c1... -- the PRE-EDIT bytes. Slurm snapshots the batch script at submission, so editing the repo or the cluster copy does not change what this job runs.",
     "launcher_versions": {
       "submitted_and_queued": "509279c13458001b085ffc686aaba9245511be492694a18835cc9f69a986dc8e",
-      "corrected_for_future_runs": "5da812f8ca3ab955ba568efa656f9379c5c948d195d1f051a4f466888583ba8b"
+      "corrected_for_future_runs": "5da812f8ca3ab955ba568efa656f9379c5c948d195d1f051a4f466888583ba8b",
+      "repaired_for_the_rerun_two_environment_split": "cd31545859e58ecde1f0fecec59dbac76bd7e91d185057045c9b3c50e4f03d11",
+      "how_to_recover_each": {
+        "509279c1_submitted_and_queued": "git show c3ff900:nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh  (VERIFIED this turn)",
+        "5da812f8_vl100_scope_narrowed": "git show dc4bb8e:nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh  (VERIFIED this turn)",
+        "cd315458_two_environment_repair": "the working tree as of BEN-280s commit"
+      }
     },
     "the_obligation": "when 56978466 completes, its NOT_CANONICAL.json must be annotated with the narrowed scope. Recorded here as an OWED ACTION rather than left to whoever reads the product later, so the artifact and its correction are discoverable from the same receipt.",
     "direction_of_the_error": "the overstatement makes the caveat STRONGER than warranted, so nothing downstream is licensed by it that should not be. That is the safe direction. It is still wrong, and a durable artifact carrying an overstated caveat is precisely how a later reader concludes that the record overstates its evidence generally.",
-    "not_requeued_deliberately": "no scancel and no requeue -- neither is authorized, and a 4 h GPU job should not be discarded over a caveat's scope when a post-run annotation fixes it exactly."
+    "not_requeued_deliberately": "no scancel and no requeue -- neither is authorized, and a 4 h GPU job should not be discarded over a caveat's scope when a post-run annotation fixes it exactly.",
+    "the_obligation_STATUS_20260814": "STILL OWED, and the reason is now different. 56978466 FAILED 6:0 in the xsec stage before writing ANY NOT_CANONICAL.json, so there is no artifact on disk to annotate -- the owed correction cannot be discharged by editing a product, only by a run that produces one. The narrowed scope is authored into the repaired launcher as a top-level `vl100_quotability_scope` key, so the NEXT successful run discharges it on write. Until that run completes the obligation stays OPEN.",
+    "why_this_job_failed": "ModuleNotFoundError: No module named 'ROOT' at extract_fullevent_fps.py:463 -> unfold_2d_omnifold_unbinned.py:21. NOT a physics or identity failure -- G0-G5 all passed and the reweight completed 49152885/49152885 with subsample agreement 2.554037696012494e-05 against 1e-3. The launcher ran --stage all under tensorflow/2.15.0, which carries no ROOT, while the driver's own header (:16-23) states xsec needs ROOT and numpy and no TensorFlow. The surviving push payload (sha256 a1debdb7105f3e531ec2e6ec5e08192d026238d5bac7eb5fe389e7e8f71bb9c9, 262448947 bytes) is re-validated and reused rather than recomputed. See BEN-280."
   }
 }

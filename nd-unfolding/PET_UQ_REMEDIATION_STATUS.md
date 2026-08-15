@@ -11,6 +11,18 @@ schema and joint-UQ definition are in
 `pet/FULL_EVENT_FEATURE_CONTRACT.md`; the packet/commit contract is in
 `../docs/PUBLICATION_COMPLETION_RUNBOOK.md`.
 
+## STATUS 2026-08-14 — P5A annealed extraction is REPAIRED and UNSUBMITTED; `56978466`'s push payload survives and is reused
+
+`56978466` FAILED `6:0` at `00:12:57` on `ModuleNotFoundError: No module named 'ROOT'` — **not** a physics
+or identity fault: `G0`–`G5` all passed and the reweight had already completed `49152885/49152885`
+(subsample agreement `2.554e-05` vs `1e-3`). `pet/sbatch_p5a_fullevent_nominal_extract.sh` now runs the
+two-environment split proven at 50/50 by `pet/sbatch_gate5_replica_extract_array.sh` (read as a template
+only; it is receipt-hash-bound), with `G6` reusing the surviving push payload by sha pin
+(`a1debdb7…bb9c9`) and `G7` preflighting the ROOT import **before any GPU time**. `G0`–`G5` byte-identical.
+**No job submitted; the mediator's go is pending. Promotion is NOT authorized** — outputs remain in
+`pet/fullevent_nominal_annealed_extraction_unpromoted/` under `MARK=P5A-ANNEALED-UNPROMOTED` with
+`NOT_CANONICAL.json`, and this product is **not** the canonical P5A central or reported-bin mask. `BEN-280`.
+
 ## STATUS 2026-08-14 — Gate 6 Leg 0 is BUILT and UNSUBMITTED; the tier gap is still unmeasured
 
 `--checkpoint-tier {auto,best-epoch,final}` is on `pet/step1_increment_trajectory.py` (default `auto` =
