@@ -151,3 +151,106 @@ per-watch `try/except`. One malformed watch aborts the loop and skips dispatch s
 `last-tick.json` there carries no `watch_errors` key — confirmed by absence. **The net operates today
 and is one bad watch away from silent, with no field that would say so.** Reconciling that fork is
 forbidden during closeout, so this is recorded as known exposure rather than fixed.
+
+---
+
+# THE ALIASING CAUGHT LIVE, WITH ITS MECHANISM, AND IT EXPLAINS A `squeue`/`sacct` DISAGREEMENT (2026-08-15)
+
+**`BEN-229`, and it invalidates `BEN-210`'s prescribed remedy in one specific regime.** `229` is the last free
+id in lane A's `220-229` block; the next lane-A filing takes a fresh closed ten-block per `FINDINGS.md`'s
+self-allocation rule.
+
+**A correction made while filing this, against this very file's index entry.** Lane A first wrote that this
+file *"had no ledger row until now"*, taking `FINDINGS.md`'s index line at face value: *"**NO BEN ROW** — lane
+A's block 190-199 is exhausted."* **That note is stale.** This file has carried `BEN-210` — and `BEN-211` for
+the defective fix — since 2026-08-13, filed out of A's `210-219` block after the note was written. The note was
+never updated. **Whether a finding has a row is machine-derivable** (grep the filename across the rows), so a
+prose note asserting it is `BEN-228`'s general form exactly: *a hand-maintained index of a machine-derivable
+fact goes stale silently*. Corrected in the index in the same commit as this section.
+
+**Found while verifying a report, not while debugging a failure.** The mediator checked lane A's Leg-0
+submission and observed that two tools disagreed about the size of the same array **in the same second**:
+
+```
+2026-08-15T04:33:48Z .. 04:33:50Z   (one 2-second window, one job id)
+squeue -j 56993778 -r   ->  _1 _2 _3 _4 _5    all PENDING     FIVE tasks
+squeue -j 56993778      ->  56993778_[1-5]    PENDING
+sacct  -j 56993778 -X   ->  56993778_[3-5]    PENDING         THREE
+sacct  -j 56993778 -X -D ->  56993778_[3-5]   PENDING         (--duplicates: same)
+```
+
+**`sacct` under-reported a live array by two tasks.** Reproducible, same id, same second, no lag argument
+available.
+
+## The mechanism, which refines the first reading rather than confirming it
+
+The natural reading — the mediator's, and lane A's before measuring — is *"`sacct` is collapsing the range and
+dropping the head of it."* **That describes the symptom and gets the cause backwards.** Two more queries
+settle it:
+
+```
+sacct -j 56993778_1   ->  (empty)
+sacct -j 56993778_2   ->  (empty)
+sacct -j 56993778_3   ->  (empty)      <- INSIDE sacct's own reported [3-5]
+```
+
+**`sacct` returns nothing for ANY individual pending task, including one it claims to be reporting.** So it is
+not dropping a head; it has **no per-task records at all**. Then `scontrol`, which does:
+
+| array task | raw `JobId` |
+|---|---|
+| `56993778_1` | `56993779` |
+| `56993778_2` | `56993780` |
+| **`56993778_3`** | **`56993778`** |
+| **`56993778_4`** | **`56993778`** |
+| **`56993778_5`** | **`56993778`** |
+
+**Slurm splits array tasks off the parent record one at a time as it prepares to schedule them.** Tasks 1 and
+2 have been split and carry new raw ids; **tasks 3, 4 and 5 are still collapsed under the array's own id.** So
+`sacct`'s `[3-5]` is the **unsplit remainder** — the only record that exists under job id `56993778` — and
+tasks 1 and 2 are absent because their new raw ids have no accounting rows until they start. The range shrinks
+from the *head* as tasks are split, which is why it looked like a dropped head.
+
+## Why this is worse than `BEN-210`, and why it BREAKS `BEN-210`'s REMEDY
+
+`BEN-210` was *"the array id equals ONE task's raw id, so five byte-identical `sstat` rows read as five healthy
+members,"* and its prescription is explicit: **"Resolve the PAIR via `sacct -X --format=JobID,JobIDRaw`."**
+
+**That remedy returns NOTHING here.** `sacct -j 56993778_<t>` is empty for every task, so on an array that has
+not started, the instrument `BEN-210` tells you to use cannot answer the question `BEN-210` tells you to ask.
+The remedy is correct **after** tasks start and silently unavailable **before** — and *silently* is the
+problem, because an empty `sacct` result looks like "no aliasing found" rather than "this tool cannot see the
+array yet." **A resolver written to `BEN-210`'s prescription returns an empty mapping on a pending array and
+its caller cannot distinguish that from a clean one.** This is the third correction in the `BEN-210` lineage
+after `BEN-211`, and the same shape: **the fix removed the symptom the bug was detected by.**
+
+Two further ways this instance is worse than the original:
+
+- **Three tasks alias simultaneously**, not one, so a query keyed on `56993778` represents tasks 3, 4 and 5
+  with a single row.
+- **The aliasing set is NOT STABLE — it shrinks as tasks are split.** A mapping resolved early and cached is
+  wrong later, in the direction that silently *over*-reports health, because one live row stands in for
+  several tasks. `BEN-210`'s remedy assumes the pairing is a fact to be looked up once; it is a snapshot.
+
+## The checks
+
+> **`sacct` IS NOT AUTHORITATIVE FOR AN ARRAY THAT HAS NOT STARTED.** Before a task starts there is no
+> accounting row; `sacct` reports only the unsplit remainder and will under-count. **Use `squeue -r` for
+> pending state** (it expands every task and is the only tool here that got the count right), and **`scontrol
+> show job <array>_<task>`** to resolve the raw id.
+>
+> **Never key a per-task query on the array id.** Resolve `ArrayJobId`/`ArrayTaskId`→`JobId` per task and
+> assert the raw ids are **distinct** before believing per-task rows. Re-resolve rather than caching: the
+> aliasing set changes as tasks are split.
+>
+> **A count from `sacct` and a count from `squeue` are not the same measurement.** Publishing either without
+> naming the tool is `BEN-027`'s shape — *"every ID, rank, count and queue name in a status report must come
+> from a command run in the same turn"* — and this instance shows the same turn is not sufficient. **The tool
+> is part of the measurement.**
+
+**Lane A's own report survived this** — it said `[1-5]` and read the count from `squeue`, which is correct.
+**It survived by luck of tool choice, not by knowing this**, and anyone verifying that record with `sacct`
+alone would have concluded the array size was mis-stated. That asymmetry is the reason this is written down.
+
+**Incidental, and consistent with `OI-74`:** `scontrol` also showed `Reason=Priority` on task 1, so this array
+is priority-starved rather than merely queued — the same contention Leg F's tasks 4 and 5 hit.
