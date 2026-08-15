@@ -34,8 +34,10 @@ test asserting merely "nonzero" would have been green on the defect**, which is 
 defect 6 means by *"assert the specific intended failure, not a generic argparse nonzero"*. Restored
 and re-verified by sha256 (`38721b9a…`, `dcae976a…`, `412086a3…`) plus a full green run.
 
-Remaining: defects 1–6 of `followup-agent-A-standard-05.md`; **stage 3
-must still not run on pre-G-1 code** and **G-1 is not on the cluster checkout**.
+Remaining: defects 1–6 of `followup-agent-A-standard-05.md`; ~~**stage 3
+must still not run on pre-G-1 code** and **G-1 is not on the cluster checkout**~~ — **both stricken
+2026-08-15 (`BEN-352`): G-1 IS on the cluster checkout and stage 3 ALREADY RAN on it, 2026-08-08. See the
+correction block at the end of the 2026-08-07 addendum below.**
 
 **Current continuation (2026-08-11): Packet B channel PASS; real-cluster terminal verdict
 pending.** PB1–PB5 implementations and adversarial acceptance evidence are committed at
@@ -74,24 +76,81 @@ standard-p4-verifier (019f74cb-…) returning PASS on the committed round-3 patc
   plus per-endpoint `footing_evidence` classified from the unfold logs and blocks when they
   disagree; `run_p4_unfold_std.sh` passes `--bkg-mode` explicitly and stamps it into both
   receipt shapes. Value is `purity`, the recorded 2026-08-07 decision. Tests 41/41.
-  **Not yet on the cluster checkout** — that tree is shared with a live concurrent lane.
+  ~~**Not yet on the cluster checkout** — that tree is shared with a live concurrent lane.~~
+  **STRICKEN 2026-08-15 (`BEN-352`): G-1 IS ON THE CLUSTER CHECKOUT.** Measured this session — cluster
+  `HEAD` = `683bdcc`, and `git merge-base --is-ancestor 5a4009f HEAD` in
+  `/pscratch/sd/j/josephrb/MINERvA-OmniFold` returns **true**. The wiring is live in that working tree —
+  `run_p4_unfold_std.sh:37` reads `bkg_mode` from `P4Config`, `:90` passes `--bkg-mode`; **those are the
+  CLUSTER tree's coordinates at `683bdcc`, and the same lines are `:41`/`:111` at local `HEAD`** (the
+  trees are forked — `OI-74`). This line was true when written on 2026-08-07 and was never rechecked.
 - **G-3 preflight PASSED** (job `56445593`, ~71 s): 10/10 merges valid, audit 120/120,
   `EVIDENCE-COMPLETE`, all five cross-checks MATCH, `mask5d n=10694`, `mask4d n=4830`.
 - **Attestation is available, measured not assumed:** all ten endpoint ROOTs sha256-match the
-  committed manifest (10/10), so stage 3 legacy-attests with no re-unfold.
-- **Stage 3 deliberately NOT run:** on pre-G-1 code it would write ten receipts with no
+  committed manifest (10/10), ~~so stage 3 legacy-attests with no re-unfold.~~ **STRICKEN: there is no
+  legacy-attest path to take. It was DELETED, not repaired, in `2654731` (2026-08-08) —
+  `run_p4_unfold_std.sh:85-103` retains the deletion rationale. Stage 3 can only PRODUCE, and the ten
+  measured receipts say `mode=produced`, i.e. it re-unfolded.**
+- ~~**Stage 3 deliberately NOT run:** on pre-G-1 code it would write ten receipts with no
   `bkg_mode`, and the launcher skips any endpoint that already has a receipt — with deletions
-  frozen, that would be an unfixable provenance regression.
-- **Still true:** the ten ROOTs have **zero** `.done` receipts (`KNOWN_ISSUES.md` #20(c)).
+  frozen, that would be an unfixable provenance regression.~~
+  **STRICKEN ON BOTH HALVES. (a) STAGE 3 RAN — 2026-08-08, post-G-1. (b) THE HAZARD WAS NEVER REAL after
+  `febb9a1` (2026-08-07): the launcher skips only when `p4_check_receipt.py` PASSES, not on receipt
+  existence (`run_p4_unfold_std.sh:77-84`). `bkg_mode` is a REQUIRED key (`p4_lib.py:796-797`, enforced
+  `:949-950`) and is COMPARED (`:961-962`), so a receipt lacking it FAILS the gate, is `rm -f`'d, and is
+  re-run transactionally. The gate cast as the trap is the repair mechanism; the cost is compute, not
+  irreversibility.**
+- ~~**Still true:** the ten ROOTs have **zero** `.done` receipts (`KNOWN_ISSUES.md` #20(c)).~~
+  **STRICKEN — REFUTED BY MEASUREMENT: ten ROOTs and TEN `.done` receipts.**
+
+> ### CORRECTION 2026-08-15 (`BEN-352`) — five counts above were stale; superseded text retained per this repo's convention (`c179a35`)
+>
+> **Measured this session, read-only, in
+> `/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/unfolds/`:**
+> **ten ROOTs and ten `.done` receipts, all dated 2026-08-08**, each with
+>
+> ```
+> mode      = produced
+> bkg_mode  = purity
+> code_rev  = 42268b6dfa2e60a0e4bd491b11ad9b11d0228273
+> ```
+>
+> `42268b6` **contains** `5a4009f` (G-1), `febb9a1` (the resume-gate repair) and `2654731` (the
+> legacy-attest deletion) — each verified by `git merge-base --is-ancestor`. Receipt `t` stamps run
+> `2026-08-08T13:41:45Z` → `14:59:03Z`; ROOT mtimes `06:40`–`07:59` local. **STAGE 3 RAN, POST-G-1, ON
+> 2026-08-08.**
+>
+> The run sits inside holder allocation **`56495756`** (`gbdt-hold`, `WorkDir`
+> `/pscratch/sd/j/josephrb/MINERvA-OmniFold`, start `2026-08-08T05:21:41`, allocation `TIMEOUT` at
+> `08:21:46`); step **`56495756.0`** (`bash`) ran `05:21:46`→`07:59:04`, `COMPLETED`, elapsed `02:37:18`.
+> The last receipt is stamped `07:59`, four seconds before that step ended — so **stage 3 completed inside
+> the step and the allocation's `TIMEOUT` is the holder expiring afterwards, not a failed unfold.**
+>
+> **TWO THINGS THIS CORRECTION DOES NOT RESOLVE. Both are escalated, not adjudicated — `OI-75`.**
+>
+> 1. **THE RUN IS UNRECONCILED WITH THE HOLD AT LINE 4 OF THIS FILE.** That line records Joseph's
+>    standing hold — scope *"code/tests/receipts only — **no cluster P4 run**"* — and **there is no record
+>    of the 2026-08-08 run anywhere in this repo**: no RUN_LOG entry, no ledger row, no products summary.
+>    **Whether it was authorized is Joseph's question. It is already put to him and unanswered.** This
+>    file records the discrepancy and takes no position. **The artifacts being well-formed is not evidence
+>    that the run was authorized** — a correct receipt attests to provenance, never to permission.
+> 2. **THE TEN PRODUCTS ARE UNTRACKED AND EXIST ONLY ON PURGEABLE SCRATCH.** `git ls-files` over that
+>    directory returns **0** on both the cluster and local checkouts, and `git status --ignored` reports
+>    every ROOT as `!!`. By this repo's own rule — *a result does not exist until its commit lands* —
+>    **they do not exist, and that is exactly why five documents say stage 3 never ran.** The products
+>    total **4.8 MB** (ten ROOTs at ~480 KB each), *not* the 20 GB an earlier relay of this escalation
+>    assumed; the 53.8 GB × 10 figure in `p4_lib.py:790` is the **merged inputs**, not these outputs. The
+>    size is recorded to keep the disposition honest and **is not a recommendation to commit them** —
+>    that is a provenance and authorization decision, not a storage one, and it is blocked on item 1.
 
 - **P3S:** 120/120 endpoint event loops done.
 - **Merge:** 10/10 endpoint MEFHC ROOTs. Full-file hashes validated by the owner-neutral
   orchestrator receipt `docs/orchestration/state/merged-input-hashes/p4-merged-20260718/`
   (COMPLETE; size⇥mtime⇥path inventory; 10-line standard.sha256) — reused, NOT re-hashed.
 - **Unfold:** 10/10 endpoint xsec ROOTs content-validated (open/non-zombie/not-recovered/
-  finite `hXSecND_flat`/65856-bin/positive/10694-central-mask/distinct). Legacy products
-  (no `.done`) are attested read-only against the manifest; the transactional driver
-  (`run_p4_unfold_std.sh`) writes the receipt LAST after an atomic ROOT publish.
+  finite `hXSecND_flat`/65856-bin/positive/10694-central-mask/distinct). ~~Legacy products
+  (no `.done`) are attested read-only against the manifest;~~ **stricken 2026-08-15 (`BEN-352`) — that
+  path was deleted in `2654731` and the live products are `mode=produced` with `.done` receipts;** the
+  transactional driver (`run_p4_unfold_std.sh`) writes the receipt LAST after an atomic ROOT publish.
 - **Evidence:** EVIDENCE-COMPLETE. Recomputed bindings MATCH the verifier's independent
   observations — central5d `630306e2…`, mask5d `74374b1a…` (10694), endpoint-manifest
   `af568b4a…`, central4d `1fb82508…`, mask4d `c977c643…` (4830). New round-3 bindings:

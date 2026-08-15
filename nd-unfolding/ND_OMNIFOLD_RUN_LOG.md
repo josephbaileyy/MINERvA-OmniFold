@@ -8693,3 +8693,61 @@ an open Gate-6 question needing its owner and a predeclaration, not a quick chec
 was tier calibration"*. **The key lives in the trajectory receipt and reads `"best-epoch"` correctly.** A
 `.get()` returning `None` for a key that was never in the file you opened is not a missing field. Caught by
 dumping the key set; it never reached a claim.
+
+## 2026-08-15 — standard-P4 stage 3 RAN on 2026-08-08 and this log said it did not (`BEN-352`)
+
+**Appended, not rewritten.** This log is append-only, so the two entries this corrects are left standing
+where they are: **`:3614`** (*"Stage 3 was deliberately NOT run"*) and **`:5705-5706`** (the two
+preconditions carried forward). Read them with this entry. **Both were accurate as chronology — they
+record what the lane believed and decided on those dates — and both are false as present-tense fact.**
+
+**MEASURED THIS SESSION, READ-ONLY, on `saul.nersc.gov`** in
+`/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/unfolds/`: **ten
+endpoint ROOTs and ten `.done` receipts, all dated 2026-08-08**, each
+
+```
+mode      = produced
+bkg_mode  = purity
+code_rev  = 42268b6dfa2e60a0e4bd491b11ad9b11d0228273
+```
+
+Receipt `t` stamps span `2026-08-08T13:41:45Z` → `14:59:03Z`; ROOT mtimes `06:40`–`07:59` local. `42268b6`
+**contains** `5a4009f` (G-1), `febb9a1` (the resume-gate repair) and `2654731` (the legacy-attest
+deletion), each verified by `git merge-base --is-ancestor`. The run is holder allocation **`56495756`**
+(`gbdt-hold`, `WorkDir` `/pscratch/sd/j/josephrb/MINERvA-OmniFold`), step **`56495756.0`** (`bash`,
+`COMPLETED`, `05:21:46`→`07:59:04`, elapsed `02:37:18`); the allocation itself shows `TIMEOUT` at
+`08:21:46`, which is the **holder** expiring after the work finished, not a failed unfold.
+
+**AND G-1 IS ON THE CLUSTER CHECKOUT.** Cluster `HEAD` = `683bdcc`;
+`git merge-base --is-ancestor 5a4009f HEAD` in that tree → **true**; the wiring is live in the working
+tree (`run_p4_unfold_std.sh:37` reads `bkg_mode` from `P4Config`, `:90` passes `--bkg-mode`).
+
+**THE IRREVERSIBILITY CLAIM AT `:3614` IS REFUTED IN CODE, AND IT WAS TRUE WHEN WRITTEN.** `:3614` says
+the launcher *"skips any endpoint that already has a receipt"*, so pre-G-1 receipts *"would then be
+skipped forever"*. That described the **pre-repair-4** gate — `[[ -s ROOT && -s RECEIPT ]]` plus a
+ROOT-key check, the form `p4_lib.py:784-787` documents and disowns — and it was **fixed by `febb9a1` on
+2026-08-07, the same day the entry was written.** The gate today (`run_p4_unfold_std.sh:77-84`) skips
+**only when `p4_check_receipt.py` PASSES**; on failure it prints `STALE ... -> re-running`, `rm -f`s the
+receipt and re-runs transactionally. `bkg_mode` is a REQUIRED key (`p4_lib.py:796-797`, enforced
+`:949-950`) and is **COMPARED** (`:961-962`). **A pre-G-1 receipt therefore FAILS the gate and is
+re-run: the gate cast as the trap is the repair mechanism.** Cost of a pre-G-1 stage 3 is compute, not
+irreversibility, and the deletion freeze never applied — the `rm -f` is the launcher's own, on scratch.
+
+**WHAT THIS DOES NOT SETTLE — two items escalated to Joseph, deliberately not adjudicated here (`OI-75`).**
+
+1. **The run is unreconciled with the standing hold.** `P4_STANDARD_STATUS.md:4` records Joseph's hold —
+   *"no cluster P4 run"* — and **there is no record of the 2026-08-08 run anywhere in this repo**: not in
+   this log, not in a ledger, not in a products summary. This entry is the first. **Whether the run was
+   authorized is Joseph's question, already put to him and unanswered.** Recorded plainly, not excused:
+   **well-formed artifacts attest to provenance, never to permission**, and this entry must not be read
+   as retroactive authorization.
+2. **The ten products are untracked and exist only on purgeable scratch.** `git ls-files` over that
+   directory → **0** on both checkouts; `git status --ignored` marks every ROOT `!!`. Per this repo's own
+   rule a result does not exist until its commit lands — **which is precisely why five documents say
+   stage 3 never ran.** Products total **4.8 MB** (ten ROOTs at ~480 KB); the 53.8 GB × 10 in
+   `p4_lib.py:790` is the **merged inputs**, not these outputs. **Nothing was copied into the repo** —
+   whether these land is a provenance and authorization call blocked on item 1, not a storage call.
+
+**NOTHING RUN, NOTHING PROMOTED, NOTHING REPINNED.** Read-only cluster access throughout. The
+`standard-p4-verifier` `BLOCK` and the "NOT BUILT" status of the standard 5D lateral are **unaffected**:
+this corrects what is true about G-1 and stage 3, and clears no gate.
