@@ -8078,3 +8078,71 @@ re-measured here** — the `.npz` files are not in this checkout and the cluster
 cited from the correction receipt, which enumerates the schema keys. What *was* verified locally from the
 object is the manifest's own pointer set, which is the part this reframing rests on. **`OI-71` stays OPEN
 on `G4`; no closure run was submitted and none is authorized without Joseph.**
+
+---
+
+## 2026-08-15 — THE 63-CELL "SPARSE EDGE" IS NEITHER SPARSE NOR AN EDGE; ITS "3.1% OF THE CROSS-SECTION" IS 15.5%; AND P5A SITS OUTSIDE ITS OWN 50-REPLICA FAMILY
+
+Peer session `B`, on the mediator's dispatch to characterise the tail of
+`state/p5a-nominal-vs-cstat-family-percell-20260815.json` and decide whether those cells belong in a
+published measurement. **Read-only on the cluster; no mask, `C_stat` or extraction product was touched.**
+All operands: `state/RECEIPT-20260815-cstat-tail-geometry-and-weighting-correction.json`.
+
+**The receipt's arrays carry no cell ids, so the binding was PROVEN before anything was built on it:**
+`per_cell_family_rel_sd` equals `sqrt(diag C)/mean` on `cell_index[quotable_mask]` to `5.5e-16`, and
+`per_cell_ratio` equals nominal/mean recomputed from the 50 **raw** member `npz` to `6.0e-16`. Six of the
+receipt's scalars then reproduce exactly. The 257 are the 262-union minus the 5 flicker cells.
+
+**1. THE PRIOR UNDER TEST — "they are the thin edge and overlap the dead and flicker sets" — IS REFUTED
+ON ALL THREE COUNTS.** One contiguous 4-connected band at **p_parallel 6–20 GeV** across nearly every
+`pT` row, bounded by well-behaved cells on both sides. Overlap with the 23 dead and 5 flicker cells is
+**zero and definitionally so** (dead are outside the 262; flicker is excluded from the 257 by
+`CSTAT-D3c`), so adjacency was the only meaningful test and **1 of 63** touches either. Median acceptance
+`a_b` **0.859** — the **highest on the grid** — holding **26.5% of all reco-accepted truth mass**. The
+genuinely sparse region is the opposite corner: `p_parallel < 1.5` is 21.1% of truth mass and **0.24%** of
+reco-accepted mass. **And spread is ANTI-correlated with acceptance** (median `relSD` 0.050 where
+`a_b<0.05`, 0.243 where `a_b>0.5`), because where acceptance vanishes the answer is the prior and the
+prior does not fluctuate across replicas — **so low replica spread means prior-dominated, not
+well-measured**, which disqualifies any spread-based tier rather than merely weakening it.
+
+**2. TWO OF THE RECEIPT'S DERIVED FIGURES WERE WRONG — `BEN-340`, filed with a detail file.** Its
+`WHY_THIS_OVERSTATES` attributes `1.10267 → 1.05656` to a **domain** mismatch; both are over the **same
+257 cells** and the step removes the **bin widths**. `sum(nom·width)` reproduces the receipt's own
+`nominal_total` to `2.9e-5` (residual = the 5 flicker cells, to `0.7%`; confirmed at source by the
+extraction's `total_sigma_cm2_per_nucleon`) while the unweighted sum is `11.3x` off. **So the `+10.267%`
+survives.** *"3.1% of the cross-section"* was the tail's share of the **unweighted family-mean density
+sum**; of the published nominal integral it is **15.5%**. Caught only by failing to re-derive a published
+total from published operands — `BEN-077` working as designed.
+
+**WHAT SURVIVES AND IS STRENGTHENED, stated because a correction reads as a demolition:** the median
+per-cell ratio is weighting-independent and stands, and dropping the 63 moves the width-weighted total
+ratio to **`0.99471`** — a stronger statement of *"concentrated, not global"* than the receipt made.
+
+**3. PRECEDENT SETTLES THE TIERING QUESTION, AND IT IS OUR OWN PREDECESSOR.** All **63 of 63** are cells
+MINERvA published: the release grid is `1.5 < p_parallel < 60` and the band's edges are its edges. Derived
+independently from `2d-unfolding/minerva_paper_anc/bin_mapping.txt` → **224** paper cells, matching the
+count `AGENTS.md` states. In that release (**Phys. Rev. D 104 (2021) 092007**, corrected from the 2020
+paper this lane first cited) **19 bins are unreported and every one is in the `theta_mu<20°` corner** —
+removed by the *signal definition*, never for being statistically weak; the paper says the bins *adjacent*
+to the hole have **lower efficiency** and reports them anyway. **MINERvA measured the same 84 bins at a
+median fractional statistical uncertainty of 1.6%** where this family's spread is **67%**.
+
+**4. THE FINDING THAT OUTRANKS THE TASK — `OI-126`, filed separately so a *"change nothing"* tiering
+conclusion cannot absorb it.** The P5A nominal **exceeds all fifty replicas in 44 of the 63 cells** (and
+at least 45 of 50 lie below it in **every** one), while agreeing with the family at `p_parallel<6`
+(median z `−0.13`). Sign reverses above 20 GeV. **Not skew** — `nom/median` is worse than `nom/mean`.
+Leading candidate, **measured but NOT established as the cause**: the arms use different Stay-Positive
+backends (nominal `precomputed:gate2-published-target`, learned; replicas recompute `exact` on
+`max_mc_events=200000`). **Ruled out**: same driver, same anneal, same `niter`, same rows, same inputs
+sha256, identical POT/nucleons/flux/`n_pass_truth`/domain. **The diagnostic is costed and NOT submitted —
+it is a submission and it is Joseph's.**
+
+**RECOMMENDATION, and it is a recommendation and not an act:** keep all 262 cells, change nothing, open no
+new tier, and treat the divergence as a blocker on P5A promotion and on quoting `C_stat` as P5A's
+statistical covariance.
+
+**DELIBERATELY NOT DONE:** the mask, `C_stat` and every extraction product are untouched; no job was
+submitted; the corrected receipt's original values are **retained beside** their `RETRACTED` markers
+rather than overwritten (`BEN-227`); and **`MANIFEST.tsv` is one line stale for `FINDINGS.md` after this
+commit — left so deliberately**, because regenerating it would have inventoried this lane's then-uncommitted
+files (`BEN-332`; the correct precondition is `git status -- docs/orchestration` clean, not a worktree).

@@ -1,0 +1,359 @@
+{
+ "what": "Geometry, acceptance and precedent characterisation of the 63-cell tail of p5a-nominal-vs-cstat-family-percell-20260815.json, and the CORRECTION of that receipt's two share-of-total figures and its WHY_THIS_OVERSTATES diagnosis.",
+ "filed_by": "peer session B (sparse-edge-cell / tiering lane), 2026-08-15, on the mediator's dispatch",
+ "reads_only": "nothing was written outside this receipt and its citing documents; no mask, C_stat or extraction product was modified",
+ "ingredients": {
+  "cstat_npz": {
+   "path": "docs/orchestration/state/gate5-cstat-n50/GATE5_CSTAT_N50.npz",
+   "sha256": "6c3b4e00910397953269527964d2803966f73ee01548a6164f04cd78501623bc"
+  },
+  "acceptance_map": {
+   "path": "nd-unfolding/products/pet/fullevent_fps/acceptance_map_fullevent_fps.json",
+   "sha256": "4615cf8ef2cbdca4e1ea44d5272aef1354e9e4a8d16112e507e660343205646b"
+  },
+  "corrected_receipt": {
+   "path": "docs/orchestration/state/p5a-nominal-vs-cstat-family-percell-20260815.json",
+   "sha256_before_this_commit": "40f58baad38e3562647a2a93e8dc7fc87416e95685b501cc5949df05e0d23142"
+  },
+  "minerva_data_release": {
+   "path": "2d-unfolding/minerva_paper_anc/",
+   "bin_mapping_sha256": "d21a41eb746fea64e5c37a69b87bff93318e7997252686b8880e10b35bf4e12a",
+   "data_sha256": "02153e7af054a98254ddfc42cce65fc7520f95032c544dbc33555ac60376c2f3",
+   "publication": "Phys. Rev. D 104 (2021) 9, 092007 (per the release README)"
+  },
+  "member_and_nominal_xsec": "read read-only on the cluster: nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_{00..49}/extraction/GATE5_REPLICA_XSEC.npz and fullevent_nominal_annealed_extraction_unpromoted/P5A-ANNEALED-UNPROMOTED.xsec.slurm-56989462.npz"
+ },
+ "array_to_cell_binding_PROVEN_not_assumed": {
+  "claim": "the corrected receipt's 257-long arrays are indexed by cell_index[quotable_mask] (the 262-cell union minus the 5 flicker cells)",
+  "test_1": "per_cell_family_rel_sd == sqrt(diag(C))/mean on those cells",
+  "test_1_max_rel_diff": 2.220446049250313e-16,
+  "test_2": "per_cell_ratio == nominal/mean(50 members) recomputed from the raw npz",
+  "test_2_max_rel_diff": 5.949666742085943e-16,
+  "flicker_cells_excluded": [
+   209,
+   254,
+   255,
+   256,
+   281
+  ]
+ },
+ "CORRECTION_1_weighting_not_domain": {
+  "retracted_claim": "the receipt's WHY_THIS_OVERSTATES: that ratio 1.10267 -> same_domain 1.05656 removes a DOMAIN mismatch",
+  "measured": "both ratios are on the SAME 257 cells; the step removes the BIN WIDTHS",
+  "same_domain_width_weighted_ratio": 1.1026784366823443,
+  "same_domain_unweighted_ratio": 1.0565626408950854,
+  "sum_nom_times_width": 2.0169163466536543e-37,
+  "sum_nom_unweighted": 2.483844757830504e-36,
+  "reported_nominal_total_in_receipt": 2.016974e-37,
+  "extraction_own_total_sigma_cm2_per_nucleon": 2.01697368472543e-37,
+  "rel_diff_width_weighted_vs_reported": 2.858408008514715e-05,
+  "rel_diff_unweighted_vs_reported": 11.314708855099292,
+  "residual_explained_by_the_5_flicker_cells": {
+   "predicted_sum_family_mean_times_width_over_flicker": 5.98678611617897e-42,
+   "residual_needed": 5.945401366497904e-42
+  },
+  "conclusion": "the +10.267% survives as a same-domain, width-weighted statement. The domain contributes 2.9e-5, not 4.6 percentage points."
+ },
+ "CORRECTION_2_share_of_total": {
+  "retracted": {
+   "the_tail.their_share_of_total": 0.03123834250236109,
+   "the_tail.top20_share_of_total": 0.0562607982600042
+  },
+  "what_those_numbers_actually_are": "the tail's / top-20's share of the UNWEIGHTED family-mean DENSITY sum",
+  "reproduced_as_such": {
+   "tail_over_family_mean_density": 0.03123834250236109
+  },
+  "corrected_share_of_the_published_nominal_integral": {
+   "tail_63_width_weighted": 0.15538027401831522,
+   "top20_by_excess_width_weighted": 0.12603396510511775
+  },
+  "what_survives_unchanged": {
+   "median_per_cell_ratio": 1.000323195109291,
+   "note": "weighting-independent; the offset being concentrated rather than global is CONFIRMED and strengthened",
+   "width_weighted_total_ratio_after_dropping_the_63": 0.994710019744099
+  },
+  "top20_share_of_total_excess_reproduces_exactly": 0.7123389780814007
+ },
+ "GEOMETRY_the_prior_was_refuted": {
+  "prior_tested": "that the 63 are the thin edge and substantially overlap the 23 dead and 5 flicker cells",
+  "grid": {
+   "n_pt_bins": 15,
+   "n_pparallel_bins": 19,
+   "bin_order": "pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel"
+  },
+  "n_connected_components_4adj": 1,
+  "pparallel_columns_occupied": [
+   10,
+   11,
+   12,
+   13,
+   14,
+   15
+  ],
+  "pparallel_range_gev": [
+   6.0,
+   20.0
+  ],
+  "pt_rows_occupied": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13
+  ],
+  "overlap_with_dead": 0,
+  "overlap_with_flicker": 0,
+  "overlap_is_definitionally_zero": "dead cells are not in the 262; flicker cells are excluded from the 257 by CSTAT-D3c",
+  "n_of_63_4adjacent_to_a_dead_cell": 1,
+  "n_of_63_4adjacent_to_a_flicker_cell": 1,
+  "acceptance": {
+   "median_a_b_of_the_63": 0.8585589519100529,
+   "min_a_b_of_the_63": 0.4174604707504686,
+   "median_a_b_of_the_other_194": 0.7130291890211585,
+   "n_of_63_below_the_tier2_threshold_a_b_lt_0p02": 0
+  },
+  "population": {
+   "share_of_fiducial_truth_mass": 0.14281560546181374,
+   "share_of_reco_accepted_truth_mass": 0.2650768936134066,
+   "for_contrast_pparallel_lt_1p5_share_of_truth_mass": 0.21124410323695497,
+   "for_contrast_pparallel_lt_1p5_share_of_reco_accepted": 0.00245253682269602
+  },
+  "spread_is_anticorrelated_with_acceptance": {
+   "median_relsd_where_a_b_lt_0p05": 0.049656340478354224,
+   "median_relsd_where_a_b_gt_0p5": 0.24340354871262507,
+   "why": "where acceptance is ~0 the answer is the prior and the prior does not fluctuate across replicas, so low replica spread means PRIOR-DOMINATED, not well-measured"
+  },
+  "conclusion": "not sparse, not at the edge, and the highest-acceptance cells on the grid. The prior is refuted on all three counts."
+ },
+ "NOMINAL_IS_OUTSIDE_ITS_OWN_FAMILY": {
+  "per_cell_z": "z = (nominal - family mean)/family sd",
+  "by_region": {
+   "pparallel_lt_6": {
+    "n": 128,
+    "median_z": -0.12806765789056113,
+    "n_nominal_above_all_50": 0,
+    "n_nominal_below_all_50": 4
+   },
+   "the_63": {
+    "n": 63,
+    "median_z": 3.808940990223355,
+    "n_nominal_above_all_50": 44,
+    "n_nominal_below_all_50": 0
+   },
+   "band_cols_10_15": {
+    "n": 84,
+    "median_z": 3.554632267028999,
+    "n_nominal_above_all_50": 44,
+    "n_nominal_below_all_50": 0
+   },
+   "pparallel_gt_20": {
+    "n": 45,
+    "median_z": -1.8279048320852105,
+    "n_nominal_above_all_50": 0,
+    "n_nominal_below_all_50": 0
+   }
+  },
+  "min_members_below_nominal_over_the_63": 45,
+  "median_nominal_over_max_member_in_the_63": 1.2091549984241903,
+  "nominal_total_percentile_among_the_50_member_totals": 98.0,
+  "not_ensemble_skew": {
+   "nom_over_mean_band": 2.8610104152488756,
+   "nom_over_median_band": 3.0583141322040097,
+   "note": "nom/median is WORSE than nom/mean, so this is not a mean-vs-median artifact"
+  },
+  "leading_candidate_NOT_ESTABLISHED": "the two arms use different Stay-Positive backends: the nominal target carries refinement_backend='precomputed:gate2-published-target' with refinement_is_learned_production=true, while each replica RECOMPUTES it (refinement_estimator='exact', max_mc_events=200000, refinement_random_state=45, g_min 0.094). RULED OUT as differences: same driver train_fullevent_nominal.py (unmodified, wrapped), same LR anneal (1e-4 -> 1e-5, 2+4 fits), same niter 3, same 2e6 training rows, same inputs sha256, identical POT / nucleons / flux / n_pass_truth / n_pass_truth_and_reco / 262-cell domain. completeness_median_populated DOES differ: 0.7661618428123138 nominal vs 0.7636544800493896 replica.",
+  "conclusion": "C_stat is paired with a central value that is not inside it over a quarter of the measured events. This is a Gate-5 / P5A-promotion question, not a reporting-tier question."
+ },
+ "PRECEDENT_minerva_own_data_release": {
+  "release": "2d-unfolding/minerva_paper_anc/ \u2014 Phys. Rev. D 104 (2021) 9, 092007",
+  "n_bins_in_release": 224,
+  "n_bins_unreported": 19,
+  "unreported_bins_are": "all at LOW p_parallel (1.5-6 GeV) and HIGH pT \u2014 the theta_mu<20deg staircase corner, i.e. removed by the SIGNAL DEFINITION, not by a per-bin reporting judgement",
+  "unreported_bin_edges": [
+   {
+    "pparallel": [
+     1.5,
+     2.0
+    ]
+   },
+   {
+    "pparallel": [
+     1.5,
+     2.0
+    ]
+   },
+   {
+    "pparallel": [
+     1.5,
+     2.0
+    ]
+   },
+   {
+    "pparallel": [
+     1.5,
+     2.0
+    ]
+   },
+   {
+    "pparallel": [
+     1.5,
+     2.0
+    ]
+   },
+   {
+    "pparallel": [
+     2.0,
+     2.5
+    ]
+   },
+   {
+    "pparallel": [
+     2.0,
+     2.5
+    ]
+   },
+   {
+    "pparallel": [
+     2.0,
+     2.5
+    ]
+   },
+   {
+    "pparallel": [
+     2.0,
+     2.5
+    ]
+   },
+   {
+    "pparallel": [
+     2.5,
+     3.0
+    ]
+   },
+   {
+    "pparallel": [
+     2.5,
+     3.0
+    ]
+   },
+   {
+    "pparallel": [
+     2.5,
+     3.0
+    ]
+   },
+   {
+    "pparallel": [
+     3.0,
+     3.5
+    ]
+   },
+   {
+    "pparallel": [
+     3.0,
+     3.5
+    ]
+   },
+   {
+    "pparallel": [
+     3.5,
+     4.0
+    ]
+   },
+   {
+    "pparallel": [
+     3.5,
+     4.0
+    ]
+   },
+   {
+    "pparallel": [
+     4.0,
+     4.5
+    ]
+   },
+   {
+    "pparallel": [
+     4.5,
+     5.0
+    ]
+   },
+   {
+    "pparallel": [
+     5.0,
+     6.0
+    ]
+   }
+  ],
+  "readme_states": "'Values of exactly 0.00E+00 are unreported bins.'",
+  "paper_states": "'There are 144 degrees of freedom for these studies, as there are 12x13 bins minus 12 bins excluded due to the 20 degree angle requirement' and 'The empty region in the top left of the plot is due to the requirement that the muon must be within a 20 degree angle of the beamline. The area around this region has lower efficiencies due to a larger portion of the event muons missing MINOS at these larger angles.' \u2014 so bins ADJACENT to the hole have LOWER EFFICIENCY and are REPORTED ANYWAY",
+  "our_63_are_all_published_bins": {
+   "n_paper_grid_cells_among_the_63": 63,
+   "n_paper_grid_cells_on_the_285_grid": 224,
+   "cross_check": "224 independently matches the paper-grid count stated in AGENTS.md and derived here from bin_mapping.txt",
+   "fps_extension_pparallel_columns": [
+    0,
+    1,
+    18
+   ]
+  },
+  "published_stat_uncertainty_on_the_SAME_bins": {
+   "n_bins_pparallel_6_to_20_reported_by_minerva": 84,
+   "median_fractional_stat_uncertainty": 0.01553639846743295,
+   "max_fractional_stat_uncertainty": 0.11331360946745561,
+   "worst_reported_bin_anywhere_in_the_release": 0.13089005235602094,
+   "our_family_median_relsd_in_the_63": 0.6711644641821876,
+   "ratio_our_spread_to_their_published_stat": 43.199488323440434,
+   "CAVEAT_not_like_for_like": "MINERvA's is data-statistics on a standard-selection sample; ours is a bootstrap over a 2e6-row training subsample plus per-replica target refinement on an extended-phase-space full-event estimator. The comparison bounds how statistically hard those BINS intrinsically are; it is not a matched comparison of the same quantity. A factor of ~40 is nonetheless far outside what that mismatch explains."
+  },
+  "conclusion": "MINERvA reports every bin inside its declared phase space, including bins it says have lower efficiency; the only absent bins are those the angular cut removes. Worst reported fractional stat uncertainty in the whole release is 0.131."
+ },
+ "OPTIONS_AND_COSTS": {
+  "note": "dropping is exact and free: reduction_is_exact=true and C == C_full[ix_(mask,mask)] was verified bit-identical, so a drop is a sub-block extraction requiring no re-run. dof=49 under every option, so none repairs CSTAT-O1.",
+  "A_flag_only_keep_262": {
+   "cells": 257,
+   "width_weighted_total_ratio": 1.1026784366823443,
+   "sqrt_trace": 1.4969756114142557e-38
+  },
+  "B_drop_the_63": {
+   "cells": 194,
+   "width_weighted_total_ratio": 0.994710019744099,
+   "sqrt_trace": 1.3322472813330275e-38
+  },
+  "C_drop_pparallel_ge_6": {
+   "cells": 128,
+   "width_weighted_total_ratio": 0.9947601649172215,
+   "sqrt_trace": 1.3268989076961653e-38
+  },
+  "E_drop_relsd_gt_0p35": {
+   "cells": 193,
+   "width_weighted_total_ratio": 1.0043844684168128,
+   "sqrt_trace": 1.3597812910130315e-38
+  },
+  "share_of_cstat_trace_held_by_the_63": 0.20797254650117425,
+  "D_merge_pparallel_bins": "NOT COSTED NUMERICALLY because it is not recoverable by sub-blocking: new edges break layout_fingerprint 53119a407987c3b65911581ead7701b6a12d10742c6156682603a30da80a97fe / CSTAT-R2, assert_extended_fps_edges fails closed, and all 50 members must be re-extracted (array-scale GPU). It would also merge away exactly the bins MINERvA published, destroying bin-level comparability.",
+  "why_B_and_E_land_near_1p00": "both cut on the disagreement itself rather than on a property of the cells, which is the tell that neither is a tiering criterion"
+ },
+ "EXISTING_CONVENTION_FOLLOWED_NOT_INVENTED": {
+  "it_exists": [
+   "nd-unfolding/FPS_PILOT.md 'Recommendation: GO, with two-tier reporting' \u2014 Tier 1 eff >~2%; Tier 2 dead cells 'published but explicitly flagged, carrying a prior-dependence band'",
+   "docs/OPEN_ITEMS-ARCHIVE-2026-08.md 'Promote stable cells to the primary acceptance-supported measurement and keep near-zero-efficiency cells in a separately labeled, model-dependent extrapolation tier'",
+   "mirrored in nd-unfolding/pet/FULL_EVENT_FEATURE_CONTRACT.md and docs/orchestration/OMNIFOLD-DOSSIER.md"
+  ],
+  "direction": "publish both tiers, label, never drop",
+  "but_it_does_not_cover_these_cells": "its criterion is acceptance, and a_b<0.02 selects 0 of the 63",
+  "stale_citation_BEN_228": "the pointer 'OPEN_ITEMS:430-438', used by the corrected receipt, gate5_cstat_contract.json, CLM-011 and both extraction summaries, is stale \u2014 docs/OPEN_ITEMS.md is 140 lines and the item is in OPEN_ITEMS-ARCHIVE-2026-08.md",
+  "unverified_invariant": "docs/orchestration/COVERAGE-SURVEY-20260802.md grades the Tier-1/Tier-2 invariant 'no check'"
+ },
+ "RECOMMENDATION": "Keep all 262 cells. Change nothing in the mask or C_stat. Do not open a new reporting tier for these cells. Treat the p_parallel>6 GeV nominal-vs-family divergence as a blocker on P5A promotion and on quoting C_stat as P5A's statistical covariance. Joseph's call; see the OI row filed with this receipt.",
+ "git_head_at_write": "519e918fb11e2b89bd1b62d58a9d0a36a4ec577a"
+}
