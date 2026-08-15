@@ -68,13 +68,69 @@ Also note which side the near-miss fell on. Both errors pointed toward **false a
 had not happened, a cap that was not binding. A lane that escalates a phantom stall spends the
 mediator's and Joseph's attention and, worse, makes the next real stall report cheaper to discount.
 
+## Third and fourth instances the same day, and the general form
+
+**This finding was filed on the first instance. Three more followed within hours, two of them mine.**
+
+2. **A validator that looked like it passed a partial family.** I compared an array measurement taken
+   at **06:27 PDT** against a validator start at **07:30 PDT** and read the gap as "nothing happened",
+   concluding the Gate-5 completeness gate had certified an incomplete family with exit 0. **False:**
+   the array's last task ended **07:24:12** and the validator started **07:30:39** — six minutes later,
+   `afterany` behaving correctly. Twenty remaining tasks at ~14.5 min and ~7 concurrent is ~41 min,
+   *entirely consistent with the 45–65 minute ETA I had published myself an hour earlier.* I had the
+   number that refuted me and did not apply it.
+
+3. **The mediator, one message after I reported instance 2, checking my work.** It read commit times
+   with `TZ=UTC git log --date=format:…` — and **`format:` renders in the commit's own offset;
+   only `format-local:` honours `TZ`.** A `-04:00` timestamp became an apparent UTC one, manufacturing
+   a **four-hour** gap that looked like `C_stat` being built before its own extraction family
+   validated. **Also false:** with `%cI`, build `14:41:14Z`, validator done `14:31:33Z`, array last
+   task `14:24:12Z` — build 9m41s *after* validation, correct order.
+
+**The git mechanism, verified by lane A on commit `6b68d12` in its own tree rather than relayed:**
+
+```
+%ci                          2026-08-12 22:53:04 -0400
+TZ=UTC --date=format:        2026-08-12T22:53:04          <-- TZ IGNORED, offset STRIPPED
+TZ=UTC --date=format-local:  2026-08-13T02:53:04          <-- TZ honoured
+%cI                          2026-08-12T22:53:04-04:00    <-- frame carried, cannot be misread
+```
+
+**`TZ` has no effect on `--date=format:`** — that renders in the **commit's own** offset, and only
+`format-local:` honours `TZ`. So `TZ=UTC git log --date=format:…` *looks* like it produced UTC and
+produced a `-04:00` wall clock instead.
+
+**And the git variant is strictly nastier than the `sacct` one, in a specific way lane A identified:**
+`format:` **strips the offset** unless the format string asks for `%z`, so **there is nothing printed
+to compare against.** My 7-hour discrepancy was catchable because it landed exactly on `UTC-0700` and
+a round number is a tell. The mediator's 4 hours was also exactly the offset — but with no offset
+displayed anywhere, the tell was unavailable. **A mitigation that depends on noticing a suspiciously
+round number does not survive a formatter that hides the number.**
+
+**THE GENERAL FORM, which is what makes this more than three anecdotes:**
+
+> **Establish the frame before comparing two timestamps, and prefer a representation that has no frame
+> to get wrong.** Epoch seconds or `%cI`/ISO-8601-with-offset cannot be misread; `sacct`'s default
+> display and `git --date=format:` both render in a frame the reader supplies from assumption. Every
+> instance here was two correct numbers subtracted in the wrong frame.
+
+**What actually stopped all four was the same act: checking before escalating rather than after.** In
+instances 2 and 3 the check took one command and the escalation would have cost a lane's attention and
+Joseph's. Worth noticing that it worked twice inside ten minutes — the reflex is functioning even
+though the underlying error keeps recurring, which is the argument for making the *representation*
+safe rather than relying on the reflex.
+
 ## Mitigation
 
 Neither half needs vigilance; both need a flag.
 
-- **Always export `SLURM_TIME_FORMAT` with `%z`** when reading `sacct`/`squeue` times, so the offset is
-  printed and cannot be assumed. Cheaper still: never mix `date -u` with default Slurm output in one
-  turn — ask both clocks in the same format.
+- **Prefer a representation that cannot omit the frame, over remembering to ask for it.** For git,
+  `%cI` (ISO-8601 with offset) or `%ct` (epoch); for Slurm, epoch or `SLURM_TIME_FORMAT` with `%z`.
+  This is lane A's generalisation and it is better than the tool-specific rule this finding shipped
+  with: the original said *print the offset*, which is right for `sacct` and cannot help with
+  `--date=format:`, because that formatter drops the offset whether or not you remember to want it.
+- **Never mix `date -u` with a tool's default time display in one turn** — ask both clocks in the same
+  representation, or convert both to epoch before subtracting.
 - **Read `ArrayTaskThrottle` from `scontrol show job`** before reasoning about concurrency, and treat
   the running count as occupancy. Cross-check the pending **reason**: `(JobArrayTaskLimit)` means the cap
   binds, `(Priority)` means it does not.

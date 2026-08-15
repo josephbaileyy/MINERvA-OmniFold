@@ -2,27 +2,41 @@
   "artifact": "p5a-extraction-submitted-56978466.json",
   "lane": "C (PET)",
   "recorded_utc": "2026-08-15T00:0x:xxZ (see measured_at below); all counts from commands in the same turn as the submit",
-  "measured_at": {"utc": "2026-08-15T00:01:51Z", "local": "2026-08-14T17:01:51-0700"},
-
+  "measured_at": {
+    "utc": "2026-08-15T00:01:51Z",
+    "local": "2026-08-14T17:01:51-0700"
+  },
   "HEADLINE": "P5A nominal extraction on the ANNEALED arm SUBMITTED as job 56978466. And the Gate-5 extraction family is TERMINAL AND VALIDATED at 50/50 -- GATE5_EXTRACTION_FAMILY_COMPLETE_PASS -- which met the submit precondition and also clears construction preconditions 1 and 2 of the C_stat spec.",
-
   "THE_SUBMIT": {
     "job_id": "56978466",
-    "launcher": "nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh",
-    "launcher_sha256": "509279c13458001b085ffc686aaba9245511be492694a18835cc9f69a986dc8e",
     "launcher_parity": "byte-identical in origin/main, the local worktree, and the cluster copy that was submitted -- verified by sha256 on all three in the same turn, which is BEN-156's deployment-parity check applied to the launcher itself",
     "resources": "1 GPU, 32 CPU, 4 h wall, qos=shared, account m3246",
     "state_confirmed_independently": "squeue -j 56978466 -> PENDING (Priority). Read from squeue, NOT from sbatch's stdout, because sbatch printing a job id is not evidence the job exists.",
-    "authorization": "Joseph verbatim 'Yes I authorize it', 2026-08-14, relayed by the mediator; the two conditions (output is not automatically canonical; report before submit) are the mediator's and both were honoured before this submit."
+    "authorization": "Joseph verbatim 'Yes I authorize it', 2026-08-14, relayed by the mediator; the two conditions (output is not automatically canonical; report before submit) are the mediator's and both were honoured before this submit.",
+    "launcher_path": "nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh",
+    "SUBMITTED_BYTES_are_a_historical_fact_not_a_live_binding": {
+      "sha256_as_submitted": "509279c13458001b085ffc686aaba9245511be492694a18835cc9f69a986dc8e",
+      "recoverable_at_commit": "c3ff9008d334007ed8293a6d22710a8fcb4321d5",
+      "recover_with": "git show c3ff900:nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh",
+      "proved_by_slurm_itself": "`scontrol write batch_script 56978466 -` hashes to this value -- Slurm snapshots the batch script at submission, so this is what the job runs regardless of later edits to the file.",
+      "why_it_is_NOT_expressed_as_a_path_plus_sha256_pair": "verify_hash_bindings.collect() would pair those and assert the file CURRENTLY hashes to this. It does not, and it should not: the launcher was legitimately corrected after submission (the VL100 scope narrowing). Forcing that binding true would falsify history, and adding this path to KNOWN_PREEXISTING would violate that set's own scope -- its comment scopes it to bindings that 'drifted before 2026-07-28' -- converting a bounded historical exemption into a growing allowlist.",
+      "the_generalisable_remedy": "bind historical bytes to an IMMUTABLE COMMIT rather than to a live path. A commit-recoverable digest is checkable forever and never drifts, where a path+sha pair is a claim about the present that a legitimate edit falsifies. This is BEN-158's remedy (VL89's bytes recoverable at 8a9d22c) applied to submit-time provenance, and it would let the four existing KNOWN_PREEXISTING entries be retired rather than carried -- not done here, because they are other lanes' receipts."
+    },
+    "launcher_current": "nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh",
+    "launcher_current_sha256": "5da812f8ca3ab955ba568efa656f9379c5c948d195d1f051a4f466888583ba8b",
+    "launcher_current_note": "the CORRECTED launcher, for future runs. This pair IS a live binding and verify_hash_bindings should hold it."
   },
-
   "THE_QUEUE_CHECK_THE_MEDIATOR_REQUIRED": {
     "rule_given": "submit only if the array is draining; if RUNNING=0 with tasks still PENDING, that is a stall and I should hold and report instead",
-    "measured": {"products": 50, "sacct_COMPLETED": 50, "RUNNING": 0, "PENDING": 0},
+    "measured": {
+      "products": 50,
+      "sacct_COMPLETED": 50,
+      "RUNNING": 0,
+      "PENDING": 0
+    },
     "evaluation": "the stall condition is RUNNING==0 AND PENDING>0. PENDING is 0, so the condition is NOT met: this is TERMINAL, not stalled. Submitted.",
     "a_cosmetic_defect_in_my_own_check": "the gate printed 'array is DRAINING (RUNNING=0), not stalled' when the array was in fact COMPLETE. The LOGIC was right -- it correctly declined to hold -- but the MESSAGE misdescribes the state it observed, which is the exact class of defect this campaign keeps filing. Recorded rather than left, because a message that misnames terminal as draining would mislead the next reader of this log."
   },
-
   "GATE5_EXTRACTION_IS_COMPLETE_AND_VALIDATED": {
     "array": "56936015 -- 50 of 50 GATE5_REPLICA_XSEC.npz products, 50 sacct COMPLETED, queue empty",
     "last_task_end": "56936015_49 at 2026-08-14T07:24:12-0700",
@@ -31,7 +45,6 @@
     "validator_manifest": "fullevent_cstat_n50/validation/GATE5_EXTRACTION_FAMILY_MANIFEST.slurm-56936016.json",
     "consequence_for_the_C_stat_spec": "construction preconditions 1 (array terminal at 50/50) and 2 (validator reports exactly 50/50 PASS) are now MET. Precondition 3 -- re-measuring the [N=14] numbers at 50/50 -- is now possible and is mine to do."
   },
-
   "A_FALSE_FINDING_I_NEARLY_ESCALATED_AND_DID_NOT": {
     "what_I_suspected": "that the family validator ran against an INCOMPLETE family. The validator started 07:30:39 PDT, and my most recent measurement of the array -- taken at 13:27Z, i.e. 06:27 PDT -- showed 30 products with 4 running and 16 pending. Read together those say the completeness gate passed a partial family with exit 0, which would be a serious defect in a gate whose entire job is to assert exactly 50/50.",
     "why_it_is_FALSE": "the array's last task 56936015_49 ended 2026-08-14T07:24:12-0700 and the validator started 2026-08-14T07:30:39-0700 -- SIX MINUTES AND 27 SECONDS AFTER the array terminated. afterany:56936015 behaved correctly and the validator saw a complete family.",
@@ -39,13 +52,26 @@
     "the_class": "a stale reading treated as current -- BEN-098's shape, and adjacent to BEN-233 which I filed earlier today about exactly this (a number inferred from a symptom rather than read from the thing that sets it). Filing it against myself twice in one day is the point: the fix is to timestamp-compare, not to be careful.",
     "what_stopped_it": "asking for the array's own End timestamps with an explicit timezone before writing the escalation, rather than after."
   },
-
   "WHAT_THIS_RUN_IS_NOT": [
     "It is NOT a promotion. Its products land in fullevent_nominal_annealed_extraction_unpromoted/, carry MARK=P5A-ANNEALED-UNPROMOTED, and the run ends by writing NOT_CANONICAL.json. G5 hard-refuses writing inside the promoted arm's own directory.",
     "It is NOT the canonical P5A central and reported-bin mask. Adopting these products as the reference RUNBOOK:213 binds every P5B component to is a separate step and a separate decision.",
     "It does NOT resolve CSTAT-O3 (which assembler consumes the 2D P5B C_stat and what ratifies its mask).",
     "It carries no quotability claim. The annealed arm's integrated fold-forward abs_dev of 0.035609 bounds an INTEGRAL and cannot distinguish scale from shape (pet_diagnostic_quarantine.py:104-120 forms it from two sums over the whole reco leg), and the annealed arm's PER-CELL fold-forward behaviour is unmeasured by anyone."
   ],
-
-  "NOT_TOUCHED": ["/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059", "56975592 (lane D's)", "no scancel, no scontrol update, no resubmission of anything not mine"]
+  "NOT_TOUCHED": [
+    "/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059",
+    "56975592 (lane D's)",
+    "no scancel, no scontrol update, no resubmission of anything not mine"
+  ],
+  "A_POST_RUN_CORRECTION_THIS_JOB_WILL_REQUIRE": {
+    "what": "56978466's NOT_CANONICAL.json will carry an OVERSTATED scope claim: that lane D falsified 'the VL100 quotability argument'. Corrected 2026-08-14 after the mediator corrected its own relay (caught by lane A): D examined ONE of VL100's FOUR quotability grounds -- the PHYSICS one -- and D's own scope note records the other three as HYGIENE grounds that were NOT examined. So VL100's PHYSICS ground is falsified; the argument as a whole is not.",
+    "why_the_queued_job_cannot_be_fixed_in_place": "MEASURED, not assumed: `scontrol write batch_script 56978466 -` hashes to 509279c1... -- the PRE-EDIT bytes. Slurm snapshots the batch script at submission, so editing the repo or the cluster copy does not change what this job runs.",
+    "launcher_versions": {
+      "submitted_and_queued": "509279c13458001b085ffc686aaba9245511be492694a18835cc9f69a986dc8e",
+      "corrected_for_future_runs": "5da812f8ca3ab955ba568efa656f9379c5c948d195d1f051a4f466888583ba8b"
+    },
+    "the_obligation": "when 56978466 completes, its NOT_CANONICAL.json must be annotated with the narrowed scope. Recorded here as an OWED ACTION rather than left to whoever reads the product later, so the artifact and its correction are discoverable from the same receipt.",
+    "direction_of_the_error": "the overstatement makes the caveat STRONGER than warranted, so nothing downstream is licensed by it that should not be. That is the safe direction. It is still wrong, and a durable artifact carrying an overstated caveat is precisely how a later reader concludes that the record overstates its evidence generally.",
+    "not_requeued_deliberately": "no scancel and no requeue -- neither is authorized, and a 4 h GPU job should not be discarded over a caveat's scope when a post-run annotation fixes it exactly."
+  }
 }

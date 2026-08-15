@@ -55,6 +55,13 @@
 # bounds the integral and says nothing about the grid.  This is not a label asking to be honoured --
 # it is what the arithmetic can and cannot support.
 #
+# SCOPE OF THAT FALSIFICATION, narrowed 2026-08-14 after the mediator corrected its own relay (caught
+# by lane A).  D examined ONE of VL100's FOUR quotability grounds -- the PHYSICS one -- and D's own
+# scope note records that the other three are HYGIENE grounds and were NOT examined.  So the correct
+# statement is that VL100's PHYSICS ground is falsified, NOT that "the VL100 quotability argument has
+# been falsified."  Nothing above depends on the wider claim, and the narrower one is enough: the
+# physics ground is the one that would have licensed quoting this run's product.
+#
 # USAGE
 #   bash sbatch_p5a_fullevent_nominal_extract.sh --check-only   # run G1..G5 and exit; no job, no GPU
 #   sbatch sbatch_p5a_fullevent_nominal_extract.sh              # the real run
@@ -228,10 +235,14 @@ doc = {
         "promotion was (state/p3f-pet-gate4-nominal-promotion-56563761.json)",
         "a resolution of CSTAT-O3: which assembler consumes the 2D P5B C_stat and what ratifies its "
         "common mask -- RUNBOOK:213's named authority did not exist because P5A had never extracted",
-        "a quotability position: lane D established 2026-08-14 that the fold-forward deficit is "
+        "a quotability position. Lane D established 2026-08-14 that the fold-forward deficit is "
         "SHAPE-dependent (per-cell ratio 0.173->1.420, 68x clear of noise), so the 'normalization "
         "divides out of unit-normalized spectra' argument is NOT available and how far VL100 moves "
-        "is unrecomputed"
+        "is unrecomputed. SCOPE: D examined ONE of VL100's FOUR quotability grounds -- the PHYSICS "
+        "one -- and D's own scope note records the other three as HYGIENE grounds that were NOT "
+        "examined. So VL100's PHYSICS ground is falsified; the argument as a whole is NOT. The "
+        "narrower claim is sufficient here, because the physics ground is the one that would have "
+        "licensed quoting this product."
     ],
     "the_favourable_scalar_and_what_it_cannot_express": {
         "value": "abs_dev 0.035609 against the frozen fold_forward_ratio_dev_max of 0.05",
