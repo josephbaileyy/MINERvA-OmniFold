@@ -8272,3 +8272,78 @@ its rows at zero weight, so thin-data sensitivity would scale with measured rath
 alone, so cells with `R_xsec > 1.5` number **65** here and are **not** the family-mean **63** of `OI-126`.
 The band used for the reading is geometric (p∥ columns 10–15, 84 cells), replica-independent, and was fixed
 in the predeclaration.
+## 2026-08-15 — control plane: three of four `blockers` were false, one vetoed authorized work, and the documented fix for it is a no-op
+
+**No cluster contact of any kind.** No `sbatch`, `scancel`, `scontrol`, `ssh`; `gate6traj-reconcile-56847059`
+untouched; no receipt-bound launcher repinned; the cluster science repo was not pulled. Local reads, two
+generator runs, and edits.
+
+**AUTHORITY.** Joseph authorized the correction; the mediator relayed it and **the verbatim grant was
+committed at `2266840` BEFORE this lane acted on it**, per `BEN-082(v)`. The standing 12-hour clause in that
+same message was **not** acted on and is not treated here as a permission expansion.
+
+**WHAT WAS WRONG — five fields, not the three the dispatch named.** `state/live-state.json` renders to
+`LIVE-STATE.md`, the file `CLAUDE.md` routes every new session to **first**:
+
+* `blockers[1]` prohibited `C_stat` *"until array 56936015 and validator 56936016 return … 50/50"* — both
+  terminal, and `C_stat` is **built** (`VL132`, sha256 `6c3b4e00…`).
+* `blockers[2]` paraphrased `do_not_retry_unchanged` as **"no retry"** — dropping the qualifier and so
+  **forbidding the CHANGED Gate-6 retry Joseph authorized at `043d572`**. This is the one that cost
+  something: a blocker list is read as a veto.
+* `blockers[3]` was the Gate-4 estimator-arm sentence, dead since 2026-08-13.
+* `state` said tasks 1–49 pending and `C_stat` null. `next_authorized_action` told a session to **wait for
+  work that had finished**.
+
+**Found because the file contradicted itself** — `next_authorized_action` states the `unchanged` qualifier
+correctly eleven lines below the blocker that drops it. A ledger read cannot detect a row that is
+confidently wrong, only one that is internally inconsistent.
+
+**WHAT WAS WRITTEN.** `blockers` now has 4 rows, each carrying a `WITNESS:` naming the artifact that would
+falsify it. `blockers[1]` was **NOT deleted** — the constraint *changed rather than lifted*: `C_stat` exists
+but was built by **one** builder against a two-blind-builder authorization, its quotable sub-block is **257**
+not 262, and `CSTAT-R7` labels it `INSUFFICIENT` at `N=50` with `OI-122`'s supersession unratified. Deleting
+it would have converted a real limit into no limit, which is the same failure in the direction that licenses
+quoting. `blockers[2]` enumerates the five prohibitions **by key**. `OI-126` was **absent entirely** and is
+now row 4. The Gate-4 row is **deleted** and its anti-misread function moved to a new `scope_notes` field.
+`state` and `next_authorized_action` rewritten. `LIVE-STATE.md` regenerated: **freshness `FRESH :: Git ==
+HEAD`**, 74 lines before and after.
+
+**THE ROOT-CAUSE FIX WAS ATTEMPTED, MEASURED TO BE A NO-OP, AND REVERTED.** `OI-73` prescribes reclassifying
+the mislabelled input via `MANIFEST-overrides.tsv`. `generate_manifest.py` applies the override and then
+`if is_runs_or_state(rel):` runs **unconditionally afterwards** and resets `event_status = "generated"` — so
+the overrides file is **inert for every `state/` and `RUNS` path**. **Worse: the discarded override is still
+added to `applied_overrides`, so it counts in `overrides=N` and is excluded from the "unused overrides"
+warning — the one diagnostic built to catch a dead override is blind to this case by construction.**
+Measured: `overrides=49`, `event_status=generated`, exit 0, row unchanged. The no-op line was **removed**
+rather than left, because a dead override that reports as applied is a trap. `immutable` is unreachable for
+the same reason (`derive_immutable` returns `yes` for `is_runs_or_state`, and the overrides file has no such
+column). **The real fix is a CODE change that reclassifies every `state/` and `RUNS` row; it was NOT made —
+not authorized, and it must not ride a documentary commit.** `OI-73`(2) stays OPEN on that. `BEN-321`.
+
+**`OI-70`'s MECHANICAL HALF DISCHARGED, on its rigorous criterion.** `generate_manifest.py` run from the
+clean main checkout. Row count `817 → 824`; and because **a rising total cannot prove nothing was dropped**,
+the path sets were set-differenced: **0 dropped, 7 added**, all 7 real files committed by other lanes today.
+Two lanes previously declined this run for want of that criterion.
+
+**`log_test.txt` — DECIDED DELIBERATELY: left in place, and the hazard raised against it does not apply.**
+The concern was that `generate_manifest.py` walks the filesystem and would inventory it. The walk is rooted
+at `ORCHESTRATION = REPO/docs/orchestration` (`:24`, `:83`) and **the file is at the repo root**, so it
+cannot be reached; confirmed by the set-difference above, in which it does not appear. Not this lane's file,
+and not deleted. **`worktree entries: 2` in the committed output is a transient**: the field counts the
+*generating* session's own dirty tree, and a session correcting `live-state.json` necessarily has that edit
+in flight, so the value can never describe the post-commit tree (`OI-73`).
+
+**NO LEDGER ROW AND NO `*_STATUS.md` LINE, deliberately.** This commit establishes **no new verified number**
+— every figure it cites is routed to `VL132`, `OI-126`'s receipt or the Gate-6 receipt — so a
+`VALIDATION_LEDGER` row would invent one. And no `*_STATUS.md` owns the control plane: per `CLAUDE.md`'s own
+table the canonical home for *"what is happening right now"* **is** `LIVE-STATE.md`, which is what was
+corrected. Bolting an orchestration line onto a science status file would write a fact outside its home.
+
+**A `BEN-228` INSTANCE FOUND IN PASSING.** `OI-73` cites the defective row as `MANIFEST.tsv:616`; at `HEAD`
+that line is a **different** row, the manifest having grown by 7. The row was located by content
+(`awk -F'\t' '$1=="…/live-state.json"'`), not by coordinate.
+
+**NOT ESTABLISHED, and not claimed:** why `C_stat` ended up single-builder (the ledger records the outcome
+and the prohibition on claiming independence, not the decision — that is lane B's or the mediator's answer);
+none of the physics was reproduced; and `blockers[0]` was checked only to the extent that its validator
+receipt exists — **a blocker asserting a negative cannot be discharged by finding its receipt.**
