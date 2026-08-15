@@ -100,3 +100,75 @@ free-lists do not.
 at write time — same family, longer interval, different cause), `BEN-216` (why cited ids are not renumbered),
 `CONVENTION-verifying-a-check-is-deployed.md` (*a fact about a concurrently-written repository is a measurement
 with a timestamp* — here the repository is not even concurrent; the writer is).
+
+## DERIVE THE INDEX AT READ TIME — and why the check is NOT armed tonight
+
+Added 2026-08-15 at the mediator's request, after this rule caught its own author a second time: lane A nearly
+filed a duplicate `BEN-229` on the authority of an index cell reading *"NO BEN ROW"*, in the file where this
+finding lives, while `BEN-210` and `BEN-211` had pointed at that same finding since 2026-08-13.
+
+> **THE RULE: whether a finding has a ledger row is DERIVABLE. Derive it at read time; do not trust a cell that
+> asserts it.** One command, and it is cheaper than the mistake it prevents:
+>
+> ```
+> grep -n 'FINDING-<date>-<slug>.md' docs/orchestration/FINDINGS.md
+> ```
+>
+> **Both times this rule was caught being broken, it was caught by someone running one `grep` — not by any
+> mechanism.** `BEN-228`'s remedy is currently enforced by attention, which is the property it says not to rely
+> on. That is stated rather than hidden, because a rule whose enforcement is attention should not be read as a
+> rule whose enforcement is a check.
+
+**THE EXECUTABLE FORM WAS MEASURED AND DELIBERATELY NOT ARMED, and the measurement is the reason.** A check
+asserting *"every indexed finding has a row"* would be the natural gate. Run over `FINDINGS.md` at
+`a642edb`: **80 index entries, 234 `BEN-*` rows, and 31 indexed findings carry no row at all** — every one of
+them dated **2026-07-30 to 2026-08-12**, i.e. before the row-per-finding convention took hold, while nearly
+everything from 08-13 onward has one.
+
+**Those 31 are not drift and must not be treated as such.** Backfilling them is what `BEN-080` forbids:
+back-filling sorts a new item among old ones and destroys the one thing an id's ordering carries. So the gate
+would fail closed on 31 entries that are correct as they stand, block four live lanes, and its only available
+remedies would be a mass backfill (forbidden) or 31 waivers (a hand-maintained index of a machine-derivable
+fact — this finding's own defect, one level out). **`BEN-226` applies too: a hook check has no advisory
+channel, so "warn about the 31" does not exist.** The honest state is **one** genuinely stale cell, now fixed,
+against 31 by-design absences — a ratio that does not justify a gate.
+
+**AND THE MEASURING INSTRUMENT WAS ITSELF NON-COVERING, which is the fourth instance of that class tonight.**
+Lane A's first detector matched only the markdown-link form `[Detail](FINDING-….md)` and reported **40**
+mismatches. Rows that cite their file with backticks instead — `BEN-233`'s *"See `FINDING-…md`"* — were
+invisible to it, **8 of them**. Matching any mention of the filename gives 32, of which 31 are the
+by-design absences. **A tool built to detect stale indices was itself wrong about the index**, and the error
+was in the direction of over-reporting a defect. Joining `awk -F'|'` counting `\|` escapes, `TZ=UTC` with
+`--date=format:`, and `which sbatch` as a covering search: **four instruments in one night that answered
+confidently outside the domain they were built for.** The generalisation is the mediator's and it belongs
+here: *validate an instrument against a case it should get wrong, before believing a number it produces.*
+
+**AND THE NOT-ARMED DECISION GOT ONE MORE PIECE OF EVIDENCE, from the fix itself.** The corrected index cell
+now records what it used to say — *"this cell read `NO BEN ROW` until 2026-08-15"* — and **lane A's detector
+still flags it**, because a scanner looking for the string `NO BEN ROW` cannot distinguish an **assertion**
+from a **quotation of a retracted assertion**. The cell is right; the scanner is wrong; and the scanner cannot
+be made right without understanding that a retraction quotes what it retracts.
+
+**This is `BEN-227`'s argument, independently confirmed by a second instrument.** `BEN-227` ruled *against*
+prose-scanning for digests on the prediction that it *"false-positives on every digest legitimately quoted as
+history, and this repo quotes retired digests deliberately."* That was reasoning; **this is a measurement of
+the same failure in a different scanner on the same day.** Any gate built by pattern-matching prose in this
+repository inherits it, because **retaining superseded text beside its correction is a deliberate convention
+here** (`INDEX-retracted-and-superseded-values.md`, and every `DO_NOT_RECORD_AS` block). A checker that
+punishes that convention will be switched off, and should be.
+
+**So the gate is refused on two independent grounds, not one:** 31 pre-convention absences that `BEN-080`
+forbids backfilling, **and** the fact that the only cheap way to detect the defect cannot tell a correction
+from the error it corrects.
+
+**A POSTSCRIPT IN WHICH THE REMEDY WORKS PROSPECTIVELY, which is the first time tonight one did.** The counts
+above are written *"at `a642edb`"* rather than bare, per `BEN-227`. The very next rebase pulled in another
+lane's row and took the total from **234 to 235**. **A bare "234 `BEN-*` rows" would therefore have been false
+in the commit that published it — `BEN-225` exactly — and quoting the ref is the only reason it was not.**
+Verified rather than assumed: `git show a642edb:docs/orchestration/FINDINGS.md` counts **234** rows and **80**
+index entries, so the claim is true as scoped and stays true permanently.
+
+Every other instance in this file is a rule catching an error after the fact. This one is a rule **preventing**
+one, and it is worth more than the rest: `value + ref` converts a perishable measurement into a durable fact,
+so the number needs no maintenance and no re-derivation. **That is the whole argument for the executable form,
+demonstrated on the smallest possible case.**
