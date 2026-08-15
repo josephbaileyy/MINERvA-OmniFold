@@ -45,6 +45,9 @@
 set -eo pipefail
 
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+# FF_REPO_OVERRIDE is honoured ONLY together with FF_GUARDS_ONLY, so the guard tests can point
+# G0 at a sandbox with a deliberately mutated file while a real run CANNOT be redirected by it.
+if [[ -n "${FF_GUARDS_ONLY:-}" && -n "${FF_REPO_OVERRIDE:-}" ]]; then REPO="${FF_REPO_OVERRIDE}"; fi
 PET="${REPO}/nd-unfolding/pet"
 OUTDIR="${PET}/foldforward_instrumented"
 MARK="NONQUOTABLE-DIAGNOSTIC"
@@ -62,20 +65,37 @@ mkdir -p "${OUTDIR}/logs"
 die() { echo "[ff-launch] FATAL: $1" >&2; exit "${2:-1}"; }
 
 # ---------------------------------------------------------------------------------------------
-# G0  the three files this run must NOT have changed, asserted by digest rather than by trust.
+# G0  every file this run's BEHAVIOUR depends on, asserted by digest rather than by trust.
 #     If any differs, the run is not the configuration the predeclaration describes.
+#
+#     THE WRAPPER PIN WAS ADDED 2026-08-15 AND ITS ABSENCE WAS A REAL EXPOSURE. The first version
+#     pinned the driver, the annealed wrapper and the engine -- and NOT
+#     closure_foldforward_instrumented.py, the module that decides what the arm actually does. So a
+#     task could satisfy every pin the launcher declared while running different code. That went
+#     from hypothetical to concrete when 57012031_3 died on a dtype promotion and the fix had to be
+#     WITHHELD from the cluster, because copying it while _4/_5 were PENDING would have put two
+#     tasks of one array on two code versions with the array id as their only shared provenance.
+#     Generalised in BEN-312: THE THING THAT VERIFIES A RUN MUST NAME EVERY OBJECT THE RUN'S
+#     BEHAVIOUR DEPENDS ON -- a pin set that omits one is satisfiable by a run it does not describe.
+#
+#     Maintenance note, stated because it is the cost of the pin: editing the wrapper changes its
+#     digest and this literal must be updated in the same commit. That is the pin working. Do NOT
+#     delete the pin to avoid the edit; and do not repin the DRIVER, which is receipt-bound
+#     (BEN-270).
 # ---------------------------------------------------------------------------------------------
 declare -A PINS=(
   ["$DRIVER"]="a45fae7c3f978c34bf73f35ab56aac668439c5784a3968b4f09799ee6090fd48"
   ["$ANNEALED"]="ce9f11f4872dd611932705e36f4ecfb651f8ee8eed796cca98be598d92fbb911"
   ["$ENGINE"]="3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa"
+  ["$WRAPPER"]="ee269b09a1ab42059e54542b6b970068be3869d9c1066fe7cca7759676be621c"
 )
 for f in "${!PINS[@]}"; do
   [[ -s "$f" ]] || die "missing: $f" 2
   got="$(sha256sum "$f" | awk '{print $1}')"
   [[ "$got" == "${PINS[$f]}" ]] || die "digest drift on $(basename "$f"): $got != ${PINS[$f]}. This run is NOT the predeclared configuration. Refusing." 2
 done
-echo "[ff-launch] G0 PASS  driver/annealed-wrapper/engine all match their recorded digests"
+echo "[ff-launch] G0 PASS  driver/annealed-wrapper/engine/instrumentation all match their digests"
+for f in "${!PINS[@]}"; do echo "[ff-launch]    ${PINS[$f]}  $(basename "$f")"; done
 
 # ---------------------------------------------------------------------------------------------
 # G1  arm assignment is derived from the task id and PRINTED, so the log says which arm ran.
@@ -109,6 +129,14 @@ PY
   then die "a COMPLETE report already exists at ${OUT_JSON}; refusing to overwrite" 0
   else echo "[ff-launch] G2 an INCOMPLETE report exists; it will be replaced (BEN-023)"
   fi
+fi
+
+# GUARDS-ONLY MODE. Exists so the pins above can be SEEN TO FAIL without burning an allocation --
+# a guard nobody has watched refuse is not yet a guard. Exercised by
+# tests/test_foldforward_launcher_guards.sh; does no training and writes no product.
+if [[ -n "${FF_GUARDS_ONLY:-}" ]]; then
+  echo "[ff-launch] FF_GUARDS_ONLY set -- guards passed, exiting before any work"
+  exit 0
 fi
 
 module load tensorflow/2.15.0
