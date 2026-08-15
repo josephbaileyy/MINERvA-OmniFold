@@ -1,8 +1,9 @@
 # The rule is broken by the artifact asserting it
 
 **Date:** 2026-08-15 · **Lane:** OI-124 disposition lane (peer session `C`) · **Row:** `BEN-333`
-**Origin:** proposed by the orchestrating session after four instances in one night; **filed here with
-the member list verified, which cost one of the four.**
+**Origin:** proposed by the orchestrating session after four instances in one night; **filed with the
+member list verified, which refuted one of the four** — and amended the same day when its author
+diagnosed *why* that one was offered, which became member 6.
 
 ---
 
@@ -45,7 +46,7 @@ second as confirmation of the first is worse than offering nothing, because agre
 derivation and a guess reads as corroboration (`BEN-300`'s separate-origins rule). Self-reported by its
 author. **VERIFIED: 45.**
 
-**5. Three wrong instruments in one verification — this file's own.** Verifying member 6 below took
+**5. Three wrong instruments in one verification — this file's own.** Verifying the REFUTED member below took
 three successive greps, each confident and each wrong: `grep -oE '^> \| [^|]*\| \`3[0-9]0-3[0-9]9\`'`
 matched the `*(unallocated)*` row **itself**, making it trivially equal to the taken block; `grep
 'unallocated'` matched the **prose** of every block row (each says *"rather than read off the
@@ -54,7 +55,21 @@ matched the `*(unallocated)*` row **itself**, making it trivially equal to the t
 would have been reported as a finding.** The fix that caught it is `BEN-228`'s own: validate the
 instrument on a case whose answer you know independently — here, HEAD, where the claimed blocks and the
 unallocated row must be consistent. **This happened while verifying a list of rule-violations, using
-instruments that violated the rule.**
+instruments that violated the rule.** **A FOURTH followed, and it was caught by this file's own remedy applied to this file:** the row asserts *"all eight live per-row free clauses currently hold"*, and the first check of that claim used a clause list **typed from an earlier grep rather than read from the artifact** — so it tested a `333-339` clause the same commit had already advanced to `334-339` and reported it FALSE. Re-derived from the staged blob: 8 clauses, 0 false. **Four bad instruments in one task; the last caught by the rule the task was writing, on its first use.**
+
+**6. A prevented failure re-offered as an occurrence — the member with a motive.** The orchestrating
+session (`personal-orchestrator`) proposed the `*(unallocated)*` instance refuted below. Its own commit
+`d10dd78` records the opposite, in that commit's body, verbatim: *"the `*(unallocated)*` row is advanced
+to 310-319 IN THIS COMMIT. Leaving it reading '300-309 free' after taking 300-309 would have reproduced
+BEN-228's free-list instance inside the commit filing BEN-228's generalisation."* **It noticed the
+hazard, prevented it, and wrote down that it had — then, assembling evidence from memory, offered the
+prevention as an occurrence.** Self-diagnosed and reported by its author, who correctly called it a
+worse category than a miscount. **Every other member here is a fact nobody checked; this is a fact its
+author DID check, whose outcome was inverted in the retelling.** Generalisation, and it is the
+transferable half: **evidence assembled from memory of one's own recent work will preferentially
+recruit near-misses as instances, because the prevention and the occurrence share a memory** — and a
+near-miss feels like evidence precisely because you lived it. **VERIFIED here by reading `d10dd78`'s
+body**, which is the same check that refuted the claim it was offered as.
 
 ## Refuted member — the reason this file enumerates instead of counting
 
@@ -71,7 +86,7 @@ Checked at every commit that introduced a block row, with the validated matcher:
 
 **Every block-taking commit advanced the unallocated row in the same commit.** The `*(unallocated)*`
 row has never been left stale. All eight live per-row *"`NNN-NNN` free"* clauses also currently hold
-(`314-319`, `321-329`, `333-339` checked against the ids that exist).
+(all eight derived from the file rather than typed, then checked against the ids that exist: 8 clauses, 0 false).
 
 The real member-1 instance is the **per-row** free clause, not the `*(unallocated)*` row — two
 different objects in the same table, and the proposal named the wrong one. **So a four-member count
@@ -90,13 +105,15 @@ What is left is a habit, and it is narrow enough to be usable:
 > **When you write a rule down, spend one check applying it to the artifact you are writing it in.**
 > Not to the codebase — to *this* paragraph, *this* commit body, *this* row.
 
-Every one of the five above would have been caught by that single check, and four of the five were
-caught only by a human or a peer reading afterwards. **Enforcement is attention** — stated plainly,
+Five of the six above would have been caught by that single check, and four of them were caught only by
+a peer reading afterwards. **Member 6 would NOT have been** — applying a rule to the artifact in front
+of you cannot catch a claim about an event that is not in front of you, which is why its own remedy is
+different: **before offering your own recent work as an instance, go and read what you actually did.** **Enforcement is attention** — stated plainly,
 as `BEN-228` also had to.
 
 ## Scope
 
-* Five verified members, one refuted, all from **one night and one campaign**. Whether the rate is
+* **Six** verified members, one refuted, all from **one night and one campaign**. *(The count was queried after filing — the orchestrating session proposed it should read four, reasoning from its own four-item proposal, which had included the refuted member. Checked against the artifact: this file's five original members never included it, so the refutation subtracted nothing, and member 6 brings it to six. **A correction offered to a count, unchecked against the artifact it corrects, is this row's own subject** — logged rather than silently applied.)* Whether the rate is
   unusual is unknown; there is no baseline, and none of this establishes that rule-writing *causes*
   the violation rather than merely co-occurring with heavy editing.
 * Members 1 and 2 are taken **as recorded in `BEN-228`** and were not independently re-derived from the
