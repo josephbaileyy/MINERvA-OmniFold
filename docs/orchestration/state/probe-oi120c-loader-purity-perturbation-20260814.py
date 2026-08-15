@@ -216,7 +216,12 @@ def main():
         if not r["ok"]:
             verdict, ok = "REFUSED", None
         elif not really_changed:
-            verdict, ok = "VOID (perturbation did not perturb)", False
+            # `None`, not `False`. `False` means "arm ran and CONTRADICTED its predeclaration" and is
+            # the ONLY value that may produce LEAKAGE below; the scoring filter at :237 excludes on
+            # `is not None`, so a `False` here made a perturbation that never ran indistinguishable
+            # from a detected leak. Job 56975592 printed LEAKAGE off three bit-identical truth arms
+            # for exactly this reason. VOID is excluded like REFUSED -- see :41-44.
+            verdict, ok = "VOID (perturbation did not perturb)", None
         else:
             same = r["sha256"] == base["sha256"]
             verdict = "IDENTICAL" if same else "CHANGED"

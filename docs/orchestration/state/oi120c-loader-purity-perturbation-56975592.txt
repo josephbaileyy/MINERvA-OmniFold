@@ -1,0 +1,138 @@
+=== OI-120(c): no-truth-leakage through the PRODUCTION loader, by perturbation ===
+npz        : /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz
+max_events : FULL inventory
+[legc] BASE (unperturbed): 8c88e15968f5c1962678f16ae1bb0646522fcf55bfa8412bfe067c59472e8bf5  hits=0 changed={}
+[legc] P0 CONTROL: reco_scalars scaled x1.01 -> event_reco MUST CHANGE: e665e9604dcf2d011ddf56382b3475d8cab9843f37068281f4b992cd97c01393  hits=1 changed={'reco_scalars': True}
+  [P0] expect=CHANGED    observed=CHANGED                            as predeclared
+[legc] P1 truth_scalars scaled x1.05: 8c88e15968f5c1962678f16ae1bb0646522fcf55bfa8412bfe067c59472e8bf5  hits=1 changed={'truth_scalars': True}
+  [P1] expect=IDENTICAL  observed=IDENTICAL                          as predeclared
+[legc] P2 truth_scalars rows permuted: 8c88e15968f5c1962678f16ae1bb0646522fcf55bfa8412bfe067c59472e8bf5  hits=1 changed={'truth_scalars': True}
+  [P2] expect=IDENTICAL  observed=IDENTICAL                          as predeclared
+[legc] P3 part_gen (truth cloud) scaled x1.05: 8c88e15968f5c1962678f16ae1bb0646522fcf55bfa8412bfe067c59472e8bf5  hits=1 changed={'part_gen': True}
+  [P3] expect=IDENTICAL  observed=IDENTICAL                          as predeclared
+[legc] P4 w_truth scaled x1.05: 8c88e15968f5c1962678f16ae1bb0646522fcf55bfa8412bfe067c59472e8bf5  hits=0 changed={}
+  [P4] expect=IDENTICAL  observed=VOID (perturbation did not perturb) *** NO ***
+
+=== LEAKAGE -- event_reco changed when only a truth array changed ===
+
+<<<RECEIPT_JSON>>>
+{
+ "SCOPE_LIMITS": [
+  "Tests PURITY of event_reco with respect to the perturbed truth arrays only. An arm the loader REFUSED tested nothing and is reported as refused, not as a pass.",
+  "Bit-identity is the criterion; no tolerance is involved or appropriate.",
+  "Says nothing about statements 1 and 3 of assert_no_truth_leakage, which have their own (real) power and are exercised elsewhere."
+ ],
+ "SMOKE_TEST": false,
+ "SPECIFIED_FORM_DECLINED": "The dispatched form -- run the production loader and call assert_no_truth_leakage on its output -- was NOT run. The loader already makes that exact call at :1247 on the object built at :1241, and its PURITY statement re-derives with the producing code (:487-490 vs :543-545), so it cannot fail. Running it again at full scale would have produced a green guaranteed before the job started.",
+ "VERDICT": "LEAKAGE -- event_reco changed when only a truth array changed",
+ "arms": {
+  "P0": {
+   "as_predeclared": true,
+   "desc": "CONTROL: reco_scalars scaled x1.01 -> event_reco MUST CHANGE",
+   "detail": {
+    "arrays_actually_changed": {
+     "reco_scalars": true
+    },
+    "dtype": "float32",
+    "ok": true,
+    "proxy_hits": 1,
+    "sha256": "e665e9604dcf2d011ddf56382b3475d8cab9843f37068281f4b992cd97c01393",
+    "shape": [
+     49152885,
+     13
+    ]
+   },
+   "expected": "CHANGED",
+   "observed": "CHANGED"
+  },
+  "P1": {
+   "as_predeclared": true,
+   "desc": "truth_scalars scaled x1.05",
+   "detail": {
+    "arrays_actually_changed": {
+     "truth_scalars": true
+    },
+    "dtype": "float32",
+    "ok": true,
+    "proxy_hits": 1,
+    "sha256": "8c88e15968f5c1962678f16ae1bb0646522fcf55bfa8412bfe067c59472e8bf5",
+    "shape": [
+     49152885,
+     13
+    ]
+   },
+   "expected": "IDENTICAL",
+   "observed": "IDENTICAL"
+  },
+  "P2": {
+   "as_predeclared": true,
+   "desc": "truth_scalars rows permuted",
+   "detail": {
+    "arrays_actually_changed": {
+     "truth_scalars": true
+    },
+    "dtype": "float32",
+    "ok": true,
+    "proxy_hits": 1,
+    "sha256": "8c88e15968f5c1962678f16ae1bb0646522fcf55bfa8412bfe067c59472e8bf5",
+    "shape": [
+     49152885,
+     13
+    ]
+   },
+   "expected": "IDENTICAL",
+   "observed": "IDENTICAL"
+  },
+  "P3": {
+   "as_predeclared": true,
+   "desc": "part_gen (truth cloud) scaled x1.05",
+   "detail": {
+    "arrays_actually_changed": {
+     "part_gen": true
+    },
+    "dtype": "float32",
+    "ok": true,
+    "proxy_hits": 1,
+    "sha256": "8c88e15968f5c1962678f16ae1bb0646522fcf55bfa8412bfe067c59472e8bf5",
+    "shape": [
+     49152885,
+     13
+    ]
+   },
+   "expected": "IDENTICAL",
+   "observed": "IDENTICAL"
+  },
+  "P4": {
+   "as_predeclared": false,
+   "desc": "w_truth scaled x1.05",
+   "detail": {
+    "arrays_actually_changed": {},
+    "dtype": "float32",
+    "ok": true,
+    "proxy_hits": 0,
+    "sha256": "8c88e15968f5c1962678f16ae1bb0646522fcf55bfa8412bfe067c59472e8bf5",
+    "shape": [
+     49152885,
+     13
+    ]
+   },
+   "expected": "IDENTICAL",
+   "observed": "VOID (perturbation did not perturb)"
+  }
+ },
+ "baseline": {
+  "arrays_actually_changed": {},
+  "dtype": "float32",
+  "ok": true,
+  "proxy_hits": 0,
+  "sha256": "8c88e15968f5c1962678f16ae1bb0646522fcf55bfa8412bfe067c59472e8bf5",
+  "shape": [
+   49152885,
+   13
+  ]
+ },
+ "max_events": null,
+ "npz": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+ "p0_control_fired": true,
+ "what": "OI-120(c): purity of event_reco tested by perturbation, production loader"
+}
