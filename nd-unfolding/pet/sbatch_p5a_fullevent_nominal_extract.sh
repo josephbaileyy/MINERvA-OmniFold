@@ -40,9 +40,20 @@
 # ~34% low cross section.  The annealed production arm sits at push 1.0840529523112135, i.e.
 # abs_dev 0.035609 against the frozen fold_forward_ratio_dev_max of 0.05
 # (state/annealed-nominal-complete-56563761.json).  That is inside tolerance rather than 34% out.
-# It is NOT a quotability claim: lane D established 2026-08-14 that the fold-forward deficit is
-# SHAPE-dependent (per-cell ratio 0.173 -> 1.420, 68x clear of the noise expectation), so the
-# "normalization divides out" argument is unavailable and how far VL100 moves is unrecomputed.
+#
+# WHAT THAT NUMBER STRUCTURALLY CANNOT EXPRESS -- read this before quoting it.  0.035609 is an
+# INTEGRATED SCALAR.  pet_diagnostic_quarantine.py:104-120 forms it as
+#   dev = |(fold_forward_sum_w_push_reco / fold_forward_sum_w_reco) / R - 1|
+# from two sums already taken over the WHOLE reco leg, so the shape information is integrated away
+# BEFORE the ratio exists.  A quantity of that construction cannot distinguish a uniform scale
+# offset from a shape distortion with the same integral -- which is why lane D had to decompose
+# per-event pieces to answer the question at all (D, 2026-08-14, f4267b4: the fold-forward deficit
+# is SHAPE-dependent, per-cell ratio 0.173 -> 1.420, relative sd 47% against a 0.69% noise
+# expectation, 68x clear, structure in p_parallel).  Consequences: the "normalization divides out of
+# unit-normalized spectra" argument is NOT available, how far VL100 moves is unrecomputed, and
+# THE ANNEALED ARM'S PER-CELL FOLD-FORWARD BEHAVIOUR HAS NOT BEEN MEASURED BY ANYONE.  So 0.035609
+# bounds the integral and says nothing about the grid.  This is not a label asking to be honoured --
+# it is what the arithmetic can and cannot support.
 #
 # USAGE
 #   bash sbatch_p5a_fullevent_nominal_extract.sh --check-only   # run G1..G5 and exit; no job, no GPU
@@ -222,6 +233,20 @@ doc = {
         "divides out of unit-normalized spectra' argument is NOT available and how far VL100 moves "
         "is unrecomputed"
     ],
+    "the_favourable_scalar_and_what_it_cannot_express": {
+        "value": "abs_dev 0.035609 against the frozen fold_forward_ratio_dev_max of 0.05",
+        "construction": "pet_diagnostic_quarantine.py:104-120 -- "
+                        "|(fold_forward_sum_w_push_reco / fold_forward_sum_w_reco)/R - 1|, from two "
+                        "sums already taken over the WHOLE reco leg",
+        "therefore": "the shape information is integrated away BEFORE the ratio exists, so this "
+                     "quantity cannot distinguish a uniform scale offset from a shape distortion "
+                     "with the same integral. It bounds the INTEGRAL and says nothing about the grid.",
+        "and_shape_dependence_is_measured_elsewhere": "lane D, 2026-08-14, f4267b4 -- the "
+            "fold-forward deficit IS shape-dependent: per-cell ratio 0.173 -> 1.420, relative sd 47% "
+            "against a 0.69% noise expectation, 68x clear, structure in p_parallel.",
+        "THE_GAP": "the ANNEALED arm's per-cell fold-forward behaviour has not been measured by "
+                   "anyone. 0.035609 does not close it and cannot.",
+    },
     "guards_that_passed_before_this_run": {
         "G1_arm_schema": "seed_policy.lr_policy.schedule == fit-time-anneal-after-iteration-0 "
                          "(the PRIMARY guard; the pre-anneal arm has no lr_policy key at all)",
