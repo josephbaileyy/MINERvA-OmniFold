@@ -1,0 +1,355 @@
+{
+ "VERDICT": "TWO RESULTS, AND THE FIRST IS NOT THE MARGIN. (1) VL100's own run does not exhibit the fold-forward deficit at all -- measured ratio 1.011418 against the nominal run's 0.736746 -- so the closure that certifies the annealed arm does not exercise the failure mode, and is SILENT about it rather than reassuring. (2) The arm still clears: under the only well-posed correction recovery moves from 0.512603276 to 0.511140 / 0.513984, margin 0.016557 at worst; under the adversarial field taken from the run where the deficit lives, to 0.515176 / 0.509074, and 2.8x the measured amplitude is needed to break the criterion.",
+ "VL100s_own_run_does_not_exercise_the_deficit": {
+  "measured_fold_forward_ratio_own_run": 1.0114175754623134,
+  "nominal_run_R": 1.1240802949941018,
+  "nominal_run_dev": 0.3445786271570904,
+  "nominal_run_recorded_ratio": 0.736746250130697,
+  "reading": "a validation that does not reproduce the fold-forward behaviour of the run producing the physics is SILENT about that failure mode, not reassuring about it. This is upstream of whether the margin clears.",
+  "receipt_chain_hole": "the closure recorded NO step1_class_ratio and NO fold_forward scalars -- not in NONQUOTABLE-DIAGNOSTIC.POWERED_CLOSURE_ANNEALED.slurm-56552326.json, not in PREFLIGHT.slurm-56552326.json, not in the 47/47 INDEPENDENT_VALIDATION.slurm-56562169.json. So NO dev can be formed for VL100's run from the record at all. The 1.011418 above is a measurement made by this session, not a recorded value. Filed as OI-125."
+ },
+ "WHAT_THIS_DOES_NOT_SAY": [
+  "It does not close OI-71. Every correction computable from disk is POST-HOC and multiplicative on h_unfolded. The fold-forward acts in iterations 2 and 3 of 3, so a defect that mis-delivered weight DURING training is baked into `push` itself and no reweighting of h_unfolded can probe it. Only a retrained closure answers that, and none was submitted.",
+  "It does not say the nominal run's 34% fold-forward deficit is benign or explained. That scalar discrepancy (ratio 0.736746250130697 vs R 1.1240802949941018, dev 0.3445786271570904) is untouched here. What is explained is its per-cell STRUCTURE, not its magnitude.",
+  "It says nothing about the three hygiene quotability grounds -- not examined here, and not by lane D either.",
+  "It does not say lane D's arithmetic is wrong. D's published numbers reproduce EXACTLY: rel_sd 0.47021238590619524 to the last digit, global ratio to 1.5e-13. The arithmetic is not in question; the target is.",
+  "The alignment control, the Pearson coefficients and the reproduction to 1.3e-10 are MEASUREMENTS MADE BY THIS SESSION and were not independently checked by the mediator, who verified only the arm error. They are shipped with their operands so they can be contradicted."
+ ],
+ "alignment_control": {
+  "max_relative_deviation_over_cells_with_mass": 5.809051470161228e-08,
+  "published": 0.5126032761517403,
+  "recovery_rebuilt_from_push_and_rows": 0.5126032762844603,
+  "residual_explained_by": "the loader rescales both weight legs in float32; per-element rounding does not fully cancel under unit normalization, giving ~1e-9..1e-8 relative. A WRONG pairing would move h_unfolded by of order its own bin values (1e-3), not 1e-10.",
+  "why": "`weights_push` is aligned to half B, whose global row ids are `dump_rows_b`. deterministic_halves returns SORTED index sets and mc_indices is sorted, so the pairing push[j] <-> dump_rows_b[j] is determined rather than guessed. If it is right, rebuilding the spectra from the artifact reproduces the published arrays."
+ },
+ "artifacts_read": [
+  {
+   "path": "nd-unfolding/pet/annealed_shape_validation/NONQUOTABLE-DIAGNOSTIC.POWERED_CLOSURE_ANNEALED.slurm-56552326.json",
+   "sha256": "f7f764594f384ea5dcb0f68809d6e1e185bb405992faaf87a013928daee9c015"
+  },
+  {
+   "path": "docs/orchestration/state/vl100-foldforward-shape-test-20260814.json",
+   "sha256": "bb1477776bf17d9c4144b6f263b443b1785f5666e34b8d9914231d6d588eec56"
+  },
+  {
+   "path": "docs/orchestration/state/vl100-own-run-foldforward-20260815.json",
+   "sha256": "3d6c4d88cb5674ad881b22075cf14b732a9c3f59f1aef1ed2030efb9281fd9b3"
+  },
+  {
+   "path": "docs/orchestration/state/vl100-nominal-residual-field-20260815.json",
+   "sha256": "06f81c8044aeb4a5ddacfa0396208794bef90ee730500be951b067260c243e37"
+  },
+  {
+   "note": "read remotely; hash not recomputed by this session",
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/annealed_shape_validation/NONQUOTABLE-DIAGNOSTIC.POWERED_CLOSURE_ANNEALED.slurm-56552326.npz",
+   "sha256_declared_by_producer": "1c5a8fef4683b2114a27272b6d7652129c9d3d22aed7dae68d54c0ddaa780202"
+  },
+  {
+   "note": "the run lane D decomposed; PRE-ANNEAL arm",
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz",
+   "sha256": "58f664cdef266d09cbae22a55698f6ff0059ecde4bef80681df9f907f2f51084"
+  },
+  {
+   "note": "read remotely; hash not recomputed by this session",
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+   "sha256_declared_by_closure": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625"
+  }
+ ],
+ "correction_family": {
+  "adopted_field": "q = ratio[c] / (h_unfolded[c]/h_prior[c]) -- the only content of ratio[c] that h_unfolded does not already carry",
+  "applied_as": "h_corr[c] proportional to h_unfolded[c] * (q[c]/<q>)**alpha, re-unit-normalized. alpha=0 is as published; alpha=-1 divides the measured field out; alpha=+1 applies it again. Cells where q is undefined get factor 1.0.",
+  "distortion_metric": "h_target-weighted relative sd of the applied multiplicative field",
+  "rejected_field": "q = ratio[c] directly -- rejected because it is a de-unfolding, demonstrated under the_structural_result above, not asserted",
+  "why_a_family": "the recorded fold-forward quantity has no per-cell reference (R is one scalar), so neither the sign nor the magnitude of a per-cell correction is determined by the record."
+ },
+ "measured_utc_date": "2026-08-15",
+ "produced_by": "peer Claude session (Opus 5), read-only. No job submitted, cancelled or scontrol'd; the cluster was touched by two read-only python reads over ssh. Authorized to land by the mediator (`personal-orchestrator`).",
+ "reproduction_of_the_published_number": {
+  "abs_difference": 0.0,
+  "adopted_criterion": 0.49458240000000003,
+  "criterion_operands": {
+   "acceptance_limited_ceiling": 0.618228,
+   "f": 0.8,
+   "product": 0.49458240000000003
+  },
+  "floor_L1_prior_untilted": 0.010747273613151719,
+  "gap_L1_prior_target": 0.23427036251295683,
+  "margin": 0.01802087615174025,
+  "method": "the producer's own definitions, closure_powered_truth_reweight.py:339-345, applied to the persisted 285-cell spectra",
+  "published_recovery": 0.5126032761517403,
+  "recovery_1_minus_residual_over_gap": 0.5126032761517403,
+  "residual_L1_unfolded_target": 0.11418260718355933,
+  "spectra_sums": {
+   "h_prior": 1.0,
+   "h_target": 0.9999999999999998,
+   "h_unfolded": 1.0,
+   "h_untilted": 1.0
+  }
+ },
+ "results": {
+  "adopted_field_NOMINAL_run_ADVERSARIAL": {
+   "criterion_crossings": {
+    "+1": {
+     "alpha_at_crossing": 2.7601739712648206,
+     "amplitude_multiple_of_measured": 2.7601739712648206,
+     "applied_distortion_at_crossing": 0.041519069503024475
+    },
+    "-1": {
+     "alpha_at_crossing": -4.593692309352724,
+     "amplitude_multiple_of_measured": 4.593692309352724,
+     "applied_distortion_at_crossing": 0.07563129252381819
+    }
+   },
+   "field_stats": {
+    "cells_given_factor_1_because_q_undefined": 29,
+    "h_target_mass_in_those_cells": 7.445806794728067e-05,
+    "h_target_mass_where_q_defined": 0.9999255419320526,
+    "n_cells_in_reduction": 207,
+    "n_cells_with_q": 256,
+    "q_max": 1.0196253375899818,
+    "q_mean": 0.9903634143150898,
+    "q_min": 0.9331088530120111,
+    "q_rel_sd": 0.014410233396475573
+   },
+   "note": "the nominal run is where the 34% deficit actually lives, and its residual field is 2.8x the amplitude of the closure's own -- so this is the adversarial application",
+   "scan": [
+    {
+     "alpha": -4.0,
+     "applied_distortion_rel_sd": 0.06526715199559811,
+     "clears": true,
+     "margin_vs_adopted": 0.008860307593767491,
+     "recovery": 0.5034427075937675
+    },
+    {
+     "alpha": -2.0,
+     "applied_distortion_rel_sd": 0.031715261015130475,
+     "clears": true,
+     "margin_vs_adopted": 0.02217450338635768,
+     "recovery": 0.5167569033863577
+    },
+    {
+     "alpha": -1.0,
+     "applied_distortion_rel_sd": 0.015651112074819867,
+     "clears": true,
+     "margin_vs_adopted": 0.020593502937267638,
+     "recovery": 0.5151759029372677
+    },
+    {
+     "alpha": -0.5,
+     "applied_distortion_rel_sd": 0.0077770555715293895,
+     "clears": true,
+     "margin_vs_adopted": 0.01932042168136966,
+     "recovery": 0.5139028216813697
+    },
+    {
+     "alpha": 0.0,
+     "applied_distortion_rel_sd": 0.0,
+     "clears": true,
+     "margin_vs_adopted": 0.01802087615174025,
+     "recovery": 0.5126032761517403
+    },
+    {
+     "alpha": 0.5,
+     "applied_distortion_rel_sd": 0.007686801117967043,
+     "clears": true,
+     "margin_vs_adopted": 0.016401954867030943,
+     "recovery": 0.510984354867031
+    },
+    {
+     "alpha": 1.0,
+     "applied_distortion_rel_sd": 0.015290579252211535,
+     "clears": true,
+     "margin_vs_adopted": 0.01449131362038708,
+     "recovery": 0.5090737136203871
+    },
+    {
+     "alpha": 2.0,
+     "applied_distortion_rel_sd": 0.03028100457948647,
+     "clears": true,
+     "margin_vs_adopted": 0.008425846996841069,
+     "recovery": 0.5030082469968411
+    },
+    {
+     "alpha": 4.0,
+     "applied_distortion_rel_sd": 0.059663671370427176,
+     "clears": false,
+     "margin_vs_adopted": -0.017049856553159992,
+     "recovery": 0.47753254344684004
+    }
+   ]
+  },
+  "adopted_field_VL100_own_run": {
+   "criterion_crossings": {
+    "+1": {
+     "alpha_at_crossing": 22.191150864228334,
+     "amplitude_multiple_of_measured": 22.191150864228334,
+     "applied_distortion_at_crossing": 0.12677070020005488
+    },
+    "-1": {
+     "alpha_at_crossing": -11.093465926120139,
+     "amplitude_multiple_of_measured": 11.093465926120139,
+     "applied_distortion_at_crossing": 0.08057155002832503
+    }
+   },
+   "field_stats": {
+    "cells_given_factor_1_because_q_undefined": 30,
+    "h_target_mass_in_those_cells": 0.00013049277019437218,
+    "h_target_mass_where_q_defined": 0.9998695072298056,
+    "n_cells_in_reduction": 206,
+    "n_cells_with_q": 255,
+    "q_max": 1.0595895965468127,
+    "q_mean": 1.0372110284194156,
+    "q_min": 0.993116027915189,
+    "q_rel_sd": 0.005229478048105698
+   },
+   "scan": [
+    {
+     "alpha": -4.0,
+     "applied_distortion_rel_sd": 0.02643181968014848,
+     "clears": true,
+     "margin_vs_adopted": 0.011923062762511816,
+     "recovery": 0.5065054627625118
+    },
+    {
+     "alpha": -2.0,
+     "applied_distortion_rel_sd": 0.012944353217138757,
+     "clears": true,
+     "margin_vs_adopted": 0.015023379773733636,
+     "recovery": 0.5096057797737337
+    },
+    {
+     "alpha": -1.0,
+     "applied_distortion_rel_sd": 0.0064103161309006385,
+     "clears": true,
+     "margin_vs_adopted": 0.016557497431016588,
+     "recovery": 0.5111398974310166
+    },
+    {
+     "alpha": -0.5,
+     "applied_distortion_rel_sd": 0.003190385632673701,
+     "clears": true,
+     "margin_vs_adopted": 0.017291042019683955,
+     "recovery": 0.511873442019684
+    },
+    {
+     "alpha": 0.0,
+     "applied_distortion_rel_sd": 0.0,
+     "clears": true,
+     "margin_vs_adopted": 0.01802087615174025,
+     "recovery": 0.5126032761517403
+    },
+    {
+     "alpha": 0.5,
+     "applied_distortion_rel_sd": 0.0031621509168274485,
+     "clears": true,
+     "margin_vs_adopted": 0.018727998679730795,
+     "recovery": 0.5133103986797308
+    },
+    {
+     "alpha": 1.0,
+     "applied_distortion_rel_sd": 0.006297322544441826,
+     "clears": true,
+     "margin_vs_adopted": 0.019401433707909976,
+     "recovery": 0.51398383370791
+    },
+    {
+     "alpha": 2.0,
+     "applied_distortion_rel_sd": 0.012491500461274575,
+     "clears": true,
+     "margin_vs_adopted": 0.020728307103702936,
+     "recovery": 0.515310707103703
+    },
+    {
+     "alpha": 4.0,
+     "applied_distortion_rel_sd": 0.024606170841289007,
+     "clears": true,
+     "margin_vs_adopted": 0.023031111524340397,
+     "recovery": 0.5176135115243404
+    }
+   ]
+  },
+  "margin_headroom": {
+   "margin": 0.01802087615174025,
+   "reading": "the margin is thin in absolute terms -- an adversarially-aligned shape distortion of a few percent consumes it -- but the MEASURED residual field is 0.52% (own run) to 1.44% (nominal run), a factor of 2.8 to 11 below the crossing."
+  }
+ },
+ "scope_errors_in_the_falsification": {
+  "arm": {
+   "found_by": "the mediator (`personal-orchestrator`); re-measured independently by this session",
+   "pre_anneal": {
+    "path": "nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz",
+    "seed_policy_has_lr_policy_key": false,
+    "seed_policy_keys": [
+     "batch_size",
+     "epochs",
+     "estimator_seed",
+     "niter",
+     "subsample_seed",
+     "train_events"
+    ],
+    "sha256": "58f664cdef266d09cbae22a55698f6ff0059ecde4bef80681df9f907f2f51084"
+   },
+   "promoted_annealed": {
+    "lr_policy_schedule": "fit-time-anneal-after-iteration-0",
+    "path": "nd-unfolding/pet/fullevent_nominal_annealed/pet_fullevent_nominal_weights.npz",
+    "seed_policy_has_lr_policy_key": true,
+    "sha256": "559a1020570929169a83e26dd9eea937bb34d6f4ecb230e332b792165ef6eb3e"
+   },
+   "reading": "VL100 is the ANNEALED arm's recovery, and D's probe line 46 reads the PRE-ANNEAL arm's weights. Two sibling directories hold identically-named files. This is the fifth instance of that trap.",
+   "the_remedy_already_exists": {
+    "mechanism": "assert seed_policy.lr_policy.schedule == 'fit-time-anneal-after-iteration-0'. The pre-anneal artifact has NO lr_policy key, so it fails loudly rather than comparing unequal values -- and it catches a wrong arm whatever the path.",
+    "site": "nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh:153-182 (guard G1)",
+    "timeline_CORRECTED": "the guard landed at d184f95, 2026-08-14 19:56:51 -0400; D's falsification is f4267b4, 19:50:07 -0400. The guard is 6m44s LATER, so it was NOT available to D -- two lanes hit the same trap inside ten minutes, one building the guard and one falling in. It WAS available to every reader afterward, including the propagation into three places."
+   }
+  },
+  "run": {
+   "D_decomposed": "nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz",
+   "D_n_pass_reco": 837671,
+   "VL100_comes_from": "annealed_shape_validation job 56552326",
+   "closure_n_step1_a": 837494,
+   "closure_n_step1_b": 836975,
+   "closure_pass_reco_b_measured_here": 837034,
+   "reading": "837671 matches no closure half, so the decomposition is of neither. The GRID is VL100's; the WEIGHTS are another run's."
+  }
+ },
+ "the_structural_result": {
+  "claim": "lane D's per-cell 'fold-forward ratio' is definitionally a per-cell weighted mean of `push` -- the reweighting function itself, binned. h_unfolded[c]/h_prior[c] is the same weighted mean over the other leg. They differ only by weight leg (w_reco vs w_truth) and population (pass_reco vs pass_truth), so they are ONE statement, not two.",
+  "consequence_dividing_it_out_is_a_de_unfolding": {
+   "L1_of_h_unfolded_to_h_prior": 0.13156017206003295,
+   "L1_of_that_result_to_h_prior": 0.0031347842759998214,
+   "fraction_of_the_unfoldings_own_distance_remaining": 0.023827760536595913,
+   "reading": "the operation returns the unfolded spectrum to within 2.4% of the prior, whose recovery is 0 by construction. That is a de-unfolding, not a correction.",
+   "recovery_at_alpha_minus_1_using_D_field_on_VL100s_own_run": -0.0008075909837852446,
+   "recovery_of_h_prior_by_construction": 0.0
+  },
+  "measured_on_VL100s_own_run": {
+   "pearson_r": 0.999874048038286,
+   "ratio_of_the_two": {
+    "max": 1.0595895965571909,
+    "mean": 1.037211028421594,
+    "min": 0.9931160278959322,
+    "rel_sd": 0.005229478050470782
+   },
+   "spearman_r": 0.9997803608259805
+  },
+  "measured_on_the_run_D_decomposed": {
+   "D_field_rel_sd": 0.47021238590619524,
+   "pearson_r": 0.9997339359499255,
+   "ratio_of_the_two": {
+    "max": 1.0196253375899818,
+    "mean": 0.9903634143150898,
+    "min": 0.9331088530120111,
+    "rel_sd": 0.014410233396475573
+   },
+   "spearman_r": 0.99937223322618,
+   "unfolding_correction_rel_sd": 0.4658785086788078
+  },
+  "the_two_runs_fields_are_nearly_uncorrelated": {
+   "pearson_r": 0.140996,
+   "reading": "a shared fold-forward DEFECT would make them agree; each being dominated by its own learned reweighting would not.",
+   "spearman_r": 0.194938
+  },
+  "why_the_68x_framing_persuaded": "the null it tests is 'push is flat across the grid', which is the negation of unfolding working at all. ANY real reweighting beats sampling noise by that factor, so the comparison cannot discriminate a deficit from the answer."
+ },
+ "what": "VL100 recomputed under a shape-corrected fold-forward, and whether the annealed arm still clears its adopted criterion."
+}
