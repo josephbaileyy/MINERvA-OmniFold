@@ -1,0 +1,31 @@
+members 14  cells 285
+
+--- per-cell n_replicas_reported over the 14 published members ---
+  n_reported ==  0 :  23 cells
+  n_reported ==  9 :   1 cells
+  n_reported == 13 :   2 cells
+  n_reported == 14 : 259 cells
+
+*** cells reported in SOME but not ALL members: 3 ***
+    reported in ALL 14   : 259
+    reported in NONE      : 23
+    => mask flicker OCCURS
+
+--- telemetry n_cells_populated per member (should equal reported count) ---
+  distinct values: [260, 261, 262]
+  matches per-member nonzero count: True
+
+--- union vs intersection, the two candidate domains ---
+  UNION        (reported in >=1) : 262 cells
+  INTERSECTION (reported in all) : 259 cells
+  cells the intersection would discard: 3
+  rank ceiling at N=50 is 49, so against EITHER domain:
+    union        D=262  D/49 = 5.35x  singular=True
+    intersection D=259  D/49 = 5.29x  singular=True
+
+--- the reported-cell count D was asked to measure, incl. the nominal ---
+  nominal (NONQUOTABLE-DIAGNOSTIC) reported cells : 262
+  nominal telemetry n_cells_populated             : 262
+  nominal n_cells_masked_zero_acceptance          : 4
+  nominal n_cells_no_denominator                  : 23
+  nominal reported set == every replica's?        : False

@@ -48,6 +48,38 @@
 #   exits 0 on a clean tree, move this to the run list as check 7. No other condition, no judgement
 #   call -- run the command.
 #
+# ADMITTED TO THE RUN LIST 2026-08-14: docs/orchestration/verify_receipt_artifacts.py, as check 7.
+# It was in NEITHER list -- the third instance of the exact silence this header's last paragraph is
+# about (verify_hash_bindings.py, then check_canonical_designation.py above, now this).
+#
+#   MEASURED BEFORE DECIDING, not recalled: `python3 docs/orchestration/verify_receipt_artifacts.py`
+#   EXIT 0 on a clean tree at 701b6c9 -- "203 receipts scanned at working tree, 3 deliverable-area
+#   artifact path(s), 0 missing", positive control fires. Green on a tree nobody edited to make it
+#   green, so it clears the admitting rule at line 11. Same shape as verify_hash_bindings.py: a
+#   whole-tree invariant, unscoped on purpose.
+#
+#   WHAT IT DOES NOT COVER, and this matters because it was wired in the same turn that repaired a
+#   defect it CANNOT SEE. Nine .out files named by state/gate5-cstat-spec-measurements-20260814.json
+#   were dropped by `.gitignore:13` (`*.out`) and `git add` no-opped silently; this check stayed green
+#   throughout, for two independent reasons, both measured:
+#     (a) `.out` is not in its EXT tuple (:39) -- the extension list is .npz/.npy/.h5/.hdf5/.root/
+#         .pkl/.parquet, so the paths are never even extracted; and
+#     (b) that receipt's `evidence` block keys are BARE FILENAMES ("centring_n50.out"), while
+#         named_artifacts() (:66) requires a path starting with docs/orchestration/state/. So even
+#         with .out added to EXT, this receipt's citations would still not be seen.
+#   Its own --historical output says the same thing from the other end: case 2 (849b70f^) "does NOT
+#   fire" because that needle is named by a METHOD-DECLARATION *.md, and scan() (:77,:83) reads only
+#   state/*.json. NOT FIXED HERE ON PURPOSE -- widening EXT or the path rule is a scope change to
+#   someone else's check, and the script's docstring (:19-23) argues the narrowness deliberately
+#   (349 of 351 named paths are cluster products). Filed, not silently patched.
+#
+#   So: this check is admitted because it is green and real, NOT because it closes the *.out hole. It
+#   does not. A future lane reading "7 checks passed" should not infer that a receipt's .out evidence
+#   is tracked -- verify that with `git ls-files`.
+#
+# (Numbering note: the canonical-designation block above says "move this to the run list as check 7";
+# that slot is now taken, so its unlock makes it check 8. Its decision is untouched -- OI-81.)
+#
 # THIS LIST IS THE ROOT CAUSE OF OI-64 AND IS NOW EXHAUSTIVE BY CONTRACT. Documenting exactly two
 # exclusions made "never considered" indistinguishable from "considered and rejected":
 # verify_hash_bindings.py was in neither list, so a Gate-4 code binding stayed broken ~18 h across four
@@ -82,7 +114,11 @@ run "OPEN_ITEMS OI ids"           python3 docs/orchestration/whose_row.py --chec
 # digest to make it green -- re-issue or retire the owning receipt (files -> files_at_issue,
 # sha256 -> sha256_at_issue, every digest preserved verbatim).
 run "receipt+shell hash bindings"  python3 docs/orchestration/verify_hash_bindings.py
+# Admitted 2026-08-14; rationale and MEASURED COVERAGE GAP in the header block above. Green at exit 0
+# does NOT mean every receipt-cited artifact is tracked -- it means no *deliverable-area* .npz/.h5/etc
+# path named by a state/*.json receipt is missing. .out/.err/.log are outside it.
+run "receipt artifact tracking"    python3 docs/orchestration/verify_receipt_artifacts.py
 
 rm -f /tmp/.hook.$$
-[ "$fail" -eq 0 ] && echo "pre-commit: 6 checks passed"
+[ "$fail" -eq 0 ] && echo "pre-commit: 7 checks passed"
 exit "$fail"
