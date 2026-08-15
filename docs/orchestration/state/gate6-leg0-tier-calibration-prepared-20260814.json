@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "receipt_kind": "pre-submission code+launcher preparation, NOT a result",
+  "campaign_node": "Gate 6 PET ML ensemble -- Leg 0 tier calibration",
+  "prepared_at_utc": "2026-08-15T03:02:00Z",
+  "prepared_against_head": "e7aea2c95d320a6aabd36e1c4d42b69938e8d3f8",
+  "plan": {
+    "path": "docs/orchestration/PLAN-20260813-gate6-cml-retry-design.md",
+    "sections": "1a (the tier crossing), 4 Leg 0 (:149-169), 6 item 2 (what Joseph is asked to decide)"
+  },
+  "submitted": false,
+  "job_id": null,
+  "why_not_submitted": "The lane brief requires the flag diff and the re-pin to be reported BEFORE any job is submitted, and the re-pin turned out not to be the free operation the PLAN described (see gate_pin_check.transitive_freeze_discovered). Submission also needs a decision that is not this lane's to make: which scratch checkout Leg 0 runs from, because the obvious one must not be mutated.",
+
+  "gate_pin_check": {
+    "question": "Is nd-unfolding/pet/step1_increment_trajectory.py in the Gate-4 code gate's pin list?",
+    "answer": "NO. The PLAN's claim at :158-160 is CORRECT as stated.",
+    "checked_file": "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260813.json",
+    "checked_file_bytes": 24098,
+    "derivation": [
+      "Parsed the receipt and walked EVERY leaf, not just the `files` block: 138 string leaves total.",
+      "`files` is a dict of 19 entries resolving to 19 DISTINCT paths (19 == 19, no duplicates hiding a 20th).",
+      "Zero of the 138 string leaves contain the substring 'step1_increment_trajectory'.",
+      "Aliasing ruled out on the raw bytes rather than the parsed tree: 'trajectory' and 'step1' both DO occur in the file (so a null result is not an artifact of a failed search), while 'increment' occurs zero times.",
+      "Enumerated all 31 path-like (.py/.sh) strings anywhere in the document; the 19 pinned paths plus prose mentions, none of them this file."
+    ],
+    "pinned_paths": [
+      "nd-unfolding/pet/annealed_estimator.py",
+      "nd-unfolding/pet/atomic_write.py",
+      "nd-unfolding/pet/closure_b1_rate_injection.py",
+      "nd-unfolding/pet/closure_fullevent_fps.py",
+      "nd-unfolding/pet/extract_fullevent_fps.py",
+      "nd-unfolding/pet/make_synthetic_g2_fullevent.py",
+      "nd-unfolding/pet/sbatch_pet_fullevent_nominal.sh",
+      "nd-unfolding/pet/stress_closure_muon.py",
+      "nd-unfolding/pet/train_fullevent_nominal.py",
+      "nd-unfolding/pet/validate_pet_nominal_gate4.py",
+      "nd-unfolding/products/pet/fullevent_fps/closure_fullevent_fps.json",
+      "nd-unfolding/tests/test_annealed_estimator.py",
+      "nd-unfolding/tests/test_b1_normalization_fix.py",
+      "nd-unfolding/tests/test_fullevent_extract.py",
+      "nd-unfolding/tests/test_fullevent_schema.py",
+      "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py",
+      "nd-unfolding/tests/test_pet_nominal_gate4_validator.py",
+      "omnifold_nn/omnifold/net.py",
+      "omnifold_nn/omnifold/omnifold.py"
+    ],
+    "gate4_reissue_required": false,
+
+    "transitive_freeze_discovered": {
+      "summary": "The Gate-4 answer is right and INSUFFICIENT. The PLAN says the change costs 'only a new launcher pin, because the trajectory launcher hardcodes its sha256'. Derived: THREE launchers hardcode it, and TWO of those three are themselves frozen by active run receipts, so an in-place re-pin is not available.",
+      "launchers_pinning_step1_increment_trajectory_py": [
+        {"path": "nd-unfolding/pet/sbatch_gate6_member_trajectory_array.sh", "line": 66,
+         "launcher_sha256": "13a598f285be4aff750b938882acba9ee87be566aaad6be95f25baa2d5dd86e8",
+         "launcher_frozen_by": "docs/orchestration/state/gate6-trajectory-array-active-56847059.json"},
+        {"path": "nd-unfolding/pet/sbatch_pet_fullevent_floor_replicate_array.sh", "line": 116,
+         "launcher_sha256": "b0308f245d0373215e21a7247fbf8e226adbefb03e6fdf1b5081a7ccd8363061",
+         "launcher_frozen_by": "docs/orchestration/state/gate6-floor-replication-active-56863958.json"},
+        {"path": "nd-unfolding/pet/sbatch_pet_fullevent_legx_2x2_array.sh", "line": 177,
+         "launcher_sha256": "059089867595b402f44dba79870dcd81c71d925e312d36620561f9b5b28504e3",
+         "launcher_frozen_by": null}
+      ],
+      "how_it_was_caught": "The in-place re-pin was made in all three, then `docs/orchestration/verify_hash_bindings.py` returned rc=1 with two MISMATCHes and `nd-unfolding/tests/test_hash_bindings.py::test_no_new_broken_hash_bindings` went red. It was NOT caught by reading; it was caught by running the verifier after the write.",
+      "why_the_edit_was_reverted_rather_than_the_receipts_updated": "verify_hash_bindings.py's own docstring: 'A stale pin is not repaired by editing the hash. The constant records what the gate ran against... Re-issue the owning gate and record the move.' Both receipts are submit-time provenance of runs that COMPLETED (56847059 and 56863958). Rewriting their hashes to accommodate a later code change would falsify what ran. Appending them to KNOWN_PREEXISTING was also rejected: that set is explicitly scoped to drift 'before 2026-07-28' and laundering new drift through it defeats the instrument.",
+      "resolution_taken": "No existing launcher is touched. All three keep pinning 48f8353d, which stays CORRECT because they read the code out of /pscratch/sd/j/josephrb/gate6-reconcile-56834281 and that tree is left byte-identical (verified there: 48f8353d, same turn). The new pin lives in a NEW launcher that runs from its own checkout.",
+      "residual_hazard_not_fixed_by_this_lane": "Syncing the flag-carrying step1_increment_trajectory.py into gate6-reconcile-56834281 would break the trajectory, floor-replicate and legx launchers simultaneously with 'code hash mismatch'. Leg 0 avoids this by construction (G6_LEG0_CODE_REPO is mandatory and the frozen trees are refused), but the hazard remains for anyone else who syncs. Filed as BEN-201."
+    }
+  },
+
+  "code_change": {
+    "file": "nd-unfolding/pet/step1_increment_trajectory.py",
+    "sha256_before": "48f8353d6c06f78823314ad81e2e1412fb9b81f3705257a406e8e6dad4518296",
+    "sha256_after": "ca2128aca2a7226720e0ce3c878f9937d129cc6a260f88750308de97cafeaf3c",
+    "control_added": "--checkpoint-tier {auto,best-epoch,final}",
+    "default": "auto",
+    "default_is_todays_behaviour": true,
+    "existing_callers_changed": 0,
+    "semantics": {
+      "auto": "prefer OmniFold_<name>_iter<i>_step<s>_final.weights.h5, fall back to the best-epoch file, die if neither exists. Byte-for-byte the pre-flag rule.",
+      "best-epoch": "force the best-epoch file for EVERY iteration and step; die if absent, never fall back.",
+      "final": "force the _final file for EVERY iteration and step; die if absent, never fall back. On the eight-checkpoint member inventory this cannot be satisfied at iterations 0 and 1, by design -- the mode exists so the auto fallback is not the only way to ask for _final."
+    },
+    "why_no_fallback_on_an_explicit_tier": "A silent downgrade would hand back the other tier's weights while the receipt recorded the requested one, so a best-vs-final contrast would compare a tier against itself and measure a gap of ZERO -- reading as 'no tier artifact', which is the exact conclusion this leg exists to test.",
+    "other_changes_all_additive": [
+      "resolve_checkpoint() lifted from a closure inside main() to module level, so the control is testable without the TensorFlow stack main() imports. No behaviour change; main()'s ckpt() now delegates.",
+      "trajectory rows gain checkpoint_tier_step2. push_dev_vs_R -- and therefore the Gate-6 metric -- is a STEP-2 quantity, and only the step-1 tier was being reported.",
+      "the GATE_FAILED payload gains R, niter, checkpoint_tier_requested, checkpoints, repro_rtol, gate_is_cross_tier and the two input paths, so |push_final/R - 1| stays derivable from a failed run instead of the run being lost (CONVENTION-receipt-ingredients, BEN-077).",
+      "payload gains checkpoint_tier_requested; the caveat string is tier-conditional so a tier-clean run does not carry the mixed-tier caveat."
+    ],
+    "not_changed": [
+      "REPRO_RTOL stays 0.02 in every mode. It was deliberately NOT relaxed for the cross-tier case: a threshold that means something different per mode is not a threshold.",
+      "the reproduction gate still fails closed in every mode."
+    ]
+  },
+
+  "new_launcher": {
+    "path": "nd-unfolding/pet/sbatch_gate6_leg0_tier_calibration_array.sh",
+    "pins_step1_increment_trajectory_py_at": "ca2128aca2a7226720e0ce3c878f9937d129cc6a260f88750308de97cafeaf3c",
+    "pin_set_identical_to_56847059_except_that_one_file": true,
+    "code_repo": "mandatory env G6_LEG0_CODE_REPO, no default; gate6-reconcile-56834281 and gate6traj-reconcile-56847059 are both refused by an explicit guard on the raw AND canonicalized path",
+    "tier": "best-epoch, hardcoded -- auto would reproduce 56847059 and measure nothing, final cannot be satisfied at iterations 0 and 1, so a parameter here would only be a way to run the wrong arm",
+    "output_namespace": "member_<N>/trajectory/STEP1_TRAJECTORY.slurm-<runid>.leg0-tier-best-epoch.json (tier in the FILENAME, so a Leg-0 receipt can never be mistaken by name for a committed 56847059 one)",
+    "reads": "the five committed member artifacts at their 56847059 hashes, and the hash-bound archived target 544b2f6a. No new artifact enters the ensemble.",
+    "writes_to_frozen_trees": "none. gate6traj-reconcile-56847059 is neither read nor written.",
+    "cost": "inference only, zero training. The five 56847059 tasks ran 00:13:44-00:14:00 each; walltime requested 01:00:00, array 1-5 in parallel."
+  },
+
+  "verification_run_this_turn": {
+    "pytest_nd-unfolding/tests/test_step1_trajectory_checkpoint_tier.py": "13 passed",
+    "pytest_nd-unfolding/tests/test_hash_bindings.py": "6 passed",
+    "verify_hash_bindings.py": "rc=0, ALL BINDINGS INTACT, 173 OK, 15 shell pins (floor 15), 162 receipt bindings (floor 140), 4 known pre-existing drift",
+    "bash -n on all four launchers": "OK",
+    "new launcher pin block vs the tree": "8/8 match, 0 mismatches",
+    "frozen-tree guard": "exercised directly, refuses both frozen paths, a trailing slash, and a symlink whose name is innocent but whose target is frozen",
+    "tier validator": "exercised for real on auto/best-epoch/final/bogus/empty",
+    "power proof": "test_the_guards_have_power reconstructs the pre-flag resolver and requires the no-fallback assertions to reject it, so the suite cannot pass vacuously (BEN-032/BEN-040 family)"
+  },
+
+  "baseline_this_will_be_compared_against": {
+    "source": "docs/orchestration/state/gate6-member-trajectories-result-56847059.json",
+    "metric": "absolute_deviation_from_one at iterations 0,1,2, which equals |push_dev_vs_R| identically (PLAN section 2, worst deviation 2.220e-16 across all 15 committed values)",
+    "tier_per_iteration_in_the_baseline": {"0": "best-epoch", "1": "best-epoch", "2": "final(BEN-043)"},
+    "ingredients_so_the_numbers_can_contradict_each_other": {
+      "1": {"dev": [0.5194819600196279, 0.12400097671928689, 0.01931026881870379], "step_0_to_1_tier_clean": -0.395480983300341, "step_1_to_2_crosses_tiers": -0.1046907079005831, "band_excess": -0.08068973118129621, "verdict": "PASS"},
+      "2": {"dev": [0.1418188042126045, 0.15249796168195373, 0.1014828481277632], "step_0_to_1_tier_clean": 0.01067915746934922, "step_1_to_2_crosses_tiers": -0.05101511355419053, "band_excess": 0.0014828481277631977, "verdict": "FAIL"},
+      "3": {"dev": [0.05647845006729013, 0.04155197108751185, 0.0426498628518126], "step_0_to_1_tier_clean": -0.01492647897977828, "step_1_to_2_crosses_tiers": 0.0010978917643007513, "band_excess": -0.0573501371481874, "verdict": "FAIL"},
+      "4": {"dev": [0.12520517569565048, 0.17415274838034767, 0.1802079805166057], "step_0_to_1_tier_clean": 0.04894757268469718, "step_1_to_2_crosses_tiers": 0.006055232136258026, "band_excess": 0.08020798051660569, "verdict": "FAIL"},
+      "5": {"dev": [0.2385588893210534, 0.22887105507462424, 0.2465231293324187], "step_0_to_1_tier_clean": -0.009687834246429161, "step_1_to_2_crosses_tiers": 0.01765207425779447, "band_excess": 0.1465231293324187, "verdict": "FAIL"}
+    },
+    "member_3_threshold_derived_not_relayed": 0.0010978917643007513,
+    "derivation_note": "0.001098 is a[2]-a[1] for member 3, computed here from the committed receipt's own absolute_deviation_from_one array. All five rows of the PLAN section-1a table reproduce from that receipt to the printed precision."
+  },
+
+  "decision_rule": {
+    "statement": "If the measured tier gap on this metric exceeds 0.0010978917643007513, member 3's monotonicity verdict is not evidence and the family has THREE real failures rather than four.",
+    "what_that_does_change": "the FAULT DESCRIPTION the Gate-6 retry has to explain, and nothing else",
+    "n": 5,
+    "caveat_on_the_gap_estimate": "Five members give five samples of the tier systematic, one per member. They are five different trained networks, so this estimates the systematic's typical SIZE across members, not a per-member correction; member 3's own sample is the only one that speaks directly to member 3's verdict."
+  },
+
+  "prohibitions_reaffirmed_and_unchanged_by_this_work": [
+    "Member 3 is NOT promoted, selected, or removed. The family still blocks on members 2, 4 and 5.",
+    "This changes the FAULT DESCRIPTION the retry must explain. Nothing else.",
+    "All five Gate-6 prohibitions at 19585b7 stay live and this clears none of them.",
+    "A changed retry was never in do_not_retry_unchanged's scope, so there is nothing here to lift.",
+    "No C_ML construction. No Leg X (held). No Leg F. No member selection. No central move. No Leg 2.",
+    "Gate 4's estimator-arm disposition remains an independent user decision and is untouched.",
+    "/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059 is frozen and was neither read nor written.",
+    "No scancel, no scontrol update, no resubmission. Jobs 56978466 and 56975592 belong to other lanes and were only READ via sacct."
+  ],
+
+  "cluster_state_read_this_turn": {
+    "read_at_utc": "2026-08-15T02:53:55Z",
+    "host": "login03 (saul.nersc.gov)",
+    "squeue_u_josephrb": [
+      {"job": "56585597", "name": "/usr/bin/pyt", "state": "PENDING", "reason": "BeginTime", "note": "scrontab supervision job, not this campaign"}
+    ],
+    "nothing_of_this_users_is_running_or_queued_that_pins_the_edited_file": true,
+    "sacct_last_12h": [
+      {"job": "56863958_5", "name": "g6_floor", "state": "COMPLETED", "end": "2026-08-14T09:02:08"},
+      {"job": "56943340", "name": "laned_legb", "state": "COMPLETED", "end": "2026-08-14T13:56:08"},
+      {"job": "56943826", "name": "laned_legc", "state": "CANCELLED by 112498", "end": "2026-08-14T15:25:20"},
+      {"job": "56975592", "name": "laned_legc", "state": "COMPLETED", "end": "2026-08-14T17:36:40"},
+      {"job": "56978466", "name": "p5a_ann_extract", "state": "FAILED", "end": "2026-08-14T17:39:53"},
+      {"job": "56585597", "name": "/usr/bin/python3.11", "state": "REQUEUED", "end": "2026-08-14T19:50:12"}
+    ],
+    "timestamp_frame": "all cluster times above are UTC; `date -u` and sacct were read in the same ssh invocation",
+    "frozen_code_repo_verified_unchanged": {
+      "path": "/pscratch/sd/j/josephrb/gate6-reconcile-56834281",
+      "step1_increment_trajectory_py_sha256": "48f8353d6c06f78823314ad81e2e1412fb9b81f3705257a406e8e6dad4518296",
+      "git_head": "4d96acf0f877d65cfe0fd81a343e0089c52ea0fb"
+    }
+  },
+
+  "what_the_mediator_must_decide_before_submission": [
+    "Whether Leg 0 may create a new scratch checkout for G6_LEG0_CODE_REPO. It cannot reuse gate6-reconcile-56834281 without breaking three launchers' pins, and it must not touch gate6traj-reconcile-56847059.",
+    "Whether the residual stale-pin hazard (BEN-201) is accepted as-is or whether the floor-replicate and legx launchers should be reissued with their owning receipts before Leg F / Leg X run."
+  ]
+}

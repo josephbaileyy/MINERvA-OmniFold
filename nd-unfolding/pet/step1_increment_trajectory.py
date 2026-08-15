@@ -73,6 +73,38 @@ for _p in (_HERE, os.path.dirname(_HERE)):
 REPRO_RTOL = 0.02
 
 
+CHECKPOINT_TIERS = ("auto", "best-epoch", "final")
+
+
+def resolve_checkpoint(weights_folder, multifold_name, it, step, tier):
+    """Pick the (path, provenance_tier) this iteration/step should be read from.
+
+    Module-level and dependency-free ON PURPOSE: this is the whole content of the
+    `--checkpoint-tier` control, and inside main() it sat behind a TensorFlow import that no
+    machine without a GPU stack can reach, so it could not be tested where it is edited.
+
+    `auto` is the historical behaviour, unchanged: prefer `_final`, fall back to best-epoch, and die
+    if neither exists. `best-epoch` and `final` force their tier for every iteration and step and
+    NEVER fall back -- a silent downgrade would make a tier comparison compare a tier against itself
+    and report the gap as zero, which is the failure mode this control exists to avoid.
+    """
+    if tier not in CHECKPOINT_TIERS:
+        raise SystemExit(f"[traj] unknown checkpoint tier {tier!r}, expected one of {CHECKPOINT_TIERS}")
+    fin = os.path.join(weights_folder, f"OmniFold_{multifold_name}_iter{it}_step{step}_final.weights.h5")
+    best = os.path.join(weights_folder, f"OmniFold_{multifold_name}_iter{it}_step{step}.weights.h5")
+    if tier == "auto":
+        if os.path.exists(fin):
+            return fin, "final(BEN-043)"
+        if not os.path.exists(best):
+            raise SystemExit(f"[traj] missing checkpoint {best} (fail closed)")
+        return best, "best-epoch"
+    want, realized = (fin, "final(BEN-043)") if tier == "final" else (best, "best-epoch")
+    if not os.path.exists(want):
+        raise SystemExit(f"[traj] --checkpoint-tier {tier} requires {want}, which is absent. "
+                         f"An explicit tier does not fall back (fail closed)")
+    return want, realized
+
+
 def jsonable(o):
     if isinstance(o, (np.floating,)):
         return float(o)
@@ -99,6 +131,19 @@ def main(argv=None):
     # A single shared value reproduces one step and silently mis-reproduces the other (BEN-072).
     ap.add_argument("--batch-size-step1", type=int, default=1000)
     ap.add_argument("--batch-size-step2", type=int, default=512)
+    # Checkpoint provenance tier. `auto` is the historical behaviour and the default, so no existing
+    # caller changes: prefer `_final` when it exists, fall back to best-epoch. The two explicit modes
+    # exist to MEASURE the best-vs-final gap on this script's own metric rather than importing
+    # BEN-043's fold-forward ratio for it -- see the PROVENANCE CAVEAT above. An explicit tier NEVER
+    # falls back: if the requested file is absent the run dies, because a silent downgrade would make
+    # a tier comparison compare the same tier against itself.
+    ap.add_argument("--checkpoint-tier", choices=CHECKPOINT_TIERS, default="auto",
+                    help="which checkpoint tier to read. auto (default) = today's behaviour, prefer "
+                         "_final and fall back to best-epoch; best-epoch / final = force that tier "
+                         "for EVERY iteration and step, failing closed if it is absent. On the "
+                         "eight-checkpoint member inventory (best-epoch for iters 0,1,2 x steps 1,2 "
+                         "plus _final for iter2 only), best-epoch changes iteration 2 and only "
+                         "iteration 2, and final cannot be satisfied at iterations 0 and 1.")
     a = ap.parse_args(argv)
 
     with np.load(a.weights, allow_pickle=True) as d:
@@ -128,6 +173,8 @@ def main(argv=None):
         raise SystemExit(f"[traj] checkpoint_semantics={sem!r} lacks the BEN-043 marker: this "
                          f"artifact's checkpoints are not the trained model (fail closed)")
     print(f"[traj] R = {R:.16f}  niter = {niter}  logit_cap = {cap}")
+    print(f"[traj] checkpoint_tier = {a.checkpoint_tier}"
+          f"{'' if a.checkpoint_tier == 'auto' else '  (EXPLICIT: no fallback)'}")
 
     ref = json.load(open(a.decomposition_receipt))
 
@@ -153,13 +200,7 @@ def main(argv=None):
     wf, name = contract["weights_folder"], contract["multifold_name"]
 
     def ckpt(it, step):
-        fin = os.path.join(wf, f"OmniFold_{name}_iter{it}_step{step}_final.weights.h5")
-        if os.path.exists(fin):
-            return fin, "final(BEN-043)"
-        p = os.path.join(wf, f"OmniFold_{name}_iter{it}_step{step}.weights.h5")
-        if not os.path.exists(p):
-            raise SystemExit(f"[traj] missing checkpoint {p} (fail closed)")
-        return p, "best-epoch"
+        return resolve_checkpoint(wf, name, it, step, a.checkpoint_tier)
 
     def build(step):
         if step == 1:
@@ -218,8 +259,20 @@ def main(argv=None):
         print(f"  {k:<12} receipt {float(want):.6f}  here {v:.6f}  rel {rel:.3e}  "
               f"{'OK' if rel <= REPRO_RTOL else 'MISMATCH'}")
     if not all(g["ok"] for g in gate.values()):
-        json.dump({"verdict": "GATE_FAILED", "gate": gate}, open(a.json, "w"),
-                  indent=2, default=jsonable)
+        # Ship the ingredients, not just the verdict (BEN-077 / CONVENTION-receipt-ingredients): with
+        # R, the tier and the per-checkpoint provenance here, the reader can derive the gate-block
+        # quantities -- including |push_final/R - 1|, which IS the Gate-6 metric at iteration
+        # niter-1 -- from a GATE_FAILED receipt instead of losing the run. Under an explicit
+        # non-auto tier a gate MISMATCH is an expected outcome, not necessarily a defect: it is the
+        # cross-tier difference itself. The threshold is deliberately NOT relaxed for that case --
+        # REPRO_RTOL keeps one meaning in every mode.
+        json.dump({"verdict": "GATE_FAILED", "gate": gate, "R": R, "niter": niter,
+                   "checkpoint_tier_requested": a.checkpoint_tier, "checkpoints": prov,
+                   "repro_rtol": REPRO_RTOL,
+                   "gate_is_cross_tier": a.checkpoint_tier != "auto",
+                   "weights": os.path.abspath(a.weights),
+                   "decomposition_receipt": os.path.abspath(a.decomposition_receipt)},
+                  open(a.json, "w"), indent=2, default=jsonable)
         raise SystemExit("[traj] reproduction gate FAILED -- refusing to print a trajectory")
     print("[traj] GATE PASSED\n")
 
@@ -272,6 +325,9 @@ def main(argv=None):
             "r1_cap_saturated_frac": (float(ww[np.abs(np.log(np.clip(v, 1e-300, None))) >= 0.999 * cap].sum()
                                             / ww.sum()) if cap else None),
             "checkpoint_tier_step1": prov[f"step1_iter{it}"]["provenance_tier"],
+            # push_dev_vs_R -- and therefore the Gate-6 metric -- is a STEP-2 quantity, so the
+            # step-2 tier is the load-bearing one for it and was not being reported at all.
+            "checkpoint_tier_step2": prov[f"step2_iter{it}"]["provenance_tier"],
         })
 
     print("=== STEP-1 INCREMENT TRAJECTORY ===")
@@ -324,9 +380,17 @@ def main(argv=None):
                "weights": os.path.abspath(a.weights),
                "decomposition_receipt": os.path.abspath(a.decomposition_receipt),
                "batch_size_step1": a.batch_size_step1, "batch_size_step2": a.batch_size_step2,
-               "caveat": ("iterations below niter-1 use BEST-epoch checkpoints; only iter{niter-1} "
-                          "has the BEN-043 _final weights. The ~1.3% best-vs-final gap cannot blur "
-                          "the 1.124-vs-0.65 discrimination this script turns on.")}
+               "checkpoint_tier_requested": a.checkpoint_tier,
+               "caveat": (("iterations below niter-1 use BEST-epoch checkpoints; only iter{niter-1} "
+                           "has the BEN-043 _final weights. The ~1.3% best-vs-final gap cannot blur "
+                           "the 1.124-vs-0.65 discrimination this script turns on.")
+                          if a.checkpoint_tier == "auto" else
+                          (f"--checkpoint-tier {a.checkpoint_tier} was requested, so EVERY iteration "
+                           f"and step was read from that tier with no fallback. The mixed-tier "
+                           f"caveat above does not apply to this run; per-checkpoint realized tiers "
+                           f"are in `checkpoints` and per-iteration ones in "
+                           f"trajectory[].checkpoint_tier_step{{1,2}}. This run is a TIER-CLEAN "
+                           f"reading and is comparable to an `auto` run only as a tier contrast."))}
     with open(a.json, "w") as fh:
         json.dump(payload, fh, indent=2, default=jsonable)
         fh.write("\n")

@@ -7747,3 +7747,43 @@ was edited** — the dispatch that authorized the regeneration also forbade hand
 file was the instruction. Two things left for whoever owns it: `blockers[2]`'s *"no retry"* needs the word
 **unchanged**, and **regenerate only from a clean tree** — the `Git:` line published `worktree entries: 4`
 from lane A's dirty tree against `1` committed, which is `BEN-183` waiting to happen.
+
+## 2026-08-14 ~23:00 EDT / 2026-08-15 03:0xZ — Gate 6 Leg 0 (tier calibration): code + launcher PREPARED, NOTHING SUBMITTED
+
+`--checkpoint-tier {auto,best-epoch,final}` added to `nd-unfolding/pet/step1_increment_trajectory.py`
+(`48f8353d` → `ca2128ac`), defaulting to `auto`, which is byte-for-byte the pre-flag rule — **zero existing
+callers change.** The tier resolver was lifted out of `main()` to module level so it is testable without the
+TensorFlow stack `main()` imports; `nd-unfolding/tests/test_step1_trajectory_checkpoint_tier.py` is 13 tests,
+including a power proof that reconstructs the pre-flag resolver and requires the no-fallback assertions to
+reject it. An explicit tier **never** falls back, because a silent downgrade would make a best-vs-final
+contrast compare a tier against itself and measure the gap as zero — the exact conclusion the leg tests.
+
+**The PLAN's Gate-4 claim is right and its launcher claim is wrong, and both were derived rather than
+relayed.** `step1_increment_trajectory.py` appears in none of the 138 string leaves of
+`p3f-pet-gate4-launch-code-gate-20260813.json` (19 distinct pinned paths) → **no Gate-4 re-issue.** But the
+sha is hardcoded in **three** launchers, not one, and **two of those launchers are hash-bound by active run
+receipts**, so the in-place re-pin the PLAN describes is not available: it was made in all three, and
+`verify_hash_bindings.py` returned rc=1 with two MISMATCHes plus a red `test_hash_bindings.py`. Reverted to
+byte-identical rather than "fixed" — that verifier's docstring forbids repairing a stale pin by editing the
+hash, and both receipts are submit-time provenance of COMPLETED runs. Filed `BEN-270`; residual hazard
+`OI-123`.
+
+**So the new pin lands in a NEW launcher**, `nd-unfolding/pet/sbatch_gate6_leg0_tier_calibration_array.sh`,
+which runs from a mandatory `G6_LEG0_CODE_REPO` and explicitly refuses both `gate6-reconcile-56834281` and
+the frozen `gate6traj-reconcile-56847059` (guard exercised against a trailing slash and against a
+symlink whose name is innocent but whose target is frozen). All three existing launchers are untouched and
+their pins remain correct against the scratch tree they actually read, verified still `48f8353d` there.
+
+**NOT SUBMITTED, and the report precedes the submission by instruction.** Nothing of this user's is running
+or queued that pins the edited file — `squeue -u josephrb` at 2026-08-15T02:53:55Z shows only `56585597`
+(scrontab, PENDING/BeginTime). Jobs `56978466` (FAILED 17:39:53) and `56975592` (COMPLETED 17:36:40) belong
+to other lanes and were read via `sacct` only; no `scancel`, no `scontrol update`, no resubmission.
+
+**What Leg 0 does NOT do, restated because it is a constraint:** member 3 is not promoted, selected or
+removed; the family still blocks on 2, 4 and 5; no `C_ML`, no Leg F, no Leg X, no member selection, no
+central move. All five Gate-6 prohibitions at `19585b7` stay live and this clears none of them. The only
+thing it can change is the **fault description** the retry must explain — three real failures or four.
+Threshold `0.0010978917643007513` re-derived here from the committed receipt's own
+`absolute_deviation_from_one` array, not taken from the brief; all five rows of the PLAN's section-1a table
+reproduce from that receipt. Products summary:
+`docs/orchestration/state/gate6-leg0-tier-calibration-prepared-20260814.json`.

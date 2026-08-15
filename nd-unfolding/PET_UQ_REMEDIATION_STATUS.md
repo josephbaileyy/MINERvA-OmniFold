@@ -11,6 +11,16 @@ schema and joint-UQ definition are in
 `pet/FULL_EVENT_FEATURE_CONTRACT.md`; the packet/commit contract is in
 `../docs/PUBLICATION_COMPLETION_RUNBOOK.md`.
 
+## STATUS 2026-08-14 — Gate 6 Leg 0 is BUILT and UNSUBMITTED; the tier gap is still unmeasured
+
+`--checkpoint-tier {auto,best-epoch,final}` is on `pet/step1_increment_trajectory.py` (default `auto` =
+prior behaviour, zero callers changed) and the new pin is in `pet/sbatch_gate6_leg0_tier_calibration_array.sh`,
+which needs a `G6_LEG0_CODE_REPO` checkout that is **not** `gate6-reconcile-56834281`. **No job submitted; no
+Gate-6 prohibition cleared; member 3 not promoted, selected or removed; the family still blocks on 2, 4 and
+5.** The PLAN's "only a new launcher pin" is wrong — three launchers pin that file and two are receipt-frozen
+(`BEN-270`), leaving a sync-time landmine (`OI-123`). Preparation receipt:
+[`gate6-leg0-tier-calibration-prepared-20260814.json`](../docs/orchestration/state/gate6-leg0-tier-calibration-prepared-20260814.json).
+
 ## STATUS 2026-08-11 — the Branch C iteration-dynamics defect does NOT survive the LR anneal
 
 Job `56691812` (predeclared `831043d`, no training, 21:45): the annealed nominal `56563761` is
