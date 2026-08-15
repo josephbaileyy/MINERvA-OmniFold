@@ -433,7 +433,7 @@
         "dtype": "int64",
         "shape": "scalar",
         "must_equal": 262,
-        "note": "from the mask, NEVER from diag -- CSTAT-D0e"
+        "note": "from the mask, NEVER from diag -- CSTAT-D0e. 262 is the UNION and is unchanged at 50/50; the intersection moved 259 -> 257, which is why the union is the declared domain."
       },
       "layout_fingerprint": {
         "dtype": "str",
@@ -613,5 +613,58 @@
     "the_receipt_MUST_state": "The statistical component is estimated from 50 coherent replicas, giving a fractional uncertainty on the estimated standard deviation of 1/sqrt(2(N-1)) = 10.1%, not the 7.1% that PREDECLARATION-20260812-fullevent-cstat-100-replicas.md targeted at N=100.",
     "not_optional": "the earlier N=100 predeclaration demands it in exchange at :52-54. Stating the shortfall is the obligation the downward revision was accepted under; dropping it silently would leave the inventory reduced and the justifying disclosure absent, at which point the walk-back objection becomes correct.",
     "independent_of_the_retirement": "whether the earlier predeclaration is formally marked SUPERSEDED is OI-122 and is assigned to Joseph, NOT to a lane. The disclosure does not wait on it: it is additive and true either way, and publishing the number WITHOUT it is the only ordering that would be wrong."
+  },
+  "measurements_at_50of50": {
+    "STATUS": "PRECONDITION 3 MET 2026-08-14. These supersede measurements_provisional_at_N14, which is retained for the stability comparison and must not be read as current.",
+    "n_members_measured": 50,
+    "all_members_present_with_markers": true,
+    "edges_bit_identical_across_all_50": true,
+    "replica_index_0_to_49_each_once": true,
+    "seed_policy_holds_50_of_50": true,
+    "n_cells": 285,
+    "union_cells": 262,
+    "intersection_cells": 257,
+    "never_reported_cells": 23,
+    "never_reported_index_set_identical_to_N14": true,
+    "flickering_cells": 5,
+    "flickering_cells_flat_with_depth": {
+      "209": 47,
+      "254": 44,
+      "255": 24,
+      "256": 49,
+      "281": 49
+    },
+    "matrix_rank": 49,
+    "matrix_rank_equals_N_minus_1_exactly": true,
+    "trace_mean_centred": 2.240936e-76,
+    "trace_nominal_centred": 1.039761e-75,
+    "trace_ratio": 4.64,
+    "offset_term_N_over_N_minus_1_times_sq_norm": 8.156678e-76,
+    "offset_term_equals_trace_difference_exactly": true,
+    "replica_mean_above_nonquotable_nominal_percent": 8.524,
+    "total_sigma_mean": 1.829166e-37,
+    "total_sigma_sd_ddof1": 9.451872e-39,
+    "total_sigma_relative_sd_percent": 5.167,
+    "total_sigma_max_minus_min_over_mean_percent": 33.016,
+    "total_sigma_median_abs_dev_over_mean_percent": 2.657,
+    "per_cell_relative_sd_median": 0.1921,
+    "per_cell_relative_sd_max": 1.0669,
+    "telemetry_n_cells_populated_per_member": [
+      260,
+      261,
+      262
+    ],
+    "telemetry_n_cells_masked_zero_acceptance_per_member": [
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "WHAT_CHANGED_AND_WHY_IT_MATTERS": {
+      "intersection_259_to_257": "CSTAT-D3a's argument became a measurement -- the intersection's deletion set IS N-dependent. Anyone who adopted the intersection at N=18 would now hold a 259-cell object where the family supports 257, with no error raised.",
+      "BEN_236_collision_is_GONE": "the 259/259 set collision between the training-mask UNION and the extraction INTERSECTION was an N-DEPENDENT COINCIDENCE. At 50/50 the extraction intersection is 257, so the counts no longer match. The lesson is STRENGTHENED: a count that matched at N=18 stopped matching at N=50, so anyone who had equated the two sets would now hold a silently different domain.",
+      "relative_sd_4.478_to_5.167": "OI-94's decomposition shifts -- gap 90.8x -> 104.8x, floor share 18.35% -> 13.78%, residual share 81.65% -> 86.22%. The floor is unchanged, so all movement is in the family term and the unexplained residual GREW with members."
+    }
   }
 }

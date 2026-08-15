@@ -75,7 +75,30 @@ Every quantity below was measured from the published replica artifacts on 2026-0
 receipt is
 [`state/gate5-cstat-spec-measurements-20260814.json`](state/gate5-cstat-spec-measurements-20260814.json).
 
-**Numbers marked `[N=14]` are provisional and MUST be re-measured at 50/50 before publication.**
+> **RE-MEASURED AT 50/50 ON 2026-08-14 — precondition 3 is MET.** All 50 members present with
+> markers, edges bit-identical across all 50, `replica_index` 0…49 each exactly once, seed policy
+> holding 50/50. **Every decision in this spec survives.** Two families of number moved and both are
+> propagated below rather than left at their `[N=14]` values:
+>
+> | | `[N=14]` | **`[N=50]`** | consequence |
+> |---|---|---|---|
+> | dimension `D` | 285 | **285** | unchanged |
+> | never-reported | 23 cells | **23, identical index set** | unchanged |
+> | union | 262 | **262** | unchanged |
+> | **intersection** | 259 | **257** | `CSTAT-D3a` vindicated — see below |
+> | **flickering cells** | 3 | **5** — flat `209 (47/50)`, `254 (44/50)`, `255 (24/50)`, `256 (49/50)`, `281 (49/50)` | deeper and wider |
+> | `matrix_rank` | 13 = N−1 | **49 = N−1 exactly** | ceiling binds tightly |
+> | relative sd of total | 4.478 % | **5.167 %** | `OI-94` decomposition shifts |
+> | centring trace ratio | 6.013× | **4.640×** | decision unchanged, still a bias term exactly |
+> | replica mean vs nominal | +7.562 % | **+8.524 %** | — |
+>
+> **The intersection shrinking 259 → 257 is the single most useful result of the re-measurement**,
+> because it is `CSTAT-D3a`'s argument happening: *"the intersection silently deletes cells and its
+> deletion set depends on `N`"*. It did. Anyone who had adopted the intersection at `N=18` would now
+> hold a 259-cell object where the family supports 257, with no error raised.
+
+**Numbers below marked `[N=14]` were superseded by the 50/50 re-measurement above; the `[N=50]` values
+govern.**
 
 **What the 14 → 18 re-check bought, since "provisional" is worth nothing without a stability test.**
 Unchanged: the grid (285), the union (262), the never-reported set (23 cells, same indices), the
@@ -284,11 +307,17 @@ either number now and being wrong in a way that only surfaces at assembly.
 **The census on the adopted `262` domain is exact and the builder MUST reproduce it:**
 
 ```
-259  reported in every member
-  3  flickering  (flat 209, 254, 255)          <-- CSTAT-D3
+257  reported in every one of the 50 members
+  5  flickering: 209 (47/50), 254 (44/50), 255 (24/50), 256 (49/50), 281 (49/50)   <-- CSTAT-D3
 ---
-262   = n_reported for this artifact
+262   = n_reported for this artifact  (unchanged from [N=14]; the SPLIT moved, the union did not)
 ```
+
+**Measured at 50/50.** The deepest flicker is cell **255 at 24 of 50** — reported in under half the
+family, where the worst at `[N=14]` was 9 of 14. Two cells joined the set (`256`, `281`), each failing
+in exactly one member. Note `281` is one of the three cells `BEN-236` identified as present in the
+extraction union but absent from the training-mask union, so it was already the kind of cell that sits
+at the edge of a reporting domain.
 
 and on the full grid `285 = 262 reported + 23 never-reported`, the 23 listed by index in the zero-cells
 receipt. Had `266` been adopted the census would read `259 + 3 + 4 = 266`; it is not.
@@ -422,16 +451,19 @@ Two further reasons, independently reached before that precedent was found:
 1. **Measured consequence.** Centring on the only 285-cell nominal-like artifact that exists inflates
    the trace by **6.0×** `[N=14]`:
 
-   | | trace |
-   |---|---|
-   | mean-centred, 1/(N−1) | `1.848970e-76` |
-   | nominal-centred, 1/(N−1) | `1.111802e-75` |
-   | ratio | **6.013×** |
+   | | trace `[N=14]` | trace **`[N=50]`** |
+   |---|---|---|
+   | mean-centred, 1/(N−1) | `1.848970e-76` | **`2.240936e-76`** |
+   | nominal-centred, 1/(N−1) | `1.111802e-75` | **`1.039761e-75`** |
+   | ratio | 6.013× | **4.640×** |
 
-   The excess is **exactly** the offset term `N/(N-1)·‖mean − nominal‖²` = `9.269051e-76`, which equals
-   `trace_nom − trace_mean` to all printed digits. That offset is a **bias**, not a statistical
-   fluctuation: the replica mean sits **+7.56%** above that nominal in total cross section. Calling it
-   variance would put a systematic shift inside the statistical component.
+   The excess is **exactly** the offset term `N/(N-1)·‖mean − nominal‖²` — `9.269051e-76` at `[N=14]`
+   and **`8.156678e-76`** at `[N=50]`, each equal to `trace_nom − trace_mean` to all printed digits.
+   **That the identity holds exactly at both member counts is the point**: the inflation is a **bias**
+   and not a statistical fluctuation, and the replica mean sits **+8.52%** above that nominal at 50/50
+   (`+7.56%` at 14). Calling it variance would put a systematic shift inside the statistical component.
+   The ratio fell from 6.0× to 4.6× only because the mean-centred trace grew as members accumulated;
+   **the decision is unchanged and the argument for it is stronger, not weaker.**
 
 2. **The nominal alternative does not exist in quotable form.** The only 285-cell nominal artifact on
    disk is
@@ -491,10 +523,13 @@ protection**, which is why `CSTAT-D3b` and `CSTAT-D3d` are requirements rather t
 - **`CSTAT-D3a` — THE RULE IS UNION, NOT INTERSECTION**, on the `262` domain of `CSTAT-D0b`. The union —
   every cell reported in **≥ 1** member — is used because **the intersection silently deletes cells and its
   deletion set depends on `N`**, so the published dimension would drift with the member count, which is
-  indefensible in a technote: it would drop 3 cells at `N=18` and an unknown number at `N=50`, so the same
-  analysis would report a different dimension for no physical reason. **Union keeps the dimension a
-  property of the grid and pushes the difference into a per-cell caveat, which is where it can be read.**
-  The 3 flickering cells are inside the 262 and are flagged, not removed — `CSTAT-D3c`.
+  indefensible in a technote. **This was an ARGUMENT at `[N=14]` and is now a MEASUREMENT: the
+  intersection dropped 3 cells at `N=18` and 5 at `N=50` — 262, then 259, then 257 — while the union
+  stayed 262 throughout.** So the same analysis really would have reported a different dimension for no
+  physical reason, and anyone who adopted the intersection at `N=18` would now hold a 259-cell object
+  where the family supports 257, **with no error raised**. **Union keeps the dimension a property of the
+  grid and pushes the difference into a per-cell caveat, which is where it can be read.** The 5
+  flickering cells are inside the 262 and are flagged, not removed — `CSTAT-D3c`.
 - **`CSTAT-D3b` — PUBLISH per-cell `n_replicas_reported`**, an integer array of length `D`, in the
   output contract. Cheap now, expensive to retrofit; without it nobody downstream can distinguish a
   genuinely quiet cell from a flickering one. D asked for this and it is adopted verbatim.
@@ -751,14 +786,19 @@ of the total equals that of the numerator `T_d = Σ_j w_truth[j]·push_d[j]`, an
 bit-identical `mc_indices` is already in the artifacts. **I re-derived every figure independently and they
 reproduce to rounding:**
 
-| term | spread | vs Poisson | share of family VARIANCE |
-|---|---|---|---|
-| family (across replicas) | **4.478 %** | 90.8× | 100 % |
-| process non-determinism floor (`VL130`) | **1.918 %** | 38.9× | **18.35 %** |
-| quadrature residual | **4.046 %** | 82.1 % → 82.1× | **81.65 %** |
-| Poisson, `n_data = 4,116,128` | 0.0493 % | 1× | — |
+| term | spread `[N=14]` | spread **`[N=50]`** | **`[N=50]`** vs Poisson | **`[N=50]`** share of family VARIANCE |
+|---|---|---|---|---|
+| family (across replicas) | 4.478 % | **5.167 %** | **104.8×** | 100 % |
+| process non-determinism floor (`VL130`) | 1.918 % | **1.918 %** | 38.9× | **13.78 %** |
+| quadrature residual | 4.046 % | **4.798 %** | **97.3×** | **86.22 %** |
+| Poisson, `n_data = 4,116,128` | 0.0493 % | 0.0493 % | 1× | — |
 
-Shares sum to **100.00 %**. Negative control holds: `cap_saturation_frac = 0.0` on every draw, so this is
+Shares sum to **100.00 %** at both member counts. **Re-measured at 50/50: the family spread GREW from
+4.478% to 5.167%, so the gap widened from 90.8× to 104.8× and the floor's share of the variance FELL
+from 18.35% to 13.78%.** The floor itself is unchanged — it is `VL130`, measured on the nominal at
+`n=4` — so the entire movement is in the family term, and **the unexplained residual grew to 86.22% of
+the variance.** Whatever the residual is, more members made it larger relative to the one component
+that has been measured, which is the opposite of what an artefact of small `N` would do. Negative control holds: `cap_saturation_frac = 0.0` on every draw, so this is
 not a logit-clipping artefact, and the mechanism is directly visible in per-draw `mean(push)` —
 `1.0776 / 1.0913 / 1.0472 / 1.0825`.
 
@@ -1019,7 +1059,7 @@ A builder that does any of these has exceeded the spec:
 |---|---|---|
 | 1 | extraction array `56936015` terminal at 50/50 | **MET** — 50 of 50 products, 50 `sacct` COMPLETED, queue empty; last task `_49` ended 2026-08-14T07:24:12-0700 |
 | 2 | family validator `56936016` reports `GATE5_EXTRACTION_FAMILY_COMPLETE_PASS`, exactly 50/50 | **MET** — COMPLETED exit `0:0`, verdict `{"declared": 50, "passing": 50, "verdict": "GATE5_EXTRACTION_FAMILY_COMPLETE_PASS"}`. It started 07:30:39 PDT, **six minutes after** the array's last task ended, so `afterany` released correctly on a complete family |
-| 3 | `[N=14]` numbers re-measured at 50/50 | **NOT MET** — structure stable over 14 → 18 (§0) |
+| 3 | `[N=14]` numbers re-measured at 50/50 | **MET 2026-08-14** — all 50 members. Every decision holds; two numbers moved and are propagated (§0) |
 | 4 | ~~`CSTAT-O1` rank treatment~~ | **CLOSED, never open** — dispositioned pre-launch (§7) |
 | 5 | ~~`CSTAT-O2` naming settled~~ | **CLOSED** — `C_stat` is correctly named; the premise was refuted (§8). `CSTAT-O2a` is still worth running, now to measure the non-determinism floor, and blocks nothing. |
 | 6 | ~~common mask confirmed against `C_syst`~~ | **WITHDRAWN** — the assembler that check belongs to is 5D and cannot consume this object (`CSTAT-D0b`). Superseded by `CSTAT-O3`, which blocks assembly, not this build. |

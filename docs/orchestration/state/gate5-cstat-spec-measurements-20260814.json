@@ -276,14 +276,14 @@
   "authorization": "OI-121; Joseph's 'go ahead' relayed by personal-orchestrator 2026-08-14. The authorization is for the SPEC. C does not write the covariance code.",
   "code_and_document_identity": {
     "SPEC (markdown)": {
-      "bytes": 74269,
+      "bytes": 77774,
       "path": "docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md",
-      "sha256": "24755f3058fa7899dd21f022a042516601626c8bafaf05a49b72bbe42bbbbcee"
+      "sha256": "4fed4e2b7cd9444dcdec3a728cfdb9cc9088a10866efc965202592e1c37eaa8d"
     },
     "machine contract": {
-      "bytes": 42169,
+      "bytes": 44899,
       "path": "nd-unfolding/pet/gate5_cstat_contract.json",
-      "sha256": "aa548a9feec3f21c388cb12c2f8ee4557b674ab5939cd6a507347104e486bc1a"
+      "sha256": "ef5fe3629335aa7858af98ee6cb9c0be62e44de07db1a319761caea7475ba75f"
     }
   },
   "evidence": {
@@ -295,6 +295,10 @@
       "bytes": 2698,
       "sha256": "5d14c557ef87418e9e51768bd07712ca391a39c4c15910f738f4c7d39d27c6d8"
     },
+    "centring_n50.out": {
+      "bytes": 797,
+      "sha256": "eb87a6447ddbedbcc292398b8bd9e5f17b6fb6c692cd14be94e31d775f28dc6c"
+    },
     "flicker.out": {
       "bytes": 1216,
       "sha256": "d573af6a5962d730e7339a096cb7995f2280eeb8c332bbd44789f20dfd0fd814"
@@ -302,6 +306,10 @@
     "flicker.py": {
       "bytes": 3192,
       "sha256": "995c21aacc8e1a49fe09ab724eef7bd3568e50fd7b0495823caafd68865267d2"
+    },
+    "flicker_n50.out": {
+      "bytes": 1278,
+      "sha256": "d39ac1e223dc30785617e5ba86b5fbce84e84b9edd76d043679b923cafbcde98"
     },
     "measure_bins.out": {
       "bytes": 3625,
@@ -319,6 +327,10 @@
       "bytes": 4121,
       "sha256": "a09bc1867a78f7bc651f4db1cedffba4eee906270e66128fa181d49a5a423b0c"
     },
+    "measure_family_n50.out": {
+      "bytes": 1854,
+      "sha256": "d2a019cab4c657d6ee06654bea0e152e081480d3ac494a141ad6e71970bd1dac"
+    },
     "p5a_g1_guard_extracted_for_controls.py": {
       "bytes": 1821,
       "sha256": "be4ee16cc55877c29e4b66425364b51ffc548efe3606320ee034d1c3e87ef038"
@@ -330,6 +342,10 @@
     "spread_and_nominal.py": {
       "bytes": 2714,
       "sha256": "24821bca501de4e885cd4043c3cab4638817d217737ee2ab73f6bd337f147e33"
+    },
+    "spread_and_nominal_n50.out": {
+      "bytes": 5869,
+      "sha256": "e3969cdcb6e282cc204425604d986ebc6653f1d8dfb5ffe638fea0d7083bd882"
     },
     "zero_cells.py": {
       "bytes": 4028,
