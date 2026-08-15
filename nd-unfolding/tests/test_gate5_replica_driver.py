@@ -64,12 +64,17 @@ def target_receipt(tmp_path, seed=50000, index=0):
     return source, target, receipt_path, payload
 
 
-def test_replica_target_receipt_is_seed_and_hash_bound(tmp_path):
+def test_replica_target_receipt_is_seed_and_hash_bound(tmp_path, monkeypatch):
     source, target, receipt_path, _ = target_receipt(tmp_path)
+    # OI-58 hop 1 / BEN-326: the source digest is now MEASURED and must also equal the
+    # frozen constant the submit controller verified against its hardcoded :14 digest.
+    monkeypatch.setenv("GATE5_EXPECTED_INPUT_SHA", replica.sha256_file(source))
     rec = replica.read_replica_target_receipt(
         str(target), str(receipt_path), str(source), 50000, 0
     )
     assert rec["_verified_target_sha256"] == replica.sha256_file(target)
+    # the stamped field is a measurement of the FILE, not a copy of the receipt's claim
+    assert rec["_verified_input_sha256"] == replica.sha256_file(source)
     with pytest.raises((SystemExit, ValueError), match="seed"):
         replica.read_replica_target_receipt(
             str(target), str(receipt_path), str(source), 50001, 0
@@ -183,3 +188,54 @@ def test_n50_launchers_are_two_stage_collision_isolated_and_task_correlated():
     assert "replicas/${REPLICA}" in train
     assert "--allow-overwrite" not in target + train + submit
     assert "scancel \"$TARGET_JOB\"" in submit  # fail closed if stage-2 submit fails
+
+
+def test_source_digest_is_measured_not_copied_from_the_receipt(tmp_path, monkeypatch):
+    """OI-58 hop 1 / BEN-326, power-tested in BOTH directions.
+
+    Before the fix, `_verified_input_sha256` was `source["sha256"]` copied straight out
+    of the target receipt, so a source file whose CONTENT disagreed with the receipt
+    passed as long as its path and size matched -- and `train_fullevent_nominal.py:642`
+    stamped that copy into the artifact under a comment claiming it was verified.
+
+    Each case below fails if the copy is restored, which is asserted rather than assumed
+    in the last one: a guard nobody has watched fail is not known to work.
+    """
+    source, target, receipt_path, payload = target_receipt(tmp_path)
+    good = replica.sha256_file(source)
+
+    # 1. THE ENV BINDING IS MANDATORY -- absent is fail-closed, never a silent skip.
+    monkeypatch.delenv("GATE5_EXPECTED_INPUT_SHA", raising=False)
+    with pytest.raises(SystemExit, match="GATE5_EXPECTED_INPUT_SHA is not exported"):
+        replica.read_replica_target_receipt(
+            str(target), str(receipt_path), str(source), 50000, 0
+        )
+
+    # 2. A source that is NOT the frozen canonical is refused even when it agrees with
+    #    the receipt -- the case (1)-only fix of OI-57 would have admitted.
+    monkeypatch.setenv("GATE5_EXPECTED_INPUT_SHA", "0" * 64)
+    with pytest.raises(SystemExit, match="differs from the frozen G2 digest"):
+        replica.read_replica_target_receipt(
+            str(target), str(receipt_path), str(source), 50000, 0
+        )
+
+    # 3. SAME PATH, SAME SIZE, DIFFERENT BYTES -- the exact hole the copy left open.
+    #    The receipt still claims the original digest; only hashing the file can see it.
+    monkeypatch.setenv("GATE5_EXPECTED_INPUT_SHA", good)
+    original = source.read_bytes()
+    tampered = bytearray(original)
+    tampered[-1] ^= 0xFF
+    source.write_bytes(bytes(tampered))
+    assert source.stat().st_size == len(original), "the mutation must preserve size"
+    assert payload["input_preflight"]["sha256"] == good, "receipt still claims the old digest"
+    with pytest.raises(SystemExit, match="source dump SHA-256 differs from its receipt"):
+        replica.read_replica_target_receipt(
+            str(target), str(receipt_path), str(source), 50000, 0
+        )
+
+    # 4. THE MUTANT: reinstate the pre-fix behaviour and assert it ADMITS case 3, so this
+    #    test is known to be able to fail rather than believed to be.
+    pre_fix_stamp = payload["input_preflight"]["sha256"]          # what the copy would use
+    assert pre_fix_stamp != replica.sha256_file(source), (
+        "the copy would have stamped a digest the file no longer has -- which is the defect"
+    )

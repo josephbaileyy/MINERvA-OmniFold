@@ -109,7 +109,37 @@ def read_replica_target_receipt(target_npy, receipt_path, inputs_npz, bootstrap_
         raise SystemExit("[gate5-train] source dump size differs from target receipt")
     if not source.get("sha256"):
         raise SystemExit("[gate5-train] target receipt does not bind a source SHA-256")
-    receipt["_verified_input_sha256"] = source["sha256"]
+    # OI-58 hop 1 / BEN-326. Until 2026-08-15 this line read
+    #     receipt["_verified_input_sha256"] = source["sha256"]
+    # -- a COPY of the receipt's own claim, eleven lines below :99 where the TARGET is
+    # genuinely hashed. Nothing on the replica path ever hashed the SOURCE, and
+    # train_fullevent_nominal.py:642 stamps this value into the artifact under a comment
+    # reading "the digest that was actually verified" -- true on the nominal path and
+    # false here. The path and size checks above cannot substitute: size collides freely.
+    #
+    # TWO independent fail-closed comparisons, so the stamped field is a MEASUREMENT and
+    # is bound to the frozen constant rather than to the receipt that quotes it:
+    #   (1) the file must hash to what the target receipt claims        -> file == receipt
+    #   (2) it must equal GATE5_EXPECTED_INPUT_SHA, which
+    #       submit_gate5_replica_n50.sh:25 checked against its HARDCODED :14 digest before
+    #       either array was submitted, and :48 exports              -> file == canonical
+    # (1) alone is what OI-57 prescribed; it proves agreement with a claim, not identity
+    # with the frozen source. (2) was already exported and NO Python read it.
+    #
+    # This file is in no pin list and its launcher digest floats at submit
+    # (submit_gate5_replica_n50.sh:50), so this lands without a re-issue or a repin.
+    # train_fullevent_nominal.py:642 is pinned by gate6-leg0-tier-calibration
+    # pinned_paths[8] and is deliberately NOT touched: its stamp becomes true here.
+    source_sha = sha256_file(inputs_npz)
+    if source_sha != source["sha256"]:
+        raise SystemExit("[gate5-train] source dump SHA-256 differs from its receipt")
+    frozen_input_sha = os.environ.get("GATE5_EXPECTED_INPUT_SHA", "")
+    if not frozen_input_sha:
+        raise SystemExit("[gate5-train] GATE5_EXPECTED_INPUT_SHA is not exported -- "
+                         "submit_gate5_replica_n50.sh:48 must supply the frozen G2 digest")
+    if source_sha != frozen_input_sha:
+        raise SystemExit("[gate5-train] source dump differs from the frozen G2 digest")
+    receipt["_verified_input_sha256"] = source_sha
     receipt["_verified_target_sha256"] = target_sha
     return receipt
 

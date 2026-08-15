@@ -8576,3 +8576,59 @@ which is what makes it structural rather than an anomaly. **No mechanism propose
 drift, it does **not** audit the artifact, and a byte change in the annealed weights would not appear in that
 guard at all. Why `minerva-omnifold-f7` did not answer was not diagnosed. And the `OI-58` fix was **not
 written or tested** — only located and costed.
+
+## 2026-08-15 — OI-58 hop 1 FIXED on the unpinned side: the replica source digest is now measured, and bound to a frozen constant nothing was reading
+
+**No cluster contact.** No `sbatch`, `scancel`, `scontrol`, `ssh`; `gate6traj-reconcile-56847059` untouched;
+**no receipt-bound launcher repinned**; cluster science repo not pulled. Fix authorized by the mediator on
+Joseph's standing grant, in the stronger form this lane recommended rather than the prescribed mirror.
+
+**WHAT WAS WRONG.** `train_fullevent_replica.py` hashed the target at `:99` and, **eleven lines later**,
+verified the 9.22 GiB source by **path, size, and the mere presence of a digest in the receipt** — then
+copied that digest into `_verified_input_sha256`. `train_fullevent_nominal.py:642` stamps it into every
+replica artifact under a comment reading *"the digest that was actually verified"*, **true on the nominal
+path and false on the replica path.** A same-path, same-size content change was invisible.
+
+**THE PART THAT GENERALISES, and it is why this is `BEN-326` rather than a chore: THE STRONGER ANCHOR WAS
+ALREADY COMPUTED, ALREADY EXPORTED, AND READ BY NOBODY.** `submit_gate5_replica_n50.sh:25` hashes the input
+against a **hardcoded** `:14` digest and `die`s before either array is submitted; `:48` exports it as
+`GATE5_EXPECTED_INPUT_SHA`; `:54`/`:57` pass it via `sbatch --export`. **`grep` over every `.py` returns zero
+readers**, while `sbatch_gate5_replica_train_array.sh:17-22` consumes **four** sibling `GATE5_EXPECTED_*`
+pins fail-closed and skips this one. **Fourth instance today of a qualifying fact computed then discarded
+before the consumer — and the FIRST where the discarded fact was STRONGER than the one used.**
+
+**WHAT THE GUARD NOW PROVES THAT IT DID NOT BEFORE.** Before: the file is at the expected path, has the
+expected size, and the receipt contains some 64-character string — reported as verified. After: the file's
+**measured** digest equals **both** the receipt's claim **and** the constant the submit controller checked
+against a hardcoded literal. So the stamped field is a **measurement**, anchored to the **frozen source**
+rather than to the document quoting it. Fail-closed three ways: missing export aborts (never a silent skip),
+receipt disagreement aborts, frozen-constant disagreement aborts.
+
+**WHY IT NEEDED NO RE-ISSUE AND NO REPIN.** Measured both ways, since `BEN-322` established role-keyed pins
+are invisible to `verify_hash_bindings.py`: `train_fullevent_nominal.py` is in **four** pin lists including
+the live `gate6-leg0-tier-calibration-prepared-20260814.json` `pinned_paths[8]` — **not touched**, an
+`OI-123` `die … 3`; `train_fullevent_replica.py` is in **no** pin list and `submit:50` recomputes its digest
+at submit. **Hop 2's stamp and its false comment become true because hop 1 now verifies.**
+
+**VERIFIED, both directions, 5 green** (`tests/test_gate5_replica_driver.py`): absent env aborts; a source
+agreeing with the receipt but **not** the frozen constant is refused — **the case an `OI-57`-only fix would
+have admitted**; **same path, same size, one byte flipped is caught**, with size-preservation and the
+receipt's now-stale claim asserted inside the test so it cannot quietly stop testing that; and a mutant
+asserts the pre-fix copy would have stamped a digest the file no longer has. `git status` after: only the
+two intended files plus the pre-existing untracked `log_test.txt`.
+
+**`OI-57`'s FALSE CELL CORRECTED.** *"A tree-wide grep finds no stored driver digest"* is literally false —
+**three receipts carry it**, two of them `-active-`. The substance it defended survives and is now stated
+properly: **none of them is an ENFORCED pin** (role-keyed, so invisible per `BEN-322`; launcher constant
+floats). **Stored-but-unenforced, not absent** — the old phrasing would make a lane find three hits and
+stall, which is what that cell existed to prevent.
+
+**NOT FIXED, and none of it is claimed:** the existing 50 artifacts still carry the copied field (hence the
+citation discharge at `c7eb704`); the repair reaches production only when `CODE_ROOT` syncs, which `OI-74`
+blocks; and **this must not motivate a Gate-5 re-issue** — it rides one.
+
+**AND A METHOD ERROR OF MINE, fourth instrument today.** Checking whether I had broken an unrelated test, I
+ran it **alone** at `HEAD` (passed) and **inside a `-k` subset** in my tree (failed), and briefly concluded I
+had broken it. **Two different conditions; the comparison was invalid.** The same subset at `HEAD` reproduces
+the identical failure — pre-existing order pollution in `test_pet_fullevent_nominal_launcher.py`, unrelated.
+**Comparing a test's status across two trees requires the same selection in both.**
