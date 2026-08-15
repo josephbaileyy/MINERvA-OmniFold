@@ -66,6 +66,34 @@ after the third rebase of the night, and the self-inflicted pair fell out of it 
 commit with no rebase gets none, and would have published both stale numbers with every check green. **The
 re-derivation pass therefore belongs to the commit, not to the rebase.**
 
+## THE GENERAL FORM, which is larger than line numbers
+
+Lane D's mediator supplied the unification and it is better than this finding's first framing:
+
+> **A hand-maintained index of a machine-derivable fact goes stale silently.**
+
+**A line number is exactly that** — `grep -n` derives it in milliseconds, and writing it down converts a
+derivable fact into a hand-maintained one with a hidden timestamp. Every instance below is the same defect at
+a different size:
+
+| the hand-maintained index | what derives it | how it went stale |
+|---|---|---|
+| `…promotion…json:95` in prose | `grep -n 'That OI-23 is discharged'` | a block inserted above it, **same commit** |
+| `FINDINGS.md`'s *"`221-229` free"* | `grep -oE '^\| BEN-22[0-9] \|' \| sort -u` | wrong since `BEN-221`, **in the same file as the "derived, not narrated" rule that forbids it** — cell at `:19`, rule at `:79` |
+| `MANIFEST.tsv`'s `generated` + producer for `live-state.json` | reading `generate_live_state.py:22-23` | the file is that script's **input**; it is never written by it (`OI-73`) |
+| a bare sha256 in prose | `git show <ref>:<path> \| shasum -a 256` | the file was edited after the note (`BEN-227`) |
+
+**The free-list instance is the one that shows the mechanism cleanly**, because it was found only by someone
+editing the row for an unrelated reason — the filer is the last person who will ever reread their own
+free-list, so the index is maintained by exactly the party with no reason to check it. **`OI-73` is this
+shape one size up**, and it is the worst of the four because its stale index does not merely mislead: it makes
+the documented remedy look forbidden, so following the procedure exactly cannot fix it.
+
+**The unified rule, and it subsumes the procedure above:** *if a fact is machine-derivable, cite the
+derivation or an address that survives edits — never the coordinate.* Content addresses
+(`explicitly_not_claimed[2]`, a quoted phrase, a key path) survive insertion; line numbers, counts and
+free-lists do not.
+
 ## Related
 
 `BEN-225` (the concurrency version, and the remedy that does *not* cover this), `BEN-219` (a citation correct
