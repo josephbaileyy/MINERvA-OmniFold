@@ -251,9 +251,13 @@ class CorrectedArmTest(unittest.TestCase):
         w = np.asarray(leg, np.float64)
         push = np.asarray(obj.weights_push, np.float64)
         after = float((w[pr] * push[pr]).sum() / w[pr].sum())
-        self.assertAlmostEqual(after, records[0]["step1_class_ratio"], places=10)
-        self.assertAlmostEqual(records[0]["reco_weighted_mean_push_after_correction"], after,
-                               places=10)
+        # TOLERANCE IS SET BY THE REPRESENTATION, NOT BY WHAT PASSES. weights_push is
+        # float32 by the engine's contract (omnifold.py:164), so the corrected ratio can
+        # only be exact to float32 epsilon (1.19e-07); measured deviation here is 1.4e-08.
+        # A per-cell or mis-ordered correction deviates by O(0.1-1), so 1e-6 keeps all the
+        # power -- re-verified by re-running both mutations after this change.
+        self.assertLess(abs(after - records[0]["step1_class_ratio"]), 1e-6)
+        self.assertLess(abs(records[0]["reco_weighted_mean_push_after_correction"] - after), 1e-6)
 
     def test_recorded_ratio_is_the_PRE_correction_measurement(self):
         """The measurement must survive the correction, or arm 1 records only its own fixed point."""
@@ -281,9 +285,11 @@ class CorrectedArmTest(unittest.TestCase):
         obj.RunStep1(0)
         after = np.asarray(obj.weights_push, np.float64)
         ratios = after / before
-        self.assertAlmostEqual(float(ratios.max() - ratios.min()), 0.0, places=10,
-                               msg="the correction varied across rows; predeclared SCALE-ONLY")
-        self.assertAlmostEqual(float(ratios[0]), records[0]["applied_correction_factor"], places=10)
+        # float32 storage again: identical scaling still differs in the last bit. A per-cell factor
+        # spreads the ratios by O(0.01) or more, which 1e-5 catches with room to spare.
+        self.assertLess(float(ratios.max() - ratios.min()), 1e-5,
+                        "the correction varied across rows; predeclared SCALE-ONLY")
+        self.assertLess(abs(float(ratios[0]) - records[0]["applied_correction_factor"]), 1e-6)
 
     def test_correction_is_applied_BEFORE_step1_consumes_it(self):
         """Order matters: a correction applied after delegation would not change training at all."""
@@ -302,8 +308,108 @@ class CorrectedArmTest(unittest.TestCase):
         w = np.asarray(leg, np.float64)
         p = seen["push_at_step1"]
         consumed = float((w[pr] * p[pr]).sum() / w[pr].sum())
-        self.assertAlmostEqual(consumed, records[0]["step1_class_ratio"], places=10,
-                               msg="step 1 consumed the UNcorrected push; the correction is a no-op")
+        # If the correction ran AFTER delegation, `consumed` is the PRE-correction ratio, which
+        # differs from R by O(0.1) here -- so 1e-6 is nowhere near the discriminating scale.
+        self.assertLess(abs(consumed - records[0]["step1_class_ratio"]), 1e-6,
+                        "step 1 consumed the UNcorrected push; the correction is a no-op")
+
+
+class EngineInterfaceContractTest(unittest.TestCase):
+    """The guard that 18 passing tests did not have, and job 57012031_3 paid for.
+
+    WHAT THE OTHER TESTS COULD NOT SEE. They exercise the correction's ARITHMETIC against fixtures --
+    scalar not per-cell, applied before delegation, ratio equals R afterwards -- and all of that was
+    correct. The defect was in the INTERFACE: the dtype of the object handed back to the engine.
+    `weights_push` is float32 (omnifold.py:164,168); a Python-float scalar promotes it to float64;
+    the engine packs it into column 1 of y_true (omnifold.py:360) and
+    net.weighted_binary_crossentropy:13 multiplies it against float32 logits, dying inside a
+    tf.function. A fixture-only suite cannot fail on a contract with a collaborator it never calls.
+
+    So one test asserts the contract directly (runs anywhere), and one pushes the corrected array
+    through the ENGINE'S OWN LOSS (skipped only if TF is unavailable, so it is real on the cluster).
+    """
+
+    def corrected_push(self):
+        w_reco = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], np.float32)
+        w_truth = w_reco * np.array([1.0, 5.0, 2.0, 9.0, 3.0, 7.0], np.float32)
+        pr = np.array([True, True, False, True, False, True], bool)
+        mc = _Leg(w_truth, pr, w_reco)
+        data = _Leg([2.0] * 6, [True] * 6)
+        cls, records = CPT.install_fold_forward_recorder(_FakeBase, correct=True)
+        obj = cls(mc, np.array([0.5, 2.0, 9.0, 1.0, 9.0, 3.0], np.float32), w_reco, data=data)
+        obj.RunStep1(0)
+        return obj, records
+
+    def test_correction_preserves_the_engine_weight_dtype(self):
+        obj, _ = self.corrected_push()
+        self.assertEqual(np.asarray(obj.weights_push).dtype, np.float32,
+                         "weights_push must stay float32; the engine's loss multiplies it against "
+                         "float32 logits (net.py:13) and float64 dies inside a tf.function")
+
+    def test_correction_preserves_whatever_dtype_it_was_given(self):
+        """Not hardcoded to float32: the contract is 'do not change it', which is the general rule."""
+        for dt in (np.float32, np.float64):
+            w_reco = np.array([1.0, 2.0, 4.0], dt)
+            mc = _Leg(np.array([1.0, 2.0, 4.0], dt), np.array([True, True, True]), w_reco)
+            data = _Leg([2.0, 2.0, 2.0], [True, True, True])
+            cls, _ = CPT.install_fold_forward_recorder(_FakeBase, correct=True)
+            obj = cls(mc, np.array([0.5, 2.0, 3.0], dt), w_reco, data=data)
+            obj.weights_push = np.asarray(obj.weights_push, dt)
+            obj.RunStep1(0)
+            self.assertEqual(np.asarray(obj.weights_push).dtype, np.dtype(dt),
+                             f"dtype {dt} was not preserved through the correction")
+
+    def test_corrected_weights_survive_the_ENGINES_OWN_loss(self):
+        """The real thing: pack as omnifold.py:360 does and call net.weighted_binary_crossentropy.
+
+        This is the test that would have caught 57012031_3. It is not a fixture -- it calls the
+        engine function whose Mul raised, with the array this module actually produces.
+        """
+        try:
+            import tensorflow as tf
+        except Exception as exc:                                     # pragma: no cover
+            self.skipTest(f"tensorflow unavailable: {exc}")
+        engine_dir = os.path.join(os.path.dirname(ROOT), "omnifold_nn", "omnifold")
+        net_path = os.path.join(engine_dir, "net.py")
+        if not os.path.exists(net_path):                             # pragma: no cover
+            self.skipTest(f"engine net.py not found at {net_path}")
+        spec = importlib.util.spec_from_file_location("omnifold_net_for_test", net_path)
+        net = importlib.util.module_from_spec(spec)
+        try:
+            spec.loader.exec_module(net)
+        except Exception as exc:                                     # pragma: no cover
+            self.skipTest(f"engine net.py not importable in this environment: {exc}")
+
+        obj, _ = self.corrected_push()
+        weights = np.asarray(obj.weights_push)
+        labels = np.ones(weights.shape[0], np.float32)
+        # EXACTLY the engine's packing, omnifold.py:360.
+        y_true = np.stack((labels, weights), axis=1)
+        y_pred = tf.zeros((weights.shape[0], 1), tf.float32)
+        loss = net.weighted_binary_crossentropy(tf.convert_to_tensor(y_true), y_pred)
+        self.assertTrue(np.isfinite(float(loss)), "the engine's loss did not return a finite value")
+
+    def test_the_loss_really_does_reject_float64_so_the_test_above_has_power(self):
+        """Without this, the test above could pass because the loss accepts anything."""
+        try:
+            import tensorflow as tf
+        except Exception as exc:                                     # pragma: no cover
+            self.skipTest(f"tensorflow unavailable: {exc}")
+        engine_dir = os.path.join(os.path.dirname(ROOT), "omnifold_nn", "omnifold")
+        net_path = os.path.join(engine_dir, "net.py")
+        if not os.path.exists(net_path):                             # pragma: no cover
+            self.skipTest("engine net.py not found")
+        spec = importlib.util.spec_from_file_location("omnifold_net_for_test_power", net_path)
+        net = importlib.util.module_from_spec(spec)
+        try:
+            spec.loader.exec_module(net)
+        except Exception as exc:                                     # pragma: no cover
+            self.skipTest(f"engine net.py not importable: {exc}")
+        n = 4
+        y_true64 = np.stack((np.ones(n), np.full(n, 1.7)), axis=1).astype(np.float64)
+        y_pred = tf.zeros((n, 1), tf.float32)
+        with self.assertRaises(Exception):
+            float(net.weighted_binary_crossentropy(tf.convert_to_tensor(y_true64), y_pred))
 
 
 if __name__ == "__main__":

@@ -144,7 +144,27 @@ def install_fold_forward_recorder(base, correct=False):
                                      f"scale-only correction is undefined (fail closed)")
                 factor = R / ratio
                 # ONE scalar over every row -- the shape of push is untouched by construction.
-                self.weights_push = np.asarray(self.weights_push, np.float64) * factor
+                # DTYPE IS PRESERVED, AND THIS COST A FAILED TASK AND ~2 MINUTES OF GPU.
+                # `weights_push` is float32 (omnifold.py:164,168). `factor` is a Python float, so
+                # `array * factor` promotes to float64; the engine then packs the weights into
+                # column 1 of y_true (omnifold.py:360, np.stack) and
+                # net.weighted_binary_crossentropy:13 multiplies them against float32 logits, which
+                # dies inside a tf.function with `Input 'y' of 'Mul' Op has type float64`. Job
+                # 57012031_3 died exactly there, in ITERATION 1 / RUNNING STEP 1 -- the first place
+                # the corrected weights meet the loss.
+                #
+                # THE TRAP WAS ALREADY DOCUMENTED, in the docstring of the driver this module wraps
+                # ("FLOAT32 INTO THE ENGINE", closure_powered_truth_reweight.py), which even asserts
+                # the dtype of the two LOADER weight arrays. Nothing asserted it for `weights_push`,
+                # because that array is engine-internal and nothing outside the engine had ever
+                # written to it. This module is the first thing that does.
+                prev = np.asarray(self.weights_push)
+                corrected = (prev * factor).astype(prev.dtype, copy=False)
+                if corrected.dtype != prev.dtype:
+                    raise SystemExit(f"[ff] iteration {i}: correction changed weights_push dtype "
+                                     f"{prev.dtype} -> {corrected.dtype}; the engine's loss "
+                                     f"requires float32 (fail closed)")
+                self.weights_push = corrected
                 after = float((w[pr] * np.asarray(self.weights_push, np.float64)[pr]).sum() / den)
                 records[-1]["applied_correction_factor"] = factor
                 records[-1]["reco_weighted_mean_push_after_correction"] = after
