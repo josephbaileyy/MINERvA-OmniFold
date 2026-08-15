@@ -146,6 +146,69 @@ runs, with an explicit `UNRESOLVED` outcome that does not default to either bran
 **This section exists so that a reader knows the question is open and being measured, not abandoned.** It is
 not a promise about the outcome, and §4's two branches remain live regardless of what the contrast returns.
 
+## 5A. AMENDMENT, 2026-08-15 — the contrast will not run, and the `67%` is characterized rather than adjudicated
+
+> **This section supersedes part of §4 and most of §5. Those sections are left exactly as written.** They
+> record what was believed and what was open at the moment they were reviewed and approved, and per this
+> document's own standing instruction an update of this kind must be **visible as a change against a version
+> already read**, never an in-place edit. **§4's fork was genuinely open when §4 was written.** What follows
+> is why it is now narrower.
+
+**The discriminating contrast was authorized and will not be run.** Four lanes independently recommended
+against it, unanimously, and that recommendation was accepted. The reason is publishable and is the honest
+one: **neither outcome would have changed what we publish.** If the contrast had shown the zero-support atom
+to be unimportant, we publish the covariance as it stands. If it had shown the atom to be decisive, the
+remedy would have required replacing the resampling scheme with a zero-free one — **which is choosing the
+noise model that yields the smaller uncertainty**, and that is not a defensible basis for tightening an
+error bar. The question was examined and closed on argument; it was not abandoned for cost.
+
+**And the argument that closed it narrows §4's second branch.** §4 offered branch **(b)**: that a
+`Poisson(1)` bootstrap is an invalid proxy for measured-statistics uncertainty, so the band entries
+*overstate*. On examination that branch is **substantially weakened on physical grounds**:
+
+- The resampled objects are **individual reconstructed events** — 4,680,719 rows. A `Poisson(1)` multiplicity
+  on a row states that, were the data retaken, that event occurred `k` times; **multiplicity zero states that
+  it did not occur, which is precisely what counting noise does to an event observed once.** The zero atom
+  is not an artifact of the method.
+- Independent `Poisson(1)` row multiplicities **reproduce exact Poisson fluctuations in every aggregate of
+  those rows** — any bin content, any weighted sum. That is the property for which the scheme is used, and it
+  is not shared by variance-matched continuous alternatives, which match the first two moments of those
+  aggregates and get the discreteness wrong.
+
+**So the resampling scheme is the sampling distribution, not a stand-in that might be the wrong one**, and
+"the proxy is invalid" is not available as a reading of the band.
+
+### What the band figure therefore is
+
+**The `67%` is the spread of a *refit* estimator under *correct* measured-statistics resampling.** Two
+consequences, and both belong beside the number wherever it is quoted:
+
+1. **It is the sampling uncertainty of *this estimator*** — a learned, iterative reweighting refit on every
+   replica — and not a property of the data alone. It includes the estimator's own sensitivity to which
+   events are present.
+2. **It is therefore an *upper bound* on how poorly the data constrain the cross-section in that region.** A
+   differently regularised estimator could do better on the same data; none could do worse purely for want of
+   information. *(Upper bound on the **statistical** component only; it says nothing about systematics.)*
+
+**This is more useful to a reader than either of §4's branches**, because it says what the number *is*
+rather than ruling on whether it is "right", and it is defensible whichever way the underlying question
+eventually settles.
+
+### The status of this amendment, stated precisely
+
+**This is an argument, not a ratified result.** It has survived four independent lanes including the one
+that proposed the instrument it retired, which is the strongest support an argument of this kind has had on
+this analysis — **and that is still not a measurement.** Ratification belongs to the PET lane and to the
+covariance-construction reviewer, and **`OI-126` remains open.** Nothing here licenses promoting the central
+value, quoting the covariance as verified, or treating the region as settled.
+
+### One bookkeeping consequence
+
+**§5's `⟨RE-DERIVE⟩` mark is now DISCHARGED, not outstanding.** It instructed a future editor to re-derive
+whether the contrast was pending, running or complete; **the answer is settled and will not change — it will
+not run.** Do not re-check `squeue` for it. **The provenance commit hash in §7 is therefore the only live
+`⟨RE-DERIVE⟩` in this document**, which supersedes the count given in the header.
+
 ## 6. Limitations of the covariance object itself, independent of §4
 
 These hold whichever branch of §4 is correct, and a limitation statement that omitted them would be
@@ -246,3 +309,25 @@ editor could silently reverse:
 fold its outcome into this document by editing it in place.** The update must be visible as a change against
 a version that has already been read and approved — a silent improvement to reviewed text destroys the only
 record that the fork was genuinely open when it was written, which is the whole evidential value of §4.
+
+**That instruction was then applied to its own author.** The contrast was declined rather than returning a
+result, and the consequence is §5A: **an added, dated, superseding section, with §4 and §5 left untouched.**
+Written that way deliberately, and it is the one structural feature of this document a later editor is most
+likely to "tidy" away.
+
+## Do not resurrect this argument — it was refuted, 2026-08-15
+
+In arguing against running the contrast, this lane offered the following and **it is wrong**: that
+`Poisson(1)` and `Exponential(1)` have identical effective sample size (`ESS = (Σw)²/Σw² = N/2` for both,
+which is arithmetically exact), and that the two arms therefore carry refit sensitivity equally, so a
+null result would not have been diagnostic.
+
+**The `Assisstant` lane refuted the inference while conceding the vote.** `ESS` is a scalar summary of the
+weight *distribution* and says nothing about **support**: a thin neighbourhood is emptied entirely by
+`Poisson` with probability `e^{-n}` — `0.368` at one row, `4.5e-5` at ten — and by `Exponential` with
+probability exactly `0` for every `n`. **Dropping an event and downweighting it are different operations for
+a weighted loss**, so matched `ESS` does not imply matched refit sensitivity.
+
+**The conclusion (do not run) stands on the other grounds in §5A; this argument is not one of them.** It is
+recorded here so that it cannot be picked up from the discussion history and cited as a reason, and **it must
+not appear anywhere in the note.**
