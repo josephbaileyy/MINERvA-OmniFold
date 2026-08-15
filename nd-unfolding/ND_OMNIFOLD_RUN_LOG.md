@@ -7847,3 +7847,84 @@ provenance sha and, discharged for the first time, the OWED VL100 scope annotati
 ground falsified at `f4267b4`, per-cell ratio 0.173→1.420, 68× clear of noise; the other **three**
 grounds are hygiene and were **not** examined, so the argument as a whole is **not** falsified).
 Finding: `BEN-280`.
+
+## 2026-08-14 — OI-120(c) verdict repair: `56975592` printed `LEAKAGE` and its own arms said the opposite
+
+**No cluster work. Nothing submitted, nothing cancelled, no `scontrol`.** Job `56975592` was read only
+from its preserved stdout, already copied off `/pscratch` by Joseph. This is lane D's probe and **lane D was
+not running: the mediator diagnosed the defect, this repair lane verified and applied it, and D did not
+review it.**
+
+**PRINTED VERDICT** (job `56975592`, COMPLETED, exit 0):
+`LEAKAGE -- event_reco changed when only a truth array changed`
+
+**CORRECTED VERDICT** (same recorded arms, replayed off-cluster, nothing re-run):
+`NO TRUTH LEAKAGE DEMONSTRATED on 3 of 4 truth perturbations, through the production loader`
+
+Both are recorded, and the printed one is not deleted anywhere: a reader must be able to see that the tool
+said `LEAKAGE` and why that was wrong.
+
+**The arms, which is why the headline was falsifiable at all.** Baseline `event_reco` sha256
+`8c88e15968f5c1962678f16ae1bb0646522fcf55bfa8412bfe067c59472e8bf5`, shape `[49152885, 13]`, `float32`.
+
+| arm | perturbation | expected | observed |
+|---|---|---|---|
+| `P0` | `reco_scalars` x1.01 (CONTROL) | `CHANGED` | `CHANGED` → `e665e9604dcf2d011ddf56382b3475d8cab9843f37068281f4b992cd97c01393` |
+| `P1` | `truth_scalars` x1.05 | `IDENTICAL` | `IDENTICAL` (baseline sha) |
+| `P2` | `truth_scalars` rows permuted | `IDENTICAL` | `IDENTICAL` (baseline sha) |
+| `P3` | `part_gen` (truth cloud) x1.05 | `IDENTICAL` | `IDENTICAL` (baseline sha) |
+| `P4` | `w_truth` x1.05 | `IDENTICAL` | `VOID` — `arrays_actually_changed: {}`, `proxy_hits: 0` |
+
+The control fired, so the probe had demonstrated power; three real truth perturbations (each confirmed to
+have landed by the proxy) left `event_reco` bit-identical. **That is a clean negative result.** The one
+failing arm failed by **not running**.
+
+**CAUSE — one token.** The arm flag is tri-state: `True` ran-and-matched, `False` ran-and-**CONTRADICTED**
+(the only value that may produce `LEAKAGE`), `None` did-not-run-**exclude**. At `f6a52ed`, `:219` assigned a
+`VOID` arm `False`; the scoring filter at `:232` excludes on `is not None`, so an arm that never ran entered
+the scored set, forced `clean` False, and the verdict fell through to the `LEAKAGE` else-branch. **The
+probe's own docstring at `:41-44` already stated the intended semantics** — *"a perturbation that did not
+perturb turns 'no leakage' into 'no test'"* — so the docstring was right and the code was wrong. Fixed to
+`None` at `:224` (`143f859`).
+
+**Caught only because the receipt shipped its ingredients** (`BEN-077`, `CONVENTION-receipt-ingredients.md`;
+second defect this heuristic has caught with nobody suspecting one). The verdict sentence is unfalsifiable
+alone — a `LEAKAGE` headline on a leakage probe is what a real leak looks like. The per-arm `sha256`,
+`arrays_actually_changed` and `proxy_hits` published beside it made the contradiction **arithmetic**.
+
+**Direction: it failed ALARMING, not quiet** — a void arm can never make a dirty run look clean, because
+`clean` is an `all()` over a falsy injection. Strictly the safer direction, and still not free: truth leakage
+is the campaign's most load-bearing purity property, so a false `LEAKAGE` competes for exactly the attention
+a real blocker would need.
+
+**Regression, written BEFORE the fix and observed failing on it:**
+`docs/orchestration/test_probe_oi120c_verdict.py` — **3 of 6 RED** at `f6a52ed` (the three reproduce the
+job's exact printed string off-cluster in 0.06 s), **6 of 6 GREEN** at `143f859`. It pins **both**
+directions: a void arm must not manufacture `LEAKAGE`, and a genuinely `CHANGED` truth arm must still
+produce it (green before and after by design, so the fix cannot be satisfied by deleting the detector). Its
+arms are parsed out of the preserved stdout rather than hand-written, so the headline test is a **replay** of
+`56975592`, not a re-enactment.
+
+**`P4` is a real open question and is NOT closed — `OI-124`. The offered hypothesis is REFUTED.** The
+dispatch suggested the loader/trainer consumes its own weights rather than the NPZ's raw arrays. Measured
+against `HEAD`'s `nd-unfolding/pet/fullevent_fps_dataloader.py`, it does not hold: `:1121` opens the NPZ,
+`:1251` `w_truth_full = np.asarray(d["w_truth"])` is the **first and only** read of the key, and the
+trainer's weights **are** derived from it (`:1323`/`:1332` → `weight=w_truth` at `:1349`). The real cause is
+the probe's own early-stop ordering, and it is **structural**: `event_reco` is fully assigned at `:1241`,
+ten lines before `w_truth` is ever read (`awk 'NR>=1121 && NR<=1241 && /w_truth/'` returns nothing; the keys
+read in that window contain the three arms that fired and not `w_truth`). So `P4`'s predeclared `IDENTICAL`
+is **true by control flow** and no perturbation of `w_truth` can make that arm fail there. It was not a test
+that missed — it was a test that could not exist where it ran. **Limit:** those line numbers are from the
+local checkout at `HEAD`; `/pscratch` was not read. Corroboration, not proof — D's probe docstring,
+written against the cluster tree, independently cites `:1241`/`:1247` and the local file matches exactly.
+
+**PRESERVED ARTIFACT, and it was the only copy.**
+`docs/orchestration/state/oi120c-loader-purity-perturbation-56975592.txt`, 5047 B, sha256
+`ec5581363f440b153057126996e30f2325cf63c94b27442559a087046522912c`. Now tracked, verified with
+`git ls-files` rather than `git add`'s exit code (`BEN-260`).
+
+**Not fixed on purpose, to keep an unreviewed edit to one token:** the all-void `UNRESOLVED` branch is
+worded *"the loader refused every truth perturbation"* when `VOID` is not `REFUSED`, and the per-arm print
+labels a void arm `REFUSED` while its `observed` column still reads `VOID`. Both in `OI-124`.
+
+Findings: `BEN-290`. Code debt: `KNOWN_ISSUES` 49. Claim evidence pointer (no state change): `CLM-002`.
