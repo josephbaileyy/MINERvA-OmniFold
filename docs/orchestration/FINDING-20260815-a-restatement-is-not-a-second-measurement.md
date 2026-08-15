@@ -49,6 +49,17 @@ choice rests on.** Filed as `OI-125`.
 
 ## 3. THE SCOPE ERRORS: A DIFFERENT RUN, AND A DIFFERENT ARM
 
+> **ATTRIBUTION CORRECTED 2026-08-15, later the same day, by the lane that wrote this section.**
+> This section originally read as though lane D chose the wrong file. **D did not.** The closure's own
+> quarantine manifest names `fullevent_nominal/pet_fullevent_nominal_weights.npz` as `weights_path` and
+> computes its entire fold-forward rejection from it, and the CPU finalizer's `hash:nominal-weights`
+> check pins that same file. **D decomposed the quantity the quarantine actually uses, which is the
+> correct target for the question D asked.** The run/arm mismatch originates in the manifest, upstream
+> of the probe, and it was independently re-derived by the finalizer before D ever ran. Read §1 and §2
+> of `FINDING-20260815-the-quarantine-measured-a-different-run.md` before reading the two subsections
+> below as a criticism of the probe — they are a description of the record the probe followed.
+
+
 `probe-vl100-foldforward-shape-20260814.py:46` reads
 `nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz`.
 
@@ -87,11 +98,17 @@ wrong arm whatever the path and survives a legitimate digest change, which a sha
 > **TIMELINE CORRECTED, because the convenient version was wrong.** The dispatch that authorized this
 > filing described C's guard as *"written hours before this probe ran."* Measured: the guard landed at
 > `d184f95`, **2026-08-14 19:56:51 -0400**; D's falsification is `f4267b4`, **19:50:07 -0400**. The
-> guard is **6m44s LATER**. So it was **not available to D** — two lanes hit the same trap inside ten
-> minutes, one building the guard and one falling into it. It *was* available to every reader
+> guard is **`+404 s` LATER**, so it was **not available to D.** It *was* available to every reader
 > afterward, including the propagation of the finding into three places. The remedy's value is
 > prospective, and overstating its availability would have made this document an instance of the
 > carelessness it is about.
+>
+> **AND THE CORRECTED FACT IS THE MORE USEFUL ONE.** *"D missed an available remedy"* is an accusation
+> and it is false. What actually happened is that **two lanes reached the same hazard independently
+> inside seven minutes** — one building a guard against it, one falling into it — with neither able to
+> see the other's work. **Two independent arrivals are evidence the hazard is structural, not evidence
+> of a lapse.** That is why this finding names the directory layout, and why the remedy is a schema
+> assertion in every reader rather than more care by any author.
 
 ## 4. WHY THE MEASUREMENT WAS NOT A SECOND MEASUREMENT (`BEN-310`)
 

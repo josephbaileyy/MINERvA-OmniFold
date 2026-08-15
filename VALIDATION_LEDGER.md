@@ -1828,17 +1828,21 @@ reopening is authorized. Receipts:
 `docs/orchestration/state/annealed-shape-r2-terminal-56552326.json` and
 `docs/orchestration/state/annealed-shape-finalizer-complete-56562169.json`.
 
-**`VL100` — DO NOT READ THIS ROW WITHOUT `OI-71`, and as of 2026-08-15 two things are settled and one
-is not.** The arithmetic above is independently reproduced from the persisted 285-cell spectra
-(`d = 0.000e+00`) and again from the artifact's per-event `weights_push` (`d = 1.3e-10`), and the value
-**survives a shape-corrected fold-forward**: `0.511140`–`0.513984` under the well-posed correction,
-`0.509074`–`0.515176` under an adversarial one, still clearing `0.494582400`. The 2026-08-14
-falsification of the quotability argument (`f4267b4`) is **scope-corrected — it was computed from the
-PRE-ANNEAL arm's weights, not the annealed arm this row measures.** **What is NOT settled, and is why
-`OI-71` stays OPEN: this run's fold-forward ratio is `1.011418` against the nominal's `0.736746`, so the
-closure does not exercise the deficit at all and is SILENT about it.** Per this repo's convention the
-facts live in their homes, not here: `docs/orchestration/state/RECEIPT-vl100-shape-corrected-foldforward-20260815.json`,
-`BEN-310`/`BEN-311`, `OI-71`, `OI-125`.
+**`VL100` — DO NOT READ THIS ROW WITHOUT `OI-71`.** As of 2026-08-15 the recovery above is
+independently reproduced twice (from the persisted spectra, and again from the artifact's per-event
+`weights_push`), and it **survives a shape-corrected fold-forward** under both a well-posed and an
+adversarial correction — **it still clears the PRIMARY criterion.** The 2026-08-14 falsification of the
+quotability argument (`f4267b4`) is **scope-corrected: it was computed from the PRE-ANNEAL arm's
+weights, not the annealed arm this row measures.** **What is NOT settled, and is why `OI-71` stays
+OPEN: this run's fold-forward ratio is close to unity where the nominal run's is not, so the closure
+does not exercise the deficit at all and is SILENT about that failure mode rather than reassuring about
+it.**
+
+*No value is quoted here deliberately* — `BEN-227`/`BEN-228`: a receipt value duplicated into a second
+file diverges from it, so this paragraph carries **routes, not numbers.** Every figure behind the three
+sentences above, with its operands, is in
+`docs/orchestration/state/RECEIPT-vl100-shape-corrected-foldforward-20260815.json` (landed `66c1f0e`);
+the mechanism is `BEN-310`/`BEN-311`; the live questions are `OI-71` and `OI-125`.
 
 ## 2026-08-10 Annealed production nominal reproduction — ~~VERIFIED FINDING~~ **RETRACTED 2026-08-11**
 
