@@ -171,10 +171,26 @@ def build_snapshot(
 
     counts = Counter(row["state"] for row in rows.values())
     unknown_tasks = [int(task) for task, row in rows.items() if row["state"] == "UNKNOWN"]
+    # ACTIVE REQUIRES POSITIVE EVIDENCE, and this is the whole point of the branch
+    # order. Until 2026-08-15 `ACTIVE` was the ELSE of this classification, so
+    # "we could not look" fell through to a liveness CLAIM: with no Slurm binaries
+    # on the host, every task parsed UNKNOWN, `error_tasks` stayed empty (UNKNOWN is
+    # excluded from the error branch above), `complete` was 0, and the row rendered
+    # **ACTIVE**. Leg F `56863958_[2-5]` was displayed ACTIVE for over 24 h after it
+    # finished, and three sessions plus the mediator built a scheduling constraint on
+    # a ~39 GPU-h decision out of it. A FAILURE TO OBSERVE MUST NEVER RENDER AS AN
+    # OBSERVATION. See BEN-323; the falsifying `sacct` rows are in its finding.
+    observed_active = any(row["state"] in ACTIVE_STATES for row in rows.values())
     if error_tasks:
         overall = "ERROR"
     elif complete == len(tasks):
         overall = "COMPLETE"
+    elif observed_active:
+        overall = "ACTIVE"
+    elif unknown_tasks:
+        # Covers both "Slurm unreachable from here" (observer_errors non-empty) and
+        # "job aged out of the accounting window". Neither is evidence of running.
+        overall = "UNOBSERVED"
     else:
         overall = "ACTIVE"
 

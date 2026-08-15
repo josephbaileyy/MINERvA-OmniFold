@@ -136,7 +136,24 @@ def render(
     ]
     for owner in owners:
         lines.append(f"| `{owner['role']}` | {owner['provider']} | `{owner['uuid']}` | {owner['purpose']} |")
-    lines.extend(["", "## Compute", "", "| Job | State counts | Errors | Resources / placement |", "|---|---|---|---|"])
+    lines.extend(["", "## Compute", ""])
+    # If this generator ran somewhere without Slurm, EVERY row below is a non-observation.
+    # Say so above the table, because a per-row caveat is read after the eye has already
+    # taken the bolded state. BEN-323.
+    if any(job["snapshot"].get("overall") == "UNOBSERVED" for job in jobs):
+        lines.extend([
+            "> **⚠ THIS TABLE IS NOT A LIVE VIEW IN THIS SNAPSHOT.** One or more rows are"
+            " `STATE UNAVAILABLE`, which means the generator could not reach Slurm from the"
+            " host it ran on — **not** that the job is running, and **not** that it is done."
+            " A `squeue`/`sacct` error in the Errors column means this file has NO state"
+            " evidence for that job and you must query Slurm yourself before acting."
+            " Until 2026-08-15 these rows rendered as **ACTIVE** (`BEN-323`): Leg F"
+            " `56863958_[2-5]` was displayed ACTIVE for over 24 h after all four tasks"
+            " COMPLETED, and a ~39 GPU-h scheduling constraint was built on it."
+            " **Regenerate from a host with Slurm to make this table evidence.**",
+            "",
+        ])
+    lines.extend(["| Job | State counts | Errors | Resources / placement |", "|---|---|---|---|"])
     for job in jobs:
         receipt = job["receipt"]
         counts = ", ".join(f"{key}={value}" for key, value in job["snapshot"].get("counts", {}).items()) or "unknown"
@@ -144,7 +161,20 @@ def render(
         placement = "batch job" if job.get("single_job") else "batch array"
         resources = f"{receipt.get('cpus_per_task','?')} CPU, {receipt.get('memory_per_task','?')}, {receipt.get('time_limit','?')}; {receipt.get('qos','?')} {placement}"
         label = job["job_id"] if job.get("single_job") else f"{job['job_id']}_[{job['tasks']}]"
-        lines.append(f"| `{label}` | **{job['snapshot'].get('overall','UNKNOWN')}**: {counts} | {errors} | {resources} |")
+        overall = job["snapshot"].get("overall", "UNOBSERVED")
+        # `observer_errors` was computed and RETURNED by build_snapshot and then dropped
+        # here, so the one piece of evidence proving Slurm was never reached did not
+        # reach the reader. It is now the Errors cell whenever the state is UNOBSERVED.
+        # BEN-323.
+        if overall == "UNOBSERVED":
+            why = "; ".join(str(x) for x in job["snapshot"].get("observer_errors", []))
+            errors = f"NOT OBSERVED — {why}" if why else "NOT OBSERVED — no Slurm reply"
+            resources = f"declared (not observed): {resources}"
+            lines.append(
+                f"| `{label}` | **STATE UNAVAILABLE — NOT A LIVENESS CLAIM**: {counts} | {errors} | {resources} |"
+            )
+        else:
+            lines.append(f"| `{label}` | **{overall}**: {counts} | {errors} | {resources} |")
     lines.extend(["", "## Wake", ""])
     if "waker_status" in wake_state:
         waker = wake_state["waker_status"]

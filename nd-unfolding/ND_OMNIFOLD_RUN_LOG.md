@@ -8425,3 +8425,93 @@ document defect that is an artifact of the instrument.
 not drift — the invisible pins were **not** compared against their files, and the guard's greens may all be
 true of what they checked. Also unexamined: which of the 122 are genuine bindings, and whether
 `collect_shell()` / `SHELL_PIN_FLOOR = 15` has the same hole. `BEN-322`, `OI-127`.
+
+## 2026-08-15 — `ACTIVE` was the else-branch: Leg F showed live for 24 h after it finished, and the whole compute table was a non-observation
+
+**Cluster contact: FOUR READ-ONLY `sacct` QUERIES over `ssh`, nothing else.** No `sbatch`, `scancel`,
+`scontrol`, no submission, no requeue; `gate6traj-reconcile-56847059` untouched; no receipt-bound launcher
+repinned; cluster science repo not pulled. Rendering fix authorized by the mediator.
+
+**THE DEFECT.** `slurm_array_status.build_snapshot` classified `ERROR` / `COMPLETE` / **`else: ACTIVE`**,
+and `UNKNOWN` is explicitly excluded from the error branch. So an unobservable task raised no error, was
+not complete, and **fell into the same bucket as a task positively observed `RUNNING`.** `ACTIVE` was not
+mapped from `UNKNOWN`; it was **what was left over.**
+
+**MEASURED HERE, not relayed.** `sacct -X`: `56863958_[2-5]` all `COMPLETED 0:0`, elapsed ~03:15 each,
+ending `2026-08-13T14:08:51` / `14:16:55` / `18:35:57` / **`2026-08-14T09:02:08`**. Leg F was rendered
+`ACTIVE` **more than 24 h after it finished.**
+
+**IT IS THE WHOLE TABLE.** `56936015` → **50/50 `COMPLETED 0:0`**; `56936016` → `COMPLETED 0:0`, ended
+`2026-08-14T07:31:33`. All three rows read `ACTIVE`. **Zero of the three states in that table were
+observations** — a bigger result than the one row that was reported.
+
+**AND THE GENERATOR CANNOT REACH SLURM FROM THIS HOST AT ALL.** `which sacct squeue scontrol sbatch` →
+all four not found. So `runner()` raises `OSError`, both texts are empty, every task parses `UNKNOWN`
+(`reason: not-visible`), and the else-branch fires. **The compute table has never been evidence when
+generated off-cluster and never could have been.** It is not a live view that went stale; it is a
+rendering of *no data* that has always read as a state.
+
+**THE EVIDENCE OF NON-OBSERVATION WAS CAPTURED AND THEN DISCARDED.** `build_snapshot` returns
+`observer_errors` — here `squeue:[Errno 2] No such file or directory` and the same for `sacct` — and
+`unknown_tasks`. **The renderer used neither**, printing `error_tasks` only, which is empty in exactly this
+case, so the Errors cell read `none`. **`BEN-322`'s shape one layer up:** there the guard's accounting had
+**no cell** for what it could not see; here the cell exists, is populated correctly, and is not rendered.
+
+**The row printed its own refutation:** `| 56863958_[2-5] | **ACTIVE**: UNKNOWN=4 | none | ? CPU, ?, ? |`.
+**The bold word is what a scanning reader takes; the qualifier that negates it is unbolded two characters
+later**, and `? CPU, ?, ?` renders absence as tabular data.
+
+**WHAT IT COST, AND THIS LANE'S SHARE OF IT.** The `OI-124` peer reported Leg F running while costing a
+Gate-5 re-issue; the mediator relayed it; the `Assistant` lane built *"re-issue the dataloader binding
+after Leg F terminates"* on it; the mediator carried that to Joseph as a scheduling constraint on a **~39
+GPU-h** experiment. **Four parties propagated a fictional constraint.** This lane wrote *"Leg F's liveness
+is quoted from the control plane's job list, not measured; no cluster command was run"* — correct
+provenance, and **not enough: `ssh sacct` cost one command and this lane flagged the gap instead of
+closing it. LABELLING A CLAIM UNVERIFIED IS CHEAPER THAN VERIFYING IT AND DOES NOT SUBSTITUTE FOR IT.**
+
+**FRESH AND WRONG.** At the moment it asserted this, `LIVE-STATE.md` — the file `CLAUDE.md` routes every
+session to **first** — reported `FRESH :: Git == HEAD`. Its own header warns that regeneration *"does NOT
+revalidate `Declared state`, which is authored prose"*; that warning is **scoped to the hand-authored
+part and silent about the compute table**, which a reader trusts precisely *because* it looks
+machine-derived. **The most-trusted region of the file was the least-caveated.**
+
+**A TEST ASSERTED THE DEFECT.** `test_missing_is_active_unknown_not_false_terminal` demanded
+`overall == "ACTIVE"` for a task nothing could see. **Its intent was right** — an unobserved task must not
+be reported terminal, because a false *"done"* licenses reading a result — **and `ACTIVE` was the wrong
+safe side**, defending against a false terminal by asserting a false liveness. Rewritten to assert the
+intent (`!= COMPLETE`) *and* the defect it permitted (`!= ACTIVE`), with the old assertion preserved in its
+docstring. **A test can pin a defect while its name states a correct principle.**
+
+**WHAT WAS CHANGED.** `ACTIVE` now requires **positive evidence** (`any(state in ACTIVE_STATES)`);
+unknowns with no positive evidence give a new **`UNOBSERVED`**; `ERROR`/`COMPLETE` keep precedence;
+partial visibility (`BEN-229`'s split-array trap) is `UNOBSERVED`, since a task invisible to `sacct` is not
+thereby running. The row renders **`STATE UNAVAILABLE — NOT A LIVENESS CLAIM`** with `observer_errors`
+verbatim and `declared (not observed):` resources, plus a **table-level warning** whenever any row is
+unobserved, because a per-row caveat is read *after* the eye has taken the bolded state. **`UNKNOWN` was
+rejected as the token deliberately: it is skimmable, and skimming was the failure.**
+
+**BOTH MACHINE CONSUMERS TRACED, NOT ASSUMED** — `watch_slurm_array_resume.sh:85-95` (`UNOBSERVED` falls
+to the `*)` arm and increments `unreliable`, as the `ACTIVE`-with-unknowns path did) and
+`wakerctl.py:440-446` (`UNOBSERVED` implies non-empty `unknown_tasks`, so it takes `unreliable_step()` as
+before). **Behaviour-identical, and the reason matters more than the result: those consumers already
+DISTRUSTED `overall` and gated on `observer_errors`/`unknown_tasks`. Two of three consumers used the
+evidence fields; only the human-facing generator trusted the verdict.** So `schema_version` was not
+bumped.
+
+**VERIFIED:** 7 tests added plus the rewrite, **18 green** across `test_slurm_array_status` and
+`test_generate_live_state`, including a **power test that re-implements the pre-fix classification and
+asserts it reproduces `ACTIVE`** — the suite is known able to fail, not assumed to — and a true-positive
+test that one observed `RUNNING` task still yields `ACTIVE`, so the fix is not uniformly pessimistic.
+**Two failures in `test_watch_slurm_array_resume.py` are NOT from this change**: they preflight a
+`/pscratch` path absent on this host, and the same 2 fail at `HEAD` in a clean throwaway `git worktree`.
+
+**AND A CORRECTION TO THIS LANE'S OWN METHOD, third instrument to misreport today.** The finding first
+claimed *"no consumer branches on `overall`"* — from a `grep` piped through `head -15`, which **truncated
+away both real consumers** while showing 15 unrelated `overall_ratio`/`overall scale` hits. That is
+`BEN-026` applied to my own search, and it would have put a false claim into a finding about tools
+asserting states they do not have. Caught by grepping the two known consumers **by name**. After the
+`| tail` exit code and the `split('|')` cell counter, this is the third.
+
+**NOT DONE:** the wake/waker and usage-gate rows were not audited for the same pattern; only the compute
+table was examined. **And this does not make the table evidence** — on a host without Slurm it now says so
+loudly, and making it a live view requires regenerating from a host that can reach Slurm. `BEN-323`.
