@@ -8632,3 +8632,64 @@ ran it **alone** at `HEAD` (passed) and **inside a `-k` subset** in my tree (fai
 had broken it. **Two different conditions; the comparison was invalid.** The same subset at `HEAD` reproduces
 the identical failure — pre-existing order pollution in `test_pet_fullevent_nominal_launcher.py`, unrelated.
 **Comparing a test's status across two trees requires the same selection in both.**
+
+## 2026-08-15 — the Leg 0 "5.2% non-determinism" is a checkpoint-tier gap, and the run said so before three documents read it otherwise
+
+**NO COMPUTE SPENT AND NONE PROPOSED.** Four read-only `sacct`/`squeue` queries and file reads on
+`/pscratch`; no `sbatch`, `scancel`, `scontrol`; `gate6traj-reconcile-56847059` untouched; nothing
+repinned; the five Gate-6 prohibitions at `19585b7` stay live; nothing promoted; nothing into
+`docs/analysis-note/`. Correction authorized by the mediator and landed **beside** `674df29`, not over it.
+
+**WHAT WAS WRONG.** `674df29`'s body and the handoff read *"it is a real non-determinism localised to the
+step that produces `push_final`"* and *"the same computation, on the same committed checkpoints … several
+times `BEN-043`'s ~1.3% checkpoint-tier gap"*, and called the tier comparison *"the obvious next
+measurement."* **All three are wrong, and `member_1`'s own trajectory receipt recorded why before any of
+them were written:** `"gate_is_cross_tier": true`, `"checkpoint_tier_requested": "best-epoch"`, and all
+three checkpoints at `"provenance_tier": "best-epoch"`. The gate compared a **forced best-epoch**
+reconstruction against a receipt produced at a **different tier**.
+
+**THE TWO BIT-EXACT REPRODUCERS ARE THE MECHANISM, and the original reading had them backwards.**
+`increment1` and `push_prev` reproduce at `rel_dev` **exactly `0.0`** across separate processes — **a run
+with process non-determinism does not reproduce two of three quantities bit-exactly** — while the only
+quantity that moves is the one depending on the **final-iteration** checkpoint, exactly where the tiers
+diverge. A clean one-checkpoint substitution, not noise. **So the 5.2% IS a checkpoint-tier gap and cannot
+be "several times" one: it is a measurement OF that gap, comparing a thing to itself.** The Gate-6 floor
+question is untouched by this run.
+
+**THE EXIT-CODE PREDICTION IS FALSIFIED 2-OF-3.** *"Expect them to exit `1:0` as well"* — measured:
+`_1`/`_2`/`_5` `FAILED 1:0`, **`_3` and `_4` `COMPLETED 0:0`** (`00:13:52` / `00:13:43`). **3 of 5 failed
+the cross-tier gate, 2 passed**, consistent with a tier shift landing under `REPRO_RTOL = 0.02` on some
+members. Elapsed times corroborate: failures `~10:15`-`10:23`, passes `~13:43`-`13:52`, the difference being
+the trajectory the passes emit — `m1`'s is a **1,703-byte refusal stub**, `m3`'s is **7,495 bytes**. Leaving
+`_3`-`_5` to run was still right, and their receipts are why this was settleable read-only.
+
+**`BEN-229` CLOSES CONFIRMED, and recorded on its own row rather than only here** (the handoff asked for the
+count either way, and a prediction whose resolution lives elsewhere is one nobody closes):
+`sacct -X -j 56993778 | wc -l` → **5** at terminal, every task owning a row. Its scope — that `sacct`
+under-reports only between *split* and *start* — is confirmed rather than merely unfalsified.
+
+**WHY IT TOOK A DAY, which is the transferable half.** `gate_is_cross_tier` is a **top-level key in a 1.7 KB
+file, beside the very numbers three documents quoted**, and the `REPRO_RTOL` mismatch was read off
+**stdout**, which does not carry it. **A gate whose comparison is known at run time to be invalid as a
+determinism test must say so in the FAILURE MESSAGE** — `[traj] reproduction gate FAILED (CROSS-TIER: not a
+determinism test)` cost nothing. **Fifth instance in two days of a qualifying fact computed, persisted, and
+not put where the reader was looking** (`BEN-321`, `BEN-322`, `BEN-323`, `BEN-326`).
+
+**THE `final`-TIER ARM WAS NOT RUN, and that is the mediator's decision on this lane's recommendation.**
+Costed from this array's own `sacct` elapsed at **0.9744 GPU-h** (`615+623+832+823+615 s`, one A100 per
+task); the launcher `sbatch_gate6_leg0_tier_calibration_array.sh` is in **no pin list** and its digest is in
+zero receipts, so it needs no repin, and `train_fullevent_nominal.py` (`pinned_paths[8]`) is not involved —
+the driver is `step1_increment_trajectory.py`. **`TRAJ_TIER` is hardcoded at `:61` and not env-overridable**,
+so the arm needs a launcher edit that is nonetheless free of pins. **If it is ever run, its predeclared
+expectation must be BIT-EXACT REPRODUCTION so it can fail loudly**; running it under the retracted framing
+would have let its result be read against a hypothesis now known to be wrong.
+
+**DELIBERATELY NOT TOUCHED: `4421013`'s conclusion that member 3's Gate-6 FAIL is a measurement artifact.**
+`m3` is one of the two that COMPLETED, which is worth re-reading against it — **recorded by the mediator as
+an open Gate-6 question needing its owner and a predeclaration, not a quick check by a documentary lane.**
+
+**AND A NEAR-MISS OF MINE.** I first read `checkpoint_tier_requested` from the **decomposition** receipt, got
+`None` from `dict.get`, and was one step from filing *"the tier is not recorded in the artifact whose purpose
+was tier calibration"*. **The key lives in the trajectory receipt and reads `"best-epoch"` correctly.** A
+`.get()` returning `None` for a key that was never in the file you opened is not a missing field. Caught by
+dumping the key set; it never reached a claim.
