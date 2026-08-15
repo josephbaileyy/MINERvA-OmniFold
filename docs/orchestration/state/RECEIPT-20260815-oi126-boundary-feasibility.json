@@ -1,0 +1,189 @@
+{
+ "what": "feasibility of the Exponential(1) vs Poisson(1) decision boundary, given the measured within-arm sigma of band R_push",
+ "status": "INPUT TO A PREDECLARATION THAT HAS NOT BEEN WRITTEN. Not an authorization, not a result about (a) vs (b), and this lane does not own the replacement instrument.",
+ "ingredients": {
+  "sigma_probe": {
+   "path": "docs/orchestration/state/probe-oi126-band-Rpush-sigma-20260815.json",
+   "sha256": "ad022b65256771535f4c4a6412f83d4d0fc7f2ab58abf97d3803f9c16431fc29"
+  }
+ },
+ "MEASURED_sigma": {
+  "n_replicas": 50,
+  "mean": 3.59690668865833,
+  "sd_ddof1": 1.609124619682023,
+  "rel_sd": 0.44736345948474887,
+  "median": 3.0417813164040526,
+  "min": 1.0859000501698937,
+  "max": 6.8865067171637,
+  "p10": 1.762915741893965,
+  "p90": 5.842746763571226,
+  "statistic": "median over the 84 geometric band cells of T_nom/T_k; 0 cells dropped for any replica"
+ },
+ "FINDING_1_replica_00_IS_NOT_TYPICAL_AND_THIS_MOVES_THE_HYPOTHESIS": {
+  "replica_00_band_R_push": 5.046669472930546,
+  "family_mean": 3.59690668865833,
+  "family_median": 3.0417813164040526,
+  "replica_00_z": 0.9009636460342653,
+  "replica_00_percentile": 70.0,
+  "consequence": "the 5.0467 that this lane reported from replica_00 alone, and that reached OI-126 and the push/extraction RESULT receipt, is a HIGH DRAW at the 70th percentile. The family-typical band R_push is 3.5969. Every downstream statement of the form 'the band effect is a factor of 5' should read 'a factor of ~3.6 on the family average, ranging 1.09 to 6.89 across the 50 draws'.",
+  "what_it_does_NOT_change": "the TRAINING-versus-EXTRACTION reading is untouched. That reading rests on R_push and R_xsec agreeing WITHIN replica_00 (ratio 1.0000) and on the control region, neither of which involves the family spread. A high draw in both arms of the same ratio cancels."
+ },
+ "FINDING_2_the_proposed_boundary_sits_almost_ON_the_(a)_hypothesis": {
+  "proposed_boundary": 4.0,
+  "a_truth_as_now_measured": 3.59690668865833,
+  "distance": 0.4030933113416699,
+  "n_required_to_confirm_a_at_that_boundary": 62,
+  "why_this_is_worse_than_the_asymmetry_already_found": "the earlier concern assumed the (a) truth was ~5.05, putting the 4.0 boundary 1.05 away. Measured, the (a) truth is 3.60, so the boundary is 0.40 away -- inside one quarter of a sigma. The Poisson arm ITSELF would cross a 4.0 boundary in a large fraction of draws, so a 4.0 boundary does not test (a) against (b), it tests draw luck."
+ },
+ "FINDING_3_a_WELL_CENTRED_boundary_makes_it_affordable": {
+  "optimal_boundary_midpoint_of_the_two_hypotheses": 2.298453344329165,
+  "distance_each_side": 1.298453344329165,
+  "n_required_each_side": 6,
+  "comparison": {
+   "at_boundary_4p0": 62,
+   "at_boundary_1p5": 40,
+   "at_midpoint": 6
+  },
+  "caveat_stated_because_it_is_load_bearing": "this uses the POISSON arm's sigma for both arms. Under (b) the Exponential arm would plausibly have a SMALLER spread, since the zero-support pathology is what is being removed; under (a) it should be similar. So 1.609 is the right sigma for the side that matters, but it is an ASSUMPTION about the untested arm and not a measurement of it. If the Exponential arm's sigma exceeds 1.609, n grows as sigma squared."
+ },
+ "boundary_table": {
+  "1.5": {
+   "distance_to_a_truth": 2.09690668865833,
+   "distance_to_b_truth": 0.5,
+   "n_to_confirm_a": 3,
+   "n_to_confirm_b": 40,
+   "n_required_worst_side": 40
+  },
+  "2.0": {
+   "distance_to_a_truth": 1.59690668865833,
+   "distance_to_b_truth": 1.0,
+   "n_to_confirm_a": 4,
+   "n_to_confirm_b": 10,
+   "n_required_worst_side": 10
+  },
+  "2.298": {
+   "distance_to_a_truth": 1.29890668865833,
+   "distance_to_b_truth": 1.298,
+   "n_to_confirm_a": 6,
+   "n_to_confirm_b": 6,
+   "n_required_worst_side": 6
+  },
+  "2.5": {
+   "distance_to_a_truth": 1.09690668865833,
+   "distance_to_b_truth": 1.5,
+   "n_to_confirm_a": 9,
+   "n_to_confirm_b": 5,
+   "n_required_worst_side": 9
+  },
+  "3.0": {
+   "distance_to_a_truth": 0.5969066886583301,
+   "distance_to_b_truth": 2.0,
+   "n_to_confirm_a": 28,
+   "n_to_confirm_b": 3,
+   "n_required_worst_side": 28
+  },
+  "4.0": {
+   "distance_to_a_truth": 0.4030933113416699,
+   "distance_to_b_truth": 3.0,
+   "n_to_confirm_a": 62,
+   "n_to_confirm_b": 2,
+   "n_required_worst_side": 62
+  }
+ },
+ "FINDING_4_the_band_is_not_uniform_and_column_15_dilutes_it": {
+  "per_column": [
+   {
+    "i_pparallel": 10,
+    "pparallel_bin": [
+     6.0,
+     7.0
+    ],
+    "mean_over_50": 2.549676856073438,
+    "sd_over_50": 1.0847380459606761,
+    "rel_sd": 0.42544138225861217
+   },
+   {
+    "i_pparallel": 11,
+    "pparallel_bin": [
+     7.0,
+     8.0
+    ],
+    "mean_over_50": 5.542240370977261,
+    "sd_over_50": 3.0523989556901436,
+    "rel_sd": 0.5507518172027452
+   },
+   {
+    "i_pparallel": 12,
+    "pparallel_bin": [
+     8.0,
+     9.0
+    ],
+    "mean_over_50": 6.572571479026482,
+    "sd_over_50": 3.715361999418534,
+    "rel_sd": 0.5652828594218418
+   },
+   {
+    "i_pparallel": 13,
+    "pparallel_bin": [
+     9.0,
+     10.0
+    ],
+    "mean_over_50": 6.3300384089340325,
+    "sd_over_50": 3.515093264291503,
+    "rel_sd": 0.5553036233287941
+   },
+   {
+    "i_pparallel": 14,
+    "pparallel_bin": [
+     10.0,
+     15.0
+    ],
+    "mean_over_50": 3.8145116076271006,
+    "sd_over_50": 1.9001428766005395,
+    "rel_sd": 0.49813529805525075
+   },
+   {
+    "i_pparallel": 15,
+    "pparallel_bin": [
+     15.0,
+     20.0
+    ],
+    "mean_over_50": 1.1050473324626393,
+    "sd_over_50": 0.33419251383707893,
+    "rel_sd": 0.3024237098444629
+   }
+  ],
+  "observation": "the effect peaks at p_parallel[8,9) with mean 6.57 and is ESSENTIALLY ABSENT at [15,20) with mean 1.105. Column 15 contributes 14 of the 84 band cells and pulls the band statistic toward the null, so the geometric band chosen for the training/extraction split -- correctly, since it had to be replica-independent and fixed in advance -- is not the most discriminating band for a two-hypothesis test.",
+  "INDICATIVE_ONLY_tighter_band_cols_11_to_14": {
+   "statistic": "median of the four column-medians per replica -- a DIFFERENT statistic from median-over-cells, reported as indicative and NOT substituted for it",
+   "mean": 5.882064197082558,
+   "sd_ddof1": 3.18443406835405,
+   "rel_sd": 0.5413803660853439,
+   "same_statistic_over_all_six_columns_for_calibration": {
+    "mean": 4.579540231261042,
+    "sd_ddof1": 2.3205629829388954
+   },
+   "implied_midpoint_boundary": 3.441032098541279,
+   "implied_n_at_that_midpoint": 7,
+   "caveat": "re-scoping the band requires re-deriving median-over-CELLS on the new band, which is one more free run of the same probe. These numbers indicate whether that is worth doing; they are not the numbers a predeclaration should quote."
+  }
+ },
+ "FINDING_5_the_spread_is_pparallel_structured": {
+  "rel_sd_by_column": [
+   0.42544138225861217,
+   0.5507518172027452,
+   0.5652828594218418,
+   0.5553036233287941,
+   0.49813529805525075,
+   0.3024237098444629
+  ],
+  "max_over_min": 1.8691750713347437,
+  "answer": "structured but mildly -- relative spread runs 0.30 to 0.57 across the six columns, a factor of 1.87, while the MEAN effect runs 1.11 to 6.57, a factor of 5.9. So the spread is far more uniform than the effect it accompanies."
+ },
+ "WHAT_THIS_DOES_NOT_DECIDE": [
+  "nothing about (a) versus (b); no perturbation arm was run",
+  "nothing about whether the Exponential arm is affordable -- that is a cost question for its owner, given n and the per-replica GPU cost",
+  "nothing about C_stat, which is untouched, and no family membership is claimed for any of this",
+  "whether the tighter band is the right band; that is the instrument owner's call and needs one free re-run"
+ ]
+}
