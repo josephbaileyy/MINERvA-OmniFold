@@ -151,12 +151,16 @@ not a promise about the outcome, and §4's two branches remain live regardless o
 These hold whichever branch of §4 is correct, and a limitation statement that omitted them would be
 incomplete.
 
-**The covariance was built by one implementation, and is not independently verified.** The construction
-scope called for two blind builders; one was produced. Its 19 specification clauses are abort-on-failure
-assertions **inside that same builder**, which makes them a self-check rather than an independent
-verification, and the regression against the in-tree recipe has power over arithmetic and ordering only —
-not over the choice of domain or centring. **No claim of independent construction or independent
-verification is made for this object.**
+**The covariance was built by one implementation, and is therefore not independently verified.** The
+construction scope originally called for two blind builders; **the dual-build design was dropped by
+Joseph on 2026-08-14 — a recorded decision, not an omission or an unmet requirement.** One builder was
+produced accordingly. Its 19 specification clauses are abort-on-failure assertions **inside that same
+builder**, which makes them a self-check rather than an independent verification, and the regression
+against the in-tree recipe has power over arithmetic and ordering only — not over the choice of domain or
+centring. **So no claim of independent construction or independent verification is made for this object,
+and none should be inferred from the clause count.** *(Stated this way deliberately: a reader who sees
+"not independently verified" without the decision behind it reads an outstanding action item and asks for
+the second build.)*
 
 **Every estimated standard deviation carries a `10.1%` fractional uncertainty of its own**, from the family
 size alone: `N = 50` gives `1/√(2(N−1)) = 1/√98`. The retired design document that specified `N = 100`
@@ -192,6 +196,7 @@ published with them, so a reader can recompute the aggregates and reach a differ
 | band geometry, acceptance, share of integral, external comparison | `state/RECEIPT-20260815-cstat-tail-geometry-and-weighting-correction.json` |
 | decision-boundary feasibility and the sample size it implies | `state/RECEIPT-20260815-oi126-boundary-feasibility.json` |
 | covariance object, domain, rank, centring, one-builder record | `GATE5_CSTAT_N50.npz`, its receipt, and the `VL132` ledger row |
+| **the input file the 50 members were built from** | `state/gate5-source-npz-verified-20260813.json`, which carries an out-of-band **measurement** of the source identity. ⚠ **Do not cite the members' own `inputs_sha256` for this.** That field is a *copied claim* rather than a measurement on the replica path, and no downstream validator re-checks it — the Gate-4 independent hash fails closed on any `bootstrap_seed != -1` and so never sees a replica (`OI-58`). Gate 5's execution is unaffected; **the source file is genuinely correct.** This row is what makes the family's source identity a recoverable measured operand rather than a restatement. |
 
 **⟨RE-DERIVE⟩** the commit hash quoted for provenance when the note is built.
 
