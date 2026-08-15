@@ -1,5 +1,14 @@
 # DRAFT — statistical-covariance limitation statement for the analysis note (Track B)
 
+> **STATUS 2026-08-15 — PLACED.** Joseph authorized placement directly (*"Put it in"*), after the mediator
+> declined to infer it from the 4-0 vote and put the distinction to him explicitly: **that vote was about
+> whether to run the contrast; no lane was ever asked about placement.** The statement now lives at
+> `docs/analysis-note/app_statmethods.tex`, `\label{app:cstatlimit}` — **appended, 182 insertions and 0
+> deletions** — in the `main_note` include closure only, so it reaches the note build and neither the paper
+> nor the primer. The superseded single-draw figure is wrapped in `\dead{}`, the repo's struck-value macro,
+> whose containment is enforced by `check_dead_containment.py`. **This file remains the drafting record; the
+> note is now the live text and edits belong there.**
+>
 > **STATUS: DRAFT FOR REVIEW. NOT IN THE NOTE AND NOT TO BE COPIED INTO IT FROM HERE.** Authorized by
 > Joseph (*"Yes I authorize both"*, recorded at `ae70c3f`) as Track B of two; the mediator reviews this
 > text and Joseph sights it before any of it goes near `docs/analysis-note/`. Track A — the clean

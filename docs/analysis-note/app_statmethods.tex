@@ -1465,3 +1465,185 @@ variance direction, which mean-centering correctly collapses to near
 zero. We mean-center throughout, matching MAT (\S\ref{sec:minerva}); the
 bands where the distinction matters are the asymmetric ones (BeamAngle,
 MuonResolution, and the one-sided NC band).
+
+\subsection{The full-event statistical covariance: what it is, and what it is not}
+\label{app:cstatlimit}
+
+\subsubsection{Construction, stated as a method choice}
+
+The statistical covariance for the full-event extended-phase-space measurement is built from a
+$50$-member replica family. Each member repeats the whole analysis --- background-subtracted target
+construction, estimator training, and cross-section extraction --- on an independent
+$\mathrm{Poisson}(1)$ bootstrap of the measured leg, so that a member's target is the nominal target
+multiplied by that draw (\S\ref{app:poisson}). The covariance is the sample covariance of the $50$
+resulting cross sections about their own mean, normalised $1/(N-1)$, on the density scale.
+
+This is a method choice and we state it as one. A $\mathrm{Poisson}(1)$ bootstrap of the measured
+sample is the standard non-parametric stand-in for measured-statistics uncertainty, but for a
+\emph{learned}, non-linear estimator it is not automatic that it inherits the properties it has for a
+linear one. We verified that the family is what the construction claims: the multiplicity distribution
+reproduces the $\mathrm{Poisson}(1)$ probability mass function for $k=0\ldots5$ to better than
+$0.5\%$, the zero-weight fraction is $e^{-1}$ to $2.4\times10^{-4}$ pooled and within $1.9\sigma$ of
+$e^{-1}$ in every one of the $18$ populated longitudinal-momentum columns, and the members' refined
+targets agree with the nominal's to $0.068\%$ on the rows both retain.
+
+\subsubsection{The measured spread}
+
+Across most of the reported plane the family is tight and the central value sits inside it. In
+$6 < p_{\parallel} < \SI{20}{GeV/c}$ it is neither.
+
+\begin{center}
+\begin{tabular}{lr}
+\hline
+median per-cell replica relative s.d., $6<p_{\parallel}<\SI{20}{GeV/c}$ & $67.1\%$ \\
+median per-cell replica relative s.d., elsewhere & $8.5\%$ \\
+nominal-to-member ratio of unfolded yield in that band, family mean & $3.5969$ \\
+s.d.\ of that ratio across the $50$ members & $1.6091$ \\
+range across the $50$ members & $1.0859$--$6.8865$ \\
+median per-cell nominal-to-family-mean ratio, whole reported plane & $1.000323$ \\
+\hline
+\end{tabular}
+\end{center}
+
+The last row is the context for the others and should not be dropped when they are quoted: over the
+reported plane as a whole the central value and the replica mean agree to $0.03\%$ per cell, so the
+disagreement is concentrated rather than global. The affected band carries $15.5\%$ of the reported
+cross-section integral. An earlier internal statement of the band ratio used a single member's value,
+$\dead{5.0467}$ --- \textbf{struck: a $70$th-percentile draw quoted as if typical}; the
+family-typical value is $3.5969$ with the spread above.
+
+\subsubsection{What is established}
+
+The discrepancy is localised to the estimator's training, and the extraction is faithful. Comparing
+the per-cell unfolded yield before extraction against the extracted cross section, for the nominal and
+for a member: in the control region $p_{\parallel} < \SI{6}{GeV/c}$ the two ratios agree to a median
+$0.139\%$; in the affected band the ratio of ratios is $1.0000$; and the deficit is separable in
+longitudinal momentum alone, for two distinct quantities --- four separate fits, not one pair repeated:
+
+\begin{center}
+\begin{tabular}{lcc}
+\hline
+quantity fitted & $R^{2}$ from $p_{\parallel}$ alone & $R^{2}$ from $p_{T}$ alone \\
+\hline
+extracted cross-section ratio & $0.868$ & $0.018$ \\
+pushed (pre-extraction) yield ratio & $0.839$ & $0.030$ \\
+\hline
+\end{tabular}
+\end{center}
+
+The two rows are close \emph{because} the extraction is faithful. Two candidate mechanisms are retired
+by measurement rather than by argument: the replica targets themselves, and the signal factor applied
+to truth counts, which the extraction comparison excludes.
+
+The affected cells are not sparse or peripheral. They form a single contiguous band spanning nearly the
+full transverse-momentum range, with median reconstruction acceptance $0.859$ --- the highest on the
+grid --- carrying $26.5\%$ of all reconstructed-and-accepted signal, and none of them falls below the
+low-acceptance threshold that defines this analysis's model-dependent reporting tier. Whatever the
+explanation, it is not that the measurement is starved there. For external context, MINERvA's published
+double-differential inclusive measurement reports all $84$ bins of this longitudinal-momentum range at
+a median fractional statistical uncertainty of $1.55\%$, its worst reported bin anywhere being
+$13.1\%$. The two are not the same object --- data statistics on a standard selection against a
+bootstrap over a learned estimator on an extended phase space --- and we do not treat the comparison as
+decisive. We state it because a reader is entitled to it.
+
+\subsubsection{The fork as it stood when this section was first written}
+
+The family disagrees with the central value by a factor of order three, coherently, in the
+best-accepted region of the plane, and at that point two readings were available and not
+distinguished. \textbf{(a) The spread is real:} the estimator is genuinely this sensitive to the
+measured sample there, and the covariance is right, so the quoted uncertainties in
+$6<p_{\parallel}<\SI{20}{GeV/c}$ really are of order $67\%$. \textbf{(b) The proxy is wrong:}
+$\mathrm{Poisson}(1)$ resampling gives $36.8\%$ of measured rows zero weight, and a learned estimator
+confronted with that much removed support may respond in a way that is a property of the perturbation,
+so the covariance would overstate and the construction would need replacing. Both are consistent with
+everything above: a genuinely unstable estimator and an invalid perturbation both act during training,
+both concentrate where information is scarcest, and both leave the extraction faithful.
+
+\subsubsection{Amendment: the discriminating contrast will not be run, and what the figure therefore is}
+
+\emph{This supersedes part of the preceding subsection, which is retained as written because it records
+what was open at the time.}
+
+A discriminating experiment was designed and authorised: $\mathrm{Exponential}(1)$ and
+$\mathrm{Poisson}(1)$ share mean and variance and differ only in $P(X{=}0)$, so substituting the former
+holds the perturbation's variance fixed while removing its zero-support. It will not be run. Four
+independent reviewers recommended against it unanimously, on the ground that \emph{neither outcome would
+change what is published}: an unimportant zero atom means publishing the covariance as it stands, and a
+decisive one means replacing the resampling scheme with a zero-free one --- which is choosing the noise
+model that yields the smaller uncertainty, and is not a defensible basis for tightening an error bar.
+The question was closed on argument, not abandoned for cost.
+
+That argument narrows branch (b). The resampled objects are individual reconstructed events. A
+$\mathrm{Poisson}(1)$ multiplicity on a row states that, were the data retaken, that event occurred $k$
+times; multiplicity zero states that it did not occur, which is what counting noise does to an event
+observed once, so the zero atom is not an artifact of the method. Independent $\mathrm{Poisson}(1)$
+multiplicities also reproduce exact Poisson fluctuations in every aggregate of those rows
+(\S\ref{app:poisson}), which variance-matched continuous alternatives do not: they match the first two
+moments and get the discreteness wrong. The resampling scheme is therefore the sampling distribution
+rather than a stand-in that might be the wrong one, and ``the proxy is invalid'' is not available as a
+reading of the band.
+
+\medskip\noindent
+\textbf{What the band figure is.} The $67\%$ is the spread of a \emph{refit} estimator under
+\emph{correct} measured-statistics resampling. Two consequences travel with the number wherever it is
+quoted. First, it is the sampling uncertainty \emph{of this estimator} --- a learned, iterative
+reweighting refit on every replica --- and not a property of the data alone; it includes the estimator's
+own sensitivity to which events are present. Second, it is therefore an \emph{upper bound} on how
+poorly the data constrain the cross section in that region: a differently regularised estimator could do
+better on the same data, and none could do worse purely for want of information. That bound is on the
+statistical component only and says nothing about systematics.
+
+\medskip\noindent
+\textbf{Status of this amendment.} It is an argument, not a ratified result. It has survived four
+independent reviewers including the one who proposed the instrument it retired, which is the strongest
+support an argument of this kind has had here, and that is still not a measurement. Ratification rests
+with the estimator's owner and the covariance-construction reviewer; the open item that records the
+question remains open, and nothing here licenses promoting the central value, quoting the covariance as
+verified, or treating the region as settled.
+
+\subsubsection{Limitations of the covariance object itself}
+
+These hold whichever reading is correct. \emph{The covariance was built by one implementation and is
+therefore not independently verified.} The construction scope originally called for two blind builders;
+the dual-build design was dropped by decision on 2026-08-14 --- a recorded choice, not an omission or an
+unmet requirement --- and one builder was produced accordingly. Its specification clauses are
+abort-on-failure assertions inside that same builder, which makes them a self-check, and the regression
+against the in-tree recipe has power over arithmetic and ordering only, not over domain or centring. No
+claim of independent construction or verification is made for this object and none should be inferred
+from the clause count.
+
+Every estimated standard deviation carries a $10.1\%$ fractional uncertainty of its own from the family
+size alone, $1/\sqrt{2(N-1)}=1/\sqrt{98}$; the retired design document that specified $N=100$ labelled a
+family of this size insufficient, and that label stands in the record as written.
+
+The reporting domain and the invertible domain differ, and quoting one for the other is an error. The
+measurement is reported on $262$ cells, those with non-zero reconstruction acceptance. The covariance is
+supplied on the same domain, but its invertible sub-block is $257$ cells: five cells enter the reported
+set in some members and not others, so their apparent variance is partly the reporting mask switching
+rather than the cross section moving, and one of the five is reported in only $24$ of the $50$ members.
+Those cells are published and flagged and are used in no inversion or goodness-of-fit. The rank is
+$49=N-1$, far below $262$, so any use requiring an inverse requires a declared regularisation which this
+analysis does not silently supply (\S\ref{sec:rank}). Finally, the covariance is on the density scale
+and is centred on the replica mean rather than on the published central value: integrating it requires
+bin areas, and the centring means it does not by itself express the offset tabulated above.
+
+\subsubsection{Recomputing these numbers}
+
+Every figure above is derived from committed artifacts, and the per-cell arrays behind the aggregates
+are published with them, so a reader can recompute the aggregates and reach a different conclusion. The
+family spread and its per-replica values are in
+\texttt{state/probe-oi126-band-Rpush-sigma-20260815}; the training-versus-extraction split, its control
+region, and the thresholds fixed before that comparison ran are in
+\texttt{state/probe-oi126-push-vs-extraction-20260815} and the predeclaration beside it; the
+$\mathrm{Poisson}(1)$ verification of the targets is in
+\texttt{state/RECEIPT-20260815-oi126-mechanism-narrowing} and
+\texttt{state/probe-oi126-zero-fraction-per-column-20260815}; the band geometry, acceptance, share of
+integral and the external comparison are in
+\texttt{state/RECEIPT-20260815-cstat-tail-geometry-and-weighting-correction}; and the two per-cell
+relative standard deviations tabulated above are fields of
+\texttt{state/p5a-nominal-vs-cstat-family-percell-20260815}, recomputable from that receipt's own
+shipped per-cell array. That receipt carries two retracted share-of-total fields, marked in place;
+neither relative-standard-deviation field is among them and no share-of-total figure from it is used
+here. The input file the members were built from is measured in
+\texttt{state/gate5-source-npz-verified-20260813}, which should be cited for that purpose in preference
+to the members' own recorded input digest.
