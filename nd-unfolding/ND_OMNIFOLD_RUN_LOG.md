@@ -8011,3 +8011,70 @@ filesystem `st_blksize` is 4 MiB and a healthy multi-hour run can emit zero prog
    carries **7**, correctly. `OI-30` and `OI-62` at 8 are real. **A naive splitter reported a document defect
    that was an artifact of the splitter**, which is `BEN-186`'s shape: the instrument was never validated
    against a case it would get wrong.
+
+## 2026-08-15 — documentary: the VL100 falsification was a MIS-TARGET, not a refutation, and the mediator propagated it into three places
+
+**Nothing executed, nothing submitted, no cluster contact of any kind.** No `sbatch`, no `scancel`, no
+`scontrol`; `/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059` untouched. Local reads and edits only.
+
+**THE CAUSE, NAMED: the mediator session relayed lane D's finding as established into three places —
+`OI-71` (via the dispatch that had lane A write it), the P5A `NOT_CANONICAL.json` output contract (via
+lane C), and a user report — before checking which artifact the finding measured.** This entry corrects
+that propagation. It is not a record that drifted on its own and must not be read as one.
+
+**WHAT IS ACTUALLY THE CASE**, established at `66c1f0e`/`5ce5e2f` and re-verified here from the object
+rather than relayed: `NONQUOTABLE-DIAGNOSTIC.manifest.slurm-56552326.json` carries `job_id 56552326` and
+the annealed closure's own `push_sha256`, then names `weights_path`/`weights_sha256` = the **pre-anneal**
+`fullevent_nominal/` file and computes its `fold_forward` block, its `rejection_reason` and
+`publication_gate_rejects_this_on_physics_alone` **from that file**. So **lane D read exactly the artifact
+the manifest names as the source of its own rejection — D followed the record, and the record is what is
+wrong** (`BEN-312`). D's arithmetic reproduces exactly and is presumably correct *about the pre-anneal
+nominal run*. **The physics ground is MIS-TARGETED, not falsified**, and `"NOT QUOTABLE on the physics
+alone"` is a true statement about a run that is not this one. Separately, *"one of the four quotability
+grounds, the other three hygiene and unexamined"* was a **count with no members** (`BEN-313`).
+
+**Routes, not numbers** (`BEN-227`/`BEN-228` — a receipt value copied into a second file diverges from it):
+`state/RECEIPT-vl100-shape-corrected-foldforward-20260815.json` for every figure with its operands,
+`FINDING-20260815-the-quarantine-measured-a-different-run.md` for the grounds reconstruction,
+`FINDING-20260815-a-restatement-is-not-a-second-measurement.md` for the mechanism.
+
+**FOUR FILES CORRECTED**, all *beside* lane D's work and none of it touched — `f4267b4`, D's finding text,
+D's receipt and D's rows are unaltered, and D is not running:
+
+1. **`docs/OPEN_ITEMS.md`, `OI-71`** — lead cell, `(2)`, `(3)`, `(4)`'s attribution, the count sentence and
+   the closing-carelessly warning. The `(2)` number pile is **gone and replaced by routes**, since it
+   restated D's receipt values into a second file. Refs column now also carries the correction receipt,
+   both 2026-08-15 findings and the un-submitted proposal. Row still declares `WAITING-USER`, **now on
+   `G4` alone**. Lane A filed this row and the mediator's text is what was corrected in it.
+2. **`nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh`** — the **generator** of the
+   `NOT_CANONICAL.json` contract, header comment and the `vl100_quotability_scope` /
+   `promotion_would_require` / `THE_GAP` keys. The key now leads with a `STATUS` field stating that any
+   emitted copy lacking it predates the correction. **The header edit is deliberately line-count-neutral
+   (13/13) so that `sbatch_p5a_fullevent_nominal_extract.sh:153-182`, cited for guard `G1` in two
+   committed receipts and in `BEN-311`, still resolves to `G1`.** Verified: `bash -n` clean, all three `PY`
+   heredocs compile, and the generator was **executed** against stub arguments — it emits valid JSON, the
+   corrected keys are present, and `0.173`/`68x` no longer appear anywhere in the emitted document.
+3. **`docs/orchestration/HANDOFF-20260815-0455Z.md`** — the `OI-71` bullet, corrected in place and marked
+   as having been wrong, because this file is what a new session is told to read first.
+4. **`VALIDATION_LEDGER.md`** — the `VL100` pointer paragraph gains the `BEN-312` attribution (the manifest
+   named the arm) and the `BEN-313` retraction. Still routes, not numbers; the `VL100` row itself untouched.
+
+**DELIBERATELY NOT EDITED, and why — each of these still carries the superseded phrasing:**
+
+* **The two earlier entries in this log** (`:7686-7712` lane A's, and the P5A submission entry at `:7845`).
+  This file is **append-only chronology**; they record what was believed when written and this entry is the
+  correction beside them.
+* **`state/p5a-extraction-submitted-56978466.json:67`**, **`state/RECEIPT-vl100-shape-corrected-foldforward-20260815.json:14`**
+  and **`state/probe-vl100-shape-correction-scan-20260815.py:174`** — emitted receipts and the probe that
+  wrote one. A receipt records what its run asserted; rewriting one destroys that. `BEN-313` is already
+  filed against the middle one.
+* **The P5A products already on `/pscratch`** under `fullevent_nominal_annealed_extraction_unpromoted/`.
+  Their `NOT_CANONICAL.json` carries the old text. **The generator is corrected; the emitted artifacts are
+  not, by instruction**, and the new `STATUS` key is how a reader tells the two apart.
+
+**NOT ESTABLISHED BY THIS LANE, and not claimed:** the two arms' digests and `seed_policy` schemas
+(`58f664cd…` with no `lr_policy` key vs `559a1020…` at `fit-time-anneal-after-iteration-0`) were **not
+re-measured here** — the `.npz` files are not in this checkout and the cluster was not contacted. They are
+cited from the correction receipt, which enumerates the schema keys. What *was* verified locally from the
+object is the manifest's own pointer set, which is the part this reframing rests on. **`OI-71` stays OPEN
+on `G4`; no closure run was submitted and none is authorized without Joseph.**

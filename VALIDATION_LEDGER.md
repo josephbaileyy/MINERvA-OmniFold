@@ -1833,7 +1833,11 @@ independently reproduced twice (from the persisted spectra, and again from the a
 `weights_push`), and it **survives a shape-corrected fold-forward** under both a well-posed and an
 adversarial correction — **it still clears the PRIMARY criterion.** The 2026-08-14 falsification of the
 quotability argument (`f4267b4`) is **scope-corrected: it was computed from the PRE-ANNEAL arm's
-weights, not the annealed arm this row measures.** **What is NOT settled, and is why `OI-71` stays
+weights, not the annealed arm this row measures — and the wrong arm was named by the closure's own
+quarantine MANIFEST, whose `job_id` is the annealed closure, so the probe followed the record and the
+record is the defect** (`BEN-312`). **The ground is mis-targeted, not falsified**, and *"one of four
+quotability grounds"* was a count with no members (`BEN-313`) — only `recovery_evaluated: False` at
+the promoted configuration survives. **What is NOT settled, and is why `OI-71` stays
 OPEN: this run's fold-forward ratio is close to unity where the nominal run's is not, so the closure
 does not exercise the deficit at all and is SILENT about that failure mode rather than reassuring about
 it.**

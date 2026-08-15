@@ -47,20 +47,20 @@
 # from two sums already taken over the WHOLE reco leg, so the shape information is integrated away
 # BEFORE the ratio exists.  A quantity of that construction cannot distinguish a uniform scale
 # offset from a shape distortion with the same integral -- which is why lane D had to decompose
-# per-event pieces to answer the question at all (D, 2026-08-14, f4267b4: the fold-forward deficit
-# is SHAPE-dependent, per-cell ratio 0.173 -> 1.420, relative sd 47% against a 0.69% noise
-# expectation, 68x clear, structure in p_parallel).  Consequences: the "normalization divides out of
-# unit-normalized spectra" argument is NOT available, how far VL100 moves is unrecomputed, and
-# THE ANNEALED ARM'S PER-CELL FOLD-FORWARD BEHAVIOUR HAS NOT BEEN MEASURED BY ANYONE.  So 0.035609
-# bounds the integral and says nothing about the grid.  This is not a label asking to be honoured --
-# it is what the arithmetic can and cannot support.
+# per-event pieces to answer the question at all (D, 2026-08-14, f4267b4).  D's arithmetic
+# reproduces exactly and is about the PRE-ANNEAL nominal run -- SCOPE CORRECTION below.  0.035609
+# still bounds only the integral and says nothing about the grid.  This is not a label asking to
+# be honoured -- it is what the arithmetic can and cannot support.
 #
-# SCOPE OF THAT FALSIFICATION, narrowed 2026-08-14 after the mediator corrected its own relay (caught
-# by lane A).  D examined ONE of VL100's FOUR quotability grounds -- the PHYSICS one -- and D's own
-# scope note records that the other three are HYGIENE grounds and were NOT examined.  So the correct
-# statement is that VL100's PHYSICS ground is falsified, NOT that "the VL100 quotability argument has
-# been falsified."  Nothing above depends on the wider claim, and the narrower one is enough: the
-# physics ground is the one that would have licensed quoting this run's product.
+# SCOPE, CORRECTED 2026-08-15.  THE PHYSICS GROUND IS MIS-TARGETED, NOT FALSIFIED, and the fault
+# is in the RECORD: the closure's own quarantine manifest carries job_id 56552326 while its
+# weights_path/weights_sha256 name the PRE-ANNEAL fullevent_nominal/ file, and computes its
+# fold_forward block and rejection_reason from it -- so D read exactly the artifact the manifest
+# names as the source of its own rejection.  The "ONE of FOUR quotability grounds, other three
+# hygiene and unexamined" scope note was a COUNT WITH NO MEMBERS -- do not repeat it; there are
+# three, two are one ground, G1-G3 are determined and only G4 remains.  Grounds:
+# FINDING-20260815-the-quarantine-measured-a-different-run.md.  Operands:
+# state/RECEIPT-vl100-shape-corrected-foldforward-20260815.json.  BEN-310/311/312/313.
 #
 # ---------------------------------------------------------------------------------------------
 # REPAIR 2026-08-14 AFTER JOB 56978466 FAILED 6:0 AT 00:12:57.  Recorded here because the failure
@@ -462,14 +462,10 @@ doc = {
         "promotion was (state/p3f-pet-gate4-nominal-promotion-56563761.json)",
         "a resolution of CSTAT-O3: which assembler consumes the 2D P5B C_stat and what ratifies its "
         "common mask -- RUNBOOK:213's named authority did not exist because P5A had never extracted",
-        "a quotability position. Lane D established 2026-08-14 that the fold-forward deficit is "
-        "SHAPE-dependent (per-cell ratio 0.173->1.420, 68x clear of noise), so the 'normalization "
-        "divides out of unit-normalized spectra' argument is NOT available and how far VL100 moves "
-        "is unrecomputed. SCOPE: D examined ONE of VL100's FOUR quotability grounds -- the PHYSICS "
-        "one -- and D's own scope note records the other three as HYGIENE grounds that were NOT "
-        "examined. So VL100's PHYSICS ground is falsified; the argument as a whole is NOT. The "
-        "narrower claim is sufficient here, because the physics ground is the one that would have "
-        "licensed quoting this product."
+        "a quotability position. As of 2026-08-15 what remains of the VL100 quotability question is "
+        "ONE ground -- G4, recovery_evaluated still False at the promoted configuration -- and it is "
+        "NOT DETERMINABLE READ-ONLY at any effort. See vl100_quotability_scope below for the whole "
+        "of it, including what this receipt's earlier emitted copies got wrong."
     ],
     "the_favourable_scalar_and_what_it_cannot_express": {
         "value": "abs_dev 0.035609 against the frozen fold_forward_ratio_dev_max of 0.05",
@@ -479,11 +475,21 @@ doc = {
         "therefore": "the shape information is integrated away BEFORE the ratio exists, so this "
                      "quantity cannot distinguish a uniform scale offset from a shape distortion "
                      "with the same integral. It bounds the INTEGRAL and says nothing about the grid.",
-        "and_shape_dependence_is_measured_elsewhere": "lane D, 2026-08-14, f4267b4 -- the "
-            "fold-forward deficit IS shape-dependent: per-cell ratio 0.173 -> 1.420, relative sd 47% "
-            "against a 0.69% noise expectation, 68x clear, structure in p_parallel.",
-        "THE_GAP": "the ANNEALED arm's per-cell fold-forward behaviour has not been measured by "
-                   "anyone. 0.035609 does not close it and cannot.",
+        "and_shape_dependence_is_measured_elsewhere": "lane D, 2026-08-14, f4267b4 -- per-cell "
+            "structure in the fold-forward ratio, measured on the PRE-ANNEAL nominal run's weights. "
+            "D's arithmetic reproduces exactly; the target is the pre-anneal arm, not this one. "
+            "Numbers with operands: state/vl100-foldforward-shape-test-20260814.json (D's own) and "
+            "state/RECEIPT-vl100-shape-corrected-foldforward-20260815.json (the scope correction). "
+            "Not restated here: BEN-227/BEN-228 -- a receipt value copied into a second file "
+            "diverges from it, so this key carries routes, not numbers.",
+        "THE_GAP": "0.035609 bounds the integral and cannot bound the grid. Note what CLOSED and "
+                   "what did NOT: the annealed arm's own per-cell fold-forward field HAS now been "
+                   "measured post-hoc (the 2026-08-15 receipt above), and the earlier claim here "
+                   "that it 'has not been measured by anyone' is superseded. What remains open is "
+                   "the TRAINING-TIME question -- the fold-forward acts in iterations 2 and 3 of 3, "
+                   "so a defect that mis-delivered weight during training is baked into push and no "
+                   "post-hoc reweighting can probe it. That needs a retrained closure (OI-71, "
+                   "OI-125).",
     },
     "guards_that_passed_before_this_run": {
         "G1_arm_schema": "seed_policy.lr_policy.schedule == fit-time-anneal-after-iteration-0 "
@@ -553,27 +559,62 @@ doc["push_provenance"] = prov
 # THE OWED VL100 ANNOTATION, discharged here.  It was authored into this launcher at dc4bb8e but job
 # 56978466 died before writing any receipt, so it has never actually reached disk.  It is a TOP-LEVEL
 # key rather than only a line inside promotion_would_require because the distinction it draws is the
-# one most likely to be flattened by someone quoting it second-hand -- which is exactly what happened
-# once already (the mediator over-relayed it, and lane A caught it).
+# one most likely to be flattened by someone quoting it second-hand.
+#
+# CORRECTED 2026-08-15, AND THE CORRECTION IS OF THIS LAUNCHER'S OWN TEXT.  What this key said until
+# now -- that lane D falsified VL100's physics ground, one of four grounds -- is wrong twice, and it
+# is here because the MEDIATOR SESSION RELAYED D'S FINDING AS ESTABLISHED INTO THREE PLACES BEFORE
+# CHECKING WHICH ARTIFACT IT MEASURED, and had lane C write that relay into this generator.  This is
+# a correction of a propagation, not a drift in the record: D's arithmetic reproduces exactly, D read
+# the file the closure's own quarantine manifest names, and nothing about the target came from D.
 # ------------------------------------------------------------------------------------------------
 doc["vl100_quotability_scope"] = {
-    "what_IS_falsified": "VL100's PHYSICS ground.",
-    "by_what": "lane D's shape-dependence test, 2026-08-14, commit f4267b4: the fold-forward deficit "
-               "is SHAPE-dependent, per-cell ratio 0.173 -> 1.420, relative sd 47% against a 0.69% "
-               "noise expectation -- 68x clear of noise, with structure in p_parallel.",
-    "what_is_NOT_falsified": "the VL100 quotability argument AS A WHOLE. Saying 'the quotability "
-                             "argument is falsified' is an OVERSTATEMENT and is not supported.",
-    "why_not": "VL100 rests on FOUR grounds. D examined ONE of them -- the physics ground -- and D's "
-               "own scope note records the other THREE as HYGIENE grounds which were NOT examined. "
-               "Nothing has been measured about them either way, so they are open, not refuted.",
-    "why_the_narrow_claim_still_suffices_here": "the physics ground is the one that would have "
-        "licensed quoting this run's product. Falsifying it is enough to withhold quotability, and "
-        "no part of this receipt depends on the wider claim.",
-    "consequences_for_this_product": [
-        "the 'normalization divides out of unit-normalized spectra' argument is NOT available",
-        "how far VL100 moves is UNRECOMPUTED",
-        "the ANNEALED arm's own per-cell fold-forward behaviour has not been measured by anyone",
-    ],
+    "STATUS": "SCOPE-CORRECTED 2026-08-15. Any emitted copy of this key under "
+              "fullevent_nominal_annealed_extraction_unpromoted/ that lacks this STATUS field "
+              "PREDATES the correction and states the superseded claim. Those artifacts were "
+              "deliberately NOT rewritten -- an emitted receipt records what its run asserted. "
+              "Read them against this block.",
+    "what_IS_established": "the physics ground is MIS-TARGETED, not falsified. It is stated from a "
+        "fold-forward deficit measured on the PRE-ANNEAL nominal arm's weights, while VL100 is the "
+        "ANNEALED arm's recovery. Under both a well-posed and an adversarial shape correction VL100 "
+        "is unchanged and still clears its primary criterion.",
+    "and_the_defect_is_in_the_RECORD_not_in_the_probe": "closure 56552326's own quarantine manifest "
+        "(NONQUOTABLE-DIAGNOSTIC.manifest.slurm-56552326.json) carries job_id 56552326 and its own "
+        "push_sha256 for the annealed closure, then names weights_path / weights_sha256 = the "
+        "PRE-ANNEAL fullevent_nominal/ file and computes its fold_forward block, its "
+        "rejection_reason and publication_gate_rejects_this_on_physics_alone FROM THAT FILE. Lane D "
+        "read exactly the artifact the manifest names as the source of its own rejection. So 'NOT "
+        "QUOTABLE on the physics alone' is a TRUE STATEMENT ABOUT A RUN THAT IS NOT THIS ONE, "
+        "attached to VL100 by the manifest's pointers. A hash pin verifies you read the file that "
+        "was named, never that the right file was named. BEN-312.",
+    "the_FOUR_GROUNDS_phrase_was_a_COUNT_WITH_NO_MEMBERS": "do not repeat it, in either direction. "
+        "'D examined one of four quotability grounds, the other three are hygiene and unexamined' "
+        "originates in f4267b4's own limitation sentence, propagated to five places, and NONE of "
+        "them enumerates the four; no CONVENTION-*.md defines quotability. Two of those five "
+        "restatements were the mediator's, put into a dispatch and a user report without asking "
+        "which artifact enumerated the set. Reconstructed from the artifacts there are THREE and "
+        "two are the same ground: G1 physics DETERMINED (does not describe this run); G2 the "
+        "NONQUOTABLE-DIAGNOSTIC. label DETERMINED and NOT INDEPENDENT of G1, its own note scoping "
+        "it to engine edits and promotion; G3 provenance hygiene DETERMINED CLEAN, with one "
+        "residual inherited from G1 because hash:nominal-weights pins the pre-anneal file. "
+        "BEN-313.",
+    "what_REMAINS_and_is_the_only_live_ground": "G4 -- recovery_evaluated is still False at the "
+        "promoted configuration, and it is NOT DETERMINABLE READ-ONLY AT ANY EFFORT, because "
+        "recovery is defined against an injected truth reweight and the promoted nominal has "
+        "neither tilt nor A/B split. It needs GPU time, not more reading.",
+    "why_this_still_withholds_quotability_from_this_product": "G4 is undetermined and the closure "
+        "certifying the annealed arm has a fold-forward ratio near unity where the nominal run's is "
+        "far from it -- so that closure does not EXERCISE the deficit at all and is SILENT about "
+        "that failure mode rather than reassuring about it. Silence is not a licence to quote.",
+    "refs_NOT_restated_values": {
+        "grounds_determination": "FINDING-20260815-the-quarantine-measured-a-different-run.md",
+        "mechanism_of_the_misread": "FINDING-20260815-a-restatement-is-not-a-second-measurement.md",
+        "every_number_with_its_operands": "state/RECEIPT-vl100-shape-corrected-foldforward-20260815.json",
+        "D_s_own_receipt_untouched": "state/vl100-foldforward-shape-test-20260814.json (f4267b4)",
+        "live_items": "OI-71 (G4, and the training-time question), OI-125 (the receipt-chain hole)",
+        "why_no_numbers_here": "BEN-227/BEN-228 -- quote with a ref or not at all; a receipt value "
+                               "duplicated into a second file diverges from it.",
+    },
 }
 for label, p in (("xsec", xsec), ("push", push), ("summary", summary)):
     if os.path.isfile(p):
