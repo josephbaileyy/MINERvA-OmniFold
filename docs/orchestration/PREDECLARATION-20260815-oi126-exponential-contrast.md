@@ -1,6 +1,23 @@
 # PREDECLARATION — the `OI-126` (a)/(b) contrast: variance-matched, zero-free perturbation
 
-**STATUS: DRAFT, UNSIGNED, NOT IN FORCE. NO CODE WRITTEN, NOTHING SUBMITTED.**
+> # RETIRED 2026-08-15 — consensus 4-0 at `410af7a`. THIS EXPERIMENT WILL NOT RUN.
+>
+> **Reason, in one line: `Poisson(1)` is the sampling distribution, not a proxy — so the contrast could
+> not have undermined the object it tested.** Independent `Poisson(1)` row multiplicities reproduce the
+> *exact* sampling distribution of every aggregate; `Exponential(1)` matches only the first two moments
+> and is wrong precisely in the atom at zero. §7 of this document argued the opposite and was wrong.
+> Consequence: **both outcomes support `C_stat`'s validity**, so no result could have been actionable.
+>
+> **THE BODY IS LEFT INTACT DELIBERATELY.** §5b, §7 and the superseded half-width rows are the
+> reasoning trail, and they are the evidence that the design was genuinely open when it was written —
+> the same principle this document applies to §4. **A retired predeclaration is a record; a removed one
+> is a gap.** Nothing below is in force. Do not resurrect it: see
+> `PROPOSAL-20260815-oi126-fixed-network-propagation.md`, which keeps the correct noise model and
+> removes the confound structurally instead.
+>
+> Retired by its own author. The pattern that produced §7's error is `BEN-315`.
+
+**STATUS: RETIRED (see above). NEVER IN FORCE. NO CODE WAS WRITTEN, NOTHING WAS SUBMITTED.**
 **Landed as a DRAFT so it can be reviewed as a document** — lane B could review only a relay of its
 arithmetic while it existed solely in a working tree, and correctly marked every claim about the text
 as UNVERIFIABLE. Landing it unsigned fixes that; it does not advance it.
