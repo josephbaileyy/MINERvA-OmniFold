@@ -36,12 +36,35 @@ PREDECLARED ARMS. P0 is not optional -- without it, "hashes matched" is indistin
   P1  perturb truth_scalars (scale)          event_reco must be IDENTICAL
   P2  permute truth_scalars rows             event_reco must be IDENTICAL
   P3  perturb part_gen (truth cloud)         event_reco must be IDENTICAL
-  P4  perturb w_truth                        event_reco must be IDENTICAL
+  P4  perturb w_truth                        RETIRED 2026-08-15, OI-124 -- see below
 
 Every arm asserts the array ACTUALLY CHANGED before its result is scored (BEN-181): a
 perturbation that did not perturb turns "no leakage" into "no test". An arm the loader REFUSES
 is reported as refused, not as a pass -- a fail-closed guard rejecting the perturbation is a
-real outcome and it is not evidence of purity.
+real outcome and it is not evidence of purity. VOID and REFUSED are DIFFERENT outcomes and are
+worded differently everywhere below: VOID is a fact about this probe (the perturbation did not
+change the array), REFUSED is a fact about the loader (it rejected the perturbed input).
+
+WHY P4 IS RETIRED RATHER THAN REPAIRED (OI-124). Job 56975592 recorded P4 as VOID with
+`proxy_hits: 0` -- the proxy was never asked for `w_truth`. That is not a weak perturbation, it
+is the arm being unfalsifiable AT THIS CAPTURE POINT: `build_event_features` returns event_reco
+before the loader has read `w_truth` at all, so P4's predeclared IDENTICAL was entailed by
+control flow and NO perturbation of `w_truth` could ever have made it fail. An arm whose
+predeclared outcome is implied by the order of two statements measures the order, not the claim.
+
+  NOT the refuted hypothesis. The guess was that the trainer consumes the loader's own weights
+  rather than the NPZ's raw arrays, so the perturbation never reached anything. False: the
+  loader DOES read raw `w_truth` and DOES derive the trainer's weights from it. The cause is
+  ordering, not indirection.
+
+  NOT fixed by moving the capture point either. event_reco is bound ONCE and never rebound, so
+  a capture taken later returns a bit-identical array and the arm still cannot fail -- later,
+  and after dragging in the TensorFlow/ROOT split this early stop exists to avoid. Moving the
+  observation point cannot falsify a statement about what was read before it.
+
+  What replaces it is STRONGER: ordering is a proof over all perturbations where the arm was a
+  sample of one. Kept executable, and re-derived from the source rather than cited by line
+  number, in docs/orchestration/test_loader_ordering_reco_before_truth_weight.py.
 """
 import gc
 import hashlib
@@ -129,6 +152,12 @@ def run_pass(label, perturb):
     reassigned, subsetted or rescaled in between. So the array captured here IS the array the
     production loader emits and IS the array the purity claim is about.
 
+    That paragraph is a READING of the loader, and its coordinates are stale the moment the loader
+    moves. It is now also a CHECK, re-derived from the source with no coordinate recorded:
+    docs/orchestration/test_loader_ordering_reco_before_truth_weight.py -- premises P-ONCE (bound
+    exactly once) and P-FIXED (reaches `reco_evt=`) are exactly the two claims made here. Added by
+    OI-124, which needed the same reading to retire P4 and declined to make it twice by hand.
+
     Stopping also removes two dependencies that have nothing to do with the property: the ROOT
     target refinement and the vendored `omnifold.dataloader` import at :1336 (which needs
     TensorFlow -- no Perlmutter interpreter carries both). Everything BEFORE :1241 -- the NPZ
@@ -190,7 +219,21 @@ ARMS = [
     ("P1", "truth_scalars scaled x1.05", {"truth_scalars": scale(1.05)}, "IDENTICAL"),
     ("P2", "truth_scalars rows permuted", {"truth_scalars": permute_rows}, "IDENTICAL"),
     ("P3", "part_gen (truth cloud) scaled x1.05", {"part_gen": scale(1.05)}, "IDENTICAL"),
-    ("P4", "w_truth scaled x1.05", {"w_truth": scale(1.05)}, "IDENTICAL"),
+]
+
+# Retired, not deleted: an arm that simply vanishes is indistinguishable from one nobody wrote, and
+# job 56975592's receipt has four arms. Published in the receipt so a reader comparing the two runs
+# finds the arm accounted for rather than missing.
+RETIRED_ARMS = [
+    ("P4", "w_truth scaled x1.05", "2026-08-15", "OI-124",
+     "UNFALSIFIABLE AT THIS CAPTURE POINT, not merely void. event_reco is fully assigned by "
+     "build_event_features -- where this probe stops -- before the loader reads the NPZ key "
+     "w_truth, so the arm's predeclared IDENTICAL followed from statement order and no "
+     "perturbation of w_truth could have made it fail. Job 56975592 recorded proxy_hits: 0. "
+     "Moving the capture point does not help: event_reco is bound once and never rebound, so a "
+     "later capture is bit-identical. Replaced by an ordering check that is a proof over all "
+     "perturbations rather than a sample of one: "
+     "docs/orchestration/test_loader_ordering_reco_before_truth_weight.py"),
 ]
 
 
@@ -217,10 +260,13 @@ def main():
             verdict, ok = "REFUSED", None
         elif not really_changed:
             # `None`, not `False`. `False` means "arm ran and CONTRADICTED its predeclaration" and is
-            # the ONLY value that may produce LEAKAGE below; the scoring filter at :237 excludes on
-            # `is not None`, so a `False` here made a perturbation that never ran indistinguishable
-            # from a detected leak. Job 56975592 printed LEAKAGE off three bit-identical truth arms
-            # for exactly this reason. VOID is excluded like REFUSED -- see :41-44.
+            # the ONLY value that may produce LEAKAGE below; the scoring filter (`scored = [v for v
+            # in truth_arms if v["as_predeclared"] is not None]`) excludes on `is not None`, so a
+            # `False` here made a perturbation that never ran indistinguishable from a detected leak.
+            # Job 56975592 printed LEAKAGE off three bit-identical truth arms for exactly this
+            # reason. VOID is excluded like REFUSED -- see the BEN-181 paragraph of the docstring.
+            # (Addressed by content, not by line: the two coordinates this comment used to carry
+            #  were falsified by the same commit that retired P4 -- BEN-228.)
             verdict, ok = "VOID (perturbation did not perturb)", None
         else:
             same = r["sha256"] == base["sha256"]
@@ -228,8 +274,14 @@ def main():
             ok = (verdict == expect)
         results[aid] = {"desc": desc, "expected": expect, "observed": verdict,
                         "as_predeclared": ok, "detail": r}
-        print(f"  [{aid}] expect={expect:10s} observed={verdict:34s} "
-              f"{'as predeclared' if ok else ('REFUSED' if ok is None else '*** NO ***')}")
+        # The label is DERIVED from `verdict`, never re-stated: the previous form hard-coded
+        # "REFUSED" for every `ok is None`, so a VOID arm printed `observed=VOID ... REFUSED` and the
+        # two columns of one line disagreed about which thing had happened.
+        if ok is None:
+            label = f"NOT SCORED -- {verdict.split(' (')[0]}"
+        else:
+            label = "as predeclared" if ok else "*** NO ***"
+        print(f"  [{aid}] expect={expect:10s} observed={verdict:34s} {label}")
 
     p0 = results.get("P0", {})
     powered = p0.get("as_predeclared") is True
@@ -241,9 +293,17 @@ def main():
         verdict = ("UNRESOLVED -- the P0 control did not fire, so this probe has no demonstrated "
                    "power to detect a change in event_reco and NO arm below means anything")
     elif not scored:
-        verdict = "UNRESOLVED -- the loader refused every truth perturbation; nothing was tested"
+        # Counts, not an assertion about which happened. The previous wording said "the loader
+        # refused every truth perturbation" on a branch reachable when the loader refused NOTHING and
+        # every perturbation was VOID -- a right conclusion (UNRESOLVED) with a reason that could be
+        # false, which is the harder defect to catch because the headline is correct.
+        n_void = sum(1 for v in truth_arms if str(v["observed"]).startswith("VOID"))
+        n_refused = sum(1 for v in truth_arms if v["observed"] == "REFUSED")
+        verdict = (f"UNRESOLVED -- no truth perturbation was scorable, so nothing was tested "
+                   f"({n_void} VOID: the perturbation did not change the array; "
+                   f"{n_refused} REFUSED: the loader rejected the perturbed input)")
     elif clean:
-        verdict = (f"NO TRUTH LEAKAGE DEMONSTRATED on {len(scored)} of {len(truth_arms)} truth "
+        verdict = (f"NO TRUTH LEAKAGE DEMONSTRATED on {len(scored)} of {len(truth_arms)} live truth "
                    f"perturbations, through the production loader"
                    + ("" if not MAX_EVENTS else " -- SMOKE TEST ONLY"))
     else:
@@ -256,6 +316,13 @@ def main():
         "SMOKE_TEST": bool(MAX_EVENTS), "max_events": MAX_EVENTS,
         "npz": NPZ, "baseline": base, "arms": results,
         "p0_control_fired": powered, "VERDICT": verdict,
+        "retired_arms": {a[0]: {"desc": a[1], "retired": a[2], "item": a[3], "why": a[4]}
+                         for a in RETIRED_ARMS},
+        "VERDICT_DENOMINATOR_NOTE": (
+            "The count is over LIVE truth arms. Before OI-124 retired P4 (2026-08-15) the same "
+            "recorded arms of job 56975592 read 'NO TRUTH LEAKAGE DEMONSTRATED on 3 of 4 truth "
+            "perturbations'; the three scored arms, their hashes and the control are unchanged, "
+            "and the retired arm never contributed to the numerator. See `retired_arms`."),
         "SPECIFIED_FORM_DECLINED": (
             "The dispatched form -- run the production loader and call assert_no_truth_leakage on "
             "its output -- was NOT run. The loader already makes that exact call at :1247 on the "

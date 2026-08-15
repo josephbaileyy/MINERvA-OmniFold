@@ -45,7 +45,14 @@ HERE = Path(__file__).resolve().parent
 PROBE = HERE / "state" / "probe-oi120c-loader-purity-perturbation-20260814.py"
 RECEIPT = HERE / "state" / "oi120c-loader-purity-perturbation-56975592.txt"
 
-TRUTH_ARMS = ("P1", "P2", "P3", "P4")
+def live_truth_arms(mod):
+    """The probe's scoreable truth arms, DERIVED from it rather than restated here.
+
+    Was the literal `("P1","P2","P3","P4")` until 2026-08-15, when OI-124 retired P4 (it could not
+    fail where it ran). Deriving means a future arm change cannot leave this file quietly testing an
+    arm set the probe no longer has -- the stale-hand-maintained-index shape of BEN-228.
+    """
+    return tuple(a[0] for a in mod.ARMS if a[0] != "P0")
 
 
 def load_probe(name="probe_oi120c_under_test"):
@@ -115,36 +122,49 @@ def test_recorded_arms_replay_to_no_leakage(probe):
 
     RED before the fix: this printed `LEAKAGE -- event_reco changed when only a truth array changed`,
     which is what the job reported.
+
+    THE DENOMINATOR MOVED ON 2026-08-15 and the result did not. At `143f859` this asserted `3 of 4`;
+    OI-124 then retired P4, so the same recorded arms now read `3 of 3 live`. Three arms, three
+    bit-identical hashes, one control that fired -- unchanged. The VOID-arm assertions that used to
+    live here moved to `test_void_arm_does_not_produce_leakage` below, which synthesises a void arm
+    from a LIVE one; BEN-290's guard therefore keeps a subject rather than being retired with P4.
     """
     baseline, details = recorded_arms()
     out, receipt = run_main(probe, baseline, details)
 
     assert receipt["p0_control_fired"] is True, "the control must have fired or nothing is scorable"
-    assert receipt["VERDICT"].startswith("NO TRUTH LEAKAGE DEMONSTRATED on 3 of 4 truth perturbations")
+    assert receipt["VERDICT"].startswith(
+        "NO TRUTH LEAKAGE DEMONSTRATED on 3 of 3 live truth perturbations")
     assert "LEAKAGE --" not in receipt["VERDICT"], f"still alarming: {receipt['VERDICT']}"
     # the headline and the arms must agree -- disagreement between them is the whole defect
-    assert receipt["arms"]["P4"]["observed"].startswith("VOID")
-    assert receipt["arms"]["P4"]["as_predeclared"] is None, (
-        "a VOID arm must carry the EXCLUDE sentinel (None), not the CONTRADICTED value (False)")
-    for aid in ("P1", "P2", "P3"):
+    for aid in live_truth_arms(probe):
         assert receipt["arms"][aid]["observed"] == "IDENTICAL"
         assert receipt["arms"][aid]["as_predeclared"] is True
-    assert re.search(r"=== NO TRUTH LEAKAGE DEMONSTRATED on 3 of 4 ", out), "stdout headline disagrees"
+    assert re.search(r"=== NO TRUTH LEAKAGE DEMONSTRATED on 3 of 3 live ", out), "stdout disagrees"
 
 
 def test_void_arm_does_not_produce_leakage(probe):
     """A void arm among otherwise-clean arms is a MISSING TEST, not a positive detection.
 
-    Synthetic and stricter than the replay: three clean arms, one void, nothing else wrong.
+    Synthetic and stricter than the replay: the other arms clean, one void, nothing else wrong.
     RED before the fix.
+
+    The void arm is synthesised from a LIVE arm (2026-08-15). It used to BE P4, whose recorded detail
+    was genuinely void -- but OI-124 retired P4, and a regression triggerable only by an arm the probe
+    no longer runs is a regression that stops running. The tri-state defect is a property of the
+    scoring code, not of which arm is void, so any live arm exercises it.
     """
     baseline, details = recorded_arms()
     details = dict(details)
-    details["P4"] = void(details["P4"])
+    subject = live_truth_arms(probe)[-1]
+    details[subject] = void(details[subject])
     _, receipt = run_main(probe, baseline, details)
 
+    assert receipt["arms"][subject]["observed"].startswith("VOID")
+    assert receipt["arms"][subject]["as_predeclared"] is None, (
+        "a VOID arm must carry the EXCLUDE sentinel (None), not the CONTRADICTED value (False)")
     assert "LEAKAGE --" not in receipt["VERDICT"], f"void arm manufactured a positive: {receipt['VERDICT']}"
-    assert receipt["VERDICT"].startswith("NO TRUTH LEAKAGE DEMONSTRATED on 3 of 4")
+    assert receipt["VERDICT"].startswith("NO TRUTH LEAKAGE DEMONSTRATED on 2 of 3 live")
 
 
 def test_genuine_truth_change_still_produces_leakage(probe):
@@ -181,17 +201,20 @@ def test_leakage_survives_alongside_a_void_arm(probe):
 def test_all_truth_arms_void_is_unresolved_not_leakage(probe):
     """Nothing tested is UNRESOLVED, never a verdict about leakage in either direction.
 
-    RED before the fix (it read LEAKAGE off four arms that never ran). NB the branch it now lands in
-    is worded "the loader refused every truth perturbation"; VOID is not REFUSED, and that wording
-    imprecision is recorded in OI-124 rather than patched here -- this repair is one token.
+    RED before the fix (it read LEAKAGE off four arms that never ran). The branch it lands in used to
+    be worded "the loader refused every truth perturbation" -- VOID is not REFUSED -- and that
+    imprecision was deferred to OI-124 to keep this one-token repair minimal. OI-124 closed it on
+    2026-08-15; the wording is now asserted in `test_probe_oi120c_p4_retirement.py`, which owns that
+    change. This test keeps asserting only what it always did: nothing tested is UNRESOLVED.
     """
     baseline, details = recorded_arms()
-    details = {aid: void(details[aid]) for aid in TRUTH_ARMS} | {"P0": details["P0"]}
+    arms = live_truth_arms(probe)
+    details = {aid: void(details[aid]) for aid in arms} | {"P0": details["P0"]}
     _, receipt = run_main(probe, baseline, details)
 
     assert receipt["VERDICT"].startswith("UNRESOLVED"), receipt["VERDICT"]
     assert "LEAKAGE --" not in receipt["VERDICT"]
-    for aid in TRUTH_ARMS:
+    for aid in arms:
         assert receipt["arms"][aid]["as_predeclared"] is None
 
 
