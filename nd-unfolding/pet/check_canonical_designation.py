@@ -39,6 +39,42 @@ anything outside the git index, are NOT scanned. D's objection is the reason thi
 was fair: a file whose entire subject is that implicit exclusions hide real sites was carrying an
 implicit exclusion in its own corpus definition, while claiming "every occurrence in the tree".
 
+CLASS 6 -- A MENTION IS NOT A CONSUMER, AND UNTIL 2026-08-15 THIS TOOL COULD NOT TELL THEM APART.
+Diagnosed read-only by the propagation-correction lane as BEN-325, fixed here by lane C (the owner) as
+BEN-237. The instrument was EXHAUSTIVE, HONEST AND UNRANKED: every occurrence was reported and a new
+FINDING file mentioning the namespace failed RED identically to a new script opening it. Measured at
+`6f9c67d^`: 74 files, 216 occurrences, 20 UNACCOUNTED. Measured at `a764a72`: 75 / 221 / 21 -- and the
+whole delta is the commit that FILED BEN-325. Documenting the namespace turned its own guard redder,
+which is why this sat RED from the 2026-08-13 designation instead of being fixed in an hour.
+
+So occurrences are now classified, and PRESENCE IN THE INVENTORY IS REQUIRED ONLY OF OPERANDS:
+
+  OPERAND    the match is in live code, so this file could open that path
+  NARRATIVE  the match is in a comment, a docstring, or a non-code file -- it cannot open anything
+
+  .py    tokenize for COMMENT spans, ast for docstring spans, both compared BY COLUMN so a trailing
+         `# ...` on a real assignment does not launder the assignment
+  .sh    a line whose first non-whitespace char is `#` is narrative -- EXCEPT `#SBATCH`, which is a
+         comment to bash and a DIRECTIVE to Slurm, and `sbatch_pet_fullevent_nominal.sh:12,:13` are
+         genuine namespace sites living in exactly that form
+  data   .json .md .tsv .txt -- nothing in them executes; their READER is code that must match on its
+         own line. (The extension list is grounded in a measurement, not guessed: the found set at
+         `a764a72` is .json 28, .md 19, .py 13, .sh 12, .tsv 2, .txt 1, and zero extensionless files.)
+  else   OPERAND. Unknown extension, unparseable Python, tokenizer error -- every one FAILS CLOSED,
+         because misreading an operand as narrative HIDES A CONSUMER while the converse merely asks
+         for a disposition that costs one line.
+
+WHAT A GREEN RUN NOW CLAIMS, AND IT IS NARROWER THAN BEFORE -- state it rather than inherit it.
+It claims: every occurrence IN CODE THAT COULD OPEN THE PATH has an explicit disposition, and every
+inventory entry still matches something. It NO LONGER claims "every occurrence in the tree has a
+disposition". Narrative-only unlisted files are COUNTED AND PRINTED on every run, never silent, so the
+weakening is visible in the output and not only here. Every pre-existing INVENTORY entry keeps the
+behaviour it had -- counts still enforced where they were enforced -- so no protection that existed on
+2026-08-14 was given away; what changed is that NEW narrative-only files no longer have to be
+hand-registered. The cost is stated in CLASS 5 below: a path literal in a NEW data file is no longer
+demanded of the inventory, which widens an exposure that was already declared unfixable-by-grep.
+A `state/*.json` pin belongs in verify_hash_bindings.py (BEN-322's territory), not in a path grep.
+
 CLASS 5 -- WHAT NO SOURCE-TEXT MATCHER OVER ANY CORPUS CAN SEE, and it is not hypothetical.
 The namespace also arrives from a DATA FILE at run time. `train_fullevent_nominal.py:529,534` stamps
 `weights_folder` and `step2_checkpoint` as ABSOLUTE paths into the artifact's own
@@ -58,10 +94,13 @@ Usage:
   python3 check_canonical_designation.py --list     # print what was found, grouped
 """
 import argparse
+import ast
+import io
 import os
 import re
 import subprocess
 import sys
+import tokenize
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _REPO = os.path.dirname(os.path.dirname(_HERE))
@@ -102,6 +141,10 @@ NS = re.compile(r'(?<!train_)(?<!sbatch_pet_)(?<!test_pet_)'
 #   STAYS-REF     the annealed validation's REFERENCE nominal; retargeting makes it self-comparing
 #   STAYS-PROD    producer / output namespace / log dir -- a write, not a read of the artifact
 #   STAYS-NAME    asserts the directory NAME, does not consume the artifact
+#   STAYS-ANNEALED  added 2026-08-15 (BEN-237). Consumes the ANNEALED arm; every `fullevent_nominal/`
+#                 occurrence is documentary. NOT the same claim as STAYS-DIAG08, which says the file
+#                 reads the 08-08 artifact -- this one says it does NOT, and a future occurrence here
+#                 would be the sibling-directory trap rather than a diagnostic's intent.
 #   RECORD-APPEND files designed to ACCRUE (run logs, FINDINGS, OPEN_ITEMS, INDEX-*, FINDING-*).
 #                 Count UNENFORCED; presence still enforced.
 #   RECORD-FROZEN per-job artifacts written once. Count ENFORCED: a frozen receipt cannot cry wolf,
@@ -151,6 +194,52 @@ INVENTORY = {
     # with its code so the two cannot diverge on it; gets the same comment.
     "nd-unfolding/tests/test_pet_diagnostic_quarantine.py":        ("STAYS-NAME", 1),
 
+    # --- OI-81's SUBSTANTIVE HALF, dispositioned 2026-08-15 by lane C as the designated owner of this
+    # script (BEN-237; BEN-325 diagnosed the RED read-only and explicitly left these to the owner).
+    # These are the FOUR files whose occurrences are OPERANDS under CLASS 6. BEN-325 reported SEVEN
+    # "code consumers"; it classified by FILE EXTENSION, and re-measured by occurrence three of the
+    # seven carry no operand at all -- probe-vl100-own-run-foldforward-20260815.py:5,
+    # test_closure_foldforward_recording.py:6 and test_pet_diagnostic_artifact_identity_guards.py
+    # :5,:14,:95 are every one of them DOCSTRING PROSE, and those three files open the ANNEALED
+    # artifact, a synthetic fixture, and nothing respectively. TWO of the four below actually np.load
+    # the path; the other two only NAME it in emitted data.
+    #
+    # THE PRE-ANNEAL READ IS DELIBERATE IN BOTH LOADERS AND MUST NOT BE RETARGETED. `fullevent_nominal/`
+    # still unambiguously names the 2026-08-08 directory -- the designation moved NO BYTES, so what it
+    # retired is the WORD "nominal" as a synonym for canonical, not this path. Retargeting either probe
+    # to the annealed sibling would change what a committed receipt's numbers mean while its name stayed
+    # the same, which is STAYS-DIAG08's whole reason for existing.
+
+    # BEN-311's line. Reads the PRE-ANNEAL arm at :46 and its result was cited against VL100, which is
+    # the ANNEALED arm's recovery. CORRECT-BUT-UNDECLARED, and the undeclared thing is the ARM: per
+    # BEN-312 the probe read exactly the artifact closure 56552326's own quarantine manifest names as
+    # the source of its own rejection, so the mis-target is in the RECORD and not here. Frozen as the
+    # evidence of that; superseded for physics by probe-vl100-own-run-foldforward-20260815.py, which
+    # runs the same quantity on the closure's own artifact.
+    "docs/orchestration/state/probe-vl100-foldforward-shape-20260814.py": ("STAYS-PINNED", 1),
+
+    # CORRECT, and deliberately so: written 2026-08-15 AFTER BEN-311/BEN-312 were known, it reads the
+    # pre-anneal arm ON PURPOSE because that arm carries the larger residual field (1.44% vs 0.52%),
+    # making it the ADVERSARIAL input to the correction scan. :8 is the load; :32 is an output label
+    # naming the directory it read, which is accurate.
+    "docs/orchestration/state/probe-vl100-nominal-residual-field-20260815.py": ("STAYS-PINNED", 2),
+
+    # NOT a loader of this path -- it opens four committed JSON operands only (:61-64). Its three
+    # occurrences are receipt DATA LITERALS recording which arm lane D decomposed, each already labelled
+    # `pre_anneal` / `PRE-ANNEAL arm` beside its sha256. They are OPERANDS by CLASS 6's fail-closed rule
+    # (live dict literals, not comments) and that is the rule working, not a misfire.
+    "docs/orchestration/state/probe-vl100-shape-correction-scan-20260815.py": ("STAYS-PINNED", 3),
+
+    # CORRECT AS WRITTEN, and this is the one entry here that protects something live. It consumes the
+    # ANNEALED arm -- ARM_DIR at :119, WEIGHTS at :125 -- so it is NOT a pre-anneal consumer; :20 and
+    # :57 are comments (one a deliberate counter-example quoting sbatch_fullevent_diagnostic_extract.sh
+    # :42, the trap this launcher was written fresh to avoid) and :584 is BEN-312's record inside the
+    # receipt heredoc. COUNT ENFORCED DESPITE THE FILE BEING EDITED OFTEN, which is the opposite of the
+    # BEN-084 cry-wolf calculus everywhere else in this inventory, and deliberately: BEN-311 names "the
+    # P5A launcher" among the prior instances of the sibling-directory trap, so a new `fullevent_nominal/`
+    # occurrence in THIS file is exactly the event worth a false alarm or two.
+    "nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh":     ("STAYS-ANNEALED", 3),
+
     # --- RECORD-APPEND: files DESIGNED TO ACCRUE. Count unenforced (None) because an enforced
     # count fires on every unrelated append and a check that cries wolf is ignored (BEN-084).
     "docs/OPEN_ITEMS.md":                                              ("RECORD-APPEND", None),  # NS-EXEMPT: inventory key
@@ -183,7 +272,19 @@ INVENTORY = {
     # event that must never happen silently: a committed receipt's content changing.
     "docs/orchestration/PREDECLARATION-20260811-annealed-step1-trajectory.md": ("RECORD-FROZEN", 2),  # NS-EXEMPT: inventory key
     "docs/orchestration/runs/standard-p4-verifier/20260810T012645Z-repair7-transcript.txt": ("RECORD-FROZEN", 2),  # NS-EXEMPT: inventory key
-    "docs/orchestration/state/annealed-nominal-complete-56563761.json": ("RECORD-FROZEN", 1),  # NS-EXEMPT: inventory key
+    # COUNT 1 -> 2, 2026-08-15 (BEN-237), and the reclassification matters more than the number.
+    # RECORD-FROZEN says "per-job artifacts written once, nothing appends". MEASURED, that is FALSE of
+    # this file: `git log --follow` gives FOUR commits (32fcf64, 156d1d6, 49a4699, 043d572) -- it has
+    # been superseded IN PLACE three times, so its label was asserting a property it does not have.
+    # The second occurrence is :245, prose inside `scope_of_this_supersession` reading "fullevent_nominal/
+    # IS NOT TOUCHED ...", i.e. this guard's ONLY enforced signal was firing on a sentence promising that
+    # the thing it protects is untouched (BEN-325's sharpest item, and it is right).
+    # COUNT ENFORCEMENT IS RETAINED ANYWAY, which is a choice and not an oversight: :63 is the actual
+    # PATH PIN and a change there is the BEN-091/BEN-133 event this label exists to catch. Enforcing a
+    # whole-file occurrence count is a crude proxy for pinning :63 and it WILL cry wolf again on the next
+    # supersession. The right instrument is a per-field pin in verify_hash_bindings.py, not a count here;
+    # that is OI-96 and is not built.
+    "docs/orchestration/state/annealed-nominal-complete-56563761.json": ("RECORD-FROZEN", 2),  # NS-EXEMPT: inventory key
     "docs/orchestration/state/annealed-nominal-error-56563092.json":   ("RECORD-FROZEN", 2),  # NS-EXEMPT: inventory key
     "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260721.json": ("RECORD-FROZEN", 1),  # NS-EXEMPT: inventory key
     "docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260731.json": ("RECORD-FROZEN", 1),  # NS-EXEMPT: inventory key
@@ -220,6 +321,78 @@ INVENTORY = {
 
 EXEMPTIONS = {}
 
+# Files whose unlisted occurrences are all NARRATIVE. Reported every run; never a failure.
+NARRATIVE_ONLY = {}
+
+
+# --- CLASS 6: OPERAND vs NARRATIVE ---------------------------------------------------------------
+# Nothing in a data file executes, so a path literal there cannot open anything -- the READER is code
+# and the reader must match on its own line. Grounded in the measured found set (see the docstring),
+# not in a guess about what extensions exist.
+DATA_EXT = (".json", ".md", ".tsv", ".txt")
+PY_EXT = (".py",)
+SH_EXT = (".sh", ".bash", ".zsh")
+
+
+def _in_region(row, col, reg):
+    r0, c0, r1, c1 = reg
+    if row < r0 or row > r1:
+        return False
+    if r0 == r1:
+        return c0 <= col < c1
+    if row == r0:
+        return col >= c0
+    if row == r1:
+        return col < c1
+    return True
+
+
+def _py_narrative_regions(text):
+    """(row0, col0, row1, col1) spans of comments and docstrings. None means FAIL CLOSED."""
+    regions = []
+    try:
+        for tok in tokenize.generate_tokens(io.StringIO(text).readline):
+            if tok.type == tokenize.COMMENT:
+                regions.append((tok.start[0], tok.start[1], tok.end[0], tok.end[1]))
+    except Exception:
+        return None
+    try:
+        tree = ast.parse(text)
+    except Exception:
+        return None
+    for node in ast.walk(tree):
+        body = getattr(node, "body", None)
+        if not isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        if not body or not isinstance(body[0], ast.Expr):
+            continue
+        v = body[0].value
+        if isinstance(v, ast.Constant) and isinstance(v.value, str):
+            regions.append((v.lineno, v.col_offset, v.end_lineno, v.end_col_offset))
+    return regions
+
+
+def _sh_narrative_regions(lines):
+    """A `#`-leading line is a comment -- EXCEPT `#SBATCH`, a Slurm DIRECTIVE and a real site."""
+    regions = []
+    for i, l in enumerate(lines):
+        s = l.lstrip()
+        if s.startswith("#") and not s.startswith("#SBATCH"):
+            regions.append((i + 1, 0, i + 1, len(l)))
+    return regions
+
+
+def classify(rel, lines):
+    """Narrative regions for one file, or None to mean 'classify every match as OPERAND'."""
+    ext = os.path.splitext(rel)[1].lower()
+    if ext in DATA_EXT:
+        return [(1, 0, len(lines) + 1, 0)]          # the whole file is narrative
+    if ext in PY_EXT:
+        return _py_narrative_regions("\n".join(lines) + "\n")
+    if ext in SH_EXT:
+        return _sh_narrative_regions(lines)
+    return None                                     # unknown extension: FAIL CLOSED
+
 
 def _tracked():
     # ALL tracked files, not just *.py/*.sh. Widened 2026-08-12: there are two ways to fix a claim
@@ -232,13 +405,19 @@ def _tracked():
 
 
 def scan(repo=_REPO, files=None):
-    """path -> list of (lineno, text). No file is excluded; class 4 is handled per-occurrence."""
+    """path -> list of (lineno, text, kind). No file is excluded; class 4 is per-occurrence.
+
+    `kind` is "OPERAND" or "NARRATIVE" per CLASS 6. A line carrying BOTH -- a real assignment with a
+    trailing comment that also names the namespace -- is OPERAND: the fail-closed direction, because
+    the assignment is what opens the path and the comment must not launder it.
+    """
     found = {}
     for rel in (files if files is not None else _tracked()):
         try:
             lines = open(os.path.join(repo, rel), encoding="utf-8").read().splitlines()
         except (OSError, UnicodeDecodeError):
             continue
+        regions = classify(rel, lines)
         hits, exempt = [], 0
         for i, l in enumerate(lines):
             if not NS.search(l):
@@ -252,7 +431,14 @@ def scan(repo=_REPO, files=None):
             if "NS-EXEMPT" in l:
                 exempt += 1
                 continue
-            hits.append((i + 1, l.strip()[:120]))
+            if regions is None:
+                kind = "OPERAND"                     # fail closed
+            else:
+                cols = [m.start() for m in NS.finditer(l)]
+                kind = ("NARRATIVE"
+                        if all(any(_in_region(i + 1, c, r) for r in regions) for c in cols)
+                        else "OPERAND")
+            hits.append((i + 1, l.strip()[:120], kind))
         if exempt:
             EXEMPTIONS[rel] = exempt
         if hits:
@@ -262,10 +448,22 @@ def scan(repo=_REPO, files=None):
 
 def audit(found):
     problems = []
+    NARRATIVE_ONLY.clear()
     for rel, hits in sorted(found.items()):
         if rel not in INVENTORY:
-            problems.append(f"UNACCOUNTED FILE {rel}: {len(hits)} occurrence(s); first at "
-                            f":{hits[0][0]} -- give it a disposition in INVENTORY")
+            # CLASS 6 (BEN-237): presence is demanded of OPERANDS only. A file that merely MENTIONS
+            # the namespace in prose cannot open it, and demanding its registration is what kept this
+            # guard RED -- the accruing classes RECORD-APPEND already names are exactly the ones a
+            # working lane creates all day, and 4 of the 20 unaccounted files on 2026-08-15 were that
+            # day's findings ABOUT this namespace. Counted and printed, never silent.
+            if not any(h[2] == "OPERAND" for h in hits):
+                NARRATIVE_ONLY[rel] = len(hits)
+                continue
+            n_op = sum(1 for h in hits if h[2] == "OPERAND")
+            first_op = next(h[0] for h in hits if h[2] == "OPERAND")
+            problems.append(f"UNACCOUNTED FILE {rel}: {len(hits)} occurrence(s), {n_op} in CODE; "
+                            f"first operand at :{first_op} -- this file could OPEN that path; give "
+                            f"it a disposition in INVENTORY")
             continue
         disp, n = INVENTORY[rel]
         # D's finding: key the exemption on the PROPERTY that justifies it, not on the label that
@@ -314,6 +512,54 @@ def self_test():
     case("_annealed with trailing slash", 'x = "pet/fullevent_nominal_annealed/p.npz"', False)
     case("bare token, no path context", '# the fullevent_nominal campaign', False)
 
+    # CLASS 6 (BEN-237). A classifier that cannot be made to say NARRATIVE about a comment, and
+    # OPERAND about the code beside it, is not evidence either. `#SBATCH` gets its own case because it
+    # is the one `#`-leading line in this repo that IS a real site.
+    print("[self-test] the OPERAND/NARRATIVE classifier, both directions:")
+
+    def kcase(name, rel, text, lineno, expect):
+        lines = text.splitlines()
+        regions = classify(rel, lines)
+        l = lines[lineno - 1]
+        cols = [m.start() for m in NS.finditer(l)]
+        got = ("OPERAND" if regions is None or
+               not all(any(_in_region(lineno, c, r) for r in regions) for c in cols)
+               else "NARRATIVE")
+        ok = got == expect and bool(cols)
+        print(f"  [self-test] {name:<52} kind={got:<9} expect={expect:<9} "
+              f"{'PASS' if ok else 'FAIL'}")
+        if not ok:
+            fails.append(name)
+
+    kcase("py: os.path.join operand", "a.py",
+          'W = os.path.join(R, "pet/fullevent_nominal/w.npz")\n', 1, "OPERAND")  # NS-EXEMPT: pattern literal, not a reference
+    kcase("py: whole-line # comment", "a.py",
+          '# reads pet/fullevent_nominal/w.npz one day\n', 1, "NARRATIVE")  # NS-EXEMPT: pattern literal, not a reference
+    kcase("py: module docstring", "a.py",
+          '"""notes about\npet/fullevent_nominal/w.npz here\n"""\nx = 1\n', 2, "NARRATIVE")  # NS-EXEMPT: pattern literal, not a reference
+    kcase("py: func docstring", "a.py",
+          'def f():\n    """about pet/fullevent_nominal/w.npz"""\n    return 1\n', 2, "NARRATIVE")  # NS-EXEMPT: pattern literal, not a reference
+    # THE LAUNDERING CASE, and it is why classification is BY COLUMN and not by line: a real
+    # assignment with a trailing comment that also names the namespace must stay OPERAND.
+    kcase("py: assignment + trailing comment is OPERAND", "a.py",
+          'W = "pet/fullevent_nominal/w.npz"  # see pet/fullevent_nominal/w.npz\n', 1, "OPERAND")  # NS-EXEMPT: pattern literal, not a reference
+    kcase("py: unparseable file FAILS CLOSED", "a.py",
+          'def (((:\nW = "pet/fullevent_nominal/w.npz"\n', 2, "OPERAND")  # NS-EXEMPT: pattern literal, not a reference
+    kcase("sh: code line operand", "a.sh",
+          'OUT="${P}/fullevent_nominal"\n', 1, "OPERAND")  # NS-EXEMPT: pattern literal, not a reference
+    kcase("sh: leading-# comment", "a.sh",
+          '#   WEIGHTS="${P}/fullevent_nominal/w.npz"   # a counter-example\n', 1, "NARRATIVE")  # NS-EXEMPT: pattern literal, not a reference
+    # #SBATCH is a comment to bash and a DIRECTIVE to Slurm. sbatch_pet_fullevent_nominal.sh:12,:13
+    # are genuine namespace sites in exactly this form -- treating them as prose would hide a write.
+    kcase("sh: #SBATCH directive is OPERAND", "a.sh",
+          '#SBATCH --output=/p/pet/fullevent_nominal/logs/x_%j.out\n', 1, "OPERAND")  # NS-EXEMPT: pattern literal, not a reference
+    kcase("json data file is NARRATIVE", "a.json",
+          '{"path": "pet/fullevent_nominal/w.npz"}\n', 1, "NARRATIVE")  # NS-EXEMPT: pattern literal, not a reference
+    kcase("md data file is NARRATIVE", "a.md",
+          'the `pet/fullevent_nominal/w.npz` baseline\n', 1, "NARRATIVE")  # NS-EXEMPT: pattern literal, not a reference
+    kcase("unknown extension FAILS CLOSED", "a.pl",
+          '# even a comment counts here\nmy $w = "pet/fullevent_nominal/w.npz";\n', 2, "OPERAND")  # NS-EXEMPT: pattern literal, not a reference
+
     print("[self-test] the auditor, both directions:")
     with tempfile.TemporaryDirectory() as d:
         os.makedirs(os.path.join(d, "sub"), exist_ok=True)
@@ -322,9 +568,27 @@ def self_test():
         found = scan(repo=d, files=["sub/x.sh"])
         got = audit(found)
         unaccounted = any("UNACCOUNTED FILE" in g for g in got)
-        print(f"  [self-test] {'unlisted file is reported':<52} {'PASS' if unaccounted else 'FAIL'}")
+        print(f"  [self-test] {'unlisted file with an OPERAND is reported':<52} "
+              f"{'PASS' if unaccounted else 'FAIL'}")
         if not unaccounted:
             fails.append("unlisted file not reported")
+
+        # CLASS 6, BOTH DIRECTIONS AT THE AUDITOR LEVEL -- the assertion that this change is a
+        # NARROWING and not a hole: an unlisted PROSE-only file must not FAIL, and must still be
+        # PRINTED. A silent waiver would be the implicit-exclusion defect this whole file objects to.
+        q = os.path.join(d, "sub", "y.md")
+        open(q, "w").write('mentions pet/fullevent_nominal/a.npz in prose\n')  # NS-EXEMPT: pattern literal, not a reference
+        got = audit(scan(repo=d, files=["sub/y.md"]))
+        quiet = not any("UNACCOUNTED FILE sub/y.md" in g for g in got)
+        listed = NARRATIVE_ONLY.get("sub/y.md") == 1
+        print(f"  [self-test] {'unlisted PROSE-only file does NOT fail':<52} "
+              f"{'PASS' if quiet else 'FAIL'}")
+        print(f"  [self-test] {'...and IS reported as narrative-only':<52} "
+              f"{'PASS' if listed else 'FAIL'}")
+        if not quiet:
+            fails.append("prose-only file wrongly failed")
+        if not listed:
+            fails.append("prose-only file not reported")
 
         # count drift must fire even though the file IS listed
         open(p, "w").write('A="${P}/fullevent_nominal/a.npz"\nB="${P}/fullevent_nominal/b.npz"\n')  # NS-EXEMPT: pattern literal, not a reference
@@ -391,23 +655,38 @@ def main(argv=None):
         for rel, hits in sorted(found.items()):
             disp = INVENTORY.get(rel, ("<UNACCOUNTED>", None))[0]
             print(f"{disp:<14} {rel}")
-            for ln, txt in hits:
-                print(f"               :{ln}  {txt}")
-        print(f"\n{len(found)} files, {total} occurrences")
+            for ln, txt, kind in hits:
+                print(f"   {kind:<9}  :{ln}  {txt}")
+        print(f"\n{len(found)} files, {total} occurrences "
+              f"({sum(1 for v in found.values() for h in v if h[2] == 'OPERAND')} in code)")
         return 0
 
     problems = audit(found)
-    print(f"[designation] {len(found)} files, {total} namespace occurrences, "
-          f"{len(INVENTORY)} inventory entries")
+    n_op = sum(1 for v in found.values() for h in v if h[2] == "OPERAND")
+    print(f"[designation] {len(found)} files, {total} namespace occurrences "
+          f"({n_op} OPERAND / {total - n_op} NARRATIVE), {len(INVENTORY)} inventory entries")
     for rel, n in sorted(EXEMPTIONS.items()):
         print(f"[designation] {n} line-level NS-EXEMPT literal(s) in {rel} "
               f"(exempted lines are reported, never silent)")
+    if NARRATIVE_ONLY:
+        print(f"[designation] {len(NARRATIVE_ONLY)} unlisted file(s) mention the namespace in PROSE "
+              f"only and are not required to be dispositioned (CLASS 6 / BEN-237) -- listed so the "
+              f"narrowing of what a PASS claims is visible in the output:")
+        for rel, n in sorted(NARRATIVE_ONLY.items()):
+            print(f"   NARRATIVE-ONLY {rel}: {n} occurrence(s)")
     if problems:
         print("[designation] FAIL -- the designation's safety depends on this being empty:")
         for p in problems:
             print("   " + p)
         return 1
-    print("[designation] PASS -- every occurrence has an explicit disposition")
+    # THE PASS LINE STATES THE CLAIM IT CAN SUPPORT AND NOT THE ONE IT USED TO MAKE. Until 2026-08-15
+    # this read "every occurrence has an explicit disposition", which after CLASS 6 would be false --
+    # 192 of 225 occurrences are prose and are deliberately not dispositioned. A green tick whose
+    # wording outruns its check is the whole BEN-321/322/323/325 family, and this file must not join it.
+    print(f"[designation] PASS -- every namespace occurrence IN CODE ({n_op} of {total}) has an "
+          f"explicit disposition, and every inventory entry still matches. This does NOT say the "
+          f"designated artifact is unchanged: a byte change in the weights appears here NOWHERE "
+          f"(BEN-325). Class 5 is unaddressed by construction; see the module docstring.")
     return 0
 
 

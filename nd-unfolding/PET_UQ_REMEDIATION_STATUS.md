@@ -566,7 +566,17 @@ C_stat + C_ml + C_retrain` — so rank in the total is a **budget** from summed 
 
 **Update 2026-08-14 ~05:00 PDT — `C_stat` SPEC COMMITTED (`OI-121`). TWO BLOCKERS RAISED. NOTHING CONSTRUCTED.**
 `OI-121` authorized as **two independent builders from one written spec**; **lane C is the spec author and
-not a builder.** `SPEC-20260814-gate5-cstat-construction-v1.md` + `pet/gate5_cstat_contract.json` pin the
+not a builder.** **AMENDED-BY-REFERENCE 2026-08-15 — READ THIS BEFORE READING THE CONTRACT.** Lane C (PET), holding
+the contract **by designation** and not by continuity (`BEN-324`), ruled that a **reduced-`n` diagnostic is
+COHERENT** under it as a non-quotable arm on five conditions, and that comparing such an arm's spread to the
+family's is licensed for **description only** —
+`../docs/orchestration/RULING-20260815-lanec-reduced-n-diagnostic-coherence.md`. **The ruling is NOT in the
+contract and CANNOT BE:** `state/gate5-cstat-spec-measurements-20260814.json` hash-pins both the machine
+contract and the prose spec, so an additive amendment breaks a committed receipt's provenance and was
+reverted rather than repinned (`BEN-238`, `OI-123`). **This paragraph exists because a contract reader has
+no other way to learn the ruling exists** — `CSTAT-O1`'s re-opened-four-times failure, one level up.
+
+`SPEC-20260814-gate5-cstat-construction-v1.md` + `pet/gate5_cstat_contract.json` pin the
 covaried key (`xsec`), the **`15 × 19 = 285`** grid (**not** `AGENTS.md`'s 224-cell paper grid — the dump is
 extended-FPS), the flattening string, replica ordering, **centring on the replica mean** (nominal-centring
 measured at **6.013×** the trace, the excess being exactly the bias offset, and the only nominal artifact is
