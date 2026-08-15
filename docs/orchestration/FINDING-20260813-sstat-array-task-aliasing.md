@@ -1,12 +1,13 @@
 # FINDING 2026-08-13 — `sstat` silently returns ONE task for every task of an array, and five identical rows read as five healthy members
 
 **Status:** measured, live. **Lane:** A (orchestrator).
-**NO `BEN-*` ROW — lane A's block `190`–`199` is exhausted (all ten filed, recomputed against
-`FINDINGS.md` at the moment of writing).** Borrowing from `200+` or another lane's block is
-`BEN-080`/`BEN-082`'s exact shape, so this is filed as long-form and indexed only. **That makes it
-`BEN-167`'s defect by construction: a finding with no id is invisible to the allocator.** The range
-allocation is a convention change and routes to Joseph; it needs deciding *before* the next A
-finding, not after. This is the second A finding tonight with nowhere to go.
+**ROWS: `BEN-210`, `BEN-211`, `BEN-229`.** *(This header read **"NO `BEN-*` ROW — lane A's block `190`–`199` is
+exhausted"** until 2026-08-15. It was true when written and went stale the same day: the block question was
+resolved, lane A took `210-219`, and `BEN-210`/`BEN-211` were filed against this file on 2026-08-13 —
+**without anyone updating the header that said it had no row.** `FINDINGS.md`'s index cell carried the identical
+stale claim and was corrected in the same commit. **Lane A nearly filed a duplicate `BEN-229` on the authority
+of these two agreeing stale statements** — two copies of one claim reading as corroboration, which is
+`BEN-244`'s shape. Whether a finding has a row is one `grep`; see `BEN-228`'s "derive the index at read time".)*
 
 ## What happened
 
@@ -254,3 +255,43 @@ alone would have concluded the array size was mis-stated. That asymmetry is the 
 
 **Incidental, and consistent with `OI-74`:** `scontrol` also showed `Reason=Priority` on task 1, so this array
 is priority-starved rather than merely queued — the same contention Leg F's tasks 4 and 5 hit.
+
+## SCOPE CORRECTED 20 MINUTES AFTER FILING — the invisibility window is BETWEEN SPLIT AND START, not "before the array starts"
+
+`BEN-229` above says *"`sacct` is not authoritative for an array that has not started."* **Measured again once
+the array was partially running, that is too narrow, and the mechanism predicted the correction before it was
+observed.** Two time points on the same array:
+
+| | `_1` | `_2` | `_3` | `_4` | `_5` |
+|---|---|---|---|---|---|
+| **04:34:42Z** raw `JobId` | `56993779` | `56993780` | **`56993778`** | **`56993778`** | **`56993778`** |
+| **04:43:33Z** raw `JobId` | `56993779` | `56993780` | `56993869` | `56993870` | **`56993778`** |
+| 04:43:13Z `squeue -r` | RUNNING | RUNNING | PENDING | PENDING | PENDING |
+| 04:43:13Z `sacct -X` | RUNNING | RUNNING | **absent** | **absent** | `[5]` PENDING |
+
+**`sacct -X` returned three rows while `squeue -r` returned five, again** — and this time it dropped tasks **3
+and 4**, which are neither started nor unsplit. The collapsed remainder went `[3-5]` → `[5]`, tracking the
+still-unsplit set exactly.
+
+**So the rule is per-task, not per-array:** a task is invisible to `sacct` **from the moment it is split off the
+parent until the moment it starts**. Before the split it is inside the collapsed range; after it starts it has
+its own row; in between it has a raw id and no accounting row at all. **`sacct`'s total was 3 of 5 at both
+readings, by two different routes.**
+
+Three things this pins down that the first section only inferred:
+
+- **The aliasing set shrinks monotonically** — `{3,4,5}` → `{5}`. A mapping cached at 04:34 says tasks 3 and 4
+  are `56993778`; at 04:43 that is wrong for both. **Re-resolve per read, never cache.**
+- **`BEN-210`'s non-contiguity warning gets fresh evidence.** The raws are `56993779`, `56993780`, then
+  `56993869`, `56993870` — allocated in *split* order, in two widely separated groups, with 88 ids of other
+  users' jobs in between. `base + t - 1` is wrong here in exactly the way `BEN-210` says.
+- **The terminal read is probably safe, and that is a prediction, not a measurement.** Once every task has
+  started, every task should own a row, so a `row count == 5` assertion should pass at terminal. **The
+  mediator's watch guard asserts exactly that before reading any verdict**, which is stronger than this finding
+  establishes and is the correct direction to be wrong in — if `sacct` still under-reports at terminal, the
+  guard fires instead of a partial verdict being believed. **Not yet verified at terminal; if it holds, this
+  section should say so.**
+
+**Recorded because a scope claim that is too narrow is how a finding stops applying where it still bites** —
+anyone reading only the first section would have concluded a partially-running array was safe to count with
+`sacct`, and it is not.
