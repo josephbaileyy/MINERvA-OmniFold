@@ -1,0 +1,209 @@
+{
+ "what": "scoped second read of the Track A sizing: are lane B's measurements used correctly?",
+ "SCOPE_AND_ITS_REASON": "checks the arithmetic and the use of this lane's numbers ONLY. The DESIGN is out of scope by the mediator's instruction and this lane agrees: this lane designed the tiebreak that was refused, so it has a stake in the instrument that replaced it. Nothing here comments on whether Exponential(1) is the right null.",
+ "WHAT_THIS_DOES_NOT_CERTIFY": "THE PREDECLARATION IS NOT COMMITTED. Searched origin/main for 'Exponential', 'variance-matched', 'zero-free' and for the quoted figures; every hit is this lane's own work. So this is a review of the ARITHMETIC AS RELAYED, not of the document. Claims about how the document pins or carries anything CANNOT be verified from here and are marked UNVERIFIABLE.",
+ "ingredients": {
+  "sigma_probe": {
+   "path": "docs/orchestration/state/probe-oi126-band-Rpush-sigma-20260815.json",
+   "sha256": "ad022b65256771535f4c4a6412f83d4d0fc7f2ab58abf97d3803f9c16431fc29"
+  }
+ },
+ "lane_B_numbers_as_measured": {
+  "sd_ddof1": 1.609124619682023,
+  "mean": 3.59690668865833,
+  "n_replicas": 50,
+  "statistic": "spread and mean ACROSS 50 REPLICAS of the PER-REPLICA MEDIAN over the 84 geometric band cells of T_nom/T_k, where T_a(cell) = sum over pass_truth rows in cell of w_truth*w_push_a; band = p_parallel columns 10-15 intersected with the 257-cell quotable sub-block; 0 cells dropped",
+  "it_is_the_POISSON_arm": true
+ },
+ "CHECK_1_statistic_pinning": {
+  "verdict": "PASS on the definition; and the STATED REASON for pinning is wrong in a way worth fixing",
+  "pinning_itself_is_UNVERIFIABLE_here": "the document is not committed",
+  "the_warning_as_relayed": "substituting a mean-over-cells statistic would silently invalidate the sizing",
+  "measured": {
+   "median_over_cells_PINNED": {
+    "mean": 3.59690668865833,
+    "sd_ddof1": 1.609124619682023,
+    "cohen_d": 0.8069315007968436,
+    "midpoint_boundary": 2.298453344329165,
+    "n_by_the_t_rule": 9
+   },
+   "mean_over_cells": {
+    "mean": 3.8484416898057496,
+    "sd_ddof1": 1.7523425397571917,
+    "cohen_d": 0.8127525370126653,
+    "midpoint_boundary": 2.424220844902875,
+    "n_by_the_t_rule": 9
+   },
+   "ratio_of_sums": {
+    "mean": 2.601663997672864,
+    "sd_ddof1": 0.8416260040822986,
+    "cohen_d": 0.9515295332511168,
+    "midpoint_boundary": 1.800831998836432,
+    "n_by_the_t_rule": 7
+   }
+  },
+  "correction": "n is NEARLY INVARIANT across the three statistics (9, 9, 7) because the spread scales with the mean, so d stays ~0.81-0.95. THE SIZING IS NOT WHAT BREAKS. What breaks is the BOUNDARY: the midpoint is 2.2985 under the pinned statistic, 2.4242 under mean-over-cells and 1.8008 under ratio-of-sums. A boundary quoted from one statistic and applied to a result computed with another is a real error EVEN WHEN n SURVIVES -- and it is the more dangerous failure because the sizing check would pass and hide it. Pin the statistic for the BOUNDARY's sake, and say so."
+ },
+ "CHECK_2_boundary": {
+  "verdict": "PASS; caveat correctly identified as a caveat, with one addition",
+  "midpoint_reproduced": 2.298453344329165,
+  "quoted_as": 2.2985,
+  "agrees": true,
+  "one_side_measured": 3.59690668865833,
+  "other_side_ASSUMED": 1.0,
+  "distance": 1.298453344329165,
+  "quoted_distance": 1.2984,
+  "note_on_the_quoted_distance": "1.2984 is a TRUNCATION of 1.298453...; the round is 1.2985. Immaterial, and in the conservative direction -- it makes the n=9 test marginally harder, not easier.",
+  "ADDITION": "the boundary's LOCATION depends on the unmeasured (b) value. If (b) collapses to 1.3 rather than 1.0 the midpoint moves to 2.4485 and the distance falls to 1.1485, which alone would cost power. The 1.0 is a hypothesis, not a measurement, and the boundary inherits that."
+ },
+ "CHECK_3_t_versus_z_AND_THE_ONE_SUBSTANTIVE_FINDING": {
+  "t_choice_verdict": "CORRECT, and it corrects THIS LANE's optimism. Lane B's n>=6 used z=1.96 with sd treated as KNOWN. Under Student's t with each arm's spread estimated from its own draws, n=6 fails: halfwidth 1.6887 > 1.2985. The 6 -> 9 move is right.",
+  "quoted_figures_reproduce": {
+   "halfwidth_n9": 1.2368826756818585,
+   "quoted": 1.2369,
+   "n8_halfwidth": 1.3452618475636235,
+   "n8_shortfall": 0.04680850323445851,
+   "quoted_shortfall": 0.047
+  },
+  "THE_FINDING": "THE SIZING RULE IS NOT A POWER CALCULATION. 't*sd/sqrt(n) < distance' substitutes the TRUE sd for the realized sample sd and the TRUE mean for the realized sample mean, which is approximately the condition for FIFTY PERCENT power. Measured, with (a) exactly true and sd exactly as this lane measured it:",
+  "power_if_a_is_exactly_true": {
+   "9": 0.5662096235229397,
+   "10": 0.6236012762171979,
+   "12": 0.7210023479153083,
+   "14": 0.7968901331063291,
+   "15": 0.8277225593323955,
+   "16": 0.8543962218220553,
+   "19": 0.9137709607900275,
+   "20": 0.9280047810801387,
+   "24": 0.9658722363504666
+  },
+  "power_at_n9": 0.5662096235229397,
+  "n_for_80pc_power": 15,
+  "n_for_90pc_power": 19,
+  "consequence": "at n=9 there is roughly a 43% chance of returning UNRESOLVED even if (a) is exactly right. That is a coin flip on a paid experiment, and it is a property of the sizing RULE, not of the design.",
+  "why_n9_can_fail": {
+   "sd_rel_uncertainty_at_n9": 0.25,
+   "halfwidth_if_realized_s_is_1sigma_high": 1.5461033446023231,
+   "P_realized_s_small_enough_alone": 0.641969760824284
+  },
+  "which_side_this_applies_to": "the (a) side, i.e. the side that borrows THIS LANE's sd as its assumed value -- which is exactly the part in scope. Under (b) the Exponential arm's spread would plausibly be SMALLER, since the zero-support pathology is what is removed, so the (b) side likely has more power than this. NOT MEASURED, because that arm does not exist yet."
+ },
+ "CHECK_4_per_column_prohibition": {
+  "verdict": "CORRECTLY SCOPED, and the justification can be made stronger than the range alone",
+  "the_11x_is_the_ABSOLUTE_sd_range": {
+   "sd_by_column": [
+    1.0847380459606761,
+    3.0523989556901436,
+    3.715361999418534,
+    3.515093264291503,
+    1.9001428766005395,
+    0.33419251383707893
+   ],
+   "max_over_min_absolute": 11.117430360004406
+  },
+  "this_lane_s_receipt_reports_the_RELATIVE_range": {
+   "rel_sd_by_column": [
+    0.42544138225861217,
+    0.5507518172027452,
+    0.5652828594218418,
+    0.5553036233287941,
+    0.49813529805525075,
+    0.3024237098444629
+   ],
+   "max_over_min_relative": 1.8691750713347437,
+   "field_name": "is_the_spread_pparallel_structured.max_over_min_of_rel_sd"
+  },
+  "DO_NOT_CONFLATE": "both are true and they are different quantities: 11.12x absolute, 1.87x relative. If a document cites '11x' next to this lane's field name it is quoting the wrong field.",
+  "measured_per_column_feasibility_at_n9": [
+   {
+    "i_pparallel": 10,
+    "pparallel_bin": [
+     6.0,
+     7.0
+    ],
+    "mean": 2.549676856073438,
+    "sd": 1.0847380459606761,
+    "own_midpoint": 1.774838428036719,
+    "own_distance": 0.7748384280367191,
+    "halfwidth_n9": 0.8338034731995352,
+    "resolvable_at_n9": false,
+    "power_n9": 0.47019597704709476
+   },
+   {
+    "i_pparallel": 11,
+    "pparallel_bin": [
+     7.0,
+     8.0
+    ],
+    "mean": 5.542240370977261,
+    "sd": 3.0523989556901436,
+    "own_midpoint": 3.2711201854886305,
+    "own_distance": 2.2711201854886305,
+    "halfwidth_n9": 2.346281538038116,
+    "resolvable_at_n9": false,
+    "power_n9": 0.5011231853333078
+   },
+   {
+    "i_pparallel": 12,
+    "pparallel_bin": [
+     8.0,
+     9.0
+    ],
+    "mean": 6.572571479026482,
+    "sd": 3.715361999418534,
+    "own_midpoint": 3.786285739513241,
+    "own_distance": 2.786285739513241,
+    "halfwidth_n9": 2.8558800448131856,
+    "resolvable_at_n9": false,
+    "power_n9": 0.5072541468051402
+   },
+   {
+    "i_pparallel": 13,
+    "pparallel_bin": [
+     9.0,
+     10.0
+    ],
+    "mean": 6.3300384089340325,
+    "sd": 3.515093264291503,
+    "own_midpoint": 3.6650192044670162,
+    "own_distance": 2.6650192044670162,
+    "halfwidth_n9": 2.7019398676948385,
+    "resolvable_at_n9": false,
+    "power_n9": 0.5158109455554103
+   },
+   {
+    "i_pparallel": 14,
+    "pparallel_bin": [
+     10.0,
+     15.0
+    ],
+    "mean": 3.8145116076271006,
+    "sd": 1.9001428766005395,
+    "own_midpoint": 2.40725580381355,
+    "own_distance": 1.4072558038135505,
+    "halfwidth_n9": 1.4605791103065275,
+    "resolvable_at_n9": false,
+    "power_n9": 0.4975441218227614
+   },
+   {
+    "i_pparallel": 15,
+    "pparallel_bin": [
+     15.0,
+     20.0
+    ],
+    "mean": 1.1050473324626393,
+    "sd": 0.33419251383707893,
+    "own_midpoint": 1.0525236662313198,
+    "own_distance": 0.052523666231319543,
+    "halfwidth_n9": 0.2568831062875265,
+    "resolvable_at_n9": false,
+    "power_n9": 0.07021267683277185
+   }
+  ],
+  "STRONGER_GROUND_FOR_THE_PROHIBITION": "NO column is resolvable at n=9, and the reason is structural rather than incidental: because relative spread is near-constant across columns, each column's own Cohen d is nearly invariant, so EVERY per-column test sits near 50% power regardless of how large that column's effect is. A per-column verdict gains nothing anywhere. Column 15 is a separate case again -- its mean is 1.105, already at the (b) hypothesis, so a per-column test there would be testing a null effect (power 0.07)."
+ },
+ "DESIGN_CONCERNS_FLAGGED_TO_THE_MEDIATOR_NOT_AS_REVIEW_FINDINGS": [
+  "none. This lane has no concern about Exponential(1) as the null that it would raise even informally; the same-mean same-variance differing-only-in-P(X=0) construction is a cleaner contrast than the instrument it replaced, which was this lane's."
+ ],
+ "SUMMARY": "arithmetic: all quoted figures reproduce. Use of this lane's numbers: correct, with one correction (pin the statistic for the BOUNDARY, not the sizing) and ONE SUBSTANTIVE FINDING -- n=9 is ~57% power, not high confidence; 80% needs n=15 and 90% needs n=19. Whether that changes the decision is a cost question for the instrument's owner and Joseph, not this lane's call."
+}
