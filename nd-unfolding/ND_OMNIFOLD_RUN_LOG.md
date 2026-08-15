@@ -8146,3 +8146,67 @@ submitted; the corrected receipt's original values are **retained beside** their
 rather than overwritten (`BEN-227`); and **`MANIFEST.tsv` is one line stale for `FINDINGS.md` after this
 commit — left so deliberately**, because regenerating it would have inventoried this lane's then-uncommitted
 files (`BEN-332`; the correct precondition is `git status -- docs/orchestration` clean, not a worktree).
+
+---
+
+## 2026-08-15 — THE `OI-126` DIAGNOSTIC JOSEPH AUTHORIZED DOES NOT EXIST AS AN OPERATION, AND THE OBSTRUCTION ANSWERED PART OF THE QUESTION
+
+Peer session `B`. Joseph authorized the `OI-126` re-extraction verbatim (*"Yes submit it"*). **Nothing was
+submitted, no GPU time was spent, and nothing should be submitted for it:** the operation it names has no
+entry point. **The un-runnability is this lane's error, in `OI-126` as first committed at `c1e7a69`.**
+
+**Four fail-closed guards form a closed ring.** `train_fullevent_replica.py:320` refuses any
+`replica_index` outside `[0,50)` or any seed other than `50000+index` — there is no value meaning
+*bootstrap disabled*; `build_fullevent_replica_target.py:153` applies the same constraint, so the replica
+path cannot build a non-replica target; `fullevent_fps_dataloader.py:736-747` refuses a nominal target
+inside the replica path (*"can never stand in for one"*); and `train_fullevent_nominal.py:253-255` is the
+mirror, refusing any target that carries a `bootstrap_seed`. They trace to the J04/D2 audit. **Weakening
+one is a different authorization from spending GPU time and is not covered by an authorization to submit a
+job** (`OI-123`, one level up). Recommended against even asking.
+
+**How the error happened, because the generalisation is reusable and is now in `BEN-340`'s finding:** the
+cost was derived from a replica receipt's real `total_seconds`, and *runnability* was inferred from the
+existence of the two named scripts. **A proposal has two independent preconditions — affordable and
+possible — and the expensive-looking one is not the one that fails.** The tell is the same as `BEN-340`'s:
+**the derivation was never attempted.**
+
+**WHAT THE OBSTRUCTION BOUGHT.** The guards prove the arms' targets differ **by design** — the nominal
+consumes the certified published target, each replica must rebuild its own — so *whether* they differ was
+never the question. That retired the hypothesis the job existed to test, before the job.
+
+**MECHANISM NARROWED READ-ONLY INSTEAD.** Receipt
+`state/RECEIPT-20260815-oi126-mechanism-narrowing.json`; both probes and the cluster probe's verbatim
+stdout are committed beside it.
+
+1. **The target is NOT the mechanism, and `OI-126`'s own leading candidate is REFUTED.** Each replica
+   target is the nominal target times a **Poisson(1) multiplicity** times one shared constant:
+   multiplicity fractions match the Poisson(1) pmf for `k=0..5` to better than 0.5%, the zero fraction is
+   `exp(-1)` to `8e-4`, totals agree to `6.5e-5`, and on rows both arms keep **the two refinements agree
+   to 0.068%**. The `refinement_backend` metadata differs; the arrays do not. **A metadata difference was
+   read as a physics difference** — the same class of error as the costing above, on the same day.
+2. **Shrinkage toward the prior is REFUTED, and it inverts the suspicion.** In the band the **nominal
+   agrees with the MC prior to ~5%** while the family mean is **~0.4x the prior** — not between them (3.2%
+   of the 63 cells) — and the band is not where the nominal departs most from the prior. **It is the
+   replicas that are anomalous, not the nominal.**
+3. **Not a subset of diverged trainings.** All 50 members are low in the band (median member/nominal
+   `0.246`) and healthy below it (`1.015`, sd `0.037`), and a replica's band deficit is **uncorrelated
+   with its overall level** (`r = 0.09`).
+4. **The deficit is a function of `p_parallel` alone.** `log(mean/nominal)` is explained `R^2 = 0.868` by
+   `p_parallel` alone against `R^2 = 0.018` by `pT` alone; three cells in different `pT` rows sharing
+   `p_parallel[8,9)` give `4.985 / 4.950 / 4.938` with identical member counts. **A separable
+   multiplicative factor is not a statistical effect.** It points at the replica extraction path, where
+   `gate5_signal_factor_applied_to_truth_counts` is `true` and the nominal's summary carries no such
+   field. **Named as the suspect and NOT established: the factor arrays are not on disk, only their
+   sha256.**
+
+**DECLARED BEFORE THE NEXT MEASUREMENT, NOT AFTER:** none of this unblocks `OI-126`, which blocks pairing
+`C_stat` with P5A. It does not identify *which* factor, does not decide training-versus-extraction, does
+not show `C_stat` is wrong — **a per-cell factor common to all 50 members may largely cancel in a
+*centred* covariance, which was not computed** — and does not show P5A is right, since a nominal agreeing
+with the prior is consistent both with a correct measurement and with an unfolding that barely moved.
+
+**NEXT MEASUREMENT, RUNNABILITY-CHECKED THIS TIME** by listing the keys of both push files rather than
+assuming them: bin `w_push` in truth `(pT, p_parallel)` for the nominal and one replica and compare per
+`p_parallel` column. It splits training from extraction. Read-only numpy, no driver, no guard, no
+TensorFlow; ~1.6 GB resident and a few core-minutes. **It is a different measurement from the one Joseph
+approved and needs its own yes — that consent does not travel.**

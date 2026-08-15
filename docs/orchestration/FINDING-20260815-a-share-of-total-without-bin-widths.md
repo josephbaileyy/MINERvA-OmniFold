@@ -95,6 +95,32 @@ re-investigate"* is not a wrong number, it is **an instruction not to look**, an
 possible way to make a live defect permanent. Corrected in place there, with the superseded sentence
 retained beside its correction per this directory's convention.
 
+## The same shape recurred in this finding's own filer within a day, which is why the rule is stated generally
+
+**Added 2026-08-15, hours after this file landed.** The same lane wrote a diagnostic into `OI-126`,
+costed it from a replica receipt's real `total_seconds` — and it **has no entry point**: four fail-closed
+guards make the operation impossible (`train_fullevent_replica.py:320`,
+`build_fullevent_replica_target.py:153`, `fullevent_fps_dataloader.py:736-747`,
+`train_fullevent_nominal.py:253-255`). Joseph authorized it before anyone noticed. No GPU time was spent
+only because the guards fail closed *before* work starts.
+
+**The generalisation is not "check costs carefully" — the cost was right.** It is:
+
+> **A proposal has at least two independent preconditions — that it is affordable and that it is
+> possible — and the expensive-looking one is not the one that fails.** Runnability was *inferred from
+> the existence of two named scripts*, which is the same move as inferring a share of a total from the
+> existence of a per-cell array: **a quantity derived from operands that do not support it.**
+
+The tell both times is identical and worth memorising: **the derivation was never attempted.** Nobody
+summed the array two ways; nobody ran the script with `--help`. In both cases one command would have
+settled it, and in both cases the claim was plausible enough that no one asked for it.
+
+**Corollary, from how this one surfaced:** the guards that made the job impossible also *answered part of
+the question* — they prove the two arms' targets differ **by design**, which retired the hypothesis the
+job was meant to test. **An obstruction is evidence about the system.** Read it before routing around it,
+and never weaken a fail-closed guard to make a proposal true — that is a different authorization from the
+one that approved the work (`OI-123`).
+
 **Related:** `BEN-077` (the convention that caught it), `BEN-227` (retract the point value, keep the
 derivation — followed here: the two shares are marked `RETRACTED` in the receipt and their corrected
 values live with their operands in the correcting receipt), `BEN-228` (the receipt's `OPEN_ITEMS:430-438`

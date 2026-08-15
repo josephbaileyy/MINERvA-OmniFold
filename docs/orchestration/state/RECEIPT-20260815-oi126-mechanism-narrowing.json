@@ -1,0 +1,243 @@
+{
+ "what": "OI-126 mechanism narrowing, READ-ONLY. Establishes what the P5A-vs-family divergence is NOT, and localises what remains. Supersedes OI-126's original 'leading candidate' and its un-runnable next action.",
+ "filed_by": "peer session B, 2026-08-15, after Joseph authorized a diagnostic that turned out to have no entry point",
+ "no_job_was_run": "no sbatch, no scancel, no scontrol; cluster access was file reads only. The array 57012031 was not touched.",
+ "ingredients": {
+  "cstat_npz": {
+   "path": "docs/orchestration/state/gate5-cstat-n50/GATE5_CSTAT_N50.npz",
+   "sha256": "6c3b4e00910397953269527964d2803966f73ee01548a6164f04cd78501623bc"
+  },
+  "acceptance_map": {
+   "path": "nd-unfolding/products/pet/fullevent_fps/acceptance_map_fullevent_fps.json",
+   "sha256": "4615cf8ef2cbdca4e1ea44d5272aef1354e9e4a8d16112e507e660343205646b"
+  },
+  "per_cell_receipt": {
+   "path": "docs/orchestration/state/p5a-nominal-vs-cstat-family-percell-20260815.json",
+   "note": "corrected in c1e7a69; its arrays are sound"
+  },
+  "cluster_reads": [
+   "nd-unfolding/g2_fullevent/gate2/final/G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy (the nominal target)",
+   "nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_{00..07}/target/GATE5_REPLICA_TARGET.npy",
+   "nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_{00..49}/extraction/GATE5_REPLICA_XSEC.npz",
+   "nd-unfolding/pet/fullevent_nominal_annealed_extraction_unpromoted/P5A-ANNEALED-UNPROMOTED.xsec.slurm-56989462.npz"
+  ]
+ },
+ "0_THE_AUTHORIZED_JOB_HAS_NO_ENTRY_POINT": {
+  "verdict": "NOT RUNNABLE. Four fail-closed guards form a closed ring and no combination of existing entry points produces the object.",
+  "guards": {
+   "nd-unfolding/pet/train_fullevent_replica.py:320": "SystemExit unless 0<=replica_index<50 AND bootstrap_seed==50000+replica_index; no value means 'bootstrap disabled'",
+   "nd-unfolding/pet/build_fullevent_replica_target.py:153": "same constraint on the target builder, so the replica path cannot produce a non-replica target",
+   "nd-unfolding/pet/fullevent_fps_dataloader.py:736-747": "assert_refined_target_is_replica: a nominal target (bootstrap_seed=None) 'can never stand in for one'",
+   "nd-unfolding/pet/train_fullevent_nominal.py:253-255": "the mirror: rejects any target carrying a bootstrap_seed, because 'bootstrap_seed is None proves it is the nominal rather than a replica'"
+  },
+  "provenance_of_the_guards": "the J04/D2 audit, where this driver silently rebuilt a target in process and nothing compared it against the certified array",
+  "MUST_NOT": "weakening or bypassing a fail-closed production guard is a DIFFERENT authorization from spending GPU time and is not covered by an authorization to submit a job. Cf. OI-123: 'do not repin a receipt-bound launcher to make it pass.'",
+  "whose_error": "peer session B's, in OI-126 as committed at c1e7a69: the cost was derived from a real replica receipt's total_seconds, and RUNNABILITY was inferred from the existence of the two named scripts. Price checked, availability never checked."
+ },
+ "1_THE_TARGET_IS_NOT_THE_MECHANISM": {
+  "claim_retired": "OI-126's leading candidate -- that the arms' different Stay-Positive backends explain the divergence -- is REFUTED at the level of the arrays.",
+  "why_it_looked_right": "the metadata strings genuinely differ: the nominal target records refinement_backend='precomputed:gate2-published-target', each replica records a recomputed refinement_estimator='exact' with max_mc_events=200000, random_state=45.",
+  "what_the_arrays_show": "the replica target IS the nominal target times a Poisson(1) multiplicity times one shared constant.",
+  "rows_decompose_as": "n_data_full 4116128 + n_bkg_full 564591 = 4680719, i.e. the MEASURED leg",
+  "MEASURED_ON_THE_CLUSTER": {
+   "rows": 4680719,
+   "nominal_target": {
+    "sum": 1124080.625,
+    "mean": 0.2401512712240219,
+    "min": 0.0,
+    "max": 0.580672562122345,
+    "n_zero": 1916,
+    "zero_fraction": 0.0004093388216639367
+   },
+   "multiplicity": {
+    "k": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "observed_fraction": [
+     0.36791440032846007,
+     0.36757905814799213,
+     0.18316501036696778,
+     0.061079297418591895,
+     0.015330630505280945,
+     0.003080275019059362
+    ],
+    "poisson1_pmf": [
+     0.36787944117144233,
+     0.36787944117144233,
+     0.18393972058572117,
+     0.06131324019524039,
+     0.015328310048810098,
+     0.0030656620097620196
+    ],
+    "unassigned_fraction": 0.0018513282136478626,
+    "obs_over_pmf": [
+     1.0000950288412596,
+     0.9991834742857777,
+     0.9957882385800823,
+     0.9961844656080229,
+     1.0001513837118023,
+     1.0047666733158482
+    ]
+   },
+   "shared_renormalisation_on_multiplicity_1_rows": 1.000680923461914,
+   "refinements_agree_to_percent": 0.06809234619140625,
+   "replica_00_target": {
+    "sum": 1125311.25,
+    "min": 0.0,
+    "max": 2.4897851943969727,
+    "n_zero": 1722438
+   },
+   "replica_target_sums": {
+    "n_replicas_read": 8,
+    "mean": 1124007.9375,
+    "sd": 698.0278564590794,
+    "rel_sd": 0.0006210168390906754,
+    "nominal_over_mean": 1.0000646681376304
+   },
+   "replica_zero_fraction": {
+    "mean": 0.36818224400994803,
+    "sd": 0.00014401883073381663,
+    "exp_minus_1": 0.36787944117144233,
+    "ratio_to_exp_minus_1": 1.0008231034535158
+   }
+  },
+  "how_CLUSTER_was_obtained": "emitted as JSON by state/probe-oi126-target-comparison-20260815.py run read-only over ssh and embedded here VERBATIM -- no figure in this block was transcribed by hand",
+  "nominal_zeros_are_the_stay_positive_clip": "the nominal's own target receipt records frac_clipped_reported 0.0004334804118768933; times the row count that is ~2029 against the measured n_zero, so the nominal's zeros are the clip and the replicas' are bootstrap zeros",
+  "conclusion": "there is no target-level bias and no normalisation difference. A metadata difference was read as a physics difference."
+ },
+ "2_SHRINKAGE_TOWARD_THE_PRIOR_IS_ALSO_REFUTED": {
+  "hypothesis": "bootstrap replicas of a regularised estimator regress toward the prior, so the family mean should sit BETWEEN prior and nominal",
+  "prior_definition": "truth_mass_cells_pt_major / bin area, renormalised to the nominal's width-weighted total",
+  "by_region": {
+   "pparallel_lt_6": {
+    "n": 128,
+    "median_nominal_over_prior": 1.0271081473694068,
+    "median_family_mean_over_prior": 1.0074668804895113,
+    "fraction_of_cells_with_mean_strictly_between": 0.5546875
+   },
+   "band_6_to_20": {
+    "n": 84,
+    "median_nominal_over_prior": 0.947502897599728,
+    "median_family_mean_over_prior": 0.39364033648816854,
+    "fraction_of_cells_with_mean_strictly_between": 0.11904761904761904
+   },
+   "the_63": {
+    "n": 63,
+    "median_nominal_over_prior": 0.9629661880047353,
+    "median_family_mean_over_prior": 0.25457998738017296,
+    "fraction_of_cells_with_mean_strictly_between": 0.031746031746031744
+   },
+   "pparallel_gt_20": {
+    "n": 45,
+    "median_nominal_over_prior": 0.7207024693640501,
+    "median_family_mean_over_prior": 1.335065537609603,
+    "fraction_of_cells_with_mean_strictly_between": 0.1111111111111111
+   }
+  },
+  "shrinkage_fraction_median": {
+   "pparallel_lt_6": 0.6030277730746624,
+   "band_6_to_20": -0.8277694339705076,
+   "the_63": -2.589325857818134,
+   "pparallel_gt_20": 1.936260341350935
+  },
+  "correlation_departure_vs_shrinkage": 0.04449585057373549,
+  "conclusion": "REFUTED. In the band the nominal agrees with the prior to about 5% while the family mean is ~0.4x the prior, so the mean is not between them -- only 3.2% of the 63 cells have it between. The band is NOT where the nominal departs most from the prior (p_parallel>20 departs more). IT IS THE REPLICAS THAT ARE ANOMALOUS IN THE BAND, NOT THE NOMINAL."
+ },
+ "3_IT_IS_NOT_A_SUBSET_OF_BROKEN_REPLICAS": {
+  "per_replica_median_member_over_nominal": {
+   "over_the_63_band_cells": {
+    "min": 0.10860804430867833,
+    "median": 0.24623808202370512,
+    "max": 0.7020612493146703,
+    "sd": 0.15350000692655602,
+    "n_below_0p5": 46,
+    "n_below_0p2": 18,
+    "all_50_below_1": true
+   },
+   "over_the_128_pparallel_lt_6": {
+    "min": 0.9058884450706091,
+    "median": 1.015196775909212,
+    "max": 1.0672453875758312,
+    "sd": 0.03705565820542539
+   }
+  },
+  "correlation_band_vs_good_per_replica": 0.09308153385940993,
+  "conclusion": "every one of the 50 is low in the band and healthy below it, and a replica's band deficit is uncorrelated with its overall level. So this is a systematic property of the replica arm, not a few diverged trainings."
+ },
+ "4_THE_DEFICIT_IS_A_FUNCTION_OF_PPARALLEL_ALONE": {
+  "model": "log(family_mean / nominal) per cell, decomposed additively over the 257 quotable cells",
+  "R2_pparallel_plus_pt": 0.8792912236918669,
+  "R2_pparallel_only": 0.868321670450479,
+  "R2_pt_only": 0.017810554334093287,
+  "illustration_DERIVED": {
+   "claim": "cells in different pT rows sharing one p_parallel column behave near-identically",
+   "cells": [
+    {
+     "cell": 12,
+     "i_pt": 0,
+     "i_pparallel": 12,
+     "pparallel_bin": [
+      8.0,
+      9.0
+     ],
+     "nominal_over_family_mean": 4.984773110999431,
+     "n_members_below_10pct_of_nominal": 15,
+     "n_members_below_50pct_of_nominal": 47
+    },
+    {
+     "cell": 31,
+     "i_pt": 1,
+     "i_pparallel": 12,
+     "pparallel_bin": [
+      8.0,
+      9.0
+     ],
+     "nominal_over_family_mean": 4.950475577434539,
+     "n_members_below_10pct_of_nominal": 15,
+     "n_members_below_50pct_of_nominal": 47
+    },
+    {
+     "cell": 50,
+     "i_pt": 2,
+     "i_pparallel": 12,
+     "pparallel_bin": [
+      8.0,
+      9.0
+     ],
+     "nominal_over_family_mean": 4.9384011936392,
+     "n_members_below_10pct_of_nominal": 15,
+     "n_members_below_50pct_of_nominal": 47
+    }
+   ]
+  },
+  "conclusion": "the deficit is essentially separable and essentially p_parallel-only. That is the signature of a MULTIPLICATIVE p_parallel-DEPENDENT FACTOR present in the replica extraction path and absent from the nominal one -- not of a statistical effect, which would not be separable."
+ },
+ "5_WHAT_REMAINS_OPEN_AND_WHAT_THIS_DOES_NOT_SHOW": {
+  "declared_before_the_next_measurement": true,
+  "this_receipt_does_NOT_show": [
+   "WHICH factor it is. The replica extraction summary carries gate5_signal_factor_applied_to_truth_counts=true and gate5_signal_factor_applied_to_completeness_and_reporting_mask=true, and the nominal's carries neither; the factor ARRAYS are not on disk, only signal_factor_sha256 / background_factor_sha256. Named as the obvious suspect and NOT established.",
+   "whether the defect is in TRAINING or in EXTRACTION. Both arms persist w_push over mc_indices, so this is decidable read-only and is the proposed next measurement.",
+   "that C_stat is wrong. If the deficit is a per-cell multiplicative factor common to all 50 members, it largely cancels in a CENTRED covariance, so C_stat may survive even though the family MEAN does not describe the nominal. NOT computed here.",
+   "that P5A is right. The nominal agreeing with the MC prior in the band is consistent with a correct measurement and also with an unfolding that barely moved there."
+  ],
+  "and_it_does_not_clear_OI_126": "OI-126 blocks pairing C_stat with P5A. Narrowing the mechanism does not unblock it, whatever the mechanism turns out to be."
+ },
+ "6_PROPOSED_NEXT_MEASUREMENT_runnability_checked_this_time": {
+  "measurement": "bin w_push (the per-event unfolded weight) in TRUTH (pT, p_parallel) for the nominal push and for one replica push, and compare per p_parallel column.",
+  "why_it_is_decisive": "it splits training from extraction. If the p_parallel deficit is already in w_push, the divergence is in the fit; if w_push agrees and only the xsec differs, it is in the extraction's factor handling.",
+  "inputs_all_exist": [
+   "P5A-ANNEALED-UNPROMOTED.push.slurm-56978466.npz (w_push, mc_indices)",
+   "replica_00/extraction/GATE5_REPLICA_FULL_PUSH.npz (w_push, mc_indices, plus the two factor digests)",
+   "G2_FPS_MEFHC_P12.npz truth_scalars for the truth coordinates"
+  ],
+  "runnability": "READ-ONLY numpy; no driver, no guard, no TensorFlow, no new code path. Verified by listing the keys of both push files rather than assuming them.",
+  "cost": "decompressing truth_scalars from a 9.9 GB npz is ~1.6 GB resident and a few minutes of one core. Requested as an interactive allocation rather than run on a login node, out of politeness, not necessity.",
+  "NOT_a_continuation_of_the_authorized_job": "Joseph said yes to a specific job that does not exist. This is a different measurement and needs its own yes."
+ },
+ "git_head_at_write": "ee2d2b1762c508bd810b182011c6eb42fe87a426"
+}
