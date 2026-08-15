@@ -144,18 +144,20 @@ docs/orchestration/FINDING-20260814-the-rebase-falsified-the-claim-it-carried.md
 docs/orchestration/FINDING-20260814-two-implementations-one-blas-kernel.md	ARCHIVAL	finding		20260814	terminal		exact-path-only		yes	1	108	6886
 docs/orchestration/FINDING-20260815-a-blockers-array-that-vetoed-authorized-work.md	ARCHIVAL	finding		20260815	terminal		exact-path-only		yes	1	140	9299
 docs/orchestration/FINDING-20260815-a-citation-you-cannot-re-derive.md	ARCHIVAL	finding		20260815	terminal		exact-path-only		yes	1	137	8976
+docs/orchestration/FINDING-20260815-a-guard-with-no-cell-for-what-it-cannot-see.md	ARCHIVAL	finding		20260815	terminal		exact-path-only		yes	2	193	11645
 docs/orchestration/FINDING-20260815-a-restatement-is-not-a-second-measurement.md	ARCHIVAL	finding		20260815	terminal		exact-path-only	nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh	yes	5	232	15349
 docs/orchestration/FINDING-20260815-a-share-of-total-without-bin-widths.md	ARCHIVAL	finding		20260815	terminal		exact-path-only		yes	2	127	8153
 docs/orchestration/FINDING-20260815-a-suite-that-could-not-fail-on-its-own-interface.md	ARCHIVAL	finding		20260815	terminal		exact-path-only		yes	1	118	7314
 docs/orchestration/FINDING-20260815-a-worktree-reproduces-the-commit-not-the-working-directory.md	ARCHIVAL	finding		20260815	terminal		exact-path-only		yes	1	100	5863
 docs/orchestration/FINDING-20260815-an-arm-whose-answer-was-entailed-by-statement-order.md	ARCHIVAL	finding		20260815	terminal		exact-path-only		yes	2	191	12665
+docs/orchestration/FINDING-20260815-the-expected-answer-from-a-broken-instrument.md	ARCHIVAL	finding		20260815	terminal		exact-path-only		yes	1	100	6239
 docs/orchestration/FINDING-20260815-the-quarantine-measured-a-different-run.md	ARCHIVAL	finding		20260815	terminal		exact-path-only	nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh	yes	8	175	12250
 docs/orchestration/FINDING-20260815-the-rule-is-broken-by-the-artifact-asserting-it.md	ARCHIVAL	finding		20260815	terminal		exact-path-only		yes	1	120	8978
 docs/orchestration/FINDING-20260815-who-holds-a-task-has-no-source.md	ARCHIVAL	finding		20260815	terminal		exact-path-only		yes	1	110	6429
 docs/orchestration/FINDINGS-ARCHIVE-2026-08.md	ARCHIVAL	document	2026-07-16-fe-campaign		terminal		exact-path-only	docs/orchestration/findings_row_lint.py;docs/orchestration/split_findings.py;nd-unfolding/pet/check_canonical_designation.py	yes	7	155	362988
 docs/orchestration/FINDINGS-INDEX-ARCHIVE-2026-08.md	ARCHIVAL	document	20260806-campaign		terminal		exact-path-only		yes	1	46	25076
 docs/orchestration/FINDINGS-POLICY-HISTORY.md	ARCHIVAL	document			terminal		exact-path-only		yes	1	62	4476
-docs/orchestration/FINDINGS.md	LIVE	ledger	20260806-campaign		open		route-only	docs/orchestration/findings_row_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/split_findings.py;docs/orchestration/whose_row.py;nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/orchestrate_gpu_node.sh;nd-unfolding/sbatch_bootstrap_5d_gpu.sh;nd-unfolding/tests/test_hash_bindings.py	no	72	473	220258
+docs/orchestration/FINDINGS.md	LIVE	ledger	20260806-campaign		open		route-only	docs/orchestration/findings_row_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/split_findings.py;docs/orchestration/whose_row.py;nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/orchestrate_gpu_node.sh;nd-unfolding/sbatch_bootstrap_5d_gpu.sh;nd-unfolding/tests/test_hash_bindings.py	no	72	477	228332
 docs/orchestration/HANDOFF-20260806-2246Z.md	ARCHIVAL	document		20260806	terminal		exact-path-only		yes	13	186	12848
 docs/orchestration/HANDOFF-20260812-1145Z.md	ARCHIVAL	document		20260812	terminal		exact-path-only		yes	6	175	14895
 docs/orchestration/HANDOFF-20260813-0030Z-session-A.md	ARCHIVAL	document		20260813	terminal		exact-path-only		yes	2	336	24517
@@ -164,10 +166,10 @@ docs/orchestration/HANDOFF-20260813-session-D-verifier.md	ARCHIVAL	document		202
 docs/orchestration/HANDOFF-20260815-0455Z.md	ARCHIVAL	document		20260815	terminal		exact-path-only	nd-unfolding/pet/closure_foldforward_instrumented.py	yes	5	175	12130
 docs/orchestration/INDEX-retracted-and-superseded-values.md	LIVE	index			open		route-only	docs/open-items/verify_open_items_restructure.py;docs/orchestration/findings_row_lint.py;nd-unfolding/pet/check_canonical_designation.py	no	24	184	24206
 docs/orchestration/INTERIM-HANDBACK.md	ARCHIVAL	document			terminal		exact-path-only		yes	2	42	4434
-docs/orchestration/LIVE-STATE.md	LIVE	live-status			generated		always	docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_g2_dump_resume.sh;docs/orchestration/watch_slurm_array_resume.sh	no	39	74	10164
+docs/orchestration/LIVE-STATE.md	LIVE	live-status			generated		always	docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_g2_dump_resume.sh;docs/orchestration/watch_slurm_array_resume.sh	no	39	74	11677
 docs/orchestration/LIVE-USAGE.md	LIVE	live-status			open		route-only		no	15	162	8154
-docs/orchestration/MANIFEST-overrides.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	7	49	3218
-docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	14	830	134632
+docs/orchestration/MANIFEST-overrides.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	8	49	3218
+docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py	no	14	836	135803
 docs/orchestration/METHOD-DECLARATION-20260814-lane-d-cstat-crosscheck.md	ARCHIVAL	document		20260814	terminal		exact-path-only	docs/orchestration/state/build_cstat_crosscheck_laned.py	yes	3	102	6794
 docs/orchestration/MIGRATION-DELTA.md	ARCHIVAL	document			terminal		exact-path-only		yes	11	67	4450
 docs/orchestration/MIGRATION-HANDOFF.md	ARCHIVAL	document			terminal		exact-path-only		yes	19	146	9653
@@ -195,7 +197,7 @@ docs/orchestration/PREDECLARATION-20260813-gate6-legX-2x2.md	ARCHIVAL	predeclara
 docs/orchestration/PREDECLARATION-20260813-gate6-member-trajectories.md	ARCHIVAL	predeclaration		20260813	terminal		exact-path-only		yes	9	97	5553
 docs/orchestration/PREDECLARATION-20260813-gate6-ml-ensemble.md	ARCHIVAL	predeclaration		20260813	terminal		exact-path-only	nd-unfolding/pet/sbatch_pet_fullevent_ml_ensemble.sh	yes	7	89	5346
 docs/orchestration/PREDECLARATION-20260815-foldforward-instrumented-closure.md	ARCHIVAL	predeclaration		20260815	terminal		exact-path-only	nd-unfolding/pet/sbatch_foldforward_instrumented_closure.sh	yes	2	103	6605
-docs/orchestration/PREDECLARATION-20260815-oi126-push-vs-extraction.md	ARCHIVAL	predeclaration		20260815	terminal		exact-path-only	docs/orchestration/state/eval-oi126-predeclared-readings-20260815.py;docs/orchestration/state/probe-oi126-push-vs-extraction-20260815.py	yes	6	100	7367
+docs/orchestration/PREDECLARATION-20260815-oi126-push-vs-extraction.md	ARCHIVAL	predeclaration		20260815	terminal		exact-path-only	docs/orchestration/state/eval-oi126-predeclared-readings-20260815.py;docs/orchestration/state/probe-oi126-push-vs-extraction-20260815.py	yes	7	100	7367
 docs/orchestration/PREDECLARE-20260811-bkgaware-footing-readopt.md	ARCHIVAL	predeclaration		20260811	terminal		exact-path-only	nd-unfolding/sbatch_readopt_5d_bkgaware_footing.sh	yes	3	128	8761
 docs/orchestration/PREDECLARE-20260811-construction-contract-receipt.md	ARCHIVAL	predeclaration		20260811	terminal		exact-path-only	nd-unfolding/receipt_construction_contract_5d.py	yes	5	67	4902
 docs/orchestration/PREDECLARE-20260811-gibuu-corner-ratio.md	ARCHIVAL	predeclaration		20260811	terminal	nd-unfolding/ND_OMNIFOLD_RUN_LOG.md	exact-path-only		yes	4	74	4978
@@ -513,8 +515,9 @@ docs/orchestration/start-publication-plan-verifier.md	ARCHIVAL	start-prompt			te
 docs/orchestration/start-standard-p4-verifier.md	ARCHIVAL	start-prompt			terminal		exact-path-only		yes	6	13	1796
 docs/orchestration/start-usage-helper-verifier.md	ARCHIVAL	start-prompt			terminal		exact-path-only		yes	2	30	3010
 docs/orchestration/state/RECEIPT-20260815-cstat-tail-geometry-and-weighting-correction.json	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	9	359	14415
-docs/orchestration/state/RECEIPT-20260815-oi126-mechanism-narrowing.json	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-oi126-mechanism-narrowing-20260815.py	yes	4	243	12687
-docs/orchestration/state/RECEIPT-20260815-oi126-push-vs-extraction-RESULT.json	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/eval-oi126-predeclared-readings-20260815.py	yes	3	68	4637
+docs/orchestration/state/RECEIPT-20260815-oi126-mechanism-narrowing.json	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/eval-oi126-tiebreak-retirement-20260815.py;docs/orchestration/state/probe-oi126-mechanism-narrowing-20260815.py	yes	7	243	12687
+docs/orchestration/state/RECEIPT-20260815-oi126-push-vs-extraction-RESULT.json	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/eval-oi126-predeclared-readings-20260815.py	yes	4	68	4637
+docs/orchestration/state/RECEIPT-20260815-oi126-tiebreak-retirement.json	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/eval-oi126-tiebreak-retirement-20260815.py	yes	4	317	12304
 docs/orchestration/state/RECEIPT-vl100-shape-corrected-foldforward-20260815.json	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-vl100-shape-correction-scan-20260815.py;nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh	yes	10	355	17212
 docs/orchestration/state/__pycache__/probe-oi120c-loader-purity-perturbation-20260814.cpython-312.pyc	MACHINE	cache	__pycache__	20260814	generated		exact-path-only		yes	0	161	21704
 docs/orchestration/state/_audit_gate3_source.py	MACHINE	state-artifact			generated		exact-path-only		yes	4	209	11920
@@ -555,6 +558,7 @@ docs/orchestration/state/diag-xsec-complete-56527676.json	MACHINE	state-artifact
 docs/orchestration/state/diag-xsec-submit-56527676.json	MACHINE	state-artifact			generated		exact-path-only		yes	3	37	1988
 docs/orchestration/state/dispatch-history-through-20260718.json	MACHINE	state-artifact		20260718	generated		exact-path-only		yes	5	160	3567
 docs/orchestration/state/eval-oi126-predeclared-readings-20260815.py	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	2	89	5952
+docs/orchestration/state/eval-oi126-tiebreak-retirement-20260815.py	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	0	122	8320
 docs/orchestration/state/g2-array-monitor-error-reconciliation-20260719.json	MACHINE	state-artifact		20260719	generated		exact-path-only		yes	1	30	1601
 docs/orchestration/state/g2-array-task4-blocker-20260719.json	MACHINE	state-artifact		20260719	generated		exact-path-only		yes	2	66	3062
 docs/orchestration/state/g2-array-task5-blocker-20260719.json	MACHINE	state-artifact		20260719	generated		exact-path-only		yes	1	55	2388
@@ -631,7 +635,7 @@ docs/orchestration/state/gate5-family-complete-pass-20260814.json	MACHINE	state-
 docs/orchestration/state/gate5-family-promotion-evidence-20260814/family-20260814-FULLSTRENGTH-50of50.json	MACHINE	state-artifact	gate5-family-promotion-evidence-20260814	20260814	generated		exact-path-only		yes	2	6713	277601
 docs/orchestration/state/gate5-family-promotion-evidence-20260814/fullstrength-50of50.stdout	MACHINE	state-artifact	gate5-family-promotion-evidence-20260814		generated		exact-path-only		yes	1	15	336
 docs/orchestration/state/gate5-family-reconciliation-20260813.json	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	9	271	30383
-docs/orchestration/state/gate5-family-validator-active-56933831.json	MACHINE	state-artifact			generated		exact-path-only		yes	2	66	3126
+docs/orchestration/state/gate5-family-validator-active-56933831.json	MACHINE	state-artifact			generated		exact-path-only		yes	3	66	3126
 docs/orchestration/state/gate5-fullevent-fps-zero-cells-20260814.json	MACHINE	state-artifact		20260814	generated		exact-path-only	docs/orchestration/state/gate5-cstat-spec-measurements-20260814/zero_cells.py	yes	2	267	6921
 docs/orchestration/state/gate5-n50-progress-56857232-20260813.json	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	1	58	6118
 docs/orchestration/state/gate5-promotion-evidence-rescue-20260814.json	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	1	73	9579
@@ -641,7 +645,7 @@ docs/orchestration/state/gate5-reconciler-r1-repair-20260813.json	MACHINE	state-
 docs/orchestration/state/gate5-reconciler-r2-repair-20260813.json	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	2	100	11088
 docs/orchestration/state/gate5-reconciler-r3-r4-repair-20260813.json	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	2	59	7121
 docs/orchestration/state/gate5-source-npz-verified-20260813.json	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	9	64	7524
-docs/orchestration/state/gate5-target-array-active-56857232.json	MACHINE	state-artifact			generated		exact-path-only		yes	2	92	4279
+docs/orchestration/state/gate5-target-array-active-56857232.json	MACHINE	state-artifact			generated		exact-path-only		yes	3	92	4279
 docs/orchestration/state/gate5-target-family-promotion-56873858.json	MACHINE	state-artifact			generated		exact-path-only		yes	4	135	5627
 docs/orchestration/state/gate5-target-promotion-evidence-56873858/GATE5_TARGET_FAMILY_RECONCILIATION.slurm-56873858.json	MACHINE	state-artifact	gate5-target-promotion-evidence-56873858		generated		exact-path-only		yes	4	3923	168512
 docs/orchestration/state/gate5-target-promotion-evidence-56873858/GATE5_TARGET_FAMILY_RECONCILIATION.slurm-56873858.json.done	MACHINE	state-artifact	gate5-target-promotion-evidence-56873858		generated		exact-path-only		yes	3	8	370
@@ -655,10 +659,10 @@ docs/orchestration/state/gate5-training-family-promotion-56933831.json	MACHINE	s
 docs/orchestration/state/gate5-training-family-promotion-evidence-56933831/GATE5_TRAINING_ARTIFACT_VALIDATION.slurm-56933831.json	MACHINE	state-artifact	gate5-training-family-promotion-evidence-56933831		generated		exact-path-only	nd-unfolding/pet/sbatch_gate5_extraction_family_validate.sh;nd-unfolding/pet/submit_gate5_extraction_n50.sh;nd-unfolding/pet/submit_gate5_extraction_r2_n50.sh	yes	6	1546	54972
 docs/orchestration/state/gate5-training-family-promotion-evidence-56933831/GATE5_TRAINING_FAMILY_PROMOTION.slurm-56933831.done	MACHINE	state-artifact	gate5-training-family-promotion-evidence-56933831		generated		exact-path-only		yes	2	36	1579
 docs/orchestration/state/gate5-training-family-promotion-evidence-56933831/GATE5_TRAINING_SACCT.slurm-56933831.psv	MACHINE	state-artifact	gate5-training-family-promotion-evidence-56933831		generated		exact-path-only		yes	4	50	4690
-docs/orchestration/state/gate5-training-terminal-preflight-56857233.json	MACHINE	state-artifact			generated		exact-path-only		yes	2	84	3774
+docs/orchestration/state/gate5-training-terminal-preflight-56857233.json	MACHINE	state-artifact			generated		exact-path-only		yes	3	84	3774
 docs/orchestration/state/gate6-agentB-disposition-20260813.json	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	0	19	934
 docs/orchestration/state/gate6-event-reconciliation-56834281.json	MACHINE	state-artifact			generated		exact-path-only		yes	1	75	4718
-docs/orchestration/state/gate6-floor-replication-active-56863958.json	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/pet/sbatch_gate6_leg0_tier_calibration_array.sh	yes	6	162	10842
+docs/orchestration/state/gate6-floor-replication-active-56863958.json	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/pet/sbatch_gate6_leg0_tier_calibration_array.sh	yes	7	162	10842
 docs/orchestration/state/gate6-floor-replication-partial-56863958.json	MACHINE	state-artifact			generated		exact-path-only		yes	7	250	13889
 docs/orchestration/state/gate6-floor-replication-result-56863958.json	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/pet/gate6_floor_statistics.py;nd-unfolding/pet/sbatch_pet_fullevent_legx_2x2_array.sh	yes	3	771	24195
 docs/orchestration/state/gate6-leg0-tier-calibration-56993778.json	MACHINE	state-artifact			generated		exact-path-only		yes	0	72	3600
@@ -755,10 +759,12 @@ docs/orchestration/state/probe-oi120a-normalization-20260814.py	MACHINE	state-ar
 docs/orchestration/state/probe-oi120b-root-order-alignment-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	0	265	12795
 docs/orchestration/state/probe-oi120c-loader-purity-perturbation-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only	docs/orchestration/test_loader_ordering_reco_before_truth_weight.py;docs/orchestration/test_probe_oi120c_verdict.py	yes	6	343	17508
 docs/orchestration/state/probe-oi126-mechanism-narrowing-20260815.py	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	1	164	14039
-docs/orchestration/state/probe-oi126-push-vs-extraction-20260815.json	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/eval-oi126-predeclared-readings-20260815.py	yes	2	1	27376
+docs/orchestration/state/probe-oi126-push-vs-extraction-20260815.json	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/eval-oi126-predeclared-readings-20260815.py;docs/orchestration/state/eval-oi126-tiebreak-retirement-20260815.py	yes	4	1	27376
 docs/orchestration/state/probe-oi126-push-vs-extraction-20260815.py	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/eval-oi126-predeclared-readings-20260815.py	yes	3	114	6551
 docs/orchestration/state/probe-oi126-target-comparison-20260815.json	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-oi126-mechanism-narrowing-20260815.py	yes	1	1	1261
 docs/orchestration/state/probe-oi126-target-comparison-20260815.py	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-oi126-mechanism-narrowing-20260815.py	yes	3	47	2513
+docs/orchestration/state/probe-oi126-zero-fraction-per-column-20260815.json	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/eval-oi126-tiebreak-retirement-20260815.py	yes	2	1	12660
+docs/orchestration/state/probe-oi126-zero-fraction-per-column-20260815.py	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	1	141	8225
 docs/orchestration/state/probe-oi22-leakage-real-input-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	1	119	5853
 docs/orchestration/state/probe-oi22-schema-parity-real-input-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	1	181	8291
 docs/orchestration/state/probe-vl100-foldforward-shape-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	2	204	10671
@@ -819,7 +825,7 @@ docs/orchestration/test_wakerctl.py	MACHINE	test-script			generated		exact-path-
 docs/orchestration/test_watch_slurm_array_resume.py	MACHINE	test-script			generated		exact-path-only		no	4	70	2995
 docs/orchestration/usage-policy.json	MACHINE	machine-data			generated		exact-path-only	docs/orchestration/usagectl.py	no	13	17	403
 docs/orchestration/usagectl.py	MACHINE	script			generated		exact-path-only	docs/orchestration/generate_live_state.py;docs/orchestration/pipeline_post_reset_verifiers.sh;docs/orchestration/resume_after_school_reset.sh;docs/orchestration/resume_after_school_reset_1800.sh;docs/orchestration/wakerctl.py	no	29	1075	44286
-docs/orchestration/verify_hash_bindings.py	MACHINE	script			generated		exact-path-only	docs/orchestration/whose_row.py;lib/enumerate_backfill_families.py;nd-unfolding/pet/atomic_write.py;nd-unfolding/pet/sbatch_gate6_leg0_tier_calibration_array.sh;nd-unfolding/pet/sbatch_powered_closure.sh;nd-unfolding/pet/sbatch_powered_closure_budget_probe.sh;nd-unfolding/tests/test_hash_bindings.py;nd-unfolding/tests/test_powered_closure_preflight.py	no	62	312	16330
+docs/orchestration/verify_hash_bindings.py	MACHINE	script			generated		exact-path-only	docs/orchestration/whose_row.py;lib/enumerate_backfill_families.py;nd-unfolding/pet/atomic_write.py;nd-unfolding/pet/sbatch_gate6_leg0_tier_calibration_array.sh;nd-unfolding/pet/sbatch_powered_closure.sh;nd-unfolding/pet/sbatch_powered_closure_budget_probe.sh;nd-unfolding/tests/test_hash_bindings.py;nd-unfolding/tests/test_powered_closure_preflight.py	no	63	312	16330
 docs/orchestration/verify_receipt_artifacts.py	MACHINE	script			generated		exact-path-only		no	4	177	7770
 docs/orchestration/waker-config.json	MACHINE	machine-data			generated		exact-path-only	docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py	no	10	21	652
 docs/orchestration/waker_fired_but_unread.sh	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/merge_guard.sh	no	8	41	2803
