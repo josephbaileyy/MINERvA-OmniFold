@@ -7682,3 +7682,68 @@ recorded 40 minutes earlier.
 
 **Nothing is unblocked by this entry.** Gate 6 is blocked at `19585b7`, all five prohibitions stand, Leg 0
 runs first, and **an authorization to retry is an authorization to gather evidence, not a verdict.**
+
+## 2026-08-14 — lane A, documentary: OI-71 carries D's falsification; two findings filed; the LIVE-STATE blocker cannot be regenerated away
+
+**Nothing executed, nothing submitted, no cluster contact.** Four dispatched items; the fourth returned a
+negative result that is more useful than the fix it was meant to confirm.
+
+**1. `OI-71` NOW CARRIES THE FALSIFICATION, and the whole exposure is in one row.** Lane D's read-only test
+at `f4267b4` (`state/vl100-foldforward-shape-test-20260814.json`, `BEN-252`) returns
+`VERDICT: SHAPE-DEPENDENT. NOT scale-only.` **Re-verified from the object rather than relayed:** truth-grid
+per-cell ratio `0.17301984808816961 → 1.4201434284841605`, `ratio_sd 0.3371` over `noise_expected_sd
+0.004931` = **`observed_over_noise 68.36`**; reco grid corroborates independently at **`36.25`**; the
+structure is in p∥ (marginal `0.272 → 1.321`, factor **4.9**) and is **not** a dead-cell artefact — those
+cells sit *above* the global mean (`0.833` vs `0.717`), so excluding them would not rescue the argument. The
+global-scale control is a real test: `k` fixed from the denominator alone reproduced the numerator to
+`2.0e-13`. **The two framings reconcile and both are in the row:** `ratio_sd/noise = 68.36` is the same
+statement as `rel_sd 47.0%` against a *relative* noise of `0.69%`.
+**The three facts that were true in three separate files now sit in one cell**, which is the `BEN-244` shape:
+`VL100` comes from a closure declaring `quotable: False`; that closure's quotability argument is falsified;
+and `recovery_evaluated` remains `False` at the promoted configuration (`explicitly_not_claimed[2]`).
+**AND ONE QUALIFIER RESTORED, which the dispatch assigning this row had dropped:** lane D examined **one of
+the four** quotability grounds. The other three are hygiene rather than physics and were **not** looked at,
+so *"the quotability argument has been falsified"* is true of the physics ground and overstated as a summary
+of all four — `BEN-220`'s own class, applied to a relay of `BEN-220`'s author. D's other two limits are in
+the row too: it does **not** say `VL100` is wrong, and it does **not** quantify how far `VL100` moves, which
+needs a shape-corrected recomputation that **was not run**.
+
+**2. `BEN-227` — a sha256 written into PROSE is not a binding.** A wrong digest in
+`p3f-pet-gate4-nominal-promotion-56563761.json` survived `verify_hash_bindings.py` reporting
+`ALL BINDINGS INTACT` across **175** resolved bindings **and** cleared `RECEIPT_BINDING_FLOOR=140` at 160.
+Neither guard is broken: a binding is a `files`/`sha256` **pair**, and a digest in a sentence has none, so
+both were **silent about a string shaped like their subject.** **Prose scanning was ruled against** — it
+false-positives on every digest quoted as history, which `INDEX-retracted-and-superseded-values.md` does on
+purpose. Prescription is the remedy already applied: **remove the point value rather than refreshing it,
+write the derivation, quote every digest WITH its ref.** Scope ruled by the mediator after lane A declined
+to rule it; the tooling question is left open in the row.
+
+**3. `BEN-228` — a line citation into a file you are editing IN THAT COMMIT is stale the moment you edit it**,
+and **`BEN-225`'s remedy does not catch it.** Re-running a check after `pull --rebase` re-runs the *check*;
+it does not re-derive the *number*. No rebase, no second lane, no concurrency — **strictly cheaper to
+trigger than `BEN-225`, so it will happen more often**, and every commit that both edits a file and cites a
+line in it is exposed. Rule: derive after the last edit, search for the **content** not the line, and prefer
+content addresses that survive insertion (`explicitly_not_claimed[2]`) over coordinates (`:95`).
+**Also corrected while filing these: lane A's own block row said `221-229` free, wrong since `BEN-221`** —
+`220-228` are filed and only `229` remains. That cell is the narration this table's own *"derived, not
+narrated"* rule warns about, and it is now marked a hint rather than an authority.
+
+**4. THE AUTHORIZED REGENERATION RAN, AND THE DEAD BLOCKER SENTENCE DOES NOT CLEAR. MY OWN HYPOTHESIS WAS
+WRONG.** I had told the mediator that `ND_OMNIFOLD_STATUS.md:40` was the likely upstream of the reprinted
+sentence. **It is not, and no STATUS prose is.** Measured: `generate_live_state.py:22` sets
+`DEFAULT_CONFIG = state/live-state.json`, reads it at `:286`, and its only write target is
+`DEFAULT_OUTPUT = LIVE-STATE.md` (`:23`, `:322`) — **the script never writes `live-state.json`.** The dead
+sentence is `live-state.json`'s `blockers[3]`, i.e. **the generator's hand-authored INPUT**, reprinted
+verbatim at `LIVE-STATE.md:53`. Run with `--stdout` so nothing was published: the regenerated output differs
+from the committed file in **exactly three things** — `Observed:`, the `Git:` sha with its worktree count,
+and one trailing newline. **The blocker text is byte-identical.**
+**And the reason it has survived is a documented falsehood:** `MANIFEST.tsv:616` classifies
+`live-state.json` as `MACHINE / state-artifact / generated` **naming `generate_live_state.py` as its
+producer** — a script that only ever reads it. **So the one file that can retire the sentence is the one
+every agent correctly believes is generated and must not be hand-edited, and the prescribed remedy —
+regenerate — is provably incapable of clearing it.** Filed `OI-73`; `OI-70`'s class, worse instance, because
+this one inverts a control-plane data flow rather than mislabelling a document's lifecycle. **Neither file
+was edited** — the dispatch that authorized the regeneration also forbade hand-editing them, and naming the
+file was the instruction. Two things left for whoever owns it: `blockers[2]`'s *"no retry"* needs the word
+**unchanged**, and **regenerate only from a clean tree** — the `Git:` line published `worktree entries: 4`
+from lane A's dirty tree against `1` committed, which is `BEN-183` waiting to happen.
