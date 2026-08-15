@@ -7,8 +7,11 @@
 > anticipated anywhere below.**
 >
 > **Every figure here was re-derived from committed artifacts at `7ceb18c`, not recalled.** Provenance is
-> in §7. **Two figures in this document are STALE-ABLE BY CONSTRUCTION and are marked `⟨RE-DERIVE⟩`** —
-> they must be recomputed at the moment the note is built, not copied (`BEN-228`).
+> in §7. **Exactly two facts in this document are STALE-ABLE BY CONSTRUCTION and are marked
+> `⟨RE-DERIVE⟩` at the point of use — the Track A submission status in §5 and the provenance commit hash in
+> §7.** They must be recomputed at the moment the note is built, not copied (`BEN-228`). *(The marker also
+> appears in this header and in drafting note 3, which are references to those two rather than further
+> instances.)*
 
 ---
 
@@ -67,8 +70,18 @@ cross-section, for the nominal and for a member:
 
 - in the control region `p_∥ < 6 GeV/c`, the two ratios agree to a median **`0.139%`**;
 - in the affected band, the ratio of ratios is **`1.0000`**;
-- the deficit is separable in longitudinal momentum alone — `R² = 0.868` from `p_∥` against `R² = 0.018`
-  from `p_T` on the extracted quantity, and `0.839` / `0.030` on the pushed quantity.
+- the deficit is separable in longitudinal momentum alone, and this holds **separately for two different
+  quantities** — the figures below are **four distinct fits, not one pair repeated**:
+
+  | quantity fitted | variance explained by `p_∥` alone | by `p_T` alone |
+  |---|---|---|
+  | the **extracted** cross-section ratio | `R² = 0.868` | `R² = 0.018` |
+  | the **pushed** (pre-extraction) yield ratio | `R² = 0.839` | `R² = 0.030` |
+
+  The two rows are close *because* the extraction is faithful — that is the point of §3, not a duplication.
+  **Whoever transfers this into the note must keep both rows and their labels**; collapsed to a single pair
+  it reads as a transcription error, and dropped to one row it loses the only evidence that the separability
+  is a property of the training rather than of the extraction.
 
 So the extraction machinery introduces essentially none of the effect and carries it faithfully. Two
 candidate mechanisms are **retired by measurement, not by argument**: the replica targets themselves (§1),
@@ -170,6 +183,7 @@ published with them, so a reader can recompute the aggregates and reach a differ
 
 | claim in this section | artifact |
 |---|---|
+| **the two per-cell replica relative standard deviations of §2 — `67.1%` in band and `8.5%` elsewhere** | `state/p5a-nominal-vs-cstat-family-percell-20260815.json`, fields `the_tail.median_family_rel_sd_in_tail` and `…_elsewhere`. **Both are recomputable from that receipt's own shipped `per_cell_family_rel_sd` array (257 values), whose cell-by-cell binding was independently proven against `sqrt(diag C)/mean` to `5.5e-16`.** ⚠ **That receipt carries two RETRACTED fields** — `the_tail.their_share_of_total` and `the_tail.top20_share_of_total`, both marked in place with the reason. **Neither of the two relative-sd fields used here is among them**, and no share-of-total figure from that receipt is used anywhere in this section. |
 | family spread, per-replica values for all 50 | `state/probe-oi126-band-Rpush-sigma-20260815.{py,json}` |
 | training-vs-extraction split, control and band | `state/probe-oi126-push-vs-extraction-20260815.{py,json}`, `state/RECEIPT-…-push-vs-extraction-RESULT.json` |
 | predeclared thresholds, fixed before that run | `PREDECLARATION-20260815-oi126-push-vs-extraction.md` (`449ec52`) |
@@ -189,8 +203,10 @@ published with them, so a reader can recompute the aggregates and reach a differ
    mechanism, a consequence for the published numbers, and a named implication for what would have to
    change. If Track A returns (b), §4's branch (b) needs no rewriting, and §3's external comparison is
    already fenced with the reason it is not decisive.
-2. **`5.0467` appears exactly once, in §2, as the figure being corrected.** It is nowhere else and it is
-   never a headline.
+2. **The single-draw band figure appears exactly once in the statement body — §2, as the figure being
+   corrected — and never as a headline.** *(It appears a second time in this drafting note, which is not
+   part of the statement; a `grep` of the whole file therefore returns two hits, and that is the reason.
+   Stated because "appears exactly once" is a checkable claim and it must survive being checked.)*
 3. **§5 does not say the experiment is running**, because at the time of writing it is not — verified by
    `squeue` at `16:59:18Z` rather than relayed. The status is marked `⟨RE-DERIVE⟩` instead of asserted, so
    the note cannot inherit a false present tense.
@@ -204,3 +220,24 @@ published with them, so a reader can recompute the aggregates and reach a differ
 6. **Numbers I did not put in and could:** the 44-of-63 cells where the central value exceeds every member,
    and the `+3.81` median per-cell z-score. They are the sharpest statement of the anomaly, and I left them
    out because per-cell z-scores against a 50-member family invite over-reading. Available if wanted.
+   **Reviewed and the omission was upheld**; §7 routes a reader to them with full context.
+
+## Review disposition, 2026-08-15 — recorded so the next editor inherits the rulings, not just the text
+
+Reviewed by the mediator; **approved for Joseph's sight subject to the `8.5%` provenance row, which is now
+added.** Three asks were ruled on and the rulings are recorded here because each one is a decision a later
+editor could silently reverse:
+
+- **The MINERvA comparison STAYS, unchanged.** A referee will find `1.55%` against `67.1%` independently,
+  and finding it unaddressed is worse than finding it stated; §4 already neutralises it **by name**. **Do
+  not quietly drop it** — omitting it is the choice that would need defending.
+- **§6's one-builder paragraph STAYS WHERE IT IS**, and may additionally appear in a construction section.
+  It must appear **at the point of use**: a reader deciding whether to trust this covariance needs to know
+  it was built once and self-checked *at the moment they are deciding*. **Misplaced and read beats correctly
+  placed and missed.**
+- **The sharp per-cell numbers STAY OUT** (see note 6).
+
+**AND A STANDING INSTRUCTION ON HOW THIS TEXT MAY BE UPDATED.** When Track A's contrast returns, **do not
+fold its outcome into this document by editing it in place.** The update must be visible as a change against
+a version that has already been read and approved — a silent improvement to reviewed text destroys the only
+record that the fork was genuinely open when it was written, which is the whole evidential value of §4.
