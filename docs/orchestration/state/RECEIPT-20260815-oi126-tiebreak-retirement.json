@@ -1,0 +1,317 @@
+{
+ "what": "Retirement of the proposed measured-leg-statistics tiebreak for OI-126, with the measured reason.",
+ "status": "THE TIEBREAK IS RETIRED AND WAS NOT RUN. Refused on review by the Assistant as second key-holder under Joseph's standing grant; the mediator concurred; this lane concurs and the design was this lane's own.",
+ "ingredients": {
+  "zero_fraction_probe": {
+   "path": "docs/orchestration/state/probe-oi126-zero-fraction-per-column-20260815.json",
+   "sha256": "2502d1f62f7068f592a9afdb2687269fe9cc3a56198f3d254854a82d896341b6"
+  },
+  "push_vs_extraction_probe": {
+   "path": "docs/orchestration/state/probe-oi126-push-vs-extraction-20260815.json",
+   "sha256": "9d2053616784ab0bf8578baff22b0fd368af87e1444a9cf4290949ec12af0665"
+  }
+ },
+ "REASON_1_the_discriminating_variable_is_a_CONSTANT_BY_CONSTRUCTION": {
+  "claim": "the tiebreak leaned on 'given 36.8% of measured rows carry zero weight'. That is not a measurement: it is the zero atom of Poisson(1), exp(-1).",
+  "exp_minus_1": 0.36787944117144233,
+  "measured_pooled_conditional": 0.3679689370693031,
+  "measured_pooled_raw": 0.36814643220411225,
+  "per_column_max_abs_rel_deviation_conditional": 0.01077965890447552,
+  "n_columns": 18,
+  "max_abs_n_sigma_over_columns": 1.8212825481169386,
+  "expected_max_abs_z_for_that_many_independent_draws": 2.2,
+  "verdict": "CONSTANT. Every populated p_parallel column sits within 1.9 sigma of exp(-1) and the largest deviation is at the smallest column, which is what noise looks like. So the zero-support fraction cannot discriminate anything: it is identical in every column and every replica by construction."
+ },
+ "REASON_2_the_raw_estimator_would_have_MANUFACTURED_the_hypothesis": {
+  "note": "this is the part worth keeping and it was nearly missed",
+  "contaminant": "a row whose NOMINAL weight is already 0 (Stay-Positive clipped) is 0 in every replica whatever its Poisson multiplicity, so it is not evidence about the bootstrap",
+  "nominal_zero_rows_total": 1916,
+  "raw_max_abs_rel_deviation": 0.028171158598392365,
+  "raw_worst_column": 1,
+  "conditional_max_abs_rel_deviation": 0.01077965890447552,
+  "why_it_matters": "the RAW fraction shows an excess that grows as the column gets smaller -- an n-dependent structure with the same qualitative shape as the hypothesis the tiebreak was hunting. Conditioning on nominal>0 removes it. An unvalidated version of this probe would have produced a FALSE POSITIVE pointing the way its author expected."
+ },
+ "REASON_3_the_premise_fails_on_its_own_regressor": {
+  "note": "the row counts the tiebreak would have regressed on are now measured, so its premise is testable rather than arguable",
+  "pearson_log_n_vs_log_R_xsec": 0.2969723861391866,
+  "spearman_log_n_vs_log_R_xsec": 0.39938080495356043,
+  "illustration": "p_parallel[5,6) has the MOST measured rows of any column and R_xsec ~1.17; [8,9) has ~4x fewer rows and R_xsec ~4.6; [60,120) has ~96x fewer than [5,6) and R_xsec ~0.52",
+  "verdict": "the effect is NOT monotone in measured-leg row count and reverses sign at high p_parallel while row count falls throughout. A statistics-scaling story predicts monotonicity; the data do not show it."
+ },
+ "REASON_4_it_did_not_separate_the_branches_anyway": "under (a) a genuinely unstable estimator is most unstable where information is scarce; under (b) the pathology of zero-weight rows is also worst where rows are fewest. SAME SIGN, SAME SHAPE, BOTH BRANCHES. The test would have confirmed that sensitivity is measured-leg-driven, which neither branch disputes. This argument is the Assistant's and it is correct.",
+ "MY_OWN_ERROR_NAMED": "the invalidating operand was already in this lane's own committed receipt -- state/RECEIPT-20260815-oi126-mechanism-narrowing.json records exp_minus_1 and a measured ratio to it of 1.000726 -- and the tiebreak was then designed around that same constant as though it were a variable. Third instance in one day of BEN-340's shape: a quantity used for something its operands do not support, with the derivation never attempted.",
+ "WHAT_REPLACES_IT_not_authorized_not_this_lane": "a variance-matched, zero-free perturbation: Exponential(1) and Poisson(1) both have mean 1 and variance 1 and differ in exactly P(X=0) = 0 vs exp(-1). Rebuild one replica with Exponential(1) data weights and re-run the 21-second push/extraction read. Band R_push staying near 5 implies variance-driven, i.e. (a); collapsing toward 1 implies zero-support-driven, i.e. (b). Opposite predictions on one axis, which is what this lane's design lacked. The Assistant's, ~7.8 GPU-h, blocked on whether a non-pinned override point exists, NOT AUTHORIZED, and to be predeclared with a numeric two-sided boundary in which UNRESOLVED does not default to (a).",
+ "INSTRUMENT_CONTROLS_that_ran_before_the_measurement": {
+  "C1_split_point": {
+   "data_block": {
+    "mean": 0.26699134707450867,
+    "n_zero": 502,
+    "percentiles": [
+     0.16430530712008476,
+     0.26831185817718506,
+     0.27390703558921814,
+     0.2757779359817505,
+     0.2768426835536957
+    ]
+   },
+   "bkg_block": {
+    "mean": 0.04447516053915024,
+    "n_zero": 1414,
+    "percentiles": [
+     0.009147550910711288,
+     0.03753931634128094,
+     0.045624423772096634,
+     0.051780739799141884,
+     0.08728934451937675
+    ]
+   },
+   "mean_ratio_bkg_over_data": 0.16657903790473938,
+   "criterion": "the two blocks must be DISTINGUISHABLE; mean ratio within 1% of 1.0 and matching percentiles would mean the concatenation assumption is unsupported",
+   "blocks_distinguishable": true
+  },
+  "C2_structure": {
+   "min": 0.14724153827495895,
+   "max": 0.2501779858960062,
+   "max_over_min": 1.6990992407918455,
+   "criterion": "must NOT be flat; a scrambled map washes column structure out to a constant",
+   "structure_detected": true
+  },
+  "why": "the expected answer was 'constant at exp(-1)', which a MIS-ORDERED row->coordinate map would also produce, since permuting a constant-rate Bernoulli field still gives exp(-1) per bin. Both controls had to pass before the constancy could be believed rather than assumed."
+ },
+ "per_column": [
+  {
+   "i_pparallel": 1,
+   "pparallel_bin": [
+    0.75,
+    1.5
+   ],
+   "n_measured_rows_nominal_gt_0": 8175,
+   "conditional_zero_fraction": 0.37184505606523954,
+   "rel_deviation_from_exp_minus_1": 0.01077965890447552,
+   "n_sigma": 1.8212825481169386,
+   "median_R_xsec": 0.9762867961356284,
+   "median_R_push": 0.9771170945391083
+  },
+  {
+   "i_pparallel": 2,
+   "pparallel_bin": [
+    1.5,
+    2.0
+   ],
+   "n_measured_rows_nominal_gt_0": 100293,
+   "conditional_zero_fraction": 0.3683590413422007,
+   "rel_deviation_from_exp_minus_1": 0.0013036884290984485,
+   "n_sigma": 0.7715028747393757,
+   "median_R_xsec": 0.9881413398730982,
+   "median_R_push": 0.9883509456644858
+  },
+  {
+   "i_pparallel": 3,
+   "pparallel_bin": [
+    2.0,
+    2.5
+   ],
+   "n_measured_rows_nominal_gt_0": 201566,
+   "conditional_zero_fraction": 0.3682317454332576,
+   "rel_deviation_from_exp_minus_1": 0.0009576622729809969,
+   "n_sigma": 0.8034325896783333,
+   "median_R_xsec": 0.9981677039147061,
+   "median_R_push": 0.9976444324777093
+  },
+  {
+   "i_pparallel": 4,
+   "pparallel_bin": [
+    2.5,
+    3.0
+   ],
+   "n_measured_rows_nominal_gt_0": 297789,
+   "conditional_zero_fraction": 0.3685349917782949,
+   "rel_deviation_from_exp_minus_1": 0.0017819713022426686,
+   "n_sigma": 1.8171193700884996,
+   "median_R_xsec": 1.0125416060915673,
+   "median_R_push": 1.0069033801138885
+  },
+  {
+   "i_pparallel": 5,
+   "pparallel_bin": [
+    3.0,
+    3.5
+   ],
+   "n_measured_rows_nominal_gt_0": 371841,
+   "conditional_zero_fraction": 0.3679928607478286,
+   "rel_deviation_from_exp_minus_1": 0.0003083063734823366,
+   "n_sigma": 0.3513092350908277,
+   "median_R_xsec": 1.015573092992924,
+   "median_R_push": 1.015753090468908
+  },
+  {
+   "i_pparallel": 6,
+   "pparallel_bin": [
+    3.5,
+    4.0
+   ],
+   "n_measured_rows_nominal_gt_0": 412156,
+   "conditional_zero_fraction": 0.3675974630964975,
+   "rel_deviation_from_exp_minus_1": -0.0007664958771463892,
+   "n_sigma": -0.919536691076256,
+   "median_R_xsec": 1.0265027882983098,
+   "median_R_push": 1.02499919335435
+  },
+  {
+   "i_pparallel": 7,
+   "pparallel_bin": [
+    4.0,
+    4.5
+   ],
+   "n_measured_rows_nominal_gt_0": 429577,
+   "conditional_zero_fraction": 0.3680655621692968,
+   "rel_deviation_from_exp_minus_1": 0.0005059293263625086,
+   "n_sigma": 0.6196390666268656,
+   "median_R_xsec": 1.0334812212606277,
+   "median_R_push": 1.035205610553311
+  },
+  {
+   "i_pparallel": 8,
+   "pparallel_bin": [
+    4.5,
+    5.0
+   ],
+   "n_measured_rows_nominal_gt_0": 417906,
+   "conditional_zero_fraction": 0.36779642630958476,
+   "rel_deviation_from_exp_minus_1": -0.0002256577904794499,
+   "n_sigma": -0.2725951102194571,
+   "median_R_xsec": 1.0486815108282364,
+   "median_R_push": 1.050748402417395
+  },
+  {
+   "i_pparallel": 9,
+   "pparallel_bin": [
+    5.0,
+    6.0
+   ],
+   "n_measured_rows_nominal_gt_0": 720763,
+   "conditional_zero_fraction": 0.36799636866302327,
+   "rel_deviation_from_exp_minus_1": 0.00031784187561179067,
+   "n_sigma": 0.5042382461460964,
+   "median_R_xsec": 1.2123753971719353,
+   "median_R_push": 1.2128662478483827
+  },
+  {
+   "i_pparallel": 10,
+   "pparallel_bin": [
+    6.0,
+    7.0
+   ],
+   "n_measured_rows_nominal_gt_0": 486105,
+   "conditional_zero_fraction": 0.36764245036223314,
+   "rel_deviation_from_exp_minus_1": -0.0006442078101851489,
+   "n_sigma": -0.839304316007944,
+   "median_R_xsec": 3.078321190707438,
+   "median_R_push": 3.0825814023336857
+  },
+  {
+   "i_pparallel": 11,
+   "pparallel_bin": [
+    7.0,
+    8.0
+   ],
+   "n_measured_rows_nominal_gt_0": 285622,
+   "conditional_zero_fraction": 0.3679344261529807,
+   "rel_deviation_from_exp_minus_1": 0.0001494646761539542,
+   "n_sigma": 0.14926666166340313,
+   "median_R_xsec": 8.278277620715969,
+   "median_R_push": 8.23756420123101
+  },
+  {
+   "i_pparallel": 12,
+   "pparallel_bin": [
+    8.0,
+    9.0
+   ],
+   "n_measured_rows_nominal_gt_0": 172552,
+   "conditional_zero_fraction": 0.36834983077565026,
+   "rel_deviation_from_exp_minus_1": 0.0012786515134144416,
+   "n_sigma": 0.9925230975871067,
+   "median_R_xsec": 8.78262065923845,
+   "median_R_push": 8.762188504303563
+  },
+  {
+   "i_pparallel": 13,
+   "pparallel_bin": [
+    9.0,
+    10.0
+   ],
+   "n_measured_rows_nominal_gt_0": 113448,
+   "conditional_zero_fraction": 0.367980631361211,
+   "rel_deviation_from_exp_minus_1": 0.0002750634540664709,
+   "n_sigma": 0.17312498183298508,
+   "median_R_xsec": 8.317818845707837,
+   "median_R_push": 8.314972282084781
+  },
+  {
+   "i_pparallel": 14,
+   "pparallel_bin": [
+    10.0,
+    15.0
+   ],
+   "n_measured_rows_nominal_gt_0": 295202,
+   "conditional_zero_fraction": 0.3682523605305294,
+   "rel_deviation_from_exp_minus_1": 0.0010136999172869476,
+   "n_sigma": 1.02919456798693,
+   "median_R_xsec": 5.098842698613284,
+   "median_R_push": 5.099454846230554
+  },
+  {
+   "i_pparallel": 15,
+   "pparallel_bin": [
+    15.0,
+    20.0
+   ],
+   "n_measured_rows_nominal_gt_0": 144281,
+   "conditional_zero_fraction": 0.3672024267459564,
+   "rel_deviation_from_exp_minus_1": -0.0018403160104031313,
+   "n_sigma": -1.3062472911455856,
+   "median_R_xsec": 1.234146801653484,
+   "median_R_push": 1.2245044093605437
+  },
+  {
+   "i_pparallel": 16,
+   "pparallel_bin": [
+    20.0,
+    40.0
+   ],
+   "n_measured_rows_nominal_gt_0": 184888,
+   "conditional_zero_fraction": 0.36794708147635324,
+   "rel_deviation_from_exp_minus_1": 0.00018386541171078186,
+   "n_sigma": 0.14773480640323805,
+   "median_R_xsec": 0.5787979344558625,
+   "median_R_push": 0.5809412395954617
+  },
+  {
+   "i_pparallel": 17,
+   "pparallel_bin": [
+    40.0,
+    60.0
+   ],
+   "n_measured_rows_nominal_gt_0": 29145,
+   "conditional_zero_fraction": 0.36730142391490817,
+   "rel_deviation_from_exp_minus_1": -0.0015712138049726043,
+   "n_sigma": -0.5012400246060368,
+   "median_R_xsec": 0.5099347719793031,
+   "median_R_push": 0.5182603251451592
+  },
+  {
+   "i_pparallel": 18,
+   "pparallel_bin": [
+    60.0,
+    120.0
+   ],
+   "n_measured_rows_nominal_gt_0": 7494,
+   "conditional_zero_fraction": 0.36991815674762024,
+   "rel_deviation_from_exp_minus_1": 0.0055418035041208125,
+   "n_sigma": 0.8964713070632148,
+   "median_R_xsec": 0.5394075726996421,
+   "median_R_push": 0.5397205104863793
+  }
+ ]
+}
