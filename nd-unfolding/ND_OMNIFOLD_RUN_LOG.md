@@ -8347,3 +8347,81 @@ that line is a **different** row, the manifest having grown by 7. The row was lo
 and the prohibition on claiming independence, not the decision — that is lane B's or the mediator's answer);
 none of the physics was reproduced; and `blockers[0]` was checked only to the extent that its validator
 receipt exists — **a blocker asserting a negative cannot be discharged by finding its receipt.**
+
+## 2026-08-15 — the hash-binding guard cannot see the Gate-5 implementation pins, and its own accounting has no cell for them
+
+**No cluster contact.** No `sbatch`, `scancel`, `scontrol`, `ssh`; `gate6traj-reconcile-56847059`
+untouched; no receipt-bound launcher repinned; the cluster science repo not pulled. Local reads only, plus
+`FINDINGS.md` / `OPEN_ITEMS.md` / this log.
+
+**RAISED BY THE MEDIATOR, RE-DERIVED HERE.** The mediator relayed the mechanism plus figures it had partly
+verified and partly received from the `OI-124` peer session, and **explicitly said not to inherit its
+chain.** Every number below was re-measured in this session with the repo's own `collect()`. They matched,
+which is stated because `BEN-300` says to check whether agreeing statements have separate origins — here
+they do, and that is what corroboration looks like when it holds.
+
+**THE MECHANISM.** `verify_hash_bindings.py:137-152` harvests a `(path, sha256)` pair only where a
+`<base>_sha256` carries a sibling `<base>`/`<base>_path`/`<base>_file`. **There is no `else`.** The Gate-5
+receipts store role-keyed hashes with **no path key of any kind**, so they are never harvested.
+
+**MEASURED.** 261 JSONs under `docs/orchestration`, 0 unparseable: **413 pairs**, of which **0** name
+`fullevent_fps_dataloader.py`, **0** name `build_fullevent_replica_target.py`, **1** names
+`reconcile_gate5_family.py`. Counted from each file's HEAD digest rather than from role names, those files
+are pinned by **12 / 4 / 4** receipts, **5 / 1 / 1** of them `-active-`; the dataloader's five include
+`gate6-floor-replication-active-56863958`, the Leg F entry in the control plane's live-job list (*a
+repo-recorded state — no cluster command was run*). `gate5-target-array-active-56857232`'s
+`implementation` block is **6 of 6 invisible**.
+
+**WHY THIS OUTRANKS A COVERAGE GAP.** The tool prints `resolved 180 bindings (600 unresolvable: data
+files, off-repo artifacts, binaries)`. `unresolved` at `:234-240` counts **only pairs `collect()` DID
+harvest** whose path then failed to localize. **Role-keyed hashes are in neither cell.** So a reader asking
+the careful question — *did it account for everything it saw?* — gets a ledger that balances, and **the
+residue line makes the gap harder to find rather than easier.** `RECEIPT_BINDING_FLOOR = 140` is met at
+`165` over a set that structurally excludes these pins.
+
+**Two details sharper than the totals.** The single visible `reconcile_gate5_family.py` pin is in a
+**terminal** preflight receipt while the pin in `gate5-family-validator-active-56933831` is invisible —
+**coverage anti-correlated with liveness** for that file. And the 6-of-6 receipt still contributes 2 pairs
+for other objects, so it **looks covered** to a spot-check.
+
+**THE SCARY NUMBER IS THE WRONG ONE, SO BOTH ARE RECORDED.** 1181 `*_sha256` keys, 123 paired, **1058
+unpaired — but most are content hashes with no file to compare** (`receipt_` 127, `root_` 120, `row_` 108,
+`stdout_`, `stderr_`). **The defensible figure is 122 occurrences across 51 receipts whose role name
+denotes repo CODE.** Role-name matching is used to BOUND the problem for costing and must not be used to
+FIX it — see the rejection below.
+
+**NOT lane A's `OI-64` and not `OI-64(f)`.** A's row is the **wiring** defect and is **RESOLVED** — the
+gate runs; `pre-commit: 7 checks passed` on this lane's own commits tonight. `(f)` is **erosion**, coverage
+sliding as bindings are legitimately retired. **This is a class never admitted to the accounting at all.**
+Filed as **`OI-127`**, a new id rather than an addition to A's row, because attaching a live item to a
+resolved row buries it and because A's row is half of an ID collision (`BEN-159`, `BEN-223`). Freeness
+derived immediately before taking it and allocated in the same commit as the finding — the `BEN-*` block
+discipline applied to a namespace that has none. That exposure is carried, not fixed.
+
+**THE COST ANSWER, which is what the mediator asked for.** **(1) ~15 lines and it is NOT a fix:** count
+the unpaired keys in the same walk and print a **third cell** beside `resolved`/`unresolvable`. Changes
+nothing about what is verified, so **no past green is reclassified**, and it gives a later widening a
+before/after baseline. **(2) New receipts carry a sibling path key** — convention plus a lint scoped to
+newly-added receipts. **(3) Retro-fitting the 51 existing receipts is FORBIDDEN, not merely expensive:**
+they are immutable records, many terminal, and rewriting one so a guard can see it is the act this repo
+refused this morning for the emitted P5A products. **Historical coverage is unrecoverable; the achievable
+goal is that the output stop implying it already holds.** **REJECTED: inferring path from role name** — it
+would make the guard assert a target the receipt never named, which is `BEN-312` exactly, whose
+`recomputed_from` claim was TRUE and rigorously recomputed from the wrong file. **The collector was
+deliberately NOT widened**, per the dispatch and on its reasoning: widening changes what every historical
+green meant and needs its own change with its own count.
+
+**FOUND IN PASSING, one line to fix: `OI-66` DOES NOT EXIST.** `verify_hash_bindings.py:121` says *"Tracked
+as OI-66"* and lane C's `OI-65` cites it, but there is no such row — A's `OI-64` folded `(f)`/`(g)` in as
+sub-parts by design and the code comment was never repointed. `BEN-215` class.
+
+**AND MY OWN CELL-COUNT INSTRUMENT WAS THE BROKEN ONE.** A naive `split('|')` reported `OI-127` at 8 cells
+against a 7-cell majority; the row was correct and **the counter counts `\|` escapes as separators** —
+exactly the defect this log already records against an earlier `awk -F'|'` audit. Re-counted with
+`re.split(r'(?<!\\)\|', ...)`: **7 logical cells, matching 85 of 88 rows.** A second instrument reporting a
+document defect that is an artifact of the instrument.
+
+**NOT ESTABLISHED, and a reader must not infer it: NO BINDING WAS SHOWN TO BE BROKEN.** This is coverage,
+not drift — the invisible pins were **not** compared against their files, and the guard's greens may all be
+true of what they checked. Also unexamined: which of the 122 are genuine bindings, and whether
+`collect_shell()` / `SHELL_PIN_FLOOR = 15` has the same hole. `BEN-322`, `OI-127`.
