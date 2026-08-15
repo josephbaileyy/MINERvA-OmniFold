@@ -8210,3 +8210,65 @@ assuming them: bin `w_push` in truth `(pT, p_parallel)` for the nominal and one 
 `p_parallel` column. It splits training from extraction. Read-only numpy, no driver, no guard, no
 TensorFlow; ~1.6 GB resident and a few core-minutes. **It is a different measurement from the one Joseph
 approved and needs its own yes — that consent does not travel.**
+
+---
+
+## 2026-08-15 — `OI-126` SPLIT: THE p∥ DEFICIT IS IN THE TRAINING, THE EXTRACTION IS FAITHFUL, AND BOTH SUSPECTS ARE NOW RETIRED
+
+Peer session `B`. Authorized by Joseph under the standing grant for agreed sub-12 h work.
+**Predeclared at `449ec52` BEFORE the probe ran**; thresholds fixed there and applied **in code**
+(`state/eval-oi126-predeclared-readings-20260815.py`) so the reading could not be chosen afterwards.
+`MATCHED: ['TRAINING']` — exactly one of the four predeclared readings.
+
+**The measurement.** `T_a(cell) = Σ w_truth·w_push_a` over all **49,150,928** `pass_truth` rows binned in
+truth `(pT, p∥)`, for the P5A nominal `56978466` and `replica_00`; `R_push = T_nom/T_rep` against the
+end-to-end `R_xsec`. `mc_indices` asserted identical between arms **and** the identity map; every
+`pass_truth` row landed inside the grid (0 outside); all 257 quotable cells usable, 0 dropped. Ran inside
+`salloc 57020313` (`-A m3246 -C cpu -q interactive`), 21 s wall, exit 0, empty stderr.
+
+| region | n | median `R_push` | median `R_xsec` | median ratio |
+|---|---|---|---|---|
+| control, p∥ < 6 GeV | 128 | `1.0114` | `1.0130` | — (`abs(ratio−1)` = **`0.00139`**) |
+| band, p∥ 6–20 GeV | 84 | **`5.0467`** | **`5.0365`** | **`1.0000`** |
+| p∥ > 20 GeV | 45 | `0.5449` | `0.5394` | `0.9965` |
+
+**Control passed to 0.139%** against a predeclared `≤ 0.10`, so the band readings are usable — the
+truth-side binning reproduces what the extraction does. **In the band the push already carries the entire
+factor of five.** The `>20 GeV` sign reversal is in the push too. p∥-separability survives in the push
+(`R² = 0.839` p∥-only against `0.030` pT-only), which the predeclaration listed as the expected secondary
+outcome — **declared and realized, recorded as such rather than written up as a discovery.**
+
+**BOTH MECHANISMS THIS CAMPAIGN NAMED ARE NOW REFUTED BY MEASUREMENT.** The **target** went first (replica
+targets are the nominal target × Poisson(1) × one shared constant; refinements agreeing to 0.068%), and now
+the **extraction**: `gate5_signal_factor_applied_to_truth_counts` is **exonerated and retired as the
+suspect, not merely unconfirmed.**
+
+**WHAT IT MEANS, NARROWLY.** The only input difference between the arms is a Poisson(1) bootstrap on the
+measured target. So **the OmniFold fit moves by a factor of ~5 in p∥ 6–20 GeV under Poisson resampling of
+the measured leg — in bins MINERvA reports at 1.6% statistical uncertainty** (`PRD 104 (2021) 092007` data
+release, all 84 of those bins reported).
+
+**AND WHAT IT DOES NOT DO — all five declared in advance, none weakened after the fact.** It does **not**
+clear `OI-126`, which blocks pairing `C_stat` with P5A; does **not** identify the factor's form; does
+**not** show whether `C_stat` survives a **centred** reduction (not computed); does **not** show P5A is
+right; and one replica is not the family. **Nothing here is "verified"** — the probe is one script by one
+lane and its internal asserts are self-checks. `C_stat` itself is **not** independently verified: `VL132`
+records **one** builder where `OI-121` authorized two blind ones.
+
+**THE DECISION THIS CREATES, WHICH IS NOT THIS LANE'S.** A bootstrap family whose fits disagree by ~5× in
+the best-accepted, second-most-populated region of the grid is either **(a)** correctly reporting that this
+estimator is unstable there — in which case `C_stat`'s band entries are honest and the published p∥ 6–20
+uncertainties are enormous and must be quoted as such — or **(b)** evidence that a Poisson bootstrap of the
+measured leg is not a valid statistical-uncertainty proxy for this estimator, in which case `C_stat` needs
+a different construction and `OI-121`/`OI-122` reopen. **These have opposite publication consequences and
+the measurement localises without adjudicating between them.**
+
+**Cheapest evidence-based way to decide (a) vs (b), designed and NOT run:** test whether the fit's band
+sensitivity tracks **measured-leg** statistics per p∥ column — each replica's measured target has 36.8% of
+its rows at zero weight, so thin-data sensitivity would scale with measured rather than truth row count.
+**Offered as a design and explicitly not a result.**
+
+**One scope note against a misreading of the numbers:** this probe compares the nominal to `replica_00`
+alone, so cells with `R_xsec > 1.5` number **65** here and are **not** the family-mean **63** of `OI-126`.
+The band used for the reading is geometric (p∥ columns 10–15, 84 cells), replica-independent, and was fixed
+in the predeclaration.
