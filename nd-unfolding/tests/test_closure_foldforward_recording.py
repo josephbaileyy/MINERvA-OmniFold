@@ -211,5 +211,100 @@ class PinnedDriverUntouchedTest(unittest.TestCase):
                              f"pinned driver")
 
 
+class CorrectedArmTest(unittest.TestCase):
+    """Arm 1: the SCALE-ONLY fold-forward correction (proposal 4b).
+
+    Predeclared scale-only, and these tests are what makes that checkable rather than aspirational.
+    A per-cell variant is refused because a per-cell field built from `push` is the unfolding's own
+    output, so dividing it out is a de-unfolding (BEN-310). `test_correction_is_a_pure_scalar`
+    is the guard that would catch a later "improvement" to per-cell.
+    """
+
+    def legs(self, n=6):
+        w_reco = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], np.float32)[:n]
+        w_truth = w_reco * np.array([1.0, 5.0, 2.0, 9.0, 3.0, 7.0], np.float32)[:n]
+        pr = np.array([True, True, False, True, False, True], bool)[:n]
+        mc = _Leg(w_truth, pr, w_reco)
+        data = _Leg([2.0] * n, [True] * n)      # R = sum(data)/sum(w_reco[pr]) != 1
+        return mc, data, w_reco, pr
+
+    def build(self, correct, push=None):
+        mc, data, leg, pr = self.legs()
+        if push is None:
+            push = np.array([0.5, 2.0, 9.0, 1.0, 9.0, 3.0], np.float32)
+        cls, records = CPT.install_fold_forward_recorder(_FakeBase, correct=correct)
+        obj = cls(mc, push, leg, data=data)
+        return obj, records, leg, pr
+
+    def test_correction_is_off_by_default(self):
+        cls, _ = CPT.install_fold_forward_recorder(_FakeBase)
+        mc, data, leg, pr = self.legs()
+        push = np.array([0.5, 2.0, 9.0, 1.0, 9.0, 3.0], np.float32)
+        obj = cls(mc, push, leg, data=data)
+        before = np.array(obj.weights_push, np.float64, copy=True)
+        obj.RunStep1(0)
+        np.testing.assert_allclose(obj.weights_push, before, rtol=0, atol=0)
+
+    def test_corrected_arm_makes_the_fold_forward_equal_R(self):
+        obj, records, leg, pr = self.build(correct=True)
+        obj.RunStep1(0)
+        w = np.asarray(leg, np.float64)
+        push = np.asarray(obj.weights_push, np.float64)
+        after = float((w[pr] * push[pr]).sum() / w[pr].sum())
+        self.assertAlmostEqual(after, records[0]["step1_class_ratio"], places=10)
+        self.assertAlmostEqual(records[0]["reco_weighted_mean_push_after_correction"], after,
+                               places=10)
+
+    def test_recorded_ratio_is_the_PRE_correction_measurement(self):
+        """The measurement must survive the correction, or arm 1 records only its own fixed point."""
+        obj, records, leg, pr = self.build(correct=True)
+        push_before = np.array(obj.weights_push, np.float64, copy=True)
+        w = np.asarray(leg, np.float64)
+        expect = float((w[pr] * push_before[pr]).sum() / w[pr].sum())
+        obj.RunStep1(0)
+        self.assertAlmostEqual(records[0]["reco_weighted_mean_push"], expect, places=12)
+        self.assertNotAlmostEqual(records[0]["reco_weighted_mean_push"],
+                                  records[0]["step1_class_ratio"], places=6,
+                                  msg="fixture is degenerate; pre-correction ratio already equals R")
+
+    def test_recorded_factor_is_R_over_the_measured_ratio(self):
+        obj, records, leg, pr = self.build(correct=True)
+        obj.RunStep1(0)
+        r = records[0]
+        self.assertAlmostEqual(r["applied_correction_factor"],
+                               r["step1_class_ratio"] / r["reco_weighted_mean_push"], places=12)
+
+    def test_correction_is_a_pure_scalar(self):
+        """Every row scaled by ONE factor: the SHAPE of push is untouched. Guards per-cell drift."""
+        obj, records, leg, pr = self.build(correct=True)
+        before = np.array(obj.weights_push, np.float64, copy=True)
+        obj.RunStep1(0)
+        after = np.asarray(obj.weights_push, np.float64)
+        ratios = after / before
+        self.assertAlmostEqual(float(ratios.max() - ratios.min()), 0.0, places=10,
+                               msg="the correction varied across rows; predeclared SCALE-ONLY")
+        self.assertAlmostEqual(float(ratios[0]), records[0]["applied_correction_factor"], places=10)
+
+    def test_correction_is_applied_BEFORE_step1_consumes_it(self):
+        """Order matters: a correction applied after delegation would not change training at all."""
+        seen = {}
+
+        class Watcher(_FakeBase):
+            def RunStep1(self, i):
+                seen["push_at_step1"] = np.array(self.weights_push, np.float64, copy=True)
+                return super().RunStep1(i)
+
+        mc, data, leg, pr = self.legs()
+        push = np.array([0.5, 2.0, 9.0, 1.0, 9.0, 3.0], np.float32)
+        cls, records = CPT.install_fold_forward_recorder(Watcher, correct=True)
+        obj = cls(mc, push, leg, data=data)
+        obj.RunStep1(0)
+        w = np.asarray(leg, np.float64)
+        p = seen["push_at_step1"]
+        consumed = float((w[pr] * p[pr]).sum() / w[pr].sum())
+        self.assertAlmostEqual(consumed, records[0]["step1_class_ratio"], places=10,
+                               msg="step 1 consumed the UNcorrected push; the correction is a no-op")
+
+
 if __name__ == "__main__":
     unittest.main()

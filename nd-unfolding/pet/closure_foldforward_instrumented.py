@@ -82,8 +82,24 @@ def step1_class_ratio(data, mc):
     return num / den
 
 
-def install_fold_forward_recorder(base):
+def install_fold_forward_recorder(base, correct=False):
     """Return `(subclass_of_base, records)` recording the fold-forward entering each iteration.
+
+    `correct=False` is ARM 0: record only, change nothing. `correct=True` is ARM 1: additionally
+    rescale `weights_push` by the single scalar `R / ratio` BEFORE step 1 consumes it, so the
+    fold-forward conserves the step-1 class ratio.
+
+    THE CORRECTION IS SCALE-ONLY, PREDECLARED, AND THAT IS NOT A STYLE CHOICE. A per-cell correction
+    built from `push` would be dividing out the unfolding's own per-cell output -- `ratio[c]` agrees
+    with `h_unfolded[c]/h_prior[c]` at Pearson 0.99973/0.99987 -- which is a DE-UNFOLDING and returns
+    recovery to ~0 by construction (BEN-310, measured at -0.000808). A later reader will be tempted to
+    "improve" this to per-cell; `test_correction_is_a_pure_scalar` is the guard. Refuse it unless a
+    per-cell reference exists in the record, which as of 2026-08-15 it does not: R is one scalar.
+
+    Order matters and is tested. The rescale happens BEFORE `super().RunStep1(i)`, because that is
+    where the engine reads `weights_push`; applied afterwards it would change no training at all and
+    arm 1 would be a silent no-op. The RECORDED ratio stays the PRE-correction measurement, so arm 1
+    still measures the fold-forward rather than only its own fixed point.
 
     SUBCLASSES THE CLASS IT IS HANDED, and that is the load-bearing property, not a style choice.
     `closure_powered_annealed_lr.py` rebinds `omnifold.MultiFold` to its `AnnealedMultiFold` before
@@ -118,7 +134,20 @@ def install_fold_forward_recorder(base):
                 "push_entering_this_iteration_left_by": (
                     "initialization (all ones)" if i == getattr(self, "start", 0)
                     else f"RunStep2({int(i) - 1})"),
+                "correction_requested": bool(correct),
+                "applied_correction_factor": None,
+                "reco_weighted_mean_push_after_correction": None,
             })
+            if correct:
+                if ratio is None or not ratio > 0:
+                    raise SystemExit(f"[ff] iteration {i}: fold-forward ratio is {ratio!r}; the "
+                                     f"scale-only correction is undefined (fail closed)")
+                factor = R / ratio
+                # ONE scalar over every row -- the shape of push is untouched by construction.
+                self.weights_push = np.asarray(self.weights_push, np.float64) * factor
+                after = float((w[pr] * np.asarray(self.weights_push, np.float64)[pr]).sum() / den)
+                records[-1]["applied_correction_factor"] = factor
+                records[-1]["reco_weighted_mean_push_after_correction"] = after
             return super().RunStep1(i)
 
     return FoldForwardRecordingMultiFold, records
@@ -147,6 +176,10 @@ def main(argv=None):
     annealed = "--annealed" in argv
     if annealed:
         argv.remove("--annealed")
+    correct = "--correct-fold-forward" in argv
+    if correct:
+        argv.remove("--correct-fold-forward")
+    arm = "arm1_corrected" if correct else "arm0_instrumented_only"
 
     import closure_powered_truth_reweight as cpt
     import omnifold as of_pkg
@@ -163,7 +196,7 @@ def main(argv=None):
         import closure_powered_annealed_lr as cpa
         base, lr_records = cpa.install_annealed_multifold()
 
-    recorder, ff_records = install_fold_forward_recorder(base)
+    recorder, ff_records = install_fold_forward_recorder(base, correct=correct)
     of_pkg.MultiFold = recorder
     try:
         rc = cpt.main(argv)
@@ -195,6 +228,13 @@ def main(argv=None):
     rep["step1_class_ratio"] = ff_records[0]["step1_class_ratio"]
     rep["fold_forward_note"] = FOLD_FORWARD_NOTE
     rep["fold_forward_instrumented_by"] = os.path.basename(__file__)
+    rep["fold_forward_arm"] = arm
+    rep["fold_forward_correction_applied"] = bool(correct)
+    rep["fold_forward_correction_form"] = (
+        "SCALE-ONLY: one scalar R/ratio per iteration, applied to weights_push BEFORE step 1 "
+        "consumes it. Predeclared; a per-cell variant is refused (BEN-310 -- a per-cell field built "
+        "from push is the unfolding's own output, so dividing it out is a de-unfolding)."
+        if correct else "none; arm 0 records only and changes no weight, model or metric")
     if lr_records is not None:
         rep["fold_forward_composed_with_annealed_arm"] = True
     tmp = out + ".tmp"
@@ -209,7 +249,7 @@ def main(argv=None):
     if len(back.get("fold_forward_per_iteration") or []) != len(ff_records):
         raise SystemExit("[ff] the annotated report does not read back with its fold-forward "
                          "records (fail closed)")
-    print(f"[ff] recorded {len(ff_records)} iterations into {out}")
+    print(f"[ff] arm={arm} recorded {len(ff_records)} iterations into {out}")
     for r in ff_records:
         print(f"[ff]   iteration {r['iteration']}: ratio={r['reco_weighted_mean_push']!r} "
               f"R={r['step1_class_ratio']!r} dev={r['deviation_from_R']!r}")
