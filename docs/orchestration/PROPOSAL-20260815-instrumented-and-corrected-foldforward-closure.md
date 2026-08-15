@@ -34,16 +34,37 @@ own**, because `git grep 'fold_forward'` over both closure drivers returns zero 
 
 ## 2. The two code changes, both small and both additive
 
-**(a) INSTRUMENT — required, ~8 lines, no behaviour change.** Port
-`train_fullevent_nominal.py:576-577` into `closure_powered_truth_reweight.py`: record
-`fold_forward_sum_w_push_reco`, `fold_forward_sum_w_reco`, `fold_forward_n_pass_reco` and
-`step1_class_ratio` **per iteration**, on the reco leg (`mc.weight_reco`, D1's rule — a step-1-space
-ratio must be built from the leg step 1 consumes). Per-iteration, not once, because the fold-forward
-acts in iterations 2 and 3 and a single end-of-run scalar cannot say which iteration drifted.
+**(a) INSTRUMENT — WRITTEN, TESTED, AND LANDED. Not a promise.**
+`nd-unfolding/pet/closure_foldforward_instrumented.py` +
+`nd-unfolding/tests/test_closure_foldforward_recording.py` (12 tests). It records
+`sum_w_push_reco`, `sum_w_reco`, `n_pass_reco`, `step1_class_ratio` and `deviation_from_R`
+**per iteration**, on the reco leg per D1, at the point `RunStep1(i)` consumes them.
 
-This alone closes `OI-125` and makes the executor lane's `1.011418` a *recorded* value instead of a
-reconstruction. **It changes no weight and no metric**, so arm 0 must reproduce the existing draws
-within their measured spread — which is the proposal's own control (§4).
+> **IT IS A SEPARATE MODULE BECAUSE THE DRIVER IS PINNED, AND THAT WAS LEARNED THE HARD WAY.** The
+> first version edited `closure_powered_truth_reweight.py` in place. That file hashes to
+> `a45fae7c…6090fd48`, pinned by **four** launchers and bound by run receipts including the 47/47
+> `NONQUOTABLE-DIAGNOSTIC.INDEPENDENT_VALIDATION.slurm-56562169.json`'s `hash:source-driver`. Two
+> tests went red immediately — `test_hash_bindings::test_no_new_broken_hash_bindings` and
+> `test_powered_closure_preflight::…code_pins_are_discoverable…` (*"pin is stale"*) — and repinning to
+> clear them is prohibited while receipts bind it (`BEN-270`, `OI-123`). So the instrumentation follows
+> the pattern the campaign already uses for exactly this problem: `closure_powered_annealed_lr.py`
+> adds the LR anneal by rebinding `omnifold.MultiFold` to a subclass and delegating to `cpt.main`,
+> touching neither engine nor driver. This composes **with** that one — MRO recorder → annealed →
+> engine — and the records are merged into the report afterwards, the same post-hoc rewrite the
+> annealed driver already performs on the same file. **The driver is byte-identical; verified.**
+>
+> **No new `BEN` row for this.** `BEN-270` already covers pinned-source freezing, the repo's own test
+> caught it in seconds, and `CLAUDE.md` prefers the executable form of a rule over another written
+> one. The constraint is therefore recorded where someone will trip over it: two tests
+> (`PinnedDriverUntouchedTest`) that assert the driver still matches its pinned digest **and** that
+> the instrumentation is not in it.
+
+Change (a) alone closes `OI-125` and turns the executor lane's `1.011418` from a reconstruction into a
+recorded value. **It changes no weight, model or metric** — it reads two arrays per iteration and
+delegates — so arm 0 must reproduce the existing draws within their measured spread, which is the
+control in §4. Guards power-tested by mutation, each caught by exactly one test: truth leg for reco leg
+(2 tests), delegation dropped (1), and a hardcoded base instead of the class handed in (1) — the last
+being the one that would have silently un-annealed the run.
 
 **(b) CORRECT — the arm under test.** Normalize the pushed reco-leg weight so the fold-forward conserves
 the step-1 class ratio per iteration, then re-run. **The correction must be predeclared before the run**
@@ -105,6 +126,18 @@ To be committed as a `PREDECLARATION-*` before any submission, following
    exceedance, not a fitted gaussian tail (`BEN-025`).
 4. **No threshold moves.** The adopted criterion stays `0.80 × 0.618228 = 0.49458240000000003`. A
    result that fails the criterion is a result, not a reason to revisit the bar.
+4b. **THE CORRECTION IS SCALE-ONLY, AND THIS CLAUSE IS THE PREDECLARATION OF IT — not a note in a
+   proposal.** Arm 1 rescales the pushed reco-leg weight by ONE per-iteration global factor to restore
+   `sum(w_reco·push)/sum(w_reco) = R`. **A per-cell correction is REFUSED, and the reason is measured,
+   not stylistic:** any per-cell field built from `push` is the unfolding's own per-cell output —
+   `ratio[c]` agrees with `h_unfolded[c]/h_prior[c]` at Pearson `0.99973`/`0.99987` — so dividing one
+   out is a **de-unfolding**, which returns recovery to `≈ 0` by construction (`BEN-310`;
+   `α = -1` measured at `-0.000808`, landing 2.4% from `h_prior`). **A later reader will be tempted to
+   "improve" this to per-cell.** Refuse it unless they can name a per-cell reference the record
+   contains, which as of 2026-08-15 it does not — `R` is one scalar. A scale-only correction also keeps
+   `Δrecovery` attributable: it cannot move a unit-normalized spectrum's shape at all, so any shape
+   change observed in arm 1 is the estimator responding to a different training trajectory, which is
+   the quantity of interest.
 5. **Both arms are `NONQUOTABLE-DIAGNOSTIC.`** until Joseph says otherwise — and, per
    `FINDING-20260815-the-quarantine-measured-a-different-run.md`, the manifest for these runs must
    name **its own** `weights_path`. The existing manifest's points at the pre-anneal nominal, which is
