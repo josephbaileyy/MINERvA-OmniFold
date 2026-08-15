@@ -8515,3 +8515,64 @@ asserting states they do not have. Caught by grepping the two known consumers **
 **NOT DONE:** the wake/waker and usage-gate rows were not audited for the same pattern; only the compute
 table was examined. **And this does not make the table evidence** — on a host without Slurm it now says so
 loudly, and making it a live view requires regenerating from a host that can reach Slurm. `BEN-323`.
+
+## 2026-08-15 — `OI-81` is NOT drift; `OI-58`'s fix is available on the unpinned side; and two critical-path items have unreachable owners
+
+**No cluster contact.** No `sbatch`, `scancel`, `scontrol`, `ssh`; `gate6traj-reconcile-56847059` untouched;
+no receipt-bound launcher repinned; cluster science repo not pulled. **Lane C's script was RUN and READ,
+never edited.** Nothing entered `docs/analysis-note/`.
+
+**`OI-81` — ANSWERED: NOT REAL DRIFT (`BEN-325`).** `check_canonical_designation.py` → exit 1,
+`74 files, 216 namespace occurrences, 54 inventory entries`, **20 UNACCOUNTED + 1 COUNT DRIFT, and nothing
+in it indicates the protected artifact changed.** Classified as the guard does not: **13 prose mentions, 7
+code consumers that open the path** — failed RED identically, so RED means *"a document was written"* and
+*"a new consumer appeared"* indistinguishably. **Its one enforced signal fires on PROSE:** the `RECORD-FROZEN`
+count drift on `annealed-nominal-complete-56563761.json` is line `245`, reading *"fullevent_nominal/ IS NOT
+TOUCHED …"* — **a sentence reassuring that the protected thing is untouched is what makes the guard say
+something changed.** **Credit where due: `:28-32` anticipates `BEN-311`'s sibling trap and matches by PATH
+SEGMENT**, closing by design the trap that later bit two other lanes. **The flaw is one thing:
+`RECORD-APPEND` waives the COUNT for files it itself defines as designed to ACCRUE and STILL ENFORCES
+PRESENCE**, so each new finding needs hand-adding to a dict inside the script — and **4 of the 20 are
+today's findings about this very namespace, so investigating the artifact turns its own safety guard RED.**
+One unaccounted file is `sbatch_p5a_fullevent_nominal_extract.sh`, which **this lane edited this morning**.
+**The remaining substance is real and is NOT closed: 7 consumers lack dispositions**, one being
+`probe-vl100-foldforward-shape-20260814.py:46` — the exact line `BEN-311`/`BEN-312` are about, opening the
+**pre-anneal** sibling deliberately. **Fix is C's and needs no GPU; do NOT close by adding 20 dict entries.**
+
+**`OI-58` — THE STAMPING DEFECT IS TWO SITES, ONE CHAIN, AND THE FIX IS AVAILABLE.** Hop 1,
+`train_fullevent_replica.py:~105-112`: source leg checks **path and size only**, then copies
+`source["sha256"]` into `_verified_input_sha256`, eleven lines below `:99`'s genuine `sha256_file(target_npy)`.
+Hop 2, `train_fullevent_nominal.py:642`: stamps that value into the artifact under a comment claiming *"the
+digest that was actually verified"* — **verified at the source: true on the nominal path, false on the
+replica path.** **PIN STATUS MEASURED BOTH WAYS, because `BEN-322` established role-keyed pins are invisible
+to `verify_hash_bindings`: `train_fullevent_nominal.py` is in FOUR pin lists including the live
+`gate6-leg0-tier-calibration-prepared-20260814.json` `pinned_paths[8]` — DO NOT TOUCH, `OI-123` class.
+`train_fullevent_replica.py` is in NO pin list**, and `submit_gate5_replica_n50.sh:50` recomputes its digest
+at submit, so it floats by design. **So fixing hop 1 makes hop 2's stamp AND its comment true without
+editing the pinned file — no re-issue, no repin.** **And a cheaper, stronger fix than the prescribed "mirror
+`:99-101`" exists: `submit:25` ALREADY hashes the 9.22 GiB input against a hardcoded `EXPECTED_INPUT_SHA`
+before any job starts and `:48` exports it — and NO Python reads it.** Binding to that frozen constant costs
+zero I/O and is strictly stronger than comparing against the receipt's copy. **Not made: report only, per
+the dispatch.** `OI-57`'s cell asserts *"a tree-wide grep finds no stored driver digest"* — **literally false,
+three receipts store it**; the substance (no *enforced* pin) survives and the phrasing would stall a lane.
+
+**AND THE ROW-SHAPE POINT THE MEDIATOR ASKED FOR:** `OI-58`'s next-action column carried **only** the
+citation fix, discharged at `c7eb704`. **The stamping defect lived in the blocker column with no remedy ever
+specified — so it could be neither closed nor scheduled.** A defect described in an evidence field with no
+action is invisible to any process that works from next-actions. The remedy is now written into that column.
+
+**`BEN-324` — AN OWNER RECORDED IN AN ARTIFACT IS NOT AN OWNER WHO CAN BE ASKED.** `gate5_cstat_contract.json`
+names its lane in its own `lane` field and that name had no addressee; `minerva-omnifold-f7` was asked twice
+and did not answer. **`lane` is provenance, not a routing table** — `ListAgents` reports liveness, never
+ownership; sessions are renamed and respawned keeping their names; and a lane label is not an address, which
+is why naming a different peer `C` as the spec owner produced a correct refusal. **`BEN-300` one level out
+and worse: a task re-dispatches by availability, a SPEC RULING DOES NOT.** **Two critical-path items are
+blocked on unreachable owners at once** — `OI-81` (C's script) and `OI-58`/`OI-57` (owner never identified) —
+which is what makes it structural rather than an anomaly. **No mechanism proposed, deliberately:** an
+`OWNERS.tsv` is the hand-maintained index of a source-less fact `BEN-228`/`BEN-300` warn about, and
+`ROW-OWNERS.tsv` already has all 12 `CLM-*` rows UNASSIGNED (`OI-53`). **Enforcement is attention.**
+
+**NOT ESTABLISHED:** that the canonical designation is **safe** — `BEN-325` says the RED is not evidence of
+drift, it does **not** audit the artifact, and a byte change in the annealed weights would not appear in that
+guard at all. Why `minerva-omnifold-f7` did not answer was not diagnosed. And the `OI-58` fix was **not
+written or tested** — only located and costed.
