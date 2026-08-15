@@ -39,6 +39,21 @@ must still not run on pre-G-1 code** and **G-1 is not on the cluster checkout**~
 2026-08-15 (`BEN-352`): G-1 IS on the cluster checkout and stage 3 ALREADY RAN on it, 2026-08-08. See the
 correction block at the end of the 2026-08-07 addendum below.**
 
+**VERIFIER STATE (2026-08-15, `repair-8`) — supersedes the repair-7 BLOCK cited anywhere below.**
+`standard-p4-verifier` returns **`BLOCK`, `defects_outstanding: 10`,
+`authorizes_covariance_stages_4_6: false`** at `code_rev 7d884da`. Receipt:
+`../../../docs/orchestration/runs/standard-p4-verifier/20260815T232546Z-repair8-verdict.json`.
+The repair-7 verdict was **measurably stale** — 25 of its 43 scope files changed, and 5 of its 14
+defects are closed in tree. **The BLOCK now rests on defects #4 and #5, which are in the token gate
+itself:** a symbolic `code_rev` such as `"HEAD"` passes the ancestry rule and then makes the gate's
+own staleness check compare HEAD with HEAD, so it is vacuous. **Do not read the closures as movement
+toward a PASS** — stages 4–6 are exactly as unauthorized as before. #6 is repaired at `0055826` and
+**deliberately not certified**: its author called it Joseph's packet decision, and it awaits him, not
+the lane. **This file's own line below — "NO covariance candidate exists" — is defect #9 and is FALSE
+at HEAD** (5D and 4D candidates exist and were product-audited; see
+`PROVENANCE-DEBT-20260810-standard-p4.md` §2b/§2c). It is left uncorrected here because the verifier
+reviews and does not repair; correcting it is the lane's work.
+
 **Current continuation (2026-08-11): Packet B channel PASS; real-cluster terminal verdict
 pending.** PB1–PB5 implementations and adversarial acceptance evidence are committed at
 `0055826`, `32489a6`, `c308a9c`, `ea89701`, and `64916ee`; PB5 is bounded/documented rather than

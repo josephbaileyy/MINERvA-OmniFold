@@ -8751,3 +8751,70 @@ irreversibility, and the deletion freeze never applied — the `rm -f` is the la
 **NOTHING RUN, NOTHING PROMOTED, NOTHING REPINNED.** Read-only cluster access throughout. The
 `standard-p4-verifier` `BLOCK` and the "NOT BUILT" status of the standard 5D lateral are **unaffected**:
 this corrects what is true about G-1 and stage 3, and clears no gate.
+
+---
+
+## 2026-08-15 — `standard-p4-verifier` **repair-8**: the live verdict was measurably stale, and this is the first pass in the chain with usable test evidence
+
+**Verdict: `BLOCK`. `defects_outstanding: 10`. `authorizes_covariance_stages_4_6: false`.**
+Receipt: `docs/orchestration/runs/standard-p4-verifier/20260815T232546Z-repair8-verdict.json`,
+`code_rev 7d884da`. Supersedes `20260810T012645Z-repair7-verdict.json`.
+
+**WHY REPAIR-7 HAD TO BE RE-RUN, measured not assumed.**
+`p4_lib.paths_unchanged_between('5c25333', HEAD, review_scope)` → `False`, **25 of its 43 scope files
+changed**, so `p4_check_verifier_token.py:126-132` would refuse that verdict today **for staleness
+alone, independently of its BLOCK**. Five of its fourteen defects are closed in tree, two of them
+(`c308a9c` 19:37, `ea89701` 01:09 next day) landing **after** the verdict was written. A repair plan
+built on the repair-7 list would have redone finished work.
+
+**THE PRECONDITION IS DISCHARGED, and it is the most useful thing in this entry.** Repair-7's
+`next_action` required *"an environment where the complete suite is executable"*; its `tests.result`
+recorded **120 failed, 57 errors** from a read-only tmpdir and said outright that this *"prevent[ed]
+verification of the claimed seven PET failures."* With `TMPDIR=/Users/josephbailey/local-research/.p4verifier-tmp-20260815`
+— verified writable by **actually writing**, and confirmed through the suite's own guard
+(`conftest.TMPDIR_WRITABLE = True`) — the same suite returns **3 failed, 1383 passed, 1 skipped** in
+71.66 s, reproduced at 70.66 s. **117 of repair-7's failures and all 57 of its errors were
+environmental artifacts.** No defect in the new verdict rests on them.
+
+The three real failures, each triaged in isolation rather than as a block:
+`test_gate2_target_runtime` fails alone too (hard `/pscratch` path, off-cluster, PET lane);
+`test_pet_fullevent_nominal_launcher::test_config_gate_only_cli_no_train` **passes alone** — test-order
+pollution, another test leaves `tensorflow` in `sys.modules`; and
+`test_p4_sweep_snapshots::test_pipeline_sweep_matches_its_snapshot` fails alone (`368 != 354`), which is
+**real and in scope** and is this round's one new defect.
+
+**CLOSED (5), each re-verified in code at HEAD, never inherited.** #1 evidence publication ordering
+(`c308a9c`, `p4_evidence.py:437-471`; crosscheck `need()` at :466-469 now precedes the publish at :471,
+and the last `blockers.append` in the file is :401) · #2 resume provenance (`32489a6`+`f67352f`,
+`p4_lib.py:493-506,575+`, producer `run_p4_unfold_std.sh:55,119`, consumer `p4_check_receipt.py:37,117`)
+· non-adoptable-marker bypass (`a1c9d10`, `p4_adopt_standard.py:32-46`) · stage-6 reachable 4D support
+(`a1c9d10`, `p4_project_4d.py:130-137,193-194`) · projection marker propagation (`ea89701`,
+`p4_project_4d.py:94-115,182,195-198`).
+
+**STILL OPEN (8).** #5 and #4 are **critical and live**, because they are in the gate that authorizes
+stages 4–6 (`run_p4_standard.sh:88-95` shells out to it) and `p4_check_verifier_token.py` is
+**byte-identical to the reviewed revision**. Measured this session: `code_rev_in_history('HEAD')`,
+`('main')`, `('HEAD~0')` all return `True`, and with `code_rev = "HEAD"` the staleness check
+`paths_unchanged_between('HEAD', HEAD, surface)` returns **ok=True, 0 differing** — *the gate's own
+anti-staleness rule is vacuous against a symbolic revision*. #4: a declared `review_scope` is trusted
+verbatim with no union against the execution surface, and the 18-module fallback omits
+`p3s_manifest_summary.py` (measured). Also open: #7 (mutation harness, **self-declared debt in
+`c308a9c`**), #8 (`tools_p4_sweep_recorded_fields.py:16-19` still omits `p4_check_verifier_token.py`),
+#9 (`P4_STANDARD_STATUS.md:56` still says *"NO covariance candidate exists"* — false; and `git ls-files`
+finds **no** tracked path containing `56495756`), plus the two byte-identical `p4_lib.py` functions
+(`check_projection_validity`'s non-independent second leg; `crosscheck_marginal_vs_independent` emitting
+NaN summaries beside **zero** threshold counts, demonstrated on a NaN input) and `conftest.py`'s
+`TmpdirGuardItself`, which is carried **structurally** — it could not be exercised, because this round
+deliberately created the writable tmpdir that makes it inert.
+
+**#6 IS REPAIRED AND IS *NOT* CERTIFIED HERE, and that is deliberate.** `0055826` implements both
+halves against the support family (`p4_lib.py:373-431`, wired at `p4_validate_active_lateral.py:233-235`,
+eleven blind adversarial fixtures all called correctly). **Its author declined to certify it**, verbatim:
+*"NOT claiming #6 closed — that is Joseph's call on the packet, not mine to assume and not the
+oversight's to grant."* This verifier does not grant what the author declined to assume. It is counted
+in `defects_outstanding` and needs **no lane work** — only Joseph's packet decision.
+
+**NOTHING RUN ON THE CLUSTER, NOTHING PROMOTED, NOTHING ADOPTED, NOTHING REPINNED.** No `sbatch`,
+`scancel` or `scontrol`; PET array `57038937` untouched; `gate6traj-reconcile-56847059` untouched; no
+`p4_*` source edited — reviewing, not repairing. The sweep snapshot was **not** `--update`d. The five
+Gate-6 prohibitions at `19585b7` are untouched and nothing entered `docs/analysis-note/`.

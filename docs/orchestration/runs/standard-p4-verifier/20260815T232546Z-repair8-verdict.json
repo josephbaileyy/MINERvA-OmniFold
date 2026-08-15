@@ -1,0 +1,306 @@
+{
+  "receipt_kind": "standard-p4-verifier verdict",
+  "utc": "2026-08-15T23:25:46Z",
+  "subject": "repair-8 -- re-review at HEAD because the repair-7 verdict was measurably STALE; first pass in this chain with an executable suite",
+  "code_rev": "7d884da3891bcd4b5015e3ca0013c8efebbb7a1b",
+  "branch": "main",
+  "verdict": "BLOCK",
+  "previously_outstanding_now_closed": 5,
+  "previously_outstanding_total": 14,
+  "defects_outstanding": 10,
+  "self_guards_adequate": "NO",
+  "authorizes_covariance_stages_4_6": false,
+  "supersedes": {
+    "verdict": "docs/orchestration/runs/standard-p4-verifier/20260810T012645Z-repair7-verdict.json",
+    "why": "MEASURED STALE, not assumed. p4_lib.paths_unchanged_between('5c253332345d2c8c596e99d291ffb8542b2609e9', HEAD, review_scope) returns False with 25 of its 43 scope files changed, so p4_check_verifier_token.py:126-132 would refuse it today for staleness alone, independently of its BLOCK. Five of its 14 defects are closed in tree, two of them (c308a9c 19:37, ea89701 01:09 next day) landing AFTER the verdict was written. A repair plan built on the repair-7 list would redo finished work.",
+    "code_rev_is_ancestor_of_head": true,
+    "scope_files_changed": 25,
+    "scope_files_total": 43
+  },
+  "delegate": {
+    "tool": "Claude Code (claude-opus-5), interactive session, read-only review discipline",
+    "account": "claude-school",
+    "independent": true,
+    "wrote_nothing_outside_this_receipt": true,
+    "NOT_the_retained_uuid": "This pass was NOT run by the codex/codex-school delegate holding standard-p4-verifier UUID 019f74cb-b85d-7ba0-96c5-dfbd09e59159 (LIVE-STATE.md:17). It is a different agent on the same role. Weigh it accordingly: it is not the continuity holder and it does not inherit that UUID's standing.",
+    "post_run_git_status": "clean apart from this receipt and its RUN_LOG/STATUS lines; no p4_* source was edited",
+    "p4_sources_edited": "none -- reviewing, not repairing"
+  },
+  "review_scope": [
+    "docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md",
+    "docs/orchestration/REPAIR6-RECORDED-NOT-CHECKED-INVENTORY.md",
+    "docs/orchestration/runs/standard-p4-verifier/20260810T012645Z-repair7-verdict.json",
+    "docs/orchestration/state/p4-sweep-snapshots.json",
+    "nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md",
+    "nd-unfolding/p4_adopt_standard.py",
+    "nd-unfolding/p4_check_receipt.py",
+    "nd-unfolding/p4_check_verifier_token.py",
+    "nd-unfolding/p4_evidence.py",
+    "nd-unfolding/p4_lib.py",
+    "nd-unfolding/p4_project_4d.py",
+    "nd-unfolding/p4_validate_active_lateral.py",
+    "nd-unfolding/run_p4_standard.sh",
+    "nd-unfolding/run_p4_unfold_std.sh",
+    "nd-unfolding/tests/conftest.py",
+    "nd-unfolding/tests/test_p4_guard_mutations.py",
+    "nd-unfolding/tests/test_p4_repair.py",
+    "nd-unfolding/tests/test_p4_sweep_snapshots.py",
+    "nd-unfolding/tools_p4_sweep_recorded_fields.py"
+  ],
+  "review_scope_is_NARROWER_than_repair7": {
+    "declared_deliberately": true,
+    "why": "Defect #4 is precisely that a declared review_scope is trusted verbatim and a narrow scope is not detected. Declaring repair-7's 43-file scope when 19 files were actually re-reviewed would be an instance of the defect this verdict carries forward as OPEN. This scope is what was read at HEAD in this session; nothing else is claimed.",
+    "in_repair7_scope_but_NOT_re_reviewed_here": [
+      "KNOWN_ISSUES.md",
+      "VALIDATION_LEDGER.md",
+      "docs/OPEN_ITEMS.md",
+      "docs/analysis-note/app_statmethods.tex",
+      "docs/orchestration/FINDING-20260809-derived-from-merged-extensives.md",
+      "docs/orchestration/FINDING-20260809-stage6-central-gate-cannot-pass.md",
+      "docs/orchestration/FINDING-20260809-tparameter-merge-semantics.md",
+      "docs/orchestration/FINDINGS.md",
+      "docs/orchestration/audit_derived_from_merged_extensives.py",
+      "docs/orchestration/audit_tparameter_merge_semantics.py",
+      "docs/orchestration/runs/standard-p4-verifier/20260807T134623Z-repair4-verdict.json",
+      "docs/orchestration/runs/standard-p4-verifier/20260807T220756Z-repair5-verdict.json",
+      "docs/orchestration/runs/standard-p4-verifier/20260809T075632Z-repair6-verdict.json",
+      "nd-unfolding/ND_OMNIFOLD_RUN_LOG.md",
+      "nd-unfolding/ND_OMNIFOLD_STATUS.md",
+      "nd-unfolding/p3s_manifest_summary.py",
+      "nd-unfolding/project_cov_nd.py",
+      "nd-unfolding/run_p4_merge_audit_std.sh",
+      "nd-unfolding/tests/test_fullevent_gate2.py",
+      "nd-unfolding/tests/test_gate2_target_runtime.py",
+      "nd-unfolding/tools_p4_sweep_pipeline_rc.py",
+      "nd-unfolding/unfold_nd_omnifold_unbinned.py",
+      "nd-unfolding/uq_math.py",
+      "nd-unfolding/xsec_nd.py",
+      "unbinned_unfolding/python/omnifold.py"
+    ],
+    "consequence": "This verdict is BLOCK, so it authorizes nothing and the narrow scope costs nothing operationally. Were a later verdict to be PASS on a scope this size, defect #4 means the gate would not notice.  Stated so the next round cannot inherit a scope it did not earn."
+  },
+  "accepted_as_closed": [
+    {
+      "n": 1,
+      "prior_severity": "critical",
+      "was": "PARTIALLY CLOSED: content comparison is real and discriminating, but verifier-crosscheck blockers are added after consumable evidence files are selected and written.",
+      "closed_by": "c308a9c299baa904face4f21231a73a3f5a4a948",
+      "evidence": "nd-unfolding/p4_evidence.py:437-441 writes all three products to `.PENDING` names only; `_publish_evidence()` is defined at :444-459 and renames by the FULL blocker set; the verifier_crosscheck `need()` enforcement loop is at :466-469 and the publish call is at :471, so the crosscheck now runs BEFORE the products acquire consumable names. Verified there is no `blockers.append` after the publish: the last one in the file is at :401 (grep of all `blockers.append` sites -> 128,157,163,172,239,260,324,357,376,385,393,401). `_publish_evidence` also deletes the opposite variant, so a stale `.FAILED` cannot sit beside a valid set.",
+      "verified_at_head": true
+    },
+    {
+      "n": 2,
+      "prior_severity": "high",
+      "was": "STILL OPEN: endpoint resume provenance binds only the unfold driver blob, not omnifold.py or xsec_nd.py.",
+      "closed_by": "32489a6556c7823d64d8910c9d733c0403ac5f04 + f67352f54043b538b43a76727b9227fac5d4c5a5 (+ 1a3a8ed, 1440b58)",
+      "evidence": "nd-unfolding/p4_lib.py:493-506 `producing_closure_blobs()` returns (closure, head_blobs) from ONE derivation and fails closed on an empty closure or a closure missing its own driver; :508+ `producing_closure()` walks imports transitively from the unfold driver; :575+ `check_resume_surface()` decides skip-eligibility against that map. Producer side: nd-unfolding/run_p4_unfold_std.sh:55 derives the map from the same helper, :57 and :62 abort if it cannot be derived or is degenerate, and :119 stamps `surface_blobs` into every receipt. Consumer side: nd-unfolding/p4_check_receipt.py:37 re-derives via the same helper and :117 calls `P.check_resume_surface(rec, closure, head_blobs)`. Both sides share one derivation rather than each carrying a path list.",
+      "verified_at_head": true,
+      "design_decision_noted_not_reopened": "Resume binds the 6-module PRODUCING CLOSURE, not the 15-module execution surface (p4_lib.py:512-520). That is a deliberate, argued narrowing -- a module that cannot execute during production cannot have affected the product. It is recorded here so a later reader does not mistake it for an oversight. omnifold.py and xsec_nd.py, the two modules the defect named, ARE in the producing closure."
+    },
+    {
+      "n": "new_defect: p4_adopt_standard.py:25",
+      "prior_severity": "high",
+      "was": "The non-adoptable marker is bypassable by supplying a marker-stripped component manifest: the adopter never compares it with validation.component_manifest_sha256 and ignores the marker propagated into validation.",
+      "closed_by": "a1c9d104602ed92507af09cf8008aa5079dccbfb (FIX 2 of 2)",
+      "evidence": "nd-unfolding/p4_adopt_standard.py:32-36 requires `validation.component_manifest_sha256` to be present and refuses a receipt predating the binding; :37-39 requires `P.sha256_file(a.component_manifest) == _cm_sha` BEFORE any gate reads from the manifest; :42 `P.require_adoptable(prov)`; and :45-46 independently honours `NON_ADOPTABLE_KEY` on the RECEIPT, so stripping the key from both files is not sufficient either. Both halves the defect named are addressed.",
+      "verified_at_head": true
+    },
+    {
+      "n": "new_defect: p4_project_4d.py:80",
+      "prior_severity": "high",
+      "was": "Stage 6 still cannot execute on the real products: the caller supplies the independent 4D support to a reverse-coverage requirement already known to have five unreachable bins.",
+      "closed_by": "a1c9d104602ed92507af09cf8008aa5079dccbfb (FIX 1 of 2)",
+      "evidence": "nd-unfolding/p4_project_4d.py:130 derives `m4_reach = P.reachable_low_mask(edges, W_AXIS, m5)` rather than asserting the reported 4D mask; :132 computes `dropped`; :133 fails closed if no reported 4D bin is reachable; :134-137 prints the dropped indices; :193-194 records `mask4d_unreachable_n` and `mask4d_unreachable_global_indices` in the projection manifest, and :209-218 records the rationale. The support is derived, recorded and bounded rather than silently asserted.",
+      "verified_at_head": true,
+      "explicitly_NOT_claimed": "This establishes that the support is DERIVED and recorded. It does NOT establish that 4825 is the right support. PROVENANCE-DEBT-20260810 sec 3b says the same and this verdict does not go past it."
+    },
+    {
+      "n": "new_defect: p4_project_4d.py:113",
+      "prior_severity": "medium",
+      "was": "A projected artifact derived from a non-adoptable candidate would lose the self-declaring rejection because the projection manifest does not propagate the marker.",
+      "closed_by": "ea89701dad1f12a4993826ba81e5b0b5509c0d37",
+      "evidence": "nd-unfolding/p4_project_4d.py:94 locates the parent component manifest BY CONVENTION beside the candidate (not via a CLI arg, so it cannot be pointed at a different parent); :104-113 binds it -- `marker`, `component_manifest`, `component_manifest_sha256`, `marker_key_present` -- before anything is written; :115 announces inheritance; :182 writes a `TNamed(NON_ADOPTABLE_KEY, reason)` INSIDE the projected ROOT; :195-198 records the marker plus `non_adoptable_inherited_from` and the parent sha256 in the projection manifest. The marker lands in two places, so a lost sidecar does not lose the rejection.",
+      "verified_at_head": true
+    }
+  ],
+  "repaired_but_NOT_CERTIFIED_BY_THIS_VERDICT": [
+    {
+      "n": 6,
+      "severity": "critical",
+      "finding_as_written_in_repair7": "STILL OPEN: C_syst recomputation trusts the manifest's retained candidate_keys and never verifies exact band-set equality or component_content_hash.",
+      "where": "nd-unfolding/p4_validate_active_lateral.py:181",
+      "repair_commit": "00558266111d9b77f62dbc2e4f4f53a997629b38",
+      "repair_evidence_at_head": "nd-unfolding/p4_lib.py:373-431+ `require_band_set_completeness()` compares against an EXTERNAL inventory taken from the support family, never the manifest's own list: :400-408 pins the referee by requiring `support_family_sha256` to match before any comparison runs; :411 requires the lateral bands to be a subset of the family; :422-425 checks set equality on `all_syst_bands`, `retained_bands`, `replaced_lateral_bands` and the `component_content_hash` KEYS; :428-431 builds `candidate_keys` FORWARD from band names and compares. Wired at nd-unfolding/p4_validate_active_lateral.py:233-235, which appends the gate label `band_set_completeness_vs_support_family`. Eleven blind adversarial fixtures, ten must-reject plus one unannounced accept-control, all eleven called correctly; pre-fix code accepts all ten must-reject variants (demonstrated, per the commit body).",
+      "WHY_THIS_IS_NOT_MARKED_CLOSED": "Its author explicitly declined to certify it, verbatim in the commit body of 0055826: \"NOT claiming #6 closed -- that is Joseph's call on the packet, not mine to assume and not the oversight's to grant.\" This verifier will not grant what the author declined to assume and named as Joseph's decision. The repair looks complete and well-evidenced on the code; that is a description, not a certification. It is counted in defects_outstanding because an uncertified item is not a closed one.",
+      "disposition": "AWAITING JOSEPH -- packet-level decision, not a code question. Nothing further is needed from the lane.",
+      "counted_in_defects_outstanding": true
+    }
+  ],
+  "outstanding": [
+    {
+      "n": 5,
+      "severity": "critical",
+      "finding": "STILL OPEN, and it is the most serious item here because it is IN THE GATE THAT AUTHORIZES STAGES 4-6. The token gate accepts a SYMBOLIC code_rev, and a symbolic code_rev makes the gate's own staleness check vacuous.",
+      "where": "nd-unfolding/p4_check_verifier_token.py:106-113 and 126-132; nd-unfolding/p4_lib.py:919-932 (code_rev_in_history), 897-916 (paths_unchanged_between)",
+      "file_unchanged_since_reviewed_rev": "nd-unfolding/p4_check_verifier_token.py is BYTE-IDENTICAL between 5c25333 and HEAD (git rev-parse comparison), so this is re-verified structurally as well as by reading.",
+      "measured_this_session": {
+        "code_rev_in_history('HEAD')": true,
+        "code_rev_in_history('main')": true,
+        "code_rev_in_history('HEAD~0')": true,
+        "code_rev_in_history('HEAD~3')": true,
+        "paths_unchanged_between('HEAD', HEAD, standard_p4_execution_surface())": "ok=True, differing=0"
+      },
+      "failure_scenario": "A verdict whose `code_rev` is the string \"HEAD\" passes rule 4a because `git merge-base --is-ancestor HEAD HEAD` succeeds, and then rule 4b compares HEAD against HEAD and finds 0 differing files. The check that exists to stop a PASS authorizing code the verifier never saw returns clean by construction, for every file, forever. The gate is live: run_p4_standard.sh:88-95 refuses without P4_VERIFIER_PASS and shells out to p4_check_verifier_token.py.",
+      "second_half_also_open": "Reviewed execution files are compared only between two COMMITS. paths_unchanged_between uses `git rev-parse {rev}:{path}` on both sides, so a working-tree modification to a reviewed file is invisible to the gate. Rule (2) at :77-86 does compare working tree against committed blob, but only for the VERDICT FILE itself, never for the code it reviewed.",
+      "verified_at_head": true
+    },
+    {
+      "n": 4,
+      "severity": "critical",
+      "finding": "STILL OPEN (was PARTIALLY CLOSED). The declared review_scope is trusted verbatim with no union against the execution surface, so an arbitrarily narrow scope is accepted; and the fallback surface omits executed shell dependencies including p3s_manifest_summary.py.",
+      "where": "nd-unfolding/p4_check_verifier_token.py:115-123; fallback at nd-unfolding/p4_lib.py:832-879 (standard_p4_execution_surface)",
+      "file_unchanged_since_reviewed_rev": "byte-identical between 5c25333 and HEAD",
+      "code_evidence": "p4_check_verifier_token.py:115-117 -- `scope = v.get('review_scope'); if isinstance(scope, list) and scope: paths = sorted(...)`. If the verdict declares ANY non-empty list, that list IS the scope; the execution surface is never consulted and no minimum is enforced. A verdict declaring review_scope of one unrelated file would satisfy rule 4b trivially.",
+      "measured_this_session": {
+        "fallback_execution_surface_size": 18,
+        "p3s_manifest_summary.py_present_in_fallback": false,
+        "surface_members": "2d-unfolding/unfold_2d_omnifold_unbinned.py, nd-unfolding/flux_universe.py, nd-unfolding/omnifold_nn_core.py, nd-unfolding/p4_build_components.py, nd-unfolding/p4_check_receipt.py, nd-unfolding/p4_check_verifier_token.py, nd-unfolding/p4_evidence.py, nd-unfolding/p4_lib.py, nd-unfolding/p4_project_4d.py, nd-unfolding/p4_validate_active_lateral.py, nd-unfolding/project_cov_nd.py, nd-unfolding/run_p4_merge_audit_std.sh, nd-unfolding/run_p4_standard.sh, nd-unfolding/run_p4_unfold_std.sh, nd-unfolding/unfold_nd_omnifold_unbinned.py, nd-unfolding/uq_math.py, nd-unfolding/xsec_nd.py, unbinned_unfolding/python/omnifold.py",
+        "why_p3s_is_missed": "standard_p4_execution_surface walks the Python IMPORT graph (p4_lib.py:838-876) and then adds only `nd-unfolding/run_p4_*.sh` (:878). A module invoked BY a shell driver rather than imported by a Python entrypoint is reached by neither leg."
+      },
+      "self_demonstrating": "This verdict's own review_scope is 19 files where repair-7 declared 43. The gate would accept it verbatim. That is the defect, exercised on this very receipt, which is why the narrowing is declared explicitly above rather than left for a reader to discover.",
+      "verified_at_head": true
+    },
+    {
+      "n": 7,
+      "severity": "high",
+      "finding": "STILL OPEN, and self-declared by the author. The mutation harness retains detached/textual guards and lacks the requested live positive and negative mutations.",
+      "where": "nd-unfolding/tests/test_p4_guard_mutations.py",
+      "code_evidence": "38 assertions in the file read source text rather than exercise behaviour (count of lines matching `read_text()` / `.read()` / `inspect.getsource` / `assertIn(` at HEAD). The file WAS touched since 5c25333, by c308a9c, but only to repair one assertion that the author's own change had broken.",
+      "author_self_declaration": "c308a9c commit body, verbatim: \"A TEXTUAL GUARD BROKE AND THAT IS ITSELF THE FINDING. test_p4_guard_mutations asserted the literal string 'p4_standard_manifest.FAILED.json'; the name is now composed, so an implementation change broke a test whose SUBJECT had not changed. That is verifier defect #7's 'detached/textual guards' demonstrating itself. ... #7 stays declared debt; I fixed only the assertion my own change invalidated.\"",
+      "note": "The replacement assertion is better than what it replaced -- it asserts an ORDERING (`code.index('need(_v,') < code.index('_publish_evidence()')`) rather than a spelling -- but it is still a source-text assertion, not a live mutant.",
+      "verified_at_head": true
+    },
+    {
+      "n": 8,
+      "severity": "medium",
+      "finding": "STILL OPEN (was PARTIALLY CLOSED). The sweep corpus still omits p4_check_verifier_token.py, and the pipeline and gate snapshots remain count-only so identity drift there is undetected.",
+      "where": "nd-unfolding/tools_p4_sweep_recorded_fields.py:16-19; nd-unfolding/tests/test_p4_sweep_snapshots.py:47-52 and :66-67",
+      "code_evidence": "tools_p4_sweep_recorded_fields.py:16-19 MODULES = [p4_lib.py, p4_evidence.py, p4_validate_active_lateral.py, p4_build_components.py, p4_project_4d.py, p4_adopt_standard.py, p4_check_receipt.py, p4_lateral_replace.py] -- p4_check_verifier_token.py is absent, exactly as repair-7 said. The module the whole authorization chain rests on is not swept by the lane's own inventory.",
+      "partial_credit_where_due": "The FIELDS half is now compared BY NAME in both directions (test_p4_sweep_snapshots.py:70-76, `test_new_unchecked_fields_are_surfaced_by_name`), which is a real improvement and closes the 'one appears as another disappears' hole for fields. The PIPELINE half (:47-52) compares only `n_shell_files` and `n_candidates`, and the GATES half (:66-67) compares only `n_gates`. Neither compares names, so a gate being renamed or swapped is invisible.",
+      "verified_at_head": true
+    },
+    {
+      "n": 9,
+      "severity": "high",
+      "finding": "STILL OPEN (was PARTIALLY CLOSED). The co-located P4 status file still asserts something false at HEAD, and no committed machine-readable product summary exists for job 56495756.",
+      "where": "nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md:56-58",
+      "code_evidence": "The file WAS updated since 5c25333 (including a 2026-08-15 BEN-352 correction about stage 3), but its headline state line at :56 still reads \"**State: REPAIR round 3 complete; NO covariance candidate exists.**\" and :57-58 still gates candidate construction on \"the standard-p4-verifier (019f74cb-...) returning PASS on the committed round-3 patch\".",
+      "why_that_is_false_at_head": "A 5D candidate exists and has been product-audited on the object -- PROVENANCE-DEBT-20260810 sec 2c records 48 cycle-1 TH2D keys, bit-for-bit active reconstruction, C_total = C_syst + C_stat + C_ML at max_abs 6.76e-93, and 0 of 114,361,636 Cauchy-Schwarz violations -- and a projected 4D candidate exists and was audited in sec 2b. The candidate carries publication_gate_rejects_this: true and is refused by the adopter, which is a different statement from 'no candidate exists'. The governing verdict is also no longer the round-3 one: repair-7 (BLOCK, 14 outstanding) superseded it, and this verdict supersedes that.",
+      "second_half_measured": "`git ls-files | grep 56495756` returns nothing -- no tracked path contains that job id. It appears only in PROSE: VALIDATION_LEDGER.md, PROVENANCE-DEBT-20260810-standard-p4.md, three verifier transcripts and two verdicts, state/cluster-ignored-set-walk-20260812.tsv, ND_OMNIFOLD_RUN_LOG.md, ND_OMNIFOLD_STATUS.md, P4_STANDARD_STATUS.md, p4_lib.py. No machine-readable summary.",
+      "verified_at_head": true
+    },
+    {
+      "n": "new_defect: p4_lib.py check_projection_validity",
+      "severity": "high",
+      "finding": "STILL OPEN. check_projection_validity calls its second leg an independent direct block sum, but it reuses M@C and repeats the same right multiplication row-by-row; it does not independently validate the map or the geometry.",
+      "where": "nd-unfolding/p4_lib.py:1318-1339 (was :1007 at 5c25333; the line moved, the code did not)",
+      "function_unchanged_since_reviewed_rev": "check_projection_validity is BYTE-IDENTICAL between 5c25333 and HEAD (extracted and compared, 1251 chars both sides).",
+      "code_evidence": "p4_lib.py:1330 computes `MH = M @ np.asarray(C_high, dtype=float)`; :1331-1332 loop `direct[i, :] = MH[i, :] @ M.T`. That is `(M @ C_high) @ M.T` re-associated row-wise -- the same MH product, the same M, the same geometry. The docstring at :1325-1327 claims \"Recomputing the same quantity by an independent route is what makes this a check rather than a restatement.\" It is not an independent route.",
+      "measured_this_session": "On a synthetic 6x9 M and 9x9 PSD C_high: max|C_low - direct| = 0.0 to float noise (1.42e-14), as it must be, because both legs share MH.",
+      "severity_bounded_honestly": "This is Pattern B (name overclaims), NOT Pattern C (gate that cannot fire). PROVENANCE-DEBT-20260810 sec 3a records an independent check: injecting a 50%-wrong `project()` IS caught, at rel 3.3e-01. So the leg does catch an error in project(); it does not catch an error in M or a conceptual error about the projection, which is what its name promises. Carried forward at the severity repair-7 assigned, not inflated.",
+      "verified_at_head": true
+    },
+    {
+      "n": "new_defect: p4_lib.py crosscheck_marginal_vs_independent",
+      "severity": "medium",
+      "finding": "STILL OPEN. The report-only cross-check accepts non-finite input and emits NaN summary values together with misleading zero threshold counts.",
+      "where": "nd-unfolding/p4_lib.py:1343-1371 (was :1029 at 5c25333)",
+      "function_unchanged_since_reviewed_rev": "crosscheck_marginal_vs_independent is BYTE-IDENTICAL between 5c25333 and HEAD (extracted and compared, 1710 chars both sides).",
+      "code_evidence": "The only guard is a shape check at :1354-1355. There is no np.isfinite requirement on x_high or x_low_independent. The threshold counters at :1369-1370 use `(a > t).sum()`, and NaN > t is False, so a fully poisoned comparison reports ZERO bins over every threshold.",
+      "measured_this_session": {
+        "input": "M = eye(4), x_high = [1.0, 2.0, nan, 4.0], x_low_independent = [1.0, 2.0, 3.0, 4.0]",
+        "n_bins": 4,
+        "median_abs_rel": "nan",
+        "p90_abs_rel": "nan",
+        "max_abs_rel": "nan",
+        "integral_ratio": "nan",
+        "n_over_3pct": 0,
+        "n_over_10pct": 0,
+        "n_over_20pct": 0,
+        "reading": "The NaNs are at least visibly wrong. The three ZERO counts are the dangerous half: they are the shape a clean comparison produces, so a reader scanning the threshold row sees agreement where there is no information at all."
+      },
+      "gates_nothing": "Correct -- this function is report-only by specification (Joseph, 2026-08-09) and appears in no PASS-gate label. That bounds the severity; it does not make a NaN-emitting summary acceptable in a receipt a human reads.",
+      "verified_at_head": true
+    },
+    {
+      "n": "new_defect: tests/conftest.py TmpdirGuardItself",
+      "severity": "medium",
+      "finding": "STILL OPEN structurally. TmpdirGuardItself does not detect helper-mediated TemporaryDirectory use, and two guard tests require the very writable tmpdir whose absence they are meant to handle.",
+      "where": "nd-unfolding/tests/conftest.py:53-78 (pytest_collection_modifyitems); test at nd-unfolding/tests/test_p4_repair.py:1300+",
+      "file_unchanged_since_reviewed_rev": "nd-unfolding/tests/conftest.py is BYTE-IDENTICAL between 5c25333 and HEAD.",
+      "code_evidence": "Detection is by marker, then by scanning `item.function.__code__.co_consts` for the literal string 'TemporaryDirectory' (:67-68), then by `inspect.getsource(item.function)` (:72-75). All three are properties of the TEST FUNCTION's own text. A test that calls a helper which opens the temp directory matches none of them and will still ERROR rather than skip.",
+      "IMPORTANT_CAVEAT_ON_THIS_ROUND": "This defect could NOT be exercised in this session, because the environment has a writable tmpdir and the guard is therefore INERT (its own docstring at test_p4_repair.py:1306-1307 says exactly this). It is carried forward on a STRUCTURAL argument -- the file is byte-identical to the reviewed revision and the detection logic is unchanged -- not on a live demonstration. Recorded as such rather than asserted as re-measured.",
+      "verified_at_head": "structurally (byte-identity + code reading); NOT exercised"
+    }
+  ],
+  "new_defects": [
+    {
+      "severity": "medium",
+      "finding": "The sweep-snapshot guard is RED at HEAD: docs/orchestration/state/p4-sweep-snapshots.json is stale and was not regenerated after the shell corpus grew. The drift-detection artifact has itself drifted.",
+      "where": "docs/orchestration/state/p4-sweep-snapshots.json vs nd-unfolding/tests/test_p4_sweep_snapshots.py:47-52",
+      "measured_this_session": "nd-unfolding/tests/test_p4_sweep_snapshots.py::SweepSnapshots::test_pipeline_sweep_matches_its_snapshot FAILS: `AssertionError: 368 != 354 : shell-file count drifted; re-run with --update and commit`. Reproduced in isolation (1 failed, 6 passed) as well as in the full suite.",
+      "why_it_matters_and_why_it_is_not_alarming": "The guard is doing exactly its job -- this is the mechanism REPAIR6-RECORDED-NOT-CHECKED-INVENTORY.md describes as having already caught three cross-lane corpus changes. But the snapshot is the committed artifact the inventory document cites for its own counts, and PROVENANCE-DEBT-20260810 sec 0 names this test as 'one guard already doing CI's job'. A guard that is red in the committed tree is a guard the next author will be tempted to --update without reading. The fix is one command plus a diff in review; it is listed here so it lands in review rather than silently.",
+      "explicitly_not_fixed_here": "This verifier does not repair. `--update` was NOT run and the snapshot was NOT touched.",
+      "in_declared_review_scope": true
+    }
+  ],
+  "code_rev_vs_the_commit_that_carries_this_receipt": {
+    "reviewed_tree": "7d884da3891bcd4b5015e3ca0013c8efebbb7a1b",
+    "note": "The commit carrying this receipt also appends a chronology entry to nd-unfolding/ND_OMNIFOLD_RUN_LOG.md and a status line to nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md, both of which are IN this verdict's declared review_scope. Those two edits are documentation-only, are the repo's required receipt/RUN_LOG/STATUS trio, and postdate the review. Stated because a verdict whose own commit mutates its scope is the exact staleness shape defect #5 is about, and it should be visible rather than discovered. Operationally it costs nothing: this verdict is BLOCK, so p4_check_verifier_token.py:90-92 refuses it before scope is ever consulted.",
+    "no_p4_source_was_edited": true,
+    "the_false_status_line_was_NOT_repaired": "P4_STANDARD_STATUS.md:56 still reads 'NO covariance candidate exists'. That is defect #9 and repairing it is the lane's work, not the verifier's. The appended status line records this verdict and points at #9; it does not correct the false line, and a reader must not take the append as a fix."
+  },
+  "tests": {
+    "TMPDIR_established": "/Users/josephbailey/local-research/.p4verifier-tmp-20260815",
+    "tmpdir_verified_writable_how": "Not by checking an env var or a path -- by writing. `tempfile.gettempdir()` resolved to the directory and `TemporaryDirectory()` + a real file write succeeded. Independently confirmed through the suite's own guard: `conftest.TMPDIR_WRITABLE = True` and `pytest_report_header` returns 'standard-P4 suites: writable tmpdir = True'.",
+    "command": "TMPDIR=/Users/josephbailey/local-research/.p4verifier-tmp-20260815 PYTHONDONTWRITEBYTECODE=1 /Users/josephbailey/miniconda3/bin/python -m pytest nd-unfolding/tests/ -q -rf",
+    "python": "/Users/josephbailey/miniconda3/bin/python 3.12.2 (conda-forge), pytest 8.3.4",
+    "result": "3 failed, 1383 passed, 1 skipped, 2 warnings in 71.66s. Reproduced on a second run: 3 failed, 1383 passed, 1 skipped in 70.66s.",
+    "THE_PRECONDITION_IS_MET_AND_THIS_IS_THE_HEADLINE": "Repair-7's next_action required 'an environment where the complete suite is executable', because its own tests.result recorded 120 failed / 57 errors from a read-only tmpdir and stated outright that this 'prevent[ed] verification of the claimed seven PET failures'. That evidence was poisoned. With a writable TMPDIR the same suite returns 3 failures, not 120 -- so 117 of repair-7's failures and all 57 of its errors were environmental artifacts, and NO defect in this verdict rests on them. This is the first pass in the chain whose test evidence is usable.",
+    "expected_healthy_baseline_comparison": "The brief for this round gave the healthy expectation as 1382 passed / 4 failed / 1 skipped. Measured here: 1383 passed / 3 failed / 1 skipped -- one more passing and one fewer failing. The delta is not explained by this session and is not treated as a finding; it is reported because an unexplained-but-benign difference is worth stating rather than rounding to 'as expected'.",
+    "failures_triaged_individually": [
+      {
+        "test": "nd-unfolding/tests/test_gate2_target_runtime.py::TargetOnlyDataLoader::test_exact_numpy_source_loads_without_tensorflow_package_init",
+        "error": "RuntimeError: canonical NumPy DataLoader source missing/invalid: /pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/dataloader.py",
+        "isolation": "FAILS in isolation too (1 failed, 3 passed)",
+        "verdict": "ENVIRONMENTAL, off-cluster. A hard /pscratch dependency; not reachable from a laptop. PET lane, not standard-P4. Not a defect of the code under review.",
+        "in_repair7_review_scope": true
+      },
+      {
+        "test": "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py::DriverConfigGate::test_config_gate_only_cli_no_train",
+        "error": "AssertionError: 'tensorflow' unexpectedly found in sys.modules",
+        "isolation": "PASSES in isolation (1 passed in 0.03s)",
+        "verdict": "TEST-ORDER POLLUTION, not a product defect. Some earlier test in the run imports TensorFlow into sys.modules, and this test asserts on global interpreter state it does not own. PET lane. Worth the PET lane's attention as test hygiene -- a test that passes alone and fails in suite is exactly the shape that gets waved through as flaky.",
+        "in_repair7_review_scope": false
+      },
+      {
+        "test": "nd-unfolding/tests/test_p4_sweep_snapshots.py::SweepSnapshots::test_pipeline_sweep_matches_its_snapshot",
+        "error": "AssertionError: 368 != 354 : shell-file count drifted; re-run with --update and commit",
+        "isolation": "FAILS in isolation too (1 failed, 6 passed)",
+        "verdict": "REAL, and IN SCOPE. Filed as this round's single new defect. The guard is correct; the committed snapshot is stale.",
+        "in_repair7_review_scope": true
+      }
+    ],
+    "the_skip": "nd-unfolding/tests/test_pet_fullevent_nominal_launcher.py:409 -- 'bound Gate-2 target NPZ not present'. Environmental, off-cluster. NOT a tmpdir skip: with TMPDIR_WRITABLE True, conftest's auto-skip path adds no markers at all.",
+    "collection_note": "conftest.py:104-105 skips collecting test_p3f_pet_fullevent_launcher.py off-cluster, so the historical whole-directory collection abort did not occur."
+  },
+  "what_this_verdict_could_NOT_establish": [
+    "Anything requiring the cluster. No sbatch/scancel/scontrol and no writing ssh were run, per this round's constraints. PET array 57038937 was not touched. /pscratch/sd/j/josephrb/gate6traj-reconcile-56847059 was not touched.",
+    "The 24 files in repair-7's review_scope that were not re-read here (enumerated under review_scope_is_NARROWER_than_repair7). Their state at HEAD is UNKNOWN to this verdict, not clean.",
+    "TmpdirGuardItself's live behaviour -- the guard is inert wherever a writable tmpdir exists, which is the condition this round deliberately created in order to run the suite at all. The two goals are in direct tension and this round chose the suite.",
+    "The 5D/4D cross-object identity C4 = M C5 M^T, which PROVENANCE-DEBT-20260810 sec 2d names as the largest remaining product gap. It needs cluster compute.",
+    "Whether the 1383/3/1 baseline differs from the brief's stated 1382/4/1 for a benign reason. Not investigated.",
+    "Whether docs/orchestration/LIVE-STATE.md is fresh: it records Git 232a2f6 against HEAD 7d884da. Outside this scope, flagged only because the entry path tells every session to trust it."
+  ],
+  "next_action": "This BLOCK rests on defects 4 and 5, which are in the token gate itself and are LIVE (run_p4_standard.sh:88-95 shells out to it). Fix those two first and in one change, because they compound: reject a non-40-hex-literal code_rev so a symbolic revision cannot make rule 4b compare HEAD with HEAD; make review_scope a mandatory UNION with the execution surface rather than a verbatim substitute; extend standard_p4_execution_surface to the shell-invoked dependencies it misses (p3s_manifest_summary.py is the named one); and compare reviewed files against WORKING-TREE bytes, not only committed blobs. Then #9 (two small, purely documentary corrections: the false headline state line, and a committed machine-readable 56495756 summary), then #8 (add p4_check_verifier_token.py to the sweep MODULES list and extend by-name comparison to pipeline and gates), then #7 (replace textual assertions with live mutants). Regenerate the sweep snapshot and commit the diff. #6 needs no lane work at all -- it is Joseph's packet decision and the code side is done and evidenced. Re-run this verifier after the token-gate fix; the suite is executable in this environment, so that precondition is discharged and does not need re-establishing."
+}
