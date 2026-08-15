@@ -7928,3 +7928,86 @@ worded *"the loader refused every truth perturbation"* when `VOID` is not `REFUS
 labels a void arm `REFUSED` while its `observed` column still reads `VOID`. Both in `OI-124`.
 
 Findings: `BEN-290`. Code debt: `KNOWN_ISSUES` 49. Claim evidence pointer (no state change): `CLM-002`.
+
+## 2026-08-15 — Gate 6 LEG 0 SUBMITTED as array 56993778_[1-5]; Gate 6 stays blocked
+
+**Authorized by Joseph (`AUTHORIZATION-20260814-gate6-retry.md`, `043d572`), sequenced by the mediator, submitted
+by lane A. Inference only, no training, 01:00:00 walltime, 1 GPU, `qos=shared`, account `m3246` — inside the
+standing 12 h authorization.**
+
+**Job identity read from `squeue`, not from `sbatch`'s stdout** (`sbatch` printed `56993778`; `squeue -j 56993778 -r`
+is what is quoted here). At `2026-08-15T04:28:48Z`: array **`56993778_[1-5]`**, name `g6_leg0_tier`, **all five
+tasks `PENDING`, reason `(None)`**. `sacct -X -P` corroborates, `Submit 2026-08-14T21:28:39`.
+**THE FRAME, established in the same turn rather than assumed** (`BEN-233`): `sacct` printed `21:28:39` against
+`date -u` `04:28:48Z`, so `sacct` is on **UTC−0700** and `21:28:39` PDT **is** `04:28:39Z` — 9 s before the UTC
+read, consistent. No timestamp here is compared across frames.
+
+## Why Leg 0 needed a new checkout, and the finding that came out of building it
+
+The launcher requires `G6_LEG0_CODE_REPO` and refuses both frozen trees. **The obvious candidate could not be
+used and neither could the science repo:** `/pscratch/sd/j/josephrb/MINERvA-OmniFold` is at **`683bdcc`**
+(`2026-08-11T08:01:25-04:00`), carries **751 uncommitted paths**, and **`git cat-file -t 692c6bd` returns
+"Not a valid object name"** — the commit adding `--checkpoint-tier` does not exist in the tree every launcher
+reads as `SCI_REPO`. **Filed as `OI-74` on its own** rather than inside this leg's receipt, on the mediator's
+instruction, because *the workaround removed the symptom without touching the cause* and the next lane to
+trust that tree will not be running Leg 0.
+
+**Checkout: `/pscratch/sd/j/josephrb/gate6-leg0-fa14db5`.** Cloned from the science repo (read-only on it) and
+then fetched from GitHub for the missing commits. Verified: `HEAD fa14db5`, **`692c6bd` IS an ancestor**
+(`git merge-base --is-ancestor`), **0 dirty**, and `step1_increment_trajectory.py` = `ca2128ac…`, which is the
+digest the launcher enforces at `:125`.
+
+**Frozen trees verified untouched AFTER the clone, not merely left alone:** `gate6-reconcile-56834281`'s
+trajectory file is still `48f8353d…` (pre-flag, correct for that tree), `gate6traj-reconcile-56847059` was
+never read or written, and the science repo re-measured at `683bdcc` with the same 751 paths.
+**`verify_hash_bindings.py` returned `ALL BINDINGS INTACT` twice** — baseline in lane A's local worktree before
+anything, and inside the new checkout afterwards. **Nothing was re-pinned and no digest was edited.**
+
+## A dry check was built because the launcher has none, and it is the reusable part
+
+30 read-only checks replicating every guard that does not need a GPU, run on a login node in seconds:
+the frozen-tree guard against both the raw and canonicalized `CODE_REPO`; the sbatch log directory (which
+lives **outside** the checkout, so a missing one loses the logs rather than failing loudly); all 7 `CODE_PET`
+pins plus the engine; the archived target `544b2f6a…`; per member 1–5 the artifact/`.done` pair, the artifact
+sha against the `56847059` set, and the absence of any pre-existing `leg0-tier` output; and **the forced
+tier's own precondition — all 6 best-epoch checkpoints present per member**, without which a missing file
+surfaces as a mid-run `SystemExit` after ~10 minutes of GPU. `DRYCHECK: ALL PASS`, re-run immediately before
+`sbatch` in the same command.
+
+## The threshold, derived rather than accepted
+
+From `gate6-member-trajectories-result-56847059.json` directly: member 3's
+`absolute_deviation_from_one` = `[0.05647845006729013, 0.04155197108751185, 0.0426498628518126]`, so
+`nonincreasing` is false because **iter2 exceeds iter1**, and the margin is
+`0.0426498628518126 − 0.04155197108751185` = **`0.0010978917643007513`**. Bit-for-bit equal to the figure
+relayed by the mediator — **the only relayed number of the campaign's last day to survive derivation
+unchanged**, against four that did not.
+
+## WHAT LEG 0 CANNOT DO, written here and not only in the receipt
+
+**Member 3 is NOT promoted, selected, or excluded**, whatever it returns. The family still blocks on **2, 4
+and 5**. **All five prohibitions at `19585b7` stay live and this leg clears none of them** — a changed retry
+was never inside `do_not_retry_unchanged`'s scope, so there was nothing to lift. No `C_ML`, no Leg F draw, no
+Leg X. **If the measured tier gap exceeds `0.0010978917643007513`, the only thing that changes is the fault
+description the retry must explain** — from four real failures to three.
+
+**Liveness will be judged by `sstat` CPU time and produced artifacts, never by log growth**: on this Lustre
+filesystem `st_blksize` is 4 MiB and a healthy multi-hour run can emit zero progress lines (`BEN-028`).
+
+## Two corrections against lane A, both found by lane A
+
+1. **Lane A duplicated `692c6bd`** — independently building the same flag, a regression test and the same
+   three-pin discovery while that work was already landing. **The commit was dropped** (`reset --hard
+   origin/main`) rather than merged, because two implementations of one function is how a subtle defect lands,
+   and `692c6bd` additionally carries the launcher and prepared receipt. **Nothing of lane A's survives.** The
+   mediator has recorded the cause as its own double-dispatch.
+2. **Lane A's earlier "this session cannot submit Leg 0" was a false conclusion from a true measurement.**
+   `which sbatch` → not found and `/pscratch` absent are both correct **of the local shell**, and neither
+   covers the configured NERSC ssh route that this submission used. **A null result from a non-covering search
+   is not evidence of absence** — the defect lane A had been flagging in others all evening, committed against
+   its own capabilities. Retracted before it reached a receipt; the claim never landed in a commit.
+3. **And a third, about a checker lane A wrote:** the cell-count audit `awk -F'|'` used in earlier entries
+   **counts `\|` escapes as cell separators**, so its report that `OI-56` carries 9 cells was wrong — `OI-56`
+   carries **7**, correctly. `OI-30` and `OI-62` at 8 are real. **A naive splitter reported a document defect
+   that was an artifact of the splitter**, which is `BEN-186`'s shape: the instrument was never validated
+   against a case it would get wrong.

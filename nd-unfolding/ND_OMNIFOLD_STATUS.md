@@ -45,7 +45,17 @@ live and none is cleared** — `do_not_retry_unchanged` forbids an *unchanged* r
 never in its scope and there was nothing to lift; what the authorization supplies is the user go to spend
 compute. **Leg 0 (inference-only, no training) comes first by the PLAN's forced ordering; Leg X remains
 authorized-in-readout, held, and unsubmitted; `C_ML` still needs a separate decision Joseph has not made.**
-The mediator sequences the legs, not a lane. Three of the four member
+The mediator sequences the legs, not a lane.
+**LEG 0 IS SUBMITTED AS ARRAY `56993778_[1-5]` (2026-08-15T04:28:48Z, all five `PENDING` per `squeue -j … -r`;
+job identity read from `squeue`, not from `sbatch`'s stdout) AND GATE 6 REMAINS BLOCKED.** `g6_leg0_tier`,
+inference only, 01:00:00, 1 GPU, `qos=shared`. Code from `692c6bd`; runs from its own checkout
+`/pscratch/sd/j/josephrb/gate6-leg0-fa14db5` (`HEAD fa14db5`, 0 dirty, `692c6bd` an ancestor) because **the
+science repo cannot supply the commit** — `683bdcc`, 751 uncommitted paths, `692c6bd` absent (`OI-74`). Both
+frozen trees re-verified byte-unchanged after the clone and `verify_hash_bindings.py` returned `ALL BINDINGS
+INTACT` before and after; **nothing was re-pinned.** **Whatever it returns, member 3 is NOT promoted, selected
+or excluded, the family still blocks on 2/4/5, and all five prohibitions stay live** — Leg 0 can only change
+the fault description the retry must explain, from four real failures to three, and only if the measured tier
+gap exceeds `0.0010978917643007513` (re-derived from the `56847059` receipt, not quoted). Three of the four member
 failures are robust — member 3's sole failing margin is `+0.001098` at the one trajectory step that
 compares a best-epoch checkpoint against a `_final` one (VL122–VL126), so **the family still blocks**.
 
