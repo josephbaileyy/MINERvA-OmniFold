@@ -1017,8 +1017,8 @@ A builder that does any of these has exceeded the spec:
 
 | # | precondition | state 2026-08-14 ~05:00 PDT |
 |---|---|---|
-| 1 | extraction array `56936015` terminal at 50/50 | **NOT MET** — 18 published at ~05:40 PDT, 1 running |
-| 2 | family validator `56936016` reports `GATE5_EXTRACTION_FAMILY_COMPLETE_PASS`, exactly 50/50 | **NOT MET** — PENDING on `afterany:56936015` |
+| 1 | extraction array `56936015` terminal at 50/50 | **MET** — 50 of 50 products, 50 `sacct` COMPLETED, queue empty; last task `_49` ended 2026-08-14T07:24:12-0700 |
+| 2 | family validator `56936016` reports `GATE5_EXTRACTION_FAMILY_COMPLETE_PASS`, exactly 50/50 | **MET** — COMPLETED exit `0:0`, verdict `{"declared": 50, "passing": 50, "verdict": "GATE5_EXTRACTION_FAMILY_COMPLETE_PASS"}`. It started 07:30:39 PDT, **six minutes after** the array's last task ended, so `afterany` released correctly on a complete family |
 | 3 | `[N=14]` numbers re-measured at 50/50 | **NOT MET** — structure stable over 14 → 18 (§0) |
 | 4 | ~~`CSTAT-O1` rank treatment~~ | **CLOSED, never open** — dispositioned pre-launch (§7) |
 | 5 | ~~`CSTAT-O2` naming settled~~ | **CLOSED** — `C_stat` is correctly named; the premise was refuted (§8). `CSTAT-O2a` is still worth running, now to measure the non-determinism floor, and blocks nothing. |
