@@ -70,9 +70,40 @@ test rather than borrowing the repository's:
 subprocess.run(["git", "branch", "-f", "ben343-probe", "HEAD"], cwd=REPO, check=True)
 ```
 
-**Not applied here.** The file is another lane's, the fix is a judgement about what the test means to
-cover, and `BEN-300` says the owner should make it. Filed so it is not re-triaged from scratch by the next
-lane that sees a red suite.
+## APPLIED 2026-08-16, and it fired a second time while being written
+
+**Initially not applied**, on ownership grounds (`BEN-300`). Then the mediator established the file has
+**no live owner** — its author was the repair-9 lane, whose account hit a session limit — so deferring to an
+owner meant leaving the trap. `'main'` is now dropped from the tuple and the reasoning lives in the test's
+docstring rather than only in this file, per `CLAUDE.md`'s *prefer the executable form of any rule you are
+tempted to write down* — and because this campaign has already watched a note 440 lines up fail to prevent a
+recurrence (`BEN-342`).
+
+**The mechanism is not inferential — it was demonstrated on the pre-fix helper, read-only:**
+
+```
+PRE-FIX helper (the one this test rebuilds)   in_history   git-is-ancestor
+  HEAD                                          True           True
+  HEAD~0                                        True           True
+  HEAD~3                                        True           True
+  main                                          False          False     <-- measured live
+  audit/20260731-findings                       False          False
+```
+
+`in_history` tracks git ancestry exactly, and a ref that **resolves but is not an ancestor** returns
+`False`. So `'main'` fails precisely when the runner's branch is behind it, and the other three cannot fail
+from any checkout.
+
+**AND IT FIRED AGAIN DURING THIS WORK, which is the best available evidence of its frequency.** Ninety
+minutes after the first occurrence, mid-way through writing this fix:
+
+```
+HEAD  f386aa0        main  df242cc        rev-list --count HEAD..main = 1        is-ancestor: NO
+```
+
+A second lane push, a second window in which the unfixed test would have failed for reasons having nothing
+to do with the code under test. **Two instances in one hour, on one lane, neither caused by the lane that
+hit them.**
 
 **Related:** `BEN-332` (same shape, different dependency), `BEN-028` (a symptom that looks like a failure
 of the thing you just touched), `CONVENTION-lane-worktrees.md`.

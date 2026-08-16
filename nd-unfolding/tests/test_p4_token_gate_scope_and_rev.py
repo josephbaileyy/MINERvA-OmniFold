@@ -259,9 +259,30 @@ class Defect5_SymbolicCodeRev(_SandboxCase):
         self.assertIn("code_rev=HEAD", out)
 
     def test_MUTATION_prefix_helper_reports_every_symbolic_rev_in_history(self):
-        """The measurement the verdict recorded, reproduced against the pre-fix helper."""
+        """The measurement the verdict recorded, reproduced against the pre-fix helper.
+
+        `'main'` WAS IN THIS TUPLE UNTIL 2026-08-16 AND IS DELIBERATELY OUT OF IT (BEN-343).
+        `code_rev_in_history` asks whether a rev is an ANCESTOR of `HEAD`. In a git worktree on a
+        feature branch, `main` resolves fine and is *not* necessarily an ancestor -- so this test
+        failed for anyone running the suite from a worktree whose branch was behind `main`, which on
+        this campaign is most lanes for most of the day (`CONVENTION-lane-worktrees.md`). Measured
+        when it fired: `HEAD e07b986`, `main 6e05985`, `merge-base --is-ancestor main HEAD` false,
+        one commit ahead, because another lane had pushed mid-edit. It cleared on rebase.
+
+        DROPPING IT COSTS NO COVERAGE, which is why this is a fix and not a weakening. The property
+        under test is that the pre-fix helper calls SYMBOLIC names in-history, and `HEAD`, `HEAD~0`
+        and `HEAD~3` are all symbolic and all in-history *by construction from any checkout*.
+        `'main'` was the only element whose truth depended on the runner's git position, and a test
+        whose result depends on where you are standing is reporting that, not the code (`BEN-332`'s
+        shape, with the dependency moved from untracked caches to the branch pointer).
+
+        If a BRANCH-NAME case is ever wanted specifically -- a fair thing to want, since a branch
+        name is a different kind of symbolic ref from `HEAD~n` -- create one here rather than
+        borrowing the repository's:
+            subprocess.run(["git", "branch", "-f", "ben343-probe", "HEAD"], cwd=REPO, check=True)
+        """
         mut = _mutated_lib([(LIB_REL, *PREFIX_NO_LITERAL_SHA_CHECK[1][1:])])
-        for rev in ("HEAD", "main", "HEAD~0", "HEAD~3"):
+        for rev in ("HEAD", "HEAD~0", "HEAD~3"):
             self.assertTrue(mut.code_rev_in_history(rev),
                             f"pre-fix helper should call {rev!r} in-history")
         ok, differing = mut.paths_unchanged_between("HEAD", "HEAD",
