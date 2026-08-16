@@ -9286,3 +9286,54 @@ printed, 17 reported omitted, and the report names
 discrepancy is reconciled in the text**: one leaf is exactly 200 characters and falls on the other side of
 `<` vs `<=`. `263 + 17 = 280`. That a one-character difference in an arbitrary cutoff moves a field between
 "read" and "invisible" is the argument for the omission report, not a footnote to it.
+
+## 2026-08-16 — `BEN-318`: redundancy that arises by construction is a free internal check, and a cross-check must share exactly what it is not testing
+
+**Append-only.** Executor lane. Documentation only — no code, no run, no cluster access, `p4_lib.py` clean
+and untouched (rule 4c). Filed while holding for lane A's `N3` repair, which **has not landed**: measured
+this turn, `git log -1 -- nd-unfolding/p4_lib.py` still returns `5fc06b6`.
+
+**Filed as its own row at the mediator's direction, not as a clause inside `BEN-360`** — the reason
+`BEN-361` had to be separated from it: **a clause inside another finding is read as that finding's
+illustration rather than as a rule in its own right.**
+
+**§1, the habit.** `67c94df`'s `RunStep2` hook produces `niter` rows of which `niter-1` **duplicate rows
+already in the report**, because the push `RunStep2(i)` leaves IS the push `RunStep1(i+1)` consumes. **The
+duplication was not designed — it fell out of hooking two adjacent points in one loop.** Trim it (smaller
+output, no information lost, **and no check**) or enforce it (gate to EXACT equality, `!=` on floats, no
+tolerance). **Trimming is the tempting move: it looks like housekeeping, a reviewer optimising for concision
+would ask for it, and "those rows are already in the report" is TRUE.** What it discards is the only thing
+in the run capable of catching `BEN-360`'s failure. **Before, "the recorder might read at the wrong moment"
+was a paragraph in a finding; after, the run refuses.** `CLAUDE.md`'s trade reached from the other
+direction, **and it cost nothing** — both numbers were already being produced and the only decision was
+whether anything compared them.
+
+**§2, and it is the part that took work: this finding appears to CONTRADICT `BEN-316`, filed hours earlier
+by this same lane, so it is resolved here rather than left to a later reader who will notice.** `BEN-316`
+condemns `check_projection_validity` for checking `M C M^T` against a second computation that **re-encodes
+the same formula** — *"`BEN-300`'s single-source case"* — and then this finding's own gate **deliberately
+makes both sides share one implementation**, `_ff_reduce` being *extracted* so the two hooks cannot compute
+the fold-forward differently, where two copies would have been more independent. **The lane argued for
+independence in the morning and against it in the evening. Both are right.**
+
+The resolution is **what the check is FOR.** The identity leg claims *the formula is correctly implemented*,
+so it must share the INPUTS and differ in the ROUTE — and it fails precisely because it shares the route,
+the thing it claims to test. The overlap gate claims *two hooks read the same array at the same logical
+MOMENT*, so it must share the REDUCTION exactly and differ only in the moment. **Duplicate the reduction
+and the gate fails in the mirror-image way: any implementation difference surfaces as a value difference,
+and a value difference is INDISTINGUISHABLE from a timing error** — it would fire on a formatting change
+and report *"the hooks disagree"* when what disagreed was the arithmetic. **A confounded check is not a
+weaker check; it is a check of a DIFFERENT PROPOSITION.**
+
+**RULE: a cross-check must SHARE exactly what it is not testing and DIFFER in exactly what it is.** Ask what
+the check CLAIMS before reusing an implementation — **"more independent" is not automatically stronger, and
+"shared" is not automatically a restatement.** The cheap diagnostic for the `BEN-316` family: **a check
+whose two sides differ in nothing that matters cannot fail; one whose sides differ in too much cannot
+localise.**
+
+**RECORDED AGAINST THIS LANE, because the wrong reason does not generalise:** `_ff_reduce` was extracted for
+**tidiness** first. Only afterwards did it become clear that with two copies the gate would compare
+implementations rather than moments — **while looking identical in the report and in the test names.** The
+right decision was reached for the wrong reason.
+
+*Long form:* `docs/orchestration/FINDING-20260816-share-what-you-are-not-testing.md`.
