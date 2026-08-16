@@ -102,16 +102,55 @@ The claim *"a ~105-draw-sd 'disagreement'"* appears in **three** places — the 
 
 ```
 gap                  0.981165 - 1.011418 = -0.030253
-gap / sd             0.030253 / 0.000399 =  75.8 draw-sd
+gap / sd(0.000399)   0.030253 / 0.000399 =  75.8 draw-sd
 gap / (sd/sqrt(3))                       = 131.3
-sd that would give 105                   =   0.000288   (stated nowhere)
 ```
 
-**So `~105` matches neither plausible normalisation.** What *does* re-derive: the predeclaration's own
-`E4` amplitude — *"differ … by roughly `-3%`"* — is **`-2.991%`**, correct; and the sign-flip claim is
-true (`-0.018835` against `+0.011418`). **The un-derivable figure is in the code docstrings, not in the
-predeclaration**, which is worth separating: the predeclared claim survived `BEN-361`'s check and the
-prose around it did not.
+**CORRECTED 2026-08-16, and the correction matters more than the original claim.** This section first
+read *"sd that would give 105 = 0.000288 (stated nowhere)"* and concluded `~105` *"matches neither
+plausible normalisation."* **That was wrong, and the error was mine: I grepped the wrapper, the test and
+the predeclaration, and not the receipt.** A null grep is evidence about the search, not about the world.
+The `Assisstant` lane recomputed rather than accepting the retraction, and the operand is in
+`state/RECEIPT-foldforward-instrumented-closure-20260815.json` — in a key that labels itself, under a
+section named `THE_QUANTITY_MISMATCH_READ_THIS_FIRST`:
+
+```
+THE_QUANTITY_MISMATCH_READ_THIS_FIRST / the_naive_read_and_what_it_would_have_produced:
+    predicted_minus_this   = 0.030252362049327908
+    sd                     = 0.0002888930898171582
+    in_draw_sd_of_that_row = 104.7181920082435          <- 104.7, real and correctly computed
+```
+
+**So `~105` was MIS-NORMALISED, not fabricated:** it is the gap over the spread of *the substituted
+consumed-push rows* — the sd **of that row**, exactly as its own key says. **It was divided by the sd of
+the very quantity that was the mistake.** The corrected figure re-derives from two receipt *fields*
+rather than from prose: `predicted_minus_this / RESULT_1_final_iteration_fold_forward /
+arm0_recovered_final_push / sd_n3` `= 0.030252362 / 0.00039936135 = ` **`75.75`**, because the prediction
+being compared is a final-push quantity. `131.3` is a third normalisation (sd of the mean) that nobody
+claimed.
+
+**Mis-normalised and fabricated have different fixes, and *"derives from nothing"* invites a later reader
+to conclude the figure was invented.** The predeclaration's own `E4` amplitude re-derives correctly
+(`-2.991%` for *"roughly `-3%`"*) and the sign-flip claim is true, so the predeclared claim survived
+`BEN-361`'s check and the prose around it did not.
+
+### And this is `BEN-360`'s shape a third time — a reader who cannot see a qualifier
+
+The receipt **disambiguated itself in a key sitting beside the number** — `in_draw_sd_of_that_row`, inside
+a block called `the_naive_read_and_what_it_would_have_produced`, under a section headed
+`THE_QUANTITY_MISMATCH_READ_THIS_FIRST` — and every reader in the chain dropped the qualifier anyway.
+That is exactly what `push_entering_this_iteration_left_by` did in `BEN-360`.
+
+**So the two halves of this finding are the same defect at different layers.** The first half is a
+*fixture* that cannot see an axis; this half is a *reader* who cannot see a qualifier. The common
+property, and the reason neither is caught by care:
+
+> **The disambiguating field is one you have to already suspect you need.** A key named
+> `..._of_that_row` reads as ordinary precision to someone who has not yet formed the hypothesis that the
+> row might be the wrong one; a uniform fixture reads as a clean minimal example to someone who has not
+> yet formed the hypothesis that the leg might be wrong. Both are invisible until you are already looking
+> for them — which is why the remedy in both halves is **executable** (a named control; an inline
+> derivation) rather than a note telling the next reader to be careful.
 
 **Related:** `BEN-360` (the rule applied here, and the reason this read happened), `BEN-314` (the
 necessary-not-sufficient condition this sharpens), `BEN-361` (the amplitude check), `BEN-077` (why the

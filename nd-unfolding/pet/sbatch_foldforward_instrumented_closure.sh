@@ -136,12 +136,30 @@ die() { echo "[ff-launch] FATAL: $1" >&2; exit "${2:-1}"; }
 #     WRAPPER PIN MOVE 4, 2026-08-16, 7499814e -> e284cdbc, for TWO CORRECTIONS FOUND BY AN
 #     INDEPENDENT READ of move 3 (BEN-342). No behaviour changes; both edits are to comments and to a
 #     test fixture, and no recorded value moves.
-#       (a) AN UN-DERIVABLE AMPLITUDE, corrected in place. The wrapper said the RunStep1 substitution
-#           was a "~105-draw-sd" disagreement. It is 75.8: gap 0.030253 over the arm-0 3-draw
-#           sd 0.000399 that PREDECLARATION-20260816-endofrun-push-recording.md:48 itself states.
-#           105 would need sd 0.000288, which appears nowhere; 131.3 would be the sd of the MEAN.
-#           The operands are now quoted inline so a reader can contradict the figure (BEN-077), and
-#           the predeclaration's OWN E4 amplitude re-derives correctly (-2.991% for "roughly -3%").
+#       (a) A MIS-NORMALISED AMPLITUDE, corrected in place -- NOT a fabricated one, and the
+#           distinction is the whole lesson. The wrapper said the RunStep1 substitution was a
+#           "~105-draw-sd" disagreement. It is 75.8. Both numbers are real and both are computed
+#           correctly; they differ in the DENOMINATOR:
+#             RECEIPT-foldforward-instrumented-closure-20260815.json, under the section
+#             THE_QUANTITY_MISMATCH_READ_THIS_FIRST / the_naive_read_and_what_it_would_have_produced:
+#               predicted_minus_this  = 0.030252362049327908
+#               sd                    = 0.0002888930898171582
+#               in_draw_sd_of_that_row = 104.7181920082435
+#           104.7 is the gap over the spread of THE SUBSTITUTED consumed-push rows -- the sd OF THAT
+#           ROW, which is what its own key says. The prediction being compared is a FINAL-push
+#           quantity, so the right denominator is the final-push spread,
+#           RESULT_1_final_iteration_fold_forward / arm0_recovered_final_push / sd_n3 =
+#           0.00039936135352511623, giving 0.030252362 / 0.000399361 = 75.75. Divided by the sd of the
+#           very quantity that WAS the mistake.
+#           A PRIOR VERSION OF THIS PARAGRAPH SAID "105 would need sd 0.000288, which appears
+#           nowhere". THAT WAS WRONG: it appears in the receipt, in a key that labels itself. The
+#           claim came from grepping the wrapper, the test and the predeclaration and not the receipt
+#           -- a null grep is evidence about the search, not about the world. Retained here rather
+#           than silently replaced, because "derives from nothing" invites a later reader to conclude
+#           the figure was invented, and mis-normalised and fabricated have different fixes.
+#           The operands are now quoted inline so a reader can contradict the figure (BEN-077); the
+#           predeclaration's OWN E4 amplitude re-derives correctly (-2.991% for "roughly -3%"); and
+#           131.3 would be the gap over the sd of the MEAN, a third normalisation nobody claimed.
 #           BEN-361's rule, failing on the very finding that states it.
 #       (b) A FIXTURE THAT COULD NOT SEE THE WEIGHT LEG. move 3 shipped a power control proving the
 #           bit-identity assertion catches a wrong-MOMENT capture, and nothing covering a wrong-LEG
