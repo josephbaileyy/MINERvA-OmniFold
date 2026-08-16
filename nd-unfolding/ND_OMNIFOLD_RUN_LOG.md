@@ -9219,3 +9219,70 @@ numbers will meet it.
 
 **Rule 4c note:** `p4_lib.py` is on the 20-path surface and this work is entirely in `nd-unfolding/pet/` plus
 `tests/`, so 4c is not engaged by it. Landed rather than left uncommitted, as instructed.
+
+## 2026-08-16 — the END-OF-RUN push is now RECORDED BY THE RUN, predeclared before anything carries it, with NO run attached
+
+**Append-only.** Executor lane. **Zero-GPU code change:** wrapper + launcher + 8 tests + predeclaration.
+No `sbatch`, no run requested or authorized, no promotion, nothing into `docs/analysis-note/`, the five
+Gate-6 prohibitions at `19585b7` untouched, the six 2026-08-15 receipts unmodified. Approved by the
+mediator directly as a zero-GPU change; **the 3-draw run that would exercise it was DENIED the same day.**
+
+**WHAT IT CLOSES.** `Unfold` is `for i in range(start, niter): RunStep1(i); RunStep2(i);
+CompileModels(fixed=True)` (`omnifold.py:172-177`) and `RunStep2` assigns `self.weights_push` (`:220`). The
+existing hook records at CONSUMPTION, so **the push `RunStep2(niter-1)` leaves is consumed by nothing and
+recorded by no row** — and that is the quantity `OI-125` needs, because
+`closure_powered_truth_reweight.py:332-333` takes `of.weights_push` after `Unfold()` and
+`train_fullevent_nominal.py:576-577` computes the nominal's `0.736746` the same way. The series goes from 3
+points to 4. `BEN-360`'s gap, closed for future runs.
+
+**THE OVERLAP IS A FREE INTERNAL GATE AND IT IS THE BEST PART.** The push `RunStep2(i)` leaves *is* the
+push `RunStep1(i+1)` consumes, so `niter-1` of the new rows duplicate existing rows **by construction** —
+gated to EXACT equality (`!=` on floats, no tolerance). **It holds for both arms**, because the `RunStep1`
+row is the PRE-correction measurement. A disagreement means one hook reads at the wrong moment and the
+end-of-run value cannot be trusted either. **Gated twice: in the wrapper, and again independently in the
+launcher's `G3`, which does not take the wrapper's word for it.**
+
+**THE REDUCTION WAS EXTRACTED TO ONE PLACE (`_ff_reduce`) RATHER THAN COPIED.** Two hooks computing "the
+same" fold-forward from two similar blocks is exactly how the overlapping rows would silently stop
+agreeing — and the cross-check would then be comparing two implementations instead of two points in time,
+which is `BEN-300`'s shape one level down. A test asserts the single definition.
+
+**POWER-TESTED, per the mediator's condition and `BEN-314`.** The load-bearing claim is that the hook's
+final capture is bit-identical to what the driver persists, because only `CompileModels(fixed=True)`
+intervenes. **Demonstrated on a fixture that mirrors the engine's loop including that trailing call** —
+omitting it would have assumed what the test exists to show — and paired with
+`test_THE_ASSERTION_ABOVE_HAS_POWER_a_pre_delegation_capture_FAILS_it`, which shows a wrong-moment capture
+FAILING the same assertion. Without that control the bit-identity test could pass vacuously on a fixture
+whose pushes happened to be equal. `G3`'s new assertions separately exercised against five bad reports —
+record absent, not flagged, wrong count, **hooks disagreeing**, push non-numeric — **refused all five**,
+valid one passes. **167 passed** across the wrapper and `p4_repair` suites; the pin test failed first, as
+designed, until the pin moved.
+
+**PREDECLARED BEFORE ANYTHING CARRIES IT** —
+`docs/orchestration/PREDECLARATION-20260816-endofrun-push-recording.md`, per `BEN-361`: a predeclared
+expectation is worth its timestamp and nothing else. **E3 is the load-bearing prohibition: a future
+recorded value CANNOT validate `VL134` and must not be reported as confirming it.** The driver takes no
+seed flag (only `--split-seed`; launcher `:23-24`), so any later run is a NEW SAMPLE of the same
+configuration — if the two are printed together they are two samples, not a measurement and its check. E4
+declares the expected `≈-3%` gap from the last consumed row as the ARTEFACT, so a future run cannot report
+it as a finding. E5 declares `deviation_from_R` on the new row as having no adopted threshold and forbids
+building a gate from it in the document that first reports it.
+
+**Wrapper pin MOVE 3, `0e1471ba → 7499814e`, same commit**, documented at `:111-127` beside moves 1 and 2.
+Driver/annealed/engine pins byte-identical. **Ordering fixed in the record rather than left to whoever
+launches next: this and the anneal attestation (`1b09a47`) both land BEFORE anything launches, because a
+run wants both.**
+
+**IT DOES NOT CLOSE `OI-125`.** That is about numbers already in the ledger, which cannot be retroactively
+recorded. `VL134` stays a **re-reduction of a persisted array** — twice-verified to `1e-13`, reliable, and
+still reader-computed. What a recorded value changes is *who* computed it.
+
+**`BEN-315`'s executable form adopted, and it is now a two-lane finding.** The mediator ran a near-identical
+truncating walker over the same receipt on the same night and was misled the same way, which makes it a
+property of the tool rather than either lane's carelessness. §6a of the long form now ships a `survey()`
+that prints `N FIELD(S) OMITTED` **with their paths** — tested against the receipt it failed on: 263 leaves
+printed, 17 reported omitted, and the report names
+`/RESULT_1.../masks/recorder_population_s1_b`, the field whose absence was wrongly claimed. **The 17-vs-18
+discrepancy is reconciled in the text**: one leaf is exactly 200 characters and falls on the other side of
+`<` vs `<=`. `263 + 17 = 280`. That a one-character difference in an arbitrary cutoff moves a field between
+"read" and "invisible" is the argument for the omission report, not a footnote to it.

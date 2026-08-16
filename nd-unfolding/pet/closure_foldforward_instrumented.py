@@ -110,6 +110,7 @@ def install_fold_forward_recorder(base, correct=False):
     `test_recorder_subclasses_the_base_it_is_handed` red.
     """
     records = []
+    step2_records = []
 
     class FoldForwardRecordingMultiFold(base):
         def RunStep1(self, i):
@@ -179,6 +180,73 @@ def install_fold_forward_recorder(base, correct=False):
                 records[-1]["reco_weighted_mean_push_after_correction"] = after
             return super().RunStep1(i)
 
+        def RunStep2(self, i):
+            """Record the push RunStep2 LEAVES, which is the only way the end-of-run value is seen.
+
+            WHY THIS HOOK EXISTS AND THE RunStep1 ONE IS NOT ENOUGH. `Unfold` is
+            `for i in range(start, niter): RunStep1(i); RunStep2(i); CompileModels(fixed=True)`
+            (omnifold.py:172-177), and `RunStep2` assigns `self.weights_push` at :220. So the
+            RunStep1 hook, which records at the point of CONSUMPTION, sees the pushes left by
+            initialisation, `RunStep2(0)` and `RunStep2(1)` -- and **the push left by
+            `RunStep2(niter-1)` is consumed by nothing and recorded by no row.** That last one is
+            the quantity `OI-125` is about, because
+            `closure_powered_truth_reweight.py:332-333` takes `of.weights_push` AFTER `Unfold()`
+            returns, and `train_fullevent_nominal.py:576-577` computes the nominal's fold-forward
+            the same way. Reading the last RunStep1 row instead gives 0.981165 against a predicted
+            1.011418 -- a ~105-draw-sd 'disagreement' with the sign of ratio-1 flipped, which is an
+            artefact of the substitution (BEN-360, VL134).
+
+            BIT-IDENTITY WITH WHAT THE DRIVER PERSISTS IS THE POINT, and it holds because nothing
+            between this hook and the driver's read touches the array: the loop's trailing
+            `CompileModels(fixed=True)` only recompiles models. Asserted rather than reasoned in
+            `test_the_final_capture_is_BIT_IDENTICAL_to_what_the_driver_persists`, which also shows
+            a pre-delegation capture FAILING the same assertion so the test has power (BEN-314).
+
+            The first `niter-1` of these rows DUPLICATE RunStep1 rows by construction -- the push
+            `RunStep2(i)` leaves is exactly the push `RunStep1(i+1)` consumes -- and that redundancy
+            is deliberate: it is a free internal cross-check, gated in `main`. It holds for BOTH
+            arms, because the RunStep1 row records the PRE-correction measurement (the record is
+            appended before `if correct:` runs).
+            """
+            out = super().RunStep2(i)
+            rec = self._ff_reduce(int(i))
+            rec["hook"] = "RunStep2"
+            rec["push_recorded_here_was_left_by"] = f"RunStep2({int(i)})"
+            rec["is_end_of_run_push"] = bool(int(i) == int(getattr(self, "niter", -1)) - 1)
+            step2_records.append(rec)
+            return out
+
+        def _ff_reduce(self, i):
+            """The reduction, in ONE place so both hooks cannot drift apart.
+
+            Extracted 2026-08-16 rather than copied: two hooks computing 'the same' fold-forward from
+            two blocks of similar arithmetic is how the overlapping rows would silently stop agreeing,
+            and the cross-check that compares them would then be comparing two implementations
+            instead of two points in time.
+            """
+            leg = getattr(self, "mc_weight_reco", None)
+            if leg is None:
+                leg = self.mc.weight
+            w = np.asarray(leg, np.float64)
+            push = np.asarray(self.weights_push, np.float64)
+            pr = np.asarray(self.mc.pass_reco).astype(bool)
+            num = float((w[pr] * push[pr]).sum())
+            den = float(w[pr].sum())
+            ratio = (num / den) if den > 0 else None
+            R = step1_class_ratio(self.data, self.mc)
+            return {
+                "iteration": int(i),
+                "sum_w_push_reco": num,
+                "sum_w_reco": den,
+                "reco_weighted_mean_push": ratio,
+                "n_pass_reco": int(pr.sum()),
+                "step1_class_ratio": R,
+                "deviation_from_R": (abs(ratio / R - 1.0) if ratio is not None else None),
+                "engine_declared_LR": float(getattr(self, "LR", float("nan"))),
+                "anneal_start": int(getattr(self, "start", 0)),
+            }
+
+    FoldForwardRecordingMultiFold.FOLD_FORWARD_STEP2_RECORDS = step2_records
     return FoldForwardRecordingMultiFold, records
 
 
@@ -450,6 +518,56 @@ def main(argv=None):
                          f"(fail closed)")
     rep["fold_forward_per_iteration"] = ff_records
     rep["step1_class_ratio"] = ff_records[0]["step1_class_ratio"]
+
+    # ---- THE END-OF-RUN PUSH, WHICH NO RunStep1 ROW CAN SEE (BEN-360/VL134) --------------------
+    s2 = list(getattr(recorder, "FOLD_FORWARD_STEP2_RECORDS", []) or [])
+    if not s2:
+        raise SystemExit("[ff] no post-RunStep2 records were captured, so the END-OF-RUN push -- the "
+                         "quantity OI-125 is about -- is absent. The RunStep2 hook did not fire, so "
+                         "this report would repeat the substitution BEN-360 documents (fail closed).")
+    if niter is not None and len(s2) != int(niter):
+        raise SystemExit(f"[ff] {len(s2)} post-RunStep2 records for niter={niter} (fail closed)")
+
+    # THE OVERLAP GATE. The push RunStep2(i) leaves IS the push RunStep1(i+1) consumes, so those rows
+    # must agree EXACTLY -- same array, same reduction, two points in time. Holds for both arms
+    # because the RunStep1 row is the PRE-correction measurement. A disagreement means one hook is
+    # reading at the wrong moment, which is the failure this pairing exists to make impossible.
+    by_iter = {int(r["iteration"]): r for r in ff_records}
+    mismatches = []
+    for r in s2:
+        nxt = by_iter.get(int(r["iteration"]) + 1)
+        if nxt is None:
+            continue
+        a, b = r["reco_weighted_mean_push"], nxt["reco_weighted_mean_push"]
+        if a != b:
+            mismatches.append(f"RunStep2({r['iteration']}) left {a!r} but "
+                              f"RunStep1({nxt['iteration']}) consumed {b!r}")
+    if mismatches:
+        raise SystemExit("[ff] THE TWO HOOKS DISAGREE ON THE SAME PUSH:\n  " + "\n  ".join(mismatches)
+                         + "\nOne of them is reading at the wrong moment; the end-of-run value cannot "
+                           "be trusted either (fail closed).")
+
+    end = [r for r in s2 if r.get("is_end_of_run_push")]
+    if len(end) != 1:
+        raise SystemExit(f"[ff] {len(end)} records claim to be the end-of-run push, expected exactly "
+                         f"1 (fail closed)")
+    rep["fold_forward_post_step2_per_iteration"] = s2
+    rep["fold_forward_end_of_run"] = dict(end[0], **{
+        "why_this_is_the_quantity_OI_125_NEEDS": (
+            "closure_powered_truth_reweight.py:332-333 takes of.weights_push AFTER Unfold(), and "
+            "train_fullevent_nominal.py:576-577 computes the nominal's fold-forward the same way, so "
+            "the nominal's 0.736746 is an END-OF-RUN scalar. The last fold_forward_per_iteration row "
+            "is the push entering the FINAL iteration, one step earlier, and substituting it gives a "
+            "~105-draw-sd disagreement with the sign of ratio-1 flipped (BEN-360, VL134)."),
+        "recorded_not_reconstructed": (
+            "This value is recorded BY THE RUN. VL134 is the same quantity RE-REDUCED by a reader "
+            "from the persisted weights_push, twice and to 1e-13 -- a re-reduction of a persisted "
+            "array, not an approximation. This row does not validate VL134 and must not be compared "
+            "to it as a check: the driver takes no seed flag, so a later run is a NEW sample."),
+        "overlap_cross_check": (
+            f"{len(s2) - 1} of these rows duplicate fold_forward_per_iteration rows by construction "
+            f"and were gated to EXACT equality before this report was written."),
+    })
     rep["fold_forward_note"] = FOLD_FORWARD_NOTE
     rep["fold_forward_instrumented_by"] = os.path.basename(__file__)
     rep["fold_forward_arm"] = arm

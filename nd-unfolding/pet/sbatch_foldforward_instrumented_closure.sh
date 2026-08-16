@@ -107,12 +107,29 @@ die() { echo "[ff-launch] FATAL: $1" >&2; exit "${2:-1}"; }
 #     THIS MOVE DOES NOT AND CANNOT RETRO-ATTEST THE SIX 2026-08-15 PRODUCTS. They ran b24cfefe or
 #     earlier, they carry the boolean alone, and they remain BOUNDED, NOT ATTESTED -- see BEN-317.
 #     Only runs launched after this commit carry `anneal_lr_proof`.
+#
+#     WRAPPER PIN MOVE 3, 2026-08-16, 0e1471ba -> 7499814e, for END-OF-RUN PUSH RECORDING.
+#     Predeclared in PREDECLARATION-20260816-endofrun-push-recording.md BEFORE any run carries it.
+#     The wrapper now also hooks RunStep2 and records the push it LEAVES, so the value
+#     `closure_powered_truth_reweight.py:332-333` persists -- the one OI-125 is about -- is RECORDED
+#     BY THE RUN instead of re-reduced by a reader. The RunStep1 hook records at CONSUMPTION and
+#     therefore cannot see it: `RunStep2(niter-1)` leaves a push nothing consumes. Substituting the
+#     last RunStep1 row gives 0.981165 against a predicted 1.011418, a ~105-draw-sd 'disagreement'
+#     with the sign of ratio-1 flipped (BEN-360, VL134).
+#
+#     NO RUN IS ATTACHED TO THIS MOVE. The 3-draw re-run was proposed and DENIED on 2026-08-16: the
+#     driver takes no seed flag (see :23-24), so a new run is a NEW SAMPLE and its recorded scalar
+#     could not validate VL134 -- it would sit in the ledger beside it as a non-comparable number.
+#     This lands so the next run that happens FOR ITS OWN REASONS carries the value for free.
+#
+#     ORDERING IS FIXED IN THE RECORD, not left to whoever launches next: this and move 2 (the anneal
+#     attestation) both land BEFORE anything launches. A run wants both.
 # ---------------------------------------------------------------------------------------------
 declare -A PINS=(
   ["$DRIVER"]="a45fae7c3f978c34bf73f35ab56aac668439c5784a3968b4f09799ee6090fd48"
   ["$ANNEALED"]="ce9f11f4872dd611932705e36f4ecfb651f8ee8eed796cca98be598d92fbb911"
   ["$ENGINE"]="3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa"
-  ["$WRAPPER"]="0e1471ba1d9ef1a50bf26a90c66152004d824e07e8fd868087fcbd8dfbf3ffb8"
+  ["$WRAPPER"]="7499814ecb460fdb05c8c83a2d6d54a63214e5661f4b29c2466de7592af3fb6f"
 )
 for f in "${!PINS[@]}"; do
   [[ -s "$f" ]] || die "missing: $f" 2
@@ -206,6 +223,26 @@ assert isinstance(proof, dict), (
 assert proof.get("pass") is True, f"anneal_lr_proof did not pass: {proof!r}"
 assert proof.get("n_fits_at_annealed_lr", 0) > 0, (
     f"anneal_lr_proof records ZERO fits at the annealed rate, so nothing was annealed: {proof!r}")
+# THE END-OF-RUN PUSH MUST BE PRESENT AND SELF-CONSISTENT (BEN-360, VL134). The last
+# fold_forward_per_iteration row is the push entering the FINAL iteration, one step earlier; the
+# quantity OI-125 needs is the one RunStep2(niter-1) leaves, which no RunStep1 row can see.
+eor = r.get("fold_forward_end_of_run")
+s2 = r.get("fold_forward_post_step2_per_iteration") or []
+assert isinstance(eor, dict), (
+    "no `fold_forward_end_of_run` in the report. Emitted for every run since 2026-08-16; its "
+    "absence means an older wrapper ran, and G0 should already have refused that.")
+assert niter is None or len(s2) == int(niter), f"{len(s2)} post-RunStep2 records vs niter={niter}"
+assert isinstance(eor.get("reco_weighted_mean_push"), float), f"end-of-run push not numeric: {eor!r}"
+assert eor.get("is_end_of_run_push") is True, f"end-of-run row not flagged as such: {eor!r}"
+# The overlap the wrapper already gated, re-checked HERE so the launcher does not take the wrapper's
+# word for it: RunStep2(i) leaves the push RunStep1(i+1) consumes.
+_by = {int(k["iteration"]): k for k in rec}
+for k in s2:
+    nxt = _by.get(int(k["iteration"]) + 1)
+    if nxt is not None:
+        assert k["reco_weighted_mean_push"] == nxt["reco_weighted_mean_push"], (
+            f"hooks disagree on the push at iteration {k['iteration']}: "
+            f"{k['reco_weighted_mean_push']!r} vs {nxt['reco_weighted_mean_push']!r}")
 want = (arm == "arm1")
 assert bool(r.get("fold_forward_correction_applied")) == want, \
     f"arm={arm} but fold_forward_correction_applied={r.get('fold_forward_correction_applied')!r}"
@@ -213,6 +250,8 @@ for k in rec:
     assert (k.get("applied_correction_factor") is not None) == want, \
         f"arm={arm} but iteration {k['iteration']} correction factor is {k.get('applied_correction_factor')!r}"
 print(f"[ff-launch] G3 PASS  recovery={m['recovery']!r}  iterations={len(rec)}  arm={arm}")
+print(f"[ff-launch]    END-OF-RUN push (RunStep2({eor['iteration']}) left it): "
+      f"{eor['reco_weighted_mean_push']!r}  dev_from_R={eor['deviation_from_R']!r}")
 for k in rec:
     print(f"[ff-launch]    it{k['iteration']}: ratio={k['reco_weighted_mean_push']!r} "
           f"R={k['step1_class_ratio']!r} dev={k['deviation_from_R']!r} "

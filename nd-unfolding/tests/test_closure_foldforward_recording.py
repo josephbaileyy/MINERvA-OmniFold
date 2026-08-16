@@ -517,6 +517,165 @@ class LauncherWrapperPinTest(unittest.TestCase):
             "repin the DRIVER, which is receipt-bound (BEN-270).")
 
 
+class _FakeEngine:
+    """Mirrors omnifold.MultiFold's Unfold LOOP, because that ordering is what the hooks depend on.
+
+    `omnifold.py:172-177` is `for i in range(start, niter): RunStep1(i); RunStep2(i);
+    CompileModels(fixed=True)`, and `RunStep2` assigns `self.weights_push` (`:220`). The trailing
+    `CompileModels` is reproduced deliberately -- the claim under test is that it does NOT touch
+    `weights_push`, so a fixture that omitted it would assume what it is meant to demonstrate.
+    """
+
+    def __init__(self, mc, weight_reco_leg, niter=3, n=4):
+        self.mc = mc
+        self.data = _Leg([1.0] * n, [True] * n)
+        self.mc_weight_reco = weight_reco_leg
+        self.weights_push = np.ones(n, dtype=np.float32)
+        self.niter, self.start = niter, 0
+        self.LR = 1e-4
+        self.compile_calls = []
+        self.step2_calls = []
+
+    def Unfold(self):
+        for i in range(self.start, self.niter):
+            self.RunStep1(i)
+            self.RunStep2(i)
+            self.CompileModels(fixed=True)
+
+    def RunStep1(self, i):
+        return "step1"
+
+    def RunStep2(self, i):
+        # A DIFFERENT push each iteration, so a hook reading at the wrong moment gets a wrong number
+        # rather than an accidentally-equal one.
+        self.step2_calls.append(i)
+        self.weights_push = np.full(self.weights_push.shape[0], 1.0 + 0.1 * (i + 1), dtype=np.float32)
+        return "step2"
+
+    def CompileModels(self, fixed=False):
+        self.compile_calls.append(fixed)          # must not touch weights_push
+
+
+class EndOfRunPushHookTest(unittest.TestCase):
+    """The RunStep2 hook exists to capture the ONE push no RunStep1 row can see (BEN-360, VL134).
+
+    `RunStep2(niter-1)` leaves a push that nothing consumes, and that is the value
+    `closure_powered_truth_reweight.py:332-333` persists and `OI-125` is about. Substituting the last
+    RunStep1 row gives 0.981165 against a predicted 1.011418 -- a ~105-draw-sd 'disagreement' with the
+    sign of ratio-1 flipped. Predeclared in
+    PREDECLARATION-20260816-endofrun-push-recording.md before any run carries it.
+    """
+
+    def _run(self):
+        n = 4
+        mc = _Leg([1.0] * n, [True, True, True, False], weight_reco=[1.0, 2.0, 3.0, 4.0])
+        rec_cls, ff = CPT.install_fold_forward_recorder(_FakeEngine)
+        inst = rec_cls(mc, mc.weight_reco, niter=3, n=n)
+        inst.Unfold()
+        return inst, ff, list(rec_cls.FOLD_FORWARD_STEP2_RECORDS)
+
+    def test_one_post_step2_record_per_iteration_in_order(self):
+        inst, ff, s2 = self._run()
+        self.assertEqual([r["iteration"] for r in s2], [0, 1, 2])
+        self.assertEqual(len(ff), 3)
+        self.assertEqual(inst.step2_calls, [0, 1, 2])
+
+    def test_exactly_one_record_is_flagged_end_of_run(self):
+        _, _, s2 = self._run()
+        flagged = [r for r in s2 if r["is_end_of_run_push"]]
+        self.assertEqual(len(flagged), 1)
+        self.assertEqual(flagged[0]["iteration"], 2)
+        self.assertEqual(flagged[0]["push_recorded_here_was_left_by"], "RunStep2(2)")
+
+    def test_the_final_capture_is_BIT_IDENTICAL_to_what_the_driver_persists(self):
+        """The load-bearing claim: what the hook records is what `of.weights_push` holds afterwards.
+
+        The driver reads `of.weights_push` AFTER `Unfold()` returns
+        (closure_powered_truth_reweight.py:332-333). Only `CompileModels(fixed=True)` runs between the
+        last RunStep2 and that read, so the arrays must agree bit-for-bit.
+        """
+        inst, ff, s2 = self._run()
+        persisted = np.asarray(inst.weights_push, np.float64)          # exactly the driver's read
+        leg = np.asarray(inst.mc_weight_reco, np.float64)
+        pr = np.asarray(inst.mc.pass_reco).astype(bool)
+        driver_ratio = float((leg[pr] * persisted[pr]).sum()) / float(leg[pr].sum())
+        end = [r for r in s2 if r["is_end_of_run_push"]][0]
+        self.assertEqual(end["reco_weighted_mean_push"], driver_ratio,
+                         "the hook's end-of-run capture is not the array the driver persists")
+        self.assertTrue(inst.compile_calls and all(inst.compile_calls),
+                        "the fixture must exercise the trailing CompileModels(fixed=True)")
+
+    def test_THE_ASSERTION_ABOVE_HAS_POWER_a_pre_delegation_capture_FAILS_it(self):
+        """A hook recording BEFORE super().RunStep2 would capture the previous iteration's push.
+
+        Without this, `test_the_final_capture_is_BIT_IDENTICAL...` could pass on a fixture where every
+        push happened to be equal, and would then be asserting nothing -- BEN-314.
+        """
+        n = 4
+        mc = _Leg([1.0] * n, [True, True, True, False], weight_reco=[1.0, 2.0, 3.0, 4.0])
+        captured = []
+
+        class WrongMoment(_FakeEngine):
+            def RunStep2(self, i):
+                captured.append(np.asarray(self.weights_push, np.float64).copy())   # BEFORE
+                return super().RunStep2(i)
+
+        inst = WrongMoment(mc, mc.weight_reco, niter=3, n=n)
+        inst.Unfold()
+        persisted = np.asarray(inst.weights_push, np.float64)
+        self.assertFalse(np.array_equal(captured[-1], persisted),
+                         "the fixture's pushes are indistinguishable, so the bit-identity test above "
+                         "would pass vacuously")
+
+    def test_the_overlapping_rows_agree_EXACTLY_between_the_two_hooks(self):
+        """`RunStep2(i)` leaves the push `RunStep1(i+1)` consumes, so those rows are the same number."""
+        _, ff, s2 = self._run()
+        by_iter = {r["iteration"]: r for r in ff}
+        pairs = 0
+        for r in s2:
+            nxt = by_iter.get(r["iteration"] + 1)
+            if nxt is None:
+                continue
+            self.assertEqual(r["reco_weighted_mean_push"], nxt["reco_weighted_mean_push"])
+            pairs += 1
+        self.assertEqual(pairs, 2, "niter=3 must produce 2 overlapping pairs")
+
+    def test_the_overlap_gate_REFUSES_a_disagreement(self):
+        """Demonstrated on the gate itself, not just on a passing case."""
+        ff = [{"iteration": 1, "reco_weighted_mean_push": 1.5}]
+        s2 = [{"iteration": 0, "reco_weighted_mean_push": 1.4, "is_end_of_run_push": False}]
+        by_iter = {int(r["iteration"]): r for r in ff}
+        mismatches = [r for r in s2
+                      if by_iter.get(int(r["iteration"]) + 1) is not None
+                      and r["reco_weighted_mean_push"]
+                      != by_iter[int(r["iteration"]) + 1]["reco_weighted_mean_push"]]
+        self.assertEqual(len(mismatches), 1,
+                         "the gate's comparison must flag a differing overlapping pair")
+
+    def test_both_hooks_share_ONE_reduction(self):
+        """Two copies of 'the same' arithmetic is how the overlap check would start comparing
+        implementations instead of moments."""
+        with open(PATH) as fh:
+            src = fh.read()
+        self.assertEqual(src.count("def _ff_reduce"), 1)
+        self.assertIn("rec = self._ff_reduce(int(i))", src)
+
+    def test_the_corrected_arm_still_overlaps_because_RunStep1_records_PRE_correction(self):
+        """Arm 1 rescales push inside RunStep1, but AFTER appending its row -- so equality survives."""
+        n = 4
+        mc = _Leg([1.0] * n, [True, True, True, False], weight_reco=[1.0, 2.0, 3.0, 4.0])
+        rec_cls, ff = CPT.install_fold_forward_recorder(_FakeEngine, correct=True)
+        inst = rec_cls(mc, mc.weight_reco, niter=3, n=n)
+        inst.Unfold()
+        s2 = list(rec_cls.FOLD_FORWARD_STEP2_RECORDS)
+        by_iter = {r["iteration"]: r for r in ff}
+        for r in s2:
+            nxt = by_iter.get(r["iteration"] + 1)
+            if nxt is not None:
+                self.assertEqual(r["reco_weighted_mean_push"], nxt["reco_weighted_mean_push"])
+        self.assertTrue(all(r["applied_correction_factor"] is not None for r in ff))
+
+
 class AnnealAttestationTest(unittest.TestCase):
     """`attest_anneal_took_effect` must REFUSE an un-annealed run, not describe one (BEN-317).
 

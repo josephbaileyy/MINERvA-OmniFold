@@ -136,6 +136,55 @@ Executable additions, in the same preference order as §3:
    whole defect in both truncation instances** — `head -8` and now `len(s) < 200` — and neither would
    have survived a one-line omission count.
 
+### 6a. THE EXECUTABLE FORM, adopted 2026-08-16 — and a second lane hit this the same night
+
+**The mediator ran a near-identical truncating walker over the same receipt on the same night and was
+misled the same way.** Two lanes independently, on one document, within hours. **That makes it a property
+of the tool rather than either lane's carelessness**, which is the only reason it is worth a rule instead
+of a note. Adopted by both lanes; use it in anything that surveys a structured document.
+
+```python
+def survey(obj, path="", limit=200, dropped=None):
+    """Print every leaf, and REPORT what was withheld. The report is the whole point."""
+    top = dropped is None
+    if top:
+        dropped = []
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            survey(v, f"{path}/{k}", limit, dropped)
+    elif isinstance(obj, list):
+        for i, v in enumerate(obj):
+            survey(v, f"{path}[{i}]", limit, dropped)
+    else:
+        s = str(obj)
+        if len(s) <= limit:
+            print(path, "=", s)
+        else:
+            dropped.append((path, len(s)))
+    if top and dropped:
+        print(f"\n!! {len(dropped)} FIELD(S) OMITTED as longer than {limit} chars -- "
+              f"THE LONG LEAVES ARE THE DEFINITIONS:")
+        for p, n in dropped:
+            print(f"   {p}  ({n} chars)")
+```
+
+**Run against the receipt in §6, it prints 263 leaves and reports 17 omitted — not the 18 above, and the
+one-field difference is worth a sentence.** The original walker dropped `len(s) >= 200`; this one keeps
+`len(s) <= limit`. Exactly one leaf, `/THE_QUANTITY_MISMATCH_READ_THIS_FIRST/claim`, is **precisely 200
+characters** and falls on the other side of the boundary. `263 + 17 = 280`, so both counts are right about
+their own filter. **That a one-character difference in an arbitrary cutoff moves a field between "read" and
+"invisible" is the argument for the omission report, not a footnote to it** — and it is why the report
+prints paths.
+
+**Why the omission list names paths and not just a count:** the count alone tells a reader that something
+was withheld; the paths tell them *whether it was the field they were about to make a claim about*. In
+instance five the dropped path was `/RESULT_1.../masks/recorder_population_s1_b` and the claim was about
+the population — **one line of output would have ended the error before it was written.**
+
+**And the rule that does not need the code at all:** never conclude *"the document does not say X"* from any
+filtered view of it. `grep -c pass_truth` returns `1`. **An absence claim needs a covering search, and a
+truncating survey is not one.**
+
 **A note on how this section was written, because it is the same hazard one level up.** The first draft
 of it said the dropped field was "278 characters." That number was estimated by eye from the quoted
 text and **it is wrong — the field is 250 characters, and 18 of 280 leaves were dropped, not the one.**
