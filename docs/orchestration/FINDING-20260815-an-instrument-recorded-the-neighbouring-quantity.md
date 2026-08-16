@@ -34,8 +34,21 @@ The last recorded row is `≈ 0.9812`. A reader keying off *"the final iteration
 |---|---|
 | predicted | `+1.1%` (`ratio − 1`) |
 | last recorded row | `−1.9%` |
-| distance | **~105 draw-sd** |
+| distance | **75.8 draw-sd** — gap `0.030253` ÷ arm-0 3-draw sd `0.000399` (`VL134`) |
 | sign of `ratio − 1` | **FLIPPED** |
+
+> **CORRECTION 2026-08-16. This cell read `~105 draw-sd` and that figure derives from nothing.**
+> `0.981165 − 1.011418 = −0.030253`; over the arm-0 3-draw sd `0.000399` that is **`75.8`**, and over
+> the standard error `0.000399/√3` it is **`131.3`**. Neither is `105`; the sd that would yield `105` is
+> `0.000288`, which appears in no artifact. The figure was **rhetorical, not measured** — it existed to
+> say *"the loudest possible disagreement"*, and `75.8` says that while being true.
+>
+> Found by lane B (`BEN-342`) while checking the successor instrument; re-derived independently here.
+> **It propagated to eight sites**, four of them in code and two in this finding and its sibling.
+> `BEN-361`, stated one document over, is the rule *"re-derive a predeclaration's own amplitude
+> estimate from the run's realized operands before repeating it"* — **and this document repeated an
+> underived number while stating it.** The corrected value is now carried with its operands so the next
+> reader can contradict it (`CONVENTION-receipt-ingredients.md`, `BEN-077`).
 
 **That is the loudest possible disagreement, on a predeclaration that pre-committed to disagreement
 outranking everything else — and it is false.**

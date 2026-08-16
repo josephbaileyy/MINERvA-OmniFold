@@ -9,8 +9,12 @@ account hit a session limit mid-commit. Receipt:
 `BEN-360` records that the fold-forward instrument recorded the **consumed** push rather than the
 **end-of-run** one. That single conflation produced **two** wrong readings with opposite signs:
 
-1. **§2 looked REFUTED** — a ~105-draw-sd disagreement with the sign flipped. Loud, and therefore
-   certain to be investigated.
+1. **§2 looked REFUTED** — a 75.8 draw-sd disagreement with the sign flipped (gap `0.030253` ÷ arm-0
+   3-draw sd `0.000399`, `VL134`). Loud, and therefore certain to be investigated.
+   **Corrected 2026-08-16 from `~105 draw-sd`, which derives from no operand pair in the corpus** —
+   see the correction block in `FINDING-20260815-an-instrument-recorded-the-neighbouring-quantity.md`.
+   **That this document, of all of them, repeated an underived figure is the point of `BEN-361`
+   landing on its own author.**
 2. **§6 looked CONSERVATIVE** — quiet, plausible, and **the one that would have been believed.**
 
 ## What §6 declared in advance
