@@ -9414,3 +9414,61 @@ default is fine"* is an arguable line, and the next reader arguing it is how `:-
 `MOVE 4`) is unchanged. The DRIVER is not repinned (`BEN-270`) and driver/annealed/engine literals are
 byte-identical — `train_fullevent_nominal.py` is an **addition** to the set, not a repin of anything.
 Tests: **189 passed** across the three affected suites, **34** on the hash-binding/preflight selection.
+
+## 2026-08-16 — the `(A′)` runtime-and-receipt closure: the cluster update is THREE files, and both "dirty" runtime deps are content-identical to local
+
+**Append-only.** Executor lane. **READ-ONLY throughout** — `ssh` reads and `sha256sum` over `/pscratch`,
+local reads and `git` plumbing. **No `sbatch`, `scancel`, `scontrol`, resubmission, pull, or write of any
+kind to the cluster. Nothing launched.** Artifact:
+`docs/orchestration/state/RECEIPT-aprime-runtime-receipt-closure-20260816.json`.
+
+**THE STOPPING CONDITION HELD AND THE ANSWER IS SMALL.** Of the runtime closure, exactly **three** items
+need action: the launcher (cluster `ee317ccd` vs local `4ffd5655`), the wrapper (cluster `ee269b09` vs local
+`e284cdbc`, missing `MOVE 2`/`3`/`4`), and `ff_revision_gate.py`, **absent** on the cluster. **Everything
+else the run reads is content-identical between the trees** — annealed wrapper, driver, all five
+`omnifold/*` modules, the quarantine module, the dump contract, `pet_bootstrap`, the Gate-4 validator,
+`atomic_write`.
+
+**AND THAT INCLUDES BOTH FILES `git status` CALLS DIRTY, which is the most useful thing in the inventory.**
+`train_fullevent_nominal.py` (`M`, 9/26) and `fullevent_fps_dataloader.py` (`M`, 38/5) are **byte-identical
+to local `HEAD`**. **The dirt is a FORWARD PORT relative to a stale `HEAD`, not divergence — "dirty" on a
+stale tree can mean "already updated", and that is invisible from `git status` alone.** Consumed values
+checked rather than assumed: `NOMINAL_SEED_POLICY` value-identical, `LR_POLICY_ANNEALED` byte-identical
+including `base_lr 1e-4`, and the diff touches neither assignment; the loader's edit is the Gate-5
+`precomputed_target_replica_seed` split, unreachable at `bootstrap_seed None`. **Recorded with that
+comment's own caveat — *"That is an argument, not evidence"* — because the evidence here is only that the
+two trees' CONTENT matches, which makes the reachability question moot for this comparison.**
+
+**A CONSEQUENCE OF MY OWN GATE, STATED BEFORE JOSEPH IS ASKED FOR TIME RATHER THAN DISCOVERED AFTER.**
+`G0b` asserts `git rev-parse HEAD == FF_EXPECT_REV`, required and non-symbolic. **Copying three files into a
+tree 663 commits behind leaves `HEAD` unchanged, so the gate REFUSES — correctly.** "Copy the pinned files
+and launch" is therefore **permanently unavailable on any path**, and the eventual launch requires the
+cluster tree genuinely to be at a named revision. That is the intended outcome and it is **stricter than
+`(A′)` alone**, so it changes the cost of the launch and not only its safety.
+
+**STILL OPEN, and it is the same shape `f521468` just fixed one instance of:**
+`fullevent_fps_dataloader.py` is an **unconditional runtime import that the launcher does not pin** —
+`BEN-312` identically to `train_fullevent_nominal.py`, and `f521468` closed only the latter. It is
+content-identical across trees today, **which is exactly the state `train_fullevent_nominal.py` was in
+before anyone looked.** Recommend pinning it; **not done here**, because it is receipt-bound and
+hash-pinned by the Gate-2 runtime, so a pin is a separate predeclared change rather than a drive-by.
+
+**TWO ERRORS OF MY OWN, RECORDED BECAUSE THEY ARE THE SAME ERROR TWICE IN ONE COMMAND.** I first measured
+`pet_bootstrap.py` and `verify_hash_bindings.py` under `nd-unfolding/pet/` and reported both **ABSENT ON
+BOTH TREES**. Both guesses were wrong: they live at `nd-unfolding/pet_bootstrap.py` and
+`docs/orchestration/verify_hash_bindings.py`. `pet_bootstrap.py` is in fact **identical** on both trees.
+**`BEN-315`: a null result is evidence about the search, not about the world**, and it was caught only
+because the paths were then located with `git ls-files` instead of the null being believed. Had I not
+checked, this receipt would have reported two phantom missing files and understated the closure.
+
+**One genuine difference worth naming, though not blocking:** `docs/orchestration/verify_hash_bindings.py`
+is `ff410e2d` locally and `ca83948e` on the cluster. **The tool that VERIFIES hash bindings is itself a
+different program on the two trees**, so "verified on the cluster" and "verified locally" are not the same
+claim. Not on this run's path; recorded so it is not discovered during a dispute.
+
+**Explicitly UNTRIAGED, per the stopping condition:** the remaining **17** tracked-dirty and **all 735**
+untracked files. Two of the 19 are in the closure and both are measured above. The rest are **not claimed
+harmless** — they are a preservation question for whoever updates the tree, not a launch question. Also
+recorded from the mediator's measurement rather than re-measured: the cluster remote is named **`github`,
+not `origin`**, and a second worktree `fe-fps-campaign` shares the area, so any update command written from
+local muscle memory will fail or do the wrong thing.
