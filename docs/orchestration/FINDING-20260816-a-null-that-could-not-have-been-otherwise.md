@@ -149,8 +149,40 @@ Everything below was re-derived this session.
 | **N6** | `conftest.py` has zero commits since repair-7's `code_rev`; the guard is inert wherever a writable tmpdir exists | commit claim: **yes** — derived **0** after `5c25333` (the file's three commits all predate it). Inertness: **argued, not measured** | **Falsifiable, and honestly labelled** — the verdict says "STILL OPEN **STRUCTURALLY**", so it does not pass the commit count off as the substantive evidence. Same shape as `#7` but disclosed. |
 | **repair-8 new_defect** | `test_p4_sweep_snapshots…FAILS at HEAD`, reproduced | **Yes** — a red test is the strongest available form, and I reproduced it (`n_shell_files 368 != 354`) and closed it | **Falsifiable and strongest.** |
 
-**Result: one of seven was half artifact, one (`#7`) is falsifiable but measures the wrong property, and the
-remaining five are properly evidenced.** So this is not a systemic failure of the campaign's verdicts — which
+### `#7` was then measured directly and REFUTED — with a correction to this lane's own count
+
+`#7`'s defect is *inadequacy*; its evidence measured *untouchedness*. Measuring adequacy directly (`44a24a1`)
+refuted it: the suite is adequate, so the outstanding count goes **7 → 6**.
+
+**And the mediator caught a count in that refutation which does not reproduce. It was mine, and it was an
+estimate presented as a measurement — on the same day this row made "a measurement with a reachable other
+outcome" the standard.** Derived now:
+
+| figure | derivation | value |
+|---|---|---|
+| tests named `test_MUTATION_*` | `grep -c 'def test_MUTATION_'` | **7** |
+| tests demonstrating the pre-repair form | the 7 above **plus** `test_pre_repair_expression_is_fail_open_on_a_deleted_source`, `test_the_old_absolute_diagonal_bound_could_not_fire_at_this_scale`, `test_the_pipeline_idiom_is_the_bug` | **10** |
+| what this lane reported | *"~14"* | **wrong, and matched neither** |
+
+`test_the_dead_gate_is_gone` and `test_a_tombstone_explains_why` match a *"pre-repair"* name pattern but are
+**removal** assertions, not demonstrations of pre-repair behaviour, and are excluded — the kind of
+over-inclusion that produced `~14` in the first place: the figure came from scanning a `def test` listing for
+names that *looked* like contrast tests, not from a derivation.
+
+**The more important correction is a mechanism, not a number.** The refutation cited `_load_mutated`'s
+`assert old in src` as making `BEN-331`'s shape fail loudly *by construction*. Derived: **`_load_mutated` is
+called by exactly ONE of the seven** (`:77`). The other six reconstruct the pre-repair logic **inline**, so
+that anchor assertion does not protect them.
+
+**The refutation stands, on a different mechanism than the one it cited.** What protects the six is the
+pairing: each shows the pre-repair form **accepting the same input** the repaired guard rejects — and for the
+absence-shaped ones (`test_MUTATION_psd_only_check_would_accept_it` asserts *no raise*), the paired
+`test_guard_rejects_a_psd_residual_that_is_not_stat_plus_ml` rejecting that identical matrix is what makes the
+silence mean something. **Which is this row's own rule satisfied by construction rather than by assertion: the
+null is shown capable of being non-null, by the neighbouring test, on the same operand.**
+
+**Result: one of seven was half artifact, one (`#7`) was falsifiable, measured the wrong property, and is now
+refuted by direct measurement, and the remaining five are properly evidenced.** So this is not a systemic failure of the campaign's verdicts — which
 is worth saying as plainly as the defect, because "one verdict had an artifact" invites the conclusion that
 verdicts are unreliable, and the audit does not support that.
 
