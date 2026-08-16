@@ -8896,3 +8896,75 @@ in that drift is in this lane's scope, and this lane's own baseline digest `ee26
 **Nothing promoted, nothing designated quotable, the central not moved. The five Gate-6 prohibitions
 at `19585b7` are untouched, `gate6traj-reconcile-56847059` was not touched, and nothing entered
 `docs/analysis-note/`.**
+
+## 2026-08-16 — the OI-6 note text was already written before it was dispatched; verified independently, nothing rewritten
+
+**NOTHING WAS WRITTEN INTO `docs/analysis-note/`.** No compute; no cluster contact; nothing repinned;
+nothing promoted; the five Gate-6 prohibitions at `19585b7` stay live. **The one file changed by this
+entry's commit is `FINDINGS.md`** (a `BEN-300` annotation) plus this log.
+
+**THE TASK WAS ALREADY COMPLETE WHEN IT REACHED THIS LANE.** Joseph's `OI-6` ruling landed `361d83e`
+`16:51 -0400`; the note text landed `e61624b` `18:52` (*"Place the standard-5D purity footing and its limit
+in the analysis note: app_negweight.tex B.6, note build only, all three builds pass"*) and was refined
+`7d884da` `19:01` (*"B.6's footing evidence was one epoch out of date: G-1 pins and stamps the mode the note
+said was inferred from a default"*). The dispatch arrived after `c179a35`, i.e. **at least two hours after
+completion.** Found by reading the target file before writing. **Had this lane started from the brief it
+would have written a second copy of an existing subsection into a file whose gate Joseph had opened for
+exactly one passage.** Recorded as a second instance on `BEN-300`, with the addition that matters: this
+row's thesis is that a task's HOLDER has no machine-derivable source, which is right — but **whether the
+work is already done usually does**, and one `git log -S` over the target artifact answers it before
+dispatch. Duplicate *dispatch* has a cheap check that duplicate *assignment* does not.
+
+**INDEPENDENT VERIFICATION OF THE EXISTING TEXT — `app_negweight.tex` §B.6
+(`\label{sec:negweight-footing}`), against Joseph's ordered boundary rather than against the relay.**
+
+Every SAY item is present: purity-footed (and *positively* identified — pinned in code via
+`STANDARD_BKG_MODE`, passed explicitly by the canonical launcher, stamped into every endpoint receipt,
+rather than inferred from a default); **a recorded choice, not a silent default**, with both dates and both
+grounds, and with *"it is that consequence, not the cost, that decided it"* preserved for the J28
+invalidation; the ~1–2% measured size; and the published pair as *measurement plus matched control at
+different footings*, naming `fps_provenance.PUBLICATION_BKG_MODE`.
+
+**Numbers RE-DERIVED from `RUNBOOK-20260807-gbdt-closeout.md` §2.1, not taken from the relay**, and the
+note ships its operands so a reader can re-derive them (`BEN-077`): `2.9828e-39 / 3.0242e-39 = 0.98631`
+against macro `\nwSystRatio = 0.986`; `1.7260e-40 / 1.7576e-40 = 0.98202` against `\nwStatRatio = 0.982`;
+`\nwPctTot = -0.13`, `\nwMedianBin = 1.000`, `\nwRmsBin = 1.4`. All five macros exist in `values.tex` and
+all five match the runbook.
+
+**The structural argument is there and is stronger than the brief asked:** the $\rho_1 = D-B$ identity makes
+the two constructions the same estimand, the residual displaces every universe by ~0.1%, and a systematic
+covariance is the spread *across* universes — so the ratio lands at `0.986` **rather than near the ~3% size
+of the purity correction itself**, which is the comparison that makes it structural rather than lucky.
+
+**THE PROHIBITED CLAIM IS ABSENT AND IS ACTIVELY DEFENDED.** The text states in bold that there is **no**
+full 5D 187-universe both-footing comparison at the publication configuration (5 iterations, `lgbm`),
+enumerates what the 5D evidence actually is (two-universe spot check at 1 iteration on the `hist` backend,
+with its numbers, plus the displacement argument, plus the 2D full-statistics result), says it is *not*
+ample for the stronger statement, and adds **"that statement should not be introduced here by a later
+edit"**. It also closes the adjacent route: the `lgbm`-vs-`exact` caveat is *"a reason the choice is safe,
+not evidence that it is immaterial."*
+
+**THE TWO GATES ARE SEPARATED, which was the `BEN-082` risk.** *"Nothing here adopts the standard
+five-dimensional covariance"*, with the verifier's `BLOCK`, fourteen defects outstanding, and
+*"it does not authorise the covariance-construction stages"* — *"The two questions are independent."*
+
+**BUILD AND CONTAINMENT, measured twice because `build_all.sh` exits 0 with undefined references on a cold
+tree.** `bash build_all.sh` (it is mode 644 and its own header says `bash`, so `./build_all.sh` returns 126
+— **not** a build failure) → **exit 0 on both passes, zero undefined reference/citation mentions in either,
+and the two passes' verdict lines are byte-identical**, so there was no first-pass artefact to mistake for a
+pass. `main_note.pdf` 86 pp, `main_primer.pdf` 5 pp, `main_paper.pdf` 7 pp. `check_dead_containment.py` →
+`RESULT :: PASS`, note carrying 18/18 struck literals and **0 of 18** in both outward builds.
+
+**Containment verified at PDF level, not only from the include list:** `app_negweight` is included by
+`main_note.tex` only (1/0/0), and `pdftotext` finds the footing text's distinctive strings **7 times in
+`main_note.pdf` and 0 times in both `main_paper.pdf` and `main_primer.pdf`.**
+
+**NO INTERACTION with the stale `values.tex` macros**, which were not to be touched and were not:
+`app_negweight.tex` contains zero `gbdtFive` references, and `\gbdtFiveAdoptTrace 5.81e-38`,
+`\gbdtFiveCVTrace 6.24e-38`, `\gbdtFiveMeanShift 1.65e-38` remain at `values.tex:58-60` unchanged. The
+footing text uses only the `nw*` set.
+
+**NOT ESTABLISHED:** whether the *physics* of the footing choice is right — this lane verified that the note
+says what Joseph ordered and does not say what he prohibited, which is a boundary check, not a review of
+the measurement. And `OI-6`'s explicit obligation to revisit the footing before submission is recorded in
+the note and is **not** discharged by any of this.
