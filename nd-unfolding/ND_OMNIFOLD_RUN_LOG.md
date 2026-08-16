@@ -9085,3 +9085,75 @@ nothing, `ALL REPRODUCED` at exit 0, **and exits non-zero if the leg's behaviour
 above goes stale invisibly; the probe does not.
 
 *Long form:* `docs/orchestration/FINDING-20260816-the-gate-that-measures-blas-blocking-noise.md`.
+
+## 2026-08-16 — arm 0's instrumentation is attested by NOTHING on the run side, `VL138` survives the version split anyway, and no receipt attests the anneal (`BEN-317`)
+
+**Append-only.** Executor lane, read-only: `ssh` reads over `/pscratch`, local reads and `git` history.
+**Nothing edited, nothing submitted, no authorization consumed.** Filed against this lane's own
+instrumentation, checking whether the wrapper defects it named on 2026-08-15 still stand now that arm 0's
+numbers are `VL134`/`VL135`/`VL136` and arm 1's contrast is `VL138`.
+
+**No number is overturned.** Two of three gaps are closed by measurement below; the third is bounded and
+left open. All three were invisible from the receipts.
+
+**ARM 0 RAN THE 3-PIN LAUNCHER AND NOBODY APPLIED THE AUTHORIZATION'S OWN TEST TO IT.** That test cleared
+the *resubmit*; line 1 of all three arm-0 logs is `G0 PASS driver/annealed-wrapper/engine all match their
+recorded digests` — **three pins**, because arm 0 predates `c6edc13`, **and the wrapper pin is the one that
+covers the instrumentation.** The old launcher also printed **no per-file digests at all**, so arm 0's logs
+do not record even the three values they checked.
+
+**WHICH WRAPPER ARM 0 RAN, ESTABLISHED FROM ITS PRODUCTS RATHER THAN THE TIMELINE.** Two versions existed
+at arm 0's `12:23:59Z` launch. `948e2b07`'s `install_fold_forward_recorder(base)` had **no `correct`
+parameter**, so it wrote none of `fold_forward_arm` / `fold_forward_correction_applied` /
+`records[].correction_requested` — **all three present** in arm 0's report (`arm0_instrumented_only`,
+`False`, `False`). An unrenamed `recovery_criteria_met` and an absent non-quotability `label` exclude
+`b24cfefe`; the timeline excludes `ee269b09` (`12:55:45Z`). **⇒ arm 0 ran `253f25c0`.** That digest appears
+in exactly **one** tracked file — the authorization — where it means *the stale copy to be replaced*;
+**this entry is the first place the linkage is written down.**
+
+**THE TWO ARMS OF `VL138` RAN DIFFERENT WRAPPER VERSIONS, AND THE CONTRAST SURVIVES.** `git diff c5c360e
+4e85f0e` on the wrapper is **one hunk, 21 insertions, 1 deletion**, every changed line inside the
+`if correct:` block at `:141` — the `BEN-314` dtype repair. **Arm 0 runs `correct=False` and never enters
+it**, so the two versions are behaviourally identical on arm 0's path. **Diffed, not assumed** — which is
+the only thing separating this from `BEN-315`.
+
+**STILL OPEN: NO RECEIPT ATTESTS THAT THE ANNEAL TOOK EFFECT.** All six ran `--annealed` and the
+composition is real (`closure_foldforward_instrumented.py:303-308`), but the wrapper binds `lr_records` and
+discards it, writing only `fold_forward_composed_with_annealed_arm = True`. **That boolean records that the
+install function was CALLED, and is `True` even when `fit_lr_records` is EMPTY** — precisely the state
+`closure_powered_annealed_lr.py:114-115` fails closed on. `assert_anneal_took_effect` is reachable only from
+that module's `main()` (`:178`), which the wrapper bypasses by design, **so the one guard that separates an
+annealed run from an un-annealed one is in the tree, wired into a path these six runs did not take**
+(`BEN-312` family). Measured: **no `lr_proof` in any of the six receipts; no `[annealed] LR pattern
+VERIFIED` in any of the twelve `.out`/`.err` files** — the only `anneal|learning` matches are the word
+inside the `G0` line — **and none of the 29 wrapper tests exercises the annealed composition.**
+
+**WHAT BOUNDS IT, SHORT OF ATTESTING IT.** The band `VL136` passes against comes from proven-annealed runs:
+`state/annealed-shape-r2-terminal-56552326.json` carries `anneal_lr_proof pass = True`, *"two fits at
+9.999999747378752e-05"* and *"four fits at 9.999999747378752e-06"*, `records = 6` — the expected count at
+`niter=3`. Arm 0 is **bit-identical** to that run on `h_prior`, `h_target` and `h_untilted` (`0.0` max abs
+cell difference) and its recovery sits **`0.535` declared draw-sd** from the three-run mean inside a
+**`1.557e-03`** band, so an un-annealed arm 0 would have had to land there by coincidence. **But the static
+spectra match because the INPUTS and INJECTION match, which carries no learning-rate information** — so
+this bounds the risk and **must not be recorded as attestation.** **Disposition: a PROVENANCE gap, not a
+suspicion of a wrong configuration.**
+
+**THE FIX IS TWO LINES, NOT ONE, AND IS WEAKER THAN IT LOOKS.** `base_lr` is derived from the records
+themselves (`:177`), so the assertion is **partly self-referential**: it catches an empty record list and a
+wrong *pattern*, but **cannot** catch a globally wrong base rate, since the highest observed rate becomes
+the standard. `ANNEALED_LR = 1e-5` (`:47`) is a literal and is checked; the base rate is not. **Not
+implemented, not authorized, and it cannot retro-attest the six runs** — nothing can, short of a rerun.
+
+**THE TRANSFERABLE RULE, AND IT INDICTS AN ACTION THIS LANE WAS AUTHORIZED TO TAKE.** The only direct
+witness to arm 0's instrumentation was the file on `/pscratch`, and **the authorized arm-1 resubmit
+overwrote it.** The copy was required, the copy order was the binding condition, and executing it was
+correct — **and it destroyed the last direct evidence of what arm 0 ran.** It survives only because the
+interlock demonstration happened to print `253f25c0…` in a refusal message: **a by-product of testing the
+gate, not a decision to preserve provenance.** A clean one-step "copy both", which the authorization's own
+table recommends, would have lost it. **RULE: before overwriting any cluster file a completed run's
+provenance depends on, record its digest in the same turn.** General form, and it is the worse half:
+**`G0`'s pin set defines what a run can prove about itself after the fact, so a file added to the pin map
+later leaves every EARLIER run permanently unattested on that axis — and the earlier runs are the ones
+already published.**
+
+*Long form:* `docs/orchestration/FINDING-20260816-the-arm-whose-instrumentation-nothing-pinned.md`.
