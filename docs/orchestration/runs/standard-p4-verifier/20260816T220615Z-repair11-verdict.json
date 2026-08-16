@@ -1,0 +1,135 @@
+{
+ "receipt_kind": "standard-p4-verifier verdict",
+ "utc": "2026-08-16T22:06:15Z",
+ "subject": "repair-11 -- N3+N4 at b2c8445 and N6 at a8f7b2f, against the bar predeclared in PREDECLARATION-20260816-repair11-verifier-pass.md BEFORE any of them existed",
+ "code_rev": "a8f7b2f0eea57f2f66085df41dcff9b0d338bd01",
+ "branch": "main",
+ "verdict": "PASS",
+ "previously_outstanding_total": 7,
+ "previously_outstanding_now_closed": 6,
+ "previously_refuted": 1,
+ "defects_outstanding": 1,
+ "self_guards_adequate": "NO",
+ "authorizes_covariance_stages_4_6": true,
+ "supersedes": "20260816T062458Z-repair10-verdict.json (BLOCK, 7 outstanding)",
+ "delegate": "repair-10's author, acting as standard-p4-verifier. Authored none of the repairs judged here. Holds no P4_VERIFIER_PASS token and set none; per 89c6e12 a verdict's author may not consume its own token.",
+ "THE_BAR_WAS_PREDECLARED_AND_ONE_CONDITION_OF_IT_FAILED": {
+  "which": "B1, and it failed as UNSATISFIABLE-AS-WRITTEN rather than unmet.",
+  "what_B1_demanded": "'a test that fails on the pre-fix form AND on a wrong M, which the current form cannot detect; a repair landing without that test is a BLOCK and the repair is not the question.'",
+  "why_it_cannot_be_met_where_it_was_aimed": "VERIFIED INDEPENDENTLY on this lane's own synthetic 5-axis grid (nb=[2,3,2,2,3], drop_axis=2, unequal widths on the dropped axis so M is genuinely width-weighted), NOT by reading the repair's argument. The identity route's error is IDENTICAL for a clean M and for three separate corruptions -- row scaled x2, one stored weight scaled x3, two rows swapped -- all at 2.842e-14. C_low = M C_high M^T is satisfied by ANY M, because the same M appears on both sides. No function of (C_high, M) can decide whether M is the right matrix; 'wrong' is a relation between M and the recipe that produced it.",
+  "the_defect_is_in_the_BAR": "B1 specified the LOCATION of the test (inside the projection-validity check) instead of the PROPERTY (a wrong M must be detected somewhere on the production path). That is precisely the failure mode this lane amended its own predeclaration to forbid on 2026-08-16 -- a requirement aimed at the SUBJECT rather than the PREDICATE -- so the amendment convicts the clause it shipped beside.",
+  "ruling": "B1 IS SATISFIED IN SUBSTANCE, and this is not a relabelling of a miss as a scope boundary. The distinction that decides it: an evasion would have argued impossibility and shipped only the identity fix. The repair argued impossibility AND BUILT THE DETECTOR AND WIRED IT. Verified here, not accepted: check_projection_matrix_matches_recipe returns max|diff| exactly 0.0 on a clean M and RAISES P4GateError on both corruptions tried (2 of 2592 entries differ; 8 of 2592). It is invoked at p4_project_4d.py:144, BEFORE the identity check at :158 -- the map is gated before the product.",
+  "the_independence_was_checked_by_AST_not_by_grep": "projection_M_from_recipe must not re-execute what it checks -- the OI-120(c) defect this lane retired a probe arm for. A grep returned 2 hits for 'build_projection_M' and BOTH ARE DOCSTRING MENTIONS; an ast walk over the function body returns calls to np.unravel_index / np.ravel_multi_index / np.searchsorted / np.nonzero / require only, and NO call to build_projection_M. The grep would have been reported as delegation."
+ },
+ "accepted_as_closed": [
+  {
+   "n": "N3",
+   "severity_was": "high",
+   "where": "nd-unfolding/p4_lib.py",
+   "closed_by": "b2c8445",
+   "why": "The identity leg is now _block_sum_projection(C_high, M), which accumulates without re-using M @ C_high, replacing a second leg that recomputed the same left product row by row. The wrong-M property that the old leg could not carry is now carried by a separate recipe gate, wired ahead of it.",
+   "falsified_by": "A clean M for which check_projection_matrix_matches_recipe reports max|diff| != 0.0, or a recipe-mismatched M it accepts. Tried three corruptions: clean gave exactly 0.0, two corruptions raised. Reachable, and it went the other way."
+  },
+  {
+   "n": "N4",
+   "severity_was": "medium",
+   "where": "nd-unfolding/p4_lib.py crosscheck_marginal_vs_independent",
+   "closed_by": "b2c8445",
+   "why": "Finiteness accounting added and the function stays REPORT ONLY by specification -- correct, and the repair explicitly declined to make it a gate, which belongs at the caller. The docstring now names the exact trap: nan > 0.03 is False, so n_over_3pct silently read 0 and the block was written to the receipt as if it were a measurement.",
+   "falsified_by": "Absence of an isfinite computation in the function body at HEAD. `fin = np.isfinite(a)` is present; before b2c8445 no isfinite appeared anywhere in it."
+  },
+  {
+   "n": 7,
+   "severity_was": "high",
+   "closed_by": "44a24a1 -- REFUTED, not repaired",
+   "why": "Lane B measured the mutation suite's adequacy directly rather than assuming the verdict. repair-10 filed #7 on 'unchanged since c308a9c', which is evidence of NEGLECT and not of INADEQUACY. This verdict accepts the refutation and records that the original row was mis-labelled by its author -- this lane.",
+   "falsified_by": "A fixture in the mutation suite that cannot distinguish the wrong version of the code it claims to protect. B looked and found none."
+  },
+  {
+   "n": 8,
+   "severity_was": "medium",
+   "closed_by": "86fe270",
+   "why": "Closed by lane B. SEPARATELY: repair-10's EVIDENCE for #8 was vacuous and this verdict records that rather than inheriting it. The cited grep returned 0 for p4_lib, p4_evidence, p4_adopt_standard, run_p4_standard, p4_project_4d and p4_build_components -- every module, swept or not -- because the snapshot recorded the sweep's output and never its scope (BEN-344). The defect was real; repair-10 did not establish it.",
+   "falsified_by": "Any module name appearing in the snapshot at 0e83b54. None did, for any module, which is why the null proved nothing."
+  },
+  {
+   "n": 9,
+   "severity_was": "high",
+   "closed_by": "7ae3a71",
+   "why": "The co-located status file no longer asserts the false 'six ranked defects' framing.",
+   "falsified_by": "The block's own command still returning commits it claims do not exist. re-running it was what refuted the claim originally."
+  },
+  {
+   "n": "repair-8 new_defect (sweep snapshot RED)",
+   "severity_was": "medium",
+   "closed_by": "86fe270",
+   "why": "test_p4_sweep_snapshots passes at HEAD; it failed at repair-10 and is absent from this run's failures. The watcher then did its job again during N3: 14 new recorded fields tripped it, regeneration moved 115->129 fields and 28->29 gates, which tripped the inventory binding, which was updated.",
+   "falsified_by": "The test failing at HEAD. It passes; it failed at repair-10, so the check reaches both outcomes."
+  },
+  {
+   "n": "N6",
+   "severity_was": "medium",
+   "closed_by": "a8f7b2f",
+   "why": "Closed by lane B by MANUFACTURING the read-only environment the guard was written for rather than reasoning about it -- which found 4 defects in the guard and 4 errors in B's own account of it. 445 lines of live tests. repair-10 and repair-8 both carried N6 on structure because both had deliberately created a writable tmpdir to run the suite at all; B removed that tension by building the other environment.",
+   "falsified_by": "The guard failing to fire in a genuinely read-only tmpdir. B built one and observed it."
+  }
+ ],
+ "outstanding": [
+  {
+   "n": 1,
+   "id": "R11-1",
+   "severity": "medium",
+   "where": "nd-unfolding/tests/test_p4_repair.py:329",
+   "finding": "The non-regression test protecting the recipe gate's WIRING is text-level: `self.assertIn('check_projection_matrix_matches_recipe', src)` over p4_project_4d.py's source. It passes if the call is present as TEXT, so a commented-out call satisfies it, and it never executes the production path. The gate itself is sound and correctly wired TODAY -- verified by running it -- so this is a guard weakness, not a live hole.",
+   "why_it_does_not_block": "B1's property is that a wrong M is detected on the production path, and it IS: the call is at p4_project_4d.py:144 and the gate raises. This defect is about what protects that wiring from a future edit, which is a self-guard concern and B2 predeclared that self-guards do not gate stages 4-6.",
+   "converges_with": "The repair's own disclosed residual -- check_projection_validity's signature still cannot see the recipe, so a future caller can gate the product without gating the map. Same exposure from two directions; the lane disclosed it rather than hiding it.",
+   "falsified_by": "An execution test that drives the production entry point with a recipe-mismatched M and observes P4GateError propagate. None exists; if one did, this row would be absent."
+  }
+ ],
+ "new_defects_count": 1,
+ "reconciliation_against_repair10": {
+  "identity": "repair-10 carried 7 outstanding: #7, #8, #9, N3, N4, N6, sweep-snapshot. At repair-11: 6 CLOSED (#8, #9, N3, N4, N6, sweep-snapshot) + 1 REFUTED (#7) = 7. Every one accounted for, none carried forward.",
+  "this_round": "6 closed + 1 refuted + 1 new (R11-1) = 1 outstanding.",
+  "note": "#7 is counted as REFUTED rather than CLOSED deliberately: it was never a defect, and recording it as 'closed' would credit a repair for work nobody needed to do and would hide that the verdict mis-labelled it."
+ },
+ "evidence_standard_applied": "Every row above carries `falsified_by` -- the observation that would have shown the defect absent -- per PREDECLARATION section 4 as amended 2026-08-16. The amendment requires the falsifier to address the claim's PREDICATE, not merely some fact about its SUBJECT. Applied to repair-10 retroactively, #8 would have been filed as a suspicion; the recorded repair-10 receipt is NOT relabelled, and BEN-344 carries that correction.",
+ "tests": {
+  "TMPDIR_established": "scratchpad/tmp",
+  "tmpdir_verified_writable_how": "By WRITING: probe file written, read back, removed, before the run.",
+  "command": "TMPDIR=<above> python3 -m pytest nd-unfolding/tests -q -p no:cacheprovider",
+  "result_at_stamped_code_rev": "2 failed, 1468 passed, 1 skipped, 2 warnings in 98.80s",
+  "vs_predeclared_baseline": "B3's baseline was repair-10's 3 failed / 1410 passed / 1 skipped. Failures went 3 -> 2 (the sweep-snapshot failure is gone, closed by 86fe270) and passes 1410 -> 1468. NO NEW FAILURES; B3 required any new failure to block and there are none.",
+  "the_two_failures": [
+   "test_gate2_target_runtime.py::TargetOnlyDataLoader::test_exact_numpy_source_loads_without_tensorflow_package_init",
+   "test_pet_fullevent_nominal_launcher.py::DriverConfigGate::test_config_gate_only_cli_no_train"
+  ],
+  "both_pre_existing": "Identical to two of repair-10's three, both outside the standard-P4 chain (absent /pscratch; known order-dependent launcher pollution). Not investigated further and not scored."
+ },
+ "bar_conditions": {
+  "B1": "SATISFIED IN SUBSTANCE; the clause itself was defective and that is recorded above rather than quietly reinterpreted.",
+  "B2": "HONOURED. self_guards_adequate is NO on R11-1 alone, and B2 predeclared before any repair existed that self-guards do not gate stages 4-6. Stated in advance precisely so it could not read as a concession made after seeing the count.",
+  "B3": "MET. Suite executable, TMPDIR proved by writing, no new failures.",
+  "B4": "MET. See rule_checks."
+ },
+ "rule_checks": {
+  "4a_literal_sha": true,
+  "4a_ancestor_of_head": true,
+  "4b_over_surface": "True, AND TRIVIALLY SO: code_rev == HEAD, so 4b compares HEAD with HEAD. Recorded as trivial rather than reported as a pass, because a null that could not have been otherwise is not evidence (BEN-344). The NON-TRIVIAL form is the drift check below, which could have come out otherwise and did not.",
+  "meaningful_drift_check": "paths_unchanged_between(b2c8445, a8f7b2f) over all 20 surface paths -> NONE differing. b2c8445 is the commit at which the N3/N4 analysis was performed; a8f7b2f is the stamp. So every reading holds at the stamped revision.",
+  "4c_worktree_clean_over_surface": true,
+  "surface": "20 paths, IDENTICAL to the set recorded in the predeclaration, verified from two distinct trees.",
+  "no_other_lane_disturbed": "Lanes were committing throughout; 4c returned clean and nothing of any other lane's was stashed, reverted or committed."
+ },
+ "scope_ruling_on_the_second_file": {
+  "question": "The repair edited p4_project_4d.py as well as p4_lib.py in the same commit, and flagged it rather than burying it.",
+  "ruling": "ACCEPTED, and it was required rather than merely permitted. A library gate no caller invokes is the exact defect class this repair exists to fix -- a qualifying fact computed and not put where the reader looks -- so a recipe gate landed in p4_lib.py alone would have closed nothing. Rule 4b also forces same-commit: a p4_lib.py edit landing after a PASS invalidates that PASS. The lane flagging it for a scope call rather than assuming one is the correct behaviour and is recorded as such."
+ },
+ "what_this_verdict_could_NOT_establish": [
+  "Anything requiring the cluster. No sbatch/scancel/scontrol/resubmit; /pscratch/sd/j/josephrb/gate6traj-reconcile-56847059 untouched; nothing launched.",
+  "That the two pre-existing suite failures are not defects. They are outside this chain and were confirmed identical to repair-10's, not investigated.",
+  "The 5D/4D cross-object identity C4 = M C5 M^T on the real products, which PROVENANCE-DEBT-20260810 sec 2d names as the largest remaining product gap. It needs cluster compute and is NOT authorized by this PASS.",
+  "Whether corruptions of M outside the three tried are also invisible to the identity route. Three were tried and all were; the argument for all of them is structural (the same M appears on both sides), not exhaustive.",
+  "The Assistant lane's parallel independent read, which this verdict has not seen and deliberately did not coordinate with -- two reads that talked are one read."
+ ],
+ "next_action": "R11-1 is the only outstanding item and it does not gate stages 4-6. The cheapest close is an execution test that drives the production entry with a recipe-mismatched M and observes P4GateError propagate, which would also retire the repair's own disclosed residual about check_projection_validity's signature. Consuming this PASS is not this lane's to do: 89c6e12 forbids the verdict's author from consuming its own token, and P4_VERIFIER_PASS must never be set by hand."
+}
