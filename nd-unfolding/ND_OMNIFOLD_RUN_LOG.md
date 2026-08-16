@@ -8840,3 +8840,59 @@ append-only chronology, which is here. **And it is a live instance of the very d
 carries as #5:** the reviewed revision stopped being `HEAD` while the review was still running, and
 nothing in the gate would have noticed — a verdict citing a symbolic `code_rev` would have papered over
 exactly this and reported zero differing files.
+
+## 2026-08-15 — fold-forward instrumented closure READ; both arms recorded; OI-125 narrowed, not closed
+
+Arm 1 was resubmitted as `57038937_{3,4,5}` under `AUTHORIZATION-20260815-arm1-resubmit.md` and
+completed `0:0` at ~1:57 each; arm 0 is `57012031_{0,1,2}`, complete since the morning. **Nobody had
+recorded either result.** This session read all six receipts, re-derived both results from the
+artifacts, and landed them. **No GPU, no `sbatch`, no `scancel`, no `scontrol` — two read-only ssh
+reads and one login-node python over `/pscratch`.**
+
+**Arm 1's provenance is intact and the copy-order condition held.** `logs/ff_57038937_{3,4,5}.out`
+line 1 prints the **four**-pin G0 line and lines 2-5 print the four digests, including the wrapper at
+`ee269b09…` — so those tasks ran the fixed wrapper under the hardened launcher, which is the only
+clean path the authorization allowed. Arm 0's logs print the **three**-pin line: it predates the
+wrapper pin, which is expected and does not compromise it — `4e85f0e`'s entire diff is inside the
+`if correct:` branch, so arm 0's code path is behaviourally identical across the two wrapper
+versions. That is read off the diff, not assumed.
+
+**The first result is a quantity no receipt contains.** The recorder hooks `RunStep1`, so it records
+the push entering iterations 0/1/2 and never the push `RunStep2(2)` leaves — while
+`train_fullevent_nominal.py:576-577` computes the *nominal's* fold-forward from `push` **after**
+`Unfold()`. So the closure's like-for-like number is the end-of-run one, and it is recorded nowhere.
+Reading the last recorded row in its place manufactures a `−1.9%`-vs-`+1.1%`, ~105-sd, sign-flipped
+"disagreement" with the predeclaration. Recovered properly the answer **AGREES** with §2. Numbers,
+controls and ingredients: `VALIDATION_LEDGER.md` (`FF1`-`FF7`) and
+`docs/orchestration/state/RECEIPT-foldforward-instrumented-closure-20260815.json`. Filed as
+`BEN-360`; `OI-125` is **narrowed and stays OPEN**, and closing it by citing this reconstruction
+would make the remaining hole invisible exactly as that row warns.
+
+**The second result is informative against its own prediction.** §6 declared in advance that a ~1%
+rescale would likely move recovery by less than the draw spread and that the honest report would then
+be a BOUND. It is not: the effect is `16.2×` the pooled within-arm sd with disjoint arm ranges and
+9/9 realized pairwise exceedance, **negative**. The reason is measured rather than guessed — §6 sized
+the perturbation off the end-of-run ratio while the correction is applied to the consumed one, so the
+realized rescale was `4.6%` at iteration 1, not `1%`. **The same conflation that made §2 look refuted
+made §6 look conservative; it is one error, not two** (`BEN-361`). All three §7 outcomes are excluded
+and §1's gate passes.
+
+**Two writer fixes landed with it, both for FUTURE receipts only — the six are the record and were
+not rewritten.** Non-quotability now rides as a field (`label`, the key
+`pet_diagnostic_quarantine.require_quotable` already refuses on) instead of only in the filename and
+`artifact.path`; and the retired-`0.80`-bar self-report is renamed away from `recovery_criteria_met`,
+mirroring `closure_powered_annealed_lr.py`. G0's **wrapper** pin moved `ee269b09` → `b24cfefe` in the
+same commit, which is the maintenance action that launcher's own header prescribes — the driver
+(`a45fae7c`), annealed wrapper (`ce9f11f4`) and engine (`3a2022b0`) pins are byte-identical and
+untouched, so no receipt-bound pin moved and this is not `OI-123`/`BEN-270` territory.
+
+Suite `1409 passed, 4 failed, 1 skipped`; the same 4 failures reproduce at `HEAD` in a throwaway
+worktree (`1382 passed`) and none touch these files. The `+27` is 7 new tests here plus 20 from
+`test_p4_token_gate_scope_and_rev.py`, which a peer lane landed at `5fc06b6` **while this session was
+running** — `HEAD` moved `b5e067d` → `5fc06b6` mid-read. Measured, not assumed: none of the six files
+in that drift is in this lane's scope, and this lane's own baseline digest `ee269b09` was re-read off
+`HEAD` after the drift.
+
+**Nothing promoted, nothing designated quotable, the central not moved. The five Gate-6 prohibitions
+at `19585b7` are untouched, `gate6traj-reconcile-56847059` was not touched, and nothing entered
+`docs/analysis-note/`.**

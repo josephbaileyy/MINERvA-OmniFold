@@ -1,0 +1,432 @@
+{
+  "what": "The fold-forward instrumented / scale-only-corrected powered closure, arms 0 and 1, read against PREDECLARATION-20260815-foldforward-instrumented-closure.md. TWO results: (1) the final-iteration fold-forward, which NO receipt row records and which is recovered here from weights_push; (2) arm 1's Delta recovery, which is informative against its own section-6 prediction rather than the bound that section expected.",
+  "measured_utc_date": "2026-08-15",
+  "produced_by": "fold-forward closure lane (Claude Opus 5). Read-only on the cluster: two ssh reads and one login-node python over /pscratch. NO sbatch, scancel, scontrol or resubmission; no GPU used.",
+  "predeclaration": "docs/orchestration/PREDECLARATION-20260815-foldforward-instrumented-closure.md",
+  "authorizations": [
+    "docs/orchestration/AUTHORIZATION-20260815-arm1-resubmit.md (0fb56af)",
+    "docs/orchestration/AUTHORIZATION-20260815-foldforward-closure-run.md"
+  ],
+  "THE_QUANTITY_MISMATCH_READ_THIS_FIRST": {
+    "claim": "The receipts CANNOT adjudicate the section-2 prediction, and a naive read of them manufactures a spurious ~3% disagreement WITH THE SIGN OF (ratio-1) FLIPPED. The two numbers are different quantities.",
+    "the_recorder_records_the_push_AT_CONSUMPTION": "closure_foldforward_instrumented.py:115 hooks RunStep1, so with niter=3 it records the push entering iterations 0, 1 and 2 -- i.e. after 0, 1 and 2 RunStep2 passes. Line 243-246 asserts len(records)==niter, so the row count is right and the series is complete FOR THAT QUANTITY.",
+    "the_push_left_by_the_LAST_RunStep2_is_recorded_by_no_row": "RunStep2(niter-1) leaves a push that no RunStep1 ever consumes, so the recorder never sees it. It IS persisted, as `weights_push` in the run's .npz (closure_powered_truth_reweight.py:337, 351).",
+    "and_the_END_OF_RUN_push_is_the_one_the_NOMINAL_run_records": "train_fullevent_nominal.py:576-577 computes sum_w_push_reco / sum_w_reco from `push` AFTER Unfold(), on the reco leg over mc.pass_reco. So the nominal's recorded 0.736746250130697 -- the 34% deficit the whole OI-71/OI-125 argument is about -- is the END-OF-RUN scalar, and the like-for-like closure number is the one recovered here, NOT any row the instrumentation writes.",
+    "consequence_for_OI_125": "The instrument narrows the receipt-chain hole but does not close it: dev = |ratio/R - 1| is now formable per iteration for this configuration, and it is NOT formable from any receipt for the quantity that is like-for-like with the nominal's recorded scalar. That one is still a reconstruction -- this session's, as the executor lane's 1.011418 was.",
+    "the_naive_read_and_what_it_would_have_produced": {
+      "last_recorded_row_per_draw": [
+        0.9808643978495698,
+        0.9814404879835096,
+        0.9811907544058771
+      ],
+      "mean": 0.9811652134129855,
+      "sd": 0.0002888930898171582,
+      "predicted_minus_this": 0.030252362049327908,
+      "in_draw_sd_of_that_row": 104.7181920082435,
+      "sign_of_ratio_minus_1": "negative",
+      "reading": "about -1.9% against a predicted +1.1%: a ~105-sd 'disagreement' with the sign flipped, entirely an artifact of comparing iteration 2's consumed push to the end-of-run push."
+    }
+  },
+  "RESULT_1_final_iteration_fold_forward": {
+    "predicted_by_predeclaration_section_2": 1.0114175754623134,
+    "prediction_provenance": "RECEIPT-vl100-shape-corrected-foldforward-20260815.json /VL100s_own_run_does_not_exercise_the_deficit/measured_fold_forward_ratio_own_run -- a reconstruction from run 56552326's weights_push, not a recorded value",
+    "method": {
+      "formula": "ratio = sum(w_reco[pop] * push[pop]) / sum(w_reco[pop])",
+      "source_of_formula": "closure_foldforward_instrumented.py:117-124, the recorder's own reduction, applied to the array it never sees",
+      "arrays_used": {
+        "push": "`weights_push`, from the run's own .npz -- float64, 2000000 rows, aligned to half B",
+        "row_map": "`dump_rows_b`, the same .npz -- absolute row ids into the input NPZ; identical across all six runs (verified by array equality) and strictly increasing",
+        "w_reco": "`w_reco` from the input NPZ indexed by dump_rows_b, cast float32 as the loader does (fullevent_fps_dataloader.py:1136), then mcB's in-place normalization emulated (omnifold/dataloader.py:147-156): one float32 scalar, so the ratio is scale-invariant",
+        "input_npz": "/pscratch/.../nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz, sha256 fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625 as recorded by all six receipts at source.inputs_sha256"
+      },
+      "masks": {
+        "recorder_population_s1_b": "pass_reco & pass_truth on half B -- what mcB was CONSTRUCTED with as its pass_reco (closure_powered_truth_reweight.py:305), so this is the population the recorded rows 0-2 use and the one that makes the recovered point the 4th term of the same series",
+        "receipt_population_pass_reco": "all pass_reco rows of half B -- the reduction the 1.011418 prediction used (vl100-own-run-foldforward-20260815.json /own_run_truth_grid/population)",
+        "n_s1_b": 836975,
+        "n_pass_reco_half_b": 837034,
+        "n_half_b": 2000000,
+        "the_two_populations_differ_by_rows": 59
+      }
+    },
+    "controls": {
+      "mask_control": {
+        "receipt_n_pass_reco": 836975,
+        "recomputed": 836975,
+        "equal": true,
+        "why": "the recorded rows' own n_pass_reco, reproduced exactly from the row map"
+      },
+      "weight_leg_control": {
+        "receipt_sum_w_reco": 999999.9559594712,
+        "recomputed": 1000000.1541637953,
+        "relative_difference": 1.9820433294626127e-07,
+        "why": "float32 rounding path of the loader's in-place rescale; the ratio is invariant to it, which the next control measures"
+      },
+      "scale_invariance": {
+        "max_relative_difference_normalized_vs_raw_weight_leg": 3.5101921369573574e-12,
+        "why": "a global rescale cannot move a weighted mean; measured rather than argued"
+      },
+      "alignment_control": {
+        "what": "rebuild h_prior and h_unfolded from (weights_push, dump_rows_b) with closure_powered_truth_reweight.py:157-168's own unit_spectrum, and reproduce each run's PUBLISHED recovery",
+        "why": "this is the control RECEIPT-vl100-...json:alignment_control ran at 1.3e-10 on run 56552326; running the SAME control on these six artifacts is what makes the recovered number comparable by construction rather than by assertion. A wrong push<->row pairing moves h_unfolded by order its own bin values (1e-3), not 1e-10.",
+        "per_run": {
+          "57012031_0": {
+            "recovery_rebuilt": 0.5118916142497627,
+            "recovery_published": 0.5118916141218095,
+            "abs_difference": 1.279532035880493e-10,
+            "max_relative_deviation_over_cells_with_mass": 5.809048619909163e-08
+          },
+          "57012031_1": {
+            "recovery_rebuilt": 0.512232159988405,
+            "recovery_published": 0.512232159859489,
+            "abs_difference": 1.2891598899500423e-10,
+            "max_relative_deviation_over_cells_with_mass": 5.809044578697353e-08
+          },
+          "57012031_2": {
+            "recovery_rebuilt": 0.5114737117220407,
+            "recovery_published": 0.5114737115921805,
+            "abs_difference": 1.2986023367744792e-10,
+            "max_relative_deviation_over_cells_with_mass": 5.8090412036193584e-08
+          },
+          "57038937_3": {
+            "recovery_rebuilt": 0.5044424241272487,
+            "recovery_published": 0.5044424240293897,
+            "abs_difference": 9.785905419334995e-11,
+            "max_relative_deviation_over_cells_with_mass": 5.809017733504618e-08
+          },
+          "57038937_4": {
+            "recovery_rebuilt": 0.505282651457847,
+            "recovery_published": 0.5052826513280378,
+            "abs_difference": 1.2980916341831517e-10,
+            "max_relative_deviation_over_cells_with_mass": 5.809015268809503e-08
+          },
+          "57038937_5": {
+            "recovery_rebuilt": 0.5052069694666526,
+            "recovery_published": 0.5052069693693144,
+            "abs_difference": 9.733813755019582e-11,
+            "max_relative_deviation_over_cells_with_mass": 5.8090214638539805e-08
+          }
+        },
+        "worst_abs_difference_over_six": 1.2986023367744792e-10,
+        "comparison_to_the_receipt_that_set_the_method": {
+          "its_abs_difference": 1.3272005716657986e-10,
+          "its_max_relative_deviation": 5.809051470161228e-08,
+          "reading": "same magnitude on both axes; the method reproduces"
+        }
+      }
+    },
+    "arm0_recovered_final_push": {
+      "per_draw_recorder_population_s1_b": {
+        "57012031_0": 1.010530049455692,
+        "57012031_1": 1.0113143658230759,
+        "57012031_2": 1.0107914240434765
+      },
+      "sum_w_push_reco_per_draw": {
+        "57012031_0": 1010530.2052428395,
+        "57012031_1": 1011314.5217311368,
+        "57012031_2": 1010791.5798709188
+      },
+      "sum_w_reco": 1000000.1541637953,
+      "mean": 1.0108786131074148,
+      "sd_n3": 0.00039936135352511623,
+      "min": 1.010530049455692,
+      "max": 1.0113143658230759,
+      "range": 0.0007843163673839637,
+      "per_draw_receipt_population_pass_reco": {
+        "57012031_0": 1.0105292928885956,
+        "57012031_1": 1.011313552903806,
+        "57012031_2": 1.0107906486969749
+      },
+      "mean_receipt_population": 1.0108778314964588,
+      "population_sensitivity": 7.731996164439536e-07
+    },
+    "arm1_recovered_final_push": {
+      "per_draw_recorder_population_s1_b": {
+        "57038937_3": 1.01762938687255,
+        "57038937_4": 1.0177752544780292,
+        "57038937_5": 1.017721779593181
+      },
+      "mean": 1.0177088069812534,
+      "sd_n3": 7.379401112038138e-05,
+      "reading": "the correction drives the CONSUMED push toward R at every iteration, and the end-of-run push it leaves is FURTHER from 1 than arm 0's, not closer -- the corrected arm's fixed point is not the uncorrected arm's"
+    },
+    "VERDICT_vs_section_2": {
+      "verdict": "AGREE",
+      "predicted_minus_arm0_mean": 0.0005389623548985867,
+      "relative": 0.0005331622886370405,
+      "in_sample_sd_units": 1.349560617574106,
+      "prediction_sd_for_a_4th_draw": 0.0004611427699233183,
+      "in_prediction_sd_units": 1.1687537787661915,
+      "inside_the_three_draw_range": false,
+      "distance_above_the_three_draw_max": 0.00010320963923748927,
+      "that_distance_in_sample_sd": 0.2584367223479933,
+      "sign_of_ratio_minus_1_predicted": "positive",
+      "sign_of_ratio_minus_1_recovered": "positive",
+      "tolerance_stated_plainly": "The predeclaration set no numeric tolerance for this comparison, so the honest one is the run's own draw spread. 1.011418 is a SINGLE draw of the same configuration (run 56552326), so the right question is whether it is consistent with being a fourth draw: it sits 1.17 prediction-sd above the three-draw mean. It is NOT inside the three-draw range -- it is 1.0e-04 above the max, 0.26 sd -- and that is stated rather than smoothed over, because at n=3 a range is not a confidence interval. AGREE at the draw-spread tolerance; and emphatically NOT the -3% / 105-sd / sign-flipped disagreement a naive read of the last recorded row produces.",
+      "what_this_does_NOT_say": [
+        "It does not make 1.011418 a RECORDED value. It remains a reconstruction, and so does the number above -- OI-125's hole is narrowed, not closed.",
+        "It does not close OI-71 G4 by itself; that row's remaining content is recovery at the PROMOTED configuration, and this is a closure.",
+        "It says nothing about the nominal run's 34% deficit, whose magnitude is untouched here. This closure's fold-forward is ~1.011, so it still does not exercise it."
+      ]
+    }
+  },
+  "RESULT_2_arm1_delta_recovery": {
+    "section_6_declared_in_advance": "a ~1% rescale may move recovery by LESS than the draw spread 0.00082, in which case arm 1 is underpowered by construction and the honest report is a BOUND, not a null",
+    "what_happened_instead": "the effect is 8.4x the declared draw spread and 16.2x the within-arm pooled sd, with disjoint arm ranges -- so this is NOT the bound section 6 expected, and the reason is section 5's amplitude, measured below",
+    "recoveries": {
+      "arm0": {
+        "57012031_0": 0.5118916141218095,
+        "57012031_1": 0.512232159859489,
+        "57012031_2": 0.5114737115921805
+      },
+      "arm1": {
+        "57038937_3": 0.5044424240293897,
+        "57038937_4": 0.5052826513280378,
+        "57038937_5": 0.5052069693693144
+      }
+    },
+    "arm0": {
+      "mean": 0.5118658285244929,
+      "sd_n3": 0.00037988105548652373,
+      "min": 0.5114737115921805,
+      "max": 0.512232159859489
+    },
+    "arm1": {
+      "mean": 0.5049773482422473,
+      "sd_n3": 0.00046480089806828653,
+      "min": 0.5044424240293897,
+      "max": 0.5052826513280378
+    },
+    "delta_recovery_arm1_minus_arm0": -0.006888480282245646,
+    "abs_delta": 0.006888480282245646,
+    "sign": "NEGATIVE -- the scale-only correction makes recovery WORSE on this closure",
+    "within_arm_pooled_sd": 0.00042446995839672864,
+    "abs_delta_over_pooled_sd": 16.228428292697604,
+    "abs_delta_over_declared_draw_sd": 8.399274603776052,
+    "declared_draw_sd": 0.000820128,
+    "margin_for_scale": 0.01802087615174025,
+    "abs_delta_over_margin": 0.3822500207116975,
+    "ranges_disjoint": true,
+    "gap_between_ranges": 0.006191060264142623,
+    "gap_in_pooled_sd": 14.585390889680301,
+    "REALIZED_exceedance_not_a_fitted_tail_BEN_025": {
+      "all_nine_pairwise_differences_arm1_minus_arm0": [
+        -0.007449190092419844,
+        -0.0077897358300993425,
+        -0.007031287562790811,
+        -0.0066089627937716555,
+        -0.006949508531451154,
+        -0.006191060264142623,
+        -0.006684644752495084,
+        -0.007025190490174582,
+        -0.006266742222866051
+      ],
+      "pairs_with_arm1_below_arm0": "9/9",
+      "pairs_exceeding_the_declared_draw_spread": "9/9",
+      "pairs_exceeding_the_pooled_within_arm_sd": "9/9",
+      "smallest_absolute_pairwise_difference": 0.006191060264142623,
+      "smallest_in_pooled_sd": 14.585390889680301,
+      "exact_permutation_test": {
+        "labelings_enumerated": 20,
+        "labelings_reaching_the_observed_abs_delta_mean": 2,
+        "two_sided_p": 0.1,
+        "reading": "0.1 is the FLOOR at 3 vs 3 -- complete separation cannot do better than 2/20, so the permutation p is bounded by the design and is NOT evidence of weakness. Reported because the alternative -- a fitted gaussian tail on n=3 -- is what BEN-025 forbids."
+      }
+    },
+    "the_honest_statement": "|Delta recovery| = 0.006888 at 3 draws per arm, effect NEGATIVE, arm ranges disjoint, 9 of 9 realized pairwise differences in the same direction and all exceeding both spread scales. This is a MEASURED EFFECT, not a bound and not a null. It is 0.38 of the margin, so both arms still clear the adopted criterion."
+  },
+  "PREDECLARATION_section_1_gate_arm0_must_reproduce": {
+    "existing_three_draws": {
+      "56552326": 0.5126032761517403,
+      "56611837": 0.5113772818506951,
+      "56626305": 0.5129339605215806
+    },
+    "existing_mean": 0.5123048395080053,
+    "existing_sd": 0.0008201283093762214,
+    "existing_band": [
+      0.5113772818506951,
+      0.5129339605215806
+    ],
+    "arm0_draws_inside_the_band": true,
+    "arm0_mean_minus_existing_mean": -0.0004390109835124001,
+    "that_in_declared_draw_sd": -0.5352956898342699,
+    "the_four_285_cell_spectra_vs_run_56552326": {
+      "h_prior_max_abs_cell_difference": 0.0,
+      "h_target_max_abs_cell_difference": 0.0,
+      "h_untilted_max_abs_cell_difference": 0.0,
+      "h_unfolded_max_abs_cell_difference_over_the_three_draws": 4.988829092261553e-05,
+      "reading": "three of the four are BIT-IDENTICAL, which is the strong form of section 1's `1e-9`. The fourth, h_unfolded, is the TRAINED spectrum and cannot be 1e-9-identical across independent draws -- its scatter IS the draw spread the gate is stated against, and stating it as a pass at 1e-9 would be meaningless. Section 1's other clause -- recovery inside the measured three-draw band -- is the one that binds h_unfolded, and it passes."
+    },
+    "gate_verdict": "PASS -- arm 1 may be read"
+  },
+  "PREDECLARATION_section_7_declared_uninformative_outcomes": {
+    "1_arm0_fails_to_reproduce": "EXCLUDED -- see the section-1 block",
+    "2_delta_below_the_pooled_spread": "EXCLUDED -- |Delta| is 16.23x the pooled sd",
+    "3_arm1_correction_factor_approx_1": {
+      "verdict": "EXCLUDED",
+      "applied_correction_factor_per_draw": {
+        "57038937_3": [
+          0.9999997219401199,
+          1.0463028283833,
+          1.0044271047948878
+        ],
+        "57038937_4": [
+          0.9999997219401199,
+          1.0463040837221362,
+          1.0041653772769075
+        ],
+        "57038937_5": [
+          0.9999997219401199,
+          1.0457214866620872,
+          1.0042840554693395
+        ]
+      },
+      "iteration_1_mean_factor": 1.0461094662558412,
+      "iteration_2_mean_factor": 1.0042921791803783,
+      "iteration_0_note": "1/R by construction: push == 1 there, so that row is not a measurement of the estimator (the module's own docstring says so)"
+    },
+    "4_any_task_exiting_other_than_0_or_3": {
+      "verdict": "EXCLUDED",
+      "sacct_this_session": {
+        "57012031_0": "COMPLETED 0:0 01:56:11",
+        "57012031_1": "COMPLETED 0:0 01:56:02",
+        "57012031_2": "COMPLETED 0:0 01:57:06",
+        "57038937_3": "COMPLETED 0:0 01:56:59",
+        "57038937_4": "COMPLETED 0:0 01:57:24",
+        "57038937_5": "COMPLETED 0:0 01:58:29"
+      },
+      "the_failed_arm1_attempt_superseded": {
+        "57012031_3": "FAILED 1:0 00:02:05",
+        "57012031_4": "FAILED 1:0 00:01:57",
+        "57012031_5": "FAILED 1:0 00:02:07"
+      },
+      "driver_exit_3_is_the_retired_self_check": "both logs print `driver exit 3`, tolerated by section 4 and by the launcher header"
+    }
+  },
+  "SECTION_6_AMPLITUDE_PREMISE_WAS_WRONG_AND_THAT_IS_WHY_ARM_1_IS_NOT_UNDERPOWERED": {
+    "what_section_6_argued": "this closure's fold-forward ratio is ~= 1.011418, so unless R is far from 1 the scale-only correction is a rescale of order 1%",
+    "what_the_correction_actually_is": "R / ratio evaluated at the ratio ENTERING each iteration, which the recorder measures at 0.9558 (iteration 1) and 0.9809-0.9958 (iteration 2)",
+    "iteration_1_rescale_percent": 4.6109466255841225,
+    "the_declared_amplitude_percent": 1.1417575462313367,
+    "ratio_of_actual_to_declared_amplitude": 4.038463893497996,
+    "reading": "section 6 sized the perturbation off the END-OF-RUN ratio and the correction is applied to the CONSUMED one -- the SAME conflation that makes the receipts look like they contradict section 2. The two errors are one error, and it cuts both ways: it made section 2 look refuted and section 6 look conservative. Arm 1 measures the sensitivity of recovery to a ~4.6% fold-forward rescale at iteration 1, NOT the ~1% section 6 declared, and STILL not the effect of correcting a 34% deficit."
+  },
+  "the_adopted_criterion_all_six_PASS": {
+    "adopted_threshold": 0.49458240000000003,
+    "operands": {
+      "f": 0.8,
+      "acceptance_limited_ceiling": 0.618228
+    },
+    "source": "CLM-012, adopted 2026-08-09",
+    "per_run": {
+      "57012031_0": {
+        "recovery": 0.5118916141218095,
+        "margin_vs_adopted": 0.01730921412180947,
+        "passes": true
+      },
+      "57012031_1": {
+        "recovery": 0.512232159859489,
+        "margin_vs_adopted": 0.017649759859488967,
+        "passes": true
+      },
+      "57012031_2": {
+        "recovery": 0.5114737115921805,
+        "margin_vs_adopted": 0.016891311592180436,
+        "passes": true
+      },
+      "57038937_3": {
+        "recovery": 0.5044424240293897,
+        "margin_vs_adopted": 0.009860024029389625,
+        "passes": true
+      },
+      "57038937_4": {
+        "recovery": 0.5052826513280378,
+        "margin_vs_adopted": 0.010700251328037813,
+        "passes": true
+      },
+      "57038937_5": {
+        "recovery": 0.5052069693693144,
+        "margin_vs_adopted": 0.010624569369314385,
+        "passes": true
+      }
+    },
+    "the_receipts_own_literal_fields_say_otherwise_and_are_NOT_the_verdict": {
+      "verdict": "FAIL (all six)",
+      "recovery_criteria_met": "false (all six)",
+      "criteria.recovery_min": 0.8,
+      "why": "closure_powered_truth_reweight.py:105's RESIDUAL_OVER_GAP_MAX = 0.20, the bar CLM-012 RETIRED on 2026-08-09. Predeclaration section 4 already states the retired literal is not consulted for any verdict, so this is a residual that misleads a JSON-only reader, NOT a live misquote.",
+      "fixed_for_FUTURE_receipts_only": "closure_foldforward_instrumented.py now renames the field, mirroring closure_powered_annealed_lr.py. The six receipts above are NOT rewritten -- they are the record."
+    }
+  },
+  "PROHIBITIONS_OBSERVED": [
+    "No GPU used and no job submitted, cancelled or scontrol'd.",
+    "No promotion; nothing designated quotable; the central was not moved.",
+    "The five Gate-6 prohibitions at 19585b7 are untouched.",
+    "Nothing entered docs/analysis-note/.",
+    "/pscratch/sd/j/josephrb/gate6traj-reconcile-56847059 untouched.",
+    "No receipt-bound pin repinned: the driver (a45fae7c), annealed wrapper (ce9f11f4) and engine (3a2022b0) digests are byte-identical and unchanged. The launcher's WRAPPER pin was updated ee269b09 -> b24cfefe in the same commit as the wrapper edit, which is the maintenance action that launcher's own G0 header prescribes; no receipt binds it, and arm 1's log preserves the digest it ran.",
+    "No tracked script renamed or deleted."
+  ],
+  "artifacts_read": [
+    {
+      "job": "57012031_0",
+      "path_on_pscratch": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/foldforward_instrumented/NONQUOTABLE-DIAGNOSTIC.FOLDFORWARD_ARM0_DRAW0.slurm-57012031_0.json",
+      "report_sha256_local_copy": "a2c6a1c3fad2ca096c60609db7dc1a490039cb62d584be10bd72e4587945fdf4",
+      "npz_sha256_as_recorded_in_the_report": "c24940a7f3b2f9ab37930b277b6ad5f55c9046b7d6dec9c71c8a88afdd68df75"
+    },
+    {
+      "job": "57012031_1",
+      "path_on_pscratch": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/foldforward_instrumented/NONQUOTABLE-DIAGNOSTIC.FOLDFORWARD_ARM0_DRAW1.slurm-57012031_1.json",
+      "report_sha256_local_copy": "254dd8837baa69ea832eb8f92b13ababbe5de3e9a0dee4b9511234ed84c4996f",
+      "npz_sha256_as_recorded_in_the_report": "eafbcaf71316f5eb491b1ef8829f4a8aaefbe7a454f687738ae0c66ec35e66a1"
+    },
+    {
+      "job": "57012031_2",
+      "path_on_pscratch": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/foldforward_instrumented/NONQUOTABLE-DIAGNOSTIC.FOLDFORWARD_ARM0_DRAW2.slurm-57012031_2.json",
+      "report_sha256_local_copy": "60bb7bf44fdaca00024fe0118213fe350449e2be5365113be190b4bbfdf4fb23",
+      "npz_sha256_as_recorded_in_the_report": "3ea102822730932d952e7a25ba360719f5323341536e0c0983739244a7ed387e"
+    },
+    {
+      "job": "57038937_3",
+      "path_on_pscratch": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/foldforward_instrumented/NONQUOTABLE-DIAGNOSTIC.FOLDFORWARD_ARM1_DRAW0.slurm-57038937_3.json",
+      "report_sha256_local_copy": "16338967615e35fa548e9a9136ead4ccaca2fb19de12c668c8ceb0b1a7265d2d",
+      "npz_sha256_as_recorded_in_the_report": "a6b950bccbf46d578be41dfe3d3cbc4c6764ad26c07e0bb1ed496a20d532fe9c"
+    },
+    {
+      "job": "57038937_4",
+      "path_on_pscratch": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/foldforward_instrumented/NONQUOTABLE-DIAGNOSTIC.FOLDFORWARD_ARM1_DRAW1.slurm-57038937_4.json",
+      "report_sha256_local_copy": "eb73e9477d988c72f813ee187cb6abf59276376acd7aeec37d8bb6529adf15d8",
+      "npz_sha256_as_recorded_in_the_report": "f4ec6ebbb734d442092a59d8bdf1335c6baaaa22219ee92706e491ce1fe825b5"
+    },
+    {
+      "job": "57038937_5",
+      "path_on_pscratch": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/foldforward_instrumented/NONQUOTABLE-DIAGNOSTIC.FOLDFORWARD_ARM1_DRAW2.slurm-57038937_5.json",
+      "report_sha256_local_copy": "0e19dda5e9676b8f168befbd7ff9d33333b5f4102968f639420179cf48693269",
+      "npz_sha256_as_recorded_in_the_report": "5c01b0d3de78ed4e92ca913be48123ad586abba664854abcdec7bb4ecb118aca"
+    },
+    {
+      "job": "56552326",
+      "path_on_pscratch": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/annealed_shape_validation/NONQUOTABLE-DIAGNOSTIC.POWERED_CLOSURE_ANNEALED.slurm-56552326.json",
+      "report_sha256_local_copy": "f7f764594f384ea5dcb0f68809d6e1e185bb405992faaf87a013928daee9c015",
+      "npz_sha256_as_recorded_in_the_report": "1c5a8fef4683b2114a27272b6d7652129c9d3d22aed7dae68d54c0ddaa780202"
+    },
+    {
+      "job": "56611837",
+      "path_on_pscratch": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/annealed_shape_validation/NONQUOTABLE-DIAGNOSTIC.POWERED_CLOSURE_ANNEALED.slurm-56611837.json",
+      "report_sha256_local_copy": "51a7d9db50d9c24043d5d92ef9ef286b143c63495c1123e1695ce2cb8ccbed05",
+      "npz_sha256_as_recorded_in_the_report": "c304c498d2412c99c79240d568511ee115126ec10222c15036bd3600f747f368"
+    },
+    {
+      "job": "56626305",
+      "path_on_pscratch": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/annealed_shape_validation/NONQUOTABLE-DIAGNOSTIC.POWERED_CLOSURE_ANNEALED.slurm-56626305.json",
+      "report_sha256_local_copy": "c6eec57cf1e02cd43e957dd22a20b8d886aba0c487a44f963864cc1a101859d9",
+      "npz_sha256_as_recorded_in_the_report": "bd6d5796f9a0f2ad9670b7dd15e04a7838ee16ebf50693c81e11ed020e8291b0"
+    }
+  ],
+  "scripts_this_session": [
+    {
+      "path": "/pscratch/sd/j/josephrb/scratchwork_recover_final_foldforward.py",
+      "sha256": "2456a15674f6cde742ada359b77620f388b31a520e0190430a513fe8fa6fbb42",
+      "what": "the cluster-side recovery + all four controls; full stream redirected to scratchwork_recover_final_foldforward.log, never piped through tail/head (BEN-026)"
+    }
+  ]
+}

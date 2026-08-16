@@ -185,6 +185,95 @@ FOLD_FORWARD_NOTE = (
 )
 
 
+def annotate_nonquotability(rep, json_path, artifact_path=None):
+    """Carry non-quotability as a FIELD, not only in the filename and `artifact.path`.
+
+    THE GAP THIS CLOSES. Every product this module has written so far says NONQUOTABLE-DIAGNOSTIC in
+    two places -- the report's own basename and the `.npz` path echoed at `artifact.path` -- and
+    NOWHERE ELSE. A consumer that loads the JSON and keys off fields (which is what a consumer
+    should do; `build_cstat_gate5_n50.FORBIDDEN_SUBSTR` keying off a filename substring is the
+    fragile form, not the model) sees a report with a `recovery` and no marking at all. The six
+    receipts of 2026-08-15 are left as they are -- they are the record -- so this affects future
+    ones only.
+
+    `label` IS THE FIELD AND THAT IS NOT AN ARBITRARY CHOICE: `pet_diagnostic_quarantine.
+    require_quotable:156` already refuses any manifest whose `label` is `DIAGNOSTIC_LABEL`, and
+    `fps_provenance:297` requires `PUBLICATION_LABEL` before it will treat one as publication. So
+    the key is one an existing consumer acts on, rather than a new boolean nobody reads.
+
+    AND THE FLAG IS NOT THE MECHANISM. That module's docstring is explicit that writing
+    `publication_gate_rejects_this: true` is a CLAIM and that its gate therefore recomputes the
+    physics instead of reading the flag -- hand-flipping the boolean, moving the file, or stripping
+    the marker must all fail to make a product quotable. Nothing here weakens that: this records
+    two separable things, (a) that a product of THIS module is non-quotable by construction, which
+    is true of the module rather than of any run, and (b) whether the filename marker is actually
+    present, which is MEASURED off the paths and may read false. They are kept apart so a false (b)
+    cannot be hidden by a true (a).
+    """
+    label, marker, source = "nonquotable-diagnostic", "NONQUOTABLE-DIAGNOSTIC", "local literal"
+    try:
+        import pet_diagnostic_quarantine as pdq
+        label, marker = pdq.DIAGNOSTIC_LABEL, pdq.FILENAME_MARKER
+        source = "pet_diagnostic_quarantine.DIAGNOSTIC_LABEL/FILENAME_MARKER"
+    except Exception as exc:          # login-safe path: say which copy of the name was used
+        source = f"local literal ({type(exc).__name__} importing pet_diagnostic_quarantine)"
+
+    rep["label"] = label
+    rep["nonquotable"] = True
+    rep["nonquotability"] = {
+        "label": label,
+        "label_source": source,
+        "filename_marker": marker,
+        "marker_in_report_filename": marker in os.path.basename(json_path or ""),
+        "marker_in_artifact_path": marker in os.path.basename(artifact_path or ""),
+        "why": ("a product of closure_foldforward_instrumented.py is an unpromoted DIAGNOSTIC "
+                "closure: it is not a publication estimate, it designates nothing quotable, and no "
+                "authorization in this campaign has ever made one quotable. The two marker booleans "
+                "above are MEASURED off the paths this run actually wrote and are not part of that "
+                "claim."),
+        "enforced_by": ("pet_diagnostic_quarantine.require_quotable rejects on `label`; it does NOT "
+                        "trust this field for the converse -- it recomputes the fold-forward "
+                        "deviation from the weights artifact, so clearing these fields does not "
+                        "make anything quotable."),
+    }
+    return rep
+
+
+def rename_retired_recovery_bar_field(rep):
+    """Rename `recovery_criteria_met` so a JSON-only reader cannot mistake it for the verdict.
+
+    Identical in intent and wording to `closure_powered_annealed_lr.py:196-207`, which does this for
+    the runs it drives. This module composes with that one but calls only its
+    `install_annealed_multifold`, never its `main`, so its rename never reaches a report written
+    here -- all six products of 2026-08-15 carry the un-renamed field, inherited from
+    `closure_powered_truth_reweight.py:362-365`.
+
+    The value is the pinned driver's self-report against its own hardcoded
+    `RESIDUAL_OVER_GAP_MAX = 0.20` (`closure_powered_truth_reweight.py:105`), i.e. the
+    `recovery >= 0.80` bar CLM-012 RETIRED on 2026-08-09. Renaming rather than correcting is the
+    point: editing a criterion inside a hash-pinned closure to make a check pass is the prohibited
+    act, and it is unnecessary because the authoritative evaluation re-derives the spectra and reads
+    the adopted threshold from FROZEN.
+
+    Safe to rename, checked rather than assumed (2026-08-15): no non-test module reads
+    `recovery_criteria_met`; `is_powered_closure` IS read (`validate_pet_nominal_gate4:722`) and is
+    left untouched. Idempotent, so composing with the annealed wrapper's rename cannot double-apply.
+    """
+    if "recovery_criteria_met" not in rep:
+        return rep
+    rep["recovery_criteria_met_AGAINST_RETIRED_0p80_BAR_NOT_THE_VERDICT"] = rep.pop(
+        "recovery_criteria_met")
+    rep["recovery_criteria_met_field_note"] = (
+        "RENAMED from `recovery_criteria_met` by closure_foldforward_instrumented.py. The value is "
+        "the closure driver's self-report against its own hardcoded recovery >= 0.80 "
+        "(closure_powered_truth_reweight.py:105) -- the bar CLM-012 RETIRED on 2026-08-09. It is "
+        "NOT the verdict, and neither is the sibling `verdict` field, which the same driver derives "
+        "from the same retired literal. The authoritative evaluation is "
+        "validate_pet_nominal_gate4.check_powered_closure, which re-derives the spectra and reads "
+        "the ADOPTED threshold from FROZEN; `metrics.recovery` is the number to evaluate.")
+    return rep
+
+
 def main(argv=None):
     """Run the powered closure with the recorder installed, then inject the records into its report.
 
@@ -257,6 +346,8 @@ def main(argv=None):
         if correct else "none; arm 0 records only and changes no weight, model or metric")
     if lr_records is not None:
         rep["fold_forward_composed_with_annealed_arm"] = True
+    annotate_nonquotability(rep, out, artifact_path=(rep.get("artifact") or {}).get("path"))
+    rename_retired_recovery_bar_field(rep)
     tmp = out + ".tmp"
     with open(tmp, "w") as fh:
         json.dump(rep, fh, indent=2)
@@ -269,7 +360,17 @@ def main(argv=None):
     if len(back.get("fold_forward_per_iteration") or []) != len(ff_records):
         raise SystemExit("[ff] the annotated report does not read back with its fold-forward "
                          "records (fail closed)")
+    # The two annotations above are the ones a JSON-only consumer keys off, so they are verified on
+    # the bytes rather than on the dict that was serialized.
+    if not back.get("nonquotable") or not back.get("nonquotability"):
+        raise SystemExit("[ff] the annotated report does not read back as non-quotable; a consumer "
+                         "parsing this JSON would see an unmarked result (fail closed)")
+    if "recovery_criteria_met" in back:
+        raise SystemExit("[ff] the retired-0.80-bar field read back under its original name, where "
+                         "it will be mistaken for the verdict (fail closed)")
     print(f"[ff] arm={arm} recorded {len(ff_records)} iterations into {out}")
+    print(f"[ff] report marked label={back.get('label')!r} nonquotable=True; the retired-0.80-bar "
+          f"self-report was renamed away from `recovery_criteria_met`")
     for r in ff_records:
         print(f"[ff]   iteration {r['iteration']}: ratio={r['reco_weighted_mean_push']!r} "
               f"R={r['step1_class_ratio']!r} dev={r['deviation_from_R']!r}")

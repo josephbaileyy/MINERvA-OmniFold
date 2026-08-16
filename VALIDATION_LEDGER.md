@@ -1929,3 +1929,65 @@ flux/Muon_Energy region leaves little freedom to absorb a coherent ~1–2 % shap
 **Scope.** Pre-unfolding bound on the MC prediction; MC signal-reco sample (background is ~2 % of
 entries); pT and p∥ only — it does not bound 5D/ND quantities. **Status: VERIFIED-NUMERIC.** The
 defect is not thereby correct; it is bounded.
+
+## 2026-08-15 Fold-forward instrumented closure, arms 0 and 1 — VERIFIED-NUMERIC DIAGNOSTIC
+
+Array `57012031_{0,1,2}` (arm 0, instrumented only) and `57038937_{3,4,5}` (arm 1, scale-only
+corrected) completed `0:0` in ~1:57 each; states from `sacct -X` run in the reading session, not
+recalled. All six products are `NONQUOTABLE-DIAGNOSTIC.`-prefixed. Predeclaration:
+`docs/orchestration/PREDECLARATION-20260815-foldforward-instrumented-closure.md`. Authorizations:
+`AUTHORIZATION-20260815-foldforward-closure-run.md` and `AUTHORIZATION-20260815-arm1-resubmit.md`.
+
+**Section 1's gate passes and it is what licenses reading arm 1.** All three arm-0 recoveries fall
+inside the existing three-draw band, and three of the four 285-cell spectra (`h_prior`, `h_target`,
+`h_untilted`) are **bit-identical** to run `56552326`'s — the strong form of the declared `1e-9`.
+The fourth, `h_unfolded`, is the trained spectrum and cannot be `1e-9`-identical across independent
+draws; its scatter *is* the draw spread the gate is stated against.
+
+| id | quantity | value | comparison | reading |
+| --- |---|---:|---:|---|
+| VL134 | arm-0 **final-iteration** fold-forward, mean of 3 draws | **1.010878613** | predicted `1.011418` (predeclaration §2) | **AGREE** — `+5.39e-04` high, `1.17` prediction-sd, same sign |
+| VL135 | its 3-draw sd | 0.000399361 | — | range `[1.010530049, 1.011314366]`; the prediction sits `1.03e-04` above the max |
+| VL136 | arm-0 recovery, mean of 3 draws | 0.511865829 | existing band `[0.511377282, 0.512933961]` | **all three inside** — §1 gate PASS |
+| VL137 | arm-1 recovery, mean of 3 draws | 0.504977348 | — | sd `0.000464801` |
+| VL138 | **Δrecovery = arm1 − arm0** | **−0.006888480** | pooled within-arm sd `0.000424470` | **16.23×**, ranges **disjoint**, **9/9** realized pairwise |
+| VL139 | Δ against the declared draw spread | 8.399× | `0.000820128` | **NOT the §6 bound; a measured effect** |
+| VL140 | arm-1 correction factor, iteration 1 | 1.046109466 | §6 declared "of order 1%" | **4.611%**, i.e. `4.04×` the declared amplitude |
+
+**VL134 IS NOT IN ANY RECEIPT AND THAT IS THE FIRST RESULT.** The recorder hooks `RunStep1`
+(`closure_foldforward_instrumented.py:115`), so with `niter=3` it captures the push after **0, 1 and
+2** `RunStep2` passes; the push left by `RunStep2(2)` is consumed by nothing and **recorded by no
+row**. Reading the last recorded row instead gives `0.981165` — about `−1.9%` against a predicted
+`+1.1%`, a `105`-draw-sd "disagreement" **with the sign of `ratio − 1` flipped**, which is an
+artifact of the substitution and not a disagreement. VL134 is recovered from `weights_push` +
+`dump_rows_b` under the recorder's own reduction; **it is a reconstruction, not a recorded value, and
+must not be cited as one** — the same caution `OI-125` attaches to `1.011418`.
+
+**Why the end-of-run push is the quantity `OI-125` needs:** `train_fullevent_nominal.py:576-577`
+computes the nominal's recorded fold-forward from `push` **after `Unfold()`**, so the nominal's
+`0.736746` — the 34% deficit the whole `OI-71`/`OI-125` argument rests on — is the end-of-run scalar.
+The like-for-like closure number is VL134, not any row the instrumentation writes.
+
+**VL138 is a measured effect, reported as realized exceedance and not a fitted tail (`BEN-025`).** All
+nine arm1-vs-arm0 pairwise differences are negative and all nine exceed both spread scales; the
+smallest is `14.59` pooled sd. The exact permutation enumeration over all `C(6,3)=20` labelings gives
+two-sided `p = 0.1`, which is the **floor** at 3-vs-3 — complete separation cannot do better, so that
+number is bounded by the design and is not evidence of weakness. **The scale-only correction makes
+recovery WORSE on this closure**, by `0.38` of the margin; both arms still clear the adopted
+criterion.
+
+**All six draws PASS the adopted criterion** `0.80 × 0.618228 = 0.494582400` (CLM-012), margins
+`+0.0169` to `+0.0177` (arm 0) and `+0.0099` to `+0.0107` (arm 1). All six receipts nevertheless
+carry `"verdict": "FAIL"` and `recovery_criteria_met: false` against the **retired** `0.80` bar
+(`closure_powered_truth_reweight.py:105`). Predeclaration §4 already states that literal is not
+consulted for any verdict, so this is a residual that misleads a JSON-only reader, **not a live
+misquote**; the writer has been fixed for future receipts and the six are left as the record.
+
+*Operands, controls and every figure above with its ingredients:*
+`docs/orchestration/state/RECEIPT-foldforward-instrumented-closure-20260815.json`. The
+push↔row alignment was re-established on all six artifacts by the method
+`RECEIPT-vl100-shape-corrected-foldforward-20260815.json:alignment_control` used — rebuilding each
+run's published recovery from `(weights_push, dump_rows_b)` — reproducing it to `≤1.3e-10` with a max
+relative per-cell deviation of `5.809e-08`, the same magnitude that receipt reports.
+
+**Nothing here is quotable, nothing is promoted, the central did not move.**

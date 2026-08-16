@@ -82,12 +82,21 @@ die() { echo "[ff-launch] FATAL: $1" >&2; exit "${2:-1}"; }
 #     digest and this literal must be updated in the same commit. That is the pin working. Do NOT
 #     delete the pin to avoid the edit; and do not repin the DRIVER, which is receipt-bound
 #     (BEN-270).
+#
+#     WRAPPER PIN MOVED ONCE, 2026-08-15, ee269b09 -> b24cfefe, for the two report-annotation fixes
+#     in closure_foldforward_instrumented.py (non-quotability as a field; the retired-0.80-bar
+#     rename). This is the maintenance action the paragraph above prescribes, not a BEN-270 repin:
+#     the driver/annealed/engine pins are byte-identical and untouched, and NO receipt binds the
+#     wrapper digest -- the six 2026-08-15 products record `fold_forward_instrumented_by` as a
+#     basename only. Arm 1's provenance survives the move because G0 PRINTS the digests it checked,
+#     so logs/ff_57038937_{3,4,5}.out carry `ee269b09...` as the wrapper those tasks actually ran.
+#     Arm 0 (57012031_{0,1,2}) predates the wrapper pin entirely and its log prints the 3-pin line.
 # ---------------------------------------------------------------------------------------------
 declare -A PINS=(
   ["$DRIVER"]="a45fae7c3f978c34bf73f35ab56aac668439c5784a3968b4f09799ee6090fd48"
   ["$ANNEALED"]="ce9f11f4872dd611932705e36f4ecfb651f8ee8eed796cca98be598d92fbb911"
   ["$ENGINE"]="3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa"
-  ["$WRAPPER"]="ee269b09a1ab42059e54542b6b970068be3869d9c1066fe7cca7759676be621c"
+  ["$WRAPPER"]="b24cfefee6d8411be000e5affd41509e86e9a69964564aa32cacf9b10be67054"
 )
 for f in "${!PINS[@]}"; do
   [[ -s "$f" ]] || die "missing: $f" 2

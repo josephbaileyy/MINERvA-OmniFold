@@ -29,6 +29,7 @@ WHAT IS GUARDED, and every case here is a defect that was possible before the pa
 import hashlib
 import importlib.util
 import os
+import tempfile
 import unittest
 
 import numpy as np
@@ -410,6 +411,110 @@ class EngineInterfaceContractTest(unittest.TestCase):
         y_pred = tf.zeros((n, 1), tf.float32)
         with self.assertRaises(Exception):
             float(net.weighted_binary_crossentropy(tf.convert_to_tensor(y_true64), y_pred))
+
+
+class ReportAnnotationTest(unittest.TestCase):
+    """The two things a JSON-ONLY consumer of one of these reports has to be able to see.
+
+    Both were absent from the six products of 2026-08-15 and both are the same shape of defect: a
+    fact carried somewhere a `json.load` does not reach. Non-quotability lived in the FILENAME and
+    in `artifact.path`; the retired-0.80-bar self-report lived under a name (`recovery_criteria_met`)
+    that reads as the verdict. Those six receipts are the record and were not rewritten.
+    """
+
+    def _report(self, **extra):
+        rep = {"metrics": {"recovery": 0.5118916141218095}, "recovery_criteria_met": False,
+               "verdict": "FAIL"}
+        rep.update(extra)
+        return rep
+
+    def test_nonquotability_is_a_field_not_only_a_filename(self):
+        rep = CPT.annotate_nonquotability(
+            self._report(), "/x/NONQUOTABLE-DIAGNOSTIC.FOLDFORWARD_ARM0_DRAW0.slurm-1_0.json",
+            artifact_path="/x/NONQUOTABLE-DIAGNOSTIC.FOLDFORWARD_ARM0_DRAW0.slurm-1_0.npz")
+        self.assertTrue(rep["nonquotable"])
+        self.assertEqual(rep["label"], "nonquotable-diagnostic")
+        self.assertTrue(rep["nonquotability"]["marker_in_report_filename"])
+        self.assertTrue(rep["nonquotability"]["marker_in_artifact_path"])
+
+    def test_the_label_is_the_one_the_quarantine_gate_actually_refuses_on(self):
+        """Not a new boolean nobody reads: `require_quotable` keys off exactly this value.
+
+        The artifact below is built to CLEAR ground 1 (the physics, `dev = 0`), because that ground
+        is sufficient on its own and would otherwise reject for a reason that says nothing about the
+        label. Reaching ground 3 is the whole point: with the label the run is refused, and with the
+        label removed the same call returns True -- so the assertion is about this field and not
+        about the gate rejecting everything handed to it.
+        """
+        pdq_path = os.path.join(PET, "pet_diagnostic_quarantine.py")
+        spec = importlib.util.spec_from_file_location("pdq_for_test", pdq_path)
+        pdq = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(pdq)
+        rep = CPT.annotate_nonquotability(self._report(), "/x/r.json")
+        self.assertEqual(rep["label"], pdq.DIAGNOSTIC_LABEL)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            npz = os.path.join(tmp, "w.npz")
+            np.savez(npz, fold_forward_sum_w_push_reco=np.array([2.0]),
+                     fold_forward_sum_w_reco=np.array([2.0]),
+                     target=np.array({"step1_class_ratio": 1.0}, dtype=object))
+            with self.assertRaises(pdq.NonQuotableError) as ctx:
+                pdq.require_quotable(rep, npz)
+            self.assertIn(pdq.DIAGNOSTIC_LABEL, str(ctx.exception))
+            cleared = {k: v for k, v in rep.items() if k != "label"}
+            self.assertTrue(pdq.require_quotable(cleared, npz),
+                            "the label is what the refusal turned on")
+
+    def test_a_missing_filename_marker_is_reported_false_not_hidden(self):
+        """The measured half must be able to read false, or it is decoration (BEN-070 rule 3)."""
+        rep = CPT.annotate_nonquotability(self._report(), "/x/plain_name.json",
+                                          artifact_path="/x/plain_name.npz")
+        self.assertFalse(rep["nonquotability"]["marker_in_report_filename"])
+        self.assertFalse(rep["nonquotability"]["marker_in_artifact_path"])
+        self.assertTrue(rep["nonquotable"], "the module-level fact does not depend on the filename")
+
+    def test_retired_080_bar_field_is_renamed_away_from_the_verdict(self):
+        rep = CPT.rename_retired_recovery_bar_field(self._report())
+        self.assertNotIn("recovery_criteria_met", rep)
+        self.assertIs(rep["recovery_criteria_met_AGAINST_RETIRED_0p80_BAR_NOT_THE_VERDICT"], False)
+        self.assertIn("CLM-012", rep["recovery_criteria_met_field_note"])
+
+    def test_the_rename_is_idempotent_and_preserves_the_value(self):
+        """It composes with closure_powered_annealed_lr's rename; applying twice must not lose it."""
+        once = CPT.rename_retired_recovery_bar_field(self._report(recovery_criteria_met=True))
+        twice = CPT.rename_retired_recovery_bar_field(dict(once))
+        self.assertIs(twice["recovery_criteria_met_AGAINST_RETIRED_0p80_BAR_NOT_THE_VERDICT"], True)
+        self.assertNotIn("recovery_criteria_met", twice)
+
+    def test_the_rename_does_not_touch_the_measurements(self):
+        rep = CPT.rename_retired_recovery_bar_field(
+            CPT.annotate_nonquotability(self._report(), "/x/r.json"))
+        self.assertEqual(rep["metrics"]["recovery"], 0.5118916141218095)
+        self.assertEqual(rep["verdict"], "FAIL", "`verdict` is the pinned driver's; not rewritten")
+
+
+class LauncherWrapperPinTest(unittest.TestCase):
+    """G0's fourth pin must name the wrapper AS IT IS NOW, or the launcher refuses every run.
+
+    `test_foldforward_launcher_guards.sh` case 1 asserts the same thing end-to-end, but it needs
+    bash >= 4 and SKIPS on macOS -- where this repo's local development happens. A pin that only
+    a skipped test checks is a pin that goes stale silently.
+    """
+
+    def test_wrapper_pin_matches_the_wrapper(self):
+        launcher = os.path.join(PET, "sbatch_foldforward_instrumented_closure.sh")
+        with open(launcher) as fh:
+            src = fh.read()
+        h = hashlib.sha256()
+        with open(PATH, "rb") as fh:
+            for b in iter(lambda: fh.read(1 << 20), b""):
+                h.update(b)
+        self.assertIn(
+            f'["$WRAPPER"]="{h.hexdigest()}"', src,
+            "closure_foldforward_instrumented.py changed without updating G0's WRAPPER pin in "
+            "sbatch_foldforward_instrumented_closure.sh. Update the literal in the SAME commit "
+            "(the launcher's own maintenance note says so); do NOT delete the pin, and do not "
+            "repin the DRIVER, which is receipt-bound (BEN-270).")
 
 
 if __name__ == "__main__":
