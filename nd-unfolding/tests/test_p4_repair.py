@@ -15,6 +15,7 @@ ND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ND))
 import p4_lib as P
 from p4_lib import P4GateError
+import p4_adopt_standard as ADOPT     # OI-128: for the gate name, so it is never respelled here
 
 
 def _band_cov(minus, plus):
@@ -1174,14 +1175,24 @@ class NonAdoptableMarker(unittest.TestCase):
                              P.stamp_non_adoptable({}, env={"P4_NON_ADOPTABLE": v}),
                              f"value {v!r} should not stamp; only the exact string '1' does")
 
-    def _run_adopt(self, d, manifest_obj, receipt_extra=None, manifest_on_disk=None):
+    def _run_adopt(self, d, manifest_obj, receipt_extra=None, manifest_on_disk=None, drop_keys=()):
         """Invoke the real adopter CLI. `manifest_on_disk` lets a caller hand the adopter a
-        DIFFERENT manifest from the one the receipt was built against -- the bypass path."""
+        DIFFERENT manifest from the one the receipt was built against -- the bypass path.
+        `drop_keys` REMOVES keys after `receipt_extra` is applied, which `update()` cannot do; it
+        exists so a test can build a receipt that is missing a key entirely (OI-128).
+
+        The default receipt carries `gates` with the band-completeness gate because that is what a
+        receipt from the CURRENT validator looks like -- it appends every cleared gate and only
+        then sets result=PASS. Omitting it here would make every caller below exercise OI-128's
+        refusal instead of the gate it is actually testing."""
         import json, subprocess
         mf = Path(d) / "std_component_manifest.json"
         mf.write_text(json.dumps(manifest_obj))
-        val_obj = {"result": "PASS", "component_manifest_sha256": P.sha256_file(str(mf))}
+        val_obj = {"result": "PASS", "component_manifest_sha256": P.sha256_file(str(mf)),
+                   "gates": [ADOPT.BAND_COMPLETENESS_GATE]}
         val_obj.update(receipt_extra or {})
+        for _k in drop_keys:
+            val_obj.pop(_k, None)
         if manifest_on_disk is not None:            # swap the file AFTER the receipt was digested
             mf.write_text(json.dumps(manifest_on_disk))
         val = Path(d) / "val.json"
@@ -1226,6 +1237,60 @@ class NonAdoptableMarker(unittest.TestCase):
                          "unconditionally and would refuse a real candidate too")
         self.assertNotIn("sha256 mismatch", out_unmarked,
                          "the binding rejected a manifest that IS the validated one")
+
+    # ---- OI-128: a PASS receipt must PROVE the band-completeness gate ran -------------------
+    # The adopter required only `result == "PASS"`, and `gates` appeared nowhere in it except a
+    # success print. A receipt written after the 2026-08-10 component-manifest binding fix but
+    # before the band-completeness gate existed therefore carried the binding, said PASS, had never
+    # refereed the band set against the support family -- and was adoptable.
+
+    def test_adopt_refuses_a_pass_receipt_that_never_ran_band_completeness(self):
+        """THE DEFECT. A PASS receipt whose gate inventory lacks the band-completeness gate must be
+        refused, and the refusal must NAME the gate rather than failing generically."""
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            out = self._run_adopt(d, self._prov(False),
+                                  receipt_extra={"gates": ["merged_inseparability",
+                                                           "component_manifest_bound",
+                                                           "exact_5_active_bands"]})
+        self.assertIn(ADOPT.BAND_COMPLETENESS_GATE, out,
+                      "the adopter accepted, or refused without naming, a PASS receipt that never "
+                      "ran the band-completeness gate -- OI-128 is open")
+        self.assertIn("silently short", out,
+                      "the refusal did not explain WHY a missing band-completeness gate matters")
+
+    def test_adopt_fails_closed_when_the_receipt_has_no_gates_key_at_all(self):
+        """Fail CLOSED, not open. An absent inventory is the oldest form of exactly the receipt
+        this gate exists to reject, so 'no gates key' must never read as 'old format, allow'."""
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            out = self._run_adopt(d, self._prov(False), drop_keys=("gates",))
+        self.assertIn("carries no `gates` list", out,
+                      "a receipt with NO gates key was not refused on that ground -- the "
+                      "absent-inventory case is waved through")
+        self.assertIn("FAIL-CLOSED", out)
+
+    def test_the_band_completeness_gate_does_not_fire_when_the_gate_is_recorded(self):
+        """Negative control. Without this, the two tests above would pass just as well if the new
+        requirement rejected EVERY receipt, which would refuse a real candidate too."""
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            out = self._run_adopt(d, self._prov(False))       # default receipt records the gate
+        self.assertNotIn("silently short", out,
+                         "the band-completeness requirement fired on a receipt that DOES record "
+                         "the gate -- it rejects unconditionally and proves nothing")
+        self.assertNotIn("carries no `gates` list", out)
+
+    def test_band_completeness_gate_name_matches_the_validator_literal(self):
+        """Drift guard. The gate name is duplicated in p4_adopt_standard.py because p4_lib.py was
+        under repair when this landed. Duplication that nothing checks is how a consumer silently
+        stops matching its producer, so assert the producer still spells it the same way."""
+        src = (ND / "p4_validate_active_lateral.py").read_text()
+        self.assertIn(f'out["gates"].append("{ADOPT.BAND_COMPLETENESS_GATE}")', src,
+                      "p4_validate_active_lateral.py no longer appends the gate name that "
+                      "p4_adopt_standard.BAND_COMPLETENESS_GATE requires -- the adopter would "
+                      "refuse every genuine receipt. Re-sync the two, or move the constant to "
+                      "p4_lib.py now that it is free.")
 
     def test_removing_the_marker_from_a_manifest_makes_the_gate_pass(self):
         """Self-guard: if someone deletes the stamp from the builder, this is what the adopter

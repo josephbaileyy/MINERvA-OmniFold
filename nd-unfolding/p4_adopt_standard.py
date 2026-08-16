@@ -11,6 +11,13 @@ canonical driver — a deliberate, separately authorized step (needs --i-underst
 import argparse, json, os, sys
 import p4_lib as P
 
+# OI-128 (2026-08-16). The gate name `p4_validate_active_lateral.py` records once the systematic
+# band set has actually been refereed against the SUPPORT FAMILY. It is duplicated from that
+# module's literal rather than shared: `p4_lib.py` is the natural home but is under repair by
+# another lane, so `tests/test_p4_repair.py` asserts the two spellings agree instead of leaving
+# the duplication unchecked. Move it to `p4_lib` when that file is free.
+BAND_COMPLETENESS_GATE = "band_set_completeness_vs_support_family"
+
 
 def main():
     ap = argparse.ArgumentParser()
@@ -25,6 +32,26 @@ def main():
     prov = json.load(open(a.component_manifest))
     val = json.load(open(a.validation))
     P.require(val.get("result") == "PASS", "candidate validator did not PASS")
+    # OI-128 (2026-08-16). `result == "PASS"` does NOT imply the band-completeness gate ran.
+    # `p4_validate_active_lateral.py` appends each cleared gate to `gates` and sets `result=PASS`
+    # only at the END of its try block, so on the CURRENT validator a PASS receipt necessarily
+    # records this one. The window this closes: a receipt written AFTER the 2026-08-10
+    # component-manifest binding fix but BEFORE the band-completeness gate existed carries
+    # `component_manifest_sha256`, records `PASS`, never refereed the band set against the support
+    # family -- and was adoptable, because `gates` appeared nowhere in this file except a success
+    # print. Checked here rather than trusted, and BEFORE any of the manifest gates below, since
+    # those all read a manifest whose systematic budget this gate is what vouches for.
+    _gates = val.get("gates")
+    P.require(isinstance(_gates, list),
+              "the validation receipt carries no `gates` list, so it cannot show WHICH checks ran; "
+              "refusing rather than reading an absent inventory as a tolerable old format -- that "
+              "is precisely the window this check exists to close (re-run "
+              "p4_validate_active_lateral.py)")
+    P.require(BAND_COMPLETENESS_GATE in _gates,
+              f"the validation receipt does not record the `{BAND_COMPLETENESS_GATE}` gate: the "
+              "systematic band set was never refereed against the support family, so a build that "
+              "enumerated the wrong bands reconstructs every internal identity perfectly while the "
+              "systematic budget is silently short (re-run p4_validate_active_lateral.py)")
     # FIX 2 of 2 (2026-08-10). Bind the component manifest to the validation receipt BEFORE
     # reading anything out of it. Previously `prov` came from a path on this command line and was
     # never tied to the receipt, so every gate below that consults it -- including the
