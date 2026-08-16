@@ -1,5 +1,19 @@
 # P4 standard-lateral — Agent-A-owned status receipt (2026-07-18)
 
+> **STAGES 4-6 HAVE NOW RUN (2026-08-16). The next sentence's "no cluster P4 run" was true of repair-4
+> and is retained because it records the hold that governed this file for four days — it is NOT current
+> state.** Under repair-11's PASS (`48ac04d`, `code_rev a8f7b2f`,
+> `authorizes_covariance_stages_4_6: True`), Slurm `57128458` ran the canonical chain to
+> `STOP_AFTER=project`, `rc=0`: stage 5 **`RESULT PASS`** on 11 gates with `support_ratio=1.000`,
+> stage 6 `n=4825` at `projection_identity=3.76e-16`, candidate `950f8cb1…`. Stages 1-3 no-op'd 20/20
+> as predicted read-only. **CANDIDATE ONLY — construction is not adoption**, the five Gate-6
+> prohibitions at `19585b7` stay live, `self_guards_adequate` is still `NO`, and a green stage 6 is
+> **not** the real-product `C4 = M C5 Mᵀ` identity. Every operand:
+> [`RECEIPT-20260816-p4-standard-stages456.json`](../../../docs/orchestration/state/RECEIPT-20260816-p4-standard-stages456.json);
+> the superseded Aug-9 candidate `602bbcf2…` is preserved at
+> `/pscratch/sd/j/josephrb/PRESERVE-p4-candidate-20260816/` because the rebuild is **not**
+> byte-identical to it.
+
 **REPAIR-4 STARTED 2026-08-12 by Lane B, authorized by Session A (ownership handed over; A is
 migrating).** Scope is code/tests/receipts only — **no cluster P4 run**, per Joseph's standing hold.
 Increment 1 of the six ranked defects **as they stood on 2026-08-12** (see the DEFECT COUNT block below —

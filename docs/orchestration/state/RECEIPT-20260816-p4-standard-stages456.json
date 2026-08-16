@@ -1,0 +1,157 @@
+{
+  "receipt": "standard-P4 stages 4-6 (covariance construction) executed under the repair-11 PASS token",
+  "date_utc": "2026-08-16",
+  "lane": "B",
+  "adoption": "NONE. CANDIDATE products only. Construction is not adoption; the five Gate-6 prohibitions at 19585b7 remain live and this receipt authorizes nothing.",
+  "authorization": {
+    "verdict": "docs/orchestration/runs/standard-p4-verifier/20260816T220615Z-repair11-verdict.json",
+    "verdict_sha256_recomputed_by_this_lane": "90dc017530c0c5ed2bb25b317be7ca491d9f369fd7fb3ea11b4011d4b6502207",
+    "how_the_token_was_obtained": "recomputed with shasum -a 256 over the tracked verdict, NOT copied from the dispatch message; a peer-supplied 64-hex string is the shape of a fabricated token",
+    "gate_output_on_the_cluster": "TOKEN-OK :: docs/orchestration/runs/standard-p4-verifier/20260816T220615Z-repair11-verdict.json (verdict=PASS, code_rev=a8f7b2f0eea57f2f66085df41dcff9b0d338bd01, scope=UNION of the standard-P4 EXECUTION surface (20 tracked paths) and the verdict's declared review_scope (0 declared, 0 beyond the surface))",
+    "negative_control": "p4_check_verifier_token.py --token 0000...  -> TOKEN-REJECT",
+    "run_grant": "zero GPU; peer-mediated under Joseph's standing run grant"
+  },
+  "irreversibility_precondition": {
+    "why": "p4_build_components.py:177 opens --out with RECREATE, and the live std_final5_candidate.root was the audited object of 20260810T0600Z-product-audit-5d-verdict.json with its digest bound in two manifests",
+    "preserved_to": "/pscratch/sd/j/josephrb/PRESERVE-p4-candidate-20260816/",
+    "audited_digest": "602bbcf26606844941b8a6295f47e080507c20097a80f42cdf202bd8c567f037",
+    "verified_how": "the runner recomputed sha256 of the PRESERVED copy and matched it to the AUDITED digest as a FAIL-CLOSED precondition inside the run; the chain could not start otherwise",
+    "and_it_mattered": "the rebuilt candidate is NOT byte-identical to the Aug-9 product (950f8cb1... vs 602bbcf2..., 42326607877 B vs 42326583908 B), so the audited object would have been destroyed without recovery"
+  },
+  "stages_1_3_no_op_as_predicted_read_only": {
+    "prediction_method": "the launcher's own SKIP predicates reproduced read-only before the run (p4_check_receipt.py standalone; valid_root; valid_merged), with two rejection controls firing in the same run",
+    "stage1_merges_skipped": 10,
+    "stage1_skipped_tags": [
+      "BeamAngleX:0",
+      "BeamAngleX:1",
+      "BeamAngleY:0",
+      "BeamAngleY:1",
+      "MuonResolution:0",
+      "MuonResolution:1",
+      "Muon_Energy_MINERvA:0",
+      "Muon_Energy_MINERvA:1",
+      "Muon_Energy_MINOS:0",
+      "Muon_Energy_MINOS:1"
+    ],
+    "stage2_endpoints_skipped": 10,
+    "stage2_skipped_tags": [
+      "BeamAngleX_0",
+      "BeamAngleX_1",
+      "BeamAngleY_0",
+      "BeamAngleY_1",
+      "MuonResolution_0",
+      "MuonResolution_1",
+      "Muon_Energy_MINERvA_0",
+      "Muon_Energy_MINERvA_1",
+      "Muon_Energy_MINOS_0",
+      "Muon_Energy_MINOS_1"
+    ],
+    "stage2_stale_reruns": [],
+    "predicted_vs_observed": "20 of 20 predicted SKIPs occurred; 0 endpoints re-unfolded",
+    "stage3_wrote": "p4_evidence.py published receipts + manifest (no resume-skip by design)",
+    "stage3_result": "EVIDENCE-COMPLETE: all required fields proven; receipts in /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/evidence"
+  },
+  "stage4_components": {
+    "sqrt_tr_syst": 4.3513e-38,
+    "sqrt_tr_full": 4.3576e-38,
+    "bands": 45,
+    "retained": 40,
+    "candidate_sha256": "950f8cb15c5a0bd785d65e7f85f4cb40fa86e27383973f82ef15c7ef525c1263",
+    "candidate_total_key": "hCov_stdcombined5d_total_candidate",
+    "support_family_sha256": "9f7b2f55d7581bb687e214e7f5a38235fd07b6d9522c2223fa3a3395c803c92a",
+    "note_on_scale": "sqrt(trace) ~ 4.35e-38 is the absolute cross-section scale (cm^2-per-nucleon units), not a near-zero covariance"
+  },
+  "stage5_validation": {
+    "result": "PASS",
+    "gates": [
+      "merged_inseparability",
+      "merged_audit_census_and_migration",
+      "component_manifest_bound",
+      "exact_5_active_bands",
+      "traces_pos_finite",
+      "active_total_eq_sum5",
+      "symmetric_psd",
+      "full_total_identity_recomputed",
+      "band_set_completeness_vs_support_family",
+      "c_syst_recomputed_from_components",
+      "support_trace_ratio_recorded"
+    ],
+    "n_gates": 11,
+    "support_ratio": 1.0,
+    "candidate_sha256": "950f8cb15c5a0bd785d65e7f85f4cb40fa86e27383973f82ef15c7ef525c1263",
+    "band_completeness_gate_present": true,
+    "why_that_gate_matters_here": "OI-128 made p4_adopt_standard.py REQUIRE this gate name in the validation receipt; this run is the first to produce a receipt that carries it under the repaired code"
+  },
+  "stage6_projection": {
+    "n_reported_4d": 4830,
+    "n_effective_4d": 4825,
+    "n_unreachable_4d": 5,
+    "unreachable_global_indices": [
+      9679,
+      9686,
+      9714,
+      9721,
+      10169
+    ],
+    "projection_identity_relerr": 3.7568690548899724e-16,
+    "projection_identity_gates_M": false,
+    "M_shape": [
+      4825,
+      10694
+    ],
+    "M_content_sha256": "2f042f760c3550a52e2d56d3a78ff09320eed4666e6254d5f3c3c60581066362"
+  },
+  "R11_1_EXECUTION_WITNESS": {
+    "defect": "repair-11's one outstanding defect (R11-1, medium): the wiring non-regression test is text-level (assertIn over source), so a commented-out call satisfies it",
+    "why_this_run_is_not_the_proof": "a run that passes says nothing about whether the check executed; the witness has to be a value the check COMPUTES",
+    "projection_M_recipe_check_present": true,
+    "route": "unravel_index/ravel_multi_index/searchsorted (independent of build_projection_M)",
+    "nnz": 10694,
+    "entries_differing": 0,
+    "independent_recount": {
+      "claim": "M is the width-weighted marginalization 5D->4D, so every reported 5D bin contributes to exactly ONE 4D bin => nnz must equal mask5d_nreported",
+      "mask5d_nreported": 10694,
+      "nnz": 10694,
+      "agrees": true,
+      "M_shape_consistency": true,
+      "effective_mask_arithmetic": true
+    },
+    "verdict": "PASS -- the gate demonstrably EXECUTED, and its recorded nnz is reproduced by an independent structural derivation rather than read back from the same key"
+  },
+  "CROSS_CHECK_WORTH_A_READER_S_ATTENTION": {
+    "what": "marginal vs INDEPENDENT 4D route, explicitly no pass/fail in the code",
+    "n": 4825,
+    "median_rel": 0.0443,
+    "p90_rel": 0.2083,
+    "max_rel": 0.7285,
+    "n_over_3pct": 3009,
+    "integral_ratio": 1.005578,
+    "reading": "3009 of 4825 bins differ by more than 3% between the two 4D routes, median 4.4%, max 72.9%, with the integrals agreeing to 0.56%. This is a RECORDED CROSS-CHECK and not a gate, and it is surfaced here because a receipt that omitted it would let a green chain read as agreement between the routes. It bears on the marginalization-vs-direct question, NOT on the projection identity (3.76e-16)."
+  },
+  "what_this_run_does_NOT_establish": [
+    "the real-product C4 = M C5 M^T identity -- lane C states that needs cluster compute and is outside the repair-11 verdict; a green stage 6 is NOT that identity",
+    "adoption or promotion of any covariance",
+    "self_guards_adequate, which the repair-11 verdict records as NO",
+    "anything about R11-1's TEST, which remains text-level; this receipt supplies a run-time witness, not a repaired test"
+  ],
+  "provenance": {
+    "cluster_head": "5fb7e38",
+    "code_rev_stamped_into_evidence": "5fb7e38bf5e6f41a86f8860413820fa3d907420c",
+    "slurm_job": "57128458 (claude-hold, urgent_milestone, nid004254)",
+    "started_utc": "2026-08-16T22:38:14Z",
+    "ended_utc": "2026-08-16T23:26:07Z",
+    "chain_rc": 0,
+    "environment": "setup_salloc_env.sh -> root_6_28: Python 3.11.14, ROOT 6.28/12 (NOT the tensorflow module, under which ROOT is not importable -- BEN-347)",
+    "dispatch": "./alloc_run.sh, per AGENTS.md's serial-work guidance; orchestrator inside the allocation; no external srun --jobid=",
+    "log": "/pscratch/sd/j/josephrb/p4-stages456-20260816/run.log (whole stream; filtered on read, BEN-026)",
+    "runner_and_probes_committed_to": "docs/orchestration/state/ (scratch is purgeable)"
+  },
+  "product_digests": {
+    "std_component_manifest.json": "269232245870632884d6e589ac8d7aa9ba7fb4e07d0860e077cbd98fe6de04b5",
+    "p4_standard_validation.json": "3853b6aa33e3cc5a69aa6fc093d880b874c908e32706d2d9093156120db0611d",
+    "std_proj4d_candidate_projmanifest.json": "30b50d2c3254f9930131345994f59371b0976922c3b3c60dee9574318119bb43",
+    "std_proj4d_candidate.root": "f042e746f2a31128c3e8df14799cf1695b7d3bfee40ac3daba93ca10dafeee47",
+    "std_final5_candidate.root": "950f8cb15c5a0bd785d65e7f85f4cb40fa86e27383973f82ef15c7ef525c1263",
+    "superseded_std_final5_candidate.root": "602bbcf26606844941b8a6295f47e080507c20097a80f42cdf202bd8c567f037"
+  }
+}

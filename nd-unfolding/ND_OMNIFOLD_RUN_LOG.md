@@ -9639,3 +9639,75 @@ claim is false in general, and on this configuration the recipe gate does all th
   is immutable: cited, not amended.** The load-bearing copy of the error is therefore the one this
   lane cannot fix, and the verifier owns it. Its `B1`-was-defective finding is unaffected — B1 aimed
   the demand at the identity route, which genuinely cannot meet it.
+
+## 2026-08-16 — STANDARD-P4 STAGES 4-6 EXECUTED under the repair-11 PASS: the first covariance construction this lane has ever been authorized to run (lane B)
+
+**`chain rc=0`, all six stages, Slurm `57128458` on `nid004254`, 22:38:14Z → 23:26:07Z (~48 min).**
+Receipt with every operand: [`state/RECEIPT-20260816-p4-standard-stages456.json`](../docs/orchestration/state/RECEIPT-20260816-p4-standard-stages456.json).
+Whole stream preserved off purgeable scratch as
+[`state/p4-stages456-20260816-run.log`](../docs/orchestration/state/p4-stages456-20260816-run.log).
+
+**AUTHORIZATION, and the token was re-derived not relayed.** The dispatch supplied a 64-hex value; a
+peer-supplied hex string is exactly the shape of a fabricated token, so it was recomputed here with
+`shasum -a 256` over the tracked verdict and matched: `90dc0175…`. The gate then accepted it on the
+cluster — `TOKEN-OK … verdict=PASS, code_rev=a8f7b2f, scope=UNION of the standard-P4 EXECUTION surface
+(20 tracked paths)` — with the zeros control returning `TOKEN-REJECT`.
+
+**THE PRECONDITION THAT MATTERED, and it is the reason this entry exists rather than a post-mortem.**
+`p4_build_components.py:177` opens `--out` with `RECREATE`, and the live `std_final5_candidate.root`
+was the **audited object** of `20260810T0600Z-product-audit-5d-verdict.json` with its digest bound in
+two manifests. The GO rested on a preserved-snapshot argument that covered the **three stage-3 evidence
+JSONs** and not the candidate: measured, that snapshot was **51 files / 742 KiB**, which cannot hold a
+39.4 GiB file, and a covering search of all of scratch found the candidate in exactly one place. The run
+was **held** until the five artifacts were preserved, and then verification of the backup was made a
+**fail-closed precondition inside the runner** — it recomputes the preserved copy's `sha256` and
+compares it to the **audited** digest `602bbcf2…` before the chain may start.
+
+**IT MATTERED IN FACT, NOT ONLY IN PRINCIPLE: the rebuilt candidate is NOT byte-identical to the Aug-9
+product** — `950f8cb1…` vs `602bbcf2…`, `42,326,607,877 B` vs `42,326,583,908 B`. Without the copy the
+audited object would be gone.
+
+**STAGES 1-3 NO-OP, 20 of 20 as predicted read-only before the run.** Rather than run
+`STOP_AFTER=audit` — which **exits at `:67` before stage 2 and is therefore silent about stage-2 resume
+by construction** — the launcher's own SKIP predicates were reproduced standalone and read-only, with
+two rejection controls firing in the same run (wrong `--tag`; foreign `--merged`). Predicted 10/10 and
+10/10; observed `[merge] SKIP` ×10 and `[unfold] SKIP … (receipt validated)` ×10, **0 endpoints
+re-unfolded**. Stage 3 wrote as expected (`EVIDENCE-COMPLETE: all required fields proven`), footing
+`purity` on all ten.
+
+**PRODUCTS (CANDIDATE ONLY).**
+
+| stage | result |
+|---|---|
+| 4 components | `sqrt_tr_syst=4.3513e-38`, `sqrt_tr_full=4.3576e-38`, `bands=45`, `retained=40`, candidate `950f8cb1…` |
+| 5 validate | **`RESULT PASS`**, 11 gates, `support_ratio=1.000` — **including `band_set_completeness_vs_support_family`**, the gate `OI-128` made `p4_adopt_standard.py` require; this is the first receipt to carry it under the repaired code |
+| 6 project | `n=4825` of 4830 reported 4D bins (5 unreachable: `9679, 9686, 9714, 9721, 10169`), `projection_identity=3.76e-16` |
+
+**R11-1 EXECUTION WITNESS — PASS, and deliberately not "the run was green".** repair-11's one
+outstanding defect is that the wiring test is *text-level*, so a commented-out call satisfies it; a
+passing run says nothing about whether the check ran. The witness is a value the check **computes**:
+`projection_M_recipe_check` is present in the produced receipt with `nnz=10694`,
+`entries_differing=0`, route *"unravel_index/ravel_multi_index/searchsorted (independent of
+build_projection_M)"*. **Independently recounted rather than read back:** `M` is the width-weighted
+marginalization 5D→4D, so every reported 5D bin contributes to exactly one 4D bin, hence `nnz` must
+equal `mask5d_nreported` — **10694 == 10694**, with `M_shape == [4825, 10694] == [neffective,
+nreported]` and `4825 == 4830 − 5`. Note `projection_identity_gates_M: false`, which is the honest
+`BEN-316` record: the identity leg does **not** gate `M`, and the recipe check is what does.
+
+**A CROSS-CHECK A READER SHOULD SEE, surfaced because a receipt that omitted it would let a green chain
+read as agreement.** Marginal vs INDEPENDENT 4D route, explicitly no pass/fail in the code:
+`n=4825 median=0.0443 p90=0.2083 max=0.7285 over3%=3009 integral_ratio=1.005578`. **3009 of 4825 bins
+differ by >3%, max 72.9%, while the integrals agree to 0.56%.** This bears on marginalization-vs-direct,
+**not** on the projection identity (`3.76e-16`), and it is a measurement rather than a gate.
+
+**WHAT THIS DOES NOT ESTABLISH.** Not the real-product `C4 = M C5 Mᵀ` identity — outside this verdict,
+and a green stage 6 is not it. Not adoption or promotion; **construction is not adoption** and the five
+Gate-6 prohibitions at `19585b7` stay live. Not `self_guards_adequate`, which repair-11 records as `NO`.
+Not a repair of R11-1's test, which is still text-level — this supplies a run-time witness only.
+
+**Environment, per `BEN-347` filed the same day:** `setup_salloc_env.sh` → `root_6_28`, **Python
+3.11.14 / ROOT 6.28/12**, *not* the tensorflow module, under which `import ROOT` raises
+`ModuleNotFoundError` and silently turned a read-only probe into a false `10/10 WOULD-RERUN`.
+Dispatched with `./alloc_run.sh` per `AGENTS.md` (orchestrator inside the allocation; no external
+`srun --jobid=`); allocation left up per the leave-it-running rule. Runner and all three probes are
+committed under `docs/orchestration/state/` because scratch is purgeable.
