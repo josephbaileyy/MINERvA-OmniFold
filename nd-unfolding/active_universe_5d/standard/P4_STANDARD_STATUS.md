@@ -107,17 +107,19 @@ share no members.** Every number here is derived from the verifier verdicts in
 |---|---|---|
 | **6** | the ORIGINAL ranked list, the one `:5` refers to | `repair-4-verdict.json` (`code_rev 39c2cf4`): `defects_total = 6`, `closed 2`, `outstanding 4` |
 | **7** | outstanding **as recorded** at the latest issued verdict | `repair10-verdict.json` (`code_rev 0e83b543`): `defects_outstanding = 7`, and `len(outstanding) == 7` |
-| **4** | still open **in the tree today**, pending a new verdict | the seven, minus three: `#7` refuted by measurement (`44a24a1`), `#8` and the repair-8 snapshot defect closed (`86fe270`) |
+| **2** | still open **in the tree today**, pending a new verdict | the seven, minus five: `#7` refuted by measurement (`44a24a1`), `#8` and the repair-8 snapshot defect closed (`86fe270`), `#9` closed (`7ae3a71`), `N6` closed (this commit) |
 
-**The four still open are `N3`, `N4`, `N6` and `#9`** — `N3`/`N4` in `p4_lib.py` (lane A), `N6` in
-`tests/conftest.py`, `#9` this block. **Do not read `4` as a verdict**: only the verifier lane can change a
-recorded count, and repair-11 has not been issued. `4` is the state of the working tree; `7` is the state of
-the record; they are allowed to differ and the difference is the repair in flight.
+**The two still open are `N3` and `N4`**, both in `p4_lib.py` and both lane A's. **Do not read `2` as a
+verdict**: only the verifier lane can change a recorded count, and repair-11 has not been issued. `2` is the
+state of the working tree; `7` is the state of the record; they are allowed to differ and the difference is
+the repair in flight.
 
 **The full derived lineage, so no single figure can be quoted as "the" number:** `6` (repair-4 total) → `4`
-→ `6` (repair-5) → `9` (repair-6) → `14` (repair-7) → `10` (repair-8) → `7` (repair-10) → `4` in tree.
+→ `6` (repair-5) → `9` (repair-6) → `14` (repair-7) → `10` (repair-8) → `7` (repair-10) → `4` → `2` in tree.
 **The count has been `6` twice already with different members each time**, which is exactly why `:5`'s bare
-"six" could not be read safely and why this block exists.
+"six" could not be read safely and why this block exists. The tree figure was `4` when this block was
+written a few hours earlier; it is edited here rather than appended to because it is a **derived** row and
+not a claim — the derivation is the row, and re-running it is what produced `2`.
 
 **Addendum 2026-08-07 — close-out packets G-0/G-1/G-3 (see the RUN_LOG entries of that date).**
 
