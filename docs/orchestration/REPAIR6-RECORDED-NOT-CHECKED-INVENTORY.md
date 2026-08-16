@@ -10,8 +10,19 @@ re-runnable — not a judgement I assert I made.
 **Generator:** the sweep is grep-level over `p4_lib.py`, `p4_evidence.py`,
 `p4_validate_active_lateral.py`, `p4_build_components.py`, `p4_project_4d.py`,
 `p4_adopt_standard.py`, `p4_check_receipt.py`, `p4_lateral_replace.py` and the three shell
-drivers. **115 fields** written into a product with no same-line comparison, and **28 named
+drivers. **129 fields** written into a product with no same-line comparison, and **29 named
 gates**.
+
+**115 → 129 fields / 28 → 29 gates on 2026-08-16**, from the N3+N4 repair. The new gate is
+`check_projection_matrix_matches_recipe()`. The 14 new fields are 3 from the projection receipt
+(`projection_identity_route`, `projection_identity_gates_M`, `projection_M_recipe_check` and its
+four members) and the rest from the cross-check's finiteness accounting
+(`n_nonfinite_rel`/`_marginal`/`_independent`, `integral_ratio_defined`, and the `*_finite_only`
+summaries). Recorded rather than absorbed, per this document's own rule that a count moving is a
+thing a reader gets to see. Note the sweep is grep-level and so does **not** see
+`n_over_3pct_finite_only` and its two siblings, which are written through an f-string key
+(`out[f"n_over_{...}pct_finite_only"]`); that is a pre-existing limit of the extractor, named here
+because a field the inventory cannot see is exactly what this inventory is for.
 
 > **These counts are now GUARDED, not typed** (repair-7 item 4). The document previously said
 > 66 fields / 22 gates while its own generator reported 82 / 24, and the pipeline section said
@@ -44,7 +55,7 @@ gates**.
 > than closed silently, because "done" and "done in the only form the repo supports" are different
 > claims and the second is the true one.
 >
-> Current snapshot: **115 fields / 28 gates**; pipeline **23 candidates across 337 shell
+> Current snapshot: **129 fields / 29 gates**; pipeline **23 candidates across 337 shell
 > files, 0 live**.
 
 ### Reading rule: this is a list of SHAPES, and polarity decides (2026-08-09)

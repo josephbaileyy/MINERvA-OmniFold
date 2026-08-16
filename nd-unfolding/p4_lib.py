@@ -1396,6 +1396,118 @@ def project(C_high, M):
     return M @ C_high @ M.T
 
 
+def _block_sum_projection(C_high, M):
+    """`C_low[a,b] = sum_i sum_j M[a,i] M[b,j] C_high[i,j]` by weighted block sums, with NO matrix
+    multiplication anywhere in this path -- numpy reductions only.
+
+    N3 REPAIR, 2026-08-16. This is the "direct block-sum recomputation" the projection gate has
+    advertised since 2026-08-09 and did not perform. The previous form computed
+    `MH = M @ C_high` and then `direct[i, :] = MH[i, :] @ M.T`, which is the same BLAS product
+    RE-ASSOCIATED -- so the identity it reported measured floating-point accumulation order and
+    nothing else: ~1.9e-16 against a 1e-9 threshold (5.4e6x headroom), and EXACTLY 0.0 on the unit
+    test's own fixture, where `assertLess(relerr, 1e-12)` therefore could not fail. BEN-316;
+    reproduce with docs/orchestration/state/probe-projection-identity-leg-20260816.py.
+
+    WHAT THIS ROUTE CAN AND CANNOT CATCH -- measured 2026-08-16, not asserted:
+      * CAN catch an error in `project()`'s expression: a doubled result is caught at rel 5.0e-1.
+      * CANNOT catch a wrong `M`. Both routes take their groups AND their weights from the same
+        `M`, so every `M` with one nonzero per column reproduces identically -- measured 1.8e-16
+        for a row scaled by 3, for a single entry scaled by 3, for a column moved to the wrong
+        row, and for two rows swapped. This is not a weakness of the implementation: `M` cannot be
+        validated from `(C_high, M)` alone, because "wrong" is only defined against the recipe
+        that produced it. That is the separate gate `check_projection_matrix_matches_recipe`, and
+        the two are not interchangeable.
+
+    Cost, measured at the real stage-6 shape (10694 reported 5D -> 4825 reported 4D): 1.00 s here
+    versus 6.62 s for the BLAS `M C_high M^T`, because `M` holds one nonzero per column. The
+    honest route is the cheaper one; nothing was traded for it."""
+    C = np.asarray(C_high, dtype=float)
+    M = np.asarray(M, dtype=float)
+    n_lo = M.shape[0]
+    require(M.shape[1] == C.shape[0], f"M cols {M.shape[1]} != C dim {C.shape[0]}")
+    T = np.zeros((n_lo, C.shape[1]))
+    for a in range(n_lo):                      # T[a,:] = sum_{i in block a} M[a,i] * C_high[i,:]
+        nz = np.nonzero(M[a, :])[0]
+        if nz.size:
+            T[a, :] = (M[a, nz, None] * C[nz, :]).sum(axis=0)
+    out = np.zeros((n_lo, n_lo))
+    for b in range(n_lo):                      # out[:,b] = sum_{j in block b} M[b,j] * T[:,j]
+        nz = np.nonzero(M[b, :])[0]
+        if nz.size:
+            out[:, b] = (T[:, nz] * M[b, nz]).sum(axis=1)
+    return out
+
+
+def projection_M_from_recipe(edges, drop_axis, mask_high, mask_low):
+    """INDEPENDENT reconstruction of the matrix `build_projection_M` builds, by a deliberately
+    DIFFERENT algorithm: vectorised `unravel_index` / `ravel_multi_index` / `searchsorted` instead
+    of a per-column Python loop over `//` and `%` with a dict lookup. Same declared contract,
+    different route, so comparing the two catches a construction bug and not merely a copy error.
+
+    Kept deliberately free of `build_projection_M`'s helpers: if this called that, the comparison
+    would be a tautology. The one thing both intentionally share is the width array
+    `edges[drop_axis][1:] - edges[drop_axis][:-1]`, whose entries are STORED verbatim by both and
+    never arithmetically combined -- which is why the gate below can require exact equality rather
+    than a tolerance."""
+    nb = [np.asarray(e).size - 1 for e in edges]
+    require(len(nb) == 5, "expected 5 axes")
+    mh = np.asarray(mask_high).astype(bool)
+    ml_mask = np.asarray(mask_low).astype(bool)
+    require(mh.size == int(np.prod(nb)), "mask_high size != high grid")
+    nb_low = [n for i, n in enumerate(nb) if i != drop_axis]
+    require(ml_mask.size == int(np.prod(nb_low)), "mask_low size != low grid")
+    gh = np.nonzero(mh)[0]
+    ml = np.nonzero(ml_mask)[0]
+    midx = np.unravel_index(gh, tuple(nb))                       # C-order, vectorised
+    k = midx[drop_axis]
+    low_multi = tuple(midx[i] for i in range(len(nb)) if i != drop_axis)
+    glow = np.ravel_multi_index(low_multi, tuple(nb_low))
+    pos = np.searchsorted(ml, glow)                              # low global -> reported row
+    ok = (pos < ml.size) & (ml[np.minimum(pos, max(ml.size - 1, 0))] == glow)
+    require(bool(np.all(ok)),
+            f"{int((~ok).sum())} reported HIGH bin(s) map to a non-reported LOW bin "
+            f"(first high global {int(gh[np.nonzero(~ok)[0][0]]) if not np.all(ok) else -1})")
+    wdrop = np.asarray(edges[drop_axis], float)[1:] - np.asarray(edges[drop_axis], float)[:-1]
+    M = np.zeros((ml.size, gh.size), dtype=float)
+    M[pos, np.arange(gh.size)] = wdrop[k]
+    return M
+
+
+def check_projection_matrix_matches_recipe(M, edges, drop_axis, mask_high, mask_low):
+    """GATE: the projection matrix handed to the projection IS the matrix its declared recipe
+    produces, bit for bit.
+
+    N3 REPAIR, 2026-08-16, and the leg that carries the bar. `check_projection_validity` gates a
+    RECOMPUTATION IDENTITY -- it re-derives `M C_high M^T` and can only find errors in that
+    expression. It is blind, and provably blind, to `M` itself being wrong, because both of its
+    routes read `M`. A corrupted `M` passed that gate at rel 3.033e-17.
+
+    "Wrong `M`" is only definable against the recipe, so the recipe is what this gate checks:
+    rebuild the matrix from `(edges, drop_axis, mask_high, mask_low)` by an independent algorithm
+    and require exact agreement. Measured 2026-08-16: catches the probe's corruption (a row scaled
+    by 3) at max|diff| 3.0, where every recomputation-identity route reports ~1e-16.
+
+    Exactness is available here and is used deliberately -- see `projection_M_from_recipe` on why
+    both routes agree bit for bit -- because any tolerance on this comparison would be a number
+    nobody can justify. Returns stats for the receipt; raises P4GateError on disagreement."""
+    M = np.asarray(M, dtype=float)
+    M_ind = projection_M_from_recipe(edges, drop_axis, mask_high, mask_low)
+    require(M.shape == M_ind.shape,
+            f"projection matrix shape {M.shape} != recipe shape {M_ind.shape}; the matrix and the "
+            f"recipe describe different reported supports")
+    d = float(np.max(np.abs(M - M_ind))) if M.size else 0.0
+    n_diff = int(np.count_nonzero(M != M_ind))
+    require(d == 0.0,
+            f"projection matrix does NOT match its recipe: {n_diff} of {M.size} entries differ, "
+            f"max|diff| {d:.6e}. The matrix used for the projection is not the matrix its declared "
+            f"edges/axis/masks produce, so every downstream identity would hold on the wrong map.")
+    return {"projection_M_recipe_max_abs_diff": d,
+            "projection_M_recipe_entries_differing": n_diff,
+            "projection_M_recipe_nnz": int(np.count_nonzero(M_ind)),
+            "projection_M_recipe_route": "unravel_index/ravel_multi_index/searchsorted "
+                                         "(independent of build_projection_M)"}
+
+
 # RE-SPECIFIED 2026-08-09 (Joseph). The previous form GATED on `max |M@x5 - x4| / |x4| <= 3%`,
 # i.e. it required the 5D->4D marginal to reproduce the INDEPENDENTLY-UNFOLDED 4D central bin by
 # bin. That is the equivalence convention the campaign DECLINED on 2026-08-07: the adopted
@@ -1410,28 +1522,52 @@ def project(C_high, M):
 # What IS gated is projection validity, which the analysis does assert: symmetry, PSD, exact
 # agreement of M C M^T against a direct block-sum recomputation, and shape/coverage. Those are
 # recomputation identities and hold at ~1e-14, the standard the stage-4 identities already meet.
+#
+# "A direct block-sum recomputation" was ADVERTISED HERE FROM 2026-08-09 AND NOT PERFORMED until
+# the N3 repair on 2026-08-16: the code computed the same `M C M^T` re-associated. The claim in
+# this comment is now true. Note what it still does not say -- these identities gate the PRODUCT
+# given `M`; `M` itself is gated separately by `check_projection_matrix_matches_recipe`, because no
+# identity of the form "recompute M C M^T" can see that `M` is wrong. BEN-316.
 def check_projection_validity(C_high, M, rtol_identity=1e-9):
-    """GATE: the projection itself is valid. Recomputation identities only -- nothing here
-    compares against an independently-produced product.
+    """GATE: the projection itself is valid, GIVEN `M`. Recomputation identities only -- nothing
+    here compares against an independently-produced product.
 
       * C_low = M C_high M^T is symmetric and PSD;
       * that product equals a direct block-sum recomputation to `rtol_identity`.
 
     The second is not redundant with the first: `project()` is one matrix expression and a bug in
-    it would produce a matrix that is still symmetric and still PSD. Recomputing the same quantity
-    by an independent route is what makes this a check rather than a restatement."""
+    it would produce a matrix that is still symmetric and still PSD. Recomputing the product by a
+    route that shares no expression with it -- `_block_sum_projection`, numpy reductions and no
+    matrix multiplication -- is what makes this a check rather than a restatement.
+
+    DOCSTRING RESOLVED 2026-08-16 (N3). Until this repair these two paragraphs contradicted each
+    other: the first disclaimed any independent comparison while the second promised that "an
+    independent route is what makes this a check rather than a restatement" -- and repair-10 quoted
+    the promise as the contract. Both readings were defensible against the same text, which is why
+    the text could not be trusted. The promise is KEPT and SCOPED, and the scope is the whole point:
+
+      * this gate re-derives THE PRODUCT independently, so it can catch an error in `project()`;
+      * it CANNOT catch a wrong `M`, and no recomputation identity can -- both routes read `M`.
+        A corrupted `M` passed this gate at rel 3.033e-17. Measured, in the docstring of
+        `_block_sum_projection`.
+
+    `M` is validated by `check_projection_matrix_matches_recipe`, which is a DIFFERENT gate against
+    a DIFFERENT premise (the recipe that built `M`), and this gate passing says nothing about it.
+    The production entry point calls both; a caller that calls only this one has gated the product
+    and not the map."""
     C_low = project(C_high, M)
     stats = check_symmetric_psd(C_low)
-    # independent route: accumulate row-block by row-block rather than as one M C M^T
-    direct = np.zeros_like(C_low)
-    MH = M @ np.asarray(C_high, dtype=float)
-    for i in range(C_low.shape[0]):
-        direct[i, :] = MH[i, :] @ M.T
+    # INDEPENDENT ROUTE (N3 repair): weighted block sums, no matrix multiplication. The form this
+    # replaced was `MH = M @ C_high` then `direct[i, :] = MH[i, :] @ M.T` -- the same BLAS product
+    # re-associated, i.e. a measurement of accumulation order. See `_block_sum_projection`.
+    direct = _block_sum_projection(C_high, M)
     scale = max(1e-300, float(np.max(np.abs(C_low))))
     err = float(np.max(np.abs(C_low - direct)) / scale)
     require(err <= rtol_identity,
             f"projection identity M C M^T != direct block sum (rel {err:.3e} > {rtol_identity:.0e})")
     stats["projection_identity_relerr"] = err
+    stats["projection_identity_route"] = "weighted block sums, no matmul (N3 repair 2026-08-16)"
+    stats["projection_identity_gates_M"] = False   # says so in the receipt, not only in a docstring
     return C_low, stats
 
 
@@ -1443,7 +1579,18 @@ def crosscheck_marginal_vs_independent(M, x_high, x_low_independent):
     the adopted convention the marginal is the deliverable and this comparison characterises the
     independent unfold; it does not constrain the marginal. Returns the full distribution rather
     than a max, because on the real products the max is owned by a handful of near-empty bins and
-    is actively misleading about the body of the comparison (BEN-064)."""
+    is actively misleading about the body of the comparison (BEN-064).
+
+    FINITENESS ACCOUNTING added 2026-08-16 (N4). It stays REPORT ONLY -- this function raises on
+    nothing but a shape mismatch, by specification, and that is deliberate and unchanged. The gap it
+    closes is that a single non-finite entry silently poisons EVERY summary here: `np.median`,
+    `np.percentile` and `.max()` all return `nan`, `n_over_3pct` silently drops to 0 because
+    `nan > 0.03` is False, and the whole block would have been printed and written to the receipt as
+    if it were a measurement. `integral_ratio` was already documented as possibly `nan`; nothing
+    reported whether the rest were. Non-finite counts are now reported alongside, and the finite-only
+    summaries are reported next to the all-bin ones so a poisoned block is visible rather than
+    plausible. Turning this into a gate would need a decision this function is specified not to make;
+    if that is wanted it belongs at the caller."""
     proj = M @ np.asarray(x_high, dtype=float)
     xind = np.asarray(x_low_independent, dtype=float)
     require(proj.shape == xind.shape,
@@ -1451,6 +1598,9 @@ def crosscheck_marginal_vs_independent(M, x_high, x_low_independent):
     denom = np.where(np.abs(xind) > 0, np.abs(xind), 1.0)
     rel = (proj - xind) / denom
     a = np.abs(rel)
+    fin = np.isfinite(a)
+    n_bad = int(a.size - int(fin.sum()))
+    af = a[fin]
     out = {"n_bins": int(a.size),
            "median_abs_rel": float(np.median(a)),
            "p90_abs_rel": float(np.percentile(a, 90)),
@@ -1459,8 +1609,24 @@ def crosscheck_marginal_vs_independent(M, x_high, x_low_independent):
            "frac_marginal_above": float(np.mean(rel > 0)),
            "signed_mean_rel": float(np.mean(rel)),
            "integral_ratio": float(proj.sum() / xind.sum()) if xind.sum() else float("nan"),
+           # N4: the counts that say whether the numbers above mean anything.
+           "n_nonfinite_rel": n_bad,
+           "n_nonfinite_marginal": int(np.count_nonzero(~np.isfinite(proj))),
+           "n_nonfinite_independent": int(np.count_nonzero(~np.isfinite(xind))),
+           "all_finite": bool(n_bad == 0),
+           "integral_ratio_defined": bool(np.isfinite(proj.sum() / xind.sum())) if xind.sum()
+                                     else False,
+           "median_abs_rel_finite_only": float(np.median(af)) if af.size else float("nan"),
+           "p90_abs_rel_finite_only": float(np.percentile(af, 90)) if af.size else float("nan"),
+           "max_abs_rel_finite_only": float(af.max()) if af.size else float("nan"),
            "note": "cross-check between two estimators; NO pass/fail by specification "
                    "(2026-08-09). The marginal is the deliverable."}
+    if n_bad:
+        out["note"] = (f"NON-FINITE: {n_bad} of {a.size} bins are nan/inf, so median_abs_rel, "
+                       f"p90/p99, max_abs_rel, signed_mean_rel and every n_over_*pct above are "
+                       f"POISONED and must not be read as measurements -- use the *_finite_only "
+                       f"fields and account for the {n_bad} excluded bins. " + out["note"])
     for t in (0.03, 0.10, 0.20):
         out[f"n_over_{int(t*100)}pct"] = int((a > t).sum())
+        out[f"n_over_{int(t*100)}pct_finite_only"] = int((af > t).sum())
     return out

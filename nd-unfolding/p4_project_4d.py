@@ -136,6 +136,15 @@ def main():
               f"5D support and are excluded from the projected product; global indices "
               f"{[int(i) for i in dropped[:10]]}{' ...' if dropped.size > 10 else ''}")
     M = P.build_projection_M(edges, W_AXIS, m5, m4_eff)           # deterministic
+    # N3 REPAIR, 2026-08-16. GATE M ITSELF, here, against the recipe that produced it. The
+    # projection-validity gate below is a recomputation identity and is provably blind to a wrong M
+    # -- both of its routes read M, and a corrupted M passed it at rel 3.033e-17 (BEN-316). This is
+    # the only leg on this path that can see that the MAP is wrong rather than the product; it is
+    # deliberately called at construction, where the ingredients are in hand.
+    mstats = P.check_projection_matrix_matches_recipe(M, edges, W_AXIS, m5, m4_eff)
+    print(f"[proj] M matches its recipe EXACTLY (independent rebuild: "
+          f"{mstats['projection_M_recipe_route']}); nnz={mstats['projection_M_recipe_nnz']}, "
+          f"entries differing={mstats['projection_M_recipe_entries_differing']}")
     m_hash = P.matrix_content_hash(M)                             # pins M's CONTENTS, not its shape
     cpath, ckey = a.c5.rsplit(":", 1)
     C5 = _th2(cpath, ckey)
@@ -152,6 +161,19 @@ def main():
           f"n={xcheck['n_bins']} median={xcheck['median_abs_rel']:.4f} "
           f"p90={xcheck['p90_abs_rel']:.4f} max={xcheck['max_abs_rel']:.4f} "
           f"over3%={xcheck['n_over_3pct']} integral_ratio={xcheck['integral_ratio']:.6f}")
+    # N4: the finiteness fact goes where the READER looks. It was already computed and written to
+    # the receipt, but this printed line is what a human and every log-scraping check actually read,
+    # and a nan-poisoned median prints as a plausible number. Same shape as BEN-327.
+    if not xcheck["all_finite"]:
+        print(f"[xcheck] *** NON-FINITE: {xcheck['n_nonfinite_rel']} of {xcheck['n_bins']} bins are "
+              f"nan/inf (marginal {xcheck['n_nonfinite_marginal']}, independent "
+              f"{xcheck['n_nonfinite_independent']}) -- THE SUMMARY LINE ABOVE IS POISONED AND IS "
+              f"NOT A MEASUREMENT. Finite-only: median={xcheck['median_abs_rel_finite_only']:.4f} "
+              f"p90={xcheck['p90_abs_rel_finite_only']:.4f} "
+              f"max={xcheck['max_abs_rel_finite_only']:.4f} "
+              f"over3%={xcheck['n_over_3pct_finite_only']}")
+    else:
+        print(f"[xcheck] all {xcheck['n_bins']} bins finite -- the summary above is a measurement")
 
     P.require(P.sha256_file(CEN5) == pre5 and P.sha256_file(CEN4) == pre4,
               "frozen central ROOT changed during projection")
@@ -186,6 +208,9 @@ def main():
                "mask5d_hash": man["mask5d_hash"], "mask4d_hash": man["mask4d_hash"],
                "central5d_sha256": pre5, "central4d_sha256": pre4,
                "projection_identity_relerr": stats["projection_identity_relerr"],
+               "projection_identity_route": stats["projection_identity_route"],
+               "projection_identity_gates_M": stats["projection_identity_gates_M"],
+               "projection_M_recipe_check": mstats,
                "crosscheck_marginal_vs_independent_4d": xcheck,
                "M_shape": list(M.shape), "M_content_sha256": m_hash,
                "mask4d_nreported": int(m4.sum()),

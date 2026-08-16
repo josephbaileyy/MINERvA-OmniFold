@@ -44,13 +44,23 @@ import p4_lib as P  # noqa: E402
 
 print(f"probing p4_lib from {os.path.dirname(os.path.abspath(P.__file__))}")
 
-FAIL = []
+FAIL = []       # BEN-316 expectations (sections 1-4): true on the pre- AND post-repair tree
+RFAIL = []      # N3-repair expectations (section 5): true ONLY on the repaired tree
 
 
 def check(label, ok, detail):
     print(("  PASS  " if ok else "  FAIL  ") + label + " :: " + detail)
     if not ok:
         FAIL.append(label)
+
+
+def rcheck(label, ok, detail):
+    """Same, but for the repair's expectations, kept in a SEPARATE bucket. Mixing them would make
+    one exit code mean both 'BEN-316 no longer reproduces' and 'the repair has not landed yet',
+    which are opposite conclusions."""
+    print(("  PASS  " if ok else "  FAIL  ") + label + " :: " + detail)
+    if not ok:
+        RFAIL.append(label)
 
 
 def main():
@@ -109,12 +119,63 @@ def main():
           sb["projection_identity_relerr"] < 1e-9,
           "relerr = %.3e, gate PASSED on a wrong M" % sb["projection_identity_relerr"])
 
+    # ---------------------------------------------------------------- the N3 repair, 2026-08-16
+    # Sections 1-4 are BEN-316's findings and hold on BOTH trees: the identity leg is still blind to
+    # a wrong M after the repair, deliberately and by construction, and section 4 must keep passing.
+    # What the repair adds is a SEPARATE gate on M, so section 5 FAILS on the pre-repair tree and
+    # PASSES after. That is the whole point of the P4LIB_DIR override: before-vs-after is this one
+    # command, run twice, and neither run is a narrative.
+    print("5. THE REPAIR: is M ITSELF gated, against the recipe that produced it?")
+    gate = getattr(P, "check_projection_matrix_matches_recipe", None)
+    if gate is None:
+        rcheck("a gate on M exists at all", False,
+               "check_projection_matrix_matches_recipe absent -- PRE-REPAIR tree: nothing on this "
+               "path can see that the MAP is wrong, only that the product was recomputed")
+    else:
+        edges = [np.array([0., 1., 2.])] * 4 + [np.array([0., 0.5, 1.5, 3.0])]
+        nb = [len(e) - 1 for e in edges]
+        mh = np.ones(int(np.prod(nb)), bool)
+        ml = P.reachable_low_mask(edges, 4, mh)
+        Mr = P.build_projection_M(edges, 4, mh, ml)
+        st = gate(Mr, edges, 4, mh, ml)
+        rcheck("the good M passes the recipe gate", st["projection_M_recipe_max_abs_diff"] == 0.0,
+               "max|diff| = %r via %s" % (st["projection_M_recipe_max_abs_diff"],
+                                          st["projection_M_recipe_route"]))
+        Mr_bad = Mr.copy()
+        Mr_bad[0, :] *= 3.0                                 # the SAME corruption as section 4
+        caught = False
+        try:
+            gate(Mr_bad, edges, 4, mh, ml)
+        except Exception as e:
+            caught, msg = True, str(e)
+        rcheck("the corruption that section 4 shows is INVISIBLE to the identity leg is CAUGHT here",
+               caught, (msg[:96] if caught else "the recipe gate ACCEPTED a corrupted M"))
+    bs = getattr(P, "_block_sum_projection", None)
+    if bs is None:
+        rcheck("the identity leg has a non-matmul route", False,
+               "_block_sum_projection absent -- PRE-REPAIR tree: `direct` is the same BLAS product "
+               "re-associated, so the identity measures accumulation order (section 1)")
+    else:
+        import inspect
+        body = inspect.getsource(bs).split('"""')[-1]
+        rcheck("that route contains no matrix multiplication",
+               "@" not in body and ".dot(" not in body and "matmul" not in body,
+               "checked structurally; a numeric check cannot separate two routes that agree to 1e-16")
+
     print()
     if FAIL:
-        print("PROBE RESULT :: %d EXPECTATION(S) NOT REPRODUCED -> %s" % (len(FAIL), FAIL))
-        print("A failure here means the leg's behaviour CHANGED; re-read BEN-316 before trusting it.")
+        print("PROBE RESULT :: %d BEN-316 EXPECTATION(S) NOT REPRODUCED -> %s" % (len(FAIL), FAIL))
+        print("A failure in 1-4 means the leg's behaviour CHANGED; re-read BEN-316 before trusting it.")
         return 1
-    print("PROBE RESULT :: ALL REPRODUCED -- BEN-316 stands as filed")
+    print("BEN-316 (sections 1-4) :: ALL REPRODUCED -- stands as filed, and section 4 is EXPECTED to "
+          "keep passing after the repair: the identity leg is blind to M by construction.")
+    if RFAIL:
+        print("N3 REPAIR (section 5) :: NOT PRESENT -> %s" % RFAIL)
+        print("PROBE RESULT :: PRE-REPAIR TREE -- the defect is live and M is ungated.")
+        return 2
+    print("N3 REPAIR (section 5) :: PRESENT -- M is gated against its recipe and the corruption that "
+          "passes the identity leg at ~1e-17 is rejected.")
+    print("PROBE RESULT :: REPAIRED TREE")
     return 0
 
 

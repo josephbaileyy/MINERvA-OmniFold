@@ -169,6 +169,167 @@ class Projection(unittest.TestCase):
         self.assertEqual(out["median_abs_rel"], 0.0)           # ...and the body is perfect
         self.assertEqual(out["n_over_3pct"], 1)
 
+    # ---------------------------------------------------------------- N3 / N4 repair, 2026-08-16
+    @staticmethod
+    def _recipe():
+        """A real width-weighted recipe with UNEQUAL dropped-axis widths, so a weight error is
+        distinguishable from a mapping error."""
+        edges = [np.array([0., 1., 2.])] * 4 + [np.array([0., 0.5, 1.5, 3.0])]   # W widths .5,1,1.5
+        nb = [len(e) - 1 for e in edges]
+        mh = np.ones(int(np.prod(nb)), bool)
+        ml = P.reachable_low_mask(edges, 4, mh)
+        return edges, 4, mh, ml
+
+    def test_a_corrupted_M_is_REJECTED_by_the_recipe_gate(self):
+        """THE BAR (B1, predeclared bf97279). The pre-repair projection gate could not detect a
+        wrong M: both of its legs read M, so a corrupted M reproduced in both and PASSED at rel
+        3.033e-17. This test fails on the pre-repair form -- where `check_projection_matrix_matches
+        _recipe` does not exist at all -- and it fails on a wrong M, which is the whole point.
+
+        BEN-344 is honoured INSIDE this test: the same instrument is shown returning a clean PASS
+        on the good M in the same run, so 'it raised' is not confounded with 'it always raises'."""
+        edges, ax, mh, ml = self._recipe()
+        M = P.build_projection_M(edges, ax, mh, ml)
+
+        st = P.check_projection_matrix_matches_recipe(M, edges, ax, mh, ml)   # non-null capability
+        self.assertEqual(st["projection_M_recipe_max_abs_diff"], 0.0)
+        self.assertEqual(st["projection_M_recipe_entries_differing"], 0)
+        self.assertEqual(st["projection_M_recipe_nnz"], int(mh.sum()))        # one nonzero per column
+
+        def scale_row(m):
+            m[0, :] *= 3.0
+
+        def scale_one_weight(m):
+            r = int(np.nonzero(m[:, 0])[0][0])
+            m[r, 0] *= 3.0
+
+        def move_column_to_wrong_row(m):
+            r = int(np.nonzero(m[:, 0])[0][0])       # capture BEFORE zeroing it
+            w = m[r, 0]
+            m[r, 0] = 0.0
+            m[(r + 1) % m.shape[0], 0] = w
+
+        def swap_two_rows(m):
+            m[[0, 1], :] = m[[1, 0], :]
+
+        for label, mutate in (("row scaled by 3 (the probe's corruption)", scale_row),
+                              ("one weight scaled by 3", scale_one_weight),
+                              ("one column moved to the wrong row", move_column_to_wrong_row),
+                              ("two rows swapped", swap_two_rows)):
+            bad = M.copy()
+            mutate(bad)
+            self.assertFalse(np.array_equal(bad, M), f"mutation did not change M: {label}")
+            with self.assertRaises(P4GateError, msg=f"corrupted M accepted: {label}"):
+                P.check_projection_matrix_matches_recipe(bad, edges, ax, mh, ml)
+
+    def test_the_recomputation_identity_is_BLIND_to_a_wrong_M_and_says_so(self):
+        """The other half of the bar, stated as a property rather than a hope. The identity gate is
+        blind to a wrong M BY CONSTRUCTION -- both routes read M -- so this pins that limit in place
+        instead of leaving a future reader to assume the gate covers the map. If someone later makes
+        the identity gate M-sensitive, this test fails and the docstring gets revisited."""
+        edges, ax, mh, ml = self._recipe()
+        M = P.build_projection_M(edges, ax, mh, ml)
+        rng = np.random.default_rng(20260816)
+        A = rng.normal(size=(M.shape[1], M.shape[1]))
+        C = A @ A.T / M.shape[1]
+        bad = M.copy(); bad[0, :] *= 3.0
+        _, st = P.check_projection_validity(C, bad)                # does NOT raise: blind
+        self.assertLess(st["projection_identity_relerr"], 1e-9)
+        self.assertFalse(st["projection_identity_gates_M"])        # and it reports its own blindness
+        # ...while the recipe gate, on the SAME corrupted M in the SAME run, rejects it.
+        with self.assertRaises(P4GateError):
+            P.check_projection_matrix_matches_recipe(bad, edges, ax, mh, ml)
+
+    def test_the_identity_route_is_not_the_same_product_re_associated(self):
+        """N3's defect was that `direct` was `MH[i,:] @ M.T` with `MH = M @ C_high`, i.e. M C M^T
+        with a different loop order, so the identity measured BLAS accumulation order. The repaired
+        route must contain no matrix multiplication at all -- checked structurally, because a
+        numeric check cannot distinguish two routes that agree to 1e-16 by construction."""
+        import inspect
+        src = inspect.getsource(P._block_sum_projection)
+        body = "\n".join(l for l in src.splitlines()
+                         if not l.strip().startswith(("#", '"', "'")))
+        self.assertNotIn("@", body.split('"""')[-1], "the block-sum route still uses matmul")
+        for banned in (".dot(", "np.dot", "np.matmul", "np.einsum", "np.tensordot"):
+            self.assertNotIn(banned, body, f"the block-sum route still uses {banned}")
+        # and it must still BE the projection, on a width-weighted M with unequal widths
+        edges, ax, mh, ml = self._recipe()
+        M = P.build_projection_M(edges, ax, mh, ml)
+        rng = np.random.default_rng(11)
+        A = rng.normal(size=(M.shape[1], M.shape[1]))
+        C = A @ A.T / M.shape[1]
+        ref = P.project(C, M)
+        got = P._block_sum_projection(C, M)
+        self.assertLess(float(np.max(np.abs(ref - got)) / np.max(np.abs(ref))), 1e-12)
+
+    def test_identity_gate_still_catches_a_project_expression_bug(self):
+        """The one thing the pre-repair leg DID do must survive the repair: a value-changing edit to
+        project() is caught. 'The old check was useless' is too strong and this keeps it honest."""
+        edges, ax, mh, ml = self._recipe()
+        M = P.build_projection_M(edges, ax, mh, ml)
+        rng = np.random.default_rng(5)
+        A = rng.normal(size=(M.shape[1], M.shape[1]))
+        C = A @ A.T / M.shape[1]
+        orig = P.project
+        try:
+            P.project = lambda C_high, M_: 2.0 * orig(C_high, M_)   # still symmetric, still PSD
+            with self.assertRaises(P4GateError):
+                P.check_projection_validity(C, M)
+        finally:
+            P.project = orig
+        P.check_projection_validity(C, M)                           # and passes once restored
+
+    def test_crosscheck_reports_nonfinite_and_still_never_raises(self):
+        """N4. A single nan silently poisoned every summary here -- median/p90/p99/max all become
+        nan and `n_over_3pct` drops to 0 because `nan > 0.03` is False -- and the block was printed
+        and written to the receipt as if it were a measurement. REPORT ONLY is unchanged: this must
+        not raise. BEN-344: the same fields are shown clean in the same run."""
+        M = np.eye(4)
+        x = np.array([1.0, 1.0, 1.0, 1.0])
+        clean = P.crosscheck_marginal_vs_independent(M, x, np.array([1.0, 1.0, 1.0, 2.0]))
+        self.assertTrue(clean["all_finite"])                       # non-null capability, same run
+        self.assertEqual(clean["n_nonfinite_rel"], 0)
+        self.assertEqual(clean["n_over_3pct"], 1)
+
+        # LOCALISED: one non-finite INDEPENDENT bin taints exactly its own bin.
+        local = P.crosscheck_marginal_vs_independent(               # must NOT raise
+            M, x, np.array([1.0, 1.0, 1.0, np.nan]))
+        self.assertFalse(local["all_finite"])
+        self.assertEqual(local["n_nonfinite_rel"], 1)
+        self.assertEqual(local["n_nonfinite_independent"], 1)
+        self.assertEqual(local["n_nonfinite_marginal"], 0)
+        # the defect it makes visible: the all-bin summaries ARE nan and the count DID drop to 0
+        self.assertTrue(np.isnan(local["median_abs_rel"]))
+        self.assertTrue(np.isnan(local["max_abs_rel"]))
+        self.assertEqual(local["n_over_3pct"], 0)                   # `nan > 0.03` is False
+        # ...while the finite-only fields stay usable and the excluded bin is counted
+        self.assertTrue(np.isfinite(local["max_abs_rel_finite_only"]))
+        self.assertEqual(local["median_abs_rel_finite_only"], 0.0)
+        self.assertIn("POISONED", local["note"])
+        self.assertIn("NO pass/fail", local["note"])                # specification unchanged
+
+        # AMPLIFIED, and this is why the counts are worth reporting rather than a bare flag: one
+        # non-finite HIGH bin poisons EVERY low bin, because `0.0 * nan` is `nan`, so a zero entry
+        # of M does not isolate it. Measured here as 1 bad input -> 4 of 4 bad outputs; on the real
+        # products that is one bad 5D bin taking all 4825 reported 4D bins with it.
+        amp = P.crosscheck_marginal_vs_independent(                 # must NOT raise
+            M, np.array([1.0, np.nan, 1.0, 1.0]), np.array([1.0, 1.0, 1.0, 2.0]))
+        self.assertEqual(amp["n_nonfinite_marginal"], 4)
+        self.assertEqual(amp["n_nonfinite_rel"], 4)
+        self.assertEqual(amp["n_bins"], 4)
+        self.assertFalse(amp["all_finite"])
+        self.assertTrue(np.isnan(amp["max_abs_rel_finite_only"]))   # nothing survives to summarise
+        self.assertEqual(amp["n_over_3pct_finite_only"], 0)
+
+    def test_production_path_gates_M_against_its_recipe(self):
+        """Non-regression on the WIRING, not the library. The recipe gate only protects the campaign
+        if the one production caller calls it; a library gate nobody invokes is the defect class this
+        repair is fixing (a qualifying fact computed and not put where the reader looks)."""
+        src = (ND / "p4_project_4d.py").read_text()
+        self.assertIn("check_projection_matrix_matches_recipe", src)
+        self.assertIn("projection_M_recipe_check", src)             # and it reaches the receipt
+        self.assertIn("all_finite", src)                            # N4 fact reaches the log line
+
     def test_projection_M_rejects_an_unreachable_low_bin(self):
         """BEN-064, the masking defect: a reported LOW bin no HIGH bin reaches used to yield an
         all-zero row of M, which reached the central check as an exact 0 and reported rel=1.0

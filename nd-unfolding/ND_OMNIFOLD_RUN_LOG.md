@@ -9523,3 +9523,77 @@ that `HEAD` contains rather than a deliberate local modification. **No cluster w
 `fullevent_fps_dataloader.py`, which is the same `BEN-312` shape as `train_fullevent_nominal.py` and needs
 its own predeclaration because it is receipt-bound and hash-pinned by the Gate-2 runtime. 17 revision-gate
 tests still green.
+
+## 2026-08-16 — N3 + N4 repair: the projection gate now checks its own premise (lane A)
+
+**Dispatch.** `N3` (high, `p4_lib.py check_projection_validity`) and `N4` (medium,
+`crosscheck_marginal_vs_independent`), both outstanding at the repair-10 verdict
+(`20260816T062458Z`, `BLOCK`, `authorizes_covariance_stages_4_6: False`). One commit, because verifier
+rule 4b invalidates a PASS when an in-scope file differs between the reviewed commit and `HEAD`, and both
+edited modules — `p4_lib.py` and `p4_project_4d.py` — are on the 20-path standard-P4 execution surface.
+
+**Before-check, run in the same turn as the first edit:** `HEAD 7023870`; `git log -1 -- nd-unfolding/p4_lib.py`
+→ `5fc06b6`; working tree clean for that file; `grep -c 'direct[i, :] = MH[i, :] @ M.T'` → 1. Re-checked
+after landing, so a concurrent edit by the other `A` would surface as a conflict rather than an overwrite.
+
+**`N3` — what was wrong, and why the prescribed fix was not enough (`BEN-328`).** The second leg computed
+`MH = M @ C_high` then `direct[i,:] = MH[i,:] @ M.T`: the same BLAS product re-associated, so its `relerr`
+measured accumulation order (~1.9e-16 against a 1e-9 threshold, and exactly 0.0 on the unit test's own
+fixture). The brief prescribed a groups-and-weights block sum. **Measured before implementing: that route
+cannot reach the predeclared bar.** A block sum reading its groups AND weights off `M` computes `M C M^T`
+by definition, so a row scaled by 3, one weight scaled by 3, a column moved to the wrong row, and two rows
+swapped all came back `1.5e-16 .. 5.0e-16` — invisible. **"Wrong" is a relation between `M` and its recipe,
+so no function of `(C_high, M)` can decide it.** Repaired as two gates:
+
+- `_block_sum_projection` — numpy reductions, no matrix multiplication, independent of `project()`'s
+  expression (catches a doubled result at rel `5.0e-1`). **1.00 s vs 6.62 s for the BLAS product at the real
+  10694 → 4825 shape**, because `M` carries one nonzero per column: the honest route is the cheaper one.
+- `check_projection_matrix_matches_recipe` — rebuilds `M` from `(edges, drop_axis, mask_high, mask_low)` via
+  `unravel_index`/`ravel_multi_index`/`searchsorted` (deliberately not `build_projection_M`'s `//`-and-`%`
+  loop, which would make the comparison a tautology) and requires **exact** equality. Catches the probe's
+  corruption at `max|diff| 3.0`. Wired into `p4_project_4d.py` at construction, where the ingredients are in
+  hand; a library gate nobody calls is the defect class this repair is about.
+
+`M` carries **width weights, not 0/1 membership** (`M[row,col] = wdrop[k]`); the recipe fixture uses unequal
+W widths so a weight error is distinguishable from a mapping error. The self-contradicting docstring is
+resolved by **scoping** the promise, not deleting it, and the blindness is now asserted in a test and
+recorded in the receipt (`projection_identity_gates_M: False`) rather than left to a docstring.
+
+**`N4`.** Finiteness accounting added, **`REPORT ONLY` unchanged** — the function still raises on nothing but
+a shape mismatch, which is its specification. `BEN-329`: one non-finite input bin poisons **every** output
+bin, because `0.0 * nan` is `nan`, so sparsity is not a containment argument; on the real products one bad
+5D bin of 10,694 takes all 4,825 4D bins with it, and `median`/`p90`/`p99`/`max` go `nan` while
+`n_over_3pct` reports `0` (`nan > 0.03` is False). Counts, `*_finite_only` summaries and a loud `note` are
+now reported, and the printed `[xcheck]` line carries the fact — `BEN-327`'s shape, since a nan-poisoned
+median prints as a plausible number and stdout is what a reader actually reads.
+
+**Before/after is one command.** `docs/orchestration/state/probe-projection-identity-leg-20260816.py`
+(lane D's, extended here) run against the pre-repair `p4_lib.py` — `sha256 aa3470e4…`, matching the baseline
+lane D recorded at `3fe11de` — exits **2**, `PRE-REPAIR TREE -- the defect is live and M is ungated`, and
+reproduces the `3.033e-17` corrupted-`M` pass. The repaired tree exits **0**. `BEN-316`'s sections 1–4 are
+**expected** to keep passing and do: section 4 is "a corrupted `M` passes the identity leg", still true by
+construction. The probe keeps the two expectation sets in separate buckets, because one exit code meaning
+both "`BEN-316` no longer reproduces" and "the repair has not landed" licenses opposite conclusions.
+
+**Tests.** 6 new in `tests/test_p4_repair.py`. Full suite **1461 passed / 2 failed / 1 skipped**, compared
+**same-selection at `HEAD`** (`1455 passed / 2 failed / 1 skipped`): the two failures are identical and
+pre-existing — `test_gate2_target_runtime` needs an absent `/pscratch` path, and
+`test_pet_fullevent_nominal_launcher::test_config_gate_only_cli_no_train` is the known order-dependent
+pollution (it passes when its file is selected alone). **Zero regressions.** `TMPDIR` set explicitly.
+
+**Drift chain, followed to the end rather than silenced.** The 14 new recorded fields tripped
+`test_p4_sweep_snapshots`; regenerated with the documented `--update` so the count change lands in review
+(`115 → 129` fields, `28 → 29` gates), which then tripped the test binding the inventory *document* to the
+snapshot, so `REPAIR6-RECORDED-NOT-CHECKED-INVENTORY.md` is updated and names the new fields. Recorded
+there: the sweep is grep-level and cannot see `n_over_3pct_finite_only` and its two siblings, written
+through an f-string key — a pre-existing limit of the extractor, named because a field the inventory cannot
+see is what the inventory is for.
+
+**Line citations that move.** `p4_project_4d.py` insertions shift the repair-8 verdict's anchors, derived
+rather than computed: `:130`/`:132`/`:133` unchanged, `:182 → :204`, `:193 → :218`, `:197 → :222`. The
+verdict JSONs are receipts and were **not** edited.
+
+**Not done, deliberately.** No run, no `sbatch`, no covariance construction — the repair-10 `BLOCK` stands and
+this commit does not lift it; `authorizes_covariance_stages_4_6` remains `False` and only the verifier can
+change that. `P4_VERIFIER_PASS` untouched. The remaining outstanding count is the verifier's to restate: lane
+B refuted `#7` by measurement, so 6 by that account, but this lane asserts no total.
