@@ -38,9 +38,22 @@ All verified by the mediator in the turn the authorization was given, not recall
 57012031_5|FAILED   |1:0|00:02:07|2026-08-15T06:02:42     ARM 1
 ```
 
-**Arm 0 is complete, healthy, and untouched.** It is the run's primary product: it closes `OI-125` and
-supplies `OI-71`'s `G4` recovery evaluation. **Only arm 1 broke**, on the float64/float32 promotion in
-`net.weighted_binary_crossentropy:13`.
+**Arm 0 is complete, healthy, and untouched.** It is the run's primary product: it ~~closes `OI-125`~~
+**NARROWS `OI-125` — see the correction below** — and supplies `OI-71`'s `G4` recovery evaluation.
+**Only arm 1 broke**, on the float64/float32 promotion in `net.weighted_binary_crossentropy:13`.
+
+> **CORRECTION 2026-08-16 (mediator, the author of this document).** The struck sentence is **false at
+> HEAD** and was false when written. `BEN-360` established that the arm-0 instrument hooked `RunStep1`
+> and recorded the push at **consumption**, so the **end-of-run** scalar — the one `OI-125` is actually
+> about, and the like-for-like partner of the nominal's recorded `0.736746` — **is recorded by no row**.
+> `OI-125` is therefore **NARROWED, NOT CLOSED**, and its own instruction forbids closing it on either
+> `1.011418` (predicted) or `1.010879` (recovered), because **both are reconstructions**.
+>
+> Raised by lane C while adjudicating a proposed re-run, and verified independently here against
+> `OI-125`'s row at HEAD. Recorded rather than silently edited: this document is cited elsewhere, and a
+> **stale closure claim inside an authorization is exactly the sentence that survives a relay while its
+> basis does not** (`BEN-361`). The authorization of the arm-1 resubmit itself is **unaffected** — it
+> never rested on this claim.
 
 **The fix has never been exercised on the cluster.** `4e85f0e` is dated `2026-08-15T12:55:45Z`; the
 first arm-1 task died at `12:46Z`.
@@ -112,4 +125,6 @@ Everything else. Restated so no later reader has to infer it:
 
 - `AUTHORIZATION-20260815-consensus-grant.md` — the cost grant this does **not** rely on.
 - `4e85f0e` — the dtype fix and `BEN-314`. `c6edc13` — the `G0` hardening that added the fourth pin.
-- `OI-125` (closed by arm 0), `OI-71` `G4` (supplied by arm 0).
+- `OI-125` — **NARROWED, not closed, by arm 0**; see the 2026-08-16 correction above. `OI-71` `G4`
+  (supplied by arm 0).
+- `BEN-360`, `BEN-361` — why arm 0 does not close `OI-125`.
