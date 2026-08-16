@@ -517,5 +517,145 @@ class LauncherWrapperPinTest(unittest.TestCase):
             "repin the DRIVER, which is receipt-bound (BEN-270).")
 
 
+class AnnealAttestationTest(unittest.TestCase):
+    """`attest_anneal_took_effect` must REFUSE an un-annealed run, not describe one (BEN-317).
+
+    A guard that passes on the thing it exists to catch is worse than no guard, because it converts
+    an open question into a recorded assurance -- `BEN-314`'s lesson, and the reason every case here
+    is a failure demonstrated rather than a success asserted.
+
+    The six products of 2026-08-15 carry `fold_forward_composed_with_annealed_arm: True` and nothing
+    else, and that boolean is True even when the LR record list is EMPTY. These tests are what makes
+    the replacement falsifiable.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        import sys
+        if PET not in sys.path:                     # the sibling is imported by name at runtime
+            sys.path.insert(0, PET)
+        import closure_powered_annealed_lr as cpa
+        cls.cpa = cpa
+
+    @staticmethod
+    def _records(pattern):
+        """pattern: list of (iteration, learning_rate); two fits per iteration, as the engine does."""
+        out = []
+        for it, lr in pattern:
+            for step in (1, 2):
+                out.append({"iteration": it, "step": step, "learning_rate": lr,
+                            "requested_fixed": False, "effective_fixed": it > 0})
+        return out
+
+    def _good(self):
+        return self._records([(0, 1e-4), (1, self.cpa.ANNEALED_LR), (2, self.cpa.ANNEALED_LR)])
+
+    def test_empty_records_are_REFUSED_not_reported(self):
+        """The exact state the old boolean left as an unbacked True."""
+        with self.assertRaises(SystemExit) as ctx:
+            CPT.attest_anneal_took_effect([], declared_lr=1e-4, start=0, niter=3)
+        self.assertIn("NO fit-time LR records", str(ctx.exception))
+
+    def test_None_records_are_refused(self):
+        with self.assertRaises(SystemExit):
+            CPT.attest_anneal_took_effect(None, declared_lr=1e-4, start=0, niter=3)
+
+    def test_a_correct_pattern_passes_and_counts_both_legs(self):
+        proof = CPT.attest_anneal_took_effect(self._good(), declared_lr=1e-4, start=0, niter=3)
+        self.assertTrue(proof["pass"])
+        self.assertEqual(proof["n_fits_at_base_lr"], 2)
+        self.assertEqual(proof["n_fits_at_annealed_lr"], 4)
+        self.assertEqual(proof["n_records"], 6)
+        self.assertTrue(proof["n_records_matches_two_per_iteration"])
+        self.assertEqual(proof["engine_declared_LR"], 1e-4)
+
+    def test_the_reference_pattern_matches_run_56552326s_proof(self):
+        """The landed proof for the band-setting run: 2 fits at 1e-4, 4 at 1e-5, 6 records."""
+        proof = CPT.attest_anneal_took_effect(self._good(), declared_lr=1e-4, start=0, niter=3)
+        self.assertEqual(
+            (proof["n_fits_at_base_lr"], proof["n_fits_at_annealed_lr"], proof["n_records"]),
+            (2, 4, 6))
+
+    def test_an_UNANNEALED_run_is_refused(self):
+        """Every fit at the base rate -- the interception silently not firing."""
+        bad = self._records([(0, 1e-4), (1, 1e-4), (2, 1e-4)])
+        with self.assertRaises(SystemExit) as ctx:
+            CPT.attest_anneal_took_effect(bad, declared_lr=1e-4, start=0, niter=3)
+        self.assertIn("DID NOT TAKE EFFECT", str(ctx.exception))
+
+    def test_annealing_the_wrong_iteration_is_refused(self):
+        """Iteration 0 must run at the base rate; annealing it is a different configuration."""
+        bad = self._records([(0, self.cpa.ANNEALED_LR), (1, self.cpa.ANNEALED_LR),
+                             (2, self.cpa.ANNEALED_LR)])
+        with self.assertRaises(SystemExit):
+            CPT.attest_anneal_took_effect(bad, declared_lr=1e-4, start=0, niter=3)
+
+    def test_A_GLOBALLY_WRONG_BASE_RATE_IS_CAUGHT_HERE_AND_NOT_BY_THE_SIBLING(self):
+        """THE DISCRIMINATING CASE, and the whole reason this is a second implementation.
+
+        Base fits at 1e-3 instead of the engine's declared 1e-4, annealed fits correct at 1e-5. The
+        record set is internally self-consistent, so a check that derives its reference from
+        `max(records)` judges the wrong rate against itself and passes.
+        """
+        bad = self._records([(0, 1e-3), (1, self.cpa.ANNEALED_LR), (2, self.cpa.ANNEALED_LR)])
+
+        # The sibling PASSES it -- demonstrated, not asserted from reading its source.
+        sibling_base_lr = max(r["learning_rate"] for r in bad)      # exactly cpa's own :177
+        self.assertEqual(sibling_base_lr, 1e-3)
+        self.cpa.assert_anneal_took_effect(bad, sibling_base_lr, start=0)   # does NOT raise
+
+        # This one refuses it, because its reference is DECLARED rather than inferred.
+        with self.assertRaises(SystemExit) as ctx:
+            CPT.attest_anneal_took_effect(bad, declared_lr=1e-4, start=0, niter=3)
+        self.assertIn("DID NOT TAKE EFFECT", str(ctx.exception))
+        self.assertIn("DECLARED", str(ctx.exception))
+
+    def test_a_missing_declared_rate_is_refused_rather_than_derived(self):
+        """Falling back to max(records) would silently reintroduce the hole above."""
+        for bad_lr in (None, float("nan"), 0.0, -1e-4):
+            with self.assertRaises(SystemExit) as ctx:
+                CPT.attest_anneal_took_effect(self._good(), declared_lr=bad_lr, start=0, niter=3)
+            self.assertIn("declared base learning rate", str(ctx.exception))
+
+    def test_start_boundary_is_honoured(self):
+        """With start=1, iterations 0 AND 1 run at the base rate."""
+        recs = self._records([(0, 1e-4), (1, 1e-4), (2, self.cpa.ANNEALED_LR)])
+        proof = CPT.attest_anneal_took_effect(recs, declared_lr=1e-4, start=1, niter=3)
+        self.assertEqual((proof["n_fits_at_base_lr"], proof["n_fits_at_annealed_lr"]), (4, 2))
+
+    def test_a_wrong_record_COUNT_is_reported_but_not_fatal(self):
+        """Deliberate: this runs after a multi-hour GPU run, and the rates are the predeclared thing.
+
+        A false refusal over a count whose invariance across future engine paths is unestablished
+        would discard a good run's annotation. The rates fail closed; the count is surfaced.
+        """
+        recs = self._records([(0, 1e-4), (1, self.cpa.ANNEALED_LR)])          # 4 records, niter=3
+        proof = CPT.attest_anneal_took_effect(recs, declared_lr=1e-4, start=0, niter=3)
+        self.assertTrue(proof["pass"])
+        self.assertEqual(proof["n_records"], 4)
+        self.assertEqual(proof["expected_n_records_at_two_fits_per_iteration"], 6)
+        self.assertFalse(proof["n_records_matches_two_per_iteration"])
+
+    def test_the_recorder_captures_the_engines_declared_LR_and_start(self):
+        """The attestation is only non-self-referential if the recorder actually reads the instance."""
+        mc = _Leg([1.0, 2.0], [True, True], weight_reco=[1.0, 3.0])
+        base = _FakeBase(mc, [1.0, 1.0], mc.weight_reco)
+        base.LR = 1e-4
+        base.start = 0
+        rec_cls, records = CPT.install_fold_forward_recorder(type(base))
+        inst = rec_cls(mc, [1.0, 1.0], mc.weight_reco)
+        inst.LR, inst.start = 1e-4, 0
+        inst.RunStep1(0)
+        self.assertEqual(records[0]["engine_declared_LR"], 1e-4)
+        self.assertEqual(records[0]["anneal_start"], 0)
+
+    def test_the_proof_does_not_claim_to_cover_the_six_existing_products(self):
+        """Scope guard: the fix must not read as retro-attestation of 2026-08-15's receipts."""
+        with open(PATH) as fh:
+            src = fh.read()
+        self.assertIn("BOUNDED, NOT ATTESTED", src)
+        self.assertIn("nothing here retro-attests them", src)
+
+
 if __name__ == "__main__":
     unittest.main()

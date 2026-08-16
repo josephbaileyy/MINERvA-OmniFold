@@ -137,6 +137,15 @@ def install_fold_forward_recorder(base, correct=False):
                 "correction_requested": bool(correct),
                 "applied_correction_factor": None,
                 "reco_weighted_mean_push_after_correction": None,
+                # CAPTURED SO THE ANNEAL ATTESTATION IS NOT SELF-REFERENTIAL. `self.LR` is the
+                # engine's own base rate (omnifold.py:127, defaulted to 1e-4 at :57 and never
+                # overridden by closure_powered_truth_reweight.py's MultiFold call), and `self.start`
+                # is the iteration boundary the anneal keys on (omnifold.py:115). Reading them from
+                # the live instance is what lets `attest_anneal_took_effect` compare observed fit
+                # rates against a DECLARED value instead of against the maximum of its own records --
+                # see that function for why the difference matters. BEN-317.
+                "engine_declared_LR": float(getattr(self, "LR", float("nan"))),
+                "anneal_start": int(getattr(self, "start", 0)),
             })
             if correct:
                 if ratio is None or not ratio > 0:
@@ -274,6 +283,112 @@ def rename_retired_recovery_bar_field(rep):
     return rep
 
 
+def attest_anneal_took_effect(lr_records, declared_lr, start, niter=None):
+    """Prove the anneal TOOK EFFECT, not that the install function was called. Fails closed.
+
+    WHY THIS EXISTS AS A SECOND IMPLEMENTATION. `closure_powered_annealed_lr.py` already has
+    `assert_anneal_took_effect` (`:112`), and it is reachable only from that module's own `main`
+    (`:178`). This module deliberately bypasses that `main` -- it drives `cpt.main` so the fold-forward
+    recorder can compose over the anneal -- so the guard never ran for the six products of
+    2026-08-15, and their receipts recorded only `fold_forward_composed_with_annealed_arm: True`.
+    **That boolean is True even when `fit_lr_records` is EMPTY**, which is precisely the state the
+    sibling guard exists to refuse. An un-annealed run was indistinguishable from an annealed one in
+    the receipt. BEN-317, BEN-312's family.
+
+    THIS VERSION IS STRICTLY STRONGER THAN THE SIBLING, AND THE DIFFERENCE IS ONE ARGUMENT.
+    The sibling derives its reference rate from the data it is checking --
+    `base_lr = max(r["learning_rate"] for r in lr_records)` (`:177`) -- so whatever the highest
+    observed rate happens to be BECOMES the standard the rest are judged against. That catches an
+    empty record list and a wrong PATTERN; it cannot catch a globally wrong base rate, because a run
+    at 10x every intended rate produces a perfectly self-consistent record set.
+
+    Here `declared_lr` is the engine's own `self.LR`, captured off the live instance by the recorder
+    (`omnifold.py:127`; the default 1e-4 at `:57`, which
+    `closure_powered_truth_reweight.py:328-331` does not override). Comparing observed rates against a
+    value the engine DECLARED rather than one the records IMPLY is what closes that hole.
+
+    THE RESIDUE, NAMED RATHER THAN LEFT FOR A LATER READER TO FIND: `declared_lr` is read at runtime,
+    so if the engine's own default were changed, the observed rate and the reference would move
+    together and this check would still pass. That is a much smaller exposure than the sibling's --
+    it requires an edit to a hash-pinned engine rather than any accident of a run -- and
+    `omnifold.py` is pinned by the launcher's `G0`, so such an edit cannot reach a run of this
+    configuration without breaking the gate first. It is NOT zero, and the check reports
+    `engine_declared_LR` so a reader can compare it against `1e-4` themselves.
+
+    `ANNEALED_LR` is a literal in the sibling module (`:47`) and is checked directly, so the annealed
+    leg has no equivalent residue.
+    """
+    import closure_powered_annealed_lr as cpa
+
+    if not lr_records:
+        raise SystemExit(
+            "[ff] the anneal produced NO fit-time LR records, so nothing proves it took effect. "
+            "This is the state closure_powered_annealed_lr.py:114-115 fails closed on, and a "
+            "receipt asserting `composed_with_annealed_arm` without it would be unfalsifiable "
+            "(fail closed -- BEN-317).")
+    if declared_lr is None or not np.isfinite(declared_lr) or declared_lr <= 0:
+        raise SystemExit(
+            f"[ff] the engine's declared base learning rate is {declared_lr!r}; without it this "
+            f"attestation would have to derive its own reference from the records it is checking, "
+            f"which cannot detect a globally wrong rate (fail closed -- BEN-317).")
+
+    problems, n_base, n_annealed = [], 0, 0
+    for r in lr_records:
+        annealed_expected = int(r["iteration"]) > int(start)
+        want = cpa.ANNEALED_LR if annealed_expected else float(declared_lr)
+        got = float(r["learning_rate"])
+        if np.isclose(got, want, rtol=cpa.LR_ASSERT_RTOL, atol=1e-12):
+            n_annealed += 1 if annealed_expected else 0
+            n_base += 0 if annealed_expected else 1
+        else:
+            problems.append(
+                f"iteration {r['iteration']} step {r['step']}: lr={got!r}, expected "
+                f"{want!r} ({'annealed' if annealed_expected else 'base'} leg, start={start})")
+    if problems:
+        raise SystemExit(
+            "[ff] THE ANNEAL DID NOT TAKE EFFECT AS INTENDED:\n  " + "\n  ".join(problems)
+            + f"\nReference base rate is the engine's DECLARED self.LR = {declared_lr!r}, not the "
+              f"maximum of these records. Refusing to annotate a report whose configuration is not "
+              f"the predeclared one (fail closed -- BEN-317).")
+
+    # Fit COUNT is recorded and cross-checked, but only the RATES are fatal. Two fits per iteration
+    # (step 1 and step 2) is what the engine does and what run 56552326's proof shows -- 6 records at
+    # niter=3 -- so a departure is worth surfacing loudly. It is not raised, because this function runs
+    # AFTER a multi-hour GPU run: a false refusal here would discard a good run's annotation over a
+    # count whose invariance across every future engine path this lane has not established. The rates
+    # are what the predeclaration is about, and they fail closed above.
+    expected = (2 * int(niter)) if niter else None
+    proof = {
+        "pass": True,
+        "n_fits_at_base_lr": n_base,
+        "n_fits_at_annealed_lr": n_annealed,
+        "n_records": len(lr_records),
+        "engine_declared_LR": float(declared_lr),
+        "annealed_LR": float(cpa.ANNEALED_LR),
+        "assert_rtol": float(cpa.LR_ASSERT_RTOL),
+        "anneal_start": int(start),
+        "niter": (int(niter) if niter else None),
+        "expected_n_records_at_two_fits_per_iteration": expected,
+        "n_records_matches_two_per_iteration": (
+            None if expected is None else bool(len(lr_records) == expected)),
+        "reference_rate_source": (
+            "the engine's DECLARED self.LR, captured off the live MultiFold instance by the "
+            "fold-forward recorder (omnifold.py:127) -- NOT max(records), which is what "
+            "closure_powered_annealed_lr.py:177 uses and which cannot detect a globally wrong rate"),
+        "residual_exposure": (
+            "declared_lr is read at runtime, so an edit to the ENGINE's own default would move the "
+            "observed rate and the reference together and still pass. omnifold.py is G0-pinned, so "
+            "such an edit cannot reach a run of this configuration without breaking the gate first. "
+            "Not zero; engine_declared_LR is reported so a reader can check it against 1e-4."),
+        "records": list(lr_records),
+    }
+    print(f"[ff] ANNEAL ATTESTED: {n_base} fit(s) at the engine's declared "
+          f"{declared_lr:g} (iteration<={start}), {n_annealed} at {cpa.ANNEALED_LR:g}; "
+          f"{len(lr_records)} records"
+          + ("" if expected is None else f", expected {expected} at niter={niter}"))
+    return proof
+
+
 def main(argv=None):
     """Run the powered closure with the recorder installed, then inject the records into its report.
 
@@ -345,7 +460,22 @@ def main(argv=None):
         "from push is the unfolding's own output, so dividing it out is a de-unfolding)."
         if correct else "none; arm 0 records only and changes no weight, model or metric")
     if lr_records is not None:
+        # The boolean stays, because it answers a different question -- WAS the anneal composed -- and
+        # a reader looking for it should still find it. It is no longer the only evidence, and it is
+        # no longer written before the proof: `attest_anneal_took_effect` raises on the empty-records
+        # state that used to leave this `True` with nothing behind it (BEN-317).
         rep["fold_forward_composed_with_annealed_arm"] = True
+        rep["anneal_lr_proof"] = attest_anneal_took_effect(
+            lr_records,
+            declared_lr=ff_records[0].get("engine_declared_LR"),
+            start=ff_records[0].get("anneal_start", 0),
+            niter=niter)
+        rep["fold_forward_composed_with_annealed_arm_note"] = (
+            "This boolean records that install_annealed_multifold() was CALLED. It is NOT the "
+            "attestation -- read `anneal_lr_proof`, which is absent if the anneal could not be "
+            "proven because this module now fails closed rather than writing an unbacked True. The "
+            "six products of 2026-08-15 predate that guard and carry the boolean ALONE; they are "
+            "BOUNDED, NOT ATTESTED, and nothing here retro-attests them (BEN-317).")
     annotate_nonquotability(rep, out, artifact_path=(rep.get("artifact") or {}).get("path"))
     rename_retired_recovery_bar_field(rep)
     tmp = out + ".tmp"

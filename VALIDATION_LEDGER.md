@@ -2008,4 +2008,16 @@ own `G3` line. So `VL134` is now **twice-derived, not recorded**, and `OI-125` s
 CLOSED**: two reconstructions agreeing is still two reconstructions. One citation is corrected in the
 verification receipt — the population's defining site is `:296`/`:311`, not `:305`.
 
+**THE SIX RUNS BEHIND `VL134`–`VL140` ARE `BOUNDED, NOT ATTESTED` ON THEIR ANNEAL** (`BEN-317`). Their
+receipts carry `fold_forward_composed_with_annealed_arm: True` and no `lr_proof`, and that boolean is `True`
+even on an EMPTY LR record list — so it records that the install function was *called*, not that any
+learning rate changed. What bounds it: the band `VL136` passes comes from proven-annealed runs
+(`annealed-shape-r2-terminal-56552326.json`, `anneal_lr_proof pass=True`), and arm 0 is bit-identical to
+`56552326` on `h_prior`/`h_target`/`h_untilted` with recovery `0.535` draw-sd from its mean. **That is a
+bound, not attestation** — the static spectra match because the *inputs* match, which carries no
+learning-rate information. **A provenance gap, not a suspicion of a wrong configuration.** The wrapper was
+repaired 2026-08-16 to emit `anneal_lr_proof` and the launcher's `G3` now refuses a product without one;
+**that applies to future runs only and retro-attests nothing here.** The six receipts are deliberately left
+unmodified as the record.
+
 **Nothing here is quotable, nothing is promoted, the central did not move.**

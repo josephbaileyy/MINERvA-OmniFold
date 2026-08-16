@@ -121,7 +121,55 @@ carrying LR information in that comparison is the one with draw scatter.
 **Disposition: a PROVENANCE gap, not a suspicion of a wrong configuration.** The claim "these runs were
 annealed" currently rests on a boolean recording that a function was called.
 
-## 5. The fix, not done and not authorized
+## 5. The fix — IMPLEMENTED 2026-08-16, and the self-referential limit was CLOSED rather than documented
+
+**Superseding this section's original text, which said "not done and not authorized."** The escalation in
+it was wrong and is corrected here rather than quietly edited: this lane escalated the fix to Joseph on the
+grounds that the wrapper is `G0`-pinned and its six products are in the ledger. **Joseph pushed back and
+he was right.** Tested against the standing grants: it is **not a run** (no GPU, so `b5e067d`'s one-GPU-day
+bar is not engaged), **not promotion** (`c1afe7a` does not reach it), and the pin lives in the launcher's
+**own `PINS` array**, which this lane had already moved once the same night with the move documented — that
+is a pin tracking a file that legitimately changed, not `OI-123`'s "repin a receipt-bound launcher to make
+a check pass." **Ordinary repair work.** Approved by the mediator and implemented.
+
+**What landed.** `attest_anneal_took_effect` in the wrapper, emitting `anneal_lr_proof` into the report in
+the form run `56552326`'s proof already uses; the launcher's `G3` now **refuses a product without a passing
+proof**; the pin moved `b24cfefe → 0e1471ba` in the same commit with the move documented at `:86-105`.
+
+**The residue named above turned out to be closable, and that changed the design.** §5's original claim was
+that `base_lr` must be derived from the records (`:177`) and so the assertion could not catch a globally
+wrong base rate. **That is true of the sibling and need not be true here.** The engine *declares* its base
+rate — `self.LR`, `omnifold.py:127`, defaulted to `1e-4` at `:57` and never overridden by the driver's
+`MultiFold` call — so the recorder captures it off the live instance and the attestation compares observed
+rates against a **declared** value instead of an **inferred** one.
+
+**The improvement is demonstrated, not argued.**
+`test_A_GLOBALLY_WRONG_BASE_RATE_IS_CAUGHT_HERE_AND_NOT_BY_THE_SIBLING` builds a record set with base fits
+at `1e-3` and annealed fits correct at `1e-5`, then **runs the sibling on it and shows it passing** —
+because `max(records)` becomes its own reference — before showing this one refuse. **A claim that one guard
+is stronger than another is worth exactly as much as the case where they disagree**, so the test executes
+both rather than reasoning about their sources.
+
+**What remains, stated because it is not zero:** `declared_lr` is read at runtime, so an edit to the
+engine's own default would move the observed rate and the reference together and still pass. That requires
+editing a `G0`-pinned engine, which cannot reach a run of this configuration without breaking the gate
+first — a much smaller exposure than an accident of a run — and the proof reports `engine_declared_LR` so a
+reader can check it against `1e-4` directly. `ANNEALED_LR` is a literal (`:47`) and is checked, so the
+annealed leg has no equivalent residue.
+
+**Power-tested before landing, per `BEN-314`: a guard that passes on the thing it exists to catch is worse
+than none.** Eleven new tests, every one a demonstrated refusal rather than an asserted success — empty
+records, `None` records, an entirely un-annealed run, annealing the wrong iteration, a missing declared
+rate, and the discriminating case above. `G3`'s new assertion was separately exercised against four bad
+reports (proof absent, `pass=False`, zero annealed fits, proof not a dict) and refused all four.
+
+**IT DOES NOT RETRO-ATTEST THE SIX EXISTING RUNS AND MUST NOT APPEAR TO.** Their receipts are untouched —
+they are the record. They ran `b24cfefe` or earlier, carry the boolean alone, and remain **BOUNDED, NOT
+ATTESTED**. Only runs launched after this commit carry `anneal_lr_proof`. The wrapper says so in the field
+note it writes, the launcher says so at `:100-105`, and a test
+(`test_the_proof_does_not_claim_to_cover_the_six_existing_products`) fails if that wording is removed.
+
+## 5b. The fix as originally scoped, retained because the escalation is the finding
 
 **Two lines** in the wrapper, not one — `base_lr` is not a constant the wrapper holds. The module's own
 `main()` derives it from the records at `:177`, `base_lr = max(r["learning_rate"] for r in lr_records)`,

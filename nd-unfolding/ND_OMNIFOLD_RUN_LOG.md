@@ -9157,3 +9157,65 @@ later leaves every EARLIER run permanently unattested on that axis — and the e
 already published.**
 
 *Long form:* `docs/orchestration/FINDING-20260816-the-arm-whose-instrumentation-nothing-pinned.md`.
+
+## 2026-08-16 — the anneal attestation IMPLEMENTED: a future run now proves the anneal took effect, and the self-referential limit was CLOSED rather than documented (`BEN-317`)
+
+**Append-only.** Executor lane. **Code change, no run:** wrapper + launcher + 11 tests. No GPU, no
+`sbatch`, no promotion, nothing into `docs/analysis-note/`, the five Gate-6 prohibitions at `19585b7`
+untouched. Approved by the mediator under Joseph's standing grants after **this lane's escalation was
+overruled — correctly.**
+
+**THE ESCALATION WAS WRONG AND THAT IS PART OF THE RECORD.** This lane wrote that the fix *"is yours and
+Joseph's call, not mine"* because the wrapper is `G0`-pinned and its six products are in the ledger. Joseph
+pushed back. Tested against the grants: **not a run** (no GPU, so `b5e067d`'s one-GPU-day bar is not
+engaged), **not promotion** (`c1afe7a` does not reach it), and the pin is in the launcher's **own `PINS`
+array** — already moved once the same night with the move documented, i.e. a pin tracking a file that
+legitimately changed, **not `OI-123`'s "repin a receipt-bound launcher to make a check pass."** Ordinary
+repair work. **Over-escalation has a cost like under-escalation does: it puts a decision in front of the
+principal that the standing grants already answered.**
+
+**WHAT LANDED.** `attest_anneal_took_effect` in `closure_foldforward_instrumented.py`, emitting
+`anneal_lr_proof` in the form run `56552326`'s proof already uses (fit counts per rate, record count vs
+`niter`). The launcher's `G3` now **refuses a product without a passing proof**. Wrapper pin moved
+`b24cfefe → 0e1471ba` **in the same commit**, documented as move 2 at `:86-105`.
+
+**THE LIMIT THIS LANE DECLARED YESTERDAY TURNED OUT TO BE CLOSABLE, AND THAT CHANGED THE DESIGN.** The
+`BEN-317` filing said the fix was "two lines, not one" and **partly self-referential**, because
+`closure_powered_annealed_lr.py:177` derives `base_lr = max(r["learning_rate"] for r in lr_records)` — so
+whatever the highest observed rate is *becomes* the standard, and a run at 10× every intended rate is
+perfectly self-consistent. **That is true of the sibling and did not have to be true here.** The engine
+DECLARES its base rate — `self.LR`, `omnifold.py:127`, defaulted `1e-4` at `:57`, never overridden by
+`closure_powered_truth_reweight.py:328-331` — so the recorder captures it off the live instance
+(`engine_declared_LR`, `anneal_start`) and the attestation compares against a **declared** value rather than
+an **inferred** one.
+
+**THE IMPROVEMENT IS DEMONSTRATED, NOT ARGUED.**
+`test_A_GLOBALLY_WRONG_BASE_RATE_IS_CAUGHT_HERE_AND_NOT_BY_THE_SIBLING` builds base fits at `1e-3` with
+annealed fits correct at `1e-5`, **runs `cpa.assert_anneal_took_effect` on it and shows it PASSING**, then
+shows this one refusing. **A claim that one guard is stronger than another is worth exactly the case where
+they disagree**, so the test executes both instead of reasoning about their sources.
+
+**POWER-TESTED BEFORE LANDING (`BEN-314`: a guard that passes on what it exists to catch is worse than
+none).** 11 new tests, **every one a demonstrated refusal rather than an asserted success**: empty records,
+`None` records, a wholly un-annealed run, annealing the wrong iteration, a missing/NaN/zero/negative
+declared rate, the `start` boundary, and the discriminating case. `G3`'s assertion was separately exercised
+against four bad reports — proof absent, `pass=False`, zero annealed fits, proof not a dict — and **refused
+all four**, with the valid one passing. **41 passed** in the wrapper suite (the pin test failed first, as
+designed, until the pin moved), **154 passed** across the hash-binding/preflight/receipt/powered selection,
+and both of the launcher's embedded python blocks compile.
+
+**ONE DELIBERATE NON-FATAL CHECK, declared rather than buried.** Fit COUNT is recorded and cross-checked
+against `2 × niter` but does **not** raise; only the RATES fail closed. This function runs *after* a
+multi-hour GPU run, and a false refusal over a count whose invariance across future engine paths this lane
+has not established would discard a good run's annotation. The rates are what the predeclaration is about.
+
+**IT RETRO-ATTESTS NOTHING.** The six 2026-08-15 receipts are **left unmodified — they are the record.** They
+ran `b24cfefe` or earlier, carry the boolean alone, and remain **BOUNDED, NOT ATTESTED**; only runs launched
+after this commit carry `anneal_lr_proof`. Said in three places that cannot drift apart from the code: the
+field note the wrapper writes, the launcher header at `:100-105`, and
+`test_the_proof_does_not_claim_to_cover_the_six_existing_products`, which fails if the wording is removed.
+`VALIDATION_LEDGER.md`'s `VL134`–`VL140` block now carries the same statement where a reader consuming those
+numbers will meet it.
+
+**Rule 4c note:** `p4_lib.py` is on the 20-path surface and this work is entirely in `nd-unfolding/pet/` plus
+`tests/`, so 4c is not engaged by it. Landed rather than left uncommitted, as instructed.

@@ -83,7 +83,7 @@ die() { echo "[ff-launch] FATAL: $1" >&2; exit "${2:-1}"; }
 #     delete the pin to avoid the edit; and do not repin the DRIVER, which is receipt-bound
 #     (BEN-270).
 #
-#     WRAPPER PIN MOVED ONCE, 2026-08-15, ee269b09 -> b24cfefe, for the two report-annotation fixes
+#     WRAPPER PIN MOVE 1, 2026-08-15, ee269b09 -> b24cfefe, for the two report-annotation fixes
 #     in closure_foldforward_instrumented.py (non-quotability as a field; the retired-0.80-bar
 #     rename). This is the maintenance action the paragraph above prescribes, not a BEN-270 repin:
 #     the driver/annealed/engine pins are byte-identical and untouched, and NO receipt binds the
@@ -91,12 +91,28 @@ die() { echo "[ff-launch] FATAL: $1" >&2; exit "${2:-1}"; }
 #     basename only. Arm 1's provenance survives the move because G0 PRINTS the digests it checked,
 #     so logs/ff_57038937_{3,4,5}.out carry `ee269b09...` as the wrapper those tasks actually ran.
 #     Arm 0 (57012031_{0,1,2}) predates the wrapper pin entirely and its log prints the 3-pin line.
+#
+#     WRAPPER PIN MOVE 2, 2026-08-16, b24cfefe -> 0e1471ba, for the ANNEAL ATTESTATION (BEN-317).
+#     The wrapper now calls its own `attest_anneal_took_effect` and emits `anneal_lr_proof` into the
+#     report, so a FUTURE run proves the anneal took effect instead of asserting that
+#     install_annealed_multifold() was called. The old boolean
+#     `fold_forward_composed_with_annealed_arm` was True even when the LR record list was EMPTY --
+#     the exact state closure_powered_annealed_lr.py:114-115 fails closed on -- which made an
+#     un-annealed run indistinguishable from an annealed one in the receipt.
+#
+#     Same maintenance action, same reasoning as move 1, and the same three things still hold: the
+#     driver/annealed/engine pins are byte-identical and untouched, no receipt binds the wrapper
+#     digest, and the digests G0 checked are PRINTED so every run stays readable from its own log.
+#
+#     THIS MOVE DOES NOT AND CANNOT RETRO-ATTEST THE SIX 2026-08-15 PRODUCTS. They ran b24cfefe or
+#     earlier, they carry the boolean alone, and they remain BOUNDED, NOT ATTESTED -- see BEN-317.
+#     Only runs launched after this commit carry `anneal_lr_proof`.
 # ---------------------------------------------------------------------------------------------
 declare -A PINS=(
   ["$DRIVER"]="a45fae7c3f978c34bf73f35ab56aac668439c5784a3968b4f09799ee6090fd48"
   ["$ANNEALED"]="ce9f11f4872dd611932705e36f4ecfb651f8ee8eed796cca98be598d92fbb911"
   ["$ENGINE"]="3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa"
-  ["$WRAPPER"]="b24cfefee6d8411be000e5affd41509e86e9a69964564aa32cacf9b10be67054"
+  ["$WRAPPER"]="0e1471ba1d9ef1a50bf26a90c66152004d824e07e8fd868087fcbd8dfbf3ffb8"
 )
 for f in "${!PINS[@]}"; do
   [[ -s "$f" ]] || die "missing: $f" 2
@@ -180,6 +196,16 @@ assert isinstance(m.get("recovery"), float), "no numeric recovery in the report"
 assert rec, "no fold_forward_per_iteration records"
 niter = (r.get("configuration") or {}).get("niter")
 assert niter is None or len(rec) == int(niter), f"{len(rec)} records vs niter={niter}"
+# ANNEAL ATTESTATION IS A PRODUCT REQUIREMENT, not just a wrapper courtesy (BEN-317). This launcher
+# always passes --annealed, so a report without a passing proof is a report whose configuration is
+# unestablished -- which is what the six 2026-08-15 products are, and the reason this assert exists.
+proof = r.get("anneal_lr_proof")
+assert isinstance(proof, dict), (
+    "no `anneal_lr_proof` in the report. The wrapper emits one for every --annealed run since "
+    "2026-08-16; its absence means an older wrapper ran, and G0 should already have refused that.")
+assert proof.get("pass") is True, f"anneal_lr_proof did not pass: {proof!r}"
+assert proof.get("n_fits_at_annealed_lr", 0) > 0, (
+    f"anneal_lr_proof records ZERO fits at the annealed rate, so nothing was annealed: {proof!r}")
 want = (arm == "arm1")
 assert bool(r.get("fold_forward_correction_applied")) == want, \
     f"arm={arm} but fold_forward_correction_applied={r.get('fold_forward_correction_applied')!r}"
