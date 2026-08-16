@@ -47,8 +47,12 @@ Three separate lanes and the mediator spent this session establishing, by measur
 
 - the successor instrument records the **right** quantity, not the neighbour (`BEN-342`);
 - the fixture is no longer degenerate on the weight-leg axis, proven by mutation;
-- the headline amplitude `~105 draw-sd` derives from nothing and is really `75.8` (`BEN-361`, on its
-  own author);
+- the headline amplitude `~105 draw-sd` is mis-normalised and is really `75.8` (`BEN-361`, on its own
+  author) — **and my first correction of it, saying it "derives from nothing", was itself wrong**: the
+  operand is the receipt's own `in_draw_sd_of_that_row` at `:23`, so the figure was divided by the sd
+  of the substituted rows, not invented. **I asserted an absence without grepping for it, which is the
+  documented error of `FINDING-20260814-ninety-times-counting-statistics.md:34`** — *"I claimed
+  `set_seed` appears nowhere"* — **committed again by the same session that indexed it**;
 - the proposed `OI-125` re-run was already denied inside the launcher being proposed (`BEN-334`).
 
 **Every one of those checks was performed against the local tree. None of them was a claim about the
