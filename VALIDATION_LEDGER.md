@@ -1990,4 +1990,22 @@ push↔row alignment was re-established on all six artifacts by the method
 run's published recovery from `(weights_push, dump_rows_b)` — reproducing it to `≤1.3e-10` with a max
 relative per-cell deviation of `5.809e-08`, the same magnitude that receipt reports.
 
+**INDEPENDENTLY RE-DERIVED 2026-08-16 by a second lane** (executor), receipt
+`docs/orchestration/state/RECEIPT-independent-verification-vl134-vl140-20260816.json`. `VL134`/`VL135`
+reproduce to 10 digits and `VL136`–`VL139` to every digit printed above, **including the `2/20`
+permutation enumeration**. The second lane used the **raw unnormalized `w_reco`** from the input
+inventory, summing to `682772` rather than the loader's `1e6`, so ratio agreement at `1e-13` across two
+different normalizations demonstrates the scale invariance more strongly than the `3.5e-12` control
+does by construction. Each `.npz` was also **bound to the log of the task that wrote it** — all six
+`sha256`-16 prefixes match the producing task's own `artifact ... (sha ...)` line, and all six are
+distinct. `weights_push` was confirmed **post-`Unfold()` at the site** (`:332-333` saved at `:351-352`),
+not inferred. The `59`-row population difference is **entirely** the `pass_truth` conjunction, measured;
+`|pass_reco & pass_truth| = 836975` equals the recorder's own `n_pass_reco` on all six runs.
+
+**What the second key does NOT do:** both lanes reduce the **same** six `weights_push` arrays — there is
+one production and no second run — and the six recovery values still come from one source each, their
+own `G3` line. So `VL134` is now **twice-derived, not recorded**, and `OI-125` stays **NARROWED, NOT
+CLOSED**: two reconstructions agreeing is still two reconstructions. One citation is corrected in the
+verification receipt — the population's defining site is `:296`/`:311`, not `:305`.
+
 **Nothing here is quotable, nothing is promoted, the central did not move.**

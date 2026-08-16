@@ -8968,3 +8968,63 @@ footing text uses only the `nw*` set.
 says what Joseph ordered and does not say what he prohibited, which is a boundary check, not a review of
 the measurement. And `OI-6`'s explicit obligation to revisit the footing before submission is recorded in
 the note and is **not** discharged by any of this.
+
+## 2026-08-16 — `VL134`–`VL140` independently re-derived by a second lane; the arm-1 `G0` condition discharged from the task logs
+
+**Append-only.** Executor lane, read-only: `ssh` reads and login-node `python` over `/pscratch`, plus
+local reads of the tracked tree. **No `sbatch`, `scancel`, `scontrol`, resubmission, or write to the
+cluster checkout; no GPU.** Verifies `bb91391`'s rows, which one lane built.
+
+**THE AUTHORIZATION'S BINDING CONDITION IS DISCHARGED, and it needed a task log rather than a dry run.**
+`AUTHORIZATION-20260815-arm1-resubmit.md` made copy order part of the grant and specified a
+self-identifying line: **3 pins means the old launcher ran and provenance is not intact; 4 means the
+hardened one did.** Line 1 of all three arm-1 logs reads `G0 PASS
+driver/annealed-wrapper/engine/instrumentation all match their digests`, and the logs print the four
+digests, wrapper `ee269b09…` — **the repaired file of `4e85f0e`, so arm 1 exercised the `BEN-314` dtype
+fix.** `sacct`: `57038937_{3,4,5}` **`COMPLETED 0:0`** at `01:56:59`/`01:57:24`/`01:58:29`, against
+`~2:00 FAILED 1:0` for the float64 attempt. Arm 0 `57012031_{0,1,2}` still `COMPLETED 0:0`, untouched as
+the grant required. The wrapper pin has since moved `ee269b09 → b24cfefe` for report-annotation fixes;
+`sbatch_foldforward_instrumented_closure.sh:86-92` documents the move and **the logs preserve what they
+ran**, so arm 1 needs no repin and is not orphaned by it.
+
+**`VL134`/`VL135` reproduce to 10 digits, `VL136`–`VL139` to every digit the ledger prints** — including
+the exact permutation enumeration, re-run here at `2/20`, `p = 0.1`, confirmed as the **design floor** at
+3-vs-3 and not evidence of weakness. Arm-0 mean `1.0108786131109` against ledger `1.010878613`; Δrecovery
+`−0.006888480` at `16.228` pooled sd, ranges disjoint, `9/9` realized pairwise.
+
+**The independence is in the starting point, not the conclusion.** This lane used the **raw unnormalized
+`w_reco`** from the inventory — summing to `682772`, not the loader's `1e6` — with a freshly written
+reduction and masks rebuilt from the input NPZ. **Ratio agreement at `1e-13` across two different
+normalizations demonstrates the scale invariance more strongly than the receipt's `3.5e-12` control,
+because it arose incidentally rather than by construction.** Each `.npz` is bound to the log of the task
+that wrote it: all six `sha256`-16 prefixes match the producing task's own `artifact … (sha …)` line and
+all six are distinct, so these are six productions and the arrays reduced are the arrays those tasks
+wrote. `weights_push` confirmed **post-`Unfold()` at the site** — `:332-333`, saved at `:351-352` — not
+inferred from a description of it.
+
+**The `59`-row population question, resolved by measurement.** `|pass_reco & pass_truth| = 836975` equals
+the recorder's own `n_pass_reco` on all six runs, and `|pass_reco & ¬pass_truth| = 59` accounts for the
+whole difference from the `837034`-row `pass_reco` population the `1.011418` prediction used. Sensitivity
+`7.7e-07` against a `5.39e-04` residual — **`0.14%` of it, so `VL134`'s AGREE is unaffected**, and the
+closure lane discloses both populations and the sensitivity. **One citation corrected:** the defining
+site is `s1_b = pr[ib] & pg[ib]` at `:296`, received by `mcB` at `:311`; the receipt's `:305` lands inside
+an unrelated `FLOAT32` comment. A slip, not a defect in the number — recorded because a `file:line`
+exists so a later reader can falsify the claim cheaply, and one pointing elsewhere cannot be.
+
+**LIMITS, stated because a verdict-only receipt is unfalsifiable (`BEN-077`).** Both lanes reduce the
+**same six `weights_push` arrays** — one production, no second run — and the six recovery values still
+have one source each, their own `G3` line. **`VL134` is now twice-derived, not recorded.** `OI-125` stays
+**NARROWED, NOT CLOSED**: two reconstructions agreeing is still two reconstructions, and the caution that
+neither `1.011418` nor `VL134` may close it is unchanged. Nothing promoted, nothing quotable, central
+unmoved, the five Gate-6 prohibitions at `19585b7` untouched, nothing into `docs/analysis-note/`.
+
+**`BEN-315` gained a fifth instance in the course of this work, and it was the lane's own tooling.** A
+`if len(s) < 200: print(...)` walker used to survey the receipt silently dropped **18 of its 280 leaves**,
+including the 250-character field that *defines* the population — on which evidence the lane concluded the
+receipt documented that population by count and not definition, and was one edit from filing it as a
+`BEN-077` row. `grep -c pass_truth` returns `1`. **A length filter over a document is a semantic filter:
+the short leaves are values, the long ones are the definitions and caveats.** Recorded in §6 of the long
+form, with the generalisation that **unreported omission is the entire defect in both truncation
+instances** — `head -8` and `len(s) < 200` — and a one-line `N of M omitted` count defeats both.
+
+*Receipt:* `docs/orchestration/state/RECEIPT-independent-verification-vl134-vl140-20260816.json`.

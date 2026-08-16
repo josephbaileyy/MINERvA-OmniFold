@@ -1,0 +1,150 @@
+{
+  "what_this_is": "INDEPENDENT SECOND KEY on VALIDATION_LEDGER rows VL134-VL140, which were built by one lane (the fold-forward closure lane) and landed at bb91391. Per CLAIMS.md's rule that worker agreement is not verification, this receipt is a re-derivation of those rows from a DIFFERENT starting point by a different lane. It promotes nothing and adopts nothing.",
+  "produced_by": "executor lane (Assistant). Read-only: ssh reads and login-node python over /pscratch, plus local reads of the tracked tree. NO sbatch, scancel, scontrol, resubmission, or writes to the cluster checkout. No GPU used.",
+  "measured_utc_date": "2026-08-16",
+  "verifies": "docs/orchestration/state/RECEIPT-foldforward-instrumented-closure-20260815.json and VALIDATION_LEDGER.md rows VL134-VL140",
+
+  "READ_THIS_FIRST_what_is_and_is_NOT_independent": {
+    "independent": [
+      "The reduction code. Written fresh from the recorder's formula, not reused from the closure lane's script.",
+      "The weight leg. This receipt uses the RAW UNNORMALIZED w_reco straight out of the input inventory, summing to 682772 over the pass_reco population; the closure lane used the loader's leg rescaled to 1e6. Agreement of the ratios to 1e-13 across two different normalizations is a stronger scale-invariance demonstration than the closure lane's own 3.5e-12 control, because it arose incidentally rather than by construction.",
+      "The population masks, rebuilt from the input NPZ's pass_reco and pass_truth rather than read from any receipt field.",
+      "The VL136-VL139 arithmetic, recomputed from the six G3 log lines including the exact permutation enumeration over all C(6,3)=20 labelings."
+    ],
+    "NOT_independent_stated_because_a_verdict_only_receipt_is_unfalsifiable": [
+      "The artifact. Both lanes reduce the SAME six weights_push arrays; there is one production of them and no second run. What IS independently established is that these are the arrays the six tasks wrote -- see artifact_bound_to_its_own_log below.",
+      "The recovery values VL136/VL137/VL138. There is one source, each run's own G3 line; this receipt verifies the arithmetic over them, not the values themselves.",
+      "The 1.011418 prediction. It is a reconstruction from run 56552326, as OI-125 already records, and this receipt does not re-derive it."
+    ]
+  },
+
+  "GATE_G0_the_authorization_binding_condition_DISCHARGED": {
+    "why_it_mattered": "AUTHORIZATION-20260815-arm1-resubmit.md made copy order part of the grant and specified a self-identifying log line: a 3-pin G0 means the OLD launcher ran and provenance is not intact; 4 pins means the hardened one ran.",
+    "evidence": "all three arm-1 task logs, line 1, verbatim: '[ff-launch] G0 PASS  driver/annealed-wrapper/engine/instrumentation all match their digests' -- FOUR pins",
+    "digests_printed_by_the_task_logs_themselves": {
+      "closure_powered_truth_reweight.py": "a45fae7c3f978c34bf73f35ab56aac668439c5784a3968b4f09799ee6090fd48",
+      "closure_powered_annealed_lr.py": "ce9f11f4872dd611932705e36f4ecfb651f8ee8eed796cca98be598d92fbb911",
+      "omnifold.py": "3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa",
+      "closure_foldforward_instrumented.py": "ee269b09a1ab42059e54542b6b970068be3869d9c1066fe7cca7759676be621c"
+    },
+    "so_arm1_ran_the_dtype_fix": "ee269b09 is the repaired wrapper of 4e85f0e (BEN-314). The three arm-1 tasks each ran a full 3 iterations and COMPLETED 0:0 in ~1:57, against ~2:00 FAILED 1:0 for the float64 attempt.",
+    "the_pin_has_since_MOVED_and_that_does_not_orphan_this_run": "the launcher's WRAPPER pin is now b24cfefe (report-annotation fixes, future products only). sbatch_foldforward_instrumented_closure.sh:86-92 documents the move and the logs preserve the digest they ran, so arm 1's provenance is readable from arm 1's own logs and needs no repin.",
+    "sacct_X_j_57038937": [
+      "57038937_3|COMPLETED|0:0|01:56:59|2026-08-15T15:45:30",
+      "57038937_4|COMPLETED|0:0|01:57:24|2026-08-15T15:48:09",
+      "57038937_5|COMPLETED|0:0|01:58:29|2026-08-15T16:16:05"
+    ],
+    "arm0_untouched_as_the_authorization_required": "57012031_0/_1/_2 remain COMPLETED 0:0"
+  },
+
+  "artifact_bound_to_its_own_log": {
+    "method": "sha256 of each .npz computed this turn, first 16 hex, against the 'artifact ... (sha ...)' line the producing task printed",
+    "per_run": {
+      "57012031_0": {"log": "c24940a7f3b2f9ab", "recomputed": "c24940a7f3b2f9ab", "equal": true},
+      "57012031_1": {"log": "eafbcaf71316f5eb", "recomputed": "eafbcaf71316f5eb", "equal": true},
+      "57012031_2": {"log": "3ea102822730932d", "recomputed": "3ea102822730932d", "equal": true},
+      "57038937_3": {"log": "a6b950bccbf46d57", "recomputed": "a6b950bccbf46d57", "equal": true},
+      "57038937_4": {"log": "f4ec6ebbb734d442", "recomputed": "f4ec6ebbb734d442", "equal": true},
+      "57038937_5": {"log": "5c01b0d3de78ed4e", "recomputed": "5c01b0d3de78ed4e", "equal": true}
+    },
+    "all_six_distinct": true,
+    "why_that_matters": "six distinct digests mean six distinct productions, so this is not one run's artifact copied; and each matching its own log means the arrays reduced below are the arrays those tasks wrote."
+  },
+
+  "structural_claim_read_at_the_site_not_inferred": {
+    "claim_under_test": "the .npz's weights_push is the END-OF-RUN push, the one no recorder row sees -- the whole basis of VL134",
+    "closure_powered_truth_reweight.py:332-334": "of.Unfold() ; push = np.asarray(of.weights_push, dtype=np.float64) ; then a fail-closed alignment check push.shape[0] != ib.size",
+    "closure_powered_truth_reweight.py:351-352": "np.savez_compressed(artifact, dump_rows_a=..., dump_rows_b=rows_b, weights_push=push.astype(np.float64), mc_indices=...)",
+    "verdict": "CONFIRMED. The saved array is the post-Unfold push, and it is the same object bound to the alignment check. Read at the site per BEN-315, not inferred from the receipt's description of it.",
+    "recorder_reduction_also_read_at_the_site": "closure_foldforward_instrumented.py:115-124 -- num = (w[pr]*push[pr]).sum(), den = w[pr].sum(), w = mc_weight_reco, pr = mc.pass_reco. This receipt reimplements that formula rather than importing it."
+  },
+
+  "VL134_VL135_final_iteration_fold_forward": {
+    "formula": "ratio = sum(w_reco[pop] * weights_push[pop]) / sum(w_reco[pop]), pop over half B",
+    "the_two_populations_and_why_there_are_two": {
+      "pass_reco_and_pass_truth": "n=836975. What mcB was CONSTRUCTED with as its pass_reco, so it is the recorder's population and VL134's. This receipt REBUILT it from the input NPZ's pass_reco & pass_truth and got 836975 on all six runs, equal to the recorder's own n_pass_reco in all six report JSONs.",
+      "CITATION_CORRECTED": {
+        "closure_lane_cited": "closure_powered_truth_reweight.py:305",
+        "what_is_actually_there": "line 305 is inside the FLOAT32-INTO-THE-ENGINE comment block, which is about a different subject entirely",
+        "correct_sites": "s1_b = pr[ib] & pg[ib] at :296, under the comment 'STEP-1 population: pass_reco & pass_truth on BOTH sides' at :294; mcB receives it as pass_reco=s1_b at :311",
+        "severity": "a citation slip, not a defect in the number -- the closure lane's DESCRIPTION of the population is exactly right and its value reproduces. Recorded because a file:line exists so a later reader can falsify the claim, and one pointing at an unrelated comment cannot be falsified without re-deriving the whole thing, which is what happened here.",
+        "and_the_naming_was_verified_by_MEASUREMENT_not_by_the_identifier": "the code writes pg (pass_gen) where the comment says pass_truth. That they are the same flag is not taken from the name: |input pass_reco & input pass_truth| over dump_rows_b = 836975 = the recorder's own n_pass_reco, on all six runs."
+      },
+      "pass_reco": "n=837034. All pass_reco rows of half B -- the population the 1.011418 prediction used.",
+      "the_59_row_difference_is_ENTIRELY_the_pass_truth_conjunction": "|pass_reco & NOT pass_truth| = 59, measured. Nothing else contributes.",
+      "population_sensitivity_of_the_answer": 7.7e-07,
+      "material": false,
+      "why_immaterial": "7.7e-07 against a VL134-vs-prediction residual of 5.39e-04, i.e. 0.14% of it. VL134's AGREE does compare a pass_reco&pass_truth number to a pass_reco prediction, and that is disclosed in the closure lane's receipt with both values and the sensitivity, so it is a stated approximation and not an unstated one."
+    },
+    "per_draw_ingredients_raw_unnormalized_weight_leg": {
+      "sum_w_reco_pass_reco_and_pass_truth": 682722.6653390448,
+      "sum_w_reco_pass_reco": 682771.721616141,
+      "57012031_0": {"sum_w_push_reco": 689911.7687719917, "ratio_s1_b": 1.0105300494592147, "ratio_pass_reco": 1.0105292928885956},
+      "57012031_1": {"sum_w_push_reco": 690447.2393327721, "ratio_s1_b": 1.011314365826556, "ratio_pass_reco": 1.011313552903806},
+      "57012031_2": {"sum_w_push_reco": 690090.2151272333, "ratio_s1_b": 1.0107914240470246, "ratio_pass_reco": 1.0107906486969749}
+    },
+    "arm0_mean_s1_b_population": 1.0108786131109,
+    "ledger_VL134": 1.010878613,
+    "closure_lane_receipt": 1.0108786131074148,
+    "agreement_to_digits": 10,
+    "arm0_sd_n3": 0.00039936,
+    "ledger_VL135": 0.000399361,
+    "VERDICT": "VL134 and VL135 REPRODUCED independently. The AGREE reading stands: +5.39e-04 above the 1.011418 prediction, 1.35 in-sample sd.",
+    "the_caution_is_NOT_lifted": "both VL134 and 1.011418 remain RECONSTRUCTIONS, not recorded values. This receipt makes VL134 twice-derived; it does not make it a recorded quantity, and OI-125 stays NARROWED, NOT CLOSED. Neither number may close it."
+  },
+
+  "arm1_final_push_reproduced_too": {
+    "57038937_3": 1.0176293868755708,
+    "57038937_4": 1.0177752544811538,
+    "57038937_5": 1.017721779596328,
+    "mean_s1_b": 1.0177088069844,
+    "closure_lane_receipt": 1.0177088069812534,
+    "reading_confirmed": "arm 1's end-of-run push sits FURTHER from 1 than arm 0's (1.01771 vs 1.01088), so the scale-only correction did not move the fixed point toward R. This corroborates VL138's sign from a quantity independent of the recovery metric."
+  },
+
+  "VL136_VL139_recovery_contrast_arithmetic": {
+    "source_of_the_six_values": "each run's own '[ff-launch] G3 PASS recovery=' line, one source, not independently produced",
+    "arm0": [0.5118916141218095, 0.512232159859489, 0.5114737115921805],
+    "arm1": [0.5044424240293897, 0.5052826513280378, 0.5052069693693144],
+    "recomputed": {
+      "arm0_mean": 0.511865829, "ledger_VL136": 0.511865829,
+      "arm1_mean": 0.504977348, "ledger_VL137": 0.504977348,
+      "arm1_sd": 0.000464801, "ledger": 0.000464801,
+      "delta": -0.006888480, "ledger_VL138": -0.006888480,
+      "pooled_within_arm_sd": 0.000424470, "ledger": 0.000424470,
+      "abs_delta_over_pooled_sd": 16.228, "ledger": 16.23,
+      "abs_delta_over_declared_draw_sd": 8.399, "ledger_VL139": 8.399,
+      "gap_between_ranges": 0.006191060, "gap_in_pooled_sd": 14.59,
+      "pairwise_arm1_below_arm0": "9/9", "smallest_abs_pairwise_difference": 0.006191060,
+      "exact_permutation_labelings_reaching_observed": "2/20", "two_sided_p": 0.1
+    },
+    "VERDICT": "VL136-VL139 REPRODUCED to every digit the ledger prints, including the exact permutation enumeration.",
+    "the_p_equals_0.1_floor_is_confirmed_as_a_design_bound": "enumerated here independently: at 3-vs-3 complete separation cannot do better than 2/20, so 0.1 is the floor and not evidence of weakness. Reported as realized exceedance rather than a fitted tail, per BEN-025."
+  },
+
+  "row_map_control": {
+    "dump_rows_b_identical_across_all_six_runs": true,
+    "strictly_increasing": true,
+    "dump_rows_a_and_dump_rows_b_disjoint": true,
+    "union_equals_sorted_mc_indices": true,
+    "n_half_b": 2000000,
+    "why": "the closure lane asserted array equality of the row maps; this reproduces it and adds the disjointness and partition checks, which bound the risk that half A and half B were confused in either lane's reduction."
+  },
+
+  "what_this_receipt_does_NOT_do": [
+    "It promotes nothing. No product becomes quotable; the six products keep their NONQUOTABLE-DIAGNOSTIC marking.",
+    "It does not close OI-125, which stays NARROWED. Two reconstructions agreeing is still two reconstructions.",
+    "It does not adopt, alter, or ratify C_stat, the central value, or any band.",
+    "The five Gate-6 prohibitions at 19585b7 are untouched: do_not_select_passing_subset, do_not_construct_C_ML, do_not_move_central, do_not_start_leg_2, do_not_retry_unchanged.",
+    "Nothing enters docs/analysis-note/.",
+    "It does not review the PHYSICS of the D2 powered closure or of the fold-forward correction; it verifies that the landed numbers are what the artifacts say."
+  ],
+
+  "related": {
+    "authorization": "docs/orchestration/AUTHORIZATION-20260815-arm1-resubmit.md (0fb56af)",
+    "predeclaration": "docs/orchestration/PREDECLARATION-20260815-foldforward-instrumented-closure.md",
+    "verified_receipt": "docs/orchestration/state/RECEIPT-foldforward-instrumented-closure-20260815.json (bb91391)",
+    "findings": ["BEN-314 the dtype defect this run's arm 1 exercised the fix for", "BEN-315 whose fifth instance this verification produced and which is recorded in its long form", "BEN-360", "BEN-361"],
+    "open_items": ["OI-125 narrowed not closed", "OI-71 G4"]
+  }
+}

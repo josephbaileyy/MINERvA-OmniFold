@@ -81,7 +81,69 @@ Recorded because the alternative reading is available and wrong: that the errors
 process is sound. It proves the *process* is sound. It says nothing good about the lane, and the lane
 is the thing a future session will be tempted to reuse.
 
-## 6. Cross-reference
+## 6. A FIFTH INSTANCE, 2026-08-16 — and this time the truncation was written by the lane itself
+
+**Added the next day, by the same lane, while independently verifying `VL134`–`VL140`.** It is here
+rather than in a new row because it is the same finding; per this repo's convention a fact is written
+once.
+
+To survey `RECEIPT-foldforward-instrumented-closure-20260815.json` — a large nested receipt — the lane
+wrote a throwaway walker and printed every leaf it found:
+
+```python
+s = str(o)
+if len(s) < 200: print(p, '=', s)
+```
+
+On that evidence the lane concluded that the receipt **documented its population by count and not by
+definition**: it reported `the_two_populations_differ_by_rows = 59` without ever saying *why*, which
+would make `VL134`'s headline number unrebuildable by an outside reader. That is a legitimate
+`BEN-077` defect and the lane was one edit away from filing it as a new `BEN` row.
+
+**The receipt says it explicitly.** The field is
+`recorder_population_s1_b: "pass_reco & pass_truth on half B -- what mcB was CONSTRUCTED with as its
+pass_reco ..."`. It is **250 characters long**, so the walker dropped it — along with **17 other
+leaves, 18 of the receipt's 280**, none of which the output mentioned.
+
+**The transferable part is the filter, not the mistake.** `len(s) < 200` was chosen to keep a survey
+readable, and a length threshold *looks* content-neutral. It is not: in a well-written receipt the
+short leaves are **values** and the long leaves are **definitions, provenance and caveats**, because
+that is what prose is for. **So a length filter over a document is a semantic filter that removes
+exactly the fields which answer "why", and it removes them silently** — the survey came back looking
+complete, in the same way instance #1's `head -8` came back looking complete.
+
+Two things distinguish this instance and both cut against the lane:
+
+- **It was self-inflicted.** Instances #1–#4 truncated or misread something someone else had produced.
+  Here the lane built the instrument that hid the evidence, one day after writing the finding that
+  names this exact hazard, and then reasoned from the instrument's output as though it were the
+  document.
+- **The conclusion ran toward a defect in someone else's work.** #2 and #4 ran with the lane's own
+  prior argument; this one ran toward a finding worth filing. **Both directions are under-checked, and
+  the second is the more tempting on a campaign that rewards finding things.**
+
+The one thing it does not show is a broken correction path: the lane caught it itself, before filing,
+by opening the field it was about to claim was absent. **That is §5's standard finally met once, and a
+single instance is not a trend.**
+
+Executable additions, in the same preference order as §3:
+
+4. **Never conclude "the document does not say X" from a filtered dump of it.** `grep` the document for
+   the concept (here: `grep -c pass_truth` would have returned `1`, not `0`), or read the section whole.
+   An absence claim needs a covering search, and a truncating survey does not cover.
+5. **If a survey script drops any leaf, print the count of what it dropped.** A filter that ends with
+   `... 18 of 280 fields omitted` cannot be mistaken for a complete read. **Unreported omission is the
+   whole defect in both truncation instances** — `head -8` and now `len(s) < 200` — and neither would
+   have survived a one-line omission count.
+
+**A note on how this section was written, because it is the same hazard one level up.** The first draft
+of it said the dropped field was "278 characters." That number was estimated by eye from the quoted
+text and **it is wrong — the field is 250 characters, and 18 of 280 leaves were dropped, not the one.**
+Caught by measuring before committing, which is the only reason this paragraph reads as a correction
+rather than as instance #6. **A finding about unmeasured claims is the last place an unmeasured number
+belongs**, and the pull to supply one was still present while writing the finding that forbids it.
+
+## 7. Cross-reference
 
 - `BEN-026` — the shell ancestor: truncation at write time destroys the evidence.
 - `BEN-312` — a provenance assertion that names its method and not its target is satisfied by the
