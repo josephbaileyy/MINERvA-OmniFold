@@ -23,9 +23,26 @@ import numpy as np
 # Locate nd-unfolding from THIS FILE, not from cwd: running a probe by path puts the probe's own
 # directory on sys.path and not the caller's, so `cd nd-unfolding && python3 ../path/to/probe.py`
 # would otherwise fail on the import. Measured 2026-08-16.
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                os.pardir, os.pardir, os.pardir, "nd-unfolding"))
+#
+# P4LIB_DIR OVERRIDE, added 2026-08-16 BEFORE the N3 repair landed, so that "before vs after" is one
+# command rather than a narrative. `check_projection_validity` is expected to change, and once it does
+# this probe measures the NEW behaviour and the pre-repair numbers become unreproducible from the
+# working tree alone. That is exactly BEN-317's rule -- record the state before the thing that
+# overwrites it -- applied to this lane's own baseline. To measure any revision:
+#
+#   mkdir -p /tmp/pre && git show <rev>:nd-unfolding/p4_lib.py > /tmp/pre/p4_lib.py
+#   P4LIB_DIR=/tmp/pre python3 docs/orchestration/state/probe-projection-identity-leg-20260816.py
+#
+# PRE-REPAIR BASELINE, recorded here so a later reader does not have to trust a commit message:
+#   nd-unfolding/p4_lib.py sha256 aa3470e45040398a00064f83fef853cffc3172e27fce2ff0d19ac1258bd7de65
+#   at HEAD 67c94df. Every number this probe asserts was measured against THAT file.
+sys.path.insert(0, os.environ.get(
+    "P4LIB_DIR",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                 os.pardir, os.pardir, os.pardir, "nd-unfolding")))
 import p4_lib as P  # noqa: E402
+
+print(f"probing p4_lib from {os.path.dirname(os.path.abspath(P.__file__))}")
 
 FAIL = []
 
