@@ -284,10 +284,27 @@ class ReproducibilityTolerance(unittest.TestCase):
         self.assertIn("per-bin relative difference", str(cm.exception))
 
     def test_shape_mismatch_and_empty_reference_fail_closed(self):
-        with self.assertRaises(P4GateError):
+        """Two DIFFERENT causes, so each assertion names the one it means (BEN-344, 2026-08-16).
+
+        These were bare `assertRaises(P4GateError)` until 2026-08-16. Both fired for the right
+        reason -- measured: `reproducibility: shape (3,) != (4,)` and `reproducibility: reference has
+        no positive bins` -- so this was a latent weakness rather than a live defect. But it is the
+        only rejection assertion in this file with neither a message check nor a paired contrast
+        showing the same input accepted by the pre-repair form, so the raise it accepts could have
+        come from anywhere: if the empty-reference path ever started failing on shape, or a future
+        edit collapsed both into one generic refusal, the test would keep passing. Naming the cause
+        is what makes the two asserts independent instead of interchangeable.
+        """
+        with self.assertRaises(P4GateError) as cm:
             P.check_reproducibility(self.base[:-1], self.base)
-        with self.assertRaises(P4GateError):
+        self.assertIn("shape", str(cm.exception),
+                      "expected the SHAPE guard; a different refusal satisfies the bare "
+                      "assertRaises this replaced")
+        with self.assertRaises(P4GateError) as cm:
             P.check_reproducibility(np.zeros(4), np.zeros(4))
+        self.assertIn("no positive bins", str(cm.exception),
+                      "expected the EMPTY-REFERENCE guard; if this now fails on shape instead, the "
+                      "two cases have collapsed into one and only one is being tested")
 
 
 class A1_VerifierTokenBinding(unittest.TestCase):
