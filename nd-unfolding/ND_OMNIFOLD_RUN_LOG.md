@@ -9028,3 +9028,60 @@ form, with the generalisation that **unreported omission is the entire defect in
 instances** — `head -8` and `len(s) < 200` — and a one-line `N of M omitted` count defeats both.
 
 *Receipt:* `docs/orchestration/state/RECEIPT-independent-verification-vl134-vl140-20260816.json`.
+
+## 2026-08-16 — repair-10's `N3` confirmed BY MEASUREMENT and corrected twice: the gate measures BLAS accumulation order, and its docstring's disclaimer was quoted as its promise (`BEN-316`)
+
+**Append-only.** Executor lane, read-only: local reads plus an in-process probe that restores what it
+monkeypatches. **`p4_lib.py` NOT edited.** No compute, no cluster access, no authorization consumed.
+Second read of the defect `20260816T062458Z-repair10-verdict.json` says its `BLOCK` rests on.
+
+**DISPOSITION FIRST: the defect is REAL, confirmed at `HEAD`, and the `BLOCK` IS NOT DISTURBED.** The six
+other defects, `self_guards_adequate: NO` and `authorizes_covariance_stages_4_6: false` stand untouched.
+This lane holds no `P4_VERIFIER_PASS` token and adjudicates nothing. What is corrected is the verdict's
+quotation and its stated basis — `AGREED-WITH-CORRECTION`, the shape `BEN-352` recorded as unexpressible
+by a plain agree/disagree bit.
+
+**WHAT THE LEG CAN MEASURE, and it is not projection validity.** `check_projection_validity`
+(`p4_lib.py:1413-1435`) compares `project()` = `M @ C_high @ M.T` against `MH = M @ C_high` followed by
+`direct[i,:] = MH[i,:] @ M.T` row by row. **That loop IS `MH @ M.T` by the definition of matrix
+multiplication** — the same product written out one row at a time — so the only quantity `err` can hold is
+the difference between a row-at-a-time `GEMV` and a whole-matrix `GEMM`. Measured at `HEAD`, with
+`p4_lib.py` **byte-identical to the verdict's `code_rev` `0e83b54`** (`git diff --stat` empty):
+`relerr = 1.851e-16` against threshold `1e-9`, **5.40e6× headroom**; `project()` **bit-identical** to the
+one-shot; row loop differing from it by `8.882e-16`. On the suite's own fixture
+(`tests/test_p4_repair.py:136-143`) the error is **exactly `0.0`**, so `assertLess(relerr, 1e-12)` compares
+zero to a tolerance — `BEN-314`/`BEN-312` family, **not filed separately** because an identity leg that
+cannot fail cannot be given a test that can.
+
+**CORRECTION 1 — THE QUOTATION IS INVERTED, and this is the part a later reader would carry forward.**
+`N3` states the docstring *promises* its leg *"compares against an independently-produced product."*
+`p4_lib.py:1414-1415` says, verbatim: **"Recomputation identities only -- nothing here compares against an
+independently-produced product."** The words match because the verdict lifted them from the sentence that
+**negates** them. The real overclaim is narrower and different — *"a direct block-sum recomputation"* by
+*"an independent route"* — and **the two point at different repairs**: the quoted promise would have a lane
+build the product comparison the function deliberately refuses, where the actual overclaim is fixed either
+by writing a genuine `sum_{a,b} M[i,a] C[a,b] M[j,b]` accumulation or by deleting the leg and the sentence
+together and letting symmetry, PSD and shape/coverage carry the gate honestly.
+
+**CORRECTION 2 — "A CHECK THAT CANNOT FAIL" IS CHECKABLE AND FALSE.** Mutation-tested: a `2.0 *` edit to
+`project()`, still symmetric and still PSD, **IS caught** at `rel 5.000e-01 > 1e-09`. So the leg is a
+**source-drift regression guard on `project()`** — a real if modest function, and exactly the class the
+docstring's *other* sentence claims. What it cannot do is anything about validity: a corrupted `M`
+(row 0 ×3, `project()` untouched) **passes at `3.033e-17`**. **The precise defect: not a check that cannot
+fail, but one that cannot fail for any reason connected to the validity of the projection.** `N3`'s
+severity survives that narrowing intact — stages 4-6 need the second thing and the gate supplies only the
+first — **but a defect stated in a falsifiable form that turns out false is the kind a repair lane
+dismisses wholesale, including the two-thirds of it that is correct.**
+
+**NOT A NEW DISCOVERY.** `ND_OMNIFOLD_RUN_LOG.md:8805` already names *"`check_projection_validity`'s
+non-independent second leg"* from repair-8. **This is the second lane to read it and the first to measure
+it.** Nothing here re-litigates the 2026-08-09 gate removal at `:1399-1412`, which is Joseph's
+re-specification and a separate question from whether what replaced it does what it says.
+
+**Executable, per `CLAUDE.md`'s preference for the executable form:**
+`docs/orchestration/state/probe-projection-identity-leg-20260816.py` — any cwd, no arguments, writes
+nothing, `ALL REPRODUCED` at exit 0, **and exits non-zero if the leg's behaviour changes, including when
+`N3` is repaired**, at which point it retires with the defect rather than being silenced. The number table
+above goes stale invisibly; the probe does not.
+
+*Long form:* `docs/orchestration/FINDING-20260816-the-gate-that-measures-blas-blocking-noise.md`.
