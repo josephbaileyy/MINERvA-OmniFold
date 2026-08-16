@@ -74,6 +74,64 @@ Concretely, and cheap enough to be habitual:
 3. **Distinguish "not present" from "not recordable".** The first is about the subject; the second is about
    the record. They read identically and license opposite conclusions.
 
+## The remedy in its stronger form, from lane `C` — accepted, and it is better than the rule above
+
+The repair-10 verifier lane accepted this finding in writing (`bf97279`, §5 of
+`PREDECLARATION-20260816-repair11-verifier-pass.md`) after verifying `#8` at its own
+`code_rev 0e83b54` rather than on trust — `grep -c` returned `0` for `p4_lib`, `p4_evidence`,
+`p4_adopt_standard`, `run_p4_standard`, `p4_project_4d` and `p4_build_components`. **Then it reproduced
+the class within the hour**, and its formulation is sharper than the three-step rule above because it is a
+habit rather than a diagnosis:
+
+> **A null result must be shown capable of being non-null by the same instrument, in the same run.**
+
+**Adopted here as the primary statement of the remedy.** *Same instrument* and *same run* are both doing
+work: a check that fired last week, or a sibling check that fires on similar input, licenses nothing about
+the silence in front of you.
+
+**What it caught, and this detail is the most useful thing in this finding.** Comparing the execution surface
+at `0e83b54` against `HEAD`, `C` ran both derivations inside one worktree and so compared the old surface
+**with itself** — which printed `IDENTICAL`, and would have been reported. Two guards caught it:
+
+1. **Inject a line and require the `diff` to fire** — the null shown capable of being non-null.
+2. **Compare the two outputs' `sha256`** to prove they came from *different* derivations rather than one.
+
+**The second exposed a third failure the first could not:** one side had produced an **empty file from a
+wrong cwd**, and *an empty file diffs clean against anything*. So even a `diff` that has been shown able to
+fire will report success on two absences. **The identity of the operands is a separate claim from the
+result of comparing them**, and only the digest check tests it.
+
+**This generalises past `grep` to any comparison whose pass is an absence** — `diff`, `assertEqual`,
+`assertNotIn`, and every guard that succeeds by finding nothing.
+
+### The operational form, adopted in the repair-11 verdict format
+
+At the orchestrator's request, `C` has put the rule in the verdict schema rather than in prose:
+
+> **Every defect row carries a `falsified_by` field: the observation that would have shown the defect
+> absent. A row whose `falsified_by` cannot be written is not a defect row — it is a suspicion.**
+
+**Under that standard repair-10's `#8` would have been filed as a suspicion**, because no observation on the
+committed snapshot could have shown the module present. `C` is deliberately **not** relabelling the recorded
+verdict — the correction lives here, which is the right split.
+
+### The instances, enumerated rather than counted
+
+`BEN-313` is the reason this is a list and not a number — *a count is the cheapest claim to relay and the
+hardest to falsify.* Four instances in this campaign, all within roughly one day:
+
+| instance | the measurement that could not have come out otherwise |
+|---|---|
+| `BEN-331` (`C`) | *"a mutation test that never applied its mutation, and reported green"* |
+| `BEN-342` (`B`) | a row-uniform fixture: `sum(w*push)/sum(w) == push` for **any** `w`, so the bit-identity assertion could not distinguish the weight leg |
+| `BEN-344` / repair-10 `#8` (`B`) | `grep -c` on a snapshot that records no module names |
+| `C`'s surface self-comparison | the old surface compared **with itself**, printing `IDENTICAL`; and then an empty file diffing clean against anything |
+
+**Two lanes, four instances, and in three of the four the author was the one who found it.** That is the
+argument for the executable form: the class is not caught by care, and it is not caught by review either —
+it is caught by requiring the instrument to demonstrate it can fail *in the run whose silence you are about
+to believe.*
+
 ## The audit the mediator asked for: is each remaining defect's evidence falsifiable?
 
 For each entry in `defects_outstanding` (7 at the verdict's `code_rev 0e83b543`, count derived from the
