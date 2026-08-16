@@ -9472,3 +9472,54 @@ harmless** — they are a preservation question for whoever updates the tree, no
 recorded from the mediator's measurement rather than re-measured: the cluster remote is named **`github`,
 not `origin`**, and a second worktree `fe-fps-campaign` shares the area, so any update command written from
 local muscle memory will fail or do the wrong thing.
+
+## 2026-08-16 — CORRECTION by append to the `(A′)` closure receipt: a digest in it was stale before its own commit landed (`BEN-228` inside the anti-staleness artifact)
+
+**Append-only, correcting the entry above rather than rewriting it** — it was true as chronology and wrong
+as present tense. Read-only, local, nothing launched.
+
+**THE ERROR.** The receipt recorded the launcher's local digest as `4ffd565531f2b437`. That was correct at
+`f521468`, when it was measured, and **wrong by the time the receipt's own commit `df242cc` landed**: lane
+B's `f386aa0` edited the launcher's comment block in between (the `~105 appears nowhere` retraction). The
+value at `df242cc` is **`99424a83277b70d6`**, re-derived this turn with
+`git show df242cc:<path> | shasum -a 256` rather than taken from the relay. **All other entries re-measured
+at `df242cc` and unchanged**; the launcher was the only drift.
+
+**WHY IT MATTERS MORE THAN A WRONG HEX STRING.** `BEN-228` — true-when-written, then read later as present
+tense — **occurring inside the artifact built to prevent exactly that class of error**, and caught by the
+mediator re-measuring rather than by any care taken while writing it. **It is not fixable by being more
+careful:** the launcher is a file several lanes edit routinely, so any static digest of it is a claim about
+a moment and nothing in the surrounding prose marks which moment.
+
+**THE FIX IS STRUCTURAL, not a better value.** The receipt now (a) binds every local digest to
+`df242cc1b0eff8ebd93dd82f3d75b1f000539bf4`, (b) ships `HOW_TO_RECOMPUTE_INSTEAD_OF_TRUSTING_THIS_FILE` with
+the exact commands, insisting on `git show <rev>:<path> | sha256sum` and **not** `sha256sum <path>`, which
+measures whatever the reader's own lane last edited, (c) marks the launcher **VOLATILE** and carries **both**
+values with the moment each belongs to — deliberately, not as a hedge — and (d) states the dirty-vs-divergent
+test that produced this receipt's main finding, since `git status` alone cannot express it.
+
+**`BEN-315` INSTANCE COUNT ADDED, because the frequency is the finding, not any one instance.** Three in one
+session across three lanes: the mediator's length-filtered walker; the mediator again asserting an operand
+*"derives from nothing"* without grepping for it (it is in the receipt at `:23`, correctly computed and
+correctly labelled `of_that_row`); and this lane reporting two files **ABSENT ON BOTH TREES** from two wrong
+path guesses. **Two of the three would have shipped a false absence into a document. NONE was caught by a
+rule** — all three were caught by somebody running the search a second time. **So `BEN-315` is not a lane's
+bad habit; it is the default failure mode of reading a large tree, and the only demonstrated defence is a
+second search by a second party.** Recorded with the limit of the executable defence already landed: §6a's
+`survey()` printing `N FIELD(S) OMITTED` defeats the truncation instances but **not** a wrong path guess,
+which is what two of the three were — for that the defence is `git ls-files | grep -E '/<name>$'` before
+believing any null.
+
+**`verify_hash_bindings.py` upgraded from "not blocking" to a directed item in the cluster-update plan.**
+Local `ff410e2d`, cluster `ca83948e`: **the tool that ADJUDICATES hash bindings is a different program on the
+two trees**, so *"verified on the cluster"* and *"verified locally"* are two different claims in the **same
+words** — `BEN-082`'s shape located in the adjudicator rather than in a document, where a pin dispute
+settled with one binary and re-checked with the other yields two honest and opposite answers. **Direction
+recorded: the cluster copy moves FORWARD to the local one** as part of bringing the tree to a named
+revision, not the reverse and not left split — the cluster's copy is clean at its stale `HEAD`, so it is what
+that `HEAD` contains rather than a deliberate local modification. **No cluster write performed.**
+
+**Deferred deliberately, on the mediator's instruction to stay available for the N3 second read:** pinning
+`fullevent_fps_dataloader.py`, which is the same `BEN-312` shape as `train_fullevent_nominal.py` and needs
+its own predeclaration because it is receipt-bound and hash-pinned by the Gate-2 runtime. 17 revision-gate
+tests still green.
