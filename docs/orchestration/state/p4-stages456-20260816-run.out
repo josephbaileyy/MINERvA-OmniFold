@@ -1,0 +1,122 @@
+[laneB] ===== start 2026-08-16T22:38:14Z on nid004254 =====
+[laneB] python: Python 3.11.14
+
+[laneB] ---- STEP 0: verify the preserved copy against the AUDITED digest ----
+[laneB] hashing 39.4 GiB, expect a few minutes of silence...
+[laneB] preserved sha256 = 602bbcf26606844941b8a6295f47e080507c20097a80f42cdf202bd8c567f037
+[laneB] audited   sha256 = 602bbcf26606844941b8a6295f47e080507c20097a80f42cdf202bd8c567f037
+[laneB] STEP 0 PASS -- the audited object survives independently of this run.
+
+[laneB] ---- STEP 1: sizes of the five artifacts this run will overwrite (pre-state) ----
+[laneB]      42326583908  2026-08-09  std_final5_candidate.root
+[laneB]             9401  2026-08-09  std_component_manifest.json
+[laneB]             2108  2026-08-11  p4_standard_validation.json
+[laneB]        181362281  2026-08-11  std_proj4d_candidate.root
+[laneB]             4127  2026-08-11  std_proj4d_candidate_projmanifest.json
+
+[laneB] ---- STEP 2: the chain, STOP_AFTER=project ----
+[laneB] git HEAD = 5fb7e38bf5e6f41a86f8860413820fa3d907420c
+[p4-std] canonical driver start 22:41:04; STOP_AFTER=project; code_rev=5fb7e38bf5e6f41a86f8860413820fa3d907420c
+[p4-std] STAGE bash run_p4_merge_audit_std.sh
+[p4-merge] start 22:41:05 CONC=4
+[merge] SKIP BeamAngleY:1 valid (53845371537B)
+[merge] SKIP BeamAngleX:1 valid (53844600453B)
+[merge] SKIP BeamAngleY:0 valid (53845291390B)
+[merge] SKIP BeamAngleX:0 valid (53845911012B)
+[merge] SKIP Muon_Energy_MINERvA:0 valid (53845254183B)
+[merge] SKIP MuonResolution:1 valid (53845210317B)
+[merge] SKIP MuonResolution:0 valid (53845199952B)
+[merge] SKIP Muon_Energy_MINERvA:1 valid (53845155381B)
+[merge] SKIP Muon_Energy_MINOS:0 valid (53841190691B)
+[merge] SKIP Muon_Energy_MINOS:1 valid (53845919075B)
+[p4-merge] merges done 22:42:03; merged=10/10; failed_children=0
+[p4-audit] running acceptance audit...
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[audit standard/observation] passing=120/120 complete=True missing=0 extras=0 failing=0 hashed=False
+summary -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/p3s_standard_manifest.json
+[p4-merge-audit] complete 22:42:18
+[p4-std] STAGE bash run_p4_unfold_std.sh
+[p4-unfold] start 22:42:24 CONC=4 config_hash=4b41fab90a83df08b57361cec4e769447815afe4f751c9f57848a022bf06a382 bkg_mode=purity closure=6 schema=2
+[unfold] SKIP BeamAngleY_0 (receipt validated)
+[unfold] SKIP BeamAngleY_1 (receipt validated)
+[unfold] SKIP BeamAngleX_1 (receipt validated)
+[unfold] SKIP BeamAngleX_0 (receipt validated)
+[unfold] SKIP Muon_Energy_MINERvA_1 (receipt validated)
+[unfold] SKIP MuonResolution_1 (receipt validated)
+[unfold] SKIP MuonResolution_0 (receipt validated)
+[unfold] SKIP Muon_Energy_MINERvA_0 (receipt validated)
+[unfold] SKIP Muon_Energy_MINOS_0 (receipt validated)
+[unfold] SKIP Muon_Energy_MINOS_1 (receipt validated)
+[p4-unfold] COMPLETE 10/10 published+receipted 22:42:49
+[p4-std] STAGE env P4_CODE_REV=5fb7e38bf5e6f41a86f8860413820fa3d907420c python3 p4_evidence.py
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+=== recomputed vs observed ===
+  central5d: MATCH
+  mask5d: MATCH
+  central4d: MATCH
+  mask4d: MATCH
+mask5d n=10694 mask4d n=4830
+endpoint reproduction vs reference: 10/10 within tolerance (per-bin 1e-09, integral 1e-11)
+  worst per-bin 1.83e-11   worst integral 2.87e-12
+footing: bkg_mode=purity estimator=lgbm seed=42 iters=5
+footing per endpoint (from log): {'BeamAngleX_0': 'purity', 'BeamAngleX_1': 'purity', 'BeamAngleY_0': 'purity', 'BeamAngleY_1': 'purity', 'MuonResolution_0': 'purity', 'MuonResolution_1': 'purity', 'Muon_Energy_MINERvA_0': 'purity', 'Muon_Energy_MINERvA_1': 'purity', 'Muon_Energy_MINOS_0': 'purity', 'Muon_Energy_MINOS_1': 'purity'}
+selection migration: {'BeamAngleX_0': 4792, 'BeamAngleX_1': 4700, 'BeamAngleY_0': 4807, 'BeamAngleY_1': 4808, 'MuonResolution_0': 0, 'MuonResolution_1': 0, 'Muon_Energy_MINERvA_0': 0, 'Muon_Energy_MINERvA_1': 0, 'Muon_Energy_MINOS_0': 0, 'Muon_Energy_MINOS_1': 0}
+EVIDENCE-COMPLETE: all required fields proven; receipts in /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/evidence
+[p4-std] verifier token accepted: TOKEN-OK :: docs/orchestration/runs/standard-p4-verifier/20260816T220615Z-repair11-verdict.json (verdict=PASS, code_rev=a8f7b2f0eea57f2f66085df41dcff9b0d338bd01, scope=UNION of the standard-P4 EXECUTION surface (20 tracked paths) and the verdict's declared review_scope (0 declared, 0 beyond the surface))
+[p4-std] candidate total key = hCov_stdcombined5d_total_candidate
+[p4-std] STAGE python3 p4_build_components.py --manifest active_universe_5d/standard/evidence/p4_standard_manifest.json --support-family uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root --out active_universe_5d/standard/candidate/std_final5_candidate.root --out-manifest active_universe_5d/standard/candidate/std_component_manifest.json
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+CANDIDATE active_universe_5d/standard/candidate/std_final5_candidate.root: sqrt_tr_syst=4.3513e-38 sqrt_tr_full=4.3576e-38 bands=45 retained=40; prov -> active_universe_5d/standard/candidate/std_component_manifest.json
+[p4-std] STAGE python3 p4_validate_active_lateral.py --candidate active_universe_5d/standard/candidate/std_final5_candidate.root --support uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root --manifest active_universe_5d/standard/evidence/p4_standard_manifest.json --merged-audit active_universe_5d/standard/evidence/p4_merged_audit.json --out active_universe_5d/standard/candidate/p4_standard_validation.json
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+RESULT PASS — gates: merged_inseparability,merged_audit_census_and_migration,component_manifest_bound,exact_5_active_bands,traces_pos_finite,active_total_eq_sum5,symmetric_psd,full_total_identity_recomputed,band_set_completeness_vs_support_family,c_syst_recomputed_from_components,support_trace_ratio_recorded support_ratio=1.000
+[p4-std] STAGE python3 p4_project_4d.py --c5 active_universe_5d/standard/candidate/std_final5_candidate.root:hCov_stdcombined5d_total_candidate --manifest active_universe_5d/standard/evidence/p4_standard_manifest.json --out active_universe_5d/standard/candidate/std_proj4d_candidate.root
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[proj] 5 of 4830 reported 4D bins are UNREACHABLE from the 5D support and are excluded from the projected product; global indices [9679, 9686, 9714, 9721, 10169]
+[proj] M matches its recipe EXACTLY (independent rebuild: unravel_index/ravel_multi_index/searchsorted (independent of build_projection_M)); nnz=10694, entries differing=0
+[xcheck] marginal vs INDEPENDENT 4D (no pass/fail, cross-check only): n=4825 median=0.0443 p90=0.2083 max=0.7285 over3%=3009 integral_ratio=1.005578
+[xcheck] all 4825 bins finite -- the summary above is a measurement
+CANDIDATE active_universe_5d/standard/candidate/std_proj4d_candidate.root n=4825 projection_identity=3.76e-16
+[p4-std] canonical chain complete (CANDIDATE only; adoption is a separate authorized step) 23:26:07
+
+[laneB] ===== chain rc=0  end 2026-08-16T23:26:07Z =====

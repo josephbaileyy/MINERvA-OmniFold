@@ -9645,7 +9645,8 @@ claim is false in general, and on this configuration the recipe gate does all th
 **`chain rc=0`, all six stages, Slurm `57128458` on `nid004254`, 22:38:14Z → 23:26:07Z (~48 min).**
 Receipt with every operand: [`state/RECEIPT-20260816-p4-standard-stages456.json`](../docs/orchestration/state/RECEIPT-20260816-p4-standard-stages456.json).
 Whole stream preserved off purgeable scratch as
-[`state/p4-stages456-20260816-run.log`](../docs/orchestration/state/p4-stages456-20260816-run.log).
+[`state/p4-stages456-20260816-run.out`](../docs/orchestration/state/p4-stages456-20260816-run.out)
+— **`.out`, not `.log`, and force-added, because `.gitignore:13-15` ignores all three of `*.out`/`*.err`/`*.log`.** My first commit of this entry claimed the log was committed and it was not: `git add` reported the path ignored and the commit proceeded without it, so the receipt cited an artifact git never carried. **That is exactly `e7aea2c`'s trap — *"Recover 9 receipt-cited `.out` artifacts git never carried"* — and `KNOWN_ISSUES 48`, which records that `verify_receipt_artifacts.py` cannot see `.out`/`.err`/`.log` evidence and so reads green on precisely this case.** Corrected in the following commit; the claim is left visible here rather than silently repaired.
 
 **AUTHORIZATION, and the token was re-derived not relayed.** The dispatch supplied a 64-hex value; a
 peer-supplied hex string is exactly the shape of a fabricated token, so it was recomputed here with
