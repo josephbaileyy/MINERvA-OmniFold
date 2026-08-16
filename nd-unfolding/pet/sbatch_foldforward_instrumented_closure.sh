@@ -59,6 +59,13 @@ ANNEALED="${PET}/closure_powered_annealed_lr.py"
 DRIVER="${PET}/closure_powered_truth_reweight.py"
 ENGINE="${REPO}/omnifold_nn/omnifold/omnifold.py"
 INPUTS="${REPO}/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz"
+# ADDED 2026-08-16 (BEN-301 / BEN-312). NOMINAL_POLICY is a RUNTIME CONFIGURATION SOURCE, not a
+# reference: closure_powered_truth_reweight.py:224 does `from train_fullevent_nominal import
+# NOMINAL_SEED_POLICY` unconditionally inside main(), and that dict supplies niter / epochs /
+# batch_size / train_events / lr_policy. It was NOT pinned until now, so a dirty copy of it could
+# change what the run trained while G0 reported PASS on four files.
+NOMINAL_POLICY="${PET}/train_fullevent_nominal.py"
+REVGATE="${PET}/ff_revision_gate.py"
 
 mkdir -p "${OUTDIR}/logs"
 
@@ -159,14 +166,52 @@ declare -A PINS=(
   ["$ANNEALED"]="ce9f11f4872dd611932705e36f4ecfb651f8ee8eed796cca98be598d92fbb911"
   ["$ENGINE"]="3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa"
   ["$WRAPPER"]="e284cdbc2502adbf1b2292da62c20c84e404668851d95240cdab17ee4aca0c19"
+  ["$NOMINAL_POLICY"]="91144bee2ff89ae62497c8282174f0fc1c344f455945d6b52b7b8219ecb4e7bc"
 )
 for f in "${!PINS[@]}"; do
   [[ -s "$f" ]] || die "missing: $f" 2
   got="$(sha256sum "$f" | awk '{print $1}')"
   [[ "$got" == "${PINS[$f]}" ]] || die "digest drift on $(basename "$f"): $got != ${PINS[$f]}. This run is NOT the predeclared configuration. Refusing." 2
 done
-echo "[ff-launch] G0 PASS  driver/annealed-wrapper/engine/instrumentation all match their digests"
+echo "[ff-launch] G0 PASS  driver/annealed-wrapper/engine/instrumentation/nominal-policy all match their digests"
 for f in "${!PINS[@]}"; do echo "[ff-launch]    ${PINS[$f]}  $(basename "$f")"; done
+
+# ---------------------------------------------------------------------------------------------
+# G0b  THE REVISION GATE -- an expectation this tree CANNOT SUPPLY ABOUT ITSELF (BEN-301).
+#
+#      G0 above is necessary and NOT sufficient, and the insufficiency was measured, not imagined:
+#      on 2026-08-16 the cluster held wrapper ee269b09 against a cluster literal reading ee269b09,
+#      so G0 PASSED while the checkout sat 663 commits behind and the run would have carried none of
+#      MOVE 2, MOVE 3 or MOVE 4. A DIGEST PIN AUTHENTICATES CONTENT AGAINST AN EXPECTATION STORED IN
+#      THE SAME TREE, SO IT IS BLIND TO THE TREE BEING STALE: both sides go stale together and agree
+#      perfectly. G0's literals above are now CROSS-CHECKS; the authority is the named revision.
+#
+#      FF_EXPECT_REV IS REQUIRED AND HAS NO DEFAULT, and that is load-bearing. A prose rule fails
+#      silently when unread; a value check fails silently when nobody supplies the value; a required
+#      variable with no default cannot be silently omitted -- omission is a refusal. Do NOT add a
+#      default, and in particular never `${FF_EXPECT_REV:-HEAD}`: a symbolic revision resolves
+#      against the stale tree itself and would pass for every file forever, which is repair-9's
+#      vacuous staleness check reintroduced in a second gate. The helper refuses anything that is not
+#      a literal 40-hex sha.
+#
+#      Predeclared: docs/orchestration/PREDECLARATION-20260816-g0-revision-gate.md
+#      Power-tested: tests/test_ff_revision_gate.py, including a stale tree REFUSED here and
+#      ACCEPTED by the co-located-literal check in the same state.
+# ---------------------------------------------------------------------------------------------
+[[ -n "${FF_EXPECT_REV}" ]] || die "FF_EXPECT_REV is not set. It is REQUIRED and has no default: this run must name the revision it believes it is, from OUTSIDE this tree, or G0's literals only prove the tree agrees with itself (BEN-301)." 2
+
+# Authenticate the HELPER against the revision before trusting it, using only git + sha256sum so this
+# preamble runs on bash 3.2. This closes one bootstrap level: a file that checks pins cannot
+# authenticate itself. The residue -- that THIS preamble is trusted -- is stated in the
+# predeclaration and is mitigated only by the preamble being short enough to read in full.
+REVGATE_WANT="$(git -C "$REPO" show "${FF_EXPECT_REV}:nd-unfolding/pet/ff_revision_gate.py" 2>/dev/null | sha256sum | awk '{print $1}')"
+REVGATE_GOT="$(sha256sum "$REVGATE" 2>/dev/null | awk '{print $1}')"
+[[ -n "$REVGATE_WANT" && "$REVGATE_WANT" == "$REVGATE_GOT" ]] || die "the revision gate helper does not match its blob at ${FF_EXPECT_REV} (want ${REVGATE_WANT:-<absent>}, got ${REVGATE_GOT:-<absent>}); refusing to let an unauthenticated checker authenticate the run" 2
+
+REVGATE_ARGS=()
+for f in "${!PINS[@]}"; do REVGATE_ARGS+=(--file "$f" --literal "$f=${PINS[$f]}"); done
+python3 "$REVGATE" --repo "$REPO" --rev "$FF_EXPECT_REV" "${REVGATE_ARGS[@]}" \
+  || die "G0b revision gate refused this tree; see the [ff-rev] lines above" 2
 
 # ---------------------------------------------------------------------------------------------
 # G1  arm assignment is derived from the task id and PRINTED, so the log says which arm ran.

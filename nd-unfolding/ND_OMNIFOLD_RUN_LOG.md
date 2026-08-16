@@ -9337,3 +9337,80 @@ implementations rather than moments — **while looking identical in the report 
 right decision was reached for the wrong reason.
 
 *Long form:* `docs/orchestration/FINDING-20260816-share-what-you-are-not-testing.md`.
+
+## 2026-08-16 — the `G0` REVISION GATE: an expectation the tree cannot supply about itself (`BEN-301` fixed, not documented)
+
+**Append-only.** Executor lane. **Local work only** — no cluster access, nothing launched, no run
+authorized, `p4_lib.py` untouched. Predeclared before implementation:
+`docs/orchestration/PREDECLARATION-20260816-g0-revision-gate.md`.
+
+**WHAT `BEN-301` IS, and it was measured rather than imagined.** The cluster held wrapper `ee269b09`
+against a cluster pin literal reading `ee269b09`, so **`G0` would have PASSED** while the checkout sat 663
+commits behind and the run would have carried none of `MOVE 2`/`MOVE 3`/`MOVE 4`. **A digest pin
+authenticates content against an expectation stored in the same tree, so it is blind to the tree being
+stale — both sides go stale together and agree perfectly.**
+
+**THE FOUR ITEMS, ranked, because items 1-2 alone would LOOK like a fix.** (1) `FF_EXPECT_REV` required,
+**no default**; (2) assert `git rev-parse HEAD` equals it; (3) **compare each pinned file against
+`git show $FF_EXPECT_REV:<relpath>` — the blob at a NAMED REVISION, not a co-located literal**; (4) extend
+the pin set to `train_fullevent_nominal.py`. **Only item 3 fixes the defect**: a tree can be at its own
+`HEAD` and still be 663 commits stale. `G0`'s literals survive as **cross-checks**; the revision is the
+authority, and a literal disagreeing with the blob is now a refusal.
+
+**ITEM 4 CLOSES A `BEN-312` GAP FOUND WHILE ADJUDICATING `(A′)`.**
+`closure_powered_truth_reweight.py:224` does `from train_fullevent_nominal import NOMINAL_SEED_POLICY`
+**unconditionally, inside `main()`**, and that dict supplies `niter`/`epochs`/`batch_size`/`train_events`/
+`lr_policy`. It was **not pinned**, so a dirty copy could change what the run trained while `G0` reported
+`PASS` on four files. Pinned at `91144bee`. The `G0` log line now names **five** files; runs before this
+print four, which is itself a provenance marker in `BEN-317`'s sense.
+
+**THE VACUITY GUARD, which is the first thing a later reader will try to remove.** `FF_EXPECT_REV` must
+match `^[0-9a-f]{40}$`; `HEAD`, `main`, `master`, `@`, `HEAD~0`, `HEAD^{}`, `refs/heads/main`, a 12-hex
+abbreviation, a 39-hex string and any uppercase form are **REFUSED**. Without it `FF_EXPECT_REV=HEAD`
+resolves against the stale tree itself and passes for every file forever — **repair-9's defect verbatim, in
+a second gate, six days later.** Mirrors `p4_check_verifier_token.py`'s `is_literal_commit_sha`.
+
+**FAIL CLOSED ON ABSENCE is the property the design rests on, and it answers lane B's objection.** Prose did
+not prevent lane B's recurrence — the trap was documented 440 lines up in the file that reintroduced it. **A
+prose rule fails silently when unread; a value check fails silently when nobody supplies the value; a
+required variable with no default cannot be silently omitted — omission is a refusal.** Precedent in this
+campaign: `BEN-317`'s `fold_forward_composed_with_annealed_arm` was **`True` on EMPTY input**, which is why
+replacing it was worth doing. **A guard satisfiable by the absence of its own evidence IS the defect.**
+
+**POWER-TESTED, 17 cases, every one a demonstrated refusal (`BEN-314`), against THROWAWAY repositories and
+never the live tree (`BEN-332`), with mutations in the WORKING TREE the gate reads rather than the index
+(repair-10's staged-copy trap).** Axis per control (`BEN-342`): vacuity; existence; **`BEN-301` staleness**;
+uncommitted drift; the literal being cross-checked not authoritative; absence; a file absent at that
+revision; a file outside the repo; and a clean tree at the named revision **passing**, so the suite is not
+satisfied by a gate that refuses everything.
+
+**THE CONTROL THAT LICENSES ITEM 3, and without it the claim is unfalsifiable:**
+`test_AND_THE_OLD_COLOCATED_LITERAL_CHECK_ACCEPTS_THAT_SAME_TREE` executes the pre-fix comparison on the
+identical stale checkout and **shows it PASSING**, then shows the new gate refusing. **A claim that one
+guard beats another is worth exactly the case where they disagree** (`BEN-318` §2) — the same standard as
+`test_A_GLOBALLY_WRONG_BASE_RATE_IS_CAUGHT_HERE_AND_NOT_BY_THE_SIBLING`.
+
+**LIVE DEMONSTRATION on the real repo and the real five-file pin set** (read-only): `PASS` at
+`1f6bafa89279ad08c5953b793a411438bc75ef25` printing all five digests, which match the launcher's literals;
+`--rev HEAD` **REFUSED** as symbolic; an expectation naming `HEAD~3` **REFUSED** with the `BEN-301` message.
+
+**WHY THE LOGIC IS IN A PYTHON HELPER.** `G0` uses `declare -A`, needing bash ≥ 4, and the only bash on the
+development machine is **3.2.57** — so `tests/test_foldforward_launcher_guards.sh` SKIPS there, and
+`LauncherWrapperPinTest` already records the consequence: *"a pin that only a skipped test checks is a pin
+that goes stale silently."* A revision gate whose power test could not run locally would inherit that
+exactly. The launcher keeps a **minimal bash-3.2 preamble** that authenticates the helper against the
+revision *before* invoking it. **THE BOOTSTRAP IS NOT FULLY CLOSED AND IS STATED, NOT HIDDEN:** a file that
+checks pins cannot authenticate itself; the preamble closes one level and the preamble itself is trusted,
+mitigated only by being short enough to read in full.
+
+**TWO TEST BUGS FOUND AND FIXED, both instructive.** The wiring guard was **defeated by the launcher's own
+comment warning against `${FF_EXPECT_REV:-HEAD}`** — a test a comment can trip is measuring the wrong text,
+so those assertions now read a comment-stripped copy. And `${FF_EXPECT_REV:-}` was removed from the code
+even though the following `-n` check made it harmless: the launcher uses `set -eo pipefail`, not `set -u`,
+so no `:-` is needed, which makes *"`FF_EXPECT_REV` never appears with `:-`"* a **bright line**. *"An empty
+default is fine"* is an arguable line, and the next reader arguing it is how `:-HEAD` gets added.
+
+**THIS DOES NOT MOVE THE WRAPPER PIN.** The launcher is edited, not the wrapper; `e284cdbc` (lane B's
+`MOVE 4`) is unchanged. The DRIVER is not repinned (`BEN-270`) and driver/annealed/engine literals are
+byte-identical — `train_fullevent_nominal.py` is an **addition** to the set, not a repin of anything.
+Tests: **189 passed** across the three affected suites, **34** on the hash-binding/preflight selection.
