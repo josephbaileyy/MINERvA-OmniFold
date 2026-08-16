@@ -548,8 +548,21 @@ class _FakeEngine:
     def RunStep2(self, i):
         # A DIFFERENT push each iteration, so a hook reading at the wrong moment gets a wrong number
         # rather than an accidentally-equal one.
+        #
+        # AND NON-UNIFORM ACROSS ROWS (BEN-342, 2026-08-16). This used to be `np.full(n, 1.0+0.1*(i+1))`
+        # -- one value for every row -- and a row-uniform push makes the reduction blind to the WEIGHT
+        # LEG: `sum(w*push)/sum(w) == push` for ANY `w` when `push` is constant, so the reco-leg and
+        # truth-leg reductions came out BIT-IDENTICAL (`1.2999999523162842`) on this fixture and
+        # `test_the_final_capture_is_BIT_IDENTICAL_to_what_the_driver_persists` would have passed
+        # unchanged had `_ff_reduce` used `mc.weight` instead of `mc_weight_reco`. That is the axis this
+        # codebase documents as hazardous (`omnifold.py:209` "TRUTH leg -- deliberately self.mc.weight,
+        # NOT self.mc_weight_reco" against `:189`'s reco leg). The `0.01*arange` term separates them:
+        # reco `1.3133333333` vs truth `1.3100000000`. One power control licenses one axis, so the
+        # fixture's VALUES have to be non-degenerate on every axis a control claims to cover.
         self.step2_calls.append(i)
-        self.weights_push = np.full(self.weights_push.shape[0], 1.0 + 0.1 * (i + 1), dtype=np.float32)
+        base = 1.0 + 0.1 * (i + 1)
+        n = self.weights_push.shape[0]
+        self.weights_push = (base + 0.01 * np.arange(n)).astype(np.float32)
         return "step2"
 
     def CompileModels(self, fixed=False):
@@ -561,7 +574,8 @@ class EndOfRunPushHookTest(unittest.TestCase):
 
     `RunStep2(niter-1)` leaves a push that nothing consumes, and that is the value
     `closure_powered_truth_reweight.py:332-333` persists and `OI-125` is about. Substituting the last
-    RunStep1 row gives 0.981165 against a predicted 1.011418 -- a ~105-draw-sd 'disagreement' with the
+    RunStep1 row gives 0.981165 against a predicted 1.011418 -- a 75.8-draw-sd (0.030253 / 0.000399, the arm-0 3-draw sd, VL134)
+    'disagreement' with the
     sign of ratio-1 flipped. Predeclared in
     PREDECLARATION-20260816-endofrun-push-recording.md before any run carries it.
     """
@@ -626,6 +640,35 @@ class EndOfRunPushHookTest(unittest.TestCase):
         self.assertFalse(np.array_equal(captured[-1], persisted),
                          "the fixture's pushes are indistinguishable, so the bit-identity test above "
                          "would pass vacuously")
+
+    def test_THE_BIT_IDENTITY_ASSERTION_HAS_POWER_OVER_THE_WEIGHT_LEG_TOO(self):
+        """The SECOND axis, added 2026-08-16 (BEN-342). The control above licenses the wrong-MOMENT
+        axis and says nothing about the wrong-LEG one, and a leg substitution is the likeliest way
+        `_ff_reduce` could be wrong -- `omnifold.py:189` uses `mc_weight_reco` for step 1 while `:209`
+        deliberately uses `mc.weight` for step 2.
+
+        This asserts the FIXTURE is non-degenerate on that axis: the reco-leg and truth-leg reductions
+        of the SAME final push must differ, because a row-uniform push makes them identical and the
+        bit-identity test would then pass for either choice. Guards the fixture rather than the
+        reduction, so reverting `RunStep2` to a constant push fails HERE with the reason.
+        """
+        inst, _, s2 = self._run()
+        persisted = np.asarray(inst.weights_push, np.float64)
+        pr = np.asarray(inst.mc.pass_reco).astype(bool)
+        reco = np.asarray(inst.mc_weight_reco, np.float64)
+        truth = np.asarray(inst.mc.weight, np.float64)
+        red = lambda w: float((w[pr] * persisted[pr]).sum()) / float(w[pr].sum())
+        self.assertNotEqual(red(reco), red(truth),
+                            "the fixture's push is row-uniform, so sum(w*push)/sum(w) is the same for "
+                            "the reco and truth legs and the bit-identity assertion above cannot tell "
+                            "them apart -- restore a row-varying push (BEN-342)")
+        end = [r for r in s2 if r["is_end_of_run_push"]][0]
+        self.assertEqual(end["reco_weighted_mean_push"], red(reco),
+                         "the recorder is not using the RECO leg the driver uses "
+                         "(train_fullevent_nominal.py:565,576-577)")
+        self.assertNotEqual(end["reco_weighted_mean_push"], red(truth),
+                            "the recorder's value coincides with the TRUTH-leg reduction; on a "
+                            "non-degenerate fixture that means it is reducing the wrong leg")
 
     def test_the_overlapping_rows_agree_EXACTLY_between_the_two_hooks(self):
         """`RunStep2(i)` leaves the push `RunStep1(i+1)` consumes, so those rows are the same number."""

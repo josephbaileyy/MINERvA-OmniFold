@@ -114,8 +114,9 @@ die() { echo "[ff-launch] FATAL: $1" >&2; exit "${2:-1}"; }
 #     `closure_powered_truth_reweight.py:332-333` persists -- the one OI-125 is about -- is RECORDED
 #     BY THE RUN instead of re-reduced by a reader. The RunStep1 hook records at CONSUMPTION and
 #     therefore cannot see it: `RunStep2(niter-1)` leaves a push nothing consumes. Substituting the
-#     last RunStep1 row gives 0.981165 against a predicted 1.011418, a ~105-draw-sd 'disagreement'
-#     with the sign of ratio-1 flipped (BEN-360, VL134).
+#     last RunStep1 row gives 0.981165 against a predicted 1.011418, a 75.8-draw-sd 'disagreement'
+#     (0.030253 / 0.000399, the arm-0 3-draw sd, VL134) with the sign of ratio-1 flipped
+#     (BEN-360, VL134). The figure read "~105-draw-sd" until 2026-08-16; see MOVE 4.
 #
 #     NO RUN IS ATTACHED TO THIS MOVE. The 3-draw re-run was proposed and DENIED on 2026-08-16: the
 #     driver takes no seed flag (see :23-24), so a new run is a NEW SAMPLE and its recorded scalar
@@ -124,12 +125,40 @@ die() { echo "[ff-launch] FATAL: $1" >&2; exit "${2:-1}"; }
 #
 #     ORDERING IS FIXED IN THE RECORD, not left to whoever launches next: this and move 2 (the anneal
 #     attestation) both land BEFORE anything launches. A run wants both.
+#
+#     WRAPPER PIN MOVE 4, 2026-08-16, 7499814e -> e284cdbc, for TWO CORRECTIONS FOUND BY AN
+#     INDEPENDENT READ of move 3 (BEN-342). No behaviour changes; both edits are to comments and to a
+#     test fixture, and no recorded value moves.
+#       (a) AN UN-DERIVABLE AMPLITUDE, corrected in place. The wrapper said the RunStep1 substitution
+#           was a "~105-draw-sd" disagreement. It is 75.8: gap 0.030253 over the arm-0 3-draw
+#           sd 0.000399 that PREDECLARATION-20260816-endofrun-push-recording.md:48 itself states.
+#           105 would need sd 0.000288, which appears nowhere; 131.3 would be the sd of the MEAN.
+#           The operands are now quoted inline so a reader can contradict the figure (BEN-077), and
+#           the predeclaration's OWN E4 amplitude re-derives correctly (-2.991% for "roughly -3%").
+#           BEN-361's rule, failing on the very finding that states it.
+#       (b) A FIXTURE THAT COULD NOT SEE THE WEIGHT LEG. move 3 shipped a power control proving the
+#           bit-identity assertion catches a wrong-MOMENT capture, and nothing covering a wrong-LEG
+#           reduction -- and _FakeEngine.RunStep2 assigned a ROW-UNIFORM push, for which
+#           sum(w*push)/sum(w) == push for ANY w. So the reco-leg and truth-leg reductions were
+#           BIT-IDENTICAL (1.2999999523162842) and the assertion would have passed had _ff_reduce
+#           used mc.weight -- the axis :189-vs-:209 exists to keep straight. The fixture push now
+#           varies per row (reco 1.3133333333 vs truth 1.3100000000) and a named control asserts that
+#           non-degeneracy, so reverting to a constant push fails with the reason. Power-tested by
+#           mutating _ff_reduce to the truth leg: the new control fails citing the leg, the
+#           pre-existing bit-identity assertion now fails too, and the wrapper was restored to a
+#           byte-identical digest afterwards.
+#       ONLY the wrapper edit (a) moves this pin; the fixture fix (b) lives in
+#       nd-unfolding/tests/ and changes no pinned digest. Same three things hold as moves 1-3: the
+#       driver/annealed/engine pins are byte-identical and untouched, no receipt binds the wrapper
+#       digest, and G0 prints what it checked. NO RUN IS ATTACHED TO THIS MOVE either; the arm-1
+#       resubmit was held until it landed so the array runs against ONE wrapper version, which is the
+#       hazard :77 names.
 # ---------------------------------------------------------------------------------------------
 declare -A PINS=(
   ["$DRIVER"]="a45fae7c3f978c34bf73f35ab56aac668439c5784a3968b4f09799ee6090fd48"
   ["$ANNEALED"]="ce9f11f4872dd611932705e36f4ecfb651f8ee8eed796cca98be598d92fbb911"
   ["$ENGINE"]="3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa"
-  ["$WRAPPER"]="7499814ecb460fdb05c8c83a2d6d54a63214e5661f4b29c2466de7592af3fb6f"
+  ["$WRAPPER"]="e284cdbc2502adbf1b2292da62c20c84e404668851d95240cdab17ee4aca0c19"
 )
 for f in "${!PINS[@]}"; do
   [[ -s "$f" ]] || die "missing: $f" 2

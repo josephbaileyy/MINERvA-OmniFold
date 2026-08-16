@@ -193,7 +193,8 @@ def install_fold_forward_recorder(base, correct=False):
             `closure_powered_truth_reweight.py:332-333` takes `of.weights_push` AFTER `Unfold()`
             returns, and `train_fullevent_nominal.py:576-577` computes the nominal's fold-forward
             the same way. Reading the last RunStep1 row instead gives 0.981165 against a predicted
-            1.011418 -- a ~105-draw-sd 'disagreement' with the sign of ratio-1 flipped, which is an
+            1.011418 -- a 75.8-draw-sd (0.030253 / 0.000399, the arm-0 3-draw sd, VL134) 'disagreement'
+            with the sign of ratio-1 flipped, which is an
             artefact of the substitution (BEN-360, VL134).
 
             BIT-IDENTITY WITH WHAT THE DRIVER PERSISTS IS THE POINT, and it holds because nothing
@@ -558,7 +559,8 @@ def main(argv=None):
             "train_fullevent_nominal.py:576-577 computes the nominal's fold-forward the same way, so "
             "the nominal's 0.736746 is an END-OF-RUN scalar. The last fold_forward_per_iteration row "
             "is the push entering the FINAL iteration, one step earlier, and substituting it gives a "
-            "~105-draw-sd disagreement with the sign of ratio-1 flipped (BEN-360, VL134)."),
+            "75.8-draw-sd (0.030253 / 0.000399, the arm-0 3-draw sd, VL134) disagreement with the sign of "
+            "ratio-1 flipped (BEN-360, VL134)."),
         "recorded_not_reconstructed": (
             "This value is recorded BY THE RUN. VL134 is the same quantity RE-REDUCED by a reader "
             "from the persisted weights_push, twice and to 1e-13 -- a re-reduction of a persisted "
