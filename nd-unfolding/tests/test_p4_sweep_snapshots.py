@@ -51,6 +51,64 @@ class SweepSnapshots(unittest.TestCase):
         self.assertEqual(cur["n_candidates"], snap["n_candidates"],
                          "candidate count drifted; re-run with --update and commit")
 
+    def test_the_snapshot_RECORDS_the_corpus_so_an_omission_is_a_visible_diff(self):
+        """repair-10 #8's unnamed half. The summary used to record only the sweep's OUTPUT, so the
+        committed snapshot named no swept module -- `grep -c p4_lib` returned 0 exactly as
+        `grep -c p4_check_verifier_token` did -- and a corpus omission was invisible in the artifact
+        that exists to catch drift. With the corpus recorded, adding or dropping a module is a
+        snapshot diff that `--update` puts in front of a reviewer.
+        """
+        cur = _current()["recorded_fields"]
+        snap = json.loads(SNAPSHOT.read_text())["recorded_fields"]
+        self.assertIn("corpus", snap,
+                      "the snapshot records no corpus; re-run with --update and commit")
+        self.assertEqual(cur["corpus"], snap["corpus"],
+                         "the sweep corpus drifted from its snapshot -- a module was added to or "
+                         "removed from MODULES/SHELL without regenerating. Re-run with --update so "
+                         "the scope change appears in review (repair-10 #8).")
+        self.assertEqual(snap["corpus"]["declared_but_absent_from_disk"], [],
+                         "the sweep declares a file that is not on disk, so it silently sweeps less "
+                         "than its list claims")
+        self.assertIn("p4_check_verifier_token.py", snap["corpus"]["modules"],
+                      "the module that AUTHORIZES stages 4-6 is not in the recorded corpus "
+                      "(repair-10 #8)")
+
+    def test_the_sweep_corpus_COVERS_every_p4_file_on_the_execution_surface(self):
+        """repair-10 defect #8, generalised so it cannot recur silently.
+
+        `#8` was that `p4_check_verifier_token.py` -- the module authorizing stages 4-6 -- was absent
+        from the recorded-fields sweep, so the gate deciding whether covariance construction may
+        proceed was the one file the drift-watcher did not watch. Adding it fixes that instance;
+        this test fixes the CLASS, because `MODULES`/`SHELL` are a hand-maintained index of a
+        machine-derivable fact and go stale silently (`BEN-228`) -- as the tool's own docstring
+        records: *"Last round's sweep was a pass I performed and it missed an item on its own list."*
+
+        The authority is `p4_lib.standard_p4_execution_surface()`, not a second hardcoded list, so a
+        new `p4_*` file added to the surface is swept by default or turns this red. Only the `p4_*`
+        and `run_p4_*` entries are required: the surface also carries engine/math modules
+        (`uq_math.py`, `xsec_nd.py`, …) that write no manifest fields and are out of this sweep's
+        stated scope.
+        """
+        import importlib, contextlib, io
+        import p4_lib as P
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            import tools_p4_sweep_recorded_fields as rec
+            importlib.reload(rec)
+        swept = set(rec.MODULES) | set(rec.SHELL)
+        surface = {Path(p).name for p in P.standard_p4_execution_surface()}
+        required = {n for n in surface
+                    if (n.startswith("p4_") and n.endswith(".py"))
+                    or (n.startswith("run_p4_") and n.endswith(".sh"))}
+        missing = sorted(required - swept)
+        self.assertEqual(missing, [],
+                         f"these files are on the standard-P4 execution surface but are NOT swept "
+                         f"for recorded-field drift: {missing}. The sweep is how drift becomes "
+                         f"visible, so a surface file missing from it is unwatched. Add it to "
+                         f"MODULES/SHELL in tools_p4_sweep_recorded_fields.py, or -- if it is "
+                         f"deliberately out of scope -- record WHY beside the list, the way the "
+                         f"_fps variant's exclusion is recorded (repair-10 #8, BEN-228).")
+
     def test_no_LIVE_pipeline_instances(self):
         """The claim the document makes. If a shell file without pipefail acquires one of the
         three shapes, this goes red rather than the claim quietly becoming false."""

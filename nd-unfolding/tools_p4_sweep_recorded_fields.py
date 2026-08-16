@@ -15,8 +15,27 @@ from pathlib import Path
 ND = Path(__file__).resolve().parent   # re-runnable from any checkout
 MODULES = ["p4_lib.py", "p4_evidence.py", "p4_validate_active_lateral.py",
            "p4_build_components.py", "p4_project_4d.py", "p4_adopt_standard.py",
-           "p4_check_receipt.py", "p4_lateral_replace.py"]
+           "p4_check_receipt.py", "p4_lateral_replace.py",
+           # ADDED 2026-08-16, repair-10 defect #8. `p4_check_verifier_token.py` is the module that
+           # AUTHORIZES stages 4-6, it is on the 20-path standard-P4 execution surface, and it was
+           # absent from this list -- so `grep -c p4_check_verifier_token` returned 0 in both this
+           # tool and the committed snapshot, and repair-9's own edits to it went unswept. The gate
+           # that decides whether covariance construction may proceed was the one file the
+           # drift-watcher did not watch.
+           "p4_check_verifier_token.py"]
+# DELIBERATELY NOT SWEPT, recorded so the omission is a decision rather than an accident (which is
+# what #8 was): `p4_validate_active_lateral_fps.py` exists on disk and is NOT here, because it is
+# not on `p4_lib.standard_p4_execution_surface()` -- it is the FPS sibling, and this tool sweeps
+# "the standard P4 lane" per its own docstring. Derived, not assumed: the surface lists
+# `p4_validate_active_lateral.py` and not the `_fps` variant. If P4-FPS ever wants the same
+# treatment it wants its own sweep, not a widened one, or the field inventory mixes two packets.
 SHELL = ["run_p4_standard.sh", "run_p4_unfold_std.sh", "run_p4_merge_audit_std.sh"]
+# COVERAGE IS ENFORCED, NOT ASSERTED HERE. A hand-maintained list of a machine-derivable fact goes
+# stale silently (BEN-228), and this tool's own docstring says the previous sweep "missed an item on
+# its own list". `tests/test_p4_sweep_snapshots.py` now derives the p4_* entries of the execution
+# surface and fails if any is missing from MODULES/SHELL, so the next surface addition cannot be
+# omitted quietly. The check lives in the test rather than here to keep this tool import-free of
+# p4_lib.
 
 src = {m: (ND / m).read_text() for m in MODULES if (ND / m).exists()}
 sh = {s: (ND / s).read_text() for s in SHELL if (ND / s).exists()}
@@ -86,7 +105,22 @@ def summary():
             "n_fields": len(rows),
             "n_gates": len(set(gates)),
             "fields": sorted(f for f, _, _ in rows),
-            "gates": sorted(n for n, _ in set(gates))}
+            "gates": sorted(n for n, _ in set(gates)),
+            # ADDED 2026-08-16, and this is the half of repair-10 #8 the verdict did not name.
+            # The summary recorded the sweep's OUTPUT and never its SCOPE, so a corpus omission left
+            # no trace in the very artifact whose job is to catch drift. Measured: before this key
+            # existed, `grep -c p4_check_verifier_token` returned 0 in the snapshot -- and so did
+            # `grep -c p4_lib`, for every module, because no module name was ever recorded. The
+            # verdict read that 0 as evidence of the omission; it was a property of the format.
+            # Adding the module to MODULES changed NOTHING observable (n_fields 115 -> 115,
+            # n_gates 28 -> 28, because it writes no swept field and defines no check_/require_/
+            # prove_ gate), so without this key the fix would have been unevidenceable.
+            # Now a corpus change is a snapshot diff, which `--update` puts in front of a reviewer.
+            "corpus": {"modules": sorted(MODULES), "shell": sorted(SHELL),
+                       "n_modules": len(MODULES), "n_shell": len(SHELL),
+                       "declared_but_absent_from_disk": sorted(
+                           [m for m in MODULES if not (ND / m).exists()]
+                           + [s for s in SHELL if not (ND / s).exists()])}}
 
 
 if __name__ != "__main__":

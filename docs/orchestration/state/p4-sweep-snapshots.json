@@ -69,6 +69,10 @@
         "hits": 1,
         "pipefail": true
       },
+      "nd-unfolding/pet/sbatch_gate6_leg0_tier_calibration_array.sh": {
+        "hits": 4,
+        "pipefail": true
+      },
       "nd-unfolding/pet/sbatch_gate6_member_trajectory_array.sh": {
         "hits": 4,
         "pipefail": true
@@ -81,12 +85,24 @@
         "hits": 1,
         "pipefail": true
       },
+      "nd-unfolding/pet/submit_gate5_extraction_n50.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
+      "nd-unfolding/pet/submit_gate5_extraction_r2_n50.sh": {
+        "hits": 1,
+        "pipefail": true
+      },
       "nd-unfolding/pet/submit_gate5_replica_n50.sh": {
         "hits": 1,
         "pipefail": true
       },
       "nd-unfolding/sbatch_eavailW_cov_wlat.sh": {
         "hits": 1,
+        "pipefail": true
+      },
+      "nd-unfolding/tests/test_foldforward_launcher_guards.sh": {
+        "hits": 2,
         "pipefail": true
       },
       "nd-unfolding/uq_5d/sbatch_hpss_protect_quoted_products.sh": {
@@ -99,11 +115,32 @@
       }
     },
     "live_instances": 0,
-    "n_candidates": 38,
-    "n_shell_files": 354,
+    "n_candidates": 46,
+    "n_shell_files": 368,
     "tool": "tools_p4_sweep_pipeline_rc"
   },
   "recorded_fields": {
+    "corpus": {
+      "declared_but_absent_from_disk": [],
+      "modules": [
+        "p4_adopt_standard.py",
+        "p4_build_components.py",
+        "p4_check_receipt.py",
+        "p4_check_verifier_token.py",
+        "p4_evidence.py",
+        "p4_lateral_replace.py",
+        "p4_lib.py",
+        "p4_project_4d.py",
+        "p4_validate_active_lateral.py"
+      ],
+      "n_modules": 9,
+      "n_shell": 3,
+      "shell": [
+        "run_p4_merge_audit_std.sh",
+        "run_p4_standard.sh",
+        "run_p4_unfold_std.sh"
+      ]
+    },
     "fields": [
       "C_combined_eq_syst_stat_ml_relerr",
       "C_syst_eq_retained_plus_active_relerr",
