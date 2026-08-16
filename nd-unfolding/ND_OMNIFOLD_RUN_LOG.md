@@ -9597,3 +9597,45 @@ verdict JSONs are receipts and were **not** edited.
 this commit does not lift it; `authorizes_covariance_stages_4_6` remains `False` and only the verifier can
 change that. `P4_VERIFIER_PASS` untouched. The remaining outstanding count is the verifier's to restate: lane
 B refuted `#7` by measurement, so 6 by that account, but this lane asserts no total.
+
+### 2026-08-16, later — correction to the entry above: `BEN-328`'s impossibility claim was too strong
+
+The entry above states *"so no function of `(C_high, M)` can decide it."* **That is false, and it is
+corrected here rather than edited above, because this log is append-only.**
+
+The independent second read on `N3`/`N4` **held the remedy and refuted the argument for it**, by
+construction. Reproduced by this lane before accepting it: a function of `M` **alone** — (a) exactly
+one nonzero per column, (b) all nonzeros positive, (c) every row carries the same multiset of nonzero
+values — **catches 3 of the 4 corruptions this lane chose.** Clause (c) follows from the construction
+itself, since `M[row,col] = wdrop[k]` depends on the dropped index and never on the row. Measured:
+row scaled by 3, one weight scaled by 3, and one column moved to the wrong row are all caught with no
+recipe; **two rows swapped is a pure relabeling — verified as the same multiset of rows — so every
+structural invariant survives it and it provably needs the recipe.**
+
+**The remedy is unaffected: the recipe gate is still necessary, and repair-11 returned PASS on it.**
+What narrows is the argument. The harm in the original wording is specific: it licenses a future lane
+to skip a cheap structural check on the grounds that checking is impossible — the same shape as the
+docstring this repair fixed, a claim strong enough that a later reader stops looking.
+
+**Operational sharpening, measured here and beyond what the second read claimed:** the invariant's
+entire discriminating power is clause (c) — (a)+(b) alone catch **none** of the four. Clause (c)
+dissolves with drop-axis coverage (distinct row multisets `1` full, `4` at 10% dropped, `6` at 30%,
+`7` at 50%), and on the production configuration it cannot hold at all: 10,694 reported 5D bins over
+4,825 reported 4D bins is a **mean W multiplicity of 2.216 of 6**. *Not* measured on the real masks,
+which need unreadable ROOT products — an implication of committed counts, stated as such. **So the
+claim is false in general, and on this configuration the recipe gate does all the work anyway.**
+
+**The same overreach is in two other places and is NOT corrected here, deliberately:**
+
+- `p4_lib.py:1417` and `:1485` assert it in docstrings. **Not edited: `p4_lib.py` is on the 20-path
+  standard-P4 execution surface, and repair-11's PASS (`48ac04d`, `code_rev a8f7b2f`,
+  `authorizes_covariance_stages_4_6: True`) would be invalidated by an in-scope edit under rule 4b.**
+  A prose fix is not worth re-verifying an authorization the campaign has been blocked on. Queued.
+  Nearby claims at `:1530` and `:1550` are correctly scoped to *recomputation identities* and stay
+  true as written.
+- **`docs/orchestration/runs/standard-p4-verifier/20260816T220615Z-repair11-verdict.json:19` asserts
+  it too** — *"No function of `(C_high, M)` can decide whether `M` is the right matrix"* — inside the
+  verdict that authorizes stages 4-6, where B1 is recorded as `UNSATISFIABLE-AS-WRITTEN`. **A receipt
+  is immutable: cited, not amended.** The load-bearing copy of the error is therefore the one this
+  lane cannot fix, and the verifier owns it. Its `B1`-was-defective finding is unaffected — B1 aimed
+  the demand at the identity route, which genuinely cannot meet it.

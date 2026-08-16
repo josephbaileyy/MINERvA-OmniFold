@@ -5,7 +5,14 @@
 The `N3` brief prescribed a fix, invited argument rather than compliance, and the argument turned out
 to be load-bearing: **the prescribed fix could not have met the bar `N3` was written against.** Not
 because it was badly specified — it correctly identifies and repairs a real dishonesty — but because
-the bar asks for something no function of that signature can deliver.
+a block sum that reads its groups and weights off `M` reproduces `M C Mᵀ` for any `M` the lane builds.
+
+> **CORRECTED 2026-08-16, before reading further.** This finding originally generalised that to *"no
+> function of `(C_high, M)` can decide whether `M` is wrong."* **That is false**, and an independent
+> second read refuted it by construction: `M`-only structural invariants catch 3 of the 4 corruptions
+> below. Only the **relabeling** class provably needs the recipe. The remedy is unaffected — see
+> [the correction section](#correction-2026-08-16-the-impossibility-claim-was-too-strong), which also
+> shows the refuting invariant has no bite on the production mask.
 
 ## What was wrong
 
@@ -54,9 +61,91 @@ any `M` with one nonzero per column — which is every `M` this lane builds. It 
 independent route with respect to `project()`'s *expression* and a tautology with respect to `M`.
 
 **The general statement, which is the transferable part: "wrong" is not a property of `M`. It is a
-relation between `M` and the recipe that produced it.** So no function of `(C_high, M)` can decide
-it. Both legs sharing `M` is not an implementation weakness to engineer around — it is the premise,
-and a premise is not checkable from inside the computation that assumes it.
+relation between `M` and the recipe that produced it.** ~~So no function of `(C_high, M)` can decide
+it.~~ **That last sentence is FALSE AS STATED and is corrected in the section below — it is retained,
+struck, because it is what this finding originally asserted and what a later reader may have acted
+on.** Both legs sharing `M` is not an implementation weakness to engineer around — it is the premise,
+and a premise is not checkable from inside the computation that assumes it, **for the class where
+that holds**, which the correction below delimits.
+
+## CORRECTION, 2026-08-16: the impossibility claim was too strong
+
+The independent second read on `N3`/`N4` **held the remedy and refuted the argument for it**, by
+construction, which is the right way to attack a claim like this. Reproduced here before accepting
+it — a reviewer's measurement is evidence, not a verdict, and this one turned out to be right.
+
+**A function of `M` ALONE catches 3 of the 4 corruptions I chose.** The invariant:
+
+* **(a)** exactly one nonzero per column;
+* **(b)** all nonzeros positive;
+* **(c)** every row carries the **same multiset** of nonzero values.
+
+Clause (c) follows from my own construction, which is what makes the refutation sting:
+`M[row,col] = wdrop[k]` depends on the **dropped index** and never on the row, so under full
+drop-axis coverage every row carries the whole width multiset.
+
+| corruption | identity leg | `M`-only invariant | recipe gate |
+|---|---|---|---|
+| row scaled by 3 | pass `1.4e-16` | **CATCHES** | **CATCHES** |
+| one weight scaled by 3 | pass `9.5e-17` | **CATCHES** | **CATCHES** |
+| one column to the wrong row | pass `9.5e-17` | **CATCHES** | **CATCHES** |
+| two rows swapped | pass `9.5e-17` | misses | **CATCHES** |
+
+**The row swap provably requires the recipe.** It is a pure relabeling — verified directly: the
+swapped matrix is the same multiset of rows as the original, so every structural invariant survives
+it. **So at least one corruption class genuinely cannot be caught from `(C_high, M)`, and the recipe
+gate is necessary regardless. The remedy stands unchanged; only the argument narrows.**
+
+### Why the overreach mattered
+
+**As filed, this finding licensed a future lane to skip a cheap structural check on the grounds that
+checking is impossible — when 3 of the 4 corruptions I myself chose are catchable without a recipe.**
+That is the same shape as the docstring this repair fixed: a claim strong enough that a later reader
+stops looking. Being wrong in the safe direction is not a defence, because the harm is not a bad gate
+but an unbuilt one.
+
+### The operational sharpening
+
+The second read flagged clause (c) as **coverage-conditional** and explicitly declined to test the
+production masks. Measured here, extending it:
+
+* **the invariant's entire discriminating power is clause (c).** (a)+(b) alone catch **none** of the
+  four corruptions;
+* clause (c) dissolves as coverage falls — distinct row multisets: **1** at full coverage, **4** at
+  10% of high bins dropped, **6** at 30%, **7** at 50%;
+* **on the production configuration it cannot hold at all.** 10,694 reported 5D bins over 4,825
+  reported 4D bins is a **mean W multiplicity of 2.216 of 6**, so almost no row is coverage-complete.
+
+**Not measured on the real masks** — they require ROOT products that are not readable from this
+checkout — so that last point is an *implication of committed counts*, and is stated as such rather
+than as a measurement.
+
+**The correct reading, then: the impossibility claim is false in general; the relabeling class is the
+part that survives; and on this configuration the recipe gate is doing all of the work anyway.**
+
+### Where the overreach propagated, enumerated (`BEN-302`)
+
+A retraction reaches only as far as the corrector's map of the corpus, so the sites are named rather
+than counted. Covering search over `*.py`, `*.md`, `*.json`:
+
+| site | status |
+|---|---|
+| `FINDINGS.md` `BEN-328` row | **corrected** (struck beside, not overwritten) |
+| this file, intro + general statement | **corrected** |
+| `ND_OMNIFOLD_RUN_LOG.md:9546` | **corrected by appended entry** — the log is append-only |
+| `p4_lib.py:1417`, `:1485` | **NOT corrected, queued** — see below |
+| `runs/standard-p4-verifier/20260816T220615Z-repair11-verdict.json:19` | **NOT correctable by this lane** — a receipt, cited not amended |
+| `state/RECEIPT-n3-n4-second-read-20260816.json`, `state/probe-projection-M-only-invariant-20260816.py` | **no action** — these quote the claim as the thing under test, which is correct usage |
+
+**The load-bearing copy is the one this lane cannot fix.** The repair-11 verdict — `48ac04d`,
+`code_rev a8f7b2f`, `verdict PASS`, `authorizes_covariance_stages_4_6: True` — asserts at `:19` that
+*"No function of `(C_high, M)` can decide whether `M` is the right matrix"*, as part of recording `B1`
+as `UNSATISFIABLE-AS-WRITTEN`. That is the same unforced generalisation, in the document that
+authorizes covariance stages 4–6, and it is the verifier's to correct. **Its `B1` finding is
+unaffected:** `B1` aimed its demand at the identity route, which genuinely cannot meet it, and the
+verifier's own fixture (`nb=[2,3,2,2,3]`, `drop_axis=2`, unequal dropped-axis widths, all corruptions
+at `2.842e-14`) establishes that much. What it did not test is an `M`-only invariant, which is
+exactly the step this correction supplies.
 
 ## The repair: two gates, not a better version of one
 
@@ -145,6 +234,19 @@ No run, no `sbatch`, no covariance construction. The repair-10 `BLOCK` stands an
 not lift it; `authorizes_covariance_stages_4_6` remains `False` and only the verifier can change
 that. `P4_VERIFIER_PASS` untouched. The outstanding-defect total is the verifier's to restate — lane
 B refuted `#7` by measurement — and this lane asserts none.
+
+**QUEUED, NOT DONE — the same overreach is in the code, in two docstrings, and was deliberately left
+there.** `p4_lib.py:1417` (*"`M` cannot be validated from `(C_high, M)` alone, because 'wrong' is only
+defined against the recipe that produced it"*) and `:1485` (*"'Wrong `M`' is only definable against the
+recipe"*) assert what the correction above narrows. **They are not edited because `p4_lib.py` is one of
+the 20 standard-P4 execution-surface paths and lane C's repair-11 pass is in flight — rule 4b
+invalidates that verdict on any in-scope edit, and a prose correction is not worth a re-verification.**
+Both are wrong in the same direction as the row was: they license skipping a structural check. Two
+nearby claims are correctly scoped and stay true as written — `:1530` (*"no identity of the form
+'recompute `M C Mᵀ`' can see that `M` is wrong"*) and `:1550` (*"it CANNOT catch a wrong `M`, and no
+recomputation identity can"*) — because both are about **recomputation identities**, not about all
+functions of `(C_high, M)`. So the fix is two sentences at `:1417` and `:1485` only, after repair-11
+lands.
 
 **One exposure is left open deliberately.** `check_projection_validity` still has a signature that
 cannot see the recipe, so a *future* caller can gate the product without gating the map. Wiring the
