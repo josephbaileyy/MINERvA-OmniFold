@@ -100,6 +100,25 @@ suspicion**, and will be reported as one. This is the generalisation of `P-USED`
 guard — *an absence-based check that also passes when the thing is absent proves nothing* — applied to
 the verdict format rather than to a probe.
 
+**AMENDED 2026-08-16, still before `N3` lands and before any repair is reviewed, on lane B's stress
+test of this field against its own `#7`** (`d2c01ed`). B observed that `#7`'s `falsified_by` would
+naturally be written *"a commit to `test_p4_guard_mutations.py` after `c308a9c`"* — falsifiable, and
+useless.
+
+**The wording above already rejects that** — it requires an observation showing *the defect* absent,
+and `#7`'s defect is **inadequacy**, not untouchedness; a commit existing shows neither. But the near
+miss names the field's real failure mode, so it is stated rather than left to be inferred:
+
+> **`falsified_by` must be able to falsify the claim's PREDICATE, not merely some fact about its
+> SUBJECT.** A falsifier aimed at the subject is the form that will pass review, because it *is*
+> checkable — it simply checks the wrong proposition.
+
+**Applied honestly, this is uncomfortable for `#7` and that is the point**, not a reason to soften it:
+under this field, repair-10's `#7` is **a well-evidenced claim about neglect wearing the label of a
+claim about inadequacy**. B owns `#7` and is measuring adequacy directly; whichever way that lands,
+the label and the evidence must agree in repair-11. The field did not create that mismatch — it made
+it visible before the verdict rather than after, which is the whole reason it is predeclared.
+
 ## 5. Acceptance of the audit of repair-10
 
 **`#8` — ACCEPTED, my evidence was vacuous.** Verified at my own `code_rev 0e83b54`: `grep -c`
