@@ -11,7 +11,7 @@ account hit a session limit mid-commit. Receipt:
 
 1. **§2 looked REFUTED** — a 75.8 draw-sd disagreement with the sign flipped (gap `0.030253` ÷ arm-0
    3-draw sd `0.000399`, `VL134`). Loud, and therefore certain to be investigated.
-   **Corrected 2026-08-16 from `~105 draw-sd`, which derives from no operand pair in the corpus** —
+   **Corrected 2026-08-16 from `~105 draw-sd`, which was MIS-NORMALISED — divided by the sd of the substituted (consumed-push) rows, the receipt's own `in_draw_sd_of_that_row` at `:23` — not fabricated; an earlier version of this line said it derived from nothing, and that was wrong** —
    see the correction block in `FINDING-20260815-an-instrument-recorded-the-neighbouring-quantity.md`.
    **That this document, of all of them, repeated an underived figure is the point of `BEN-361`
    landing on its own author.**

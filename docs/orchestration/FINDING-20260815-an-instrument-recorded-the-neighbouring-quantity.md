@@ -37,13 +37,36 @@ The last recorded row is `≈ 0.9812`. A reader keying off *"the final iteration
 | distance | **75.8 draw-sd** — gap `0.030253` ÷ arm-0 3-draw sd `0.000399` (`VL134`) |
 | sign of `ratio − 1` | **FLIPPED** |
 
-> **CORRECTION 2026-08-16. This cell read `~105 draw-sd` and that figure derives from nothing.**
-> `0.981165 − 1.011418 = −0.030253`; over the arm-0 3-draw sd `0.000399` that is **`75.8`**, and over
-> the standard error `0.000399/√3` it is **`131.3`**. Neither is `105`; the sd that would yield `105` is
-> `0.000288`, which appears in no artifact. The figure was **rhetorical, not measured** — it existed to
-> say *"the loudest possible disagreement"*, and `75.8` says that while being true.
+> **CORRECTION 2026-08-16, twice — and the second correction retracts the first.**
 >
-> Found by lane B (`BEN-342`) while checking the successor instrument; re-derived independently here.
+> **First pass (lane B, `BEN-342`).** This cell read `~105 draw-sd`. `0.981165 − 1.011418 = −0.030253`;
+> over the **final-push** 3-draw sd `0.000399` (`VL134`) that is **`75.8`**, and over the standard error
+> `0.000399/√3` it is **`131.3`**. `75.8` is the right figure, because the prediction being compared is
+> a final-push quantity. **That part stands.**
+>
+> **Second pass (Assistant lane) — and my first correction was itself wrong.** I wrote that `105`
+> *"derives from nothing"* and that the sd yielding it, `0.000288`, *"appears in no artifact."* **Both
+> claims are false.** It is in the receipt, at `:23`:
+>
+> ```
+> "sd": 0.0002888930898171582,
+> "predicted_minus_this": 0.030252362049327908,
+> "in_draw_sd_of_that_row": 104.7181920082435,
+> ```
+>
+> **`104.7` is real, correctly computed, and correctly labelled by its own key — `in_draw_sd_of_that_row`.**
+> The sd is the spread of the **substituted rows**, i.e. of the *consumed* push. So the figure was
+> **MIS-NORMALISED, NOT FABRICATED**: divided by the sd of the very quantity that was the mistake.
+> Those have different fixes, and *"derives from nothing"* invites a later reader to conclude the number
+> was invented.
+>
+> **This is `BEN-360`'s own shape a third time, now with me as the reader.** The receipt disambiguated
+> itself in a key sitting beside the number — exactly as `push_entering_this_iteration_left_by` did —
+> and I dropped the qualifier `of_that_row`, quoted the bare `105`, and then, correcting it, asserted
+> the operand did not exist **without grepping for it**.
+>
+> Found by lane B while checking the successor instrument; the retraction of my own correction by the
+> Assistant lane; both re-derived independently here before acceptance.
 > **It propagated to eight sites**, four of them in code and two in this finding and its sibling.
 > `BEN-361`, stated one document over, is the rule *"re-derive a predeclaration's own amplitude
 > estimate from the run's realized operands before repeating it"* — **and this document repeated an
