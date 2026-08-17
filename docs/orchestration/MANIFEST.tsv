@@ -827,3 +827,4 @@ docs/orchestration/PREDECLARE-20260817-cause1-endpoint-census-and-magnitude.md	A
 docs/orchestration/FINDING-20260817-a-trailer-that-survives-the-rebase-that-invalidates-it.md	LIVE	finding		20260817	open		route-only		no	1	94	5261
 docs/orchestration/DETERMINATION-20260817-pet-ten-items-state-and-oi126-shape.md	LIVE	document		20260817	open		route-only		no	0	229	16762
 docs/orchestration/DETERMINATION-20260817-pet-oi82-oi60-oi41.md	LIVE	document		20260817	open		route-only		no	0	153	8915
+docs/orchestration/RECOST-20260817-pet-items-pin-exposure.md	LIVE	document		20260817	open		route-only	docs/orchestration/state/probe-pin-exposure-20260817.py	no	0	75	4127

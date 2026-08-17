@@ -78,7 +78,32 @@ stored projection tracks the GBDT 5D reference (`hXSec_eavail`) to ~15–25 %.
 `GetTrueExperimentersW` (CVUniverse.h:365‑379) is a **leptonic** estimator —
 W = √(M² + 2(Eν−Eμ)M − Q²) from muon kinematics with a single struck nucleon at rest. The
 cloud `W_had` is the **invariant mass of the final‑state hadron system**. On has‑cloud
-events `W_had − MC_W` has median **+0.96 GeV** (mean +1.84). The 2‑D hexbin
+events `W_had − MC_W` has median **+0.96 GeV** (mean +1.84).
+
+> ### ⚠ CITE THE FULLCLOUD ARTIFACT FOR THIS OFFSET, NOT THIS PARAGRAPH — `OI-41`, closed here 2026-08-17
+>
+> **The `+0.96 GeV` above is the PRE-FIX number, measured on the 72.6 % has-cloud subset.** The
+> committed post-fix source is
+> **`nd-unfolding/products/pet/fullcloud/pointcloud_projection_summary.json` → `W_validation.median`**.
+> Read from that artifact 2026-08-17:
+>
+> | | median `W_had − MC_W` | population |
+> |---|---|---|
+> | **post-fix, quote this** | **`0.9579842725967493` GeV** | fullcloud, `n_validation_events = 32848929` |
+> | pre-fix, the paragraph above | `0.9603795705901552` GeV | has-cloud subset, 72.6 % |
+>
+> **They agree only because both round to `0.96` at the printed precision. That is a coincidence of
+> rounding, not a stability result** — so anyone re-quoting at more digits, or comparing against a
+> post-fix companion, must take the artifact. `\pcWoffset` in `values.tex` is already sourced to it.
+>
+> **Why this rule lives here rather than in the open-items list**, which is the whole of `OI-41`'s
+> disposition: the item's action was *"correct **future** citations"*, which **no action can satisfy** —
+> it is a standing rule about writing that has not happened, so as a ledger row it could only ever be
+> outlived, while inflating every count taken from that file in a way no reader could distinguish from
+> real work. A rule about future writing belongs **where the writer is already looking**, which is
+> beside the number it governs. Moved on the mediator's explicit instruction (re-filing another lane's
+> item is normally the owner's call). **The paragraph above is left as written** — it is an accurate
+> record of the pre-fix measurement and rewriting history is not this repo's convention. The 2‑D hexbin
 (`pointcloud_projection_xsec.png`, left) makes the physics explicit:
 
 - a sharp horizontal locus at `W_had ≈ 0.94 GeV` — QE/single‑nucleon final states, whose
