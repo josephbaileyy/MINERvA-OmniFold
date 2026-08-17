@@ -9892,3 +9892,86 @@ Carried to Joseph as a proposal; no run designed and none requested. It is small
 the question this lane was handed, **and saying so is not a claim to have answered it.**
 
 *Long form:* `docs/orchestration/FINDING-20260817-a-crosscheck-that-measures-a-different-thing-than-its-name.md`.
+
+## 2026-08-17 — repair-12 VERIFIED: PASS on C1-C5 by a lane that authored none of it, and the token is minted as a RECORD with no run pending
+
+**Append-only.** Executor lane acting as `standard-p4-verifier` for repair-12 only. **No surface file
+edited, `P4_VERIFIER_PASS` never set by hand, nothing launched, `57142574` untouched, and the minting
+verifier has not consumed the token and will not.** Verdict:
+`docs/orchestration/runs/standard-p4-verifier/20260817T045149Z-repair12-verdict.json`.
+
+**WHY THIS LANE.** Lane C wrote the bar as the verifier lane and then **refused to judge its own
+implementation** — `89c6e12`'s rule one layer down. That refusal is recorded as correct behaviour and is
+why this verdict exists. This lane authored no part of repair-12 and holds no prior token.
+
+**THE ANNOUNCEMENT AND THE ARMING WERE SEPARATED DELIBERATELY.** The sha256 of a verdict **is** the token,
+so writing it mints an authorization. This lane reported `PASS` first and minted only on the mediator's
+word — not hedging the verdict, refusing to let concluding and arming be one act.
+
+**NO RUN IS PENDING AGAINST THIS AUTHORIZATION, and it is stated first in the verdict** because an
+authorization with no requester is the kind of standing capability someone later consumes assuming it was
+minted for them. Measured this turn, not carried: `squeue` shows only `56585597` (waker cron) and
+`57142574` (`claude-hold`) — **no P4 job queued or running**; `sacct -j 57128458` shows step **`.1`
+COMPLETED `0:0` in `00:47:58`**, which is the stages 4-6 execution under repair-11, and step `.0` FAILED
+`127:0` in 6s (command not found), which is **not** it. **The covariance already exists; construction is
+still not adoption.**
+
+**C1 PASS** — `require_verifier_token()` is the FIRST statement in each stage's `main()`
+(`p4_build_components.py:82`, `p4_validate_active_lateral.py:56`, `p4_project_4d.py:54`) and calls
+`resolve()`, the wrapper's own function. Verified by execution: a 64-hex non-matching token and a
+passphrase are both refused **by the digest machinery** with `sha256` in the message and **not** the
+unset-message, which is what distinguishes resolving from an emptiness check.
+
+**C2 PASS** — the gated set is read out of `run_p4_standard.sh` and **printed at run time**:
+`['p4_build_components.py', 'p4_validate_active_lateral.py', 'p4_project_4d.py']`. 9/9, including
+`test_MUTATION_an_added_stage_script_enters_the_set` — **the case a hand-written tuple cannot pass**, which
+is what the predeclaration demanded — and a gateless wrapper deriving `[]` rather than concluding "nothing
+needs gating".
+
+**C3 PASS, AND THE WRONG-REASON HAZARD WAS MEASURED ON A REAL PRE-REPAIR CHECKOUT** rather than taken from
+the implementer's report. A throwaway worktree at `63a397c^` (removed afterwards): the ungated stage-6
+module returns **`rc=2` with argparse `usage:` under ALL THREE token conditions**, no `sha256`, no
+`P4_VERIFIER_PASS`. **So a bare `assertNotEqual(rc, 0)` WOULD have passed pre-repair for entirely the wrong
+reason.** Each control carries at least one assertion that fails on exactly that output — two of the three
+carry two, and `assertNotIn(unset-message)` is the sharpest because it is what proves the gate **resolves**.
+**`BEN-344` checked for and not found.** Positive direction: unit-level with `resolve` substituted, which is
+the only route available since no token can resolve in this tree by construction — **and the gap that
+substitution leaves is closed elsewhere**, at `test_p4_token_gate_scope_and_rev.py:187`, which exercises the
+real `resolve` positive path.
+
+**COVERAGE MOVED, NOT DROPPED** — `test_project_rejects_protected_out_path` now asserts **which** gate
+refuses (`assertIn("P4_VERIFIER_PASS")`, `assertNotIn("unrecognized arguments")`), and the path guard is
+exercised directly in both directions. **No test-mode bypass exists**, checked by grep on the gate module —
+one would have re-opened `KNOWN_ISSUES #21` in the module repair-12 exists to close.
+
+**LAZY ROOT PROVEN EXECUTABLY, not read** — all three modules import on a machine with no ROOT and
+`ROOT in sys.modules` is `False` afterwards, so `C3` is demonstrable wherever the suite runs.
+
+**C4 PASS, re-earned rather than carried.** repair-11's token confirmed dead **by running the resolver**:
+`TOKEN-REJECT … 4 file(s) in its scope have CHANGED at HEAD`, naming exactly the four modules repair-12
+touched — **its death is by design and is not recorded as a finding.** 4a: `63a397c…` is a literal sha and
+an ancestor of HEAD `773c940…`. 4b: the 20-path surface is byte-identical between them, measured over all
+twenty rather than sampled. 4c: no surface file dirty. Targeted suites 9/9 and 81/81. **Neither repair-11's
+baseline nor lane C's predeclared `B3` figure is carried.**
+
+**C5 PASS** — `falsified_by` on every condition row, on the outstanding row, and **on the PASS itself**:
+*a control that fires on the pre-repair form for a reason other than the gate.* Had any control rested on
+nonzero-exit alone, this verdict would be `BLOCK`.
+
+**O2 — THE PUBLISHED BASELINE'S ENVIRONMENT WAS INCOMPLETE, and this is the SECOND instance of the class in
+one night.** `TMPDIR` is a third variable and it moves the count: under `/private/tmp` the suite reads
+**2 failed / 1479 passed / 1 skipped**; under the default `TMPDIR`,
+`test_matching_override_is_hash_bound` fails with `'/tmp/…' != '/private/tmp/…'` — the macOS symlink —
+giving **3 failed / 1478 passed**. **Both are correct readings of the same tree.** The first instance was
+colour. **Corrected spec: commit sha + colour + `TMPDIR` + platform.** An environment quoted incompletely
+is a number that can be neither reproduced nor contradicted. **It does not touch repair-12:** every one of
+those failures is a known off-cluster environment failure unrelated to the token gate.
+
+**O1 routed to lane C, not fixed here** — `test_a_passphrase_is_refused_as_not_a_digest` carries **one**
+discriminator where its siblings carry two. It has power today, and would go vacuous **silently** if
+argparse's message ever mentioned `sha256`. **The lane that verifies a gate should not also edit its tests.**
+
+**Review scope declared at six paths — the four surface modules plus the two test files, because the tests
+ARE the evidence** and a PASS that did not bind them could survive deletion of its own proof. The commit's
+two documentation files were read and deliberately excluded: a token that dies on a doc edit while claiming
+to protect evidence teaches a later reader the wrong thing about what it guards.
