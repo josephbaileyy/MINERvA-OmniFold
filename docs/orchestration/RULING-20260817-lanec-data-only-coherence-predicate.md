@@ -49,11 +49,101 @@ none on a flag.
 | **P2** | **signal MC unthinned, ON THE ARRAY** | `sig_bootstrap_factor_full` present, `shape == (n_sig_full,)`, and `np.array_equal(sig, np.ones(n_sig_full, np.uint8))`. **Explicitly unity at full length — never inferred from absence** (`BEN-405`: `{}` and unity must be asserted, not read off a missing key). |
 | **P3** | **background MC unthinned** | identically, on `bkg_bootstrap_factor_full` at `(n_bkg_full,)`. Required because §2 of the product ruling makes `C_stat^data` **data-only** and the background stream is MC. |
 | **P4** | **the data stream IS drawn AND IS coherent** | `data_bootstrap_factor` present, `shape == (n_data_full,)`, and `np.array_equal(df, np.random.default_rng(int(seed)).poisson(1.0, n_data_full).astype(np.uint8))`. **THIS IS THE COHERENCE CHECK, SURVIVING — same predicate, re-pointed at the one stream that varies.** |
-| **P5** | **the MC actually entering training was unthinned** | `hash_array(w_truth) == hash_array(w_truth_full[imc])`, and the same for `w_reco`. **The condition-8 execution check, promoted from a report into the guard.** This is the one that catches `Route A`'s defect, and no existing guard has an equivalent. |
+| **P5** | **the MC actually entering training was unthinned** | `hash_array(w_truth) == hash_array(w_truth_full[imc])`, and the same for `w_reco`. **⚠ SUPERSEDED BY `P5a` + `P5b` — see §1b. As written it CANNOT PASS**, because the MC leg is normalized and the loader's own comment at `:1344-1347` says so. Kept as written because the reasoning is the finding. |
 | **P6** | **seed identity under its OWN key** | the data-only seed lives at `data_bootstrap_seed`, **not** `bootstrap_seed`. Two reasons: `BEN-405`'s `-1` sentinel collision becomes unreachable, and `BEN-406`'s tense rule is satisfied because every comparison is inside the artifact. |
 
 **`P4` is the load-bearing one for the "is this weaker?" question.** The three-stream guard verifies one
 drawn stream against its canonical form; so does this. **The difference is which stream, not whether.**
+
+## 1b. ⚠ **`P5` AS WRITTEN CANNOT PASS. SPLIT CONFIRMED into `P5a` + `P5b`, with three additions.**
+
+**Found by lane E, which stopped rather than re-specifying a mandatory guard itself — the same line it held
+on the fifth site. Verified here from the tree.**
+
+**The MC leg is normalized.** `:1348-1352`:
+
+```
+mc = DataLoader(..., weight=w_truth, weight_reco=w_reco, normalize=True,
+                normalization_factor=STEP1_MC_NORMALIZATION, rank=rank, size=size)
+```
+
+**and the loader's own comment THREE LINES ABOVE THE CALL says exactly what this does** (`:1344-1347`):
+
+> *"The truth leg lands at **`1e6*sum(w_truth)/sum(w_reco)`** by construction; truth-space YIELDS must be
+> built from the raw weights times pot_scale, **never from `mc.weight`**."*
+
+**So `P5` asserted an identity the code's own comment forbids, and the comment is adjacent to the call.**
+`hash_array(mc.weight)` can never equal `hash_array(w_truth_full[imc])`, and nothing records `_c`, so the
+pre-normalization vector is not recoverable either. **A predicate that cannot pass has zero discriminating
+power — it is a hard failure wearing a check's clothes.** E is right that the split is a **repair, not a
+concession.**
+
+### The split — confirmed as specified
+
+| | predicate | form |
+|---|---|---|
+| **`P5a`** | `np.array_equal(mc.weight == 0, w_truth_full[imc] == 0)`, and the same for `w_reco` | **BIT-EXACT** — the *"nothing happened"* limb |
+| **`P5b`** | `mc.weight` proportional to `w_truth_full[imc]` by ONE positive scalar `c`, with **`c` DERIVED INDEPENDENTLY** as `1e6 / sum(w_reco_full[imc][pass_reco])` — never read back — and `max |mc.weight/(w_truth_full[imc]) − c| ≤ 4·eps·c` over nonzero rows | **TOLERANCED CLOSURE** — the *"a computation happened"* limb |
+
+**`P5a` is the discriminating half and it is immune to every scalar transformation downstream.** Measured:
+`Poisson(1)` zeroes **36.73%** of rows (`1/e = 36.79%`); **a positive scalar zeroes exactly `0.00000%`** at
+`c = 0.5`, `2.0` and `1e-3`. **The zero pattern IS the signature of thinning**, so it is bit-exact with no
+rounding to argue about — which is precisely `BEN-408`'s condition for the exact form.
+
+**Together they catch THREE failure modes where `P5` aimed at one: a thinning fails `P5a`, a per-row factor
+fails `P5b`, and a WRONG NORMALIZATION fails `P5b` — the third bought entirely by deriving `c` independently
+rather than reading it back.**
+
+### Addition 1 — `P5b` MUST assert single-rank, in the predicate
+
+`sumw` is computed over the **rank-sliced** array (`dataloader.py:82-97`, `self.weight = self.weight[rank::size]`,
+then `sumw = np.sum(_src[_pr])`). **So under multi-rank the independently-derived `c` is not the same
+quantity.** Gate 5 F7 and the launchers forbid multi-rank — *"Independent single-rank job; Horovod and
+distributed rank slicing are prohibited"* — **but a predicate that silently depends on an external guard is
+`BEN-386`'s shape. `P5b` asserts `size == 1` itself and raises otherwise.**
+
+### Addition 2 — `c`'s denominator is the **RECO** leg, and it gets a NAMED negative control
+
+`_src = self.weight if self.weight_reco is None else self.weight_reco` — and `mc` supplies `weight_reco`,
+**so the constant is set by the reco leg** (the B-4/D1 Option A comment, `dataloader.py:134-141`).
+**Confirmed twice: E's read, and the loader's own `:1344-1347` comment stating the truth leg lands at
+`1e6·sum(w_truth)/sum(w_reco)`.**
+
+> **A control that derived `c` from `sum(w_truth…)` would PASS on a wrong constant.** So one of the required
+> negative controls is explicitly **"`c` derived from the truth leg must FAIL"** — a control against the
+> plausible mistake, not only against the implausible one.
+
+### Addition 3 — `P5a` MUST FAIL on a flush-to-zero, and that is CORRECT
+
+**Flush is reachable:** `float32(1e-45) · 0.5 = 0.0` (verified; `float32(1e-40) · 0.5` stays subnormal and
+nonzero). So a subnormal weight can be destroyed by the rescale and appear as a **new zero**, which `P5a`
+reports as a failure.
+
+> **That is the right behaviour — information was destroyed — and a future lane must NOT "repair" `P5a` by
+> excluding zero rows of `mc.weight` from the comparison, because that exempts exactly the failure mode.**
+> Recorded here so the repair is foreclosed before it is attempted.
+
+### On the aliasing — E's point 1, verified and in our favour
+
+`w_truth = w_truth_full[imc]` is a **fancy-index COPY**: verified `np.shares_memory(...) is False` and
+in-place mutation of the copy leaves the source untouched. **So the DataLoader's in-place rescale cannot
+corrupt `w_truth_full`, and `P5`'s right-hand side is freshly recomputable at any point.**
+
+### The accurate account of my own error, because the sequence matters
+
+**`P5` was specified at `0e99adb`; the bit-exact-vs-toleranced rule at `9e63258`. `P5` PREDATES the rule.**
+So this is **not** the stater violating their own rule — **it is the rule, once stated, retroactively
+diagnosing an earlier predicate, which is the rule working.** Recording it the other way round would be a
+more flattering story and a false one.
+
+**The error that IS mine is narrower and worth naming: I specified a predicate over `w_truth` by its identity
+at the point it is CREATED, not at the point `P5` COMPARES it — and a normalization runs in between.** That
+is `BEN-408`'s naming variant one level in: **I reasoned about the array by its name rather than tracing its
+value through to the comparison site**, and the loader's own comment three lines from the call would have told
+me (`BEN-239`: evidence sitting unread).
+
+**Controls: 13 → 15.** `P5a` and `P5b` at train, each with its own negative control, plus the named
+truth-leg-denominator control folded into `P5b`'s.
 
 ## 2. BOTH call sites, and they MUST DIFFER — the difference is forced by `BEN-406`
 
