@@ -1055,7 +1055,10 @@ argued about. Both superseded runs are archived under `nd-unfolding/g2_fullevent
   blocks the corresponding values are **4.3578e-38** and **13.359%**
   *(both quarantined)*.
 - The corrected unified-throw candidate uses actual asymmetric endpoints,
-  one fixed estimator seed, throw-mean centering, MAT `1/N`, exact manifests,
+  one fixed estimator seed **[⚠ SEE `VL141`: true of each leg SEPARATELY, FALSE of the composite —
+  `C_syst`'s 169 universes ran at estimator seed `42` (`sweep_bank_5d.py:252`, hardcoded) while the
+  throw/CV legs ran at `1000` (`unified_throw_cov.py:525`). Sentence retained; do not quote it as a
+  property of the block sum]**, throw-mean centering, MAT `1/N`, exact manifests,
   and no scalar jitter subtraction. The candidate mean-centered covariance is PSD
   with sqrt-trace **5.8077e-38** *(quarantined — see notice above)*. The joint
   mean shift has norm **1.654e-38** *(quarantined; the CV-centered variant's
@@ -1953,6 +1956,7 @@ draws; its scatter *is* the draw spread the gate is stated against.
 | VL138 | **Δrecovery = arm1 − arm0** | **−0.006888480** | pooled within-arm sd `0.000424470` | **16.23×**, ranges **disjoint**, **9/9** realized pairwise |
 | VL139 | Δ against the declared draw spread | 8.399× | `0.000820128` | **NOT the §6 bound; a measured effect** |
 | VL140 | arm-1 correction factor, iteration 1 | 1.046109466 | §6 declared "of order 1%" | **4.611%**, i.e. `4.04×` the declared amplitude |
+| VL141 | **the candidate's estimator seed is NOT one value — the block sum mixes two** | `C_syst` (169 universes): **`42`**, hardcoded at `sweep_bank_5d.py:252` with **no CLI flag**; throw/CV legs: **`1000`**, `unified_throw_cov.py:525` | `VALIDATION_LEDGER.md:1058` says the candidate uses *"one fixed estimator seed"* | **FALSE OF THE COMPOSITE, true of each leg separately.** Filed as its own row on lane C's ruling — *a false quotable claim about the candidate, independent of cause 3; folding it into a cause-3 ruling would bury it behind a discharge decision.* **No number moves:** every leg is internally single-seeded, so nothing is mis-computed — what is wrong is the *description*, and it is the description a reader would quote. Two consequences: (a) any statement of the form *"the candidate's estimator seed"* must name the leg; (b) `M(ii)` must vary **both** seeds, which is why the composite ruling followed. Sentence at `:1058` retained beside its correction. Nothing stamps the sweep seed into its products (`ndim`/`globalCompleteness`/`dataPOT`/`hXSecND_flat` only) and `analyze_universes_5d.py` has **zero** occurrences of `seed`, so the agreement holds by hardcoding and is checked by nothing — see [`FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-block.md`](docs/orchestration/FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-block.md) |
 
 **VL134 IS NOT IN ANY RECEIPT AND THAT IS THE FIRST RESULT.** The recorder hooks `RunStep1`
 (`closure_foldforward_instrumented.py:115`), so with `niter=3` it captures the push after **0, 1 and

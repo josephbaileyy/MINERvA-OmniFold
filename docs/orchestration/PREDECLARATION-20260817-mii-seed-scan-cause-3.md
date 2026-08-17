@@ -61,6 +61,39 @@ disagree.
 
 **Headline bar remains `f ≤ 2.7 %`** as the tighter of the two legs and the number to quote.
 
+### 2a. RE-DERIVED AGAINST THE COMPOSITE (C's ruling, 2026-08-17) — the legs SURVIVE, the object is restated, and the COST DOES NOT
+
+C deferred rather than denied, on the ground that *"a falsifier whose object changed under it must be
+re-derived, not re-confirmed"*. Re-derived:
+
+**The BAR is unchanged, and unchanged for a reason that matters: it comes from PUBLISHED PRECISION, not
+from the noise source.** `13.36` at 4 s.f. and `5.81e-38` at 3 s.f. are the same numbers whichever seeds
+vary, so `0.0374 %`/`2.74 %` and `0.0861 %`/`4.15 %` stand. **A precision anchor is invariant under a
+change of what is being varied — which is the second time tonight it has outperformed the analogue-based
+one.**
+
+**The LEGS survive** — each published quantity is still tested against its own precision by its own noise,
+so there is still no band and no concentration constant.
+
+**The OBJECT is restated, and this is the substantive change:** `sd` is now taken over arms in which
+**both** estimator seeds vary **jointly** — `sweep_bank_5d.py`'s (currently `42`) and
+`unified_throw_cov.py`'s (currently `1000`). So:
+
+| | before (single-leg reading) | after (composite) |
+|---|---|---|
+| what an arm is | one `--seed` value | one **pair** of seeds, both moved |
+| `f_agg`, `f_med` | over `--seed` arms | over **joint** arms |
+| decomposable per leg? | n/a | **NO** — joint variation gives the joint contribution and cannot be split without separate scans, and `M(ii)` does not ask for a split |
+
+**⚠ AND THE `28.50 A100-h` FIGURE DOES NOT COVER A COMPOSITE ARM. Stated before it can be quoted as if it
+did.** That figure is *sweep run + lateral + finalize*, i.e. the **`C_syst` path only**. The block sum is
+`C_syst + stat + ML`, and the **stat** (`boot5d`, 100 replicas) and **ML** (`ssplit5d`) blocks are unfolds
+too, so they are very likely seed-dependent as well — **I have not measured whether they are, or what they
+cost.** A composite arm may therefore cost materially more than `28.50`. **The number going to Joseph must
+carry that scope**, or it is the same error as pricing the abandoned throw/block path: a real measurement
+of the wrong extent.
+
+
 ## 3. AMENDMENT 3 ACCEPTED — MY "THE CAUSES DO NOT SHARE A SCALE" IS WITHDRAWN
 
 I compared an **input-level** quantity (`f`, a fractional *contribution*) against an **effect-level** one
