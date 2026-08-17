@@ -49,6 +49,9 @@ def canonical_edges():
 
 
 def main():
+    # REPAIR-12: stage 6 gates itself. Before argparse, before ROOT, before anything reads a file.
+    import p4_check_verifier_token as _tok
+    _tok.require_verifier_token("stage 6 (project)")
     ap = argparse.ArgumentParser()
     ap.add_argument("--c5", required=True, help="candidate C5 ROOT:key")
     ap.add_argument("--manifest", required=True)

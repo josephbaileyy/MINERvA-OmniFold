@@ -325,10 +325,25 @@ class Projection(unittest.TestCase):
         """Non-regression on the WIRING, not the library. The recipe gate only protects the campaign
         if the one production caller calls it; a library gate nobody invokes is the defect class this
         repair is fixing (a qualifying fact computed and not put where the reader looks)."""
-        src = (ND / "p4_project_4d.py").read_text()
-        self.assertIn("check_projection_matrix_matches_recipe", src)
-        self.assertIn("projection_M_recipe_check", src)             # and it reaches the receipt
-        self.assertIn("all_finite", src)                            # N4 fact reaches the log line
+        # R11-1, closed by repair-12. This was three `assertIn`s over the source, which accept a
+        # COMMENTED-OUT call as evidence of wiring -- BEN-335's substitution with the polarity
+        # reversed (there a grep read docstring mentions as a call; here text would read a comment
+        # as one). "Does the caller call it" is a question about the program, so it is answered by
+        # the AST. The receipt/log keys stay text-level deliberately: those ARE string literals,
+        # and the right check for a literal is that the literal is there.
+        import ast as _ast
+        _tree = _ast.parse((ND / "p4_project_4d.py").read_text())
+        _main = next((n for n in _ast.walk(_tree)
+                      if isinstance(n, _ast.FunctionDef) and n.name == "main"), None)
+        self.assertIsNotNone(_main, "p4_project_4d.py has no main()")
+        _calls = {_ast.unparse(n.func) for n in _ast.walk(_main) if isinstance(n, _ast.Call)}
+        self.assertTrue(any("check_projection_matrix_matches_recipe" in c for c in _calls),
+                        "the recipe gate is not CALLED from p4_project_4d.main(); a library gate "
+                        "nobody invokes protects nothing")
+        _consts = {n.value for n in _ast.walk(_tree)
+                   if isinstance(n, _ast.Constant) and isinstance(n.value, str)}
+        self.assertIn("projection_M_recipe_check", _consts)         # and it reaches the receipt
+        self.assertIn("all_finite", _consts)                        # N4 fact reaches the log line
 
     def test_projection_M_rejects_an_unreachable_low_bin(self):
         """BEN-064, the masking defect: a reported LOW bin no HIGH bin reaches used to yield an
@@ -398,7 +413,20 @@ class IntegrationCLI(unittest.TestCase):
         projector does not define, so argparse exited nonzero BEFORE the path guard ran and
         `assertNotEqual(rc, 0)` passed for the wrong reason. It asserted nothing about the
         guard it was named for. Now: only real arguments, and the assertion is on the SPECIFIC
-        gate reached, not merely a nonzero return."""
+        gate reached, not merely a nonzero return.
+
+        AMENDED BY REPAIR-12, and the amendment keeps that principle rather than weakening it.
+        Stage 6 now gates on the verifier token BEFORE argparse, so this invocation can no longer
+        reach the path guard -- it is refused earlier, by design. THE TOKEN CANNOT BE SUPPLIED HERE:
+        it must be the sha256 of a tracked verdict whose reviewed scope is unchanged at HEAD, and
+        repair-12 edits that scope, so by construction no token resolves in this tree. That is the
+        gate working, not an obstacle to route around, and manufacturing a test-mode bypass would
+        re-open KNOWN_ISSUES #21 in the place repair-12 exists to close.
+
+        So this test now asserts WHICH gate refuses -- still the specific one, now the first one --
+        and the path guard it was named for is exercised directly in
+        `test_require_candidate_path_rejects_an_outside_path`, where it is reachable. Coverage moved;
+        it was not dropped."""
         import tempfile, os
         with tempfile.TemporaryDirectory() as td:
             out = "uq_4d/corrected/proj_candidate.root"
@@ -406,9 +434,20 @@ class IntegrationCLI(unittest.TestCase):
                                 ["--c5", os.path.join(td, "c5.root:k"),
                                  "--manifest", "/dev/null", "--out", out])
             self.assertNotEqual(rc, 0)
-            self.assertNotIn("unrecognized arguments", err)   # would mean we never reached the guard
-            self.assertIn("candidate must resolve inside", err)  # the guard we are actually testing
+            self.assertNotIn("unrecognized arguments", err)   # would mean we never reached a guard
+            self.assertIn("P4_VERIFIER_PASS", err)            # the SPECIFIC gate: repair-12's
             self.assertFalse(os.path.exists(f"{self.ND}/{out}"))
+
+    def test_require_candidate_path_rejects_an_outside_path(self):
+        """The path guard that `test_project_rejects_protected_out_path` used to reach through the
+        CLI, exercised where repair-12's stage gate cannot mask it. Both directions, so this is not
+        a check that only ever refuses."""
+        import p4_lib as P
+        with self.assertRaises(P.P4GateError) as cm:
+            P.require_candidate_path("uq_4d/corrected/proj_candidate.root")
+        self.assertIn("candidate must resolve inside", str(cm.exception))
+        inside = f"{P.ND_ROOT}/active_universe_5d/standard/candidate/x.root"
+        self.assertTrue(P.require_candidate_path(inside))   # returns truthy, does not raise
 
 
 class Round3Gates(unittest.TestCase):

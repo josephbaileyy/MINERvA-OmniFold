@@ -45,6 +45,10 @@
         "hits": 1,
         "pipefail": true
       },
+      "docs/orchestration/shared_push.sh": {
+        "hits": 2,
+        "pipefail": false
+      },
       "docs/orchestration/waker_fired_but_unread.sh": {
         "hits": 1,
         "pipefail": true
@@ -114,9 +118,9 @@
         "pipefail": true
       }
     },
-    "live_instances": 0,
-    "n_candidates": 46,
-    "n_shell_files": 368,
+    "live_instances": 2,
+    "n_candidates": 48,
+    "n_shell_files": 374,
     "tool": "tools_p4_sweep_pipeline_rc"
   },
   "recorded_fields": {
@@ -299,12 +303,13 @@
       "require_exact_bands()",
       "require_exact_endpoint_tags()",
       "require_standard_footing()",
+      "require_verifier_token()",
       "support_trace_ratio_recorded",
       "symmetric_psd",
       "traces_pos_finite"
     ],
     "n_fields": 129,
-    "n_gates": 29,
+    "n_gates": 30,
     "tool": "tools_p4_sweep_recorded_fields"
   }
 }

@@ -191,6 +191,48 @@ def resolve(token):
     return rel, v
 
 
+ENV_VAR = "P4_VERIFIER_PASS"
+
+
+def require_verifier_token(stage):
+    """Entry gate for a covariance stage, to be called FIRST in that stage's `main()`.
+
+    REPAIR-12. Until now the hard gate lived only in `run_p4_standard.sh`, so `P4_VERIFIER_PASS`
+    was a property of ONE CALL PATH rather than of covariance construction. The three stage
+    modules are individually executable, and invoking them directly -- the only way to run stages
+    4-6 without re-running 1-3, which is exactly what "run stages 4-6" asks for -- bypassed the
+    token entirely. Lane B found that route by executing the instruction literally and declined to
+    use it.
+
+    That is KNOWN_ISSUES #21 one layer out. #21 was "any non-empty string opens the stages"; this
+    was "not going through the wrapper opens the stages". The #21 repair strengthened the predicate
+    and left it in the same single location, which is why the same class recurred against a
+    stronger check.
+
+    THIS RESOLVES, IT DOES NOT SNIFF. The check is `resolve()` -- the same function the wrapper
+    calls -- so the token must be the sha256 of an actual verdict receipt that is git-TRACKED and
+    byte-identical to its committed blob, whose verdict is PASS, whose `code_rev` is a literal
+    ancestor sha, and whose scope is unchanged at HEAD in both the index and the working tree. An
+    `os.environ.get(...)` truthiness test would re-open #21 here instead of there: an agent who can
+    export a variable can also export a wrong one, and the whole point of the digest is that it
+    cannot be invented without committing a falsified receipt under your own name.
+
+    Deliberately raises rather than `sys.exit`s: the caller decides how to report, and a test can
+    observe the refusal without a subprocess. Called before any ROOT import in every stage, so the
+    gate is demonstrable on a machine that has no ROOT -- if it fired later, the one environment
+    where these tests run could not exercise it.
+    """
+    tok = (os.environ.get(ENV_VAR) or "").strip()
+    if not tok:
+        raise P.P4GateError(
+            f"{stage}: covariance construction requires {ENV_VAR} = the sha256 of a "
+            f"standard-p4-verifier verdict with authorizes_covariance_stages_4_6=true. It is unset. "
+            f"This module is gated on its own, not only through run_p4_standard.sh, so invoking it "
+            f"directly does not skip the gate (repair-12).")
+    rel, v = resolve(tok)
+    return rel, v
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--token", required=True)

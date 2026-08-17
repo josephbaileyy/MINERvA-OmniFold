@@ -77,6 +77,9 @@ def build_active_bands(manifest, idx):
 
 
 def main():
+    # REPAIR-12: stage 4 gates itself. Before argparse, before ROOT, before anything reads a file.
+    import p4_check_verifier_token as _tok
+    _tok.require_verifier_token("stage 4 (components)")
     ap = argparse.ArgumentParser()
     ap.add_argument("--manifest", required=True)
     ap.add_argument("--support-family", required=True, help="corrected bkgaware combined cov ROOT")

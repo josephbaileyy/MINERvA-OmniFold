@@ -51,6 +51,9 @@ def _chash(C):
 
 
 def main():
+    # REPAIR-12: stage 5 gates itself. Before argparse, before ROOT, before anything reads a file.
+    import p4_check_verifier_token as _tok
+    _tok.require_verifier_token("stage 5 (validate)")
     ap = argparse.ArgumentParser()
     ap.add_argument("--candidate", required=True, help="p4_build_components output ROOT")
     ap.add_argument("--support", required=True, help="corrected bkgaware combined cov ROOT")
