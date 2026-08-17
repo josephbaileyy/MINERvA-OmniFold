@@ -13,6 +13,32 @@
   "why_it_discriminates_where_the_fixed_net_arm_cannot": "The fixed-net arm removes the REFIT and thereby also removes the data channel, because the measured leg reaches the result only through training. The floor does the COMPLEMENT: hold the data FIXED and let the refit vary (different estimator seed, same draw). That isolates refit sensitivity DIRECTLY without touching the data channel, and it is subtractable from the family spread. floor spread ~ family spread in the band  => the 67% is refit sensitivity  => branch (b). floor spread << family spread             => the excess is data-driven  => branch (a). BOTH outcomes are reachable, which is exactly what the fixed-net arm fails.",
   "why_it_is_worth_saying_anyway": "It changes the framing that reaches Joseph from 'the route failed and nobody has designed another' to 'the measurement this decision needs was declared mandatory before interpreting C_stat, and was never made.' Those call for different decisions."
  },
+ "BUT_THE_PER_CELL_FLOOR_SURVIVES_ON_DISK_measured_this_turn": {
+  "finding": "The band-restricted floor is COMPUTABLE FROM ARTIFACTS ALREADY ON DISK AT ZERO COMPUTE. No retrain and no extraction pass.",
+  "measured_per_cell_floor_over_the_4_surviving_draws": {
+   "band_cells": 113,
+   "global_max": "95.0938%",
+   "global_median": "13.7169%",
+   "nonzero_cells": 259,
+   "p_parallel_band_cols_9_16_median": "21.1491%",
+   "reported_bin_mask_true": 259,
+   "statistic": "range/mean per cell, over draws 2,3,4,5"
+  },
+  "note": "The floor is NOT small per cell, and it is LARGER in the band than globally. That is a substantive fact about the estimator regardless of what OI-126 concludes.",
+  "why": "Each floor draw carries pet_fullevent_floor_drawN_weights.npz with a `central_vector` (285,) float64 that SUMS TO 1.0 -- the unit-normalized 285-cell spectrum -- and it VARIES per draw (distinct sha256 per draw; cell 0 = 1.065215e-03, 1.039182e-03, 1.074642e-03, 1.048273e-03 for draws 2..5). It is each draw's own output, not a frozen reference copy. `weights_push` (2,000,000,) also differs per draw."
+ },
+ "CORRECTION_TO_MY_OWN_LINE_REFERENCE": "I wrote `--tag floor` at train_fullevent_nominal.py:168. WRONG, and I inherited it from COVERAGE-SURVEY rather than deriving it -- :168 is a docstring for a publication config gate. It is at :325: ap.add_argument('--tag', default='nominal', choices=['nominal','floor'], ...). Caught by the mediator. Verified myself.",
+ "DOES_56863958_SATISFY_INV_129": {
+  "answer": "ONLY THE C_ML HALF -- and for the C_stat half its RECORDED FORM is unusable for a SECOND reason, independent of scope.",
+  "the_second_reason": "OI-126's fork is SPATIALLY LOCALISED -- p_parallel 6-20, 44 of 63 cells, 26.5% of reco-accepted truth mass. The floor receipt records F_range as a GLOBAL SCALAR (0.06452911345365375) with no per-cell array anywhere: its longest lists are the 5 draws and 3-element tier triples. A global scalar cannot answer a band-localised question, which is BEN-252's shape exactly -- a gate that reduces to a scalar fixes which failures its record can express. Repointing the RECEIPT at OI-126 is impossible for that reason alone, before any Gate-6 prohibition is considered.",
+  "two_consumers_verified": "INV-129 is at source doc L302, and COVERAGE-SURVEY-20260802.md's own numbering puts it immediately before L303 ('C_stat: coherent data+MC Poisson replicas...') and L305 ('C_ML: PET-specific crossed ensemble, no Poisson'). One floor line stated once, ahead of BOTH definitions. The two-consumer reading is structurally supported, not inferred from the sentence alone."
+ },
+ "FOUR_COMPARABILITY_TRAPS_do_not_treat_this_as_a_drop_in": [
+  "SMALL-SAMPLE RANGE, AND THE BIAS HAS A DIRECTION. This is a range over FOUR draws. Range grows with n, so it UNDERSTATES relative to a range over a 50-member family. Comparing a 4-draw range against a 50-replica range would understate the floor and overstate the data-driven excess -- i.e. bias the answer toward branch (a). BEN-025.",
+  "DIFFERENT MASK. 259 reported cells here against the PET nominal's 262. Different reported domains, so a band defined by cell index is not the same set of physical cells.",
+  "DIFFERENT OBJECT AND CONFIG. This is the Gate-6 ML floor at fixed (42,0), not the C_stat family's configuration, and its own prohibitions are Gate-6's.",
+  "COMPLETENESS. The receipt declares n=5 with draws 1-5 valid; only draw_2..draw_5 are present on disk. M=4 against N=5 (BEN-247), and every number above is over the four."
+ ],
  "IT_NOMINALLY_DISCRIMINATES_a_FROM_b": "On its own text the two outcomes do map onto the mediator's (a) and (b), so it is not superseded and not off-target in intent. The defect is not in what it claims to distinguish; it is that the arm it builds cannot produce one of the two answers.",
  "SCOPE_AND_LIMITS": [
   "This is a claim about CODE PATHS, verified at the cited lines, plus one inference clearly labelled as such.",
@@ -32,6 +58,7 @@
  },
  "THE_PROPOSAL_ALSO_FORBIDS_ITS_OWN_COSTING": "Its section 'What must be settled before it is proposed for real' states verbatim: 'None of this is done, and the proposal should not be costed until it is.' Four preconditions, none met. Item 1 is runnability (explicitly unchecked). ITEM 3 is the one that matters here: 'whether the comparison is coherent under the C_stat contract... is a spec question, not a compute question', and lane C never ruled on the analogous question for the retired contrast. The header says NOT COSTED and RUNNABILITY EXPLICITLY UNCHECKED. I was asked to do the thing the artifact says not to do yet, and the artifact's reason turns out to be the right one.",
  "WHAT_I_DID_NOT_DO_AND_WHY": "I did not produce a GPU/CPU price. Costing an instrument that cannot answer the question would have produced exactly the trap the dispatch warned about -- 'affordable has been the tell all day, not the recommendation'. A number would have made an unsound arm look decision-ready. No pin sweep either: BEN-386's ceiling is that a sweep can only ever show expense, never cheapness, and the blocking constraint here is upstream of runnability.",
+ "WHAT_THIS_DOES_AND_DOES_NOT_LICENSE": "It does NOT answer OI-126 and I am not claiming it does. Whether a Gate-6-shaped floor is comparable to the C_stat family spread under the C_stat contract is item 3 of the fixed-net proposal's precondition list and is lane C's spec question on any route. What it DOES do is move the ask from 'design and run a new instrument' to 'the per-cell floor already exists, here are its numbers, and here are the four reasons it is not a drop-in'. Also live and recorded in 56863958 itself: FLOOR_INTERMEDIATE fired neither predeclared branch, so a C_stat floor could land in the same declared middle and leave OI-126's binary exactly where it is, minus the compute.",
  "WHY_BOTH_OUTCOMES_ARE_UNSOUND": {
   "fixed-net spread much smaller (read as branch b)": "GUARANTEED BY CONSTRUCTION. An entire variance source was ZEROED rather than isolated, so a smaller spread is what the design produces regardless of whether refit sensitivity exists. This is the same shape as BEN-250 and BEN-186: a check whose result is fixed before the data is seen.",
   "net": "The arm is biased toward branch (b) by construction and cannot support branch (a). A biased instrument on a binary decision with OPPOSITE publication consequences is worse than no instrument, because it returns an answer.",
