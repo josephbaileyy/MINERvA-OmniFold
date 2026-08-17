@@ -285,6 +285,15 @@ The Provenance leg moved for causes 2, 3 and 4, but **only one hop up the chain*
 > and `T` are untouched. Full measurement, including what a real MET would require:
 > [`FINDING-20260817-a-seed-census-that-cannot-reach-the-product-it-grades.md`](FINDING-20260817-a-seed-census-that-cannot-reach-the-product-it-grades.md)
 > (`BEN-246`). **No number moves** — every leg is internally single-seeded; what fails is a verification claim.
+> **AMENDED same day: my recommended cell was TOO GENEROUS and lane C's harsher grade is the right one.**
+> Clause (i) fails on **both** legs, not only on `combined_source`: covering search over every tracked
+> artifact (`*.json`, `*.tsv`, `*.txt`, `*.md`) for a recorded seed value returns **zero hits**, so no receipt
+> records it for the `uthrow` arm either — my §2 mechanism (`slab_seeds` reaches no product) entails that and
+> I stopped short of it. The `.npz` slabs do stamp the seed, but slabs are purgeable-scratch intermediates,
+> not X and not a receipt (`OI-130`); and the tracked launchers that hardcode `--seed 1000`/`42` are
+> **committed intent, not provenance** (`BEN-245`, `BEN-083`). **`P` clause (i) is ABSENT, both arms.** This
+> finding's scoping result stands as a **second, independent** defect on top — it is the one that survives a
+> future seed stamp, because `sweep_bank_5d.py` and `analyze_universes_5d.py` have nowhere to put one.
 >
 > **POINTER 2, added 2026-08-17 by lane E — cause 1's row: `(§4.8)` DOES NOT RESOLVE, and its two open
 > legs are now closed by measurement.** §4 of this document runs **4.1 through 4.7**; there is no §4.8, so

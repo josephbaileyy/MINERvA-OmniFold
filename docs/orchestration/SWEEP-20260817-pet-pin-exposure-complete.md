@@ -100,9 +100,9 @@ instrument 1 cannot see, then read the site to learn whether the digest is *comp
 | `OI-60` | `pet/fullevent_fps_dataloader.py` | **PINNED** | 25 † | **NO — see the determination** |
 | `OI-60` | `pet/build_fullevent_replica_target.py` | clean | **5** | **NO — instrument 2 catches what 1 misses** |
 | `OI-60` | `pet/run_gate2_target_validator.sh` | **PINNED** | 2 | NO |
-| `OI-61` | `pet/train_fullevent_nominal.py` | **PINNED** | 15 | **partially — see below** |
-| `OI-61` | `pet/train_fullevent_replica.py` | clean | 0 | yes, for the replica-tag half |
-| `OI-61` | `tests/test_reconcile_gate5_family.py` | clean | 0 | yes |
+| `OI-61` | `pet/train_fullevent_nominal.py` | **PINNED** | 15 | **NO — and this is BOTH halves, corrected below** |
+| `OI-61` | `pet/train_fullevent_replica.py` | clean | 0 | ~~yes, for the replica-tag half~~ **NO** ‡ |
+| `OI-61` | `tests/test_reconcile_gate5_family.py` | clean | 0 | free, but nothing to do there alone |
 | `OI-64` (A's) | `docs/orchestration/verify_hash_bindings.py` | clean | 0 | **n/a — free** |
 | `OI-64` (A's) | `tests/test_hash_bindings.py` | clean | 0 | **n/a — free** |
 | `OI-65` (A's) | same two files | clean | 0 | **n/a — free** |
@@ -144,9 +144,55 @@ independent ways.
 changes pre-commit check 6, `OI-12` is the FPS lane's by its own audit, A's `OI-64` records itself
 `RESOLVED / INSTALLED` — but none carries hidden pin cost.
 
-**`OI-61` splits.** The replica-tag half routes to unpinned files; the `_raw`-must-not-hold-a-scaled-
-value half is in `train_fullevent_nominal.py` and does not. The row's *"cosmetic-to-value, rides the
-next Gate-5 launcher"* is right about the first half and wrong about the second.
+**~~`OI-61` splits.~~ ‡ IT DOES NOT, AND THIS TABLE SAID IT DID.** Struck the same day, by attempting
+the fix — see the correction below, which is the more useful half of this document.
+
+### ‡ THE CORRECTION: the file an edit LIVES IN is not the file that VALIDATES it
+
+This table graded `OI-61(b)` — *"pass a replica-specific tag"* — **routable**, because the row names
+`train_fullevent_replica.py` as the edit site and that file is clean on both instruments. **Wrong.**
+
+`train_fullevent_replica.py` calls `nominal.main([… "--tag", "nominal" …])`, and
+`train_fullevent_nominal.py:325` **declares the tag's domain**:
+
+```
+ap.add_argument("--tag", default="nominal", choices=["nominal", "floor"], …)
+```
+
+So the one-line change in the unpinned caller is **rejected by the pinned callee.** Measured rather
+than argued:
+
+```
+$ python3 nd-unfolding/pet/train_fullevent_nominal.py --tag replica_07 …
+train_fullevent_nominal.py: error: argument --tag: invalid choice: 'replica_07'
+                            (choose from 'nominal', 'floor')          exit 2
+```
+
+`state/probe-oi61b-tag-route-20260817.py` then applies the **real minimal diff** for each candidate —
+not a comment append, because a comment cannot distinguish the edit that works from the edit that
+compiles — and asks the gate:
+
+```
+the edit the ROW names        train_fullevent_replica.py    gate -> green   (and does not work)
+the edit that makes it WORK   train_fullevent_nominal.py    gate -> RED
+2/2 as expected
+```
+
+**And the second-order cost is the same one that priced `OI-60`.**
+`validate_gate5_training_artifacts.py:189-191` compares every replica receipt's recorded code digest
+against `EXPECTED_CODE`, whose key for this file is — with no irony intended by its author —
+**`nominal_driver_unmodified`**. Editing the driver falsifies the name of the constant that pins it,
+and invalidates the archived 50 the same way a loader edit does.
+
+**So `OI-61` does not split: both halves are in the pinned driver, and both ride whatever re-issue
+`OI-60` rides.** The useful output is not a fix but a corrected specification — the next lane must
+edit the driver's `choices`, not just the caller, or argparse will reject the diff at exit 2.
+
+**What this does to the sweep's method, stated because it is a real limit and not a slip:**
+instruments 1 and 2 answer *"is this file frozen?"*. Neither answers *"does this edit work?"* — a
+question that can reach a second file through an argument contract, an import, a schema, or a
+declared enum, none of which is a hash. **The probe must apply the diff that achieves the goal, not
+the diff the row describes**, and the two are only the same when nobody has checked.
 
 ---
 

@@ -14,7 +14,7 @@ control, one re-derived here in the course of `BEN-391`, and two relayed and **n
 |---|---|---|---|
 | `7.8 GPU-h` | `n=1`, both arms | an `n>=6` design (real cost `39.0`, outside the `24 A100-h` grant) | **no** — relayed |
 | *"no committed document records which scalar"* | **documents** | **code** (the spec was at `a0cdc019`, `unified_throw_cov.py:224`, with its derivation) | **yes** — see `BEN-391` |
-| `~1 GPU-node-hour` | AI1's footing (`of_inputs_5d.npz`, fixed data seed 0, no flux universes) | the candidate's footing (measured unit `28.50 A100-h`, `28.5x`) | **no** — relayed |
+| `~1 GPU-node-hour` | AI1's footing (`of_inputs_5d.npz`, fixed data seed 0, no flux universes) | the candidate's footing (measured unit `28.50 A100-h`, `28.5x`) | **no** — relayed; **and `28.50` is itself superseded, see below** |
 | `8874f1f` | an ancestor of `origin/main` | the identity of the scoreboard commit (which is `2a92c71`) | **yes** — measured, with a control |
 
 **Not one of these is a bad measurement.** Every committed source was correct. In three of the four the
@@ -37,6 +37,29 @@ design is outside the grant. **The derivation also raises a question the quoted 
 multiplier of `5` against a design described as `n>=6` needs one further ingredient to be consistent (e.g.
 one arm already spent). That is the check working as intended — arithmetic on the operands either reproduces
 the claim or names the missing ingredient, and here it does the second.
+
+## Amendment, same day — instance 3's *corrected* value was also wrong
+
+Added after lane B filed `BEN-247` (`6afda0e`) hours later. **`28.50 A100-h` — the figure this row quotes as
+the true footing — is itself superseded by `39.078`.** Its lateral term `3.626` came from **5 `COMPLETED`
+tasks of a 19-task leg**; the completion run `55894759` was absent from the table, and B's arithmetic
+reproduces exactly here (`23.840 + 14.2075 + 1.030 = 39.0775`, `+37.1 %` on `28.50`; `14.36` vs `14.2075`
+agree to `1.07 %`). Verified same-quantity rather than assumed: `SCOREBOARD-20260817-quarantine-seven-causes.md:133`
+— *"The measured unit on the candidate footing is **28.50 A100-h per re-seed**, ~28.5×"* — is the sentence
+instance 3 was drawn from, and it is the same per-re-seed cost B corrected.
+
+**This makes the row's own point against the row: the transport error is LARGER than stated (~39×, not
+28.5×), and the descendant ratio `28.5×` does not string-match `28.50`,** which is the first write-time rule
+in `INDEX-retracted-and-superseded-values.md` — a retraction propagates by string match and derived
+quantities do not. Both the value and its descendant ratio are now indexed there, with the sites that still
+carry them.
+
+**Not corrected by me: the six surviving sites owned by other lanes**, including the ones carrying a pending
+decision to Joseph at the low figure (`COST-20260817-mii-seed-scan-derivation.md:154,160`,
+`SCOREBOARD…:133-134,161`, `HANDOFF-20260817-1133Z.md:39,41,98`,
+`PREDECLARATION-20260817-mii-seed-scan-cause-3.md:88,92`,
+`FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-block.md:71`). Their owners were told; the index
+entry is the mechanism that reaches a lane nobody thought to notify, which is `BEN-302`'s whole point.
 
 ## The fourth instance is a verification-method defect, not a citation slip
 

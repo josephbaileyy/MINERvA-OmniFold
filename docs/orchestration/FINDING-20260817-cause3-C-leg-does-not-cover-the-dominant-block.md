@@ -69,3 +69,9 @@ require that all inputs agree on it. **That makes the property that currently ho
 — and it is a precondition for `M(ii)` on the composite, since a scan must be able to prove which seed each
 universe ran at.** It belongs with the seed-separation change (same two modules, same reviewer), and is
 **not** written here: that change stays specified-not-written until Joseph rules on the `28.50 A100-h`.
+**⚠ `28.50` SUPERSEDED 2026-08-17 → `39.078` A100-h** (`+37.1 %`; the lateral term costed 5 of 19
+universes, missing job `55894759`), and the thing awaiting Joseph is now `39.22` A100-h **plus `55.34` CPU
+task-hours` — see [`EXTENT-20260817-2850-a100h-scope-and-missing-legs.md`](EXTENT-20260817-2850-a100h-scope-and-missing-legs.md)
+§0 and `BEN-247`. **The dependency stated in this sentence is unchanged**; only the figure it names moved.
+Note this is a *definite description* pointing at a number (`BEN-380`): "the `28.50 A100-h`" re-points to
+nothing once the value is withdrawn, which is why the replacement is written out here rather than linked.

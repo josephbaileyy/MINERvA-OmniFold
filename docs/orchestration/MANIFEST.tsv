@@ -64,7 +64,7 @@ docs/orchestration/DECISION-20260815-oi126-contrast-not-run.md	ARCHIVAL	document
 docs/orchestration/DETERMINATION-20260811-cause5-binding-half.md	LIVE	document		20260811	open		route-only		no	14	289	20575
 docs/orchestration/DETERMINATION-20260817-cause1-census-and-magnitude-measured.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	5	222	14979
 docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	6	233	16035
-docs/orchestration/DETERMINATION-20260817-oi60-rerun-costed.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	176	10923
+docs/orchestration/DETERMINATION-20260817-oi60-rerun-costed.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	176	10923
 docs/orchestration/DETERMINATION-20260817-pet-oi82-oi60-oi41.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	153	8915
 docs/orchestration/DETERMINATION-20260817-pet-ten-items-state-and-oi126-shape.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	229	16762
 docs/orchestration/DRAFT-20260815-cstat-limitation-statement.md	ARCHIVAL	document		20260815	terminal		exact-path-only		yes	0	342	26400
@@ -295,7 +295,7 @@ docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	LIVE	document	
 docs/orchestration/SESSION-WORKFLOW.md	LIVE	document			open		route-only		no	3	170	8468
 docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md	LIVE	document		20260814	open		route-only	docs/orchestration/live_doc_indexed.py;nd-unfolding/pet/build_cstat_gate5_n50.py	no	16	1069	77774
 docs/orchestration/STEP2-20260806-niter3-budget-classification.md	ARCHIVAL	document		20260806	terminal		exact-path-only		yes	6	153	10985
-docs/orchestration/SWEEP-20260817-pet-pin-exposure-complete.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	170	10400
+docs/orchestration/SWEEP-20260817-pet-pin-exposure-complete.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	5	216	12889
 docs/orchestration/TASK-HANDOFF.template.md	LIVE	template			open		route-only		no	3	125	4731
 docs/orchestration/TASK.template.md	LIVE	template			open		route-only		no	4	34	1256
 docs/orchestration/USER-DECISIONS.md	LIVE	document			open		route-only		no	3	59	3534
@@ -832,11 +832,12 @@ docs/orchestration/state/probe-oi126-zero-fraction-per-column-20260815.json	MACH
 docs/orchestration/state/probe-oi126-zero-fraction-per-column-20260815.py	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	1	141	8225
 docs/orchestration/state/probe-oi22-leakage-real-input-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	1	119	5853
 docs/orchestration/state/probe-oi22-schema-parity-real-input-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	1	181	8291
+docs/orchestration/state/probe-oi61b-tag-route-20260817.py	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	3	87	3597
 docs/orchestration/state/probe-p4-stage1-and-power-controls-20260816.sh	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	0	42	2042
 docs/orchestration/state/probe-p4-stage2-resume-readonly-20260816.sh	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	0	47	2256
 docs/orchestration/state/probe-p4-stages456-postrun-witness-20260816.sh	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	0	75	3766
 docs/orchestration/state/probe-p4-stages456-runner-20260816.sh	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	0	54	2973
-docs/orchestration/state/probe-pin-exposure-20260817.py	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	4	255	11172
+docs/orchestration/state/probe-pin-exposure-20260817.py	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	5	255	11172
 docs/orchestration/state/probe-projection-M-only-invariant-20260816.py	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	2	194	9072
 docs/orchestration/state/probe-projection-identity-leg-20260816.py	MACHINE	state-artifact		20260816	generated		exact-path-only	nd-unfolding/p4_lib.py	yes	4	183	9512
 docs/orchestration/state/probe-vl100-foldforward-shape-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	6	204	10671
