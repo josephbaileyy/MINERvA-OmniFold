@@ -1,0 +1,368 @@
+{
+ "schema": "canonical-namespace-field-pins/v1",
+ "why": "OI-96. Pin the FIELD, not the file. The whole-file occurrence count it replaces is silent on an in-directory repoint and red on a prose deletion; both measured by mutation. See this generator's docstring.",
+ "scope": {
+  "derived_from": "nd-unfolding/pet/check_canonical_designation.py INVENTORY, entries labelled RECORD-FROZEN",
+  "rule": "every string field whose value names a path inside `fullevent_nominal/` as a PATH SEGMENT, `fullevent_nominal_annealed` excluded",
+  "NOT_a_digest_pin": "these pin the VALUE OF THE FIELD, not the bytes of the artifact. Most targets are cluster products under /pscratch and are absent from this checkout, so a digest pin cannot run here at all. A green run says the receipts still POINT where they pointed and says NOTHING about whether the artifacts changed -- the same disclaimer BEN-325 makes about the count.",
+  "regenerate": "docs/orchestration/state/regen_canonical_namespace_field_pins.py"
+ },
+ "derived_at_head": "49f38b2177edf4e5358607f67de9db4ca9b3cf04",
+ "receipts_scanned": 22,
+ "pin_count": 44,
+ "pins": [
+  {
+   "receipt": "docs/orchestration/state/annealed-nominal-complete-56563761.json",
+   "pointer": [
+    "products",
+    "canonical_baseline",
+    "path"
+   ],
+   "expected": "nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz"
+  },
+  {
+   "receipt": "docs/orchestration/state/annealed-nominal-error-56563092.json",
+   "pointer": [
+    "runtime_evidence",
+    "stdout"
+   ],
+   "expected": "nd-unfolding/pet/fullevent_nominal/logs/fe_pet_nom_56563092.out"
+  },
+  {
+   "receipt": "docs/orchestration/state/annealed-nominal-error-56563092.json",
+   "pointer": [
+    "runtime_evidence",
+    "stderr"
+   ],
+   "expected": "nd-unfolding/pet/fullevent_nominal/logs/fe_pet_nom_56563092.err"
+  },
+  {
+   "receipt": "docs/orchestration/state/step1-dynamics-submit-56531057.json",
+   "pointer": [
+    "baseline",
+    "artifact"
+   ],
+   "expected": "nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz"
+  },
+  {
+   "receipt": "docs/orchestration/state/step1-ihedge-launch-56525829.json",
+   "pointer": [
+    "collision_policy",
+    "batch_output"
+   ],
+   "expected": "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-56525829.json"
+  },
+  {
+   "receipt": "docs/orchestration/state/step1-ihedge-launch-56525829.json",
+   "pointer": [
+    "collision_policy",
+    "interactive_output"
+   ],
+   "expected": "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-${INTERACTIVE_ALLOCATION_JOB_ID}.json"
+  },
+  {
+   "receipt": "docs/orchestration/state/step1-trajectory-complete-56525829.json",
+   "pointer": [
+    "products",
+    "artifact",
+    "path"
+   ],
+   "expected": "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-56525829.json"
+  },
+  {
+   "receipt": "docs/orchestration/state/step1-trajectory-complete-56525829.json",
+   "pointer": [
+    "products",
+    "stdout",
+    "path"
+   ],
+   "expected": "nd-unfolding/pet/fullevent_nominal/logs/fe_traj_56525829.out"
+  },
+  {
+   "receipt": "docs/orchestration/state/step1-trajectory-complete-56525829.json",
+   "pointer": [
+    "products",
+    "stderr",
+    "path"
+   ],
+   "expected": "nd-unfolding/pet/fullevent_nominal/logs/fe_traj_56525829.err"
+  },
+  {
+   "receipt": "docs/orchestration/state/step1-trajectory-complete-56525829.json",
+   "pointer": [
+    "products",
+    "run_log",
+    "path"
+   ],
+   "expected": "nd-unfolding/pet/fullevent_nominal/logs/step1_traj_56525829.log"
+  },
+  {
+   "receipt": "docs/orchestration/state/step1-trajectory-submit-56525829.json",
+   "pointer": [
+    "expected_product"
+   ],
+   "expected": "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-56525829.json"
+  },
+  {
+   "receipt": "docs/orchestration/state/step1-trajectory-submit-56525829.json",
+   "pointer": [
+    "output"
+   ],
+   "expected": "nd-unfolding/pet/fullevent_nominal/logs/fe_traj_56525829.out"
+  },
+  {
+   "receipt": "docs/orchestration/state/step1-trajectory-submit-56525829.json",
+   "pointer": [
+    "error"
+   ],
+   "expected": "nd-unfolding/pet/fullevent_nominal/logs/fe_traj_56525829.err"
+  },
+  {
+   "receipt": "docs/orchestration/state/step1-trajectory-submit-56525829.json",
+   "pointer": [
+    "run_log"
+   ],
+   "expected": "nd-unfolding/pet/fullevent_nominal/logs/step1_traj_56525829.log"
+  },
+  {
+   "receipt": "nd-unfolding/pet/annealed_shape_validation/NONQUOTABLE-DIAGNOSTIC.manifest.slurm-56552326.json",
+   "pointer": [
+    "weights_path"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_diagnostic_nonquotable/NONQUOTABLE-DIAGNOSTIC.manifest.slurm-56527676.json",
+   "pointer": [
+    "weights_path"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_diagnostic_nonquotable/NONQUOTABLE-DIAGNOSTIC.xsec.slurm-56527676.summary.json",
+   "pointer": [
+    "push_provenance",
+    "source_weights"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.floor-56445883.json",
+   "pointer": [
+    "artifact"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/pet_fullevent_floor_weights.npz"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.floor-56445883.json",
+   "pointer": [
+    "gate_B",
+    "step2_checkpoint"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_floor/OmniFold_fe_nominal_floor_iter2_step2_final.weights.h5"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.json",
+   "pointer": [
+    "artifact"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.json",
+   "pointer": [
+    "gate_B",
+    "step2_checkpoint"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter2_step2.weights.h5"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.json",
+   "pointer": [
+    "control_extra",
+    "artifact"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/pet_fullevent_floor_weights.npz"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.slurm-56445883.batch512.json",
+   "pointer": [
+    "artifact"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.slurm-56445883.batch512.json",
+   "pointer": [
+    "gate_B",
+    "step2_checkpoint"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.slurm-56445883.json",
+   "pointer": [
+    "artifact"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.slurm-56445883.json",
+   "pointer": [
+    "gate_B",
+    "step2_checkpoint"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/STEP1_DECOMPOSITION.json",
+   "pointer": [
+    "gate_receipt"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.json"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/STEP1_DECOMPOSITION.slurm-56445883.json",
+   "pointer": [
+    "gate_receipt"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.slurm-56445883.batch512.json"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-56525829.json",
+   "pointer": [
+    "checkpoints",
+    "step1_iter2",
+    "checkpoint"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-56525829.json",
+   "pointer": [
+    "checkpoints",
+    "step2_iter1",
+    "checkpoint"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter1_step2.weights.h5"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-56525829.json",
+   "pointer": [
+    "checkpoints",
+    "step2_iter2",
+    "checkpoint"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-56525829.json",
+   "pointer": [
+    "checkpoints",
+    "step1_iter0",
+    "checkpoint"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter0_step1.weights.h5"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-56525829.json",
+   "pointer": [
+    "checkpoints",
+    "step2_iter0",
+    "checkpoint"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter0_step2.weights.h5"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-56525829.json",
+   "pointer": [
+    "checkpoints",
+    "step1_iter1",
+    "checkpoint"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter1_step1.weights.h5"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-56525829.json",
+   "pointer": [
+    "weights"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal/STEP1_TRAJECTORY.slurm-56525829.json",
+   "pointer": [
+    "decomposition_receipt"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/STEP1_DECOMPOSITION.slurm-56445883.json"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal_annealed/STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json",
+   "pointer": [
+    "checkpoints",
+    "step1_iter2",
+    "checkpoint"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal_annealed/STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json",
+   "pointer": [
+    "checkpoints",
+    "step2_iter1",
+    "checkpoint"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter1_step2.weights.h5"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal_annealed/STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json",
+   "pointer": [
+    "checkpoints",
+    "step2_iter2",
+    "checkpoint"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal_annealed/STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json",
+   "pointer": [
+    "checkpoints",
+    "step1_iter0",
+    "checkpoint"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter0_step1.weights.h5"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal_annealed/STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json",
+   "pointer": [
+    "checkpoints",
+    "step2_iter0",
+    "checkpoint"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter0_step2.weights.h5"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal_annealed/STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json",
+   "pointer": [
+    "checkpoints",
+    "step1_iter1",
+    "checkpoint"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/w_nominal/OmniFold_fe_nominal_nominal_iter1_step1.weights.h5"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal_annealed/STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json",
+   "pointer": [
+    "weights"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz"
+  },
+  {
+   "receipt": "nd-unfolding/pet/fullevent_nominal_annealed/STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json",
+   "pointer": [
+    "decomposition_receipt"
+   ],
+   "expected": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal/STEP1_DECOMPOSITION.slurm-56445883.json"
+  }
+ ]
+}

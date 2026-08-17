@@ -35,11 +35,38 @@ A stale pin is not repaired by editing the hash. The constant records what the
 gate ran against; moving it to match the working tree converts the guard into a
 no-op and destroys the evidence. Re-issue the owning gate and record the move.
 
+FIELD PINS (OI-96, added 2026-08-17). A hash binding freezes CONTENT. It cannot
+freeze a POINTER, and the canonical-nominal designation is a pointer: promotion
+there moves no bytes, so the safety argument is entirely that the receipts naming
+the protected artifacts keep naming them. That was enforced by
+`check_canonical_designation.py`'s WHOLE-FILE occurrence count of the namespace --
+a proxy for pinning a path field, and MEASURED WRONG IN BOTH DIRECTIONS by mutating
+the receipt and running that guard:
+
+    repoint `products/canonical_baseline/path` to a SIBLING inside the same
+    protected directory   -> count stays 2, guard SILENT   <- the BEN-133 repoint
+                                                              class it exists for
+    delete the prose sentence at :245
+                          -> count falls to 1, guard RED   <- a legitimate edit
+
+Silent on the defect, loud on the innocent edit. So this file now also checks 44
+declared FIELD values across the 22 RECORD-FROZEN JSON receipts, derived by
+`state/regen_canonical_namespace_field_pins.py` and stored in
+`state/canonical-namespace-field-pins-20260817.json`. A repoint is loud; prose is
+invisible to them.
+
+These pin the VALUE OF A FIELD, not the bytes of an artifact -- most targets are
+cluster products under /pscratch and are absent from any checkout, so a digest pin
+cannot run here at all. Green means the receipts still POINT where they pointed. It
+says NOTHING about whether the artifacts changed, exactly as BEN-325 says of the
+count this replaces.
+
 Exit 0 if every resolvable binding matches, 1 otherwise.
 """
 import argparse
 import glob
 import hashlib
+import importlib.util
 import json
 import os
 import re
@@ -124,6 +151,94 @@ SHELL_PIN_FLOOR = 15
 # Raise this when receipts add durable bindings. Lowering it needs the same
 # justification as deleting a receipt, because that is what it launders.
 RECEIPT_BINDING_FLOOR = 140
+
+
+FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"
+
+# Minimum FIELD pins that must resolve. Same device as the two floors above and for the
+# same reason: the pin file is DATA, so a truncation, a bad merge, or a regeneration that
+# parsed nothing yields `pins: []`, and a loop over an empty list reports success. Zero
+# pins is the state this check exists to make impossible, not a quiet pass.
+#
+# BELOW the current count on purpose, like RECEIPT_BINDING_FLOOR and unlike
+# SHELL_PIN_FLOOR: field pins legitimately SHRINK when a receipt leaves the RECORD-FROZEN
+# inventory, and an exact floor would go red on a lane doing the documented right thing,
+# whose only remedy would be lowering it. 44 resolve today across 22 receipts; 30 leaves
+# room for real retirements while a collector that has gone blind resolves ~0 and trips it.
+FIELD_PIN_FLOOR = 30
+
+
+FIELD_PIN_GENERATOR = "docs/orchestration/state/regen_canonical_namespace_field_pins.py"
+# Minimum RECORD-FROZEN JSON entries the coverage parse must find. Without this, a
+# reformat of that INVENTORY makes the regex match nothing, the "uncovered receipts" set
+# is empty, and the coverage check reports success by seeing no receipts at all -- the
+# same shape as the two collector floors above, in the guard that was added to fix that
+# shape. 22 parse today; 15 leaves room for legitimate retirement.
+FROZEN_JSON_FLOOR = 15
+
+
+def _pin_rules(root):
+    """Load the GENERATOR's rules rather than re-implementing them.
+
+    The first version of the coverage check below re-implemented "does this receipt carry a
+    namespace path" as a regex over the raw file, and immediately produced FIVE false
+    positives on receipts whose only occurrence is a SENTENCE -- the prose-versus-field
+    confusion this whole check exists to fix, reproduced inside it within the hour. Two
+    predicates for one concept is exactly what `OI-65` (lane A's) is about; importing makes
+    divergence impossible instead of merely unlikely.
+    """
+    path = os.path.join(root, FIELD_PIN_GENERATOR)
+    spec = importlib.util.spec_from_file_location("_cnfp", path)
+    if spec is None or spec.loader is None:
+        return None
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def check_field_pins(root):
+    """Verify each declared FIELD value still reads as declared. Returns (ok, bad, missing).
+
+    Three distinguishable failures, kept separate because they need different remedies:
+      MISMATCH      the field moved -- a repoint. Do NOT regenerate the pin file to match.
+      UNRESOLVED    the pointer no longer exists in the receipt (a rename or a deletion).
+      NO RECEIPT    the receipt itself is gone.
+    A pointer that resolves to a non-string is UNRESOLVED, not a silent skip: `if the key is
+    present, check it` is the vacuous form (PB2), and absence is what this check is about.
+    """
+    pin_path = os.path.join(root, FIELD_PIN_FILE)
+    try:
+        doc = json.load(open(pin_path))
+    except (OSError, json.JSONDecodeError) as e:
+        return 0, [(FIELD_PIN_FILE, "", f"pin file unreadable: {e}", "")], 0
+    ok, bad, missing = 0, [], 0
+    for pin in doc.get("pins", []):
+        rel, ptr, want = pin.get("receipt"), pin.get("pointer"), pin.get("expected")
+        full = os.path.join(root, rel or "")
+        if not rel or not os.path.isfile(full):
+            bad.append((rel, "", "NO RECEIPT", want))
+            continue
+        try:
+            node = json.load(open(full))
+        except (OSError, json.JSONDecodeError) as e:
+            bad.append((rel, "", f"receipt unreadable: {e}", want))
+            continue
+        cur = node
+        for key in ptr or []:
+            try:
+                cur = cur[key]
+            except (KeyError, IndexError, TypeError):
+                cur = None
+                break
+        loc = "/".join(str(x) for x in (ptr or []))
+        if not isinstance(cur, str):
+            bad.append((rel, loc, "UNRESOLVED", want))
+            missing += 1
+        elif cur != want:
+            bad.append((rel, loc, cur, want))
+        else:
+            ok += 1
+    return ok, bad, missing
 
 
 def sha256(path):
@@ -281,6 +396,63 @@ def main():
           f"({len(shell_pairs)} pins seen, floor {SHELL_PIN_FLOOR})")
     print(f"  {receipt_resolved} of them from receipt bindings "
           f"(floor {RECEIPT_BINDING_FLOOR})")
+
+    field_ok, field_bad, _field_missing = check_field_pins(a.root)
+    field_blind = (field_ok + len(field_bad)) < FIELD_PIN_FLOOR
+
+    # COVERAGE, not just correctness. A receipt ADDED to the RECORD-FROZEN inventory and
+    # never pinned is invisible to the loop above -- it checks the pins it has, so
+    # under-coverage reports as a clean pass. That is BEN-322's shape reproduced inside the
+    # guard written to fix it, so it is checked rather than trusted.
+    rules = _pin_rules(a.root)
+    frozen = rules.frozen_json_receipts(a.root) if rules else []
+    try:
+        covered = {p.get("receipt") for p in json.load(
+            open(os.path.join(a.root, FIELD_PIN_FILE))).get("pins", [])}
+    except (OSError, json.JSONDecodeError):
+        covered = set()
+    # A receipt with NO namespace path FIELD legitimately contributes no pins, so absence
+    # from `covered` is a defect only for receipts that DO carry one -- re-derived with the
+    # generator's own rule, not with a cheaper proxy.
+    uncovered = []
+    for rel in frozen:
+        full = os.path.join(a.root, rel)
+        if rel in covered or not os.path.isfile(full):
+            continue
+        try:
+            if rules.namespace_path_fields(json.load(open(full))):
+                uncovered.append(rel)
+        except (OSError, json.JSONDecodeError):
+            continue
+    frozen_blind = len(frozen) < FROZEN_JSON_FLOOR
+
+    print(f"{field_ok} canonical-namespace FIELD pins verified "
+          f"(floor {FIELD_PIN_FLOOR}) over {len(covered)} of {len(frozen)} RECORD-FROZEN "
+          f"JSON receipts -- these pin a POINTER, not bytes; "
+          f"green says the receipts still point where they pointed")
+    if frozen_blind:
+        print(f"\n*** RECORD-FROZEN INVENTORY PARSE WENT BLIND ***\n"
+              f"  parsed {len(frozen)} JSON entries from {DESIGNATION_INVENTORY}, expected\n"
+              f"  at least {FROZEN_JSON_FLOOR}. The label or its formatting changed, and an\n"
+              f"  empty parse makes the coverage check below pass by seeing nothing.")
+    if uncovered:
+        print(f"\n*** RECORD-FROZEN RECEIPTS CARRY NAMESPACE PATHS AND ARE NOT PINNED ***")
+        for rel in uncovered:
+            print(f"      {rel}")
+        print(f"  Regenerate with state/regen_canonical_namespace_field_pins.py -- this is\n"
+              f"  the ONE case where regenerating is the correct remedy, because the pin set\n"
+              f"  grew. It is NOT the remedy for a FIELD PIN mismatch below.")
+    if field_blind:
+        print(f"\n*** FIELD PIN COLLECTOR WENT BLIND ***\n"
+              f"  saw {field_ok + len(field_bad)}, expected at least {FIELD_PIN_FLOOR}.\n"
+              f"  The pin file is data: a truncation or a regeneration that parsed nothing\n"
+              f"  yields an empty list, and a loop over it reports success. Do NOT lower\n"
+              f"  this floor -- regenerate only for a real inventory change (OI-96).")
+    for rel, loc, got, want in field_bad:
+        print(f"\nFIELD PIN {rel}  {loc}\n  want {want}\n  got  {got}\n"
+              f"  A repoint is NOT repaired by regenerating the pin file -- that adopts\n"
+              f"  whatever the receipt now says, which is this file's own forbidden move\n"
+              f"  one level out. Re-issue the receipt, or justify the move in the commit.")
     if receipt_blind:
         print(f"\n*** RECEIPT BINDING COLLECTOR WENT BLIND ***\n"
               f"  resolved {receipt_resolved}, expected at least "
@@ -303,6 +475,8 @@ def main():
         print(f"\nMISMATCH {rel}\n  want {want}\n  got  {got}\n  from {src}")
 
     failed = (bool(new_bad) or blind or receipt_blind
+              or bool(field_bad) or field_blind
+              or bool(uncovered) or frozen_blind
               or (a.strict and bool(known_bad)))
     print("\n" + ("*** BINDINGS BROKEN ***" if failed else "ALL BINDINGS INTACT"))
     return 1 if failed else 0

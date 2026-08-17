@@ -8,6 +8,7 @@ Perlmutter, so only the hashes changed and nothing caught it.
 This test fails on any NEW mismatch. The four pre-existing drifts are allowed by
 the verifier's KNOWN_PREEXISTING list; run it with --strict to see those too.
 """
+import json
 import os
 import re
 import subprocess
@@ -265,3 +266,167 @@ def test_the_index_has_no_dangling_rows():
     assert not dangling, (
         "the FINDINGS.md index points at files that do not exist (renamed or deleted "
         "without updating the index): " + ", ".join(dangling))
+
+
+# ---------------------------------------------------------------------------------------
+# OI-96: the canonical-namespace FIELD pins.
+#
+# POWER-TESTED IN BOTH DIRECTIONS, because a guard that only demonstrates it accepts is not
+# demonstrated (BEN-344), and because the instrument these pins REPLACE is wrong in both
+# directions at once -- silent on an in-directory repoint, red on a prose deletion. A
+# replacement that is only shown to pass would be indistinguishable from the thing it fixes.
+#
+# The mutations are applied IN PLACE and restored byte-exactly in a `finally`, then the
+# restoration is ASSERTED. A test that leaves a mutated receipt behind would hand the next
+# lane a red gate with no cause.
+
+_PIN_RECEIPT = os.path.join(
+    _REPO, "docs", "orchestration", "state", "annealed-nominal-complete-56563761.json")
+_PIN_FILE = os.path.join(
+    _REPO, "docs", "orchestration", "state",
+    "canonical-namespace-field-pins-20260817.json")
+
+# The pinned field, and a SIBLING inside the same protected directory. The sibling is the
+# whole point: the occurrence count this replaces cannot see this edit, because the count of
+# `fullevent_nominal/` is identical before and after.
+_PINNED_VALUE = '"nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz"'
+_SIBLING_VALUE = '"nd-unfolding/pet/fullevent_nominal/pet_fullevent_floor_weights.npz"'
+
+
+def _verifier():
+    return subprocess.run([sys.executable, _VERIFIER, "--root", _REPO],
+                          capture_output=True, text=True)
+
+
+def _with_mutation(path, old, new):
+    """Apply one byte-level substitution, run the verifier, restore, assert restoration."""
+    with open(path, "rb") as f:
+        original = f.read()
+    assert old.encode() in original, (
+        f"anchor absent from {os.path.basename(path)} -- the receipt moved and this test is "
+        f"asserting nothing. Re-read the file rather than deleting the case.")
+    try:
+        with open(path, "wb") as f:
+            f.write(original.replace(old.encode(), new.encode(), 1))
+        return _verifier()
+    finally:
+        with open(path, "wb") as f:
+            f.write(original)
+        with open(path, "rb") as f:
+            assert f.read() == original, f"RESTORE FAILED for {path}"
+
+
+@pytest.mark.skipif(not os.path.exists(_PIN_FILE), reason="field pin file not present")
+def test_field_pin_fires_on_an_in_directory_repoint():
+    """The case the occurrence count is SILENT on -- measured, that is why these pins exist."""
+    r = _with_mutation(_PIN_RECEIPT, _PINNED_VALUE, _SIBLING_VALUE)
+    assert r.returncode == 1, (
+        "a canonical-baseline repoint to a sibling in the same directory did NOT fail the "
+        "verifier. That is the BEN-133 repoint class and the entire reason for OI-96.\n"
+        + r.stdout + r.stderr)
+    assert "FIELD PIN" in r.stdout, (
+        "it failed, but not as a field pin -- the message must name the field, or the next "
+        "reader cannot tell a repoint from a hash drift.\n" + r.stdout)
+
+
+@pytest.mark.skipif(not os.path.exists(_PIN_FILE), reason="field pin file not present")
+def test_field_pin_is_silent_on_a_prose_edit():
+    """The direction that matters for adoption: the incumbent goes RED here and must not."""
+    r = _with_mutation(
+        _PIN_RECEIPT,
+        '"fullevent_nominal/ IS NOT TOUCHED.',
+        '"The canonical baseline directory IS NOT TOUCHED.')
+    assert r.returncode == 0, (
+        "editing PROSE tripped the verifier. A guard that fires on a documentation tidy is "
+        "the defect OI-96 was filed about, reproduced in its own fix.\n" + r.stdout + r.stderr)
+
+
+@pytest.mark.skipif(not os.path.exists(_PIN_FILE), reason="field pin file not present")
+def test_field_pin_fires_when_the_pointer_disappears():
+    """Absence must fail. `if the key is present, check it` is the vacuous form (PB2)."""
+    r = _with_mutation(_PIN_RECEIPT, '"canonical_baseline"', '"canonical_baseline_renamed"')
+    assert r.returncode == 1, (
+        "renaming the pinned block away left the verifier green -- the check skips what it "
+        "cannot find, which is the failure mode it exists to prevent.\n" + r.stdout + r.stderr)
+    assert "UNRESOLVED" in r.stdout, (
+        "it failed, but did not report the pointer as UNRESOLVED, so a reader cannot tell a "
+        "rename from a repoint.\n" + r.stdout)
+
+
+@pytest.mark.skipif(not os.path.exists(_PIN_FILE), reason="field pin file not present")
+def test_field_pin_floor_fires_on_an_emptied_pin_file():
+    """A loop over an empty list reports success. That is BEN-184 one instrument along."""
+    with open(_PIN_FILE, "rb") as f:
+        original = f.read()
+    doc = json.loads(original)
+    assert doc["pins"], "the pin file is already empty -- this test would pass vacuously"
+    doc["pins"] = []
+    try:
+        with open(_PIN_FILE, "w") as f:
+            json.dump(doc, f, indent=1)
+        r = _verifier()
+    finally:
+        with open(_PIN_FILE, "wb") as f:
+            f.write(original)
+        with open(_PIN_FILE, "rb") as f:
+            assert f.read() == original, f"RESTORE FAILED for {_PIN_FILE}"
+    assert r.returncode == 1, (
+        "emptying the pin file left the verifier green. Zero pins must be BLIND, not a pass."
+        "\n" + r.stdout + r.stderr)
+    assert "FIELD PIN COLLECTOR WENT BLIND" in r.stdout, (
+        "it failed, but not with the blind-collector message, so the remedy a reader reaches "
+        "for would be wrong.\n" + r.stdout)
+
+
+@pytest.mark.skipif(not os.path.exists(_PIN_FILE), reason="field pin file not present")
+def test_coverage_fires_when_a_frozen_receipt_gains_an_unpinned_namespace_path():
+    """Under-coverage reports as a clean pass unless something checks for it.
+
+    The loop verifies the pins it HAS, so a RECORD-FROZEN receipt that newly names a
+    protected path and is never pinned is invisible to it -- BEN-322's shape reproduced
+    inside the guard written to fix it. Exercised on one of the five frozen receipts that
+    legitimately carry NO namespace path field today.
+    """
+    victim = os.path.join(
+        _REPO, "docs", "orchestration", "state",
+        "p3f-pet-gate4-launch-code-gate-20260721.json")
+    if not os.path.exists(victim):
+        pytest.skip("frozen receipt absent")
+    with open(victim, "rb") as f:
+        original = f.read()
+    doc = json.loads(original)
+    assert "oi96_probe" not in doc, "probe key already present -- pick another receipt"
+    doc["oi96_probe"] = "nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz"
+    try:
+        with open(victim, "w") as f:
+            json.dump(doc, f, indent=1)
+        r = _verifier()
+    finally:
+        with open(victim, "wb") as f:
+            f.write(original)
+        with open(victim, "rb") as f:
+            assert f.read() == original, f"RESTORE FAILED for {victim}"
+    assert r.returncode == 1, (
+        "a frozen receipt gained an unpinned path into the protected namespace and the "
+        "verifier stayed green -- the pin set can then silently under-cover.\n"
+        + r.stdout + r.stderr)
+    assert "ARE NOT PINNED" in r.stdout, (
+        "it failed, but not as a coverage gap, so the reader would reach for the wrong "
+        "remedy -- regeneration is correct HERE and wrong for a mismatch.\n" + r.stdout)
+
+
+@pytest.mark.skipif(not os.path.exists(_PIN_FILE), reason="field pin file not present")
+def test_coverage_does_not_fire_on_a_receipt_whose_only_mention_is_prose():
+    """The five receipts that carry only a SENTENCE must not be demanded of the pin set.
+
+    The first version of the coverage check used a regex over the raw file and flagged all
+    five -- the prose-versus-field confusion this item is about, reproduced inside its own
+    fix. This asserts the shared rule, so a future 'simplification' back to a raw grep is a
+    test failure rather than five phantom red receipts.
+    """
+    r = _verifier()
+    assert r.returncode == 0, "baseline is not green; this case cannot be read\n" + r.stdout
+    assert "ARE NOT PINNED" not in r.stdout, (
+        "receipts whose only namespace occurrence is prose are being demanded of the pin "
+        "set. The coverage rule must be the generator's field-level one, not a grep.\n"
+        + r.stdout)

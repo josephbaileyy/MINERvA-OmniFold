@@ -191,6 +191,21 @@ def main():
     dig = {f: digest_sites(f) for f in files}
 
     print("### PER-ITEM EXPOSURE")
+    # The caveats live HERE, not only in the finding. A finding is read once; this output is
+    # read every time, and both numbers below have already been misread once each -- `gate`
+    # as "is this edit safe" and `digest` as a verdict. Lane A's point, and it is right: a
+    # caveat in a document is a claim about the instrument that the instrument cannot check.
+    print("### `gate`   = will editing this file turn pre-commit check 6 red? It does NOT")
+    print("###            answer 'does my edit work' -- an argument contract, an import, a")
+    print("###            schema or a declared enum in a pinned file binds every caller of")
+    print("###            it and is invisible to every hash-shaped instrument (BEN-386).")
+    print("### `digest` = how many files record this content's CURRENT sha256. A LEAD, NOT A")
+    print("###            VERDICT, and wrong in BOTH directions at once: a digest can be")
+    print("###            recorded as history rather than compared (over-reports), and a")
+    print("###            file already drifted from its pin reads 0 (under-reports). Nothing")
+    print("###            in a single run tells those apart -- read the sites (BEN-385).")
+    print("### Neither column can establish that an item is CHEAP. Only an attempt can.")
+    print()
     print(f"{'item':8} {'gate':10} {'digest':7} file")
     for item, fs in CANDIDATES.items():
         for rel in fs:
