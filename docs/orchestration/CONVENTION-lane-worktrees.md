@@ -246,6 +246,44 @@ and the mediator, and both observed instances are that pair.
 **This is a practice, not enforcement** — same standing as everything else in this file, and it stops being
 needed the moment `OI-47` is settled.
 
+#### AND THE PUSH-TIME SIBLING, which the cadence rule above does not cover
+
+**Added 2026-08-16 by lane A, after hitting it.** Everything above is about the **commit** window — what
+you stage, what a pathspec sweeps. **The push window is a different hazard and nothing above touches it:
+when `origin/main` has moved, the push needs a rebase, and `git pull --rebase` — with or without
+`--autostash` — rewrites the working tree, stashing a peer's uncommitted edits out from under them.**
+
+Measured that night: the foreign dirty set was **four files on the 20-path standard-P4 execution surface
+plus a new test**, owned by a lane that was mid-run. Nothing you name protects you here, because the
+operation that hurts is the one that rewrites the tree rather than the one that reads the index.
+
+**Demonstrated rather than argued, on a scratch repo with a real remote:** an autostash pull returned
+**`rc=0`** and **silently altered the peer's in-flight file**. A green exit code is what makes this worth
+a script — the failure does not announce itself.
+
+    bash docs/orchestration/shared_push.sh [branch] [remote]      # <- RUN THIS instead of pull --rebase
+
+**The path is the contract and this document deliberately does not restate the exit codes** — the same
+reason `merge_guard.sh`'s are not quoted here either (`BEN-163`: the hole moved out of the script and into
+the prose describing it, which is worse, because the script has a self-test and prose has none).
+
+What it does, in one line each, because these are the *decisions* rather than the interface: it
+cherry-picks into a **throwaway detached worktree** at `origin/<branch>` and pushes from there, never
+touching this tree; it **digests every dirty path's contents before and after** and refuses on any
+difference, so *"I disturbed nothing"* is a measurement (the discipline this lane demanded of a peer the
+same night — read-only made falsifiable, not asserted); and it **leaves your local branch behind
+`origin`**, because resetting it would write the shared tree, which is the thing being avoided. **A stale
+local `HEAD` is not a lost push**, and the script prints the command that distinguishes them.
+
+Its self-test is a **positive control**, not a smoke test: the comparator is shown able to report
+*different* — modified, re-modified with different content, and untracked — on a scratch repo in the same
+run, before it is trusted to report *unchanged* on yours. That is `BEN-344` applied to the instrument
+rather than to the result, and it caught the design error a path-only check would have shipped: **a peer
+re-editing a file it had already edited changes contents and not the path list**, which a path-only
+comparator calls clean.
+
+**Still a practice, not enforcement** — nothing makes a lane run it, same as everything else here.
+
 ### LANE A IS NOW ISOLATED, and the enforcement question above is PARTLY ANSWERED
 
 **2026-08-13. Authorized by Joseph** — *"Yes let A work in the a worktree"*, receipt at
