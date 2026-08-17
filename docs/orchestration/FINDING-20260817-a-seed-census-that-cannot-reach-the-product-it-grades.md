@@ -123,3 +123,41 @@ not about a seed, and it is satisfied. **This finding moves one cell.**
 **No number moves.** Every leg is internally single-seeded, so nothing in the candidate is mis-computed. What
 is wrong is a **verification claim** — and unlike `VL141`'s wrong *description*, this one is load-bearing for
 a discharge decision, which is why it is filed as a MET withdrawal and not as a ledger correction.
+
+---
+
+## 5. ADDENDUM — lane C graded it HARSHER, and C is right; my recommendation was too generous
+
+**C's grade: clause (i) fails on BOTH legs, not only on `combined_source`, because no product records a seed
+VALUE anywhere — including the `uthrow` arm.** Verified here independently rather than accepted, by covering
+search over every tracked artifact of any format:
+
+    git grep -nE '"(seed|estimator_seed)":\s*(1000|42)' -- '*.json'                      -> 0 hits
+    git grep -nE '(seed[^a-z]{0,4}[:=][[:space:]]*"?(1000|42)\b)' -- '*.json' '*.tsv' '*.txt' '*.md'
+                                                                                        -> 0 hits
+
+**So the estimator seed value is recorded in no committed receipt, ledger row, manifest or state file, for
+either arm.** My §2 already contained the mechanism for this and I did not carry it to its conclusion:
+`slab_seeds` is never written to any product, so **the census cannot reach a receipt for the `uthrow` leg
+either.** I graded that leg MET because the census over its slabs is *complete and correct*, which is true
+and is **not what the criterion asks.** The criterion asks what **X's receipt** records.
+
+**The `.npz` slabs DO stamp the seed** (`unified_throw_cov.py:254`, `:285`, `:302`), and that is the strongest
+thing in the `uthrow` arm's favour — **but slabs are intermediates on purgeable scratch, they are not X and
+they are not a receipt**, so they cannot satisfy a provenance clause about the adopted product. `OI-130` is
+the standing item for exactly this class.
+
+**And the obvious rescue is foreclosed by my own finding from the same day.** The seed value *is* in a
+tracked file: `sbatch_uthrow_run_5d_fast.sh:21` hardcodes `--seed 1000`, and
+`sbatch_unfold_5d_detector_bkgaware_gpu.sh:37,51` hardcode `--seed 42`. **A launcher is committed intent, not
+provenance** — `BEN-245`, filed hours earlier against myself for reading a launcher as a description of what
+ran. **A tracked launcher cannot discharge a `P` leg, because `P` is the leg that exists to distinguish
+"the code says 1000" from "this artifact was built at 1000."** That is the whole of `BEN-083`.
+
+**Corrected recommendation, superseding §0's:** cause 3's `P` clause (i) is **ABSENT for the candidate,
+both arms.** My scoping finding — that the census is structurally blind to `combined_source` — **stands as a
+second, independent problem stacked on top**, and it is the one that survives even if a seed stamp is added
+to the `uthrow` chain tomorrow, because `sweep_bank_5d.py` and `analyze_universes_5d.py` would still have
+nowhere to put one. **Two defects, not one:** *nothing records the value* (C's, on both arms) and *nothing
+could record it on the dominant arm* (this finding's). **The grade is C's call and this addendum does not
+re-take it** (`BEN-381`); it records that my own measurement supported a harsher grade than I drew from it.

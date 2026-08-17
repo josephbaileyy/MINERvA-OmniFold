@@ -129,6 +129,42 @@ arm that is.** The vertical sweep (`23.840` of the `39.078`) is still blocked by
 `sweep_bank_5d.py:252`, so **`39.078` does NOT imply the run is possible** — which is exactly the inference
 the mediator asked not to license.
 
+### ⚠ AND THE SENTENCE ABOVE CREATES A HAZARD, SO THE REFUSAL BELONGS BESIDE IT
+
+*"The lateral arm is the only `C_syst` arm that is re-seedable today"* makes a **laterals-only estimator-seed
+scan the cheapest run-condition-(b)-clean job on the board** — 19 tasks, `14.2075` A100-h, no code change, no
+ruling. Assistant flagged that it **must be refused as `M(ii)`** and that is right. **REFUSED here, in the
+document that would otherwise license it.**
+
+**But not for the reason offered, and the difference matters because the offered reason is false.** The
+stated ground was *"18 of 188 is the minor leg."* **That is a MEMBER COUNT doing duty as a VARIANCE SHARE,
+and the only per-group figures the committed summary carries point the other way.** The 18 lateral universes
+are exactly `detector_universes.txt` — `BeamAngleX/Y`, `MinosEfficiency`, `MuonResolution`,
+`Muon_Energy_MINERvA`, `Muon_Energy_MINOS` (12) and `GEANT_Neutron/Pion/Proton` (6) — which map **1:1** onto
+two of `uq_universe_5d_summary.txt`'s five groups, leaving the other three to the sweep:
+
+    lateral  (Muon reconstruction 2.789e-38  +  Hadronic response 4.017e-38)          = 6.806e-38
+    vertical (Models 8.964e-38 + Normalization 4.507e-39 + Flux 3.993e-39)            = 9.814e-38
+    -> lateral is 41 % of the summed figure, on 9.6 % of the members
+
+**That `41 %` is NOT a variance share and must not be quoted as one:** those are **sums of per-band
+sqrt-traces**, not a quadrature decomposition, and the proof is in the same file — `total syst
+sqrt-trace = 4.3515e-38` is **smaller than either arm's sum**, so the two do not add to the total and no
+share is derivable from them. **The lateral arm's actual variance share is UNMEASURED.** What the figures do
+establish is the negative: **the lateral arm is not a small perturbation by any available reading, so
+"minor leg" is unsupported** — 18 detector universes can carry large shifts precisely because a detector
+band moves the reconstructed quantities and cannot be reweighted away, which is why it needs a re-unfold at
+all.
+
+**The refusal that does not need a variance share, and is therefore the one to use:** a laterals-only scan
+**holds the vertical arm's estimator seed fixed at `42` by construction**, so it measures the seed
+sensitivity of one sub-block while `169` of the `188` universes contribute a **constant**. That is a partial
+derivative reported as a total, and it is not *"the magnitude of what varying seeds would have contributed"*
+under **any** weighting of the two arms — including a weighting that turned out to favour the laterals.
+**It would be a defensible `M(ii)` LOWER BOUND on the lateral arm alone, labelled as such, and nothing
+more.** A number filed as `M(ii)` that measures one arm at fixed other-arm seed is the same scope defect
+this document exists to correct, arriving with a receipt.
+
 ---
 
 ## 1. What `28.50` covers, re-derived this turn — **§0 SUPERSEDES THIS SECTION'S LATERAL ROW AND TOTALS**
