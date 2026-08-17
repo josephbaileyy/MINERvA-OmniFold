@@ -174,9 +174,24 @@ class TheBypassIsClosed(unittest.TestCase):
                                  "testing emptiness, not resolving the digest")
 
     def test_a_passphrase_is_refused_as_not_a_digest(self):
+        """HARDENED after repair-12's verification, which measured the hazard rather than asserting
+        it: on a pre-repair checkout (`63a397c^`) the ungated stage 6 returns `rc=2` with argparse
+        `usage:` under ALL THREE token conditions -- unset, 64-hex zeros, and a passphrase.
+        Reproduced here before changing anything. So a control resting on a nonzero exit alone
+        passes pre-repair for the wrong reason.
+
+        This one did fire pre-repair, but on a SINGLE discriminator (`sha256` absent from argparse's
+        message) where its two siblings each carry two. A single incidental discriminator is a
+        control that would go vacuous SILENTLY the day argparse's text happened to mention sha256 --
+        nothing would fail, and the guard would simply stop guarding. The `usage:` assertion below
+        is the second discriminator, and it fails LOUDLY instead.
+        """
         r = run_module_directly("p4_project_4d.py", env_token="please-let-me-through")
+        out = r.stdout + r.stderr
         self.assertNotEqual(r.returncode, 0)
-        self.assertIn("sha256", (r.stdout + r.stderr).lower())
+        self.assertNotIn("usage:", out.lower(),
+                         "reached argparse; this refusal is argparse's, not the gate's")
+        self.assertIn("sha256", out.lower())
 
     def test_POSITIVE_a_resolving_token_passes_the_gate(self):
         """Unit-level and labelled as such. No live PASS token can exist here by construction:
