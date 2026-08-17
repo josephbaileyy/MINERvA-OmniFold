@@ -150,6 +150,45 @@ the same instrument in the same run; these are the author-side companion — **a
 exists is a claim about the search, and the search was never described.** The habit that fixes it is
 cheap: before writing "no X", run the grep that would find X and quote it.
 
+### FOURTH instance, and it cost a consensus ruling: I confirmed a run that already existed
+
+Lane B withdrew the real-product `C4 = M C5 Mᵀ` run at `4100331`, before execution, on grounds that
+**the check already existed, had already been run, and could not have come out differently**: the
+2026-08-10 `cross-object-script.py` records `identity_verdict = ESTABLISHED`, an independently
+reconstructed `M` whose content hash matches the pipeline's, `max rel 3.7568690548899724e-16`, a 19/19
+block census and rank `263 = 263 = 263`. **I confirmed that run.** So did B. Two lanes ratified it and
+it went to Joseph.
+
+**My share of the failure is specific and it is not "I trusted B".** I adjudicated the question I was
+handed — *is this a different measurement, is it falsifiable, what does it share* — and answered all
+three correctly. **I never asked whether the check already existed.** That is the omission, and it is
+unforgivable in this particular session, because **I had filed the remedy for it hours earlier**: the
+`BEN-300` addendum from the `OI-6` duplicate dispatch says that a task's *holder* has no
+machine-derivable source but **whether the work is already done usually does**, and one
+`git log -S` / `git grep` over the target answers it before dispatch. I wrote *"duplicate dispatch has
+a cheap pre-check that duplicate assignment doesn't"* — and then adjudicated a request for compute
+without running it. **A falsified_by sentence does not catch redundancy.** I even wrote *"different ≠
+informative"* in the ruling and then failed to test informativeness.
+
+**AND A SECOND, SHARPER ERROR OF MINE THAT B'S MEASUREMENT EXPOSED — the one worth the most.** My
+prerequisite argued that if `C4` predated the C5 rebuild the identity *"MUST fail"*, resting on the
+whole-file digest having moved (`602bbcf2… → 950f8cb1…`). B measured the objects: **the covariance
+CONTENT is bit-identical across that change** — only ~24 KB of metadata/band-level bytes moved — so
+the inference was invalid and its conclusion false. **A whole-file digest is not a digest of the object
+you are asking about**, and `std_final5_candidate.root` holds many objects.
+
+The self-indictment is that **`OI-129` is my own row recording that this pipeline never digests the
+covariance object itself** — and in the same message I reasoned as though the file digest filled that
+gap. I identified the missing content digest and then used the available file digest in its place. This
+is [[my-recurring-failure-is-asymmetric-comparison]] in its purest form: two quantities that differ in
+what they cover, compared as if they covered the same thing.
+
+**What survives from the episode, and it is B's, not mine:** the 2026-08-10 audit's own
+`gaps_remaining[0]` is still open, because `row_index_sha256` hashes the in-memory array that was used
+to write `hRowIndex4D` rather than reading the histogram back — a circular digest that hashes the
+intent instead of the artifact. `OI-129`'s fix is sharpened to say read-back explicitly. Seconds to
+check, genuinely falsifiable, and the one thing in this whole thread that was worth doing.
+
 ### Where the overreach propagated, enumerated (`BEN-302`)
 
 A retraction reaches only as far as the corrector's map of the corpus, so the sites are named rather
