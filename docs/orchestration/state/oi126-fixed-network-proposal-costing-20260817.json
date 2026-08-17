@@ -116,6 +116,68 @@
   "I did not grade OI-126, edit any verdict cell, or touch the proposal."
  ],
  "STEP_1_WHAT_IT_PROPOSES_IN_ITS_OWN_TERMS": "Keep Poisson(1) rather than substituting a noise model. Propagate the Poisson(1) resampling of the MEASURED leg through a FIXED, already-trained network (the nominal's) instead of refitting per replica, then compare the fixed-net spread against the existing 50-replica refit spread. Declared readout: spreads comparable => information loss => C_stat valid and the band's uncertainties simply large (branch a); fixed-net spread much smaller => the excess is refit sensitivity, an estimator defect (branch b).",
+ "THE_63_RESOLVED_AND_THE_FLOOR_COMPUTED_ON_IT_20260817": {
+  "DO_NOT_QUOTE": "their_share_of_total (0.0312) and top20_share_of_total (0.0563) carry _RETRACTED: true in that receipt. Not used here.",
+  "MY_OPEN_ASSUMPTION_IS_ANSWERED": "I flagged that nobody had established the P5A annealed nominal's 50-replica family is Gate-5's C_stat set. The receipt's own `what` field answers it: 'P5A nominal vs Gate-5 50-replica family, per cell.' Same family. Resolved, and not by me.",
+  "STRUCTURE_reported_not_graded": {
+   "I_AM_NOT_GRADING_THIS": "What this implies for OI-126's (a)/(b) fork is lane C's call. I am reporting a measurement on a set I can now name exactly, not a verdict.",
+   "family_in_tail_vs_elsewhere": "67.1164% vs 8.4611%  (~7.9x)",
+   "floor_in_tail_vs_elsewhere": "8.6088% vs 3.9915%  (~2.2x)",
+   "observation": "Both the floor and the family are elevated in the tail, and the family is elevated far more. The floor accounts for roughly an eighth of the family's tail spread, and the conclusion's DIRECTION survives the n=4 bias correction (7.80x -> 7.18x)."
+  },
+  "THE_NUMBER_median_relative_sd_on_the_SAME_63_CELLS": {
+   "STATISTIC_CORRECTION": "My earlier band figures (13.72% global, ~21% band) were RANGE/MEAN. The family's 67.12% is RELATIVE SD. Those are different statistics and were never comparable. Only the rel_sd numbers above are like-for-like.",
+   "family_n50_from_Josephs_receipt_not_recomputed": "67.1164%",
+   "floor_bias_corrected_for_n4": "c4(4)=0.9213, so a 4-sample sd underestimates sigma by 7.9%; corrected floor 9.344%, ratio 7.18x",
+   "floor_n4_measured_here": "8.6088%",
+   "ratio_family_over_floor": "7.80x"
+  },
+  "THE_a_b_CHECK": {
+   "pT_rows_occupied": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+   ],
+   "p_par_bins_occupied": [
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ],
+   "reading": "A threshold selection lands entirely inside the spatial band, occupying all six of its p_parallel bins. The determination's 'the 63-cell p|| 6-20 GeV band' and the receipt's 'ratio > 1.5' pick THE SAME 63 CELLS.",
+   "result": "(a) HOLDS, COMPLETELY. No conflation in the determination.",
+   "tail_cells_above_20_GeV": 0,
+   "tail_cells_below_6_GeV": 0,
+   "tail_cells_in_p_par_6_20_bins_10_15": "63 of 63"
+  },
+  "WHAT_STILL_LIMITS_IT": [
+   "TRAP 3 IS NOW THE BINDING ONE. The floor draws are the GATE-6 ML floor at fixed (42,0), a different object from the Gate-5 C_stat family's training configuration. Whether a Gate-6 floor bounds the refit noise of the Gate-5 family is exactly item 3 and is C's.",
+   "TRAP 1 is now QUANTIFIED rather than merely flagged: n=4 against n=50, c4=0.9213, direction of the correction known and the conclusion robust to it.",
+   "TRAP 4 stands: M=4 against the receipt's declared N=5 draws.",
+   "TRAP 2 DISSOLVES: the tail is 63 of 63 live on the floor mask, so the 259-vs-262-vs-236 mask difference costs nothing on this particular set."
+  ],
+  "mapping_reconstructed_and_verified": "The receipt publishes per_cell_ratio as a 257-list and does NOT publish the index->grid mapping. Reconstructed as (X>0).all(axis=0) over the 50 GATE5_REPLICA_XSEC.npz -> 257 cells, matching both domain.compared_all_members_positive=257 and the array length. Applying ratio>1.5 to it reproduces 63, matching the receipt exactly. The mapping is therefore established, not assumed.",
+  "step_3_intersection_reported_before_the_statistic": {
+   "dropped": 0,
+   "floor_draws_live": 259,
+   "note": "No cells lost, so the floor statistic below is on the FULL tail, not a subset.",
+   "tail_cells_live_on_the_floor": "63 of 63"
+  },
+  "the_selection_rule": "The 63 is n_cells_ratio_gt_1p5 in Joseph's receipt state/p5a-nominal-vs-cstat-family-percell-20260815.json -- a THRESHOLD selection (per-cell ratio > 1.5) over the 257 cells where all 50 members are positive, NOT a positional band mask. Found by the mediator; verified by me from the receipt."
+ },
  "THE_DEFECT_verified_in_code": {
   "claim": "With the network FIXED, the measured-leg Poisson draw has NO path to the extracted xsec. The only per-replica quantity that survives to the result is the SIGNAL-MC factor.",
   "evidence": [
