@@ -390,6 +390,59 @@ archived artifact is recoverable only if that run's LOG survives**, not from any
 is a sharper claim than *"no document records it"* and it names a **checkable, unchecked** next step: does
 any surviving run log carry a printed jitter floor for a product still in play?
 
+**ANSWERED 2026-08-17 by lane D, and the answer is a third one — neither of the two I anticipated.**
+**No** surviving log carries a jitter floor for a product still in play. But **one value did survive,
+attached to a product that no longer exists**: `[null] jitter floor = 3.731e-78`, `sqrt = 1.932e-39`, in
+`uthrow5d_comb_55286276.out` (2026-07-01, **purgeable scratch only**). That run wrote
+`uq_5d/unified_throw_cov_5d.root`; the file now at that path is the landed headline, mtime 2026-07-13 —
+**overwritten 12 days later.** *A path joined them; it did not make them the same object.*
+
+**Three constraints D attached, and the first is a methodological point worth more than the result.**
+The **durable** corpus returned **"0 reachable, not 0 hits"** — `.gitignore` excludes `*.log`/`*.out`/`*.err`,
+so run logs are **absent by construction** and a null there means nothing. **D established reachability by
+finding a known script's stdout in the scratch corpus before counting.** That is `BEN-235`'s class —
+a search structurally incapable of finding what its silence would deny — and it is **the first time today
+someone pre-empted it instead of filing it afterwards.** Second: **M = 1 against N ≥ 3** runs known to have
+written that path, so it is a completeness gap, not an answer. Third: the one value exists **only on
+purgeable scratch** — the *third state* between recorded and unrecoverable.
+
+### The branch, CLOSED as open-and-immaterial — and the reason is not "both branches land the same grade"
+
+D correctly declined to assert whether the 07-13 headline run passed `--null`, leaving two readings:
+**UNRECOVERABLE-BECAUSE-LOST** (a floor was printed for the live product, log gone) or **NEVER-COMPUTED**
+(none ever existed for it). **I was asked whether that distinction changes my wording or my routing. It
+does not, and the reason is stronger than the grade coinciding:**
+
+**Neither branch was ever a route to a number.** Read the recovered specification's own derivation:
+
+> *"With two CV unfolds at different seeds, **`E||x_cv2 - x_cv1||^2 = 2*sum_bin sigma_jit^2`**"*
+
+and the implementation is `x_cv2 = _xsec_for_weights(…, args.seed + 7)` then
+`jit_trace = float(np.sum((x_cv2 - base) ** 2))`. **So `jit_trace` is a ONE-SAMPLE ESTIMATE OF A
+VARIANCE** — the comment writes it as an expectation, and a single evaluation is one draw from it. Two
+consequences:
+
+1. **A recovered log value is one noisy realization**, not *the* scalar. D's `3.731e-78` is one draw, for a
+   superseded product. **Doubly unusable, and the second reason is the durable one** — even the right
+   product's log would have given a single draw of a noisy quantity.
+2. **A recomputation would be a different draw.** Both unfolds carry GPU/process non-determinism, so the
+   value is environment-dependent. Recomputing today yields *today's* realization, not the historical
+   subtraction. **This is `VL130`'s species measured from the other side**, and the campaign already knows
+   that floor is not small.
+
+**So the distinction is immaterial to the grade, to the wording, and to the routing, and I close it.** It
+should not sit looking unfinished.
+
+**One thing this DOES surface, flagged with its brake because it would otherwise move a cell.** The
+recovered specification makes the counterfactual **recomputable in principle** — a route to `M` that is
+neither recovering a record nor inventing a success condition, since the recipe is the documented one. **I
+am not proposing it**, and the brake is the point: because `jit_trace` is a one-sample variance estimate,
+a recomputation measures *a* realization of the quantity the defective construction would have subtracted,
+**not the one it did**. Whether that satisfies §0's `M` is a **judgement of the same species as the `M(ii)`
+gap** (§2c) — not a lookup — and it would need the machinery restored, since the code is absent at HEAD.
+**I flag it because burying it would be worse than naming it, and I name the brake first because the
+argument's payoff is otherwise its own premise.**
+
 **So the correction to land is NOT "the stated reason is false."** It is: **one of two conjoined claims is
 false, the other stands, and the sentence should be rewritten to assert only the surviving one.** A blanket
 refutation would overshoot in the direction that flatters the morning's claim — and per the mediator, that
