@@ -47,7 +47,7 @@ the nearer of PASS/FAIL.
 | | | M | **MET** — `5.3478×` floor (corrected from `4.83×`, BEN-109) | **OPEN** |
 | | | T | **MET** — `f7_cv_centered_required`, N3/N4 | **MET** |
 | **3** | varying estimator seeds | C | **PARTIAL — scoped; INAPPLICABLE to the dominant block** | **PARTIAL — same scope** |
-| | | P | **MET** — `receipt_candidate_stamps_5d.json`, S1 | **OPEN** — stamps `ABSENT` |
+| | | P | **WITHDRAWN from MET → PARTIAL — see §2d** | **OPEN** — stamps `ABSENT` |
 | | | M | **OPEN and NOT CURRENTLY MEASURABLE — see §2 and §2b** | **OPEN, same** |
 | | | T | **MET** — N5, re-derived | **MET** |
 | **4** | scalar jitter subtraction | C | **MET** | **MET** |
@@ -199,6 +199,66 @@ blocks** — so a per-block magnitude is the one that composes the way the artif
 only one that can be reported per leg when one leg's instrumentation lands before the other's. **If the
 mediator or Assistant dissents toward (B), the dissent should say what correlation between the two legs'
 estimator noise it expects to be non-negligible**, because that is the only thing (B) buys over (A).
+
+**The two code changes §2b names are better-precedented than I said.** Verified: `bootstrap_nd.py:19,21`
+and `seedscan_split.py:36` **already carry `--estimator-seed` alongside `--fixed-data-seed`**, with
+`:25` stating the split in its own help text — *"`--seed` varies data+MC, `--estimator-seed` fixed."*
+**So the two-role separation is an existing pattern in this repo, not a new design**, and only
+`sweep_bank_5d.py` and `unified_throw_cov.py` lack it. That makes gate 1 smaller than "two code changes"
+sounds — and it does **not** make it cheap, because those two modules are where the cost lives.
+
+**And the cost figure now has two unreconciled values.** B measures **0.44 node-h** for the stat estimator
+axis against `FOOTING-20260817:66-69`'s **~1 GPU-node-h** — the very figure I quoted this morning as *"the
+cheapest open cell."* B says its own is the conservative one and **did not reconcile them.** So the cell I
+first priced at ~1 GPU-node-hour on the wrong footing now has, on the *right* footing, **two independent
+values disagreeing by ~2× with neither reconciled.** Recorded rather than averaged.
+
+## 2d. Cause 3's `P` leg: WITHDRAWN from MET, and I had the disconfirming evidence on screen
+
+**This withdraws a `MET` I published on this board this morning.** Lane B measured it and filed a pointer
+**without grading**, correctly, because `BEN-381` bars the lane that measured a leg from grading it. So the
+grade is mine. **I verified every code claim from the tree before regrading**, and I am grading on
+`CRITERIA` §2's **own two clauses** rather than on B's one-line recommendation — which makes my grade
+slightly *harsher* than B's.
+
+§2's `P` for cause 3 asks for two things:
+
+> *"X's receipt records **the single seed value**, and `fixed_seed_null_norm` is **PRESENT** in X and ≤ tol."*
+
+| clause | grade | evidence, verified at HEAD |
+|---|---|---|
+| (ii) `fixed_seed_null_norm` PRESENT and ≤ tol | **MET** | written at `unified_throw_cov.py:491`; candidate carries `upstream_fixed_seed_null_norm = 5.8223488501140625e-50` against tol `1e-12` |
+| (i) the receipt records **the seed value** | **NOT MET — on any leg** | `--out-root` writes six `TParameter`s (`:479-492`): `sqrt_tr_unified`, `sqrt_tr_block`, `joint_mean_shift_norm`, `fixed_seed_null_checked`, `fixed_seed_null_norm`, `n_throws`. **None is a seed.** The candidate's 13 keys contain no seed key either. |
+
+**So `P` is `PARTIAL`, and the reason is stronger than "scoped".** B recommended *"PARTIAL — MET for
+uthrow, ABSENT for `combined_source`."* I grade it **PARTIAL with clause (i) failing on *both* legs**,
+because no product anywhere records a seed *value* — not the uthrow arm either. The scoping is a second,
+independent problem on top:
+
+* the census reads **`.npz` slabs** via `np.load` (`:326-332`, `if "seed" in z.files`), so
+  `combined_source`'s **188 ROOT universes are not in its population at all**;
+* `analyze_universes_5d.py`, **which writes `combined_source` itself**, contains `seed` **zero** times and
+  writes no `TParameter`;
+* `sweep_bank_5d.py` contains `seed` **exactly once** — `:252`, the hardcoded `42`.
+
+**So the dominant block's single-seed property holds by hardcoding and is recorded nowhere and checked by
+nothing**, and `BEN-106`'s stamp-propagation fix — the thing three causes were said to be waiting on —
+**has nothing to propagate.**
+
+**NO NUMBER MOVES.** Every leg is internally single-seeded, so nothing is mis-computed. What fails is a
+**verification claim** (B's phrasing, and it is exact). `BEN-246`.
+
+**The consequence for this row, which is the point of the board:** on the **candidate**, cause 3 now has
+**exactly one unqualified MET leg — `T`.** `C` is PARTIAL (§2b), `P` is PARTIAL (here), and `M` is OPEN and
+not currently measurable, with its M(i) half being the one `CRITERIA` §2 says *is not what the criterion is
+about*. **This morning I shipped that row as "P MET, provenance done."** It was the row I was most confident
+about and it is now the weakest of the five.
+
+**And I should not have been confident.** I printed the candidate's 13 keys **in this session**, read them,
+and graded `P` MET anyway — the list has no seed key in it, and clause (i) asks for exactly that. **The
+disconfirming evidence was on my own screen.** Same shape as the array-stall near-miss I filed this morning:
+holding the number that refutes you and not applying it. The difference is that one I caught before
+publishing.
 
 ## 3. Cause 4: the REASON the `M` cell was unreachable is false, and the cell still does not move
 
