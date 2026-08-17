@@ -81,6 +81,35 @@
   "why_that_is_decisive": "The three regions PARTITION THE 285-CELL GRID EXACTLY at the 6 and 20 GeV edges, and the '>20 GeV' count of 45 is an EXACT match to the unmasked grid count -- zero masked, which is what you expect at high p|| where the dead staircase does not reach. Under the mediator's reading the region below 6 GeV would hold 20 of 150 grid cells, i.e. 130 masked there while zero are masked above 20 GeV. That is not credible and the exact 45 refutes it."
  },
  "IT_NOMINALLY_DISCRIMINATES_a_FROM_b": "On its own text the two outcomes do map onto the mediator's (a) and (b), so it is not superseded and not off-target in intent. The defect is not in what it claims to distinguish; it is that the arm it builds cannot produce one of the two answers.",
+ "MASK_DERIVATION_ATTEMPTED_AND_IT_DOES_NOT_REPRODUCE_20260817": {
+  "AND_THE_SHAPE_OF_THE_MISMATCH_IS_THE_INTERESTING_PART": "The 26-cell discrepancy is NOT spread evenly. It is 0 above 20 GeV, 4 below 6 GeV, and **22 of 85 in the 6-20 band** -- so whatever selection OI-126 applies is concentrated almost entirely in the band, and removes roughly a quarter of it. THE BAND IS WHERE THE FORK LIVES. A selection rule that discards 22 of 85 cells exactly there is not incidental bookkeeping; it is a choice that could bear on the conclusion, and nobody has stated what it is.",
+  "VERDICT_ON_THE_ROUTE": "THE MEDIATOR'S STEP-2 STOP CONDITION FIRES. The OI-126 mask is NOT the union of xsec>0 over the Gate-5 50-replica family: 262 against 236. So 'the 63-cell mask is derivable in code and needs no author' is FALSE. The obvious derivation over the obvious files does not reproduce the statement's counts, and I did not have to run anything new to find that -- the number came from my own cross-check build earlier today.",
+  "grid_identity_status": "STILL INFERRED -- but now doubly supported, and by a stronger coincidence than before. The '>20 GeV' region comes out at EXACTLY 45 under TWO INDEPENDENT MASKS (mine at 262 live, and the OI-126 statement's at 236 live). Two different selections agreeing exactly on an unmasked region count is hard to get by accident.",
+  "step_1_2_result": {
+   "delta": {
+    "band": -22,
+    "p_par_gt_20": 0,
+    "p_par_lt_6": -4,
+    "total": -26
+   },
+   "measured": {
+    "band_6_20_bins_10_15": 85,
+    "p_par_gt_20_bins_16_18": 45,
+    "p_par_lt_6_bins_0_9": 132,
+    "total_live": 262
+   },
+   "oi126_statement": {
+    "band_6_20": 63,
+    "p_par_gt_20": 45,
+    "p_par_lt_6": 128,
+    "total_live": 236
+   },
+   "rule_tested": "(X > 0).any(axis=0) over the 50 GATE5_REPLICA_XSEC.npz, per the mediator's route"
+  },
+  "steps_3_and_4_not_run": "Deliberately. An intersection against a band mask I cannot reproduce would produce a number at a scope nobody can state, which is the precise failure the mediator warned about in their own step 3.",
+  "the_circularity_I_am_flagging_first": "The mediator cited build_cstat_crosscheck_laned.py:41-44 and :117-123 as a RECORD that the OI-126 analysis runs on 285 cells, and upgraded my grid claim from INFERRED to MEASURED on that basis. THAT FILE IS MINE. N_CELLS = N_PT * N_PP = 285 is a constant I hardcoded from the loader's canonical edges, and (X > 0).any(axis=0) is a rule I chose and documented as 'DERIVE the mask; do not adopt one'. It records what I did with the 50 XSEC files. It is not evidence about what the OI-126 analysis did. Corroboration vs echo: this is echo, and I decline the upgrade.",
+  "what_is_still_needed_and_it_did_not_shrink": "The OI-126 analysis's actual mask rule, from its author. It is not the union rule. It may be a stricter positivity criterion, an acceptance or occupancy floor, a different family, or a different object entirely -- the statement concerns the P5A ANNEALED nominal and its 50-replica family, and I have not established that this is the same family as Gate-5's C_stat set."
+ },
  "SCOPE_AND_LIMITS": [
   "This is a claim about CODE PATHS, verified at the cited lines, plus one inference clearly labelled as such.",
   "If lane B or the executor lane intended the fixed-net arm to re-run step-1 inference in some way that lets resampled data reach the weights, THE PROPOSAL'S TEXT DOES NOT SAY SO and I found no such path in the extraction. If such a path exists I have not found it, and that would overturn this.",
