@@ -136,7 +136,77 @@ would kill the hypothesis I myself am carrying.**
 
 **Not E's step 2, which is the code route. These are the constraints that route must satisfy.**
 
-**(i) The substitution is a VALUE change, and it must not become a pinned-file edit.**
+> ### ⚠ **CONSTRAINT (i) IS FALSIFIED. `Route A` IS NOT EXPENSIVE — IT IS SILENTLY WRONG.** Found by lane E, verified here from the tree.
+>
+> **The loader applies `sig_factor` ITSELF, before returning.** `fullevent_fps_dataloader.py:1321-1325`,
+> inside `if bootstrap_seed is not None:`
+>
+> ```
+> data_factor, sig_factor, bkg_factor = coherent_bootstrap_factors(M, N, n_bkg_full, int(bootstrap_seed))
+> w_truth = (w_truth_full[imc] * sig_factor[imc]).astype(np.float32)
+> w_reco  = (w_reco_full[imc]  * sig_factor[imc]).astype(np.float32)
+> ```
+>
+> **So setting `sig_factor = 1` in the replica driver changes NOTHING — the thinning has already happened
+> upstream of the place I prescribed the override. And it cannot be undone afterwards: 36.8% of the factors
+> are exactly zero, so the multiply DESTROYS information rather than scaling it.**
+>
+> **`train_fullevent_replica.py:202` re-derives the factors to VERIFY the loader's, not to apply them** —
+> a checker (`raise SystemExit("[gate5-train] loader bootstrap evidence carries the wrong seed")`), not an
+> applier. **I read the mention and inferred the operation.**
+>
+> **THE ROUTE WOULD HAVE PRODUCED A FAMILY WHOSE RECEIPTS CLAIM UNITY WHILE THE TRAINING CONSUMED THINNED
+> MC — a false receipt, and exactly the class this campaign spent the day refusing to ship.**
+>
+> **And the instrument that should catch it documents that it cannot.** `reconcile_gate5_family.py:526-530`,
+> its own note, verbatim: *"it compares the BUILDER's recomputation to this tool's redraw, so it is **blind
+> to what the LOADER applied**."* **The guard names its own blind spot and the blind spot is exactly where
+> `Route A` would have lived.**
+>
+> **MY CONSTRAINT WAS RIGHT AS A PRINCIPLE AND WRONG AS A ROUTE, and the distinction is the finding:** keep
+> the diff off a file pinned 25 ways — sound. *Put it in the driver* — wrong, because **the operation is not
+> where the mention is.**
+>
+> **AND IT IS MY OWN `BEN-403(ii)` VIOLATED ONE COMMIT AFTER FILING IT.** That rule reads *"presence in the
+> construction is not activity in the region — check availability where the effect is, not where the code
+> is."* I filed it for a physics mechanism and then, in the next ruling, **observed that the driver MENTIONS
+> the factors and inferred that it APPLIES them.** Same rule, different domain. **E's added rule — *when
+> routing an edit away from a pinned file, verify the destination PERFORMS the operation rather than merely
+> mentioning it* — is the code-domain statement of it, and E's second half is the part I could not have
+> supplied: PREFER THE LOUD FAILURE.** `OI-61(b)` died to an `argparse choices` list — exit 2, immediate.
+> **This one ships a false receipt and passes its own reconciler.**
+>
+> **THE VIABLE ROUTE, and E explicitly does not call it cheap:** call the loader with `bootstrap_seed=None`.
+> The else-branch at `:1332-1334` returns genuinely unthinned MC (`w_truth_full[imc]`, `w_reco_full[imc]`,
+> `meta["bootstrap"] = None` — verified), the driver already intercepts the loader call, and the
+> measured-side helpers already default `data_factor=None` to ones (`:696`, `:945-948`), so the data stream
+> can be supplied separately. **Four sites, one of them a new verdict path in the pin-exposed reconciler.**
+> **E's caveat, carried: `Route A` looked viable on exactly this kind of inspection until the loader's own
+> multiply was read. So `Route B` gets an EXECUTION check, not another inspection.**
+>
+> ### AND `Route B` HAS A SPECIFICATION CONSEQUENCE THAT MUST BE SETTLED BEFORE IT IS BUILT
+>
+> With `bootstrap_seed=None` the loader sets **`meta["bootstrap"] = None`** — and the reconciler reads
+> `data_factor_sha256` out of exactly that dict (`bs.get("data_factor_sha256")`). **So the receipt path that
+> carries the varying stream's provenance is the one `Route B` empties.** And `:527-530`'s own note calls
+> `data_factor` **"THE STREAM NOTHING ELSE CHECKS — no stage persists or array-compares it."**
+>
+> **That is the most dangerous possible combination: in `C_stat^data` the ONLY stream that varies is the one
+> the pipeline persists least.** **REQUIREMENT: the data-only verdict path must assert that the data factor
+> is persisted AND array-comparable under a named key of its own, and must FAIL CLOSED if it is absent.**
+> A `bootstrap: None` receipt that silently carries no data-factor hash is `Route A`'s false receipt in a
+> different disguise — unity claimed by omission instead of by assertion.
+>
+> ### THE RECONCILER PROFILE IS WORSE THAN I SAID, WHICH STRENGTHENS THE "NO RELAXATION" LINE
+>
+> I named `:837-845`'s four distinctness labels. **E found `:519-530` ALSO replay-redraws all three streams
+> and compares hashes**, so unity mismatches there **before distinctness is ever reached.** **The real
+> profile is 2 of 4 distinctness PLUS 2 of 3 replay** — a shorter-looking exemption than I anticipated, and
+> **the shorter it looks the more important it is that `C_stat^data` gets its own verdict path rather than a
+> relaxation.** E is holding that line and it is the right line.
+
+**(i) ~~The substitution is a VALUE change, and it must not become a pinned-file edit.~~ SUPERSEDED — see
+the box above. Left as written because the reasoning is the finding.**
 `coherent_bootstrap_factors(n_data, n_sig, n_bkg, seed)` (`:614-625`) returns three **arrays**, and
 `reconcile_gate5_family.py` already hashes them separately (`factor_sha256` for `data`/`signal`/
 `background`). **So a data-only replica is the same construction with two of three factor arrays set to
