@@ -67,6 +67,7 @@ docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md	ARCH
 docs/orchestration/DETERMINATION-20260817-oi60-rerun-costed.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	176	10923
 docs/orchestration/DETERMINATION-20260817-pet-oi82-oi60-oi41.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	153	8915
 docs/orchestration/DETERMINATION-20260817-pet-ten-items-state-and-oi126-shape.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	229	16762
+docs/orchestration/DETERMINATION-20260817-sha-identity-hook-not-buildable.md	LIVE	document		20260817	open		route-only		no	2	132	7316
 docs/orchestration/DRAFT-20260815-cstat-limitation-statement.md	ARCHIVAL	document		20260815	terminal		exact-path-only		yes	0	342	26400
 docs/orchestration/EXTENT-20260817-2850-a100h-scope-and-missing-legs.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	6	546	39500
 docs/orchestration/FABLE-BOOTSTRAP.md	ARCHIVAL	document			terminal		exact-path-only		yes	1	14	1848
@@ -846,6 +847,7 @@ docs/orchestration/state/probe-p4-stages456-runner-20260816.sh	MACHINE	state-art
 docs/orchestration/state/probe-pin-exposure-20260817.py	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	4	270	12475
 docs/orchestration/state/probe-projection-M-only-invariant-20260816.py	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	2	194	9072
 docs/orchestration/state/probe-projection-identity-leg-20260816.py	MACHINE	state-artifact		20260816	generated		exact-path-only	nd-unfolding/p4_lib.py	yes	4	183	9512
+docs/orchestration/state/probe-sha-citation-rule-20260817.py	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	1	84	2901
 docs/orchestration/state/probe-vl100-foldforward-shape-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	6	204	10671
 docs/orchestration/state/probe-vl100-nominal-residual-field-20260815.py	MACHINE	state-artifact		20260815	generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	3	38	2365
 docs/orchestration/state/probe-vl100-own-run-foldforward-20260815.py	MACHINE	state-artifact		20260815	generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	3	172	8137
