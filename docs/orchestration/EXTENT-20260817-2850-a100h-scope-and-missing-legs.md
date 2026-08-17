@@ -341,7 +341,38 @@ is **not separately attributable in `sacct`** — `FOOTING-20260817-gbdtaiesttra
 independently at `~1 GPU-node-hour` from `CONC=6`, 2 waves. **My `1.750` A100-h for 12 seeds (`= 12 x
 0.1458`) and that `~1 GPU-node-hour` are in different units** — a Perlmutter GPU node is 4 A100s, so mine is
 `0.44` node-h against their `~1`. **They do not agree, and the FOOTING figure is the more conservative**;
-I have not tried to reconcile them and the discrepancy is the packing, not the arithmetic.
+I have not tried to reconcile them and the discrepancy is the packing, not the arithmetic. (Node width is
+in-repo, not from memory: `sbatch_boot5d_gpu_interactive.sh:4` requests `--nodes=1 --gpus=4`, and
+`gpus-per-node=4` appears elsewhere in the launcher set.)
+
+### ⚠ AND THAT CROSS-UNIT PAIR HAS ALREADY PRODUCED A RATIO — `~28.5x` IS WRONG TWICE OVER
+
+`SCOREBOARD-20260817-quarantine-seven-causes.md:133-134` (lane C's file, **not edited from here**) reads:
+*"The measured unit on the candidate footing is `28.50 A100-h per re-seed`, `~28.5x`."* That `~28.5x` is the
+understatement factor of C's own withdrawn `~1 GPU-node-hour`. **Two independent defects, and the dead
+numerator is the smaller of them:**
+
+1. **CROSS-UNIT.** It divides A100-hours by GPU-node-hours as though `1 A100-h = 1 GPU-node-h`. At 4 A100
+   per node, the same-unit ratio of C's **own** operands is **`7.12x`** (`28.50 / 4`), not `28.5x` — so the
+   ratio was off by a factor of 4 **before** its numerator was found to be stale. It is the exact unit
+   confusion the paragraph above this one warns about, committed one paragraph later by a different lane.
+2. **NON-COMMENSURABLE, which no unit conversion repairs.** The numerator is **one** estimator seed of
+   `C_syst`; the denominator is **twelve** seeds of `C_stat`. Different block, different member count. A
+   ratio of *"1 seed of one thing"* to *"12 seeds of another"* measures nothing at all.
+
+**The quantity that cell wants — how much dearer the candidate footing is than AI1's — is the per-seed
+like-for-like ratio, and it is `268x`:** `39.078` A100-h per `C_syst` seed against `0.1458` A100-h per
+`C_stat` seed. Same unit, same operation shape, both measured. Across the unresolved FOOTING discrepancy,
+`39.078` against a **12-seed** AI1 scan is **`9.77x`** using FOOTING's `~1` node-hour (`= 4` A100-h) and
+**`22.3x`** using my measured `1.750` A100-h — **the spread between those two IS the FOOTING disagreement**,
+which is why no single ratio should be quoted without naming its denominator.
+
+**C owns that cell and has been notified. Nothing in that file was edited from here.** This is lane A's
+"descendant ratio" hazard concretely: `~28.5x` does not string-match `28.50`, so a retraction of the parent
+propagates straight past it — which is why A indexed the ratio as a **separate** dead value. **C's
+conclusions at `:158-164` are unaffected and my measurements strengthen them:** `M(ii)` is blocked on two
+code changes before it is a cost question, and measured, the two blocked legs are `99.6 %` of the GPU and
+`99.7 %` of the CPU bill while three of five legs need no change at all.
 
 **Full 100-replica stat bank, for reference — this is NOT the `M(ii)` cost:**
 

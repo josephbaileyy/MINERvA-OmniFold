@@ -76,6 +76,29 @@ Three measured properties, each load-bearing:
    mixed with unstamped* passes. Every `uthrow` slab does stamp (`:254`, `:285`, `:302`), so **no live defect
    follows on this path** — but the guard's shape is what makes the blindness invisible rather than loud.
 
+### ⚠ THE SAME SIX LINES ARE ALSO A COST CONSTRAINT, AND THIS FINDING READ THEM ONLY AS A CHECK
+
+**Added 2026-08-17 on lane A's challenge, which is the reason it is here.** `:417-419` does not merely
+*verify* seed homogeneity — **it forecloses slab reuse across a seed change, and therefore prices every
+re-seed of the `uthrow` leg.** Combining slabs stamped `1000` under `--seed s'` raises `SystemExit`, so a
+composite arm **cannot** reuse a single slab: all 71 CPU tasks re-run (`55821660`, `56427580`, `55821661`) at
+`55.182` task-hours / `2,759.1` CPU-core-hours / **`0` A100-hours**. The guard's own comment states the
+purpose — *"else `C_uni`/`C_block` would mix estimator jitter across slabs"* — and that purpose is exactly
+why no cheaper path exists. **The scheduling consequence is a feature of the guard, not a side effect.**
+
+**I had read these lines four times in one day and never asked this question.** For the seed census, for the
+MET withdrawal, and for lane C's harsher grade — each time as a *verification mechanism*. Lane A read them
+as a *scheduling constraint* and got a cost result out of them. **And a third reading closed a different
+question again:** `:416`'s comment is the file's single surviving `jitter` mention, which lane A had recorded
+as the evidence that the retired jitter procedure is genuinely gone (`BEN-391`).
+
+**Three lanes, three purposes, one six-line block, and each of us saw the one we came for.** The
+generalisable form, which is stronger than any of the three instances: **a guard encodes a constraint, and a
+constraint has consequences in every dimension the thing it constrains is measured in — correctness, cost,
+schedule, and what its own existence proves about history.** Reading a guard for the property you are
+currently grading is the default, and it is how a fully-read file stays partly unread. `BEN-246`, `BEN-393`,
+`BEN-391`.
+
 ## 3. The other upstream: seed `42`, hardcoded, stamped nowhere, checked by nothing
 
     sweep_bank_5d.py:252   omnifold_loop(..., kind="lgbm", ..., seed=42, verbose=False)
