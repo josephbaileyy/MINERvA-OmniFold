@@ -65,48 +65,64 @@ draw produced at another time through another invocation path carries drift that
 `5.10–12.14×` → `5.41–11.34×`. Small, and **the published band is the wider one, so the reported caution is
 conservative.**
 
-### Third revision, and the conflict resolves against my `n=4`-is-settled reading too
+### SETTLED at revision 4: `n=5`, which is where this row started
 
-The dispatching lane retracted its own message in full and **two of its premises were false**, which changes
-what I had written above:
+**Lane C reversed the passage revisions 2 and 3 were built on** — `fc8a949`, §2(e):
 
-1. **Draw 1's per-cell array EXISTS.** `member_1/pet_fullevent_ml_member1_weights.npz` carries
-   `central_vector`, shape `(285,)`, sum `1.0`, **259 nonzero — identical shape, normalisation and live-cell
-   count to `draw_2` and `draw_5`.** So *"the inputs do not exist"* is withdrawn by its author, who had listed
-   that very file two commands before concluding the data was nowhere. **My flagged conflict resolves in the
-   mediator's favour: the recomputation was real.**
-2. **The impact figures I relayed were MODELLED, not measured** — `s` rescaled by `c4` rather than recomputed
-   from the actual fifth vector — and are withdrawn. Measured: `n=4` median `9.3440 %` vs `n=5` `8.7302 %`,
-   ratio-of-medians `7.688`.
-3. **The "controlled replicate" merits argument for excluding draw 1 was its author's own invention** and is
-   withdrawn. It is not this project's practice.
+> **"THE POPULATION QUESTION — `member_1` IS a legitimate fifth draw. I ruled the other way and I was
+> wrong."** … **"`n=5` is correct."** DISPOSITION: **"include draw 1, report `n=5`."**
 
-### And that leaves a real tension between two authorities, which I am routing rather than deciding
+C credits this row as having ruled for inclusion and been right. **So revisions 2 and 3 moved away from a
+correct original position, and revision 4 restores it.**
 
-- **`VL130`** — in `VALIDATION_LEDGER.md`, the canonical home for quoted numbers — reads **`n=5` of 5,
-  TERMINAL**, and explicitly: *"UPDATED TO n=5 2026-08-14 after floor draw 5 landed: every figure moved by less
-  than one tenth of its own 35.4% uncertainty … Per-sd fractional uncertainty `1/√(2·4)` = **35.36%** (was
-  40.82% at `n=4`)."* **It includes draw 1 and calls the result terminal.**
-- **Lane C's ruling** holds `n=4` correct **for the `OI-126` tail probe specifically**, on the ground that draw 1
-  *"lives under `fullevent_ml_ensemble/`, outside the floor directory"* — **a location reason, and point 1 above
-  shows the data there is commensurable in shape, normalisation and live-cell count.**
+**C's ground is better than any of the three we cycled through, because it argues from the estimand:**
 
-**Both are committed, and they concern statistics that are adjacent rather than plainly distinct.** This is not
-mine to settle: it belongs to C, whose ruling it is, and to `OI-126`'s owner. **I have neither the cluster access
-to recompute nor the standing to overturn a ruling** — and having already been wrong once here in the opposite
-direction, the right output is the routed question, not a third confident answer.
+> *"membership in the process-noise population is determined by the EXECUTION'S CONFIGURATION, not by which
+> leg launched it or by whether it was retrained FOR THIS LEG … `'reused unmodified, NOT retrained'` is
+> bookkeeping about the leg, not provenance about the artifact."*
 
-**What this row asserts is only what it verified from the tracked receipt:** the designed `N` is 5 = 1 reused + 4
-new, the array is `[2-5]`, and `products = N − 1` is the designed state.
+Excluding on that basis would make the population depend on a job's **label** rather than its
+**configuration**.
 
-### Flagged for the floor/family comparison's owner, deliberately not filed here
+**And the structural fact that ends the question, verified here in the probe rather than taken from a
+message:** `probe-oi120a-csyst-k-20260814.py:16` lists `("draw1_member1", ".../fullevent_ml_ensemble/member_1/…")`
+as **`FILES[0]`, co-equal with draws 2-5** — so the committed floor of record already includes it and the
+tail probe's `n=4` is the deviation — and `:37` takes the reporting domain from **`masks[tags[0]]`, member_1's
+own mask.** **Dropping draw 1 changes `n` *and* changes which artifact supplies the domain.** So `n=4` vs
+`n=5` was never a sample-size choice, and that also closes the `259`/`257` mask flag: **the domain axis and
+the `n` axis are the same change**, which is why no sample-size framing came out cleanly for anyone.
 
-`VL130`'s own closing note records the training artifact's `reported_bin_mask` as **259** cells, against the
-extraction's **262** and the lgbm FPS canonical **266**, nesting `259 ⊂ 262 ⊂ 266`, **with an explicit
-prohibition: *"no consumer may take a training artifact's mask as the reporting domain."*** The `C_stat`
-family's domain is **257**. So a general claim of the form *"the floor is X % of the family spread"* spans two
-domains that are not the same and are not claimed to nest. The 63 tail cells were separately confirmed live on
-the floor's mask, so a specific comparison may still be on a common set.
+**Carried forward, because C's disposition is conditional:** membership rests on an **unevaluated premise** —
+the clause-8 check (is draw 1 from a different process population at identical configuration?) is one command
+never run, so under `CRITERIA-20260811` §0 it is *currently unmeasured*. *"It barely matters"* is a reason not
+to spend long on the check, **not a reason to skip it.** And do not quote `9.3440 %` against `8.7302 %` as a
+clean pair: C flags `9.3440 = 8.6088 / 0.9213`, the **bias-corrected** `n=4` value, so the pairing mixes
+scales.
+
+### What revisions 2 and 3 got wrong, which is worse than either individual error
+
+**I had the right answer first and was argued off it three times in succession** — each time by a peer
+carrying real evidence: a committed ruling, an on-disk listing, a ledger row. And **revision 3 routed as an
+"unresolved tension" a question C had resolved `2 m 33 s` before I pushed:**
+
+```
+fc8a949  15:10:58  "member_1 IS a legitimate fifth draw. n=5, BEN-397 was right"
+817d884  15:13:31  my revision 3, routing the tension as live
+```
+
+Timeline re-derived here with `git log --date=format:'%H:%M:%S'`. **That is not a misread — it is the
+dated-claim shape at a two-minute scale**, and the only defence is re-reading a cited document at the moment
+of **writing** rather than at the moment of **deciding**.
+
+> **THE GENERALISABLE PART IS THE ASYMMETRY IN HOW A POSITION MOVES.** Three successive peers each moved me,
+> and **none of the three was the party who ultimately settled it.** Deference to the most recent
+> well-evidenced objection is a **random walk, not convergence.** The fix is not stubbornness — it is
+> **naming the authority and re-reading it at write time**, which is where this row's other lesson arrives
+> from the falsifier direction.
+
+**Four revisions by three parties in thirteen minutes**, returning to the first position. Part of that
+instability was in the record rather than in us: the document three of us were citing changed twice while we
+cited it.
 
 ### The third-order lesson, and it is the dispatching lane's
 
