@@ -89,10 +89,32 @@ re-seed does not reproduce another run's failures.
     published 28.496  ->  39.078   understated by +37.1 %
     against the 24 A100-h grant    39.078 / 24 = 1.63x   (63 % over)
 
+    ONE COMPOSITE ARM (both seeds moved: C_syst path + uthrow leg)
+                                                     GPU 39.078 A100-h  +  CPU 55.182 task-h
     ONE additional estimator seed, all four blocks:  GPU 39.223 A100-h  +  CPU 55.337 task-h
       C_syst share of the GPU column                 99.63 %
       C_syst per seed / C_stat per seed              268x   (was quoted as 195x)
     At the predeclared n >= 6:                       GPU 235.34 A100-h  +  CPU 332.02 task-h
+
+**⚠ `39.078` AND `39.223` ARE DIFFERENT QUANTITIES THAT NEARLY COINCIDE, and the coincidence is not
+rounding.** `C_syst` is `99.63 %` of the GPU column, so the `C_syst` re-seed (`39.078`) and the all-four-block
+one-seed total (`39.223`) differ by `0.37 %` — small enough that a reader meeting them in adjacent documents
+will assume one is the other printed to different precision. **They are not.** Lane A named this as the
+retracted-values index's own *"two quantities that have historically agreed at the printed precision"* trap:
+it is the condition under which one sentence can describe two things. **State which one you mean, every
+time**, and note that `39.078` is the GPU column of a quantity whose CPU column is `55.182` task-hours —
+**never quote either bare.**
+
+**A composite arm necessarily carries the CPU term, and the code REFUSES the alternative rather than merely
+implying it.** A composite arm's second seed is `unified_throw_cov.py`'s `--seed`, which threads into every
+throw unfold (`:244`), every knob block endpoint (`:281`) and every flux block unit (`:297`); is stamped into
+each slab (`:254`, `:285`, `:302`); and is enforced by the **F2 guard at `:417-419`**, which raises
+`SystemExit` — *"refusing mixed-seed combine"*, the comment giving the reason as *"else `C_uni`/`C_block`
+would mix estimator jitter across slabs."* **So not one slab is reusable across a seed change: all 71 CPU
+tasks re-run** (`55821660`, `56427580`, `55821661`). Since that leg is `0` A100-h and `2,759.1` CPU-core-h,
+**the composite arm's defining move is the leg carrying essentially the entire CPU bill** — the reason a
+GPU-only figure is worst, not best, at a site whose subject is composite scope. *Raised as an unasserted
+chain by lane A, which offered to withdraw it; traced here and confirmed.*
 
 **`39.078` is MEASURED throughout** — every one of the 189 tasks in it has a realized elapsed. It is not a
 forecast, with one named assumption: **a re-seed resumes nothing**, because a new estimator seed invalidates
