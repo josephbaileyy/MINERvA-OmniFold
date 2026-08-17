@@ -196,6 +196,69 @@ would kill the hypothesis I myself am carrying.**
 > is persisted AND array-comparable under a named key of its own, and must FAIL CLOSED if it is absent.**
 > A `bootstrap: None` receipt that silently carries no data-factor hash is `Route A`'s false receipt in a
 > different disguise — unity claimed by omission instead of by assertion.
+> **REV-3 SHARPENING BELOW: this is right about the CLASS and wrong about WHERE the silence lives.**
+>
+> #### ⚠ REV 3 — the mechanism is a DEFENSIVE IDIOM, and one half of my own warning was wrong
+>
+> **The mediator established it.** `train_fullevent_replica.py:196` is
+> `bootstrap = dict(meta.get("bootstrap") or {})` — **and the same `or {}` at `:220` and `:253`.** Python
+> makes the two shapes differ, verified this turn:
+>
+> ```
+> {"bootstrap": None}.get("bootstrap", {})  -> None -> .get(...) raises AttributeError   LOUD
+> key absent, or {}                          -> {}   -> .get(...) returns None            SILENT
+> ```
+>
+> **A `.get` default fires only when the KEY IS ABSENT, never when its value is `None`** — so `or {}` at the
+> **writer** converts `ABSENT` into `EMPTY` and disarms the crash the reader would otherwise have. **A guard
+> written to make a reader robust to a missing dict is what suppresses the loud failure**, and `{}` is *empty
+> in content and present in type* — the one shape that defeats both a presence check and an exception.
+>
+> **BUT `Route B` THROUGH THE DRIVER AS IT STANDS FAILS LOUDLY, AND THAT CORRECTS MY FRAMING.** `:197` is
+> `if int(bootstrap.get("bootstrap_seed", -1)) != int(args.bootstrap_seed): raise SystemExit(...)`. With
+> `meta["bootstrap"] = None` the block is `{}`, the get defaults to `-1`, and for any real replica seed
+> (`50000 + i`) **`-1 != 50000+i` fires and the artifact is never written.** So the silence is in the
+> **reconciler**, not in the pipeline as built: **`Route B` does not currently ship a false receipt.**
+>
+> **The silent path is the DRIVER EDIT `Route B` REQUIRES.** `Route B` must make `:197` accept a run with no
+> bootstrap block, and **the smallest-looking way to do that is to relax `:197` — exactly the edit that arms
+> the reconciler's `:355`.** One relaxation converts the loud failure into the silent one.
+>
+> > **REQUIREMENT, replacing the weaker form above: the driver edit must BRANCH ON THE PRODUCT, never relax
+> > `:197`.** The three-stream assertion stays byte-identical; the data-only path asserts a **different
+> > positive** condition of its own. **`BEN-404`'s rule with a second instance and a line number — and now the
+> > FIRST line of defence rather than the third.**
+>
+> #### AND A LATENT VACUOUS PASS THAT NEEDS NO EDIT AT ALL — `BEN-405`
+>
+> **`:197`'s absent-default is `-1`, and `-1` is this pipeline's own sentinel for "no bootstrap"** —
+> `VL130`'s verified floor premises are *"identical inputs, identical 2,000,000-row `mc_indices`,
+> **`bootstrap_seed = -1`**"*. **So a run invoked with `--bootstrap-seed -1` against an empty block compares
+> `-1 != -1`, which is False, and the guard PASSES VACUOUSLY** (verified).
+>
+> It then dies five lines on at `:202` with `ValueError: expected non-negative integer` from
+> `np.random.default_rng(-1)` (verified). **Loud, but MISATTRIBUTED — the message names an RNG problem, so a
+> reader debugging it looks at numpy and not at the missing loader evidence.** **A guard whose absent-default
+> collides with a meaningful domain value stops guarding exactly when that value is in use, and the failure it
+> lets through resurfaces wearing someone else's name.** One-line fix, unrelated to this product: **the
+> absent-default must be a value no legal seed can take** — `None` with an explicit `is None` check, not `-1`.
+>
+> #### THE CLEAN SPECIFICATION ANSWER, which avoids the class rather than guarding it
+>
+> **`C_stat^data` must NOT reuse the `bootstrap` receipt key.** Its empty form is indistinguishable from its
+> absent form at **three writer sites** where `or {}` is doing what it was written to do, so any guard on it
+> guards a distinction the writers have already erased. **Give the data-only product its own top-level block
+> with its own required keys** — product tag, data-factor sha256, and the unthinned-MC assertion — **and leave
+> `bootstrap` meaning exactly what it means today.**
+>
+> #### AND AN EXECUTION CONDITION, which is now a CONDITION rather than a suggestion
+>
+> **Whatever route lands must demonstrate on ONE replica, FROM THE ARTIFACT rather than from the code path,
+> that the MC weights entering training are bit-identical to the unthinned arrays:** a `hash_array` of
+> `w_truth` against `w_truth_full[imc]`, **one key in the built receipt, failing loudly.** *(The record is the
+> reason: `Route A` survived inspection until someone read a multiply four hundred lines away; `Route B` has
+> survived two inspections and acquired a defect in the second. **An execution check is the only thing that
+> has caught anything on this item.**)*
 >
 > ### THE RECONCILER PROFILE IS WORSE THAN I SAID, WHICH STRENGTHENS THE "NO RELAXATION" LINE
 >
