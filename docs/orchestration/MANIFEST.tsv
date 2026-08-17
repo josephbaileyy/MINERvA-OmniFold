@@ -64,6 +64,7 @@ docs/orchestration/DECISION-20260815-oi126-contrast-not-run.md	ARCHIVAL	document
 docs/orchestration/DETERMINATION-20260811-cause5-binding-half.md	LIVE	document		20260811	open		route-only		no	14	289	20575
 docs/orchestration/DETERMINATION-20260817-cause1-census-and-magnitude-measured.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	5	222	14979
 docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	6	252	17592
+docs/orchestration/DETERMINATION-20260817-cluster-sync-step1-safe-and-the-fork-is-gone.md	LIVE	document		20260817	open		route-only		no	2	126	7165
 docs/orchestration/DETERMINATION-20260817-oi60-rerun-costed.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	176	10923
 docs/orchestration/DETERMINATION-20260817-pet-oi82-oi60-oi41.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	153	8915
 docs/orchestration/DETERMINATION-20260817-pet-ten-items-state-and-oi126-shape.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	229	16762
