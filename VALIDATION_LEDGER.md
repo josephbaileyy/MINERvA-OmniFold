@@ -735,6 +735,20 @@ product the reader had in mind, and that reading came one edit from deleting a l
 **So for the artifact the four `\gbdtFive*` macros quote, the count is ZERO of seven, not one of seven.**
 Nothing in this table changes any status; it names the subject each status was always about.
 
+**PER-LEG EXTENSION, added 2026-08-17 by lane C.** The per-artifact column above is necessary and **not
+sufficient**: discharge is graded on four legs (`C`/`P`/`M`/`T`), and **a single cause can hold different
+legs for different artifacts at the same time.** Cause 1 is the live example — its `M` is measured on X's
+own bank while its `P` holds only for the footing-matched candidate — and a column keyed to the *cause*
+cannot express that. **That is a limit of the schema, not of the entries.**
+
+The per-leg grading, with the artifact named in the same row as each leg and every cell citing the
+artifact that establishes it, is
+[`docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md`](docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md).
+**These rows are unchanged and remain authoritative for cause-level state**; the board refines them per
+leg and per artifact. Three of its cells read weaker than this table implies, and one — cause 5's
+applicability to X — is graded **`N/A — UNDECLARED`** precisely because no session outside the owning lane
+has stated it.
+
 ## 2026-08-07 selection-complete five-band FPS active lateral — VERIFIED-NUMERIC, gate chain PASSED
 
 Job `56431823` (`sbatch_fps_active_lateral_chain.sh`), 53:56, all four steps rc=0, on the ten

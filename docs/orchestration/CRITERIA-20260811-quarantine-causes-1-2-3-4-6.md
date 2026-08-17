@@ -9,6 +9,23 @@ Subject: the seven construction causes at `VALIDATION_LEDGER.md:65-88`. Causes 1
 session's; cause 5 (frozen PET weights) is Session C's; cause 7 is discussed in §1 only because its
 recorded discharge does not cover the artifact this lane is gated on.
 
+> **POINTER 3, added 2026-08-17 by lane C — the citation in the line above no longer resolves, and it is
+> this document's own §4.4 finding landing on its own header.** `VALIDATION_LEDGER.md:65-88` now carries
+> Gate-6 member-trajectory rows (`VL119`–`VL121`); the seven causes are near `:690`, and grep for the
+> *"used one or more of"* sentence finds them. The ledger is **append-only**, so any line-number citation
+> into it decays by construction — which is exactly what §4.4 says about the discharge criterion, filed by
+> this document, about a different file.
+>
+> **Cite the immutable handles instead: rows `VL62`–`VL68`, under the heading
+> `### The seven causes, WITH THE ARTIFACT EACH IS DISCHARGED FOR — added 2026-08-11`.** VL ids do not
+> move when the file grows; line numbers do. Same remedy this repo already applies elsewhere: cite a
+> committed test, a receipt key, a VL id, or a commit — never a line number in a growing file.
+>
+> **Header text left as written**, per this document's convention and lane E's two pointers above.
+> Repaired under Joseph's 2026-08-17 two-session rule; the mediator verified the defect from the files
+> independently before authorizing. **Cause 1's `(§4.8)` is NOT re-repaired here — lane E's POINTER 2
+> already covers it, and doing it twice is `BEN-304`'s duplication.**
+
 ---
 
 ## 0. The framing decision, which is why no criterion could be written before

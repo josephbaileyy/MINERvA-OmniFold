@@ -57,7 +57,7 @@ docs/orchestration/CORPUS-20260811-gates-that-cannot-fail-sweep.md	LIVE	document
 docs/orchestration/CORROBORATION-20260816-oi8-g1-landing.md	ARCHIVAL	document		20260816	terminal		exact-path-only		yes	0	176	9887
 docs/orchestration/COST-20260817-mii-seed-scan-derivation.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	208	12034
 docs/orchestration/COVERAGE-SURVEY-20260802.md	ARCHIVAL	document		20260802	terminal		exact-path-only		yes	5	1753	186197
-docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md	LIVE	document		20260811	open		route-only	nd-unfolding/receipt_candidate_stamps_5d.py;nd-unfolding/receipt_cause1_endpoint_census_5d.py;nd-unfolding/receipt_construction_contract_5d.py;nd-unfolding/tests/test_uq_remediation.py	no	23	693	56181
+docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md	LIVE	document		20260811	open		route-only	nd-unfolding/receipt_candidate_stamps_5d.py;nd-unfolding/receipt_cause1_endpoint_census_5d.py;nd-unfolding/receipt_construction_contract_5d.py;nd-unfolding/tests/test_uq_remediation.py	no	23	710	57520
 docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md	ARCHIVAL	document		20260804	terminal		exact-path-only	docs/open-items/verify_open_items_restructure.py	yes	17	126	7737
 docs/orchestration/DECISION-20260815-joseph-oi6-oi8-oi126.md	ARCHIVAL	document		20260815	terminal		exact-path-only		yes	5	262	15435
 docs/orchestration/DECISION-20260815-oi126-contrast-not-run.md	ARCHIVAL	document		20260815	terminal		exact-path-only		yes	2	81	4872
@@ -285,7 +285,7 @@ docs/orchestration/RUNS.tsv	MACHINE	tabular-data	fe-fps-campaign		generated		exa
 docs/orchestration/SCHEDULING-STRATEGY.md	LIVE	document			open		route-only		no	9	212	14246
 docs/orchestration/SCOPING-20260810-engine-rebaseline-cost.md	ARCHIVAL	document		20260810	terminal		exact-path-only		yes	6	182	12988
 docs/orchestration/SCOPING-20260813-csyst-joint-nuisance-retraining.md	ARCHIVAL	document		20260813	terminal		exact-path-only		yes	2	348	25320
-docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	LIVE	document		20260817	open		route-only		no	2	232	15777
+docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	LIVE	document		20260817	open		route-only		no	3	232	15777
 docs/orchestration/SESSION-WORKFLOW.md	LIVE	document			open		route-only		no	3	170	8468
 docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md	LIVE	document		20260814	open		route-only	docs/orchestration/live_doc_indexed.py;nd-unfolding/pet/build_cstat_gate5_n50.py	no	16	1069	77774
 docs/orchestration/STEP2-20260806-niter3-budget-classification.md	ARCHIVAL	document		20260806	terminal		exact-path-only		yes	6	153	10985
