@@ -820,3 +820,5 @@ docs/orchestration/watch_g2_dump_resume.sh	MACHINE	shell-tool			generated		exact
 docs/orchestration/watch_g2_smoke_resume.sh	MACHINE	shell-tool			generated		exact-path-only		no	1	108	3560
 docs/orchestration/watch_slurm_array_resume.sh	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/test_watch_slurm_array_resume.py	no	9	162	7177
 docs/orchestration/whose_row.py	MACHINE	script			generated		exact-path-only	docs/orchestration/merge_guard.sh	no	17	867	49715
+docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md	LIVE	document		20260817	open		route-only	nd-unfolding/receipt_candidate_stamps_5d.py	no	0	233	16035
+docs/orchestration/PREDECLARE-20260817-candidate-stamp-receipt-causes-3-4.md	ARCHIVAL	predeclaration		20260817	terminal		exact-path-only	nd-unfolding/receipt_candidate_stamps_5d.py	yes	0	131	8755

@@ -240,6 +240,19 @@ The Provenance leg moved for causes 2, 3 and 4, but **only one hop up the chain*
 | 4 scalar jitter subtraction | MET | **MET** — `fixed_seed_null_norm_checked=1` and `upstream_fixed_seed_null_norm=5.8223488501140625e-50` read back **from the adopted product** (job `56695424`) | UNRESOLVED — `1.539` is a different ensemble | **MET** — `fixed_seed_null_checked` written unconditionally; N6 caught it and nothing else did | **OPEN — M and provenance** |
 | 6 incomplete statistical projection | **PARTIAL** — the `(E_avail,W)` projector's unguarded all-zero rows are now detected and reported (BEN-110); the ensemble leg and the corrected upstream input are untouched | **OPEN — no product rebuilt at all** | OPEN | **MET** for the coverage guard — numeric + static + pre-fix control; P1/P2 | **OPEN, and still furthest** |
 
+> **POINTER, added 2026-08-17 by lane E — the `P` cells for causes 3 and 4 above cite the wrong file, and
+> the leg is now measured on the right one.** *"Read back from the adopted product (job `56695424`)"*
+> resolves to `STAMPTEST2_bkgaware_meancentered.root`, whose own receipt records `test_product_only: true`,
+> `adopts_nothing: true`, `test_product_adopted: false` — and which is mean-centered only, so the
+> CV-centered arm was covered by nothing. Cause 2's box below re-cited itself to the regenerated
+> adoption-named arms for exactly this reason; causes 3 and 4 were not re-cited. **They are now**, against
+> `stamped_bkgaware_{mean,cv}centered_20260812.root` directly:
+> `nd-unfolding/uq_5d/receipt_candidate_stamps_5d.json` (branch **S1**, both negative controls ABSENT).
+> **This moves `P` and discharges nothing** — see
+> [`DETERMINATION-20260817-causes-3-4-provenance-measured.md`](DETERMINATION-20260817-causes-3-4-provenance-measured.md)
+> §5 for the two `M`-leg judgements that remain, including this document's own §2-vs-§3 disagreement on
+> cause 3's `M`. Row text left as written, per this repo's convention of leaving written history written.
+
 **UPDATED 2026-08-11 after job `56695424`. READ THE PRODUCT COLUMN BEFORE READING THE VERDICTS —
 the P legs above are MET for the FOOTING-MATCHED CANDIDATE, not for the product the note quotes.**
 The stamps were verified in a ROOT written by the new `adopt_unified_5d.py`. The currently-quoted

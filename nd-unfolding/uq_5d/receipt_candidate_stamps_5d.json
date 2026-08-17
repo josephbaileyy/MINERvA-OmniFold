@@ -1,0 +1,607 @@
+{
+  "adopts_nothing": true,
+  "criteria": "docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md",
+  "files": {
+    "A1_candidate_meancentered": {
+      "all_keys": [
+        "centering_convention",
+        "combined_source",
+        "fixed_seed_null_norm_checked",
+        "hCov_combined5d_total_uthrow",
+        "hInflation_g",
+        "joint_mean_shift_norm_checked",
+        "n_throws_checked",
+        "sqrt_tr_new",
+        "sqrt_tr_old",
+        "upstream_fixed_seed_null_norm",
+        "upstream_joint_mean_shift_norm",
+        "upstream_n_throws",
+        "uthrow_source"
+      ],
+      "exists": true,
+      "mtime_utc": "2026-08-12T05:43:34Z",
+      "named": {
+        "centering_convention": {
+          "present": true,
+          "value": "mean-centered"
+        },
+        "combined_source": {
+          "present": true,
+          "value": "uq_universe_5d_covariance_combined_bkgaware.root"
+        },
+        "uthrow_source": {
+          "present": true,
+          "value": "unified_throw_cov_5d_fluxfix_20260806_full160.root"
+        }
+      },
+      "note": "headline arm of the 2026-08-12 cause-2 discharge; P leg of causes 3 and 4 must be about THIS file",
+      "parameters": {
+        "fixed_seed_null_checked": {
+          "present": false
+        },
+        "fixed_seed_null_norm": {
+          "present": false
+        },
+        "fixed_seed_null_norm_checked": {
+          "present": true,
+          "value": 1
+        },
+        "joint_mean_shift_norm": {
+          "present": false
+        },
+        "joint_mean_shift_norm_checked": {
+          "present": true,
+          "value": 1
+        },
+        "n_throws": {
+          "present": false
+        },
+        "n_throws_checked": {
+          "present": true,
+          "value": 1
+        },
+        "sqrt_tr_block": {
+          "present": false
+        },
+        "sqrt_tr_new": {
+          "present": true,
+          "value": 5.269625166386846e-38
+        },
+        "sqrt_tr_old": {
+          "present": true,
+          "value": 4.357790406860002e-38
+        },
+        "sqrt_tr_unified": {
+          "present": false
+        },
+        "upstream_fixed_seed_null_norm": {
+          "present": true,
+          "value": 5.8223488501140625e-50
+        },
+        "upstream_joint_mean_shift_norm": {
+          "present": true,
+          "value": 1.878696733368378e-38
+        },
+        "upstream_n_throws": {
+          "present": true,
+          "value": 160
+        }
+      },
+      "path": "uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root",
+      "read": true,
+      "role": "subject",
+      "sha256": "4f168e83eaeb4bc7191a4e13e219c7ff06556e5ad30b9df4fcc249e6720c7ec2",
+      "size_bytes": 892170881
+    },
+    "A2_candidate_cvcentered": {
+      "all_keys": [
+        "centering_convention",
+        "combined_source",
+        "fixed_seed_null_norm_checked",
+        "hCov_combined5d_total_uthrow",
+        "hInflation_g",
+        "joint_mean_shift_norm_checked",
+        "n_throws_checked",
+        "sqrt_tr_new",
+        "sqrt_tr_old",
+        "upstream_fixed_seed_null_norm",
+        "upstream_joint_mean_shift_norm",
+        "upstream_n_throws",
+        "uthrow_source"
+      ],
+      "exists": true,
+      "mtime_utc": "2026-08-12T05:45:38Z",
+      "named": {
+        "centering_convention": {
+          "present": true,
+          "value": "cv-centered"
+        },
+        "combined_source": {
+          "present": true,
+          "value": "uq_universe_5d_covariance_combined_bkgaware.root"
+        },
+        "uthrow_source": {
+          "present": true,
+          "value": "unified_throw_cov_5d_fluxfix_20260806_full160.root"
+        }
+      },
+      "note": "conservative variant; NEVER stamp-verified by anything, not even a test product",
+      "parameters": {
+        "fixed_seed_null_checked": {
+          "present": false
+        },
+        "fixed_seed_null_norm": {
+          "present": false
+        },
+        "fixed_seed_null_norm_checked": {
+          "present": true,
+          "value": 1
+        },
+        "joint_mean_shift_norm": {
+          "present": false
+        },
+        "joint_mean_shift_norm_checked": {
+          "present": true,
+          "value": 1
+        },
+        "n_throws": {
+          "present": false
+        },
+        "n_throws_checked": {
+          "present": true,
+          "value": 1
+        },
+        "sqrt_tr_block": {
+          "present": false
+        },
+        "sqrt_tr_new": {
+          "present": true,
+          "value": 5.67431104455928e-38
+        },
+        "sqrt_tr_old": {
+          "present": true,
+          "value": 4.357790406860002e-38
+        },
+        "sqrt_tr_unified": {
+          "present": false
+        },
+        "upstream_fixed_seed_null_norm": {
+          "present": true,
+          "value": 5.8223488501140625e-50
+        },
+        "upstream_joint_mean_shift_norm": {
+          "present": true,
+          "value": 1.878696733368378e-38
+        },
+        "upstream_n_throws": {
+          "present": true,
+          "value": 160
+        }
+      },
+      "path": "uq_5d/readopt_20260811_footing/stamped_bkgaware_cvcentered_20260812.root",
+      "read": true,
+      "role": "subject",
+      "sha256": "dbcd5359c76e5c12b97ec8819980cb11c492f051f054a50d9b0bca2bd02fb9dd",
+      "size_bytes": 892232198
+    },
+    "STAMPTEST2_positive_control": {
+      "all_keys": [
+        "centering_convention",
+        "combined_source",
+        "fixed_seed_null_norm_checked",
+        "hCov_combined5d_total_uthrow",
+        "hInflation_g",
+        "joint_mean_shift_norm_checked",
+        "n_throws_checked",
+        "sqrt_tr_new",
+        "sqrt_tr_old",
+        "upstream_fixed_seed_null_norm",
+        "upstream_joint_mean_shift_norm",
+        "upstream_n_throws",
+        "uthrow_source"
+      ],
+      "exists": true,
+      "mtime_utc": "2026-08-12T00:31:54Z",
+      "named": {
+        "centering_convention": {
+          "present": true,
+          "value": "mean-centered"
+        },
+        "combined_source": {
+          "present": true,
+          "value": "uq_universe_5d_covariance_combined_bkgaware.root"
+        },
+        "uthrow_source": {
+          "present": true,
+          "value": "unified_throw_cov_5d_fluxfix_20260806_full160.root"
+        }
+      },
+      "note": "the file CRITERIA section 3 actually cites; must reproduce ben106-stamp-verify-complete-56695424.json",
+      "parameters": {
+        "fixed_seed_null_checked": {
+          "present": false
+        },
+        "fixed_seed_null_norm": {
+          "present": false
+        },
+        "fixed_seed_null_norm_checked": {
+          "present": true,
+          "value": 1
+        },
+        "joint_mean_shift_norm": {
+          "present": false
+        },
+        "joint_mean_shift_norm_checked": {
+          "present": true,
+          "value": 1
+        },
+        "n_throws": {
+          "present": false
+        },
+        "n_throws_checked": {
+          "present": true,
+          "value": 1
+        },
+        "sqrt_tr_block": {
+          "present": false
+        },
+        "sqrt_tr_new": {
+          "present": true,
+          "value": 5.269625166386846e-38
+        },
+        "sqrt_tr_old": {
+          "present": true,
+          "value": 4.357790406860002e-38
+        },
+        "sqrt_tr_unified": {
+          "present": false
+        },
+        "upstream_fixed_seed_null_norm": {
+          "present": true,
+          "value": 5.8223488501140625e-50
+        },
+        "upstream_joint_mean_shift_norm": {
+          "present": true,
+          "value": 1.878696733368378e-38
+        },
+        "upstream_n_throws": {
+          "present": true,
+          "value": 160
+        }
+      },
+      "path": "uq_5d/readopt_20260811_footing/STAMPTEST2_bkgaware_meancentered.root",
+      "read": true,
+      "role": "control_positive",
+      "sha256": "2465e3e95cbfa148e4939a18cdabb71e2a14b2ed879f420d8e555d952bb14312",
+      "size_bytes": 892170857
+    },
+    "X_july_cvcentered_negative_control": {
+      "all_keys": [
+        "hCov_combined5d_total_uthrow",
+        "hInflation_g",
+        "sqrt_tr_new",
+        "sqrt_tr_old"
+      ],
+      "exists": true,
+      "mtime_utc": "2026-07-14T21:04:46Z",
+      "named": {
+        "centering_convention": {
+          "present": false
+        },
+        "combined_source": {
+          "present": false
+        },
+        "uthrow_source": {
+          "present": false
+        }
+      },
+      "note": "feeds \\gbdtFiveCVTrace 6.24e-38; MUST come back with every stamp ABSENT",
+      "parameters": {
+        "fixed_seed_null_checked": {
+          "present": false
+        },
+        "fixed_seed_null_norm": {
+          "present": false
+        },
+        "fixed_seed_null_norm_checked": {
+          "present": false
+        },
+        "joint_mean_shift_norm": {
+          "present": false
+        },
+        "joint_mean_shift_norm_checked": {
+          "present": false
+        },
+        "n_throws": {
+          "present": false
+        },
+        "n_throws_checked": {
+          "present": false
+        },
+        "sqrt_tr_block": {
+          "present": false
+        },
+        "sqrt_tr_new": {
+          "present": true,
+          "value": 6.236702327843976e-38
+        },
+        "sqrt_tr_old": {
+          "present": true,
+          "value": 4.357790406860002e-38
+        },
+        "sqrt_tr_unified": {
+          "present": false
+        },
+        "upstream_fixed_seed_null_norm": {
+          "present": false
+        },
+        "upstream_joint_mean_shift_norm": {
+          "present": false
+        },
+        "upstream_n_throws": {
+          "present": false
+        }
+      },
+      "path": "uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware_uthrow_cvcentered.root",
+      "read": true,
+      "role": "control_negative",
+      "sha256": "b4edc66588f1b9c78bc9a30793419746dc2b95ae220950f17e7329c128fe3a55",
+      "size_bytes": 892241032
+    },
+    "X_july_meancentered_negative_control": {
+      "all_keys": [
+        "hCov_combined5d_total_uthrow",
+        "hInflation_g",
+        "sqrt_tr_new",
+        "sqrt_tr_old"
+      ],
+      "exists": true,
+      "mtime_utc": "2026-07-14T21:02:04Z",
+      "named": {
+        "centering_convention": {
+          "present": false
+        },
+        "combined_source": {
+          "present": false
+        },
+        "uthrow_source": {
+          "present": false
+        }
+      },
+      "note": "feeds \\gbdtFiveAdoptTrace 5.81e-38; MUST come back with every stamp ABSENT",
+      "parameters": {
+        "fixed_seed_null_checked": {
+          "present": false
+        },
+        "fixed_seed_null_norm": {
+          "present": false
+        },
+        "fixed_seed_null_norm_checked": {
+          "present": false
+        },
+        "joint_mean_shift_norm": {
+          "present": false
+        },
+        "joint_mean_shift_norm_checked": {
+          "present": false
+        },
+        "n_throws": {
+          "present": false
+        },
+        "n_throws_checked": {
+          "present": false
+        },
+        "sqrt_tr_block": {
+          "present": false
+        },
+        "sqrt_tr_new": {
+          "present": true,
+          "value": 5.807716496958672e-38
+        },
+        "sqrt_tr_old": {
+          "present": true,
+          "value": 4.357790406860002e-38
+        },
+        "sqrt_tr_unified": {
+          "present": false
+        },
+        "upstream_fixed_seed_null_norm": {
+          "present": false
+        },
+        "upstream_joint_mean_shift_norm": {
+          "present": false
+        },
+        "upstream_n_throws": {
+          "present": false
+        }
+      },
+      "path": "uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware_uthrow.root",
+      "read": true,
+      "role": "control_negative",
+      "sha256": "8feb8ba468411a66899e9edd0006b398a2e0c41c56c5b53e64cfebc6b1a0d72d",
+      "size_bytes": 892195314
+    }
+  },
+  "git": {
+    "dirty": true,
+    "head": "5fb7e38bf5e6f41a86f8860413820fa3d907420c"
+  },
+  "grades": {
+    "A1_candidate_meancentered": {
+      "cause4_null_check": {
+        "ratio_to_tol": 5.822348850114063e-38,
+        "tol": 1e-12,
+        "tol_source": "unified_throw_cov.py:445  tol = 1e-12 * max(||base||, 1.0); ||base|| ~ 1e-36 << 1 so max() binds => absolute 1e-12",
+        "value": 5.8223488501140625e-50,
+        "within_tol": true
+      },
+      "confirmations": [
+        "all 6 adopt-self-checked stamps present",
+        "upstream_n_throws = 160 matches predeclared",
+        "upstream_joint_mean_shift_norm = 1.878696733368378e-38 matches predeclared",
+        "upstream_fixed_seed_null_norm = 5.8223488501140625e-50 matches predeclared",
+        "centering_convention = 'mean-centered'",
+        "sha256 matches the committed receipt"
+      ],
+      "ingredients": {
+        "ratio": 1.2092424541784845,
+        "sqrt_tr_new": 5.269625166386846e-38,
+        "sqrt_tr_old": 4.357790406860002e-38,
+        "sqrt_tr_old_matches_predeclared": true
+      },
+      "mismatches": [],
+      "role": "subject",
+      "sqrt_tr_new_check": {
+        "predeclared": 5.2696e-38,
+        "read": 5.269625166386846e-38,
+        "rel_diff": 4.775767960706384e-06
+      }
+    },
+    "A2_candidate_cvcentered": {
+      "cause4_null_check": {
+        "ratio_to_tol": 5.822348850114063e-38,
+        "tol": 1e-12,
+        "tol_source": "unified_throw_cov.py:445  tol = 1e-12 * max(||base||, 1.0); ||base|| ~ 1e-36 << 1 so max() binds => absolute 1e-12",
+        "value": 5.8223488501140625e-50,
+        "within_tol": true
+      },
+      "confirmations": [
+        "all 6 adopt-self-checked stamps present",
+        "upstream_n_throws = 160 matches predeclared",
+        "upstream_joint_mean_shift_norm = 1.878696733368378e-38 matches predeclared",
+        "upstream_fixed_seed_null_norm = 5.8223488501140625e-50 matches predeclared",
+        "centering_convention = 'cv-centered'",
+        "sha256 matches the committed receipt"
+      ],
+      "ingredients": {
+        "ratio": 1.3021073789200188,
+        "sqrt_tr_new": 5.67431104455928e-38,
+        "sqrt_tr_old": 4.357790406860002e-38,
+        "sqrt_tr_old_matches_predeclared": true
+      },
+      "mismatches": [],
+      "role": "subject",
+      "sqrt_tr_new_check": {
+        "predeclared": 5.6743e-38,
+        "read": 5.67431104455928e-38,
+        "rel_diff": 1.946417933371264e-06
+      }
+    },
+    "STAMPTEST2_positive_control": {
+      "cause4_null_check": {
+        "ratio_to_tol": 5.822348850114063e-38,
+        "tol": 1e-12,
+        "tol_source": "unified_throw_cov.py:445  tol = 1e-12 * max(||base||, 1.0); ||base|| ~ 1e-36 << 1 so max() binds => absolute 1e-12",
+        "value": 5.8223488501140625e-50,
+        "within_tol": true
+      },
+      "confirmations": [
+        "all 6 adopt-self-checked stamps present",
+        "upstream_n_throws = 160 matches predeclared",
+        "upstream_joint_mean_shift_norm = 1.878696733368378e-38 matches predeclared",
+        "upstream_fixed_seed_null_norm = 5.8223488501140625e-50 matches predeclared",
+        "centering_convention = 'mean-centered'"
+      ],
+      "ingredients": {
+        "ratio": 1.2092424541784845,
+        "sqrt_tr_new": 5.269625166386846e-38,
+        "sqrt_tr_old": 4.357790406860002e-38,
+        "sqrt_tr_old_matches_predeclared": true
+      },
+      "mismatches": [],
+      "role": "control_positive",
+      "sqrt_tr_new_check": {
+        "predeclared": 5.269625166386846e-38,
+        "read": 5.269625166386846e-38,
+        "rel_diff": 0.0
+      }
+    },
+    "X_july_cvcentered_negative_control": {
+      "confirmations": [
+        "all 9 propagation stamps ABSENT, as required",
+        "sha256 matches the committed receipt"
+      ],
+      "ingredients": {
+        "ratio": 1.4311616084211403,
+        "sqrt_tr_new": 6.236702327843976e-38,
+        "sqrt_tr_old": 4.357790406860002e-38,
+        "sqrt_tr_old_matches_predeclared": true
+      },
+      "mismatches": [],
+      "role": "control_negative",
+      "sqrt_tr_new_check": {
+        "predeclared": 6.236702327843976e-38,
+        "read": 6.236702327843976e-38,
+        "rel_diff": 0.0
+      }
+    },
+    "X_july_meancentered_negative_control": {
+      "confirmations": [
+        "all 9 propagation stamps ABSENT, as required",
+        "sha256 matches the committed receipt"
+      ],
+      "ingredients": {
+        "ratio": 1.3327204740770018,
+        "sqrt_tr_new": 5.807716496958672e-38,
+        "sqrt_tr_old": 4.357790406860002e-38,
+        "sqrt_tr_old_matches_predeclared": true
+      },
+      "mismatches": [],
+      "role": "control_negative",
+      "sqrt_tr_new_check": {
+        "predeclared": 5.807716496958672e-38,
+        "read": 5.807716496958672e-38,
+        "rel_diff": 0.0
+      }
+    }
+  },
+  "keys_looked_for": {
+    "adopt_self_checked": [
+      "fixed_seed_null_norm_checked",
+      "joint_mean_shift_norm_checked",
+      "n_throws_checked",
+      "centering_convention",
+      "uthrow_source",
+      "combined_source"
+    ],
+    "named": [
+      "centering_convention",
+      "uthrow_source",
+      "combined_source"
+    ],
+    "note": "The UNION is looked for on every file, subjects and controls alike, so that 'absent' is a measured property of the file and not of which list it was checked against. Absence is reported, never omitted. NOTE the three upstream_* VALUE parameters are NOT in adopt_self_checked: adopt_unified_5d.py:215-219 fails closed on the three *_checked flags and three TNameds only, so job exit 0 does not by itself attest the values.",
+    "parameters": [
+      "sqrt_tr_old",
+      "sqrt_tr_new",
+      "n_throws_checked",
+      "upstream_n_throws",
+      "joint_mean_shift_norm_checked",
+      "upstream_joint_mean_shift_norm",
+      "fixed_seed_null_norm_checked",
+      "upstream_fixed_seed_null_norm",
+      "fixed_seed_null_norm",
+      "fixed_seed_null_checked",
+      "joint_mean_shift_norm",
+      "n_throws",
+      "sqrt_tr_unified",
+      "sqrt_tr_block"
+    ]
+  },
+  "predeclaration": "docs/orchestration/PREDECLARE-20260817-candidate-stamp-receipt-causes-3-4.md",
+  "purpose": "Provenance (P) leg of quarantine causes 3 and 4, read off the ADOPTION-CANDIDATE arms of job 56720356 rather than off the test product of job 56695424. Reads existing stamps; adopts nothing, recomputes nothing, makes no value quotable.",
+  "reader_sha256": "1628c76b3008780b7dbe7427c2b390f5119a90bc0a62df02e7c4b9f0be19d2f7",
+  "schema": "candidate-stamp-receipt/1",
+  "tolerance": {
+    "derivation": "unified_throw_cov.py:445  tol = 1e-12 * max(||base||, 1.0); ||base|| ~ 1e-36 << 1 so max() binds => absolute 1e-12",
+    "null_tol": 1e-12
+  },
+  "values_tex_untouched": true,
+  "verdict": {
+    "branch": "S1",
+    "positive_control_mismatches": {},
+    "positive_control_reproduced": true,
+    "scope": "P leg only, and for the CANDIDATE only. Under S1 this does NOT discharge cause 3 or cause 4: cause 4's M leg is recorded UNRESOLVED in CRITERIA section 2 and no stamp read changes that, and cause 3's M is graded differently in CRITERIA section 2 (M(ii) UNRESOLVED) than in section 3 (MET). Both are judgements and neither is taken here.",
+    "why": "both candidate arms carry all six self-checked stamps AND all three upstream_* values, matching the predeclaration; both negative controls came back with every stamp absent"
+  },
+  "written_at_utc": "2026-08-17T06:02:46Z"
+}

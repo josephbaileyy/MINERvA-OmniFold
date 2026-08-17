@@ -16,6 +16,17 @@ variant** — which was reason (ii) for the earlier refusal to declare.
 > `:73-78`, and a second citation ("line 325", the 37%-NON-negligible observation) had drifted to `364`.
 > Both are now content-cited. `orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md` §4.4.
 
+**2026-08-17 causes 3/4 one-liner (Lane E) — the `P` leg is now MET for BOTH, read off the adoption
+candidate itself, and NEITHER CAUSE IS DISCHARGED.** Both arms of job `56720356` carry all nine
+construction stamps with values matching the predeclaration digit for digit; the two July products the
+note quotes came back with every stamp ABSENT in the same run as negative controls. Predeclared branch
+`S1`. Receipt `uq_5d/receipt_candidate_stamps_5d.json`, reader `receipt_candidate_stamps_5d.py`, ~2 min
+on a login node. **This corrects the citation the line below and `CRITERIA` §3 both carry** — *"read back
+from the adopted product (job `56695424`)"* names `STAMPTEST2`, whose own receipt says `adopts_nothing:
+true`, and which is mean-centered only. Cause 4 stays OPEN on `M` (UNRESOLVED by construction) and cause
+3's `M` is graded two ways inside `CRITERIA-20260811`; both are judgements and neither was taken.
+`docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md`, `BEN-380`.
+
 **2026-08-11 BEN-106 verification one-liner — repaired stamp propagation is committed, but its
 provenance legs remain OPEN pending artifact read-back.** The first test product silently received no
 stamps despite an exit-0 success print (BEN-112) and is quarantined. Repair commit `5856eeb` captures

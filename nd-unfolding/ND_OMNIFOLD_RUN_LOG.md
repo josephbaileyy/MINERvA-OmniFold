@@ -9975,3 +9975,48 @@ argparse's message ever mentioned `sha256`. **The lane that verifies a gate shou
 ARE the evidence** and a PASS that did not bind them could survive deletion of its own proof. The commit's
 two documentation files were read and deliberately excluded: a token that dies on a doc edit while claiming
 to protect evidence teaches a later reader the wrong thing about what it guards.
+
+## 2026-08-17 — quarantine causes 3 and 4: the shared P leg measured on the adoption candidate (Lane E)
+
+Session E, commissioned by session `personal`. Predeclared at `9c03c67`
+(`docs/orchestration/PREDECLARE-20260817-candidate-stamp-receipt-causes-3-4.md`) **before any stamp was
+read**; branch set `S1`–`S5` with every predicted value sourced to a committed file.
+
+**Run.** `nd-unfolding/receipt_candidate_stamps_5d.py` (new; sha256
+`1628c76b3008780b7dbe7427c2b390f5119a90bc0a62df02e7c4b9f0be19d2f7`, **verified equal on both sides of the
+copy** — the cluster tree is `5fb7e38`, this checkout `00e794e`). Perlmutter `login08`, interactive,
+`rc=0`, ~2 minutes, **no batch job and no compute allocation consumed.** Whole stream to
+`/pscratch/sd/j/josephrb/lane-e/run.out` and filtered on read (BEN-026); `stderr` is the nine known
+duplicate-class `TInterpreter::ReadRootmapFile` warnings. Every ROOT opened `READ`; nothing rebuilt,
+nothing modified, nothing adopted, `values.tex` untouched.
+
+**Result: branch `S1`.** Both adoption-candidate arms of job `56720356` carry all six self-checked stamps
+**and** all three `upstream_*` values, matching the predeclaration digit for digit:
+
+    A1 stamped_bkgaware_meancentered_20260812.root  4f168e83…  892170881 B  mean-centered
+       sqrt_tr_old 4.357790406860002e-38  sqrt_tr_new 5.269625166386846e-38  ratio 1.2092424541784845
+    A2 stamped_bkgaware_cvcentered_20260812.root    dbcd5359…  892232198 B  cv-centered
+       sqrt_tr_old 4.357790406860002e-38  sqrt_tr_new 5.67431104455928e-38   ratio 1.3021073789200188
+    both: upstream_n_throws 160, upstream_joint_mean_shift_norm 1.878696733368378e-38,
+          upstream_fixed_seed_null_norm 5.8223488501140625e-50  (tol 1e-12, 37 orders of margin)
+
+The two ratios reproduce `VALIDATION_LEDGER.md:187-190`'s A1 ×1.209 / A2 ×1.302 and are **derived from
+operands carried in the same receipt**, per `CONVENTION-receipt-ingredients.md`. Positive control
+`STAMPTEST2` reproduced `ben106-stamp-verify-complete-56695424.json` exactly and its sha256
+`2465e3e9…` is recorded for the first time. **Negative controls: the two July products the note quotes
+came back with all nine propagation stamps ABSENT in the same run** — the reader shown failing in the
+direction it acts, and `S5` was declared to dominate `S1` so a leak there would have voided the subjects.
+
+**Receipt:** `nd-unfolding/uq_5d/receipt_candidate_stamps_5d.json`.
+
+**T legs re-derived rather than inherited** (BEN-344): three mutations in an isolated worktree, each
+failing **exactly one** test and leaving the others green — `unified_throw_cov.py:417` mixed-seed
+rejection disabled → cause-3 test fails *"SystemExit not raised"*; `:509` `fixed_seed_null_checked`
+dropped → cause-4 flag test fails; `:435` scalar jitter subtraction reintroduced → cause-4 AST test fails
+*"['st_uni - jitter_floor'] != []"*. Restored, `git diff HEAD` empty, full suite **35/35 pass**.
+
+**NO CAUSE IS DISCHARGED.** The `P` leg moved for causes 3 and 4, for the **candidate only**. Cause 4's
+`M` is UNRESOLVED by construction (`CRITERIA` §2: the counterfactual has no surviving specification) and
+cause 3's `M` is graded two different ways inside `CRITERIA-20260811` itself. Both are judgements and
+**neither was taken.** Full record and the three corrections to the citation chain:
+`docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md`, `BEN-380`.
