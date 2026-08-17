@@ -79,6 +79,46 @@ with no observer on either transition, will be stale whenever it is next read. I
 the tree sha it was measured against — the same remedy `BEN-382` proposes for the `Checks:` trailer, and the
 third notation of *evidence must be bound to what it is evidence about*.
 
+## Resolved same day — and the resolution is the sharper half of the finding
+
+Lane E reproduced the flip independently before acting on it (`8a34f12^` → 0, `8a34f12` → 1, `be06d45` → 1)
+and fixed it at `890fa0f`. Three facts this row was filed without, all re-measured here at `890fa0f`:
+
+**1. The commit that broke the trigger is the `OI-96` fix itself.** The pin generator and the tests that
+power-test it both mention the protected namespace in code. **So the remedy for the item falsified the trigger
+being reported on, in the same hour, and both were announced in one message** — measured before the fix was
+written, never re-measured after. Causally linked and still not connected, which is worse than staleness and
+better as evidence: no amount of care about *timing* helps when the two facts are the same act.
+
+**2. A committed assertion shipped on a tree where it was false.** `be06d45` added to the hook header:
+
+> `*** THE TRIGGER FIRED ON 2026-08-17 AND IS DELIBERATELY NOT HONOURED. DO NOT WIRE IT. ***`
+
+Verified here at exit 1. **This is `BEN-382`'s durable-PRESENCE defect in a third artifact — a hook comment —
+and what kept it harmless is that the `DO NOT WIRE IT` conclusion was right while its premise was false.**
+Safety by correct conclusion, not by true premise, is the thing that does not generalise.
+
+**3. Restored to exit 0**, verified: `PASS`, 33 of 294 in-code occurrences dispositioned, via **five
+line-level `# NS-EXEMPT` markers** (1 in `regen_canonical_namespace_field_pins.py`, 4 in
+`test_hash_bindings.py`, counted at HEAD rather than quoted). The lighter of the two sanctioned remedies — it
+leaves lane C's inventory untouched, and the guard **prints every exemption on every run**, so the narrowing
+lives in the output rather than in a document.
+
+### Two upgrades to this row's remedy, both lane E's
+
+**Bind a trigger to the sha AND state what would invalidate it.** This trigger was invalidated by a file
+*merely mentioning a string* — which no reader of *"exits 0 on a clean tree"* would predict. A sha tells you a
+reading is old; it does not tell you **what kind of edit ages it**, and that is the part a reader needs in
+order to know whether to re-measure.
+
+**The trigger is not a pending decision — it is a re-litigation latch on a decision already made.** `966d202`
+had already *declined* this exact wiring. So the trigger takes a settled no and converts it into a standing
+invitation to redo it, **with the re-opening condition delegated to a tree-global measurement nobody
+watches.** That reframing changes what the object is, not just how stale it is, and it is the strongest single
+sentence produced about it. **Three parties have now declined** — `966d202`, the mediator as hook owner, and
+this lane — **and none of the three is authorization to wire, which is the only direction that would need
+one.**
+
 ## Cross-references
 
 - `BEN-387` (lane E) — the guard's inversion, and the reason a green would not license the wiring anyway.
