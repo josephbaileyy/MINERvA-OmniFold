@@ -7,12 +7,31 @@ the raw pulls are in the job tmp dir and the commands are quoted in §6.
 
 ---
 
-## THE ONE NUMBER, WITH ITS SCOPE IN THE SAME SENTENCE
+> ## ⚠ CORRIGENDUM 2026-08-17, and it corrects THIS DOCUMENT's own headline
+>
+> **`28.50` was understated by `+37.1 %`. The lateral leg is `19` universes, not `5`, and I costed a
+> truncated attempt.** Raised by the mediator, verified independently here from `sacct` in the same turn.
+> **The re-seed figure is `39.078` A100-h, and every number in this document that contains `28.496` is
+> superseded by the arithmetic in §0 below.** The corrected headline:
+>
+> > **One additional estimator seed across all four blocks of the candidate costs `39.22` A100-hours
+> > PLUS `55.34` CPU task-hours (`2,764.7` CPU-core-hours) — and the `28.50 A100-h` figure is the
+> > `C_syst` path's GPU unfolds only, undercounted, which corrected is `99.6 %` of the GPU bill and
+> > `0 %` of the CPU bill, the CPU bill being the larger half.**
+>
+> **The two conclusions this document draws do not move**, and that is stated so the corrigendum is not
+> mistaken for a retraction: the figure is still ~all of the GPU bill and none of the CPU bill, and the
+> decision is still not a cost decision. What moves is the number itself — from `63 %` over the `24`
+> A100-h grant by one route to `63 %` over it by another, since `28.50/24 = 1.19` was wrong and
+> `39.078/24 = 1.63` is right.
 
-> **One additional estimator seed across all four blocks of the candidate costs `28.64` A100-hours
+## THE ONE NUMBER, WITH ITS SCOPE IN THE SAME SENTENCE — **SUPERSEDED, see the corrigendum above and §0**
+
+> ~~**One additional estimator seed across all four blocks of the candidate costs `28.64` A100-hours
 > PLUS `55.34` CPU task-hours (`2,764.7` CPU-core-hours) — and the `28.50 A100-h` figure is the
 > `C_syst` path's 175 GPU unfolds only, which is `99.5 %` of the GPU bill and `0 %` of the CPU bill,
-> the CPU bill being the larger half.**
+> the CPU bill being the larger half.**~~ Retained rather than deleted: the `28.496` operand is wrong and
+> the scope statement around it is right, and a reader who met the number elsewhere needs to find it here.
 
 The figure's extent gap is **not** a rounding term on the GPU side. It is **an entire second unit**, which a
 GPU-denominated grant does not reach — and the single largest leg in it (`2,759.1` CPU-core-hours, the
@@ -20,12 +39,99 @@ GPU-denominated grant does not reach — and the single largest leg in it (`2,75
 change, so funding does not move it.
 
 **A one-seed increment is not an `M(ii)` measurement.** At the predeclared `n >= 6` the same accounting gives
-**`171.85` A100-hours plus `332.0` CPU task-hours**, of which `170.98` A100-h (`99.4 %` of GPU) is the
-`C_syst` path alone. §5 derives both.
+**`235.34` A100-hours plus `332.02` CPU task-hours**, of which `234.47` A100-h (`99.6 %` of GPU) is the
+`C_syst` path alone. §5 derives the shape; **§0 carries the corrected operands** (§5's tables still read
+`28.496` and are marked superseded there).
 
 ---
 
-## 1. What `28.50` covers, re-derived this turn
+## 0. THE CORRECTION — a missing job id, and the check that would have caught it
+
+**Raised by the mediator; the defect is real; the ids below are from `sacct -j 55891346,55894759 -X` run
+in this turn, not from the message.** `55891346` is a **truncated attempt**:
+
+    55891346_0..4    COMPLETED  41.6-45.6 min   5 real universes        3.6264 A100-h
+    55891346_5,6     FAILED     34:32, 34:32 }
+    55891346_7,8     CANCELLED  19:56, 12:53  }  4 tasks of waste       1.6981 A100-h
+    55891346_[10-18%8] CANCELLED  00:00:00        never started         0
+    (index 9 appears in neither listing for this job)
+
+    55894759_0..4    COMPLETED  10-36 s         5 resume-guard SKIPS    0.0269 A100-h
+    55894759_5..18   COMPLETED  43.6-54.5 min  14 real universes       10.5811 A100-h
+
+**The array is `0-18` = 19 tasks, and the composition is `188 = 169 vertical + 18 lateral + 1 CV` — so the
+19 tasks are the 18 lateral universes plus the CV.** I costed 5 of them.
+
+**MY CORRECTION IS ITSELF A CORRECTION TO THE MEDIATOR'S, and it is the same principle that saved the
+`99` A100-h: do not extrapolate when you can measure.** The mediator proposed
+*"FORECAST re-seed `14.36` = 19 x 45.35 min"*, where `45.35` min is the mean of `55894759`'s **14** real
+tasks scaled to 19. **No scaling is needed: all 19 universes have a measured real production** — 5 in
+`55891346`, 14 in `55894759`, and the resume skips are exactly why the two sets are disjoint and complete.
+
+| | tasks | A100-h | basis |
+|---|---|---|---|
+| lateral+CV, `55891346_0..4` | 5 | 3.6264 | measured |
+| lateral+CV, `55894759_5..18` | 14 | 10.5811 | measured |
+| **lateral+CV, all 19** | **19** | **14.2075** | **measured, no extrapolation** (mean 44.87 min) |
+| *(mediator's forecast, for the record)* | *19* | *14.3601* | *14-task mean scaled to 19* |
+| excluded — resume-skip overhead `55894759_0..4` | 5 | 0.0269 | not work |
+| excluded — `55891346`'s 2 FAILED + 2 CANCELLED | 4 | 1.6981 | history and provenance, not a clean-run forecast |
+
+**The two figures agree to `1.1 %`; I use the measured one.** The `1.6981` A100-h of failed/cancelled work is
+kept out of **both** the as-run and the forecast totals, per the mediator's framing, which is right: a
+re-seed does not reproduce another run's failures.
+
+### Corrected arithmetic
+
+    RE-SEED  = 23.840 sweep(169) + 14.2075 lateral+CV(19) + 1.030 finalize(1) = 39.078 A100-h  [189 tasks]
+    FULL     = re-seed + 9.564 dump(16) + 0.021 chk(1)                        = 48.663 A100-h  [206 tasks]
+
+    published 28.496  ->  39.078   understated by +37.1 %
+    against the 24 A100-h grant    39.078 / 24 = 1.63x   (63 % over)
+
+    ONE additional estimator seed, all four blocks:  GPU 39.223 A100-h  +  CPU 55.337 task-h
+      C_syst share of the GPU column                 99.63 %
+      C_syst per seed / C_stat per seed              268x   (was quoted as 195x)
+    At the predeclared n >= 6:                       GPU 235.34 A100-h  +  CPU 332.02 task-h
+
+**`39.078` is MEASURED throughout** — every one of the 189 tasks in it has a realized elapsed. It is not a
+forecast, with one named assumption: **a re-seed resumes nothing**, because a new estimator seed invalidates
+every stored product, so the `55894759_0..4` skip path cannot recur. That assumption is load-bearing and it
+is an assumption, not a measurement. **The `dump` leg is still excluded and that exclusion IS verified**
+(`sweep_bank_5d.py`'s `do_dump` never calls `omnifold_loop`) — it is the one thing a re-seed genuinely reuses.
+
+### ⚠ THE LESSON, and it is about my own method, not the mediator's
+
+**Re-deriving a figure from its stated operands catches wrong arithmetic on stated inputs and is BLIND TO A
+MISSING INPUT.** My `3.626` reproduces to the digit — for 5 of 19 universes. **Every figure reconciles
+perfectly inside a scope that is too small**, so an ingredients receipt (`BEN-077`) is necessary and is
+**not sufficient**: it can only be falsified by its own operands.
+
+**The complementary check is one comparison: cross the id set against the DESIGN'S OWN MEMBER COUNT before
+trusting a per-leg total.** `sacct` reporting `5` where the composition says `18 lateral + 1 CV` is visible
+immediately, and the composition was **in this document**, two sections from the error.
+
+**The aggravating fact, and it is the whole finding: I HAD ALREADY USED THIS TECHNIQUE IN THIS DOCUMENT AND
+DID NOT APPLY IT TWICE.** The surviving vertical sweep was found precisely by scanning the window **by name**
+because every id the status log recorded was `CANCELLED` — and I then confirmed completeness by counting
+(`169 sweep5dBKGrun|COMPLETED` against 169 expected universes). **The lateral leg got neither the name scan
+nor the count**, because it had a plausible id that returned `COMPLETED` rows. **A `CANCELLED` id forces the
+search; a partially-`COMPLETED` id silently satisfies it.** That is the enabling condition, it is general,
+and it is the opposite of where I was looking. Filed `BEN-247`.
+
+**On the mediator's flagged unknown — *"whether the lateral leg is re-seedable at all… it could be a third
+hardcoded site"* — ANSWERED, and it is NOT:** §4 of this document already measured it.
+`sbatch_unfold_5d_detector_bkgaware_gpu.sh:37,51` passes `--seed 42` into
+`unfold_nd_omnifold_unbinned.py`, where `--seed` sets `random_state` on the classifiers
+(`:930-931`, `:956-959`) and the data/MC draw is a **separate** `--bootstrap-seed` (`:904-905`). **So the
+lateral arm has the two-role separation, is re-seedable today with no code change, and is the only `C_syst`
+arm that is.** The vertical sweep (`23.840` of the `39.078`) is still blocked by
+`sweep_bank_5d.py:252`, so **`39.078` does NOT imply the run is possible** — which is exactly the inference
+the mediator asked not to license.
+
+---
+
+## 1. What `28.50` covers, re-derived this turn — **§0 SUPERSEDES THIS SECTION'S LATERAL ROW AND TOTALS**
 
 `sacct -j 55892341,55892343,55891346,55891028,55912230,55919500 -X` — all `COMPLETED`, single node,
 `gres/gpu:a100=1` per task:
@@ -209,7 +315,14 @@ rows at all, so the window covers the whole history rather than merely containin
 
 I use the **later, post-fix** pass (`55849763`) for the forward figure and record the earlier one beside it.
 
-### The accounting
+### The accounting — **⚠ THE `C_syst` OPERAND IN BOTH TABLES BELOW IS SUPERSEDED BY §0**
+
+**The two tables keep `28.496` as written**, per this repo's convention of leaving written history written,
+and the corrected figures are stated here so no reader has to carry them from §0: `C_syst` per seed is
+**`39.078`** A100-h over **189** tasks (not `28.496` over 175); the one-seed GPU total is **`39.223`** and
+`C_syst` is **`99.63 %`** of it (not `99.49 %`); the `n>=6` GPU total is **`235.34`** (not `171.85`), which is
+**`9.8x`** the `24` A100-h grant (not `7.2x`). **The CPU columns are unaffected** — the defect was entirely
+in the lateral arm of the GPU leg.
 
 **One additional estimator seed, per block** — and note the two sides are different shapes, which is the
 thing most likely to be misread: for `C_syst` and `uthrow` one seed means **a whole alternative covariance
@@ -260,8 +373,12 @@ liveness, not for completeness.
 
 ## 7. What goes to Joseph
 
-1. **The `28.50` figure is right about what it measures and wrong as a total** — it is `99.5 %` of the GPU
-   bill and `0 %` of a CPU bill that is the larger half. **Do not authorize it as "the re-seed cost."**
+1. **The `28.50` figure is wrong twice over, and both ways understate.** It **undercounts its own leg** —
+   the lateral arm is 19 universes, not 5, so the `C_syst` re-seed is **`39.078`** A100-h, `+37.1 %` (§0);
+   and it is **`99.6 %` of the GPU bill and `0 %` of a CPU bill that is the larger half.** **Do not
+   authorize `28.50` as "the re-seed cost."** Against the `24` A100-h grant the corrected figure is
+   `1.63x`, so it still goes to Joseph — the *decision* the `28.50` implied is unchanged, the *number*
+   was not defensible.
 2. **The decision is not a cost decision.** Two of the four blocks cannot be re-seeded at any price today
    (`sweep_bank_5d.py:252` hardcoded; `unified_throw_cov.py`'s dual-role `--seed`), and those two are
    `99.5 %` of GPU and `99.7 %` of CPU. Funding does not move them.
