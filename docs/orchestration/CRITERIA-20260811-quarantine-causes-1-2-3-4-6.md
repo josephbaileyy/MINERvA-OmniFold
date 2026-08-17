@@ -270,6 +270,22 @@ The Provenance leg moved for causes 2, 3 and 4, but **only one hop up the chain*
 > §5 for the two `M`-leg judgements that remain, including this document's own §2-vs-§3 disagreement on
 > cause 3's `M`. Row text left as written, per this repo's convention of leaving written history written.
 >
+> **POINTER 1b, added 2026-08-17 by lane B — cause 3's `P` cell should be WITHDRAWN to PARTIAL, and the
+> re-cite above does not save it.** The `P` criterion has two clauses (§2) and the load-bearing one fails:
+> *"X's receipt records the single seed value"* — measured, **the candidate carries no seed key of any kind**,
+> on either arm, in the same `receipt_candidate_stamps_5d.json` cited above (13 keys, none a seed). The
+> *"one seed `1000`, 40 throw + 36 block slabs"* census is **complete and correct for the `uthrow` leg**, is
+> **never written into any product** (`unified_throw_cov.py`'s `--out-root` block stamps seven things, no
+> seed), and globs `.npz` slabs only — so it cannot see `combined_source`'s **188 universes, produced at
+> estimator seed `42` hardcoded** (`sweep_bank_5d.py:252`, no flag, no stamp; `analyze_universes_5d.py` has
+> **zero** occurrences of `seed`). **The grade is true of the smaller upstream and silent about the dominant
+> one.** Recommended cell: **PARTIAL — MET for `uthrow`, ABSENT for `combined_source`**. **Lane B has not
+> edited the cell** (`BEN-381`: the lane that measured a leg must not grade it) — that is lane C's or the
+> mediator's. Cause 4's `P` is **NOT** withdrawn; its criterion is about the null, not a seed. `M(i)`, `C`
+> and `T` are untouched. Full measurement, including what a real MET would require:
+> [`FINDING-20260817-a-seed-census-that-cannot-reach-the-product-it-grades.md`](FINDING-20260817-a-seed-census-that-cannot-reach-the-product-it-grades.md)
+> (`BEN-246`). **No number moves** — every leg is internally single-seeded; what fails is a verification claim.
+>
 > **POINTER 2, added 2026-08-17 by lane E — cause 1's row: `(§4.8)` DOES NOT RESOLVE, and its two open
 > legs are now closed by measurement.** §4 of this document runs **4.1 through 4.7**; there is no §4.8, so
 > the `C` cell's only evidence pointer is dangling. **The audit is real and is better than prose** — it is
