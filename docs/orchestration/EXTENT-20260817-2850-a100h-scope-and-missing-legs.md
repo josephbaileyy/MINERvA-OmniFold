@@ -335,7 +335,30 @@ Joseph rules.**
     55916613_[3-12%1]                CANCELLED by 112498 at 2026-07-14T16:34:07
 
 **`0.2917` A100-h / 2 seeds = `0.1458` A100-h per estimator seed.** `n=2`, and I am quoting the per-seed
-figure rather than a scaled total wherever a total is not needed. The array delivered 2 of 12; the 12-seed
+figure rather than a scaled total wherever a total is not needed.
+
+**`n` RAISED FROM 2 TO 11, on lane C's challenge that `268x` inherited an `n=2` with no spread estimate.**
+`bootstrap_nd.py`'s per-task cost does not depend on **which** seed role varies — same `.npz`, same
+`--iters 5`, same `lgbm` estimator, same 1-A100 hardware; `--fixed-data-seed` changes only which RNG seeds
+the weight draw. So the 9 real replicas inside `boot5dG 55871150` (`_3`..`_11`) measure the same operation,
+and pooling is **checked against the data rather than assumed** — the two sets' ranges nearly touch:
+
+    ai1est5d   n= 2   524-526 s   mean 525.0 s = 0.1458 A100-h   (fixed draw, varying estimator seed)
+    boot5dG    n= 9   505-519 s   mean 509.7 s = 0.1416 A100-h   sd 4.2 s
+    POOLED     n=11   505-526 s   mean 512.5 s = 0.1423 A100-h   sd 7.3 s = 1.4 %
+
+    ratio to C_syst's 39.078 A100-h/seed:  268x (ai1-only) | 275x (pooled) | 267-279x (per-task range)
+
+**So `268x` is good to about `±4 %` and now carries a measured spread instead of none. The conclusion is
+untouched at every value**, which is what C said it would be.
+
+**One observation against pooling, recorded so nobody over-reads the pooled figure:** the two `ai1est5d`
+tasks are the **two slowest of the eleven** — `526` and `524` s against a `boot5dG` maximum of `519`. Under
+random assignment that has probability `1/C(11,2) = 1.8 %`, which is **suggestive of a small real systematic
+in the `--fixed-data-seed` path (or in the node/day, 07-14 vs 07-13) and is a post-hoc test on a pattern I
+noticed, at `n=2`** — so it is not a finding. Its practical effect: **pooling would slightly UNDERSTATE the
+fixed-draw cost, so `0.1458` stays the headline as the conservative choice and the exact operation**, with
+the pooled set serving as the spread evidence rather than as the estimate. The array delivered 2 of 12; the 12-seed
 `\gbdtAiEstTrace` result came from the packed `ai1_packed_loop.sh` run inside an interactive `salloc`, which
 is **not separately attributable in `sacct`** — `FOOTING-20260817-gbdtaiesttrace-12-seeds.md:66-69` costs it
 independently at `~1 GPU-node-hour` from `CONC=6`, 2 waves. **My `1.750` A100-h for 12 seeds (`= 12 x
@@ -344,6 +367,38 @@ independently at `~1 GPU-node-hour` from `CONC=6`, 2 waves. **My `1.750` A100-h 
 I have not tried to reconcile them and the discrepancy is the packing, not the arithmetic. (Node width is
 in-repo, not from memory: `sbatch_boot5d_gpu_interactive.sh:4` requests `--nodes=1 --gpus=4`, and
 `gpus-per-node=4` appears elsewhere in the launcher set.)
+
+### ⚠ RECONCILED 2026-08-17, AND "THEY DO NOT AGREE" WAS MY OWN ASYMMETRIC COMPARISON
+
+**The packed run is NOT unattributable — I looked for the wrong name.** A covering name-scan for
+`ai1|est5d` over the four windows returns three job names, not one: `ai1est5d` (6 rows, the array),
+**`ai1int` (3 rows, the packed interactive run)** and **`ai1comb` (1 row, the combine)**. Measured, all on a
+full 4-A100 node (`gres/gpu:a100=4`, `NCPUS=128`):
+
+| job | state | elapsed | node-h | A100-h |
+|---|---|---|---|---|
+| `55922588` `ai1int` | CANCELLED | 00:01:02 | 0.0172 | 0.069 |
+| `55922613` `ai1int` | **TIMEOUT** | 01:00:20 | **1.0056** | 4.022 |
+| `55923713` `ai1int` | COMPLETED | 00:27:31 | 0.4586 | 1.834 |
+| `55924460` `ai1comb` | COMPLETED | 00:01:51 | 0.0308 | 0.123 |
+| | **as-run total** | | **1.5122** | **6.049** |
+
+**So `FOOTING`'s `~1 GPU-node-hour` is measurable after all, and as-run it is `1.51` node-hours — of which
+`1.01` is a job that TIMED OUT.** The `~1` figure lands almost exactly on the timeout.
+
+**And the reconciliation is not "packing" — it is that the two numbers are DIFFERENT QUANTITIES, which makes
+my own earlier sentence an instance of the failure this document keeps filing.** `FOOTING`'s figure is
+**allocation** (a whole 4-GPU node held for a wall-clock interval); mine is **work** (12 tasks x measured
+per-task GPU time). Those are never comparable, and I wrote *"they do not agree"* — a delta asserted across
+two conditions I had not named. **The correct statement:** the completing run plus combine is `0.4894`
+node-h and my work-based figure is `0.4374` node-h, **consistent to 11 %**, and `55923713` is a *lower*
+bound because `rg_skip_if_complete` means it only finished what `55922613` had not. **There was no
+disagreement to reconcile; there was a unit-of-account difference plus a wasted hour.**
+
+**Consequence for the ratios in the next subsection:** the honest AI1 denominator depends on which question
+is asked — `1.51` node-h **as-run including the timeout**, `~0.49` node-h **for a clean completing pass**, or
+`0.4374` node-h **of actual work.** Quoting any of them as *"the cost of an AI1 scan"* without saying which
+is the same defect one level down, so all three are stated here and the ratios below name theirs.
 
 ### ⚠ AND THAT CROSS-UNIT PAIR HAS ALREADY PRODUCED A RATIO — `~28.5x` IS WRONG TWICE OVER
 
@@ -361,11 +416,20 @@ numerator is the smaller of them:**
    ratio of *"1 seed of one thing"* to *"12 seeds of another"* measures nothing at all.
 
 **The quantity that cell wants — how much dearer the candidate footing is than AI1's — is the per-seed
-like-for-like ratio, and it is `268x`:** `39.078` A100-h per `C_syst` seed against `0.1458` A100-h per
-`C_stat` seed. Same unit, same operation shape, both measured. Across the unresolved FOOTING discrepancy,
-`39.078` against a **12-seed** AI1 scan is **`9.77x`** using FOOTING's `~1` node-hour (`= 4` A100-h) and
-**`22.3x`** using my measured `1.750` A100-h — **the spread between those two IS the FOOTING disagreement**,
-which is why no single ratio should be quoted without naming its denominator.
+like-for-like ratio, and it is `268x` (`267-279x` over the pooled `n=11` per-task range):** `39.078` A100-h
+per `C_syst` seed against `0.1458` A100-h per `C_stat` seed. Same unit, same operation shape, both measured.
+
+**If the 12-seed comparison is wanted instead, it has three denominators and they are not interchangeable**
+— the subsection above measures all three rather than leaving the discrepancy open:
+
+    vs AI1 as-run allocation incl. the TIMEOUT   1.5122 node-h = 6.049 A100-h  ->   6.5x
+    vs AI1 clean completing pass + combine       0.4894 node-h = 1.958 A100-h  ->  20.0x
+    vs AI1 work (12 x 0.1458)                    0.4374 node-h = 1.750 A100-h  ->  22.3x
+
+**The `~1 GPU-node-hour` that `FOOTING` quotes is none of these three exactly** — it sits almost on the
+timed-out job alone (`1.0056` node-h). **So a ratio against "the AI1 figure" is undefined until the
+denominator is named**, and the per-seed `268x` is preferable precisely because it needs no denominator
+choice at all.
 
 **C owns that cell and has been notified. Nothing in that file was edited from here.** This is lane A's
 "descendant ratio" hazard concretely: `~28.5x` does not string-match `28.50`, so a retraction of the parent
