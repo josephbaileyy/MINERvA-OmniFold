@@ -48,6 +48,40 @@
 #   exits 0 on a clean tree, move this to the run list as check 7. No other condition, no judgement
 #   call -- run the command.
 #
+#   *** THE TRIGGER FIRED ON 2026-08-17 AND IS DELIBERATELY NOT HONOURED. DO NOT WIRE IT. ***
+#   Recorded HERE, beside the trigger, so the next reader sees a DECISION rather than assuming the
+#   trigger was missed -- which is this header's own rule about declining a check, applied to a
+#   trigger. Ruling by the hook owner (mediator session, 2026-08-17); measured by lane E under
+#   OI-96; full record in `BEN-387` and `docs/OPEN_ITEMS.md`'s OI-96 row.
+#
+#     MEASURED: `python3 nd-unfolding/pet/check_canonical_designation.py` -> EXIT 0 on a clean
+#     tree. The trigger's stated condition is met, exactly and without interpretation.
+#
+#     AND THE CHECK STILL MUST NOT BE WIRED, because the trigger tests the wrong property. Its
+#     enforcement is a WHOLE-FILE occurrence count of the namespace, and mutating the receipt
+#     shows that count is INVERTED, not merely crude:
+#       repoint `annealed-nominal-complete-56563761.json`'s canonical_baseline path to a SIBLING
+#       inside the same protected directory -> count unchanged at 2, guard SILENT. That is the
+#       BEN-133 repoint class the guard exists for.
+#       delete the prose sentence at :245 -> count 2 -> 1, guard RED. A documentation tidy.
+#     So wiring it installs a check that reddens on an innocent edit: a committer who did nothing
+#     wrong CANNOT always make it pass, which fails the admitting rule at line 11 -- eleven lines
+#     above the trigger that would have installed it. It would train lanes to `--no-verify`, which
+#     is the cost this dispatcher's two other exclusions exist to avoid.
+#
+#     THE GENERAL FORM, which is why this block is long: A TRIGGER WRITTEN TO REMOVE JUDGEMENT IS
+#     PRECISELY THE ONE PLACE NOBODY RE-DERIVES THE PROPERTY. Automating a decision does not
+#     verify the predicate it automates -- it guarantees the predicate stops being checked. "Green
+#     today" and "a committer who did nothing wrong can always make it pass" are different claims,
+#     and the trigger asserts only the first.
+#
+#     WHAT WOULD ACTUALLY UNLOCK IT: replace the occurrence count with a field-level check, then
+#     re-derive the admitting rule against the replacement. The field-level half now exists for
+#     the protected namespace -- 44 declared pins in check 6, see this file's `verify_hash_bindings`
+#     line and `state/regen_canonical_namespace_field_pins.py` -- so the remaining question is
+#     whether anything in `check_canonical_designation.py` is still worth wiring once the pins
+#     cover the repoint class. That is a judgement call, which is the point.
+#
 # ADMITTED TO THE RUN LIST 2026-08-14: docs/orchestration/verify_receipt_artifacts.py, as check 7.
 # It was in NEITHER list -- the third instance of the exact silence this header's last paragraph is
 # about (verify_hash_bindings.py, then check_canonical_designation.py above, now this).
