@@ -144,7 +144,16 @@
     "environment": "setup_salloc_env.sh -> root_6_28: Python 3.11.14, ROOT 6.28/12 (NOT the tensorflow module, under which ROOT is not importable -- BEN-347)",
     "dispatch": "./alloc_run.sh, per AGENTS.md's serial-work guidance; orchestrator inside the allocation; no external srun --jobid=",
     "log": "/pscratch/sd/j/josephrb/p4-stages456-20260816/run.log, committed as docs/orchestration/state/p4-stages456-20260816-run.out (whole stream; filtered on read, BEN-026). FORCE-ADDED: .gitignore:13-15 ignores *.out/*.err/*.log, so the first commit of this receipt cited a log git had not carried -- the same trap as e7aea2c and KNOWN_ISSUES 48, in which verify_receipt_artifacts.py reads green on exactly this case.",
-    "runner_and_probes_committed_to": "docs/orchestration/state/ (scratch is purgeable)"
+    "runner_and_probes_committed_to": "docs/orchestration/state/ (scratch is purgeable)",
+    "slurm": "57128458.1 (claude-hold, urgent_milestone, nid004254), dispatched via ./alloc_run.sh per AGENTS.md",
+    "SLURM_ATTRIBUTION_VERIFIED_NOT_ASSUMED": {
+      "checked": "sacct -j 57128458 step records, run 2026-08-16 20:48 PDT",
+      "job_and_step": "job start 2026-08-16T15:37:28; step .1 15:38:09 -> 16:26:07, 00:47:58, COMPLETED",
+      "matches_this_runs_own_log": "run.log recorded start 2026-08-16T22:38:14Z and end 23:26:07Z, i.e. 15:38 and 16:26 PDT -- agreeing with the step record to the second",
+      "step_0_is_the_tmp_incident": "57128458.0 bash 15:37:33-15:37:39, 6s, FAILED -- the first dispatch, which died on `bash: /tmp/p4_runner_laneB.sh: No such file or directory` because /tmp is node-local (BEN-347). The step record corroborates that account independently of the log.",
+      "job_later_TIMED_OUT": "2026-08-16T18:37:31 after 03:00:03, AFTER this chain completed, so it does not affect this receipt. A later check of mine wrongly attributed itself to this job; corrected in RECEIPT-20260816-hrowindex4d-readback.json.",
+      "so_this_receipt_was_right": true
+    }
   },
   "product_digests": {
     "std_component_manifest.json": "269232245870632884d6e589ac8d7aa9ba7fb4e07d0860e077cbd98fe6de04b5",

@@ -9784,3 +9784,41 @@ as a remaining gap. **Bounded conclusion: nothing verified it between 2026-08-10
 
 Read-only throughout; write set is this receipt, the log and three probes. `W_AXIS = 4` remains unpinned
 at `p4_project_4d.py:27` — raised with lane C for repair-12 or a follow-on, not edited here.
+
+## 2026-08-16 — CORRECTION: the `hRowIndex4D` receipt named an allocation that had already timed out, and `alloc_run.sh` working correctly is what hid it (lane B)
+
+**`BEN-027` inside a receipt.** `RECEIPT-20260816-hrowindex4d-readback.json` recorded
+`slurm: 57128458` — asserted from memory of an earlier dispatch rather than from a command run in the
+same turn. Measured now: **`57128458` TIMED OUT at `2026-08-16T18:37:31` PDT after `03:00:03`, about
+1h44m before that check ran.**
+
+**The right one, derived from step records rather than reasoning:**
+
+```
+sacct -j 57142574   .0  20:04:56-20:05:25  29s   the C4/C5 content-identity probe
+                    .1  20:16:40-20:16:52  12s   THE hRowIndex4D READBACK
+                    .2  20:17:43-20:17:52   9s   the 5D key listing
+                    .3  20:18:40-20:18:54  14s   the hRowIndex5D extension
+```
+
+Four dispatches, four steps, in the order issued. Cross-check: `337399f` landed `23:21:19 -0400` =
+`20:21` PDT, inside `57142574` (started `20:04:51` PDT). **Every measured value in that receipt is
+unaffected — the products were read, not the queue. The defect is attribution, not result.**
+
+**And the stages 4-6 receipt was RIGHT, now verified rather than assumed:** `57128458.1`,
+`15:38:09 → 16:26:07`, `00:47:58`, `COMPLETED` — agreeing **to the second** with that run's own log
+(`22:38:14Z → 23:26:07Z`). A bonus corroboration falls out: **`57128458.0`, 6 s, `FAILED`** is the first
+dispatch that died on `bash: /tmp/p4_runner_laneB.sh: No such file or directory`, so the step record
+confirms `BEN-347`'s node-local `/tmp` account independently of the log.
+
+**WHY IT WAS INVISIBLE, which is the transferable part.** `AGENTS.md` documents that `alloc_run.sh`
+*"auto-requests a fresh one when the previous 3-hour allocation has expired"* — so **the wrapper behaved
+exactly as designed, every dispatch succeeded, and nothing failed to prompt a re-check.** A stale id
+survives precisely when the tooling is good: an expired allocation that *broke* the run would have been
+caught in seconds.
+
+**Same family as this session's `fetch && rebase && commit` defect and it generalises the same way: bind
+a claim to the thing that can be re-derived, and re-derive it in the turn you assert it.** A job id in a
+receipt is a measurement, not a label — and so is a job id in a dispatch footer, which is how the same
+stale figure reached four lanes as *"held and idle, leave it up"*. **A constraint block is a status
+report and goes stale like any other.**

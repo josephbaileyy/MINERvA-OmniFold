@@ -113,7 +113,7 @@
     ]
   },
   "provenance": {
-    "slurm": "57128458 (claude-hold), dispatched via ./alloc_run.sh per AGENTS.md",
+    "slurm": "57142574.1 (claude-hold, nid004146), dispatched via ./alloc_run.sh",
     "environment": "setup_salloc_env.sh -> root_6_28, Python 3.11.14, ROOT 6.28/12 (BEN-347)",
     "products_read": [
       "std_proj4d_candidate.root (READ)",
@@ -123,6 +123,15 @@
     ],
     "c5_digest_carried_forward_not_reverified": "950f8cb15c5a0bd785d65e7f85f4cb40fa86e27383973f82ef15c7ef525c1263",
     "write_set": "exactly this receipt JSON plus a force-added log (KNOWN_ISSUES 48); nothing in candidate/, no ROOT output, nothing on the 20-path execution surface",
-    "log": "docs/orchestration/state/hrowindex4d-readback-20260816.out (force-added)"
+    "log": "docs/orchestration/state/hrowindex4d-readback-20260816.out (force-added)",
+    "SLURM_ATTRIBUTION_CORRECTED": {
+      "superseded_value": "57128458 (claude-hold), dispatched via ./alloc_run.sh per AGENTS.md",
+      "why_it_was_wrong": "the job id was asserted from memory of an EARLIER dispatch instead of from a command run in the same turn -- BEN-027, inside a receipt. 57128458 had already TIMED OUT at 2026-08-16T18:37:31 PDT after 03:00:03, about 1h44m before this check ran, and ./alloc_run.sh silently auto-requested a fresh allocation exactly as AGENTS.md documents it will. The wrapper behaving correctly is what made the stale id invisible: nothing failed, so nothing prompted a re-check.",
+      "derivation_of_the_right_one": "sacct -j 57142574 step records: .0 20:04:56-20:05:25 (29s, the C4/C5 content-identity probe), .1 20:16:40-20:16:52 (12s, THIS readback), .2 20:17:43-20:17:52 (9s, the 5D key listing), .3 20:18:40-20:18:54 (14s, the hRowIndex5D extension). Four dispatches, four steps, in the order issued.",
+      "cross_check": "this receipt's commit 337399f landed 2026-08-16 23:21:19 -0400 = 20:21 PDT, inside 57142574 (started 20:04:51 PDT) and 1h44m after 57128458 ended",
+      "the_content_identity_probe_ran_in": "57142574.0",
+      "the_5d_extension_ran_in": "57142574.3",
+      "what_is_unaffected": "every measured value in this receipt -- the products were read, not the queue; the defect is provenance attribution, not result"
+    }
   }
 }
