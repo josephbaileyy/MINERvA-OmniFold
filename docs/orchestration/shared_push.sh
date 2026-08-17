@@ -125,7 +125,24 @@ WT="$(mktemp -d)/wt"
 cleanup() { git worktree remove --force "$WT" >/dev/null 2>&1 || true; git worktree prune >/dev/null 2>&1 || true; }
 trap cleanup EXIT
 git worktree add --detach -q "$WT" "$REM_SHA" || { say "CANNOT CHECK :: could not create the worktree"; exit 2; }
-if ! git -C "$WT" cherry-pick "$REM_SHA..$HEAD_SHA" >/dev/null 2>&1; then
+
+# ONLY the commits that are not ALREADY UPSTREAM BY CONTENT. Found by dogfooding this script on the
+# second consecutive push: the first push landed a commit under a NEW sha (that is what cherry-picking
+# does), so the local branch then held a commit patch-equivalent to one already on the remote, and
+# re-picking it conflicted with itself. `git cherry` compares patch-ids rather than shas, which is
+# exactly the question being asked -- "is this change already there" -- and `rev-list` cannot answer it.
+# Without this the script works once and refuses forever after, which is worse than not existing.
+PICKS="$(git cherry "$REM_SHA" "$HEAD_SHA" | awk '$1=="+"{print $2}')"
+if [ -z "$PICKS" ]; then
+    cleanup; trap - EXIT
+    verify_untouched || exit 1
+    say "nothing to push :: all $N_AHEAD local commit(s) are already upstream BY CONTENT"
+    say "  (different shas, identical patches -- your local $BRANCH is behind, not ahead)"
+    exit 0
+fi
+N_PICK="$(printf '%s\n' "$PICKS" | grep -c .)"
+[ "$N_PICK" = "$N_AHEAD" ] || say "note :: $((N_AHEAD - N_PICK)) of $N_AHEAD local commit(s) already upstream by content; skipping them"
+if ! git -C "$WT" cherry-pick $PICKS >/dev/null 2>&1; then
     git -C "$WT" cherry-pick --abort >/dev/null 2>&1 || true
     cleanup; trap - EXIT
     verify_untouched || exit 1
@@ -141,7 +158,7 @@ if ! git -C "$WT" push -q "$REMOTE" "HEAD:$BRANCH"; then
 fi
 cleanup; trap - EXIT
 verify_untouched || exit 1
-say "PUSHED :: $N_AHEAD commit(s) as $NEW -> $REMOTE/$BRANCH"
+say "PUSHED :: $N_PICK commit(s) as $NEW -> $REMOTE/$BRANCH"
 say "NOTE :: your local $BRANCH is intentionally BEHIND $REMOTE/$BRANCH."
 say "  Resetting it would write the shared tree, which is what this script avoids."
 say "  A stale local HEAD is not a lost push -- confirm with: git branch -r --contains $NEW"
