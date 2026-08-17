@@ -77,7 +77,7 @@ the nearer of PASS/FAIL.
 | | | P | **MET** — `receipt_candidate_stamps_5d.json`, S1 | **OPEN** — stamps `ABSENT` |
 | | | M | **OPEN — reason corrected today; see §3** | **OPEN** |
 | | | T | **MET** — N6 (caught a defect nothing else did), N7 | **MET** |
-| **5** | frozen PET weights | all | **N/A ON ITS MERITS** — established 2026-08-17; ledger sentence routed to B and **not yet landed** (§4) | **N/A, same** |
+| **5** | frozen PET weights | all | **N/A ON ITS MERITS** — established 2026-08-17, declaration **LANDED** in `VL66` at `d1c5f90` (§4) | **N/A, same** |
 | **6** | incomplete statistical projection | C | **PARTIAL** — BEN-110 detects all-zero rows; ensemble leg + corrected upstream input untouched | **PARTIAL** |
 | | | P | **OPEN** — no product rebuilt at all | **OPEN** |
 | | | M | **OPEN** | **OPEN** |
@@ -338,7 +338,8 @@ process.** That is a real difference in what lane B's stamping repair has to sup
 > covariance is *right* for 42-vs-1000 and *wrong* within the 42-group, so the error is **structured and
 > directional** — not boundable by one correction factor and not labellable conservative.
 >
-> **THE ARGUMENT I CONSIDERED FOR INDEPENDENCE, AND WHY IT DOES NOT RESCUE (A).** The four legs at seed 42
+> **THE ARGUMENT I CONSIDERED FOR INDEPENDENCE, AND WHY IT DOES NOT RESCUE (A) — recorded as
+> `CONSIDERED-AND-DECLINED` with its mechanism, not as absent, so that a later measurement of the decorrelation has a stated argument to revisit `(B)` against rather than one to re-derive.** The four legs at seed 42
 > operate on **different inputs**, so a shared seed initialises the same RNG state but consumes draws against
 > different data — perhaps the perturbations decorrelate. **That is an empirical claim nobody has measured**,
 > which puts it in exactly `M(ii)`'s own position. **Using it to choose the specification would be letting an
@@ -666,15 +667,38 @@ another.
 > **Established by Assistant, not by me, which is what makes it usable** — I am the cause's owner, and my own
 > reason for grading it `UNDECLARED` was that a quorum containing its owner is thin. The route was to read
 > `DETERMINATION-20260811-cause5-binding-half.md` **against the question**, where §7 already answers it:
-> recoil is *"a different estimator"*, and `OPEN_ITEMS` item 6 states no recoil-PET component is
-> transferable. Assistant then traced the one route by which cause 5 could reach X and found it **absent**:
+> recoil is *"a different estimator"* (`:233-237`, *"What this determination does not do"* — read this turn).
+> Assistant then traced the one route by which cause 5 could reach X and found it **absent**:
 > X's background is **MC-derived** (`sweep_bank_5d.py:171-177`, `mc_background` plus per-universe
 > `w_bkg_*`), the estimator is **lgbm on every leg**, and **the recoil-PET budget is a DOWNSTREAM CONSUMER of
 > the shared bkgaware bank rather than an input to it.**
 >
-> **The ledger sentence is routed to B — clerical, attributed to Assistant, and explicitly not me and not
-> Assistant, per my own reason. It has NOT yet landed**, so this board reads `N/A on its merits` with the
-> declaration pending rather than `N/A` outright.
+> **LANDED 2026-08-17 in `VL66` at `d1c5f90`** — routed to B as clerical, attributed to Assistant, and
+> explicitly not me and not Assistant, per my own reason. The board's `pending` clause is retired.
+>
+> **⚠ AND MY OWN §4 CARRIED THE SAME BAD CITATION, WHICH I AM RECORDING RATHER THAN QUIETLY DROPPING.** The
+> sentence above read *"`OPEN_ITEMS` item 6 states no recoil-PET component is transferable."* **`OI-6` is the
+> standard-P4 purity decision (`docs/OPEN_ITEMS.md:74`) and says nothing about transferability.** Found by
+> lane B while landing the declaration; **B corrected it in the ledger row and recorded that it failed rather
+> than silently repairing the address**, which is the reason it reached me at all. Re-derived here rather than
+> accepted: the claim's live home is **`OI-3`, `docs/OPEN_ITEMS.md:71`** — *"Recoil-only covariance cannot be
+> transferred and the joint full-event construction is not built"* — and its original phrasing is
+> **archived** at `docs/OPEN_ITEMS-ARCHIVE-2026-08.md:834` (*"…automatically transferable to the new
+> estimator."*), which is the sentence the `DETERMINATION` quotes. A covering `grep -ciE 'transferab'` over
+> the live `docs/OPEN_ITEMS.md` returns **`0`**, so the bare ordinal had **no** referent there to be
+> mis-numbered against — it was pointing at a document that no longer contains the claim in any form.
+> **A renumbered/archived item plus a bare ordinal is `CLAUDE.md`'s own rule broken in transit** (*item ids
+> are prefixed with their document's short name*) and it is the same decay class as this board's `POINTER 3`
+> on `CRITERIA-20260811`'s line-range header citation. **I received the citation and repeated it without
+> resolving it, which is the very failure §4 is about, committed in §4's own paragraph.**
+>
+> **AND A CAVEAT ON WEIGHT, WHICH PROTECTS MY GRADE RATHER THAN WEAKENING IT — B's, and it is right.**
+> `OI-3`'s owner cell reads **`PET / cause 5 owner`**. So the transferability claim is **the owning lane's
+> own statement**: it corroborates the declaration's background and **must not be counted as a second
+> outside voice.** My `UNDECLARED` grade's entire content was that nobody outside the owning lane had said
+> the cause does not reach X — **so a corroboration sourced to the owner cannot be what discharges it.**
+> **The outside evidence is Assistant's `sweep_bank_5d.py` trace, and it stands alone.** That is a thinner
+> footing than the two-source reading, and it is the correct one.
 >
 > **AND THE PROCESS LESSON IS ABOUT MY GRADING, NOT IN ITS DEFENCE.** Assistant's note: *the weakness was
 > never in the evidence — the answering document existed and nobody had read it against the question.* **Two
