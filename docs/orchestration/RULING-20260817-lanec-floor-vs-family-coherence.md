@@ -39,8 +39,24 @@ half of the worry is answered and should be dropped rather than carried as a cav
 
 ### (a) THE FLOOR IS ON `central_vector`; THE FAMILY IS ON `xsec`. Different keys, and the mismatch has a KNOWN DIRECTION.
 
+> **CONFIRMED IN CODE 2026-08-17, not conjectured — and the confirming file predated the question.**
+> `docs/orchestration/state/probe-oi126-tail-floor-20260817.py`, the probe that produced the `8.6088%`
+> itself, does both halves in one file:
+>
+> ```
+> :21   X = np.array([np.load(p)["xsec"].ravel(order="C") for p in ... GATE5_REPLICA_XSEC.npz])   # family
+> :30   F.append(np.asarray(z["central_vector"]))                                                  # floor
+> :38   rsd = A.std(0, ddof=1) / mu                                                                # same fn, both
+> ```
+>
+> **So the ratio is `rel_sd` of `xsec` over `rel_sd` of `central_vector`, established from the producing
+> code rather than inferred.** And the probe's docstring is *titled* `COMPARABILITY` — it caught the
+> `range/mean` vs `rel_sd` trap and concluded *"only `rel_sd` is comparable to the family's."* **That is
+> true of the statistic and false of the quantity: a `rel_sd` of a different key is still not comparable.
+> A comparability check that ran on one axis licenses nothing on another** (`BEN-386`'s shape).
+
 `docs/orchestration/state/probe-oi120a-csyst-k-20260814.py:29` — the probe that produced `VL130` —
-reads **`z["central_vector"]`**. `VL130`'s own ledger text states the consequence:
+reads the same **`z["central_vector"]`**. `VL130`'s own ledger text states the consequence:
 
 > **"SHAPE ONLY** — `central_vector` sums to 1 by construction, so it is blind to normalization and
 > **understates** the absolute noise."
@@ -67,14 +83,23 @@ different measurements on the same draws:**
   **This** is the per-cell floor. `FLOOR_INTERMEDIATE` says nothing about it.
 
 **So the per-cell floor's brake is not `FLOOR_INTERMEDIATE`; it is `VL130`'s own:** `PROVISIONAL`,
-shape-only, and a **per-sd fractional uncertainty of `35.36%`** at `n=5` (`1/√(2·4)`). On the denominator
-alone that puts `7.18×` at **`5.30×`–`11.11×`**. *"About one seventh"* is really *"between a ninth and a
-fifth"* before anything else in this section.
+shape-only. **And the tail floor is a DIFFERENT POPULATION from `VL130`'s**: `probe-oi126-tail-floor-20260817.py:28`
+iterates `for n in (2, 3, 4, 5)` over `fullevent_floor_42_0/draw_{n}` — **`n=4`**, excluding draw 1, which
+the `56863958` receipt records as *"EXISTING `member_1` artifact, reused unmodified, NOT retrained"* and
+which lives under `fullevent_ml_ensemble/`, outside the floor directory. So the applicable per-sd
+fractional uncertainty is `1/√(2·3)` = **`40.82%`**, the `n=4` figure, not `VL130`'s `35.36%`. **On the
+denominator alone that puts `7.18×` at `5.10×`–`12.13×`.** *"About one seventh"* is really *"between a
+tenth and a fifth"* before anything else in this section.
 
-**Rider on the dispatch's own arithmetic, offered as a question and not a correction:** it states the bias
-correction as *"for `n=4`, `c4=0.9213`"*, but `VL130` is **`n=5` TERMINAL** and `c4(5) = 0.9399856`
-(→ `9.1583%`, `7.33×`). **Which `n` the floor statistic was computed over should be stated**, because the
-receipt carries both an `n=4` and an `n=5` population and they were separate ledger states.
+> **RIDER WITHDRAWN, and the withdrawal is the more useful record.** I raised, as a question, that the
+> dispatch bias-corrected with `c4(n=4) = 0.9213` while `VL130` is `n=5` TERMINAL. **`n=4` is correct** —
+> `:28` reads four draws, for the good reason above. **The question was already answered in the file that
+> produced the number, which landed at `a80b167`, `2026-08-17T14:42:36-04:00`, and this ruling at
+> `15:02:20-04:00` — twenty minutes later.** So I asked instead of reading, and the artifact was there.
+> **That is `BEN-239` — evidence sitting unread — committed ONE COMMIT after I filed it** (`0eb1f80`).
+> The finding's own rule applied to itself: *"no document I read answers this" is a claim about the
+> reader.* Recorded here rather than in the row, because the row already states the class and what this
+> adds is that stating a class does not inoculate the stater.
 
 ### (c) THE TWO SIDES ARE STRATIFIED BY DIFFERENT VARIABLES, so a single median over the tail averages over the axis each one depends on.
 
@@ -116,6 +141,13 @@ The floor draws run at **`bootstrap_seed = -1`** on identical inputs and identic
 
 **Direction unmeasured. So it is an approximation with a named, untested sensitivity — which is why the
 answer to "does it bound" is `no` rather than `yes with a caveat`.**
+
+**AND THE PROBE ALREADY BRAKED ITSELF, which should travel with the number:**
+`probe-oi126-tail-floor-20260817.py:61-62` prints *"TRAP 1 STILL APPLIES: n=4 against n=50. An sd from four
+draws is a noisy estimate; the direction of any bias is NOT established here and **this ratio is indicative
+only**."* **The producing code labelled its own output indicative-only. Nothing in §2 contradicts that
+label — §2 says why the label cannot be lifted by adding draws**, since more draws fix `n` and fix neither
+the key mismatch nor the stratification gap.
 
 **AND A CORRECTION TO THE DISPATCH'S GROUNDING, which changes what the ask to Joseph would be.** The
 dispatch's branch (2) calls a Gate-5-condition identical-seed repeat *"`INV-129`'s mandate for the
