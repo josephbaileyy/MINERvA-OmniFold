@@ -204,6 +204,43 @@ phase map); rather than accept the survivor or let a silent default stand, the i
 raises and is exercised — the same move as manufacturing an unwritable tmpdir in a subprocess.
 **8/8 green under default, forced-colour, forced-plain and forced-TTY.**
 
+**Acceptance check: the suite now resolves to ONE number under both colour settings.** Authoritative
+baseline, environment attached: **`3 failed / 1478 passed / 1 skipped` at `4eab7d1` under
+`NO_COLOR=1 PY_COLORS=0`, macOS off-cluster** — measured independently by this lane and by the mediator,
+agreeing exactly. All three failures are the known off-cluster trio (macOS `/private/var` symlink;
+absent `/pscratch` paths). The 2/3/4 spread is fully explained: **2** predates `shared_push.sh`,
+**3** is correct with colour off, **4** was colour *plus* the stale read corrected immediately below.
+
+> ### ⚠ CORRECTION — the sentence retained beneath this was FALSE WHEN SENT, though true when measured
+>
+> The retained text below claimed `4 failed, 1477 passed` and named 2 live pipeline-rc instances in
+> `docs/orchestration/shared_push.sh`. **At `4eab7d1` the file has `set -o pipefail` at `:50`,
+> `live_instances = 0`, `n_candidates = 47`, and `test_no_LIVE_pipeline_instances` passes.** Lane A had
+> closed both defects at `e5b9f3a`.
+>
+> **The mechanism is not simply a stale read, and it is self-inflicted.** I ran the suite, then
+> committed with `git fetch && git rebase && git push` **in one command** — so the rebase pulled
+> `e5b9f3a` in *between* the measurement and the commit. Measured: at `337399f`, the tree I actually
+> ran against, `grep -c pipefail docs/orchestration/shared_push.sh` returns **0**; `e5b9f3a` is **not**
+> an ancestor of `337399f` and **is** an ancestor of `4eab7d1`. **So the committed tree was never the
+> measured tree, and a commit message asserting a suite count was wrong at its own commit.**
+>
+> **RULE, and it generalises past this instance: if a measurement is going into a commit message,
+> rebase BEFORE measuring, or re-measure after the rebase.** `fetch && rebase && commit` as one step
+> guarantees the two differ whenever a peer has pushed. This lane used that idiom all session; this is
+> the first time it changed a reported result, and it will not be the last shared-checkout instance.
+> Cheap companion guard, which this campaign keeps re-deriving: **re-read the file, or run
+> `git log -1 -- <path>`, immediately before writing a claim about its contents** — `BEN-027` for
+> cluster state and `BEN-228` for derived facts, applied to another lane's active file.
+>
+> **What survives:** the `|| true` observation, which is about the sweep's rule rather than the file.
+> A trailing `|| true` is a *deliberate* discard of the return code, so counting it as a live
+> pipeline-rc instance is a **false positive**. Worth raising with the sweep's owner precisely *because*
+> there are now zero instances — nothing is red, so nobody is under pressure to make it green the wrong
+> way. Not acted on here; `shared_push.sh` is lane A's and A is active in it.
+>
+> **Superseded text retained verbatim below, per this directory's convention.**
+
 **Acceptance check: the suite now resolves to ONE number under both colour settings —
 `4 failed, 1477 passed, 1 skipped`** — where three lanes previously disagreed at 2, 3 and 4. The fourth
 failure is *not* colour and *not* this file: `test_no_LIVE_pipeline_instances` reports 2 live instances,
@@ -212,3 +249,11 @@ active file. **Removing the noise revealed a signal the noise was hiding**, whic
 fixing rendering-dependence rather than pinning around it. Note for its owner: both instances end
 `|| true`, so the return code is deliberately discarded and this may be a sweep false-positive rather
 than a defect — but the test asserts `0`, so the disposition is theirs. Not touched here.
+
+**And what the fix bought is more than one test going green, which is the stronger form of this
+addendum.** Before it, the suite **could not produce a stable number across two machines running
+identical source** — so *"did this change break something?"* was unanswerable by comparison, which is
+the only question a baseline exists to answer. **A test whose result depends on the runner does not
+merely fail sometimes; it makes every other count in the same run uncomparable.** Three lanes spent an
+hour reconciling 2 versus 3 versus 4 across a tree that had not changed. That, rather than one fragile
+assertion, is the cost of asserting a rendering.
