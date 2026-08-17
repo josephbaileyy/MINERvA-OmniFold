@@ -9822,3 +9822,73 @@ a claim to the thing that can be re-derived, and re-derive it in the turn you as
 receipt is a measurement, not a label — and so is a job id in a dispatch footer, which is how the same
 stale figure reached four lanes as *"held and idle, leave it up"*. **A constraint block is a status
 report and goes stale like any other.**
+
+## 2026-08-17 — Joseph's question answered: the stage-6 marginal-vs-direct disagreement is an IDENTITY, not a commutation effect (`BEN-319`)
+
+**Append-only.** Executor lane. **READ-ONLY:** five ROOT reads on the login node under
+`setup_salloc_env.sh`, plus local code reads. Nothing written on the cluster, no job submitted or
+cancelled, **no run needed or requested**. Receipt:
+`docs/orchestration/state/RECEIPT-stage6-marginal-vs-direct-anatomy-20260817.json`.
+
+**Allocation state DERIVED in the turn this was written, not carried (`BEN-303`):** `57128458` **TIMEOUT**,
+ended `2026-08-16T18:37:31` after `03:00:03` — that is the dead id the stage-6 run was reported under.
+`57142574` **RUNNING** since `2026-08-16T20:04:51`. This analysis used neither; login-node reads only.
+
+**THE ANSWER: neither mathematics nor a defect, as the question was posed.**
+`max | rel − (frac_seen − 1) | = 1.187e-14` against `max|rel| = 0.7285`, where `frac_seen[r]` is the summed
+**reported** 5D `hUnfoldND` over column `r`'s W bins over the 4D `hUnfoldND`. **The cross-section
+conversion cancels exactly: the cross-check IS the per-column content ratio minus one and carries no
+information beyond it.** `corr = 1.000`, verified **algebraically** rather than relied on, because a
+correlation of 1 can still hide an offset.
+
+**ALL THREE COMMUTATION MECHANISMS REFUTED BY ONE TABLE.** Median `|rel|` by reported-W-count: `nW=1 →
+0.0572`, `2 → 0.0519`, `3 → 0.0363`, `4 → 0.0215`, `5 → 0.0190`, `6 → 0.0264`. **At `nW=1` the row of `M`
+has one entry — the "marginalization" is multiplication by a single width and none occurs — and those bins
+disagree the MOST.** A commutation effect must **vanish** where there is nothing to marginalize; this one
+is maximal there. **The wrong sign of dependence, which no coupling strength repairs.**
+
+**WHAT IT IS:** a typical 4D column reports **2 of its 6** W bins (median coverage `0.333`, fully covered
+`3.56%`). On the commensurable subset — `frac_seen` within 1% of 1, `n=702` of `4825` — the two products
+agree to **`0.45%` median, max `0.999%`**. The `4.4%` is inherited one-for-one from two reported supports
+being different subsets of one spectrum.
+
+**PROJECTOR EXONERATED INDEPENDENTLY:** `M @ x5` against the 5D producer's own `hXSecND_dropLast_flat` —
+which no projecting-lane code touches — agrees at `max rel 3.107e-16`, median exactly `0`.
+`p4_project_4d.py:22-25` already asserted this; it is **confirmed by measurement rather than cited.**
+
+**NOISE STORY EXCLUDED BY DATA, NOT ARGUMENT** (`BEN-025`, realized exceedance): median `|rel|` by
+cross-section quartile is **flat** at `[0.0373, 0.0456, 0.0553, 0.0439]`, and the `|rel|>10%` bins are
+**3.6× brighter** than typical (`3.852e-41` vs `1.070e-41`). Only the five bins above `50%` are faint.
+*"Concentrated in low-occupancy bins"* is plausible and **false**.
+
+**AGAINST THIS LANE, TWICE, in the course of producing it.** (1) The mechanism-2 probe returned exactly
+`0.0000` on all 4825 bins — **the signature of an identity, not an agreement** — so it was re-run under
+three weightings: unfolded-xsec `1.19e-14`, **UNIFORM** `1.03e-14`, width-only `1.14e-14`. **A quantity
+that does not move when you change its own weights is not measuring the weighting** (`BEN-316`'s shape in
+this lane's own instrument). **Its real content was kept rather than deleted:** invariance under uniform
+weights means completeness has **no W-dependence within a column**, so mechanism 2 via efficiency is
+**structurally absent** rather than small — which is a different and stronger statement than "we measured
+it and it was tiny." (2) A *"|rel| grows with W-shape concentration"* result was **withdrawn as
+corroboration** on noticing its top quartile `[1.00,1.00]` was exactly the `nW=1` bins — `BEN-300` applied
+to this lane's own evidence.
+
+**THE DEFECT IS THE LABEL, filed as `BEN-319`.** The printed line and the manifest present
+`median / p90 / max / over3%` as **estimator disagreement** when they measure **support mismatch** — and
+that framing licensed an entire physics hypothesis space. **It fails by being INVESTIGATED rather than
+loudly.** Fix: report `frac_seen` alongside, or quote only the commensurable subset. **NOT PATCHED** —
+repair-12 was under this lane's verification when this was found, and the lane that verifies a gate should
+not also edit the module under it.
+
+**CONVENTION INTACT AND STRENGTHENED.** Bin-by-bin equality was never coherent between products on
+different supports, so retiring the `3%` gate (2026-08-09) was right. **One wording correction:** the
+docstring says the comparison *"characterises the independent unfold"* — it does **not**. It characterises
+**the support difference between the two products**, a third thing belonging to neither estimator.
+
+**STILL OPEN, and not to be read as closed:** `frac_seen > 1.01` in **1876 of 4825 columns (39%)** — the
+summed **reported** 5D content **exceeds** the 4D content, which *"the 5D reports a subset"* cannot
+explain. **The well-posed question survives — why do the two unfolds distribute content differently across
+columns given different supports — and that is where mechanisms (1) and (3) could legitimately live.**
+Carried to Joseph as a proposal; no run designed and none requested. It is smaller and better posed than
+the question this lane was handed, **and saying so is not a claim to have answered it.**
+
+*Long form:* `docs/orchestration/FINDING-20260817-a-crosscheck-that-measures-a-different-thing-than-its-name.md`.
