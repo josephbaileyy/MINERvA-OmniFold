@@ -1,5 +1,14 @@
 # SCOREBOARD 2026-08-17 — the seven quarantine causes, all four legs, candidate vs quoted product
 
+> ## The one thing to take from this board
+>
+> **THE QUOTED COLUMN CANNOT MOVE BY REMEDIATION.** `receipt_candidate_stamps_5d.json` runs both July
+> products as **negative controls, named by the macro each feeds**, and every named stamp comes back
+> **`ABSENT`** — 4 keys where the candidate arms carry 13. X predates the stamping, so
+> **"X gets replaced, not repaired."** That is a structural fact about the deliverable, not a grading
+> opinion. A reader who takes one line from this board should take that one and not *"1 of 7"*.
+> Promoted to the top on the mediator's instruction; detail in §1.
+
 **Written by lane C (PET) on the mediator's dispatch** (`HANDOFF-20260817-1133Z.md` §"The four dispatches"
 item 4). **Nothing here adopts anything, discharges anything, or lifts the 2026-07-12 quarantine.**
 `docs/analysis-note/` untouched; `values.tex` untouched.
@@ -37,9 +46,9 @@ the nearer of PASS/FAIL.
 | | | P | **MET** — job `56720356`, path+sha256 | **OPEN** — stamps `ABSENT` |
 | | | M | **MET** — `5.3478×` floor (corrected from `4.83×`, BEN-109) | **OPEN** |
 | | | T | **MET** — `f7_cv_centered_required`, N3/N4 | **MET** |
-| **3** | varying estimator seeds | C | **MET** | **MET** |
+| **3** | varying estimator seeds | C | **PARTIAL — scoped; INAPPLICABLE to the dominant block** | **PARTIAL — same scope** |
 | | | P | **MET** — `receipt_candidate_stamps_5d.json`, S1 | **OPEN** — stamps `ABSENT` |
-| | | M | **OPEN — costed, not merely unresolved; see §2** | **OPEN** |
+| | | M | **OPEN and NOT CURRENTLY MEASURABLE — see §2 and §2b** | **OPEN, same** |
 | | | T | **MET** — N5, re-derived | **MET** |
 | **4** | scalar jitter subtraction | C | **MET** | **MET** |
 | | | P | **MET** — `receipt_candidate_stamps_5d.json`, S1 | **OPEN** — stamps `ABSENT` |
@@ -117,6 +126,79 @@ being runnable, and it is the cheapest open cell on the board.
 `FOOTING` document while adding this board's pointer row to `CATALOG.md` — the very step the pre-commit
 hook refused to let me skip. **The index requirement surfaced a correction to the document being
 indexed.** That is a stronger argument for the rule than the one the hook gives.
+
+**AND THE "COSTED" HALF OF MY OWN CELL WAS ALSO WRONG — corrected 2026-08-17.** I wrote *"`OPEN` — costed
+at ~1 GPU-node-hour … the cheapest open cell on the board."* **Wrong twice.** That figure prices **AI1's
+footing** — `of_inputs_5d.npz`, fixed-data-seed 0, no flux universes — which is precisely the footing
+`FOOTING-20260817` **disqualified**. The measured unit on the candidate footing is **28.50 A100-h per
+re-seed**, ~28.5×. And "costed" implies configurable, which §2b shows it is not. **So the cell is not
+cheap and not runnable, and I had it as both.** I took the figure from a `CATALOG` row rather than from a
+measurement, which is the thing this board grades other cells down for.
+
+## 2b. Cause 3's `C` leg is scoped, and `M(ii)` is not currently MEASURABLE on either leg
+
+**`C` corrected from MET to PARTIAL.** I graded it MET both columns off `CRITERIA` §2's citation
+(`unified_throw_cov.py:330-331, 370-371` — `do_combine` rejects mixed-seed slabs). Lane B established that
+the guard's coverage **excludes the dominant block**:
+[`FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-block.md`](FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-block.md)
+— *"the dominant block's products are not in the guard's population at all, and there is no seed provenance
+anywhere on that path to be present or absent."* Nothing stamps the sweep seed into its products, and
+`analyze_universes_5d.py` has **zero** occurrences of `seed`. **So the single-seed property of the dominant
+block holds by hardcoding and is checked by nothing** — it would not be noticed if it stopped holding.
+`MET` for the throw/block units, **inapplicable** to `C_syst`. Graded `PARTIAL`.
+
+**And `M(ii)` cannot be configured on either leg. Both verified from the tree, not from relay:**
+
+| leg | seed | why `M(ii)` cannot be run |
+|---|---|---|
+| per-**universe** (`C_syst`, 169 universes — the dominant block) | **`42`** | `sweep_bank_5d.py:252` carries it as a **literal**; the module has **14** `add_argument` calls and **none for seed**. Unreachable, and unstamped, so a scan could not even prove which seed a product used. |
+| per-**throw** (throw/CV/ML blocks) | **`1000`** | `unified_throw_cov.py:525` has **exactly one** `--seed`, and `:223` does `rng = np.random.default_rng(args.seed + gj)` to draw **which band shifts** — one flag, two roles. Varying it moves the **draw**, so *"estimator seed varied with the draw held fixed"* is **unsatisfiable**. |
+
+**Consequence for the board's own language:** cause 3's `M` is **not** *"unmeasured pending a cost
+decision."* It is **blocked on two code changes** — lane B's specified stamping repair for the sweep, and a
+seed/draw separation in the throw path — **and only after those is it a cost question.** Joseph's cost
+decision is **downstream** of that, not parallel to it. **Pricing a run that cannot be configured is what
+produced both wrong figures on this cell**, mine (~1 GPU-node-hour, wrong footing) and the 28.50 A100-h
+one (right footing, unsatisfiable condition).
+
+## 2c. `M(ii)`'s referent — PROPOSAL, awaiting a second or a dissent
+
+The mediator asked: **which leg's seed does `M(ii)` mean?** My answer has two parts and the second is the
+one I think is actually open.
+
+**Part 1 — "which leg" is already answered, and not by me.** `VL141` records it as consequence (b):
+**`M(ii)` must vary BOTH seeds.** That is not a fresh choice — it is grounded in the criterion's own defect
+statement, which says *"per-throw **or** per-universe unfolds drawn with different estimator seeds."* Both
+ensembles are named in the defect, so a magnitude covering only one measures only part of it. **I am not
+re-deciding this; I am pointing at it**, and `VL141` also states the reason it needed its own row: *"a
+false quotable claim about the candidate, independent of cause 3."*
+
+**Part 2 — the real gap, and it is a SPECIFICATION GAP rather than an ambiguity.** `CRITERIA` §2 asks for
+*"**the** magnitude of what varying seeds would have contributed"* — **singular magnitude, two seeds** — and
+it does **not** say whether that is:
+
+* **(A) per-leg and summed** — scan the sweep's seed, scan the throw path's seed, add the two contributions; or
+* **(B) jointly on the composite** — vary both together in one scan and take the resulting spread.
+
+**These are different numbers, and choosing between them is a physics decision, not a reading.** (A)
+treats the two legs' estimator noises as independent contributions to be added; (B) does not, and would
+capture any correlation between them. The covariance sums blocks, so (A) is the construction-shaped answer
+and (B) is the ensemble-shaped one. **The criterion is silent, and no amount of careful reading makes it
+speak** — which is the test the mediator set for calling something a gap rather than an ambiguity.
+
+**So: recorded as a specification gap that needs a decision, not papered.** And note the ordering it
+implies: **the gap is answerable now, on paper, at zero cost**, whereas the *measurement* it governs is
+blocked behind two code changes. So answering it does not unblock the run — but leaving it unanswered means
+the code changes would be made without knowing what they must enable, and (A) and (B) do not require the
+same instrumentation. **(A) needs each leg's seed independently variable. (B) needs both variable in one
+process.** That is a real difference in what lane B's stamping repair has to support.
+
+**My recommendation, offered for second-or-dissent and not taken:** **(A), per-leg and summed**, on the
+ground that `CRITERIA` §0 defines `M` as *"measured on X's own inputs"* and X is constructed as a **sum of
+blocks** — so a per-block magnitude is the one that composes the way the artifact does, and it is also the
+only one that can be reported per leg when one leg's instrumentation lands before the other's. **If the
+mediator or Assistant dissents toward (B), the dissent should say what correlation between the two legs'
+estimator noise it expects to be non-negligible**, because that is the only thing (B) buys over (A).
 
 ## 3. Cause 4: the REASON the `M` cell was unreachable is false, and the cell still does not move
 
