@@ -5,6 +5,19 @@
 call: *"whether `C_stat`'s object is DATA-STATISTICS-ONLY or TOTAL statistics. `SPEC-20260814` discusses the
 signal factor's effects at `:419` and `:495` without stating intent."*
 
+> **⚠ CITATION DEFECT IN THIS FILE'S OWN FIRST REVISION, recorded rather than silently fixed.** Both
+> citations of the DAG were **bare** — `PET_UQ_REMEDIATION_STATUS.md:738-758` — from a document living in
+> `docs/orchestration/`, where no such file exists. **A bare filename is a citation whose resolution depends
+> on the reader's working directory**, and in a repo holding both `nd-unfolding/` and `nd-unfolding/pet/`
+> the natural guess for a PET file is the wrong one by exactly one directory: the mediator looked in
+> `nd-unfolding/pet/`, got nothing, and nearly reported the citation unresolvable before finding it one
+> level up. **Now repo-relative in both places.** *(The exact string `nd-unfolding/pet/…` is the mediator's
+> reconstruction and does not appear in my text — but the ambiguity that produced it is mine, and a
+> citation that requires the reader to guess a directory is not better than one that names the wrong
+> directory.)* **Third instance today of a citation landing near-but-not-on** — `:36` for `:37`, `OI-6` for
+> `OI-3`, and this. **In all three the near-miss is what makes it expensive: a citation that lands nowhere
+> gets checked and fixed; one that lands nearby gets believed or silently abandoned.**
+
 **The mediator is right that the spec never states the intent.** Both cited passages
 (`CSTAT-D0d`, `CSTAT-D3`) describe the signal factor's *effects on the mask* and neither states what the
 object IS. **That gap is real and it is mine.** Nothing was run to produce this determination.
@@ -13,7 +26,7 @@ object IS. **That gap is real and it is mine.** Nothing was run to produce this 
 
 ## 1. RULING: TOTAL statistics — and it is not the spec's choice, it is the DAG's
 
-**`PET_UQ_REMEDIATION_STATUS.md:738-758`, Gate 5 F7's own text, *"For every replica, in this exact order"*:**
+**`nd-unfolding/PET_UQ_REMEDIATION_STATUS.md:738-758`, Gate 5 F7's own text, *"For every replica, in this exact order"*:**
 
 > 1. *"Enumerate complete, ordered **data, signal-MC, and background-MC** inventories before any training
 >    subset."*
@@ -43,7 +56,7 @@ arguing for its *presence*: there was nothing for the spec to decide.
 ## 2. AND IT IS CORRECT BY DESIGN, not merely specified — because no other component carries it
 
 **The declared budget has no MC-statistics component.** Measured over `SPEC-20260814` and
-`PET_UQ_REMEDIATION_STATUS.md`: `C_stat` (48), `C_syst` (12), `C_ML` (9), `C_retrain` (5), `C_train` (2),
+`nd-unfolding/PET_UQ_REMEDIATION_STATUS.md`: `C_stat` (48), `C_syst` (12), `C_ML` (9), `C_retrain` (5), `C_train` (2),
 `C_syst_joint` (1). **`C_MCstat` — or any spelling of it — occurs zero times.**
 
 And `C_syst` cannot absorb it: systematic universes vary **physics parameters**, not **sample size**. A flux
@@ -103,6 +116,66 @@ measures**, not evidence the construction is broken.
 at the **unthinned** signal MC while every replica is built at a **thinned** one, and the map from that
 stream to the answer is a **trained network** — nonlinear, and unlike the Stay-Positive refinement it is
 **active everywhere, including the band.**
+
+### The `N_eff` arithmetic — verified, and it must NOT be read as the bootstrap being mis-scaled
+
+The mediator reached the same conjecture independently within the hour, from arithmetic rather than
+structure: `N_eff = N / E[w²]`, and for `Poisson(1)` weights `E[w²] = Var + mean² = 2`, so **`N_eff = N/2`**
+and *"every replica trains at half the nominal's effective MC statistics."* **Verified numerically this
+turn** at `N = 2×10⁶`: `E[w²] = 2.0005`, `N_eff/N = 0.50003`. **Two derivations, one from arithmetic and one
+from structure, is corroboration rather than echo.**
+
+**But one guard has to travel with it, and it is a spec-owner's guard.** `N_eff = N/2` is a property of
+**every correct Poisson bootstrap**, not a defect of this one — the bootstrap's variance estimate is
+consistent for a smooth functional **precisely because** the weights have variance 1. **So this must not be
+read as showing `C_stat` is mis-normalized, and in particular it does not license a `√2` rescaling.** Anyone
+who takes `N_eff = N/2` as evidence of mis-scaling will "fix" a construction that is correct.
+
+**What the arithmetic DOES establish is sharper than the halving, and it is the part that bears on a trained
+network:** with `Poisson(1)` weights, **`1/e` = 36.8% of rows receive weight exactly zero** (measured:
+`0.36779`), so **each replica's training sees only 63.2% of the DISTINCT rows.** For a smooth functional the
+distinct-row count is not a separate quantity — `N_eff` carries everything. **For a network trained to
+convergence, coverage of the input space is a separate quantity from effective weight**, and a third of the
+support being absent is not a first-order perturbation of the empirical measure.
+
+**So the live claim is precisely the bootstrap's own regularity assumption:** the Poisson bootstrap is valid
+for a **smooth functional of the empirical measure**, and whether a trained network is one — at the level
+this bootstrap assumes — is exactly what is in question.
+
+### AND THAT IS `(b)` REPAIRED, WHICH CHANGES THE ITEM'S STATE FROM "ALL THREE BROKEN"
+
+`(b)` as written is *"a Poisson bootstrap of **the measured leg** is not a valid uncertainty proxy for this
+estimator."* Repair the leg — three streams, not one, per §1 — and the claim becomes the smoothness claim
+above. **And unlike `(b)`-as-written, the repaired form has a LOCATION limb: if the estimator is not smooth
+in the empirical measure then `E[T(resample)] ≠ T(data)`, which is a statement about where the family mean
+sits relative to the nominal. So the repaired `(b)` escapes my §1 type mismatch.**
+
+**So the branch set was not so much MISSING a branch as UNDER-STATING one**, which is a more useful
+conclusion than *"all three named branches are broken"* — and it is compatible with it: **`(b)`-as-written
+stays refuted (wrong leg, and dispersion-only), and `(b)`-as-repaired is the live conjecture, which owes its
+own prediction and does not inherit evidence from being identifiable with a branch.**
+
+### THE FALSIFIER, AND IT IS THE CHECK I OWED `(c)` — RUN IT FIRST THIS TIME
+
+**The mediator gave E one prediction: the effect must be *present but smaller* in the control regions, not
+absent. I do not think that one can fail.** The controls already show `median z = −0.128` below 6 GeV —
+small and nonzero — **so the prediction is satisfied by data already in hand, and a prediction that cannot
+fail against what is already known is `BEN-403`'s defect arriving in the successor hypothesis.**
+
+**Here is one that can fail, and it is the necessary condition of the mechanism rather than a consequence of
+it.** Support thinning is **uniform**: every cell loses the same expected `36.8%` of its rows. **A mechanism
+uniform in share cannot produce a band-confined effect unless it is locally amplified** — which is exactly
+the objection that killed `(c)`. Losing `36.8%` of rows is harmless in a cell with many MC events and severe
+in a cell with few. **So the mechanism REQUIRES the band to be the MC-sparse end of the grid.**
+
+> **MEASURE per-cell signal-MC occupancy over the 231 live reco cells and ask whether the band is the sparse
+> end. If it is not, the mechanism dies by availability exactly as `(c)` did.**
+
+**And there is real reason to expect it might fail:** D established the 63 are the **highest-acceptance**
+cells on the grid (median `a_b` `0.859` against `0.713` elsewhere) holding **26.5% of reco-accepted truth
+mass**, and the band's background share sits **between** the two controls. **None of that is the profile of a
+statistics-starved region.** `BEN-403`'s second rule applied to my own successor conjecture: **presence in
+the construction is not activity in the region, and the availability check goes first.**
 
 **That is the same shape as the refuted `(c)` on a different stage, and I am labelling it a CONJECTURE rather
 than a branch, deliberately.** `(c)` failed partly because I let the observation write the mechanism's
