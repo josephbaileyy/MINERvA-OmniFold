@@ -10084,3 +10084,46 @@ routed; the reasoning does not weaken because the lane changed. The single quest
 is stated in `DETERMINATION-20260817-cause1-census-and-magnitude-measured.md` §6. New defect filed as
 `BEN-381` (the `file:line` allow-list) and **deliberately not fixed** — a lane must not both grade a leg
 and modify the instrument that grades it.
+## 2026-08-17 — OI-120(c): the corrective receipt was serving the false verdict; indexed and fixed (lane D)
+
+**The preserved stdout at `:7922` is UNCHANGED and must stay so.** Re-verified this turn at
+`origin/main`: 138 lines, 5047 B, sha256
+`ec5581363f440b153057126996e30f2325cf63c94b27442559a087046522912c`. It is pinned three ways — that
+RUN_LOG entry, `MANIFEST.tsv:687`, and `test_probe_oi120c_verdict.py:46` which reads it as a
+**fixture**. One appended line falsifies all three at once, so the false banner it prints stays where
+it is and the correction lives elsewhere.
+
+**What was actually wrong was the correction, not the log.**
+`state/oi120c-loader-purity-perturbation-56975592.json` carried the true answer under
+`CORRECTED_VERDICT` and left the FALSE string under **`VERDICT`** — the canonical key every consumer
+reads. So the artifact written to correct the log reproduced the log's error under the name that
+counts: reading the receipt gave the same wrong answer as reading the log. `VERDICT` now carries the
+corrected verdict; the false string is retained verbatim under `VERDICT_SUPERSEDED_FALSE_STRING`;
+`CORRECTED_VERDICT` is folded in rather than left to be chosen between.
+
+**A locator in that receipt was also wrong in the direction that matters.** It said the log's *last*
+line reads `LEAKAGE`. The last line is `}`; the false verdict appears **twice**, at lines **16**
+(banner) and **27** (`"VERDICT"` inside the embedded RECEIPT_JSON). A reader following the old pointer
+would have found a closing brace and concluded the correction was stale.
+
+**Findability was the real defect, not the wording.** The stdout is cited from four places; the
+receipt was cited from one transient handoff. Now indexed from the three routers a reader actually
+arrives at: `KNOWN_ISSUES` 49, `OI-124`'s row, and `CLM-002`.
+
+**Scope reconciliation — two formulations were in circulation and they do NOT conflict.** *3 of 4*
+(`CLM-002`, at filing) and *3 of 3 live* (`test_probe_oi120c_verdict.py:126-127`, after `OI-124`
+retired `P4`) are the same three arms with the same three bit-identical hashes; only the denominator
+convention moved. *Full 49,152,885-row inventory* is the orthogonal **data** axis (`max_events=None`,
+not the 200k smoke subset). **The complete statement needs both: three live arms, each over the full
+inventory.**
+
+**`CLM-002` reviewed by D and it holds — and it is still NOT an independent check.** D is the probe's
+author, so this is author-review of D's own instrument's output, which is weaker than the independent
+check the claim lacks rather than a substitute for it. The claim's state is deliberately unchanged.
+
+**Executable guard added** so this cannot recur as prose:
+`docs/orchestration/test_receipt_verdict_is_not_the_superseded_one.py` asserts, over every receipt in
+`state/`, that a live `VERDICT` is never the string that receipt records as superseded, and that
+`VERDICT`/`CORRECTED_VERDICT` never disagree when both exist. General rather than scoped to this file
+— the defect is *a receipt disagreeing with itself about its own verdict*. Carries a positive control
+and fails if no receipt exercises it.
