@@ -31,11 +31,40 @@ and — see below — **different domain**. You cannot quadrature-decompose quan
 different bases. Note also the direction: **~2% *sounds* negligible in a way *a seventh* does not**,
 which is precisely the shape nobody checks.
 
-**The defensible statement:** the floor's spread is about a seventh of the family's in the tail; the
-floor is measured shape-only on `central_vector`, which `VL130` records as blind to normalization
-while flux drives 81% of endpoints, so **that is a lower bound on the floor**. What survives every
-reading, and is the finding: **the floor is not the explanation for the tail spread** — even a `4×`
-sd understatement leaves the tail above `57%`.
+**THE DEFENSIBLE FORM IS A CORRELATION BRACKET, AND IT NEEDS NOTHING UNMEASURED.** Lane C's
+rev-4 supersedes both the variance share and the bare sd comparison. Solve `s² + 2ρsf + f² = T²`
+for the residual `s` at `T = 67.1164%`, `f = 8.6088%`, over the whole range of `ρ` — re-derived by
+the filer:
+
+| `ρ` | residual | reduction | floor / residual |
+|---|---|---|---|
+| `+1` (sds subtract linearly) | **58.5076%** | 12.83% | 0.1471 |
+| `+0.5` | 62.3966% | 7.03% | 0.1380 |
+| `0` (quadrature — the `~2%` case) | 66.5620% | 0.83% | 0.1293 |
+| `−0.5` | 71.0054% | −5.79% | 0.1212 |
+| `−1` | 75.7252% | −12.83% | 0.1137 |
+
+**Residual `58.5%`–`75.7%` for ANY correlation; the floor is `11%`–`15%` of it throughout.** So
+**the floor is not the explanation for the tail spread** holds with no independence assumption at
+all — which is stronger than earning the assumption would have been.
+
+**And this partially vindicates the sd ratio rather than disqualifying it.** The `ρ=+1` reduction is
+exactly `f/T` — `12.8267%`, the reciprocal of the `7.80×` sd ratio, verified to four decimals. **So
+the sd ratio is the MAXIMUM-CORRELATION BOUND on the floor's share, not a meaningless quantity.**
+"About a seventh" was right as a *bound* and wrong as an *explanatory share*: a value attained only
+at perfect correlation, presented as a decomposition. `Do not quote the ratio` was too broad on this
+axis — the ratio is disqualified by §2(a)'s cross-key units defect (`central_vector` vs `xsec`),
+which is untouched by any of this, and merely **relabelled** by the correlation argument. Two
+objections that had been entangled.
+
+**What would overturn the conclusion is a CONJUNCTION, and neither leg is measured:** a `4×`
+understated floor (`34.44%`) **and** `ρ ≈ +1` gives residual `32.68%` with `floor/residual = 1.054`
+— the only corner of the space where the floor rivals what is left. Either extreme alone leaves it
+intact: `4×` at `ρ=0` gives `57.61%`; the measured floor at `ρ=+1` gives `58.51%`.
+
+**Note the direction of the earlier error, because it is the day's species:** the `~2%` quadrature
+figure was obtained by choosing the most favourable `ρ`, and `~2%` *sounds* negligible in a way
+"a seventh" does not. The honest form is the bracket, not either endpoint.
 
 **A fourth incommensurability axis, from `VL130`'s own row.** The floor vectors carry **259** nonzero
 cells — the training artifact's `reported_bin_mask`, `h_prior > 0` on the 2M subsample — while the
