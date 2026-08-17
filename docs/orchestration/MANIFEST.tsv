@@ -826,3 +826,4 @@ docs/orchestration/DETERMINATION-20260817-cause1-census-and-magnitude-measured.m
 docs/orchestration/PREDECLARE-20260817-cause1-endpoint-census-and-magnitude.md	ARCHIVAL	predeclaration		20260817	terminal		exact-path-only	nd-unfolding/receipt_cause1_endpoint_census_5d.py	yes	0	158	10120
 docs/orchestration/FINDING-20260817-a-trailer-that-survives-the-rebase-that-invalidates-it.md	LIVE	finding		20260817	open		route-only		no	1	94	5261
 docs/orchestration/DETERMINATION-20260817-pet-ten-items-state-and-oi126-shape.md	LIVE	document		20260817	open		route-only		no	0	229	16762
+docs/orchestration/DETERMINATION-20260817-pet-oi82-oi60-oi41.md	LIVE	document		20260817	open		route-only		no	0	153	8915

@@ -55,11 +55,15 @@ if str(PET) not in sys.path:
 # artifact at runtime instead of trusting a path.
 FF_08_08_CANONICAL_AT_THE_TIME = 0.7367462501305516
 FF_08_06_SUPERSEDED = 0.7464834064182863
-# The annealed arm, now canonical by designation. THIS VALUE IS THE GUARDS' OWN COMMENT and it does NOT
-# match either committed measurement of the same quantity -- see the gap note at the foot of the file.
-# It is used here only as "some wrong artifact", which is all this axis needs, and every candidate in
-# that neighbourhood is equally wrong for the guard's purpose.
-FF_08_10_ANNEALED_PER_GUARD_COMMENT = 1.0840529829474115
+# The annealed arm, now canonical by designation. CORRECTED 2026-08-17 with OI-82's resolution: this
+# was 1.0840529829474115, taken from the guards' own comment, which did not match either committed
+# measurement. It was never a measurement -- it is the numerator over a ROUNDED denominator. See the
+# resolved note at the foot of the file. Used here only as "some wrong artifact" relative to the 08-08
+# value the guards require, and the corrected value serves that purpose identically.
+FF_08_10_ANNEALED = 1.0840529523112135
+# Retained under its own name so a reader meeting the old number anywhere can identify it rather than
+# treat it as a fourth measurement. NOT a candidate for any guard's expected value.
+FF_08_10_ANNEALED_ARITHMETIC_SLIP = 1.0840529829474115
 
 
 def _load(name):
@@ -88,7 +92,8 @@ def test_guard_accepts_the_08_08_artifact_it_is_about(name):
 @pytest.mark.parametrize("name", MODULES)
 @pytest.mark.parametrize("ff,label", [
     (FF_08_06_SUPERSEDED, "08-06 superseded"),
-    (FF_08_10_ANNEALED_PER_GUARD_COMMENT, "08-10 annealed, canonical by designation"),
+    (FF_08_10_ANNEALED, "08-10 annealed, canonical by designation"),
+    (FF_08_10_ANNEALED_ARITHMETIC_SLIP, "OI-82's old comment value; must also be refused"),
 ])
 def test_guard_refuses_each_known_wrong_artifact(name, ff, label):
     """The live confusion is the annealed one: it IS the canonical nominal, so a future lane
@@ -147,17 +152,22 @@ def test_the_expected_constant_has_not_drifted_between_the_three_copies(name):
 
 
 # --- STATED GAPS ---------------------------------------------------------------------------------
-# 1. THE GUARDS' ANNEALED REFERENCE VALUE DISAGREES WITH BOTH COMMITTED MEASUREMENTS OF IT, and this
-#    battery does not resolve it because it cannot: the artifact is on /pscratch. Measured here:
+# 1. ~~THE GUARDS' ANNEALED REFERENCE VALUE DISAGREES WITH BOTH COMMITTED MEASUREMENTS OF IT~~
+#    **RESOLVED 2026-08-17 (lane E, OI-82), AND IT WAS NEVER A THIRD MEASUREMENT.** The gap was:
 #        guards' comment        1.0840529829474115
 #        production 56563761    1.0840529523112135   (annealed-nominal-complete receipt)
 #        trajectory 56818470    1.0840529523260116   (step-1 decomposition harness)
-#    Production and the trajectory harness agree to 1.48e-11 across different code paths on the same
-#    checkpoints; the guards' value is 3.064e-8 from both -- 2,070x further away than they are from
-#    each other, and 30.6x the guards' own tol=1e-9. It is PROSE in a comment and no threshold reads
-#    it, so nothing is mis-gated; but it is the number an operator reads when diagnosing a refusal.
-#    Recorded rather than corrected, because overwriting a measurement I cannot reproduce is how a
-#    third value becomes a fourth. Owner: the PET lane. `BEN-244`, `OI-82`.
+#    Closed by the method this item prescribed -- a login-node read of the annealed NPZ's own stored
+#    fields (sha256 559a1020570929169a83e26dd9eea937bb34d6f4ecb230e332b792165ef6eb3e):
+#        fold_forward_sum_w_push_reco = 1084052.9829474115
+#        fold_forward_sum_w_reco      = 1000000.0282607947
+#        num / den                    = 1.0840529523112135   == production, BIT-IDENTICAL
+#        num / 1e6                    = 1.0840529829474115   == the old comment, BIT-IDENTICAL
+#    So the third value is the NUMERATOR OVER A ROUNDED DENOMINATOR. 1e6 against 1000000.0282607947
+#    is 2.826e-8 relative, which reproduces the observed 3.064e-8 gap to the last digit. The guards'
+#    comments now carry the correct value; the slip is retained above under its own name so a reader
+#    meeting it elsewhere can identify it instead of filing a fourth value. `BEN-244`, `OI-82`.
+#    NOT re-derived here: the production and trajectory numbers, which are quoted from their receipts.
 # 2. NOT COVERED: that the artifact at ART is actually the 08-08 one. Nothing local can check that --
 #    it is the runtime assertion's whole job, and this battery verifies the assertion, not the tree.
 # 3. NOT COVERED: class 5 proper. `inference_contract.step2_checkpoint` is an ABSOLUTE path written at

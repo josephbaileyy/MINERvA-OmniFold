@@ -49,7 +49,20 @@ R = 1.1240802949941018
 # Fold-forward fingerprints, all measured 2026-08-11/12:
 #   0.7367462501305516  2026-08-08 canonical-at-the-time  <- what this diagnostic requires
 #   0.7464834064182863  2026-08-06 superseded
-#   1.0840529829474115  2026-08-10 annealed (now canonical by designation)
+#   1.0840529523112135  2026-08-10 annealed (now canonical by designation)
+#
+# OI-82 RESOLVED 2026-08-17 (lane E). This line read 1.0840529829474115 until now -- a THIRD value
+# for the annealed ratio, 3.064e-8 from both committed measurements, i.e. 2,070x further away than
+# they are from each other and 30.6x this file's own tol=1e-9. It was NOT a measurement of another
+# artifact. Recomputed from the annealed NPZ's own stored fields on a login node, per the item's
+# prescribed close (sha256 559a1020570929169a83e26dd9eea937bb34d6f4ecb230e332b792165ef6eb3e):
+#     fold_forward_sum_w_push_reco = 1084052.9829474115
+#     fold_forward_sum_w_reco      = 1000000.0282607947
+#     ratio                        = 1.0840529523112135   == the production 56563761 receipt, exactly
+# The old value is that NUMERATOR over a ROUNDED denominator: 1084052.9829474115 / 1e6 reproduces
+# 1.0840529829474115 bit-for-bit, and 1e6 vs 1000000.0282607947 is 2.826e-8 relative -- which is the
+# 3.064e-8 gap to the last digit. So the operator-facing reference was an arithmetic slip, not a
+# disagreement between artifacts, and correcting it removes a number rather than adding a fourth.
 EXPECTED_FOLD_FORWARD = 0.7367462501305516
 
 
