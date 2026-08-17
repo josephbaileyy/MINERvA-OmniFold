@@ -29,7 +29,7 @@ This file is a pointer-only router. [`MANIFEST.tsv`](MANIFEST.tsv) is the author
 | Work on quarantine discharge | [`CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md`](CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md), [`DETERMINATION-20260811-cause5-binding-half.md`](DETERMINATION-20260811-cause5-binding-half.md) |
 | Work on standard-P4 provenance | [`PROVENANCE-DEBT-20260810-standard-p4.md`](PROVENANCE-DEBT-20260810-standard-p4.md), [`P4_STANDARD_STATUS.md`](../../nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md) |
 | Work on PET remediation | [`PET_UQ_REMEDIATION_STATUS.md`](../../nd-unfolding/PET_UQ_REMEDIATION_STATUS.md) |
-| Prepare the macro update after authorization | [`PROCEDURE-gbdtFive-macro-update.md`](PROCEDURE-gbdtFive-macro-update.md) |
+| Prepare the macro update after authorization | [`PROCEDURE-gbdtFive-macro-update.md`](PROCEDURE-gbdtFive-macro-update.md), then [`RECONCILIATION-20260817-gbdtfive-macros-vs-rebuilt-candidate.md`](RECONCILIATION-20260817-gbdtfive-macros-vs-rebuilt-candidate.md) for what each macro IS, whether the 2026-08-16 rebuild moved it (no), and the three inline `\SI{}` operands outside `values.tex` |
 | Audit the open cannot-fail sweep | [`CORPUS-20260811-gates-that-cannot-fail-sweep.md`](CORPUS-20260811-gates-that-cannot-fail-sweep.md) |
 | Interpret covariance rank or inversion | [`RANK-AND-INVERSION-20260810.md`](RANK-AND-INVERSION-20260810.md) |
 | Coordinate the current closeout sessions | [`PROMPTS-20260811-four-session-closeout.md`](PROMPTS-20260811-four-session-closeout.md) |
