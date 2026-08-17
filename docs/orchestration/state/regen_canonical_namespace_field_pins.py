@@ -111,7 +111,7 @@ def main():
         ),
         "scope": {
             "derived_from": CHECK_REL + " INVENTORY, entries labelled RECORD-FROZEN",
-            "rule": ("every string field whose value names a path inside `fullevent_nominal/` "
+            "rule": ("every string field whose value names a path inside `fullevent_nominal/` "  # NS-EXEMPT: pattern literal, not a reference
                      "as a PATH SEGMENT, `fullevent_nominal_annealed` excluded"),
             "NOT_a_digest_pin": (
                 "these pin the VALUE OF THE FIELD, not the bytes of the artifact. Most targets "

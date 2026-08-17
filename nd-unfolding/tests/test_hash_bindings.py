@@ -289,8 +289,8 @@ _PIN_FILE = os.path.join(
 # The pinned field, and a SIBLING inside the same protected directory. The sibling is the
 # whole point: the occurrence count this replaces cannot see this edit, because the count of
 # `fullevent_nominal/` is identical before and after.
-_PINNED_VALUE = '"nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz"'
-_SIBLING_VALUE = '"nd-unfolding/pet/fullevent_nominal/pet_fullevent_floor_weights.npz"'
+_PINNED_VALUE = '"nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz"'  # NS-EXEMPT: mutation payload, substituted into a receipt and never opened
+_SIBLING_VALUE = '"nd-unfolding/pet/fullevent_nominal/pet_fullevent_floor_weights.npz"'  # NS-EXEMPT: mutation payload, substituted into a receipt and never opened
 
 
 def _verifier():
@@ -334,7 +334,7 @@ def test_field_pin_is_silent_on_a_prose_edit():
     """The direction that matters for adoption: the incumbent goes RED here and must not."""
     r = _with_mutation(
         _PIN_RECEIPT,
-        '"fullevent_nominal/ IS NOT TOUCHED.',
+        '"fullevent_nominal/ IS NOT TOUCHED.',  # NS-EXEMPT: mutation anchor, never opened
         '"The canonical baseline directory IS NOT TOUCHED.')
     assert r.returncode == 0, (
         "editing PROSE tripped the verifier. A guard that fires on a documentation tidy is "
@@ -396,7 +396,7 @@ def test_coverage_fires_when_a_frozen_receipt_gains_an_unpinned_namespace_path()
         original = f.read()
     doc = json.loads(original)
     assert "oi96_probe" not in doc, "probe key already present -- pick another receipt"
-    doc["oi96_probe"] = "nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz"
+    doc["oi96_probe"] = "nd-unfolding/pet/fullevent_nominal/pet_fullevent_nominal_weights.npz"  # NS-EXEMPT: mutation payload, never opened
     try:
         with open(victim, "w") as f:
             json.dump(doc, f, indent=1)

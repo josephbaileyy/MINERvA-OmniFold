@@ -48,6 +48,61 @@
 #   exits 0 on a clean tree, move this to the run list as check 7. No other condition, no judgement
 #   call -- run the command.
 #
+#   *** THIS TRIGGER IS DELIBERATELY NOT HONOURED, AND ITS VALUE IS NOT STABLE. DO NOT WIRE IT. ***
+#   Recorded HERE, beside the trigger, so the next reader sees a DECISION rather than assuming the
+#   trigger was missed -- which is this header's own rule about declining a check, applied to a
+#   trigger. Ruling by the hook owner (mediator session, 2026-08-17); measured by lane E under
+#   OI-96; full record in `BEN-387`, lane A's `BEN-394`, and `docs/OPEN_ITEMS.md`'s OI-96 row.
+#
+#     MEASURED, AND EVERY READING IS BOUND TO A SHA, because the first version of this paragraph
+#     was not and was FALSE WITHIN THE HOUR (`BEN-382`'s remedy, third notation):
+#       8a34f12^  exit 0   trigger fired
+#       8a34f12   exit 1   NOT fired -- broken by lane E's OWN commit, which added two files
+#                          mentioning the namespace: the OI-96 pin generator and the tests that
+#                          power-test it. Announced as "the trigger has fired" in the same hour.
+#       be06d45   exit 1   this paragraph's first version shipped SAYING IT HAD FIRED. False on
+#                          the tree carrying it. Caught by lane A with a parent-commit control,
+#                          not by me.
+#       this commit  exit 0  restored -- the five occurrences are `# NS-EXEMPT` pattern literals
+#                          and test mutation payloads, none of which opens the path.
+#     Re-measure, do not trust the table: `python3 nd-unfolding/pet/check_canonical_designation.py`,
+#     and `git log -1 --format=%H -- .githooks/pre-commit` for the sha this text arrived on.
+#
+#     THAT INSTABILITY IS THE FIRST REASON NOT TO WIRE IT, and it is stronger than the second.
+#     The predicate is TREE-GLOBAL: any lane can flip it, in either direction, and NOTHING TELLS
+#     ANYONE. A test that merely mentions the namespace flips a latch in a hook header its author
+#     has never read; and because nothing announces a GREEN either, the trigger can be satisfied
+#     silently and sit unwired for weeks. A stored measurement wearing the grammar of a rule --
+#     "run the command" reads as having a stable answer, and the answer is a property of a tree
+#     five lanes push to. (Lane A, `BEN-394`.)
+#
+#     AND THE SECOND REASON SURVIVES A FIXED TREE, WHICH IS WHY IT IS THE DECISIVE ONE. Anyone
+#     reading the table above as "so keep the tree green and then wire it" has drawn exactly the
+#     wrong conclusion: the trigger tests the wrong property. Its
+#     enforcement is a WHOLE-FILE occurrence count of the namespace, and mutating the receipt
+#     shows that count is INVERTED, not merely crude:
+#       repoint `annealed-nominal-complete-56563761.json`'s canonical_baseline path to a SIBLING
+#       inside the same protected directory -> count unchanged at 2, guard SILENT. That is the
+#       BEN-133 repoint class the guard exists for.
+#       delete the prose sentence at :245 -> count 2 -> 1, guard RED. A documentation tidy.
+#     So wiring it installs a check that reddens on an innocent edit: a committer who did nothing
+#     wrong CANNOT always make it pass, which fails the admitting rule at line 11 -- eleven lines
+#     above the trigger that would have installed it. It would train lanes to `--no-verify`, which
+#     is the cost this dispatcher's two other exclusions exist to avoid.
+#
+#     THE GENERAL FORM, which is why this block is long: A TRIGGER WRITTEN TO REMOVE JUDGEMENT IS
+#     PRECISELY THE ONE PLACE NOBODY RE-DERIVES THE PROPERTY. Automating a decision does not
+#     verify the predicate it automates -- it guarantees the predicate stops being checked. "Green
+#     today" and "a committer who did nothing wrong can always make it pass" are different claims,
+#     and the trigger asserts only the first.
+#
+#     WHAT WOULD ACTUALLY UNLOCK IT: replace the occurrence count with a field-level check, then
+#     re-derive the admitting rule against the replacement. The field-level half now exists for
+#     the protected namespace -- 44 declared pins in check 6, see this file's `verify_hash_bindings`
+#     line and `state/regen_canonical_namespace_field_pins.py` -- so the remaining question is
+#     whether anything in `check_canonical_designation.py` is still worth wiring once the pins
+#     cover the repoint class. That is a judgement call, which is the point.
+#
 # ADMITTED TO THE RUN LIST 2026-08-14: docs/orchestration/verify_receipt_artifacts.py, as check 7.
 # It was in NEITHER list -- the third instance of the exact silence this header's last paragraph is
 # about (verify_hash_bindings.py, then check_canonical_designation.py above, now this).
