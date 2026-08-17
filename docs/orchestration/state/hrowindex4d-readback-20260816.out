@@ -1,0 +1,79 @@
+[alloc_run] using shared allocation 57142574
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+==============================================================================
+STEP 1  digest the 4D product BEFORE (read-only made falsifiable, not asserted)
+  before = f042e746f2a31128c3e8df14799cf1695b7d3bfee40ac3daba93ca10dafeee47
+STEP 2  read hRowIndex4D OUT OF THE CLOSED FILE
+  TH1D bins = 4825   TH2D = 4825 x 4825
+STEP 3  G5: the read-back vector is a well-formed index vector
+  [PASS] G5-integral
+  [PASS] G5-range -- min=0 max=10975 < 10976
+  [PASS] G5-monotonic
+STEP 4  G2: assert length 4825 rather than assuming it
+  [PASS] G2-length -- 4825 == 4825 == covariance dimension
+STEP 5  INDEPENDENT derivation (grid shape + central supports; no widths, no p4_lib)
+  m5 reported = 10694   m4 reported = 4830   effective4 = 4825   unreachable = 5
+STEP 6  G1: read-back vector == independently derived effective4
+  [PASS] G1 -- all 4825 row labels agree exactly
+STEP 7  G4: derived unreachable set == the recorded one
+  [PASS] G4 -- [9679, 9686, 9714, 9721, 10169]
+STEP 8  G3: sha256 of the READ-BACK array vs the receipt's row_index_sha256
+  recorded (hashed from the in-memory array) = de966d2a16bc695ff2077b20f7293420a67fdae03b2e62b3591426edcad67427
+  read back OUT OF THE OBJECT                = de966d2a16bc695ff2077b20f7293420a67fdae03b2e62b3591426edcad67427
+  [PASS] G3 -- artifact and intent agree -- two digests of DIFFERENT objects now, not one array twice
+STEP 9  G7: MUTATION CONTROL -- perturb one entry in memory; the comparison MUST fire
+  perturbed row 100: 153 -> 154
+  equality comparison fired : True
+  digest comparison fired   : True
+  [PASS] G7 -- both comparisons detect a single perturbed entry
+STEP 10 G6: digest the 4D product AFTER -- read-only proven, not claimed
+  after  = f042e746f2a31128c3e8df14799cf1695b7d3bfee40ac3daba93ca10dafeee47
+  [PASS] G6 -- byte-identical before and after
+==============================================================================
+VERDICT: PASS   failures: 0
+{
+  "check": "hRowIndex4D readback vs an independently derived effective-4D index set",
+  "predeclaration": "PREDECLARATION-20260816-hrowindex4d-readback.md (319f1e4)",
+  "closes": "gaps_remaining[0] of 20260810T0630Z-cross-object-verdict.json",
+  "results": {
+    "proj4d_sha256_before": "f042e746f2a31128c3e8df14799cf1695b7d3bfee40ac3daba93ca10dafeee47",
+    "hRowIndex4D_nbins": 4825,
+    "cov_shape": [
+      4825,
+      4825
+    ],
+    "m5_reported": 10694,
+    "m4_reported": 4830,
+    "effective4_size": 4825,
+    "unreachable_derived": [
+      9679,
+      9686,
+      9714,
+      9721,
+      10169
+    ],
+    "row_index_sha256_recorded": "de966d2a16bc695ff2077b20f7293420a67fdae03b2e62b3591426edcad67427",
+    "row_index_sha256_readback": "de966d2a16bc695ff2077b20f7293420a67fdae03b2e62b3591426edcad67427",
+    "mutation_control": {
+      "row": 100,
+      "from": 153,
+      "to": 154,
+      "equality_fired": true,
+      "digest_fired": true
+    },
+    "proj4d_sha256_after": "f042e746f2a31128c3e8df14799cf1695b7d3bfee40ac3daba93ca10dafeee47"
+  },
+  "failures": [],
+  "notes": {
+    "c5_not_opened": "the 39.4 GiB std_final5_candidate.root was NOT opened by this check; its digest 950f8cb1... is carried forward from the stages-4-6 receipt and was NOT re-verified here"
+  },
+  "verdict": "PASS"
+}

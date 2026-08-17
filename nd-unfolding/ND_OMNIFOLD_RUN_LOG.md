@@ -9712,3 +9712,75 @@ Not a repair of R11-1's test, which is still text-level — this supplies a run-
 Dispatched with `./alloc_run.sh` per `AGENTS.md` (orchestrator inside the allocation; no external
 `srun --jobid=`); allocation left up per the leave-it-running rule. Runner and all three probes are
 committed under `docs/orchestration/state/` because scratch is purgeable.
+
+## 2026-08-16 — `hRowIndex4D` READ OUT OF THE OBJECT: the Aug-10 audit's own `gaps_remaining[0]` closed, after the identity run it superseded was cancelled as redundant (lane B)
+
+**`VERDICT: PASS`, 0 failures, mutation control fired.** Predeclared at `319f1e4` **before** execution:
+[`PREDECLARATION-20260816-hrowindex4d-readback.md`](../docs/orchestration/PREDECLARATION-20260816-hrowindex4d-readback.md).
+Receipt: [`RECEIPT-20260816-hrowindex4d-readback.json`](../docs/orchestration/state/RECEIPT-20260816-hrowindex4d-readback.json).
+Log force-added (`KNOWN_ISSUES 48`): [`hrowindex4d-readback-20260816.out`](../docs/orchestration/state/hrowindex4d-readback-20260816.out).
+
+**WHY THIS RAN AND THE CONSENSUS RUN DID NOT.** Joseph authorized the real-product `C4 = M C5 Mᵀ`
+identity *"if there's consensus"*; both lanes confirmed; **I then reversed my own confirm to DENY.** My
+justification — *"nothing, anywhere, reads the persisted 4D product back"* — was **false**, taken from a
+`grep` over two globs. An unrestricted `git grep` finds
+`runs/standard-p4-verifier/20260810T0630Z-cross-object-script.py`: *"Read-only, independent
+cross-object audit: `C4_stored ?= M C5 M^T`. **No pipeline modules are imported. M is reconstructed
+solely from hard-coded analysis edges** … Writes: none."* Its verdict already records
+`identity_verdict = ESTABLISHED`, independent `M` content hash `2f042f76…` equal to the pipeline's,
+19/19 block census, 17 element probes at disagreement `0`, rank `263 = 263 = 263`. **The check we had
+authorized already existed and did not share `M` with the producer — the exact limit lane A asked to be
+attacked was already absent from it.**
+
+**And it could not have come out differently:** replicating that script's own content-hash convention,
+the rebuilt `C5` total hashes **`f26b3bfe…`** and the stored `C4` **`c1fe11b1…`** — **both bit-identical
+to the audited objects.** Which also explains a coincidence noticed before it was understood: stage 6's
+`projection_identity_relerr = 3.7568690548899724e-16` equals the Aug-10 figure to all 17 digits
+**because both are computed over the same bytes.**
+
+**WHAT WAS ACTUALLY OPEN** is `gaps_remaining[0]` of that verdict — *"Exact covariance-row to physical-bin
+labels remain unaudited. A verified `hRowIndex4D` of length 4825 matching the independently derived
+effective4 index vector"*. `hRowIndex4D` was written **that same day** in response to it
+(`p4_project_4d.py:186`) and **nothing verified it for six days**, because `:226-227` hashes
+`np.nonzero(m4_eff)[0]` — the *same in-memory array* used to write the histogram three lines earlier.
+**It hashes the intent, not the artifact.** Receipt-side fix is `OI-129`'s (lane A).
+
+**RESULTS.** Derived from the grid **shape** and the two central supports only — **no `p4_lib`, no
+`build_projection_M`, no `AXIS_EDGES` values, no bin widths**, so this leg is not exposed to the
+edge-array question at all:
+
+| check | result |
+|---|---|
+| `G1` read-back == independent derivation | **PASS** — all `4825` row labels agree exactly |
+| `G2` length asserted | `4825` bins == `4825` == covariance dimension `4825×4825` |
+| `G3` read-back digest vs recorded | both `de966d2a…` — now two digests of **different objects** |
+| `G4` unreachable set | derived `[9679, 9686, 9714, 9721, 10169]` == recorded |
+| `G5` well-formed | integral, strictly increasing, `[0, 10975] < 10976` |
+| `G6` read-only **proven** | `f042e746…` before **and** after |
+| `G7` mutation control | row 100 `153 → 154`; equality **and** digest comparisons both fired |
+
+Independent counts reproduce the Aug-10 audit: `m5 = 10694`, `m4 = 4830`, `effective4 = 4825`,
+`unreachable = 5`.
+
+**UNPREDECLARED EXTENSION, labelled as a measurement and not a gate result:** the rebuilt 5D candidate
+carries **`hRowIndex5D`**, which the Aug-10 audits never saw and nothing had verified. Same instrument:
+`10694` bins == covariance dimension == `nonzero(m5)`, integral, strictly increasing, `[0, 65855]`,
+mutation control fires. **Weaker than the 4D leg and the receipt says so** — no before/after digest of
+the 39.4 GiB file was taken, so it does not *prove* read-onlyness the way the 4D check does.
+
+**PROVENANCE CONSEQUENCE, and it supersedes a code comment.** The rebuilt 5D candidate has **49 keys vs
+the audited 47**, the new one being `hRowIndex5D` — which accounts for the 23,969-byte growth at
+**unchanged covariance content**. `p4_build_components.py:213-220` states the already-audited 42.3 GB
+artifact is *"deliberately NOT rewritten"* because `602bbcf2…` is the digest the 4D, 5D and cross-object
+audits all verified. **The authorized stages-4-6 run did rewrite it**, so that premise no longer holds:
+the three audits' **scientific** conclusions transfer (content is bit-identical), while their
+**whole-file digest bindings** are stale and need re-pointing at `950f8cb1…`. **Not a defect** — the
+rewrite added the row-index array those same audits asked for.
+
+**Covering search stated in the receipt**, because the withdrawn proposal is what taught the lesson:
+unrestricted `git grep` on `hRowIndex4D`, `std_proj4d_candidate`, `hCov_std_proj4d`, `proj4d_candidate`;
+the only `hRowIndex4D` hits are the writer, a comment, an inventory entry, and the verdict that names it
+as a remaining gap. **Bounded conclusion: nothing verified it between 2026-08-10 and this run.**
+
+Read-only throughout; write set is this receipt, the log and three probes. `W_AXIS = 4` remains unpinned
+at `p4_project_4d.py:27` — raised with lane C for repair-12 or a follow-on, not edited here.

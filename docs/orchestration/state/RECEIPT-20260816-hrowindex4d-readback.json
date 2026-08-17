@@ -1,0 +1,128 @@
+{
+  "receipt": "hRowIndex4D read out of the closed 4D product and verified against an independently derived effective-4D index set",
+  "date_utc": "2026-08-16",
+  "lane": "B",
+  "verdict": "PASS",
+  "failures": [],
+  "predeclaration": {
+    "file": "docs/orchestration/PREDECLARATION-20260816-hrowindex4d-readback.md",
+    "commit": "319f1e4",
+    "committed_before_execution": true,
+    "no_tolerance_and_why": "the comparison is exact integer equality; an exact comparison needs no tolerance and must not be given one. Conditions 2 and 4 of the prior brief (block-sum route, 1e-12) are recorded NOT APPLICABLE rather than silently dropped."
+  },
+  "what_it_closes": {
+    "gap": "gaps_remaining[0] of docs/orchestration/runs/standard-p4-verifier/20260810T0630Z-cross-object-verdict.json",
+    "verbatim": "Exact covariance-row to physical-bin labels remain unaudited. A verified hRowIndex4D of length 4825 matching the independently derived effective4 index vector",
+    "open_for": "six days -- hRowIndex4D was written into the product on 2026-08-10 (p4_project_4d.py:186, 'ITEM 2 of the narrow freeze lift') in response to that very gap, and nothing verified it until now",
+    "why_the_existing_field_could_not_close_it": "p4_project_4d.py:226-227 hashes np.nonzero(m4_eff)[0] -- the SAME in-memory array used to write the histogram three lines earlier. It hashes the intent, not the artifact, so it cannot detect a write that did not land, a truncated TH1D or a wrong bin offset. Two digests of one array are not two digests. Receipt-side fix belongs to OI-129 (lane A)."
+  },
+  "independent_derivation": {
+    "inputs": "grid SHAPE and the two central supports only",
+    "explicitly_not_used": [
+      "p4_lib",
+      "build_projection_M",
+      "AXIS_EDGES values",
+      "any bin width"
+    ],
+    "why_that_matters": "no widths enter, so this leg is not exposed to the AXIS_EDGES consistency-without-external-authority question at all -- a strictly better position than the withdrawn C4-identity proposal was in",
+    "recipe": "5D grid 14x16x7x7x6 = 65856; 4D grid 14x16x7x7 = 10976; W is the LAST axis in C order so i4 = i5 // 6; m5 = central5 > 0; m4 = central4 > 0; reachable = unique(i5 // 6); effective4 = nonzero(m4 & reachable)",
+    "m5_reported": 10694,
+    "m4_reported": 4830,
+    "effective4_size": 4825,
+    "unreachable_derived": [
+      9679,
+      9686,
+      9714,
+      9721,
+      10169
+    ],
+    "agrees_with_the_aug10_audit_independent_counts": true
+  },
+  "results_against_the_predeclared_falsified_by": {
+    "G1_readback_equals_independent_derivation": "PASS -- all 4825 row labels agree exactly",
+    "G2_length_asserted_not_assumed": "PASS -- TH1D bins 4825 == 4825 == covariance dimension [4825, 4825]",
+    "G3_readback_digest_vs_recorded": {
+      "recorded_hashed_from_the_in_memory_array": "de966d2a16bc695ff2077b20f7293420a67fdae03b2e62b3591426edcad67427",
+      "read_back_out_of_the_object": "de966d2a16bc695ff2077b20f7293420a67fdae03b2e62b3591426edcad67427",
+      "equal": true,
+      "meaning": "artifact and intent agree; these are now two digests of DIFFERENT objects rather than one array hashed twice"
+    },
+    "G4_unreachable_set": "PASS -- derived [9679, 9686, 9714, 9721, 10169] equals the recorded set",
+    "G5_wellformed": "PASS -- integral, strictly increasing, range [0, 10975] < 10976",
+    "G6_read_only_PROVEN": {
+      "proj4d_sha256_before": "f042e746f2a31128c3e8df14799cf1695b7d3bfee40ac3daba93ca10dafeee47",
+      "proj4d_sha256_after": "f042e746f2a31128c3e8df14799cf1695b7d3bfee40ac3daba93ca10dafeee47",
+      "equal": true,
+      "meaning": "read-onlyness is measured, not asserted"
+    },
+    "G7_mutation_control": {
+      "row": 100,
+      "from": 153,
+      "to": 154,
+      "equality_fired": true,
+      "digest_fired": true
+    }
+  },
+  "UNPREDECLARED_EXTENSION_reported_as_a_measurement_not_a_gate": {
+    "what": "the rebuilt 5D candidate carries hRowIndex5D, which the Aug-10 audits never saw and which nothing had verified either; checked with the same instrument",
+    "labelled_unpredeclared_because": "the predeclaration covers the 4D readback only; this is reported as a measurement so it cannot be read as a predeclared gate result",
+    "hRowIndex5D_bins": 10694,
+    "covariance_dimension": 10694,
+    "independent_nonzero_m5_size": 10694,
+    "equals_independent_derivation": true,
+    "integral_and_strictly_increasing": true,
+    "range": [
+      0,
+      65855
+    ],
+    "readback_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08",
+    "mutation_control_fired": true,
+    "weaker_than_the_4D_leg_and_says_so": "no before/after digest of the 39.4 GiB file was taken (2 x 40 GB hash is not free), so this leg does NOT prove read-onlyness the way the 4D check does"
+  },
+  "PROVENANCE_CONSEQUENCE_OF_THE_STAGES_456_RUN": {
+    "observed": "the rebuilt 5D candidate has 49 keys including hRowIndex5D; the audited Aug-9 object had 47 and no row-index array",
+    "explains": "the 23,969-byte file growth (602bbcf2... -> 950f8cb1...) at unchanged covariance CONTENT (f26b3bfe... on both) -- the file grew by a compressed TH1D of 10694 doubles",
+    "supersedes_a_code_comment": "p4_build_components.py:213-220 says the already-audited 42.3 GB artifact is 'deliberately NOT rewritten' because 602bbcf2... is the digest the 4D, 5D and cross-object audits all verified. The authorized stages-4-6 run DID rewrite it, so that premise no longer holds and 602bbcf2... is not the live digest.",
+    "what_transfers_and_what_does_not": "the three audits' SCIENTIFIC conclusions transfer, because the covariance content is bit-identical; their WHOLE-FILE digest bindings are stale and need re-pointing at 950f8cb1...",
+    "not_a_defect": "the rewrite added the row-index array those same audits asked for; this is recorded as a provenance fact, not a finding against the run"
+  },
+  "covering_search_before_any_negative_sentence": {
+    "why": "the withdrawn C4 proposal rested on a negative claim taken from a two-glob grep; this receipt states what was searched so the claim is bounded",
+    "command": "git grep -n -I with no path restriction",
+    "patterns": [
+      "hRowIndex4D",
+      "std_proj4d_candidate",
+      "hCov_std_proj4d",
+      "proj4d_candidate"
+    ],
+    "hits_on_hRowIndex4D_and_their_nature": {
+      "nd-unfolding/p4_project_4d.py": "the WRITER",
+      "nd-unfolding/p4_build_components.py": "a COMMENT (:213-220), not a verification",
+      "docs/orchestration/state/p4-packetb-stage56-56636802-reconciliation.json": "an INVENTORY entry (artifacts.projection_root_keys[1]), not a verification",
+      "20260810T0630Z-cross-object-{judgement.txt,verdict.json}": "names it as a REMAINING gap, i.e. explicitly NOT verified"
+    },
+    "conclusion_now_bounded": "nothing verified hRowIndex4D between 2026-08-10 and this run"
+  },
+  "scope_of_what_this_licenses": {
+    "licenses": "that the row-label vector stored in the 4D product equals the independently derived effective-4D index set, today, for this object; gaps_remaining[0] is closed for these products",
+    "does_not_license": [
+      "adoption or promotion -- construction is not adoption; the five Gate-6 prohibitions at 19585b7 stay live",
+      "the C4 = M C5 M^T identity, which was already ESTABLISHED on 2026-08-10 and transfers by content bit-identity rather than by this run",
+      "anything about M, the geometry, or W_AXIS = 4 being unpinned at p4_project_4d.py:27",
+      "a repair of the row_index_sha256 self-reference, which is OI-129's"
+    ]
+  },
+  "provenance": {
+    "slurm": "57128458 (claude-hold), dispatched via ./alloc_run.sh per AGENTS.md",
+    "environment": "setup_salloc_env.sh -> root_6_28, Python 3.11.14, ROOT 6.28/12 (BEN-347)",
+    "products_read": [
+      "std_proj4d_candidate.root (READ)",
+      "std_final5_candidate.root (READ, 2 keys)",
+      "products/5d/xsec_5d_MEFHC_5iter_lgbm.root",
+      "products/4d/xsec_4d_MEFHC_5iter_lgbm.root"
+    ],
+    "c5_digest_carried_forward_not_reverified": "950f8cb15c5a0bd785d65e7f85f4cb40fa86e27383973f82ef15c7ef525c1263",
+    "write_set": "exactly this receipt JSON plus a force-added log (KNOWN_ISSUES 48); nothing in candidate/, no ROOT output, nothing on the 20-path execution surface",
+    "log": "docs/orchestration/state/hrowindex4d-readback-20260816.out (force-added)"
+  }
+}
