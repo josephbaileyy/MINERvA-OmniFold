@@ -13,6 +13,31 @@
   "why_it_discriminates_where_the_fixed_net_arm_cannot": "The fixed-net arm removes the REFIT and thereby also removes the data channel, because the measured leg reaches the result only through training. The floor does the COMPLEMENT: hold the data FIXED and let the refit vary (different estimator seed, same draw). That isolates refit sensitivity DIRECTLY without touching the data channel, and it is subtractable from the family spread. floor spread ~ family spread in the band  => the 67% is refit sensitivity  => branch (b). floor spread << family spread             => the excess is data-driven  => branch (a). BOTH outcomes are reachable, which is exactly what the fixed-net arm fails.",
   "why_it_is_worth_saying_anyway": "It changes the framing that reaches Joseph from 'the route failed and nobody has designed another' to 'the measurement this decision needs was declared mandatory before interpreting C_stat, and was never made.' Those call for different decisions."
  },
+ "BAND_FIGURE_CORRECTED_20260817": {
+  "BUT_THE_CELL_COUNT_DOES_NOT_RECONCILE_AND_THIS_MATTERS_MORE": "OI-126's band is described as '44 of 63 cells'. My band, all 15 pT rows x p_parallel bins 10-15, is 84 live of 90 grid cells. 84 != 63 and 90 != 63. SO THE SET I MEASURED IS DEMONSTRABLY NOT THE SET OI-126 REFERS TO. It may be additionally pT-restricted, or masked differently, or '63' may count something else. I am not going to guess a second mapping and then confirm my own guess -- that is exactly what produced the first error. THE BAND DEFINITION MUST COME FROM WHOEVER AUTHORED THE OI-126 STATEMENT.",
+  "correct_mapping": "6-20 GeV == p_parallel bins 10-15 inclusive, derived from the edge array",
+  "corrected_numbers_over_the_4_surviving_draws": {
+   "band_6_20_GeV_bins_10_15": {
+    "live_cells": 84,
+    "max": "82.5571%",
+    "median_range_over_mean": "20.9669%",
+    "of_grid_cells": 90
+   },
+   "global": {
+    "live_cells": 259,
+    "max": "95.0938%",
+    "median_range_over_mean": "13.7169%"
+   },
+   "my_erroneous_5_40_GeV_bins_9_16": {
+    "live_cells": 113,
+    "median_range_over_mean": "21.1491%",
+    "of_grid_cells": 120
+   }
+  },
+  "my_error": "I reported the band median as 21.1491% over 113 cells using p_parallel bins 9-16. THAT MAPPING IS WRONG. By CANONICAL_PPARALLEL_EDGES, bin 9 is [5.0,6.0) and bin 16 is [20.0,40.0), so 9-16 spans 5-40 GeV, not 6-20. I guessed a mapping and did not derive it from the edges -- the second inherited-rather-than-derived error I have made in two messages.",
+  "status_of_the_band_figure": "STILL UNVERIFIED AGAINST OI-126's ACTUAL BAND, and the check needed is not a second reduction of my numbers -- the mediator reproduced the global figures digit-for-digit from an independent script and could not check the band because they declined to guess the mapping. They were right to decline. What is missing is the DEFINITION, not the arithmetic.",
+  "the_conclusion_is_robust_to_the_error": "21.15% -> 20.97%. The headline is unchanged: the per-cell floor is materially LARGER in the band (~21%) than globally (13.72%). The error moved the number by 0.18 points and the cell count by 29."
+ },
  "BUT_THE_PER_CELL_FLOOR_SURVIVES_ON_DISK_measured_this_turn": {
   "finding": "The band-restricted floor is COMPUTABLE FROM ARTIFACTS ALREADY ON DISK AT ZERO COMPUTE. No retrain and no extraction pass.",
   "measured_per_cell_floor_over_the_4_surviving_draws": {
