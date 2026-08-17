@@ -1,0 +1,139 @@
+{
+ "CORRECTED_VERDICT": "NO TRUTH LEAKAGE. event_reco is bit-identical under every truth perturbation the loader actually consumed (P1, P2, P3), with the P0 control demonstrating the probe can detect a change; P4 was never read before event_reco exists and therefore cannot influence it.",
+ "CORRECTS_THIS_COMMITTED_LOG": "docs/orchestration/state/oi120c-loader-purity-perturbation-56975592.txt -- the raw run log, committed verbatim upstream. ITS LAST LINE READS '=== LEAKAGE -- event_reco changed when only a truth array changed ===' AND THAT LINE IS FALSE. No arm changed. Anyone reading the log without this receipt beside it takes away the opposite of the result. That is why this file names the log explicitly rather than merely recording the right answer somewhere else.",
+ "SCOPE_LIMITS": [
+  "Tests PURITY of event_reco with respect to the perturbed truth arrays only. An arm the loader REFUSED tested nothing and is reported as refused, not as a pass.",
+  "Bit-identity is the criterion; no tolerance is involved or appropriate.",
+  "Says nothing about statements 1 and 3 of assert_no_truth_leakage, which have their own (real) power and are exercised elsewhere."
+ ],
+ "SMOKE_TEST": false,
+ "SPECIFIED_FORM_DECLINED": "The dispatched form -- run the production loader and call assert_no_truth_leakage on its output -- was NOT run. The loader already makes that exact call at :1247 on the object built at :1241, and its PURITY statement re-derives with the producing code (:487-490 vs :543-545), so it cannot fail. Running it again at full scale would have produced a green guaranteed before the job started.",
+ "SUPERSEDED_BY_UPSTREAM_ON_THE_CODE_SIDE": "The probe has since been fixed independently and further than my own fix went: VOID is now scored None rather than False (mine still left False for the read-but-unchanged case, which would have reproduced the same false alarm), the printed label is derived from the verdict, and P4 is RETIRED outright under OI-124 on the same read-order argument recorded here. This receipt is the RESULT for job 56975592; the code lesson belongs to that work, not to this.",
+ "VERDICT": "LEAKAGE -- event_reco changed when only a truth array changed",
+ "VERDICT_AS_PRINTED_BY_THE_RUN_WAS_WRONG": "The run printed 'LEAKAGE -- event_reco changed when only a truth array changed'. THAT IS FALSE and it is my bug, not a result. No arm changed. P4 recorded proxy_hits=0 -- the loader never read w_truth before event_reco was built -- and the verdict logic scored that as a failed arm (as_predeclared=False) rather than as not-applicable, so `clean` went False and the code fell through to the LEAKAGE branch. A false alarm produced by verdict plumbing on a clean dataset. Fixed in the probe; the corrected verdict above is recomputed from the RECORDED per-arm hashes, which are unchanged.",
+ "WHY_P4_IS_STRONGER_THAN_A_PASS": "proxy_hits=0 for w_truth is not a missing test. It is a read-order fact: d['w_truth'] is first fetched at fullevent_fps_dataloader.py:1251, AFTER event_reco is built at :1241 (:901 is not reached on this path). event_reco cannot depend on an array that has not been read, which is a stronger statement than any perturbation could have returned.",
+ "arms": {
+  "P0": {
+   "as_predeclared": true,
+   "corrected": "CHANGED",
+   "desc": "CONTROL: reco_scalars scaled x1.01 -> event_reco MUST CHANGE",
+   "detail": {
+    "arrays_actually_changed": {
+     "reco_scalars": true
+    },
+    "dtype": "float32",
+    "ok": true,
+    "proxy_hits": 1,
+    "sha256": "e665e9604dcf2d011ddf56382b3475d8cab9843f37068281f4b992cd97c01393",
+    "shape": [
+     49152885,
+     13
+    ]
+   },
+   "expected": "CHANGED",
+   "observed": "CHANGED"
+  },
+  "P1": {
+   "as_predeclared": true,
+   "corrected": "IDENTICAL",
+   "desc": "truth_scalars scaled x1.05",
+   "detail": {
+    "arrays_actually_changed": {
+     "truth_scalars": true
+    },
+    "dtype": "float32",
+    "ok": true,
+    "proxy_hits": 1,
+    "sha256": "8c88e15968f5c1962678f16ae1bb0646522fcf55bfa8412bfe067c59472e8bf5",
+    "shape": [
+     49152885,
+     13
+    ]
+   },
+   "expected": "IDENTICAL",
+   "observed": "IDENTICAL"
+  },
+  "P2": {
+   "as_predeclared": true,
+   "corrected": "IDENTICAL",
+   "desc": "truth_scalars rows permuted",
+   "detail": {
+    "arrays_actually_changed": {
+     "truth_scalars": true
+    },
+    "dtype": "float32",
+    "ok": true,
+    "proxy_hits": 1,
+    "sha256": "8c88e15968f5c1962678f16ae1bb0646522fcf55bfa8412bfe067c59472e8bf5",
+    "shape": [
+     49152885,
+     13
+    ]
+   },
+   "expected": "IDENTICAL",
+   "observed": "IDENTICAL"
+  },
+  "P3": {
+   "as_predeclared": true,
+   "corrected": "IDENTICAL",
+   "desc": "part_gen (truth cloud) scaled x1.05",
+   "detail": {
+    "arrays_actually_changed": {
+     "part_gen": true
+    },
+    "dtype": "float32",
+    "ok": true,
+    "proxy_hits": 1,
+    "sha256": "8c88e15968f5c1962678f16ae1bb0646522fcf55bfa8412bfe067c59472e8bf5",
+    "shape": [
+     49152885,
+     13
+    ]
+   },
+   "expected": "IDENTICAL",
+   "observed": "IDENTICAL"
+  },
+  "P4": {
+   "as_predeclared": false,
+   "corrected": "NOT-READ before event_reco (cannot influence it)",
+   "desc": "w_truth scaled x1.05",
+   "detail": {
+    "arrays_actually_changed": {},
+    "dtype": "float32",
+    "ok": true,
+    "proxy_hits": 0,
+    "sha256": "8c88e15968f5c1962678f16ae1bb0646522fcf55bfa8412bfe067c59472e8bf5",
+    "shape": [
+     49152885,
+     13
+    ]
+   },
+   "expected": "IDENTICAL",
+   "observed": "VOID (perturbation did not perturb)"
+  }
+ },
+ "baseline": {
+  "arrays_actually_changed": {},
+  "dtype": "float32",
+  "ok": true,
+  "proxy_hits": 0,
+  "sha256": "8c88e15968f5c1962678f16ae1bb0646522fcf55bfa8412bfe067c59472e8bf5",
+  "shape": [
+   49152885,
+   13
+  ]
+ },
+ "job": {
+  "elapsed": "00:18:31",
+  "id": 56975592,
+  "note": "resubmit of 56943826, which sat 9h and never started; shared/192G/no-nice",
+  "queue_wait": "1h52m47s",
+  "start": "2026-08-14T17:18:09",
+  "state": "COMPLETED",
+  "submit": "2026-08-14T15:25:24"
+ },
+ "max_events": null,
+ "npz": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+ "p0_control_fired": true,
+ "what": "OI-120(c): purity of event_reco tested by perturbation, production loader"
+}
