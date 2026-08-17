@@ -10020,3 +10020,67 @@ dropped → cause-4 flag test fails; `:435` scalar jitter subtraction reintroduc
 cause 3's `M` is graded two different ways inside `CRITERIA-20260811` itself. Both are judgements and
 **neither was taken.** Full record and the three corrections to the citation chain:
 `docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md`, `BEN-380`.
+
+## 2026-08-17 — quarantine cause 1: the endpoint census and the magnitude that "does not exist anywhere" (Lane E)
+
+Session E, commissioned by session `personal`. Predeclared at `a2a3a8a` **before any covariance was
+reconstructed** (`docs/orchestration/PREDECLARE-20260817-cause1-endpoint-census-and-magnitude.md`),
+branch set `C1`–`C5` with **two dominators**. Result: **`C1`**.
+
+**Run.** `nd-unfolding/receipt_cause1_endpoint_census_5d.py` (new; sha256
+`0bb03405f7db839a1bd4e26d3bc767c8e9c6c8d62fd6a28f1e947adee5cec704`, verified equal both sides of the
+copy). Perlmutter `login08`, interactive, `rc=0`, **no batch job**. Whole stream to
+`/pscratch/sd/j/josephrb/lane-e/c1.out`, filtered on read (BEN-026). The reader **imports production's
+own `load_flat`, `UNI_RE` and `category_for_band` from `analyze_universes_5d`** rather than
+reimplementing them, so a discrepancy cannot be its parsing. Diagonal-only **by sufficiency** — trace and
+per-bin σ depend only on the diagonal, so no 10,694² matrix is formed, and **nothing is claimed about
+off-diagonal structure.**
+
+**Positive control first (branch `C2` was declared to void the comparison on any failure): all EIGHT
+committed numbers in `uq_universe_5d_summary.txt` reproduced** — reported bins `10694/65856`, total syst
+√Tr `4.3515e-38` (got `4.351483e-38`), median rel `13.235%` (got `13.23461%`), and all five category
+sums. Tolerance `5e-4`, stated with its derivation (half a unit in the summary's last printed figure).
+
+**`P` — census, which did not exist.** 44 bands / 188 files: **42 ± pair bands, every one with both
+endpoints; `Flux` exactly 100 at indices `0…99` contiguous.** Non-pairs recorded rather than smoothed:
+`2p2h` has **N=3** (declared as an unknown before measuring; excluded from the counterfactual, carried
+unchanged in both totals) and one `…_uni_full_CV.root` carries no numeric index so production's `UNI_RE`
+skips it. **P leg criterion satisfied, by a committed artifact.**
+
+**`M` — the number `CRITERIA` §2 says "does not exist anywhere". It exists:**
+
+    as-built  (mean-centered, biased 1/N)   sqrtTr 4.351483e-38            median rel 13.2346%
+    one-sided CV-centered, endpoint 0       sqrtTr 4.610136e-38  x1.059440 median rel 14.8405%  (+1.61 pp)
+    one-sided CV-centered, endpoint 1       sqrtTr 4.487828e-38  x1.031333 median rel 15.7383%  (+2.50 pp)
+
+Both endpoints computed rather than trusting `unified_throw_cov.py:52-53`'s comment — **and they
+disagree in opposite senses** (ep0 larger √Tr, ep1 larger median), so **the endpoint choice alone is worth
+~2.7% of √Tr.** Per-band trace-ratio distribution over the 40 non-degenerate pair bands (BEN-064,
+distribution not a max): ep0 min `0.6377` median `2.0261` p90 `4.3256` max `5.8024`, **35 of 40 above 1**;
+ep1 min `0.6111` median `1.6797` p90 `3.9487` max `8.6838`, **34 of 40 above 1**. So *"one-sided
+overstates"* holds **in aggregate and not universally**.
+
+**`EtaNCEL` and `NormDISCC` excluded from the distribution** — as-built √Tr `4.187e-45` and `8.043e-51`,
+five and eleven orders below the smallest real band, so the `1e-42` cut is a property of the data and not
+a tuned threshold. **They are the sharpest demonstration of the defect, in absolute terms: both knobs
+have no systematic effect at all, and the one-sided form fabricates `1.279e-39` of variance for each.**
+
+**Mechanism, measured not asserted:** `‖sweep CV unfold − products/5d CV‖ = 1.7054569831625e-39`, a
+**0.906% max relative common baseline offset**. Mean-centering cancels it exactly; CV-centering converts
+it to a spurious rank-1 term in every band — precisely `CRITERIA` §2's stated defect, now sourced.
+**X as built is unaffected**; the offset matters only to the counterfactual. Whether a 0.9% sweep-vs-CV
+offset is itself worth investigating is a separate question, flagged for the owning lane.
+
+**`C` and `T` re-derived.** `CRITERIA` §3 grades `C` MET citing **`(§4.8)`, which does not exist** — §4
+runs 4.1–4.7. The audit is real and is executable (`Cause1PathAuditTests`), so this is a **citation**
+defect. Four mutations, restored and `git diff HEAD` empty after each: **M1** drop mean-centering at
+`analyze_universes_5d.py:97` → audit test fails; **M2** rename `uq_math.mat_covariance` → two tests fail,
+one with *"has disappeared"*, i.e. fails rather than skipping; **M3** `import pet_systematics_5d` →
+pet-reachability test fails; **M4** *one comment line, no semantic change* → the outer-product guard
+fails on **line drift alone**. Full suite **35/35** restored.
+
+**Four METs on the letter of §0 — and NOT declared.** Session B reached this position on cause 2 and
+routed; the reasoning does not weaken because the lane changed. The single question a decider must answer
+is stated in `DETERMINATION-20260817-cause1-census-and-magnitude-measured.md` §6. New defect filed as
+`BEN-381` (the `file:line` allow-list) and **deliberately not fixed** — a lane must not both grade a leg
+and modify the instrument that grades it.

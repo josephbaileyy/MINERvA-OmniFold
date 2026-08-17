@@ -252,6 +252,22 @@ The Provenance leg moved for causes 2, 3 and 4, but **only one hop up the chain*
 > [`DETERMINATION-20260817-causes-3-4-provenance-measured.md`](DETERMINATION-20260817-causes-3-4-provenance-measured.md)
 > §5 for the two `M`-leg judgements that remain, including this document's own §2-vs-§3 disagreement on
 > cause 3's `M`. Row text left as written, per this repo's convention of leaving written history written.
+>
+> **POINTER 2, added 2026-08-17 by lane E — cause 1's row: `(§4.8)` DOES NOT RESOLVE, and its two open
+> legs are now closed by measurement.** §4 of this document runs **4.1 through 4.7**; there is no §4.8, so
+> the `C` cell's only evidence pointer is dangling. **The audit is real and is better than prose** — it is
+> committed as `Cause1PathAuditTests` in `nd-unfolding/tests/test_uq_remediation.py`, recorded in
+> `ND_OMNIFOLD_RUN_LOG.md` under *"2026-08-11 — BEN-106 VERIFIED; cause 1's path audited"*. **Cite that,
+> not `§4.8`.** (This is §4.4's own finding recurring inside the document that filed it.) Separately, the
+> `P` cell's *"no committed per-band endpoint census"* and the `M` cell's *"this number does not exist
+> anywhere"* are **both now closed**: `nd-unfolding/uq_5d/receipt_cause1_endpoint_census_5d.json` —
+> 42 ± pairs all with both endpoints, `Flux` exactly 100 contiguous, and the one-sided-vs-mean-centered
+> magnitude on X's own bank (√Tr `4.3515e-38` → `4.6101e-38` / `4.4878e-38`, per-bin median `13.23%` →
+> `14.84%` / `15.74%`), after reproducing all eight committed summary numbers as a positive control.
+> **On the letter of §0 that is four METs for cause 1 — and it is ROUTED, not declared**, exactly as
+> cause 2 was:
+> [`DETERMINATION-20260817-cause1-census-and-magnitude-measured.md`](DETERMINATION-20260817-cause1-census-and-magnitude-measured.md)
+> §6 states the one question a decider has to answer. Row text left as written.
 
 **UPDATED 2026-08-11 after job `56695424`. READ THE PRODUCT COLUMN BEFORE READING THE VERDICTS —
 the P legs above are MET for the FOOTING-MATCHED CANDIDATE, not for the product the note quotes.**

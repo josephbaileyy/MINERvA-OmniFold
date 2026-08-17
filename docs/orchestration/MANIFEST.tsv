@@ -822,3 +822,5 @@ docs/orchestration/watch_slurm_array_resume.sh	MACHINE	shell-tool			generated		e
 docs/orchestration/whose_row.py	MACHINE	script			generated		exact-path-only	docs/orchestration/merge_guard.sh	no	17	867	49715
 docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md	LIVE	document		20260817	open		route-only	nd-unfolding/receipt_candidate_stamps_5d.py	no	0	233	16035
 docs/orchestration/PREDECLARE-20260817-candidate-stamp-receipt-causes-3-4.md	ARCHIVAL	predeclaration		20260817	terminal		exact-path-only	nd-unfolding/receipt_candidate_stamps_5d.py	yes	0	131	8755
+docs/orchestration/DETERMINATION-20260817-cause1-census-and-magnitude-measured.md	LIVE	document		20260817	open		route-only	nd-unfolding/receipt_cause1_endpoint_census_5d.py	no	0	222	14979
+docs/orchestration/PREDECLARE-20260817-cause1-endpoint-census-and-magnitude.md	ARCHIVAL	predeclaration		20260817	terminal		exact-path-only	nd-unfolding/receipt_cause1_endpoint_census_5d.py	yes	0	158	10120

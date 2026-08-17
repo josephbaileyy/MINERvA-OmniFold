@@ -1,0 +1,1322 @@
+{
+  "adopts_nothing": true,
+  "census": {
+    "n_bands": 44,
+    "n_files_grouped": 187,
+    "n_files_matched_glob": 188,
+    "per_band": {
+      "2p2h": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1,
+          2
+        ],
+        "is_pm_pair": false,
+        "n_universes": 3
+      },
+      "AGKYxF1pi": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "AhtBY": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "BeamAngleX": {
+        "both_endpoints_present": true,
+        "category": "Muon reconstruction",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "BeamAngleY": {
+        "both_endpoints_present": true,
+        "category": "Muon reconstruction",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "BhtBY": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "CCQEPauliSupViaKF": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "CV1uBY": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "CV2uBY": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "EtaNCEL": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "Flux": {
+        "both_endpoints_present": true,
+        "category": "Flux",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66,
+          67,
+          68,
+          69,
+          70,
+          71,
+          72,
+          73,
+          74,
+          75,
+          76,
+          77,
+          78,
+          79,
+          80,
+          81,
+          82,
+          83,
+          84,
+          85,
+          86,
+          87,
+          88,
+          89,
+          90,
+          91,
+          92,
+          93,
+          94,
+          95,
+          96,
+          97,
+          98,
+          99
+        ],
+        "is_pm_pair": false,
+        "n_universes": 100
+      },
+      "FrAbs_N": {
+        "both_endpoints_present": true,
+        "category": "Hadronic response",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "FrAbs_pi": {
+        "both_endpoints_present": true,
+        "category": "Hadronic response",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "FrCEx_N": {
+        "both_endpoints_present": true,
+        "category": "Hadronic response",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "FrCEx_pi": {
+        "both_endpoints_present": true,
+        "category": "Hadronic response",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "FrElas_N": {
+        "both_endpoints_present": true,
+        "category": "Hadronic response",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "FrElas_pi": {
+        "both_endpoints_present": true,
+        "category": "Hadronic response",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "FrInel_N": {
+        "both_endpoints_present": true,
+        "category": "Hadronic response",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "FrPiProd_N": {
+        "both_endpoints_present": true,
+        "category": "Hadronic response",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "FrPiProd_pi": {
+        "both_endpoints_present": true,
+        "category": "Hadronic response",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "GEANT_Neutron": {
+        "both_endpoints_present": true,
+        "category": "Hadronic response",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "GEANT_Pion": {
+        "both_endpoints_present": true,
+        "category": "Hadronic response",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "GEANT_Proton": {
+        "both_endpoints_present": true,
+        "category": "Hadronic response",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "HighQ2": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "LowQ2": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "MFP_N": {
+        "both_endpoints_present": true,
+        "category": "Hadronic response",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "MFP_pi": {
+        "both_endpoints_present": true,
+        "category": "Hadronic response",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "MaCCQE": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "MaNCEL": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "MaRES": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "MinosEfficiency": {
+        "both_endpoints_present": true,
+        "category": "Muon reconstruction",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "MuonResolution": {
+        "both_endpoints_present": true,
+        "category": "Muon reconstruction",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "Muon_Energy_MINERvA": {
+        "both_endpoints_present": true,
+        "category": "Muon reconstruction",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "Muon_Energy_MINOS": {
+        "both_endpoints_present": true,
+        "category": "Muon reconstruction",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "MvRES": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "NormDISCC": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "NormNCRES": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "RDecBR1gamma": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "Rvn1pi": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "Rvn2pi": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "Rvp1pi": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "Rvp2pi": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "Theta_Delta2Npi": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      },
+      "VecFFCCQEshape": {
+        "both_endpoints_present": true,
+        "category": "Models",
+        "contiguous_from_zero": true,
+        "indices": [
+          0,
+          1
+        ],
+        "is_pm_pair": true,
+        "n_universes": 2
+      }
+    },
+    "skipped_files_not_matching_UNI_RE": [
+      "5d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root"
+    ],
+    "skipped_note": "Production's UNI_RE requires a trailing _<digits>; these are skipped by analyze_universes_5d too and contribute to no band.",
+    "summary": {
+      "flux_exactly_100_contiguous": true,
+      "n_pm_pair_bands": 42,
+      "non_pair_bands": {
+        "2p2h": 3,
+        "Flux": 100
+      },
+      "pair_bands_missing_an_endpoint": []
+    }
+  },
+  "criteria": "docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md",
+  "git": {
+    "dirty": true,
+    "head": "5fb7e38bf5e6f41a86f8860413820fa3d907420c"
+  },
+  "inputs": {
+    "add_norm": 0.014,
+    "cv": "products/5d/xsec_5d_MEFHC_5iter_lgbm.root",
+    "glob": "uq_5d/universe_sweep_bkgaware/5d_xsec_*_uni_full_*.root"
+  },
+  "magnitude_M": {
+    "as_built": {
+      "median_rel_pct": 13.234606756608178,
+      "sqrt_trace": 4.3514831463037644e-38
+    },
+    "one_sided_ep0": {
+      "median_rel_pct": 14.840539456001412,
+      "sqrt_trace": 4.610136062505377e-38
+    },
+    "one_sided_ep1": {
+      "median_rel_pct": 15.738335342553972,
+      "sqrt_trace": 4.4878284910287366e-38
+    },
+    "per_band_ratios_ep0_sorted": [
+      0.6377048647481052,
+      0.8012275272209627,
+      0.9449251916273537,
+      0.9537059660903346,
+      0.9588478650796217,
+      1.0198670518435111,
+      1.100091075577203,
+      1.1186729929764432,
+      1.1905231404444483,
+      1.2285930237049458,
+      1.2355722913872642,
+      1.2916351256221643,
+      1.3445840688747883,
+      1.3470806273581457,
+      1.6275473913771392,
+      1.6670091345136373,
+      1.6870863727445087,
+      1.730121772011657,
+      1.9668947607421956,
+      1.9926740444050408,
+      2.0594804561570887,
+      2.1437037432425545,
+      2.157629053128853,
+      2.178655589134368,
+      2.2158610162625068,
+      2.450115623988183,
+      2.474238600382105,
+      2.530915543897795,
+      2.618159117892006,
+      2.629025857880838,
+      2.640184620878921,
+      2.640184620908173,
+      2.946217761640945,
+      3.131980962107048,
+      3.624314256639291,
+      4.309228349986378,
+      4.472691289225185,
+      4.6872657087403455,
+      5.662828413344897,
+      5.802368336231158,
+      93336361471.68355,
+      2.530224596888551e+22
+    ],
+    "per_band_ratios_ep1_sorted": [
+      0.6110702607149924,
+      0.7961166083832045,
+      0.8756701832455168,
+      0.885079699630527,
+      0.9241905992265085,
+      0.9288059291433276,
+      1.0007590626968959,
+      1.0118135618116382,
+      1.0183763515750386,
+      1.029645661752858,
+      1.0713905845193248,
+      1.116153328823171,
+      1.1862204487408867,
+      1.204156192053485,
+      1.264782218497034,
+      1.2666987612462115,
+      1.4288964004245237,
+      1.5688561440014341,
+      1.6085314610846824,
+      1.6119338756941288,
+      1.747398305616466,
+      1.8212723762799843,
+      1.8232415585100061,
+      1.9536851194824796,
+      2.1811411666852423,
+      2.247013280454829,
+      2.408035091282335,
+      2.737590084108124,
+      2.8053729450361797,
+      2.822403311999874,
+      2.822403312035281,
+      2.8272474857916556,
+      3.119101918791363,
+      3.4113888892803557,
+      3.8674000237238078,
+      3.9173794227540526,
+      4.23048330968546,
+      4.243608989138347,
+      4.821908619148886,
+      8.68381974997099,
+      93336832727.15791,
+      2.530224596883978e+22
+    ],
+    "per_band_trace_ratio_distribution_ep0": {
+      "max": 2.530224596888551e+22,
+      "median": 2.101592099699822,
+      "min": 0.6377048647481052,
+      "n_above_1": 37,
+      "n_bands": 42,
+      "n_below_1": 5,
+      "p25": 1.2495879999459891,
+      "p90": 4.665808266788829
+    },
+    "per_band_trace_ratio_distribution_ep1": {
+      "max": 2.530224596883978e+22,
+      "median": 1.7843353409482252,
+      "min": 0.6110702607149924,
+      "n_above_1": 36,
+      "n_bands": 42,
+      "n_below_1": 6,
+      "p25": 1.0825812705952864,
+      "p90": 4.242296421193059
+    },
+    "reported_as": "distribution across pair bands, not a max (BEN-064)",
+    "scope_note": "Totals differ ONLY through the pair bands; Flux, 2p2h and the norm band are byte-identical contributions in both.",
+    "total_ratio_ep0": 1.0594401741901074,
+    "total_ratio_ep1": 1.0313330742969296
+  },
+  "method": {
+    "as_built": "Z = D - D.mean(axis=0); diag = (Z**2).sum(axis=0)/N   [analyze_universes_5d:96-97]",
+    "counterfactual_scope": "N==2 pair bands only. Flux (N=100), 2p2h (N=3) and __Normalization_flat are carried UNCHANGED in both totals.",
+    "diagonal_only": true,
+    "one_sided": "diag = d_ep**2, i.e. diag(outer(x_ep - CV)); computed for BOTH ep in {0,1}",
+    "why_sufficient": "The criterion is phrased over sqrt-trace and per-bin median sigma; both depend only on the diagonal. No 10694^2 matrix is formed. This says NOTHING about off-diagonal structure and no such claim is made."
+  },
+  "per_band": {
+    "2p2h": {
+      "category": "Models",
+      "counterfactual_applied": false,
+      "excluded_reason": "N != 2, so there is no '+1 sigma endpoint'; carried unchanged in both totals",
+      "n": 3,
+      "sqrt_trace_as_built": 3.360984008909379e-38,
+      "trace_as_built": 1.1296213508144563e-75
+    },
+    "AGKYxF1pi": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 2.1437037432425545,
+      "ratio_one_sided_ep1_over_as_built": 1.9536851194824796,
+      "sqrt_trace_as_built": 1.1422427723612682e-39,
+      "trace_as_built": 1.304718551011556e-78,
+      "trace_one_sided_ep0": 2.7969300416814743e-78,
+      "trace_one_sided_ep1": 2.5490092182240193e-78
+    },
+    "AhtBY": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 2.530915543897795,
+      "ratio_one_sided_ep1_over_as_built": 3.9173794227540526,
+      "sqrt_trace_as_built": 1.0877519561767654e-39,
+      "trace_as_built": 1.1832043181663798e-78,
+      "trace_one_sided_ep0": 2.9945902004542827e-78,
+      "trace_one_sided_ep1": 4.635060248898715e-78
+    },
+    "BeamAngleX": {
+      "category": "Muon reconstruction",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 4.309228349986378,
+      "ratio_one_sided_ep1_over_as_built": 8.68381974997099,
+      "sqrt_trace_as_built": 7.626209624425781e-40,
+      "trace_as_built": 5.815907323568443e-79,
+      "trace_one_sided_ep0": 2.506207271961453e-78,
+      "trace_one_sided_ep1": 5.050429088040456e-78
+    },
+    "BeamAngleY": {
+      "category": "Muon reconstruction",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 4.6872657087403455,
+      "ratio_one_sided_ep1_over_as_built": 3.4113888892803557,
+      "sqrt_trace_as_built": 9.185718471748111e-40,
+      "trace_as_built": 8.437742384221445e-79,
+      "trace_one_sided_ep0": 3.954994053674619e-78,
+      "trace_one_sided_ep1": 2.8784420620142975e-78
+    },
+    "BhtBY": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 2.157629053128853,
+      "ratio_one_sided_ep1_over_as_built": 3.8674000237238078,
+      "sqrt_trace_as_built": 9.37769615040152e-40,
+      "trace_as_built": 8.794118508925548e-79,
+      "trace_one_sided_ep0": 1.897444559151595e-78,
+      "trace_one_sided_ep1": 3.4010374130048643e-78
+    },
+    "CCQEPauliSupViaKF": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 1.6870863727445087,
+      "ratio_one_sided_ep1_over_as_built": 1.1862204487408867,
+      "sqrt_trace_as_built": 4.944267225467505e-39,
+      "trace_as_built": 2.444577839683214e-77,
+      "trace_one_sided_ep0": 4.12421396044276e-77,
+      "trace_one_sided_ep1": 2.8998082219710496e-77
+    },
+    "CV1uBY": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 3.131980962107048,
+      "ratio_one_sided_ep1_over_as_built": 2.8272474857916556,
+      "sqrt_trace_as_built": 1.0898732180167002e-39,
+      "trace_as_built": 1.1878236313500775e-78,
+      "trace_one_sided_ep0": 3.7202409997293033e-78,
+      "trace_one_sided_ep1": 3.358271375298421e-78
+    },
+    "CV2uBY": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 2.0594804561570887,
+      "ratio_one_sided_ep1_over_as_built": 3.119101918791363,
+      "sqrt_trace_as_built": 1.2166100999401917e-39,
+      "trace_as_built": 1.4801401352764833e-78,
+      "trace_one_sided_ep0": 3.048319680975627e-78,
+      "trace_one_sided_ep1": 4.616707936020987e-78
+    },
+    "EtaNCEL": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 93336361471.68355,
+      "ratio_one_sided_ep1_over_as_built": 93336832727.15791,
+      "sqrt_trace_as_built": 4.187420100377362e-45,
+      "trace_as_built": 1.7534487097044357e-89,
+      "trace_one_sided_ep0": 1.6366052259103033e-78,
+      "trace_one_sided_ep1": 1.636613489133338e-78
+    },
+    "Flux": {
+      "category": "Flux",
+      "counterfactual_applied": false,
+      "excluded_reason": "N != 2, so there is no '+1 sigma endpoint'; carried unchanged in both totals",
+      "n": 100,
+      "sqrt_trace_as_built": 3.9926730202902006e-39,
+      "trace_as_built": 1.5941437846953273e-77
+    },
+    "FrAbs_N": {
+      "category": "Hadronic response",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 1.3445840688747883,
+      "ratio_one_sided_ep1_over_as_built": 1.264782218497034,
+      "sqrt_trace_as_built": 2.5630939754468603e-39,
+      "trace_as_built": 6.56945072697199e-78,
+      "trace_one_sided_ep0": 8.833178788744435e-78,
+      "trace_one_sided_ep1": 8.3089244647665865e-78
+    },
+    "FrAbs_pi": {
+      "category": "Hadronic response",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 1.100091075577203,
+      "ratio_one_sided_ep1_over_as_built": 1.5688561440014341,
+      "sqrt_trace_as_built": 2.5694769176166236e-39,
+      "trace_as_built": 6.6022116301646255e-78,
+      "trace_one_sided_ep0": 7.263034093416123e-78,
+      "trace_one_sided_ep1": 1.0357920279981497e-77
+    },
+    "FrCEx_N": {
+      "category": "Hadronic response",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 1.2916351256221643,
+      "ratio_one_sided_ep1_over_as_built": 0.8756701832455168,
+      "sqrt_trace_as_built": 4.2946966078022746e-39,
+      "trace_as_built": 1.8444418953068364e-77,
+      "trace_one_sided_ep0": 2.3823459391474286e-77,
+      "trace_one_sided_ep1": 1.6151227724490457e-77
+    },
+    "FrCEx_pi": {
+      "category": "Hadronic response",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 1.1905231404444483,
+      "ratio_one_sided_ep1_over_as_built": 1.6085314610846824,
+      "sqrt_trace_as_built": 2.0732854330581965e-39,
+      "trace_as_built": 4.2985124869313137e-78,
+      "trace_one_sided_ep0": 5.117478585181143e-78,
+      "trace_one_sided_ep1": 6.914292571094378e-78
+    },
+    "FrElas_N": {
+      "category": "Hadronic response",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 0.9588478650796217,
+      "ratio_one_sided_ep1_over_as_built": 1.116153328823171,
+      "sqrt_trace_as_built": 9.998979986250415e-39,
+      "trace_as_built": 9.997960076543634e-77,
+      "trace_one_sided_ep0": 9.586522674545155e-77,
+      "trace_one_sided_ep1": 1.1159256420875343e-76
+    },
+    "FrElas_pi": {
+      "category": "Hadronic response",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 2.178655589134368,
+      "ratio_one_sided_ep1_over_as_built": 2.1811411666852423,
+      "sqrt_trace_as_built": 1.3535866703226016e-39,
+      "trace_as_built": 1.8321968740750274e-78,
+      "trace_one_sided_ep0": 3.9917259600980763e-78,
+      "trace_one_sided_ep1": 3.9962800275170593e-78
+    },
+    "FrInel_N": {
+      "category": "Hadronic response",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 1.3470806273581457,
+      "ratio_one_sided_ep1_over_as_built": 1.0183763515750386,
+      "sqrt_trace_as_built": 3.244395247201839e-39,
+      "trace_as_built": 1.052610052006588e-77,
+      "trace_one_sided_ep0": 1.417950609220525e-77,
+      "trace_one_sided_ep1": 1.0719531843936806e-77
+    },
+    "FrPiProd_N": {
+      "category": "Hadronic response",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 5.802368336231158,
+      "ratio_one_sided_ep1_over_as_built": 4.821908619148886,
+      "sqrt_trace_as_built": 6.353706875755379e-40,
+      "trace_as_built": 4.036959106302117e-79,
+      "trace_one_sided_ep0": 2.342392369306744e-78,
+      "trace_one_sided_ep1": 1.946584790982976e-78
+    },
+    "FrPiProd_pi": {
+      "category": "Hadronic response",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 2.618159117892006,
+      "ratio_one_sided_ep1_over_as_built": 1.747398305616466,
+      "sqrt_trace_as_built": 9.820564379050524e-40,
+      "trace_as_built": 9.644348472307601e-79,
+      "trace_one_sided_ep0": 2.5250438888899986e-78,
+      "trace_one_sided_ep1": 1.6852518179285053e-78
+    },
+    "GEANT_Neutron": {
+      "category": "Hadronic response",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 0.9449251916273537,
+      "ratio_one_sided_ep1_over_as_built": 2.8053729450361797,
+      "sqrt_trace_as_built": 1.4951952352201763e-39,
+      "trace_as_built": 2.235608791425118e-78,
+      "trace_one_sided_ep0": 2.1124830656411763e-78,
+      "trace_one_sided_ep1": 6.271716419149058e-78
+    },
+    "GEANT_Pion": {
+      "category": "Hadronic response",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 2.946217761640945,
+      "ratio_one_sided_ep1_over_as_built": 1.6119338756941288,
+      "sqrt_trace_as_built": 1.2623836363914458e-39,
+      "trace_as_built": 1.5936124454288898e-78,
+      "trace_one_sided_ep0": 4.695129291894656e-78,
+      "trace_one_sided_ep1": 2.568797885514589e-78
+    },
+    "GEANT_Proton": {
+      "category": "Hadronic response",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 2.450115623988183,
+      "ratio_one_sided_ep1_over_as_built": 2.247013280454829,
+      "sqrt_trace_as_built": 1.3553840180860114e-39,
+      "trace_as_built": 1.8370658364829814e-78,
+      "trace_one_sided_ep0": 4.5010237082618735e-78,
+      "trace_one_sided_ep1": 4.127911331647119e-78
+    },
+    "HighQ2": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 1.730121772011657,
+      "ratio_one_sided_ep1_over_as_built": 0.885079699630527,
+      "sqrt_trace_as_built": 2.588679417144637e-39,
+      "trace_as_built": 6.701261124748297e-78,
+      "trace_one_sided_ep0": 1.1593997771862355e-77,
+      "trace_one_sided_ep1": 5.931150183437951e-78
+    },
+    "LowQ2": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 0.8012275272209627,
+      "ratio_one_sided_ep1_over_as_built": 1.8212723762799843,
+      "sqrt_trace_as_built": 4.1000304067750633e-39,
+      "trace_as_built": 1.6810249336480094e-77,
+      "trace_one_sided_ep0": 1.3468834507835774e-77,
+      "trace_one_sided_ep1": 3.061604275491013e-77
+    },
+    "MFP_N": {
+      "category": "Hadronic response",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 1.0198670518435111,
+      "ratio_one_sided_ep1_over_as_built": 1.0713905845193248,
+      "sqrt_trace_as_built": 5.902872759746367e-39,
+      "trace_as_built": 3.484390681775569e-77,
+      "trace_one_sided_ep0": 3.553615252093451e-77,
+      "trace_one_sided_ep1": 3.7331433692412154e-77
+    },
+    "MFP_pi": {
+      "category": "Hadronic response",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 1.6670091345136373,
+      "ratio_one_sided_ep1_over_as_built": 1.029645661752858,
+      "sqrt_trace_as_built": 2.434907274476058e-39,
+      "trace_as_built": 5.928773435296426e-78,
+      "trace_one_sided_ep0": 9.883319473100938e-78,
+      "trace_one_sided_ep1": 6.104535847168553e-78
+    },
+    "MaCCQE": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 0.6377048647481052,
+      "ratio_one_sided_ep1_over_as_built": 1.8232415585100061,
+      "sqrt_trace_as_built": 9.917627363339372e-39,
+      "trace_as_built": 9.835933251805785e-77,
+      "trace_one_sided_ep0": 6.2724224840141985e-77,
+      "trace_one_sided_ep1": 1.7933282271422773e-76
+    },
+    "MaNCEL": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 2.474238600382105,
+      "ratio_one_sided_ep1_over_as_built": 2.737590084108124,
+      "sqrt_trace_as_built": 7.763340297324976e-40,
+      "trace_as_built": 6.026945257206985e-79,
+      "trace_one_sided_ep0": 1.4912100597771375e-78,
+      "trace_one_sided_ep1": 1.6499305573592328e-78
+    },
+    "MaRES": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 2.2158610162625068,
+      "ratio_one_sided_ep1_over_as_built": 0.6110702607149924,
+      "sqrt_trace_as_built": 9.397896519880961e-39,
+      "trace_as_built": 8.832045899839069e-77,
+      "trace_one_sided_ep0": 1.9570586203294504e-76,
+      "trace_one_sided_ep1": 5.397000590661439e-77
+    },
+    "MinosEfficiency": {
+      "category": "Muon reconstruction",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 0.9537059660903346,
+      "ratio_one_sided_ep1_over_as_built": 1.204156192053485,
+      "sqrt_trace_as_built": 4.686244955546077e-39,
+      "trace_as_built": 2.1960891783381053e-77,
+      "trace_one_sided_ep0": 2.094423351447472e-77,
+      "trace_one_sided_ep1": 2.6444343823974792e-77
+    },
+    "MuonResolution": {
+      "category": "Muon reconstruction",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 3.624314256639291,
+      "ratio_one_sided_ep1_over_as_built": 4.243608989138347,
+      "sqrt_trace_as_built": 8.649523063575312e-40,
+      "trace_as_built": 7.481424922732126e-79,
+      "trace_one_sided_ep0": 2.7115035007434553e-78,
+      "trace_one_sided_ep1": 3.174824205366972e-78
+    },
+    "Muon_Energy_MINERvA": {
+      "category": "Muon reconstruction",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 1.2285930237049458,
+      "ratio_one_sided_ep1_over_as_built": 0.9288059291433276,
+      "sqrt_trace_as_built": 9.360303937921877e-39,
+      "trace_as_built": 8.76152898102758e-77,
+      "trace_one_sided_ep0": 1.0764353383079187e-76,
+      "trace_one_sided_ep1": 8.137760065939514e-77
+    },
+    "Muon_Energy_MINOS": {
+      "category": "Muon reconstruction",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 1.2355722913872642,
+      "ratio_one_sided_ep1_over_as_built": 0.9241905992265085,
+      "sqrt_trace_as_built": 1.1299916529261625e-38,
+      "trace_as_built": 1.276881135682801e-76,
+      "trace_one_sided_ep0": 1.5776789506447705e-76,
+      "trace_one_sided_ep1": 1.1800815419277126e-76
+    },
+    "MvRES": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 1.9926740444050408,
+      "ratio_one_sided_ep1_over_as_built": 0.7961166083832045,
+      "sqrt_trace_as_built": 4.377383362977428e-39,
+      "trace_as_built": 1.9161485106471575e-77,
+      "trace_one_sided_ep0": 3.818259402391967e-77,
+      "trace_one_sided_ep1": 1.5254776534549437e-77
+    },
+    "NormDISCC": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 2.530224596888551e+22,
+      "ratio_one_sided_ep1_over_as_built": 2.530224596883978e+22,
+      "sqrt_trace_as_built": 8.042535611412939e-51,
+      "trace_as_built": 6.468237906084531e-101,
+      "trace_one_sided_ep0": 1.636609464850198e-78,
+      "trace_one_sided_ep1": 1.6366094648472398e-78
+    },
+    "NormNCRES": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 5.662828413344897,
+      "ratio_one_sided_ep1_over_as_built": 4.23048330968546,
+      "sqrt_trace_as_built": 7.521311412581111e-40,
+      "trace_as_built": 5.657012536502288e-79,
+      "trace_one_sided_ep0": 3.2034691326353446e-78,
+      "trace_one_sided_ep1": 2.393189711835434e-78
+    },
+    "RDecBR1gamma": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 4.472691289225185,
+      "ratio_one_sided_ep1_over_as_built": 2.408035091282335,
+      "sqrt_trace_as_built": 9.291578354297717e-40,
+      "trace_as_built": 8.633342831405386e-79,
+      "trace_one_sided_ep0": 3.861427727892157e-78,
+      "trace_one_sided_ep1": 2.078939249309496e-78
+    },
+    "Rvn1pi": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 2.640184620908173,
+      "ratio_one_sided_ep1_over_as_built": 2.822403312035281,
+      "sqrt_trace_as_built": 1.2749131596143356e-39,
+      "trace_as_built": 1.6254035645578085e-78,
+      "trace_one_sided_ep0": 4.2913654939148507e-78,
+      "trace_one_sided_ep1": 4.5875444040019105e-78
+    },
+    "Rvn2pi": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 2.629025857880838,
+      "ratio_one_sided_ep1_over_as_built": 1.0118135618116382,
+      "sqrt_trace_as_built": 2.0887280641682368e-39,
+      "trace_as_built": 4.362784926043989e-78,
+      "trace_one_sided_ep0": 1.1469874382942387e-77,
+      "trace_one_sided_ep1": 4.414324955438694e-78
+    },
+    "Rvp1pi": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 2.640184620878921,
+      "ratio_one_sided_ep1_over_as_built": 2.822403311999874,
+      "sqrt_trace_as_built": 1.2749131596220062e-39,
+      "trace_as_built": 1.6254035645773672e-78,
+      "trace_one_sided_ep0": 4.291365493918943e-78,
+      "trace_one_sided_ep1": 4.587544403999562e-78
+    },
+    "Rvp2pi": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 1.9668947607421956,
+      "ratio_one_sided_ep1_over_as_built": 1.2666987612462115,
+      "sqrt_trace_as_built": 2.0702318850355658e-39,
+      "trace_as_built": 4.2858600578179123e-78,
+      "trace_one_sided_ep0": 8.429835692996295e-78,
+      "trace_one_sided_ep1": 5.428893626112566e-78
+    },
+    "Theta_Delta2Npi": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 1.6275473913771392,
+      "ratio_one_sided_ep1_over_as_built": 1.0007590626968959,
+      "sqrt_trace_as_built": 3.131151174275235e-39,
+      "trace_as_built": 9.804107676165184e-78,
+      "trace_one_sided_ep0": 1.595664987312323e-77,
+      "trace_one_sided_ep1": 9.811549608578511e-78
+    },
+    "VecFFCCQEshape": {
+      "category": "Models",
+      "counterfactual_applied": true,
+      "n": 2,
+      "ratio_one_sided_ep0_over_as_built": 1.1186729929764432,
+      "ratio_one_sided_ep1_over_as_built": 1.4288964004245237,
+      "sqrt_trace_as_built": 2.9322034545669106e-39,
+      "trace_as_built": 8.597817098974124e-78,
+      "trace_one_sided_ep0": 9.618145787173423e-78,
+      "trace_one_sided_ep1": 1.2285389904232546e-77
+    },
+    "__Normalization_flat": {
+      "category": "Normalization",
+      "counterfactual_applied": false,
+      "excluded_reason": "documented rank-1 outer(sigma*CV) norm band, not a one-sided construction (CRITERIA section 2 cause 1); identical in both totals",
+      "n": null,
+      "sqrt_trace_as_built": 4.5070394951526284e-39,
+      "trace_as_built": 2.031340501086566e-77
+    }
+  },
+  "positive_control": {
+    "all_targets_reproduced": true,
+    "checks": [
+      {
+        "committed": [
+          10694,
+          65856
+        ],
+        "match": true,
+        "quantity": "reported_bins",
+        "reconstructed": [
+          10694,
+          65856
+        ]
+      },
+      {
+        "committed": 4.3515e-38,
+        "match": true,
+        "quantity": "total syst sqrt-trace",
+        "reconstructed": 4.3514831463037644e-38,
+        "rel_diff": 3.873077383773915e-06
+      },
+      {
+        "committed": 13.235,
+        "match": true,
+        "quantity": "total syst median rel %",
+        "reconstructed": 13.234606756608178,
+        "rel_diff": 2.971238321278653e-05
+      },
+      {
+        "committed": 3.993e-39,
+        "match": true,
+        "quantity": "category sum sqrt-tr Flux",
+        "reconstructed": 3.9926730202902006e-39,
+        "rel_diff": 8.188823185556414e-05
+      },
+      {
+        "committed": 8.964e-38,
+        "match": true,
+        "quantity": "category sum sqrt-tr Models",
+        "reconstructed": 8.963974013734465e-38,
+        "rel_diff": 2.898958671899348e-06
+      },
+      {
+        "committed": 4.507e-39,
+        "match": true,
+        "quantity": "category sum sqrt-tr Normalization",
+        "reconstructed": 4.5070394951526284e-39,
+        "rel_diff": 8.763069143222532e-06
+      },
+      {
+        "committed": 4.017e-38,
+        "match": true,
+        "quantity": "category sum sqrt-tr Hadronic response",
+        "reconstructed": 4.016568488709946e-38,
+        "rel_diff": 0.00010742128206468559
+      },
+      {
+        "committed": 2.789e-38,
+        "match": true,
+        "quantity": "category sum sqrt-tr Muon reconstruction",
+        "reconstructed": 2.78926105387045e-38,
+        "rel_diff": 9.360124433488555e-05
+      }
+    ],
+    "why": "An instrument that cannot rebuild the committed number is not measuring X, so a failure here VOIDS the one-sided comparison whatever it says (branch C2)."
+  },
+  "predeclaration": "docs/orchestration/PREDECLARE-20260817-cause1-endpoint-census-and-magnitude.md",
+  "production_module_sha256": "cb8698fc6e6a1c3d5d96ed807815abcc08c54215f144f1b8bacb979404c0b141",
+  "purpose": "Cause 1's P leg (per-band endpoint census) and M leg (one-sided CV-centered vs mean-centered sqrt-trace and per-bin median on X's own bank). Reads existing universe vectors; adopts nothing, rebuilds nothing, makes no value quotable.",
+  "reader_sha256": "0bb03405f7db839a1bd4e26d3bc767c8e9c6c8d62fd6a28f1e947adee5cec704",
+  "reproduction_tolerance": {
+    "note": "uq_universe_5d_summary.txt prints 4 significant figures; 5e-4 is half a unit in the last printed place. Not a fitted tolerance.",
+    "rtol": 0.0005
+  },
+  "schema": "cause1-endpoint-census-and-magnitude/1",
+  "values_tex_untouched": true,
+  "verdict": {
+    "M_leg": "MEASURED -- the number CRITERIA says 'does not exist anywhere' now exists",
+    "P_leg": "MET -- per-band census committed, both endpoints present for every pair band, Flux exactly 100 contiguous",
+    "branch": "C1",
+    "does_not_discharge": "M MEASURED is not M ACCEPTABLE. Whether this magnitude leaves X's published numbers standing is a physics-presentation judgement and is NOT taken here.",
+    "why": "all committed targets reproduced; census complete; one-sided total differs from as-built and is reported as a per-band distribution"
+  },
+  "written_at_utc": "2026-08-17T08:15:39Z"
+}
