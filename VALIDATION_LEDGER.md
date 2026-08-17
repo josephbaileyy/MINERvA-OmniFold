@@ -735,6 +735,20 @@ product the reader had in mind, and that reading came one edit from deleting a l
 **So for the artifact the four `\gbdtFive*` macros quote, the count is ZERO of seven, not one of seven.**
 Nothing in this table changes any status; it names the subject each status was always about.
 
+**PER-LEG EXTENSION, added 2026-08-17 by lane C.** The per-artifact column above is necessary and **not
+sufficient**: discharge is graded on four legs (`C`/`P`/`M`/`T`), and **a single cause can hold different
+legs for different artifacts at the same time.** Cause 1 is the live example — its `M` is measured on X's
+own bank while its `P` holds only for the footing-matched candidate — and a column keyed to the *cause*
+cannot express that. **That is a limit of the schema, not of the entries.**
+
+The per-leg grading, with the artifact named in the same row as each leg and every cell citing the
+artifact that establishes it, is
+[`docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md`](docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md).
+**These rows are unchanged and remain authoritative for cause-level state**; the board refines them per
+leg and per artifact. Three of its cells read weaker than this table implies, and one — cause 5's
+applicability to X — is graded **`N/A — UNDECLARED`** precisely because no session outside the owning lane
+has stated it.
+
 ## 2026-08-07 selection-complete five-band FPS active lateral — VERIFIED-NUMERIC, gate chain PASSED
 
 Job `56431823` (`sbatch_fps_active_lateral_chain.sh`), 53:56, all four steps rc=0, on the ten
@@ -1057,8 +1071,9 @@ argued about. Both superseded runs are archived under `nd-unfolding/g2_fullevent
 - The corrected unified-throw candidate uses actual asymmetric endpoints,
   one fixed estimator seed **[⚠ SEE `VL141`: true of each leg SEPARATELY, FALSE of the composite —
   `C_syst`'s 169 universes ran at estimator seed `42` (`sweep_bank_5d.py:252`, hardcoded) while the
-  throw/CV legs ran at `1000` (`unified_throw_cov.py:525`). Sentence retained; do not quote it as a
-  property of the block sum]**, throw-mean centering, MAT `1/N`, exact manifests,
+  throw/CV legs ran at `1000` (`unified_throw_cov.py:525`). **Amended 2026-08-17: `C_stat` and `C_ML` are
+  also at `42`, so the map is FOUR legs at `42` and the `uthrow` leg alone at `1000`.** Sentence retained;
+  do not quote it as a property of the block sum]**, throw-mean centering, MAT `1/N`, exact manifests,
   and no scalar jitter subtraction. The candidate mean-centered covariance is PSD
   with sqrt-trace **5.8077e-38** *(quarantined — see notice above)*. The joint
   mean shift has norm **1.654e-38** *(quarantined; the CV-centered variant's
@@ -1956,7 +1971,7 @@ draws; its scatter *is* the draw spread the gate is stated against.
 | VL138 | **Δrecovery = arm1 − arm0** | **−0.006888480** | pooled within-arm sd `0.000424470` | **16.23×**, ranges **disjoint**, **9/9** realized pairwise |
 | VL139 | Δ against the declared draw spread | 8.399× | `0.000820128` | **NOT the §6 bound; a measured effect** |
 | VL140 | arm-1 correction factor, iteration 1 | 1.046109466 | §6 declared "of order 1%" | **4.611%**, i.e. `4.04×` the declared amplitude |
-| VL141 | **the candidate's estimator seed is NOT one value — the block sum mixes two** | `C_syst` (169 universes): **`42`**, hardcoded at `sweep_bank_5d.py:252` with **no CLI flag**; throw/CV legs: **`1000`**, `unified_throw_cov.py:525` | `VALIDATION_LEDGER.md:1058` says the candidate uses *"one fixed estimator seed"* | **FALSE OF THE COMPOSITE, true of each leg separately.** Filed as its own row on lane C's ruling — *a false quotable claim about the candidate, independent of cause 3; folding it into a cause-3 ruling would bury it behind a discharge decision.* **No number moves:** every leg is internally single-seeded, so nothing is mis-computed — what is wrong is the *description*, and it is the description a reader would quote. Two consequences: (a) any statement of the form *"the candidate's estimator seed"* must name the leg; (b) `M(ii)` must vary **both** seeds, which is why the composite ruling followed. Sentence at `:1058` retained beside its correction. Nothing stamps the sweep seed into its products (`ndim`/`globalCompleteness`/`dataPOT`/`hXSecND_flat` only) and `analyze_universes_5d.py` has **zero** occurrences of `seed`, so the agreement holds by hardcoding and is checked by nothing — see [`FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-block.md`](docs/orchestration/FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-block.md) |
+| VL141 | **the candidate's estimator seed is NOT one value — the block sum mixes two** | `C_syst` (169 universes): **`42`**, hardcoded at `sweep_bank_5d.py:252` with **no CLI flag**; throw/CV legs: **`1000`**, `unified_throw_cov.py:525` | `VALIDATION_LEDGER.md:1058` says the candidate uses *"one fixed estimator seed"* | **FALSE OF THE COMPOSITE, true of each leg separately.** Filed as its own row on lane C's ruling — *a false quotable claim about the candidate, independent of cause 3; folding it into a cause-3 ruling would bury it behind a discharge decision.* **No number moves:** every leg is internally single-seeded, so nothing is mis-computed — what is wrong is the *description*, and it is the description a reader would quote. Two consequences: (a) any statement of the form *"the candidate's estimator seed"* must name the leg; (b) `M(ii)` must vary **both** seeds, which is why the composite ruling followed. Sentence at `:1058` retained beside its correction. Nothing stamps the sweep seed into its products (`ndim`/`globalCompleteness`/`dataPOT`/`hXSecND_flat` only) and `analyze_universes_5d.py` has **zero** occurrences of `seed`, so the agreement holds by hardcoding and is checked by nothing — see [`FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-block.md`](docs/orchestration/FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-block.md). **AMENDED 2026-08-17 (lane B), and the amendment sharpens the row rather than softening it: the map is FOUR legs at `42` and ONE outlier at `1000`, not "two seeds mixed".** Measured at `91fc4e9`: `C_stat`'s 100 bootstrap replicas run at estimator seed **`42`** (`bootstrap_nd.py:19`, `--estimator-seed` default, and **no** 5D launcher overrides it) and `C_ML`'s 24 splits likewise at **`42`** (`seedscan_split.py:36`), while the `C_syst` **lateral** arm passes `--seed 42` explicitly (`sbatch_unfold_5d_detector_bkgaware_gpu.sh:37,51`, estimator-only role per `unfold_nd_omnifold_unbinned.py:956-959`). **The sole `1000` is the `uthrow` leg** (`sbatch_uthrow_run_5d_fast.sh:21`; parser `unified_throw_cov.py:525`). **This corrects THIS lane's own prose, not the row above it:** `COST-20260817-mii-seed-scan-derivation.md`'s addendum and commit `382cd8e`'s body say *"throw/**stat/ML** blocks built at seed 1000"* — **stat and ML are at `42`**; the row's own wording (*"throw/CV legs: `1000`"*) was right. **Consequence for `M(ii)`, and it CUTS BOTH WAYS:** the two-role separation `VL141` says is missing is **already present** in the stat and ML modules (`--estimator-seed`, plus `--fixed-data-seed` at `bootstrap_nd.py:21-29`, a working reference implementation of the pattern specified for `unified_throw_cov.py`), so those legs need **no code change** — and the two legs that do need it, `sweep` and `uthrow`, are `99.5 %` of the GPU and `99.7 %` of the CPU cost of a re-seed. Costs, scope and the `sacct` operands: [`EXTENT-20260817-2850-a100h-scope-and-missing-legs.md`](docs/orchestration/EXTENT-20260817-2850-a100h-scope-and-missing-legs.md) |
 
 **VL134 IS NOT IN ANY RECEIPT AND THAT IS THE FIRST RESULT.** The recorder hooks `RunStep1`
 (`closure_foldforward_instrumented.py:115`), so with `niter=3` it captures the push after **0, 1 and

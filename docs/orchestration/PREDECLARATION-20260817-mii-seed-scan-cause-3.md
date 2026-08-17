@@ -7,6 +7,39 @@ the three amendments it returned are incorporated below, one of which retracts a
 that is a measured finding, not a caveat.** This file is committed anyway: a predeclaration's value is that
 it exists before the run, whenever the run happens.
 
+> **NAVIGATION NOTE added 2026-08-17 to the header, NOT to any predeclared text: `28.50 A100-h` at `:88`
+> and `:92` is SUPERSEDED. A COMPOSITE ARM — this document's own subject — COSTS
+> `39.078` A100-HOURS *PLUS* `55.182` CPU TASK-HOURS (`2,759.1` CPU-core-hours), IN TWO UNITS.**
+> The `39.078` alone (`+37.1 %` on `28.50`; the lateral term had costed 5 of 19 universes, missing job
+> `55894759`) is the **`C_syst` path only** — and quoting it bare here would reintroduce, in the successor,
+> exactly the omission `:88-92` exists to warn about. Corrected on lane A's challenge; see the annotation for
+> why the CPU term is not optional.
+>
+> **Why a composite arm necessarily carries the CPU term, and the code does not merely imply it — it
+> REFUSES the alternative.** A composite arm moves **both** seeds, and the second of them is
+> `unified_throw_cov.py`'s `--seed`, i.e. the `uthrow` leg. That seed threads into **every** throw unfold
+> (`:244`), **every** knob block endpoint (`:281`) and **every** flux block unit (`:297`); it is **stamped**
+> into each slab (`:254`, `:285`, `:302`); and the F2 guard at **`:417-419` raises `SystemExit` on a
+> mixed-seed combine** — *"refusing mixed-seed combine"*, with the comment giving the reason as *"else
+> `C_uni`/`C_block` would mix estimator jitter across slabs."* **So no slab can be reused across a seed
+> change: the 71 CPU tasks (40 throw + 31 block, `55821660`/`56427580`/`55821661`) re-run in full.** The
+> `uthrow` leg is `0` A100-hours and `2,759.1` CPU-core-hours, so **the composite arm's defining move is
+> precisely the leg that carries essentially all of the CPU bill** — which is why a GPU-only figure fails
+> hardest at this site rather than most harmlessly.
+>
+> **Do not read `39.078` and `39.223` as the same number rounded.** They are different quantities that
+> nearly coincide because `C_syst` is `99.63 %` of the GPU column: `39.078` is the `C_syst` re-seed,
+> `39.223` is one seed across **all four** blocks (`+ 0.1458` for `C_stat`). The four-block CPU total is
+> `55.337` task-hours (`+ 0.1550` for `C_ML`). Against the `24` A100-h grant: `1.63x`, **on the GPU column
+> alone**, with the CPU column outside the grant's unit entirely.
+>
+> The predeclared *claim* at `:88-92` held on measurement — only its operand moved, and the direction it
+> predicted was right. Full record in the **POST-HOC ANNOTATION at the end of this file**, which leaves
+> everything above it untouched. This pointer is in the header because a reader who greps to `:88` would
+> otherwise never reach an annotation 150 lines below it, and a predeclaration is the one document class
+> where the body must not be edited to fix that (`BEN-244`). `BEN-247`;
+> [`EXTENT-20260817-2850-a100h-scope-and-missing-legs.md`](EXTENT-20260817-2850-a100h-scope-and-missing-legs.md) §0.
+
 ---
 
 ## 1. THE BAR (confirmed)
@@ -224,3 +257,57 @@ bkgaware bank and the candidate combined product, and deliberately **not** pre-f
 override or a sibling launcher is permissible without a repin. **The seed is nevertheless hardcoded at
 `:20`**, so varying it is an explicit code change and must be committed before the run, not passed as an
 undeclared environment override — otherwise the arm's seed is unprovable from the tree.
+
+---
+
+## POST-HOC ANNOTATION, 2026-08-17 — appended, and the predeclared body above is UNTOUCHED
+
+**Nothing above this line was edited.** A predeclaration's whole value is that it was written before the
+measurement, so a correction to it goes here or nowhere (`BEN-244` records two stale references sitting
+inside frozen predeclarations for exactly this reason). This block records what later measurement did to
+one **operand** in the text above; it changes no predeclared criterion, threshold or branch.
+
+**`28.50 A100-h` at `:88` and `:92` is SUPERSEDED. For a COMPOSITE ARM the figure is `39.078` A100-hours
+PLUS `55.182` CPU task-hours (`2,759.1` CPU-core-hours).** The `39.078` alone (`+37.1 %` on `28.50`) is the
+`C_syst` path: its lateral term had costed a **truncated attempt** — 5 of 19 universes (job `55891346`), with
+the completion run `55894759` missing — and corrected from all 19 measured productions is
+`23.840 + 14.2075 + 1.030 = 39.078` over **189** tasks.
+
+**⚠ MY FIRST VERSION OF THIS ANNOTATION QUOTED `39.078` BARE, AND LANE A CAUGHT IT — the same defect a
+fourth time, in the correction to the correction.** A declined to assert it, having not traced whether a
+composite arm re-runs the `uthrow` leg or reuses it, and offered to withdraw. **It does not reuse, and the
+code does not merely imply that — it refuses the alternative.** A composite arm's second seed is
+`unified_throw_cov.py`'s `--seed`, which threads into every throw unfold (`:244`), every knob block endpoint
+(`:281`) and every flux block unit (`:297`), is stamped into each slab (`:254`, `:285`, `:302`), and is
+enforced by the F2 guard at **`:417-419`**, which raises `SystemExit` — *"refusing mixed-seed combine"* —
+because *"else `C_uni`/`C_block` would mix estimator jitter across slabs."* **So all 71 CPU tasks re-run
+(40 throw + 31 block: `55821660`, `56427580`, `55821661`), and that leg is `0` A100-hours against `2,759.1`
+CPU-core-hours.** A's chain holds and is confirmed rather than withdrawn: **the composite arm's defining
+move is the leg carrying essentially the whole CPU bill**, so a GPU-only successor fails *hardest* at the one
+site whose predeclared point is that the figure omits composite scope. **The omission I introduced was
+larger than the one I was fixing.**
+
+`BEN-247`;
+[`EXTENT-20260817-2850-a100h-scope-and-missing-legs.md`](EXTENT-20260817-2850-a100h-scope-and-missing-legs.md) §0.
+
+**THE PREDECLARED CLAIM AT `:88-92` WAS RIGHT, AND MORE RIGHT THAN IT KNEW.** It says the figure covers the
+`C_syst` path only, that the stat and ML blocks *"are unfolds too, so they are very likely seed-dependent as
+well — I have not measured whether they are, or what they cost"*, and that **a composite arm may therefore
+cost materially more than `28.50`**. All three held on measurement. The stat and ML legs **are**
+seed-dependent, and one seed across all four blocks is `39.22` A100-h **plus `55.34` CPU task-hours**
+(`2,764.7` CPU-core-hours) — a second unit the GPU grant does not reach, and the larger half.
+
+**One predeclared expectation was WRONG in a way worth recording, because it was wrong in my favour.** The
+text infers the stat/ML legs are *"very likely seed-dependent"* and treats that as raising the cost. They
+are seed-dependent, but they are **nearly free** to scan — `0.1458` A100-h and `0.1550` CPU task-hours per
+estimator seed — because `bootstrap_nd.py:19,21` and `seedscan_split.py:36` **already carry the two-role
+`--estimator-seed`/`--fixed-data-seed` separation** that the `C_syst` path lacks. So the composite costs more
+than `28.50` for a reason the predeclaration did not anticipate: not because the extra legs are expensive,
+but because **the leg already counted was undercounted**, and because the extra legs are denominated in CPU.
+**"Materially more" was the right call reached through a partly wrong mechanism**, which is the kind of thing
+a predeclaration exists to expose and is recorded rather than smoothed over.
+
+**`:88`'s closing instruction is unchanged and now has a number that satisfies it:** *"The number going to
+Joseph must carry that scope."* It is **`39.22` A100-hours plus `55.34` CPU task-hours for one additional
+estimator seed across all four blocks of the candidate** — and per §2b's own finding, funding does not make
+the run possible: `sweep_bank_5d.py:252` and `unified_throw_cov.py`'s dual-role `--seed` still block it.

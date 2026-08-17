@@ -1,5 +1,14 @@
 # SCOREBOARD 2026-08-17 — the seven quarantine causes, all four legs, candidate vs quoted product
 
+> ## The one thing to take from this board
+>
+> **THE QUOTED COLUMN CANNOT MOVE BY REMEDIATION.** `receipt_candidate_stamps_5d.json` runs both July
+> products as **negative controls, named by the macro each feeds**, and every named stamp comes back
+> **`ABSENT`** — 4 keys where the candidate arms carry 13. X predates the stamping, so
+> **"X gets replaced, not repaired."** That is a structural fact about the deliverable, not a grading
+> opinion. A reader who takes one line from this board should take that one and not *"1 of 7"*.
+> Promoted to the top on the mediator's instruction; detail in §1.
+
 **Written by lane C (PET) on the mediator's dispatch** (`HANDOFF-20260817-1133Z.md` §"The four dispatches"
 item 4). **Nothing here adopts anything, discharges anything, or lifts the 2026-07-12 quarantine.**
 `docs/analysis-note/` untouched; `values.tex` untouched.
@@ -37,9 +46,9 @@ the nearer of PASS/FAIL.
 | | | P | **MET** — job `56720356`, path+sha256 | **OPEN** — stamps `ABSENT` |
 | | | M | **MET** — `5.3478×` floor (corrected from `4.83×`, BEN-109) | **OPEN** |
 | | | T | **MET** — `f7_cv_centered_required`, N3/N4 | **MET** |
-| **3** | varying estimator seeds | C | **MET** | **MET** |
-| | | P | **MET** — `receipt_candidate_stamps_5d.json`, S1 | **OPEN** — stamps `ABSENT` |
-| | | M | **OPEN — costed, not merely unresolved; see §2** | **OPEN** |
+| **3** | varying estimator seeds | C | **PARTIAL — scoped; INAPPLICABLE to the dominant block** | **PARTIAL — same scope** |
+| | | P | **WITHDRAWN from MET → PARTIAL — see §2d** | **OPEN** — stamps `ABSENT` |
+| | | M | **OPEN and NOT CURRENTLY MEASURABLE — see §2 and §2b** | **OPEN, same** |
 | | | T | **MET** — N5, re-derived | **MET** |
 | **4** | scalar jitter subtraction | C | **MET** | **MET** |
 | | | P | **MET** — `receipt_candidate_stamps_5d.json`, S1 | **OPEN** — stamps `ABSENT` |
@@ -118,11 +127,212 @@ being runnable, and it is the cheapest open cell on the board.
 hook refused to let me skip. **The index requirement surfaced a correction to the document being
 indexed.** That is a stronger argument for the rule than the one the hook gives.
 
-## 3. Cause 4: the REASON the `M` cell was unreachable is false, and the cell still does not move
+**AND THE "COSTED" HALF OF MY OWN CELL WAS ALSO WRONG — corrected 2026-08-17.** I wrote *"`OPEN` — costed
+at ~1 GPU-node-hour … the cheapest open cell on the board."* **Wrong twice.** That figure prices **AI1's
+footing** — `of_inputs_5d.npz`, fixed-data-seed 0, no flux universes — which is precisely the footing
+`FOOTING-20260817` **disqualified**. The measured unit on the candidate footing is **28.50 A100-h per
+re-seed**, ~28.5×. And "costed" implies configurable, which §2b shows it is not. **So the cell is not
+cheap and not runnable, and I had it as both.** I took the figure from a `CATALOG` row rather than from a
+measurement, which is the thing this board grades other cells down for.
+
+## 2b. Cause 3's `C` leg is scoped, and `M(ii)` is not currently MEASURABLE on either leg
+
+**`C` corrected from MET to PARTIAL.** I graded it MET both columns off `CRITERIA` §2's citation
+(`unified_throw_cov.py:330-331, 370-371` — `do_combine` rejects mixed-seed slabs). Lane B established that
+the guard's coverage **excludes the dominant block**:
+[`FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-block.md`](FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-block.md)
+— *"the dominant block's products are not in the guard's population at all, and there is no seed provenance
+anywhere on that path to be present or absent."* Nothing stamps the sweep seed into its products, and
+`analyze_universes_5d.py` has **zero** occurrences of `seed`. **So the single-seed property of the dominant
+block holds by hardcoding and is checked by nothing** — it would not be noticed if it stopped holding.
+`MET` for the throw/block units, **inapplicable** to `C_syst`. Graded `PARTIAL`.
+
+**And `M(ii)` cannot be configured on either leg. Both verified from the tree, not from relay:**
+
+| leg | seed | why `M(ii)` cannot be run |
+|---|---|---|
+| per-**universe** (`C_syst`, 169 universes — the dominant block) | **`42`** | `sweep_bank_5d.py:252` carries it as a **literal**; the module has **14** `add_argument` calls and **none for seed**. Unreachable, and unstamped, so a scan could not even prove which seed a product used. |
+| per-**throw** (throw/CV/ML blocks) | **`1000`** | `unified_throw_cov.py:525` has **exactly one** `--seed`, and `:223` does `rng = np.random.default_rng(args.seed + gj)` to draw **which band shifts** — one flag, two roles. Varying it moves the **draw**, so *"estimator seed varied with the draw held fixed"* is **unsatisfiable**. |
+
+**Consequence for the board's own language:** cause 3's `M` is **not** *"unmeasured pending a cost
+decision."* It is **blocked on two code changes** — lane B's specified stamping repair for the sweep, and a
+seed/draw separation in the throw path — **and only after those is it a cost question.** Joseph's cost
+decision is **downstream** of that, not parallel to it. **Pricing a run that cannot be configured is what
+produced both wrong figures on this cell**, mine (~1 GPU-node-hour, wrong footing) and the 28.50 A100-h
+one (right footing, unsatisfiable condition).
+
+## 2c. `M(ii)`'s referent — PROPOSAL, awaiting a second or a dissent
+
+The mediator asked: **which leg's seed does `M(ii)` mean?** My answer has two parts and the second is the
+one I think is actually open.
+
+**Part 1 — "which leg" is already answered, and not by me.** `VL141` records it as consequence (b):
+**`M(ii)` must vary BOTH seeds.** That is not a fresh choice — it is grounded in the criterion's own defect
+statement, which says *"per-throw **or** per-universe unfolds drawn with different estimator seeds."* Both
+ensembles are named in the defect, so a magnitude covering only one measures only part of it. **I am not
+re-deciding this; I am pointing at it**, and `VL141` also states the reason it needed its own row: *"a
+false quotable claim about the candidate, independent of cause 3."*
+
+**Part 2 — the real gap, and it is a SPECIFICATION GAP rather than an ambiguity.** `CRITERIA` §2 asks for
+*"**the** magnitude of what varying seeds would have contributed"* — **singular magnitude, two seeds** — and
+it does **not** say whether that is:
+
+* **(A) per-leg and summed** — scan the sweep's seed, scan the throw path's seed, add the two contributions; or
+* **(B) jointly on the composite** — vary both together in one scan and take the resulting spread.
+
+**These are different numbers, and choosing between them is a physics decision, not a reading.** (A)
+treats the two legs' estimator noises as independent contributions to be added; (B) does not, and would
+capture any correlation between them. The covariance sums blocks, so (A) is the construction-shaped answer
+and (B) is the ensemble-shaped one. **The criterion is silent, and no amount of careful reading makes it
+speak** — which is the test the mediator set for calling something a gap rather than an ambiguity.
+
+**So: recorded as a specification gap that needs a decision, not papered.** And note the ordering it
+implies: **the gap is answerable now, on paper, at zero cost**, whereas the *measurement* it governs is
+blocked behind two code changes. So answering it does not unblock the run — but leaving it unanswered means
+the code changes would be made without knowing what they must enable, and (A) and (B) do not require the
+same instrumentation. **(A) needs each leg's seed independently variable. (B) needs both variable in one
+process.** That is a real difference in what lane B's stamping repair has to support.
+
+**My recommendation, offered for second-or-dissent and not taken:** **(A), per-leg and summed**, on the
+ground that `CRITERIA` §0 defines `M` as *"measured on X's own inputs"* and X is constructed as a **sum of
+blocks** — so a per-block magnitude is the one that composes the way the artifact does, and it is also the
+only one that can be reported per leg when one leg's instrumentation lands before the other's. **If the
+mediator or Assistant dissents toward (B), the dissent should say what correlation between the two legs'
+estimator noise it expects to be non-negligible**, because that is the only thing (B) buys over (A).
+
+**The two code changes §2b names are better-precedented than I said — and my first phrasing of that was
+`BEN-386`-shaped, so here it is re-grounded.** Verified: `bootstrap_nd.py:19,21` and `seedscan_split.py:36`
+**already carry `--estimator-seed` alongside `--fixed-data-seed`**, `:25` stating the split in its own help
+text — *"`--seed` varies data+MC, `--estimator-seed` fixed."* So the two-role separation is an existing
+pattern here, not a new design.
+
+**But a precedent in one file says nothing about feasibility in another, which is exactly `BEN-386`: the
+file an edit lives in is not the file that validates it, so a pin sweep can tell you an item is expensive
+and can NEVER tell you it is cheap.** So I checked the **callees**, which is the instrument that can
+answer it:
+
+| module | what the edit is | callee constraint |
+|---|---|---|
+| `sweep_bank_5d.py` | add `--estimator-seed`; replace the literal at `:252` | **none** — the call is `omnifold_loop(…, seed=42, …)` and the callee **already takes `seed` as a kwarg**. No receipt references this file at all. |
+| `unified_throw_cov.py` | split the single `--seed` (`:525`) into two roles | **none** — `args.seed` is the **estimator** seed at `:254`, `:285`, `:302` (`seed=np.int64(args.seed)`) and the **draw** base at `:223` (`default_rng(args.seed + gj)`). Adding `--estimator-seed` defaulting to `args.seed` and using it at the three estimator sites, leaving `:223` alone, is caller-side only. |
+
+**So the CONFIGURATION change is small and unblocked at the callee — evidence from the callee, not from a
+pin sweep.** And per `BEN-386`'s asymmetry, that is the most this can establish: **I have shown no blocking
+constraint, which is not the same as showing it is cheap.** Cost is GPU time to re-run the sweep, and that
+is the axis where the two figures disagree. **Feasible to configure, expensive to run, and those are
+different questions** — conflating them is what produced every wrong cost figure on this cell today.
+
+**And the cost figure now has two unreconciled values.** B measures **0.44 node-h** for the stat estimator
+axis against `FOOTING-20260817:66-69`'s **~1 GPU-node-h** — the very figure I quoted this morning as *"the
+cheapest open cell."* B says its own is the conservative one and **did not reconcile them.** So the cell I
+first priced at ~1 GPU-node-hour on the wrong footing now has, on the *right* footing, **two independent
+values disagreeing by ~2× with neither reconciled.** Recorded rather than averaged.
+
+### The bound-vs-`M` judgement, which the mediator put closer to my desk than theirs
+
+**A laterals-only scan would land cause 3's `M(ii)` in cause 4's CURRENT position** — a **bound** where the
+criterion asks for a **measurement**. `CRITERIA` already rules on that shape for cause 4: *"a bound is not
+the `M` leg"*, and `DETERMINATION-20260817-causes-3-4` routes the judgement without taking it.
+
+**So the ordering matters more than the price.** ~15.4 A100-h buys **arrival at an already-open,
+already-routed judgement**, not a discharge. **And if the bound-vs-`M` judgement is taken FIRST and comes
+back "a bound cannot stand in for `M`", the scan's value drops to documentary before it is run.** Spending
+compute to reach a question that is already on the table, and might be answered against you on paper, is
+the worst available order.
+
+> ### RULED 2026-08-17: the laterals-only scan DOES NOT RUN
+>
+> **Taken by the mediator and lane C agreeing, which settles it under Joseph's 2026-08-17 rule — and it
+> settles in the direction of NOT spending.** The ground is **not** cost and **not** B's construction
+> argument alone: **`CRITERIA` has already ruled, for cause 4, that a bound is not the `M` leg, and by §0's
+> own consistency that ruling extends to cause 3.** The scan would arrive at a question the criterion has
+> already answered.
+>
+> **The ordering sentence, for the record:** *spending compute to reach a question already on the table,
+> which might be answered against you on paper, is the worst available order.*
+>
+> **I CHECKED THE RULING ON THE MERITS RATHER THAN ACCEPTING IT, and it is entailed rather than
+> stylistic.** §0:53-54 reads: *"A measured large difference discharges the cause just as well as a measured
+> small one; **what is forbidden is an unmeasured one.**"* A bound leaves the difference **unmeasured** — it
+> is an upper limit on the quantity, not a measurement of it. **So "a bound is not the `M` leg" follows from
+> §0's own wording and needs no separate justification. I have no merits case against it**, and I record
+> that so the branch is closed rather than left dangling for someone to reopen as an open question.
+>
+> **And the branch the mediator DECLINED should stay declined, for the reason given.** It was mine —
+> *"if a bound is admissible, cause 4's `M` may be closable for free on the existing `<0.1%` bound"* — and
+> the mediator declined it because **its attraction is that it moves a cell at zero cost, which is the shape
+> of motivated reasoning.** That is right, and it is right about my argument specifically. Today's record is
+> of numbers and grades that drifted toward cheaper-and-more-favourable until someone checked them; an
+> argument whose payoff is its own premise belongs nowhere near a discharge decision.
+
+**My position, superseded by the ruling above and left as written:** the judgement
+should be taken **once, for both causes 3 and 4, before either scan is priced.** `CRITERIA` has already
+answered it for cause 4 in the negative — *"a bound is not the `M` leg"* — and if that ruling stands, then
+by §0's own consistency it stands for cause 3, and **the laterals-only scan should not be run at all.** If
+instead a bound IS admissible, then cause 4's `M` may be closable on the existing `<0.1%` bound **without
+any run**, which would move a cell for free. **Either way the paper judgement dominates the compute
+decision, and it is one decision rather than two.** Not mine to take; stated so it can be answered in one
+move rather than twice.
+
+**A correction I should carry rather than inherit:** the refusal ground first relayed to me for that scan
+— *"18 of 188 is the minor leg"* — was **a member count doing duty as a variance share**, and B caught it.
+The refusal now rests on B's weighting-independent ground: holding the vertical arm at `42` makes 169 of
+188 a **constant**, so the result is **a partial derivative reported as a total**. Same conclusion, sound
+reason. **I note it because the unsound version reached me and Joseph before the correction did**, and a
+board that inherited the first version would have recorded the right answer for the wrong reason.
+
+## 2d. Cause 3's `P` leg: WITHDRAWN from MET, and I had the disconfirming evidence on screen
+
+**This withdraws a `MET` I published on this board this morning.** Lane B measured it and filed a pointer
+**without grading**, correctly, because `BEN-381` bars the lane that measured a leg from grading it. So the
+grade is mine. **I verified every code claim from the tree before regrading**, and I am grading on
+`CRITERIA` §2's **own two clauses** rather than on B's one-line recommendation — which makes my grade
+slightly *harsher* than B's.
+
+§2's `P` for cause 3 asks for two things:
+
+> *"X's receipt records **the single seed value**, and `fixed_seed_null_norm` is **PRESENT** in X and ≤ tol."*
+
+| clause | grade | evidence, verified at HEAD |
+|---|---|---|
+| (ii) `fixed_seed_null_norm` PRESENT and ≤ tol | **MET** | written at `unified_throw_cov.py:491`; candidate carries `upstream_fixed_seed_null_norm = 5.8223488501140625e-50` against tol `1e-12` |
+| (i) the receipt records **the seed value** | **NOT MET — on any leg** | `--out-root` writes six `TParameter`s (`:479-492`): `sqrt_tr_unified`, `sqrt_tr_block`, `joint_mean_shift_norm`, `fixed_seed_null_checked`, `fixed_seed_null_norm`, `n_throws`. **None is a seed.** The candidate's 13 keys contain no seed key either. |
+
+**So `P` is `PARTIAL`, and the reason is stronger than "scoped".** B recommended *"PARTIAL — MET for
+uthrow, ABSENT for `combined_source`."* I grade it **PARTIAL with clause (i) failing on *both* legs**,
+because no product anywhere records a seed *value* — not the uthrow arm either. The scoping is a second,
+independent problem on top:
+
+* the census reads **`.npz` slabs** via `np.load` (`:326-332`, `if "seed" in z.files`), so
+  `combined_source`'s **188 ROOT universes are not in its population at all**;
+* `analyze_universes_5d.py`, **which writes `combined_source` itself**, contains `seed` **zero** times and
+  writes no `TParameter`;
+* `sweep_bank_5d.py` contains `seed` **exactly once** — `:252`, the hardcoded `42`.
+
+**So the dominant block's single-seed property holds by hardcoding and is recorded nowhere and checked by
+nothing**, and `BEN-106`'s stamp-propagation fix — the thing three causes were said to be waiting on —
+**has nothing to propagate.**
+
+**NO NUMBER MOVES.** Every leg is internally single-seeded, so nothing is mis-computed. What fails is a
+**verification claim** (B's phrasing, and it is exact). `BEN-246`.
+
+**The consequence for this row, which is the point of the board:** on the **candidate**, cause 3 now has
+**exactly one unqualified MET leg — `T`.** `C` is PARTIAL (§2b), `P` is PARTIAL (here), and `M` is OPEN and
+not currently measurable, with its M(i) half being the one `CRITERIA` §2 says *is not what the criterion is
+about*. **This morning I shipped that row as "P MET, provenance done."** It was the row I was most confident
+about and it is now the weakest of the five.
+
+**And I should not have been confident.** I printed the candidate's 13 keys **in this session**, read them,
+and graded `P` MET anyway — the list has no seed key in it, and clause (i) asks for exactly that. **The
+disconfirming evidence was on my own screen.** Same shape as the array-stall near-miss I filed this morning:
+holding the number that refutes you and not applying it. The difference is that one I caught before
+publishing.
+
+## 3. Cause 4: HALF the REASON the `M` cell was unreachable is false — the method half — and the cell still does not move
 
 `CRITERIA-20260811` §2 grounds cause 4's `M` on *"no committed document records which scalar or how it was
 estimated"*, so that constructing one now would be *"the success condition invented after the fact."*
-**That reason is false as written, and I verified the correction from the commits rather than from the
+**HALF of that reason is false, and I verified the correction from the commits rather than from the
 retraction that reported it:**
 
 * **`a0cdc01`** (2026-06-08) **added the full specification with its derivation in the comment** —
@@ -135,6 +345,37 @@ retraction that reported it:**
 
 **There was never a literal scalar** — it was computed at runtime — which is why every value-shaped search
 for one returned empty.
+
+**NARROWED 2026-08-17, and the narrowing is the point — the sentence is a CONJUNCTION and only ONE half
+is refuted.** §2 reads: *"The retired procedure subtracted a scalar, and no committed document records
+**which scalar** or **how it was estimated**."* Those are two claims:
+
+| half | status | why |
+|---|---|---|
+| *"how it was estimated"* — the **method** | **REFUTED** | `a0cdc01` carries the derivation in the comment, and code is a committed record |
+| *"which scalar"* — the **value, per artifact** | **SURVIVES, untouched** | nothing found today shows what any *given archived artifact* had subtracted |
+
+**This is `BEN-245`/`BEN-083`'s distinction — a committed specification is INTENT, not PROVENANCE** — and it
+is the same distinction lane B used to withdraw its own uthrow MET. Code history shows the method existed
+and was active across a commit range. **It does not show that any particular artifact was built with it
+applied, nor at what value.** Credit to Assistant for constraining the finding before I did.
+
+**And the surviving half is STRONGER than when it was written, which I do not think anyone has said yet.**
+The specification we recovered shows the scalar was **never a stored quantity**: `jit_trace` was computed
+at runtime as `float(np.sum((x_cv2 - base) ** 2))` and emitted only to stdout —
+`print(f"\n[null] jitter floor ||x_cv(s+7)-x_cv||^2 = {jit_trace:.3e}")`. **So "which scalar" for a given
+archived artifact is recoverable only if that run's LOG survives**, not from any artifact or receipt. That
+is a sharper claim than *"no document records it"* and it names a **checkable, unchecked** next step: does
+any surviving run log carry a printed jitter floor for a product still in play?
+
+**So the correction to land is NOT "the stated reason is false."** It is: **one of two conjoined claims is
+false, the other stands, and the sentence should be rewritten to assert only the surviving one.** A blanket
+refutation would overshoot in the direction that flatters the morning's claim — and per the mediator, that
+is the direction it has been wrong in twice today.
+
+**The cell does not move**, and Assistant's read is that **the surviving claim may be the one cause 4's `M`
+leg actually needs.** If so, the finding narrows the *reason* without touching the *grade* — which is what I
+said this morning when I declined to move it.
 
 **The cell stays `OPEN` and I am declining to move it in either direction.** What an artifact establishes
 right now is: the specification **exists and is recoverable at `a0cdc01`**; the machinery is **absent at
@@ -222,6 +463,47 @@ committed test, a receipt key, or a commit, never a line number in a growing fil
   `gate6traj-reconcile-56847059`. No `scancel`, no `scontrol`, no run submitted, no compute spent.
 - It **does not re-derive** cause 5's determination beyond reading it, and does not assert cause 5's
   X-side applicability — see §4.
+
+## 7b. `INAPPLICABLE` is in USE as a leg grade, and `§3` does not define it — and as written that
+forecloses a cause-4 option rather than opening one
+
+**Surfaced while checking the declined branch, and reported because its as-written resolution goes
+AGAINST the outcome I would have preferred.** That asymmetry is the only evidence I can offer that raising
+it is not the motivated reasoning the mediator just declined.
+
+**`§3:246` states the vocabulary and the rule:** *"Legs are graded **MET / OPEN / UNRESOLVED**. A cause is
+discharged only with four METs."* **`INAPPLICABLE` is not among the three.**
+
+**But it is already in use, twice:**
+
+1. **Cause 3's `C` leg.** Lane B's finding is titled *"Cause 3's `C` leg is **INAPPLICABLE** to the dominant
+   block"* — the guard's population excludes `combined_source` entirely, so there is nothing for the leg to
+   be MET or OPEN *about* on that path. This board carries it as `PARTIAL`, which is my own coinage and is
+   also not in §3's vocabulary.
+2. **Cause 4's `M` leg.** `DETERMINATION-20260817-causes-3-4` §5 routes three options, and the middle one is
+   *"cause 4 is discharged on three legs with `M` declared **inapplicable**."*
+
+**Under §3 as written, option 2 is not available.** A leg graded `INAPPLICABLE` is neither `MET`, `OPEN`, nor
+`UNRESOLVED`; and *"discharged only with four METs"* means a cause carrying an inapplicable leg **can never
+discharge**, however sound the reasoning for its inapplicability. **So the criteria as written foreclose the
+`DETERMINATION`'s own middle option** — and nobody has noticed, because the option was routed rather than
+exercised.
+
+**This cuts both ways and I am not proposing which way.**
+
+* Treat `INAPPLICABLE` as **satisfying** the leg → causes discharge more easily. **Favourable direction**,
+  and it would immediately make cause 4's middle option live.
+* Leave §3 as written → a cause with an inapplicable leg is **permanently undischargeable**. **Unfavourable
+  direction**, and it is the reading that currently holds.
+
+**As written, the unfavourable reading is the one in force.** So naming this gap **closes** an option that
+was being kept open for cause 4; it does not open one. **That is the test the mediator set for the declined
+branch, applied to this one before offering it.**
+
+**What is needed is a definition, not a decision about any cause:** does §3's vocabulary admit a fourth
+grade, and if so does a cause discharge on three METs plus one justified `INAPPLICABLE`? **That is the same
+species as §2c's `M(ii)` gap** — a criterion that cannot be read without a substantive choice — and it
+should be recorded as needing one rather than settled inside a cause's row. **Routed, not taken.**
 
 ## 8. The one structural recommendation
 

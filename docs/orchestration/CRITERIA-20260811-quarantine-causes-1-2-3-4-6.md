@@ -9,6 +9,23 @@ Subject: the seven construction causes at `VALIDATION_LEDGER.md:65-88`. Causes 1
 session's; cause 5 (frozen PET weights) is Session C's; cause 7 is discussed in §1 only because its
 recorded discharge does not cover the artifact this lane is gated on.
 
+> **POINTER 3, added 2026-08-17 by lane C — the citation in the line above no longer resolves, and it is
+> this document's own §4.4 finding landing on its own header.** `VALIDATION_LEDGER.md:65-88` now carries
+> Gate-6 member-trajectory rows (`VL119`–`VL121`); the seven causes are near `:690`, and grep for the
+> *"used one or more of"* sentence finds them. The ledger is **append-only**, so any line-number citation
+> into it decays by construction — which is exactly what §4.4 says about the discharge criterion, filed by
+> this document, about a different file.
+>
+> **Cite the immutable handles instead: rows `VL62`–`VL68`, under the heading
+> `### The seven causes, WITH THE ARTIFACT EACH IS DISCHARGED FOR — added 2026-08-11`.** VL ids do not
+> move when the file grows; line numbers do. Same remedy this repo already applies elsewhere: cite a
+> committed test, a receipt key, a VL id, or a commit — never a line number in a growing file.
+>
+> **Header text left as written**, per this document's convention and lane E's two pointers above.
+> Repaired under Joseph's 2026-08-17 two-session rule; the mediator verified the defect from the files
+> independently before authorizing. **Cause 1's `(§4.8)` is NOT re-repaired here — lane E's POINTER 2
+> already covers it, and doing it twice is `BEN-304`'s duplication.**
+
 ---
 
 ## 0. The framing decision, which is why no criterion could be written before
@@ -252,6 +269,31 @@ The Provenance leg moved for causes 2, 3 and 4, but **only one hop up the chain*
 > [`DETERMINATION-20260817-causes-3-4-provenance-measured.md`](DETERMINATION-20260817-causes-3-4-provenance-measured.md)
 > §5 for the two `M`-leg judgements that remain, including this document's own §2-vs-§3 disagreement on
 > cause 3's `M`. Row text left as written, per this repo's convention of leaving written history written.
+>
+> **POINTER 1b, added 2026-08-17 by lane B — cause 3's `P` cell should be WITHDRAWN to PARTIAL, and the
+> re-cite above does not save it.** The `P` criterion has two clauses (§2) and the load-bearing one fails:
+> *"X's receipt records the single seed value"* — measured, **the candidate carries no seed key of any kind**,
+> on either arm, in the same `receipt_candidate_stamps_5d.json` cited above (13 keys, none a seed). The
+> *"one seed `1000`, 40 throw + 36 block slabs"* census is **complete and correct for the `uthrow` leg**, is
+> **never written into any product** (`unified_throw_cov.py`'s `--out-root` block stamps seven things, no
+> seed), and globs `.npz` slabs only — so it cannot see `combined_source`'s **188 universes, produced at
+> estimator seed `42` hardcoded** (`sweep_bank_5d.py:252`, no flag, no stamp; `analyze_universes_5d.py` has
+> **zero** occurrences of `seed`). **The grade is true of the smaller upstream and silent about the dominant
+> one.** Recommended cell: **PARTIAL — MET for `uthrow`, ABSENT for `combined_source`**. **Lane B has not
+> edited the cell** (`BEN-381`: the lane that measured a leg must not grade it) — that is lane C's or the
+> mediator's. Cause 4's `P` is **NOT** withdrawn; its criterion is about the null, not a seed. `M(i)`, `C`
+> and `T` are untouched. Full measurement, including what a real MET would require:
+> [`FINDING-20260817-a-seed-census-that-cannot-reach-the-product-it-grades.md`](FINDING-20260817-a-seed-census-that-cannot-reach-the-product-it-grades.md)
+> (`BEN-246`). **No number moves** — every leg is internally single-seeded; what fails is a verification claim.
+> **AMENDED same day: my recommended cell was TOO GENEROUS and lane C's harsher grade is the right one.**
+> Clause (i) fails on **both** legs, not only on `combined_source`: covering search over every tracked
+> artifact (`*.json`, `*.tsv`, `*.txt`, `*.md`) for a recorded seed value returns **zero hits**, so no receipt
+> records it for the `uthrow` arm either — my §2 mechanism (`slab_seeds` reaches no product) entails that and
+> I stopped short of it. The `.npz` slabs do stamp the seed, but slabs are purgeable-scratch intermediates,
+> not X and not a receipt (`OI-130`); and the tracked launchers that hardcode `--seed 1000`/`42` are
+> **committed intent, not provenance** (`BEN-245`, `BEN-083`). **`P` clause (i) is ABSENT, both arms.** This
+> finding's scoping result stands as a **second, independent** defect on top — it is the one that survives a
+> future seed stamp, because `sweep_bank_5d.py` and `analyze_universes_5d.py` have nowhere to put one.
 >
 > **POINTER 2, added 2026-08-17 by lane E — cause 1's row: `(§4.8)` DOES NOT RESOLVE, and its two open
 > legs are now closed by measurement.** §4 of this document runs **4.1 through 4.7**; there is no §4.8, so
