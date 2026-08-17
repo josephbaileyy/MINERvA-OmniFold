@@ -1,0 +1,202 @@
+{
+ "ANSWER": "DO NOT COST IT AND DO NOT RUN IT AS WRITTEN. Holding the network fixed removes the measured leg's ONLY path to the extracted cross section, so the arm cannot observe information loss -- the very quantity the proposal exists to isolate. Its two declared outcomes are not two measurements; one is unreachable and the other is guaranteed by construction.",
+ "A_REPAIR_THAT_MIGHT_WORK_not_costed_not_endorsed": "OBSERVATION, MINE, OFFERED AS A DIRECTION AND NOT A PROPOSAL. The incompatibility is structural: the measured leg enters only through step-1 training, so ANY arm that fixes the whole network necessarily kills the data channel. Fixing STEP 2 ONLY while refitting STEP 1 would let resampled data flow into the step-1 weights while removing the step-2 refit -- a different decomposition that does not zero the channel of interest. It would cost most of a training per replica, so it is not the cheap route, and I have not costed it, checked its runnability, or verified that step 1 and step 2 are separable in this codebase. Whether it isolates what OI-126 needs is a physics question for B/C, not mine.",
+ "A_ROUTE_THAT_MAY_ALREADY_BE_DECLARED_added_20260817": {
+  "WHAT_I_HAVE_NOT_DONE_AND_THIS_IS_NOT_A_RECOMMENDATION": [
+   "Not costed. Deliberately -- the same reason I produced no price for the fixed-net arm. A retrain-based floor is several GPU-hours per member and 'affordable' has been the tell all day.",
+   "Not checked for runnability. `--tag floor` exists at train_fullevent_nominal.py:168 and I have NOT established that a floor run is executable, pin-clear, or that its output is comparable to the family's under the C_stat contract -- which is item 3 of the proposal's own precondition list and is lane C's spec question either way.",
+   "Not validated as physics. Whether a same-data different-seed spread is the right complement for THIS estimator is B's or C's call, not mine. I am naming a shape the campaign already wrote down, not asserting it answers OI-126."
+  ],
+  "claim": "'OI-126 has no live instrument' may be too strong. The campaign already DECLARED the measurement this decision needs, as a standing invariant, and never made it.",
+  "possibly_already_in_flight": "RELAYED, NOT VERIFIED: the mediator reported earlier today that lane C is running a two-retrainings-at-one-bootstrap-seed test to bound the GPU-nondeterminism residual in C_stat. If that is what it sounds like, it IS a floor measurement, or a piece of one, and the ingredient may already exist. I have not seen that job or its receipt.",
+  "the_invariant": "INV-129, quoted in COVERAGE-SURVEY-20260802.md:1343 from the doc it audits: 'GPU FLOOR: 1 identical-seed repeat; record BEFORE interpreting C_stat/C_ML.' The survey's own coverage verdict on it: nothing checks it. '--tag floor exists (train_fullevent_nominal.py:168) but nothing asserts the floor run used identical seeds, nor that it precedes C_stat/C_ML interpretation.'",
+  "why_it_discriminates_where_the_fixed_net_arm_cannot": "The fixed-net arm removes the REFIT and thereby also removes the data channel, because the measured leg reaches the result only through training. The floor does the COMPLEMENT: hold the data FIXED and let the refit vary (different estimator seed, same draw). That isolates refit sensitivity DIRECTLY without touching the data channel, and it is subtractable from the family spread. floor spread ~ family spread in the band  => the 67% is refit sensitivity  => branch (b). floor spread << family spread             => the excess is data-driven  => branch (a). BOTH outcomes are reachable, which is exactly what the fixed-net arm fails.",
+  "why_it_is_worth_saying_anyway": "It changes the framing that reaches Joseph from 'the route failed and nobody has designed another' to 'the measurement this decision needs was declared mandatory before interpreting C_stat, and was never made.' Those call for different decisions."
+ },
+ "BAND_FIGURE_CORRECTED_20260817": {
+  "BUT_THE_CELL_COUNT_DOES_NOT_RECONCILE_AND_THIS_MATTERS_MORE": "OI-126's band is described as '44 of 63 cells'. My band, all 15 pT rows x p_parallel bins 10-15, is 84 live of 90 grid cells. 84 != 63 and 90 != 63. SO THE SET I MEASURED IS DEMONSTRABLY NOT THE SET OI-126 REFERS TO. It may be additionally pT-restricted, or masked differently, or '63' may count something else. I am not going to guess a second mapping and then confirm my own guess -- that is exactly what produced the first error. THE BAND DEFINITION MUST COME FROM WHOEVER AUTHORED THE OI-126 STATEMENT.",
+  "correct_mapping": "6-20 GeV == p_parallel bins 10-15 inclusive, derived from the edge array",
+  "corrected_numbers_over_the_4_surviving_draws": {
+   "band_6_20_GeV_bins_10_15": {
+    "live_cells": 84,
+    "max": "82.5571%",
+    "median_range_over_mean": "20.9669%",
+    "of_grid_cells": 90
+   },
+   "global": {
+    "live_cells": 259,
+    "max": "95.0938%",
+    "median_range_over_mean": "13.7169%"
+   },
+   "my_erroneous_5_40_GeV_bins_9_16": {
+    "live_cells": 113,
+    "median_range_over_mean": "21.1491%",
+    "of_grid_cells": 120
+   }
+  },
+  "my_error": "I reported the band median as 21.1491% over 113 cells using p_parallel bins 9-16. THAT MAPPING IS WRONG. By CANONICAL_PPARALLEL_EDGES, bin 9 is [5.0,6.0) and bin 16 is [20.0,40.0), so 9-16 spans 5-40 GeV, not 6-20. I guessed a mapping and did not derive it from the edges -- the second inherited-rather-than-derived error I have made in two messages.",
+  "status_of_the_band_figure": "STILL UNVERIFIED AGAINST OI-126's ACTUAL BAND, and the check needed is not a second reduction of my numbers -- the mediator reproduced the global figures digit-for-digit from an independent script and could not check the band because they declined to guess the mapping. They were right to decline. What is missing is the DEFINITION, not the arithmetic.",
+  "the_conclusion_is_robust_to_the_error": "21.15% -> 20.97%. The headline is unchanged: the per-cell floor is materially LARGER in the band (~21%) than globally (13.72%). The error moved the number by 0.18 points and the cell count by 29."
+ },
+ "BUT_THE_PER_CELL_FLOOR_SURVIVES_ON_DISK_measured_this_turn": {
+  "finding": "The band-restricted floor is COMPUTABLE FROM ARTIFACTS ALREADY ON DISK AT ZERO COMPUTE. No retrain and no extraction pass.",
+  "measured_per_cell_floor_over_the_4_surviving_draws": {
+   "band_cells": 113,
+   "global_max": "95.0938%",
+   "global_median": "13.7169%",
+   "nonzero_cells": 259,
+   "p_parallel_band_cols_9_16_median": "21.1491%",
+   "reported_bin_mask_true": 259,
+   "statistic": "range/mean per cell, over draws 2,3,4,5"
+  },
+  "note": "The floor is NOT small per cell, and it is LARGER in the band than globally. That is a substantive fact about the estimator regardless of what OI-126 concludes.",
+  "why": "Each floor draw carries pet_fullevent_floor_drawN_weights.npz with a `central_vector` (285,) float64 that SUMS TO 1.0 -- the unit-normalized 285-cell spectrum -- and it VARIES per draw (distinct sha256 per draw; cell 0 = 1.065215e-03, 1.039182e-03, 1.074642e-03, 1.048273e-03 for draws 2..5). It is each draw's own output, not a frozen reference copy. `weights_push` (2,000,000,) also differs per draw."
+ },
+ "CORRECTION_TO_MY_OWN_LINE_REFERENCE": "I wrote `--tag floor` at train_fullevent_nominal.py:168. WRONG, and I inherited it from COVERAGE-SURVEY rather than deriving it -- :168 is a docstring for a publication config gate. It is at :325: ap.add_argument('--tag', default='nominal', choices=['nominal','floor'], ...). Caught by the mediator. Verified myself.",
+ "DOES_56863958_SATISFY_INV_129": {
+  "answer": "ONLY THE C_ML HALF -- and for the C_stat half its RECORDED FORM is unusable for a SECOND reason, independent of scope.",
+  "the_second_reason": "OI-126's fork is SPATIALLY LOCALISED -- p_parallel 6-20, 44 of 63 cells, 26.5% of reco-accepted truth mass. The floor receipt records F_range as a GLOBAL SCALAR (0.06452911345365375) with no per-cell array anywhere: its longest lists are the 5 draws and 3-element tier triples. A global scalar cannot answer a band-localised question, which is BEN-252's shape exactly -- a gate that reduces to a scalar fixes which failures its record can express. Repointing the RECEIPT at OI-126 is impossible for that reason alone, before any Gate-6 prohibition is considered.",
+  "two_consumers_verified": "INV-129 is at source doc L302, and COVERAGE-SURVEY-20260802.md's own numbering puts it immediately before L303 ('C_stat: coherent data+MC Poisson replicas...') and L305 ('C_ML: PET-specific crossed ensemble, no Poisson'). One floor line stated once, ahead of BOTH definitions. The two-consumer reading is structurally supported, not inferred from the sentence alone."
+ },
+ "FOUR_COMPARABILITY_TRAPS_do_not_treat_this_as_a_drop_in": [
+  "SMALL-SAMPLE RANGE, AND THE BIAS HAS A DIRECTION. This is a range over FOUR draws. Range grows with n, so it UNDERSTATES relative to a range over a 50-member family. Comparing a 4-draw range against a 50-replica range would understate the floor and overstate the data-driven excess -- i.e. bias the answer toward branch (a). BEN-025.",
+  "DIFFERENT MASK. 259 reported cells here against the PET nominal's 262. Different reported domains, so a band defined by cell index is not the same set of physical cells.",
+  "DIFFERENT OBJECT AND CONFIG. This is the Gate-6 ML floor at fixed (42,0), not the C_stat family's configuration, and its own prohibitions are Gate-6's.",
+  "COMPLETENESS. The receipt declares n=5 with draws 1-5 valid; only draw_2..draw_5 are present on disk. M=4 against N=5 (BEN-247), and every number above is over the four."
+ ],
+ "GRID_QUESTION_RESOLVED_20260817": {
+  "CONCLUSION": "ONE GRID, THREE MASKS -- not three griddings. All of it is the 285-cell frozen grid in pt-major order. The masks differ: OI-126's analysis 236 live, the floor draws 259 live, the PET nominal 262 live. The column mapping is the IDENTITY on cell index; what differs is which cells each analysis counts.",
+  "epistemic_status": "The partition arithmetic and the exact-45 match are MEASURED. That the OI-126 analysis runs on the 285 grid is INFERRED from them -- strongly, but inferred. If its author says otherwise, the exact 45 and the exact 285 partition would both have to be coincidences.",
+  "measured_against_the_canonical_edges": {
+   "p_par 6-20": "bins 10-15, 6 bins x 15 pT =  90 grid cells, statement  63, 27 masked",
+   "p_par < 6 GeV": "bins 0-9,  10 bins x 15 pT = 150 grid cells, statement 128, 22 masked",
+   "p_par > 20": "bins 16-18, 3 bins x 15 pT =  45 grid cells, statement  45, ZERO masked",
+   "partition": "150 + 90 + 45 = 285 EXACTLY; live 128 + 63 + 45 = 236"
+  },
+  "the_reading_that_settles_it": "The 128 is attached to the p||<6 CLAUSE, not to the whole grid. So the three region counts are 128 / 63 / 45 and the analysis total is 236, not 128. The mediator read 128 as the total and derived 20 cells below 6 GeV; both readings close arithmetically, so arithmetic alone cannot choose between them. The GRID does.",
+  "the_source_statement_verbatim": "DETERMINATION-20260817-pet-ten-items-state-and-oi126-shape.md:171-173: 'p|| < 6 GeV behaves perfectly (median z = -0.13, 4 of 128 cells outside the full range); in the 63-cell p|| 6-20 GeV band the nominal exceeds ALL FIFTY replicas in 44 of 63 cells; at p|| > 20 GeV the sign reverses (44 of 45 cells nominal below the family mean)'.",
+  "the_stronger_claim_I_am_declining": "The mediator concluded there are THREE GRIDDINGS (128 / 262 / 285), that '84-of-90 could never have become 44-of-63 by choosing different columns', and that the band comparison is NOT CURRENTLY DEFINED. Measured, that is wrong -- and the correction restores a route.",
+  "what_is_actually_needed": "The OI-126 analysis's reported mask -- which 63 of the 90 band cells it counts live. That is a smaller and more tractable ask than a grid reconciliation, and it still belongs to the author of the 44-of-63 statement rather than to me.",
+  "what_this_means_for_my_band_number": "My 84-of-90 and OI-126's 63 are THE SAME REGION (p|| bins 10-15) under DIFFERENT MASKS -- 84 live on the floor mask, 63 on the OI-126 analysis mask, 27 cells apart. So my ~21% is still NOT the OI-126 band figure and must not be quoted as one. But it is a mask restriction away, not undefined: given the 63-cell mask, the committed probe recomputes the like-for-like band floor in one command.",
+  "why_that_is_decisive": "The three regions PARTITION THE 285-CELL GRID EXACTLY at the 6 and 20 GeV edges, and the '>20 GeV' count of 45 is an EXACT match to the unmasked grid count -- zero masked, which is what you expect at high p|| where the dead staircase does not reach. Under the mediator's reading the region below 6 GeV would hold 20 of 150 grid cells, i.e. 130 masked there while zero are masked above 20 GeV. That is not credible and the exact 45 refutes it."
+ },
+ "IT_NOMINALLY_DISCRIMINATES_a_FROM_b": "On its own text the two outcomes do map onto the mediator's (a) and (b), so it is not superseded and not off-target in intent. The defect is not in what it claims to distinguish; it is that the arm it builds cannot produce one of the two answers.",
+ "MASK_DERIVATION_ATTEMPTED_AND_IT_DOES_NOT_REPRODUCE_20260817": {
+  "AND_THE_SHAPE_OF_THE_MISMATCH_IS_THE_INTERESTING_PART": "The 26-cell discrepancy is NOT spread evenly. It is 0 above 20 GeV, 4 below 6 GeV, and **22 of 85 in the 6-20 band** -- so whatever selection OI-126 applies is concentrated almost entirely in the band, and removes roughly a quarter of it. THE BAND IS WHERE THE FORK LIVES. A selection rule that discards 22 of 85 cells exactly there is not incidental bookkeeping; it is a choice that could bear on the conclusion, and nobody has stated what it is.",
+  "VERDICT_ON_THE_ROUTE": "THE MEDIATOR'S STEP-2 STOP CONDITION FIRES. The OI-126 mask is NOT the union of xsec>0 over the Gate-5 50-replica family: 262 against 236. So 'the 63-cell mask is derivable in code and needs no author' is FALSE. The obvious derivation over the obvious files does not reproduce the statement's counts, and I did not have to run anything new to find that -- the number came from my own cross-check build earlier today.",
+  "grid_identity_status": "STILL INFERRED -- but now doubly supported, and by a stronger coincidence than before. The '>20 GeV' region comes out at EXACTLY 45 under TWO INDEPENDENT MASKS (mine at 262 live, and the OI-126 statement's at 236 live). Two different selections agreeing exactly on an unmasked region count is hard to get by accident.",
+  "step_1_2_result": {
+   "delta": {
+    "band": -22,
+    "p_par_gt_20": 0,
+    "p_par_lt_6": -4,
+    "total": -26
+   },
+   "measured": {
+    "band_6_20_bins_10_15": 85,
+    "p_par_gt_20_bins_16_18": 45,
+    "p_par_lt_6_bins_0_9": 132,
+    "total_live": 262
+   },
+   "oi126_statement": {
+    "band_6_20": 63,
+    "p_par_gt_20": 45,
+    "p_par_lt_6": 128,
+    "total_live": 236
+   },
+   "rule_tested": "(X > 0).any(axis=0) over the 50 GATE5_REPLICA_XSEC.npz, per the mediator's route"
+  },
+  "steps_3_and_4_not_run": "Deliberately. An intersection against a band mask I cannot reproduce would produce a number at a scope nobody can state, which is the precise failure the mediator warned about in their own step 3.",
+  "the_circularity_I_am_flagging_first": "The mediator cited build_cstat_crosscheck_laned.py:41-44 and :117-123 as a RECORD that the OI-126 analysis runs on 285 cells, and upgraded my grid claim from INFERRED to MEASURED on that basis. THAT FILE IS MINE. N_CELLS = N_PT * N_PP = 285 is a constant I hardcoded from the loader's canonical edges, and (X > 0).any(axis=0) is a rule I chose and documented as 'DERIVE the mask; do not adopt one'. It records what I did with the 50 XSEC files. It is not evidence about what the OI-126 analysis did. Corroboration vs echo: this is echo, and I decline the upgrade.",
+  "what_is_still_needed_and_it_did_not_shrink": "The OI-126 analysis's actual mask rule, from its author. It is not the union rule. It may be a stricter positivity criterion, an acceptance or occupancy floor, a different family, or a different object entirely -- the statement concerns the P5A ANNEALED nominal and its 50-replica family, and I have not established that this is the same family as Gate-5's C_stat set."
+ },
+ "SCOPE_AND_LIMITS": [
+  "This is a claim about CODE PATHS, verified at the cited lines, plus one inference clearly labelled as such.",
+  "If lane B or the executor lane intended the fixed-net arm to re-run step-1 inference in some way that lets resampled data reach the weights, THE PROPOSAL'S TEXT DOES NOT SAY SO and I found no such path in the extraction. If such a path exists I have not found it, and that would overturn this.",
+  "I did not grade OI-126, edit any verdict cell, or touch the proposal."
+ ],
+ "STEP_1_WHAT_IT_PROPOSES_IN_ITS_OWN_TERMS": "Keep Poisson(1) rather than substituting a noise model. Propagate the Poisson(1) resampling of the MEASURED leg through a FIXED, already-trained network (the nominal's) instead of refitting per replica, then compare the fixed-net spread against the existing 50-replica refit spread. Declared readout: spreads comparable => information loss => C_stat valid and the band's uncertainties simply large (branch a); fixed-net spread much smaller => the excess is refit sensitivity, an estimator defect (branch b).",
+ "THE_63_RESOLVED_AND_THE_FLOOR_COMPUTED_ON_IT_20260817": {
+  "DO_NOT_QUOTE": "their_share_of_total (0.0312) and top20_share_of_total (0.0563) carry _RETRACTED: true in that receipt. Not used here.",
+  "MY_OPEN_ASSUMPTION_IS_ANSWERED": "I flagged that nobody had established the P5A annealed nominal's 50-replica family is Gate-5's C_stat set. The receipt's own `what` field answers it: 'P5A nominal vs Gate-5 50-replica family, per cell.' Same family. Resolved, and not by me.",
+  "STRUCTURE_reported_not_graded": {
+   "I_AM_NOT_GRADING_THIS": "What this implies for OI-126's (a)/(b) fork is lane C's call. I am reporting a measurement on a set I can now name exactly, not a verdict.",
+   "family_in_tail_vs_elsewhere": "67.1164% vs 8.4611%  (~7.9x)",
+   "floor_in_tail_vs_elsewhere": "8.6088% vs 3.9915%  (~2.2x)",
+   "observation": "Both the floor and the family are elevated in the tail, and the family is elevated far more. The floor accounts for roughly an eighth of the family's tail spread, and the conclusion's DIRECTION survives the n=4 bias correction (7.80x -> 7.18x)."
+  },
+  "THE_NUMBER_median_relative_sd_on_the_SAME_63_CELLS": {
+   "STATISTIC_CORRECTION": "My earlier band figures (13.72% global, ~21% band) were RANGE/MEAN. The family's 67.12% is RELATIVE SD. Those are different statistics and were never comparable. Only the rel_sd numbers above are like-for-like.",
+   "family_n50_from_Josephs_receipt_not_recomputed": "67.1164%",
+   "floor_bias_corrected_for_n4": "c4(4)=0.9213, so a 4-sample sd underestimates sigma by 7.9%; corrected floor 9.344%, ratio 7.18x",
+   "floor_n4_measured_here": "8.6088%",
+   "ratio_family_over_floor": "7.80x"
+  },
+  "THE_a_b_CHECK": {
+   "pT_rows_occupied": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+   ],
+   "p_par_bins_occupied": [
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ],
+   "reading": "A threshold selection lands entirely inside the spatial band, occupying all six of its p_parallel bins. The determination's 'the 63-cell p|| 6-20 GeV band' and the receipt's 'ratio > 1.5' pick THE SAME 63 CELLS.",
+   "result": "(a) HOLDS, COMPLETELY. No conflation in the determination.",
+   "tail_cells_above_20_GeV": 0,
+   "tail_cells_below_6_GeV": 0,
+   "tail_cells_in_p_par_6_20_bins_10_15": "63 of 63"
+  },
+  "WHAT_STILL_LIMITS_IT": [
+   "TRAP 3 IS NOW THE BINDING ONE. The floor draws are the GATE-6 ML floor at fixed (42,0), a different object from the Gate-5 C_stat family's training configuration. Whether a Gate-6 floor bounds the refit noise of the Gate-5 family is exactly item 3 and is C's.",
+   "TRAP 1 is now QUANTIFIED rather than merely flagged: n=4 against n=50, c4=0.9213, direction of the correction known and the conclusion robust to it.",
+   "TRAP 4 stands: M=4 against the receipt's declared N=5 draws.",
+   "TRAP 2 DISSOLVES: the tail is 63 of 63 live on the floor mask, so the 259-vs-262-vs-236 mask difference costs nothing on this particular set."
+  ],
+  "mapping_reconstructed_and_verified": "The receipt publishes per_cell_ratio as a 257-list and does NOT publish the index->grid mapping. Reconstructed as (X>0).all(axis=0) over the 50 GATE5_REPLICA_XSEC.npz -> 257 cells, matching both domain.compared_all_members_positive=257 and the array length. Applying ratio>1.5 to it reproduces 63, matching the receipt exactly. The mapping is therefore established, not assumed.",
+  "step_3_intersection_reported_before_the_statistic": {
+   "dropped": 0,
+   "floor_draws_live": 259,
+   "note": "No cells lost, so the floor statistic below is on the FULL tail, not a subset.",
+   "tail_cells_live_on_the_floor": "63 of 63"
+  },
+  "the_selection_rule": "The 63 is n_cells_ratio_gt_1p5 in Joseph's receipt state/p5a-nominal-vs-cstat-family-percell-20260815.json -- a THRESHOLD selection (per-cell ratio > 1.5) over the 257 cells where all 50 members are positive, NOT a positional band mask. Found by the mediator; verified by me from the receipt."
+ },
+ "THE_DEFECT_verified_in_code": {
+  "claim": "With the network FIXED, the measured-leg Poisson draw has NO path to the extracted xsec. The only per-replica quantity that survives to the result is the SIGNAL-MC factor.",
+  "evidence": [
+   "extract_fullevent_replica.py:184-199 -- extract_replica_xsec(inputs_npz, w_push, sig_factor) and the arithmetic is `w_push * sig_factor`. Those are its only per-replica inputs.",
+   "extract_fullevent_replica.py:146,157 -- data_factor is computed and hashed into the receipt as data_factor_sha256, and is passed to NOTHING downstream. It never enters the arithmetic.",
+   "extract_fullevent_fps.py:257-259 -- w_push = reweight_full_inventory(inputs_npz, contract): 'Evaluate the trained step-2 model on EVERY signal-MC row.' Its inputs are the dump and the TRAINED ARTIFACT. No data leg.",
+   "Consistent with BEN-151, which established independently that the data factors are persisted nowhere and compared nowhere, and that the loader telemetry has sig_ and bkg_ entries and no data equivalent."
+  ],
+  "inference": "A fixed network means one `contract` for every replica, so `w_push` is IDENTICAL across the arm. The measured leg reaches the result only by having shaped the training, and the training is precisely what this proposal removes. What the arm would measure is signal-MC Poisson spread under the nominal's weights -- a real quantity, and not the one asked for."
+ },
+ "THE_PROPOSAL_ALSO_FORBIDS_ITS_OWN_COSTING": "Its section 'What must be settled before it is proposed for real' states verbatim: 'None of this is done, and the proposal should not be costed until it is.' Four preconditions, none met. Item 1 is runnability (explicitly unchecked). ITEM 3 is the one that matters here: 'whether the comparison is coherent under the C_stat contract... is a spec question, not a compute question', and lane C never ruled on the analogous question for the retired contrast. The header says NOT COSTED and RUNNABILITY EXPLICITLY UNCHECKED. I was asked to do the thing the artifact says not to do yet, and the artifact's reason turns out to be the right one.",
+ "WHAT_I_DID_NOT_DO_AND_WHY": "I did not produce a GPU/CPU price. Costing an instrument that cannot answer the question would have produced exactly the trap the dispatch warned about -- 'affordable has been the tell all day, not the recommendation'. A number would have made an unsound arm look decision-ready. No pin sweep either: BEN-386's ceiling is that a sweep can only ever show expense, never cheapness, and the blocking constraint here is upstream of runnability.",
+ "WHAT_THIS_DOES_AND_DOES_NOT_LICENSE": "It does NOT answer OI-126 and I am not claiming it does. Whether a Gate-6-shaped floor is comparable to the C_stat family spread under the C_stat contract is item 3 of the fixed-net proposal's precondition list and is lane C's spec question on any route. What it DOES do is move the ask from 'design and run a new instrument' to 'the per-cell floor already exists, here are its numbers, and here are the four reasons it is not a drop-in'. Also live and recorded in 56863958 itself: FLOOR_INTERMEDIATE fired neither predeclared branch, so a C_stat floor could land in the same declared middle and leave OI-126's binary exactly where it is, minus the compute.",
+ "WHY_BOTH_OUTCOMES_ARE_UNSOUND": {
+  "fixed-net spread much smaller (read as branch b)": "GUARANTEED BY CONSTRUCTION. An entire variance source was ZEROED rather than isolated, so a smaller spread is what the design produces regardless of whether refit sensitivity exists. This is the same shape as BEN-250 and BEN-186: a check whose result is fixed before the data is seen.",
+  "net": "The arm is biased toward branch (b) by construction and cannot support branch (a). A biased instrument on a binary decision with OPPOSITE publication consequences is worse than no instrument, because it returns an answer.",
+  "spreads comparable (read as branch a)": "UNREACHABLE as evidence for information loss. It could only occur if signal-MC Poisson fluctuation ALONE reproduced the 67% band spread. That would be a genuine and surprising finding, but it is a statement about MC statistics, not about whether the MEASURED leg constrains the region -- which is what 'information loss' denotes in the proposal's own definition at its line 10-11."
+ },
+ "measured_utc_date": "2026-08-17",
+ "produced_by": "Lane D (verifier). Read-only; no job, no submission, no code change.",
+ "what": "Costing request for PROPOSAL-20260815-oi126-fixed-network-propagation.md. STOPPED AT STEP 1: the instrument cannot measure the quantity it is built to measure, so its price is moot."
+}

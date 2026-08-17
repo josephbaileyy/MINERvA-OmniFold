@@ -323,14 +323,94 @@ already exercised in production (`sbatch_ai1_estimator_scan.sh:23-24`). The chan
 better-precedented than my last message implied. **Still not written — specified-not-written stands until
 Joseph rules.**
 
+**⚠ ATTRIBUTION, DISAMBIGUATED BEFORE THE CREDIT — the lane named below is `Assistant [28640e]`, which is
+NOT lane `A [84e2e8]`.** Both were live and distinct in `ListAgents` at the time of writing, and **lane A
+explicitly DECLINED this credit**: it has no record of working on `bootstrap_nd.py`, `seedscan_split.py` or
+gate 1's leg structure, and it notes the name *"Assistant"* has been used for at least two different sessions
+in its hearing today. **A reader who maps *"Assistant"* onto the lane holding `BEN-390-399` would therefore
+manufacture a misattribution in the flattering direction** (`BEN-214`'s shape), **and the only mechanism that
+could catch it is the party declining the credit, which is what happened.** Recorded here rather than
+silently corrected, because the ambiguity is in the name and will recur.
+
 **CORROBORATED INDEPENDENTLY, 2026-08-17, and the independence is evidenced rather than assumed.** The
-`Assistant` lane reached the same gate-1 conclusion — that `--fixed-data-seed` already pins the draw and
+`Assistant [28640e]` lane reached the same gate-1 conclusion — that `--fixed-data-seed` already pins the draw and
 routes `--seed` to the estimator, that `seedscan_split.py:36` exposes `--estimator-seed`, and that gate 1 is
 therefore **two modules rather than four legs** — **citing the code and its quoted help text directly, not
 this document.** The independence claim rests on `Assistant`'s own unprompted statement, made *before*
 producing the finding: *"`EXTENT-20260817-…md` exists on main and names this launcher; **I HAVE NOT READ
 IT**, and it may already carry some of §1."* **So this is a second derivation, and §3/§4 are corroborated
 rather than merely restated.**
+
+**THIRD DERIVATION, and it comes with an UPGRADE TO MY OWN CITATION.** Lane `A [84e2e8]` — the lane that
+declined the credit above — then ran the check itself, reading the tree before reading this document and
+without reference to it, and confirmed both flags exist and route as described. **A's contribution is not the
+agreement but a correction to which citation is load-bearing: HELP TEXT IS DOCUMENTATION.** A help string
+describing seed routing is a claim about what the author *intended*; the **behaviour** is
+`bootstrap_nd.py:28-29`, two lines below it:
+
+    :28  _data_base = a.fixed_data_seed if a.fixed_data_seed is not None else a.seed
+    :29  _est_seed  = a.seed             if a.fixed_data_seed is not None else a.estimator_seed
+
+**Cite those, not the help string.** This section already cites both (`:28`, `:29`, `:37`, and `:54` for the
+ML leg), so nothing here rested on documentation alone — **but the agreement between the two is worth
+stating explicitly rather than leaving implicit**, because it is `BEN-391`'s instance 2 in miniature, where
+*"no committed DOCUMENT records X"* was true and got read as settling a question about **code**. **The help
+text and the implementation agree here; that is a finding, not an assumption.**
+
+**AND A DECLINED TO OVERSTATE ITS OWN PASS, which is the part I must not inherit as completeness:** A
+verified that the two flags exist and route as described. A did **NOT** verify *"gate 1 is therefore two
+modules rather than four legs"*, which depends on what the four legs were — a document A has not read.
+**Premises thrice-derived; the conclusion is not corroborated by A.** And the conclusion is in any case now
+qualified by the inversion above, so what stands thrice-derived is the **capability**, which is precisely the
+half that turned out not to help.
+
+### ⚠ INVERSION: THE CAPABILITY FINDING STANDS AS FACT AND ITS CONSEQUENCE REVERSES UNDER SPEC (B)
+
+**Added 2026-08-17, after lane C conceded (B) as the `M(ii)` specification.** Everything above about the
+capability is **true and re-verified** (`bootstrap_nd.py:28-29`,
+`_est_seed = a.seed if a.fixed_data_seed is not None else a.estimator_seed`). **What is false is that it
+helps.**
+
+Under **(B)** `M(ii)` is a **joint** measurement on the composite, so a coherent variation across the four
+legs sharing estimator seed `42` needs **all four seed-variable at once**. A joint measurement **cannot
+yield a partial result**, so **partial capability buys nothing** — and therefore
+**`sweep_bank_5d.py:252`'s hardcoded `42` stops being one of two parallel edits and becomes the BLOCKING
+DEPENDENCY.** Lane C's summary is the one to carry, and **both halves must travel together because the first
+reads as good news and the second is why it isn't:**
+
+> **Gate 1 is SMALLER than anyone said in module count, and MORE SERIAL than anyone said in sequencing.**
+
+**So my §7 item 4 is withdrawn** (marked there) and the *"smaller and better-precedented"* sentence above
+should be read as a statement about **module count only** — never about schedule or about how much of `M(ii)`
+is reachable today, which is **none of it**. **This is not a defect in the measurement; the specification
+changed after it was filed.** The mediator, who handed me the favourable framing, self-reported the transport
+error as the same class again: **a true capability claim carried without the specification it depends on, and
+the specification is what determines whether the capability is useful.**
+
+**MY OWN SEED MAP IS WHAT MADE (A) FAIL, and the correlation is documented rather than inferred.** The
+decisive argument against (A) was that four legs at seed `42` make their estimator noise move **coherently**,
+so (A)'s independent-additive assumption fails exactly where it is applied. The named correlation is the
+**retired jitter term** — verified from history at this commit,
+`git show a0cdc01:nd-unfolding/unified_throw_cov.py` `:225-227`:
+
+> *"OmniFold run-to-run jitter does NOT cancel against `x_cv`; the block units + `x_cv` all share one seed,
+> so their jitter cancels in `(x_b - x_cv)`."*
+
+— which **is** a statement that the covariance is set by seed-sharing. Corroborating, on the band axis:
+`docs/HIGHER_DIM_OMNIFOLD_DESIGN.md:153-155` (verified at `docs/`, not `nd-unfolding/`) records the block-sum
+inference **measured, rejected and rebuilt against** — *"block-sum underestimates the vertical systematic
+~2x (jitter-corrected unified/block sqrt-trace `2.01`)"*.
+
+**THE DECORRELATION ESCAPE HATCH, pre-answered because I own the seed map and will be the one asked.** The
+argument is: the four legs at `42` run on **different inputs**, so a shared seed initialises the same RNG
+state but consumes draws against different data, and perhaps the perturbations decorrelate after all. **Lane
+C considered and declined to offer it**, on the ground that it is an empirical claim nobody has measured,
+which puts it in `M(ii)`'s own position — *letting an unmeasured convenience choose the criterion.* **That is
+right, and it is stronger than stated: the hatch is foreclosed by the IDENTICAL blocker.** Testing whether
+two legs' estimator perturbations decorrelate requires varying **one** leg's seed independently of the other;
+for the sweep leg that is `sweep_bank_5d.py:252`, hardcoded with no flag. **So the argument that would excuse
+the code change cannot be evaluated without the code change.** It is not merely unmeasured — on the current
+footing it is unmeasurable, for the same reason `M(ii)` is.
 
 **The distinction is recorded because I nearly lost it in the opposite direction.** The finding first reached
 me *relayed as new information*, and I flagged it back as my own conclusion returning to me — correctly on
@@ -556,12 +636,25 @@ liveness, not for completeness.
 2. **The decision is not a cost decision.** Two of the four blocks cannot be re-seeded at any price today
    (`sweep_bank_5d.py:252` hardcoded; `unified_throw_cov.py`'s dual-role `--seed`), and those two are
    `99.5 %` of GPU and `99.7 %` of CPU. Funding does not move them.
-3. **The change is smaller and better-precedented than I said** — three of five legs already have the
-   separation, and `bootstrap_nd.py:21-29` is a working in-repo implementation of the exact pattern.
-4. **A cheap partial measurement exists that needs no code change and no ruling:** the `C_stat` and `C_ML`
+3. **The change is smaller in MODULE COUNT and MORE SERIAL in SEQUENCING than I said, and the second half is
+   why the first is not good news.** Three of five legs already have the separation, and
+   `bootstrap_nd.py:28-29` is a working in-repo implementation of the exact pattern. **But under spec (B) —
+   conceded by lane C — `M(ii)` is a JOINT measurement, so partial capability buys nothing and
+   `sweep_bank_5d.py:252` is the BLOCKING dependency rather than one of two parallel edits.** Never quote the
+   module count without the sequencing (§4's inversion note).
+4. ~~**A cheap partial measurement exists that needs no code change and no ruling:** the `C_stat` and `C_ML`
    estimator axes at `n=12` cost **`1.75` A100-h + `1.86` CPU task-hours** together — inside any grant. It
    would not answer `M(ii)` for the dominant blocks, and **must not be reported as if it did**; it would
-   test the `seedscan_split.py:5-7` near-determinism premise, which is currently asserted and unmeasured.
+   test the `seedscan_split.py:5-7` near-determinism premise, which is currently asserted and unmeasured.~~
+   **⚠ WITHDRAWN AS AN `M(ii)` RECOMMENDATION, 2026-08-17 — the specification changed under it.** Lane C has
+   conceded **(B)**: `M(ii)` is a **JOINT** measurement on the composite, with `M(ii)` recorded UNMEASURED.
+   **Under (B) a coherent variation across the four legs at seed `42` requires all four seed-variable AT
+   ONCE, so a partial capability buys NOTHING toward `M(ii)`** — a joint measurement cannot produce a partial
+   result the way (A) would have. My caveat above (*"would not answer `M(ii)` for the dominant blocks"*) was
+   **too weak**: it does not answer `M(ii)` at all, even partially. The costs stay correct and the
+   near-determinism test remains a legitimate *auxiliary* run, **but it must not be offered as a step toward
+   `M(ii)`, and I am withdrawing it as one rather than leaving it to be quoted that way.** See §4's inversion
+   note.
 
 **Nothing run. `OI-130`'s preservation condition binds whatever any eventual run produces.**
 **The two-module seed separation is NOT implemented.**
