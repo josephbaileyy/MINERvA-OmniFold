@@ -191,11 +191,59 @@ cell is not cheap and not runnable, and I had it as both.**
 > **not one slab is reusable.** **The CPU half is the larger half, and the 24 A100-h grant does not reach
 > it.**
 >
-> **If a 12-seed comparison is wanted instead, it has TWO values and neither may travel bare:** `9.77×`
-> using `FOOTING`'s ~1 node-hour (= 4 A100-h), or `22.3×` using B's measured `1.750 A100-h` for 12 seeds.
-> **The spread between them IS the unreconciled footing disagreement** (`FOOTING-20260817:66-69`'s `CONC=6`
-> packing derivation vs B's direct per-task measurement of 0.44 node-h; B's is the conservative one and B
-> has not reconciled them). **So no single ratio should be quoted without naming its denominator.** I took the figure from a `CATALOG` row rather than from a
+> **CORRECTED AGAIN 2026-08-17 — and the clause I had here was itself an asymmetric comparison, carried
+> verbatim from lane B, who then found and withdrew it.** I had written that `FOOTING`'s ~1 node-hour and
+> B's `1.750 A100-h` *"do not agree"* and that **the spread between them IS the unreconciled footing
+> disagreement.** **There was never a disagreement to reconcile.** They are **different quantities**:
+> `FOOTING`'s is **ALLOCATION** — a 4-GPU node held for a wall-clock interval — and B's is **WORK**, 12 tasks
+> × measured per-task GPU time. **A unit-of-account difference, plus a wasted hour.** So the clause asserted
+> a delta across two conditions it had not named — *the exact error this cell exists to record*, committed by
+> B while correcting my instance of it and by me while carrying it.
+>
+> **The 12-seed comparison has THREE denominators, and none is `FOOTING`'s ~1 node-h exactly.** All four
+> jobs verified by `sacct` — name, state, elapsed, and `gres/gpu=4` — and every ratio re-derived from its
+> operands:
+>
+> | denominator | value | ratio to `39.078 A100-h` |
+> |---|---|---|
+> | AI1 **as-run allocation**, including a `TIMEOUT` | `1.5122` node-h = `6.049` A100-h | **`6.5×`** |
+> | AI1 **clean completing pass + combine** (`55923713` + `55924460`) | `0.4894` node-h = `1.958` A100-h | **`20.0×`** |
+> | AI1 **work** (12 × `0.1458`) | `0.4374` node-h = `1.750` A100-h | **`22.3×`** |
+>
+> `55922613 ai1int TIMEOUT 01:00:20` = `1.0056` node-h is where `FOOTING`'s *"~1"* lands almost exactly —
+> **it was pricing a timed-out hour.** And `55923713` is a **lower** bound, because `rg_skip_if_complete`
+> means it only finished what the timeout had not.
+>
+> **Which is why per-seed `268×` is the figure this cell should use: it needs no denominator choice at all.**
+> And it is no longer `n=2`. B raised it to **`n=11`** by pooling `boot5dG 55871150`'s 9 replicas — sound
+> because `bootstrap_nd.py`'s per-task cost does not depend on **which** seed role varies (same npz, same
+> `--iters 5`, same lgbm estimator, same 1-A100 hardware; `--fixed-data-seed` changes only which RNG seeds
+> the weight draw):
+>
+> ```
+> ai1est5d  n=2   524-526 s   mean 525.0 s = 0.1458 A100-h
+> boot5dG   n=9   505-519 s   mean 509.7 s = 0.1416 A100-h, sd 4.2 s
+> POOLED    n=11  505-526 s   mean 512.5 s = 0.1423 A100-h, sd 7.3 s = 1.4%
+> ratio: 268x (ai1-only) | 275x (pooled) | 267-279x across the per-task range
+> ```
+>
+> **So `268×` is good to about ±4% and now carries a measured spread instead of none** — my `n=2` caveat is
+> answered, and it was answered by raising `n` rather than by dropping the caveat.
+>
+> **`0.1458` stays the headline, on B's own argument against its own pooling, recorded rather than buried:**
+> the two `ai1est5d` tasks are **the two slowest of the eleven** (526 and 524 s against a `boot5dG` maximum
+> of 519), which under random assignment is `1/C(11,2)` = **1.8%**. Suggestive of a small real systematic in
+> the `--fixed-data-seed` path — or in the node/day — but it is a **post-hoc test on a noticed pattern at
+> `n=2`, so not a finding.** Its practical effect is that **pooling would UNDERSTATE the fixed-draw cost**,
+> so `0.1458` is both the conservative choice and the exact operation, with the pooled set serving as
+> **spread evidence rather than as the estimate**. That is the right way round.
+>
+> **THE CLASS FIRED THREE TIMES TODAY AND ONCE ON EACH OF US, WHICH IS THE ACTUAL FINDING HERE.** My
+> `~28.5×`; B withdrawing a correct CPU/GPU claim on evidence from an abandoned path; B's allocation-vs-work
+> comparison above. **So "the board grading the error while committing it" is not a lane-specific failure —
+> it is a property of comparing numbers that arrive from different runs**, and the remedy is structural:
+> **name both sides' unit and member count in the same breath as the ratio, or do not state the ratio.**
+> Per-seed `268×` satisfies that; every 12-seed figure requires its denominator named. I took the figure from a `CATALOG` row rather than from a
 measurement, which is the thing this board grades other cells down for.
 
 ## 2b. Cause 3's `C` leg is scoped, and `M(ii)` is not currently MEASURABLE on either leg
