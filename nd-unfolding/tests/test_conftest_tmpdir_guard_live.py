@@ -317,6 +317,39 @@ class TmpdirGuardLive(unittest.TestCase):
     def tearDownClass(cls):
         cls._tmp.cleanup()
 
+    def _label(self, name, run="control"):
+        """The label the terminal would print, derived from the report objects rather than read off
+        the rendering.
+
+        `_pytest.terminal` has no "error" outcome to store: it prints ERROR when a non-passing report
+        arrives from a phase other than `call`, and FAILED when it arrives from `call`. That rule is
+        two fields, both of which this test already collects, so the label is a program fact here and
+        not a string to be matched. Returns None when the test did not fail at all, so a silently
+        passing probe cannot be mistaken for either label.
+
+        A MISSING phase RAISES rather than defaulting. Mutation-testing this helper produced one
+        surviving mutant -- `phases.get(name, "call")` -- and the reason it survived is that no probe
+        reaches the missing-phase branch, so either default is unfalsifiable here. Defaulting would
+        silently label an unknown phase; guessing "ERROR" and guessing "FAILED" are both wrong, since
+        a missing phase means the derivation's input is absent. Same disposition as the dead
+        `types.ModuleType` branch removed from `conftest.py` today: do not keep an untestable default,
+        make the impossible case say so.
+        """
+        outcomes = self.control if run == "control" else self.guarded
+        phases = self.control_phase if run == "control" else self.guarded_phase
+        outcome = outcomes.get(name)
+        if outcome == "skipped":
+            return "SKIPPED"
+        if outcome != "failed":
+            return None
+        phase = phases.get(name)
+        if phase is None:
+            raise AssertionError(
+                f"{name} is recorded as failed with NO phase, so the terminal's label rule "
+                f"(ERROR when the phase is not 'call') cannot be applied. The reporting plugin "
+                f"records a phase for every non-passing report, so this means the plugin changed.")
+        return "FAILED" if phase == "call" else "ERROR"
+
     def test_the_subprocess_really_had_no_usable_tmpdir(self):
         """If this fails, every other assertion in the file is vacuous -- the guard would be inert
         for the ordinary reason and the skips would have to come from somewhere else."""
@@ -371,21 +404,45 @@ class TmpdirGuardLive(unittest.TestCase):
         break. "ERROR" is not a stored outcome -- the terminal derives the label from
         `when != "call"`. So a test asserting `outcome == "error"` would be red no matter how the
         code behaved.
+
+        AND THE LABEL IS NOW DERIVED THE SAME WAY THE TERMINAL DERIVES IT, which is the repair of a
+        defect this test contained while explaining it. `:378` used to assert
+        `assertRegex(control_text, r"(?m)^ERROR ")` -- matching the RENDERING. When pytest
+        colourises, that line begins `\\x1b[1m`, not `E`, so `^ERROR ` cannot match at line start and
+        the test failed. Reproduced on one machine by flipping one variable: `PY_COLORS=1` -> 1
+        failed, `NO_COLOR=1 PY_COLORS=0` -> 7 passed. Three lanes reporting three different suite
+        totals were reading colour settings, not code.
+
+        The fragile assertion sat ONE LINE below the robust one, in a test whose whole subject is
+        which phase broke: the phase was answered correctly from the report objects and then
+        re-asked of the terminal text. `BEN-335` -- text as a proxy for a program fact. The fix is
+        NOT to force `NO_COLOR` in the subprocess, which would suppress the variable while leaving
+        the dependency, and would leave the next reader no way to see the assertion was ever
+        rendering-dependent.
         """
         self.assertEqual(self.control_phase.get("test_route2_pytest_fixture"), "setup",
                          "the pytest tmpdir fixture no longer breaks in the setup phase, so the "
                          "error-vs-failure account in conftest.py and here needs re-deriving")
-        self.assertRegex(self.control_text, r"(?m)^ERROR ",
-                         "the control run rendered no ERROR line, so the claim that the fixture "
-                         "stratum is the erroring one is not supported by this run:\n"
-                         + self.control_text)
-        for name in ("test_body_never_names_a_tmpdir_api", "test_route3_body_calls_mkdtemp"):
+        # DERIVED, not matched: exactly the rule the terminal applies.
+        self.assertEqual(self._label("test_route2_pytest_fixture"), "ERROR",
+                         "the fixture stratum no longer derives an ERROR label, so the claim that "
+                         "it is the erroring one is not supported by this run")
+        for name in ("test_body_never_names_a_tmpdir_api", "test_route3_body_calls_mkdtemp",
+                     "test_direct_setup_body_names_nothing"):
             with self.subTest(shape=name):
                 self.assertEqual(self.control_phase.get(name), "call",
                                  f"{name} broke in phase {self.control_phase.get(name)!r}, not "
                                  f"call; the error/failure asymmetry recorded here would then be "
                                  f"wrong")
                 self.assertEqual(self.control.get(name), "failed")
+                # THE CONTROL ON THE DERIVATION ITSELF, in the direction it must NOT fire. Without
+                # this, `_label` returning "ERROR" unconditionally would satisfy the assertion above
+                # and the derivation would be untested -- the same shape as a filter with no test
+                # that it declines to act (BEN-345).
+                self.assertEqual(self._label(name), "FAILED",
+                                 f"{name} broke in the call phase yet derives an ERROR label; the "
+                                 f"label derivation does not distinguish the two strata, so the "
+                                 f"ERROR assertion above proves nothing")
 
     def test_the_guard_does_NOT_over_fire_on_a_tmpdir_free_sibling(self):
         """The boundary. Whole-class source scanning was the obvious fix and would have skipped 154
@@ -397,6 +454,25 @@ class TmpdirGuardLive(unittest.TestCase):
                                  f"over-fires and is hiding coverage behind phantom skips.\n"
                                  + self.guarded_text)
                 self.assertEqual(self.control.get(name, "passed"), "passed")
+
+    def test_the_label_derivation_REFUSES_an_unknown_phase(self):
+        """The missing-phase tripwire, made falsifiable by manufacturing the state no probe produces.
+
+        `_label` raises rather than defaulting when a failed report carries no phase. No probe reaches
+        that branch -- every non-passing report the plugin records has a `when` -- so deleting the
+        raise was a SURVIVING MUTANT until this test existed. Rather than accept the survivor or
+        pretend a default is safe, the condition is injected directly: a name present in the outcome
+        map and absent from the phase map. That is the same move as manufacturing an unwritable tmpdir
+        in a subprocess for the guard itself -- if the state cannot occur naturally, construct it.
+        """
+        key = "__synthetic_failed_without_a_phase__"
+        self.assertNotIn(key, self.control_phase)
+        self.control[key] = "failed"
+        try:
+            with self.assertRaises(AssertionError):
+                self._label(key)
+        finally:
+            self.control.pop(key, None)
 
     def test_an_IMPORTED_helper_is_the_known_residual(self):
         """The other boundary, pinned in the direction it actually acts.

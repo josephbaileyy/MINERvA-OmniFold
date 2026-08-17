@@ -164,3 +164,51 @@ and are complementary: they test the hook body, this file tests the hook under a
 neither reaches what the other does — the fake items in the unit tests have no class, no fixture
 closure, and a `get_closest_marker` that returns `None` unconditionally, so the marker, fixture and
 `setUp` routes were all unreachable from them.
+
+---
+
+## ADDENDUM 2026-08-16 — the same file then failed on ANSI colour codes, one line below the robust assertion
+
+Finding (4) above is that **`ERROR` is not a stored outcome** — the terminal derives it from
+`when != "call"`. Having written that down, `test_WHICH_shape_errors_and_which_merely_fails` then
+asserted the *rendering* of it:
+
+```python
+self.assertEqual(self.control_phase.get("test_route2_pytest_fixture"), "setup")   # robust
+self.assertRegex(self.control_text, r"(?m)^ERROR ")                              # fragile, next line
+```
+
+**When pytest colourises, that summary line begins `\x1b[1m`, not `E`, so `^ERROR ` cannot match at line
+start.** Reproduced on one machine by flipping one variable — `PY_COLORS=1` → 1 failed;
+`NO_COLOR=1 PY_COLORS=0` → 7 passed. **Three lanes reporting three different suite totals were reading
+colour settings, not code**; `git log` over both files since the commit first blamed is empty, and
+repair-12 touched neither.
+
+**The defect is `BEN-335`'s shape — text as a proxy for a program fact — and its placement is the
+lesson.** In a test whose entire subject is *which phase broke*, the phase was answered correctly from
+the report objects and then **re-asked, fragilely, of the terminal output.** The robust assertion and the
+fragile one were adjacent. Knowing the general rule did not prevent the specific instance, because the
+two assertions look like they check the same thing.
+
+**Fixed by deriving the label the way the terminal derives it** — a `_label()` helper computing
+`"FAILED" if phase == "call" else "ERROR"` from the two fields the test already collects — and deleting
+the text assertion. **Not** by forcing `NO_COLOR` in the subprocess: that suppresses the variable while
+leaving the dependency, and leaves no trace the assertion was ever rendering-dependent.
+
+**Controls, because a derived label can be wrong in two directions:** the fixture route must derive
+`ERROR` **and** the three call-phase routes must derive `FAILED`, so a helper returning either label
+unconditionally is caught. Mutation-tested under `PY_COLORS=1`: **4/4 caught** — always-`ERROR`,
+always-`FAILED`, inverted rule, and dropping the missing-phase raise. That last one **survived until a
+test manufactured the state no probe produces** (a name present in the outcome map and absent from the
+phase map); rather than accept the survivor or let a silent default stand, the impossible case now
+raises and is exercised — the same move as manufacturing an unwritable tmpdir in a subprocess.
+**8/8 green under default, forced-colour, forced-plain and forced-TTY.**
+
+**Acceptance check: the suite now resolves to ONE number under both colour settings —
+`4 failed, 1477 passed, 1 skipped`** — where three lanes previously disagreed at 2, 3 and 4. The fourth
+failure is *not* colour and *not* this file: `test_no_LIVE_pipeline_instances` reports 2 live instances,
+both in `docs/orchestration/shared_push.sh` (lines 98 and 105, no `set -o pipefail`), another lane's
+active file. **Removing the noise revealed a signal the noise was hiding**, which is the argument for
+fixing rendering-dependence rather than pinning around it. Note for its owner: both instances end
+`|| true`, so the return code is deliberately discarded and this may be a sweep false-positive rather
+than a defect — but the test asserts `0`, so the disposition is theirs. Not touched here.
