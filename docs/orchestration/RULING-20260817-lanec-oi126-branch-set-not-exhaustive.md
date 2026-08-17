@@ -1,4 +1,4 @@
-# RULING — `OI-126`: `{(a), (b)}` is NOT exhaustive, and the third branch is what the code's own design comment predicts
+# RULING — `OI-126`: `{(a), (b)}` is NOT exhaustive — and the third branch I offered is now REFUTED too
 
 **Asked of:** lane C (PET), as owner of `SPEC-20260814-gate5-cstat-construction-v1.md` and
 `gate5_cstat_contract.json`. **Put to quorum, not to Joseph**, under his 2026-08-17 grant that two agreeing
@@ -9,6 +9,21 @@ the other first.
 disposes of `(a)` whether or not `(a)` is true. **Q2 therefore does not fire. Q3: the discriminating
 measurement compares TARGETS, not unfoldings, and the arrays are already on disk and already inventoried
 by sha.** Nothing was run to produce this ruling.
+
+> ### ⚠ STATUS AFTER LANE D'S MEASUREMENTS, 2026-08-17 — READ THIS FIRST
+>
+> **`(c)`, the third branch offered below, is REFUTED** (§3): its mass-addition limb measured null with
+> power (`+0.000179%`, `0.03 SE`, 19/50 above), and its redistribution limb requires a nonlinearity that
+> **is not active in the band at all** (`0` of 86 band cells have background mass exceeding the data count).
+> **And my Q3 refutation rule was self-contradictory** — D caught it and declined to cash it (`BEN-403`).
+>
+> **§1 and §2 are untouched, and D says so explicitly rather than letting the death of its own assigned
+> hypothesis read as support for a rival.** `(b)`'s premise separately misdescribes the construction as
+> measured-leg-only — Assistant's point, located in
+> [`DETERMINATION-20260817-lanec-cstat-object-is-total-statistics.md`](DETERMINATION-20260817-lanec-cstat-object-is-total-statistics.md).
+>
+> **So all three named branches now have a problem. That is the honest state of `OI-126` and it is harder
+> than before, not easier.** What is live is the MC-thinning route in the TRAINING leg, which is lane E's.
 
 **Constraints honoured, both from my own prior work:** nothing here rests on the floor **decomposing** the
 family spread (`VL130`'s independence assumption forbids it), and nothing here uses the sd ratio as an
@@ -63,7 +78,61 @@ the problem it is offered for** — it is not a conservative reading of the evid
 leaves the measurement self-inconsistent. **Whatever is true about estimator stability at p‖ 6–20, `(a)`
 cannot be the disposition.**
 
-## 3. The third branch, and it is not speculative — the code says it
+## 3. The third branch — ⚠ **REFUTED BY MEASUREMENT 2026-08-17, TWICE, AND ONE OF THE TESTS WAS MINE AND WAS BROKEN**
+
+> **`(c)` IS DEAD. Both limbs, independently, by lane D. The code reading below stands; the EXPLANATION does
+> not.**
+>
+> **LIMB 1 — mass addition, measured with power established FIRST.** `sum(nominal_target)` =
+> `1.124080587652e+06` against `mean_i sum(replica_target_i)` = `1.124082601268e+06`: gap **`+2.01`**,
+> **`+0.000179%`**, **`0.03 SE`**, **19 of 50** replicas above. D checked the test could discriminate before
+> running it — replica sums span `1.1226e6`–`1.1253e6`, `sd = 5.68e2`, so not pinned to a constant.
+> **No mass-addition signature.**
+>
+> **LIMB 2 — the mechanism is not merely weak in the band, it is ABSENT.** Background share of the measured
+> leg, median per reco cell: **`9.604%`** at p‖ < 6 (100 cells), **`9.840%`** in the band (86),
+> **`11.368%`** at p‖ > 20 (45). **The band sits BETWEEN the two control regions, not at a peak.** And
+> **`0` of the 86 band cells** have background mass exceeding the data count (3 of 231 live overall), so
+> **the cell-level signed sum never goes negative in the band at all. Stay-Positive is not clipping there.**
+> **A nonlinearity that is inactive where the effect is cannot be the effect's mechanism.**
+>
+> *(D's limits, carried rather than smoothed: this is RECO space, because data rows carry no truth
+> coordinate so a truth-cell negative fraction is not a defined quantity; `"bkg mass > data count"` is a
+> cell-level proxy and finer clipping inside net-positive cells is not excluded; the uniform ~10% share is
+> the robust half and holds at any granularity.)*
+>
+> ### AND MY OWN Q3 DECISION RULE WAS SELF-CONTRADICTORY — D CAUGHT IT AND DECLINED TO EXPLOIT IT
+>
+> §4 said *"a nonzero one-signed gap is the Jensen signature; **zero refutes `(c)` at the total level**."*
+> §3 said `(c)` was *"redistribution, not inflation, **with the total nearly conserved**."* **If `(c)`
+> predicts conservation, a zero total gap is what `(c)` PREDICTS, not what refutes it.** D declined to
+> return `REFUTED` against a rule whose own hypothesis expected the observed outcome — **the right call, and
+> it caught my defect instead of cashing it.**
+>
+> **The mediator's repair is right and I would go one step further, because the contradiction is the symptom
+> and not the cause.** The repair: Jensen on an elementwise convex map **adds** mass and the addition does
+> not cancel under summation, so a strict Jensen mechanism predicts a **positive total gap** as well as
+> redistribution — which makes Limb 1 informative rather than silent. **The cause: `"total nearly
+> conserved"` was never a prediction of the Jensen mechanism at all. It was a description of the
+> OBSERVATION** (the nominal's total at the 98th percentile) **that I imported into the mechanism's
+> predictions.** So one limb was made unfalsifiable by the very evidence it was invented to explain, and the
+> two limbs then contradicted each other. **Filed as `BEN-403`.**
+>
+> ### WHAT SURVIVES AND WHAT DOES NOT
+>
+> | | status |
+> |---|---|
+> | §1 type mismatch — both branches are dispersion propositions, the evidence is location | **STANDS** (D says so explicitly) |
+> | §2 `(a)` incoherent as a disposition | **STANDS** |
+> | §3 code reading — the per-replica refinement is REQUIRED, harmonising destroys `C_stat` (`BEN-402`) | **STANDS** — it is a fact about the construction |
+> | §3 Jensen as the EXPLANATION of the band structure | **REFUTED** |
+> | §3 the `CSTAT-D2` centring question | **MOOT**, and separately **SPECIFIED** upstream — Gate 5 F7's own text says *"Center `C_stat` on the accepted replica mean"* (`DETERMINATION-20260817-lanec-cstat-object-is-total-statistics.md` §1) |
+> | §4 Test 1 as a REFUTATION rule | **WITHDRAWN** — it was inverted; as a test of the mass-addition limb (the mediator's reading) it is sound and it ran |
+>
+> **All three named branches now have a problem. That is the honest state and it should not be smoothed into
+> whichever branch is least damaged.**
+
+## 3. The third branch, as originally argued — the code reading stands, the explanation does not
 
 **`(c)` THE NEGWEIGHT REFINEMENT IS INSIDE THE BOOTSTRAP AND IT IS NONLINEAR, SO THE FAMILY MEAN IS NOT AN
 ESTIMATOR OF THE NOMINAL AND NON-CONTAINMENT IS EXPECTED.**

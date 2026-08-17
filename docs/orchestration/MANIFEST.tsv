@@ -66,6 +66,7 @@ docs/orchestration/DETERMINATION-20260811-cause5-binding-half.md	LIVE	document		
 docs/orchestration/DETERMINATION-20260817-cause1-census-and-magnitude-measured.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	5	222	14979
 docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	6	252	17592
 docs/orchestration/DETERMINATION-20260817-cluster-sync-step1-safe-and-the-fork-is-gone.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	126	7165
+docs/orchestration/DETERMINATION-20260817-lanec-cstat-object-is-total-statistics.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	112	7299
 docs/orchestration/DETERMINATION-20260817-oi60-rerun-costed.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	176	10923
 docs/orchestration/DETERMINATION-20260817-pet-oi82-oi60-oi41.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	153	8915
 docs/orchestration/DETERMINATION-20260817-pet-ten-items-state-and-oi126-shape.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	5	229	16762
@@ -219,7 +220,7 @@ docs/orchestration/FINDING-20260817-verification-allocated-by-suspicion.md	ARCHI
 docs/orchestration/FINDINGS-ARCHIVE-2026-08.md	ARCHIVAL	document	2026-07-16-fe-campaign		terminal		exact-path-only	docs/orchestration/findings_row_lint.py;docs/orchestration/split_findings.py;nd-unfolding/pet/check_canonical_designation.py	yes	7	155	362988
 docs/orchestration/FINDINGS-INDEX-ARCHIVE-2026-08.md	ARCHIVAL	document	20260806-campaign		terminal		exact-path-only		yes	2	46	25076
 docs/orchestration/FINDINGS-POLICY-HISTORY.md	ARCHIVAL	document			terminal		exact-path-only		yes	1	62	4476
-docs/orchestration/FINDINGS.md	LIVE	ledger	20260806-campaign		open		route-only	docs/orchestration/findings_row_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/split_findings.py;docs/orchestration/whose_row.py;nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/orchestrate_gpu_node.sh;nd-unfolding/sbatch_bootstrap_5d_gpu.sh;nd-unfolding/tests/test_hash_bindings.py	no	82	592	512111
+docs/orchestration/FINDINGS.md	LIVE	ledger	20260806-campaign		open		route-only	docs/orchestration/findings_row_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/split_findings.py;docs/orchestration/whose_row.py;nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/orchestrate_gpu_node.sh;nd-unfolding/sbatch_bootstrap_5d_gpu.sh;nd-unfolding/tests/test_hash_bindings.py	no	82	594	515979
 docs/orchestration/FOOTING-20260817-gbdtaiesttrace-12-seeds.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	94	6331
 docs/orchestration/HANDOFF-20260806-2246Z.md	ARCHIVAL	document		20260806	terminal		exact-path-only		yes	13	186	12848
 docs/orchestration/HANDOFF-20260812-1145Z.md	ARCHIVAL	document		20260812	terminal		exact-path-only		yes	6	175	14895
@@ -233,7 +234,7 @@ docs/orchestration/INTERIM-HANDBACK.md	ARCHIVAL	document			terminal		exact-path-
 docs/orchestration/LIVE-STATE.md	LIVE	live-status			generated		always	docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_g2_dump_resume.sh;docs/orchestration/watch_slurm_array_resume.sh	no	44	76	12872
 docs/orchestration/LIVE-USAGE.md	LIVE	live-status			open		route-only		no	15	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	10	53	3555
-docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	19	937	153897
+docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	19	942	154636
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	LIVE	document		20260817	open		route-only		no	3	184	13929
 docs/orchestration/MAP-20260817-pet-critical-path.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	197	14433
 docs/orchestration/METHOD-DECLARATION-20260814-lane-d-cstat-crosscheck.md	ARCHIVAL	document		20260814	terminal		exact-path-only	docs/orchestration/state/build_cstat_crosscheck_laned.py	yes	3	102	6794
@@ -300,7 +301,7 @@ docs/orchestration/ROLLOUT-PLAN.md	ARCHIVAL	document	fe-fps-campaign		terminal		
 docs/orchestration/ROW-OWNERS.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/whose_row.py	no	6	52	4181
 docs/orchestration/RULING-20260815-lanec-reduced-n-diagnostic-coherence.md	ARCHIVAL	document		20260815	terminal		exact-path-only		yes	3	273	20344
 docs/orchestration/RULING-20260817-lanec-floor-vs-family-coherence.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	338	24704
-docs/orchestration/RULING-20260817-lanec-oi126-branch-set-not-exhaustive.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	178	12109
+docs/orchestration/RULING-20260817-lanec-oi126-branch-set-not-exhaustive.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	247	17338
 docs/orchestration/RUNBOOK-20260807-gbdt-closeout.md	ARCHIVAL	runbook		20260807	terminal		exact-path-only	docs/open-items/verify_open_items_restructure.py;nd-unfolding/p4_lib.py	yes	25	450	34284
 docs/orchestration/RUNS.template.tsv	DEAD	tabular-data			superseded	docs/orchestration/RUNS.tsv	never		yes	1	2	105
 docs/orchestration/RUNS.tsv	MACHINE	tabular-data	fe-fps-campaign		generated		exact-path-only	docs/orchestration/test_generate_live_state.py;docs/orchestration/wakerctl.py;nd-unfolding/sbatch_pet_train_fps_delta.sh	no	66	306	179022
@@ -309,7 +310,7 @@ docs/orchestration/SCOPING-20260810-engine-rebaseline-cost.md	ARCHIVAL	document	
 docs/orchestration/SCOPING-20260813-csyst-joint-nuisance-retraining.md	ARCHIVAL	document		20260813	terminal		exact-path-only		yes	2	348	25320
 docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	LIVE	document		20260817	open		route-only		no	8	815	61891
 docs/orchestration/SESSION-WORKFLOW.md	LIVE	document			open		route-only		no	3	170	8468
-docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md	LIVE	document		20260814	open		route-only	docs/orchestration/live_doc_indexed.py;nd-unfolding/pet/build_cstat_gate5_n50.py	no	18	1069	77774
+docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md	LIVE	document		20260814	open		route-only	docs/orchestration/live_doc_indexed.py;nd-unfolding/pet/build_cstat_gate5_n50.py	no	19	1069	77774
 docs/orchestration/STEP2-20260806-niter3-budget-classification.md	ARCHIVAL	document		20260806	terminal		exact-path-only		yes	6	153	10985
 docs/orchestration/SWEEP-20260817-pet-pin-exposure-complete.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	216	12889
 docs/orchestration/TASK-HANDOFF.template.md	LIVE	template			open		route-only		no	3	125	4731
@@ -779,6 +780,8 @@ docs/orchestration/state/oi120b-root-order-alignment-56943340.json	MACHINE	state
 docs/orchestration/state/oi120c-loader-purity-perturbation-56975592.json	MACHINE	state-artifact			generated		exact-path-only	docs/orchestration/test_receipt_verdict_is_not_the_superseded_one.py	yes	6	153	7927
 docs/orchestration/state/oi120c-loader-purity-perturbation-56975592.txt	MACHINE	state-artifact			generated		exact-path-only	docs/orchestration/test_probe_oi120c_verdict.py	yes	6	138	5047
 docs/orchestration/state/oi126-fixed-network-proposal-costing-20260817.json	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	0	201	25996
+docs/orchestration/state/oi126-q3-negative-injection-localisation-20260817.json	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	0	331	9363
+docs/orchestration/state/oi126-q3-test1-jensen-total-20260817.json	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	0	76	4222
 docs/orchestration/state/oi22-legA-real-input-verification-20260814.json	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	2	195	7986
 docs/orchestration/state/opendata-input-integrity-20260813.json	MACHINE	state-artifact		20260813	generated		exact-path-only	docs/orchestration/fend_probe.py	yes	4	174	12766
 docs/orchestration/state/opendata-input-integrity-fullcoverage-20260813.json	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	2	69	5960
@@ -848,6 +851,8 @@ docs/orchestration/state/probe-oi126-band-variants-20260815.py	MACHINE	state-art
 docs/orchestration/state/probe-oi126-mechanism-narrowing-20260815.py	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	1	164	14039
 docs/orchestration/state/probe-oi126-push-vs-extraction-20260815.json	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/eval-oi126-predeclared-readings-20260815.py;docs/orchestration/state/eval-oi126-tiebreak-retirement-20260815.py	yes	4	1	27376
 docs/orchestration/state/probe-oi126-push-vs-extraction-20260815.py	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/eval-oi126-predeclared-readings-20260815.py	yes	3	114	6551
+docs/orchestration/state/probe-oi126-q3-negative-injection-20260817.py	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	0	106	4994
+docs/orchestration/state/probe-oi126-q3-test1-jensen-20260817.py	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	0	76	3753
 docs/orchestration/state/probe-oi126-tail-floor-20260817.py	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	4	62	2554
 docs/orchestration/state/probe-oi126-tail-vs-band-20260817.py	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	0	64	2975
 docs/orchestration/state/probe-oi126-target-comparison-20260815.json	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-oi126-mechanism-narrowing-20260815.py	yes	1	1	1261
