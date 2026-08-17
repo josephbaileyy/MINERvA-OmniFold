@@ -17,8 +17,26 @@
 # WORKTREE at origin/<branch>, pushes from there, and removes it. Your local branch is deliberately
 # left BEHIND origin -- resetting it would touch the shared tree, which is the thing being avoided.
 # The foreign dirty set is digested before and after, and a difference is a REFUSAL, so "I did not
-# disturb anything" is a measurement rather than a claim (the discipline this lane demanded of a peer
-# on the same night: read-only made falsifiable, not asserted).
+# disturb anything" is a measurement rather than a claim.
+#
+# ---------------------------------------------------------------------------------------------------
+# TWO PIPELINE-rc DEFECTS, found by lane C and fixed 2026-08-16 AFTER this had been used three times.
+# Both were the same shape and both were in this file's own safety machinery:
+#
+#   1. `PICKS="$(git cherry ... | awk ...)"` took AWK's exit status. A failed `git cherry` yielded an
+#      empty PICKS, which fell into the "nothing to push" branch and EXITED 0 -- a push that silently
+#      did nothing while reporting success, inside the tool written to make pushing safe.
+#   2. WORSE, and not the one reported: `dirty_digest` returned empty with rc 0 when `git status`
+#      failed, so a FAILED measurement was indistinguishable from a CLEAN TREE. If it failed both
+#      times, `verify_untouched` compared empty to empty and printed "verified, not asserted" -- this
+#      script's central claim, asserted over two absences. That is BEN-344's third recorded failure
+#      verbatim ("an empty file diffs clean against anything"), cited in this file's own commit message
+#      and then shipped in it.
+#
+# THE RULE BOTH VIOLATE: an empty result and a failed search must never share a code path. Every
+# measurement here now returns a nonzero rc on failure and emits a `MEASURED` header, so a successful
+# empty reading is a NON-EMPTY string and silence can only mean failure.
+# ---------------------------------------------------------------------------------------------------
 #
 # Exit codes are the contract. This script is their only interpreter; do not restate them in prose
 # (BEN-163 -- the hole moved from merge_guard.sh into the document describing it).
@@ -29,53 +47,77 @@
 #   3  BLOCKED       bad usage, not a git repo, or the self-test failed
 #
 set -u
+set -o pipefail          # without this, every pipeline below reports its LAST stage's status
 BRANCH="${1:-main}"
 REMOTE="${2:-origin}"
 
 say() { printf '%s\n' "$*"; }
 die() { say "BLOCKED :: $*"; exit 3; }
+cannot() { say "CANNOT CHECK :: $*"; exit 2; }
 
 # --- the instrument: a digest of every dirty (unstaged/untracked) path and its CONTENT -------------
-# Paths alone are not enough. A peer editing a file it had already edited changes content and not the
-# path list, and that is exactly the case a path-only check would call clean.
+# Emits `MEASURED` first, so a clean tree yields a NON-EMPTY result and an empty result can only mean
+# the function failed. Returns nonzero if the status could not be taken at all -- fail closed.
+# The path is included in each line as well as the digest: hashes alone would not notice two dirty
+# files swapping contents, and paths alone would not notice a peer re-editing a file it had already
+# edited (which is the case that matters most here).
 dirty_digest() {
-    local root="$1" out="" f
-    ( cd "$root" 2>/dev/null || return 1
-      git status --porcelain -z 2>/dev/null | tr '\0' '\n' | while IFS= read -r line; do
-          [ -n "$line" ] || continue
-          f="${line:3}"
-          if [ -f "$f" ]; then
-              printf '%s %s\n' "${line:0:2}" "$(shasum -a 256 "$f" 2>/dev/null | cut -d' ' -f1)"
-          else
-              printf '%s %s DIR-OR-GONE\n' "${line:0:2}" "$f"
-          fi
-      done | LC_ALL=C sort
-    )
+    local root="$1" st rc line f h
+    st="$(mktemp)" || return 1
+    ( cd "$root" 2>/dev/null && git status --porcelain -z ) > "$st" 2>/dev/null
+    rc=$?
+    if [ "$rc" -ne 0 ]; then rm -f "$st"; return 1; fi
+    printf 'MEASURED\n'
+    tr '\0' '\n' < "$st" | while IFS= read -r line; do
+        [ -n "$line" ] || continue
+        f="${line:3}"
+        if [ -f "$root/$f" ]; then
+            h="$(shasum -a 256 "$root/$f" 2>/dev/null | cut -d' ' -f1)"
+            printf '%s %s %s\n' "${line:0:2}" "$f" "${h:-UNREADABLE}"
+        else
+            printf '%s %s DIR-OR-GONE\n' "${line:0:2}" "$f"
+        fi
+    done | LC_ALL=C sort
+    rm -f "$st"
+    return 0
 }
 
-# --- SELF-TEST: the comparator must be shown able to report DIFFERENT, in this run ------------------
-# BEN-344's rule applied to this script's own instrument: a null result ("nothing changed") is worth
-# nothing unless the same instrument, in the same run, is shown capable of returning non-null. Run on
-# a scratch repo, never on the caller's tree.
+# --- SELF-TEST: the comparator must be shown able to report DIFFERENT, and to FAIL, in this run -----
+# BEN-344 applied to the instrument rather than the result: a null reading is worth nothing unless the
+# same instrument, in the same run, is shown capable of returning non-null -- AND of failing loudly
+# when it cannot measure, which is the defect fixed above. Runs on scratch dirs, never on your tree.
 self_test() {
-    local t; t="$(mktemp -d)" || return 1
+    local t d clean dirty1 dirty2
+    t="$(mktemp -d)" || return 1
     ( cd "$t" && git init -q . && git config user.email t@t && git config user.name t \
-      && echo base > tracked.txt && git add tracked.txt && git commit -qm base ) || { rm -rf "$t"; return 1; }
-    local clean dirty1 dirty2
-    clean="$(dirty_digest "$t")"
-    [ -z "$clean" ] || { rm -rf "$t"; say "self-test: a clean tree did not digest empty"; return 1; }
+      && echo base > tracked.txt && git add tracked.txt && git commit -qm base ) \
+      || { rm -rf "$t"; say "self-test: could not build the scratch repo"; return 1; }
+
+    clean="$(dirty_digest "$t")" || { rm -rf "$t"; say "self-test: a CLEAN repo failed to measure"; return 1; }
+    [ "$clean" = "MEASURED" ] || { rm -rf "$t"
+        say "self-test: a clean tree did not read as exactly MEASURED (got: $clean)"; return 1; }
+
     echo modified > "$t/tracked.txt"
-    dirty1="$(dirty_digest "$t")"
-    [ -n "$dirty1" ] || { rm -rf "$t"; say "self-test: a MODIFIED file was not detected"; return 1; }
+    dirty1="$(dirty_digest "$t")" || { rm -rf "$t"; say "self-test: a dirty repo failed to measure"; return 1; }
+    [ "$dirty1" != "$clean" ] || { rm -rf "$t"; say "self-test: a MODIFIED file was not detected"; return 1; }
+
     echo modified-differently > "$t/tracked.txt"
-    dirty2="$(dirty_digest "$t")"
+    dirty2="$(dirty_digest "$t")" || { rm -rf "$t"; say "self-test: re-measure failed"; return 1; }
     [ "$dirty1" != "$dirty2" ] || { rm -rf "$t"
-        say "self-test: two DIFFERENT contents digested identically -- the comparator is path-only"
-        return 1; }
+        say "self-test: two DIFFERENT contents digested identically -- the comparator is path-only"; return 1; }
+
     echo new > "$t/untracked.txt"
     [ "$(dirty_digest "$t")" != "$dirty2" ] || { rm -rf "$t"
         say "self-test: an UNTRACKED file was not detected"; return 1; }
-    rm -rf "$t"
+
+    # THE FAILURE-PATH CONTROL. A non-repo must make this FAIL, not read as clean.
+    d="$(mktemp -d)" || { rm -rf "$t"; return 1; }
+    if dirty_digest "$d" >/dev/null 2>&1; then
+        rm -rf "$t" "$d"
+        say "self-test: a NON-REPO measured successfully -- a failed reading would pass as clean"
+        return 1
+    fi
+    rm -rf "$t" "$d"
     return 0
 }
 
@@ -84,21 +126,27 @@ ROOT="$(git rev-parse --show-toplevel)" || die "cannot find the worktree root"
 case "$BRANCH" in -*|"") die "usage: shared_push.sh [branch] [remote]";; esac
 
 self_test || die "self-test failed -- the instrument is not trustworthy, so nothing was attempted"
-say "self-test :: PASS (comparator detects modified, re-modified, and untracked)"
+say "self-test :: PASS (detects modified, re-modified, untracked; and FAILS on an unmeasurable tree)"
 
-git fetch -q "$REMOTE" "$BRANCH" || { say "CANNOT CHECK :: fetch failed"; exit 2; }
-HEAD_SHA="$(git rev-parse HEAD)" || { say "CANNOT CHECK :: no HEAD"; exit 2; }
-REM_SHA="$(git rev-parse "$REMOTE/$BRANCH")" || { say "CANNOT CHECK :: no $REMOTE/$BRANCH"; exit 2; }
+git fetch -q "$REMOTE" "$BRANCH" || cannot "fetch failed"
+HEAD_SHA="$(git rev-parse HEAD)" || cannot "no HEAD"
+REM_SHA="$(git rev-parse "$REMOTE/$BRANCH")" || cannot "no $REMOTE/$BRANCH"
 
 if [ "$HEAD_SHA" = "$REM_SHA" ]; then say "nothing to push (HEAD == $REMOTE/$BRANCH)"; exit 0; fi
-N_AHEAD="$(git rev-list --count "$REM_SHA..$HEAD_SHA")"
-[ "$N_AHEAD" -gt 0 ] || { say "CANNOT CHECK :: HEAD is not ahead of $REMOTE/$BRANCH; nothing to push"; exit 2; }
+N_AHEAD="$(git rev-list --count "$REM_SHA..$HEAD_SHA")" || cannot "could not count local commits"
+[ "$N_AHEAD" -gt 0 ] || cannot "HEAD is not ahead of $REMOTE/$BRANCH; nothing to push"
 
-BEFORE="$(dirty_digest "$ROOT")"
-say "foreign/local dirty entries before: $(printf '%s' "$BEFORE" | grep -c . || true)"
+BEFORE="$(dirty_digest "$ROOT")" \
+    || cannot "could not read this tree's dirty set, so 'I disturbed nothing' would be unprovable"
+say "dirty entries before: $(( $(printf '%s\n' "$BEFORE" | wc -l | tr -d ' ') - 1 ))"
 
 verify_untouched() {
-    local after; after="$(dirty_digest "$ROOT")"
+    local after
+    if ! after="$(dirty_digest "$ROOT")"; then
+        say "REFUSED :: the dirty set could not be RE-READ, so nothing is verified."
+        say "  Not treated as unchanged: a failed measurement and a clean tree are different claims."
+        return 1
+    fi
     if [ "$after" != "$BEFORE" ]; then
         say "REFUSED :: the working tree's dirty set CHANGED during this operation."
         say "  This script exists to make that impossible; investigate before doing anything else."
@@ -124,15 +172,24 @@ say "DIVERGED from $REMOTE/$BRANCH; using a throwaway detached worktree (this tr
 WT="$(mktemp -d)/wt"
 cleanup() { git worktree remove --force "$WT" >/dev/null 2>&1 || true; git worktree prune >/dev/null 2>&1 || true; }
 trap cleanup EXIT
-git worktree add --detach -q "$WT" "$REM_SHA" || { say "CANNOT CHECK :: could not create the worktree"; exit 2; }
+git worktree add --detach -q "$WT" "$REM_SHA" || cannot "could not create the worktree"
 
-# ONLY the commits that are not ALREADY UPSTREAM BY CONTENT. Found by dogfooding this script on the
-# second consecutive push: the first push landed a commit under a NEW sha (that is what cherry-picking
-# does), so the local branch then held a commit patch-equivalent to one already on the remote, and
-# re-picking it conflicted with itself. `git cherry` compares patch-ids rather than shas, which is
-# exactly the question being asked -- "is this change already there" -- and `rev-list` cannot answer it.
-# Without this the script works once and refuses forever after, which is worse than not existing.
-PICKS="$(git cherry "$REM_SHA" "$HEAD_SHA" | awk '$1=="+"{print $2}')"
+# ONLY the commits not ALREADY UPSTREAM BY CONTENT. Found by dogfooding this script on its second
+# consecutive push: the first push landed a commit under a NEW sha (that is what cherry-picking does),
+# so the local branch then held a commit patch-equivalent to one already on the remote, and re-picking
+# it conflicted with itself. `git cherry` compares patch-ids, which is exactly the question -- "is this
+# change already there" -- and `rev-list` cannot answer it, because the sha is the thing that changed.
+#
+# `git cherry`'s rc is captured SEPARATELY rather than through the pipe. An empty PICKS from a
+# SUCCESSFUL cherry is a legitimate no-op; an empty PICKS from a FAILED one is an error, and the two
+# must not share a code path (defect 1 above -- it silently exited 0 and pushed nothing).
+CHERRY_OUT="$(mktemp)"
+if ! git cherry "$REM_SHA" "$HEAD_SHA" > "$CHERRY_OUT" 2>/dev/null; then
+    rm -f "$CHERRY_OUT"; cleanup; trap - EXIT
+    cannot "\`git cherry\` failed, so which commits are already upstream is UNKNOWN. Nothing pushed."
+fi
+PICKS="$(awk '$1=="+"{print $2}' "$CHERRY_OUT")"
+rm -f "$CHERRY_OUT"
 if [ -z "$PICKS" ]; then
     cleanup; trap - EXIT
     verify_untouched || exit 1
@@ -140,7 +197,7 @@ if [ -z "$PICKS" ]; then
     say "  (different shas, identical patches -- your local $BRANCH is behind, not ahead)"
     exit 0
 fi
-N_PICK="$(printf '%s\n' "$PICKS" | grep -c .)"
+N_PICK="$(printf '%s\n' "$PICKS" | wc -l | tr -d ' ')"
 [ "$N_PICK" = "$N_AHEAD" ] || say "note :: $((N_AHEAD - N_PICK)) of $N_AHEAD local commit(s) already upstream by content; skipping them"
 if ! git -C "$WT" cherry-pick $PICKS >/dev/null 2>&1; then
     git -C "$WT" cherry-pick --abort >/dev/null 2>&1 || true

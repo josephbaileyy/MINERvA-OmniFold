@@ -15,7 +15,12 @@
 #
 #   exit 0  all pass          exit 1  a test failed          exit 3  cannot set up
 set -u
-S="$(cd "$(dirname "$0")" && pwd)/shared_push.sh"
+# SHARED_PUSH overrides the script under test, so this suite can be POWER-TESTED against an older
+# revision -- a regression test that also passes on the buggy version tests nothing. Used to confirm
+# TEST 5 and TEST 6 fail on 72da120, the revision that shipped both pipeline-rc defects:
+#   git show 72da120:docs/orchestration/shared_push.sh > /tmp/old.sh
+#   SHARED_PUSH=/tmp/old.sh bash docs/orchestration/shared_push_e2e_test.sh
+S="${SHARED_PUSH:-$(cd "$(dirname "$0")" && pwd)/shared_push.sh}"
 [ -r "$S" ] || { echo "BLOCKED :: cannot read $S"; exit 3; }
 T="$(mktemp -d)" || exit 3
 trap 'rm -rf "$T"' EXIT
@@ -87,6 +92,76 @@ git branch -q -M main && git fetch -q origin
 echo y > b.txt && git add b.txt && git commit -qm y
 bash "$S" main origin >"$T/o4" 2>&1; chk "exit 0" "$?" "0"
 grep -q "fast-forward available" "$T/o4"; chk "used the fast-forward path" "$?" "0"
+
+# --- the two pipeline-rc defects, found by lane C after this had been used three times --------------
+# Both were "an empty result read as nothing-to-do rather than as the-search-may-have-failed", and a
+# fix without a scenario reproducing the silent no-op would not meet the bar TEST 0 sets for the
+# script. Each failure is injected with a `git` shim earlier on PATH that fails ONE subcommand and
+# delegates the rest, so the rest of the script runs exactly as it does in production.
+REAL_GIT="$(command -v git)"
+shim() {   # $1 = subcommand to break everywhere
+    local d="$T/shim.$1"; mkdir -p "$d"
+    { printf '#!/bin/sh\n'
+      printf 'if [ "$1" = "%s" ]; then exit 42; fi\n' "$1"
+      printf 'exec %s "$@"\n' "$REAL_GIT"; } > "$d/git"
+    chmod +x "$d/git"; printf '%s' "$d"
+}
+# ...and a CWD-SCOPED variant, which TEST 6 requires and a blanket shim cannot provide.
+# WHY: a blanket `status` shim also breaks the script's own self-test, which runs on scratch repos
+# FIRST -- so the pre-fix script exits 3 (BLOCKED) before it ever reaches the defect, and TEST 6's
+# assertions would pass on the buggy version FOR THE WRONG REASON. Verified: with a blanket shim,
+# TEST 6 passed against 72da120, which shipped the defect. That is a fixture degenerate on the axis
+# under test, so the failure has to be scoped to the real tree and let the self-test succeed.
+shim_in() {   # $1 = subcommand, $2 = the only directory in which it fails
+    local d="$T/shim.$1.scoped" res
+    # RESOLVE the target with `pwd -P`, and compare against `pwd -P` inside the shim. On macOS
+    # /tmp is a symlink to /private/tmp, so `git rev-parse --show-toplevel` (which the script uses)
+    # returns the PHYSICAL path while $T is the symlinked one -- the two strings never match, no
+    # failure gets injected, and the scenario silently tests nothing while looking like a real run.
+    # Caught by this suite failing against the FIXED script, which is the only reason it was noticed.
+    res="$(cd "$2" && pwd -P)"
+    mkdir -p "$d"
+    { printf '#!/bin/sh\n'
+      printf 'if [ "$1" = "%s" ] && [ "$(pwd -P)" = "%s" ]; then exit 42; fi\n' "$1" "$res"
+      printf 'exec %s "$@"\n' "$REAL_GIT"; } > "$d/git"
+    chmod +x "$d/git"; printf '%s' "$d"
+}
+
+echo "TEST 5 -- DEFECT 1: if \`git cherry\` fails, the script must NOT report success and push nothing"
+setup || exit 3
+cd "$T/w"
+B_F="$(dig f.txt)"
+PATH="$(shim cherry):$PATH" bash "$S" main origin >"$T/o5" 2>&1
+rc5=$?
+[ "$rc5" != "0" ] && echo "  PASS  did not exit 0 on an unmeasurable cherry (rc=$rc5)" \
+    || { echo "  FAIL  exited 0 -- a silent no-op push, the defect this test exists for"; fail=1; }
+grep -q "CANNOT CHECK" "$T/o5"; chk "reported CANNOT CHECK, not 'nothing to push'" "$?" "0"
+grep -q "nothing to push" "$T/o5" && { echo "  FAIL  still claims 'nothing to push'"; fail=1; } \
+    || echo "  PASS  does not claim 'nothing to push'"
+git fetch -q origin 2>/dev/null || true
+git cat-file -e origin/main:mine.txt 2>/dev/null \
+    && { echo "  FAIL  pushed anyway"; fail=1; } || echo "  PASS  nothing was pushed"
+chk "peer file untouched even on the error path" "$(dig f.txt)" "$B_F"
+chk "no leftover worktree after the error path" "$(git worktree list | wc -l | tr -d ' ')" "1"
+
+echo "TEST 6 -- DEFECT 2 (worse, and not the one reported): if \`git status\` cannot be read, the"
+echo "          before/after claim must NOT be made. An empty measurement is not a clean tree."
+setup || exit 3
+cd "$T/w"
+PATH="$(shim_in status "$T/w"):$PATH" bash "$S" main origin >"$T/o6" 2>&1
+rc6=$?
+grep -q "self-test :: PASS" "$T/o6" \
+    && echo "  PASS  the self-test still ran (so this scenario reaches the defect, not a BLOCK)" \
+    || { echo "  FAIL  the self-test was broken too -- this test would pass for the wrong reason"; fail=1; }
+[ "$rc6" != "0" ] && echo "  PASS  did not exit 0 when the dirty set was unreadable (rc=$rc6)" \
+    || { echo "  FAIL  exited 0 -- 'verified, not asserted' over a failed measurement"; fail=1; }
+grep -q "verified, not asserted" "$T/o6" \
+    && { echo "  FAIL  claimed the before/after comparison on an unmeasurable tree"; fail=1; } \
+    || echo "  PASS  made no before/after claim it could not support"
+grep -qE "CANNOT CHECK|REFUSED" "$T/o6"; chk "said which, in the contract's vocabulary" "$?" "0"
+
+echo "TEST 7 -- the self-test itself must refuse an unmeasurable tree (the failure-path control)"
+grep -q "FAILS on an unmeasurable tree" "$T/o1"; chk "self-test asserts its own failure path" "$?" "0"
 
 echo
 if [ $fail -eq 0 ]; then echo "SUITE :: ALL PASS"; else echo "SUITE :: FAILED"; fi

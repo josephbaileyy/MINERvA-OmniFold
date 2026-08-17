@@ -46,8 +46,8 @@
         "pipefail": true
       },
       "docs/orchestration/shared_push.sh": {
-        "hits": 2,
-        "pipefail": false
+        "hits": 1,
+        "pipefail": true
       },
       "docs/orchestration/waker_fired_but_unread.sh": {
         "hits": 1,
@@ -118,8 +118,8 @@
         "pipefail": true
       }
     },
-    "live_instances": 2,
-    "n_candidates": 48,
+    "live_instances": 0,
+    "n_candidates": 47,
     "n_shell_files": 374,
     "tool": "tools_p4_sweep_pipeline_rc"
   },
