@@ -16,6 +16,21 @@ variant** — which was reason (ii) for the earlier refusal to declare.
 > `:73-78`, and a second citation ("line 325", the 37%-NON-negligible observation) had drifted to `364`.
 > Both are now content-cited. `orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md` §4.4.
 
+**2026-08-17 cause 1 one-liner (Lane E) — `P` MET and `M` MEASURED; four METs on the letter of §0 and
+ROUTED, not declared.** The per-band endpoint census now exists (42 ± pairs all complete, `Flux` exactly
+100 contiguous, `2p2h` N=3 recorded and excluded from the counterfactual) and so does the magnitude
+`CRITERIA` §2 calls *"a number that does not exist anywhere"*: rebuilding X's budget from its own 188
+universe vectors, the retired one-sided CV-centered form gives √Tr `4.6101e-38` / `4.4878e-38` against
+as-built `4.3515e-38` (**+3.1% to +5.9%**) and per-bin median `13.23%` → `14.84%` / `15.74%`. All eight
+committed summary numbers reproduced first as a positive control. Cause of the inflation, measured: a
+**0.906% common baseline offset** between the sweep unfolds and the CV file, which mean-centering cancels
+and CV-centering turns into spurious rank-1 variance — **X as built is unaffected.** Receipt
+`uq_5d/receipt_cause1_endpoint_census_5d.json`, reader `receipt_cause1_endpoint_census_5d.py`, no batch
+job. `CRITERIA` §3's cause-1 `C` cell cites **`§4.8`, which does not exist**; the audit is
+`Cause1PathAuditTests`. New defect `BEN-381`: the outer-product guard's `file:line` allow-list goes red on
+a bare comment line — filed, deliberately not fixed.
+`docs/orchestration/DETERMINATION-20260817-cause1-census-and-magnitude-measured.md`.
+
 **2026-08-17 causes 3/4 one-liner (Lane E) — the `P` leg is now MET for BOTH, read off the adoption
 candidate itself, and NEITHER CAUSE IS DISCHARGED.** Both arms of job `56720356` carry all nine
 construction stamps with values matching the predeclaration digit for digit; the two July products the
