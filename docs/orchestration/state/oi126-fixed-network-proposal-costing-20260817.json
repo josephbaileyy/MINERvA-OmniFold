@@ -64,6 +64,22 @@
   "DIFFERENT OBJECT AND CONFIG. This is the Gate-6 ML floor at fixed (42,0), not the C_stat family's configuration, and its own prohibitions are Gate-6's.",
   "COMPLETENESS. The receipt declares n=5 with draws 1-5 valid; only draw_2..draw_5 are present on disk. M=4 against N=5 (BEN-247), and every number above is over the four."
  ],
+ "GRID_QUESTION_RESOLVED_20260817": {
+  "CONCLUSION": "ONE GRID, THREE MASKS -- not three griddings. All of it is the 285-cell frozen grid in pt-major order. The masks differ: OI-126's analysis 236 live, the floor draws 259 live, the PET nominal 262 live. The column mapping is the IDENTITY on cell index; what differs is which cells each analysis counts.",
+  "epistemic_status": "The partition arithmetic and the exact-45 match are MEASURED. That the OI-126 analysis runs on the 285 grid is INFERRED from them -- strongly, but inferred. If its author says otherwise, the exact 45 and the exact 285 partition would both have to be coincidences.",
+  "measured_against_the_canonical_edges": {
+   "p_par 6-20": "bins 10-15, 6 bins x 15 pT =  90 grid cells, statement  63, 27 masked",
+   "p_par < 6 GeV": "bins 0-9,  10 bins x 15 pT = 150 grid cells, statement 128, 22 masked",
+   "p_par > 20": "bins 16-18, 3 bins x 15 pT =  45 grid cells, statement  45, ZERO masked",
+   "partition": "150 + 90 + 45 = 285 EXACTLY; live 128 + 63 + 45 = 236"
+  },
+  "the_reading_that_settles_it": "The 128 is attached to the p||<6 CLAUSE, not to the whole grid. So the three region counts are 128 / 63 / 45 and the analysis total is 236, not 128. The mediator read 128 as the total and derived 20 cells below 6 GeV; both readings close arithmetically, so arithmetic alone cannot choose between them. The GRID does.",
+  "the_source_statement_verbatim": "DETERMINATION-20260817-pet-ten-items-state-and-oi126-shape.md:171-173: 'p|| < 6 GeV behaves perfectly (median z = -0.13, 4 of 128 cells outside the full range); in the 63-cell p|| 6-20 GeV band the nominal exceeds ALL FIFTY replicas in 44 of 63 cells; at p|| > 20 GeV the sign reverses (44 of 45 cells nominal below the family mean)'.",
+  "the_stronger_claim_I_am_declining": "The mediator concluded there are THREE GRIDDINGS (128 / 262 / 285), that '84-of-90 could never have become 44-of-63 by choosing different columns', and that the band comparison is NOT CURRENTLY DEFINED. Measured, that is wrong -- and the correction restores a route.",
+  "what_is_actually_needed": "The OI-126 analysis's reported mask -- which 63 of the 90 band cells it counts live. That is a smaller and more tractable ask than a grid reconciliation, and it still belongs to the author of the 44-of-63 statement rather than to me.",
+  "what_this_means_for_my_band_number": "My 84-of-90 and OI-126's 63 are THE SAME REGION (p|| bins 10-15) under DIFFERENT MASKS -- 84 live on the floor mask, 63 on the OI-126 analysis mask, 27 cells apart. So my ~21% is still NOT the OI-126 band figure and must not be quoted as one. But it is a mask restriction away, not undefined: given the 63-cell mask, the committed probe recomputes the like-for-like band floor in one command.",
+  "why_that_is_decisive": "The three regions PARTITION THE 285-CELL GRID EXACTLY at the 6 and 20 GeV edges, and the '>20 GeV' count of 45 is an EXACT match to the unmasked grid count -- zero masked, which is what you expect at high p|| where the dead staircase does not reach. Under the mediator's reading the region below 6 GeV would hold 20 of 150 grid cells, i.e. 130 masked there while zero are masked above 20 GeV. That is not credible and the exact 45 refutes it."
+ },
  "IT_NOMINALLY_DISCRIMINATES_a_FROM_b": "On its own text the two outcomes do map onto the mediator's (a) and (b), so it is not superseded and not off-target in intent. The defect is not in what it claims to distinguish; it is that the arm it builds cannot produce one of the two answers.",
  "SCOPE_AND_LIMITS": [
   "This is a claim about CODE PATHS, verified at the cited lines, plus one inference clearly labelled as such.",
