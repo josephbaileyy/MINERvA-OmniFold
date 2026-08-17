@@ -7,6 +7,15 @@ the three amendments it returned are incorporated below, one of which retracts a
 that is a measured finding, not a caveat.** This file is committed anyway: a predeclaration's value is that
 it exists before the run, whenever the run happens.
 
+> **NAVIGATION NOTE added 2026-08-17 to the header, NOT to any predeclared text: `28.50 A100-h` at `:88`
+> and `:92` is SUPERSEDED → `39.078` A100-h (`+37.1 %`; the lateral term costed 5 of 19 universes, missing
+> job `55894759`).** The predeclared *claim* at `:88-92` held on measurement — only the operand moved. Full
+> record in the **POST-HOC ANNOTATION at the end of this file**, which leaves everything above it untouched.
+> This pointer is in the header because a reader who greps to `:88` would otherwise never reach an
+> annotation 150 lines below it, and a predeclaration is the one document class where the body must not be
+> edited to fix that (`BEN-244`). `BEN-247`;
+> [`EXTENT-20260817-2850-a100h-scope-and-missing-legs.md`](EXTENT-20260817-2850-a100h-scope-and-missing-legs.md) §0.
+
 ---
 
 ## 1. THE BAR (confirmed)
@@ -224,3 +233,40 @@ bkgaware bank and the candidate combined product, and deliberately **not** pre-f
 override or a sibling launcher is permissible without a repin. **The seed is nevertheless hardcoded at
 `:20`**, so varying it is an explicit code change and must be committed before the run, not passed as an
 undeclared environment override — otherwise the arm's seed is unprovable from the tree.
+
+---
+
+## POST-HOC ANNOTATION, 2026-08-17 — appended, and the predeclared body above is UNTOUCHED
+
+**Nothing above this line was edited.** A predeclaration's whole value is that it was written before the
+measurement, so a correction to it goes here or nowhere (`BEN-244` records two stale references sitting
+inside frozen predeclarations for exactly this reason). This block records what later measurement did to
+one **operand** in the text above; it changes no predeclared criterion, threshold or branch.
+
+**`28.50 A100-h` at `:88` and `:92` is SUPERSEDED → `39.078` A100-h, `+37.1 %`.** The lateral term in its
+derivation costed a **truncated attempt** — 5 of 19 universes (job `55891346`); the completion run
+`55894759` was missing. Corrected from all 19 measured productions:
+`23.840 + 14.2075 + 1.030 = 39.078` over **189** tasks. `BEN-247`;
+[`EXTENT-20260817-2850-a100h-scope-and-missing-legs.md`](EXTENT-20260817-2850-a100h-scope-and-missing-legs.md) §0.
+
+**THE PREDECLARED CLAIM AT `:88-92` WAS RIGHT, AND MORE RIGHT THAN IT KNEW.** It says the figure covers the
+`C_syst` path only, that the stat and ML blocks *"are unfolds too, so they are very likely seed-dependent as
+well — I have not measured whether they are, or what they cost"*, and that **a composite arm may therefore
+cost materially more than `28.50`**. All three held on measurement. The stat and ML legs **are**
+seed-dependent, and one seed across all four blocks is `39.22` A100-h **plus `55.34` CPU task-hours**
+(`2,764.7` CPU-core-hours) — a second unit the GPU grant does not reach, and the larger half.
+
+**One predeclared expectation was WRONG in a way worth recording, because it was wrong in my favour.** The
+text infers the stat/ML legs are *"very likely seed-dependent"* and treats that as raising the cost. They
+are seed-dependent, but they are **nearly free** to scan — `0.1458` A100-h and `0.1550` CPU task-hours per
+estimator seed — because `bootstrap_nd.py:19,21` and `seedscan_split.py:36` **already carry the two-role
+`--estimator-seed`/`--fixed-data-seed` separation** that the `C_syst` path lacks. So the composite costs more
+than `28.50` for a reason the predeclaration did not anticipate: not because the extra legs are expensive,
+but because **the leg already counted was undercounted**, and because the extra legs are denominated in CPU.
+**"Materially more" was the right call reached through a partly wrong mechanism**, which is the kind of thing
+a predeclaration exists to expose and is recorded rather than smoothed over.
+
+**`:88`'s closing instruction is unchanged and now has a number that satisfies it:** *"The number going to
+Joseph must carry that scope."* It is **`39.22` A100-hours plus `55.34` CPU task-hours for one additional
+estimator seed across all four blocks of the candidate** — and per §2b's own finding, funding does not make
+the run possible: `sweep_bank_5d.py:252` and `unified_throw_cov.py`'s dual-role `--seed` still block it.

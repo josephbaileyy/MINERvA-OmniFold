@@ -1,5 +1,34 @@
 # COST derivation for cause 3's `M(ii)` seed scan — and two corrections to my own blocking report
 
+> ## ⚠ THIS DOCUMENT IS THE ORIGIN OF `28.50 A100-h`, AND `28.50` IS SUPERSEDED
+>
+> **`28.50` is `37.1 %` low. The re-seed cost is `39.078` A100-h.** The lateral term below (`3.63`, job
+> `55891346`, 5 tasks) costed a **truncated attempt**: the lateral leg is **19 tasks** (18 detector
+> universes + 1 CV), and the completion run **`55894759`** is absent from this document's tables. Corrected
+> from all 19 measured productions, no extrapolation: lateral `= 14.2075`, so
+> `23.840 + 14.2075 + 1.030 = 39.078` A100-h over **189** tasks.
+>
+> **`:160`'s sentence — *"28.50 A100-h exceeds the 24 A100-h grant, so it goes to Joseph"* — is the sentence
+> that routes a pending decision to Joseph, and it carries the wrong figure.** Its *conclusion* survives
+> (`39.078 / 24 = 1.63x`, still over, so the same request still goes to him); its *number* does not. **Nobody
+> should quote `28.50` from this file.**
+>
+> **And `28.50` is not the whole bill even corrected:** one additional estimator seed across all four blocks
+> is `39.22` A100-h **plus `55.34` CPU task-hours** (`2,764.7` CPU-core-hours), which a GPU-denominated grant
+> does not reach and which is the larger half.
+>
+> **What in this document still stands, stated so the supersession is not read as a retraction of the
+> method:** §5's code-derived non-reusability result, §6's two-role `--seed` blocker, the addendum's
+> `sweep_bank_5d.py:252` finding, and the refusal to extrapolate `169 x 43.5 min = 122.6` — that refusal was
+> right, the `5.1x` overestimate and `~99` A100-h of avoided error are computed against the sweep-run leg
+> only and are **unaffected** by the lateral defect.
+>
+> Corrected figure, ingredients and the reusable lesson (`BEN-247`):
+> [`EXTENT-20260817-2850-a100h-scope-and-missing-legs.md`](EXTENT-20260817-2850-a100h-scope-and-missing-legs.md) §0.
+> Indexed in [`INDEX-retracted-and-superseded-values.md`](INDEX-retracted-and-superseded-values.md) with the
+> where-it-still-appears column (lane A, `a6ef30d`) — **`~28.5x` is listed there as a separate dead value
+> because it does not string-match `28.50`.** Body text below left as written, per this repo's convention.
+
 **Lane B, 2026-08-17. Read-only: `sacct` and code reads only. No job submitted, cancelled or requeued.**
 
 **Headline: the total is NOT derivable from the record as it stands, and I will not manufacture one.** What
@@ -151,13 +180,16 @@ the whole criterion leans on lives in the same file.
 | | tasks | A100-hours |
 |---|---|---|
 | **FULL production, all legs** | 192 | **38.08** |
-| **RE-SEED only** (sweep run + lateral + finalize, reusing bank/dump) | 175 | **28.50** |
+| **RE-SEED only** (sweep run + lateral + finalize, reusing bank/dump) | 175 | **28.50** ⚠ SUPERSEDED → `39.078` over 189 tasks; the lateral term is 5 of 19 universes, see the banner |
 
 **Reusability of the dump leg is verified, not assumed:** `sweep_bank_5d.py`'s `do_dump` (`:56`) never
 imports or calls `omnifold_loop`; only `do_run` (`:205`) does, at `:208`/`:249`. **The dump is data
 preparation and carries no estimator seed, so the bank is reusable across seeds.**
 
 **28.50 A100-h exceeds the 24 A100-h grant, so it goes to Joseph — now on a measured basis.**
+**⚠ SUPERSEDED, AND THIS IS THE SENTENCE THAT CARRIES THE DECISION: the figure is `39.078` A100-h
+(`1.63x` the grant, not `1.19x`), plus `55.34` CPU task-hours the grant does not cover. The conclusion
+holds, the number does not. See the banner at the top of this file.**
 
 ## REFUSING TO EXTRAPOLATE WAS WORTH ~99 A100-HOURS
 
