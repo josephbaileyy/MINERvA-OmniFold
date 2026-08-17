@@ -92,14 +92,81 @@ denominator alone that puts `7.18×` at `5.10×`–`12.13×`.** *"About one seve
 tenth and a fifth"* before anything else in this section.
 
 > **RIDER WITHDRAWN, and the withdrawal is the more useful record.** I raised, as a question, that the
-> dispatch bias-corrected with `c4(n=4) = 0.9213` while `VL130` is `n=5` TERMINAL. **`n=4` is correct** —
-> `:28` reads four draws, for the good reason above. **The question was already answered in the file that
+> dispatch bias-corrected with `c4(n=4) = 0.9213` while `VL130` is `n=5` TERMINAL. **`c4(n=4)` is the
+> right correction for what the probe computed** — `:28` reads four draws.
+>
+> **⚠ AND THE SENTENCE THAT FOLLOWED IT IS WITHDRAWN TOO, ON A SHARPER GROUND THAN THE ONE IT ANSWERED —
+> see §2(e). I wrote *"so `n=4` is correct and the tail floor is a different population from `VL130`'s."*
+> That is a claim about WHAT THE COMMITTED PROBE DID, stated as a claim about WHAT THE DATA SUPPORTS.**
+> The mediator drew that distinction and it is the right one. **`n=5` is correct.** **The question was already answered in the file that
 > produced the number, which landed at `a80b167`, `2026-08-17T14:42:36-04:00`, and this ruling at
 > `15:02:20-04:00` — twenty minutes later.** So I asked instead of reading, and the artifact was there.
 > **That is `BEN-239` — evidence sitting unread — committed ONE COMMIT after I filed it** (`0eb1f80`).
 > The finding's own rule applied to itself: *"no document I read answers this" is a claim about the
 > reader.* Recorded here rather than in the row, because the row already states the class and what this
 > adds is that stating a class does not inoculate the stater.
+
+### (e) THE POPULATION QUESTION — `member_1` IS a legitimate fifth draw. I ruled the other way and I was wrong.
+
+**Asked by the mediator 2026-08-17, against `BEN-397`, which ruled for inclusion and was right.**
+
+**THE CRITERION: membership in the process-noise population is determined by the EXECUTION'S
+CONFIGURATION, not by which leg launched it or by whether it was retrained FOR THIS LEG.** The floor's
+estimand is `VL130`'s — *"the residual non-determinism floor that SURVIVES the seed pin … the only
+differences between draws are process, node and GPU."* **`"reused unmodified, NOT retrained"` is
+bookkeeping about the leg, not provenance about the artifact.** Excluding it would make the population
+depend on the job's **label** rather than its **configuration** — the error `CSTAT-D4`'s disjointness
+proof avoids on the seed axis by arguing from the `seed_policy` inside the artifacts rather than from
+which launcher wrote them. **The same discipline applied here excludes nothing.**
+
+**AND THE LEDGER ALREADY RULES THIS WAY, which I should have read before ruling against it.**
+`probe-oi120a-csyst-k-20260814.py:16` lists `("draw1_member1", ".../fullevent_ml_ensemble/member_1/...")`
+as **`FILES[0]`**, co-equal with draws 2–5, and `VL130` is `n=5` **TERMINAL**. So the committed floor of
+record already includes it; the tail probe's `n=4` is the **deviation**, not `VL130`'s `n=5`.
+
+**A SECOND AXIS NOBODY NAMED, AND IT SETTLES THE `n=4` OPTION INDEPENDENTLY.**
+`probe-oi120a-csyst-k-20260814.py:36` takes the reporting domain from **`masks[tags[0]]`** — **`member_1`'s
+own `reported_bin_mask`.** So dropping draw 1 changes `n` **and** changes which artifact supplies the
+domain. **`n=4` vs `n=5` was never a sample-size choice**, and a two-axis change presented as one is the
+shape this whole ruling is about.
+
+**BUT ONE OF THE FIVE CARRIES A DIFFERENT EVIDENTIARY FOOTING, AND THE RECEIPT'S OWN INVENTORY CONCEALS
+IT — filed as `BEN-401`.** `state/gate6-floor-replication-result-56863958.json`, read this turn:
+
+| field | value |
+|---|---|
+| `draws` | **4 entries**, ids `[2,3,4,5]`, **8 clauses each** |
+| `draw_1` | keys exactly `source`, `trajectory_receipt`, `v`. **No clauses.** |
+| `inventory.draws_valid` | **`[1,2,3,4,5]`**, `inventory.n` = **`5`** |
+
+**Draw 1 is counted `VALID` with none of the eight criteria that define validity ever evaluated on it.**
+Three of the eight — `2_target_provenance`, `3_realized_policy`, `5_mc_indices` — **are exactly the
+premises `VL130`'s ledger text asserts across all five draws** (*"identical `inputs_sha256`, identical
+2,000,000-row `mc_indices`, `bootstrap_seed = -1`"*). **Asserted for five, evaluated for four.**
+
+**THE FALSIFIER, and it is clause 8 of the battery that was never run on draw 1:
+`8_execution_environment`.** The floor measures GPU/library non-determinism; `member_1` came from job
+`56847059` and draws 2–5 from `56863958` on 2026-08-14. **If the software stack or node type differed,
+draw 1 is a draw from a different process population at identical configuration — and clause 8 is the
+clause that would have said so.** One command, never run. Under `CRITERIA-20260811` §0 — *a measured large
+difference discharges the cause just as well as a measured small one; what is forbidden is an unmeasured
+one* — **this is currently unmeasured.**
+
+**DISPOSITION: include draw 1, report `n=5`, and record that its membership rests on an unevaluated
+premise.** Not *"include it because it barely matters"* — it barely mattering is why nobody should spend
+long on the check, not a reason the check is unnecessary.
+
+**AND THE ARITHMETIC PAIRING NEEDS FIXING, because it mixes scales — my own named failure, and I would be
+accepting it silently.** `9.3440%` is exactly `8.6088 / 0.9213`, i.e. the **bias-corrected** `n=4` value.
+So `"1.65% versus roughly 1.4%"` pairs a **raw** numerator against a **corrected** denominator. Consistent
+pairs:
+
+| pairing | floor | variance share |
+|---|---|---|
+| bias-corrected, `n=4` → `n=5` | `9.3440% → 8.7302%` | **`1.938% → 1.692%`** |
+| raw, `n=4` → `n=5` | `8.6088% → 8.2063%` | **`1.645% → 1.495%`** |
+
+**Either is fine; mixing them is not. Every pairing is ~2% of the tail variance and no conclusion moves.**
 
 ### (c) THE TWO SIDES ARE STRATIFIED BY DIFFERENT VARIABLES, so a single median over the tail averages over the axis each one depends on.
 
@@ -206,6 +273,9 @@ adjudication belongs to whoever owns the physics, and not on a single ratio.
   tail spread by `9.5` percentage points and changes no conclusion. **So this ratio does not fire the
   trigger, and the ask to Joseph in the dispatch's branch (2) is NOT yet warranted.** That is the
   cheapest of the available answers and it is the one the evidence supports.
+- **`n=5`, not `n=4`** (§2(e)) — `member_1` is a legitimate draw, `BEN-397` was right, and my earlier
+  sentence is withdrawn. **Its membership rests on an unevaluated premise**: clause `8_execution_environment`
+  has never been run on draw 1, and it is the axis the floor measures.
 - **Open and one command for whoever holds the arrays:** the 63's placement in `VL130`'s own occupancy
   strata. It cannot change §3's conclusion; it can change whether `8.6088%` is the right floor to have
   reported.
