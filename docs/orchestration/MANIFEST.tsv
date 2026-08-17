@@ -294,7 +294,7 @@ docs/orchestration/RUNS.tsv	MACHINE	tabular-data	fe-fps-campaign		generated		exa
 docs/orchestration/SCHEDULING-STRATEGY.md	LIVE	document			open		route-only		no	9	212	14246
 docs/orchestration/SCOPING-20260810-engine-rebaseline-cost.md	ARCHIVAL	document		20260810	terminal		exact-path-only		yes	6	182	12988
 docs/orchestration/SCOPING-20260813-csyst-joint-nuisance-retraining.md	ARCHIVAL	document		20260813	terminal		exact-path-only		yes	2	348	25320
-docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	LIVE	document		20260817	open		route-only		no	7	704	52727
+docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	LIVE	document		20260817	open		route-only		no	7	791	59455
 docs/orchestration/SESSION-WORKFLOW.md	LIVE	document			open		route-only		no	3	170	8468
 docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md	LIVE	document		20260814	open		route-only	docs/orchestration/live_doc_indexed.py;nd-unfolding/pet/build_cstat_gate5_n50.py	no	16	1069	77774
 docs/orchestration/STEP2-20260806-niter3-budget-classification.md	ARCHIVAL	document		20260806	terminal		exact-path-only		yes	6	153	10985

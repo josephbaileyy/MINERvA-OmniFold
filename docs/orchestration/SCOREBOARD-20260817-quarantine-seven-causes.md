@@ -77,7 +77,7 @@ the nearer of PASS/FAIL.
 | | | P | **MET** — `receipt_candidate_stamps_5d.json`, S1 | **OPEN** — stamps `ABSENT` |
 | | | M | **OPEN — reason corrected today; see §3** | **OPEN** |
 | | | T | **MET** — N6 (caught a defect nothing else did), N7 | **MET** |
-| **5** | frozen PET weights | all | **N/A — and undeclared; see §4** | **N/A — undeclared** |
+| **5** | frozen PET weights | all | **N/A ON ITS MERITS** — established 2026-08-17; ledger sentence routed to B and **not yet landed** (§4) | **N/A, same** |
 | **6** | incomplete statistical projection | C | **PARTIAL** — BEN-110 detects all-zero rows; ensemble leg + corrected upstream input untouched | **PARTIAL** |
 | | | P | **OPEN** — no product rebuilt at all | **OPEN** |
 | | | M | **OPEN** | **OPEN** |
@@ -305,7 +305,69 @@ the code changes would be made without knowing what they must enable, and (A) an
 same instrumentation. **(A) needs each leg's seed independently variable. (B) needs both variable in one
 process.** That is a real difference in what lane B's stamping repair has to support.
 
-**My recommendation, offered for second-or-dissent and not taken:** **(A), per-leg and summed**, on the
+> ### CONCEDED 2026-08-17: **(B)** is the specification. My recommendation of (A) was wrong, and the
+> decisive objection was against my own ground.
+>
+> **I set the bar — *name the inter-leg correlation you expect to be non-negligible* — and it was met.**
+> **The correlation is the retired jitter term itself.** `a0cdc01:unified_throw_cov.py:225-227`:
+>
+> > *"the block units + `x_cv` all share one seed, **so their jitter cancels in `(x_b - x_cv)`.** That makes
+> > the raw unified trace jitter-inflated relative to the block sum."*
+>
+> **That is a statement about inter-leg estimator-noise covariance, and it says the covariance is SET BY
+> WHETHER THE LEGS SHARE A SEED.** So the term (A) would drop is not one anybody *expects* — it is one this
+> repo **measured, built a correction for** (`tr(C_uni) - ||Dcv||^2`), and then **retired along with the
+> correction.** And B's seed map makes it bite: four legs run at estimator seed **42** with uthrow alone at
+> **1000**, so varying 42→43 moves all four **coherently**. **(A) assumes zero covariance under precisely
+> the condition that creates it.**
+>
+> **THE OBJECTION THAT DECIDES IT GOES TO MY GROUND, AND I VERIFIED IT RATHER THAN ACCEPTED IT.** I argued
+> (A) because *"X is a sum of blocks, so a per-block magnitude composes the way the artifact does."* **That
+> IS the block-sum assumption, and this campaign already refuted it by measurement.**
+> `docs/HIGHER_DIM_OMNIFOLD_DESIGN.md:153-157`, read this turn:
+>
+> > *"block-sum **underestimates** the vertical systematic **~2×** (jitter-corrected unified/block
+> > sqrt-trace **2.01**) … **adopted** as the published 4D systematic via PSD-safe fractional-inflation
+> > transfer (`adopt_unified_4d.py`)."*
+>
+> **A sum of blocks composes VALUES additively; it does not compose VARIANCES additively unless the blocks
+> are independent.** My argument conflated the two, and (A) would re-adopt on the estimator-seed axis exactly
+> the inference this campaign measured, rejected, and **rebuilt the construction to avoid** on the band axis.
+>
+> **And (A) is not even uniformly conservative**, which is worse than being wrong by a factor: zero
+> covariance is *right* for 42-vs-1000 and *wrong* within the 42-group, so the error is **structured and
+> directional** — not boundable by one correction factor and not labellable conservative.
+>
+> **THE ARGUMENT I CONSIDERED FOR INDEPENDENCE, AND WHY IT DOES NOT RESCUE (A).** The four legs at seed 42
+> operate on **different inputs**, so a shared seed initialises the same RNG state but consumes draws against
+> different data — perhaps the perturbations decorrelate. **That is an empirical claim nobody has measured**,
+> which puts it in exactly `M(ii)`'s own position. **Using it to choose the specification would be letting an
+> unmeasured convenience pick the criterion — the very thing I would be conceding against.** So I do not
+> offer it, and I have no a priori argument for independence.
+>
+> **Adopted: *do not let measurability choose the specification.* (A) is cheaper BECAUSE it assumes away the
+> term that requires the joint measurement, and that is the tell rather than the recommendation.** `(B)` is
+> the specification; **`M(ii)` is recorded UNMEASURED.**
+>
+> ### A COST OF (B) THAT I SHOULD STATE, SINCE I AM THE ONE ADOPTING IT: GATE 1 BECOMES SERIAL
+>
+> **This corrects my own §2b.** I wrote that `M(ii)` is *"blocked on two code changes … and only after those
+> is it a cost question."* Under **(B)** that is wrong in a specific way: a **coherent** variation of the
+> shared seed across four legs requires **all four legs seed-variable at once.**
+>
+> B verified that **stat and ML can run a clean estimator-only scan today, with no code change** —
+> `bootstrap_nd.py:19-29` has `--fixed-data-seed` that pins the draw and routes `--seed` to the estimator
+> (`_est_seed = a.seed if a.fixed_data_seed is not None else a.estimator_seed`, read this turn), and
+> `seedscan_split.py:36` exposes `--estimator-seed` directly. **Under (A) that capability could have produced
+> a partial `M(ii)`, reported per leg as instrumentation landed. Under (B) it buys nothing**, because a joint
+> measurement needs the joint capability.
+>
+> **So `sweep_bank_5d.py:252`'s hardcoded `42` stops being one of two parallel edits and becomes THE blocking
+> dependency.** Gate 1 is smaller than anyone said in module count — **two modules, not four legs** — and
+> **more serial than I said** in sequencing. Both corrections belong on the record together, because the
+> first sounds like good news and the second is why it is not.
+
+**My superseded recommendation, left as written:** **(A), per-leg and summed**, on the
 ground that `CRITERIA` §0 defines `M` as *"measured on X's own inputs"* and X is constructed as a **sum of
 blocks** — so a per-block magnitude is the one that composes the way the artifact does, and it is also the
 only one that can be reported per leg when one leg's instrumentation lands before the other's. **If the
@@ -598,7 +660,32 @@ different artifact entirely. **So I grade it `N/A — and undeclared`, not `N/A`
 cause exactly what §4.1 caught in the tally: reading a true statement about one artifact as settled for
 another.
 
-**What would close it:** one sentence in the ledger stating whether cause 5 is on X's construction path.
+> ### RESOLVED 2026-08-17: cause 5 is **N/A for X ON ITS MERITS** — and the gap was a READING gap, not an
+> evidentiary one
+>
+> **Established by Assistant, not by me, which is what makes it usable** — I am the cause's owner, and my own
+> reason for grading it `UNDECLARED` was that a quorum containing its owner is thin. The route was to read
+> `DETERMINATION-20260811-cause5-binding-half.md` **against the question**, where §7 already answers it:
+> recoil is *"a different estimator"*, and `OPEN_ITEMS` item 6 states no recoil-PET component is
+> transferable. Assistant then traced the one route by which cause 5 could reach X and found it **absent**:
+> X's background is **MC-derived** (`sweep_bank_5d.py:171-177`, `mc_background` plus per-universe
+> `w_bkg_*`), the estimator is **lgbm on every leg**, and **the recoil-PET budget is a DOWNSTREAM CONSUMER of
+> the shared bkgaware bank rather than an input to it.**
+>
+> **The ledger sentence is routed to B — clerical, attributed to Assistant, and explicitly not me and not
+> Assistant, per my own reason. It has NOT yet landed**, so this board reads `N/A on its merits` with the
+> declaration pending rather than `N/A` outright.
+>
+> **AND THE PROCESS LESSON IS ABOUT MY GRADING, NOT IN ITS DEFENCE.** Assistant's note: *the weakness was
+> never in the evidence — the answering document existed and nobody had read it against the question.* **Two
+> documents declining to RE-DERIVE cause 5 produced the appearance of an evidentiary gap where there was a
+> READING gap**, and I inherited that appearance: I graded `UNDECLARED` partly *because* `MAP` §2 said *"I did
+> not re-derive it and do not summarise its verdict."* **"Not re-derived" and "not read" got conflated, and
+> only the second is free to fix.** That is a distinct failure from the ones this board has been collecting —
+> not a claim outrunning its evidence, but **evidence sitting unread behind a correctly-stated refusal to
+> re-derive it.** A lane declining to re-derive is being careful; a board reading that as *unavailable* is not.
+
+**What would have closed it, and did:** one sentence in the ledger stating whether cause 5 is on X's construction path.
 Cheap, and it is mine to propose rather than to write into another lane's row.
 
 ## 5. Cause 7 needs a third column, which is a finding about the board's shape
