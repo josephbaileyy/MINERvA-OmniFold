@@ -144,6 +144,49 @@ lane A's worktree as a description of the repository, which is `BEN-183`.** So t
 regeneration is left to whoever runs it in the main checkout. Until then this file reads `ARCHIVAL` in the
 manifest and `LIVE` in `CATALOG.md`, and **the manifest is the one that is wrong.**
 
+## ADDENDUM 2026-08-17 — the hook that never ran, and why nothing in this file catches it
+
+**Every instrument above assumes the hook EXECUTED.** The probe commits something only the check can
+reject; the payload rule (`BEN-224`) binds what the hook invokes; the success count verifies a hook
+*line*. The nearest row in *"four reasons a check runs and tells you nothing"* is `BEN-185` — a check
+correctly **skipped inside a passing suite**. **None of them detects the hook not running at all.**
+
+**The incident.** A lane ran `git config core.hooksPath <throwaway-worktree>/.githooks` inside a linked
+worktree, then deleted that worktree. `extensions.worktreeConfig` is unset here, so linked worktrees
+share `.git/config` — the write landed in the MAIN repo's config, pointing `core.hooksPath` at a
+directory that then ceased to exist. **Git skips a missing `hooksPath` silently: no warning, no error,
+exit 0.** Two commits were made in the ~30-minute window with all nine checks not run.
+
+**`BEN-344` applied to the hook itself: a green run and a run that never happened are indistinguishable
+unless you look for the POSITIVE signal.** The `N checks passed` line is the only evidence it ran, and
+its absence does not look like failure. It was caught because a lane happened to be watching that line
+for an unrelated reason.
+
+**THE BOOTSTRAP CONSTRAINT, and the escape.** A check that `core.hooksPath` resolves cannot live in the
+hook — a disabled hook cannot run it. The escape is to assert it **where lanes already execute code that
+is not the hook**: `nd-unfolding/tests/test_precommit_hook_is_wired.py`, in the suite every lane runs and
+which runs regardless of hook state. It asserts the resolved `pre-commit` exists, is executable, and is
+**byte-identical to the tracked `.githooks/pre-commit`** — so it catches absence *and* `BEN-224`'s
+different-tree payload. Mutation-tested 4/4, including a control that the resolver reports a deleted
+worktree path as not-wired, so the check cannot be a green that never fails.
+
+**MEASURED AND REJECTED AS THE FIX: `extensions.worktreeConfig = true`.** It is the setting everyone
+reaches for and it does **not** prevent this. In a throwaway repo: with the extension enabled, a **plain**
+`git config demo x` inside a linked worktree **still lands in the shared config** and `config.worktree`
+stays empty. Only an explicit `git config --worktree` write goes local — which requires the author to
+already know, i.e. it does not protect against the mistake.
+
+**THE OPERATIONAL RULE, measured: `git -c key=value <cmd>` writes nothing at all.** Use the one-shot form
+for any experiment touching config in a worktree. It needs no repo setting and cannot leak. This is prose,
+but it is prose naming a *mechanical alternative* rather than asking for vigilance — which is the only
+kind of prose this campaign has not watched fail.
+
+**What is NOT claimed:** the suite test catches the *condition*, which persists, not an individual commit
+made during a window. For that, the evidence would have to live in the commit object itself — a
+`commit-msg` trailer recording the check count, making absence durable and auditable by
+`git log --format='%(trailers:key=Checks)'`. That is a repo-wide message-convention change and belongs to
+whoever owns the hook, not to the lane that noticed. **Recorded here as the option rather than taken.**
+
 ## Related
 
 `BEN-222` (a committed hook is not an installed hook), `BEN-224` (the file and the payload come from different
