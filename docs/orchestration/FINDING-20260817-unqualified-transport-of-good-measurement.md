@@ -54,6 +54,34 @@ in `INDEX-retracted-and-superseded-values.md` — a retraction propagates by str
 quantities do not. Both the value and its descendant ratio are now indexed there, with the sites that still
 carry them.
 
+### And `39.078` has the same defect one notch smaller — lane B's catch, against my correction
+
+Quoted bare, `39.078` reads as *the* cost of a re-seed. **It is the GPU column only, and the CPU half is the
+larger one.** One additional estimator seed across all four blocks of the candidate:
+
+| | GPU (A100-h) | CPU (task-h) | CPU (core-h) |
+|---|---|---|---|
+| `C_syst` (sweep + lateral + finalize), 189 tasks | **39.078** | 0 | 0 |
+| `uthrow` (throws + blocks), 71 tasks | 0 | **55.182** | **2759.1** |
+| `C_stat`, 1 task | 0.1458 | — | — |
+| `C_ML`, 1 task | 0 | 0.1550 | 5.58 |
+| **one seed, all four blocks** | **39.223** | **55.337** | **2764.7** |
+
+Re-derived from B's table rather than quoted: `39.078 + 0.1458 = 39.2238`, `55.182 + 0.1550 = 55.337`,
+`2759.1 + 5.58 = 2764.68`, `39.223 / 24 = 1.63x` the grant, `39.078 / 39.223 = 99.63 %`.
+
+**`39.078` and `39.223` are different quantities that nearly coincide**, because `C_syst` is `99.63 %` of the
+GPU column — which is precisely the *"two quantities that have historically agreed at the printed
+precision"* hazard `INDEX-retracted-and-superseded-values.md` names as what lets one sentence describe two
+things. **And `55.337` CPU task-hours is denominated in a unit the `24 A100-h` grant does not reach at all**,
+so the larger half of the bill is invisible to the comparison the decision is actually made on.
+
+**Rule: carry the CPU term wherever the GPU figure travels.** This is the third recursion of this finding in
+one day and the second against its own author — I corrected an unqualified `28.50` with an unqualified
+`39.078`, inside the row whose subject is unqualified transport. **The check that caught it is the one this
+row already prescribes** (re-derive from the operands: B's own table has a CPU column and my sentence had
+none), applied by a reader who was not the writer.
+
 **Not corrected by me: the six surviving sites owned by other lanes**, including the ones carrying a pending
 decision to Joseph at the low figure (`COST-20260817-mii-seed-scan-derivation.md:154,160`,
 `SCOREBOARD…:133-134,161`, `HANDOFF-20260817-1133Z.md:39,41,98`,
