@@ -189,6 +189,40 @@ to write `hRowIndex4D` rather than reading the histogram back — a circular dig
 intent instead of the artifact. `OI-129`'s fix is sharpened to say read-back explicitly. Seconds to
 check, genuinely falsifiable, and the one thing in this whole thread that was worth doing.
 
+### FIFTH and SIXTH, and they are the producer side of the same habit
+
+**Eliminating one alternative is not identifying a cause.** Investigating a suite failure I had not
+caused, I reproduced it in a throwaway worktree at a clean `63a397c` with nothing dirty — which
+correctly ruled out my own edits and the working tree — and then wrote *"so it arrived with repair-12
+or the N6 work."* **That does not follow.** I had varied exactly one variable and named a culprit on
+the strength of it. Measured afterwards, in my own environment:
+
+```
+default                    ->  1 failed, 6 passed
+PY_COLORS=1                ->  1 failed, 6 passed
+NO_COLOR=1 PY_COLORS=0     ->  7 passed
+```
+
+The test does `assertRegex(control_text, r"(?m)^ERROR ")`, which fails when the captured line begins
+with `\x1b[1m` rather than `E`. **The cause was the runner's colour setting — a variable I never
+varied** — and lane C separately proved both files byte-unchanged since the commit I blamed, so my
+attribution was not merely unsupported, it was false. The worktree reproduction was the right instinct
+and it is what made the question findable; the sentence I appended to it was not part of the
+measurement.
+
+**And a count without its environment is not a baseline.** I put *"3 failed / 1477 passed"* into a
+commit message as this suite's baseline. Lane C measured **2 failed / 1478 passed** on the same tree,
+and **both readings are correct**. A commit message is immutable, so that number is now permanently
+available to be compared against C's and read as a regression by someone who has no way to know the
+two runs differed in whether pytest colourises.
+
+This is [[my-recurring-failure-is-asymmetric-comparison]] from the **producing** end rather than the
+consuming end: the memory says *state the two conditions before trusting a delta*, and the sibling
+obligation is to **publish the condition alongside any number a later reader will diff.** Until the
+guard is fixed (lane B's, deriving the `ERROR` label from `when != "call"` on the report objects rather
+than from rendered text — `BEN-335`'s shape), **this suite's baseline must be quoted with its colour
+setting attached.**
+
 ### Where the overreach propagated, enumerated (`BEN-302`)
 
 A retraction reaches only as far as the corrector's map of the corpus, so the sites are named rather
