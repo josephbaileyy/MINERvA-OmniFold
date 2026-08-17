@@ -1,0 +1,66 @@
+{
+ "ANSWER": "NO. Exactly one surviving log carries a printed jitter-floor value, and the product that run wrote has since been OVERWRITTEN at the same path. No surviving log carries a jitter floor for a product still in play.",
+ "COMPLETENESS_BEN_247": {
+  "combine_jobs_naming_that_output_path": [
+   "55286276 (07-01, log survives)",
+   "55800120 (status file)",
+   "55821662 (status file)",
+   "the 07-13 headline run"
+  ],
+  "note": "M=1 against N>=3 named. That is a completeness gap, not an answer -- and here it compounds: the single survivor is the one attached to the SUPERSEDED product, and the logs for the live one are gone.",
+  "surviving_uthrow5d_comb_logs_on_scratch": 1
+ },
+ "HITS": {
+  "files_carrying_a_printed_VALUE": 1,
+  "files_matching_'jitter floor'": 3,
+  "the_one_value": {
+   "in_commit_window": true,
+   "jit_trace": 3.731e-78,
+   "log": "/pscratch/.../nd-unfolding/uq_5d/uthrow5d_comb_55286276.out",
+   "log_mtime": "2026-07-01 23:54:25 -0700",
+   "log_size_bytes": 969,
+   "printed": "[null] jitter floor ||x_cv(s+7)-x_cv||^2 = 3.731e-78  (= 2*sum sigma_jit^2); sqrt = 1.932e-39",
+   "sqrt_jit_trace": 1.932e-39
+  },
+  "the_other_two": "waker logs evt-stamp-verify-56695424.log and evt-readopt-footing-hashes-56695130.log -- these are PROSE copies of a findings document discussing the defect ('**The defect.** A scalar run-to-run \"jitter floor\"...'), not run output. Counting files rather than reading lines would have reported 3."
+ },
+ "OPEN_SUB_QUESTION_I_DID_NOT_RESOLVE": "Whether the 07-13 headline run used --null at all. If it DID, a jitter floor was printed for the live product and its log is simply lost -> UNRECOVERABLE-because-lost. If it did NOT, no jitter floor was ever computed for the live product -> a stronger and different statement (never-existed). --null is passed by 5D launchers (sbatch_j28_adopt_5d.sh:96), so it is plausible but UNESTABLISHED. Resolving it needs the 07-13 launcher invocation or its log, neither of which I found.",
+ "SCOPE": "Supplies an ingredient for cause 4. Does NOT grade the M leg and edits no verdict cell -- C owns the grading (BEN-381 separation). Read-only throughout; no job, no submission, nothing written outside this receipt.",
+ "SEARCH_SPACE_NOT_JUST_HITS": {
+  "durable_local_repo": {
+   "files_carrying_unified_throw_cov_stdout": 0,
+   "log_shaped_files": 14,
+   "verdict": "0 REACHABLE, NOT 0 HITS. .gitignore excludes *.log/*.out/*.err, so run logs are essentially absent from the tree by construction. A null result here would have been meaningless and is reported as such."
+  },
+  "purgeable_scratch": {
+   "control_A_files_with_'knobs (no flux units)'": 3,
+   "control_B_files_with_'[null]'": 7,
+   "log_shaped_files": 6920,
+   "log_shaped_files_mtime_in_2026-06-01..2026-07-20": 5727,
+   "root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+   "verdict": "REACHABLE. The corpus demonstrably contains unified_throw_cov stdout, so the hit count below is a measurement rather than an artefact of reach."
+  },
+  "why": "BEN-391: an empty result is only as strong as the query. Controls run so that '0 hits' is distinguishable from '0 reachable'."
+ },
+ "THE_THIRD_STATE_REPORTED_SEPARATELY": "The one recovered value exists ONLY on purgeable scratch. It is recoverable today and not necessarily next month. That is neither 'recorded' nor 'unrecoverable' and is the state most likely to be misfiled as either. Nothing durable carries it.",
+ "WHY_IT_DOES_NOT_ANSWER_THE_QUESTION": {
+  "conclusion": "The recovered value belongs to an occupant of that path that was overwritten 12 days later. A printed number attached to a superseded product answers nothing, which was the mediator's own caution.",
+  "corroboration": "CORRECTED_UQ_PRODUCTION_STATUS.md:491 -- '02:20 PDT 07-13 HEADLINE LANDED+VALIDATED: uq_5d/unified_throw_cov_5d.root (2.68GB)'. The same file also names 55800120 and 55821662 writing that path.",
+  "file_now_at_that_path": {
+   "mtime": "2026-07-13 02:15:41 -0700",
+   "size_bytes": 2677168123
+  },
+  "product_that_run_wrote": "uq_5d/unified_throw_cov_5d.root  ('[combine] wrote ...')",
+  "the_path_was_REUSED_and_OVERWRITTEN": true
+ },
+ "measured_utc_date": "2026-08-17",
+ "produced_by": "Lane D (verifier). INGREDIENT ONLY -- this does not grade cause 4's M leg.",
+ "signature_verified_myself": {
+  "gate": "if args.null:  (:231) -- computed AND printed only under --null, so the population is --null runs only",
+  "line": "print(f\"\\n[null] jitter floor ||x_cv(s+7)-x_cv||^2 = {jit_trace:.3e}  \"",
+  "removed_at": "07c18ae (in-place edit)",
+  "source": "a0cdc01:nd-unfolding/unified_throw_cov.py:238",
+  "window": "2026-06-08 (a0cdc01) .. 2026-07-14 (07c18ae)"
+ },
+ "what": "Does any surviving run log carry a PRINTED jitter floor for a product still in play? Log archaeology for cause 4. Lane D, read-only."
+}
