@@ -111,13 +111,46 @@ lives in the output rather than in a document.
 reading is old; it does not tell you **what kind of edit ages it**, and that is the part a reader needs in
 order to know whether to re-measure.
 
-**The trigger is not a pending decision — it is a re-litigation latch on a decision already made.** `966d202`
-had already *declined* this exact wiring. So the trigger takes a settled no and converts it into a standing
-invitation to redo it, **with the re-opening condition delegated to a tree-global measurement nobody
-watches.** That reframing changes what the object is, not just how stale it is, and it is the strongest single
-sentence produced about it. **Three parties have now declined** — `966d202`, the mediator as hook owner, and
-this lane — **and none of the three is authorization to wire, which is the only direction that would need
-one.**
+### ~~The trigger is a re-litigation latch on a decision already made~~ — WITHDRAWN
+
+**Withdrawn 2026-08-17 by its author (lane E, `e70f864`), and verified withdrawn here by reading `966d202`'s
+body — which I should have done before building it into this row on a one-line summary.** That is the failure
+this row's neighbours are about, committed by me in the row that files them: *a peer's summary is evidence
+about the summary.* One `git log -1` away.
+
+**`966d202` declined on exactly one ground, and that ground is TREE STATE:**
+
+> *"BUT IT CANNOT BE PASSED BY A COMMITTER WHO DID NOTHING WRONG … Measured at `849b70f` rather than recalled:
+> EXIT 1 — 8 unaccounted files, 1 COUNT DRIFT …, 2 stale inventory entries. Wiring it green-required today
+> would block every lane on a red none of them caused, which is precisely how a hook trains a team to
+> `--no-verify`."*
+
+**And it recorded the opposite on substance:**
+
+> *"ON SUBSTANCE IT BELONGS IN THE RUN LIST. It is `verify_hash_bindings.py`'s shape exactly … So this is a
+> regression in the tree, not a check that never worked."*
+
+**So the trigger is not a latch somebody left behind — it is the honest remedy of a CONDITIONAL decline**
+(tree red, no; tree green, yes), faithful to its own reasoning, and `966d202` was right on the evidence it
+had. It also closes the obvious escape route in advance: *"it cannot be wired as an advisory"* — `run()`
+discards a passing check's output, so the dispatcher has exactly two channels, silence and failure
+(`BEN-226`), and the choice really is binary.
+
+### The correct argument, which is stronger and replaces it
+
+**`BEN-387` falsified the PREMISE, not the measurement.** The enforcement is a whole-file occurrence count and
+it is **inverted** — silent on repointing a pinned path to a sibling, red on deleting a prose sentence — so it
+**reddens on innocent edits by construction, independently of tree cleanliness.** The check is therefore not
+*"sound, with a dirty tree,"* which is exactly what `966d202` believed. **No green tree licenses wiring it.**
+
+That **retires** the trigger rather than postponing it, and it does so without needing any claim that someone
+was re-litigating anything. It also re-ranks the two objections in this row: **mine (the precondition is not
+met) is the weaker one, and `BEN-387`'s (the precondition is the wrong one) is the one that ends the matter.**
+
+**And my decline count was wrong: not three declines — two unconditional** (the mediator as hook owner, and
+this lane) **plus one conditional that endorsed the check on substance.** The conditional one is now retired by
+`BEN-387` rather than satisfied. **None of them is authorization to wire, which remains the only direction that
+would need one.**
 
 ## Cross-references
 
