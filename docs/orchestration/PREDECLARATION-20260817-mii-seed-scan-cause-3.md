@@ -110,6 +110,30 @@ outcome is indistinguishable from the desired one.** Required at every `n ≥ 2`
 
 ## 6. ⚠ THE RUN IS BLOCKED ON COST AND AUTHORITY — measured, not estimated
 
+> **⚠ CORRECTED 2026-08-17 by its own author, before any run. TWO CLAIMS BELOW ARE WRONG and the
+> superseded text is retained beneath this notice per convention.**
+>
+> **(1) "It is CPU, not GPU" is FALSE.** Measured by `sacct`: every actual bkgaware production job ran
+> `shared_gpu_ss11` with `gres/gpu:a100=1`. My claim came from the *tracked* launcher's
+> `--constraint=cpu`; **the production did not use that launcher.** So the mediator's GPU-denominated
+> grant is in the RIGHT unit and my unit objection is withdrawn — I read a committed launcher as a
+> description of what ran, which is the same class of error as reading `--time` as a cost.
+>
+> **(2) "One seed = 160 throws + 124 block re-unfolds" describes an ABANDONED path.**
+> `CORRECTED_UQ_PRODUCTION_STATUS.md:598`: *"the OLD B5 throw-combine plan is SUPERSEDED (throws/blocks
+> cancelled — redundant)"*; `:542` reframes it as **the vertical sweep, not the throw**. The candidate
+> came from **188 universes** (169 vertical + 18 lateral + 1 CV), finalized `55912230`.
+>
+> **What survives, and is now the primary blocker: `--seed` is not an estimator-only knob.**
+> `unified_throw_cov.py:525` has one `--seed`; it drives both the estimator (`→ omnifold_loop(seed=)`)
+> and the throw realization (`:223 default_rng(args.seed + gj)` selecting which universes are drawn).
+> **So a `--seed` scan cannot isolate estimator noise and violates run condition (b).** A committed code
+> change separating the roles is required before any measurement means `M(ii)`.
+>
+> Full derivation, per-task measured costs, and what remains unmeasured:
+> [`COST-20260817-mii-seed-scan-derivation.md`](COST-20260817-mii-seed-scan-derivation.md).
+
+
 **The seed is a PRODUCTION parameter on this footing, not a scan parameter.** Measured:
 
 * `unified_throw_cov.py:417-419` **refuses a mixed-seed combine**; the seed is *"stamped by
