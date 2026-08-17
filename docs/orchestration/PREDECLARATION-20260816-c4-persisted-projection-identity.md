@@ -6,6 +6,53 @@ both lanes' requirements.
 
 ---
 
+> ## ⚠ WITHDRAWN BEFORE EXECUTION — THE RUN WAS NOT PERFORMED, AND §1'S PREMISE IS FALSE
+>
+> **Amended 2026-08-16, by the author, before anything ran. The text below is retained unedited
+> because it is the record of a proposal I got wrong, and the way it was wrong is the finding.**
+>
+> **§1's load-bearing sentence — *"nothing, anywhere, reads the persisted product back"* — is FALSE.**
+> It came from a `grep` over `p4_*.py` and `run_p4_*.sh`: two globs, not a covering search. An
+> unrestricted `git grep` finds
+> **`docs/orchestration/runs/standard-p4-verifier/20260810T0630Z-cross-object-script.py`**, whose
+> docstring is *"Read-only, independent standard-p4 cross-object audit: `C4_stored ?= M C5 M^T`. **No
+> pipeline modules are imported. M is reconstructed solely from hard-coded analysis edges** … Writes:
+> none."* Its verdict records `identity_verdict = ESTABLISHED`, an independently reconstructed `M`
+> whose content hash `2f042f76…` equals the pipeline's exactly, `max matrix-scale relative =
+> 3.7568690548899724e-16`, 19/19 block census, 17 direct element probes at disagreement 0, and rank
+> `263 = 263 = 263`. **The check proposed here already existed, had already been run, and did not share
+> `M` with the producer — which is the limit §5 discusses and this proposal would have inherited.**
+>
+> **And the run could not have come out differently.** Replicating that script's own content-hash
+> convention: the rebuilt `C5` total hashes `f26b3bfe…` and the rebuilt stored `C4` hashes
+> `c1fe11b1…` — **both bit-identical to the objects the 2026-08-10 audit judged.** The whole-file
+> digest moved (`602bbcf2…` → `950f8cb1…`) while the covariance *content* did not; the 23,969-byte
+> difference is metadata/band-level. So `F1`–`F5` below are **unfalsifiable on these inputs**, and by
+> this file's own condition 3 and `F7` that voids the run. It also explains a coincidence noticed
+> before it was understood: stage 6's `projection_identity_relerr` equals the audit's figure to all 17
+> digits **because both are computed over the same bytes.**
+>
+> **What survives, and it is the only part that does:** the Aug-10 audit's own
+> `gaps_remaining[0]` — *"Exact covariance-row to physical-bin labels remain unaudited. A verified
+> `hRowIndex4D` of length 4825 matching the independently derived effective4 index vector…"*.
+> `hRowIndex4D` was added that same day (`p4_project_4d.py:186`, *"ITEM 2 of the narrow freeze lift"*)
+> in response to that gap and **has never been verified**, because `row_index_sha256` is hashed from
+> the same in-memory array used to write it. That check is seconds, not minutes, and is falsifiable.
+> Superseded by
+> [`PREDECLARATION-20260816-hrowindex4d-readback.md`](PREDECLARATION-20260816-hrowindex4d-readback.md).
+>
+> **My instrument failure, recorded here rather than only in a `BEN` row: I confirmed a consensus run
+> on an unbounded negative claim.** A negative claim that justifies spending compute needs a covering
+> search **before the proposal**, not before the run. Fourth instance of this class across four lanes
+> in one night, and the only one where the false absence had already been ratified by two lanes and
+> relayed to Joseph.
+>
+> **§5's attack stands on its own merits** and is unaffected by this withdrawal — the strong
+> `AXIS_EDGES` claim it refutes was independently withdrawn by its own author, and the two of us
+> reached the same measurement separately.
+
+---
+
 ## 1. What is being tested, and what is NOT
 
 **Tested:** that the **persisted** 4D covariance (`std_proj4d_candidate.root`, `181,361,072 B`,
