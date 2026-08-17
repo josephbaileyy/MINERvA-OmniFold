@@ -1,6 +1,5 @@
 {
- "CORRECTED_VERDICT": "NO TRUTH LEAKAGE. event_reco is bit-identical under every truth perturbation the loader actually consumed (P1, P2, P3), with the P0 control demonstrating the probe can detect a change; P4 was never read before event_reco exists and therefore cannot influence it.",
- "CORRECTS_THIS_COMMITTED_LOG": "docs/orchestration/state/oi120c-loader-purity-perturbation-56975592.txt -- the raw run log, committed verbatim upstream. ITS LAST LINE READS '=== LEAKAGE -- event_reco changed when only a truth array changed ===' AND THAT LINE IS FALSE. No arm changed. Anyone reading the log without this receipt beside it takes away the opposite of the result. That is why this file names the log explicitly rather than merely recording the right answer somewhere else.",
+ "CORRECTS_THIS_COMMITTED_LOG": "docs/orchestration/state/oi120c-loader-purity-perturbation-56975592.txt, the raw run log, committed verbatim. THE FALSE VERDICT APPEARS TWICE IN IT: line 16 as the banner '=== LEAKAGE -- event_reco changed when only a truth array changed ===', and line 27 as the '\"VERDICT\"' key inside the embedded RECEIPT_JSON block. Of 138 lines; the last line is '}'. An earlier version of this field said 'ITS LAST LINE READS' -- wrong, and wrong in the direction that matters, because a reader following that pointer finds a closing brace and concludes the correction is stale.",
  "SCOPE_LIMITS": [
   "Tests PURITY of event_reco with respect to the perturbed truth arrays only. An arm the loader REFUSED tested nothing and is reported as refused, not as a pass.",
   "Bit-identity is the criterion; no tolerance is involved or appropriate.",
@@ -9,8 +8,24 @@
  "SMOKE_TEST": false,
  "SPECIFIED_FORM_DECLINED": "The dispatched form -- run the production loader and call assert_no_truth_leakage on its output -- was NOT run. The loader already makes that exact call at :1247 on the object built at :1241, and its PURITY statement re-derives with the producing code (:487-490 vs :543-545), so it cannot fail. Running it again at full scale would have produced a green guaranteed before the job started.",
  "SUPERSEDED_BY_UPSTREAM_ON_THE_CODE_SIDE": "The probe has since been fixed independently and further than my own fix went: VOID is now scored None rather than False (mine still left False for the read-but-unchanged case, which would have reproduced the same false alarm), the printed label is derived from the verdict, and P4 is RETIRED outright under OI-124 on the same read-order argument recorded here. This receipt is the RESULT for job 56975592; the code lesson belongs to that work, not to this.",
- "VERDICT": "LEAKAGE -- event_reco changed when only a truth array changed",
+ "THE_LOG_MUST_NOT_BE_ANNOTATED": {
+  "measured": {
+   "bytes": 5047,
+   "lines": 138,
+   "sha256": "ec5581363f440b153057126996e30f2325cf63c94b27442559a087046522912c"
+  },
+  "pins": [
+   "nd-unfolding/ND_OMNIFOLD_RUN_LOG.md:7922-7923 records the size and the sha256",
+   "docs/orchestration/MANIFEST.tsv:687 carries the row",
+   "docs/orchestration/test_probe_oi120c_verdict.py:46 reads it as a FIXTURE"
+  ],
+  "the_executable_remedy_already_exists": "test_probe_oi120c_verdict.py replays this job's recorded arms through the fixed probe and asserts the corrected verdict AND that 'LEAKAGE --' does not appear. Per CLAUDE.md a check costs zero and cannot be skipped, so a prose annotation on the log would be the weaker copy of a test that already exists.",
+  "why": "It is byte-pinned in three independent places, all verified at origin/main on 2026-08-17. One appended line falsifies all three at once."
+ },
+ "VERDICT": "NO TRUTH LEAKAGE. event_reco is bit-identical under every truth perturbation the loader actually consumed (P1, P2, P3), with the P0 control demonstrating the probe can detect a change; P4 was never read before event_reco exists and therefore cannot influence it.",
  "VERDICT_AS_PRINTED_BY_THE_RUN_WAS_WRONG": "The run printed 'LEAKAGE -- event_reco changed when only a truth array changed'. THAT IS FALSE and it is my bug, not a result. No arm changed. P4 recorded proxy_hits=0 -- the loader never read w_truth before event_reco was built -- and the verdict logic scored that as a failed arm (as_predeclared=False) rather than as not-applicable, so `clean` went False and the code fell through to the LEAKAGE branch. A false alarm produced by verdict plumbing on a clean dataset. Fixed in the probe; the corrected verdict above is recomputed from the RECORDED per-arm hashes, which are unchanged.",
+ "VERDICT_CORRECTION_NOTE": "Until 2026-08-17 this file carried the FALSE string above under `VERDICT` -- the canonical key every other receipt in this repo uses and the one any consumer reads -- while the true answer sat under `CORRECTED_VERDICT`, a key nothing keys on. So the artifact written to correct the log REPRODUCED THE LOG'S ERROR under the name that counts: reading the receipt yielded the same wrong answer as reading the log. `CORRECTED_VERDICT` is folded into `VERDICT` rather than left alongside it, because two keys disagreeing about the verdict is the defect and not the fix. The false string is retained verbatim above so nothing is lost.",
+ "VERDICT_SUPERSEDED_FALSE_STRING": "LEAKAGE -- event_reco changed when only a truth array changed",
  "WHY_P4_IS_STRONGER_THAN_A_PASS": "proxy_hits=0 for w_truth is not a missing test. It is a read-order fact: d['w_truth'] is first fetched at fullevent_fps_dataloader.py:1251, AFTER event_reco is built at :1241 (:901 is not reached on this path). event_reco cannot depend on an array that has not been read, which is a stronger statement than any perturbation could have returned.",
  "arms": {
   "P0": {
