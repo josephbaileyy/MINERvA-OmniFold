@@ -96,6 +96,26 @@
 #     today" and "a committer who did nothing wrong can always make it pass" are different claims,
 #     and the trigger asserts only the first.
 #
+#     AND THE TRIGGER'S OWN PREMISE IS NOW FALSE, which is the reason to RETIRE it rather than keep
+#     waiting on it. Read 966d202 (the commit that wrote this block) before acting on any of the
+#     above: it declined on EXACTLY ONE ground -- the tree was red, 8 unaccounted files and a count
+#     drift, so "a committer who did nothing wrong" could not pass it -- and it recorded the
+#     OPPOSITE conclusion on substance, verbatim "ON SUBSTANCE IT BELONGS IN THE RUN LIST" and
+#     "this is a regression in the tree, not a check that never worked". The trigger is a faithful
+#     encoding of that premise: tree red today, so no; tree green, so yes.
+#
+#     `BEN-387` FALSIFIED THE PREMISE. The enforcement is a whole-file occurrence count and it is
+#     INVERTED, not merely red -- it reddens on innocent edits BY CONSTRUCTION, independently of
+#     how clean the tree is. So the check is not "sound, with a dirty tree", and a green tree does
+#     not license wiring it. A trigger cannot be honoured when the reasoning it encodes has been
+#     shown wrong, and this one cannot be repaired by re-measuring, because its condition was never
+#     the load-bearing one.
+#
+#     *** DO NOT READ THIS BLOCK AS "the decision was already made, stop re-opening it." *** That
+#     was this lane's first reading and it is wrong: 966d202's decline was explicitly CONDITIONAL
+#     and the trigger is its honest remedy, not a latch someone left behind. What changed is the
+#     evidence, not the appetite for re-litigation.
+#
 #     WHAT WOULD ACTUALLY UNLOCK IT: replace the occurrence count with a field-level check, then
 #     re-derive the admitting rule against the replacement. The field-level half now exists for
 #     the protected namespace -- 44 declared pins in check 6, see this file's `verify_hash_bindings`
