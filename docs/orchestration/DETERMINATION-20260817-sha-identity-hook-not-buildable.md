@@ -95,12 +95,31 @@ route around it.
 The dispatch raised this itself and asked me to check it. Measured:
 
 ```
-git log --all --grep="8874f1f"   ->  (nothing)
-git log --all --grep="8a23194"   ->  (nothing)
+git log --all --grep="8874f1f"   ->  (nothing)      <- TRUE WHEN MEASURED
+git log --all --grep="8a23194"   ->  (nothing)      <- FALSE BY THE TIME IT WAS RECORDED
 ```
 
-**Neither instance was ever cited in a commit message.** Both were in a **peer message** and a
-**report to Joseph**. A commit-time hook cannot see either channel, so the check would have had a
+> ### ‡ CORRECTED — and the correction is better than the claim it replaces
+>
+> **Both greps now return exactly one hit, and it is `66ad811`: THIS DOCUMENT'S OWN COMMIT.** Lane A
+> caught it; re-verified here rather than accepted, since accepting a peer's correction on trust
+> would be the same error one level down. The commit whose subject reads *"neither was ever in a
+> commit message"* is the thing that made that false.
+>
+> **It does not weaken the conclusion, it sharpens it past what I claimed.** The population of
+> *real* instances is still **zero**, and the population of *citations* is now one — the write-up.
+> Both cited shas are auto-regen commits, so **Rule 2 would flag `66ad811` itself**:
+>
+> > **the only thing this instrument would ever catch is the write-up of the defect it failed to
+> > catch.**
+>
+> **Third instance today of one shape, and it is the reusable one** (`BEN-389`): the `OI-96` fix
+> breaking the trigger it was reporting on; the digest count going 24 → 25 because the determination
+> quotes the digest; and now a null result falsified by recording it. **An instrument coupled to the
+> corpus it measures cannot be evaluated on a population that includes its own evaluation.**
+
+**Neither instance was ever cited in a commit message by anyone acting normally.** Both were in a
+**peer message** and a **report to Joseph**. A commit-time hook cannot see either channel, so the check would have had a
 0% detection rate on the entire measured population of this defect while rejecting 66% (Rule 1) or a
 growing fraction (Rule 2) of legitimate commits.
 
