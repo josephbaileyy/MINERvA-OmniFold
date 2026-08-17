@@ -65,7 +65,63 @@ draw produced at another time through another invocation path carries drift that
 `5.10–12.14×` → `5.41–11.34×`. Small, and **the published band is the wider one, so the reported caution is
 conservative.**
 
-### An unresolved conflict between two relayed claims, flagged rather than resolved
+### Third revision, and the conflict resolves against my `n=4`-is-settled reading too
+
+The dispatching lane retracted its own message in full and **two of its premises were false**, which changes
+what I had written above:
+
+1. **Draw 1's per-cell array EXISTS.** `member_1/pet_fullevent_ml_member1_weights.npz` carries
+   `central_vector`, shape `(285,)`, sum `1.0`, **259 nonzero — identical shape, normalisation and live-cell
+   count to `draw_2` and `draw_5`.** So *"the inputs do not exist"* is withdrawn by its author, who had listed
+   that very file two commands before concluding the data was nowhere. **My flagged conflict resolves in the
+   mediator's favour: the recomputation was real.**
+2. **The impact figures I relayed were MODELLED, not measured** — `s` rescaled by `c4` rather than recomputed
+   from the actual fifth vector — and are withdrawn. Measured: `n=4` median `9.3440 %` vs `n=5` `8.7302 %`,
+   ratio-of-medians `7.688`.
+3. **The "controlled replicate" merits argument for excluding draw 1 was its author's own invention** and is
+   withdrawn. It is not this project's practice.
+
+### And that leaves a real tension between two authorities, which I am routing rather than deciding
+
+- **`VL130`** — in `VALIDATION_LEDGER.md`, the canonical home for quoted numbers — reads **`n=5` of 5,
+  TERMINAL**, and explicitly: *"UPDATED TO n=5 2026-08-14 after floor draw 5 landed: every figure moved by less
+  than one tenth of its own 35.4% uncertainty … Per-sd fractional uncertainty `1/√(2·4)` = **35.36%** (was
+  40.82% at `n=4`)."* **It includes draw 1 and calls the result terminal.**
+- **Lane C's ruling** holds `n=4` correct **for the `OI-126` tail probe specifically**, on the ground that draw 1
+  *"lives under `fullevent_ml_ensemble/`, outside the floor directory"* — **a location reason, and point 1 above
+  shows the data there is commensurable in shape, normalisation and live-cell count.**
+
+**Both are committed, and they concern statistics that are adjacent rather than plainly distinct.** This is not
+mine to settle: it belongs to C, whose ruling it is, and to `OI-126`'s owner. **I have neither the cluster access
+to recompute nor the standing to overturn a ruling** — and having already been wrong once here in the opposite
+direction, the right output is the routed question, not a third confident answer.
+
+**What this row asserts is only what it verified from the tracked receipt:** the designed `N` is 5 = 1 reused + 4
+new, the array is `[2-5]`, and `products = N − 1` is the designed state.
+
+### Flagged for the floor/family comparison's owner, deliberately not filed here
+
+`VL130`'s own closing note records the training artifact's `reported_bin_mask` as **259** cells, against the
+extraction's **262** and the lgbm FPS canonical **266**, nesting `259 ⊂ 262 ⊂ 266`, **with an explicit
+prohibition: *"no consumer may take a training artifact's mask as the reporting domain."*** The `C_stat`
+family's domain is **257**. So a general claim of the form *"the floor is X % of the family spread"* spans two
+domains that are not the same and are not claimed to nest. The 63 tail cells were separately confirmed live on
+the floor's mask, so a specific comparison may still be on a common set.
+
+### The third-order lesson, and it is the dispatching lane's
+
+Its first framing enumerated two branches; refuted, **it invented a third branch and asserted it with the same
+confidence, without checking whether the project had already answered the question.** `VL130` had, four days
+earlier, in the ledger.
+
+> **A falsifier that names the authority is worth more than one that enumerates outcomes — and when your
+> enumeration is refuted, the next move is to FIND THE AUTHORITY, not to author a better branch.**
+
+**This row has now been revised three times in one day by three parties.** That is not only evidence about our
+errors: a question that four careful passes could not settle is a question whose *own* structure is the
+difficulty, and the routed form is the honest output.
+
+### ~~An unresolved conflict between two relayed claims, flagged rather than resolved~~ — resolved above
 
 This host has no Slurm, so I cannot adjudicate: **one peer reports recomputing the floor both ways from
 `member_1`'s `central_vector` (`n=4` median `9.3440 %` vs `n=5` `8.7302 %`, the fifth draw *lowering* it); the
