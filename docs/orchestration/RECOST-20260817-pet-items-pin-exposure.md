@@ -1,5 +1,10 @@
 # RE-COST — pin exposure across the remaining PET items, measured by asking the gate rather than reading the rows
 
+> **SUPERSEDED 2026-08-17 by [`SWEEP-20260817-pet-pin-exposure-complete.md`](SWEEP-20260817-pet-pin-exposure-complete.md), and left in place rather than rewritten because its error is the instructive half.** Two defects, both found by extending this probe rather than by reading it (`BEN-385`):
+> **(1) THE `OI-64C` LINE BELOW IS A CORRECT MEASUREMENT OF THE WRONG FILE.** `check_canonical_designation.py` is not that item's edit site; its sites are `verify_executing_copy_is_committed.py` and the two callers it must be wired into, **both of which are PINNED**. Read the `OI-64C` row here as answering nothing.
+> **(2) THE BINARY BELOW HAS NO CELL FOR TWO REAL STATES** — *pinned but tolerated* (`KNOWN_PREEXISTING`, four files, gate stays green) and *bound by a comparator the gate cannot resolve* (`BEN-322`; for `OI-60` that is nine of eleven sites). A `not pinned` cell below means "this gate stayed green", not "this file is free".
+> **What stands unchanged:** the `OI-61` finding, the positive-control discipline, and the closing rule about re-running the gate after writing.
+
 **Lane E, 2026-08-17.** `BEN-384` turned into a sweep, on the mediator's instruction: *"for each
 remaining candidate, check whether any file it touches is hash-pinned, before writing anything."*
 
