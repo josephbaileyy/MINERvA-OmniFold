@@ -85,12 +85,40 @@ class PreCommitHookIsWired(unittest.TestCase):
             f"is the ABSENCE of the 'N checks passed' line.")
 
     def test_it_is_the_TRACKED_hook_and_not_some_other_file(self):
-        """Absence is one failure; pointing at a different existing directory is the other (`BEN-224`
-        -- the hook file and the payload coming from different trees). Compares bytes against the
-        tracked `.githooks/pre-commit` rather than trusting the path."""
+        """Absence is one failure; pointing at a different existing file is the other (`BEN-224` -- the
+        hook file and the payload coming from different trees).
+
+        CORRECTED 2026-08-17, HOURS AFTER THIS FILE WAS COMMITTED, and the correction matters more than
+        the original assertion. This test compared the resolved hook byte-for-byte against
+        `HEAD:.githooks/pre-commit` unconditionally. That is only a meaningful comparison **when the
+        resolved hook lives inside THIS worktree.** Measured: `core.hooksPath` here is **absolute into
+        the main checkout** (`/…/MINERvA-OmniFold/.githooks`), so a linked worktree's commits run the
+        MAIN checkout's hook -- which is a different working tree and may legitimately sit at a
+        different commit than this one. Comparing them then reports a normal state as a defect, and it
+        would have gone RED FOR EVERY LANE the moment any hook edit was committed from a worktree.
+
+        Found by editing the hook and watching this test pass when it should have been the thing that
+        noticed. It passed because both sides were the main checkout's copy -- the test was reading the
+        file it was supposed to be comparing *against*.
+
+        So the comparison is now scoped to the case where it is decidable, and the cross-tree case is
+        reported as a skip that NAMES the situation rather than as a pass or a failure."""
         pre_commit, _ = hook_resolution(self.configured, self.toplevel)
         if not is_wired(pre_commit):
             self.skipTest("not wired at all; the test above owns that failure")
+        try:
+            inside = pre_commit.resolve().is_relative_to(Path(self.toplevel).resolve())
+        except AttributeError:                                   # py<3.9
+            inside = str(pre_commit.resolve()).startswith(str(Path(self.toplevel).resolve()) + os.sep)
+        if not inside:
+            self.skipTest(
+                f"core.hooksPath resolves OUTSIDE this worktree ({pre_commit}); the hook git runs "
+                f"belongs to another working tree, which may legitimately be at a different commit. "
+                f"Byte-identity against THIS tree's HEAD is not decidable here (BEN-224). The "
+                f"existence/executable assertion still applies and is tested above. NOTE THE "
+                f"DEPLOYMENT CONSEQUENCE: a hook change committed from a worktree does not take effect "
+                f"until that other checkout's working files are refreshed -- a committed hook is not an "
+                f"installed hook (FINDING-20260813).")
         rc, tracked = _git("show", "HEAD:.githooks/pre-commit")
         self.assertEqual(rc, 0, "no .githooks/pre-commit at HEAD to compare against")
         self.assertEqual(

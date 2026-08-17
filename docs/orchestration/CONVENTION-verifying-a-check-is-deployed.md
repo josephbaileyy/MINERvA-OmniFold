@@ -181,11 +181,53 @@ for any experiment touching config in a worktree. It needs no repo setting and c
 but it is prose naming a *mechanical alternative* rather than asking for vigilance — which is the only
 kind of prose this campaign has not watched fail.
 
-**What is NOT claimed:** the suite test catches the *condition*, which persists, not an individual commit
-made during a window. For that, the evidence would have to live in the commit object itself — a
-`commit-msg` trailer recording the check count, making absence durable and auditable by
-`git log --format='%(trailers:key=Checks)'`. That is a repo-wide message-convention change and belongs to
-whoever owns the hook, not to the lane that noticed. **Recorded here as the option rather than taken.**
+**IMPLEMENTED 2026-08-17 — the evidence now lives in the commit object.** `.githooks/commit-msg` appends
+a `Checks: N passed` trailer, so a hook that never ran leaves a **durable** absence instead of a missing
+terminal line. Audit any range:
+
+```
+git log --format='%h %(trailers:key=Checks,valueonly)' <range>     # empty field = checks did not run
+```
+
+**THE COUNT IS DERIVED, AND FIXING THAT WAS THE FIRST THING THIS FOUND.** `pre-commit` ended
+`echo "pre-commit: 9 checks passed"` with the **9 hardcoded** — the hook never counted its own checks. Add
+a tenth and the line still says 9; delete one and it still says 9. **That is `BEN-163` inside the
+instrument the whole campaign reads as proof the hook ran**, and the literal happened to be correct
+(9 `run` lines), which is exactly why nobody noticed. `run()` now increments a counter, the printed line
+uses it, and the trailer records that derived number via a **one-shot token** (`$GIT_DIR/
+PRECOMMIT_CHECKS_PASSED`, written on a clean pass, deleted by `commit-msg` on use so it cannot be
+inherited by a later commit).
+
+**Power-tested end to end through real `git commit`, five cases, no `git config` written anywhere
+(`git -c` only):** hooks live → `Checks: 7 passed`; `hooksPath` at a **deleted worktree** → **absent**;
+`--no-verify` → **absent**; a **planted** token with hooks dangling → absent, and the next live commit
+reports `7`, not the planted `99`; and the audit query shows the absences across history.
+
+**`--no-verify` commits also lack the trailer, and that is the point: the detector reports "unchecked" and
+the lane annotates deliberately, converting a silent gap into an explicit one.** A trailer obtainable
+without the checks running would be worth nothing.
+
+**FAIL-OPEN BY DESIGN.** `commit-msg` records evidence and never gates: every path exits 0. A lane losing
+work because the trailer writer broke would be a worse failure than a missing trailer.
+
+**DEPLOYMENT GAP THIS CHANGE CANNOT CLOSE ITSELF, and it must be read before trusting an absence.**
+Measured 2026-08-17: `core.hooksPath` is **absolute into the main checkout**
+(`/…/MINERvA-OmniFold/.githooks`), so **a linked worktree's commits run the MAIN checkout's hooks.** A
+hook change committed from a worktree therefore does **not** take effect until that checkout's working
+files are refreshed — *a committed hook is not an installed hook*
+([`FINDING-20260813`](FINDING-20260813-a-committed-hook-is-not-an-installed-hook.md)), applying to the
+commit that introduced this mechanism. **Until the main checkout carries `.githooks/commit-msg`, every
+commit lacks the trailer for a benign reason, and absence means nothing.** Confirm deployment before
+reading any absence as unchecked; the first trailered commit is the evidence that deployment happened.
+
+**AND THE DISCIPLINE OVER TYPED COMMANDS IS NECESSARY BUT NOT SUFFICIENT.** *"Never run `git config` in a
+worktree; use `git -c`"* cannot cover this failure, because **the harness's `EnterWorktree` writes
+`core.hooksPath` into the shared `.git/config` at worktree creation** — measured by lane E: worktree birth
+`01:53:13`, `.git/config` mtime `01:53:14`. The write is *correct* (a relative `hooksPath` does not
+resolve inside a linked worktree), but **a lane can comply perfectly and still perturb the shared config,
+because the write is made by the tool on the agent's behalf.** A rule phrased over commands the agent
+types is structurally blind to it — which is the argument for the detector over the discipline, and the
+reason both exist here.
 
 ## Related
 

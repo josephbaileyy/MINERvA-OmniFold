@@ -126,7 +126,22 @@ set -uo pipefail
 cd "$(git rev-parse --show-toplevel)" || exit 2
 
 fail=0
-run() { local n="$1"; shift; "$@" >/tmp/.hook.$$ 2>&1 || { echo "PRE-COMMIT FAIL: $n"; cat /tmp/.hook.$$; fail=1; }; }
+# COUNTERS ADDED 2026-08-17. The all-passed line used to end `echo "pre-commit: 9 checks passed"` with
+# the 9 HARDCODED -- the hook never counted its own checks. That is `BEN-163` inside the instrument the
+# whole campaign reads as proof it ran: add a tenth check and the line still says 9; delete one and it
+# still says 9. The literal happened to be correct (9 `run` lines) which is exactly why nobody noticed.
+# Now derived, and the derived number is what the commit-msg trailer records.
+ran=0
+passed=0
+run() {
+  local n="$1"; shift
+  ran=$((ran + 1))
+  if "$@" >/tmp/.hook.$$ 2>&1; then
+    passed=$((passed + 1))
+  else
+    echo "PRE-COMMIT FAIL: $n"; cat /tmp/.hook.$$; fail=1
+  fi
+}
 
 run "findings long-form pointers" python3 docs/orchestration/findings_row_lint.py --longform
 run "ledger VL ids"               python3 docs/orchestration/whose_row.py --check-ledger-ids
@@ -162,5 +177,12 @@ run "LIVE doc indexed"             python3 docs/orchestration/live_doc_indexed.p
 run "LIVE-index self-test"         python3 docs/orchestration/live_doc_indexed.py --self-test
 
 rm -f /tmp/.hook.$$
-[ "$fail" -eq 0 ] && echo "pre-commit: 9 checks passed"
+if [ "$fail" -eq 0 ]; then
+  echo "pre-commit: ${passed} checks passed"
+  # ONE-SHOT TOKEN for the commit-msg hook, which records the count as a commit trailer so that a hook
+  # that never ran leaves a DURABLE absence instead of a missing terminal line. Written only on a clean
+  # pass, deleted by commit-msg on use, so it cannot be inherited by a later commit. `--absolute-git-dir`
+  # because a linked worktree's git dir is not `.git`.
+  printf '%s\n' "$passed" > "$(git rev-parse --absolute-git-dir)/PRECOMMIT_CHECKS_PASSED" 2>/dev/null || true
+fi
 exit "$fail"

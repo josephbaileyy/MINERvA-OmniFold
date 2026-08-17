@@ -1,0 +1,53 @@
+#!/bin/bash
+# Record, IN THE COMMIT OBJECT, that the pre-commit checks ran and how many passed.
+#
+# WHY THIS EXISTS. On 2026-08-17 two commits landed with all nine checks silently skipped: a lane ran
+# `git config core.hooksPath <throwaway-worktree>/.githooks` inside a LINKED WORKTREE and deleted that
+# worktree. Linked worktrees share `.git/config` here (`extensions.worktreeConfig` unset), so the write
+# hit the main repo's config and pointed `core.hooksPath` at a directory that ceased to exist. Git skips
+# a missing `hooksPath` SILENTLY -- no warning, no error, exit 0.
+#
+# The `pre-commit: N checks passed` line was the only evidence the hook ran, and it lives in a terminal.
+# ABSENCE OF OUTPUT DOES NOT LOOK LIKE FAILURE, so a green run and a run that never happened were
+# indistinguishable. It was caught because a lane happened to be watching that line for another reason.
+# This is `BEN-344` applied to the hook itself.
+#
+# THE FIX IS TO MOVE THE EVIDENCE OUT OF STDOUT AND INTO THE ARTIFACT -- the same move as recording a
+# gate's computed `nnz` in a receipt rather than trusting a green run, and as deriving a terminal label
+# from report objects rather than matching rendered text. Absence becomes durable and queryable:
+#
+#     git log --format='%h %(trailers:key=Checks,valueonly)' <range>
+#
+# and a commit with an empty field is one whose checks did not run.
+#
+# THE COUNT IS DERIVED, NOT RESTATED. `pre-commit` counts its own `run` invocations and writes the total
+# to a one-shot token; this hook reads and DELETES it, so a stale token cannot be inherited by a later
+# commit. A hardcoded number here would be `BEN-163` -- the hole moving out of the mechanism and into the
+# copy describing it -- which is precisely the defect found in `pre-commit`'s own `9` while writing this.
+#
+# `--no-verify` COMMITS ALSO LACK THE TRAILER, AND THAT IS THE POINT. Git skips both hooks, so no token
+# is written and no trailer is added. The detector then reports the commit as UNCHECKED and the lane
+# annotates it deliberately -- which converts a silent gap into an explicit one. A trailer that could be
+# produced without the checks running would be worth nothing.
+#
+# FAIL-OPEN BY DESIGN. This hook records evidence; it does not gate. It must never block a commit for its
+# own reasons -- a lane losing work because the trailer writer broke would be a far worse failure than a
+# missing trailer. Every path exits 0.
+set -uo pipefail
+
+msg="${1:-}"
+[ -n "$msg" ] && [ -f "$msg" ] || exit 0
+
+gitdir="$(git rev-parse --absolute-git-dir 2>/dev/null)" || exit 0
+tok="${gitdir}/PRECOMMIT_CHECKS_PASSED"
+
+# No token => pre-commit did not run (dangling hooksPath, or --no-verify) => NO TRAILER. That absence is
+# the signal this hook exists to create; do not manufacture one.
+[ -f "$tok" ] || exit 0
+
+n="$(tr -dc '0-9' < "$tok" 2>/dev/null || true)"
+rm -f "$tok"                      # one-shot, whatever happens next
+[ -n "$n" ] || exit 0
+
+git interpret-trailers --in-place --trailer "Checks: ${n} passed" "$msg" 2>/dev/null || true
+exit 0
