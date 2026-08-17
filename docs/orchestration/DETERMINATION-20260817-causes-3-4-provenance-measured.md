@@ -169,6 +169,25 @@ the `C` leg is graded MET on it. The claim is true; its address is not.
 
 ## 5. What remains, named and not taken
 
+> **POINTER, added 2026-08-17 by lane C — one of the three options this section routes for cause 4 is NOT
+> AVAILABLE under the criteria as written, and it reads live below.** `CRITERIA` §3:246 defines the entire
+> leg vocabulary — *"Legs are graded **MET / OPEN / UNRESOLVED**. A cause is discharged only with four
+> METs"* — and **`INAPPLICABLE` is defined zero times anywhere in that document.** So the middle option
+> below, *"cause 4 is discharged on three legs with `M` declared inapplicable"*, **cannot be exercised**: a
+> leg graded `INAPPLICABLE` is none of the three, and *"only with four METs"* means a cause carrying one
+> cannot discharge, however sound the reasoning for its inapplicability.
+>
+> **Ruled 2026-08-17 by the mediator with lane C agreeing** (Joseph's two-session rule), and **deliberately
+> the unfavourable branch**: §3 as written is operative. The conservative reading is the status quo, so
+> adopting it changes nothing — whereas admitting a fourth grade would retroactively make discharge easier
+> for causes already graded under the three. **The definition question is left open on purpose** and nothing
+> waits on it; if the fourth grade is to exist it should be a deliberate criterion change, not a side effect
+> of a cell that wanted to move.
+>
+> **This does not touch the other two options, or any grade in this document.** Section text left as
+> written, per this repo's convention. Gap and reasoning:
+> [`SCOREBOARD-20260817-quarantine-seven-causes.md`](SCOREBOARD-20260817-quarantine-seven-causes.md) §7b.
+
 **Cause 3** — `C` MET, **`P` MET (this receipt)**, `T` MET (N5, re-derived), `M` **contradicted inside one
 document**:
 

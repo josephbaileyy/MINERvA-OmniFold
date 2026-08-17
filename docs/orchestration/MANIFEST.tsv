@@ -63,7 +63,7 @@ docs/orchestration/DECISION-20260815-joseph-oi6-oi8-oi126.md	ARCHIVAL	document		
 docs/orchestration/DECISION-20260815-oi126-contrast-not-run.md	ARCHIVAL	document		20260815	terminal		exact-path-only		yes	2	81	4872
 docs/orchestration/DETERMINATION-20260811-cause5-binding-half.md	LIVE	document		20260811	open		route-only		no	14	289	20575
 docs/orchestration/DETERMINATION-20260817-cause1-census-and-magnitude-measured.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	5	222	14979
-docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	6	233	16035
+docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	6	252	17592
 docs/orchestration/DETERMINATION-20260817-oi60-rerun-costed.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	176	10923
 docs/orchestration/DETERMINATION-20260817-pet-oi82-oi60-oi41.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	153	8915
 docs/orchestration/DETERMINATION-20260817-pet-ten-items-state-and-oi126-shape.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	229	16762
@@ -291,7 +291,7 @@ docs/orchestration/RUNS.tsv	MACHINE	tabular-data	fe-fps-campaign		generated		exa
 docs/orchestration/SCHEDULING-STRATEGY.md	LIVE	document			open		route-only		no	9	212	14246
 docs/orchestration/SCOPING-20260810-engine-rebaseline-cost.md	ARCHIVAL	document		20260810	terminal		exact-path-only		yes	6	182	12988
 docs/orchestration/SCOPING-20260813-csyst-joint-nuisance-retraining.md	ARCHIVAL	document		20260813	terminal		exact-path-only		yes	2	348	25320
-docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	LIVE	document		20260817	open		route-only		no	5	514	37724
+docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	LIVE	document		20260817	open		route-only		no	6	544	40220
 docs/orchestration/SESSION-WORKFLOW.md	LIVE	document			open		route-only		no	3	170	8468
 docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md	LIVE	document		20260814	open		route-only	docs/orchestration/live_doc_indexed.py;nd-unfolding/pet/build_cstat_gate5_n50.py	no	16	1069	77774
 docs/orchestration/STEP2-20260806-niter3-budget-classification.md	ARCHIVAL	document		20260806	terminal		exact-path-only		yes	6	153	10985

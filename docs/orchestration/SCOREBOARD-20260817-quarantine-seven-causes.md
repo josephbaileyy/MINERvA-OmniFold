@@ -27,6 +27,28 @@ the nearer of PASS/FAIL.
 
 **Discharge is a property of a (cause × artifact) pair** — §0. So every cell below names its artifact.
 
+> ### ⚠ THIS BOARD USES TWO GRADES ITS OWN CRITERIA DO NOT DEFINE. Read this before reading a cell.
+>
+> `CRITERIA` §3:246 defines the whole vocabulary: **"Legs are graded MET / OPEN / UNRESOLVED. A cause is
+> discharged only with four METs."** This board also uses **`PARTIAL`** and reports lane B's
+> **`INAPPLICABLE`**. **Neither is in that vocabulary** — `INAPPLICABLE` is defined **zero** times in
+> `CRITERIA`, and `PARTIAL` occurs four times there without ever being defined either.
+>
+> **They are kept rather than collapsed, deliberately.** Cause 3's `P` genuinely is **MET on one clause and
+> ABSENT on the other** (§2d); flattening that to `OPEN` would destroy information the grading worked to
+> produce. But **a board using a grade its criteria do not define must say so on its face, or it inherits an
+> authority it has not got.** So: **wherever this board reads `PARTIAL`, read "extra-vocabulary — see §7b",
+> and do not treat it as a fourth defined grade.**
+>
+> **RULED 2026-08-17, and deliberately the UNFAVOURABLE reading** — mediator and lane C agreeing, which
+> settles it under Joseph's rule: **§3 as written is OPERATIVE.** A leg graded `INAPPLICABLE` is none of the
+> three, so **a cause carrying one CANNOT discharge**, however sound the reasoning for its inapplicability.
+> The conservative reading is also the **status quo**, so adopting it costs nothing and changes nothing —
+> whereas admitting a fourth grade would retroactively make discharge **easier** for causes already graded
+> under the three. **Nothing waits on this**, and the definition question is left open on purpose: resolving
+> a specification gap in the favourable direction, at the end of a day whose whole record is of numbers
+> drifting toward more-favourable-until-checked, would be the wrong reason at the wrong time. See §7b.
+
 | col | artifact |
 |---|---|
 | **CAND** | the footing-matched, stamp-verified candidate: `uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root` (`4f168e83…`), CV arm `dbcd5359…`, job `56720356` |
@@ -499,6 +521,14 @@ exercised.
 **As written, the unfavourable reading is the one in force.** So naming this gap **closes** an option that
 was being kept open for cause 4; it does not open one. **That is the test the mediator set for the declined
 branch, applied to this one before offering it.**
+
+**RULED 2026-08-17 — the conservative branch, taken by the mediator with lane C agreeing.** **§3 as
+written is operative.** Consequence, and it is a *foreclosure* rather than an opening:
+**`DETERMINATION-20260817-causes-3-4` §5's middle option for cause 4 — *"discharged on three legs with `M`
+declared inapplicable"* — IS NOT AVAILABLE**, and has been recorded as such on that determination rather
+than left as a routed option that reads live. The definition question below is **left open deliberately**,
+because the favourable reading is the one that moves cells and the conservative one is already the status
+quo, so adopting it costs nothing.
 
 **What is needed is a definition, not a decision about any cause:** does §3's vocabulary admit a fourth
 grade, and if so does a cause discharge on three METs plus one justified `INAPPLICABLE`? **That is the same
