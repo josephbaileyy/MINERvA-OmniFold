@@ -43,7 +43,7 @@ docs/orchestration/CLAIM-CLM-010.md	ARCHIVAL	document			terminal		exact-path-onl
 docs/orchestration/CLAIM-CLM-011.md	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	1714
 docs/orchestration/CLAIM-CLM-012.md	ARCHIVAL	document			terminal		exact-path-only	docs/open-items/verify_open_items_restructure.py	yes	4	97	20772
 docs/orchestration/CLAIMS-ARCHIVE-2026-08.md	ARCHIVAL	document	fe-fps-campaign		terminal		exact-path-only		yes	1	18	37933
-docs/orchestration/CLAIMS.md	LIVE	ledger	fe-fps-campaign		open		route-only	docs/orchestration/generate_manifest.py;docs/orchestration/whose_row.py;nd-unfolding/pet/extract_fullevent_fps.py;nd-unfolding/tests/test_fullevent_extract.py	no	59	23	10266
+docs/orchestration/CLAIMS.md	LIVE	ledger	fe-fps-campaign		open		route-only	docs/orchestration/generate_manifest.py;docs/orchestration/whose_row.py;nd-unfolding/pet/extract_fullevent_fps.py;nd-unfolding/tests/test_fullevent_extract.py	no	59	23	11537
 docs/orchestration/CLAIMS.template.md	DEAD	template			superseded	docs/orchestration/CLAIMS.md	never		yes	1	11	496
 docs/orchestration/CLAUDE.project-template.md	DEAD	document			superseded	CLAUDE.md	never		yes	2	49	2841
 docs/orchestration/COMPARATOR-PREDECLARATION-20260814-cstat.md	ARCHIVAL	document		20260814	terminal		exact-path-only	docs/orchestration/state/build_cstat_crosscheck_laned.py;docs/orchestration/state/compare_cstat_implementations.py;docs/orchestration/state/probe-cstat-comparator-mutations-20260814.py;docs/orchestration/state/probe-cstat-crosscheck-comparison-20260814.py;docs/orchestration/state/probe-cstat-single-artifact-mutations-20260814.py	yes	12	508	33122
@@ -748,7 +748,7 @@ docs/orchestration/state/merged-input-hashes/p4-merged-20260718/summary.tsv	MACH
 docs/orchestration/state/merged-input-hashes/p4-merged-20260718/validation.tsv	MACHINE	state-artifact	merged-input-hashes		generated		exact-path-only	nd-unfolding/fps_verify_merged_receipt.py;nd-unfolding/p4_lib.py;nd-unfolding/tests/test_p4_repair.py	yes	12	14	814
 docs/orchestration/state/oi120a-csyst-k-from-legf-20260814.json	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	0	282	21267
 docs/orchestration/state/oi120b-root-order-alignment-56943340.json	MACHINE	state-artifact			generated		exact-path-only		yes	0	338	6617
-docs/orchestration/state/oi120c-loader-purity-perturbation-56975592.json	MACHINE	state-artifact			generated		exact-path-only	docs/orchestration/test_receipt_verdict_is_not_the_superseded_one.py	yes	1	153	7927
+docs/orchestration/state/oi120c-loader-purity-perturbation-56975592.json	MACHINE	state-artifact			generated		exact-path-only	docs/orchestration/test_receipt_verdict_is_not_the_superseded_one.py	yes	5	153	7927
 docs/orchestration/state/oi120c-loader-purity-perturbation-56975592.txt	MACHINE	state-artifact			generated		exact-path-only	docs/orchestration/test_probe_oi120c_verdict.py	yes	6	138	5047
 docs/orchestration/state/oi22-legA-real-input-verification-20260814.json	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	2	195	7986
 docs/orchestration/state/opendata-input-integrity-20260813.json	MACHINE	state-artifact		20260813	generated		exact-path-only	docs/orchestration/fend_probe.py	yes	4	174	12766
@@ -883,7 +883,7 @@ docs/orchestration/test_generate_live_state.py	MACHINE	test-script			generated		
 docs/orchestration/test_loader_ordering_reco_before_truth_weight.py	MACHINE	test-script			generated		exact-path-only	docs/orchestration/state/probe-oi120c-loader-purity-perturbation-20260814.py;docs/orchestration/test_probe_oi120c_p4_retirement.py	no	5	250	13048
 docs/orchestration/test_probe_oi120c_p4_retirement.py	MACHINE	test-script			generated		exact-path-only	docs/orchestration/test_probe_oi120c_verdict.py	no	3	208	10820
 docs/orchestration/test_probe_oi120c_verdict.py	MACHINE	test-script			generated		exact-path-only		no	6	234	11056
-docs/orchestration/test_receipt_verdict_is_not_the_superseded_one.py	MACHINE	test-script			generated		exact-path-only		no	0	81	3837
+docs/orchestration/test_receipt_verdict_is_not_the_superseded_one.py	MACHINE	test-script			generated		exact-path-only		no	1	81	3837
 docs/orchestration/test_slurm_array_status.py	MACHINE	test-script			generated		exact-path-only		no	2	166	8120
 docs/orchestration/test_usagectl.py	MACHINE	test-script			generated		exact-path-only		no	12	634	27580
 docs/orchestration/test_wakerctl.py	MACHINE	test-script			generated		exact-path-only	docs/orchestration/verify_hash_bindings.py	no	12	1014	42965
