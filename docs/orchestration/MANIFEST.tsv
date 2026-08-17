@@ -67,6 +67,7 @@ docs/orchestration/DETERMINATION-20260811-cause5-binding-half.md	LIVE	document		
 docs/orchestration/DETERMINATION-20260817-cause1-census-and-magnitude-measured.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	5	222	14979
 docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	6	252	17592
 docs/orchestration/DETERMINATION-20260817-cluster-sync-step1-safe-and-the-fork-is-gone.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	126	7165
+docs/orchestration/DETERMINATION-20260817-cstat-data-only-route-and-cost-to-build.md	LIVE	document		20260817	open		route-only		no	2	131	7670
 docs/orchestration/DETERMINATION-20260817-lanec-cstat-object-is-total-statistics.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	185	13331
 docs/orchestration/DETERMINATION-20260817-oi60-rerun-costed.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	176	10923
 docs/orchestration/DETERMINATION-20260817-pet-oi82-oi60-oi41.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	153	8915
@@ -831,6 +832,7 @@ docs/orchestration/state/pre-shutdown-checklist-20260721.json	MACHINE	state-arti
 docs/orchestration/state/probe-c4c5-content-bit-identity-20260816.py	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	0	85	3154
 docs/orchestration/state/probe-cstat-comparator-mutations-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only	docs/orchestration/state/compare_cstat_implementations.py	yes	2	346	14819
 docs/orchestration/state/probe-cstat-crosscheck-comparison-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	0	133	6270
+docs/orchestration/state/probe-cstat-data-only-route-20260817.py	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	1	67	2712
 docs/orchestration/state/probe-cstat-mask-flicker-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	0	119	5661
 docs/orchestration/state/probe-cstat-mask-nesting-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	0	70	3423
 docs/orchestration/state/probe-cstat-single-artifact-mutations-20260814.py	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	0	227	9232
