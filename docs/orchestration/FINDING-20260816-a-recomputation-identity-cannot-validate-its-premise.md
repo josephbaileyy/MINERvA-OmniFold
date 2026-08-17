@@ -123,6 +123,33 @@ than as a measurement.
 **The correct reading, then: the impossibility claim is false in general; the relabeling class is the
 part that survives; and on this configuration the recipe gate is doing all of the work anyway.**
 
+### A THIRD overreach of the same shape, 2026-08-16, and this one is about the author
+
+While adjudicating the real-product `C4 = M C5 Mᵀ` identity I wrote that `AXIS_EDGES` *"sits outside
+every gate on this path, before and after my repair."* **False, and checked rather than defended.**
+Edge **drift** is gated in two independent places: `p4_project_4d.py:73-78` computes
+`edges_bin_volume_hash(edges)` and requires both `edge_hash` and `bin_volume_hash` against the
+manifest — mandatory, with `test_p4_repair.py:1188-1189` pinning that they are no longer optional —
+and `project_cov_nd.py:62` carries an `np.allclose` drift check against `AXIS_EDGES` in the mirror.
+
+**What survives is much narrower:** the identity cannot detect an edge array that is **wrong but
+consistent**. `edge_hash`/`bin_volume_hash` bind *"the edges now"* to *"the edges when the manifest
+was made"*; nothing on this path compares `AXIS_EDGES` to an authority outside the repo. Because the
+same array feeds both the stored `C4` and any recomputation, the identity is blind to that class —
+genuinely this finding's shape, but a far smaller claim. **Deliberately not filed as an `OI`:** "no
+external authority for a frozen binning" is true of essentially every frozen binning in this
+campaign, so it is a general property, not a defect in this path, and an `OI` would imply an
+actionable owner that does not exist.
+
+**The pattern is worth more than the three instances.** Same night: *"no function of `(C_high, M)` can
+decide it"* (refuted by construction, above), *"no consumers exist"* (from a `| head`-truncated grep
+that dropped both real hits), and now *"outside every gate."* Each is an **asserted absence** made
+without the covering search that would bound it, and **each errs in the direction that makes the
+author's own finding look larger.** `BEN-344` says a null must be shown capable of being non-null by
+the same instrument in the same run; these are the author-side companion — **a claim that nothing
+exists is a claim about the search, and the search was never described.** The habit that fixes it is
+cheap: before writing "no X", run the grep that would find X and quote it.
+
 ### Where the overreach propagated, enumerated (`BEN-302`)
 
 A retraction reaches only as far as the corrector's map of the corpus, so the sites are named rather
