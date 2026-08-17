@@ -78,7 +78,43 @@
 #   is tracked -- verify that with `git ls-files`.
 #
 # (Numbering note: the canonical-designation block above says "move this to the run list as check 7";
-# that slot is now taken, so its unlock makes it check 8. Its decision is untouched -- OI-81.)
+# that slot was taken, and slots 8 and 9 are now taken too, so its unlock makes it check 10. Its
+# decision is untouched -- OI-81.)
+#
+# CHECKS 8 AND 9, "LIVE doc indexed" + its self-test, added 2026-08-17 by lane A at the mediator's
+# request. Two run lines rather than one, following the `whose_row self-test` precedent already in the
+# list: a guard whose self-test is not itself on a path anything takes is the class this hook exists to
+# fix, one level down.
+#
+#   WHY: `RECONCILIATION-20260817-gbdtfive-macros-vs-rebuilt-candidate.md` was committed LIVE and this
+#   hook printed "7 checks passed" while the document was in NO INDEX AT ALL. The pointer was added
+#   because a peer asked, not because anything caught it. CLAUDE.md records nine findings that sat
+#   orphaned exactly that way, and CONVENTION-document-retention.md:36 already required the
+#   declaration -- what was missing was the check. Same shape as KNOWN_ISSUES 48: green on precisely
+#   the case it does not cover.
+#
+#   IT SATISFIES THE ADMITTING RULE ABOVE -- "a committer who did nothing wrong can always make it
+#   pass" -- and that is why it is SCOPED TO WHAT THIS COMMIT NEWLY DECLARES LIVE rather than
+#   whole-tree. Measured before writing: 2 of the currently-LIVE .md docs are absent from CATALOG.md
+#   (CONVENTION-document-retention.md, SPEC-20260814-gate5-cstat-construction-v1.md). A whole-tree
+#   form would fail every lane's next commit on debt none of them created, which is how a check gets
+#   routed around. The backlog is PRINTED on every run instead of hidden, and widening to whole-tree
+#   is one line once those two are indexed -- deliberately somebody's decision, not the script's.
+#
+#   Note this is the narrow-scope form the header above records lane A as having proposed WRONGLY as a
+#   general admitting rule. It is right *here* for a different reason: not "only fail on what this
+#   commit changed" as a principle, but because the whole-tree variant fails on pre-existing debt and
+#   therefore violates the real rule. The scope is a consequence of the admitting rule, not a rival to it.
+#
+#   COST: 0.07 s measured. Two small file reads and two `git show`s; it does NOT run
+#   generate_manifest.py, which would be far too expensive for a hook and is itself ~140 lines stale.
+#
+#   WHAT IT DOES NOT DO: it cannot detect a document that SHOULD be LIVE but was never declared. With
+#   no overrides row the generator defaults to ARCHIVAL, so an undeclared doc is out of scope and this
+#   check is silent. It enforces agreement between the author's declaration and the router -- not the
+#   correctness of the declaration. Do not read this hook's all-passed line as "every live document is
+#   findable" -- and note that the line is deliberately not quoted with its count here, per BEN-163:
+#   prose restating a number the script prints is the copy that goes stale.
 #
 # THIS LIST IS THE ROOT CAUSE OF OI-64 AND IS NOW EXHAUSTIVE BY CONTRACT. Documenting exactly two
 # exclusions made "never considered" indistinguishable from "considered and rejected":
@@ -118,7 +154,13 @@ run "receipt+shell hash bindings"  python3 docs/orchestration/verify_hash_bindin
 # does NOT mean every receipt-cited artifact is tracked -- it means no *deliverable-area* .npz/.h5/etc
 # path named by a state/*.json receipt is missing. .out/.err/.log are outside it.
 run "receipt artifact tracking"    python3 docs/orchestration/verify_receipt_artifacts.py
+# Added 2026-08-17; rationale, measured scope and stated LIMITS in the header block above. Its own
+# --self-test is power-tested in BOTH directions (9 cases) and was additionally verified end-to-end
+# against real `git add` staging in a throwaway worktree, because CONVENTION-lane-worktrees.md records
+# that merge_guard.sh's one false pass was caught end-to-end and NOT by its self-test.
+run "LIVE doc indexed"             python3 docs/orchestration/live_doc_indexed.py --check
+run "LIVE-index self-test"         python3 docs/orchestration/live_doc_indexed.py --self-test
 
 rm -f /tmp/.hook.$$
-[ "$fail" -eq 0 ] && echo "pre-commit: 7 checks passed"
+[ "$fail" -eq 0 ] && echo "pre-commit: 9 checks passed"
 exit "$fail"
