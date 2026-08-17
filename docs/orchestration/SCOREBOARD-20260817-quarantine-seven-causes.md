@@ -69,7 +69,8 @@ the nearer of PASS/FAIL.
 | | | M | **MET** — `5.3478×` floor (corrected from `4.83×`, BEN-109) | **OPEN** |
 | | | T | **MET** — `f7_cv_centered_required`, N3/N4 | **MET** |
 | **3** | varying estimator seeds | C | **PARTIAL — scoped; INAPPLICABLE to the dominant block** | **PARTIAL — same scope** |
-| | | P | **WITHDRAWN from MET → PARTIAL — see §2d** | **OPEN** — stamps `ABSENT` |
+| | | P-i | value not RECORDED anywhere — **PARTIAL**, remedy = add a stamp (§2d) | **OPEN** |
+| | | P-ii | value CANNOT be recorded on the dominant arm — **OPEN**, remedy = a new write site; **survives P-i's fix** (§2d) | **OPEN** |
 | | | M | **OPEN and NOT CURRENTLY MEASURABLE — see §2 and §2b** | **OPEN, same** |
 | | | T | **MET** — N5, re-derived | **MET** |
 | **4** | scalar jitter subtraction | C | **MET** | **MET** |
@@ -152,9 +153,49 @@ indexed.** That is a stronger argument for the rule than the one the hook gives.
 **AND THE "COSTED" HALF OF MY OWN CELL WAS ALSO WRONG — corrected 2026-08-17.** I wrote *"`OPEN` — costed
 at ~1 GPU-node-hour … the cheapest open cell on the board."* **Wrong twice.** That figure prices **AI1's
 footing** — `of_inputs_5d.npz`, fixed-data-seed 0, no flux universes — which is precisely the footing
-`FOOTING-20260817` **disqualified**. The measured unit on the candidate footing is **28.50 A100-h per
-re-seed**, ~28.5×. And "costed" implies configurable, which §2b shows it is not. **So the cell is not
-cheap and not runnable, and I had it as both.** I took the figure from a `CATALOG` row rather than from a
+`FOOTING-20260817` **disqualified**. And "costed" implies configurable, which §2b shows it is not. **So the
+cell is not cheap and not runnable, and I had it as both.**
+
+> **⚠ MY REPLACEMENT FIGURE WAS ALSO WRONG, AND IN A WAY I HAVE A NAMED HABIT OF — corrected 2026-08-17 on
+> lane B's measurement.** I wrote *"the measured unit on the candidate footing is **28.50 A100-h per
+> re-seed**, ~28.5×."* **Three defects, and only the first is B's:**
+>
+> 1. **The numerator was stale.** `28.50` → **`39.078 A100-h`** (+37.1%). Its lateral term costed a
+>    *truncated* attempt — 5 of 19 universes, job `55891346` — and the completion run `55894759` was
+>    missing from the table. Corrected from all 19 measured productions, no extrapolation:
+>    `23.840 + 14.2075 + 1.030 = 39.078` over 189 tasks. **B's defect, B's correction, `BEN-247`.**
+> 2. **`~28.5×` was CROSS-UNIT — mine.** It divides **A100-hours** by **GPU-node-hours** as though they were
+>    the same unit. **A Perlmutter GPU node is 4 A100s**, verified in-repo rather than recalled:
+>    `sbatch_boot5d_gpu_interactive.sh:4` requests `--nodes=1 --gpus=4`, and `--gpus-per-node=4` appears in
+>    `sbatch_pet_conv_fps_xps2.sh:8` and `sbatch_pet_train_fps_delta.sh:7`. **The same-unit ratio of my own
+>    operands was `7.12×`. It was wrong by a factor of 4 before its numerator was ever found to be stale.**
+> 3. **And no unit conversion repairs it, because the operands are NON-COMMENSURABLE — also mine.** The
+>    numerator is **ONE estimator seed of `C_syst`**; the denominator (~1 GPU-node-hour) is **TWELVE seeds
+>    of `C_stat`**. Different block, different member count. **A ratio of "1 seed of one thing" to "12 seeds
+>    of another" measures nothing**, whatever units it is expressed in.
+>
+> **This is my named recurring failure and I should have caught it here.** My own record of it reads: *five
+> misreads in one session, all two-conditions-differ; **name both sides before believing a delta.*** I
+> quoted a delta without naming either side's unit or member count — in a cell whose entire subject is that
+> two figures were priced on incommensurate footings. **The board was grading that exact error in others
+> while committing it.**
+>
+> **THE NUMBER THE CELL ACTUALLY WANTS** — how much dearer the candidate footing is than AI1's — is the
+> **per-seed, like-for-like** ratio, and B measured it: **`268×`**. `39.078 A100-h` per `C_syst` seed against
+> **`0.1458 A100-h`** per `C_stat` seed (`55919500_1/_2`, `00:08:44` and `00:08:46` on 1 A100). Same unit,
+> same operation shape, both measured.
+>
+> **A COMPOSITE arm — which is what §2b is about, since a composite moves `unified_throw_cov.py`'s seed too
+> — is `39.078 A100-hours` PLUS `55.182` CPU task-hours (`2759.1` CPU-core-hours).** The uthrow leg is
+> **0 A100-h** and **re-runs in full**, because `:417-419` raises `SystemExit` on a mixed-seed combine, so
+> **not one slab is reusable.** **The CPU half is the larger half, and the 24 A100-h grant does not reach
+> it.**
+>
+> **If a 12-seed comparison is wanted instead, it has TWO values and neither may travel bare:** `9.77×`
+> using `FOOTING`'s ~1 node-hour (= 4 A100-h), or `22.3×` using B's measured `1.750 A100-h` for 12 seeds.
+> **The spread between them IS the unreconciled footing disagreement** (`FOOTING-20260817:66-69`'s `CONC=6`
+> packing derivation vs B's direct per-task measurement of 0.44 node-h; B's is the conservative one and B
+> has not reconciled them). **So no single ratio should be quoted without naming its denominator.** I took the figure from a `CATALOG` row rather than from a
 measurement, which is the thing this board grades other cells down for.
 
 ## 2b. Cause 3's `C` leg is scoped, and `M(ii)` is not currently MEASURABLE on either leg
@@ -180,8 +221,9 @@ block holds by hardcoding and is checked by nothing** — it would not be notice
 decision."* It is **blocked on two code changes** — lane B's specified stamping repair for the sweep, and a
 seed/draw separation in the throw path — **and only after those is it a cost question.** Joseph's cost
 decision is **downstream** of that, not parallel to it. **Pricing a run that cannot be configured is what
-produced both wrong figures on this cell**, mine (~1 GPU-node-hour, wrong footing) and the 28.50 A100-h
-one (right footing, unsatisfiable condition).
+produced every wrong figure on this cell**: mine (~1 GPU-node-hour, wrong footing), the `28.50 A100-h` one
+(right footing, stale by 37.1%, and pricing an unsatisfiable condition), and my `~28.5×` ratio (cross-unit
+by 4× *and* non-commensurable). **Four wrong numbers on one cell in one day, three of them mine.**
 
 ## 2c. `M(ii)`'s referent — PROPOSAL, awaiting a second or a dissent
 
@@ -334,6 +376,23 @@ independent problem on top:
 **So the dominant block's single-seed property holds by hardcoding and is recorded nowhere and checked by
 nothing**, and `BEN-106`'s stamp-propagation fix — the thing three causes were said to be waiting on —
 **has nothing to propagate.**
+
+**AND THIS IS TWO DEFECTS WITH DIFFERENT REMEDIES, NOT ONE — B's point, and it is the most important thing
+anyone has said about this board's SHAPE.** I had them in a single `P` cell, which is a trap:
+
+| | defect | remedy | survives the other's fix? |
+|---|---|---|---|
+| **P-i** | **nothing RECORDS the seed value** — no product, no receipt. B ran a covering search over every tracked `*.json`/`*.tsv`/`*.txt`/`*.md`: **zero hits.** | **add a stamp** | — |
+| **P-ii** | **nothing COULD record it on the dominant arm** — `sweep_bank_5d.py` and `analyze_universes_5d.py` have **nowhere to put one** | a **new write site**, not a stamp | **YES — P-ii survives P-i's fix** |
+
+**Why one cell was dangerous:** a future *"stamp added, `P` satisfied"* would close the cell **while the
+dominant arm is still ungraded.** P-i is satisfiable by an edit; P-ii is not, and the arm it concerns is the
+dominant block. **Graded as two, so a fix to one cannot silently discharge the other.**
+
+**B also confirms my harsher grade and calls its own recommendation too generous** — its covering search
+shows no receipt records the seed for the **uthrow** arm either, so clause (i) fails there as I graded it,
+**and the obvious rescue is foreclosed by B's own `BEN-245`**: the launchers hardcoding `--seed 1000`/`42`
+are **committed intent, not provenance.**
 
 **NO NUMBER MOVES.** Every leg is internally single-seeded, so nothing is mis-computed. What fails is a
 **verification claim** (B's phrasing, and it is exact). `BEN-246`.

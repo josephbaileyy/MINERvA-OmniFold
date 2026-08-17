@@ -220,7 +220,7 @@ docs/orchestration/INTERIM-HANDBACK.md	ARCHIVAL	document			terminal		exact-path-
 docs/orchestration/LIVE-STATE.md	LIVE	live-status			generated		always	docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_g2_dump_resume.sh;docs/orchestration/watch_slurm_array_resume.sh	no	43	76	12872
 docs/orchestration/LIVE-USAGE.md	LIVE	live-status			open		route-only		no	15	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	9	53	3555
-docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	17	915	150619
+docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	17	916	150778
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	LIVE	document		20260817	open		route-only		no	3	184	13929
 docs/orchestration/MAP-20260817-pet-critical-path.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	197	14433
 docs/orchestration/METHOD-DECLARATION-20260814-lane-d-cstat-crosscheck.md	ARCHIVAL	document		20260814	terminal		exact-path-only	docs/orchestration/state/build_cstat_crosscheck_laned.py	yes	3	102	6794
@@ -292,7 +292,7 @@ docs/orchestration/RUNS.tsv	MACHINE	tabular-data	fe-fps-campaign		generated		exa
 docs/orchestration/SCHEDULING-STRATEGY.md	LIVE	document			open		route-only		no	9	212	14246
 docs/orchestration/SCOPING-20260810-engine-rebaseline-cost.md	ARCHIVAL	document		20260810	terminal		exact-path-only		yes	6	182	12988
 docs/orchestration/SCOPING-20260813-csyst-joint-nuisance-retraining.md	ARCHIVAL	document		20260813	terminal		exact-path-only		yes	2	348	25320
-docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	LIVE	document		20260817	open		route-only		no	7	597	44282
+docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	LIVE	document		20260817	open		route-only		no	7	656	49259
 docs/orchestration/SESSION-WORKFLOW.md	LIVE	document			open		route-only		no	3	170	8468
 docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md	LIVE	document		20260814	open		route-only	docs/orchestration/live_doc_indexed.py;nd-unfolding/pet/build_cstat_gate5_n50.py	no	16	1069	77774
 docs/orchestration/STEP2-20260806-niter3-budget-classification.md	ARCHIVAL	document		20260806	terminal		exact-path-only		yes	6	153	10985
@@ -580,6 +580,7 @@ docs/orchestration/state/RECEIPT-independent-verification-vl134-vl140-20260816.j
 docs/orchestration/state/RECEIPT-n3-n4-second-read-20260816.json	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	1	116	13541
 docs/orchestration/state/RECEIPT-stage6-marginal-vs-direct-anatomy-20260817.json	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	1	132	12852
 docs/orchestration/state/RECEIPT-vl100-shape-corrected-foldforward-20260815.json	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-vl100-shape-correction-scan-20260815.py;nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh	yes	12	355	17212
+docs/orchestration/state/__pycache__/regen_canonical_namespace_field_pins.cpython-312.pyc	MACHINE	cache	__pycache__		generated		exact-path-only		yes	0	65	8047
 docs/orchestration/state/_audit_gate3_source.py	MACHINE	state-artifact			generated		exact-path-only		yes	4	209	11920
 docs/orchestration/state/account-migration-authorization-20260719.json	MACHINE	state-artifact		20260719	generated		exact-path-only		yes	4	15	743
 docs/orchestration/state/agent-A-standard-migration-20260811.json	MACHINE	state-artifact		20260811	generated		exact-path-only		yes	1	23	1193
