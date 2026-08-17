@@ -323,6 +323,27 @@ already exercised in production (`sbatch_ai1_estimator_scan.sh:23-24`). The chan
 better-precedented than my last message implied. **Still not written — specified-not-written stands until
 Joseph rules.**
 
+**CORROBORATED INDEPENDENTLY, 2026-08-17, and the independence is evidenced rather than assumed.** The
+`Assistant` lane reached the same gate-1 conclusion — that `--fixed-data-seed` already pins the draw and
+routes `--seed` to the estimator, that `seedscan_split.py:36` exposes `--estimator-seed`, and that gate 1 is
+therefore **two modules rather than four legs** — **citing the code and its quoted help text directly, not
+this document.** The independence claim rests on `Assistant`'s own unprompted statement, made *before*
+producing the finding: *"`EXTENT-20260817-…md` exists on main and names this launcher; **I HAVE NOT READ
+IT**, and it may already carry some of §1."* **So this is a second derivation, and §3/§4 are corroborated
+rather than merely restated.**
+
+**The distinction is recorded because I nearly lost it in the opposite direction.** The finding first reached
+me *relayed as new information*, and I flagged it back as my own conclusion returning to me — correctly on
+the facts available, and **wrongly on the merits**, because the derivation really was independent; what was
+missing was its **route**. `BEN-312` is one number derived by three parties from one source, where agreement
+read as corroboration; **this is that mechanism in reverse — genuine corroboration reading as an echo — and
+in both directions the defect is that the route is not carried with the fact.** Corroboration and echo have
+**opposite** evidential value, so a relay that omits the route destroys the difference. **The check is one
+clause: when relaying a claim, say where it came from.** That is the receipt-ingredients rule
+(`CONVENTION-receipt-ingredients.md`, `BEN-077`) applied to the **provenance of a claim** rather than to the
+operands of a number. *Transport error the mediator's, self-reported; independence established from
+`Assistant`'s own prior disclaimer; framing this lane's, routed to lane A, which owns the transport class.*
+
 ## 5. Cost per seed-dependent leg, from measured `sacct` elapsed
 
 **The `M(ii)` instrument for the stat leg is already written and has already run.**
