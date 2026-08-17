@@ -1,0 +1,51 @@
+{
+ "ARITHMETIC_CLOSES": "1403 OK + 2 MISMATCH + 4 known drift = 1409 resolved",
+ "MISMATCHES": [
+  {
+   "age": "wanted sha dates to 8f2bcb0 2026-08-07; file changed at 54a8797 (08-10, LR anneal adopted as production policy) and ce03f2c (08-13, estimator extracted to a FACTORY)",
+   "got": "91144bee2ff89ae62497c8282174f0fc1c344f455945d6b52b7b8219ecb4e7bc",
+   "source": "nd-unfolding/pet/step1_iteration_dynamics/cold_fresh_split/slurm-56534116_2/STEP1_DYNAMICS.json",
+   "source_state_locally": "UNTRACKED -- cluster-only scratch product",
+   "target": "nd-unfolding/pet/train_fullevent_nominal.py",
+   "want": "66aa1f8f62087e6ef6ca79928aca954ed25aea1bb304d71e8dbf159ec417dadd"
+  },
+  {
+   "got": "950f8cb15c5a0bd785d65e7f85f4cb40fa86e27383973f82ef15c7ef525c1263",
+   "source": "nd-unfolding/tests/fixtures/packet_b1_adversarial/std_component_manifest.B1_E.json",
+   "target": "nd-unfolding/active_universe_5d/standard/candidate/std_final5_candidate.root",
+   "target_state_locally": "UNTRACKED and ABSENT ON DISK",
+   "want": "602bbcf26606844941b8a6295f47e080507c20097a80f42cdf202bd8c567f037"
+  }
+ ],
+ "MISMATCH_COUNT": 2,
+ "USE_AS_A_DIFFERENTIAL_BASELINE": "Because the gate is already BROKEN for pre-existing reasons, 'the gate goes green' is unavailable as a test of any new change. The available test is DIFFERENTIAL: does an intended diff ADD a mismatch to this set. THE BASELINE IS THESE TWO.",
+ "VERDICT": "*** BINDINGS BROKEN ***",
+ "WHY_THIS_IS_THE_FIRST_CLUSTER_MEASUREMENT_IN_TEN_DAYS": "The gate is wired into .githooks/pre-commit:242 and runs on every commit -- locally, where the first mismatch's RECEIPT is untracked and the second's TARGET is absent. It passes there honestly. See BEN-255.",
+ "canonical_namespace_FIELD_pins": {
+  "floor": 30,
+  "note": "these pin a POINTER, not bytes",
+  "over": "17 of 22 RECORD-FROZEN JSON receipts",
+  "verified": 44
+ },
+ "cluster_head": "7ac36ac6",
+ "from_EXPECTED_SHA_guards_in_sh": {
+  "count": 21,
+  "floor": 15
+ },
+ "from_receipt_bindings": {
+  "count": 1388,
+  "floor": 140
+ },
+ "known_pre_existing_drift_submit_time_provenance": [
+  "docs/orchestration/gate2_queue_hedge_controller.sh",
+  "nd-unfolding/pet/sbatch_dump_g2_mefhc.sh",
+  "docs/orchestration/wakerctl.py",
+  "docs/orchestration/test_wakerctl.py"
+ ],
+ "measured_utc_date": "2026-08-17",
+ "ok": 1403,
+ "produced_by": "Lane D, read-only.",
+ "resolved_bindings": 1409,
+ "unresolvable": 755,
+ "what": "verify_hash_bindings.py CLUSTER-SIDE baseline -- the first cluster run in the ten-day window in which the tree has been BROKEN there and green locally"
+}
