@@ -100,6 +100,12 @@ the data supports. Withdrawn.**
 `masks[tags[0]]` — **`member_1`'s own `reported_bin_mask`.** So dropping draw 1 changes `n` **and** changes
 which artifact supplies the reporting domain. `n=4` vs `n=5` was never a sample-size choice.
 
-**None of it moves the conclusion it was serving.** The floor's share of the tail spread is a **variance**
-share of roughly **2%** on every pairing (`1.938% → 1.692%` bias-corrected, `1.645% → 1.495%` raw), and it
-survives a `4×` error in the floor. **The floor is not the explanation for the tail spread** either way.
+**None of it moves the conclusion it was serving** — but the conclusion's own framing needed correcting
+twice, and the second correction was against **me**. A variance share assumes the floor is an independent
+quadrature component, which `VL130` says is *"an empirical claim about run-to-run behaviour, and `n=4`
+cannot test it."* **So the defensible form is a bracket over the correlation, not either endpoint:** the
+residual is **`58.5%`–`75.7%`** for any `ρ ∈ [−1,+1]` and the floor is **`11%`–`15%`** of it throughout.
+`ρ=0` gives the `1.9%` variance share; `ρ=+1` gives exactly `f/T = 12.83%`, **which is the reciprocal of
+the sd ratio — so the sd ratio is the maximum-correlation BOUND, not a meaningless quantity.** *"About one
+seventh"* was right as a bound and wrong as a share. **The floor is not the explanation for the tail spread
+at any `ρ`**; only a `4×` understated floor *and* `ρ ≈ +1` together would change that.

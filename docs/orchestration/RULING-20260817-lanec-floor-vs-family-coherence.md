@@ -125,8 +125,14 @@ as **`FILES[0]`**, co-equal with draws 2–5, and `VL130` is `n=5` **TERMINAL**.
 record already includes it; the tail probe's `n=4` is the **deviation**, not `VL130`'s `n=5`.
 
 **A SECOND AXIS NOBODY NAMED, AND IT SETTLES THE `n=4` OPTION INDEPENDENTLY.**
-`probe-oi120a-csyst-k-20260814.py:36` takes the reporting domain from **`masks[tags[0]]`** — **`member_1`'s
-own `reported_bin_mask`.** So dropping draw 1 changes `n` **and** changes which artifact supplies the
+`probe-oi120a-csyst-k-20260814.py:37` takes the reporting domain from **`masks[tags[0]]`** — **`member_1`'s
+own `reported_bin_mask`.** *(**CITATION CORRECTED 2026-08-17: I wrote `:36`, which is
+`sd = X.std(0, ddof=1)`.** Found by Assistant, checked by the mediator, re-verified here from
+`origin/main`. **The off-by-one is the interesting part: `:36` is topically adjacent and reads plausibly
+to anyone spot-checking a claim about how the statistic is computed, so a casual check PASSES.** That is a
+different shape from this board's `POINTER 3` and the `VALIDATION_LEDGER:65-88` case, which fail loudly
+because they land on nothing relevant — **this one lands on something relevant and wrong.** And the file
+was open in front of me when I wrote it, which is the same failure mode as §5's, one section later.)* So dropping draw 1 changes `n` **and** changes which artifact supplies the
 domain. **`n=4` vs `n=5` was never a sample-size choice**, and a two-axis change presented as one is the
 shape this whole ruling is about.
 
@@ -252,6 +258,47 @@ share, not an sd ratio:
 `explains` names: the floor accounts for `1.9%` of the tail VARIANCE — one fifty-second, not one
 seventh.** Removing it entirely moves the tail spread from `67.1164%` to `66.46%`.
 
+> ### ⚠ CORRECTED 2026-08-17 — THE QUADRATURE STEP ASSUMES INDEPENDENCE, WHICH IS NOT EARNED. IT DOES NOT NEED TO BE EARNED; IT NEEDS TO BE BRACKETED.
+>
+> **Assistant's objection is right and it lands on my §3, not on the dispatch's number.** Squaring
+> requires the floor to be an independent quadrature component, and `VL130` says in its own words that
+> `f/√k`'s independence *"is an empirical claim about run-to-run behaviour, and `n=4` cannot test it."*
+> **So `1.9%` is the `ρ=0` case, not the case.**
+>
+> **But the conclusion does not depend on `ρ`, and that is stronger than earning the step.** Solving
+> `s² + 2ρ·s·f + f² = T²` for the residual `s` at `T = 67.1164%`, `f = 8.6088%`, over the whole range:
+>
+> | `ρ` (floor vs residual) | residual spread | reduction | floor / residual |
+> |---|---|---|---|
+> | **`+1`** (perfectly correlated — **sds subtract linearly**) | **`58.5076%`** | **`12.83%`** | `0.147` |
+> | `+0.5` | `62.3967%` | `7.03%` | `0.138` |
+> | **`0`** (independent — the quadrature case) | `66.5620%` | `0.83%` | `0.129` |
+> | `−0.5` | `71.0055%` | `−5.79%` | `0.121` |
+> | `−1` | `75.7252%` | `−12.83%` | `0.114` |
+>
+> **The residual is `58.5%`–`75.7%` for ANY correlation, and the floor is `11%`–`15%` of it in every
+> case. So `"the floor is not the explanation for the tail spread"` holds without the independence
+> assumption.**
+>
+> **AND THE `ρ=+1` REDUCTION IS EXACTLY `f/T` — the reciprocal of the sd ratio. Which partially vindicates
+> the framing I corrected, and I should say so.** `1/7.80 = 12.83%`, against *"about one seventh"* =
+> `14.3%`. **So the sd ratio is not meaningless: it is the MAXIMUM-CORRELATION BOUND on the floor's
+> share.** The dispatch's number was right and its **status** was wrong — a bound attained only at perfect
+> correlation, presented as an explanatory share. **That is a smaller error than the one I charged, and
+> `"do not quote the ratio"` was too broad on this axis.** It stands on §2(a) — the cross-key defect — which
+> is a units objection and untouched by any of this. **Two objections I had entangled: one disqualifies the
+> ratio, the other only relabels it.**
+>
+> **AND MY OWN REFRAME OVERCORRECTED IN THE DIRECTION NOBODY CHECKS.** `~2%` *sounds* negligible in a way
+> `"a seventh"` does not, and I replaced an overstatement with a framing that understates by choosing the
+> most favourable `ρ`. **The honest form is the bracket, not either endpoint.**
+>
+> **THE ONE THING THAT WOULD OVERTURN IT IS A CONJUNCTION, and it takes both extremes at once:** a floor
+> understated by `4×` (`34.44%`) **AND** `ρ ≈ +1` gives residual `32.68%` with `floor/residual = 1.054` —
+> the only cell in the whole space where the floor rivals what is left. At `4×` with `ρ=0` the residual is
+> still `57.61%`; at the measured floor with `ρ=+1` it is `58.51%`. **Either extreme alone leaves the
+> conclusion intact; only their conjunction breaks it, and neither has been measured.**
+
 **And that conclusion is robust to every defect in §2.** Even understating the floor by `4×` — far beyond
 the `35.36%` uncertainty, the shape-only bias and the stratification gap combined — leaves it at `26%` of
 the variance and the tail spread above `57%`. **So: the RATIO is not a legitimate quantity as posed, and
@@ -266,8 +313,11 @@ adjudication belongs to whoever owns the physics, and not on a single ratio.
 
 - **The `7.80×` / `7.18×` ratio: DO NOT QUOTE.** Cross-unit (`central_vector` vs `xsec`), biased in the
   direction of the conclusion, wrong brake attached, `n` unstated, and `±35%` on its denominator alone.
-- **The finding it was reaching for: STANDS, on the variance share** — `1.9%`, robust to a `4×` floor
-  error. **State it in quadrature with its operands, never as an sd ratio.**
+- **The finding it was reaching for: STANDS, and on a CORRELATION BRACKET rather than on the variance
+  share alone** — residual `58.5%`–`75.7%` over all `ρ`, floor `11%`–`15%` of it throughout. **The `1.9%`
+  variance share is the `ρ=0` endpoint and must not travel as the answer; the sd ratio's reciprocal
+  (`12.83%`) is the `ρ=+1` endpoint and is a legitimate BOUND. Quote the bracket, with both endpoints and
+  their operands.** Only a `4×` understated floor AND `ρ ≈ +1` together would overturn it.
 - **`CSTAT-O2a`: STAYS HELD.** Its trigger is *"only if the subtraction proves sensitive to that
   difference"*, and §3 shows the subtraction is **insensitive** — a `4×` change in the floor moves the
   tail spread by `9.5` percentage points and changes no conclusion. **So this ratio does not fire the
