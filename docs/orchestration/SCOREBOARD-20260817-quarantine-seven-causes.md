@@ -240,7 +240,32 @@ back "a bound cannot stand in for `M`", the scan's value drops to documentary be
 compute to reach a question that is already on the table, and might be answered against you on paper, is
 the worst available order.
 
-**My position, offered and not taken, because it is one judgement covering two causes:** the judgement
+> ### RULED 2026-08-17: the laterals-only scan DOES NOT RUN
+>
+> **Taken by the mediator and lane C agreeing, which settles it under Joseph's 2026-08-17 rule — and it
+> settles in the direction of NOT spending.** The ground is **not** cost and **not** B's construction
+> argument alone: **`CRITERIA` has already ruled, for cause 4, that a bound is not the `M` leg, and by §0's
+> own consistency that ruling extends to cause 3.** The scan would arrive at a question the criterion has
+> already answered.
+>
+> **The ordering sentence, for the record:** *spending compute to reach a question already on the table,
+> which might be answered against you on paper, is the worst available order.*
+>
+> **I CHECKED THE RULING ON THE MERITS RATHER THAN ACCEPTING IT, and it is entailed rather than
+> stylistic.** §0:53-54 reads: *"A measured large difference discharges the cause just as well as a measured
+> small one; **what is forbidden is an unmeasured one.**"* A bound leaves the difference **unmeasured** — it
+> is an upper limit on the quantity, not a measurement of it. **So "a bound is not the `M` leg" follows from
+> §0's own wording and needs no separate justification. I have no merits case against it**, and I record
+> that so the branch is closed rather than left dangling for someone to reopen as an open question.
+>
+> **And the branch the mediator DECLINED should stay declined, for the reason given.** It was mine —
+> *"if a bound is admissible, cause 4's `M` may be closable for free on the existing `<0.1%` bound"* — and
+> the mediator declined it because **its attraction is that it moves a cell at zero cost, which is the shape
+> of motivated reasoning.** That is right, and it is right about my argument specifically. Today's record is
+> of numbers and grades that drifted toward cheaper-and-more-favourable until someone checked them; an
+> argument whose payoff is its own premise belongs nowhere near a discharge decision.
+
+**My position, superseded by the ruling above and left as written:** the judgement
 should be taken **once, for both causes 3 and 4, before either scan is priced.** `CRITERIA` has already
 answered it for cause 4 in the negative — *"a bound is not the `M` leg"* — and if that ruling stands, then
 by §0's own consistency it stands for cause 3, and **the laterals-only scan should not be run at all.** If
@@ -438,6 +463,47 @@ committed test, a receipt key, or a commit, never a line number in a growing fil
   `gate6traj-reconcile-56847059`. No `scancel`, no `scontrol`, no run submitted, no compute spent.
 - It **does not re-derive** cause 5's determination beyond reading it, and does not assert cause 5's
   X-side applicability — see §4.
+
+## 7b. `INAPPLICABLE` is in USE as a leg grade, and `§3` does not define it — and as written that
+forecloses a cause-4 option rather than opening one
+
+**Surfaced while checking the declined branch, and reported because its as-written resolution goes
+AGAINST the outcome I would have preferred.** That asymmetry is the only evidence I can offer that raising
+it is not the motivated reasoning the mediator just declined.
+
+**`§3:246` states the vocabulary and the rule:** *"Legs are graded **MET / OPEN / UNRESOLVED**. A cause is
+discharged only with four METs."* **`INAPPLICABLE` is not among the three.**
+
+**But it is already in use, twice:**
+
+1. **Cause 3's `C` leg.** Lane B's finding is titled *"Cause 3's `C` leg is **INAPPLICABLE** to the dominant
+   block"* — the guard's population excludes `combined_source` entirely, so there is nothing for the leg to
+   be MET or OPEN *about* on that path. This board carries it as `PARTIAL`, which is my own coinage and is
+   also not in §3's vocabulary.
+2. **Cause 4's `M` leg.** `DETERMINATION-20260817-causes-3-4` §5 routes three options, and the middle one is
+   *"cause 4 is discharged on three legs with `M` declared **inapplicable**."*
+
+**Under §3 as written, option 2 is not available.** A leg graded `INAPPLICABLE` is neither `MET`, `OPEN`, nor
+`UNRESOLVED`; and *"discharged only with four METs"* means a cause carrying an inapplicable leg **can never
+discharge**, however sound the reasoning for its inapplicability. **So the criteria as written foreclose the
+`DETERMINATION`'s own middle option** — and nobody has noticed, because the option was routed rather than
+exercised.
+
+**This cuts both ways and I am not proposing which way.**
+
+* Treat `INAPPLICABLE` as **satisfying** the leg → causes discharge more easily. **Favourable direction**,
+  and it would immediately make cause 4's middle option live.
+* Leave §3 as written → a cause with an inapplicable leg is **permanently undischargeable**. **Unfavourable
+  direction**, and it is the reading that currently holds.
+
+**As written, the unfavourable reading is the one in force.** So naming this gap **closes** an option that
+was being kept open for cause 4; it does not open one. **That is the test the mediator set for the declined
+branch, applied to this one before offering it.**
+
+**What is needed is a definition, not a decision about any cause:** does §3's vocabulary admit a fourth
+grade, and if so does a cause discharge on three METs plus one justified `INAPPLICABLE`? **That is the same
+species as §2c's `M(ii)` gap** — a criterion that cannot be read without a substantive choice — and it
+should be recorded as needing one rather than settled inside a cause's row. **Routed, not taken.**
 
 ## 8. The one structural recommendation
 
