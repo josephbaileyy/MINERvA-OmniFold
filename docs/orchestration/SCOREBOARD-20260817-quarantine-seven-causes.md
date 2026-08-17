@@ -200,18 +200,61 @@ only one that can be reported per leg when one leg's instrumentation lands befor
 mediator or Assistant dissents toward (B), the dissent should say what correlation between the two legs'
 estimator noise it expects to be non-negligible**, because that is the only thing (B) buys over (A).
 
-**The two code changes §2b names are better-precedented than I said.** Verified: `bootstrap_nd.py:19,21`
-and `seedscan_split.py:36` **already carry `--estimator-seed` alongside `--fixed-data-seed`**, with
-`:25` stating the split in its own help text — *"`--seed` varies data+MC, `--estimator-seed` fixed."*
-**So the two-role separation is an existing pattern in this repo, not a new design**, and only
-`sweep_bank_5d.py` and `unified_throw_cov.py` lack it. That makes gate 1 smaller than "two code changes"
-sounds — and it does **not** make it cheap, because those two modules are where the cost lives.
+**The two code changes §2b names are better-precedented than I said — and my first phrasing of that was
+`BEN-386`-shaped, so here it is re-grounded.** Verified: `bootstrap_nd.py:19,21` and `seedscan_split.py:36`
+**already carry `--estimator-seed` alongside `--fixed-data-seed`**, `:25` stating the split in its own help
+text — *"`--seed` varies data+MC, `--estimator-seed` fixed."* So the two-role separation is an existing
+pattern here, not a new design.
+
+**But a precedent in one file says nothing about feasibility in another, which is exactly `BEN-386`: the
+file an edit lives in is not the file that validates it, so a pin sweep can tell you an item is expensive
+and can NEVER tell you it is cheap.** So I checked the **callees**, which is the instrument that can
+answer it:
+
+| module | what the edit is | callee constraint |
+|---|---|---|
+| `sweep_bank_5d.py` | add `--estimator-seed`; replace the literal at `:252` | **none** — the call is `omnifold_loop(…, seed=42, …)` and the callee **already takes `seed` as a kwarg**. No receipt references this file at all. |
+| `unified_throw_cov.py` | split the single `--seed` (`:525`) into two roles | **none** — `args.seed` is the **estimator** seed at `:254`, `:285`, `:302` (`seed=np.int64(args.seed)`) and the **draw** base at `:223` (`default_rng(args.seed + gj)`). Adding `--estimator-seed` defaulting to `args.seed` and using it at the three estimator sites, leaving `:223` alone, is caller-side only. |
+
+**So the CONFIGURATION change is small and unblocked at the callee — evidence from the callee, not from a
+pin sweep.** And per `BEN-386`'s asymmetry, that is the most this can establish: **I have shown no blocking
+constraint, which is not the same as showing it is cheap.** Cost is GPU time to re-run the sweep, and that
+is the axis where the two figures disagree. **Feasible to configure, expensive to run, and those are
+different questions** — conflating them is what produced every wrong cost figure on this cell today.
 
 **And the cost figure now has two unreconciled values.** B measures **0.44 node-h** for the stat estimator
 axis against `FOOTING-20260817:66-69`'s **~1 GPU-node-h** — the very figure I quoted this morning as *"the
 cheapest open cell."* B says its own is the conservative one and **did not reconcile them.** So the cell I
 first priced at ~1 GPU-node-hour on the wrong footing now has, on the *right* footing, **two independent
 values disagreeing by ~2× with neither reconciled.** Recorded rather than averaged.
+
+### The bound-vs-`M` judgement, which the mediator put closer to my desk than theirs
+
+**A laterals-only scan would land cause 3's `M(ii)` in cause 4's CURRENT position** — a **bound** where the
+criterion asks for a **measurement**. `CRITERIA` already rules on that shape for cause 4: *"a bound is not
+the `M` leg"*, and `DETERMINATION-20260817-causes-3-4` routes the judgement without taking it.
+
+**So the ordering matters more than the price.** ~15.4 A100-h buys **arrival at an already-open,
+already-routed judgement**, not a discharge. **And if the bound-vs-`M` judgement is taken FIRST and comes
+back "a bound cannot stand in for `M`", the scan's value drops to documentary before it is run.** Spending
+compute to reach a question that is already on the table, and might be answered against you on paper, is
+the worst available order.
+
+**My position, offered and not taken, because it is one judgement covering two causes:** the judgement
+should be taken **once, for both causes 3 and 4, before either scan is priced.** `CRITERIA` has already
+answered it for cause 4 in the negative — *"a bound is not the `M` leg"* — and if that ruling stands, then
+by §0's own consistency it stands for cause 3, and **the laterals-only scan should not be run at all.** If
+instead a bound IS admissible, then cause 4's `M` may be closable on the existing `<0.1%` bound **without
+any run**, which would move a cell for free. **Either way the paper judgement dominates the compute
+decision, and it is one decision rather than two.** Not mine to take; stated so it can be answered in one
+move rather than twice.
+
+**A correction I should carry rather than inherit:** the refusal ground first relayed to me for that scan
+— *"18 of 188 is the minor leg"* — was **a member count doing duty as a variance share**, and B caught it.
+The refusal now rests on B's weighting-independent ground: holding the vertical arm at `42` makes 169 of
+188 a **constant**, so the result is **a partial derivative reported as a total**. Same conclusion, sound
+reason. **I note it because the unsound version reached me and Joseph before the correction did**, and a
+board that inherited the first version would have recorded the right answer for the wrong reason.
 
 ## 2d. Cause 3's `P` leg: WITHDRAWN from MET, and I had the disconfirming evidence on screen
 
@@ -260,11 +303,11 @@ disconfirming evidence was on my own screen.** Same shape as the array-stall nea
 holding the number that refutes you and not applying it. The difference is that one I caught before
 publishing.
 
-## 3. Cause 4: the REASON the `M` cell was unreachable is false, and the cell still does not move
+## 3. Cause 4: HALF the REASON the `M` cell was unreachable is false — the method half — and the cell still does not move
 
 `CRITERIA-20260811` §2 grounds cause 4's `M` on *"no committed document records which scalar or how it was
 estimated"*, so that constructing one now would be *"the success condition invented after the fact."*
-**That reason is false as written, and I verified the correction from the commits rather than from the
+**HALF of that reason is false, and I verified the correction from the commits rather than from the
 retraction that reported it:**
 
 * **`a0cdc01`** (2026-06-08) **added the full specification with its derivation in the comment** —
@@ -277,6 +320,37 @@ retraction that reported it:**
 
 **There was never a literal scalar** — it was computed at runtime — which is why every value-shaped search
 for one returned empty.
+
+**NARROWED 2026-08-17, and the narrowing is the point — the sentence is a CONJUNCTION and only ONE half
+is refuted.** §2 reads: *"The retired procedure subtracted a scalar, and no committed document records
+**which scalar** or **how it was estimated**."* Those are two claims:
+
+| half | status | why |
+|---|---|---|
+| *"how it was estimated"* — the **method** | **REFUTED** | `a0cdc01` carries the derivation in the comment, and code is a committed record |
+| *"which scalar"* — the **value, per artifact** | **SURVIVES, untouched** | nothing found today shows what any *given archived artifact* had subtracted |
+
+**This is `BEN-245`/`BEN-083`'s distinction — a committed specification is INTENT, not PROVENANCE** — and it
+is the same distinction lane B used to withdraw its own uthrow MET. Code history shows the method existed
+and was active across a commit range. **It does not show that any particular artifact was built with it
+applied, nor at what value.** Credit to Assistant for constraining the finding before I did.
+
+**And the surviving half is STRONGER than when it was written, which I do not think anyone has said yet.**
+The specification we recovered shows the scalar was **never a stored quantity**: `jit_trace` was computed
+at runtime as `float(np.sum((x_cv2 - base) ** 2))` and emitted only to stdout —
+`print(f"\n[null] jitter floor ||x_cv(s+7)-x_cv||^2 = {jit_trace:.3e}")`. **So "which scalar" for a given
+archived artifact is recoverable only if that run's LOG survives**, not from any artifact or receipt. That
+is a sharper claim than *"no document records it"* and it names a **checkable, unchecked** next step: does
+any surviving run log carry a printed jitter floor for a product still in play?
+
+**So the correction to land is NOT "the stated reason is false."** It is: **one of two conjoined claims is
+false, the other stands, and the sentence should be rewritten to assert only the surviving one.** A blanket
+refutation would overshoot in the direction that flatters the morning's claim — and per the mediator, that
+is the direction it has been wrong in twice today.
+
+**The cell does not move**, and Assistant's read is that **the surviving claim may be the one cause 4's `M`
+leg actually needs.** If so, the finding narrows the *reason* without touching the *grade* — which is what I
+said this morning when I declined to move it.
 
 **The cell stays `OPEN` and I am declining to move it in either direction.** What an artifact establishes
 right now is: the specification **exists and is recoverable at `a0cdc01`**; the machinery is **absent at
