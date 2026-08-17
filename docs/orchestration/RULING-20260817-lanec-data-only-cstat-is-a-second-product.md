@@ -251,6 +251,17 @@ would kill the hypothesis I myself am carrying.**
 > with its own required keys** — product tag, data-factor sha256, and the unthinned-MC assertion — **and leave
 > `bootstrap` meaning exactly what it means today.**
 >
+> **AND TWO ADDITIONS TAKEN FROM THE MEDIATOR, one against my own preference.** (1) **Keep the empty-dict
+> rejection as well — but in the NEW verdict path only, never in the shared checker.** The separate-block
+> design alone would let a future consumer reaching for `bootstrap` out of habit read `None` from a key that
+> legitimately has no value there. Avoiding the class is the design; the assertion is the cheap backstop.
+> (2) **NO CROSS-TENSE COMPARISON anywhere in `C_stat^data`'s verifier** (`BEN-406`): assert either
+> **present** (tree vs tree) or **past self-contained** (a receipt asserting agreement between two things IT
+> recorded at one moment). A present-vs-historical check must decay to `FAIL` the moment a pinned file
+> legitimately changes, and the existing gate's exemption channel (`verify_hash_bindings.py`'s
+> `KNOWN_PREEXISTING`) is scoped to drift **before 2026-07-28** — **so a new product must not add a check
+> that inherits an expired escape hatch.**
+>
 > #### AND AN EXECUTION CONDITION, which is now a CONDITION rather than a suggestion
 >
 > **Whatever route lands must demonstrate on ONE replica, FROM THE ARTIFACT rather than from the code path,
