@@ -247,9 +247,17 @@ def main(argv=None):
     ap.add_argument("--offsets", required=True,
                     help="comma-separated offset grid, e.g. 0,1,2,3 (k=0 is the archive anchor)")
     ap.add_argument("--out", default=None, help="write the plan JSON here")
+    ap.add_argument("--cluster-probe", metavar="REPO", default=None,
+                    help="NATIVE argv probe over all seven launchers, run on the cluster where "
+                         "${REPO} and the env resolve for real. Read-only: python3/sbatch/srun/mkdir "
+                         "and rg_run/mr_run are stubbed, so nothing is written, deleted or submitted. "
+                         "Prints a machine-checkable VERDICT line; exits 0 PASS / 1 FAIL / 2 nothing ran.")
     ap.add_argument("--check", action="store_true",
                     help="validate only; exit non-zero on any violation")
     a = ap.parse_args(argv)
+    if a.cluster_probe:
+        offs = [int(x) for x in a.offsets.split(",") if x.strip() != ""]
+        return probe.cluster_check(a.cluster_probe, offs[0] if offs else 1200, PROBE_CASES)
     offsets = [int(x) for x in a.offsets.split(",") if x.strip() != ""]
     plan = build_plan(offsets)
     print(f"[mii] offsets={plan['offsets']}  groups={plan['group_baselines']}  "
