@@ -1961,5 +1961,93 @@ class CodeBasisAndCanonicalNamespace(unittest.TestCase):
         self.assertNotIn("mr_declared", comb,
                          "the combine's conditional was reverted once _sb was ruled canonical")
 
+
+class CompletenessGuardClassifiesUnopenable(unittest.TestCase):
+    """`TFile.Open` RAISES under PyROOT 6.28 instead of returning null, so `check()`'s own
+    `zombie/unopenable` branch was DEAD CODE and the caller's clean SystemExit never appeared.
+
+    ROOT is absent on this machine, so the guard is exercised against a STUB `ROOT` module -- the same
+    device as the stub gate. That tests the classification logic, which is what changed; it does not
+    test PyROOT's actual behaviour, which the mediator measured on real truncated products.
+    """
+
+    @contextlib.contextmanager
+    def _stub_root(self, open_impl):
+        """A ROOT stub COMPLETE for what this module touches, not just for what I first assumed.
+
+        My first version stubbed only TFile and the import died on `ROOT.gROOT` -- a stub whose
+        incompleteness looks like a failure of the code under test. Attributes are derived from the
+        module's own `ROOT.` references rather than guessed.
+        """
+        import sys
+        import types
+        mod = types.ModuleType("ROOT")
+        mod.TFile = types.SimpleNamespace(Open=open_impl, kRecovered=1)
+        mod.gROOT = types.SimpleNamespace(SetBatch=lambda *a, **k: None,
+                                          GetVersion=lambda: "stub")
+        mod.gErrorIgnoreLevel = 0
+        mod.kError = 3000
+        mod.kWarning = 1000
+        saved = sys.modules.get("ROOT")
+        sys.modules["ROOT"] = mod
+        sys.modules.pop("fps_unfold_complete", None)
+        try:
+            import fps_unfold_complete as fuc
+            yield fuc
+        finally:
+            sys.modules.pop("fps_unfold_complete", None)
+            if saved is None:
+                sys.modules.pop("ROOT", None)
+            else:
+                sys.modules["ROOT"] = saved
+
+    def test_an_OSError_from_Open_is_CLASSIFIED_not_propagated(self):
+        """The defect: a truncated file raised out of check() so the caller could never report why."""
+        def _raises(path, *a, **k):
+            raise OSError(f"file {path} does not exist or is unreadable")
+        with self._stub_root(_raises) as fuc, tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "trunc.root"
+            target.write_bytes(b"\x00" * 4096)      # >1024 so it clears the tiny-file check
+            r = fuc.check(str(target), expect_nbins=0, require_completeness=False)
+        self.assertFalse(r["ok"], "an unopenable file must not be ok")
+        self.assertIn("zombie/unopenable", r["why"],
+                      "check() must CLASSIFY the failure rather than let OSError escape -- a guard "
+                      "that cannot report its own reason leaves a bare ROOT traceback for the next "
+                      f"reader. got: {r!r}")
+        self.assertIn("OSError", r["why"], "the reason should name what actually happened")
+
+    def test_the_null_return_branch_is_KEPT_and_still_classifies(self):
+        """Both branches kept: the except handles pythonized PyROOT, `not f` is still correct for a
+        build or call path that returns null. Removing either trades one blind spot for another."""
+        with self._stub_root(lambda *a, **k: None) as fuc, tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "null.root"
+            target.write_bytes(b"\x00" * 4096)
+            r = fuc.check(str(target), expect_nbins=0, require_completeness=False)
+        self.assertFalse(r["ok"])
+        self.assertIn("zombie/unopenable", r["why"])
+
+    def test_the_stub_itself_is_not_what_makes_these_pass(self):
+        """CONTROL. A stub that raises on IMPORT would fail these tests for the wrong reason, and a
+        stub too permissive would pass them for the wrong reason. So: a HEALTHY open must reach further
+        into check() and fail on a LATER gate, proving the early return is the one under test."""
+        import types
+        class _H:
+            # IsZombie was missing on the first attempt and the CONTROL is what surfaced it -- the two
+            # real tests above never reach this far, so an incomplete healthy-file stub would have gone
+            # unnoticed and they would both have been passing over a stub that could not represent a
+            # healthy file at all.
+            def IsZombie(self): return False
+            def TestBit(self, _): return False
+            def Get(self, _): return None
+            def Close(self): pass
+        with self._stub_root(lambda *a, **k: _H()) as fuc, tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "openable.root"
+            target.write_bytes(b"\x00" * 4096)
+            r = fuc.check(str(target), expect_nbins=0, require_completeness=False)
+        self.assertFalse(r["ok"])
+        self.assertIn("no hXSecND_flat", r["why"],
+                      "an OPENABLE file must fail on a LATER gate, not on zombie/unopenable -- "
+                      f"otherwise these tests pass because the stub is broken. got: {r!r}")
+
 if __name__ == "__main__":
     unittest.main()
