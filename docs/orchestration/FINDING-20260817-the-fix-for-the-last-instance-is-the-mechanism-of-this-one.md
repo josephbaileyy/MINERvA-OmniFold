@@ -134,6 +134,41 @@ construct may differ the other way.
 compute node, same OS image, and the shebang settles the interpreter family — strong, and still **two
 hops of population with one measured.**
 
+### The two local shell-audit tools have OPPOSITE bias directions, and both are now measured
+
+Lane A's addition, and it matters more than either half alone. `bash 3.2` is the **older** grammar,
+so it accepts roughly a subset of what `4.4` does. Demonstrated in both directions rather than
+reasoned:
+
+| tool, run locally | probe | bash 3.2.57 (Mac) | bash 4.4.23 (Perlmutter) | local bias |
+|---|---|---|---|---|
+| `set -e` semantics | `set -euo pipefail; PASS=0; ((PASS++))` | **survives**, exit 0 | **exit 1** | **FALSE CONFIDENCE** |
+| `bash -n` grammar | `true \|& cat` | **syntax error**, exit 2 | **exit 0** | **false alarm** |
+
+> **A local `set -e` audit under-reports; a local `bash -n` over-reports.** Same host, same two
+> interpreters, opposite directions — so *"it was clean on my machine"* means something different for
+> each, and a reader who generalises from one to the other gets it backwards half the time.
+
+`bash -n`'s direction is the safe one: it is noisy about cluster-valid syntax and misses nothing the
+cluster would reject, because `4.4` removed essentially nothing `3.2` accepted. **That narrows the
+scope of a `bash -n`-clean result without weakening it** — relevant to the *"clean over 35 files"*
+reported during the gate-1 work, which stands, and which was never able to catch the continuation
+defect under **any** bash version anyway.
+
+### The dispatcher itself is clear, checked rather than assumed
+
+The exposure this amendment describes is real in general and **absent from `.githooks/pre-commit`.**
+Measured on `origin/main`: shebang `#!/bin/bash`, `set -uo pipefail` at `:200`, **zero occurrences of
+the `((x++))` idiom**, aggregation via the safe `$((x + 1))` form, and every check dispatched to
+`python3` rather than evaluated as a shell predicate. **So the hook's verdict does not pass through
+shell semantics, and every *"9 checks passed"* reported from a bash-3.2 Mac stands.** Lane A's
+measurement; recorded here because *"runs on the committer's machine"* is exactly the phrase that
+would otherwise send a future lane to re-audit it.
+
+**The one question worth asking of any green earned locally:** *does its verdict pass through a
+shell?* If no — a Python text scanner, a `python3` dispatcher — the interpreter cannot disagree. If
+yes, ask which direction the local interpreter errs in, because it is not the same for every tool.
+
 ## Family
 
 - `BEN-250` — a check whose strongest statement could not fail.
