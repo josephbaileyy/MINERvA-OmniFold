@@ -71,7 +71,7 @@ mr_require_valid_offset() {
 mr_member_dir() {
   if [[ -z "${MNV_EST_SEED_OFFSET:-}" ]]; then printf ''; return 0; fi
   local k="${MNV_EST_SEED_OFFSET}"
-  if ! [[ "$k" =~ ^-?[0-9]+$ ]]; then
+  if ! [[ "$k" =~ ^(0|-?[1-9][0-9]*)$ ]]; then
     echo "[member] FAIL: MNV_EST_SEED_OFFSET='${k}' is not an integer; it names the output namespace" >&2
     return 2
   fi
@@ -101,7 +101,7 @@ mr_dir_prefix() {
 # mr_note -> the marker note recording this run's declared offset, or "" when undeclared.
 mr_note() {
   if [[ -z "${MNV_EST_SEED_OFFSET:-}" ]]; then printf 'est_seed_offset=undeclared'; return 0; fi
-  if ! [[ "${MNV_EST_SEED_OFFSET}" =~ ^-?[0-9]+$ ]]; then printf 'est_seed_offset=MALFORMED'; return 2; fi
+  if ! [[ "${MNV_EST_SEED_OFFSET}" =~ ^(0|-?[1-9][0-9]*)$ ]]; then printf 'est_seed_offset=MALFORMED'; return 2; fi
   printf 'est_seed_offset=%s' "${MNV_EST_SEED_OFFSET}"
 }
 
