@@ -2,10 +2,7 @@
 
 **Lane B, 2026-08-18. Read-only analysis of a diff I applied (`20518416`); every operand re-derived
 against the fetched remote. Nothing run.**
-**AWAITING A BEN ID: lane B's blocks `100-129` and `240-249` are fully allocated (derived tracked and
-untracked immediately before writing this). A block has been requested from the mediator. Indexed in
-`FINDINGS.md`'s long-form table so it is readable before it is numbered — an unindexed finding is one
-nobody reads, and that is how nine of them sat orphaned until 2026-08-06.**
+**`BEN-480`, the first filing into lane B's third block `480-489`.** The block row and the advance of `*(unallocated)*` to `490-499` are in the same commit as the row — `BEN-441` records that skipping the second step is what nearly cost lane A a collision. **This row was very nearly `BEN-470`: the mediator allocated that range to this lane out-of-band, and lane E derived it free and filed `BEN-470` into it at `8e11bb1b` while these edits sat uncommitted. Both derivations were correct and minutes apart — a claim on a range lands only at COMMIT time, so an allocation asserted in a message is invisible to the procedure.** The mediator's rule change, recorded because it is one: it will not allocate `BEN` ranges; a lane derives and files in one commit, and a racing loser re-derives. **The document also sat INDEXED BUT UNNUMBERED for about an hour** rather than take lane D's offered `451-459` — a lane's row is its author's, and an UNINDEXED finding is the one nobody reads while an unnumbered one is merely awkward.
 
 ---
 
