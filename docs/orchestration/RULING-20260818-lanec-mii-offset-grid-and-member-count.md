@@ -102,6 +102,14 @@ number above that, and it also clears the `50000+i` band at every `j`.**
 > each derived from a launcher's `--array` and from `unified_throw_cov.py:245` — so the predicate must READ
 > them, not hardcode them, or it rots the first time an array widens.**
 >
+> **⚠ SUPERSEDED IN PART — this clause asserted the exemption without giving a REASON, and lane B correctly
+> declined to wire a predicate on a fiat. The reason, the conditional disposition it implies, and the form the
+> exemption must take are in
+> [`DETERMINATION-20260818-lanec-anchor-confound-is-declarable-by-direction.md`](DETERMINATION-20260818-lanec-anchor-confound-is-declarable-by-direction.md) (`BEN-463`). The exemption
+> stands; *"declare rather than repair"* is now conditional on the verdict's direction, and the exemption is a
+> two-entry allowlist rather than a member skip.** *(Pointer added under this ruling's own linkage rule,
+> `BEN-460`: a document must index what supersedes any of its rows.)*
+>
 > **`k = 0` is EXEMPT and must be: it is dirty on two of the three ranges, and that is a property of the
 > PUBLISHED ARCHIVE, not of the scan.** The exemption is the honest shape — the anchor differs structurally
 > from every other member, this cannot be fixed without abandoning the anchor, and **it is a limitation of
