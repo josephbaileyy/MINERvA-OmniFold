@@ -2,6 +2,7 @@ import ast
 import importlib.util
 import sys
 import contextlib
+import os
 import re
 import tempfile
 import unittest
