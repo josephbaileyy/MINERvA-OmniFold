@@ -49,11 +49,10 @@ THROW_DIR="$(mr_dir_prefix uq_5d/uthrow_slabs_5d_sb)"
 # So: a DECLARED member reads the namespace its own block leg writes; an UNDECLARED run reads exactly
 # what it read before. Repointing the literal unconditionally would move archive behaviour, which is
 # C's decision and not mine -- WHICH NAMESPACE IS CANONICAL IS STILL OPEN.
-if mr_declared; then
-  BLOCK_DIR_SB="$(mr_dir_prefix uq_5d/block_slabs_5d)"
-else
-  BLOCK_DIR_SB="uq_5d/block_slabs_5d_sb"
-fi
+# REVERTED to the plain namespaced form once R1 ruled _sb canonical. I had made this conditional so a
+# member's combine would read the block leg's non-_sb namespace -- correct as a way to make the two
+# agree, wrong about WHICH one to agree on. The consumer was never the misaligned side.
+BLOCK_DIR_SB="$(mr_dir_prefix uq_5d/block_slabs_5d_sb)"
 ROOT_OUT="$(mr_prefix uq_5d/unified_throw_cov_5d.root)"
 python3 unified_throw_cov_5d.py --draw-seed 1000 --estimator-seed ${EST_SEED} \
   --combine "${THROW_DIR}/uthrow5d_slab_*.npz" \

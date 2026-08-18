@@ -22,7 +22,25 @@ source "${REPO}/lib/resume_guard.sh"
 # tracked .sh and are deliberately NOT touched here: that is a repo-wide migration, not a patch.
 _HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${_HERE}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
-BLOCK_DIR="$(mr_dir_prefix uq_5d/block_slabs_5d)"
+# R1 RULED (C, db5b3931 §12): _sb IS THE CANONICAL NAMESPACE FOR BOTH LEGS.
+# receipt_construction_contract_5d.py:313-314 binds throw_slabs_sb AND block_slabs_sb, corroborated by
+# the digest-bearing slab manifest, the fast combine's globs and the fast run's writes. So the CONSUMER
+# was right all along and THIS launcher's literal is the single misaligned one in the chain.
+#
+# A MEMBER therefore writes into the _sb namespace, matching its own combine -- which makes the
+# zero-slab SystemExit unreachable per member instead of certain.
+#
+# THE UNSET PATH IS DELIBERATELY LEFT ON THE NON-_sb LITERAL, and my earlier reason for that was WRONG.
+# I said repointing it would move archive behaviour. It would not -- the archive IS _sb. What it would
+# actually do is let a NON-SCAN run write INTO THE LIVE ARCHIVE DIRECTORY, a destructive edge on 124
+# receipt-bound slabs. Right action, wrong reason, and the real reason is worse than the one I gave.
+# The tracked producer's wrong literal is a PRE-EXISTING defect needing its own change and its own
+# authorization; it is not folded into the scan.
+if mr_declared; then
+  BLOCK_DIR="$(mr_dir_prefix uq_5d/block_slabs_5d_sb)"
+else
+  BLOCK_DIR="uq_5d/block_slabs_5d"
+fi
 T=${SLURM_ARRAY_TASK_ID}
 # --invalid-ratio neutral: hold the ~5e-5 GENIE negative-weight artifacts
 # (HighQ2/LowQ2 +1sigma, one MFP_N zero) at CV for the affected knob -- the
