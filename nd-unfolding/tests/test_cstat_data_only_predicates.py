@@ -50,6 +50,43 @@ def _source_of(fn):
     return src
 
 
+def _code_only(fn):
+    """A function's EXECUTABLE source: comments AND docstrings removed.
+
+    `ast.unparse` DROPS COMMENTS BUT PRESERVES DOCSTRINGS -- a docstring is a string expression, not a
+    comment -- so it is not a general prose-stripper, and using it as one is the fifth instance in this
+    session of a check of mine reading PROSE AS CODE. It failed here on a docstring that NAMES the very
+    thing the control forbids, while explaining why the function must not do it: `default_rng`.
+
+    So the rule the earlier four instances produced -- "use ast.unparse, which drops comments by
+    construction" -- was true and incomplete, and the incompleteness is invisible until a docstring
+    happens to quote the forbidden token. Anything asserting the ABSENCE of a token in code must come
+    through here.
+    """
+    return _code_only_src(inspect.getsource(fn).strip(), label=fn.__name__)
+
+
+def _code_only_src(src, *, label="<source>"):
+    """`_code_only` for a source STRING -- a whole module, or any parseable fragment.
+
+    Same reason, and it is applied to every ABSENCE assertion in this file rather than only to the one
+    that bit: a rule enforced where it has already failed catches nothing new. Two further sites were
+    LATENTLY vulnerable here -- they happened not to quote their own forbidden token -- and "happens not
+    to" is not a property anyone maintains.
+    """
+    tree = ast.parse(src)
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Module)):
+            body = getattr(node, "body", [])
+            if body and isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant) \
+                    and isinstance(body[0].value.value, str):
+                node.body = body[1:] or [ast.Pass()]
+    code = ast.unparse(tree)
+    if len(code) < 40:
+        raise AssertionError(f"docstring stripping left almost nothing for {label}")
+    return code
+
+
 class FakeMC:
     """Minimal stand-in for the loader's MC DataLoader: the three attributes P5 reads."""
 
@@ -744,9 +781,10 @@ class ExtractionStampGuard(unittest.TestCase):
         """BRANCHED, NEVER WIDENED. If the data-only branch were the shared set minus
         `bootstrap_seed`, a three-stream artifact that LOST that field would pass by being read as
         data-only. The two sets must each be complete for their own product."""
-        src = inspect.getsource(self.xr.read_replica_contract)
-        tree = ast.parse(src.strip())
-        code = ast.unparse(tree)          # drops comments, so prose cannot satisfy this
+        # `_code_only`: ast.unparse alone keeps DOCSTRINGS, and this control's own docstring talks
+        # about "the shared set minus bootstrap_seed". It happened not to quote the forbidden token
+        # verbatim, which is luck rather than a property.
+        code = _code_only(self.xr.read_replica_contract)
         self.assertIn("shared_required |", code,
                       "each product must ADD to a shared core rather than subtract from a union")
         self.assertNotIn("shared_required -", code)
@@ -943,6 +981,186 @@ class SubmitControllerStageSelection(unittest.TestCase):
         Comments stripped, because this is an ABSENCE check and absence checks are the direction prose
         can satisfy by accident."""
         self.assertNotIn("both|target|train", self._shell_code())
+
+
+class ReadbackReplacements(unittest.TestCase):
+    """The first 14 of the 38 remaining UNEXECUTED-BY-CONSTRUCTION replacements.
+
+    THE STRUCTURAL POINT, which is better than the ruling assumed: the pinned validator IMPORTS cleanly
+    and its expectations are MODULE-LEVEL constants, so every `want` here is the SAME OBJECT the pinned
+    check compares against rather than a restatement. The divergence is in the EXECUTION, not in the
+    VALUES -- 71% of the control flow and 0% of the constants. A control below asserts there is no local
+    fallback, because a fallback would reintroduce exactly the drift this arrangement removes.
+    """
+
+    def setUp(self):
+        import cstat_data_only_readback as rb
+        import validate_gate5_training_artifacts as V
+        self.rb, self.V = rb, V
+
+    def store(self, **over):
+        n_bkg, rows = 7, int(self.V.FROZEN_POLICY["train_events"])
+        d = {
+            "replica_seed_policy": np.asarray(self.V.SEED_POLICY_STRING),
+            "seed_policy": np.asarray(self.V.FROZEN_POLICY, dtype=object),
+            "estimator_fingerprint": np.asarray(self.V.ESTIMATOR),
+            "bkg_mode": np.asarray(self.V.BKG_MODE),
+            "tag": np.asarray("nominal"),
+            "inputs_sha256": np.asarray(self.V.SOURCE_SHA256),
+            "inventory_hashes": np.asarray("inv-abc"),
+            "input_identity_hashes": np.asarray({"sig": "s", "bkg": "b"}, dtype=object),
+            "n_bkg_full": np.asarray(n_bkg),
+            "mc_indices": np.arange(rows, dtype=np.int64),
+            "sig_bootstrap_factor": np.ones(rows, dtype=np.uint8),
+            "bkg_indices": np.arange(n_bkg, dtype=np.int64),
+            "weights_push": np.ones(rows, dtype=np.float64),
+        }
+        d.update(over)
+        return d
+
+    # ---- cluster A: the six policy scalars ----
+    def test_policy_scalars_pass_on_a_correct_artifact(self):
+        out = self.rb.assert_artifact_policy_scalars(self.store(), where="unit")
+        self.assertEqual(6, out["checked"])
+        self.assertEqual([225, 227, 228, 229, 230, 231], out["replaces_pinned_sites"])
+
+    def test_each_policy_scalar_is_INDIVIDUALLY_load_bearing(self):
+        """Six controls in one loop: each field is perturbed alone and must fail alone. A single
+        all-fields-wrong control would pass even if five of the six comparisons were missing."""
+        for key, bad in (("replica_seed_policy", "other-policy"),
+                         ("seed_policy", {"estimator_seed": 43}),
+                         ("estimator_fingerprint", "pet-v0"),
+                         ("bkg_mode", "raw"),
+                         ("tag", "annealed"),
+                         ("inputs_sha256", "0" * 64)):
+            with self.assertRaises(SystemExit) as cm:
+                self.rb.assert_artifact_policy_scalars(
+                    self.store(**{key: np.asarray(bad, dtype=object)}), where="unit")
+            self.assertIn(key, str(cm.exception))
+
+    def test_a_missing_policy_key_FAILS_rather_than_being_skipped(self):
+        st = self.store()
+        del st["bkg_mode"]
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_artifact_policy_scalars(st, where="unit")
+        self.assertIn("required key absent", str(cm.exception))
+
+    # ---- cluster B: cross-process inventory/identity ----
+    def test_inventory_and_identity_agree_with_the_target_receipt(self):
+        tb = {"inventory_hashes": "inv-abc", "input_identity_hashes": {"sig": "s", "bkg": "b"}}
+        out = self.rb.assert_inventory_identity_agree_with_target(self.store(), tb, where="unit")
+        self.assertEqual([239, 241], out["replaces_pinned_sites"])
+        self.assertIn("different processes", out["operands"])
+
+    def test_a_disagreeing_inventory_hash_is_caught(self):
+        tb = {"inventory_hashes": "inv-DIFFERENT",
+              "input_identity_hashes": {"sig": "s", "bkg": "b"}}
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_inventory_identity_agree_with_target(self.store(), tb, where="unit")
+        self.assertIn("inventory_hashes disagree", str(cm.exception))
+
+    def test_a_disagreeing_identity_map_is_caught(self):
+        tb = {"inventory_hashes": "inv-abc", "input_identity_hashes": {"sig": "s", "bkg": "OTHER"}}
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_inventory_identity_agree_with_target(self.store(), tb, where="unit")
+        self.assertIn("input_identity_hashes disagree", str(cm.exception))
+
+    def test_an_ABSENT_target_block_fails_closed_rather_than_skipping(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_inventory_identity_agree_with_target(self.store(), {}, where="unit")
+        self.assertIn("no second operand", str(cm.exception))
+
+    def test_a_target_block_MISSING_one_field_fails_on_that_field(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_inventory_identity_agree_with_target(
+                self.store(), {"inventory_hashes": "inv-abc"}, where="unit")
+        self.assertIn("no input_identity_hashes", str(cm.exception))
+
+    # ---- cluster C: subsample geometry ----
+    def test_subsample_geometry_passes_and_refuses_to_regenerate_its_own_expectation(self):
+        rows = int(self.V.FROZEN_POLICY["train_events"])
+        out = self.rb.assert_subsample_geometry(
+            self.store(), expected_mc_indices=np.arange(rows, dtype=np.int64), where="unit")
+        self.assertEqual([248, 252, 255], out["replaces_pinned_sites"])
+        # `_code_only`, NOT `ast.unparse` -- ast.unparse keeps DOCSTRINGS, and this function's docstring
+        # names `default_rng` while explaining why the function must not call it. Fifth prose-as-code
+        # instance of the session, and the first where the prose was a docstring rather than a comment.
+        code = _code_only(self.rb.assert_subsample_geometry)
+        self.assertNotIn("default_rng", code,
+                         "a predicate that regenerates its own expectation from the same seed the "
+                         "artifact used is comparing a value to itself")
+
+    def test_wrong_mc_indices_are_caught(self):
+        rows = int(self.V.FROZEN_POLICY["train_events"])
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_subsample_geometry(
+                self.store(), expected_mc_indices=np.arange(1, rows + 1, dtype=np.int64),
+                where="unit")
+        self.assertIn("not the frozen subsample", str(cm.exception))
+
+    def test_an_EMPTY_expected_index_array_is_REFUSED(self):
+        """An equality against an empty array is vacuously satisfiable, so supplying one must fail
+        rather than pass -- this session's finding family, inside a replacement written for it."""
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_subsample_geometry(
+                self.store(), expected_mc_indices=np.asarray([], dtype=np.int64), where="unit")
+        self.assertIn("vacuously satisfiable", str(cm.exception))
+
+    def test_unordered_background_indices_are_caught(self):
+        rows = int(self.V.FROZEN_POLICY["train_events"])
+        st = self.store(bkg_indices=np.asarray([0, 2, 1, 3, 4, 5, 6], dtype=np.int64))
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_subsample_geometry(
+                st, expected_mc_indices=np.arange(rows, dtype=np.int64), where="unit")
+        self.assertIn("complete ordered inventory", str(cm.exception))
+
+    # ---- cluster F: weights_push ----
+    def test_weights_push_sane_passes(self):
+        out = self.rb.assert_weights_push_sane(self.store(), where="unit")
+        self.assertEqual([304, 305, 306], out["replaces_pinned_sites"])
+
+    def test_a_SINGLE_negative_weight_in_two_million_rows_is_caught(self):
+        """The reason non-negativity is checked elementwise: one negative row cannot move a summary."""
+        rows = int(self.V.FROZEN_POLICY["train_events"])
+        w = np.ones(rows, dtype=np.float64)
+        w[rows // 3] = -1e-9
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_weights_push_sane(self.store(weights_push=w), where="unit")
+        self.assertIn("1 negative entries", str(cm.exception))
+
+    def test_a_single_nan_weight_is_caught(self):
+        rows = int(self.V.FROZEN_POLICY["train_events"])
+        w = np.ones(rows, dtype=np.float64)
+        w[0] = np.nan
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_weights_push_sane(self.store(weights_push=w), where="unit")
+        self.assertIn("non-finite", str(cm.exception))
+
+    def test_a_wrong_row_count_is_caught(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_weights_push_sane(
+                self.store(weights_push=np.ones(5, dtype=np.float64)), where="unit")
+        self.assertIn("weights_push shape", str(cm.exception))
+
+    # ---- the structural property ----
+    def test_there_is_NO_local_fallback_for_the_pinned_expectations(self):
+        """A try/except around the import, or a local default, would reintroduce the drift this whole
+        arrangement removes -- and it would do so silently, since the fallback path only runs when the
+        pinned module is unavailable."""
+        src = (Path(PET) / "cstat_data_only_readback.py").read_text()
+        code = _code_only_src(src, label="cstat_data_only_readback")
+        self.assertIn("from validate_gate5_training_artifacts import", src)
+        self.assertNotIn("except ImportError", code)
+        self.assertNotIn("except Exception", code)
+
+    def test_every_want_is_the_pinned_modules_own_object(self):
+        """Identity, not equality: if these were copies, a change to the pinned constant would leave the
+        replacement asserting the old value while looking correct."""
+        self.assertIs(self.rb.SEED_POLICY_STRING, self.V.SEED_POLICY_STRING)
+        self.assertIs(self.rb.FROZEN_POLICY, self.V.FROZEN_POLICY)
+        self.assertIs(self.rb.ESTIMATOR, self.V.ESTIMATOR)
+        self.assertIs(self.rb.BKG_MODE, self.V.BKG_MODE)
+        self.assertIs(self.rb.SOURCE_SHA256, self.V.SOURCE_SHA256)
 
 
 class ManifestPrecedesArtifacts(unittest.TestCase):
