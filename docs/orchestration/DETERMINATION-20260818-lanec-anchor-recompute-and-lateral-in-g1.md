@@ -519,6 +519,99 @@ universes' `.root`), so they are in scope and I have **not** read their writers.
 > that enumeration exists, and I would rather block on a named gap than ship a rule that silently covers half the
 > comparison.**
 
+### 11e. THE ROOT-SIDE LISTING — form asked for, and it arrived. **Ruled below; and it found a fifth gate**
+
+**Requested form, and the last two are hazards ROOT has that npz does not:** recursive PATH not object name
+(ROOT nests, and a comparison keyed on a bare name compares the wrong pair and reports agreement); CLASS + SHAPE
+beside every key (for ROOT the class answers most of the three-class test); **CYCLE COUNTS** — a key re-`Write()`n
+without `kOverwrite` leaves `;1`, `;2`, **so it has no single value and a comparator reads the highest silently**,
+which is today's shape exactly and cannot happen in an npz; and **BOTH SIDES AS A THREE-BUCKET DIFF** (in both /
+archive-only / current-only), because §11d's map is built from the DIFFERENCE and the buckets make its
+completeness checkable — anything left over is the fail-closed case.
+
+> **AND A FLAG WITH A NUMBER, because nothing here has carried it: `uq_5d/unified_throw_cov_5d.root` is
+> `2,677,168,123 B` measured. Stage 1 compares it ONCE (`2.68 GB`, fine). STAGE 2 STORES FIFTY —
+> `133.9 GB` / `124.7 GiB` for that ONE product**, before 188 sweep `.root` per member. **Scratch is purgeable.**
+> I am not estimating the rest; **it is a THIRD cost column beside GPU and CPU and it should be measured before
+> stage 2.**
+
+### 11f. RULED on the archive's ROOT keys — **the missing SEED STAMP is a fifth gate, and one of the mediator's classifications is wrong in the way that produced the third class**
+
+**Measured: `unified_throw_cov_5d.root` has 9 keys, `5d_xsec_…root` has 4, and NEITHER carries `estimator_seed`,
+`draw_seed`, `est_seed_offset`, or any seed key at all.** The `.npz` slabs do; the ROOT products do not.
+
+#### 11f-i. ⚠ AT STAGE 1, A BIT-EXACT PASS AND *"you compared the archive to itself"* ARE THE SAME OBSERVATION
+
+**The mediator leans toward the ensemble receipt's write-time digest binding being sufficient. It is sufficient
+for stage 2 and NOT for stage 1, and the asymmetry is the whole point.** Spec §4's ensemble assertion —
+*"cross-member product digests DISTINCT wherever stochastic outputs should differ"* — catches a resume-skip that
+hands 50 members the same bytes, because 50 identical digests are visible. **Stage 1 has ONE member, so that
+backstop does not exist** — and the outcome stage 1 exists to exclude (member 0 handed the archive) produces
+**identical digests, which is indistinguishable from a successful bit-exact reproduction.**
+
+> **So the gate cannot distinguish success from the failure it exists to catch, using digests alone. RULED: BOTH
+> remedies, because they close different halves.**
+>
+> **(A) THE MEMBER'S ROOT WRITERS STAMP `estimator_seed`, `draw_seed`, `est_seed_offset` and
+> `est_seed_offset_declared`.** A positive declaration in the artifact, which is §10c's invariant. **Compatible
+> with §2b: the archive has none, so every stamp is `current-only` and PROVENANCE for the comparison — and a
+> ROOT comparison is object-by-object, not file-byte-by-byte, so a stamp cannot break bit-exactness of payload.**
+>
+> **(B) A PRODUCT CLASS THAT CANNOT CARRY AN IDENTITY STAMP CAN NEVER BE RESUMED.** Until (A) lands, the
+> identity-aware resume must never skip a ROOT product — no stamp to read means no skip is defensible. **Fail-
+> closed, no writer change, and it is exactly §10c applied to a whole product class.**
+>
+> **And the reason I will not take *"unlikely, because under member-root-first the paths differ"*: that is the
+> argument I refused two rulings ago for glob non-recursion.** A path is not a declaration.
+
+#### 11f-ii. ⚠ AND `dataPOT` IS **CONFIGURATION**, NOT PROVENANCE — a correction, and the SECOND instance of one pattern
+
+**`dataPOT = 1.057394261158926e+21` is the exposure the cross sections were NORMALISED TO. It enters the
+arithmetic.** If it differed, every value would be scaled differently. **By §11a's test — *changing it changes
+what was measured* — it is CONFIGURATION, and as provenance it would be ALLOWED TO DIFFER and a member
+normalised to a different POT would pass.**
+
+> **THIS IS `train_frac` AGAIN, which is the example that produced the third class in the first place. Two for
+> two, and both times the key LOOKED like a stamp — so here is the heuristic: A SCALAR THAT ENTERS THE ARITHMETIC
+> LOOKS LIKE A STAMP BECAUSE IT IS RECORDED ONCE AND NEVER VARIES.** Constancy is not circumstance. **Ask what
+> breaks if it changes, not how often it changes.**
+
+#### 11f-iii. The rest of the classification — confirmed, with the recomputation rule extended
+
+| key | class | note |
+|---|---|---|
+| `C_unified`, `C_blocksum`, `C_cross`, `hJointMeanShift`, `hXSecND_flat` | **PAYLOAD** | bit-exact |
+| `sqrt_tr_unified`, `sqrt_tr_block`, `joint_mean_shift_norm`, `fixed_seed_null_norm` | **PAYLOAD + MANDATORY RECOMPUTATION** | **CONFIRMED as the mediator proposed.** Derived from the histograms in the same file, so `BEN-077` applies exactly as for `total_xsec`: **a product whose scalar disagrees with its own array is a defect a bit-exact comparison passes on BOTH sides.** |
+| `globalCompleteness` | **PAYLOAD + MANDATORY RECOMPUTATION** | It IS a measured value — of the product's own completeness — so the test says payload, and recomputation applies for the same reason as the four scalars. It also doubles as `require_completeness`'s operand. |
+| `n_throws`, `ndim` | **CONFIGURATION** | declared integers |
+| `dataPOT` | **CONFIGURATION** | see §11f-ii — corrected |
+
+#### 11f-iv. ⚠ AND THE BAR'S OWN OPERAND IS NOT IN THIS FILE — a scope gap, flagged
+
+**The predeclared bar is `f_agg = sd(block_sum)/block_sum` against `block_sum = 4.357790406860002e-38`. The
+terminal product's scalars are `sqrt_tr_unified = 4.4607819710748654e-38` and
+`sqrt_tr_block = 3.4032639007214586e-38`. NEITHER IS THE BAR'S OPERAND.**
+
+> **So `block_sum` lives in some other product — the 5-block assembly — and STAGE 1's COMPARISON SCOPE AS LISTED
+> DOES NOT COVER THE QUANTITY THE BAR TESTS.** That product must be identified and added to the scope, or the
+> anchor comparison is bit-exact over everything except the number `M(ii)` is about. **Named rather than
+> resolved: I do not know which product carries it, and guessing is how a scope gets closed on the wrong file.**
+
+#### 11f-v. Two clarifications my own §11a needed, both surfaced by this listing
+
+1. **PROVENANCE-class means *may DIFFER from the archive*. It does NOT mean *may be ABSENT from the member*.** I
+   conflated those, and (A) above depends on the distinction: **the offset stamp is PROVENANCE for the archive
+   comparison and MANDATORY for member admission.** Two checks, one key, no contradiction.
+2. **`n_throws = 160` in the terminal product is a THIRD corroboration of the throw population, by a third
+   route** — launcher arithmetic, the slab id union, and now a declared integer in the artifact. **And this one is
+   immune to `BEN-465`: it is a stated count, not a count of containers.**
+
+**And on `globalCompleteness` being PRESENT (`0.99986`) while B relaxed `require_completeness` because the family
+*"does not always write"* it: endorsed, and sharpened. A RELAXATION IS A WIDENING, so it needs a case that
+REQUIRES it — a member of the family that demonstrably lacks the key.** Absent that, the relaxation is
+unevidenced. *(Same rule as a filter needing a test in the direction it acts, applied to a guard being loosened
+rather than tightened.)*
+
 ## 12. R1 RULED — **`_sb` IS CANONICAL FOR BOTH LEGS**, and there is exactly ONE wrong literal
 
 **Not a judgement — the receipt says so.** `receipt_construction_contract_5d.py:313-314`:
@@ -742,6 +835,15 @@ single-ply** — and the surviving clause is the weaker of the two.)*
 - **RULED (§11d): a declared KEY-RENAME/SPLIT MAP for the archive side**, written before stage 1 — archive
   `seed` → `(estimator_seed, draw_seed)`. **And `bands` classified CONFIGURATION; the fail-closed rule fired
   on it correctly, on real data.**
+- **RULED (§11f): the missing ROOT seed stamp is a FIFTH stage-1 gate.** At stage 1 a bit-exact pass and
+  *"you compared the archive to itself"* are the same observation, because the ensemble's digest-distinctness
+  backstop needs more than one member. **Both remedies: member ROOT writers stamp the offset, AND a product
+  class that cannot carry an identity stamp can never be resumed.**
+- **CORRECTED (§11f-ii): `dataPOT` is CONFIGURATION, not provenance** — it enters the arithmetic. Second
+  instance of `train_frac`'s pattern: **a scalar that enters the arithmetic looks like a stamp because it is
+  recorded once and never varies.**
+- **FLAGGED (§11f-iv): the bar's `block_sum` is NOT among the terminal product's 9 keys**, so stage 1's
+  scope as listed does not cover the quantity the bar tests.
 - **AUTHORIZED: nothing.** No launcher edited, nothing submitted.
 
 *Second sought: B on §3's derived-target predicate (its module) and on whether stage 1 can be run as a single
