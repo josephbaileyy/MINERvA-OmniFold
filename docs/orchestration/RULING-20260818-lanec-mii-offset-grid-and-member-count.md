@@ -17,6 +17,8 @@ different KINDS of thing, which is why they are separated:**
 
 **Everything below is derived this turn from the launchers and modules at `HEAD`, not recalled.**
 
+> **⚠ LINE CITATIONS REPOINTED ONE COMMIT AFTER THIS RULING LANDED, AND THE REASON IS WORTH THE THREE LINES.** The measurements were taken at `808a028b`, where the throw-seed derivation was `unified_throw_cov.py:239` and the block-unit call `:295`. Merging `origin/main` (`214acdbb`, +19 lines in that file) moved them to **`:245`** and **`:306`** — same code, different coordinates. **Re-verified by content, not by offset**: `grep -n 'default_rng(args.draw_seed'` → `245`. *Recorded rather than silently corrected: this is `measure after the rebase, not before` arriving inside a document whose whole argument is a set of line-anchored facts, and a reader who checks `:239` today finds unrelated code.* **The three seed RANGES — `[1,100]`, `[1,24]`, `[1000,1159]` — are unchanged; they come from `--array` specs and a `--throws` count, neither of which the merge touched.**
+
 ---
 
 ## 1. THE GRID — `k_j = 1200·j`, `j = 0 … n−1`
@@ -41,9 +43,9 @@ OFFSET MOVES.** Measured at `HEAD`:
 |---|---|---|---|
 | `C_stat` | `sbatch_bootstrap_5d_gpu.sh:5,34` | `--seed ${SLURM_ARRAY_TASK_ID}`, `--array=1-100` | **`[1, 100]`** |
 | `C_ML` | `sbatch_seedscan_split_5d.sh:5,19` | `--split-seed ${SLURM_ARRAY_TASK_ID}`, `--array=1-24` | **`[1, 24]`** |
-| `C_syst` throws | `unified_throw_cov.py:239` | `default_rng(draw_seed + gj)`, `gj = 0…159` | **`[1000, 1159]`** |
+| `C_syst` throws | `unified_throw_cov.py:245` | `default_rng(draw_seed + gj)`, `gj = 0…159` | **`[1000, 1159]`** |
 
-*(The block-unit path takes `estimator_seed` only — `:295` — so `[1000,1159]` is the whole derived range, not a
+*(The block-unit path takes `estimator_seed` only — `:306` — so `[1000,1159]` is the whole derived range, not a
 lower bound on it. `160` global throws: `sbatch_uthrow_run_5d_fast.sh:5,9` — 40 tasks × 4 throws, union 0-159.)*
 
 > **So the forbidden set is not `{±958}`. It is every offset that lands EITHER group's estimator seed inside
@@ -97,7 +99,7 @@ number above that, and it also clears the `50000+i` band at every `j`.**
 
 > **CLEAN-OFFSET PREDICATE: for every `k ≠ 0` in the grid and every baseline `b`, `b + k` must lie outside
 > every seed range the four legs derive by addition. The three ranges are `[1,100]`, `[1,24]`, `[1000,1159]`,
-> each derived from a launcher's `--array` and from `unified_throw_cov.py:239` — so the predicate must READ
+> each derived from a launcher's `--array` and from `unified_throw_cov.py:245` — so the predicate must READ
 > them, not hardcode them, or it rots the first time an array widens.**
 >
 > **`k = 0` is EXEMPT and must be: it is dirty on two of the three ranges, and that is a property of the
