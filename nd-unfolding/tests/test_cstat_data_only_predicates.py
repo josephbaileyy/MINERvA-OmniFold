@@ -2007,6 +2007,212 @@ class DataOnlyFamilyValidator(unittest.TestCase):
         self.assertIn("the divergence manifest is missing", src)
 
 
+class FamilyVerdictIsBinding(unittest.TestCase):
+    """THE PROPERTY `guarded()` MUST NOT HAVE BROKEN: a recorded failure is VERDICT-BEARING.
+
+    Converting a predicate's `SystemExit` into a recorded row is right for a family instrument -- a raise
+    loses the other 49 members and makes a failure look like a crash, and this campaign has spent a day on
+    the difference between "the check failed" and "the check could not run". BUT if a recorded failure were
+    merely REPORTED and not verdict-bearing, `guarded()` would have converted a hard stop into a soft
+    signal, which is strictly WORSE than the abort it replaced.
+
+    So this is asserted END TO END, by running the shipped module as a subprocess over a synthetic
+    one-member family: correct family -> verdict PASS and exit 0; ONE perturbed field -> verdict FAIL,
+    exit 1, and the offending row named. Reading the `if not c.failed` expression would not have settled
+    it, because the question is about the composition of four separate steps (row -> member verdict ->
+    family verdict -> exit code) and any one of them could drop the signal.
+    """
+
+    MOD = "nd-unfolding/pet/validate_gate5_data_only_artifacts.py"
+
+    def setUp(self):
+        import cstat_data_only as cdo_
+        import cstat_data_only_readback as rb
+        import validate_gate5_data_only_artifacts as V
+        self.cdo, self.rb, self.V = cdo_, rb, V
+        self.repo = Path(__file__).resolve().parents[2]
+        self.tmp = Path(tempfile.mkdtemp(prefix="gate5-family-"))
+        self.job = "57200001"
+        self.idx = 0
+        self.seed = 50_000 + self.idx
+        self.rows = int(rb.FROZEN_POLICY["train_events"])
+        self.n_sig = self.rows + 17
+        self.n_bkg = 11
+        self.n_data = 23
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _build(self, *, perturb=None):
+        """A synthetic single-member family that satisfies every replacement, then optionally one break."""
+        V, rb, cdo_ = self.V, self.rb, self.cdo
+        root = self.tmp / "fullevent_cstat_data_only_n50"
+        rep = root / "replicas" / f"replica_{self.idx:02d}"
+        tdir, trdir, logs = rep / "target", rep / "training", root / "logs"
+        for d in (tdir, trdir, trdir / "w_nominal", logs):
+            d.mkdir(parents=True, exist_ok=True)
+
+        mc = V.frozen_mc_indices(self.n_sig)
+        # THE REAL CANONICAL DRAW, not `np.ones`. My first fixture used ones and P4 correctly refused it
+        # ("data factor != canonical draw at this seed") -- the fixture was wrong and the validator was
+        # right, which is the direction a positive control has to be built to respect.
+        data_factor = np.asarray(
+            fe.coherent_bootstrap_factors(self.n_data, self.n_sig, self.n_bkg, self.seed)[0],
+            dtype=np.uint8)
+        sig_ones = np.ones(self.n_sig, dtype=np.uint8)
+        bkg_ones = np.ones(self.n_bkg, dtype=np.uint8)
+
+        def h(a):
+            return V.rb_hash({"k": a}, "k")
+
+        ids = {"sig": "s-hash", "bkg": "b-hash"}
+        inv = "inv-hash"
+        # canonical MC digests must DIFFER from the unity ones, which is the unthinned-MC evidence
+        boot = {"n_data_full": self.n_data, "n_sig_full": self.n_sig, "n_bkg_full": self.n_bkg,
+                "inventory_hashes": inv, "input_identity_hashes": ids,
+                "data_factor_sha256": h(data_factor),
+                "signal_factor_sha256": "canonical-signal", "background_factor_sha256": "canonical-bkg"}
+
+        target_npy = tdir / V.TARGET_ARTIFACT
+        np.save(target_npy, np.ones(3, dtype=np.float64))
+        target_receipt_path = tdir / V.TARGET_RECEIPT
+        target_receipt = {"bootstrap": boot, "data_bootstrap_seed": self.seed,
+                          "code": {"loader": {"sha256": rb.EXPECTED_LOADER_SHA256}},
+                          "_verified_target_sha256": "unused-here"}
+        target_receipt_path.write_text(json.dumps(target_receipt))
+        (tdir / (V.TARGET_ARTIFACT + ".done")).write_text("")
+        (tdir / (V.TARGET_RECEIPT + ".done")).write_text("")
+
+        exp = rb.expected_lr_schedule()
+        ck = trdir / "w_nominal"
+        for name in sorted(rb.expected_checkpoints()):
+            (ck / name).write_bytes(b"x")
+        contract = {"checkpoint_semantics": rb.CHECKPOINT_SEMANTICS,
+                    "step1_checkpoint": str(
+                        ck / "OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5"),
+                    "step2_checkpoint": str(
+                        ck / "OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5")}
+        target_block = {"target_mode": rb.BKG_MODE, "estimator_fingerprint": rb.ESTIMATOR,
+                        "input_identity_hashes": ids, "bootstrap_seed": None,
+                        "precomputed_target_replica_seed": self.seed,
+                        "consumed_precomputed_target": str(target_npy),
+                        "step1_class_ratio": 1.0}
+        store = {
+            "campaign_role": np.asarray(cdo_.CAMPAIGN_ROLES[cdo_.CSTAT_DATA_ONLY]),
+            "cstat_product": np.asarray(cdo_.CSTAT_DATA_ONLY),
+            "replica_index": np.asarray(self.idx),
+            "data_bootstrap_seed": np.asarray(self.seed),
+            "data_bootstrap_factor": data_factor,
+            "sig_bootstrap_factor_full": sig_ones,
+            "bkg_bootstrap_factor_full": bkg_ones,
+            "sig_bootstrap_factor": np.ones(self.rows, dtype=np.uint8),
+            "bkg_bootstrap_factor": bkg_ones,
+            "bkg_indices": np.arange(self.n_bkg, dtype=np.int64),
+            "bootstrap_factor_sha256": np.asarray(boot, dtype=object),
+            "n_data_full": np.asarray(self.n_data),
+            "n_sig_full": np.asarray(self.n_sig),
+            "n_bkg_full": np.asarray(self.n_bkg),
+            "inventory_hashes": np.asarray(inv),
+            "input_identity_hashes": np.asarray(ids, dtype=object),
+            "mc_indices": mc,
+            "weights_push": np.ones(self.rows, dtype=np.float64),
+            "replica_seed_policy": np.asarray(rb.SEED_POLICY_STRING),
+            "seed_policy": np.asarray(rb.FROZEN_POLICY, dtype=object),
+            "estimator_fingerprint": np.asarray(rb.ESTIMATOR),
+            "bkg_mode": np.asarray(rb.BKG_MODE),
+            "tag": np.asarray("nominal"),
+            "inputs_sha256": np.asarray(rb.SOURCE_SHA256),
+            "target": np.asarray(target_block, dtype=object),
+            "inference_contract": np.asarray(contract, dtype=object),
+            "lr_policy_realized": np.asarray(
+                {"verified_from_optimizer": True, "n_fits_base_lr": exp["n_fits_base_lr"],
+                 "n_fits_annealed": exp["n_fits_annealed"],
+                 "fits": [{"iteration": i, "learning_rate": r}
+                          for i, r in zip(exp["iterations"], exp["rates"])]}, dtype=object),
+            # THE DIGESTS ARE OF THE FILES ON DISK, computed after they are written -- which is the whole
+            # content of `assert_target_binding`, and my placeholder version was correctly refused.
+            "replica_target_sha256": np.asarray(V.sha256_file(target_npy)),
+            "replica_target_receipt_sha256": np.asarray(V.sha256_file(target_receipt_path)),
+            "replica_target_receipt_path": np.asarray(str(target_receipt_path)),
+        }
+        if perturb:
+            perturb(store)
+        art = trdir / V.TRAIN_ARTIFACT
+        np.savez_compressed(art, **store)
+        (trdir / (V.TRAIN_ARTIFACT + ".done")).write_text("")
+        rec = trdir / V.TRAIN_RECEIPT
+        rec.write_text(json.dumps({
+            "status": "PASS", "replica_index": self.idx,
+            "execution": {"slurm_array_job_id": self.job, "slurm_array_task_id": self.idx},
+            "artifact": {"sha256": V.sha256_file(art)},
+            "code": {"loader": {"sha256": rb.EXPECTED_LOADER_SHA256}}}))
+        (trdir / (V.TRAIN_RECEIPT + ".done")).write_text("")
+
+        for ext, body in ((".out", "\n".join([
+                f"[gate5-train] index={self.idx} seed={self.seed} job={self.job}_{self.idx}",
+                '"config_gate": "PASS"', rb.optimizer_proof_line(), '"status": "PASS"',
+                f"[gate5-train] DONE index={self.idx} seed={self.seed}"]) + "\n"), (".err", "")):
+            (logs / f"train_{self.job}_{self.idx}{ext}").write_text(body)
+        return root
+
+    def _run(self, root):
+        out = self.tmp / "report.json"
+        r = subprocess.run(
+            [sys.executable, str(self.repo / self.MOD), "--family-root", str(root),
+             "--array-job-id", self.job, "--members", "1", "--out", str(out)],
+            capture_output=True, text=True, cwd=str(self.repo))
+        doc = json.loads(out.read_text()) if out.is_file() else None
+        return r, doc
+
+    def test_a_correct_member_gives_verdict_PASS_and_exit_0(self):
+        """The POSITIVE half. Without it, a FAIL-on-everything validator would satisfy the negative
+        controls below and be worthless."""
+        r, doc = self._run(self._build())
+        self.assertIsNotNone(doc, r.stderr[-1500:])
+        self.assertEqual("PASS", doc["verdict"], json.dumps(doc["members_detail"][0]["checks"])[:2000])
+        self.assertEqual(0, r.returncode)
+
+    def test_a_RECORDED_failure_makes_the_FAMILY_verdict_FAIL_and_exit_1(self):
+        """THE PROPERTY UNDER TEST. One perturbed policy scalar -- caught by a predicate that RAISES, so
+        it travels through `guarded()` -- must reach the family verdict and the exit code."""
+        def break_it(store):
+            store["bkg_mode"] = np.asarray("raw")
+        r, doc = self._run(self._build(perturb=break_it))
+        self.assertIsNotNone(doc, r.stderr[-1500:])
+        self.assertEqual("FAIL", doc["verdict"])
+        self.assertEqual(1, r.returncode)
+        failures = json.dumps(doc["members_detail"][0]["checks"]["failures"])
+        self.assertIn("artifact_policy_scalars", failures)
+        self.assertIn("bkg_mode", failures)
+
+    def test_the_withheld_key_being_present_also_reaches_the_verdict(self):
+        """A second, structurally different predicate, so the property is not a fluke of one call site."""
+        def break_it(store):
+            store["bootstrap_seed"] = np.asarray(50_000)
+        r, doc = self._run(self._build(perturb=break_it))
+        self.assertEqual("FAIL", doc["verdict"])
+        self.assertEqual(1, r.returncode)
+        self.assertIn("pinned_required_keys_and_withheld",
+                      json.dumps(doc["members_detail"][0]["checks"]["failures"]))
+
+    def test_a_THINNED_MC_leg_reaches_the_verdict(self):
+        """The physics failure the product exists to prevent, end to end."""
+        def break_it(store):
+            store["sig_bootstrap_factor_full"] = np.zeros(self.n_sig, dtype=np.uint8)
+        r, doc = self._run(self._build(perturb=break_it))
+        self.assertEqual("FAIL", doc["verdict"])
+        self.assertEqual(1, r.returncode)
+
+    def test_the_report_records_the_executed_row_count(self):
+        """V4's floor operand: a verdict that bounds failures and never the checks EXECUTED cannot
+        distinguish `passed` from `never ran`."""
+        r, doc = self._run(self._build())
+        self.assertGreater(doc["executed_check_rows_total"], 15)
+        self.assertEqual(doc["executed_check_rows_total"],
+                         doc["members_detail"][0]["checks"]["n_passed"]
+                         + doc["members_detail"][0]["checks"]["n_failed"])
+
+
 class DivergenceManifest(unittest.TestCase):
     """The manifest is regenerable, its partition SUMS, and its generator refuses to run late.
 

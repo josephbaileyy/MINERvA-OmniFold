@@ -46,7 +46,14 @@ from pathlib import Path
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-for _p in (str(HERE),):
+REPO = HERE.parents[1]
+# `nd-unfolding` IS ON THE PATH DELIBERATELY, and its absence was a real defect found only by running this
+# module end to end: `pet_bootstrap` lives one directory up, is imported LAZILY by
+# `fullevent_fps_dataloader.coherent_bootstrap_factors`, and that call is reached by P4's canonical-draw
+# check. With `HERE` alone this module raised `ModuleNotFoundError` at member 0 -- it could not have graded
+# a single member, and no import-time or unit test would have said so, because the import is lazy and
+# inside the predicate. Same path list as both replica drivers, so the three agree by construction.
+for _p in (str(HERE), str(REPO / "nd-unfolding"), str(REPO / "nd-unfolding/pet")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
