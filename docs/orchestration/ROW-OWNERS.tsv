@@ -24,9 +24,31 @@
 # The twelve CLM assignments are deliberately left UNASSIGNED by Session A. Session A is the
 # orchestrator; routing is its job and adjudicating physics ownership is not. Filling these
 # in by judgement is precisely the error A instructed Session C against on the quoted set —
-# derive the set from the artifacts, do not decide it. Each row below is routed to the lane
-# that authored or verified the claim, per the row's own `independent verifier` field, and
-# that lane fills its own line. See CONVENTION-lane-worktrees.md's author-merges-own-row rule.
+# derive the set from the artifacts, do not decide it.
+#
+# HOW THE `basis` COLUMN WAS ACTUALLY PRODUCED, corrected 2026-08-18 (quorum: lanes A, C, and
+# the mediator). This header previously said each row was routed "to the lane that authored or
+# verified the claim, per the row's own `independent verifier` field". THAT DERIVATION CANNOT
+# HAVE BEEN PERFORMED. The field exists -- column 8 of CLAIMS.md's table, so the citation
+# resolves -- but ZERO of the twelve name a lane. They name tools and sessions: "codex V1 +
+# claude-school V2 (independent)", "agy (separate provider account, effort high)",
+# "fresh-context claude-school opus x3", "single-source (this session)". A CITATION THAT
+# RESOLVES IS NOT A CITATION THAT HOLDS.
+#
+# So the `basis` column is SUBJECT-MATTER JUDGEMENT, RECORDED FOR REVIEW -- not an artifact
+# derivation, and not an assignment. It is a reading offered so a future adjudication starts
+# somewhere, and it is explicitly NOT an answer to the ownership question.
+#
+# THE OWNER COLUMN MUST NOT BE BACK-FILLED FROM `basis`. Doing so would make the provenance
+# CIRCULAR AND PASSING: the owner cell would cite `basis`, `basis` is judgement, and the header
+# would then describe a derivation that both resolves AND supports the cell it feeds. Today the
+# inconsistency is visible, which is what makes it fixable. The twelve stay UNASSIGNED until
+# someone RULES them.
+#
+# The abstention itself is correct and is deliberately preserved: adjudicating physics ownership
+# is not the orchestrator's job, and a raiser is not an owner.
+#
+# Each row's named lane fills its own line once ownership is ruled. See CONVENTION-lane-worktrees.md's author-merges-own-row rule.
 # ---------------------------------------------------------------------------------------
 #
 # COLUMNS (tab-separated):
@@ -38,15 +60,15 @@
 #             that has stopped looking like one.
 #
 id	owner	source	basis
-CLM-001	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to C (PET): omnifold_nn PET event-feature path; verified codex V1 + claude-school V2
-CLM-002	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to C (PET): step-1 leakage assertion + negative test in test_fullevent_fps.py
-CLM-003	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to C (PET): omitted-muon stress closure, fe5v seeds 0/1
-CLM-004	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to C (PET): self-consistency closure on xps2 tensors
-CLM-005	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to C (PET): FPS census on xps2; independent recompute by codex
-CLM-006	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to C (PET): full-event end-to-end estimator, predeclared gates
-CLM-007	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to C (PET): measured_scalars fallback defect in fullevent_fps_dataloader.py
-CLM-008	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to C (PET): P5B engineering debt F2/F3/F7/F8/F9/F10
-CLM-009	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to B (uncertainty): sieve reduction / negweight purity equivalence, note App. B.2
-CLM-010	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to B (uncertainty): niter 2->3 as regularization; the B1 rate-injection closure
-CLM-011	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to B (uncertainty): extended-FPS cross section must not be divided by reco efficiency
-CLM-012	UNASSIGNED	docs/orchestration/CLAIMS.md	routed to D (verifier): D2's recovery >= 0.80 bar vs reco-acceptance limit
+CLM-001	UNASSIGNED	docs/orchestration/CLAIMS.md	subject matter: C (PET) -- omnifold_nn PET event-feature path; verified codex V1 + claude-school V2
+CLM-002	UNASSIGNED	docs/orchestration/CLAIMS.md	subject matter: C (PET) -- step-1 leakage assertion + negative test in test_fullevent_fps.py
+CLM-003	UNASSIGNED	docs/orchestration/CLAIMS.md	subject matter: C (PET) -- omitted-muon stress closure, fe5v seeds 0/1
+CLM-004	UNASSIGNED	docs/orchestration/CLAIMS.md	subject matter: C (PET) -- self-consistency closure on xps2 tensors
+CLM-005	UNASSIGNED	docs/orchestration/CLAIMS.md	subject matter: C (PET) -- FPS census on xps2; independent recompute by codex
+CLM-006	UNASSIGNED	docs/orchestration/CLAIMS.md	subject matter: C (PET) -- full-event end-to-end estimator, predeclared gates
+CLM-007	UNASSIGNED	docs/orchestration/CLAIMS.md	subject matter: C (PET) -- measured_scalars fallback defect in fullevent_fps_dataloader.py
+CLM-008	UNASSIGNED	docs/orchestration/CLAIMS.md	subject matter: C (PET) -- P5B engineering debt F2/F3/F7/F8/F9/F10
+CLM-009	UNASSIGNED	docs/orchestration/CLAIMS.md	subject matter: B (uncertainty) -- sieve reduction / negweight purity equivalence, note App. B.2
+CLM-010	UNASSIGNED	docs/orchestration/CLAIMS.md	subject matter: B (uncertainty) -- niter 2->3 as regularization; the B1 rate-injection closure
+CLM-011	UNASSIGNED	docs/orchestration/CLAIMS.md	subject matter: B (uncertainty) -- extended-FPS cross section must not be divided by reco efficiency
+CLM-012	UNASSIGNED	docs/orchestration/CLAIMS.md	subject matter: D (verifier) -- D2's recovery >= 0.80 bar vs reco-acceptance limit
