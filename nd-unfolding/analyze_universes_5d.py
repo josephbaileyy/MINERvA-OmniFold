@@ -72,11 +72,42 @@ def load_flat(path, expect_nbins=None):
     # meaningless cross-section, and I was folding it into the 188-universe covariance silently.
     # That is the same class of defect as the kRecovered hole this delegation was written to close.
     #
-    # SO: presence + finiteness are now REQUIRED. The FPS floor (MIN_COMPLETE = 0.50) is
-    # deliberately NOT inherited -- min_complete=0.0 -- because I have not measured the completeness
-    # distribution across the 188 universes and a floor tuned on the 285-bin FPS grid is not a
-    # measurement about this one. That is a cheap cluster follow-up, and stating it this way makes
-    # the missing measurement falsifiable rather than invisible.
+    # SO: presence + finiteness are now REQUIRED. THE FLOOR IS 0.90, AND IT IS NOW MEASURED RATHER
+    # THAN A PLACEHOLDER. The mediator ran the 188-universe archive distribution on the cluster:
+    #     present 188/188   NaN 0   unreadable/kRecovered 0
+    #     min 0.9720202   p01 0.9722697   p05 0.9743379   median 0.9987681
+    #     p95 1.0074093   max 1.0240842
+    #     below 0.50: 0     below 0.99: 66     below 0.999: 95
+    #
+    # THREE THINGS THAT DISTRIBUTION SETTLES, and only the first was anticipated:
+    #
+    # (1) THE FPS 0.50 FLOOR WOULD HAVE BEEN VACUOUS, not wrong -- it sits 0.47 below the observed
+    #     minimum, so it could never fire on this family. Declining to inherit it was right, and it is
+    #     now right for a measured reason instead of a stated gap.
+    #
+    # (2) 0.99 IS THE TRAP AND IT IS THE ROUND NUMBER ANYONE REACHES FOR. It reads as "essentially
+    #     complete" and WOULD REJECT 66 OF 188 HEALTHY ARCHIVE UNIVERSES -- a third of the population.
+    #     Written down here so the next reader does not re-derive it.
+    #
+    # (3) THE QUANTITY IS NOT BOUNDED BY 1. Max is 1.0241 and 39 of 188 exceed unity, so whatever this
+    #     ratio measures it can overshoot. ONLY A ONE-SIDED FLOOR IS MEANINGFUL; an upper bound or an
+    #     |x-1| tolerance would be wrong, and would reject a fifth of the archive.
+    #
+    # WHY 0.90 AND NOT THE 0.95 THAT LOOKS TIGHTER. This is a HYGIENE floor, not a physics threshold:
+    # its job is to catch a BROKEN universe, not to adjudicate quality. So it should be as low as
+    # possible while still capable of firing. The observed population spans 0.9720 to 1.0241 -- a
+    # spread of 5.2% -- and 0.95 sits only 2.2% below the minimum, i.e. INSIDE ONE SPREAD-WIDTH OF THE
+    # DATA. A member population at estimator seed 42+k has no reason to occupy the same range, and one
+    # that merely re-centres by less than half its own observed spread would start clipping a floor set
+    # there. 0.90 sits 7.4% below the minimum -- wider than the full observed spread -- so it cannot
+    # fire on a plausible member while still catching a genuine breakdown (0.5, 0.1, 0.0).
+    # Calibrating a hygiene floor as tightly as the data allows converts it into a quality gate on a
+    # population nobody has measured, which is how a guard starts failing correct work.
+    #
+    # AND THE NaN BRANCH IS UNREALIZED IN THE ARCHIVE: 0 of 188. So the hole I closed above would have
+    # FIRST APPEARED IN A MEMBER, silently, with no archive precedent to compare against -- which is
+    # the failure mode that has no natural discoverer.
+    MIN_COMPLETE_5D_UNIVERSE = 0.90
     #
     # expect_nbins: the CV defines the grid, so it passes 0 (skip). Universes are checked against the
     # CV's own bin count, which turns a wrong-grid product into this function's clean diagnostic
@@ -85,7 +116,7 @@ def load_flat(path, expect_nbins=None):
     # means "use the FPS 285 default", expect_nbins=0 means "skip". They are opposite meanings.
     import fps_unfold_complete as _fuc
     _v = _fuc.check(path, expect_nbins=(0 if expect_nbins is None else expect_nbins),
-                    min_complete=0.0, require_completeness=True)
+                    min_complete=MIN_COMPLETE_5D_UNIVERSE, require_completeness=True)
     if not _v.get("ok"):
         raise SystemExit(f"[FAIL] {path} is not a COMPLETE product: {_v.get('why')}")
     f = ROOT.TFile.Open(path)
