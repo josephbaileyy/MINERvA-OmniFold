@@ -1194,5 +1194,115 @@ class SeedOffsetGridAliasing(unittest.TestCase):
         self.assertIn("CONSIDERED-AND-DECLINED", doc)
         self.assertIn("decorrelate", doc)
 
+
+class MiiFourLegDriver(unittest.TestCase):
+    """The four-leg offset-scan driver: the five dispatch requirements, each with its mutation."""
+
+    def _drv(self):
+        import mii_seed_offset_driver as d
+        return d
+
+    def test_R3_one_offset_fans_across_all_four_legs_preserving_BOTH_groups(self):
+        """INTEGRATION is the deliverable. A flag is capability; a launcher diff is not a launcher."""
+        d = self._drv()
+        plan = d.build_plan([0, 5])
+        legs = {m["leg"] for m in plan["members"]}
+        self.assertEqual(legs, {"sweep_bank_5d", "unified_throw_cov", "bootstrap_nd",
+                                "seedscan_split"}, "a scan must reach all four legs")
+        for k in (0, 5):
+            seeds = {m["leg"]: m["estimator_seed"] for m in plan["members"] if m["k"] == k}
+            self.assertEqual(seeds["sweep_bank_5d"], 42 + k)
+            self.assertEqual(seeds["bootstrap_nd"], 42 + k)
+            self.assertEqual(seeds["seedscan_split"], 42 + k)
+            self.assertEqual(seeds["unified_throw_cov"], 1000 + k)
+            # the whole point of (ii): g1 stays internally equal and stays unequal to g2
+            self.assertEqual(len({seeds["sweep_bank_5d"], seeds["bootstrap_nd"],
+                                  seeds["seedscan_split"]}), 1, "group g1 must remain coherent")
+            self.assertNotEqual(seeds["sweep_bank_5d"], seeds["unified_throw_cov"],
+                                "g1 and g2 must remain independent")
+
+    def test_R5_the_draw_seed_does_NOT_move_with_k(self):
+        """LANE D's MUTATION, run here so it is not only a review step.
+
+        Passing 1000+k to both flags is the natural implementation and gives every member a
+        different THROW ENSEMBLE -- estimator noise convolved with ensemble noise, which the combine
+        guard cannot catch because every member runs its own combine and 1000/1000 and 1005/1005
+        both pass. Per-member coherence is not ensemble coherence.
+        """
+        d = self._drv()
+        # NOT [0, 5, 958]: that grid ALIASES (958 - 0 is exactly b2 - b1) and build_plan
+        # correctly refused it. My own fixture tripped the guard, which is the guard working.
+        plan = d.build_plan([0, 5, 10])
+        draws = {m["draw_seed"] for m in plan["members"] if m["leg"] == "unified_throw_cov"}
+        self.assertEqual(draws, {1000}, "the draw seed moved with k -- the scan would measure "
+                                        "estimator noise convolved with ensemble noise")
+
+    def test_R5_MUTATION_parameterising_the_draw_seed_is_REJECTED(self):
+        import seed_offset_policy as sp
+        with self.assertRaises(SystemExit) as cm:
+            sp.assert_draw_seed_is_pinned({"x.sh": "python3 f.py --draw-seed ${EST_SEED}"})
+        self.assertIn("Per-member coherence is not ensemble coherence", str(cm.exception))
+
+    def test_R4_k0_control_is_TWO_SIDED(self):
+        """Mutate the LAUNCHER side and the ARCHIVE side; both must fail.
+
+        A reproduction check that only notices changes on one side is comparing a value against
+        itself -- `BEN-423`, which caught three lanes today.
+        """
+        d = self._drv()
+        import seed_offset_policy as sp
+        src = d.launcher_sources()
+        self.assertTrue(d.assert_k0_reproduces_the_archive(src))
+
+        mutated = dict(src)
+        k = "sbatch_sweep_bank_5d_run_bkgaware_gpu.sh"
+        mutated[k] = mutated[k].replace("EST_SEED=$(( 42 +", "EST_SEED=$(( 43 +")
+        self.assertNotEqual(mutated[k], src[k], "launcher-side mutation changed nothing")
+        with self.assertRaises(SystemExit):
+            d.assert_k0_reproduces_the_archive(mutated)
+
+        saved = sp.LEG_BASELINES["sweep_bank_5d"]
+        sp.LEG_BASELINES["sweep_bank_5d"] = ("g1", 43)
+        try:
+            with self.assertRaises(SystemExit, msg="ARCHIVE-side mutation was not detected: the "
+                                                   "control is comparing a value against itself"):
+                d.assert_k0_reproduces_the_archive(src)
+        finally:
+            sp.LEG_BASELINES["sweep_bank_5d"] = saved
+
+    def test_R1_an_aliasing_grid_is_REJECTED_and_a_one_member_grid_cannot_pass_vacuously(self):
+        d = self._drv()
+        with self.assertRaises(SystemExit) as cm:
+            d.build_plan([0, 958])
+        self.assertIn("ALIASES", str(cm.exception))
+        import seed_offset_policy as sp
+        with self.assertRaises(SystemExit) as cm2:
+            sp.assert_offset_grid_is_alias_free({"only": 42}, [0, 1, 2])
+        self.assertIn("ZERO pairs", str(cm2.exception))
+
+    def test_MUTATION_removing_the_offset_hook_from_a_launcher_is_REJECTED(self):
+        """Without this the driver exports a variable nothing reads, every member runs at baseline,
+        and the scan returns a null produced by the plumbing rather than by the physics."""
+        d = self._drv()
+        src = dict(d.launcher_sources())
+        k = "sbatch_bootstrap_5d_gpu.sh"
+        src[k] = src[k].replace("MNV_EST_SEED_OFFSET", "MNV_DISABLED")
+        with self.assertRaises(SystemExit) as cm:
+            d.assert_offset_hook_present(src)
+        self.assertIn("would run at baseline for every k", str(cm.exception))
+
+    def test_the_driver_HAS_NO_SUBMISSION_PATH(self):
+        """Asserted on the source, because the dispatch said do not submit and a review of intent is
+        weaker than a check of the file."""
+        import ast as _ast
+        src = (ND / "mii_seed_offset_driver.py").read_text()
+        tree = _ast.parse(src)
+        called = {n.func.attr for n in _ast.walk(tree)
+                  if isinstance(n, _ast.Call) and isinstance(n.func, _ast.Attribute)}
+        for forbidden in ("run", "check_call", "check_output", "Popen", "system", "spawn"):
+            self.assertNotIn(forbidden, called, f"driver may call no process-spawning API: {forbidden}")
+        self.assertNotIn("import subprocess", src)
+        self.assertFalse(any(m.get("submitted") for m in [d for d in []]), "sanity")
+
 if __name__ == "__main__":
     unittest.main()

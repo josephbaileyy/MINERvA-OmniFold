@@ -36,12 +36,26 @@ sends the next reader after the wrong bug: at k = 958 the WITHIN-RUN structure i
 defect is SPURIOUS ALIASING BETWEEN TWO MEMBERS OF THE SCAN ENSEMBLE, not destruction of the
 co-variation structure.
 
-THE PREMISE THIS WHOLE CONSTRAINT RESTS ON IS UNMEASURED, and this module asserts a policy rather than
-a fact. Lane C recorded it CONSIDERED-AND-DECLINED: *"a shared seed initialises the same RNG state but
+THE PREMISE THIS CONSTRAINT RESTS ON IS UNMEASURED, SO THIS IS A CONSERVATIVE CHOICE AND NOT A
+CORRECTNESS REQUIREMENT -- and the distinction is the point of this
+paragraph rather than a hedge in it. A future lane relaxing this guard needs to know whether it is
+trimming a safety margin or breaking a proof, and those are opposite decisions -- so: Lane C recorded it CONSIDERED-AND-DECLINED: *"a shared seed initialises the same RNG state but
 consumes draws against different data -- perhaps the perturbations decorrelate. That is an empirical
 claim nobody has measured."* If the premise holds, the pairwise form is REQUIRED and the single-value
-form was insufficient. If it fails, neither is needed. Imposing it either way is conservative and
-cheap; presenting it as structural would be a claim the campaign has explicitly declined to make.
+form was insufficient. If it fails, neither is needed. Imposing it either way is cheap, so it is imposed --
+but it is a MARGIN, not a THEOREM. Presenting it as a structural fact would be a claim the campaign has
+explicitly declined to make, and the first relay of this constraint did present it that way.
+
+REQUIREMENT (5), and it is enforced in the LAUNCHERS rather than here because that is the only place it
+cannot be got wrong: `--draw-seed` stays the literal `1000` for every `k`. ONLY the estimator seed
+moves. The natural implementation -- one variable in hand, passed to both flags -- gives every scan
+member a DIFFERENT THROW ENSEMBLE, so the measured spread is estimator noise convolved with ensemble
+noise, which is `C_syst` re-measured with extra steps and looks entirely normal. AND THE COMBINE GUARD
+CANNOT CATCH IT: `unified_throw_cov.py` compares each slab's `draw_seed` against THIS combine's
+`--draw-seed`, and each scan member runs its own combine, so `1000/1000` and `1005/1005` both pass.
+PER-MEMBER COHERENCE IS NOT ENSEMBLE COHERENCE, and that guard is per-member by construction. Lane D
+raised it; the offset hook in the six launchers touches `--estimator-seed` only, and
+`assert_draw_seed_is_pinned` below asserts the literal so a later edit cannot parameterise it.
 """
 from __future__ import annotations
 
@@ -75,15 +89,34 @@ def check_offset_grid(baselines, offsets):
     return sorted(out)
 
 
+def pairs_checked(baselines, offsets):
+    """How many (group-pair, offset-pair) comparisons the aliasing check actually performs.
+
+    NON-VACUITY, and it is the hole lane D left in its own power-test specification this evening:
+    with one group, or one offset, the check compares NOTHING and returns clean. A guard that
+    reports OK over zero comparisons is not a guard, so callers assert this is > 0.
+    """
+    n_groups = len({int(b) for b in dict(baselines).values()})
+    n_off = len({int(k) for k in offsets})
+    return (n_groups * (n_groups - 1) // 2) * n_off * n_off
+
+
 def assert_offset_grid_is_alias_free(baselines, offsets):
     """FAIL CLOSED on any aliasing pair. Call this in the launcher, before submitting anything.
 
     Deliberately not a warning: the run completes normally and produces a number either way, so the
     only place this can be caught is before submission.
     """
+    checked = pairs_checked(baselines, offsets)
+    if checked == 0:
+        raise SystemExit(
+            "[FAIL] the aliasing check compared ZERO pairs and would have reported OK. That needs "
+            "at least two distinct baselines and at least one offset; got baselines="
+            f"{sorted(set(int(b) for b in dict(baselines).values()))}, offsets={sorted(set(offsets))}. "
+            "A clean result over zero comparisons is not evidence -- it is the check not running.")
     bad = check_offset_grid(baselines, offsets)
     if not bad:
-        return True
+        return checked
     lines = [f"[FAIL] estimator-seed offset grid ALIASES {len(bad)} ensemble member pair(s). "
              f"Two scan points would run at the SAME estimator seed in different legs, so their "
              f"noise is not independent and the joint variation is not what (B) specifies."]
@@ -96,3 +129,55 @@ def assert_offset_grid_is_alias_free(baselines, offsets):
     lines.append("        This is PAIRWISE over the grid: excluding a single offset value is the "
                  "special case k'=0 and passes grids that alias (see this module's docstring).")
     raise SystemExit("\n".join(lines))
+
+
+# ---------------------------------------------------------------------------------------------------
+# Requirement (5)'s pin. E's `pinned_expected` shape: assert against the CONSTANT, never against the
+# run's own argument -- an argument compared to itself is `BEN-423`, which caught three lanes today.
+ARCHIVE_DRAW_SEED = 1000
+
+#: leg -> (coherence group, archive estimator-seed baseline). Group membership is what `(ii)` preserves.
+LEG_BASELINES = {
+    "sweep_bank_5d":     ("g1", 42),
+    "bootstrap_nd":      ("g1", 42),
+    "seedscan_split":    ("g1", 42),
+    "unified_throw_cov": ("g2", 1000),
+}
+
+
+def group_baselines(legs=None):
+    """`{group: baseline}` for the aliasing check. Distinct groups are what can alias."""
+    src = LEG_BASELINES if legs is None else {k: LEG_BASELINES[k] for k in legs}
+    out = {}
+    for _leg, (grp, base) in src.items():
+        if grp in out and out[grp] != base:
+            raise SystemExit(f"[FAIL] group {grp} has two baselines {out[grp]} and {base}; the "
+                             "coherence grouping is not well defined")
+        out[grp] = base
+    return out
+
+
+def assert_draw_seed_is_pinned(launcher_texts):
+    """FAIL CLOSED if any targeted launcher parameterises `--draw-seed`.
+
+    `launcher_texts` maps a path to its source. Only the uthrow leg carries the flag at all; the
+    others must not acquire it. Asserted against ARCHIVE_DRAW_SEED, not against whatever the file
+    happens to say, so the check cannot be satisfied by the thing it is checking.
+    """
+    bad = []
+    for path, text in launcher_texts.items():
+        for ln, line in enumerate(text.split("\n"), 1):
+            if "--draw-seed" not in line:
+                continue
+            if f"--draw-seed {ARCHIVE_DRAW_SEED}" not in line:
+                bad.append(f"{path}:{ln}: {line.strip()[:90]}")
+    if bad:
+        raise SystemExit(
+            "[FAIL] --draw-seed is not pinned to the literal " + str(ARCHIVE_DRAW_SEED) + " in:\n  "
+            + "\n  ".join(bad)
+            + "\n  ONLY the estimator seed may move across scan members. A moving draw seed gives "
+              "every member a different throw ensemble, so the measured spread is estimator noise "
+              "CONVOLVED with ensemble noise. The combine guard cannot catch it: it compares each "
+              "slab against THIS combine's --draw-seed, and every member runs its own combine, so "
+              "1000/1000 and 1005/1005 both pass. Per-member coherence is not ensemble coherence.")
+    return True
