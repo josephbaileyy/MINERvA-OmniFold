@@ -113,3 +113,59 @@ look.
 - The `aae49f2a` fix is to **one** lint. Other `test_*.py` files scrape shell with bare regexes.
 - The suite reads 1756 pass / 4 skip / 3 fail, and **all three remaining failures reproduce at the
   pre-change baseline `8e48a811`** in a detached worktree — measured, not assumed.
+
+---
+
+## 7. AMENDMENT, SAME DAY — A THIRD INSTANCE, AND I HIT IT WHILE THE ROW WAS BEING WRITTEN
+
+**The third instance is this document's own remedy failing to be applied to this document's own
+follow-up work.** Hours after filing §§1–6, the mediator found that
+`launcher_argv_probe.py:452` used
+
+    member = [o for o in outs if "member_k" in str(o)]
+
+which is **true of both path shapes** — `uq_5d/.../member_k001200/x` and
+`mii/member_k001200/uq_5d/.../x` — so the probe re-run C ordered *specifically to confirm
+member-root-first* **could not distinguish it from what it replaced**, and returned byte-for-byte the
+same summary as the pre-change run. I replaced it with a `startswith` shape test and then wrote:
+
+    self.assertNotIn('if "member_k" in str(o)', src)
+
+**which failed, because the new function's docstring quotes the old predicate verbatim** — deliberately,
+so the next reader can see what was replaced. **The grep could not tell the retired predicate from the
+explanation of its retirement.** Third time in one turn, in the work whose entire subject is this
+mistake.
+
+**A NEW GENERALISATION, and it is a different claim from §1's:** *a substring test cannot express a
+POSITIONAL requirement.* §1 was about a matcher reading the wrong **corpus** (comments as code). This
+is about a matcher whose **relation** is too weak for the claim: containment is the one relation blind
+to order, and the requirement was *"the member root comes first."* Two distinct failure modes for one
+tool, and the fix differs — §1's is *parse instead of grep*, this one's is *pick the right predicate*.
+Both were satisfied here by parsing, which is why they were easy to conflate.
+
+## 8. AND THE FIX'S FIRST FORM WAS TOO BROAD, WHICH IS ITS OWN LESSON
+
+The AST assertion I wrote to replace the grep banned **any** `"member_k" in ...` containment in the
+file. It failed — on a **legitimate** one at `:458`, inside `is_member_scoped` itself, where
+containment is **not** the acceptance predicate (acceptance is `startswith`) but only **refines the
+rejection reason**: *"contains a member component but in the wrong position"* — the shape C reversed —
+versus *"not member-scoped at all."* Those are different defects with different fixes and collapsing
+them makes the diagnostic worse.
+
+**So the requirement is not "containment appears nowhere" but "containment is not the acceptance
+predicate",** and the test now says exactly that: exactly one containment inside the classifier, zero
+in every other function. **A blanket ban would have forced me to delete a better error message to
+satisfy a test.** That is the shape of over-broad assertion that teaches people to weaken checks, and
+it is worth naming beside the under-broad ones this row is otherwise about: **a check can fail by
+demanding too much just as readily as by seeing too little, and the second failure mode is the one that
+gets checks deleted rather than fixed.**
+
+## 9. What the amendment does not change
+
+The mediator's conclusion that the implementation **is** member-root-first stands, but it rests on its
+own **behavioural bash read** of `mr_prefix` — not on the probe pass, which was invalid evidence for
+placement in both directions. It said so itself and asked for the distinction on the record. **The
+probe now prints every observed path**, because a passing run's log contained no path at all: 36 lines,
+zero occurrences of `member_k` or `mii/` outside the summary counts, so nothing downstream could audit
+what had passed. A verdict-only receipt is unfalsifiable (`CONVENTION-receipt-ingredients.md`); the
+paths **are** the ingredients of `namespaced=N`.

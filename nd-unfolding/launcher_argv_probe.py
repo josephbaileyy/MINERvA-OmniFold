@@ -419,6 +419,47 @@ def observed_argv_native(launcher, env, repo):
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+
+def member_root_for(offset):
+    """`mii/member_kNNNNNN` for this offset -- the string a member-scoped path must START WITH."""
+    k = int(offset)
+    name = f"member_kneg{-k:06d}" if k < 0 else f"member_k{k:06d}"
+    return f"{os.environ.get('MII_CONTAINER', 'mii')}/{name}"
+
+
+def is_member_scoped(path, offset):
+    """SHAPE, NOT SUBSTRING. Returns (ok, reason).
+
+    THE DEFECT THIS REPLACES, found by the mediator and it invalidated a probe pass:
+
+        member = [o for o in outs if "member_k" in str(o)]        # launcher_argv_probe.py:452
+
+    `"member_k" in str(o)` is TRUE OF BOTH PATH SHAPES --
+        uq_5d/block_slabs_5d_sb/member_k001200/x.npz    namespace-then-member  (the OLD shape)
+        mii/member_k001200/uq_5d/block_slabs_5d_sb/x.npz  member-root-first     (the NEW shape)
+    -- so the probe re-run C ORDERED SPECIFICALLY TO CONFIRM MEMBER-ROOT-FIRST COULD NOT DISTINGUISH IT
+    FROM WHAT IT REPLACED, and it returned byte-for-byte the same summary as the pre-change run. The
+    identity of the two summaries was the evidence.
+
+    A SUBSTRING TEST CANNOT EXPRESS A POSITIONAL REQUIREMENT. That is the general form, and it is why
+    the remedy is `startswith` on a computed root rather than a longer regex: the requirement is "the
+    member root comes FIRST", and containment is the one relation that is blind to order. Compare
+    `BEN-482`, where a substring could not express "this is a call, not prose"; the family is
+    text-matching a claim the text cannot carry.
+
+    Absolute paths are anchored after the LAST `/nd-unfolding/`, matching `_mr_insert`.
+    """
+    root = member_root_for(offset)
+    s = str(path)
+    rel = s.split("/nd-unfolding/")[-1] if "/nd-unfolding/" in s else s
+    rel = rel.lstrip("./")
+    if rel.startswith(root + "/") or rel == root:
+        return True, ""
+    if "member_k" in s:
+        return False, (f"contains a member component but NOT AT THE ROOT -- this is the shape C "
+                       f"reversed (namespace-then-member). Expected to start with {root!r}: {s}")
+    return False, f"not member-scoped at all (expected to start with {root!r}): {s}"
+
 def cluster_check(repo, offset, cases_by_launcher):
     """Run every launcher x case on the cluster and print a MACHINE-CHECKABLE verdict.
 
@@ -449,7 +490,9 @@ def cluster_check(repo, offset, cases_by_launcher):
             seeds = flag_values(rows, "--estimator-seed") or flag_values(rows, "--seed")
             outs = [v for k in ("--out", "--outdir", "--out-root", "--combine", "--block-slabs")
                     for v in flag_values(rows, k)]
-            member = [o for o in outs if "member_k" in str(o)]
+            shaped = [(o, ) + is_member_scoped(o, offset) for o in outs]
+            member = [o for o, ok, _ in shaped if ok]
+            misshaped = [(o, why) for o, ok, why in shaped if not ok]
             if not expect:
                 if stub_fired and not rows:
                     failures.append((launcher, case,
@@ -470,11 +513,19 @@ def cluster_check(repo, offset, cases_by_launcher):
                     problems.append(f"seed value {s!r} is not an integer")
             if not outs:
                 problems.append("no output path reached a command")
-            elif len(member) != len(outs):
-                problems.append(f"{len(outs) - len(member)} of {len(outs)} output paths are NOT "
-                                f"member-namespaced: {[o for o in outs if o not in member]}")
+            elif misshaped:
+                problems.append(f"{len(misshaped)} of {len(outs)} output paths FAIL THE SHAPE TEST:")
+                problems.extend(f"    {why}" for _, why in misshaped)
             if problems:
                 failures.append((launcher, case, problems, rc, err.strip()[-300:]))
+            # PRINT EVERY OBSERVED PATH. The mediator's finding: a passing run's log contained NO
+            # PATH -- 36 lines, zero occurrences of `member_k` or `mii/` outside the summary counts --
+            # so a reader could not recover from the artifact WHAT had passed, and the counts were
+            # identical across two different path shapes. A verdict-only receipt is unfalsifiable
+            # (`CONVENTION-receipt-ingredients.md`); the paths ARE the ingredients of "namespaced=N".
+            for o in outs:
+                ok, why = is_member_scoped(o, offset)
+                print(f"[probe]   PATH {'ok ' if ok else 'BAD'} {o}", flush=True)
             print(f"[probe] DONE  {launcher} case={case} rc={rc} obs={len(rows)} "
                   f"stub_fired={stub_fired} seeds={seeds} outs={len(outs)} "
                   f"namespaced={len(member)} {'OK' if not problems else 'PROBLEM'}", flush=True)
