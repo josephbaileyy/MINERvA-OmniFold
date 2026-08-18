@@ -831,11 +831,24 @@ class Gate1TwoRoleSeedSplit(unittest.TestCase):
             self.assertEqual(out["estimator_seed"], 1000)
             self.assertEqual(out["draw_seed"], 7, "the product must record BOTH roles (item 4)")
 
-            prev = _import_module_at_rev("HEAD~", "nd-unfolding/unified_throw_cov.py",
+            # PINNED SHA, NOT `HEAD~`. This read `HEAD~` for exactly one commit, and it broke on
+            # the next one: `HEAD~` became the gate-1 commit itself, so the "pre-diff" module
+            # already had the split and the control failed. A relative ref is not a definition --
+            # the same lesson as publishing a command without its ref, arriving inside a test
+            # written to enforce it. 26e4e343 is the last commit before the split.
+            prev = _import_module_at_rev("26e4e343", "nd-unfolding/unified_throw_cov.py",
                                          "unified_throw_cov_prediff")
+            # FAIL, DO NOT SKIP. This was a skipTest for one commit, and lane Assistant named the
+            # hole: in a shallow clone or a fresh CI checkout the pinned object may be absent, and
+            # a skip is GREEN in exactly the environment where nobody is watching -- a check that
+            # cannot fail, guarding the one test whose expected result this diff changes. Verified
+            # here in a checkout that HAS the object, which is why the branch needed naming rather
+            # than testing. Same move as widening the assertion below: make the control's own
+            # failure mode loud.
             if prev is None:
-                self.skipTest("pre-diff revision unavailable; the control arm did NOT run, so "
-                              "the accept arm above is UNCONTROLLED")
+                self.fail("pre-diff revision 26e4e343 could not be loaded (shallow clone? run "
+                          "`git fetch --unshallow`). The control arm did NOT run, so the accept "
+                          "arm above is UNCONTROLLED and this test proves nothing about the diff.")
             # THE CONTROL'S FAILURE MODE IS ITSELF INFORMATIVE, so it is asserted as a union
             # rather than narrowed to SystemExit. Measured: the pre-diff module raises
             # AttributeError at its `args.seed` read -- it cannot even be CALLED with split-role
