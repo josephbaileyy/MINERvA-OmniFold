@@ -324,7 +324,7 @@ docs/orchestration/RULING-20260815-lanec-reduced-n-diagnostic-coherence.md	ARCHI
 docs/orchestration/RULING-20260817-lanec-data-only-coherence-predicate.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	233	16767
 docs/orchestration/RULING-20260817-lanec-data-only-cstat-is-a-second-product.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	339	24599
 docs/orchestration/RULING-20260817-lanec-data-only-normalization-must-vary.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	204	13059
-docs/orchestration/RULING-20260817-lanec-data-only-target-family-and-launchers.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	543	38384
+docs/orchestration/RULING-20260817-lanec-data-only-target-family-and-launchers.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	609	43748
 docs/orchestration/RULING-20260817-lanec-floor-vs-family-coherence.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	338	24704
 docs/orchestration/RULING-20260817-lanec-oi126-branch-set-not-exhaustive.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	247	17338
 docs/orchestration/RULING-20260817-lanec-pinned-readers-get-wrappers-not-copies.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	244	16354
@@ -630,7 +630,7 @@ docs/orchestration/state/RECEIPT-n3-n4-second-read-20260816.json	MACHINE	state-a
 docs/orchestration/state/RECEIPT-stage6-marginal-vs-direct-anatomy-20260817.json	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	1	132	12852
 docs/orchestration/state/RECEIPT-vl100-shape-corrected-foldforward-20260815.json	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-vl100-shape-correction-scan-20260815.py;nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh	yes	12	355	17212
 docs/orchestration/state/__pycache__/regen_canonical_namespace_field_pins.cpython-312.pyc	MACHINE	cache	__pycache__		generated		exact-path-only		yes	0	65	8047
-docs/orchestration/state/_audit_gate3_source.py	MACHINE	state-artifact			generated		exact-path-only		yes	4	209	11920
+docs/orchestration/state/_audit_gate3_source.py	MACHINE	state-artifact			generated		exact-path-only		yes	5	209	11920
 docs/orchestration/state/account-migration-authorization-20260719.json	MACHINE	state-artifact		20260719	generated		exact-path-only		yes	4	15	743
 docs/orchestration/state/agent-A-standard-migration-20260811.json	MACHINE	state-artifact		20260811	generated		exact-path-only		yes	1	23	1193
 docs/orchestration/state/agent-B-p5b-migration-20260813.json	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	1	26	1369

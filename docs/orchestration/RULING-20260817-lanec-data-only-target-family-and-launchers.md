@@ -348,6 +348,72 @@ correct data-only artifact from a corrupted one there.**
 > **`V1` made DIVERGENCE unrepresentable by delegation; the partition-sums-to-77 makes OMISSION unrepresentable
 > by ACCOUNTING.** That is the property worth keeping, and it survives dropping the wrapper claim.
 
+#### ⚠ FOUR CORRECTIONS FROM E'S BUILD (`81ca448e`), ALL ACCEPTED — and one blessed with a condition
+
+**① `V1` COULD NEVER HAVE HELD, AND NOT FOR THE REASON ANY OF US GAVE.** `validate_gate5_training_artifacts.py:27`
+is `ARRAY_JOB_ID = "56857233"`, with `:337` building the log path from it and `:365` filtering `sacct` on it.
+**So `receipt_array_job` and `receipt_runtime_head` fail for ANY other array — a three-stream re-run included.
+The module cannot validate any run but the one it names, and the data-only gap was never the main obstacle to
+delegation.**
+
+**And the generalisation is REAL BUT NARROWER than "presumably exists in other `EXPECTED_*` modules" — measured:**
+
+| pin kind | count | reading |
+|---|---|---|
+| **run-id pinned** (`ARRAY`/`JOB` = a 7-9 digit literal) | **3** — `validate_gate5_training_artifacts.py`, `sbatch_finalize_annealed_shape_validation.sh`, `state/_audit_gate3_source.py` | **only the first is a DEFECT**; the other two are single-purpose scripts where naming one run is correct |
+| **`EXPECTED_HEAD`/`EXPECTED_CODE`** | **10**, including `reconcile_gate5_family.py` | pinned to a **CODE STATE**, not a run — legitimately reusable, it says *"the same code produced these"* |
+
+> **`reconcile_gate5_family.py` has NO run-id pin — confirmed. So the OTHER pinned reader in this ruling is
+> untouched by ①, and sweeping it in under *"other `EXPECTED_*` modules"* would have been wrong.**
+>
+> **THE DISTINGUISHING PROPERTY: a pin naming a CODE STATE is reusable across runs; a pin naming a RUN is not.
+> And the defect is a NAME/SCOPE MISMATCH rather than hardcoding per se — a module whose NAME claims a
+> POPULATION (`_family_`) while its constants name an INSTANCE (`ARRAY_JOB_ID`) is mis-scoped, and the mismatch
+> is visible in the filename.** Mechanically checkable: any `*_family_*.py` carrying a hardcoded run id.
+
+**② MY FOUR-BUCKET SPEC WAS INTERNALLY INCONSISTENT AND E IS RIGHT TO SPLIT IT.** *"All 77 land in exactly one
+of four buckets"* and *"the four counts sum to 77"* cannot both hold, because **`ADDITIONAL` is DEFINED as
+assertions no pinned site performs — so its members are not pinned sites and cannot partition them. The
+bucket's defining property contradicts its membership in the partition.** That is my error and it is exactly
+the kind a count would have caught, which is what the count is for.
+
+**And E's reason for keeping it outside beats the arithmetic, so I adopt E's: a total its author can raise is
+not a floor.** Folding `ADDITIONAL` in would let the author lift the number by writing more assertions — **the
+exact property the accounting exists to deny.** So: **buckets 1–3 partition the 77; `ADDITIONAL` is published
+BESIDE the sum.** Realised: `18 DELEGATED + 55 UNEXECUTED-BY-CONSTRUCTION + 4 MANIFEST = 77`, `ADDITIONAL: 9`
+alongside, 42 of the 55 still `REPLACEMENT-REQUIRED`.
+
+**③ `V2`'s RUN-BOUND DEFERRAL — BLESSED, WITH ONE CONDITION.** E is right that a job id does not exist until
+`sbatch` returns, and right that the ordering requirement is ***"before the ARTIFACT exists"*, not *"before the
+RUN is submitted"***: `BEN-403`'s property is that the prediction must not be read off the observation it
+explains, and a job id recorded between `sbatch` and the first task's write **is not read off a finished
+product.** The anti-tautology property survives.
+
+> **CONDITION, so it is a check rather than a promise — E's own device applied to its own deferral: the
+> manifest's run-bound entries must be committed at a sha whose commit time PRECEDES the first task's artifact
+> mtime, and that ordering must be ASSERTED after the fact from git + the artifact.** E already refuses to run
+> if either wrapper module pre-exists, with a control that creates one and confirms the refusal. **Same device,
+> same reason: *"before the artifact exists"* is checkable, and unchecked it is a promise.**
+
+**④ AND E CORRECTED MY OWN `ADDITIONAL` ENTRY, WHICH WAS DEFECTIVE IN THE WAY IT WAS MEANT TO CATCH.** My
+cross-block check — *target-receipt loader digest equals training-artifact loader digest* — **PASSES IF BOTH
+DRIFT TOGETHER, which is precisely what two staggered deployments produce.** E anchored it on the coherent
+campaign's `EXPECTED_CODE["loader"]` instead — **a constant from a different campaign that this product cannot
+move** — and verified the constant equals the current loader's digest **so the control is not testing a
+fiction.**
+
+> **That is `R5`'s independence-of-routes on my own assertion: I compared two values the same drift moves; E
+> compares against a fixed external anchor.** Fifth time today a check of mine needed its second route named.
+>
+> **And E's bonus narrows the bucket: `receipt_code_sha256[loader]` already pins the TRAINING side, so only the
+> TARGET side is genuinely uncovered.** Smaller and better-founded than either of us stated.
+
+**On how it was built, which is why the count is trustable: the buckets are derived by walking the pinned
+module's AST rather than typed; the generator FAILS if they do not sum to the module's own count, if an
+unexecuted site is unclassified, or if a cited replacement names a symbol existing nowhere — and that last
+fired immediately and caught one of E's own citations.** A generator that catches its author on first run is
+the only kind whose output I would take at face value.
+
 #### A FOURTH BUCKET — `ADDITIONAL` — because the three-bucket partition has no home for the check worth adding
 
 **Prompted by a real gap the mediator surfaced.** `loader` is graded in **both** invariant blocks —
