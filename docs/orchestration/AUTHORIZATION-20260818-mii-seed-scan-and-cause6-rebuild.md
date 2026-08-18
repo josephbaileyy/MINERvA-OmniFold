@@ -64,3 +64,57 @@ Measured by lane B at `3be8c052`. Two coherence groups, mutually independent:
 | `bootstrap_nd.py` (`C_stat`, 100 replicas) | `42` |
 | `seedscan_split.py` (`C_ML`, 24 splits) | `42` |
 | `unified_throw_cov.py` (throws + block units + CV) | `1000` |
+
+---
+
+## AMENDMENT 1 — a CEILING, given 2026-08-18 after the grid was found to be unnamed
+
+The original grant read *"any hours (both CPU and GPU) needed"*, which is unbounded and was given
+before anyone had established how many scan members `M(ii)` requires. Told that the mediator would not
+submit a run whose size it had inferred, Joseph replied, verbatim:
+
+> **"I authorize any hours under 200 GPU hours and 500 CPU hours, even without knowing what they are"**
+
+**So the authorization is now a CEILING rather than a blank grant, and that is strictly better for both
+parties: it authorizes action under uncertainty without authorizing an unbounded spend.**
+
+| unit | ceiling | the pre-grid estimate | headroom |
+|---|---|---|---|
+| GPU | **200 GPU-hours** | `39.223` A100-h | ~5x |
+| CPU | **500 CPU-hours** | `55.337` CPU task-h | ~9x |
+
+**OPERATIVE RULE: the mediator may submit without returning to Joseph IF AND ONLY IF the priced run
+fits under both ceilings. A grid that does not fit goes back to him with its real number BEFORE
+submission, not after.** *"Even without knowing what they are"* licenses proceeding under uncertainty;
+it does not license failing to price the run.
+
+**AND THE CEILING MUST NOT BECOME THE GRID'S DESIGN CONSTRAINT.** Lane C refused option `(i)` this
+afternoon on exactly this ground — *do not let measurability choose the specification* — and the same
+applies to sizing: **choose the number of members `M(ii)` needs, then check it against the ceiling.**
+If the honest grid exceeds 200 GPU-hours, that is a fact to report, not a grid to trim. This campaign
+has a standing finding on undersized ensembles (`BEN-025`): a 16-seed spread estimate inverted a
+correct ranking at `p = 0.093`, with the 48-seed answer inside the CI throughout.
+
+## SEPARATELY — HPSS deletion, recorded because it removes a recovery path
+
+Joseph, 2026-08-18: the P3F products other than the quoted set have been moved to CFS and **the HPSS
+duplicates are being deleted**, on his advisor's judgement that CFS is safe as the resident tier.
+**That is the advisor's call and the right authority for it; it is recorded here, not questioned.**
+
+**Verified by the mediator before the deletion, from the executing host:**
+
+| | HPSS `mnv-p3f-pet-fullevent-final` | CFS destination |
+|---|---|---|
+| files | 120 `.root` + 120 receipts = 240 | 240 |
+| bytes | `1134998230283` | **`1134998230283`** |
+| zero-length | — | 0 |
+
+Job `57199158` COMPLETED, 240/240 markers, no errors in either log, and the verification is genuine:
+`p3f_move.sh:46-49` compares each retrieved file's `md5sum` against **the md5 HPSS stored at write
+time** and only then moves it into place.
+
+**ONE THING TO PRESERVE: `/global/cfs/cdirs/m3246/josephrb/p3f-move-20260818/` is the only record that
+the verification happened** — `p3f_md5.txt`, `p3f_files.txt` and `logs/hsi.log`. It lives on CFS and so
+survives the deletion, but it is a working directory and reads as disposable. **After the HPSS copies
+are gone it is the sole evidence that the 240 were checked rather than merely copied.** The `.ok`
+markers are empty files and carry no evidence themselves.
