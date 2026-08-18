@@ -55,23 +55,94 @@ import mii_root_payload_classes as classes
 
 IN_FILE, CROSS_FILE, NOT_RECOMPUTABLE = "IN_FILE", "CROSS_FILE", "NOT_RECOMPUTABLE"
 
-#: How each recompute-required scalar can be checked, and from what. Derived from the writers at the
-#: line numbers in the module docstring -- a claim about code, so a test re-reads the code.
+#: WHY a key is not recomputable, and C required this distinction rather than a bare `no`:
+#:   WRITER_GAP  the ingredients COULD be written and are not. FIXABLE LATER.
+#:   IMPOSSIBLE  the quantity cannot be reconstructed from any plausible in-file content.
+#: Recording which kind it is DETERMINES WHETHER ANYONE CAN EVER CLOSE IT. A bare "not recomputable"
+#: reads as a law of nature and freezes a writer gap forever.
+WRITER_GAP, IMPOSSIBLE = "WRITER_GAP", "MATHEMATICALLY_IMPOSSIBLE"
+
+#: How each recompute-required scalar can be checked, from what, and -- when it cannot -- WHY NOT and
+#: OF WHICH KIND. Derived from the writers at the line numbers in the module docstring; a claim about
+#: code, so a test re-reads the code.
+#:
+#: C RULED THERE IS NO FOURTH CLASS, and the reason is structural and worth keeping: each of the three
+#: classes names a COMPARISON RULE -- bit-exact, equal, superset -- and "not recomputable" is not one,
+#: because these keys still compare BIT-EXACT. What differs is whether the INGREDIENT CHECK is
+#: available. So this is a REQUIRED ATTRIBUTE ON PAYLOAD, not a class.
+#:
+#: Each value is (how, kind, reason). `kind` is None iff `how` is not NOT_RECOMPUTABLE.
 RECOMPUTABILITY = {
-    "sqrt_tr_unified":                (IN_FILE, "C_unified"),
-    "sqrt_tr_block":                  (IN_FILE, "C_blocksum"),
-    "joint_mean_shift_norm":          (IN_FILE, "hJointMeanShift"),
-    "sqrt_tr_new":                    (IN_FILE, "hCov_combined5d_total_uthrow"),
-    "upstream_fixed_seed_null_norm":  (CROSS_FILE, "the throw root's fixed_seed_null_norm"),
-    "upstream_joint_mean_shift_norm": (CROSS_FILE, "the throw root's joint_mean_shift_norm"),
-    "fixed_seed_null_norm":           (NOT_RECOMPUTABLE, "norm(x_cv2 - base); neither is written"),
-    "globalCompleteness":             (NOT_RECOMPUTABLE, "of_in.sum()/denom_nd.sum(); neither is "
-                                                         "written, and no completeness histogram is "
-                                                         "written by sweep_bank_5d.py"),
-    "sqrt_tr_old":                    (NOT_RECOMPUTABLE, "trace(hCov_combined5d_total) in the 41.44 GB "
-                                                         "intermediate C ruled deletable -- THE BAR'S "
-                                                         "OPERAND. Remedy: ship diag(C_old), 0.527 MB"),
+    "sqrt_tr_unified":  (IN_FILE, None, "trace(C_unified)"),
+    "sqrt_tr_block":    (IN_FILE, None, "trace(C_blocksum)"),
+    "joint_mean_shift_norm": (IN_FILE, None, "norm(hJointMeanShift)"),
+    "sqrt_tr_new":      (IN_FILE, None, "trace(hCov_combined5d_total_uthrow)"),
+    "upstream_fixed_seed_null_norm":  (CROSS_FILE, None, "the throw root's fixed_seed_null_norm"),
+    "upstream_joint_mean_shift_norm": (CROSS_FILE, None, "the throw root's joint_mean_shift_norm"),
+    # WRITER GAP, not impossible: `x_cv2` and `base` are ordinary per-bin vectors that unified_throw_cov
+    # simply does not write. Shipping either one closes it, so this is a decision nobody has taken
+    # rather than a limit of the mathematics.
+    "fixed_seed_null_norm": (NOT_RECOMPUTABLE, WRITER_GAP,
+                             "norm(x_cv2 - base); NEITHER IS WRITTEN by unified_throw_cov.py. Both are "
+                             "per-bin vectors, so writing one would close this -- a writer decision, "
+                             "not a mathematical limit."),
+    # WRITER GAP, and C named it as the example: the inputs are unwritten AND sweep_bank_5d.py emits no
+    # completeness histogram at all (measured: 0 occurrences of hCompleteness). Either would close it.
+    "globalCompleteness": (NOT_RECOMPUTABLE, WRITER_GAP,
+                           "of_in.sum()/denom_nd.sum(); NEITHER IS WRITTEN, and sweep_bank_5d.py emits "
+                           "NO completeness histogram (0 occurrences of hCompleteness) though "
+                           "unfold_nd_omnifold_unbinned.py has one. Writing either closes this."),
+    # WRITER GAP TODAY, and C's 11g sequencing closes it: `diag_comb` is ALREADY IN MEMORY at
+    # adopt_unified_5d.py:128 at the moment sqrt_tr_comb is computed, so the remedy is a WRITE, not a
+    # computation, and not even an extra read of the 41 GB file. Until that write lands the key is `no`,
+    # because THE DECLARED SET DESCRIBES THE TREE AS IT IS, not as it is about to be.
+    "sqrt_tr_old": (NOT_RECOMPUTABLE, WRITER_GAP,
+                    "trace(hCov_combined5d_total), which lives ONLY in the 41.44 GB member "
+                    "intermediate. THE PREDECLARED BAR'S OPERAND. Closed by C's 11g sequencing: ship "
+                    "diag(C_old) (0.527 MB, already in memory at adopt_unified_5d.py:128) BEFORE any "
+                    "member intermediate is released. `no` until that write lands."),
 }
+
+
+def declared_unrecomputable():
+    """The exact set of keys declared `recomputable: no`. THE CLOSED SET the flag must match.
+
+    C's strengthening, and it is the same defect as my comparator being blind to a key absent from both
+    files: A BLANKET ACKNOWLEDGEMENT LETS A FUTURE `no` RIDE IN SILENTLY. Someone adds a key, declares it
+    unrecomputable, and every existing invocation of `--acknowledge-unrecomputable` swallows it without
+    anyone deciding. So the flag takes an EXPLICIT KEY LIST and must equal this set exactly.
+    """
+    return frozenset(k for k, (how, _, _) in RECOMPUTABILITY.items() if how is NOT_RECOMPUTABLE)
+
+
+def assert_reasons_are_stated():
+    """A `no` WITHOUT A STATED REASON IS THE FAIL-CLOSED CASE, and the reason must name its KIND.
+
+    Declared in the enumeration, never discovered at comparison time -- so this runs at import-adjacent
+    time in the tests rather than inside `compare_files`, where a missing reason would surface only on
+    the run it blocks.
+    """
+    problems = []
+    for key, entry in sorted(RECOMPUTABILITY.items()):
+        if not (isinstance(entry, tuple) and len(entry) == 3):
+            problems.append(f"{key}: malformed entry {entry!r}; expected (how, kind, reason)")
+            continue
+        how, kind, reason = entry
+        if how not in (IN_FILE, CROSS_FILE, NOT_RECOMPUTABLE):
+            problems.append(f"{key}: unknown how {how!r}")
+        if how is NOT_RECOMPUTABLE:
+            if kind not in (WRITER_GAP, IMPOSSIBLE):
+                problems.append(
+                    f"{key}: declared NOT_RECOMPUTABLE with kind {kind!r}. A bare `no` reads as a law "
+                    "of nature and freezes a writer gap forever -- state WRITER_GAP or "
+                    "MATHEMATICALLY_IMPOSSIBLE.")
+            if not reason or len(reason) < 20:
+                problems.append(f"{key}: declared NOT_RECOMPUTABLE with no usable reason {reason!r}")
+        elif kind is not None:
+            problems.append(f"{key}: kind {kind!r} set on a recomputable key")
+    if problems:
+        raise SystemExit("[FAIL] recomputability declarations:\n  " + "\n  ".join(problems))
+    return len(RECOMPUTABILITY)
 
 
 def _sqrt_trace_from_diag(diag):
@@ -126,11 +197,25 @@ def read_keys_pyroot(path):
 
 
 def compare_files(artifact, archive_path, member_path, offset, read_keys=read_keys_pyroot,
-                  rtol=0.0, acknowledge_unrecomputable=False):
+                  rtol=0.0, acknowledge_unrecomputable=None):
     """Stage 1's comparison. Returns (verdict, lines).
 
     `rtol=0.0` by default: THIS IS A BIT-EXACT GATE and a tolerance is a decision, not a default.
     """
+    assert_reasons_are_stated()          # declared, never discovered at comparison time
+    # CLOSED-SET ACKNOWLEDGEMENT. `None` means "acknowledge nothing"; a list must equal the declared
+    # `no` set EXACTLY -- not a subset, not a superset. A subset would leave a blocked key looking
+    # acknowledged; a superset names a key nobody declared and is a sign the caller is working from a
+    # stale list.
+    if acknowledge_unrecomputable is not None:
+        got, want = frozenset(acknowledge_unrecomputable), declared_unrecomputable()
+        if got != want:
+            raise SystemExit(
+                "[FAIL] --acknowledge-unrecomputable must match the DECLARED unrecomputable set "
+                f"exactly.\n        declared : {sorted(want)}\n        given    : {sorted(got)}\n"
+                f"        missing  : {sorted(want - got)}\n        extra    : {sorted(got - want)}\n"
+                "        A blanket acknowledgement lets a FUTURE `no` ride in silently, which is why "
+                "this is a closed set rather than a boolean.")
     a_sc, a_di = read_keys(archive_path)
     m_sc, m_di = read_keys(member_path)
 
@@ -175,9 +260,10 @@ def compare_files(artifact, archive_path, member_path, offset, read_keys=read_ke
     for name in sorted(set(classes.RECOMPUTE_REQUIRED) & set(m_sc)):
         if name in RECOMPUTE:
             continue
-        how, why = RECOMPUTABILITY.get(name, (NOT_RECOMPUTABLE, "UNCLASSIFIED -- add a row"))
+        how, kind, why = RECOMPUTABILITY.get(
+            name, (NOT_RECOMPUTABLE, None, "UNCLASSIFIED -- add a row to RECOMPUTABILITY"))
         if how is NOT_RECOMPUTABLE:
-            unverifiable.append(f"{name}: {how} -- {why}")
+            unverifiable.append(f"{name}: {how} ({kind}) -- {why}")
         else:
             lines.append(f"[recompute] DEFERRED {name}: {how} -- {why}")
 
@@ -190,16 +276,17 @@ def compare_files(artifact, archive_path, member_path, offset, read_keys=read_ke
     lines += [f"[recompute] OK   {d}" for d in discharged]
     lines += [f"[recompute] OWED {c}" for c in contradicted]
     lines += [f"[recompute] OWED {m}" for m in ingredient_missing]
+    acked = acknowledge_unrecomputable is not None
     for u in unverifiable:
-        lines.append(f"[recompute] {'UNVERIFIED (acknowledged)' if acknowledge_unrecomputable else 'BLOCKED'} {u}")
-    if unverifiable and not acknowledge_unrecomputable:
+        lines.append(f"[recompute] {'UNVERIFIED (acknowledged)' if acked else 'BLOCKED'} {u}")
+    if unverifiable and not acked:
         lines.append("[recompute] BEN-077 CANNOT BE SATISFIED FOR THE KEYS ABOVE FROM THIS FILE. Pass "
                      "--acknowledge-unrecomputable to proceed with them RECORDED as unverified rather "
                      "than silently treated as checked.")
 
     if class_failed or identity or contradicted or ingredient_missing:
         return "FAIL", lines
-    if unverifiable and not acknowledge_unrecomputable:
+    if unverifiable and not acked:
         return "INCOMPLETE", lines
     return "PASS", lines
 
@@ -212,9 +299,11 @@ def main(argv=None):
     ap.add_argument("--offset", type=int, required=True)
     ap.add_argument("--rtol", type=float, default=0.0,
                     help="0.0 (default) means BIT-EXACT. A tolerance is a decision, not a default.")
-    ap.add_argument("--acknowledge-unrecomputable", action="store_true",
-                    help="proceed with keys whose ingredients are not in the file, RECORDED as "
-                         "UNVERIFIED rather than silently treated as checked")
+    ap.add_argument("--acknowledge-unrecomputable", metavar="KEY", nargs="+", default=None,
+                    help="EXPLICIT list of keys whose ingredients are not in the file. Must match the "
+                         "declared unrecomputable set EXACTLY -- a blanket flag would let a future "
+                         "`no` ride in silently. They are RECORDED as UNVERIFIED, never treated as "
+                         f"checked. Declared today: {' '.join(sorted(declared_unrecomputable()))}")
     a = ap.parse_args(argv)
     verdict, lines = compare_files(a.artifact, a.archive, a.member, a.offset, rtol=a.rtol,
                                   acknowledge_unrecomputable=a.acknowledge_unrecomputable)

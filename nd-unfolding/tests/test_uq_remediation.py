@@ -2901,8 +2901,9 @@ class AnchorComparatorB2(unittest.TestCase):
                          [l for l in lines if not l.startswith("[recompute] OK")])
         self.assertTrue(any("BLOCKED" in l and "fixed_seed_null_norm" in l for l in lines), lines)
         self.assertTrue(any("CANNOT BE SATISFIED" in l for l in lines))
-        self.assertEqual(go(acknowledge_unrecomputable=True)[0], "PASS",
-                         "an EXPLICIT acknowledgement lets it through, RECORDED as unverified")
+        full = sorted(self.B.declared_unrecomputable())
+        self.assertEqual(go(acknowledge_unrecomputable=full)[0], "PASS",
+                         "the EXACT declared list lets it through, RECORDED as unverified")
 
     def test_an_ADOPTED_root_FAILS_ON_IDENTITY_before_recomputation_is_reached(self):
         """THE FIFTH GATE, as an observation rather than a proposal. `adopt_unified_5d.py` stamps no
@@ -2948,9 +2949,12 @@ class AnchorComparatorB2(unittest.TestCase):
         `hCov_combined5d_total` in the 41.44 GB intermediate C ruled need not be retained. C's argument
         was that the bar's operands live downstream in the 892 MB adopted roots -- true of
         `sqrt_tr_new`, false of `sqrt_tr_old`."""
-        how, why = self.B.RECOMPUTABILITY["sqrt_tr_old"]
+        how, kind, why = self.B.RECOMPUTABILITY["sqrt_tr_old"]
         self.assertEqual(how, self.B.NOT_RECOMPUTABLE)
-        self.assertIn("deletable", why)
+        self.assertEqual(kind, self.B.WRITER_GAP,
+                         "a WRITER GAP, not a mathematical impossibility -- diag_comb is already in "
+                         "memory at adopt_unified_5d.py:128, so C's 11g remedy is a WRITE")
+        self.assertIn("41.44 GB", why)
         self.assertEqual(self.B.RECOMPUTABILITY["sqrt_tr_new"][0], self.B.IN_FILE,
                          "the OTHER operand IS recomputable, which is what makes this specific")
 
@@ -2958,7 +2962,7 @@ class AnchorComparatorB2(unittest.TestCase):
         """C classified seven scalars as mandatory-recomputation; four can be recomputed from the file
         that carries them. Derived, not assumed, and pinned so the count cannot drift silently."""
         by = {}
-        for k, (how, _) in self.B.RECOMPUTABILITY.items():
+        for k, (how, _kind, _why) in self.B.RECOMPUTABILITY.items():
             by.setdefault(how, []).append(k)
         self.assertEqual(len(by[self.B.IN_FILE]), 4)
         self.assertEqual(sorted(by[self.B.NOT_RECOMPUTABLE]),
@@ -2966,7 +2970,7 @@ class AnchorComparatorB2(unittest.TestCase):
         for k in self.B.RECOMPUTE:
             self.assertEqual(self.B.RECOMPUTABILITY[k][0], self.B.IN_FILE,
                              f"{k} has a recompute implementation, so it must be classified IN_FILE")
-        for k, (how, _) in self.B.RECOMPUTABILITY.items():
+        for k, (how, _kind, _why) in self.B.RECOMPUTABILITY.items():
             if how is self.B.IN_FILE:
                 self.assertIn(k, self.B.RECOMPUTE,
                               f"{k} is classified IN_FILE but has no implementation -- the claim and "
@@ -2978,6 +2982,125 @@ class AnchorComparatorB2(unittest.TestCase):
         self.assertEqual(self.B._sqrt_trace_from_diag(np.array([9.0, 16.0])), 5.0)
         src = (ND / "mii_anchor_comparator.py").read_text()
         self.assertIn("GetBinContent(i + 1, i + 1)", src, "the TH2D reader takes the diagonal only")
+
+
+class RecomputabilityIsADeclaredAttribute(unittest.TestCase):
+    """C ruled: NO FOURTH CLASS -- `recomputable: yes|no` as a required attribute on PAYLOAD.
+
+    Its reason is structural and worth keeping: each of the three classes names a COMPARISON RULE
+    (bit-exact, equal, superset) and "not recomputable" is not one, because those keys still compare
+    bit-exact. What differs is whether the INGREDIENT CHECK is available.
+    """
+
+    def setUp(self):
+        import mii_anchor_comparator as B
+        self.B = B
+
+    def test_every_entry_declares_how_kind_and_reason(self):
+        self.assertEqual(self.B.assert_reasons_are_stated(), 9)
+
+    def test_a_BARE_no_IS_THE_FAIL_CLOSED_CASE(self):
+        """A `no` without a stated kind reads as a law of nature and freezes a writer gap forever."""
+        saved = dict(self.B.RECOMPUTABILITY)
+        try:
+            self.B.RECOMPUTABILITY["invented"] = (self.B.NOT_RECOMPUTABLE, None, "")
+            with self.assertRaises(SystemExit) as cm:
+                self.B.assert_reasons_are_stated()
+            self.assertIn("law of nature", str(cm.exception))
+        finally:
+            self.B.RECOMPUTABILITY.clear(); self.B.RECOMPUTABILITY.update(saved)
+
+    def test_a_no_with_a_KIND_but_NO_REASON_also_fails(self):
+        saved = dict(self.B.RECOMPUTABILITY)
+        try:
+            self.B.RECOMPUTABILITY["invented"] = (self.B.NOT_RECOMPUTABLE, self.B.WRITER_GAP, "short")
+            with self.assertRaises(SystemExit) as cm:
+                self.B.assert_reasons_are_stated()
+            self.assertIn("no usable reason", str(cm.exception))
+        finally:
+            self.B.RECOMPUTABILITY.clear(); self.B.RECOMPUTABILITY.update(saved)
+
+    def test_every_no_DISTINGUISHES_a_writer_gap_from_an_impossibility(self):
+        """C's requirement, and its purpose is that recording WHICH KIND determines whether anyone can
+        ever close it. All three of today's `no`s are WRITER GAPS -- i.e. all three are closable."""
+        for key in self.B.declared_unrecomputable():
+            how, kind, why = self.B.RECOMPUTABILITY[key]
+            with self.subTest(key=key):
+                self.assertIn(kind, (self.B.WRITER_GAP, self.B.IMPOSSIBLE))
+                self.assertEqual(kind, self.B.WRITER_GAP,
+                                 f"{key} is a writer gap; if this ever becomes IMPOSSIBLE the reason "
+                                 "must say what changed")
+                self.assertIn("writ", why.lower(),
+                              "the reason must name the unwritten ingredient, not just assert absence")
+
+    def test_the_ACKNOWLEDGEMENT_IS_A_CLOSED_SET_not_a_boolean(self):
+        """C's strengthening. A blanket flag lets a FUTURE `no` ride in silently: someone adds a key,
+        declares it unrecomputable, and every existing invocation swallows it without anyone deciding.
+        Same defect as the comparator being blind to a key absent from both files."""
+        self.assertEqual(sorted(self.B.declared_unrecomputable()),
+                         ["fixed_seed_null_norm", "globalCompleteness", "sqrt_tr_old"])
+        import inspect
+        self.assertIsNone(inspect.signature(self.B.compare_files)
+                          .parameters["acknowledge_unrecomputable"].default,
+                          "the default must be 'acknowledge nothing', not False-as-boolean")
+
+    def _reader(self):
+        C = np.array([1.0, 2.0, 3.0, 4.0])
+        MS = np.array([0.3, 0.4])
+        def mk(**over):
+            sc = {"sqrt_tr_unified": float(np.sqrt(10.0)), "sqrt_tr_block": float(np.sqrt(10.0)),
+                  "joint_mean_shift_norm": 0.5, "n_throws": 160, "fixed_seed_null_checked": 1,
+                  "fixed_seed_null_norm": 1.9706093906025077e-50}
+            sc.update(over)
+            return sc, {"C_unified": C, "C_blocksum": C, "C_cross": C, "hJointMeanShift": MS}
+        return lambda p: (mk() if p == "A" else
+                          mk(estimator_seed=1000, draw_seed=1000, est_seed_offset=0,
+                             est_seed_offset_declared=1))
+
+    def test_a_SUBSET_acknowledgement_is_REJECTED(self):
+        """A subset would leave a blocked key looking acknowledged."""
+        with self.assertRaises(SystemExit) as cm:
+            self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
+                                 read_keys=self._reader(),
+                                 acknowledge_unrecomputable=["globalCompleteness"])
+        self.assertIn("must match the DECLARED", str(cm.exception))
+        self.assertIn("missing", str(cm.exception), "and it must NAME what is missing")
+
+    def test_a_SUPERSET_acknowledgement_is_ALSO_rejected(self):
+        """A superset names a key nobody declared -- a sign the caller is working from a stale list, and
+        the direction that would otherwise pass silently."""
+        with self.assertRaises(SystemExit) as cm:
+            self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
+                                 read_keys=self._reader(),
+                                 acknowledge_unrecomputable=sorted(
+                                     self.B.declared_unrecomputable()) + ["not_a_key"])
+        self.assertIn("extra", str(cm.exception))
+
+    def test_the_EXACT_set_is_accepted_and_the_keys_are_LABELLED_unverified(self):
+        """Unverified-and-LABELLED versus unverified-and-indistinguishable-from-verified is the whole
+        distinction. PASS is allowed; silence is not."""
+        v, lines = self.B.compare_files(
+            "uq_5d/unified_throw_cov_5d.root", "A", "M", 0, read_keys=self._reader(),
+            acknowledge_unrecomputable=sorted(self.B.declared_unrecomputable()))
+        self.assertEqual(v, "PASS")
+        self.assertTrue(any("UNVERIFIED (acknowledged)" in l and "fixed_seed_null_norm" in l
+                            for l in lines),
+                        f"an acknowledged key must still be LABELLED in the report: {lines}")
+
+    def test_WITHOUT_the_flag_the_same_run_is_INCOMPLETE(self):
+        """The control: if this were PASS too, the flag would be decorative."""
+        v, _ = self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
+                                    read_keys=self._reader())
+        self.assertEqual(v, "INCOMPLETE")
+
+    def test_an_UNDECLARED_key_in_RECOMPUTE_REQUIRED_fails_closed(self):
+        """Declared in the enumeration, never DISCOVERED at comparison time -- so a recompute-required
+        key with no RECOMPUTABILITY row must not silently default to anything."""
+        import mii_root_payload_classes as classes
+        for key in classes.RECOMPUTE_REQUIRED:
+            with self.subTest(key=key):
+                self.assertIn(key, self.B.RECOMPUTABILITY,
+                              f"{key} is RECOMPUTE_REQUIRED with no declared recomputability")
 
 if __name__ == "__main__":
     unittest.main()
