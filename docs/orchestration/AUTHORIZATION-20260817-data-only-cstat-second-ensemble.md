@@ -90,3 +90,36 @@ set of contributing streams is certain; the variance shares are indicative.***
 5. Only then, submit.
 
 **Authorized by Joseph. Recorded by the mediator. Nothing submitted at the time of writing.**
+
+---
+
+## AMENDMENT 1 — 2026-08-17: the CPU unit, authorized separately
+
+**Joseph, verbatim: "Yes I authorize CPU hours, too."**
+
+The original authorization covered **151.17 A100-hours**. The eighth site (`BEN-420`) established that
+`C_stat^data` requires **its own target family** — reusing the existing 50 would leave the background
+Poisson *inside* the family while `P3` asserts unity, which is the largest MC contribution the product
+exists to exclude, asserted falsely in the artifact under a guard the implementing lane wrote.
+
+**That stage is CPU, and it was surfaced rather than absorbed:**
+
+| | |
+|---|---|
+| target family | **~46.3 CPU node-hours** (50 × 0.9256), **ZERO additional A100-hours** |
+| measured from | `56344268` — `00:55:32`, 256 CPU, 1 node, **no GPU** |
+| training family | 151.17 A100-hours, unchanged |
+
+**Why it was surfaced rather than spent:** the campaign's standing discipline is that every run is
+reported with its unit, and an A100 grant does not silently cover CPU node-hours. The same discipline
+caught the inverse error earlier today — `OI-60`'s Gate-2 re-run was recorded as GPU and is a **CPU**
+job, so *"an A100 grant cannot buy it"* in the direction nobody expected.
+
+**Also amended, and it happened before this authorization rather than because of it:** the motivating
+figure was corrected from `σ_total/σ_data = 2.89×` to **`1.18×` on measured injected leverage**, and
+Joseph ruled *"this will generate a result that can be compared to existing results more cleanly …
+do it"* **on the corrected number**. The case is *"~18% too large and reducible by generating more MC
+rather than more data"* — definitional rather than magnitude-based, and it is the form authorized.
+
+**Nothing else in the original authorization changes.** All five non-authorizations stand: no Gate 5
+F7 deviation, no pinned-file edit, no skipped predeclaration, no lifted prohibition, and `BEN-381`.
