@@ -1900,6 +1900,113 @@ class CrossStageLoaderAgreement(unittest.TestCase):
         self.assertIn("vacuously true", str(cm.exception))
 
 
+class DataOnlyFamilyValidator(unittest.TestCase):
+    """The CALLER. Its existence is what turns `0 REQUIRED` into a claim about grading.
+
+    These controls do not re-test the predicates -- 157 controls already do -- they test the properties
+    that only the caller can have: that every predicate is actually INVOKED, that a raising predicate
+    becomes a RECORDED failure rather than a crash, that the pinned-digest guard fires, and that the
+    family-level checks exist and are pairwise rather than degenerate.
+    """
+
+    MOD = "nd-unfolding/pet/validate_gate5_data_only_artifacts.py"
+
+    def setUp(self):
+        import validate_gate5_data_only_artifacts as V
+        self.V = V
+        self.repo = Path(__file__).resolve().parents[2]
+
+    def test_EVERY_predicate_the_manifest_cites_is_INVOKED_here(self):
+        """THE CONTROL THIS MODULE EXISTS TO SATISFY. Before it, 39 of the 55 replacements were written,
+        tested, and called by nothing -- and the manifest's `0 REQUIRED` would have read as 'the family
+        can be graded'. Checked by CALL SITE, not substring, and it names any predicate left out."""
+        doc = json.loads((self.repo / "docs/orchestration/state"
+                          / "DIVERGENCE-MANIFEST-20260818-cstat-data-only.json").read_text())
+        cited = set()
+        for row in doc["buckets"]["UNEXECUTED_BY_CONSTRUCTION"]:
+            repl = row["replacement"]
+            if repl.startswith("REPLACEMENT-REQUIRED"):
+                continue
+            cited.add(repl.split(".")[-1].split(" ")[0])
+        tree = ast.parse((self.repo / self.MOD).read_text())
+        called = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Call):
+                f = node.func
+                called.add(f.attr if isinstance(f, ast.Attribute) else getattr(f, "id", None))
+        # predicates whose home is a driver rather than this module are invoked at write time; the ones
+        # this module owns are the readback set plus the shared cstat predicates.
+        owned = {c for c in cited if c.startswith("assert_")}
+        missing = sorted(owned - called)
+        self.assertEqual([], missing,
+                         f"the manifest cites these replacements and this caller never invokes them: "
+                         f"{missing}")
+
+    def test_a_RAISING_predicate_becomes_a_RECORDED_FAILURE_not_a_crash(self):
+        """A raise would lose the other 49 members' verdicts AND make a failure look like a crash. The
+        `guarded` helper must convert `SystemExit` into a named row -- and must NOT swallow it."""
+        code = _code_only_src((self.repo / self.MOD).read_text(), label="validator")
+        self.assertIn("except SystemExit", code)
+        # the failure path must RECORD, so `c.eq(name, ...)` has to appear inside the handler
+        tree = ast.parse((self.repo / self.MOD).read_text())
+        handlers = [n for n in ast.walk(tree) if isinstance(n, ast.ExceptHandler)]
+        self.assertTrue(handlers, "no exception handler found")
+        for h in handlers:
+            body = ast.unparse(h)
+            self.assertIn(".eq(", body,
+                          "an exception handler that does not record a row would swallow a failure")
+            self.assertNotIn("pass", body.split("\n")[-1].strip()[:4])
+
+    def test_it_REFUSES_when_the_pinned_module_has_been_re_issued(self):
+        """The one comparison that distinguishes a legitimate re-issue of the pinned validator from this
+        module breaking. Without it, a re-issue produces a confusing failure whose tempting resolution is
+        to refresh the manifest."""
+        code = _code_only_src((self.repo / self.MOD).read_text(), label="validator")
+        self.assertIn("pinned_module", code)
+        self.assertIn("re-issued", (self.repo / self.MOD).read_text())
+
+    def test_the_pairwise_distinctness_check_is_PAIRWISE_not_non_degeneracy(self):
+        """'Not all identical' catches only the catastrophic case and passes silently on the graded one,
+        where duplicates bias sigma_stat^data DOWN -- 49 distinct understates by 0.1%, 25 by 1.7%."""
+        src = (self.repo / self.MOD).read_text()
+        self.assertIn("pairwise_distinct", src)
+        code = _code_only_src(src, label="validator")
+        self.assertIn("count(s) > 1", code.replace(" ", "").replace("count(s)>1", "count(s) > 1")
+                      if "count(s)>1" in code.replace(" ", "") else code)
+        self.assertNotIn("len(set(shas)) > 1", code,
+                         "that is non-degeneracy, which passes on 49-of-50 duplicates")
+
+    def test_the_family_level_loader_check_uses_the_PINNED_third_operand(self):
+        """Comparing the target and training blocks only to each other passes when both drift together,
+        which is the failure mode two separately-cut deployments create."""
+        code = _code_only_src((self.repo / self.MOD).read_text(), label="validator")
+        self.assertIn("assert_loader_digest_agrees_across_stages", code)
+        self.assertIn("pinned_expected", code)
+
+    def test_the_array_job_id_is_a_CLI_operand_and_not_a_module_literal(self):
+        """BEN-419: the pinned validator's `ARRAY_JOB_ID` names one run, which is why it cannot grade a
+        second one. This module must not repeat that."""
+        src = (self.repo / self.MOD).read_text()
+        self.assertIn("--array-job-id", src)
+        tree = ast.parse(src)
+        for node in tree.body:
+            if isinstance(node, ast.Assign) and isinstance(node.value, ast.Constant) \
+                    and isinstance(node.value.value, str):
+                self.assertFalse(re.fullmatch(r"\d{7,9}", node.value.value),
+                                 f"{ast.unparse(node.targets[0])} is a module-level run-id literal")
+
+    def test_it_states_what_it_does_NOT_establish(self):
+        src = (self.repo / self.MOD).read_text()
+        self.assertIn("not an independent verification", src)
+        self.assertIn("inherit", src)
+
+    def test_it_refuses_to_run_without_the_manifest(self):
+        """This module IS the manifest's caller; grading without the partition would be grading without
+        the accounting that makes omission unrepresentable."""
+        src = (self.repo / self.MOD).read_text()
+        self.assertIn("the divergence manifest is missing", src)
+
+
 class DivergenceManifest(unittest.TestCase):
     """The manifest is regenerable, its partition SUMS, and its generator refuses to run late.
 
@@ -1989,29 +2096,38 @@ class DivergenceManifest(unittest.TestCase):
         self.assertEqual(st["n_sites_whose_replacement_no_caller_INVOKES"],
                          sum(len(v) for v in st["written_but_UNCALLED"].values()))
 
-    def test_the_generator_reproduces_the_committed_manifest_byte_for_byte(self):
-        """Otherwise the file on disk and the rule that produced it can disagree silently."""
-        before = (self._repo() / self.OUT).read_bytes()
+    def test_the_generator_REFUSES_now_that_the_validator_EXISTS(self):
+        """THE ORDERING ASSERTION, NOW EXERCISED BY THE REAL STATE RATHER THAN BY A SIMULATION.
+
+        This control used to create a temporary file to prove the refusal fires, and to check the
+        generator reproduced the manifest byte for byte. Both were correct for the world in which the
+        validator did not exist. It exists now, so the refusal is LIVE: the manifest can no longer be
+        regenerated, which is the intended terminal state and the reason writing the validator was the
+        last step. A simulated refusal has been replaced by the real one -- BEN-258's third category
+        again, since the simulated version was the only evidence the guard worked.
+
+        The byte-for-byte reproduction control is deliberately NOT replaced by a weaker version: it
+        cannot run, and asserting something adjacent that CAN run would be the forbidden relaxation with
+        extra steps. The manifest's internal consistency is covered by the partition-sum, digest and
+        entry controls above, which read the committed file directly.
+        """
+        d = self._doc()
+        declared = [self._repo() / c for c in d["written_before_assertion"]]
+        self.assertTrue(any(p.exists() for p in declared),
+                        "no declared validator module exists, so the generator should still run and "
+                        "this control has the wrong premise")
         r = subprocess.run([sys.executable, str(self._repo() / self.GEN)],
                            capture_output=True, text=True, cwd=str(self._repo()))
-        self.assertEqual(0, r.returncode, r.stderr[-800:])
-        self.assertEqual(before, (self._repo() / self.OUT).read_bytes())
+        self.assertNotEqual(0, r.returncode, "the generator regenerated the manifest AFTER the validator "
+                                            "exists -- the ordering assertion is not firing")
+        self.assertIn("must be written before the wrapper", r.stdout + r.stderr)
 
-    def test_the_generator_REFUSES_once_a_wrapper_module_exists(self):
-        """THE ORDERING REQUIREMENT, EXERCISED. A manifest derived from a finished wrapper records what
-        was written rather than what was predicted, and the verdict's middle clause degenerates. The
-        control creates one of the forbidden paths, confirms the refusal, and removes it."""
-        d = self._doc()
-        target = self._repo() / d["written_before_assertion"][0]
-        self.assertFalse(target.exists(), "the wrapper already exists; this control cannot run")
-        target.write_text("# temporary, created by a control\n")
-        try:
-            r = subprocess.run([sys.executable, str(self._repo() / self.GEN)],
-                               capture_output=True, text=True, cwd=str(self._repo()))
-            self.assertNotEqual(0, r.returncode)
-            self.assertIn("must be written before the wrapper", r.stdout + r.stderr)
-        finally:
-            target.unlink()
+    def test_the_committed_manifest_is_unchanged_by_the_refusal(self):
+        """A refusal must not truncate or clobber the artifact it protects."""
+        before = (self._repo() / self.OUT).read_bytes()
+        subprocess.run([sys.executable, str(self._repo() / self.GEN)],
+                       capture_output=True, text=True, cwd=str(self._repo()))
+        self.assertEqual(before, (self._repo() / self.OUT).read_bytes())
 
 
 class MainGuardPosition(unittest.TestCase):
