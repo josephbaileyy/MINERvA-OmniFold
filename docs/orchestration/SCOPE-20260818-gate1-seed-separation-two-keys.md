@@ -277,13 +277,61 @@ operative content is unaffected — **not** a repeat of `BEN-249` amendment 2's 
 category error.)* **The `~80 shifting` figure is D's, presumes a single insertion at `:223`, and is
 superseded by §3c: there is no single offset, so it must be re-derived per citation after the diff.**
 
+## 6b. THE BUILD IS HELD — the ruling's population EXCLUDES the 5D production path
+
+**The mediator ruled (remove `--seed`, both flags REQUIRED with no defaults, all `26` call sites edited
+in the same diff) and said *"build it."* I am not building yet, on one measurement made before touching
+a file.** Every operand at `origin/main` `df5237f1`.
+
+**`nd-unfolding/unified_throw_cov_5d.py` IS A SEPARATE 3,646-BYTE WRAPPER THAT INHERITS THE BASE
+ARGPARSE.** It monkeypatches a `td_W`-aware `_xsec_for_weights` into the base module and ends:
+
+    base._xsec_for_weights = _xsec_for_weights_5d
+    if __name__ == "__main__":
+        base.main()
+
+**So removing `--seed` from `unified_throw_cov.py` breaks every `unified_throw_cov_5d.py` invocation
+too — and that is the 5D path, the one that produced the adopted candidate's `C_syst`.**
+
+**AND NO PATTERN ANYONE RAN COULD SEE THEM: `unified_throw_cov\.py` does not match
+`unified_throw_cov_5d.py`, because the `_5d` sits before the `.py`.** D's `26 invoke / 21 pass / 5
+silent` and `Assistant`'s `39 lines / 28 files` are both correct **about the base module's spelling** and
+neither reaches the wrapper. Measured, non-comment lines only:
+
+| launcher (invokes `unified_throw_cov_5d.py`) | invoke lines | passes `--seed` |
+|---|---|---|
+| `sbatch_j28_adopt_5d.sh:92` | 1 | **no** |
+| `sbatch_uthrow_combine_5d.sh:11` | 1 | **no** |
+| `sbatch_uthrow_combine_5d_fast.sh:15` | 1 | **no** |
+| `sbatch_uthrow_block_5d.sh:20,25` | 2 | 1 of 2 |
+| `sbatch_uthrow_run_5d.sh:20` | 1 | yes |
+| `sbatch_uthrow_run_5d_fast.sh:21` | 1 | yes |
+
+**THE SILENT POPULATION IS 8, NOT 5 — and the three new ones are on the 5D path**, two of them
+**combine** launchers (where `:418` compares archived `slab_seeds` against the estimator seed) and one
+the **J28 adopt** launcher. So the ruling's own justification argues for a LARGER diff than the ruling
+priced: condition 2 says *"all 26 call sites, not 21 and not 5"*, and the true figure is **26 base + 6
+wrapper launchers**, `7` additional invocation lines.
+
+**Why this is held rather than absorbed: the mediator priced the cost explicitly and called it larger
+than either option I had priced. A lane that discovers the price was still too low and proceeds anyway
+has converted a ruling into an estimate.** Re-priced and returned for confirmation; nothing edited.
+
+**This is `BEN-235`'s species at the top of the chain and the third instance in this thread of a
+population selected by a pattern that cannot see its relevant members** — D's *"a search for a token
+cannot enumerate the callers that omit it"*, `Assistant`'s *"my population was selected by the very
+property I was reasoning about"*, and now a name-spelling that excludes the production path. **All three
+were found by changing the predicate, never by widening the corpus.**
+
 ## 7. STATUS
 
 **Gate: CLEARED** (header). **Keys: `D` and `Assistant`, both YES, both against seven items, each with
 required changes now folded in above.** Both state explicitly that a key is a statement about the merits
 and not an authorisation.
 
-**OPEN, and the only thing blocking the build: the `--seed` fate (§3a / D's (ii)).** Joseph routed it —
+**RULED, and the build is HELD ON A RE-PRICING — see §6b.** The mediator ruled: remove `--seed`, both flags REQUIRED with no parser default, all call sites edited in the same diff, D's (iii) subsumed by construction. **§6b shows the priced population excluded the 5D wrapper and the true silent population is 8, not 5.** Returned for confirmation.
+
+**Superseded, kept for the record: the `--seed` fate (§3a / D's (ii)).** Joseph routed it —
 *"Ask the personal orchestrator"* — so it is with the mediator. D requires removal; `Assistant` expressed
 no preference; the unsafe option (retain meaning only one of the two roles) is excluded by both keys.
 **D's part (iii) applies either way**: the 5 no-seed invokers get explicit seeds, so that after the diff
