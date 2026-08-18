@@ -42,9 +42,15 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[3]
 
 
-def commit_time(sha):
-    out = subprocess.run(["git", "-C", str(REPO), "show", "-s", "--format=%ct", sha],
-                         capture_output=True, text=True)
+def commit_time(sha, repo=None):
+    # `stdout=PIPE` rather than `capture_output=True`, and `--repo` rather than a derived root: BOTH are
+    # fixes I had already made in `gen_manifest_run_bound_addendum.py` and did NOT carry to this sibling.
+    # The login node this must run on has Python 3.6 (`capture_output` is 3.7+), and the script has to be
+    # runnable from outside the repo because the family root it checks is only visible on the cluster
+    # (BEN-474). **A fix applied to the instance rather than to the class leaves the second instance to be
+    # discovered by the same failure** -- here, at the moment the check was finally needed.
+    out = subprocess.run(["git", "-C", str(repo or REPO), "show", "-s", "--format=%ct", sha],
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     if out.returncode != 0:
         raise SystemExit(f"[precedes] cannot read commit time for {sha}: {out.stderr.strip()}")
     return int(out.stdout.strip().splitlines()[-1])
@@ -75,9 +81,12 @@ def main(argv=None):
     ap.add_argument("--family-root", required=True,
                     help="the campaign root whose artifacts the entries predict")
     ap.add_argument("--out", help="write a receipt here")
+    ap.add_argument("--repo", default=None,
+                    help="repository root to read the commit time from. Supply it when running from outside "
+                         "the repo, which is required whenever the family root is only visible elsewhere.")
     args = ap.parse_args(argv)
 
-    ct = commit_time(args.addendum_sha)
+    ct = commit_time(args.addendum_sha, args.repo)
     arts = family_artifacts(args.family_root)
     if not arts:
         # AN EMPTY POPULATION IS REFUSED, not reported as satisfied. "No artifact was written before the
