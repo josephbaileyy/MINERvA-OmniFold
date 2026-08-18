@@ -118,3 +118,55 @@ the verification happened** — `p3f_md5.txt`, `p3f_files.txt` and `logs/hsi.log
 survives the deletion, but it is a working directory and reads as disposable. **After the HPSS copies
 are gone it is the sole evidence that the 240 were checked rather than merely copied.** The `.ok`
 markers are empty files and carry no evidence themselves.
+
+---
+
+## AMENDMENT 2 — the ceiling is lifted; `n = 50` funded. **And the stated premise is half true.**
+
+Joseph, 2026-08-18, after being shown the corrected costs and the live allocation, verbatim:
+
+> **"Okay yes, because we have so many hours available, I approve all these hours since there are so
+> many hours avaiable."**
+
+**So `BEN-462`'s ruled grid — `k_j = 1200j`, `n = 50` — is funded. The `200` GPU-h / `500` CPU-h ceiling
+of amendment 1 is superseded.**
+
+### The premise holds for GPU and does NOT hold for CPU, and this is recorded so the approval is not later read as covering a fact it was not shown
+
+Measured from `iris` immediately before the approval, in **node-hours** (the unit `iris` reports —
+derived empirically, not assumed: CPU charge moved `4.5` units over ~9 h while tasks billing 36 of 128
+cores ran, and GPU tasks show `billing=32, gres/gpu:a100=1` on a 4-GPU node):
+
+| | remaining | used | `n = 50` costs | share of remaining |
+|---|---|---|---|---|
+| GPU `m3246_g` | 64,119.5 node-h | 64.4% | **480.5 node-h** | **0.75%** |
+| CPU `m3246` | 4,009.1 node-h | **80.0%** | **1,059.2 node-h** | **26.4%** |
+
+> **"So many hours available" is true of GPU by two orders of magnitude and is NOT true of CPU.**
+> **This run takes a quarter of everything left on the allocation that is already at 80%, and the
+> data-only rebuild is still to draw on the same pool.** The approval stands — it was given after the
+> `26.4%` figure was put in front of him — **but a future reader must not infer that CPU was abundant.**
+> **It was not, and the decision was to spend it anyway.**
+
+### Not covered by this amendment
+
+- **The pre-commit hook admission** (`check_continuation_integrity.py`). Asked in the same message and
+  **not answered** — *"all these hours"* is about compute. **It remains open, and a lane quorum cannot
+  substitute**: a run line in `.githooks/pre-commit` widens a constraint on every lane, and the
+  precedent for this exact edit is Joseph's approval *gated on* a lane's concurrence, not a lane pair.
+- **Any spend beyond `n = 50` on this grid.** `n = 100` would be `53.4%` of remaining CPU and is a
+  separate question.
+
+### Lane-side gates that funding does not release, all open at the time of writing
+
+1. **THE ANCHOR IS CONFOUNDED.** `1200j` is dirty at `j = 0`, for two independent reasons, **and both are
+   properties of the ARCHIVE rather than of the scan** — throw 0's draw RNG has always been seeded
+   identically to the estimator, and bootstrap replica 42 has always drawn from seed 42 under an
+   estimator seeded 42. `j = 1..49` clean. **With C for a specification ruling; the predicate is
+   deliberately unwired pending it.**
+2. **`P-ANCHOR` UNANSWERED.** All six archived four-leg product paths are absent from the checkout and
+   untracked; recorded-as-produced evidence covers **one of four legs**. Needs a cluster-side read.
+   **If it fails, the anchor costs a full member and every figure above moves up one.**
+3. **D's re-review against `1200j`** rather than the `0..7` illustration.
+
+**Nothing is submitted. Funding was never the last gate and is not now.**
