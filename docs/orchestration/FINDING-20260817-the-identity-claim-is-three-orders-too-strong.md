@@ -93,6 +93,35 @@ reach `OI-126`'s `186.1%` falls with it:
 **`27×` is enormously more plausible than the `2.7 × 10³` lane C had quoted from the scalar.** The
 correction strengthens the experiment it was thought to retire.
 
+### AMENDMENT 2 (Assistant) — the test was not uninformative; it leaned C's way
+
+**Amendment 1 left the record saying the restriction test could not distinguish the hypotheses. It is
+weakly informative, and in the direction that supports the surviving route.**
+
+The prediction already divides out the direct linear effect (`pred[:n_data] *= data_factor * C`), so
+the residual is each row's deviation *from exact scaling*. **Under the nonlinearity hypothesis, a row
+scaled by 3 sits at a different point on the nonlinear map than a row scaled by 1, so it should carry
+its own nonlinear response ON TOP OF any shared coupling; `mult = 1` rows sit at the reference point
+and should show the shared term alone.** So nonlinearity predicts `mult >= 2` residual **greater than**
+`mult = 1` residual.
+
+| restriction | median residual |
+|---|---|
+| `data_factor == 1` | `8.047e-04` |
+| `data_factor >= 2` | `8.022e-04` |
+
+**Measured LOWER, not higher. There is no detectable own-row nonlinear response.** At `0.3%` in the
+medians this is mild, so the honest statement is **consistent with a common offset and unsupportive of
+nonlinearity** — not proof. But it is evidence, and the previous draft recorded it as a null.
+
+**Net: the target route is not merely un-retired. Combined with the `27×`-at-p99 correction above, the
+control is cheaper to believe on two independent counts than before either check ran.**
+
+**Provenance, because it matters for who owns the error:** the restriction test AND the reading
+attached to it (*"restricted ≈ full → (ii) confirmed, no finding"*) were both specified by Assistant;
+the mediator relayed the inference and published it. **Nonlinear coupling and a constant offset BOTH
+predict draw-independence, so the test could never have separated them, and one was asserted anyway.**
+
 **THE GENERALIZABLE ERROR, and it is the second instance in this same item.** I refuted a *dispersion*
 mechanism and wrote off a *location* observation. That is the identical dispersion-vs-location mismatch
 that made `{(a),(b)}` non-exhaustive — reappearing **inside the argument that retires a third route.**
