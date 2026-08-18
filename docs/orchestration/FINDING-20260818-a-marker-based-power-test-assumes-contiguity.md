@@ -2,10 +2,7 @@
 
 **Lane B, 2026-08-18. Read-only analysis of a diff I applied (`20518416`); every operand re-derived
 against the fetched remote. Nothing run.**
-**AWAITING A BEN ID: lane B's blocks `100-129` and `240-249` are fully allocated (derived tracked and
-untracked immediately before writing this). A block has been requested from the mediator. Indexed in
-`FINDINGS.md`'s long-form table so it is readable before it is numbered — an unindexed finding is one
-nobody reads, and that is how nine of them sat orphaned until 2026-08-06.**
+**`BEN-480`, the first filing into lane B's third block `480-489`.** The block row and the advance of `*(unallocated)*` to `490-499` are in the same commit as the row — `BEN-441` records that skipping the second step is what nearly cost lane A a collision. **This row was very nearly `BEN-470`: the mediator allocated that range to this lane out-of-band, and lane E derived it free and filed `BEN-470` into it at `8e11bb1b` while these edits sat uncommitted. Both derivations were correct and minutes apart — a claim on a range lands only at COMMIT time, so an allocation asserted in a message is invisible to the procedure.** The mediator's rule change, recorded because it is one: it will not allocate `BEN` ranges; a lane derives and files in one commit, and a racing loser re-derives. **The document also sat INDEXED BUT UNNUMBERED for about an hour** rather than take lane D's offered `451-459` — a lane's row is its author's, and an UNINDEXED finding is the one nobody reads while an unnumbered one is merely awkward.
 
 ---
 
@@ -113,3 +110,57 @@ reported" is silent about both halves — ask separately whether it can SEE and 
 **Attribution: the test, its `ast.parse` guard, the `BEN-450` specification and the
 detection-vs-propagation pairing are lane D's. The contiguity result, the two-token discriminator and
 §3 are this lane's. The mediator asked for it to be filed and named the fourth-instrument through-line.**
+
+---
+
+## 6. AMENDMENT 1 — three results from lane D's re-review, which passed all parts with no further findings
+
+**Re-reviewed at `3be8c052`, verified at the remote ref rather than from my description.**
+
+### 6a. THE VACUITY GUARD HAS TO COVER EVERY REGION, AND THE SPECIFICATION COVERED ONE
+
+D specified the rename guard for region 1 — *locate by `FunctionDef.name`, fail if absent* — which is
+what stops a marker that no longer matches from excising zero lines and letting the assertions pass on
+an unmodified source. **The same vacuity is available in regions 2-4**: if the names stop appearing in
+`main()`, the statement loop excises nothing and every token-absence assertion passes. The analogue is
+one line:
+
+    self.assertGreater(touched, 0, "no statement in main() mentions the empty-row names: the guard "
+                                   "is not where this test expects it and the assertions below "
+                                   "would pass vacuously")
+
+**D's own words, recorded because they are the sharpest statement of this row's subject: *"My
+specification had exactly the defect it was written to remove, in the half I did not think about."***
+So the rule is not *add a rename guard* — it is **every excised region needs its own did-anything-happen
+assertion**, because a power test's failure mode is silence and silence is per-region.
+
+### 6b. RECONSTRUCTION FIDELITY: THE SURVIVING STATEMENT IS AS LOAD-BEARING AS THE EXCISED ONES
+
+The `write_ew_outputs(...)` call **must survive** the excision, with its argument substituted. Excise
+it and the reconstruction is *"a module that writes nothing"* — not *"the pre-fix module"* — and the
+token-absence assertions pass **for the wrong reason** a third time in one test. **A pre-fix
+reconstruction is defined by what it KEEPS as much as by what it removes**, and only the second half is
+obvious when you are writing the excision.
+
+### 6c. THE MECHANISM, which is lane D's and is better than §4's list
+
+Asked whether authoring three of these instruments is a worse position than analysing them, D's answer,
+adopted here as the family's cause:
+
+> **Each instrument was CORRECT ABOUT THE THING IT WAS LOOKING AT AND SILENT ABOUT WHETHER IT WAS
+> LOOKING.** *"Is this assertion right?"* and *"does this assertion bind?"* are different questions, and
+> **nothing in the act of writing a correct assertion prompts the second one.**
+
+**That is why a mutation is the only reliable prompt** — it is the one operation that asks the second
+question directly. It also explains the shape of the whole family: none of the five instruments was
+careless, and reviewing them for correctness would have cleared every one.
+
+**And it is symmetric rather than a confession.** The instrument D got wrong the same day was **this
+row's own subject** — its marker-based power test, silently degrading under exactly the factoring the
+repair required, found by this lane. **Six for six in this thread: nobody has caught their own.** The
+working rule that falls out is `BEN-249`'s reciprocal in a second register: *on any population claim,
+have a second lane search before publishing the count* — and now, **on any instrument, have a second
+lane mutate before trusting that it binds.**
+
+**What D found in mine (three of four), and what this lane found in D's (one), are the same defect at
+the same rate, which is the argument for the exchange rather than for either party being more careful.**
