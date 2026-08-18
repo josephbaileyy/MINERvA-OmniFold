@@ -612,6 +612,62 @@ REQUIRES it — a member of the family that demonstrably lacks the key.** Absent
 unevidenced. *(Same rule as a filter needing a test in the direction it acts, applied to a guard being loosened
 rather than tightened.)*
 
+### 11g. RULED on the 41 GB per-universe covariance — **each member MUST PRODUCE it and NEED NOT RETAIN it**, and that is the whole storage question
+
+**The scope gap of §11f-iv is CLOSED by tracing: the bar's operand is `sqrt_tr_old` in the ADOPTED roots**
+(`uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware_uthrow.root`, 892 MB, 4 keys),
+not in the terminal throw product — which is why the listing could not find it. **So stage 1's comparison scope
+gains that file and its sibling.** Traced through `receipt_construction_contract_5d.json`'s `adopted_roots` and
+confirmed on the cluster, not guessed. Gap closed.
+
+**Now the question that moves the storage by a factor of ten. `uq_universe_5d_covariance_combined_bkgaware.root`
+is 41.44 GB — 47 keys, `hCov_universe5d_total` plus 46 systematics.**
+
+#### 11g-i. It MUST be produced per member. That half is not close
+
+**It is not the analyzer's input — it is the analyzer's OUTPUT and adoption's INPUT.** And the analyzer's inputs
+are the member's own 188 universes, re-unfolded at `42+k`.
+
+> **So a member consuming the ARCHIVE's per-universe covariance would freeze the sweep leg — the block that is
+> `61 %` of the GPU bill — and the member's `C_syst` would BE the archive's.** That is item 7's argument and Q1's
+> argument arriving at a third site: **a frozen leg makes the variation incoherent, and an incoherent variation
+> measures nothing.** No escape here, and I looked for one.
+
+#### 11g-ii. But it NEED NOT BE RETAINED — and that is where the factor of ten is
+
+**It is an INTERMEDIATE. The bar's operands live downstream of it, in the 892 MB adopted roots.** So once
+`ADOPT_j` has consumed it and `MVFINAL_j` has bound its digest, **the member has no further use for it.**
+
+```
+retained per member   892,195,314 + 892,241,032 + 2,677,168,123  =  4.46 GB
+  x 50                                                           =  223.1 GB = 0.203 TiB
+transient per member  uq_universe_5d_..._bkgaware.root           = 41.44 GB
+
+peak, retained-all-50 + N in flight:      N=1  264.5 GB (6.0% of free)   N=4  388.8 GB ( 8.8%)
+                                          N=8  554.6 GB (12.6%)          N=10 637.4 GB (14.5%)
+NO DELETION AT ALL:                            2.087 TiB               = 52.1% of the 4.01 TiB free
+```
+
+> **So the storage column is `223 GB` retained plus `41.44 GB × concurrency`, and `52.1 %` of remaining headroom
+> becomes `8.8 %` at four members in flight. THE NUMBER WAS NEVER A PHYSICS QUANTITY — IT IS A RETENTION POLICY
+> NOBODY HAD SET, and a concurrency choice.**
+
+**AND THE REPRODUCIBILITY COST IS BOUNDED AND TINY, which is what makes the deletion defensible rather than
+convenient.** The 41 GB is a handful of `65856²` `TH2D`s — **one such matrix is `34.7 GB` on its own** — derived
+from 188 universe files totalling **`26.9 MB`**. **Retaining the inputs and discarding the intermediate is a
+~1,500× compression of the reproducibility requirement**, and rebuilding it is the analyzer's CPU time, not a
+GPU member.
+
+> **DELETION IS GATED, and the gate is §10c's invariant running the other way: NOTHING IS DELETED WITHOUT A
+> POSITIVE DECLARATION EITHER.** No member's intermediate may be removed until that member's `MVFINAL_j` exists
+> and validates. **Nothing accepted without a stamp; nothing deleted without one.** A failed member keeps its
+> intermediate.
+
+**AND `CLAUDE.md`'s purge rule now bites at a size that can be obeyed:** `223 GB` of retained products carrying
+`1,961` GPU-hours is copyable off scratch. **`2.09 TiB` is not.** *(My own `133.9 GB` was correctly SCOPED — I
+said "that ONE product" and "I am not estimating the rest" — and radically incomplete: the all-in figure is
+`45.90 GB` per member. The mediator measured the rest, which is the division of labour that worked.)*
+
 ## 12. R1 RULED — **`_sb` IS CANONICAL FOR BOTH LEGS**, and there is exactly ONE wrong literal
 
 **Not a judgement — the receipt says so.** `receipt_construction_contract_5d.py:313-314`:
@@ -787,6 +843,33 @@ incomplete bytes. The audit lane's rider is worth keeping: `not f` is unreachabl
 `TFile.Open` raises rather than returning null, **so a guard that reads as two-clause belt-and-braces is
 single-ply** — and the surviving clause is the weaker of the two.)*
 
+### 14a. AMENDED — **`hInflation_g` ALREADY SHIPS THE MASK, so my addition reduces to the operands**
+
+**The mediator found that `hInflation_g` is a key in the adopted root. That is `adopt_unified_5d.py:112`'s `g`,
+and it is the mask:**
+
+```
+g = sqrt(max(vu,vb)) / sqrt(vb)      g == 1  <=>  vb won        g > 1  <=>  vu won
+and wherever g > 1:  vu = g^2 * vb   <-- so g plus vb RECOVERS vu on the vu-wins region
+```
+
+> **So §14's winner mask is ALREADY A SHIPPED PRODUCT and B should not build it. What is genuinely missing is
+> `vb`** — with which `g` recovers `vu` wherever `vu` won — **plus `vu` itself in the CENSORED region `g == 1`,
+> where `g` says only `vu ≤ vb` and the distance to the kink is unrecoverable.**
+>
+> **That is exactly the "by how much" half §14 identified, and it is now the ONLY half.** Ship `vb` and `vu`;
+> note in the receipt that `g` is the mask and is redundant with them wherever `g > 1`.
+
+**AND A NUMBER OF MINE THAT WAS WRONG: §14 said "three arrays of ~285 floats."** The 5D flat length is **65,856**,
+so each array is **`0.527 MB`**, not `~2 KB` — **wrong by 230×.** *(It came from the extended-FPS `15×19 = 285`
+grid, a different product entirely — a quantity true at its own scope quoted at another.)* **The ruling is
+unchanged, because `0.527 MB` against a `4.46 GB` retained member is still unmeasurable — but I stated a number
+and it was the wrong one.**
+
+*(This is the fourth time today that checking before building removed work rather than adding it: cause 1's census
+already existed, the manifest freeze covered 4 entries not 77, `finalize` was already inside the priced `39.078`,
+and now the mask is already in the product. Worth noting as a rate, not an anecdote.)*
+
 ## 4. Scope
 
 - **RULED: item 7 → `(a)`**, on the F2 guard's committed precedent rather than on my discretion. Seven
@@ -844,6 +927,14 @@ single-ply** — and the surviving clause is the weaker of the two.)*
   recorded once and never varies.**
 - **FLAGGED (§11f-iv): the bar's `block_sum` is NOT among the terminal product's 9 keys**, so stage 1's
   scope as listed does not cover the quantity the bar tests.
+- **RULED (§11g): the 41.44 GB per-universe covariance MUST be produced per member and NEED NOT be
+  retained.** Consuming the archive's would freeze the sweep leg — `61 %` of the GPU bill. Retention:
+  `223 GB` + `41.44 GB × concurrency`, so `52.1 %` of remaining scratch headroom becomes `8.8 %` at four in
+  flight. **Deletion gated on `MVFINAL_j`: nothing accepted without a stamp, nothing deleted without one.**
+  **And the bar's operand is located — `sqrt_tr_old` in the adopted roots — so §11f-iv's gap is CLOSED and
+  those two 892 MB files join stage 1's scope.**
+- **AMENDED (§14a): `hInflation_g` already ships the winner mask**, so R4 reduces to `vb` plus `vu` in the
+  censored region. **And my "~285 floats" was wrong by 230× — the 5D flat length is 65,856.**
 - **AUTHORIZED: nothing.** No launcher edited, nothing submitted.
 
 *Second sought: B on §3's derived-target predicate (its module) and on whether stage 1 can be run as a single
