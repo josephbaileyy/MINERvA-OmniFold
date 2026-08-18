@@ -45,8 +45,13 @@ claim and the magnitude is unmeasured. **§3 gives what is available instead: a 
 independent of the offset structure and of variance `σ_δ²`:
 
 ```
-E[s^2]  =  sigma^2  +  sigma_d^2 * (1 - 1/n) / (n - 1)      >=  sigma^2
+E[s^2]  =  sigma^2  +  sigma_d^2 / n      >=  sigma^2
 ```
+
+*(Simplified on lane A's key: `(1 − 1/n)/(n−1) = 1/n` identically — verified here at
+`n = 2,3,6,20,50,100,1000`. **Same claim, and the simpler form makes the `1/n` scaling visible, which is why
+`n = 6` is four times worse than `n = 50`.** A derived the whole result independently and confirmed all four
+inflation figures by Monte Carlo over 200k trials.)*
 
 > **So the anchor confound biases the measured `f` UPWARD — toward `UNMET`, AGAINST the negligibility claim
 > the bar exists to test.** And that settles the disposition, because it is the opposite of the other bias in
@@ -72,16 +77,21 @@ indefensible in exactly the branch where it matters).
 
 ## 3. THE MAGNITUDE — a bound now, and a two-step check on products that ALREADY EXIST
 
-**Bound, from §2's formula.** Percentage inflation of the measured sd:
+**Bound, from §2's formula.** Percentage inflation of the measured sd — **exact for leg A (`f_agg`), and for
+leg B (`f_med`) these are the CONSTANT-DISPLACEMENT case, which §3c proves is a FLOOR rather than a ceiling:**
 
 | `σ_δ / σ` | `n = 6` | `n = 20` | **`n = 50`** | `n = 100` |
 |---|---|---|---|---|
-| **1.00** *(pessimistic: anchor displaced by the FULL per-member scatter)* | **8.01 %** | 2.47 % | **1.00 %** | 0.50 % |
+| **1.00** *(anchor displaced by the FULL per-member scatter)* | **8.01 %** | 2.47 % | **1.00 %** | 0.50 % |
 | 0.50 | 2.06 % | 0.62 % | 0.25 % | 0.12 % |
 | 0.25 | 0.52 % | 0.16 % | 0.06 % | 0.03 % |
 
-> **At `n = 50`, even the pessimistic case inflates the measured sd by `1.00 %` — twice `c4`'s `0.51 %`
-> correction and in the safe direction.** *(And a fourth independent reason `n = 6` is the wrong grid: there the
+> **⚠ THE ROW LABEL USED TO READ *"pessimistic"* AND THAT WAS WRONG FOR LEG B. Corrected on lane A's
+> challenge — see §3c.** It is pessimistic in the displacement's SIZE and optimistic in its PATTERN, and only
+> the first was stated. **The direction of the bias is unaffected, so the disposition in §2 does not move.**
+
+> **At `n = 50`, a full-per-member-scatter displacement inflates the measured sd by `1.00 %` — twice `c4`'s
+> `0.51 %` correction and in the safe direction.** *(And a fourth independent reason `n = 6` is the wrong grid: there the
 > same confound is worth `8.01 %`, which would move a verdict on its own.)*
 
 ### 3a. ⚠ A CORRECTION TO MY OWN FIRST FRAMING OF THIS, CAUGHT BEFORE PUBLISHING — two different `σ`s
@@ -115,6 +125,108 @@ matters, and that is worth knowing whatever the verdict.
 
 **Both steps are cluster-side reads** (the products are on scratch — see §5), so they belong with `P-ANCHOR`
 rather than being a second trip.
+
+## 3c. AMENDMENT on lane A's second — **the median transfer, and my table's label was wrong**
+
+**A asked the right question: §2's algebra is about a variance, and `f_med` is a MEDIAN over 285 bins. Does
+*"inflates `E[s²]`"* survive that?** My §6-of-the-ruling argument for `c4` relied on the multiplier being
+**uniform**, and this is not one. **A tested it; I re-tested it independently rather than take it on relay.**
+
+**IT SURVIVES, AND FOR A DIFFERENT REASON THAN `c4` DOES — A's distinction, adopted:**
+
+> **`c4` survives a median because it is UNIFORM. This survives because it is UNIVERSAL.** A median is robust
+> to a **minority** of contaminated arguments; here the displaced member is displaced **in every bin at once**,
+> because it is one run. **So there is no clean majority for the median to fall back on.** *(And that is why
+> quoting `c4`'s reasoning here — which the first draft of §2 did implicitly — would have reached the right
+> answer by the wrong route.)*
+
+**Measured independently. `n = 50`, 285 bins, 4000 trials, seed `20260818` — and the script ships tracked as
+[`mii_anchor_confound_mc.py`](mii_anchor_confound_mc.py), so these either reproduce or they do not
+(`CONVENTION-receipt-ingredients.md`, `BEN-077`):**
+
+| displacement pattern | `E[d_b²]` | `f_med` inflation, mine | A's | trials in the UP direction |
+|---|---|---|---|---|
+| constant `d_b/σ_b = 1` | 1.000 | **0.99 %** | 0.99 % | 0.995 |
+| uniform `0…2` | 1.333 | **1.32 %** | *1.46 %* | 1.000 |
+| half 0 / half 2 | 2.000 | **1.95 %** | 1.94 % | 1.000 |
+| lognormal, mean 1 | 1.284 | **1.23 %** | *1.34 %* | 1.000 |
+
+**A's conclusion is confirmed — `uniform 0…2` lands at `1.32 %`, exactly the `E[d²] = 4/3` prediction — and it is a correction to my table: every non-constant pattern inflates `f_med`
+MORE than the constant one, so my four figures are NOT upper bounds on `f_med`.** Safe direction, disposition
+unchanged, **label wrong** — fixed above.
+
+### 3c-i. A labels the reordering *"a hypothesis from three sampled configurations"*. It is a THEOREM, and here it is
+
+**The inflation is governed by `E[d_b²]/n`, not by the pattern's shape.** Tested over six patterns spanning
+`E[d²] ∈ [0.33, 8]`:
+
+```
+pattern            E[d^2]   predicted sqrt(1+E[d^2]/n)-1   measured   ratio
+uniform 0..1       0.3333            0.33%                   0.34%    1.026
+constant 1         1.0000            1.00%                   0.99%    0.994
+lognormal mean 1   1.2840            1.28%                   1.23%    0.966
+uniform 0..2       1.3333            1.32%                   1.32%    0.997
+half 0 / half 2    2.0000            1.98%                   1.95%    0.986
+half 0 / half 4    8.0000            7.70%                   7.16%    0.930
+```
+
+> **Then Jensen closes it: at fixed mean displacement `E|d_b| = m`, `E[d_b²] ≥ m²` with equality IF AND ONLY IF
+> `d_b` is CONSTANT.** So among all patterns with the same mean displacement, **the constant one minimises
+> `E[d²]` and therefore minimises the inflation.** **The constant-displacement figures are a FLOOR over the
+> whole family, not three lucky draws** — which is stronger than the hypothesis and removes the need to sample
+> configurations at all.
+>
+> **And a second fact the table gives away: the ratio drifts to `0.930` as `E[d²]` grows, so leg A's exact
+> formula OVER-estimates leg B's inflation at fixed `E[d²]`.** `f_agg`'s algebra is therefore a
+> conservative proxy for `f_med` — usable, and now with its direction known.
+
+### 3c-ii. TWO OF A's FOUR FIGURES DID NOT REPRODUCE, and it changes nothing — reported because that is the rule
+
+**`uniform 0…2`: mine `1.31 %`, A's `1.46 %`. `lognormal`: mine `1.23 %`, A's `1.34 %`.** My MC standard error
+is `0.007 %`, so these are not noise. **Constant (`0.99 %`) and half-half (`1.95 %`) match exactly.**
+
+> **And the `E[d²]` law says A's uniform figure is UNREACHABLE by the stated pattern: `uniform(0,2)` has
+> `E[d²] = 4/3` exactly, giving `1.32 %` at `n = 50` with `σ_b = 1`. `1.46 %` needs `E[d²] ≈ 2.95`.** So the two
+> runs differ in setup — most likely `σ_b` varying across bins against an ABSOLUTE `d_b`, which is a different
+> and also legitimate model, or a different lognormal parameterisation *(`lognormal(0, 0.5)` has mean `1.133`
+> and `E[d²] = 1.649`, which WOULD give `1.63 %`)*.
+>
+> **NOT RESOLVED and deliberately not adjudicated: the discrepancy does not touch either conclusion.** All four
+> patterns inflate, all four exceed the constant case, and §3c-i's theorem is independent of any of the eight
+> numbers. **Recorded because two lanes reporting different values for the same quoted quantity is exactly what
+> gets copied forward as agreement.** *(If A's setup does scale `σ_b`, its numbers are the more realistic ones
+> and mine are the cleaner isolation of the mechanism — both worth having, neither replacing the other.)*
+
+## 3d. THE ASYMMETRY, in A's general form — **adopted verbatim, with its condition**
+
+> **A bias is DECLARABLE when its sign is certain and points toward the stricter verdict; it must be CORRECTED
+> when its sign is certain and points toward the lenient one; and when its sign is UNCERTAIN it must be BOUNDED
+> before any verdict is read.**
+
+**Both of §2's cases depend on the sign being CERTAIN rather than estimated** — here `σ_δ² ≥ 0` for every
+realisation, so the increment cannot reverse. **The third case does not arise here, and naming it is what makes
+the first two a RULE instead of a pair of decisions.** *(A's, and it is better than my two-case form.)*
+
+### 3d-i. But the sign is certain **in EXPECTATION**, not per realisation — and here is why that is subsumed
+
+**`E[s²]` inflates; a single realised `s` can still fall below its uncontaminated value.** If that happened, a
+`MET` could in principle be partly manufactured by the confound. **Measured, constant pattern, `n = 50`, 4000
+trials:**
+
+```
+P(the confound pushes f_med DOWN) = 0.0055      worst downward excursion seen = -0.33%
+percentiles of the inflation: 0.5% -> -0.01%   2.5% -> +0.26%   50% -> +0.98%   97.5% -> +1.73%
+```
+
+*(From the tracked script. An earlier draft of this section quoted `0.0025` and `-0.21%` from a scratch run
+whose RNG stream was consumed in a different order — same seed, different draws. **The document now quotes the
+version that ships**, which is the only one a reader can check.)*
+
+> **And the margin the decision actually has at `n = 50` is `16.8 %`** — leg B's `MET` threshold is `2.28 %`
+> against a `2.74 %` bar. **A sub-`1 %` realisation excursion cannot move a verdict across a `16.8 %` gap**, so
+> the caveat is real, stated, and already covered by the bound §2 requires be quoted. **`MET → STANDS` is
+> unaffected, and A's reading of it is right: it is the strongest branch precisely because it needs no magnitude
+> at all.**
 
 ## 4. `build_plan` — **WIRE THE PREDICATE, and express the exemption as a COINCIDENCE ALLOWLIST, not as `j != 0`**
 
@@ -189,6 +301,11 @@ remaining.)*
 - **CORRECTED, mine, before publishing: §3a's two `σ`s.** The outlier test and the inflation bound are in
   different units and the leverage between them is the whole conversion.
 - **NOT RULED: `P-ANCHOR`.** A cluster-side read, B's to report, and §6 states what a failure costs.
+- **AMENDED on lane A's second (`BEN-444`, `2254be5c`):** the algebra simplified to `σ² + σ_δ²/n`; the
+  median transfer argued from UNIVERSALITY rather than from `c4`'s uniformity; **my table relabelled — the
+  figures are a FLOOR on `f_med`, not a ceiling**; A's three-case asymmetry adopted verbatim; the
+  reordering upgraded from hypothesis to theorem by Jensen; and two of A's four MC figures reported as
+  NOT reproducing, with the conclusion unaffected (§3c-ii).
 - **AUTHORIZED: nothing.** §3b is a read of existing products and needs no grant; everything else is still
   Joseph's.
 
