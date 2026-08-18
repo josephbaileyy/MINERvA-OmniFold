@@ -216,7 +216,7 @@ docs/orchestration/FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-blo
 docs/orchestration/FINDING-20260817-comparable-on-one-axis-is-not-comparable.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	1	111	7580
 docs/orchestration/FINDING-20260817-corroboration-and-echo-have-opposite-value.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	2	152	9550
 docs/orchestration/FINDING-20260817-default-identity-is-the-machine-owner.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	1	106	5943
-docs/orchestration/FINDING-20260817-match-the-moment-and-the-null-survivor-list.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	1	51	3259
+docs/orchestration/FINDING-20260817-match-the-moment-and-the-null-survivor-list.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	1	62	4041
 docs/orchestration/FINDING-20260817-testing-the-gate-disabled-the-gate.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	2	88	5159
 docs/orchestration/FINDING-20260817-the-fix-for-the-last-instance-is-the-mechanism-of-this-one.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	1	98	5354
 docs/orchestration/FINDING-20260817-the-floor-shape-noise-is-heterogeneous.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	2	176	11035
@@ -229,7 +229,7 @@ docs/orchestration/FINDING-20260817-verification-allocated-by-suspicion.md	ARCHI
 docs/orchestration/FINDINGS-ARCHIVE-2026-08.md	ARCHIVAL	document	2026-07-16-fe-campaign		terminal		exact-path-only	docs/orchestration/findings_row_lint.py;docs/orchestration/split_findings.py;nd-unfolding/pet/check_canonical_designation.py	yes	7	155	362988
 docs/orchestration/FINDINGS-INDEX-ARCHIVE-2026-08.md	ARCHIVAL	document	20260806-campaign		terminal		exact-path-only		yes	2	46	25076
 docs/orchestration/FINDINGS-POLICY-HISTORY.md	ARCHIVAL	document			terminal		exact-path-only		yes	1	62	4476
-docs/orchestration/FINDINGS.md	LIVE	ledger	20260806-campaign		open		route-only	docs/orchestration/findings_row_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/split_findings.py;docs/orchestration/whose_row.py;nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/orchestrate_gpu_node.sh;nd-unfolding/sbatch_bootstrap_5d_gpu.sh;nd-unfolding/tests/test_hash_bindings.py	no	83	623	585172
+docs/orchestration/FINDINGS.md	LIVE	ledger	20260806-campaign		open		route-only	docs/orchestration/findings_row_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/split_findings.py;docs/orchestration/whose_row.py;nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/orchestrate_gpu_node.sh;nd-unfolding/sbatch_bootstrap_5d_gpu.sh;nd-unfolding/tests/test_hash_bindings.py	no	83	624	589219
 docs/orchestration/FOOTING-20260817-gbdtaiesttrace-12-seeds.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	94	6331
 docs/orchestration/HANDOFF-20260806-2246Z.md	ARCHIVAL	document		20260806	terminal		exact-path-only		yes	13	186	12848
 docs/orchestration/HANDOFF-20260812-1145Z.md	ARCHIVAL	document		20260812	terminal		exact-path-only		yes	6	175	14895
@@ -313,7 +313,7 @@ docs/orchestration/RULING-20260815-lanec-reduced-n-diagnostic-coherence.md	ARCHI
 docs/orchestration/RULING-20260817-lanec-data-only-coherence-predicate.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	233	16767
 docs/orchestration/RULING-20260817-lanec-data-only-cstat-is-a-second-product.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	339	24599
 docs/orchestration/RULING-20260817-lanec-data-only-normalization-must-vary.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	204	13059
-docs/orchestration/RULING-20260817-lanec-data-only-target-family-and-launchers.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	236	16710
+docs/orchestration/RULING-20260817-lanec-data-only-target-family-and-launchers.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	272	19553
 docs/orchestration/RULING-20260817-lanec-floor-vs-family-coherence.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	338	24704
 docs/orchestration/RULING-20260817-lanec-oi126-branch-set-not-exhaustive.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	247	17338
 docs/orchestration/RULING-20260817-lanec-unity-factor-diagnostic-is-admissible.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	207	13931

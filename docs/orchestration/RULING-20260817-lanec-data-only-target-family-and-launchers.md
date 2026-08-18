@@ -125,6 +125,42 @@ disabling the check, and power-tested by extraction from the shipped file (`BEN-
 | **`R4`** | **either `bootstrap_seed` is ABSENT from the data-only artifact entirely, or an assertion fixes the two fields' relationship.** Two fields that can disagree with nothing raising is a reader's coin-flip | both present, unrelated, nothing checks |
 | **`R5`** | **the identity assertion consults `data_bootstrap_seed` AND the sha, not one or the other** — limb 1 is the caller's intent, limb 2 is the bytes | a patch that de-overloads the field and drops the sha leg |
 
+> ### ⚠ `R2` AND `R5` AMENDED 2026-08-17 — both were under-specified, and `R5` was WORTHLESS as written
+>
+> **`R2` EXTENDS ACROSS THE WHOLE PATH, INCLUDING THE VALIDATOR. Stated explicitly because the natural
+> reading stops at the driver and that reading is wrong.**
+>
+> ***"The data-only path" is not a set of files — it is EVERY SITE THAT READS A FIELD THE DATA-ONLY ARTIFACT
+> WRITES.*** `validate_gate5_training_artifacts.py:283` is
+> `checks.eq("target_meta_seed", target_meta.get("bootstrap_seed"), seed)` with `seed = SEED_BASE + idx` at
+> `:145` — **a SECOND consumer of the overloaded field, downstream of everything E is fixing.** Verified here.
+> **And it is the WORSE of the two, because it fails after the FULL training spend rather than at 2m24s** —
+> so the cheap failure is the one being fixed and the expensive one is downstream of the diff being scoped.
+>
+> **Mechanical form, so `R2` cannot be under-scoped again:** `grep -rn 'bootstrap_seed'` over **the whole
+> corpus the data-only path touches — driver, loader-callers, target builder, extractor, validator,
+> reconciler** — and classify each occurrence. **`R2` passes only at ZERO identity-reads of `bootstrap_seed`
+> on that path.** A covering search with a stated corpus (`BEN-235`), applied to my own criterion.
+>
+> **`R5` IS REWRITTEN, because as written it was satisfiable by a TAUTOLOGY — and by my own standard that
+> makes it worth nothing.** Verified: `train_fullevent_nominal.py:379` passes
+> `precomputed_target=args.target_npy`; the loader echoes `os.path.abspath(precomputed_target)` to
+> `consumed_precomputed_target` at `:1516`; and `:233` computes `got_sha = sha256_file(target_npy)` from the
+> same path. **So both provenance legs compare `X` to `X`. The limb I called *load-bearing* — the one that
+> converts intent into bytes — currently establishes NOTHING.**
+>
+> > **`R5` (amended): each provenance leg must compare a value the artifact ECHOES against a value derived by
+> > a route THAT DOES NOT PASS THROUGH THE ECHO'S SOURCE.** Admissible second operands are
+> > **family-position-derived** — `SEED_BASE + idx`, `campaign/replicas/replica_NN/target`. **Inadmissible:
+> > anything derived from the driver's own arguments (`args.target_npy`).** *"Consults the sha"* is NOT the
+> > criterion and never was; **independence of the two routes is.**
+>
+> **And the working form already exists in the file E has to fix anyway:** `:283` derives its operand from the
+> member's **directory position**, and `:285-287` derives `target_path` from `campaign/replicas/replica_NN/target`.
+> **So the independent route is implemented, demonstrated, and reusable — the fix is to POINT `:283` at
+> `data_bootstrap_seed`, not to weaken it.** A good check failing for a bad reason is repaired by correcting
+> the field, never the comparison.
+
 **`R4` is the one I expect to be the near miss**, because leaving `bootstrap_seed: None` in the artifact is the
 path of least resistance and reads as harmless — and it is exactly the shape that made `{}` indistinguishable
 from absent (`BEN-405`). **If both fields ship, the relationship must be asserted, not documented.**
