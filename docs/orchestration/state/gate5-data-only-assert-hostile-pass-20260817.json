@@ -1,0 +1,64 @@
+{
+ "BOUNDARY": "Lane D is read-only. This is a FINDING, not a change. fullevent_fps_dataloader.py is pinned at 25 digest sites and nothing here licenses editing it; the recommended shape touches train_fullevent_replica.py only, and is E's to write and someone else's to approve.",
+ "Q1_DOES_replica_target_sha256_RESOLVE": {
+  "MATCH": true,
+  "VERDICT": "YES -- RESOLVES. The mediator's diagnosis is NOT upstream-faulted.",
+  "bootstrap_seed": 50000,
+  "cstat_product": "data-only-v1",
+  "receipt": ".../fullevent_cstat_data_only_n50/replicas/replica_00/target/GATE5_REPLICA_TARGET_RECEIPT.json",
+  "receipt_step1_feed_weights_sha256": "616117e163beaf27eeff50603894ec53389ace16bd4d8fe7b494050c55507499",
+  "replica_index": 0,
+  "sha256_recomputed_on_disk": "616117e163beaf27eeff50603894ec53389ace16bd4d8fe7b494050c55507499",
+  "size_bytes_on_disk": 18723004,
+  "size_bytes_receipt": 18723004,
+  "status": "PASS",
+  "target_mtime": "2026-08-17 19:22 (= 57194054_0 End 19:22:05Z)"
+ },
+ "Q2_IS_THE_ASSERT_RIGHT_AND_THE_DESIGN_WRONG": {
+  "HOSTILE_HYPOTHESIS_A_killed": {
+   "claim": "The consumed target was built by the SAME builder as the coherent family, which thins background by bkg_factor. Data-only repairs R with ones_bkg. If so the target carries a background bootstrap the design says it does not want, and the assert would be accidentally standing in front of a REAL mismatch.",
+   "why_it_is_false": "build_fullevent_replica_target.py:187-198 installs cstat_data_only.unity_mc_factor_patch, which returns (canonical data_factor, ones(n_sig), ones(n_bkg)). The target IS 'data Poisson, MC unity'. It is then asserted three ways against what the LOADER published -- T5 sig unity, T2 bkg unity, T3 data factor == canonical (:254-265) -- plus assert_data_only_target_streams over the block BEFORE it is written (:293-300). Target and driver agree."
+  },
+  "HOSTILE_HYPOTHESIS_B_killed": {
+   "claim": "Fixing the assert only MOVES the failure: the next data-only job would die in replica_atomic / validate_artifact, which require coherent bootstrap evidence that a bootstrap_seed=None build does not produce.",
+   "why_it_is_false": "the data-only path is branched all the way down. train_fullevent_replica.py:393-395 swaps in BOTH replica_build_data_only AND replica_atomic_data_only; :556 selects validate_data_only_artifact. None of the three call validate_coherent_bootstrap. The assert at :288 really is the SINGLE blocker -- one correct change unblocks the family."
+  },
+  "VERDICT": "NO. Two independent hostile hypotheses were constructed and BOTH ARE KILLED BY THE CODE. The assert is the defect, as diagnosed.",
+  "WHY_A_PRECOMPUTED_TARGET_IS_UNAVOIDABLE": "no Perlmutter interpreter carries both ROOT and TF, so the ROOT-side target must be handed to the TF-side trainer as an array. There is no in-process alternative to reject it in favour of."
+ },
+ "SEE_ALSO": "BEN-256 -- one field, two roles (this instance + unified_throw_cov.py's --seed).",
+ "SLURM_STATE_read_this_turn": {
+  "50_failed_rows_claim": "CONFIRMED ARITHMETICALLY: 2 FAILED + 48 PENDING = 50.",
+  "57194054 g5dotarg (CPU targets)": "10 COMPLETED (_0.._9), 3 RUNNING (_10.._12), 37 PENDING -- HEALTHY",
+  "57194055 g5dotrain (GPU)": "2 FAILED (_0 00:02:24 ExitCode 1:0 End 19:54:32Z; _1 00:02:16 End 19:54:24Z), 48 PENDING (_2.._49)",
+  "note_on_the_reported_time": "mediator reported 'FAILED at 19:52Z'; sacct End is 19:54:32Z / 19:54:24Z. Immaterial to the diagnosis, corrected for the record."
+ },
+ "THE_THING_THE_DIAGNOSIS_DID_NOT_SAY_AND_IT_MATTERS": {
+  "consequence": "`bootstrap_seed` means 'the seed this target was BUILT FOR' in one dict and 'the seed this loader DREW MC WITH' in the other. One function cannot read both.",
+  "headline": "The SAME assert is called twice per job on two dicts with THE SAME KEY NAMES AND SWAPPED MEANINGS, and returns opposite verdicts minutes apart.",
+  "site_A_PASSES": {
+   "measured": "read out of replica_00's receipt this turn",
+   "runtime_target.bootstrap_seed": 50000,
+   "runtime_target.precomputed_target_replica_seed": null,
+   "where": "train_fullevent_replica.py:87, on the BUILDER receipt's runtime_target"
+  },
+  "site_B_FAILS": {
+   "measured": "fullevent_fps_dataloader.py:1524 + the frozen driver's :283-284",
+   "target.bootstrap_seed": null,
+   "target.precomputed_target_replica_seed": 50000,
+   "where": "train_fullevent_replica.py:288, on the LOADER's meta['target']"
+  }
+ },
+ "WHY_THE_OBVIOUS_FIX_IS_WRONG": {
+  "AND_THE_LOADERS_OWN_MISPAIRING_GUARD_IS_ALREADY_DEAD_HERE": "fullevent_fps_dataloader.py:1479 gates the whole seed-consistency block on `if bootstrap_seed is not None`. Data-only sets it to None, so :1488's 'precomputed target was built for replica X but this loader is drawing Y' NEVER RUNS in data-only. The role collapse disabled the guard at the same stroke it broke the assert.",
+  "RECOMMENDED_SHAPE_not_a_patch_and_NOT_MINE_TO_APPLY": "at :288 stop re-asserting identity from loader telemetry, which has none, and instead assert that the loader consumed THE PATH WHOSE SHA WAS VERIFIED AT :87 -- meta['target']['consumed_precomputed_target'] (frozen loader :1516) is an abspath the LOADER wrote about what it actually opened. That is a fact about the run, not an echo of an argument, and it fails when the wrong array is loaded.",
+  "WHAT_ACTUALLY_CARRIES_IDENTITY": "the sha256 binding already performed at :87/:155 -- read_replica_target_receipt verifies receipt.status==PASS, receipt.bootstrap_seed==args.bootstrap_seed, receipt.replica_index, the owning path, AND sha256_file(target)==feed.sha256, storing it as _verified_target_sha256. THAT is external. I re-verified it on disk this turn and it holds.",
+  "WHY_IT_IS_A_CHECK_THAT_CANNOT_FAIL": "precomputed_target_replica_seed is NOT a property of the array on disk. It is a value the DRIVER passes IN at replica_build_data_only (frozen :284, unconditionally int(args.bootstrap_seed)), which the loader echoes into meta['target'] (:1523-1524). Asserting on it is the driver asserting against its own argument. It would return True for replica 7 handed replica 12's target, AND for replica 7 handed the NOMINAL array. That is BEN-250's family exactly: the current form cannot pass, the coalesced form cannot fail, and neither is evidence.",
+  "the_obvious_fix": "read precomputed_target_replica_seed, or coalesce it with bootstrap_seed"
+ },
+ "frozen_checkout": "/pscratch/sd/j/josephrb/gate5-data-only-frozen-d0c42bd",
+ "measured_utc_date": "2026-08-17",
+ "produced_by": "Lane D (verifier), read-only. Nothing submitted, cancelled, or written on scratch.",
+ "requested_by": "mediator session (minerva-omnifold-72), item (1)",
+ "what": "Hostile pass on the 57194055 data-only training failure: is the assert RIGHT and the design wrong, and does replica_target_sha256 resolve?"
+}
