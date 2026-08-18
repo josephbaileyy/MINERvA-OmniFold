@@ -484,6 +484,31 @@ stamp and IS the thing that makes the member the anchor.**
 from the same file. **A product whose scalar disagrees with its own array is a defect the bit-exact comparison
 would otherwise pass on both sides.** `BEN-077`.
 
+### 11d. ⚠ AND A FOURTH PROVISION THE ENUMERATION NEEDS — **the ARCHIVE's schema is not the CURRENT one**
+
+**The corroboration run reported the keys actually present in a canonical `_sb` slab:**
+
+```
+['bands', 'flux_u', 'seed', 'throws', 'xs']
+```
+
+**Compare §11b's row, which I wrote from the CURRENT writer: `xs`, `throws`, `flux_u`, `estimator_seed`,
+`draw_seed`, `est_seed_offset_declared`, `est_seed_offset`.** The archive predates the two-role seed split and
+the offset stamps. **So:**
+
+- **`bands` is UNCLASSIFIED by §11b — and the fail-closed rule therefore FIRES, correctly, on real data.**
+  Classified now: **CONFIGURATION** — it names the systematic bands the throw varied, and changing it changes
+  what was measured.
+- **`seed` is ONE key where the current writer has TWO.** The archive's `seed` is the pre-split single seed; the
+  member's `estimator_seed` and `draw_seed` were both `1000` in the archive.
+
+> **FOURTH PROVISION: the comparison needs a declared KEY-RENAME/SPLIT MAP for the archive side, and it must be
+> written BEFORE stage 1 runs.** Here: archive `seed` → current `(estimator_seed, draw_seed)`, both required
+> equal to it. **Without the map, stage 1 fails on a SCHEMA change rather than on a physics difference — and the
+> obvious repair at that moment is to demote the keys to PROVENANCE and let them differ, which is exactly the
+> failure §11a's third class exists to prevent.** The map is CONFIGURATION-class bookkeeping, not a tolerance:
+> **a rename is a claim that two names denote one quantity, and it is falsifiable.**
+
 ### 11c. AND THE ROOT SIDE IS NOT ENUMERATED HERE — said rather than papered over
 
 **Stage 1 compares the archive's ROOT products too** (`unified_throw_cov_5d.root` at `2.67 GB`, and the sweep
@@ -587,6 +612,41 @@ throw leg packs, and only the throw leg's corroboration needed repair.
 **Consequence for `P-ANCHOR`: its throw-leg availability answer must be re-run against `_sb`.** The `160 ✓` was
 against a directory the contract does not bind, and a month older.
 
+### 12c. ⚠ PATH SHAPE — **MEMBER-ROOT-FIRST, and I meant it literally. The inconsistency is MINE, in my own document, not in the relay**
+
+**The mediator offers to own this as a paraphrase defect. It is not one.** My §12 says
+`member_kXXXXXX/uq_5d/block_slabs_5d_sb/` — **member first, literally** — and my §5 endorsed B's implementation,
+which is **namespace-then-member**: `lib_member_resume.sh:64-71`'s `mr_prefix` inserts the member directory
+**before the basename**. **Two sections of one document disagree, and the paraphrase was faithful to §12.**
+
+> **THE ENDORSEMENT IN §5 WAS OF THE NAME, AND I EXTENDED IT TO THE PLACEMENT WITHOUT NOTICING THEY WERE
+> SEPARATE DECISIONS.** B's offset-derived *naming* — `member_k%06d/` rather than an index — **stands, and every
+> argument in §5 is about the name.** Its *placement* is a different question and §5 gave it no argument at all.
+
+**RULED: MEMBER-ROOT-FIRST, under an `mii/` container, exactly as spec §1 derives it** —
+`mii/member_k001200/uq_5d/block_slabs_5d_sb/…`. **Not on my preference: on two mechanisms.**
+
+**(1) SPEC §1's PREFLIGHT IS UNWRITABLE UNDER NAMESPACE-THEN-MEMBER.** It requires *"a preflight must reject any
+member output path equal to, under, or glob-overlapping the six canonical archive namespaces."* **Under
+namespace-then-member EVERY member path is under a canonical namespace by construction** —
+`uq_5d/block_slabs_5d_sb/member_k001200/` is literally beneath `uq_5d/block_slabs_5d_sb/`. So the preflight
+either rejects all 50 members or needs an *"under, but with a member component"* exception. **A guard that must
+special-case the thing it guards is the shape this campaign has spent the day removing.** Member-first makes it a
+one-line prefix test in both directions: every member path starts `mii/`, no archive path does.
+
+**(2) IT PLACES 50 MEMBER TREES AS SIBLINGS INSIDE THE DIRECTORY THE ARCHIVE'S OWN CONSUMERS GLOB.** The combine
+globs `'uq_5d/block_slabs_5d_sb/block5d_*.npz'`. **The only thing keeping 50 members out of that glob is that
+shell globs do not recurse — and the absence of exactly that property is what caused the Q1 defect.** One `*/`,
+one recursive-glob, one `find`, one `rsync` and members cross-contaminate or a member's products are swept into the
+archive's combine. **Relying on non-recursion as a safety property, in the same document that ruled on a defect
+caused by non-recursion, is backwards.** Under member-first the archive's namespace contains only archive
+products, forever, by construction.
+
+> **CONSEQUENCE, and it is mine: the 16/16 probe pass is INVALIDATED and must be re-run against the corrected
+> shape.** The mediator identified it as a one-line change in `mr_dir_prefix`. **B flagged rather than resolved,
+> which was exactly right — a builder that had silently taken either reading would have left a document disagreeing
+> with an implementation and a probe certifying the wrong one.**
+
 ## 13. R2 RULED — `MVFINAL_j` is a **RECEIPT**, digest-bound. But the CITABLE artifact is the ENSEMBLE receipt, and that is what the verifier learns
 
 **A thing that gates admission must be verifiable or the gate is decorative** — spec §4 says *"no member is
@@ -675,6 +735,13 @@ single-ply** — and the surviving clause is the weaker of the two.)*
   throws/file = 160 ids, exactly the range. **My COUNTING METHOD is what is withdrawn (`BEN-465`), and the
   spec I cited had already warned against it.** The fresh check reads the `throws` id arrays, not files.
   **Bounded: bootstrap and split are 1-product-per-id, so `100`/`24` stand.**
+- **RULED (§12c): MEMBER-ROOT-FIRST under `mii/`**, per spec §1 — because the spec's preflight is
+  unwritable otherwise and namespace-then-member puts 50 member trees inside the directory the archive's
+  consumers glob. **My §5 endorsed B's NAME and silently extended to its PLACEMENT; the inconsistency is in
+  my document, not in the relay, and it invalidates the 16/16 probe.**
+- **RULED (§11d): a declared KEY-RENAME/SPLIT MAP for the archive side**, written before stage 1 — archive
+  `seed` → `(estimator_seed, draw_seed)`. **And `bands` classified CONFIGURATION; the fail-closed rule fired
+  on it correctly, on real data.**
 - **AUTHORIZED: nothing.** No launcher edited, nothing submitted.
 
 *Second sought: B on §3's derived-target predicate (its module) and on whether stage 1 can be run as a single
