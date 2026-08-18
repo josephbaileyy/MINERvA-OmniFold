@@ -1346,10 +1346,17 @@ class LauncherArgvProbe(unittest.TestCase):
         "Six successive attempts to make the transformation work each MOVED the failure, which is why "
         "native mode deletes the transformation instead. The DETECTION they assert -- a nested "
         "assignment or a continuation-swallowed argument shows up as a missing/absent seed value -- is "
-        "exactly what --cluster-probe now checks, and it PASSED on the cluster with stub_fired=True on "
-        "all 14 executing cases. So the capability is verified where it can be; these two are skipped "
-        "with a REASON rather than deleted, because deleting them would remove the only record that "
-        "the local path was tried and why it was abandoned."
+        "exactly what --cluster-probe checks. WHAT SUBSTITUTES FOR THESE TWO, so a reader who finds a "
+        "skip can trace it to its replacement instead of assuming nothing covers it: "
+        "`python3 mii_seed_offset_driver.py --gate-only <TREE>` (exit 0, all four intercepted commands "
+        "still shell functions after the env activation) followed by "
+        "`python3 mii_seed_offset_driver.py --offsets 1200 --cluster-probe <TREE>`, run on the cluster "
+        "at sha bd578ac4: exit 0, 16 START / 16 DONE, 14 observations, seeds 1242 on all four g1 legs "
+        "and 2200 on all three g2 legs, every output path member-namespaced, stub_fired=True on all 14 "
+        "executing cases. A SKIP NOBODY CAN TRACE TO ITS REPLACEMENT DECAYS INTO 'we turned that off'. "
+        "Skipped rather than deleted because these two are the only record that the local path was "
+        "tried and why it was abandoned, and a skip with a reason is falsifiable where a deletion is "
+        "not. Set MNV_ARGV_PROBE_LOCAL=1 to run them anyway and watch the local harness fail."
     )
 
     def _skip_if_local(self):
