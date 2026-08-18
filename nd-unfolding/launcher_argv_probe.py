@@ -495,3 +495,30 @@ def cluster_check(repo, offset, cases_by_launcher):
     print(f"[probe] VERDICT: PASS -- {total_cases} cases, {total_obs} observations, every expected "
           f"case produced an integer estimator seed and a member-namespaced output")
     return 0
+
+
+# ===================================================================================================
+def gate_only(repo):
+    """RUN THE STUB GATE AND NOTHING ELSE. There is no path from here to a launcher.
+
+    WHY A SEPARATE ENTRY POINT RATHER THAN "invoke the full probe carefully". The mediator ran an
+    instrument that executed real work on my assurance, and asked not to have to trust its own
+    discipline twice in a row. An early `return` inside the full path would be one edit away from
+    being bypassed; this function calls `assert_stubs_survive_activation` and returns, and a test
+    asserts by AST that neither `observed_argv_native` nor `cluster_check` is reachable from it.
+
+    IT CANNOT EXECUTE A LAUNCHER because it never names one: the gate sources only the environment
+    activator, to answer one question -- do the stubs survive it?
+    """
+    try:
+        got = assert_stubs_survive_activation(repo)
+    except SystemExit as exc:
+        print(str(exc), flush=True)
+        print("[gate] VERDICT: FAIL -- the stubs do NOT survive the launchers' env activation. "
+              "The full probe must NOT be run: this is the condition under which it previously "
+              "executed a real unfold on a login node.", flush=True)
+        return 2
+    print(f"[gate] stub kinds AFTER sourcing setup_salloc_env.sh: {got}", flush=True)
+    print("[gate] VERDICT: PASS -- every intercepted command is still a shell function after the "
+          "activation that displaced the old PATH shims. The full probe may be run.", flush=True)
+    return 0
