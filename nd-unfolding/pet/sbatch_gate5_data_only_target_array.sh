@@ -77,6 +77,36 @@ PYTHON_BIN=$(command -v python3 || true)
 [[ -n "$PYTHON_BIN" && -x "$PYTHON_BIN" ]] || die "ROOT environment python3 missing"
 "$PYTHON_BIN" -c 'import numpy, sklearn' || die "ROOT target environment missing NumPy/sklearn"
 
+# ---------------------------------------------------------------------------------------------
+# DEPLOYMENT PARITY -- the first production caller this checker has ever had on an UNPINNED path.
+#
+# `verify_executing_copy_is_committed.py` has existed and worked since 2026-08-13 and its only
+# production call site is `reconcile_gate5_family.py`, which is hash-pinned -- so `BEN-385` records
+# it as effectively unwired: the one check that answers "is the file about to execute the committed
+# one" was on no path anything took. These launchers are NEW and unpinned, and they are about to be
+# the only consumer of a frozen deployment checkout, so this is the first opportunity to give it a
+# caller without editing a pinned file.
+#
+# WHY IT IS NOT REDUNDANT WITH THE sha_of PINS ABOVE. Those compare each file against a constant the
+# submit controller computed AT SUBMIT. This compares each file against the COMMITTED BLOB in the
+# tree it sits in. The two fail on different things: a pin catches a change between submit and
+# dispatch, and this catches a deployment that was edited after it was created -- or was never a
+# faithful checkout in the first place. A deployment step that does not verify its own premise is
+# exactly the defect this checker was written for, committed by the work that fixes it.
+#
+# EXIT SEMANTICS ARE THE TOOL'S, NOT REINTERPRETED HERE: 0 only if every pair is CURRENT, 3 if any
+# pair is stale/uncommitted/missing, and 2 for "could not look" -- deliberately NOT 3, so an
+# unreadable tree can never be misread as measured drift. Both non-zero cases die.
+PARITY=${CODE_ROOT}/nd-unfolding/pet/verify_executing_copy_is_committed.py
+[[ -s "$PARITY" && ! -L "$PARITY" ]] || die "deployment parity checker missing at $PARITY"
+"$PYTHON_BIN" "$PARITY" --repo "$CODE_ROOT" \
+  --pair "${DRIVER}=nd-unfolding/pet/build_fullevent_replica_target.py" \
+  --pair "${LOADER}=nd-unfolding/pet/fullevent_fps_dataloader.py" \
+  --pair "${PREDICATES}=nd-unfolding/pet/cstat_data_only.py" \
+  --pair "${PARITY}=nd-unfolding/pet/verify_executing_copy_is_committed.py" \
+  || die "deployment parity: the executing copies are not the committed ones in $CODE_ROOT" $?
+echo "[gate5-do-target] deployment parity CURRENT for all pinned executing copies in $CODE_ROOT"
+
 echo "[gate5-do-target] index=$INDEX seed=$SEED job=${SLURM_ARRAY_JOB_ID}_${INDEX} head=$EXPECTED_HEAD product=data-only-v1"
 "$PYTHON_BIN" "$DRIVER" \
   --inputs "$INPUT" \
