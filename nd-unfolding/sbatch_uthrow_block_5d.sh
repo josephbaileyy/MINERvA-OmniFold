@@ -11,6 +11,9 @@
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"; mkdir -p uq_5d/block_slabs_5d
+source "${REPO}/lib/resume_guard.sh"
+source "${REPO}/nd-unfolding/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
+BLOCK_DIR="$(mr_dir_prefix uq_5d/block_slabs_5d)"
 T=${SLURM_ARRAY_TASK_ID}
 # --invalid-ratio neutral: hold the ~5e-5 GENIE negative-weight artifacts
 # (HighQ2/LowQ2 +1sigma, one MFP_N zero) at CV for the affected knob -- the
@@ -30,10 +33,10 @@ EST_SEED=$(( 1000 + ${MNV_EST_SEED_OFFSET:-0} ))
 if [[ "$T" -eq 0 ]]; then
   python3 unified_throw_cov_5d.py --blockunits --block-knobs all --draw-seed 1000 --estimator-seed ${EST_SEED} \
     --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral \
-    --out "uq_5d/block_slabs_5d/block5d_knobs.npz"
+    --out "${BLOCK_DIR}/block5d_knobs.npz"
 else
   LO=$(( (T-1) * 5 )); HI=$(( LO + 4 ))
   python3 unified_throw_cov_5d.py --blockunits --block-knobs none --block-flux ${LO}-${HI} \
     --draw-seed 1000 --estimator-seed ${EST_SEED} --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral \
-    --out "uq_5d/block_slabs_5d/block5d_flux_${T}.npz"
+    --out "${BLOCK_DIR}/block5d_flux_${T}.npz"
 fi

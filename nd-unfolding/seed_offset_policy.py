@@ -454,3 +454,53 @@ def assert_target_set_is_complete(repo_root, targeted):
         raise SystemExit("\n".join(lines))
     return {"scoped_files": scoped, "targeted_clean": len(targeted),
             "substitution_hazards": [r["file"] for r in haz]}
+
+
+# ---------------------------------------------------------------------------------------------------
+#: The substitution hazards, FROZEN AS A CLOSED ENUMERATION. C's item 4: not raising on these leaves
+#: the list decorative unless its test asserts EXACT EQUALITY. `len(hazards) > 0` and
+#: `FROZEN <= hazards` both pass forever and discover nothing; equality fails the moment a tenth
+#: appears. The nine block nobody; a tenth stops the build. Same device as the anchor allowlist.
+FROZEN_SUBSTITUTION_HAZARDS = frozenset({
+    # LOUD -- g2, backstopped by the F2 guard at unified_throw_cov.py:453, CONFIRMED BY RUN in both
+    # directions rather than by reading it: slabs at 1000 vs a combine at 1000+k raises, and slabs at
+    # 1000+k vs a combine at 1000 raises, while the matching pair is ACCEPTED.
+    "nd-unfolding/sbatch_uthrow_run_5d.sh",
+    "nd-unfolding/sbatch_uthrow_combine_5d.sh",
+    "nd-unfolding/sbatch_j28_adopt_5d.sh",
+    # SILENT -- g1, the sweep path, which has NO such guard: analyze_universes globs and
+    # combine_cov_nd checks ids but not offset metadata. Remedy differs BY ROW, not by group.
+    "nd-unfolding/sbatch_sweep_bank_5d_run.sh",
+    "nd-unfolding/sbatch_unfold_5d_detector.sh",
+    "nd-unfolding/sweep_run_bkgaware_packed_loop.sh",
+    # OUT OF REACH rather than out of scope -- their outputs are products/pet/fps_envelope_5d*,
+    # disjoint from all six canonical namespaces and from every member root, so they cannot
+    # contaminate a member or a combine whatever their seeds. C's route, better than the
+    # module-name one this lane used: "a different measurement" is a claim about INTENT; a disjoint
+    # output tree is a fact about REACH.
+    "nd-unfolding/sbatch_fps_reunfold_5d.sh",
+    "nd-unfolding/sbatch_fps_reunfold_5d_xps.sh",
+    "nd-unfolding/sbatch_fps_reunfold_5d_xps2.sh",
+})
+
+#: `%06d` in the member directory name widens rather than truncates, so nothing is lost -- but MIXED
+#: widths break lexicographic ordering above 999999. C checked the headroom rather than asserting a
+#: footgun: max offset is 58,800 at n=50 and 118,800 at n=100, so sort-safety holds to n <= 833. The
+#: assertion exists anyway, in the direction the padding acts, so a later lane widening the STEP
+#: rather than the count cannot walk into it.
+MEMBER_DIR_SORT_SAFE_LIMIT = 1_000_000
+
+
+def assert_offsets_are_sort_safe(offsets):
+    """FAIL CLOSED if any offset would break lexicographic ordering of the member directories."""
+    ks = [abs(int(k)) for k in offsets]
+    if not ks:
+        raise SystemExit("[FAIL] no offsets; a sort-safety check over an empty grid is not a pass")
+    worst = max(ks)
+    if worst >= MEMBER_DIR_SORT_SAFE_LIMIT:
+        raise SystemExit(
+            f"[FAIL] offset magnitude {worst} >= {MEMBER_DIR_SORT_SAFE_LIMIT}: the member directory "
+            f"name is zero-padded to 6 digits, so this one widens and MIXED widths no longer sort "
+            f"lexicographically. Widen the padding in lib_member_resume.sh:mr_member_dir and this "
+            f"limit together, or the directory listing silently stops being ordered.")
+    return worst

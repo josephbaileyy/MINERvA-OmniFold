@@ -54,6 +54,10 @@ LEG_LAUNCHERS = {
                           "sbatch_uthrow_combine_5d_fast.sh"],
     "bootstrap_nd":      ["sbatch_bootstrap_5d_gpu.sh"],
     "seedscan_split":    ["sbatch_seedscan_split_5d.sh"],
+    # ITEM 7 RULING (a): the LATERAL leg joins g1 at 42+k. Seven launchers, not six -- and the
+    # derived predicate's HAZARD half is what surfaced it, which is why that half is part of the
+    # result rather than a footnote.
+    "unfold_nd_omnifold_unbinned": ["sbatch_unfold_5d_detector_bkgaware_gpu.sh"],
 }
 
 OFFSET_ENV = policy.OFFSET_ENV
@@ -73,8 +77,45 @@ PROBE_CASES = {
     "sbatch_uthrow_combine_5d_fast.sh":         [{"SLURM_ARRAY_TASK_ID": 0}, {"SLURM_ARRAY_TASK_ID": 1}],
     "sbatch_bootstrap_5d_gpu.sh":               [{"SLURM_ARRAY_TASK_ID": 0}, {"SLURM_ARRAY_TASK_ID": 9}],
     "sbatch_seedscan_split_5d.sh":              [{"SLURM_ARRAY_TASK_ID": 0}, {"SLURM_ARRAY_TASK_ID": 5}],
+    # the lateral leg has TWO real branches: task 0 is the CV unfold, task>0 reads a universe from
+    # uq_5d/detector_universes.txt and exits 0 when the index is past the list -- declared, not
+    # inferred, so "no command observed" is never silently excused.
+    "sbatch_unfold_5d_detector_bkgaware_gpu.sh": [{"SLURM_ARRAY_TASK_ID": 0},
+                                                  {"SLURM_ARRAY_TASK_ID": 1},
+                                                  {"SLURM_ARRAY_TASK_ID": 99999,
+                                                   "_expect_command": False}],
 }
 HERE = os.path.dirname(os.path.abspath(__file__))
+
+
+def targeted_launchers():
+    """The derived target set, flattened. The fence's allowlist."""
+    return {rel for paths in LEG_LAUNCHERS.values() for rel in paths}
+
+
+def preflight_launcher(name):
+    """THE FENCE. Refuse to execute any launcher not on the derived target list.
+
+    C's item 2 ruling: the six same-module hazards are FENCED, not hooked -- a launcher the scan does
+    not use should not gain a seed-varying surface with no consumer, which would contradict the
+    derived-target rule itself. So the refusal lives at the driver.
+
+    IT PREVENTS WHERE F2 ONLY DETECTS, and that is the whole point: the F2 guard fires at the
+    COMBINE, after a member's slabs are already computed and paid for. And F2 only covers g2 -- the
+    g1 sweep path has no equivalent, so for three of the six there is nothing downstream at all.
+    """
+    base = os.path.basename(str(name))
+    allowed = {os.path.basename(p) for p in targeted_launchers()}
+    if base not in allowed:
+        raise SystemExit(
+            f"[FAIL] {base} is NOT on the derived target list and the scan will not execute it.\n"
+            f"        Targeted: {sorted(allowed)}\n"
+            f"        A same-module variant run instead of a hooked launcher takes its module's "
+            f"BASELINE seed silently. For the g2 variants the combine's F2 guard would eventually "
+            f"refuse the slab set; for the g1 sweep variants there is NO such guard, so nothing "
+            f"downstream would object at all. This refusal PREVENTS; F2 only DETECTS, and only after "
+            f"the member's slabs are paid for.")
+    return True
 
 
 def launcher_sources():
@@ -173,6 +214,9 @@ def build_plan(offsets):
     # `j != 0` skip, so a THIRD coincidence at the anchor -- e.g. from a later --array widening --
     # still fails. A member skip would have passed it silently.
     clean_checked = policy.assert_offsets_are_clean(offsets)
+    worst_offset = policy.assert_offsets_are_sort_safe(offsets)
+    for rel in sorted(targeted_launchers()):
+        preflight_launcher(rel)          # the fence, applied to the plan's own set
     archive = assert_k0_reproduces_the_archive(sources)
     plan = []
     for k in sorted({int(x) for x in offsets}):
@@ -186,6 +230,7 @@ def build_plan(offsets):
                              "env": {OFFSET_ENV: str(k)},
                              "command": f"{OFFSET_ENV}={k} sbatch {rel}"})
     return {"probe_cases_run": probed,
+            "max_offset_magnitude": worst_offset,
             "clean_offset_combinations_checked": clean_checked,
             "offsets": sorted({int(x) for x in offsets}),
             "group_baselines": baselines,

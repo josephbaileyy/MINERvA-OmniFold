@@ -1645,5 +1645,96 @@ class DerivedTargetSet(unittest.TestCase):
                 sp.assert_target_set_is_complete(td, self.SEVEN)
             self.assertIn("ZERO files", str(cm.exception))
 
+
+class FenceAndFrozenHazards(unittest.TestCase):
+    """C's items 2-4: the six hazards are FENCED not hooked, the fence has a test that it FIRES, F2
+    is confirmed by RUN in both directions, and the hazard list is a CLOSED enumeration."""
+
+    def test_the_fence_FIRES_for_every_one_of_the_six_same_module_hazards(self):
+        """A fence nobody has tripped is a fence nobody knows works. Parameterised over all six."""
+        import mii_seed_offset_driver as d
+        import seed_offset_policy as sp
+        six = sorted(h for h in sp.FROZEN_SUBSTITUTION_HAZARDS if "fps_reunfold" not in h)
+        self.assertEqual(len(six), 6, "the six same-module variants")
+        for h in six:
+            with self.subTest(launcher=h), self.assertRaises(SystemExit) as cm:
+                d.preflight_launcher(h)
+            self.assertIn("NOT on the derived target list", str(cm.exception))
+
+    def test_the_fence_ADMITS_every_targeted_launcher(self):
+        """Otherwise a fence that rejects everything would pass the test above."""
+        import mii_seed_offset_driver as d
+        for rel in sorted(d.targeted_launchers()):
+            with self.subTest(launcher=rel):
+                self.assertTrue(d.preflight_launcher(rel))
+
+    def test_the_hazard_list_is_EXACTLY_the_frozen_nine(self):
+        """C's item 4, and the counterweight the non-raising choice needs. `len(hazards) > 0` and
+        `FROZEN <= hazards` both pass forever and discover nothing; equality fails the moment a tenth
+        appears. The nine block nobody; a tenth stops the build."""
+        import seed_offset_policy as sp
+        import mii_seed_offset_driver as d
+        targeted = {p.split("/")[-1] for p in d.targeted_launchers()}
+        _hard, haz, _n = sp.derive_seed_literal_sites(str(ND.parent), targeted)
+        self.assertEqual({r["file"] for r in haz}, set(sp.FROZEN_SUBSTITUTION_HAZARDS),
+                         "the derived hazard list must EQUAL the frozen enumeration -- a tenth "
+                         "hazard is a build stop, not a longer list")
+
+    def test_offsets_are_sort_safe_and_the_check_fires(self):
+        import seed_offset_policy as sp
+        self.assertEqual(sp.assert_offsets_are_sort_safe([1200 * j for j in range(50)]), 58800)
+        with self.assertRaises(SystemExit):
+            sp.assert_offsets_are_sort_safe([sp.MEMBER_DIR_SORT_SAFE_LIMIT])
+
+    # ---- F2 CONFIRMED BY RUN, BOTH DIRECTIONS (C's item 3(ii)) ----
+    def _f2_fixture(self, td, slab_est):
+        p = Path(td)
+        throws = np.array([[0.8, 2.1], [1.2, 1.9], [1.1, 2.2]])
+        for nm, xs, ids in (("throws_0.npz", throws[:2], [0, 1]), ("throws_1.npz", throws[2:], [2])):
+            np.savez(p / nm, xs=xs, throws=np.array(ids), flux_normalized=np.int64(1),
+                     estimator_seed=np.int64(slab_est), draw_seed=np.int64(1000))
+        np.savez(p / "blocks.npz", xs=np.array([[0.9, 2.2], [1.1, 1.8]]),
+                 labels=np.array(["MaCCQE:0", "MaCCQE:1"], dtype=object),
+                 kinds=np.array(["knob", "knob"], dtype=object), flux_normalized=np.int64(1),
+                 estimator_seed=np.int64(slab_est), draw_seed=np.int64(1000))
+        return str(p / "throws_*.npz"), str(p / "blocks.npz")
+
+    @contextlib.contextmanager
+    def _stub(self, utc):
+        d = {"edges": [np.array([0.0, 1.0, 2.0])], "w_truth": np.ones(1),
+             "w_reco": np.ones(1), "td_w": np.ones(1)}
+        ol, ok = utc._load_bank, utc._xsec_for_weights
+        utc._load_bank = lambda b: (d, ["MaCCQE"], 0)
+        utc._xsec_for_weights = lambda *a, **k: np.array([1.0, 2.0])
+        try:
+            yield
+        finally:
+            utc._load_bank, utc._xsec_for_weights = ol, ok
+
+    def _combine(self, slab_est, comb_est):
+        import unified_throw_cov as utc
+        with tempfile.TemporaryDirectory() as td:
+            comb, blocks = self._f2_fixture(td, slab_est)
+            args = SimpleNamespace(bank=td, iters=1, estimator_seed=comb_est, draw_seed=1000,
+                                   combine=comb, block_slabs=blocks, expected_throws="0-2",
+                                   null=True, out_root=None)
+            with self._stub(utc):
+                return utc.do_combine(args)
+
+    def test_F2_refuses_ARCHIVE_slabs_against_an_OFFSET_combine(self):
+        """Direction 1: slabs at 1000, combine at 1000+k."""
+        with self.assertRaises(SystemExit) as cm:
+            self._combine(1000, 2200)
+        self.assertIn("refusing mixed-seed combine", str(cm.exception))
+
+    def test_F2_refuses_OFFSET_slabs_against_an_ARCHIVE_combine(self):
+        """Direction 2, the one C would not infer: slabs at 1000+k, combine at 1000."""
+        with self.assertRaises(SystemExit) as cm:
+            self._combine(2200, 1000)
+        self.assertIn("refusing mixed-seed combine", str(cm.exception))
+
+    def test_F2_ACCEPTS_a_matching_pair_so_it_is_not_rejecting_everything(self):
+        self.assertIsNotNone(self._combine(1000, 1000))
+
 if __name__ == "__main__":
     unittest.main()

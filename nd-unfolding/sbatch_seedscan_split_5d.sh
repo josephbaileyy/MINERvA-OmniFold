@@ -9,12 +9,14 @@ set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
 source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a completion marker, not on size
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"; mkdir -p seedscan_split_5d
-rg_skip_if_complete "seedscan_split_5d/res_split_${SLURM_ARRAY_TASK_ID}.npz" && exit 0
+source "${REPO}/nd-unfolding/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
+SPLIT_OUT="$(mr_prefix "seedscan_split_5d/res_split_${SLURM_ARRAY_TASK_ID}.npz")"
+mr_skip_if_complete "${SPLIT_OUT}" && exit 0
 # M(ii) OFFSET HOOK (spec (B) option (ii), BEN-461). The launcher keeps its OWN baseline
 # literal, so MNV_EST_SEED_OFFSET=0 -- the default -- reproduces the archive EXACTLY and the
 # two coherence groups are preserved BY CONSTRUCTION rather than by the driver getting it
 # right: one offset in, each leg adds it to its own baseline. Do not replace this with an
 # absolute-seed override; that hands the group structure back to the caller.
 EST_SEED=$(( 42 + ${MNV_EST_SEED_OFFSET:-0} ))
-rg_run "seedscan_split_5d/res_split_${SLURM_ARRAY_TASK_ID}.npz" python3 seedscan_split.py --npz of_inputs_5d.npz --split-seed ${SLURM_ARRAY_TASK_ID} --estimator-seed ${EST_SEED} \
-  --train-frac 0.8 --iters 5 --out seedscan_split_5d/res_split_${SLURM_ARRAY_TASK_ID}.npz
+mr_run "${SPLIT_OUT}" python3 seedscan_split.py --npz of_inputs_5d.npz --split-seed ${SLURM_ARRAY_TASK_ID} --estimator-seed ${EST_SEED} \
+  --train-frac 0.8 --iters 5 --out "${SPLIT_OUT}"
