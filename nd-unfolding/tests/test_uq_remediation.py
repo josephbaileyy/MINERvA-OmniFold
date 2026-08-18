@@ -2,6 +2,7 @@ import ast
 import importlib.util
 import sys
 import contextlib
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -609,48 +610,70 @@ class Cause6ProjectionCoverageTests(unittest.TestCase):
     def test_the_prefix_source_would_fail(self):
         """POWER: reconstruct the pre-fix module and require the assertions above to fail on it.
 
-        Without this the static test is a spelling check. Same technique as
-        `test_flux_universe_fix.EavailWFluxBlockIsPerUniverse.test_the_prefix_source_would_fail`.
+        KEYED ON AST `FunctionDef` NODES AND EXPLICIT CALL SITES, NOT ON COMMENT MARKERS. Lane D's
+        specification, after the marker version broke twice under the `BEN-450` repair -- once when
+        propagation put the value in a second place and once when the single-source helper put the
+        computation in a third, both outside a marker-based excision. Two properties a marker
+        cannot give you:
+
+          * it follows the code through further factoring;
+          * IT RAISES WHEN THE FUNCTION IS RENAMED. A marker that stops matching excises ZERO
+            lines, and the assertions below then pass on an UNMODIFIED source -- a power test that
+            has silently stopped being one. That is the failure mode this rewrite exists to remove.
+
+        Substitution over deletion throughout, and the `ast.parse` arm is kept: deleting a line
+        inside a multi-line call leaves an unclosed paren, and every token-absence assertion is
+        true of source that is no longer a program.
         """
         src = (ND / self.FNAME).read_text()
-        marker = "    # BOTH DIRECTIONS (added 2026-08-11, quarantine cause 6)."
-        self.assertIn(marker, src, "guard block marker missing; this test can no longer locate it")
-        head, _, tail = src.partition(marker)
-        # drop the whole guard block: everything from the marker to the next top-level-ish statement
-        rest = tail.split("\n    fs = ROOT.TFile.Open(args.stat5d)", 1)
-        self.assertEqual(len(rest), 2, "guard block no longer ends where this test expects")
-        prefix_src = head + "    fs = ROOT.TFile.Open(args.stat5d)" + rest[1]
-        # THE EXCISION NOW HAS TWO REGIONS, and that is a consequence of the BEN-450 repair rather
-        # than a weakening of this test. Until 2026-08-18 the guard's value existed ONLY inside the
-        # guard block, so removing that block removed every trace of it and this reconstruction was
-        # a faithful pre-fix source. Propagation puts the value in a SECOND place by design -- the
-        # `write_ew_outputs(...)` call -- so excising only the guard leaves `_ew_empty` behind and
-        # this assertion failed for a correct reason. The pre-fix source is now guard-block-removed
-        # AND propagation-removed; asserting only on the first would quietly stop being a power test
-        # the moment the value travelled anywhere.
-        # SUBSTITUTE the propagated argument rather than DELETING its line: it sits inside a
-        # multi-line call, so dropping the line leaves an unclosed paren and this test then fails
-        # on a SyntaxError -- the reconstruction failing for the wrong reason, which the
-        # `ast.parse` below exists to catch and did.
-        prefix_src = prefix_src.replace(
-            "        (_ew_empty, _n_ew_empty))",
-            "        (np.array([], dtype=int), 0))")
-        # THIRD REGION: the computation itself now lives in the `ew_coverage_report` HELPER, above
-        # `main()` and therefore outside a marker-based excision of the guard block. That is the
-        # single-source property the repair wanted, and it means a pre-fix reconstruction must drop
-        # the helper too. Worth stating rather than patching silently: THIS TEST'S EXCISION MODEL
-        # ASSUMED THE GUARDED LOGIC WAS TEXTUALLY CONTIGUOUS, and refactoring for testability is
-        # exactly what breaks that assumption -- so a marker-based power test degrades quietly as
-        # the code it guards gets factored. It failed loudly here only because it asserts on two
-        # tokens rather than one.
-        lines = prefix_src.split("\n")
-        try:
-            a = next(i for i, ln in enumerate(lines) if ln.startswith("def ew_coverage_report("))
-            b = next(i for i, ln in enumerate(lines[a + 1:], a + 1)
-                     if ln.startswith("def ") or ln.startswith("class "))
-        except StopIteration:  # pragma: no cover - the helper must exist
-            self.fail("ew_coverage_report helper not found; this test can no longer locate it")
-        prefix_src = "\n".join(lines[:a] + lines[b:])
+        lines = src.split("\n")
+
+        # ---- region 1: the helper that computes the empty-row set, located by NAME ----
+        tree = ast.parse(src)
+        fdefs = {n.name: n for n in tree.body if isinstance(n, ast.FunctionDef)}
+        self.assertIn("ew_coverage_report", fdefs,
+                      "ew_coverage_report not found as a top-level function: this power test can no "
+                      "longer locate what it must excise, and would otherwise pass vacuously")
+        fd = fdefs["ew_coverage_report"]
+        lo, hi = fd.lineno - 1, (fd.end_lineno or fd.lineno)
+        for i in range(lo, hi):
+            lines[i] = ""
+
+        # ---- regions 2-4: every STATEMENT in main() that mentions the names, excised as a
+        # STATEMENT rather than as a line. This is the same lesson twice: the guard's report is a
+        # multi-line f-string expression followed by an `if` block, so blanking matching LINES
+        # orphans continuation lines and an if-body -- caught by the `ast.parse` arm below as an
+        # IndentationError, the second time that arm has caught this reconstruction failing for the
+        # wrong reason. Statement boundaries come from the AST, so a multi-line expression and a
+        # compound statement are each removed whole.
+        #
+        # THE ONE STATEMENT THAT MUST SURVIVE is the `write_ew_outputs(...)` call: deleting it would
+        # remove the write entirely, and the pre-fix module DID write its outputs -- it just did not
+        # propagate the coverage result. Its argument is SUBSTITUTED instead.
+        main_fd = next((n for n in tree.body
+                        if isinstance(n, ast.FunctionDef) and n.name == "main"), None)
+        self.assertIsNotNone(main_fd, "main() not found; this power test cannot locate its subject")
+        NAMES = ("_ew_empty", "_n_ew_empty")
+        touched = 0
+        for stmt in ast.walk(main_fd):
+            if not isinstance(stmt, ast.stmt) or stmt is main_fd:
+                continue
+            lo, hi = stmt.lineno - 1, (stmt.end_lineno or stmt.lineno)
+            seg = "\n".join(src.split("\n")[lo:hi])
+            if not any(nm in seg for nm in NAMES):
+                continue
+            if "write_ew_outputs(" in seg:
+                continue          # survives; its argument is substituted below
+            for i in range(lo, hi):
+                lines[i] = ""
+            touched += 1
+        self.assertGreater(touched, 0,
+                           "no statement in main() mentions the empty-row names: the guard is not "
+                           "where this test expects it and the assertions below would pass vacuously")
+
+        arg = "        (_ew_empty, _n_ew_empty))"
+        self.assertIn(arg, src, "the propagated argument is not where this test expects it")
+        prefix_src = "\n".join(lines).replace(arg, "        (np.array([], dtype=int), 0))")
 
         self.assertNotIn("_ew_empty", prefix_src)
         self.assertNotIn("Mew.any(axis=1)", prefix_src)
@@ -927,21 +950,35 @@ class _RootRecorder:
 
     def __init__(self):
         self.params = {}
-        self.hists = {}
+        self.hists = {}        # BUILT: populated by SetBinContent. Not evidence of a write.
+        self.written = set()   # REACHED THE FILE: populated ONLY by Write().
         self.closed = False
 
     class _Obj:
+        """WRITTEN AND BUILT ARE SEPARATE, and lane D's finding 3 is why.
+
+        The first version recorded the histogram's name in `hists` from `SetBinContent`, so a
+        populated-but-never-written object was indistinguishable from a written one: deleting
+        `hmask.Write()` left the suite GREEN. That is `BEN-450` -- an object constructed,
+        populated, and not propagated -- reproduced inside the test written to detect `BEN-450`,
+        with the instrument blind to the very distinction it exists to make.
+
+        Only the zero-case test caught it, and by luck: with an empty index set the loop never
+        runs, so the key could only appear via `Write()`. Assertions now bind to `written`.
+        """
         def __init__(self, rec, name):
             self._rec, self._name = rec, name
         def SetBinContent(self, *a):
             self._rec.hists.setdefault(self._name, {})[tuple(a[:-1])] = a[-1]
         def Write(self):
+            self._rec.written.add(self._name)
             self._rec.hists.setdefault(self._name, {})
 
     class _Param:
         def __init__(self, rec, name, value):
             self._rec, self._name, self._value = rec, name, value
         def Write(self):
+            self._rec.written.add(self._name)
             self._rec.params[self._name] = self._value
 
     def TFile(self):  # pragma: no cover - shape only
@@ -1020,9 +1057,10 @@ class Cause6CoverageGuardPropagates(unittest.TestCase):
     def test_count_AND_set_reach_the_file(self):
         rec, got = self._call([1, 3], n=4)
         self.assertEqual(got, 2)
-        self.assertIn("n_ew_unsupported", rec.params, "the count did not reach the artifact")
+        self.assertIn("n_ew_unsupported", rec.written, "the count did not reach the artifact")
         self.assertEqual(rec.params["n_ew_unsupported"], 2)
-        self.assertIn("hEwUnsupportedMask", rec.hists, "the SET did not reach the artifact")
+        self.assertIn("hEwUnsupportedMask", rec.written,
+                      "the SET was BUILT but never WRITTEN -- assert on `written`, not `hists`")
         mask = rec.hists["hEwUnsupportedMask"]
         self.assertEqual({k[0] for k in mask}, {2, 4},
                          "mask must be 1-indexed and index-aligned to the covariance rows")
@@ -1036,33 +1074,52 @@ class Cause6CoverageGuardPropagates(unittest.TestCase):
         """
         rec, got = self._call([], n=4)
         self.assertEqual(got, 0)
-        self.assertIn("n_ew_unsupported", rec.params,
+        self.assertIn("n_ew_unsupported", rec.written,
                       "ZERO must still be written -- absence is indistinguishable from unchecked")
         self.assertEqual(rec.params["n_ew_unsupported"], 0)
-        self.assertEqual(rec.params.get("ew_coverage_checked"), 1,
-                        "the checked flag makes 'this product predates the check' readable")
-        self.assertIn("hEwUnsupportedMask", rec.hists,
+        self.assertNotIn("ew_coverage_checked", rec.params,
+                         "dropped on D's finding 1: a literal-1 flag on the only path cannot fail "
+                         "in the direction it claims. n_ew_unsupported IS the checked flag -- its "
+                         "ABSENCE means the product predates the check, 0 means fully supported")
+        self.assertIn("hEwUnsupportedMask", rec.written,
                       "the mask is written even when empty, for the same reason as the count")
 
-    def test_MUTATION_removing_the_write_makes_these_tests_fail(self):
-        """POSITIVE CONTROL. Without this, the three tests above could be passing on a property
-        they do not actually constrain -- which is precisely `BEN-450`'s criticism of the static
-        test they replace: a positive control on a static test controls only the static property.
+    # EVERY propagating write gets its own mutant, on lane D's finding 2: the first version
+    # mutated only the COUNT, so the SET test was assumed rather than controlled -- and the set is
+    # the half a downstream chi2 needs, since the count says there IS a problem and the mask says
+    # which bins to drop. `(needle, key)` pairs; each mutant must lose exactly its own key.
+    PROPAGATION_WRITES = [
+        ('ROOT.TParameter("int")("n_ew_unsupported", count).Write()', "n_ew_unsupported"),
+        ("hmask.Write()", "hEwUnsupportedMask"),
+    ]
+
+    def test_MUTATION_removing_ANY_propagating_write_is_detected(self):
+        """POSITIVE CONTROL, one mutant per propagating write.
+
+        Without it the tests above could be passing on a property they do not constrain -- which is
+        exactly `BEN-450`'s criticism of the static test they replace: a positive control on a
+        static test controls only the static property. The `hmask.Write()` mutant is the one that
+        matters: until the recorder separated WRITTEN from BUILT, deleting that line left the suite
+        green because `SetBinContent` had already created the key.
         """
         src = (ND / "eavailW_covariance.py").read_text()
-        needle = 'ROOT.TParameter("int")("n_ew_unsupported", count).Write()'
-        self.assertIn(needle, src, "the propagating line is not where the mutation expects it")
-        mutant_src = src.replace(needle, "pass  # MUTATED: propagation removed")
-        ns = {"__name__": "eavailW_mutant"}
-        exec(compile(mutant_src, "eavailW_mutant.py", "exec"), ns)
         mats = [(nm, np.zeros((4, 4))) for nm in ("C_syst",)]
         data = (2, 2, np.array([0.0, 1.0, 2.0]), np.array([0.0, 1.0, 2.0]), np.zeros((2, 2)))
-        with tempfile.TemporaryDirectory() as td:
-            out = str(Path(td) / "sub" / "out.root")
-            with _StubbedRoot() as rec:
-                ns["write_ew_outputs"](out, mats, 4, data, (np.array([1], dtype=int), 1))
-        self.assertNotIn("n_ew_unsupported", rec.params,
-                         "the mutation did not actually remove propagation, so the control is void")
+        for needle, key in self.PROPAGATION_WRITES:
+            with self.subTest(write=key):
+                self.assertIn(needle, src,
+                              f"the write propagating {key} is not where the mutation expects it")
+                mutant_src = src.replace(needle, "pass  # MUTATED: propagation removed")
+                self.assertNotEqual(mutant_src, src, "the mutation changed nothing")
+                ns = {"__name__": "eavailW_mutant"}
+                exec(compile(mutant_src, "eavailW_mutant.py", "exec"), ns)
+                with tempfile.TemporaryDirectory() as td:
+                    out = str(Path(td) / "sub" / "out.root")
+                    with _StubbedRoot() as rec:
+                        ns["write_ew_outputs"](out, mats, 4, data,
+                                               (np.array([1], dtype=int), 1))
+                self.assertNotIn(key, rec.written,
+                                 f"the mutant still propagated {key}, so this control is VOID")
 
 if __name__ == "__main__":
     unittest.main()

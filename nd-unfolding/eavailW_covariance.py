@@ -102,7 +102,15 @@ def write_ew_outputs(path, mats, n, data_hist, ew_unsupported):
             hd.SetBinContent(ie_ + 1, iw_ + 1, y2[ie_, iw_])
     hd.Write()
     # ---- the coverage result, in the artifact rather than in stdout ----
-    ROOT.TParameter("int")("ew_coverage_checked", 1).Write()
+    # `n_ew_unsupported` IS the checked-flag, so there is no separate one. Lane D's review:
+    # a companion `ew_coverage_checked` written as a literal 1 on the only path CANNOT FAIL in the
+    # direction it claims -- it is present exactly when `n_ew_unsupported` is present and absent
+    # exactly when it is absent, so a criterion `== 1` passes on every product carrying it. That is
+    # the form of `unified_throw_cov.py:489` transferred WITHOUT its condition: there the flag can be
+    # 0 because `--null` is optional. A flag with one reachable value is not a flag (`BEN-256` rule 2),
+    # and reintroducing the defect inside its own repair is `BEN-333`'s shape. Dropped, and the
+    # semantics it was reaching for are stated instead: ABSENCE of `n_ew_unsupported` in a product
+    # means that product PREDATES this check; `0` means checked and fully supported.
     ROOT.TParameter("int")("n_ew_unsupported", count).Write()
     # The SET, not just the count: a consumer excluding unsupported bins from a chi2 needs to know
     # WHICH. Bin i of this mask is 1 iff covariance row i is unsupported, so it is index-aligned to
