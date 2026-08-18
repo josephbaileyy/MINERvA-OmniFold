@@ -17,6 +17,9 @@ REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_en
 export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=32 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 \
        NUMEXPR_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2
 cd "${REPO}/nd-unfolding"; mkdir -p uq_5d/uthrow_slabs_5d_sb
+source "${REPO}/lib/resume_guard.sh"
+source "${REPO}/nd-unfolding/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
+SLAB_DIR="$(mr_dir_prefix uq_5d/uthrow_slabs_5d_sb)"
 OFF=$(( SLURM_ARRAY_TASK_ID * 4 ))
 # M(ii) OFFSET HOOK (spec (B) option (ii), BEN-461). The launcher keeps its OWN baseline
 # literal, so MNV_EST_SEED_OFFSET=0 -- the default -- reproduces the archive EXACTLY and the
@@ -26,4 +29,4 @@ OFF=$(( SLURM_ARRAY_TASK_ID * 4 ))
 EST_SEED=$(( 1000 + ${MNV_EST_SEED_OFFSET:-0} ))
 python3 unified_throw_cov_5d.py --throws 4 --throw-offset ${OFF} --draw-seed 1000 --estimator-seed ${EST_SEED} \
   --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral \
-  --out "uq_5d/uthrow_slabs_5d_sb/uthrow5d_slab_${SLURM_ARRAY_TASK_ID}.npz"
+  --out "${SLAB_DIR}/uthrow5d_slab_${SLURM_ARRAY_TASK_ID}.npz"
