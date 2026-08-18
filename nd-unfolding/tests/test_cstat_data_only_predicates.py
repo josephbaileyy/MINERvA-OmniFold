@@ -66,6 +66,38 @@ def _code_only(fn):
     return _code_only_src(inspect.getsource(fn).strip(), label=fn.__name__)
 
 
+def _reads_key(fn, key):
+    """Does `fn` actually READ `key` -- `x.get("key")`, `x["key"]`, or `_scalar(x, "key")`?
+
+    WHY THIS EXISTS, AND IT IS THE SIXTH PROSE-AS-CODE INSTANCE OF THE SESSION WITH A NEW TWIST:
+    `_code_only` was not enough either. The token appeared in a RETURN VALUE -- a dict literal
+    documenting that a site is deliberately excluded, `{283: "the overloaded bootstrap_seed, ..."}`.
+    That string IS code, so no prose-stripper can remove it.
+
+        A SUBSTRING ABSENCE CHECK CANNOT DISTINGUISH A MENTION FROM A USE.
+
+    The property anyone actually cares about is "this function does not read that field", which is a
+    question about ACCESSES, not about text. So this walks the AST for the three access forms this
+    codebase uses. It is narrower than a grep and it is the thing being claimed.
+    """
+    tree = ast.parse(inspect.getsource(fn).strip())
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call):
+            f = node.func
+            if isinstance(f, ast.Attribute) and f.attr == "get" and node.args:
+                a = node.args[0]
+                if isinstance(a, ast.Constant) and a.value == key:
+                    return True
+            if isinstance(f, ast.Name) and f.id == "_scalar" and len(node.args) > 1:
+                a = node.args[1]
+                if isinstance(a, ast.Constant) and a.value == key:
+                    return True
+        if isinstance(node, ast.Subscript) and isinstance(node.slice, ast.Constant) \
+                and node.slice.value == key:
+            return True
+    return False
+
+
 def _code_only_src(src, *, label="<source>"):
     """`_code_only` for a source STRING -- a whole module, or any parseable fragment.
 
@@ -1163,6 +1195,411 @@ class ReadbackReplacements(unittest.TestCase):
         self.assertIs(self.rb.SOURCE_SHA256, self.V.SOURCE_SHA256)
 
 
+class ReadbackTargetBindingAndLrPolicy(unittest.TestCase):
+    """The second tranche: target binding (:275/:276/:278), target-meta fields (:282/:284/:285) and the
+    realized lr policy (:292/:293/:294/:295/:298/:300).
+
+    The lr cluster is the interesting one: the pinned expectations there are FUNCTION-LOCAL literals and
+    cannot be imported, so they are DERIVED from the imported policy and the derivation is proved against
+    the pinned literals extracted from source. A derivation plus an equality control fails when either
+    side moves and says which; a restatement is true when written and silent afterwards.
+    """
+
+    IDS = {"sig": "s", "bkg": "b"}
+
+    def setUp(self):
+        import cstat_data_only_readback as rb
+        import validate_gate5_training_artifacts as V
+        self.rb, self.V = rb, V
+        self.tmp = Path(tempfile.mkdtemp(prefix="gate5-readback2-"))
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    # ---------- target binding ----------
+    def _binding_store(self, **over):
+        rp = self.tmp / "GATE5_REPLICA_TARGET_RECEIPT.json"
+        rp.write_text("{}")
+        d = {"replica_target_sha256": np.asarray("t" * 64),
+             "replica_target_receipt_sha256": np.asarray("r" * 64),
+             "replica_target_receipt_path": np.asarray(str(rp))}
+        d.update(over)
+        return d, rp
+
+    def test_target_binding_passes_on_agreement(self):
+        st, rp = self._binding_store()
+        out = self.rb.assert_target_binding(
+            st, target_sha256="t" * 64, target_receipt_sha256="r" * 64,
+            target_receipt_path=rp, where="unit")
+        self.assertEqual([275, 276, 278], out["replaces_pinned_sites"])
+        self.assertIn("not the artifact", out["operands"])
+
+    def test_a_receipt_CHANGED_since_training_is_caught(self):
+        st, rp = self._binding_store()
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_target_binding(
+                st, target_sha256="t" * 64, target_receipt_sha256="X" * 64,
+                target_receipt_path=rp, where="unit")
+        self.assertIn("changed since training", str(cm.exception))
+
+    def test_a_receipt_at_the_WRONG_PATH_is_caught(self):
+        st, rp = self._binding_store()
+        other = self.tmp / "elsewhere.json"
+        other.write_text("{}")
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_target_binding(
+                st, target_sha256="t" * 64, target_receipt_sha256="r" * 64,
+                target_receipt_path=other, where="unit")
+        self.assertIn("this member's receipt is at", str(cm.exception))
+
+    def test_a_wrong_TARGET_digest_is_caught_even_when_the_receipt_legs_agree(self):
+        """All three legs together, so a caller cannot pass one wrong member's operands and have only
+        two of three notice."""
+        st, rp = self._binding_store()
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_target_binding(
+                st, target_sha256="Z" * 64, target_receipt_sha256="r" * 64,
+                target_receipt_path=rp, where="unit")
+        self.assertIn("target on disk digests to", str(cm.exception))
+
+    # ---------- target meta ----------
+    def _meta_store(self, **over):
+        meta = {"target_mode": self.V.BKG_MODE,
+                "estimator_fingerprint": self.V.ESTIMATOR,
+                "input_identity_hashes": dict(self.IDS)}
+        meta.update(over)
+        return {"target": np.asarray(meta, dtype=object)}
+
+    def test_target_meta_fields_pass_and_EXCLUDE_the_overloaded_seed(self):
+        out = self.rb.assert_target_meta_fields(self._meta_store(), identities=self.IDS, where="unit")
+        self.assertEqual([282, 284, 285], out["replaces_pinned_sites"])
+        self.assertIn("283", {str(k) for k in out["deliberately_excluded"]})
+        # `_reads_key`, NOT a substring check on stripped code. The token appears in this function's
+        # RETURN VALUE -- the dict documenting that :283 is deliberately excluded -- and that string IS
+        # code, so no prose-stripper removes it. A SUBSTRING ABSENCE CHECK CANNOT DISTINGUISH A MENTION
+        # FROM A USE; the property is about ACCESSES.
+        self.assertFalse(_reads_key(self.rb.assert_target_meta_fields, "bootstrap_seed"),
+                         "the overloaded field must not be READ here; :283 is F1/F3's job and a field "
+                         "re-read would suggest the seed question is settled by one")
+
+    def test_the_reads_key_helper_can_actually_fire(self):
+        """A negative-only helper that has never returned True is unverified (BEN-258's third category).
+        F1/F3 DOES read the field, so it is the positive control."""
+        self.assertTrue(_reads_key(cdo.assert_data_only_target_is_this_replicas, "bootstrap_seed"))
+        self.assertFalse(_reads_key(cdo.assert_data_only_target_is_this_replicas, "no_such_field"))
+
+    def test_a_wrong_target_mode_is_caught(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_target_meta_fields(
+                self._meta_store(target_mode="raw"), identities=self.IDS, where="unit")
+        self.assertIn("target_mode", str(cm.exception))
+
+    def test_a_wrong_estimator_in_the_target_block_is_caught(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_target_meta_fields(
+                self._meta_store(estimator_fingerprint="pet-v0"), identities=self.IDS, where="unit")
+        self.assertIn("estimator_fingerprint", str(cm.exception))
+
+    def test_an_ABSENT_target_block_fails_closed_and_says_absent_is_not_nominal(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_target_meta_fields({"target": np.asarray({}, dtype=object)},
+                                              identities=self.IDS, where="unit")
+        self.assertIn("ABSENT IS NOT NOMINAL", str(cm.exception))
+
+    def test_a_MISSING_identity_operand_fails_rather_than_skipping(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_target_meta_fields(self._meta_store(), identities=None, where="unit")
+        self.assertIn("no second operand", str(cm.exception))
+
+    # ---------- lr policy ----------
+    def test_the_DERIVED_schedule_equals_the_PINNED_LITERALS(self):
+        """THE CONTROL THAT MAKES DERIVATION SAFER THAN RESTATEMENT. The pinned expectations are
+        function-local literals, extracted from source here and compared against the derivation."""
+        src = (Path(PET) / "validate_gate5_training_artifacts.py").read_text()
+        m_rates = re.search(r"expected_rates = (\[[^\]]*\])", src)
+        m_iters = re.search(r"expected_iterations = (\[[^\]]*\])", src)
+        self.assertIsNotNone(m_rates, "expected_rates literal not found in the pinned validator")
+        self.assertIsNotNone(m_iters, "expected_iterations literal not found")
+        pinned_rates = ast.literal_eval(m_rates.group(1))
+        pinned_iters = ast.literal_eval(m_iters.group(1))
+        exp = self.rb.expected_lr_schedule()
+        self.assertEqual(pinned_iters, exp["iterations"])
+        self.assertEqual([float(r) for r in pinned_rates], exp["rates"])
+        self.assertEqual(6, exp["fit_count"])
+        self.assertEqual(2, exp["n_fits_base_lr"])
+        self.assertEqual(4, exp["n_fits_annealed"])
+
+    def _lr_store(self, **over):
+        exp = self.rb.expected_lr_schedule()
+        realized = {
+            "verified_from_optimizer": True,
+            "n_fits_base_lr": exp["n_fits_base_lr"],
+            "n_fits_annealed": exp["n_fits_annealed"],
+            "fits": [{"iteration": it, "learning_rate": r}
+                     for it, r in zip(exp["iterations"], exp["rates"])],
+        }
+        realized.update(over)
+        return {"lr_policy_realized": np.asarray(realized, dtype=object)}
+
+    def test_a_correct_realized_policy_passes(self):
+        out = self.rb.assert_lr_policy_realized(self._lr_store(), where="unit")
+        self.assertEqual([292, 293, 294, 295, 298, 300], out["replaces_pinned_sites"])
+
+    def test_a_DECLARED_but_unverified_policy_is_REJECTED(self):
+        """`verified_from_optimizer` is the only field distinguishing a schedule that was declared from
+        one that was realized, so it is the one that cannot be allowed to be absent or false."""
+        for bad in (False, None, "yes"):
+            with self.assertRaises(SystemExit) as cm:
+                self.rb.assert_lr_policy_realized(
+                    self._lr_store(verified_from_optimizer=bad), where="unit")
+            self.assertIn("DECLARED schedule is not a", str(cm.exception))
+
+    def test_an_ANNEALED_rate_applied_at_iteration_ZERO_is_caught(self):
+        """The physically meaningful failure: the anneal firing one iteration early makes this member a
+        different estimator from the other 49."""
+        st = self._lr_store()
+        realized = dict(np.asarray(st["lr_policy_realized"], dtype=object).item())
+        fits = [dict(f) for f in realized["fits"]]
+        fits[0]["learning_rate"] = 1e-5
+        realized["fits"] = fits
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_lr_policy_realized(
+                {"lr_policy_realized": np.asarray(realized, dtype=object)}, where="unit")
+        self.assertIn("fit[0] learning_rate", str(cm.exception))
+
+    def test_a_rate_off_by_MORE_than_the_pinned_tolerance_is_caught_and_less_is_not(self):
+        """The tolerance is the pinned 3e-12 and the claim is that a specific rate WAS APPLIED -- an
+        arithmetic value round-tripped through JSON -- so bit-exactness would test the serializer."""
+        for delta, should_fail in ((1e-13, False), (1e-11, True)):
+            st = self._lr_store()
+            realized = dict(np.asarray(st["lr_policy_realized"], dtype=object).item())
+            fits = [dict(f) for f in realized["fits"]]
+            fits[2]["learning_rate"] = fits[2]["learning_rate"] + delta
+            realized["fits"] = fits
+            store = {"lr_policy_realized": np.asarray(realized, dtype=object)}
+            if should_fail:
+                with self.assertRaises(SystemExit):
+                    self.rb.assert_lr_policy_realized(store, where="unit")
+            else:
+                self.rb.assert_lr_policy_realized(store, where="unit")
+
+    def test_a_wrong_fit_count_is_caught_and_names_the_derivation(self):
+        st = self._lr_store()
+        realized = dict(np.asarray(st["lr_policy_realized"], dtype=object).item())
+        realized["fits"] = realized["fits"][:4]
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_lr_policy_realized(
+                {"lr_policy_realized": np.asarray(realized, dtype=object)}, where="unit")
+        self.assertIn("two fits per iteration", str(cm.exception))
+
+    def test_an_ABSENT_lr_block_fails_closed(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_lr_policy_realized(
+                {"lr_policy_realized": np.asarray({}, dtype=object)}, where="unit")
+        self.assertIn("no lr_policy_realized block", str(cm.exception))
+
+
+class ReadbackCheckpointsAndLogs(unittest.TestCase):
+    """The final tranche: checkpoints/contract (:315/:318/:320/:324/:326) and logs
+    (:333/:334/:337/:339/:340/:342/:343/:345).
+
+    Two restated literals here rather than imported ones -- `CHECKPOINT_SEMANTICS` and
+    `FATAL_LOG_TOKENS` are function-local in the pinned module -- so both get a control pinning them to
+    that module's SOURCE, the same arrangement as `required_keys`. And the optimizer-proof log line is
+    DERIVED from the policy and proved against the pinned literal, because its four embedded numbers are
+    the ones `expected_lr_schedule()` already derives.
+    """
+
+    def setUp(self):
+        import cstat_data_only_readback as rb
+        import validate_gate5_training_artifacts as V
+        self.rb, self.V = rb, V
+        self.tmp = Path(tempfile.mkdtemp(prefix="gate5-readback3-"))
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    # ---------- the two restated literals ----------
+    def test_the_restated_literals_match_the_pinned_source(self):
+        src = (Path(PET) / "validate_gate5_training_artifacts.py").read_text()
+        self.assertIn(repr(self.rb.CHECKPOINT_SEMANTICS).strip("'\""), src,
+                      "CHECKPOINT_SEMANTICS has drifted from the pinned validator")
+        for tok in self.rb.FATAL_LOG_TOKENS:
+            self.assertIn(tok, src, f"fatal token {tok!r} is not the pinned one")
+        # EXTRACTED VIA AST, NOT REGEX. `r"\[[^\]]*\]"` stops at the first `]`, which here falls INSIDE
+        # the token "[gate5-train][FAIL]" -- so the regex version produced an unterminated string and a
+        # SyntaxError rather than a wrong answer. A bracket-counting regex over source containing
+        # brackets is the wrong instrument; the parser already knows where the list ends.
+        pinned = None
+        for node in ast.walk(ast.parse(src)):
+            if isinstance(node, ast.Assign) and any(
+                    isinstance(t, ast.Name) and t.id == "fatal_tokens" for t in node.targets):
+                pinned = ast.literal_eval(node.value)
+        self.assertIsNotNone(pinned, "the pinned fatal_tokens assignment was not found")
+        self.assertEqual(pinned, self.rb.FATAL_LOG_TOKENS)
+
+    def test_the_optimizer_proof_line_is_DERIVED_and_matches_the_pinned_literal(self):
+        """Its four embedded numbers are the ones the schedule already derives, so copying the string
+        would give a check that is true when written and silent if the policy changes."""
+        line = self.rb.optimizer_proof_line()
+        self.assertEqual(
+            "LR anneal VERIFIED from the optimizer: 2 fit(s) at 0.0001, 4 at 1e-05", line)
+        src = (Path(PET) / "validate_gate5_training_artifacts.py").read_text()
+        self.assertIn(line, src, "the derived proof line no longer matches the pinned literal")
+
+    # ---------- checkpoints and contract ----------
+    def _tree(self, *, extra_root=(), missing_ckpt=(), extra_ckpt=(), final_symlink=False):
+        train = self.tmp / "training"
+        ck = train / "w_nominal"
+        ck.mkdir(parents=True, exist_ok=True)
+        for name in sorted(self.V.expected_checkpoints()):
+            if name in missing_ckpt:
+                continue
+            (ck / name).write_bytes(b"x")
+        for name in extra_ckpt:
+            (ck / name).write_bytes(b"x")
+        for name in (self.V.TRAIN_ARTIFACT, self.V.TRAIN_ARTIFACT + ".done",
+                     self.V.TRAIN_RECEIPT, self.V.TRAIN_RECEIPT + ".done"):
+            (train / name).write_bytes(b"x")
+        for name in extra_root:
+            (train / name).write_bytes(b"x")
+        if final_symlink:
+            tgt = ck / "OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5"
+            tgt.unlink()
+            tgt.symlink_to(ck / "OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5")
+        contract = {
+            "checkpoint_semantics": self.rb.CHECKPOINT_SEMANTICS,
+            "step1_checkpoint": str(ck / "OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5"),
+            "step2_checkpoint": str(ck / "OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5"),
+        }
+        return train, contract
+
+    def test_a_complete_namespace_passes(self):
+        train, contract = self._tree()
+        out = self.rb.assert_checkpoints_and_contract(train, contract, where="unit")
+        self.assertEqual([315, 318, 320, 324, 326], out["replaces_pinned_sites"])
+        self.assertIn("expected_checkpoints", out["imported"])
+
+    def test_a_STRAY_FILE_in_the_training_namespace_FAILS(self):
+        """The exact-set equality is what catches a partial rerun's debris beside a complete artifact --
+        BEN-023's shape, where a resume guard let 7 partial slabs block their own repair."""
+        train, contract = self._tree(extra_root=("GATE5_REPLICA_WEIGHTS.npz.tmp",))
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_checkpoints_and_contract(train, contract, where="unit")
+        self.assertIn("unexpected ['GATE5_REPLICA_WEIGHTS.npz.tmp']", str(cm.exception))
+        self.assertIn("BEN-023", str(cm.exception))
+
+    def test_a_MISSING_checkpoint_FAILS_and_names_it(self):
+        train, contract = self._tree(
+            missing_ckpt=("OmniFold_fe_nominal_nominal_iter1_step2.pkl",))
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_checkpoints_and_contract(train, contract, where="unit")
+        self.assertIn("iter1_step2.pkl", str(cm.exception))
+
+    def test_an_EXTRA_checkpoint_also_FAILS(self):
+        train, contract = self._tree(extra_ckpt=("OmniFold_fe_nominal_nominal_iter3_step1.pkl",))
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_checkpoints_and_contract(train, contract, where="unit")
+        self.assertIn("iter3_step1.pkl", str(cm.exception))
+
+    def test_a_SYMLINKED_final_checkpoint_is_REFUSED(self):
+        """A symlink would let one member's inference read another's weights while every digest and path
+        check on the artifact still passed."""
+        train, contract = self._tree(final_symlink=True)
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_checkpoints_and_contract(train, contract, where="unit")
+        self.assertIn("is a symlink", str(cm.exception))
+
+    def test_a_contract_pointing_at_ANOTHER_members_checkpoint_is_caught(self):
+        train, contract = self._tree()
+        contract["step2_checkpoint"] = "/tmp/somebody_elses/step2_final.weights.h5"
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_checkpoints_and_contract(train, contract, where="unit")
+        self.assertIn("not this member's", str(cm.exception))
+
+    def test_wrong_checkpoint_semantics_are_caught(self):
+        train, contract = self._tree()
+        contract["checkpoint_semantics"] = "last-epoch weights"
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_checkpoints_and_contract(train, contract, where="unit")
+        self.assertIn("checkpoint_semantics", str(cm.exception))
+
+    # ---------- logs ----------
+    JOB, IDX, SEED = "57199999", 7, 50_007
+
+    def _logs(self, *, out_extra="", err_extra="", drop=None, twice=None):
+        d = self.tmp / "logs"
+        d.mkdir(parents=True, exist_ok=True)
+        lines = {
+            "start": f"[gate5-train] index={self.IDX} seed={self.SEED} job={self.JOB}_{self.IDX}",
+            "gate": '"config_gate": "PASS"',
+            "proof": self.rb.optimizer_proof_line(),
+            "receipt": '"status": "PASS"',
+            "done": f"[gate5-train] DONE index={self.IDX} seed={self.SEED}",
+        }
+        body = []
+        for k, v in lines.items():
+            if k == drop:
+                continue
+            body.append(v)
+            if k == twice:
+                body.append(v)
+        (d / f"train_{self.JOB}_{self.IDX}.out").write_text("\n".join(body) + "\n" + out_extra)
+        (d / f"train_{self.JOB}_{self.IDX}.err").write_text(err_extra)
+        return d
+
+    def _check(self, d):
+        return self.rb.assert_member_logs(d, array_job_id=self.JOB, replica_index=self.IDX,
+                                          bootstrap_seed=self.SEED, where="unit")
+
+    def test_clean_logs_pass_and_the_job_id_is_caller_supplied(self):
+        out = self._check(self._logs())
+        self.assertEqual([333, 334, 337, 339, 340, 342, 343, 345], out["replaces_pinned_sites"])
+        self.assertIn("caller-supplied", out["array_job_id"])
+        self.assertFalse(_reads_key(self.rb.assert_member_logs, "ARRAY_JOB_ID"))
+
+    def test_a_MISSING_marker_FAILS(self):
+        with self.assertRaises(SystemExit) as cm:
+            self._check(self._logs(drop="done"))
+        self.assertIn("appears 0 times", str(cm.exception))
+
+    def test_a_DUPLICATED_marker_ALSO_FAILS(self):
+        """`== 1`, not `>= 1`: two DONE lines mean the task ran twice into one namespace."""
+        with self.assertRaises(SystemExit) as cm:
+            self._check(self._logs(twice="done"))
+        self.assertIn("appears 2 times", str(cm.exception))
+        self.assertIn("ran twice into one namespace", str(cm.exception))
+
+    def test_a_TRACEBACK_IN_STDERR_with_a_clean_stdout_is_CAUGHT(self):
+        """How 57194055 failed: its logs looked short rather than wrong, and a stdout-only check would
+        have passed every one of the five markers."""
+        with self.assertRaises(SystemExit) as cm:
+            self._check(self._logs(err_extra="Traceback (most recent call last)\n  ...\n"))
+        self.assertIn("across the two streams", str(cm.exception))
+        self.assertIn("Traceback", str(cm.exception))
+
+    def test_a_gate5_train_FAIL_token_in_stdout_is_caught(self):
+        with self.assertRaises(SystemExit) as cm:
+            self._check(self._logs(out_extra="[gate5-train][FAIL] something\n"))
+        self.assertIn("[gate5-train][FAIL]", str(cm.exception))
+
+    def test_a_missing_log_FILE_fails_closed(self):
+        d = self._logs()
+        (d / f"train_{self.JOB}_{self.IDX}.err").unlink()
+        with self.assertRaises(SystemExit) as cm:
+            self._check(d)
+        self.assertIn("stderr is missing", str(cm.exception))
+
+    def test_a_SYMLINKED_log_is_refused(self):
+        d = self._logs()
+        p = d / f"train_{self.JOB}_{self.IDX}.err"
+        p.unlink()
+        p.symlink_to(d / f"train_{self.JOB}_{self.IDX}.out")
+        with self.assertRaises(SystemExit) as cm:
+            self._check(d)
+        self.assertIn("is a symlink", str(cm.exception))
+
+
 class ManifestPrecedesArtifacts(unittest.TestCase):
     """C's condition on the deferral: unchecked, "before the artifact exists" is a PROMISE.
 
@@ -1524,8 +1961,33 @@ class DivergenceManifest(unittest.TestCase):
         the exact defect the partition exists to make unrepresentable."""
         st = self._doc()["replacement_status"]
         self.assertEqual(st["n_required"], len(st["REPLACEMENT_REQUIRED"]))
-        self.assertGreater(st["n_required"], 0,
-                           "if this ever reaches zero, check it is coverage and not renaming")
+
+    def test_ZERO_REQUIRED_DOES_NOT_READ_AS_VALIDATED(self):
+        """THE CONTROL THAT REPLACED `n_required > 0`, AND THE REASON IS WORTH KEEPING.
+
+        The original said "if this ever reaches zero, check it is coverage and not renaming" -- and when
+        it reached zero, the answer was neither. It was genuine coverage of the PREDICATE INVENTORY over
+        which NOTHING RUNS: 39 of the 55 sites have a replacement that exists, is tested, and is invoked
+        by no caller, because the data-only validator does not exist yet. `0 REQUIRED` would have read as
+        "the family can be graded", which is false.
+
+        So the invariant is not a floor on the required count. It is: whenever `n_required == 0` the
+        uncalled count must be PUBLISHED, and if that is also zero a caller must actually exist.
+        'The checks are written' and 'the checks run' are different claims (`BEN-416`).
+        """
+        st = self._doc()["replacement_status"]
+        self.assertIn("n_sites_whose_replacement_no_caller_INVOKES", st)
+        self.assertIn("written_but_UNCALLED", st)
+        if st["n_required"] == 0 and st["n_sites_whose_replacement_no_caller_INVOKES"] == 0:
+            repo = Path(__file__).resolve().parents[2]
+            self.assertTrue(
+                any((repo / c).exists() for c in (
+                    "nd-unfolding/pet/validate_gate5_data_only_artifacts.py",
+                    "nd-unfolding/pet/validate_gate5_training_artifacts_data_only.py")),
+                "the manifest reports every replacement written AND wired, but no data-only validator "
+                "module exists to do the wiring -- one of the two numbers is wrong")
+        self.assertEqual(st["n_sites_whose_replacement_no_caller_INVOKES"],
+                         sum(len(v) for v in st["written_but_UNCALLED"].values()))
 
     def test_the_generator_reproduces_the_committed_manifest_byte_for_byte(self):
         """Otherwise the file on disk and the rule that produced it can disagree silently."""
