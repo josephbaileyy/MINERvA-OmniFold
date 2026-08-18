@@ -136,7 +136,151 @@ would kill the hypothesis I myself am carrying.**
 
 **Not E's step 2, which is the code route. These are the constraints that route must satisfy.**
 
-**(i) The substitution is a VALUE change, and it must not become a pinned-file edit.**
+> ### ⚠ **CONSTRAINT (i) IS FALSIFIED. `Route A` IS NOT EXPENSIVE — IT IS SILENTLY WRONG.** Found by lane E, verified here from the tree.
+>
+> **The loader applies `sig_factor` ITSELF, before returning.** `fullevent_fps_dataloader.py:1321-1325`,
+> inside `if bootstrap_seed is not None:`
+>
+> ```
+> data_factor, sig_factor, bkg_factor = coherent_bootstrap_factors(M, N, n_bkg_full, int(bootstrap_seed))
+> w_truth = (w_truth_full[imc] * sig_factor[imc]).astype(np.float32)
+> w_reco  = (w_reco_full[imc]  * sig_factor[imc]).astype(np.float32)
+> ```
+>
+> **So setting `sig_factor = 1` in the replica driver changes NOTHING — the thinning has already happened
+> upstream of the place I prescribed the override. And it cannot be undone afterwards: 36.8% of the factors
+> are exactly zero, so the multiply DESTROYS information rather than scaling it.**
+>
+> **`train_fullevent_replica.py:202` re-derives the factors to VERIFY the loader's, not to apply them** —
+> a checker (`raise SystemExit("[gate5-train] loader bootstrap evidence carries the wrong seed")`), not an
+> applier. **I read the mention and inferred the operation.**
+>
+> **THE ROUTE WOULD HAVE PRODUCED A FAMILY WHOSE RECEIPTS CLAIM UNITY WHILE THE TRAINING CONSUMED THINNED
+> MC — a false receipt, and exactly the class this campaign spent the day refusing to ship.**
+>
+> **And the instrument that should catch it documents that it cannot.** `reconcile_gate5_family.py:526-530`,
+> its own note, verbatim: *"it compares the BUILDER's recomputation to this tool's redraw, so it is **blind
+> to what the LOADER applied**."* **The guard names its own blind spot and the blind spot is exactly where
+> `Route A` would have lived.**
+>
+> **MY CONSTRAINT WAS RIGHT AS A PRINCIPLE AND WRONG AS A ROUTE, and the distinction is the finding:** keep
+> the diff off a file pinned 25 ways — sound. *Put it in the driver* — wrong, because **the operation is not
+> where the mention is.**
+>
+> **AND IT IS MY OWN `BEN-403(ii)` VIOLATED ONE COMMIT AFTER FILING IT.** That rule reads *"presence in the
+> construction is not activity in the region — check availability where the effect is, not where the code
+> is."* I filed it for a physics mechanism and then, in the next ruling, **observed that the driver MENTIONS
+> the factors and inferred that it APPLIES them.** Same rule, different domain. **E's added rule — *when
+> routing an edit away from a pinned file, verify the destination PERFORMS the operation rather than merely
+> mentioning it* — is the code-domain statement of it, and E's second half is the part I could not have
+> supplied: PREFER THE LOUD FAILURE.** `OI-61(b)` died to an `argparse choices` list — exit 2, immediate.
+> **This one ships a false receipt and passes its own reconciler.**
+>
+> **THE VIABLE ROUTE, and E explicitly does not call it cheap:** call the loader with `bootstrap_seed=None`.
+> The else-branch at `:1332-1334` returns genuinely unthinned MC (`w_truth_full[imc]`, `w_reco_full[imc]`,
+> `meta["bootstrap"] = None` — verified), the driver already intercepts the loader call, and the
+> measured-side helpers already default `data_factor=None` to ones (`:696`, `:945-948`), so the data stream
+> can be supplied separately. **Four sites, one of them a new verdict path in the pin-exposed reconciler.**
+> **E's caveat, carried: `Route A` looked viable on exactly this kind of inspection until the loader's own
+> multiply was read. So `Route B` gets an EXECUTION check, not another inspection.**
+>
+> ### AND `Route B` HAS A SPECIFICATION CONSEQUENCE THAT MUST BE SETTLED BEFORE IT IS BUILT
+>
+> With `bootstrap_seed=None` the loader sets **`meta["bootstrap"] = None`** — and the reconciler reads
+> `data_factor_sha256` out of exactly that dict (`bs.get("data_factor_sha256")`). **So the receipt path that
+> carries the varying stream's provenance is the one `Route B` empties.** And `:527-530`'s own note calls
+> `data_factor` **"THE STREAM NOTHING ELSE CHECKS — no stage persists or array-compares it."**
+>
+> **That is the most dangerous possible combination: in `C_stat^data` the ONLY stream that varies is the one
+> the pipeline persists least.** **REQUIREMENT: the data-only verdict path must assert that the data factor
+> is persisted AND array-comparable under a named key of its own, and must FAIL CLOSED if it is absent.**
+> A `bootstrap: None` receipt that silently carries no data-factor hash is `Route A`'s false receipt in a
+> different disguise — unity claimed by omission instead of by assertion.
+> **REV-3 SHARPENING BELOW: this is right about the CLASS and wrong about WHERE the silence lives.**
+>
+> #### ⚠ REV 3 — the mechanism is a DEFENSIVE IDIOM, and one half of my own warning was wrong
+>
+> **The mediator established it.** `train_fullevent_replica.py:196` is
+> `bootstrap = dict(meta.get("bootstrap") or {})` — **and the same `or {}` at `:220` and `:253`.** Python
+> makes the two shapes differ, verified this turn:
+>
+> ```
+> {"bootstrap": None}.get("bootstrap", {})  -> None -> .get(...) raises AttributeError   LOUD
+> key absent, or {}                          -> {}   -> .get(...) returns None            SILENT
+> ```
+>
+> **A `.get` default fires only when the KEY IS ABSENT, never when its value is `None`** — so `or {}` at the
+> **writer** converts `ABSENT` into `EMPTY` and disarms the crash the reader would otherwise have. **A guard
+> written to make a reader robust to a missing dict is what suppresses the loud failure**, and `{}` is *empty
+> in content and present in type* — the one shape that defeats both a presence check and an exception.
+>
+> **BUT `Route B` THROUGH THE DRIVER AS IT STANDS FAILS LOUDLY, AND THAT CORRECTS MY FRAMING.** `:197` is
+> `if int(bootstrap.get("bootstrap_seed", -1)) != int(args.bootstrap_seed): raise SystemExit(...)`. With
+> `meta["bootstrap"] = None` the block is `{}`, the get defaults to `-1`, and for any real replica seed
+> (`50000 + i`) **`-1 != 50000+i` fires and the artifact is never written.** So the silence is in the
+> **reconciler**, not in the pipeline as built: **`Route B` does not currently ship a false receipt.**
+>
+> **The silent path is the DRIVER EDIT `Route B` REQUIRES.** `Route B` must make `:197` accept a run with no
+> bootstrap block, and **the smallest-looking way to do that is to relax `:197` — exactly the edit that arms
+> the reconciler's `:355`.** One relaxation converts the loud failure into the silent one.
+>
+> > **REQUIREMENT, replacing the weaker form above: the driver edit must BRANCH ON THE PRODUCT, never relax
+> > `:197`.** The three-stream assertion stays byte-identical; the data-only path asserts a **different
+> > positive** condition of its own. **`BEN-404`'s rule with a second instance and a line number — and now the
+> > FIRST line of defence rather than the third.**
+>
+> #### AND A LATENT VACUOUS PASS THAT NEEDS NO EDIT AT ALL — `BEN-405`
+>
+> **`:197`'s absent-default is `-1`, and `-1` is this pipeline's own sentinel for "no bootstrap"** —
+> `VL130`'s verified floor premises are *"identical inputs, identical 2,000,000-row `mc_indices`,
+> **`bootstrap_seed = -1`**"*. **So a run invoked with `--bootstrap-seed -1` against an empty block compares
+> `-1 != -1`, which is False, and the guard PASSES VACUOUSLY** (verified).
+>
+> It then dies five lines on at `:202` with `ValueError: expected non-negative integer` from
+> `np.random.default_rng(-1)` (verified). **Loud, but MISATTRIBUTED — the message names an RNG problem, so a
+> reader debugging it looks at numpy and not at the missing loader evidence.** **A guard whose absent-default
+> collides with a meaningful domain value stops guarding exactly when that value is in use, and the failure it
+> lets through resurfaces wearing someone else's name.** One-line fix, unrelated to this product: **the
+> absent-default must be a value no legal seed can take** — `None` with an explicit `is None` check, not `-1`.
+>
+> #### THE CLEAN SPECIFICATION ANSWER, which avoids the class rather than guarding it
+>
+> **`C_stat^data` must NOT reuse the `bootstrap` receipt key.** Its empty form is indistinguishable from its
+> absent form at **three writer sites** where `or {}` is doing what it was written to do, so any guard on it
+> guards a distinction the writers have already erased. **Give the data-only product its own top-level block
+> with its own required keys** — product tag, data-factor sha256, and the unthinned-MC assertion — **and leave
+> `bootstrap` meaning exactly what it means today.**
+>
+> **AND TWO ADDITIONS TAKEN FROM THE MEDIATOR, one against my own preference.** (1) **Keep the empty-dict
+> rejection as well — but in the NEW verdict path only, never in the shared checker.** The separate-block
+> design alone would let a future consumer reaching for `bootstrap` out of habit read `None` from a key that
+> legitimately has no value there. Avoiding the class is the design; the assertion is the cheap backstop.
+> (2) **NO CROSS-TENSE COMPARISON anywhere in `C_stat^data`'s verifier** (`BEN-406`): assert either
+> **present** (tree vs tree) or **past self-contained** (a receipt asserting agreement between two things IT
+> recorded at one moment). A present-vs-historical check must decay to `FAIL` the moment a pinned file
+> legitimately changes, and the existing gate's exemption channel (`verify_hash_bindings.py`'s
+> `KNOWN_PREEXISTING`) is scoped to drift **before 2026-07-28** — **so a new product must not add a check
+> that inherits an expired escape hatch.**
+>
+> #### AND AN EXECUTION CONDITION, which is now a CONDITION rather than a suggestion
+>
+> **Whatever route lands must demonstrate on ONE replica, FROM THE ARTIFACT rather than from the code path,
+> that the MC weights entering training are bit-identical to the unthinned arrays:** a `hash_array` of
+> `w_truth` against `w_truth_full[imc]`, **one key in the built receipt, failing loudly.** *(The record is the
+> reason: `Route A` survived inspection until someone read a multiply four hundred lines away; `Route B` has
+> survived two inspections and acquired a defect in the second. **An execution check is the only thing that
+> has caught anything on this item.**)*
+>
+> ### THE RECONCILER PROFILE IS WORSE THAN I SAID, WHICH STRENGTHENS THE "NO RELAXATION" LINE
+>
+> I named `:837-845`'s four distinctness labels. **E found `:519-530` ALSO replay-redraws all three streams
+> and compares hashes**, so unity mismatches there **before distinctness is ever reached.** **The real
+> profile is 2 of 4 distinctness PLUS 2 of 3 replay** — a shorter-looking exemption than I anticipated, and
+> **the shorter it looks the more important it is that `C_stat^data` gets its own verdict path rather than a
+> relaxation.** E is holding that line and it is the right line.
+
+**(i) ~~The substitution is a VALUE change, and it must not become a pinned-file edit.~~ SUPERSEDED — see
+the box above. Left as written because the reasoning is the finding.**
 `coherent_bootstrap_factors(n_data, n_sig, n_bkg, seed)` (`:614-625`) returns three **arrays**, and
 `reconcile_gate5_family.py` already hashes them separately (`factor_sha256` for `data`/`signal`/
 `background`). **So a data-only replica is the same construction with two of three factor arrays set to

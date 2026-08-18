@@ -28,6 +28,7 @@ for item in (HERE, REPO / "2d-unfolding", REPO / "nd-unfolding", REPO / "nd-unfo
         sys.path.insert(0, str(item))
 
 import fullevent_fps_dataloader as fe  # noqa: E402
+import cstat_data_only as cdo  # noqa: E402  (T1-T5, L2; one home)
 import train_fullevent_nominal as nominal  # noqa: E402
 from atomic_write import atomic_write, mark_complete  # noqa: E402
 
@@ -141,6 +142,11 @@ def main(argv=None):
     ap.add_argument("--expected-input-sha256", required=True)
     ap.add_argument("--gate3-manifest", required=True)
     ap.add_argument("--max-mc-events", type=int, default=200000)
+    # Defaults to three-stream so every existing launcher invocation is unchanged. The default is
+    # made IRRELEVANT by L2 below rather than trusted: `--cstat-product` and the family root must
+    # agree, so a data-only launcher cannot silently produce three-stream targets and vice versa.
+    ap.add_argument("--cstat-product", choices=list(cdo.CSTAT_PRODUCTS),
+                    default=cdo.CSTAT_THREE_STREAM)
     args = ap.parse_args(argv)
 
     inputs = Path(args.inputs).resolve()
@@ -167,23 +173,50 @@ def main(argv=None):
     # The exact NumPy DataLoader is the Gate-2 precedent for running target construction without
     # importing TensorFlow.  The learned refiner remains the canonical deferred ROOT implementation.
     numpy_loader = install_target_only_dataloader()
+
+    # L2 -- TAG <=> FAMILY ROOT, both ways, before anything is written.
+    data_only = (getattr(args, "cstat_product", cdo.CSTAT_THREE_STREAM) == cdo.CSTAT_DATA_ONLY)
+    cdo.assert_tag_matches_root(args.cstat_product, output, receipt_path)
+
+    # THE DATA-ONLY MECHANISM. The target stage genuinely NEEDS the data factor applied -- it is
+    # what the refined target carries -- so `bootstrap_seed=None`, which is right for the TRAINING
+    # stage, would remove the very variation this stage exists to produce. "Data Poisson, background
+    # unity" is not reachable through the loader's single switch, and the loader is pinned. So the
+    # driver substitutes the module-global the loader calls, in the same idiom this file already
+    # uses for the DataLoader itself, and RESTORES IT BEFORE THE VERIFICATION BLOCK so the replay
+    # below sees the canonical function rather than comparing a patched draw against itself.
+    original_factors = fe.coherent_bootstrap_factors
+    canonical_data_factor = None
+    inv = {}
+    if data_only:
+        with np.load(str(inputs)) as _d:
+            inv = {"n_data": int(np.asarray(_d["measured_pc"]).shape[0]),
+                   "n_sig": int(np.asarray(_d["w_truth"]).shape[0]),
+                   "n_bkg": int(np.asarray(_d["w_bkg"]).shape[0])}
+        patched, canonical_data_factor = cdo.unity_mc_factor_patch(
+            int(args.bootstrap_seed), inv["n_data"], inv["n_sig"], inv["n_bkg"])
+        fe.coherent_bootstrap_factors = patched
+
     started = time.monotonic()
     started_utc = dt.datetime.now(dt.timezone.utc).isoformat()
-    data, mc, imc, coord_reco, coord_gen, meta = fe.build_fullevent_loaders(
-        str(inputs),
-        max_events=int(args.max_mc_events),
-        seed=int(nominal.NOMINAL_SEED_POLICY["subsample_seed"]),
-        bootstrap_seed=int(args.bootstrap_seed),
-        bkg_mode=nominal.BKG_MODE,
-        refine_fn=None,
-        refine_kwargs={
-            "estimator": "exact",
-            "device": "cpu",
-            "params": {"random_state": REFINEMENT_SEED},
-            "verbose": True,
-        },
-        verify_identities=True,
-    )
+    try:
+        data, mc, imc, coord_reco, coord_gen, meta = fe.build_fullevent_loaders(
+            str(inputs),
+            max_events=int(args.max_mc_events),
+            seed=int(nominal.NOMINAL_SEED_POLICY["subsample_seed"]),
+            bootstrap_seed=int(args.bootstrap_seed),
+            bkg_mode=nominal.BKG_MODE,
+            refine_fn=None,
+            refine_kwargs={
+                "estimator": "exact",
+                "device": "cpu",
+                "params": {"random_state": REFINEMENT_SEED},
+                "verbose": True,
+            },
+            verify_identities=True,
+        )
+    finally:
+        fe.coherent_bootstrap_factors = original_factors
     target_meta = dict(meta.get("target") or {})
     fe.assert_refined_target_is_replica(
         target_meta, bootstrap_seed=int(args.bootstrap_seed)
@@ -212,17 +245,59 @@ def main(argv=None):
     ):
         raise SystemExit("[gate5-target] normalized target sum misses replica 1e6*R")
 
-    # Replay the three full factor streams and prove the loader used their exact restrictions.
+    # THE REPLAY BRANCHES, and so does the closure above it -- two checks, not one. Neither is
+    # relaxed: each asserts a DIFFERENT POSITIVE condition for the data-only product.
     data_factor, sig_factor, bkg_factor = fe.coherent_bootstrap_factors(
         n_data, n_sig, n_bkg, int(args.bootstrap_seed)
     )
-    if not np.array_equal(sig_factor[imc], np.asarray(bootstrap["sig_bootstrap_factor"])):
-        raise SystemExit("[gate5-target] loader signal factors differ from canonical replay")
-    if not np.array_equal(bkg_factor, np.asarray(bootstrap["bkg_bootstrap_factor"])):
-        raise SystemExit("[gate5-target] loader background factors differ from canonical replay")
+    if data_only:
+        # T2 / T5 at source: the MC streams the loader actually applied must be UNITY, and the
+        # DATA stream must be the canonical draw. Asserted against what the loader published,
+        # which is the whole point of substituting the factors rather than trusting the switch.
+        if not np.array_equal(np.asarray(bootstrap["sig_bootstrap_factor"]),
+                              np.ones(imc.size, dtype=np.uint8)):
+            raise SystemExit("[gate5-target-dataonly] T5 loader applied a non-unity signal factor")
+        if not np.array_equal(np.asarray(bootstrap["bkg_bootstrap_factor"]),
+                              np.ones(n_bkg, dtype=np.uint8)):
+            raise SystemExit("[gate5-target-dataonly] T2 loader applied a non-unity background "
+                             "factor; the background MC fluctuation is in the measured target")
+        if not np.array_equal(np.asarray(data_factor), np.asarray(canonical_data_factor)):
+            raise SystemExit("[gate5-target-dataonly] T3 canonical data factor is not the draw the "
+                             "patch supplied; the substitution did not reach the loader")
+        # THE CLOSURE ABOVE targets `step1_measured_normalization` == 1e6*R. With unity background
+        # the loader computed R from the DATA draw alone, so that stamp is already 1e6*R_dataonly --
+        # and this asserts it rather than assuming it, by re-deriving R the loader's own way.
+        with np.load(str(inputs)) as _d:
+            r_do = float(fe.step1_class_ratio_from_dump(
+                _d, n_data=n_data,
+                w_truth_full=np.asarray(_d["w_truth"], dtype=np.float32),
+                w_reco_full=np.asarray(_d["w_reco"], dtype=np.float32),
+                data_factor=np.asarray(data_factor),
+                bkg_factor=np.ones(n_bkg, dtype=np.uint8))[0])
+        want = fe.STEP1_MC_NORMALIZATION * r_do
+        got = float(target_meta["step1_measured_normalization"])
+        if abs(got - want) > 4.0 * float(np.finfo(np.float32).eps) * abs(want):
+            raise SystemExit(f"[gate5-target-dataonly] normalized-target closure targets "
+                             f"{got!r}, not 1e6*R_dataonly {want!r}")
+    else:
+        if not np.array_equal(sig_factor[imc], np.asarray(bootstrap["sig_bootstrap_factor"])):
+            raise SystemExit("[gate5-target] loader signal factors differ from canonical replay")
+        if not np.array_equal(bkg_factor, np.asarray(bootstrap["bkg_bootstrap_factor"])):
+            raise SystemExit("[gate5-target] loader background factors differ from canonical replay")
 
     output.parent.mkdir(parents=True, exist_ok=True)
     receipt_path.parent.mkdir(parents=True, exist_ok=True)
+    if data_only:
+        # T1-T5 asserted over the block ABOUT TO BE WRITTEN, so a target carrying a Poisson
+        # background never comes into existence rather than being detected afterwards.
+        cdo.assert_data_only_target_streams(
+            {"cstat_product": np.asarray(cdo.CSTAT_DATA_ONLY),
+             "data_bootstrap_seed": np.asarray(int(args.bootstrap_seed)),
+             "data_bootstrap_factor": np.asarray(data_factor),
+             "bkg_bootstrap_factor": np.ones(n_bkg, dtype=np.uint8),
+             "sig_bootstrap_factor_full": np.ones(n_sig, dtype=np.uint8)},
+            data_bootstrap_seed=int(args.bootstrap_seed),
+            n_data_full=n_data, n_sig_full=n_sig, n_bkg_full=n_bkg)
     write_npy(output, weights)
     target_sha = sha256_file(output)
     completed_utc = dt.datetime.now(dt.timezone.utc).isoformat()
@@ -253,6 +328,7 @@ def main(argv=None):
             "sha256": sha256_file(gate3),
         },
         "runtime_target": target_meta,
+        "cstat_product": args.cstat_product,
         "configuration": {
             "target_mode": nominal.BKG_MODE,
             "refinement_estimator": "exact",
