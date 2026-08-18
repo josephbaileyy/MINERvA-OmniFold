@@ -377,3 +377,66 @@ The first version computed its verdict with `any("!=" in l or "ABSENT" in l for 
 its **own diagnostics**. A verdict derived from its own prose can be changed by rewording a message, and
 `"ABSENT"` matches both a mandatory key missing and the word in an unrelated sentence. Verdicts are now
 decided by explicit flags. **Fourth instance today, this one inside the tool built to enforce rigour.**
+
+---
+
+## 9. C's RULING: `recomputable: yes | no` AS A REQUIRED ATTRIBUTE ON PAYLOAD — NO FOURTH CLASS
+
+C's reason is structural and it corrected my framing: **each of the three classes names a COMPARISON
+RULE** — bit-exact, equal, superset — and *"not recomputable"* is not one, **because those keys still
+compare bit-exact.** What differs is whether the *ingredient check* is available. So it is an attribute,
+not a class.
+
+Four requirements, all implemented in `mii_anchor_comparator.py`:
+
+1. **Declared here, never discovered at comparison time.** `assert_reasons_are_stated()` runs before any
+   file is opened.
+2. **A `no` requires a stated reason; a bare `no` is the fail-closed case.**
+3. **The reason must distinguish a WRITER GAP from a MATHEMATICAL IMPOSSIBILITY.** Recording which kind
+   it is *determines whether anyone can ever close it* — a bare *"not recomputable"* reads as a law of
+   nature and freezes a writer gap forever.
+4. **`--acknowledge-unrecomputable` takes an EXPLICIT KEY LIST that must equal the declared `no` set
+   exactly.** A blanket flag lets a future `no` ride in silently: someone adds a key, declares it
+   unrecomputable, and every existing invocation swallows it without anyone deciding. **This is the same
+   defect as §7(b)** — a check whose domain is narrower than the requirement it enforces. Subset and
+   superset are both rejected, and the error names which keys are missing or extra.
+
+### 9a. All three of today's `no`s are WRITER GAPS, i.e. all three are closable
+
+| key | kind | what would close it |
+|---|---|---|
+| `globalCompleteness` | WRITER_GAP | `of_in`/`denom_nd` unwritten, **and** `sweep_bank_5d.py` emits no completeness histogram (0 occurrences of `hCompleteness`, while `unfold_nd_omnifold_unbinned.py` has one). Writing either closes it. |
+| `fixed_seed_null_norm` | WRITER_GAP | `x_cv2` and `base` are ordinary per-bin vectors `unified_throw_cov.py` does not write. |
+| `sqrt_tr_old` | WRITER_GAP | C's **11g**: ship `diag(C_old)` before any member intermediate is released. The mediator found it is **already in memory** at `adopt_unified_5d.py:128` (`diag_comb`), so the remedy is a **write**, not a computation, and not even an extra read of the 41 GB file. |
+
+**`sqrt_tr_old` stays `no` until that write lands**, because the declared set describes the tree as it
+is, not as it is about to be.
+
+### 9b. C's 11g, and the general defect it names
+
+*Nothing accepted without a stamp, nothing deleted without one, **and nothing deleted before the
+survivors' ingredients are retained elsewhere**.*
+
+C's generalisation, which it rates above the fix: **a retention policy must be tested against every
+derived quantity that SURVIVES the deletion, not against the ones the deletion is for.** The question
+asked was *"are the bar's operands downstream of the intermediate?"*; the question never asked was *"are
+the SURVIVING SCALARS' ingredients downstream too?"* Only the second is about deletion.
+
+Two scope constraints that bind any implementation: **11g releases MEMBER intermediates only — the
+archive's 41.44 GB file is frozen and no ruling may delete an archive product**, so
+`p4_build_components.py:114` is unaffected and *"delete the 41 GB file"* must never be implemented as
+reaching the archive. And **a release must enumerate every reader, not only those on the member DAG** —
+the third consumer's harmlessness was luck; the rule is completeness.
+
+Costing, confirmed both ways: `diag_comb + vb + vu` = 3 × 65,856 doubles = **1.58 MB**, 0.035 % of a
+retained member, a **26,219 : 1** trade against 41.44 GB.
+
+### 9c. And the line C asked for, beside the key
+
+**39 of 188 archive universes have `globalCompleteness` ABOVE UNITY, max 1.0241.** A *"completeness"*
+exceeding 1 means **it is not a completeness fraction** — so the guard is **floor-only, with no
+ceiling**. Anyone reading the name will assume `[0,1]` and may add a ceiling that **rejects 39 good
+universes**. C's framing, better than mine: **a hygiene floor and a quality gate have opposite
+calibrations** — hygiene catches corruption and wants a wide margin; quality judges physics and wants a
+tight one. Floor `0.90`: spread `0.0521`, so `0.95` sits `0.42` spread-widths below the minimum and
+`0.90` sits `1.38`.
