@@ -61,6 +61,70 @@ data-only artifact that unexpectedly **passes** `target_meta_seed`, or fails it 
 > There is no third state between *executed unchanged* and *named in a frozen manifest*.** Divergence is not
 > discouraged — **it is unrepresentable.**
 
+### `V5` — THE DIFFERENTIAL TEST, adopted from Assistant, and it is the EXECUTABLE FORM of `V1`
+
+**Assistant's control is adopted, and its place in this ruling is more specific than *"an addition"*.**
+
+> **Feed a family to BOTH reconcilers and require identical verdicts PER CHECK on everything except the
+> declared mode-specific entries — and require the declared ones to differ. Any other divergence FAILS.**
+
+**`V1` says the wrapper contains no check logic. That is a property a reader verifies by INSPECTION. The
+differential test verifies it by EXECUTION** — and `CLAUDE.md`'s own preference is explicit: *prefer the
+executable form of any rule you are tempted to write down.*
+
+> **So `V5` does not sit beside `V1`; it DISCHARGES `V1`'s verification burden.** And it pins the
+> **relationship** between the two paths rather than either path, so **neither pinned file is touched** and the
+> `R2` pins at `reconcile_gate5_family.py` are untied.
+
+**And Assistant's REASON is better than the observation I gave.** I said *two writers to disjoint roots cannot
+disagree, two readers can*. **Assistant says why: launchers emit ARTIFACTS, which have downstream comparators;
+reconcilers emit VERDICTS, which are TERMINAL. A verdict has nothing downstream that would notice it was
+reached by a different standard — so divergence in judgment-producing code is unobservable by construction.**
+
+**And the asymmetry is what PRICES the control rather than merely motivating it:** a data-only reconciler that
+is **stricter** produces a false block and someone investigates; one that is **laxer** passes a family that
+should not have passed **and nobody ever looks.** **The dangerous direction is silent by construction**, which
+is why this is worth building rather than documenting.
+
+#### MY ADDITION — the MIRROR direction, and it is required
+
+**Assistant specifies the coherent family. That direction tests `V1`'s delegation and NEVER EXERCISES THE
+DATA-ONLY BEHAVIOUR.** Both directions are required:
+
+| direction | pinned reconciler must | wrapper must |
+|---|---|---|
+| **coherent family** | PASS everything | **PASS the non-manifest checks and REFUSE the family** — its manifest checks are declared expected-to-fail and are observed PASSING, so `V3`'s middle clause fires |
+| **data-only family** | **FAIL exactly the manifest checks, PASS the rest** | **PASS** |
+
+**Note what the coherent direction implies and a careless implementation would get wrong: the comparison must
+be PER CHECK, never whole-verdict** — because the wrapper *should* refuse a coherent family, and a
+whole-verdict diff would read that correct refusal as divergence. **Assistant's phrasing already has this
+right; I am making it explicit because it is the line an implementer would drop.**
+
+**This is the repo's power-test-both-directions convention applied to a PAIR OF INSTRUMENTS instead of a
+single guard** — *agree where they must, differ where they must* — and a textual diff against an allowlist is
+the weaker cousin: **textual identity is not behavioural identity and it breaks spuriously on refactor.**
+
+#### The pre-registration requirement is `V2`, with one sharpening
+
+**Assistant is right that the declared-difference list must be written BEFORE the second reconciler.** That is
+already `V2`. **The sharpening: `V5` must be written against the MANIFEST, not against the observed diff.**
+Otherwise the test records **what was written** rather than **what was intended** — the same defect one level
+up, and the fifth instance of that shape in two days including in my own `R5`.
+
+#### THE LIMIT, adopted verbatim as a LABEL rather than a caveat
+
+**This pins the two paths to each other. It does NOT establish that the coherent reconciler is correct.** If
+that one is wrong, `V5` propagates the error to the data-only family **with a green light.**
+
+> **`V5` IS A DIVERGENCE CONTROL, NOT A CORRECTNESS CONTROL, and it must be labelled so wherever it lands.**
+>
+> **Consequence I add, because this is exactly what a summary loses: `V5` must NEVER be cited as evidence the
+> data-only family is verdicted CORRECTLY — only that it is verdicted by the SAME STANDARD.** Those two
+> sentences compress to the same phrase in a status report, which is `BEN-392`'s transport shape.
+
+**Stated by its author before anyone could discover it, which is the reason it is safe to adopt at all.**
+
 ### Forward prohibitions — two carried, one new
 
 1. **Never merge the wrapper into the original.** *(Launcher ruling; the tidy-up arrives as a refactor.)*
