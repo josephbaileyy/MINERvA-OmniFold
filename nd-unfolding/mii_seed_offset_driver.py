@@ -168,6 +168,11 @@ def build_plan(offsets):
     probed = assert_offset_reaches_every_branch()     # the gate: observed argv, every branch
     baselines = policy.group_baselines()
     checked = policy.assert_offset_grid_is_alias_free(baselines, offsets)
+    # BEN-463: the clean-offset predicate, wired now that C has ruled the exemption's FORM. The
+    # two archive coincidences are exempt via a (group, range, seed) ALLOWLIST rather than a
+    # `j != 0` skip, so a THIRD coincidence at the anchor -- e.g. from a later --array widening --
+    # still fails. A member skip would have passed it silently.
+    clean_checked = policy.assert_offsets_are_clean(offsets)
     archive = assert_k0_reproduces_the_archive(sources)
     plan = []
     for k in sorted({int(x) for x in offsets}):
@@ -181,6 +186,7 @@ def build_plan(offsets):
                              "env": {OFFSET_ENV: str(k)},
                              "command": f"{OFFSET_ENV}={k} sbatch {rel}"})
     return {"probe_cases_run": probed,
+            "clean_offset_combinations_checked": clean_checked,
             "offsets": sorted({int(x) for x in offsets}),
             "group_baselines": baselines,
             "archive_k0": archive,
@@ -205,6 +211,8 @@ def main(argv=None):
           f"aliasing pairs checked={plan['aliasing_pairs_checked']}")
     print(f"[mii] k=0 archive anchor verified two-sided: {plan['archive_k0']}")
     print(f"[mii] --draw-seed pinned to the literal {policy.ARCHIVE_DRAW_SEED} in every targeted launcher")
+    print(f"[mii] clean-offset predicate: {plan['clean_offset_combinations_checked']} combinations "
+          f"checked, exemptions = the {len(policy.COINCIDENCE_ALLOWLIST)} ARCHIVE coincidences only")
     print(f"[mii] OBSERVED-ARGV probe passed on every branch: {plan['probe_cases_run']}")
     print( "[mii]   (the textual hook check is a precondition, not evidence: it passed on the "
            "launcher whose else-branch expanded the seed to nothing)")

@@ -1205,11 +1205,11 @@ class MiiFourLegDriver(unittest.TestCase):
     def test_R3_one_offset_fans_across_all_four_legs_preserving_BOTH_groups(self):
         """INTEGRATION is the deliverable. A flag is capability; a launcher diff is not a launcher."""
         d = self._drv()
-        plan = d.build_plan([0, 5])
+        plan = d.build_plan([0, 1200])   # ruled-grid steps: 5 is forbidden
         legs = {m["leg"] for m in plan["members"]}
         self.assertEqual(legs, {"sweep_bank_5d", "unified_throw_cov", "bootstrap_nd",
                                 "seedscan_split"}, "a scan must reach all four legs")
-        for k in (0, 5):
+        for k in (0, 1200):
             seeds = {m["leg"]: m["estimator_seed"] for m in plan["members"] if m["k"] == k}
             self.assertEqual(seeds["sweep_bank_5d"], 42 + k)
             self.assertEqual(seeds["bootstrap_nd"], 42 + k)
@@ -1230,9 +1230,10 @@ class MiiFourLegDriver(unittest.TestCase):
         both pass. Per-member coherence is not ensemble coherence.
         """
         d = self._drv()
-        # NOT [0, 5, 958]: that grid ALIASES (958 - 0 is exactly b2 - b1) and build_plan
-        # correctly refused it. My own fixture tripped the guard, which is the guard working.
-        plan = d.build_plan([0, 5, 10])
+        # NOT [0, 5, 958]: that ALIASES (958 - 0 is exactly b2 - b1). And not [0, 5, 10] either:
+        # the clean-offset predicate now forbids 5 and 10 (42+5 and 42+10 land in the bootstrap
+        # replica range). The fixture tripped BOTH guards in turn, which is both guards working.
+        plan = d.build_plan([0, 1200, 2400])
         draws = {m["draw_seed"] for m in plan["members"] if m["leg"] == "unified_throw_cov"}
         self.assertEqual(draws, {1000}, "the draw seed moved with k -- the scan would measure "
                                         "estimator noise convolved with ensemble noise")
@@ -1430,31 +1431,34 @@ class CleanOffsetPredicate(unittest.TestCase):
         """`1000` and `997` both FAIL -- 42+1000 and 42+997 are inside [1000,1159] -- which is why the
         predicate is derived from the ranges rather than from a number anyone remembers."""
         import seed_offset_policy as sp
-        for k in (0, 5, 159, 958, 997, 1000):
+        # k=0 removed: it is the ARCHIVE's own coincidence and is exempt by allowlist (BEN-463).
+        # Its arithmetic is unchanged and is asserted in the allowlist tests instead.
+        for k in (5, 159, 958, 997, 1000):
             with self.subTest(k=k), self.assertRaises(SystemExit):
                 sp.assert_offsets_are_clean([k])
         self.assertTrue(sp.assert_offsets_are_clean([160, 1200, 2400]))
 
-    def test_Cs_grid_1200j_is_DIRTY_AT_j0_AND_THAT_IS_THE_ARCHIVE(self):
-        """THE RESULT WORTH THE TEST. `1200j` is clean for j >= 1 and forbidden at j = 0 -- for TWO
-        independent reasons, both PROPERTIES OF THE ARCHIVE rather than of the scan:
+    def test_j0_IS_the_archive_and_is_exempt_by_ALLOWLIST_not_by_a_member_skip(self):
+        """WAS `test_Cs_grid_1200j_is_DIRTY_AT_j0`, and it encoded the PRE-RULING behaviour.
 
-            g1 estimator seed   42 lands in bootstrap replica seeds [1,100]
-            g2 estimator seed 1000 lands in uthrow per-throw draw seeds [1000,1159]
+        The predicate did reject `j = 0`, for two reasons that are properties of the ARCHIVE:
+        `g1`'s estimator seed 42 lands in the bootstrap replica seeds and `g2`'s 1000 lands in the
+        per-throw draw seeds. Lane C's determination (`BEN-463`) is that this is not a defect to
+        route around: A CLEAN ANCHOR IS NOT AN ANCHOR. The anchor's function is reproducing the
+        published product, the published product HAS the coincidences, so the confound and the
+        anchoring are the same fact -- and dropping `j = 0` costs not a member but the ANCHOR,
+        leaving 49 members tied to no published value.
 
-        So the anchor member is the one member the predicate cannot clear, and every archived product
-        already carries both coincidences. Not exempted here: the predicate is applied as specified and
-        the consequence is reported, because exempting the anchor silently would hide that member 0
-        differs structurally from members 1..49 -- which is exactly what the predicate forbids.
+        Rewritten rather than deleted so the reversal is visible: the earlier assertion was correct
+        about the arithmetic and wrong about the disposition, and the disposition was a ruling.
         """
         import seed_offset_policy as sp
-        with self.assertRaises(SystemExit) as cm:
-            sp.assert_offsets_are_clean([1200 * j for j in range(50)])
-        msg = str(cm.exception)
-        self.assertIn("1 of 50", msg, "only the anchor is dirty")
-        self.assertIn("k=0", msg)
-        self.assertTrue(sp.assert_offsets_are_clean([1200 * j for j in range(1, 50)]),
-                        "j=1..49 must be clean, so the finding is about the anchor and not the grid")
+        self.assertEqual(sp.assert_offsets_are_clean([1200 * j for j in range(50)]), 300,
+                         "the ruled grid, anchor included, must now pass")
+        # the arithmetic the earlier test asserted is still true -- it is the DISPOSITION that moved
+        raw = sp.forbidden_offsets(-200, 1400)
+        self.assertIn(0, raw, "k=0 still HAS the coincidences; it is exempt, not clean")
+        self.assertEqual(len(raw[0]), 2, "both archive coincidences, not one")
 
     def test_the_range_table_is_DATA_and_names_what_it_omits(self):
         """Lane C reports a PET-family band making k=2000 dirty. This lane has not measured it, so it
@@ -1475,6 +1479,115 @@ class CleanOffsetPredicate(unittest.TestCase):
             sp.assert_offsets_are_clean([])
         with self.assertRaises(SystemExit):
             sp.assert_offsets_are_clean([1200], ranges={})
+
+
+class CoincidenceAllowlist(unittest.TestCase):
+    """`BEN-463`: the archive's own coincidences are exempt, expressed as an ALLOWLIST rather than a
+    member skip -- because a skip passes ANY coincidence at the anchor, including a third one a later
+    `--array` widening introduces, and the anchor is the member everyone has agreed is special."""
+
+    def test_the_ruled_grid_is_accepted(self):
+        import seed_offset_policy as sp
+        self.assertEqual(sp.assert_offsets_are_clean([1200 * j for j in range(50)]), 300)
+
+    def test_A_THIRD_COINCIDENCE_AT_THE_ANCHOR_STILL_FAILS(self):
+        """THE NARROWING'S OWN TEST, and the reason the allowlist form was worth wiring. Without it,
+        widening the exemption later looks free."""
+        import seed_offset_policy as sp
+        widened = dict(sp.PER_UNIT_SEED_RANGES, **{"hypothetical widened array": (40, 44)})
+        with self.assertRaises(SystemExit) as cm:
+            sp.assert_offsets_are_clean([0], ranges=widened)
+        self.assertIn("hypothetical widened array", str(cm.exception))
+
+    def test_the_exemption_does_not_leak_to_other_offsets_or_other_groups(self):
+        """Keyed on `(group, range, SEED)`, a strengthening of the two-entry form: on `(group, range)`
+        alone the exemption would also excuse k=5's bootstrap coincidence, same group same range. And
+        k=958 puts g1's seed at 1000 -- the archive's coincidence is g2's at 1000, not g1's."""
+        import seed_offset_policy as sp
+        for k in (5, 47, 158, 958, 997, 1000):
+            with self.subTest(k=k), self.assertRaises(SystemExit):
+                sp.assert_offsets_are_clean([k])
+        hits = sp.unexempted_coincidences([958])
+        self.assertTrue(any("g1 estimator seed 1000" in r for r in hits[958]),
+                        "g1 at 1000 must NOT inherit g2's exemption")
+
+    def test_the_allowlist_has_exactly_the_two_archive_entries(self):
+        import seed_offset_policy as sp
+        self.assertEqual(sp.COINCIDENCE_ALLOWLIST,
+                         {("g2", "uthrow per-throw draw seed", 1000),
+                          ("g1", "bootstrap replica seed", 42)})
+
+    def test_the_driver_now_enforces_it(self):
+        import mii_seed_offset_driver as d
+        plan = d.build_plan([1200 * j for j in range(1, 4)])
+        self.assertGreater(plan["clean_offset_combinations_checked"], 0)
+        with self.assertRaises(SystemExit):
+            d.build_plan([5])
+
+
+class AnchorCoincidenceRead(unittest.TestCase):
+    """Lane C's two reads: is the anchor's coincidence EMPIRICALLY material? Tested on synthetic
+    families with and without a planted outlier, because a detector never pointed at a positive is
+    not a detector."""
+
+    def _reps(self, n=100, outlier_at=None, kick=0.0, seed=3):
+        rng = np.random.default_rng(seed)
+        out = {}
+        for k in range(1, n + 1):
+            row = rng.normal(1.0, 0.05, size=8)
+            if outlier_at is not None and k == outlier_at:
+                row = row + kick
+            out[k] = (float(row.sum()), row)
+        return out
+
+    def test_a_clean_family_does_NOT_flag(self):
+        import anchor_coincidence_displacement as acd
+        r = acd.displacement(self._reps(), 42, "replicas")
+        self.assertFalse(r["FLAGS"], f"clean family flagged at |z|={r['max_abs_z']:.2f}")
+        self.assertTrue(r["below_test_resolution"],
+                        "a clean family's max |z| must sit under the expected max of 100 draws")
+
+    def test_a_PLANTED_outlier_DOES_flag(self):
+        """The positive control. Without it, 'nothing flagged' is not evidence."""
+        import anchor_coincidence_displacement as acd
+        r = acd.displacement(self._reps(outlier_at=42, kick=1.5), 42, "replicas")
+        self.assertTrue(r["FLAGS"], f"planted outlier not flagged: |z|={r['max_abs_z']:.2f}")
+        self.assertGreater(r["max_abs_z"], r["flag_at_abs_z"])
+
+    def test_the_sd_excludes_the_member_under_test(self):
+        """A member cannot inflate its own denominator -- otherwise a large outlier suppresses its
+        own z and the test gets quieter exactly as the defect gets worse."""
+        import anchor_coincidence_displacement as acd
+        small = acd.displacement(self._reps(outlier_at=42, kick=1.0), 42, "replicas")["max_abs_z"]
+        big = acd.displacement(self._reps(outlier_at=42, kick=3.0), 42, "replicas")["max_abs_z"]
+        self.assertGreater(big, small, "z must grow with the kick, not shrink")
+
+    def test_leverage_is_leave_one_out_and_small_for_one_of_a_hundred(self):
+        import anchor_coincidence_displacement as acd
+        lv = acd.leverage(self._reps(), 42, "replicas")
+        self.assertLess(lv["relative_leverage"], 0.05,
+                        "dropping 1 of 100 clean members must move the summary very little")
+        self.assertGreater(acd.leverage(self._reps(outlier_at=42, kick=3.0), 42,
+                                        "replicas")["relative_leverage"],
+                           lv["relative_leverage"], "an outlier must have MORE leverage")
+
+    def test_a_wrong_family_size_warns_that_the_threshold_is_not_valid(self):
+        """The family-wise threshold was derived for m=100; at another m it is not the same test."""
+        import anchor_coincidence_displacement as acd, io as _io, contextlib as _c
+        buf = _io.StringIO()
+        with _c.redirect_stdout(buf):
+            # n=60, NOT n=30: a 30-member family has no member 42, so the earlier fixture raised
+            # "member absent" before ever reaching the warning under test. Fourth fixture-index bug
+            # of the day, and the third time a reported failure was the fixture's rather than the code's.
+            acd.displacement(self._reps(n=60), 42, "replicas")
+        self.assertIn("NOT valid as stated", buf.getvalue())
+
+    def test_it_FAILS_CLOSED_when_the_products_are_absent(self):
+        import anchor_coincidence_displacement as acd
+        with tempfile.TemporaryDirectory() as td:
+            rc = acd.main(["--boot-dir", str(Path(td) / "nope"),
+                           "--throw-glob", str(Path(td) / "nope" / "*.npz")])
+        self.assertEqual(rc, 2, "absent products must be a loud non-zero, not a clean zero")
 
 if __name__ == "__main__":
     unittest.main()

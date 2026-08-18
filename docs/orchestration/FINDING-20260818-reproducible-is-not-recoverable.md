@@ -86,12 +86,89 @@ watching — not unrepeatable.**
 does not mean the dump is unread. `:99` reads it. **A true comment about what a program avoids is not
 a statement of what it consumes.**
 
-## Pending, and the finding does not depend on it
+## RESOLVED 2026-08-18 — the copy exists, and it is byte-identical
 
-Whether any copy of the dump exists off scratch (CFS or HPSS) is unresolved — the scan is slow and
-`HPSS is over quota` is the recorded state, so **no copy is assumed.** If one exists the promise is
-*backed but undocumented*; if none does it is *unbacked*. **The header should state the condition
-either way**, which is why this is filed now rather than held.
+Filed with this pending. Measured since, and the branch resolves to **backed but undocumented**:
+
+```
+/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz
+/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12_RECEIPT.json
+
+scratch  9,897,374,636 B  2026-07-19 03:10:48.000000000
+CFS      9,897,374,636 B  2026-07-19 03:10:48.000000000
+sha256(CFS) = fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625
+```
+
+**That digest is the pin** — `EXPECTED_INPUT_SHA`, the same value the Gate-5 launcher verifies and the
+same one `CLM-012`'s row cites as *"the acceptance map pins the G2 dump `fa6b3463…`"*. So the copy is
+not merely present at the right size and mtime; **it is the pinned artifact.** CFS is not purgeable.
+The receipt was staged beside the payload, so whoever did this copied the pair rather than the bytes
+alone.
+
+**SCOPE, because a positive from a truncated search needs one.** My first search was **killed, not
+completed** — reported as killed rather than allowed to stand as a null, which is this finding's own
+lesson aimed at its author. The bounded re-run exited **124 (timed out at 90 s)** at `-maxdepth 4`.
+That does not weaken the result: **one hit answers an existential.** It does mean **these are not
+claimed to be the only copies**, and they are not. A truncated search supports *"a copy exists"* and
+can never support *"this is where the copies are."*
+
+**What resolves and what does not.** The *preservation* worry is discharged: the dump is safe, so the
+`.gitignore`'s promise is true and its precondition is met. **The finding is unchanged**, because it
+was never *"the dump might be purged"* — it was *"the promise does not say what it depends on."* The
+remedy therefore shrinks rather than vanishing: **one clause naming the CFS path**, after which a
+reader can check the claim instead of trusting it.
+
+**And the chain result is untouched — it is still the class.** `git ls-files` at both hops returns a
+receipt and no payload, so the enumeration's question stops at every hop exactly as before. **A CFS
+copy that nobody has written down is not discoverable by asking *"is the backing artifact
+tracked?"*** — it took a filesystem search to find, and the next lane will not run one. **Preserved
+and findable are different properties, and only the first of them is now established.**
+
+## Amendment 1 — I was wrong that it is unindexed, and the surviving defect is SHARPER
+
+I wrote that `minerva-shutdown-stage` was *"indexed nowhere locatable from the repo."* **False, and
+lane A found it in one grep.** Verified here:
+
+`docs/orchestration/state/restore-step1-g2-durability-20260804.json` — **committed**, `verdict: PASS`,
+`observed_at_utc 2026-08-04T06:28:17Z`, `repo_commit_at_verification f424427` — names **both** paths,
+and its `destination` block records *"The destination directory did not exist before this step,
+confirming there was genuinely no backup."* `minerva-shutdown-stage` appears in **8 tracked files.**
+It is `RESTORE-2026-08-03` Step 1, run two weeks before this finding.
+
+**HOW I MISSED IT, which is the part worth keeping.** I searched the two directories the dependency
+chain led me through, then a filesystem tree — **and once I had the CFS path in hand I never grepped
+the repository for it.** One `git grep` on a string I was already holding. *A search for the token you
+have is the cheapest one available and it is the one I did not run*, which is this evening's family
+with me as the author again.
+
+**So the branch moves once more: not unbacked, not backed-but-undocumented — BACKED AND DOCUMENTED**,
+with a PASS verdict and a stated reason predating the finding. The receipt-beside-payload staging I
+noticed was the runbook, not an accident.
+
+**AND THE DEFECT THAT SURVIVES IS BETTER THAN THE ONE FILED.** Lane A measured it: this document
+references that durability receipt **zero** times, and `powered_closure/.gitignore` references it
+**zero** times. The `.gitignore` promises reproducibility *"from the receipts plus the dump"*; the
+receipt proving the dump is durable sits in `docs/orchestration/state/`; **neither points at the
+other.**
+
+> **The condition this row asks for IS stated — and is unfindable from the artifact that depends on
+> it.**
+
+The remedy therefore shrinks again and gets cheaper: **not *state the precondition's storage class*,
+but *cross-reference the receipt that already states it*.** A link is checkable; a restatement can
+drift from what it restates.
+
+**And the population is smaller and cheaper than I feared** — A's complete-over-tracked-files result
+is **two durability receipts for two preserved objects** (`restore-step1-g2-durability`,
+`restore-step5-delta-durability`), so `OI-130` can index `state/restore-*-durability-*.json` rather
+than walk CFS. **The walk was never needed for the enumeration — only for the discovery**, and it was
+only needed for that because of the missing link above.
+
+**A applied my own rule back to me correctly, and I record its limit as A stated it:** a `git grep`
+complete over the repository still licenses no universal, **because the repository is not the
+filesystem.** *"Two objects have documented CFS durability"* is not *"two objects are preserved."* And
+the `sha256` remains load-bearing: A's repo-side result says the copy was *intended and recorded*;
+only the hash says **the bytes match.**
 
 ## Family
 
