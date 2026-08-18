@@ -63,7 +63,7 @@ inflation figures by Monte Carlo over 200k trials.)*
 > pass-ward bias can. **This is the same asymmetry as `INCONCLUSIVE → NOT MET` in the ruling's §5, applied to a
 > nuisance term instead of to a bound.**
 
-**RULED, and the conditional is the substance of it:**
+**RULED, and the conditional is the substance of it.** ⚠ **THE CONDITIONAL IS NOW DISCHARGED IN BOTH BRANCHES BY MEASUREMENT — §3e. The table below is kept as written because it is the reasoning that made the measurement worth ordering, but the UNMET row's burden is MET:** the confound can move a decision boundary by `1.3 × 10⁻⁴` percentage points, so it cannot manufacture any verdict.
 
 | verdict | disposition | why |
 |---|---|---|
@@ -303,6 +303,88 @@ version that ships**, which is the only one a reader can check.)*
 > unaffected, and A's reading of it is right: it is the strongest branch precisely because it needs no magnitude
 > at all.**
 
+## 3e. **THE CHECK RAN. Both legs NULL, and the conditional of §2 is DISCHARGED — UNCONDITIONALLY, which I did not expect**
+
+**Batch `57215459`, 1 m 34 s, `EXIT=0`, no flags.** B's script unmodified, run by the mediator against the
+repo's own product trees. **Family sizes are the specified ones — `m = 100` and `m = 160` — so the printed
+thresholds ARE the test §3b specified**, which was B's open caveat and does not arise.
+
+### 3e-i. Step 1, displacement: both coincidence sites are not merely un-flagged, they are TYPICAL
+
+| site | `max|z|` | flag at | expected max of `m` clean | more central than |
+|---|---|---|---|---|
+| replica 42 | **`0.3090`** | 3.48 | 2.58 | **`24.3 %`** of clean draws |
+| throw 0 | **`0.7336`** | 3.60 | 2.73 | `53.7 %` of clean draws |
+
+> **A clean normal draw has median `|z| = 0.6745`. So replica 42 sits BELOW the median `|z|` of its own family
+> and throw 0 barely above it.** Neither is an outlier on any reading, let alone at the family-wise threshold.
+> **This is the branch §3b named: *"if replica 42 and throw 0 are unremarkable, the displacement is below the
+> test's own resolution and the leverage shrinks it further."***
+
+*(`statistics_agree` is set on SIGN only — the weaker predicate, as B flagged. Here the magnitudes agree too:
+`z_total_xsec = −0.3090` against `z_deviation_norm = −0.2426` for replica 42, and the two coincide at `−0.7336`
+for throw 0. **So the choice of summary statistic is not load-bearing and needs no ruling** — recorded because
+the mediator surfaced the flag as weak rather than letting it stand as strong.)*
+
+### 3e-ii. Step 2, the conversion — **and it is the whole content, exactly as §3a said**
+
+```
+replica 42   z x relative_leverage = 0.3090 x 6.9815e-04 = 2.1570e-04
+throw 0      z x relative_leverage = 0.7336 x 2.8052e-03 = 2.0580e-03
+                        combined, independent (quadrature)  delta = 2.0693e-03
+                        combined, perfectly correlated      delta = 2.2737e-03
+```
+
+**The two sit in DIFFERENT legs — `C_stat` and `C_syst` — driven by different streams, so independence is the
+expected case; the correlated value is carried as the bracket** because a correlation nobody measured should not
+be assumed away. **It changes nothing below: the bracket is `10 %` wide on `δ` and the conclusion has four
+orders of margin.**
+
+### 3e-iii. ⚠ AND THE ANSWER IS *f*-INDEPENDENT, WHICH IS STRONGER THAN THE CONDITIONAL I WROTE
+
+**I expected to have to say *"immaterial provided `f` is not tiny."* The quadrature form removes the proviso:**
+
+```
+f_obs^2 = f^2 + delta^2/n      delta^2/n = 8.5638e-08      <- no f in it
+```
+
+| | leg B (`2.74 %`) | leg A (`4.15 %`) |
+|---|---|---|
+| confound's share of `bar²` | **`0.01141 %`** | `0.00497 %` |
+| effective bar | `2.7400 % → 2.7398 %` | `4.1500 % → 4.1499 %` |
+| shift of the `n = 50` UNMET boundary | **`1.3 × 10⁻⁴` percentage points** | — |
+| shift of the `n = 50` MET boundary | `1.9 × 10⁻⁴` percentage points | — |
+
+> **`δ²/n` carries no `f`, so the confound's contribution to `f_obs²` is a CONSTANT. The verdict cannot be
+> manufactured at ANY value of `f`** — not "provided `f` is large," which is what §2's UNMET row was hedging
+> against. **Expressed in the units of §3's table: the measured `δ` is `σ_δ/σ = 0.0755` at the bar, giving
+> `0.0057 %` inflation against the `1.00 %` the pessimistic row used — a factor of `175` below it.**
+
+> **AND THE LEG-B STEP RESTS ON THE CLAIM I DOWNGRADED THIS MORNING, which is the pleasing part.** Quadrature is
+> exact for `f_agg` and only approximate for `f_med` — and §3c-iii measured the direction of that approximation:
+> **the `f_agg` form OVER-estimates `f_med`'s inflation in every regime tested (ratios `≤ 1`).** So applying it
+> to leg B is conservative. **The result whose over-reach cost me a theorem is what licenses using its formula
+> here.**
+
+### 3e-iv. WHAT I ASK FOR INSTEAD OF AN INDEPENDENT RE-RUN
+
+**The mediator flags that it ordered the run and is not an independent party to it, and offers a re-run by a
+lane that did not. I decline that and ask for something cheaper and stronger.**
+
+> **A null is the CONVENIENT result here, and re-running the same script with a different hand does not test the
+> thing that matters: whether the instrument CAN fire.** `EXIT=0, FLAGS: none` is produced identically by *"no
+> displacement"* and by *"a check that cannot detect one."*
+>
+> **ASKED: a POSITIVE CONTROL. Inject a synthetic displacement into replica 42's slab — `5 σ` of the replica
+> scatter — and require `max|z| > 3.48` and a non-null flag.** Then the null means what it says. **This is the
+> standing rule that a filter needs a test in the direction it acts, and it is the fourth time today it has been
+> the right ask.** *(Independence of the runner is worth much less than falsifiability of the instrument: I can
+> read the script, and I cannot read a `FLAGS: none` that was never able to be anything else.)*
+
+**Disposition: with a passing positive control, `M(ii)`'s anchor confound is EMPIRICALLY IMMATERIAL and the
+declaration in §2 becomes a footnote with a number attached rather than a live caveat. Without one, the null is
+un-interpretable and §2's conditional stays live.** Nothing else in this determination changes.
+
 ## 4. `build_plan` — **WIRE THE PREDICATE, and express the exemption as a COINCIDENCE ALLOWLIST, not as `j != 0`**
 
 **Wire it.** B is right that wiring it un-exempted would make the driver refuse the ruled grid, and right not
@@ -310,6 +392,13 @@ to choose. **The choice is:**
 
 > **The exemption names the TWO KNOWN COINCIDENCES — `(g1, bootstrap[1,100])` and `(g2, uthrow[1000,1159])`,
 > each with where it was measured — and permits those two and nothing else. It does NOT skip member `0`.**
+
+> **⚠ AS WRITTEN THIS KEY LEAKS, AND B FOUND IT. RULED IN B's FAVOUR — see §4a. The key must carry the SEED
+> VALUE and the OFFSET too.** A `(group, range)` key is matched by any `k` that lands that group in that range,
+> and non-zero such `k` exist: `42 + 58 = 100 ∈ [1,100]` and `1000 + 159 = 1159 ∈ [1000,1159]`. **So my
+> allowlist would have exempted members `k = 58` and `k = 159` — an under-specified predicate passing the case
+> it was written to reject, which is `BEN-405`'s shape for the third time in this thread and the second time
+> inside a guard I wrote against it.**
 
 **The difference is the only thing that makes the guard worth wiring.** A `j != 0` skip passes *any* coincidence
 at the anchor, including one introduced later by widening an array or adding a leg. **An allowlist of two
@@ -319,6 +408,34 @@ because the anchor is the member everyone has already agreed is special.
 > **This is *a filter needs a test in the direction it acts*: the exemption is a NARROWING, so it gets a test
 > that it does NOT fire — a fixture with a third coincidence at `j = 0` that the predicate must still reject.**
 > Without that test, widening the exemption later looks free.
+
+## 4a. RULING on B's `(group, range, SEED VALUE)` narrowing — **ADOPTED, and I add a fourth conjunct**
+
+**B is right and my `(group, range)` key was defective.** Adopted:
+
+> **KEY: `(group, range, seed value, k == 0)`. All four. The exemption fires only for
+> `(g1, bootstrap[1,100], 42, k=0)` and `(g2, uthrow[1000,1159], 1000, k=0)`.**
+
+**Why the seed value closes the leak:** `42 + k = 42` only at `k = 0`, and `1000 + k = 1000` only at `k = 0`, so
+pinning the value pins the anchor **given the current baselines** — and if a baseline ever moves, the exemption
+becomes unreachable and the predicate FAILS at the anchor, **which is the correct behaviour: a changed baseline
+means a new archive whose coincidences must be re-derived, not inherited.**
+
+**Why I add `k == 0` on top, even though it is redundant today:** the value-pins-the-anchor argument *depends on
+the baselines*. If `g1`'s baseline ever became `1000`, then `(g1, …, 42)` would be reachable at `k = −958`.
+**Contrived, and the conjunct costs one term and one test.**
+
+> **THE GENERAL RULE, and it is what both of my defective versions violated: AN EXEMPTION'S KEY MUST CARRY EVERY
+> COORDINATE THAT MAKES IT LEGITIMATE.** This one is legitimate because *this group*, in *this range*, at *this
+> seed value*, at *the anchor*. **Four facts, four conjuncts. A redundant conjunct in a NARROWING fails safe —
+> which is the opposite of a redundant conjunct in a widening, and is why the asymmetry is worth stating rather
+> than trimming to the minimal sufficient key.**
+
+**And this is NOT the `j != 0` skip I refused:** a skip is `k == 0` ALONE. The conjunction with three other
+terms means a third coincidence appearing at the anchor still fails the predicate, which was the whole point.
+
+**B's two leak assertions stand either way and should be kept** — they are tests of the narrowing in the
+direction it acts, which is what makes the fourth conjunct cheap to add rather than an act of faith.
 
 ## 5. B's implementation notes, and its sharpening — **accepted, one of them against my own text**
 
@@ -387,6 +504,12 @@ remaining.)*
   Jensen floor over-claimed** and is conditional on A's universality hypothesis for `f_med`, exhibited
   failing in §3c-iii; **my *"drift with `E[d²]`"* reading was a two-axis confound** and the ratio is a
   concentration effect; and **A's claim that Jensen retires its own contribution is refused** (§3c-iv).
+- **§2's CONDITIONAL DISCHARGED by measurement (§3e), and UNCONDITIONALLY**: `δ²/n = 8.56e-8` carries no
+  `f`, so the confound shifts a decision boundary by `1.3e-4` percentage points at any `f`. **Contingent
+  on a POSITIVE CONTROL (§3e-iv), which I ask for in preference to an independent re-run.**
+- **RULED for B on the allowlist key (§4a): `(group, range, seed value, k == 0)`.** My `(group, range)`
+  form leaked at `k = 58` and `k = 159` — B found it, and it is `BEN-405`'s shape inside my own guard
+  against `BEN-405`'s shape.
 - **AUTHORIZED: nothing.** §3b is a read of existing products and needs no grant; everything else is still
   Joseph's.
 
