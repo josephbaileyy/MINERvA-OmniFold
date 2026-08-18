@@ -270,7 +270,58 @@ def forbidden_offsets(lo, hi, baselines=None, ranges=None):
     return bad
 
 
-def assert_offsets_are_clean(offsets, baselines=None, ranges=None):
+#: The archive's OWN coincidences, exempt because they ARE the archive. `(group, range name, the
+#: estimator seed at which the coincidence occurs)`.
+#:
+#: WHY AN ALLOWLIST AND NOT `j != 0`, which is lane C's reason and the whole point of wiring this: a
+#: MEMBER SKIP passes ANY coincidence at the anchor, including one a later `--array` widening
+#: introduces. A two-entry allowlist FAILS the moment a third appears -- and a third appearing at the
+#: anchor is exactly the event nobody would otherwise notice, because the anchor is the member
+#: everyone has already agreed is special.
+#:
+#: WHY THE SEED VALUE IS PART OF THE KEY, which is a STRENGTHENING of the two-entry form as specified
+#: and is flagged as a deviation rather than assumed. Keyed on `(group, range)` alone, the exemption
+#: would also excuse `k = 5`'s coincidence -- bootstrap replica 47 against estimator seed 47 -- because
+#: that is the same group against the same range. Pinning the seed exempts ONLY the coincidence the
+#: published product actually has, so the allowlist covers `k = 0` and nothing else, without ever
+#: naming `k`.
+#:
+#: AND THE STRUCTURAL REASON THE EXEMPTION IS CORRECT RATHER THAN CONVENIENT, lane C's, better than
+#: either option that was on the table: A CLEAN ANCHOR IS NOT AN ANCHOR. The anchor's function is
+#: reproducing the published product exactly; the published product HAS these coincidences; so a run
+#: without them is not the archive, and a run reproducing the archive has them. THE CONFOUND AND THE
+#: ANCHORING ARE THE SAME FACT. Dropping `j = 0` does not cost a member -- it costs the ANCHOR, leaving
+#: a 49-member scan with no tie to any published value, which re-imports the defect that refused (i).
+COINCIDENCE_ALLOWLIST = {
+    # unified_throw_cov.py:245 -- production ran `--seed 1000` for BOTH roles, so throw 0's draw RNG
+    # has always been seeded identically to the estimator. Present in every archived slab.
+    ("g2", "uthrow per-throw draw seed", 1000),
+    # sbatch_bootstrap_5d_gpu.sh:5,40 -- replica 42 has always drawn its Poisson weights from seed 42
+    # while its estimator was seeded 42 (bootstrap_nd.py:19 default). Present in every archived replica.
+    ("g1", "bootstrap replica seed", 42),
+}
+
+
+def unexempted_coincidences(offsets, baselines=None, ranges=None, allowlist=None):
+    """`{k: [reasons]}` for coincidences that are NOT the archive's own."""
+    B = dict(baselines) if baselines is not None else {g: b for g, b in group_baselines().items()}
+    R = dict(ranges) if ranges is not None else PER_UNIT_SEED_RANGES
+    A = set(COINCIDENCE_ALLOWLIST if allowlist is None else allowlist)
+    out = {}
+    for k in sorted({int(x) for x in offsets}):
+        for g, b in B.items():
+            for nm, (rlo, rhi) in R.items():
+                seed = b + k
+                if not (rlo <= seed <= rhi):
+                    continue
+                if (g, nm, seed) in A:
+                    continue
+                out.setdefault(k, []).append(
+                    f"{g} estimator seed {seed} lands in {nm} [{rlo},{rhi}]")
+    return out
+
+
+def assert_offsets_are_clean(offsets, baselines=None, ranges=None, allowlist=None):
     """FAIL CLOSED on any offset that creates an estimator/draw seed coincidence inside a member.
 
     Returns the number of (offset, baseline, range) combinations actually examined, so a caller can
@@ -286,8 +337,7 @@ def assert_offsets_are_clean(offsets, baselines=None, ranges=None):
         raise SystemExit("[FAIL] the clean-offset check examined ZERO combinations; that needs at "
                          "least one baseline and one per-unit range. A clean result over nothing "
                          "checked is the check not running.")
-    bad = forbidden_offsets(min(ks), max(ks), B, R)
-    hits = {k: v for k, v in bad.items() if k in ks}
+    hits = unexempted_coincidences(ks, B, R, allowlist)
     if hits:
         lines = [f"[FAIL] {len(hits)} of {len(ks)} scanned offsets create an estimator/draw seed "
                  f"COINCIDENCE inside a member. The coincidence site moves with k, so each is a "
