@@ -1205,7 +1205,11 @@ class MiiFourLegDriver(unittest.TestCase):
     def test_R3_one_offset_fans_across_all_four_legs_preserving_BOTH_groups(self):
         """INTEGRATION is the deliverable. A flag is capability; a launcher diff is not a launcher."""
         d = self._drv()
-        plan = d.build_plan([0, 1200])   # ruled-grid steps: 5 is forbidden
+        # argv_probe=False: the observed-argv GATE is cluster-only (the launchers hardcode a cluster
+        # REPO and source a cluster env activator). These assertions are PLAN-LEVEL only -- they say
+        # nothing about whether the offset reaches a seed or an output path in any branch, and the
+        # gate that answers that runs via --cluster-probe. Stated so the pass is not over-read.
+        plan = d.build_plan([0, 1200], argv_probe=False)
         legs = {m["leg"] for m in plan["members"]}
         self.assertEqual(legs, {"sweep_bank_5d", "unified_throw_cov", "bootstrap_nd",
                                 "seedscan_split"}, "a scan must reach all four legs")
@@ -1233,7 +1237,11 @@ class MiiFourLegDriver(unittest.TestCase):
         # NOT [0, 5, 958]: that ALIASES (958 - 0 is exactly b2 - b1). And not [0, 5, 10] either:
         # the clean-offset predicate now forbids 5 and 10 (42+5 and 42+10 land in the bootstrap
         # replica range). The fixture tripped BOTH guards in turn, which is both guards working.
-        plan = d.build_plan([0, 1200, 2400])
+        # argv_probe=False: the observed-argv GATE is cluster-only (the launchers hardcode a cluster
+        # REPO and source a cluster env activator). These assertions are PLAN-LEVEL only -- they say
+        # nothing about whether the offset reaches a seed or an output path in any branch, and the
+        # gate that answers that runs via --cluster-probe. Stated so the pass is not over-read.
+        plan = d.build_plan([0, 1200, 2400], argv_probe=False)
         draws = {m["draw_seed"] for m in plan["members"] if m["leg"] == "unified_throw_cov"}
         self.assertEqual(draws, {1000}, "the draw seed moved with k -- the scan would measure "
                                         "estimator noise convolved with ensemble noise")
@@ -1274,7 +1282,7 @@ class MiiFourLegDriver(unittest.TestCase):
     def test_R1_an_aliasing_grid_is_REJECTED_and_a_one_member_grid_cannot_pass_vacuously(self):
         d = self._drv()
         with self.assertRaises(SystemExit) as cm:
-            d.build_plan([0, 958])
+            d.build_plan([0, 958], argv_probe=False)
         self.assertIn("ALIASES", str(cm.exception))
         import seed_offset_policy as sp
         with self.assertRaises(SystemExit) as cm2:
@@ -1519,10 +1527,10 @@ class CoincidenceAllowlist(unittest.TestCase):
 
     def test_the_driver_now_enforces_it(self):
         import mii_seed_offset_driver as d
-        plan = d.build_plan([1200 * j for j in range(1, 4)])
+        plan = d.build_plan([1200 * j for j in range(1, 4)], argv_probe=False)
         self.assertGreater(plan["clean_offset_combinations_checked"], 0)
         with self.assertRaises(SystemExit):
-            d.build_plan([5])
+            d.build_plan([5], argv_probe=False)
 
 
 class AnchorCoincidenceRead(unittest.TestCase):

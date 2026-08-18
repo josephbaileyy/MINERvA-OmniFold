@@ -144,6 +144,10 @@ LEG_BASELINES = {
     "bootstrap_nd":      ("g1", 42),
     "seedscan_split":    ("g1", 42),
     "unified_throw_cov": ("g2", 1000),
+    # ITEM 7(a): the LATERAL leg joins g1 at 42+k. Absent until 2026-08-18, which is why build_plan
+    # could not build ANY plan the moment the seventh launcher was added -- a KeyError-adjacent hole
+    # in the table that only surfaced because the driver validates before it emits.
+    "unfold_nd_omnifold_unbinned": ("g1", 42),
 }
 
 

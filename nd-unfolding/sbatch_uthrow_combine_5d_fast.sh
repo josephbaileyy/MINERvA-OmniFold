@@ -30,7 +30,21 @@ EST_SEED=$(( 1000 + ${MNV_EST_SEED_OFFSET:-0} ))
 source "${REPO}/lib/resume_guard.sh"
 source "${REPO}/nd-unfolding/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
 THROW_DIR="$(mr_dir_prefix uq_5d/uthrow_slabs_5d_sb)"
-BLOCK_DIR_SB="$(mr_dir_prefix uq_5d/block_slabs_5d_sb)"
+# THE BLOCK/COMBINE EDGE, RESOLVED FOR MEMBERS ONLY AND THE ARCHIVE PATH LEFT ALONE.
+# Pre-existing: this combine globs block_slabs_5d_sb/ while sbatch_uthrow_block_5d.sh WRITES
+# block_slabs_5d/, and BOTH namespaces hold separately populated old products (36 and 8 npz). I
+# reported earlier that namespacing "may resolve it as a side effect" -- IT DOES NOT. Two independent
+# reviewers confirmed it makes the mismatch FATAL FOR EVERY MEMBER: the member glob resolves to
+# block_slabs_5d_sb/member_kNNNNNN/, which the block leg never writes, so every member dies on
+# "no block-unit slabs match". Loud, but a total scan failure.
+# So: a DECLARED member reads the namespace its own block leg writes; an UNDECLARED run reads exactly
+# what it read before. Repointing the literal unconditionally would move archive behaviour, which is
+# C's decision and not mine -- WHICH NAMESPACE IS CANONICAL IS STILL OPEN.
+if mr_declared; then
+  BLOCK_DIR_SB="$(mr_dir_prefix uq_5d/block_slabs_5d)"
+else
+  BLOCK_DIR_SB="uq_5d/block_slabs_5d_sb"
+fi
 ROOT_OUT="$(mr_prefix uq_5d/unified_throw_cov_5d.root)"
 python3 unified_throw_cov_5d.py --draw-seed 1000 --estimator-seed ${EST_SEED} \
   --combine "${THROW_DIR}/uthrow5d_slab_*.npz" \
