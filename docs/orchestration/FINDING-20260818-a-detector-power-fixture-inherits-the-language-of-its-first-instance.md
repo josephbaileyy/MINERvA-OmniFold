@@ -83,7 +83,18 @@ LANGUAGE OF THE INSTANCE THAT MOTIVATED THE RULE.** `BEN-023` was found in shell
 → the proof is shell. The detector then sweeps 762 files in two languages, reports FIRES on its fixture,
 finds nothing, and **nothing in the output distinguishes NO INSTANCES from CANNOT SEE INSTANCES.**
 
-> **A DETECTOR'S POWER FIXTURE MUST BE WRITTEN IN EVERY LANGUAGE ITS WALK VISITS.**
+> **A DETECTOR'S POWER FIXTURE MUST BE WRITTEN IN EVERY LANGUAGE ITS WALK VISITS —**
+> **AND SO MUST ITS MATCHER. TWO WIDENINGS. DOING ONLY THE FIRST WEARS THE FIX AS A BADGE.**
+
+**The mediator's caution, and it is the trap this row would otherwise set.** A reader who takes only the
+fixture half adds a Python power fixture to a bash-only regex and gets **a detector that FIRES on its
+Python fixture and still cannot see `sweep_bank_5d.py:216`.** The fixture proves the detector *fires*;
+it does not prove the **matcher** *covers the language*. **A green power test over a blind matcher is
+precisely the state this row exists to name — so satisfying half the rule reproduces the defect while
+looking like the remedy.** This is the conformance/discovery distinction — the one that corrected my own
+`BEN-480` derived-target predicate — applied to the **repair** rather than to the check, and it is the
+same shape as §2's refused `.py`-walk: **widening the corpus without widening the pattern makes the blind
+spot look covered.** Both halves, or neither.
 
 Checkable, and one command reproduces the whole thing:
 
