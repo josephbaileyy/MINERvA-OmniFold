@@ -603,6 +603,7 @@ docs/orchestration/state/RECEIPT-20260815-trackA-sizing-second-read.json	MACHINE
 docs/orchestration/state/RECEIPT-20260816-hrowindex4d-readback.json	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	2	137	9743
 docs/orchestration/state/RECEIPT-20260816-n6-tmpdir-guard-observed.json	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	2	164	9850
 docs/orchestration/state/RECEIPT-20260816-p4-standard-stages456.json	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	2	166	10327
+docs/orchestration/state/RECEIPT-20260817-cstat-data-only-submitted.json	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	0	135	8038
 docs/orchestration/state/RECEIPT-aprime-runtime-receipt-closure-20260816.json	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	1	120	17870
 docs/orchestration/state/RECEIPT-foldforward-instrumented-closure-20260815.json	MACHINE	state-artifact		20260815	generated		exact-path-only	nd-unfolding/pet/sbatch_foldforward_instrumented_closure.sh	yes	12	432	26144
 docs/orchestration/state/RECEIPT-independent-verification-vl134-vl140-20260816.json	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	2	150	13451
