@@ -30,7 +30,7 @@ while true; do
   say "relaunches=$relaunches complete_throws=$nc/40 blocks=$nb/26"
   if (( nc >= 40 && nb >= 26 )); then
     say "phase B COMPLETE -> combine"
-    "$REPO"/alloc_run.sh "$ENVP cd nd-unfolding && python3 unified_throw_cov.py --combine 'uq_fps/corrected/uthrow_slabs_fps_neutral/uthrowfps_slab_*.npz' --expected-throws 0-159 --block-slabs 'uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_*.npz' --bank bank_uthrow_fps --iters 5 --invalid-ratio neutral --null --out-root uq_fps/corrected/unified_throw_cov_fps.root" 2>&1 | tail -20
+    "$REPO"/alloc_run.sh "$ENVP cd nd-unfolding && python3 unified_throw_cov.py --draw-seed 1000 --estimator-seed 1000 --combine 'uq_fps/corrected/uthrow_slabs_fps_neutral/uthrowfps_slab_*.npz' --expected-throws 0-159 --block-slabs 'uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_*.npz' --bank bank_uthrow_fps --iters 5 --invalid-ratio neutral --null --out-root uq_fps/corrected/unified_throw_cov_fps.root" 2>&1 | tail -20
     if [[ -s nd-unfolding/uq_fps/corrected/unified_throw_cov_fps.root ]]; then
       say "combine OK -> adopt"
       "$REPO"/alloc_run.sh "$ENVP cd nd-unfolding && python3 adopt_unified_4d.py --uthrow uq_fps/corrected/unified_throw_cov_fps.root --combined uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined.root --prod uq_fps/universe_sweep/fps2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root --out uq_fps/corrected/universe_stage2_fps/uq_universe_fps_covariance_combined_uthrow.root" 2>&1 | tail -15

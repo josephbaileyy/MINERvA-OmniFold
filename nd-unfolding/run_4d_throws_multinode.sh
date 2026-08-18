@@ -30,7 +30,7 @@ for w in "${WORK[@]}"; do
       out="$SL/uthrow4d_slab_${T}.npz"; off=$(( T * 4 ))
       if [[ ! -s "$out" ]]; then
         while [ "$(jobs -rp|wc -l)" -ge "$CONC" ]; do sleep 8; done
-        python3 unified_throw_cov.py --throws 4 --throw-offset "$off" --seed 1000 \
+        python3 unified_throw_cov.py --throws 4 --throw-offset "$off" --draw-seed 1000 --estimator-seed 1000 \
           --bank "$BANK" --iters 5 --invalid-ratio neutral --out "$out" \
           > uq_4d/corrected/logs/mn_thr_${T}.log 2>&1 &
       fi
@@ -39,12 +39,12 @@ for w in "${WORK[@]}"; do
       if [[ ! -s "$out" ]]; then
         while [ "$(jobs -rp|wc -l)" -ge "$CONC" ]; do sleep 8; done
         if [ "$T" -lt 6 ]; then
-          python3 unified_throw_cov.py --blockunits --bank "$BANK" --iters 5 --seed 1000 \
+          python3 unified_throw_cov.py --blockunits --bank "$BANK" --iters 5 --draw-seed 1000 --estimator-seed 1000 \
             --invalid-ratio neutral --block-knobs "${KNOBS[$T]}" --out "$out" \
             > uq_4d/corrected/logs/mn_blk_${T}.log 2>&1 &
         else
           lo=$(( (T-6)*5 )); hi=$(( lo+4 ))
-          python3 unified_throw_cov.py --blockunits --bank "$BANK" --iters 5 --seed 1000 \
+          python3 unified_throw_cov.py --blockunits --bank "$BANK" --iters 5 --draw-seed 1000 --estimator-seed 1000 \
             --invalid-ratio neutral --block-knobs none --block-flux "${lo}-${hi}" --out "$out" \
             > uq_4d/corrected/logs/mn_blk_${T}.log 2>&1 &
         fi

@@ -145,9 +145,27 @@ def slab_census(pattern: str) -> dict:
         try:
             with np.load(p, allow_pickle=True) as d:
                 files = list(d.files)
-                if "seed" in files:
+                # GATE 1: the ambiguous single `seed` key was split into `estimator_seed`
+                # (the unfolding estimator) and `draw_seed` (the throw realization). Both are
+                # read and reported separately; `seed` is still read for PRE-SPLIT slabs so
+                # this receipt keeps saying `present: True` about them rather than silently
+                # degrading to `present: False` when the producer changed under it. A legacy
+                # slab's value is reported as `seed_ambiguous` because that integer drove BOTH
+                # roles and is not a measurement of either one.
+                if "estimator_seed" in files:
+                    entry["estimator_seed"] = {
+                        "present": True,
+                        "value": int(np.asarray(d["estimator_seed"]).ravel()[0])}
+                    if "draw_seed" in files:
+                        entry["draw_seed"] = {
+                            "present": True,
+                            "value": int(np.asarray(d["draw_seed"]).ravel()[0])}
+                    s = int(np.asarray(d["estimator_seed"]).ravel()[0])
+                    entry["seed"] = {"present": True, "value": s, "role": "estimator"}
+                elif "seed" in files:
                     s = int(np.asarray(d["seed"]).ravel()[0])
-                    entry["seed"] = {"present": True, "value": s}
+                    entry["seed"] = {"present": True, "value": s,
+                                     "role": "seed_ambiguous_pre_split"}
                     seeds[s] = seeds.get(s, 0) + 1
                 else:
                     entry["seed"] = {"present": False}

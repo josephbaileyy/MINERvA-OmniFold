@@ -19,6 +19,6 @@ OFF=$(( SLURM_ARRAY_TASK_ID * TPT ))
 # +1sigma, one MFP_N zero) at CV -- prior handling, now logged (see 5D scripts).
 echo "[uthrow4dC] task=${SLURM_ARRAY_TASK_ID} throws ${OFF}..$((OFF+TPT-1)) $(date -u '+%F %T')"
 python3 unified_throw_cov.py --throws ${TPT} --throw-offset ${OFF} \
-    --seed 1000 --bank uq_4d/corrected/bank_uthrow_4d --iters 5 --invalid-ratio neutral \
+    --draw-seed 1000 --estimator-seed 1000 --bank uq_4d/corrected/bank_uthrow_4d --iters 5 --invalid-ratio neutral \
     --out "uq_4d/corrected/uthrow_slabs_4d/uthrow4d_slab_${SLURM_ARRAY_TASK_ID}.npz"
 echo "[uthrow4dC] task=${SLURM_ARRAY_TASK_ID} done $(date -u '+%F %T')"

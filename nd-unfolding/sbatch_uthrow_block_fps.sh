@@ -17,7 +17,7 @@ KNOBS=("2p2h,CCQEPauliSupViaKF" "FrAbs_pi,FrElas_N" "HighQ2,LowQ2" "MaCCQE,MaRES
 FLUX=("0-1" "2-3" "4-5" "6-7" "8-9" "10-11")
 rg_skip_if_complete "uq_fps/uthrow_slabs_fps/blockfps_${T}.npz" && exit 0
 echo "[blkfps] task=$T knobs=${KNOBS[$T]} flux=${FLUX[$T]} $(date -u '+%F %T UTC')"
-rg_run "uq_fps/uthrow_slabs_fps/blockfps_${T}.npz" python3 unified_throw_cov.py --blockunits --bank bank_uthrow_fps --iters 5 --seed 1000 \
+rg_run "uq_fps/uthrow_slabs_fps/blockfps_${T}.npz" python3 unified_throw_cov.py --blockunits --bank bank_uthrow_fps --iters 5 --draw-seed 1000 --estimator-seed 1000 \
     --block-knobs "${KNOBS[$T]}" --block-flux "${FLUX[$T]}" \
     --out "uq_fps/uthrow_slabs_fps/blockfps_${T}.npz"
 echo "[blkfps] task=$T done $(date -u '+%F %T UTC')"

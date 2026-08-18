@@ -39,9 +39,9 @@ emit() {  # print the shell command for one unit IFF its output is missing
   case "$1" in
     boot)  o="$BD/res_boot_$2.npz";  [[ -s "$o" ]] || echo "python3 bootstrap_nd.py --npz of_inputs_fps.npz --seed $2 --estimator-seed 42 --iters 5 --out $o";;
     split) o="$SD/res_split_$2.npz"; [[ -s "$o" ]] || echo "python3 seedscan_split.py --npz of_inputs_fps.npz --split-seed $2 --estimator-seed 42 --train-frac 0.8 --iters 5 --out $o";;
-    throw) o="$UD/uthrowfps_slab_$2.npz"; off=$(( $2 * 4 )); [[ -s "$o" ]] || echo "python3 unified_throw_cov.py --throws 4 --throw-offset $off --seed 1000 --bank bank_uthrow_fps --iters 5 --invalid-ratio neutral --out $o";;
-    knob)  o="$UD/blockfps_$2.npz"; K=(2p2h,CCQEPauliSupViaKF FrAbs_pi,FrElas_N HighQ2,LowQ2 MaCCQE,MaRES MFP_N,MvRES Rvn2pi,Rvp2pi); [[ -s "$o" ]] || echo "python3 unified_throw_cov.py --blockunits --bank bank_uthrow_fps --iters 5 --seed 1000 --invalid-ratio neutral --block-knobs ${K[$2]} --out $o";;
-    flux)  t=$2; o="$UD/blockfps_$t.npz"; lo=$(( (t-6)*5 )); hi=$(( lo+4 )); [[ -s "$o" ]] || echo "python3 unified_throw_cov.py --blockunits --bank bank_uthrow_fps --iters 5 --seed 1000 --invalid-ratio neutral --block-knobs '' --block-flux ${lo}-${hi} --out $o";;
+    throw) o="$UD/uthrowfps_slab_$2.npz"; off=$(( $2 * 4 )); [[ -s "$o" ]] || echo "python3 unified_throw_cov.py --throws 4 --throw-offset $off --draw-seed 1000 --estimator-seed 1000 --bank bank_uthrow_fps --iters 5 --invalid-ratio neutral --out $o";;
+    knob)  o="$UD/blockfps_$2.npz"; K=(2p2h,CCQEPauliSupViaKF FrAbs_pi,FrElas_N HighQ2,LowQ2 MaCCQE,MaRES MFP_N,MvRES Rvn2pi,Rvp2pi); [[ -s "$o" ]] || echo "python3 unified_throw_cov.py --blockunits --bank bank_uthrow_fps --iters 5 --draw-seed 1000 --estimator-seed 1000 --invalid-ratio neutral --block-knobs ${K[$2]} --out $o";;
+    flux)  t=$2; o="$UD/blockfps_$t.npz"; lo=$(( (t-6)*5 )); hi=$(( lo+4 )); [[ -s "$o" ]] || echo "python3 unified_throw_cov.py --blockunits --bank bank_uthrow_fps --iters 5 --draw-seed 1000 --estimator-seed 1000 --invalid-ratio neutral --block-knobs '' --block-flux ${lo}-${hi} --out $o";;
   esac
 }
 

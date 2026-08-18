@@ -29,7 +29,7 @@ for i in "${!UNIS[@]}"; do
   out="$OUTDIR/5d_xsec_MEFHC_5iter_lgbm_uni_full_${TAG}.root"
   rg_skip_if_complete "$out" && continue
   while [ "$(jobs -rp | wc -l)" -ge "$CONC" ]; do sleep 10; done
-  rg_run "$out" python3 sweep_bank_5d.py --run --universe "$U" --bankdir "$BANKDIR" \
+  rg_run "$out" python3 sweep_bank_5d.py --run --estimator-seed 42 --universe "$U" --bankdir "$BANKDIR" \
     --outdir "$OUTDIR" --iters 5 > "$OUTDIR/isweeprun_${TAG}.log" 2>&1 &
 done
 wait

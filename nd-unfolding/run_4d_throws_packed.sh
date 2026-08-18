@@ -29,14 +29,14 @@ run_throw() {   # $1 = task id 0..39
   local T=$1 off=$(( $1 * 4 )) out="$SL/uthrow4d_slab_$1.npz" log="uq_4d/corrected/logs/pk_thr_$1.log"
   rg_skip_if_complete "$out" && return 0
   rg_run "$out" srun --overlap --exact -n1 -c"$CPT" --gres=none \
-    python3 unified_throw_cov.py --throws 4 --throw-offset "$off" --seed 1000 \
+    python3 unified_throw_cov.py --throws 4 --throw-offset "$off" --draw-seed 1000 --estimator-seed 1000 \
       --bank "$BANK" --iters 5 --invalid-ratio neutral --out "$out" > "$log" 2>&1
   echo "[done] throw $T rc=$?"
 }
 run_block() {   # $1 = block task id 0..25
   local T=$1 out="$SL/block4d_$1.npz" log="uq_4d/corrected/logs/pk_blk_$1.log"
   rg_skip_if_complete "$out" && return 0
-  local common=(--blockunits --bank "$BANK" --iters 5 --seed 1000 --invalid-ratio neutral --out "$out")
+  local common=(--blockunits --bank "$BANK" --iters 5 --draw-seed 1000 --estimator-seed 1000 --invalid-ratio neutral --out "$out")
   if [ "$T" -lt 6 ]; then
     rg_run "$out" srun --overlap --exact -n1 -c"$CPT" --gres=none \
       python3 unified_throw_cov.py "${common[@]}" --block-knobs "${KNOBS[$T]}" > "$log" 2>&1

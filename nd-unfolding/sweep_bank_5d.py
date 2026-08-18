@@ -249,7 +249,7 @@ def do_run(args):
     w_pull, w_push = omnifold_loop(
         MCgen, MCreco, measured, pass_reco, pass_truth, np.ones(len(measured), bool),
         args.iters, kind="lgbm", MCgen_weights=wt, MCreco_weights=wr,
-        measured_weights=measured_weights, seed=42, verbose=False)
+        measured_weights=measured_weights, seed=args.estimator_seed, verbose=False)
     m = pass_truth
     bins = [np.asarray(e, float) for e in edges]
     sample = np.column_stack([MCgen[m, a] for a in range(MCgen.shape[1])])
@@ -308,10 +308,30 @@ def main():
     ap.add_argument("--iters", type=int, default=5)
     ap.add_argument("--allow-cv-background", action="store_true",
                     help="legacy diagnostic only; production must use banked universe background")
+    # ITEM 1 of the gate-1 two-role seed split. This was the literal `seed=42` at the
+    # omnifold_loop call in do_run: the estimator seed of every vertical bank-sweep universe,
+    # unreachable from the command line, so a coherent estimator variation across the four
+    # C_syst legs was impossible no matter what the other modules exposed.
+    #
+    # NO DEFAULT, and REQUIRED only for --run. `--dump` never calls omnifold_loop, so a seed
+    # there would be a flag that documents nothing; making it globally required would force
+    # two dump launchers to pass a value they do not use, which is worse documentation than
+    # no flag. Enforced below rather than by argparse for exactly that reason.
+    #
+    # DAY-ONE IDENTITY: pass `--estimator-seed 42`. 42 was the hardcoded literal, so 42 is this
+    # module's archive value -- and it deliberately DIFFERS from unified_throw_cov.py's 1000.
+    # Each module's default-equivalent preserves ITS OWN prior behaviour; unifying them on one
+    # number is the instinct a later reader will have and it silently re-seeds one of the two.
+    ap.add_argument("--estimator-seed", type=int, default=None,
+                    help="unfolding estimator seed for --run (required with --run; pass 42 to "
+                         "reproduce archived sweep-bank products)")
     args = ap.parse_args()
     if args.dump:
         do_dump(args)
     elif args.run:
+        if args.estimator_seed is None:
+            ap.error("--run requires --estimator-seed (pass 42 to reproduce archived products); "
+                     "it is not defaulted because a silent estimator seed is what gate 1 removed")
         do_run(args)
     else:
         ap.error("pass --dump or --run")

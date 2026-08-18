@@ -26,7 +26,7 @@ FLUX=("0-1" "2-3" "4-5" "6-7" "8-9" "10-11")
 echo "[blk] task=$T knobs=${KNOBS[$T]} flux=${FLUX[$T]} $(date -u '+%F %T UTC')"
 # --invalid-ratio neutral: prior GENIE negative-weight handling, now logged
 # (see sbatch_uthrow_run_5d.sh).
-python3 unified_throw_cov.py --blockunits --bank bank_uthrow_4d --iters 5 --seed 1000 \
+python3 unified_throw_cov.py --blockunits --bank bank_uthrow_4d --iters 5 --draw-seed 1000 --estimator-seed 1000 \
     --invalid-ratio neutral --block-knobs "${KNOBS[$T]}" --block-flux "${FLUX[$T]}" \
     --out "uq_4d/uthrow_slabs_4d/block4d_${T}.npz"
 echo "[blk] task=$T done $(date -u '+%F %T UTC')"

@@ -8,7 +8,7 @@
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"
-python3 unified_throw_cov_5d.py \
+python3 unified_throw_cov_5d.py --draw-seed 1000 --estimator-seed 1000 \
   --combine 'uq_5d/uthrow_slabs_5d/uthrow5d_slab_*.npz' \
   --expected-throws 0-159 \
   --block-slabs 'uq_5d/block_slabs_5d/block5d_*.npz' \

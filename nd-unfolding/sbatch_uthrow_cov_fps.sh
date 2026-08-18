@@ -17,6 +17,6 @@ OFF=$(( SLURM_ARRAY_TASK_ID * THROWS_PER ))
 rg_skip_if_complete "uq_fps/uthrow_slabs_fps/uthrowfps_slab_${SLURM_ARRAY_TASK_ID}.npz" && exit 0
 echo "[uthrowfps] task=${SLURM_ARRAY_TASK_ID} throws ${OFF}..$((OFF+THROWS_PER-1)) $(date -u '+%F %T UTC')"
 rg_run "uq_fps/uthrow_slabs_fps/uthrowfps_slab_${SLURM_ARRAY_TASK_ID}.npz" python3 unified_throw_cov.py --throws "${THROWS_PER}" --throw-offset "${OFF}" \
-    --seed 1000 --bank bank_uthrow_fps --iters 5 \
+    --draw-seed 1000 --estimator-seed 1000 --bank bank_uthrow_fps --iters 5 \
     --out "uq_fps/uthrow_slabs_fps/uthrowfps_slab_${SLURM_ARRAY_TASK_ID}.npz"
 echo "[uthrowfps] task=${SLURM_ARRAY_TASK_ID} done $(date -u '+%F %T UTC')"
