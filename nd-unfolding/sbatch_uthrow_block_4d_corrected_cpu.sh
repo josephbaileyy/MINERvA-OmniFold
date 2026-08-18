@@ -16,7 +16,7 @@ cd "${REPO}/nd-unfolding"; mkdir -p uq_4d/corrected/uthrow_slabs_4d
 T=${SLURM_ARRAY_TASK_ID}
 OUT="uq_4d/corrected/uthrow_slabs_4d/block4d_${T}.npz"
 rg_skip_if_complete "${OUT}" && exit 0
-COMMON=(--blockunits --bank uq_4d/corrected/bank_uthrow_4d --iters 5 --seed 1000 --invalid-ratio neutral --out "$OUT")
+COMMON=(--blockunits --bank uq_4d/corrected/bank_uthrow_4d --iters 5 --draw-seed 1000 --estimator-seed 1000 --invalid-ratio neutral --out "$OUT")
 if [ "$T" -lt 6 ]; then
   KNOBS=("2p2h,CCQEPauliSupViaKF" "FrAbs_pi,FrElas_N" "HighQ2,LowQ2" "MaCCQE,MaRES" "MFP_N,MvRES" "Rvn2pi,Rvp2pi")
   echo "[blk4dCc] task=$T knobs=${KNOBS[$T]} $(date -u '+%F %T')"

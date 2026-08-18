@@ -257,42 +257,42 @@
         "kind": "eq",
         "line": 225,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: no data-only predicate reads `replica_seed_policy`"
+        "replacement": "cstat_data_only_readback.assert_artifact_policy_scalars"
       },
       {
         "check": "'frozen_estimator_policy'",
         "kind": "eq",
         "line": 227,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: no data-only predicate reads the frozen estimator policy"
+        "replacement": "cstat_data_only_readback.assert_artifact_policy_scalars"
       },
       {
         "check": "'estimator_fingerprint'",
         "kind": "eq",
         "line": 228,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: no data-only predicate reads `estimator_fingerprint`"
+        "replacement": "cstat_data_only_readback.assert_artifact_policy_scalars"
       },
       {
         "check": "'background_mode'",
         "kind": "eq",
         "line": 229,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: no data-only predicate reads `bkg_mode`"
+        "replacement": "cstat_data_only_readback.assert_artifact_policy_scalars"
       },
       {
         "check": "'training_tag'",
         "kind": "eq",
         "line": 230,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: no data-only predicate reads `tag`"
+        "replacement": "cstat_data_only_readback.assert_artifact_policy_scalars"
       },
       {
         "check": "'source_sha256'",
         "kind": "eq",
         "line": 231,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: no data-only predicate reads `inputs_sha256`"
+        "replacement": "cstat_data_only_readback.assert_artifact_policy_scalars"
       },
       {
         "check": "'n_sig_full'",
@@ -320,21 +320,21 @@
         "kind": "eq",
         "line": 239,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: inventory_hashes is written but never re-compared"
+        "replacement": "cstat_data_only_readback.assert_inventory_identity_agree_with_target"
       },
       {
         "check": "'input_identity_hashes'",
         "kind": "eq",
         "line": 241,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: input_identity_hashes is written but never re-compared"
+        "replacement": "cstat_data_only_readback.assert_inventory_identity_agree_with_target"
       },
       {
         "check": "'mc_indices_exact_frozen_subsample'",
         "kind": "truth",
         "line": 248,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: mc_indices frozen-subsample identity is not re-derived data-only-side"
+        "replacement": "cstat_data_only_readback.assert_subsample_geometry"
       },
       {
         "check": "'signal_full_shape'",
@@ -348,7 +348,7 @@
         "kind": "eq",
         "line": 252,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: the SUBSET shape is now written but not asserted post-write"
+        "replacement": "cstat_data_only_readback.assert_subsample_geometry"
       },
       {
         "check": "'signal_subset_is_exact_full_restriction'",
@@ -362,7 +362,7 @@
         "kind": "truth",
         "line": 255,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: bkg_indices is now written but its ordering is not asserted post-write"
+        "replacement": "cstat_data_only_readback.assert_subsample_geometry"
       },
       {
         "check": "'background_full_shape'",
@@ -376,28 +376,28 @@
         "kind": "eq",
         "line": 262,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED-BY-DESIGN: must assert the digests DIFFER, not match (BEN-407)"
+        "replacement": "cstat_data_only.assert_unthinned_mc_evidence"
       },
       {
         "check": "'signal_full_hash_vs_canonical_replay'",
         "kind": "eq",
         "line": 263,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED-BY-DESIGN: must assert the digests DIFFER, not match (BEN-407)"
+        "replacement": "cstat_data_only.assert_unthinned_mc_evidence"
       },
       {
         "check": "'background_full_hash_vs_target'",
         "kind": "eq",
         "line": 265,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED-BY-DESIGN: must assert the digests DIFFER, not match (BEN-407)"
+        "replacement": "cstat_data_only.assert_unthinned_mc_evidence"
       },
       {
         "check": "'background_full_hash_vs_canonical_replay'",
         "kind": "eq",
         "line": 267,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED-BY-DESIGN: must assert the digests DIFFER, not match (BEN-407)"
+        "replacement": "cstat_data_only.assert_unthinned_mc_evidence"
       },
       {
         "check": "f'persisted_bootstrap_metadata[{key}]'",
@@ -509,21 +509,21 @@
         "kind": "eq",
         "line": 304,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: weights_push shape is not asserted data-only-side"
+        "replacement": "cstat_data_only_readback.assert_weights_push_sane"
       },
       {
         "check": "'weights_push_finite'",
         "kind": "truth",
         "line": 305,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: weights_push finiteness is not asserted data-only-side"
+        "replacement": "cstat_data_only_readback.assert_weights_push_sane"
       },
       {
         "check": "'weights_push_nonnegative'",
         "kind": "truth",
         "line": 306,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: weights_push non-negativity is not asserted data-only-side"
+        "replacement": "cstat_data_only_readback.assert_weights_push_sane"
       },
       {
         "check": "'checkpoint_semantics'",
@@ -637,21 +637,6 @@
   },
   "replacement_status": {
     "REPLACEMENT_REQUIRED": [
-      225,
-      227,
-      228,
-      229,
-      230,
-      231,
-      239,
-      241,
-      248,
-      252,
-      255,
-      262,
-      263,
-      265,
-      267,
       276,
       278,
       282,
@@ -663,9 +648,6 @@
       295,
       298,
       300,
-      304,
-      305,
-      306,
       315,
       318,
       320,
@@ -684,20 +666,38 @@
       221,
       223,
       224,
+      225,
+      227,
+      228,
+      229,
+      230,
+      231,
       236,
       237,
       238,
+      239,
+      241,
+      248,
       251,
+      252,
       253,
+      255,
       257,
+      262,
+      263,
+      265,
+      267,
       272,
       275,
       283,
-      286
+      286,
+      304,
+      305,
+      306
     ],
     "honesty_note": "The REPLACEMENT_REQUIRED count is the real measure of remaining work and is deliberately NOT hidden behind invented names. A manifest that named a replacement for all 55 would assert coverage it does not have, which is the exact defect the partition exists to make unrepresentable.",
-    "n_covered": 13,
-    "n_required": 42
+    "n_covered": 31,
+    "n_required": 24
   },
   "schema": "gate5-cstat-data-only-divergence-manifest-v1",
   "v4_floor": {
@@ -705,6 +705,7 @@
     "floor_on": "executed check sites (n_passed + n_failed), NOT manifest size",
     "why": "a floor on manifest size is authored by the same party as the manifest, so it cannot see 55 checks that never ran. C's improvement: the executed count must EQUAL what the coherent partition observes, so the operand comes from the other path rather than from the manifest's author."
   },
+  "what_the_ordering_assertion_protects": "The PREDICTIONS -- bucket 3's got/want -- which are frozen at the sha that committed them. It does NOT and cannot freeze the replacement BOOKKEEPING, which is meant to track work as predicates land, so `covered`/`REPLACEMENT_REQUIRED` move between regenerations by design. Said explicitly because the two live in the same JSON and an assertion that appears to freeze more than it does is worse than one that freezes less and says so.",
   "what_this_is": "A DIVERGENCE control, not a correctness control. It pins the data-only path's relationship to the coherent one and establishes nothing about whether the coherent validator is correct; if that one is wrong, this propagates the error with a green light.",
   "written_before_assertion": [
     "nd-unfolding/pet/validate_gate5_data_only_artifacts.py",

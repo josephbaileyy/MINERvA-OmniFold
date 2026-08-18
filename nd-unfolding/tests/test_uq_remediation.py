@@ -1,6 +1,7 @@
 import ast
 import importlib.util
 import sys
+import contextlib
 import tempfile
 import unittest
 from pathlib import Path
@@ -65,13 +66,13 @@ class UnifiedThrowTests(unittest.TestCase):
             # predicate accepts only a stamped slab. The guard itself must stay fail-closed.
             throws = np.array([[0.8, 2.1], [1.2, 1.9], [1.1, 2.2]])
             np.savez(p / "throws_0.npz", xs=throws[:2], throws=np.array([0, 1]),
-                     seed=np.int64(42), flux_normalized=np.int64(1))
+                     estimator_seed=np.int64(42), draw_seed=np.int64(1000), flux_normalized=np.int64(1))
             np.savez(p / "throws_1.npz", xs=throws[2:], throws=np.array([2]),
-                     seed=np.int64(42), flux_normalized=np.int64(1))
+                     estimator_seed=np.int64(42), draw_seed=np.int64(1000), flux_normalized=np.int64(1))
             endpoints = np.array([[0.9, 2.2], [1.1, 1.8]])
             np.savez(p / "blocks.npz", xs=endpoints,
                      labels=np.array(["MaCCQE:0", "MaCCQE:1"], dtype=object),
-                     seed=np.int64(42),
+                     estimator_seed=np.int64(42), draw_seed=np.int64(1000),
                      kinds=np.array(["knob", "knob"], dtype=object),
                      flux_normalized=np.int64(1))
 
@@ -82,7 +83,7 @@ class UnifiedThrowTests(unittest.TestCase):
             utc._xsec_for_weights = lambda *args, **kwargs: np.array([1.0, 2.0])
             try:
                 args = SimpleNamespace(
-                    bank=td, iters=1, seed=42,
+                    bank=td, iters=1, estimator_seed=42, draw_seed=1000,
                     combine=str(p / "throws_*.npz"),
                     block_slabs=str(p / "blocks.npz"),
                     expected_throws="0-2", null=True, out_root=None)
@@ -92,8 +93,12 @@ class UnifiedThrowTests(unittest.TestCase):
                     utc.do_combine(args)
                 # F2 guard: a slab stamped with a different estimator seed is rejected
                 args.expected_throws = "0-2"
+                # flux_normalized MUST be stamped here: without it the J28 guard fires FIRST
+                # and this assertRaises passes without ever reaching the estimator-seed guard.
+                # It was missing until 2026-08-18 -- the test was green via the wrong guard.
                 np.savez(p / "throws_0.npz", xs=throws[:2], throws=np.array([0, 1]),
-                         seed=np.int64(999))
+                         estimator_seed=np.int64(999), draw_seed=np.int64(1000),
+                         flux_normalized=np.int64(1))
                 with self.assertRaises(SystemExit):
                     utc.do_combine(args)
             finally:
@@ -445,12 +450,12 @@ class QuarantineCauseGuardTests(unittest.TestCase):
 
             def write(seed_a, seed_b):
                 np.savez(p / "throws_0.npz", xs=throws[:2], throws=np.array([0, 1]),
-                         seed=np.int64(seed_a), flux_normalized=np.int64(1))
+                         estimator_seed=np.int64(seed_a), draw_seed=np.int64(1000), flux_normalized=np.int64(1))
                 np.savez(p / "throws_1.npz", xs=throws[2:], throws=np.array([2]),
-                         seed=np.int64(seed_b), flux_normalized=np.int64(1))
+                         estimator_seed=np.int64(seed_b), draw_seed=np.int64(1000), flux_normalized=np.int64(1))
                 np.savez(p / "blocks.npz", xs=np.array([[0.9, 2.2], [1.1, 1.8]]),
                          labels=np.array(["MaCCQE:0", "MaCCQE:1"], dtype=object),
-                         seed=np.int64(seed_a),
+                         estimator_seed=np.int64(seed_a), draw_seed=np.int64(1000),
                          kinds=np.array(["knob", "knob"], dtype=object),
                          flux_normalized=np.int64(1))
 
@@ -460,7 +465,7 @@ class QuarantineCauseGuardTests(unittest.TestCase):
             utc._load_bank = lambda bank: (d, ["MaCCQE"], 0)
             utc._xsec_for_weights = lambda *a, **k: np.array([1.0, 2.0])
             try:
-                args = SimpleNamespace(bank=td, iters=1, seed=42,
+                args = SimpleNamespace(bank=td, iters=1, estimator_seed=42, draw_seed=1000,
                                        combine=str(p / "throws_*.npz"),
                                        block_slabs=str(p / "blocks.npz"),
                                        expected_throws="0-2", null=True, out_root=None)
@@ -488,12 +493,12 @@ class QuarantineCauseGuardTests(unittest.TestCase):
             p = Path(td)
             throws = np.array([[0.8, 2.1], [1.2, 1.9], [1.1, 2.2]])
             np.savez(p / "throws_0.npz", xs=throws[:2], throws=np.array([0, 1]),
-                     seed=np.int64(42), flux_normalized=np.int64(1))
+                     estimator_seed=np.int64(42), draw_seed=np.int64(1000), flux_normalized=np.int64(1))
             np.savez(p / "throws_1.npz", xs=throws[2:], throws=np.array([2]),
-                     seed=np.int64(42), flux_normalized=np.int64(1))
+                     estimator_seed=np.int64(42), draw_seed=np.int64(1000), flux_normalized=np.int64(1))
             np.savez(p / "blocks.npz", xs=np.array([[0.9, 2.2], [1.1, 1.8]]),
                      labels=np.array(["MaCCQE:0", "MaCCQE:1"], dtype=object),
-                     seed=np.int64(42),
+                     estimator_seed=np.int64(42), draw_seed=np.int64(1000),
                      kinds=np.array(["knob", "knob"], dtype=object),
                      flux_normalized=np.int64(1))
 
@@ -503,7 +508,7 @@ class QuarantineCauseGuardTests(unittest.TestCase):
             utc._load_bank = lambda bank: (d, ["MaCCQE"], 0)
             utc._xsec_for_weights = lambda *a, **k: np.array([1.0, 2.0])
             try:
-                args = SimpleNamespace(bank=td, iters=1, seed=42,
+                args = SimpleNamespace(bank=td, iters=1, estimator_seed=42, draw_seed=1000,
                                        combine=str(p / "throws_*.npz"),
                                        block_slabs=str(p / "blocks.npz"),
                                        expected_throws="0-2", null=True, out_root=None)
@@ -728,5 +733,144 @@ class Cause1PathAuditTests(unittest.TestCase):
                     found.append(f"{mod}.py:{i}")
         self.assertEqual(found, ["analyze_universes_5d.py:109"],
                          "unaccounted outer product on X's build path -- a cause-1 candidate")
+
+class Gate1TwoRoleSeedSplit(unittest.TestCase):
+    """The gate-1 split of `--seed` into `--draw-seed` (throw realization) and
+    `--estimator-seed` (the unfolding estimator).
+
+    THE THIRD TEST IS THE ONLY ONE WHOSE EXPECTED RESULT THE DIFF CHANGES, so it is the only one
+    that could be written to pass vacuously, and it carries a PRE-DIFF CONTROL: the same
+    configuration is run against the module as it existed at HEAD~ and must FAIL there. Without
+    that arm, a green result cannot distinguish the change from a no-op (BEN-181's shape).
+    """
+
+    def _fixture(self, tmp, *, est, draw, est2=None, draw2=None, legacy=None):
+        """Write two throw slabs and one block slab. `legacy` writes the PRE-SPLIT single
+        ambiguous `seed` key instead of the two role keys.
+
+        flux_normalized IS stamped on every slab, deliberately: without it the J28 guard fires
+        FIRST and any assertRaises below would pass without reaching the seed guards at all.
+        """
+        p = Path(tmp)
+        throws = np.array([[0.8, 2.1], [1.2, 1.9], [1.1, 2.2]])
+        def stamp(seed_est, seed_draw):
+            if legacy is not None:
+                return {"seed": np.int64(legacy)}
+            return {"estimator_seed": np.int64(seed_est), "draw_seed": np.int64(seed_draw)}
+        np.savez(p / "throws_0.npz", xs=throws[:2], throws=np.array([0, 1]),
+                 flux_normalized=np.int64(1), **stamp(est, draw))
+        np.savez(p / "throws_1.npz", xs=throws[2:], throws=np.array([2]),
+                 flux_normalized=np.int64(1),
+                 **stamp(est if est2 is None else est2, draw if draw2 is None else draw2))
+        np.savez(p / "blocks.npz", xs=np.array([[0.9, 2.2], [1.1, 1.8]]),
+                 labels=np.array(["MaCCQE:0", "MaCCQE:1"], dtype=object),
+                 kinds=np.array(["knob", "knob"], dtype=object),
+                 flux_normalized=np.int64(1), **stamp(est, draw))
+        return str(p / "throws_*.npz"), str(p / "blocks.npz")
+
+    @contextlib.contextmanager
+    def _stubbed(self, module):
+        d = {"edges": [np.array([0.0, 1.0, 2.0])],
+             "w_truth": np.ones(1), "w_reco": np.ones(1), "td_w": np.ones(1)}
+        old_load, old_kernel = module._load_bank, module._xsec_for_weights
+        module._load_bank = lambda bank: (d, ["MaCCQE"], 0)
+        module._xsec_for_weights = lambda *a, **k: np.array([1.0, 2.0])
+        try:
+            yield
+        finally:
+            module._load_bank, module._xsec_for_weights = old_load, old_kernel
+
+    def _args(self, td, combine, blocks, *, est, draw):
+        return SimpleNamespace(bank=td, iters=1, estimator_seed=est, draw_seed=draw,
+                               combine=combine, block_slabs=blocks,
+                               expected_throws="0-2", null=True, out_root=None)
+
+    def test_legacy_single_seed_slab_is_REJECTED_and_the_message_names_the_migration(self):
+        """Item 6, policy (a) STRICT. A pre-split slab carries only the ambiguous `seed` key.
+
+        The rejected alternative was a fallback reading `seed` as the estimator seed, which
+        would let a legacy slab combine beside a post-split one whose draw seed differs -- a
+        silent mixed-estimator covariance, strictly worse than failing.
+        """
+        import unified_throw_cov as utc
+        with tempfile.TemporaryDirectory() as td:
+            combine, blocks = self._fixture(td, est=1000, draw=1000, legacy=1000)
+            with self._stubbed(utc):
+                with self.assertRaises(SystemExit) as cm:
+                    utc.do_combine(self._args(td, combine, blocks, est=1000, draw=1000))
+        msg = str(cm.exception)
+        self.assertIn("estimator_seed", msg)
+        self.assertIn("MIGRATION", msg,
+                      "a strict rejection must tell the operator how to move forward")
+
+    def test_two_draw_seeds_in_one_combine_are_REJECTED(self):
+        """New guard. Distinct throw ids do NOT make two draw seeds one coherent ensemble."""
+        import unified_throw_cov as utc
+        with tempfile.TemporaryDirectory() as td:
+            combine, blocks = self._fixture(td, est=1000, draw=1000, draw2=7)
+            with self._stubbed(utc):
+                with self.assertRaises(SystemExit) as cm:
+                    utc.do_combine(self._args(td, combine, blocks, est=1000, draw=1000))
+        self.assertIn("draw seed", str(cm.exception))
+
+    def test_roles_may_DIFFER_post_split_and_the_pre_diff_module_cannot_express_it(self):
+        """THE POWER TEST. estimator 1000 with draw 7 is the configuration M(ii) needs and the
+        pre-split code could not express, because one integer drove both roles.
+
+        ACCEPT arm: the split module combines it.
+        PRE-DIFF CONTROL: the module at HEAD~ must NOT. Its slab reader keys on `seed`, which
+        these slabs do not carry, so it fails closed -- and that failure is what proves the
+        accept arm above is caused by this diff rather than true all along.
+        """
+        import unified_throw_cov as utc
+        with tempfile.TemporaryDirectory() as td:
+            combine, blocks = self._fixture(td, est=1000, draw=7)
+            with self._stubbed(utc):
+                out = utc.do_combine(self._args(td, combine, blocks, est=1000, draw=7))
+            self.assertIsNotNone(out, "estimator 1000 / draw 7 must be ACCEPTED after the split")
+            self.assertEqual(out["estimator_seed"], 1000)
+            self.assertEqual(out["draw_seed"], 7, "the product must record BOTH roles (item 4)")
+
+            prev = _import_module_at_rev("HEAD~", "nd-unfolding/unified_throw_cov.py",
+                                         "unified_throw_cov_prediff")
+            if prev is None:
+                self.skipTest("pre-diff revision unavailable; the control arm did NOT run, so "
+                              "the accept arm above is UNCONTROLLED")
+            # THE CONTROL'S FAILURE MODE IS ITSELF INFORMATIVE, so it is asserted as a union
+            # rather than narrowed to SystemExit. Measured: the pre-diff module raises
+            # AttributeError at its `args.seed` read -- it cannot even be CALLED with split-role
+            # arguments, which is a stronger statement than "its guard rejects them". Narrowing
+            # this to SystemExit would have made the control fail for the right reason and be
+            # RECORDED as a broken test.
+            with self._stubbed(prev):
+                with self.assertRaises((SystemExit, AttributeError, TypeError),
+                                       msg="PRE-DIFF module accepted a split-role combine; the "
+                                           "accept arm above is then not evidence about this diff"):
+                    prev.do_combine(self._args(td, combine, blocks, est=1000, draw=7))
+
+
+def _import_module_at_rev(rev, path, name):
+    """Import `path` as it existed at `rev`, or None if git cannot produce it."""
+    import importlib.util
+    import subprocess
+    root = Path(__file__).resolve().parent.parent.parent
+    try:
+        src = subprocess.run(["git", "-C", str(root), "show", f"{rev}:{path}"],
+                             capture_output=True, text=True, check=True).stdout
+    except Exception:
+        return None
+    if not src:
+        return None
+    with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as fh:
+        fh.write(src)
+        tmp = fh.name
+    spec = importlib.util.spec_from_file_location(name, tmp)
+    mod = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(mod)
+    except Exception:
+        return None
+    return mod
+
 if __name__ == "__main__":
     unittest.main()

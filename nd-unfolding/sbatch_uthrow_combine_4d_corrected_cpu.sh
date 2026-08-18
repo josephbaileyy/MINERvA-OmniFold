@@ -16,6 +16,6 @@ echo "[comb4dCc] start $(date -u '+%F %T')"
 python3 unified_throw_cov.py \
     --combine 'uq_4d/corrected/uthrow_slabs_4d/uthrow4d_slab_*.npz' --expected-throws 0-159 \
     --block-slabs 'uq_4d/corrected/uthrow_slabs_4d/block4d_*.npz' \
-    --bank uq_4d/corrected/bank_uthrow_4d --iters 5 --seed 1000 --null \
+    --bank uq_4d/corrected/bank_uthrow_4d --iters 5 --draw-seed 1000 --estimator-seed 1000 --null \
     --out-root uq_4d/corrected/unified_throw_cov_4d.root
 echo "[comb4dCc] DONE $(date -u '+%F %T')"

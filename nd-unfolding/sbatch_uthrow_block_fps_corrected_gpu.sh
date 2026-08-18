@@ -24,12 +24,12 @@ OUT="uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_${T}.npz"
 rg_skip_if_complete "${OUT}" && exit 0
 if (( T <= 5 )); then
   echo "[blkfpsC] task=$T knobs=${KNOBS[$T]} $(date -u '+%F %T UTC')"
-  rg_run "${OUT}" python3 unified_throw_cov.py --blockunits --bank bank_uthrow_fps --iters 5 --invalid-ratio neutral --seed 1000 \
+  rg_run "${OUT}" python3 unified_throw_cov.py --blockunits --bank bank_uthrow_fps --iters 5 --invalid-ratio neutral --draw-seed 1000 --estimator-seed 1000 \
       --block-knobs "${KNOBS[$T]}" --out "${OUT}"
 else
   LO=$(( (T-6)*5 )); HI=$(( LO+4 ))
   echo "[blkfpsC] task=$T flux=${LO}-${HI} $(date -u '+%F %T UTC')"
-  rg_run "${OUT}" python3 unified_throw_cov.py --blockunits --bank bank_uthrow_fps --iters 5 --invalid-ratio neutral --seed 1000 \
+  rg_run "${OUT}" python3 unified_throw_cov.py --blockunits --bank bank_uthrow_fps --iters 5 --invalid-ratio neutral --draw-seed 1000 --estimator-seed 1000 \
       --block-knobs "" --block-flux "${LO}-${HI}" --out "${OUT}"
 fi
 echo "[blkfpsC] task=$T done $(date -u '+%F %T UTC')"

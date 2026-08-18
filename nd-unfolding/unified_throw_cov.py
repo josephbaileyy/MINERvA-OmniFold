@@ -220,7 +220,7 @@ def do_throws(args):
     metas = []
     for j in range(args.throws):
         gj = args.throw_offset + j
-        rng = np.random.default_rng(args.seed + gj)
+        rng = np.random.default_rng(args.draw_seed + gj)
         g = {b: float(rng.standard_normal()) for b in bands}
         rt = np.ones_like(w_truth); rr = np.ones_like(w_reco); rtd = np.ones_like(td_cv)
         for b in bands:
@@ -241,7 +241,7 @@ def do_throws(args):
             flux_j = None
         # Systematic throws all use the SAME estimator seed. ML variation belongs
         # exclusively in C_ML and must not leak into C_syst.
-        x = _xsec_for_weights(d, edges, wt_j, wr_j, wtd_j, args.iters, args.seed,
+        x = _xsec_for_weights(d, edges, wt_j, wr_j, wtd_j, args.iters, args.estimator_seed,
                               flux=flux_j)
         xs.append(x.ravel(order="C"))
         metas.append((gj, u))
@@ -251,7 +251,8 @@ def do_throws(args):
         _atomic_savez(args.out, xs=np.array(xs),
                       throws=np.array([m[0] for m in metas]),
                       flux_u=np.array([m[1] for m in metas]),
-                      seed=np.int64(args.seed),
+                      estimator_seed=np.int64(args.estimator_seed),
+                      draw_seed=np.int64(args.draw_seed),
                       flux_normalized=np.int64(1),
                       bands=np.array(bands, dtype=object))
     print(f"[throws] wrote {args.out}: xs{np.array(xs).shape}")
@@ -278,11 +279,12 @@ def do_blockunits(args):
             wtd = td_cv * _ratio(_opt(args.bank, f"td_{b}_{idx}.npy"),
                                  f"{b}:{sign}:td", args.invalid_ratio)
             # knob endpoints do not move the flux integral: CV flux is correct here
-            x = _xsec_for_weights(d, edges, wt, wr, wtd, args.iters, args.seed).ravel(order="C")
+            x = _xsec_for_weights(d, edges, wt, wr, wtd, args.iters, args.estimator_seed).ravel(order="C")
             xs.append(x); labels.append(f"{b}:{idx}"); kinds.append("knob")
             print(f"[blockunit] knob {b} {sign} done", flush=True)
             _atomic_savez(args.out, xs=np.array(xs), labels=np.array(labels, dtype=object),
-                          seed=np.int64(args.seed),
+                          estimator_seed=np.int64(args.estimator_seed),
+                          draw_seed=np.int64(args.draw_seed),
                           flux_normalized=np.int64(1),
                           kinds=np.array(kinds, dtype=object))
     if args.block_flux:
@@ -294,12 +296,13 @@ def do_blockunits(args):
                 w_truth * _ratio(fwt, f"Flux:{u}:t", args.invalid_ratio),
                 w_reco * _ratio(fwr, f"Flux:{u}:r", args.invalid_ratio),
                 td_cv * _ratio(fwtd, f"Flux:{u}:td", args.invalid_ratio),
-                args.iters, args.seed,
+                args.iters, args.estimator_seed,
                 flux=_flux_for_universe(d, flux_ratio, u)).ravel(order="C")
             xs.append(x); labels.append(f"flux{u}"); kinds.append("flux")
             print(f"[blockunit] flux {u} done", flush=True)
             _atomic_savez(args.out, xs=np.array(xs), labels=np.array(labels, dtype=object),
-                          seed=np.int64(args.seed),
+                          estimator_seed=np.int64(args.estimator_seed),
+                          draw_seed=np.int64(args.draw_seed),
                           flux_normalized=np.int64(1),
                           kinds=np.array(kinds, dtype=object))
     print(f"[blockunit] wrote {args.out}: {len(xs)} units")
@@ -311,7 +314,7 @@ def do_combine(args):
     w_truth, w_reco, td_cv = d["w_truth"], d["w_reco"], d["td_w"]
 
     # CV xsec (reported-bin mask)
-    x_cv = _xsec_for_weights(d, edges, w_truth, w_reco, td_cv, args.iters, args.seed).ravel(order="C")
+    x_cv = _xsec_for_weights(d, edges, w_truth, w_reco, td_cv, args.iters, args.estimator_seed).ravel(order="C")
     rep = x_cv > 0
     base = x_cv[rep]
     nrep = int(rep.sum())
@@ -324,11 +327,14 @@ def do_combine(args):
     slab_rows = []
     throw_ids = []
     slab_seeds = set()
+    slab_draw_seeds = set()
     unnormalized = []
     for s in slabs:
         z = np.load(s, allow_pickle=True)
-        if "seed" in z.files:
-            slab_seeds.add(int(z["seed"]))
+        if "estimator_seed" in z.files:
+            slab_seeds.add(int(z["estimator_seed"]))
+        if "draw_seed" in z.files:
+            slab_draw_seeds.add(int(z["draw_seed"]))
         if not _flux_normalized(z):
             unnormalized.append(s)
         xx = np.asarray(z["xs"], dtype=float)
@@ -367,8 +373,10 @@ def do_combine(args):
     knob_x = {}
     for s in bslabs:
         z = np.load(s, allow_pickle=True)
-        if "seed" in z.files:
-            slab_seeds.add(int(z["seed"]))
+        if "estimator_seed" in z.files:
+            slab_seeds.add(int(z["estimator_seed"]))
+        if "draw_seed" in z.files:
+            slab_draw_seeds.add(int(z["draw_seed"]))
         if not _flux_normalized(z):
             unnormalized.append(s)
         xx = np.asarray(z["xs"], dtype=float)
@@ -414,9 +422,15 @@ def do_combine(args):
     # F2 guard: every throw/block slab must have been produced at the same
     # estimator seed as this combine (--seed), else C_uni/C_block would mix
     # estimator jitter across slabs. Seed is stamped by do_throws/do_blockunits.
-    if slab_seeds and slab_seeds != {int(args.seed)}:
+    if slab_seeds and slab_seeds != {int(args.estimator_seed)}:
         raise SystemExit(f"[FAIL] slabs carry estimator seed(s) {sorted(slab_seeds)} != "
-                         f"--seed {args.seed}; refusing mixed-seed combine")
+                         f"--estimator-seed {args.estimator_seed}; refusing mixed-seed combine")
+    # DRAW-seed coherence, new with the two-role split. All slabs of one throw ensemble are
+    # drawn from `--draw-seed + global_throw_index`, so two draw seeds in one combine means two
+    # different ensembles wearing one set of throw ids -- distinct ids do NOT make them coherent.
+    if slab_draw_seeds and slab_draw_seeds != {int(args.draw_seed)}:
+        raise SystemExit(f"[FAIL] slabs carry draw seed(s) {sorted(slab_draw_seeds)} != "
+                         f"--draw-seed {args.draw_seed}; refusing incoherent-ensemble combine")
     # J28 guard: a slab whose flux universes divided by the CV integral must not
     # be folded into a fresh covariance. Correct it with rescale_flux_universes.py
     # (exact, no re-unfold) or re-throw with the current code.
@@ -428,9 +442,15 @@ def do_combine(args):
             "integral. Run rescale_flux_universes.py over them (exact post-hoc "
             "correction, no re-unfold) or regenerate the throws/blocks.")
     if not slab_seeds:
-        raise SystemExit("[FAIL] slabs carry no estimator-seed stamp; refusing combine to "
-                         "prevent accidental reuse of pre-remediation products -- regenerate "
-                         "throws/blocks with the current code (they stamp the seed)")
+        raise SystemExit(
+            "[FAIL] slabs carry no `estimator_seed` stamp; refusing combine. Slabs written "
+            "BEFORE the two-role seed split carry a single ambiguous `seed` key instead, and it "
+            "is not readable as an estimator seed because the same integer also drove the throw "
+            "draw. MIGRATION: regenerate the throws/blocks with the current code, which stamps "
+            "`estimator_seed` and `draw_seed` separately. There is deliberately no fallback that "
+            "reads `seed` as the estimator seed -- doing so would let a pre-split slab combine "
+            "beside a post-split one whose draw seed differs, which is a silent mixed-estimator "
+            "covariance.")
 
     st_uni = float(np.sqrt(np.trace(C_uni)))
     st_block = float(np.sqrt(np.trace(C_block)))
@@ -440,7 +460,7 @@ def do_combine(args):
     null_norm = None
     if args.null:
         x_cv2 = _xsec_for_weights(d, edges, w_truth, w_reco, td_cv, args.iters,
-                                  args.seed).ravel(order="C")[rep]
+                                  args.estimator_seed).ravel(order="C")[rep]
         null_norm = float(np.linalg.norm(x_cv2 - base))
         tol = 1e-12 * max(float(np.linalg.norm(base)), 1.0)
         print(f"\n[null] fixed-seed ||CV2-CV|| = {null_norm:.3e} (tol={tol:.3e})")
@@ -490,6 +510,12 @@ def do_combine(args):
         if null_norm is not None:
             ROOT.TParameter("double")("fixed_seed_null_norm", null_norm).Write()
         ROOT.TParameter("int")("n_throws", T).Write()
+        # ITEM 4. Before the two-role split this writer stamped NO seed at all, so a re-seeded
+        # covariance was indistinguishable from the original in its own product (BEN-246): the
+        # seed census could not reach the artifact it graded. Both roles are written, separately,
+        # because "the seed" is not a well-formed field on this product any more.
+        ROOT.TParameter("int")("estimator_seed", int(args.estimator_seed)).Write()
+        ROOT.TParameter("int")("draw_seed", int(args.draw_seed)).Write()
         hs = ROOT.TH1D("hJointMeanShift", "joint throw mean minus CV", nrep, 0, nrep)
         for i, value in enumerate(mean_shift):
             hs.SetBinContent(i + 1, float(value))
@@ -507,6 +533,10 @@ def do_combine(args):
         # Same reason as the ROOT stamp above: a consumer of this dict must be able to distinguish
         # "checked and zero" from "not checked", and `None` alone invites `or 0.0`.
         "fixed_seed_null_checked": null_norm is not None,
+        # Same reason as the ROOT stamps: an in-process consumer must be able to tell WHICH
+        # estimator seed produced this covariance without re-reading the slabs.
+        "estimator_seed": int(args.estimator_seed),
+        "draw_seed": int(args.draw_seed),
     }
 
 
@@ -522,7 +552,30 @@ def main():
                          "when the bank carries no flux_univ_ratio.npy.")
     ap.add_argument("--throws", type=int, default=0, help="number of throws this task")
     ap.add_argument("--throw-offset", type=int, default=0)
-    ap.add_argument("--seed", type=int, default=1000)
+    # THE TWO-ROLE SPLIT (gate 1). `--seed` is GONE, not aliased: a single flag setting both
+    # roles is the dual-role field under a new name, which is the defect this change exists to
+    # remove. Both replacements are REQUIRED with NO default -- a default on either one
+    # re-creates a population of call sites that silently inherit it, and four of those were
+    # `--combine` launchers where the estimator seed is compared against archived slab stamps.
+    #
+    # DAY-ONE IDENTITY: pass `--draw-seed 1000 --estimator-seed 1000` to reproduce every
+    # pre-split product bit-for-bit. Before the split a single `--seed 1000` drove both roles,
+    # so 1000/1000 IS the archive's configuration -- see nd-unfolding/unified_throw_cov.py
+    # history and docs/orchestration/SCOPE-20260818-gate1-seed-separation-two-keys.md.
+    #
+    # INVARIANT, load-bearing and cited from seven places as a BEHAVIOUR claim: the throw draw
+    # is `--draw-seed + <global throw index>`, so regeneration is bit-reproducible per throw.
+    # Setting `--draw-seed` to anything other than 1000 VOIDS the regenerability of every
+    # archived slab and voids validate_rescale_identity.py's premise, which relies on a given
+    # global throw index reproducing the same knob draws and flux universe.
+    ap.add_argument("--draw-seed", type=int, required=True,
+                    help="seed for the SYSTEMATIC THROW DRAW (knob gaussians + flux universe "
+                         "choice); the realization for global throw j is --draw-seed + j. "
+                         "Pass 1000 to reproduce archived products.")
+    ap.add_argument("--estimator-seed", type=int, required=True,
+                    help="seed for the UNFOLDING ESTIMATOR, held fixed across all throws, "
+                         "block units and the CV so that ML variation stays in C_ML and does "
+                         "not leak into C_syst. Pass 1000 to reproduce archived products.")
     ap.add_argument("--iters", type=int, default=5)
     ap.add_argument("--out", default="uthrow_slab.npz")
     ap.add_argument("--combine", default=None, help="glob of throw slab npzs to aggregate")

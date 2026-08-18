@@ -24,7 +24,7 @@ T=${SLURM_ARRAY_TASK_ID}
 KNOBS=("2p2h,CCQEPauliSupViaKF" "FrAbs_pi,FrElas_N" "HighQ2,LowQ2" "MaCCQE,MaRES" "MFP_N,MvRES" "Rvn2pi,Rvp2pi")
 FLUX=("0-1" "2-3" "4-5" "6-7" "8-9" "10-11")
 echo "[blk] task=$T knobs=${KNOBS[$T]} flux=${FLUX[$T]} $(date -u '+%F %T UTC')"
-python3 unified_throw_cov.py --blockunits --bank bank_uthrow --iters 5 --seed 1000 \
+python3 unified_throw_cov.py --blockunits --bank bank_uthrow --iters 5 --draw-seed 1000 --estimator-seed 1000 \
     --block-knobs "${KNOBS[$T]}" --block-flux "${FLUX[$T]}" \
     --out "uq_4d/uthrow_slabs/blocknode_${T}.npz"
 echo "[blk] task=$T done $(date -u '+%F %T UTC')"

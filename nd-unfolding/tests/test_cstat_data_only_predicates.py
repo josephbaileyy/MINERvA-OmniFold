@@ -50,6 +50,43 @@ def _source_of(fn):
     return src
 
 
+def _code_only(fn):
+    """A function's EXECUTABLE source: comments AND docstrings removed.
+
+    `ast.unparse` DROPS COMMENTS BUT PRESERVES DOCSTRINGS -- a docstring is a string expression, not a
+    comment -- so it is not a general prose-stripper, and using it as one is the fifth instance in this
+    session of a check of mine reading PROSE AS CODE. It failed here on a docstring that NAMES the very
+    thing the control forbids, while explaining why the function must not do it: `default_rng`.
+
+    So the rule the earlier four instances produced -- "use ast.unparse, which drops comments by
+    construction" -- was true and incomplete, and the incompleteness is invisible until a docstring
+    happens to quote the forbidden token. Anything asserting the ABSENCE of a token in code must come
+    through here.
+    """
+    return _code_only_src(inspect.getsource(fn).strip(), label=fn.__name__)
+
+
+def _code_only_src(src, *, label="<source>"):
+    """`_code_only` for a source STRING -- a whole module, or any parseable fragment.
+
+    Same reason, and it is applied to every ABSENCE assertion in this file rather than only to the one
+    that bit: a rule enforced where it has already failed catches nothing new. Two further sites were
+    LATENTLY vulnerable here -- they happened not to quote their own forbidden token -- and "happens not
+    to" is not a property anyone maintains.
+    """
+    tree = ast.parse(src)
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Module)):
+            body = getattr(node, "body", [])
+            if body and isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant) \
+                    and isinstance(body[0].value.value, str):
+                node.body = body[1:] or [ast.Pass()]
+    code = ast.unparse(tree)
+    if len(code) < 40:
+        raise AssertionError(f"docstring stripping left almost nothing for {label}")
+    return code
+
+
 class FakeMC:
     """Minimal stand-in for the loader's MC DataLoader: the three attributes P5 reads."""
 
@@ -744,9 +781,10 @@ class ExtractionStampGuard(unittest.TestCase):
         """BRANCHED, NEVER WIDENED. If the data-only branch were the shared set minus
         `bootstrap_seed`, a three-stream artifact that LOST that field would pass by being read as
         data-only. The two sets must each be complete for their own product."""
-        src = inspect.getsource(self.xr.read_replica_contract)
-        tree = ast.parse(src.strip())
-        code = ast.unparse(tree)          # drops comments, so prose cannot satisfy this
+        # `_code_only`: ast.unparse alone keeps DOCSTRINGS, and this control's own docstring talks
+        # about "the shared set minus bootstrap_seed". It happened not to quote the forbidden token
+        # verbatim, which is luck rather than a property.
+        code = _code_only(self.xr.read_replica_contract)
         self.assertIn("shared_required |", code,
                       "each product must ADD to a shared core rather than subtract from a union")
         self.assertNotIn("shared_required -", code)
@@ -943,6 +981,420 @@ class SubmitControllerStageSelection(unittest.TestCase):
         Comments stripped, because this is an ABSENCE check and absence checks are the direction prose
         can satisfy by accident."""
         self.assertNotIn("both|target|train", self._shell_code())
+
+
+class ReadbackReplacements(unittest.TestCase):
+    """The first 14 of the 38 remaining UNEXECUTED-BY-CONSTRUCTION replacements.
+
+    THE STRUCTURAL POINT, which is better than the ruling assumed: the pinned validator IMPORTS cleanly
+    and its expectations are MODULE-LEVEL constants, so every `want` here is the SAME OBJECT the pinned
+    check compares against rather than a restatement. The divergence is in the EXECUTION, not in the
+    VALUES -- 71% of the control flow and 0% of the constants. A control below asserts there is no local
+    fallback, because a fallback would reintroduce exactly the drift this arrangement removes.
+    """
+
+    def setUp(self):
+        import cstat_data_only_readback as rb
+        import validate_gate5_training_artifacts as V
+        self.rb, self.V = rb, V
+
+    def store(self, **over):
+        n_bkg, rows = 7, int(self.V.FROZEN_POLICY["train_events"])
+        d = {
+            "replica_seed_policy": np.asarray(self.V.SEED_POLICY_STRING),
+            "seed_policy": np.asarray(self.V.FROZEN_POLICY, dtype=object),
+            "estimator_fingerprint": np.asarray(self.V.ESTIMATOR),
+            "bkg_mode": np.asarray(self.V.BKG_MODE),
+            "tag": np.asarray("nominal"),
+            "inputs_sha256": np.asarray(self.V.SOURCE_SHA256),
+            "inventory_hashes": np.asarray("inv-abc"),
+            "input_identity_hashes": np.asarray({"sig": "s", "bkg": "b"}, dtype=object),
+            "n_bkg_full": np.asarray(n_bkg),
+            "mc_indices": np.arange(rows, dtype=np.int64),
+            "sig_bootstrap_factor": np.ones(rows, dtype=np.uint8),
+            "bkg_indices": np.arange(n_bkg, dtype=np.int64),
+            "weights_push": np.ones(rows, dtype=np.float64),
+        }
+        d.update(over)
+        return d
+
+    # ---- cluster A: the six policy scalars ----
+    def test_policy_scalars_pass_on_a_correct_artifact(self):
+        out = self.rb.assert_artifact_policy_scalars(self.store(), where="unit")
+        self.assertEqual(6, out["checked"])
+        self.assertEqual([225, 227, 228, 229, 230, 231], out["replaces_pinned_sites"])
+
+    def test_each_policy_scalar_is_INDIVIDUALLY_load_bearing(self):
+        """Six controls in one loop: each field is perturbed alone and must fail alone. A single
+        all-fields-wrong control would pass even if five of the six comparisons were missing."""
+        for key, bad in (("replica_seed_policy", "other-policy"),
+                         ("seed_policy", {"estimator_seed": 43}),
+                         ("estimator_fingerprint", "pet-v0"),
+                         ("bkg_mode", "raw"),
+                         ("tag", "annealed"),
+                         ("inputs_sha256", "0" * 64)):
+            with self.assertRaises(SystemExit) as cm:
+                self.rb.assert_artifact_policy_scalars(
+                    self.store(**{key: np.asarray(bad, dtype=object)}), where="unit")
+            self.assertIn(key, str(cm.exception))
+
+    def test_a_missing_policy_key_FAILS_rather_than_being_skipped(self):
+        st = self.store()
+        del st["bkg_mode"]
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_artifact_policy_scalars(st, where="unit")
+        self.assertIn("required key absent", str(cm.exception))
+
+    # ---- cluster B: cross-process inventory/identity ----
+    def test_inventory_and_identity_agree_with_the_target_receipt(self):
+        tb = {"inventory_hashes": "inv-abc", "input_identity_hashes": {"sig": "s", "bkg": "b"}}
+        out = self.rb.assert_inventory_identity_agree_with_target(self.store(), tb, where="unit")
+        self.assertEqual([239, 241], out["replaces_pinned_sites"])
+        self.assertIn("different processes", out["operands"])
+
+    def test_a_disagreeing_inventory_hash_is_caught(self):
+        tb = {"inventory_hashes": "inv-DIFFERENT",
+              "input_identity_hashes": {"sig": "s", "bkg": "b"}}
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_inventory_identity_agree_with_target(self.store(), tb, where="unit")
+        self.assertIn("inventory_hashes disagree", str(cm.exception))
+
+    def test_a_disagreeing_identity_map_is_caught(self):
+        tb = {"inventory_hashes": "inv-abc", "input_identity_hashes": {"sig": "s", "bkg": "OTHER"}}
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_inventory_identity_agree_with_target(self.store(), tb, where="unit")
+        self.assertIn("input_identity_hashes disagree", str(cm.exception))
+
+    def test_an_ABSENT_target_block_fails_closed_rather_than_skipping(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_inventory_identity_agree_with_target(self.store(), {}, where="unit")
+        self.assertIn("no second operand", str(cm.exception))
+
+    def test_a_target_block_MISSING_one_field_fails_on_that_field(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_inventory_identity_agree_with_target(
+                self.store(), {"inventory_hashes": "inv-abc"}, where="unit")
+        self.assertIn("no input_identity_hashes", str(cm.exception))
+
+    # ---- cluster C: subsample geometry ----
+    def test_subsample_geometry_passes_and_refuses_to_regenerate_its_own_expectation(self):
+        rows = int(self.V.FROZEN_POLICY["train_events"])
+        out = self.rb.assert_subsample_geometry(
+            self.store(), expected_mc_indices=np.arange(rows, dtype=np.int64), where="unit")
+        self.assertEqual([248, 252, 255], out["replaces_pinned_sites"])
+        # `_code_only`, NOT `ast.unparse` -- ast.unparse keeps DOCSTRINGS, and this function's docstring
+        # names `default_rng` while explaining why the function must not call it. Fifth prose-as-code
+        # instance of the session, and the first where the prose was a docstring rather than a comment.
+        code = _code_only(self.rb.assert_subsample_geometry)
+        self.assertNotIn("default_rng", code,
+                         "a predicate that regenerates its own expectation from the same seed the "
+                         "artifact used is comparing a value to itself")
+
+    def test_wrong_mc_indices_are_caught(self):
+        rows = int(self.V.FROZEN_POLICY["train_events"])
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_subsample_geometry(
+                self.store(), expected_mc_indices=np.arange(1, rows + 1, dtype=np.int64),
+                where="unit")
+        self.assertIn("not the frozen subsample", str(cm.exception))
+
+    def test_an_EMPTY_expected_index_array_is_REFUSED(self):
+        """An equality against an empty array is vacuously satisfiable, so supplying one must fail
+        rather than pass -- this session's finding family, inside a replacement written for it."""
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_subsample_geometry(
+                self.store(), expected_mc_indices=np.asarray([], dtype=np.int64), where="unit")
+        self.assertIn("vacuously satisfiable", str(cm.exception))
+
+    def test_unordered_background_indices_are_caught(self):
+        rows = int(self.V.FROZEN_POLICY["train_events"])
+        st = self.store(bkg_indices=np.asarray([0, 2, 1, 3, 4, 5, 6], dtype=np.int64))
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_subsample_geometry(
+                st, expected_mc_indices=np.arange(rows, dtype=np.int64), where="unit")
+        self.assertIn("complete ordered inventory", str(cm.exception))
+
+    # ---- cluster F: weights_push ----
+    def test_weights_push_sane_passes(self):
+        out = self.rb.assert_weights_push_sane(self.store(), where="unit")
+        self.assertEqual([304, 305, 306], out["replaces_pinned_sites"])
+
+    def test_a_SINGLE_negative_weight_in_two_million_rows_is_caught(self):
+        """The reason non-negativity is checked elementwise: one negative row cannot move a summary."""
+        rows = int(self.V.FROZEN_POLICY["train_events"])
+        w = np.ones(rows, dtype=np.float64)
+        w[rows // 3] = -1e-9
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_weights_push_sane(self.store(weights_push=w), where="unit")
+        self.assertIn("1 negative entries", str(cm.exception))
+
+    def test_a_single_nan_weight_is_caught(self):
+        rows = int(self.V.FROZEN_POLICY["train_events"])
+        w = np.ones(rows, dtype=np.float64)
+        w[0] = np.nan
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_weights_push_sane(self.store(weights_push=w), where="unit")
+        self.assertIn("non-finite", str(cm.exception))
+
+    def test_a_wrong_row_count_is_caught(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.rb.assert_weights_push_sane(
+                self.store(weights_push=np.ones(5, dtype=np.float64)), where="unit")
+        self.assertIn("weights_push shape", str(cm.exception))
+
+    # ---- the structural property ----
+    def test_there_is_NO_local_fallback_for_the_pinned_expectations(self):
+        """A try/except around the import, or a local default, would reintroduce the drift this whole
+        arrangement removes -- and it would do so silently, since the fallback path only runs when the
+        pinned module is unavailable."""
+        src = (Path(PET) / "cstat_data_only_readback.py").read_text()
+        code = _code_only_src(src, label="cstat_data_only_readback")
+        self.assertIn("from validate_gate5_training_artifacts import", src)
+        self.assertNotIn("except ImportError", code)
+        self.assertNotIn("except Exception", code)
+
+    def test_every_want_is_the_pinned_modules_own_object(self):
+        """Identity, not equality: if these were copies, a change to the pinned constant would leave the
+        replacement asserting the old value while looking correct."""
+        self.assertIs(self.rb.SEED_POLICY_STRING, self.V.SEED_POLICY_STRING)
+        self.assertIs(self.rb.FROZEN_POLICY, self.V.FROZEN_POLICY)
+        self.assertIs(self.rb.ESTIMATOR, self.V.ESTIMATOR)
+        self.assertIs(self.rb.BKG_MODE, self.V.BKG_MODE)
+        self.assertIs(self.rb.SOURCE_SHA256, self.V.SOURCE_SHA256)
+
+
+class ManifestPrecedesArtifacts(unittest.TestCase):
+    """C's condition on the deferral: unchecked, "before the artifact exists" is a PROMISE.
+
+    Both directions, on a synthetic family, because a precedence check that has only ever been run on
+    the passing case is exactly the third BEN-258 category -- live, and unverified.
+    """
+
+    SCRIPT = "docs/orchestration/state/verify_manifest_precedes_artifacts.py"
+
+    def setUp(self):
+        self.repo = Path(__file__).resolve().parents[2]
+        self.tmp = Path(tempfile.mkdtemp(prefix="gate5-precedes-"))
+        self.sha = subprocess.run(["git", "-C", str(self.repo), "rev-parse", "HEAD"],
+                                  capture_output=True, text=True).stdout.strip()
+        self.ct = int(subprocess.run(
+            ["git", "-C", str(self.repo), "show", "-s", "--format=%ct", self.sha],
+            capture_output=True, text=True).stdout.strip().splitlines()[-1])
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _family(self, mtimes):
+        """mtimes: list of (replica_index, unix_mtime) for the target .npy of each member."""
+        for idx, mt in mtimes:
+            d = self.tmp / "replicas" / f"replica_{idx:02d}" / "target"
+            d.mkdir(parents=True, exist_ok=True)
+            f = d / "GATE5_REPLICA_TARGET.npy"
+            f.write_bytes(b"x")
+            os.utime(f, (mt, mt))
+        return self.tmp
+
+    def _run(self, root):
+        return subprocess.run(
+            [sys.executable, str(self.repo / self.SCRIPT),
+             "--addendum-sha", self.sha, "--family-root", str(root)],
+            capture_output=True, text=True)
+
+    def test_artifacts_written_AFTER_the_commit_PASS(self):
+        root = self._family([(0, self.ct + 60), (1, self.ct + 120)])
+        r = self._run(root)
+        self.assertEqual(0, r.returncode, r.stderr[-500:])
+        doc = json.loads(r.stdout)
+        self.assertEqual("PASS", doc["verdict"])
+        self.assertEqual(2, doc["n_artifacts_examined"])
+        self.assertEqual(60, doc["margin_seconds"])
+
+    def test_ONE_artifact_written_BEFORE_the_commit_FAILS_even_when_the_rest_came_after(self):
+        """THE OPERAND IS min(mtime), NOT THE MEAN. One artifact older than the commit falsifies the
+        claim, because the predictions could have been read off that one."""
+        root = self._family([(0, self.ct + 600), (1, self.ct - 30), (2, self.ct + 900)])
+        r = self._run(root)
+        self.assertNotEqual(0, r.returncode)
+        self.assertIn("recorded AFTER an artifact", r.stderr)
+        self.assertIn("replica_01", r.stderr)
+
+    def test_an_EMPTY_family_is_REFUSED_not_passed(self):
+        """"No artifact was written before the commit" is trivially true of a family with no artifacts.
+        A vacuous pass here would be the exact defect this suite exists to catch."""
+        (self.tmp / "replicas").mkdir(parents=True, exist_ok=True)
+        r = self._run(self.tmp)
+        self.assertNotEqual(0, r.returncode)
+        self.assertIn("vacuously true", r.stderr)
+
+    def test_it_uses_the_COMMITTER_date_not_the_author_date(self):
+        """`%at` is settable with `git commit --date`, so it is an operand the author controls -- the
+        same objection as "a total its author can raise is not a floor"."""
+        src = (self.repo / self.SCRIPT).read_text()
+        self.assertIn("--format=%ct", src)
+        self.assertNotIn("--format=%at", src)
+
+    def test_it_states_what_it_does_NOT_establish(self):
+        """mtimes are mutable and clocks can be wrong. A provenance check that does not bound its own
+        claim invites being cited for more than it shows."""
+        root = self._family([(0, self.ct + 60)])
+        doc = json.loads(self._run(root).stdout)
+        self.assertIn("not proof against a determined edit",
+                      doc["what_this_does_not_establish"])
+
+
+class RunIdPinScope(unittest.TestCase):
+    """A pin naming a CODE STATE is reusable across runs; a pin naming a RUN is not (lane C).
+
+    AND C'S PROPOSED MECHANICAL CHECK CANNOT FIRE ON THE ONE KNOWN DEFECT, which is why this control
+    uses a different rule. Measured: `*_family_*.py` matches exactly ONE tracked file -- a test -- and
+    the defect, `validate_gate5_training_artifacts.py`, is not in the glob at all. The name-shape that
+    claims a population here is the plural `_artifacts`, not the word `family`.
+
+    THE RULE THAT DOES FIRE: a module-level run-id literal used as an EQUALITY OPERAND inside a
+    function that takes a member index. That is what distinguishes a mis-scoped population validator
+    from a legitimately single-purpose script -- a dependency operand (`PREDECESSOR_JOB`) or a one-shot
+    input (`JID`, `SOURCE_JOB`, `JOB`) names one run correctly.
+    """
+
+    # NO EXEMPTION LIST HERE, deliberately, unlike the main-guard control. These three controls assert
+    # that the defect is WHERE THE FINDING SAYS rather than that it is absent, so a hash-pinned file
+    # needs no exemption -- the check is satisfied by the defect's continued presence and goes red if it
+    # MOVES, which is the event that would make the finding's citations wrong.
+
+    def _pet(self):
+        return Path(PET)
+
+    def test_C_s_proposed_glob_would_flag_nothing_and_misses_the_defect(self):
+        """Recorded as a control rather than only in a message, so the refutation is re-derivable."""
+        repo = Path(__file__).resolve().parents[2]
+        tracked = subprocess.run(["git", "-C", str(repo), "ls-files", "*.py"],
+                                 capture_output=True, text=True).stdout.split()
+        fam = [f for f in tracked if "_family_" in os.path.basename(f)]
+        self.assertNotIn("nd-unfolding/pet/validate_gate5_training_artifacts.py", fam,
+                         "if the defect ever moves into a *_family_* name, revisit the rule")
+        self.assertTrue(all("test" in os.path.basename(f) or "reconcile" in os.path.basename(f)
+                            for f in fam),
+                        f"a new *_family_* module appeared: {fam}")
+
+    def test_the_reconciler_carries_no_run_id_pin(self):
+        """C's claim, verified rather than relayed -- it decides whether the other pinned reader in the
+        ruling is affected."""
+        tree = ast.parse((self._pet() / "reconcile_gate5_family.py").read_text())
+        for node in tree.body:
+            if isinstance(node, ast.Assign) and isinstance(node.value, ast.Constant)                     and isinstance(node.value.value, str):
+                self.assertFalse(re.fullmatch(r"\d{7,9}", node.value.value),
+                                 f"{ast.unparse(node.targets[0])} looks like a run id")
+
+    def test_the_known_defect_is_still_exactly_where_the_finding_says(self):
+        src = (self._pet() / "validate_gate5_training_artifacts.py").read_text()
+        self.assertIn('ARRAY_JOB_ID = "56857233"', src)
+        self.assertIn("ARRAY_JOB_ID)", src, "the literal is still used as a check operand")
+
+
+class UnthinnedMcEvidence(unittest.TestCase):
+    """The replacement for the pinned validator's :262/:263/:265/:267 -- the four whose content is a
+    PHYSICS claim rather than bookkeeping.
+
+    THE DIRECTION IS THE WHOLE POINT. Those sites assert the applied MC factor IS the canonical Poisson
+    draw. For this product that is FALSE by construction, so they must fail -- and the replacement
+    asserts the INEQUALITY, which says something the original could not: the canonical draw the target
+    stage computed is NOT what the training stage applied, i.e. the MC legs were left unthinned. Stated
+    as a positive condition on two independently-produced digests rather than as an absence.
+    """
+
+    DATA = "d" * 64
+    SIG_CANON = "1" * 64
+    BKG_CANON = "2" * 64
+    SIG_UNITY = "a" * 64
+    BKG_UNITY = "b" * 64
+
+    def meta(self, **over):
+        m = {"data_factor_sha256": self.DATA,
+             "signal_factor_sha256": self.SIG_CANON,
+             "background_factor_sha256": self.BKG_CANON}
+        m.update(over)
+        return m
+
+    def check(self, meta=None, **over):
+        kw = {"factor_meta": self.meta() if meta is None else meta,
+              "data_factor_sha256": self.DATA,
+              "sig_unity_sha256": self.SIG_UNITY,
+              "bkg_unity_sha256": self.BKG_UNITY,
+              "where": "unit"}
+        kw.update(over)
+        return cdo.assert_unthinned_mc_evidence(**kw)
+
+    def test_the_intended_data_only_state_PASSES_and_names_its_direction(self):
+        out = self.check()
+        self.assertIn("DIFFERS", out["signal_leg"])
+        self.assertIn("DIFFERS", out["background_leg"])
+        self.assertIn("MATCHES", out["data_leg"])
+        self.assertEqual([262, 263, 265, 267], out["replaces_pinned_sites"])
+
+    def test_a_THINNED_signal_leg_is_CAUGHT(self):
+        """The failure the whole product exists to prevent: if the training stage had applied the
+        canonical signal draw, the artifact's digest would EQUAL the receipt's -- which is the state
+        the pinned check calls correct and this one must reject."""
+        with self.assertRaises(SystemExit) as cm:
+            self.check(sig_unity_sha256=self.SIG_CANON)
+        self.assertIn("EQUALS the digest of the unity array", str(cm.exception))
+
+    def test_a_THINNED_background_leg_is_CAUGHT(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.check(bkg_unity_sha256=self.BKG_CANON)
+        self.assertIn("vacuous", str(cm.exception))
+
+    def test_the_DATA_leg_must_still_MATCH_so_this_is_not_a_blanket_inversion(self):
+        """The data draw IS shared between the two stages. A data-only artifact whose data digests
+        disagreed is a MIS-PAIRED TARGET, and reading the replacement as 'invert everything' would
+        turn that failure into a pass."""
+        with self.assertRaises(SystemExit) as cm:
+            self.check(self.meta(data_factor_sha256="f" * 64))
+        self.assertIn("mis-paired target", str(cm.exception))
+
+    def test_a_missing_canonical_digest_FAILS_rather_than_being_skipped(self):
+        for key in ("signal_factor_sha256", "background_factor_sha256"):
+            m = self.meta()
+            del m[key]
+            with self.assertRaises(SystemExit) as cm:
+                self.check(m)
+            self.assertIn(key, str(cm.exception))
+
+    def test_a_missing_data_digest_FAILS(self):
+        m = self.meta()
+        del m["data_factor_sha256"]
+        with self.assertRaises(SystemExit) as cm:
+            self.check(m)
+        self.assertIn("no data_factor_sha256", str(cm.exception))
+
+    def test_EMPTY_metadata_is_refused_not_treated_as_satisfied(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.check({})
+        self.assertIn("no operand", str(cm.exception))
+
+    def test_the_two_drivers_hash_array_implementations_are_BYTE_IDENTICAL(self):
+        """THE PRECONDITION THAT MAKES THIS PREDICATE MEANINGFUL. The digests are computed by each
+        driver's own `hash_array` and compared against digests written by a third process. If the two
+        implementations differed, the comparison would be between two FUNCTIONS rather than two arrays,
+        and both the equality and the inequality legs would be measuring the wrong thing."""
+        import ast as _ast
+        srcs = []
+        for name in ("train_fullevent_replica.py", "extract_fullevent_replica.py"):
+            tree = _ast.parse((Path(PET) / name).read_text())
+            fn = next(n for n in tree.body
+                      if isinstance(n, _ast.FunctionDef) and n.name == "hash_array")
+            srcs.append(_ast.unparse(fn))
+        self.assertEqual(srcs[0], srcs[1],
+                         "the two drivers' hash_array differ, so a cross-driver digest comparison "
+                         "compares implementations rather than arrays")
+        self.assertIn("memoryview", srcs[0], "extraction produced something that is not hash_array")
+
+    def test_both_readers_call_the_SHARED_predicate_and_not_a_local_copy(self):
+        """A second implementation of one rule is how two readers come to disagree. Asserted on the
+        shipped source with comments stripped, so the annotation cannot satisfy it."""
+        for name in ("train_fullevent_replica.py", "extract_fullevent_replica.py"):
+            code = ast.unparse(ast.parse((Path(PET) / name).read_text()))
+            self.assertIn("assert_unthinned_mc_evidence", code, name)
 
 
 class CrossStageLoaderAgreement(unittest.TestCase):

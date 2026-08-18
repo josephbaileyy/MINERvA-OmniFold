@@ -22,7 +22,7 @@ export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"
 U=$(sed -n "${SLURM_ARRAY_TASK_ID}p" uq_4d/vertical_run_bkgaware.txt)
 [[ -z "$U" ]] && exit 0
 echo "[sweep-run-bkg] node=$(hostname) task=${SLURM_ARRAY_TASK_ID} universe=${U} start $(date -u '+%F %T UTC')"
-python3 sweep_bank_5d.py --run --universe "$U" \
+python3 sweep_bank_5d.py --run --estimator-seed 42 --universe "$U" \
   --bankdir "${REPO}/nd-unfolding/bank_sweep_5d_bkgaware" \
   --outdir "${REPO}/nd-unfolding/uq_5d/universe_sweep_bkgaware" --iters 5
 echo "[sweep-run-bkg] task=${SLURM_ARRAY_TASK_ID} done $(date -u '+%F %T UTC')"

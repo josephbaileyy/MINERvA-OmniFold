@@ -18,5 +18,5 @@ OUT="uq_4d/corrected/uthrow_slabs_4d/uthrow4d_slab_${SLURM_ARRAY_TASK_ID}.npz"
 rg_skip_if_complete "${OUT}" && exit 0
 echo "[uthr4dCc] task=${SLURM_ARRAY_TASK_ID} throws ${OFF}..$((OFF+TPT-1)) $(date -u '+%F %T')"
 rg_run "${OUT}" python3 unified_throw_cov.py --throws ${TPT} --throw-offset ${OFF} \
-    --seed 1000 --bank uq_4d/corrected/bank_uthrow_4d --iters 5 --invalid-ratio neutral \
+    --draw-seed 1000 --estimator-seed 1000 --bank uq_4d/corrected/bank_uthrow_4d --iters 5 --invalid-ratio neutral \
     --out "${OUT}"

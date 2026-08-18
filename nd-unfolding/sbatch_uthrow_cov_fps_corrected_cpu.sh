@@ -24,5 +24,5 @@ OUT="uq_fps/corrected/uthrow_slabs_fps_neutral/uthrowfps_slab_${SLURM_ARRAY_TASK
 rg_skip_if_complete "${OUT}" && exit 0
 echo "[uthrowfpsC] task=${SLURM_ARRAY_TASK_ID} throws ${OFF}..$((OFF+THROWS_PER-1)) $(date -u '+%F %T UTC')"
 rg_run "${OUT}" python3 unified_throw_cov.py --throws "${THROWS_PER}" --throw-offset "${OFF}" \
-    --seed 1000 --bank bank_uthrow_fps --iters 5 --invalid-ratio neutral --out "${OUT}"
+    --draw-seed 1000 --estimator-seed 1000 --bank bank_uthrow_fps --iters 5 --invalid-ratio neutral --out "${OUT}"
 echo "[uthrowfpsC] task=${SLURM_ARRAY_TASK_ID} done $(date -u '+%F %T UTC')"

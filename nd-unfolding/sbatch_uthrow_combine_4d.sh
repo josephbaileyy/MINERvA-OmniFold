@@ -19,7 +19,7 @@ REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 source "${REPO}/setup_salloc_env.sh"
 cd "${REPO}/nd-unfolding"
 echo "[comb4d] start $(date -u '+%F %T UTC')"
-python3 unified_throw_cov.py \
+python3 unified_throw_cov.py --draw-seed 1000 --estimator-seed 1000 \
     --combine 'uq_4d/uthrow_slabs_4d/uthrow4d_slab_*.npz' \
     --expected-throws 0-159 \
     --block-slabs 'uq_4d/uthrow_slabs_4d/block4d_*.npz' \

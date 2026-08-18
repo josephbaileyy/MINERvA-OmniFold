@@ -128,27 +128,31 @@ UNEXECUTED = {
     221: "cstat_data_only.CAMPAIGN_ROLES via validate_data_only_artifact",
     223: "validate_data_only_artifact replica_index check",
     224: "cstat_data_only.assert_data_only_streams",              # P6, under data_bootstrap_seed
-    225: "REPLACEMENT-REQUIRED: no data-only predicate reads `replica_seed_policy`",
-    227: "REPLACEMENT-REQUIRED: no data-only predicate reads the frozen estimator policy",
-    228: "REPLACEMENT-REQUIRED: no data-only predicate reads `estimator_fingerprint`",
-    229: "REPLACEMENT-REQUIRED: no data-only predicate reads `bkg_mode`",
-    230: "REPLACEMENT-REQUIRED: no data-only predicate reads `tag`",
-    231: "REPLACEMENT-REQUIRED: no data-only predicate reads `inputs_sha256`",
+    225: "cstat_data_only_readback.assert_artifact_policy_scalars",
+    227: "cstat_data_only_readback.assert_artifact_policy_scalars",
+    228: "cstat_data_only_readback.assert_artifact_policy_scalars",
+    229: "cstat_data_only_readback.assert_artifact_policy_scalars",
+    230: "cstat_data_only_readback.assert_artifact_policy_scalars",
+    231: "cstat_data_only_readback.assert_artifact_policy_scalars",
     236: "cstat_data_only.assert_data_only_streams",              # n_sig_full
     237: "cstat_data_only.assert_data_only_streams",              # n_data_full
     238: "cstat_data_only.assert_data_only_streams",              # n_bkg_full
-    239: "REPLACEMENT-REQUIRED: inventory_hashes is written but never re-compared",
-    241: "REPLACEMENT-REQUIRED: input_identity_hashes is written but never re-compared",
-    248: "REPLACEMENT-REQUIRED: mc_indices frozen-subsample identity is not re-derived data-only-side",
+    239: "cstat_data_only_readback.assert_inventory_identity_agree_with_target",
+    241: "cstat_data_only_readback.assert_inventory_identity_agree_with_target",
+    248: "cstat_data_only_readback.assert_subsample_geometry",
     251: "cstat_data_only.assert_data_only_streams",              # P2 full-length shape
-    252: "REPLACEMENT-REQUIRED: the SUBSET shape is now written but not asserted post-write",
+    252: "cstat_data_only_readback.assert_subsample_geometry",
     253: "train_fullevent_replica.replica_atomic_data_only write-time restriction assertion",
-    255: "REPLACEMENT-REQUIRED: bkg_indices is now written but its ordering is not asserted post-write",
+    255: "cstat_data_only_readback.assert_subsample_geometry",
     257: "cstat_data_only.assert_data_only_streams",              # P3 full-length shape
-    262: "REPLACEMENT-REQUIRED-BY-DESIGN: must assert the digests DIFFER, not match (BEN-407)",
-    263: "REPLACEMENT-REQUIRED-BY-DESIGN: must assert the digests DIFFER, not match (BEN-407)",
-    265: "REPLACEMENT-REQUIRED-BY-DESIGN: must assert the digests DIFFER, not match (BEN-407)",
-    267: "REPLACEMENT-REQUIRED-BY-DESIGN: must assert the digests DIFFER, not match (BEN-407)",
+    # CLOSED. The replacement asserts INEQUALITY on the MC legs -- the positive form of "left
+    # unthinned" -- and EQUALITY on the shared data leg, so it is not a blanket inversion. Called from
+    # BOTH readers, one home, and it refuses the degenerate case where a canonical digest equals the
+    # unity digest, because there no inequality can distinguish "left unthinned" from "nothing to thin".
+    262: "cstat_data_only.assert_unthinned_mc_evidence",
+    263: "cstat_data_only.assert_unthinned_mc_evidence",
+    265: "cstat_data_only.assert_unthinned_mc_evidence",
+    267: "cstat_data_only.assert_unthinned_mc_evidence",
     272: "extract_fullevent_replica.factor_meta data-only branch comparison",
     275: "validate_data_only_artifact replica_target_sha256 check",
     276: "REPLACEMENT-REQUIRED: the target RECEIPT sha is not re-compared post-write",
@@ -164,9 +168,9 @@ UNEXECUTED = {
     295: "REPLACEMENT-REQUIRED: fit count is not read data-only-side",
     298: "REPLACEMENT-REQUIRED: fit iterations are not read data-only-side",
     300: "REPLACEMENT-REQUIRED: fit learning rates are not read data-only-side",
-    304: "REPLACEMENT-REQUIRED: weights_push shape is not asserted data-only-side",
-    305: "REPLACEMENT-REQUIRED: weights_push finiteness is not asserted data-only-side",
-    306: "REPLACEMENT-REQUIRED: weights_push non-negativity is not asserted data-only-side",
+    304: "cstat_data_only_readback.assert_weights_push_sane",
+    305: "cstat_data_only_readback.assert_weights_push_sane",
+    306: "cstat_data_only_readback.assert_weights_push_sane",
     315: "REPLACEMENT-REQUIRED: checkpoint semantics are not read data-only-side",
     318: "REPLACEMENT-REQUIRED: the inference contract is not re-read data-only-side",
     320: "REPLACEMENT-REQUIRED: checkpoint existence is not asserted data-only-side",
@@ -277,7 +281,8 @@ def main():
     # Every module a replacement may be cited from, read as text. A citation that names a symbol none
     # of these contains is an error here rather than a promise in a document.
     sources = "\n".join(p.read_text() for p in (
-        PREDICATES, TRAIN_DRIVER, REPO / "nd-unfolding/pet/extract_fullevent_replica.py"))
+        PREDICATES, TRAIN_DRIVER, REPO / "nd-unfolding/pet/extract_fullevent_replica.py",
+        REPO / "nd-unfolding/pet/cstat_data_only_readback.py"))
     unresolved = []
     for line, repl in sorted(UNEXECUTED.items()):
         if repl.startswith("REPLACEMENT-REQUIRED"):
@@ -298,6 +303,12 @@ def main():
                         "coherent validator is correct; if that one is wrong, this propagates the "
                         "error with a green light.",
         "written_before_the_wrapper_exists": True,
+        "what_the_ordering_assertion_protects": (
+            "The PREDICTIONS -- bucket 3's got/want -- which are frozen at the sha that committed them. "
+            "It does NOT and cannot freeze the replacement BOOKKEEPING, which is meant to track work as "
+            "predicates land, so `covered`/`REPLACEMENT_REQUIRED` move between regenerations by design. "
+            "Said explicitly because the two live in the same JSON and an assertion that appears to "
+            "freeze more than it does is worse than one that freezes less and says so."),
         "written_before_assertion": [str(f.relative_to(REPO)) for f in FORBIDDEN_YET],
         "pinned_module": {
             "path": str(PINNED.relative_to(REPO)),

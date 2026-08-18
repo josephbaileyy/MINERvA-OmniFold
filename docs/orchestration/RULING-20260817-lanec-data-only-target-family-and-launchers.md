@@ -348,6 +348,122 @@ correct data-only artifact from a corrupted one there.**
 > **`V1` made DIVERGENCE unrepresentable by delegation; the partition-sums-to-77 makes OMISSION unrepresentable
 > by ACCOUNTING.** That is the property worth keeping, and it survives dropping the wrapper claim.
 
+#### ⚠ FOUR CORRECTIONS FROM E'S BUILD (`81ca448e`), ALL ACCEPTED — and one blessed with a condition
+
+**① `V1` COULD NEVER HAVE HELD, AND NOT FOR THE REASON ANY OF US GAVE.** `validate_gate5_training_artifacts.py:27`
+is `ARRAY_JOB_ID = "56857233"`, with `:337` building the log path from it and `:365` filtering `sacct` on it.
+**So `receipt_array_job` and `receipt_runtime_head` fail for ANY other array — a three-stream re-run included.
+The module cannot validate any run but the one it names, and the data-only gap was never the main obstacle to
+delegation.**
+
+**And the generalisation is REAL BUT NARROWER than "presumably exists in other `EXPECTED_*` modules" — measured:**
+
+| pin kind | count | reading |
+|---|---|---|
+| **run-id pinned** (`ARRAY`/`JOB` = a 7-9 digit literal) | **3** — `validate_gate5_training_artifacts.py`, `sbatch_finalize_annealed_shape_validation.sh`, `state/_audit_gate3_source.py` | **only the first is a DEFECT**; the other two are single-purpose scripts where naming one run is correct |
+| **`EXPECTED_HEAD`/`EXPECTED_CODE`** | **10**, including `reconcile_gate5_family.py` | pinned to a **CODE STATE**, not a run — legitimately reusable, it says *"the same code produced these"* |
+
+> **`reconcile_gate5_family.py` has NO run-id pin — confirmed. So the OTHER pinned reader in this ruling is
+> untouched by ①, and sweeping it in under *"other `EXPECTED_*` modules"* would have been wrong.**
+>
+> **THE DISTINGUISHING PROPERTY: a pin naming a CODE STATE is reusable across runs; a pin naming a RUN is not.
+> And the defect is a NAME/SCOPE MISMATCH rather than hardcoding per se — a module whose NAME claims a
+> POPULATION (`_family_`) while its constants name an INSTANCE (`ARRAY_JOB_ID`) is mis-scoped, and the mismatch
+> is visible in the filename.** Mechanically checkable: any `*_family_*.py` carrying a hardcoded run id.
+
+**①b MY PROPOSED MECHANICAL CHECK CANNOT FIRE ON THE DEFECT IT WAS WRITTEN FOR.** Verified by the mediator:
+`git ls-files | grep -E '[^/]*_family_[^/]*\.py$'` matches **one test file** and **`validate_gate5_training_artifacts.py`
+is not in that glob at all** — because the population-claiming name-shape there is the plural **`_artifacts`**,
+not the word `family`.
+
+> **I derived a lexical check from the ONE instance I had, and the instance's name did not contain the word I
+> keyed on.** `BEN-235`'s class arriving in a *proposed* check rather than a run one. **Third time today a
+> check of mine needed its discriminator repaired.**
+>
+> **ADOPT E's RULE, which is structural rather than lexical and does not depend on anyone's filename
+> discipline: a module-level run-id literal used as an EQUALITY OPERAND inside a function taking a member
+> index.** That is exactly what separates a mis-scoped population validator from a legitimately single-purpose
+> script.
+
+**AND MY CENSUS WAS TWO SHORT WITH ONE FALSE POSITIVE — the conclusion survived, the population did not.**
+E read the files where I grepped: **5 genuine pins, 1 defect**, against my 3. **My regex required line-start, a
+quoted literal, and 7–9 digits — so it missed `PREDECESSOR_JOB` and `JID` on naming, and would have missed a
+bare int.** I reported a pattern's output as a population. *(And E's own `NGLOBAL = 32849103` false positive is
+the mirror error — a pattern matching a number that merely looks like a job id. **An 8-digit integer is not a
+type, and *"job id"* is not a lexical category: grep over-matches and under-matches, and only reading resolves
+both.**)*
+
+> **THE DISTINCTION IS THE MEDIATOR'S AND IT IS THE REUSABLE PART: a census good enough to RULE with is not
+> automatically good enough to MECHANISE.** My `3` reached the right conclusion — one defect — over a population
+> two short. **Fine for the ruling; not fine for the check that was going to be built on it.**
+
+**What survives, verified by AST rather than by my grep: `reconcile_gate5_family.py` carries no run-id pin.** So
+the other pinned reader in this ruling is genuinely untouched, and *"presumably other `EXPECTED_*` modules"*
+would have swept it in wrongly.
+
+**②** **MY FOUR-BUCKET SPEC WAS INTERNALLY INCONSISTENT AND E IS RIGHT TO SPLIT IT.** *"All 77 land in exactly one
+of four buckets"* and *"the four counts sum to 77"* cannot both hold, because **`ADDITIONAL` is DEFINED as
+assertions no pinned site performs — so its members are not pinned sites and cannot partition them. The
+bucket's defining property contradicts its membership in the partition.** That is my error and it is exactly
+the kind a count would have caught, which is what the count is for.
+
+**And E's reason for keeping it outside beats the arithmetic, so I adopt E's: a total its author can raise is
+not a floor.** Folding `ADDITIONAL` in would let the author lift the number by writing more assertions — **the
+exact property the accounting exists to deny.** So: **buckets 1–3 partition the 77; `ADDITIONAL` is published
+BESIDE the sum.** Realised: `18 DELEGATED + 55 UNEXECUTED-BY-CONSTRUCTION + 4 MANIFEST = 77`, `ADDITIONAL: 9`
+alongside, 42 of the 55 still `REPLACEMENT-REQUIRED`.
+
+**③ `V2`'s RUN-BOUND DEFERRAL — BLESSED, WITH ONE CONDITION.** E is right that a job id does not exist until
+`sbatch` returns, and right that the ordering requirement is ***"before the ARTIFACT exists"*, not *"before the
+RUN is submitted"***: `BEN-403`'s property is that the prediction must not be read off the observation it
+explains, and a job id recorded between `sbatch` and the first task's write **is not read off a finished
+product.** The anti-tautology property survives.
+
+> **CONDITION AS BUILT (`c9301394`, 8 controls) — three operand choices carry the whole content and each is
+> right for a stated reason:**
+>
+> - **`min()` not mean.** **One artifact older than the commit falsifies the claim even if the other 49 came
+>   after**, because the predictions could have been read off *that one*. `BEN-403`'s property exactly: a single
+>   pre-existing observation is enough to have contaminated a prediction.
+> - **`%ct` not `%at`.** An author date is settable with `git commit --date`, **so it is an operand the party
+>   being checked controls.** Same principle as *a total its author can raise is not a floor*, on a different
+>   field — **and it generalises: ANY OPERAND THE PARTY BEING CHECKED CAN SET IS NOT AN OPERAND.**
+> - **An empty family REFUSED**, because *"no artifact was written before the commit"* is trivially true of a
+>   family with none. The vacuity class, third instance, pre-empted rather than filed.
+>
+> **And two devices worth naming, both E's to file rather than mine:** the receipt **states what it does NOT
+> establish** — mutable mtimes, clock skew — **with a control asserting that sentence is PRESENT**, which
+> pre-empts `BEN-392`'s transport failure at the source rather than downstream; and E chose **defect-location
+> assertions over an exemption list**, deliberately asymmetric — **an exemption list DECAYS** (`KNOWN_PREEXISTING`'s
+> 2026-07-28 cutoff, `BEN-406`) **while a defect-location assertion is SELF-MAINTAINING: it fails exactly when
+> the citation it protects becomes wrong, so its failure mode is *"your finding's citations are stale"* rather
+> than *"add me to a list."* That inverts the maintenance burden.**
+
+> ~~**CONDITION, so it is a check rather than a promise — E's own device applied to its own deferral: the
+> manifest's run-bound entries must be committed at a sha whose commit time PRECEDES the first task's artifact
+> mtime, and that ordering must be ASSERTED after the fact from git + the artifact.** E already refuses to run
+> if either wrapper module pre-exists, with a control that creates one and confirms the refusal. **Same device,
+> same reason: *"before the artifact exists"* is checkable, and unchecked it is a promise.**
+
+**④ AND E CORRECTED MY OWN `ADDITIONAL` ENTRY, WHICH WAS DEFECTIVE IN THE WAY IT WAS MEANT TO CATCH.** My
+cross-block check — *target-receipt loader digest equals training-artifact loader digest* — **PASSES IF BOTH
+DRIFT TOGETHER, which is precisely what two staggered deployments produce.** E anchored it on the coherent
+campaign's `EXPECTED_CODE["loader"]` instead — **a constant from a different campaign that this product cannot
+move** — and verified the constant equals the current loader's digest **so the control is not testing a
+fiction.**
+
+> **That is `R5`'s independence-of-routes on my own assertion: I compared two values the same drift moves; E
+> compares against a fixed external anchor.** Fifth time today a check of mine needed its second route named.
+>
+> **And E's bonus narrows the bucket: `receipt_code_sha256[loader]` already pins the TRAINING side, so only the
+> TARGET side is genuinely uncovered.** Smaller and better-founded than either of us stated.
+
+**On how it was built, which is why the count is trustable: the buckets are derived by walking the pinned
+module's AST rather than typed; the generator FAILS if they do not sum to the module's own count, if an
+unexecuted site is unclassified, or if a cited replacement names a symbol existing nowhere — and that last
+fired immediately and caught one of E's own citations.** A generator that catches its author on first run is
+the only kind whose output I would take at face value.
+
 #### A FOURTH BUCKET — `ADDITIONAL` — because the three-bucket partition has no home for the check worth adding
 
 **Prompted by a real gap the mediator surfaced.** `loader` is graded in **both** invariant blocks —
@@ -431,10 +547,36 @@ deleted rather than satisfied."* **That condition is correct — and a target st
    ones — `BEN-023`'s shape, a guard validating existence rather than completeness. **Two routes exist (a fresh
    root per `L1`'s disjoint-root logic, or explicit removal of the old); I am NOT choosing between them and I do
    not authorize any deletion on scratch.** Stating the requirement, not the disposal.
-3. **Unit disclosure, per standing practice: CPU on `shared_milan_ss11`, OUTSIDE Joseph's `151 A100-h` grant.
-   ~46.5 CPU node-hours total (50 × 0.93), of which ~15 is RE-WORK** (the 16 built or running). **The re-work
-   figure is the one that should travel, because *"34 of 50 unstarted"* is true and reads as though nothing is
-   being spent twice.**
+3. **Unit disclosure, per standing practice: CPU on `shared_milan_ss11`, OUTSIDE Joseph's `151 A100-h` grant.**
+   ~~**~46.5 CPU node-hours total (50 × 0.93), of which ~15 is RE-WORK**~~
+
+   > **⚠ MY FIGURE IS WRONG AND IT IS OVER THE SAME POPULATION, so there is nothing to reconcile — one number
+   > is simply better.** Asked what population `~46.5` covered: **the 50 target tasks. Exactly E's population.**
+   > So the two are estimates of one quantity and mine is the stale one.
+   >
+   > **The operands, since I stated them and that is what made this catchable:** `0.93` node-h/task came from
+   > `PREDECLARATION-20260813`'s measured job **`56344268`** at `00:55:32`. **E measured the array that is
+   > actually running** — `57194054_0..15` all `COMPLETED`, `41:37`–`48:19` — which is **`1.293×` faster per
+   > task.** So `50 × 0.93 = 46.28` is a 2026-08-18 rebuild priced off a 2026-08-13 measurement of a
+   > **different job**, and I did not say so.
+   >
+   > **This is my own named failure: a number true at its own scope, quoted at another. Re-derive from the
+   > stated operands before spending — which is exactly what E did, to my number, and it did not survive.**
+   >
+   > **CORRECTED: use E's measurement.** `~35.8 CPU node-hours` for 50, and **re-work `16 × 0.716 = ~11.5`**,
+   > not `~15`.
+   >
+   > **One caveat on E's number, offered so it travels better rather than as a defence of mine: `35.8` implies
+   > `43.0 min/task`, which is near the LOW end of E's own measured range.** The range over 50 is
+   > **`34.7`–`40.3` node-hours** (`41:37`→`34.68`, `48:19`→`40.26`). **So it should travel as a range, or with
+   > its statistic named** — mean, median, or slowest — because a point estimate at the edge of its own spread
+   > invites the same question I have just been asked.
+   >
+   > **And the earlier `~20 min` figures were read off RUNNING tasks and were low by `2.8×`** — E's catch, and
+   > the same class as this one: an elapsed time on an unfinished task is not that task's cost.
+
+   **The re-work figure is still the one that should travel, because *"34 of 50 unstarted"* is true and reads as
+   though nothing is being spent twice.**
 
 **My key: CONCUR — rebuild, migration refused.** *(D authored the migration route and has first refusal on E's
 objection; this is one of the two concurrences, not the decision.)*

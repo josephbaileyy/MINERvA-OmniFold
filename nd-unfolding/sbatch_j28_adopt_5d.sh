@@ -89,7 +89,7 @@ done
 echo "[stage] union has $(ls ${UNION} | wc -l) slabs (expect 40)"
 
 # --- 3. combine the full corrected 160 ------------------------------------------------------------
-python3 unified_throw_cov_5d.py \
+python3 unified_throw_cov_5d.py --draw-seed 1000 --estimator-seed 1000 \
   --combine "${UNION}/uthrow5d_slab_*.npz" \
   --expected-throws 0-159 \
   --block-slabs "${RESCALED}/block5d_*.npz" \

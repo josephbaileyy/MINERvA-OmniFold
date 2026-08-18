@@ -17,6 +17,6 @@ OFF=$(( SLURM_ARRAY_TASK_ID * 8 ))
 # (spline overshoot) + one MFP_N zero. Hold them at CV (ratio=1) for the
 # affected knob -- the established prior handling (old _clip did this silently),
 # now explicitly logged. Negligible for the covariance.
-python3 unified_throw_cov_5d.py --throws 8 --throw-offset ${OFF} --seed 1000 \
+python3 unified_throw_cov_5d.py --throws 8 --throw-offset ${OFF} --draw-seed 1000 --estimator-seed 1000 \
   --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral \
   --out "uq_5d/uthrow_slabs_5d/uthrow5d_slab_${SLURM_ARRAY_TASK_ID}.npz"

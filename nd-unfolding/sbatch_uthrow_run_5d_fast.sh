@@ -18,6 +18,6 @@ export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=32 MKL_NUM_THREADS=2 OPENBLAS_NUM_THRE
        NUMEXPR_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2
 cd "${REPO}/nd-unfolding"; mkdir -p uq_5d/uthrow_slabs_5d_sb
 OFF=$(( SLURM_ARRAY_TASK_ID * 4 ))
-python3 unified_throw_cov_5d.py --throws 4 --throw-offset ${OFF} --seed 1000 \
+python3 unified_throw_cov_5d.py --throws 4 --throw-offset ${OFF} --draw-seed 1000 --estimator-seed 1000 \
   --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral \
   --out "uq_5d/uthrow_slabs_5d_sb/uthrow5d_slab_${SLURM_ARRAY_TASK_ID}.npz"

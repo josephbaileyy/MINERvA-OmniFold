@@ -19,7 +19,7 @@ NSLAB=$(ls uq_fps/corrected/uthrow_slabs_fps_neutral/uthrowfps_slab_*.npz 2>/dev
 NBLK=$(ls uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_*.npz 2>/dev/null | wc -l)
 [[ ${NSLAB} -eq 40 && ${NBLK} -eq 26 ]] || { echo "[FAIL] slabs=${NSLAB} (!=40) or blocks=${NBLK} (!=26)"; exit 2; }
 echo "[combfpsC] start slabs=${NSLAB} blocks=${NBLK} $(date -u '+%F %T UTC')"
-python3 unified_throw_cov.py \
+python3 unified_throw_cov.py --draw-seed 1000 --estimator-seed 1000 \
     --combine 'uq_fps/corrected/uthrow_slabs_fps_neutral/uthrowfps_slab_*.npz' \
     --expected-throws 0-159 \
     --block-slabs 'uq_fps/corrected/uthrow_slabs_fps_neutral/blockfps_*.npz' \

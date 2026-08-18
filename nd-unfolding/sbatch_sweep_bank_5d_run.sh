@@ -12,6 +12,6 @@ REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_en
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"
 U=$(sed -n "${SLURM_ARRAY_TASK_ID}p" uq_4d/vertical_universes.txt)
 [[ -z "$U" ]] && exit 0
-python3 sweep_bank_5d.py --run --universe "$U" \
+python3 sweep_bank_5d.py --run --estimator-seed 42 --universe "$U" \
   --bankdir "${REPO}/nd-unfolding/bank_sweep_5d" \
   --outdir "${REPO}/nd-unfolding/uq_5d/universe_sweep" --iters 5
