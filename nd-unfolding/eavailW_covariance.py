@@ -50,6 +50,72 @@ def _th2(h):
     return b[1:ny + 1, 1:nx + 1].T.copy()
 
 
+def ew_coverage_report(Mew):
+    """The (Eavail,W) rows that no reported 5D bin reaches, and how many there are.
+
+    ONE SOURCE for the value, which is the point: before 2026-08-18 this expression lived inline
+    beside a `print` and the number existed only in stdout. Both the warning and the ROOT write now
+    read it from here, so a propagation test has something to bind to.
+
+    An empty row means `M C M^T` gives that bin an exactly zero row and column -- a reported bin
+    with zero statistical uncertainty, which reads downstream as infinite precision rather than as
+    missing data. NOT fail-closed: the (Eavail,W) plane is kinematically constrained, so an empty
+    row can be physically legitimate.
+    """
+    idx = np.nonzero(~Mew.any(axis=1))[0]
+    return idx, int(idx.size)
+
+
+def write_ew_outputs(path, mats, n, data_hist, ew_unsupported):
+    """Write the covariances, the data histogram, and THE COVERAGE RESULT.
+
+    SPLIT OUT OF `main()` so the propagation can be tested. It could not be before: the value was
+    computed in `main`, printed, and the write block took no argument carrying it, so no test could
+    observe whether it travelled. `BEN-450` is exactly that -- detection without propagation, and a
+    static test that still passes when both prints are deleted.
+
+    `ew_unsupported` is `(indices, count)` from `ew_coverage_report`.
+
+    THE COUNT IS WRITTEN UNCONDITIONALLY, INCLUDING ZERO, on `unified_throw_cov.py`'s null-as-absent
+    precedent (same quarantine, closed the same date): a build that skips the write when the count is
+    zero is INDISTINGUISHABLE from a build that never checked, and a downstream criterion phrased as
+    "the unsupported count is not large" passes vacuously on it. `ew_coverage_checked` is written
+    beside it for the same reason one layer up -- so "this product predates the check" is a readable
+    state rather than an inference from a missing key.
+    """
+    import ROOT
+    idx, count = ew_unsupported
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    fo = ROOT.TFile.Open(path, "RECREATE")
+    def wr_th2(name, C):
+        h = ROOT.TH2D(name, name, n, 0, n, n, 0, n)
+        for i in range(n):
+            for j in range(n):
+                h.SetBinContent(i + 1, j + 1, C[i, j])
+        h.Write()
+    for nm, C in mats:
+        wr_th2(nm, C)
+    n_ea, n_w, ea_e, w_e, y2 = data_hist
+    hd = ROOT.TH2D("hData_ew", "data d2sigma/(dEavail dW)", n_ea, ea_e, n_w, w_e)
+    for ie_ in range(n_ea):
+        for iw_ in range(n_w):
+            hd.SetBinContent(ie_ + 1, iw_ + 1, y2[ie_, iw_])
+    hd.Write()
+    # ---- the coverage result, in the artifact rather than in stdout ----
+    ROOT.TParameter("int")("ew_coverage_checked", 1).Write()
+    ROOT.TParameter("int")("n_ew_unsupported", count).Write()
+    # The SET, not just the count: a consumer excluding unsupported bins from a chi2 needs to know
+    # WHICH. Bin i of this mask is 1 iff covariance row i is unsupported, so it is index-aligned to
+    # C_stat/C_total and needs no separate convention to interpret.
+    hmask = ROOT.TH1I("hEwUnsupportedMask", "1 = (Eavail,W) bin has no reported 5D support",
+                      n, 0, n)
+    for i in idx:
+        hmask.SetBinContent(int(i) + 1, 1)
+    hmask.Write()
+    fo.Close()
+    return count
+
+
 def main():
     import ROOT
     from scipy import stats
@@ -346,7 +412,7 @@ def main():
     # cannot be. Aborting would make a legitimate geometry unrunnable. So: count it, name it, and put
     # it in the output, because the failure this prevents is not "the code ran" but "nobody could tell
     # the bin had no support".
-    _ew_empty = np.nonzero(~Mew.any(axis=1))[0]
+    _ew_empty, _n_ew_empty = ew_coverage_report(Mew)
     print(f"[stat] (Eavail,W) cells receiving NO reported 5D bin: {_ew_empty.size} of {n}"
           + (f"  -> flat indices {[int(i) for i in _ew_empty[:12]]}"
              f"{' ...' if _ew_empty.size > 12 else ''}" if _ew_empty.size else ""))
@@ -490,23 +556,16 @@ def main():
         print(f"   {tag:12s} {c_all:9.1f}/{n:<5d} {z_all:6.2f} | {c_c:10.1f}/{cidx.size:<5d} {z_c:6.2f}")
 
     # ---------- write ----------
-    os.makedirs(os.path.dirname(args.out), exist_ok=True)
-    fo = ROOT.TFile.Open(args.out, "RECREATE")
-    def wr_th2(name, C):
-        h = ROOT.TH2D(name, name, n, 0, n, n, 0, n)
-        for i in range(n):
-            for j in range(n):
-                h.SetBinContent(i + 1, j + 1, C[i, j])
-        h.Write()
-    for nm, C in [("C_syst", C_syst), ("C_stat", C_stat), ("C_lateral", C_lateral), ("C_total", C_total)]:
-        wr_th2(nm, C)
-    hd = ROOT.TH2D("hData_ew", "data d2sigma/(dEavail dW)", n_ea, ea_e, n_w, w_e)
-    for ie_ in range(n_ea):
-        for iw_ in range(n_w):
-            hd.SetBinContent(ie_ + 1, iw_ + 1, y2[ie_, iw_])
-    hd.Write()
-    fo.Close()
-    print(f"\n[ew] wrote {args.out}")
+    # The coverage result travels WITH the covariance now (BEN-450). Before 2026-08-18 the guard's
+    # own comment promised three verbs -- count it, name it, and put it in the output -- and only
+    # the first two happened, in a `print`, on a filesystem where stdout block-buffers at 4 MiB.
+    n_unsup = write_ew_outputs(
+        args.out,
+        [("C_syst", C_syst), ("C_stat", C_stat), ("C_lateral", C_lateral), ("C_total", C_total)],
+        n,
+        (n_ea, n_w, ea_e, w_e, y2),
+        (_ew_empty, _n_ew_empty))
+    print(f"\n[ew] wrote {args.out}  (n_ew_unsupported={n_unsup}, written unconditionally)")
 
 
 if __name__ == "__main__":

@@ -620,6 +620,37 @@ class Cause6ProjectionCoverageTests(unittest.TestCase):
         rest = tail.split("\n    fs = ROOT.TFile.Open(args.stat5d)", 1)
         self.assertEqual(len(rest), 2, "guard block no longer ends where this test expects")
         prefix_src = head + "    fs = ROOT.TFile.Open(args.stat5d)" + rest[1]
+        # THE EXCISION NOW HAS TWO REGIONS, and that is a consequence of the BEN-450 repair rather
+        # than a weakening of this test. Until 2026-08-18 the guard's value existed ONLY inside the
+        # guard block, so removing that block removed every trace of it and this reconstruction was
+        # a faithful pre-fix source. Propagation puts the value in a SECOND place by design -- the
+        # `write_ew_outputs(...)` call -- so excising only the guard leaves `_ew_empty` behind and
+        # this assertion failed for a correct reason. The pre-fix source is now guard-block-removed
+        # AND propagation-removed; asserting only on the first would quietly stop being a power test
+        # the moment the value travelled anywhere.
+        # SUBSTITUTE the propagated argument rather than DELETING its line: it sits inside a
+        # multi-line call, so dropping the line leaves an unclosed paren and this test then fails
+        # on a SyntaxError -- the reconstruction failing for the wrong reason, which the
+        # `ast.parse` below exists to catch and did.
+        prefix_src = prefix_src.replace(
+            "        (_ew_empty, _n_ew_empty))",
+            "        (np.array([], dtype=int), 0))")
+        # THIRD REGION: the computation itself now lives in the `ew_coverage_report` HELPER, above
+        # `main()` and therefore outside a marker-based excision of the guard block. That is the
+        # single-source property the repair wanted, and it means a pre-fix reconstruction must drop
+        # the helper too. Worth stating rather than patching silently: THIS TEST'S EXCISION MODEL
+        # ASSUMED THE GUARDED LOGIC WAS TEXTUALLY CONTIGUOUS, and refactoring for testability is
+        # exactly what breaks that assumption -- so a marker-based power test degrades quietly as
+        # the code it guards gets factored. It failed loudly here only because it asserts on two
+        # tokens rather than one.
+        lines = prefix_src.split("\n")
+        try:
+            a = next(i for i, ln in enumerate(lines) if ln.startswith("def ew_coverage_report("))
+            b = next(i for i, ln in enumerate(lines[a + 1:], a + 1)
+                     if ln.startswith("def ") or ln.startswith("class "))
+        except StopIteration:  # pragma: no cover - the helper must exist
+            self.fail("ew_coverage_report helper not found; this test can no longer locate it")
+        prefix_src = "\n".join(lines[:a] + lines[b:])
 
         self.assertNotIn("_ew_empty", prefix_src)
         self.assertNotIn("Mew.any(axis=1)", prefix_src)
@@ -884,6 +915,154 @@ def _import_module_at_rev(rev, path, name):
     except Exception:
         return None
     return mod
+
+
+class _RootRecorder:
+    """Minimal ROOT stub that RECORDS what a writer wrote.
+
+    Manufactured rather than mocked-away: ROOT is not installed on every checkout, so the only way
+    to test that a value reaches the FILE is to stand in for the file. Records TParameter names and
+    values, TH1/TH2 names, and per-bin contents of the mask.
+    """
+
+    def __init__(self):
+        self.params = {}
+        self.hists = {}
+        self.closed = False
+
+    class _Obj:
+        def __init__(self, rec, name):
+            self._rec, self._name = rec, name
+        def SetBinContent(self, *a):
+            self._rec.hists.setdefault(self._name, {})[tuple(a[:-1])] = a[-1]
+        def Write(self):
+            self._rec.hists.setdefault(self._name, {})
+
+    class _Param:
+        def __init__(self, rec, name, value):
+            self._rec, self._name, self._value = rec, name, value
+        def Write(self):
+            self._rec.params[self._name] = self._value
+
+    def TFile(self):  # pragma: no cover - shape only
+        raise AssertionError("use TFile.Open")
+
+    def TParameter(self, _type):
+        return lambda name, value: _RootRecorder._Param(self, name, value)
+
+    def TH2D(self, name, *a):
+        return _RootRecorder._Obj(self, name)
+
+    def TH1I(self, name, *a):
+        return _RootRecorder._Obj(self, name)
+
+    def TH1D(self, name, *a):
+        return _RootRecorder._Obj(self, name)
+
+
+class _StubbedRoot:
+    """Install a recorder as `ROOT` for the duration of a with-block."""
+
+    def __init__(self):
+        self.rec = _RootRecorder()
+
+    def __enter__(self):
+        import sys, types
+        mod = types.ModuleType("ROOT")
+        mod.TParameter = self.rec.TParameter
+        mod.TH2D = self.rec.TH2D
+        mod.TH1I = self.rec.TH1I
+        mod.TH1D = self.rec.TH1D
+        opened = types.SimpleNamespace(Close=lambda: setattr(self.rec, "closed", True))
+        mod.TFile = types.SimpleNamespace(Open=lambda *a, **k: opened)
+        self._saved = sys.modules.get("ROOT")
+        sys.modules["ROOT"] = mod
+        return self.rec
+
+    def __exit__(self, *exc):
+        import sys
+        if self._saved is None:
+            sys.modules.pop("ROOT", None)
+        else:
+            sys.modules["ROOT"] = self._saved
+        return False
+
+
+class Cause6CoverageGuardPropagates(unittest.TestCase):
+    """`BEN-450`: the guard DETECTED and did not PROPAGATE.
+
+    The pre-existing test was STATIC -- it asserted the empty-row set was computed and two strings
+    were present -- and lane D's observation is that deleting both `print`s leaves it green. So
+    these tests bind to the value reaching the FILE, and the last one is the MUTATION CONTROL that
+    proves they can fail.
+    """
+
+    def _call(self, empty_rows, n=4):
+        import eavailW_covariance as ew
+        mats = [(nm, np.zeros((n, n))) for nm in ("C_syst", "C_stat", "C_lateral", "C_total")]
+        data = (2, 2, np.array([0.0, 1.0, 2.0]), np.array([0.0, 1.0, 2.0]), np.zeros((2, 2)))
+        idx = np.asarray(empty_rows, dtype=int)
+        with tempfile.TemporaryDirectory() as td:
+            out = str(Path(td) / "sub" / "out.root")   # `sub` exercises the makedirs branch
+            with _StubbedRoot() as rec:
+                got = ew.write_ew_outputs(out, mats, n, data, (idx, int(idx.size)))
+        return rec, got
+
+    def test_the_helper_is_the_single_source_of_the_value(self):
+        import eavailW_covariance as ew
+        Mew = np.zeros((3, 2))
+        Mew[0, 0] = 1.0
+        idx, count = ew.ew_coverage_report(Mew)
+        np.testing.assert_array_equal(idx, [1, 2])
+        self.assertEqual(count, 2)
+        self.assertIsInstance(count, int, "the count must be a plain int to survive a ROOT write")
+
+    def test_count_AND_set_reach_the_file(self):
+        rec, got = self._call([1, 3], n=4)
+        self.assertEqual(got, 2)
+        self.assertIn("n_ew_unsupported", rec.params, "the count did not reach the artifact")
+        self.assertEqual(rec.params["n_ew_unsupported"], 2)
+        self.assertIn("hEwUnsupportedMask", rec.hists, "the SET did not reach the artifact")
+        mask = rec.hists["hEwUnsupportedMask"]
+        self.assertEqual({k[0] for k in mask}, {2, 4},
+                         "mask must be 1-indexed and index-aligned to the covariance rows")
+
+    def test_count_is_written_WHEN_ZERO(self):
+        """The half most likely to be dropped as pedantry, and the repo has paid for it once.
+
+        A build that skips the write on zero is indistinguishable from one that never checked, and
+        a downstream criterion phrased as "the unsupported count is not large" passes vacuously.
+        Same argument as `unified_throw_cov.py`'s `fixed_seed_null_checked`, same quarantine.
+        """
+        rec, got = self._call([], n=4)
+        self.assertEqual(got, 0)
+        self.assertIn("n_ew_unsupported", rec.params,
+                      "ZERO must still be written -- absence is indistinguishable from unchecked")
+        self.assertEqual(rec.params["n_ew_unsupported"], 0)
+        self.assertEqual(rec.params.get("ew_coverage_checked"), 1,
+                        "the checked flag makes 'this product predates the check' readable")
+        self.assertIn("hEwUnsupportedMask", rec.hists,
+                      "the mask is written even when empty, for the same reason as the count")
+
+    def test_MUTATION_removing_the_write_makes_these_tests_fail(self):
+        """POSITIVE CONTROL. Without this, the three tests above could be passing on a property
+        they do not actually constrain -- which is precisely `BEN-450`'s criticism of the static
+        test they replace: a positive control on a static test controls only the static property.
+        """
+        src = (ND / "eavailW_covariance.py").read_text()
+        needle = 'ROOT.TParameter("int")("n_ew_unsupported", count).Write()'
+        self.assertIn(needle, src, "the propagating line is not where the mutation expects it")
+        mutant_src = src.replace(needle, "pass  # MUTATED: propagation removed")
+        ns = {"__name__": "eavailW_mutant"}
+        exec(compile(mutant_src, "eavailW_mutant.py", "exec"), ns)
+        mats = [(nm, np.zeros((4, 4))) for nm in ("C_syst",)]
+        data = (2, 2, np.array([0.0, 1.0, 2.0]), np.array([0.0, 1.0, 2.0]), np.zeros((2, 2)))
+        with tempfile.TemporaryDirectory() as td:
+            out = str(Path(td) / "sub" / "out.root")
+            with _StubbedRoot() as rec:
+                ns["write_ew_outputs"](out, mats, 4, data, (np.array([1], dtype=int), 1))
+        self.assertNotIn("n_ew_unsupported", rec.params,
+                         "the mutation did not actually remove propagation, so the control is void")
 
 if __name__ == "__main__":
     unittest.main()
