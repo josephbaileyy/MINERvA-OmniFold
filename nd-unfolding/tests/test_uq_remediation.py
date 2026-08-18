@@ -1589,5 +1589,61 @@ class AnchorCoincidenceRead(unittest.TestCase):
                            "--throw-glob", str(Path(td) / "nope" / "*.npz")])
         self.assertEqual(rc, 2, "absent products must be a loud non-zero, not a clean zero")
 
+
+class DerivedTargetSet(unittest.TestCase):
+    """C's item 2: the target set is DERIVED, not listed -- and the derivation has a limit that
+    matters for how it is read."""
+
+    SIX = {"sbatch_sweep_bank_5d_run_bkgaware_gpu.sh", "sbatch_uthrow_run_5d_fast.sh",
+           "sbatch_uthrow_block_5d.sh", "sbatch_uthrow_combine_5d_fast.sh",
+           "sbatch_bootstrap_5d_gpu.sh", "sbatch_seedscan_split_5d.sh"}
+    SEVEN = SIX | {"sbatch_unfold_5d_detector_bkgaware_gpu.sh"}
+
+    def _root(self):
+        return str(ND.parent)
+
+    def test_the_lateral_leg_hard_FAILS_once_it_is_targeted(self):
+        import seed_offset_policy as sp
+        with self.assertRaises(SystemExit) as cm:
+            sp.assert_target_set_is_complete(self._root(), self.SEVEN)
+        self.assertIn("sbatch_unfold_5d_detector_bkgaware_gpu.sh", str(cm.exception))
+
+    def test_THE_LIMIT_the_failure_half_cannot_DISCOVER_an_undeclared_leg(self):
+        """THE RESULT WORTH REPORTING. With the pre-ruling SIX the predicate PASSES -- it hard-fails
+        only on launchers already declared targeted, so it cannot discover a leg nobody declared.
+
+        The discovery channel is the HAZARD half, which IS derived from code: the lateral appears
+        there under the six-set. So the predicate is a completeness check on the declared set plus a
+        discovery list beside it, and reading the pass alone would reproduce exactly the miss C's item
+        2 exists to prevent.
+        """
+        import seed_offset_policy as sp
+        r = sp.assert_target_set_is_complete(self._root(), self.SIX)
+        self.assertIn("nd-unfolding/sbatch_unfold_5d_detector_bkgaware_gpu.sh",
+                      r["substitution_hazards"],
+                      "the lateral must appear in the DISCOVERY half even when the failure half passes")
+
+    def test_the_hazard_list_discriminates_by_MODULE_not_by_name(self):
+        """`sbatch_fps_reunfold_5d*.sh` carry `--seed 1000` and are a DIFFERENT measurement -- they run
+        fps_gbdt_prior_reunfold_5d.py, not a leg module. Group mapping separates them from the six real
+        same-module variants, which is what 'a coherence group is the shared seed VALUE' requires."""
+        import seed_offset_policy as sp
+        hard, haz, scoped = sp.derive_seed_literal_sites(self._root(), self.SEVEN)
+        by = {r["file"].split("/")[-1]: r["groups"] for r in haz}
+        self.assertEqual(by.get("sbatch_fps_reunfold_5d.sh"), [],
+                         "a non-leg module must map to no coherence group")
+        self.assertEqual(by.get("sbatch_uthrow_run_5d.sh"), ["g2"])
+        self.assertEqual(by.get("sbatch_sweep_bank_5d_run.sh"), ["g1"])
+        self.assertGreater(scoped, 0, "the denominator must be measured, not assumed")
+
+    def test_it_refuses_a_pass_computed_over_zero_files(self):
+        import seed_offset_policy as sp
+        with tempfile.TemporaryDirectory() as td:
+            import subprocess
+            subprocess.run(["git", "-C", td, "init", "-q"], check=True, capture_output=True)
+            with self.assertRaises(SystemExit) as cm:
+                sp.assert_target_set_is_complete(td, self.SEVEN)
+            self.assertIn("ZERO files", str(cm.exception))
+
 if __name__ == "__main__":
     unittest.main()

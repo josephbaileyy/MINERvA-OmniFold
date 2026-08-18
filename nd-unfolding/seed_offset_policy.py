@@ -61,6 +61,7 @@ from __future__ import annotations
 
 import itertools
 import os
+import re
 
 
 def forbidden_differences(baselines):
@@ -369,3 +370,87 @@ def assert_offsets_are_clean(offsets, baselines=None, ranges=None, allowlist=Non
                      "estimator and draw seeds coinciding. Both are required.")
         raise SystemExit("\n".join(lines))
     return checked
+
+
+# ---------------------------------------------------------------------------------------------------
+# C's ITEM 2: THE TARGET SET IS DERIVED, NOT LISTED.
+#
+# The lateral leg was missed because the plan enumerated HOOKED LAUNCHERS while a coherence group is
+# defined by the SHARED SEED VALUE. A hand list was wrong by one leg in seven, so the list is retired.
+#
+# BUT THE DERIVED PREDICATE RETURNS A BIGGER ANSWER THAN SEVEN, AND THE EXTRA MEMBERS ARE A SECOND
+# HAZARD RATHER THAN NOISE -- measured 2026-08-18 over 48 5D-scoped shell files: the seventh leg C
+# named, PLUS NINE UNHOOKED VARIANTS OF THE SAME MODULES (`_fast`/non-`_fast`, `bkgaware`/plain,
+# packed-loop, adopt). Those nine are not launchers the plan invokes; they are launchers someone could
+# invoke INSTEAD of a hooked one and get baseline silently. So the predicate reports two classes and
+# does not collapse them:
+#
+#   TARGETED and unhooked          -> HARD FAILURE. The plan invokes it; the offset would not reach it.
+#   SAME-MODULE VARIANT, unhooked  -> SUBSTITUTION HAZARD. Naming it is the point; whether it must be
+#                                     hooked or explicitly fenced is a specification call, not mine.
+#
+# SCOPE IS DERIVED TOO, from 5D artifact references rather than filenames, because "is this a 5D
+# launcher" answered by name is the same defect one level up.
+_FIVE_D = re.compile(r'(of_inputs_5d\.npz|uq_5d/|bank_uthrow_5d|bank_sweep_5d|_5d\.py|boot_nd_5d'
+                     r'|seedscan_split_5d)')
+_SEED_LITERAL = re.compile(r'--(?:estimator-)?seed\s+(42|1000)\b')
+#: module basename -> the coherence group it belongs to, so a VARIANT is recognised by what it RUNS.
+_LEG_MODULES = {
+    "sweep_bank_5d.py": "g1",
+    "bootstrap_nd.py": "g1",
+    "seedscan_split.py": "g1",
+    "unfold_nd_omnifold_unbinned.py": "g1",     # the lateral leg, item 7 ruling (a)
+    "unified_throw_cov_5d.py": "g2",
+    "unified_throw_cov.py": "g2",
+}
+
+
+def derive_seed_literal_sites(repo_root, targeted):
+    """Every 5D-scoped shell file carrying an unhooked `42`/`1000` seed literal, split into the two
+    classes above. `targeted` is the set of launchers the plan actually invokes.
+
+    Returns `(hard_failures, substitution_hazards, n_scoped)`; the third is the denominator, so a
+    caller can refuse a pass computed over nothing.
+    """
+    import subprocess
+    listed = subprocess.run(["git", "-C", repo_root, "ls-files", "*.sh", "**/*.sh"],
+                            capture_output=True, text=True).stdout.split()
+    hard, haz, scoped = [], [], 0
+    for rel in sorted(set(listed)):
+        full = os.path.join(repo_root, rel)
+        if not os.path.exists(full):
+            continue
+        with open(full, encoding="utf-8", errors="replace") as fh:
+            text = fh.read()
+        body = "\n".join(l for l in text.split("\n") if not l.lstrip().startswith("#"))
+        if not _FIVE_D.search(body):
+            continue
+        scoped += 1
+        lits = [(i, l.strip()) for i, l in enumerate(body.split("\n"), 1) if _SEED_LITERAL.search(l)]
+        if not lits or OFFSET_ENV in text:
+            continue
+        base = os.path.basename(rel)
+        groups = sorted({g for m, g in _LEG_MODULES.items() if m in body})
+        row = {"file": rel, "sites": lits, "groups": groups}
+        (hard if base in targeted else haz).append(row)
+    return hard, haz, scoped
+
+
+def assert_target_set_is_complete(repo_root, targeted):
+    """FAIL CLOSED if any TARGETED launcher carries an unhooked seed literal. Hazards are returned,
+    not raised -- they are a specification question and raising on them would make this module
+    unusable until someone else's decision lands, which is how a check gets switched off."""
+    hard, haz, scoped = derive_seed_literal_sites(repo_root, set(targeted))
+    if scoped == 0:
+        raise SystemExit("[FAIL] no 5D-scoped shell files found; the derived target set was computed "
+                         "over ZERO files and a clean result means the walk did not run")
+    if hard:
+        lines = [f"[FAIL] {len(hard)} TARGETED launcher(s) carry an unhooked 42/1000 seed literal, so "
+                 f"the offset would not reach them and those legs would run at baseline for every k:"]
+        for r in hard:
+            lines.append(f"        {r['file']}  groups={r['groups'] or ['?']}")
+            for ln, txt in r["sites"][:3]:
+                lines.append(f"            :{ln}  {txt[:88]}")
+        raise SystemExit("\n".join(lines))
+    return {"scoped_files": scoped, "targeted_clean": len(targeted),
+            "substitution_hazards": [r["file"] for r in haz]}
