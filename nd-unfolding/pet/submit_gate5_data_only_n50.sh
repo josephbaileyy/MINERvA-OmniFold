@@ -132,6 +132,20 @@ case "$PARENT_REAL" in
   *fullevent_cstat_n50*) die "L1 output root's parent RESOLVES into the three-stream family: $PARENT_REAL" ;;
 esac
 
+# === CAN THE JOB BECOME ITS ENVIRONMENT? ADDED BECAUSE EVERY GUARD ABOVE ASKED A DIFFERENT QUESTION. ===
+#
+# 57232522 died 50/50 in 7-11 seconds with an EMPTY `.out`, on the first line of the environment activation,
+# after a pre-submit dry run that went green through every check above INCLUDING the full 9.9 GB input
+# sha256. All of those inspect the DATA ROOT'S CONTENTS; none resolves what the activator sources. The
+# guards answered "are the inputs right?" and the job died on "can I become the environment that reads
+# them?"
+#
+# The activator computes SCRIPT_DIR from its OWN location, so symlinking it into a bare data root makes it
+# look for software trees that root does not contain -- and the reference list is THREE long, so fixing the
+# one path that appeared in the .err would have failed again at the next.
+"${CODE_ROOT}/nd-unfolding/pet/check_activator_paths.sh" "$DATA_ROOT" \
+  || die "the activator resolves a path that does not exist from $DATA_ROOT -- see above" 4
+
 # Both name sets are checked, because a live three-stream array shares the cluster and the input.
 if squeue -h -u "$USER" -n g5dotarg,g5dotrain | grep -q .; then
   squeue -h -u "$USER" -n g5dotarg,g5dotrain -o '%i|%j|%T|%R' >&2
@@ -169,7 +183,15 @@ EXPORTS+=",GATE5_EXPECTED_LOADER_SHA=$(sha_of "$LOADER")"
 # product wearing the same name.
 EXPORTS+=",GATE5_EXPECTED_PREDICATES_SHA=$(sha_of "$PREDICATES")"
 
-TARGET_JOB=$(sbatch --parsable --array=0-49%10 --export="$EXPORTS" "$TARGET_SCRIPT") \
+# LOG PATHS OVERRIDDEN ON THE COMMAND LINE, because `#SBATCH --output=` in the launcher is an ABSOLUTE path
+# into the generation-one tree and sbatch parses those directives BEFORE the script runs -- so they cannot
+# see `$DATA_ROOT` and a g2 run's logs land in g1's log directory, interleaved and distinguishable only by
+# job id. Found by looking for 57235710's logs in the g2 tree and finding none. A command-line `--output`
+# wins over the directive, so the launcher's default is left intact for the generation-one reproduction.
+mkdir -p "$OUTPUT_ROOT/logs"
+TARGET_JOB=$(sbatch --parsable --array=0-49%10 --export="$EXPORTS" \
+  --output="$OUTPUT_ROOT/logs/target_%A_%a.out" --error="$OUTPUT_ROOT/logs/target_%A_%a.err" \
+  "$TARGET_SCRIPT") \
   || die "target-array submission failed"
 [[ "$TARGET_JOB" =~ ^[0-9]+$ ]] || die "unexpected target job id $TARGET_JOB"
 if [[ "$STAGE" == "target" ]]; then
@@ -185,7 +207,9 @@ if [[ "$STAGE" == "target" ]]; then
   TRAIN_JOB="DEFERRED"
 else
   if ! TRAIN_JOB=$(sbatch --parsable --array="$TRAIN_ARRAY" --dependency="aftercorr:${TARGET_JOB}" \
-        --export="$EXPORTS" "$TRAIN_SCRIPT"); then
+        --export="$EXPORTS" \
+        --output="$OUTPUT_ROOT/logs/train_%A_%a.out" --error="$OUTPUT_ROOT/logs/train_%A_%a.err" \
+        "$TRAIN_SCRIPT"); then
     scancel "$TARGET_JOB" || true
     die "training-array submission failed; exact target array $TARGET_JOB cancelled"
   fi
