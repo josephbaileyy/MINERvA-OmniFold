@@ -278,8 +278,13 @@ def assert_estimator_seed_is_an_integer_in_every_branch(launcher, cases, expect=
 # On the cluster none of those three conditions holds, so the transformation is deleted rather than
 # repaired.
 #
-# READ-ONLY BY CONSTRUCTION, and this is the part that matters for running it against live namespaces:
-#   python3 / sbatch / srun   stubbed -> no real work, no job submitted
+# READ-ONLY ONLY IF THE STUB GATE PASSES -- AND THE EARLIER VERSION OF THIS PARAGRAPH WAS FALSE.
+# It said "read-only by construction". It was not: the PATH shims were displaced by the launchers' own
+# `conda activate` and a REAL bootstrap_nd.py unfold ran on a login node, twice. The claim is now
+# CONDITIONAL on `assert_stubs_survive_activation` passing, which is checked AFTER sourcing the
+# activator and aborts every launcher if any stub was displaced. "By construction" was the wrong
+# phrase for a property that depended on an environment I had never run in.
+#   python3 / python / sbatch / srun   stubbed AS SHELL FUNCTIONS, gate-verified after activation
 #   mkdir                     stubbed -> NO member directories created under the canonical namespaces
 #   rg_run / mr_run           stubbed to exec the command only -> rg_begin's `rm -f marker` NEVER runs,
 #                                                                 no .done marker is written
@@ -289,14 +294,95 @@ def assert_estimator_seed_is_an_integer_in_every_branch(launcher, cases, expect=
 # rg_run/mr_run are stubbed, this does not exercise marker writing or the SKIP and HARD-FAILURE resume
 # regimes. Those are verified separately and independently by the three-regime bash test of
 # lib_member_resume.sh, which does not use this probe at all.
+# ===================================================================================================
+# THE STUB MECHANISM. READ THIS BEFORE CHANGING IT.
+#
+# THIS PROBE RAN A REAL UNFOLD ON A LOGIN NODE, TWICE, WHILE ITS DOCSTRING SAID "python3/sbatch stubbed
+# -> no real work, no job submitted" AND ITS AUTHOR SAID IN WRITING "read-only by construction, not by
+# intention". Both claims were TRUE LOCALLY AND FALSE ON THE CLUSTER, which is the only environment it
+# is meant to run in. An orphaned bootstrap_nd.py survived a first kill and ran ~15 minutes.
+#
+# THE MECHANISM, demonstrated rather than reasoned about:
+#   PATH SHIM      displaced. Every launcher's first executable line sources setup_salloc_env.sh,
+#                  which runs `conda activate`, which PREPENDS the env's bin to PATH -- in front of
+#                  the shim dir. From that line onward python3, python AND sbatch are the real ones.
+#   SHELL FUNCTION survives. A function takes precedence over any PATH lookup, and prepending to PATH
+#                  does not touch it. Verified directly, both directions.
+#
+# SO: A STUB THAT A `conda activate` CAN DISPLACE IS NOT A STUB. Everything is a shell function now.
+# The PATH shim is kept as a SECOND, ORDER-INDEPENDENT layer, not as the mechanism.
+#
+# AND NOTHING WAS CONTAMINATED ONLY BY LUCK: `mkdir` happened to be implemented as a function, so the
+# member directory never existed and the real unfold's write had nowhere to land. The stub that saved
+# the canonical tree is the one that happened to use the surviving mechanism.
+#
+# sbatch WAS UNSTUBBED. Nothing submitted only because these seven launchers do not invoke sbatch
+# internally. The safety rested on that accident. Pointed at a launcher that submits, it would have
+# submitted from an instrument everyone was calling read-only.
+_STUB_COMMANDS = ("python3", "python", "sbatch", "srun")
+
 _NATIVE_PREAMBLE = """
 set +e
-module() { :; }
-mkdir() { :; }                       # no writes into canonical namespaces
-srun() { while [ $# -gt 0 ]; do case "$1" in -*) shift;; [0-9]*) shift;; *) break;; esac; done; "$@"; }
-rg_run() { shift; "$@"; }            # no rg_begin, so no marker is removed or written
-mr_run() { shift; "$@"; }
+_ARGV_SENTINEL="__SENTINEL__"
+_argvprobe_emit() {
+  printf 'ARGV'; for _a in "$@"; do printf '\t%s' "$_a"; done; printf '\n'
+  printf 'x' >> "$_ARGV_SENTINEL"
+}
+# EVERY intercepted command is a SHELL FUNCTION, because a PATH shim does not survive the env
+# activation these launchers perform on their first executable line.
+python3() { _argvprobe_emit "$@"; }
+python()  { _argvprobe_emit "$@"; }
+sbatch()  { _argvprobe_emit "$@"; }
+srun()    { while [ $# -gt 0 ]; do case "$1" in -*) shift;; [0-9]*) shift;; *) break;; esac; done; "$@"; }
+module()  { :; }
+mkdir()   { :; }                     # no writes into canonical namespaces
+rg_run()  { shift; "$@"; }           # no rg_begin, so no marker removed or written
+mr_run()  { shift; "$@"; }
+export -f python3 python sbatch srun module mkdir rg_run mr_run _argvprobe_emit 2>/dev/null || true
 """
+
+#: Sourced by the gate below to prove the stubs survive whatever the launchers source.
+_GATE_TEMPLATE = """
+source "__PRE__"
+REPO="__REPO__"
+{ source "${REPO}/setup_salloc_env.sh" ; } >/dev/null 2>&1 || true
+for _c in __CMDS__; do
+  printf 'GATE\t%s\t%s\n' "$_c" "$(type -t "$_c" 2>/dev/null || echo MISSING)"
+done
+"""
+
+
+def assert_stubs_survive_activation(repo):
+    """SOURCE THE ACTIVATOR FIRST, THEN CHECK. Refuse to run anything if a stub did not survive.
+
+    This is the check whose absence let a real unfold run: the harness asserted its stubs at
+    definition time and never at USE time, and the displacement happens in between. Ordering is the
+    whole content of the check -- asserting before the activator runs proves nothing.
+    """
+    tmp = tempfile.mkdtemp(prefix="argvgate.")
+    try:
+        pre = os.path.join(tmp, "pre.sh")
+        with open(pre, "w", encoding="utf-8") as fh:
+            fh.write(_NATIVE_PREAMBLE.replace("__SENTINEL__", os.path.join(tmp, "sentinel")))
+        script = _GATE_TEMPLATE.replace("__PRE__", pre).replace("__REPO__", repo)                                .replace("__CMDS__", " ".join(_STUB_COMMANDS))
+        r = subprocess.run(["bash", "-c", script], capture_output=True, text=True, timeout=300)
+        got = {}
+        for line in (r.stdout or "").split("\n"):
+            if line.startswith("GATE\t"):
+                _, name, kind = line.split("\t")
+                got[name] = kind
+        bad = [c for c in _STUB_COMMANDS if got.get(c) != "function"]
+        if bad or len(got) != len(_STUB_COMMANDS):
+            raise SystemExit(
+                "[FAIL] STUB GATE: after sourcing the launchers' own environment activator, these "
+                f"commands are NOT the probe's stubs: {bad or 'gate produced no output'}\n"
+                f"        observed: {got}\n"
+                "        A stub that the activation displaces is not a stub. Refusing to run any "
+                "launcher: this is the exact condition under which this probe previously executed a "
+                "REAL unfold on a login node while reporting itself read-only.")
+        return got
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
 def observed_argv_native(launcher, env, repo):
@@ -306,14 +392,17 @@ def observed_argv_native(launcher, env, repo):
         raise SystemExit(f"[FAIL] launcher not found on the cluster: {path}")
     tmp = tempfile.mkdtemp(prefix="argvprobe.")
     try:
-        for name in ("python3", "python", "sbatch"):
+        # PATH shims kept as a SECOND, order-independent layer -- not the mechanism. The mechanism is
+        # the shell functions in the preamble, which survive the activation that displaces PATH.
+        for name in _STUB_COMMANDS:
             q = os.path.join(tmp, name)
             with open(q, "w", encoding="utf-8") as fh:
                 fh.write(_STUB)
             os.chmod(q, 0o755)
+        sentinel = os.path.join(tmp, "sentinel")
         pre = os.path.join(tmp, "pre.sh")
         with open(pre, "w", encoding="utf-8") as fh:
-            fh.write(_NATIVE_PREAMBLE)
+            fh.write(_NATIVE_PREAMBLE.replace("__SENTINEL__", sentinel))
         e = dict(os.environ)
         e["PATH"] = tmp + os.pathsep + e.get("PATH", "")
         e.update({k: str(v) for k, v in env.items()})
@@ -321,7 +410,11 @@ def observed_argv_native(launcher, env, repo):
                            capture_output=True, text=True, env=e,
                            cwd=os.path.join(repo, "nd-unfolding"), timeout=600)
         rows = [ln.split("\t")[1:] for ln in (r.stdout or "").split("\n") if ln.startswith("ARGV\t")]
-        return rows, r.returncode, (r.stderr or "")
+        # THE SENTINEL DISTINGUISHES "no command reached" FROM "a command ran unstubbed". Without it,
+        # an unstubbed run is indistinguishable from a quiet one until someone notices it took fifteen
+        # minutes -- which is how a real unfold got to run twice.
+        stub_fired = os.path.exists(sentinel) and os.path.getsize(sentinel) > 0
+        return rows, r.returncode, (r.stderr or ""), stub_fired
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
@@ -338,6 +431,9 @@ def cluster_check(repo, offset, cases_by_launcher):
     appears for more than a few seconds a launcher is genuinely stuck; a quiet stream is NOT
     evidence of progress (BEN-028) and this prints per case so silence is unambiguous.
     """
+    # THE GATE RUNS FIRST AND ABORTS EVERYTHING. Not per case, not advisory.
+    gate = assert_stubs_survive_activation(repo)
+    print(f"[probe] STUB GATE PASSED after sourcing the env activator: {gate}", flush=True)
     total_cases = 0
     total_obs = 0
     failures = []
@@ -348,17 +444,25 @@ def cluster_check(repo, offset, cases_by_launcher):
             env["MNV_EST_SEED_OFFSET"] = offset
             total_cases += 1
             print(f"[probe] START {launcher} case={case} offset={offset}", flush=True)
-            rows, rc, err = observed_argv_native(launcher, env, repo)
+            rows, rc, err, stub_fired = observed_argv_native(launcher, env, repo)
             total_obs += len(rows)
             seeds = flag_values(rows, "--estimator-seed") or flag_values(rows, "--seed")
             outs = [v for k in ("--out", "--outdir", "--out-root", "--combine", "--block-slabs")
                     for v in flag_values(rows, k)]
             member = [o for o in outs if "member_k" in str(o)]
             if not expect:
-                print(f"[probe] DONE  {launcher} case={case} (no command expected) obs={len(rows)}",
-                      flush=True)
+                if stub_fired and not rows:
+                    failures.append((launcher, case,
+                                     ["a stub fired but produced no ARGV -- the interception path is "
+                                      "inconsistent"], rc, err.strip()[-300:]))
+                print(f"[probe] DONE  {launcher} case={case} (no command expected) obs={len(rows)} "
+                      f"stub_fired={stub_fired}", flush=True)
                 continue
             problems = []
+            if not rows and not stub_fired:
+                problems.append("NO command reached a stub AND the stub never fired -- either the "
+                                "launcher exited early or the stubs were displaced. This is the "
+                                "condition under which a real producer previously ran.")
             if not seeds:
                 problems.append("no --estimator-seed/--seed reached a command")
             for s in seeds:
@@ -372,8 +476,8 @@ def cluster_check(repo, offset, cases_by_launcher):
             if problems:
                 failures.append((launcher, case, problems, rc, err.strip()[-300:]))
             print(f"[probe] DONE  {launcher} case={case} rc={rc} obs={len(rows)} "
-                  f"seeds={seeds} outs={len(outs)} namespaced={len(member)} "
-                  f"{'OK' if not problems else 'PROBLEM'}", flush=True)
+                  f"stub_fired={stub_fired} seeds={seeds} outs={len(outs)} "
+                  f"namespaced={len(member)} {'OK' if not problems else 'PROBLEM'}", flush=True)
     print("")
     print(f"[probe] launchers={len(cases_by_launcher)} cases={total_cases} argv_observations={total_obs}")
     for launcher, case, problems, rc, err in failures:
