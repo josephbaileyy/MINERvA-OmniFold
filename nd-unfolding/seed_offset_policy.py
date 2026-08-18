@@ -220,3 +220,86 @@ def declared_offset(environ=None):
     except ValueError:
         raise SystemExit(f"[FAIL] {OFFSET_ENV}={raw!r} is not an integer. It is stamped into every "
                          "product of this run, so a malformed value would be recorded as provenance.")
+
+
+# ---------------------------------------------------------------------------------------------------
+# REQUIREMENT (6): THE CLEAN-OFFSET PREDICATE. Lane C's finding, and it is a DIFFERENT confound from
+# the pairwise aliasing rule above -- which is why both are needed and why the pairwise rule is
+# "necessary and nowhere near sufficient".
+#
+# Two legs derive their PER-UNIT seeds by adding small integers to the SAME baselines the offset
+# moves. So an offset can slide a leg's ESTIMATOR seed into the range of that leg's own DRAW seeds,
+# and then, inside a single member, one unit's draw RNG and the estimator RNG are seeded identically.
+# The coincidence SITE MOVES WITH k, so it is a per-member structural difference -- the attributability
+# confound the pairwise rule exists to prevent, arriving through a door that rule does not cover.
+#
+# At k = 5: bootstrap replica 47 draws its Poisson weights from seed 47 while the estimator in that
+# same unfold is seeded 47. At k = 5 again: unified_throw_cov's estimator seed 1005 IS throw 5's draw
+# seed. `k = 958` is dirty for a SECOND independent reason -- so the one value the pairwise rule
+# catches, it catches for one of the two reasons it is bad.
+#
+# DERIVED FROM THE RANGES, NEVER FROM A THRESHOLD. The condition happens to be `k >= 1118` for the
+# ranges below, and `1000` and `997` both FAIL (`42+1000 = 1042` and `42+997 = 1039` are both inside
+# `[1000,1159]`). A remembered threshold would also silently stop covering the moment an array size
+# changes, which is a launcher edit anyone can make.
+#
+#: leg -> (lo, hi) of the per-unit seeds that leg derives, with where each was measured.
+PER_UNIT_SEED_RANGES = {
+    # sbatch_bootstrap_5d_gpu.sh:5 `--array=1-100`, :40 `--seed ${SLURM_ARRAY_TASK_ID}`
+    "bootstrap replica seed": (1, 100),
+    # sbatch_seedscan_split_5d.sh:5 `--array=1-24`, :19 `--split-seed ${SLURM_ARRAY_TASK_ID}`
+    "seedscan split seed": (1, 24),
+    # unified_throw_cov.py:245 `default_rng(args.draw_seed + gj)` with gj 0..159 at draw_seed 1000
+    "uthrow per-throw draw seed": (1000, 1159),
+    # NOT INCLUDED AND NAMED SO: lane C reports a PET-family band that makes k = 2000 dirty. This
+    # lane has not measured that range, so it is absent rather than guessed -- and its absence is the
+    # reason this table is DATA. Adding it is a one-line change here, not a change to the predicate.
+}
+
+
+def forbidden_offsets(lo, hi, baselines=None, ranges=None):
+    """Every `k` in `[lo, hi]` that slides a baseline into a per-unit seed range."""
+    B = dict(baselines) if baselines is not None else {g: b for g, b in group_baselines().items()}
+    R = dict(ranges) if ranges is not None else PER_UNIT_SEED_RANGES
+    bad = {}
+    for k in range(int(lo), int(hi) + 1):
+        for g, b in B.items():
+            for nm, (rlo, rhi) in R.items():
+                if rlo <= b + k <= rhi:
+                    bad.setdefault(k, []).append(f"{g} estimator seed {b + k} lands in {nm} [{rlo},{rhi}]")
+    return bad
+
+
+def assert_offsets_are_clean(offsets, baselines=None, ranges=None):
+    """FAIL CLOSED on any offset that creates an estimator/draw seed coincidence inside a member.
+
+    Returns the number of (offset, baseline, range) combinations actually examined, so a caller can
+    refuse a vacuous pass -- the same non-vacuity requirement as the pairwise check.
+    """
+    ks = sorted({int(k) for k in offsets})
+    if not ks:
+        raise SystemExit("[FAIL] no offsets given; a clean-offset check over an empty grid is not a pass")
+    B = dict(baselines) if baselines is not None else {g: b for g, b in group_baselines().items()}
+    R = dict(ranges) if ranges is not None else PER_UNIT_SEED_RANGES
+    checked = len(ks) * len(B) * len(R)
+    if checked == 0:
+        raise SystemExit("[FAIL] the clean-offset check examined ZERO combinations; that needs at "
+                         "least one baseline and one per-unit range. A clean result over nothing "
+                         "checked is the check not running.")
+    bad = forbidden_offsets(min(ks), max(ks), B, R)
+    hits = {k: v for k, v in bad.items() if k in ks}
+    if hits:
+        lines = [f"[FAIL] {len(hits)} of {len(ks)} scanned offsets create an estimator/draw seed "
+                 f"COINCIDENCE inside a member. The coincidence site moves with k, so each is a "
+                 f"per-member structural difference and the spread is not attributable to the "
+                 f"estimator seed alone."]
+        for k in sorted(hits)[:8]:
+            for why in hits[k]:
+                lines.append(f"        k={k}: {why}")
+        if len(hits) > 8:
+            lines.append(f"        ... and {len(hits) - 8} more offsets")
+        lines.append("        This is a DIFFERENT constraint from the pairwise aliasing rule: that "
+                     "one is about two scan members sharing a seed, this one is about one member's "
+                     "estimator and draw seeds coinciding. Both are required.")
+        raise SystemExit("\n".join(lines))
+    return checked

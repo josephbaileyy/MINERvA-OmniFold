@@ -1413,5 +1413,68 @@ class OffsetProvenanceStamp(unittest.TestCase):
             d.archive_expansion(src)
         self.assertIn("silently", str(cm.exception))
 
+
+class CleanOffsetPredicate(unittest.TestCase):
+    """Lane C's constraint: an offset must not slide a leg's ESTIMATOR seed into the range of that
+    leg's own per-unit DRAW seeds. A DIFFERENT confound from pairwise aliasing, and both are needed."""
+
+    def test_the_measured_forbidden_set_reproduces(self):
+        import seed_offset_policy as sp
+        bad = sp.forbidden_offsets(-200, 1400)
+        self.assertEqual(len(bad), 361, "361 forbidden offsets in [-200,1400]")
+        self.assertEqual((min(bad), max(bad)), (-41, 1117))
+        self.assertEqual(next(k for k in range(1, 4000) if k not in bad), 160,
+                         "smallest strictly positive clean offset")
+
+    def test_a_remembered_threshold_would_be_wrong(self):
+        """`1000` and `997` both FAIL -- 42+1000 and 42+997 are inside [1000,1159] -- which is why the
+        predicate is derived from the ranges rather than from a number anyone remembers."""
+        import seed_offset_policy as sp
+        for k in (0, 5, 159, 958, 997, 1000):
+            with self.subTest(k=k), self.assertRaises(SystemExit):
+                sp.assert_offsets_are_clean([k])
+        self.assertTrue(sp.assert_offsets_are_clean([160, 1200, 2400]))
+
+    def test_Cs_grid_1200j_is_DIRTY_AT_j0_AND_THAT_IS_THE_ARCHIVE(self):
+        """THE RESULT WORTH THE TEST. `1200j` is clean for j >= 1 and forbidden at j = 0 -- for TWO
+        independent reasons, both PROPERTIES OF THE ARCHIVE rather than of the scan:
+
+            g1 estimator seed   42 lands in bootstrap replica seeds [1,100]
+            g2 estimator seed 1000 lands in uthrow per-throw draw seeds [1000,1159]
+
+        So the anchor member is the one member the predicate cannot clear, and every archived product
+        already carries both coincidences. Not exempted here: the predicate is applied as specified and
+        the consequence is reported, because exempting the anchor silently would hide that member 0
+        differs structurally from members 1..49 -- which is exactly what the predicate forbids.
+        """
+        import seed_offset_policy as sp
+        with self.assertRaises(SystemExit) as cm:
+            sp.assert_offsets_are_clean([1200 * j for j in range(50)])
+        msg = str(cm.exception)
+        self.assertIn("1 of 50", msg, "only the anchor is dirty")
+        self.assertIn("k=0", msg)
+        self.assertTrue(sp.assert_offsets_are_clean([1200 * j for j in range(1, 50)]),
+                        "j=1..49 must be clean, so the finding is about the anchor and not the grid")
+
+    def test_the_range_table_is_DATA_and_names_what_it_omits(self):
+        """Lane C reports a PET-family band making k=2000 dirty. This lane has not measured it, so it
+        is ABSENT rather than guessed -- and the predicate must be computed from the table so that
+        adding it is a data change, not a rewrite."""
+        import seed_offset_policy as sp
+        self.assertIn("uthrow per-throw draw seed", sp.PER_UNIT_SEED_RANGES)
+        src = (ND / "seed_offset_policy.py").read_text()
+        self.assertIn("PET-family band", src.replace("PET family band", "PET-family band"))
+        # a caller-supplied range table must change the answer, or the table is decorative
+        extra = dict(sp.PER_UNIT_SEED_RANGES, **{"hypothetical band": (2042, 2100)})
+        with self.assertRaises(SystemExit):
+            sp.assert_offsets_are_clean([2000], ranges=extra)
+
+    def test_it_refuses_a_vacuous_pass(self):
+        import seed_offset_policy as sp
+        with self.assertRaises(SystemExit):
+            sp.assert_offsets_are_clean([])
+        with self.assertRaises(SystemExit):
+            sp.assert_offsets_are_clean([1200], ranges={})
+
 if __name__ == "__main__":
     unittest.main()
