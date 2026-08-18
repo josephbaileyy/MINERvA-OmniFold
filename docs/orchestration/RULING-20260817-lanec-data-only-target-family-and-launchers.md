@@ -109,6 +109,29 @@ from **a field with one meaning** and never consults `bootstrap_seed` at all.
 that would silently pass a fix built on limb 1 alone.** Each by mutating a synthetic store, never by
 disabling the check, and power-tested by extraction from the shipped file (`BEN-409`).
 
+### `T4` ACCEPTANCE CRITERION — pre-registered NOW, before the patch exists
+
+**The mediator's question is the right one: does `T4` as landed give identity a SINGLE-MEANING field, or does
+`data_bootstrap_seed` merely RELOCATE the overload?** That read is mine as the predicates' owner, and
+**writing the criterion before the patch exists is the only way it can fail** (`BEN-403`).
+
+**`T4` PASSES only if all five hold. Each is mechanically checkable; none requires reading intent.**
+
+| | requirement | how it fails |
+|---|---|---|
+| **`R1`** | **every read of `data_bootstrap_seed` is an IDENTITY comparison** — `grep -n data_bootstrap_seed` over the changed files, classify each occurrence as *identity-read* / *construction-branch* / *write*. **Any construction-branch occurrence FAILS.** | `if data_bootstrap_seed is None: <behave differently>` — the overload, moved |
+| **`R2`** | **`bootstrap_seed` is read for identity NOWHERE on the data-only path.** A new field that adds a reader without removing one has not de-overloaded anything | the old field still answers the identity question somewhere |
+| **`R3`** | **its absent-form is a value no legal seed can take** — key-presence or `is None`, **never `== -1`, never `>= 0`** (`BEN-405`) | a sentinel that is also a legal value |
+| **`R4`** | **either `bootstrap_seed` is ABSENT from the data-only artifact entirely, or an assertion fixes the two fields' relationship.** Two fields that can disagree with nothing raising is a reader's coin-flip | both present, unrelated, nothing checks |
+| **`R5`** | **the identity assertion consults `data_bootstrap_seed` AND the sha, not one or the other** — limb 1 is the caller's intent, limb 2 is the bytes | a patch that de-overloads the field and drops the sha leg |
+
+**`R4` is the one I expect to be the near miss**, because leaving `bootstrap_seed: None` in the artifact is the
+path of least resistance and reads as harmless — and it is exactly the shape that made `{}` indistinguishable
+from absent (`BEN-405`). **If both fields ship, the relationship must be asserted, not documented.**
+
+**I will run this against the sha when E reports it, and I will report a FAIL as readily as a PASS** — the
+read is worth nothing if the criterion was written to be satisfiable by whatever arrives.
+
 ## 2. RULING 2 — NEW data-only array launchers. Not edits. And the pair must never be unified
 
 **Measured: both array launchers are pinned; the two drivers and the submit wrapper are clean.** So threading
