@@ -34,6 +34,7 @@
  },
  "SEE_ALSO": "BEN-256 -- one field, two roles (this instance + unified_throw_cov.py's --seed).",
  "SELF_CORRECTION": "The receipt-side assert was first written here as train_fullevent_replica.py:87. That was read off the PRE-MERGE local tree, which held an older non-data-only version of the file; :87 there is `receipt = json.load(stream)`. The correct site is :99 in both the frozen checkout and origin/main. Corrected before the finding was relayed. This is the dated-code-claim failure mode -- a line number true in one tree quoted against another -- and the digest block above is what makes the corrected numbers falsifiable rather than merely re-asserted.",
+ "SELF_CORRECTION_2": "I told the Assistant lane :1525 was a continuation and the stamp was :1524. INVERTED, and caught by them. :1523-1524 is the precomputed_target_replica_seed stamp (two lines); :1525 is the bootstrap_seed stamp (one line). A reader following the published :1524 arrives at the field that is NOT overloaded -- the citation pointed at the counter-example, in a finding entirely about which field carries which role. The wrong number read as right, which is the failure mode.",
  "SLURM_STATE_read_this_turn": {
   "50_failed_rows_claim": "CONFIRMED ARITHMETICALLY: 2 FAILED + 48 PENDING = 50.",
   "57194054 g5dotarg (CPU targets)": "10 COMPLETED (_0.._9), 3 RUNNING (_10.._12), 37 PENDING -- HEALTHY",
@@ -50,11 +51,18 @@
    "where": "train_fullevent_replica.py:99, on the BUILDER receipt's runtime_target"
   },
   "site_B_FAILS": {
-   "measured": "fullevent_fps_dataloader.py:1524 + the frozen driver's :283-284",
+   "measured": "fullevent_fps_dataloader.py:1525 + the frozen driver's :283-284",
    "target.bootstrap_seed": null,
    "target.precomputed_target_replica_seed": 50000,
    "where": "train_fullevent_replica.py:288, on the LOADER's meta['target']"
   }
+ },
+ "THREE_SITES_ONE_FIELD_THREE_ROLES": {
+  ":1317": "if bootstrap_seed is not None -> DRAW the data/sig/bkg factors",
+  ":1479": "if bootstrap_seed is not None -> THE GATE on the seed-consistency block",
+  ":1525": "'bootstrap_seed': (None if bootstrap_seed is None else int(...)) -> THE STAMP the assert reads",
+  "honest_identity_field_stamped_separately_at": ":1523-1524 precomputed_target_replica_seed",
+  "note": "one assignment silences all three; :1479 should have branched on the :1523-1524 field."
  },
  "WHY_THE_OBVIOUS_FIX_IS_WRONG": {
   "AND_THE_LOADERS_OWN_MISPAIRING_GUARD_IS_ALREADY_DEAD_HERE": "fullevent_fps_dataloader.py:1479 gates the whole seed-consistency block on `if bootstrap_seed is not None`. Data-only sets it to None, so :1488's 'precomputed target was built for replica X but this loader is drawing Y' NEVER RUNS in data-only. The role collapse disabled the guard at the same stroke it broke the assert.",

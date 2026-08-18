@@ -44,7 +44,7 @@ minutes apart.
 | `train_fullevent_replica.py:288` | loader's `meta["target"]` | `None` | **50000** | **FAILS** |
 
 Both rows measured — the first read out of `replica_00`'s receipt on scratch, the second from
-`fullevent_fps_dataloader.py:1524` and the frozen driver's `:283-284`. In the builder the two roles
+`fullevent_fps_dataloader.py:1525` and the frozen driver's `:283-284`. In the builder the two roles
 hold the same number, so the ambiguity is *invisible at the only site that ever exercised it*.
 
 **A third call site proves that last clause.** `:198` is the *coherent* family's equivalent of
@@ -58,12 +58,27 @@ distinguish its two meanings.
 `origin/main` and the frozen checkout `gate5-data-only-frozen-d0c42bd`**, verified both sides this
 turn. Every line number here is valid in both trees.
 
+### Three sites, one field, three roles
+
+Verified in the pinned loader (`e1402370…0ce1`), and this is what makes the overload load-bearing
+rather than cosmetic — **one assignment silences all three**:
+
+| site | role |
+|---|---|
+| `:1317` `if bootstrap_seed is not None:` | **draw the factors** — `data_factor`/`sig_factor`/`bkg_factor` |
+| `:1479` `if bootstrap_seed is not None:` | **the gate** on the whole seed-consistency block |
+| `:1525` `"bootstrap_seed": (None if bootstrap_seed is None else …)` | **the stamp** the driver's assert reads |
+
+The honest identity field is stamped **separately** at `:1523-1524`
+(`precomputed_target_replica_seed`) — **and that is what `:1479` should have branched on**, which is
+the fix to make whenever the loader is next legitimately re-issued.
+
 ### The role collapse also silently disabled a guard
 
-`fullevent_fps_dataloader.py:1479` gates the entire seed-consistency block on
-`if bootstrap_seed is not None`. Data-only sets it to `None`, so `:1488` — *"precomputed target was
-built for replica X but this loader is drawing Y"* — **never runs in data-only at all.** One
-assignment broke the assert and removed the mis-pairing check in the same stroke.
+`:1479` gates the entire seed-consistency block on `if bootstrap_seed is not None`. Data-only sets it
+to `None`, so `:1488` — *"precomputed target was built for replica X but this loader is drawing Y"* —
+**never runs in data-only at all.** One assignment broke the assert and removed the mis-pairing check
+in the same stroke.
 
 ### And the obvious fix is a check that cannot fail
 
@@ -223,6 +238,20 @@ measurement; pair it with the driver's own argument and it is an echo.
 process and before any GPU work: `read_replica_target_receipt` checks the receipt's own
 `replica_index` (`:92`) and `bootstrap_seed` (`:94`) against the driver's. Replica 7 handed replica
 12's target-and-receipt dies there. `:288` has no identity work left to do.
+
+### Amendment 3 — a corrected citation that had been corrected the wrong way
+
+I told the Assistant lane that `:1525` was a continuation line and the stamp was `:1524`. **That is
+inverted, and the Assistant lane caught it.** `:1523-1524` is the two-line
+`precomputed_target_replica_seed` stamp; `:1525` is the `bootstrap_seed` stamp, complete on one line.
+
+**Worth recording rather than fixing quietly, because of where it landed:** a reader following the
+published `:1524` arrives at `else int(precomputed_target_replica_seed)),` — **the field that is not
+overloaded**, the one the loader's own comment names as the honest identity carrier. In a finding
+whose entire content is which field carries which role, **the citation pointed at the
+counter-example.** Same class as an off-by-one onto a topically adjacent line that survives a casual
+check: the failure mode is not that the number is wrong, it is that the wrong number *reads as
+right*.
 
 ### The `:198` observation generalizes, and there is a third read nobody has hit yet
 
