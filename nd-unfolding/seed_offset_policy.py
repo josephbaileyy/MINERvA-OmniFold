@@ -292,6 +292,22 @@ def forbidden_offsets(lo, hi, baselines=None, ranges=None):
 #: without them is not the archive, and a run reproducing the archive has them. THE CONFOUND AND THE
 #: ANCHORING ARE THE SAME FACT. Dropping `j = 0` does not cost a member -- it costs the ANCHOR, leaving
 #: a 49-member scan with no tie to any published value, which re-imports the defect that refused (i).
+#: AND THE COINCIDENCE HAS NO OBSERVED BUILDER-SIDE CONSEQUENCE, measured by lane E on the one product
+#: where a consequence would have shown: `replica_42` was the family's only non-zero Slurm exit, which
+#: is the first place anyone would look for a seed-coincidence effect at index 42. E found the products
+#: COMPLETE AND SOUND -- PASS line with the target digest, both artifacts and both `.done` markers
+#: written, npy byte-for-byte the size of replicas 41 and 43, receipt in family range -- and exit 129 a
+#: SIGHUP during interpreter TEARDOWN, after the writes, with the same crash present but exit-masked in
+#: none of the other 49. NOTHING IN THE BUILDER FAILED AT INDEX 42, so there is no builder-side event
+#: for the coincidence to explain. That CLOSES the question from the other side rather than weakening
+#: the exemption: the coincidence is real in the seeds and so far invisible in the products, which is
+#: precisely why lane C's displacement/leverage read is the test that decides materiality.
+#:
+#: E's transferable line, recorded because it generalises past this file: A SLURM EXIT STATUS DESCRIBES
+#: THE PROCESS, NOT THE PRODUCT -- a task can fail with its output complete and correct. It is `BEN-023`
+#: mirrored: that was a resume guard ACCEPTING an incomplete product because it existed; this is a
+#: scheduler verdict REJECTING a complete one because the process died after making it. A guard
+#: validating completeness rather than existence would accept `_42`, and would be right.
 COINCIDENCE_ALLOWLIST = {
     # unified_throw_cov.py:245 -- production ran `--seed 1000` for BOTH roles, so throw 0's draw RNG
     # has always been seeded identically to the estimator. Present in every archived slab.
