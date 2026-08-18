@@ -1834,6 +1834,35 @@ class UnthinnedMcEvidence(unittest.TestCase):
             self.check(self.meta(mc_factors_applied="canonical-poisson"))
         self.assertIn("canonical-poisson", str(cm.exception))
 
+    def test_mc_factors_applied_IS_NESTED_UNDER_bootstrap_AND_A_TOP_LEVEL_LOOKUP_MISSES_IT(self):
+        """PINS THE NESTING, because a top-level `.get()` reports it ABSENT on a CORRECT product.
+
+        The orchestrator hit this on the first real receipt and nearly filed the key as missing -- a
+        recursive walk found it under `/bootstrap`. That is the same false-negative shape as my own
+        `mc_factors_applied != .unity.` grep earlier today: a check whose operand is one level away from
+        the property.
+
+        Verified against the FIRST REAL RECEIPT `57236137_0` produced: top-level lookup -> None,
+        `/bootstrap` lookup -> 'unity'. So this control asserts the builder keeps it nested AND that the
+        predicate's operand is the bootstrap block, which is what makes the two agree.
+        """
+        src = (Path(PET) / "build_fullevent_replica_target.py").read_text()
+        tree = ast.parse(src)
+        # find the receipt dict's "bootstrap" value and require the key inside IT, not beside it
+        nested = False
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Dict):
+                for k, v in zip(node.keys, node.values):
+                    if isinstance(k, ast.Constant) and k.value == "bootstrap":
+                        if "mc_factors_applied" in ast.unparse(v):
+                            nested = True
+        self.assertTrue(nested,
+                        "mc_factors_applied must live INSIDE the receipt's `bootstrap` block -- moving it "
+                        "to the top level would silently break every reader whose operand is that block")
+        # and the predicate must read it from the block it is nested in
+        code = _code_only(cdo.assert_unthinned_mc_evidence)
+        self.assertIn('meta.get(\'mc_factors_applied\')', code.replace('"', "'"))
+
     def test_the_target_builder_writes_it_ONLY_on_the_data_only_branch(self):
         """Present-in-both would be better semantics and is unavailable: the coherent family's receipts
         are already archived and cannot carry it. So the asymmetry is historical, and the reader-side
