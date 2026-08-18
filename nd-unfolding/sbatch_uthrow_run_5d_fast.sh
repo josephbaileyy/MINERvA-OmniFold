@@ -18,7 +18,16 @@ export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=32 MKL_NUM_THREADS=2 OPENBLAS_NUM_THRE
        NUMEXPR_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2
 cd "${REPO}/nd-unfolding"; mkdir -p uq_5d/uthrow_slabs_5d_sb
 source "${REPO}/lib/resume_guard.sh"
-source "${REPO}/nd-unfolding/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
+# SOURCED RELATIVE TO THIS SCRIPT, NOT THROUGH ${REPO}. A launcher frozen at a sha that sources its
+# member-axis library from the MUTABLE canonical checkout is not frozen: at run time it picks up
+# whatever is in /pscratch/.../MINERvA-OmniFold, which is on a divergent local main that does not
+# contain this library at all. Demonstrated, not theorised -- the cluster probe failed 16/16 with
+# exactly that error. Relative sourcing means a frozen deployment sources its OWN frozen library,
+# and a git worktree resolves its own. The library lives beside this file, so no path arithmetic.
+# The three PRE-EXISTING ${REPO} sources on the lines above have the same exposure across 244
+# tracked .sh and are deliberately NOT touched here: that is a repo-wide migration, not a patch.
+_HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${_HERE}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
 SLAB_DIR="$(mr_dir_prefix uq_5d/uthrow_slabs_5d_sb)"
 OFF=$(( SLURM_ARRAY_TASK_ID * 4 ))
 # M(ii) OFFSET HOOK (spec (B) option (ii), BEN-461). The launcher keeps its OWN baseline
