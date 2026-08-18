@@ -1304,5 +1304,114 @@ class MiiFourLegDriver(unittest.TestCase):
         self.assertNotIn("import subprocess", src)
         self.assertFalse(any(m.get("submitted") for m in [d for d in []]), "sanity")
 
+
+class LauncherArgvProbe(unittest.TestCase):
+    """The probe that reads the USE, not the assignment. It found two live defects in my own hook
+    insertions after three text/assignment-level checks had passed on both."""
+
+    def _reinsert_into_then_branch(self, text):
+        L = text.split("\n")
+        ai = next(i for i, l in enumerate(L) if l.strip().startswith("EST_SEED=$(("))
+        assign = L.pop(ai)
+        ii = next(i for i, l in enumerate(L) if l.strip().startswith("if [[") and '"$T" -eq 0' in l)
+        L.insert(ii + 1, assign)          # column 0 INSIDE the then block: the original bug
+        return "\n".join(L)
+
+    def test_it_catches_an_assignment_NESTED_IN_A_BRANCH(self):
+        """`sbatch_uthrow_block_5d.sh`'s real defect: the else branch expanded ${EST_SEED} to nothing
+        and every T != 0 task died. INDENTATION IS NOT SCOPE -- column 0 inside an indented block is
+        legal bash and reads as top level, which is why an indentation-based heuristic cleared it."""
+        import launcher_argv_probe as probe
+        f = "sbatch_uthrow_block_5d.sh"
+        orig = (ND / f).read_text()
+        (ND / f).write_text(self._reinsert_into_then_branch(orig))
+        try:
+            rows = probe.observed_argv(f, {"SLURM_ARRAY_TASK_ID": 3, "MNV_EST_SEED_OFFSET": 5})
+            self.assertEqual(probe.flag_values(rows, "--estimator-seed"), ["<MISSING>"],
+                             "the probe must SEE the value vanish, not merely fail to find the flag")
+            with self.assertRaises(SystemExit):
+                probe.assert_estimator_seed_is_an_integer_in_every_branch(
+                    f, [{"SLURM_ARRAY_TASK_ID": 0, "MNV_EST_SEED_OFFSET": 5},
+                        {"SLURM_ARRAY_TASK_ID": 3, "MNV_EST_SEED_OFFSET": 5}])
+        finally:
+            (ND / f).write_text(orig)
+        # and the restored file passes, so the test is not asserting a permanent failure
+        probe.assert_estimator_seed_is_an_integer_in_every_branch(
+            f, [{"SLURM_ARRAY_TASK_ID": 0, "MNV_EST_SEED_OFFSET": 5},
+                {"SLURM_ARRAY_TASK_ID": 3, "MNV_EST_SEED_OFFSET": 5}])
+
+    def test_it_catches_an_assignment_INSIDE_A_CONTINUED_COMMAND(self):
+        r"""`sbatch_bootstrap_5d_gpu.sh`'s real defect, and the worse of the two: the hook landed
+        between a `\`-continued command's first line and its continuation, so bash swallowed the
+        continuation as a comment. The command truncated to `bootstrap_nd.py --npz of_inputs_5d.npz`
+        -- NO seed arguments at all -- and `bash -n` PASSED on it. Syntax valid, arguments destroyed.
+        """
+        import launcher_argv_probe as probe
+        f = "sbatch_bootstrap_5d_gpu.sh"
+        orig = (ND / f).read_text()
+        L = orig.split("\n")
+        ai = next(i for i, l in enumerate(L) if l.strip().startswith("EST_SEED=$(("))
+        assign = L.pop(ai)
+        ri = next(i for i, l in enumerate(L)
+                  if l.strip().startswith("rg_run") and "bootstrap_nd.py" in l)
+        L.insert(ri + 1, assign)          # between the command and its continuation
+        (ND / f).write_text("\n".join(L))
+        try:
+            rows = probe.observed_argv(f, {"SLURM_ARRAY_TASK_ID": 9, "MNV_EST_SEED_OFFSET": 5})
+            vals = probe.flag_values(rows, "--estimator-seed")
+            self.assertEqual(vals, [], "the flag should have been swallowed entirely")
+            with self.assertRaises(SystemExit):
+                probe.assert_estimator_seed_is_an_integer_in_every_branch(
+                    f, [{"SLURM_ARRAY_TASK_ID": 9, "MNV_EST_SEED_OFFSET": 5}])
+        finally:
+            (ND / f).write_text(orig)
+
+    def test_the_probe_refuses_to_run_with_fewer_cases_than_branches(self):
+        import launcher_argv_probe as probe
+        with self.assertRaises(SystemExit) as cm:
+            probe.assert_estimator_seed_is_an_integer_in_every_branch(
+                "sbatch_uthrow_block_5d.sh", [{"SLURM_ARRAY_TASK_ID": 0}])
+        self.assertIn("has not checked the launcher", str(cm.exception))
+
+
+class OffsetProvenanceStamp(unittest.TestCase):
+    """The offset itself is stamped, not just the resulting seed -- lane D's point that an unhooked
+    leg stamps its baseline and is then indistinguishable from a deliberate k=0 anchor member."""
+
+    def test_declared_and_value_are_two_keys_not_a_sentinel(self):
+        import seed_offset_policy as sp
+        self.assertEqual(sp.declared_offset({}), (0, 0),
+                         "unset must be DECLARED=0: nothing can be concluded about the member")
+        self.assertEqual(sp.declared_offset({"MNV_EST_SEED_OFFSET": "0"}), (1, 0),
+                         "a deliberate anchor member is declared=1, value=0 -- distinguishable from "
+                         "an unhooked run, which is the whole point")
+        self.assertEqual(sp.declared_offset({"MNV_EST_SEED_OFFSET": "5"}), (1, 5))
+
+    def test_a_malformed_offset_FAILS_rather_than_being_recorded_as_provenance(self):
+        import seed_offset_policy as sp
+        with self.assertRaises(SystemExit):
+            sp.declared_offset({"MNV_EST_SEED_OFFSET": "nope"})
+
+    def test_all_four_legs_stamp_both_keys(self):
+        """Asserted on the source of each writer, because the alternative is a run whose provenance
+        cannot be reconstructed -- cheap now and impossible after the spend."""
+        for mod in ("unified_throw_cov.py", "bootstrap_nd.py", "seedscan_split.py", "sweep_bank_5d.py"):
+            src = (ND / mod).read_text()
+            with self.subTest(module=mod):
+                self.assertIn("est_seed_offset_declared", src)
+                self.assertIn("est_seed_offset", src)
+
+    def test_archive_expansion_FAILS_when_a_leg_cannot_be_parsed(self):
+        """Attack #2: the parse is by string, so an unmatched leg was silently ABSENT from the result
+        and the k=0 control would pass over a leg it never read."""
+        import mii_seed_offset_driver as d
+        src = dict(d.launcher_sources())
+        k = "sbatch_seedscan_split_5d.sh"
+        src[k] = src[k].replace("EST_SEED=$((", "EST_SEED=$(( ")   # still bash-valid, no longer matched
+        src[k] = src[k].replace("EST_SEED=$(( ", "ESTSEED=$(( ")
+        with self.assertRaises(SystemExit) as cm:
+            d.archive_expansion(src)
+        self.assertIn("silently", str(cm.exception))
+
 if __name__ == "__main__":
     unittest.main()

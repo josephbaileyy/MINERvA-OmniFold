@@ -60,6 +60,7 @@ raised it; the offset hook in the six launchers touches `--estimator-seed` only,
 from __future__ import annotations
 
 import itertools
+import os
 
 
 def forbidden_differences(baselines):
@@ -181,3 +182,41 @@ def assert_draw_seed_is_pinned(launcher_texts):
               "slab against THIS combine's --draw-seed, and every member runs its own combine, so "
               "1000/1000 and 1005/1005 both pass. Per-member coherence is not ensemble coherence.")
     return True
+
+
+# ---------------------------------------------------------------------------------------------------
+OFFSET_ENV = "MNV_EST_SEED_OFFSET"
+
+
+def declared_offset(environ=None):
+    """`(declared, value)` for the offset, for STAMPING ONLY -- never for behaviour.
+
+    WHY THE PRODUCT MUST CARRY THE OFFSET AND NOT JUST THE SEED, which is lane D's finding and is
+    unrecoverable once the run is spent: the slabs already stamp `estimator_seed`, so **a leg that
+    silently ran UNHOOKED stamps its baseline -- indistinguishable from a member at k = 0.** Only six
+    launchers carry the hook; any other launcher of the same module runs at baseline and looks like a
+    legitimate anchor member. Stamping the OFFSET separates the two:
+
+        declared = 0            this leg did not go through a hooked launcher. Its seed is its
+                                baseline and NOTHING can be concluded about which scan member it is.
+        declared = 1, value = 0 this leg ran hooked, at the archive anchor, deliberately.
+        declared = 1, value = k this leg ran hooked at offset k.
+
+    TWO KEYS RATHER THAN A SENTINEL, on `unified_throw_cov.py`'s null-as-absent precedent -- a
+    sentinel invites `or 0` and collapses "not declared" into "zero", which is the exact conflation
+    this exists to prevent. And UNLIKE the `ew_coverage_checked` flag lane D made me drop, `declared`
+    genuinely takes both values: it is 0 whenever the env is unset, which is every non-scan run.
+
+    Reading an env var is a hidden input and that is a real cost. It is accepted here because it is
+    STAMP-ONLY -- no code path branches on it -- and the alternative is provenance that cannot be
+    reconstructed from the artifact at all.
+    """
+    env = os.environ if environ is None else environ
+    raw = env.get(OFFSET_ENV)
+    if raw is None or str(raw).strip() == "":
+        return 0, 0
+    try:
+        return 1, int(str(raw).strip())
+    except ValueError:
+        raise SystemExit(f"[FAIL] {OFFSET_ENV}={raw!r} is not an integer. It is stamped into every "
+                         "product of this run, so a malformed value would be recorded as provenance.")
