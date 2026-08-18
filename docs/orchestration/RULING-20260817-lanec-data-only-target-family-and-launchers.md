@@ -371,7 +371,37 @@ delegation.**
 > POPULATION (`_family_`) while its constants name an INSTANCE (`ARRAY_JOB_ID`) is mis-scoped, and the mismatch
 > is visible in the filename.** Mechanically checkable: any `*_family_*.py` carrying a hardcoded run id.
 
-**② MY FOUR-BUCKET SPEC WAS INTERNALLY INCONSISTENT AND E IS RIGHT TO SPLIT IT.** *"All 77 land in exactly one
+**①b MY PROPOSED MECHANICAL CHECK CANNOT FIRE ON THE DEFECT IT WAS WRITTEN FOR.** Verified by the mediator:
+`git ls-files | grep -E '[^/]*_family_[^/]*\.py$'` matches **one test file** and **`validate_gate5_training_artifacts.py`
+is not in that glob at all** — because the population-claiming name-shape there is the plural **`_artifacts`**,
+not the word `family`.
+
+> **I derived a lexical check from the ONE instance I had, and the instance's name did not contain the word I
+> keyed on.** `BEN-235`'s class arriving in a *proposed* check rather than a run one. **Third time today a
+> check of mine needed its discriminator repaired.**
+>
+> **ADOPT E's RULE, which is structural rather than lexical and does not depend on anyone's filename
+> discipline: a module-level run-id literal used as an EQUALITY OPERAND inside a function taking a member
+> index.** That is exactly what separates a mis-scoped population validator from a legitimately single-purpose
+> script.
+
+**AND MY CENSUS WAS TWO SHORT WITH ONE FALSE POSITIVE — the conclusion survived, the population did not.**
+E read the files where I grepped: **5 genuine pins, 1 defect**, against my 3. **My regex required line-start, a
+quoted literal, and 7–9 digits — so it missed `PREDECESSOR_JOB` and `JID` on naming, and would have missed a
+bare int.** I reported a pattern's output as a population. *(And E's own `NGLOBAL = 32849103` false positive is
+the mirror error — a pattern matching a number that merely looks like a job id. **An 8-digit integer is not a
+type, and *"job id"* is not a lexical category: grep over-matches and under-matches, and only reading resolves
+both.**)*
+
+> **THE DISTINCTION IS THE MEDIATOR'S AND IT IS THE REUSABLE PART: a census good enough to RULE with is not
+> automatically good enough to MECHANISE.** My `3` reached the right conclusion — one defect — over a population
+> two short. **Fine for the ruling; not fine for the check that was going to be built on it.**
+
+**What survives, verified by AST rather than by my grep: `reconcile_gate5_family.py` carries no run-id pin.** So
+the other pinned reader in this ruling is genuinely untouched, and *"presumably other `EXPECTED_*` modules"*
+would have swept it in wrongly.
+
+**②** **MY FOUR-BUCKET SPEC WAS INTERNALLY INCONSISTENT AND E IS RIGHT TO SPLIT IT.** *"All 77 land in exactly one
 of four buckets"* and *"the four counts sum to 77"* cannot both hold, because **`ADDITIONAL` is DEFINED as
 assertions no pinned site performs — so its members are not pinned sites and cannot partition them. The
 bucket's defining property contradicts its membership in the partition.** That is my error and it is exactly
@@ -389,7 +419,27 @@ RUN is submitted"***: `BEN-403`'s property is that the prediction must not be re
 explains, and a job id recorded between `sbatch` and the first task's write **is not read off a finished
 product.** The anti-tautology property survives.
 
-> **CONDITION, so it is a check rather than a promise — E's own device applied to its own deferral: the
+> **CONDITION AS BUILT (`c9301394`, 8 controls) — three operand choices carry the whole content and each is
+> right for a stated reason:**
+>
+> - **`min()` not mean.** **One artifact older than the commit falsifies the claim even if the other 49 came
+>   after**, because the predictions could have been read off *that one*. `BEN-403`'s property exactly: a single
+>   pre-existing observation is enough to have contaminated a prediction.
+> - **`%ct` not `%at`.** An author date is settable with `git commit --date`, **so it is an operand the party
+>   being checked controls.** Same principle as *a total its author can raise is not a floor*, on a different
+>   field — **and it generalises: ANY OPERAND THE PARTY BEING CHECKED CAN SET IS NOT AN OPERAND.**
+> - **An empty family REFUSED**, because *"no artifact was written before the commit"* is trivially true of a
+>   family with none. The vacuity class, third instance, pre-empted rather than filed.
+>
+> **And two devices worth naming, both E's to file rather than mine:** the receipt **states what it does NOT
+> establish** — mutable mtimes, clock skew — **with a control asserting that sentence is PRESENT**, which
+> pre-empts `BEN-392`'s transport failure at the source rather than downstream; and E chose **defect-location
+> assertions over an exemption list**, deliberately asymmetric — **an exemption list DECAYS** (`KNOWN_PREEXISTING`'s
+> 2026-07-28 cutoff, `BEN-406`) **while a defect-location assertion is SELF-MAINTAINING: it fails exactly when
+> the citation it protects becomes wrong, so its failure mode is *"your finding's citations are stale"* rather
+> than *"add me to a list."* That inverts the maintenance burden.**
+
+> ~~**CONDITION, so it is a check rather than a promise — E's own device applied to its own deferral: the
 > manifest's run-bound entries must be committed at a sha whose commit time PRECEDES the first task's artifact
 > mtime, and that ordering must be ASSERTED after the fact from git + the artifact.** E already refuses to run
 > if either wrapper module pre-exists, with a control that creates one and confirms the refusal. **Same device,

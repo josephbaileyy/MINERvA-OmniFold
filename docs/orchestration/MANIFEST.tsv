@@ -256,7 +256,7 @@ docs/orchestration/INTERIM-HANDBACK.md	ARCHIVAL	document			terminal		exact-path-
 docs/orchestration/LIVE-STATE.md	LIVE	live-status			generated		always	docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_g2_dump_resume.sh;docs/orchestration/watch_slurm_array_resume.sh	no	44	76	12872
 docs/orchestration/LIVE-USAGE.md	LIVE	live-status			open		route-only		no	15	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	10	53	3555
-docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	19	986	161695
+docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	19	987	161879
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	LIVE	document		20260817	open		route-only		no	3	184	13929
 docs/orchestration/MAP-20260817-pet-critical-path.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	197	14433
 docs/orchestration/METHOD-DECLARATION-20260814-lane-d-cstat-crosscheck.md	ARCHIVAL	document		20260814	terminal		exact-path-only	docs/orchestration/state/build_cstat_crosscheck_laned.py	yes	3	102	6794
@@ -326,7 +326,7 @@ docs/orchestration/RULING-20260815-lanec-reduced-n-diagnostic-coherence.md	ARCHI
 docs/orchestration/RULING-20260817-lanec-data-only-coherence-predicate.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	233	16767
 docs/orchestration/RULING-20260817-lanec-data-only-cstat-is-a-second-product.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	339	24599
 docs/orchestration/RULING-20260817-lanec-data-only-normalization-must-vary.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	204	13059
-docs/orchestration/RULING-20260817-lanec-data-only-target-family-and-launchers.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	635	45600
+docs/orchestration/RULING-20260817-lanec-data-only-target-family-and-launchers.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	685	49531
 docs/orchestration/RULING-20260817-lanec-floor-vs-family-coherence.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	338	24704
 docs/orchestration/RULING-20260817-lanec-oi126-branch-set-not-exhaustive.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	247	17338
 docs/orchestration/RULING-20260817-lanec-pinned-readers-get-wrappers-not-copies.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	244	16354
@@ -954,6 +954,7 @@ docs/orchestration/state/step1-queue-latency-56525829-reconciliation.json	MACHIN
 docs/orchestration/state/step1-trajectory-complete-56525829.json	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	5	108	5506
 docs/orchestration/state/step1-trajectory-submit-56525829.json	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	4	29	1507
 docs/orchestration/state/verify-hash-bindings-cluster-baseline-20260817.json	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	1	50	2577
+docs/orchestration/state/verify_manifest_precedes_artifacts.py	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/tests/test_cstat_data_only_predicates.py	yes	1	126	6018
 docs/orchestration/state/vl100-foldforward-shape-test-20260814.json	MACHINE	state-artifact		20260814	generated		exact-path-only	docs/orchestration/state/probe-vl100-shape-correction-scan-20260815.py;nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh	yes	6	1801	35191
 docs/orchestration/state/vl100-nominal-residual-field-20260815.json	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-vl100-shape-correction-scan-20260815.py	yes	3	1438	29070
 docs/orchestration/state/vl100-own-run-foldforward-20260815.json	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-vl100-shape-correction-scan-20260815.py	yes	4	1537	31600
