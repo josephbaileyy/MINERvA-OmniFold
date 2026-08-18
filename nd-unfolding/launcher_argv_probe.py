@@ -266,3 +266,128 @@ def assert_estimator_seed_is_an_integer_in_every_branch(launcher, cases, expect=
     if problems:
         raise SystemExit("[FAIL] observed-argv probe:\n  " + "\n  ".join(problems))
     return True
+
+
+# ===================================================================================================
+# NATIVE (CLUSTER) MODE -- ruling (a). NO TEXT TRANSFORMATION AT ALL.
+#
+# The `_prepare` transformation above exists ONLY because a local checkout cannot resolve
+# ${REPO}=/pscratch, cannot run setup_salloc_env.sh (it activates a cluster conda env), and is
+# overridden anyway because every launcher REASSIGNS REPO on its first executable line. Six successive
+# fixes each MOVED the failure rather than removing it, which is the signature of a design problem.
+# On the cluster none of those three conditions holds, so the transformation is deleted rather than
+# repaired.
+#
+# READ-ONLY BY CONSTRUCTION, and this is the part that matters for running it against live namespaces:
+#   python3 / sbatch / srun   stubbed -> no real work, no job submitted
+#   mkdir                     stubbed -> NO member directories created under the canonical namespaces
+#   rg_run / mr_run           stubbed to exec the command only -> rg_begin's `rm -f marker` NEVER runs,
+#                                                                 no .done marker is written
+#   rg_skip_if_complete / mr_skip_if_complete   LEFT REAL -- they only READ
+#
+# WHAT NATIVE MODE THEREFORE DOES NOT COVER, stated so it cannot be mistaken for coverage: because
+# rg_run/mr_run are stubbed, this does not exercise marker writing or the SKIP and HARD-FAILURE resume
+# regimes. Those are verified separately and independently by the three-regime bash test of
+# lib_member_resume.sh, which does not use this probe at all.
+_NATIVE_PREAMBLE = """
+set +e
+module() { :; }
+mkdir() { :; }                       # no writes into canonical namespaces
+srun() { while [ $# -gt 0 ]; do case "$1" in -*) shift;; [0-9]*) shift;; *) break;; esac; done; "$@"; }
+rg_run() { shift; "$@"; }            # no rg_begin, so no marker is removed or written
+mr_run() { shift; "$@"; }
+"""
+
+
+def observed_argv_native(launcher, env, repo):
+    """Run the launcher AS WRITTEN under stubs. No `_prepare`, no substitutions."""
+    path = os.path.join(repo, "nd-unfolding", launcher)
+    if not os.path.exists(path):
+        raise SystemExit(f"[FAIL] launcher not found on the cluster: {path}")
+    tmp = tempfile.mkdtemp(prefix="argvprobe.")
+    try:
+        for name in ("python3", "python", "sbatch"):
+            q = os.path.join(tmp, name)
+            with open(q, "w", encoding="utf-8") as fh:
+                fh.write(_STUB)
+            os.chmod(q, 0o755)
+        pre = os.path.join(tmp, "pre.sh")
+        with open(pre, "w", encoding="utf-8") as fh:
+            fh.write(_NATIVE_PREAMBLE)
+        e = dict(os.environ)
+        e["PATH"] = tmp + os.pathsep + e.get("PATH", "")
+        e.update({k: str(v) for k, v in env.items()})
+        r = subprocess.run(["bash", "-c", f'source "{pre}"; source "{path}"'],
+                           capture_output=True, text=True, env=e,
+                           cwd=os.path.join(repo, "nd-unfolding"), timeout=600)
+        rows = [ln.split("\t")[1:] for ln in (r.stdout or "").split("\n") if ln.startswith("ARGV\t")]
+        return rows, r.returncode, (r.stderr or "")
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def cluster_check(repo, offset, cases_by_launcher):
+    """Run every launcher x case on the cluster and print a MACHINE-CHECKABLE verdict.
+
+    A SILENT NO-OP CANNOT BE MISTAKEN FOR A PASS: the verdict line carries the number of launchers,
+    cases and argv observations, and PASS is refused unless every case that declares it expects a
+    command produced an integer estimator seed AND a member-namespaced output. Zero observations is
+    reported as FAIL, never as clean.
+
+    LIVENESS: one `[probe]` line per case, flushed, before and after each launcher runs. If nothing
+    appears for more than a few seconds a launcher is genuinely stuck; a quiet stream is NOT
+    evidence of progress (BEN-028) and this prints per case so silence is unambiguous.
+    """
+    total_cases = 0
+    total_obs = 0
+    failures = []
+    for launcher in sorted(cases_by_launcher):
+        for case in cases_by_launcher[launcher]:
+            env = dict(case)
+            expect = env.pop("_expect_command", True)
+            env["MNV_EST_SEED_OFFSET"] = offset
+            total_cases += 1
+            print(f"[probe] START {launcher} case={case} offset={offset}", flush=True)
+            rows, rc, err = observed_argv_native(launcher, env, repo)
+            total_obs += len(rows)
+            seeds = flag_values(rows, "--estimator-seed") or flag_values(rows, "--seed")
+            outs = [v for k in ("--out", "--outdir", "--out-root", "--combine", "--block-slabs")
+                    for v in flag_values(rows, k)]
+            member = [o for o in outs if "member_k" in str(o)]
+            if not expect:
+                print(f"[probe] DONE  {launcher} case={case} (no command expected) obs={len(rows)}",
+                      flush=True)
+                continue
+            problems = []
+            if not seeds:
+                problems.append("no --estimator-seed/--seed reached a command")
+            for s in seeds:
+                if s == "<MISSING>" or not re.fullmatch(r"-?\d+", str(s)):
+                    problems.append(f"seed value {s!r} is not an integer")
+            if not outs:
+                problems.append("no output path reached a command")
+            elif len(member) != len(outs):
+                problems.append(f"{len(outs) - len(member)} of {len(outs)} output paths are NOT "
+                                f"member-namespaced: {[o for o in outs if o not in member]}")
+            if problems:
+                failures.append((launcher, case, problems, rc, err.strip()[-300:]))
+            print(f"[probe] DONE  {launcher} case={case} rc={rc} obs={len(rows)} "
+                  f"seeds={seeds} outs={len(outs)} namespaced={len(member)} "
+                  f"{'OK' if not problems else 'PROBLEM'}", flush=True)
+    print("")
+    print(f"[probe] launchers={len(cases_by_launcher)} cases={total_cases} argv_observations={total_obs}")
+    for launcher, case, problems, rc, err in failures:
+        print(f"[probe] FAIL {launcher} {case} rc={rc}")
+        for pr in problems:
+            print(f"[probe]      {pr}")
+        if err:
+            print(f"[probe]      stderr tail: {err}")
+    if total_obs == 0:
+        print("[probe] VERDICT: FAIL -- ZERO argv observations. Nothing ran; this is NOT a pass.")
+        return 2
+    if failures:
+        print(f"[probe] VERDICT: FAIL -- {len(failures)} case(s) with problems")
+        return 1
+    print(f"[probe] VERDICT: PASS -- {total_cases} cases, {total_obs} observations, every expected "
+          f"case produced an integer estimator seed and a member-namespaced output")
+    return 0
