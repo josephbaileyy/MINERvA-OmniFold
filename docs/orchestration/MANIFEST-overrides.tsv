@@ -1,5 +1,4 @@
 path	class	event_status	canonical_successor
-docs/orchestration/.DS_Store	DEAD	generated	
 docs/orchestration/AGENTS.project-template.md	DEAD	superseded	AGENTS.md
 docs/orchestration/B1-FIX-IMPLEMENTER-BRIEF.md	DEAD	superseded	docs/orchestration/B1-NORMALIZATION-FIX-DESIGN.md
 docs/orchestration/CATALOG.md	LIVE	open	
@@ -30,7 +29,10 @@ docs/orchestration/FINDINGS.md	LIVE	open
 docs/orchestration/INDEX-retracted-and-superseded-values.md	LIVE	open	
 docs/orchestration/LIVE-STATE.md	LIVE	generated	
 docs/orchestration/LIVE-USAGE.md	LIVE	open	
+docs/orchestration/MEDIATOR-REVIEW-20260818-control-plane.md	ARCHIVAL	terminal	""
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	LIVE	open	
+docs/orchestration/PLAYBOOK.md	LIVE	open	""
+docs/orchestration/PROPOSAL-20260818-control-plane-compaction.md	ARCHIVAL	terminal	""
 docs/orchestration/OMNIFOLD-DOSSIER.template.md	DEAD	superseded	docs/orchestration/OMNIFOLD-DOSSIER.md
 docs/orchestration/PREDECLARATION-20260812-fullevent-cstat-100-replicas.md	ARCHIVAL	superseded	docs/orchestration/PREDECLARATION-20260813-gate5-coherent-replicas-n50.md
 docs/orchestration/PREDECLARE-20260811-gibuu-corner-ratio.md	ARCHIVAL	terminal	nd-unfolding/ND_OMNIFOLD_RUN_LOG.md
@@ -49,5 +51,11 @@ docs/orchestration/TASK-HANDOFF.template.md	LIVE	open	""
 docs/orchestration/TASK.template.md	LIVE	open	
 docs/orchestration/USER-DECISIONS.md	LIVE	open	""
 docs/orchestration/WAKER.md	LIVE	open	
+docs/orchestration/control-plane/owners.tsv	LIVE	open	""
+docs/orchestration/control-plane/playbook.tsv	LIVE	open	""
+docs/orchestration/control-plane/policy.json	LIVE	open	""
+docs/orchestration/control-plane/source-record-inventory.tsv	MACHINE	generated	""
+docs/orchestration/control-plane/work-items.tsv	LIVE	open	""
+docs/orchestration/control_plane_lint.py	LIVE	open	""
 docs/orchestration/fable-prompt-brevity.md	DEAD	superseded	
 docs/orchestration/followup-agent-E-g2-source-06.md	DEAD	superseded	nd-unfolding/ND_OMNIFOLD_STATUS.md

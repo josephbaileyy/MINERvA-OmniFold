@@ -182,7 +182,8 @@
 #   therefore violates the real rule. The scope is a consequence of the admitting rule, not a rival to it.
 #
 #   COST: 0.07 s measured. Two small file reads and two `git show`s; it does NOT run
-#   generate_manifest.py, which would be far too expensive for a hook and is itself ~140 lines stale.
+#   the full generate_manifest.py corpus scan, which remains an explicit pre-landing check; the hook
+#   runs its cheap ignored-vs-intended inventory self-test below.
 #
 #   WHAT IT DOES NOT DO: it cannot detect a document that SHOULD be LIVE but was never declared. With
 #   no overrides row the generator defaults to ARCHIVAL, so an undeclared doc is out of scope and this
@@ -250,6 +251,9 @@ run "receipt artifact tracking"    python3 docs/orchestration/verify_receipt_art
 # that merge_guard.sh's one false pass was caught end-to-end and NOT by its self-test.
 run "LIVE doc indexed"             python3 docs/orchestration/live_doc_indexed.py --check
 run "LIVE-index self-test"         python3 docs/orchestration/live_doc_indexed.py --self-test
+run "bounded control plane"        python3 docs/orchestration/control_plane_lint.py
+run "control-plane self-test"      python3 docs/orchestration/control_plane_lint.py --self-test
+run "manifest inventory self-test" python3 docs/orchestration/generate_manifest.py --self-test
 
 rm -f /tmp/.hook.$$
 if [ "$fail" -eq 0 ]; then

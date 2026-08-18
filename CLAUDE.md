@@ -23,23 +23,29 @@ re-narrated** — so where this file points somewhere, go there rather than trus
    of which ~14% are live. Routes by task; `MANIFEST.tsv` is the authority on what is LIVE vs
    ARCHIVAL vs MACHINE vs DEAD. Use it instead of reading the directory. Retention rules:
    `CONVENTION-document-retention.md`.
-1. **`docs/orchestration/FINDINGS.md`** — the `BEN-*` ledger of how *agents on this campaign* fail.
-   This is the highest-value file in the repo for a new session and the most frequently skipped.
-   Long-form detail is in sibling `FINDING-<date>-<slug>.md` files, indexed at the top of `FINDINGS.md`.
-2. **`KNOWN_ISSUES.md`** — how the *code* fails. Different axis from FINDINGS; read both.
-3. **`docs/OPEN_ITEMS.md`** — the live to-do.
+1. **`docs/CURRENT_WORK.md`** — the generated bounded attention queue: at most 15 actionable,
+   waiting-Joseph, or externally blocked leaves. Never hand-edit it; change the checked-in
+   `docs/orchestration/control-plane/` sources and regenerate. Open the cited `OI-*` row before acting.
+2. **`docs/orchestration/PLAYBOOK.md`** — the generated 15–25 active process rules every session
+   applies. Each rule points to its `BEN-*` evidence; read the full finding only when relevant.
+3. **`KNOWN_ISSUES.md`** — how the *code* fails. Different axis from the playbook; read both.
 4. **`docs/orchestration/CLAIMS.md`** — `CLM-*` physics claims and their verification status. Allowed
    states are `PROVED / VERIFIED-NUMERIC / VERIFIED-CODE / CITED / ASSUMED / OPEN / REFUTED`.
    **Worker agreement is not verification**; promotion needs a recoverable artifact + an independent check.
 
 ## Read ON DEMAND, not on entry
 
+**`docs/OPEN_ITEMS.md` and `docs/orchestration/FINDINGS.md`** — the full item record and process
+casebook. Search them by the `OI-*` or `BEN-*` routed from the compact views. They preserve amendments,
+allocation state, and chronology; their value as evidence is exactly why they are not default context.
+
+**`docs/CURRENT_WORK_BACKLOG.md`** — generated list of active source records not promoted into the
+bounded queue. Consult it when reprioritizing; omission from `CURRENT_WORK.md` is not retirement.
+
 **`AGENTS.md`** — the ~500-line domain reference: pipeline, contracts, bin edges, SLURM, and the
-`salloc` section. **Read it when you touch the domain it describes, not to orient.** It was item 4 of
-the list above until 2026-08-13; **measured, it is 7,663 of the entry path's 39,972 tokens — 19.2%, the
-single largest file after `FINDINGS.md`** — and almost none of it is needed to answer *"what should I do
-next."* Moved on Joseph's instruction: *"can you implement this HPSS change and this context strategy
-change?"*
+`salloc` section. **Read it when you touch the domain it describes, not to orient.** It was removed
+from the default entry path on 2026-08-13 because almost none of it is needed to answer *"what should
+I do next."*
 
 **Nothing was deleted and no fact moved.** This is a read-ordering change and it is reversible in one
 commit. The routing table below still names `AGENTS.md` as the canonical home for domain detail, so a
@@ -58,8 +64,10 @@ Mirrors the table in `AGENTS.md`. Write a fact in its home; index it everywhere 
 |---|---|
 | Verified numbers (anything technote-quoted) | `VALIDATION_LEDGER.md` |
 | Bugs, code debt, recurring traps | `KNOWN_ISSUES.md` |
-| Open / deferred items | `docs/OPEN_ITEMS.md` |
-| **How agents/campaigns fail** | `docs/orchestration/FINDINGS.md` (`BEN-*`) |
+| Current priority and routing | generated `docs/CURRENT_WORK.md`; unpromoted active records in generated `docs/CURRENT_WORK_BACKLOG.md` |
+| Open / deferred item records | `docs/OPEN_ITEMS.md` |
+| **Active operating lessons** | generated `docs/orchestration/PLAYBOOK.md` (source `control-plane/playbook.tsv`) |
+| **How agents/campaigns fail — evidence/casebook** | `docs/orchestration/FINDINGS.md` (`BEN-*`) |
 | **Physics claims + verification status** | `docs/orchestration/CLAIMS.md` (`CLM-*`) |
 | Current state per workstream | `*_STATUS.md` |
 | **What is happening right now** (campaign, DAG node, owners, live jobs, watches) | `docs/orchestration/LIVE-STATE.md` (generated) |
@@ -69,49 +77,21 @@ Mirrors the table in `AGENTS.md`. Write a fact in its home; index it everywhere 
 
 ## Hard rules
 
-These are not style preferences. Each one is here because it was broken and cost real time.
+These are bootstrap and repository-integrity constraints that apply before task-specific work. Recurring
+operating rules live only in the generated `PLAYBOOK.md`; do not copy them back into this section.
 
 - **A result does not exist until its commit lands.** The commit introducing a campaign's
   scripts/launchers must also carry its products summary, the ledger entry, the RUN_LOG entry, and the
   STATUS one-liner. Other sessions run this repo concurrently — unpushed work is invisible to them.
-- **Never pipe a diagnostic run through `tail`/`head`.** Redirect the whole stream to a file, then
-  filter *reads* of it. Truncating at write time destroys the evidence and buys a second 30–90 min run.
-  (BEN-026 — this was done twice in one day.)
-- **Every ID, rank, count, and queue name in a status report must come from a command run in the same
-  turn.** Never from memory, never eyeballed off a listing. Another user's job has already been
-  reported as this campaign's progress once. (BEN-027)
-- **A quiet log does not mean a dead job.** On this Lustre filesystem `st_blksize` is 4 MiB, so Python
-  block-buffers redirected stdout and a healthy multi-hour run can show *zero* progress lines until the
-  process exits. Judge liveness by `sstat` CPU time and produced artifacts, never by log growth. A
-  healthy q3 sweep was once cancelled for exactly this. (BEN-028, and `AGENTS.md` salloc lesson #2)
-- **Do not let a small-sample spread estimate overturn a decision.** A 16-seed "sd grew 56%" reading
-  inverted a correct ranking at p=0.093, with the eventual 48-seed answer inside the CI the whole time.
-  Prefer realized exceedance over a fitted gaussian tail. (BEN-025)
 - **Audit and review lanes get read-only tooling.** `codex exec --sandbox read-only`, or
   `claude -p --allowedTools "Read,Grep,Glob,Bash"`; give `agy` a throwaway `git worktree`. A pure audit
   prompt has already caused a delegate to silently refactor a training loss in a file that was
   hash-pinned into a gate two hours later. Always `git status` after a delegate finishes, and preserve
   the diff before reverting — parts of it may be real findings.
-- **Resume guards must validate completeness, not existence.** `[[ -s $OUT ]] && skip` let 7 partial
-  slabs permanently block their own repair. Validate content, or write-to-temp + rename-on-complete.
-  (BEN-023)
 - **Deletions and top-level reorgs are frozen** behind `docs/POST_PUBLICATION_REORG_PLAN.md`'s freeze
   tag. `nd-unfolding/`'s root is at capacity — put new work in the subdirectory that owns it.
-- **Every derived quantity in a receipt ships its ingredients** — enough that the reported numbers can
-  contradict each other. A verdict-only receipt is unfalsifiable, and this is the only heuristic that has
-  caught a defect with nobody suspecting one: a first-leg-vs-end-to-end metric mismatch was found purely by
-  failing to derive a published ratio from published operands. `docs/orchestration/CONVENTION-receipt-ingredients.md`
-  (BEN-077).
 - **Do not rename or delete a tracked script cited in a RUN_LOG, ledger, or receipt JSON.** 115
   `sbatch_*.sh` names are load-bearing provenance.
-- **Item ids inside a document are prefixed with that document's short name** — `PB1`, not `B1`. Two id
-  collisions in four days: `BEN-041`/`BEN-044` between concurrent lanes, then Packet B's items landing on a
-  `B1` that already meant the CLM-010 rate-injection closure. The second is the dangerous shape: *"B1
-  closed"* is true of one and false of the other, and read at face value it supports a "Gate-4 unblocked"
-  claim that isn't the case. It was caught only because a commit *body* named its scope. **This closes the
-  namespace that had no rule; it does not cover `BEN-*` ids, which have per-lane ranges that were violated
-  anyway and caught by attention rather than by mechanism** — that exposure is known and accepted, not
-  fixed. (BEN-080, BEN-082.)
 
 ## Compute quick reference
 
@@ -125,7 +105,9 @@ These are not style preferences. Each one is here because it was broken and cost
 
 ## When you learn something
 
-If you hit a failure that a future agent could hit, add a `BEN-*` row to `docs/orchestration/FINDINGS.md`
-in the same turn you fix it. If it needs more than a table row, write
-`docs/orchestration/FINDING-<YYYYMMDD>-<slug>.md` **and add it to the index at the top of FINDINGS.md** —
-an unindexed finding is one nobody will read, which is how nine of them sat orphaned until 2026-08-06.
+Search `FINDINGS.md`, its archives, and long-form findings before filing. Amend or cross-reference an
+existing `BEN-*` when the reusable mechanism is already represented. Add a new row only when the
+failure is a genuinely new reusable mechanism that changes an executable check, an active playbook
+rule, or an existing BEN's scope. If it needs more than a compact row, write
+`docs/orchestration/FINDING-<YYYYMMDD>-<slug>.md` **and add it to the index at the top of FINDINGS.md**.
+Promote it to `PLAYBOOK.md` only if every new session should act differently because of it.

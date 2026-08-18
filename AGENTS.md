@@ -31,12 +31,14 @@ OmniFold in place of D'Agostini IBU. Validated on playlist 1A; full
 |---|---|
 | Verified numbers (anything technote-quoted) | `VALIDATION_LEDGER.md` |
 | Bugs, code debt, recurring traps (index) | `KNOWN_ISSUES.md` |
-| Open / deferred items (the live to-do) | `docs/OPEN_ITEMS.md` |
+| Current priority and routing | generated `docs/CURRENT_WORK.md`; unpromoted active records in generated `docs/CURRENT_WORK_BACKLOG.md` |
+| Open / deferred item records | `docs/OPEN_ITEMS.md` |
 | Current state per workstream | `*_STATUS.md` (kept short; prune on update) |
 | Chronology / archaeology | `*_RUN_LOG.md` (append-only, never trimmed) |
 | Durable invariants & gotchas (full detail) | `2d-unfolding/2D_OMNIFOLD_REFERENCE.md` (shared by 3D/ND) |
 | Deliverables | `docs/analysis-note/` (Overleaf subtree; ALL THREE builds: note/primer/paper), slides |
-| **How agents/campaigns fail** (process lessons) | `docs/orchestration/FINDINGS.md` — `BEN-*` ledger |
+| **Active operating lessons** | generated `docs/orchestration/PLAYBOOK.md` — bounded, points to `BEN-*` |
+| **How agents/campaigns fail** (evidence/casebook) | `docs/orchestration/FINDINGS.md` — `BEN-*` ledger |
 | **Physics claims + verification status** | `docs/orchestration/CLAIMS.md` — `CLM-*` ledger |
 | Long-form finding detail | `docs/orchestration/FINDING-<YYYYMMDD>-<slug>.md`, indexed at the top of `FINDINGS.md` |
 
@@ -68,11 +70,15 @@ RUN_LOG co-located in its directory, prefixed by dimensionality
 - `docs/orchestration/CATALOG.md` — pointer-only router for `docs/orchestration/` (498 files, ~14%
   live). Route by task rather than reading the directory; `MANIFEST.tsv` is the classification
   authority, `CONVENTION-document-retention.md` the rule for keeping it true.
-- `docs/orchestration/FINDINGS.md` — the `BEN-*` process-failure ledger. **Read FIRST among the
-  standing docs, before KNOWN_ISSUES.** `KNOWN_ISSUES.md` records how the *code* fails; `FINDINGS.md` records how *agents
-  working on this campaign* fail, which is the class of error that has actually repeated here. If you
-  are about to report a status, pick an operating point, judge a spread, or trust a delegate's
-  self-validation, the relevant entry already exists (see BEN-023 … BEN-028).
+- `docs/CURRENT_WORK.md` — generated bounded attention queue (10–15 leaves). Never hand-edit it;
+  change the `docs/orchestration/control-plane/` sources and regenerate. Read the cited `OI-*` row
+  before acting; terminal and merely deferred records stay off this default surface.
+- `docs/CURRENT_WORK_BACKLOG.md` — generated list of active source records without a promoted leaf.
+  Read when reprioritizing; omission from the bounded queue is not retirement.
+- `docs/orchestration/PLAYBOOK.md` — generated bounded active process rules (15–25), each backed by
+  `BEN-*` evidence and an observable check. Read this before the full casebook.
+- `docs/orchestration/FINDINGS.md` — the full `BEN-*` process-failure casebook. Read **on demand** by
+  id when the playbook, a task, or a review routes you there; do not context-load it wholesale.
 - `KNOWN_ISSUES.md` — bugs/traps index. Read FIRST among code docs.
 - `2d-unfolding/2D_OMNIFOLD_REFERENCE.md` — stable invariants and gotchas (shared 2D+3D+ND).
 - `2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md` — 2D dashboard, current numbers, next actions.
@@ -84,6 +90,14 @@ RUN_LOG co-located in its directory, prefixed by dimensionality
 - `nd-unfolding/PET_UQ_REMEDIATION_STATUS.md` — ordered PET-only remediation
   DAG, reuse/rerun matrix, and the gate for targeted versus full per-universe
   retraining. Read before launching PET UQ work.
+
+**BEN filing pressure.** Search `FINDINGS.md`, its archives, and long forms before adding a row.
+Amend or cross-reference an existing mechanism unless the new finding changes an executable check,
+an active `PLAYBOOK.md` rule, or an existing BEN's established scope. Put chronology and detailed
+evidence in a long-form finding rather than expanding the index row.
+
+Recurring operating rules are written only in generated `PLAYBOOK.md`. The domain reference may
+route to a playbook key but must not maintain a second prose copy of an active rule.
 
 **Headline numbers (Phase 18.2 MEFHC, 5-iter production):**
 - σ_total = 3.073e-38 cm²/nucleon (paper: 3.039e-38; ours runs 1.12 % high).

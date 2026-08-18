@@ -22,6 +22,11 @@ its path and never in its bytes.**
 | Generator | [`generate_manifest.py`](generate_manifest.py) |
 | Router agents actually read | [`CATALOG.md`](CATALOG.md) |
 
+`MANIFEST.tsv` inventories Git-tracked files plus nonignored untracked files proposed in the current
+change. Its `tracking` column distinguishes `tracked` from `intended`; ignored caches and build
+products are excluded. Thus an intended file is reviewable before `git add` but cannot be mistaken
+for committed repository inventory.
+
 `class` is one of `LIVE / ARCHIVAL / MACHINE / DEAD`; `event_status` is one of
 `open / terminal / superseded / generated`.
 
@@ -58,11 +63,10 @@ python3 docs/orchestration/generate_manifest.py --check   # nonzero if stale
 `--check` is the guard: it fails when the tree and the manifest disagree, which is what catches a
 document added without a classification. Run it before committing documentation changes.
 
-**Regenerate on as clean a tree as you can.** The generator classifies tracked files *plus* untracked
-files that are not ignored, so that a new document is classified the moment it exists rather than the
-moment it lands. The cost is that several sessions share this checkout: a regeneration picks up
-whatever untracked scratch other sessions currently have on disk. A `--check` failure after someone
-else's work lands is therefore expected and means *regenerate*, not *something is broken*.
+The generator classifies tracked files plus untracked files that are not ignored, so that a new
+document is classified before it lands. Every such row is visibly `tracking=intended`. Ignored files
+never enter the inventory. A `--check` failure after another commit lands means regenerate and review
+the path-set difference; it does not authorize silently accepting unrelated inventory changes.
 
 ## Scope
 

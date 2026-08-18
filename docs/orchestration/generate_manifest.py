@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """Generate the in-place classification manifest for docs/orchestration.
 
-The required output schema intentionally has no tracking-state column.  Git
-tracking/ignore state is still derived here: tracked and intended-to-be-tracked
-files participate in inbound-reference analysis, while ignored artifacts are
-inventoried but do not create inbound references.
+Inventory is Git-defined: tracked files plus nonignored untracked files intended
+for the current change. Ignored caches and build products are excluded. Tracking
+state is emitted, so a proposed file cannot masquerade as committed inventory.
 """
 
 from __future__ import annotations
@@ -12,10 +11,10 @@ from __future__ import annotations
 import argparse
 import csv
 import io
-import os
 import re
 import subprocess
 import sys
+import tempfile
 from collections import Counter, deque
 from pathlib import Path
 
@@ -27,6 +26,7 @@ OVERRIDES = ORCHESTRATION / "MANIFEST-overrides.tsv"
 
 COLUMNS = (
     "path",
+    "tracking",
     "class",
     "kind",
     "campaign",
@@ -67,40 +67,14 @@ def repo_path(path: Path) -> str:
 
 
 def inventory() -> tuple[list[Path], dict[str, str]]:
-    tracked = set(git_lines("ls-files"))
-    ignored = set(
-        git_lines(
-            "ls-files",
-            "--others",
-            "--ignored",
-            "--exclude-standard",
-            "--",
-            "docs/orchestration",
-        )
-    )
-
-    paths: list[Path] = []
-    for directory, dirnames, filenames in os.walk(ORCHESTRATION):
-        dirnames.sort()
-        for filename in sorted(filenames):
-            candidate = Path(directory) / filename
-            if candidate.is_file():
-                paths.append(candidate)
-
-    # The first generation must already describe its own eventual output.
-    if TARGET not in paths:
-        paths.append(TARGET)
-    paths.sort(key=repo_path)
-
-    states: dict[str, str] = {}
-    for path in paths:
-        rel = repo_path(path)
-        if rel in tracked:
-            states[rel] = "tracked"
-        elif rel in ignored:
-            states[rel] = "ignored"
-        else:
-            states[rel] = "intended"
+    tracked = set(git_lines("ls-files", "--", "docs/orchestration"))
+    intended = set(git_lines("ls-files", "--others", "--exclude-standard", "--",
+                             "docs/orchestration"))
+    target_rel = repo_path(TARGET)
+    tracked.add(target_rel)
+    relpaths = sorted(tracked | intended)
+    paths = [REPO / rel for rel in relpaths if (REPO / rel).is_file() or rel == target_rel]
+    states = {rel: ("tracked" if rel in tracked else "intended") for rel in relpaths}
     return paths, states
 
 
@@ -353,6 +327,7 @@ def generate() -> tuple[bytes, Counter[str], int, int, Counter[str], list[str]]:
         rows.append(
             {
                 "path": rel,
+                "tracking": states[rel],
                 "class": classification,
                 "kind": derive_kind(path, rel),
                 "campaign": derive_campaign(path, rel, data),
@@ -397,6 +372,43 @@ def generate() -> tuple[bytes, Counter[str], int, int, Counter[str], list[str]]:
     )
 
 
+def self_test() -> int:
+    ignored_dir = ORCHESTRATION / "__pycache__"
+    made_ignored_dir = not ignored_dir.exists()
+    ignored_dir.mkdir(exist_ok=True)
+    intended_path: Path | None = None
+    ignored_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=ORCHESTRATION, prefix="manifest-selftest-",
+                                         suffix=".md", delete=False) as handle:
+            intended_path = Path(handle.name)
+        with tempfile.NamedTemporaryFile(dir=ignored_dir, prefix="manifest-selftest-",
+                                         suffix=".pyc", delete=False) as handle:
+            ignored_path = Path(handle.name)
+        paths, states = inventory()
+        rels = {repo_path(path) for path in paths}
+        checks = (
+            repo_path(intended_path) in rels,
+            states.get(repo_path(intended_path)) == "intended",
+            repo_path(ignored_path) not in rels,
+            set(states.values()) <= {"tracked", "intended"},
+            "tracking" in COLUMNS,
+        )
+        if not all(checks):
+            print("manifest self-test: FAIL", file=sys.stderr)
+            print(f"checks={checks}", file=sys.stderr)
+            return 1
+    finally:
+        if intended_path is not None:
+            intended_path.unlink(missing_ok=True)
+        if ignored_path is not None:
+            ignored_path.unlink(missing_ok=True)
+        if made_ignored_dir:
+            ignored_dir.rmdir()
+    print("manifest self-test: PASS")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -404,7 +416,11 @@ def main() -> int:
         action="store_true",
         help="exit nonzero when MANIFEST.tsv differs from generated output",
     )
+    parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
+
+    if args.self_test:
+        return self_test()
 
     try:
         output, counts, overridden, defaults, tracking, unused = generate()

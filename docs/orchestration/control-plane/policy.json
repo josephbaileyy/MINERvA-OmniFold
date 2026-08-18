@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "canonical_adoption_allowed": true,
+  "registry_scope": "all-open-items-records",
+  "current_work_min": 10,
+  "current_work_cap": 15,
+  "playbook_min": 15,
+  "playbook_cap": 25,
+  "queue_weights": {
+    "NOW": 30,
+    "WAITING-JOSEPH": 40,
+    "BLOCKED-EXTERNAL": 10
+  },
+  "impact_weights": {
+    "publication": 400,
+    "provenance": 300,
+    "safety": 200,
+    "infrastructure": 100,
+    "maintenance": 0
+  },
+  "urgency_weights": {
+    "P0": 30,
+    "P1": 20,
+    "P2": 10,
+    "P3": 0
+  },
+  "unassigned_owner_queue": "WAITING-JOSEPH",
+  "unassigned_action_prefix": "Designate an accountable owner, then: ",
+  "source_classification": {
+    "overrides": {
+      "OI-80": {
+        "lifecycle": "retired",
+        "queue": "-",
+        "rule": "pointer-to-canonical-OI-122"
+      }
+    },
+    "ordered_rules": [
+      {
+        "name": "explicit-terminal-prefix",
+        "pattern": "^(WITHDRAWN|DISCHARGED|CLOSED(?:\\s|$)|PREMISE FALSE|SUPERSEDED|BOTH ACTIONS EXECUTED)",
+        "lifecycle": "retired",
+        "queue": "-"
+      },
+      {
+        "name": "explicit-deferred-prefix",
+        "pattern": "^(FROZEN|DEFERRED)",
+        "lifecycle": "deferred",
+        "queue": "-"
+      },
+      {
+        "name": "explicit-user-decision",
+        "pattern": "WAITING-USER|NEEDS JOSEPH'S RULING",
+        "lifecycle": "active",
+        "queue": "WAITING-JOSEPH"
+      },
+      {
+        "name": "explicit-blocker",
+        "pattern": "\\bBLOCKED\\b",
+        "lifecycle": "active",
+        "queue": "BLOCKED-EXTERNAL"
+      }
+    ],
+    "default": {
+      "lifecycle": "active",
+      "queue": "NOW",
+      "rule": "safe-default-active"
+    }
+  }
+}

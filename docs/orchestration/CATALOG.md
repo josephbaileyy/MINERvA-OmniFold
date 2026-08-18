@@ -6,9 +6,13 @@ This file is a pointer-only router. [`MANIFEST.tsv`](MANIFEST.tsv) is the author
 
 - Classification and exact-path lookup: [`MANIFEST.tsv`](MANIFEST.tsv)
 - Current control-plane snapshot: [`LIVE-STATE.md`](LIVE-STATE.md)
+- Bounded current-work queue: [`../CURRENT_WORK.md`](../CURRENT_WORK.md)
+- Eligible work below the cap: [`../CURRENT_WORK_OVERFLOW.md`](../CURRENT_WORK_OVERFLOW.md)
+- Active source records not promoted into the bounded queue: [`../CURRENT_WORK_BACKLOG.md`](../CURRENT_WORK_BACKLOG.md)
+- Active process playbook: [`PLAYBOOK.md`](PLAYBOOK.md)
 - Multi-session operating policy: [`SESSION-WORKFLOW.md`](SESSION-WORKFLOW.md)
 - Joseph-only choice register: [`USER-DECISIONS.md`](USER-DECISIONS.md)
-- Agent-process failure index: [`FINDINGS.md`](FINDINGS.md)
+- Agent-process failure casebook (on demand): [`FINDINGS.md`](FINDINGS.md)
 - Physics-claim index: [`CLAIMS.md`](CLAIMS.md)
 - Retracted and superseded value index: [`INDEX-retracted-and-superseded-values.md`](INDEX-retracted-and-superseded-values.md)
 
@@ -16,7 +20,8 @@ This file is a pointer-only router. [`MANIFEST.tsv`](MANIFEST.tsv) is the author
 
 | Task | Read |
 |---|---|
-| Create or dispatch a bounded worker task | [`TASK-HANDOFF.template.md`](TASK-HANDOFF.template.md), [`TASK.template.md`](TASK.template.md), [`FINDINGS.md`](FINDINGS.md) |
+| Create or dispatch a bounded worker task | [`../CURRENT_WORK.md`](../CURRENT_WORK.md), [`PLAYBOOK.md`](PLAYBOOK.md), [`TASK-HANDOFF.template.md`](TASK-HANDOFF.template.md), [`TASK.template.md`](TASK.template.md); open exact `BEN-*` evidence from [`FINDINGS.md`](FINDINGS.md) only as needed |
+| Maintain generated current-work and playbook views | [`control-plane/policy.json`](control-plane/policy.json), [`control-plane/owners.tsv`](control-plane/owners.tsv), [`control-plane/work-items.tsv`](control-plane/work-items.tsv), [`control-plane/playbook.tsv`](control-plane/playbook.tsv), generated [`control-plane/source-record-inventory.tsv`](control-plane/source-record-inventory.tsv), [`../CURRENT_WORK.md`](../CURRENT_WORK.md), [`../CURRENT_WORK_OVERFLOW.md`](../CURRENT_WORK_OVERFLOW.md), [`../CURRENT_WORK_BACKLOG.md`](../CURRENT_WORK_BACKLOG.md), [`PLAYBOOK.md`](PLAYBOOK.md) |
 | Operate or rotate Claude/Codex sessions | [`SESSION-WORKFLOW.md`](SESSION-WORKFLOW.md), [`USER-DECISIONS.md`](USER-DECISIONS.md) |
 | Record a Joseph-only choice | [`USER-DECISIONS.md`](USER-DECISIONS.md) |
 | Inspect current jobs, owners, blockers, or next action | [`LIVE-STATE.md`](LIVE-STATE.md) |
