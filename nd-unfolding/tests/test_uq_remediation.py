@@ -1774,5 +1774,71 @@ class FenceAndFrozenHazards(unittest.TestCase):
     def test_F2_ACCEPTS_a_matching_pair_so_it_is_not_rejecting_everything(self):
         self.assertIsNotNone(self._combine(1000, 1000))
 
+
+class StubGateAndGateOnly(unittest.TestCase):
+    """The probe ran a REAL unfold on a login node twice while claiming to be read-only, because PATH
+    shims are displaced by the launchers' own `conda activate`. These tests pin the fix."""
+
+    def test_a_PATH_shim_is_displaced_and_a_shell_function_is_not(self):
+        """The mechanism, asserted rather than described -- the whole fix rests on this asymmetry."""
+        import subprocess
+        with tempfile.TemporaryDirectory() as td:
+            shim, real = Path(td) / "shim", Path(td) / "real"
+            shim.mkdir(); real.mkdir()
+            for d, word in ((shim, "SHIM"), (real, "REAL")):
+                exe = d / "python3"
+                exe.write_text("#!/bin/sh\necho %s\n" % word)
+                exe.chmod(0o755)
+            env = dict(os.environ, PATH=f"{shim}:{os.environ['PATH']}")
+            path_only = subprocess.run(
+                ["bash", "-c", f'PATH="{real}:$PATH"; python3'],
+                capture_output=True, text=True, env=env).stdout.strip()
+            self.assertEqual(path_only, "REAL", "a PATH shim MUST be shown displaceable")
+            as_function = subprocess.run(
+                ["bash", "-c", f'python3() {{ echo STUB; }}; PATH="{real}:$PATH"; python3'],
+                capture_output=True, text=True, env=env).stdout.strip()
+            self.assertEqual(as_function, "STUB", "a shell function MUST survive the displacement")
+
+    def test_the_gate_FIRES_when_a_stub_would_not_survive(self):
+        """Positive control. A gate that has never refused is a gate nobody knows works -- and this
+        one's absence is what let a real producer run."""
+        import launcher_argv_probe as probe
+        saved = probe._NATIVE_PREAMBLE
+        probe._NATIVE_PREAMBLE = '\nset +e\n_ARGV_SENTINEL="__SENTINEL__"\n'   # no functions
+        try:
+            with self.assertRaises(SystemExit) as cm:
+                probe.assert_stubs_survive_activation(str(ND.parent))
+            self.assertIn("STUB GATE", str(cm.exception))
+            self.assertIn("not a stub", str(cm.exception))
+        finally:
+            probe._NATIVE_PREAMBLE = saved
+
+    def test_the_gate_PASSES_with_the_real_preamble(self):
+        import launcher_argv_probe as probe
+        got = probe.assert_stubs_survive_activation(str(ND.parent))
+        for cmd in probe._STUB_COMMANDS:
+            self.assertEqual(got.get(cmd), "function", f"{cmd} must be a function after activation")
+
+    def test_sbatch_IS_among_the_gated_commands(self):
+        """sbatch was UNSTUBBED and nothing submitted only because these seven launchers happen not to
+        invoke it. The safety rested on that accident; it must rest on the gate."""
+        import launcher_argv_probe as probe
+        self.assertIn("sbatch", probe._STUB_COMMANDS)
+
+    def test_NO_LAUNCHER_IS_REACHABLE_FROM_gate_only(self):
+        """STRUCTURAL, by AST. An early `return` inside the full path would be one edit from being
+        bypassed; this asserts the separation instead of trusting it."""
+        import ast as _ast
+        tree = _ast.parse((ND / "launcher_argv_probe.py").read_text())
+        fn = next(n for n in tree.body
+                  if isinstance(n, _ast.FunctionDef) and n.name == "gate_only")
+        called = {c.func.id for c in _ast.walk(fn)
+                  if isinstance(c, _ast.Call) and isinstance(c.func, _ast.Name)}
+        called |= {c.func.attr for c in _ast.walk(fn)
+                   if isinstance(c, _ast.Call) and isinstance(c.func, _ast.Attribute)}
+        for forbidden in ("observed_argv_native", "observed_argv", "cluster_check"):
+            self.assertNotIn(forbidden, called,
+                             f"gate_only must not be able to reach {forbidden}")
+
 if __name__ == "__main__":
     unittest.main()
