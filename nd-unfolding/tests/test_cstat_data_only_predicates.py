@@ -1748,7 +1748,11 @@ class UnthinnedMcEvidence(unittest.TestCase):
     def meta(self, **over):
         m = {"data_factor_sha256": self.DATA,
              "signal_factor_sha256": self.SIG_CANON,
-             "background_factor_sha256": self.BKG_CANON}
+             "background_factor_sha256": self.BKG_CANON,
+             # REQUIRED, not decorative: the target stage writes it in the data-only branch only, so a
+             # receipt lacking it PREDATES the key and its MC treatment is unstated. See the two controls
+             # at the end of this class.
+             "mc_factors_applied": "unity"}
         m.update(over)
         return m
 
@@ -1808,6 +1812,34 @@ class UnthinnedMcEvidence(unittest.TestCase):
         with self.assertRaises(SystemExit) as cm:
             self.check({})
         self.assertIn("no operand", str(cm.exception))
+
+    def test_a_receipt_WITHOUT_mc_factors_applied_is_REJECTED(self):
+        """THE KEY THAT KEEPS "ABSENCE IS NOT NOMINAL" TRUE INSIDE THIS PRODUCT.
+
+        A generation-one target receipt lacks it. Reading its absence as "canonical" would be exactly the
+        absence-means-default trap this campaign keeps finding -- and the honest reading is that the
+        receipt predates the key, so its MC treatment is UNSTATED, which is not the same thing.
+        """
+        m = self.meta()
+        del m["mc_factors_applied"]
+        with self.assertRaises(SystemExit) as cm:
+            self.check(m)
+        self.assertIn("mc_factors_applied=None", str(cm.exception))
+        self.assertIn("UNSTATED", str(cm.exception))
+
+    def test_a_receipt_CLAIMING_canonical_mc_factors_is_REJECTED(self):
+        """The other direction: a receipt that says its MC factors WERE canonical is not a data-only
+        target, and the digests-differ legs must not be reached on it."""
+        with self.assertRaises(SystemExit) as cm:
+            self.check(self.meta(mc_factors_applied="canonical-poisson"))
+        self.assertIn("canonical-poisson", str(cm.exception))
+
+    def test_the_target_builder_writes_it_ONLY_on_the_data_only_branch(self):
+        """Present-in-both would be better semantics and is unavailable: the coherent family's receipts
+        are already archived and cannot carry it. So the asymmetry is historical, and the reader-side
+        requirement above is what compensates."""
+        src = (Path(PET) / "build_fullevent_replica_target.py").read_text()
+        self.assertIn('{"mc_factors_applied": "unity"} if data_only else {}', src)
 
     def test_the_two_drivers_hash_array_implementations_are_BYTE_IDENTICAL(self):
         """THE PRECONDITION THAT MAKES THIS PREDICATE MEANINGFUL. The digests are computed by each
@@ -2071,7 +2103,8 @@ class FamilyVerdictIsBinding(unittest.TestCase):
         boot = {"n_data_full": self.n_data, "n_sig_full": self.n_sig, "n_bkg_full": self.n_bkg,
                 "inventory_hashes": inv, "input_identity_hashes": ids,
                 "data_factor_sha256": h(data_factor),
-                "signal_factor_sha256": "canonical-signal", "background_factor_sha256": "canonical-bkg"}
+                "signal_factor_sha256": "canonical-signal", "background_factor_sha256": "canonical-bkg",
+                "mc_factors_applied": "unity"}
 
         target_npy = tdir / V.TARGET_ARTIFACT
         np.save(target_npy, np.ones(3, dtype=np.float64))

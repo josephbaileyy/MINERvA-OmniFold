@@ -371,6 +371,30 @@ def main(argv=None):
             "background_factor_sha256": hash_array(bkg_factor),
             "factor_hash_contract": "sha256(dtype || JSON(shape) || contiguous raw bytes)",
             "canonical_replay_verified": True,
+            # === WHICH MC FACTORS WERE ACTUALLY APPLIED, WRITTEN DOWN RATHER THAN LEFT TO THE READER ===
+            #
+            # The three digests above are of the CANONICAL draws, computed at :250 after :219 restores the
+            # unpatched function. In a DATA-ONLY build the MC legs the loader applied are UNITY, so two of
+            # those three describe draws this product deliberately did NOT apply -- under names that read
+            # as if it had. Lane C closed that reader-side and `assert_unthinned_mc_evidence` does close
+            # it, by asserting the digests DIFFER, which is the unthinned-MC evidence.
+            #
+            # BUT READER-SIDE MEANS EVERY FUTURE READER HAS TO KNOW, FOREVER. This key writes the
+            # narrowing into the artifact instead. Added before the generation-two target rerun because
+            # changing what a receipt RECORDS is free until the receipts are written and costs a rebuild
+            # after -- and the window was about to close.
+            #
+            # ADDITIVE, NOT A RE-KEY, and the alternative was considered and refused: renaming the two
+            # digests to `unapplied_canonical_*` would diverge the two products' receipt schemas to fix a
+            # naming problem, and nothing that reads the existing names would break.
+            #
+            # PRESENT ONLY IN THE DATA-ONLY BRANCH, which is a deliberate exception to this campaign's
+            # "absence is not nominal" rule and the reason is historical rather than semantic: the
+            # coherent family's receipts are already written and archived, so the key CANNOT be present
+            # there. Its absence records that a receipt predates the key, not that its MC factors were
+            # canonical. So the DATA-ONLY READER requires it -- `assert_unthinned_mc_evidence` fails
+            # closed when it is missing -- and within this product absence is never nominal.
+            **({"mc_factors_applied": "unity"} if data_only else {}),
         },
         "code": {
             "target_builder": {"path": str(Path(__file__).resolve()), "sha256": sha256_file(__file__)},
