@@ -24,6 +24,24 @@ set -eo pipefail
 # from outside, and an unvalidated job id in a dependency is how a training array silently starts against
 # a target family that is still being written. It gets added with its own validation or not at all.
 STAGE=${1:-both}
+# THE TRAINING ARRAY SPEC, OVERRIDABLE FOR A SINGLE-MEMBER SMOKE AND FOR NOTHING ELSE.
+#
+# WHY IT EXISTS: the fix for 57194055 works by SUBSTITUTING a module global inside
+# `replica_build_data_only` so a new assertion runs in place of the pinned loader's `:742` guard. The
+# predicates carry 170 unit controls; THE SUBSTITUTION MECHANISM CARRIES NONE, and 57194055 died inside
+# that pinned loader in a real process. No real target-plus-train pair has ever run, and local TF cannot
+# run PET, so the composition is testable only on the cluster. One member costs ~3 A100-h against the
+# family's ~151 -- 2% to test the only thing left untested.
+#
+# THE TARGET ARRAY IS DELIBERATELY NOT PARAMETERISED. A partial target family is a trap: the training
+# stage's `aftercorr` pairs task N with target task N, so a target array narrower than the training one
+# leaves members permanently `DependencyNeverSatisfied` -- which is exactly how the last ten tasks of
+# 57194055 ended up unrunnable and unremovable (`BEN-472`). Targets are all-or-nothing here.
+TRAIN_ARRAY=${GATE5_TRAIN_ARRAY:-0-49%10}
+case "$TRAIN_ARRAY" in
+  *[!0-9,%-]*) echo "[gate5-do-submit][FAIL] GATE5_TRAIN_ARRAY '$TRAIN_ARRAY' is not an array spec" >&2
+               exit 1 ;;
+esac
 case "$STAGE" in
   both|target) ;;
   # Plain quoting, not `${STAGE@Q}` -- that is bash 4.4+ and this is read on hosts with bash 3.2, where
@@ -166,7 +184,7 @@ if [[ "$STAGE" == "target" ]]; then
   # `--stage train --after <this job id>` invocation, which re-derives its own pins from ITS checkout.
   TRAIN_JOB="DEFERRED"
 else
-  if ! TRAIN_JOB=$(sbatch --parsable --array=0-49%10 --dependency="aftercorr:${TARGET_JOB}" \
+  if ! TRAIN_JOB=$(sbatch --parsable --array="$TRAIN_ARRAY" --dependency="aftercorr:${TARGET_JOB}" \
         --export="$EXPORTS" "$TRAIN_SCRIPT"); then
     scancel "$TARGET_JOB" || true
     die "training-array submission failed; exact target array $TARGET_JOB cancelled"
@@ -180,6 +198,9 @@ echo "GATE5_DATAONLY_CODE_HEAD=$HEAD"
 echo "GATE5_DATAONLY_OUTPUT_ROOT=$OUTPUT_ROOT"
 echo "GATE5_DATAONLY_PRODUCT=data-only-v1"
 echo "GATE5_DATAONLY_STAGE=$STAGE"
+# Echoed because a family built from a NARROWED training array is not the 50-member family,
+# and the only durable record of which members were trained is this line plus sacct.
+echo "GATE5_DATAONLY_TRAIN_ARRAY=$TRAIN_ARRAY"
 # THE DATA ROOT IS PROVENANCE NOW THAT IT IS OVERRIDABLE. The training stage must run under the SAME
 # value or F2's family-position operand disagrees on every member -- safe and loud, but it would read
 # as a mysterious family-wide failure rather than a launcher-env mismatch (lane D).

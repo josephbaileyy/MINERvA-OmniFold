@@ -134,6 +134,17 @@ def assert_unthinned_mc_evidence(*, factor_meta, data_factor_sha256, sig_unity_s
     if not meta:
         raise SystemExit(f"[gate5-dataonly] {where}: no bootstrap factor metadata at all; the "
                          f"unthinned-MC evidence has no operand -- fail closed")
+    # `mc_factors_applied` IS REQUIRED, NOT TOLERATED-IF-PRESENT. The target stage writes it in the
+    # data-only branch only, because the coherent family's receipts are already archived and CANNOT carry
+    # it -- so its absence records that a receipt predates the key rather than that the MC factors were
+    # canonical. Requiring it HERE is what keeps "absence is not nominal" true inside this product: a
+    # generation-one target receipt, which lacks it, is rejected rather than read as unity.
+    applied = meta.get("mc_factors_applied")
+    if applied != "unity":
+        raise SystemExit(
+            f"[gate5-dataonly] {where}: the target receipt records mc_factors_applied={applied!r}, not "
+            f"'unity'. A receipt without this key predates it and its MC treatment is UNSTATED -- which "
+            f"is not the same as canonical, and not something this predicate will infer")
     got_data = meta.get("data_factor_sha256")
     if got_data is None:
         raise SystemExit(f"[gate5-dataonly] {where}: receipt carries no data_factor_sha256")
