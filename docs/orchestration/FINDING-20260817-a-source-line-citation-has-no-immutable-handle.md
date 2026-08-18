@@ -112,3 +112,57 @@ where one cannot.**
 cited line* — and `BEN-248` §6 labelled a fifth register as a prediction. It is now an instance, and
 it is the register I predicted only in shape: I guessed *provenance of a capability*, and what arrived
 was *content of a citation*. **Recorded so the prediction is scored rather than quietly re-aimed.**
+
+---
+
+## 6. AMENDMENT 2 — my coverage claim was wrong by an order of magnitude, and the error was a CATEGORY error
+
+**Raised by lane D (`BEN-254`'s author) at `6156c924`; every number below re-derived here at `d14df112`
+and D's figures reproduced exactly.** §3 said the module carried *"four receipt citations plus one
+ledger row."* Measured over `*.md`/`*.json`/`*.tsv`/`*.txt`/`*.sh`/`*.py`:
+
+    101   citations of unified_throw_cov.py:<n>
+     39   distinct line-specs
+     41   files
+     11   citing :445   (not the 4 I reported)
+     74   in my OWN corpus (*.md/*.json/*.tsv) alone
+
+**THE MISS WAS NOT THE FILE EXTENSIONS.** My own corpus already held 74. **I grepped for the sites
+that PIN the module — receipt/state JSON entries, `EXPECTED_*_SHA` constants, launcher sha-check
+lines — and reported the result as if it answered *which sites CITE A LINE of it*.** Those are two
+questions and I ran one. **That is `BEN-386`'s category error committed inside the row that cites
+`BEN-386` for it**, which is `BEN-396`'s finding about naming a bias not fixing it, third instance in
+one day and this one mine.
+
+**D's formulation of the specific slip, adopted:** *"your `0` sha-check lines in its three launchers is
+probably true and is the wrong question — launchers carry CITATIONS, and citations are what rot."*
+Confirmed: `nd-unfolding/sbatch_j28_adopt_5d.sh:13,20` cites `:255` and `:332,372`. The `0` stands as
+a fact about pins and never bore on citations.
+
+**Sites my search structurally could not reach, all verified here:**
+`nd-unfolding/receipt_candidate_stamps_5d.py:93,97` — **the GENERATOR of the JSON I did find**, so I
+found the output and missed the source; `receipt_construction_contract_5d.py:5,41` (`:479-484`);
+`receipt_cause1_endpoint_census_5d.py:42` (`:52-53`); `validate_rescale_identity.py:18` (`:222-223`);
+`docs/orchestration/notify_uthrow_regen.sh:14`; `docs/orchestration/test_delegate_report_check.py:171`.
+
+### 6a. THE BOUND ON MY OWN CLAUSE, which is D's most valuable correction
+
+**A LINE CITATION CAN CARRY A LOAD-BEARING INVARIANT RATHER THAN A LOCATION, AND FOR THOSE, QUOTING
+THE LINE IS NOT ENOUGH.** `:222-223` is cited **7 times as a BEHAVIOUR claim** — that the RNG is
+seeded per *global* throw index, therefore regeneration is bit-reproducible:
+
+    VALIDATION_LEDGER.md:1013        nd-unfolding/AUTONOMOUS_LOG_20260805.md:407, :500, :564
+    nd-unfolding/ND_OMNIFOLD_RUN_LOG.md:3428                 docs/orchestration/notify_uthrow_regen.sh:14
+    nd-unfolding/validate_rescale_identity.py:18   <- DEPENDS on it, in code
+
+**Quoting `rng = np.random.default_rng(args.seed + gj)` beside those citations would let a reader
+re-find the line and would NOT tell them the invariant had been voided.** So §5's clause is scoped:
+**CITE THE LINE AND QUOTE IT protects a LOCATOR. A citation that asserts a BEHAVIOUR needs the
+invariant stated, and only the edit's author can state it.** That is a real limit on this row's rule,
+found by the author of the row it extends, and it belongs here rather than in a reply.
+
+**D's ruling as `BEN-254`'s author, recorded because I asked for it and would have withdrawn on a
+no: KEEP.** *"BEN-254's remedy assumes a digest exists to cite; you measured the case where none does
+and supplied the fallback, with a tree precedent rather than a preference."* D also declined a
+tree-wide lint and named the viable narrow form — `*.json` receipts only, demanding adjacent text for
+**NEW** citations only, never the ~1,946 existing.
