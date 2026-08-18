@@ -67,12 +67,12 @@ docs/orchestration/DETERMINATION-20260811-cause5-binding-half.md	LIVE	document		
 docs/orchestration/DETERMINATION-20260817-cause1-census-and-magnitude-measured.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	5	222	14979
 docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	6	252	17592
 docs/orchestration/DETERMINATION-20260817-cluster-sync-step1-safe-and-the-fork-is-gone.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	126	7165
-docs/orchestration/DETERMINATION-20260817-cstat-data-only-build-complete.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	128	8135
+docs/orchestration/DETERMINATION-20260817-cstat-data-only-build-complete.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	170	10981
 docs/orchestration/DETERMINATION-20260817-cstat-data-only-route-and-cost-to-build.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	131	7670
 docs/orchestration/DETERMINATION-20260817-lanec-cstat-object-is-total-statistics.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	185	13331
 docs/orchestration/DETERMINATION-20260817-oi126-band-is-not-the-mc-sparse-end.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	107	5961
-docs/orchestration/DETERMINATION-20260817-oi60-rerun-costed.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	176	10923
-docs/orchestration/DETERMINATION-20260817-pet-oi82-oi60-oi41.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	153	8915
+docs/orchestration/DETERMINATION-20260817-oi60-rerun-costed.md	LIVE	document		20260817	open		route-only		no	4	176	10923
+docs/orchestration/DETERMINATION-20260817-pet-oi82-oi60-oi41.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	153	8915
 docs/orchestration/DETERMINATION-20260817-pet-ten-items-state-and-oi126-shape.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	5	229	16762
 docs/orchestration/DETERMINATION-20260817-sha-identity-hook-not-buildable.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	151	8634
 docs/orchestration/DRAFT-20260815-cstat-limitation-statement.md	ARCHIVAL	document		20260815	terminal		exact-path-only		yes	0	342	26400
@@ -298,7 +298,7 @@ docs/orchestration/RANK-AND-INVERSION-20260810.md	LIVE	document		20260810	open		
 docs/orchestration/README.md	DEAD	document			superseded	docs/orchestration/CATALOG.md	never	omnifold_nn/setup.py	yes	17	35	2036
 docs/orchestration/RECEIPT-20260812-hpss-space-audit.md	ARCHIVAL	document	non-campaign	20260812	terminal		exact-path-only		yes	5	309	20023
 docs/orchestration/RECONCILIATION-20260817-gbdtfive-macros-vs-rebuilt-candidate.md	LIVE	document		20260817	open		route-only	docs/orchestration/live_doc_indexed.py	no	5	279	14792
-docs/orchestration/RECOST-20260817-pet-items-pin-exposure.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	80	5213
+docs/orchestration/RECOST-20260817-pet-items-pin-exposure.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	80	5213
 docs/orchestration/REPAIR4-DEFECT-STATUS-20260807.md	ARCHIVAL	document		20260807	terminal		exact-path-only	nd-unfolding/run_p4_standard.sh	yes	10	201	13579
 docs/orchestration/REPAIR5-PATTERN-SWEEP-20260807.md	ARCHIVAL	document		20260807	terminal		exact-path-only		yes	1	65	7072
 docs/orchestration/REPAIR6-RECORDED-NOT-CHECKED-INVENTORY.md	ARCHIVAL	document			terminal		exact-path-only	nd-unfolding/p4_evidence.py;nd-unfolding/tests/test_p4_sweep_snapshots.py	yes	11	418	30567
@@ -324,7 +324,7 @@ docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	LIVE	document	
 docs/orchestration/SESSION-WORKFLOW.md	LIVE	document			open		route-only		no	3	170	8468
 docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md	LIVE	document		20260814	open		route-only	docs/orchestration/live_doc_indexed.py;nd-unfolding/pet/build_cstat_gate5_n50.py	no	22	1069	77774
 docs/orchestration/STEP2-20260806-niter3-budget-classification.md	ARCHIVAL	document		20260806	terminal		exact-path-only		yes	6	153	10985
-docs/orchestration/SWEEP-20260817-pet-pin-exposure-complete.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	216	12889
+docs/orchestration/SWEEP-20260817-pet-pin-exposure-complete.md	LIVE	document		20260817	open		route-only		no	5	216	12889
 docs/orchestration/TASK-HANDOFF.template.md	LIVE	template			open		route-only		no	3	125	4731
 docs/orchestration/TASK.template.md	LIVE	template			open		route-only		no	4	34	1256
 docs/orchestration/USER-DECISIONS.md	LIVE	document			open		route-only		no	3	59	3534
@@ -881,7 +881,7 @@ docs/orchestration/state/probe-p4-stage1-and-power-controls-20260816.sh	MACHINE	
 docs/orchestration/state/probe-p4-stage2-resume-readonly-20260816.sh	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	0	47	2256
 docs/orchestration/state/probe-p4-stages456-postrun-witness-20260816.sh	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	0	75	3766
 docs/orchestration/state/probe-p4-stages456-runner-20260816.sh	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	0	54	2973
-docs/orchestration/state/probe-pin-exposure-20260817.py	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	4	270	12475
+docs/orchestration/state/probe-pin-exposure-20260817.py	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	5	270	12475
 docs/orchestration/state/probe-projection-M-only-invariant-20260816.py	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	2	194	9072
 docs/orchestration/state/probe-projection-identity-leg-20260816.py	MACHINE	state-artifact		20260816	generated		exact-path-only	nd-unfolding/p4_lib.py	yes	4	183	9512
 docs/orchestration/state/probe-sha-citation-rule-20260817.py	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	1	84	2901

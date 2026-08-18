@@ -34,6 +34,7 @@ SEED_POLICY = "gate5-cstat-n50-v1: bootstrap_seed=50000+replica_index"
 
 from cstat_data_only import (  # noqa: E402
     CSTAT_DATA_ONLY,
+    assert_tag_matches_root,
     CSTAT_PRODUCTS,
     CSTAT_THREE_STREAM,
     CLOSURE_TOL_EPS,
@@ -534,6 +535,11 @@ def main(argv=None):
     expected_seed = 50000 + int(args.replica_index)
     if args.replica_index < 0 or args.replica_index >= 50 or args.bootstrap_seed != expected_seed:
         raise SystemExit("[gate5-train] replica index/seed violates predeclared N=50 policy")
+    # L2 -- TAG <=> FAMILY ROOT, both ways, BEFORE the collision guard. Order matters: the
+    # collision guard fires only if a file is already there, so on a fresh root a wrong-product
+    # submission would sail past it. L2 does not depend on prior occupancy.
+    assert_tag_matches_root(getattr(args, "cstat_product", CSTAT_THREE_STREAM),
+                            args.output, args.train_receipt)
     for path in (args.output, args.train_receipt):
         if os.path.lexists(path) or os.path.lexists(f"{path}.done"):
             raise SystemExit(f"[gate5-train] collision/no-clobber guard: {path}")

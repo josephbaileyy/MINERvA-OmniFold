@@ -146,6 +146,9 @@ def read_replica_contract(weights_npz, replica_index, bootstrap_seed,
         if "cstat_product" in set(store.files):
             product = str(scalar(store, "cstat_product"))
             if product == replica_train.CSTAT_DATA_ONLY:
+                # L2 at the READING end: the artifact's own tag must match the root it was read
+                # from, so a data-only artifact copied into the three-stream tree is refused.
+                replica_train.assert_tag_matches_root(product, weights_npz)
                 replica_train.assert_data_only_streams(
                     store, data_bootstrap_seed=int(bootstrap_seed),
                     n_data_full=n_data, n_sig_full=n_sig, n_bkg_full=n_bkg)

@@ -17,6 +17,7 @@ unsatisfiable guard -- if the new product fails a TRUE claim, skipping is a rela
 forbidden; if the claim is INAPPLICABLE, the replacement can and must be STRONGER. P1-P8 are that
 replacement, and the data-only path is verified more tightly than the three-stream path.
 """
+import os
 import sys
 from pathlib import Path
 
@@ -241,3 +242,122 @@ def assert_ratio_provenance_block(block):
     if float(block["step1_class_ratio_applied"]) <= 0:
         raise SystemExit("[gate5-dataonly] P7 applied ratio is not positive")
     return True
+
+# ---------------------------------------------------------------------------------------------
+# L1 / L2 -- THE DEFAULT IS MADE IRRELEVANT BY CONSTRUCTION RATHER THAN FLIPPED.
+#
+# `--cstat-product` defaults to three-stream, which is the safe value in isolation and became the
+# SILENT FAILURE the moment a run was authorized: no launcher passed the flag, so an sbatch would
+# have spent 151 A100-hours rebuilding the product that already exists, with only a receipt field
+# to say so. A DEFAULT'S SAFETY IS A PROPERTY OF THE CALL GRAPH, NOT OF THE VALUE (BEN-420).
+#
+# Lane C refused a REQUIRED flag, because that purchases edits to BOTH PINNED array launchers just
+# to pass `three-stream-v1` -- the exact trade this whole route exists to avoid. Instead the
+# data-only launchers write to a DISJOINT FAMILY ROOT (L1) and the drivers ASSERT TAG <=> ROOT (L2).
+# L2 is what converts "a field nobody would think to read" into a check that reads it, and because
+# the existing 50 artifacts occupy their root under overwrite=False, a wrong-launcher submission
+# COLLIDES LOUDLY instead of quietly rebuilding.
+FAMILY_ROOTS = {
+    CSTAT_THREE_STREAM: "fullevent_cstat_n50",
+    CSTAT_DATA_ONLY: "fullevent_cstat_data_only_n50",
+}
+
+
+def assert_tag_matches_root(product, *paths):
+    """L2. The product tag and the family root must agree, BOTH WAYS.
+
+    Two-way on purpose: a data-only run must not write into the three-stream root, AND a
+    three-stream run must not write into the data-only root. A one-way check would leave the
+    second direction to the collision guard alone, which fires only if a file is already there.
+    """
+    if product not in FAMILY_ROOTS:
+        raise SystemExit(f"[gate5-family] unknown cstat_product {product!r}")
+    want = FAMILY_ROOTS[product]
+    others = {r for k, r in FAMILY_ROOTS.items() if k != product}
+    for path in paths:
+        if path is None:
+            continue
+        parts = set(str(path).split(os.sep))
+        if want not in parts:
+            raise SystemExit(
+                f"[gate5-family] L2 product {product!r} requires the family root {want!r}; "
+                f"path does not contain it: {path}")
+        clash = parts & others
+        if clash:
+            raise SystemExit(
+                f"[gate5-family] L2 path carries a FOREIGN family root {sorted(clash)} for "
+                f"product {product!r}: {path}")
+    return True
+
+
+def assert_data_only_target_streams(store, *, data_bootstrap_seed, n_data_full, n_sig_full,
+                                    n_bkg_full):
+    """T1-T5 over a data-only TARGET receipt block.
+
+    The target stage is where the product becomes honest or does not: the background fluctuation
+    lives in the MEASURED TARGET, so a data-only family built on three-stream targets would carry
+    the 21.7% background variance share it exists to exclude -- while its training artifact asserted
+    unity. T2 is the predicate that prevents that.
+
+    T5 requires the signal factor to be stated as unity EVEN THOUGH the refinement never consumes
+    signal MC, because `build_fullevent_replica_target.py:218-220` already reads it as evidence:
+    THE ARTIFACT MUST BE SELF-DESCRIBING ON ALL THREE STREAMS RATHER THAN SILENT ON ONE (lane C).
+    """
+    def get(key):
+        keys = set(store.files) if hasattr(store, "files") else set(store)
+        if key not in keys:
+            raise SystemExit(f"[gate5-target-dataonly] required key absent: {key}")
+        return store[key]
+
+    tag = str(np.asarray(get("cstat_product")).item())          # T1
+    if tag != CSTAT_DATA_ONLY:
+        raise SystemExit(f"[gate5-target-dataonly] T1 cstat_product is {tag!r}")
+    seed = int(np.asarray(get("data_bootstrap_seed")).item())   # T4
+    if seed != int(data_bootstrap_seed):
+        raise SystemExit("[gate5-target-dataonly] T4 data_bootstrap_seed mismatch")
+    for pred, key, n in (("T2", "bkg_bootstrap_factor", int(n_bkg_full)),
+                         ("T5", "sig_bootstrap_factor_full", int(n_sig_full))):
+        arr = np.asarray(get(key))
+        if arr.shape != (n,):
+            raise SystemExit(f"[gate5-target-dataonly] {pred} {key} shape {arr.shape} != {(n,)}")
+        if not np.array_equal(arr, np.ones(n, dtype=arr.dtype)):
+            raise SystemExit(f"[gate5-target-dataonly] {pred} {key} is not identically one")
+    df = np.asarray(get("data_bootstrap_factor"))               # T3
+    if df.shape != (int(n_data_full),):
+        raise SystemExit(f"[gate5-target-dataonly] T3 data factor shape {df.shape}")
+    canonical = fe.coherent_bootstrap_factors(
+        int(n_data_full), int(n_sig_full), int(n_bkg_full), int(data_bootstrap_seed))[0]
+    if not np.array_equal(df, canonical):
+        raise SystemExit("[gate5-target-dataonly] T3 data factor != canonical draw -- fail closed")
+    return True
+
+
+def unity_mc_factor_patch(seed, n_data, n_sig, n_bkg):
+    """The data-only target's mechanism: data Poisson, MC streams UNITY.
+
+    WHY A PATCH AND NOT A KEYWORD. The loader has ONE `bootstrap_seed` switch controlling all three
+    streams, and the target stage genuinely NEEDS the data factor applied -- so
+    `bootstrap_seed=None`, which works for the training stage, would remove the data variation the
+    target exists to carry. "Data Poisson, background unity" is not reachable through the loader's
+    interface, and the loader is hash-pinned 25 ways.
+
+    So the driver substitutes the module-global the loader calls. This is the SAME IDIOM both
+    replica drivers already use (`nominal.fe.build_fullevent_loaders`,
+    `install_target_only_dataloader`), it touches no pinned file, and it makes T2/T5 true BY
+    CONSTRUCTION rather than by assertion -- with T2/T5 still asserted, because a mechanism that is
+    correct by construction and unchecked is one refactor from being neither.
+
+    RESTORE IT BEFORE THE VERIFICATION BLOCK. The target driver's own replay must see the CANONICAL
+    function, or T3 would compare a patched draw against itself.
+    """
+    canonical = fe.coherent_bootstrap_factors(int(n_data), int(n_sig), int(n_bkg), int(seed))
+
+    def patched(nd, ns, nb, sd):
+        if (int(nd), int(ns), int(nb), int(sd)) != (int(n_data), int(n_sig), int(n_bkg), int(seed)):
+            raise SystemExit("[gate5-target-dataonly] loader asked for factors with unexpected "
+                             "inventory sizes or seed; refusing to substitute")
+        return (canonical[0],
+                np.ones(int(n_sig), dtype=np.uint8),
+                np.ones(int(n_bkg), dtype=np.uint8))
+
+    return patched, canonical[0]

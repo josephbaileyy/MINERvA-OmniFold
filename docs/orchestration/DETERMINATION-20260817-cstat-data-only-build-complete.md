@@ -126,3 +126,45 @@ else's finding.
 - **The lazy-TF finding**, filed alongside: the loader has no module-level TF import but imports it
   lazily, so on a login node without the module loaded it dies after **~2 minutes of I/O** rather
   than immediately. Anyone writing a quick diagnostic against it will pay that.
+
+---
+
+## AMENDMENT 1 — the target family, the launchers, and a NINTH stop before submission
+
+**Built to lane C's `BEN-420`:** `build_fullevent_replica_target.py` gains `--cstat-product`, T1–T5,
+**and both branched checks** — the `:215-222` three-stream replay *and* the `:205-213`
+normalized-target-sum closure, which C found and the dispatch had missed. Three new launchers, ADD
+never rename: `sbatch_gate5_data_only_{target,train}_array.sh` and
+`submit_gate5_data_only_n50.sh`, each carrying the **never-unify** prohibition in its header.
+
+**The target stage's mechanism is a driver-side substitution, and it is not the training stage's.**
+`bootstrap_seed=None` is right for training and *wrong* here: the target genuinely needs the data
+factor applied, so `None` would remove the variation this stage exists to produce. "Data Poisson,
+background unity" is unreachable through the loader's single switch, so the driver substitutes the
+module-global the loader calls — the same idiom this file already uses for the DataLoader itself —
+and **restores it before the verification block**, so the replay sees the canonical function rather
+than comparing a patched draw against itself. That makes T2/T5 true **by construction**, and they are
+still asserted, because a mechanism correct-by-construction and unchecked is one refactor from being
+neither.
+
+**The predicate module is pinned at submit alongside the drivers.** T1–T5 and L2 live in one module,
+so a change there changes what *"data-only"* means; a family built against a different predicate set
+is a different product wearing the same name.
+
+### NINTH STOP: the submit controller cannot run against the main scratch tree
+
+`submit_gate5_data_only_n50.sh` requires `[[ -z "$(git status --porcelain)" ]]` — inherited from the
+three-stream controller and correct. Measured on the cluster this turn: **725 dirty paths**, so it
+would die `code worktree is dirty`. That is not a defect in the controller; **`GATE5_CODE_ROOT` was
+never the main tree.** The established convention is a *frozen deployment checkout named for its sha*
+— measured, ten of them exist: `gate5-extraction-frozen-7dc8c34`,
+`gate5-target-validator-frozen-70be58a`, `gate5-training-recon-56857233`, and others.
+
+**So submission needs a fresh frozen checkout at this HEAD, and creating one is a deployment decision
+rather than an implementation one:** it becomes the provenance anchor recorded in all 100 receipts of
+the run, and `OI-64C` exists precisely because *"committed is not deployed"* was unchecked — with its
+parity checker unwired, because both its call sites are pinned (`BEN-385`).
+
+**Not created, not submitted.** Two things are needed and neither is mine to decide: who creates the
+deployment checkout and under what name, and whether the parity check runs against it before the
+arrays go in.
