@@ -581,6 +581,66 @@ deleted rather than satisfied."* **That condition is correct — and a target st
 **My key: CONCUR — rebuild, migration refused.** *(D authored the migration route and has first refusal on E's
 objection; this is one of the two concurrences, not the decision.)*
 
+## 1f. CONFIRMATION FOR THE IRREVERSIBLE STEP — **the spec is FINAL and the four predictions are CONFIRMED.** And the question as asked was malformed.
+
+**Asked to confirm *"is the manifest final?"* before E creates the validator, because the generator refuses to
+regenerate once it exists.** Read the manifest and the generator rather than answering from the ruling.
+
+### The question is malformed, and E's own field says so — which shrinks the irreversible step enormously
+
+`what_the_ordering_assertion_protects`, verbatim:
+
+> *"The PREDICTIONS — bucket 3's `got`/`want` — which are frozen at the sha that committed them. **It does NOT
+> and cannot freeze the replacement BOOKKEEPING**, which is meant to track work as predicates land, so
+> `covered`/`REPLACEMENT_REQUIRED` move between regenerations by design."*
+
+> **So the freeze covers FOUR ENTRIES, not seventy-seven — and two of those four are `DEFERRED`, meaning the
+> freeze locks in a DEFERRAL rather than a value.** What is irreversibly frozen is: **one concrete prediction
+> (`:217`), one split-site prediction (`:190`), and two commitments to fill values later under a stated
+> ordering rule (`:176`, `:178`).** That is a confirmable step. *"Is the manifest final"* is not.
+
+### The four, checked against `V3` and `BEN-426`'s single-state condition
+
+| site | `predicted_got` | verdict |
+|---|---|---|
+| **`:217`** `required_npz_keys_missing` | `['bootstrap_seed']` | **EXEMPLARY.** Its own `discriminating` field argues single-state reachability — *"a second missing key changes the value, and a present-but-wrong `bootstrap_seed` would make the list empty"* — **and explicitly contrasts the `-1` I ruled inadmissible.** This is the standard the clause was written for. |
+| **`:190`** `receipt_code_sha256[<role>]` | `{loader: PASSES, nominal_driver: PASSES, replica_driver: MEASURED-AT-GENERATION-TIME}` | **WEAKEST OF THE FOUR — see condition below.** One static site realising three checks that SPLIT, put in `MANIFEST` with the passing subset **named rather than averaged**, which is right. And its `load_bearing_passes` field carries the cross-block loader evidence anchored on the coherent campaign's constant. |
+| **`:176`** `receipt_array_job` | `DEFERRED-TO-SUBMISSION` | **CONFIRMED** — the deferral I blessed, with my reasoning restated correctly. |
+| **`:178`** `receipt_runtime_head` | `DEFERRED-TO-TRAINING-DEPLOYMENT` | **CONFIRMED**, and *"deliberately NOT the target deployment's, because the two are cut separately"* — the staggered-deployment hazard handled rather than inherited. |
+
+**CONDITION ON `:190`, not a blocker.** `MEASURED-AT-GENERATION-TIME` is **an OBSERVATION serving as a
+PREDICTION.** It is not a tautology — the wrapper does not exist yet, so it is not read off a verdict — **but
+it is one step from what `BEN-403` forbids.** So: **its `discriminating` clause must state what OTHER artifact
+state could produce the same digest** (answer: any deployment of the byte-identical file), **so a reader can
+see the prediction's resolution rather than trusting its label.**
+
+### And the `0 REQUIRED` finding shows MY spec was underspecified — E's device is the fix, RATIFIED
+
+I wrote *"each requiring a named replacement"*, **which is satisfied by WRITTEN.** E's own control caught that
+`0 REQUIRED` would then read as *"the family can be graded"*, which is false — **39 of the 55 replacements
+exist, are tested, and have no caller.**
+
+> **`written_but_UNCALLED` published alongside is the correct repair, it is already in, and I RATIFY it as part
+> of the spec rather than requiring it as a change.** *"The checks are written"* and *"the checks run"* are
+> separate claims and the manifest now says so. **My clause should have said INVOKED and did not.**
+
+### WHAT MY CONFIRMATION COVERS, stated because the boundary is the whole value of it
+
+**CONFIRMED: the four-bucket spec (buckets 1–3 partition the 77, `ADDITIONAL` beside), `V3`'s discriminating-`got`
+condition, `V4`'s floor on executed checks with `V5` supplying the operand, and the four frozen predictions
+above.**
+
+**NOT CONFIRMED, and not mine to confirm: that the `18`/`55` bucketing is CORRECT.** I have not audited 77
+sites and cannot in a reply. **Saying otherwise would be the category error I made on the `~3 A100-h` this
+afternoon — asserting an authority I do not have.** What I rely on instead is that **E's generator enforces
+the mechanically checkable parts — sum-to-77, no unclassified unexecuted site, no citation to a nonexistent
+symbol — and that the last of those fired immediately and caught one of E's own citations.**
+
+*(Minor, and the day's own class: the manifest's `correction_to_the_spec` field corrects a wording my ruling
+**itself already retracts** — the only occurrence of *"four buckets… sum to 77"* in my text is inside my own §②
+correction. **The field should cite the correction rather than the original, or a reader finds the spec agreeing
+with the correction and wonders what was corrected.**)*
+
 ## 2. RULING 2 — NEW data-only array launchers. Not edits. And the pair must never be unified
 
 **Measured: both array launchers are pinned; the two drivers and the submit wrapper are clean.** So threading

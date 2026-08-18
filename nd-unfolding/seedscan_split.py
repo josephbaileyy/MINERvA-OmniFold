@@ -24,6 +24,7 @@ if _ND not in sys.path:
 from omnifold_nn_core import omnifold_loop          # noqa: E402
 from xsec_nd import (extract_cross_section_nd,       # noqa: E402
                      project_axis, total_xsec)
+import seed_offset_policy   # noqa: E402
 
 
 def main():
@@ -75,7 +76,15 @@ def main():
         proj[f"edges_{nm}"] = e
 
     # full flat xsec (C order) for the covariance build (combine step masks to CV>0 bins)
+    # OFFSET PROVENANCE (lane D, 2026-08-18). The seed alone cannot say whether this product
+    # came from a HOOKED launcher: a leg that silently ran unhooked stamps its BASELINE, which
+    # is indistinguishable from a deliberate k=0 anchor member. Two keys, not a sentinel:
+    # declared=0 means nothing can be concluded about which scan member this is.
+    _off_declared, _off_value = seed_offset_policy.declared_offset()
     np.savez_compressed(args.out, split_seed=args.split_seed, train_frac=args.train_frac,
+                        estimator_seed=np.int64(args.estimator_seed),
+                        est_seed_offset_declared=np.int64(_off_declared),
+                        est_seed_offset=np.int64(_off_value),
                         total_xsec=tot, xsec_flat=xsec.ravel(order="C"),
                         shape=np.array(xsec.shape), **proj)
     print(f"[OK split {args.split_seed}] total_xsec={tot:.4e} -> {args.out}")

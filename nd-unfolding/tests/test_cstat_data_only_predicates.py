@@ -1900,6 +1900,319 @@ class CrossStageLoaderAgreement(unittest.TestCase):
         self.assertIn("vacuously true", str(cm.exception))
 
 
+class DataOnlyFamilyValidator(unittest.TestCase):
+    """The CALLER. Its existence is what turns `0 REQUIRED` into a claim about grading.
+
+    These controls do not re-test the predicates -- 157 controls already do -- they test the properties
+    that only the caller can have: that every predicate is actually INVOKED, that a raising predicate
+    becomes a RECORDED failure rather than a crash, that the pinned-digest guard fires, and that the
+    family-level checks exist and are pairwise rather than degenerate.
+    """
+
+    MOD = "nd-unfolding/pet/validate_gate5_data_only_artifacts.py"
+
+    def setUp(self):
+        import validate_gate5_data_only_artifacts as V
+        self.V = V
+        self.repo = Path(__file__).resolve().parents[2]
+
+    def test_EVERY_predicate_the_manifest_cites_is_INVOKED_here(self):
+        """THE CONTROL THIS MODULE EXISTS TO SATISFY. Before it, 39 of the 55 replacements were written,
+        tested, and called by nothing -- and the manifest's `0 REQUIRED` would have read as 'the family
+        can be graded'. Checked by CALL SITE, not substring, and it names any predicate left out."""
+        doc = json.loads((self.repo / "docs/orchestration/state"
+                          / "DIVERGENCE-MANIFEST-20260818-cstat-data-only.json").read_text())
+        cited = set()
+        for row in doc["buckets"]["UNEXECUTED_BY_CONSTRUCTION"]:
+            repl = row["replacement"]
+            if repl.startswith("REPLACEMENT-REQUIRED"):
+                continue
+            cited.add(repl.split(".")[-1].split(" ")[0])
+        tree = ast.parse((self.repo / self.MOD).read_text())
+        called = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Call):
+                f = node.func
+                called.add(f.attr if isinstance(f, ast.Attribute) else getattr(f, "id", None))
+        # predicates whose home is a driver rather than this module are invoked at write time; the ones
+        # this module owns are the readback set plus the shared cstat predicates.
+        owned = {c for c in cited if c.startswith("assert_")}
+        missing = sorted(owned - called)
+        self.assertEqual([], missing,
+                         f"the manifest cites these replacements and this caller never invokes them: "
+                         f"{missing}")
+
+    def test_a_RAISING_predicate_becomes_a_RECORDED_FAILURE_not_a_crash(self):
+        """A raise would lose the other 49 members' verdicts AND make a failure look like a crash. The
+        `guarded` helper must convert `SystemExit` into a named row -- and must NOT swallow it."""
+        code = _code_only_src((self.repo / self.MOD).read_text(), label="validator")
+        self.assertIn("except SystemExit", code)
+        # the failure path must RECORD, so `c.eq(name, ...)` has to appear inside the handler
+        tree = ast.parse((self.repo / self.MOD).read_text())
+        handlers = [n for n in ast.walk(tree) if isinstance(n, ast.ExceptHandler)]
+        self.assertTrue(handlers, "no exception handler found")
+        for h in handlers:
+            body = ast.unparse(h)
+            self.assertIn(".eq(", body,
+                          "an exception handler that does not record a row would swallow a failure")
+            self.assertNotIn("pass", body.split("\n")[-1].strip()[:4])
+
+    def test_it_REFUSES_when_the_pinned_module_has_been_re_issued(self):
+        """The one comparison that distinguishes a legitimate re-issue of the pinned validator from this
+        module breaking. Without it, a re-issue produces a confusing failure whose tempting resolution is
+        to refresh the manifest."""
+        code = _code_only_src((self.repo / self.MOD).read_text(), label="validator")
+        self.assertIn("pinned_module", code)
+        self.assertIn("re-issued", (self.repo / self.MOD).read_text())
+
+    def test_the_pairwise_distinctness_check_is_PAIRWISE_not_non_degeneracy(self):
+        """'Not all identical' catches only the catastrophic case and passes silently on the graded one,
+        where duplicates bias sigma_stat^data DOWN -- 49 distinct understates by 0.1%, 25 by 1.7%."""
+        src = (self.repo / self.MOD).read_text()
+        self.assertIn("pairwise_distinct", src)
+        code = _code_only_src(src, label="validator")
+        self.assertIn("count(s) > 1", code.replace(" ", "").replace("count(s)>1", "count(s) > 1")
+                      if "count(s)>1" in code.replace(" ", "") else code)
+        self.assertNotIn("len(set(shas)) > 1", code,
+                         "that is non-degeneracy, which passes on 49-of-50 duplicates")
+
+    def test_the_family_level_loader_check_uses_the_PINNED_third_operand(self):
+        """Comparing the target and training blocks only to each other passes when both drift together,
+        which is the failure mode two separately-cut deployments create."""
+        code = _code_only_src((self.repo / self.MOD).read_text(), label="validator")
+        self.assertIn("assert_loader_digest_agrees_across_stages", code)
+        self.assertIn("pinned_expected", code)
+
+    def test_the_array_job_id_is_a_CLI_operand_and_not_a_module_literal(self):
+        """BEN-419: the pinned validator's `ARRAY_JOB_ID` names one run, which is why it cannot grade a
+        second one. This module must not repeat that."""
+        src = (self.repo / self.MOD).read_text()
+        self.assertIn("--array-job-id", src)
+        tree = ast.parse(src)
+        for node in tree.body:
+            if isinstance(node, ast.Assign) and isinstance(node.value, ast.Constant) \
+                    and isinstance(node.value.value, str):
+                self.assertFalse(re.fullmatch(r"\d{7,9}", node.value.value),
+                                 f"{ast.unparse(node.targets[0])} is a module-level run-id literal")
+
+    def test_it_states_what_it_does_NOT_establish(self):
+        src = (self.repo / self.MOD).read_text()
+        self.assertIn("not an independent verification", src)
+        self.assertIn("inherit", src)
+
+    def test_it_refuses_to_run_without_the_manifest(self):
+        """This module IS the manifest's caller; grading without the partition would be grading without
+        the accounting that makes omission unrepresentable."""
+        src = (self.repo / self.MOD).read_text()
+        self.assertIn("the divergence manifest is missing", src)
+
+
+class FamilyVerdictIsBinding(unittest.TestCase):
+    """THE PROPERTY `guarded()` MUST NOT HAVE BROKEN: a recorded failure is VERDICT-BEARING.
+
+    Converting a predicate's `SystemExit` into a recorded row is right for a family instrument -- a raise
+    loses the other 49 members and makes a failure look like a crash, and this campaign has spent a day on
+    the difference between "the check failed" and "the check could not run". BUT if a recorded failure were
+    merely REPORTED and not verdict-bearing, `guarded()` would have converted a hard stop into a soft
+    signal, which is strictly WORSE than the abort it replaced.
+
+    So this is asserted END TO END, by running the shipped module as a subprocess over a synthetic
+    one-member family: correct family -> verdict PASS and exit 0; ONE perturbed field -> verdict FAIL,
+    exit 1, and the offending row named. Reading the `if not c.failed` expression would not have settled
+    it, because the question is about the composition of four separate steps (row -> member verdict ->
+    family verdict -> exit code) and any one of them could drop the signal.
+    """
+
+    MOD = "nd-unfolding/pet/validate_gate5_data_only_artifacts.py"
+
+    def setUp(self):
+        import cstat_data_only as cdo_
+        import cstat_data_only_readback as rb
+        import validate_gate5_data_only_artifacts as V
+        self.cdo, self.rb, self.V = cdo_, rb, V
+        self.repo = Path(__file__).resolve().parents[2]
+        self.tmp = Path(tempfile.mkdtemp(prefix="gate5-family-"))
+        self.job = "57200001"
+        self.idx = 0
+        self.seed = 50_000 + self.idx
+        self.rows = int(rb.FROZEN_POLICY["train_events"])
+        self.n_sig = self.rows + 17
+        self.n_bkg = 11
+        self.n_data = 23
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _build(self, *, perturb=None):
+        """A synthetic single-member family that satisfies every replacement, then optionally one break."""
+        V, rb, cdo_ = self.V, self.rb, self.cdo
+        root = self.tmp / "fullevent_cstat_data_only_n50"
+        rep = root / "replicas" / f"replica_{self.idx:02d}"
+        tdir, trdir, logs = rep / "target", rep / "training", root / "logs"
+        for d in (tdir, trdir, trdir / "w_nominal", logs):
+            d.mkdir(parents=True, exist_ok=True)
+
+        mc = V.frozen_mc_indices(self.n_sig)
+        # THE REAL CANONICAL DRAW, not `np.ones`. My first fixture used ones and P4 correctly refused it
+        # ("data factor != canonical draw at this seed") -- the fixture was wrong and the validator was
+        # right, which is the direction a positive control has to be built to respect.
+        data_factor = np.asarray(
+            fe.coherent_bootstrap_factors(self.n_data, self.n_sig, self.n_bkg, self.seed)[0],
+            dtype=np.uint8)
+        sig_ones = np.ones(self.n_sig, dtype=np.uint8)
+        bkg_ones = np.ones(self.n_bkg, dtype=np.uint8)
+
+        def h(a):
+            return V.rb_hash({"k": a}, "k")
+
+        ids = {"sig": "s-hash", "bkg": "b-hash"}
+        inv = "inv-hash"
+        # canonical MC digests must DIFFER from the unity ones, which is the unthinned-MC evidence
+        boot = {"n_data_full": self.n_data, "n_sig_full": self.n_sig, "n_bkg_full": self.n_bkg,
+                "inventory_hashes": inv, "input_identity_hashes": ids,
+                "data_factor_sha256": h(data_factor),
+                "signal_factor_sha256": "canonical-signal", "background_factor_sha256": "canonical-bkg"}
+
+        target_npy = tdir / V.TARGET_ARTIFACT
+        np.save(target_npy, np.ones(3, dtype=np.float64))
+        target_receipt_path = tdir / V.TARGET_RECEIPT
+        target_receipt = {"bootstrap": boot, "data_bootstrap_seed": self.seed,
+                          "code": {"loader": {"sha256": rb.EXPECTED_LOADER_SHA256}},
+                          "_verified_target_sha256": "unused-here"}
+        target_receipt_path.write_text(json.dumps(target_receipt))
+        (tdir / (V.TARGET_ARTIFACT + ".done")).write_text("")
+        (tdir / (V.TARGET_RECEIPT + ".done")).write_text("")
+
+        exp = rb.expected_lr_schedule()
+        ck = trdir / "w_nominal"
+        for name in sorted(rb.expected_checkpoints()):
+            (ck / name).write_bytes(b"x")
+        contract = {"checkpoint_semantics": rb.CHECKPOINT_SEMANTICS,
+                    "step1_checkpoint": str(
+                        ck / "OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5"),
+                    "step2_checkpoint": str(
+                        ck / "OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5")}
+        target_block = {"target_mode": rb.BKG_MODE, "estimator_fingerprint": rb.ESTIMATOR,
+                        "input_identity_hashes": ids, "bootstrap_seed": None,
+                        "precomputed_target_replica_seed": self.seed,
+                        "consumed_precomputed_target": str(target_npy),
+                        "step1_class_ratio": 1.0}
+        store = {
+            "campaign_role": np.asarray(cdo_.CAMPAIGN_ROLES[cdo_.CSTAT_DATA_ONLY]),
+            "cstat_product": np.asarray(cdo_.CSTAT_DATA_ONLY),
+            "replica_index": np.asarray(self.idx),
+            "data_bootstrap_seed": np.asarray(self.seed),
+            "data_bootstrap_factor": data_factor,
+            "sig_bootstrap_factor_full": sig_ones,
+            "bkg_bootstrap_factor_full": bkg_ones,
+            "sig_bootstrap_factor": np.ones(self.rows, dtype=np.uint8),
+            "bkg_bootstrap_factor": bkg_ones,
+            "bkg_indices": np.arange(self.n_bkg, dtype=np.int64),
+            "bootstrap_factor_sha256": np.asarray(boot, dtype=object),
+            "n_data_full": np.asarray(self.n_data),
+            "n_sig_full": np.asarray(self.n_sig),
+            "n_bkg_full": np.asarray(self.n_bkg),
+            "inventory_hashes": np.asarray(inv),
+            "input_identity_hashes": np.asarray(ids, dtype=object),
+            "mc_indices": mc,
+            "weights_push": np.ones(self.rows, dtype=np.float64),
+            "replica_seed_policy": np.asarray(rb.SEED_POLICY_STRING),
+            "seed_policy": np.asarray(rb.FROZEN_POLICY, dtype=object),
+            "estimator_fingerprint": np.asarray(rb.ESTIMATOR),
+            "bkg_mode": np.asarray(rb.BKG_MODE),
+            "tag": np.asarray("nominal"),
+            "inputs_sha256": np.asarray(rb.SOURCE_SHA256),
+            "target": np.asarray(target_block, dtype=object),
+            "inference_contract": np.asarray(contract, dtype=object),
+            "lr_policy_realized": np.asarray(
+                {"verified_from_optimizer": True, "n_fits_base_lr": exp["n_fits_base_lr"],
+                 "n_fits_annealed": exp["n_fits_annealed"],
+                 "fits": [{"iteration": i, "learning_rate": r}
+                          for i, r in zip(exp["iterations"], exp["rates"])]}, dtype=object),
+            # THE DIGESTS ARE OF THE FILES ON DISK, computed after they are written -- which is the whole
+            # content of `assert_target_binding`, and my placeholder version was correctly refused.
+            "replica_target_sha256": np.asarray(V.sha256_file(target_npy)),
+            "replica_target_receipt_sha256": np.asarray(V.sha256_file(target_receipt_path)),
+            "replica_target_receipt_path": np.asarray(str(target_receipt_path)),
+        }
+        if perturb:
+            perturb(store)
+        art = trdir / V.TRAIN_ARTIFACT
+        np.savez_compressed(art, **store)
+        (trdir / (V.TRAIN_ARTIFACT + ".done")).write_text("")
+        rec = trdir / V.TRAIN_RECEIPT
+        rec.write_text(json.dumps({
+            "status": "PASS", "replica_index": self.idx,
+            "execution": {"slurm_array_job_id": self.job, "slurm_array_task_id": self.idx},
+            "artifact": {"sha256": V.sha256_file(art)},
+            "code": {"loader": {"sha256": rb.EXPECTED_LOADER_SHA256}}}))
+        (trdir / (V.TRAIN_RECEIPT + ".done")).write_text("")
+
+        for ext, body in ((".out", "\n".join([
+                f"[gate5-train] index={self.idx} seed={self.seed} job={self.job}_{self.idx}",
+                '"config_gate": "PASS"', rb.optimizer_proof_line(), '"status": "PASS"',
+                f"[gate5-train] DONE index={self.idx} seed={self.seed}"]) + "\n"), (".err", "")):
+            (logs / f"train_{self.job}_{self.idx}{ext}").write_text(body)
+        return root
+
+    def _run(self, root):
+        out = self.tmp / "report.json"
+        r = subprocess.run(
+            [sys.executable, str(self.repo / self.MOD), "--family-root", str(root),
+             "--array-job-id", self.job, "--members", "1", "--out", str(out)],
+            capture_output=True, text=True, cwd=str(self.repo))
+        doc = json.loads(out.read_text()) if out.is_file() else None
+        return r, doc
+
+    def test_a_correct_member_gives_verdict_PASS_and_exit_0(self):
+        """The POSITIVE half. Without it, a FAIL-on-everything validator would satisfy the negative
+        controls below and be worthless."""
+        r, doc = self._run(self._build())
+        self.assertIsNotNone(doc, r.stderr[-1500:])
+        self.assertEqual("PASS", doc["verdict"], json.dumps(doc["members_detail"][0]["checks"])[:2000])
+        self.assertEqual(0, r.returncode)
+
+    def test_a_RECORDED_failure_makes_the_FAMILY_verdict_FAIL_and_exit_1(self):
+        """THE PROPERTY UNDER TEST. One perturbed policy scalar -- caught by a predicate that RAISES, so
+        it travels through `guarded()` -- must reach the family verdict and the exit code."""
+        def break_it(store):
+            store["bkg_mode"] = np.asarray("raw")
+        r, doc = self._run(self._build(perturb=break_it))
+        self.assertIsNotNone(doc, r.stderr[-1500:])
+        self.assertEqual("FAIL", doc["verdict"])
+        self.assertEqual(1, r.returncode)
+        failures = json.dumps(doc["members_detail"][0]["checks"]["failures"])
+        self.assertIn("artifact_policy_scalars", failures)
+        self.assertIn("bkg_mode", failures)
+
+    def test_the_withheld_key_being_present_also_reaches_the_verdict(self):
+        """A second, structurally different predicate, so the property is not a fluke of one call site."""
+        def break_it(store):
+            store["bootstrap_seed"] = np.asarray(50_000)
+        r, doc = self._run(self._build(perturb=break_it))
+        self.assertEqual("FAIL", doc["verdict"])
+        self.assertEqual(1, r.returncode)
+        self.assertIn("pinned_required_keys_and_withheld",
+                      json.dumps(doc["members_detail"][0]["checks"]["failures"]))
+
+    def test_a_THINNED_MC_leg_reaches_the_verdict(self):
+        """The physics failure the product exists to prevent, end to end."""
+        def break_it(store):
+            store["sig_bootstrap_factor_full"] = np.zeros(self.n_sig, dtype=np.uint8)
+        r, doc = self._run(self._build(perturb=break_it))
+        self.assertEqual("FAIL", doc["verdict"])
+        self.assertEqual(1, r.returncode)
+
+    def test_the_report_records_the_executed_row_count(self):
+        """V4's floor operand: a verdict that bounds failures and never the checks EXECUTED cannot
+        distinguish `passed` from `never ran`."""
+        r, doc = self._run(self._build())
+        self.assertGreater(doc["executed_check_rows_total"], 15)
+        self.assertEqual(doc["executed_check_rows_total"],
+                         doc["members_detail"][0]["checks"]["n_passed"]
+                         + doc["members_detail"][0]["checks"]["n_failed"])
+
+
 class DivergenceManifest(unittest.TestCase):
     """The manifest is regenerable, its partition SUMS, and its generator refuses to run late.
 
@@ -1989,29 +2302,38 @@ class DivergenceManifest(unittest.TestCase):
         self.assertEqual(st["n_sites_whose_replacement_no_caller_INVOKES"],
                          sum(len(v) for v in st["written_but_UNCALLED"].values()))
 
-    def test_the_generator_reproduces_the_committed_manifest_byte_for_byte(self):
-        """Otherwise the file on disk and the rule that produced it can disagree silently."""
-        before = (self._repo() / self.OUT).read_bytes()
+    def test_the_generator_REFUSES_now_that_the_validator_EXISTS(self):
+        """THE ORDERING ASSERTION, NOW EXERCISED BY THE REAL STATE RATHER THAN BY A SIMULATION.
+
+        This control used to create a temporary file to prove the refusal fires, and to check the
+        generator reproduced the manifest byte for byte. Both were correct for the world in which the
+        validator did not exist. It exists now, so the refusal is LIVE: the manifest can no longer be
+        regenerated, which is the intended terminal state and the reason writing the validator was the
+        last step. A simulated refusal has been replaced by the real one -- BEN-258's third category
+        again, since the simulated version was the only evidence the guard worked.
+
+        The byte-for-byte reproduction control is deliberately NOT replaced by a weaker version: it
+        cannot run, and asserting something adjacent that CAN run would be the forbidden relaxation with
+        extra steps. The manifest's internal consistency is covered by the partition-sum, digest and
+        entry controls above, which read the committed file directly.
+        """
+        d = self._doc()
+        declared = [self._repo() / c for c in d["written_before_assertion"]]
+        self.assertTrue(any(p.exists() for p in declared),
+                        "no declared validator module exists, so the generator should still run and "
+                        "this control has the wrong premise")
         r = subprocess.run([sys.executable, str(self._repo() / self.GEN)],
                            capture_output=True, text=True, cwd=str(self._repo()))
-        self.assertEqual(0, r.returncode, r.stderr[-800:])
-        self.assertEqual(before, (self._repo() / self.OUT).read_bytes())
+        self.assertNotEqual(0, r.returncode, "the generator regenerated the manifest AFTER the validator "
+                                            "exists -- the ordering assertion is not firing")
+        self.assertIn("must be written before the wrapper", r.stdout + r.stderr)
 
-    def test_the_generator_REFUSES_once_a_wrapper_module_exists(self):
-        """THE ORDERING REQUIREMENT, EXERCISED. A manifest derived from a finished wrapper records what
-        was written rather than what was predicted, and the verdict's middle clause degenerates. The
-        control creates one of the forbidden paths, confirms the refusal, and removes it."""
-        d = self._doc()
-        target = self._repo() / d["written_before_assertion"][0]
-        self.assertFalse(target.exists(), "the wrapper already exists; this control cannot run")
-        target.write_text("# temporary, created by a control\n")
-        try:
-            r = subprocess.run([sys.executable, str(self._repo() / self.GEN)],
-                               capture_output=True, text=True, cwd=str(self._repo()))
-            self.assertNotEqual(0, r.returncode)
-            self.assertIn("must be written before the wrapper", r.stdout + r.stderr)
-        finally:
-            target.unlink()
+    def test_the_committed_manifest_is_unchanged_by_the_refusal(self):
+        """A refusal must not truncate or clobber the artifact it protects."""
+        before = (self._repo() / self.OUT).read_bytes()
+        subprocess.run([sys.executable, str(self._repo() / self.GEN)],
+                       capture_output=True, text=True, cwd=str(self._repo()))
+        self.assertEqual(before, (self._repo() / self.OUT).read_bytes())
 
 
 class MainGuardPosition(unittest.TestCase):

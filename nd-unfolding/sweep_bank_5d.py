@@ -27,6 +27,7 @@ import sys
 from array import array as carray
 
 import numpy as np
+import seed_offset_policy
 
 _REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
@@ -276,6 +277,14 @@ def do_run(args):
                                        float(cv["data_pot"]), float(cv["n_nucleons"]), edges)
     flat = xsec.ravel(order="C")
     rf = ROOT.TFile.Open(out, "RECREATE")
+    # OFFSET PROVENANCE (lane D, 2026-08-18). The seed alone cannot say whether this product
+    # came from a HOOKED launcher: a leg that silently ran unhooked stamps its BASELINE, which
+    # is indistinguishable from a deliberate k=0 anchor member. Two keys, not a sentinel:
+    # declared=0 means nothing can be concluded about which scan member this is.
+    _off_declared, _off_value = seed_offset_policy.declared_offset()
+    ROOT.TParameter("int")("estimator_seed", int(args.estimator_seed)).Write()
+    ROOT.TParameter("int")("est_seed_offset_declared", int(_off_declared)).Write()
+    ROOT.TParameter("int")("est_seed_offset", int(_off_value)).Write()
     ROOT.TParameter("int")("ndim", NDIM).Write()
     ROOT.TParameter("double")("globalCompleteness", cglob).Write()
     ROOT.TParameter("double")("dataPOT", float(cv["data_pot"])).Write()

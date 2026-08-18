@@ -2,6 +2,7 @@ import ast
 import importlib.util
 import sys
 import contextlib
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -609,17 +610,70 @@ class Cause6ProjectionCoverageTests(unittest.TestCase):
     def test_the_prefix_source_would_fail(self):
         """POWER: reconstruct the pre-fix module and require the assertions above to fail on it.
 
-        Without this the static test is a spelling check. Same technique as
-        `test_flux_universe_fix.EavailWFluxBlockIsPerUniverse.test_the_prefix_source_would_fail`.
+        KEYED ON AST `FunctionDef` NODES AND EXPLICIT CALL SITES, NOT ON COMMENT MARKERS. Lane D's
+        specification, after the marker version broke twice under the `BEN-450` repair -- once when
+        propagation put the value in a second place and once when the single-source helper put the
+        computation in a third, both outside a marker-based excision. Two properties a marker
+        cannot give you:
+
+          * it follows the code through further factoring;
+          * IT RAISES WHEN THE FUNCTION IS RENAMED. A marker that stops matching excises ZERO
+            lines, and the assertions below then pass on an UNMODIFIED source -- a power test that
+            has silently stopped being one. That is the failure mode this rewrite exists to remove.
+
+        Substitution over deletion throughout, and the `ast.parse` arm is kept: deleting a line
+        inside a multi-line call leaves an unclosed paren, and every token-absence assertion is
+        true of source that is no longer a program.
         """
         src = (ND / self.FNAME).read_text()
-        marker = "    # BOTH DIRECTIONS (added 2026-08-11, quarantine cause 6)."
-        self.assertIn(marker, src, "guard block marker missing; this test can no longer locate it")
-        head, _, tail = src.partition(marker)
-        # drop the whole guard block: everything from the marker to the next top-level-ish statement
-        rest = tail.split("\n    fs = ROOT.TFile.Open(args.stat5d)", 1)
-        self.assertEqual(len(rest), 2, "guard block no longer ends where this test expects")
-        prefix_src = head + "    fs = ROOT.TFile.Open(args.stat5d)" + rest[1]
+        lines = src.split("\n")
+
+        # ---- region 1: the helper that computes the empty-row set, located by NAME ----
+        tree = ast.parse(src)
+        fdefs = {n.name: n for n in tree.body if isinstance(n, ast.FunctionDef)}
+        self.assertIn("ew_coverage_report", fdefs,
+                      "ew_coverage_report not found as a top-level function: this power test can no "
+                      "longer locate what it must excise, and would otherwise pass vacuously")
+        fd = fdefs["ew_coverage_report"]
+        lo, hi = fd.lineno - 1, (fd.end_lineno or fd.lineno)
+        for i in range(lo, hi):
+            lines[i] = ""
+
+        # ---- regions 2-4: every STATEMENT in main() that mentions the names, excised as a
+        # STATEMENT rather than as a line. This is the same lesson twice: the guard's report is a
+        # multi-line f-string expression followed by an `if` block, so blanking matching LINES
+        # orphans continuation lines and an if-body -- caught by the `ast.parse` arm below as an
+        # IndentationError, the second time that arm has caught this reconstruction failing for the
+        # wrong reason. Statement boundaries come from the AST, so a multi-line expression and a
+        # compound statement are each removed whole.
+        #
+        # THE ONE STATEMENT THAT MUST SURVIVE is the `write_ew_outputs(...)` call: deleting it would
+        # remove the write entirely, and the pre-fix module DID write its outputs -- it just did not
+        # propagate the coverage result. Its argument is SUBSTITUTED instead.
+        main_fd = next((n for n in tree.body
+                        if isinstance(n, ast.FunctionDef) and n.name == "main"), None)
+        self.assertIsNotNone(main_fd, "main() not found; this power test cannot locate its subject")
+        NAMES = ("_ew_empty", "_n_ew_empty")
+        touched = 0
+        for stmt in ast.walk(main_fd):
+            if not isinstance(stmt, ast.stmt) or stmt is main_fd:
+                continue
+            lo, hi = stmt.lineno - 1, (stmt.end_lineno or stmt.lineno)
+            seg = "\n".join(src.split("\n")[lo:hi])
+            if not any(nm in seg for nm in NAMES):
+                continue
+            if "write_ew_outputs(" in seg:
+                continue          # survives; its argument is substituted below
+            for i in range(lo, hi):
+                lines[i] = ""
+            touched += 1
+        self.assertGreater(touched, 0,
+                           "no statement in main() mentions the empty-row names: the guard is not "
+                           "where this test expects it and the assertions below would pass vacuously")
+
+        arg = "        (_ew_empty, _n_ew_empty))"
+        self.assertIn(arg, src, "the propagated argument is not where this test expects it")
+        prefix_src = "\n".join(lines).replace(arg, "        (np.array([], dtype=int), 0))")
 
         self.assertNotIn("_ew_empty", prefix_src)
         self.assertNotIn("Mew.any(axis=1)", prefix_src)
@@ -838,9 +892,17 @@ class Gate1TwoRoleSeedSplit(unittest.TestCase):
             # written to enforce it. 26e4e343 is the last commit before the split.
             prev = _import_module_at_rev("26e4e343", "nd-unfolding/unified_throw_cov.py",
                                          "unified_throw_cov_prediff")
+            # FAIL, DO NOT SKIP. This was a skipTest for one commit, and lane Assistant named the
+            # hole: in a shallow clone or a fresh CI checkout the pinned object may be absent, and
+            # a skip is GREEN in exactly the environment where nobody is watching -- a check that
+            # cannot fail, guarding the one test whose expected result this diff changes. Verified
+            # here in a checkout that HAS the object, which is why the branch needed naming rather
+            # than testing. Same move as widening the assertion below: make the control's own
+            # failure mode loud.
             if prev is None:
-                self.skipTest("pre-diff revision unavailable; the control arm did NOT run, so "
-                              "the accept arm above is UNCONTROLLED")
+                self.fail("pre-diff revision 26e4e343 could not be loaded (shallow clone? run "
+                          "`git fetch --unshallow`). The control arm did NOT run, so the accept "
+                          "arm above is UNCONTROLLED and this test proves nothing about the diff.")
             # THE CONTROL'S FAILURE MODE IS ITSELF INFORMATIVE, so it is asserted as a union
             # rather than narrowed to SystemExit. Measured: the pre-diff module raises
             # AttributeError at its `args.seed` read -- it cannot even be CALLED with split-role
@@ -876,6 +938,543 @@ def _import_module_at_rev(rev, path, name):
     except Exception:
         return None
     return mod
+
+
+class _RootRecorder:
+    """Minimal ROOT stub that RECORDS what a writer wrote.
+
+    Manufactured rather than mocked-away: ROOT is not installed on every checkout, so the only way
+    to test that a value reaches the FILE is to stand in for the file. Records TParameter names and
+    values, TH1/TH2 names, and per-bin contents of the mask.
+    """
+
+    def __init__(self):
+        self.params = {}
+        self.hists = {}        # BUILT: populated by SetBinContent. Not evidence of a write.
+        self.written = set()   # REACHED THE FILE: populated ONLY by Write().
+        self.closed = False
+
+    class _Obj:
+        """WRITTEN AND BUILT ARE SEPARATE, and lane D's finding 3 is why.
+
+        The first version recorded the histogram's name in `hists` from `SetBinContent`, so a
+        populated-but-never-written object was indistinguishable from a written one: deleting
+        `hmask.Write()` left the suite GREEN. That is `BEN-450` -- an object constructed,
+        populated, and not propagated -- reproduced inside the test written to detect `BEN-450`,
+        with the instrument blind to the very distinction it exists to make.
+
+        Only the zero-case test caught it, and by luck: with an empty index set the loop never
+        runs, so the key could only appear via `Write()`. Assertions now bind to `written`.
+        """
+        def __init__(self, rec, name):
+            self._rec, self._name = rec, name
+        def SetBinContent(self, *a):
+            self._rec.hists.setdefault(self._name, {})[tuple(a[:-1])] = a[-1]
+        def Write(self):
+            self._rec.written.add(self._name)
+            self._rec.hists.setdefault(self._name, {})
+
+    class _Param:
+        def __init__(self, rec, name, value):
+            self._rec, self._name, self._value = rec, name, value
+        def Write(self):
+            self._rec.written.add(self._name)
+            self._rec.params[self._name] = self._value
+
+    def TFile(self):  # pragma: no cover - shape only
+        raise AssertionError("use TFile.Open")
+
+    def TParameter(self, _type):
+        return lambda name, value: _RootRecorder._Param(self, name, value)
+
+    def TH2D(self, name, *a):
+        return _RootRecorder._Obj(self, name)
+
+    def TH1I(self, name, *a):
+        return _RootRecorder._Obj(self, name)
+
+    def TH1D(self, name, *a):
+        return _RootRecorder._Obj(self, name)
+
+
+class _StubbedRoot:
+    """Install a recorder as `ROOT` for the duration of a with-block."""
+
+    def __init__(self):
+        self.rec = _RootRecorder()
+
+    def __enter__(self):
+        import sys, types
+        mod = types.ModuleType("ROOT")
+        mod.TParameter = self.rec.TParameter
+        mod.TH2D = self.rec.TH2D
+        mod.TH1I = self.rec.TH1I
+        mod.TH1D = self.rec.TH1D
+        opened = types.SimpleNamespace(Close=lambda: setattr(self.rec, "closed", True))
+        mod.TFile = types.SimpleNamespace(Open=lambda *a, **k: opened)
+        self._saved = sys.modules.get("ROOT")
+        sys.modules["ROOT"] = mod
+        return self.rec
+
+    def __exit__(self, *exc):
+        import sys
+        if self._saved is None:
+            sys.modules.pop("ROOT", None)
+        else:
+            sys.modules["ROOT"] = self._saved
+        return False
+
+
+class Cause6CoverageGuardPropagates(unittest.TestCase):
+    """`BEN-450`: the guard DETECTED and did not PROPAGATE.
+
+    The pre-existing test was STATIC -- it asserted the empty-row set was computed and two strings
+    were present -- and lane D's observation is that deleting both `print`s leaves it green. So
+    these tests bind to the value reaching the FILE, and the last one is the MUTATION CONTROL that
+    proves they can fail.
+    """
+
+    def _call(self, empty_rows, n=4):
+        import eavailW_covariance as ew
+        mats = [(nm, np.zeros((n, n))) for nm in ("C_syst", "C_stat", "C_lateral", "C_total")]
+        data = (2, 2, np.array([0.0, 1.0, 2.0]), np.array([0.0, 1.0, 2.0]), np.zeros((2, 2)))
+        idx = np.asarray(empty_rows, dtype=int)
+        with tempfile.TemporaryDirectory() as td:
+            out = str(Path(td) / "sub" / "out.root")   # `sub` exercises the makedirs branch
+            with _StubbedRoot() as rec:
+                got = ew.write_ew_outputs(out, mats, n, data, (idx, int(idx.size)))
+        return rec, got
+
+    def test_the_helper_is_the_single_source_of_the_value(self):
+        import eavailW_covariance as ew
+        Mew = np.zeros((3, 2))
+        Mew[0, 0] = 1.0
+        idx, count = ew.ew_coverage_report(Mew)
+        np.testing.assert_array_equal(idx, [1, 2])
+        self.assertEqual(count, 2)
+        self.assertIsInstance(count, int, "the count must be a plain int to survive a ROOT write")
+
+    def test_count_AND_set_reach_the_file(self):
+        rec, got = self._call([1, 3], n=4)
+        self.assertEqual(got, 2)
+        self.assertIn("n_ew_unsupported", rec.written, "the count did not reach the artifact")
+        self.assertEqual(rec.params["n_ew_unsupported"], 2)
+        self.assertIn("hEwUnsupportedMask", rec.written,
+                      "the SET was BUILT but never WRITTEN -- assert on `written`, not `hists`")
+        mask = rec.hists["hEwUnsupportedMask"]
+        self.assertEqual({k[0] for k in mask}, {2, 4},
+                         "mask must be 1-indexed and index-aligned to the covariance rows")
+
+    def test_count_is_written_WHEN_ZERO(self):
+        """The half most likely to be dropped as pedantry, and the repo has paid for it once.
+
+        A build that skips the write on zero is indistinguishable from one that never checked, and
+        a downstream criterion phrased as "the unsupported count is not large" passes vacuously.
+        Same argument as `unified_throw_cov.py`'s `fixed_seed_null_checked`, same quarantine.
+        """
+        rec, got = self._call([], n=4)
+        self.assertEqual(got, 0)
+        self.assertIn("n_ew_unsupported", rec.written,
+                      "ZERO must still be written -- absence is indistinguishable from unchecked")
+        self.assertEqual(rec.params["n_ew_unsupported"], 0)
+        self.assertNotIn("ew_coverage_checked", rec.params,
+                         "dropped on D's finding 1: a literal-1 flag on the only path cannot fail "
+                         "in the direction it claims. n_ew_unsupported IS the checked flag -- its "
+                         "ABSENCE means the product predates the check, 0 means fully supported")
+        self.assertIn("hEwUnsupportedMask", rec.written,
+                      "the mask is written even when empty, for the same reason as the count")
+
+    # EVERY propagating write gets its own mutant, on lane D's finding 2: the first version
+    # mutated only the COUNT, so the SET test was assumed rather than controlled -- and the set is
+    # the half a downstream chi2 needs, since the count says there IS a problem and the mask says
+    # which bins to drop. `(needle, key)` pairs; each mutant must lose exactly its own key.
+    PROPAGATION_WRITES = [
+        ('ROOT.TParameter("int")("n_ew_unsupported", count).Write()', "n_ew_unsupported"),
+        ("hmask.Write()", "hEwUnsupportedMask"),
+    ]
+
+    def test_MUTATION_removing_ANY_propagating_write_is_detected(self):
+        """POSITIVE CONTROL, one mutant per propagating write.
+
+        Without it the tests above could be passing on a property they do not constrain -- which is
+        exactly `BEN-450`'s criticism of the static test they replace: a positive control on a
+        static test controls only the static property. The `hmask.Write()` mutant is the one that
+        matters: until the recorder separated WRITTEN from BUILT, deleting that line left the suite
+        green because `SetBinContent` had already created the key.
+        """
+        src = (ND / "eavailW_covariance.py").read_text()
+        mats = [(nm, np.zeros((4, 4))) for nm in ("C_syst",)]
+        data = (2, 2, np.array([0.0, 1.0, 2.0]), np.array([0.0, 1.0, 2.0]), np.zeros((2, 2)))
+        for needle, key in self.PROPAGATION_WRITES:
+            with self.subTest(write=key):
+                self.assertIn(needle, src,
+                              f"the write propagating {key} is not where the mutation expects it")
+                mutant_src = src.replace(needle, "pass  # MUTATED: propagation removed")
+                self.assertNotEqual(mutant_src, src, "the mutation changed nothing")
+                ns = {"__name__": "eavailW_mutant"}
+                exec(compile(mutant_src, "eavailW_mutant.py", "exec"), ns)
+                with tempfile.TemporaryDirectory() as td:
+                    out = str(Path(td) / "sub" / "out.root")
+                    with _StubbedRoot() as rec:
+                        ns["write_ew_outputs"](out, mats, 4, data,
+                                               (np.array([1], dtype=int), 1))
+                self.assertNotIn(key, rec.written,
+                                 f"the mutant still propagated {key}, so this control is VOID")
+
+
+class SeedOffsetGridAliasing(unittest.TestCase):
+    """Spec (B) option (ii): the offset grid must not alias two ensemble members onto one seed.
+
+    THE MEASURED BASELINES, 2026-08-18: group 1 = {sweep_bank_5d, bootstrap_nd, seedscan_split} at
+    42, group 2 = {unified_throw_cov} at 1000. An offset preserves the grouping; it can still make
+    one group at offset k share a seed with the other group at a DIFFERENT offset k'.
+    """
+
+    B = {"g1": 42, "g2": 1000}
+
+    def test_the_single_value_form_is_UNDER_INCLUSIVE_and_the_pairwise_form_catches_what_it_misses(self):
+        """THE CONTROL THAT JUSTIFIES THE MODULE. Without it, "we check the grid" is unfalsifiable.
+
+        `assert k not in (958, -958)` is only the special case k'=0 -- the baseline member. This
+        grid aliases TWICE and that form flags one of them, so it would ship the second silently:
+        a guard that certifies a grid it has not checked, which is worse than no guard.
+        """
+        import seed_offset_policy as sp
+        grid = [0, 100, 500, 958, 1058, 1500]
+        bad = sp.check_offset_grid(self.B, grid)
+        pairs = {(ka, kb) for _, ka, _, kb, _ in bad}
+        self.assertEqual(pairs, {(958, 0), (1058, 100)},
+                         "the pairwise form must catch BOTH, including the pair with neither "
+                         "offset in {+-958}")
+
+        naive_flagged = {k for k in grid if k in (958, -958)}
+        self.assertEqual(naive_flagged, {958},
+                         "the single-value form flags only the baseline-relative collision")
+        survivors = {(ka, kb) for ka, kb in pairs if ka not in naive_flagged}
+        self.assertEqual(survivors, {(1058, 100)},
+                         "and this aliasing pair SURVIVES the single-value form -- the exact "
+                         "failure the pairwise check exists to prevent")
+
+    def test_a_clean_grid_passes_so_the_guard_is_not_vacuous(self):
+        import seed_offset_policy as sp
+        self.assertEqual(sp.check_offset_grid(self.B, [0, 1, 2, 5, 10]), [])
+        self.assertTrue(sp.assert_offset_grid_is_alias_free(self.B, [0, 1, 2, 5, 10]))
+
+    def test_a_single_group_can_never_alias(self):
+        """One baseline means no distinct-group pair, so no k/k' can collide across groups."""
+        import seed_offset_policy as sp
+        self.assertEqual(sp.check_offset_grid({"only": 42}, [0, 958, -958, 1058]), [])
+
+    def test_the_assertion_FAILS_CLOSED_and_its_message_names_ALIASING_not_structure(self):
+        """The message matters as much as the raise: the first description of this defect said the
+        co-variation STRUCTURE was destroyed, which is false -- at k=958 the within-run structure is
+        intact (42+958=1000, 1000+958=1958, distinct). What collides is g1@958 with g2@0. A wrong
+        message sends the next reader after the wrong bug.
+        """
+        import seed_offset_policy as sp
+        with self.assertRaises(SystemExit) as cm:
+            sp.assert_offset_grid_is_alias_free(self.B, [0, 958])
+        msg = str(cm.exception)
+        self.assertIn("ALIASES", msg)
+        self.assertIn("SAME estimator seed", msg)
+        self.assertNotIn("destroy", msg.lower(),
+                         "the failure is aliasing between grid points, not destruction of the "
+                         "within-run co-variation structure")
+        self.assertIn("PAIRWISE", msg, "the message must say why a single-value exclusion is not enough")
+
+    def test_the_docstring_cites_the_UNMEASURED_premise_rather_than_asserting_a_fact(self):
+        """The whole constraint is necessary only IF a shared seed across legs produces correlated
+        noise, which lane C recorded CONSIDERED-AND-DECLINED and UNMEASURED. Imposing the policy
+        anyway is conservative; presenting it as structural would be a claim the campaign has
+        explicitly declined to make. Pinned so the caveat cannot be quietly dropped.
+        """
+        import seed_offset_policy as sp
+        doc = sp.__doc__ or ""
+        self.assertIn("UNMEASURED", doc)
+        self.assertIn("CONSIDERED-AND-DECLINED", doc)
+        self.assertIn("decorrelate", doc)
+
+
+class MiiFourLegDriver(unittest.TestCase):
+    """The four-leg offset-scan driver: the five dispatch requirements, each with its mutation."""
+
+    def _drv(self):
+        import mii_seed_offset_driver as d
+        return d
+
+    def test_R3_one_offset_fans_across_all_four_legs_preserving_BOTH_groups(self):
+        """INTEGRATION is the deliverable. A flag is capability; a launcher diff is not a launcher."""
+        d = self._drv()
+        plan = d.build_plan([0, 5])
+        legs = {m["leg"] for m in plan["members"]}
+        self.assertEqual(legs, {"sweep_bank_5d", "unified_throw_cov", "bootstrap_nd",
+                                "seedscan_split"}, "a scan must reach all four legs")
+        for k in (0, 5):
+            seeds = {m["leg"]: m["estimator_seed"] for m in plan["members"] if m["k"] == k}
+            self.assertEqual(seeds["sweep_bank_5d"], 42 + k)
+            self.assertEqual(seeds["bootstrap_nd"], 42 + k)
+            self.assertEqual(seeds["seedscan_split"], 42 + k)
+            self.assertEqual(seeds["unified_throw_cov"], 1000 + k)
+            # the whole point of (ii): g1 stays internally equal and stays unequal to g2
+            self.assertEqual(len({seeds["sweep_bank_5d"], seeds["bootstrap_nd"],
+                                  seeds["seedscan_split"]}), 1, "group g1 must remain coherent")
+            self.assertNotEqual(seeds["sweep_bank_5d"], seeds["unified_throw_cov"],
+                                "g1 and g2 must remain independent")
+
+    def test_R5_the_draw_seed_does_NOT_move_with_k(self):
+        """LANE D's MUTATION, run here so it is not only a review step.
+
+        Passing 1000+k to both flags is the natural implementation and gives every member a
+        different THROW ENSEMBLE -- estimator noise convolved with ensemble noise, which the combine
+        guard cannot catch because every member runs its own combine and 1000/1000 and 1005/1005
+        both pass. Per-member coherence is not ensemble coherence.
+        """
+        d = self._drv()
+        # NOT [0, 5, 958]: that grid ALIASES (958 - 0 is exactly b2 - b1) and build_plan
+        # correctly refused it. My own fixture tripped the guard, which is the guard working.
+        plan = d.build_plan([0, 5, 10])
+        draws = {m["draw_seed"] for m in plan["members"] if m["leg"] == "unified_throw_cov"}
+        self.assertEqual(draws, {1000}, "the draw seed moved with k -- the scan would measure "
+                                        "estimator noise convolved with ensemble noise")
+
+    def test_R5_MUTATION_parameterising_the_draw_seed_is_REJECTED(self):
+        import seed_offset_policy as sp
+        with self.assertRaises(SystemExit) as cm:
+            sp.assert_draw_seed_is_pinned({"x.sh": "python3 f.py --draw-seed ${EST_SEED}"})
+        self.assertIn("Per-member coherence is not ensemble coherence", str(cm.exception))
+
+    def test_R4_k0_control_is_TWO_SIDED(self):
+        """Mutate the LAUNCHER side and the ARCHIVE side; both must fail.
+
+        A reproduction check that only notices changes on one side is comparing a value against
+        itself -- `BEN-423`, which caught three lanes today.
+        """
+        d = self._drv()
+        import seed_offset_policy as sp
+        src = d.launcher_sources()
+        self.assertTrue(d.assert_k0_reproduces_the_archive(src))
+
+        mutated = dict(src)
+        k = "sbatch_sweep_bank_5d_run_bkgaware_gpu.sh"
+        mutated[k] = mutated[k].replace("EST_SEED=$(( 42 +", "EST_SEED=$(( 43 +")
+        self.assertNotEqual(mutated[k], src[k], "launcher-side mutation changed nothing")
+        with self.assertRaises(SystemExit):
+            d.assert_k0_reproduces_the_archive(mutated)
+
+        saved = sp.LEG_BASELINES["sweep_bank_5d"]
+        sp.LEG_BASELINES["sweep_bank_5d"] = ("g1", 43)
+        try:
+            with self.assertRaises(SystemExit, msg="ARCHIVE-side mutation was not detected: the "
+                                                   "control is comparing a value against itself"):
+                d.assert_k0_reproduces_the_archive(src)
+        finally:
+            sp.LEG_BASELINES["sweep_bank_5d"] = saved
+
+    def test_R1_an_aliasing_grid_is_REJECTED_and_a_one_member_grid_cannot_pass_vacuously(self):
+        d = self._drv()
+        with self.assertRaises(SystemExit) as cm:
+            d.build_plan([0, 958])
+        self.assertIn("ALIASES", str(cm.exception))
+        import seed_offset_policy as sp
+        with self.assertRaises(SystemExit) as cm2:
+            sp.assert_offset_grid_is_alias_free({"only": 42}, [0, 1, 2])
+        self.assertIn("ZERO pairs", str(cm2.exception))
+
+    def test_MUTATION_removing_the_offset_hook_from_a_launcher_is_REJECTED(self):
+        """Without this the driver exports a variable nothing reads, every member runs at baseline,
+        and the scan returns a null produced by the plumbing rather than by the physics."""
+        d = self._drv()
+        src = dict(d.launcher_sources())
+        k = "sbatch_bootstrap_5d_gpu.sh"
+        src[k] = src[k].replace("MNV_EST_SEED_OFFSET", "MNV_DISABLED")
+        with self.assertRaises(SystemExit) as cm:
+            d.assert_offset_hook_present(src)
+        self.assertIn("would run at baseline for every k", str(cm.exception))
+
+    def test_the_driver_HAS_NO_SUBMISSION_PATH(self):
+        """Asserted on the source, because the dispatch said do not submit and a review of intent is
+        weaker than a check of the file."""
+        import ast as _ast
+        src = (ND / "mii_seed_offset_driver.py").read_text()
+        tree = _ast.parse(src)
+        called = {n.func.attr for n in _ast.walk(tree)
+                  if isinstance(n, _ast.Call) and isinstance(n.func, _ast.Attribute)}
+        for forbidden in ("run", "check_call", "check_output", "Popen", "system", "spawn"):
+            self.assertNotIn(forbidden, called, f"driver may call no process-spawning API: {forbidden}")
+        self.assertNotIn("import subprocess", src)
+        self.assertFalse(any(m.get("submitted") for m in [d for d in []]), "sanity")
+
+
+class LauncherArgvProbe(unittest.TestCase):
+    """The probe that reads the USE, not the assignment. It found two live defects in my own hook
+    insertions after three text/assignment-level checks had passed on both."""
+
+    def _reinsert_into_then_branch(self, text):
+        L = text.split("\n")
+        ai = next(i for i, l in enumerate(L) if l.strip().startswith("EST_SEED=$(("))
+        assign = L.pop(ai)
+        ii = next(i for i, l in enumerate(L) if l.strip().startswith("if [[") and '"$T" -eq 0' in l)
+        L.insert(ii + 1, assign)          # column 0 INSIDE the then block: the original bug
+        return "\n".join(L)
+
+    def test_it_catches_an_assignment_NESTED_IN_A_BRANCH(self):
+        """`sbatch_uthrow_block_5d.sh`'s real defect: the else branch expanded ${EST_SEED} to nothing
+        and every T != 0 task died. INDENTATION IS NOT SCOPE -- column 0 inside an indented block is
+        legal bash and reads as top level, which is why an indentation-based heuristic cleared it."""
+        import launcher_argv_probe as probe
+        f = "sbatch_uthrow_block_5d.sh"
+        orig = (ND / f).read_text()
+        (ND / f).write_text(self._reinsert_into_then_branch(orig))
+        try:
+            rows = probe.observed_argv(f, {"SLURM_ARRAY_TASK_ID": 3, "MNV_EST_SEED_OFFSET": 5})
+            self.assertEqual(probe.flag_values(rows, "--estimator-seed"), ["<MISSING>"],
+                             "the probe must SEE the value vanish, not merely fail to find the flag")
+            with self.assertRaises(SystemExit):
+                probe.assert_estimator_seed_is_an_integer_in_every_branch(
+                    f, [{"SLURM_ARRAY_TASK_ID": 0, "MNV_EST_SEED_OFFSET": 5},
+                        {"SLURM_ARRAY_TASK_ID": 3, "MNV_EST_SEED_OFFSET": 5}])
+        finally:
+            (ND / f).write_text(orig)
+        # and the restored file passes, so the test is not asserting a permanent failure
+        probe.assert_estimator_seed_is_an_integer_in_every_branch(
+            f, [{"SLURM_ARRAY_TASK_ID": 0, "MNV_EST_SEED_OFFSET": 5},
+                {"SLURM_ARRAY_TASK_ID": 3, "MNV_EST_SEED_OFFSET": 5}])
+
+    def test_it_catches_an_assignment_INSIDE_A_CONTINUED_COMMAND(self):
+        r"""`sbatch_bootstrap_5d_gpu.sh`'s real defect, and the worse of the two: the hook landed
+        between a `\`-continued command's first line and its continuation, so bash swallowed the
+        continuation as a comment. The command truncated to `bootstrap_nd.py --npz of_inputs_5d.npz`
+        -- NO seed arguments at all -- and `bash -n` PASSED on it. Syntax valid, arguments destroyed.
+        """
+        import launcher_argv_probe as probe
+        f = "sbatch_bootstrap_5d_gpu.sh"
+        orig = (ND / f).read_text()
+        L = orig.split("\n")
+        ai = next(i for i, l in enumerate(L) if l.strip().startswith("EST_SEED=$(("))
+        assign = L.pop(ai)
+        ri = next(i for i, l in enumerate(L)
+                  if l.strip().startswith("rg_run") and "bootstrap_nd.py" in l)
+        L.insert(ri + 1, assign)          # between the command and its continuation
+        (ND / f).write_text("\n".join(L))
+        try:
+            rows = probe.observed_argv(f, {"SLURM_ARRAY_TASK_ID": 9, "MNV_EST_SEED_OFFSET": 5})
+            vals = probe.flag_values(rows, "--estimator-seed")
+            self.assertEqual(vals, [], "the flag should have been swallowed entirely")
+            with self.assertRaises(SystemExit):
+                probe.assert_estimator_seed_is_an_integer_in_every_branch(
+                    f, [{"SLURM_ARRAY_TASK_ID": 9, "MNV_EST_SEED_OFFSET": 5}])
+        finally:
+            (ND / f).write_text(orig)
+
+    def test_the_probe_refuses_to_run_with_fewer_cases_than_branches(self):
+        import launcher_argv_probe as probe
+        with self.assertRaises(SystemExit) as cm:
+            probe.assert_estimator_seed_is_an_integer_in_every_branch(
+                "sbatch_uthrow_block_5d.sh", [{"SLURM_ARRAY_TASK_ID": 0}])
+        self.assertIn("has not checked the launcher", str(cm.exception))
+
+
+class OffsetProvenanceStamp(unittest.TestCase):
+    """The offset itself is stamped, not just the resulting seed -- lane D's point that an unhooked
+    leg stamps its baseline and is then indistinguishable from a deliberate k=0 anchor member."""
+
+    def test_declared_and_value_are_two_keys_not_a_sentinel(self):
+        import seed_offset_policy as sp
+        self.assertEqual(sp.declared_offset({}), (0, 0),
+                         "unset must be DECLARED=0: nothing can be concluded about the member")
+        self.assertEqual(sp.declared_offset({"MNV_EST_SEED_OFFSET": "0"}), (1, 0),
+                         "a deliberate anchor member is declared=1, value=0 -- distinguishable from "
+                         "an unhooked run, which is the whole point")
+        self.assertEqual(sp.declared_offset({"MNV_EST_SEED_OFFSET": "5"}), (1, 5))
+
+    def test_a_malformed_offset_FAILS_rather_than_being_recorded_as_provenance(self):
+        import seed_offset_policy as sp
+        with self.assertRaises(SystemExit):
+            sp.declared_offset({"MNV_EST_SEED_OFFSET": "nope"})
+
+    def test_all_four_legs_stamp_both_keys(self):
+        """Asserted on the source of each writer, because the alternative is a run whose provenance
+        cannot be reconstructed -- cheap now and impossible after the spend."""
+        for mod in ("unified_throw_cov.py", "bootstrap_nd.py", "seedscan_split.py", "sweep_bank_5d.py"):
+            src = (ND / mod).read_text()
+            with self.subTest(module=mod):
+                self.assertIn("est_seed_offset_declared", src)
+                self.assertIn("est_seed_offset", src)
+
+    def test_archive_expansion_FAILS_when_a_leg_cannot_be_parsed(self):
+        """Attack #2: the parse is by string, so an unmatched leg was silently ABSENT from the result
+        and the k=0 control would pass over a leg it never read."""
+        import mii_seed_offset_driver as d
+        src = dict(d.launcher_sources())
+        k = "sbatch_seedscan_split_5d.sh"
+        src[k] = src[k].replace("EST_SEED=$((", "EST_SEED=$(( ")   # still bash-valid, no longer matched
+        src[k] = src[k].replace("EST_SEED=$(( ", "ESTSEED=$(( ")
+        with self.assertRaises(SystemExit) as cm:
+            d.archive_expansion(src)
+        self.assertIn("silently", str(cm.exception))
+
+
+class CleanOffsetPredicate(unittest.TestCase):
+    """Lane C's constraint: an offset must not slide a leg's ESTIMATOR seed into the range of that
+    leg's own per-unit DRAW seeds. A DIFFERENT confound from pairwise aliasing, and both are needed."""
+
+    def test_the_measured_forbidden_set_reproduces(self):
+        import seed_offset_policy as sp
+        bad = sp.forbidden_offsets(-200, 1400)
+        self.assertEqual(len(bad), 361, "361 forbidden offsets in [-200,1400]")
+        self.assertEqual((min(bad), max(bad)), (-41, 1117))
+        self.assertEqual(next(k for k in range(1, 4000) if k not in bad), 160,
+                         "smallest strictly positive clean offset")
+
+    def test_a_remembered_threshold_would_be_wrong(self):
+        """`1000` and `997` both FAIL -- 42+1000 and 42+997 are inside [1000,1159] -- which is why the
+        predicate is derived from the ranges rather than from a number anyone remembers."""
+        import seed_offset_policy as sp
+        for k in (0, 5, 159, 958, 997, 1000):
+            with self.subTest(k=k), self.assertRaises(SystemExit):
+                sp.assert_offsets_are_clean([k])
+        self.assertTrue(sp.assert_offsets_are_clean([160, 1200, 2400]))
+
+    def test_Cs_grid_1200j_is_DIRTY_AT_j0_AND_THAT_IS_THE_ARCHIVE(self):
+        """THE RESULT WORTH THE TEST. `1200j` is clean for j >= 1 and forbidden at j = 0 -- for TWO
+        independent reasons, both PROPERTIES OF THE ARCHIVE rather than of the scan:
+
+            g1 estimator seed   42 lands in bootstrap replica seeds [1,100]
+            g2 estimator seed 1000 lands in uthrow per-throw draw seeds [1000,1159]
+
+        So the anchor member is the one member the predicate cannot clear, and every archived product
+        already carries both coincidences. Not exempted here: the predicate is applied as specified and
+        the consequence is reported, because exempting the anchor silently would hide that member 0
+        differs structurally from members 1..49 -- which is exactly what the predicate forbids.
+        """
+        import seed_offset_policy as sp
+        with self.assertRaises(SystemExit) as cm:
+            sp.assert_offsets_are_clean([1200 * j for j in range(50)])
+        msg = str(cm.exception)
+        self.assertIn("1 of 50", msg, "only the anchor is dirty")
+        self.assertIn("k=0", msg)
+        self.assertTrue(sp.assert_offsets_are_clean([1200 * j for j in range(1, 50)]),
+                        "j=1..49 must be clean, so the finding is about the anchor and not the grid")
+
+    def test_the_range_table_is_DATA_and_names_what_it_omits(self):
+        """Lane C reports a PET-family band making k=2000 dirty. This lane has not measured it, so it
+        is ABSENT rather than guessed -- and the predicate must be computed from the table so that
+        adding it is a data change, not a rewrite."""
+        import seed_offset_policy as sp
+        self.assertIn("uthrow per-throw draw seed", sp.PER_UNIT_SEED_RANGES)
+        src = (ND / "seed_offset_policy.py").read_text()
+        self.assertIn("PET-family band", src.replace("PET family band", "PET-family band"))
+        # a caller-supplied range table must change the answer, or the table is decorative
+        extra = dict(sp.PER_UNIT_SEED_RANGES, **{"hypothetical band": (2042, 2100)})
+        with self.assertRaises(SystemExit):
+            sp.assert_offsets_are_clean([2000], ranges=extra)
+
+    def test_it_refuses_a_vacuous_pass(self):
+        import seed_offset_policy as sp
+        with self.assertRaises(SystemExit):
+            sp.assert_offsets_are_clean([])
+        with self.assertRaises(SystemExit):
+            sp.assert_offsets_are_clean([1200], ranges={})
 
 if __name__ == "__main__":
     unittest.main()

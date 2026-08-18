@@ -45,6 +45,7 @@ for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
         sys.path.insert(0, _p)
 
 import flux_universe
+import seed_offset_policy
 from compare_unified_throw import _xsec_for_weights
 from uq_math import (interpolate_asymmetric_ratio, joint_throw_covariance,
                      mat_covariance)
@@ -209,6 +210,11 @@ def _flux_for_universe(d, table, u):
     return np.asarray(d["flux"], float) * table[u]
 
 
+# Read ONCE at import so every product of one process agrees, and so a mid-run env change cannot
+# produce two differently-stamped slabs from the same job.
+_OFF_DECLARED, _OFF_VALUE = seed_offset_policy.declared_offset()
+
+
 def do_throws(args):
     d, bands, n_flux = _load_bank(args.bank)
     edges = d["edges"]
@@ -269,6 +275,8 @@ def do_throws(args):
                       flux_u=np.array([m[1] for m in metas]),
                       estimator_seed=np.int64(args.estimator_seed),
                       draw_seed=np.int64(args.draw_seed),
+                      est_seed_offset_declared=np.int64(_OFF_DECLARED),
+                      est_seed_offset=np.int64(_OFF_VALUE),
                       flux_normalized=np.int64(1),
                       bands=np.array(bands, dtype=object))
     print(f"[throws] wrote {args.out}: xs{np.array(xs).shape}")
@@ -301,6 +309,8 @@ def do_blockunits(args):
             _atomic_savez(args.out, xs=np.array(xs), labels=np.array(labels, dtype=object),
                           estimator_seed=np.int64(args.estimator_seed),
                           draw_seed=np.int64(args.draw_seed),
+                          est_seed_offset_declared=np.int64(_OFF_DECLARED),
+                          est_seed_offset=np.int64(_OFF_VALUE),
                           flux_normalized=np.int64(1),
                           kinds=np.array(kinds, dtype=object))
     if args.block_flux:
@@ -319,6 +329,8 @@ def do_blockunits(args):
             _atomic_savez(args.out, xs=np.array(xs), labels=np.array(labels, dtype=object),
                           estimator_seed=np.int64(args.estimator_seed),
                           draw_seed=np.int64(args.draw_seed),
+                          est_seed_offset_declared=np.int64(_OFF_DECLARED),
+                          est_seed_offset=np.int64(_OFF_VALUE),
                           flux_normalized=np.int64(1),
                           kinds=np.array(kinds, dtype=object))
     print(f"[blockunit] wrote {args.out}: {len(xs)} units")
@@ -532,6 +544,11 @@ def do_combine(args):
         # because "the seed" is not a well-formed field on this product any more.
         ROOT.TParameter("int")("estimator_seed", int(args.estimator_seed)).Write()
         ROOT.TParameter("int")("draw_seed", int(args.draw_seed)).Write()
+        # OFFSET PROVENANCE (lane D, 2026-08-18). The seed alone cannot say whether this product came from a
+        # HOOKED launcher: an unhooked leg stamps its BASELINE, indistinguishable from a deliberate k=0
+        # anchor member. Two keys, not a sentinel -- declared=0 means nothing can be concluded.
+        ROOT.TParameter("int")("est_seed_offset_declared", int(_OFF_DECLARED)).Write()
+        ROOT.TParameter("int")("est_seed_offset", int(_OFF_VALUE)).Write()
         hs = ROOT.TH1D("hJointMeanShift", "joint throw mean minus CV", nrep, 0, nrep)
         for i, value in enumerate(mean_shift):
             hs.SetBinContent(i + 1, float(value))
@@ -553,6 +570,8 @@ def do_combine(args):
         # estimator seed produced this covariance without re-reading the slabs.
         "estimator_seed": int(args.estimator_seed),
         "draw_seed": int(args.draw_seed),
+        "est_seed_offset_declared": int(_OFF_DECLARED),
+        "est_seed_offset": int(_OFF_VALUE),
     }
 
 

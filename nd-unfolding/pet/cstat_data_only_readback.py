@@ -45,6 +45,7 @@ if _HERE not in sys.path:
 from validate_gate5_training_artifacts import (  # noqa: E402
     BKG_MODE,
     ESTIMATOR,
+    EXPECTED_CODE,
     FROZEN_POLICY,
     SEED_POLICY_STRING,
     SOURCE_SHA256,
@@ -57,6 +58,12 @@ from validate_gate5_training_artifacts import (  # noqa: E402
 # imported. Restated here and pinned to the pinned module's source by controls, the same arrangement as
 # `required_keys`. Kept as module constants rather than inline so the controls have something to name.
 CHECKPOINT_SEMANTICS = "final-epoch weights, round-trip verified (BEN-043)"
+
+# THE INDEPENDENT THIRD OPERAND for the cross-stage loader comparison, taken from the COHERENT campaign's
+# pinned expectations rather than from anything this product writes. Comparing the target and training
+# blocks only to EACH OTHER passes when both drift together -- which is precisely the failure mode two
+# deployments cut at different times create -- so both are compared to this.
+EXPECTED_LOADER_SHA256 = EXPECTED_CODE["loader"]
 FATAL_LOG_TOKENS = ["Traceback (most recent call last)", "[gate5-train][FAIL]", "SystemExit:"]
 
 

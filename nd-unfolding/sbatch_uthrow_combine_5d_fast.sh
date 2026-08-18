@@ -12,7 +12,13 @@
 set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"
-python3 unified_throw_cov_5d.py --draw-seed 1000 --estimator-seed 1000 \
+# M(ii) OFFSET HOOK (spec (B) option (ii), BEN-461). The launcher keeps its OWN baseline
+# literal, so MNV_EST_SEED_OFFSET=0 -- the default -- reproduces the archive EXACTLY and the
+# two coherence groups are preserved BY CONSTRUCTION rather than by the driver getting it
+# right: one offset in, each leg adds it to its own baseline. Do not replace this with an
+# absolute-seed override; that hands the group structure back to the caller.
+EST_SEED=$(( 1000 + ${MNV_EST_SEED_OFFSET:-0} ))
+python3 unified_throw_cov_5d.py --draw-seed 1000 --estimator-seed ${EST_SEED} \
   --combine 'uq_5d/uthrow_slabs_5d_sb/uthrow5d_slab_*.npz' \
   --expected-throws 0-159 \
   --block-slabs 'uq_5d/block_slabs_5d_sb/block5d_*.npz' \
