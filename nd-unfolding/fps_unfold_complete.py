@@ -32,8 +32,17 @@ def check(path, expect_nbins=None, min_complete=None, require_completeness=True)
     copy of a kRecovered check. `BEN-481` measured that this file already carries the right COMPLETE
     definition and that only three hardcoded constants blocked reuse; `expect_nbins=None` skips the
     grid-size assertion for callers on a different binning, and `require_completeness=False` skips the
-    globalCompleteness gate for products that do not write it. Defaults preserve the FPS behaviour
-    exactly, so every existing caller is unaffected.
+    globalCompleteness gate ENTIRELY -- both its presence/NaN half and its threshold half. Defaults
+    preserve the FPS behaviour exactly, so every existing caller is unaffected.
+
+    DO NOT REACH FOR `require_completeness=False` TO RELAX A THRESHOLD; pass `min_complete` instead.
+    I wrote its first use with the justification "for products that do not write it" and that was
+    false of the family I applied it to -- measured 2026-08-18, both writers of the 5D universe family
+    emit the key unconditionally (`sweep_bank_5d.py:289`, `unfold_nd_omnifold_unbinned.py:1014`). The
+    flag's coarseness is what made the mistake cheap to make: it bundles "the key may be absent" with
+    "the floor does not transfer", and only the second was ever true. NaN is a reachable value with a
+    known cause (`denom_nd.sum() <= 0`), so skipping the presence half admits a meaningless product.
+    `analyze_universes_5d.py:load_flat` now passes `min_complete=0.0, require_completeness=True`.
 
     THE POINT OF REUSE HERE IS NOT TIDINESS. Two copies of a completeness rule drift, and the drift is
     invisible: each copy passes its own tests. The mediator's instruction was explicit -- if there is a
