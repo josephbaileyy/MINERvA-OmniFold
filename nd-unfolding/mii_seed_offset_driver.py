@@ -255,7 +255,12 @@ def build_plan(offsets, argv_probe=True):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--offsets", default="1200",
+    # N4, A FOOTGUN I INTRODUCED AND THE MEDIATOR REFUSED TO LET SIT: this defaulted to "1200" so
+    # --gate-only would not need it, which meant a TYPO'D OR OMITTED --offsets silently planned the
+    # WRONG GRID on the one code path that decides what 50 members compute, and everything downstream
+    # looked healthy. Required again; --gate-only returns before this value is read, so it costs
+    # nothing there but is checked explicitly below for the non-gate paths.
+    ap.add_argument("--offsets", default=None,
                     help="comma-separated offset grid, e.g. 0,1,2,3 (k=0 is the archive anchor)")
     ap.add_argument("--out", default=None, help="write the plan JSON here")
     ap.add_argument("--gate-only", metavar="REPO", default=None,
@@ -277,6 +282,10 @@ def main(argv=None):
     # from a --gate-only invocation to a launcher.
     if a.gate_only:
         return probe.gate_only(a.gate_only)
+    if not a.offsets:
+        ap.error("--offsets is REQUIRED for every path except --gate-only. It defaulted to 1200 for "
+                 "one commit, which meant an omitted or mistyped grid silently planned the wrong "
+                 "members with everything downstream looking healthy.")
     if a.no_argv_probe and not a.cluster_probe:
         print("[mii] WARNING: --no-argv-probe -- the observed-argv GATE IS NOT RUNNING. Everything "
               "below is plan-level validation only and says NOTHING about whether the offset reaches "

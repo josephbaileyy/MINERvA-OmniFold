@@ -786,8 +786,40 @@ class Cause1PathAuditTests(unittest.TestCase):
             for i, line in enumerate(f.read_text().splitlines(), 1):
                 if "np.outer(" in line:
                     found.append(f"{mod}.py:{i}")
-        self.assertEqual(found, ["analyze_universes_5d.py:109"],
-                         "unaccounted outer product on X's build path -- a cause-1 candidate")
+        # PINNED ON CONTENT, NOT ON A LINE NUMBER -- changed 2026-08-18 and flagged for the owning
+        # lane's review. This asserted `analyze_universes_5d.py:109` and went RED when a 15-line
+        # comment was added ABOVE it in load_flat for B4: the outer product moved to :124 and nothing
+        # about the audited property changed. That is BEN-249/BEN-480's subject arriving in a TEST,
+        # which is the strongest form of it -- a test is a citation-bearing artifact and this one
+        # asserted the citation rather than the fact.
+        #
+        # Bumping 109 to 124 would have been the quiet fix and it would rot again on the next edit
+        # above it. So: still EXACTLY ONE occurrence on X's path, and it must be the documented
+        # norm-band term, identified by what the line SAYS. The line number is reported, not asserted
+        # -- "cite the line and quote it": the number locates, the content survives the edit.
+        self.assertEqual(len(found), 1,
+                         f"expected exactly ONE np.outer on X's build path, found {found} -- any NEW "
+                         "outer product here is a cause-1 candidate")
+        mod, _, lineno = found[0].rpartition(":")
+        self.assertEqual(mod, "analyze_universes_5d.py", f"outer product moved module: {found}")
+        src = (ND / mod).read_text().splitlines()
+        line = src[int(lineno) - 1]
+        self.assertIn("np.outer(", line)
+        # SYMMETRIC rank-1: `np.outer(v, v)`. A one-sided band would be np.outer(a, b) with a != b,
+        # which is cause 1's actual signature, so the symmetry is the property worth asserting.
+        args_in = line.split("np.outer(", 1)[1].split(")", 1)[0]
+        lhs, _, rhs = (x.strip() for x in args_in.partition(","))
+        self.assertEqual(lhs, rhs,
+                         f"{found[0]} is a NON-SYMMETRIC outer product ({args_in}) -- a one-sided "
+                         "band is cause 1's signature, not the documented norm term")
+        # ...and it is the --add-norm-gated norm band built from the CV, not some new term. Checked in
+        # the three lines above it so this survives the block moving as a whole.
+        context = "\n".join(src[max(0, int(lineno) - 4):int(lineno)])
+        self.assertIn("add_norm", context,
+                      f"{found[0]} is a symmetric outer product but is NOT gated on --add-norm; the "
+                      f"documented term is (sigma_N X^CV)(sigma_N X^CV)^T. Context:\n{context}")
+        self.assertIn("cv_rep", context,
+                      f"{found[0]}'s vector is not built from the reported CV: {context!r}")
 
 class Gate1TwoRoleSeedSplit(unittest.TestCase):
     """The gate-1 split of `--seed` into `--draw-seed` (throw realization) and

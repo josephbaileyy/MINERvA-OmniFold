@@ -25,7 +25,24 @@ EXPECT_NBINS = 285          # 15 (pt) x 19 (pz) FPS extended grid
 MIN_COMPLETE = 0.50         # sanity floor; healthy unfolds report c=1.0000
 
 
-def check(path):
+def check(path, expect_nbins=None, min_complete=None, require_completeness=True):
+    """COMPLETE per the definition at the top of this file. Reusable, not FPS-only.
+
+    PARAMETERISED 2026-08-18 so the M(ii) member-axis work can REUSE this instead of adding a third
+    copy of a kRecovered check. `BEN-481` measured that this file already carries the right COMPLETE
+    definition and that only three hardcoded constants blocked reuse; `expect_nbins=None` skips the
+    grid-size assertion for callers on a different binning, and `require_completeness=False` skips the
+    globalCompleteness gate for products that do not write it. Defaults preserve the FPS behaviour
+    exactly, so every existing caller is unaffected.
+
+    THE POINT OF REUSE HERE IS NOT TIDINESS. Two copies of a completeness rule drift, and the drift is
+    invisible: each copy passes its own tests. The mediator's instruction was explicit -- if there is a
+    shared helper, use it -- and this is the helper.
+    """
+    if expect_nbins is None:
+        expect_nbins = EXPECT_NBINS
+    if min_complete is None:
+        min_complete = MIN_COMPLETE
     r = {"path": os.path.basename(path), "ok": False, "why": ""}
     if not os.path.exists(path):
         r["why"] = "missing"; return r
@@ -40,8 +57,8 @@ def check(path):
     if not h:
         f.Close(); r["why"] = "no hXSecND_flat"; return r
     nb = h.GetNbinsX()
-    if nb != EXPECT_NBINS:
-        f.Close(); r["why"] = f"nbins {nb} != {EXPECT_NBINS}"; return r
+    if expect_nbins and nb != expect_nbins:
+        f.Close(); r["why"] = f"nbins {nb} != {expect_nbins}"; return r
     vals = np.array([h.GetBinContent(i + 1) for i in range(nb)])
     if not np.all(np.isfinite(vals)):
         f.Close(); r["why"] = "non-finite bins in hXSecND_flat"; return r
@@ -51,10 +68,11 @@ def check(path):
     gc = f.Get("globalCompleteness")
     gcv = float(gc.GetVal()) if gc else None
     f.Close()
-    if gcv is None or not np.isfinite(gcv):
-        r["why"] = "no/NaN globalCompleteness"; return r
-    if gcv < MIN_COMPLETE:
-        r["why"] = f"globalCompleteness {gcv:.4f} < {MIN_COMPLETE}"; return r
+    if require_completeness:
+        if gcv is None or not np.isfinite(gcv):
+            r["why"] = "no/NaN globalCompleteness"; return r
+        if gcv < min_complete:
+            r["why"] = f"globalCompleteness {gcv:.4f} < {min_complete}"; return r
     r.update(ok=True, sum=s, gc=gcv, nbins=nb); return r
 
 
