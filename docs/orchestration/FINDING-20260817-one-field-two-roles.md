@@ -1,8 +1,11 @@
 # FINDING 2026-08-17 — one field, two roles: the defect a new mode is always the first to find
 
-**BEN-256.** Lane D (verifier), read-only, at the mediator's request. The seam analysis of instance 1
-is joint with the Assistant session, which named the two roles; the second instance, the detection
-rule, and the "the obvious fix cannot fail" result are mine. Hostile-pass receipt:
+**BEN-256.** Lane D (verifier), read-only, at the mediator's request. Credit inline. The seam analysis
+of instance 1 is joint with the **Assistant** lane, which named the two roles; instance 2, the
+detection rule and the *"the obvious fix cannot fail"* result are mine; **Rule 3, the third
+instance, and the reframing of why Rule 1 is bounded — *a workaround's justification paragraph is a
+defect report that was never routed* — are the Assistant lane's**, contributed with an explicit
+disclaimer of credit and recorded anyway. Amendment 1 is B's objection, upheld. Hostile-pass receipt:
 [`state/gate5-data-only-assert-hostile-pass-20260817.json`](state/gate5-data-only-assert-hostile-pass-20260817.json).
 
 ## The shape
@@ -97,6 +100,22 @@ Recorded consequence, independently and before this finding:
 `DECISION-CALIBRATION-20260817.md:57` — *"Four legs share estimator seed 42, so their noise moves
 coherently"*, with the cross-terms **unmeasured**. That is `M(ii)`, which cause 3 is still behind.
 
+## Instance 3 — `sweep_bank_5d.py:252`: the degenerate case, included deliberately
+
+```
+:252   measured_weights=measured_weights, seed=42, verbose=False)
+```
+
+Verified: **no `add_argument` naming a seed and no `args.seed` anywhere in the file.** So this is not
+two roles collapsed into one field — it is **zero roles addressable**, a literal with no interface at
+all. Different failure, *same consequence*: a mode cannot say what it needs.
+
+It is listed because the remedy is the same and it is `M(ii)`'s other blocked leg — but note the
+asymmetry, because it inverts the detection rule. Instances 1 and 2 left a documented reach-around,
+so **Rule 1 finds them.** Instance 3 left nothing, because nobody has yet needed the role badly
+enough to work around its absence. **Rule 1 finds overloaded fields; it cannot find absent ones**,
+and that is the rule's stated limit rather than an oversight in applying it.
+
 ## The detection rule
 
 The tempting rule — *"audit fields for multiple meanings"* — is unbounded and nobody will run it. Two
@@ -115,6 +134,34 @@ waiting for. Instance 2's is `+ gj`. So: **a comment explaining why a value had 
 monkeypatching a module global, offsetting a seed, or otherwise bypassing the declared parameter, is
 a role collision until shown otherwise.** Grep the workaround idioms — a patched module global, a
 seed with arithmetic on it — not the several hundred config fields.
+
+**Why the rule is bounded and high-yield, which is the Assistant lane's sharpening and is better
+than my own reason for it.** I had it as *"workarounds sit near defects."* It is stronger than that:
+
+> **A workaround's justification paragraph is a defect report that was written and never routed.**
+
+Read `cstat_data_only.py:333-347` in full and it is not a hint near a defect — it is a **complete and
+correct diagnosis** of it: *"The loader has ONE `bootstrap_seed` switch controlling all three
+streams… 'Data Poisson, background unity' is not reachable through the loader's interface, and the
+loader is hash-pinned 25 ways."* The analysis was done. There was nowhere to put it. **So grepping
+workarounds is not hunting for hidden defects — it is collecting filed ones that never reached a
+ledger**, which is exactly why the yield is high and the corpus small.
+
+**And the same docstring forecloses the easy reading that someone was careless** — `:346-347`:
+
+> *"…it makes T2/T5 true BY CONSTRUCTION rather than by assertion — with T2/T5 still asserted,
+> **because a mechanism that is correct by construction and unchecked is one refactor from being
+> neither**."*
+
+That is careful engineering. The author anticipated the refactor risk and asserted against it
+anyway — **and the failure happened regardless**, because care at the call site cannot repair an
+interface defect one level up. **Local diligence does not compensate for an unroutable interface; it
+only ensures the eventual failure lands somewhere well-commented.**
+
+**RULE 3 (write-time complement, the Assistant lane's).** For any field a guard branches on, ask
+**what else sets that field, and why.** If two callers set it for different reasons, the guard is
+testing whichever reason happens to be live. This one prevents the next collision; it locates none of
+the existing ones, which is why it is the complement to Rule 1 rather than a substitute.
 
 **RULE 2 (static, narrower).** A field has two roles if **a value that is legitimate input at one
 site is a sentinel at another.** `bootstrap_seed=None` is a legal nominal build *and* the value
