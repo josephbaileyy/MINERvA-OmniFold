@@ -868,6 +868,82 @@ class NominalExtractorRoutingRefusal(unittest.TestCase):
                         "the routing guard must be installed before any stage dispatch")
 
 
+class SubmitControllerStageSelection(unittest.TestCase):
+    """`--stage target` decouples the two frozen deployments, and the default must not change meaning.
+
+    WHY TWO DEPLOYMENTS. `reconcile_gate5_family.py` grades the target-side invariants over the TARGET
+    RECEIPTS and the training-side ones over the TRAINING ARTIFACTS, and neither block compares one
+    stage's digests against the other's -- so one deployment per stage yields one group in each block.
+    A single checkout for both is what couples them.
+    """
+
+    SCRIPT = "nd-unfolding/pet/submit_gate5_data_only_n50.sh"
+
+    def _repo(self):
+        return Path(__file__).resolve().parents[2]
+
+    def _run(self, *argv):
+        return subprocess.run(["bash", str(self._repo() / self.SCRIPT), *argv],
+                              capture_output=True, text=True, cwd=str(self._repo()))
+
+    def test_an_unknown_stage_is_REFUSED_before_anything_else_runs(self):
+        r = self._run("bogus")
+        self.assertEqual(1, r.returncode)
+        self.assertIn("unknown stage 'bogus'", r.stderr)
+        self.assertIn("'both' or 'target'", r.stderr)
+
+    def test_the_error_path_uses_no_bash_4_only_expansion(self):
+        """`${VAR@Q}` is bash 4.4+; this is read on hosts with bash 3.2, where it is a `bad
+        substitution` that fires INSIDE the error path and REPLACES the diagnostic with noise. Measured
+        once for real, hence the control.
+
+        COMMENTS ARE STRIPPED FIRST, and that is the fourth time this session that a check of mine read
+        PROSE AS CODE -- here the comment explaining why not to use `${VAR@Q}` contained `@Q}` and failed
+        the control it accompanies. In Python the fix is `ast.unparse`, which drops comments by
+        construction; shell has no such thing, so the stripping is explicit and is the point of the
+        helper rather than an incidental detail.
+        """
+        code = self._shell_code()
+        self.assertNotIn("@Q}", code)
+        self.assertIn("@Q}", (self._repo() / self.SCRIPT).read_text(),
+                      "the comment warning against ${VAR@Q} is gone, so this control now passes for "
+                      "the wrong reason -- it would pass over a file that never mentioned it")
+
+    def _shell_code(self):
+        """The script with whole-line comments removed. Not a shell parser: it strips lines whose first
+        non-space character is `#`, which is exactly the case that bit."""
+        out = []
+        for line in (self._repo() / self.SCRIPT).read_text().split("\n"):
+            if line.lstrip().startswith("#"):
+                continue
+            out.append(line)
+        stripped = "\n".join(out)
+        self.assertGreater(len(stripped), 800, "comment stripping removed almost everything")
+        self.assertIn("STAGE=${1:-both}", stripped, "stripping removed live code")
+        return stripped
+
+    def test_the_default_is_both_so_no_existing_caller_changes_meaning(self):
+        src = (self._repo() / self.SCRIPT).read_text()
+        self.assertIn("STAGE=${1:-both}", src)
+
+    def test_target_stage_defers_rather_than_dropping_the_training_array(self):
+        """A deferral that silently never happens is indistinguishable from a family with no training
+        stage, so the deferral has to be stated in the output."""
+        src = (self._repo() / self.SCRIPT).read_text()
+        self.assertIn('TRAIN_JOB="DEFERRED"', src)
+        self.assertIn("GATE5_DATAONLY_STAGE=$STAGE", src)
+
+    def test_no_train_only_mode_exists_yet(self):
+        """Deliberate: a `train`-only mode needs an externally-supplied `aftercorr` job id, and an
+        unvalidated one is how a training array starts against a target family still being written.
+        This control fails the moment someone adds the mode without the validation, which is the point
+        at which the reasoning needs re-reading.
+
+        Comments stripped, because this is an ABSENCE check and absence checks are the direction prose
+        can satisfy by accident."""
+        self.assertNotIn("both|target|train", self._shell_code())
+
+
 class MainGuardPosition(unittest.TestCase):
     """`BEN-417`: a misplaced `unittest.main()` silently halves a suite and still prints OK.
 
