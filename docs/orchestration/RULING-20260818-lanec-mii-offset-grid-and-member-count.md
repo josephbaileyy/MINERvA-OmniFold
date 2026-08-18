@@ -52,6 +52,25 @@ lower bound on it. `160` global throws: `sbatch_uthrow_run_5d_fast.sh:5,9` — 4
 > ANY of those three ranges — and it is large: `361` forbidden values in `[−200, 1400]`, spanning
 > `[−41, 1117]`. The smallest strictly-positive clean offset is `160`.**
 
+> **⚠ AMENDED 2026-08-18 — THE COMPLETE SET IS `461` VALUES IN THREE BLOCKS, AND THE WINDOW ABOVE HID ONE OF
+> THEM.** `[−200, 1400]` was my search, not the world. Widened until the blocks close:
+>
+> ```
+> [ -999,  -900]  100   g2@-999 -> 1     in bootstrap[1,100] and seedscan[1,24]   <- NEVER ENUMERATED
+> [  -41,   159]  201   g1@-41  -> 1     in bootstrap[1,100] and seedscan[1,24]
+> [  958,  1117]  160   g1@958  -> 1000  in uthrow[1000,1159]
+> ```
+>
+> **`461` total, and COMPLETE rather than window-bounded: `g1` can only reach a range for `k ∈ [−41, 1117]`
+> and `g2` for `k ∈ [−999, 159]`, so the whole set is contained in `[−999, 1117]` and nothing lies outside.**
+> **The `[−999, −900]` block is `g2` landing in the BOOTSTRAP and SPLIT ranges, and every window quoted in this
+> thread stopped at `−200`** — mine included. *(My `BEN-462` row said *"361 in `[−200, 1400]`"*, which is
+> correctly scoped; the reproduction that reached D and the mediator carried the span `[−41, 1117]` without the
+> qualifier, which is how a window-bounded count becomes read as a complete one.)*
+> **It is not academic: `lib_member_resume.sh:60` has a `member_kneg%06d/` branch, so negative offsets are
+> REPRESENTABLE in the implementation** — the ruled grid never uses one, and a later lane reaching for a
+> symmetric grid would walk into an unenumerated block.
+
 **THE ILLUSTRATIVE GRID `k = 0…7` IS DIRTY AT EVERY NON-ANCHOR MEMBER, ON BOTH GROUPS — 14 coincidences among
 7 members:**
 
@@ -89,6 +108,15 @@ where a `g1` seed lands inside the throw range, so `s` must be large enough that
 **concretely `s ≥ 1118`** — while any `s ≤ 160` puts some multiple inside it. **`1200` is the smallest round
 number above that, and it also clears the `50000+i` band at every `j`.**
 
+> **`s ≥ 1118` IS EXACT IN BOTH DIRECTIONS, verified 2026-08-18 on the mediator's question of whether `1200`
+> was deliberate or lucky: `s = 1117` FAILS (`g1@1117 → 1159`, the top of the throw range) and `s = 1118`
+> PASSES.** **So the choice was DERIVED, not lucky — the derivation is the `s ≥ 1118` in this paragraph, written
+> before the grid was ruled.**
+>
+> **But the `83` between `1117` and `1200` is ROUNDING SLACK, not margin, and should not be recorded as a safety
+> factor it is not.** The useful form for a later lane: **anything in `[1118, 1199]` is equally legal**, and
+> `1200` is `1118` rounded up for legibility. **A margin claim would invite someone to spend it.**
+
 > **`50000+i` is the PET Gate-5 `C_stat` family's seed base (`build_cstat_gate5_n50.py:64`), a DIFFERENT
 > pipeline and out of this scan's scope. It is checked anyway — excluding an out-of-scope range costs one line
 > and discovering a collision with it afterwards would be indefensible.**
@@ -111,7 +139,28 @@ number above that, and it also clears the `50000+i` band at every `j`.**
 > `BEN-460`: a document must index what supersedes any of its rows.)*
 >
 > **`k = 0` is EXEMPT and must be: it is dirty on two of the three ranges, and that is a property of the
-> PUBLISHED ARCHIVE, not of the scan.** The exemption is the honest shape — the anchor differs structurally
+> PUBLISHED ARCHIVE, not of the scan.**
+>
+> **⚠ WHICH RULE THIS EXEMPTS, stated 2026-08-18 because the relay had it backwards and B was about to
+> implement it against the wrong one. THE EXEMPTION BELONGS TO THIS CLEAN-OFFSET RULE AND TO NOTHING ELSE.
+> `k = 0` DOES NOT VIOLATE THE PAIRWISE ALIAS RULE** — verified: no pair on `k = 1200j, j = 0…49` differs by
+> `958`, so the alias rule needs **no exemption at all**. **Exempting `k = 0` from the alias rule would exempt it
+> from a rule it does not break while leaving the rule it DOES break un-exempted — and the clean-offset gate
+> would then reject the anchor.** **ONE exemption, one rule, and it is this one.**
+>
+> **AND IT IS NOT A WEAKENING — it is this rule's SCOPE stated correctly.** The rule forbids **the scan from
+> INTRODUCING** a coincidence; it does not and must not forbid **the archive from HAVING** one. At a non-anchor
+> member a coincidence is a per-member structural difference and therefore a confound; **at the anchor it is not
+> a difference at all — it is the thing the anchor exists to match.** *(So the offered dichotomy — either the
+> coincidence is harmless and the rule is too strong, or the archive carries it and the anchor is right — has
+> both horns TRUE and about different things, and "the rule is too strong" does not follow from either.)*
+>
+> **AND THE EXEMPTION DOES NOT REST ON THE MEASURED HARMLESSNESS.** `DETERMINATION-…-anchor-confound…` §3e
+> measured the coincidence at `δ²/n = 8.56 × 10⁻⁸`, which shifts a decision boundary by `1.3 × 10⁻⁴` percentage
+> points. **Had it come back large, the anchor would STILL have to reproduce the archive; only the DECLARATION's
+> size would change.** So §3e is corroboration and not warrant — the same separation as *attributability, not
+> conservatism*, and it matters because a future lane re-measuring differently must not read the exemption as
+> revoked. The exemption is the honest shape — the anchor differs structurally
 > from every other member, this cannot be fixed without abandoning the anchor, and **it is a limitation of
 > `M(ii)` to declare rather than a defect to repair.**
 
