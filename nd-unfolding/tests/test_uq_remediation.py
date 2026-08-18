@@ -1121,5 +1121,78 @@ class Cause6CoverageGuardPropagates(unittest.TestCase):
                 self.assertNotIn(key, rec.written,
                                  f"the mutant still propagated {key}, so this control is VOID")
 
+
+class SeedOffsetGridAliasing(unittest.TestCase):
+    """Spec (B) option (ii): the offset grid must not alias two ensemble members onto one seed.
+
+    THE MEASURED BASELINES, 2026-08-18: group 1 = {sweep_bank_5d, bootstrap_nd, seedscan_split} at
+    42, group 2 = {unified_throw_cov} at 1000. An offset preserves the grouping; it can still make
+    one group at offset k share a seed with the other group at a DIFFERENT offset k'.
+    """
+
+    B = {"g1": 42, "g2": 1000}
+
+    def test_the_single_value_form_is_UNDER_INCLUSIVE_and_the_pairwise_form_catches_what_it_misses(self):
+        """THE CONTROL THAT JUSTIFIES THE MODULE. Without it, "we check the grid" is unfalsifiable.
+
+        `assert k not in (958, -958)` is only the special case k'=0 -- the baseline member. This
+        grid aliases TWICE and that form flags one of them, so it would ship the second silently:
+        a guard that certifies a grid it has not checked, which is worse than no guard.
+        """
+        import seed_offset_policy as sp
+        grid = [0, 100, 500, 958, 1058, 1500]
+        bad = sp.check_offset_grid(self.B, grid)
+        pairs = {(ka, kb) for _, ka, _, kb, _ in bad}
+        self.assertEqual(pairs, {(958, 0), (1058, 100)},
+                         "the pairwise form must catch BOTH, including the pair with neither "
+                         "offset in {+-958}")
+
+        naive_flagged = {k for k in grid if k in (958, -958)}
+        self.assertEqual(naive_flagged, {958},
+                         "the single-value form flags only the baseline-relative collision")
+        survivors = {(ka, kb) for ka, kb in pairs if ka not in naive_flagged}
+        self.assertEqual(survivors, {(1058, 100)},
+                         "and this aliasing pair SURVIVES the single-value form -- the exact "
+                         "failure the pairwise check exists to prevent")
+
+    def test_a_clean_grid_passes_so_the_guard_is_not_vacuous(self):
+        import seed_offset_policy as sp
+        self.assertEqual(sp.check_offset_grid(self.B, [0, 1, 2, 5, 10]), [])
+        self.assertTrue(sp.assert_offset_grid_is_alias_free(self.B, [0, 1, 2, 5, 10]))
+
+    def test_a_single_group_can_never_alias(self):
+        """One baseline means no distinct-group pair, so no k/k' can collide across groups."""
+        import seed_offset_policy as sp
+        self.assertEqual(sp.check_offset_grid({"only": 42}, [0, 958, -958, 1058]), [])
+
+    def test_the_assertion_FAILS_CLOSED_and_its_message_names_ALIASING_not_structure(self):
+        """The message matters as much as the raise: the first description of this defect said the
+        co-variation STRUCTURE was destroyed, which is false -- at k=958 the within-run structure is
+        intact (42+958=1000, 1000+958=1958, distinct). What collides is g1@958 with g2@0. A wrong
+        message sends the next reader after the wrong bug.
+        """
+        import seed_offset_policy as sp
+        with self.assertRaises(SystemExit) as cm:
+            sp.assert_offset_grid_is_alias_free(self.B, [0, 958])
+        msg = str(cm.exception)
+        self.assertIn("ALIASES", msg)
+        self.assertIn("SAME estimator seed", msg)
+        self.assertNotIn("destroy", msg.lower(),
+                         "the failure is aliasing between grid points, not destruction of the "
+                         "within-run co-variation structure")
+        self.assertIn("PAIRWISE", msg, "the message must say why a single-value exclusion is not enough")
+
+    def test_the_docstring_cites_the_UNMEASURED_premise_rather_than_asserting_a_fact(self):
+        """The whole constraint is necessary only IF a shared seed across legs produces correlated
+        noise, which lane C recorded CONSIDERED-AND-DECLINED and UNMEASURED. Imposing the policy
+        anyway is conservative; presenting it as structural would be a claim the campaign has
+        explicitly declined to make. Pinned so the caveat cannot be quietly dropped.
+        """
+        import seed_offset_policy as sp
+        doc = sp.__doc__ or ""
+        self.assertIn("UNMEASURED", doc)
+        self.assertIn("CONSIDERED-AND-DECLINED", doc)
+        self.assertIn("decorrelate", doc)
+
 if __name__ == "__main__":
     unittest.main()
