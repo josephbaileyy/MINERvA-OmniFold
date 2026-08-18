@@ -945,6 +945,134 @@ class SubmitControllerStageSelection(unittest.TestCase):
         self.assertNotIn("both|target|train", self._shell_code())
 
 
+class ManifestPrecedesArtifacts(unittest.TestCase):
+    """C's condition on the deferral: unchecked, "before the artifact exists" is a PROMISE.
+
+    Both directions, on a synthetic family, because a precedence check that has only ever been run on
+    the passing case is exactly the third BEN-258 category -- live, and unverified.
+    """
+
+    SCRIPT = "docs/orchestration/state/verify_manifest_precedes_artifacts.py"
+
+    def setUp(self):
+        self.repo = Path(__file__).resolve().parents[2]
+        self.tmp = Path(tempfile.mkdtemp(prefix="gate5-precedes-"))
+        self.sha = subprocess.run(["git", "-C", str(self.repo), "rev-parse", "HEAD"],
+                                  capture_output=True, text=True).stdout.strip()
+        self.ct = int(subprocess.run(
+            ["git", "-C", str(self.repo), "show", "-s", "--format=%ct", self.sha],
+            capture_output=True, text=True).stdout.strip().splitlines()[-1])
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _family(self, mtimes):
+        """mtimes: list of (replica_index, unix_mtime) for the target .npy of each member."""
+        for idx, mt in mtimes:
+            d = self.tmp / "replicas" / f"replica_{idx:02d}" / "target"
+            d.mkdir(parents=True, exist_ok=True)
+            f = d / "GATE5_REPLICA_TARGET.npy"
+            f.write_bytes(b"x")
+            os.utime(f, (mt, mt))
+        return self.tmp
+
+    def _run(self, root):
+        return subprocess.run(
+            [sys.executable, str(self.repo / self.SCRIPT),
+             "--addendum-sha", self.sha, "--family-root", str(root)],
+            capture_output=True, text=True)
+
+    def test_artifacts_written_AFTER_the_commit_PASS(self):
+        root = self._family([(0, self.ct + 60), (1, self.ct + 120)])
+        r = self._run(root)
+        self.assertEqual(0, r.returncode, r.stderr[-500:])
+        doc = json.loads(r.stdout)
+        self.assertEqual("PASS", doc["verdict"])
+        self.assertEqual(2, doc["n_artifacts_examined"])
+        self.assertEqual(60, doc["margin_seconds"])
+
+    def test_ONE_artifact_written_BEFORE_the_commit_FAILS_even_when_the_rest_came_after(self):
+        """THE OPERAND IS min(mtime), NOT THE MEAN. One artifact older than the commit falsifies the
+        claim, because the predictions could have been read off that one."""
+        root = self._family([(0, self.ct + 600), (1, self.ct - 30), (2, self.ct + 900)])
+        r = self._run(root)
+        self.assertNotEqual(0, r.returncode)
+        self.assertIn("recorded AFTER an artifact", r.stderr)
+        self.assertIn("replica_01", r.stderr)
+
+    def test_an_EMPTY_family_is_REFUSED_not_passed(self):
+        """"No artifact was written before the commit" is trivially true of a family with no artifacts.
+        A vacuous pass here would be the exact defect this suite exists to catch."""
+        (self.tmp / "replicas").mkdir(parents=True, exist_ok=True)
+        r = self._run(self.tmp)
+        self.assertNotEqual(0, r.returncode)
+        self.assertIn("vacuously true", r.stderr)
+
+    def test_it_uses_the_COMMITTER_date_not_the_author_date(self):
+        """`%at` is settable with `git commit --date`, so it is an operand the author controls -- the
+        same objection as "a total its author can raise is not a floor"."""
+        src = (self.repo / self.SCRIPT).read_text()
+        self.assertIn("--format=%ct", src)
+        self.assertNotIn("--format=%at", src)
+
+    def test_it_states_what_it_does_NOT_establish(self):
+        """mtimes are mutable and clocks can be wrong. A provenance check that does not bound its own
+        claim invites being cited for more than it shows."""
+        root = self._family([(0, self.ct + 60)])
+        doc = json.loads(self._run(root).stdout)
+        self.assertIn("not proof against a determined edit",
+                      doc["what_this_does_not_establish"])
+
+
+class RunIdPinScope(unittest.TestCase):
+    """A pin naming a CODE STATE is reusable across runs; a pin naming a RUN is not (lane C).
+
+    AND C'S PROPOSED MECHANICAL CHECK CANNOT FIRE ON THE ONE KNOWN DEFECT, which is why this control
+    uses a different rule. Measured: `*_family_*.py` matches exactly ONE tracked file -- a test -- and
+    the defect, `validate_gate5_training_artifacts.py`, is not in the glob at all. The name-shape that
+    claims a population here is the plural `_artifacts`, not the word `family`.
+
+    THE RULE THAT DOES FIRE: a module-level run-id literal used as an EQUALITY OPERAND inside a
+    function that takes a member index. That is what distinguishes a mis-scoped population validator
+    from a legitimately single-purpose script -- a dependency operand (`PREDECESSOR_JOB`) or a one-shot
+    input (`JID`, `SOURCE_JOB`, `JOB`) names one run correctly.
+    """
+
+    # NO EXEMPTION LIST HERE, deliberately, unlike the main-guard control. These three controls assert
+    # that the defect is WHERE THE FINDING SAYS rather than that it is absent, so a hash-pinned file
+    # needs no exemption -- the check is satisfied by the defect's continued presence and goes red if it
+    # MOVES, which is the event that would make the finding's citations wrong.
+
+    def _pet(self):
+        return Path(PET)
+
+    def test_C_s_proposed_glob_would_flag_nothing_and_misses_the_defect(self):
+        """Recorded as a control rather than only in a message, so the refutation is re-derivable."""
+        repo = Path(__file__).resolve().parents[2]
+        tracked = subprocess.run(["git", "-C", str(repo), "ls-files", "*.py"],
+                                 capture_output=True, text=True).stdout.split()
+        fam = [f for f in tracked if "_family_" in os.path.basename(f)]
+        self.assertNotIn("nd-unfolding/pet/validate_gate5_training_artifacts.py", fam,
+                         "if the defect ever moves into a *_family_* name, revisit the rule")
+        self.assertTrue(all("test" in os.path.basename(f) or "reconcile" in os.path.basename(f)
+                            for f in fam),
+                        f"a new *_family_* module appeared: {fam}")
+
+    def test_the_reconciler_carries_no_run_id_pin(self):
+        """C's claim, verified rather than relayed -- it decides whether the other pinned reader in the
+        ruling is affected."""
+        tree = ast.parse((self._pet() / "reconcile_gate5_family.py").read_text())
+        for node in tree.body:
+            if isinstance(node, ast.Assign) and isinstance(node.value, ast.Constant)                     and isinstance(node.value.value, str):
+                self.assertFalse(re.fullmatch(r"\d{7,9}", node.value.value),
+                                 f"{ast.unparse(node.targets[0])} looks like a run id")
+
+    def test_the_known_defect_is_still_exactly_where_the_finding_says(self):
+        src = (self._pet() / "validate_gate5_training_artifacts.py").read_text()
+        self.assertIn('ARRAY_JOB_ID = "56857233"', src)
+        self.assertIn("ARRAY_JOB_ID)", src, "the literal is still used as a check operand")
+
+
 class UnthinnedMcEvidence(unittest.TestCase):
     """The replacement for the pinned validator's :262/:263/:265/:267 -- the four whose content is a
     PHYSICS claim rather than bookkeeping.
