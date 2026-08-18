@@ -63,9 +63,41 @@ full-target `n_zero`.
 ## 4. What this does NOT establish
 
 **It is not an `OI-126` finding.** The residual is **identical to three significant figures** on rows
-whose input weight changed and rows whose did not — so it is **independent of the draw**, and a
-draw-independent residual cannot produce a draw-dependent family displacement. **The target route to
-`OI-126` is dead**, killed by two free checks rather than by compute.
+whose input weight changed and rows whose did not — so it is **independent of the draw**.
+
+### ⚠ AMENDMENT 1 (lane C, `BEN-422`, `c9045c1f`) — the conclusion drawn from that was WRONG
+
+**This section originally read *"a draw-independent residual cannot produce a draw-dependent family
+displacement — the target route to `OI-126` is dead."* That does not follow, and the retraction is
+lane C's.**
+
+**Draw-independence refutes a VARIANCE mechanism. The `OI-126` observation is a LOCATION failure** —
+the *nominal* sitting outside its own family, **common-mode across all fifty replicas.** A
+draw-independent, common archived-vs-rebuilt offset is **exactly the right shape for that.** Nothing
+in the observation requires the offset to grow with the draw; **the family's width was never what was
+anomalous.** So the free checks retired the mechanism I tested, not the route.
+
+**The target route is NOT dead.** It requires the amplification below, and the unity-factor control is
+its test.
+
+**And the correction in §1 makes that route CHEAPER to believe, not dearer.** Because the true input
+perturbation is three orders larger than the scalar everyone was quoting, the amplification needed to
+reach `OI-126`'s `186.1%` falls with it:
+
+| input residual | value | amplification required |
+|---|---|---|
+| median | `0.0805%` | `2313×` |
+| p90 | `0.8286%` | `225×` |
+| **p99** | **`6.888%`** | **`27×`** |
+
+**`27×` is enormously more plausible than the `2.7 × 10³` lane C had quoted from the scalar.** The
+correction strengthens the experiment it was thought to retire.
+
+**THE GENERALIZABLE ERROR, and it is the second instance in this same item.** I refuted a *dispersion*
+mechanism and wrote off a *location* observation. That is the identical dispersion-vs-location mismatch
+that made `{(a),(b)}` non-exhaustive — reappearing **inside the argument that retires a third route.**
+**The class survives being named.** Naming a failure mode does not immunize the next argument against
+it; only checking each conclusion against which moment of the distribution it constrains does.
 
 **A caveat on the tail, unresolved:** `max = 6.86e+02` indicates a near-zero-denominator population, so
 `8.46% of rows above 1%` is unconditioned and must not travel as a physical statement. Full clipping is
