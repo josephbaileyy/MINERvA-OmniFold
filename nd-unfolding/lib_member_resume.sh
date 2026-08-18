@@ -40,18 +40,36 @@
 # path and the launcher carried on writing to a bad location. Found by running this file's own sanity
 # cases rather than by reading it -- the same lesson as the argv probe, one layer down.
 mr_require_valid_offset() {
-  if [[ -z "${MNV_EST_SEED_OFFSET+x}" ]]; then return 0; fi
-  if ! [[ "${MNV_EST_SEED_OFFSET}" =~ ^-?[0-9]+$ ]]; then
-    echo "[member] FAIL: MNV_EST_SEED_OFFSET='${MNV_EST_SEED_OFFSET}' is not an integer. It names the" >&2
-    echo "[member]   output namespace AND is stamped into every product, so a malformed value would be" >&2
-    echo "[member]   recorded as provenance and written to an unintended path. Refusing to run." >&2
+  if [[ -z "${MNV_EST_SEED_OFFSET:-}" ]]; then return 0; fi
+  # NO LEADING ZEROS. This is not pedantry -- a zero-padded value is OCTAL to bash's arithmetic and
+  # DECIMAL to Python, so it diverges the seed from its own provenance THREE WAYS at once. Measured:
+  #
+  #   MNV_EST_SEED_OFFSET=001200  ->  bash 42+offset = 682        (octal 1200 = 640)
+  #                                   member dir     = member_k000640
+  #                                   python int()   = 1200       <- stamped as provenance
+  #   MNV_EST_SEED_OFFSET=009600  ->  bash: "value too great for base", printf fails, AND
+  #                                   mr_member_dir still emitted member_k000000/ -- a WRONG
+  #                                   directory rather than a dead job
+  #
+  # The old regex ^-?[0-9]+$ accepted both. The driver emits unpadded offsets so nothing was exposed,
+  # but THE LAUNCHER CONTRACT is what a human or a later tool reads, and mr_member_dir formats with
+  # %06d -- so padded values are the natural thing to pass back in. A silent seed/provenance
+  # divergence is the worst failure mode available to this campaign, and it would have been invisible:
+  # every guard passes, the member directory exists, the stamp is self-consistent, and the number is
+  # wrong. Found by an independent non-Claude reviewer.
+  if ! [[ "${MNV_EST_SEED_OFFSET}" =~ ^(0|-?[1-9][0-9]*)$ ]]; then
+    echo "[member] FAIL: MNV_EST_SEED_OFFSET='${MNV_EST_SEED_OFFSET}' is not a canonical integer." >&2
+    echo "[member]   Required form: 0, or a non-zero integer with NO LEADING ZEROS (1200, -5)." >&2
+    echo "[member]   A zero-padded value is OCTAL to bash arithmetic and DECIMAL to Python, so it" >&2
+    echo "[member]   would seed the estimator from one number, name the member directory from a" >&2
+    echo "[member]   second, and stamp a third into the product as provenance. Refusing to run." >&2
     exit 2
   fi
 }
 
 # mr_member_dir -> "" when no offset is declared, else "member_k<6-digit signed>/"
 mr_member_dir() {
-  if [[ -z "${MNV_EST_SEED_OFFSET+x}" ]]; then printf ''; return 0; fi
+  if [[ -z "${MNV_EST_SEED_OFFSET:-}" ]]; then printf ''; return 0; fi
   local k="${MNV_EST_SEED_OFFSET}"
   if ! [[ "$k" =~ ^-?[0-9]+$ ]]; then
     echo "[member] FAIL: MNV_EST_SEED_OFFSET='${k}' is not an integer; it names the output namespace" >&2
@@ -82,7 +100,7 @@ mr_dir_prefix() {
 
 # mr_note -> the marker note recording this run's declared offset, or "" when undeclared.
 mr_note() {
-  if [[ -z "${MNV_EST_SEED_OFFSET+x}" ]]; then printf 'est_seed_offset=undeclared'; return 0; fi
+  if [[ -z "${MNV_EST_SEED_OFFSET:-}" ]]; then printf 'est_seed_offset=undeclared'; return 0; fi
   if ! [[ "${MNV_EST_SEED_OFFSET}" =~ ^-?[0-9]+$ ]]; then printf 'est_seed_offset=MALFORMED'; return 2; fi
   printf 'est_seed_offset=%s' "${MNV_EST_SEED_OFFSET}"
 }
@@ -96,20 +114,44 @@ mr_note() {
 # made it. Existence-based resume would let stage 1 pass by being handed the archive, which is the one
 # outcome stage 1 exists to exclude.
 mr_skip_if_complete() {
-  local out="$1" marker note want
+  local out="$1"; shift
+  local marker note want
   marker="$(rg_marker_path "$out")"
   want="$(mr_note)"
-  if [[ -f "$marker" ]]; then
-    note="$(sed -n 's/.*"note":"\([^"]*\)".*/\1/p' "$marker" 2>/dev/null)"
-    if [[ -n "$note" && "$note" == est_seed_offset=* && "$note" != "$want" ]]; then
-      echo "[member] FAIL: ${out} is complete but its marker records ${note} while this run is ${want}." >&2
-      echo "[member]   A complete product from another member is a HARD FAILURE, never a skip: it is" >&2
-      echo "[member]   valid and correctly stamped for the k that made it, so skipping would hand this" >&2
-      echo "[member]   member another member's answer with nothing downstream able to tell." >&2
-      exit 3
-    fi
+  # UNDECLARED: legacy behaviour, byte-for-byte. Every non-scan use of these launchers lands here.
+  if [[ -z "${MNV_EST_SEED_OFFSET:-}" ]]; then
+    rg_skip_if_complete "$out" "$@"
+    return $?
   fi
-  rg_skip_if_complete "$out"
+  # DECLARED: a member may ONLY skip on a product ITS OWN member produced.
+  #
+  # THE CONDITION WAS INVERTED AND IT DEFEATED THE WHOLE POINT. It previously required the marker's
+  # note to START with `est_seed_offset=` before comparing, so a product whose marker carries NO note
+  # -- WHICH IS EVERY ARCHIVE PRODUCT, all of them written before this file existed -- fell straight
+  # through to rg_skip_if_complete and was ACCEPTED on size and mtime. Member 0 could be handed the
+  # archive, which is the single outcome stage 1 exists to exclude.
+  #
+  # AND MY OWN HARD-FAILURE TEST COULD NOT SEE IT: I copied a k=1200 product into k=0's namespace, a
+  # product whose marker DOES carry the note -- the one regime where the old condition fires. The
+  # regime that matters is the archive's markers, which predate the note entirely. That is BEN-452's
+  # shape (a probe configured into the regime where the defect is invisible) arriving inside the
+  # fixture built to discharge BEN-452. Found by an independent non-Claude reviewer, not by me.
+  if [[ ! -f "$marker" ]]; then
+    rg_skip_if_complete "$out" "$@"     # no marker: not complete, so nothing to adjudicate
+    return $?
+  fi
+  note="$(sed -n 's/.*"note":"\([^"]*\)".*/\1/p' "$marker" 2>/dev/null)"
+  if [[ "$note" != "$want" ]]; then
+    echo "[member] FAIL: ${out} is complete but its marker does not belong to this member." >&2
+    echo "[member]   marker note: '${note}'   this run: '${want}'" >&2
+    echo "[member]   An ABSENT or EMPTY note means the product PREDATES the member axis -- i.e. it is" >&2
+    echo "[member]   an ARCHIVE product -- and accepting it would hand this member the archive, which" >&2
+    echo "[member]   is exactly what a member namespace exists to prevent. A note naming a DIFFERENT" >&2
+    echo "[member]   offset is another member's answer: valid, correctly stamped, and not ours." >&2
+    echo "[member]   Both are HARD FAILURES, never skips." >&2
+    exit 3
+  fi
+  rg_skip_if_complete "$out" "$@"
 }
 
 # mr_run <out> <cmd...> -- like rg_run, except the completion marker RECORDS THIS RUN'S OFFSET.
@@ -132,3 +174,7 @@ mr_run() {
   [[ -e "$out" ]] || { echo "[member][FAIL] producer returned 0 but ${out} absent" >&2; return 4; }
   rg_mark_complete "$out" "$(mr_note)"
 }
+
+# mr_declared -> 0 (true) when an offset is declared, 1 otherwise. For call sites that must choose a
+# namespace rather than just prefix one.
+mr_declared() { [[ -n "${MNV_EST_SEED_OFFSET:-}" ]]; }
