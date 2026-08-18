@@ -241,19 +241,15 @@ def read_replica_contract(weights_npz, replica_index, bootstrap_seed,
             # data digest must MATCH and the MC digests must DIFFER -- and the difference is positive
             # evidence the MC legs were left unthinned, which is why this is stronger than the
             # three-stream equality check rather than a relaxation of it (BEN-407).
-            factor_meta = scalar(store, "bootstrap_factor_sha256")
-            if factor_meta.get("data_factor_sha256") != factor_hashes["data_factor_sha256"]:
-                raise SystemExit("[gate5-dataonly] persisted data_factor_sha256 does not re-derive "
-                                 "from the artifact's own data_bootstrap_factor")
-            for key in ("signal_factor_sha256", "background_factor_sha256"):
-                if factor_meta.get(key) is None:
-                    raise SystemExit(f"[gate5-dataonly] target receipt carries no {key}; the "
-                                     f"unthinned-MC evidence cannot be established")
-                if factor_meta.get(key) == factor_hashes[key]:
-                    raise SystemExit(
-                        f"[gate5-dataonly] {key} EQUALS the digest of the unity array, so the target "
-                        f"stage's canonical draw was itself unity -- the MC legs cannot be shown to "
-                        f"have been left unthinned")
+            # ONE HOME, TWO IMPORTERS. The predicate lives in `cstat_data_only` and is called from
+            # here and from `validate_data_only_artifact`; the inline version this replaces was a
+            # second implementation of the same rule, which is how two readers come to disagree.
+            replica_train.assert_unthinned_mc_evidence(
+                factor_meta=scalar(store, "bootstrap_factor_sha256"),
+                data_factor_sha256=factor_hashes["data_factor_sha256"],
+                sig_unity_sha256=factor_hashes["signal_factor_sha256"],
+                bkg_unity_sha256=factor_hashes["background_factor_sha256"],
+                where="extract read-back")
             contract["_inputs_path"] = scalar(store, "inputs_path")
             contract["_inputs_sha256"] = inputs_sha
             contract["_subsample_indices"] = np.asarray(store["mc_indices"], dtype=np.int64)

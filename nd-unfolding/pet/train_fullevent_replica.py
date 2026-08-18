@@ -44,6 +44,7 @@ from cstat_data_only import (  # noqa: E402
     assert_mc_leg_unthinned,
     assert_pinned_required_keys,
     assert_ratio_provenance_block,
+    assert_unthinned_mc_evidence,
     rescale_measured_to_data_only_R,
 )
 
@@ -521,7 +522,24 @@ def validate_data_only_artifact(path, bootstrap_seed, replica_index, target_rece
             "_verified_target_sha256"
         ]:
             raise SystemExit("[gate5-dataonly] artifact target hash differs from verified receipt")
+        # THE REPLACEMENT FOR THE PINNED VALIDATOR'S :262/:263/:265/:267, at read-back. Those four
+        # cannot execute here (the required-key early return fires first) and their claim -- that the
+        # applied MC factor IS the canonical draw -- is FALSE for this product by construction. The
+        # replacement asserts the INEQUALITY, which is the positive form of "the MC legs were left
+        # unthinned", plus EQUALITY on the shared data leg. Digests come from this module's own
+        # `hash_array`, which is byte-identical to the extractor's; a control asserts that, because a
+        # cross-implementation digest comparison compares two functions rather than two arrays.
+        unthinned = assert_unthinned_mc_evidence(
+            factor_meta=np.asarray(store["bootstrap_factor_sha256"], dtype=object).item(),
+            data_factor_sha256=hash_array(
+                np.asarray(store["data_bootstrap_factor"], dtype=np.uint8)),
+            sig_unity_sha256=hash_array(
+                np.asarray(store["sig_bootstrap_factor_full"], dtype=np.uint8)),
+            bkg_unity_sha256=hash_array(
+                np.asarray(store["bkg_bootstrap_factor_full"], dtype=np.uint8)),
+            where="train read-back")
         return {
+            "unthinned_mc_evidence": unthinned,
             "rows": int(np.asarray(store["weights_push"]).size),
             "cstat_product": CSTAT_DATA_ONLY,
             "n_data_full": n_data, "n_sig_full": n_sig, "n_bkg_full": n_bkg,

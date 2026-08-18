@@ -96,6 +96,124 @@ PINNED_VALIDATOR_REQUIRED_KEYS = frozenset({
 DATA_ONLY_WITHHELD_REQUIRED_KEYS = frozenset({"bootstrap_seed"})
 
 
+def assert_unthinned_mc_evidence(*, factor_meta, data_factor_sha256, sig_unity_sha256,
+                                 bkg_unity_sha256, where):
+    """The replacement for the pinned validator's :262 / :263 / :265 / :267, and the only one of the 55
+    whose content is a PHYSICS claim rather than bookkeeping.
+
+    WHAT THOSE FOUR SITES DO, AND WHY THEY MUST FAIL HERE. They assert
+    `hash_array(artifact_signal_factor) == target_receipt.bootstrap.signal_factor_sha256`, i.e. that
+    the factor the training stage applied is the canonical Poisson draw the target stage computed. In
+    the data-only product the artifact's MC factors are UNITY and the receipt's digests are of the
+    CANONICAL draws (build_fullevent_replica_target.py:369-371, computed at :250 after :219 restores
+    the unpatched function), so equality is FALSE and the check correctly fails.
+
+    THE REPLACEMENT IS STRICTLY STRONGER THAN WHAT IT REPLACES, WHICH IS THE ONLY ADMISSIBLE FORM WHEN
+    A GUARD'S CLAIM IS INAPPLICABLE RATHER THAN WRONG (lane C, BEN-407). Skipping the four would leave
+    the unthinned-MC property unasserted at read-back. Asserting INEQUALITY asserts something the
+    original could not: that the canonical draw the target stage computed is NOT what the training
+    stage applied -- which is exactly the claim "the MC legs were left unthinned", expressed as a
+    positive condition on two independently-produced digests rather than as the absence of a Poisson
+    factor.
+
+    AND THE DATA LEG MUST STILL MATCH, so this is not a blanket inversion: the data draw IS shared
+    between the two stages, and a data-only product whose data digests disagreed would be a
+    mis-paired target. Three checks, two directions, one predicate.
+
+    A DEGENERATE CASE IS REFUSED RATHER THAN PASSED: if a canonical digest EQUALS the unity digest then
+    the target stage's own draw was unity, and no inequality can distinguish "left unthinned" from
+    "there was nothing to thin". That is a real possibility at tiny inventories and it makes the whole
+    leg vacuous, so it fails closed instead of passing quietly.
+
+    THE DIGESTS ARE PASSED IN, NOT COMPUTED HERE, because `hash_array` lives in each driver and this
+    module deliberately does not add a third copy. Verified byte-identical between the two drivers, and
+    a control asserts that -- a cross-implementation digest comparison would otherwise be comparing two
+    functions rather than two arrays.
+    """
+    meta = dict(factor_meta or {})
+    if not meta:
+        raise SystemExit(f"[gate5-dataonly] {where}: no bootstrap factor metadata at all; the "
+                         f"unthinned-MC evidence has no operand -- fail closed")
+    got_data = meta.get("data_factor_sha256")
+    if got_data is None:
+        raise SystemExit(f"[gate5-dataonly] {where}: receipt carries no data_factor_sha256")
+    if str(got_data) != str(data_factor_sha256):
+        raise SystemExit(
+            f"[gate5-dataonly] {where}: the DATA draw disagrees with the target stage's -- "
+            f"{str(data_factor_sha256)[:12]}... vs {str(got_data)[:12]}...; the data leg is SHARED "
+            f"between the stages and a disagreement here is a mis-paired target, not a mode difference")
+    for label, key, unity in (("signal", "signal_factor_sha256", sig_unity_sha256),
+                              ("background", "background_factor_sha256", bkg_unity_sha256)):
+        canonical = meta.get(key)
+        if canonical is None:
+            raise SystemExit(f"[gate5-dataonly] {where}: receipt carries no {key}, so the "
+                             f"unthinned-MC claim about the {label} leg cannot be established")
+        if str(canonical) == str(unity):
+            raise SystemExit(
+                f"[gate5-dataonly] {where}: the target stage's canonical {label} digest EQUALS the "
+                f"digest of the unity array, so its own draw was unity and no inequality can "
+                f"distinguish 'left unthinned' from 'nothing to thin' -- this leg is vacuous here")
+    return {
+        "data_leg": "MATCHES the target stage, as it must",
+        "signal_leg": "DIFFERS from the canonical draw -- unthinned",
+        "background_leg": "DIFFERS from the canonical draw -- unthinned",
+        "replaces_pinned_sites": [262, 263, 265, 267],
+        "direction": "INEQUALITY on the MC legs, EQUALITY on the data leg",
+    }
+
+
+def assert_loader_digest_agrees_across_stages(target_receipts, training_receipts, *,
+                                              pinned_expected=None):
+    """The ONE cross-block comparison no pinned check performs, and a strengthening of the requirement.
+
+    THE GAP, stated as lane C stated it: an invariant checked independently WITHIN each of two
+    partitions does not constrain their UNION. `reconcile_gate5_family.py` grades `loader` twice --
+    target-side over the target receipts and training-side over the training artifacts -- and NOTHING
+    compares one block's digest against the other's. Two frozen deployments cut at different times
+    could carry DIFFERENT loaders with each block internally uniform and the discrepancy invisible. The
+    check's TEXT is unchanged and its CLAIM narrows, which is why splitting a population is silently
+    unsafe for any invariant implicitly about the union.
+
+    WHY `pinned_expected` IS NOT OPTIONAL IN PRACTICE, AND WHY IT IS STRONGER THAN THE REQUIREMENT AS
+    GIVEN. C asked that the two blocks be asserted EQUAL TO EACH OTHER. That passes if BOTH drift
+    together -- two deployments cut from the same wrong tree agree perfectly. Comparing both to the
+    same pinned THIRD value does not, and the third value already exists: the coherent campaign's
+    `EXPECTED_CODE["loader"]` in `validate_gate5_training_artifacts.py:36`, which is a constant from a
+    different campaign and cannot be moved by anything this product does. So the recommended call
+    passes it, and the equality-only form is retained for the case where no such constant applies.
+    """
+    def digests(rows, label):
+        seen = {}
+        for i, r in enumerate(rows):
+            d = ((dict(r).get("code") or {}).get("loader") or {}).get("sha256")
+            if not d:
+                raise SystemExit(f"[gate5-dataonly] {label}[{i}] records no code.loader.sha256; the "
+                                f"cross-stage loader comparison has no operand -- fail closed")
+            seen.setdefault(str(d), []).append(i)
+        if not seen:
+            raise SystemExit(f"[gate5-dataonly] {label} is empty; an invariant over an empty "
+                             f"population is vacuously true and must not be reported as satisfied")
+        if len(seen) > 1:
+            raise SystemExit(f"[gate5-dataonly] {label} is NOT internally uniform on the loader "
+                             f"digest: {({k[:12]: v for k, v in seen.items()})}")
+        return next(iter(seen))
+
+    t = digests(target_receipts, "target receipts")
+    r = digests(training_receipts, "training artifacts")
+    if t != r:
+        raise SystemExit(
+            f"[gate5-dataonly] the two stages ran DIFFERENT loaders and no pinned check would say so: "
+            f"target {t[:12]}... vs training {r[:12]}...")
+    if pinned_expected is not None and t != str(pinned_expected):
+        raise SystemExit(
+            f"[gate5-dataonly] both stages agree on loader {t[:12]}... but it is NOT the pinned "
+            f"expected {str(pinned_expected)[:12]}...; two deployments cut from the same wrong tree "
+            f"agree perfectly, which is exactly what comparing them only to each other cannot catch")
+    return {"loader_sha256": t, "n_target_receipts": len(target_receipts),
+            "n_training_receipts": len(training_receipts),
+            "compared_to_pinned_constant": pinned_expected is not None}
+
+
 def assert_pinned_required_keys(store, *, where):
     """Every pinned-validator required key present except the declared-withheld one, which is ABSENT.
 

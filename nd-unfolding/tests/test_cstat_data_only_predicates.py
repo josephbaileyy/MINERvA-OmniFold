@@ -18,6 +18,7 @@ line count.
 import ast
 import hashlib
 import inspect
+import json
 import os
 import re
 import shutil
@@ -942,6 +943,267 @@ class SubmitControllerStageSelection(unittest.TestCase):
         Comments stripped, because this is an ABSENCE check and absence checks are the direction prose
         can satisfy by accident."""
         self.assertNotIn("both|target|train", self._shell_code())
+
+
+class UnthinnedMcEvidence(unittest.TestCase):
+    """The replacement for the pinned validator's :262/:263/:265/:267 -- the four whose content is a
+    PHYSICS claim rather than bookkeeping.
+
+    THE DIRECTION IS THE WHOLE POINT. Those sites assert the applied MC factor IS the canonical Poisson
+    draw. For this product that is FALSE by construction, so they must fail -- and the replacement
+    asserts the INEQUALITY, which says something the original could not: the canonical draw the target
+    stage computed is NOT what the training stage applied, i.e. the MC legs were left unthinned. Stated
+    as a positive condition on two independently-produced digests rather than as an absence.
+    """
+
+    DATA = "d" * 64
+    SIG_CANON = "1" * 64
+    BKG_CANON = "2" * 64
+    SIG_UNITY = "a" * 64
+    BKG_UNITY = "b" * 64
+
+    def meta(self, **over):
+        m = {"data_factor_sha256": self.DATA,
+             "signal_factor_sha256": self.SIG_CANON,
+             "background_factor_sha256": self.BKG_CANON}
+        m.update(over)
+        return m
+
+    def check(self, meta=None, **over):
+        kw = {"factor_meta": self.meta() if meta is None else meta,
+              "data_factor_sha256": self.DATA,
+              "sig_unity_sha256": self.SIG_UNITY,
+              "bkg_unity_sha256": self.BKG_UNITY,
+              "where": "unit"}
+        kw.update(over)
+        return cdo.assert_unthinned_mc_evidence(**kw)
+
+    def test_the_intended_data_only_state_PASSES_and_names_its_direction(self):
+        out = self.check()
+        self.assertIn("DIFFERS", out["signal_leg"])
+        self.assertIn("DIFFERS", out["background_leg"])
+        self.assertIn("MATCHES", out["data_leg"])
+        self.assertEqual([262, 263, 265, 267], out["replaces_pinned_sites"])
+
+    def test_a_THINNED_signal_leg_is_CAUGHT(self):
+        """The failure the whole product exists to prevent: if the training stage had applied the
+        canonical signal draw, the artifact's digest would EQUAL the receipt's -- which is the state
+        the pinned check calls correct and this one must reject."""
+        with self.assertRaises(SystemExit) as cm:
+            self.check(sig_unity_sha256=self.SIG_CANON)
+        self.assertIn("EQUALS the digest of the unity array", str(cm.exception))
+
+    def test_a_THINNED_background_leg_is_CAUGHT(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.check(bkg_unity_sha256=self.BKG_CANON)
+        self.assertIn("vacuous", str(cm.exception))
+
+    def test_the_DATA_leg_must_still_MATCH_so_this_is_not_a_blanket_inversion(self):
+        """The data draw IS shared between the two stages. A data-only artifact whose data digests
+        disagreed is a MIS-PAIRED TARGET, and reading the replacement as 'invert everything' would
+        turn that failure into a pass."""
+        with self.assertRaises(SystemExit) as cm:
+            self.check(self.meta(data_factor_sha256="f" * 64))
+        self.assertIn("mis-paired target", str(cm.exception))
+
+    def test_a_missing_canonical_digest_FAILS_rather_than_being_skipped(self):
+        for key in ("signal_factor_sha256", "background_factor_sha256"):
+            m = self.meta()
+            del m[key]
+            with self.assertRaises(SystemExit) as cm:
+                self.check(m)
+            self.assertIn(key, str(cm.exception))
+
+    def test_a_missing_data_digest_FAILS(self):
+        m = self.meta()
+        del m["data_factor_sha256"]
+        with self.assertRaises(SystemExit) as cm:
+            self.check(m)
+        self.assertIn("no data_factor_sha256", str(cm.exception))
+
+    def test_EMPTY_metadata_is_refused_not_treated_as_satisfied(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.check({})
+        self.assertIn("no operand", str(cm.exception))
+
+    def test_the_two_drivers_hash_array_implementations_are_BYTE_IDENTICAL(self):
+        """THE PRECONDITION THAT MAKES THIS PREDICATE MEANINGFUL. The digests are computed by each
+        driver's own `hash_array` and compared against digests written by a third process. If the two
+        implementations differed, the comparison would be between two FUNCTIONS rather than two arrays,
+        and both the equality and the inequality legs would be measuring the wrong thing."""
+        import ast as _ast
+        srcs = []
+        for name in ("train_fullevent_replica.py", "extract_fullevent_replica.py"):
+            tree = _ast.parse((Path(PET) / name).read_text())
+            fn = next(n for n in tree.body
+                      if isinstance(n, _ast.FunctionDef) and n.name == "hash_array")
+            srcs.append(_ast.unparse(fn))
+        self.assertEqual(srcs[0], srcs[1],
+                         "the two drivers' hash_array differ, so a cross-driver digest comparison "
+                         "compares implementations rather than arrays")
+        self.assertIn("memoryview", srcs[0], "extraction produced something that is not hash_array")
+
+    def test_both_readers_call_the_SHARED_predicate_and_not_a_local_copy(self):
+        """A second implementation of one rule is how two readers come to disagree. Asserted on the
+        shipped source with comments stripped, so the annotation cannot satisfy it."""
+        for name in ("train_fullevent_replica.py", "extract_fullevent_replica.py"):
+            code = ast.unparse(ast.parse((Path(PET) / name).read_text()))
+            self.assertIn("assert_unthinned_mc_evidence", code, name)
+
+
+class CrossStageLoaderAgreement(unittest.TestCase):
+    """The one cross-block comparison no pinned check performs, exercised in every failure direction.
+
+    `reconcile_gate5_family.py` grades `loader` INDEPENDENTLY over the target receipts and over the
+    training artifacts, and nothing compares the two -- so two deployments cut at different times could
+    carry different loaders with each block internally uniform. An invariant checked within each of two
+    partitions does not constrain their union (lane C).
+    """
+
+    A = "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1"
+    B = "0000000000000000000000000000000000000000000000000000000000000000"
+
+    def rows(self, digest, n=3):
+        return [{"code": {"loader": {"sha256": digest}}} for _ in range(n)]
+
+    def test_agreement_passes_and_reports_its_ingredients(self):
+        out = cdo.assert_loader_digest_agrees_across_stages(
+            self.rows(self.A, 2), self.rows(self.A, 3))
+        self.assertEqual(self.A, out["loader_sha256"])
+        self.assertEqual(2, out["n_target_receipts"])
+        self.assertEqual(3, out["n_training_receipts"])
+        self.assertFalse(out["compared_to_pinned_constant"])
+
+    def test_two_stages_with_DIFFERENT_loaders_are_caught(self):
+        with self.assertRaises(SystemExit) as cm:
+            cdo.assert_loader_digest_agrees_across_stages(self.rows(self.A), self.rows(self.B))
+        self.assertIn("DIFFERENT loaders", str(cm.exception))
+
+    def test_BOTH_STAGES_DRIFTING_TOGETHER_is_caught_ONLY_by_the_pinned_constant(self):
+        """THE REASON THE REQUIREMENT WAS STRENGTHENED. Equality between the two blocks passes when both
+        are wrong in the same way -- two deployments cut from the same wrong tree agree perfectly."""
+        cdo.assert_loader_digest_agrees_across_stages(self.rows(self.B), self.rows(self.B))
+        with self.assertRaises(SystemExit) as cm:
+            cdo.assert_loader_digest_agrees_across_stages(
+                self.rows(self.B), self.rows(self.B), pinned_expected=self.A)
+        self.assertIn("agree perfectly", str(cm.exception))
+
+    def test_the_pinned_constant_matches_the_loader_in_this_tree(self):
+        """So the constant used above is the real one and this class is not testing a fiction. It is
+        `EXPECTED_CODE["loader"]` in the pinned validator, a value from the COHERENT campaign, which is
+        what makes it an independent third operand rather than a restatement."""
+        pet = Path(PET)
+        got = hashlib.sha256((pet / "fullevent_fps_dataloader.py").read_bytes()).hexdigest()
+        self.assertEqual(self.A, got)
+        src = (pet / "validate_gate5_training_artifacts.py").read_text()
+        self.assertIn(self.A, src, "the pinned constant is not in the pinned validator any more")
+
+    def test_a_non_uniform_block_is_caught_before_the_comparison(self):
+        mixed = self.rows(self.A, 1) + self.rows(self.B, 1)
+        with self.assertRaises(SystemExit) as cm:
+            cdo.assert_loader_digest_agrees_across_stages(mixed, self.rows(self.A))
+        self.assertIn("NOT internally uniform", str(cm.exception))
+
+    def test_a_missing_digest_FAILS_rather_than_being_skipped(self):
+        with self.assertRaises(SystemExit) as cm:
+            cdo.assert_loader_digest_agrees_across_stages([{"code": {}}], self.rows(self.A))
+        self.assertIn("no operand", str(cm.exception))
+
+    def test_an_EMPTY_population_is_refused(self):
+        """An invariant over an empty population is vacuously true, which is the whole failure family
+        this session has been filing: a green verdict over nothing examined."""
+        with self.assertRaises(SystemExit) as cm:
+            cdo.assert_loader_digest_agrees_across_stages([], self.rows(self.A))
+        self.assertIn("vacuously true", str(cm.exception))
+
+
+class DivergenceManifest(unittest.TestCase):
+    """The manifest is regenerable, its partition SUMS, and its generator refuses to run late.
+
+    C's partition (`BEN-426`) makes OMISSION unrepresentable by ACCOUNTING, so the sum is the
+    load-bearing part -- and a sum asserted in prose is worth nothing. These controls run the shipped
+    generator and check the properties the ruling actually turns on.
+    """
+
+    GEN = "docs/orchestration/state/gen_divergence_manifest_cstat_data_only.py"
+    OUT = "docs/orchestration/state/DIVERGENCE-MANIFEST-20260818-cstat-data-only.json"
+
+    def _repo(self):
+        return Path(__file__).resolve().parents[2]
+
+    def _doc(self):
+        return json.loads((self._repo() / self.OUT).read_text())
+
+    def test_the_partition_sums_to_the_modules_own_static_site_count(self):
+        d = self._doc()
+        c = d["partition_counts"]
+        self.assertEqual(
+            d["pinned_module"]["static_check_sites"],
+            c["DELEGATED"] + c["UNEXECUTED_BY_CONSTRUCTION"] + c["MANIFEST"])
+        self.assertEqual(d["partition_sums_to"], d["pinned_module"]["static_check_sites"])
+
+    def test_ADDITIONAL_is_outside_the_sum(self):
+        """The one number in the document its author controls must not be able to raise the total.
+        Folding ADDITIONAL into the partition would let me inflate a floor by adding assertions."""
+        d = self._doc()
+        self.assertNotIn("ADDITIONAL", {"DELEGATED", "UNEXECUTED_BY_CONSTRUCTION", "MANIFEST"})
+        self.assertLess(d["partition_sums_to"],
+                        d["partition_sums_to"] + d["partition_counts"]["ADDITIONAL"])
+        self.assertIn("cannot both hold", d["correction_to_the_spec"])
+
+    def test_the_pinned_modules_digest_is_current(self):
+        """Recorded so a legitimate re-issue of the pinned module is distinguishable from this manifest
+        breaking, in ONE comparison -- without it, a re-issue's tempting resolution is to refresh the
+        manifest, which is the read-off-the-finished-artifact defect through the back door."""
+        d = self._doc()
+        path = self._repo() / d["pinned_module"]["path"]
+        self.assertEqual(d["pinned_module"]["sha256"],
+                         hashlib.sha256(path.read_bytes()).hexdigest())
+
+    def test_every_manifest_entry_carries_a_discriminating_justification(self):
+        for line, entry in self._doc()["buckets"]["MANIFEST"].items():
+            self.assertIn("discriminating", entry, f"site {line}")
+            self.assertGreater(len(entry["discriminating"]), 80, f"site {line}")
+            self.assertIn("predicted_got", entry, f"site {line}")
+
+    def test_every_unexecuted_site_is_classified(self):
+        d = self._doc()
+        rows = d["buckets"]["UNEXECUTED_BY_CONSTRUCTION"]
+        self.assertEqual(d["partition_counts"]["UNEXECUTED_BY_CONSTRUCTION"], len(rows))
+        for r in rows:
+            self.assertTrue(r["replacement"], f"site {r['line']} has no disposition")
+
+    def test_the_REPLACEMENT_REQUIRED_count_is_published_not_hidden(self):
+        """A manifest that named a replacement for all 55 would assert coverage it does not have --
+        the exact defect the partition exists to make unrepresentable."""
+        st = self._doc()["replacement_status"]
+        self.assertEqual(st["n_required"], len(st["REPLACEMENT_REQUIRED"]))
+        self.assertGreater(st["n_required"], 0,
+                           "if this ever reaches zero, check it is coverage and not renaming")
+
+    def test_the_generator_reproduces_the_committed_manifest_byte_for_byte(self):
+        """Otherwise the file on disk and the rule that produced it can disagree silently."""
+        before = (self._repo() / self.OUT).read_bytes()
+        r = subprocess.run([sys.executable, str(self._repo() / self.GEN)],
+                           capture_output=True, text=True, cwd=str(self._repo()))
+        self.assertEqual(0, r.returncode, r.stderr[-800:])
+        self.assertEqual(before, (self._repo() / self.OUT).read_bytes())
+
+    def test_the_generator_REFUSES_once_a_wrapper_module_exists(self):
+        """THE ORDERING REQUIREMENT, EXERCISED. A manifest derived from a finished wrapper records what
+        was written rather than what was predicted, and the verdict's middle clause degenerates. The
+        control creates one of the forbidden paths, confirms the refusal, and removes it."""
+        d = self._doc()
+        target = self._repo() / d["written_before_assertion"][0]
+        self.assertFalse(target.exists(), "the wrapper already exists; this control cannot run")
+        target.write_text("# temporary, created by a control\n")
+        try:
+            r = subprocess.run([sys.executable, str(self._repo() / self.GEN)],
+                               capture_output=True, text=True, cwd=str(self._repo()))
+            self.assertNotEqual(0, r.returncode)
+            self.assertIn("must be written before the wrapper", r.stdout + r.stderr)
+        finally:
+            target.unlink()
 
 
 class MainGuardPosition(unittest.TestCase):

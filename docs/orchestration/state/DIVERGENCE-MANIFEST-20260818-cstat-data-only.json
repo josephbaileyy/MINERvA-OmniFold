@@ -1,0 +1,714 @@
+{
+  "buckets": {
+    "ADDITIONAL": [
+      {
+        "assertion": "P1 cstat_product tag",
+        "closes": "the pinned validator has no notion of a product tag, so nothing there distinguishes the two families at all"
+      },
+      {
+        "assertion": "P5a bit-exact zero pattern on the MC legs",
+        "closes": "no pinned site asserts that NOTHING happened to the MC legs; bit-exactness is required because an absence has no rounding (BEN-409)"
+      },
+      {
+        "assertion": "P5b / measured-leg closure at 4 float32 eps",
+        "closes": "no pinned site knows the measured normalization was rescaled driver-side"
+      },
+      {
+        "assertion": "P7 ratio-provenance block",
+        "closes": "the loader's own R stamp is left unmodified and the applied R recorded beside it; no pinned site can tell those apart"
+      },
+      {
+        "assertion": "P8 loader stamp unmodified",
+        "closes": "no pinned site checks that a loader-written field was not overwritten"
+      },
+      {
+        "assertion": "F2 family-position target derivation",
+        "closes": "every pinned target check binds the file to ITS OWN receipt; only a family-position route notices a self-consistent stray copy"
+      },
+      {
+        "assertion": "L2 tag-matches-root, both ways",
+        "closes": "no pinned site relates an artifact's product to the family root it sits in"
+      },
+      {
+        "assertion": "the nominal-extractor routing refusal",
+        "closes": "extract_fullevent_fps.py:178 accepts bootstrap_seed == -1 as proof of nominal AND returns -1 as its absent default, so a data-only artifact satisfies it whether the field is stamped or missing -- a guard that cannot be satisfied honestly must never be REACHED (BEN-426)"
+      },
+      {
+        "assertion": "the withheld-key both-directions check",
+        "closes": "no pinned site asserts a key's ABSENCE, and a present-but-None bootstrap_seed would clear the required-key gate and then raise TypeError from :224's int() -- a traceback where a named failure belongs"
+      }
+    ],
+    "DELEGATED": [
+      {
+        "check": "f'exists_regular_not_symlink[{path.name}]'",
+        "kind": "truth",
+        "line": 158,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      },
+      {
+        "check": "'receipt_status'",
+        "kind": "eq",
+        "line": 169,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      },
+      {
+        "check": "'receipt_verdict'",
+        "kind": "eq",
+        "line": 170,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      },
+      {
+        "check": "'receipt_index'",
+        "kind": "eq",
+        "line": 172,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      },
+      {
+        "check": "'receipt_seed'",
+        "kind": "eq",
+        "line": 173,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      },
+      {
+        "check": "'receipt_seed_policy'",
+        "kind": "eq",
+        "line": 174,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      },
+      {
+        "check": "'receipt_array_task'",
+        "kind": "eq",
+        "line": 177,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      },
+      {
+        "check": "'receipt_artifact_path'",
+        "kind": "eq",
+        "line": 179,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      },
+      {
+        "check": "'artifact_sha256'",
+        "kind": "eq",
+        "line": 181,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      },
+      {
+        "check": "'artifact_size'",
+        "kind": "eq",
+        "line": 182,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      },
+      {
+        "check": "'receipt_target_path'",
+        "kind": "eq",
+        "line": 184,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      },
+      {
+        "check": "'target_sha256'",
+        "kind": "eq",
+        "line": 186,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      },
+      {
+        "check": "'target_receipt_sha256'",
+        "kind": "eq",
+        "line": 187,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      },
+      {
+        "check": "'family_target_row_verdict'",
+        "kind": "eq",
+        "line": 196,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      },
+      {
+        "check": "'canonical_factor_replay_performed'",
+        "kind": "eq",
+        "line": 197,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      },
+      {
+        "check": "'canonical_data_factor_hash'",
+        "kind": "eq",
+        "line": 198,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      },
+      {
+        "check": "'canonical_signal_factor_hash'",
+        "kind": "eq",
+        "line": 200,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      },
+      {
+        "check": "'canonical_background_factor_hash'",
+        "kind": "eq",
+        "line": 202,
+        "note": "executes byte-identically from the pinned module",
+        "phase": "executed"
+      }
+    ],
+    "MANIFEST": {
+      "176": {
+        "check": "receipt_array_job",
+        "consequence": "The ordering requirement is BEFORE THE ARTIFACT EXISTS, not before the run is submitted. A job id recorded between `sbatch` and the first task's write is still not read off a finished product, so the anti-tautology property survives the deferral. Stating it the other way round would make the entry unwritable rather than merely late.",
+        "discriminating": "RUN-BOUND, not product-bound. `ARRAY_JOB_ID = \"56857233\"` (:27) names ONE campaign run, so this site fails for ANY other array -- a three-stream re-run included. Its predicted got is the new array's job id, which does not exist until `sbatch` returns.",
+        "predicted_got": "DEFERRED-TO-SUBMISSION",
+        "replacement": "submission-time addendum, written before any artifact exists",
+        "site": {
+          "check": "'receipt_array_job'",
+          "kind": "eq",
+          "line": 176,
+          "phase": "executed"
+        },
+        "want": "56857233"
+      },
+      "178": {
+        "check": "receipt_runtime_head",
+        "discriminating": "RUN-BOUND via `EXPECTED_HEAD` (:30). The got is the full sha of the TRAINING deployment's detached HEAD, which is knowable the moment that deployment is cut and not before -- and it is deliberately NOT the target deployment's, because the two are cut separately.",
+        "predicted_got": "DEFERRED-TO-TRAINING-DEPLOYMENT",
+        "replacement": "submission-time addendum, written before any artifact exists",
+        "site": {
+          "check": "'receipt_runtime_head'",
+          "kind": "eq",
+          "line": 178,
+          "phase": "executed"
+        },
+        "want": "b82ac63f9c5685c9cc05df059d2bbb4ae42d3258"
+      },
+      "190": {
+        "check": "receipt_code_sha256[<role>]",
+        "discriminating": "One static site realizing three checks, and they SPLIT -- which is why this site is in MANIFEST with its passing subset named rather than being silently averaged. `replica_driver` fails because the data-only work edited that file; its predicted got is the digest of the deployed file, which is a property of one specific version and is therefore discriminating.",
+        "load_bearing_passes": "*** THE TWO PASSING ROLES ARE THE CROSS-BLOCK LOADER EVIDENCE, AND THEY ARE ALREADY PINNED. *** `receipt_code_sha256[loader]` compares this family's recorded loader digest against a CONSTANT from the coherent campaign, so its passing establishes gen2-loader == coherent-loader directly. That is stronger than asserting the target and training blocks equal EACH OTHER, which passes if both drift together. Recommended form of C's fourth-bucket requirement: compare BOTH blocks to the same pinned third value.",
+        "predicted_got": {
+          "loader": "PASSES",
+          "nominal_driver_unmodified": "PASSES",
+          "replica_driver": "MEASURED-AT-GENERATION-TIME"
+        },
+        "realizes": 3,
+        "replacement": "none needed for the failing role: the pinned check still runs and still means what it says; only its `want` belongs to the other campaign",
+        "site": {
+          "check": "f'receipt_code_sha256[{role}]'",
+          "kind": "eq",
+          "line": 190,
+          "phase": "executed"
+        },
+        "want": "EXPECTED_CODE (:33-37)"
+      },
+      "217": {
+        "check": "required_npz_keys_missing",
+        "consequence": "THIS ENTRY IS WHY BUCKET 2 EXISTS. This site's failure triggers the early return at :218, so the 55 sites after it never execute. The entry is not one failure among many; it is the cause of 55 absences.",
+        "discriminating": "A sorted one-element list naming exactly `bootstrap_seed` is reached by ONE artifact state: a data-only artifact carrying all 26 other required keys and withholding that one. A second missing key changes the value, and a present-but-wrong `bootstrap_seed` would make the list empty. Contrast `-1`, which lane C ruled INADMISSIBLE as a predicted got because `int(r.get('bootstrap_seed', -1))` yields it for both a stamped and a lost field -- the discriminating power is a property of the predicted VALUE, not the clause.",
+        "predicted_got": [
+          "bootstrap_seed"
+        ],
+        "replacement": "cstat_data_only.assert_pinned_required_keys",
+        "site": {
+          "check": "'required_npz_keys_missing'",
+          "kind": "eq",
+          "line": 217,
+          "phase": "executed"
+        },
+        "want": []
+      }
+    },
+    "UNEXECUTED_BY_CONSTRUCTION": [
+      {
+        "check": "'artifact_role'",
+        "kind": "eq",
+        "line": 221,
+        "phase": "unexecuted",
+        "replacement": "cstat_data_only.CAMPAIGN_ROLES via validate_data_only_artifact"
+      },
+      {
+        "check": "'artifact_replica_index'",
+        "kind": "eq",
+        "line": 223,
+        "phase": "unexecuted",
+        "replacement": "validate_data_only_artifact replica_index check"
+      },
+      {
+        "check": "'artifact_bootstrap_seed'",
+        "kind": "eq",
+        "line": 224,
+        "phase": "unexecuted",
+        "replacement": "cstat_data_only.assert_data_only_streams"
+      },
+      {
+        "check": "'artifact_replica_seed_policy'",
+        "kind": "eq",
+        "line": 225,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: no data-only predicate reads `replica_seed_policy`"
+      },
+      {
+        "check": "'frozen_estimator_policy'",
+        "kind": "eq",
+        "line": 227,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: no data-only predicate reads the frozen estimator policy"
+      },
+      {
+        "check": "'estimator_fingerprint'",
+        "kind": "eq",
+        "line": 228,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: no data-only predicate reads `estimator_fingerprint`"
+      },
+      {
+        "check": "'background_mode'",
+        "kind": "eq",
+        "line": 229,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: no data-only predicate reads `bkg_mode`"
+      },
+      {
+        "check": "'training_tag'",
+        "kind": "eq",
+        "line": 230,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: no data-only predicate reads `tag`"
+      },
+      {
+        "check": "'source_sha256'",
+        "kind": "eq",
+        "line": 231,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: no data-only predicate reads `inputs_sha256`"
+      },
+      {
+        "check": "'n_sig_full'",
+        "kind": "eq",
+        "line": 236,
+        "phase": "unexecuted",
+        "replacement": "cstat_data_only.assert_data_only_streams"
+      },
+      {
+        "check": "'n_data_full'",
+        "kind": "eq",
+        "line": 237,
+        "phase": "unexecuted",
+        "replacement": "cstat_data_only.assert_data_only_streams"
+      },
+      {
+        "check": "'n_bkg_full'",
+        "kind": "eq",
+        "line": 238,
+        "phase": "unexecuted",
+        "replacement": "cstat_data_only.assert_data_only_streams"
+      },
+      {
+        "check": "'inventory_hashes'",
+        "kind": "eq",
+        "line": 239,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: inventory_hashes is written but never re-compared"
+      },
+      {
+        "check": "'input_identity_hashes'",
+        "kind": "eq",
+        "line": 241,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: input_identity_hashes is written but never re-compared"
+      },
+      {
+        "check": "'mc_indices_exact_frozen_subsample'",
+        "kind": "truth",
+        "line": 248,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: mc_indices frozen-subsample identity is not re-derived data-only-side"
+      },
+      {
+        "check": "'signal_full_shape'",
+        "kind": "eq",
+        "line": 251,
+        "phase": "unexecuted",
+        "replacement": "cstat_data_only.assert_data_only_streams"
+      },
+      {
+        "check": "'signal_subset_shape'",
+        "kind": "eq",
+        "line": 252,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: the SUBSET shape is now written but not asserted post-write"
+      },
+      {
+        "check": "'signal_subset_is_exact_full_restriction'",
+        "kind": "truth",
+        "line": 253,
+        "phase": "unexecuted",
+        "replacement": "train_fullevent_replica.replica_atomic_data_only write-time restriction assertion"
+      },
+      {
+        "check": "'background_indices_are_complete_ordered_inventory'",
+        "kind": "truth",
+        "line": 255,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: bkg_indices is now written but its ordering is not asserted post-write"
+      },
+      {
+        "check": "'background_full_shape'",
+        "kind": "eq",
+        "line": 257,
+        "phase": "unexecuted",
+        "replacement": "cstat_data_only.assert_data_only_streams"
+      },
+      {
+        "check": "'signal_full_hash_vs_target'",
+        "kind": "eq",
+        "line": 262,
+        "phase": "unexecuted",
+        "replacement": "cstat_data_only.assert_unthinned_mc_evidence"
+      },
+      {
+        "check": "'signal_full_hash_vs_canonical_replay'",
+        "kind": "eq",
+        "line": 263,
+        "phase": "unexecuted",
+        "replacement": "cstat_data_only.assert_unthinned_mc_evidence"
+      },
+      {
+        "check": "'background_full_hash_vs_target'",
+        "kind": "eq",
+        "line": 265,
+        "phase": "unexecuted",
+        "replacement": "cstat_data_only.assert_unthinned_mc_evidence"
+      },
+      {
+        "check": "'background_full_hash_vs_canonical_replay'",
+        "kind": "eq",
+        "line": 267,
+        "phase": "unexecuted",
+        "replacement": "cstat_data_only.assert_unthinned_mc_evidence"
+      },
+      {
+        "check": "f'persisted_bootstrap_metadata[{key}]'",
+        "kind": "eq",
+        "line": 272,
+        "phase": "unexecuted",
+        "replacement": "extract_fullevent_replica.factor_meta data-only branch comparison"
+      },
+      {
+        "check": "'artifact_target_sha'",
+        "kind": "eq",
+        "line": 275,
+        "phase": "unexecuted",
+        "replacement": "validate_data_only_artifact replica_target_sha256 check"
+      },
+      {
+        "check": "'artifact_target_receipt_sha'",
+        "kind": "eq",
+        "line": 276,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: the target RECEIPT sha is not re-compared post-write"
+      },
+      {
+        "check": "'artifact_target_receipt_path'",
+        "kind": "eq",
+        "line": 278,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: the target receipt PATH is not re-compared post-write"
+      },
+      {
+        "check": "'target_meta_mode'",
+        "kind": "eq",
+        "line": 282,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: target_meta target_mode is not re-read post-write"
+      },
+      {
+        "check": "'target_meta_seed'",
+        "kind": "eq",
+        "line": 283,
+        "phase": "unexecuted",
+        "replacement": "cstat_data_only.assert_data_only_target_is_this_replicas"
+      },
+      {
+        "check": "'target_meta_fingerprint'",
+        "kind": "eq",
+        "line": 284,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: target_meta estimator_fingerprint is not re-read post-write"
+      },
+      {
+        "check": "'target_meta_identity'",
+        "kind": "eq",
+        "line": 285,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: target_meta identity hashes are not re-read post-write"
+      },
+      {
+        "check": "'target_meta_consumed_path'",
+        "kind": "eq",
+        "line": 286,
+        "phase": "unexecuted",
+        "replacement": "cstat_data_only.assert_data_only_target_is_this_replicas"
+      },
+      {
+        "check": "'optimizer_verified'",
+        "kind": "eq",
+        "line": 292,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: optimizer proof is not read data-only-side"
+      },
+      {
+        "check": "'n_fits_base_lr'",
+        "kind": "eq",
+        "line": 293,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: lr-policy realization is not read data-only-side"
+      },
+      {
+        "check": "'n_fits_annealed'",
+        "kind": "eq",
+        "line": 294,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: lr-policy realization is not read data-only-side"
+      },
+      {
+        "check": "'fit_count'",
+        "kind": "eq",
+        "line": 295,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: fit count is not read data-only-side"
+      },
+      {
+        "check": "'fit_iterations'",
+        "kind": "eq",
+        "line": 298,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: fit iterations are not read data-only-side"
+      },
+      {
+        "check": "f'fit_learning_rate[{fit_idx}]'",
+        "kind": "close",
+        "line": 300,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: fit learning rates are not read data-only-side"
+      },
+      {
+        "check": "'weights_push_shape'",
+        "kind": "eq",
+        "line": 304,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: weights_push shape is not asserted data-only-side"
+      },
+      {
+        "check": "'weights_push_finite'",
+        "kind": "truth",
+        "line": 305,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: weights_push finiteness is not asserted data-only-side"
+      },
+      {
+        "check": "'weights_push_nonnegative'",
+        "kind": "truth",
+        "line": 306,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: weights_push non-negativity is not asserted data-only-side"
+      },
+      {
+        "check": "'checkpoint_semantics'",
+        "kind": "eq",
+        "line": 315,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: checkpoint semantics are not read data-only-side"
+      },
+      {
+        "check": "f'inference_contract_{key}'",
+        "kind": "eq",
+        "line": 318,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: the inference contract is not re-read data-only-side"
+      },
+      {
+        "check": "f'checkpoint_exists[{key}]'",
+        "kind": "truth",
+        "line": 320,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: checkpoint existence is not asserted data-only-side"
+      },
+      {
+        "check": "'checkpoint_file_set'",
+        "kind": "eq",
+        "line": 324,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: the checkpoint file set is not asserted data-only-side"
+      },
+      {
+        "check": "'training_namespace_root_entries'",
+        "kind": "eq",
+        "line": 326,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: the namespace root entries are not asserted data-only-side"
+      },
+      {
+        "check": "'stdout_regular'",
+        "kind": "truth",
+        "line": 333,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: stdout regularity is not asserted data-only-side"
+      },
+      {
+        "check": "'stderr_regular'",
+        "kind": "truth",
+        "line": 334,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: stderr regularity is not asserted data-only-side"
+      },
+      {
+        "check": "'log_start_line_count'",
+        "kind": "eq",
+        "line": 337,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED (also RUN-BOUND via ARRAY_JOB_ID in the log path)"
+      },
+      {
+        "check": "'log_config_gate_pass_count'",
+        "kind": "eq",
+        "line": 339,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: log config-gate count is not asserted data-only-side"
+      },
+      {
+        "check": "'log_optimizer_proof_count'",
+        "kind": "eq",
+        "line": 340,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: log optimizer-proof count is not asserted data-only-side"
+      },
+      {
+        "check": "'log_pass_receipt_count'",
+        "kind": "eq",
+        "line": 342,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: log PASS-receipt count is not asserted data-only-side"
+      },
+      {
+        "check": "'log_done_count'",
+        "kind": "eq",
+        "line": 343,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: log DONE count is not asserted data-only-side"
+      },
+      {
+        "check": "'fatal_log_tokens'",
+        "kind": "eq",
+        "line": 345,
+        "phase": "unexecuted",
+        "replacement": "REPLACEMENT-REQUIRED: fatal log tokens are not asserted data-only-side"
+      }
+    ]
+  },
+  "correction_to_the_spec": "The ruling says every one of the 77 sites lands in exactly one of FOUR buckets and the counts must sum to 77. Those two clauses cannot both hold: ADDITIONAL is defined as assertions the data-only path makes that NO pinned site performs, so its members are not pinned check sites and cannot be part of a partition of them. Buckets 1-3 partition the 77 and are checked to sum to it; ADDITIONAL is disjoint by construction and is reported beside the sum, not inside it. Folding it in would inflate the total by the number of assertions I chose to add, which is the one number in this document that its author controls -- and a total an author can raise is not a floor.",
+  "partition_counts": {
+    "ADDITIONAL": 9,
+    "DELEGATED": 18,
+    "MANIFEST": 4,
+    "UNEXECUTED_BY_CONSTRUCTION": 55
+  },
+  "partition_sums_to": 77,
+  "pinned_module": {
+    "early_return_line": 218,
+    "executed_on_a_data_only_artifact": 22,
+    "path": "nd-unfolding/pet/validate_gate5_training_artifacts.py",
+    "sha256": "1aea6f96fef54d0298d885998d5556f326fb273eba7aabbaf44dc4b922c59067",
+    "static_check_sites": 77,
+    "unexecuted_on_a_data_only_artifact": 55,
+    "why_the_digest": "so a legitimate re-issue of the pinned module is distinguishable from this manifest breaking, in one comparison. Without it a re-issue produces a loud failure whose tempting resolution is to refresh the manifest -- the read-off-the-finished-artifact defect through the back door."
+  },
+  "replacement_status": {
+    "REPLACEMENT_REQUIRED": [
+      225,
+      227,
+      228,
+      229,
+      230,
+      231,
+      239,
+      241,
+      248,
+      252,
+      255,
+      276,
+      278,
+      282,
+      284,
+      285,
+      292,
+      293,
+      294,
+      295,
+      298,
+      300,
+      304,
+      305,
+      306,
+      315,
+      318,
+      320,
+      324,
+      326,
+      333,
+      334,
+      337,
+      339,
+      340,
+      342,
+      343,
+      345
+    ],
+    "covered_by_an_existing_predicate": [
+      221,
+      223,
+      224,
+      236,
+      237,
+      238,
+      251,
+      253,
+      257,
+      262,
+      263,
+      265,
+      267,
+      272,
+      275,
+      283,
+      286
+    ],
+    "honesty_note": "The REPLACEMENT_REQUIRED count is the real measure of remaining work and is deliberately NOT hidden behind invented names. A manifest that named a replacement for all 55 would assert coverage it does not have, which is the exact defect the partition exists to make unrepresentable.",
+    "n_covered": 17,
+    "n_required": 38
+  },
+  "schema": "gate5-cstat-data-only-divergence-manifest-v1",
+  "v4_floor": {
+    "expected_executed_static_sites": 22,
+    "floor_on": "executed check sites (n_passed + n_failed), NOT manifest size",
+    "why": "a floor on manifest size is authored by the same party as the manifest, so it cannot see 55 checks that never ran. C's improvement: the executed count must EQUAL what the coherent partition observes, so the operand comes from the other path rather than from the manifest's author."
+  },
+  "what_this_is": "A DIVERGENCE control, not a correctness control. It pins the data-only path's relationship to the coherent one and establishes nothing about whether the coherent validator is correct; if that one is wrong, this propagates the error with a green light.",
+  "written_before_assertion": [
+    "nd-unfolding/pet/validate_gate5_data_only_artifacts.py",
+    "nd-unfolding/pet/validate_gate5_training_artifacts_data_only.py"
+  ],
+  "written_before_the_wrapper_exists": true
+}
