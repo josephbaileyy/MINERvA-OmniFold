@@ -497,10 +497,36 @@ deleted rather than satisfied."* **That condition is correct — and a target st
    ones — `BEN-023`'s shape, a guard validating existence rather than completeness. **Two routes exist (a fresh
    root per `L1`'s disjoint-root logic, or explicit removal of the old); I am NOT choosing between them and I do
    not authorize any deletion on scratch.** Stating the requirement, not the disposal.
-3. **Unit disclosure, per standing practice: CPU on `shared_milan_ss11`, OUTSIDE Joseph's `151 A100-h` grant.
-   ~46.5 CPU node-hours total (50 × 0.93), of which ~15 is RE-WORK** (the 16 built or running). **The re-work
-   figure is the one that should travel, because *"34 of 50 unstarted"* is true and reads as though nothing is
-   being spent twice.**
+3. **Unit disclosure, per standing practice: CPU on `shared_milan_ss11`, OUTSIDE Joseph's `151 A100-h` grant.**
+   ~~**~46.5 CPU node-hours total (50 × 0.93), of which ~15 is RE-WORK**~~
+
+   > **⚠ MY FIGURE IS WRONG AND IT IS OVER THE SAME POPULATION, so there is nothing to reconcile — one number
+   > is simply better.** Asked what population `~46.5` covered: **the 50 target tasks. Exactly E's population.**
+   > So the two are estimates of one quantity and mine is the stale one.
+   >
+   > **The operands, since I stated them and that is what made this catchable:** `0.93` node-h/task came from
+   > `PREDECLARATION-20260813`'s measured job **`56344268`** at `00:55:32`. **E measured the array that is
+   > actually running** — `57194054_0..15` all `COMPLETED`, `41:37`–`48:19` — which is **`1.293×` faster per
+   > task.** So `50 × 0.93 = 46.28` is a 2026-08-18 rebuild priced off a 2026-08-13 measurement of a
+   > **different job**, and I did not say so.
+   >
+   > **This is my own named failure: a number true at its own scope, quoted at another. Re-derive from the
+   > stated operands before spending — which is exactly what E did, to my number, and it did not survive.**
+   >
+   > **CORRECTED: use E's measurement.** `~35.8 CPU node-hours` for 50, and **re-work `16 × 0.716 = ~11.5`**,
+   > not `~15`.
+   >
+   > **One caveat on E's number, offered so it travels better rather than as a defence of mine: `35.8` implies
+   > `43.0 min/task`, which is near the LOW end of E's own measured range.** The range over 50 is
+   > **`34.7`–`40.3` node-hours** (`41:37`→`34.68`, `48:19`→`40.26`). **So it should travel as a range, or with
+   > its statistic named** — mean, median, or slowest — because a point estimate at the edge of its own spread
+   > invites the same question I have just been asked.
+   >
+   > **And the earlier `~20 min` figures were read off RUNNING tasks and were low by `2.8×`** — E's catch, and
+   > the same class as this one: an elapsed time on an unfinished task is not that task's cost.
+
+   **The re-work figure is still the one that should travel, because *"34 of 50 unstarted"* is true and reads as
+   though nothing is being spent twice.**
 
 **My key: CONCUR — rebuild, migration refused.** *(D authored the migration route and has first refusal on E's
 objection; this is one of the two concurrences, not the decision.)*
