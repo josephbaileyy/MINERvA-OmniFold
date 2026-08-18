@@ -2049,5 +2049,74 @@ class CompletenessGuardClassifiesUnopenable(unittest.TestCase):
                       "an OPENABLE file must fail on a LATER gate, not on zombie/unopenable -- "
                       f"otherwise these tests pass because the stub is broken. got: {r!r}")
 
+
+class MemberRootFirst(unittest.TestCase):
+    """C reversed my path shape, and the preflight below is the mechanism that decided it."""
+
+    def _paths(self, offset, args):
+        import subprocess
+        script = 'source lib_member_resume.sh\n' + "\n".join(
+            f'mr_dir_prefix "{a}" ; echo' for a in args)
+        env = dict(os.environ, MNV_EST_SEED_OFFSET=str(offset),
+                   REPO=str(ND.parent), ND=str(ND))
+        r = subprocess.run(["bash", "-c", script], capture_output=True, text=True,
+                           env=env, cwd=str(ND))
+        return [l for l in r.stdout.split("\n") if l.strip()]
+
+    def test_the_member_root_comes_FIRST_for_relative_and_absolute_paths(self):
+        rel, absol = "uq_5d/block_slabs_5d_sb", f"{ND}/uq_5d/universe_sweep_bkgaware"
+        got = self._paths(1200, [rel, absol])
+        self.assertEqual(got[0], "mii/member_k001200/uq_5d/block_slabs_5d_sb")
+        self.assertEqual(got[1], f"{ND}/mii/member_k001200/uq_5d/universe_sweep_bkgaware",
+                         "an absolute path is anchored after /nd-unfolding/, not prefixed blindly")
+
+    def test_UNDECLARED_paths_are_byte_identical_to_the_archive_paths(self):
+        rel = "uq_5d/block_slabs_5d_sb"
+        self.assertEqual(self._paths("", [rel])[0], rel,
+                         "every non-scan use of these launchers must be unchanged")
+
+    def test_an_unanchored_absolute_path_FAILS_CLOSED(self):
+        """A member path assembled by guesswork is how a member writes outside its own tree."""
+        import subprocess
+        r = subprocess.run(["bash", "-c",
+                            'source lib_member_resume.sh; mr_dir_prefix /tmp/nowhere; echo "rc=$?"'],
+                           capture_output=True, text=True,
+                           env=dict(os.environ, MNV_EST_SEED_OFFSET="1200"), cwd=str(ND))
+        self.assertIn("no /nd-unfolding/ anchor", r.stderr)
+        self.assertIn("Refusing to guess", r.stderr)
+
+    def test_THE_PREFLIGHT_REJECTS_MY_OWN_PREVIOUS_PATH_SHAPE(self):
+        """C's argument (1), demonstrated rather than argued.
+
+        Spec section 1's preflight must reject any member output path equal to, under, or
+        glob-overlapping the six canonical archive namespaces. Under my original
+        `uq_5d/block_slabs_5d_sb/member_k001200/` EVERY member path is beneath a canonical namespace by
+        construction -- so this check would have had to reject all 50 members or carry an
+        "under, but with a member component" exception, which is a guard special-casing the thing it
+        guards. The new shape passes the same check as a plain prefix test.
+        """
+        import seed_offset_policy as sp
+        with self.assertRaises(SystemExit) as cm:
+            sp.assert_member_path_is_outside_the_archive("uq_5d/block_slabs_5d_sb/member_k001200")
+        self.assertIn("inside the canonical archive namespace", str(cm.exception))
+        self.assertTrue(sp.assert_member_path_is_outside_the_archive(
+            "mii/member_k001200/uq_5d/block_slabs_5d_sb"))
+
+    def test_the_preflight_also_rejects_an_UNSCOPED_path(self):
+        """A path that is neither under the archive nor under the member container is a path nobody
+        can show is safe by inspection -- which is the property member-first buys."""
+        import seed_offset_policy as sp
+        for bad in ("uq_5d/block_slabs_5d_sb", "boot_nd_5d/member_k001200/x.npz", "somewhere/else"):
+            with self.subTest(path=bad), self.assertRaises(SystemExit):
+                sp.assert_member_path_is_outside_the_archive(bad)
+
+    def test_every_canonical_namespace_is_listed(self):
+        """Six, and the list is what the check is only as good as."""
+        import seed_offset_policy as sp
+        self.assertEqual(len(sp.CANONICAL_ARCHIVE_NAMESPACES), 6)
+        for ns in ("uq_5d/uthrow_slabs_5d_sb", "uq_5d/block_slabs_5d_sb", "boot_nd_5d",
+                   "seedscan_split_5d", "uq_5d/universe_sweep_bkgaware"):
+            self.assertIn(ns, sp.CANONICAL_ARCHIVE_NAMESPACES)
+
 if __name__ == "__main__":
     unittest.main()
