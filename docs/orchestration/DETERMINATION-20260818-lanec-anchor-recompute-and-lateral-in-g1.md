@@ -668,6 +668,91 @@ GPU member.
 said "that ONE product" and "I am not estimating the rest" — and radically incomplete: the all-in figure is
 `45.90 GB` per member. The mediator measured the rest, which is the division of labour that worked.)*
 
+### 11h. AMENDED — **the diagonal SHIPS BEFORE the intermediate goes**, and the check I owed and did not make
+
+**B is right and the ruling is amended, not reversed.** `sqrt_tr_old`'s sole ingredient is
+`hCov_combined5d_total` — `adopt_unified_5d.py:124-127`, from the `COMBINED` path at
+`sbatch_adopt_stamped_footing.sh:33` — **which IS the 41.44 GB intermediate §11g releases.** So after deletion
+**the scalar survives in a retained 892 MB root and its ingredient does not.**
+
+> **⚠ THE GENERAL DEFECT, and it is the check I owed: A RETENTION POLICY MUST BE TESTED AGAINST EVERY DERIVED
+> QUANTITY THAT *SURVIVES* THE DELETION, not against the ones the deletion is FOR.** §11g asked *"are the bar's
+> operands downstream of the intermediate?"* — yes — and never asked *"are the surviving scalars' INGREDIENTS
+> downstream too?"* **Those are different questions and only the second is about deletion.**
+>
+> **A DELETION CAN RETROACTIVELY BREAK `BEN-077` FOR AN ARTIFACT THAT WAS COMPLIANT WHEN WRITTEN** — converting a
+> receipt that shipped its ingredients into a verdict-only one, permanently and after the fact. **Nothing in this
+> campaign's convention covers that direction, because a receipt is checked when written and a purge happens
+> later.**
+
+**THE REMEDY IS A WRITE, NOT A COMPUTATION.** `trace(C) = Σ diag(C)`, and `adopt_unified_5d.py:128` **already
+computes** `diag_comb = np.clip(np.diag(C_new), 0, None).copy()`, in memory at the moment `sqrt_tr_comb` is
+formed. **Ship it as a `TH1D`.**
+
+```
+diag_comb + R4's vb + vu  =  3 x 65,856 doubles  =  1.58 MB
+against the 4.46 GB retained member : 0.035 %
+against the 41.44 GB released       : 26,219 : 1
+```
+
+> **RULED: the diagonal SHIPS FIRST, and DELETION IS CONTINGENT ON IT.** Not a reversal — `41.44 GB` against
+> `1.58 MB` is not a close trade, and B says so too. **It is a SEQUENCING constraint, and it is §10c's invariant
+> in its third form: nothing accepted without a stamp, nothing deleted without one, and NOTHING DELETED BEFORE
+> THE SURVIVORS' INGREDIENTS ARE RETAINED ELSEWHERE.**
+
+**AND TWO CLARIFICATIONS OF §11g'S SCOPE that the third consumer makes necessary:**
+
+1. **§11g RELEASES *MEMBER* INTERMEDIATES ONLY. THE ARCHIVE'S 41.44 GB FILE IS UNTOUCHED** — it is frozen, and
+   nothing in any ruling of mine may delete an archive product. **So `p4_build_components.py:114`'s consumption of
+   it is unaffected**, and I should have said so when I wrote §11g rather than leaving *"delete the 41 GB file"*
+   readable as touching the archive.
+2. **The consumer enumeration must be COMPLETE, not confined to the member DAG.** B found a third consumer;
+   **that it turned out to be harmless is luck, and the rule is that a release enumerates every reader.**
+
+*(Attribution, fairly: the trace that said the operands are downstream did not distinguish `sqrt_tr_old`
+— ingredient released — from `sqrt_tr_new` — ingredient retained. But I ruled on it, and the question I failed to
+ask is the one in the box above. **B found it by WRITING THE COMPARATOR**, which is the fifth time today that
+building an instrument found what reading could not.)*
+
+### 11i. RULED on B's interim — **NOT A FOURTH CLASS. A REQUIRED ATTRIBUTE ON `PAYLOAD`**
+
+**Of the seven keys I put in `PAYLOAD + MANDATORY RECOMPUTATION`, B implemented it and three cannot be
+recomputed from the file that carries them: `fixed_seed_null_norm`, `globalCompleteness`, and `sqrt_tr_old` —
+which §11h's remedy repairs, leaving two.**
+
+> **REFUSED as a fourth class, and the reason is structural: my three classes each name a COMPARISON RULE**
+> (bit-exact / equal / superset). ***"Not recomputable"* is not a comparison rule — these keys still compare
+> bit-exact.** What differs is whether the INGREDIENT CHECK is available. **So it is an ATTRIBUTE on `PAYLOAD`,
+> declared per key: `recomputable: yes | no`.**
+
+**And the attribute inherits the enumeration's own discipline, which is the point of putting it there:**
+
+- **Declared IN THE ENUMERATION, never discovered at comparison time** — the whole reason §11a is a table.
+- **A `no` REQUIRES A STATED REASON**, and a `no` without one is the fail-closed case. `globalCompleteness`'s
+  reason is *"inputs unwritten; `sweep_bank_5d.py` emits no completeness histogram at all"* — **which is a WRITER
+  GAP, fixable later, and materially different from a mathematical impossibility.** Recording which kind it is
+  determines whether anyone can ever close it.
+- **B's `--acknowledge-unrecomputable` is ENDORSED and becomes permanent, with one strengthening: it takes the
+  EXPLICIT KEY LIST and must match the enumeration's declared `no` set EXACTLY.** A blanket flag lets a FUTURE
+  `no` ride in silently. **Closed-set assertion, third use today** — the hazard list, the archive-key buckets, and
+  now this.
+
+**B's default — `NOT_RECOMPUTABLE` keys BLOCK, and the flag lets them through RECORDED AS UNVERIFIED rather than
+silently treated as checked — is exactly right and is the distinction the whole day has turned on.**
+
+### 11j. AMENDED — remedy **(A) IS MANDATORY ON THE ADOPTED ROOTS**, not merely preferable
+
+**`adopt_unified_5d.py` stamps no identity key, so a member's adopted root fails `anchor_identity` UPSTREAM of
+every payload and recomputation question.** That sharpens §11f-i:
+
+> **It is not that the comparison proceeds unverified — IT CANNOT BEGIN. And the artifact in question is the
+> TERMINUS: the one `MVFINAL_j` binds and anybody quotes.** So **remedy (B) — never resume a stampless product
+> class — does not help here, because the failure is ADMISSION and not RESUME.** **Only (A) reaches it.**
+>
+> **REVISED ORDERING: (B) first for the resume hazard, as the mediator proposed and for the reason it gave — no
+> writer change. (A) REQUIRED BEFORE ANY MEMBER CAN BE ADMITTED AT ALL.** And on the adopted root (A) is both most
+> necessary and cheapest: four `TParameter` keys in a 892 MB file.
+
 ## 12. R1 RULED — **`_sb` IS CANONICAL FOR BOTH LEGS**, and there is exactly ONE wrong literal
 
 **Not a judgement — the receipt says so.** `receipt_construction_contract_5d.py:313-314`:
@@ -935,6 +1020,15 @@ and now the mask is already in the product. Worth noting as a rate, not an anecd
   those two 892 MB files join stage 1's scope.**
 - **AMENDED (§14a): `hInflation_g` already ships the winner mask**, so R4 reduces to `vb` plus `vu` in the
   censored region. **And my "~285 floats" was wrong by 230× — the 5D flat length is 65,856.**
+- **AMENDED (§11h): the `diag(C_old)` TH1D SHIPS BEFORE the intermediate is released** — `1.58 MB` against
+  `41.44 GB`, and `adopt_unified_5d.py:128` already computes it. **The general defect is mine: a retention
+  policy must be tested against the derived quantities that SURVIVE, and a deletion can retroactively break
+  `BEN-077` for an artifact that was compliant when written.** §11g releases MEMBER intermediates only; the
+  archive's copy is untouched.
+- **RULED (§11i): NOT a fourth class — a required `recomputable: yes|no` ATTRIBUTE on `PAYLOAD`**, declared
+  in the enumeration, `no` requiring a stated reason, and B's acknowledge-flag taking the explicit key list.
+- **AMENDED (§11j): remedy (A) is MANDATORY on the adopted roots** — the failure there is ADMISSION, which
+  (B) cannot reach.
 - **AUTHORIZED: nothing.** No launcher edited, nothing submitted.
 
 *Second sought: B on §3's derived-target predicate (its module) and on whether stage 1 can be run as a single
