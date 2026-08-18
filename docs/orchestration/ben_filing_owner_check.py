@@ -112,7 +112,19 @@ def advertised_free(findings: Path) -> list[tuple[int, int]]:
     # a parse that silently finds no free block would pass every tree forever.
     spans: set[tuple[int, int]] = set()
     for row in rows:
-        advert = row.split("\u2014")[0]
+        # Cut at the em dash OR the first emphasis marker, whichever comes first.
+        #
+        # FALSE POSITIVE, MEASURED 2026-08-18, AND IT ACCUSED ANOTHER LANE. The em-dash rule
+        # assumed every annotation sits AFTER the dash. Lane B wrote its advance annotation
+        # BEFORE it -- "`490-499`, then `500-509`, ... *Advanced from `480-489` in the same commit
+        # as `BEN-480`.* -- **closed ten-blocks only** ..." -- so `480-489` fell inside the leading
+        # clause and this check reported a collision against a row that was completely correct.
+        # B had written its block row AND advanced the free-list; the defect was entirely here.
+        #
+        # This is attempt 3's failure mode recurring one level in: the prose problem was inside the
+        # clause I had narrowed to. An emphasis marker is where narration starts, so cut there too.
+        cut_at = [i for i in (row.find("\u2014"), row.find("*")) if i >= 0]
+        advert = row[:min(cut_at)] if cut_at else row
         spans.update((int(lo), int(hi)) for lo, hi in SPAN.findall(advert))
     if not spans:
         raise SystemExit("FATAL: the *(unallocated)* row names no span before its first em dash. "
