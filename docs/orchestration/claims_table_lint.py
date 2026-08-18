@@ -25,8 +25,10 @@ TWO CHECKS, and the second is not a formatting one:
   2. SELF-REFUTED STATUS. `CLAIMS.md:4` requires "a recoverable artifact + an independent check" for
      promotion. A row whose `independent verifier` field DECLARES the second conjunct unmet -- e.g.
      "single-source", "has NOT been independently checked" -- while carrying a promoted status is
-     refuted by its own row. The declaration may be PARTIAL and it still fails: CLM-010 names `agy`
-     for the F-test and then says the ASSEMBLY of the two halves is single-source. That is a
+     refuted by its own row. The declaration may be PARTIAL and it still fails -- and PARTIAL vs
+     WHOLLY is derived from the row's OWN text (does the self-declaration open the field, or follow
+     other content?), never from a hardcoded example, because a message naming another row asserts
+     that row's facts about this one. That is a
      different defect from a verifier field naming an unrecoverable identity ("me", "this session"):
      there we cannot TELL whether the leg was satisfied, here the row TELLS US it was not. Opposite
      epistemic states, so they get different treatment -- this one fails, that one is reported.
@@ -89,8 +91,15 @@ def main(argv: list[str] | None = None) -> int:
             bad_count.append((lineno, cid, len(f)))
             continue                      # column indices are meaningless once the row is shifted
         verifier, status = f[vcol], f[scol]
-        if status in PROMOTED and any(p in verifier.lower() for p in SELF_DECLARED_SINGLE_SOURCE):
-            self_refuted.append((lineno, cid, status, verifier[:90]))
+        hits = [verifier.lower().find(p) for p in SELF_DECLARED_SINGLE_SOURCE]
+        first = min([h for h in hits if h >= 0], default=-1)
+        if status in PROMOTED and first >= 0:
+            # PARTIAL vs WHOLLY is derived from THIS row's own text -- whether the self-declaration
+            # opens the field or follows other content. Never from a hardcoded example: a message
+            # that names another row asserts that row's facts about this one (lane A, BEN-382's
+            # shape at the finest scale -- the row's evidence not bound to the row).
+            scope = "WHOLLY single-source" if first <= 4 else "PARTIAL (the field names something else first)"
+            self_refuted.append((lineno, cid, status, scope, verifier[:110]))
         if UNRECOVERABLE_IDENTITY.search(verifier):
             unrecoverable.append((lineno, cid, verifier[:70]))
 
@@ -100,14 +109,13 @@ def main(argv: list[str] | None = None) -> int:
               f"A literal `|` inside a cell splits the row; escape it as `&#124;`, NOT as `\\|` -- "
               f"a backslash fixes the renderer and leaves the pipe byte, so a naive split still "
               f"mis-counts.")
-    for lineno, cid, status, verifier in self_refuted:
-        print(f"  FAIL {cid} (line {lineno}) status {status} but its own `independent verifier` "
-              f"declares a component NOT independently checked: {verifier!r}. The declaration may "
-              f"be PARTIAL -- CLM-010 names an independent verifier for the F-test and then says "
-              f"the ASSEMBLY is single-source -- and a promoted status resting partly on a "
-              f"self-declared unchecked component is still unsupported. CLAIMS.md:4 requires a "
-              f"recoverable artifact AND an independent check. Supply the check or mark the status "
-              f"provisional; do not quote the status meanwhile.")
+    for lineno, cid, status, scope, verifier in self_refuted:
+        print(f"  FAIL {cid} (line {lineno}) status {status}, and its own `independent verifier` "
+              f"declares the independent-check leg unmet -- {scope}: {verifier!r}. A promoted "
+              f"status resting even PARTLY on a self-declared unchecked component is unsupported; "
+              f"CLAIMS.md:4 requires a recoverable artifact AND an independent check. Supply the "
+              f"check, or split the row so the status attaches to the claim the evidence covers. "
+              f"Do not quote the status meanwhile.")
     for lineno, cid, verifier in unrecoverable:
         print(f"  note {cid} (line {lineno}) verifier identity does not resolve: {verifier!r}. "
               f"Not a failure -- the artifact leg survives. But it may not serve as the "
