@@ -52,12 +52,68 @@ CSTAT_THREE_STREAM = "three-stream-v1"
 CSTAT_DATA_ONLY = "data-only-v1"
 CSTAT_PRODUCTS = (CSTAT_THREE_STREAM, CSTAT_DATA_ONLY)
 
+# `campaign_role` per product. One home, three importers -- the string was previously a literal in
+# two places in the training driver and nowhere in the extractor, which is how the extractor's
+# data-only branch came to sit BEHIND a role check that rejects data-only artifacts.
+CAMPAIGN_ROLES = {
+    CSTAT_THREE_STREAM: "gate5-cstat-coherent-replica",
+    CSTAT_DATA_ONLY: "gate5-cstat-data-only-replica",
+}
+
 # P5b / measured-leg closure tolerance. Four float32 eps, as C specified: the claim on these
 # arrays is that a SPECIFIC COMPUTATION HAPPENED (a scalar renormalization), and an arithmetic
 # result carries rounding, so bit-exactness there would test the implementation path rather than
 # the claim. Bit-exactness is reserved for P5a, whose claim is that NOTHING happened.
 F32_EPS = float(np.finfo(np.float32).eps)
 CLOSURE_TOL_EPS = 4.0
+
+# === THE PINNED VALIDATOR'S REQUIRED-KEY SET, RESTATED, AND WHY A RESTATEMENT IS ACCEPTABLE HERE ===
+#
+# `validate_gate5_training_artifacts.py:206-214` builds this set as a FUNCTION-LOCAL literal, so it
+# cannot be imported and a wrapper cannot rebind it. Restating it duplicates a fact, which this repo
+# forbids -- so the duplication is pinned by a test that derives the set from that file's SOURCE and
+# asserts equality (`test_required_key_set_matches_the_pinned_validator`). The executable form of the
+# rule, not a comment promising to keep it in sync.
+#
+# WHY THE SET MATTERS AT ALL: that validator RETURNS EARLY at :219-220 on any absent required key.
+# Measured on this tree, 22 of its 77 static check sites run before that return and 55 run after, so
+# one missing key costs 55 checks and reports "1 failure" rather than "55 unevaluated". A required-key
+# gap is a large defect that presents as a small one.
+PINNED_VALIDATOR_REQUIRED_KEYS = frozenset({
+    "campaign_role", "replica_index", "bootstrap_seed", "replica_seed_policy",
+    "seed_policy", "estimator_fingerprint", "bkg_mode", "tag", "inputs_sha256",
+    "inventory_hashes", "input_identity_hashes", "n_sig_full", "n_data_full",
+    "n_bkg_full", "mc_indices", "sig_bootstrap_factor_full",
+    "sig_bootstrap_factor", "bkg_indices", "bkg_bootstrap_factor",
+    "bootstrap_factor_sha256", "replica_target_sha256",
+    "replica_target_receipt_sha256", "replica_target_receipt_path",
+    "lr_policy_realized", "weights_push", "target", "inference_contract",
+})
+
+# The ONE required key a data-only artifact must never carry. `bootstrap_seed` means "the seed passed
+# to coherent_bootstrap_factors"; the data-only training stage passes None and the loader draws
+# nothing, so no honest value exists. Its absence is a declared ruling request, not an omission.
+DATA_ONLY_WITHHELD_REQUIRED_KEYS = frozenset({"bootstrap_seed"})
+
+
+def assert_pinned_required_keys(store, *, where):
+    """Every pinned-validator required key present except the declared-withheld one, which is ABSENT.
+
+    BOTH DIRECTIONS, and the second is the one that earns its place: a data-only artifact that grew a
+    `bootstrap_seed` would clear the required-key gate, reach the pinned validator's
+    `int(scalar(store, "bootstrap_seed"))`, and -- if the value were None -- raise `TypeError` from
+    `int()` rather than record a failed check. That is an expression-level exception, invisible to a
+    grep for `raise`, and it turns a Checks object into a traceback.
+    """
+    keys = set(store.files) if hasattr(store, "files") else set(store)
+    missing = sorted((PINNED_VALIDATOR_REQUIRED_KEYS - DATA_ONLY_WITHHELD_REQUIRED_KEYS) - keys)
+    if missing:
+        raise SystemExit(f"[gate5-dataonly] {where}: pinned-validator required keys absent, which "
+                         f"would cost 55 unevaluated checks: {missing}")
+    present = sorted(DATA_ONLY_WITHHELD_REQUIRED_KEYS & keys)
+    if present:
+        raise SystemExit(f"[gate5-dataonly] {where}: withheld key(s) present: {present}; the seed "
+                         f"lives under `data_bootstrap_seed` (P6)")
 
 
 def assert_data_only_streams(store, *, data_bootstrap_seed, n_data_full, n_sig_full, n_bkg_full):
@@ -397,10 +453,26 @@ def assert_data_only_target_is_this_replicas(target_meta, *, bootstrap_seed,
         raise SystemExit("[gate5-dataonly] the loader published NO target block at all; this is not "
                          "a nominal target, it is an absent one -- fail closed")
 
-    # F1 -- IDENTITY, from a key with exactly ONE meaning, written by the stage that BUILT the
-    # target, in the receipt that owns it. CROSS-PROCESS: the target driver wrote it, this driver
-    # reads it. `bootstrap_seed` in that receipt means "the three-stream coherent seed" and is
-    # overloaded; `data_bootstrap_seed` is not (T4).
+    # F1 -- IDENTITY, from a key written by the stage that BUILT the target, in the receipt that
+    # owns it.
+    #
+    # AN EARLIER VERSION OF THIS COMMENT OVERSTATED THE CASE AND THE CORRECTION MATTERS (lane D, via
+    # the mediator). It said the receipt's `bootstrap_seed` "is overloaded" and imported the loader
+    # field's defect to justify T4. Not so: the field that killed 57194055_0/_1 is the LOADER's
+    # `meta["target"]["bootstrap_seed"]` (fullevent_fps_dataloader.py:1525), a different field in a
+    # different dict with the same name -- BEN-256's table exactly, and the conflation landed inside
+    # the comment justifying the fix for it. The RECEIPT's top-level `bootstrap_seed`
+    # (build_fullevent_replica_target.py:309) holds one unambiguous value per build; what it does not
+    # do is say WHICH KIND of seed that is without reading `cstat_product` too, and that is the real
+    # and smaller reason `data_bootstrap_seed` earns its own key (T4).
+    #
+    # AND F1's EVIDENTIARY CONTENT, STATED HONESTLY. Both operands descend from the launcher's
+    # SEED_BASE+index: the target driver's argparse value and this driver's. So F1 is NOT a
+    # measurement, and calling a rebuild "evidence" would be the same error as calling an echo one.
+    # What it IS, and it is the exposure that matters: AGREEMENT BETWEEN TWO INDEPENDENTLY
+    # PARAMETERISED INVOCATIONS, which is what catches replica X's trainer consuming replica Y's
+    # target. Third read of that fact after read_replica_target_receipt's :92/:94, so the family is
+    # never unprotected while this leg is pending -- a second route, not a closed hole (lane D).
     if target_receipt is not None:
         rseed = dict(target_receipt).get("data_bootstrap_seed")
         if rseed is None:

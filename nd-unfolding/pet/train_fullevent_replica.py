@@ -42,6 +42,7 @@ from cstat_data_only import (  # noqa: E402
     assert_data_only_streams,
     assert_data_only_target_is_this_replicas,
     assert_mc_leg_unthinned,
+    assert_pinned_required_keys,
     assert_ratio_provenance_block,
     rescale_measured_to_data_only_R,
 )
@@ -386,6 +387,74 @@ def run_nominal_adapter(args, target_receipt):
             "replica_target_sha256": np.asarray(target_receipt["_verified_target_sha256"]),
             "replica_seed_policy": np.asarray(SEED_POLICY),
         })
+        # === THE FOUR MODE-INDEPENDENT REQUIRED KEYS ===
+        #
+        # WHY THEY ARE HERE AND WHY THEIR ABSENCE WAS NOT A DATA-ONLY PROPERTY. The pinned validator
+        # names 27 `required_keys` (validate_gate5_training_artifacts.py:206-214) and RETURNS EARLY
+        # at :219-220 when any is absent. Measured on this tree: 22 of its 77 static check sites run
+        # before that return and 55 run after it -- so ONE missing key silently costs 55 checks, and
+        # the report says "1 failure" rather than "55 unevaluated". A required-key gap is therefore
+        # not a small defect that shows up small; it is a large defect that shows up small.
+        #
+        # AST-diffing the two writers' `augmented` dicts against that set gave FIVE absent keys. Four
+        # are mode-independent and were simply omitted; they are written below. The fifth is
+        # `bootstrap_seed` and it is NOT written -- see the block after this one.
+        #
+        # WHY NOW. Zero data-only training artifacts exist (57194055 is failing out), so writing them
+        # here costs nothing; after a resubmission it costs the family. Free today, 151 A100-h later.
+        sig_subset = np.ones(int(np.asarray(arrays["mc_indices"]).size), dtype=np.uint8)
+        # ASSERTED, not filled: this must be the exact restriction of the full factor to mc_indices,
+        # which is the pinned validator's own `signal_subset_is_exact_full_restriction` (:253-254).
+        # Writing a correctly-shaped array that is not that restriction would satisfy the required-key
+        # gate and then pass a check it should fail.
+        if not np.array_equal(
+                sig_subset,
+                np.asarray(augmented["sig_bootstrap_factor_full"])[
+                    np.asarray(arrays["mc_indices"])]):
+            raise SystemExit("[gate5-dataonly] sig_bootstrap_factor is not the full factor's "
+                             "restriction to mc_indices")
+        ones_bkg = np.ones(int(ev["n_bkg_full"]), dtype=np.uint8)
+        if not np.array_equal(ones_bkg, np.asarray(augmented["bkg_bootstrap_factor_full"])):
+            raise SystemExit("[gate5-dataonly] bkg_bootstrap_factor and its _full alias disagree")
+        augmented.update({
+            "bkg_indices": np.arange(int(ev["n_bkg_full"]), dtype=np.int64),
+            "sig_bootstrap_factor": sig_subset,
+            # The pinned validator's name for the full background factor; the `_full` key above is
+            # P3's name for the same array, and the two are asserted equal rather than assumed.
+            "bkg_bootstrap_factor": ones_bkg,
+            # CONTAMINATED AND WRITTEN ANYWAY, because omitting it costs 55 checks. It is a verbatim
+            # copy of the target receipt's `bootstrap` block, whose `signal_factor_sha256` and
+            # `background_factor_sha256` digest the CANONICAL three-stream draws that this build
+            # deliberately did NOT apply (build_fullevent_replica_target.py:369-371, computed at :250
+            # after :219 restores the unpatched function). So the two pinned checks that compare them
+            # to this artifact's unity arrays MUST fail, and they are declared manifest entries with
+            # replacements asserting the values DIFFER -- which is positive evidence the MC legs were
+            # left unthinned. Rewriting the receipt's own stamp instead would make a target-stage
+            # field assert what the target stage did not compute (BEN-406 3).
+            "bootstrap_factor_sha256": np.asarray(
+                dict(target_receipt.get("bootstrap") or {}), dtype=object),
+        })
+        # === AND THE FIFTH KEY, `bootstrap_seed`, IS DELIBERATELY NOT WRITTEN ===
+        #
+        # It means "the seed passed to coherent_bootstrap_factors". The data-only training stage
+        # passes None and the loader draws nothing (:1317/:1321 gate the draw), so there is no such
+        # seed. Writing 50000+index would assert a draw that did not happen -- the one-field-two-
+        # meanings defect this whole product exists to stop repeating, after BEN-408's `bootstrap_seed`
+        # and BEN-405's -1 sentinel.
+        #
+        # AND A SENTINEL IS NOT AVAILABLE EITHER, measured rather than assumed: a present-but-None
+        # value clears the required-key gate and then reaches :224's `int(scalar(...))`, which raises
+        # `TypeError: int() argument must be a string, a bytes-like object or a real number`. That is
+        # an EXPRESSION-level exception, so it is invisible to a grep for `raise` -- it yields a
+        # traceback instead of a Checks object, defeating the wrapper design at precisely the point
+        # lane C identified as its one vulnerable precondition. `-1` clears int() and then collides
+        # with BEN-405.
+        #
+        # So this key's absence is a RULING REQUEST, not an omission: it costs 55 checks and no
+        # honest value closes it. Recorded here so the next reader finds the reasoning at the site.
+        # BOTH DIRECTIONS AT ONCE, and asserted over what is ABOUT TO BE WRITTEN rather than read
+        # back: the 26 required keys present, `bootstrap_seed` absent.
+        assert_pinned_required_keys(augmented, where="write-time")
         # P1-P4 / P6 over what is about to be written, so a thinned-MC data-only replica never
         # comes into existence rather than being detected afterwards.
         assert_data_only_streams(augmented, data_bootstrap_seed=int(args.bootstrap_seed),
@@ -435,6 +504,10 @@ def validate_data_only_artifact(path, bootstrap_seed, replica_index, target_rece
         n_data = int(np.asarray(store["n_data_full"]).item())
         n_sig = int(np.asarray(store["n_sig_full"]).item())
         n_bkg = int(np.asarray(store["n_bkg_full"]).item())
+        # READ BACK OFF THE WRITTEN FILE, not off the dict the writer held. Both are needed and they
+        # answer different questions: the write-time call stops a bad artifact existing, this one
+        # catches a write that did not land what it asserted.
+        assert_pinned_required_keys(store, where="read-back")
         assert_data_only_streams(store, data_bootstrap_seed=int(bootstrap_seed),
                                  n_data_full=n_data, n_sig_full=n_sig, n_bkg_full=n_bkg)
         assert_ratio_provenance_block({

@@ -94,8 +94,26 @@ def read_replica_contract(weights_npz, replica_index, bootstrap_seed,
     if not is_complete(weights_npz):
         raise SystemExit("[gate5-extract] training artifact completion marker is invalid")
     with np.load(weights_npz, allow_pickle=True) as store:
-        required = {
-            "campaign_role", "replica_index", "bootstrap_seed", "replica_seed_policy",
+        # === THE TAG IS READ BEFORE ANY REQUIRED-KEY SET IS CHOSEN, AND THAT ORDER IS THE FIX ===
+        #
+        # The `if data_only:` branch further down in this same function was written BEHIND this
+        # function's required-key gate, its role check and its seed read. All three reject a
+        # data-only artifact, so that branch was UNREACHABLE for the very artifacts it exists to
+        # handle. Three failures, not the one I reported: the required set, `campaign_role`, and
+        # `bootstrap_seed`. Dispatching on the tag first is what makes the existing branch live.
+        # (No line numbers here on purpose -- both sites move, and a stale number is worse than a
+        # description that stays true.)
+        #
+        # BRANCHED, NEVER WIDENED, per the ruling: dropping `bootstrap_seed` from the SHARED set
+        # would let a three-stream artifact pass with that field missing. Each product names its own
+        # complete set, so neither can be satisfied by the other's absence.
+        product = (str(scalar(store, "cstat_product"))
+                   if "cstat_product" in set(store.files) else replica_train.CSTAT_THREE_STREAM)
+        if product not in replica_train.CSTAT_PRODUCTS:
+            raise SystemExit(f"[gate5-extract] unknown cstat_product {product!r}")
+        data_only = (product == replica_train.CSTAT_DATA_ONLY)
+        shared_required = {
+            "campaign_role", "replica_index", "replica_seed_policy",
             "estimator_fingerprint", "inputs_path", "inputs_sha256", "inference_contract",
             "weights_push", "mc_indices", "sig_bootstrap_factor", "sig_bootstrap_factor_full",
             "bkg_indices", "bkg_bootstrap_factor", "bootstrap_factor_sha256",
@@ -103,15 +121,34 @@ def read_replica_contract(weights_npz, replica_index, bootstrap_seed,
             "input_identity_hashes", "replica_target_sha256",
             "replica_target_receipt_sha256",
         }
+        if data_only:
+            # The data-only set is not the shared set MINUS something: it names four keys the
+            # three-stream product does not have, so it is not weaker in the direction that matters.
+            required = shared_required | {
+                "cstat_product", "data_bootstrap_seed", "data_bootstrap_factor",
+                "bkg_bootstrap_factor_full", "p5_mc_leg_evidence",
+                "measured_closure_evidence", "weights_embody",
+                "step1_class_ratio_loader_stamped", "step1_class_ratio_applied",
+            }
+        else:
+            required = shared_required | {"bootstrap_seed"}
         missing = sorted(required - set(store.files))
         if missing:
-            raise SystemExit(f"[gate5-extract] training artifact missing {missing}")
-        if scalar(store, "campaign_role") != ROLE:
-            raise SystemExit("[gate5-extract] artifact is not a Gate-5 coherent replica")
+            raise SystemExit(f"[gate5-extract] {product} training artifact missing {missing}")
+        # A data-only artifact must NOT carry `bootstrap_seed`: present-but-None would clear a
+        # required-key gate and then raise TypeError from `int()` further downstream, which is a
+        # traceback where a named failure belongs.
+        if data_only and "bootstrap_seed" in set(store.files):
+            raise SystemExit("[gate5-extract] data-only artifact carries `bootstrap_seed`; the seed "
+                             "lives under `data_bootstrap_seed`")
+        expected_role = replica_train.CAMPAIGN_ROLES[product]
+        if scalar(store, "campaign_role") != expected_role:
+            raise SystemExit(f"[gate5-extract] artifact role is not {expected_role!r}")
         if int(scalar(store, "replica_index")) != int(replica_index):
             raise SystemExit("[gate5-extract] replica index mismatch")
-        if int(scalar(store, "bootstrap_seed")) != int(bootstrap_seed):
-            raise SystemExit("[gate5-extract] bootstrap seed mismatch")
+        seed_key = "data_bootstrap_seed" if data_only else "bootstrap_seed"
+        if int(scalar(store, seed_key)) != int(bootstrap_seed):
+            raise SystemExit(f"[gate5-extract] {seed_key} mismatch")
         if scalar(store, "replica_seed_policy") != SEED_POLICY:
             raise SystemExit("[gate5-extract] seed policy mismatch")
         if scalar(store, "estimator_fingerprint") != nominal_extract.ESTIMATOR_FINGERPRINT:
@@ -143,54 +180,102 @@ def read_replica_contract(weights_npz, replica_index, bootstrap_seed,
         # family has no signal draw to be coherent with, so that guard would be checking the wrong
         # proposition rather than failing a true one. It is replaced by a STRICTLY STRONGER set
         # (lane C, BEN-407/409), not relaxed.
-        if "cstat_product" in set(store.files):
-            product = str(scalar(store, "cstat_product"))
-            if product == replica_train.CSTAT_DATA_ONLY:
-                # L2 at the READING end: the artifact's own tag must match the root it was read
-                # from, so a data-only artifact copied into the three-stream tree is refused.
-                replica_train.assert_tag_matches_root(product, weights_npz)
-                replica_train.assert_data_only_streams(
-                    store, data_bootstrap_seed=int(bootstrap_seed),
-                    n_data_full=n_data, n_sig_full=n_sig, n_bkg_full=n_bkg)
-                replica_train.assert_ratio_provenance_block({
-                    "step1_class_ratio_loader_stamped":
-                        float(np.asarray(store["step1_class_ratio_loader_stamped"]).item()),
-                    "step1_class_ratio_applied":
-                        float(np.asarray(store["step1_class_ratio_applied"]).item()),
-                    "weights_embody": str(scalar(store, "weights_embody")),
-                })
-                # P5' -- PAST TENSE, SELF-CONTAINED. The persisted evidence must satisfy its own
-                # tolerances. This must NOT re-derive w_truth_full[imc] from the current input and
-                # compare it against a hash written at training time: that is BEN-406's
-                # past-vs-present error, it would FAIL on a legitimate input re-dump, and the
-                # write-time gate in replica_atomic_data_only already proved the live identity
-                # before the artifact existed.
-                ev = np.asarray(store["p5_mc_leg_evidence"], dtype=object).item()
-                for leg in ("w_truth", "w_reco"):
-                    dev = float(ev[f"{leg}_max_ratio_deviation"])
-                    tol = float(ev[f"{leg}_tolerance"])
-                    if not dev <= tol:
-                        raise SystemExit(
-                            f"[gate5-dataonly] P5' persisted {leg} closure evidence does not "
-                            f"satisfy its own tolerance ({dev:.6e} > {tol:.6e})")
-                if float(ev["derived_normalization_constant"]) <= 0:
-                    raise SystemExit("[gate5-dataonly] P5' persisted normalization constant "
-                                     "is not positive")
-                mc_ev = np.asarray(store["measured_closure_evidence"], dtype=object).item()
-                if not float(mc_ev["closure_abs_deviation"]) <= float(mc_ev["closure_tolerance"]):
-                    raise SystemExit("[gate5-dataonly] P5' persisted measured-leg closure evidence "
-                                     "does not satisfy its own tolerance")
-                data_factor = np.asarray(store["data_bootstrap_factor"], dtype=np.uint8)
-                return dict(
-                    contract=contract, n_data=n_data, n_sig=n_sig, n_bkg=n_bkg,
-                    identities=identities, inventory_hashes=inventory_hashes,
-                    cstat_product=product,
-                    sig_factor_full=np.ones(n_sig, dtype=np.uint8),
-                    data_factor=data_factor,
-                    factor_hashes={"data_factor_sha256": hash_array(data_factor)},
-                )
-            if product != replica_train.CSTAT_THREE_STREAM:
-                raise SystemExit(f"[gate5-extract] unknown cstat_product {product!r}")
+        if data_only:
+            # L2 at the READING end: the artifact's own tag must match the root it was read
+            # from, so a data-only artifact copied into the three-stream tree is refused.
+            replica_train.assert_tag_matches_root(product, weights_npz)
+            replica_train.assert_data_only_streams(
+                store, data_bootstrap_seed=int(bootstrap_seed),
+                n_data_full=n_data, n_sig_full=n_sig, n_bkg_full=n_bkg)
+            replica_train.assert_ratio_provenance_block({
+                "step1_class_ratio_loader_stamped":
+                    float(np.asarray(store["step1_class_ratio_loader_stamped"]).item()),
+                "step1_class_ratio_applied":
+                    float(np.asarray(store["step1_class_ratio_applied"]).item()),
+                "weights_embody": str(scalar(store, "weights_embody")),
+            })
+            # P5' -- PAST TENSE, SELF-CONTAINED. The persisted evidence must satisfy its own
+            # tolerances. This must NOT re-derive w_truth_full[imc] from the current input and
+            # compare it against a hash written at training time: that is BEN-406's
+            # past-vs-present error, it would FAIL on a legitimate input re-dump, and the
+            # write-time gate in replica_atomic_data_only already proved the live identity
+            # before the artifact existed.
+            ev = np.asarray(store["p5_mc_leg_evidence"], dtype=object).item()
+            for leg in ("w_truth", "w_reco"):
+                dev = float(ev[f"{leg}_max_ratio_deviation"])
+                tol = float(ev[f"{leg}_tolerance"])
+                if not dev <= tol:
+                    raise SystemExit(
+                        f"[gate5-dataonly] P5' persisted {leg} closure evidence does not "
+                        f"satisfy its own tolerance ({dev:.6e} > {tol:.6e})")
+            if float(ev["derived_normalization_constant"]) <= 0:
+                raise SystemExit("[gate5-dataonly] P5' persisted normalization constant "
+                                 "is not positive")
+            mc_ev = np.asarray(store["measured_closure_evidence"], dtype=object).item()
+            if not float(mc_ev["closure_abs_deviation"]) <= float(mc_ev["closure_tolerance"]):
+                raise SystemExit("[gate5-dataonly] P5' persisted measured-leg closure evidence "
+                                 "does not satisfy its own tolerance")
+            data_factor = np.asarray(store["data_bootstrap_factor"], dtype=np.uint8)
+            sig_ones = np.ones(n_sig, dtype=np.uint8)
+            bkg_ones = np.ones(n_bkg, dtype=np.uint8)
+            # === THE RETURN SHAPE, AND WHY IT WAS BROKEN ===
+            #
+            # This branch used to `return dict(...)` while both callers do
+            #     contract, sig_factor, evidence = read_replica_contract(...)
+            # so it could not have been executed even once: nine keys unpacked into three names is a
+            # ValueError. The branch was unreachable AND wrongly shaped, and neither would have been
+            # noticed while the required-key gate above rejected data-only artifacts first. Three
+            # defects stacked so that no one of them could be observed.
+            #
+            # THE FACTOR DIGESTS ARE OF WHAT WAS APPLIED, which for the MC legs is unity. That is not
+            # a placeholder: downstream receipts publish these, and publishing the digest of a
+            # canonical draw the build did not apply is the defect this product exists to avoid.
+            factor_hashes = {
+                "data_factor_sha256": hash_array(data_factor),
+                "signal_factor_sha256": hash_array(sig_ones),
+                "background_factor_sha256": hash_array(bkg_ones),
+            }
+            # THE MANIFEST'S REPLACEMENT ASSERTION, RUN LIVE HERE TOO. The persisted
+            # `bootstrap_factor_sha256` block is copied verbatim from the target receipt, whose
+            # signal/background digests are of the CANONICAL draws. So for a data-only artifact the
+            # data digest must MATCH and the MC digests must DIFFER -- and the difference is positive
+            # evidence the MC legs were left unthinned, which is why this is stronger than the
+            # three-stream equality check rather than a relaxation of it (BEN-407).
+            factor_meta = scalar(store, "bootstrap_factor_sha256")
+            if factor_meta.get("data_factor_sha256") != factor_hashes["data_factor_sha256"]:
+                raise SystemExit("[gate5-dataonly] persisted data_factor_sha256 does not re-derive "
+                                 "from the artifact's own data_bootstrap_factor")
+            for key in ("signal_factor_sha256", "background_factor_sha256"):
+                if factor_meta.get(key) is None:
+                    raise SystemExit(f"[gate5-dataonly] target receipt carries no {key}; the "
+                                     f"unthinned-MC evidence cannot be established")
+                if factor_meta.get(key) == factor_hashes[key]:
+                    raise SystemExit(
+                        f"[gate5-dataonly] {key} EQUALS the digest of the unity array, so the target "
+                        f"stage's canonical draw was itself unity -- the MC legs cannot be shown to "
+                        f"have been left unthinned")
+            contract["_inputs_path"] = scalar(store, "inputs_path")
+            contract["_inputs_sha256"] = inputs_sha
+            contract["_subsample_indices"] = np.asarray(store["mc_indices"], dtype=np.int64)
+            contract["_subsample_push"] = np.asarray(store["weights_push"], dtype=np.float64)
+            evidence = {
+                "n_data_full": n_data,
+                "n_sig_full": n_sig,
+                "n_bkg_full": n_bkg,
+                "inventory_hashes": inventory_hashes,
+                "input_identity_hashes": identities,
+                "factor_sha256": factor_hashes,
+                "replica_target_sha256": str(scalar(store, "replica_target_sha256")),
+                "replica_target_receipt_sha256": str(
+                    scalar(store, "replica_target_receipt_sha256")
+                ),
+                # CARRIED SO THE DOWNSTREAM STAMPS CAN BRANCH. Without it the push/xsec/receipt
+                # products label a data-only extraction `gate5-cstat-coherent-replica` and stamp a
+                # `bootstrap_seed` for a draw that did not happen.
+                "cstat_product": product,
+                "data_bootstrap_seed": int(scalar(store, "data_bootstrap_seed")),
+            }
+            return contract, sig_ones, evidence
 
         fe.validate_coherent_bootstrap(
             store, bootstrap_seed=int(bootstrap_seed), n_sig_full=n_sig,
@@ -234,8 +319,89 @@ def read_replica_contract(weights_npz, replica_index, bootstrap_seed,
             "replica_target_receipt_sha256": str(
                 scalar(store, "replica_target_receipt_sha256")
             ),
+            # PRESENT ON BOTH BRANCHES so downstream never has to distinguish "three-stream" from
+            # "the key is missing" -- the absent-is-not-nominal rule that cost lane B a finding.
+            "cstat_product": product,
         }
     return contract, sig_full, evidence
+
+
+def install_nominal_extractor_dataonly_refusal():
+    """POSITIVE ROUTING ASSERTION: the pinned NOMINAL extractor must never be reached with a
+    data-only artifact.
+
+    WHY THIS IS NOT A VALUE PROBLEM (lane C, BEN-426). `extract_fullevent_fps.py:163` reads
+    `bootstrap_seed` with `-1` as the ABSENT default and `:178` raises unless the value IS `-1`,
+    because `-1` is its positive test for "this is the nominal, not a replica". So BOTH a written `-1`
+    AND an absent field satisfy it: a data-only artifact CANNOT satisfy that guard honestly and
+    correctly by any value at all. `bootstrap_seed` encodes two bits -- did it draw, and which draw --
+    in a one-field encoding that assumed they were correlated; three-stream is (drew, S), nominal is
+    (did not draw, -1), and data-only is (did not draw on MC, DID draw on data), the corner the
+    projection discards. **No value can fix an under-dimensioned encoding**, which is why five
+    candidate values failed for five unrelated reasons rather than converging on a near-miss.
+    Therefore it is a guard the product must never REACH, and reading it as a value problem is what
+    kept five dead options alive.
+
+    THE PINNED FILE CANNOT LEARN THE DIFFERENCE -- 18 digest sites -- so the discrimination is
+    installed IN FRONT of it, in this unpinned driver, using the same module-substitution idiom the
+    rest of this campaign uses. It fires on the actual failure route (someone points the nominal
+    contract reader at a replica npz) rather than asserting the absence of that route in prose.
+
+    Idempotent, and it returns the original so a caller can restore it.
+    """
+    original = nominal_extract.read_inference_contract
+    if getattr(original, "_gate5_dataonly_guarded", False):
+        return original
+
+    def guarded(weights_npz):
+        with np.load(weights_npz, allow_pickle=True) as z:
+            product = (str(scalar(z, "cstat_product"))
+                       if "cstat_product" in set(z.files) else None)
+        if product == replica_train.CSTAT_DATA_ONLY:
+            raise SystemExit(
+                f"[gate5-extract] ROUTING VIOLATION: the NOMINAL contract reader was invoked on a "
+                f"data-only replica artifact ({weights_npz}). extract_fullevent_fps.py:178 accepts "
+                f"bootstrap_seed == -1 as proof of nominal, and -1 is also its absent-default at "
+                f":163, so a data-only artifact passes that guard whether the field is stamped or "
+                f"missing. The guard cannot be satisfied honestly here and must not be reached.")
+        return original(weights_npz)
+
+    guarded._gate5_dataonly_guarded = True
+    nominal_extract.read_inference_contract = guarded
+    return original
+
+
+def assert_extraction_stamps_support(evidence):
+    """Refuse to extract a data-only replica until this file's OUTPUT stamps are branched.
+
+    WHY A REFUSAL AND NOT A FIX, stated so the next reader does not have to guess. Eight write sites
+    below stamp `campaign_role = ROLE` (`gate5-cstat-coherent-replica`) and
+    `bootstrap_seed = args.bootstrap_seed` into the push array, the xsec array, and three receipts.
+    On a data-only artifact both are FALSE: the product is not a coherent replica, and no coherent
+    draw happened. Branching them correctly means deciding whether `PUSH_SCHEMA` / `XSEC_SCHEMA` get
+    new versions, which is a product decision and not mine to make -- and a downstream consumer
+    keyed on the schema string would silently accept a differently-shaped payload under the old name.
+
+    So this converts a SILENT MISLABEL into a NAMED REFUSAL. It is fail-closed, it costs nothing
+    today (no data-only training artifacts exist, so nothing can reach here), and it cannot be
+    satisfied by accident: whoever branches the stamps has to delete this guard, which is where the
+    schema question will be unavoidable.
+
+    A guard gets a test that it FIRES. `test_extraction_refuses_data_only_until_stamps_branched`.
+    """
+    product = evidence.get("cstat_product")
+    if product is None:
+        raise SystemExit("[gate5-extract] evidence carries no cstat_product; absent is not "
+                         "three-stream -- fail closed")
+    if product == replica_train.CSTAT_DATA_ONLY:
+        raise SystemExit(
+            "[gate5-extract] REFUSING to extract a data-only replica: this driver's output stamps "
+            "(campaign_role, bootstrap_seed) are still three-stream at 8 write sites, and emitting "
+            "them would label the product a coherent replica and assert a draw that did not happen. "
+            "Branch the stamps -- and decide whether PUSH_SCHEMA/XSEC_SCHEMA need new versions -- "
+            "then remove this guard.")
+    if product != replica_train.CSTAT_THREE_STREAM:
+        raise SystemExit(f"[gate5-extract] unknown cstat_product {product!r}")
 
 
 def extract_replica_xsec(inputs_npz, w_push, sig_factor, **kwargs):
@@ -273,6 +439,7 @@ def run_push(args):
     contract, sig_factor, evidence = read_replica_contract(
         args.weights, args.replica_index, args.bootstrap_seed, args.expected_inputs_sha
     )
+    assert_extraction_stamps_support(evidence)
     nominal_extract._assert_same_dump(contract, args.inputs)
     if int(evidence["n_sig_full"]) != int(sig_factor.size):
         raise SystemExit("[gate5-extract] signal inventory length mismatch")
@@ -327,6 +494,7 @@ def run_xsec(args):
     contract, sig_factor, evidence = read_replica_contract(
         args.weights, args.replica_index, args.bootstrap_seed, args.expected_inputs_sha
     )
+    assert_extraction_stamps_support(evidence)
     nominal_extract._assert_same_dump(contract, args.inputs)
     if not is_complete(args.push_out):
         raise SystemExit("[gate5-extract] full push completion marker is invalid")
@@ -497,6 +665,9 @@ def main(argv=None):
     ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated")
     ap.add_argument("--n-nucleons", type=float, default=None)
     args = ap.parse_args(argv)
+    # INSTALLED BEFORE ANY STAGE RUNS, so the routing constraint holds for every path through this
+    # driver rather than for the ones I remembered to annotate.
+    install_nominal_extractor_dataonly_refusal()
     if not 0 <= args.replica_index < 50:
         raise SystemExit("[gate5-extract] replica index is outside predeclared 0..49")
     if args.bootstrap_seed != 50000 + args.replica_index:

@@ -2,11 +2,26 @@
 
 **BEN-396.** Filed 2026-08-17 by the seconding lane (block `390-399`).
 
-**Attribution, and the first thing in it is a failure of this row's own subject.** The species and its
-formulation are a peer session's, which the mediator names **"Assistant."** **That is not this lane, and I
-cannot resolve which session it is** — the same name has been used in my hearing for at least two different
-sessions today, and I have declined credit for a derivation attributed to it once already. **So the formulation
-is credited to a party I cannot name, which is exactly the defect below: a claim arrived without its route.**
+**ATTRIBUTION RESOLVED 2026-08-18, and the route is a cleaner instance of this row's subject than the
+ambiguity it replaces.** The species and its formulation are the **review / second-key lane's** (peer session
+`Assistant [28640e]`), which identified itself against a checkable list of its own day's work and claimed
+nothing outside it. **Named here at its request.**
+
+**How the attribution came loose, in its own account, and nobody did anything wrong.** It sent the
+formulation to the mediator inside a message conceding its own `item 6` citation slip. The mediator replied
+*"let me state it in the first person rather than relay it in the third,"* and restated it as its own — which
+was **correct**, because it was an admission about the mediator's own day — and it reached this lane from
+there, originless.
+
+> **A formulation that is ADOPTED rather than QUOTED loses its origin at the point of adoption, and no
+> downstream reader can recover it.** The remedy is not *"attribute carefully"*: it is **when you take another
+> party's formulation into the first person, name whose it was in the same sentence, because adoption is the
+> step that erases it.**
+
+**This is a better instance than the one it replaces.** The earlier text recorded an unresolvable name and
+called that the defect. The defect was not ambiguity — it was that **the honest move and the erasing move were
+the same move.** A rule against careless attribution would not have caught it, because no carelessness
+occurred.
 The three instances are the mediator's, self-reported. They were caught by lanes B, D and C respectively.
 
 ## The species

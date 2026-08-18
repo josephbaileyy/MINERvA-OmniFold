@@ -303,9 +303,6 @@ class PETAndNNTests(unittest.TestCase):
         self.assertIn("tf.keras.utils.set_random_seed(args.estimator_seed)", source)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class QuarantineCauseGuardTests(unittest.TestCase):
     """The TEST leg of quarantine causes 1, 2, 3 and 4 (VALIDATION_LEDGER.md's 2026-07-12 list).
@@ -731,3 +728,5 @@ class Cause1PathAuditTests(unittest.TestCase):
                     found.append(f"{mod}.py:{i}")
         self.assertEqual(found, ["analyze_universes_5d.py:109"],
                          "unaccounted outer product on X's build path -- a cause-1 candidate")
+if __name__ == "__main__":
+    unittest.main()
