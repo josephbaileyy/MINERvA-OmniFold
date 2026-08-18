@@ -172,30 +172,105 @@ half 0 / half 4    8.0000            7.70%                   7.16%    0.930
 
 > **Then Jensen closes it: at fixed mean displacement `E|d_b| = m`, `E[d_b²] ≥ m²` with equality IF AND ONLY IF
 > `d_b` is CONSTANT.** So among all patterns with the same mean displacement, **the constant one minimises
-> `E[d²]` and therefore minimises the inflation.** **The constant-displacement figures are a FLOOR over the
-> whole family, not three lucky draws** — which is stronger than the hypothesis and removes the need to sample
-> configurations at all.
+> `E[d²]` and therefore minimises the inflation.** **The constant-displacement figures are a FLOOR** — which
+> removes the need to sample configurations at all.
 >
-> **And a second fact the table gives away: the ratio drifts to `0.930` as `E[d²]` grows, so leg A's exact
-> formula OVER-estimates leg B's inflation at fixed `E[d²]`.** `f_agg`'s algebra is therefore a
-> conservative proxy for `f_med` — usable, and now with its direction known.
+> **⚠ BUT THE FLOOR IS EXACT ONLY FOR LEG A, AND FOR LEG B IT NEEDS A PRECONDITION I OMITTED — see §3c-iii,
+> where it is exhibited failing.** Corrected the same day it was written.
 
-### 3c-ii. TWO OF A's FOUR FIGURES DID NOT REPRODUCE, and it changes nothing — reported because that is the rule
+### 3c-ii. TWO OF A's FOUR FIGURES DID NOT REPRODUCE — **RESOLVED: same model, different realisation, no defect on either side**
 
 **`uniform 0…2`: mine `1.31 %`, A's `1.46 %`. `lognormal`: mine `1.23 %`, A's `1.34 %`.** My MC standard error
 is `0.007 %`, so these are not noise. **Constant (`0.99 %`) and half-half (`1.95 %`) match exactly.**
 
-> **And the `E[d²]` law says A's uniform figure is UNREACHABLE by the stated pattern: `uniform(0,2)` has
-> `E[d²] = 4/3` exactly, giving `1.32 %` at `n = 50` with `σ_b = 1`. `1.46 %` needs `E[d²] ≈ 2.95`.** So the two
-> runs differ in setup — most likely `σ_b` varying across bins against an ABSOLUTE `d_b`, which is a different
-> and also legitimate model, or a different lognormal parameterisation *(`lognormal(0, 0.5)` has mean `1.133`
-> and `E[d²] = 1.649`, which WOULD give `1.63 %`)*.
+**RESOLVED by lane A, and my own benign hypothesis was WRONG.** I had guessed `σ_b` varying against an absolute
+`d_b`. A ran exactly my model — `σ_b = 1` for every bin, `ε ~ N(0,1)` per bin, `d_b` added to member 0 — so that
+explanation is closed. **The cause is the REALISED second moment:**
+
+```
+pattern                  A's realised E[d^2]   A meas   C meas   inflation at A's realised E[d^2]
+uniform 0..2                          1.5015    1.46%    1.32%   1.49%   <- matches A
+half 0 / half 2                       2.0070    1.94%    1.95%   1.98%   <- matches both
+lognormal(-0.35, 0.8)                 1.6521    1.34%     n/a    1.63%   (see 3c-iii: a TAIL effect)
+```
+
+**Verified here: for 285 draws of `uniform(0,2)`, `sd(Ê[d²]) = 0.0706`, so A's `1.5015` is a `+2.38 σ` draw —
+high, unremarkable, attainable.** And `1.49 %` is what the law gives at that realised moment, against A's
+measured `1.46 %`. **Neither run has a defect.**
+
+> **AND THE STRUCTURAL CAUSE IS SIMPLER THAN EITHER OF US SAID: A DREW ONE `d` ARRAY PER PATTERN AND HELD IT
+> FIXED; MY SCRIPT REDRAWS IT EVERY TRIAL AND AVERAGES.** So A reports a single realisation and I report the
+> expectation over realisations. That explains all four rows at once — A's half-half realised `2.0070` against a
+> population `2.0000` and therefore agreed; its uniform realised `+2.4 σ` and therefore did not.
 >
-> **NOT RESOLVED and deliberately not adjudicated: the discrepancy does not touch either conclusion.** All four
-> patterns inflate, all four exceed the constant case, and §3c-i's theorem is independent of any of the eight
-> numbers. **Recorded because two lanes reporting different values for the same quoted quantity is exactly what
-> gets copied forward as agreement.** *(If A's setup does scale `σ_b`, its numbers are the more realistic ones
-> and mine are the cleaner isolation of the mechanism — both worth having, neither replacing the other.)*
+> **A's own diagnostic — *"the pattern that agrees is the DETERMINISTIC one, identical in both runs by
+> construction"* — reaches the right conclusion by a reason that does not hold: in MY script `half 0 / half 2`
+> is `np.where(rng.random(nb) < 0.5, …)`, i.e. randomly drawn, and its realised `E[d²]` has spread `±0.120`
+> across trials — WIDER than `uniform(0,2)`'s `±0.071`, not tighter.** It agreed because both runs landed near
+> the population value, not because either was deterministic. **A's conclusion is nevertheless established
+> independently by the realised-moment arithmetic above, which needs no diagnostic at all.**
+
+**AND THE FIX IS IN THE ARTIFACT, WHICH IS THE POINT.** `mii_anchor_confound_mc.py` now prints the **realised**
+`E[d²]` and its spread beside every population value. **It cost A a hand reconstruction of a call order to find
+this; it would have cost one glance.** *(A's note that my tracked-MC decision is what made the class visible is
+accepted — and it cuts against me too: my own first draft's `0.0025 / −0.21 %` pair came from a scratch run at a
+different stream position, which is the same defect one layer down.)*
+
+### 3c-iii. ⚠ MY FLOOR OVER-CLAIMED, AND MY *"drift with `E[d²]`"* READING WAS A CONFOUND OF TWO AXES
+
+**A's `lognormal` ratio of `0.82` at `E[d²] = 1.65` does not sit on my trend** — my table has `0.964` at `1.29`
+and `0.986` at `2.00`. **So `0.82` is not "further along" my drift; it is a different axis.** Tested by matching
+`E[d²]` at `1.65` and varying only the lognormal's `σ`:
+
+```
+sigma   E|d|     E[d^2]    pred    meas   ratio
+  0.3  1.2288    1.6529   1.64%   1.63%   0.993
+  0.5  1.1343    1.6544   1.64%   1.56%   0.954
+  0.8  0.9333    1.6561   1.64%   1.30%   0.793   <- reproduces A's 0.82
+  1.2  0.6256    1.6405   1.63%   0.81%   0.499
+  1.6  0.3574    1.5250   1.51%   0.41%   0.274
+```
+
+> **At FIXED `E[d²]` the ratio spans `0.719`. So the ratio is set by the displacement pattern's CONCENTRATION,
+> not by its second moment — and my *"drifts to `0.930` as `E[d²]` grows"* was an artifact of my six patterns
+> happening to be ordered by BOTH axes.** A's number is confirmed *and* explained: `σ = 0.8` gives `0.793` here.
+
+**AND THE SAME MECHANISM BREAKS MY FLOOR. Exhibited, all patterns at `E|d_b| = 1` EXACTLY and deterministic:**
+
+```
+pattern (E|d|=1)          E[d^2]   f_agg pred   f_med meas
+constant 1                 1.000        1.00%        0.98%   <- the claimed floor
+half 0 / half 2            1.993        1.97%        1.92%   above
+1 bin in 5 at 5            5.000        4.88%        2.93%   above
+1 bin in 20 at 20         21.053       19.21%        0.70%   BELOW  <-- FLOOR VIOLATED
+1 bin in 285 at 285      285.000      158.84%        0.05%   BELOW  <-- FLOOR VIOLATED
+```
+
+> **So Jensen's ordering is EXACT for `f_agg` — it is a statement about `E[d²]` and `f_agg` is a function of
+> `E[d²]` — and CONDITIONAL for `f_med`: it requires the displacement to reach a MAJORITY OF BINS. Concentrate
+> the same mean displacement into a minority and the median becomes robust to it and lands BELOW the constant
+> case, with `E[d²]` of 285 and an inflation of `0.05 %`.**
+>
+> **THAT PRECONDITION IS EXACTLY A's UNIVERSALITY CONDITION, WHICH IS WHY THE CORRECTION IS A's WIN AND NOT
+> MINE.** I built a theorem on top of A's mechanism and dropped the mechanism's hypothesis on the way. **It
+> APPLIES to this campaign's case for a PHYSICAL reason, not a mathematical one: one perturbed bootstrap replica
+> moves the whole unfolded spectrum, not one cell.** A theorem plus a physical fact, and the second is the part
+> a later lane would forget.
+
+### 3c-iv. So A's *"the Jensen result retires my contribution"* is WRONG, and the record should say so
+
+**A asked that its contribution be recorded as retired. It is not, and over-claiming against oneself corrupts
+the record in the same way as over-claiming for oneself.**
+
+> **Jensen ORDERS patterns by `E[d²]`. It says nothing whatever about whether a MEDIAN inflates at all** — and
+> §3c-iii shows the ordering itself fails for `f_med`. **A's MC established that the direction survives the
+> median. That result is load-bearing for leg B, is not derivable from Jensen, and supplied the precondition my
+> theorem needed.**
+>
+> **What Jensen retires is one sub-claim — *"non-constant inflated more in three sampled configurations"* — and
+> only within the majority-of-bins regime.** A's framing traded a live result for a retired one. **The
+> arrangement is the reverse: A's mechanism is the foundation and my theorem is the conditional refinement on
+> top of it.**
 
 ## 3d. THE ASYMMETRY, in A's general form — **adopted verbatim, with its condition**
 
@@ -306,6 +381,12 @@ remaining.)*
   figures are a FLOOR on `f_med`, not a ceiling**; A's three-case asymmetry adopted verbatim; the
   reordering upgraded from hypothesis to theorem by Jensen; and two of A's four MC figures reported as
   NOT reproducing, with the conclusion unaffected (§3c-ii).
+- **AMENDED AGAIN, 2026-08-18, and TWO OF THE THREE ARE CORRECTIONS TO ME:** the eight-number
+  disagreement is RESOLVED (A drew one `d` array and held it; I redraw per trial — A's `uniform(0,2)`
+  realised a `+2.4 σ` second moment, and **my own benign hypothesis about `σ_b` was wrong**); **my
+  Jensen floor over-claimed** and is conditional on A's universality hypothesis for `f_med`, exhibited
+  failing in §3c-iii; **my *"drift with `E[d²]`"* reading was a two-axis confound** and the ratio is a
+  concentration effect; and **A's claim that Jensen retires its own contribution is refused** (§3c-iv).
 - **AUTHORIZED: nothing.** §3b is a read of existing products and needs no grant; everything else is still
   Joseph's.
 
