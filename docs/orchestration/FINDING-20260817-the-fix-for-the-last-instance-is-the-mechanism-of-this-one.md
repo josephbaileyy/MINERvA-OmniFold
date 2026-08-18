@@ -89,6 +89,51 @@ contained both mismatches — **but that could not be known without the untrunca
 the whole point. The general form worth keeping: **truncating a slow run costs more than the
 truncation saves, always, because the re-run pays the full price the truncation was avoiding.**
 
+## Amendment 1 (2026-08-18) — a second mechanism for the same defect: the INTERPRETER differs, not the file set
+
+Filed as *"the population it scans differs by location"* — untracked receipts and absent targets.
+**There is a second way for a check to be honestly green locally and wrong where it runs, and it does
+not need the file set to differ at all.** Measured at both ends, same three lines, same repository:
+
+| where | interpreter | `set -euo pipefail; PASS=0; ((PASS++)); echo SURVIVED` |
+|---|---|---|
+| this Mac checkout | GNU bash **3.2.57** (arm64-apple-darwin) | **SURVIVED**, exit 0 |
+| Perlmutter login node | GNU bash **4.4.23** (x86_64-suse-linux) | **exit 1, no output** |
+| this Mac, zsh (lane A) | zsh | **KILLED** |
+
+`((PASS++))` returns the **old** value, so its first increment from `0` exits non-zero;
+`((++PASS))` and `PASS=$((PASS+1))` are the portable idioms.
+
+**THE ASYMMETRY IS THE FINDING AND IT IS ONE-DIRECTIONAL: local is the PERMISSIVE end.** A shell
+check that passes on a Mac checkout can fail on the cluster; the reverse does not occur for this
+class. So:
+
+> **A `set -e` audit run from a Mac checkout systematically UNDER-REPORTS.** Not *"may differ"* —
+> under-reports, in the direction that produces false confidence.
+
+Several lanes work from Mac checkouts, and **`.githooks/pre-commit` runs on the committer's machine**,
+so any check whose verdict depends on shell *semantics* rather than on *text* inherits the local
+interpreter and inherits this bias. That is the same sentence as this finding's original claim with
+*"population"* replaced by *"interpreter"*, which is why it is an amendment and not a row —
+`BEN-391`: N citations of one sentence is one source.
+
+**WHAT IS NOT AFFECTED, checked rather than assumed**, because it is the obvious next worry: the
+continuation lint admitted today (`check_continuation_integrity.py`) is a **Python text scanner**. It
+parses shell as text and executes none of it, so its verdict is interpreter-independent and the
+`ADMIT` stands. **`bash -n` is a different matter** — it is the local shell's own parser, and a
+`bash -n`-clean result from a Mac checkout is a statement about bash 3.2.
+
+**Credit:** lane A measured both local ends and named the transportable consequence; the cluster
+measurement is mine. **And the accounting on how I got there belongs in the row:** my original claim
+that `set -e` would kill the script was derived from `set -e` semantics *in general* and asserted
+about a *specific* script. The measurement vindicated the claim and **not the derivation** — a right
+answer reached by a non-transportable route is one you cannot rely on next time, and the next
+construct may differ the other way.
+
+**Scope, stated rather than glossed:** the cluster figure is the **login node**. SLURM executes on a
+compute node, same OS image, and the shebang settles the interpreter family — strong, and still **two
+hops of population with one measured.**
+
 ## Family
 
 - `BEN-250` — a check whose strongest statement could not fail.
