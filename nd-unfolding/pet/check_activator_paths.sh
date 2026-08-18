@@ -60,13 +60,29 @@ done < <(grep -oE '\$\{SCRIPT_DIR\}/[A-Za-z0-9_./-]+' "$FINAL" | sed 's|^${SCRIP
 echo "MISSING_COUNT=$missing"
 [ "$missing" -eq 0 ] || { echo "PATHS_MISSING"; exit 3; }
 
-# Activation ATTEMPTED and reported, never gating -- see the header.
-if bash --noprofile --norc -c "source '$ACT' >/dev/null 2>&1 && command -v python3" >/dev/null 2>&1; then
-  echo "ACTIVATION_INFO=succeeded"
+# === ACTIVATION IS NOW A GATE, AND THE HEADER'S CAVEAT IS SUPERSEDED. ===
+#
+# I wrote earlier that activation could not be made a reliable gate. THAT WAS TRUE OF MY TEST, NOT OF THE
+# SUBJECT: I was imposing `set -u` and `env -i`, neither of which the job has. Under the launcher's ACTUAL
+# options -- `set -eo pipefail`, no `-u`, inherited environment -- activation succeeds deterministically.
+#
+# It is promoted only now because it has been power-tested BOTH WAYS on the real filesystem, without a pipe
+# so the exit code is the shell's and not `tail`'s:
+#     fixed shim        -> rc=0, marker ACTIVATED
+#     shim with `set -u` (the exact 57235710 arrangement) -> rc=1, no marker
+# THAT NEGATIVE IS THE REASON IT IS A GATE. The path check above PASSED while the shim was fatal, so it is
+# necessary and not sufficient: it verifies what the activator can FIND, never that the shell SURVIVES it.
+act_out=$(bash --noprofile --norc -c "set -eo pipefail; source '$ACT' >/dev/null 2>&1; echo ACTIVATED" 2>/dev/null)
+act_rc=$?
+if [ "$act_rc" -eq 0 ] && [ "$act_out" = "ACTIVATED" ]; then
+  echo "ACTIVATION=ok"
 else
-  echo "ACTIVATION_INFO=did-not-complete-in-this-shell (NOT a failure condition; see header)"
+  echo "ACTIVATION_FAILED rc=$act_rc marker=[$act_out]"
+  echo "The activator does not survive being sourced under the launcher's own shell options."
+  echo "57235710 died 50/50 in 10 s exactly this way, on a `set -u` in the data root's shim."
+  exit 4
 fi
 echo "ENV_PATHS_OK"
 
-echo "[activator-paths] PASS -- every path the activator resolves against its own directory exists from"
-echo "[activator-paths] this data root. Activation itself is reported above as INFO, never as a gate."
+echo "[activator-paths] PASS -- every path the activator resolves against its own directory exists AND the"
+echo "[activator-paths] activator survives being sourced under the launcher's own shell options."

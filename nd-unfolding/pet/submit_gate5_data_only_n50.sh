@@ -183,7 +183,15 @@ EXPORTS+=",GATE5_EXPECTED_LOADER_SHA=$(sha_of "$LOADER")"
 # product wearing the same name.
 EXPORTS+=",GATE5_EXPECTED_PREDICATES_SHA=$(sha_of "$PREDICATES")"
 
-TARGET_JOB=$(sbatch --parsable --array=0-49%10 --export="$EXPORTS" "$TARGET_SCRIPT") \
+# LOG PATHS OVERRIDDEN ON THE COMMAND LINE, because `#SBATCH --output=` in the launcher is an ABSOLUTE path
+# into the generation-one tree and sbatch parses those directives BEFORE the script runs -- so they cannot
+# see `$DATA_ROOT` and a g2 run's logs land in g1's log directory, interleaved and distinguishable only by
+# job id. Found by looking for 57235710's logs in the g2 tree and finding none. A command-line `--output`
+# wins over the directive, so the launcher's default is left intact for the generation-one reproduction.
+mkdir -p "$OUTPUT_ROOT/logs"
+TARGET_JOB=$(sbatch --parsable --array=0-49%10 --export="$EXPORTS" \
+  --output="$OUTPUT_ROOT/logs/target_%A_%a.out" --error="$OUTPUT_ROOT/logs/target_%A_%a.err" \
+  "$TARGET_SCRIPT") \
   || die "target-array submission failed"
 [[ "$TARGET_JOB" =~ ^[0-9]+$ ]] || die "unexpected target job id $TARGET_JOB"
 if [[ "$STAGE" == "target" ]]; then
@@ -199,7 +207,9 @@ if [[ "$STAGE" == "target" ]]; then
   TRAIN_JOB="DEFERRED"
 else
   if ! TRAIN_JOB=$(sbatch --parsable --array="$TRAIN_ARRAY" --dependency="aftercorr:${TARGET_JOB}" \
-        --export="$EXPORTS" "$TRAIN_SCRIPT"); then
+        --export="$EXPORTS" \
+        --output="$OUTPUT_ROOT/logs/train_%A_%a.out" --error="$OUTPUT_ROOT/logs/train_%A_%a.err" \
+        "$TRAIN_SCRIPT"); then
     scancel "$TARGET_JOB" || true
     die "training-array submission failed; exact target array $TARGET_JOB cancelled"
   fi
