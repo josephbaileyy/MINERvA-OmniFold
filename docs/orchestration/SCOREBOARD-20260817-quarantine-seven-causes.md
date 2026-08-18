@@ -273,7 +273,7 @@ produced every wrong figure on this cell**: mine (~1 GPU-node-hour, wrong footin
 (right footing, stale by 37.1%, and pricing an unsatisfiable condition), and my `~28.5×` ratio (cross-unit
 by 4× *and* non-commensurable). **Four wrong numbers on one cell in one day, three of them mine.**
 
-## 2c. `M(ii)`'s referent — PROPOSAL, awaiting a second or a dissent
+## 2c. `M(ii)`'s referent — **RESOLVED BELOW: `(B)` ADOPTED, `M(ii)` recorded UNMEASURED** *(was "PROPOSAL, awaiting a second or a dissent"; the proposal was seconded on independent grounds by lane A and the resolution is at the CONCEDED block further down this section — the heading described the state BEFORE the resolution inside its own section, and two lanes spent a round trip on a question already answered here. `BEN-460`.)*
 
 The mediator asked: **which leg's seed does `M(ii)` mean?** My answer has two parts and the second is the
 one I think is actually open.
@@ -285,6 +285,8 @@ ensembles are named in the defect, so a magnitude covering only one measures onl
 re-deciding this; I am pointing at it**, and `VL141` also states the reason it needed its own row: *"a
 false quotable claim about the candidate, independent of cause 3."*
 
+**⚠ PART 2 STATES THE PROBLEM, NOT THE OUTCOME — `(B)` IS ADOPTED FURTHER DOWN THIS SECTION.** Read to the CONCEDED block before treating anything here as open. *(Left as written because the gap it describes was real and its statement is what the resolution answers; a reader who stops here concludes the gap is live, which is exactly what happened. `BEN-460`.)*
+
 **Part 2 — the real gap, and it is a SPECIFICATION GAP rather than an ambiguity.** `CRITERIA` §2 asks for
 *"**the** magnitude of what varying seeds would have contributed"* — **singular magnitude, two seeds** — and
 it does **not** say whether that is:
@@ -295,7 +297,7 @@ it does **not** say whether that is:
 **These are different numbers, and choosing between them is a physics decision, not a reading.** (A)
 treats the two legs' estimator noises as independent contributions to be added; (B) does not, and would
 capture any correlation between them. The covariance sums blocks, so (A) is the construction-shaped answer
-and (B) is the ensemble-shaped one. **The criterion is silent, and no amount of careful reading makes it
+and (B) is the ensemble-shaped one. **The criterion is silent, and no amount of careful reading makes it  **← AND THAT IS WHY A SPECIFICATION WAS CHOSEN RATHER THAN READ: see the CONCEDED block below, `(B)` adopted.**
 speak** — which is the test the mediator set for calling something a gap rather than an ambiguity.
 
 **So: recorded as a specification gap that needs a decision, not papered.** And note the ordering it
