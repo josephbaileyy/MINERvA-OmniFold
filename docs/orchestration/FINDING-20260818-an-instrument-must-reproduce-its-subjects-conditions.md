@@ -82,3 +82,48 @@ composition rather than the conditions), `BEN-418` (checks that matched their ow
 `BEN-415`/`BEN-417` (a green verdict over a population smaller than it appears), `BEN-258` amendment 1 (a live
 guard that has never fired is unverified — the addendum's refusal was exactly that until it was run somewhere
 it could fire).
+
+---
+
+## Amendment, same day: an over-strict SHIM kills the job
+
+**Forty minutes after filing this, I wrote `set -u` into a production shim** — the file placed in the
+generation-two data root so the environment activator resolves its paths correctly. For hygiene. It killed
+array `57235710`, 50 tasks of 50, in ten seconds each, with an empty `.out`: exactly the failure the shim
+existed to fix.
+
+The activator reaches conda's `activate-binutils_linux-64.sh`, which references `ADDR2LINE` unbound. Under
+`set -u` that is fatal to the whole shell — and `source` runs in the **caller's** shell, so the task dies
+before its first line of work.
+
+Isolated by execution rather than reading:
+
+```
+bash -c "set -eo pipefail; source <g2 shim>;        echo OK"   ->  dies, no OK
+bash -c "set -eo pipefail; source <real activator>; echo OK"   ->  OK
+```
+
+> **AN OVER-STRICT INSTRUMENT RAISES A FALSE ALARM. AN OVER-STRICT SHIM KILLS THE JOB.**
+
+Same error as both instances above, **one category worse, because a shim sits ON the execution path rather
+than beside it.** The instrument version costs a wasted investigation; the shim version costs an array. And
+the launcher's options were one `grep` away the whole time: `set -eo pipefail`, no `-u`, line 15.
+
+### The corollary, which cost more than the outage
+
+I had told the orchestrator that activation **could not be made a reliable gate**. It accepted that and
+published it to the principal as a named scope limit.
+
+**It was true of my test, not of the subject.** All three activation failures — `set -u`, `env -i`, and
+reading a conda warning as fatal when 2 of 50 historical tasks emitted it and completed — were conditions the
+job does not have. Under the launcher's actual options, activation is deterministic, and it is now a hard gate
+power-tested both ways, with the `set -u` shim shape as its negative case.
+
+> **A published limitation can be an artifact of the instrument.** *"I could not make this work"* and *"I was
+> testing it wrong"* are different facts, and only the second was true — but the first is what other people
+> planned around.
+
+So the check to steal grows one line: **before reporting that something cannot be verified, verify that your
+attempt reproduced the subject's conditions.** A scope limit is a claim, and it needs the same standard as any
+other.
+
