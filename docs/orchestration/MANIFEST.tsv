@@ -67,6 +67,7 @@ docs/orchestration/DETERMINATION-20260811-cause5-binding-half.md	LIVE	document		
 docs/orchestration/DETERMINATION-20260817-cause1-census-and-magnitude-measured.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	5	222	14979
 docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	6	252	17592
 docs/orchestration/DETERMINATION-20260817-cluster-sync-step1-safe-and-the-fork-is-gone.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	126	7165
+docs/orchestration/DETERMINATION-20260817-cstat-data-only-build-complete.md	LIVE	document		20260817	open		route-only		no	2	128	8135
 docs/orchestration/DETERMINATION-20260817-cstat-data-only-route-and-cost-to-build.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	131	7670
 docs/orchestration/DETERMINATION-20260817-lanec-cstat-object-is-total-statistics.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	185	13331
 docs/orchestration/DETERMINATION-20260817-oi126-band-is-not-the-mc-sparse-end.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	107	5961

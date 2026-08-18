@@ -32,6 +32,17 @@ from atomic_write import atomic_write, is_complete, mark_complete  # noqa: E402
 
 SEED_POLICY = "gate5-cstat-n50-v1: bootstrap_seed=50000+replica_index"
 
+from cstat_data_only import (  # noqa: E402
+    CSTAT_DATA_ONLY,
+    CSTAT_PRODUCTS,
+    CSTAT_THREE_STREAM,
+    CLOSURE_TOL_EPS,
+    F32_EPS,
+    assert_data_only_streams,
+    assert_mc_leg_unthinned,
+    assert_ratio_provenance_block,
+    rescale_measured_to_data_only_R,
+)
 
 def sha256_file(path, chunk=16 << 20):
     h = hashlib.sha256()
@@ -259,9 +270,128 @@ def run_nominal_adapter(args, target_receipt):
         })
         return original_atomic(path, augmented, **kwargs)
 
-    nominal.fe.build_fullevent_loaders = replica_build
+    # ------------------------------- DATA-ONLY PATH (C_stat^data) -------------------------------
+    def replica_build_data_only(*build_args, **build_kwargs):
+        """Unthinned MC via `bootstrap_seed=None`, then the data draw restored to the measured
+        normalization driver-side. The ORDER here is load-bearing: rescale, then closure, and
+        nothing hashes the measured weights until both have run."""
+        if build_kwargs.get("bootstrap_seed") not in (None, int(args.bootstrap_seed)):
+            raise SystemExit("[gate5-dataonly] conflicting bootstrap seed at loader seam")
+        # THE WHOLE POINT: None leaves the MC legs untouched (:1332-1334). It also leaves the
+        # measured normalization at nominal R, which is repaired below and NOT left implicit.
+        build_kwargs["bootstrap_seed"] = None
+        build_kwargs["precomputed_target_replica_seed"] = int(args.bootstrap_seed)
+        result = original_build(*build_args, **build_kwargs)
+        data_loader, mc_loader, imc, _cr, _cg = result[0], result[1], result[2], result[3], result[4]
+        meta = result[-1]
+        fe.assert_refined_target_is_replica(
+            meta.get("target") or {}, bootstrap_seed=int(args.bootstrap_seed)
+        )
+        if meta.get("bootstrap") is not None:
+            raise SystemExit("[gate5-dataonly] loader published a bootstrap block; the MC legs "
+                             "were thinned and this is not a data-only build")
+
+        with np.load(args.inputs) as d:
+            n_data = int(np.asarray(d["measured_pc"]).shape[0])
+            n_sig = int(np.asarray(d["w_truth"]).shape[0])
+            n_bkg = int(np.asarray(d["w_bkg"]).shape[0])
+            w_truth_full = np.asarray(d["w_truth"], dtype=np.float32)
+            w_reco_full = np.asarray(d["w_reco"], dtype=np.float32)
+            data_factor, _sig_unused, _bkg_unused = fe.coherent_bootstrap_factors(
+                n_data, n_sig, n_bkg, int(args.bootstrap_seed))
+            ones_bkg = np.ones(n_bkg, dtype=np.uint8)
+            # R with NO factors must reproduce the loader's own stamp. If it does not, one of my
+            # operands is not the loader's and the rescale ratio would be wrong -- so this is an
+            # assertion, not a comfort. It covers every operand choice in one check.
+            r_nominal = float(fe.step1_class_ratio_from_dump(
+                d, n_data=n_data, w_truth_full=w_truth_full, w_reco_full=w_reco_full)[0])
+            r_data_only = float(fe.step1_class_ratio_from_dump(
+                d, n_data=n_data, w_truth_full=w_truth_full, w_reco_full=w_reco_full,
+                data_factor=data_factor, bkg_factor=ones_bkg)[0])
+
+        stamped = float((meta.get("target") or {}).get("step1_class_ratio"))
+        if abs(r_nominal - stamped) > CLOSURE_TOL_EPS * F32_EPS * abs(stamped):
+            raise SystemExit(f"[gate5-dataonly] independently derived nominal R {r_nominal!r} does "
+                             f"not reproduce the loader's stamp {stamped!r}; operands differ")
+
+        # P5a / P5b BEFORE the measured rescale, because they concern the MC leg and must not be
+        # able to observe anything the measured path does.
+        p5 = assert_mc_leg_unthinned(mc_loader, w_truth_full=w_truth_full,
+                                     w_reco_full=w_reco_full, imc=imc,
+                                     size=int(build_kwargs.get("size", 1) or 1))
+        closure = rescale_measured_to_data_only_R(
+            data_loader, r_nominal=r_nominal, r_data_only=r_data_only)
+
+        captured["meta"] = meta
+        captured["data_only"] = {
+            "n_data_full": n_data, "n_sig_full": n_sig, "n_bkg_full": n_bkg,
+            "data_factor": data_factor,
+            "inventory_hashes": fe.inventory_order_hash(w_truth_full),
+            "p5_mc_leg": p5,
+            "measured_closure": closure,
+            "ratio_provenance": {
+                "step1_class_ratio_loader_stamped": r_nominal,
+                "step1_class_ratio_applied": r_data_only,
+                "weights_embody": "step1_class_ratio_applied",
+                "loader_stamp_left_unmodified": True,
+            },
+        }
+        return result
+
+    def replica_atomic_data_only(path, arrays, **kwargs):
+        if "data_only" not in captured:
+            raise SystemExit("[gate5-dataonly] artifact write occurred before data-only evidence")
+        meta, ev = captured["meta"], captured["data_only"]
+        # P8 -- the loader's own stamp is left EXACTLY as written. Overwriting it would make a
+        # loader-stamped field assert what the loader did not do, which is the prohibition on
+        # rewriting a submit-time hash (BEN-406 §3). The correction is ADDITIVE.
+        if float((meta.get("target") or {}).get("step1_class_ratio")) != \
+                float(ev["ratio_provenance"]["step1_class_ratio_loader_stamped"]):
+            raise SystemExit("[gate5-dataonly] P8 loader step1_class_ratio was modified")
+        assert_ratio_provenance_block(ev["ratio_provenance"])  # P7
+        augmented = dict(arrays)
+        augmented.update({
+            "campaign_role": np.asarray("gate5-cstat-data-only-replica"),
+            "cstat_product": np.asarray(CSTAT_DATA_ONLY),
+            "replica_index": np.asarray(int(args.replica_index)),
+            "data_bootstrap_seed": np.asarray(int(args.bootstrap_seed)),
+            "data_bootstrap_factor": ev["data_factor"],
+            "sig_bootstrap_factor_full": np.ones(ev["n_sig_full"], dtype=np.uint8),
+            "bkg_bootstrap_factor_full": np.ones(ev["n_bkg_full"], dtype=np.uint8),
+            "n_data_full": np.asarray(ev["n_data_full"]),
+            "n_sig_full": np.asarray(ev["n_sig_full"]),
+            "n_bkg_full": np.asarray(ev["n_bkg_full"]),
+            "step1_class_ratio_loader_stamped": np.asarray(
+                ev["ratio_provenance"]["step1_class_ratio_loader_stamped"]),
+            "step1_class_ratio_applied": np.asarray(
+                ev["ratio_provenance"]["step1_class_ratio_applied"]),
+            "weights_embody": np.asarray(ev["ratio_provenance"]["weights_embody"]),
+            "p5_mc_leg_evidence": np.asarray(dict(ev["p5_mc_leg"]), dtype=object),
+            "measured_closure_evidence": np.asarray(dict(ev["measured_closure"]), dtype=object),
+            "input_identity_hashes": np.asarray(
+                dict(meta.get("input_identity_hashes") or {}), dtype=object),
+            "inventory_hashes": np.asarray(str(ev["inventory_hashes"])),
+            "replica_target_receipt_path": np.asarray(os.path.abspath(args.target_receipt)),
+            "replica_target_receipt_sha256": np.asarray(sha256_file(args.target_receipt)),
+            "replica_target_sha256": np.asarray(target_receipt["_verified_target_sha256"]),
+            "replica_seed_policy": np.asarray(SEED_POLICY),
+        })
+        # P1-P4 / P6 over what is about to be written, so a thinned-MC data-only replica never
+        # comes into existence rather than being detected afterwards.
+        assert_data_only_streams(augmented, data_bootstrap_seed=int(args.bootstrap_seed),
+                                 n_data_full=ev["n_data_full"], n_sig_full=ev["n_sig_full"],
+                                 n_bkg_full=ev["n_bkg_full"])
+        return original_atomic(path, augmented, **kwargs)
+
+    # ABSENCE MEANS THREE-STREAM, and that direction is deliberate: a family is never data-only by
+    # omission. Programmatic callers that predate this flag (the driver's own regression test builds
+    # `args` by hand) therefore keep their existing behaviour unchanged, while a data-only build must
+    # be asked for BY NAME. The artifact is self-identifying either way -- P1's tag is stamped by the
+    # data-only path and checked by both validators.
+    data_only = (getattr(args, "cstat_product", CSTAT_THREE_STREAM) == CSTAT_DATA_ONLY)
+    nominal.fe.build_fullevent_loaders = replica_build_data_only if data_only else replica_build
     nominal.assert_target_provenance = replica_provenance
-    nominal.atomic_savez_compressed = replica_atomic
+    nominal.atomic_savez_compressed = replica_atomic_data_only if data_only else replica_atomic
     try:
         return nominal.main([
             "--inputs", args.inputs,
@@ -277,10 +407,62 @@ def run_nominal_adapter(args, target_receipt):
         nominal.atomic_savez_compressed = original_atomic
 
 
+def validate_data_only_artifact(path, bootstrap_seed, replica_index, target_receipt):
+    """P1-P4, P6, P7 read back off the WRITTEN artifact, plus the P5/closure evidence it carries.
+
+    P5 is NOT re-derived here. It was asserted live inside `replica_atomic_data_only` BEFORE the
+    write, so a thinned-MC data-only replica never comes into existence; re-deriving it from the
+    current input afterwards would be `BEN-406`'s past-vs-present error -- it would FAIL on a
+    legitimate input re-dump while proving nothing the write-time gate did not already prove.
+    """
+    if not is_complete(path):
+        raise SystemExit("[gate5-dataonly] replica artifact lacks a valid completion marker")
+    with np.load(path, allow_pickle=True) as store:
+        if str(np.asarray(store["campaign_role"]).item()) != "gate5-cstat-data-only-replica":
+            raise SystemExit("[gate5-dataonly] artifact role is not a Gate-5 data-only replica")
+        if int(np.asarray(store["replica_index"]).item()) != int(replica_index):
+            raise SystemExit("[gate5-dataonly] artifact replica index mismatch")
+        n_data = int(np.asarray(store["n_data_full"]).item())
+        n_sig = int(np.asarray(store["n_sig_full"]).item())
+        n_bkg = int(np.asarray(store["n_bkg_full"]).item())
+        assert_data_only_streams(store, data_bootstrap_seed=int(bootstrap_seed),
+                                 n_data_full=n_data, n_sig_full=n_sig, n_bkg_full=n_bkg)
+        assert_ratio_provenance_block({
+            "step1_class_ratio_loader_stamped":
+                float(np.asarray(store["step1_class_ratio_loader_stamped"]).item()),
+            "step1_class_ratio_applied":
+                float(np.asarray(store["step1_class_ratio_applied"]).item()),
+            "weights_embody": str(np.asarray(store["weights_embody"]).item()),
+        })
+        if str(np.asarray(store["replica_target_sha256"]).item()) != target_receipt[
+            "_verified_target_sha256"
+        ]:
+            raise SystemExit("[gate5-dataonly] artifact target hash differs from verified receipt")
+        return {
+            "rows": int(np.asarray(store["weights_push"]).size),
+            "cstat_product": CSTAT_DATA_ONLY,
+            "n_data_full": n_data, "n_sig_full": n_sig, "n_bkg_full": n_bkg,
+            "p5_mc_leg_evidence": jsonable(
+                np.asarray(store["p5_mc_leg_evidence"], dtype=object).item()),
+            "measured_closure_evidence": jsonable(
+                np.asarray(store["measured_closure_evidence"], dtype=object).item()),
+            "input_identity_hashes": np.asarray(
+                store["input_identity_hashes"], dtype=object).item(),
+        }
+
+
 def validate_artifact(path, bootstrap_seed, replica_index, target_receipt):
     if not is_complete(path):
         raise SystemExit("[gate5-train] replica artifact lacks a valid completion marker")
     with np.load(path, allow_pickle=True) as store:
+        # P1's CONVERSE. A data-only artifact must never satisfy the three-stream path. Tolerating
+        # ABSENCE is deliberate and not laxity: the archived 50 predate the tag, and requiring it
+        # here would fail a family this build must not touch.
+        keys = set(store.files)
+        if "cstat_product" in keys and \
+                str(np.asarray(store["cstat_product"]).item()) != CSTAT_THREE_STREAM:
+            raise SystemExit("[gate5-train] artifact is not a three-stream replica; use the "
+                             "data-only validator")
         if str(np.asarray(store["campaign_role"]).item()) != "gate5-cstat-coherent-replica":
             raise SystemExit("[gate5-train] artifact role is not Gate-5 coherent replica")
         if int(np.asarray(store["replica_index"]).item()) != int(replica_index):
@@ -344,6 +526,9 @@ def main(argv=None):
     ap.add_argument("--gate3-manifest", required=True)
     ap.add_argument("--bootstrap-seed", type=int, required=True)
     ap.add_argument("--replica-index", type=int, required=True)
+    # Default is the three-stream product, so every existing launcher invocation is unchanged.
+    # The data-only product must be asked for BY NAME -- a family is never data-only by omission.
+    ap.add_argument("--cstat-product", choices=list(CSTAT_PRODUCTS), default=CSTAT_THREE_STREAM)
     args = ap.parse_args(argv)
 
     expected_seed = 50000 + int(args.replica_index)
@@ -362,7 +547,9 @@ def main(argv=None):
     rc = run_nominal_adapter(args, target_receipt)
     if rc != 0:
         raise SystemExit(f"[gate5-train] nominal adapter returned {rc}")
-    evidence = validate_artifact(
+    validator = (validate_data_only_artifact if args.cstat_product == CSTAT_DATA_ONLY
+                 else validate_artifact)
+    evidence = validator(
         args.output, args.bootstrap_seed, args.replica_index, target_receipt
     )
     receipt = {
@@ -372,6 +559,7 @@ def main(argv=None):
         "replica_index": int(args.replica_index),
         "bootstrap_seed": int(args.bootstrap_seed),
         "seed_policy": SEED_POLICY,
+        "cstat_product": args.cstat_product,
         "started_at_utc": started_utc,
         "completed_at_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
         "execution": {

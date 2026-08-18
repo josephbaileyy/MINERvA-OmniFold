@@ -35,6 +35,7 @@ for item in (HERE, REPO / "nd-unfolding", REPO / "2d-unfolding",
 import extract_fullevent_fps as nominal_extract  # noqa: E402
 import fullevent_fps_dataloader as fe  # noqa: E402
 from atomic_write import atomic_savez_compressed, atomic_write, is_complete  # noqa: E402
+import cstat_data_only as replica_train  # noqa: E402  (P1-P8; one home, two importers)
 
 ROLE = "gate5-cstat-coherent-replica"
 SEED_POLICY = "gate5-cstat-n50-v1: bootstrap_seed=50000+replica_index"
@@ -135,6 +136,59 @@ def read_replica_contract(weights_npz, replica_index, bootstrap_seed,
         n_bkg = int(scalar(store, "n_bkg_full"))
         identities = scalar(store, "input_identity_hashes")
         inventory_hashes = str(scalar(store, "inventory_hashes"))
+
+        # ------------------------------ DATA-ONLY PATH (C_stat^data) -----------------------------
+        # DISPATCHED ONCE, ON THE TAG, before any three-stream predicate runs. The coherence gate
+        # below asserts that the persisted SIGNAL factor is the canonical Poisson draw; a data-only
+        # family has no signal draw to be coherent with, so that guard would be checking the wrong
+        # proposition rather than failing a true one. It is replaced by a STRICTLY STRONGER set
+        # (lane C, BEN-407/409), not relaxed.
+        if "cstat_product" in set(store.files):
+            product = str(scalar(store, "cstat_product"))
+            if product == replica_train.CSTAT_DATA_ONLY:
+                replica_train.assert_data_only_streams(
+                    store, data_bootstrap_seed=int(bootstrap_seed),
+                    n_data_full=n_data, n_sig_full=n_sig, n_bkg_full=n_bkg)
+                replica_train.assert_ratio_provenance_block({
+                    "step1_class_ratio_loader_stamped":
+                        float(np.asarray(store["step1_class_ratio_loader_stamped"]).item()),
+                    "step1_class_ratio_applied":
+                        float(np.asarray(store["step1_class_ratio_applied"]).item()),
+                    "weights_embody": str(scalar(store, "weights_embody")),
+                })
+                # P5' -- PAST TENSE, SELF-CONTAINED. The persisted evidence must satisfy its own
+                # tolerances. This must NOT re-derive w_truth_full[imc] from the current input and
+                # compare it against a hash written at training time: that is BEN-406's
+                # past-vs-present error, it would FAIL on a legitimate input re-dump, and the
+                # write-time gate in replica_atomic_data_only already proved the live identity
+                # before the artifact existed.
+                ev = np.asarray(store["p5_mc_leg_evidence"], dtype=object).item()
+                for leg in ("w_truth", "w_reco"):
+                    dev = float(ev[f"{leg}_max_ratio_deviation"])
+                    tol = float(ev[f"{leg}_tolerance"])
+                    if not dev <= tol:
+                        raise SystemExit(
+                            f"[gate5-dataonly] P5' persisted {leg} closure evidence does not "
+                            f"satisfy its own tolerance ({dev:.6e} > {tol:.6e})")
+                if float(ev["derived_normalization_constant"]) <= 0:
+                    raise SystemExit("[gate5-dataonly] P5' persisted normalization constant "
+                                     "is not positive")
+                mc_ev = np.asarray(store["measured_closure_evidence"], dtype=object).item()
+                if not float(mc_ev["closure_abs_deviation"]) <= float(mc_ev["closure_tolerance"]):
+                    raise SystemExit("[gate5-dataonly] P5' persisted measured-leg closure evidence "
+                                     "does not satisfy its own tolerance")
+                data_factor = np.asarray(store["data_bootstrap_factor"], dtype=np.uint8)
+                return dict(
+                    contract=contract, n_data=n_data, n_sig=n_sig, n_bkg=n_bkg,
+                    identities=identities, inventory_hashes=inventory_hashes,
+                    cstat_product=product,
+                    sig_factor_full=np.ones(n_sig, dtype=np.uint8),
+                    data_factor=data_factor,
+                    factor_hashes={"data_factor_sha256": hash_array(data_factor)},
+                )
+            if product != replica_train.CSTAT_THREE_STREAM:
+                raise SystemExit(f"[gate5-extract] unknown cstat_product {product!r}")
+
         fe.validate_coherent_bootstrap(
             store, bootstrap_seed=int(bootstrap_seed), n_sig_full=n_sig,
             n_bkg_full=n_bkg,
