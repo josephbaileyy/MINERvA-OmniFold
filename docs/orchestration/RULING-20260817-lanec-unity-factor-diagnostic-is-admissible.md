@@ -22,18 +22,90 @@ unthinned, `R` is nominal — so the replica MUST reproduce the nominal.* **Thre
 > through the trained Stay-Positive refinement.** `fullevent_fps_dataloader.py:1462-1487` is explicit that
 > Gate 5 *"requires a negweight-refined target built PER REPLICA (ROOT)"*, and the production refinement is
 > `u2d.refine_stay_positive` — **a fit, not the closed form.** So the two targets differ by the **refit
-> residual**, which is not zero and is already measured: **`0.068%`** (the mediator's fact 1).
+> residual**, which is not zero. *(**Magnitude SUPERSEDED — see §Q2b: `0.068%` was the shared SCALAR, not a residual; the measured per-row residual is median `0.0805%`, p99 `6.888%`. The argument's STRUCTURE is unchanged and its magnitude improves.*)
 
-**So a unity-factor replica differs from the nominal by exactly two things: a `0.068%` target perturbation and
-one process's nondeterminism. Not by nothing.**
+**So a unity-factor replica differs from the nominal by exactly two things: a target perturbation and one
+process's nondeterminism. Not by nothing.** *(Magnitude per §Q2b, not the `0.068%` written below.)*
 
 **Therefore the experiment asks a real question with a real answer:**
 
 > **Does a `0.068%` input perturbation produce the band's `186.1%` displacement** (`nom/mean = 2.8610` →
 > `|ratio − 1| = 186.1%`)?
 
-**That is an amplification of `2.7 × 10³`.** It is not a check that cannot fail — **it is a check whose
-failure has a name.**
+~~**That is an amplification of `2.7 × 10³`.**~~ **SUPERSEDED: `2313×` at the median residual, `27×` at p99 (§Q2b).** It is not a check that cannot fail — **it is a check whose failure has a name.**
+
+## Q2b — ⚠ **RE-RULED on the re-priced object. The `0.068%` was the SCALAR, not a residual — and that makes the experiment STRONGER**
+
+**`FINDING-20260817-the-identity-claim-is-three-orders-too-strong.md` (`a17b8401`) is accepted.** Verified
+here: `(1.000680923461914 − 1) × 100 = 0.0680923461914` **exactly** — so *"targets agree to 0.068%"* was the
+**shared scalar**, not a residual bound, and the campaign carried it for two days as the latter. **My §Q2
+used it as the latter too.**
+
+**The measured per-row residual against the multiplicative identity is LARGER than the number I used, so the
+required amplification FALLS:**
+
+| | residual | amplification to `186.1%` |
+|---|---|---|
+| median | **`0.0805%`** | **`2313×`** |
+| p90 | **`0.8286%`** | **`225×`** |
+| p99 | **`6.888%`** | **`27×`** |
+
+> **A `27×` amplification is enormously more plausible than the `2.7 × 10³` I quoted. So the correction
+> strengthens the experiment's discriminating power rather than weakening it — the input perturbation is
+> bigger than I said, and the hypothesis it tests is correspondingly cheaper to believe.**
+
+### DISPUTED — *"the OI-126 target route is dead"* does not follow from draw-independence
+
+The finding measures the residual as **draw-independent**: `8.047e-04` at `data_factor == 1` against
+`8.022e-04` at `≥ 2`. **The inference drawn from it — that it cannot produce a family displacement — is the
+type mismatch I named in `OI-126`'s original branch set, now inside the argument that retires the route.**
+
+> **Draw-independence rules out a VARIANCE mechanism. The `OI-126` observation is a LOCATION failure — the
+> NOMINAL sitting outside its own family, common-mode across all fifty replicas.** And a **draw-independent,
+> common archived-vs-rebuilt offset is exactly the right SHAPE for a common nominal-vs-family
+> displacement.** Nothing about the observation requires the offset to grow with the draw; the family's
+> *width* is not what is anomalous.
+
+**So the target route is not dead. It requires the amplification in the table above — which is precisely
+what the unity-factor control measures.** The control **is** the target route's test, and the finding has
+made that test cheaper to justify rather than unnecessary.
+
+### Category re-pricing — accepted in part, and it settles `BEN-404` from a second direction
+
+*"A Gate-2 reproducibility control, not an `OI-126` experiment"* — **these are the same run under two
+descriptions, and a description does not change what a run measures.** What the re-pricing **does** settle:
+**`BEN-404`'s third-product question definitively does not apply**, confirming from a second direction what
+§Q1 ruled — a control that reproduces an archived target builds no covariance, so nothing trips.
+
+**`U1`–`U4` stand unchanged, and `U2` matters MORE under the new description:** a Gate-2 control must not
+write into **either** family root.
+
+### Thresholds REVISED — before the run, and recorded as a revision
+
+Per `BEN-403`, a threshold may be revised only before the result exists. **This is that moment.**
+
+- **Vacuity floor `< 0.068%` → `< 0.0805%`**, the measured median per-row residual. The old floor was derived
+  from a number now shown to be the scalar.
+- **`REPRODUCES ≤ 5%` STANDS** — still `62×` the median input — **with a rider that is part of the
+  threshold: the input's p99 is `6.888%`, so INDIVIDUAL CELLS CAN EXCEED 5% FROM THE INPUT ALONE. The
+  statistic is the band MEDIAN, and per-cell excursions must not be read as failures.**
+- **`≥ 50%` does not reproduce; between is indeterminate** — unchanged.
+
+**And the caveat that must not travel is also the reason the thresholds are on the median:** the finding's
+`">1%: 8.456%"` tail is **unconditioned and has a near-zero-denominator pathology (max `686`)**. **A tail
+fraction would inherit that; a median does not.** Stated so the choice reads as principled rather than
+lucky.
+
+### And `BEN-383`'s backend candidate is retired on MECHANISM — which refines my own `BEN-402`
+
+`G2_GATE2_TARGET_RUNTIME_RECEIPT.json` carries `max_mc_events: 200000` and `refinement_random_state: 45`
+(**verified here**) — **identical to the replica builder. So no backend difference has a mechanism.**
+
+> **This refines `BEN-402`, which I filed carrying `BEN-383`'s phrase *"the two arms use different
+> Stay-Positive backends"*. That is RIGHT about CONSUME-versus-REBUILD and WRONG if read as
+> DIFFERENT-ALGORITHM.** The rebuild-is-required claim stands and is the load-bearing half; the
+> different-configuration reading is refuted. **Anyone quoting `BEN-402` for a config difference is quoting
+> it for the half that died.**
 
 ## Q3 — the mechanism that would make it fail is **branch (a), as a FACT**
 
