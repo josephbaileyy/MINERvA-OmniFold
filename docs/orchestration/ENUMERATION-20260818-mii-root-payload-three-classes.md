@@ -306,3 +306,74 @@ pressure at stage 1 is toward green. `INCOMPLETE` names what is missing rather t
 `test_the_stamp_coverage_table_MATCHES_THE_WRITERS`, because **a claim about code is dated unless
 something re-reads the code** — and §1's whole argument is a claim about five files that lane D and
 gate 1 are actively editing.
+
+---
+
+## 8. B2 EXISTS — AND WRITING IT FOUND THAT MOST "MANDATORY RECOMPUTATION" KEYS CANNOT BE RECOMPUTED
+
+`nd-unfolding/mii_anchor_comparator.py`. It applies §2a's classes to two real ROOT files and adds the
+half the table can only *demand*: recomputing every derived scalar from the ingredients in its own file.
+The ROOT reader is **injected** (`read_keys` is a callable) because ROOT is absent here — every decision
+is exercised against stubs and nothing about PyROOT's behaviour is claimed.
+
+**C classified seven scalars as PAYLOAD WITH MANDATORY RECOMPUTATION. Four can be recomputed from the
+file that carries them.** Derived from the writers, not assumed:
+
+| key | ingredient | where |
+|---|---|---|
+| `sqrt_tr_unified` | `trace(C_unified)` | **in file** |
+| `sqrt_tr_block` | `trace(C_blocksum)` | **in file** |
+| `joint_mean_shift_norm` | `norm(hJointMeanShift)` | **in file** |
+| `sqrt_tr_new` | `trace(hCov_combined5d_total_uthrow)` | **in file** |
+| `upstream_*` (×2) | the throw root's scalars | cross-file |
+| `fixed_seed_null_norm` | `norm(x_cv2 - base)` | **neither is written** |
+| `globalCompleteness` | `of_in.sum()/denom_nd.sum()` | **neither is written**, and `sweep_bank_5d.py` writes **no** completeness histogram |
+| **`sqrt_tr_old`** | `trace(hCov_combined5d_total)` | **the deleted intermediate — see below** |
+
+### 8a. THE BAR'S OPERAND IS NOT RECOMPUTABLE FROM RETAINED BYTES
+
+`sqrt_tr_old` is **the predeclared bar's operand** (`4.357790406860002e-38`). Its sole ingredient is
+`hCov_combined5d_total`, read at `adopt_unified_5d.py:124-127` from `--combined`, whose value is set at
+`sbatch_adopt_stamped_footing.sh:33` to
+`uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root` — **the 41.44 GB
+intermediate C ruled need not be retained.**
+
+So after deletion the **scalar survives** in a retained 892 MB root and **its ingredient does not**, and
+BEN-077's rule can never again be satisfied for it from retained bytes.
+
+**C's argument was that "the bar's operands live downstream of it in the 892 MB adopted roots." That is
+true of `sqrt_tr_new` and false of `sqrt_tr_old`** — the trace established that the operands are
+downstream without distinguishing the two operands, and only one of them is. This is not an objection to
+the retention ruling; it is one key the ruling did not separate.
+
+**THE REMEDY IS 0.527 MB AND THE HELPER ALREADY EXISTS.** `trace(C) == sum(diag(C))`, so shipping
+`diag(C_old)` as a TH1D makes the bar's operand recomputable from retained bytes forever.
+`adopt_unified_5d.py:53`'s `_diag()` already reads a square TH2D's diagonal without materializing it,
+and this composes with R4's `vb`/`vu` — **three per-bin arrays, 1.58 MB against a 4.46 GB retained
+member.** I have **not** made that change: it alters a receipt-bound writer's output and the retention
+ruling is C's. Flagged, costed, left.
+
+*(`hCov_combined5d_total` has a third consumer, `p4_build_components.py:115`, so the intermediate's
+deletion touches more than adoption.)*
+
+### 8b. Two things the comparator does that the table cannot
+
+- **A `sqrt`-trace is computed from the DIAGONAL, never the matrix.** One 65,856² float64 TH2D is
+  34.7 GB. `read_keys_pyroot` extracts diagonals for exactly this reason.
+- **`rtol` defaults to `0.0`.** This is the gate that decides whether the archive was reproduced; a
+  silent `1e-9` would make *"reproduced"* mean something nobody chose. A tolerance is a decision.
+
+### 8c. And the adopted root cannot reach the gate at all
+
+`adopt_unified_5d.py` stamps **no** identity key, so a member's adopted root **fails `anchor_identity`
+upstream of every payload and recomputation question**. The comparator shows the fifth gate is
+**unreachable** today, not merely unverified. The table therefore has **no rows** for
+`estimator_seed`/`est_seed_offset{,_declared}` on that artifact, and `classify()` refuses them — which
+is correct, and will start demanding a decision the moment remedy (A) lands.
+
+### 8d. And I committed BEN-482's defect inside B2 itself
+
+The first version computed its verdict with `any("!=" in l or "ABSENT" in l for l in lines)` — greping
+its **own diagnostics**. A verdict derived from its own prose can be changed by rewording a message, and
+`"ABSENT"` matches both a mandatory key missing and the word in an unrelated sentence. Verdicts are now
+decided by explicit flags. **Fourth instance today, this one inside the tool built to enforce rigour.**

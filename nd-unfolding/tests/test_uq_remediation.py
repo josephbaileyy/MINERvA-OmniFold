@@ -2224,8 +2224,10 @@ class CompletenessGateIsRequiredNotSkipped(CompletenessGuardClassifiesUnopenable
         self.assertIn("require_completeness", kw)
         self.assertIs(kw["require_completeness"].value, True,
                       "the completeness gate must be REQUIRED, not skipped")
-        self.assertEqual(kw["min_complete"].value, 0.0,
-                         "the FPS floor is not inherited; the relaxation is the THRESHOLD only")
+        import mii_root_payload_classes  # noqa: F401  (import-order sanity for the suite)
+        self.assertEqual(getattr(kw["min_complete"], "id", None), "MIN_COMPLETE_5D_UNIVERSE",
+                         "the floor must be a NAMED, documented constant -- a bare literal in the "
+                         "call site is where a measured threshold turns back into a magic number")
         self.assertIn("expect_nbins", kw,
                       "universes are checked against the CV's grid; the CV itself defines it")
 
@@ -2712,6 +2714,270 @@ class Stage0Distinctness(unittest.TestCase):
         text = self.S.format_report(v, rep)
         self.assertIn("max|d|", text)
         self.assertIn(row["digest_a"], text, "the digests must reach the human-readable report too")
+
+
+class TheCompletenessFloorIsMeasured(unittest.TestCase):
+    """The mediator ran the 188-universe archive distribution; this pins what it decided.
+
+        present 188/188  NaN 0  min 0.9720202  p05 0.9743379  median 0.9987681
+        p95 1.0074093  max 1.0240842   below 0.50: 0   below 0.99: 66
+    """
+
+    OBSERVED_MIN, OBSERVED_MAX, BELOW_099 = 0.9720201555, 1.0240842128, 66
+
+    def setUp(self):
+        """READ THE CONSTANT, DO NOT IMPORT THE MODULE. `analyze_universes_5d.py:25` is a MODULE-LEVEL
+        `import ROOT` and ROOT is absent here -- unlike `unified_throw_cov.py`, whose only ROOT import
+        is function-local, which is why that module's guards ARE locally testable. Same repo, opposite
+        answer, decided by where the heavy import sits.
+        """
+        import ast
+        src = (ND / "analyze_universes_5d.py").read_text()
+        self.consts = {}
+        for node in ast.walk(ast.parse(src)):
+            if isinstance(node, ast.Assign) and isinstance(node.value, ast.Constant):
+                for tgt in node.targets:
+                    if isinstance(tgt, ast.Name):
+                        self.consts[tgt.id] = node.value.value
+        self.src = src
+
+    def test_the_floor_is_0_90(self):
+        self.assertEqual(self.consts.get("MIN_COMPLETE_5D_UNIVERSE"), 0.90)
+
+    def test_the_floor_is_NOT_VACUOUS_but_clears_the_observed_population(self):
+        """Both directions. A floor below every conceivable value is an unexercised guard; a floor
+        inside the observed spread is a quality gate on a population nobody measured."""
+        f = self.consts["MIN_COMPLETE_5D_UNIVERSE"]
+        self.assertLess(f, self.OBSERVED_MIN, "must accept every healthy archive universe")
+        self.assertGreater(f, 0.0, "must be capable of firing at all")
+        spread = self.OBSERVED_MAX - self.OBSERVED_MIN
+        margin = self.OBSERVED_MIN - f
+        self.assertGreater(margin, spread,
+                           f"margin {margin:.4f} must exceed the observed spread {spread:.4f} -- a "
+                           "member at 42+k has no reason to occupy the archive's range, and a floor "
+                           "inside one spread-width starts clipping correct work")
+
+    def test_the_FPS_floor_would_have_been_VACUOUS_here(self):
+        """Not wrong -- unexercised. 0.50 sits 0.47 below the observed minimum and could never fire,
+        which is why declining to inherit it was right for a reason that is now measured.
+
+        `fps_unfold_complete.py` also imports ROOT at module level, so the constant is read from source
+        for the same reason as above.
+        """
+        import ast
+        fps = {}
+        for node in ast.walk(ast.parse((ND / "fps_unfold_complete.py").read_text())):
+            if isinstance(node, ast.Assign) and isinstance(node.value, ast.Constant):
+                for tgt in node.targets:
+                    if isinstance(tgt, ast.Name):
+                        fps[tgt.id] = node.value.value
+        self.assertEqual(fps["MIN_COMPLETE"], 0.50)
+        self.assertLess(fps["MIN_COMPLETE"], self.OBSERVED_MIN - 0.4)
+
+    def test_0_99_IS_THE_TRAP_and_the_docstring_says_so(self):
+        """The round number anyone reaches for rejects a THIRD of the healthy archive."""
+        self.assertGreater(0.99, self.OBSERVED_MIN,
+                           "0.99 is above the observed minimum, hence rejects real universes")
+        src = self.src
+        self.assertIn("0.99 IS THE TRAP", src)
+        self.assertIn("66 OF 188", src, "the cost of the trap must be stated, not implied")
+
+    def test_only_a_ONE_SIDED_floor_is_meaningful_because_the_ratio_EXCEEDS_ONE(self):
+        """39 of 188 exceed unity, so an upper bound or an |x-1| tolerance would reject a fifth of the
+        archive. Recorded because 'completeness' reads as a fraction bounded by 1 and is not."""
+        self.assertGreater(self.OBSERVED_MAX, 1.0)
+        self.assertIn("NOT BOUNDED BY 1", self.src)
+
+    def test_the_NaN_branch_is_UNREALIZED_IN_THE_ARCHIVE(self):
+        """0 of 188. So the hole closed at aae49f2a would have FIRST APPEARED IN A MEMBER, silently,
+        with no archive precedent -- the failure mode with no natural discoverer."""
+        self.assertIn("UNREALIZED IN THE ARCHIVE", self.src)
+
+
+class AnchorComparatorB2(unittest.TestCase):
+    """B2. ROOT is absent here, so the reader is injected and only the DECISIONS are exercised."""
+
+    def setUp(self):
+        import mii_anchor_comparator as B
+        self.B = B
+        self.C = np.array([1.0, 2.0, 3.0, 4.0])          # trace 10
+        self.MS = np.array([0.3, 0.4])                   # norm 0.5
+
+    def _throw(self, **over):
+        sc = {"sqrt_tr_unified": float(np.sqrt(10.0)), "sqrt_tr_block": float(np.sqrt(10.0)),
+              "joint_mean_shift_norm": 0.5, "n_throws": 160, "fixed_seed_null_checked": 0}
+        sc.update(over)
+        di = {"C_unified": self.C, "C_blocksum": self.C, "C_cross": self.C,
+              "hJointMeanShift": self.MS}
+        return sc, di
+
+    def _reader(self, member_over=None, drop_diag=()):
+        arch = self._throw()
+        over = {"estimator_seed": 1000, "draw_seed": 1000, "est_seed_offset": 0,
+                "est_seed_offset_declared": 1}
+        over.update(member_over or {})          # build THEN update, so member_over can override
+        m_sc, m_di = self._throw(**over)
+        m_di = {k: v for k, v in m_di.items() if k not in drop_diag}
+        return lambda p: (arch if p == "A" else (m_sc, m_di))
+
+    def _go(self, **kw):
+        fixture = {k: v for k, v in kw.items() if k in ("member_over", "drop_diag")}
+        return self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
+                                    read_keys=self._reader(**fixture),
+                                    **{k: v for k, v in kw.items() if k not in fixture})
+
+    def test_a_SELF_CONSISTENT_k0_anchor_PASSES(self):
+        v, lines = self._go()
+        self.assertEqual(v, "PASS", [l for l in lines if "OK" not in l])
+        self.assertEqual(sum(1 for l in lines if l.startswith("[recompute] OK")), 3)
+
+    def test_a_FILE_THAT_CONTRADICTS_ITSELF_fails_which_equality_could_NEVER_catch(self):
+        """BEN-077's whole point: the archive and the member can agree exactly on a scalar and both be
+        inconsistent with their own matrices. Equality is necessary and not sufficient."""
+        v, lines = self._go(member_over={"sqrt_tr_unified": 99.0})
+        self.assertEqual(v, "FAIL")
+        self.assertTrue(any("CONTRADICTS ITSELF" in l for l in lines), lines)
+
+    def test_a_MISSING_INGREDIENT_fails_rather_than_being_skipped(self):
+        """A scalar whose ingredient is gone is UNVERIFIABLE, and unverifiable must not read as fine."""
+        v, lines = self._go(drop_diag=("C_unified",))
+        self.assertEqual(v, "FAIL")
+        self.assertTrue(any("ingredient 'C_unified' absent" in l for l in lines), lines)
+
+    def test_an_UNDECLARED_anchor_fails_on_IDENTITY_not_on_payload(self):
+        v, lines = self._go(member_over={"est_seed_offset_declared": 0})
+        self.assertEqual(v, "FAIL")
+        self.assertTrue(any("UNHOOKED" in l for l in lines), lines)
+
+    def test_rtol_DEFAULTS_TO_BIT_EXACT(self):
+        """A tolerance is a decision, not a default. This is the gate that decides whether the archive
+        was reproduced; a silent 1e-9 would make 'reproduced' mean something nobody chose."""
+        import inspect
+        sig = inspect.signature(self.B.compare_files)
+        self.assertEqual(sig.parameters["rtol"].default, 0.0)
+        # AND MY FIRST VERSION OF THIS TEST MEASURED THE WRONG THING. I perturbed only the member's
+        # scalar, so it failed the PAYLOAD equality against the archive -- a different check, decided
+        # before rtol is ever consulted. `rtol` governs the RECOMPUTATION comparison only. So both
+        # sides carry the perturbed value and the archive equality holds; what is left is the file
+        # disagreeing with its own matrix by 1e-12.
+        eps = float(np.sqrt(10.0)) * (1 + 1e-12)
+        both = lambda p: (self._throw(sqrt_tr_unified=eps) if p == "A"
+                          else self._throw(sqrt_tr_unified=eps, estimator_seed=1000, draw_seed=1000,
+                                           est_seed_offset=0, est_seed_offset_declared=1))
+        go = lambda **kw: self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
+                                               read_keys=both, **kw)
+        self.assertEqual(go()[0], "FAIL", "bit-exact by default: 1e-12 self-inconsistency is a FAIL")
+        self.assertEqual(go(rtol=1e-9)[0], "PASS", "and an EXPLICIT tolerance admits it")
+
+    def test_the_report_does_not_say_NOT_PERFORMED_and_OK_about_one_key(self):
+        """The table emits the DEMAND and the comparator emits the DISCHARGE. Printing both left a
+        report contradicting itself three lines apart, which is worse than either alone."""
+        v, lines = self._go()
+        for key in ("sqrt_tr_unified", "sqrt_tr_block", "joint_mean_shift_norm"):
+            demanded = [l for l in lines if "RECOMPUTATION NOT PERFORMED" in l and l.startswith(key)]
+            self.assertEqual(demanded, [], f"{key}: superseded demand still printed")
+
+    def test_the_UNRECOMPUTABLE_keys_BLOCK_unless_explicitly_acknowledged(self):
+        """A key whose ingredients are not in the file cannot satisfy BEN-077, and the failure must be
+        loud. Silently treating it as checked is the exact shape of an unfalsifiable receipt."""
+        # MEASURED ON AN ARTIFACT WHOSE IDENTITY CAN BE SATISFIED, and my first version could not be.
+        # I used the adopted root, which today carries NO identity stamp -- so it FAILS on identity
+        # before recomputation is ever reached, and the test would have "passed" for the wrong reason
+        # had I asserted FAIL. The throw root stamps all four keys, so `fixed_seed_null_norm` -- also
+        # NOT_RECOMPUTABLE, ingredients unwritten -- is the clean case.
+        # ON BOTH SIDES. My previous attempt put the key only on the member, so the ARCHIVE KEY MAP
+        # branch fired first -- "present in member, absent from archive, unexplained" -- and the test
+        # measured that instead. The archive DOES carry `fixed_seed_null_norm` (1.9706093906025077e-50,
+        # read on the cluster), so the fixture must too or it is not the archive.
+        NULL = 1.9706093906025077e-50
+        both = lambda p: (self._throw(fixed_seed_null_norm=NULL) if p == "A"
+                          else self._throw(fixed_seed_null_norm=NULL, estimator_seed=1000,
+                                           draw_seed=1000, est_seed_offset=0,
+                                           est_seed_offset_declared=1))
+        go = lambda **kw: self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
+                                               read_keys=both, **kw)
+        v, lines = go()
+        self.assertEqual(v, "INCOMPLETE",
+                         [l for l in lines if not l.startswith("[recompute] OK")])
+        self.assertTrue(any("BLOCKED" in l and "fixed_seed_null_norm" in l for l in lines), lines)
+        self.assertTrue(any("CANNOT BE SATISFIED" in l for l in lines))
+        self.assertEqual(go(acknowledge_unrecomputable=True)[0], "PASS",
+                         "an EXPLICIT acknowledgement lets it through, RECORDED as unverified")
+
+    def test_an_ADOPTED_root_FAILS_ON_IDENTITY_before_recomputation_is_reached(self):
+        """THE FIFTH GATE, as an observation rather than a proposal. `adopt_unified_5d.py` stamps no
+        identity key, so a member's adopted root cannot satisfy `anchor_identity` at all -- and it fails
+        there, upstream of every payload and recomputation question. Whether the remedy is the writer
+        stamping (A) or the ensemble receipt's digest binding is C's call; what the comparator shows is
+        that the gate is unreachable today, not merely unverified."""
+        keys = {"sqrt_tr_old": 1.0, "sqrt_tr_new": 2.0}
+        diag = {"hCov_combined5d_total_uthrow": np.array([4.0])}
+        v, lines = self.B.compare_files("adopted_uthrow.root", "A", "M", 0,
+                                        read_keys=lambda p: (keys, diag))
+        self.assertEqual(v, "FAIL")
+        self.assertTrue(any("ABSENT" in l and "est_seed_offset_declared" in l for l in lines), lines)
+
+    def test_an_ADOPTED_ROOT_CANNOT_carry_an_identity_stamp_TODAY_and_the_table_says_so(self):
+        """A REAL GAP THE TABLE SURFACED WHILE I WAS WRITING THIS TEST, and I am recording it rather
+        than patching around it.
+
+        My first version handed the adopted artifact `estimator_seed`/`est_seed_offset{,_declared}` and
+        `classify()` refused: those keys HAVE NO CLASS in `ADOPTED_UTHROW`. That is CORRECT, because
+        `adopt_unified_5d.py` writes none of them (`STAMP_COVERAGE == 0`) -- so a member's adopted root
+        cannot be told from the archive's by its own contents, which IS the fifth gate. The fix is not
+        to add speculative rows to the table; it is remedy (A) in the writer, which is C's call.
+
+        So the table stays honest and the comparator FAILS CLOSED on a key nobody has classified --
+        which is exactly what should happen the moment (A) lands and adoption starts stamping.
+        """
+        import mii_root_payload_classes as classes
+        for key in ("estimator_seed", "est_seed_offset", "est_seed_offset_declared"):
+            with self.subTest(key=key), self.assertRaises(SystemExit) as cm:
+                classes.classify("adopted_uthrow.root", key)
+            self.assertIn("NO CLASS", str(cm.exception))
+        self.assertEqual(classes.STAMP_COVERAGE["adopt_unified_5d.py"], 0,
+                         "and the reason the table lacks them is that the writer lacks them")
+        # the throw root, by contrast, DOES classify all three -- so this is a per-writer gap, not a
+        # hole in the table's design
+        for key in ("estimator_seed", "est_seed_offset", "est_seed_offset_declared"):
+            self.assertEqual(classes.classify("uq_5d/unified_throw_cov_5d.root", key),
+                             classes.PROVENANCE)
+
+    def test_THE_BARS_OPERAND_IS_NOT_RECOMPUTABLE_and_the_table_says_why(self):
+        """THE FINDING. `sqrt_tr_old` is the predeclared bar's operand and its sole ingredient is
+        `hCov_combined5d_total` in the 41.44 GB intermediate C ruled need not be retained. C's argument
+        was that the bar's operands live downstream in the 892 MB adopted roots -- true of
+        `sqrt_tr_new`, false of `sqrt_tr_old`."""
+        how, why = self.B.RECOMPUTABILITY["sqrt_tr_old"]
+        self.assertEqual(how, self.B.NOT_RECOMPUTABLE)
+        self.assertIn("deletable", why)
+        self.assertEqual(self.B.RECOMPUTABILITY["sqrt_tr_new"][0], self.B.IN_FILE,
+                         "the OTHER operand IS recomputable, which is what makes this specific")
+
+    def test_only_FOUR_of_the_recompute_keys_are_IN_FILE(self):
+        """C classified seven scalars as mandatory-recomputation; four can be recomputed from the file
+        that carries them. Derived, not assumed, and pinned so the count cannot drift silently."""
+        by = {}
+        for k, (how, _) in self.B.RECOMPUTABILITY.items():
+            by.setdefault(how, []).append(k)
+        self.assertEqual(len(by[self.B.IN_FILE]), 4)
+        self.assertEqual(sorted(by[self.B.NOT_RECOMPUTABLE]),
+                         ["fixed_seed_null_norm", "globalCompleteness", "sqrt_tr_old"])
+        for k in self.B.RECOMPUTE:
+            self.assertEqual(self.B.RECOMPUTABILITY[k][0], self.B.IN_FILE,
+                             f"{k} has a recompute implementation, so it must be classified IN_FILE")
+        for k, (how, _) in self.B.RECOMPUTABILITY.items():
+            if how is self.B.IN_FILE:
+                self.assertIn(k, self.B.RECOMPUTE,
+                              f"{k} is classified IN_FILE but has no implementation -- the claim and "
+                              "the capability must not drift apart")
+
+    def test_a_sqrt_trace_is_computed_from_the_DIAGONAL_never_the_matrix(self):
+        """One 65856x65856 float64 TH2D is 34.7 GB. `trace(C) == sum(diag(C))`, so the comparator never
+        materializes one -- and `read_keys_pyroot` extracts diagonals for exactly this reason."""
+        self.assertEqual(self.B._sqrt_trace_from_diag(np.array([9.0, 16.0])), 5.0)
+        src = (ND / "mii_anchor_comparator.py").read_text()
+        self.assertIn("GetBinContent(i + 1, i + 1)", src, "the TH2D reader takes the diagonal only")
 
 if __name__ == "__main__":
     unittest.main()
