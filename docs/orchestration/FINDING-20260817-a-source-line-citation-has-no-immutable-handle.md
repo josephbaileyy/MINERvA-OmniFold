@@ -40,6 +40,24 @@ content, with no digest, no tooling, and no pin.
       58   of those immediately followed by quoted source text (same corpus, same regex family)
      186   distinct .py modules cited by line
 
+**AS-OF SHAS, AND MY OWN WRITE-UP MOVED THE RATIO IN THE FLATTERING DIRECTION.** All three counts above
+are as of `65daf8fa`. Re-measured after the commit that reports them, because in this repo every
+measurement runs over the repo and every finding is written into it:
+
+| as of | all `.py` cites | with quoted text | modules | ratio |
+|---|---|---|---|---|
+| `65daf8fa` (when written) | 2004 | 58 | 186 | 2.89 % |
+| `9b1e2d45` (immediately pre-commit) | 2025 | 58 | 187 | 2.86 % |
+| `ddfd6e22` (this finding committed) | 2032 | 60 | 187 | **2.95 %** |
+
+**Two things fall out and only one is comfortable.** The population drifted `2004 → 2025` in about
+twenty minutes on other lanes' commits alone, so a bare count here is stale inside the hour — an
+as-of sha is not optional. And **my own row and long form added `+7` to the total and `+2` to the arm
+I am advocating, moving the ratio UP**: the write-up quotes cited lines beside their numbers, which is
+the practice being recommended. `BEN-391`'s asymmetry, pointing the wrong way for me — there the
+contamination widened a contrast, here it flatters the remedy. **The `58` is the honest operand and
+the `60` is contaminated by this document; neither is quotable without its sha.**
+
 **58/2004 = 2.9 % is a FLOOR, not the rate.** The regex recognises only *cite, two-or-more spaces,
 text*; a citation that quotes its line in the next sentence or a code fence does not match. So the
 practice is commoner than 58 and still nowhere near universal.
