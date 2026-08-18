@@ -411,28 +411,28 @@
         "kind": "eq",
         "line": 275,
         "phase": "unexecuted",
-        "replacement": "validate_data_only_artifact replica_target_sha256 check"
+        "replacement": "cstat_data_only_readback.assert_target_binding"
       },
       {
         "check": "'artifact_target_receipt_sha'",
         "kind": "eq",
         "line": 276,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: the target RECEIPT sha is not re-compared post-write"
+        "replacement": "cstat_data_only_readback.assert_target_binding"
       },
       {
         "check": "'artifact_target_receipt_path'",
         "kind": "eq",
         "line": 278,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: the target receipt PATH is not re-compared post-write"
+        "replacement": "cstat_data_only_readback.assert_target_binding"
       },
       {
         "check": "'target_meta_mode'",
         "kind": "eq",
         "line": 282,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: target_meta target_mode is not re-read post-write"
+        "replacement": "cstat_data_only_readback.assert_target_meta_fields"
       },
       {
         "check": "'target_meta_seed'",
@@ -446,14 +446,14 @@
         "kind": "eq",
         "line": 284,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: target_meta estimator_fingerprint is not re-read post-write"
+        "replacement": "cstat_data_only_readback.assert_target_meta_fields"
       },
       {
         "check": "'target_meta_identity'",
         "kind": "eq",
         "line": 285,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: target_meta identity hashes are not re-read post-write"
+        "replacement": "cstat_data_only_readback.assert_target_meta_fields"
       },
       {
         "check": "'target_meta_consumed_path'",
@@ -467,42 +467,42 @@
         "kind": "eq",
         "line": 292,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: optimizer proof is not read data-only-side"
+        "replacement": "cstat_data_only_readback.assert_lr_policy_realized"
       },
       {
         "check": "'n_fits_base_lr'",
         "kind": "eq",
         "line": 293,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: lr-policy realization is not read data-only-side"
+        "replacement": "cstat_data_only_readback.assert_lr_policy_realized"
       },
       {
         "check": "'n_fits_annealed'",
         "kind": "eq",
         "line": 294,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: lr-policy realization is not read data-only-side"
+        "replacement": "cstat_data_only_readback.assert_lr_policy_realized"
       },
       {
         "check": "'fit_count'",
         "kind": "eq",
         "line": 295,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: fit count is not read data-only-side"
+        "replacement": "cstat_data_only_readback.assert_lr_policy_realized"
       },
       {
         "check": "'fit_iterations'",
         "kind": "eq",
         "line": 298,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: fit iterations are not read data-only-side"
+        "replacement": "cstat_data_only_readback.assert_lr_policy_realized"
       },
       {
         "check": "f'fit_learning_rate[{fit_idx}]'",
         "kind": "close",
         "line": 300,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: fit learning rates are not read data-only-side"
+        "replacement": "cstat_data_only_readback.assert_lr_policy_realized"
       },
       {
         "check": "'weights_push_shape'",
@@ -530,91 +530,91 @@
         "kind": "eq",
         "line": 315,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: checkpoint semantics are not read data-only-side"
+        "replacement": "cstat_data_only_readback.assert_checkpoints_and_contract"
       },
       {
         "check": "f'inference_contract_{key}'",
         "kind": "eq",
         "line": 318,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: the inference contract is not re-read data-only-side"
+        "replacement": "cstat_data_only_readback.assert_checkpoints_and_contract"
       },
       {
         "check": "f'checkpoint_exists[{key}]'",
         "kind": "truth",
         "line": 320,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: checkpoint existence is not asserted data-only-side"
+        "replacement": "cstat_data_only_readback.assert_checkpoints_and_contract"
       },
       {
         "check": "'checkpoint_file_set'",
         "kind": "eq",
         "line": 324,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: the checkpoint file set is not asserted data-only-side"
+        "replacement": "cstat_data_only_readback.assert_checkpoints_and_contract"
       },
       {
         "check": "'training_namespace_root_entries'",
         "kind": "eq",
         "line": 326,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: the namespace root entries are not asserted data-only-side"
+        "replacement": "cstat_data_only_readback.assert_checkpoints_and_contract"
       },
       {
         "check": "'stdout_regular'",
         "kind": "truth",
         "line": 333,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: stdout regularity is not asserted data-only-side"
+        "replacement": "cstat_data_only_readback.assert_member_logs"
       },
       {
         "check": "'stderr_regular'",
         "kind": "truth",
         "line": 334,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: stderr regularity is not asserted data-only-side"
+        "replacement": "cstat_data_only_readback.assert_member_logs"
       },
       {
         "check": "'log_start_line_count'",
         "kind": "eq",
         "line": 337,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED (also RUN-BOUND via ARRAY_JOB_ID in the log path)"
+        "replacement": "cstat_data_only_readback.assert_member_logs"
       },
       {
         "check": "'log_config_gate_pass_count'",
         "kind": "eq",
         "line": 339,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: log config-gate count is not asserted data-only-side"
+        "replacement": "cstat_data_only_readback.assert_member_logs"
       },
       {
         "check": "'log_optimizer_proof_count'",
         "kind": "eq",
         "line": 340,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: log optimizer-proof count is not asserted data-only-side"
+        "replacement": "cstat_data_only_readback.assert_member_logs"
       },
       {
         "check": "'log_pass_receipt_count'",
         "kind": "eq",
         "line": 342,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: log PASS-receipt count is not asserted data-only-side"
+        "replacement": "cstat_data_only_readback.assert_member_logs"
       },
       {
         "check": "'log_done_count'",
         "kind": "eq",
         "line": 343,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: log DONE count is not asserted data-only-side"
+        "replacement": "cstat_data_only_readback.assert_member_logs"
       },
       {
         "check": "'fatal_log_tokens'",
         "kind": "eq",
         "line": 345,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED: fatal log tokens are not asserted data-only-side"
+        "replacement": "cstat_data_only_readback.assert_member_logs"
       }
     ]
   },
@@ -636,32 +636,7 @@
     "why_the_digest": "so a legitimate re-issue of the pinned module is distinguishable from this manifest breaking, in one comparison. Without it a re-issue produces a loud failure whose tempting resolution is to refresh the manifest -- the read-off-the-finished-artifact defect through the back door."
   },
   "replacement_status": {
-    "REPLACEMENT_REQUIRED": [
-      276,
-      278,
-      282,
-      284,
-      285,
-      292,
-      293,
-      294,
-      295,
-      298,
-      300,
-      315,
-      318,
-      320,
-      324,
-      326,
-      333,
-      334,
-      337,
-      339,
-      340,
-      342,
-      343,
-      345
-    ],
+    "REPLACEMENT_REQUIRED": [],
     "covered_by_an_existing_predicate": [
       221,
       223,
@@ -689,15 +664,100 @@
       267,
       272,
       275,
+      276,
+      278,
+      282,
       283,
+      284,
+      285,
       286,
+      292,
+      293,
+      294,
+      295,
+      298,
+      300,
       304,
       305,
-      306
+      306,
+      315,
+      318,
+      320,
+      324,
+      326,
+      333,
+      334,
+      337,
+      339,
+      340,
+      342,
+      343,
+      345
     ],
     "honesty_note": "The REPLACEMENT_REQUIRED count is the real measure of remaining work and is deliberately NOT hidden behind invented names. A manifest that named a replacement for all 55 would assert coverage it does not have, which is the exact defect the partition exists to make unrepresentable.",
-    "n_covered": 31,
-    "n_required": 24
+    "n_covered": 55,
+    "n_required": 0,
+    "n_sites_whose_replacement_no_caller_INVOKES": 39,
+    "why_this_field_exists": "`REPLACEMENT_REQUIRED == 0` is true of the PREDICATE INVENTORY and does NOT mean the family can be validated. A cited replacement can exist and be called by nobody, and the family is graded only when a caller invokes the set over its 50 members. 'The checks are written' and 'the checks run' are different claims -- BEN-416, from this same session -- so the gap is measured rather than left to be assumed. Detected by CALL SITE and not by substring, because a symbol's name appears in the module that defines it and a mention is not a use.",
+    "written_but_UNCALLED": {
+      "assert_artifact_policy_scalars": [
+        225,
+        227,
+        228,
+        229,
+        230,
+        231
+      ],
+      "assert_checkpoints_and_contract": [
+        315,
+        318,
+        320,
+        324,
+        326
+      ],
+      "assert_inventory_identity_agree_with_target": [
+        239,
+        241
+      ],
+      "assert_lr_policy_realized": [
+        292,
+        293,
+        294,
+        295,
+        298,
+        300
+      ],
+      "assert_member_logs": [
+        333,
+        334,
+        337,
+        339,
+        340,
+        342,
+        343,
+        345
+      ],
+      "assert_subsample_geometry": [
+        248,
+        252,
+        255
+      ],
+      "assert_target_binding": [
+        275,
+        276,
+        278
+      ],
+      "assert_target_meta_fields": [
+        282,
+        284,
+        285
+      ],
+      "assert_weights_push_sane": [
+        304,
+        305,
+        306
+      ]
+    }
   },
   "schema": "gate5-cstat-data-only-divergence-manifest-v1",
   "v4_floor": {
