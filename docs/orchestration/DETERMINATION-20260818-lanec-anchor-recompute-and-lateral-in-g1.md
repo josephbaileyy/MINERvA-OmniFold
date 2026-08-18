@@ -444,6 +444,142 @@ nothing about the driver's recognizer.
 > name, baseline table, recognizer, validator population.** *"Same treatment as the other six"* is a definite
 > description, and the lateral is the one leg for which it is false.
 
+---
+
+## 11. R3 RULED — the payload enumeration. **And TWO CLASSES WERE NOT ENOUGH: my own §2b was missing one, and the missing one is where the danger was**
+
+**B is right that deciding at comparison time is the move §2b refused. Here is the enumeration — and producing it
+found a defect in the rule that generated it.**
+
+### 11a. ⚠ THE THREE-CLASS RULE, replacing §2b's two
+
+`seedscan_split.py:84` writes `train_frac`. **It is not payload — it is not a measured value. It is not
+provenance — a difference in it means the two products are not comparable at all.** Under a two-class rule it
+gets filed as provenance and ALLOWED TO DIFFER. **And the same is true of `estimator_seed`, which LOOKS like a
+stamp and IS the thing that makes the member the anchor.**
+
+> **THREE CLASSES, and the classifier is a test rather than a list, because a list goes stale and a test does
+> not:**
+>
+> | class | test | comparison rule |
+> |---|---|---|
+> | **PAYLOAD** | it is a MEASURED VALUE | **BIT-EXACT. No tolerances.** |
+> | **CONFIGURATION** | changing it changes WHAT WAS MEASURED | **EQUAL. A difference is a HARD FAILURE, not a superset allowance.** |
+> | **PROVENANCE** | it records only the CIRCUMSTANCES of the measurement | superset allowed, audited separately, **never compared bytewise** |
+>
+> **AND FAIL-CLOSED ON ANY KEY MATCHING NO CLASS.** That is what makes the enumeration safe to age: a key added
+> later is a hard failure until someone classifies it. **Same invariant as §10c — an absent declaration is a no,
+> not a weak yes.**
+
+### 11b. The enumeration, read from the writers at `HEAD` this turn
+
+| product | PAYLOAD (bit-exact) | CONFIGURATION (must be EQUAL) | PROVENANCE (superset) |
+|---|---|---|---|
+| `boot_nd_5d/res_boot_*.npz` `bootstrap_nd.py:49` | `xsec_flat`, `shape`, `total_xsec` | `seed`, `estimator_seed` | `est_seed_offset_declared`, `est_seed_offset` |
+| `seedscan_split_5d/res_split_*.npz` `seedscan_split.py:84` | `xsec_flat`, `shape`, `total_xsec`, **every key unpacked from the `proj` mapping** | `split_seed`, `estimator_seed`, **`train_frac`** | `est_seed_offset_declared`, `est_seed_offset` |
+| `uthrow_slabs_5d_sb/*.npz` `unified_throw_cov.py:273` | `xs` | `throws`, `flux_u`, `estimator_seed`, `draw_seed` | `est_seed_offset_declared`, `est_seed_offset` |
+| `block_slabs_5d_sb/*.npz` same writer family | the unit `xs` | unit `labels`/`kinds`, `estimator_seed`, `draw_seed` | `est_seed_offset_*` |
+
+**`total_xsec` is PAYLOAD and is also an INGREDIENT CHECK**: it must equal `total_xsec(xsec_flat)` recomputed
+from the same file. **A product whose scalar disagrees with its own array is a defect the bit-exact comparison
+would otherwise pass on both sides.** `BEN-077`.
+
+### 11c. AND THE ROOT SIDE IS NOT ENUMERATED HERE — said rather than papered over
+
+**Stage 1 compares the archive's ROOT products too** (`unified_throw_cov_5d.root` at `2.67 GB`, and the sweep
+universes' `.root`), so they are in scope and I have **not** read their writers.
+
+> **The three-class rule of §11a covers them unchanged — it classifies by what a key IS, not by container
+> format.** B produces the ROOT-side enumeration by applying it to those writers. **Stage 1 cannot gate until
+> that enumeration exists, and I would rather block on a named gap than ship a rule that silently covers half the
+> comparison.**
+
+## 12. R1 RULED — **`_sb` IS CANONICAL FOR BOTH LEGS**, and there is exactly ONE wrong literal
+
+**Not a judgement — the receipt says so.** `receipt_construction_contract_5d.py:313-314`:
+
+```
+"throw_slabs_sb": "uq_5d/uthrow_slabs_5d_sb/uthrow5d_slab_*.npz",
+"block_slabs_sb": "uq_5d/block_slabs_5d_sb/block5d_*.npz",
+```
+
+**Corroborated four ways:** `slab_manifest_20260806.json` carries the `_sb` paths **with digests**;
+`sbatch_uthrow_combine_5d_fast.sh:22,24` globs `_sb` for **both** legs; `sbatch_uthrow_run_5d_fast.sh:19,29`
+**writes** `uthrow_slabs_5d_sb`; and `CORRECTED_UQ_PRODUCTION_STATUS.md:483` records the headline full combine as
+throws + `block_slabs_5d_sb`.
+
+> **So the consumer is RIGHT and `sbatch_uthrow_block_5d.sh:33,38` is the single misaligned literal in the
+> chain.** `AUTONOMOUS_LOG_20260805.md:48` measured it: **`block_slabs_5d` holds 8 files, `block_slabs_5d_sb`
+> holds 36.** The tracked block producer has been writing a stale partial that nothing consumes.
+
+**RULED: the member's block producer writes `member_kXXXXXX/uq_5d/block_slabs_5d_sb/`, matching the member's
+combine.** That resolves it for every member and makes the combine's zero-slab `SystemExit` unreachable.
+
+> **AND B IS RIGHT NOT TO REPOINT THE UNSET LITERAL — but the reason is the OPPOSITE of the one given.**
+> Repointing would not *"move archive behaviour"* in the sense of departing from the archive; the archive IS
+> `_sb`. **It would let a non-scan run of that launcher write INTO THE LIVE ARCHIVE DIRECTORY**, which is a
+> destructive edge on 124 receipt-bound slabs. **So: leave the unset path alone, and record the tracked
+> producer's wrong literal as a PRE-EXISTING defect needing its own change and its own authorization — not
+> folded into the scan.**
+
+### 12a. ⚠ AND A FLAG ON `P-ANCHOR`, which I am routing rather than resolving
+
+**`P-ANCHOR`'s listing reported `uq_5d/uthrow_slabs_5d/*.npz → 160`. The construction contract binds
+`uq_5d/uthrow_slabs_5d_sb/`.**
+
+> **If those are two directories, then either `P-ANCHOR` counted a NON-CANONICAL one or the contract is stale —
+> and the first would mean the availability check verified products the archive does not use.** Cheap to settle
+> with one `ls` on the cluster, and it should be settled before stage 1 compares against anything. **Not mine to
+> resolve; named because a `160 ✓` against the wrong path is the same shape as everything else today: correct
+> about the thing it was looking at, silent about whether it was looking at the right one.**
+
+## 13. R2 RULED — `MVFINAL_j` is a **RECEIPT**, digest-bound. But the CITABLE artifact is the ENSEMBLE receipt, and that is what the verifier learns
+
+**A thing that gates admission must be verifiable or the gate is decorative** — spec §4 says *"no member is
+admitted without this terminal receipt,"* so it cannot be a summary. **And `BEN-077` settles the form: every
+derived quantity ships its ingredients.**
+
+> **RULED: 50 member receipts, each digest-bound over its member's products; ONE ensemble receipt that binds all
+> 50 by digest and carries the predeclared spread metrics.** **The ensemble receipt is the citable artifact; the
+> member receipts are its INGREDIENTS.**
+>
+> **So `verify_receipt_artifacts.py` learns ONE new path shape, not fifty.** It verifies the ensemble receipt;
+> the ensemble receipt's own verification walks the 50 member digests. **That satisfies `BEN-077` at the citable
+> boundary with the minimum scope growth, and it is the answer to B's question: the verifier does not need to
+> learn member paths, because nothing outside the scan should ever cite a member receipt directly.**
+
+*(Corollary worth stating: a member receipt that is never cited outside the scan is exactly why it must still be
+digest-bound. It is the positive declaration §10c's invariant demands, and the three failures today were all a
+member satisfied WITHOUT one.)*
+
+## 14. R4 RULED — **YES, and record the OPERANDS as well as the winner.** B's is the best question in the batch
+
+**My §8 argument for `(b)` was that `np.maximum(vu, vb)` does not commute with a spread and that two members can
+sit on opposite sides of a kink. B is right that diagnosing that later REQUIRES the record, and that it is
+impossible to reconstruct** — adoption consumes `vu` and `vb` and the archive keeps neither per member.
+
+> **RULED: per member, adoption records the per-bin winner mask `vu > vb`, AND `vu` and `vb` THEMSELVES.**
+> Three arrays of ~285 floats; the cost is not measurable against a member.
+>
+> **The mask alone says WHICH branch won and not BY HOW MUCH — and "how much" is what identifies members sitting
+> NEAR the kink, which are precisely the members whose jitter the max rectifies.** `BEN-077` again: `s_adopt` is
+> derived from `(vu, vb)`, so it ships them.
+
+**AND IT IS MORE THAN A DIAGNOSTIC — it is the TEST OF MY OWN RULING'S PREMISE, which is why I would take it at
+more than a small cost:**
+
+> **If all 50 members turn out to share one branch pattern, the max never switched, the spread is effectively one
+> branch's, and `(a)` would retrospectively have been sufficient.** If the patterns differ, the kink is live and
+> the number must be read with that in mind. **Either way the scan reports whether the non-linearity I refused
+> `(a)` over actually bit — and a ruling that ships the evidence against itself is worth more than one that does
+> not.**
+
+*(And a note on `analyze_universes_5d.py:load_flat:48-57`: `not f or f.IsZombie()` without `kRecovered` accepts a
+truncated member product, which **does** block under §10c as literally written — a member satisfied from
+incomplete bytes. The audit lane's rider is worth keeping: `not f` is unreachable under PyROOT 6.28 because
+`TFile.Open` raises rather than returning null, **so a guard that reads as two-clause belt-and-braces is
+single-ply** — and the surviving clause is the weaker of the two.)*
+
 ## 4. Scope
 
 - **RULED: item 7 → `(a)`**, on the F2 guard's committed precedent rather than on my discretion. Seven
@@ -472,6 +608,15 @@ nothing about the driver's recognizer.
   submission.
 - **ADDED (§10): the padded offset is output-only (bash reads it as octal); the equality rule must pin the
   sourced shell libraries; and my item 7(a) was under-specified against the driver's recognizer.**
+- **RULED (§11, R3): the payload enumeration — and §2b's TWO classes become THREE.** `CONFIGURATION` was
+  missing, and `train_frac`/`estimator_seed` would have been filed as provenance and allowed to differ.
+  **Fail-closed on any unclassified key. ROOT-side enumeration named as a gap, not papered over.**
+- **RULED (§12, R1): `_sb` is canonical for BOTH legs** on the construction contract's authority; the
+  member block producer writes `..._sb`; the unset literal stays, as a pre-existing defect with its own
+  authorization. **Plus a `P-ANCHOR` flag: it counted `uthrow_slabs_5d/` and the contract binds `_sb`.**
+- **RULED (§13, R2): `MVFINAL_j` is a digest-bound RECEIPT; the ENSEMBLE receipt is the citable artifact**
+  and binds all 50. The verifier learns one path shape, not fifty.
+- **RULED (§14, R4): YES — record the winner mask AND `vu`, `vb`.** It is the test of §8's own premise.
 - **AUTHORIZED: nothing.** No launcher edited, nothing submitted.
 
 *Second sought: B on §3's derived-target predicate (its module) and on whether stage 1 can be run as a single
