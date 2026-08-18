@@ -104,6 +104,29 @@ def advertised_free(findings: Path) -> list[tuple[int, int]]:
     if not rows:
         raise SystemExit("FATAL: no *(unallocated)* row in FINDINGS.md's block table. Refusing to "
                          "pass by default -- a missing free-list is not an empty one.")
+    # PREFERRED PATH: an EXPLICIT machine-readable advertisement, so nothing is inferred.
+    #
+    # Lane E's diagnosis, and it is the right one: this row has NO DECLARED GRAMMAR. Every cut rule
+    # below is a grammar inferred from the examples available when it was written, and lane B wrote a
+    # correct row under a different reading of the same untyped cell -- so the check reported a
+    # collision against a row that was right. *A check whose correctness rests on an undeclared
+    # convention in prose it parses* (`BEN-418`'s family, in an instrument rather than a subject).
+    #
+    # So: if the row carries `FREE: <span>, <span>` -- in the cell or an HTML comment -- those spans
+    # ARE the advertisement and no heuristic runs. This ships the READER only. It needs no edit to
+    # FINDINGS.md, no coordination, and no lane has to change anything; the marker is opt-in and the
+    # heuristic remains the fallback. Adding the marker to the row is the table owner's call, not
+    # this lane's -- writing another lane's block-row narration is an authorship claim (lane E).
+    for row in rows:
+        m = re.search(r"FREE:\s*((?:`?\d{3}-\d{3}`?\s*,?\s*)+)", row)
+        if m:
+            spans = {(int(a), int(b)) for a, b in SPAN.findall(m.group(1))
+                     } or {(int(a), int(b)) for a, b in
+                           re.findall(r"(\d{3})-(\d{3})", m.group(1))}
+            if spans:
+                return sorted(spans)
+
+    # FALLBACK: an INFERRED grammar. Kept because no row carries the marker yet.
     # ATTEMPT 3, and the prose problem was INSIDE the row I had narrowed to. That cell reads
     #   "`430-439`, then `440-449`, ... -- ... *Advanced from `390-399`, then `400-409`, ...*"
     # so reading every span in it re-flagged four already-owned blocks including this lane's own.

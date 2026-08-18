@@ -85,6 +85,23 @@ class CheckTest(unittest.TestCase):
         p = build(self.tmp, "| BEN-430 | filed into a still-advertised block |", unalloc=unalloc)
         self.assertEqual(chk.main(["--findings", str(p)]), chk.UNOWNED)
 
+    def test_explicit_FREE_marker_wins_over_every_heuristic(self) -> None:
+        """Lane E's fix (b): a declared grammar, so nothing is inferred.
+
+        The cell here is deliberately hostile to every cut rule -- `430-439` sits in the leading
+        clause, before both the em dash and the emphasis -- and the marker still decides.
+        """
+        unalloc = ("> | *(unallocated)* | `430-439` was taken; FREE: `500-509`, `510-519` "
+                   "\u2014 **closed ten-blocks only** |")
+        p = build(self.tmp, "| BEN-430 | filed; its block is properly rowed |", unalloc=unalloc)
+        self.assertEqual(chk.main(["--findings", str(p)]), chk.OK)
+
+    def test_explicit_FREE_marker_still_catches_a_real_collision(self) -> None:
+        """The direction it must still act: an explicit marker is not a blanket pass."""
+        unalloc = "> | *(unallocated)* | FREE: `500-509`, `510-519` \u2014 **closed only** |"
+        p = build(self.tmp, "| BEN-505 | filed into a declared-free block |", unalloc=unalloc)
+        self.assertEqual(chk.main(["--findings", str(p)]), chk.UNOWNED)
+
     def test_a_mentioned_id_is_not_a_filed_id(self) -> None:
         """Prose may reference BEN-430 freely; only a row HEADED by the id is a filing."""
         p = build(self.tmp, "| BEN-400 | see BEN-430 and BEN-431 for the other half |")
