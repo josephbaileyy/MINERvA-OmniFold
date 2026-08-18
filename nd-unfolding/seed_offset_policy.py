@@ -596,3 +596,50 @@ def assert_code_basis_covers_the_resume_path(basis):
             "member may be satisfied by an existing product at all. A bit-exact payload comparison "
             "over a basis excluding them proves the bytes match and NOT that the anchor ran.")
     return True
+
+
+# ===================================================================================================
+#: The six canonical archive namespaces a member output path must never equal, sit under, or
+#: glob-overlap (spec section 1). Measured from the receipt-bound globs and the launchers' own writes.
+CANONICAL_ARCHIVE_NAMESPACES = (
+    "uq_5d/universe_sweep_bkgaware",
+    "uq_5d/uthrow_slabs_5d_sb",
+    "uq_5d/block_slabs_5d_sb",
+    "uq_5d/unified_throw_cov_5d.root",
+    "boot_nd_5d",
+    "seedscan_split_5d",
+)
+
+MII_CONTAINER = "mii"
+
+
+def assert_member_path_is_outside_the_archive(path, container=MII_CONTAINER):
+    """FAIL CLOSED if a member output path equals, sits under, or glob-overlaps a canonical namespace.
+
+    THIS IS THE CHECK THAT COULD NOT BE WRITTEN UNDER MY ORIGINAL PATH SHAPE, and that is why C
+    reversed it. With `uq_5d/block_slabs_5d_sb/member_k001200/` every member path is beneath a canonical
+    namespace BY CONSTRUCTION, so this function would have to either reject all 50 members or carry an
+    "under, but with a member component" exception -- a guard special-casing the thing it guards. Under
+    `mii/member_k001200/uq_5d/block_slabs_5d_sb/` it is a prefix test in both directions.
+    """
+    rel = str(path)
+    # normalise away a repo-absolute prefix so the test is about the repo-relative shape
+    if "/nd-unfolding/" in rel:
+        rel = rel.split("/nd-unfolding/", 1)[1]
+    rel = rel.lstrip("./")
+    for ns in CANONICAL_ARCHIVE_NAMESPACES:
+        if rel == ns or rel.startswith(ns.rstrip("/") + "/"):
+            raise SystemExit(
+                f"[FAIL] member output path is inside the canonical archive namespace {ns!r}:\n"
+                f"        {path}\n"
+                "        A member must never write equal to, under, or glob-overlapping the archive. "
+                "Member paths begin with the member root, so a path that lands here is either "
+                "unscoped (the offset was not declared where it should have been) or assembled by "
+                "something other than mr_prefix/mr_dir_prefix.")
+    if not rel.startswith(container.rstrip("/") + "/"):
+        raise SystemExit(
+            f"[FAIL] member output path does not begin with the member container {container!r}/:\n"
+            f"        {path}\n"
+            "        Member-root-first is what makes this a one-line prefix test; a path outside the "
+            "container cannot be shown to be outside the archive by inspection.")
+    return True

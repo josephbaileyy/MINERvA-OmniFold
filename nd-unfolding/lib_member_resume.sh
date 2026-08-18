@@ -67,35 +67,85 @@ mr_require_valid_offset() {
   fi
 }
 
-# mr_member_dir -> "" when no offset is declared, else "member_k<6-digit signed>/"
+# mr_member_dir -> "" when no offset is declared, else "member_k<6-digit signed>"
+# (NO trailing slash now; composition is done by _mr_insert.)
 mr_member_dir() {
   if [[ -z "${MNV_EST_SEED_OFFSET:-}" ]]; then printf ''; return 0; fi
   local k="${MNV_EST_SEED_OFFSET}"
   if ! [[ "$k" =~ ^(0|-?[1-9][0-9]*)$ ]]; then
-    echo "[member] FAIL: MNV_EST_SEED_OFFSET='${k}' is not an integer; it names the output namespace" >&2
+    echo "[member] FAIL: MNV_EST_SEED_OFFSET='${k}' is not a canonical integer; it names the output" >&2
+    echo "[member]   namespace, so a malformed value would be written into a path." >&2
     return 2
   fi
-  if [[ "$k" -lt 0 ]]; then printf 'member_kneg%06d/' "$(( -k ))"; else printf 'member_k%06d/' "$k"; fi
+  if [[ "$k" -lt 0 ]]; then printf 'member_kneg%06d' "$(( -k ))"; else printf 'member_k%06d' "$k"; fi
 }
 
-# mr_prefix <path> -> the path with the member directory inserted before its basename, and the
-# directory created. A relative or absolute path both work; "" member leaves the path untouched.
+# MEMBER ROOT = "<MII_CONTAINER>/member_kNNNNNN", e.g. mii/member_k001200
+MII_CONTAINER="${MII_CONTAINER:-mii}"
+mr_member_root() {
+  local d; d="$(mr_member_dir)" || return 2
+  if [[ -z "$d" ]]; then printf ''; return 0; fi
+  printf '%s/%s' "${MII_CONTAINER}" "$d"
+}
+
+# _mr_insert <path> -- put the member root at the FRONT of the repo-relative part.
+#
+# MEMBER-ROOT-FIRST, RULED BY C AND IT REVERSED MY IMPLEMENTATION. I had
+# uq_5d/block_slabs_5d_sb/member_kNNNNNN/ -- namespace first, member last. Two mechanisms decided it
+# against me and neither is a preference:
+#
+#   (1) SPEC SECTION 1'S PREFLIGHT IS UNWRITABLE UNDER NAMESPACE-FIRST. It must reject any member
+#       output path equal to, under, or glob-overlapping the six canonical archive namespaces -- and
+#       under my order EVERY member path is under a canonical namespace BY CONSTRUCTION, since
+#       uq_5d/block_slabs_5d_sb/member_k001200/ is literally beneath uq_5d/block_slabs_5d_sb/. The
+#       preflight would have to either reject all 50 members or carry an "under, but with a member
+#       component" exception -- a guard special-casing the thing it guards. Member-first makes it a
+#       one-line prefix test in both directions.
+#
+#   (2) IT PUT 50 MEMBER TREES AS SIBLINGS INSIDE THE DIRECTORY THE ARCHIVE'S OWN CONSUMERS GLOB.
+#       The only thing keeping them out of `uq_5d/block_slabs_5d_sb/block5d_*.npz` is that shell globs
+#       do not recurse -- and the ABSENCE of that property is exactly what caused the consumer defect
+#       this whole member axis exists to fix. One `*/`, one `find`, one `rsync` and members either
+#       cross-contaminate or get swept into the archive's combine. Relying on non-recursion as a safety
+#       property, in the same design that ruled on a defect caused by non-recursion, is backwards.
+#
+# The NAME is unchanged and C confirmed its endorsement of the offset-derived name stands; what moved
+# is PLACEMENT. C's section 5 had endorsed placement by extension without noticing name and placement
+# were separate decisions, and its section 12 said member-first literally.
+#
+# ABSOLUTE PATHS ARE ANCHORED, NOT GUESSED. Two call sites pass absolute paths built from ${REPO} or
+# ${ND}, so the member root goes after the LAST /nd-unfolding/ component. An absolute path with no such
+# anchor FAILS CLOSED rather than being prefixed somewhere plausible -- a member path assembled by
+# guesswork is how a member writes outside its own tree.
+_mr_insert() {
+  local p="$1" m head tail
+  m="$(mr_member_root)" || return 2
+  if [[ -z "$m" ]]; then printf '%s' "$p"; return 0; fi
+  case "$p" in
+    */nd-unfolding/*)
+      head="${p%%/nd-unfolding/*}/nd-unfolding"; tail="${p#*/nd-unfolding/}"
+      printf '%s/%s/%s' "$head" "$m" "$tail" ;;
+    /*)
+      echo "[member] FAIL: absolute path with no /nd-unfolding/ anchor cannot be member-scoped: $p" >&2
+      echo "[member]   Refusing to guess where the member root belongs." >&2
+      return 2 ;;
+    *)
+      printf '%s/%s' "$m" "$p" ;;
+  esac
+}
+
+# mr_prefix <path> -> the member-scoped path, with its directory created.
 mr_prefix() {
-  local p="$1" m d b
-  m="$(mr_member_dir)" || return 2
-  if [[ -z "$m" ]]; then printf '%s' "$p"; return 0; fi
-  d="$(dirname "$p")"; b="$(basename "$p")"
-  mkdir -p "${d}/${m}" 2>/dev/null || true
-  printf '%s/%s%s' "$d" "$m" "$b"
+  local out; out="$(_mr_insert "$1")" || return 2
+  if [[ "$out" != "$1" ]]; then mkdir -p "$(dirname "$out")" 2>/dev/null || true; fi
+  printf '%s' "$out"
 }
 
-# mr_dir_prefix <dir> -> the directory with the member directory appended, created.
+# mr_dir_prefix <dir> -> the member-scoped directory, created.
 mr_dir_prefix() {
-  local p="$1" m
-  m="$(mr_member_dir)" || return 2
-  if [[ -z "$m" ]]; then printf '%s' "$p"; return 0; fi
-  mkdir -p "${p}/${m}" 2>/dev/null || true
-  printf '%s/%s' "$p" "${m%/}"
+  local out; out="$(_mr_insert "$1")" || return 2
+  if [[ "$out" != "$1" ]]; then mkdir -p "$out" 2>/dev/null || true; fi
+  printf '%s' "$out"
 }
 
 # mr_note -> the marker note recording this run's declared offset, or "" when undeclared.
