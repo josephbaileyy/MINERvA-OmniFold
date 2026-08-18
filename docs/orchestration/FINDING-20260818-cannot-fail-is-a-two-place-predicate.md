@@ -70,6 +70,43 @@ For each check found unable to fail, ask **what would have to become variable fo
 
 Cheap, because it is asked only of checks already found vacuous — a set someone has just enumerated.
 
+## Amendment 1 (2026-08-18) — a THIRD category, and it is not an instance of the other two
+
+Lane E, applying this finding to its own launcher work, first wrote that
+`submit_gate5_data_only_n50.sh:39` — `[[ -s "$f" && ! -L "$f" ]]`, with `$INPUT` in the loop — was
+*"non-vacuous over exactly the domain my change introduced."* **That is false, and E withdrew it.**
+With `DATA_ROOT` a literal, `$INPUT` was a **fixed path — and a fixed path can be a symlink on disk.**
+Nothing stopped anyone symlinking it yesterday. **The guard was live all along and had simply never
+been exercised.**
+
+> **A live guard that has never fired is not evidence that it works, and you only learn that it does
+> by tripping it.**
+
+So the taxonomy has three entries, not two, and the third earns its place by having a **distinct
+remedy** — the test of a real category rather than a restatement:
+
+| the check | what it is | remedy |
+|---|---|---|
+| cannot fire, input is a design constant | dead code | **delete it** |
+| cannot fire, input is about to vary | a specification | **keep it, and write the guard the change makes checkable** |
+| **can fire, never has** | **unverified** | **do not TRUST it — exercise it** |
+
+Neither of the first two implies the third. This finding's original claim says *do not delete a guard
+whose input is about to vary*; the third says *do not trust an unexercised one*. E learned `:39`
+works only by nearly tripping it — a hard link passes `! -L` where the symlink both of us had agreed
+on does not, and the `sha256` check sits **two lines below** the symlink test, so the symlink route
+dies before its digest is ever computed.
+
+**Instance credited to lane E; E declined attribution for the category on the ground that it should
+be findable beside the other two rather than in a launcher row, which is right.**
+
+**And the same correction applies to my own framing one level up.** I wrote that the override *"gives
+those guards something to check."* True of `:46`/`:47`, which really were vacuous. **Not true of
+`:39`**, which needed nothing from the change. Two guards in one file, opposite categories, and the
+tempting single story — *"my change made the guards meaningful"* — is right about one and flattering
+about the other. **A taxonomy is worth having precisely because a file can hold more than one of its
+entries.**
+
 ## What this does and does not revise
 
 **Refines `BEN-250`** (*a check whose strongest statement could not fail*) by making its domain
@@ -89,4 +126,5 @@ second reason survives any widening of the domain**, so widening does not rescue
 - `BEN-255` — a check evaluated on the wrong population. *Which rows*, where this is *which values*.
 - `BEN-256` — one field, two roles. Rule 2 is this finding's mirror image.
 - **`BEN-258`** — a check evaluated over a domain too narrow for it to fire, **where the domain is
-  about to widen.** The check is sound and its input is not yet interesting.
+  about to widen.** The check is sound and its input is not yet interesting. **Amendment 1 adds the
+  third category: a check whose domain is already wide enough, that has simply never fired.**
