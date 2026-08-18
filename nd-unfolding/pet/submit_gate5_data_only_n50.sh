@@ -132,6 +132,20 @@ case "$PARENT_REAL" in
   *fullevent_cstat_n50*) die "L1 output root's parent RESOLVES into the three-stream family: $PARENT_REAL" ;;
 esac
 
+# === CAN THE JOB BECOME ITS ENVIRONMENT? ADDED BECAUSE EVERY GUARD ABOVE ASKED A DIFFERENT QUESTION. ===
+#
+# 57232522 died 50/50 in 7-11 seconds with an EMPTY `.out`, on the first line of the environment activation,
+# after a pre-submit dry run that went green through every check above INCLUDING the full 9.9 GB input
+# sha256. All of those inspect the DATA ROOT'S CONTENTS; none resolves what the activator sources. The
+# guards answered "are the inputs right?" and the job died on "can I become the environment that reads
+# them?"
+#
+# The activator computes SCRIPT_DIR from its OWN location, so symlinking it into a bare data root makes it
+# look for software trees that root does not contain -- and the reference list is THREE long, so fixing the
+# one path that appeared in the .err would have failed again at the next.
+"${CODE_ROOT}/nd-unfolding/pet/check_activator_paths.sh" "$DATA_ROOT" \
+  || die "the activator resolves a path that does not exist from $DATA_ROOT -- see above" 4
+
 # Both name sets are checked, because a live three-stream array shares the cluster and the input.
 if squeue -h -u "$USER" -n g5dotarg,g5dotrain | grep -q .; then
   squeue -h -u "$USER" -n g5dotarg,g5dotrain -o '%i|%j|%T|%R' >&2
