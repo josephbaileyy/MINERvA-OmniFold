@@ -2267,5 +2267,135 @@ class CompletenessGateIsRequiredNotSkipped(CompletenessGuardClassifiesUnopenable
                             self.assertIsNot(k.value.value, False,
                                              f"{mod} still calls check() with the gate off")
 
+
+class RootPayloadThreeClasses(unittest.TestCase):
+    """B2's table. C ruled stage 1 cannot gate until this enumeration exists."""
+
+    def setUp(self):
+        import mii_root_payload_classes as m
+        self.m = m
+        self.arch = {"C_unified": "d1", "C_blocksum": "d2", "C_cross": "d3",
+                     "hJointMeanShift": "d4", "sqrt_tr_unified": 1.0, "sqrt_tr_block": 2.0,
+                     "joint_mean_shift_norm": 3.0, "fixed_seed_null_norm": 4.0, "n_throws": 160}
+        self.mem = dict(self.arch, fixed_seed_null_checked=1, estimator_seed=1000,
+                        draw_seed=1000, est_seed_offset=0, est_seed_offset_declared=1)
+        self.A = "uq_5d/unified_throw_cov_5d.root"
+
+    def test_an_UNCLASSIFIED_key_fails_closed(self):
+        """The whole point: an unclassified key is the one a future writer added without telling the
+        comparator. It must fail, not default to a permissive class."""
+        with self.assertRaises(SystemExit) as cm:
+            self.m.classify("sweep_universe.root", "some_future_key")
+        self.assertIn("NO CLASS", str(cm.exception))
+
+    def test_a_correct_k0_anchor_is_INCOMPLETE_not_PASS_and_not_FAIL(self):
+        """THREE VERDICTS. A correct anchor has no mismatch and still cannot be PASS: 9 keys are
+        derived from other keys in the same file and nothing has recomputed them (BEN-077). Folding
+        that into FAIL conflates a real mismatch with an unfinished comparator; folding it into PASS is
+        worse, because the pressure at stage 1 is toward green."""
+        verdict, findings = self.m.compare(self.A, self.arch, self.mem)
+        self.assertEqual(verdict, "INCOMPLETE")
+        self.assertTrue(all("RECOMPUTATION NOT PERFORMED" in f for f in findings),
+                        f"only recomputation should be owed: {findings}")
+
+    def test_a_CONFIGURATION_difference_is_a_HARD_FAILURE(self):
+        v, f = self.m.compare(self.A, self.arch, dict(self.mem, n_throws=159))
+        self.assertEqual(v, "FAIL")
+        self.assertTrue(any("n_throws" in x and "HARD FAILURE" in x for x in f), f)
+
+    def test_PROVENANCE_may_differ_but_may_NOT_be_ABSENT_from_the_member(self):
+        """C's clarification, and the distinction is load-bearing: superset is allowed on the ARCHIVE
+        side only. A member missing its offset stamp is inadmissible, not merely undocumented."""
+        v, f = self.m.compare(self.A, self.arch, dict(self.mem, estimator_seed=99999))
+        self.assertEqual(v, "INCOMPLETE", "a differing provenance value is fine across the scan")
+        short = dict(self.mem); short.pop("est_seed_offset_declared")
+        v2, f2 = self.m.compare(self.A, self.arch, short)
+        self.assertEqual(v2, "FAIL")
+        self.assertTrue(any("ABSENT FROM MEMBER" in x for x in f2), f2)
+
+    def test_the_DRAW_SEED_row_is_enforceable_which_is_what_running_the_table_caught(self):
+        """The archive carries NO seed key of any kind, so "draw_seed must equal the archive" was a
+        check that could never run. Its value comes from the pinned g2 literal instead -- a THIRD kind
+        of map entry (declared constant, external to both files) that I had not anticipated."""
+        self.assertEqual(self.m._g2_baseline(), 1000)
+        self.assertNotIn("draw_seed", self.arch, "the premise: the archive has no draw_seed")
+        v, f = self.m.compare(self.A, self.arch, dict(self.mem, draw_seed=1200))
+        self.assertEqual(v, "FAIL")
+        self.assertTrue(any("draw_seed" in x and "1000" in x for x in f),
+                        f"a drifted draw seed must be caught against the declared constant: {f}")
+
+    def test_the_draw_seed_constant_is_SOURCED_not_RETYPED(self):
+        """One place it can be wrong, not two. A second copy of 1000 drifts silently."""
+        import seed_offset_policy as sp
+        self.assertEqual(sp.LEG_BASELINES["unified_throw_cov"], ("g2", 1000))
+        src = (ND / "mii_root_payload_classes.py").read_text()
+        self.assertIn("seed_offset_policy.LEG_BASELINES", src)
+        self.assertIn('_g2_baseline()', src)
+
+    def test_the_k0_ANCHORs_provenance_is_NOT_free(self):
+        """PROVENANCE means "may differ across the scan". The anchor is the member that must NOT
+        differ, and the class alone does not say so."""
+        self.assertEqual(self.m.anchor_identity(self.mem, 0), [])
+        wrong = self.m.anchor_identity(dict(self.mem, estimator_seed=1200), 0)
+        self.assertTrue(any("k=0 ANCHOR" in p for p in wrong), wrong)
+        self.assertEqual(
+            self.m.anchor_identity(dict(self.mem, estimator_seed=1200, est_seed_offset=1200), 1200),
+            [], "member 1200 differing from the archive is the whole point of the scan")
+
+    def test_an_UNDECLARED_offset_cannot_pass_as_a_deliberate_anchor(self):
+        """declared==0 means an unhooked launcher stamping its baseline is indistinguishable from a
+        deliberate k=0 member. That ambiguity is why the stamp is two keys and not a sentinel."""
+        p = self.m.anchor_identity(dict(self.mem, est_seed_offset_declared=0), 0)
+        self.assertTrue(any("UNHOOKED" in x for x in p), p)
+
+    def test_the_ARCHIVE_KEY_MAP_covers_every_key_the_writers_added(self):
+        """The headline finding, as a check: the archive predates its own writers' provenance blocks,
+        so a k=0 anchor built today carries keys the archive lacks FOR REASONS UNRELATED TO THE SEED.
+        Every such key needs a dated row or stage 1 reddens for the wrong reason."""
+        archive_9 = set(self.arch)
+        writer_keys = set(self.m.UNIFIED_THROW_COV)
+        extra = writer_keys - archive_9
+        self.assertEqual(len(extra), 5, f"5 extra keys in the throw root: {sorted(extra)}")
+        for k in extra:
+            self.assertIn(k, self.m.ARCHIVE_KEY_MAP, f"{k} has no dated map row")
+            self.assertIn("landed", self.m.ARCHIVE_KEY_MAP[k])
+
+    def test_an_UNEXPLAINED_member_only_key_is_reported_rather_than_tolerated(self):
+        """Not in the archive AND not in the map: the map is dated and derivable, so silence is not an
+        option. This is the branch that keeps the map honest as writers change."""
+        self.m.ARTIFACTS["sweep_universe.root"]["ndim"]   # sanity: table is a dict
+        v, f = self.m.compare("sweep_universe.root",
+                              {"hXSecND_flat": "d", "ndim": 5},
+                              {"hXSecND_flat": "d", "ndim": 5, "dataPOT": 1e21})
+        self.assertEqual(v, "FAIL")
+        self.assertTrue(any("NOT IN THE ARCHIVE KEY MAP" in x for x in f), f)
+
+    def test_the_STAMP_COVERAGE_table_names_the_three_unstamped_writers(self):
+        """Remedy (B) -- never resume a ROOT product -- must cover every writer with 0 here. Its scope
+        NARROWS as (A) lands, so this table is what gets re-measured, not the prose."""
+        zero = {k for k, v in self.m.STAMP_COVERAGE.items() if v == 0}
+        self.assertEqual(zero, {"unfold_nd_omnifold_unbinned.py", "adopt_unified_5d.py",
+                                "analyze_universes_5d.py"})
+        self.assertEqual(self.m.STAMP_COVERAGE["unified_throw_cov.py"], 4)
+        self.assertEqual(self.m.STAMP_COVERAGE["sweep_bank_5d.py"], 3)
+
+    def test_the_stamp_coverage_table_MATCHES_THE_WRITERS(self):
+        """A table of measurements rots the moment a writer changes. Re-derive it here rather than
+        trusting the number I typed -- a claim about code is dated unless something re-reads the code.
+        """
+        import re
+        pat = re.compile(r'TParameter\("int"\)\(\s*"(estimator_seed|draw_seed|est_seed_offset'
+                         r'|est_seed_offset_declared)"')
+        for fname, expected in self.m.STAMP_COVERAGE.items():
+            got = len(pat.findall((ND / fname).read_text()))
+            self.assertEqual(got, expected,
+                             f"{fname}: table says {expected} identity stamps, source has {got}")
+
+    def test_the_flat_length_is_65856_not_285(self):
+        """C sized a per-bin array off the extended-FPS 285-bin grid and was wrong by 230x. Pinned so
+        the next reader cannot inherit the wrong number from this table."""
+        self.assertEqual(self.m.FLAT_NBINS, 65856)
+        self.assertAlmostEqual(self.m.FLAT_NBINS * 8 / 1e6, 0.527, places=3)
+
 if __name__ == "__main__":
     unittest.main()
