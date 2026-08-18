@@ -142,8 +142,14 @@ def assert_offset_hook_present(sources):
     for rel, text in sources.items():
         if OFFSET_ENV not in text:
             bad.append(f"{rel}: does not read ${OFFSET_ENV}; it would run at baseline for every k")
-        if "--estimator-seed ${EST_SEED}" not in text:
-            bad.append(f"{rel}: does not pass --estimator-seed ${{EST_SEED}}")
+        # MATCH THE VALUE, NOT THE FLAG NAME. This demanded `--estimator-seed ${EST_SEED}` textually,
+        # so the lateral leg -- whose module's native flag IS `--seed`, correctly -- failed the check
+        # and build_plan could not produce ANY plan from the moment the seventh launcher was added.
+        # The invariant is "the offset-derived value reaches a seed argument", and the flag NAME is a
+        # property of each module's CLI rather than of the invariant. `seed ${EST_SEED}` matches both
+        # `--seed ${EST_SEED}` and `--estimator-seed ${EST_SEED}` and nothing else.
+        if "seed ${EST_SEED}" not in text:
+            bad.append(f"{rel}: no seed argument receives ${{EST_SEED}}")
     if bad:
         raise SystemExit("[FAIL] the offset hook is not wired:\n  " + "\n  ".join(bad))
     return True
@@ -202,11 +208,16 @@ def assert_k0_reproduces_the_archive(sources):
     return expected
 
 
-def build_plan(offsets):
+def build_plan(offsets, argv_probe=True):
     sources = launcher_sources()
     assert_offset_hook_present(sources)              # cheap precondition, NOT verification
     policy.assert_draw_seed_is_pinned(sources)
-    probed = assert_offset_reaches_every_branch()     # the gate: observed argv, every branch
+    # THE GATE. Skippable ONLY explicitly, and the skip is RECORDED IN THE PLAN rather than implied
+    # by its absence: the local harness cannot execute these launchers (they hardcode a cluster REPO
+    # and source a cluster env activator), so without a skip the rest of the plan is untestable off
+    # the cluster. A silent skip would be the day's recurring defect, so the plan carries
+    # "argv_probe": "SKIPPED -- NOT VERIFIED" and the printed output says so on its own line.
+    probed = assert_offset_reaches_every_branch() if argv_probe else "SKIPPED -- NOT VERIFIED"
     baselines = policy.group_baselines()
     checked = policy.assert_offset_grid_is_alias_free(baselines, offsets)
     # BEN-463: the clean-offset predicate, wired now that C has ruled the exemption's FORM. The
@@ -252,21 +263,36 @@ def main(argv=None):
                          "${REPO} and the env resolve for real. Read-only: python3/sbatch/srun/mkdir "
                          "and rg_run/mr_run are stubbed, so nothing is written, deleted or submitted. "
                          "Prints a machine-checkable VERDICT line; exits 0 PASS / 1 FAIL / 2 nothing ran.")
+    ap.add_argument("--no-argv-probe", action="store_true",
+                    help="skip the observed-argv gate (it cannot run off-cluster). The skip is "
+                         "recorded in the plan and announced on stdout; it is NOT a pass.")
     ap.add_argument("--check", action="store_true",
                     help="validate only; exit non-zero on any violation")
     a = ap.parse_args(argv)
+    if a.no_argv_probe and not a.cluster_probe:
+        print("[mii] WARNING: --no-argv-probe -- the observed-argv GATE IS NOT RUNNING. Everything "
+              "below is plan-level validation only and says NOTHING about whether the offset reaches "
+              "a seed or an output path in any branch. Run --cluster-probe on the cluster for that.")
     if a.cluster_probe:
         offs = [int(x) for x in a.offsets.split(",") if x.strip() != ""]
         return probe.cluster_check(a.cluster_probe, offs[0] if offs else 1200, PROBE_CASES)
     offsets = [int(x) for x in a.offsets.split(",") if x.strip() != ""]
-    plan = build_plan(offsets)
+    plan = build_plan(offsets, argv_probe=not a.no_argv_probe)
     print(f"[mii] offsets={plan['offsets']}  groups={plan['group_baselines']}  "
           f"aliasing pairs checked={plan['aliasing_pairs_checked']}")
     print(f"[mii] k=0 archive anchor verified two-sided: {plan['archive_k0']}")
     print(f"[mii] --draw-seed pinned to the literal {policy.ARCHIVE_DRAW_SEED} in every targeted launcher")
     print(f"[mii] clean-offset predicate: {plan['clean_offset_combinations_checked']} combinations "
           f"checked, exemptions = the {len(policy.COINCIDENCE_ALLOWLIST)} ARCHIVE coincidences only")
-    print(f"[mii] OBSERVED-ARGV probe passed on every branch: {plan['probe_cases_run']}")
+    _pr = plan["probe_cases_run"]
+    # DO NOT PRINT "passed" NEXT TO A SKIP. The first version printed "OBSERVED-ARGV probe passed on
+    # every branch: SKIPPED -- NOT VERIFIED", a sentence that asserts the opposite of its own value.
+    # After a day of instruments that reported the wrong thing confidently, a contradictory label is
+    # not cosmetic.
+    if isinstance(_pr, str):
+        print(f"[mii] OBSERVED-ARGV probe: {_pr}  <-- the gate did NOT run")
+    else:
+        print(f"[mii] OBSERVED-ARGV probe PASSED on every branch: {_pr}")
     print( "[mii]   (the textual hook check is a precondition, not evidence: it passed on the "
            "launcher whose else-branch expanded the seed to nothing)")
     if not a.check:
