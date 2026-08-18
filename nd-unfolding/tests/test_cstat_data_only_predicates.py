@@ -15,6 +15,7 @@ function's source text is NON-EMPTY and carries its raise, because on the P5A la
 discipline caught an EMPTY extracted file exiting 0 -- a meaningless pass found only by printing a
 line count.
 """
+import ast
 import inspect
 import os
 import sys
@@ -390,3 +391,233 @@ class ExtractSitePredicates(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class TargetIdentityF1F3(unittest.TestCase):
+    """F1-F3: the data-only replacement for `fe.assert_refined_target_is_replica`.
+
+    WHY THESE EXIST AT ALL, and it is the reason the requirement is not optional: NOBODY HAD EVER
+    WATCHED THE LOADER'S :1479 GUARD FIRE IN DATA-ONLY MODE, BECAUSE IT CANNOT FIRE THERE -- it sits
+    behind `if bootstrap_seed is not None:` and data-only sets that to None deliberately. That is
+    exactly how the defect reached production: two independent bindings were designed at this seam
+    and BOTH were wired to the field the new mode sets to None. So each leg is shown to FIRE on a
+    bad target under data-only, and the PASSING direction is exercised with equal explicitness --
+    a guard needs a test in the direction it acts, in the mode that matters.
+    """
+
+    SEED = 50_000
+    ROOT = "/scratch/fullevent_cstat_data_only_n50"
+    IDX = 0
+    TARGET = ROOT + "/replicas/replica_00/target/GATE5_REPLICA_TARGET.npy"
+
+    def good_meta(self):
+        """A CORRECT data-only target_meta: replica-seeded, path-bound, bootstrap_seed None."""
+        return {"precomputed_target_replica_seed": self.SEED,
+                "consumed_precomputed_target": self.TARGET,
+                "bootstrap_seed": None}
+
+    def good_receipt(self):
+        """The target's OWN receipt: T4's single-meaning key, plus the feed path F2 binds to.
+
+        `step1_feed.weights.path` is the INDEPENDENT operand -- written by the target stage in
+        another process. F2's earlier operands (`args.target_npy`, `_verified_target_sha256`) were
+        both echoes of this driver's own argument and established nothing.
+        """
+        return {"cstat_product": cdo.CSTAT_DATA_ONLY,
+                "data_bootstrap_seed": self.SEED,
+                "step1_feed": {"weights": {"path": self.TARGET}}}
+
+    def check(self, meta, receipt=None):
+        return cdo.assert_data_only_target_is_this_replicas(
+            meta, bootstrap_seed=self.SEED,
+            target_receipt=self.good_receipt() if receipt is None else receipt,
+            family_output_root=self.ROOT, replica_index=self.IDX)
+
+    def setUp(self):
+        src = _source_of(cdo.assert_data_only_target_is_this_replicas)
+        self.assertTrue(src.strip(), "the extracted predicate is EMPTY; a pass would prove nothing")
+        self.assertIn("raise SystemExit", src, "no fail-closed raise in the predicate")
+        # The tautological digest leg must NOT come back: sha256_file(target_npy) is BY CONSTRUCTION
+        # what _verified_target_sha256 holds (driver :111 -> :155), so comparing them is a value
+        # against itself -- BEN-405's vacuous-pass shape, and the shape of the defect being fixed.
+        # COMMENTS AND DOCSTRING STRIPPED VIA ast BEFORE ASSERTING, and this is the THIRD time today
+        # the same defect has bitten in the same way: a check that reads PROSE AS CODE. OI-96's
+        # coverage grep, the P5'-locality control, and this one -- each searched raw source and
+        # matched an explanation of why the code does NOT do the thing. `ast.unparse` drops comments
+        # by construction rather than by a strip-the-hashes heuristic, so this cannot regress.
+        tree = ast.parse(src.strip())
+        fn = tree.body[0]
+        if (fn.body and isinstance(fn.body[0], ast.Expr)
+                and isinstance(getattr(fn.body[0], "value", None), ast.Constant)
+                and isinstance(fn.body[0].value.value, str)):
+            fn.body = fn.body[1:]                       # drop the docstring
+        code = ast.unparse(fn)
+        self.assertTrue(code.strip(), "the predicate's CODE is empty after stripping prose")
+        # BOTH removed tautologies are forbidden from returning. The second one is subtler and
+        # was caught by lane B: `consumed_precomputed_target` vs `args.target_npy` is abspath(X) vs
+        # abspath(X), because train_fullevent_nominal.py:379 passes precomputed_target=args.target_npy.
+        # C's criterion (BEN-423): the second operand must not pass through the ECHO'S SOURCE,
+        # which is args.target_npy. All three earlier forms did. Forbidden by name so none returns.
+        for banned in ("target_npy", "step1_feed"):
+            self.assertNotIn(banned, code,
+                             f"{banned!r} routes F2's second operand through the echo's source; "
+                             f"admissible operands are family-position-derived only")
+        self.assertNotIn("_verified_target_sha256", code,
+                         "a digest comparison against _verified_target_sha256 is a TAUTOLOGY here: "
+                         "driver :111 computes it and :155 assigns it, so it compares a value to "
+                         "itself -- BEN-405's vacuous-pass shape")
+
+    # ---- the PASSING direction, first and explicitly ----
+    def test_correct_data_only_target_PASSES(self):
+        self.assertTrue(self.check(self.good_meta()))
+
+    def test_the_ORIGINAL_guard_REJECTS_the_very_case_the_new_one_accepts(self):
+        """The sharpest available demonstration that the replacement is TARGETED, not a weakening.
+
+        `fe.assert_refined_target_is_replica` raises on the correct data-only meta -- because it
+        reads `bootstrap_seed`, which data-only sets to None by mechanism. So the new predicate
+        accepts exactly the case the old one rejected, and for a stated reason.
+        """
+        with self.assertRaises(ValueError):
+            fe.assert_refined_target_is_replica(self.good_meta(), bootstrap_seed=self.SEED)
+        self.assertTrue(self.check(self.good_meta()))
+
+    def test_the_ORIGINAL_guard_STILL_WORKS_on_a_three_stream_meta(self):
+        """The swap must not touch the other branch. A three-stream meta still passes the original,
+        and a nominal one still fails it -- so nothing was relaxed for anybody else."""
+        three_stream = {"bootstrap_seed": self.SEED,
+                        "precomputed_target_replica_seed": self.SEED}
+        self.assertTrue(fe.assert_refined_target_is_replica(three_stream,
+                                                           bootstrap_seed=self.SEED))
+        with self.assertRaises(ValueError):
+            fe.assert_refined_target_is_replica({"bootstrap_seed": None},
+                                                bootstrap_seed=self.SEED)
+
+    # ---- F1: the two conditions recovered from the loader's unreachable :1480-1493 ----
+    def test_F3_nominal_target_is_rejected_by_the_field_RELATIONSHIP(self):
+        """The loader-side limb is now part of F3, asserted as a RELATIONSHIP rather than alone.
+
+        `precomputed_target_replica_seed` on its own is an echo of this driver's own kwarg, so
+        comparing it to `args.bootstrap_seed` proves nothing. What IS a property of the loader's
+        behaviour is that `bootstrap_seed` is None WHILE that field names this replica -- a future
+        edit that broke the pairing would break the relationship.
+        """
+        m = self.good_meta(); m["precomputed_target_replica_seed"] = None
+        with self.assertRaises(SystemExit) as cm:
+            self.check(m)
+        self.assertIn("F3", str(cm.exception))
+
+    def test_F3_another_replicas_target_is_rejected_by_the_relationship(self):
+        m = self.good_meta(); m["precomputed_target_replica_seed"] = self.SEED + 1
+        with self.assertRaises(SystemExit) as cm:
+            self.check(m)
+        self.assertIn("F3", str(cm.exception))
+
+    # ---- F2: the path clause, which is the whole of F2 ----
+    def test_F2_loader_opened_a_different_file_than_the_receipt_verified(self):
+        m = self.good_meta()
+        m["consumed_precomputed_target"] = (
+            self.ROOT + "/replicas/replica_07/target/GATE5_REPLICA_TARGET.npy")
+        with self.assertRaises(SystemExit) as cm:
+            self.check(m)
+        self.assertIn("F2", str(cm.exception))
+
+    def test_F2_absent_consumed_path_is_rejected_not_skipped(self):
+        """Absence must fail. `if the key is present, check it` is the vacuous form (PB2)."""
+        m = self.good_meta(); del m["consumed_precomputed_target"]
+        with self.assertRaises(SystemExit) as cm:
+            self.check(m)
+        self.assertIn("F2", str(cm.exception))
+
+    def test_F2_accepts_a_different_spelling_of_the_same_path(self):
+        """The clause compares abspaths, so a non-normalised spelling of the SAME file must PASS --
+        otherwise the check would fail on a legitimate invocation, which is how a guard gets
+        routed around."""
+        m = self.good_meta()
+        m["consumed_precomputed_target"] = (
+            self.ROOT + "/replicas/replica_00/target/../target/GATE5_REPLICA_TARGET.npy")
+        self.assertTrue(self.check(m))
+
+    # ---- F3: the misused field, asserted for what it means here ----
+    def test_F3_a_thinned_build_is_rejected(self):
+        m = self.good_meta(); m["bootstrap_seed"] = self.SEED
+        with self.assertRaises(SystemExit) as cm:
+            self.check(m)
+        self.assertIn("F3", str(cm.exception))
+
+    # ---- F1a / T4: identity from the receipt's own single-meaning key ----
+    def test_F1_receipt_without_data_bootstrap_seed_is_rejected(self):
+        """Absence is never unity. A three-stream target receipt has no such key, so it cannot be
+        consumed by a data-only run even if every loader-side field looks right."""
+        with self.assertRaises(SystemExit) as cm:
+            self.check(self.good_meta(), receipt={"cstat_product": cdo.CSTAT_THREE_STREAM})
+        self.assertIn("F1", str(cm.exception))
+
+    def test_F1_receipt_for_another_replica_is_rejected(self):
+        r = self.good_receipt(); r["data_bootstrap_seed"] = self.SEED + 1
+        with self.assertRaises(SystemExit) as cm:
+            self.check(self.good_meta(), receipt=r)
+        self.assertIn("F1", str(cm.exception))
+
+    def test_RIGHT_SEED_WRONG_FILE_is_rejected_and_ONLY_the_path_limb_can_do_it(self):
+        """THE CONTROL THAT JUSTIFIES THE PATH LIMB, and it is the one a reviewer will want.
+
+        Both seed limbs are satisfied -- the receipt says this replica AND the loader's echoed
+        parameter says this replica -- and the file opened is a DIFFERENT one. Limb 1 records the
+        CALLER'S INTENT and intent is not provenance (`BEN-245`); only the path binding looks at
+        which bytes were actually read. Asserted here explicitly: the two seed limbs are shown to be
+        SATISFIED on the same input that the path limb rejects, so this cannot be mistaken for a
+        seed-limb catch.
+        """
+        m = self.good_meta()
+        m["consumed_precomputed_target"] = "/scratch/replicas/replica_31/target/GATE5_REPLICA_TARGET.npy"
+        # both seed limbs agree with this replica -- stated, not assumed
+        self.assertEqual(int(self.good_receipt()["data_bootstrap_seed"]), self.SEED)
+        self.assertEqual(int(m["precomputed_target_replica_seed"]), self.SEED)
+        with self.assertRaises(SystemExit) as cm:
+            self.check(m)
+        self.assertIn("F2", str(cm.exception))
+        self.assertNotIn("F1", str(cm.exception))
+
+    def test_F2_refuses_to_run_without_a_family_position_operand(self):
+        """No independent operand means no evidence, so it must FAIL rather than fall back.
+
+        The control that distinguishes the admissible F2 from the three inadmissible ones: they
+        could not have this failure mode, because their operand was always available -- it was the
+        caller's own argument.
+        """
+        with self.assertRaises(SystemExit) as cm:
+            cdo.assert_data_only_target_is_this_replicas(
+                self.good_meta(), bootstrap_seed=self.SEED,
+                target_receipt=self.good_receipt(),
+                family_output_root=None, replica_index=None)
+        self.assertIn("family-position operand", str(cm.exception))
+
+    def test_F2_catches_a_target_OUTSIDE_the_campaign_layout(self):
+        """THE CASE NO OTHER CHECK CATCHES, and the reason F2 is not belt-and-braces.
+
+        A stray copy with a self-consistent receipt satisfies :94, :100, :108 and :112 -- every one
+        of those binds the file to ITS OWN receipt. Only a family-position route notices that the
+        file is not where this member's target lives.
+        """
+        m = self.good_meta()
+        m["consumed_precomputed_target"] = "/tmp/somebodys_copy/GATE5_REPLICA_TARGET.npy"
+        with self.assertRaises(SystemExit) as cm:
+            self.check(m)
+        self.assertIn("F2", str(cm.exception))
+        self.assertIn("position in the family", str(cm.exception))
+
+    def test_F2_catches_another_members_target_by_position(self):
+        m = self.good_meta()
+        m["consumed_precomputed_target"] = (
+            self.ROOT + "/replicas/replica_31/target/GATE5_REPLICA_TARGET.npy")
+        with self.assertRaises(SystemExit) as cm:
+            self.check(m)
+        self.assertIn("F2", str(cm.exception))
+
+    def test_absent_target_block_is_distinguished_from_a_nominal_one(self):
+        """Lane B point 8: `meta.get("target") or {}` made absent and nominal produce the same
+        message, so a failure for the other reason was invisible in the traceback."""
+        with self.assertRaises(SystemExit) as cm:
+            self.check({})
+        self.assertIn("absent one", str(cm.exception))
+
