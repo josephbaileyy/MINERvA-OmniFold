@@ -831,7 +831,12 @@ class Gate1TwoRoleSeedSplit(unittest.TestCase):
             self.assertEqual(out["estimator_seed"], 1000)
             self.assertEqual(out["draw_seed"], 7, "the product must record BOTH roles (item 4)")
 
-            prev = _import_module_at_rev("HEAD~", "nd-unfolding/unified_throw_cov.py",
+            # PINNED SHA, NOT `HEAD~`. This read `HEAD~` for exactly one commit, and it broke on
+            # the next one: `HEAD~` became the gate-1 commit itself, so the "pre-diff" module
+            # already had the split and the control failed. A relative ref is not a definition --
+            # the same lesson as publishing a command without its ref, arriving inside a test
+            # written to enforce it. 26e4e343 is the last commit before the split.
+            prev = _import_module_at_rev("26e4e343", "nd-unfolding/unified_throw_cov.py",
                                          "unified_throw_cov_prediff")
             if prev is None:
                 self.skipTest("pre-diff revision unavailable; the control arm did NOT run, so "

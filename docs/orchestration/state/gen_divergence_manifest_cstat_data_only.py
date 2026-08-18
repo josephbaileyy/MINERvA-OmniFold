@@ -154,36 +154,36 @@ UNEXECUTED = {
     265: "cstat_data_only.assert_unthinned_mc_evidence",
     267: "cstat_data_only.assert_unthinned_mc_evidence",
     272: "extract_fullevent_replica.factor_meta data-only branch comparison",
-    275: "validate_data_only_artifact replica_target_sha256 check",
-    276: "REPLACEMENT-REQUIRED: the target RECEIPT sha is not re-compared post-write",
-    278: "REPLACEMENT-REQUIRED: the target receipt PATH is not re-compared post-write",
-    282: "REPLACEMENT-REQUIRED: target_meta target_mode is not re-read post-write",
+    275: "cstat_data_only_readback.assert_target_binding",
+    276: "cstat_data_only_readback.assert_target_binding",
+    278: "cstat_data_only_readback.assert_target_binding",
+    282: "cstat_data_only_readback.assert_target_meta_fields",
     283: "cstat_data_only.assert_data_only_target_is_this_replicas",   # F1/F3
-    284: "REPLACEMENT-REQUIRED: target_meta estimator_fingerprint is not re-read post-write",
-    285: "REPLACEMENT-REQUIRED: target_meta identity hashes are not re-read post-write",
+    284: "cstat_data_only_readback.assert_target_meta_fields",
+    285: "cstat_data_only_readback.assert_target_meta_fields",
     286: "cstat_data_only.assert_data_only_target_is_this_replicas",   # F2, family position
-    292: "REPLACEMENT-REQUIRED: optimizer proof is not read data-only-side",
-    293: "REPLACEMENT-REQUIRED: lr-policy realization is not read data-only-side",
-    294: "REPLACEMENT-REQUIRED: lr-policy realization is not read data-only-side",
-    295: "REPLACEMENT-REQUIRED: fit count is not read data-only-side",
-    298: "REPLACEMENT-REQUIRED: fit iterations are not read data-only-side",
-    300: "REPLACEMENT-REQUIRED: fit learning rates are not read data-only-side",
+    292: "cstat_data_only_readback.assert_lr_policy_realized",
+    293: "cstat_data_only_readback.assert_lr_policy_realized",
+    294: "cstat_data_only_readback.assert_lr_policy_realized",
+    295: "cstat_data_only_readback.assert_lr_policy_realized",
+    298: "cstat_data_only_readback.assert_lr_policy_realized",
+    300: "cstat_data_only_readback.assert_lr_policy_realized",
     304: "cstat_data_only_readback.assert_weights_push_sane",
     305: "cstat_data_only_readback.assert_weights_push_sane",
     306: "cstat_data_only_readback.assert_weights_push_sane",
-    315: "REPLACEMENT-REQUIRED: checkpoint semantics are not read data-only-side",
-    318: "REPLACEMENT-REQUIRED: the inference contract is not re-read data-only-side",
-    320: "REPLACEMENT-REQUIRED: checkpoint existence is not asserted data-only-side",
-    324: "REPLACEMENT-REQUIRED: the checkpoint file set is not asserted data-only-side",
-    326: "REPLACEMENT-REQUIRED: the namespace root entries are not asserted data-only-side",
-    333: "REPLACEMENT-REQUIRED: stdout regularity is not asserted data-only-side",
-    334: "REPLACEMENT-REQUIRED: stderr regularity is not asserted data-only-side",
-    337: "REPLACEMENT-REQUIRED (also RUN-BOUND via ARRAY_JOB_ID in the log path)",
-    339: "REPLACEMENT-REQUIRED: log config-gate count is not asserted data-only-side",
-    340: "REPLACEMENT-REQUIRED: log optimizer-proof count is not asserted data-only-side",
-    342: "REPLACEMENT-REQUIRED: log PASS-receipt count is not asserted data-only-side",
-    343: "REPLACEMENT-REQUIRED: log DONE count is not asserted data-only-side",
-    345: "REPLACEMENT-REQUIRED: fatal log tokens are not asserted data-only-side",
+    315: "cstat_data_only_readback.assert_checkpoints_and_contract",
+    318: "cstat_data_only_readback.assert_checkpoints_and_contract",
+    320: "cstat_data_only_readback.assert_checkpoints_and_contract",
+    324: "cstat_data_only_readback.assert_checkpoints_and_contract",
+    326: "cstat_data_only_readback.assert_checkpoints_and_contract",
+    333: "cstat_data_only_readback.assert_member_logs",
+    334: "cstat_data_only_readback.assert_member_logs",
+    337: "cstat_data_only_readback.assert_member_logs",
+    339: "cstat_data_only_readback.assert_member_logs",
+    340: "cstat_data_only_readback.assert_member_logs",
+    342: "cstat_data_only_readback.assert_member_logs",
+    343: "cstat_data_only_readback.assert_member_logs",
+    345: "cstat_data_only_readback.assert_member_logs",
 }
 
 # Bucket 4 -- ADDITIONAL: what the data-only path asserts that NO pinned site does. Each names its gap.
@@ -296,6 +296,55 @@ def main():
     needed = sorted(l for l, r in UNEXECUTED.items() if r.startswith("REPLACEMENT-REQUIRED"))
     covered = sorted(l for l, r in UNEXECUTED.items() if not r.startswith("REPLACEMENT-REQUIRED"))
 
+    # === EXISTING IS NOT WIRED, AND `0 REQUIRED` MUST NOT BE READ AS `VALIDATED` ===
+    #
+    # A cited replacement can EXIST and be called by NOBODY. `n_required == 0` is then true of the
+    # PREDICATE INVENTORY and false of the validation: the family still cannot be graded, because no
+    # caller invokes the set over its 50 members. That distinction is the whole difference between "the
+    # checks are written" and "the checks run", which is `BEN-416`'s lesson from this same session --
+    # so it is measured here rather than left for a reader to assume.
+    #
+    # Detection is by CALL SITE, not by substring: a symbol's name appears in the module that DEFINES
+    # it, and a mention is not a use.
+    # The rule is deliberately the SIMPLE one -- a symbol is CALLED if any Call node names it in any of
+    # these modules, including the one that defines it. A more clever rule (calls from OTHER modules
+    # only) reported `validate_data_only_artifact` as uncalled because its caller is its own module,
+    # which is a false alarm; and reachability-from-main is a bigger analysis than the question needs.
+    # None of these predicates is recursive, so a self-call cannot mask a genuinely dead one.
+    #
+    # NON-FUNCTION citations (`CAMPAIGN_ROLES`, `factor_meta`) are excluded: they are data and a variable
+    # read is not a call, so scoring them as uncalled would inflate the gap with entries that are fine.
+    called = set()
+    all_defined = set()
+    for mod in (PREDICATES, TRAIN_DRIVER,
+                REPO / "nd-unfolding/pet/extract_fullevent_replica.py",
+                REPO / "nd-unfolding/pet/cstat_data_only_readback.py"):
+        tree = ast.parse(mod.read_text())
+        all_defined |= {n.name for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)}
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Call):
+                f = node.func
+                name = f.attr if isinstance(f, ast.Attribute) else getattr(f, "id", None)
+                if name:
+                    called.add(name)
+        # AND A BARE NAME LOAD COUNTS AS WIRING, because this campaign's idiom is SUBSTITUTION rather
+        # than direct invocation: `nominal.atomic_savez_compressed = replica_atomic_data_only` and
+        # `validator = validate_data_only_artifact` wire a predicate in without ever producing a Call
+        # node at that site. Counting only calls reported both of those as dead, which is a false alarm
+        # of exactly the kind this field exists to avoid producing.
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load):
+                called.add(node.id)
+    cited = {}
+    for line, repl in UNEXECUTED.items():
+        if repl.startswith("REPLACEMENT-REQUIRED"):
+            continue
+        sym = repl.split(".")[-1].split(" ")[0]
+        cited.setdefault(sym, []).append(line)
+    uncalled = {sym: sorted(lines) for sym, lines in sorted(cited.items())
+                if sym in all_defined and sym not in called}
+    n_sites_uncalled = sum(len(v) for v in uncalled.values())
+
     doc = {
         "schema": "gate5-cstat-data-only-divergence-manifest-v1",
         "what_this_is": "A DIVERGENCE control, not a correctness control. It pins the data-only path's "
@@ -358,6 +407,16 @@ def main():
                             "is deliberately NOT hidden behind invented names. A manifest that named a "
                             "replacement for all 55 would assert coverage it does not have, which is "
                             "the exact defect the partition exists to make unrepresentable.",
+            "written_but_UNCALLED": uncalled,
+            "n_sites_whose_replacement_no_caller_INVOKES": n_sites_uncalled,
+            "why_this_field_exists":
+                "`REPLACEMENT_REQUIRED == 0` is true of the PREDICATE INVENTORY and does NOT mean the "
+                "family can be validated. A cited replacement can exist and be called by nobody, and "
+                "the family is graded only when a caller invokes the set over its 50 members. "
+                "'The checks are written' and 'the checks run' are different claims -- BEN-416, from "
+                "this same session -- so the gap is measured rather than left to be assumed. Detected "
+                "by CALL SITE and not by substring, because a symbol's name appears in the module that "
+                "defines it and a mention is not a use.",
         },
     }
     out = REPO / "docs/orchestration/state/DIVERGENCE-MANIFEST-20260818-cstat-data-only.json"
@@ -366,6 +425,8 @@ def main():
           f"+ {counts['UNEXECUTED_BY_CONSTRUCTION']} UNEXECUTED + {counts['MANIFEST']} MANIFEST")
     print(f"ADDITIONAL (not part of the sum, by construction): {counts['ADDITIONAL']}")
     print(f"replacements: {len(covered)} covered, {len(needed)} REQUIRED")
+    print(f"of the covered, {n_sites_uncalled} site(s) have a replacement NO CALLER INVOKES "
+          f"({len(uncalled)} predicate(s): {sorted(uncalled)})")
     print(f"wrote {out.relative_to(REPO)}")
     return 0
 
