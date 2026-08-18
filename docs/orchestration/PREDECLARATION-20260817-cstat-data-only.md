@@ -98,6 +98,12 @@ write, so a thinned-MC replica never comes into existence. **30 controls, zero s
 
 ## 4. What will be computed, and how each outcome reads
 
+**COST CARRIES TWO UNITS AND THE SECOND IS AN ADDITION, NOT AN ABSORPTION.** The data-only
+**target** family is required (`BEN-420`) and it is a **CPU** stage: 50 × 0.9256 = **~46.3 CPU
+node-hours, ZERO additional A100-hours**, measured from `56344268` (`00:55:32`, 256 CPU, 1 node, no
+GPU). **Joseph authorized 151 A100-hours. Per the standing discipline that every run is surfaced with
+its unit, this is surfaced to him separately and is NOT spent against the A100 grant.**
+
 Fifty replicas at **3.0235 A100-h each** — measured from the existing family's realized `sacct`,
 job `56857233`, 50/50 COMPLETED, sum 151.175 A100-h (`BEN-027`: a cost that spends money names its
 measurement); `C_stat^data` centred on the accepted replica mean, matching
@@ -132,11 +138,19 @@ Per `BEN-403`: a prediction that restates an observation is not a prediction.
 - **The ratio** `σ_total/σ_data` — **genuinely unmeasured.** The counting floor suggests ~2.89× but
   neither the background's negative-injection leverage nor the signal MC's estimator leverage is unit,
   **so any value is admissible and none falsifies anything.** It must be reported, not predicted.
-- **A measured ratio near 1** — **NOT a construction failure, and it would RETIRE THIS PRODUCT'S
-  STATED MOTIVATION.** It would mean the MC streams contribute almost nothing and the existing
-  `C_stat` was already ~data-only in effect. **At a predicted `1.18×` this is close to the expected
-  case rather than a remote one, and it must be reported as such.** Without this branch the run
-  could not come back negative about its own reason for existing.
+- **A measured ratio near 1** — **DOES NOT RETIRE THIS PRODUCT.** *Amended 2026-08-17 BEFORE
+  submission and before any result exists, which is the only point at which such an amendment is
+  legitimate; afterwards it is indistinguishable from moving a goalpost.* **Rev 2 wrote that a ratio
+  near 1 would retire the stated motivation. That was wrong when written: it conflated *the effect is
+  small* with *the effect is not real*.** The motivation is **definitional, not magnitude-based** —
+  MC statistics inside a published `σ_stat` is reducible by generating more **MC** rather than more
+  **data**, which is a category distinction to a global fit at any ratio, and it is the form Joseph
+  ruled on. **What the magnitude bears on is whether the product is worth its cost — a question he
+  has already answered at the measured `1.18×`, not one the run re-opens.**
+  **The reporting obligation survives and is strengthened:** the realized ratio must be reported
+  prominently whatever it is, because it is the evidence on which a *future* such product would be
+  judged worth building. **A ratio near 1 is a result about how much MC contamination there was, never
+  a verdict on whether removing it was worth doing.**
 - **A measured ratio materially above `1.18×`** — a RESULT, not a discrepancy. The same-gain
   assumption above is exactly what would break, and `OI-126`'s kinematic gain dependence is the
   named mechanism. Do not read it as an error in this document.
