@@ -24,11 +24,17 @@ source "${REPO}/lib/resume_guard.sh"
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"; mkdir -p boot_nd_5d
 OUT="boot_nd_5d/res_boot_${SLURM_ARRAY_TASK_ID}.npz"
 rg_skip_if_complete "$OUT" rg_valid_npz && exit 0
-rg_run "$OUT" python3 bootstrap_nd.py --npz of_inputs_5d.npz \
+# HOISTED ABOVE THE COMMAND ON 2026-08-18. The hook was inserted BETWEEN a line-continued
+# command's first line and its continuation, so bash swallowed the continuation as a comment:
+# the command truncated to `bootstrap_nd.py --npz of_inputs_5d.npz` -- NO seed arguments at all
+# -- and the remainder ran as `--seed: command not found`. `bash -n` PASSED on that: syntax
+# valid, arguments destroyed. Only an observed-argv probe caught it. Never place an assignment
+# inside a `\`-continued command.
 # M(ii) OFFSET HOOK (spec (B) option (ii), BEN-461). The launcher keeps its OWN baseline
 # literal, so MNV_EST_SEED_OFFSET=0 -- the default -- reproduces the archive EXACTLY and the
 # two coherence groups are preserved BY CONSTRUCTION rather than by the driver getting it
 # right: one offset in, each leg adds it to its own baseline. Do not replace this with an
 # absolute-seed override; that hands the group structure back to the caller.
 EST_SEED=$(( 42 + ${MNV_EST_SEED_OFFSET:-0} ))
+rg_run "$OUT" python3 bootstrap_nd.py --npz of_inputs_5d.npz \
   --seed ${SLURM_ARRAY_TASK_ID} --estimator-seed ${EST_SEED} --iters 5 --out "$OUT"

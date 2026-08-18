@@ -16,13 +16,18 @@ T=${SLURM_ARRAY_TASK_ID}
 # (HighQ2/LowQ2 +1sigma, one MFP_N zero) at CV for the affected knob -- the
 # established prior handling (old _clip), now explicitly logged. See
 # sbatch_uthrow_run_5d.sh for the full note.
-if [[ "$T" -eq 0 ]]; then
+# HOISTED ABOVE THE `if` ON 2026-08-18, and the bug it fixes is worth the line: this assignment
+# sat at COLUMN 0 INSIDE the `then` block, so the `else` branch expanded ${EST_SEED} to NOTHING
+# and every T != 0 task died with `argument --estimator-seed: expected one argument`. INDENTATION
+# IS NOT SCOPE -- column 0 inside an indented block is legal bash and reads as top level, which
+# is why a reachability heuristic keyed on indentation cleared it. Keep it before the `if`.
 # M(ii) OFFSET HOOK (spec (B) option (ii), BEN-461). The launcher keeps its OWN baseline
 # literal, so MNV_EST_SEED_OFFSET=0 -- the default -- reproduces the archive EXACTLY and the
 # two coherence groups are preserved BY CONSTRUCTION rather than by the driver getting it
 # right: one offset in, each leg adds it to its own baseline. Do not replace this with an
 # absolute-seed override; that hands the group structure back to the caller.
 EST_SEED=$(( 1000 + ${MNV_EST_SEED_OFFSET:-0} ))
+if [[ "$T" -eq 0 ]]; then
   python3 unified_throw_cov_5d.py --blockunits --block-knobs all --draw-seed 1000 --estimator-seed ${EST_SEED} \
     --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral \
     --out "uq_5d/block_slabs_5d/block5d_knobs.npz"

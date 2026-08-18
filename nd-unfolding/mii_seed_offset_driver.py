@@ -42,6 +42,7 @@ import json
 import os
 import sys
 
+import launcher_argv_probe as probe
 import seed_offset_policy as policy
 
 #: leg -> the launcher the scan drives. Other launchers of the same modules are UNCHANGED and still
@@ -55,7 +56,24 @@ LEG_LAUNCHERS = {
     "seedscan_split":    ["sbatch_seedscan_split_5d.sh"],
 }
 
-OFFSET_ENV = "MNV_EST_SEED_OFFSET"
+OFFSET_ENV = policy.OFFSET_ENV
+
+#: launcher -> the env dicts that select EVERY branch it can take. The observed-argv probe refuses to
+#: run with fewer cases than the launcher has branches, so this table cannot silently under-cover.
+#: `sbatch_uthrow_block_5d.sh` needs both T==0 (knobs) and T!=0 (flux chunk) -- the T!=0 branch is the
+#: one that shipped broken, and a single-case probe would have cleared it.
+PROBE_CASES = {
+    # task 0 reads an EMPTY universe and exits 0 by design -- this launcher's array is 1-BASED
+    # (`sed -n "${SLURM_ARRAY_TASK_ID}p"`). Declared, not inferred, so "no command observed" is
+    # never silently excused; 1 and 3 are the two branches that actually run the command.
+    "sbatch_sweep_bank_5d_run_bkgaware_gpu.sh": [{"SLURM_ARRAY_TASK_ID": 1}, {"SLURM_ARRAY_TASK_ID": 3},
+                                                 {"SLURM_ARRAY_TASK_ID": 0, "_expect_command": False}],
+    "sbatch_uthrow_run_5d_fast.sh":             [{"SLURM_ARRAY_TASK_ID": 0}, {"SLURM_ARRAY_TASK_ID": 7}],
+    "sbatch_uthrow_block_5d.sh":                [{"SLURM_ARRAY_TASK_ID": 0}, {"SLURM_ARRAY_TASK_ID": 3}],
+    "sbatch_uthrow_combine_5d_fast.sh":         [{"SLURM_ARRAY_TASK_ID": 0}, {"SLURM_ARRAY_TASK_ID": 1}],
+    "sbatch_bootstrap_5d_gpu.sh":               [{"SLURM_ARRAY_TASK_ID": 0}, {"SLURM_ARRAY_TASK_ID": 9}],
+    "sbatch_seedscan_split_5d.sh":              [{"SLURM_ARRAY_TASK_ID": 0}, {"SLURM_ARRAY_TASK_ID": 5}],
+}
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -72,11 +90,12 @@ def launcher_sources():
 
 
 def assert_offset_hook_present(sources):
-    """Every targeted launcher must read the offset env and must not hardcode the estimator seed.
+    """CHEAP PRECONDITION ONLY -- NOT VERIFICATION, and it must not be reported as if it were.
 
-    Without this the driver would export a variable nothing reads, the scan would run entirely at
-    baseline, and every member would agree -- a null result produced by the plumbing rather than by
-    the physics, which is the most expensive way for this to fail.
+    This reads the TEXT. It passed identically on the fixed launcher and on the one whose `else`
+    branch expanded `${EST_SEED}` to nothing, so it is not evidence either way about whether the hook
+    WORKS. Kept because a missing hook is worth catching in milliseconds; the gate is
+    `assert_offset_reaches_every_branch` below, which executes the launcher and reads the argv.
     """
     bad = []
     for rel, text in sources.items():
@@ -89,6 +108,20 @@ def assert_offset_hook_present(sources):
     return True
 
 
+def assert_offset_reaches_every_branch(offset=7):
+    """THE GATE. Execute each launcher with `python3`/`sbatch` stubbed and read the OBSERVED argv.
+
+    Three earlier checks all read the ASSIGNMENT -- the text, the `EST_SEED=$((` line, and that
+    line's arithmetic -- and all three passed on a launcher that could not execute its majority
+    branch. One blind spot three times, not three blind spots. This is the only form that reads the
+    USE, and it caught the defect when pointed at the pre-fix file.
+    """
+    for launcher, cases in PROBE_CASES.items():
+        env_cases = [dict(c, **{OFFSET_ENV: offset}) for c in cases]
+        probe.assert_estimator_seed_is_an_integer_in_every_branch(launcher, env_cases)
+    return {lnk: len(cs) for lnk, cs in PROBE_CASES.items()}
+
+
 def archive_expansion(sources):
     """What each launcher's `EST_SEED` expands to at k=0, read out of the launcher itself."""
     got = {}
@@ -99,6 +132,13 @@ def archive_expansion(sources):
                 if s.startswith("EST_SEED=$(("):
                     base = s.split("$((", 1)[1].split("+", 1)[0].strip()
                     got.setdefault(leg, set()).add(int(base))
+    missing = [leg for leg in LEG_LAUNCHERS if leg not in got]
+    if missing:
+        raise SystemExit(
+            f"[FAIL] no `EST_SEED=$((` assignment was PARSED for {missing}. This function reads the "
+            "assignment by string, so a launcher writing the arithmetic differently is silently "
+            "ABSENT from the result rather than wrong -- and the k=0 control would then pass over a "
+            "leg it never read. Same vacuity as a search that matched nothing.")
     return {leg: sorted(v) for leg, v in got.items()}
 
 
@@ -123,8 +163,9 @@ def assert_k0_reproduces_the_archive(sources):
 
 def build_plan(offsets):
     sources = launcher_sources()
-    assert_offset_hook_present(sources)
+    assert_offset_hook_present(sources)              # cheap precondition, NOT verification
     policy.assert_draw_seed_is_pinned(sources)
+    probed = assert_offset_reaches_every_branch()     # the gate: observed argv, every branch
     baselines = policy.group_baselines()
     checked = policy.assert_offset_grid_is_alias_free(baselines, offsets)
     archive = assert_k0_reproduces_the_archive(sources)
@@ -139,7 +180,8 @@ def build_plan(offsets):
                              "launcher": rel,
                              "env": {OFFSET_ENV: str(k)},
                              "command": f"{OFFSET_ENV}={k} sbatch {rel}"})
-    return {"offsets": sorted({int(x) for x in offsets}),
+    return {"probe_cases_run": probed,
+            "offsets": sorted({int(x) for x in offsets}),
             "group_baselines": baselines,
             "archive_k0": archive,
             "aliasing_pairs_checked": checked,
@@ -163,6 +205,9 @@ def main(argv=None):
           f"aliasing pairs checked={plan['aliasing_pairs_checked']}")
     print(f"[mii] k=0 archive anchor verified two-sided: {plan['archive_k0']}")
     print(f"[mii] --draw-seed pinned to the literal {policy.ARCHIVE_DRAW_SEED} in every targeted launcher")
+    print(f"[mii] OBSERVED-ARGV probe passed on every branch: {plan['probe_cases_run']}")
+    print( "[mii]   (the textual hook check is a precondition, not evidence: it passed on the "
+           "launcher whose else-branch expanded the seed to nothing)")
     if not a.check:
         for m in plan["members"]:
             ds = "" if m["draw_seed"] is None else f"  draw={m['draw_seed']}"

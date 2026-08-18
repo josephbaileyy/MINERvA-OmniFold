@@ -11,6 +11,7 @@ _ND="/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding"
 if _ND not in sys.path: sys.path.insert(0,_ND)
 from omnifold_nn_core import omnifold_loop
 from xsec_nd import extract_cross_section_nd, project_axis, total_xsec
+import seed_offset_policy
 
 def main():
     ap=argparse.ArgumentParser()
@@ -40,6 +41,14 @@ def main():
     unf,_=np.histogramdd(samp,bins=bins,weights=wpush*wt[m]); ofin,_=np.histogramdd(samp,bins=bins,weights=wt[m])
     dn=d["denom_nd"]; comp=np.zeros_like(ofin); nz=dn>0; comp[nz]=ofin[nz]/dn[nz]
     xs,_=extract_cross_section_nd(unf,comp,d["flux"],float(d["data_pot"]),float(d["n_nucleons"]),edges)
-    np.savez_compressed(a.out,seed=a.seed,xsec_flat=xs.ravel(order="C"),shape=np.array(xs.shape),total_xsec=total_xsec(xs,edges))
+    # OFFSET PROVENANCE (lane D, 2026-08-18). The seed alone cannot say whether this product
+    # came from a HOOKED launcher: a leg that silently ran unhooked stamps its BASELINE, which
+    # is indistinguishable from a deliberate k=0 anchor member. Two keys, not a sentinel:
+    # declared=0 means nothing can be concluded about which scan member this is.
+    _off_declared, _off_value = seed_offset_policy.declared_offset()
+    np.savez_compressed(a.out,seed=a.seed,xsec_flat=xs.ravel(order="C"),shape=np.array(xs.shape),total_xsec=total_xsec(xs,edges),
+                        estimator_seed=np.int64(_est_seed),
+                        est_seed_offset_declared=np.int64(_off_declared),
+                        est_seed_offset=np.int64(_off_value))
     print(f"[boot {a.seed}] total={total_xsec(xs,edges):.4e} -> {a.out}")
 if __name__=="__main__": main()
