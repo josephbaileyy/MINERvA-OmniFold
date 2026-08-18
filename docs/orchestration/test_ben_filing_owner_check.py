@@ -64,6 +64,27 @@ class CheckTest(unittest.TestCase):
         p = build(self.tmp, "| BEN-400 | owned by lane C, narrated in the unallocated row |")
         self.assertEqual(chk.main(["--findings", str(p)]), chk.OK)
 
+    def test_annotation_BEFORE_the_em_dash_is_not_an_advertisement(self) -> None:
+        """REGRESSION, and it accused another lane before it was caught.
+
+        Lane B advanced the free-list correctly and put its annotation BEFORE the em dash:
+        "`490-499`, then `500-509`, ... *Advanced from `480-489` ...* -- **closed ten-blocks only**".
+        The em-dash-only cut read `480-489` as still advertised and reported a collision against a
+        row that was entirely correct. An emphasis marker starts narration too, so cut at whichever
+        comes first.
+        """
+        unalloc = ("> | *(unallocated)* | `490-499`, then `500-509`, ... *Advanced from `430-439` in "
+                   "the same commit as `BEN-430`.* \u2014 **closed ten-blocks only** |")
+        p = build(self.tmp, "| BEN-430 | filed, and its block IS properly rowed |", unalloc=unalloc)
+        self.assertEqual(chk.main(["--findings", str(p)]), chk.OK)
+
+    def test_still_fails_when_the_leading_clause_really_is_occupied(self) -> None:
+        """The direction it must still act: narrowing the cut must not blind the check."""
+        unalloc = ("> | *(unallocated)* | `430-439`, then `440-449`, ... *Advanced from `420-429`.* "
+                   "\u2014 **closed ten-blocks only** |")
+        p = build(self.tmp, "| BEN-430 | filed into a still-advertised block |", unalloc=unalloc)
+        self.assertEqual(chk.main(["--findings", str(p)]), chk.UNOWNED)
+
     def test_a_mentioned_id_is_not_a_filed_id(self) -> None:
         """Prose may reference BEN-430 freely; only a row HEADED by the id is a filing."""
         p = build(self.tmp, "| BEN-400 | see BEN-430 and BEN-431 for the other half |")
