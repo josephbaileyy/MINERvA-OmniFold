@@ -96,6 +96,58 @@ PINNED_VALIDATOR_REQUIRED_KEYS = frozenset({
 DATA_ONLY_WITHHELD_REQUIRED_KEYS = frozenset({"bootstrap_seed"})
 
 
+def assert_loader_digest_agrees_across_stages(target_receipts, training_receipts, *,
+                                              pinned_expected=None):
+    """The ONE cross-block comparison no pinned check performs, and a strengthening of the requirement.
+
+    THE GAP, stated as lane C stated it: an invariant checked independently WITHIN each of two
+    partitions does not constrain their UNION. `reconcile_gate5_family.py` grades `loader` twice --
+    target-side over the target receipts and training-side over the training artifacts -- and NOTHING
+    compares one block's digest against the other's. Two frozen deployments cut at different times
+    could carry DIFFERENT loaders with each block internally uniform and the discrepancy invisible. The
+    check's TEXT is unchanged and its CLAIM narrows, which is why splitting a population is silently
+    unsafe for any invariant implicitly about the union.
+
+    WHY `pinned_expected` IS NOT OPTIONAL IN PRACTICE, AND WHY IT IS STRONGER THAN THE REQUIREMENT AS
+    GIVEN. C asked that the two blocks be asserted EQUAL TO EACH OTHER. That passes if BOTH drift
+    together -- two deployments cut from the same wrong tree agree perfectly. Comparing both to the
+    same pinned THIRD value does not, and the third value already exists: the coherent campaign's
+    `EXPECTED_CODE["loader"]` in `validate_gate5_training_artifacts.py:36`, which is a constant from a
+    different campaign and cannot be moved by anything this product does. So the recommended call
+    passes it, and the equality-only form is retained for the case where no such constant applies.
+    """
+    def digests(rows, label):
+        seen = {}
+        for i, r in enumerate(rows):
+            d = ((dict(r).get("code") or {}).get("loader") or {}).get("sha256")
+            if not d:
+                raise SystemExit(f"[gate5-dataonly] {label}[{i}] records no code.loader.sha256; the "
+                                f"cross-stage loader comparison has no operand -- fail closed")
+            seen.setdefault(str(d), []).append(i)
+        if not seen:
+            raise SystemExit(f"[gate5-dataonly] {label} is empty; an invariant over an empty "
+                             f"population is vacuously true and must not be reported as satisfied")
+        if len(seen) > 1:
+            raise SystemExit(f"[gate5-dataonly] {label} is NOT internally uniform on the loader "
+                             f"digest: {({k[:12]: v for k, v in seen.items()})}")
+        return next(iter(seen))
+
+    t = digests(target_receipts, "target receipts")
+    r = digests(training_receipts, "training artifacts")
+    if t != r:
+        raise SystemExit(
+            f"[gate5-dataonly] the two stages ran DIFFERENT loaders and no pinned check would say so: "
+            f"target {t[:12]}... vs training {r[:12]}...")
+    if pinned_expected is not None and t != str(pinned_expected):
+        raise SystemExit(
+            f"[gate5-dataonly] both stages agree on loader {t[:12]}... but it is NOT the pinned "
+            f"expected {str(pinned_expected)[:12]}...; two deployments cut from the same wrong tree "
+            f"agree perfectly, which is exactly what comparing them only to each other cannot catch")
+    return {"loader_sha256": t, "n_target_receipts": len(target_receipts),
+            "n_training_receipts": len(training_receipts),
+            "compared_to_pinned_constant": pinned_expected is not None}
+
+
 def assert_pinned_required_keys(store, *, where):
     """Every pinned-validator required key present except the declared-withheld one, which is ABSENT.
 
