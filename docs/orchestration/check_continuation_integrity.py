@@ -68,23 +68,72 @@ def tracked_shell_files(root):
 
 
 def self_test():
-    """Both directions. Reconstructs the two defect shapes and requires each to FIRE."""
+    """Both directions, EXACT, and the WALK is exercised rather than assumed.
+
+    TWO LEVELS OF THE SAME DEFECT, both raised by lane E:
+
+    (a) THE MUST-FIRE ASSERTIONS WERE TRUTHY AND THE MUST-NOT-FIRE ONES EXACT, so a lint firing at
+        the wrong LINE or for the wrong REASON passed the pair. They are exact tuples now.
+
+    (b) THE SELF-TEST PROVED `findings()` WORKS AND PROVED NOTHING ABOUT THE WALK THAT FEEDS IT.
+        The tree scan asserts a COUNT -- "377 scanned, 0 interrupted" -- and nothing exercised
+        `tracked_shell_files`. A glob matching NOTHING is caught (0 scanned -> CANNOT CHECK, exit 2),
+        which was already right. A glob matching a SUBSET reports a smaller count and PASSES.
+        "377 files were clean" and "every tracked shell file was clean" are different claims and only
+        the first was tested. The walk control below builds a throwaway git repo containing a
+        known-bad file and requires the walk to FIND it and the lint to FLAG it -- so the denominator
+        is measured, not asserted.
+    """
     good = ('rg_run "$OUT" python3 boot.py --npz x.npz \\\n'
             '  --seed 1 --iters 5 --out "$OUT"\n')
     assert findings(good) == [], f"clean case flagged: {findings(good)}"
+
     bad_comment = ('rg_run "$OUT" python3 boot.py --npz x.npz \\\n'
                    '# hook comment\n'
                    '  --seed 1 --out "$OUT"\n')
-    assert findings(bad_comment), "MISSED a comment inside a continuation"
+    got = findings(bad_comment)
+    want = [(2, "COMMENT inside a continued command -- swallows the remainder")]
+    assert got == want, f"comment case: got {got}, want {want}"
+
     bad_assign = ('rg_run "$OUT" python3 boot.py --npz x.npz \\\n'
                   'EST_SEED=$(( 42 + 0 ))\n'
                   '  --seed 1 --out "$OUT"\n')
-    assert findings(bad_assign), "MISSED an assignment inside a continuation"
-    env_ok = ('env A=1 \\\n  B=2 \\\n  python3 x.py\n')
+    got = findings(bad_assign)
+    want = [(2, "ASSIGNMENT inside a continued COMMAND (not an env prefix)")]
+    assert got == want, f"assignment case: got {got}, want {want}"
+
+    env_ok = 'env A=1 \\\n  B=2 \\\n  python3 x.py\n'
     assert findings(env_ok) == [], f"env prefix false-positived: {findings(env_ok)}"
-    doc_ok = ('# usage:  foo \\\n#           --bar\nreal_command\n')
+    doc_ok = '# usage:  foo \\\n#           --bar\nreal_command\n'
     assert findings(doc_ok) == [], f"documentation block false-positived: {findings(doc_ok)}"
-    print("CONTINUATION :: SELF-TEST PASS (clean/comment/assignment/env-prefix/doc-block)")
+
+    # ---- (b) THE WALK CONTROL: a throwaway repo whose only tracked .sh is known-bad ----
+    import shutil
+    import tempfile
+    tmp = tempfile.mkdtemp(prefix="contlint.")
+    try:
+        subprocess.run(["git", "-C", tmp, "init", "-q"], check=True, capture_output=True)
+        sub = os.path.join(tmp, "deep", "nested")
+        os.makedirs(sub)
+        target = os.path.join(sub, "planted.sh")
+        with open(target, "w", encoding="utf-8") as fh:
+            fh.write(bad_assign)
+        with open(os.path.join(tmp, "clean.sh"), "w", encoding="utf-8") as fh:
+            fh.write(good)
+        subprocess.run(["git", "-C", tmp, "add", "-A"], check=True, capture_output=True)
+        walked = tracked_shell_files(tmp)
+        assert "deep/nested/planted.sh" in walked, (
+            f"THE WALK MISSED A TRACKED .sh IN A SUBDIRECTORY: {walked}. A walk that returns a "
+            "SUBSET reports a smaller count and still PASSES, which is the hole this control exists "
+            "to close.")
+        assert "clean.sh" in walked, f"the walk missed a top-level tracked .sh: {walked}"
+        rc = main(["--root", tmp])
+        assert rc == 1, f"the lint must FAIL (1) on a tree containing the planted file; got {rc}"
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    print("CONTINUATION :: SELF-TEST PASS -- findings() exact in both directions, and the WALK "
+          "found a planted bad file in a nested subdirectory (denominator measured, not asserted)")
     return 0
 
 
