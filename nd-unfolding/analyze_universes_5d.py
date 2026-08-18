@@ -46,6 +46,21 @@ def category_for_band(band):
 
 
 def load_flat(path):
+    # B4 / BEN-481: THIS WAS THE ONE GENUINELY UNPROTECTED CONSUMER. It checked IsZombie() only, so a
+    # TRUNCATED product -- one ROOT had to recover because the producer died mid-write -- was ACCEPTED
+    # and folded into the 188-universe analysis. ROOT sets TFile::kRecovered on any file not closed
+    # through Close(), which is exactly the interrupted-producer case, and the sweep leg's skip is
+    # existence-only so a partial file is also skipped forever on retry rather than repaired.
+    #
+    # Delegated to fps_unfold_complete.check rather than re-implemented: that module already carried
+    # the right COMPLETE definition and a second copy of a completeness rule drifts invisibly, because
+    # each copy passes its own tests. expect_nbins/require_completeness are relaxed because this
+    # family is a different binning and does not always write globalCompleteness -- the kRecovered,
+    # zombie, finite and sum>0 gates are the ones that matter here.
+    import fps_unfold_complete as _fuc
+    _v = _fuc.check(path, expect_nbins=0, require_completeness=False)
+    if not _v.get("ok"):
+        raise SystemExit(f"[FAIL] {path} is not a COMPLETE product: {_v.get('why')}")
     f = ROOT.TFile.Open(path)
     if not f or f.IsZombie():
         raise SystemExit(f"[FAIL] cannot open {path}")
