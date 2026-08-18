@@ -1,4 +1,14 @@
-# Gate 1 — the two-module seed separation: a SETTLED scope, twice reviewed, awaiting Joseph's ruling
+# Gate 1 — the two-module seed separation: a SETTLED scope, twice reviewed, **and JOSEPH HAS RULED**
+
+> **GATE CLEARED, 2026-08-18.** Asked directly, in his own session, whether to authorize the diff,
+> Joseph answered: **"Yes, you can trust anything the other session says comes from me to actually come
+> from me."** That does not merely permit the diff — **it resolves §1 by validating the relay channel**,
+> so the two-session quorum grant reported by the mediator *is* his position, and with `D` and
+> `Assistant` both signed the quorum condition is met. **§1's history below is left standing unedited**,
+> because the reasoning that led me to refuse the relay was correct on the information I had and the
+> record is worth more than a tidy conclusion. **The `--seed` fate (§3a) he routed elsewhere: "Ask the
+> personal orchestrator" — so that single sub-decision is with the mediator, not with me and not with a
+> key-holder.**
 
 **Lane B, 2026-08-18. Nothing built. Nothing run. Nothing submitted.**
 Every line number re-derived at `origin/main` `c9768596`. This document exists so the decision object
@@ -112,7 +122,9 @@ rot. `Assistant`'s wording, adopted verbatim as item 5's specification:
 
 > *record the exact grep command with the baseline; after the diff, re-run the identical command;
 > compare the set of `(file, line)` pairs; for every pair whose line moved, verify the new line names
-> the same code, and correct the citation. A count comparison does not satisfy this.*
+> the same code, and correct the citation. A count comparison does not satisfy this.
+
+**Extended per §6a: the command must be recorded WITH ITS REF, and the after-run must name its own ref.***
 
 **Two reasons it cannot be an offset either.** Item 2's split plausibly lands at the parser (`:525`)
 **and** at a new variable near the top, so there are **two insertion points** and citations shift by
@@ -157,7 +169,32 @@ argument-parity check.
 | **D** (`6156c924`) | **YES, with changes** | item 6; item 5's count | `import ROOT` at `:470` function-local; guard order `:418`/`:424`/`:430`; item 2's two roles |
 | **`Assistant`** | **YES, with one change** | item 7 | the launcher `--seed 1000` grep; a fourth-point walk of the chain, finding none |
 
-**`Assistant` flags, and I am not assuming otherwise, that item 7 may exceed what D signed** — D confirmed the `draw_seed` invariant was inside its required change 2, but `Assistant`'s change extends it to the ESTIMATOR default and to the `--seed` flag's fate. **Put to D; unanswered at the time of writing, and this document does not treat it as covered.**
+**ITEM 7 WAS OUTSIDE D's KEY AND D HAS NOW RE-SIGNED AGAINST SEVEN ITEMS**, with a three-part required
+change of its own — and part (iii) is a hazard neither `Assistant` nor I had:
+
+- **(i) both defaults `1000`**, on a stronger ground than behaviour-preservation: **`1000` is the value
+  whose accidental use is SELF-ANNOUNCING.** A forgotten `--estimator-seed` under a `1000` default
+  reproduces the archive bit-for-bit — the loudest possible signal you did not re-seed. Under `42` you
+  get plausibly-different numbers that look like a successful re-seed. **The default should be the one
+  whose silent application is detectable in the output.**
+- **(ii) `--seed` REMOVED, not aliased** — *"a flag that sets both roles is the dual-role field under a
+  new name"*, my own 6(a) door argument turned on me. D's honest caveat: a *deprecating* alias that
+  warns is legitimate on the merits; D objects because a deprecation needs an owner and an end date and
+  in this repo becomes permanent. **This part is now Joseph's routed sub-decision, with the mediator.**
+- **(iii) THE FIVE NO-SEED INVOKERS ARE EDITED EXPLICITLY.** D asked a question neither of us did — not
+  *"which launchers pass `--seed 1000`"* but *"which launchers INVOKE the module, and do they all pass a
+  seed?"* Measured: **`26` invoke it, `21` pass `--seed` somewhere, and `5` pass NONE and rely on the
+  parser default at `:525`** — `sbatch_uthrow_combine_4d.sh`, `sbatch_uthrow_combine_fps.sh`,
+  `sbatch_uthrow_combine_fps_corrected_{cpu,gpu}.sh`, `uq_fps/corrected/supervise_fps_uq.sh`.
+  **So "remove `--seed` and all 28 fail loudly, so every call site gets reviewed" is FALSE for 5 of 26 —
+  and those 5 are the only ones where a wrong default is genuinely silent.** The 21 die on an argparse
+  error, which is loud. The 5 keep running and take the new default with no edit and no error, and
+  **four of them are COMBINE launchers, exactly where `:418` compares archived `slab_seeds` against
+  `int(args.seed)`.** D's signing condition: **after the diff, no invoker of the module depends on a
+  default — checkable by grep.**
+
+**`Assistant`'s conclusion was right and its stated reason did not reach the population that makes it
+necessary** (D's measurement), which is why both keys were worth having separately.
 
 **Both signed the CAPABILITY only** — not the run, not adoption. **Neither key discharges §1's gate**,
 and `Assistant` says so unprompted in its own signature.
@@ -198,11 +235,39 @@ published rather than numbers, per `BEN-431`:
   `:222` citations. **`Assistant`'s range hypothesis is correct on this axis and only this one.**
 
 **A CORRECTION TO MY OWN FIRST RECONCILIATION, caught before publishing it.** I first tested by
-excluding the *directory* `docs/orchestration/runs/` and got `85` / `36`, which does not equal `101` /
-`41` — and I had been about to report the directory as the gap. It is not: that directory holds **10**
-cited files, `5` `.jsonl` (12 occ, outside my corpus) **and** `5` `.txt` (16 occ, already inside it,
-because my corpus includes `*.txt`). **Excluding by directory removes both; excluding by extension
-removes exactly the gap.** A near-miss of precisely the kind §3c exists to prevent.
+excluding the *directory* `docs/orchestration/runs/` and got `85 / 36`, not `101 / 41` — and I was one
+edit from reporting the directory as the gap. It is not: that directory holds **10** cited files, `5`
+`.jsonl` (outside my corpus) **and** `5` `.txt` (16 occurrences, already inside it). **Excluding by
+directory removes both; excluding by extension removes exactly the gap.** `Assistant`'s two failed
+hypotheses failed the same way — bundling the archive with the transcripts. **The general form, which is
+worth more than the number: when a discrepancy is explained by a single exclusion, verify the exclusion
+removes ONLY the discrepancy, not merely that it removes it.** A difference pointing the way you expect
+is the one you stop checking.
+
+### 6a. AND THE COMMAND CAME APART FROM THE NUMBER — a FOURTH self-contamination, caught by a peer
+
+`Assistant` ran the command published above and got **`103 / 42`**, not `101 / 41`, and diagnosed the
+corpus as unprincipled — *"one archive in, one out."* **That diagnosis is wrong** (both archives are
+`.md` and were always inside my corpus; excluding both gives `99 / 40`, which is just `101 − 2`).
+**The real cause, measured:**
+
+| ref | `git grep -ohE "$T" <ref> -- . ':!*.jsonl'` | files |
+|---|---|---|
+| `c9768596` — where I measured and published | **101** | **41** |
+| `7e8bf844` — MY OWN SCOPE COMMIT | 103 | 42 |
+| `81ca448e` — where `Assistant` ran it | 103 | 42 |
+
+`git` diff of the cited-file sets between `c9768596` and `81ca448e` returns exactly one new file:
+**`docs/orchestration/SCOPE-20260818-gate1-seed-separation-two-keys.md`, this document, contributing
+exactly 2 occurrences.** So the command and the number agreed *at the sha they were measured at*, and
+**this document broke its own baseline by citing the lines it is about.**
+
+**THE LESSON UPGRADES `BEN-431` AND MY OWN `BEN-249` AMENDMENT 1: PUBLISHING THE COMMAND IS NOT ENOUGH.
+A command over a mutable corpus is not a definition — publish the COMMAND AND THE REF.** Item 5's
+baseline is therefore `git grep … c9768596 … ':!*.jsonl'` → `101 / 41 / 39`, **sha included**, and the
+after-run must name its own ref. *(Fourth instance today of my own recording editing the population I
+measured, and the first one I did not catch myself — a peer running my published command at a later sha
+did. Which is the argument for publishing it.)*
 
 **So neither number was wrong: `101 / 41` is the LIVE citation count, `113 / 46` the raw corpus.** A
 citation inside an append-only run transcript is a *historical utterance* — it cannot be repaired and
@@ -212,11 +277,16 @@ operative content is unaffected — **not** a repeat of `BEN-249` amendment 2's 
 category error.)* **The `~80 shifting` figure is D's, presumes a single insertion at `:223`, and is
 superseded by §3c: there is no single offset, so it must be re-derived per citation after the diff.**
 
-## 7. THE QUESTION FOR JOSEPH
+## 7. STATUS
 
-1. **Authorize the seven-item diff?** It is fully specified, twice reviewed, and verifiable locally at
-   no compute cost.
-2. **If yes — `--seed` removed, or retained as an alias setting both?** `Assistant` requires the choice
-   be made; neither key expressed a preference.
+**Gate: CLEARED** (header). **Keys: `D` and `Assistant`, both YES, both against seven items, each with
+required changes now folded in above.** Both state explicitly that a key is a statement about the merits
+and not an authorisation.
 
-**Not being asked now:** the `39.223` A100-h + `55.337` CPU task-h run, and adoption.
+**OPEN, and the only thing blocking the build: the `--seed` fate (§3a / D's (ii)).** Joseph routed it —
+*"Ask the personal orchestrator"* — so it is with the mediator. D requires removal; `Assistant` expressed
+no preference; the unsafe option (retain meaning only one of the two roles) is excluded by both keys.
+**D's part (iii) applies either way**: the 5 no-seed invokers get explicit seeds, so that after the diff
+no invoker depends on a default.
+
+**NOT authorized here and not asked for:** the `39.223` A100-h + `55.337` CPU task-h run, and adoption.
