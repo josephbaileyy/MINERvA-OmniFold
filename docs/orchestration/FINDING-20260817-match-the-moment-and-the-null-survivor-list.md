@@ -20,8 +20,19 @@ anyone traced it to the type mismatch.
 ## Rule 2 — A NULL ON DEPENDENCE EXCLUDES A FAMILY; IT DOES NOT NAME A MEMBER
 
 **"X does not depend on Y" rules out Y-driven mechanisms and nothing else. Before concluding
-"therefore Z", enumerate the other Y-independent mechanisms and say why Z rather than them. If the
-list has one entry, say so; if it has two, you have not finished.**
+"therefore Z", enumerate the other Y-independent mechanisms and say why Z rather than them.**
+
+**AND THE CLAUSE THAT MAKES THE RULE SAFE, without which it reproduces the defect it fixes
+(lane C, `34ccd090`).** This finding first read *"if the list has one entry, say so; if it has two, you
+have not finished"* — which invites the reading **enumerate until one survives, then conclude.** That
+is the same over-confidence in a new dress, and it would have licensed the exact inference `BEN-422`
+refuted: draw-independence plus a one-item list would have "authorized" it.
+
+> **Two survivors does not mean the enumeration is unfinished — it means you cannot yet conclude.
+> One survivor does not license concluding it, because the list is never provably complete.**
+> **The survivor list BOUNDS WHAT YOU MAY CLAIM; it never certifies completeness.**
+
+A one-entry list supports *"the only mechanism I can name"*. It never supports *"the mechanism."*
 
 *Instance.* The measured residual is draw-independent: median `8.047e-04` at `data_factor == 1`
 against `8.022e-04` at `>= 2`. That excludes **draw-driven** mechanisms. **Nonlinear coupling and a
