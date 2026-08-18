@@ -221,7 +221,7 @@ docs/orchestration/FINDING-20260817-default-identity-is-the-machine-owner.md	ARC
 docs/orchestration/FINDING-20260817-match-the-moment-and-the-null-survivor-list.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	1	62	4041
 docs/orchestration/FINDING-20260817-one-field-two-roles.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	1	281	18170
 docs/orchestration/FINDING-20260817-testing-the-gate-disabled-the-gate.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	2	88	5159
-docs/orchestration/FINDING-20260817-the-fix-for-the-last-instance-is-the-mechanism-of-this-one.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	1	98	5354
+docs/orchestration/FINDING-20260817-the-fix-for-the-last-instance-is-the-mechanism-of-this-one.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	2	98	5354
 docs/orchestration/FINDING-20260817-the-floor-shape-noise-is-heterogeneous.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	2	176	11035
 docs/orchestration/FINDING-20260817-the-identity-claim-is-three-orders-too-strong.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	3	155	8958
 docs/orchestration/FINDING-20260817-the-reconciliation-was-in-the-receipt.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	1	221	14503
@@ -229,10 +229,11 @@ docs/orchestration/FINDING-20260817-two-pins-one-file-two-tenses.md	ARCHIVAL	fin
 docs/orchestration/FINDING-20260817-two-sessions-one-checkout-and-no-signal.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	1	93	5981
 docs/orchestration/FINDING-20260817-unqualified-transport-of-good-measurement.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	2	148	10003
 docs/orchestration/FINDING-20260817-verification-allocated-by-suspicion.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	1	168	11530
+docs/orchestration/FINDING-20260818-answered-and-not-heard.md	ARCHIVAL	finding		20260818	terminal		exact-path-only		yes	1	58	3244
 docs/orchestration/FINDINGS-ARCHIVE-2026-08.md	ARCHIVAL	document	2026-07-16-fe-campaign		terminal		exact-path-only	docs/orchestration/findings_row_lint.py;docs/orchestration/split_findings.py;nd-unfolding/pet/check_canonical_designation.py	yes	7	155	362988
 docs/orchestration/FINDINGS-INDEX-ARCHIVE-2026-08.md	ARCHIVAL	document	20260806-campaign		terminal		exact-path-only		yes	2	46	25076
 docs/orchestration/FINDINGS-POLICY-HISTORY.md	ARCHIVAL	document			terminal		exact-path-only		yes	1	62	4476
-docs/orchestration/FINDINGS.md	LIVE	ledger	20260806-campaign		open		route-only	docs/orchestration/findings_row_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/split_findings.py;docs/orchestration/whose_row.py;nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/orchestrate_gpu_node.sh;nd-unfolding/sbatch_bootstrap_5d_gpu.sh;nd-unfolding/tests/test_hash_bindings.py	no	83	631	607416
+docs/orchestration/FINDINGS.md	LIVE	ledger	20260806-campaign		open		route-only	docs/orchestration/findings_row_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/split_findings.py;docs/orchestration/whose_row.py;nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/orchestrate_gpu_node.sh;nd-unfolding/sbatch_bootstrap_5d_gpu.sh;nd-unfolding/tests/test_hash_bindings.py	no	84	635	617123
 docs/orchestration/FOOTING-20260817-gbdtaiesttrace-12-seeds.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	94	6331
 docs/orchestration/HANDOFF-20260806-2246Z.md	ARCHIVAL	document		20260806	terminal		exact-path-only		yes	13	186	12848
 docs/orchestration/HANDOFF-20260812-1145Z.md	ARCHIVAL	document		20260812	terminal		exact-path-only		yes	6	175	14895
@@ -246,7 +247,7 @@ docs/orchestration/INTERIM-HANDBACK.md	ARCHIVAL	document			terminal		exact-path-
 docs/orchestration/LIVE-STATE.md	LIVE	live-status			generated		always	docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_g2_dump_resume.sh;docs/orchestration/watch_slurm_array_resume.sh	no	44	76	12872
 docs/orchestration/LIVE-USAGE.md	LIVE	live-status			open		route-only		no	15	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	10	53	3555
-docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	19	967	158572
+docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	19	969	158841
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	LIVE	document		20260817	open		route-only		no	3	184	13929
 docs/orchestration/MAP-20260817-pet-critical-path.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	197	14433
 docs/orchestration/METHOD-DECLARATION-20260814-lane-d-cstat-crosscheck.md	ARCHIVAL	document		20260814	terminal		exact-path-only	docs/orchestration/state/build_cstat_crosscheck_laned.py	yes	3	102	6794
@@ -316,7 +317,7 @@ docs/orchestration/RULING-20260815-lanec-reduced-n-diagnostic-coherence.md	ARCHI
 docs/orchestration/RULING-20260817-lanec-data-only-coherence-predicate.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	233	16767
 docs/orchestration/RULING-20260817-lanec-data-only-cstat-is-a-second-product.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	339	24599
 docs/orchestration/RULING-20260817-lanec-data-only-normalization-must-vary.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	204	13059
-docs/orchestration/RULING-20260817-lanec-data-only-target-family-and-launchers.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	272	19553
+docs/orchestration/RULING-20260817-lanec-data-only-target-family-and-launchers.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	543	38384
 docs/orchestration/RULING-20260817-lanec-floor-vs-family-coherence.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	338	24704
 docs/orchestration/RULING-20260817-lanec-oi126-branch-set-not-exhaustive.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	247	17338
 docs/orchestration/RULING-20260817-lanec-pinned-readers-get-wrappers-not-copies.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	244	16354
@@ -325,6 +326,7 @@ docs/orchestration/RUNBOOK-20260807-gbdt-closeout.md	ARCHIVAL	runbook		20260807	
 docs/orchestration/RUNS.template.tsv	DEAD	tabular-data			superseded	docs/orchestration/RUNS.tsv	never		yes	1	2	105
 docs/orchestration/RUNS.tsv	MACHINE	tabular-data	fe-fps-campaign		generated		exact-path-only	docs/orchestration/test_generate_live_state.py;docs/orchestration/wakerctl.py;nd-unfolding/sbatch_pet_train_fps_delta.sh	no	66	306	179022
 docs/orchestration/SCHEDULING-STRATEGY.md	LIVE	document			open		route-only		no	9	212	14246
+docs/orchestration/SCOPE-20260818-gate1-seed-separation-two-keys.md	ARCHIVAL	document		20260818	terminal		exact-path-only		yes	0	222	15397
 docs/orchestration/SCOPING-20260810-engine-rebaseline-cost.md	ARCHIVAL	document		20260810	terminal		exact-path-only		yes	6	182	12988
 docs/orchestration/SCOPING-20260813-csyst-joint-nuisance-retraining.md	ARCHIVAL	document		20260813	terminal		exact-path-only		yes	2	348	25320
 docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	LIVE	document		20260817	open		route-only		no	8	815	61891
@@ -444,7 +446,7 @@ docs/orchestration/notify_job_log.sh	MACHINE	shell-tool			generated		exact-path-
 docs/orchestration/notify_nominal.sh	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/notify_job_log.sh;docs/orchestration/notify_uthrow_regen.sh;nd-unfolding/pet/check_canonical_designation.py	no	6	95	5256
 docs/orchestration/notify_p4_receipts.sh	MACHINE	shell-tool			generated		exact-path-only		no	2	26	1479
 docs/orchestration/notify_pwclosure.sh	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/notify_job_log.sh;docs/orchestration/notify_nominal.sh	no	3	59	2906
-docs/orchestration/notify_uthrow_regen.sh	MACHINE	shell-tool			generated		exact-path-only		no	6	57	3246
+docs/orchestration/notify_uthrow_regen.sh	MACHINE	shell-tool			generated		exact-path-only		no	7	57	3246
 docs/orchestration/novelty-per-round.md	ARCHIVAL	document			terminal		exact-path-only		yes	2	24	1656
 docs/orchestration/oi_owner_report.py	MACHINE	script			generated		exact-path-only		no	2	83	3650
 docs/orchestration/orchestration-guide.md	ARCHIVAL	document			terminal		exact-path-only		yes	5	165	11207

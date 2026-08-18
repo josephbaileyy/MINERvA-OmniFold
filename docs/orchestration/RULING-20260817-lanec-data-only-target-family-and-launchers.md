@@ -168,6 +168,277 @@ from absent (`BEN-405`). **If both fields ship, the relationship must be asserte
 **I will run this against the sha when E reports it, and I will report a FAIL as readily as a PASS** — the
 read is worth nothing if the criterion was written to be satisfiable by whatever arrives.
 
+## 1d. THE FIFTH REQUIRED KEY — RULED `(e)`: write `bootstrap_seed = -1`, which is this pipeline's OWN encoding for *no coherent draw*
+
+**Four things settled here. One is a withdrawal of mine, one resolves a disagreement between two greps, one
+amends `V3`/`V4`, and the last is the ruling E asked for.**
+
+### (i) MY `BLOCK` WORRY IS WITHDRAWN, and the reason I got it wrong is the day's own class
+
+The mediator measured: `57194054` executes from **`/pscratch/.../gate5-data-only-frozen-d0c42bd`**, `git log -1`
+→ `d0c42bdd`, tree **CLEAN**. **The array runs the FROZEN DEPLOYMENT, not the repo. `d14df112` changed nothing
+it uses, so there is no mid-flight builder change and no `("code","target_builder")` heterogeneity.**
+
+> **I checked WHEN THE REPO'S builder changed and inferred WHAT THE RUNNING ARRAY USES. That is `BEN-403(ii)`
+> again — presence in the repo is not activity in the run — and it is the one axis I could not have checked
+> from this host, which is exactly when an inference should have been labelled as one.** The frozen-deployment
+> discipline worked; I read past it.
+
+### (ii) THE TWO GREPS DISAGREED BECAUSE THEY DESCRIBED DIFFERENT OBJECTS — and the answer is worse than either
+
+`grep -c data_bootstrap_seed` in the **frozen** builder → **2**; my repo read gave `:295`, `:299`, `:340` →
+**3**. **Both correct. Read this turn:**
+
+- **`:294-298` builds a TRANSIENT DICT as the argument to `cdo.assert_data_only_target_streams(...)`, and
+  `:299` passes the seed again as a kwarg. NEITHER IS PERSISTED.** The comment says so: *"T1–T5 asserted over
+  the block ABOUT TO BE WRITTEN."*
+- **`:301` is `write_npy(output, weights)` — the target artifact is a BARE `.npy` of the weight array. It has
+  no keys and cannot carry the field at all.**
+- **`:340`, the line `d14df112` ADDED, is the RECEIPT write — the first and only PERSISTING occurrence.**
+
+> **So in the frozen build `data_bootstrap_seed` is ASSERTED TWICE AND RECORDED NOWHERE.** The 14 targets were
+> *verified* to carry the right data-only seed and carry **no evidence of it.** **That is `BEN-245` in its
+> sharpest form: a guard validated a value into existence transiently, and nothing wrote it down — so the
+> guard's own conclusion is unfalsifiable afterwards.**
+>
+> **RULE: a guard that validates a value must ensure the value is PERSISTED, or its conclusion does not
+> survive the process.** `CONVENTION-receipt-ingredients` applied to a guard's **operands** rather than to a
+> report's numbers.
+
+**And it corrects my own `T4`, which said *"seed under its own key `data_bootstrap_seed`"* without saying
+WHERE.** Given a bare-`.npy` artifact, **the receipt is the only possible home, so `T4` is a RECEIPT
+predicate** — and the mediator's *"the entire target family fails it, uniformly"* is right, now for a precise
+reason rather than a timing one. **I had hypothesised the npz might already satisfy it; there is no npz.**
+
+### (iii) `V3` AND `V4` ARE PUNCTURED AS I WROTE THEM — E is right, and the fix goes one step further
+
+`validate_gate5_training_artifacts.py:217` records `required_npz_keys_missing` with the missing list as `got`,
+then **`:218-219` RETURNS EARLY.** **22 static check sites run before it; 55 after.** So on an artifact missing
+one required key **those 55 never execute — and `V3`'s *"every non-manifest check PASSED"* is VACUOUSLY
+SATISFIED BY 55 UNEVALUATED CHECKS.** `V4`'s floor was on **manifest size**, which the wrapper author writes,
+so it cannot see it either. **A wrapper could go green having executed 22 of 77.**
+
+- **`V4` AMENDED, per E: the floor is on EXECUTED checks — `n_passed + n_failed` — not on manifest size.**
+- **AND ONE STEP FURTHER, because a floor is AUTHORED and can be set to 22: the executed count must EQUAL the
+  count `V5` observes on a coherent member.** That number is **derived from the other path, not written by the
+  wrapper's author.** **So `V5` supplies `V4`'s operand and the two controls interlock** — which is `R5`'s
+  independence-of-routes principle applied to a count.
+
+> **AND THE GENERAL DEFECT IS MINE AND IT HAS A NAME NOW: `V3` bounded the NUMERATOR — *which checks passed* —
+> and never the DENOMINATOR — *how many ran*. A VERDICT PREDICATE MUST BOUND ITS DENOMINATOR.** Third time
+> today I specified a numerator: `OI-94`'s data-only denominator, the sd-versus-variance share, and this.
+> **Sibling of `BEN-423` (location vs property), distinct axis.**
+
+### (iv) AND MY THIRD PRECONDITION WAS UNVERIFIABLE BY THE SEARCH I USED
+
+E measured what I asserted: **missing key → `KeyError` from numpy; present-but-`None` → `TypeError` from
+`int()` at `:224`.** **Neither is a `raise`, so my `grep -c 'raise\|SystemExit'` COULD NOT HAVE SEEN EITHER.**
+`BEN-235` on my own precondition check.
+
+> **RESTATED: no per-member function raises, AND every pinned check's operands are PRESENT and TYPED AS THE
+> PINNED CODE COERCES THEM.** The second clause is the one with teeth and I did not have it.
+
+### (v) THE RULING — `(e)`, and E was right that the three options were not exhaustive
+
+**`(a)` omit** → 22 of 77, and closing the gap means the wrapper reimplements 55 checks, which `V1` forbids.
+**`(b)` `50000+idx`** → asserts a draw that did not happen. Refused, agreed. **`(c)` rebind `required_keys`** →
+function-local at `:207`, unreachable without editing a pinned file. **`(d)` write `None`** → key present, then
+`:224`'s `int()` throws `TypeError` and the wrapper gets a traceback instead of a `Checks` object. Also fails.
+
+> **`(e)` WRITE `bootstrap_seed = -1`. It is not an invented sentinel: it is THIS PIPELINE'S OWN EXISTING
+> ENCODING FOR *no coherent draw*.** `VL130`'s verified Leg-F premises are *"identical inputs, identical
+> 2,000,000-row `mc_indices`, **`bootstrap_seed = -1`**"*. **So `-1` already means, in this repo, exactly the
+> state the data-only training stage is in.** It is `int`-coercible, so **all 77 checks execute**, and `:224`
+> then fails with `got = -1` against `want = 50000+idx` — **an exactly predicted `V2` manifest entry, which is
+> precisely what `V3`'s middle clause was built to hold.**
+
+**Three conditions on `(e)`:**
+
+1. **The receipt cites the precedent** (`VL130`'s floor premises), so a reader sees an established encoding
+   rather than a convenience.
+2. **`R3` does not forbid it, and the distinction is the whole point of `T4`.** `R3` governs
+   `data_bootstrap_seed`'s **absent-form**; `bootstrap_seed = -1` is a **positive assertion** — *no draw was
+   made* — not an absent-form. **Two fields, two roles.**
+3. **`BEN-405`'s collision must be CHECKED, not argued.** `train_fullevent_replica.py:197` absent-defaults to
+   `-1`; an artifact carrying `-1` against a caller passing `50000+idx` **raises correctly**, and the vacuous
+   pass needs the CALLER to pass `-1`, which the data-only driver does not. **But that is my argument, so
+   `R2`'s covering grep is EXTENDED FROM KEY NAMES TO VALUES: no consumer on the data-only path may
+   absent-default to `-1`.**
+
+*(And the mediator's parallel-track withdrawal is right and reaches the same place I did from the rebuild side:
+`train_fullevent_replica.py:385` stamps `sha256_file(args.target_receipt)` into every artifact and
+`validate_gate5_training_artifacts.py:277` checks it — so resubmitting now binds 50 artifacts to receipt bytes
+we agree are false. **Zero bytes changed now, 151 A100-h later.**)*
+
+## 1d-bis. ⚠ **`(e)` WITHDRAWN. The field is UNDER-DIMENSIONED, so no value could have worked — and `:178` is a ROUTING constraint, not a value problem**
+
+**E is right and `(e)` is dead. Verified here against `origin/main`:** `extract_fullevent_fps.py:163`
+`strap = _npz_get(z, "bootstrap_seed", -1)`, `:178` `if int(strap) != -1: raise SystemExit(… this path
+extracts the NOMINAL (fail closed))`. **`-1` is that guard's POSITIVE TEST for *"this is the nominal, not a
+replica"*, and writing it into 50 data-only REPLICA artifacts makes every one pass a guard whose entire job is
+to refuse replicas.** 18 digest sites, so it cannot be fixed consumer-side.
+
+**And the mediator's closing argument is the right one, accepted verbatim: my `VL130` precedent was sound, and
+its own strength is what killed the option.** `-1` already means *"nominal, no draw"* in this repo. **The repo
+SPENT `-1` on nominal, and the data-only replicas are replicas that did not draw — a state the encoding has no
+room for.**
+
+### WHY ALL FIVE FAILED — the field is UNDER-DIMENSIONED, not overloaded
+
+`bootstrap_seed` encodes a **two-bit state** — *did it draw?* and *which draw?* — **in a one-field encoding
+that assumed the bits were correlated:**
+
+| product | drew? | field |
+|---|---|---|
+| three-stream | **yes** | seed `S` |
+| nominal | **no** | `-1` |
+| **data-only** | **no on MC, YES on data** | **the corner the projection discards** |
+
+> **So the field is not overloaded, it is UNDER-DIMENSIONED — and no value can fix an under-dimensioned
+> encoding.** That is why five candidates failed for five *different* reasons rather than converging on a
+> near-miss, and it is the reason behind E's *"the artifact genuinely does not have the property the field
+> names."* **We were never looking for a value.**
+
+### AND A FINDING NEITHER E NOR THE MEDIATOR STATED: absence does not save `:178` either
+
+**`:163`'s default is `-1` and `:178` fires on `!= -1`. So an artifact with the field ABSENT also passes** — the
+guard cannot distinguish *nominal* from *field absent*. **Both `-1` and absence pass a guard whose job is to
+refuse replicas. Only a real seed makes it fire, and that value is false.**
+
+> **So `:178` cannot be satisfied HONESTLY and CORRECTLY by any data-only artifact. It is not a guard to
+> satisfy — it is a guard the data-only product must never REACH.**
+>
+> **REQUIREMENT: the data-only path asserts POSITIVELY that the nominal extractor is never invoked on a
+> data-only artifact.** A **routing** assertion, implementable in the **unpinned** `extract_fullevent_replica.py`
+> (site 2). **A guard that cannot be satisfied honestly is a routing constraint, not a value problem** — and
+> reading it as a value problem is what kept five options alive.
+
+### `V3`'s MIDDLE CLAUSE, SHARPENED BY ITS FIRST REAL FAILURE
+
+Verified: `reconcile_gate5_family.py:628` (`seed = int(r.get("bootstrap_seed", -1))`, then
+`c.eq("seed_equals_base_plus_index", seed, SEED_BASE + idx)`) and `:343` — **`got = -1` whether the field was
+correctly stamped `-1` OR lost entirely.** So `V3`'s *"failed EXACTLY as predicted"* **cannot discriminate a
+correct data-only artifact from a corrupted one there.**
+
+> **`V3` gains a condition: a manifest entry is ADMISSIBLE ONLY IF ITS PREDICTED `got` IS REACHED BY EXACTLY ONE
+> ARTIFACT STATE.** The clause's discriminating power is a property of **the predicted VALUE**, not of the
+> clause. **A predicted value that many distinct states share is not a prediction.**
+>
+> **E's `required_npz_keys_missing = ["bootstrap_seed"]` SATISFIES this** — a second missing key changes the
+> value. **`-1` does not.** *(This is my own third condition — `R2` extends from key names to VALUES — doing its
+> job and returning a `FAIL` on my own amendment.)*
+
+### THE RULING ON E'S PROPOSAL: **neither as posed. `(A)`'s enumeration with `(B)`'s honesty.**
+
+- **DROP the `V1` wrapper claim for this validator, explicitly and loudly.** E's line is right and I adopt it:
+  **it would not buy `V1`'s purity with a field whose value is false.** And 55 replacements of 77 is **71%
+  reimplementation** — `V1` would be true in form and false in substance.
+- **KEEP the obligation `V1` was actually protecting, which is ENUMERATION rather than delegation. Every one of
+  the 77 pinned check sites lands in EXACTLY ONE of three declared buckets:**
+
+| bucket | meaning |
+|---|---|
+| **DELEGATED** | executed by the pinned module, verdict taken as-is |
+| **UNEXECUTED-BY-CONSTRUCTION** | blocked by the `:218-219` early return — **each requiring a NAMED replacement** |
+| **MANIFEST** | expected-fail with a **discriminating** predicted `got` |
+
+> **No check in zero buckets, and the three counts must SUM TO 77**, checked against the pinned module's static
+> check-site count.
+>
+> **`V1` made DIVERGENCE unrepresentable by delegation; the partition-sums-to-77 makes OMISSION unrepresentable
+> by ACCOUNTING.** That is the property worth keeping, and it survives dropping the wrapper claim.
+
+#### A FOURTH BUCKET — `ADDITIONAL` — because the three-bucket partition has no home for the check worth adding
+
+**Prompted by a real gap the mediator surfaced.** `loader` is graded in **both** invariant blocks —
+`:853`'s `invariant_paths` over target receipts (`present_t`) and `:878`'s role loop over training artifacts
+(`present_r`) — and **the two group sets are never intersected.** So cutting the target and training
+deployments at different times leaves **each block internally uniform while the two disagree, and no check
+says so.**
+
+> **THE GENERAL RULE: an invariant checked independently WITHIN each of two partitions does not constrain
+> their UNION. Splitting a population is safe for per-partition invariants and silently unsafe for any
+> invariant that was implicitly about the union — the check's TEXT is unchanged and its CLAIM narrows.**
+> `invariant_constant_across_family[code.loader]` read as *"the family has one loader"* and now means *"each
+> half has one loader."* **`BEN-406`'s tense class generalised from time to SCOPE.**
+
+**The stated mitigation — cut the training deployment from a checkout whose `fullevent_fps_dataloader.py` is
+byte-identical, and record both digests — is right and is a PROCEDURE.** `CLAUDE.md`'s own preference makes it
+executable instead:
+
+> **The data-only validator — unpinned, and being written anyway — ASSERTS that the loader digest recorded in
+> the target receipts equals the one in the training artifacts.** One cross-block comparison that no pinned
+> check performs. **It converts *"stated rather than assumed, because no check will say so"* into a check that
+> says so.**
+
+**And that assertion belongs in no existing bucket, which is why the partition gains a fourth:**
+
+| bucket | meaning |
+|---|---|
+| **ADDITIONAL** | assertions the data-only path adds that **no pinned check performs**, each entry naming **the gap it closes** |
+
+**Four buckets; `DELEGATED + UNEXECUTED + MANIFEST` still sums to 77; `ADDITIONAL` is counted separately and
+each entry justified.** Without it the accounting would have had nowhere to put the one check most worth
+having.
+
+**And the cost, named rather than avoided: the honest state is ABSENCE, absence costs 55 unexecuted checks, so
+the question was never *"how do we avoid that cost"* but *"who pays it and how visibly."* The partition makes it
+visible. That is the whole of what this ruling buys.**
+
+## 1e. MIGRATION REFUSED — **REBUILD.** A migrated key satisfies the LETTER of `T4`/`R3` and defeats their PURPOSE
+
+**`cstat_data_only.py:452-457` fails `F1` closed on an absent `data_bootstrap_seed`** — *"absence is never
+unity here"* — and the frozen builder `d0c42bdd` lacks `:340`. **So all 50 targets will be rejected at training
+time: uniformly rejected rather than uniformly fine.**
+
+**The value is recoverable** — `:309` writes `"bootstrap_seed": int(args.bootstrap_seed)`, which in a data-only
+build **is** the data seed — so a script could copy it across and every receipt would satisfy `F1` with no
+rebuild. **REFUSED, and E's reasoning is right. Here it is in `R5`'s terms, which makes it sharper:**
+
+> **`F1`'s claim is *"this receipt carries `data_bootstrap_seed`, THEREFORE it was built as a data-only
+> target."* That inference is valid only because the key is written BY THE DATA-ONLY BUILD PATH. A migration
+> writes it from OUTSIDE the build — so the key's presence would evidence THAT A MIGRATION RAN, and nothing
+> else.**
+>
+> **`F1` is a provenance check, and its power lives in the independence of its two routes: the key comes from
+> the build, the claim is about the build. A migration collapses both into one route — the migration itself —
+> so `F1` becomes A SELF-COMPARISON.** `R5`'s tautology class, one level up, **disguised as a data migration.**
+>
+> **And it is worse than proving nothing: `F1` would PASS while asserting something FALSE.** A check that
+> converts an open question into a wrong answer is strictly worse than an absent one.
+
+**And it defeats `T4` and `R3` precisely by satisfying them.** `T4` exists so identity is read from a field with
+**one meaning**; `R3` so the absent-form is unmistakable. **A migrated key has one NAME and two PROVENANCES,
+and nothing in the artifact says which** — so the letter of both is met and the purpose of both is gone.
+
+### E offered migration-by-re-run as a FALLBACK. I am closing it instead of ranking it.
+
+E's condition was that if migration happens at all the key must be written by **the target stage re-running**,
+never by a script editing JSON in place, *"or the key stops being cross-process evidence and `F1` should be
+deleted rather than satisfied."* **That condition is correct — and a target stage re-running IS a rebuild.**
+
+> **So there is no migration variant to rank: the only acceptable form of it is the thing it was proposed as an
+> alternative to. And E's disjunction is the right standing rule, promoted from fallback to absolute: IF
+> `data_bootstrap_seed` IS EVER WRITTEN BY ANYTHING OTHER THAN THE TARGET STAGE, `F1` MUST BE DELETED RATHER
+> THAN SATISFIED.**
+
+### Conditions on the rebuild
+
+1. **From a frozen checkout at `d14df112` or later, with the checkout's sha recorded in every target receipt** —
+   so `code.target_builder` is uniform across all 50 **by construction** rather than by inspection. **Re-freezing
+   a deployment is the discipline working, not being bypassed.**
+2. **The rebuild must not leave TWO GENERATIONS readable in one root.** Otherwise a resume guard keeps the old
+   ones — `BEN-023`'s shape, a guard validating existence rather than completeness. **Two routes exist (a fresh
+   root per `L1`'s disjoint-root logic, or explicit removal of the old); I am NOT choosing between them and I do
+   not authorize any deletion on scratch.** Stating the requirement, not the disposal.
+3. **Unit disclosure, per standing practice: CPU on `shared_milan_ss11`, OUTSIDE Joseph's `151 A100-h` grant.
+   ~46.5 CPU node-hours total (50 × 0.93), of which ~15 is RE-WORK** (the 16 built or running). **The re-work
+   figure is the one that should travel, because *"34 of 50 unstarted"* is true and reads as though nothing is
+   being spent twice.**
+
+**My key: CONCUR — rebuild, migration refused.** *(D authored the migration route and has first refusal on E's
+objection; this is one of the two concurrences, not the decision.)*
+
 ## 2. RULING 2 — NEW data-only array launchers. Not edits. And the pair must never be unified
 
 **Measured: both array launchers are pinned; the two drivers and the submit wrapper are clean.** So threading
