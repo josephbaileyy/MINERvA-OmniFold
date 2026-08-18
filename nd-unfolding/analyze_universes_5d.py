@@ -45,7 +45,7 @@ def category_for_band(band):
     return "Models"
 
 
-def load_flat(path):
+def load_flat(path, expect_nbins=None):
     # B4 / BEN-481: THIS WAS THE ONE GENUINELY UNPROTECTED CONSUMER. It checked IsZombie() only, so a
     # TRUNCATED product -- one ROOT had to recover because the producer died mid-write -- was ACCEPTED
     # and folded into the 188-universe analysis. ROOT sets TFile::kRecovered on any file not closed
@@ -54,11 +54,38 @@ def load_flat(path):
     #
     # Delegated to fps_unfold_complete.check rather than re-implemented: that module already carried
     # the right COMPLETE definition and a second copy of a completeness rule drifts invisibly, because
-    # each copy passes its own tests. expect_nbins/require_completeness are relaxed because this
-    # family is a different binning and does not always write globalCompleteness -- the kRecovered,
-    # zombie, finite and sum>0 gates are the ones that matter here.
+    # each copy passes its own tests.
+    #
+    # TIGHTENED 2026-08-18, and the earlier justification here was FALSE OF THIS FAMILY. It read
+    # "does not always write globalCompleteness". Measured: BOTH writers of this family write it
+    # UNCONDITIONALLY, in the same straight-line block as hXSecND_flat itself --
+    #     sweep_bank_5d.py:289             (169 vertical universes)
+    #     unfold_nd_omnifold_unbinned.py:1014  (19 lateral + CV)
+    # and the mediator independently read the key out of a real archive product
+    # (5d_xsec_MEFHC_5iter_lgbm_uni_full_2p2h_0.root, globalCompleteness = 0.9998608732766575).
+    # There is no absent case, so the premise of the relaxation did not exist.
+    #
+    # WHAT THE RELAXATION ACTUALLY COST is worse than a weak comment: require_completeness=False
+    # skipped the NaN gate as well as the threshold, and NaN IS REACHABLE WITH A KNOWN CAUSE --
+    # both writers emit float("nan") when denom_nd.sum() <= 0 (sweep_bank_5d.py:265,
+    # unfold_nd_omnifold_unbinned.py:999). A universe whose denominator integrates to zero has a
+    # meaningless cross-section, and I was folding it into the 188-universe covariance silently.
+    # That is the same class of defect as the kRecovered hole this delegation was written to close.
+    #
+    # SO: presence + finiteness are now REQUIRED. The FPS floor (MIN_COMPLETE = 0.50) is
+    # deliberately NOT inherited -- min_complete=0.0 -- because I have not measured the completeness
+    # distribution across the 188 universes and a floor tuned on the 285-bin FPS grid is not a
+    # measurement about this one. That is a cheap cluster follow-up, and stating it this way makes
+    # the missing measurement falsifiable rather than invisible.
+    #
+    # expect_nbins: the CV defines the grid, so it passes 0 (skip). Universes are checked against the
+    # CV's own bin count, which turns a wrong-grid product into this function's clean diagnostic
+    # instead of a numpy broadcast error at the subtraction two frames up.
+    # NOTE THE SENTINEL ASYMMETRY, which is a documented trap in check() itself: expect_nbins=None
+    # means "use the FPS 285 default", expect_nbins=0 means "skip". They are opposite meanings.
     import fps_unfold_complete as _fuc
-    _v = _fuc.check(path, expect_nbins=0, require_completeness=False)
+    _v = _fuc.check(path, expect_nbins=(0 if expect_nbins is None else expect_nbins),
+                    min_complete=0.0, require_completeness=True)
     if not _v.get("ok"):
         raise SystemExit(f"[FAIL] {path} is not a COMPLETE product: {_v.get('why')}")
     f = ROOT.TFile.Open(path)
@@ -83,7 +110,7 @@ def main():
     args = ap.parse_args()
     os.makedirs(args.outdir, exist_ok=True)
 
-    cv = load_flat(args.cv)
+    cv = load_flat(args.cv)   # the CV DEFINES the grid, so no bin-count expectation
     print(f"[INFO] CV flat nbins={cv.size}")
     paths = sorted(glob.glob(args.glob))
     if not paths:
@@ -95,7 +122,8 @@ def main():
         if not m:
             print(f"  [skip] {p}")
             continue
-        by_band[m.group("band")].append((int(m.group("idx")), load_flat(p) - cv))
+        by_band[m.group("band")].append((int(m.group("idx")),
+                                        load_flat(p, expect_nbins=cv.size) - cv))
     print(f"[INFO] {len(paths)} universe files across {len(by_band)} bands")
 
     rep = cv > 0

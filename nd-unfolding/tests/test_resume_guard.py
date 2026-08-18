@@ -259,6 +259,28 @@ def test_every_rg_caller_sources_the_library_first():
     assert not problems, "\n".join(problems)
 
 
+def _strip_full_line_comments(text):
+    """Drop lines whose first non-whitespace character is `#`.
+
+    WHY THIS EXISTS, 2026-08-18. The stamp lint below scraped a PROSE MENTION of a guard out of a
+    comment and reported the English word "and" as an unstamped output:
+
+        nd-unfolding/lib_member_resume.sh: guarded but never stamped: ['and']
+
+    from `# through to rg_skip_if_complete and was ACCEPTED on size and mtime.` -- a comment
+    EXPLAINING a resume defect, which is exactly the kind of comment a resume library should have. A
+    regex over raw source cannot tell a call from prose about a call, so the lint's own remedy
+    (write down why the guard is there) triggered it.
+
+    ONLY FULL-LINE COMMENTS ARE STRIPPED, deliberately. A trailing-comment strip that cut at the
+    first `#` would corrupt real code: `lib_member_resume.sh:126` contains
+    `tail="${p#*/nd-unfolding/}"`, where the `#` is parameter expansion, not a comment. Cutting there
+    would silently shorten a line the lint is meant to read -- trading a false positive for a false
+    negative, which is the worse direction for a guard.
+    """
+    return "\n".join(l for l in text.split("\n") if not l.lstrip().startswith("#"))
+
+
 def test_every_guarded_output_has_a_producer_stamp():
     """A resume guard with no matching rg_run/rg_publish/rg_mark_complete would skip
     nothing forever -- every run would redo the work. That is the safe direction, but
@@ -267,7 +289,7 @@ def test_every_guarded_output_has_a_producer_stamp():
     for rel in _shell_files():
         if rel.startswith("lib/"):
             continue
-        t = open(os.path.join(_REPO, rel)).read()
+        t = _strip_full_line_comments(open(os.path.join(_REPO, rel)).read())
         guarded = set(re.findall(r'rg_skip_if_complete\s+"?([^"\s]+)"?', t))
         if not guarded:
             continue
@@ -280,3 +302,37 @@ def test_every_guarded_output_has_a_producer_stamp():
         if missing:
             problems.append(f"{rel}: guarded but never stamped: {sorted(missing)}")
     assert not problems, "\n".join(problems)
+
+
+def test_the_comment_strip_did_not_BLIND_the_stamp_lint():
+    """THE TEST THE NARROWING REQUIRES: a filter that removes false positives gets a test that it
+    still fires on a REAL offender. Without this, `_strip_full_line_comments` could strip everything
+    and the lint above would pass vacuously forever -- and a lint that cannot fail is worse than an
+    absent one, because it reports green.
+
+    Planted offender: a guarded output with no rg_run/rg_mark_complete/rg_publish/rg_adopt anywhere.
+    """
+    offender = (
+        '#!/usr/bin/env bash\n'
+        '# a comment mentioning rg_skip_if_complete and prose must NOT be scraped\n'
+        'source lib/resume_guard.sh\n'
+        'rg_skip_if_complete "$REAL_OUT" && exit 0\n'
+        'python3 produce.py --out "$REAL_OUT"\n'
+    )
+    stripped = _strip_full_line_comments(offender)
+    guarded = set(re.findall(r'rg_skip_if_complete\s+"?([^"\s]+)"?', stripped))
+    stamped = set(re.findall(r'rg_(?:run|mark_complete|adopt)\s+"?([^"\s]+)"?', stripped))
+    assert guarded == {"$REAL_OUT"}, (
+        f"the strip must keep the real call: {guarded}")
+    assert "and" not in guarded, "the prose mention must be gone -- that was the false positive"
+    assert not stamped, "nothing stamps it, so this file IS an offender"
+    assert guarded - stamped == {"$REAL_OUT"}, "and the lint must still report it"
+
+
+def test_the_strip_preserves_parameter_expansion_containing_a_hash():
+    """The false-negative direction. `${p#*/nd-unfolding/}` is code, not a comment; a naive cut at the
+    first `#` would truncate the line and hide whatever followed on it."""
+    line = 'tail="${p#*/nd-unfolding/}"; rg_skip_if_complete "$OUT"'
+    kept = _strip_full_line_comments(line)
+    assert kept == line, f"a code line with $#-expansion must survive intact: {kept!r}"
+    assert "rg_skip_if_complete" in kept, "and what followed the hash must still be visible"

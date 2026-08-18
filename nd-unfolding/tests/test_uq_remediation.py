@@ -2118,5 +2118,154 @@ class MemberRootFirst(unittest.TestCase):
                    "seedscan_split_5d", "uq_5d/universe_sweep_bkgaware"):
             self.assertIn(ns, sp.CANONICAL_ARCHIVE_NAMESPACES)
 
+
+class CompletenessGateIsRequiredNotSkipped(CompletenessGuardClassifiesUnopenable):
+    """The tightening of 2026-08-18, tested IN THE DIRECTION IT ACTS.
+
+    `analyze_universes_5d.load_flat` passed `require_completeness=False` on the stated grounds that
+    this family "does not always write globalCompleteness". The mediator read the key straight out of a
+    real archive universe (0.9998608732766575) and asked for a real absent case or a tightening.
+    MEASURED: there is no absent case -- `sweep_bank_5d.py:289` and
+    `unfold_nd_omnifold_unbinned.py:1014` both write it unconditionally, in the same straight-line
+    block as `hXSecND_flat`. So the flag was tightened, and what it had been silently admitting was not
+    a threshold but a NaN, whose cause is known (`denom_nd.sum() <= 0`).
+
+    Inherits the stub harness deliberately -- a second copy of a ROOT stub drifts exactly the way a
+    second copy of a completeness rule does, which is what this whole delegation was about.
+    """
+
+    def _file(self, gc, nbins=4):
+        class _P:
+            def __init__(self, v): self._v = v
+            def GetVal(self): return self._v
+        class _H:
+            def GetNbinsX(self): return nbins
+            def GetBinContent(self, i): return 1.0
+        class _F:
+            def IsZombie(self): return False
+            def TestBit(self, _): return False
+            def Get(self, k):
+                if k == "hXSecND_flat": return _H()
+                if k == "globalCompleteness": return None if gc is None else _P(gc)
+                return None
+            def Close(self): pass
+        return lambda *a, **k: _F()
+
+    def _check(self, gc, nbins=4, **kw):
+        with self._stub_root(self._file(gc, nbins)) as fuc, tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "u.root"
+            target.write_bytes(b"\x00" * 4096)
+            kw.setdefault("expect_nbins", 0)
+            return fuc.check(str(target), **kw)
+
+    def test_a_NaN_completeness_universe_is_REJECTED_under_the_new_settings(self):
+        """THE DEFECT THE RELAXATION ADMITTED. A universe whose denominator integrates to zero has a
+        meaningless cross-section and was being folded into the 188-universe covariance silently."""
+        r = self._check(float("nan"), min_complete=0.0, require_completeness=True)
+        self.assertFalse(r["ok"], "a NaN-completeness universe must not be accepted")
+        self.assertIn("no/NaN globalCompleteness", r["why"])
+
+    def test_the_OLD_settings_ACCEPTED_that_same_NaN_universe(self):
+        """The control that makes the test above mean something: same stub, old flag, opposite verdict.
+        Without this the new test could be passing for a reason unrelated to what changed."""
+        r = self._check(float("nan"), require_completeness=False)
+        self.assertTrue(r["ok"], "if this fails, the NaN test above is not measuring the tightening")
+
+    def test_an_ABSENT_completeness_key_is_also_REJECTED(self):
+        r = self._check(None, min_complete=0.0, require_completeness=True)
+        self.assertFalse(r["ok"]); self.assertIn("no/NaN globalCompleteness", r["why"])
+
+    def test_a_HEALTHY_universe_still_passes_and_its_value_is_RECORDED(self):
+        r = self._check(0.9998608732766575, min_complete=0.0, require_completeness=True)
+        self.assertTrue(r["ok"], f"the real archive value must pass: {r!r}")
+        self.assertAlmostEqual(r["gc"], 0.9998608732766575, places=12)
+
+    def test_the_FPS_FLOOR_IS_DELIBERATELY_NOT_INHERITED(self):
+        """min_complete=0.0, not 0.50. A floor tuned on the 285-bin FPS grid is not a measurement about
+        the 5D universe family, and I have not measured that family's distribution. This test pins the
+        CHOICE so it cannot be quietly changed into an inherited default -- and it fails the moment
+        someone measures the 188 and adopts a real floor, which is when it should be revisited."""
+        low = 0.30
+        self.assertTrue(self._check(low, min_complete=0.0, require_completeness=True)["ok"],
+                        "0.30 must pass under the chosen floor")
+        inherited = self._check(low, require_completeness=True)     # min_complete=None -> FPS 0.50
+        self.assertFalse(inherited["ok"])
+        self.assertIn("< 0.5", inherited["why"],
+                      "and it WOULD have been rejected by the inherited FPS floor -- which is the "
+                      "choice being pinned, not an accident")
+
+    def test_a_WRONG_GRID_universe_gets_a_CLEAN_DIAGNOSTIC(self):
+        """Previously `expect_nbins=0` skipped this and the mismatch surfaced as a numpy broadcast
+        error at the subtraction two frames up. Universes are now checked against the CV's bin count."""
+        r = self._check(1.0, nbins=4)
+        self.assertTrue(r["ok"])
+        r2 = self._check(1.0, nbins=4, expect_nbins=65856, min_complete=0.0,
+                         require_completeness=True)
+        self.assertFalse(r2["ok"]); self.assertIn("nbins 4 != 65856", r2["why"])
+
+    def test_the_CONSUMER_no_longer_asks_for_the_relaxation(self):
+        """Read the CALL, not the file.
+
+        My first version of this test did `assertNotIn("require_completeness=False", src)` and it
+        FAILED -- on the comment I had just written explaining why the flag was removed. A substring
+        search over a source file cannot distinguish a call from prose ABOUT a call, and every honest
+        retraction I write makes that kind of check likelier to misfire. This is the same shape as the
+        `.count()` collision earlier in this campaign, so it gets the same remedy: parse it.
+        """
+        import ast
+        src = (ND / "analyze_universes_5d.py").read_text()
+        tree = ast.parse(src)
+        fn = next(n for n in ast.walk(tree)
+                  if isinstance(n, ast.FunctionDef) and n.name == "load_flat")
+        calls = [c for c in ast.walk(fn)
+                 if isinstance(c, ast.Call) and getattr(c.func, "attr", None) == "check"]
+        self.assertEqual(len(calls), 1, "load_flat should delegate exactly once")
+        kw = {k.arg: k.value for k in calls[0].keywords}
+        self.assertIn("require_completeness", kw)
+        self.assertIs(kw["require_completeness"].value, True,
+                      "the completeness gate must be REQUIRED, not skipped")
+        self.assertEqual(kw["min_complete"].value, 0.0,
+                         "the FPS floor is not inherited; the relaxation is the THRESHOLD only")
+        self.assertIn("expect_nbins", kw,
+                      "universes are checked against the CV's grid; the CV itself defines it")
+
+    def test_the_UNIVERSE_call_site_passes_the_CVs_bin_count(self):
+        """The other half of the grid check: load_flat's caller must supply cv.size for universes and
+        nothing for the CV, which is the file that defines the grid."""
+        import ast
+        src = (ND / "analyze_universes_5d.py").read_text()
+        sites = [c for c in ast.walk(ast.parse(src))
+                 if isinstance(c, ast.Call) and getattr(c.func, "id", None) == "load_flat"]
+        self.assertEqual(len(sites), 2, "one CV load, one universe load")
+        shapes = sorted(
+            (len(c.args), tuple(k.arg for k in c.keywords),
+             ast.unparse(c.keywords[0].value) if c.keywords else None)
+            for c in sites)
+        self.assertEqual(shapes[0], (1, (), None), "the CV passes no expectation")
+        self.assertEqual(shapes[1], (1, ("expect_nbins",), "cv.size"),
+                         "the universes are pinned to the CV's own bin count")
+
+    def test_the_helper_docstring_RETRACTS_the_false_premise(self):
+        """NOT "the phrase is gone" -- the phrase is deliberately still there, in quotes, being
+        retracted, because a correction that deletes the wrong claim leaves the next reader free to
+        re-derive it. My first version of this test asserted its ABSENCE and failed against my own
+        retraction. What must be true is that the phrase never appears as an active justification.
+        """
+        src = (ND / "fps_unfold_complete.py").read_text()
+        self.assertIn("for products that do not write it", src,
+                      "the false claim is quoted so the retraction has a referent")
+        self.assertIn("that was\n    false of the family I applied it to", src,
+                      "and it must be quoted AS FALSE, adjacent to the quote")
+        self.assertIn("DO NOT REACH FOR `require_completeness=False` TO RELAX A THRESHOLD", src)
+        # the operative form: nothing in this repo may still CALL for the relaxation on that ground
+        import ast
+        for mod in ("analyze_universes_5d.py", "fps_unfold_complete.py"):
+            for c in ast.walk(ast.parse((ND / mod).read_text())):
+                if isinstance(c, ast.Call) and getattr(c.func, "attr", None) == "check":
+                    for k in c.keywords:
+                        if k.arg == "require_completeness":
+                            self.assertIsNot(k.value.value, False,
+                                             f"{mod} still calls check() with the gate off")
+
 if __name__ == "__main__":
     unittest.main()
