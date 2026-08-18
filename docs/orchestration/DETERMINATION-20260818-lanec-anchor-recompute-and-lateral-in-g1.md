@@ -304,6 +304,146 @@ one. **So a note-keyed identity check on `rg_run`-written markers could never ha
 one place the equality rule of §2b has to be enforced. `mr_run` is not duplication; it is the only place the
 check can live.
 
+---
+
+## 8. RULED — **a member is `(b)`, a full parallel pipeline THROUGH ADOPTION** — because the published quantity passes through an elementwise `maximum`
+
+**`(a)` is refused, and not on scope taste. One line of committed code decides it**, the same way `:450-455`
+decided item 7:
+
+> **`nd-unfolding/adopt_unified_5d.py:108`**
+> ```
+> s_adopt = np.sqrt(np.maximum(vu, vb))     # conservative: never below block baseline
+> ...
+> g[m] = s_adopt[m] / sb[m]                 # >= 1
+> C_new[i, :] += (g[i] * g - 1.0) * C_vert[i, :]
+> ```
+
+**Adoption contains a PER-BIN ELEMENTWISE MAXIMUM, and it feeds a per-bin rescaling of the vertical covariance
+that reaches every off-diagonal.** So:
+
+1. **`f_agg` and `f_med` are functions of the ADOPTED object, not of the producers.** `block_sum` is a trace and
+   `σ_i` a diagonal **of the adopted total**, and `\gbdtFiveAdoptTrace` says so in its own name.
+2. **A maximum does not commute with taking a spread.** Which branch wins at bin `i` can DIFFER BETWEEN MEMBERS,
+   so two members can sit on opposite sides of a kink. **A spread assembled from per-block traces and diagonals
+   is the spread of a DIFFERENT quantity.**
+3. **And its direction relative to the true spread is NOT ESTABLISHED.** A max clamps jitter where `vb` wins and
+   passes it where `vu` does — but `vb` is itself an unfold at the estimator seed, so both branches jitter and
+   `sd(max(X,Y))` is not generally ordered against either. **Had the direction been known to be conservative,
+   `(a)` would have yielded a usable upper bound under §5's rule that MET may be reached on a bound. It is not
+   known, so it does not.**
+
+> **RULED: `(b)`. A member runs producers → combines → 188-analyzer → ADOPTION, and produces the member's
+> `(block_sum, {σ_i})` plus the terminal receipt spec §4 requires.**
+
+### 8a. WHERE THE CUT IS, because `(b)` as stated is slightly more than `M(ii)` needs
+
+- **IN:** the four combines, the 188-universe analysis, **adoption** (the max is there), and `MVFINAL_j`.
+- **OUT:** any write to a canonical path — spec §1 already forbids it — and the **publication** aspects of the
+  finalizer. **`M(ii)` needs the NUMBER out of the adopted object, not 50 publishable adopted covariances**, and
+  B's instinct on that half was right even though its conclusion was not.
+
+### 8b. ⚠ AND THE ORDER-OF-MAGNITUDE COST CLAIM IS NOT SUPPORTED — measured, with its unit
+
+**`EXTENT-20260817-2850-a100h-scope-and-missing-legs.md:86`, verbatim:**
+
+```
+RE-SEED = 23.840 sweep(169) + 14.2075 lateral+CV(19) + 1.030 finalize(1) = 39.078 A100-h  [189 tasks]
+```
+
+> **`finalize` IS ALREADY INSIDE THE PRICED `39.078`, at `1.030` A100-h — `2.6 %` of the GPU column.** The
+> combines and the analyzer are matrix algebra, not unfolds. **So memberizing the consumers does not multiply the
+> bill; it lands almost entirely on the CPU column — the axis B measured as BINDING (`26.4 %` of remaining CPU
+> at `n = 50`) rather than the GPU one (`0.75 %`).**
+>
+> **So *"changes the cost by an order of magnitude"* needs its unit before it is quoted, and on the GPU column it
+> is false.** I am not asserting the CPU figure either — **it must be measured, and `(b)` should not be priced by
+> anyone from the GPU number.**
+
+### 8c. AND THE SAME LINE VINDICATES §1b's REFUSAL TO CONVERT TASKS INTO HOURS
+
+**`lateral+CV(19)` is `14.2075` of `39.078` — `36.4 %` of the GPU column from `10.1 %` of the tasks, a factor of
+`3.6`.** §1b declined to derive an hour share from a task share and said the lateral share *"is plausibly LARGER
+than its share of tasks."* **Measured: larger by 3.6×.** *(It was already priced, so nothing moves — but item
+7(a) is a third of the GPU bill rather than a tenth, and anyone reasoning from `19/189` would have been wrong by
+that factor.)*
+
+## 9. RULED — the fence lives **INSIDE EACH LAUNCHER'S PREFLIGHT**, not in the driver. **My §6a ground is withdrawn**
+
+**Accepted without qualification: as built, the fence intercepts nothing.** `preflight_launcher()` is called only
+on names drawn from the driver's own allowlist — B's source comment *"the fence, applied to the plan's own set"*
+is the admission written into the code — and the driver does not submit, so the printed commands execute outside
+it entirely. **`agy` flagged it as its one UNABLE-TO-CHECK and `codex-school` confirmed it, independently.**
+
+> **So my §6a ground — *"it PREVENTS where F2 only DETECTS"* — IS WITHDRAWN. As built it does neither.**
+
+**RULED: the guard goes in each launcher, at the top, keyed off the environment.** Not driver-owned submission,
+and not a submit-time wrapper.
+
+> **THE DECIDING PROPERTY: the hazard is SOMEONE RUNNING THE VARIANT, so the fence must live where the wrong
+> thing would run.** A driver-side fence is bypassed by *precisely the action it exists to prevent* — a human, a
+> resubmit, or a line copy-pasted out of a log. **A launcher that refuses itself cannot be bypassed by how it was
+> invoked.**
+
+**Shape:** the six hazard launchers each call a library helper at the top — *if `MNV_EST_SEED_OFFSET` is declared
+(we are inside a scan member) and this launcher is not a declared target, FAIL*. The seven targets simply do not
+call it, and `unset` remains the archive path for everybody.
+
+- **It requires NO authority move, which is the second reason to prefer it. I am NOT ruling that the driver owns
+  submission** — the mediator holds submission deliberately and this fence does not ask for it.
+- **The fence-fires test I required in §6a gets EASIER, not harder:** a launcher's self-refusal is testable with
+  real bash and no Slurm, which is the harness B already has.
+- **And the two halves compose:** the derived predicate's HAZARD half discovers launchers that need the guard;
+  the guard prevents execution; the closed-set assertion (`hazards == FROZEN_NINE`, §7a) fails when a tenth
+  appears. **Discovery, prevention, and non-staleness, none of them relying on a chokepoint.**
+
+## 10. Three additions that fall out of my own earlier rulings, and one shape appearing for the third time
+
+### 10a. The padded offset is **OUTPUT-ONLY** — bash reads `001200` as OCTAL
+
+**Measured by the mediator: `001200` gives seed `682`, directory `member_k000640`, and python provenance `1200`
+— three different numbers from one input.** `$(( 42 + 001200 ))` is base-8.
+
+> **This lands on MY §5 ruling, because §5 is what put a zero-padded number into a name.** The padded form is a
+> **rendering** and must never be an **input**: `MNV_EST_SEED_OFFSET` must be rejected if it carries a leading
+> zero, or forced base-10 with `$((10#$k))` at the single validation point B already has. **A name that cannot be
+> read back is a name that will be.**
+
+### 10b. §2b's equality rule must pin the SOURCED SHELL LIBRARIES, not only the Python
+
+**279 files hardcode `REPO` and 85 source `lib/resume_guard.sh` through it — so a frozen deployment does not
+freeze its own resume semantics.** B's synthesis, endorsed: **the campaign's hard rules are enforced in the
+libraries and bypassed in the Python.**
+
+> **So the *code digest* that §2b's bit-exact comparison binds must cover the sourced shell libraries.** Otherwise
+> the anchor comparison is pinned to a basis that excludes the code deciding whether the anchor RAN — and that is
+> the exact gap §10c describes.
+
+### 10c. My §2c gate was defeated once already — and that is this shape's THIRD appearance
+
+**The identity-aware resume ACCEPTED THE ARCHIVE:** the gate required a marker note beginning
+`est_seed_offset=`, every archive marker predates that note, so it fell through to a size/mtime skip. **Member 0
+was handed the archive — the single outcome §2c exists to exclude.**
+
+> **Three instances of one shape today: the original blocker (fixed literals → resume-skip → 50 copies of the
+> archive); this one (identity gate → note absent → size/mtime skip); and §8's consumer layer (memberized
+> producers, canonical globs → the finalizer reads the archive).** Each is *fast, green, and indistinguishable
+> from success.*
+>
+> **THE INVARIANT, which is `BEN-023` stated for this campaign: EVERY LAYER THAT COULD SATISFY A MEMBER FROM
+> PRE-EXISTING BYTES MUST FAIL CLOSED ON AN ABSENT POSITIVE DECLARATION.** An absent stamp is not a weak yes; it
+> is a no. **Falling through to size/mtime is *validate existence, not completeness* wearing a new hat.**
+
+### 10d. And my item 7(a) was UNDER-SPECIFIED — mine to own
+
+**`build_plan` cannot build any plan: it textually demands `--estimator-seed` while the lateral correctly uses
+its native `--seed`, and has no `LEG_BASELINES` entry.** My §1 named the launcher edit (`:37`, `:51`) and said
+nothing about the driver's recognizer.
+
+> **RULE: a ruling that adds a leg must name every place the new leg's SHAPE differs from its siblings' — flag
+> name, baseline table, recognizer, validator population.** *"Same treatment as the other six"* is a definite
+> description, and the lateral is the one leg for which it is false.
+
 ## 4. Scope
 
 - **RULED: item 7 → `(a)`**, on the F2 guard's committed precedent rather than on my discretion. Seven
@@ -323,6 +463,15 @@ check can live.
 - **ACCEPTED (§7): B's correction to my §3.** The predicate's failure half cannot discover an undeclared
   leg; the hazard half is the discovery channel, and the result is the PAIR. **Plus the counterweight B's
   non-raising choice needs: assert the hazard list as a CLOSED SET of nine, not as non-empty.**
+- **RULED (§8): a member is `(b)` — producers through ADOPTION**, because `adopt_unified_5d.py:108`'s
+  elementwise `np.maximum` does not commute with a spread, and its direction is not established. Cut at
+  adoption; no canonical writes, no publication. **And the order-of-magnitude cost claim is unsupported:
+  `finalize` is already `1.030` of the priced `39.078`, so the change lands on the CPU column.**
+- **RULED (§9): the fence lives INSIDE EACH LAUNCHER**, keyed off the environment. **My §6a *prevents-vs-
+  detects* ground is WITHDRAWN — as built it does neither.** I am NOT ruling that the driver owns
+  submission.
+- **ADDED (§10): the padded offset is output-only (bash reads it as octal); the equality rule must pin the
+  sourced shell libraries; and my item 7(a) was under-specified against the driver's recognizer.**
 - **AUTHORIZED: nothing.** No launcher edited, nothing submitted.
 
 *Second sought: B on §3's derived-target predicate (its module) and on whether stage 1 can be run as a single
