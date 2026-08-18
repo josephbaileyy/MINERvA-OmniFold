@@ -145,10 +145,14 @@ UNEXECUTED = {
     253: "train_fullevent_replica.replica_atomic_data_only write-time restriction assertion",
     255: "REPLACEMENT-REQUIRED: bkg_indices is now written but its ordering is not asserted post-write",
     257: "cstat_data_only.assert_data_only_streams",              # P3 full-length shape
-    262: "REPLACEMENT-REQUIRED-BY-DESIGN: must assert the digests DIFFER, not match (BEN-407)",
-    263: "REPLACEMENT-REQUIRED-BY-DESIGN: must assert the digests DIFFER, not match (BEN-407)",
-    265: "REPLACEMENT-REQUIRED-BY-DESIGN: must assert the digests DIFFER, not match (BEN-407)",
-    267: "REPLACEMENT-REQUIRED-BY-DESIGN: must assert the digests DIFFER, not match (BEN-407)",
+    # CLOSED. The replacement asserts INEQUALITY on the MC legs -- the positive form of "left
+    # unthinned" -- and EQUALITY on the shared data leg, so it is not a blanket inversion. Called from
+    # BOTH readers, one home, and it refuses the degenerate case where a canonical digest equals the
+    # unity digest, because there no inequality can distinguish "left unthinned" from "nothing to thin".
+    262: "cstat_data_only.assert_unthinned_mc_evidence",
+    263: "cstat_data_only.assert_unthinned_mc_evidence",
+    265: "cstat_data_only.assert_unthinned_mc_evidence",
+    267: "cstat_data_only.assert_unthinned_mc_evidence",
     272: "extract_fullevent_replica.factor_meta data-only branch comparison",
     275: "validate_data_only_artifact replica_target_sha256 check",
     276: "REPLACEMENT-REQUIRED: the target RECEIPT sha is not re-compared post-write",

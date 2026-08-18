@@ -945,6 +945,112 @@ class SubmitControllerStageSelection(unittest.TestCase):
         self.assertNotIn("both|target|train", self._shell_code())
 
 
+class UnthinnedMcEvidence(unittest.TestCase):
+    """The replacement for the pinned validator's :262/:263/:265/:267 -- the four whose content is a
+    PHYSICS claim rather than bookkeeping.
+
+    THE DIRECTION IS THE WHOLE POINT. Those sites assert the applied MC factor IS the canonical Poisson
+    draw. For this product that is FALSE by construction, so they must fail -- and the replacement
+    asserts the INEQUALITY, which says something the original could not: the canonical draw the target
+    stage computed is NOT what the training stage applied, i.e. the MC legs were left unthinned. Stated
+    as a positive condition on two independently-produced digests rather than as an absence.
+    """
+
+    DATA = "d" * 64
+    SIG_CANON = "1" * 64
+    BKG_CANON = "2" * 64
+    SIG_UNITY = "a" * 64
+    BKG_UNITY = "b" * 64
+
+    def meta(self, **over):
+        m = {"data_factor_sha256": self.DATA,
+             "signal_factor_sha256": self.SIG_CANON,
+             "background_factor_sha256": self.BKG_CANON}
+        m.update(over)
+        return m
+
+    def check(self, meta=None, **over):
+        kw = {"factor_meta": self.meta() if meta is None else meta,
+              "data_factor_sha256": self.DATA,
+              "sig_unity_sha256": self.SIG_UNITY,
+              "bkg_unity_sha256": self.BKG_UNITY,
+              "where": "unit"}
+        kw.update(over)
+        return cdo.assert_unthinned_mc_evidence(**kw)
+
+    def test_the_intended_data_only_state_PASSES_and_names_its_direction(self):
+        out = self.check()
+        self.assertIn("DIFFERS", out["signal_leg"])
+        self.assertIn("DIFFERS", out["background_leg"])
+        self.assertIn("MATCHES", out["data_leg"])
+        self.assertEqual([262, 263, 265, 267], out["replaces_pinned_sites"])
+
+    def test_a_THINNED_signal_leg_is_CAUGHT(self):
+        """The failure the whole product exists to prevent: if the training stage had applied the
+        canonical signal draw, the artifact's digest would EQUAL the receipt's -- which is the state
+        the pinned check calls correct and this one must reject."""
+        with self.assertRaises(SystemExit) as cm:
+            self.check(sig_unity_sha256=self.SIG_CANON)
+        self.assertIn("EQUALS the digest of the unity array", str(cm.exception))
+
+    def test_a_THINNED_background_leg_is_CAUGHT(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.check(bkg_unity_sha256=self.BKG_CANON)
+        self.assertIn("vacuous", str(cm.exception))
+
+    def test_the_DATA_leg_must_still_MATCH_so_this_is_not_a_blanket_inversion(self):
+        """The data draw IS shared between the two stages. A data-only artifact whose data digests
+        disagreed is a MIS-PAIRED TARGET, and reading the replacement as 'invert everything' would
+        turn that failure into a pass."""
+        with self.assertRaises(SystemExit) as cm:
+            self.check(self.meta(data_factor_sha256="f" * 64))
+        self.assertIn("mis-paired target", str(cm.exception))
+
+    def test_a_missing_canonical_digest_FAILS_rather_than_being_skipped(self):
+        for key in ("signal_factor_sha256", "background_factor_sha256"):
+            m = self.meta()
+            del m[key]
+            with self.assertRaises(SystemExit) as cm:
+                self.check(m)
+            self.assertIn(key, str(cm.exception))
+
+    def test_a_missing_data_digest_FAILS(self):
+        m = self.meta()
+        del m["data_factor_sha256"]
+        with self.assertRaises(SystemExit) as cm:
+            self.check(m)
+        self.assertIn("no data_factor_sha256", str(cm.exception))
+
+    def test_EMPTY_metadata_is_refused_not_treated_as_satisfied(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.check({})
+        self.assertIn("no operand", str(cm.exception))
+
+    def test_the_two_drivers_hash_array_implementations_are_BYTE_IDENTICAL(self):
+        """THE PRECONDITION THAT MAKES THIS PREDICATE MEANINGFUL. The digests are computed by each
+        driver's own `hash_array` and compared against digests written by a third process. If the two
+        implementations differed, the comparison would be between two FUNCTIONS rather than two arrays,
+        and both the equality and the inequality legs would be measuring the wrong thing."""
+        import ast as _ast
+        srcs = []
+        for name in ("train_fullevent_replica.py", "extract_fullevent_replica.py"):
+            tree = _ast.parse((Path(PET) / name).read_text())
+            fn = next(n for n in tree.body
+                      if isinstance(n, _ast.FunctionDef) and n.name == "hash_array")
+            srcs.append(_ast.unparse(fn))
+        self.assertEqual(srcs[0], srcs[1],
+                         "the two drivers' hash_array differ, so a cross-driver digest comparison "
+                         "compares implementations rather than arrays")
+        self.assertIn("memoryview", srcs[0], "extraction produced something that is not hash_array")
+
+    def test_both_readers_call_the_SHARED_predicate_and_not_a_local_copy(self):
+        """A second implementation of one rule is how two readers come to disagree. Asserted on the
+        shipped source with comments stripped, so the annotation cannot satisfy it."""
+        for name in ("train_fullevent_replica.py", "extract_fullevent_replica.py"):
+            code = ast.unparse(ast.parse((Path(PET) / name).read_text()))
+            self.assertIn("assert_unthinned_mc_evidence", code, name)
+
+
 class CrossStageLoaderAgreement(unittest.TestCase):
     """The one cross-block comparison no pinned check performs, exercised in every failure direction.
 

@@ -376,28 +376,28 @@
         "kind": "eq",
         "line": 262,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED-BY-DESIGN: must assert the digests DIFFER, not match (BEN-407)"
+        "replacement": "cstat_data_only.assert_unthinned_mc_evidence"
       },
       {
         "check": "'signal_full_hash_vs_canonical_replay'",
         "kind": "eq",
         "line": 263,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED-BY-DESIGN: must assert the digests DIFFER, not match (BEN-407)"
+        "replacement": "cstat_data_only.assert_unthinned_mc_evidence"
       },
       {
         "check": "'background_full_hash_vs_target'",
         "kind": "eq",
         "line": 265,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED-BY-DESIGN: must assert the digests DIFFER, not match (BEN-407)"
+        "replacement": "cstat_data_only.assert_unthinned_mc_evidence"
       },
       {
         "check": "'background_full_hash_vs_canonical_replay'",
         "kind": "eq",
         "line": 267,
         "phase": "unexecuted",
-        "replacement": "REPLACEMENT-REQUIRED-BY-DESIGN: must assert the digests DIFFER, not match (BEN-407)"
+        "replacement": "cstat_data_only.assert_unthinned_mc_evidence"
       },
       {
         "check": "f'persisted_bootstrap_metadata[{key}]'",
@@ -648,10 +648,6 @@
       248,
       252,
       255,
-      262,
-      263,
-      265,
-      267,
       276,
       278,
       282,
@@ -690,14 +686,18 @@
       251,
       253,
       257,
+      262,
+      263,
+      265,
+      267,
       272,
       275,
       283,
       286
     ],
     "honesty_note": "The REPLACEMENT_REQUIRED count is the real measure of remaining work and is deliberately NOT hidden behind invented names. A manifest that named a replacement for all 55 would assert coverage it does not have, which is the exact defect the partition exists to make unrepresentable.",
-    "n_covered": 13,
-    "n_required": 42
+    "n_covered": 17,
+    "n_required": 38
   },
   "schema": "gate5-cstat-data-only-divergence-manifest-v1",
   "v4_floor": {
