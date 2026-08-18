@@ -55,6 +55,60 @@ data-only route the block is empty, so `n_data = n_bkg = -1` and `:201` raises o
 against `(-2,)`. **Loud, and diagnostic enough — recorded so nobody "improves" the default to something that
 would pass.**)*
 
+## 1c. LIVE — `57194055` fails closed at `assert_refined_target_is_replica`. **The fix shape is NECESSARY, INSUFFICIENT, and correctly LOCATED**
+
+`_0`/`_1` FAILED 19:52Z: `ValueError: refined target has bootstrap_seed=None (NOMINAL)` from
+`fullevent_fps_dataloader.py:742` via `train_fullevent_replica.py:288`.
+
+### The diagnosis: one field carrying two meanings, for the third time
+
+`assert_refined_target_is_replica` (`:736-747`) reads `target_meta["bootstrap_seed"]` to answer **"is this
+target THIS replica's, or the nominal's?"** — an **identity** question. **Our design sets
+`bootstrap_seed=None` as the MECHANISM for leaving MC unthinned — a CONSTRUCTION SWITCH.**
+
+> **So `bootstrap_seed` carries two meanings — *which draw produced this* and *were the MC streams thinned* —
+> and the guard reads it for the first while the data-only design set it for the second. This is the THIRD
+> consequence of that overload** (`BEN-408`: `bootstrap_seed=None` reads as *no bootstrap* and means *all
+> three streams off and `R` reverts*; `BEN-405`: the `-1` sentinel).
+
+**The guard's CLAIM is true and the failure is a FALSE POSITIVE**, so `(c)`'s rule governs: **re-target,
+never relax.** The naive relaxation — dropping the `None` check — would let **the actual nominal target**
+through, and the loader's own cross-seed block at `:1479-1493` is **unreachable** under
+`bootstrap_seed=None`, so **the driver assert is the sole binding.**
+
+### The two limbs, and why the sha is load-bearing rather than an extra
+
+| limb | what it establishes |
+|---|---|
+| `precomputed_target_replica_seed` non-`None` **and** equal | **the CALLER'S INTENT** — it is a *parameter*, not a field in the target's own receipt (`:1480-1493`), so **a driver that supplies the right number for the wrong file passes this limb** |
+| consumed path bound to the receipt's `replica_target_sha256` | **the BYTES** — the only limb that makes it a claim about what was actually read |
+
+**`BEN-245`: committed intent is not provenance. Limb 1 alone is intent; limb 2 is what converts it. Both
+required — the sha is not belt-and-braces.**
+
+### INSUFFICIENT: it does not satisfy `T4`, and without `T4` it re-creates the overload
+
+**`T4` puts the data-only seed under its own key `data_bootstrap_seed`.** With `T4`, the guard reads identity
+from **a field with one meaning** and never consults `bootstrap_seed` at all.
+
+> **Without `T4` the patch makes the guard right about identity while leaving the overloaded field in place —
+> so the same collision recurs at the next site that reads it. LAND `T4` WITH THE PATCH, not after.**
+
+### LOCATION: correct, and constrained — the shared assert must NOT be edited
+
+**`assert_refined_target_is_replica` lives in `fullevent_fps_dataloader.py`, the PINNED loader.** So:
+
+> **The fix belongs at the driver (`:288`): BRANCH ON THE PRODUCT TAG — three-stream calls the shared assert
+> unchanged, data-only calls a NEW driver-side assert.** Pinned loader untouched; the shared guard keeps its
+> exact behaviour for the family it was written for (`BEN-404`).
+
+### And the new assert needs its OWN negative controls — three, not two
+
+**Controls `15 → 18`:** the **nominal** target rejected; a **wrong-replica** target rejected; and
+**right-seed-wrong-file** rejected — **the third exists only because the sha limb exists, and it is the one
+that would silently pass a fix built on limb 1 alone.** Each by mutating a synthetic store, never by
+disabling the check, and power-tested by extraction from the shipped file (`BEN-409`).
+
 ## 2. RULING 2 — NEW data-only array launchers. Not edits. And the pair must never be unified
 
 **Measured: both array launchers are pinned; the two drivers and the submit wrapper are clean.** So threading
