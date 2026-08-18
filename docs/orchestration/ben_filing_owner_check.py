@@ -124,7 +124,7 @@ def advertised_free(findings: Path) -> list[tuple[int, int]]:
                      } or {(int(a), int(b)) for a, b in
                            re.findall(r"(\d{3})-(\d{3})", m.group(1))}
             if spans:
-                return sorted(spans)
+                return sorted(spans), "FREE marker (declared)"
 
     # FALLBACK: an INFERRED grammar. Kept because no row carries the marker yet.
     # ATTEMPT 3, and the prose problem was INSIDE the row I had narrowed to. That cell reads
@@ -152,7 +152,7 @@ def advertised_free(findings: Path) -> list[tuple[int, int]]:
     if not spans:
         raise SystemExit("FATAL: the *(unallocated)* row names no span before its first em dash. "
                          "Refusing to report PASS from a parse that found nothing to check.")
-    return sorted(spans)
+    return sorted(spans), "INFERRED grammar (no FREE: marker present)"
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -166,13 +166,18 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[ben-owner] {args.findings} not found", file=sys.stderr)
         return USAGE
 
-    free = advertised_free(args.findings)
+    free, how = advertised_free(args.findings)
     ids = filed_ids(args.findings)
     clash = [(n, ln, lo, hi) for n, ln in ids for lo, hi in free if lo <= n <= hi]
 
     if not args.quiet:
         spans = ", ".join(f"{lo}-{hi}" for lo, hi in free)
         print(f"[ben-owner] {len(ids)} filed ids; *(unallocated)* advertises {spans}")
+        # NAME THE METHOD, ALWAYS -- lane E's point, and it is this session's whole finding family
+        # arriving in the tool that fixed it: a PASS from the declared marker and a PASS from the
+        # inferred grammar are different verdicts, and a partially-adopted marker set is the worst
+        # state because a reader cannot tell which path produced a green.
+        print(f"[ben-owner] advertisement read via: {how}")
     for n, ln, lo, hi in clash:
         print(f"[ben-owner] COLLISION  BEN-{n} is filed at {args.findings.name}:{ln} "
               f"but `{lo}-{hi}` is still advertised as free")
