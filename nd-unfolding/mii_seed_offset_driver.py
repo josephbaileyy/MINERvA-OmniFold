@@ -255,9 +255,13 @@ def build_plan(offsets, argv_probe=True):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--offsets", required=True,
+    ap.add_argument("--offsets", default="1200",
                     help="comma-separated offset grid, e.g. 0,1,2,3 (k=0 is the archive anchor)")
     ap.add_argument("--out", default=None, help="write the plan JSON here")
+    ap.add_argument("--gate-only", metavar="REPO", default=None,
+                    help="Run ONLY the stub gate against REPO and exit. Cannot execute a launcher: "
+                         "it sources the env activator and checks whether the stubs survived. "
+                         "Exit 0 PASS / 2 FAIL. Run this BEFORE --cluster-probe, always.")
     ap.add_argument("--cluster-probe", metavar="REPO", default=None,
                     help="NATIVE argv probe over all seven launchers, run on the cluster where "
                          "${REPO} and the env resolve for real. Read-only: python3/sbatch/srun/mkdir "
@@ -269,6 +273,10 @@ def main(argv=None):
     ap.add_argument("--check", action="store_true",
                     help="validate only; exit non-zero on any violation")
     a = ap.parse_args(argv)
+    # HANDLED FIRST AND RETURNS IMMEDIATELY. Nothing below this line can run, so there is no path
+    # from a --gate-only invocation to a launcher.
+    if a.gate_only:
+        return probe.gate_only(a.gate_only)
     if a.no_argv_probe and not a.cluster_probe:
         print("[mii] WARNING: --no-argv-probe -- the observed-argv GATE IS NOT RUNNING. Everything "
               "below is plan-level validation only and says NOTHING about whether the offset reaches "
