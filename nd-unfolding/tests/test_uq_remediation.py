@@ -2397,5 +2397,321 @@ class RootPayloadThreeClasses(unittest.TestCase):
         self.assertEqual(self.m.FLAT_NBINS, 65856)
         self.assertAlmostEqual(self.m.FLAT_NBINS * 8 / 1e6, 0.527, places=3)
 
+
+class ProbeAssertsShapeNotSubstring(unittest.TestCase):
+    """The mediator found that the probe's predicate could not distinguish the shape it was re-run to
+    confirm: `"member_k" in str(o)` is true of BOTH `uq_5d/.../member_k001200/x` and
+    `mii/member_k001200/uq_5d/.../x`. The re-run returned byte-for-byte the same summary as the
+    pre-change run, and THAT IDENTITY WAS THE EVIDENCE.
+
+    A SUBSTRING TEST CANNOT EXPRESS A POSITIONAL REQUIREMENT -- containment is the one relation blind
+    to order, and the requirement was "the member root comes FIRST".
+    """
+
+    def setUp(self):
+        import launcher_argv_probe as P
+        self.P = P
+
+    def test_the_NEW_shape_passes_relative_and_absolute(self):
+        for path in ("mii/member_k001200/uq_5d/block_slabs_5d_sb/x.npz",
+                     f"{ND}/mii/member_k001200/boot_nd_5d/res_boot_7.npz"):
+            with self.subTest(path=path):
+                ok, why = self.P.is_member_scoped(path, 1200)
+                self.assertTrue(ok, why)
+
+    def test_THE_OLD_SHAPE_FAILS_which_the_substring_test_could_not_do(self):
+        """POSITIVE CONTROL, and it is the whole point of the change: a planted old-shape path must
+        FAIL. Without this the new predicate could be as blind as the one it replaced."""
+        for path in ("uq_5d/block_slabs_5d_sb/member_k001200/x.npz",
+                     f"{ND}/boot_nd_5d/member_k001200/res_boot_7.npz"):
+            with self.subTest(path=path):
+                ok, why = self.P.is_member_scoped(path, 1200)
+                self.assertFalse(ok, f"the OLD shape must not pass: {path}")
+                self.assertIn("NOT AT THE ROOT", why,
+                              "and the reason must say WHICH failure it is -- 'contains a member "
+                              "component but in the wrong position' is a different defect from "
+                              "'not scoped at all' and they get fixed differently")
+
+    def test_the_OLD_predicate_would_have_passed_both(self):
+        """Demonstrates the defect rather than asserting it. If this ever fails, the premise of the
+        change was wrong and the change should be re-argued."""
+        for path in ("mii/member_k001200/uq_5d/x.npz", "uq_5d/member_k001200/x.npz"):
+            self.assertIn("member_k", path,
+                          "the substring predicate accepted both shapes -- that is why the re-run "
+                          "produced an identical summary and proved nothing about placement")
+
+    def test_an_UNSCOPED_path_fails_with_a_DIFFERENT_reason(self):
+        ok, why = self.P.is_member_scoped("boot_nd_5d/res_boot_7.npz", 1200)
+        self.assertFalse(ok)
+        self.assertIn("not member-scoped at all", why)
+
+    def test_the_member_name_AGREES_WITH_BASH_rather_than_being_a_second_copy(self):
+        """A second copy of the naming rule drifts silently, and this one lives in a different
+        language from the original. Derived from `mr_member_dir` itself, not from my Python."""
+        import subprocess
+        for k in (0, 1200, 9600, -600):
+            with self.subTest(k=k):
+                r = subprocess.run(
+                    ["bash", "-c", 'source lib_member_resume.sh; mr_member_root'],
+                    capture_output=True, text=True, cwd=str(ND),
+                    env=dict(os.environ, MNV_EST_SEED_OFFSET=str(k)))
+                self.assertEqual(r.stdout.strip(), self.P.member_root_for(k),
+                                 f"python and bash disagree on the member root for k={k}: "
+                                 f"bash={r.stdout.strip()!r} python={self.P.member_root_for(k)!r}")
+
+    def test_the_probe_PRINTS_every_observed_path(self):
+        """A passing run's log contained NO PATH -- 36 lines, zero occurrences of `member_k` or `mii/`
+        outside the summary counts -- so nothing downstream could audit what passed, and the counts
+        were identical across two different shapes. The paths ARE the ingredients of `namespaced=N`."""
+        src = (ND / "launcher_argv_probe.py").read_text()
+        self.assertIn('print(f"[probe]   PATH', src)
+
+    def test_the_substring_predicate_is_GONE_FROM_THE_CODE_not_merely_from_the_text(self):
+        """BEN-482'S THIRD INSTANCE, AND I HIT IT IN THE SAME TURN I FILED THE ROW.
+
+        My first version was `assertNotIn('if "member_k" in str(o)', src)` and it failed -- because
+        `is_member_scoped`'s docstring QUOTES THE OLD PREDICATE VERBATIM, deliberately, so the next
+        reader can see what was replaced. The grep could not tell the retired predicate from the
+        explanation of its retirement. Third time today; the row's own remedy is to parse, so:
+        walk the AST for a `"member_k" in <expr>` comparison, which cannot exist in a docstring.
+        """
+        import ast
+        tree = ast.parse((ND / "launcher_argv_probe.py").read_text())
+
+        def containments(node):
+            return [c.lineno for c in ast.walk(node)
+                    if isinstance(c, ast.Compare) and any(isinstance(o, ast.In) for o in c.ops)
+                    and isinstance(c.left, ast.Constant) and c.left.value == "member_k"]
+
+        funcs = {n.name: n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)}
+        # NARROWED AFTER MY FIRST VERSION FAILED ON A LEGITIMATE USE, and the narrowing is the finding:
+        # ONE containment test survives INSIDE `is_member_scoped` at :458, and it SHOULD. There it is
+        # not the acceptance predicate -- acceptance is `startswith` -- it only refines the REJECTION
+        # REASON, distinguishing "contains a member component but in the wrong position" (the shape C
+        # reversed) from "not member-scoped at all". Those are different defects with different fixes,
+        # and collapsing them would make the diagnostic worse.
+        #
+        # So the requirement is not "containment appears nowhere" but "CONTAINMENT IS NOT THE
+        # ACCEPTANCE PREDICATE". A blanket ban would have forced me to delete a better error message to
+        # satisfy a test -- the shape of over-broad assertion that makes people weaken checks.
+        self.assertEqual(len(containments(funcs["is_member_scoped"])), 1,
+                         "the classifier keeps exactly one containment, for the reason string")
+        for name, fn in funcs.items():
+            if name == "is_member_scoped":
+                continue
+            self.assertEqual(containments(fn), [],
+                             f"{name}() uses containment on 'member_k' -- acceptance must go through "
+                             "is_member_scoped(), because containment is blind to order and cannot "
+                             "express 'the member root comes first'")
+        # and the shape test IS present as code, so this is not passing by the file being empty
+        self.assertTrue(any(isinstance(n, ast.FunctionDef) and n.name == "is_member_scoped"
+                            for n in ast.walk(tree)),
+                        "control: the replacement predicate must exist")
+
+
+class Stage0Distinctness(unittest.TestCase):
+    """Stage 0 answers a question the probe cannot: the probe showed the offset REACHES the seed;
+    stage 0 shows it CHANGES THE NUMBERS.
+
+    ITS POLARITY IS INVERTED FROM EVERY OTHER GATE -- PASS means "these DIFFER" -- so the usual
+    failure modes (missing file, empty glob, self-comparison) all produce NO OBSERVED DIFFERENCE and
+    would read as "the offset does nothing", which is a physics claim. Hence three verdicts.
+    """
+
+    def setUp(self):
+        import mii_stage0_distinctness as S
+        self.S = S
+        self.td = tempfile.TemporaryDirectory()
+        self.root = Path(self.td.name)
+
+    def tearDown(self):
+        self.td.cleanup()
+
+    def _member(self, offset, replicas, *, xsec=None, seed_of=None, est_of=None, declared=1):
+        d = self.root / f"mii/member_k{offset:06d}" / "boot_nd_5d"
+        d.mkdir(parents=True, exist_ok=True)
+        for rid in replicas:
+            x = np.full(64, 1.0 + rid) if xsec is None else xsec(rid, offset)
+            np.savez_compressed(
+                d / f"res_boot_{rid}.npz",
+                seed=np.int64(rid if seed_of is None else seed_of(rid, offset)),
+                xsec_flat=x, shape=np.array([64]), total_xsec=float(x.sum()),
+                estimator_seed=np.int64(42 + offset if est_of is None else est_of(rid, offset)),
+                est_seed_offset_declared=np.int64(declared),
+                est_seed_offset=np.int64(offset))
+            # np.savez_compressed on 64 floats is under the 1024 B floor, so pad to a realistic size
+            pth = d / f"res_boot_{rid}.npz"
+            if pth.stat().st_size < 1024:
+                x2 = np.tile(x, 64)
+                np.savez_compressed(
+                    pth, seed=np.int64(rid if seed_of is None else seed_of(rid, offset)),
+                    xsec_flat=x2 + np.arange(x2.size) * 1e-12, shape=np.array([x2.size]),
+                    total_xsec=float(x2.sum()),
+                    estimator_seed=np.int64(42 + offset if est_of is None else est_of(rid, offset)),
+                    est_seed_offset_declared=np.int64(declared),
+                    est_seed_offset=np.int64(offset))
+        return str(self.root / f"mii/member_k{offset:06d}")
+
+    def test_genuinely_different_products_are_DISTINCT(self):
+        a = self._member(0, [1, 2, 3], xsec=lambda r, k: np.full(64, 1.0 + r))
+        b = self._member(1200, [1, 2, 3], xsec=lambda r, k: np.full(64, 1.0 + r + 0.5))
+        v, rep = self.S.compare_member_pair(a, b, 0, 1200)
+        self.assertEqual(v, self.S.DISTINCT, rep.get("why"))
+        self.assertEqual(rep["n_differing"], 3)
+        self.assertTrue(all(r["max_abs_delta"] > 0 for r in rep["replicas"]),
+                        "a DISTINCT verdict whose max|delta| is 0 would contradict itself")
+
+    def test_identical_products_are_IDENTICAL_a_REAL_NEGATIVE_not_an_error(self):
+        a = self._member(0, [1, 2], xsec=lambda r, k: np.full(64, 1.0 + r))
+        b = self._member(1200, [1, 2], xsec=lambda r, k: np.full(64, 1.0 + r))
+        v, rep = self.S.compare_member_pair(a, b, 0, 1200)
+        self.assertEqual(v, self.S.IDENTICAL)
+        self.assertIn("REAL NEGATIVE RESULT", rep["why"],
+                      "this is the one outcome that IS a physics answer, and it must not be reported "
+                      "in the same class as a broken comparison")
+
+    def test_an_EMPTY_TREE_is_INCOMPARABLE_not_IDENTICAL(self):
+        """THE DEFECT THIS MODULE EXISTS TO PREVENT. An empty glob produces no observed difference,
+        which under a two-valued checker reads as 'the offset changes nothing' -- a physics claim made
+        from a directory nothing was found in."""
+        a = self._member(0, [1, 2])
+        empty = self.root / "mii/member_k001200"
+        empty.mkdir(parents=True, exist_ok=True)
+        v, rep = self.S.compare_member_pair(a, str(empty), 0, 1200)
+        self.assertEqual(v, self.S.INCOMPARABLE)
+        self.assertIn("EVIDENCE ABOUT THE SEARCH", rep["why"])
+
+    def test_SELF_COMPARISON_is_INCOMPARABLE(self):
+        """C's stage-1 asymmetry, applied one stage earlier: a null from comparing a member to itself
+        says nothing about the seed."""
+        a = self._member(0, [1])
+        v, rep = self.S.compare_member_pair(a, a, 0, 0)
+        self.assertEqual(v, self.S.INCOMPARABLE)
+        self.assertIn("comparing a member to itself", rep["why"])
+        v2, rep2 = self.S.compare_member_pair(a, a, 0, 1200)
+        self.assertEqual(v2, self.S.INCOMPARABLE, "same directory under two offset labels")
+        self.assertIn("one directory, two names", rep2["why"])
+
+    def test_a_DIFFERENT_DATA_DRAW_is_INCOMPARABLE_even_though_the_products_DIFFER(self):
+        """BOTH SIDES NAMED BEFORE THE DELTA IS BELIEVED. If the draws differ, the difference is
+        attributable to the draw and the measurement is not the one stage 0 makes -- and it would be
+        LARGE, which is the direction that fools you."""
+        a = self._member(0, [1], xsec=lambda r, k: np.full(64, 1.0))
+        b = self._member(1200, [1], xsec=lambda r, k: np.full(64, 9.0),
+                         seed_of=lambda r, k: r + 77)
+        v, rep = self.S.compare_member_pair(a, b, 0, 1200)
+        self.assertEqual(v, self.S.INCOMPARABLE)
+        self.assertIn("DATA DRAW DIFFERS", rep["why"])
+
+    def test_an_estimator_seed_delta_that_does_not_match_the_offset_delta_is_INCOMPARABLE(self):
+        a = self._member(0, [1], xsec=lambda r, k: np.full(64, 1.0))
+        b = self._member(1200, [1], xsec=lambda r, k: np.full(64, 2.0),
+                         est_of=lambda r, k: 42 + 7)
+        v, rep = self.S.compare_member_pair(a, b, 0, 1200)
+        self.assertEqual(v, self.S.INCOMPARABLE)
+        self.assertIn("not demonstrably", rep["why"])
+
+    def test_an_UNDECLARED_offset_is_INCOMPARABLE(self):
+        a = self._member(0, [1], declared=0)
+        b = self._member(1200, [1])
+        v, rep = self.S.compare_member_pair(a, b, 0, 1200)
+        self.assertEqual(v, self.S.INCOMPARABLE)
+        self.assertIn("declared == 0", rep["why"])
+
+    def test_PARTIAL_distinctness_is_not_a_pass(self):
+        """If the estimator seed moves the estimate it should move every replica. An identical subset
+        means something else is varying, and calling that DISTINCT would ship a half-effect."""
+        a = self._member(0, [1, 2], xsec=lambda r, k: np.full(64, 1.0 + r))
+        b = self._member(1200, [1, 2],
+                         xsec=lambda r, k: np.full(64, 1.0 + r + (0.5 if r == 1 else 0.0)))
+        v, rep = self.S.compare_member_pair(a, b, 0, 1200)
+        self.assertEqual(v, self.S.INCOMPARABLE)
+        self.assertIn("Partial distinctness", rep["why"])
+
+    def test_an_ASYMMETRIC_replica_population_is_REPORTED_not_silently_reduced(self):
+        """A silently reduced denominator is how 'all replicas differ' gets said about three of them."""
+        a = self._member(0, [1, 2, 3], xsec=lambda r, k: np.full(64, 1.0 + r))
+        b = self._member(1200, [1, 2], xsec=lambda r, k: np.full(64, 1.5 + r))
+        v, rep = self.S.compare_member_pair(a, b, 0, 1200)
+        self.assertEqual(v, self.S.DISTINCT)
+        self.assertIn("asymmetric population", rep["partial"])
+        self.assertEqual(rep["n_shared"], 2)
+        self.assertIn("asymmetric population", self.S.format_report(v, rep))
+
+    def test_a_TRUNCATED_replica_is_INCOMPARABLE(self):
+        """TWO BRANCHES, NOT ONE, AND MY FIRST VERSION OF THIS TEST CONFLATED THEM.
+
+        I truncated a fixture to 60% and asserted "unreadable" or "missing keys". It came back
+        `tiny (848 B)` -- because a constant array compresses to ~1.4 kB, so 60% of it is UNDER the
+        1024 B floor and the size check fired first. Both rejections are correct and the test was
+        wrong: it named one branch and exercised another. The size floor is cheap and fires early; the
+        deflate reader is the one that matters for a realistically-sized product, and it gets its own
+        test below so neither can pass for the other's reason.
+        """
+        a = self._member(0, [1], xsec=lambda r, k: np.full(64, 1.0))
+        b = self._member(1200, [1], xsec=lambda r, k: np.full(64, 2.0))
+        victim = Path(b) / "boot_nd_5d" / "res_boot_1.npz"
+        raw = victim.read_bytes()
+        victim.write_bytes(raw[:int(len(raw) * 0.6)])
+        self.assertLess(victim.stat().st_size, 1024, "this fixture exercises the SIZE FLOOR")
+        v, rep = self.S.compare_member_pair(a, b, 0, 1200)
+        self.assertEqual(v, self.S.INCOMPARABLE)
+        self.assertIn("tiny", rep["why"])
+
+    def test_a_TRUNCATED_DEFLATE_STREAM_above_the_size_floor_is_INCOMPARABLE(self):
+        """THE BRANCH THAT ACTUALLY MATTERS. A compressed npz can list every key in its header while a
+        member's deflate stream is truncated, so a key-presence check passes and `d[k]` raises -- which
+        is why `validate_replica` MATERIALIZES every array instead of checking names. Incompressible
+        content, and the truncated file is asserted to clear the size floor so it reaches the reader.
+        """
+        rng = np.random.default_rng(20260818)          # incompressible, so truncation lands >1024 B
+        a = self._member(0, [1], xsec=lambda r, k: rng.random(4096))
+        b = self._member(1200, [1], xsec=lambda r, k: rng.random(4096))
+        victim = Path(b) / "boot_nd_5d" / "res_boot_1.npz"
+        raw = victim.read_bytes()
+        victim.write_bytes(raw[:int(len(raw) * 0.6)])
+        self.assertGreater(victim.stat().st_size, 1024,
+                           "the point of this fixture is to get PAST the size floor")
+        v, rep = self.S.compare_member_pair(a, b, 0, 1200)
+        self.assertEqual(v, self.S.INCOMPARABLE)
+        self.assertNotIn("tiny", rep["why"], "the size floor must NOT be what caught this")
+        self.assertTrue("unreadable" in rep["why"] or "missing keys" in rep["why"], rep["why"])
+
+    def test_a_NON_FINITE_replica_is_INCOMPARABLE(self):
+        a = self._member(0, [1], xsec=lambda r, k: np.full(64, 1.0))
+        b = self._member(1200, [1],
+                         xsec=lambda r, k: np.concatenate([np.full(63, 2.0), [np.nan]]))
+        v, rep = self.S.compare_member_pair(a, b, 0, 1200)
+        self.assertEqual(v, self.S.INCOMPARABLE)
+        self.assertIn("non-finite", rep["why"])
+
+    def test_the_three_verdicts_map_to_three_EXIT_CODES(self):
+        """A caller checking `!= 0` still behaves correctly; one that wants to distinguish a negative
+        RESULT from a broken COMPARISON can."""
+        a = self._member(0, [1], xsec=lambda r, k: np.full(64, 1.0))
+        b = self._member(1200, [1], xsec=lambda r, k: np.full(64, 2.0))
+        args = ["--root-a", a, "--root-b", b, "--offset-a", "0", "--offset-b", "1200"]
+        self.assertEqual(self.S.main(args), 0)
+        same = self._member(2400, [1], xsec=lambda r, k: np.full(64, 1.0))
+        self.assertEqual(self.S.main(["--root-a", a, "--root-b", same,
+                                      "--offset-a", "0", "--offset-b", "2400"]), 1)
+        self.assertEqual(self.S.main(["--root-a", a, "--root-b", a,
+                                      "--offset-a", "0", "--offset-b", "0"]), 2)
+
+    def test_the_report_ships_its_INGREDIENTS(self):
+        """A verdict-only receipt is unfalsifiable (BEN-077). The report must carry enough that its own
+        numbers could contradict each other."""
+        a = self._member(0, [1], xsec=lambda r, k: np.full(64, 1.0))
+        b = self._member(1200, [1], xsec=lambda r, k: np.full(64, 2.0))
+        v, rep = self.S.compare_member_pair(a, b, 0, 1200)
+        row = rep["replicas"][0]
+        for key in ("nbins", "changed_bins", "max_abs_delta", "scale_max_abs_a", "max_rel_delta",
+                    "digest_a", "digest_b", "estimator_seed_a", "estimator_seed_b"):
+            self.assertIn(key, row)
+        self.assertNotEqual(row["digest_a"], row["digest_b"])
+        text = self.S.format_report(v, rep)
+        self.assertIn("max|d|", text)
+        self.assertIn(row["digest_a"], text, "the digests must reach the human-readable report too")
+
 if __name__ == "__main__":
     unittest.main()
