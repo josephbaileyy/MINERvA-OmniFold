@@ -533,6 +533,60 @@ combine.** That resolves it for every member and makes the combine's zero-slab `
 > resolve; named because a `160 ✓` against the wrong path is the same shape as everything else today: correct
 > about the thing it was looking at, silent about whether it was looking at the right one.**
 
+### 12b. RULED on the corroboration — **REPAIRED, not withdrawn. `_sb`'s 40 IS the right number, and my COUNTING METHOD was the defect**
+
+**The `ls` came back with both directories live:**
+
+```
+uthrow_slabs_5d      npz=160   newest 2026-07-12      <- non-canonical
+uthrow_slabs_5d_sb   npz= 40   newest 2026-08-06      <- the contract binds this
+block_slabs_5d       npz=  8   block_slabs_5d_sb  npz=36
+```
+
+**Neither offered branch is right, because `40` is not a partial population — it is the CANONICAL one in a
+different LAYOUT.** `sbatch_uthrow_run_5d_fast.sh`, verbatim:
+
+```
+:5   #SBATCH --array=0-39%40
+:9   # 40 tasks x 4 throws = 160 throws, offsets t*4..t*4+3 -> union 0-159.
+:12  # ... the batch id-layout (4 throws/file) never collides with the interactive layout (1/file)
+:29  --out "uq_5d/uthrow_slabs_5d_sb/uthrow5d_slab_${SLURM_ARRAY_TASK_ID}.npz"
+```
+
+> **40 files × 4 throws/file = 160 throw ids = draw seeds `1000…1159`. The canonical directory corroborates the
+> range EXACTLY.** So the corroboration is **REPAIRED and it agrees**, and the mediator's open question — *"I
+> have NOT established what 40 means"* — is answered by the launcher's own comment rather than by a guess.
+>
+> **AND `160` WAS NOT A COINCIDENCE OF CARDINALITY EITHER.** The non-canonical directory is the **interactive
+> 1-throw-per-file** layout of *the same 160 ids*. Both directories encode 160 throws. **My original number was
+> RIGHT — by an accident of layout, because 1-per-file makes file count equal population count.**
+
+**WHAT IS WITHDRAWN IS MY COUNTING METHOD, and that is the part worth keeping: `BEN-465`.** A file count is not a
+population count, and it is only ever equal to one when a layout happens to be 1:1.
+
+> **⚠ AND THE WARNING WAS IN THE DOCUMENT I READ BEFORE RULING.** `SPEC-20260818` §2: ***"Do not specify `K_j`'s
+> correctness by FILE COUNT — historical layouts pack units differently."*** Codex wrote it about the block leg.
+> **It applies verbatim to the throw leg, I cited that spec in the same determination, and I did not apply it to
+> my own evidence.**
+
+**THE CORROBORATION TO RUN, and my own §11b already names the operand:** `throws` is CONFIGURATION in the throw
+slabs, so the check is **the union of the `throws` arrays across the 40 canonical slabs equals `{0…159}`,** with
+no duplicates.
+
+> **That is strictly stronger than any file count, because it catches a duplicated or missing id that every
+> cardinality check passes** — and `protect_throw_slabs.py:52-55` is this repo's own precedent for exactly that
+> failure: a directory-blind filter *"silently under-protected the set by a third… found 365 of 542 files and
+> reported `365 readable, 0 unreadable`, which reads as complete."*
+
+**AND THE DAMAGE IS BOUNDED TO ONE OF THE THREE, which is worth stating precisely.**
+`sbatch_bootstrap_5d_gpu.sh:25` writes `res_boot_${SLURM_ARRAY_TASK_ID}.npz` and
+`sbatch_seedscan_split_5d.sh:20` writes `res_split_${SLURM_ARRAY_TASK_ID}.npz` — **one product per id by
+construction, so file count IS population count for those two, and `100`/`24` stand as corroborations.** Only the
+throw leg packs, and only the throw leg's corroboration needed repair.
+
+**Consequence for `P-ANCHOR`: its throw-leg availability answer must be re-run against `_sb`.** The `160 ✓` was
+against a directory the contract does not bind, and a month older.
+
 ## 13. R2 RULED — `MVFINAL_j` is a **RECEIPT**, digest-bound. But the CITABLE artifact is the ENSEMBLE receipt, and that is what the verifier learns
 
 **A thing that gates admission must be verifiable or the gate is decorative** — spec §4 says *"no member is
@@ -617,6 +671,10 @@ single-ply** — and the surviving clause is the weaker of the two.)*
 - **RULED (§13, R2): `MVFINAL_j` is a digest-bound RECEIPT; the ENSEMBLE receipt is the citable artifact**
   and binds all 50. The verifier learns one path shape, not fifty.
 - **RULED (§14, R4): YES — record the winner mask AND `vu`, `vb`.** It is the test of §8's own premise.
+- **RULED (§12b): the throw-range corroboration is REPAIRED, not withdrawn** — `_sb`'s 40 files × 4
+  throws/file = 160 ids, exactly the range. **My COUNTING METHOD is what is withdrawn (`BEN-465`), and the
+  spec I cited had already warned against it.** The fresh check reads the `throws` id arrays, not files.
+  **Bounded: bootstrap and split are 1-product-per-id, so `100`/`24` stand.**
 - **AUTHORIZED: nothing.** No launcher edited, nothing submitted.
 
 *Second sought: B on §3's derived-target predicate (its module) and on whether stage 1 can be run as a single
