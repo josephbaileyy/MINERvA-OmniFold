@@ -1202,8 +1202,14 @@ class MiiFourLegDriver(unittest.TestCase):
         import mii_seed_offset_driver as d
         return d
 
-    def test_R3_one_offset_fans_across_all_four_legs_preserving_BOTH_groups(self):
-        """INTEGRATION is the deliverable. A flag is capability; a launcher diff is not a launcher."""
+    def test_R3_one_offset_fans_across_all_FIVE_legs_preserving_BOTH_groups(self):
+        """INTEGRATION is the deliverable. A flag is capability; a launcher diff is not a launcher.
+
+        WAS `..._all_four_legs`. Renamed rather than patched, so the reversal is visible: lane C's
+        determination (item 7 ruling (a)) put the LATERAL leg in g1 at 42+k, making it FIVE legs
+        across SEVEN launchers. The old name encoded a superseded declaration, and a fixture that
+        keeps a stale count while its assertion is loosened is how a test stops describing the system.
+        """
         d = self._drv()
         # argv_probe=False: the observed-argv GATE is cluster-only (the launchers hardcode a cluster
         # REPO and source a cluster env activator). These assertions are PLAN-LEVEL only -- they say
@@ -1212,16 +1218,23 @@ class MiiFourLegDriver(unittest.TestCase):
         plan = d.build_plan([0, 1200], argv_probe=False)
         legs = {m["leg"] for m in plan["members"]}
         self.assertEqual(legs, {"sweep_bank_5d", "unified_throw_cov", "bootstrap_nd",
-                                "seedscan_split"}, "a scan must reach all four legs")
+                                "seedscan_split", "unfold_nd_omnifold_unbinned"},
+                         "a scan must reach all FIVE legs -- the lateral joined g1 under item 7(a)")
         for k in (0, 1200):
             seeds = {m["leg"]: m["estimator_seed"] for m in plan["members"] if m["k"] == k}
             self.assertEqual(seeds["sweep_bank_5d"], 42 + k)
             self.assertEqual(seeds["bootstrap_nd"], 42 + k)
             self.assertEqual(seeds["seedscan_split"], 42 + k)
+            self.assertEqual(seeds["unfold_nd_omnifold_unbinned"], 42 + k,
+                             "the lateral leg moves with g1, which is what item 7(a) ruled")
             self.assertEqual(seeds["unified_throw_cov"], 1000 + k)
             # the whole point of (ii): g1 stays internally equal and stays unequal to g2
             self.assertEqual(len({seeds["sweep_bank_5d"], seeds["bootstrap_nd"],
-                                  seeds["seedscan_split"]}), 1, "group g1 must remain coherent")
+                                  seeds["seedscan_split"],
+                                  seeds["unfold_nd_omnifold_unbinned"]}), 1,
+                             "group g1 must remain coherent -- INCLUDING the lateral, which is the "
+                             "whole point of item 7(a): holding laterals at 42 while verticals move "
+                             "is the condition unified_throw_cov.py's F2 guard fails closed on")
             self.assertNotEqual(seeds["sweep_bank_5d"], seeds["unified_throw_cov"],
                                 "g1 and g2 must remain independent")
 
@@ -1610,11 +1623,25 @@ class DerivedTargetSet(unittest.TestCase):
     def _root(self):
         return str(ND.parent)
 
-    def test_the_lateral_leg_hard_FAILS_once_it_is_targeted(self):
+    def test_a_targeted_but_unhooked_launcher_hard_FAILS(self):
+        """WAS `test_the_lateral_leg_hard_FAILS_once_it_is_targeted`, which was true until the lateral
+        got its hook. Superseded by the work itself rather than by a ruling: the lateral is now both
+        targeted AND hooked, so it correctly PASSES.
+
+        The MECHANISM still needs a test, so the example is now a launcher that is targeted and has no
+        hook -- one of the six same-module variants, borrowed as a fixture. Deleting the test because
+        its original example was fixed would have removed the only check that the failure half fires
+        at all.
+        """
         import seed_offset_policy as sp
+        # the real seven now pass
+        self.assertTrue(sp.assert_target_set_is_complete(self._root(), self.SEVEN))
+        # ...and a targeted-but-unhooked launcher still fails
         with self.assertRaises(SystemExit) as cm:
-            sp.assert_target_set_is_complete(self._root(), self.SEVEN)
-        self.assertIn("sbatch_unfold_5d_detector_bkgaware_gpu.sh", str(cm.exception))
+            sp.assert_target_set_is_complete(self._root(),
+                                             self.SEVEN | {"sbatch_uthrow_run_5d.sh"})
+        self.assertIn("sbatch_uthrow_run_5d.sh", str(cm.exception))
+        self.assertIn("would not reach them", str(cm.exception))
 
     def test_THE_LIMIT_the_failure_half_cannot_DISCOVER_an_undeclared_leg(self):
         """THE RESULT WORTH REPORTING. With the pre-ruling SIX the predicate PASSES -- it hard-fails
@@ -1626,10 +1653,13 @@ class DerivedTargetSet(unittest.TestCase):
         2 exists to prevent.
         """
         import seed_offset_policy as sp
+        # The lateral was the original example and is now hooked, so the demonstration uses a launcher
+        # that is still unhooked. The CLAIM is unchanged and is not about the lateral: the failure half
+        # passes over anything undeclared, and only the discovery half sees it.
         r = sp.assert_target_set_is_complete(self._root(), self.SIX)
-        self.assertIn("nd-unfolding/sbatch_unfold_5d_detector_bkgaware_gpu.sh",
-                      r["substitution_hazards"],
-                      "the lateral must appear in the DISCOVERY half even when the failure half passes")
+        self.assertIn("nd-unfolding/sbatch_uthrow_run_5d.sh", r["substitution_hazards"],
+                      "an undeclared same-module launcher must appear in the DISCOVERY half even "
+                      "when the failure half passes -- that asymmetry IS the finding")
 
     def test_the_hazard_list_discriminates_by_MODULE_not_by_name(self):
         """`sbatch_fps_reunfold_5d*.sh` carry `--seed 1000` and are a DIFFERENT measurement -- they run
