@@ -44,7 +44,7 @@ docs/orchestration/CLAIM-CLM-010.md	ARCHIVAL	document			terminal		exact-path-onl
 docs/orchestration/CLAIM-CLM-011.md	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	1714
 docs/orchestration/CLAIM-CLM-012.md	ARCHIVAL	document			terminal		exact-path-only	docs/open-items/verify_open_items_restructure.py	yes	4	97	20772
 docs/orchestration/CLAIMS-ARCHIVE-2026-08.md	ARCHIVAL	document	fe-fps-campaign		terminal		exact-path-only		yes	1	18	37933
-docs/orchestration/CLAIMS.md	LIVE	ledger	fe-fps-campaign		open		route-only	docs/orchestration/generate_manifest.py;docs/orchestration/whose_row.py;nd-unfolding/pet/extract_fullevent_fps.py;nd-unfolding/tests/test_fullevent_extract.py	no	62	23	11557
+docs/orchestration/CLAIMS.md	LIVE	ledger	fe-fps-campaign		open		route-only	docs/orchestration/claims_table_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/whose_row.py;nd-unfolding/pet/extract_fullevent_fps.py;nd-unfolding/tests/test_fullevent_extract.py	no	64	23	11557
 docs/orchestration/CLAIMS.template.md	DEAD	template			superseded	docs/orchestration/CLAIMS.md	never		yes	1	11	496
 docs/orchestration/CLAUDE.project-template.md	DEAD	document			superseded	CLAUDE.md	never		yes	2	49	2841
 docs/orchestration/COMPARATOR-PREDECLARATION-20260814-cstat.md	ARCHIVAL	document		20260814	terminal		exact-path-only	docs/orchestration/state/build_cstat_crosscheck_laned.py;docs/orchestration/state/compare_cstat_implementations.py;docs/orchestration/state/probe-cstat-comparator-mutations-20260814.py;docs/orchestration/state/probe-cstat-crosscheck-comparison-20260814.py;docs/orchestration/state/probe-cstat-single-artifact-mutations-20260814.py	yes	12	508	33122
@@ -228,7 +228,8 @@ docs/orchestration/FINDING-20260817-the-reconciliation-was-in-the-receipt.md	ARC
 docs/orchestration/FINDING-20260817-two-pins-one-file-two-tenses.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	1	95	5523
 docs/orchestration/FINDING-20260817-two-sessions-one-checkout-and-no-signal.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	1	93	5981
 docs/orchestration/FINDING-20260817-unqualified-transport-of-good-measurement.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	2	148	10003
-docs/orchestration/FINDING-20260817-verification-allocated-by-suspicion.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	1	168	11530
+docs/orchestration/FINDING-20260817-verification-allocated-by-suspicion.md	ARCHIVAL	finding		20260817	terminal		exact-path-only		yes	1	183	12487
+docs/orchestration/FINDING-20260818-a-null-disjunct-is-silent-inside-a-nonempty-output.md	ARCHIVAL	finding		20260818	terminal		exact-path-only		yes	1	113	6519
 docs/orchestration/FINDING-20260818-answered-and-not-heard.md	ARCHIVAL	finding		20260818	terminal		exact-path-only		yes	2	82	4977
 docs/orchestration/FINDING-20260818-both-endpoints-blind-in-the-same-direction.md	ARCHIVAL	finding		20260818	terminal		exact-path-only		yes	1	138	8450
 docs/orchestration/FINDING-20260818-cannot-fail-is-a-two-place-predicate.md	ARCHIVAL	finding		20260818	terminal		exact-path-only		yes	1	92	4965
@@ -238,7 +239,7 @@ docs/orchestration/FINDING-20260818-the-word-owner-marks-the-absence-of-one.md	A
 docs/orchestration/FINDINGS-ARCHIVE-2026-08.md	ARCHIVAL	document	2026-07-16-fe-campaign		terminal		exact-path-only	docs/orchestration/findings_row_lint.py;docs/orchestration/split_findings.py;nd-unfolding/pet/check_canonical_designation.py	yes	7	155	362988
 docs/orchestration/FINDINGS-INDEX-ARCHIVE-2026-08.md	ARCHIVAL	document	20260806-campaign		terminal		exact-path-only		yes	2	46	25076
 docs/orchestration/FINDINGS-POLICY-HISTORY.md	ARCHIVAL	document			terminal		exact-path-only		yes	1	62	4476
-docs/orchestration/FINDINGS.md	LIVE	ledger	20260806-campaign		open		route-only	docs/orchestration/ben_filing_owner_check.py;docs/orchestration/findings_row_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/split_findings.py;docs/orchestration/test_ben_filing_owner_check.py;docs/orchestration/whose_row.py;nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/orchestrate_gpu_node.sh;nd-unfolding/sbatch_bootstrap_5d_gpu.sh;nd-unfolding/tests/test_hash_bindings.py	no	87	649	640060
+docs/orchestration/FINDINGS.md	LIVE	ledger	20260806-campaign		open		route-only	docs/orchestration/ben_filing_owner_check.py;docs/orchestration/findings_row_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/split_findings.py;docs/orchestration/test_ben_filing_owner_check.py;docs/orchestration/whose_row.py;nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/orchestrate_gpu_node.sh;nd-unfolding/sbatch_bootstrap_5d_gpu.sh;nd-unfolding/tests/test_hash_bindings.py	no	88	651	645001
 docs/orchestration/FOOTING-20260817-gbdtaiesttrace-12-seeds.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	4	94	6331
 docs/orchestration/HANDOFF-20260806-2246Z.md	ARCHIVAL	document		20260806	terminal		exact-path-only		yes	13	186	12848
 docs/orchestration/HANDOFF-20260812-1145Z.md	ARCHIVAL	document		20260812	terminal		exact-path-only		yes	6	175	14895
@@ -252,7 +253,7 @@ docs/orchestration/INTERIM-HANDBACK.md	ARCHIVAL	document			terminal		exact-path-
 docs/orchestration/LIVE-STATE.md	LIVE	live-status			generated		always	docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_g2_dump_resume.sh;docs/orchestration/watch_slurm_array_resume.sh	no	44	76	12872
 docs/orchestration/LIVE-USAGE.md	LIVE	live-status			open		route-only		no	15	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	10	53	3555
-docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	19	979	160491
+docs/orchestration/MANIFEST.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	19	981	160789
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	LIVE	document		20260817	open		route-only		no	3	184	13929
 docs/orchestration/MAP-20260817-pet-critical-path.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	197	14433
 docs/orchestration/METHOD-DECLARATION-20260814-lane-d-cstat-crosscheck.md	ARCHIVAL	document		20260814	terminal		exact-path-only	docs/orchestration/state/build_cstat_crosscheck_laned.py	yes	3	102	6794
@@ -317,7 +318,7 @@ docs/orchestration/REQUIREMENTS-20260814-cstat-assembly-conventions.md	ARCHIVAL	
 docs/orchestration/RESTORE-2026-08-03.md	ARCHIVAL	document			terminal		exact-path-only	lib/enumerate_backfill_families.py;nd-unfolding/pet/closure_fullevent_fps.py;nd-unfolding/pet/fullevent_fps_dataloader.py;nd-unfolding/pet/stress_closure_muon.py;nd-unfolding/pet/validate_pet_nominal_gate4.py;nd-unfolding/tests/test_b1_normalization_fix.py;nd-unfolding/tests/test_pet_nominal_gate4_validator.py	yes	41	1428	90534
 docs/orchestration/REVIEW-20260808-clm012-independent-rederivation.md	ARCHIVAL	review		20260808	terminal		exact-path-only		yes	4	211	14377
 docs/orchestration/ROLLOUT-PLAN.md	ARCHIVAL	document	fe-fps-campaign		terminal		exact-path-only		yes	13	124	8494
-docs/orchestration/ROW-OWNERS.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/whose_row.py	no	6	52	4181
+docs/orchestration/ROW-OWNERS.tsv	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/whose_row.py	no	7	74	5692
 docs/orchestration/RULING-20260815-lanec-reduced-n-diagnostic-coherence.md	ARCHIVAL	document		20260815	terminal		exact-path-only		yes	3	273	20344
 docs/orchestration/RULING-20260817-lanec-data-only-coherence-predicate.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	233	16767
 docs/orchestration/RULING-20260817-lanec-data-only-cstat-is-a-second-product.md	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	339	24599
@@ -351,12 +352,13 @@ docs/orchestration/__pycache__/slurm_array_status.cpython-312.pyc	MACHINE	cache	
 docs/orchestration/__pycache__/wakerctl.cpython-312.pyc	MACHINE	cache			generated		exact-path-only		yes	0	441	80891
 docs/orchestration/agentctl.py	MACHINE	script			generated		exact-path-only	docs/orchestration/generate_live_state.py;docs/orchestration/pipeline_post_reset_verifiers.sh;docs/orchestration/resume_after_school_reset.sh;docs/orchestration/resume_after_school_reset_1800.sh;docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py	no	33	611	22259
 docs/orchestration/analyze_dispatch_history.py	MACHINE	script			generated		exact-path-only		no	2	147	5340
-docs/orchestration/analyze_slurm_history.py	MACHINE	script			generated		exact-path-only		no	2	146	5355
+docs/orchestration/analyze_slurm_history.py	MACHINE	script			generated		exact-path-only		no	3	146	5355
 docs/orchestration/audit_derived_from_merged_extensives.py	MACHINE	script			generated		exact-path-only		no	10	344	17022
 docs/orchestration/audit_gates_that_cannot_fail.py	MACHINE	script			generated		exact-path-only	nd-unfolding/tests/test_cannot_fail_auditor.py	no	10	369	17861
 docs/orchestration/audit_tparameter_merge_semantics.py	MACHINE	script			generated		exact-path-only		no	9	255	12144
 docs/orchestration/audit_validator_tolerance_units.py	MACHINE	script			generated		exact-path-only	nd-unfolding/tests/test_validator_units_auditor.py	no	9	232	10103
 docs/orchestration/ben_filing_owner_check.py	MACHINE	script			generated		exact-path-only	docs/orchestration/test_ben_filing_owner_check.py	no	3	158	8874
+docs/orchestration/claims_table_lint.py	MACHINE	script			generated		exact-path-only		no	0	126	6911
 docs/orchestration/codex-mcp-account.py	MACHINE	script			generated		exact-path-only		no	2	21	582
 docs/orchestration/continuity-agent-A-standard.md	ARCHIVAL	continuity-prompt			terminal		exact-path-only		yes	1	3	254
 docs/orchestration/continuity-agent-B-p5b.md	ARCHIVAL	continuity-prompt			terminal		exact-path-only		yes	1	3	254
@@ -364,7 +366,7 @@ docs/orchestration/continuity-agent-C-fps.md	ARCHIVAL	continuity-prompt			termin
 docs/orchestration/delegate_report_check.py	MACHINE	script			generated		exact-path-only		no	3	171	7588
 docs/orchestration/fable-prompt-brevity.md	DEAD	document			superseded		never		yes	1	14	995
 docs/orchestration/fend_probe.py	MACHINE	script			generated		exact-path-only		no	2	174	7341
-docs/orchestration/findings_row_lint.py	MACHINE	script			generated		exact-path-only	docs/orchestration/ben_filing_owner_check.py	no	7	208	10379
+docs/orchestration/findings_row_lint.py	MACHINE	script			generated		exact-path-only	docs/orchestration/ben_filing_owner_check.py	no	8	208	10379
 docs/orchestration/followup-agent-A-standard-01.md	ARCHIVAL	followup-prompt			terminal		exact-path-only		yes	4	7	1337
 docs/orchestration/followup-agent-A-standard-02.md	ARCHIVAL	followup-prompt			terminal		exact-path-only	docs/orchestration/resume_after_school_reset.sh	yes	6	13	2730
 docs/orchestration/followup-agent-A-standard-03.md	ARCHIVAL	followup-prompt			terminal		exact-path-only		yes	5	110	7029
@@ -441,7 +443,7 @@ docs/orchestration/followup-standard-p4-verifier-03.md	ARCHIVAL	followup-prompt	
 docs/orchestration/followup-usage-helper-verifier-01.md	ARCHIVAL	followup-prompt			terminal		exact-path-only		yes	1	39	2141
 docs/orchestration/gate2_queue_hedge_controller.sh	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/verify_hash_bindings.py	no	11	331	16015
 docs/orchestration/generate_live_state.py	MACHINE	generator-script			generated		exact-path-only		no	16	358	16948
-docs/orchestration/generate_manifest.py	MACHINE	generator-script			generated		exact-path-only	docs/orchestration/live_doc_indexed.py	no	12	439	14988
+docs/orchestration/generate_manifest.py	MACHINE	generator-script			generated		exact-path-only	docs/orchestration/live_doc_indexed.py	no	13	439	14988
 docs/orchestration/heartbeat-agent-B-p5b-06.md	ARCHIVAL	heartbeat-prompt			terminal		exact-path-only		yes	1	3	278
 docs/orchestration/heartbeat-agent-C-fps-07.md	ARCHIVAL	heartbeat-prompt			terminal		exact-path-only		yes	1	3	277
 docs/orchestration/hpss_space_audit.sh	MACHINE	shell-tool			generated		exact-path-only		no	4	481	23015
@@ -599,7 +601,7 @@ docs/orchestration/sbatch_hash_merged_inputs.sh	MACHINE	shell-tool			generated		
 docs/orchestration/shared_push.sh	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/live_doc_indexed.py;docs/orchestration/shared_push_e2e_test.sh	no	7	222	12293
 docs/orchestration/shared_push_e2e_test.sh	MACHINE	shell-tool			generated		exact-path-only		no	1	168	10306
 docs/orchestration/slurm_array_status.py	MACHINE	script			generated		exact-path-only	docs/orchestration/watch_slurm_array_resume.sh	no	7	223	7431
-docs/orchestration/split_findings.py	MACHINE	script			generated		exact-path-only		no	0	134	5848
+docs/orchestration/split_findings.py	MACHINE	script			generated		exact-path-only		no	1	134	5848
 docs/orchestration/start-agent-E-g2-source.md	ARCHIVAL	start-prompt			terminal		exact-path-only		yes	4	75	4225
 docs/orchestration/start-agy-g2-gate-verifier.md	ARCHIVAL	start-prompt			terminal		exact-path-only		yes	1	45	2452
 docs/orchestration/start-agy-publication-redteam.md	ARCHIVAL	start-prompt			terminal		exact-path-only		yes	1	45	2707
@@ -972,8 +974,8 @@ docs/orchestration/verify_hash_bindings.py	MACHINE	script			generated		exact-pat
 docs/orchestration/verify_receipt_artifacts.py	MACHINE	script			generated		exact-path-only	docs/orchestration/live_doc_indexed.py	no	7	177	7770
 docs/orchestration/waker-config.json	MACHINE	machine-data			generated		exact-path-only	docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py	no	10	21	652
 docs/orchestration/waker_fired_but_unread.sh	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/merge_guard.sh	no	8	41	2803
-docs/orchestration/wakerctl.py	MACHINE	script			generated		exact-path-only	docs/orchestration/state/probe-pin-exposure-20260817.py;docs/orchestration/test_wakerctl.py;docs/orchestration/verify_hash_bindings.py;docs/orchestration/waker_fired_but_unread.sh;nd-unfolding/pet/interactive_step1_trajectory_controller.sh	no	35	1467	57686
+docs/orchestration/wakerctl.py	MACHINE	script			generated		exact-path-only	docs/orchestration/state/probe-pin-exposure-20260817.py;docs/orchestration/test_wakerctl.py;docs/orchestration/verify_hash_bindings.py;docs/orchestration/waker_fired_but_unread.sh;nd-unfolding/pet/interactive_step1_trajectory_controller.sh	no	36	1467	57686
 docs/orchestration/watch_g2_dump_resume.sh	MACHINE	shell-tool			generated		exact-path-only		no	5	94	5041
 docs/orchestration/watch_g2_smoke_resume.sh	MACHINE	shell-tool			generated		exact-path-only		no	1	108	3560
 docs/orchestration/watch_slurm_array_resume.sh	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/test_watch_slurm_array_resume.py	no	9	162	7177
-docs/orchestration/whose_row.py	MACHINE	script			generated		exact-path-only	docs/orchestration/ben_filing_owner_check.py;docs/orchestration/merge_guard.sh	no	20	867	49715
+docs/orchestration/whose_row.py	MACHINE	script			generated		exact-path-only	docs/orchestration/ben_filing_owner_check.py;docs/orchestration/merge_guard.sh	no	21	867	49715
