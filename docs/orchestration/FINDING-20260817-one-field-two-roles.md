@@ -133,6 +133,67 @@ the roles; **nobody edits that file on the strength of it.** The remedy shape fo
 abspath the *loader* wrote about what it actually opened, rather than on an echo of the driver's own
 argument. Writing it is E's; approving it is not mine.
 
+## Amendment 1 (2026-08-17) — my own recommended limb is WITHDRAWN. It is a tautology.
+
+Lane B objected that the form recommended above reduces to comparing a value with itself, and the
+mediator put the question precisely: **is there any reachable execution in which
+`consumed_precomputed_target != abspath(args.target_npy)`?**
+
+**Measured answer: NO. B is right and I withdraw the limb.** The chain, every link verified in the
+digest-pinned tree above:
+
+| step | site | what happens to the string |
+|---|---|---|
+| 1 | `train_fullevent_replica.py:402` | `"--target-npy", args.target_npy` — copied **verbatim** into nominal's argv |
+| 2 | `train_fullevent_nominal.py:377-379` | the **sole** `build_fullevent_loaders(` call site in the module; passes `precomputed_target=args.target_npy` |
+| 3 | `fullevent_fps_dataloader.py:1516` | `os.path.abspath(precomputed_target)` |
+| 4 | `train_fullevent_replica.py:106` | `os.path.abspath(target_npy)` — **the same string**, from the same variable |
+
+Both operands are `abspath()` of one unmodified value. The only mechanism that could separate them is
+a **cwd change between steps 4 and 3 with a relative path** — and there is **no `chdir` in any of the
+three modules** (grepped), while the launcher supplies an absolute path
+(`sbatch_gate5_data_only_train_array.sh:34,51`), which makes `abspath` the identity function anyway.
+
+**And note the shape of that lone hypothetical, because it is the decisive part rather than a
+caveat:** even if a `chdir` did make them differ, the check would be *detecting a chdir* — not
+detecting a wrong target. **A check whose only route to failing is not the failure it claims to
+detect is not a measurement of that failure.** So the limb fails on its own terms, not merely on
+C's independence-of-routes rule (`9b1e2d45`, `BEN-423`), which it also fails.
+
+I passed exactly this verdict on the coalesce fix two sections up and then proposed a second form of
+it. **The operand I chose was independent-*looking* — a loader-written abspath rather than a driver
+argument — and I did not trace it back to its source.** Provenance of a *value* is not provenance of
+its *route*, which is the whole content of C's rule.
+
+**The one thing worth keeping, because the next person will reach for this field for the same good
+reason:** `consumed_precomputed_target` records **what the loader actually opened**, which is a
+genuinely different kind of fact from what the driver intended. It is unusable here only because
+**nothing independent exists to compare it against** — not because the field is uninformative. Pair
+it with a family-position operand (`campaign/replicas/replica_NN/target`) and it becomes a
+measurement; pair it with the driver's own argument and it is an echo.
+
+**Nothing is lost by dropping it.** The mis-pairing it was meant to catch is *already* caught, in
+process and before any GPU work: `read_replica_target_receipt` checks the receipt's own
+`replica_index` (`:92`) and `bootstrap_seed` (`:94`) against the driver's. Replica 7 handed replica
+12's target-and-receipt dies there. `:288` has no identity work left to do.
+
+### The `:198` observation generalizes, and there is a third read nobody has hit yet
+
+C establishes that the same overloaded field is read for identity at
+`validate_gate5_training_artifacts.py:283` — `checks.eq("target_meta_seed",
+target_meta.get("bootstrap_seed"), seed)` — so this is **not one guard, it is a family of reads**,
+and the coherent campaign satisfied all of them under the one condition that cannot distinguish the
+field's two meanings.
+
+**Measured, and it is latent rather than fired:** that validator has **zero** `data_only` /
+`cstat_product` awareness (grepped: no hits). For a data-only artifact `target_meta["bootstrap_seed"]`
+is `None`, so `:283` compares `None` against `50000` and **fails on all 50**. It is not wired into
+`submit_gate5_data_only_n50.sh` — that campaign is two stages, target and train, with no validation
+stage — so it does not block E's repair. **It blocks the step immediately after it**, via
+`sbatch_gate5_training_family_validate.sh:25`, which is the natural next thing anyone reaches for.
+A second candidate in the same file that I did **not** evaluate: `:189-191`, the `EXPECTED_CODE`
+digest comparison (`BEN-386`, `OI-60`).
+
 ## Family
 
 - `BEN-250` — a check whose strongest statement could not fail. **Instance 1's obvious fix lands
