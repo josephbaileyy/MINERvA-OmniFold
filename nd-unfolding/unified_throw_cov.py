@@ -220,6 +220,22 @@ def do_throws(args):
     metas = []
     for j in range(args.throws):
         gj = args.throw_offset + j
+        # THE BIT-REPRODUCIBILITY INVARIANT, AND IT IS NOW CONDITIONAL -- stated here because
+        # this is the one place it cannot rot. Seven committed sites cite this line as a
+        # BEHAVIOUR claim ("seeds per GLOBAL throw index, so regeneration is bit-reproducible"),
+        # four of them in append-only logs that cannot be annotated: VALIDATION_LEDGER.md:1013,
+        # ND_OMNIFOLD_RUN_LOG.md:3428, AUTONOMOUS_LOG_20260805.md:407/500/564,
+        # notify_uthrow_regen.sh:14, and validate_rescale_identity.py:18 which DEPENDS on it.
+        #
+        # Before the two-role split the claim was STRUCTURAL: it followed from the code with no
+        # precondition a caller could fail to supply. It is now CONTINGENT, holding at
+        # --draw-seed 1000, which is what every archived product was built with.
+        #
+        # WHAT MAKES THAT SAFE RATHER THAN A WEAKENING (lane D's formulation): the contingency
+        # cannot be met by accident in either direction. There is no default to inherit, so a
+        # reader replaying with a different draw seed has SAID so; and a reader replaying an
+        # archived command line that still reads `--seed 1000` gets an argparse error, not a
+        # wrong number. The failure is loud and the correct path is bit-identical.
         rng = np.random.default_rng(args.draw_seed + gj)
         g = {b: float(rng.standard_normal()) for b in bands}
         rt = np.ones_like(w_truth); rr = np.ones_like(w_reco); rtd = np.ones_like(td_cv)
