@@ -329,6 +329,15 @@ def main(argv=None):
         },
         "runtime_target": target_meta,
         "cstat_product": args.cstat_product,
+        # T4. The data-only seed gets ITS OWN KEY, in the target's own receipt.
+        #
+        # `bootstrap_seed` above means "the three-stream coherent seed", and in a data-only build it
+        # is the seed of the DATA draw while the loader's echo of it is None -- one field, two
+        # meanings, which is what 57194055_0/_1 died of. `precomputed_target_replica_seed` is not a
+        # substitute: it is a PARAMETER the driver passes and the loader writes back, so it records
+        # the CALLER'S INTENT rather than a fact about this target. This key is written by the stage
+        # that BUILT the target, into the receipt that owns it, and it has exactly one meaning.
+        "data_bootstrap_seed": (int(args.bootstrap_seed) if data_only else None),
         "configuration": {
             "target_mode": nominal.BKG_MODE,
             "refinement_estimator": "exact",

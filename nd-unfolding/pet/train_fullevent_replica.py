@@ -40,6 +40,7 @@ from cstat_data_only import (  # noqa: E402
     CLOSURE_TOL_EPS,
     F32_EPS,
     assert_data_only_streams,
+    assert_data_only_target_is_this_replicas,
     assert_mc_leg_unthinned,
     assert_ratio_provenance_block,
     rescale_measured_to_data_only_R,
@@ -285,9 +286,17 @@ def run_nominal_adapter(args, target_receipt):
         result = original_build(*build_args, **build_kwargs)
         data_loader, mc_loader, imc, _cr, _cg = result[0], result[1], result[2], result[3], result[4]
         meta = result[-1]
-        fe.assert_refined_target_is_replica(
-            meta.get("target") or {}, bootstrap_seed=int(args.bootstrap_seed)
-        )
+        # F1-F3 REPLACE fe.assert_refined_target_is_replica ON THIS BRANCH ONLY. The three-stream
+        # branch above still calls it unchanged: this is an INAPPLICABLE guard swapped for a
+        # strictly stronger set, not a shared guard relaxed (lane C's rule, BEN-407, third instance).
+        assert_data_only_target_is_this_replicas(
+            meta.get("target") or {}, bootstrap_seed=int(args.bootstrap_seed),
+            target_receipt=target_receipt,
+            # FAMILY-POSITION OPERANDS, and deliberately NOT args.target_npy: the training output
+            # lives at <root>/replicas/replica_NN/training/..., so parents[2] is the campaign root.
+            # Derived from --output and --replica-index, neither of which is F2's echo source.
+            family_output_root=Path(args.output).resolve().parents[2],
+            replica_index=int(args.replica_index))
         if meta.get("bootstrap") is not None:
             raise SystemExit("[gate5-dataonly] loader published a bootstrap block; the MC legs "
                              "were thinned and this is not a data-only build")

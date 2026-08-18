@@ -361,3 +361,112 @@ def unity_mc_factor_patch(seed, n_data, n_sig, n_bkg):
                 np.ones(int(n_bkg), dtype=np.uint8))
 
     return patched, canonical[0]
+
+def assert_data_only_target_is_this_replicas(target_meta, *, bootstrap_seed,
+                                            target_receipt=None,
+                                            family_output_root=None, replica_index=None):
+    """The data-only replacement for `fe.assert_refined_target_is_replica`.
+
+    WHY THE ORIGINAL COULD NOT BE USED, in one sentence:
+    THE GUARD ASSERTS ON THE LOADER'S ECHO OF ITS OWN CALLER'S ARGUMENT.
+    `fe.assert_refined_target_is_replica` reads `target_meta["bootstrap_seed"]`
+    (fullevent_fps_dataloader.py:742), and :1525 writes that field as
+    `None if bootstrap_seed is None else int(...)` -- it is what the DRIVER PASSED IN, written back
+    out. The data-only branch passes None deliberately, because that is the mechanism for leaving
+    the MC legs unthinned, so the guard raised on the one value its own caller guarantees.
+    `57194055_0` and `_1` died there. The guard's CLAIM is true; the failure is a FALSE POSITIVE,
+    which is why this re-targets rather than relaxes. The original is SOUND at its other two call
+    sites and is left untouched.
+
+    THE RULE THIS FUNCTION NOW OBEYS, and the first version of it did not:
+        A COMPARISON IS EVIDENCE ONLY IF ITS TWO OPERANDS WERE PRODUCED BY DIFFERENT PROCESSES.
+    Two legs were removed for failing it -- see the notes below. Both were in-process echoes of this
+    driver's own arguments, i.e. the root cause above, committed again inside the fix for it.
+    (Lane B and the mediator, converging independently.)
+
+    NOTE THE ABSENT PARAMETER. This function no longer takes `target_npy`. It was the operand of
+    both removed tautologies, and an unused parameter that used to be the wrong answer is an
+    invitation to reach for it again. A control asserts the name does not appear in this function.
+    """
+    tm = dict(target_meta or {})
+
+    # ABSENT IS NOT NOMINAL. The old call site passed `meta.get("target") or {}`, so a MISSING target
+    # block produced the identical "bootstrap_seed=None (NOMINAL)" message and the two were
+    # indistinguishable in the log (lane B). Separated here.
+    if not tm:
+        raise SystemExit("[gate5-dataonly] the loader published NO target block at all; this is not "
+                         "a nominal target, it is an absent one -- fail closed")
+
+    # F1 -- IDENTITY, from a key with exactly ONE meaning, written by the stage that BUILT the
+    # target, in the receipt that owns it. CROSS-PROCESS: the target driver wrote it, this driver
+    # reads it. `bootstrap_seed` in that receipt means "the three-stream coherent seed" and is
+    # overloaded; `data_bootstrap_seed` is not (T4).
+    if target_receipt is not None:
+        rseed = dict(target_receipt).get("data_bootstrap_seed")
+        if rseed is None:
+            raise SystemExit(
+                "[gate5-dataonly] F1 the target receipt carries no data_bootstrap_seed; it was not "
+                "built as a data-only target -- fail closed (absence is never unity here)")
+        if int(rseed) != int(bootstrap_seed):
+            raise SystemExit(
+                f"[gate5-dataonly] F1 the target receipt was written for data seed {int(rseed)} but "
+                f"this run is replica {int(bootstrap_seed)} -- fail closed")
+
+    # F2 -- THE BYTES, bound to a FAMILY-POSITION-DERIVED operand.
+    #
+    # C's criterion (BEN-423), verbatim: each provenance leg must compare a value the artifact
+    # ECHOES against a value derived by a route THAT DOES NOT PASS THROUGH THE ECHO'S SOURCE.
+    # Admissible: family-position-derived. Inadmissible: anything derived from the echo's source.
+    # "Consults the sha" was never the criterion -- independence of the two routes is.
+    #
+    # THREE EARLIER FORMS WERE ALL INADMISSIBLE, recorded so nobody reaches for them again:
+    #   (a) sha256_file(args.target_npy) vs target_receipt["_verified_target_sha256"] -- :111
+    #       computes the first and :155 ASSIGNS it to the second. A value against itself.
+    #   (b) consumed_precomputed_target vs args.target_npy -- train_fullevent_nominal.py:379 passes
+    #       precomputed_target=args.target_npy and the loader echoes it at :1516. abspath(X)/abspath(X).
+    #   (c) consumed_precomputed_target vs target_receipt["step1_feed"]["weights"]["path"] -- MY OWN
+    #       third attempt, inadmissible ONE STEP REMOVED: :108 already asserts that feed path equals
+    #       args.target_npy, so (c) is (b) transitively.
+    # All three pass through `args.target_npy`, which IS the echo's source.
+    #
+    # THE ADMISSIBLE ROUTE, copied from the shape that already works in
+    # `validate_gate5_training_artifacts.py:285-287`, where `target_path` comes from
+    # `campaign/replicas/replica_NN/target`: derive the expected target from THIS MEMBER'S POSITION
+    # IN THE FAMILY, via the training output path and the declared replica index. Neither is the
+    # echo's source.
+    #
+    # AND IT CAN FAIL, which none of (a)-(c) could: a `--target-npy` pointing OUTSIDE the campaign
+    # layout -- a stray copy, or a hand-made file with a self-consistent receipt -- satisfies :94,
+    # :100, :108 and :112 (they all bind the file to ITS OWN receipt) and is caught only here.
+    consumed = tm.get("consumed_precomputed_target")
+    if not consumed:
+        raise SystemExit("[gate5-dataonly] F2 the loader did not record which target it opened "
+                         "(consumed_precomputed_target absent); the chain cannot be closed")
+    if family_output_root is None or replica_index is None:
+        raise SystemExit("[gate5-dataonly] F2 has no family-position operand; refusing to fall back "
+                         "on an argument-derived one, which is what made three earlier forms "
+                         "unfalsifiable")
+    member = "replica_%02d" % int(replica_index)
+    expected = os.path.join(str(family_output_root), "replicas", member, "target",
+                            "GATE5_REPLICA_TARGET.npy")
+    if os.path.realpath(str(consumed)) != os.path.realpath(expected):
+        raise SystemExit(
+            f"[gate5-dataonly] F2 the loader opened {consumed!r}, but this member's position in the "
+            f"family says its target is {expected!r}. The two routes are independent, so a "
+            f"disagreement means the file trained on is not the one this replica owns.")
+
+    # F3 -- THE TWO FIELDS' RELATIONSHIP, which is what makes the overload safe rather than merely
+    # avoided. In data-only `bootstrap_seed` MUST be None (the MC legs are unthinned) WHILE
+    # `precomputed_target_replica_seed` MUST name this replica. Asserting the PAIR is the durable
+    # form: either field alone is an echo of this driver's own argument and proves nothing, but
+    # their RELATIONSHIP is a property of the loader's behaviour that a future edit would break.
+    if tm.get("bootstrap_seed") is not None:
+        raise SystemExit(
+            f"[gate5-dataonly] F3 the loader reports bootstrap_seed={tm.get('bootstrap_seed')!r} on "
+            f"a data-only build; the MC legs were thinned and this is not the product")
+    prs = tm.get("precomputed_target_replica_seed")
+    if prs is None or int(prs) != int(bootstrap_seed):
+        raise SystemExit(
+            f"[gate5-dataonly] F3 the loader consumed a target for replica seed {prs!r} while "
+            f"bootstrap_seed is None; the two fields disagree about which replica this is")
+    return True
