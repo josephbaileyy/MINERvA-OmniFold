@@ -48,7 +48,26 @@ def check(path, expect_nbins=None, min_complete=None, require_completeness=True)
         r["why"] = "missing"; return r
     if os.path.getsize(path) < 1024:
         r["why"] = f"tiny ({os.path.getsize(path)}B)"; return r
-    f = ROOT.TFile.Open(path)
+    # THE `if not f` DISJUNCT WAS DEAD CODE AND THAT MADE THIS GUARD LOOK REDUNDANT WHILE IT WAS BARE.
+    # Under PyROOT 6.28 `TFile.Open` is PYTHONIZED TO RAISE OSError rather than return a null pointer
+    # (_pythonization/_tfile.py:103), so on the dominant real failure mode -- an unopenable file --
+    # control never reached this return and `why="zombie/unopenable"` could never be produced. Measured
+    # by the mediator on truncated copies of a real 5D product at 99/97/95/90/80/60 %: every one raised
+    # OSError out of `check()` instead of being classified, so the caller's clean SystemExit with its
+    # diagnostic never appeared and a bare ROOT traceback appeared instead.
+    #
+    # The DIRECTION was always fail-closed -- nothing unsafe got through -- but a guard that cannot
+    # report its own reason is a guard whose failures a future reader has to re-diagnose. And the
+    # `not f or IsZombie()` idiom reads as belt-and-braces while being single-ply: the audit lane
+    # measured 90 occurrences of it across 70 files, so this is one instance of a repo-wide shape.
+    #
+    # BOTH BRANCHES ARE KEPT. The except handles pythonized PyROOT; `not f` is still correct for a
+    # build or call path that returns null, and IsZombie() for a file that opens degraded. What changed
+    # is that the first is now REACHABLE.
+    try:
+        f = ROOT.TFile.Open(path)
+    except OSError as exc:
+        r["why"] = f"zombie/unopenable ({exc.__class__.__name__}: {exc})"; return r
     if not f or f.IsZombie():
         r["why"] = "zombie/unopenable"; return r
     if f.TestBit(ROOT.TFile.kRecovered):
