@@ -28,9 +28,14 @@ import subprocess
 import sys
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[3]
-MANIFEST = REPO / "docs/orchestration/state/DIVERGENCE-MANIFEST-20260818-cstat-data-only.json"
-PINNED = REPO / "nd-unfolding/pet/validate_gate5_training_artifacts.py"
+# `--repo` EXISTS SO THIS CAN RUN WHERE THE FAMILY ROOT IS VISIBLE.
+#
+# The zero-artifact refusal below is only meaningful on a host that can SEE the family root, which for a
+# `/pscratch` campaign means the cluster -- and the script itself then has to live somewhere other than
+# inside the repo it reads. Deriving REPO from `__file__` alone forced the two to be co-located, which is
+# what let the first real run happen from a host where the check could not fail. Default is unchanged.
+def _default_repo():
+    return Path(__file__).resolve().parents[3]
 
 
 def existing_artifacts(root):
@@ -63,12 +68,42 @@ def main(argv=None):
     ap.add_argument("--minutes-per-task-max", type=float, required=True)
     ap.add_argument("--minutes-sample-size", type=int, required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--billing-cores", type=float, default=36.0,
+                    help="AllocTRES billing= per task, measured from sacct. A shared partition bills the "
+                         "fraction requested, so this is what converts wall-hours to node-hours.")
+    ap.add_argument("--cores-per-node", type=float, default=128.0,
+                    help="cores per node on the partition (Perlmutter CPU: 2x64).")
+    ap.add_argument("--repo", default=None,
+                    help="repository root holding the manifest and the pinned validator. Defaults to the "
+                         "tree containing this script; supply it when running from elsewhere so the "
+                         "zero-artifact check can run where the family root is visible.")
     args = ap.parse_args(argv)
+    repo = Path(args.repo).resolve() if args.repo else _default_repo()
+    manifest_path = repo / "docs/orchestration/state/DIVERGENCE-MANIFEST-20260818-cstat-data-only.json"
+    pinned_path = repo / "nd-unfolding/pet/validate_gate5_training_artifacts.py"
 
     if len(args.deployment_sha) < 40:
         raise SystemExit("[addendum] --deployment-sha must be the FULL 40-char sha: the pinned check "
                          "compares against a full head, and an abbreviation would predict a `got` that "
                          "never appears")
+    # === THE ROOT MUST BE VISIBLE FROM HERE, OR THE ZERO-ARTIFACT CLAIM IS VACUOUS ===
+    #
+    # FOUND THE HARD WAY, on the first real use: this script ran from the LOCAL checkout against a family
+    # root on `/pscratch`, which does not exist on that filesystem. `existing_artifacts()` walks replica
+    # directories and skips any that are not directories, so a root that is absent yields zero artifacts
+    # and the refusal below cannot fire. **The assertion that makes "before the artifact exists"
+    # checkable rather than promised was, run from the wrong host, unable to fail.**
+    #
+    # The cluster-side state happened to be clean -- verified independently, root present with zero
+    # products and the array still PENDING -- so the addendum's claim is true. It was true by timing, not
+    # because this check established it. Distinguishing those is the whole point of having the check.
+    root = Path(args.family_root)
+    if not root.is_dir():
+        raise SystemExit(
+            f"[addendum] {root} is not a directory FROM HERE. Either the family root does not exist yet "
+            f"or this is running on a host that cannot see it -- and in the second case the "
+            f"zero-artifact check below would pass vacuously, which is exactly the guarantee this script "
+            f"exists to provide. Run it where the family root is visible.")
     found = existing_artifacts(args.family_root)
     if found:
         raise SystemExit(
@@ -76,21 +111,28 @@ def main(argv=None):
             f"{found[0]}. These predictions must be recorded BEFORE any artifact they predict exists, "
             f"or they could have been read off one and the entry is worth nothing. Refusing.")
 
-    if not MANIFEST.is_file():
-        raise SystemExit(f"[addendum] the main manifest is missing at {MANIFEST}")
-    manifest = json.loads(MANIFEST.read_text())
-    pinned_now = hashlib.sha256(PINNED.read_bytes()).hexdigest()
+    if not manifest_path.is_file():
+        raise SystemExit(f"[addendum] the main manifest is missing at {manifest_path}")
+    manifest = json.loads(manifest_path.read_text())
+    pinned_now = hashlib.sha256(pinned_path.read_bytes()).hexdigest()
     if manifest["pinned_module"]["sha256"] != pinned_now:
         raise SystemExit(
             f"[addendum] the pinned module has been re-issued since the manifest was written "
             f"({pinned_now[:12]}... vs {manifest['pinned_module']['sha256'][:12]}...). The manifest's "
             f"predictions may no longer describe it -- re-derive them rather than extending them.")
 
-    head = subprocess.run(["git", "-C", str(REPO), "rev-parse", "HEAD"],
-                          capture_output=True, text=True).stdout.strip()
+    # `stdout=PIPE` rather than `capture_output=True`: the login node this must run on has Python 3.6,
+    # where `capture_output` does not exist. Found by running it there -- the whole point of `--repo` is
+    # that this executes where the family root is visible, so 3.6 compatibility is a requirement of the
+    # design and not a nicety.
+    head = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
+                          stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                          universal_newlines=True).stdout.strip()
     doc = {
         "schema": "gate5-cstat-data-only-divergence-manifest-run-bound-addendum-v1",
-        "extends": MANIFEST.name,
+        "extends": manifest_path.name,
+        "repo_read": str(repo),
+        "zero_artifact_check_ran_where_the_family_root_is_VISIBLE": True,
         "extends_pinned_module_sha256": manifest["pinned_module"]["sha256"],
         "stage": args.stage,
         "recorded_at_repo_head": head,
@@ -149,12 +191,30 @@ def main(argv=None):
                     "a LOWER BOUND on its duration, not an estimate of it, which is how the first "
                     "pricing of this array came out 2.8x low."),
             },
-            "node_hours_for_50_tasks": {
+            "wall_hours_for_50_tasks": {
                 "point": round(50 * args.minutes_per_task_mean / 60.0, 2),
                 "low": round(50 * args.minutes_per_task_min / 60.0, 2),
                 "high": round(50 * args.minutes_per_task_max / 60.0, 2),
-                "unit": "CPU node-hours on shared_milan_ss11 -- OUTSIDE the A100 grant, and CPU is the "
-                        "tighter allocation (m3246 79.9% used) despite being the cheaper unit",
+                "unit": "task wall-hours summed. NOT node-hours -- see below.",
+            },
+            "node_hours_for_50_tasks": {
+                "point": round(50 * args.minutes_per_task_mean / 60.0 * args.billing_cores
+                               / args.cores_per_node, 2),
+                "low": round(50 * args.minutes_per_task_min / 60.0 * args.billing_cores
+                             / args.cores_per_node, 2),
+                "high": round(50 * args.minutes_per_task_max / 60.0 * args.billing_cores
+                              / args.cores_per_node, 2),
+                "billing_cores_per_task": args.billing_cores,
+                "cores_per_node": args.cores_per_node,
+                "unit": "CHARGED CPU node-hours on a shared_* partition -- OUTSIDE the A100 grant, and "
+                        "CPU is the tighter allocation despite being the cheaper unit",
+                "why_the_fraction": (
+                    "A shared partition bills the FRACTION requested, not a whole node. This field "
+                    "originally reported wall-hours under a node-hours label, which overstated the cost "
+                    "by cores_per_node/billing_cores -- 128/36 = 3.6x for this array -- and it is the "
+                    "same allocation-versus-work error, in the same session, that produced the ~35.8 "
+                    "figure this receipt supersedes. Both are now reported, separately labelled, so a "
+                    "reader cannot mistake one for the other."),
             },
         },
     }
