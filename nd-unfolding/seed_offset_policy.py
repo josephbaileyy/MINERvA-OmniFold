@@ -508,3 +508,91 @@ def assert_offsets_are_sort_safe(offsets):
             f"lexicographically. Widen the padding in lib_member_resume.sh:mr_member_dir and this "
             f"limit together, or the directory listing silently stops being ordered.")
     return worst
+
+
+# ===================================================================================================
+# B3: THE CODE BASIS THE STAGE-1 ANCHOR COMPARISON BINDS.
+#
+# C's addition (ii): the digest basis must COVER THE SOURCED SHELL LIBRARIES, not only the Python.
+# The reason is one line and it is the whole point -- AN ANCHOR COMPARISON PINNED TO A BASIS THAT
+# EXCLUDES THE CODE DECIDING WHETHER THE ANCHOR RAN IS PINNED TO THE WRONG OBJECT. `lib/resume_guard.sh`
+# decides skip-versus-run and `lib_member_resume.sh` decides whether a member may be satisfied by an
+# existing product at all; a bit-exact payload comparison says nothing if either changed underneath it.
+#
+# This follows from my own 279/85 measurement: 85 launchers source `lib/resume_guard.sh` through a
+# mutable canonical path, so its content at run time is not implied by any launcher's sha.
+#
+# FAIL CLOSED ON AN ABSENT MEMBER OF THE REQUIRED SET. A basis computed over "whatever of these exists"
+# is a basis that silently shrinks -- the same shape as every other defect this campaign found today,
+# and section 10c's invariant applied to the basis itself: an absent entry is not a weak yes.
+#: Every file whose content can change what stage 1 compares or whether it ran at all.
+CODE_BASIS_REQUIRED = (
+    # the two SOURCED SHELL LIBRARIES -- C's addition (ii), and the reason this list exists
+    "lib/resume_guard.sh",
+    "nd-unfolding/lib_member_resume.sh",
+    # the modules that compute seeds, namespaces and the policy the anchor is exempted under
+    "nd-unfolding/seed_offset_policy.py",
+    "nd-unfolding/mii_seed_offset_driver.py",
+    # the five leg modules: their estimator seed IS the thing under variation
+    "nd-unfolding/unified_throw_cov.py",
+    "nd-unfolding/unified_throw_cov_5d.py",
+    "nd-unfolding/sweep_bank_5d.py",
+    "nd-unfolding/bootstrap_nd.py",
+    "nd-unfolding/seedscan_split.py",
+    "nd-unfolding/unfold_nd_omnifold_unbinned.py",
+    # the seven launchers: the offset hook and every output path live here
+    "nd-unfolding/sbatch_sweep_bank_5d_run_bkgaware_gpu.sh",
+    "nd-unfolding/sbatch_uthrow_run_5d_fast.sh",
+    "nd-unfolding/sbatch_uthrow_block_5d.sh",
+    "nd-unfolding/sbatch_uthrow_combine_5d_fast.sh",
+    "nd-unfolding/sbatch_bootstrap_5d_gpu.sh",
+    "nd-unfolding/sbatch_seedscan_split_5d.sh",
+    "nd-unfolding/sbatch_unfold_5d_detector_bkgaware_gpu.sh",
+)
+
+
+def member_axis_code_basis(repo_root, required=None):
+    """`{relpath: sha256}` over every file whose content can change what stage 1 compares.
+
+    FAILS CLOSED if any required file is absent, rather than returning a shorter basis.
+    """
+    import hashlib
+    req = tuple(CODE_BASIS_REQUIRED if required is None else required)
+    missing, basis = [], {}
+    for rel in req:
+        full = os.path.join(repo_root, rel)
+        if not os.path.exists(full):
+            missing.append(rel)
+            continue
+        h = hashlib.sha256()
+        with open(full, "rb") as fh:
+            for chunk in iter(lambda: fh.read(1 << 20), b""):
+                h.update(chunk)
+        basis[rel] = h.hexdigest()
+    if missing:
+        raise SystemExit(
+            "[FAIL] code basis INCOMPLETE -- these required files are absent:\n  "
+            + "\n  ".join(missing)
+            + "\n  A basis computed over whatever happens to exist silently shrinks, and an anchor "
+              "comparison pinned to a shrunken basis is pinned to the wrong object. Refusing to "
+              "produce a partial basis.")
+    return basis
+
+
+def assert_code_basis_covers_the_resume_path(basis):
+    """The two sourced shell libraries MUST be in any basis stage 1 binds.
+
+    Separate from the completeness check on purpose: a later lane trimming
+    `CODE_BASIS_REQUIRED` would still get a complete-looking basis, and THIS is the entry whose
+    absence is invisible -- the payload comparison would still pass bit-exact while the code deciding
+    whether the anchor ran had changed underneath it.
+    """
+    need = ("lib/resume_guard.sh", "nd-unfolding/lib_member_resume.sh")
+    absent = [n for n in need if n not in basis]
+    if absent:
+        raise SystemExit(
+            f"[FAIL] the code basis does not cover the RESUME path: {absent} missing. "
+            "lib/resume_guard.sh decides skip-versus-run and lib_member_resume.sh decides whether a "
+            "member may be satisfied by an existing product at all. A bit-exact payload comparison "
+            "over a basis excluding them proves the bytes match and NOT that the anchor ran.")
+    return True

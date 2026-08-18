@@ -1898,5 +1898,68 @@ class StubGateAndGateOnly(unittest.TestCase):
             self.assertNotIn(forbidden, called,
                              f"gate_only must not be able to reach {forbidden}")
 
+
+class CodeBasisAndCanonicalNamespace(unittest.TestCase):
+    """B3 (C's addition ii) and R1 (C's ruling that `_sb` is canonical for both legs)."""
+
+    def test_the_basis_covers_BOTH_sourced_shell_libraries(self):
+        """An anchor comparison pinned to a basis excluding the code that decides whether the anchor
+        RAN is pinned to the wrong object. `lib/resume_guard.sh` decides skip-versus-run."""
+        import seed_offset_policy as sp
+        basis = sp.member_axis_code_basis(str(ND.parent))
+        for need in ("lib/resume_guard.sh", "nd-unfolding/lib_member_resume.sh"):
+            self.assertIn(need, basis, f"{need} must be in the stage-1 code basis")
+            self.assertRegex(basis[need], r"^[0-9a-f]{64}$")
+        self.assertTrue(sp.assert_code_basis_covers_the_resume_path(basis))
+
+    def test_the_basis_FAILS_CLOSED_on_an_absent_required_file(self):
+        """A basis computed over whatever exists silently SHRINKS -- section 10c's invariant applied
+        to the basis itself: an absent entry is not a weak yes."""
+        import seed_offset_policy as sp
+        with self.assertRaises(SystemExit) as cm:
+            sp.member_axis_code_basis(str(ND.parent),
+                                      required=("lib/resume_guard.sh", "nd-unfolding/nope.sh"))
+        self.assertIn("INCOMPLETE", str(cm.exception))
+
+    def test_the_resume_path_check_is_SEPARATE_from_completeness(self):
+        """Deliberately two checks: a later lane trimming CODE_BASIS_REQUIRED would still get a
+        COMPLETE-looking basis, and the resume libraries are the entries whose absence is invisible --
+        the payload comparison would still pass bit-exact."""
+        import seed_offset_policy as sp
+        trimmed = {"nd-unfolding/seed_offset_policy.py": "0" * 64}
+        with self.assertRaises(SystemExit) as cm:
+            sp.assert_code_basis_covers_the_resume_path(trimmed)
+        self.assertIn("RESUME path", str(cm.exception))
+
+    def test_every_leg_module_and_launcher_is_in_the_required_set(self):
+        """The basis must not silently omit a leg. Five leg modules, seven launchers, two libraries,
+        two policy modules -- and the lateral is among them, which it was not when it joined g1."""
+        import seed_offset_policy as sp
+        req = set(sp.CODE_BASIS_REQUIRED)
+        for leg in ("unified_throw_cov.py", "sweep_bank_5d.py", "bootstrap_nd.py",
+                    "seedscan_split.py", "unfold_nd_omnifold_unbinned.py"):
+            self.assertIn(f"nd-unfolding/{leg}", req, f"leg module {leg} missing from the basis")
+        import mii_seed_offset_driver as d
+        for rel in d.targeted_launchers():
+            self.assertIn(f"nd-unfolding/{rel}", req,
+                          f"targeted launcher {rel} is not in the code basis")
+
+    def test_R1_a_member_block_producer_and_its_combine_agree_on_the_sb_namespace(self):
+        """`_sb` is canonical (`receipt_construction_contract_5d.py:313-314` binds both `_sb` globs).
+        The member's producer writes `_sb` so the zero-slab SystemExit is unreachable per member, and
+        the UNSET path is deliberately left on the pre-existing non-`_sb` literal -- repointing it
+        would let a NON-SCAN run write into the LIVE ARCHIVE directory, which is destructive on 124
+        receipt-bound slabs. Right action, and my original reason for it was wrong."""
+        block = (ND / "sbatch_uthrow_block_5d.sh").read_text()
+        comb = (ND / "sbatch_uthrow_combine_5d_fast.sh").read_text()
+        self.assertIn('mr_dir_prefix uq_5d/block_slabs_5d_sb', block,
+                      "the member's block producer must write the canonical _sb namespace")
+        self.assertIn('BLOCK_DIR="uq_5d/block_slabs_5d"', block,
+                      "the UNSET path must stay on the pre-existing literal -- untouched by the scan")
+        self.assertIn('mr_dir_prefix uq_5d/block_slabs_5d_sb', comb,
+                      "the combine reads _sb unconditionally; it was never the misaligned side")
+        self.assertNotIn("mr_declared", comb,
+                         "the combine's conditional was reverted once _sb was ruled canonical")
+
 if __name__ == "__main__":
     unittest.main()
