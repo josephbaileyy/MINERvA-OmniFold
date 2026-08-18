@@ -124,10 +124,51 @@ copy that nobody has written down is not discoverable by asking *"is the backing
 tracked?"*** — it took a filesystem search to find, and the next lane will not run one. **Preserved
 and findable are different properties, and only the first of them is now established.**
 
-**Routed, not claimed:** the staging directory is named `minerva-shutdown-stage`, which reads like a
-deliberate preservation exercise indexed nowhere locatable from the repo. If so there may be a
-preserved population that `OI-130`'s enumeration cannot see — good news for its remediation, bad news
-for its method. That is `OI-130`'s owner's item.
+## Amendment 1 — I was wrong that it is unindexed, and the surviving defect is SHARPER
+
+I wrote that `minerva-shutdown-stage` was *"indexed nowhere locatable from the repo."* **False, and
+lane A found it in one grep.** Verified here:
+
+`docs/orchestration/state/restore-step1-g2-durability-20260804.json` — **committed**, `verdict: PASS`,
+`observed_at_utc 2026-08-04T06:28:17Z`, `repo_commit_at_verification f424427` — names **both** paths,
+and its `destination` block records *"The destination directory did not exist before this step,
+confirming there was genuinely no backup."* `minerva-shutdown-stage` appears in **8 tracked files.**
+It is `RESTORE-2026-08-03` Step 1, run two weeks before this finding.
+
+**HOW I MISSED IT, which is the part worth keeping.** I searched the two directories the dependency
+chain led me through, then a filesystem tree — **and once I had the CFS path in hand I never grepped
+the repository for it.** One `git grep` on a string I was already holding. *A search for the token you
+have is the cheapest one available and it is the one I did not run*, which is this evening's family
+with me as the author again.
+
+**So the branch moves once more: not unbacked, not backed-but-undocumented — BACKED AND DOCUMENTED**,
+with a PASS verdict and a stated reason predating the finding. The receipt-beside-payload staging I
+noticed was the runbook, not an accident.
+
+**AND THE DEFECT THAT SURVIVES IS BETTER THAN THE ONE FILED.** Lane A measured it: this document
+references that durability receipt **zero** times, and `powered_closure/.gitignore` references it
+**zero** times. The `.gitignore` promises reproducibility *"from the receipts plus the dump"*; the
+receipt proving the dump is durable sits in `docs/orchestration/state/`; **neither points at the
+other.**
+
+> **The condition this row asks for IS stated — and is unfindable from the artifact that depends on
+> it.**
+
+The remedy therefore shrinks again and gets cheaper: **not *state the precondition's storage class*,
+but *cross-reference the receipt that already states it*.** A link is checkable; a restatement can
+drift from what it restates.
+
+**And the population is smaller and cheaper than I feared** — A's complete-over-tracked-files result
+is **two durability receipts for two preserved objects** (`restore-step1-g2-durability`,
+`restore-step5-delta-durability`), so `OI-130` can index `state/restore-*-durability-*.json` rather
+than walk CFS. **The walk was never needed for the enumeration — only for the discovery**, and it was
+only needed for that because of the missing link above.
+
+**A applied my own rule back to me correctly, and I record its limit as A stated it:** a `git grep`
+complete over the repository still licenses no universal, **because the repository is not the
+filesystem.** *"Two objects have documented CFS durability"* is not *"two objects are preserved."* And
+the `sha256` remains load-bearing: A's repo-side result says the copy was *intended and recorded*;
+only the hash says **the bytes match.**
 
 ## Family
 
