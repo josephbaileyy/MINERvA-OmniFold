@@ -32,19 +32,37 @@ ROW = re.compile(r"^\| (OI-\d+) \|([^|]*)\|([^|]*)\|")
 # A cell routes the row iff it names a lane, a person, or is explicitly marked unowned.
 OWNER = re.compile(
     r"(?i)(lane [A-E]\b|session [A-E]\b|agent[- ][A-E]\b|\b[A-E] \(PET\)|Joseph|mediator"
-    r"|peer session|verdict-repair lane|standard-P4 lane|propagation)"
+    r"|peer session|verdict-repair lane|standard-P4 lane|propagation"
+    r"|routes to `OI-\d+`|routable via `OI-\d+`)"
 )
 EXPLICIT_NONE = re.compile(r"(?i)\bunowned\b")
 CLOSED = re.compile(r"(?i)closed|no action")
 
+# A row in a TERMINAL state needs no owner, so counting it as an ownership defect overstates the
+# backlog. Read from the STATE cell's opening -- the declared state -- not from anywhere in the row:
+# nearly every long row contains the word "closed" somewhere in its history.
+TERMINAL = re.compile(
+    r"^\W*(CLOSED|WITHDRAWN|SUPERSEDED|RESOLVED|DISCHARGED|RETIRED|DEFERRED|PREMISE FALSE"
+    r"|MECHANICAL HALF DISCHARGED|ITEMS \(1\) AND \(3\) DISCHARGED)\b", re.I)
 
-def classify(cell: str) -> str:
+# `<area> owner` NAMES A ROLE AND THEREBY ASSERTS A HOLDER, in a column headed `lane/owner`.
+# "cluster freeze owner" reads as "the person who owns the cluster freeze" -- a definite description
+# with no referent (`BEN-380`'s species, applied to people). Called out separately because it is the
+# most misleading of the three unroutable shapes: a bare area at least looks like an area.
+ROLE_NO_HOLDER = re.compile(r"(?i)\b[a-z][a-z /-]*\bowner\b\s*$")
+
+
+def classify(cell: str, state: str = "") -> str:
     if EXPLICIT_NONE.search(cell):
         return "explicitly-unowned"
     if OWNER.search(cell):
         return "routable"
+    if TERMINAL.match(state.strip().lstrip("*_ ")):
+        return "terminal-no-owner-needed"
     if CLOSED.search(cell):
         return "closed"
+    if ROLE_NO_HOLDER.search(cell.strip()):
+        return "role-named-no-holder"
     return "area-only"
 
 
@@ -63,18 +81,25 @@ def main(argv: list[str] | None = None) -> int:
         m = ROW.match(line)
         if not m:
             continue
-        oid, _state, cell = m.group(1), m.group(2), m.group(3)
-        buckets.setdefault(classify(cell), []).append(oid)
+        oid, state, cell = m.group(1), m.group(2), m.group(3)
+        buckets.setdefault(classify(cell, state), []).append(oid)
 
     total = sum(len(v) for v in buckets.values())
     print(f"[oi-owner] {total} rows in {args.path}")
-    for kind in ("routable", "explicitly-unowned", "closed", "area-only"):
+    order = ("routable", "explicitly-unowned", "terminal-no-owner-needed", "closed",
+             "role-named-no-holder", "area-only")
+    notes = {"area-only": "  <-- cannot be routed from the row",
+             "role-named-no-holder": "  <-- names a role with no holder; reads as owned"}
+    for kind in order:
         ids = buckets.get(kind, [])
-        note = "  <-- cannot be routed from the row" if kind == "area-only" else ""
-        print(f"[oi-owner]   {kind:20} {len(ids):3}{note}")
+        print(f"[oi-owner]   {kind:26} {len(ids):3}{notes.get(kind, '')}")
+    needs = len(buckets.get("area-only", [])) + len(buckets.get("role-named-no-holder", []))
+    print(f"[oi-owner] NEEDS A DECISION: {needs} live rows. A terminal row needs no owner and is "
+          f"not counted here.")
     if args.list_area_only:
-        for oid in buckets.get("area-only", []):
-            print(f"[oi-owner]   AREA-ONLY {oid}")
+        for kind in ("area-only", "role-named-no-holder"):
+            for oid in buckets.get(kind, []):
+                print(f"[oi-owner]   {kind.upper()} {oid}")
     print("[oi-owner] REPORT ONLY — never a gate; see the module docstring for why.")
     return 0
 

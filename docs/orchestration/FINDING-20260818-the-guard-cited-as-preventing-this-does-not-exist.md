@@ -77,6 +77,21 @@ I was one command from doing it. My first derivation for this very block read th
 learned by lane E the same way — showed the ids already present. **The narration and the tree
 disagreed, and the narration is what the rule tells you to distrust.**
 
+## Amendment 2026-08-18 — the filer's own account, and it narrows this finding
+
+**The mediator DID derive freeness** — tracked and untracked, immediately before taking the span,
+`grep -rhoE 'BEN-4(2[3-9]|3[0-9])'` → 0 unique — **and stated that derivation inside `BEN-430`'s own
+row.** So the span was provably free and provably taken. What was skipped is the block row and the
+`*(unallocated)*` advance: **the artifacts a LATER lane reads.**
+
+> **Deriving freeness protects the filer; writing the block row protects everyone else — and only the
+> second was skipped.**
+
+That is the filer's own formulation, recorded as its account rather than as a correction to this row,
+whose text was accurate about the artifacts. It sharpens the finding: the omitted step is precisely the
+one whose whole beneficiary is somebody else, which is why it is the one that gets dropped under time
+pressure and why no amount of care by the filer would have caught it.
+
 ## The remedy, and the three attempts it took
 
 `docs/orchestration/ben_filing_owner_check.py` (+ 9 tests). **The missing predicate is the other
