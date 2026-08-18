@@ -37,12 +37,23 @@ minutes apart.
 
 | call site | dict | `bootstrap_seed` | `precomputed_target_replica_seed` | verdict |
 |---|---|---|---|---|
-| `train_fullevent_replica.py:87` | builder receipt's `runtime_target` | **50000** | `None` | **PASSES** |
+| `train_fullevent_replica.py:99` | builder receipt's `runtime_target` | **50000** | `None` | **PASSES** |
 | `train_fullevent_replica.py:288` | loader's `meta["target"]` | `None` | **50000** | **FAILS** |
 
 Both rows measured — the first read out of `replica_00`'s receipt on scratch, the second from
 `fullevent_fps_dataloader.py:1524` and the frozen driver's `:283-284`. In the builder the two roles
 hold the same number, so the ambiguity is *invisible at the only site that ever exercised it*.
+
+**A third call site proves that last clause.** `:198` is the *coherent* family's equivalent of
+`:288`, and it has never failed — because there the driver passes `bootstrap_seed=<seed>` **and**
+`precomputed_target_replica_seed=<the same seed>`. Both roles hold the same number, so either read is
+correct. The guard ran the entire Gate-5 coherent campaign under the one condition that cannot
+distinguish its two meanings.
+
+**Digest parity, so these line numbers can be falsified.** `train_fullevent_replica.py` is
+`7aee2f98…2128` and `fullevent_fps_dataloader.py` is `e1402370…0ce1` — **byte-identical between
+`origin/main` and the frozen checkout `gate5-data-only-frozen-d0c42bd`**, verified both sides this
+turn. Every line number here is valid in both trees.
 
 ### The role collapse also silently disabled a guard
 
@@ -62,8 +73,8 @@ back out (`:1523-1524`). Asserting on it is the driver asserting against its own
 **The current form cannot pass; the coalesced form cannot fail. Neither is evidence** (`BEN-250`).
 
 What actually binds the array is already there and already passing: `read_replica_target_receipt`
-verifies status, seed, index, owning path **and** `sha256_file(target) == feed.sha256` (`:87`,
-`:155`). Re-verified on disk this turn — `616117e1…7499`, 18,723,004 bytes, matching both the receipt
+verifies status, seed, index, owning path **and** `sha256_file(target) == feed.sha256`
+(`:83` def, `:111` digest, `:155` stored as `_verified_target_sha256`). Re-verified on disk this turn — `616117e1…7499`, 18,723,004 bytes, matching both the receipt
 and `57194054_0`'s `19:22:05Z` completion.
 
 ## Instance 2 — `--seed`: "estimator initialization" ∧ "throw realization"
