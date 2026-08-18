@@ -17,6 +17,8 @@ export ROOT628_PREFIX=/global/homes/j/josephrb/.conda/envs/root_6_28
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 source "${REPO}/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"
+source "${REPO}/lib/resume_guard.sh"
+source "${REPO}/nd-unfolding/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
 # GEANT bands are owned by the detector direct-driver leg (matches validated
 # methodology); this vertical bank-sweep leg runs the other 169 (GEANT filtered).
 U=$(sed -n "${SLURM_ARRAY_TASK_ID}p" uq_4d/vertical_run_bkgaware.txt)
@@ -28,7 +30,12 @@ echo "[sweep-run-bkg] node=$(hostname) task=${SLURM_ARRAY_TASK_ID} universe=${U}
 # right: one offset in, each leg adds it to its own baseline. Do not replace this with an
 # absolute-seed override; that hands the group structure back to the caller.
 EST_SEED=$(( 42 + ${MNV_EST_SEED_OFFSET:-0} ))
+# MEMBER AXIS: outputs move into member_kNNNNNN/ when an offset is DECLARED, and are byte-identical
+# to the archive paths when it is not. Assigned BEFORE the python3 line, never inside its
+# continuation -- an assignment between a \-continued command and its continuation makes bash
+# swallow the continuation as a comment, which is the defect that cost this diff a review round.
+SWEEP_OUTDIR="$(mr_dir_prefix "${REPO}/nd-unfolding/uq_5d/universe_sweep_bkgaware")"
 python3 sweep_bank_5d.py --run --estimator-seed ${EST_SEED} --universe "$U" \
   --bankdir "${REPO}/nd-unfolding/bank_sweep_5d_bkgaware" \
-  --outdir "${REPO}/nd-unfolding/uq_5d/universe_sweep_bkgaware" --iters 5
+  --outdir "${SWEEP_OUTDIR}" --iters 5
 echo "[sweep-run-bkg] task=${SLURM_ARRAY_TASK_ID} done $(date -u '+%F %T UTC')"

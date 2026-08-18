@@ -17,10 +17,24 @@ export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"
 # two coherence groups are preserved BY CONSTRUCTION rather than by the driver getting it
 # right: one offset in, each leg adds it to its own baseline. Do not replace this with an
 # absolute-seed override; that hands the group structure back to the caller.
+# MEMBER AXIS. THE _sb LITERALS BELOW ARE DELIBERATELY UNCHANGED. This combine reads
+# block_slabs_5d_sb/ while sbatch_uthrow_block_5d.sh WRITES block_slabs_5d/ -- a real, pre-existing
+# mismatch (both namespaces hold separately populated old products, 8 and 36 npz). Repointing the
+# literal would change what a NON-SCAN run reads, which is archive behaviour and not mine to move.
+# WHAT NAMESPACING DOES TO IT, reported as a SIDE EFFECT rather than presented as a fix: inside a
+# member the block glob resolves to block_slabs_5d_sb/member_kNNNNNN/, which the block leg never
+# writes, so the combine hits unified_throw_cov.py's "no block-unit slabs match" SystemExit instead
+# of silently consuming ARCHIVED _sb blocks. The mismatch becomes LOUD inside a member and is
+# unchanged outside one. Which namespace is intended is still an open decision.
 EST_SEED=$(( 1000 + ${MNV_EST_SEED_OFFSET:-0} ))
+source "${REPO}/lib/resume_guard.sh"
+source "${REPO}/nd-unfolding/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
+THROW_DIR="$(mr_dir_prefix uq_5d/uthrow_slabs_5d_sb)"
+BLOCK_DIR_SB="$(mr_dir_prefix uq_5d/block_slabs_5d_sb)"
+ROOT_OUT="$(mr_prefix uq_5d/unified_throw_cov_5d.root)"
 python3 unified_throw_cov_5d.py --draw-seed 1000 --estimator-seed ${EST_SEED} \
-  --combine 'uq_5d/uthrow_slabs_5d_sb/uthrow5d_slab_*.npz' \
+  --combine "${THROW_DIR}/uthrow5d_slab_*.npz" \
   --expected-throws 0-159 \
-  --block-slabs 'uq_5d/block_slabs_5d_sb/block5d_*.npz' \
+  --block-slabs "${BLOCK_DIR_SB}/block5d_*.npz" \
   --bank bank_uthrow_5d --iters 5 --null \
-  --out-root uq_5d/unified_throw_cov_5d.root
+  --out-root "${ROOT_OUT}"

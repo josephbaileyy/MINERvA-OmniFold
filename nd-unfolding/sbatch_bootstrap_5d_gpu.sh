@@ -22,8 +22,9 @@ set -eo pipefail
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
 source "${REPO}/lib/resume_guard.sh"
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"; mkdir -p boot_nd_5d
-OUT="boot_nd_5d/res_boot_${SLURM_ARRAY_TASK_ID}.npz"
-rg_skip_if_complete "$OUT" rg_valid_npz && exit 0
+source "${REPO}/nd-unfolding/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
+OUT="$(mr_prefix "boot_nd_5d/res_boot_${SLURM_ARRAY_TASK_ID}.npz")"
+mr_skip_if_complete "$OUT" rg_valid_npz && exit 0
 # HOISTED ABOVE THE COMMAND ON 2026-08-18. The hook was inserted BETWEEN a line-continued
 # command's first line and its continuation, so bash swallowed the continuation as a comment:
 # the command truncated to `bootstrap_nd.py --npz of_inputs_5d.npz` -- NO seed arguments at all
@@ -36,5 +37,5 @@ rg_skip_if_complete "$OUT" rg_valid_npz && exit 0
 # right: one offset in, each leg adds it to its own baseline. Do not replace this with an
 # absolute-seed override; that hands the group structure back to the caller.
 EST_SEED=$(( 42 + ${MNV_EST_SEED_OFFSET:-0} ))
-rg_run "$OUT" python3 bootstrap_nd.py --npz of_inputs_5d.npz \
+mr_run "$OUT" python3 bootstrap_nd.py --npz of_inputs_5d.npz \
   --seed ${SLURM_ARRAY_TASK_ID} --estimator-seed ${EST_SEED} --iters 5 --out "$OUT"

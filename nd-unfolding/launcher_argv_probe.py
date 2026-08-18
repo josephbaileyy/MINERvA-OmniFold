@@ -61,7 +61,20 @@ srun() { while [ $# -gt 0 ]; do case "$1" in -*) shift;; [0-9]*) shift;; *) brea
 # named `setup_salloc_env.sh` only, so `source "${REPO}/lib/resume_guard.sh"` still ran, `set -e` aborted
 # the script, and TWO launchers reported "no command reached" -- indistinguishable from a real
 # reachability bug. A hardcoded exception list is a population claim about files that do not exist yet.
-_SOURCES_ABSENT = re.compile(r'(^|;)\s*(source|\.)\s+"?\$\{?REPO\}?/')
+_SOURCE_LINE = re.compile(r'(^|;)\s*(source|\.)\s+"?\$\{?REPO\}?/(?P<rel>[^"\s;]+)')
+
+# REPO IS REMAPPED, NOT STRIPPED. The first version neutralised every `${REPO}/...` source, which was
+# fine until a launcher started sourcing a file that MUST run for it to work -- `lib_member_resume.sh`.
+# Stripping it left mr_require_valid_offset undefined, `set -e` killed every launcher at line 1, and
+# the probe reported ZERO argv for all seven. That is indistinguishable from a reachability defect in
+# the launchers, and it is the third time this probe's own environment handling has produced a false
+# negative. So: point REPO at the local checkout so real files resolve for real, and neutralise only
+# the sources that still do not exist here.
+_LOCAL_REPO = os.path.abspath(os.path.join(HERE, ".."))
+
+
+def _source_resolves(rel):
+    return os.path.exists(os.path.join(_LOCAL_REPO, rel))
 
 
 def _prepare(text):
@@ -71,6 +84,22 @@ def _prepare(text):
     and `mkdir -p ...`. Everything that selects a branch or builds a command line is left exactly as
     written, because that is the thing under test.
     """
+    # REPOINT THE LAUNCHER'S OWN `REPO=` ASSIGNMENT AT THIS CHECKOUT, AS A WHOLE-TEXT SUBSTITUTION
+    # BEFORE the per-line walk. Setting REPO in the child ENVIRONMENT is not enough: every launcher
+    # reassigns it to the cluster path on its first executable line, so the env value was overwritten
+    # before any source ran and every ${REPO}-relative source resolved to /pscratch -- the function
+    # libraries the launcher depends on never loaded and the probe reported zero argv for all seven,
+    # indistinguishable from a reachability defect.
+    #
+    # AND IT MUST HAPPEN HERE RATHER THAN IN A PER-LINE BRANCH. A per-line branch handled the REPO
+    # line and `continue`d, which BYPASSED the source-wrapping branch below -- so setup_salloc_env.sh
+    # ran unprotected, conda failed, and `set -e` killed the script. Same defect one layer in.
+    #
+    # Five attempts on this harness before it worked, and the diagnosis was blocked by my own
+    # `2>/dev/null` on the wrapper, which was suppressing the `bash -x` trace I was reading:
+    # THE DIAGNOSTIC WAS SILENCING THE EVIDENCE IT WAS FOR.
+    text = re.sub(r'REPO=("|\')?/pscratch/[^"\'\s;]*("|\')?', f'REPO="{_LOCAL_REPO}"', text)
+
     out = []
     for line in text.split("\n"):
         s = line.strip()
@@ -85,10 +114,32 @@ def _prepare(text):
         # aborted the script, and every case reported "no command reached". That looked exactly like a
         # reachability defect in the launcher. Segment-wise now, so an assignment is kept and only the
         # sourcing segment is dropped.
-        if _SOURCES_ABSENT.search(line):
-            kept = [seg for seg in line.split(";") if not _SOURCES_ABSENT.search(seg)]
-            out.append(("; ".join(s.strip() for s in kept if s.strip()) + "   ") if kept else ""
-                       + "# setup sourced-out by the argv probe")
+        # TOLERANT SOURCING, criterion-free. Existence was the wrong test: setup_salloc_env.sh EXISTS
+        # in the checkout and still cannot run here (it activates a cluster conda env), so "neutralise
+        # what is absent" left it running and `set -e` killed every launcher -- zero argv for all
+        # seven, again. And a hardcoded name list is the population claim I already rejected once.
+        # So every ${REPO}-relative source becomes best-effort: a function LIBRARY the launcher
+        # depends on loads for real, an environment ACTIVATOR fails harmlessly, and neither the probe
+        # nor a future launcher has to declare which is which.
+        m = _SOURCE_LINE.search(line)
+        if m:
+            kept = []
+            for seg in line.split(";"):
+                if _SOURCE_LINE.search(seg):
+                    # STRIP THE TRAILING COMMENT BEFORE WRAPPING. The first version wrapped the
+                    # segment verbatim, so a line like
+                    #     source "${REPO}/lib/resume_guard.sh"   # BEN-023: resume on a marker
+                    # became `{ source ... # BEN-023: ... ; } 2>/dev/null || true` -- the comment
+                    # swallowed the CLOSING BRACE, the group never closed, bash exited 1 and the probe
+                    # reported zero argv for all seven launchers. That is the same swallow-the-rest-of-
+                    # the-line class as the continuation defect this project has a lint for, committed
+                    # in the probe's own text generator, which the lint does not cover because it walks
+                    # TRACKED files and this text is synthesised at run time.
+                    bare = re.sub(r'\s+#.*$', '', seg.strip())
+                    kept.append(f"{{ {bare} ; }} 2>/dev/null || true")
+                elif seg.strip():
+                    kept.append(seg.strip())
+            out.append("; ".join(kept) if kept else ": # nothing to keep")
             continue
         if re.match(r'^\s*export [A-Z_]+=\S+; cd ', line) or re.match(r'^\s*cd "\$\{?REPO', line):
             out.append("# " + s + "   # cd neutralised by the argv probe")
@@ -140,6 +191,8 @@ def observed_argv(launcher, env):
         with open(script, "w", encoding="utf-8") as fh:
             fh.write(prepared)
         e = dict(os.environ)
+        e["REPO"] = _LOCAL_REPO          # so ${REPO}-relative sources resolve against this checkout
+        e["ND"] = HERE
         e["PATH"] = tmp + os.pathsep + e.get("PATH", "")
         e.update({k: str(v) for k, v in env.items()})
         r = subprocess.run(["bash", "-c", f'source "{pre}"; source "{script}"'],
