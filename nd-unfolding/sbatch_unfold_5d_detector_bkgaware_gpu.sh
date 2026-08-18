@@ -20,7 +20,16 @@ export PYTHONUNBUFFERED=1
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-32}
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; ND="${REPO}/nd-unfolding"
 source "${REPO}/lib/resume_guard.sh"
-source "${REPO}/nd-unfolding/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis   # BEN-023: resume on a completion marker, not on size
+# SOURCED RELATIVE TO THIS SCRIPT, NOT THROUGH ${REPO}. A launcher frozen at a sha that sources its
+# member-axis library from the MUTABLE canonical checkout is not frozen: at run time it picks up
+# whatever is in /pscratch/.../MINERvA-OmniFold, which is on a divergent local main that does not
+# contain this library at all. Demonstrated, not theorised -- the cluster probe failed 16/16 with
+# exactly that error. Relative sourcing means a frozen deployment sources its OWN frozen library,
+# and a git worktree resolves its own. The library lives beside this file, so no path arithmetic.
+# The three PRE-EXISTING ${REPO} sources on the lines above have the same exposure across 244
+# tracked .sh and are deliberately NOT touched here: that is a repo-wide migration, not a patch.
+_HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${_HERE}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis   # BEN-023: resume on a completion marker, not on size
 source "${REPO}/setup_salloc_env.sh"; cd "${ND}"
 OMNIFILE="${ND}/runEventLoopOmniFold_5D_MEFHC_universes_full_bkgaware.root"
 FLUX_MC="${REPO}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root"
