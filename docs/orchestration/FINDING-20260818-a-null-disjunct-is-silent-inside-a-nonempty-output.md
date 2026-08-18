@@ -34,6 +34,23 @@ intersection:** *here are indexed reads, and here is CLAIMS, therefore CLAIMS is
 no marker — nothing.** The output looked full because the others fired, and a full output reads as a
 productive search.
 
+### The overlap is the load-bearing check, and it is zero
+
+**The equation alone proves nothing** — `3 + 11 = 14` is equally consistent with 4 `CLAIMS` lines and 12 index
+lines sharing 2, in which case it holds by accident and says nothing about the empty disjunct. So the count
+that matters is the intersection:
+
+```
+CLAIMS  matches lines : 381 382 383
+index   matches lines : 209 227 272 279 282 298 531 534 652 697 698
+OVERLAP               : 0
+```
+
+**Disjoint. The union is therefore the exact disjoint sum of the two non-null patterns, so the empty one
+demonstrably contributed nothing.** With the overlap the null's invisibility is proved; without it the
+equation is only suggestive. The review lane supplied this check against its own finding after the row was
+filed.
+
 > **In a disjunctive search, the absence of one pattern is invisible. There is no row saying "this one matched
 > nothing."**
 
@@ -53,8 +70,32 @@ That also makes it harder to catch by the usual reflex. *"Check your grep"* fail
 **Run the disjuncts separately whenever the conclusion depends on WHICH one fired.** Three commands, three
 counts, and a `0` is a visible answer rather than an absent line.
 
-There is a middle option and it is worth knowing its limit. `grep -oE` with a tally shows which patterns
-actually matched:
+**And there is a one-command form that is robust rather than a compromise** — the review lane's, and it
+retires the tradeoff this row originally recorded:
+
+```
+$ awk '/split\(.\|.\)/{a++} /CLAIMS/{b++} /\[[0-9]+\]/{c++} END{printf "%d %d %d\n", a+0, b+0, c+0}' whose_row.py
+0 3 11
+```
+
+**`+0` forces an unset counter to print `0`.** One command, an explicit zero, nothing absent to notice.
+
+**The naive form of that same remedy reproduces the defect exactly, one layer down**, which is why the `+0` is
+the whole point rather than a detail:
+
+```
+$ awk '... END{printf "[%s] [%s] [%s]\n", a, b, c}' whose_row.py
+[] [3] [11]
+```
+
+**`%s` on an unset awk variable prints EMPTY.** The tool proposed to make the null visible makes it invisible
+again unless you force the coercion. Generalised: **any multi-pattern query should be written so a
+non-matching pattern EMITS A VALUE rather than nothing.**
+
+### The tally, demoted, with its limit measured
+
+`grep -oE` with a tally shows which patterns actually matched, and is acceptable when you only need to know
+*whether* something matched rather than which:
 
 ```
 $ grep -oE 'split\(.\|.\)|CLAIMS|\[[0-9]+\]' whose_row.py | sort | uniq -c | sort -rn
@@ -66,8 +107,8 @@ $ grep -oE 'split\(.\|.\)|CLAIMS|\[[0-9]+\]' whose_row.py | sort | uniq -c | sor
 
 `split("|")` is **absent from the tally**, which is the visible form of the null — better than a line-oriented
 grep, and still an *absence* rather than a *zero*. A reader scanning four populated rows has to notice a fifth
-that is not there, which is the same act that failed the first time. **Per-disjunct counts are the robust
-form; the tally is the cheap one.**
+that is not there, which is the same act that failed the first time. **Prefer the `awk … +0` form above: it is
+one command AND prints zeros, so "robust" and "cheap" were never actually in tension.**
 
 ## Provenance, and one correction to the diagnosis it came with
 
@@ -80,6 +121,18 @@ within one turn of being shown the correction.
 split on `\t` and read `OWNERS_TSV`. **A right answer suppresses scrutiny of its reasoning**, which is
 `BEN-396`'s allocation rule — verification goes where there is disagreement, not where there is fragility —
 and a supporting premise inside a correct conclusion is the least-scrutinised position there is.
+
+### The habit that made the error catchable, which is the transferable part
+
+The review lane's own account, and it is narrower and cheaper than any disposition: **it cited
+`whose_row.py:209` and `:697-698` rather than writing "the parser reads only the first three columns."**
+
+> **A line number is a falsifiable claim; a description of what code does is not.**
+
+That is the entire mechanism. A reader can open the file and disagree with a line number; a description invites
+agreement. **File the habit, not the disposition** — the lane's words, recorded at its request in place of the
+credit it was offered. Same family as `BEN-380` (a definite description is not a citation), stated from the
+*writer's* side rather than the reader's.
 
 **The true statement is stronger than the one it replaces:** there is no column-indexed consumer of
 `CLAIMS.md` anywhere in the repo. Checked every `.py` hit for `split("|")` individually — `findings_row_lint.py:92`
