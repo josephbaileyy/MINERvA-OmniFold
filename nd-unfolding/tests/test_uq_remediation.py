@@ -3134,11 +3134,13 @@ class AnchorComparatorB2(unittest.TestCase):
         self.assertEqual(self.B._sqrt_trace_from_diag(np.array([9.0, 16.0])), 5.0)
         src = (ND / "mii_anchor_comparator.py").read_text()
         self.assertIn("def _th2_content(", src, "the full-matrix reader must exist")
-        self.assertIn("[1:ny + 1, 1:nx + 1]", src,
-                      "content bins only -- under/overflow excluded, and ALL of them")
+        # The under/overflow SLICE went with the deleted buffer route -- the row loop indexes content
+        # bins directly as GetBinContent(i+1, j+1), which excludes them by construction rather than by
+        # arithmetic. That is one fewer off-by-one to get wrong, and it is why the aliasing hazard is
+        # gone too: there is no buffer to alias.
+        self.assertIn("GetBinContent(i + 1, j + 1)", src, "content bins, 1-indexed, no padding maths")
         self.assertIn("np.diagonal(arr)", src,
                       "the diagonal is DERIVED from the full array, not read instead of it")
-        # and the summation-route warning D asked for must be present at the recompute helper
         self.assertIn("PROPERTY OF THE SUMMATION ROUTE", src)
 
     def test_a_PARTIAL_comparison_FAILS_and_says_what_fraction(self):
@@ -3890,120 +3892,104 @@ class SummationRouteIsLoadBearing(unittest.TestCase):
         self.assertIn("math.fsum", src, "and the other tempting 'simplification' too")
 
 
-class TwoReadPathsCrossCheck(unittest.TestCase):
-    """C's section 20: THE DANGEROUS FAILURE DOES NOT RAISE, so the fallback structurally cannot catch it.
+class OneReadRouteAndTheDeletedFastPath(unittest.TestCase):
+    """C ruled the buffer fast path DELETED, and my own stub had already told me why.
 
-    A wrong dtype, a single-precision TH2D, an off-by-one in the under/overflow slice, or a future ROOT
-    layout change each returns an array of THE RIGHT SHAPE WITH WRONG NUMBERS. The fallback never
-    triggers, and the coverage line reports 100.00%. THAT IS H1 INVERTED -- there the word was wrong and
-    the bytes right; here the word is right and the bytes wrong. COVERAGE COUNTS ELEMENTS COMPARED AND
-    CANNOT SEE WHETHER THEY WERE READ CORRECTLY.
-    The two paths compute the same quantity by INDEPENDENT ROUTES, so they need no oracle.
+    `buf.SetSize(...)` is the OLD PyROOT buffer API. On ROOT 6.28/12 -- the only interpreter this repo has
+    -- `h.GetArray()` returns a `cppyy.LowLevelView` with attributes ['format', 'reshape', 'typecode'] and
+    NO SetSize, so the call raised AttributeError on line 1 of the try block and THE FALLBACK RAN ON EVERY
+    INVOCATION IT WOULD EVER HAVE HAD. When my local stub lacked SetSize I read that as a STUB DEFICIENCY.
+    THE STUB MATCHED THE WORLD. Making the fixture agree with my code instead of with the interpreter
+    would have greened a route that cannot execute -- which is the whole failure mode of a fixture.
+
+    Deleting also removed THREE succeeds-but-wrong hazards at once: the bare `except`, the `len(buf)`
+    sentinel, and the view-aliasing that C's own `Delete()` ruling had made live.
     """
 
-    class _Buf:
-        """Mimics PyROOT's low-level buffer: SetSize() plus the buffer protocol."""
-        def __init__(self, arr):
-            self._arr = arr
-        def SetSize(self, n):
-            self._n = n
-        def __buffer__(self, flags):
-            return memoryview(self._arr)
-
     class _TH2:
-        def __init__(self, ny, nx, corrupt_buffer=False):
+        def __init__(self, ny, nx):
             self._nx, self._ny = nx, ny
             self._flat = np.arange((nx + 2) * (ny + 2), dtype=np.float64) * 0.5
-            self._corrupt = corrupt_buffer
+        def GetName(self): return "C_unified"
         def GetNbinsX(self): return self._nx
         def GetNbinsY(self): return self._ny
-        def GetArray(self):
-            a = self._flat.copy()
-            if self._corrupt:
-                a[:] = a[::-1]      # right shape, WRONG BYTES -- and it does not raise
-            return TwoReadPathsCrossCheck._Buf(a)
-        def GetBinContent(self, i, j):
-            return float(self._flat[j * (self._nx + 2) + i])
-        def Delete(self): pass
+        def GetBinContent(self, i, j): return float(self._flat[j * (self._nx + 2) + i])
 
     def setUp(self):
         import mii_anchor_comparator as B
         self.B = B
 
-    def test_the_BUFFER_path_executes_and_AGREES_with_the_row_loop(self):
-        h = self._TH2(3, 4)
-        arr, which = self.B._th2_content(h)
-        self.assertEqual(which, "buffer", "the fast path must actually run, or the cross-check is vacuous")
-        r = self.B.cross_check_readers(h)
-        self.assertTrue(r["ok"], r)
-        self.assertEqual(r["digest_buffer"], r["digest_rowloop"])
-        self.assertEqual(r["elements"], 12)
-
-    def test_the_cross_check_CATCHES_succeeds_but_wrong(self):
-        """THE DIRECTION IT ACTS IN, and the only failure mode the fallback cannot see: a buffer read that
-        returns the right shape and the wrong numbers, WITHOUT RAISING."""
-        h = self._TH2(3, 4, corrupt_buffer=True)
-        arr, which = self.B._th2_content(h)
-        self.assertEqual(which, "buffer", "it must NOT have fallen back -- that is the whole point")
-        r = self.B.cross_check_readers(h)
-        self.assertFalse(r["ok"], "a wrong-bytes buffer read must be caught")
-        self.assertIn("THE TWO READ PATHS DISAGREE", r["why"])
-        self.assertGreater(r["n_differing"], 0)
-        self.assertNotEqual(r["digest_buffer"], r["digest_rowloop"])
-
-    def test_the_returned_array_NEVER_ALIASES_the_ROOT_buffer(self):
-        """C's finding, and my copy was safe only BY ACCIDENT. `np.frombuffer` returns a VIEW, and
-        [1:ny+1, 1:nx+1] of an (ny+2, nx+2) array is NON-CONTIGUOUS -- the under/overflow padding is the
-        only reason `ascontiguousarray` copied. Remove the padding arithmetic, a plausible
-        'simplification', and the slice becomes contiguous, the copy vanishes, and the function returns a
-        view into a buffer that `read_keys_pyroot` then Delete()s. Two separately-correct rulings --
-        explicit Delete(), and padding-aware slicing -- interacting destructively.
-        """
-        h = self._TH2(3, 4)
-        arr, which = self.B._th2_content(h)
-        self.assertEqual(which, "buffer")
-        # mutate the source after the read; an aliasing return would change too
-        original = arr.copy()
-        h._flat[:] = -999.0
-        np.testing.assert_array_equal(arr, original,
-                                      "the returned array must be an independent copy")
-        src = (ND / "mii_anchor_comparator.py").read_text()
-        self.assertIn("np.shares_memory(out, flat)", src,
-                      "and the non-aliasing must be PINNED by an assert, not left to np.array's "
-                      "argument surviving a future edit")
-        self.assertIn("copy=True", src)
-
-    def test_the_FALLBACK_ANNOUNCES_ITSELF_rather_than_hiding(self):
-        """A bare `except Exception` over five operations made the fast path's failure INVISIBLE: any
-        failure returned the RIGHT answer by the slow route and no run ever said so, so the fast path
-        could be permanently broken and unnoticed. WHICH READER EXECUTED IS AN INGREDIENT OF THE DIGEST."""
-        import contextlib, io as _io
-        class _NoBuffer(TwoReadPathsCrossCheck._TH2):
-            def GetArray(self):
-                raise AttributeError("no GetArray on this build")
-        h = _NoBuffer(3, 4)
-        err = _io.StringIO()
-        with contextlib.redirect_stderr(err):
-            arr, which = self.B._th2_content(h)
+    def test_there_is_exactly_ONE_read_route_and_it_is_the_row_loop(self):
+        arr, which = self.B._th2_content(self._TH2(3, 4))
         self.assertEqual(which, "rowloop")
-        self.assertIn("BUFFER PATH FAILED", err.getvalue())
-        self.assertIn("AttributeError", err.getvalue(), "and it must name what failed")
-        self.assertIn("INGREDIENT OF THE DIGEST", err.getvalue())
-        src = (ND / "mii_anchor_comparator.py").read_text()
-        self.assertNotIn("except Exception:\n        # FALLBACK", src, "the bare catch must be gone")
+        self.assertEqual(arr.shape, (3, 4))
 
-    def test_the_cross_check_REFUSES_to_claim_a_check_it_could_not_run(self):
-        """If the buffer path did not execute there is nothing to cross-check, and saying so beats
-        returning ok=True over one path run twice."""
-        class _NoBuffer(TwoReadPathsCrossCheck._TH2):
-            def GetArray(self):
-                raise AttributeError("no GetArray")
-        import contextlib, io as _io
-        with contextlib.redirect_stderr(_io.StringIO()):
-            r = self.B.cross_check_readers(_NoBuffer(3, 4))
+    def test_the_BUFFER_ROUTE_IS_GONE_from_the_code_though_its_LESSON_IS_NOT(self):
+        """Parsed, not grepped -- the docstring deliberately QUOTES `SetSize` to record why it was wrong,
+        and a substring check could not tell the retired call from its own retraction. BEN-482, and I have
+        hit it enough times today to reach for the AST first."""
+        import ast
+        src = (ND / "mii_anchor_comparator.py").read_text()
+        calls = [n for n in ast.walk(ast.parse(src))
+                 if isinstance(n, ast.Call)
+                 and getattr(n.func, "attr", None) in ("SetSize", "frombuffer", "GetArray")]
+        self.assertEqual(calls, [], "no buffer-route call may survive AS CODE")
+        self.assertIn("SetSize", src, "and the reason it was wrong must survive AS PROSE")
+        self.assertIn("cppyy.LowLevelView", src, "naming the actual type D measured")
+
+    def test_the_len_buf_SENTINEL_is_recorded_even_though_the_route_is_gone(self):
+        """`len(h.GetArray())` returns 268,435,455 == 2**28-1, a cppyy sentinel, against a true length of
+        (10694+2)**2 = 114,404,416. A repair sizing the read from it would OVER-READ 1.23 GB PAST THE END
+        AND SUCCEED SILENTLY. 2**28-1 is not recognisable as a sentinel unless somebody writes it down."""
+        src = (ND / "mii_anchor_comparator.py").read_text()
+        self.assertIn("268,435,455", src)
+        self.assertIn("2**28 - 1", src)
+        self.assertIn("114,404,416", src)
+        self.assertEqual(2 ** 28 - 1, 268435455)
+        self.assertEqual((10694 + 2) ** 2, 114404416)
+        self.assertGreater(2 ** 28 - 1, (10694 + 2) ** 2,
+                           "the sentinel EXCEEDS the true length, which is why it over-reads")
+
+    def test_the_GATE2_READ_reports_its_digest_and_completeness(self):
+        r = self.B.read_one_matrix_for_gate2(self._TH2(3, 4))
+        self.assertEqual(r["route"], "rowloop")
+        self.assertEqual(r["elements"], 12)
+        self.assertTrue(r["finite"])
+        self.assertIn("digest", r)
+        # C_unified's derived expectation is 10694**2, so a 12-element read is INCOMPLETE and says so
+        self.assertFalse(r["complete"])
         self.assertFalse(r["ok"])
-        self.assertIn("nothing to cross-check", r["why"])
-        self.assertEqual(r["path"], "rowloop")
+        self.assertIn("element count", r["why"])
+
+    def test_it_REFUSES_to_call_a_non_finite_read_a_discharge(self):
+        class _Bad(OneReadRouteAndTheDeletedFastPath._TH2):
+            def GetBinContent(self, i, j): return float("nan")
+        r = self.B.read_one_matrix_for_gate2(_Bad(3, 4))
+        self.assertFalse(r["ok"])
+        self.assertFalse(r["finite"])
+        self.assertIn("non-finite", r["why"])
+
+    def test_the_REFUSE_TO_CLAIM_discipline_SURVIVES_the_route(self):
+        """C rated this the most valuable thing in 40fbc789 and asked that it not be deleted with the
+        route. With one reader there is nothing to cross-check, but the DISCIPLINE has other subjects --
+        mask_order_hash against its positive control, the summation-route control, this read. The gate-2
+        read reports `ok=False` with a reason rather than asserting a discharge it cannot support."""
+        src = (ND / "mii_anchor_comparator.py").read_text()
+        # NORMALISED, because the phrase spans a line break in the docstring. A literal assertIn over
+        # wrapped prose is a check on the line width, not on the content -- the same over-specific-matcher
+        # habit as asserting capitalisation.
+        flat = " ".join(src.split())
+        self.assertIn("REFUSE TO CLAIM A CHECK YOU COULD NOT RUN", flat)
+        self.assertIn("no two-path test to stand in for it", flat)
+        self.assertIn("mask_order_hash", flat, "and its other subjects must be named, so the discipline "
+                                              "is not read as belonging to the deleted route")
+
+    def test_gate2_is_NOT_claimed_discharged_by_this_test_file(self):
+        """The discharge is one run against REAL data. A stub cannot supply it, and saying so is the
+        difference between a labelled gap and a false claim."""
+        src = (ND / "mii_anchor_comparator.py").read_text()
+        self.assertIn("NOT EXECUTED HERE", src)
+        self.assertIn("Gate 2's discharge is now one run of THIS function", src)
 
 if __name__ == "__main__":
     unittest.main()
