@@ -321,12 +321,12 @@ class TestArmThenRetire(Harness):
         disarms = [i for i, c in enumerate(self.cmds) if "watch-disarm" in c]
         self.assertTrue(adds and disarms, "expected both an add and a disarm: %s" % self.cmds)
         self.assertLess(adds[0], disarms[0],
-                        "ADD-THEN-RETIRE inverted: disarm at %d precedes add at %d (ISSUE-46)"
+                        "ADD-THEN-RETIRE inverted: disarm at %d precedes add at %d (ISSUE-56)"
                         % (disarms[0], adds[0]))
 
     def test_readback_happens_between_the_add_and_the_retire(self):
         """The ordering that matters is not add-before-disarm but
-        add -> VERIFY -> disarm: an unverified add is what ISSUE-46 actually was."""
+        add -> VERIFY -> disarm: an unverified add is what ISSUE-56 actually was."""
         self.run_script()
         add = next(i for i, c in enumerate(self.cmds) if "watch-add" in c)
         readback = next(i for i, c in enumerate(self.cmds) if "-r4.json" in c)

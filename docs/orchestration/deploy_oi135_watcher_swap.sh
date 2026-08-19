@@ -9,7 +9,7 @@
 # undo: deploying `waker-config.json` without `profiles.json` makes every codex dispatch
 # raise `AgentCtlError: Unknown profile 'codex-waker'` (MEASURED, OI-135 (f)), and
 # disarming `r3` before `r4` is verifiably armed leaves a 3 A100-h job with NO watch at
-# all -- which is ISSUE-46, committed by this lane. Typed by hand at cluster-return the
+# all -- which is ISSUE-56, committed by this lane. Typed by hand at cluster-return the
 # ordering is a matter of memory; here it is a matter of control flow, because every
 # mutation sits downstream of a check that must return 0.
 #
@@ -374,7 +374,7 @@ PYEOF
 fi
 
 # ============================ (b) ARM r4, THEN RETIRE r3 -- never the reverse
-# ADD-THEN-RETIRE (ISSUE-46, committed by this lane: the inverse left a 3 A100-h job
+# ADD-THEN-RETIRE (ISSUE-56, committed by this lane: the inverse left a 3 A100-h job
 # unwatched). The ticker's remove-then-recreate exception at ISSUE-52 does NOT extend to
 # watches. Enforced structurally: the disarm is unreachable unless the r4 readback passed.
 #

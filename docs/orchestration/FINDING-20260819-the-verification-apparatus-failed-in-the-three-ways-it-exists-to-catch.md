@@ -96,7 +96,7 @@ reason that was survivable is a seven-day maintenance reservation meaning the jo
 > human reads — and the thing broken was whether it fires at all. Prefer add-then-retire to disarm-then-re-add:
 > the first has no window in which nothing is armed.
 
-Filed as `ISSUE-46`. Recovery was to arm a NEW id (`…-r2`) and leave the disarmed one inert, rather than
+Filed as `ISSUE-56` (re-numbered from 46 on 2026-08-19: id 46 was already held by the `mat_gates` row, whose id is also a tracked filename). Recovery was to arm a NEW id (`…-r2`) and leave the disarmed one inert, rather than
 hand-edit `state` back to `armed` in the tool's own state file — reaching into a tool's private state cannot be
 checked for consistency, and a disarmed watch cannot fire so there is no double notification.
 
