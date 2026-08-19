@@ -8,3 +8,6 @@ standard_p4	standard-P4 lane	standard-P4 role	Joseph	assigned
 storage	storage / Joseph	Joseph	-	assigned
 repo_infra	UNASSIGNED — repo infrastructure	-	Joseph	unassigned
 unassigned	UNASSIGNED	-	Joseph	unassigned
+lane_b	lane B (implementation / write)	lane B	Joseph	assigned
+lane_c	lane C (rulings / schema / launcher policy)	lane C	Joseph	assigned
+lane_d	lane D (audit / inventory / verification, READ-ONLY)	lane D	Joseph	assigned
