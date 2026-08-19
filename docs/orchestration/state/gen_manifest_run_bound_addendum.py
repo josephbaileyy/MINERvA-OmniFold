@@ -38,16 +38,46 @@ def _default_repo():
     return Path(__file__).resolve().parents[3]
 
 
-def existing_artifacts(root):
+# WHICH ARTIFACTS A STAGE'S ADDENDUM IS ALLOWED TO PREDICT, and the reason this is per-stage rather than one
+# list. The refusal below exists so a prediction cannot be READ OFF a product that already exists. That makes
+# it a claim about the products of THE STAGE BEING LAUNCHED -- and for the `train` stage the fifty members'
+# TARGET products legitimately pre-exist, because that stage's entire design is "targets pre-exist and were
+# asserted, so no dependency is needed".
+#
+# FOUND BY THE FIRST TRAIN-STAGE USE, which it refused: 100 target artifacts present, so a train-stage addendum
+# was IMPOSSIBLE TO WRITE. That is the third guard today that forbade what the legitimate path must produce --
+# after the withheld-key assertion (`BEN-476`) and my own unreachable absence branch. A guard whose cheapest
+# satisfying state is one the pipeline cannot reach is the defect, not the pipeline.
+#
+# THIS IS A SCOPING FIX AND NOT A WEAKENING, and the distinction is checkable: for `train` the refusal still
+# requires ZERO training products, which is the claim the addendum actually makes. A target receipt cannot
+# contain the pinned validator's verdicts on a TRAINING artifact, so its existence cannot let a training
+# prediction be read off it. `--stage target` is unchanged in both directions.
+STAGE_ARTIFACTS = {
+    "target": (("target", "GATE5_REPLICA_TARGET.npy"),
+               ("target", "GATE5_REPLICA_TARGET_RECEIPT.json")),
+    "train": (("training", "GATE5_REPLICA_WEIGHTS.npz"),
+              ("training", "GATE5_REPLICA_TRAINING_RECEIPT.json")),
+}
+
+
+def existing_artifacts(root, stage):
+    """Products of `stage` that already exist under `root`. NOT products of the other stage.
+
+    `stage` is REQUIRED rather than defaulted: a default here would silently restore the behaviour that made a
+    train-stage addendum unwritable, and it would do so at the one call site that matters.
+    """
     root = Path(root)
-    names = ("GATE5_REPLICA_TARGET.npy", "GATE5_REPLICA_TARGET_RECEIPT.json",
-             "GATE5_REPLICA_WEIGHTS.npz", "GATE5_REPLICA_TRAINING_RECEIPT.json")
+    try:
+        pairs = STAGE_ARTIFACTS[stage]
+    except KeyError:
+        raise SystemExit(f"[addendum] unknown stage {stage!r}; expected one of {sorted(STAGE_ARTIFACTS)}")
     out = []
     for idx in range(50):
-        for sub in ("target", "training"):
-            d = root / "replicas" / f"replica_{idx:02d}" / sub
-            if d.is_dir():
-                out.extend(str(d / n) for n in names if (d / n).is_file())
+        for sub, name in pairs:
+            f = root / "replicas" / f"replica_{idx:02d}" / sub / name
+            if f.is_file():
+                out.append(str(f))
     return out
 
 
@@ -104,12 +134,17 @@ def main(argv=None):
             f"or this is running on a host that cannot see it -- and in the second case the "
             f"zero-artifact check below would pass vacuously, which is exactly the guarantee this script "
             f"exists to provide. Run it where the family root is visible.")
-    found = existing_artifacts(args.family_root)
+    found = existing_artifacts(args.family_root, args.stage)
     if found:
         raise SystemExit(
-            f"[addendum] {len(found)} artifact(s) already exist under {args.family_root}, e.g. "
-            f"{found[0]}. These predictions must be recorded BEFORE any artifact they predict exists, "
-            f"or they could have been read off one and the entry is worth nothing. Refusing.")
+            f"[addendum] {len(found)} {args.stage}-stage artifact(s) already exist under "
+            f"{args.family_root}, e.g. {found[0]}. These predictions must be recorded BEFORE any artifact "
+            f"they predict exists, or they could have been read off one and the entry is worth nothing. "
+            f"Refusing.")
+    # WHAT THE REFUSAL DID *NOT* LOOK AT, recorded in the addendum itself rather than left implicit -- a
+    # refusal that silently narrowed its own scope would read as the broader claim it used to make.
+    other = [st for st in STAGE_ARTIFACTS if st != args.stage]
+    not_examined = sum(len(existing_artifacts(args.family_root, st)) for st in other)
 
     if not manifest_path.is_file():
         raise SystemExit(f"[addendum] the main manifest is missing at {manifest_path}")
@@ -136,7 +171,21 @@ def main(argv=None):
         "extends_pinned_module_sha256": manifest["pinned_module"]["sha256"],
         "stage": args.stage,
         "recorded_at_repo_head": head,
+        # 0 OF THIS STAGE'S ARTIFACTS -- and the next key says what was NOT examined, because a count of
+        # zero over a narrowed scope reads exactly like a count of zero over the whole family.
         "artifacts_existing_when_recorded": 0,
+        "artifacts_existing_scope": (
+            "products of stage %r ONLY: %s" % (args.stage,
+                                               ", ".join(n for _, n in STAGE_ARTIFACTS[args.stage]))),
+        "other_stage_artifacts_present_and_DELIBERATELY_not_examined": not_examined,
+        "why_the_other_stage_is_excluded": (
+            "The refusal exists so a prediction cannot be READ OFF an existing product, which makes it a "
+            "claim about the products of the stage being launched. For `train` the fifty members' TARGET "
+            "products legitimately pre-exist -- that stage asserts them present INSTEAD of taking a "
+            "dependency -- so requiring zero of them made a train-stage addendum impossible to write. A "
+            "target receipt cannot contain the pinned validator's verdicts on a TRAINING artifact, so its "
+            "existence cannot let a training prediction be read off it. Scoping fix, not a weakening: for "
+            "`train` this still requires ZERO training products, which is the claim actually being made."),
         "ordering_argument": (
             "The requirement is BEFORE THE ARTIFACT EXISTS, not before the run is submitted: a job id "
             "recorded between `sbatch` and the first task's write is not read off a finished product. "
