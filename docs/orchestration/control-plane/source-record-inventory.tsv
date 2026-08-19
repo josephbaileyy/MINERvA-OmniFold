@@ -1,8 +1,8 @@
 source_record	lifecycle	queue	classification_rule	source_row_sha256	state_prefix
-OI-70	active	NOW	safe-default-active	ab5d3b2b2cbf57fa750d988407dae5af99e7421395b62b5fa6645467d341bfbc	MECHANICAL HALF DISCHARGED 2026-08-15 from the MAIN CHECKOUT on Joseph's authorization (relayed by the mediator, grant c
+OI-70	active	NOW	safe-default-active	fbeafc72e79982d1a8f781cd0ce684425dc53ce83efa5196537a1f181ebe6fe0	MECHANICAL HALF DISCHARGED 2026-08-15 from the MAIN CHECKOUT on Joseph's authorization (relayed by the mediator, grant c
 OI-71	active	WAITING-JOSEPH	explicit-user-decision	ca97bd37e556345e86623f7d01fbdb2aa7a2941402919dcf63012e2ce91a9941	WAITING-USER, AND NARROWER THAN THIS ROW SAID. CORRECTED 2026-08-15: the physics ground for quoting VL100 is MIS-TARGETE
 OI-72	retired	-	explicit-terminal-prefix	23c70831d45ae5faefc64a4931723a4b6f399c8e2bb7250e7f87f43bf310c6ae	WITHDRAWN THE SAME HOUR IT WAS FILED — already found by lane B, already fixed, and the id is kept rather than reused. Fi
-OI-73	active	BLOCKED-EXTERNAL	explicit-blocker	91c22daa14b538ffbc7518a3bf9cd617c65f6e0e8ec58c0d0f7890ffe55b78a9	ITEMS (1) AND (3) DISCHARGED 2026-08-15; ITEM (2) IS BLOCKED BY A CODE DEFECT AND THIS ROW STAYS OPEN ON IT. Raised 2026
+OI-73	active	BLOCKED-EXTERNAL	explicit-blocker	3dee0253188ebb0fc48e39cd183a79764c62aa5287ec05681650e76ecaf513d0	ITEMS (1) AND (3) DISCHARGED 2026-08-15; ITEM (2) IS BLOCKED BY A CODE DEFECT AND THIS ROW STAYS OPEN ON IT. Raised 2026
 OI-74	active	NOW	safe-default-active	ea9e11bf504a91f57b826d7c8b4afe01919ea43849b5ddac7ff509c4ecc98a04	CORRECTED AND NARROWED 2026-08-17 (lane E) — THE DRIFT IS GONE, THE TREE IS SYNCED AT 7ac36ac, AND EVERY QUANTITY IN THI
 OI-75	active	WAITING-JOSEPH	explicit-user-decision	616ef4e67cd48cf198648524b10c9d45807723705b8476c703a2b12b66dc448c	OPEN — WAITING-USER on item (1), which this lane is DELIBERATELY NOT ADJUDICATING. Filed 2026-08-15 by lane A while corr
 OI-1	active	BLOCKED-EXTERNAL	explicit-blocker	e96dba9d3913a6dc5ff47820b046c3de891c112effd037458c4ad67e766d12c7	BLOCKED
