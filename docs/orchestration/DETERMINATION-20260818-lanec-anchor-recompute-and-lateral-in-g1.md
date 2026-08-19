@@ -1279,7 +1279,9 @@ fourth discovery.**
 > four keys and a `PASS` over thirteen are different claims wearing one word** — which is §17's whole argument,
 > one level up from matrix elements.
 
-### 19e. RULED on D's second finding — **every `[FAIL]` PATH MUST EXIT 2**, and my own §17 makes this a PRECONDITION rather than a parallel item
+### 19e. RULED on D's second finding — **five `[FAIL]` paths RETURN `INCOMPLETE` TODAY; every one of them must exit 2**, and my own §17 makes this a PRECONDITION rather than a parallel item
+
+*(Heading rewritten 2026-08-19 on D's report. It previously read *"every `[FAIL]` path MUST EXIT 2"* — the RULING — directly above a body establishing that the sites exit `1`, the PRE-FIX EVIDENCE. Correct once read carefully; **on a skim it reads as its own negation, and D began drafting a "your heading contradicts your body" correction before checking.** **Second instance in this document of the class §19a is about: a SUMMARY that a careful reader must defend the body against** — there the summary hid a closed item, here the heading inverted its own evidence. One section apart, and I wrote §19a first.)*
 
 **Confirmed by reading:** `:314` returns `{"PASS": 0, "INCOMPLETE": 1, "FAIL": 2}[verdict]`, while
 `raise SystemExit("[FAIL] …")` at **`:144`, `:177`, `:179`, `:181`, `:213`** exits **`1`** — Python's default for
@@ -1330,6 +1332,131 @@ because the value of an independent reproduction is destroyed by mistaking it fo
 recomputations are bit-exact**; and **`rtol` cannot loosen the payload comparison at all** — it reaches only the
 recompute check. **The gate's tolerance surface is therefore smaller than I had assumed, which is the one piece
 of good news in the report and deserves to survive the four corrections around it.**
+
+## 20. B's IMPLEMENTATION ACCEPTED — **and gate 2 is still UNMET, because the path that replaced the defect has never executed**
+
+**`origin/lane-b-member-axis-wip` @ `8164266b`. All four of D's defects fixed, every ruling in §§16-19 applied,
+suite 1845 passed / 4 skipped / 3 failed with the three reproducing at baseline `8e48a811`.** The work is
+substantially better than what I ruled, and three of B's formulations are better than mine (§20d).
+
+### 20a. ⚠ **GATE 2 REMAINS UNMET. B labelled this correctly and the label is not a discharge**
+
+**`_th2_content`'s own docstring says so, in terms I would not improve on:** *"NOT EXECUTED ANYWHERE. ROOT is
+absent on the machine this was written on, so the buffer fast path below is unverified and falls back to a row
+loop. Labelled rather than claimed."* **D's execution was against the DIAGONAL version, so the buffer read has
+never run.**
+
+> **That labelling is the honest form and it is exactly what I asked of everyone all campaign. It is also not a
+> discharge: an unverified reader sitting in the gate's critical position is unverified, however accurately it
+> says so.** Gate 2's whole content was *"a bit-exact comparator existing at all"*, and the reason I said to
+> guard it hardest is that **a comparator existing is not a comparator being right** — which was proved once
+> already when the thing that existed read `0.00935 %`.
+
+### 20b. ⚠ AND READING IT FOUND A DEFECT THE FALLBACK CANNOT CATCH — **the fast path can succeed and be WRONG, and then coverage reports `100 %` of the wrong bytes**
+
+```python
+    try:
+        buf = h.GetArray()
+        buf.SetSize((nx + 2) * (ny + 2))
+        flat = np.frombuffer(buf, dtype=np.float64, count=(nx + 2) * (ny + 2))
+        return np.ascontiguousarray(flat.reshape(ny + 2, nx + 2)[1:ny + 1, 1:nx + 1])
+    except Exception:
+        # FALLBACK, correct but slow.
+```
+
+**1. A BARE `except Exception` OVER FIVE OPERATIONS MAKES THE FAST PATH'S FAILURE INVISIBLE.** Any failure in
+`GetArray`, `SetSize`, `frombuffer`, `reshape` or `ascontiguousarray` yields a silent fallback that returns the
+**right answer**. **So the fast path can be permanently broken and no run will ever say so** — a defect that
+produces a correct-looking result, which is the shape every ruling in this document is about.
+
+**2. THE FALLBACK IS REACHED ONLY IF THE FAST PATH *RAISES*, AND THE DANGEROUS FAILURE DOES NOT RAISE.** A
+wrong `dtype`, a `TH2D` stored single-precision, an off-by-one in the under/overflow slice, a future ROOT layout
+change — **each returns an array of the RIGHT SHAPE containing WRONG NUMBERS. The fallback never triggers, and
+the new coverage line reports `compared 114,361,636 of 114,361,636 (100.00 %)`.**
+
+> **`100 %` COVERAGE OF THE WRONG BYTES. That is §17's defect one level down: in §17 the WORD was wrong and the
+> bytes were right; here the word would be right and the bytes wrong.** The coverage line I ruled into existence
+> would state it with full confidence, **because coverage counts elements COMPARED and cannot see whether they
+> were READ CORRECTLY.**
+>
+> **RULED, and it is free: CROSS-CHECK THE TWO PATHS AGAINST EACH OTHER, BIT-EXACTLY, ON AT LEAST ONE REAL
+> MATRIX, ONCE.** They compute the same quantity by independent routes, so **the check needs no oracle and no
+> fixture** — and it is the ONLY test that can catch a fast path that succeeds-but-wrong, which the fallback is
+> structurally unable to do. One slow read of one matrix, once, against `origin/lane-b-member-axis-wip`'s own
+> archive files.
+>
+> **AND THE FALLBACK MUST ANNOUNCE ITSELF.** A silent fallback means the coverage line reports numbers produced
+> by **a path nobody chose**. **WHICH READER EXECUTED IS AN INGREDIENT OF THE DIGEST and belongs in the receipt**
+> — `BEN-077` applied to the instrument rather than the result, the same move §17c made for the reduction.
+> Narrow the `except` to the exceptions actually expected, too: a bare catch here is a promise that every future
+> failure is benign.
+
+**3. A LATENT HAZARD THAT MY OWN §19b RULING JUST MADE LIVE, AND IT REVIEWS AS A NO-OP.** `np.frombuffer` returns
+a **VIEW** of ROOT's buffer. The return is safe today only because `flat.reshape(ny+2, nx+2)[1:ny+1, 1:nx+1]` is
+**non-contiguous** — the `±1` under/overflow padding guarantees it — so `np.ascontiguousarray` **copies**.
+
+> **If anyone ever removes the padding arithmetic, the slice becomes contiguous, `ascontiguousarray` returns its
+> input UNCHANGED, and the function returns a VIEW into a ROOT buffer.** And §19b ruled **explicit
+> `obj.Delete()`** to make one-key-at-a-time real — **so the freed object and the live view now coexist by
+> construction.** Two of my own rulings, each correct, whose interaction is a dangling read.
+>
+> **PIN IT: assert the returned array does not share memory with the buffer** — `np.shares_memory(out, flat)` is
+> `False`. **One line, and it fails exactly when the padding logic is "simplified".** *(Same species as D's
+> summation-route finding: an accidental invariant holding up a gate, with nothing asserting it. And `BEN-425`'s
+> lesson — two rulings each correct and jointly destructive is what B said it would not have caught from inside
+> one of them; this is the second such pair today and I made both halves.)*
+
+### 20c. ⚠ **MY §19e ENUMERATION WAS PARTIAL: FIVE SITES NAMED, EIGHT REAL** — and D's point about the record is the important half
+
+**D verified H4 by reading and found `origin/lane-b-member-axis-wip:nd-unfolding/mii_root_payload_classes.py`'s three additional raises — `classify`'s two
+and `_g2_baseline`'s group check — reachable from `compare_files` on every run and absent from my list. All eight
+now route through one `classes.fail_closed`.**
+
+> **B fixed more than I ruled. D's observation is the one to keep: an auditor checking *"the five sites C named"*
+> would find them fixed and conclude the ruling was fully implemented — and that conclusion would be TRUE BY THE
+> IMPLEMENTER'S DILIGENCE AND NOT BY THE RECORD.**
+>
+> **A partial enumeration that happens to be repaired in full leaves nothing behind saying it was partial.** Same
+> shape as my `derive: None` gap, and as §19a's summary, and as §19e's heading. **Recorded here so the record
+> carries the deficiency the implementation absorbed** — because the next enumeration of mine will be trusted at
+> the width it states.
+
+### 20d. THREE FORMULATIONS OF B's AND ONE OF D's THAT ARE BETTER THAN MINE, recorded as theirs
+
+- **B, on why `derive: None` was never a class question: *"A class is a COMPARISON RULE; it has no content when
+  one side cannot have the key at all."*** **That is a cleaner statement of §19d than §19d makes**, and it is my
+  own §11i structural argument — *these are attributes, not a fourth class* — **turned around and used to find
+  where my taxonomy stopped reaching.** The map's `derive: None` case is OUTSIDE the class system, not a member
+  of it.
+- **B, on the CV reversal: *"I compared the right two objects under the wrong functional."*** **A distinct
+  register of the asymmetric-comparison family** — mine have been wrong-denominator and wrong-scope; this one has
+  both objects right and the *statistic* wrong. **Worth its own name because the usual repair (check both sides)
+  does not touch it.**
+- **B, on the constant: *"A GRID IS NOT AN ARTIFACT SIZE"*, and the deeper half — `EXPECTED_ELEMENTS` is now
+  per-key, each traced to a writer's construction line, and a key with no derived expectation gets coverage
+  PRINTED AND NOT ASSERTED.** B's reason: *"asserting a number I have not read out of a writer is how the wrong
+  constant arrived."* **That is `BEN-467`'s rule as a code invariant, and it is stronger than the comment
+  discipline I ruled** — an expectation traced to a construction site cannot go stale silently.
+- **B, on H3's asymmetry: *"an enumeration from the producer side systematically misses artifacts whose producer
+  is out of scope."*** **Sharper than my *"D's list was longer"***, and it explains rather than observes.
+- **D, extending `BEN-467` past comments: it is `CLAUDE.md`'s *prefer the executable form* arriving from the
+  opposite direction — not *"make it a check"* but *"STATE THE INVARIANT, NOT ITS CURRENT VALUE"*, which works
+  where no check is possible.** And D's framing of the procedural half: **not citation hygiene but PROPAGATION,
+  and the callee is where it bites.**
+
+### 20e. Accepted without qualification, and what remains
+
+**ACCEPTED:** the full-array digest with per-key coverage printed and partial coverage FAILING; `DECLARED_REDUCTIONS`
+empty behind `assert_reduction_is_declared`, so **a reduction costs a measurement rather than a line**; `--cv`
+member-scoped with the bias DIRECTION at the call site and byte-identical when no offset is declared; `derive: None`
+recorded **UNCOMPARABLE — admissible and NOT verified**; `identity_is_checkable` with the other three reporting
+UNCHECKABLE and (A) widened to `LATERAL_CV`; one `fail_closed` at exit 2 carrying `.fail_message` — **B's
+refinement, and right: `SystemExit(2)` alone leaves an in-process caller holding a number with no reason.**
+
+**REMAINS, and only the first is mine to press:** the two-path cross-check and the announced fallback (§20b);
+`mask_order_hash` not yet built, correctly not claimed, with the archive's two CVs as its positive control;
+and the three suite failures, which B reports reproducing at baseline `8e48a811` — **a claim I have not
+independently checked and am not treating as verified.**
 
 ## 12. R1 RULED — **`_sb` IS CANONICAL FOR BOTH LEGS**, and there is exactly ONE wrong literal
 
@@ -1703,6 +1830,23 @@ and now the mask is already in the product. Worth noting as a rate, not an anecd
   **§17c multiplies the exposure, so this PRECEDES §17's implementation — my ruling raised the risk.**
 - **RULED (§19f): the bit-exactness depends on numpy PAIRWISE SUMMATION on both sides** and nothing
   asserts it. A control must assert BOTH that the recompute matches AND that a sequential sum does NOT.
+- **§20a: GATE 2 IS STILL UNMET** — `_th2_content` has NEVER EXECUTED (ROOT absent where it was written);
+  B labelled that honestly and **a label is not a discharge.**
+- **RULED (§20b): CROSS-CHECK the buffer fast path against the row-loop fallback, bit-exactly, on one real
+  matrix, once** — free, no oracle, and **the only test that can catch a fast path that SUCCEEDS AND IS
+  WRONG, which the fallback structurally cannot.** A bare `except Exception` over five operations makes
+  failure invisible, and a wrong-but-non-raising read would have coverage report **`100 %` of the WRONG
+  BYTES** — §17's defect inverted. **The fallback must ANNOUNCE: which reader executed is an ingredient of
+  the digest.**
+- **§20b(3): two of my OWN rulings now interact destructively** — `np.frombuffer` returns a VIEW, safe only
+  because the `±1` padding makes the slice non-contiguous so `ascontiguousarray` copies; §19b's explicit
+  `obj.Delete()` puts a freed object and a live view together. **Pin with `np.shares_memory(out, flat)` is
+  `False` — it fails exactly when the padding is "simplified".**
+- **§20c: MY §19e ENUMERATION WAS PARTIAL — five sites named, EIGHT real.** B fixed more than I ruled, so
+  **an auditor checking my five would credit the ruling for the implementer's diligence.** Recorded so the
+  record carries what the implementation absorbed.
+- **§19e heading rewritten** — it read as its own negation on a skim (D nearly filed a correction against
+  it). **Second instance in this document of §19a's own class.**
 - **AUTHORIZED: nothing.** No launcher edited, nothing submitted.
 
 *Second sought: B on §3's derived-target predicate (its module) and on whether stage 1 can be run as a single
