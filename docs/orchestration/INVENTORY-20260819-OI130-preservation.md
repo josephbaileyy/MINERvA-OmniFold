@@ -4,6 +4,13 @@
 cleanup pass is the moment today's evidence disappears — `BEN-306` (*a deletion can retroactively break
 a receipt*) and `BEN-477` (which exists only because a deletion was refused) are both from today.
 
+**REVISION 3, 2026-08-19.** Two changes, both driven by facts that arrived after revision 2 was
+published. **(1) `ecee9ff1` is anchored** — the tag revision 2 routed was created and pushed, and this
+lane re-verified it against the remote (§7C); §2's hazard is historical and §1's row now reads
+`PRESERVED`. **(2) §5.2's dropped-member reading is WITHDRAWN** — the author of the 08-19 endpoint
+disclosed that the read was a four-row *filter*, not an enumeration, so it never asked about the fifth
+file and cannot be evidence that anything was lost.
+
 **REVISION 2, 2026-08-19T14:06Z.** Observed at local `HEAD` `fc878396`, `origin/main` `9413a8cb`.
 Revision 1 was written at `origin/main` `b6cdd44b`; **six of its verdicts are now wrong and two are
 inverted.** Both the corrections and the mechanism that produced them are recorded below rather than
@@ -19,8 +26,11 @@ silently patched, because *the mechanism is the finding* and the same defect too
 > enumeration and false of the other — the `BEN-080`/`BEN-082` id shape. **`OI-130` remains
 > unenumerated and this document does not touch it.**
 
-**Nothing here was deleted, moved, unlocked, tagged or modified.** This lane created no ref, removed no
-worktree, ran no `gc`, and touched only this file.
+**Nothing here was deleted, moved, unlocked or pruned.** This lane created no tag and no branch, removed
+no worktree, ran no `gc`, and touched only this file. **Two writes it did make, declared because an
+inventory that hides its own footprint is worthless:** `git fetch origin --tags`, which was *required*
+to see the anchors at all (§0), and a rebase of its own `lane-d` branch onto `origin/main` so this
+revision lands on top of the published copy instead of needing a second cherry-pick (§7C).
 
 ---
 
@@ -88,7 +98,7 @@ fixed-width sha grep is `inference-from-absence-needs-a-covering-search` in a ne
 | `e477afb1` | BEN-382 pre-rebase evidence | — | — | **yes** | `evidence/ben-382-e477afb1` **pushed** | **PRESERVED** |
 | `ea4a4f3d` | BEN-225 pre-rebase evidence | — | — | **yes** | `evidence/ben-225-ea4a4f3d` **pushed** | **PRESERVED** |
 | `22668401` | standing compute grant | — | — | **yes** | `evidence/standing-compute-grant-22668401` **pushed** | **PRESERVED** |
-| **`ecee9ff1`** | **gate-2 instrument tree** | **—** | **—** | **—** | **reflog only** (`worktree-lane-b-oi126@{6}`) | **AT RISK — §2** |
+| `ecee9ff1` | gate-2 instrument tree | — | — | **yes** | `evidence/ben-454-anchor-comparator-ecee9ff1` **pushed** | **PRESERVED — was AT RISK, §2 / §7C** |
 | `9e96f0a5` | lane-b remedy-(A) tip | — | — | — | reflog only (`@{4}`) | at risk, uncited — §2 |
 | `66fb1ed1` | lane-b-oi126 HEAD **now** | yes | `origin/main`, `origin/lane-b-member-axis-wip` | — | pushed | **RECOVERABLE** |
 | `bb16c270` | `audit/20260731-findings` tip | yes | — | — | **local branch only** | **UNPUSHED — §4** |
@@ -126,6 +136,12 @@ the claim.
 ---
 
 ## 2. `ecee9ff1` — A LIVE `BEN-306`, AND REVISION 1 ASSERTED THE OPPOSITE
+
+> **RESOLVED 2026-08-19 — anchored on the pushed tag `evidence/ben-454-anchor-comparator-ecee9ff1`
+> (§7C), re-verified on the remote by this lane.** The section is kept in full and in the present tense
+> because **the measurement is the evidence for the tag and the mechanism is reusable**; the six
+> commands below are the ones to re-run against the next cited sha, and deleting them would leave the
+> tag looking arbitrary. Read it as *what was true before the anchor*, not as a live hazard.
 
 Revision 1's headline correction read:
 
@@ -337,20 +353,30 @@ DROPPED (4):  compare_to_models.py, model_comp_report.txt, adopt_unified_5d.py  
 ADDED   (0):  none
 ```
 
-**`waker/BLOCKED-ON-USER.json` was uniquely-valued on the cluster, dispositioned `REVIEW`, and has since
-stopped being modified.** Its unique blob `b13b51d0` **is not in the local object store** (tested
-above). Three readings are consistent with the evidence — it was committed, it was reverted, or the
-waker cron overwrote it — **and the last is the likeliest, because it is a file that cron rewrites.**
-If so those bytes are **already lost**, and the only surviving record of them is the blob sha in the
-08-12 inventory. **A shrinking modified-tracked count reads as progress and is equally consistent with
-silent loss; the count could not distinguish the two and the set can.** Resolve with
-`git cat-file -t b13b51d0` on the cluster when it returns — **not** by re-counting.
+**THE SET DIFFERENCE ABOVE IS NOT A MEASUREMENT OF LOSS, AND SAYING SO IS THE WHOLE POINT OF THIS
+SUBSECTION.** Revision 2 published it with the dropped member flagged and the caveat that the 08-19
+endpoint was relayed. **The author of that endpoint has since disclosed what the command actually was,
+and it settles the caveat in the direction that voids the inference:**
 
-**Caveat on both endpoints of that set difference.** The 08-12 reading is first-hand in an artifact I
-read; the 08-19 reading is relayed and I could not re-run it. The dropped-member conclusion therefore
-depends on the relayed set being complete — if the 12:40Z read named only the four it was looking for,
-`BLOCKED-ON-USER.json` may still be modified and nothing has been lost. **Both readings must be redone
-in one command after the maintenance; that is the check, and it is cheap.**
+> the 12:40Z read filtered for modified tracked files with `grep -E '^( M|M |MM|AM)'` and returned
+> exactly four; **it did NOT enumerate the 08-12 set and then diff.**
+
+**So the four are what the filter was built to find, not an enumeration that the fifth failed to
+survive.** `BLOCKED-ON-USER.json` sits under `docs/orchestration/state/waker/`, and nothing in a
+four-row filtered result reports on it either way. **Do not read the four as evidence that the other
+four are gone** — this document previously leaned toward *"the waker cron overwrote it, so those bytes
+are already lost"*, and that reading is **withdrawn**: it was an inference from an absence produced by a
+filter that never asked the question.
+
+What survives is the shape of the risk, not an instance of it: `b13b51d0` was uniquely-valued on the
+cluster on 2026-08-12, is dispositioned `REVIEW`, and **is not in the local object store** (tested
+above). Its current status is **UNKNOWN and unmeasurable until the maintenance lifts.**
+
+**The general rule, which is why the row stays:** a shrinking modified-tracked *count* reads as progress
+and is equally consistent with silent loss, **and a filtered result cannot distinguish either from "I
+did not look."** Resolve with `git cat-file -t b13b51d0` on the cluster, plus a full re-enumeration of
+the modified-tracked set to diff against the 08-12 eight — **not** by re-counting and not by re-running
+the same filter. The mediator has carried both onto the cluster-return list.
 
 ### 5.3 Unverified cluster-side loose end — `OI-135` step (e)
 
@@ -427,26 +453,41 @@ place, and the hazard raised against it does not apply."* The hazard was that
 cannot be reached — confirmed by that entry's 0-dropped / 7-added set difference, in which it does not
 appear. It is present (335 bytes, mtime 2026-08-14). **Not this lane's file, and not deleted.**
 
-### 7C. THE ONE ACTION THAT SHOULD PRECEDE ANY CLEANUP — and it is not a cleanup
-
-**Anchor `ecee9ff1`.** It is cited five times across two files on `origin/main`, it is held by a reflog
-entry and nothing else, and **an ordinary cleanup — `git gc --prune=now`, a reflog expire, or deleting
-the now-merged `worktree-lane-b-oi126` branch — collects it immediately** (§2). The repair is one
-command of the shape lane E already used, and it must be **a tag, not a repoint**, for the same reason
-`BEN-382` and `BEN-225` were tagged: the determination's claim is about the instrument *at that commit*.
+### 7C. THE ONE ACTION THAT HAD TO PRECEDE ANY CLEANUP — **DONE, 2026-08-19, by the mediator**
 
 ```
-git tag -a evidence/gate2-instrument-ecee9ff1 ecee9ff1 -m '<why>'   &&   git push origin <tag>
+evidence/ben-454-anchor-comparator-ecee9ff1   ->   ecee9ff10fa6a592641143fb850b137d38c8b1f2
 ```
 
-**This lane created no tag** — tag creation is outside its one-file mandate, and it is lane E's
-established instrument. **Routed, not done.** Until it is done, `ecee9ff1` is the single item in the
-estate where a routine cleanup produces an unrecoverable citation break.
+**Verified on the remote by this lane, not accepted on report** — `git ls-remote --tags origin` returns
+the tag and its peeled `^{}` at the exact commit, and after `git fetch origin --tags` the covering test
+that returned nothing in revision 2's §2 now returns:
 
-Beyond that, and none of it urgent: **push `codex/gregor-pet2-omnifold` and `audit/20260731-findings`**
-(29 and 2 commits), and **write a receipt for the four cluster files** once the maintenance lifts.
-After those four acts, every commit in the estate is on a pushed ref, and every worktree becomes what a
-worktree is — a disposable checkout.
+```
+git for-each-ref --contains ecee9ff1   ->   refs/tags/evidence/ben-454-anchor-comparator-ecee9ff1  [tag]
+```
+
+**`ecee9ff1` is `PRESERVED`.** It is no longer reflog-only, no longer on a gc clock, and no longer the
+estate's live `BEN-306`. It was **tagged, not repointed**, for the `BEN-382`/`BEN-225` reason (§1), and
+the tag message carries the reachability measurement, the five citations with `:1912` named as the
+substantive one, the tag-not-repoint rationale and the blob trap — **so the reasoning survives
+independently of this document**, which is the right place for it.
+
+**Consequence for §7A: it is unblocked on recoverability grounds.** Every commit named in 7A is now on a
+pushed ref, so removing any of those checkouts destroys no commit and no cited artifact. **That is a
+recoverability verdict and nothing more.** The caveat column still routes: the live lanes, the locked
+`lane-b-oi126` handoff and `baseline-wt`'s unmeasured untracked paths are unchanged, and **no row in 7A
+has become a recommendation to remove anything.** 7B is untouched.
+
+**Still outstanding, none of it urgent and none of it blocking:** push `codex/gregor-pet2-omnifold` and
+`audit/20260731-findings` (29 and 2 commits — safe from `gc`, exposed only to losing the machine), and
+**write a receipt for the four cluster files** once the maintenance lifts.
+
+> **A small irony worth recording rather than hiding.** Committing this revision meant rebasing `lane-d`
+> onto `origin/main`, which made revision 2's own commit `c3c16682` unreachable — the exact mechanism
+> §2 documents. It is harmless *here* because the mediator had already cherry-picked the content to
+> `526feb64` on `origin/main`, so the citable object is pushed and this one was never cited. **That is
+> the general rule the estate should run on: cite the pushed sha, and a rebase costs nothing.**
 
 ---
 
@@ -456,14 +497,35 @@ worktree is — a disposable checkout.
 |---|---|---|
 | `8e48a811` reachable from nothing | **PRESERVED**, pushed tag | `git branch -a --contains` cannot see tags |
 | `c1b63820` reachable from nothing, disposable | **PRESERVED**, pushed tag; **its worktree is already gone** | same, plus the estate was cleaned in the interval |
-| `ecee9ff1` on a pushed remote branch, *"gate 2 reproducible from GitHub"* | **reflog only — live `BEN-306`** | the branch moved; content safe at `f7ab02ff`, the sha is not |
+| `ecee9ff1` on a pushed remote branch, *"gate 2 reproducible from GitHub"* | rev 2: **reflog only — live `BEN-306`**; rev 3: **`PRESERVED`** on `evidence/ben-454-anchor-comparator-ecee9ff1` | the branch moved; content safe at `f7ab02ff`, the sha was not — then the mediator tagged and pushed it |
 | `lane-b-oi126` `9e96f0a5`, LOCAL ONLY 35 ahead, CITED + IRRECOVERABLE | `66fb1ed1`, **on `origin/main`, recoverable** | branch rebased and merged |
 | the 4 cluster files are *"unowned / UNKNOWN"* | **dispositioned `REVIEW` on 2026-08-12 with blob shas**; only the *preservation receipt* is missing | the 08-12 inventory and `OI-74` were not consulted |
 | ten local worktrees | **nine** | `agy-review-wt` removed by another process |
 | `e477afb1` / `ea4a4f3d` uncited (implied by an 8-char sweep) | **cited by `BEN-382` and `BEN-225`** at 7 chars | the sweep's width was narrower than the repo's citation style |
 
-**The estate's residual risk is one commit, not a policy.** Six shas are preserved off-machine on pushed
-tags; one — `ecee9ff1` — is cited five times and held by a reflog. **The highest-value act available is
-a single annotated tag; the second is a receipt for four files nobody can reach today.** Everything
-else in the estate is either recoverable from a pushed ref or explicitly named in §7B as not to be
-touched.
+**REVISION 3, 2026-08-19 — THE RESIDUAL RISK IS DISCHARGED.** Revision 2 closed by saying the estate's
+risk was one commit and the highest-value act was a single annotated tag. **The mediator created it and
+pushed it, and this lane verified it on the remote rather than on report** (§7C):
+`evidence/ben-454-anchor-comparator-ecee9ff1`.
+
+**Seven shas are now preserved off this machine on pushed tags, and no cited commit in the local estate
+is reachable only from a reflog.** What remains is not a preservation problem:
+
+- two unpushed branches (`codex/gregor-pet2-omnifold` 29, `audit/20260731-findings` 2) — safe from `gc`,
+  exposed only to losing the machine, cited nowhere;
+- `gregor-pet2`'s untracked content, and the shared checkout's — **unmeasured, not unsafe** (§6.1);
+- the cluster's modified tracked files — **identified and dispositioned; the missing thing is a
+  receipt** (§5.1);
+- `b13b51d0`'s status — **UNKNOWN, and revision 2's lean toward "already lost" is withdrawn** (§5.2);
+- the 22 non-frozen cluster worktrees — **unenumerated, therefore unclassified** (§6.3).
+
+**The one thing that must not be lost in the good news:** `gate5-data-only-frozen-377c713` is
+recoverable *and* must not be removed, because it is array `57266000`'s code pin (§7B). Recoverability
+was never the whole question, which is why this document has always had two axes.
+
+**And the durable lesson is the method, not the estate.** Two independent ways to declare a cited commit
+disposable — **a namespace the query cannot see** (tags, invisible to `branch --contains`) and **a
+precision the query cannot match** (an 8-char sweep against a repo that cites at 7) — produce the same
+false conclusion from different causes, **and neither is visible in the output.** Three parties hit the
+first today and revision 1 hit the second. Routed for a `FINDINGS.md` row by its owning lane; **this
+document does not file it.**
