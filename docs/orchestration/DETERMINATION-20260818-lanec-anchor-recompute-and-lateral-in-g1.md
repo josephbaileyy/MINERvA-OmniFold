@@ -1795,6 +1795,103 @@ D's own cross-check so the finding cannot be read as discharging gate 2.** The f
 > expected value, and a named party — fixed BEFORE the run rather than assembled after it.** `BEN-403`'s rule
 > applied to a gate discharge rather than a threshold.
 
+### 21l. ⚠ **§21j(3) IS WRONG: THE TWO ASSERTIONS ARE ON DIFFERENT SWEEPS** — and I had printed the disproof myself, earlier in the same session
+
+**D checked my redundancy argument expecting to find nothing and found this. Verified here:**
+
+```
+snapshot keys
+  pipeline         -> files_with_candidates, live_instances, n_candidates, n_shell_files, tool
+  recorded_fields  -> corpus, fields, gates, n_fields, n_gates, tool
+```
+
+**The PASSING corpus assertion is on `recorded_fields`** — hand-declared P4 `MODULES`/`SHELL`. **The FAILING count
+is on `pipeline`**, over repo-global `tracked_shell_files()`. **Different tool, different corpus, and `pipeline`
+HAS NO `corpus` KEY AT ALL.**
+
+> **So *"the assertion that matters already exists beside it"* is FALSE. It exists on a DIFFERENT SWEEP.** And
+> print-not-assert on its own would leave the pipeline sweep with **zero assertions over its own corpus** — both
+> of its assertions are counts (`n_shell_files`, `n_candidates`) and **both carry the `+1/−1` blindness I had just
+> finished identifying.**
+
+**AND THE AGGRAVATING DETAIL, WHICH MAKES THIS A NEW REGISTER RATHER THAN ANOTHER INSTANCE.** Earlier in this same
+session I ran a command whose output was, verbatim:
+
+```
+pipeline.n_shell_files = 374
+pipeline keys: ['files_with_candidates', 'live_instances', 'n_candidates', 'n_shell_files', 'tool']
+```
+
+> **`corpus` IS NOT IN THAT LIST. I printed the disproof of my own claim, read the number I was after, and did not
+> read the line beneath it.**
+>
+> **Every earlier instance today was a WRONG MEASUREMENT — wrong denominator (`BEN-466`), wrong index (`BEN-467`),
+> wrong functional (B's). THIS ONE IS A CORRECT MEASUREMENT, MADE BY ME, LEFT UNREAD AGAINST THE CLAIM I THEN
+> WROTE.** That is worse, because no better instrument would have prevented it: **the instrument fired, printed
+> the right answer, and the failure was entirely in the reading.**
+
+### 21m. **D's INVERSION IS THE IMPORTANT HALF — the count is a BAD ASSERTION AND A LOAD-BEARING TRIGGER**
+
+**Verified: `SNAPSHOT.write_text(...)` at `test_p4_sweep_snapshots.py:168` is the ONLY writer, reached only via
+`--update`, and `:13` states that updating is deliberately reviewer-facing. And nobody types `--update` except
+when an assertion has gone red.**
+
+> **THEREFORE THE RECORDED CORPUS REACHES A HUMAN ONLY AS AN `--update` DIFF, AND THE COUNT GOING RED IS WHAT
+> CAUSES THE `--update`.** Remove the count assertion without adding a corpus assertion and the recorded corpus
+> becomes **permanently invisible: no red, no `--update`, no diff, ever.**
+>
+> **`BEN-455` RUNNING BACKWARDS.** There, a mitigation's SUCCESS concealed a failure. Here, **removing a bad check
+> would conceal the good data it was inadvertently surfacing.** The count is a poor assertion *and* a load-bearing
+> trigger, **and only the first of those is visible from the failure message.**
+
+**SO THE REMEDY IS ORDERED, AND MY §21j STATED IT UNORDERED:**
+
+> **1. ADD the `files_with_candidates` SET assertion** — the same shape `fields` already has, `cur - snap` and
+> `snap - cur` both empty. **No new data and no new generator: `tools_p4_sweep_pipeline_rc.py:81` already emits
+> `files_with_candidates` as a dict keyed by relative path, and `grep` for it in the test file returns ZERO.**
+> **2. THEN demote `n_shell_files` to PRINTED.**
+>
+> **Either alone is worse than today.** *(Third sequencing constraint I have had to state: the diagonal before the
+> deletion, the exit codes before the streaming pass, and now the set assertion before the count's demotion.)*
+
+**AND IT REFINES B's FORMULATION, WHICH I WOULD OTHERWISE HAVE APPLIED WRONGLY HERE.** B's rule is *"two correct
+rulings compose into a defect when each is safe only under a precondition the other silently removes."*
+
+> **Here BOTH changes are safe, in ONE ORDER AND NOT THE OTHER. The resolving variable is SEQUENCE, not a
+> precondition** — so the diagnostic question is not *"what does each assume?"* but ***"what does the interval
+> between them look like?"*** **All three of today's constraints are about the INTERVAL, and an interval is
+> invisible to anyone reasoning about either endpoint.**
+
+### 21n. **D's FOURTH ARRIVAL PREDATES ALL THREE OF OURS, AND IS TWENTY LINES AWAY**
+
+**Verified at `test_p4_sweep_snapshots.py:128-133`:**
+
+```python
+def test_new_unchecked_fields_are_surfaced_by_name(self):
+    """Counts alone would let one field appear as another disappears."""
+    cur  = set(_current()["recorded_fields"]["fields"])
+    snap = set(json.loads(SNAPSHOT.read_text())["recorded_fields"]["fields"])
+    self.assertEqual(cur - snap, set(), ...);  self.assertEqual(snap - cur, set(), ...)
+```
+
+> **That docstring is §21j(4)'s `+1 −1` point VERBATIM, written by this file's own author, before any of today's
+> three arrivals — and applied to `recorded_fields["fields"]` and NOT to `pipeline`. The insight is in the file;
+> its application is partial.**
+>
+> **D's explanation for why the rule keeps being rediscovered is the correct one and it is `BEN-467`'s procedural
+> half again: NOTHING PROPAGATED IT TO THE SIBLING ASSERTION TWENTY LINES AWAY.** The correction reached the place
+> it was found and not the callee. **Fourth instance of that pattern, and the most damning, because the distance
+> was twenty lines inside one file rather than across two modules and a branch.**
+>
+> **This strengthens the convergence rather than diluting it:** four independent arrivals, the earliest already
+> committed here, **and the rule still had to be re-derived today by three lanes — which is evidence about
+> PROPAGATION and not about the rule.**
+
+**WHAT STANDS FROM §21j, and I am not relitigating it:** `--update` is the wrong fix; flagging over fixing is
+right and D's *erase-the-evidence* reason is the better one; the `36` hours are evidence; the repo-global
+predicate is the class `.githooks/pre-commit:71-77` already declined to wire. **What is withdrawn is exactly the
+word *"beside"*, and the unordered form of the remedy.**
+
 ## 12. R1 RULED — **`_sb` IS CANONICAL FOR BOTH LEGS**, and there is exactly ONE wrong literal
 
 **Not a judgement — the receipt says so.** `receipt_construction_contract_5d.py:313-314`:
@@ -2238,6 +2335,23 @@ and now the mask is already in the product. Worth noting as a rate, not an anecd
 - **§21k: GATE 2's CLOSURE AGREED and PRE-SPECIFIED** — on B's deletion sha, D runs `_th2_content` once
   against one real matrix, digest against `de32843b…`. **Instrument, artifact, expected value and party
   all named BEFORE the run** — `BEN-403` applied to a gate discharge.
+- **⚠ WITHDRAWN (§21l): §21j(3)'s redundancy claim is WRONG — the two assertions are on DIFFERENT SWEEPS.**
+  The passing corpus assertion is on `recorded_fields`; the failing count is on `pipeline`, **which has no
+  `corpus` key**. Print-not-assert alone would leave the pipeline sweep with ZERO corpus assertions.
+  **And I had PRINTED the disproof myself earlier this session and not read it — a CORRECT measurement left
+  unread, which no better instrument would have prevented.**
+- **§21m: D's inversion — the count is a bad assertion AND a load-bearing TRIGGER.** `:168` is the only
+  writer, reached only by `--update`, and nobody runs `--update` unless something is red — **so the corpus
+  reaches a reviewer only because the count fails.** Removing it alone makes the corpus permanently
+  invisible: **`BEN-455` inverted.** **ORDERED remedy: add the `files_with_candidates` set assertion FIRST
+  (data already emitted at `tools_p4_sweep_pipeline_rc.py:81`, asserted NOWHERE), then demote the count.**
+- **§21m: refines B's rule — here BOTH changes are safe in ONE ORDER AND NOT THE OTHER**, so the resolving
+  variable is SEQUENCE, not a precondition. **All three of today's constraints are about the INTERVAL, and
+  an interval is invisible to anyone reasoning about either endpoint.**
+- **§21n: a FOURTH arrival at the count-for-identity rule sits `20` lines away in the same file**
+  (`:128-133`, *"Counts alone would let one field appear as another disappears"*), predating all three of
+  today's. **Nothing propagated it to the sibling assertion — `BEN-467`'s procedural half, fourth
+  instance, and the shortest distance yet.**
 - **AUTHORIZED: nothing.** No launcher edited, nothing submitted.
 
 *Second sought: B on §3's derived-target predicate (its module) and on whether stage 1 can be run as a single
