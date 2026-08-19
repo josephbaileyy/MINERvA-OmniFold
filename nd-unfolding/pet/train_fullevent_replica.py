@@ -294,10 +294,21 @@ def run_nominal_adapter(args, target_receipt):
         assert_data_only_target_is_this_replicas(
             meta.get("target") or {}, bootstrap_seed=int(args.bootstrap_seed),
             target_receipt=target_receipt,
-            # FAMILY-POSITION OPERANDS, and deliberately NOT args.target_npy: the training output
-            # lives at <root>/replicas/replica_NN/training/..., so parents[2] is the campaign root.
-            # Derived from --output and --replica-index, neither of which is F2's echo source.
-            family_output_root=Path(args.output).resolve().parents[2],
+            # FAMILY-POSITION OPERANDS, and deliberately NOT args.target_npy: derived from --output and
+            # --replica-index, neither of which is F2's echo source.
+            #
+            # `parents[3]`, NOT `parents[2]`. The output is
+            #     <root>/replicas/replica_NN/training/GATE5_REPLICA_WEIGHTS.npz
+            # so parents[0]=training, [1]=replica_NN, [2]=replicas, [3]=<root>. `parents[2]` returns the
+            # `replicas` DIRECTORY, and F2 then appends `replicas/<member>/target/...` to it, producing
+            # `.../replicas/replicas/replica_00/...` -- a doubled component.
+            #
+            # THIS WAS AN OFF-BY-ONE THAT 174 CONTROLS COULD NOT SEE, and the reason is the reason: every
+            # fixture passed `family_output_root=<the correct root>` DIRECTLY, so the DERIVATION was never
+            # exercised. The tests checked what F2 does with a root; nothing checked where the root comes
+            # from. Found by the single-member smoke 57253127_0 -- the first real target-plus-train pair --
+            # which is exactly the gap the smoke existed to probe, one layer deeper than expected.
+            family_output_root=Path(args.output).resolve().parents[3],
             replica_index=int(args.replica_index))
         if meta.get("bootstrap") is not None:
             raise SystemExit("[gate5-dataonly] loader published a bootstrap block; the MC legs "

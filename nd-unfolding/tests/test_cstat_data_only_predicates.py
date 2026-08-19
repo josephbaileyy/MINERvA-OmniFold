@@ -961,7 +961,7 @@ class SubmitControllerStageSelection(unittest.TestCase):
         r = self._run("bogus")
         self.assertEqual(1, r.returncode)
         self.assertIn("unknown stage 'bogus'", r.stderr)
-        self.assertIn("'both' or 'target'", r.stderr)
+        self.assertIn("'both', 'target' or 'train'", r.stderr)
 
     def test_the_error_path_uses_no_bash_4_only_expansion(self):
         """`${VAR@Q}` is bash 4.4+; this is read on hosts with bash 3.2, where it is a `bad
@@ -1004,15 +1004,31 @@ class SubmitControllerStageSelection(unittest.TestCase):
         self.assertIn('TRAIN_JOB="DEFERRED"', src)
         self.assertIn("GATE5_DATAONLY_STAGE=$STAGE", src)
 
-    def test_no_train_only_mode_exists_yet(self):
-        """Deliberate: a `train`-only mode needs an externally-supplied `aftercorr` job id, and an
-        unvalidated one is how a training array starts against a target family still being written.
-        This control fails the moment someone adds the mode without the validation, which is the point
-        at which the reasoning needs re-reading.
+    def test_the_train_stage_takes_NO_EXTERNAL_DEPENDENCY_OPERAND(self):
+        """THIS CONTROL FIRED, AS DESIGNED, AND IS NOW RE-POINTED RATHER THAN DELETED.
 
-        Comments stripped, because this is an ABSENCE check and absence checks are the direction prose
-        can satisfy by accident."""
-        self.assertNotIn("both|target|train", self._shell_code())
+        It used to assert `train` did not exist -- a tripwire for "someone added the mode without the
+        validation". Adding the mode made it fail, which is the control working: the world changed and it
+        said so. What it must protect now is the PROPERTY, not the absence.
+
+        The reason `train` was refused was an externally supplied `--dependency=aftercorr:<job>`: an
+        unvalidated job id there is how a training array starts against a family still being written. The
+        stage that shipped takes NO dependency and asserts the targets EXIST instead -- a measurement of
+        the present rather than a promise about the future. So this now forbids the operand and requires
+        the assertion, which is the thing whose loss would matter.
+
+        Comments AND docstrings stripped: an absence check is the direction prose satisfies by accident.
+        """
+        code = self._shell_code()
+        self.assertIn("both|target|train", code, "the stage must be accepted")
+        # the train branch must not reintroduce a dependency
+        train_branch = code.split('if [[ "$STAGE" == "train" ]]; then', 1)[1].split("\nelse", 1)[0]
+        self.assertNotIn("--dependency", train_branch,
+                         "the train stage must not take a dependency: the targets already exist and are "
+                         "asserted, and a dependency on a finished job is not a check")
+        self.assertIn("train stage requires an existing regular non-symlink target product", code,
+                      "the existence assertion is what replaced the dependency; without it the stage is "
+                      "strictly weaker than the thing that was declined")
 
 
 class ReadbackReplacements(unittest.TestCase):
@@ -2066,6 +2082,74 @@ class DataOnlyFamilyValidator(unittest.TestCase):
         the accounting that makes omission unrepresentable."""
         src = (self.repo / self.MOD).read_text()
         self.assertIn("the divergence manifest is missing", src)
+
+
+class FamilyRootDerivation(unittest.TestCase):
+    """THE DERIVATION ITSELF, which 174 controls could not see and a real run found in 2m11s.
+
+    F2 compares the loader's echoed target against one derived from THIS MEMBER'S POSITION IN THE FAMILY.
+    Every fixture in this file passed `family_output_root=<the correct root>` DIRECTLY -- so the tests
+    checked what F2 DOES with a root and nothing checked WHERE THE ROOT COMES FROM. The shipped driver used
+    `Path(args.output).resolve().parents[2]`, which is the `replicas` DIRECTORY, and F2 then appends
+    `replicas/<member>/target/...` to it:
+
+        loader opened  .../fullevent_cstat_data_only_n50/replicas/replica_00/target/...
+        F2 expected    .../fullevent_cstat_data_only_n50/replicas/replicas/replica_00/target/...
+                                                          ^^^^^^^^^^^^^^^^^ doubled
+
+    An off-by-one in an INDEX, invisible to every test that supplied the index's OUTPUT. This class tests
+    the arithmetic against the real campaign layout, so the fixture can no longer stand in for it.
+    """
+
+    LAYOUT = ("/pscratch/sd/j/josephrb/gate5-do-g2/nd-unfolding/pet/fullevent_cstat_data_only_n50"
+              "/replicas/replica_00/training/GATE5_REPLICA_WEIGHTS.npz")
+    ROOT = "/pscratch/sd/j/josephrb/gate5-do-g2/nd-unfolding/pet/fullevent_cstat_data_only_n50"
+
+    def test_the_driver_derives_the_FAMILY_ROOT_and_not_the_replicas_directory(self):
+        """Asserted on the SHIPPED source, so the index cannot drift back."""
+        code = _code_only_src((Path(PET) / "train_fullevent_replica.py").read_text(),
+                              label="train driver")
+        self.assertIn("parents[3]", code)
+        self.assertNotIn("resolve().parents[2]", code,
+                         "parents[2] is the `replicas` directory, and F2 appends `replicas/...` to whatever "
+                         "it is given -- that is the doubled-component defect 57253127_0 found")
+
+    def test_the_arithmetic_against_the_REAL_campaign_layout(self):
+        p = Path(self.LAYOUT)
+        self.assertEqual("training", p.parents[0].name)
+        self.assertEqual("replica_00", p.parents[1].name)
+        self.assertEqual("replicas", p.parents[2].name)      # <- the wrong answer, named
+        self.assertEqual(self.ROOT, str(p.parents[3]))        # <- the right one
+
+    def test_F2_ACCEPTS_the_real_target_when_the_root_is_derived_the_shipped_way(self):
+        """END TO END over the derivation: build the operand exactly as the driver now does, and require F2
+        to accept the target the loader actually opens. This is the control whose absence let the defect
+        ship -- it consumes `--output`, not a hand-written root."""
+        root = str(Path(self.LAYOUT).resolve().parents[3])
+        target = os.path.join(root, "replicas", "replica_00", "target", "GATE5_REPLICA_TARGET.npy")
+        meta = {"bootstrap_seed": None, "precomputed_target_replica_seed": 50_000,
+                "consumed_precomputed_target": target}
+        receipt = {"data_bootstrap_seed": 50_000}
+        self.assertTrue(cdo.assert_data_only_target_is_this_replicas(
+            meta, bootstrap_seed=50_000, target_receipt=receipt,
+            family_output_root=root, replica_index=0))
+
+    def test_F2_REJECTS_the_real_target_when_the_root_is_derived_the_OLD_way(self):
+        """The defect, reproduced: with `parents[2]` the expected path doubles `replicas` and F2 refuses a
+        CORRECT target. A guard that rejects the right answer is worse than absent, because it stops the
+        run and points at the wrong thing -- 57253127_0 died naming a path that does not exist."""
+        wrong_root = str(Path(self.LAYOUT).resolve().parents[2])
+        target = os.path.join(str(Path(self.LAYOUT).resolve().parents[3]),
+                              "replicas", "replica_00", "target", "GATE5_REPLICA_TARGET.npy")
+        meta = {"bootstrap_seed": None, "precomputed_target_replica_seed": 50_000,
+                "consumed_precomputed_target": target}
+        with self.assertRaises(SystemExit) as cm:
+            cdo.assert_data_only_target_is_this_replicas(
+                meta, bootstrap_seed=50_000, target_receipt={"data_bootstrap_seed": 50_000},
+                family_output_root=wrong_root, replica_index=0)
+        msg = str(cm.exception)
+        self.assertIn("F2", msg)
+        self.assertIn("replicas/replicas", msg.replace(os.sep, "/"))
 
 
 class FamilyVerdictIsBinding(unittest.TestCase):

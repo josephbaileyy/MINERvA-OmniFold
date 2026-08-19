@@ -1,0 +1,48 @@
+{
+  "array_job_id": "57236137",
+  "data_root": "/pscratch/sd/j/josephrb/gate5-do-g2",
+  "deployment_sha": "52df3985d3da75d110dcfe2ea276b71cc00db101",
+  "family_root": "/pscratch/sd/j/josephrb/gate5-do-g2/nd-unfolding/pet/fullevent_cstat_data_only_n50",
+  "gate_1_final_sweep": {
+    "exit": 0,
+    "transcript": [
+      "=== product counts ===",
+      "targets                            50  OK",
+      "targets .done                      50  OK",
+      "receipts                           50  OK",
+      "receipts .done                     50  OK",
+      "=== the two keys generation one lacked ===",
+      "data_bootstrap_seed present        50  OK",
+      "mc_factors_applied present         50  OK",
+      "mc_factors_applied == unity        50  OK",
+      "=== the loader digest, WITNESSED in receipts rather than read off the deployment ===",
+      "loader e1402370...                 50  OK",
+      "=== PAIRWISE DISTINCTNESS of data_bootstrap_seed -- not non-degeneracy ===",
+      "seed values read                   50  OK",
+      "seed values UNIQUE                 50  OK",
+      "seeds contiguous 50000..50049      OK",
+      "",
+      "FINAL SWEEP: PASS -- all counts are exactly 50, seeds unique and contiguous"
+    ],
+    "verdict": "PASS"
+  },
+  "gate_2_precedence": {
+    "addendum_commit_time_unix": 1787082094,
+    "addendum_sha": "1734716f",
+    "earliest_artifact": "/pscratch/sd/j/josephrb/gate5-do-g2/nd-unfolding/pet/fullevent_cstat_data_only_n50/replicas/replica_00/target/GATE5_REPLICA_TARGET.npy",
+    "earliest_artifact_mtime_unix": 1787084613.0,
+    "family_root": "/pscratch/sd/j/josephrb/gate5-do-g2/nd-unfolding/pet/fullevent_cstat_data_only_n50",
+    "margin_seconds": 2519.0,
+    "n_artifacts_examined": 100,
+    "schema": "gate5-manifest-precedes-artifacts-v1",
+    "verdict": "PASS",
+    "what_this_does_not_establish": "mtimes are mutable and clocks can be wrong. This is evidence against the ordinary failure -- a manifest written or amended after the run -- not proof against a determined edit.",
+    "why_committer_date": "%ct, not %at: an author date is settable with --date and is therefore an operand the author controls.",
+    "why_the_minimum": "one artifact written before the commit falsifies the claim even if the other 49 came after, so the operand is min(mtime), not the mean or the first found."
+  },
+  "sacct_census": "50 COMPLETED",
+  "schema": "gate5-cstat-data-only-target-family-acceptance-v1",
+  "sweep_asserts_rather_than_prints": "every count must be exactly 50 or the script exits non-zero; verified by running it at 48/50 first, where it failed 11 conditions -- its failure mode was observed while failing was still free.",
+  "what_this_does_NOT_establish": "nothing about TRAINING. The 57194055 fix works by substituting a module global so a new assertion replaces the pinned loader:742 guard, and THAT SUBSTITUTION HAS NEVER EXECUTED IN A REAL PROCESS. All three of this campaign array failures were in environment activation, upstream of it. 174 unit controls cover the predicates and none covers the substitution. The single-member smoke is the only test of it and the 151 A100-h remains gated on that smoke.",
+  "what_this_establishes": "the generation-two TARGET family is complete and internally consistent, carries both keys generation one lacked, witnesses the pinned loader digest in every receipt, and has 50 unique contiguous data_bootstrap_seed values -- the pairwise-distinctness property, not mere non-degeneracy."
+}
