@@ -16,7 +16,8 @@
       "max": 178.73,
       "mean": 178.73,
       "min": 178.73,
-      "n_completed_tasks": 1,
+      "n_tasks_in_sample": 1,
+      "sample_note": "ONE task: 57256638_0, ElapsedRaw 10724 s = 178.73 min. It FAILED (exit 1:0) at the training receipt write, having completed all six fits with the LR anneal verified from the optimizer and both final checkpoints round-trip verified. It is the right sample for 'how long until the first artifact could appear' and it is NOT a completed task -- sacct shows no COMPLETED task for this stage, so do not go looking for one. DELIBERATELY EXCLUDED: 57253127_0, 131 s, which died before training started on an off-by-one in the family-root derivation; it measures a different event, and averaging the two would give ~90 min describing nothing that has ever happened (BEN-473). N=1, so per BEN-419 this is a coincidence until a second run agrees.",
       "why_a_range": "a point estimate at the edge of its own spread invites the question it is meant to foreclose. And it is measured from COMPLETED tasks: a RUNNING job's elapsed time is a LOWER BOUND on its duration, not an estimate of it, which is how the first pricing of this array came out 2.8x low."
     },
     "node_hours_for_50_tasks": {
