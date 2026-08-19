@@ -1498,8 +1498,7 @@ class ReadbackCheckpointsAndLogs(unittest.TestCase):
         src = (Path(PET) / "validate_gate5_training_artifacts.py").read_text()
         self.assertIn(repr(self.rb.CHECKPOINT_SEMANTICS).strip("'\""), src,
                       "CHECKPOINT_SEMANTICS has drifted from the pinned validator")
-        for tok in self.rb.FATAL_LOG_TOKENS:
-            self.assertIn(tok, src, f"fatal token {tok!r} is not the pinned one")
+        # SUPERSET, NOT EQUALITY -- see the assertion at the end of this test for why.
         # EXTRACTED VIA AST, NOT REGEX. `r"\[[^\]]*\]"` stops at the first `]`, which here falls INSIDE
         # the token "[gate5-train][FAIL]" -- so the regex version produced an unterminated string and a
         # SyntaxError rather than a wrong answer. A bracket-counting regex over source containing
@@ -1510,7 +1509,28 @@ class ReadbackCheckpointsAndLogs(unittest.TestCase):
                     isinstance(t, ast.Name) and t.id == "fatal_tokens" for t in node.targets):
                 pinned = ast.literal_eval(node.value)
         self.assertIsNotNone(pinned, "the pinned fatal_tokens assignment was not found")
-        self.assertEqual(pinned, self.rb.FATAL_LOG_TOKENS)
+        # WAS `assertEqual(pinned, FATAL_LOG_TOKENS)`, AND THAT EQUALITY WAS THE PROBLEM (ISSUE-55).
+        # It was written to stop this file drifting from the pinned copy, and it did that. It also made
+        # this file UNABLE TO BE MORE CORRECT THAN g1's -- so when `SystemExit:` turned out to be a token
+        # no producer emits, the equality held the same wrong constant on both paths. The direction worth
+        # policing is DROPPING something g1 checks; ADDING a token g1 lacks is a repair, not drift.
+        # COVERAGE, NOT SET INCLUSION -- and getting this wrong once is instructive: the repaired list
+        # drops the literal `[gate5-train][FAIL]` in favour of the bare `[FAIL]`, which SUBSUMES it. A
+        # set-superset test therefore reports a regression where the list got stronger. The property that
+        # actually matters is: any text g1's list would flag, this list must also flag.
+        uncovered = [t for t in pinned if not any(m in t for m in self.rb.FATAL_LOG_TOKENS)]
+        self.assertEqual([], uncovered, f"g1 would flag {uncovered} and this list would not")
+        # And it must be STRICTLY stronger, or the ISSUE-54 widening has been undone. The witness is a
+        # bare driver guard message -- exactly what `SystemExit(msg)` prints and what g1 cannot see.
+        # NOTE THE TWO LISTS: the driver prefixes live in `FATAL_STDERR_TOKENS` and are scanned in STDERR
+        # ONLY, because in the REPLICA family the identical prefix is what a HEALTHY launcher prints to
+        # stdout. Asserting over `FATAL_LOG_TOKENS` alone would report the repair as missing.
+        guard = "[gate5-train] target receipt unreadable: x"
+        self.assertFalse(any(t in guard for t in pinned),
+                         "the pinned g1 list already sees a bare driver guard; ISSUE-55 would be moot")
+        self.assertTrue(any(t in guard for t in
+                            list(self.rb.FATAL_LOG_TOKENS) + list(self.rb.FATAL_STDERR_TOKENS)),
+                        "a bare driver guard message is invisible again -- ISSUE-54's silent half")
 
     def test_the_optimizer_proof_line_is_DERIVED_and_matches_the_pinned_literal(self):
         """Its four embedded numbers are the ones the schedule already derives, so copying the string
@@ -1605,11 +1625,15 @@ class ReadbackCheckpointsAndLogs(unittest.TestCase):
         d = self.tmp / "logs"
         d.mkdir(parents=True, exist_ok=True)
         lines = {
-            "start": f"[gate5-train] index={self.IDX} seed={self.SEED} job={self.JOB}_{self.IDX}",
+            # sbatch_gate5_data_only_train_array.sh:113 -- the launcher's own prefix. It is NOT
+            # "[gate5-train]": that is the g1 launcher's, and this fixture asserting it is how
+            # ISSUE-54 stayed green.
+            "start": f"[gate5-do-train] index={self.IDX} seed={self.SEED} job={self.JOB}_{self.IDX}",
             "gate": '"config_gate": "PASS"',
             "proof": self.rb.optimizer_proof_line(),
             "receipt": '"status": "PASS"',
-            "done": f"[gate5-train] DONE index={self.IDX} seed={self.SEED}",
+            # sbatch_gate5_data_only_train_array.sh:124
+            "done": f"[gate5-do-train] DONE index={self.IDX} seed={self.SEED}",
         }
         body = []
         for k, v in lines.items():
@@ -1654,8 +1678,9 @@ class ReadbackCheckpointsAndLogs(unittest.TestCase):
 
     def test_a_gate5_train_FAIL_token_in_stdout_is_caught(self):
         with self.assertRaises(SystemExit) as cm:
-            self._check(self._logs(out_extra="[gate5-train][FAIL] something\n"))
-        self.assertIn("[gate5-train][FAIL]", str(cm.exception))
+            self._check(self._logs(out_extra="[gate5-do-train][FAIL] something\n"))
+        # The repaired token is the bare marker, so it matches BOTH launchers' die() output.
+        self.assertIn("[FAIL]", str(cm.exception))
 
     def test_a_missing_log_FILE_fails_closed(self):
         d = self._logs()
@@ -2356,9 +2381,9 @@ class FamilyVerdictIsBinding(unittest.TestCase):
         (trdir / (V.TRAIN_RECEIPT + ".done")).write_text("")
 
         for ext, body in ((".out", "\n".join([
-                f"[gate5-train] index={self.idx} seed={self.seed} job={self.job}_{self.idx}",
+                f"[gate5-do-train] index={self.idx} seed={self.seed} job={self.job}_{self.idx}",
                 '"config_gate": "PASS"', rb.optimizer_proof_line(), '"status": "PASS"',
-                f"[gate5-train] DONE index={self.idx} seed={self.seed}"]) + "\n"), (".err", "")):
+                f"[gate5-do-train] DONE index={self.idx} seed={self.seed}"]) + "\n"), (".err", "")):
             (logs / f"train_{self.job}_{self.idx}{ext}").write_text(body)
         return root
 
