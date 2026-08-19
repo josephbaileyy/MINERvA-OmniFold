@@ -97,6 +97,14 @@ def main(argv=None):
     ap.add_argument("--minutes-per-task-min", type=float, required=True)
     ap.add_argument("--minutes-per-task-max", type=float, required=True)
     ap.add_argument("--minutes-sample-size", type=int, required=True)
+    # REQUIRED, not optional, and that is deliberate. The sample behind a timing operand is never obvious
+    # from the number: which tasks, in which state, and what was excluded and why. Making this optional
+    # would mean the one addendum that needed it is the one that omitted it.
+    ap.add_argument("--minutes-sample-note", required=True,
+                    help="WHICH tasks the operand came from, in what state, and what was EXCLUDED and why. "
+                         "A task that ran to the end of training and then failed is a valid sample for "
+                         "'how long until an artifact could appear' and is not a completed task; say so "
+                         "rather than letting a field name imply otherwise.")
     ap.add_argument("--out", required=True)
     ap.add_argument("--billing-cores", type=float, default=36.0,
                     help="AllocTRES billing= per task, measured from sacct. A shared partition bills the "
@@ -233,7 +241,14 @@ def main(argv=None):
                 "mean": args.minutes_per_task_mean,
                 "min": args.minutes_per_task_min,
                 "max": args.minutes_per_task_max,
-                "n_completed_tasks": args.minutes_sample_size,
+                # RENAMED FROM `n_completed_tasks`, WHICH WAS A LIE BY ONE WORD. The first train-stage
+                # addendum's operand came from `57256638_0`, a task that ran all six fits and then FAILED at
+                # the receipt write -- so it "completed" in the sense the timing question cares about (how
+                # long until an artifact could appear) and did NOT complete in the sense the field name
+                # asserted. A reader auditing the operand would have gone looking for a COMPLETED task in
+                # sacct and found none.
+                "n_tasks_in_sample": args.minutes_sample_size,
+                "sample_note": args.minutes_sample_note,
                 "why_a_range": (
                     "a point estimate at the edge of its own spread invites the question it is meant to "
                     "foreclose. And it is measured from COMPLETED tasks: a RUNNING job's elapsed time is "
