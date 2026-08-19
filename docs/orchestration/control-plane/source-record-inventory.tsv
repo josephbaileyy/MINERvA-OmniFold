@@ -94,4 +94,4 @@ OI-129	active	NOW	safe-default-active	5202336a86f0dd1279c05e2d3f598fd9d5b4d11cff
 OI-130	active	NOW	safe-default-active	f3f51e86b12a51c219f86c17f6d71c4fb6d400221b4cfea6039f189c081b8242	OPEN — filed 2026-08-17 by the mediator, routed from lane C. A published macro's backing artifact was never tracked at a
 OI-131	active	NOW	safe-default-active	cc61da371d76f36bb44a86443d20c378b749b164355e57ba6774429581226747	OPEN — filed 2026-08-18. Supersedes OI-48, whose decision was reversed.
 OI-132	active	NOW	safe-default-active	c4798e5a1cba00655c8ed339d81242cefc89c410bac4a6de8476958dda98baab	OPEN — filed 2026-08-19 by lane E in the same commit as BEN-476. THE DIVERGENCE MANIFEST'S LARGEST BUCKET RESTS ON A CON
-OI-133	active	NOW	safe-default-active	fbe90202bdb01f088f00a1b66d11c172d375347b603ab24ca322c558db51492c	OPEN — filed 2026-08-19 by lane E with BEN-477. NOTHING BINDS A CHECKPOINT TO THE RUN THAT WROTE IT, so a member's check
+OI-133	active	NOW	safe-default-active	cd0cfeeb6947403f799be81d7ff9aff35e9f8a3b9dad870e5ac6fbe62e16eed1	OPEN — filed 2026-08-19 by lane E with BEN-477. NOTHING BINDS A CHECKPOINT TO THE RUN THAT WROTE IT, so a member's check

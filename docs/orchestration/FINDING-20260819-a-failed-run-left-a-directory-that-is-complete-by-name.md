@@ -103,8 +103,22 @@ asserts an EXACT SET over `train_dir.iterdir()` (`cstat_data_only_readback.py:38
 run's read-back. That check is correct and was not weakened to make room for evidence — the evidence moved
 instead, to outside the DATA ROOT, where no data-root walk reaches it.
 
-**Purge exposure, stated rather than assumed:** `/pscratch` is purgeable. 7.9 MB is small enough to copy off
-scratch if this evidence is to be durable. That has **not** been done and is not implied by the move.
+**AND NOW COPIED OFF SCRATCH, 2026-08-19** — `/pscratch` is purgeable, and this is the finding's only
+physical evidence:
+
+    /global/homes/j/josephrb/evidence/BEN-477-57256638_0/
+
+A COPY, not a second move: the scratch original was re-counted afterwards and still holds 14 files. Verified
+three ways — 14 files and 7,903,936 bytes on both sides, and **all 14 sha256 digests identical**, because equal
+totals are not equal contents. `cp -a`, preserving mtimes, since mtime is the only run-identity signal these
+files carry (see `OI-133`). Home was at 22.50 of 40.00 GiB (56.2%) before the write.
+
+**A vacuous guard in my own copy script, recorded because it is the day's pattern and not because it changed the
+outcome:** I gated the copy on `df -Pk /global/homes/...`, which reported **22.8 TiB available** — the raw GPFS
+filesystem, *not* the 40 GiB quota that actually binds. **The refusal could not have fired**, and would have
+passed a home directory at 100% of quota. The decision was still correct, taken from the `myquota` output
+printed beside it — but the CHECK measured the wrong quantity, which is `BEN-473`'s shape (the convenient number
+rather than the governing one) inside a script guarding against exactly that.
 
 **A byte figure I published at the wrong scope, corrected here:** I first reported `7,908,032 bytes` for
 `w_nominal/`. That was `du -sb` on **`training/`**, its parent, which at the time contained only `w_nominal`.
