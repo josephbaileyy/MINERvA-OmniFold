@@ -25,6 +25,7 @@ language; terminal and deferred records never enter this page.
 | OI-128 | WAITING-JOSEPH | UNASSIGNED → Joseph | safety/P2 | Designate an accountable owner, then: put the adopter on the protected execution surface and move the gate-name constant to the shared protected module. | docs/OPEN_ITEMS.md (`OI-128`) |
 | OI-70 | WAITING-JOSEPH | UNASSIGNED — repo infrastructure → Joseph | infrastructure/P1 | Designate an accountable owner, then: fix manifest tracking semantics so ignored and merely intended paths cannot masquerade as committed repository inventory. | docs/OPEN_ITEMS.md (`OI-70`) |
 | OI-73 | WAITING-JOSEPH | UNASSIGNED — repo infrastructure → Joseph | infrastructure/P1 | Designate an accountable owner, then: correct the live-state.json lifecycle classification and distinguish authored input from generated output. | docs/OPEN_ITEMS.md (`OI-73`) |
+| OI-135 | BLOCKED-EXTERNAL | lane E (execution / freezes / submissions) | infrastructure/P1 | Swap the watcher response path from an LLM resume to the tested email script, then retire the r3 watch add-then-retire. | docs/OPEN_ITEMS.md (`OI-135`); docs/orchestration/watch_report_train_run.py |
 
 ## Machine-enforced contract
 

@@ -13,3 +13,4 @@ OI-129	OI-129	-	standard_p4	provenance	P2	Digest the projected covariance and re
 OI-130	OI-130	-	unassigned	publication	P2	Enumerate quoted values to artifacts and preservation status, then remediate by evidence class.	docs/OPEN_ITEMS.md (`OI-130`)
 OI-70	OI-70	-	repo_infra	infrastructure	P1	Fix manifest tracking semantics so ignored and merely intended paths cannot masquerade as committed repository inventory.	docs/OPEN_ITEMS.md (`OI-70`)
 OI-73	OI-73	-	repo_infra	infrastructure	P1	Correct the live-state.json lifecycle classification and distinguish authored input from generated output.	docs/OPEN_ITEMS.md (`OI-73`)
+OI-135	OI-135	-	lane_e	infrastructure	P1	Swap the watcher response path from an LLM resume to the tested email script, then retire the r3 watch add-then-retire.	docs/OPEN_ITEMS.md (`OI-135`); docs/orchestration/watch_report_train_run.py
