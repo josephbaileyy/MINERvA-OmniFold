@@ -22,6 +22,16 @@ REPO = HERE.parents[1]
 DEFAULT_CONFIG = HERE / "state" / "live-state.json"
 DEFAULT_OUTPUT = HERE / "LIVE-STATE.md"
 MAX_LINES = 120
+# Kinds whose watch has a SLURM SUBJECT that can be checked for existence.
+WATCH_SUBJECT_KINDS = {"slurm-job", "slurm-array"}
+# Used only when the managed scrontab block cannot be read or parsed, and always
+# rendered with the word "assumed" so it is never mistaken for an observation.
+# It matches `wakerctl cron --interval-minutes`' default (wakerctl.py argparse).
+ASSUMED_TICK_INTERVAL_MINUTES = 5
+# Three severities, because two are not enough: a check that can only say
+# PASS/FAIL has to call "I could not look" one of them, and BEN-323 is what
+# happens when it picks PASS.
+QUIET, NO_EVIDENCE, LOUD = "quiet", "no-evidence", "loud"
 
 
 def utc_now() -> str:
@@ -96,6 +106,218 @@ def codex_capacity(usage: dict[str, Any], profile: str) -> str:
     return f"{remaining}% weekly remaining; reset {reset}; Full resets {available} available/{protected} protected"
 
 
+
+# ---------------------------------------------------------------------------
+# Wake-section health.
+#
+# EVERY verdict below is computed by calling wakerctl's own checks -- never by
+# reimplementing them here. The renderer and the evaluator must not be able to
+# disagree about whether a watch's subject exists or whether the ticker is
+# alive; two implementations of one predicate diverge, and the divergence is
+# invisible precisely because both look right in isolation. So this module owns
+# the WORDS and wakerctl owns the JUDGEMENT.
+
+
+def _wakerctl():
+    """Imported lazily: the non-waker wake path must not pay for it."""
+    import wakerctl
+
+    return wakerctl
+
+
+def classify_problems(problems: list[str]) -> str:
+    """QUIET (no problems) / NO_EVIDENCE (only unobservability) / LOUD (a finding).
+
+    A `NO EVIDENCE:` line means the check could not run. Silence and NO EVIDENCE
+    must never render the same way -- that conflation is BEN-323, where an
+    unreachable Slurm rendered as **ACTIVE** for 24 h.
+    """
+    wakerctl = _wakerctl()
+    if not problems:
+        return QUIET
+    if all(str(item).startswith(wakerctl.NO_EVIDENCE_PREFIX) for item in problems):
+        return NO_EVIDENCE
+    return LOUD
+
+
+def safe_health_call(function, *args) -> list[str]:
+    """Run a wakerctl health check, converting unreachability into NO EVIDENCE.
+
+    This generator is routinely run from a Mac with no `squeue`, `sacct` or
+    `scrontab` on PATH, and wakerctl's checks call `ctx.runner` directly, so a
+    missing binary surfaces as FileNotFoundError rather than a return code. A
+    crash here would take the whole dashboard down; a swallowed exception would
+    render as health. Neither is acceptable, so it becomes NO EVIDENCE.
+    """
+    wakerctl = _wakerctl()
+    try:
+        return list(function(*args))
+    except OSError as exc:
+        return [wakerctl.no_evidence(f"{type(exc).__name__}: {exc} (this host cannot query the scheduler)")]
+    except Exception as exc:  # noqa: BLE001 -- an unassessable check is NO EVIDENCE, never PASS
+        return [wakerctl.no_evidence(f"check raised {type(exc).__name__}: {exc}")]
+
+
+def age_phrase(seconds: float) -> str:
+    if abs(seconds) >= 7200:
+        return f"{seconds / 3600.0:.1f} h"
+    return f"{seconds / 60.0:.0f} min"
+
+
+def watch_subject_text(watch: dict[str, Any]) -> str:
+    """The watch's SUBJECT: job id, the `tasks` spec AS WRITTEN, and its expansion.
+
+    Until 2026-08-19 a watch rendered as `id`(kind:state) and nothing else, so
+    `gate5-do-train-57266000-r2` displayed as `armed` for ~45 h while its
+    params were {"job_id": "57266000", "tasks": "1"} against an array whose only
+    task is index 0. `tasks` is a task-id SPEC and never a count --
+    expand_spec("1") == [1] -- and the expansion is printed here because that
+    single fact is what nobody could see. A stored `state` field is not a
+    liveness claim (BEN-456, BEN-478).
+    """
+    kind = watch.get("kind")
+    if kind not in WATCH_SUBJECT_KINDS:
+        return ""
+    params = watch.get("params")
+    if not isinstance(params, dict):
+        # wakerctl.status() projects watches to six keys and `params` is not one
+        # of them, so this is what a status-only record looks like.
+        return "; subject=UNKNOWN (this record carries no `params`)"
+    job_id = str(params.get("job_id", "")).strip() or "<missing>"
+    if kind != "slurm-array":
+        return f"; subject=job {job_id}"
+    raw = str(params.get("tasks", ""))
+    try:
+        expanded = expand_spec(raw)
+    except ValueError as exc:
+        return f"; subject=job {job_id} tasks={raw!r} INVALID SPEC ({exc})"
+    return f"; subject=job {job_id} tasks={raw!r} -> task ids {expanded}"
+
+
+def watch_subject_verdict(watch: dict[str, Any], waker_ctx) -> tuple[str, str]:
+    """Is this watch's subject OBSERVABLE? Delegated to wakerctl entirely.
+
+    `wakerctl.watch_subject_problems` builds its snapshot with
+    `slurm_array_status.build_snapshot`, the same function `evaluate()` uses, so
+    the render cannot disagree with the evaluator.
+    """
+    if waker_ctx is None:
+        return NO_EVIDENCE, "NO EVIDENCE its subject exists: Slurm was not asked in this run"
+    wakerctl = _wakerctl()
+    problems = safe_health_call(wakerctl.watch_subject_problems, waker_ctx, watch)
+    severity = classify_problems(problems)
+    detail = " | ".join(str(item) for item in problems)
+    if severity == QUIET:
+        return QUIET, "subject OBSERVED in Slurm"
+    if severity == NO_EVIDENCE:
+        return NO_EVIDENCE, f"{detail} -- NOT a claim the subject exists"
+    return LOUD, f"**\u26a0 {detail}**"
+
+
+def render_watch(watch: dict[str, Any], waker_ctx) -> tuple[str, str]:
+    """(severity, rendered) for one watch. Never renders `state` alone."""
+    wakerctl = _wakerctl()
+    watch_id = watch.get("watch_id") or "<no-watch_id>"
+    kind = watch.get("kind")
+    state = wakerctl.watch_state(watch) or "<no-state>"
+    body = f"`{watch_id}`({kind}:{state}{watch_subject_text(watch)}"
+    if kind not in WATCH_SUBJECT_KINDS:
+        return QUIET, body + ")"
+    # WHOLE-FIELD equality, never a substring: "disarmed" CONTAINS "armed", and a
+    # `grep -c '<job>.*armed'` health check has already reported 2 armed watches
+    # for a job that had one armed and one disarmed (2026-08-19).
+    if not wakerctl.is_armed(watch):
+        return QUIET, body + "; not armed, so its subject was not probed)"
+    severity, verdict = watch_subject_verdict(watch, waker_ctx)
+    return severity, f"{body}; {verdict})"
+
+
+def safe_load_watches(waker_ctx) -> list[dict[str, Any]]:
+    try:
+        return _wakerctl().load_watches(waker_ctx)
+    except OSError:
+        return []
+
+
+def tick_interval_minutes(waker_ctx) -> tuple[int, str]:
+    """(minutes, how we know) -- parsed from the managed scrontab block if readable."""
+    wakerctl = _wakerctl()
+    fallback = (
+        ASSUMED_TICK_INTERVAL_MINUTES,
+        f"{ASSUMED_TICK_INTERVAL_MINUTES} m ASSUMED (the managed scrontab block was not readable here)",
+    )
+    if waker_ctx is None:
+        return fallback
+    try:
+        lines, _ = wakerctl.read_scrontab_lines(waker_ctx)
+    except OSError:
+        return fallback
+    if lines is None:
+        return fallback
+    interval = wakerctl.cron_interval_minutes(lines)
+    if interval is None:
+        return fallback
+    return interval, f"{interval} m from the managed scrontab block"
+
+
+def tick_line(last_tick: dict[str, Any], waker_ctx) -> tuple[str, str]:
+    """(severity, the `Last tick:` bullet) -- a VERDICT, not a transcription.
+
+    Before 2026-08-19 this printed `Last tick: {at_utc}` verbatim. On that day it
+    would have read 2026-08-17T15:05:14+00:00 against a wall clock of
+    2026-08-19T12:40Z: the number that proved the supervision net was dead had
+    been on the repo's first-read page, unjudged, for two days (ISSUE-52 --
+    WAKER.md:52 already stated the rule in prose, and a rule that exists only as
+    prose is not a control).
+
+    BEN-199 governs the shape: the FRESH case is quiet and unalarming, because a
+    check with no passing state is a check nobody reads.
+    """
+    wakerctl = _wakerctl()
+    stamp = last_tick.get("at_utc", "never")
+    node = last_tick.get("node", "unknown")
+    prefix = f"- Last tick: {stamp} on {node}"
+    suffix = " (scrontab is the supervision net; see WAKER.md)"
+    interval, interval_source = tick_interval_minutes(waker_ctx)
+    multiplier = wakerctl.DEFAULT_CRON_STALE_MULTIPLIER
+    if waker_ctx is not None:
+        multiplier = float(waker_ctx.config.get("cron_stale_multiplier", multiplier))
+    bound = f"bound {interval * multiplier:.0f} min = {interval_source} x {multiplier:g}"
+
+    age = None
+    if waker_ctx is not None and stamp not in (None, "", "never"):
+        try:
+            age = waker_ctx.now() - wakerctl.parse_utc(str(stamp))
+        except (TypeError, ValueError):
+            age = None
+    age_text = f"{age_phrase(age)} old" if age is not None else "age NOT COMPUTABLE from this stamp"
+
+    if waker_ctx is None:
+        return NO_EVIDENCE, (
+            f"{prefix} -- **NO EVIDENCE ABOUT THE TICKER, AND THAT IS NOT A LIVENESS CLAIM**: this"
+            f" run had no waker state dir, so neither the tick receipt nor the scrontab was read"
+            f" and this timestamp is UNJUDGED.{suffix}"
+        )
+    # One call covers all three a0a31176 control-plane checks that bear on the
+    # ticker: the managed block's presence, `check_cron_job_runnable` (is the
+    # scron job RUNNABLE in Slurm, not merely scheduled), and
+    # `check_tick_freshness` (is the heartbeat younger than its own interval).
+    problems = safe_health_call(wakerctl.check_cron_ticker, waker_ctx)
+    severity = classify_problems(problems)
+    if severity == QUIET:
+        return QUIET, f"{prefix} -- FRESH, {age_text}; {bound}; scron tick job runnable.{suffix}"
+    detail = " | ".join(str(item) for item in problems)
+    if severity == NO_EVIDENCE:
+        return NO_EVIDENCE, (
+            f"{prefix} -- **NO EVIDENCE ABOUT THE TICKER -- NOT A LIVENESS CLAIM** ({age_text};"
+            f" {bound}): {detail}{suffix}"
+        )
+    return LOUD, (
+        f"{prefix} -- **\u26a0 SUPERVISION NET NOT HEALTHY: {age_text}; {bound}. {detail}"
+        f" Treat no watch below as supervised.**{suffix}"
+    )
+
+
 def render(
     config: dict[str, Any],
     sessions: dict[str, Any],
@@ -105,6 +327,7 @@ def render(
     git_state: dict[str, Any],
     wake_state: dict[str, Any],
     observed_at: str,
+    waker_ctx=None,
 ) -> str:
     owners = validate_owners(config, sessions)
     lines = [
@@ -178,18 +401,51 @@ def render(
     lines.extend(["", "## Wake", ""])
     if "waker_status" in wake_state:
         waker = wake_state["waker_status"]
-        watches = ", ".join(
-            f"`{w['watch_id']}`({w['kind']}:{w.get('state')})" for w in waker.get("watches", [])
-        ) or "none"
+        # `wakerctl.status()` projects each watch to six keys and `params` is NOT
+        # among them, so the full records are re-read here: without them this
+        # section can only ever show `state`, which is the defect being fixed.
+        full: dict[str, dict[str, Any]] = {}
+        if waker_ctx is not None:
+            for record in safe_load_watches(waker_ctx):
+                full[str(record.get("watch_id"))] = record
+        rendered, severities = [], []
+        for projected in waker.get("watches", []):
+            watch = full.get(str(projected.get("watch_id"))) or projected
+            severity, text = render_watch(watch, waker_ctx)
+            severities.append(severity)
+            rendered.append(text)
+        watches = ", ".join(rendered) or "none"
         events = ", ".join(
             f"`{e['event_id']}`:{e['state']}" for e in waker.get("events", [])
         ) or "none"
         last_tick = waker.get("last_tick") or {}
+        tick_severity, tick_text = tick_line(last_tick, waker_ctx)
+        if LOUD in severities or tick_severity == LOUD:
+            lines.extend([
+                "> **\u26a0 THE SUPERVISION NET IS NOT HEALTHY IN THIS SNAPSHOT.** An armed watch"
+                " whose subject Slurm does not have, or a ticker that is stale or not runnable,"
+                " means NOTHING WILL WAKE ANYONE when the job below ends -- and the watch will"
+                " still read `armed`. A watch on a nonexistent task cannot reach"
+                " `slurm-array-complete` in either direction: it counts unreliable ticks to"
+                " `max_unreliable` and emits `monitor-error` (BEN-456, BEN-478). Re-arm the watch"
+                " with the correct `params`, or release/reinstall the tick job, before treating"
+                " any row here as supervised.",
+                "",
+            ])
+        elif NO_EVIDENCE in severities or tick_severity == NO_EVIDENCE:
+            lines.extend([
+                "> **THIS SECTION IS NOT A LIVE VIEW IN THIS SNAPSHOT.** One or more entries read"
+                " `NO EVIDENCE`, which means this host could not reach the scheduler or the waker"
+                " state dir -- **not** that the watch is fine and **not** that the ticker is"
+                " alive. Regenerate from a host with Slurm and the waker state dir to make this"
+                " section evidence.",
+                "",
+            ])
         lines.extend(
             [
                 f"- wakerctl watches: {watches}",
                 f"- wakerctl events: {events}",
-                f"- Last tick: {last_tick.get('at_utc', 'never')} on {last_tick.get('node', 'unknown')} (scrontab is the supervision net; see WAKER.md)",
+                tick_text,
                 f"- Resume target: `{config['orchestrator_thread_id']}` with goals disabled and full-access flag.",
             ]
         )
@@ -329,10 +585,12 @@ def main() -> int:
             }
         )
     wake = config["wake"]
+    waker_ctx = None
     if wake.get("waker"):
         import wakerctl
 
-        wake_state = {"waker_status": wakerctl.status(wakerctl.Ctx())}
+        waker_ctx = wakerctl.Ctx()
+        wake_state = {"waker_status": wakerctl.status(waker_ctx)}
     else:
         tmux_rc = subprocess.run(["tmux", "has-session", "-t", wake["tmux_session"]], capture_output=True).returncode
         wake_state = {
@@ -345,7 +603,9 @@ def main() -> int:
         "head": run_text(["git", "rev-parse", "--short", "HEAD"]).strip(),
         "dirty_count": len(run_text(["git", "status", "--short"]).splitlines()),
     }
-    output = render(config, sessions, usage, usage_rc, jobs, git_state, wake_state, utc_now())
+    output = render(
+        config, sessions, usage, usage_rc, jobs, git_state, wake_state, utc_now(), waker_ctx=waker_ctx
+    )
     if args.stdout:
         print(output)
     else:

@@ -50,9 +50,15 @@ class LiveStateTests(unittest.TestCase):
             }
         }
         text = render(config, sessions, usage, 3, jobs, {"head": "abc", "dirty_count": 1}, wake_state, "now")
-        self.assertIn("wakerctl watches: `w1`(slurm-job:armed)", text)
+        # A status-only record (no waker_ctx) can render neither the subject nor a
+        # verdict, so it must render NO EVIDENCE -- never a bare `kind:state`, which
+        # is what taught two sessions that an unfireable watch was healthy.
+        # Full coverage of both directions: test_generate_live_state_watch_health.py.
+        self.assertIn("wakerctl watches: `w1`(slurm-job:armed;", text)
+        self.assertIn("NO EVIDENCE its subject exists", text)
         self.assertIn("`evt-w1`:resumed", text)
         self.assertIn("Last tick: now on login11", text)
+        self.assertIn("UNJUDGED", text)
         self.assertLessEqual(len(text.splitlines()), MAX_LINES)
 
     def test_uuid_mismatch_fails(self):
