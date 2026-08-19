@@ -83,6 +83,28 @@ def git_head():
     ).strip()
 
 
+def _checkpoint_witness(ckpt_dir):
+    """name -> {size_bytes, mtime_utc} for every file in `ckpt_dir`, sorted. NO assertions.
+
+    Deliberately tolerant: a missing directory yields `[]` rather than raising. A WITNESS THAT CAN FAIL THE RUN
+    IS A CHECK, and this is not authorized to be one -- the receipt write is the step that has never completed,
+    so nothing added to it here may be able to prevent that.
+    """
+    try:
+        entries = sorted(p for p in ckpt_dir.iterdir() if p.is_file())
+    except OSError:
+        return []
+    out = []
+    for p in entries:
+        try:
+            st = p.stat()
+        except OSError:
+            continue
+        out.append({"name": p.name, "size_bytes": int(st.st_size),
+                    "mtime_utc": dt.datetime.fromtimestamp(st.st_mtime, dt.timezone.utc).isoformat()})
+    return out
+
+
 def read_replica_target_receipt(target_npy, receipt_path, inputs_npz, bootstrap_seed,
                                 replica_index):
     try:
@@ -708,6 +730,26 @@ def main(argv=None):
             "loader": {"path": str(Path(fe.__file__).resolve()), "sha256": sha256_file(fe.__file__)},
         },
         "timing": {"total_seconds": time.monotonic() - started},
+        # A WITNESS, NOT A CHECK, AND THE DIFFERENCE IS THE WHOLE POINT.
+        #
+        # `BEN-477`: nothing binds a checkpoint to the run that wrote it. The read-back checks the two finals by
+        # path and existence and then asserts set equality on FILENAMES, so a directory left by a FAILED run is
+        # already "complete" -- measured, 14 of 14 expected names after `57256638_0` died at this very write.
+        #
+        # The fix is to record DIGESTS and re-verify them (`OI-133`). That is deliberately NOT what this is. It
+        # changes the artifact schema, and this receipt write is the one step that has never once been observed
+        # completing -- so changing the schema now would mean a run testing a new schema and a new guard at the
+        # same time, with no way to tell which failed. Ruling: land digests AFTER one receipt exists.
+        #
+        # So this records mtimes and sizes as PLAIN DATA with NO VERIFICATION SEMANTICS. Nothing reads it,
+        # nothing asserts on it, and it must not be described as a fix -- its only job is to give the digest
+        # binding, when it lands, ONE PRIOR RUN to be checked against. A witness that got called a check would
+        # be worse than no witness.
+        "checkpoint_witness": {
+            "semantics": "PLAIN DATA. Nothing verifies this. See BEN-477 / OI-133.",
+            "dir": str(Path(args.output).resolve().parent / "w_nominal"),
+            "files": _checkpoint_witness(Path(args.output).resolve().parent / "w_nominal"),
+        },
     }
     write_json(args.train_receipt, receipt)
     print(json.dumps({

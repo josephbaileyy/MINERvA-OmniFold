@@ -2,6 +2,18 @@
 
 *Lane E, 2026-08-19. `BEN-476`. Campaign `EP-2026-08-17-data-only-cstat`.*
 
+## THE HEADLINE, WHICH IS NOT THE SEED
+
+**A guard cited a predicate as its authority, and the predicate does not say what the guard claimed.** The seed
+policy is how it was found; the citation is what a reader should take away, because a wrong citation converts a
+bug into an argument with an absent author — and someone would have gone and had it.
+
+The failure text ended `(P6)`. P6 is a NAMING rule. I enforced it as an ABSENCE rule and put the citation in
+the message, so the guard asserted an authority that never granted it. **Every guard message in this repo that
+names an authority is suspect until that authority is read. Better no citation than a wrong one.**
+
+The rest of this document is how that happened and what it cost.
+
 ## What happened
 
 `57256638_0` -- the third single-member training smoke of the data-only C_stat product -- ran for
@@ -111,8 +123,8 @@ fires and all 77 sites execute.** The partition's premise is void and it must be
 
 ## Checks to steal
 
-1. **Before asserting a key's absence, find its writer.** `git grep` the key name in the PINNED set first. An
-   absence rule is a claim about a producer, and it is cheapest to check there.
+1. **BEFORE ENFORCING AN ABSENCE, GREP FOR THE THING YOU ARE FORBIDDING. If the tree is full of it, your reading is wrong — not the tree.** Here a genuine absence rule would already have been violated **50 times, one file away**, in the target receipts of all 50 ACCEPTED members. That disproof cost one
+   `git grep` and existed the whole time. The narrower form: an absence rule is a claim about a PRODUCER, so check the producer's source first, and check the pinned set before your own.
 2. **When a guard cites a predicate, re-read the predicate at write time.** A naming rule is not an absence
    rule.
 3. **Never build a fixture from the rule under test.** Build it from what the producer emits.

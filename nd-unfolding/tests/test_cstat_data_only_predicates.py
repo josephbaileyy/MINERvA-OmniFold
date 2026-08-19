@@ -2601,5 +2601,65 @@ class MainGuardPosition(unittest.TestCase):
                          + "; ".join(offenders))
 
 
+class CheckpointWitness(unittest.TestCase):
+    """`BEN-477`'s witness: PLAIN DATA in the receipt, and the controls assert that it stays plain.
+
+    The digest binding that would actually close `BEN-477` is `OI-133` and is deliberately deferred -- the
+    receipt write is the one step never observed completing, so changing its schema and its guard in the same
+    run would leave no way to tell which failed. What lands now is a witness, and a witness that grew
+    verification semantics would be the defect it exists to prepare for.
+    """
+
+    def _mod(self):
+        sys.path.insert(0, str(PET))
+        import train_fullevent_replica as tr
+        return tr
+
+    def test_a_missing_directory_yields_empty_and_does_NOT_raise(self):
+        """THE PROPERTY THAT KEEPS IT A WITNESS. It is executed during the receipt write -- the exact step that
+        has failed three times -- so anything here that can raise can kill a 3 h run for a diagnostic."""
+        tr = self._mod()
+        with tempfile.TemporaryDirectory() as d:
+            self.assertEqual(tr._checkpoint_witness(Path(d) / "does-not-exist"), [])
+
+    def test_it_records_name_size_and_mtime_for_each_file(self):
+        tr = self._mod()
+        with tempfile.TemporaryDirectory() as d:
+            ck = Path(d) / "w_nominal"
+            ck.mkdir()
+            (ck / "OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5").write_bytes(b"x" * 11)
+            (ck / "OmniFold_fe_nominal_nominal_iter2_step1.pkl").write_bytes(b"yy")
+            got = tr._checkpoint_witness(ck)
+        self.assertEqual([r["name"] for r in got],
+                         ["OmniFold_fe_nominal_nominal_iter2_step1.pkl",
+                          "OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5"])
+        self.assertEqual([r["size_bytes"] for r in got], [2, 11])
+        for r in got:
+            self.assertTrue(r["mtime_utc"].endswith("+00:00"), r["mtime_utc"])
+
+    def test_a_SUBDIRECTORY_is_not_reported_as_a_file(self):
+        tr = self._mod()
+        with tempfile.TemporaryDirectory() as d:
+            ck = Path(d) / "w_nominal"
+            (ck / "nested").mkdir(parents=True)
+            (ck / "a.pkl").write_bytes(b"z")
+            self.assertEqual([r["name"] for r in tr._checkpoint_witness(ck)], ["a.pkl"])
+
+    def test_NOTHING_ASSERTS_ON_THE_WITNESS(self):
+        """The control that makes 'witness, not check' falsifiable rather than a claim in a comment. If a later
+        edit reads `checkpoint_witness` inside a validator or a read-back, this fails -- which is the moment the
+        deferral in `OI-133` would have been quietly undone."""
+        for name in ("cstat_data_only.py", "cstat_data_only_readback.py",
+                     "validate_gate5_data_only_artifacts.py"):
+            src = (Path(PET) / name).read_text()
+            self.assertNotIn("checkpoint_witness", src,
+                             f"{name} reads the witness; it is PLAIN DATA and nothing may verify it (OI-133)")
+
+    def test_the_receipt_records_the_witness_under_a_self_describing_key(self):
+        src = (Path(PET) / "train_fullevent_replica.py").read_text()
+        self.assertIn('"checkpoint_witness"', src)
+        self.assertIn("PLAIN DATA. Nothing verifies this.", src)
+
+
 if __name__ == "__main__":
     unittest.main()

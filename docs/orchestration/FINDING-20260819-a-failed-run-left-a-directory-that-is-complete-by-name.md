@@ -14,7 +14,7 @@ Taken from the cluster in the same turn as this finding:
   absent   training/GATE5_REPLICA_TRAINING_RECEIPT.json
   absent   training/GATE5_REPLICA_TRAINING_RECEIPT.json.done
 === EVERYTHING ELSE under training/:
-  14 files, 7,908,032 bytes under w_nominal/
+  14 files, 7,903,936 bytes under w_nominal/
 ```
 
 And `expected_checkpoints()` expects **exactly those 14 names** — verified by running it:
@@ -60,9 +60,9 @@ The finals are written **last**. That makes them, simultaneously:
 A later run that died before writing `iter2_step*_final.weights.h5` would present a directory with 14 correct
 names, fresh non-finals from itself, and **finals from a different run** — and every check would pass.
 
-## What was checked and is NOT live, recorded so nobody re-derives it
+## A LIVE HAZARD HELD OFF BY ONE DEFAULT ARGUMENT (not "checked, not live" — that reads as closed)
 
-Cross-run contamination through `omnifold.py`'s `LoadStart` — which does
+Cross-run contamination through `omnifold.py`'s `LoadStart` is **not reachable today, and nothing about the code prevents it** — it is held off by a default argument that nobody has had a reason to change yet. Stating it as *"checked, not live"* would be true and would get it read as closed. `LoadStart` does
 `temp1.load_weights(model1_name)  #better starting point for model 1` — is **not reachable here**:
 
 | link | evidence |
@@ -86,6 +86,31 @@ attempt — against a **committed** tree, because the controller refuses to run 
 **That closes re-runs through the controller and nothing else.** The durable fix is to record the 14
 checkpoint digests in the receipt and re-verify them at read-back, so completeness becomes a claim about
 **content**; it changes the artifact schema, so it is proposed rather than done (`OI-133`).
+
+## Where the evidence lives
+
+The 14 files were **QUARANTINED, NOT DELETED** — moved on 2026-08-19 to
+
+    /pscratch/sd/j/josephrb/gate5-do-g2-evidence/BEN-477-57256638_0/
+
+with a `README.txt` beside it. **14 files and 7,903,936 bytes verified on both sides of the move**, and the
+member's `training/` verified empty afterwards. They are this finding's only physical evidence: a checkpoint set
+that is complete by name and was produced by a failed run.
+
+**NOT inside `training/`, and the proposed path there was withdrawn for a measured reason:** the read-back
+asserts an EXACT SET over `train_dir.iterdir()` (`cstat_data_only_readback.py:388-390`), and `iterdir()` returns
+**directories**, so a quarantine sibling named `w_nominal.FAILED-…` would become `unexpected` and fail the next
+run's read-back. That check is correct and was not weakened to make room for evidence — the evidence moved
+instead, to outside the DATA ROOT, where no data-root walk reaches it.
+
+**Purge exposure, stated rather than assumed:** `/pscratch` is purgeable. 7.9 MB is small enough to copy off
+scratch if this evidence is to be durable. That has **not** been done and is not implied by the move.
+
+**A byte figure I published at the wrong scope, corrected here:** I first reported `7,908,032 bytes` for
+`w_nominal/`. That was `du -sb` on **`training/`**, its parent, which at the time contained only `w_nominal`.
+The directory's own total is **7,903,936**. The claim was true of a different object than the one it named —
+which is the same defect shape as everything else in this pair, one level down and with no consequence beyond
+the number.
 
 ## Check to steal
 
