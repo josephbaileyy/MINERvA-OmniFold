@@ -9,6 +9,8 @@
 # RE-UNFOLDS (5-iter LightGBM OmniFold) on the 5D bank -> the nonlinear cross-band
 # covariance the block-sum drops. Incremental save per throw (slab survives a kill).
 set -eo pipefail
+_HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${_HERE}/lib_substitution_fence.sh"; mr_fence_unhooked   # S1: unhooked launcher, refuse during a scan
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"; mkdir -p uq_5d/uthrow_slabs_5d
 OFF=$(( SLURM_ARRAY_TASK_ID * 8 ))

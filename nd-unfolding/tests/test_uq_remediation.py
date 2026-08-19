@@ -3102,5 +3102,138 @@ class RecomputabilityIsADeclaredAttribute(unittest.TestCase):
                 self.assertIn(key, self.B.RECOMPUTABILITY,
                               f"{key} is RECOMPUTE_REQUIRED with no declared recomputability")
 
+
+class SubstitutionFenceS1(unittest.TestCase):
+    """S1. The driver's `preflight_launcher()` was TAUTOLOGICAL -- called only on names from the driver's
+    own allowlist, so it verified that the launchers it chose are the launchers it chose. And the driver
+    does not submit; the printed commands execute outside it. C ruled the fence moves INTO the launchers,
+    because THE ONLY PLACE A SUBSTITUTION CAN BE CAUGHT IS INSIDE THE THING SUBSTITUTED IN.
+    """
+
+    def _sh(self):
+        import subprocess
+        out = subprocess.run(["git", "ls-files", "nd-unfolding/*.sh"], capture_output=True, text=True,
+                             cwd=str(ND.parent)).stdout.split()
+        return {f: (ND.parent / f).read_text(errors="replace") for f in out}
+
+    def _partition(self):
+        hooked, fenced, both, neither = [], [], [], []
+        for f, t in self._sh().items():
+            h, fe = "mr_require_valid_offset" in t, "mr_fence_unhooked" in t
+            (both if (h and fe) else hooked if h else fenced if fe else neither).append(f)
+        return sorted(hooked), sorted(fenced), sorted(both), sorted(neither)
+
+    def test_ALL_NINE_hazard_launchers_carry_the_fence(self):
+        import seed_offset_policy as sp
+        _, fenced, _, _ = self._partition()
+        self.assertEqual(set(fenced), {str(x) for x in sp.FROZEN_SUBSTITUTION_HAZARDS})
+        self.assertEqual(len(fenced), 9,
+                         "NINE, not six -- measured from FROZEN_SUBSTITUTION_HAZARDS rather than "
+                         "recalled from a message")
+
+    def test_the_two_sets_are_DISJOINT(self):
+        """A launcher in both would be asserting it has an offset hook AND that it has none."""
+        _, _, both, _ = self._partition()
+        self.assertEqual(both, [], f"launchers in BOTH sets: {both}")
+
+    def test_the_HOOKED_set_is_EXACTLY_the_driver_legs_plus_the_library(self):
+        """Closed-set on the other side. The library DEFINES mr_require_valid_offset and is not a
+        launcher; every one of the driver's seven legs must be hooked, and nothing else may be."""
+        import mii_seed_offset_driver as d
+        hooked, _, _, _ = self._partition()
+        vals = list(d.LEG_LAUNCHERS.values())
+        flat = []
+        for v in vals:
+            flat.extend(v if isinstance(v, (list, tuple)) else [v])
+        legs = {f if f.startswith("nd-unfolding/") else "nd-unfolding/" + f for f in map(str, flat)}
+        self.assertEqual(len(legs), 7)
+        self.assertEqual(set(hooked) - legs, {"nd-unfolding/lib_member_resume.sh"})
+        self.assertEqual(legs - set(hooked), set(), "every leg launcher must require a valid offset")
+
+    def test_the_UNCLASSIFIED_REMAINDER_IS_PINNED_because_it_is_the_real_exposure(self):
+        """245 tracked shell files are in NEITHER set, and that number is the honest statement of what
+        S1 does NOT cover.
+
+        THE FENCE IS ONLY AS GOOD AS THE HAZARD LIST. `FROZEN_SUBSTITUTION_HAZARDS` is nine files
+        somebody enumerated; the other 245 are unreviewed, and any of them that writes a canonical
+        product would be an unfenced substitution. Pinning the count means the remainder cannot GROW
+        silently -- a new launcher lands in NEITHER and this test reddens, which forces a classification
+        rather than letting the default be "unfenced".
+        """
+        hooked, fenced, both, neither = self._partition()
+        self.assertEqual(len(neither), 245,
+                         "if this moved, a launcher was added or removed and needs classifying as "
+                         "hooked, fenced, or explicitly out of scope")
+        self.assertEqual(len(hooked) + len(fenced) + len(both) + len(neither), 262)
+
+    def test_the_fence_fires_on_a_DECLARATION_including_ZERO_and_EMPTY(self):
+        """DECLARED-AT-ALL, not truthy, and the k=0 case is the one worth arguing.
+
+        An unhooked launcher at k=0 writes to the CANONICAL paths, so it would collide with the
+        published archive rather than produce an anchor member. The anchor IS a member and must come
+        from a hooked launcher like every other one. Set-but-empty is included because that exact
+        disagreement -- `${VAR+x}` vs `${VAR:-0}` -- already bit the member library once.
+        """
+        import subprocess
+        script = 'source ./lib_substitution_fence.sh; mr_fence_unhooked; echo CONTINUED'
+        for decl in ("0", "", "1200", "-600"):
+            with self.subTest(decl=decl):
+                r = subprocess.run(["bash", "-c", script], capture_output=True, text=True,
+                                   cwd=str(ND), env=dict(os.environ, MNV_EST_SEED_OFFSET=decl))
+                self.assertEqual(r.returncode, 3, f"decl={decl!r} must refuse: {r.stdout}{r.stderr}")
+                self.assertNotIn("CONTINUED", r.stdout, "and it must not fall through")
+                self.assertIn("REFUSING TO RUN", r.stderr)
+
+    def test_the_fence_is_a_NO_OP_when_UNDECLARED(self):
+        """CONTROL, and it is the whole compatibility claim: every non-scan use of these nine launchers
+        is byte-identical in behaviour. Without this the fence could be refusing unconditionally."""
+        import subprocess
+        env = {k: v for k, v in os.environ.items() if k != "MNV_EST_SEED_OFFSET"}
+        r = subprocess.run(["bash", "-c",
+                            'source ./lib_substitution_fence.sh; mr_fence_unhooked; echo CONTINUED'],
+                           capture_output=True, text=True, cwd=str(ND), env=env)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("CONTINUED", r.stdout)
+        self.assertEqual(r.stderr, "", "a no-op must be silent, not merely non-fatal")
+
+    def test_every_fenced_launcher_still_PARSES(self):
+        r"""`bash -n` on all nine. The insertion sits immediately after a standalone `set -` line and
+        NEVER inside a `\`-continued command -- that defect truncated a command to its first line and
+        `bash -n` passed on it, so parsing is necessary and not sufficient. The position is asserted
+        separately below."""
+        import subprocess
+        import seed_offset_policy as sp
+        for rel in sorted(sp.FROZEN_SUBSTITUTION_HAZARDS):
+            with self.subTest(rel=rel):
+                r = subprocess.run(["bash", "-n", str(ND.parent / rel)],
+                                   capture_output=True, text=True)
+                self.assertEqual(r.returncode, 0, r.stderr)
+
+    def test_the_fence_is_not_inside_a_CONTINUED_command(self):
+        r"""The necessary half `bash -n` cannot give. A hook inserted between a `\`-continued command's
+        first line and its continuation makes bash swallow the continuation as a comment: the command
+        truncates, arguments vanish, and the syntax stays valid."""
+        import seed_offset_policy as sp
+        for rel in sorted(sp.FROZEN_SUBSTITUTION_HAZARDS):
+            lines = (ND.parent / rel).read_text(errors="replace").split("\n")
+            i = next(n for n, l in enumerate(lines) if "mr_fence_unhooked" in l)
+            with self.subTest(rel=rel):
+                prev = lines[i - 2].rstrip() if i >= 2 else ""
+                self.assertFalse(prev.endswith("\\"),
+                                 f"{rel}: the line before the fence block is CONTINUED: {prev!r}")
+                self.assertTrue(lines[i - 1].startswith("_HERE="),
+                                f"{rel}: fence not preceded by its own _HERE line")
+
+    def test_the_fence_is_sourced_RELATIVELY_not_through_REPO(self):
+        """BEN-483. A launcher frozen at a sha that sources its fence through the mutable `${REPO}` is
+        not frozen -- the cluster probe failed 16/16 on exactly that, and canonical was 180 commits
+        behind for 27.5 hours today."""
+        import seed_offset_policy as sp
+        for rel in sorted(sp.FROZEN_SUBSTITUTION_HAZARDS):
+            t = (ND.parent / rel).read_text(errors="replace")
+            with self.subTest(rel=rel):
+                self.assertIn('source "${_HERE}/lib_substitution_fence.sh"', t)
+                self.assertNotIn('source "${REPO}/lib_substitution_fence.sh"', t)
+
 if __name__ == "__main__":
     unittest.main()

@@ -8,6 +8,8 @@
 # the bank (already dumped) -> NO omnifile read. skip-if-exists shares progress with the
 # gpu_shared run 55892343 + across nodes. School-acct HOME/ROOT fix inline. NO set -u.
 set -o pipefail
+_HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${_HERE}/lib_substitution_fence.sh"; mr_fence_unhooked   # S1: unhooked launcher, refuse during a scan
 export HOME=/global/homes/j/josephrb
 export ROOT628_PREFIX=/global/homes/j/josephrb/.conda/envs/root_6_28
 REPO=/pscratch/sd/j/josephrb/MINERvA-OmniFold

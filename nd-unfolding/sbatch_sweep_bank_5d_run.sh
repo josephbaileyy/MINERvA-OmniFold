@@ -8,6 +8,8 @@
 # GEANT universes already produced by sbatch_unfold_5d_detector.sh are skipped, so this
 # effectively fills the 169 missing Flux+GENIE vertical universes.
 set -eo pipefail
+_HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${_HERE}/lib_substitution_fence.sh"; mr_fence_unhooked   # S1: unhooked launcher, refuse during a scan
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"
 U=$(sed -n "${SLURM_ARRAY_TASK_ID}p" uq_4d/vertical_universes.txt)

@@ -6,6 +6,8 @@
 # Combine corrected fixed-seed 5D throws + matched block endpoints. --null
 # repeats CV at the identical seed and must be zero; no jitter subtraction.
 set -eo pipefail
+_HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${_HERE}/lib_substitution_fence.sh"; mr_fence_unhooked   # S1: unhooked launcher, refuse during a scan
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"
 python3 unified_throw_cov_5d.py --draw-seed 1000 --estimator-seed 1000 \

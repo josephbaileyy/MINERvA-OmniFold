@@ -7,6 +7,8 @@
 # theta-lifted (--full-phase-space) full-stats PET weights, using the xps-aligned
 # GBDT/PET-pc/W-source inputs. Writes products/pet/fps_envelope_5d_xps/.
 set -eo pipefail
+_HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${_HERE}/lib_substitution_fence.sh"; mr_fence_unhooked   # S1: unhooked launcher, refuse during a scan
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 export ROOT628_PREFIX=/global/homes/j/josephrb/.conda/envs/root_6_28
 source "${REPO}/setup_salloc_env.sh"

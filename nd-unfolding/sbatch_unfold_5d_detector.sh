@@ -21,6 +21,8 @@
 # the 4D 187-universe sweep. Array index 0 = the MATCHED CV (same seed/config, no
 # --universe) that the band differencing requires; 1-18 = detector_universes.txt.
 set -eo pipefail
+_HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${_HERE}/lib_substitution_fence.sh"; mr_fence_unhooked   # S1: unhooked launcher, refuse during a scan
 export PYTHONUNBUFFERED=1
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-32}
 
