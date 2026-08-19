@@ -1,0 +1,103 @@
+diff --git a/nd-unfolding/adopt_unified_5d.py b/nd-unfolding/adopt_unified_5d.py
+index f11b0c6d..8f2b666c 100644
+--- a/nd-unfolding/adopt_unified_5d.py
++++ b/nd-unfolding/adopt_unified_5d.py
+@@ -104,6 +104,15 @@ def main():
+     for _key in ("fixed_seed_null_norm", "joint_mean_shift_norm", "n_throws"):
+         _src = fu.Get(_key)
+         upstream[_key] = _src.GetVal() if _src else None
++    # REMEDY (A): the identity keys, per leg. READ INSIDE EACH FILE'S OWN OPEN WINDOW -- my first version
++    # read both here, and `fc` is not opened until :131 while `fu` closes at :114, so it would have raised
++    # NameError on the first real invocation. `ast.parse` passes on it; only reading the open/close
++    # sequence catches it, and ROOT is absent here so nothing would have executed it locally.
++    _IDENTITY_KEYS = ("estimator_seed", "est_seed_offset", "est_seed_offset_declared")
++    _up_uthrow, _up_combined = {}, {}
++    for _k in _IDENTITY_KEYS:
++        _o = fu.Get(_k)
++        _up_uthrow[_k] = int(_o.GetVal()) if _o else None
+     fu.Close()
+     s_adopt = np.sqrt(np.maximum(vu, vb))               # conservative: never below block baseline
+     sb = np.sqrt(vb)
+@@ -122,6 +131,9 @@ def main():
+ 
+     # --- load C_comb (becomes C_new in place) + the sweep vertical block sum ---
+     fc = ROOT.TFile.Open(args.combined)
++    for _k in _IDENTITY_KEYS:                    # remedy (A), g1 side -- inside fc's open window
++        _o = fc.Get(_k)
++        _up_combined[_k] = int(_o.GetVal()) if _o else None
+     C_new = _th2(fc.Get("hCov_combined5d_total"))
+     assert C_new.shape == (n, n), f"combined dim {C_new.shape} != throw dim {n}"
+     sqrt_tr_comb = float(np.sqrt(np.trace(C_new)))
+@@ -205,6 +217,72 @@ def main():
+     # The centering convention is a property of THIS product and cannot be inferred from the throw
+     # ROOT, which carries both variants' inputs. Record which one was built.
+     centering = "cv-centered" if args.cv_centered else "mean-centered"
++    # ============================== REMEDY (A) ON THE ADOPTED ROOTS ================================
++    # C ruled (A) MANDATORY rather than preferable, and the comparator showed why in the direction that
++    # matters: this writer stamped NO identity key, so a member's adopted root -- the CITABLE artifact
++    # whose digest MVFINAL_j binds -- failed `anchor_identity` UPSTREAM of every payload question. The
++    # gate was UNREACHABLE, not merely unverified.
++    #
++    # THE MEMBER IDENTITY IS SINGLE-VALUED AND COMES FROM THIS PROCESS. Two keys, not a sentinel:
++    # declared=0 means nothing can be concluded about which scan member this is.
++    # FUNCTION-LOCAL, AND IT DOES *NOT* DO WHAT I FIRST CLAIMED. I made it local believing that
++    # would keep `seed_offset_policy` out of the P4 verifier's CODE SURFACE, which my remedy-(A)
++    # import had widened -- breaking two of another lane's pinned counts:
++    #   test_launcher_emits_exactly_the_six_producing_paths  gained nd-unfolding/seed_offset_policy.py
++    #   repair-8's mutation surface                          18 -> 19, same file
++    # MEASURED: THE WALKER SCANS ALL IMPORTS, NOT ONLY MODULE-LEVEL ONES, so both counts still move.
++    # Kept local anyway because it is the right scope for a provenance read, but the widening is
++    # REAL and is another lane's pinned number to re-measure -- not something I can dodge by
++    # nesting an import. Recording the failed mechanism rather than deleting it: a comment that
++    # claims a mechanism which does not work is worse than no comment.
++    import seed_offset_policy
++    _off_declared, _off_value = seed_offset_policy.declared_offset()
++    ROOT.TParameter("int")("est_seed_offset_declared", int(_off_declared)).Write()
++    ROOT.TParameter("int")("est_seed_offset", int(_off_value)).Write()
++
++    # THE ESTIMATOR SEED IS *NOT* SINGLE-VALUED ON THIS PRODUCT AND MUST NOT BE STAMPED AS THOUGH IT WERE.
++    # VL141: "the candidate's estimator seed is NOT one value -- the block sum mixes two". This root
++    # combines the throw leg (g2, 1000+k) with the vertical sweep's covariance (g1, 42+k), so a single
++    # `estimator_seed` key here would be the exact false quotable claim VL141 exists to correct. Both are
++    # propagated, NAMED BY GROUP.
++    for _name, _src in (("g1", _up_combined), ("g2", _up_uthrow)):
++        _v = _src.get("estimator_seed")
++        ROOT.TParameter("int")(f"upstream_estimator_seed_{_name}_checked",
++                              0 if _v is None else 1).Write()
++        if _v is not None:
++            ROOT.TParameter("int")(f"upstream_estimator_seed_{_name}", int(_v)).Write()
++
++    # AND THE TWO LEGS MUST BE THE SAME MEMBER. This check did not EXIST before the analyzer began
++    # stamping: the combined root wrote zero scalars, so g1's offset could not reach here at all. Now a
++    # product assembled from TWO DIFFERENT MEMBERS' legs -- the cross-member contamination the member axis
++    # exists to prevent -- is detectable in the artifact rather than only in the directory layout, which
++    # is the property C refused to rely on when it rejected glob non-recursion as a safety argument.
++    _o1, _o2 = _up_combined.get("est_seed_offset"), _up_uthrow.get("est_seed_offset")
++    if _o1 is not None and _o2 is not None and int(_o1) != int(_o2):
++        raise SystemExit(
++            f"[FAIL] the two legs of this adopted root are DIFFERENT MEMBERS: combined carries "
++            f"est_seed_offset={int(_o1)}, uthrow carries {int(_o2)}. Refusing to write a product that "
++            "mixes members.")
++    if _off_declared and _o1 is not None and int(_o1) != int(_off_value):
++        raise SystemExit(
++            f"[FAIL] this process declares offset {int(_off_value)} but its inputs were built at "
++            f"{int(_o1)}. Refusing to relabel another member's covariance as this one.")
++
++    # ================== C's 11g PRECONDITION: SHIP THE BAR'S OPERAND'S INGREDIENT ==================
++    # `sqrt_tr_old` is the PREDECLARED BAR'S OPERAND and its only ingredient is `hCov_combined5d_total`
++    # inside the 41.44 GB member intermediate that 11g releases. After deletion the scalar would survive
++    # here and its ingredient would not, so BEN-077 could never again be satisfied for it from retained
++    # bytes. `trace(C) == sum(diag(C))`, so the diagonal is sufficient -- and `diag_comb` is ALREADY IN
++    # MEMORY at :128, computed at the moment sqrt_tr_comb is. This is a WRITE, not a computation, and not
++    # even an extra read of the 41 GB file.
++    # SIZE: 10,694 x 8 B = 0.0856 MB. My own earlier figure of 0.527 MB was the 65,856 GRID rather than
++    # the cv>0 SUPPORT -- a grid is not an artifact size.
++    _hdc = ROOT.TH1D("hDiagCombinedOld", "diag of the OLD combined covariance (sqrt_tr_old's ingredient)",
++                     len(diag_comb), 0, len(diag_comb))
++    for _i, _v in enumerate(diag_comb):
++        _hdc.SetBinContent(_i + 1, float(_v))
++    _hdc.Write()
++
+     ROOT.TNamed("centering_convention", centering).Write()
+     ROOT.TNamed("uthrow_source", os.path.basename(args.uthrow)).Write()
+     ROOT.TNamed("combined_source", os.path.basename(args.combined)).Write()

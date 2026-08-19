@@ -213,6 +213,25 @@ ADOPTED_UTHROW = {
     # these keys exist to catch. A third independent argument for C's path ruling, reached from the
     # ROOT keys rather than from globs or the preflight.
     "uthrow_source": CONFIGURATION, "combined_source": CONFIGURATION,
+    # ============ REMEDY (A) ON THIS ARTIFACT IS *BLOCKED*, AND THE TABLE SAYS SO ==================
+    # The keys below are NOT WRITTEN. Remedy (A) on `adopt_unified_5d.py` is implemented and REVERTED,
+    # preserved as docs/orchestration/pending/PENDING-20260819-remedy-A-adopt-blocked-on-ben106-rebinding.patch
+    # -- because ANY edit to that file breaks a receipt sha256 binding owned by
+    # `docs/orchestration/state/ben106-stamp-verify-active-56695424.json`, and the pre-commit hook refuses
+    # the commit. The hook's own instruction is "the owning gate must be deliberately re-run and its
+    # receipt re-issued -- DO NOT JUST UPDATE THE HASH", so this needs a gate re-run, not a lane's edit.
+    #
+    # I ALMOST LEFT THEM CLASSIFIED, WHICH WOULD HAVE BEEN THE WORST DIRECTION. With them present,
+    # `identity_is_checkable("adopted_uthrow.root")` returns True while the writer stamps NOTHING -- a gate
+    # reporting that identity is checkable on an artifact that carries none. A table describing a writer
+    # that does not exist yet is worse than a table admitting the gap.
+    # THEY GO BACK IN THE SAME COMMIT THAT LANDS THE PATCH. A writer change and a table change are one
+    # change, in both directions.
+    #   "est_seed_offset": PROVENANCE, "est_seed_offset_declared": PROVENANCE,
+    #   "upstream_estimator_seed_g1": PROVENANCE, "upstream_estimator_seed_g2": PROVENANCE,
+    #   "upstream_estimator_seed_g1_checked": CONFIGURATION,
+    #   "upstream_estimator_seed_g2_checked": CONFIGURATION,
+    #   "hDiagCombinedOld": PAYLOAD,      <- C's 11g precondition, 0.0856 MB, same blocked patch
 }
 
 SWEEP_UNIVERSE = {
@@ -233,6 +252,25 @@ SWEEP_UNIVERSE = {
 LATERAL_CV = {
     "hXSecND_flat": PAYLOAD, "globalCompleteness": PAYLOAD,
     "dataPOT": CONFIGURATION, "ndim": CONFIGURATION,
+    # REMEDY (A), 2026-08-19. C widened (A) to this artifact on D's enumeration -- I had listed WRITERS
+    # needing stamps, D listed ARTIFACTS THE GATE CANNOT READ, and D's direction found more.
+    "est_seed_offset": PROVENANCE, "est_seed_offset_declared": PROVENANCE,
+    "estimator_seed": PROVENANCE,
+    # `--seed` defaults to None on this writer, so "nobody passed one" must be READABLE rather than
+    # inferred from a missing key. An absent stamp is not a weak yes.
+    "estimator_seed_checked": CONFIGURATION,
+}
+
+#: The 41.44 GB combined intermediate. It carried NO scalars before remedy (A) -- which is why g1's
+#: estimator seed could not reach adopt -- and now carries the propagated g1 identity plus the universe
+#: count it was verified over. Listed even though 11g releases it, because it is comparable while it
+#: exists and an unlisted artifact cannot be compared at all.
+COMBINED_INTERMEDIATE = {
+    "hCov_universe5d_total": PAYLOAD,
+    "hCov_combined5d_total": PAYLOAD,
+    "estimator_seed": PROVENANCE,
+    "est_seed_offset": PROVENANCE, "est_seed_offset_declared": PROVENANCE,
+    "n_universes": CONFIGURATION,
 }
 
 ARTIFACTS = {
@@ -241,6 +279,7 @@ ARTIFACTS = {
     "adopted_uthrow_cvcentered.root": ADOPTED_UTHROW,
     "sweep_universe.root": SWEEP_UNIVERSE,
     "lateral_cv.root": LATERAL_CV,
+    "combined_intermediate.root": COMBINED_INTERMEDIATE,
 }
 
 # =====================================================================================================
@@ -301,13 +340,52 @@ ARCHIVE_KEY_MAP = {
 #: Measured 2026-08-18 from source: which ROOT writers on a member's chain stamp the four identity
 #: keys. Remedy (B) -- never resume a ROOT product -- must cover every writer with 0 here; its scope
 #: NARROWS as (A) lands, so this table is the thing to re-measure rather than the prose.
+#: WAS A COUNT, AND THE COUNT WAS THE WRONG SHAPE. It tallied literal
+#: `TParameter("int")("estimator_seed", ...)` occurrences -- and after remedy (A) two writers stamp
+#: through a LOOP over a variable key (`TParameter("int")(_k, ...)`) or an f-string
+#: (`f"upstream_estimator_seed_{_name}"`). Both are correct and both are INVISIBLE to a literal matcher,
+#: so the tally read 0 for a writer that stamps three keys. A COUNT OF LITERAL OCCURRENCES MEASURES THE
+#: SPELLING, NOT THE CAPABILITY -- BEN-482's family, arriving in a measurement table this time.
+#: So: a boolean capability plus HOW, with the mechanism stated so the boolean is falsifiable.
 STAMP_COVERAGE = {
-    "sweep_bank_5d.py":               3,   # estimator_seed + est_seed_offset{,_declared}; no draws
-    "unified_throw_cov.py":           4,   # both roles + both offset keys
-    "unfold_nd_omnifold_unbinned.py": 0,   # THE 19 LATERAL + CV -- plumbed by gate 1 item 7(a), unstamped
-    "adopt_unified_5d.py":            0,   # THE TWO 892 MB CITABLE ARTIFACTS -- the worst gap
-    "analyze_universes_5d.py":        0,   # the 41.44 GB intermediate; deleted per C's retention ruling
+    "sweep_bank_5d.py": {
+        "stamps": True, "how": "three literal TParameter writes; no draws, so no draw_seed",
+        "products": "169 vertical universes"},
+    "unified_throw_cov.py": {
+        "stamps": True, "how": "four literal TParameter writes -- both seed roles and both offset keys",
+        "products": "unified_throw_cov_5d.root"},
+    "unfold_nd_omnifold_unbinned.py": {
+        "stamps": True, "how": "remedy (A) 2026-08-19: the offset pair unconditionally, plus "
+                               "estimator_seed_checked and estimator_seed when --seed was given. "
+                               "--seed DEFAULTS TO None, so absence has to be a READABLE state",
+        "products": "19 lateral + CV"},
+    "analyze_universes_5d.py": {
+        "stamps": True, "how": "remedy (A) 2026-08-19: PROPAGATES the g1 identity from the 188 universes "
+                               "via a loop over a variable key, AFTER asserting all 188 agree. THE LINK "
+                               "NOBODY ENUMERATED -- it wrote zero scalars, so g1's seed could not reach "
+                               "adopt at all, however carefully adopt was patched",
+        "products": "the 41.44 GB combined intermediate"},
+    "adopt_unified_5d.py": {
+        # BLOCKED, NOT DONE. The implementation exists as a preserved patch; committing it breaks
+        # ben106-stamp-verify's sha256 binding and the pre-commit hook refuses. `stamps: False` is the
+        # true state of the tree, and reporting the intended state would be the claim this campaign has
+        # spent the day learning not to make.
+        "stamps": False, "how": "BLOCKED on a BEN-106 receipt re-issue. Implemented and reverted; see "
+                               "docs/orchestration/pending/"
+                               "PENDING-20260819-remedy-A-adopt-blocked-on-ben106-rebinding.patch. Would "
+                               "stamp the offset pair plus upstream_estimator_seed_g1/_g2 BY GROUP -- not "
+                               "a single estimator_seed, per VL141 -- and C's 11g diagonal in the same "
+                               "touch. ANY edit to this file breaks the binding, so C's mandatory (A) and "
+                               "BEN-106's frozen binding are in DIRECT CONFLICT and only a gate re-run "
+                               "resolves it",
+        "products": "the two 892 MB citable adopted roots"},
 }
+
+
+def writers_without_identity_stamps():
+    """Writers remedy (A) has not reached. THREE on 2026-08-18; ONE now -- `adopt_unified_5d.py`, blocked
+    on a BEN-106 receipt re-issue rather than on work. Empty is the goal and is not the state."""
+    return sorted(k for k, v in STAMP_COVERAGE.items() if not v["stamps"])
 
 
 
@@ -327,7 +405,15 @@ def _g2_baseline():
     return baseline
 
 
-IDENTITY_KEYS = ("estimator_seed", "est_seed_offset", "est_seed_offset_declared")
+#: WHAT MEMBER IDENTITY ACTUALLY REQUIRES: the OFFSET PAIR, and nothing else.
+#: `estimator_seed` was in this tuple and it made `identity_is_checkable` FALSE for the adopted roots even
+#: after remedy (A) stamped them -- because VL141 forbids a single `estimator_seed` on that product: it
+#: mixes a g1 seed (42+k) with a g2 one (1000+k), and one key would be a false quotable claim. So the
+#: predicate was demanding the very key the physics says must not be there.
+#: THE OFFSET IS THE MEMBER IDENTITY AND IT IS SINGLE-VALUED EVERYWHERE. The estimator seed is per-LEG,
+#: so it is checked where it exists and not required where it cannot.
+IDENTITY_KEYS = ("est_seed_offset", "est_seed_offset_declared")
+OPTIONAL_IDENTITY_KEYS = ("estimator_seed",)
 
 
 def identity_is_checkable(artifact):
@@ -368,7 +454,9 @@ def anchor_identity(member_keys, offset):
                         "k=0 anchor. That is precisely the ambiguity the two keys exist to remove.")
     if member_keys.get("est_seed_offset") != offset:
         problems.append(f"est_seed_offset {member_keys.get('est_seed_offset')!r} != declared {offset!r}")
-    if offset == 0:
+    if offset == 0 and "estimator_seed" in member_keys:
+        # ONLY WHERE A SINGLE ESTIMATOR SEED EXISTS. On the adopted roots it deliberately does not
+        # (VL141), so demanding it would fail an artifact for lacking a key it must not have.
         known = ARCHIVE_KEY_MAP["estimator_seed"].get("archive_value_known_to_be")
         if member_keys.get("estimator_seed") != known:
             problems.append(

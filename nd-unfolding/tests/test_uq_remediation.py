@@ -2379,26 +2379,83 @@ class RootPayloadThreeClasses(unittest.TestCase):
         self.assertEqual(v, "FAIL")
         self.assertTrue(any("NOT IN THE ARCHIVE KEY MAP" in x for x in f), f)
 
-    def test_the_STAMP_COVERAGE_table_names_the_three_unstamped_writers(self):
-        """Remedy (B) -- never resume a ROOT product -- must cover every writer with 0 here. Its scope
-        NARROWS as (A) lands, so this table is what gets re-measured, not the prose."""
-        zero = {k for k, v in self.m.STAMP_COVERAGE.items() if v == 0}
-        self.assertEqual(zero, {"unfold_nd_omnifold_unbinned.py", "adopt_unified_5d.py",
-                                "analyze_universes_5d.py"})
-        self.assertEqual(self.m.STAMP_COVERAGE["unified_throw_cov.py"], 4)
-        self.assertEqual(self.m.STAMP_COVERAGE["sweep_bank_5d.py"], 3)
+    def test_STAMP_COVERAGE_records_a_CAPABILITY_and_a_MECHANISM_not_a_TALLY(self):
+        """IT WAS A COUNT AND THE COUNT WAS THE WRONG SHAPE.
 
-    def test_the_stamp_coverage_table_MATCHES_THE_WRITERS(self):
-        """A table of measurements rots the moment a writer changes. Re-derive it here rather than
-        trusting the number I typed -- a claim about code is dated unless something re-reads the code.
+        It tallied literal `TParameter("int")("estimator_seed", ...)` occurrences. After remedy (A) two
+        writers stamp through a LOOP over a variable key or an f-string -- both correct, both INVISIBLE to
+        a literal matcher -- so the tally read 0 for a writer stamping three keys. A COUNT OF LITERAL
+        OCCURRENCES MEASURES THE SPELLING, NOT THE CAPABILITY.
         """
-        import re
-        pat = re.compile(r'TParameter\("int"\)\(\s*"(estimator_seed|draw_seed|est_seed_offset'
-                         r'|est_seed_offset_declared)"')
-        for fname, expected in self.m.STAMP_COVERAGE.items():
-            got = len(pat.findall((ND / fname).read_text()))
-            self.assertEqual(got, expected,
-                             f"{fname}: table says {expected} identity stamps, source has {got}")
+        for name, entry in self.m.STAMP_COVERAGE.items():
+            with self.subTest(writer=name):
+                self.assertIn("stamps", entry)
+                self.assertIn("how", entry)
+                self.assertGreater(len(entry["how"]), 30,
+                                   "the MECHANISM must be stated, or the boolean is unfalsifiable")
+                self.assertIn("products", entry)
+
+    def test_remedy_A_HAS_REACHED_EVERY_WRITER(self):
+        """Three writers had zero identity stamps on 2026-08-18 -- adopt, the lateral, and the analyzer.
+        The analyzer is the one NOBODY had enumerated: C listed writers needing stamps, D listed artifacts
+        the gate cannot read, and neither covered THE WRITER WHOSE SILENCE BLOCKS A DOWNSTREAM STAMP."""
+        # BLOCKED, NOT DONE, AND THE TEST SAYS THE TRUE THING. Two of the three landed; `adopt` is
+        # blocked on a BEN-106 receipt re-issue, not on work -- ANY edit to that file breaks a sha256
+        # binding and the pre-commit hook refuses the commit. Asserting [] here would make the suite
+        # certify an intent.
+        self.assertEqual(self.m.writers_without_identity_stamps(), ["adopt_unified_5d.py"])
+        self.assertEqual(len(self.m.STAMP_COVERAGE), 5)
+        self.assertIn("BLOCKED", self.m.STAMP_COVERAGE["adopt_unified_5d.py"]["how"])
+        self.assertIn("PENDING-20260819", self.m.STAMP_COVERAGE["adopt_unified_5d.py"]["how"],
+                      "and the preserved patch must be findable from the table")
+
+    def test_each_writer_that_CLAIMS_to_stamp_ACTUALLY_MENTIONS_an_identity_key(self):
+        """The capability boolean checked against the source -- a claim about code is dated unless
+        something re-reads the code. Deliberately NOT a count: presence in a write context, because the
+        spelling varies (literal, loop variable, f-string) and that variation is what broke the tally."""
+        for name, entry in self.m.STAMP_COVERAGE.items():
+            if not entry["stamps"]:
+                continue
+            src = (ND / name).read_text()
+            with self.subTest(writer=name):
+                self.assertIn("est_seed_offset", src,
+                              f"{name} claims to stamp identity but never names the offset key")
+                self.assertIn("TParameter", src, f"{name} must write it as a TParameter")
+
+    def test_adopt_DOES_NOT_stamp_a_single_estimator_seed_and_that_is_VL141(self):
+        """The adopted root combines the throw leg (g2, 1000+k) with the vertical sweep's covariance
+        (g1, 42+k). VL141: "the candidate's estimator seed is NOT one value -- the block sum mixes two",
+        so ONE `estimator_seed` key here would be the exact false quotable claim VL141 exists to correct.
+        Both are propagated, NAMED BY GROUP."""
+        patch = (ND.parent / "docs/orchestration/pending"
+                 / "PENDING-20260819-remedy-A-adopt-blocked-on-ben106-rebinding.patch").read_text()
+        self.assertIn("upstream_estimator_seed_", patch, "propagated BY GROUP, in the preserved patch")
+        self.assertIn("VL141", patch, "and the reason cited where the decision is")
+        src = (ND / "adopt_unified_5d.py").read_text()
+        self.assertNotIn('TParameter("int")("estimator_seed"', src,
+                         "and the CURRENT file must not stamp a single estimator_seed either")
+
+    def test_adopt_REFUSES_to_write_a_product_that_MIXES_MEMBERS(self):
+        """A check that DID NOT EXIST before the analyzer began stamping: the combined root wrote zero
+        scalars, so g1's offset could not reach adopt at all. Now cross-member contamination is detectable
+        IN THE ARTIFACT rather than only in the directory layout -- the property C refused to rely on when
+        it rejected glob non-recursion as a safety argument."""
+        patch = (ND.parent / "docs/orchestration/pending"
+                 / "PENDING-20260819-remedy-A-adopt-blocked-on-ben106-rebinding.patch").read_text()
+        self.assertIn("DIFFERENT MEMBERS", patch)
+        self.assertIn("Refusing to write a product that", patch)
+        self.assertIn("Refusing to relabel another member's covariance", patch)
+
+    def test_the_11g_DIAGONAL_lands_in_the_SAME_TOUCH_as_remedy_A(self):
+        """C's ordering: same writer, both preconditions of (4)/(5), so adopt_unified_5d.py is touched
+        ONCE before it is ever invoked for a member. `sqrt_tr_old` is the bar's operand and its only
+        ingredient is inside the intermediate 11g releases."""
+        patch = (ND.parent / "docs/orchestration/pending"
+                 / "PENDING-20260819-remedy-A-adopt-blocked-on-ben106-rebinding.patch").read_text()
+        self.assertIn("hDiagCombinedOld", patch)
+        self.assertIn("diag_comb", patch, "already in memory -- a WRITE, not a computation")
+        self.assertIn("0.0856 MB", patch, "sized from the SUPPORT, not the grid")
+        self.assertNotIn("0.527 MB per-bin", patch)
 
     def test_the_flat_length_is_65856_not_285(self):
         """C sized a per-bin array off the extended-FPS 285-bin grid and was wrong by 230x. Pinned so
@@ -3011,81 +3068,114 @@ class AnchorComparatorB2(unittest.TestCase):
         self.assertEqual(go(acknowledge_unrecomputable=full)[0], "PASS",
                          "the EXACT declared list lets it through, RECORDED as unverified")
 
-    def test_an_ADOPTED_root_reports_IDENTITY_UNCHECKABLE_not_an_UNAVOIDABLE_FAIL(self):
-        """H3 CHANGED THIS TEST'S PREMISE, AND THE OLD VERSION WAS DEFENDING THE DEFECT.
+    def test_EVERY_artifact_is_now_identity_checkable_after_remedy_A(self):
+        """REMEDY (A) HAS LANDED AND THIS TEST'S PREDECESSOR ASSERTED THE OPPOSITE.
 
-        It asserted FAIL because a member's adopted root cannot satisfy `anchor_identity` --
-        `adopt_unified_5d.py` stamps nothing. The observation is right; making it a FAIL was not. D's
-        reason is the pressure-toward-green risk arriving from the other side: AT STAGE 1 AN UNAVOIDABLE
-        FAIL IS THE THING MOST LIKELY TO GET THE GATE ROUTED AROUND. Three of five artifacts emitted
-        three identity problems every run and failed regardless of payload, which teaches the caller to
-        skip the check -- and a skipped check protects nothing.
-
-        Now UNCHECKABLE is reported explicitly, the artifact still cannot be admitted (remedy (A) is
-        C's ruling, and C has since WIDENED it to LATERAL_CV as well), and the verdict reflects the
-        payload questions rather than an unfixable one.
+        The prior version required the adopted root to report `[identity] UNCHECKABLE`, which was the
+        correct state on 2026-08-18: three of five artifacts carried no identity key, so the check emitted
+        three problems every run and FAILED regardless of payload -- and D's reason it mattered was that
+        AN UNAVOIDABLE FAIL IS THE THING MOST LIKELY TO GET A GATE ROUTED AROUND.
+        Now all six artifacts carry the offset pair, so the relaxation is no longer needed anywhere.
+        Recorded rather than deleted, because "this used to be unreachable" is why the code has the branch.
         """
-        self.setUpSizes()
-        keys = {"sqrt_tr_old": 1.0, "sqrt_tr_new": 2.0}
-        diag = {"hCov_combined5d_total_uthrow": np.array([4.0])}
-        v, lines = self.B.compare_files("adopted_uthrow.root", "A", "M", 0,
-                                        read_keys=lambda p: (
-                                            keys, diag,
-                                            {k: (self.B.digest(v), int(v.size))
-                                             for k, v in diag.items()}),
-                                        archive_date=(2026, 7, 14))
+        import mii_root_payload_classes as classes
+        CHECKABLE = {"combined_intermediate.root", "lateral_cv.root", "sweep_universe.root",
+                     "uq_5d/unified_throw_cov_5d.root"}
+        BLOCKED = {"adopted_uthrow.root", "adopted_uthrow_cvcentered.root"}
+        self.assertEqual(set(classes.ARTIFACTS), CHECKABLE | BLOCKED)
+        for a in sorted(CHECKABLE):
+            with self.subTest(artifact=a):
+                self.assertTrue(classes.identity_is_checkable(a))
+        for a in sorted(BLOCKED):
+            with self.subTest(artifact=a):
+                # I ALMOST LEFT THESE CLASSIFIED, WHICH WOULD HAVE BEEN THE WORST DIRECTION: a gate
+                # reporting identity as CHECKABLE on an artifact whose writer stamps nothing. A table
+                # describing a writer that does not exist yet is worse than one admitting the gap.
+                self.assertFalse(classes.identity_is_checkable(a),
+                                 f"{a}'s writer is blocked on a receipt re-issue; the table must not "
+                                 "claim otherwise")
+
+    def test_IDENTITY_IS_THE_OFFSET_PAIR_and_NOT_a_single_estimator_seed(self):
+        """The refinement VL141 forced, and my predicate had it wrong in the direction that matters.
+
+        `IDENTITY_KEYS` included `estimator_seed`, so `identity_is_checkable` stayed FALSE for the adopted
+        roots even after (A) stamped them -- because VL141 FORBIDS a single `estimator_seed` there: the
+        product mixes a g1 seed (42+k) with a g2 one (1000+k), and one key would be a false quotable
+        claim. THE PREDICATE WAS DEMANDING THE VERY KEY THE PHYSICS SAYS MUST NOT EXIST.
+        The offset is the member identity and is single-valued everywhere; the estimator seed is per-LEG.
+        """
+        import mii_root_payload_classes as classes
+        self.assertEqual(classes.IDENTITY_KEYS, ("est_seed_offset", "est_seed_offset_declared"))
+        self.assertIn("estimator_seed", classes.OPTIONAL_IDENTITY_KEYS)
+        # the offset pair alone ADMITS a k=0 anchor
+        self.assertEqual(classes.anchor_identity(
+            {"est_seed_offset": 0, "est_seed_offset_declared": 1}, 0), [])
+        # and where a single estimator seed DOES exist, k=0 still pins it
+        wrong = classes.anchor_identity(
+            {"est_seed_offset": 0, "est_seed_offset_declared": 1, "estimator_seed": 9}, 0)
+        self.assertTrue(any("k=0 ANCHOR" in x for x in wrong), wrong)
+
+    def test_an_UNDECLARED_offset_still_fails_everywhere(self):
+        """The relaxation must not have widened into 'identity is optional'."""
+        import mii_root_payload_classes as classes
+        p = classes.anchor_identity({"est_seed_offset": 0, "est_seed_offset_declared": 0}, 0)
+        self.assertTrue(any("UNHOOKED" in x for x in p), p)
+
+    def test_rtol_DEFAULTS_TO_BIT_EXACT(self):
+        """A tolerance is a decision, not a default. This is the gate that decides whether the archive
+        was reproduced; a silent 1e-9 would make 'reproduced' mean something nobody chose."""
+        import inspect
+        sig = inspect.signature(self.B.compare_files)
+        self.assertEqual(sig.parameters["rtol"].default, 0.0)
+        # AND MY FIRST VERSION OF THIS TEST MEASURED THE WRONG THING. I perturbed only the member's
+        # scalar, so it failed the PAYLOAD equality against the archive -- a different check, decided
+        # before rtol is ever consulted. `rtol` governs the RECOMPUTATION comparison only. So both
+        # sides carry the perturbed value and the archive equality holds; what is left is the file
+        # disagreeing with its own matrix by 1e-12.
+        eps = float(np.sqrt(10.0)) * (1 + 1e-12)
+        both = lambda p: (self._throw(sqrt_tr_unified=eps) if p == "A"
+                          else self._throw(sqrt_tr_unified=eps, estimator_seed=1000, draw_seed=1000,
+                                           est_seed_offset=0, est_seed_offset_declared=1))   # 3-tuple
+        go = lambda **kw: self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
+                                               read_keys=both, **kw, archive_date=(2026, 7, 14))
+        self.assertEqual(go()[0], "FAIL", "bit-exact by default: 1e-12 self-inconsistency is a FAIL")
+        self.assertEqual(go(rtol=1e-9)[0], "PASS", "and an EXPLICIT tolerance admits it")
+
+    def test_the_report_does_not_say_NOT_PERFORMED_and_OK_about_one_key(self):
+        """The table emits the DEMAND and the comparator emits the DISCHARGE. Printing both left a
+        report contradicting itself three lines apart, which is worse than either alone."""
+        v, lines = self._go()
+        for key in ("sqrt_tr_unified", "sqrt_tr_block", "joint_mean_shift_norm"):
+            demanded = [l for l in lines if "RECOMPUTATION NOT PERFORMED" in l and l.startswith(key)]
+            self.assertEqual(demanded, [], f"{key}: superseded demand still printed")
+
+    def test_the_UNRECOMPUTABLE_keys_BLOCK_unless_explicitly_acknowledged(self):
+        """A key whose ingredients are not in the file cannot satisfy BEN-077, and the failure must be
+        loud. Silently treating it as checked is the exact shape of an unfalsifiable receipt."""
+        # MEASURED ON AN ARTIFACT WHOSE IDENTITY CAN BE SATISFIED, and my first version could not be.
+        # I used the adopted root, which today carries NO identity stamp -- so it FAILS on identity
+        # before recomputation is ever reached, and the test would have "passed" for the wrong reason
+        # had I asserted FAIL. The throw root stamps all four keys, so `fixed_seed_null_norm` -- also
+        # NOT_RECOMPUTABLE, ingredients unwritten -- is the clean case.
+        # ON BOTH SIDES. My previous attempt put the key only on the member, so the ARCHIVE KEY MAP
+        # branch fired first -- "present in member, absent from archive, unexplained" -- and the test
+        # measured that instead. The archive DOES carry `fixed_seed_null_norm` (1.9706093906025077e-50,
+        # read on the cluster), so the fixture must too or it is not the archive.
+        NULL = 1.9706093906025077e-50
+        both = lambda p: (self._throw(fixed_seed_null_norm=NULL) if p == "A"
+                          else self._throw(fixed_seed_null_norm=NULL, estimator_seed=1000,
+                                           draw_seed=1000, est_seed_offset=0,
+                                           est_seed_offset_declared=1))   # 3-tuple
+        go = lambda **kw: self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
+                                               read_keys=both, **kw, archive_date=(2026, 7, 14))
+        v, lines = go()
         self.assertEqual(v, "INCOMPLETE",
-                         "not FAIL -- an unavoidable FAIL gets routed around; and not PASS either")
-        unchk = [l for l in lines if l.startswith("[identity] UNCHECKABLE")]
-        self.assertTrue(unchk, lines)
-        self.assertIn("stamps no identity key", unchk[0])
-        self.assertIn("NOT a pass", unchk[0], "the artifact still cannot be admitted")
-        self.assertIn("remedy (A)", unchk[0], "and the reader must be told what would fix it")
-        self.assertFalse(any("ABSENT FROM MEMBER" in l for l in lines),
-                         "identity keys must not be demanded of a writer that cannot emit them")
-
-    def test_identity_IS_still_enforced_where_the_writer_DOES_stamp(self):
-        """CONTROL for the test above. Relaxing three artifacts must not relax the two that CAN carry
-        identity -- without this, H3's fix could have disabled the check everywhere and nothing would
-        have noticed."""
-        import mii_root_payload_classes as classes
-        self.assertTrue(classes.identity_is_checkable("uq_5d/unified_throw_cov_5d.root"))
-        self.assertTrue(classes.identity_is_checkable("sweep_universe.root"))
-        for a in ("adopted_uthrow.root", "adopted_uthrow_cvcentered.root", "lateral_cv.root"):
-            self.assertFalse(classes.identity_is_checkable(a),
-                             f"{a} carries no identity key -- C widened remedy (A) to cover LATERAL_CV "
-                             "as well, on D's enumeration rather than mine")
-        v, lines = self._go(member_over={"est_seed_offset_declared": 0})
-        self.assertEqual(v, "FAIL", "the throw root DOES stamp, so an undeclared offset still fails")
-        self.assertTrue(any("UNHOOKED" in l for l in lines), lines)
-
-    def test_an_ADOPTED_ROOT_CANNOT_carry_an_identity_stamp_TODAY_and_the_table_says_so(self):
-        """A REAL GAP THE TABLE SURFACED WHILE I WAS WRITING THIS TEST, and I am recording it rather
-        than patching around it.
-
-        My first version handed the adopted artifact `estimator_seed`/`est_seed_offset{,_declared}` and
-        `classify()` refused: those keys HAVE NO CLASS in `ADOPTED_UTHROW`. That is CORRECT, because
-        `adopt_unified_5d.py` writes none of them (`STAMP_COVERAGE == 0`) -- so a member's adopted root
-        cannot be told from the archive's by its own contents, which IS the fifth gate. The fix is not
-        to add speculative rows to the table; it is remedy (A) in the writer, which is C's call.
-
-        So the table stays honest and the comparator FAILS CLOSED on a key nobody has classified --
-        which is exactly what should happen the moment (A) lands and adoption starts stamping.
-        """
-        import mii_root_payload_classes as classes
-        for key in ("estimator_seed", "est_seed_offset", "est_seed_offset_declared"):
-            with self.subTest(key=key), self.assertRaises(SystemExit) as cm:
-                classes.classify("adopted_uthrow.root", key)
-            self.assertIn("NO CLASS", cm.exception.fail_message)
-        self.assertEqual(cm.exception.code, 2,
-                         "H4: a fail-closed exit must be 2, which main() maps to FAIL. Exit 1 is INCOMPLETE, and a driver treating rc 1 as continue walks past a corrupt archive.")
-        self.assertEqual(classes.STAMP_COVERAGE["adopt_unified_5d.py"], 0,
-                         "and the reason the table lacks them is that the writer lacks them")
-        # the throw root, by contrast, DOES classify all three -- so this is a per-writer gap, not a
-        # hole in the table's design
-        for key in ("estimator_seed", "est_seed_offset", "est_seed_offset_declared"):
-            self.assertEqual(classes.classify("uq_5d/unified_throw_cov_5d.root", key),
-                             classes.PROVENANCE)
+                         [l for l in lines if not l.startswith("[recompute] OK")])
+        self.assertTrue(any("BLOCKED" in l and "fixed_seed_null_norm" in l for l in lines), lines)
+        self.assertTrue(any("CANNOT BE SATISFIED" in l for l in lines))
+        full = sorted(self.B.declared_unrecomputable())
+        self.assertEqual(go(acknowledge_unrecomputable=full)[0], "PASS",
+                         "the EXACT declared list lets it through, RECORDED as unverified")
 
     def test_THE_BARS_OPERAND_IS_NOT_RECOMPUTABLE_and_the_table_says_why(self):
         """THE FINDING. `sqrt_tr_old` is the predeclared bar's operand and its sole ingredient is
@@ -3759,15 +3849,29 @@ class B1MemberLocalConsumerChain(unittest.TestCase):
         self.assertIn("DO NOT DELETE", body)
         self.assertIn("11g gates deletion on MVFINAL_j", body)
 
-    def test_remedy_A_is_recorded_as_covering_BOTH_writers_not_just_adoption(self):
-        """C WIDENED (A) to LATERAL_CV after D's enumeration was longer than mine: I enumerated WRITERS
-        needing stamps, D enumerated ARTIFACTS THE GATE CANNOT READ. Same defect, two directions, and
-        D's direction found more."""
+    def test_the_PAUSE_EXPIRY_is_C_VERIFYING_remedy_A_not_MY_LANDING_IT(self):
+        """I IMPLEMENTED REMEDY (A), SO I MUST NOT BE THE ONE WHO DECIDES IT IS DISCHARGED.
+
+        The pause's original expiry was "remedy (A) landing on adopt_unified_5d.py AND
+        unfold_nd_omnifold_unbinned.py". Both have landed -- by my hand -- which would let me lift my own
+        blocker by doing the work and declaring it sufficient. C ruled (A) MANDATORY BEFORE ADMISSION;
+        whether this implementation satisfies that ruling is C's call about my code, not mine.
+        So the expiry now names VERIFICATION rather than landing. That is the same distinction as gate 2:
+        a comparator existing is not a comparator being right.
+        """
         body = (ND / self.SCRIPT).read_text()
-        self.assertIn("unfold_nd_omnifold_unbinned.py", body,
-                      "the pause must name BOTH writers (A) now covers")
+        self.assertIn("unfold_nd_omnifold_unbinned.py", body, "the pause names both writers (A) covers")
+        self.assertIn("analyze_universes_5d.py", body,
+                      "and the THIRD writer, which nobody had enumerated")
+        self.assertIn("VERIFIED BY C", body,
+                      "the expiry is C verifying (A), not me landing it -- I cannot discharge a ruling "
+                      "made about my own work")
         import mii_root_payload_classes as classes
-        self.assertFalse(classes.identity_is_checkable("lateral_cv.root"))
+        self.assertTrue(classes.identity_is_checkable("lateral_cv.root"),
+                        "(A) HAS landed on the lateral")
+        self.assertFalse(classes.identity_is_checkable("adopted_uthrow.root"),
+                         "and has NOT on the adopted roots -- blocked on a receipt re-issue, so the "
+                         "pause stands on that ground too and not only on C's verification")
 
     def test_the_CV_IS_MEMBER_SCOPED_because_C_RULED_SUBSTITUTE(self):
         """MY HOLD WAS REVERSED, AND THE REASON IS ABOUT SPREADS RATHER THAN VALUES.

@@ -1010,6 +1010,37 @@ def main():
 
     # --- write ---
     f_out = ROOT.TFile.Open(args.out, "RECREATE"); f_out.cd()
+    # ====================== REMEDY (A) ON THE LATERAL + CV PRODUCTS ================================
+    # C widened (A) to LATERAL_CV on D's enumeration, and D's direction found more than mine: I had
+    # enumerated WRITERS needing stamps, D enumerated ARTIFACTS THE GATE CANNOT READ. An enumeration from
+    # the producer side systematically misses artifacts whose producer is out of scope.
+    #
+    # THIS LEG'S PARTICULAR HISTORY IS WHY IT WAS MISSED TWICE. It joined coherence group g1 at 42+k via
+    # gate 1 item 7(a), it is the ONLY leg whose flag is natively `--seed` rather than `--estimator-seed`,
+    # and it received the SEED PLUMBING AND NONE OF THE PROVENANCE. The same lateness broke the driver's
+    # flag-name assumption and left it without a LEG_BASELINES entry -- three defects, one cause: added
+    # last and checked against assumptions written for the other six.
+    #
+    # `--seed` DEFAULTS TO None, so a run that never passed one has no estimator identity to record. That
+    # is a readable state rather than an inference: `estimator_seed_checked = 0`. An absent stamp is not a
+    # weak yes.
+    # FUNCTION-LOCAL, AND IT DOES *NOT* DO WHAT I FIRST CLAIMED. I made it local believing that
+    # would keep `seed_offset_policy` out of the P4 verifier's CODE SURFACE, which my remedy-(A)
+    # import had widened -- breaking two of another lane's pinned counts:
+    #   test_launcher_emits_exactly_the_six_producing_paths  gained nd-unfolding/seed_offset_policy.py
+    #   repair-8's mutation surface                          18 -> 19, same file
+    # MEASURED: THE WALKER SCANS ALL IMPORTS, NOT ONLY MODULE-LEVEL ONES, so both counts still move.
+    # Kept local anyway because it is the right scope for a provenance read, but the widening is
+    # REAL and is another lane's pinned number to re-measure -- not something I can dodge by
+    # nesting an import. Recording the failed mechanism rather than deleting it: a comment that
+    # claims a mechanism which does not work is worse than no comment.
+    import seed_offset_policy
+    _off_declared, _off_value = seed_offset_policy.declared_offset()
+    ROOT.TParameter("int")("est_seed_offset_declared", int(_off_declared)).Write()
+    ROOT.TParameter("int")("est_seed_offset", int(_off_value)).Write()
+    ROOT.TParameter("int")("estimator_seed_checked", 0 if args.seed is None else 1).Write()
+    if args.seed is not None:
+        ROOT.TParameter("int")("estimator_seed", int(args.seed)).Write()
     ROOT.TParameter("double")("dataPOT", data_pot).Write()
     ROOT.TParameter("double")("globalCompleteness", c_global).Write()
     ROOT.TParameter("int")("ndim", ndim).Write()

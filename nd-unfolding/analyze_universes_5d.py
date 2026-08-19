@@ -130,6 +130,45 @@ def load_flat(path, expect_nbins=None):
     return a
 
 
+
+def _collect_universe_identity(path, seen):
+    """Accumulate each universe's identity stamps. VERIFIES COHERENCE rather than trusting it.
+
+    Every universe this module reads carries `estimator_seed` and `est_seed_offset{,_declared}`
+    (`sweep_bank_5d.py:285-287`), so the common value can be PROPAGATED -- and because there are 188 of
+    them, agreement is a real check rather than a copy. A member assembled from universes at MIXED seeds
+    is not a member of anything, and before this the mixing would have been undetectable: VL141 already
+    records that the sweep's agreement "holds by hardcoding and is checked by nothing".
+    """
+    f = ROOT.TFile.Open(path)
+    try:
+        for key in ("estimator_seed", "est_seed_offset", "est_seed_offset_declared"):
+            obj = f.Get(key)
+            seen.setdefault(key, set()).add(int(obj.GetVal()) if obj else None)
+    finally:
+        f.Close()
+
+
+def _assert_universe_identity_is_coherent(seen, n_universes):
+    """One value per key across every universe, or fail closed naming the disagreement."""
+    problems = []
+    for key, values in sorted(seen.items()):
+        if None in values and len(values) == 1:
+            problems.append(f"{key}: ABSENT from every universe -- these products predate the stamp, so "
+                            "this covariance cannot carry an identity and no member built from it can be "
+                            "admitted. An absent stamp is not a weak yes.")
+        elif None in values:
+            problems.append(f"{key}: present in SOME universes and absent from others {sorted(v for v in values if v is not None)} "
+                            "-- a MIXED population, which is worse than a uniformly unstamped one because "
+                            "it looks stamped")
+        elif len(values) > 1:
+            problems.append(f"{key}: DISAGREES across the {n_universes} universes: {sorted(values)}. A "
+                            "member assembled from mixed estimator seeds is not a member of anything.")
+    if problems:
+        raise SystemExit("[FAIL] universe identity:\n  " + "\n  ".join(problems))
+    return {k: next(iter(v)) for k, v in seen.items()}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--cv", required=True)
@@ -148,6 +187,7 @@ def main():
         raise SystemExit(f"[FAIL] no universe files matched {args.glob}")
 
     by_band = defaultdict(list)
+    seen_identity = {}          # remedy (A): the g1 identity, collected from the universes themselves
     for p in paths:
         m = UNI_RE.match(os.path.basename(p))
         if not m:
@@ -155,6 +195,14 @@ def main():
             continue
         by_band[m.group("band")].append((int(m.group("idx")),
                                         load_flat(p, expect_nbins=cv.size) - cv))
+        # REMEDY (A), THE LINK NOBODY HAD ENUMERATED. C scoped (A) to adopt_unified_5d.py and
+        # unfold_nd_omnifold_unbinned.py; D widened it to the artifacts the gate cannot read. NEITHER
+        # COVERED THE WRITER WHOSE SILENCE BLOCKS A DOWNSTREAM STAMP. This module wrote ZERO scalars, so
+        # the g1 estimator seed COULD NOT REACH adopt AT ALL -- adopt's only inputs are the throw root
+        # (g2) and this file, so an adopted root could never have carried g1's seed however carefully
+        # adopt was patched. A third axis: not "does this writer stamp", nor "can the gate read this
+        # artifact", but CAN THIS ARTIFACT'S WRITER *OBTAIN* WHAT IT NEEDS TO STAMP.
+        _collect_universe_identity(p, seen_identity)
     print(f"[INFO] {len(paths)} universe files across {len(by_band)} bands")
 
     rep = cv > 0
@@ -220,7 +268,14 @@ def main():
               f"rank={cond_rank(combined)}/{n_rep} median rel={100*np.median(crel):.2f}%")
 
     out = os.path.join(args.outdir, args.out_root)
+    # REMEDY (A) ON THIS WRITER. Without these three keys the g1 estimator seed dies here and every
+    # downstream product is unidentifiable -- see `_collect_universe_identity`.
+    _identity = _assert_universe_identity_is_coherent(seen_identity, len(paths))
     rf = ROOT.TFile.Open(out, "RECREATE")
+    rf.cd()
+    for _k, _v in sorted(_identity.items()):
+        ROOT.TParameter("int")(_k, int(_v)).Write()
+    ROOT.TParameter("int")("n_universes", int(len(paths))).Write()
 
     def wcov(name, mat):
         n = mat.shape[0]

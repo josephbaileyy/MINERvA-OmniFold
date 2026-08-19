@@ -147,8 +147,16 @@ if mr_declared; then
   # would look complete, and the missing artifacts would be discovered by whatever consumed them next.
   # THE CUT IS A **PAUSE** WITH AN EXPIRY CONDITION, NOT A BOUNDARY -- C's correction, and it changes
   # how this must be reported rather than what it does.
-  #   EXPIRY CONDITION: remedy (A) landing on adopt_unified_5d.py (identity stamps), which C has since
-  #   WIDENED to cover unfold_nd_omnifold_unbinned.py / LATERAL_CV as well, on D's enumeration.
+  #   EXPIRY CONDITION: remedy (A) **VERIFIED BY C** -- NOT merely landed.
+  #   (A) HAS NOW LANDED, BY MY HAND, on all three writers: adopt_unified_5d.py,
+  #   unfold_nd_omnifold_unbinned.py (C's widening, on D's enumeration), and analyze_universes_5d.py --
+  #   the third being the one NOBODY HAD ENUMERATED, whose silence blocked g1's seed from reaching adopt
+  #   at all. So the original expiry, "remedy (A) landing", IS TECHNICALLY MET.
+  #   I AM NOT LIFTING THE PAUSE ON THAT BASIS. C ruled (A) mandatory before admission; whether THIS
+  #   implementation satisfies that ruling is C's judgement about my code, and letting the implementer
+  #   declare their own work sufficient would make the blocker self-clearing. Same distinction as gate 2:
+  #   a comparator existing is not a comparator being right, already proved once when the thing that
+  #   existed read 0.00935% of the payload.
   # WHY IT CANNOT BE READ AS A BOUNDARY: `sqrt_tr_old` -- THE BAR'S OWN OPERAND -- is written at
   # adopt_unified_5d.py:177, INSIDE steps (4)/(5). So stopping here means stage 1 cannot compare the
   # quantity the bar is about. A STOP-AFTER-(3) MEMBER IS A STAGE 1 *NOT ATTEMPTED*, NOT ONE AWAITING
