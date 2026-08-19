@@ -77,6 +77,18 @@ EXPECTED_LOADER_SHA256 = EXPECTED_CODE["loader"]
 # derived from `--cstat-product`: the launcher's token is an arbitrary string with no rule connecting it to
 # "data-only-v1", so a "derivation" would be a lookup table wearing a function's clothes and would still
 # need editing when a third launcher appears.
+# LANE C'S RULING (RULING-20260819-lanec-issue54-frozen-deployment.md): the launcher token is a
+# PARAMETER of the reader, not a literal in it -- the fix belongs in the reader, parameterised, and never
+# in either producer. This constant is now only the DEFAULT for `assert_member_logs`'s
+# `launcher_log_prefix`, which is what lets ONE reader serve both families: the data-only launcher emits
+# "[gate5-do-train]" (:113/:124) and the REPLICA launcher `sbatch_gate5_replica_train_array.sh` emits
+# "[gate5-train]" (:62/:72). Those two are the SOLE producers of the two needles; the shared driver
+# produces ZERO of them (all 41 of its "[gate5-train]" sites are `raise` sites), so it can neither satisfy
+# nor rescue the exactly-once check.
+# NOT made a REQUIRED parameter, though that is the exact shape of `array_job_id` and would leave no
+# literal here at all: the sole caller is `validate_gate5_data_only_artifacts.py:199`, which is outside
+# this lane's file set, so requiring it would break a file this lane may not edit. The one-line caller
+# change is handed over rather than taken.
 LAUNCHER_LOG_PREFIX = "[gate5-do-train]"
 DRIVER_FATAL_PREFIXES = ("[gate5-train]", "[gate5-dataonly]")
 
@@ -87,10 +99,13 @@ DRIVER_FATAL_PREFIXES = ("[gate5-train]", "[gate5-dataonly]")
 # silent FALSE PASS, which is the half that matters. Hence:
 #   * "[FAIL]" -- the bare marker, deliberately PREFIX-INDEPENDENT. Covers this launcher's `die()` and, as
 #     a side effect, g1's "[gate5-train][FAIL]" unchanged. Only `die()` emits "[FAIL]" in either producer.
-#   * the driver's own two prefixes -- sound HERE because in THIS job's logs they occur only inside
-#     SystemExit messages and the launcher emits neither. DO NOT reuse this list against a g1 log without
-#     re-checking that: the g1 launcher prints "[gate5-train]" on its HEALTHY start and DONE lines, so this
-#     arm would be a FALSE ALARM there.
+#   * the driver's own two prefixes -- but STDERR ONLY, in `FATAL_STDERR_TOKENS` below, and the reason is
+#     the whole of why this arm is split out. A bare "[gate5-train]" scanned across BOTH streams is a
+#     FALSE ALARM on a REPLICA-family log, because that family's launcher prints "[gate5-train] index=..."
+#     and "[gate5-train] DONE ..." on its HEALTHY path (`sbatch_gate5_replica_train_array.sh:62,72`).
+#     Caught by this file's own both-families test, NOT by reasoning -- it was written here first as a
+#     "do not reuse this list" caveat, and lane C's ruling to parameterise the reader turned that caveat
+#     into a live defect by making the reuse the POINT.
 #   * "Traceback (most recent call last)" -- anything that is not a deliberate guard.
 # "SystemExit:" is KEPT but is no longer load-bearing: it cannot fire for a `raise` in __main__, and is
 # retained only for the case where a SystemExit escapes a thread, where `threading` does print a traceback.
@@ -116,9 +131,20 @@ DRIVER_FATAL_PREFIXES = ("[gate5-train]", "[gate5-dataonly]")
 FATAL_LOG_TOKENS = [
     "Traceback (most recent call last)",
     "[FAIL]",
-    *DRIVER_FATAL_PREFIXES,
     "SystemExit:",
 ]
+
+# STDERR ONLY, and the stream is the discriminator rather than a convenience. MEASURED in both families:
+#   * the launcher's prefixed HEALTHY lines are `echo`s to STDOUT (data-only :113/:124, replica :62/:72);
+#   * the ONLY prefixed thing either launcher writes to STDERR is `die()` (data-only :57, replica :39),
+#     which the `[FAIL]` marker already covers;
+#   * the driver writes to stderr ONLY by raising -- all 41 "[gate5-train]" and 11 "[gate5-dataonly]"
+#     sites are `raise SystemExit(...)`, and it prints nothing prefixed to stderr on the healthy path;
+#   * `.out` and `.err` are separate files in both families (`--output`/`--error` at :13/:14), so the
+#     streams are not merged and this distinction survives to the artifact.
+# Therefore: a driver prefix in STDERR is a failure, in EITHER family, with no dependence on which
+# launcher prefix the caller passed. That is what makes one reader safely serve both.
+FATAL_STDERR_TOKENS = list(DRIVER_FATAL_PREFIXES)
 
 
 def _scalar(store, key, *, where):
@@ -452,7 +478,8 @@ def assert_checkpoints_and_contract(train_dir, contract, *, where):
             "imported": ["expected_checkpoints", "TRAIN_ARTIFACT", "TRAIN_RECEIPT"]}
 
 
-def assert_member_logs(logs_dir, *, array_job_id, replica_index, bootstrap_seed, where):
+def assert_member_logs(logs_dir, *, array_job_id, replica_index, bootstrap_seed, where,
+                       launcher_log_prefix=None):
     """Replaces :333 / :334 / :337 / :339 / :340 / :342 / :343 / :345.
 
     `array_job_id` IS A CALLER-SUPPLIED OPERAND, deliberately. The pinned validator takes it from a
@@ -467,6 +494,9 @@ def assert_member_logs(logs_dir, *, array_job_id, replica_index, bootstrap_seed,
     stdout is exactly how 57194055 failed while its logs looked short rather than wrong.
     """
     logs_dir = Path(logs_dir)
+    # Resolved here rather than in the signature so the module constant remains the ONE place the default
+    # lives; a default evaluated at def-time would silently outlive any change to it.
+    prefix = LAUNCHER_LOG_PREFIX if launcher_log_prefix is None else launcher_log_prefix
     idx, seed = int(replica_index), int(bootstrap_seed)
     out_p = logs_dir / f"train_{array_job_id}_{idx}.out"
     err_p = logs_dir / f"train_{array_job_id}_{idx}.err"
@@ -477,11 +507,11 @@ def assert_member_logs(logs_dir, *, array_job_id, replica_index, bootstrap_seed,
     err_text = err_p.read_text(errors="replace")
     exact_one = (
         ("log_start_line",
-         f"{LAUNCHER_LOG_PREFIX} index={idx} seed={seed} job={array_job_id}_{idx}"),
+         f"{prefix} index={idx} seed={seed} job={array_job_id}_{idx}"),
         ("log_config_gate_pass", '"config_gate": "PASS"'),
         ("log_optimizer_proof", optimizer_proof_line()),
         ("log_pass_receipt", '"status": "PASS"'),
-        ("log_done", f"{LAUNCHER_LOG_PREFIX} DONE index={idx} seed={seed}"),
+        ("log_done", f"{prefix} DONE index={idx} seed={seed}"),
     )
     for name, needle in exact_one:
         n = out_text.count(needle)
@@ -491,6 +521,7 @@ def assert_member_logs(logs_dir, *, array_job_id, replica_index, bootstrap_seed,
                 f"({needle!r}); 0 means it did not happen and 2 means the task ran twice into one "
                 f"namespace -- both are failures and only 1 is correct")
     fatal = [t for t in FATAL_LOG_TOKENS if t in out_text or t in err_text]
+    fatal += [t for t in FATAL_STDERR_TOKENS if t in err_text]
     if fatal:
         raise SystemExit(f"[gate5-dataonly] {where}: fatal tokens present across the two streams: "
                          f"{fatal}; checked in BOTH because a Traceback in stderr with a clean stdout "

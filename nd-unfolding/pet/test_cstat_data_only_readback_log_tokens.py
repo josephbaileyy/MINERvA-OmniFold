@@ -29,6 +29,7 @@ import cstat_data_only_readback as R  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 LAUNCHER = HERE / "sbatch_gate5_data_only_train_array.sh"
+REPLICA_LAUNCHER = HERE / "sbatch_gate5_replica_train_array.sh"
 DRIVER = HERE / "train_fullevent_replica.py"
 
 IDX, JOB = 7, "57235710"
@@ -119,11 +120,27 @@ def healthy_stdout():
     ])
 
 
-def call(logs_dir):
+class old_fatal_config:
+    """Restore the pre-fix fatal detection COMPLETELY: the three-token both-streams list AND an empty
+    stderr-only list, which did not exist. Reverting one of the two would leave the other live and the
+    mutation would silently not be a mutation."""
+
+    def __enter__(self):
+        self.saved = (R.FATAL_LOG_TOKENS, R.FATAL_STDERR_TOKENS)
+        R.FATAL_LOG_TOKENS, R.FATAL_STDERR_TOKENS = OLD_FATAL_TOKENS, []
+        return self
+
+    def __exit__(self, *exc):
+        R.FATAL_LOG_TOKENS, R.FATAL_STDERR_TOKENS = self.saved
+        return False
+
+
+def call(logs_dir, prefix=None):
     """Invoke the real predicate. Returns (raised, message)."""
     try:
         res = R.assert_member_logs(logs_dir, array_job_id=JOB, replica_index=IDX,
-                                   bootstrap_seed=SEED, where=WHERE)
+                                   bootstrap_seed=SEED, where=WHERE,
+                                   launcher_log_prefix=prefix)
         return False, res
     except SystemExit as e:
         return True, str(e)
@@ -160,13 +177,9 @@ def main():
         ok("healthy_run_does_not_raise", not raised, f"raised: {info}")
         ok("healthy_run_reports_checked_8", (not raised) and info.get("checked") == 8, f"{info}")
 
-        # POWER / MUTATION: put the pre-fix prefix back and the SAME healthy fixture must now fail.
-        saved = R.LAUNCHER_LOG_PREFIX
-        R.LAUNCHER_LOG_PREFIX = OLD_LAUNCHER_PREFIX_IN_READBACK
-        try:
-            raised_old, msg_old = call(d)
-        finally:
-            R.LAUNCHER_LOG_PREFIX = saved
+        # POWER / MUTATION: put the pre-fix prefix back -- now THROUGH THE PARAMETER, which is also a
+        # test that the parameter is actually consulted rather than shadowed by the module default.
+        raised_old, msg_old = call(d, prefix=OLD_LAUNCHER_PREFIX_IN_READBACK)
         ok("MUTANT_old_prefix_fails_a_healthy_run", raised_old and "appears 0 times" in msg_old,
            f"raised={raised_old} msg={msg_old}")
         ok("MUTANT_old_prefix_blames_the_start_line", raised_old and "log_start_line" in msg_old,
@@ -188,12 +201,8 @@ def main():
         ok("launcher_die_raises", raised, f"info={msg}")
         ok("launcher_die_names_fatal_tokens", raised and "fatal tokens present" in msg, msg)
 
-        saved = R.FATAL_LOG_TOKENS
-        R.FATAL_LOG_TOKENS = OLD_FATAL_TOKENS
-        try:
+        with old_fatal_config():
             raised_old, msg_old = call(d)
-        finally:
-            R.FATAL_LOG_TOKENS = saved
         ok("MUTANT_old_tokens_MISS_launcher_die", not raised_old,
            f"old tokens caught it; the silent half would not have been silent: {msg_old}")
 
@@ -209,12 +218,8 @@ def main():
             ok(f"driver_guard[{i}]_raises", raised, f"guard={gmsg!r} info={msg}")
             ok(f"driver_guard[{i}]_names_fatal_tokens", raised and "fatal tokens present" in msg, msg)
 
-            saved = R.FATAL_LOG_TOKENS
-            R.FATAL_LOG_TOKENS = OLD_FATAL_TOKENS
-            try:
+            with old_fatal_config():
                 raised_old, msg_old = call(d)
-            finally:
-                R.FATAL_LOG_TOKENS = saved
             ok(f"MUTANT_old_tokens_MISS_driver_guard[{i}]", not raised_old,
                f"old tokens caught {gmsg!r}: {msg_old}")
 
@@ -230,12 +235,8 @@ def main():
         # It raises at the FIRST failing check, which is an exact_one needle, not the token scan.
         ok("aborted_member_reports_a_missing_needle", raised and "appears 0 times" in msg, msg)
 
-        saved = R.FATAL_LOG_TOKENS
-        R.FATAL_LOG_TOKENS = OLD_FATAL_TOKENS
-        try:
+        with old_fatal_config():
             raised_old, _ = call(d)
-        finally:
-            R.FATAL_LOG_TOKENS = saved
         ok("aborted_member_caught_even_with_old_tokens", raised_old,
            "with the prefix fixed, log_done alone catches an aborted member")
 
@@ -253,6 +254,50 @@ def main():
        any(t in "[gate5-train][FAIL] code HEAD drift" for t in R.FATAL_LOG_TOKENS))
     ok("data_only_fail_token_matched",
        any(t in launcher_die() for t in R.FATAL_LOG_TOKENS))
+
+    print("== 7b. the stderr-only arm is a NARROWING, so test that it does NOT fire ==")
+    # Same bytes, other stream. In STDERR this is a guard rejection; in STDOUT the identical prefix is
+    # what a healthy replica-family launcher prints. If this fired, section 8 could not pass.
+    gmsg, _, gse = driver_guard_stderr()
+    with tempfile.TemporaryDirectory() as tmp:
+        d = write_logs(tmp, healthy_stdout() + gse, "")
+        raised, msg = call(d)
+        ok("driver_prefix_in_STDOUT_does_not_trip_the_stderr_arm",
+           not (raised and "[gate5-train]" in str(msg)), f"raised={raised} {msg}")
+    with tempfile.TemporaryDirectory() as tmp:
+        d = write_logs(tmp, healthy_stdout(), gse)
+        raised, msg = call(d)
+        ok("the_same_bytes_in_STDERR_DO_trip_it", raised and "[gate5-train]" in msg, f"{raised} {msg}")
+
+    print("== 8. lane C's ruling: ONE reader, BOTH families, via the parameter ==")
+    # The REPLICA launcher is the sole producer of the "[gate5-train]" needle form (:62/:72). Its lines are
+    # executed here the same way, so this fixture is the replica family's real output -- not a re-spelling
+    # of the data-only one.
+    rsrc = REPLICA_LAUNCHER.read_text().splitlines()
+    r_start, r_done = rsrc[61], rsrc[71]
+    ok("replica_launcher_lines_are_the_echoes",
+       r_start.lstrip().startswith("echo ") and r_done.lstrip().startswith("echo "),
+       f"{r_start!r} / {r_done!r}")
+    script = (f'INDEX={IDX}\nSEED={SEED}\nSLURM_ARRAY_JOB_ID={JOB}\n'
+              'EXPECTED_HEAD=377c713d0000000000000000000000000000beef\n'
+              f'{r_start}\n{r_done}\n')
+    rp = subprocess.run(["bash", "-c", script], capture_output=True, text=True)
+    ok("replica_launcher_echoes_run", rp.returncode == 0, rp.stderr)
+    ok("replica_prefix_really_differs", "[gate5-train]" in rp.stdout
+       and R.LAUNCHER_LOG_PREFIX not in rp.stdout, rp.stdout)
+    r_out = (rp.stdout.splitlines()[0] + "\n"
+             + json.dumps({"config_gate": "PASS", "tag": "replica"}) + "\n"
+             + R.optimizer_proof_line() + "\n"
+             + json.dumps({"status": "PASS", "replica_index": IDX}) + "\n"
+             + rp.stdout.splitlines()[1] + "\n")
+    with tempfile.TemporaryDirectory() as tmp:
+        d = write_logs(tmp, r_out, "")
+        raised, info = call(d, prefix="[gate5-train]")
+        ok("replica_family_log_passes_with_its_own_prefix", not raised, f"raised: {info}")
+        # And the default must NOT accept a replica log -- otherwise the parameter is decorative.
+        raised_def, msg_def = call(d)
+        ok("replica_log_REJECTED_under_the_data_only_default", raised_def
+           and "appears 0 times" in msg_def, f"raised={raised_def} {msg_def}")
 
     print(f"\n{P} passed, {len(F)} failed")
     for f in F:
