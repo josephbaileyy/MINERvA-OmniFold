@@ -7,27 +7,29 @@
 | key | operating rule | executable or observable check | evidence |
 |---|---|---|---|
 | PB-01 | Treat generated current state as a view, not truth. | Run the freshness checker and re-measure every decision-bearing field from its source before acting. | BEN-191, BEN-199, BEN-323 |
-| PB-02 | Read the artifact that governs the decision, not merely a related artifact. | Name the governing path and field in the report; fail closed if either is unavailable. | BEN-205, BEN-383 |
+| PB-02 | Read the artifact that governs the decision, not merely a related artifact. | Name the governing path and field in the report; fail closed if either is unavailable, and re-read any predicate an error message or refusal cites before shipping it. | BEN-205, BEN-383, BEN-476 |
 | PB-03 | Derive identifiers, counts, and free ranges in the same turn. | Include the command and denominator; never copy a narrated free-list or remembered count. | BEN-027, BEN-080, BEN-228 |
-| PB-04 | A hash proves agreement with the named target, not that the target is the right one. | Verify run, arm, configuration, and event identity independently of the digest. | BEN-312 |
+| PB-04 | A hash proves agreement with the named target, not that the target is the right one. | Verify run, arm, configuration, and event identity independently of the digest; resolve which tree and which callee actually execute, and compare at callee granularity rather than whole-file. | BEN-312, BEN-483, BEN-484 |
 | PB-05 | Corroboration requires independent origins. | Trace each agreeing statement to its first measurement; count shared origins once. | BEN-300, BEN-304, BEN-312 |
 | PB-06 | Relay hypotheses and limits as attributed claims until independently checked. | Preserve the source, qualifier, and evidence pointer in every dispatch and summary. | BEN-305, BEN-392 |
 | PB-07 | Run a command before embedding it in an authorization or procedure. | Execute a dry-run or authorize the outcome and let the executor choose the environment-specific command. | BEN-410 |
 | PB-08 | A successful send is not acceptance of a task. | Require an acknowledgement from the addressed peer before reporting the task as held. | BEN-300 |
-| PB-09 | Resume guards validate completeness, not existence or size. | Parse required content or write to a temporary path and rename only after validation. | BEN-023 |
-| PB-10 | Preserve the complete diagnostic stream. | Redirect the producer's full output, then filter only a subsequent read; capture the producer's exit status. | BEN-026, BEN-035 |
+| PB-09 | Resume guards validate completeness, not existence or size. | Parse required content or write to a temporary path and rename only after validation; for every completeness test ask whether a PREVIOUS attempt could satisfy it, and bind artifacts to the run that wrote them by content, not by filename. | BEN-023, BEN-477 |
+| PB-10 | Preserve the complete diagnostic stream. | Redirect the producer's full output, then filter only a subsequent read; capture the producer's exit status and never pipe a command whose status will be read. | BEN-026, BEN-035, BEN-478 |
 | PB-11 | Judge job liveness from resource use and products, not log quietness. | Query scheduler CPU/state and count validated artifacts. | BEN-028 |
-| PB-12 | Check that a criterion measures the quantity it names. | Publish achieved value, required value, units, population, and reduction side by side. | BEN-077, BEN-119 |
+| PB-12 | Check that a criterion measures the quantity it names. | Publish achieved value, required value, units, population, and reduction side by side; a threshold must read the quantity that binds, not a broader one that resembles it. | BEN-077, BEN-119, BEN-478 |
 | PB-13 | An identity recomputation cannot validate its own premise. | Add an independent input or artifact readback for every premise the identity assumes. | BEN-328 |
 | PB-14 | A code-text search is not a call-graph result. | Exercise the path or use a semantic/call trace before asserting that one component invokes another. | BEN-335 |
 | PB-15 | Coverage reports need a cell for what the instrument cannot resolve. | Print resolved, unresolved, excluded, and total populations; zero unresolved must be distinguishable from unmeasured. | BEN-193, BEN-322 |
-| PB-16 | A guard needs mutation tests in both directions. | Demonstrate one defect mutation fires and one innocent mutation stays green. | BEN-331, BEN-387 |
+| PB-16 | A guard needs mutation tests in both directions. | Demonstrate one defect mutation fires and one innocent mutation stays green; a narrowing additionally needs a control it does NOT fire on, and every fixture is built from the producer, never from the rule under test. | BEN-331, BEN-387, BEN-476, BEN-482 |
 | PB-17 | A check belongs in the hook only if an innocent committer can make it pass. | Test the check on a clean worktree plus defect and innocent controls before wiring it. | BEN-387 |
 | PB-18 | Concurrent lanes use isolated worktrees and per-commit identities. | Check git worktree list, staged paths, and author identity before commit; never use shared stash state. | BEN-074, BEN-214, BEN-398 |
 | PB-19 | A receipt carries ingredients, not only verdicts. | Recompute every derived headline from fields in the receipt and require contradictions to be representable. | BEN-077 |
 | PB-20 | A new BEN must change future behavior. | Search the casebook first; amend or cross-reference an existing mechanism unless the new row changes a check, rule, or scope. | BEN-228, BEN-300 |
 | PB-21 | Do not let a small-sample spread estimate overturn a decision. | Report the interval and realized exceedance; prefer the realized population to a fitted Gaussian tail when the sample is small. | BEN-025 |
 | PB-22 | Document-local item ids carry the document's short prefix. | Reject bare letter-number ids in shared documents; use a scoped form such as PB1 or CLM-010 B1. | BEN-080, BEN-082 |
+| PB-23 | A control's silence is not evidence; ask the three detection questions. | For each green control name what proves the PRIMARY path ran, what the path DISCARDS, and what lies OUTSIDE its trigger; a control that can answer none of the three is unmeasured, not passing. | BEN-456, BEN-454, BEN-455 |
+| PB-24 | Cardinality cannot witness containment. | For any before/after claim that nothing new appeared, print the set DIFFERENCE by name (cur - snap) on both sides; a pair of tallies reads identically whether the claim is true or false. | BEN-468 |
 
 ## Promotion and retirement
 
