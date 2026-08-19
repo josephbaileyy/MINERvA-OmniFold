@@ -1,0 +1,20 @@
+# Fixtures for docs/orchestration/test_watch_report_train_run.py
+#
+# BEN-476: a fixture built from the signature list cannot disagree with the signature list. Every byte
+# below was emitted by the PRODUCER (a real Slurm job on Perlmutter), captured read-only, and is kept
+# UNEDITED. Where a fixture is an excerpt, the excerpt is a verbatim copy of whole lines; no byte inside
+# a kept line was altered.
+#
+# source_sha256 is the sha256 of the COMPLETE source file on the cluster, recorded at capture time
+# (2026-08-19, before /pscratch went offline for the maintenance_20260819 reservation). It is the
+# provenance anchor: it identifies the file the excerpt came from, not the excerpt.
+#
+# fixture (stored with a .txt suffix: .gitignore excludes *.out/*.err repo-wide, and the tests copy
+#          each fixture to the producer's real name in a temp dir. Bytes are unchanged by the rename.)
+# fixture	source_abs_path	source_sha256	source_bytes	source_lines	excerpt_method
+target_57235710_0.out.txt	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_data_only_n50/logs/target_57235710_0.out	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	0	0	COMPLETE FILE, byte-identical (empty file; local sha256 verified equal to source sha256)
+target_57235710_0.err.txt	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_data_only_n50/logs/target_57235710_0.err	bf41f9ae42bcf076057d0de9dd7be7f29c82d948357ba1bfa0ec9305a9933059	136	1	COMPLETE FILE, byte-identical (local sha256 verified equal to source sha256)
+train_57253127_0.out.txt	/pscratch/sd/j/josephrb/gate5-do-g2/nd-unfolding/pet/fullevent_cstat_data_only_n50/logs/train_57253127_0.out	ce226b6be31b6357602bb0badf33ef8f838526b35cfcf1ee7a30930cc9a3cca7	2202	42	EXCERPT: verbatim lines 11-16 of 42 (the deployment-parity line, the index/seed start line, and the opening of the config-gate JSON incl. the "config_gate": "PASS" line). Kept because these are the substring-trap material for the SUCCESS branch.
+train_57253127_0.err.txt	/pscratch/sd/j/josephrb/gate5-do-g2/nd-unfolding/pet/fullevent_cstat_data_only_n50/logs/train_57253127_0.err	4d045686d2b57d381700e9a2e3f69e82551f3c256a0c48aa70499ba6ba1b9a77	2775	17	EXCERPT: verbatim final 2 lines of 17 (the last TF-TRT warning for context, then the F2 family-root disagreement line that carries the FAIL-2 signature). Truncated TF/CUDA banner lines are not classification-relevant.
+train_57256638_0.out.txt	/pscratch/sd/j/josephrb/gate5-do-g2/nd-unfolding/pet/fullevent_cstat_data_only_n50/logs/train_57256638_0.out	44399ba64c4e0ab2d05c53ed98a45f56970b2797560e76c2acfecb51e81436c0	3547	76	EXCERPT: verbatim lines 13-15 and 74-76 of 76, concatenated (the index/seed start line, the "config_gate": "PASS" line, and the three [gate4] lines proving it trained fully and round-trip verified both finals). Two disjoint verbatim ranges; no line altered.
+train_57256638_0.err.txt	/pscratch/sd/j/josephrb/gate5-do-g2/nd-unfolding/pet/fullevent_cstat_data_only_n50/logs/train_57256638_0.err	f3fd69ccab784ee19ce4cb1383095a63f77413117ed1380f5d6c75cec43d1571	4911	33	EXCERPT: verbatim final 3 lines of 33 (shuffle-buffer line for context, the [gate4] degenerate-column WARNING, and the write-time withheld-key line that carries the FAIL-3 signature).

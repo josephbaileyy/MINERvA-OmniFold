@@ -1,0 +1,7 @@
+[gate5-do-train] index=0 seed=50000 job=57256638_0 head=abbf7e022d6419b8c8965bb5e0b632452fe53d7c product=data-only-v1
+{
+  "config_gate": "PASS",
+  "tag": "nominal",
+[gate4] LR anneal VERIFIED from the optimizer: 2 fit(s) at 0.0001, 4 at 1e-05
+[gate4] step1 FINAL (last-epoch) weights -> /pscratch/sd/j/josephrb/gate5-do-g2/nd-unfolding/pet/fullevent_cstat_data_only_n50/replicas/replica_00/training/w_nominal/OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5 (round-trip verified)
+[gate4] step2 FINAL (last-epoch) weights -> /pscratch/sd/j/josephrb/gate5-do-g2/nd-unfolding/pet/fullevent_cstat_data_only_n50/replicas/replica_00/training/w_nominal/OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5 (round-trip verified)

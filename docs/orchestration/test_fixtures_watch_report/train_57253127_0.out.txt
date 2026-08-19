@@ -1,0 +1,6 @@
+[gate5-do-train] deployment parity CURRENT for all pinned executing copies in /pscratch/sd/j/josephrb/gate5-data-only-frozen-152306a
+[gate5-do-train] index=0 seed=50000 job=57253127_0 head=152306a06ad98b85345535c88cde9eef82c4fb59 product=data-only-v1
+{
+  "config_gate": "PASS",
+  "tag": "nominal",
+  "estimator_fingerprint": "pet-fullevent-fps-v1",
