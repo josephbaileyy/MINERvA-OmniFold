@@ -100,10 +100,26 @@ green looks like the green, and the finding looks like a finding. `BEN-481` clos
 
 **Prediction, offered so it can be checked rather than assumed:** the next instance is a matcher over
 **generated** or **vendored** code, where the corpus differs from the author's mental model not by
-comments but by provenance. I have an unfiled observation that `test_resume_guard.py`'s own corpus
-excludes `lib/` by an early `continue` — which is why `lib/resume_guard.sh`, the file that *defines*
-every symbol the lint scrapes, is never scanned. Not yet an instance; recorded as the next place to
-look.
+comments but by provenance. I noted that `test_resume_guard.py`'s own corpus excludes `lib/` by an early
+`continue` (`:244`, `:290`) — so `lib/resume_guard.sh`, the file that *defines* every symbol the lint
+scrapes, is never scanned — and recorded it as the next place to look.
+
+**REFUTED THE SAME DAY, MEASURED.** I ran the lint's own regexes over both excluded files with comments
+stripped:
+
+    lib/backfill_completion_markers.sh   guarded=[]  ->  would report []
+    lib/resume_guard.sh                  guarded=[]  ->  would report []
+
+**Neither file contains a single `rg_skip_if_complete` CALL SITE** — the library *defines* the function
+and never guards an output with it — so the exclusion hides nothing and the lint loses no power to it.
+**The exclusion is correct.**
+
+**Recorded as refuted rather than quietly dropped, because an unrefuted wrong prediction sitting in this
+ledger is worse than no prediction:** the next reader spends real time confirming a dead end, and it
+carries this row's authority while doing so. The general prediction — a matcher over generated or
+vendored code — stands and has no instance. *(Incidental observation from the same run, not a finding:
+over the library the `stamped` regex captures `'called'` and `'${out}:'`, junk from reading the library's
+own definitions and prose. It is harmless only because `guarded` is empty there.)*
 
 ## 6. What this does not claim
 
