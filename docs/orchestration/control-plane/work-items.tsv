@@ -13,4 +13,3 @@ OI-129	OI-129	-	standard_p4	provenance	P2	Digest the projected covariance and re
 OI-130	OI-130	-	unassigned	publication	P2	Enumerate quoted values to artifacts and preservation status, then remediate by evidence class.	docs/OPEN_ITEMS.md (`OI-130`)
 OI-70	OI-70	-	repo_infra	infrastructure	P1	Fix manifest tracking semantics so ignored and merely intended paths cannot masquerade as committed repository inventory.	docs/OPEN_ITEMS.md (`OI-70`)
 OI-73	OI-73	-	repo_infra	infrastructure	P1	Correct the live-state.json lifecycle classification and distinguish authored input from generated output.	docs/OPEN_ITEMS.md (`OI-73`)
-OI-134	OI-134	-	repo_infra	safety	P1	Release the held wakerctl cron ticker and re-add the array watch under a new id with a task spec the array actually has.	docs/OPEN_ITEMS.md (`OI-134`); KNOWN_ISSUES.md (`ISSUE-52`); docs/orchestration/FINDINGS.md (`BEN-456`, `BEN-478`)

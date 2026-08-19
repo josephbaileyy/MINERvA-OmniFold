@@ -95,4 +95,4 @@ OI-130	active	NOW	safe-default-active	f3f51e86b12a51c219f86c17f6d71c4fb6d400221b
 OI-131	active	NOW	safe-default-active	cc61da371d76f36bb44a86443d20c378b749b164355e57ba6774429581226747	OPEN — filed 2026-08-18. Supersedes OI-48, whose decision was reversed.
 OI-132	active	NOW	safe-default-active	c4798e5a1cba00655c8ed339d81242cefc89c410bac4a6de8476958dda98baab	OPEN — filed 2026-08-19 by lane E in the same commit as BEN-476. THE DIVERGENCE MANIFEST'S LARGEST BUCKET RESTS ON A CON
 OI-133	active	NOW	safe-default-active	cd0cfeeb6947403f799be81d7ff9aff35e9f8a3b9dad870e5ac6fbe62e16eed1	OPEN — filed 2026-08-19 by lane E with BEN-477. NOTHING BINDS A CHECKPOINT TO THE RUN THAT WROTE IT, so a member's check
-OI-134	active	WAITING-JOSEPH	explicit-user-decision	911c2019c639a9352c9a09076404dccf96b574713eccb0cc2f40690c6ddb47e8	OPEN — item (1) IS ACTIONABLE NOW; item (2) IS WAITING-USER AND NOT AUTHORISED. Filed 2026-08-19 by the records lane in
+OI-134	retired	-	explicit-terminal-prefix	b291006e16866ed9b6d7b629b69739fc52b4b04a04b2e1ab75f5494f0fb6e2a0	BOTH ACTIONS EXECUTED 2026-08-19T12:40Z — and the authorised one FAILED, so the second was reached by a different route.
