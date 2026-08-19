@@ -41,7 +41,7 @@
     {
       "job_id": "57266000",
       "tasks": "0-0",
-      "receipt": "docs/orchestration/state/DIVERGENCE-MANIFEST-ADDENDUM-20260819-train-57266000.json"
+      "receipt": "docs/orchestration/state/gate5-do-train-array-active-57266000.json"
     }
   ],
   "blockers": [

@@ -16,8 +16,10 @@ import json
 import pathlib
 import subprocess
 import tempfile
+import os
 import unittest
 
+import generate_live_state
 import wakerctl
 from generate_live_state import LOUD, MAX_LINES, NO_EVIDENCE, QUIET, render, render_watch, tick_line
 
@@ -276,3 +278,29 @@ class WakeSectionEndToEndTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class AbsentWatchStoreIsNotZeroWatches(unittest.TestCase):
+    """An absent state dir must render NO EVIDENCE, never `none`.
+
+    2026-08-19: exactly one watch was armed on the cluster while this host had no
+    state/waker at all. `", ".join(rendered) or "none"` rendered that as `none` --
+    a claim about the world derived from a fact about the host. The section banner
+    covered it, but a banner is prose and the line is what gets quoted.
+    """
+
+    def test_absent_store_is_not_readable(self):
+        class Ctx:
+            state_dir = "/nonexistent/definitely/not/here/waker"
+        self.assertFalse(generate_live_state._watch_store_readable(Ctx()))
+
+    def test_present_empty_store_IS_readable(self):
+        with tempfile.TemporaryDirectory() as d:
+            os.makedirs(os.path.join(d, "watches"))
+
+            class Ctx:
+                state_dir = d
+            self.assertTrue(generate_live_state._watch_store_readable(Ctx()))
+
+    def test_none_ctx_is_not_readable(self):
+        self.assertFalse(generate_live_state._watch_store_readable(None))

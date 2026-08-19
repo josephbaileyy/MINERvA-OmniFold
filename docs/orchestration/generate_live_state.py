@@ -214,6 +214,19 @@ def watch_subject_verdict(watch: dict[str, Any], waker_ctx) -> tuple[str, str]:
     return LOUD, f"**\u26a0 {detail}**"
 
 
+def _watch_store_readable(ctx: Any) -> bool:
+    """True only if this host can actually enumerate the watch store.
+
+    Distinguishes "I looked and there are none" from "I could not look". The
+    caller renders the first as `none` and the second as NO EVIDENCE.
+    """
+    try:
+        store = pathlib.Path(ctx.state_dir) / "watches"
+        return store.is_dir() and os.access(store, os.R_OK)
+    except Exception:
+        return False
+
+
 def render_watch(watch: dict[str, Any], waker_ctx) -> tuple[str, str]:
     """(severity, rendered) for one watch. Never renders `state` alone."""
     wakerctl = _wakerctl()
@@ -414,7 +427,22 @@ def render(
             severity, text = render_watch(watch, waker_ctx)
             severities.append(severity)
             rendered.append(text)
-        watches = ", ".join(rendered) or "none"
+        # An ABSENT state dir must not render as "none". "none" is a claim about the
+        # world ("there are no watches"); absence is a fact about this HOST. Rendering
+        # the second as the first is the defect this whole section exists to prevent --
+        # on 2026-08-19 exactly one watch was armed on the cluster while a Mac
+        # regeneration would have printed "none" under a banner nobody had to read.
+        if rendered:
+            watches = ", ".join(rendered)
+        elif waker_ctx is None or not _watch_store_readable(waker_ctx):
+            watches = _wakerctl().no_evidence(
+                "the waker state dir is not present or not readable on this host, so this "
+                "host knows of NO watches -- that is NOT the same as there being none. "
+                "Regenerate from the host that owns state/waker."
+            )
+            severities.append(NO_EVIDENCE)
+        else:
+            watches = "none (state dir readable; 0 watch records present)"
         events = ", ".join(
             f"`{e['event_id']}`:{e['state']}" for e in waker.get("events", [])
         ) or "none"

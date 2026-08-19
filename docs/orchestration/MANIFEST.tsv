@@ -778,6 +778,7 @@ docs/orchestration/state/gate5-cstat-spec-measurements-20260814/zero_cells.py	tr
 docs/orchestration/state/gate5-data-factor-persistence-20260814.json	tracked	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	2	75	8052
 docs/orchestration/state/gate5-data-only-assert-hostile-pass-20260817.json	tracked	MACHINE	state-artifact		20260817	generated		exact-path-only		yes	1	78	9299
 docs/orchestration/state/gate5-deployment-parity-20260813.json	tracked	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	3	93	9859
+docs/orchestration/state/gate5-do-train-array-active-57266000.json	tracked	MACHINE	state-artifact			generated		exact-path-only		yes	1	88	5368
 docs/orchestration/state/gate5-extraction-active-56935552.json	tracked	MACHINE	state-artifact			generated		exact-path-only		yes	5	77	3829
 docs/orchestration/state/gate5-extraction-failure-56935552.json	tracked	MACHINE	state-artifact			generated		exact-path-only		yes	7	114	4933
 docs/orchestration/state/gate5-extraction-implementation-20260814.json	tracked	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	3	58	3719
