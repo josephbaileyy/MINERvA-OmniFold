@@ -64,7 +64,61 @@ CHECKPOINT_SEMANTICS = "final-epoch weights, round-trip verified (BEN-043)"
 # blocks only to EACH OTHER passes when both drift together -- which is precisely the failure mode two
 # deployments cut at different times create -- so both are compared to this.
 EXPECTED_LOADER_SHA256 = EXPECTED_CODE["loader"]
-FATAL_LOG_TOKENS = ["Traceback (most recent call last)", "[gate5-train][FAIL]", "SystemExit:"]
+# THE TWO PRODUCERS THAT WRITE INTO ONE PAIR OF LOG FILES, AND THEY DO NOT SHARE A PREFIX. Enumerating
+# the producers rather than the matches is the whole of ISSUE-54: :67/:425/:429 below were line-for-line
+# `validate_gate5_training_artifacts.py:338,343,344`, whose tokens only the *g1* launcher emits, so every
+# one of them was aimed at a string this job never writes.
+#   LAUNCHER `sbatch_gate5_data_only_train_array.sh` -> "[gate5-do-train]": :113 start, :124 DONE (stdout),
+#            and :57 `die() { echo "[gate5-do-train][FAIL] ..." >&2; }` (STDERR).
+#   DRIVER   `train_fullevent_replica.py`, invoked UNCHANGED at launcher :114 -> "[gate5-train]" (42 sites)
+#            and "[gate5-dataonly]" (11 sites). MEASURED: every single one of the 53 is inside a
+#            `raise SystemExit(...)`; neither prefix is ever printed on the driver's healthy path.
+# Named once here because a fourth copy of either literal is the drift this campaign keeps filing. NOT
+# derived from `--cstat-product`: the launcher's token is an arbitrary string with no rule connecting it to
+# "data-only-v1", so a "derivation" would be a lookup table wearing a function's clothes and would still
+# need editing when a third launcher appears.
+LAUNCHER_LOG_PREFIX = "[gate5-do-train]"
+DRIVER_FATAL_PREFIXES = ("[gate5-train]", "[gate5-dataonly]")
+
+# WHAT A FAILURE ACTUALLY LOOKS LIKE IN THESE STREAMS -- measured, not inferred from the `raise` syntax.
+# `python3 -c 'raise SystemExit("[gate5-train] x")'` prints EXACTLY `[gate5-train] x` to stderr, rc=1:
+# no traceback, and no literal "SystemExit:" text. So the old list matched NOTHING for the launcher's 12
+# `die` sites (wrong prefix) and NOTHING for the driver's 53 guard rejections (no token they emit) -- a
+# silent FALSE PASS, which is the half that matters. Hence:
+#   * "[FAIL]" -- the bare marker, deliberately PREFIX-INDEPENDENT. Covers this launcher's `die()` and, as
+#     a side effect, g1's "[gate5-train][FAIL]" unchanged. Only `die()` emits "[FAIL]" in either producer.
+#   * the driver's own two prefixes -- sound HERE because in THIS job's logs they occur only inside
+#     SystemExit messages and the launcher emits neither. DO NOT reuse this list against a g1 log without
+#     re-checking that: the g1 launcher prints "[gate5-train]" on its HEALTHY start and DONE lines, so this
+#     arm would be a FALSE ALARM there.
+#   * "Traceback (most recent call last)" -- anything that is not a deliberate guard.
+# "SystemExit:" is KEPT but is no longer load-bearing: it cannot fire for a `raise` in __main__, and is
+# retained only for the case where a SystemExit escapes a thread, where `threading` does print a traceback.
+# BELT AND BRACES, AND THE HONEST SIZING OF THIS ARM: the launcher runs under `set -eo pipefail` (:15),
+# its 12 `die` sites are ALL at :59-110 i.e. BEFORE the start echo at :113, and the driver call at :114 is
+# an unguarded simple command. So every failure that aborts the launcher already loses an `exact_one`
+# needle, and `log_done`/`log_start_line` catch it independently of any token. The token scan's OWN
+# reachable ground is therefore narrower than "the half that matters": it is (a) NAMING the failure
+# instead of misattributing it to a missing line, and (b) the failures that do NOT abort the launcher --
+# a non-fatal traceback from a subprocess, or a log pair that mixes a failed attempt with a requeued one.
+# Both are real; neither is the common case. Recorded so the next reader does not re-derive it, and so
+# nobody quotes this arm as the sole detector.
+#
+# ISSUE-55, AND IT IS NOT FIXED HERE: `validate_gate5_training_artifacts.py:344` holds the byte-identical
+# three-token list as a LOCAL `fatal_tokens`, so the g1 path is blind to the shared driver's 41
+# `[gate5-train]` guards in exactly the same way. That is one wrong constant on two paths and g1's copy is
+# another lane's surface. THE COUPLING THAT MAKES THIS MORE THAN A COURTESY NOTE:
+# `nd-unfolding/tests/test_cstat_data_only_predicates.py:1513` asserts
+# `FATAL_LOG_TOKENS == <g1's fatal_tokens, AST-extracted>` -- an EQUALITY. Written to stop this file
+# drifting from the pinned copy, it also makes this file UNABLE TO BE MORE CORRECT THAN g1, which is why
+# one constant stayed wrong on both paths for as long as it did. Widening the list here breaks that test
+# BY CONSTRUCTION, and repairing it is a scope decision for that suite's owner, not a tuple edit.
+FATAL_LOG_TOKENS = [
+    "Traceback (most recent call last)",
+    "[FAIL]",
+    *DRIVER_FATAL_PREFIXES,
+    "SystemExit:",
+]
 
 
 def _scalar(store, key, *, where):
@@ -422,11 +476,12 @@ def assert_member_logs(logs_dir, *, array_job_id, replica_index, bootstrap_seed,
     out_text = out_p.read_text(errors="replace")
     err_text = err_p.read_text(errors="replace")
     exact_one = (
-        ("log_start_line", f"[gate5-train] index={idx} seed={seed} job={array_job_id}_{idx}"),
+        ("log_start_line",
+         f"{LAUNCHER_LOG_PREFIX} index={idx} seed={seed} job={array_job_id}_{idx}"),
         ("log_config_gate_pass", '"config_gate": "PASS"'),
         ("log_optimizer_proof", optimizer_proof_line()),
         ("log_pass_receipt", '"status": "PASS"'),
-        ("log_done", f"[gate5-train] DONE index={idx} seed={seed}"),
+        ("log_done", f"{LAUNCHER_LOG_PREFIX} DONE index={idx} seed={seed}"),
     )
     for name, needle in exact_one:
         n = out_text.count(needle)
