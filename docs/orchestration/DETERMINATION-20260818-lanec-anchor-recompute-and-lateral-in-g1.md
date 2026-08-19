@@ -975,6 +975,200 @@ fraction must name WHICH INDEX its denominator is*; and now **a support must be 
 CARDINALITY.** **All three are the same substitution: a count standing in for an identity, and in all three the
 count agreed while the identity did not.**
 
+## 17. THE COMPARATOR DIGESTS ONLY THE DIAGONAL — **gate 2 is UNMET, and the reduction is aligned with the bar in the worst possible way**
+
+**Lane D found that `read_keys_pyroot` reduces every `TH2D` to its DIAGONAL and the comparator digests that.**
+Measured on the real `C_unified`: the payload comparison sees **`10,694` of `114,361,636` elements =
+`0.00935 %`**, and **`sum|off-diagonal|` is `~997x` `sum|diagonal|`.**
+
+> **RULED: this does not satisfy gate 2, and the failure is definitional rather than a matter of degree.**
+> §11a's `PAYLOAD` class says **bit-exact**, of the object. **A digest of the diagonal is a bit-exact comparison
+> of A PROJECTION, and reporting it as a bit-exact payload comparison is a category error** — the verdict is
+> about the projection, and nothing in it is about the artifact. **`0.00935 %` coverage with `997x` the mass
+> outside cannot support the word "bit-exact" under any reading.**
+
+### 17a. ⚠ MY §11f-i UNDERCOUNTED: THERE ARE **THREE** INDISTINGUISHABLE OBSERVATIONS, NOT TWO
+
+**§11f-i established two — a genuine reproduction and *"you compared the archive to itself"* — and argued the
+cross-member distinctness backstop cannot separate them at `n=1`. D adds a third:**
+
+| # | observation | separated by |
+|---|---|---|
+| 1 | a genuine bit-exact reproduction | — |
+| 2 | **the archive compared to itself** | remedy **(A)**, the identity stamp — which is why I ruled it MANDATORY |
+| 3 | **a member that reproduced `10,694` numbers and NOTHING ELSE** | **nothing, currently** |
+
+> **All three produce identical digests and an exit 0.** My §11f-i reasoning was right and its enumeration was
+> short by one, because I was reasoning about *what the digests can distinguish* and not about *what the
+> comparator actually reads.* **A gate is only as strong as the bytes its instrument touches, and I had ruled on
+> the comparison's LOGIC without ever asking its EXTENT.**
+
+### 17b. ⚠ AND THE REDUCTION IS NOT ARBITRARY — **it covers EXACTLY the bar's operand and nothing else, which is the most defensible-looking and worst possible choice**
+
+**`sqrt_tr_old = sqrt(trace(C))` depends ONLY on the diagonal.** So:
+
+> **A DIAGONAL-ONLY COMPARATOR VERIFIES PRECISELY THE QUANTITY THE PREDECLARED BAR CONSUMES, AND NOTHING ABOUT
+> THE CORRELATIONS.** It would produce a bar-consistent `PASS` with `997x` the matrix mass never read.
+>
+> **I expect the defence *"the bar only needs the trace, so the diagonal is the relevant part"*, and it is
+> wrong:** the adopted covariance is not consumed only by the bar. **`project_cov_nd.py` marginalises it —
+> `C_low = M C_high M^T` — which is a sum over OFF-DIAGONAL sub-blocks**, and its own header warns that getting
+> the ordering wrong *"silently produces a plausible number."* **A covariance whose off-diagonals were never
+> compared is unverified for every downstream projection, which is most of what it is for.**
+>
+> **This is the sharpest form of a shape this determination keeps meeting: a check whose coverage is ALIGNED with
+> the quantity someone will quote is not thereby sufficient — it is harder to notice.** A random `0.00935 %`
+> sample would at least fail visibly.
+
+### 17c. RULED — full-array digest, and any reduction DECLARES ITSELF WITH TWO NUMBERS
+
+> **1. THE PAYLOAD COMPARISON DIGESTS THE FULL ARRAY, one key at a time.** Feasible and not close: **one
+> `10,694²` `TH2D` is `914,893,088 B = 0.915 GB`**, so peak memory is one matrix, and a digest needs no more than
+> a streaming pass over the buffer. **The diagonal reduction is REFUSED for `PAYLOAD`-class keys.**
+>
+> **2. A REDUCTION IS PERMITTED ONLY IF IT DECLARES ITSELF, AND A DECLARATION IS TWO NUMBERS, NOT A NOTE: the
+> ELEMENT COVERAGE and the MASS FRACTION OUTSIDE THE REDUCTION.** `0.00935 %` and `997x` are the template —
+> **the pair is exactly what makes the current instrument's inadequacy arithmetic rather than a judgement call,
+> and it is `BEN-077` applied to a comparator's own scope.**
+>
+> **3. THE GENERAL RULE: A COMPARATOR THAT COMPARES A PROJECTION REPORTS THE PROJECTION.** The defect is not
+> that it reduces — reduction may well be necessary — **it is that it reduces SILENTLY and reports the reduced
+> verdict in the vocabulary of the full one.** *(Gate 2 was the one I said to guard hardest, on the grounds that
+> a comparator existing is not a comparator being right. It existed and had never run on real archive data;
+> what it did when it ran was read `0.00935 %` of the payload.)*
+
+### 17d. REMEDY (A)'s SCOPE WIDENS — **`LATERAL_CV` too, not only the adopted roots**
+
+**D found that `anchor_identity` CANNOT RUN on `ADOPTED_UTHROW` *or* `LATERAL_CV`: neither carries any identity
+key.** §11j ruled (A) mandatory and named *"the adopted roots"*.
+
+> **AMENDED: (A) covers `LATERAL_CV` as well.** Same argument, unchanged: the failure is **ADMISSION**, so (B)
+> cannot reach it, and an artifact that cannot be identified cannot be admitted. **This is (A)'s gap seen from
+> the GATE's side rather than the WRITER's, and the two views disagreeing about scope is itself the finding** —
+> I enumerated the writers that need stamps; D enumerated the artifacts the gate cannot read. **The second list
+> was longer.**
+
+### 17e. TWO NUMBER RECONCILIATIONS, so that neither becomes a fourth round of corrections
+
+**(i) `484,384:1` and `161,461:1` ARE BOTH RIGHT.** The mediator priced **one** per-bin array
+(`41.44e9 / 85,552`); §11h prices **three** — `diag_comb`, `vb`, `vu` (`41.44e9 / 256,656`). **Same artifact,
+same arithmetic, different operand count.** Stating it explicitly because *"your figure is 3x mine"* is how the
+last three rounds started, and neither of us is wrong here.
+
+**(ii) THE CORRECTED MATRIX SIZE DOES NOT WEAKEN §11g — IT EXPLAINS IT.** My §11g wrote that the `41.44 GB`
+intermediate is *"a handful of `65856²` `TH2D`s — one such matrix is `34.7 GB` on its own."* **That figure was
+mine and it was wrong, from the grid rather than the support.** But the corrected number closes a gap the wrong
+one left open:
+
+```
+one 10,694^2 TH2D          =  0.915 GB
+41.44 GB / 0.915 GB        =  45.3 matrices
+the file's key count       =  47   (hCov_universe5d_total + 46 systematics)
+46 x 0.915 GB              =  42.09 GB   ~=  the measured 41.44 GB
+```
+
+> **So the file's size is now fully accounted for by its OWN key list, which the `34.7 GB` figure could never
+> have done — at `34.7 GB` per matrix a 47-key file would be `1.6 TB`.** The retention ruling is unchanged and
+> its mechanism is now derivable from published operands instead of asserted. **A wrong number that nothing
+> could contradict, replaced by a right one that reproduces an independent measurement.**
+
+**(iii) `16.24 %` and `15.95 %` are the same RATIO on two different supports.** `10,694/65,856 = 16.24 %`;
+stage 0's `10,507/65,856 = 15.95 %`. **Near-identical, not identical, and the difference is precisely that the
+two supports belong to different products** — which is `BEN-466`'s subject appearing inside the sentence that
+reports `BEN-466`'s subject. **The mediator's observation stands: two lanes, two artifacts, one denominator, and
+the comment on the constant records that it was written down BECAUSE a per-bin array had already been sized off
+the grid and was wrong by `230x`. The fix for the first instance carried the second.**
+
+## 18. THE §16b CONDITIONAL IS DISCHARGED — **SUBSTITUTE, use the member's own CV**, and the mediator's lean is corrected on one point: the contaminant does not enter the statistic
+
+**The measurement I asked for was run and it is decisive, though not in the way either of us framed it.**
+
+```
+products/5d/xsec_5d_MEFHC_5iter_lgbm.root                    479,553 B
+uq_5d/universe_sweep_bkgaware/5d_xsec_..._uni_full_CV.root   480,251 B
+same key set, same 65,856 grid, same hXSecND_flat
+SUPPORT 10,694 both, and np.array_equal(a>0, b>0) is TRUE      <- membership, not cardinality
+all 10,694 support bins differ:  median rel 5.754e-03,  p90 2.046e-02,  28.8% above 1e-2
+integrated  sum(a)/sum(b) = 0.999690823                        <- totals agree to 0.03%
+```
+
+### 18a. ⚠ WHY THE LEAN TO *"PIN AND RECORD"* IS WRONG — **the bar is a SPREAD statistic, and a common-mode difference does not enter a spread**
+
+**The mediator quoted my own §16b sentence back at me — *"substituting would inject a difference that is NOT
+estimator noise, which is worse than pinning"* — and applied it faithfully. THE SENTENCE WAS TOO BROAD AND THE
+ERROR IS MINE.** It is the correct test for a comparison of **VALUES**. **The bar compares SPREADS:**
+
+```
+leg A   f_agg = sd_j(block_sum_j) / block_sum        <- sd ACROSS the 50 members
+leg B   f_med = median_bins sd_j(sigma_i) / sigma_i  <- sd ACROSS the 50 members
+```
+
+**Write the flat-norm term's contribution as `T(cv) ∝ 0.014 · ||cv||`, and let member `j` carry
+`cv_j = cv_uni(seed_j) = cv_arch + Δ + (seed response)_j`:**
+
+| choice | `sd_j` of the flat-norm contribution | consequence |
+|---|---|---|
+| **PIN** to `cv_arch` | `sd_j(0.014 · ||cv_arch||)` = **exactly 0** | **the term contributes NOTHING to either leg** |
+| **SUBSTITUTE** `cv_uni(seed_j)` | driven by the seed response | **the term contributes its real seed sensitivity** |
+
+> **So `Δ` — whatever distinguishes the two products — IS COMMON-MODE ACROSS ALL FIFTY MEMBERS AND CANCELS IN
+> `sd` TO FIRST ORDER.** It shifts the operating point, so it perturbs the *sensitivity* at second order, and it
+> shifts leg A's denominator by the measured `0.03 %`. **It does not enter the spread.**
+>
+> **PINNING, BY CONTRAST, ZEROES THE TERM'S CONTRIBUTION TO THE SPREAD AT FIRST ORDER.** That is not a small
+> conservatism — **it removes a channel entirely, and §16b already established the direction: DOWNWARD, TOWARD
+> `MET`.** A `MET` obtained that way is a pass bought by omitting a term.
+>
+> **RULED: SUBSTITUTE. The member's own `uni_full_CV`.** The condition I set — same estimator of the same
+> quantity — **is satisfied on the evidence that actually bears on it**, and the evidence that looked
+> disqualifying bears on a statistic the bar does not use.
+
+### 18b. The evidence FOR same-quantity is stronger than it was credited, and one piece of it is the gate-6 instrument passing
+
+- **`np.array_equal(a>0, b>0)` is TRUE — IDENTICAL SUPPORT MEMBERSHIP, bin-for-bin across `10,694` bins.**
+  **This is the strongest single fact in the measurement.** A genuinely different observable, or a different
+  binning, or a different iteration count would not preserve support membership *exactly*. **And note what kind
+  of check it is: a SET identity, not a cardinality** — precisely the instrument §16d ruled for gate 6, run here
+  incidentally, and **PASSING. So the archive's own two CVs are a ready-made POSITIVE CONTROL for
+  `mask_order_hash`**, which the mediator spotted and which is worth more than the CV question it arose from: a
+  gate with a real positive control is a gate that has been shown to be able to pass.
+- **Integrated totals to `0.03 %`** — same normalisation, same units, same POT scaling.
+- **Same key set, same grid, same `hXSecND_flat`.**
+
+### 18c. ⚠ THE MAGNITUDE COINCIDENCE IS SUGGESTIVE AND IS NOT EVIDENCE — named because the argument leaned on it
+
+**The two archive CVs' median difference is `5.754e-03`; stage 0's median per-bin seed effect is `5.098e-03` to
+`6.273e-03`. The same magnitude, and it is a genuinely striking observation.**
+
+> **But *"two quantities have the same magnitude"* does not license *"they have the same cause."*** Seed-scale
+> jitter would produce this; so would a re-run at a different iteration count, a different random state in a
+> shared subroutine, or two builds months apart on different library versions. **The coincidence is CONSISTENT
+> WITH the seed reading and discriminates against nothing** — and my §18a ruling does not depend on it either
+> way, which is the reason it can be stated as an observation rather than argued over.
+
+### 18d. AND A GENUINE OPEN ITEM THAT IS NOT MINE AND NOT `M(ii)`'s
+
+> **Two archive products that ought to be the same central value differ on `100 %` of their support, with
+> `28.8 %` of bins above `1 %` and a median of `0.58 %` — AND NOBODY HAS RECORDED IT.** The mediator named this
+> and it is right: **if these are the same estimator reached by two routes, a `0.58 %` median disagreement is a
+> REPRODUCIBILITY finding about the archive**, independent of the seed scan.
+>
+> **It belongs to whoever owns the archive's CV provenance, not to `OI-121`, and I am not filing it into another
+> lane's territory.** Flagged with its operands so it can be picked up: the two paths, the byte sizes, and the
+> distribution above.
+>
+> **AND DO NOT QUOTE THE `max = 1.262e-01`.** One bin of `10,694`, and a per-bin *relative* difference on a
+> support that reaches down to near-zero cross sections is the classic near-zero-denominator artefact — the same
+> `BEN-064` shape this campaign has declined to report twice. **The median and the quantiles are the reportable
+> statistics.**
+
+### 18e. What this does NOT settle
+
+**Nothing here changes `0.014`'s member-invariance (settled), the cancellation in the systematic covariance
+(B's, bit-identical, `max abs diff 0.0`), or any of §§16a/16c/17.** And it does not predict `f_agg` or `f_med`:
+**the `0.573 %` sqrt-trace shift between two CVs is a two-artifact difference, not a fifty-member spread.** It
+bounds the term's sensitivity, not the bar.
+
 ## 12. R1 RULED — **`_sb` IS CANONICAL FOR BOTH LEGS**, and there is exactly ONE wrong literal
 
 **Not a judgement — the receipt says so.** `receipt_construction_contract_5d.py:313-314`:
@@ -1298,6 +1492,35 @@ and now the mask is already in the product. Worth noting as a rate, not an anecd
   supports of equal SIZE can differ in MEMBERSHIP, which shifts the flat ordering and makes a bit-exact
   comparison compare the wrong pairs SILENTLY. **`p4_lib.py:1196` `mask_order_hash` already exists and
   already fails closed** — B should not build one. Mask is `CONFIGURATION`: equality is a hard failure.
+- **RULED (§17): GATE 2 IS UNMET — the comparator digests only the DIAGONAL**, `10,694` of `114,361,636`
+  elements = `0.00935 %`, with `~997x` the mass off-diagonal. A diagonal digest is a bit-exact comparison
+  of a PROJECTION; reporting it as a payload comparison is a category error. **Full-array digest ruled,
+  one key at a time (`0.915 GB` peak); any reduction must declare ELEMENT COVERAGE and MASS FRACTION
+  OUTSIDE.**
+- **§17b: the reduction covers EXACTLY the bar's operand** — `sqrt(trace)` is diagonal-only — **so it
+  would yield a bar-consistent PASS with the correlations never read.** `project_cov_nd.py` marginalises
+  those off-diagonals, so the *"only the trace matters"* defence fails.
+- **§17a: my §11f-i undercounted — THREE indistinguishable observations, not two.** The third (a member
+  reproducing `10,694` numbers and nothing else) is separated by nothing at present. **I ruled on the
+  comparison's LOGIC without asking its EXTENT.**
+- **AMENDED (§17d): remedy (A) covers `LATERAL_CV` too**, not only the adopted roots — D enumerated the
+  artifacts the gate cannot read and that list was longer than my list of writers needing stamps.
+- **§17e: `484,384:1` (one array) and `161,461:1` (three) are both right**; and the corrected `0.915 GB`
+  matrix size **explains** the `41.44 GB` file as `46 x 0.915`, which my wrong `34.7 GB` never could.
+- **RULED (§18): the §16b conditional is DISCHARGED — SUBSTITUTE, the member's own `uni_full_CV`.** The
+  two archive CVs share **identical support MEMBERSHIP bin-for-bin** and totals to `0.03 %`, so they are
+  the same quantity. **And my own §16b sentence was TOO BROAD: *"injects a difference that is not
+  estimator noise"* is the right test for comparing VALUES, but the bar compares SPREADS — the
+  product-offset is COMMON-MODE across all fifty members and cancels in `sd` to first order, while
+  PINNING ZEROES the term's spread contribution at FIRST order, biasing toward `MET`.**
+- **§18b: the archive's two CVs are a ready-made POSITIVE CONTROL for `mask_order_hash`** — the gate-6
+  instrument ran here incidentally, on a set identity rather than a count, and PASSED.
+- **§18c: the median-magnitude coincidence (`5.754e-03` vs stage 0's `5.098-6.273e-03`) is CONSISTENT
+  with the seed reading and discriminates against nothing** — same magnitude is not same cause, and the
+  ruling does not rest on it.
+- **§18d: flagged, NOT mine — two archive CVs differ on `100 %` of support, `28.8 %` above `1 %`,** and
+  nobody has recorded it. A reproducibility item for the archive's CV owner. **Do not quote the
+  `max = 1.262e-01`** — one bin, near-zero denominator, `BEN-064`.
 - **AUTHORIZED: nothing.** No launcher edited, nothing submitted.
 
 *Second sought: B on §3's derived-target predicate (its module) and on whether stage 1 can be run as a single
