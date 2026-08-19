@@ -2030,6 +2030,105 @@ SUBMITTER's shell.**
 > is the difference between a covering search and a null result** (`BEN-451`, and D says it turned on D's own
 > answer).
 
+## 24. **A DIGEST PROVES THE BYTES; ONLY AN IDENTITY BINDING PROVES WHOSE BYTES** — the constraint on `OI-133`'s fix, which is NOT my item
+
+**SCOPE FIRST, because I checked before ruling: `OI-133` is LANE E's** (`docs/OPEN_ITEMS.md:158`, *"filed 2026-08-19
+by lane E with `BEN-477`"*), and **whether its schema change lands before or after the fourth smoke is not my
+call.** What IS mine is the constraint it has to satisfy, because it lands on §11a's classes, §11i's attributes
+and remedy (A) — and D is right that ruling it while scoped only to the failed-run shape would size it wrong.
+
+### 24a. **`BEN-477` and §23c's fence gap are ONE hole with TWO entry points**
+
+| entry | how the wrong product arrives | are the bytes self-consistent? |
+|---|---|---|
+| **`BEN-477`** — a run that DIED | `57256638_0` failed at the receipt write, leaving `14` files / `7,908,032 B` under `w_nominal/`, and `expected_checkpoints()` expects **exactly those 14 names** | **NO** — stale, from a previous attempt |
+| **§23c** — a run that SUCCEEDED AT THE WRONG THING | a concurrent unfenced sibling (`sbatch_bootstrap_5d.sh`, `sbatch_boot5d_gpu_interactive.sh`, `boot5d_packed_loop.sh`) writes the identical `boot_nd_5d/res_boot_${id}.npz` from a shell with no `MNV_EST_SEED_OFFSET` set — **invisible to the fence by construction** | **YES** — correct for ITS OWN seed |
+
+> **THAT LAST COLUMN IS THE WHOLE RULING.** `OI-133`'s proposed fix — *record the 14 checkpoint digests in the
+> receipt and re-verify at read-back, making completeness a claim about CONTENT* — **defeats the `BEN-477` case,
+> because a dead run's leftovers are stale and their digests will not match.**
+>
+> **IT DOES NOT DEFEAT THE CONCURRENCY CASE. A concurrent baseline sibling's output is INTERNALLY CONSISTENT,
+> RECOMPUTABLE, AND PASSES EVERY CONTENT CHECK — it is wrong only in WHOSE it is.** So a fix sized for *"a dead
+> run's leftovers"* passes *"a live sibling writing the same names right now"*, and the second is the adversarial
+> case rather than the unlucky one.
+
+### 24b. RULED — **content-completeness is NECESSARY AND NOT SUFFICIENT, and the missing half is remedy (A)**
+
+> **Any binding that makes completeness a claim about CONTENT must ALSO carry the PRODUCING RUN'S IDENTITY.**
+> Digests and identity are **orthogonal**, not redundant: a digest answers *are these the bytes that were
+> written*, and nothing about it answers *was this run the one that was supposed to write them.*
+>
+> **AND THIS IS REMEDY (A) AT A FOURTH SITE, with the same key set** — `estimator_seed`, `draw_seed`,
+> `est_seed_offset`, `est_seed_offset_declared`. §11j ruled (A) mandatory on the adopted roots because **the
+> failure there is ADMISSION and not RESUME**, and §17d widened it to `LATERAL_CV` on D's evidence. **The
+> checkpoint directory is the same shape: a content comparison cannot begin until you know whose content it is.**
+>
+> *(So E's fix and my remedy (A) are the two halves of one repair, and either alone leaves a live hole. Recorded
+> because they are filed as separate items owned by separate lanes, which is exactly the arrangement in which each
+> owner reasonably believes the other half is somebody's plan.)*
+
+### 24c. ⚠ AND IT REACHES §11g's DELETION GATE, which is mine
+
+**§11g gates deletion of the `41.44 GB` member intermediate on `MVFINAL_j` existing and validating.**
+
+> **IF `MVFINAL_j` BINDS CONTENT DIGESTS ONLY, a concurrent sibling's self-consistent product SATISFIES IT — and
+> the deletion it authorises would destroy a real intermediate on the strength of another run's bytes.** So
+> `MVFINAL_j`'s binding inherits §24b's constraint: identity, not only content.
+
+### 24d. ⚠ **DE-ESCALATED BY D, AND §11g IS NOT IMPLEMENTED AT ALL — it is an `echo` to stderr**
+
+**D went looking for the deleter after reading §24c and there isn't one. Verified here, both branches:**
+
+```
+git grep MVFINAL origin/main -- 'nd-unfolding/*'                    0 occurrences
+git grep MVFINAL origin/lane-b-member-axis-wip -- 'nd-unfolding/*'  5, ALL of one kind:
+    sbatch_finalize_5d_bkgaware_gpu.sh:157,159   comments
+    sbatch_finalize_5d_bkgaware_gpu.sh:164       echo "[fin-bkg]   DO NOT DELETE ${COMB}" >&2
+    tests/test_uq_remediation.py:3755,3760       a test asserting that STRING is present
+```
+
+> **THE FORGE-THEN-DELETE CHAIN IS NOT LIVE, AND §24c SHOULD NOT BE READ AS "DATA DESTRUCTION IS ARMED."** Nothing
+> writes an `MVFINAL_j`, nothing reads one, and nothing deletes a member intermediate. **D found this by checking
+> an escalation I had made from its own report, and said so rather than let my version stand at full strength.**
+>
+> **AND THE HARDER ADMISSION IS MINE: §11g's "gate" IS, IN CODE, AN `echo` TO STDERR.** I have called it a gate
+> throughout — *"deletion is gated on `MVFINAL_j`"*, *"nothing accepted without a stamp, nothing deleted without
+> one"* — and **what exists is a warning printed by a job that has already finished.** A declared rule is not a
+> gate, and I should not have kept using the word.
+
+**D's three consequences, all accepted, and the second is the one that changes what I ask for:**
+
+**1. THE CONDITION HOLDS VACUOUSLY, AND EITHER HALF ENDS THE VACUITY.** *"No member's intermediate may be removed
+until that member's `MVFINAL_j` exists"* is satisfied today **because neither side of it exists.**
+
+> **THE FIRST PERSON TO IMPLEMENT EITHER HALF ENDS THAT — AND IF THE DELETER LANDS BEFORE THE IDENTITY BINDING,
+> THEY END IT IN THE DANGEROUS DIRECTION.**
+
+**2. AND THIS IS §21m's INTERVAL QUESTION WITH A PROPERTY THE OTHER THREE DID NOT HAVE.** D's point, and it is the
+best refinement of that framing anyone has offered:
+
+> **THE DIAGONAL-BEFORE-DELETION, EXIT-CODES-BEFORE-STREAMING AND ASSERT-BEFORE-DEMOTE INTERVALS WERE ALL
+> RECOVERABLE IF GOT WRONG. THIS ONE DESTROYS `41.44 GB`.**
+>
+> **So intervals are not interchangeable and must be ranked by REVERSIBILITY, not by likelihood.** I had been
+> treating the three as one class. **The ordering ask is concrete and cheap: land the digest-AND-identity binding
+> before anything that removes bytes — and TODAY IS THE CHEAPEST THAT WILL EVER BE, because there is no deleter to
+> retrofit.**
+
+**3. THE TRIGGER IS THE WEAKEST AVAILABLE ONE, AND `BEN-456`'s instance-3 QUESTION IS AIMED CORRECTLY AT MY GATE.**
+*What is the trigger, and what lies outside it?* **Here the trigger is an operator reading stderr from a job that
+finished hours ago.**
+
+> **The first deletion will almost certainly be done BY HAND, BY A HUMAN FOLLOWING MY RETENTION RULING — and a
+> `>&2` warning is weakest precisely there, because the operator is the DECIDER rather than a downstream process
+> that could be made to fail closed.** The test at `:3755-3760` pins that the WARNING EXISTS; **nothing pins that
+> anything ACTS on it.** `BEN-450` — detection without propagation — **with a human as the unread channel.**
+>
+> **D's caveat is fair and I keep it: the `echo` is not wrong to be there. It is the right thing to have written
+> when there is nothing else. It should not be mistaken for the gate — and the test asserting its text makes it
+> look MORE load-bearing than it is**, which is the same shape as a green check that measures nothing.
+
 ## 12. R1 RULED — **`_sb` IS CANONICAL FOR BOTH LEGS**, and there is exactly ONE wrong literal
 
 **Not a judgement — the receipt says so.** `receipt_construction_contract_5d.py:313-314`:
@@ -2515,6 +2614,28 @@ and now the mask is already in the product. Worth noting as a rate, not an anecd
   intermediate under §11g.**
 - **§23d: `228 cannot reach a canonical path` is bounded by D's THREE ROUTES, not by the tree** — each
   caught what the others missed, and two evasion shapes are named.
+- **RULED (§24): A DIGEST PROVES THE BYTES; ONLY AN IDENTITY BINDING PROVES WHOSE BYTES.** `OI-133` is
+  **lane E's item** and its scheduling is not my call; the CONSTRAINT is mine. **`BEN-477` (a run that
+  DIED) and §23c's fence gap (a run that SUCCEEDED AT THE WRONG THING) are one hole with two entry
+  points, and they differ in whether the wrong bytes are SELF-CONSISTENT** — a dead run's leftovers fail a
+  content digest; **a concurrent sibling's output passes every content check and is wrong only in whose it
+  is.** So content-completeness is NECESSARY AND NOT SUFFICIENT, and the missing half is **remedy (A) at a
+  fourth site, same key set.** E's fix and (A) are two halves of one repair, filed as separate items under
+  separate owners.
+- **⚠ §24c/§24d: DE-ESCALATED BY D, and the harder admission is mine — §11g's "gate" IS AN `echo` TO
+  STDERR.** `git grep MVFINAL` finds **0** occurrences in main's code and **5** on B's branch, all comments,
+  one `>&2` warning, and a test asserting that string exists. **No producer, no reader, no deleter: the
+  forge-then-delete chain is NOT live**, and I called a declared rule a gate throughout.
+  **The condition holds VACUOUSLY because neither side exists, and whoever implements either half ends
+  that — a deleter landing first ends it in the dangerous direction.**
+- **§24d: D's refinement of §21m, and it re-ranks all four intervals** — diagonal-before-deletion,
+  exit-codes-before-streaming and assert-before-demote were **RECOVERABLE**; this one **destroys
+  `41.44 GB`**. **Intervals must be ranked by REVERSIBILITY, not likelihood**, and I had treated them as one
+  class. Land the identity binding before anything that removes bytes — **cheapest today, with no deleter to
+  retrofit.**
+- **§24d: the trigger is an operator reading stderr hours later** — weakest exactly where the decider is a
+  HUMAN rather than a process that could fail closed. The test pins that the WARNING exists; **nothing pins
+  that anything ACTS on it** (`BEN-450`, with a human as the unread channel).
 - **AUTHORIZED: nothing.** No launcher edited, nothing submitted.
 
 *Second sought: B on §3's derived-target predicate (its module) and on whether stage 1 can be run as a single

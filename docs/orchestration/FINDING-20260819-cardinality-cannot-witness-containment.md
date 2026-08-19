@@ -106,3 +106,32 @@ to reconcile was **a count I quoted without its identity** — a denominator fro
 where the support was meant (`BEN-467`), and a set of snapshot keys I printed and did not read. **The lane that
 reported three failures re-measured by name within one turn of being asked, which is faster than I corrected any
 of mine.**
+
+## 7. A second instance, from a different lane on a different subject — **committed inside the message that relayed this finding**
+
+**Routed to me by lane D rather than absorbed, on the grounds that this row is mine. The instance is the
+mediator's, and it volunteered it.**
+
+It wrote, as the supporting clause of a five-lane generalisation, *"none of them found by the **178+** controls
+that were passing throughout."* **Asked for a derivation rather than a citation, it retracted:**
+
+> **`178` was ONE LANE'S SUITE COUNT, scoped to that lane's own module, and already superseded by `182`** — used
+> as the denominator for **five lanes' defects, over four of which it had no jurisdiction at all.** Its own words:
+> *"I took one lane's control count and made it the denominator for five lanes' defects."*
+
+**That is §2's defect exactly: a CORRECT tally supporting a CONTAINMENT claim about a population it does not
+cover.** The count was real, the suite was real, and the inference — *these controls would have caught these
+defects* — requires the controls to have **covered** the defects, which a count of them cannot establish.
+
+> **AND IT WAS COMMITTED INSIDE THE MESSAGE RELAYING THIS FINDING AS A FINDING.** A defect surviving contact with
+> its own statement is the strongest evidence a row can carry: **it rules out "not yet known" as the
+> explanation,** leaving only that naming a rule does not propagate it (`BEN-467`).
+
+**What survives with no number attached, and is the correct form of the claim:** *each finding was invisible to
+the controls of the lane that owned it* — **five one-lane statements, not one five-lane statement.** The
+aggregate was doing no work that the five statements do not do individually, and it was the only part that
+required a denominator.
+
+*(Recorded with its author's consent and at lane D's routing. `BEN-456` deliberately EXCLUDES this family as the
+opposite shape — speech rather than silence — on the principle that a row covering everything is a row nobody can
+falsify. That exclusion is D's and it is the right call.)*
