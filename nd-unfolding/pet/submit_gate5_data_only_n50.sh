@@ -20,9 +20,21 @@ set -eo pipefail
 # existing caller changes meaning. `target` submits ONLY the target array and defers the training one to
 # a later invocation against a LATER checkout -- see the deferral note beside the submission below.
 #
-# DELIBERATELY NOT a `train`-only mode yet: that needs a `--dependency=aftercorr:<job>` operand supplied
-# from outside, and an unvalidated job id in a dependency is how a training array silently starts against
-# a target family that is still being written. It gets added with its own validation or not at all.
+# `train` EXISTS NOW, AND ITS EARLIER REFUSAL EXPIRED RATHER THAN WAS OVERRULED. The note is kept because a
+# reader needs to know which of the two it was.
+#
+# REFUSED WHILE: it would have needed a `--dependency=aftercorr:<job>` operand supplied from outside, and an
+# unvalidated job id in a dependency is how a training array silently starts against a target family that is
+# still being written.
+# THE HAZARD IS GONE: the family is COMPLETE and gate-verified (50/50 products, both keys, 50 unique
+# contiguous seeds, precedence margin 2519 s), so this stage takes NO DEPENDENCY AT ALL. It ASSERTS THE
+# TARGETS EXIST for every member it is about to submit.
+#
+#   A DEPENDENCY IS A PROMISE ABOUT THE FUTURE; AN EXISTENCE ASSERTION IS A MEASUREMENT OF THE PRESENT, AND
+#   ONLY ONE OF THEM CAN BE CHECKED AT THE MOMENT IT MATTERS.
+#
+# So the replacement is STRICTLY STRONGER than what was declined, which is the only admissible direction when
+# a guard is re-opened (BEN-407).
 STAGE=${1:-both}
 # THE TRAINING ARRAY SPEC, OVERRIDABLE FOR A SINGLE-MEMBER SMOKE AND FOR NOTHING ELSE.
 #
@@ -43,10 +55,11 @@ case "$TRAIN_ARRAY" in
                exit 1 ;;
 esac
 case "$STAGE" in
-  both|target) ;;
+  both|target|train) ;;
   # Plain quoting, not `${STAGE@Q}` -- that is bash 4.4+ and this is read on hosts with bash 3.2, where
   # it is a `bad substitution` that fires INSIDE the error path and replaces the diagnostic with noise.
-  *) echo "[gate5-do-submit][FAIL] unknown stage '$STAGE'; expected 'both' or 'target'" >&2; exit 1 ;;
+  *) echo "[gate5-do-submit][FAIL] unknown stage '$STAGE'; expected 'both', 'target' or 'train'" >&2
+     exit 1 ;;
 esac
 
 CODE_ROOT=$(git rev-parse --show-toplevel)
@@ -155,21 +168,62 @@ if squeue -h -u "$USER" -n g5targ,g5train | grep -q .; then
   squeue -h -u "$USER" -n g5targ,g5train -o '%i|%j|%T|%R' >&2
   die "a three-stream Gate-5 array is active; refusing to interleave two families on one input"
 fi
-for index in $(seq 0 49); do
-  replica=$(printf 'replica_%02d' "$index")
-  base=${OUTPUT_ROOT}/replicas/${replica}
-  for f in \
-    "$base/target/GATE5_REPLICA_TARGET.npy" \
-    "$base/target/GATE5_REPLICA_TARGET.npy.done" \
-    "$base/target/GATE5_REPLICA_TARGET_RECEIPT.json" \
-    "$base/target/GATE5_REPLICA_TARGET_RECEIPT.json.done" \
-    "$base/training/GATE5_REPLICA_WEIGHTS.npz" \
-    "$base/training/GATE5_REPLICA_WEIGHTS.npz.done" \
-    "$base/training/GATE5_REPLICA_TRAINING_RECEIPT.json" \
-    "$base/training/GATE5_REPLICA_TRAINING_RECEIPT.json.done"; do
-    [[ ! -e "$f" && ! -L "$f" ]] || die "collision/no-clobber guard: $f"
+# THE COLLISION GUARD IS STAGE-AWARE, AND THIS IS THE ONE PLACE THE NEW STAGE RELAXES ANYTHING -- SO IT IS
+# ALSO WHERE THE COMPENSATING ASSERTION GOES.
+#
+# In `both`/`target` NOTHING may pre-exist, which is unchanged. In `train` the TARGET products MUST pre-exist
+# -- that is the whole point -- so refusing them would make the stage unusable, and the honest form is to
+# REQUIRE them rather than to skip the check. Only the TRAINING products must be absent.
+#
+# For the members being submitted, `train` therefore asserts all four target artifacts are PRESENT, REGULAR
+# and NON-SYMLINK. A symlinked target would let one member train on another's, which every digest check
+# downstream would then confirm as consistent.
+if [[ "$STAGE" == "train" ]]; then
+  # Which members? Parse the array spec's leading range so the assertion covers exactly what is submitted --
+  # a smoke over member 0 must not be gated on 49 families it is not going to touch, and a full run must be.
+  lo=${TRAIN_ARRAY%%-*}; rest=${TRAIN_ARRAY#*-}; hi=${rest%%\%*}
+  case "$TRAIN_ARRAY" in *-*) ;; *) lo=$TRAIN_ARRAY; hi=$TRAIN_ARRAY ;; esac
+  [[ "$lo" =~ ^[0-9]+$ && "$hi" =~ ^[0-9]+$ ]] || die "cannot parse members from GATE5_TRAIN_ARRAY '$TRAIN_ARRAY'"
+  echo "[gate5-do-submit] train stage: asserting target products for members ${lo}..${hi}"
+  n_ok=0
+  for index in $(seq "$lo" "$hi"); do
+    replica=$(printf 'replica_%02d' "$index")
+    base=${OUTPUT_ROOT}/replicas/${replica}
+    for f in \
+      "$base/target/GATE5_REPLICA_TARGET.npy" \
+      "$base/target/GATE5_REPLICA_TARGET.npy.done" \
+      "$base/target/GATE5_REPLICA_TARGET_RECEIPT.json" \
+      "$base/target/GATE5_REPLICA_TARGET_RECEIPT.json.done"; do
+      [[ -s "$f" && -f "$f" && ! -L "$f" ]] \
+        || die "train stage requires an existing regular non-symlink target product: $f" 5
+      n_ok=$((n_ok + 1))
+    done
+    for f in \
+      "$base/training/GATE5_REPLICA_WEIGHTS.npz" \
+      "$base/training/GATE5_REPLICA_WEIGHTS.npz.done" \
+      "$base/training/GATE5_REPLICA_TRAINING_RECEIPT.json" \
+      "$base/training/GATE5_REPLICA_TRAINING_RECEIPT.json.done"; do
+      [[ ! -e "$f" && ! -L "$f" ]] || die "collision/no-clobber guard (training): $f"
+    done
   done
-done
+  echo "[gate5-do-submit] train stage: ${n_ok} target artifact(s) asserted present for ${lo}..${hi}"
+else
+  for index in $(seq 0 49); do
+    replica=$(printf 'replica_%02d' "$index")
+    base=${OUTPUT_ROOT}/replicas/${replica}
+    for f in \
+      "$base/target/GATE5_REPLICA_TARGET.npy" \
+      "$base/target/GATE5_REPLICA_TARGET.npy.done" \
+      "$base/target/GATE5_REPLICA_TARGET_RECEIPT.json" \
+      "$base/target/GATE5_REPLICA_TARGET_RECEIPT.json.done" \
+      "$base/training/GATE5_REPLICA_WEIGHTS.npz" \
+      "$base/training/GATE5_REPLICA_WEIGHTS.npz.done" \
+      "$base/training/GATE5_REPLICA_TRAINING_RECEIPT.json" \
+      "$base/training/GATE5_REPLICA_TRAINING_RECEIPT.json.done"; do
+      [[ ! -e "$f" && ! -L "$f" ]] || die "collision/no-clobber guard: $f"
+    done
+  done
+fi
 mkdir -p "$OUTPUT_ROOT/logs"
 
 EXPORTS="ALL,HOME=/global/homes/j/josephrb,GATE5_CODE_ROOT=$CODE_ROOT,GATE5_DATA_ROOT=$DATA_ROOT"
@@ -189,6 +243,28 @@ EXPORTS+=",GATE5_EXPECTED_PREDICATES_SHA=$(sha_of "$PREDICATES")"
 # job id. Found by looking for 57235710's logs in the g2 tree and finding none. A command-line `--output`
 # wins over the directive, so the launcher's default is left intact for the generation-one reproduction.
 mkdir -p "$OUTPUT_ROOT/logs"
+if [[ "$STAGE" == "train" ]]; then
+  # NO `--dependency`: the targets already exist and were asserted above. A dependency here would be a
+  # promise about a job that has already finished, which is not a check.
+  TARGET_JOB="NOT_SUBMITTED_train_stage"
+  TRAIN_JOB=$(sbatch --parsable --array="$TRAIN_ARRAY" --export="$EXPORTS" \
+    --output="$OUTPUT_ROOT/logs/train_%A_%a.out" --error="$OUTPUT_ROOT/logs/train_%A_%a.err" \
+    "$TRAIN_SCRIPT") \
+    || die "training-array submission failed"
+  [[ "$TRAIN_JOB" =~ ^[0-9]+$ ]] || die "unexpected training job id $TRAIN_JOB"
+  echo "GATE5_DATAONLY_TARGET_JOB=$TARGET_JOB"
+  echo "GATE5_DATAONLY_TRAIN_JOB=$TRAIN_JOB"
+  echo "GATE5_DATAONLY_DEPENDENCY=none (targets pre-exist and were asserted)"
+  echo "GATE5_DATAONLY_CODE_HEAD=$HEAD"
+  echo "GATE5_DATAONLY_OUTPUT_ROOT=$OUTPUT_ROOT"
+  echo "GATE5_DATAONLY_PRODUCT=data-only-v1"
+  echo "GATE5_DATAONLY_STAGE=$STAGE"
+  echo "GATE5_DATAONLY_TRAIN_ARRAY=$TRAIN_ARRAY"
+  echo "GATE5_DATAONLY_DATA_ROOT=$DATA_ROOT"
+  echo "GATE5_DATAONLY_LOADER_SHA256=$(sha_of "$LOADER")"
+  exit 0
+fi
+
 TARGET_JOB=$(sbatch --parsable --array=0-49%10 --export="$EXPORTS" \
   --output="$OUTPUT_ROOT/logs/target_%A_%a.out" --error="$OUTPUT_ROOT/logs/target_%A_%a.err" \
   "$TARGET_SCRIPT") \
