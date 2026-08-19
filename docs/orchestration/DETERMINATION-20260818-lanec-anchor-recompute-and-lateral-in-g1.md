@@ -1892,6 +1892,144 @@ right and D's *erase-the-evidence* reason is the better one; the `36` hours are 
 predicate is the class `.githooks/pre-commit:71-77` already declined to wire. **What is withdrawn is exactly the
 word *"beside"*, and the unordered form of the remedy.**
 
+## 22. **GATE 2 IS MET** — on a pre-specified value, and the instrument is a SEPARATE claim that is NOT met
+
+**D ran the specification agreed in §21k, on the tree I named, with the expected value fixed before the run.**
+
+```
+instrument  _th2_content / read_one_matrix_for_gate2 at ecee9ff1, extracted by git show, unmodified
+artifact    real C_unified, 10694^2, Perlmutter ROOT 6.28/12          party  lane D
+[gate2-read] ok=True  route=rowloop  elements=114361636 == expected_elements  complete finite
+[gate2-read] digest = de32843bca7128c951a37e18d4cdc437eef1023bee41cc35251846a91c643d6f   exit 0
+```
+
+> **CHARACTER-FOR-CHARACTER THE PRE-SPECIFIED VALUE. GATE 2 IS MET**, on an artifact identical to the tree,
+> against a digest fixed in advance, by a party who is not its author. **`sqrt_tr_unified` recomputes bit-exactly
+> from that array's own diagonal**, and a direct `_th2_content` call agrees (`37.3 s`, peak RSS `2,926 MB`).
+
+**AND FOUR INDEPENDENT COMPUTATIONS AGREE ON ONE DIGEST**, because D still holds the pre-deletion result:
+the repaired buffer route, the pre-deletion row loop, `_th2_content` at `ecee9ff1`, and `--read-one-matrix` at
+`ecee9ff1` — `array_equal` True across all `114,361,636` elements.
+
+> **So the deleted route, once repaired, agreed EXACTLY with the survivor. §21d removed a DEAD path, not a
+> DIVERGENT one** — which is the outcome that makes the deletion clean rather than merely cheap, and it was not
+> knowable when I ruled it.
+
+**Reference digests now exist for the throw root and did not before today:**
+
+```
+C_unified        de32843bca7128c951a37e18d4cdc437eef1023bee41cc35251846a91c643d6f   114361636
+C_blocksum       2c432e87781a7a9c93ca501dc3b5ec5a78e5b4513f235121af5fd40aeb4192a6   114361636
+C_cross          e4c605c774f0cf50b965d78b99888b1e7e5008771fde9d8d912204f5c20599c1   114361636
+hJointMeanShift  10f364dbbb24faaabc7c0090404eac884ee9cf9aa0aca41ebc973794caf5f5b1       10694
+```
+
+### 22a. ⚠ **THE INSTRUMENT IS NOT VERIFIED, AND D FLAGGED IT AGAINST ITS OWN RESULT**
+
+> **D: *"I read `--read-one-matrix`'s `ok=False` reasons in the source and EXERCISED NONE OF THEM."*** So the
+> entry point's failure directions are untested. **This does not touch the discharge — a positive result against a
+> value fixed in advance stands on its own — and it does bound REUSE.**
+>
+> **RULED: gate 2 is MET; `--read-one-matrix` is NOT CERTIFIED FOR LATER GATES until a case reddens it.** Two
+> claims, kept apart deliberately, because *"the gate passed"* and *"the instrument works"* are exactly the pair
+> §17 was about. **A check that cannot be shown to fail is not evidence** — my own rule, aimed this time at an
+> instrument that produced a result I wanted.
+
+### 22b. D's MEMORY MEASUREMENT REDIRECTS §19b — **the numpy side is not the lever and never was**
+
+```
+digests instead of arrays   3,790 MB      diagonals only (before)   3,773 MB      delta +17 MB
+```
+
+> **Returning digests bought NO memory. The peak is ROOT's live `TH2D` with its `sumw2`, not the numpy copy — the
+> same reason the buffer route saved nothing.** So §19b's *"budget ~2 GB per live `TH2D`"* stands and its
+> implication narrows: **`obj.Delete()` per key is the ONLY remaining lever, and nothing on the numpy side is
+> worth spending on.** Planning figures: `37 s` per matrix, `144 s` for the throw root's four keys, **`~5 min` for
+> both files** — which also re-confirms §21d's trade from a third direction.
+
+## 23. D's FENCE REPORT — **the hazard list widens, and one item shows the fence's SUBJECT is wrong**
+
+**Partition reproduced independently: `263 = 7 HOOKED + 9 FENCED + 247 NEITHER`, `0 BOTH`; of the 247, `19` can
+reach a canonical 5D path and `8` of those WRITE one.**
+
+### 23a. ⚠ **A DESTRUCTIVE DEFAULT THAT WOULD DESTROY GATE 2's OWN ARTIFACT — verified line by line**
+
+```
+nd-unfolding/sbatch_adopt_5d.sh          11 lines total; line 11 is   python3 adopt_unified_5d.py
+nd-unfolding/adopt_unified_5d.py:79-80   --out defaults to uq_5d/universe_stage2_5d/…_combined_uthrow.root
+nd-unfolding/adopt_unified_5d.py:169     fo = ROOT.TFile.Open(args.out, "RECREATE")
+```
+
+> **Running that launcher RECREATEs the adopted uthrow root — one of the two `892 MB` files stage 1 compares
+> against, the one carrying `sqrt_tr_old`, WHICH IS THE PREDECLARED BAR'S OWN OPERAND (§16a), and one of the files
+> D read for gate 2 this turn.**
+>
+> **AND THE REPO DOCUMENTS THE HAZARD, VERBATIM, ONE DIRECTORY AWAY.**
+> `nd-unfolding/sbatch_readopt_5d_bkgaware_footing.sh:36-39`: *"`--out` IS PASSED EXPLICITLY ON ALL FOUR ARMS.
+> `adopt_unified_5d.py:79-80` defaults `--out` to the July product and opens it RECREATE, so taking the default
+> would destroy a historical artifact AND let the CV-centered arm silently clobber the mean-centered one, leaving
+> one file that looks like both."* **`BEN-256` paying out: a workaround's justification paragraph is a defect
+> report nobody routed.**
+
+### 23b. ⚠ **AND IT SHOWS MY FENCE'S SUBJECT IS WRONG — a text fence cannot see a bare invocation**
+
+**There is NOTHING IN `sbatch_adopt_5d.sh` TO GREP. The dangerous path never appears in it.** Eleven lines, no
+arguments, and the canonical destination lives entirely in the callee's `argparse` default.
+
+> **RULED — and this corrects my own fence design, not D's list: THE FENCE'S SUBJECT IS THE PRODUCER'S EFFECTIVE
+> OUTPUT PATH, NOT THE LAUNCHER'S TEXT.** A launcher that passes no arguments has no text to match, so **every
+> grep-shaped fence over launcher bodies is structurally blind to the most dangerous case — the one that takes
+> defaults.**
+>
+> **This is *what EXECUTES versus what is CITED, and the unit is the callee*, applied to the fence itself.** I
+> ruled a fence into each launcher (§9) and specified it over the thing I could read rather than the thing that
+> determines the write. **Widening the list from 9 to the sites D names is necessary and does not fix this**: the
+> next bare invocation is invisible again.
+>
+> **D's route-2 repair is the right instrument and should be adopted as the fence's basis: enumerate the python
+> modules the launchers invoke and read each one's own `argparse` defaults.** D did that for all `118`, rather than
+> patching a list written from memory — and it is what caught this.
+
+**HAZARD LIST WIDENED, all accepted:** the `boot_nd_5d/` trio (`sbatch_bootstrap_5d.sh:14`,
+`sbatch_boot5d_gpu_interactive.sh:29`, `boot5d_packed_loop.sh:23`) writing filenames identical to the HOOKED
+`sbatch_bootstrap_5d_gpu.sh` — *verbatim the scenario `origin/lane-b-member-axis-wip:nd-unfolding/lib_substitution_fence.sh`'s own header describes*; the
+namespace-6 pair (`run_budget_5d.sh:16,18`, `sbatch_combine_5d_budget.sh:15,17`); and the finalizer outputs
+(`sbatch_finalize_5d_bkgaware_gpu.sh:19-23`, `run_adopt_5d.sh:20,23`). **`readopt` and `stamped_footing` confirmed
+SAFE — they flagged on READS.**
+
+### 23c. ⚠ **ASK 2 RULED: the fence catches SUBSTITUTION and cannot catch CONCURRENCY, and no widening reaches it**
+
+**`mr_fence_unhooked` triggers on `MNV_EST_SEED_OFFSET` being DECLARED (`${VAR+x}`) — a property of the
+SUBMITTER's shell.**
+
+> **So a concurrent run of an unfenced launcher, from a shell with no variable set, is invisible to the fence BY
+> CONSTRUCTION. D is right that this is a hazard and not a proposal, and right that widening the list does not
+> touch it.**
+>
+> **RULED: the fence's trigger must be a SCAN-ACTIVE MARKER THE PRODUCERS CHECK, not an environment variable the
+> submitter happens to carry.** A marker in the tree (or a lock under the campaign's state directory) is readable
+> by any producer regardless of who launched it or how; **an env var is readable only by descendants of the shell
+> that set it, which is precisely the set of processes that were already going to behave.**
+>
+> **AND IT BEARS ON `M(ii)` DIRECTLY, which is why it is not deferred: fifty members writing member-scoped paths
+> is the regime where a stray unfenced sibling is BOTH most likely and least visible.** D's sharpest consequence:
+> **`lib_member_resume.sh` trusts a complete product, and a concurrent baseline run can FORGE that input** — so a
+> resume guard becomes an attack surface rather than a safeguard. **That interacts with §11g's deletion gate: a
+> forged-complete product could satisfy `MVFINAL_j` and authorise deleting a real intermediate.**
+
+### 23d. **D's BOUNDING STATEMENT IS THE PART TO KEEP, and it is about the 228 rather than the 19**
+
+> **D: *"The `228` is bounded by these three routes, not by the world."*** Each of the three routes caught
+> something the other two missed — the literal-path route missed `sbatch_adopt_5d.sh` entirely; the
+> argparse-default route missed the bootstrap trio until D stopped patching a remembered producer list and
+> enumerated all `118`; and reading the flagged launchers is what established `readopt` is safe.
+>
+> **So `228 cannot reach a canonical path` is a statement about D's three routes and NOT about the tree** — and D
+> names the two shapes that would evade all three: **a canonical path assembled at runtime from variables, and a
+> producer that derives one internally rather than declaring it as a default.** **Recorded as a stated bound, which
+> is the difference between a covering search and a null result** (`BEN-451`, and D says it turned on D's own
+> answer).
+
 ## 12. R1 RULED — **`_sb` IS CANONICAL FOR BOTH LEGS**, and there is exactly ONE wrong literal
 
 **Not a judgement — the receipt says so.** `receipt_construction_contract_5d.py:313-314`:
@@ -2352,6 +2490,31 @@ and now the mask is already in the product. Worth noting as a rate, not an anecd
   (`:128-133`, *"Counts alone would let one field appear as another disappears"*), predating all three of
   today's. **Nothing propagated it to the sibling assertion — `BEN-467`'s procedural half, fourth
   instance, and the shortest distance yet.**
+- **✅ §22: GATE 2 IS MET.** D reproduced `de32843bca7128c951a37e18d4cdc437eef1023bee41cc35251846a91c643d6f`
+  character-for-character at `ecee9ff1`, on an artifact identical to the tree, against a value fixed before
+  the run, by a party who is not its author. **Four independent computations agree on one digest, so §21d
+  removed a DEAD path and not a DIVERGENT one.**
+- **§22a: the INSTRUMENT is a separate claim and is NOT met** — D exercised none of
+  `--read-one-matrix`'s `ok=False` reasons. **Gate 2 MET; the entry point NOT CERTIFIED for later gates
+  until a case reddens it.** *A check that cannot be shown to fail is not evidence*, aimed at an instrument
+  that produced a result I wanted.
+- **§22b: §19b narrowed by measurement** — digests instead of arrays bought `+17 MB`, so the numpy side was
+  never the lever. **`obj.Delete()` per key is the only one.**
+- **⚠ §23a: a DESTRUCTIVE DEFAULT would RECREATE gate 2's own artifact.** `sbatch_adopt_5d.sh` is 11 lines
+  ending in a bare `python3 adopt_unified_5d.py`; `:79-80` defaults `--out` to the adopted uthrow root and
+  `:169` opens it `RECREATE` — **the file carrying `sqrt_tr_old`, the bar's own operand.** The hazard is
+  documented verbatim at `sbatch_readopt_5d_bkgaware_footing.sh:36-39`, one directory away (`BEN-256`).
+- **⚠ RULED (§23b): MY FENCE'S SUBJECT IS WRONG — it must key on the PRODUCER'S EFFECTIVE OUTPUT PATH, not
+  the LAUNCHER'S TEXT.** There is nothing in an 11-line bare invocation to grep, so every text-shaped fence
+  is blind to the most dangerous case. **Widening the list does not fix it.** Adopt D's route-2 basis:
+  enumerate the invoked modules and read their `argparse` defaults — all 118, not a remembered list.
+- **RULED (§23c): the fence catches SUBSTITUTION and cannot catch CONCURRENCY.** `${VAR+x}` is a property
+  of the SUBMITTER's shell, so a concurrent unfenced run is invisible by construction. **The trigger must
+  be a scan-active marker the PRODUCERS check.** And `lib_member_resume.sh` trusts a complete product that
+  a concurrent baseline run can FORGE — **which could satisfy `MVFINAL_j` and authorise deleting a real
+  intermediate under §11g.**
+- **§23d: `228 cannot reach a canonical path` is bounded by D's THREE ROUTES, not by the tree** — each
+  caught what the others missed, and two evasion shapes are named.
 - **AUTHORIZED: nothing.** No launcher edited, nothing submitted.
 
 *Second sought: B on §3's derived-target predicate (its module) and on whether stage 1 can be run as a single

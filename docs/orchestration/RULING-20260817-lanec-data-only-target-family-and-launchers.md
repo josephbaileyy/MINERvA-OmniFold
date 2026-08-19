@@ -501,15 +501,41 @@ having.
 the question was never *"how do we avoid that cost"* but *"who pays it and how visibly."* The partition makes it
 visible. That is the whole of what this ruling buys.**
 
-> **EMBARGO 2026-08-19 — THE `18/55/4` PARTITION'S PREMISE IS VOID; DO NOT QUOTE IT UNTIL `OI-132` LANDS.**
-> The 55 sites are unexecuted **because the pinned validator returns early on a missing required key, and that
-> key was `bootstrap_seed`** — which `BEN-476` establishes a PINNED producer stamps unconditionally
-> (`train_fullevent_nominal.py:635-637`, `-1` when the meta value is `None`). **With the key present the early
-> return never fires and all 77 sites execute.** `OI-132` re-derives the partition and re-classifies the 55 one
-> by one; some move to `DELEGATED`, some to an executed-and-passes class that could not exist while nothing
-> reached them, and any executed-and-not-covered are NEW exposure. **The sum stays 77 while the buckets change,
+> **EMBARGO 2026-08-19 — THE `18/55/4` PARTITION IS UNDER RE-DERIVATION; DO NOT QUOTE IT UNTIL `OI-132`
+> LANDS.** The embargo STANDS. **Its originally-recorded reason did not, and is corrected here rather than left
+> to be discovered** — because an embargo resting on a checkable-and-wrong reason is fragile: the next reader
+> checks the reason, finds it false, and un-embargoes the number.
+>
+> **WHAT IS TRUE, verified at `HEAD`:** `bootstrap_seed` IS stamped unconditionally —
+> `nd-unfolding/pet/train_fullevent_nominal.py:635-637`, `-1` when `target_meta.get("bootstrap_seed") is None`.
+> `BEN-476` is right about that.
+>
+> **WHAT DOES NOT FOLLOW: *"with the key present the early return never fires and all 77 sites execute."***
+> `nd-unfolding/pet/validate_gate5_training_artifacts.py:207-219` gates on **TWENTY-SEVEN** required keys with
+> **ANY** semantics — `if required_keys - set(store.files): return`. **One key's presence cannot witness an empty
+> set difference.** `bootstrap_seed` being unconditional removes ONE candidate cause of the early return, out of
+> twenty-seven.
+>
+> **AND THERE IS MEASURED EVIDENCE AGAINST IT.** `BEN-415`/`BEN-416` recorded FIVE keys absent from the
+> data-only artifact, and **four of them — `bkg_indices`, `sig_bootstrap_factor`, `bkg_bootstrap_factor`,
+> `bootstrap_factor_sha256` — are in this same `required_keys` set** and are not `bootstrap_seed`. **Any one of
+> them fires the same early return.** So the partition's premise is *under review*, not *void*: the correct
+> statement is that **one of five candidate causes is eliminated and the other four are unexamined.**
+>
+> **NOTE WHAT THE FAULTY INFERENCE IS:** *one member present ⇒ the set difference is empty*. **That is
+> `BEN-468`'s shape in its membership form** — cardinality-or-membership standing in for containment — **and it
+> arrived inside the argument to amend this ruling, two commits after `BEN-468` was filed.** The rule keeps
+> having to be re-derived because nothing propagates it (`BEN-467`).
+>
+> **`OI-132`'s re-derivation is still required and its shape is unchanged:** re-classify the 55 one by one; some
+> move to `DELEGATED`, some to executed-and-passes, and any executed-and-not-covered are NEW exposure.
+> **`E`'s own warning is the load-bearing part and is kept verbatim: the sum stays 77 while the buckets change,
 > so a re-derived partition looks unchanged unless the count that MOVED is reported — report that count.**
-> Nothing above this line is withdrawn; only the premise that the 55 were unexecutable is. See `BEN-476`.
+>
+> **Nothing above this line is withdrawn.** *(Block added by the mediator at `86200caa` while this lane was
+> mid-turn, on the correct judgement that `main` was publishing a number under review and a message would have
+> died with a session. The ACT was right and is endorsed; the REASONING is corrected above, at the mediator's own
+> invitation to own the wording. See `BEN-476`, `OI-132`.)*
 
 ## 1e. MIGRATION REFUSED — **REBUILD.** A migrated key satisfies the LETTER of `T4`/`R3` and defeats their PURPOSE
 
