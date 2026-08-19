@@ -3288,5 +3288,145 @@ class SubstitutionFenceS1(unittest.TestCase):
                 self.assertIn('source "${_HERE}/lib_substitution_fence.sh"', t)
                 self.assertNotIn('source "${REPO}/lib_substitution_fence.sh"', t)
 
+
+class LibraryResolverSurvivesSbatch(unittest.TestCase):
+    """`${BASH_SOURCE[0]}` IS THE SPOOL PATH UNDER sbatch, and that killed stage 0 in 12 seconds.
+
+    Slurm copies the batch script to /var/spool/slurmd/job<N>/slurm_script and executes the COPY, so
+    `dirname "${BASH_SOURCE[0]}"` is the spool directory and the library was never staged there. All
+    nine tasks of the first three arrays died at that line.
+
+    WHY FOUR PROBE RUNS AND A GATE PASSED OVER IT, which is the part worth keeping: direct execution and
+    the argv probe (which SOURCES launchers from a parent shell) BOTH preserve BASH_SOURCE as the real
+    path. sbatch is the ONLY invocation that stages the script and the ONLY one production uses. The
+    go-line was verified twice in environments that share the property it depends on -- and the probe
+    STILL cannot verify the fix, for the same reason, so these tests simulate the spool directly.
+    """
+
+    LAUNCHERS = ("sbatch_bootstrap_5d_gpu.sh", "sbatch_seedscan_split_5d.sh",
+                 "sbatch_sweep_bank_5d_run_bkgaware_gpu.sh",
+                 "sbatch_unfold_5d_detector_bkgaware_gpu.sh", "sbatch_uthrow_block_5d.sh",
+                 "sbatch_uthrow_combine_5d_fast.sh", "sbatch_uthrow_run_5d_fast.sh")
+
+    def _block(self):
+        """The resolver, extracted VERBATIM from a shipped launcher -- not a copy in the test."""
+        lines = (ND / self.LAUNCHERS[0]).read_text().split("\n")
+        a = next(i for i, l in enumerate(lines) if l.startswith("# --- M(ii) member axis: LOCATE"))
+        b = next(i for i, l in enumerate(lines)
+                 if "mr_require_valid_offset" in l and l.startswith("source "))
+        return "\n".join(lines[a:b + 1]) + "\necho RESOLVED=$_mr_lib\n"
+
+    def _run(self, cwd, env, script_name="slurm_script"):
+        import subprocess
+        p = Path(cwd) / script_name
+        p.write_text(self._block())
+        base = {k: v for k, v in os.environ.items()
+                if k not in ("MNV_EST_SEED_OFFSET", "SLURM_JOB_ID", "MNV_LAUNCHER_DIR")}
+        base.update(env)
+        return subprocess.run(["bash", f"./{script_name}"], capture_output=True, text=True,
+                              cwd=str(cwd), env=base)
+
+    def test_all_seven_leg_launchers_carry_a_BYTE_IDENTICAL_resolver(self):
+        """It has to be inlined -- it is the code that FINDS the library, so it cannot live in it. Seven
+        inlined copies drift, so identity is pinned instead."""
+        import hashlib
+        digests = {}
+        for f in self.LAUNCHERS:
+            lines = (ND / f).read_text().split("\n")
+            a = next(i for i, l in enumerate(lines) if l.startswith("# --- M(ii) member axis: LOCATE"))
+            b = next(i for i, l in enumerate(lines)
+                     if "mr_require_valid_offset" in l and l.startswith("source "))
+            digests[f] = hashlib.sha256("\n".join(lines[a:b + 1]).encode()).hexdigest()
+        self.assertEqual(len(set(digests.values())), 1,
+                         f"the seven resolvers have diverged: {digests}")
+
+    def test_DIRECT_EXECUTION_resolves_via_BASH_SOURCE(self):
+        r = self._run(ND, {}, script_name="_t_direct.sh")
+        try:
+            self.assertEqual(r.returncode, 0, r.stderr)
+            self.assertIn(f"RESOLVED={ND}", r.stdout)
+        finally:
+            (ND / "_t_direct.sh").unlink(missing_ok=True)
+
+    def test_the_SPOOL_CASE_FAILS_CLOSED_rather_than_guessing(self):
+        """THE DEFECT, REPRODUCED. A script running from a directory with no library, no override and no
+        job id must exit 2 and NAME every candidate it tried -- not fall back to something plausible."""
+        with tempfile.TemporaryDirectory() as td:
+            r = self._run(td, {})
+            self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+            self.assertIn("cannot locate lib_member_resume.sh", r.stderr)
+            for candidate in ("MNV_LAUNCHER_DIR", "BASH_SOURCE", "scontrol Command"):
+                self.assertIn(candidate, r.stderr, "the diagnostic must name what it tried")
+            self.assertIn("runs from the spool", r.stderr,
+                          "and it must say WHY BASH_SOURCE was wrong, or the next reader re-diagnoses it")
+
+    def test_the_SPOOL_CASE_resolves_with_an_EXPLICIT_override(self):
+        with tempfile.TemporaryDirectory() as td:
+            r = self._run(td, {"MNV_LAUNCHER_DIR": str(ND)})
+            self.assertEqual(r.returncode, 0, r.stderr)
+            self.assertIn(f"RESOLVED={ND}", r.stdout)
+
+    def test_the_SPOOL_CASE_resolves_via_scontrol_Command(self):
+        """THE BRANCH THAT WILL ACTUALLY FIRE IN PRODUCTION, and the one I can least vouch for: it is
+        exercised here against a STUB `scontrol` I wrote, so this tests my PARSER against my own idea of
+        the format, not against real output. That is the same shape as the defect this class is about, so
+        it is stated rather than hidden -- `MNV_LAUNCHER_DIR` is the recommended primary for that reason.
+        """
+        with tempfile.TemporaryDirectory() as td:
+            binp = Path(td) / "bin"
+            binp.mkdir()
+            (binp / "scontrol").write_text(
+                "#!/bin/bash\n"
+                f'echo "JobId=99 UserId=x(1) JobName=y Command={ND}/sbatch_bootstrap_5d_gpu.sh WorkDir=/z"\n')
+            (binp / "scontrol").chmod(0o755)
+            r = self._run(td, {"SLURM_JOB_ID": "99", "PATH": f"{binp}:{os.environ['PATH']}"})
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            self.assertIn(f"RESOLVED={ND}", r.stdout)
+
+    def test_SLURM_SUBMIT_DIR_IS_NOT_A_CANDIDATE_and_that_is_deliberate(self):
+        """It would have worked for stage 0 and it is REFUSED, because it is the SUBMIT directory rather
+        than the script's. Submitting from the canonical checkout -- which also contains a
+        lib_member_resume.sh -- would silently source the CANONICAL library instead of the frozen one,
+        reintroducing the exact frozen-deployment defect the relative source closed, and invisibly.
+        A candidate that can resolve to the wrong tree is worse than failing closed.
+        """
+        for f in self.LAUNCHERS:
+            body = (ND / f).read_text()
+            resolver = body[:body.index("mr_require_valid_offset")]
+            # BEN-482, SEVENTH INSTANCE, AND I HIT IT IN THIS VERY TEST. My first version was
+            # `assertNotIn("SLURM_SUBMIT_DIR", resolver)` and it FAILED -- on the comment that explains
+            # why SLURM_SUBMIT_DIR is deliberately excluded. The comment is the most valuable line in
+            # the block, so the matcher is what changes. Strip comments; then assert BOTH directions,
+            # so neither the exclusion nor its stated reason can be removed silently.
+            code = "\n".join(l for l in resolver.split("\n") if not l.lstrip().startswith("#"))
+            with self.subTest(f=f):
+                self.assertNotIn("SLURM_SUBMIT_DIR", code,
+                                 "SLURM_SUBMIT_DIR must not be CONSULTED to locate the library")
+                self.assertIn("SLURM_SUBMIT_DIR IS DELIBERATELY NOT A CANDIDATE", resolver,
+                              "and the reason must stay, or the next reader adds it back as an "
+                              "obvious robustness improvement")
+
+    def test_a_DECOY_library_in_the_spool_would_be_used_and_that_is_CORRECT(self):
+        """Boundary case, recorded so nobody 'fixes' it. Each candidate is validated by the library's
+        PRESENCE, so a spool directory that genuinely contained the library would be used -- which is
+        right: the file beside the running script IS the frozen library in a direct deployment. Slurm
+        does not stage it, so this cannot arise under sbatch; the test pins the semantics."""
+        with tempfile.TemporaryDirectory() as td:
+            (Path(td) / "lib_member_resume.sh").write_text(
+                "mr_require_valid_offset() { :; }\n")
+            r = self._run(td, {})
+            self.assertEqual(r.returncode, 0, r.stderr)
+            self.assertIn(f"RESOLVED={os.path.realpath(td)}", r.stdout.replace("/private/", "/"))
+
+    def test_the_OLD_go_line_is_GONE_from_every_leg(self):
+        """`_HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"` followed by an unguarded source was
+        the defect. The new resolver still consults BASH_SOURCE -- correctly, as one validated candidate
+        -- so the check is that no launcher sources the library from an UNVALIDATED path."""
+        for f in self.LAUNCHERS:
+            body = (ND / f).read_text()
+            with self.subTest(f=f):
+                self.assertNotIn('source "${_HERE}/lib_member_resume.sh"', body)
+                self.assertIn('source "${_mr_lib}/lib_member_resume.sh"', body)
+
 if __name__ == "__main__":
     unittest.main()

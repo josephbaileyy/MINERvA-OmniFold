@@ -28,8 +28,47 @@ source "${REPO}/lib/resume_guard.sh"
 # and a git worktree resolves its own. The library lives beside this file, so no path arithmetic.
 # The three PRE-EXISTING ${REPO} sources on the lines above have the same exposure across 244
 # tracked .sh and are deliberately NOT touched here: that is a repo-wide migration, not a patch.
-_HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${_HERE}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis   # BEN-023: resume on a completion marker, not on size
+# --- M(ii) member axis: LOCATE lib_member_resume.sh, then source it -------------------------------
+# `${BASH_SOURCE[0]}` IS THE SPOOL PATH UNDER sbatch. Slurm copies the batch script to
+# /var/spool/slurmd/job<N>/slurm_script and executes the COPY, so `dirname "${BASH_SOURCE[0]}"` is the
+# spool directory and the library was never staged there. Measured, not theorised: stage 0's first three
+# arrays died in 12 s at exactly this line with
+#   /var/spool/slurmd/job57250483/lib_member_resume.sh: No such file or directory
+# while the library sat correctly at 13,845 bytes in the frozen tree.
+#
+# WHY FOUR PROBE RUNS AND A GATE PASSED OVER IT. Direct execution and the argv probe (which `source`s
+# launchers from a parent shell) BOTH preserve BASH_SOURCE as the real path. sbatch is the only
+# invocation that stages the script, and it is the only one production uses. The go-line was verified
+# twice in environments that share the property it depends on.
+#
+# EACH CANDIDATE IS VALIDATED BY THE LIBRARY'S PRESENCE, NOT BY TRUSTING ITS MECHANISM. That is the
+# actual lesson: a resolver that assumes cannot detect the environment where its assumption is false.
+#
+# SLURM_SUBMIT_DIR IS DELIBERATELY NOT A CANDIDATE. It would have worked here, but it is the SUBMIT
+# directory rather than the script's, so submitting from the canonical checkout -- which also contains a
+# lib_member_resume.sh -- would silently source the CANONICAL library instead of the frozen one. That
+# reintroduces the exact frozen-deployment defect the relative source was written to close, and it does
+# so INVISIBLY. A candidate that can resolve to the wrong tree is worse than failing closed.
+_mr_lib=""
+for _mr_c in "${MNV_LAUNCHER_DIR:-}" "$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)"; do
+  if [[ -n "$_mr_c" && -r "$_mr_c/lib_member_resume.sh" ]]; then _mr_lib="$_mr_c"; break; fi
+done
+if [[ -z "$_mr_lib" && -n "${SLURM_JOB_ID:-}" ]]; then
+  # The only source of the REAL script path inside a batch job. One control-plane call per job.
+  _mr_c="$(scontrol show job "$SLURM_JOB_ID" 2>/dev/null \
+           | tr ' ' '\n' | sed -n 's/^Command=//p' | head -1)"
+  _mr_c="${_mr_c:+$(dirname "$_mr_c")}"
+  if [[ -n "$_mr_c" && -r "$_mr_c/lib_member_resume.sh" ]]; then _mr_lib="$_mr_c"; fi
+fi
+if [[ -z "$_mr_lib" ]]; then
+  echo "[member] FAIL: cannot locate lib_member_resume.sh beside this launcher." >&2
+  echo "[member]   tried: MNV_LAUNCHER_DIR, dirname \$BASH_SOURCE, scontrol Command" >&2
+  echo "[member]   BASH_SOURCE=${BASH_SOURCE[0]:-<unset>}  SLURM_JOB_ID=${SLURM_JOB_ID:-<unset>}" >&2
+  echo "[member]   Under sbatch the script runs from the spool, so BASH_SOURCE is NOT its home." >&2
+  echo "[member]   Set MNV_LAUNCHER_DIR to the launcher's directory to resolve this explicitly." >&2
+  exit 2
+fi
+source "${_mr_lib}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
 source "${REPO}/setup_salloc_env.sh"; cd "${ND}"
 OMNIFILE="${ND}/runEventLoopOmniFold_5D_MEFHC_universes_full_bkgaware.root"
 FLUX_MC="${REPO}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root"
