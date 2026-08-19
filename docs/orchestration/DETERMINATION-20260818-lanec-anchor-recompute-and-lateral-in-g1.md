@@ -1720,6 +1720,81 @@ docstring says updating is deliberate so the diff goes in front of a reviewer.
 check someone else's number is what surfaced a defect neither of us was looking at — which is the argument for
 running the check even when you expect the report to be right.)*
 
+### 21j. §21i SHARPENED BY D, AND THE REMEDY IS **NOT** `--update` — the count assertion is redundant with a WORKING set assertion beside it
+
+**D verified §21i independently and added the fact that changes its class. Both of D's load-bearing numbers
+reproduce here:** `git ls-tree -r --name-only 06de0aa9 | grep -c '\.sh$'` → **`377`** (first red) and
+`ac48f5ba` → **`374`** (green again). **13 measured transitions, `181` commits since first red, `~36 hours`.**
+
+**1. THE ONE-HOUR RETURN TO GREEN IS THE FINDING, AND IT IS D's.** *"Nobody fixed it. The count OSCILLATES —
+`377 → 374 → 377 → 379 → 377 → 379` — because the predicate is REPO-GLOBAL and every lane's merge moves it in
+either direction."*
+
+> **So a GREEN from this check is not evidence either.** §21i said *"red long enough to be invisible"*; **D's
+> observation is strictly worse — the check can PASS by an unrelated lane's commit, and did.** A verdict that an
+> unrelated party can produce in either direction carries no information in either direction.
+
+**2. AND THE REPO ALREADY DECLINED, IN WRITING, TO WIRE A CHECK WITH THIS EXACT PROPERTY.** Verified at
+`.githooks/pre-commit:71-77`, `BEN-394`, lane A:
+
+> *"THAT INSTABILITY IS THE FIRST REASON NOT TO WIRE IT… The predicate is TREE-GLOBAL: any lane can flip it, in
+> either direction, and NOTHING TELLS ANYONE… A stored measurement wearing the grammar of a rule."*
+
+> **`test_p4_sweep_snapshots::test_pipeline_sweep_matches_its_snapshot` has the identical property and IS WIRED.**
+> **A check the repo has already reasoned its way out of running, in this exact form, running anyway** — and the
+> reasoning sits in a hook header, which is the one file every committer's tooling touches and nobody reads.
+
+**3. THE PART THAT DECIDES THE REMEDY, AND IT IS NEW: THE FILE ALREADY CONTAINS A SET ASSERTION THAT PASSES.**
+
+```
+test_the_snapshot_RECORDS_the_corpus_so_an_omission_is_a_visible_diff   PASSES
+    cur["corpus"] == snap["corpus"]        <- a SET, scoped to the sweep's DECLARED MODULES/SHELL
+    plus  corpus["declared_but_absent_from_disk"] == []
+test_pipeline_sweep_matches_its_snapshot                                FAILS
+    cur["n_shell_files"] == snap["n_shell_files"]   <- a COUNT over repo-global git ls-files "*.sh"
+```
+
+> **The assertion that serves the docstring's stated purpose — *"an omission is a VISIBLE DIFF"* — is the CORPUS
+> one, and it is green, scoped, and not repo-global. The count assertion is the red one, and it is not what makes
+> an omission visible.**
+>
+> **SO `--update` RE-PINS A NUMBER THAT WILL DRIFT AGAIN WITHIN HOURS — measured: 8 transitions in 36 h.** It buys
+> a green until the next lane merges a shell file. **D's alternative is the right shape and it is `BEN-467`
+> exactly — state the invariant, not its current value.** The stronger version, given the above: **the repo-global
+> count should be PRINTED AND NOT ASSERTED**, because the assertion that matters already exists next to it.
+
+**4. AND MY OWN ADDITION, WHICH IS THE SIXTH INSTANCE OF THE WEEK'S FAMILY: A COUNT CANNOT DISTINGUISH `+1` FROM
+`−1` FROM `+1 −1`.** One `sbatch_*.sh` deleted and one added leaves `n_shell_files` **identical**.
+
+> **So even when GREEN, the count assertion is blind to a substitution — and substitution is precisely the case
+> `CLAUDE.md` cares about, since it forbids renaming a tracked script cited in a RUN_LOG because `115 sbatch_*.sh`
+> names are LOAD-BEARING PROVENANCE.** A rename is `+1 −1`. **The count assertion is blind in exactly the
+> direction the corpus assertion covers**, which settles that it is redundant rather than complementary.
+>
+> **THREE INDEPENDENT ARRIVALS AT ONE RULE TODAY, from three lanes:** B's `EXPECTED_ELEMENTS` per-key with
+> un-derived expectations *printed and not asserted*; `BEN-467`'s *record the derivation, not the value*; and now
+> a repo-global count asserted beside a scoped set assertion that already does the work. **The convergence is the
+> evidence, not any one of them.**
+
+**STILL FLAGGED AND STILL NOT FIXED BY ME**, and D's second reason is better than my first: `--update` on another
+lane's artifact is a reviewer-facing act, **and it would erase the evidence of the 36 hours.** The diagnosis above
+is worth more to whoever owns it than a green would be.
+
+### 21k. GATE 2's CLOSURE IS AGREED, and D has offered the exact run
+
+**`BEN-455` is filed and merged (`69894e51`), long form indexed, carrying the measured counterfactual, the
+`2^28 - 1` sentinel, the backwards-propagation into the fixture, and — per §21c — the scope statement against
+D's own cross-check so the finding cannot be read as discharging gate 2.** The family stands as
+`BEN-023` / `BEN-454` / `BEN-455`, three in one day.
+
+> **AGREED CLOSURE: when B's deletion lands, I relay the sha; D runs `_th2_content` once against one real matrix
+> and reports the digest against `de32843bca7128c951a37e18d4cdc437eef1023bee41cc35251846a91c643d6f`** — the value
+> both paths produced today. **If it reproduces on an artifact identical to the tree, GATE 2 IS MET.**
+>
+> **This is the shape I want on record for the remaining gates: a named instrument, a named artifact, a named
+> expected value, and a named party — fixed BEFORE the run rather than assembled after it.** `BEN-403`'s rule
+> applied to a gate discharge rather than a threshold.
+
 ## 12. R1 RULED — **`_sb` IS CANONICAL FOR BOTH LEGS**, and there is exactly ONE wrong literal
 
 **Not a judgement — the receipt says so.** `receipt_construction_contract_5d.py:313-314`:
@@ -2148,6 +2223,21 @@ and now the mask is already in the product. Worth noting as a rate, not an anecd
   **Its purpose is to make a shell-file omission a VISIBLE DIFF and `CLAUDE.md` calls those names
   load-bearing provenance — so a 383rd file is now invisible.** A check red long enough is
   indistinguishable from one that is absent.
+- **§21j: §21i is worse than I measured, and the remedy is NOT `--update`.** D's counts reproduce here
+  (`06de0aa9` → `377`, `ac48f5ba` → `374`): **13 transitions, 181 commits, ~36 h, and one COINCIDENTAL
+  GREEN from an unrelated lane's commit — so a PASS from this check is not evidence either.** And
+  `.githooks/pre-commit:71-77` (`BEN-394`) already declined to wire a check for having exactly this
+  tree-global property; **this one has it and IS wired.**
+- **§21j(3): the file already contains a SET assertion that PASSES** — `cur["corpus"] == snap["corpus"]`,
+  scoped to the declared corpus — **so the count assertion is redundant, not complementary, and should be
+  PRINTED NOT ASSERTED.** `--update` re-pins a number measured to drift 8 times in 36 h.
+- **§21j(4), mine: a COUNT cannot distinguish `+1` from `−1` from `+1 −1`** — a rename leaves
+  `n_shell_files` identical, and a rename is exactly what `CLAUDE.md` forbids because those names are
+  load-bearing provenance. **Blind in the direction the corpus assertion covers.** Sixth instance of the
+  count-for-identity family; **three lanes reached the print-not-assert rule independently today.**
+- **§21k: GATE 2's CLOSURE AGREED and PRE-SPECIFIED** — on B's deletion sha, D runs `_th2_content` once
+  against one real matrix, digest against `de32843b…`. **Instrument, artifact, expected value and party
+  all named BEFORE the run** — `BEN-403` applied to a gate discharge.
 - **AUTHORIZED: nothing.** No launcher edited, nothing submitted.
 
 *Second sought: B on §3's derived-target predicate (its module) and on whether stage 1 can be run as a single
