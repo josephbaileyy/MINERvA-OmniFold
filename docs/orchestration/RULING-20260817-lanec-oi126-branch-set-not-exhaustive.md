@@ -214,8 +214,25 @@ Gate-2 nominal target, proven pairwise distinct by the reconciler.
 how much it adds depends on how many negatives that draw produced. **A nonzero one-signed gap is the Jensen
 signature; zero refutes `(c)` at the total level.** 51 arrays, one loop.
 
-**Test 2 — spatial, still no jobs.** Histogram both into the reco grid using the loader's own per-event
-assignment and ask whether the **target-level** gap reproduces the `−0.128 / +3.555 / −1.828` structure.
+**Test 2 — spatial, still no jobs.** Histogram both into the reco grid using an assignment
+**RECONSTRUCTED BY THE CONSUMER** from the loader's canonical edges — `CANONICAL_PT_EDGES`,
+`CANONICAL_PPARALLEL_EDGES` and `SCALAR_COLS` imported, not restated, and the grid asserted by the loader's
+own `assert_extended_fps_edges` — and ask whether the **target-level** gap reproduces the
+`−0.128 / +3.555 / −1.828` structure.
+
+> **⚠ CORRECTED 2026-08-19 — THIS SENTENCE NAMED A MECHANISM THAT DOES NOT EXIST, AND ITS ABSENCE IS A
+> DESIGN PROPERTY.** It read *"using the loader's own per-event assignment"*. **The loader performs no
+> binning at all** — zero `digitize`/`searchsorted`/`ravel_multi_index` — and **production refinement is the
+> LEARNED UNBINNED classifier on continuous reco features**, so no per-event cell index exists anywhere on
+> the production path. `stay_positive_refine_binned` RECEIVES `cell` and is labelled FIXTURE-ONLY in the
+> loader's own comment; `build_reco_cloud`'s `coord_idx = (1, 2)` is the point cloud's KNN (pos, z) columns
+> and is **not** a bin index, which is the specific way this phrase misleads. The assignment is therefore a
+> **construction introduced by the consumer**, admissible as such and required to be described as such.
+> **Full ruling, including the no-clip requirement and the `-1` reporting condition that make a Test 2
+> number quotable: `RULING-20260819-lanec-reconstructed-cell-assignment-admissible.md`.** Found by lane B,
+> escalated by the mediator, corrected by lane C as the author. *The original phrasing is quoted above
+> rather than deleted, because it propagated into other artifacts and a reader who met it there needs to
+> find it here.*
 
 - **If it does: `(c)` is established, neither `(a)` nor `(b)` is needed, and the live question becomes the
   narrow centring question in §3.**
