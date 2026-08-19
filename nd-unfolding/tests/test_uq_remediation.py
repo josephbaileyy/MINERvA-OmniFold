@@ -2910,7 +2910,10 @@ class AnchorComparatorB2(unittest.TestCase):
         sc.update(over)
         di = {"C_unified": self.C, "C_blocksum": self.C, "C_cross": self.C,
               "hJointMeanShift": self.MS}
-        mx = dict(di)                       # full arrays; the fixture's C IS its whole matrix
+        # matrices are (sha256_hex, n_elements) after the memory restructure -- C corrected the cost to
+        # ~2 GB per LIVE TH2D (ROOT resides sumw2 alongside contents), so the reader must not retain
+        # arrays at all. The fixture mirrors that shape or it is not testing the reader's contract.
+        mx = {k: (self.B.digest(v), int(v.size)) for k, v in di.items()}
         return sc, di, mx
 
     def _reader(self, member_over=None, drop_diag=()):
@@ -2927,7 +2930,7 @@ class AnchorComparatorB2(unittest.TestCase):
         fixture = {k: v for k, v in kw.items() if k in ("member_over", "drop_diag")}
         return self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
                                     read_keys=self._reader(**fixture),
-                                    **{k: v for k, v in kw.items() if k not in fixture})
+                                    **{k: v for k, v in kw.items() if k not in fixture}, archive_date=(2026, 7, 14))
 
     def test_a_SELF_CONSISTENT_k0_anchor_PASSES(self):
         v, lines = self._go()
@@ -2968,7 +2971,7 @@ class AnchorComparatorB2(unittest.TestCase):
                           else self._throw(sqrt_tr_unified=eps, estimator_seed=1000, draw_seed=1000,
                                            est_seed_offset=0, est_seed_offset_declared=1))   # 3-tuple
         go = lambda **kw: self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
-                                               read_keys=both, **kw)
+                                               read_keys=both, **kw, archive_date=(2026, 7, 14))
         self.assertEqual(go()[0], "FAIL", "bit-exact by default: 1e-12 self-inconsistency is a FAIL")
         self.assertEqual(go(rtol=1e-9)[0], "PASS", "and an EXPLICIT tolerance admits it")
 
@@ -2998,7 +3001,7 @@ class AnchorComparatorB2(unittest.TestCase):
                                            draw_seed=1000, est_seed_offset=0,
                                            est_seed_offset_declared=1))   # 3-tuple
         go = lambda **kw: self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
-                                               read_keys=both, **kw)
+                                               read_keys=both, **kw, archive_date=(2026, 7, 14))
         v, lines = go()
         self.assertEqual(v, "INCOMPLETE",
                          [l for l in lines if not l.startswith("[recompute] OK")])
@@ -3026,7 +3029,11 @@ class AnchorComparatorB2(unittest.TestCase):
         keys = {"sqrt_tr_old": 1.0, "sqrt_tr_new": 2.0}
         diag = {"hCov_combined5d_total_uthrow": np.array([4.0])}
         v, lines = self.B.compare_files("adopted_uthrow.root", "A", "M", 0,
-                                        read_keys=lambda p: (keys, diag, diag))
+                                        read_keys=lambda p: (
+                                            keys, diag,
+                                            {k: (self.B.digest(v), int(v.size))
+                                             for k, v in diag.items()}),
+                                        archive_date=(2026, 7, 14))
         self.assertEqual(v, "INCOMPLETE",
                          "not FAIL -- an unavoidable FAIL gets routed around; and not PASS either")
         unchk = [l for l in lines if l.startswith("[identity] UNCHECKABLE")]
@@ -3142,7 +3149,7 @@ class AnchorComparatorB2(unittest.TestCase):
         reader = self._reader()            # builds the fixture (and patches the small sizes) FIRST
         classes.EXPECTED_ELEMENTS["C_unified"] = 114361636      # then the REAL size, so it survives
         v, lines = self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
-                                        read_keys=reader)
+                                        read_keys=reader, archive_date=(2026, 7, 14))
         self.assertEqual(v, "FAIL")
         cov = [l for l in lines if l.startswith("[coverage] C_unified")]
         self.assertTrue(cov, lines)
@@ -3241,7 +3248,8 @@ class RecomputabilityIsADeclaredAttribute(unittest.TestCase):
                   "fixed_seed_null_norm": 1.9706093906025077e-50}
             sc.update(over)
             d = {"C_unified": C, "C_blocksum": C, "C_cross": C, "hJointMeanShift": MS}
-            return sc, d, dict(d)
+            import mii_anchor_comparator as _B
+            return sc, d, {k: (_B.digest(v), int(v.size)) for k, v in d.items()}
         import mii_root_payload_classes as classes
         saved = dict(classes.EXPECTED_ELEMENTS)
         classes.EXPECTED_ELEMENTS.update({"C_unified": 4, "C_blocksum": 4, "C_cross": 4,
@@ -3257,7 +3265,7 @@ class RecomputabilityIsADeclaredAttribute(unittest.TestCase):
         with self.assertRaises(SystemExit) as cm:
             self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
                                  read_keys=self._reader(),
-                                 acknowledge_unrecomputable=["globalCompleteness"])
+                                 acknowledge_unrecomputable=["globalCompleteness"], archive_date=(2026, 7, 14))
         self.assertIn("must match the DECLARED", cm.exception.fail_message)
         self.assertIn("missing", cm.exception.fail_message, "and it must NAME what is missing")
 
@@ -3266,7 +3274,7 @@ class RecomputabilityIsADeclaredAttribute(unittest.TestCase):
         the direction that would otherwise pass silently."""
         with self.assertRaises(SystemExit) as cm:
             self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
-                                 read_keys=self._reader(),
+                                 read_keys=self._reader(), archive_date=(2026, 7, 14),
                                  acknowledge_unrecomputable=sorted(
                                      self.B.declared_unrecomputable()) + ["not_a_key"])
         self.assertIn("extra", cm.exception.fail_message)
@@ -3276,6 +3284,7 @@ class RecomputabilityIsADeclaredAttribute(unittest.TestCase):
         distinction. PASS is allowed; silence is not."""
         v, lines = self.B.compare_files(
             "uq_5d/unified_throw_cov_5d.root", "A", "M", 0, read_keys=self._reader(),
+            archive_date=(2026, 7, 14),
             acknowledge_unrecomputable=sorted(self.B.declared_unrecomputable()))
         self.assertEqual(v, "PASS")
         self.assertTrue(any("UNVERIFIED (acknowledged)" in l and "fixed_seed_null_norm" in l
@@ -3285,7 +3294,7 @@ class RecomputabilityIsADeclaredAttribute(unittest.TestCase):
     def test_WITHOUT_the_flag_the_same_run_is_INCOMPLETE(self):
         """The control: if this were PASS too, the flag would be decorative."""
         v, _ = self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
-                                    read_keys=self._reader())
+                                    read_keys=self._reader(), archive_date=(2026, 7, 14))
         self.assertEqual(v, "INCOMPLETE")
 
     def test_an_UNDECLARED_key_in_RECOMPUTE_REQUIRED_fails_closed(self):
@@ -3826,6 +3835,175 @@ class B1MemberLocalConsumerChain(unittest.TestCase):
         a, b = cov(np.array([0.5, 0.5])), cov(np.array([7.0, -3.0]))
         self.assertTrue(np.array_equal(a, b),
                         "the covariance must be BIT-identical under a different cv, not merely close")
+
+
+class SummationRouteIsLoadBearing(unittest.TestCase):
+    """C's ask, and it is the only control that stops a no-op-looking diff from breaking a bit-exact gate.
+
+    D measured all four recomputations BIT-EXACT against the stamped values -- and found that a sequential
+    Python sum over the SAME diagonal differs in the last ulps. It holds because NUMPY PAIRWISE SUMMATION
+    IS ON BOTH SIDES: `np.trace` in the writer (`unified_throw_cov.py:483-484`) and `np.sum` in
+    `_sqrt_trace_from_diag`. THAT IS A PROPERTY OF THE SUMMATION ROUTE, NOT OF THE MATHEMATICS.
+
+    So asserting only "the recompute matches" is insufficient: it would keep passing if someone replaced
+    either side with a loop on a machine where the ulps happened to agree. The control asserts BOTH
+    directions -- pairwise matches AND naive sequential does NOT -- so the dependency is visible.
+    """
+
+    def _diag(self):
+        # values chosen so sequential and pairwise summation genuinely differ: many small terms after a
+        # large one, which is the classic catastrophic-accumulation shape.
+        rng = np.random.default_rng(20260819)
+        return np.concatenate([[1e16], rng.random(4096) * 1e-3])
+
+    def test_pairwise_and_sequential_summation_DISAGREE_on_this_diagonal(self):
+        """The premise. If this ever fails, the fixture stopped exercising the hazard and the control
+        below is vacuous -- which is exactly the state a power test exists to prevent."""
+        d = self._diag()
+        pairwise = float(np.sum(d))
+        seq = 0.0
+        for x in d:
+            seq += float(x)
+        self.assertNotEqual(pairwise, seq,
+                            "the fixture must distinguish the two routes or the control proves nothing")
+
+    def test_the_recompute_uses_the_PAIRWISE_route_and_a_LOOP_would_break_it(self):
+        import mii_anchor_comparator as B
+        d = self._diag()
+        got = B._sqrt_trace_from_diag(d)
+        self.assertEqual(got, float(np.sqrt(max(float(np.sum(d)), 0.0))),
+                         "the shipped helper must use numpy pairwise summation")
+        seq = 0.0
+        for x in d:
+            seq += float(x)
+        self.assertNotEqual(got, float(np.sqrt(max(seq, 0.0))),
+                            "and a naive sequential sum must NOT reproduce it -- if it did, the "
+                            "bit-exactness would not depend on the route and this control would be "
+                            "asserting nothing")
+
+    def test_the_dependency_is_DOCUMENTED_at_the_helper(self):
+        """A diff that reviews as a no-op is the worst kind to break a gate with, so the warning has to
+        be where the change would be made."""
+        src = (ND / "mii_anchor_comparator.py").read_text()
+        self.assertIn("PROPERTY OF THE SUMMATION ROUTE", src)
+        self.assertIn("unified_throw_cov.py:483-484", src, "both sides of the route must be named")
+        self.assertIn("math.fsum", src, "and the other tempting 'simplification' too")
+
+
+class TwoReadPathsCrossCheck(unittest.TestCase):
+    """C's section 20: THE DANGEROUS FAILURE DOES NOT RAISE, so the fallback structurally cannot catch it.
+
+    A wrong dtype, a single-precision TH2D, an off-by-one in the under/overflow slice, or a future ROOT
+    layout change each returns an array of THE RIGHT SHAPE WITH WRONG NUMBERS. The fallback never
+    triggers, and the coverage line reports 100.00%. THAT IS H1 INVERTED -- there the word was wrong and
+    the bytes right; here the word is right and the bytes wrong. COVERAGE COUNTS ELEMENTS COMPARED AND
+    CANNOT SEE WHETHER THEY WERE READ CORRECTLY.
+    The two paths compute the same quantity by INDEPENDENT ROUTES, so they need no oracle.
+    """
+
+    class _Buf:
+        """Mimics PyROOT's low-level buffer: SetSize() plus the buffer protocol."""
+        def __init__(self, arr):
+            self._arr = arr
+        def SetSize(self, n):
+            self._n = n
+        def __buffer__(self, flags):
+            return memoryview(self._arr)
+
+    class _TH2:
+        def __init__(self, ny, nx, corrupt_buffer=False):
+            self._nx, self._ny = nx, ny
+            self._flat = np.arange((nx + 2) * (ny + 2), dtype=np.float64) * 0.5
+            self._corrupt = corrupt_buffer
+        def GetNbinsX(self): return self._nx
+        def GetNbinsY(self): return self._ny
+        def GetArray(self):
+            a = self._flat.copy()
+            if self._corrupt:
+                a[:] = a[::-1]      # right shape, WRONG BYTES -- and it does not raise
+            return TwoReadPathsCrossCheck._Buf(a)
+        def GetBinContent(self, i, j):
+            return float(self._flat[j * (self._nx + 2) + i])
+        def Delete(self): pass
+
+    def setUp(self):
+        import mii_anchor_comparator as B
+        self.B = B
+
+    def test_the_BUFFER_path_executes_and_AGREES_with_the_row_loop(self):
+        h = self._TH2(3, 4)
+        arr, which = self.B._th2_content(h)
+        self.assertEqual(which, "buffer", "the fast path must actually run, or the cross-check is vacuous")
+        r = self.B.cross_check_readers(h)
+        self.assertTrue(r["ok"], r)
+        self.assertEqual(r["digest_buffer"], r["digest_rowloop"])
+        self.assertEqual(r["elements"], 12)
+
+    def test_the_cross_check_CATCHES_succeeds_but_wrong(self):
+        """THE DIRECTION IT ACTS IN, and the only failure mode the fallback cannot see: a buffer read that
+        returns the right shape and the wrong numbers, WITHOUT RAISING."""
+        h = self._TH2(3, 4, corrupt_buffer=True)
+        arr, which = self.B._th2_content(h)
+        self.assertEqual(which, "buffer", "it must NOT have fallen back -- that is the whole point")
+        r = self.B.cross_check_readers(h)
+        self.assertFalse(r["ok"], "a wrong-bytes buffer read must be caught")
+        self.assertIn("THE TWO READ PATHS DISAGREE", r["why"])
+        self.assertGreater(r["n_differing"], 0)
+        self.assertNotEqual(r["digest_buffer"], r["digest_rowloop"])
+
+    def test_the_returned_array_NEVER_ALIASES_the_ROOT_buffer(self):
+        """C's finding, and my copy was safe only BY ACCIDENT. `np.frombuffer` returns a VIEW, and
+        [1:ny+1, 1:nx+1] of an (ny+2, nx+2) array is NON-CONTIGUOUS -- the under/overflow padding is the
+        only reason `ascontiguousarray` copied. Remove the padding arithmetic, a plausible
+        'simplification', and the slice becomes contiguous, the copy vanishes, and the function returns a
+        view into a buffer that `read_keys_pyroot` then Delete()s. Two separately-correct rulings --
+        explicit Delete(), and padding-aware slicing -- interacting destructively.
+        """
+        h = self._TH2(3, 4)
+        arr, which = self.B._th2_content(h)
+        self.assertEqual(which, "buffer")
+        # mutate the source after the read; an aliasing return would change too
+        original = arr.copy()
+        h._flat[:] = -999.0
+        np.testing.assert_array_equal(arr, original,
+                                      "the returned array must be an independent copy")
+        src = (ND / "mii_anchor_comparator.py").read_text()
+        self.assertIn("np.shares_memory(out, flat)", src,
+                      "and the non-aliasing must be PINNED by an assert, not left to np.array's "
+                      "argument surviving a future edit")
+        self.assertIn("copy=True", src)
+
+    def test_the_FALLBACK_ANNOUNCES_ITSELF_rather_than_hiding(self):
+        """A bare `except Exception` over five operations made the fast path's failure INVISIBLE: any
+        failure returned the RIGHT answer by the slow route and no run ever said so, so the fast path
+        could be permanently broken and unnoticed. WHICH READER EXECUTED IS AN INGREDIENT OF THE DIGEST."""
+        import contextlib, io as _io
+        class _NoBuffer(TwoReadPathsCrossCheck._TH2):
+            def GetArray(self):
+                raise AttributeError("no GetArray on this build")
+        h = _NoBuffer(3, 4)
+        err = _io.StringIO()
+        with contextlib.redirect_stderr(err):
+            arr, which = self.B._th2_content(h)
+        self.assertEqual(which, "rowloop")
+        self.assertIn("BUFFER PATH FAILED", err.getvalue())
+        self.assertIn("AttributeError", err.getvalue(), "and it must name what failed")
+        self.assertIn("INGREDIENT OF THE DIGEST", err.getvalue())
+        src = (ND / "mii_anchor_comparator.py").read_text()
+        self.assertNotIn("except Exception:\n        # FALLBACK", src, "the bare catch must be gone")
+
+    def test_the_cross_check_REFUSES_to_claim_a_check_it_could_not_run(self):
+        """If the buffer path did not execute there is nothing to cross-check, and saying so beats
+        returning ok=True over one path run twice."""
+        class _NoBuffer(TwoReadPathsCrossCheck._TH2):
+            def GetArray(self):
+                raise AttributeError("no GetArray")
+        import contextlib, io as _io
+        with contextlib.redirect_stderr(_io.StringIO()):
+            r = self.B.cross_check_readers(_NoBuffer(3, 4))
+        self.assertFalse(r["ok"])
+        self.assertIn("nothing to cross-check", r["why"])
+        self.assertEqual(r["path"], "rowloop")
 
 if __name__ == "__main__":
     unittest.main()

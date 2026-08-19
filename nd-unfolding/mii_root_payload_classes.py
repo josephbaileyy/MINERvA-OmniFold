@@ -21,8 +21,71 @@ Any key in either file that this table does not name FAILS CLOSED. That is the w
 unclassified key is the one a future writer adds without telling the comparator.
 """
 
+import re
 import sys
 
+
+
+# ===================================================================================================
+#: WHY A KEY IS ABSENT FROM THE ARCHIVE -- A CLOSED VOCABULARY, C's section 19d. `derive: None` used to
+#: mean one thing and had to cover two, which is why a PERFECT ANCHOR FAILED with nine findings.
+#:   PREDATES_ARCHIVE  the archive has no counterpart because the key landed AFTER it was written.
+#:                     Not a finding -- and NOT a verification either (see below).
+#:   EXPECTED_PRESENT  the archive should carry it. Absence is a HARD FINDING.
+#: C's section 11f-v(1) ruled that PROVENANCE means "may DIFFER from the archive", not "may be ABSENT
+#: from the member". The converse -- present in the member, absent from the archive, for a NON-provenance
+#: class -- was never ruled, and my code demanded PROVENANCE there. A class is a COMPARISON RULE; it has
+#: no content when one side cannot hold the key at all.
+PREDATES_ARCHIVE, EXPECTED_PRESENT = "PREDATES_ARCHIVE", "EXPECTED_PRESENT"
+
+
+def _landed_date(landed):
+    """The YYYY-MM-DD inside a `landed` string, or None. The map already carries its own operand."""
+    m = re.search(r"(\d{4})-(\d{2})-(\d{2})", str(landed))
+    return tuple(int(g) for g in m.groups()) if m else None
+
+
+def assert_absence_excuses_are_dated(archive_date):
+    """THE EXCUSE IS MACHINE-CHECKED, NOT NARRATED -- C's requirement, and the map already had the operand.
+
+    Every row carries a `landed` string ("5856eeb1 BEN-106 2026-08-11", "lane D 2026-08-18") and the
+    archive's own date is readable. So a row claiming PREDATES_ARCHIVE is only excused if it landed AFTER
+    the archive was written -- AND A ROW CLAIMING IT WHILE LANDING BEFORE IS ITSELF THE FINDING. The
+    comparator verifies its own exemption, so the nine keys at 2026-08-11 against an archive at 2026-07-14
+    classify automatically with NO hand-maintained exception list.
+
+    `archive_date` is a required (y, m, d). An excuse without its operand is a narration.
+    """
+    if not (isinstance(archive_date, tuple) and len(archive_date) == 3):
+        fail_closed("assert_absence_excuses_are_dated needs the ARCHIVE's date as (y, m, d). The "
+                    "PREDATES_ARCHIVE excuse is only checkable against it, and an unchecked excuse is "
+                    "the hand-maintained exception list this mechanism exists to avoid.")
+    problems = []
+    for key, entry in sorted(ARCHIVE_KEY_MAP.items()):
+        if entry.get("derive") is not None:
+            # A DERIVABLE row needs no absence excuse: the archive's value is OBTAINABLE, so the key is
+            # not uncompared. Demanding a reason here was my own category error -- the vocabulary is
+            # about keys that CANNOT be compared, not keys the archive happens not to store literally.
+            continue
+        why = entry.get("absence")
+        if why not in (PREDATES_ARCHIVE, EXPECTED_PRESENT):
+            problems.append(f"{key}: absence reason {why!r} is not in the closed vocabulary "
+                            f"({PREDATES_ARCHIVE} / {EXPECTED_PRESENT})")
+            continue
+        if why is not PREDATES_ARCHIVE:
+            continue
+        landed = _landed_date(entry.get("landed"))
+        if landed is None:
+            problems.append(f"{key}: claims PREDATES_ARCHIVE but its `landed` carries no date "
+                            f"({entry.get('landed')!r}) -- the excuse has no operand")
+        elif landed <= archive_date:
+            problems.append(
+                f"{key}: CLAIMS PREDATES_ARCHIVE BUT LANDED {landed} <= archive {archive_date}. The "
+                "archive was written after this key existed, so its absence is NOT explained by age -- "
+                "this row is itself the finding.")
+    if problems:
+        fail_closed("absence excuses:\n  " + "\n  ".join(problems))
+    return len(ARCHIVE_KEY_MAP)
 
 def fail_closed(msg):
     """Fail closed with THE EXIT CODE THE CALLER DEFINES AS FAIL, which is 2, not 1.
@@ -201,7 +264,8 @@ ARCHIVE_KEY_MAP = {
     # roles at 1000 (VL141, `unified_throw_cov.py:525`), so the archive's ESTIMATOR seed was 1000 too.
     # Provenance may differ, so no equality is imposed here; at k=0 specifically it must NOT differ,
     # which is a property of the anchor rather than of the class.
-    "estimator_seed": {"landed": "gate 1, this campaign", "derive": None,
+    "estimator_seed": {"landed": "gate 1, this campaign, 2026-08-17", "derive": None,
+                       "absence": PREDATES_ARCHIVE,
                        "archive_value_known_to_be": 1000},
     # `draw_seed` WAS THE ROW MY OWN TABLE CAUGHT, WITHIN SECONDS OF BEING EXECUTABLE, AND IT IS THE
     # REASON THIS FILE IS CODE RATHER THAN ONLY THE ENUMERATION DOCUMENT.
@@ -217,21 +281,21 @@ ARCHIVE_KEY_MAP = {
     # other keys", not "member-only provenance", but A DECLARED CONSTANT EXTERNAL TO BOTH FILES. The
     # archive's draw seed is 1000 because every g2 launcher pins the literal, and that is sourced from
     # the policy module rather than retyped here so there is ONE place it can be wrong.
-    "draw_seed": {"landed": "gate 1, this campaign",
+    "draw_seed": {"landed": "gate 1, this campaign, 2026-08-17",
                   "derive": lambda keys: _g2_baseline(),
                   "source": "declared constant: the pinned g2 literal. The archive file itself "
                             "carries NO seed key of any kind, so this value cannot come from it."},
-    "est_seed_offset": {"landed": "lane D 2026-08-18", "derive": None},
-    "est_seed_offset_declared": {"landed": "lane D 2026-08-18", "derive": None},
-    "fixed_seed_null_norm_checked": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None},
-    "joint_mean_shift_norm_checked": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None},
-    "n_throws_checked": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None},
-    "upstream_fixed_seed_null_norm": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None},
-    "upstream_joint_mean_shift_norm": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None},
-    "upstream_n_throws": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None},
-    "centering_convention": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None},
-    "uthrow_source": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None},
-    "combined_source": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None},
+    "est_seed_offset": {"landed": "lane D 2026-08-18", "derive": None, "absence": PREDATES_ARCHIVE},
+    "est_seed_offset_declared": {"landed": "lane D 2026-08-18", "derive": None, "absence": PREDATES_ARCHIVE},
+    "fixed_seed_null_norm_checked": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None, "absence": PREDATES_ARCHIVE},
+    "joint_mean_shift_norm_checked": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None, "absence": PREDATES_ARCHIVE},
+    "n_throws_checked": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None, "absence": PREDATES_ARCHIVE},
+    "upstream_fixed_seed_null_norm": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None, "absence": PREDATES_ARCHIVE},
+    "upstream_joint_mean_shift_norm": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None, "absence": PREDATES_ARCHIVE},
+    "upstream_n_throws": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None, "absence": PREDATES_ARCHIVE},
+    "centering_convention": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None, "absence": PREDATES_ARCHIVE},
+    "uthrow_source": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None, "absence": PREDATES_ARCHIVE},
+    "combined_source": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None, "absence": PREDATES_ARCHIVE},
 }
 
 #: Measured 2026-08-18 from source: which ROOT writers on a member's chain stamp the four identity
