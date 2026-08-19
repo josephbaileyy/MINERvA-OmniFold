@@ -3367,10 +3367,22 @@ class LibraryResolverSurvivesSbatch(unittest.TestCase):
             self.assertIn(f"RESOLVED={ND}", r.stdout)
 
     def test_the_SPOOL_CASE_resolves_via_scontrol_Command(self):
-        """THE BRANCH THAT WILL ACTUALLY FIRE IN PRODUCTION, and the one I can least vouch for: it is
-        exercised here against a STUB `scontrol` I wrote, so this tests my PARSER against my own idea of
-        the format, not against real output. That is the same shape as the defect this class is about, so
-        it is stated rather than hidden -- `MNV_LAUNCHER_DIR` is the recommended primary for that reason.
+        """The fallback branch. Exercised here against a STUB `scontrol`, so on its own this tests the
+        parser against my own idea of the format -- which is the same shape as the defect this class is
+        about, and is why it was shipped LABELLED rather than claimed.
+
+        THAT LABEL IS NOW DISCHARGED, by the mediator, against REAL scontrol output on an existing job
+        (no new submission):
+            raw     Command=/pscratch/.../gate5-data-only-frozen-52df398/nd-unfolding/pet/sbatch_gate5_data_only_target_array.sh
+            parsed  the same path, which exists and is ours
+        So `tr ' ' '\n' | sed -n 's/^Command=//p' | head -1` returns the true script path on real output.
+        The stub stays: it is what makes the branch testable HERE, where scontrol does not exist. What
+        changed is that the stub's FORMAT is no longer an assumption -- and the distinction between "this
+        test passes" and "the format is right" is exactly the one this class exists to police.
+
+        THE SPACE-IN-PATH LIMITATION STANDS: `tr ' '` splits on spaces, so a script path containing one
+        would break. None of this repo's paths do, and that is a property of the paths rather than of the
+        parser.
         """
         with tempfile.TemporaryDirectory() as td:
             binp = Path(td) / "bin"

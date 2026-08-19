@@ -115,9 +115,20 @@ rather than hidden, and it is why the explicit override is primary.
   edits.
 - **Only the seven hooked leg launchers changed.** The nine fenced ones (`S1`) do not source the member
   library.
-- **The `scontrol` parser is unverified against real output.** It assumes `Command=` is a single
-  space-delimited token — true of the measured output, and it would break on a path containing a space.
-  None of this repo's paths do.
+- **The `scontrol` parser WAS shipped unverified against real output, labelled as such, and the label
+  is now discharged.** The mediator ran the exact one-liner against a real existing job (no new
+  submission) and it returned the true script path:
+  `Command=/pscratch/.../gate5-data-only-frozen-52df398/nd-unfolding/pet/sbatch_gate5_data_only_target_array.sh`,
+  parsed identically, path exists and is ours. **The space-in-path limitation stands** — `tr ' '` splits
+  on spaces — and that is a property of the paths rather than of the parser. *Recording the discharge
+  rather than deleting the caveat, because "shipped labelled, closed later" is the pattern worth
+  imitating and it is invisible if the label just disappears.*
+- **A `BEN-027` instance in the verification itself, the mediator's, worth keeping beside the result:**
+  its first attempt ran `scontrol show job $J` with an **empty** job id (because
+  `squeue -h -u josephrb -t RUNNING` returned nothing), and scontrol defaulted to *another user's* job —
+  parsing `/global/u2/n/nquota/src/git/nersc-cron/daily_darshan_summary.sh`. **The parser worked and the
+  evidence was a stranger's.** *"The parser works"* would have been a true sentence supported by the wrong
+  artifact. Second time this campaign that another user's job has stood in for ours.
 - **This does not fix the 279 launchers that hardcode `${REPO}`.** That migration is separate
   (`BEN-483` §4), and the relative-source idiom those launchers would migrate *to* is exactly what this
   row shows to be insufficient on its own — **so anyone doing that migration must carry this cascade, not
