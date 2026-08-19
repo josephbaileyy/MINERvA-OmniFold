@@ -437,8 +437,32 @@ fi
 
 # ==================================== (c) RE-MEASURE THE FIVE RESOURCE FIELDS
 # The five `NOT MEASURED` fields in state/gate5-do-train-array-active-57266000.json.
-# This script PRINTS them and does NOT edit that receipt: it is another session's
-# provenance record, and a script that rewrote it would become a second author on it.
+#
+# THIS STEP WRITES THAT RECEIPT, on the mediator's instruction of 2026-08-19: a
+# hand-transcribed number is the thing this campaign keeps having to re-derive. The receipt
+# opens with a PROVENANCE block declaring that every value is either MEASURED (with the
+# command and the time) or the literal string `NOT MEASURED`, never guessed -- so the writer
+# is bound by that declaration rather than merely aware of it:
+#
+#   (i)   it replaces ONLY those five keys;
+#   (ii)  it records the `scontrol` invocation and a UTC timestamp beside them, in a new
+#         key, because a value without its command is the un-falsifiable form;
+#   (iii) a field with no token in the output is written as the literal `NOT MEASURED` --
+#         never null, never "", never "?";
+#   (iv)  it touches no other key, and a test asserts the other 26 are byte-identical.
+#
+# THE DISTINCTION THE MEDIATOR ASKED FOR, MADE EXPLICIT: an unmeasurable field FAILS the
+# step when there is nowhere honest to put that fact, and is RECORDED as `NOT MEASURED` when
+# there is. For this receipt there is, so recording it beats failing -- an honest
+# `NOT MEASURED` is information and a failed step is not. What still FAILS is a receipt that
+# is missing, unparseable, or belongs to a different job.
+#
+# AND ONE RULE THE INSTRUCTION DID NOT NAME: NEVER DOWNGRADE. If a key already holds a
+# measured value and this run finds no token for it, the existing value stands and the script
+# says so. A writer that overwrites yesterday's measurement with `NOT MEASURED` because
+# today's `scontrol` was thinner has destroyed evidence, which is the opposite of the
+# receipt's purpose.
+RECEIPT="$CREPO/docs/orchestration/state/gate5-do-train-array-active-$JOB_ID.json"
 if ! remote "scontrol show job $JOB_ID"; then
   fail "(c) scontrol show job $JOB_ID failed (rc=$R_RC): $R_OUT"
 else
@@ -457,11 +481,18 @@ else
     esac
   done
   read_ "cpus_per_task=[$V_CPUS] memory_per_task=[$V_MEM] time_limit=[$V_TIME] qos=[$V_QOS] gpus_per_task=[$V_GPUS]"
+  # An absent token is reported here and carried to the writer as an explicit sentinel, so
+  # "no token" and "the empty string" cannot be confused on the way across.
   for _pair in "cpus_per_task:$V_CPUS" "memory_per_task:$V_MEM" "time_limit:$V_TIME" "qos:$V_QOS" "gpus_per_task:$V_GPUS"; do
     if [ -z "${_pair#*:}" ]; then
-      fail "(c) field ${_pair%%:*} is STILL not measured: scontrol printed no such token. Leave it NOT MEASURED rather than guessing."
+      say "NOTE  (c) ${_pair%%:*}: scontrol printed no such token. It will be written as the"
+      say "NOTE      literal NOT MEASURED, or left alone if the receipt already holds a"
+      say "NOTE      measured value -- never guessed and never downgraded."
     fi
   done
+  ABSENT="@ABSENT@"
+  A_CPUS="${V_CPUS:-$ABSENT}"; A_MEM="${V_MEM:-$ABSENT}"; A_TIME="${V_TIME:-$ABSENT}"
+  A_QOS="${V_QOS:-$ABSENT}"; A_GPUS="${V_GPUS:-$ABSENT}"
   if ! remote "sacct -n -X -j ${JOB_ID}_${TASK_ID} -o JobIDRaw,State"; then
     fail "(c) sacct for ${JOB_ID}_${TASK_ID} failed (rc=$R_RC): $R_OUT"
   else
@@ -471,9 +502,135 @@ else
       *) say "NOTE  ${JOB_ID}_${TASK_ID} is NOT pending any more: [$R_OUT]. The watch subject still exists, but the run has started or ended -- read the verdict from the logs, not from this script." ;;
     esac
   fi
-  say "NOTE  (c) the five values above are for the OPERATOR to record in"
-  say "NOTE      docs/orchestration/state/gate5-do-train-array-active-57266000.json;"
-  say "NOTE      this script deliberately does not author another session's receipt."
+  if [ "$MODE" = "plan" ]; then
+    plan "write cpus_per_task/memory_per_task/time_limit/qos/gpus_per_task into $RECEIPT"
+    plan "  -- only those five keys, plus a new resource_fields_remeasured provenance key;"
+    plan "  -- an absent token becomes the literal 'NOT MEASURED'; a measured value is never downgraded"
+  else
+    cat > "$TMPD/receipt_write.py" <<'PYEOF'
+"""Replace ONLY the five resource keys in the array-active receipt, and say what it did.
+
+Bound by the receipt's own PROVENANCE block: every value is MEASURED (with the command and
+the time) or the literal string `NOT MEASURED`. Never null, never "", never "?", never a
+guess -- and never a DOWNGRADE of a value some earlier measurement established.
+"""
+import datetime as dt
+import json
+import os
+import sys
+
+FIELDS = ["cpus_per_task", "memory_per_task", "time_limit", "qos", "gpus_per_task"]
+NOT_MEASURED = "NOT MEASURED"
+ABSENT = "@ABSENT@"
+
+
+def is_unmeasured(value):
+    """Is this key's current content a PLACEHOLDER rather than a measurement?
+
+    `NOT MEASURED` is the canonical form, but a receipt could hold any of the other ways a
+    gap gets written down, and every one of them must normalise to the canonical literal
+    rather than survive. Anything else is treated as a real measurement and is never
+    overwritten -- so this predicate is exactly the line between (iii) and NEVER DOWNGRADE.
+    """
+    if value is None:
+        return True
+    return str(value).strip().lower() in {"", "?", "not measured", "unknown", "n/a", "tbd"}
+
+
+path, job_id = sys.argv[1], sys.argv[2]
+observed = dict(zip(FIELDS, sys.argv[3:8]))
+if len(observed) != len(FIELDS):
+    print("usage-error: expected %d values, got %d" % (len(FIELDS), len(sys.argv) - 3))
+    sys.exit(11)
+
+try:
+    with open(path) as fh:
+        receipt = json.load(fh)
+except Exception as exc:                       # missing or unparseable: FAIL, never create
+    print("receipt-unreadable: %s: %s" % (path, exc))
+    sys.exit(12)
+
+# THE RECEIPT MUST BE THIS JOB'S. A path is a definite description, and this one is
+# constructed from a variable; the file itself declares its subject, so ask it.
+if str(receipt.get("job_id", "")) != job_id:
+    print("receipt-subject-mismatch: %s declares job_id=%r, expected %r"
+          % (path, receipt.get("job_id"), job_id))
+    sys.exit(13)
+missing = [f for f in FIELDS if f not in receipt]
+if missing:
+    print("receipt-shape-mismatch: keys absent, so this is not the receipt this step "
+          "was written for: %r" % (missing,))
+    sys.exit(14)
+
+before = {k: receipt[k] for k in FIELDS}
+stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+command = "scontrol show job %s" % job_id
+lines, changes = [], 0
+for field in FIELDS:
+    old, raw = receipt[field], observed[field]
+    if raw == ABSENT:
+        if not is_unmeasured(old):
+            # NEVER DOWNGRADE: an earlier measurement outranks today's thinner output.
+            lines.append("%s: NO TOKEN, but the receipt already holds %r -- LEFT ALONE "
+                         "(a measured value is never replaced by %r)" % (field, old, NOT_MEASURED))
+        elif old == NOT_MEASURED:
+            lines.append("%s: NO TOKEN -> stays the literal %r" % (field, NOT_MEASURED))
+        else:
+            # A placeholder that is not the canonical literal: normalise it, so the receipt
+            # says NOT MEASURED and never null, "" or "?".
+            receipt[field] = NOT_MEASURED
+            changes += 1
+            lines.append("%s: NO TOKEN -> normalised placeholder %r to the literal %r"
+                         % (field, old, NOT_MEASURED))
+        continue
+    if old == raw:
+        lines.append("%s: already %r -- unchanged" % (field, raw))
+        continue
+    receipt[field] = raw
+    changes += 1
+    lines.append("%s: %r -> %r" % (field, old, raw))
+
+if changes:
+    # (ii) The values and their provenance land together. A number whose command and time
+    # are not recorded beside it cannot be checked, which is what this receipt exists to fix.
+    receipt["resource_fields_remeasured"] = {
+        "measured_at_utc": stamp,
+        "measured_by_command": command,
+        "measured_on_host": os.uname().nodename,
+        "written_by": "docs/orchestration/deploy_oi135_watcher_swap.sh step (c), OI-135",
+        "fields": FIELDS,
+        "semantics": ("Each field above is either the value this command printed, or the "
+                      "literal string 'NOT MEASURED'. No field was guessed, and no "
+                      "previously measured value was overwritten with 'NOT MEASURED'."),
+        "NOTE_why_resources_not_measured_is_now_STALE": (
+            "The pre-existing key `why_resources_not_measured` explains the ORIGINAL gap and "
+            "still says to re-measure when the window ends. This writer deliberately did not "
+            "edit it: it is prose owned by the receipt's author. Amend or retire it by hand."),
+    }
+    tmp = path + ".oi135.tmp"
+    with open(tmp, "w") as fh:
+        json.dump(receipt, fh, indent=2, ensure_ascii=False)
+        fh.write("\n")
+    os.replace(tmp, path)                      # atomic: no half-written receipt
+
+for line in lines:
+    print("field %s" % line)
+print("changed=%d" % changes)
+print("measured_at_utc=%s" % stamp)
+print("measured_by_command=%s" % command)
+print("receipt-write-ok" if changes else "receipt-write-noop")
+PYEOF
+    if ! remote_file "$TMPD/receipt_write.py" "$RECEIPT" "$JOB_ID" \
+        "$A_CPUS" "$A_MEM" "$A_TIME" "$A_QOS" "$A_GPUS"; then
+      fail "(c) could NOT write the receipt (rc=$R_RC): $R_OUT. The five values are printed above; nothing in the receipt was changed."
+      indent "$R_OUT"
+    else
+      indent "$R_OUT"
+      ok "(c) receipt updated in place: only the five resource keys, each MEASURED or the literal NOT MEASURED, with the command and UTC time recorded beside them"
+      say "NOTE  \`why_resources_not_measured\` was left untouched and now reads stale."
+      say "NOTE      It is prose owned by the receipt's author; amend it by hand."
+    fi
+  fi
 fi
 
 # ==================================== (d) CLUSTER WORKTREE HYGIENE

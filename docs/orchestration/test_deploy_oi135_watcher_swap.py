@@ -78,6 +78,11 @@ def default_scenario():
             "profiles.json defines=['codex-personal', 'codex-school', 'codex-waker']\n"
             "profile 'codex-waker' model='gpt-5.6-luna' reasoning_effort='low' yolo=True\n"
             "profile-pair-ok"},
+        {"match": "array-active-57266000.json", "rc": 0, "out":
+            "field cpus_per_task: 'NOT MEASURED' -> '32'\n"
+            "field qos: 'NOT MEASURED' -> 'shared_gp'\n"
+            "changed=5\nmeasured_at_utc=2026-08-26T14:00:00Z\n"
+            "measured_by_command=scontrol show job 57266000\nreceipt-write-ok"},
         {"match": "-r4.json", "rc": 0, "out":
             "watch_id='gate5-do-train-57266000-r4'\nstate='armed'\nkind='slurm-array'\n"
             "params.job_id='57266000'\nparams.tasks='0-0'\naction.type='command'\n"
@@ -436,19 +441,35 @@ class TestResourceRemeasurement(Harness):
         self.assertIn("gpus_per_task=[gres/gpu:1]", proc.stdout)
         self.assertIn("still queued (PENDING)", proc.stdout)
 
-    def test_an_unmeasurable_field_fails_rather_than_being_guessed(self):
+    def test_an_unmeasurable_field_is_recorded_honestly_and_does_not_fail_the_step(self):
+        """CHANGED DIRECTION, 2026-08-19, on the mediator's instruction and with its reason:
+        an honest `NOT MEASURED` is information and a failed step is not. Failing was right
+        while the values had nowhere to go; now that the writer records them, recording the
+        absence beats refusing. What still fails is a receipt that cannot be written."""
         trimmed = SCONTROL_HAPPY.replace("QOS=shared_gp ", "")
         proc = self.run_script(override(default_scenario(), "scontrol show job",
                                         rc=0, out=trimmed))
-        self.assertEqual(1, proc.returncode)
-        self.assertIn("qos is STILL not measured", proc.stderr)
+        self.assertEqual(0, proc.returncode, proc.stdout + proc.stderr)
+        self.assertIn("scontrol printed no such token", proc.stdout)
+        self.assertIn("never guessed and never downgraded", proc.stdout)
+        # the sentinel, not an empty string, is what crosses to the writer
+        write = [c for c in self.cmds if "array-active-57266000.json" in c][0]
+        self.assertIn("@ABSENT@", write)
 
-    def test_the_receipt_is_never_edited_by_this_script(self):
-        """state/gate5-do-train-array-active-57266000.json is another session's provenance
-        record. The script prints the values for an operator to record."""
-        self.run_script()
-        offenders = [c for c in self.cmds if "array-active-57266000.json" in c]
-        self.assertEqual([], offenders, "the script touched the receipt: %s" % offenders)
+    def test_the_receipt_is_written_and_a_failed_write_fails_the_step(self):
+        proc = self.run_script()
+        writes = [c for c in self.cmds if "array-active-57266000.json" in c]
+        self.assertEqual(1, len(writes), "expected exactly one receipt write: %s" % writes)
+        self.assertIn("receipt-write-ok", proc.stdout)
+        proc2 = self.run_script(override(default_scenario(), "array-active-57266000.json",
+                                         rc=12, out="receipt-unreadable: ..."))
+        self.assertEqual(1, proc2.returncode)
+        self.assertIn("could NOT write the receipt", proc2.stderr)
+
+    def test_plan_mode_does_not_write_the_receipt(self):
+        proc = self.run_script(args=())
+        self.assertEqual([], [c for c in self.cmds if "array-active-57266000.json" in c])
+        self.assertIn("write cpus_per_task", proc.stdout)
 
     def test_a_started_job_is_reported_as_itself_not_forced_into_pending(self):
         proc = self.run_script(override(default_scenario(), "sacct", rc=0,
@@ -649,6 +670,157 @@ class TestEmbeddedProbes(unittest.TestCase):
         self.assertEqual(0, proc.returncode, proc.stdout)
 
 
+class TestReceiptWriter(unittest.TestCase):
+    """receipt_write.py, run FOR REAL against a copy of the repository's own receipt.
+
+    The fixture is the committed
+    `state/gate5-do-train-array-active-57266000.json` -- the file the deployment will
+    actually rewrite, with its 27 keys and its PROVENANCE block. A fixture I invented could
+    not disagree with my reading of the rule; this one can.
+    """
+
+    FIELDS = ["cpus_per_task", "memory_per_task", "time_limit", "qos", "gpus_per_task"]
+    MEASURED = ["32", "3G", "02:00:00", "shared_gp", "gres/gpu:1"]
+    SOURCE = (REPO / "docs" / "orchestration" / "state" /
+              "gate5-do-train-array-active-57266000.json")
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="oi135-receipt-"))
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.prog = self.tmp / "receipt_write.py"
+        self.prog.write_text(extract_heredoc("receipt_write.py"))
+        self.receipt = self.tmp / self.SOURCE.name
+        shutil.copyfile(str(self.SOURCE), str(self.receipt))
+        self.original = json.loads(self.receipt.read_text())
+
+    def write(self, values=None, job_id="57266000", receipt=None):
+        args = [sys.executable, str(self.prog), str(receipt or self.receipt), job_id]
+        args += list(values if values is not None else self.MEASURED)
+        return subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+
+    def current(self):
+        return json.loads(self.receipt.read_text())
+
+    def test_the_committed_receipt_still_has_the_five_keys_as_NOT_MEASURED(self):
+        """If this fails, the receipt moved on and the writer's premise needs re-reading --
+        which is the point of using the real file as the fixture."""
+        for field in self.FIELDS:
+            self.assertIn(field, self.original)
+        self.assertEqual("57266000", str(self.original["job_id"]))
+
+    def test_only_the_five_keys_change_and_the_other_keys_are_byte_identical(self):
+        proc = self.write()
+        self.assertEqual(0, proc.returncode, proc.stdout)
+        after = self.current()
+        for field, want in zip(self.FIELDS, self.MEASURED):
+            self.assertEqual(want, after[field])
+        untouched = set(self.original) - set(self.FIELDS)
+        for key in untouched:
+            self.assertEqual(
+                json.dumps(self.original[key], sort_keys=True),
+                json.dumps(after[key], sort_keys=True),
+                "key %r was modified; only the five resource keys may change" % key)
+        # exactly one key added, and it is the provenance key
+        self.assertEqual({"resource_fields_remeasured"}, set(after) - set(self.original))
+
+    def test_the_values_arrive_with_their_command_and_a_utc_timestamp(self):
+        self.write()
+        prov = self.current()["resource_fields_remeasured"]
+        self.assertEqual("scontrol show job 57266000", prov["measured_by_command"])
+        self.assertRegex(prov["measured_at_utc"], r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
+        self.assertEqual(self.FIELDS, prov["fields"])
+        self.assertIn("deploy_oi135_watcher_swap.sh", prov["written_by"])
+
+    def test_an_absent_token_becomes_the_literal_NOT_MEASURED(self):
+        """Never null, never "", never "?"."""
+        values = list(self.MEASURED)
+        values[3] = "@ABSENT@"
+        proc = self.write(values)
+        self.assertEqual(0, proc.returncode, proc.stdout)
+        self.assertEqual("NOT MEASURED", self.current()["qos"])
+        self.assertNotIn("?", str(self.current()["qos"]))
+
+    def test_a_non_canonical_placeholder_is_normalised_not_preserved(self):
+        """(iii) is a claim about the STRING in the file, so `?`/null/"" must become the
+        literal `NOT MEASURED` -- preserving them would satisfy the rule only by accident of
+        this receipt already holding the canonical form."""
+        for placeholder in ("?", "", None, "unknown"):
+            with self.subTest(placeholder=placeholder):
+                doc = dict(self.original)
+                doc["qos"] = placeholder
+                self.receipt.write_text(json.dumps(doc, indent=2))
+                values = list(self.MEASURED)
+                values[3] = "@ABSENT@"
+                proc = self.write(values)
+                self.assertEqual(0, proc.returncode, proc.stdout)
+                self.assertEqual("NOT MEASURED", self.current()["qos"])
+
+    def test_a_measured_value_is_never_downgraded_to_NOT_MEASURED(self):
+        """A second run with a thinner `scontrol` must not destroy the first run's evidence."""
+        self.write()
+        self.assertEqual("shared_gp", self.current()["qos"])
+        values = list(self.MEASURED)
+        values[3] = "@ABSENT@"
+        proc = self.write(values)
+        self.assertEqual(0, proc.returncode, proc.stdout)
+        self.assertEqual("shared_gp", self.current()["qos"],
+                         "overwrote a measured value with NOT MEASURED")
+        self.assertIn("LEFT ALONE", proc.stdout)
+
+    def test_a_second_identical_run_is_a_noop(self):
+        self.write()
+        first = self.receipt.read_text()
+        proc = self.write()
+        self.assertEqual(0, proc.returncode, proc.stdout)
+        self.assertIn("receipt-write-noop", proc.stdout)
+        self.assertEqual(first, self.receipt.read_text(),
+                         "an idempotent re-run rewrote the file")
+
+    def test_a_receipt_for_another_job_is_refused_and_left_alone(self):
+        """The path is built from a variable, so the file's own declared subject is asked.
+        A definite description is not a citation."""
+        before = self.receipt.read_text()
+        proc = self.write(job_id="57999999")
+        self.assertEqual(13, proc.returncode, proc.stdout)
+        self.assertIn("receipt-subject-mismatch", proc.stdout)
+        self.assertEqual(before, self.receipt.read_text())
+
+    def test_a_missing_receipt_fails_and_is_never_created(self):
+        absent = self.tmp / "does-not-exist.json"
+        proc = self.write(receipt=absent)
+        self.assertEqual(12, proc.returncode, proc.stdout)
+        self.assertIn("receipt-unreadable", proc.stdout)
+        self.assertFalse(absent.exists(), "the writer CREATED a receipt out of nothing")
+
+    def test_an_unparseable_receipt_fails_and_is_not_overwritten(self):
+        broken = self.tmp / "broken.json"
+        broken.write_text("{not json")
+        proc = self.write(receipt=broken)
+        self.assertEqual(12, proc.returncode, proc.stdout)
+        self.assertEqual("{not json", broken.read_text())
+
+    def test_a_receipt_missing_the_five_keys_is_refused(self):
+        other = self.tmp / "other.json"
+        other.write_text(json.dumps({"job_id": "57266000", "purpose": "something else"}))
+        proc = self.write(receipt=other)
+        self.assertEqual(14, proc.returncode, proc.stdout)
+        self.assertIn("receipt-shape-mismatch", proc.stdout)
+
+    def test_the_stale_prose_key_is_flagged_and_not_edited(self):
+        self.write()
+        after = self.current()
+        self.assertEqual(self.original["why_resources_not_measured"],
+                         after["why_resources_not_measured"])
+        self.assertIn("STALE", " ".join(after["resource_fields_remeasured"].keys()))
+
+    def test_the_receipt_stays_valid_json_with_the_repositorys_indentation(self):
+        self.write()
+        text = self.receipt.read_text()
+        json.loads(text)
+        self.assertTrue(text.endswith("\n"))
+        self.assertIn('\n  "job_id"', text, "2-space indent was not preserved")
+
+
 class TestScriptHygiene(unittest.TestCase):
     """Static properties of the script that the campaign has been bitten by."""
 
@@ -709,6 +881,16 @@ MUTANTS = [
      'TASKS_SPEC="0-0"', 'TASKS_SPEC="1"'),
     ("m6-accept-an-undefined-profile",
      "if named not in keys:", "if False:"),
+    ("m7-let-the-writer-downgrade-a-measured-value",
+     "    if value is None:\n        return True",
+     "    if value is None:\n        return True\n    return True"),
+    ("m8-write-into-a-receipt-for-another-job",
+     'if str(receipt.get("job_id", "")) != job_id:', "if False:"),
+    ("m9-writer-touches-a-sixth-key",
+     "    receipt[field] = raw\n    changes += 1",
+     '    receipt[field] = raw\n    receipt["schema_version"] = 99\n    changes += 1'),
+    ("m10-record-the-values-without-their-command",
+     '"measured_by_command": command,', '"measured_by_command": "",'),
 ]
 
 
