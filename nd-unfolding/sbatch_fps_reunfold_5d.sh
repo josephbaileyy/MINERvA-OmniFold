@@ -7,6 +7,8 @@
 # model-dependence fraction -> fractional transfer onto the PET headline. 3 LightGBM
 # nd unfolds at ~33M events; writes products/pet/fps_envelope_5d/fps_modeldep_cov_5d.root.
 set -eo pipefail
+_HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${_HERE}/lib_substitution_fence.sh"; mr_fence_unhooked   # S1: unhooked launcher, refuse during a scan
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"
 python3 fps_gbdt_prior_reunfold_5d.py --iters 5 --seed 1000

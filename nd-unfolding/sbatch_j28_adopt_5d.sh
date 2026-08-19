@@ -28,6 +28,8 @@
 # because ||mean_shift|| is 4.69x the sampling floor; replacing the quarantined numbers is a separate,
 # human-reviewed commit.
 set -eo pipefail   # NOT -u: conda activate aborts under nounset (AGENTS.md)
+_HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${_HERE}/lib_substitution_fence.sh"; mr_fence_unhooked   # S1: unhooked launcher, refuse during a scan
 REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 source "${REPO}/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=32
