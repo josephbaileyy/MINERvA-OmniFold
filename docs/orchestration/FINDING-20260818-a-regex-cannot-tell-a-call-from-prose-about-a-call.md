@@ -185,3 +185,40 @@ probe now prints every observed path**, because a passing run's log contained no
 zero occurrences of `member_k` or `mii/` outside the summary counts, so nothing downstream could audit
 what had passed. A verdict-only receipt is unfalsifiable (`CONVENTION-receipt-ingredients.md`); the
 paths **are** the ingredients of `namespaced=N`.
+
+---
+
+## 10. HOW THESE ACTUALLY GET CAUGHT — THE DISCOVERY CHANNEL IS THE IMPLAUSIBILITY OF THE POPULATION
+
+Five instances in one day, and **not one was caught by a check.** The mediator's observation, which is
+the most actionable thing in this row:
+
+> **THE DISCOVERY CHANNEL WAS THE IMPLAUSIBILITY OF THE POPULATION, NOT THE CHECK.**
+
+Instance 5 is the clean case. Inserting the S1 fence, my regex required end-of-line after `pipefail`, so
+
+    set -eo pipefail   # NOT -u: conda activate aborts under nounset (AGENTS.md)
+
+did not match and `sbatch_j28_adopt_5d.sh` was reported as **having no `set -` line** when it has one at
+`:30`. Nothing failed. The script printed `SKIP` and `fenced 8 launchers`. **I noticed because 8 of 9 is
+an implausible answer to "how many of these nine files have a `set -` line".** Had the list been 30 files
+and the miss been 3, the number would have looked fine.
+
+*(And the comment it choked on documents another lane's `set -u` finding, written into that launcher the
+same afternoon — a too-narrow matcher reporting absence, on a comment recording someone else's defect.)*
+
+**The practical consequence, which is not "write better regexes":**
+
+- **Print the denominator, always.** `fenced 8 launchers` is unfalsifiable; `fenced 8 of 9` is not. Every
+  sweep in this row's remedies now reports `N of M`, and that alone converts a silent miss into a visible
+  one.
+- **A `SKIP` line is a finding, not noise.** My script printed exactly why it skipped the ninth file and I
+  nearly read past it, because skips look like housekeeping.
+- **When a population count is off by one or two, suspect the matcher before the population.** Instance 5
+  and the `exists=False` on all nine hazard paths — resolving repo-relative paths from inside
+  `nd-unfolding/` — were both *"the check disagrees with what I know about the world"*, and in both the
+  check was wrong.
+
+**This does not argue against the checks in §§2–4.** They stop *regressions*. What it says is that the
+**first** instance of a new shape in this family is found by a human noticing a number that cannot be
+right — so the cheap investment is making numbers that *can* be checked at a glance, not more matchers.
