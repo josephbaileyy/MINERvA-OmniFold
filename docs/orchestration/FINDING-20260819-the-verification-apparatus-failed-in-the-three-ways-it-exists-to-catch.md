@@ -85,6 +85,33 @@ rather than a 3 A100-h job finishing into silence during an account migration.
 
 > **THE READ-BACK IS THE CONTROL. THE ARMING IS JUST AN ATTEMPT.** Report what you read, never that you armed.
 
+## AMENDMENT, half an hour later: a FOURTH instance, and it was the recovery attempt
+
+Updating the watch's context — because it named a superseded commit and predated the discovery that the machine
+is down for a week — I ran `watch-disarm` intending to `watch-add` the same id back. **There is no `watch-arm`,
+and `watch-add` refuses an existing id.** So I left the only watch on a 3 A100-h job **disarmed**, and the sole
+reason that was survivable is a seven-day maintenance reservation meaning the job could not run.
+
+> **I BROKE THE CONTROL WHILE IMPROVING ITS CONTENTS.** The thing being improved was the context — the part a
+> human reads — and the thing broken was whether it fires at all. Prefer add-then-retire to disarm-then-re-add:
+> the first has no window in which nothing is armed.
+
+Filed as `ISSUE-46`. Recovery was to arm a NEW id (`…-r2`) and leave the disarmed one inert, rather than
+hand-edit `state` back to `armed` in the tool's own state file — reaching into a tool's private state cannot be
+checked for consistency, and a disarmed watch cannot fire so there is no double notification.
+
+**And the verification of the recovery had the same disease one more level down:**
+
+```
+grep -c '57266000.*armed'   ->  2
+```
+
+There is **one** armed watch. `"disarmed"` contains `"armed"`, so my count matched its own negation. Caught only
+because `watch-list` prints the states explicitly and I read them.
+
+> **A PATTERN THAT MATCHES ITS OWN NEGATION IS WORSE THAN NO CHECK**, because it fails in the safe-looking
+> direction: it over-counts *healthy*.
+
 ## Checks to steal
 
 1. **Never pipe a command whose exit status you will read.** Redirect, then read the file.
@@ -95,3 +122,6 @@ rather than a 3 A100-h job finishing into silence during an account migration.
 4. **Check the units of every threshold.** `df` is not a quota; `Elapsed` is not a duration for a running job;
    wall-hours are not node-hours on a shared partition.
 5. **Verify by reading the artifact back, and report the read, not the write.**
+6. **Never disarm a control to edit it** — add the replacement, then retire the old one.
+7. **Check that your grep pattern cannot match its own negation** (`armed` vs `disarmed`, `enabled` vs
+   `disabled`, `valid` vs `invalid`). Anchor it, or match the whole field.
