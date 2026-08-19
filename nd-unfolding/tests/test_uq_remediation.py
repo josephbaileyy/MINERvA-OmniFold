@@ -3116,12 +3116,60 @@ class SubstitutionFenceS1(unittest.TestCase):
                              cwd=str(ND.parent)).stdout.split()
         return {f: (ND.parent / f).read_text(errors="replace") for f in out}
 
+    #: `lib_*.sh` DEFINE the two symbols and are not launchers. Excluded EXPLICITLY, by rule, because
+    #: the alternative bit me: see `_partition`.
+    DEFINITION_PREFIX = "lib_"
+
     def _partition(self):
+        """Partition LAUNCHERS -- comments stripped, definition files excluded by rule.
+
+        TWO DEFECTS OF MINE, BOTH FOUND BY THIS TEST FAILING AFTER A REBASE, AND BOTH ARE THE DAY'S
+        FAMILY:
+
+        (1) THE MATCH READ PROSE. `lib_substitution_fence.sh` landed in BOTH sets because its own comment
+            says "this is the MIRROR of `mr_require_valid_offset`". My own explanatory comment classified
+            my own library as a hooked launcher. That is `BEN-482` in the file I wrote to close S1, and
+            the remedy is `BEN-482`'s own: strip comments before matching.
+
+        (2) THE TEST PASSED THE FIRST TIME FOR A REASON THAT HAD NOTHING TO DO WITH CORRECTNESS.
+            I ran the partition BEFORE committing `lib_substitution_fence.sh`, so `git ls-files` could
+            not see it and it was absent from the corpus entirely. `total` read 262. After the commit and
+            the rebase it reads 265, the file appears, and it appears in BOTH.
+            **`git ls-files` CANNOT SEE WHAT YOU HAVE NOT ADDED, so a corpus test measured before its own
+            commit is measured against a tree that will never exist again.** Measure after the commit.
+
+        The exclusion is by RULE rather than by name-list so a third library does not silently rejoin the
+        launcher population -- and it is asserted below, so the rule cannot quietly widen either.
+        """
         hooked, fenced, both, neither = [], [], [], []
-        for f, t in self._sh().items():
+        for f, raw in self._sh().items():
+            if f.split("/")[-1].startswith(self.DEFINITION_PREFIX):
+                continue
+            t = "\n".join(l for l in raw.split("\n") if not l.lstrip().startswith("#"))
             h, fe = "mr_require_valid_offset" in t, "mr_fence_unhooked" in t
             (both if (h and fe) else hooked if h else fenced if fe else neither).append(f)
         return sorted(hooked), sorted(fenced), sorted(both), sorted(neither)
+
+    def test_the_DEFINITION_FILES_are_excluded_BY_RULE_and_are_exactly_two(self):
+        """The exclusion must not become a place to hide a launcher. Two files, both `lib_*`, both of
+        which DEFINE a symbol rather than guarding an output with it."""
+        defs = sorted(f for f in self._sh() if f.split("/")[-1].startswith(self.DEFINITION_PREFIX))
+        self.assertEqual(defs, ["nd-unfolding/lib_member_resume.sh",
+                                "nd-unfolding/lib_substitution_fence.sh"])
+        for d in defs:
+            body = (ND.parent / d).read_text(errors="replace")
+            self.assertIn("()", body, f"{d} must be a definition file")
+            self.assertNotIn("#SBATCH", body, f"{d} must not be a launcher")
+
+    def test_comments_are_STRIPPED_before_matching_and_it_MATTERS_here(self):
+        """Not hypothetical: `lib_substitution_fence.sh` names `mr_require_valid_offset` in prose to
+        explain the mirrored polarity, and that comment is worth keeping. The matcher must be the thing
+        that changes, not the comment -- same conclusion as `BEN-482` reached about a docstring."""
+        raw = (ND / "lib_substitution_fence.sh").read_text()
+        self.assertIn("mr_require_valid_offset", raw, "the prose mention is deliberate")
+        stripped = "\n".join(l for l in raw.split("\n") if not l.lstrip().startswith("#"))
+        self.assertNotIn("mr_require_valid_offset", stripped,
+                         "and it exists ONLY in a comment, so stripping removes it entirely")
 
     def test_ALL_NINE_hazard_launchers_carry_the_fence(self):
         import seed_offset_policy as sp
@@ -3136,9 +3184,9 @@ class SubstitutionFenceS1(unittest.TestCase):
         _, _, both, _ = self._partition()
         self.assertEqual(both, [], f"launchers in BOTH sets: {both}")
 
-    def test_the_HOOKED_set_is_EXACTLY_the_driver_legs_plus_the_library(self):
-        """Closed-set on the other side. The library DEFINES mr_require_valid_offset and is not a
-        launcher; every one of the driver's seven legs must be hooked, and nothing else may be."""
+    def test_the_HOOKED_set_is_EXACTLY_the_driver_legs(self):
+        """Closed-set on the other side: every one of the driver's seven legs must be hooked, and no
+        other launcher may be. The libraries that DEFINE the symbols are excluded by rule."""
         import mii_seed_offset_driver as d
         hooked, _, _, _ = self._partition()
         vals = list(d.LEG_LAUNCHERS.values())
@@ -3147,7 +3195,9 @@ class SubstitutionFenceS1(unittest.TestCase):
             flat.extend(v if isinstance(v, (list, tuple)) else [v])
         legs = {f if f.startswith("nd-unfolding/") else "nd-unfolding/" + f for f in map(str, flat)}
         self.assertEqual(len(legs), 7)
-        self.assertEqual(set(hooked) - legs, {"nd-unfolding/lib_member_resume.sh"})
+        self.assertEqual(set(hooked), legs,
+                         "the hooked set is EXACTLY the seven legs -- the two lib_* definition files "
+                         "are excluded by rule, so nothing else should appear here")
         self.assertEqual(legs - set(hooked), set(), "every leg launcher must require a valid offset")
 
     def test_the_UNCLASSIFIED_REMAINDER_IS_PINNED_because_it_is_the_real_exposure(self):
@@ -3161,10 +3211,13 @@ class SubstitutionFenceS1(unittest.TestCase):
         rather than letting the default be "unfenced".
         """
         hooked, fenced, both, neither = self._partition()
-        self.assertEqual(len(neither), 245,
+        self.assertEqual(len(neither), 247,
                          "if this moved, a launcher was added or removed and needs classifying as "
                          "hooked, fenced, or explicitly out of scope")
-        self.assertEqual(len(hooked) + len(fenced) + len(both) + len(neither), 262)
+        self.assertEqual(len(hooked) + len(fenced) + len(both) + len(neither), 263,
+                         "263 LAUNCHERS = 265 tracked nd-unfolding/*.sh minus the 2 definition files. "
+                         "The number moved from 262 across a rebase: peers added launchers AND my own "
+                         "library became visible to `git ls-files` once committed.")
 
     def test_the_fence_fires_on_a_DECLARATION_including_ZERO_and_EMPTY(self):
         """DECLARED-AT-ALL, not truthy, and the k=0 case is the one worth arguing.
