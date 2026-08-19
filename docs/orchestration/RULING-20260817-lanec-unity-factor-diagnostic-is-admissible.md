@@ -98,8 +98,26 @@ lucky.
 
 ### And `BEN-383`'s backend candidate is retired on MECHANISM — which refines my own `BEN-402`
 
-`G2_GATE2_TARGET_RUNTIME_RECEIPT.json` carries `max_mc_events: 200000` and `refinement_random_state: 45`
-(**verified here**) — **identical to the replica builder. So no backend difference has a mechanism.**
+`nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json` carries `max_mc_events: 200000`
+and `refinement_random_state: 45` — **both NESTED, not top-level** — (**verified here**) — **identical to the
+replica builder. So no backend difference has a mechanism.**
+
+> **CITATION REPAIRED 2026-08-18, and the defect was mine: the RECEIPT'S BASENAME ALONE matches FOUR tracked
+> paths** — the live one cited above, plus
+> `nd-unfolding/g2_fullevent/gate2/final/superseded-20260719/G2_GATE2_TARGET_RUNTIME_RECEIPT.json`,
+> `nd-unfolding/g2_fullevent/gate2/final/superseded-20260805-r1/G2_GATE2_TARGET_RUNTIME_RECEIPT.json` and
+> `nd-unfolding/g2_fullevent/gate2/final/superseded-20260813-pre-gate5-rerun/G2_GATE2_TARGET_RUNTIME_RECEIPT.json`.
+> **`BEN-380`'s species: a definite description that re-points as soon as a second file satisfies it, and three
+> of the four candidates are explicitly superseded.** *(Written with every path in full deliberately: naming the
+> bare basename here — even to explain it — would trip
+> `docs/orchestration/lanec_citation_resolution_check.py` forever, and the fix for that is to write the paths
+> out, NOT to allowlist the token. An allowlist entry would also suppress the next genuine misuse of the same
+> name.)*
+>
+> **The claim SURVIVES — all four carry `max_mc_events: 200000` and `refinement_random_state: 45`, measured, so
+> every resolution of the ambiguity gives the same answer. But I did not check that before writing it, so the
+> claim was right by luck and not by method** — the same shape as `BEN-465`'s repair. **And the prose said
+> *"carries"* of two keys that are nested, which is what a mechanical re-check would have failed on first.**
 
 > **This refines `BEN-402`, which I filed carrying `BEN-383`'s phrase *"the two arms use different
 > Stay-Positive backends"*. That is RIGHT about CONSUME-versus-REBUILD and WRONG if read as

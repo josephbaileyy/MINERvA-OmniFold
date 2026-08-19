@@ -768,8 +768,13 @@ every payload and recomputation question.** That sharpens §11f-i:
 throws + `block_slabs_5d_sb`.
 
 > **So the consumer is RIGHT and `sbatch_uthrow_block_5d.sh:33,38` is the single misaligned literal in the
-> chain.** `AUTONOMOUS_LOG_20260805.md:48` measured it: **`block_slabs_5d` holds 8 files, `block_slabs_5d_sb`
-> holds 36.** The tracked block producer has been writing a stale partial that nothing consumes.
+> chain.** `nd-unfolding/AUTONOMOUS_LOG_20260805.md:48` measured it: **`block_slabs_5d` holds 8 files,
+> `block_slabs_5d_sb` holds 36.** The tracked block producer has been writing a stale partial that nothing
+> consumes. *(Citation repaired 2026-08-18 from the bare basename, which matches TWO tracked logs — the other
+> being `nd-unfolding/pet/AUTONOMOUS_LOG_20260805.md`. **This is the DANGEROUS form of `BEN-380`: the two
+> candidates' line 48 say ENTIRELY DIFFERENT THINGS** — the `pet/` one is about a `certifies` field and contains
+> no `block_slabs_5d_sb` at all — **so a reader resolving the wrong way would find an unrelated sentence and
+> conclude this ruling misquoted its source.** Found by `lanec_citation_resolution_check.py`, not by reading.)*
 
 **RULED: the member's block producer writes `member_kXXXXXX/uq_5d/block_slabs_5d_sb/`, matching the member's
 combine.** That resolves it for every member and makes the combine's zero-slab `SystemExit` unreachable.
