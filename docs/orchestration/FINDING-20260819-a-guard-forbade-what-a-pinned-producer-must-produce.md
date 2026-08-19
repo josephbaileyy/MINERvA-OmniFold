@@ -121,6 +121,46 @@ fires and all 77 sites execute.** The partition's premise is void and it must be
 > A partition is only as sound as the condition that puts items in its buckets, and **that condition was a
 > defect.**
 
+## AMENDMENT, same day: my consequence claim was CORRECTED THREE TIMES, and the shape is the lesson
+
+I wrote *"with the key present, that early return never fires and all 77 sites execute."* **It did not follow,
+and it was corrected three times in one day by three parties** — by me, by lane C, and by an embargo note the
+orchestrator wrote propagating it.
+
+**Correction 1, mine.** The pinned validator is not INVOKED on the data-only path at all —
+`cstat_data_only_readback.py:45` imports only constants from it (`BKG_MODE`, `ESTIMATOR`, `EXPECTED_CODE`,
+`FROZEN_POLICY`, `SEED_POLICY_STRING`, `SOURCE_SHA256`, `TRAIN_ARTIFACT`, `TRAIN_RECEIPT`,
+`expected_checkpoints`), and the family has its own validator, `validate_gate5_data_only_artifacts.py`. So
+`OI-132` is a coverage-accounting defect, not a runtime hazard, and it gates no run.
+
+**Correction 2, lane C's, and it kills the inference at its root.** Read the site
+(`validate_gate5_training_artifacts.py:217-219`):
+
+```python
+checks.eq("required_npz_keys_missing", sorted(required_keys - set(store.files)), [])
+if required_keys - set(store.files):
+    return {...}
+```
+
+The guard is a **set difference over TWENTY-SEVEN keys with ANY semantics**. *One key's presence cannot witness
+an empty set difference.* My sentence was a true statement about `bootstrap_seed` **carrying an unstated
+universal about the other twenty-six** — and it read as established because the part that was checked was
+checked properly.
+
+**Correction 3, the embargo note.** It now records that the 18/55/4 embargo **STANDS while its
+originally-recorded reason did not** — because an embargo resting on a checkable-and-wrong reason is fragile:
+the next reader checks the reason, finds it false, and un-embargoes the number.
+
+**AND THE CONCLUSION SURVIVES ON DIFFERENT EVIDENCE, which is not the same as having been right.** The producer
+check run before the fourth submission derives, by AST from both drivers' source, that **all 27 required keys
+are written** — 11 by the pinned `atomic_savez_compressed` dict, 16 by the replica driver, **zero orphans** —
+and `57256638_0` independently proves it, because my own `missing` check is raised BEFORE the withheld check
+and did not fire. So the early return indeed would not fire. **That is now a measured fact about 27 keys rather
+than an inference from one**, and the difference is the entire finding.
+
+> **A CLAIM THAT SURVIVES THREE CORRECTIONS BY BEING RE-DERIVED IS NOT A CLAIM THAT WAS RIGHT.** What made it
+> durable was its shape: a verified fact about one member of a set, stated as though it settled the set.
+
 ## Checks to steal
 
 1. **BEFORE ENFORCING AN ABSENCE, GREP FOR THE THING YOU ARE FORBIDDING. If the tree is full of it, your reading is wrong — not the tree.** Here a genuine absence rule would already have been violated **50 times, one file away**, in the target receipts of all 50 ACCEPTED members. That disproof cost one

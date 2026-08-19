@@ -2661,5 +2661,83 @@ class CheckpointWitness(unittest.TestCase):
         self.assertIn("PLAIN DATA. Nothing verifies this.", src)
 
 
+class AddendumZeroArtifactScope(unittest.TestCase):
+    """The zero-artifact refusal is scoped to the STAGE'S OWN products, and both directions are tested.
+
+    WHY THIS CLASS EXISTS. The refusal used to check all four product names, so the first train-stage use was
+    REFUSED: the fifty members' target products legitimately pre-exist -- that stage asserts them present
+    INSTEAD of taking a dependency -- and 100 of them made a train-stage addendum impossible to write. Third
+    guard in one day that forbade what the legitimate path must produce.
+
+    A NARROWING GETS A TEST THAT IT DOES *NOT* FIRE, or widening it back later looks free. So: `train` must
+    accept a tree full of target products, and must still refuse ONE training product.
+    """
+
+    def _gen(self):
+        sys.path.insert(0, str(HERE.parents[1] / "docs/orchestration/state"))
+        import gen_manifest_run_bound_addendum as g
+        return g
+
+    def _family(self, d, target=0, training=0):
+        root = Path(d) / "fam"
+        for i in range(max(target, training)):
+            m = root / "replicas" / ("replica_%02d" % i)
+            (m / "target").mkdir(parents=True, exist_ok=True)
+            (m / "training").mkdir(parents=True, exist_ok=True)
+            if i < target:
+                (m / "target" / "GATE5_REPLICA_TARGET.npy").write_bytes(b"t")
+                (m / "target" / "GATE5_REPLICA_TARGET_RECEIPT.json").write_text("{}")
+            if i < training:
+                (m / "training" / "GATE5_REPLICA_WEIGHTS.npz").write_bytes(b"w")
+        return root
+
+    def test_train_does_NOT_see_target_products(self):
+        """The direction that was broken. 50 members of target products, zero training: train sees zero."""
+        g = self._gen()
+        with tempfile.TemporaryDirectory() as d:
+            root = self._family(d, target=50)
+            self.assertEqual(g.existing_artifacts(str(root), "train"), [])
+            self.assertEqual(len(g.existing_artifacts(str(root), "target")), 100)
+
+    def test_train_DOES_see_one_training_product(self):
+        """The direction that must keep working: the claim a train-stage addendum actually makes."""
+        g = self._gen()
+        with tempfile.TemporaryDirectory() as d:
+            root = self._family(d, target=50, training=1)
+            got = g.existing_artifacts(str(root), "train")
+            self.assertEqual(len(got), 1)
+            self.assertTrue(got[0].endswith("GATE5_REPLICA_WEIGHTS.npz"), got[0])
+
+    def test_target_stage_is_UNCHANGED_in_both_directions(self):
+        g = self._gen()
+        with tempfile.TemporaryDirectory() as d:
+            self.assertEqual(g.existing_artifacts(str(self._family(d, target=0)), "target"), [])
+        with tempfile.TemporaryDirectory() as d:
+            self.assertEqual(len(g.existing_artifacts(str(self._family(d, target=1)), "target")), 2)
+
+    def test_stage_is_REQUIRED_not_defaulted(self):
+        """A default would silently restore the unwritable behaviour at the one call site that matters."""
+        g = self._gen()
+        with tempfile.TemporaryDirectory() as d:
+            root = self._family(d, target=1)
+            with self.assertRaises(TypeError):
+                g.existing_artifacts(str(root))
+
+    def test_an_unknown_stage_is_refused_rather_than_silently_empty(self):
+        g = self._gen()
+        with tempfile.TemporaryDirectory() as d:
+            root = self._family(d, target=1)
+            with self.assertRaises(SystemExit) as cm:
+                g.existing_artifacts(str(root), "trian")
+            self.assertIn("unknown stage", str(cm.exception))
+
+    def test_the_emitted_json_DISCLOSES_what_the_refusal_did_not_examine(self):
+        """A count of zero over a narrowed scope reads exactly like a count of zero over the whole family, so
+        the addendum must say which. `BEN-476`'s lesson one level up: the scope of a claim is part of it."""
+        src = (HERE.parents[1] / "docs/orchestration/state/gen_manifest_run_bound_addendum.py").read_text()
+        self.assertIn("artifacts_existing_scope", src)
+        self.assertIn("other_stage_artifacts_present_and_DELIBERATELY_not_examined", src)
+
+
 if __name__ == "__main__":
     unittest.main()
