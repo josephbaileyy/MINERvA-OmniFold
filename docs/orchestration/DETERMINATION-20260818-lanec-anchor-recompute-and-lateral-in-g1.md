@@ -2129,6 +2129,157 @@ finished hours ago.**
 > when there is nothing else. It should not be mistaken for the gate — and the test asserting its text makes it
 > look MORE load-bearing than it is**, which is the same shape as a green check that measures nothing.
 
+## 25. **THE `BEN-106` CONFLICT IS BETWEEN TWO OF MY OWN RULINGS, NOT BETWEEN A RULING AND A FREEZE** — remedy (A) gets a WRAPPER
+
+**B is blocked: any edit to `nd-unfolding/adopt_unified_5d.py` breaks the sha256 binding in
+`docs/orchestration/state/ben106-stamp-verify-active-56695424.json` (`"implementation":
+"nd-unfolding/adopt_unified_5d.py"`), the pre-commit hook refuses the commit, and the guarding test states
+*"the owning gate must be deliberately re-run and its receipt re-issued — DO NOT JUST UPDATE THE HASH."*
+B has not used `--no-verify`, has not touched the hash, and preserved the diff. All correct.**
+
+### 25a. REFUSED, three ways, and none of them is the interesting part
+
+> **REFUSED: editing `adopt_unified_5d.py`. REFUSED: re-issuing `BEN-106`'s receipt. REFUSED: updating the hash.**
+> A receipt-bound implementation is bound *because* somebody's published verification rests on those exact bytes,
+> and *"re-run the gate"* is the remedy for a change that is **necessary** — which this one is not, per §25b.
+
+### 25b. ⚠ **AND THE CONFLICT IS MINE. I RULED THE ANSWER ON 2026-08-17 AND DID NOT APPLY IT TO MY OWN NEXT RULING**
+
+**`RULING-20260817-lanec-pinned-readers-get-wrappers-not-copies.md`, mine, two days ago:**
+
+> *"RULED: new unpinned files — and they must be WRAPPERS THAT IMPORT THE PINNED MODULES, never copies of them.
+> A copy is a second implementation and diverges by default. A wrapper that delegates can only differ where it
+> explicitly names a difference."*
+
+> **THEN §11j RULED REMEDY (A) AS A STAMP *INSIDE* THE PINNED WRITER — creating precisely the collision the
+> earlier ruling exists to prevent.** So B's blocker is not *my ruling versus a frozen receipt*; it is
+> **§11j versus my own `RULING-20260817`, and the earlier one is right.**
+>
+> **RULED: REMEDY (A) ON THE ADOPTED ROOTS IS IMPLEMENTED AS A NEW UNPINNED WRAPPER. `adopt_unified_5d.py` IS NOT
+> TOUCHED, THE BINDING STAYS INTACT, AND NO RECEIPT IS RE-ISSUED.** B's `PENDING-…-remedy-A-adopt-blocked-…patch`
+> should NOT land as written; the preservation was right and the target is wrong.
+
+**PRECONDITION VERIFIED BEFORE RULING, per that ruling's own §1 discipline — not prescribed from inspection:**
+
+| precondition | verified this turn |
+|---|---|
+| the pinned writer is **importable** | `def main():` at `nd-unfolding/adopt_unified_5d.py:72`, guarded by `if __name__ == "__main__":` at `:229` |
+| a stamp can be added **after** it runs | `:169` opens the output `RECREATE` and closes it; ROOT reopens in `UPDATE` and accepts new `TParameter` keys |
+| the **conservative** route needs no import at all | the wrapper may `subprocess` the frozen script, then reopen the output — **which executes the exact bytes the receipt binds**, so provenance is not merely preserved but obviously so |
+| the OTHER two writers are **not bound** | `grep` over `docs/orchestration/state/*.json` finds **no receipt binding `analyze_universes_5d.py`** — so B's third writer needs no wrapper and its landed edit stands |
+
+> **The subprocess form is preferred over the import form for one reason: it runs the bytes whose sha256 the
+> receipt names, so the wrapper cannot silently diverge from the thing that was verified.** Stamping is a
+> post-step, which is exactly what §11h established for the diagonal — *the remedy is a write, not a
+> computation.*
+
+**FIFTH INSTANCE OF THE PROPAGATION FAILURE, and the shortest hop yet: MY OWN RULE, NOT PROPAGATED TO MY OWN NEXT
+RULING, ONE DAY APART, BY THE SAME AUTHOR.** `BEN-467`'s procedural half has now been observed across two modules,
+across two sweeps twenty lines apart, and now across two of my own documents. **The pattern is not about distance.**
+
+### 25c. B's THIRD AXIS OF ENUMERATION IS REAL AND IS RECORDED AS B's
+
+**B measured that `analyze_universes_5d.py` wrote ZERO scalars, and adopt's only inputs are the throw root and
+that intermediate — so the g1 estimator seed COULD NOT REACH ADOPT AT ALL, however carefully adopt was patched.**
+
+> **I enumerated WRITERS THAT DO NOT STAMP. D enumerated ARTIFACTS THE GATE CANNOT READ. Neither covers B's:
+> THE WRITER WHOSE SILENCE BLOCKS A DOWNSTREAM STAMP** — not *does this writer stamp*, nor *can the gate read
+> this*, but **can this artifact's writer OBTAIN what it needs to stamp.** Three axes, three lanes, and the scope
+> of (A) moved on each. **B's own caveat is the honest one and I keep it: it expects this to be the last axis and
+> said the same of the second.**
+
+**And two of B's self-catches are better than the rulings they repair:**
+
+- **`IDENTITY_KEYS` included `estimator_seed`, so `identity_is_checkable` could never go True on the adopted
+  roots — because `VL141` forbids a single `estimator_seed` there. THE PREDICATE DEMANDED THE VERY KEY THE PHYSICS
+  SAYS MUST NOT EXIST.** Resolved correctly: the **offset pair** is the member identity and is single-valued
+  everywhere; the estimator seed is **per-leg**, so it is checked where it exists and not required where it cannot.
+- **`STAMP_COVERAGE` tallied literal `TParameter("int")("estimator_seed", …)` occurrences, and (A) stamps through
+  a loop over a variable key and an f-string — invisible to a literal matcher — so it read `0` for a writer
+  stamping three keys. *A COUNT OF LITERAL OCCURRENCES MEASURES THE SPELLING, NOT THE CAPABILITY.*** **That is
+  `BEN-468`'s family in a new register: not a wrong count, not a count answering the wrong question, but a count
+  whose PREDICATE is syntactic where the claim is semantic.**
+- **And B nearly shipped a table describing a writer that does not exist yet** — `identity_is_checkable` returning
+  True while the writer stamps nothing. **B's rule: *a writer change and a table change are one change, in both
+  directions.*** Correct, and it is §10c's positive-declaration invariant applied to the classification table
+  itself.
+
+**B's two new P4 failures (launcher surface `+1`, mutation surface `18 → 19`) are ANOTHER LANE'S PINNED
+MEASUREMENTS and are not B's to re-take** — the same disposition as the `p4_sweep` snapshot. **And B's refusal to
+inline the offset parse to dodge the dependency is right: a third copy of the offset rule is the drift hazard this
+campaign keeps filing.** B's function-local import attempt is recorded as a **failed mechanism** rather than a
+fix, which is the correct form.
+
+## 26. HANDOFF — **everything is LANDED; nothing is deferred**, and the standing rule a successor needs
+
+**Written for a lane reset: a fresh session on a different account inherits this file, so anything that exists
+only as an intention is a hole. Below is the state, with shas, and it is complete.**
+
+### 26a. THE FOUR ITEMS REPORTED OPEN ARE ALL ALREADY IN THE TREE
+
+| item | where | sha |
+|---|---|---|
+| `OI-133`'s constraint — *a digest proves the bytes, only an identity binding proves whose bytes* | §24, **with D's concurrency case explicit** and `OI-133` scoped as **lane E's item** | `48d511ad` / `b6cdd44b` |
+| D's hazard-list widening, incl. the `sbatch_adopt_5d.sh` destructive default | §23a, **verified line by line** | `8595475a` |
+| the fence's SUBJECT is wrong | **§23b, in the document and not only a commit subject** | `8595475a` |
+| the scan-active marker | **§23c, RULED as an unmitigated hazard**, not a proposal | `8595475a` |
+| the `178 controls` second instance for `BEN-468` | **ACCEPTED**, §7 of `FINDING-20260819-cardinality-cannot-witness-containment.md` | `48d511ad` |
+
+> **So there is nothing to defer. The report that these were open was itself stale — which is the same defect as
+> the ruling-2 relay and the *"three rulings still pending"* message, and the third time a peer's picture of my
+> state lagged the tree.** **`git log --oneline origin/main -- <this file>` is the answer to *"what has C ruled"*,
+> and no message is.**
+
+### 26b. ⚠ TWO CLUSTER-STATE FACTS RECORDED SO THEY ARE IN THE TREE RATHER THAN IN A CONVERSATION
+
+**Relayed by the mediator from E; recorded here because a fact in a chat dies with the session, and neither is
+mine to act on.**
+
+1. **THE SHARED CLUSTER CHECKOUT CARRIES `727` PORCELAIN ENTRIES, INCLUDING FOUR *MODIFIED TRACKED* FILES THAT NO
+   LANE OWNS AND NOBODY HAS INVENTORIED:** `p4_endpoint_evidence.json`, `p4_merged_audit.json`,
+   `p4_standard_manifest.json`, `sessions.json`. **E used `fetch` only, which was right.**
+   > **This is §23c's concurrency hazard in a second location: a working tree no lane owns and every lane reads,
+   > with modifications nobody has enumerated.** A blanket clean there **deletes un-reproducible state** and must
+   > wait behind `OI-130`'s preservation inventory — `BEN-306` is literally *a deletion can retroactively break a
+   > receipt*, and §11g/§24d is the same argument with an operator as the trigger.
+2. **THE CLUSTER'S REMOTE IS NAMED `github`, NOT `origin`.** It killed one freeze attempt already and will kill
+   the next lane's. **Recorded because it is exactly the class of fact that lives in muscle memory and dies with a
+   session.**
+
+### 26c. THE STANDING RULE, and the escalation boundary I am NOT crossing to place it
+
+> **THE COMMITTED DETERMINATION IS THE AUTHORITY. MESSAGES ARE POINTERS TO IT — INCLUDING A LANE'S OWN MESSAGES
+> AGAINST ITS OWN SECTIONS.** If a message of mine ever conflicts with a pushed section of mine, **the section
+> wins until I push a change.**
+
+**Worked examples, all from this campaign, none hypothetical:** the mediator's ruling-2 error — *"I treated a
+measurement that was fresh TO ME as new TO THE RECORD"* — which it has agreed may be cited by name; the *"your
+three rulings are still pending"* message that arrived after all three were pushed; and §26a above.
+**B's application of it is the model: B read the committed §18 rather than either account, found its own relayed
+figures already inside my measurement block, and declined to revert with reasons attached. That is a check, not a
+temperament** — which matters, because a temperament does not generalise to the next lane and a procedure does.
+
+> **I WAS ASKED TO PUT THIS WHERE A FRESH SESSION READS ON ENTRY. THAT MEANS `CLAUDE.md`, AND I AM NOT EDITING
+> `CLAUDE.md` ON A PEER'S REQUEST — no matter how good the rule is.** Promoting a rule into the file that governs
+> every future session is Joseph's call, not a peer's, and *"the rule is obviously correct"* is exactly the
+> argument that makes the boundary worth holding. **It is written here instead, in the document a successor to this
+> lane inherits, and the promotion is left as an explicit ask for Joseph.**
+
+### 26d. WHAT IS GENUINELY OPEN, owned by others, with my name only as the ruling party
+
+| open | owner | my position |
+|---|---|---|
+| remedy (A) as a **wrapper** | B | §25 — `adopt_unified_5d.py` untouched, no receipt re-issued |
+| `mask_order_hash` | B | §16d — not built, correctly not claimed; the archive's two CVs are its positive control |
+| `B1` steps (4)/(5) | B | §16a — behind (A), diagonal in the same touch; **the pause is a PAUSE and nothing is deletable during it** |
+| `OI-133`'s schema change | **lane E** | §24b — content-completeness necessary, not sufficient |
+| `--read-one-matrix`'s failure directions | B / D | §22a — **gate 2 MET; the instrument NOT certified for reuse** |
+| the `p4_sweep` snapshot, the two P4 surface counts | whoever owns them | §21i/§21j/§25c — flagged with operands, **not fixed by me** |
+| the archive's two CVs differing on `100 %` of support | archive CV provenance owner | §18d — flagged with operands |
+
+**AUTHORIZED BY ANY SECTION OF THIS DOCUMENT: nothing.** No launcher edited, nothing submitted, no receipt
+re-issued, no hash updated, no cluster state changed.
+
 ## 12. R1 RULED — **`_sb` IS CANONICAL FOR BOTH LEGS**, and there is exactly ONE wrong literal
 
 **Not a judgement — the receipt says so.** `receipt_construction_contract_5d.py:313-314`:
@@ -2636,7 +2787,20 @@ and now the mask is already in the product. Worth noting as a rate, not an anecd
 - **§24d: the trigger is an operator reading stderr hours later** — weakest exactly where the decider is a
   HUMAN rather than a process that could fail closed. The test pins that the WARNING exists; **nothing pins
   that anything ACTS on it** (`BEN-450`, with a human as the unread channel).
-- **AUTHORIZED: nothing.** No launcher edited, nothing submitted.
+- **RULED (§25): remedy (A) GETS A WRAPPER — `adopt_unified_5d.py` IS NOT TOUCHED, `BEN-106`'s binding
+  STAYS INTACT, NO RECEIPT IS RE-ISSUED.** **The conflict is between TWO OF MY OWN RULINGS**, not between a
+  ruling and a freeze: `RULING-20260817-lanec-pinned-readers-get-wrappers-not-copies.md` already said
+  *pinned modules get wrappers, never edits*, and §11j then ruled (A) as a stamp INSIDE the pinned writer.
+  **The earlier ruling is right.** Preconditions verified: `main()` at `:72` behind a `__main__` guard at
+  `:229`; the output reopens `UPDATE`; the **subprocess** form runs the exact bytes the receipt binds; and
+  **no receipt binds `analyze_universes_5d.py`**, so B's third writer stands as landed.
+- **§25b: FIFTH instance of the propagation failure and the shortest hop yet — my own rule, not applied to
+  my own next ruling, one day apart, same author.** The pattern is not about distance.
+- **§25c: B's THIRD AXIS is real** — I enumerated writers that do not stamp, D enumerated artifacts the gate
+  cannot read, and B adds **the writer whose SILENCE BLOCKS A DOWNSTREAM STAMP**. Plus B's own catch that
+  `IDENTITY_KEYS` demanded the key `VL141` forbids, and that **a count of literal occurrences measures the
+  SPELLING, not the CAPABILITY.**
+- **AUTHORIZED: nothing.** No launcher edited, nothing submitted, no receipt re-issued, no hash updated.
 
 *Second sought: B on §3's derived-target predicate (its module) and on whether stage 1 can be run as a single
 member without the ensemble machinery; the Codex session's `(A)` recommendation is already the second on item 6,
