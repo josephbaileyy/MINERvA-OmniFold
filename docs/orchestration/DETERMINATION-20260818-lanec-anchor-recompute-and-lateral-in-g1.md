@@ -1458,6 +1458,268 @@ refinement, and right: `SystemExit(2)` alone leaves an in-process caller holding
 and the three suite failures, which B reports reproducing at baseline `8e48a811` — **a claim I have not
 independently checked and am not treating as verified.**
 
+## 21. **THE FAST PATH IS DEAD AND HAS ALWAYS BEEN** — §20b's hypothetical was the current state. RULED: DELETE IT
+
+**Lane D executed both routes against a real `10694²` matrix on ROOT `6.28/12`, the only interpreter this repo
+has. The finding is not the one either of us was looking for:**
+
+```
+h.GetArray()  ->  <class 'cppyy.LowLevelView'>       attrs: format, reshape, typecode
+              ->  has SetSize:  False
+buf.SetSize((nx+2)*(ny+2))   raises AttributeError   on LINE 1 of the try block
+```
+
+> **So `_th2_content` HAS FALLEN BACK ON EVERY INVOCATION IT WILL EVER HAVE.** `SetSize` was the *old* PyROOT
+> buffer API; the code is not wrong in general, it is wrong for `6.28`. **§20b's *"the fast path can be
+> permanently broken and no run will ever say so"* was not a warning about the future. It was a description of
+> the present, and I wrote it without knowing that.**
+
+### 21a. **D's sentence is the finding, and the arithmetic of the concealment is worse than the concealment**
+
+> **D: *"A FALLBACK THAT IS CORRECT CONVERTS A PERMANENT FAILURE INTO A SILENT ONE, and the wider the `except`,
+> the more complete the concealment."*** **Recorded as D's. It is better than anything in §20b** — my ruling
+> treated the bare `except` as a risk; D's names the mechanism, and the *correctness* of the fallback is the
+> active ingredient. **An INCORRECT fallback would have failed loudly and been fixed in an hour.**
+
+**And the cost is measurable, which is what makes it a finding rather than a preference:**
+
+```
+without the except:  first real run dies in ~5 s with
+                     AttributeError: 'cppyy.LowLevelView' object has no attribute 'SetSize'
+with the except:     a permanently broken primary, indistinguishable from a working one, forever
+```
+
+> **THE GENERAL FORM, AND IT IS THE THIRD INSTANCE TODAY: A MITIGATION THAT SUCCEEDS HIDES THE FAILURE IT
+> MITIGATES.** The resume guard that validated existence rather than completeness (`BEN-023`); the diagonal
+> reduction defended as a memory saving that saved nothing; and now a fallback whose correctness is precisely
+> what buried a five-second diagnosis. **In all three the protective mechanism worked and that is why the defect
+> survived.**
+
+### 21b. THE CROSS-CHECK PASSES, AND MY PIN HELD — **measured, not argued**
+
+```
+buffer digest   de32843bca7128c951a37e18d4cdc437eef1023bee41cc35251846a91c643d6f
+loop   digest   de32843bca7128c951a37e18d4cdc437eef1023bee41cc35251846a91c643d6f
+array_equal     True                       114,361,636 elements, no off-by-one, no dtype error
+sqrt_tr_unified stamped 4.4607819710748654e-38 == from the buffer diagonal    BIT-EXACT
+peak RSS        3,819 MB
+
+np.shares_memory(fast,   flat) = False     <- §20b(3)'s pin
+np.shares_memory(sliced, flat) = True      <- the slice IS a view; ascontiguousarray is what saves it
+```
+
+> **The buffer route IS correct once it can run, and §20b(3)'s accidental invariant is confirmed LIVE rather than
+> by reading: the slice really is a view, and only the `±1` padding's non-contiguity forces the copy.** It holds
+> today and **nothing asserts it** — so the pin is required whether or not the route survives §21d.
+
+### 21c. **D's SCOPING OF ITS OWN RESULT IS THE STRONGEST MOVE IN THE EXCHANGE, and it is endorsed without reservation**
+
+> **D: *"I verified the repaired route, not B's code. B's code as written cannot reach the line I checked… the
+> artifact I exercised differs from the artifact in the tree by the defect."*** **So a label is not a discharge,
+> and NEITHER IS D's OWN CROSS-CHECK until the repair lands.**
+>
+> **That is `BEN-467`'s discipline — what EXECUTES versus what is CITED, and the unit is the callee — applied by a
+> reviewer TO ITS OWN FINDING, at the cost of the finding's own force.** It is the hardest direction to apply it
+> in and the one nobody is incentivised to. **GATE 2 STAYS UNMET, on D's reasoning rather than mine.**
+
+### 21d. ⚠ RULED — **DELETE THE FAST PATH.** Its measured value is `0.226 %` of ONE member's GPU hours, against three hazards and a route that has never executed
+
+**D handed me the measurement rather than the opinion, which is the right way round. Here is the trade:**
+
+```
+fallback rate        2,147,141 elem/s
+one 10694^2 matrix   53.3 s   =  0.89 min
+six matrices, both files  =  5.3 min   ONCE, at a gate that decides whether the anchor is real
+as a share of ONE member's 39.223 A100-h  =  0.226 %
+peak RSS   loop 3,819 MB   vs   diagonal 3,773 MB   =  +46 MB
+```
+
+> **DELETE. Three reasons, and the third is the one that settles it.**
+>
+> **1. THE VALUE IS `5.3` MINUTES, ONCE.** Against a member costing `39.223` GPU-h and `2,766.8` core-h. **Same
+> shape as §11h's `250.6 KiB` against `41.44 GB`: when one side of a trade is negligible, the answer is not to
+> optimise it.**
+>
+> **2. DELETING REMOVES THREE HAZARDS FOR THAT `5.3` MINUTES** — the bare `except` (§21a), the `count=`/`len(buf)`
+> trap (§21e), and the view-aliasing that my own §19b `obj.Delete()` ruling made live (§20b(3)). **Every one of
+> them is a succeeds-but-wrong shape, which is the class this gate exists to exclude.**
+>
+> **3. AND IT WAS WRITTEN TO AVOID A MEMORY PROBLEM THAT DOES NOT EXIST.** `key.ReadObj()` materialises the full
+> matrix regardless — **B's own docstring says so** — so the buffer route saves *numpy* copies, not *ROOT* memory,
+> and D measures the difference at **`+46 MB` on a `3,819 MB` peak**. **It optimises neither the dominant memory
+> cost nor a material time cost. Deleting it forfeits nothing that was ever obtained.**
+>
+> **IF IT IS KEPT INSTEAD, it needs ALL FOUR of D's conditions and I will not accept three: no `SetSize`;
+> explicit `count=`; the `except` narrowed so a broken fast path is LOUD; and the two-path comparison pinned as a
+> test.** *(A route kept for `0.226 %` while carrying four preconditions is a maintenance liability wearing an
+> optimisation's clothes.)*
+
+**AND DELETION CHANGES THE SHAPE OF GATE 2's DISCHARGE, which I am not going to blur.** With one route there is
+nothing to cross-check, so §20b's two-path test becomes moot and the discharge rests instead on **the single
+surviving route having executed on real data IN THE TREE'S OWN CODE.**
+
+> **D's loop measurement makes that a formality; it is not a substitute for it.** By D's own standard in §21c I
+> will not discharge a gate on a run of code that differs from the tree — **including when the difference is a
+> deletion I ordered.** One post-deletion run of `_th2_content` against one real matrix, reported with its digest,
+> and gate 2 is met.
+
+### 21e. **A TRAP INSIDE THE REPAIR, which must be recorded EVEN IF the fast path is deleted**
+
+```
+len(buf)          = 268,435,455   = 2^28 - 1, a cppyy SENTINEL
+true length       = (10694+2)^2   = 114,404,416
+over-read         = 154,031,039 elements  =  1.23 GB past the end of the buffer
+```
+
+> **A repair that replaces `count=(nx+2)*(ny+2)` with `len(buf)` reads `1.23 GB` past the end AND SUCCEEDS
+> SILENTLY.** **That is the succeeds-but-wrong class arriving through the FIX rather than the bug** — the sharpest
+> possible instance, because the fix is written by someone who has just been told to be careful about exactly
+> this.
+>
+> **RECORDED HERE REGARDLESS OF §21d, because a deletion does not prevent a reintroduction.** The next person to
+> want a fast buffer read will find `GetArray()` and reach for `len()`. **`2^28 - 1` is not recognisable as a
+> sentinel unless someone has written it down**, and D is the only person who has read it.
+
+### 21f. D's `BEN` — **yes, and it is D's to author**
+
+**D offered to file *"a correct fallback converts a permanent failure into a silent one"* from `455-459`, distinct
+from `BEN-454`. Agreed on both counts: it IS distinct** — `BEN-454` is about a reader untestable for what it
+DISCARDS, this is about a mitigation that conceals what it MITIGATES — **and the row is D's, because a lane's row
+belongs to its author** (`BEN-159`, `BEN-223`), and every load-bearing measurement in it is D's.
+
+**And D's disclosure of its own harness bug — a `sorted()` that reshaped a 0-d object array, named so the
+traceback is not misread as a defect in B's module — is the practice that makes the rest of the report usable.**
+An instrument's own failure reported alongside its results is the difference between a measurement and a claim.
+
+### 21g. B's `40fbc789` — **the three §20 defects are fixed, and B does NOT yet have §21's finding**
+
+**Arrived after §21 was drafted. `origin/lane-b-member-axis-wip` @ `40fbc789`, suite 1853 passed / 4 skipped /
+3 failed.** Accepted, and two things need saying in opposite directions.
+
+**FIRST, THE RELAY THAT MATTERS MORE THAN ANY OF MY RULINGS HERE.** B writes: *"my first local stub lacked
+`SetSize`, the buffer path fell back, and the cross-check correctly declined."* **B read that as a deficient
+STUB. It is not — `SetSize` does not exist on ROOT `6.28/12` at all**
+(`h.GetArray()` → `cppyy.LowLevelView`, attrs `format`/`reshape`/`typecode`).
+
+> **So B's stub was FAITHFUL to the real interpreter, and B is at risk of "fixing" the stub to make a route pass
+> that cannot execute on the only ROOT this repo has.** **The declining cross-check was reporting the true state
+> of the world and was read as an artefact of the fixture** — which is `BEN-462`'s shape inverted: there a fixture
+> was too weak to exercise the world, here the fixture matched the world and was mistaken for too weak.
+> **Relayed to B immediately; it is worth more than the ruling below.**
+
+**SECOND, AND IT DOES NOT CHANGE §21d.** B has built `--cross-check-reader` — one command, one matrix, both paths
+required bit-exactly equal, first branch after parse with no path to a comparison. **And it REFUSES to claim a
+check it could not run:** if the buffer path did not execute it returns `ok=False` with *"nothing to cross-check"*
+rather than `ok=True` over one path run twice.
+
+> **That refusal is the most valuable thing in `40fbc789` and it must SURVIVE §21d's deletion of the route it
+> checks.** A check that declines rather than reporting agreement-with-itself is the executable form of the whole
+> campaign's discipline, and **with one reader there is nothing to cross-check but the DISCIPLINE has other
+> subjects** — `mask_order_hash` against its positive control, the summation-route control, the post-deletion read.
+> **Do not delete the pattern with the route.**
+>
+> **§21d STANDS, and D's finding STRENGTHENS it: the route now also requires an API migration before it can be
+> tested at all.** A path worth `0.226 %` of one member's GPU hours, which cannot execute on the available
+> interpreter, is not a candidate for repair.
+
+**AND B's ALIASING FIX IS BETTER THAN MY PIN.** B replaced `ascontiguousarray` with `np.array(..., copy=True)`,
+kept `assert not np.shares_memory(out, flat)`, **and added a test that MUTATES THE SOURCE after the read and
+requires the returned array unchanged.** B's reason: *"'np.array copies' is a property of an argument someone can
+change back."* **That is a test of the property rather than of the call, and it is the direction my pin did not
+reach.**
+
+**B's general shape, recorded as B's and better than my two instances of it:**
+
+> **B: *"TWO CORRECT RULINGS COMPOSE INTO A DEFECT WHEN EACH IS SAFE ONLY UNDER A PRECONDITION THE OTHER SILENTLY
+> REMOVES. Neither author can see it, because each is reasoning inside their own ruling's scope."*** **Both of
+> today's pairs were mine — pause + §11g deleting the only input to the steps that had not run, and explicit
+> `Delete()` + padding-aware slicing producing a use-after-free.** **The mechanism explains why a ruling author is
+> the worst-placed person to catch it, which is the actionable half.**
+
+**AND §19d's VOCABULARY FAILED ON ITS AUTHOR'S OWN NARRATION, WHICH IS THE ARGUMENT FOR IT.** B reports the
+date-check caught `estimator_seed`'s `landed` reading *"gate 1, this campaign"* — **no date, so it could not prove
+its own excuse** — plus two rows whose absence is explained by DERIVATION rather than age, correctly scoping the
+check to `derive: None`. **A mechanism that forces narration into something checkable and then fails on the
+narration of the person who built it is the strongest available evidence that it is not decorative.** Key coverage
+now prints *"compared 3 of 13 classified keys (23.1 %)"*, and the `upstream_*` keys land in `DECLARED_UNVERIFIED`
+because their recomputation is CROSS_FILE and an adopted-root comparison never opens the throw root — **a reason I
+had not supplied and which is the right one.**
+
+### 21h. I RAN B's BASELINE REPRODUCTION — **it is 4 failures at baseline, not 3**, and the difference is the day's own lesson arriving in a verification report
+
+**B offered the recipe and I said I would not treat the report as verified, so I ran it.** Detached worktree at
+`8e48a811`, `TMPDIR` set explicitly:
+
+```
+4 failed, 1722 passed, 4 skipped in 105.09s        <- B reported THREE at this baseline
+  test_gate2_target_runtime.py    canonical NumPy DataLoader source missing/invalid: /pscratch/...
+  test_pet_fullevent_nominal_launcher.py   'tensorflow' unexpectedly found in ...
+  test_resume_guard.py            lib_member_resume.sh: guarded but never stamped: ['and']
+  test_p4_sweep_snapshots.py      380 != 374 : shell-file count drifted        <- the fourth
+```
+
+**B's `105 s` is exact, which is a good sign the rest of the report is careful.** Two corrections to the recipe
+and one to the count.
+
+**(i) THE RECIPE DOES NOT RUN AS GIVEN.** `python3 -m pytest tests/ -q` from the repo root gives *"file or
+directory not found: tests/"* — **the suite is `nd-unfolding/tests`.** Trivial, and worth saying because **a
+reproduction recipe that does not run is not a reproduction recipe**, and this one was offered precisely so I
+would not have to trust a report.
+
+**(ii) I VERIFIED THE FOURTH IS REAL AND NOT MY ENVIRONMENT, because this repo has faked failures before.**
+`tools_p4_sweep_pipeline_rc` counts via `git ls-files "*.sh"` with `cwd=REPO`, `REPO = parents[1]` — **inside the
+worktree, so no `${REPO}` escape.** Then, two independent routes:
+
+```
+git -C <worktree> ls-files "*.sh" | wc -l        380
+git ls-tree -r --name-only 8e48a811 | grep -c '\.sh$'   380
+committed snapshot at 8e48a811                   374
+```
+
+> **So the snapshot was ALREADY STALE AT THE BASELINE. The fourth failure is real, and it is nobody's regression.**
+
+**(iii) AND THE DISCREPANCY IS THIS WEEK'S OWN DEFECT, IN A VERIFICATION REPORT.** B's substantive claim — *"I
+introduced no new failures"* — **is CONSISTENT with what I measured and is NOT ESTABLISHED by it.** `3 ≤ 4` only
+supports it if B's three are a *subset* of my four.
+
+> **B GAVE ME A CARDINALITY WHERE THE CLAIM NEEDED A SET. *"The three reproduce at baseline"* is unfalsifiable as
+> stated, because I cannot check a subset relation against a count** — and had one of B's three been NEW while one
+> of the baseline four was FIXED, the report would read identically. **FIFTH INSTANCE of the family: `BEN-465`
+> (read the ids, not the containers), `BEN-466` (name which index), §16d (membership, not cardinality), `BEN-445`
+> (a row count cannot report a failed query), and now a failure count standing in for a failure SET.**
+>
+> **The repair is one line of output: name the failing tests.** `pytest -q` already prints them; the report
+> summarised them away. *(And I have no standing here either — every number in §17e and §19 that I had to
+> reconcile was a count I quoted without its identity.)*
+
+### 21i. ⚠ A LIVE DEFECT ON `main`, NOT MINE AND NOT B's — **the shell-file snapshot has been drifting and is now failing silently**
+
+```
+tracked *.sh at 8e48a811   380      snapshot 374     drift 6
+tracked *.sh at main       382      snapshot 374     drift 8      <- measured this turn
+```
+
+**`test_p4_sweep_snapshots.py::test_pipeline_sweep_matches_its_snapshot` is FAILING ON `main`, and the drift is
+GROWING.** The remedy is in the test's own message — *"re-run with `--update` and commit"* — and the file's
+docstring says updating is deliberate so the diff goes in front of a reviewer.
+
+> **WHY THIS MATTERS MORE THAN A RED TEST: the snapshot's stated purpose is that *"an omission is a VISIBLE
+> DIFF"*, and `CLAUDE.md` records that `115 sbatch_*.sh` names are LOAD-BEARING PROVENANCE.** A permanently-red
+> snapshot test emits no signal, **so adding a 383rd shell file is now invisible — the mechanism built to make
+> shell-file changes reviewable has stopped doing it, while still existing.**
+>
+> **Third instance today of the same family as §21a: A MITIGATION THAT NOBODY READS PROTECTS NOTHING, and a check
+> that has been red long enough is indistinguishable from one that is absent.** `§21a`'s was a mitigation that
+> SUCCEEDED and hid the failure; this is one that FAILS and hides the next one.
+>
+> **NOT MINE TO FIX** — it belongs to whoever owns `p4-sweep-snapshots.json`, and `--update` is a deliberate
+> reviewer-facing act, not a hygiene chore I should perform silently on another lane's artifact. **Flagged with
+> its operands: `374` recorded, `382` actual, and the two commands above.**
+
+*(Found only because I declined to accept a peer's "3 failures at baseline" on report. The verification I ran to
+check someone else's number is what surfaced a defect neither of us was looking at — which is the argument for
+running the check even when you expect the report to be right.)*
+
 ## 12. R1 RULED — **`_sb` IS CANONICAL FOR BOTH LEGS**, and there is exactly ONE wrong literal
 
 **Not a judgement — the receipt says so.** `receipt_construction_contract_5d.py:313-314`:
@@ -1847,6 +2109,45 @@ and now the mask is already in the product. Worth noting as a rate, not an anecd
   record carries what the implementation absorbed.
 - **§19e heading rewritten** — it read as its own negation on a skim (D nearly filed a correction against
   it). **Second instance in this document of §19a's own class.**
+- **§21: THE FAST PATH IS DEAD AND ALWAYS HAS BEEN.** `cppyy.LowLevelView` has no `SetSize` on ROOT
+  `6.28/12`, so it raises on line 1 of the try and `except Exception` swallows it — **`_th2_content` has
+  fallen back on every invocation it will ever have.** §20b's hypothetical was the present state.
+- **RULED (§21d): DELETE the fast path.** Measured value `5.3` min once = **`0.226 %` of ONE member's GPU
+  hours**, against three succeeds-but-wrong hazards; and it was written to avoid a memory problem that does
+  not exist (`+46 MB` on a `3,819 MB` peak, because `ReadObj()` materialises the matrix regardless).
+  **If kept, ALL FOUR of D's conditions, not three.**
+- **§21d: deletion changes gate 2's discharge and I will not blur it** — with one route the two-path test
+  is moot, so the discharge needs the surviving route to have run **in the tree's own code**. D's
+  measurement makes that a formality, not a substitute — **including when the difference is a deletion I
+  ordered.**
+- **§21b: the cross-check PASSES bit-exactly and §20b(3)'s pin HELD, measured live** —
+  `shares_memory(sliced, flat)` is `True`, so only the padding's non-contiguity forces the copy. **The
+  assertion is required either way.**
+- **§21e: `len(buf)` returns `2^28 - 1`, a cppyy SENTINEL** — a repair using it over-reads `1.23 GB` and
+  succeeds silently. **Recorded even though §21d deletes the route, because deletion does not prevent
+  reintroduction.**
+- **§21a, recorded as D's: *a correct fallback converts a permanent failure into a silent one*** — and the
+  third instance today of **a mitigation that succeeds hiding the failure it mitigates.**
+- **§21g: B does NOT yet have §21's finding and is at risk of "fixing" a faithful stub.** B read its
+  stub's missing `SetSize` as a fixture deficiency; **`SetSize` does not exist on ROOT `6.28/12` at all**,
+  so the stub matched the world and the declining cross-check was telling the truth. **Relayed; worth more
+  than any ruling in §21.**
+- **§21g: B's `--cross-check-reader` REFUSES to claim a check it could not run** (`ok=False`, *"nothing to
+  cross-check"*, rather than `ok=True` over one path run twice). **That refusal must SURVIVE §21d's
+  deletion — do not delete the pattern with the route.**
+- **§21g: B's aliasing fix exceeds my pin** — a test that MUTATES THE SOURCE and requires the return
+  unchanged tests the property, not the call.
+- **§21h: I RAN B's BASELINE REPRODUCTION — `4 failed, 1722 passed, 4 skipped` in `105.09 s`, NOT three.**
+  The fourth is real, verified two ways (`git ls-files` and `git ls-tree` both `380` against a snapshot of
+  `374`), and is nobody's regression. **B's no-new-failures claim is CONSISTENT with this and not
+  ESTABLISHED by it: a cardinality cannot support a subset relation.** Fifth instance of a count standing
+  in for an identity. Also the recipe needs `cd nd-unfolding` — **a reproduction recipe that does not run
+  is not one.**
+- **⚠ §21i: A LIVE DEFECT ON `main`, mine to REPORT and not to fix** — `382` tracked `*.sh` against a
+  snapshot of `374`, drift GROWING (`6` at baseline, `8` now), so `test_p4_sweep_snapshots` is red on main.
+  **Its purpose is to make a shell-file omission a VISIBLE DIFF and `CLAUDE.md` calls those names
+  load-bearing provenance — so a 383rd file is now invisible.** A check red long enough is
+  indistinguishable from one that is absent.
 - **AUTHORIZED: nothing.** No launcher edited, nothing submitted.
 
 *Second sought: B on §3's derived-target predicate (its module) and on whether stage 1 can be run as a single
