@@ -2700,6 +2700,68 @@ class Stage0Distinctness(unittest.TestCase):
         self.assertEqual(self.S.main(["--root-a", a, "--root-b", a,
                                       "--offset-a", "0", "--offset-b", "0"]), 2)
 
+
+    def test_the_CHANGED_BIN_COUNT_ships_its_DENOMINATOR_and_the_denominator_is_the_SUPPORT(self):
+        """THE REPORT'S HEADLINE NUMBER WAS WRONG BY CONSTRUCTION UNTIL THIS SHIPPED.
+
+        Stage 0's real output read `changed 10510/65856`, which the mediator reported as "the seed moves
+        ~16% of bins". But ~84% of the 65,856-bin 5D grid is EMPTY -- the analysis reports on the `cv > 0`
+        mask, 10,694 bins (`analyze_universes_5d.py:160`, and "the same 10694 support" at
+        `p4_evidence.py:137`). A bin that is zero in both members CANNOT change, so it is not evidence of
+        anything. Against the support the same measurement reads ~98% of the bins that CAN move.
+
+        SHIPPING ONLY THE GRID SIZE MADE A STRONG RESULT LOOK WEAK, which is the rarer direction and the
+        reason it would have survived review. BEN-077 against my own report: the ingredient of "changed
+        bins" is how many bins were ever in play.
+        """
+        sparse = np.zeros(64)
+        sparse[:8] = 1.0
+        moved = sparse.copy()
+        moved[:6] = 1.5                                  # 6 of the 8 populated bins move
+        a = self._member(0, [1], xsec=lambda r, k: sparse)
+        b = self._member(1200, [1], xsec=lambda r, k: moved)
+        v, rep = self.S.compare_member_pair(a, b, 0, 1200)
+        self.assertEqual(v, self.S.DISTINCT, rep.get("why"))
+        row = rep["replicas"][0]
+        # the fixture pads to clear the 1 kB floor, so assert the RELATION rather than literal counts
+        self.assertLess(row["support_either"], row["nbins"],
+                        "the fixture must be sparse or this test proves nothing")
+        self.assertEqual(row["changed_bins"] / row["support_either"],
+                         row["changed_frac_of_support"])
+        self.assertGreater(row["changed_frac_of_support"],
+                           row["changed_bins"] / row["nbins"],
+                           "the support-based fraction must EXCEED the grid-based one -- that gap is "
+                           "the entire correction")
+
+    def test_the_report_prints_BOTH_denominators_so_neither_reading_is_available_alone(self):
+        sparse = np.zeros(64); sparse[:8] = 1.0
+        moved = sparse.copy(); moved[:6] = 1.5
+        a = self._member(0, [1], xsec=lambda r, k: sparse)
+        b = self._member(1200, [1], xsec=lambda r, k: moved)
+        v, rep = self.S.compare_member_pair(a, b, 0, 1200)
+        text = self.S.format_report(v, rep)
+        self.assertIn("of support", text)
+        self.assertIn("[grid", text, "the grid size stays visible; it is just not the denominator")
+        self.assertIn("of peak", text,
+                      "and max|d| must be labelled as a fraction of the PEAK, not as 'rel'")
+
+    def test_max_delta_over_peak_is_NOT_a_per_bin_relative_error(self):
+        """The second misreadable number. `max_rel_delta` divides max|delta| by the PEAK bin value, so
+        "0.6-1.2% relative" invites reading it as "bins move by ~1%". It is the largest absolute change
+        expressed as a fraction of the largest bin. The median per-bin relative change on the support is
+        now shipped beside it, and they differ by construction."""
+        x = np.array([100.0] + [1.0] * 63)
+        y = x.copy(); y[1:] = 1.5                      # every small bin moves 50%; the peak does not
+        a = self._member(0, [1], xsec=lambda r, k: x)
+        b = self._member(1200, [1], xsec=lambda r, k: y)
+        v, rep = self.S.compare_member_pair(a, b, 0, 1200)
+        row = rep["replicas"][0]
+        self.assertLess(row["max_delta_over_peak"], 0.02,
+                        "max|d|/peak is small because the peak is large")
+        self.assertGreater(row["median_rel_delta_on_support"], 0.2,
+                           "while the TYPICAL bin moved a lot -- the two numbers answer different "
+                           "questions and only shipping both prevents the substitution")
+
     def test_the_report_ships_its_INGREDIENTS(self):
         """A verdict-only receipt is unfalsifiable (BEN-077). The report must carry enough that its own
         numbers could contradict each other."""
