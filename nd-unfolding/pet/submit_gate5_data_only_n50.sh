@@ -205,6 +205,26 @@ if [[ "$STAGE" == "train" ]]; then
       "$base/training/GATE5_REPLICA_TRAINING_RECEIPT.json.done"; do
       [[ ! -e "$f" && ! -L "$f" ]] || die "collision/no-clobber guard (training): $f"
     done
+    # THE FOUR PRODUCTS ABOVE WERE NOT ENOUGH, AND 57256638_0 IS THE PROOF. It died at the receipt write
+    # AFTER writing 14 checkpoint files into `training/w_nominal/` -- and those 14 are EXACTLY the set
+    # `expected_checkpoints()` requires, so member 0's checkpoint directory is already "complete" by name
+    # while every one of the four declared products is absent. That is artifact-present/declaration-absent,
+    # and the four-path guard waved it through because `w_nominal/` was never in the list.
+    #
+    # The live hazard is not clutter, it is ATTRIBUTION: the read-back checks the finals by PATH IDENTITY and
+    # `is_file()`, never by content, so a later run that failed before overwriting `iter2_step*_final` would
+    # be validated against a PREVIOUS run's weights. Nothing in the artifact binds a checkpoint to the run
+    # that produced it.
+    #
+    # So: no FILE may exist under `w_nominal/` at train-stage start. The directory itself is allowed, since
+    # the trainer creates it (`omnifold.py:142`) and an empty one carries no attribution.
+    if [[ -d "$base/training/w_nominal" ]]; then
+      n_ckpt=$(find "$base/training/w_nominal" -type f -o -type l 2>/dev/null | wc -l | tr -d "[:space:]")
+      (( n_ckpt == 0 )) || die "collision/no-clobber guard (checkpoints): ${n_ckpt} file(s) already under \
+$base/training/w_nominal -- a previous attempt's weights. They are NOT covered by the four-product guard and \
+the read-back validates the finals by path and existence only, so leaving them risks validating this run \
+against another run's checkpoints. Remove them deliberately, with the deletion reported." 5
+    fi
   done
   echo "[gate5-do-submit] train stage: ${n_ok} target artifact(s) asserted present for ${lo}..${hi}"
 else

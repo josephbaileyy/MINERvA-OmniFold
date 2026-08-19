@@ -26,6 +26,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 import numpy as np
@@ -725,9 +726,14 @@ class PinnedValidatorRequiredKeys(unittest.TestCase):
                         <= self._pinned_required_keys())
 
     def _store(self, **over):
+        # `bootstrap_seed` IS included, as -1, because the PINNED base driver stamps it whenever the loader
+        # drew nothing -- which is the data-only condition. The earlier fixture excluded it to match an
+        # absence assertion of mine, and that assertion forbade what the producer must produce: 57256638_0
+        # trained 2 h 58 m and died on it at the write.
         keys = set(cdo.PINNED_VALIDATOR_REQUIRED_KEYS) - set(
             cdo.DATA_ONLY_WITHHELD_REQUIRED_KEYS)
         store = {k: np.asarray(0) for k in keys}
+        store["bootstrap_seed"] = np.asarray(cdo.DATA_ONLY_BOOTSTRAP_SEED_VALUE)
         store.update(over)
         return store
 
@@ -742,16 +748,68 @@ class PinnedValidatorRequiredKeys(unittest.TestCase):
         self.assertIn("bkg_indices", str(cm.exception))
         self.assertIn("55", str(cm.exception))
 
-    def test_the_withheld_key_being_PRESENT_also_fails(self):
-        """BOTH DIRECTIONS. A present `bootstrap_seed` clears the pinned validator's required-key gate
-        and then reaches its `int(scalar(store, "bootstrap_seed"))`; if the value is None that raises
-        TypeError from int() -- an expression-level exception invisible to a grep for `raise`, which
-        turns a Checks object into a traceback."""
+    def test_a_REAL_SEED_in_bootstrap_seed_is_REJECTED(self):
+        """RE-POINTED, NOT DELETED. This used to assert the key must be ABSENT. The pinned base driver
+        stamps it as -1 whenever the loader drew nothing, so absence is unproducible -- but a REAL seed is
+        still the failure that matters: it would mean the loader drew coherent MC factors after all, which
+        is the entire thing this product exists not to do.
+
+        What the control protects is therefore the PROPERTY (no coherent draw happened), not the original
+        absence."""
         with self.assertRaises(SystemExit) as cm:
             cdo.assert_pinned_required_keys(
                 self._store(bootstrap_seed=np.asarray(50_000)), where="unit")
-        self.assertIn("bootstrap_seed", str(cm.exception))
-        self.assertIn("data_bootstrap_seed", str(cm.exception))
+        msg = str(cm.exception)
+        self.assertIn("bootstrap_seed is 50000", msg)
+        self.assertIn("data_bootstrap_seed", msg)
+
+    def test_an_ABSENT_bootstrap_seed_is_ALSO_rejected_and_names_the_55_check_cost(self):
+        """The other direction, and it is not symmetric with the above: absence is not a lie about the
+        draw, it is a hole that costs 55 of the pinned validator's 77 checks through its required-key
+        early return.
+
+        THIS CONTROL ALSO KILLED A VACUOUS GUARD. I first wrote a dedicated `else: raise ABSENT` branch for
+        this case; the control proved it unreachable, because with the withheld set empty `bootstrap_seed` is
+        an ordinary required key and the `missing` raise above gets there first. The branch is gone and this
+        asserts the message that ACTUALLY fires -- which is the stronger arrangement anyway: one code path
+        for every absent required key, not a special case that can drift from it."""
+        st = self._store()
+        del st["bootstrap_seed"]
+        with self.assertRaises(SystemExit) as cm:
+            cdo.assert_pinned_required_keys(st, where="unit")
+        msg = str(cm.exception)
+        self.assertIn("required keys absent", msg)
+        self.assertIn("bootstrap_seed", msg)
+        self.assertIn("55", msg)
+
+    def test_the_withheld_set_is_EMPTY_and_a_re_add_is_visible(self):
+        """The withheld set is now empty, so the guard reading it cannot fire. Pinning the emptiness means a
+        future re-add is a test failure rather than a silent return to the design that cost 2 h 58 m."""
+        self.assertEqual(set(cdo.DATA_ONLY_WITHHELD_REQUIRED_KEYS), set())
+
+    def test_the_withheld_MECHANISM_still_fires_when_the_set_is_NON_empty(self):
+        """A TEST IN THE DIRECTION THE GUARD ACTS. The mechanism is retained for a future genuinely-withheld
+        key, but a guard over an empty set is untested by every other control in this class -- which is how
+        the two vacuous shell guards at :46/:47 survived. Patch the set non-empty and prove it fires."""
+        # THE STORE IS BUILT BEFORE THE PATCH, and the first attempt got this wrong in a way worth keeping:
+        # `_store()` reads the withheld set itself, so building it INSIDE the patch removed the very key the
+        # guard was supposed to object to, and "SystemExit not raised" looked like a broken guard rather than a
+        # fixture that had agreed with the patch. A power test whose fixture tracks the thing under test cannot
+        # fail in the direction it is aimed.
+        store = self._store()
+        with mock.patch.object(cdo, "DATA_ONLY_WITHHELD_REQUIRED_KEYS", frozenset({"n_data_full"})):
+            with self.assertRaises(SystemExit) as cm:
+                cdo.assert_pinned_required_keys(store, where="unit")
+        self.assertIn("withheld key(s) present", str(cm.exception))
+        self.assertIn("n_data_full", str(cm.exception))
+
+    def test_the_PINNED_base_driver_is_what_stamps_it(self):
+        """The claim the whole correction rests on, asserted against the pinned source so it cannot rot:
+        the value is not mine to choose, and any future reader wondering why a data-only artifact carries
+        `-1` is pointed at the file that put it there."""
+        src = (Path(PET) / "train_fullevent_nominal.py").read_text()
+        self.assertIn("bootstrap_seed=np.asarray(", src)
+        self.assertIn("-1 if target_meta.get(\"bootstrap_seed\") is None", src)
 
     def test_int_of_a_None_valued_key_really_does_raise_TypeError(self):
         """The measurement behind the comment, executed rather than asserted in prose. `BEN-410`: a
@@ -2247,6 +2305,9 @@ class FamilyVerdictIsBinding(unittest.TestCase):
             "campaign_role": np.asarray(cdo_.CAMPAIGN_ROLES[cdo_.CSTAT_DATA_ONLY]),
             "cstat_product": np.asarray(cdo_.CSTAT_DATA_ONLY),
             "replica_index": np.asarray(self.idx),
+            # -1, stamped by the PINNED base driver whenever the loader drew nothing. The data seed lives
+            # under its own key on the next line.
+            "bootstrap_seed": np.asarray(cdo_.DATA_ONLY_BOOTSTRAP_SEED_VALUE),
             "data_bootstrap_seed": np.asarray(self.seed),
             "data_bootstrap_factor": data_factor,
             "sig_bootstrap_factor_full": sig_ones,

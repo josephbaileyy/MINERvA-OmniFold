@@ -90,10 +90,38 @@ PINNED_VALIDATOR_REQUIRED_KEYS = frozenset({
     "lr_policy_realized", "weights_push", "target", "inference_contract",
 })
 
-# The ONE required key a data-only artifact must never carry. `bootstrap_seed` means "the seed passed
-# to coherent_bootstrap_factors"; the data-only training stage passes None and the loader draws
-# nothing, so no honest value exists. Its absence is a declared ruling request, not an omission.
-DATA_ONLY_WITHHELD_REQUIRED_KEYS = frozenset({"bootstrap_seed"})
+# === `bootstrap_seed` IS PRESENT AND MUST BE EXACTLY -1, AND A PINNED FILE DECIDED THAT, NOT ME. ===
+#
+# THE WITHHELD-KEY DESIGN WAS WRONG AND A REAL RUN PROVED IT. `57256638_0` trained for 2 h 58 m -- all six
+# fits, LR anneal verified, both final checkpoints round-trip verified -- and died AT THE WRITE on my own
+# assertion: `write-time: withheld key(s) present: ['bootstrap_seed']`.
+#
+# The key is not mine to withhold. `train_fullevent_nominal.py:635-637` -- PINNED, 0 edits available -- writes
+#     bootstrap_seed = -1 if target_meta.get("bootstrap_seed") is None else int(...)
+# and the data-only path forces `bootstrap_seed=None` at the loader seam BY DESIGN, so the base driver stamps
+# **-1** into `arrays` before my atomic wrapper ever sees them. I asserted an absence that the producer cannot
+# produce.
+#
+# AND THE VALUE IS THE ONE LANE C RULED INADMISSIBLE, WHICH IS UNCOMFORTABLE AND STILL FINE. C ruled `-1`
+# inadmissible as a value *I* would choose, because `extract_fullevent_fps.py:178` treats `-1` as proof of
+# "this is the NOMINAL, not a replica". Both facts hold: the value is dangerous at that reader, and a pinned
+# file writes it regardless. What makes it safe is not the value but the ROUTING -- C's own resolution, that
+# `:178` "is not a guard to satisfy, it is a guard the product must never REACH", implemented as
+# `install_nominal_extractor_dataonly_refusal()` in the replica extractor.
+#
+#   SO THE COMPENSATION WAS ALREADY BUILT, AND THIS ASSERTION WAS DEFENDING A DOOR THAT IS BOLTED ELSEWHERE.
+#
+# The replacement is a POSITIVE assertion rather than a tolerance: the key must be present AND exactly -1. A
+# data-only artifact carrying a real seed still fails, which is the case that actually matters -- it would mean
+# the loader drew coherent factors after all.
+DATA_ONLY_WITHHELD_REQUIRED_KEYS = frozenset()
+
+# What `bootstrap_seed` MUST equal in a data-only artifact, and why absence is not an option: the pinned base
+# driver's own comment says "-1 = nominal (no bootstrap); the validator's recomputation from the dump is only
+# valid for the nominal, so it must be able to tell." In data-only the loader genuinely draws no MC factors, so
+# that reading is TRUE of this product -- the danger was never the value's meaning here, only its collision at
+# a reader this product must not reach.
+DATA_ONLY_BOOTSTRAP_SEED_VALUE = -1
 
 
 def assert_unthinned_mc_evidence(*, factor_meta, data_factor_sha256, sig_unity_sha256,
@@ -226,13 +254,20 @@ def assert_loader_digest_agrees_across_stages(target_receipts, training_receipts
 
 
 def assert_pinned_required_keys(store, *, where):
-    """Every pinned-validator required key present except the declared-withheld one, which is ABSENT.
+    """Every pinned-validator required key present, and `bootstrap_seed` present AND exactly -1.
 
-    BOTH DIRECTIONS, and the second is the one that earns its place: a data-only artifact that grew a
-    `bootstrap_seed` would clear the required-key gate, reach the pinned validator's
-    `int(scalar(store, "bootstrap_seed"))`, and -- if the value were None -- raise `TypeError` from
-    `int()` rather than record a failed check. That is an expression-level exception, invisible to a
-    grep for `raise`, and it turns a Checks object into a traceback.
+    THE DOCSTRING USED TO SAY THE OPPOSITE and a 2 h 58 m run is what refuted it. `bootstrap_seed` was
+    declared WITHHELD here, on the reasoning that data-only passes `bootstrap_seed=None` to the loader so no
+    honest value exists. `57256638_0` trained to completion -- six fits, LR anneal verified, both final
+    checkpoints round-tripped -- and died at the write on that very assertion, because the PINNED base driver
+    `train_fullevent_nominal.py:635-637` stamps `-1` whenever the loader drew nothing. The absence I required
+    was unproducible by the producer.
+
+    So the check is now POSITIVE, and the direction that earns its place is a REAL seed: that would mean the
+    loader drew coherent MC factors after all, which is the one thing this product exists not to do. The value
+    -1 is safe here not because of what it means but because of ROUTING -- `extract_fullevent_fps.py:178`
+    reads -1 as proof of nominal, and `install_nominal_extractor_dataonly_refusal()` makes that reader
+    unreachable for this product (lane C: "not a guard to satisfy -- a guard the product must never REACH").
     """
     keys = set(store.files) if hasattr(store, "files") else set(store)
     missing = sorted((PINNED_VALIDATOR_REQUIRED_KEYS - DATA_ONLY_WITHHELD_REQUIRED_KEYS) - keys)
@@ -241,8 +276,22 @@ def assert_pinned_required_keys(store, *, where):
                          f"would cost 55 unevaluated checks: {missing}")
     present = sorted(DATA_ONLY_WITHHELD_REQUIRED_KEYS & keys)
     if present:
-        raise SystemExit(f"[gate5-dataonly] {where}: withheld key(s) present: {present}; the seed "
-                         f"lives under `data_bootstrap_seed` (P6)")
+        raise SystemExit(f"[gate5-dataonly] {where}: withheld key(s) present: {present}")
+    # POSITIVE, not a tolerance: `bootstrap_seed` must be there AND be exactly -1. Absence would trip the
+    # pinned validator's required-key early return (22 of 77 sites, 55 skipped); a REAL seed would mean the
+    # loader drew coherent factors after all, which is the failure that matters. Neither is accepted.
+    if "bootstrap_seed" in keys:
+        got = int(np.asarray(store["bootstrap_seed"]).item())
+        if got != DATA_ONLY_BOOTSTRAP_SEED_VALUE:
+            raise SystemExit(
+                f"[gate5-dataonly] {where}: bootstrap_seed is {got}, not "
+                f"{DATA_ONLY_BOOTSTRAP_SEED_VALUE} -- in a data-only build the loader draws NO MC factors, so "
+                f"the pinned base driver stamps -1; any other value means it drew after all. The data seed "
+                f"lives under `data_bootstrap_seed` (P6).")
+    # NO `else: raise ABSENT` HERE, AND THE MISSING ONE IS THE POINT. With the withheld set empty,
+    # `bootstrap_seed` is an ordinary REQUIRED key, so its absence is already caught by the `missing` raise
+    # above -- which names the same 55-check cost. I wrote that else-branch anyway and a control caught that it
+    # cannot fire: the third vacuous guard in this file today, after :46 and :47.
 
 
 def assert_data_only_streams(store, *, data_bootstrap_seed, n_data_full, n_sig_full, n_bkg_full):
