@@ -54,7 +54,8 @@ DOC_DIR = REPO / "docs" / "orchestration"
 # because the check reads DOCUMENTS and not its own source.  A known blind spot, stated.)
 CITATION = re.compile(
     r"(?<![A-Za-z0-9_./-])"
-    r"([A-Za-z0-9_][A-Za-z0-9_./-]*\.(?:md|tsv|py|sh|json))"
+    r"(?:(?P<ref>(?:origin/)?[A-Za-z0-9_][A-Za-z0-9_./-]*):)?"       # optional `<git-ref>:` prefix
+    r"(?P<path>[A-Za-z0-9_][A-Za-z0-9_./-]*\.(?:md|tsv|py|sh|json))"
     r"(?![A-Za-z0-9_])"
 )
 
@@ -72,6 +73,30 @@ def tracked_files() -> set[str]:
         capture_output=True, text=True, check=True,
     ).stdout
     return set(out.splitlines())
+
+
+_REF_CACHE: dict[str, set[str]] = {}
+
+
+def ref_files(ref: str) -> set[str]:
+    """Files tracked at another git ref.
+
+    A lane frequently must cite a peer lane's UNMERGED work — `mii_anchor_comparator.py`
+    lives only on `origin/lane-b-member-axis-wip`.  A bare repo-relative path to such a file
+    is UNRESOLVABLE for anyone reading the branch the citing document lives on, which is
+    exactly the defect this script exists to catch: it fired on four of my own citations.
+    The repair is not an allowlist -- it is to make the citation carry its ref, so
+    `origin/lane-b-member-axis-wip:nd-unfolding/mii_anchor_comparator.py:171` is checkable.
+    An unknown or unfetched ref resolves to the empty set and therefore FAILS, which is the
+    fail-closed direction: a citation into a ref nobody can see is not a citation.
+    """
+    if ref not in _REF_CACHE:
+        r = subprocess.run(
+            ["git", "-C", str(REPO), "ls-tree", "-r", "--name-only", ref],
+            capture_output=True, text=True,
+        )
+        _REF_CACHE[ref] = set(r.stdout.splitlines()) if r.returncode == 0 else set()
+    return _REF_CACHE[ref]
 
 
 def lanec_documents() -> list[Path]:
@@ -103,12 +128,15 @@ def scan(tracked: set[str]) -> tuple[list[tuple], int, int]:
         text = doc.read_text(encoding="utf-8", errors="replace")
         seen: set[str] = set()
         for m in CITATION.finditer(text):
-            token = m.group(1)
-            if token in seen or token in ALLOWLIST:
+            token, ref = m.group("path"), m.group("ref")
+            key = f"{ref}:{token}" if ref else token
+            if key in seen or token in ALLOWLIST:
                 continue
-            seen.add(token)
+            seen.add(key)
             n_citations += 1
-            verdict, hits = resolve(token, tracked)
+            verdict, hits = resolve(token, ref_files(ref) if ref else tracked)
+            if verdict != "OK" and ref:
+                verdict = f"{verdict}@{ref}"
             if verdict != "OK":
                 line = text.count("\n", 0, m.start()) + 1
                 problems.append((doc.name, line, token, verdict, hits))
@@ -144,6 +172,17 @@ def self_check() -> bool:
             ok = False
 
     # The detector must actually detect: a synthetic ambiguity and a synthetic absence.
+    # a ref-qualified citation must parse into (ref, path), and a bare one into (None, path)
+    m = CITATION.search("origin/lane-b-member-axis-wip:nd-unfolding/mii_anchor_comparator.py")
+    if not m or m.group("ref") != "origin/lane-b-member-axis-wip" \
+            or m.group("path") != "nd-unfolding/mii_anchor_comparator.py":
+        print("  SELF-CHECK FAIL: ref-qualified citation did not split into ref + path")
+        ok = False
+    m = CITATION.search("docs/orchestration/FINDINGS.md")
+    if not m or m.group("ref") is not None:
+        print("  SELF-CHECK FAIL: bare citation wrongly parsed a ref")
+        ok = False
+
     fake = {"a/dup.md", "b/dup.md", "c/only.md"}
     if resolve("dup.md", fake)[0] != "AMBIGUOUS":
         print("  SELF-CHECK FAIL: two matching basenames not reported AMBIGUOUS")

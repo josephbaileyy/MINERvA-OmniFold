@@ -1169,6 +1169,168 @@ leg B   f_med = median_bins sd_j(sigma_i) / sigma_i  <- sd ACROSS the 50 members
 **the `0.573 %` sqrt-trace shift between two CVs is a two-artifact difference, not a fifty-member spread.** It
 bounds the term's sensitivity, not the bar.
 
+## 19. LANE D's JOB-1 REPORT — **my §17 closed a gap I recorded as open in the same section**, and two unruled items, one of which blocks stage 1 outright
+
+### 19a. ACCEPTED — **§17a's *"nothing currently separates the third"* IS WRONG, AND §17c IS WHAT REFUTES IT**
+
+**I wrote that there are three indistinguishable observations and that nothing separates the third — a member
+that reproduced `10,694` numbers and nothing else — three paragraphs BELOW ruling the full-array digest that
+makes exactly that member fail.** Under §17c a member must reproduce all `114,361,636` elements; reproducing
+only the diagonal no longer passes.
+
+> **CORRECTED: all three ARE separable under §17 as written.** (A) separates the first two; **§17c separates the
+> third.** **The defect is a document that states a gap and its remedy in one section and does not connect them
+> — which is worse than either an unnoticed gap or an unremedied one, because a reader who trusts the summary
+> inherits an open item that is closed.** D caught it; I had the answer and had not applied it to my own
+> enumeration.
+
+### 19b. CORRECTION — **peak memory is `~2 GB` per LIVE `TH2D`, measured, not `0.915 GB`; and the release must be EXPLICIT**
+
+**Measured: `2,027 MB` peak RSS for the adopted root (one `10,694²` `TH2D` + one `TH1D`); `3,773 MB` for the
+throw root's three. ROOT allocates the `sumw2` array alongside the contents, so a `TH2D` is resident at ~2x its
+nominal size.** My `0.915 GB` was the array, not the object.
+
+> **§17c's *"one key at a time"* is PROMOTED FROM PREFERENCE TO REQUIREMENT, and it needs code that does not
+> exist:** `origin/lane-b-member-axis-wip:nd-unfolding/mii_anchor_comparator.py:182-183` loops `for key in f.GetListOfKeys(): name, obj = key.GetName(),
+> key.ReadObj()` and **holds every object until `f.Close()`.** So a streaming digest needs explicit
+> `obj.Delete()` or per-key scope — **restructuring the digest alone does not stream anything.**
+>
+> **BUDGET `~2 GB` PER LIVE `TH2D` AND MAKE THE RELEASE EXPLICIT.** Otherwise the throw root is `~6 GB` and my
+> ruling reads as free when it is not. *(This strengthens §17 rather than weakening it: a requirement with a
+> measured cost is implementable; a preference with an understated one gets deferred.)*
+
+### 19c. ⚠ **I CORRECTED THE NUMBER WHERE I ORIGINATED IT AND NOT WHERE IT EXECUTES** — and the constant written to prevent my first error encodes my second one verbatim
+
+**Read at `origin/lane-b-member-axis-wip`, not inferred:**
+
+```python
+# origin/lane-b-member-axis-wip:nd-unfolding/mii_root_payload_classes.py:37-39
+#: The 5D flat length. RECORDED EXPLICITLY because C sized a per-bin array off the extended-FPS
+#: 285-bin grid and was wrong by 230x; the mediator caught it. A per-bin float64 array is 0.527 MB.
+FLAT_NBINS = 65856
+
+# origin/lane-b-member-axis-wip:nd-unfolding/mii_anchor_comparator.py:171
+#   "...avoids materializing a 34.7 GB matrix."      <- 65856^2 x 8 B = 34.70 GB
+```
+
+> **THE CONSTANT INTRODUCED TO PREVENT MY FIRST ERROR CARRIES MY SECOND ONE, INCLUDING MY PROSE.** The comment
+> names me, cites the `230x` correction — **which was itself wrong** — and states *"a per-bin float64 array is
+> `0.527 MB`"*, the exact figure §14a was corrected for. **`FLAT_NBINS = 65856` is the grid; every array these
+> classes describe is on the support.**
+>
+> **AND THE RULE THAT WOULD HAVE PREVENTED IT: A COMMENT THAT RECORDS A CORRECTED *VALUE* INHERITS THE NEXT
+> ERROR; ONE THAT RECORDS THE *DERIVATION* CANNOT.** Had it read *"derive `n` from `xfull > 0`, never from the
+> grid — see `adopt_unified_5d.py:120-121`"*, it would have been right without knowing the number. **It recorded
+> the answer to the first question instead of the method, so it was defenceless against the second.**
+>
+> *(And a second-order instance caught by `docs/orchestration/lanec_citation_resolution_check.py` on its second
+> outing: my first draft of this section cited both modules by BARE repo-relative path, and they exist ONLY on
+> `origin/lane-b-member-axis-wip` — **so the citations were unresolvable for anyone reading `main`, which is the
+> tree this document lives on.** Repaired by making each citation carry its ref, and the checker now resolves a
+> `<ref>:<path>` citation against that ref's tree, failing closed on a ref nobody can fetch. **An allowlist would
+> have hidden it; the citation needed the ref, not an exemption.**)*
+>
+> **RULED, and it is the part I got wrong procedurally: the correction lands AT THE CALLEE.** §14a/§17e fixed my
+> determination; **the executing copy is `origin/lane-b-member-axis-wip:nd-unfolding/mii_root_payload_classes.py:39` and `origin/lane-b-member-axis-wip:nd-unfolding/mii_anchor_comparator.py:171`, and
+> that is the one a future reader acts on.** A number corrected only in the document that first stated it has not
+> been corrected. *(My own standing lesson — what EXECUTES versus what is CITED, and the unit is the callee —
+> applied to my own arithmetic, one day after I wrote it down.)*
+
+### 19d. RULED on D's blocking finding — **`derive: None` CONFLATES TWO ABSENCES, and the map already carries what distinguishes them**
+
+**D ran a PERFECT ANCHOR through the comparator and got `FAIL`, nine findings.** The real
+`adopted_uthrow.root` has **four** keys, dated **2026-07-14**; nine of `ARCHIVE_KEY_MAP`'s `derive: None` rows
+are **not** `PROVENANCE`-class, and a non-provenance member-only key is a hard finding by construction.
+**`upstream_fixed_seed_null_norm` and `upstream_joint_mean_shift_norm` are `PAYLOAD` AND member-only — they
+cannot pass.** *"The map written to stop the archive's age from reddening stage 1 is what reddens it."*
+
+**This is a gap in MY taxonomy, not in B's map.** §11f-v(1) ruled that `PROVENANCE` means *may differ*, not *may
+be absent from the member*. **I never ruled the converse: PRESENT IN THE MEMBER, ABSENT FROM THE ARCHIVE, for a
+NON-PROVENANCE class.** B's `:143` comment — *"THE FIX IS A THIRD KIND OF MAP ENTRY, which I had not
+anticipated"* — is B discovering the shape one entry at a time. **Here is the general form so there is no
+fourth discovery.**
+
+> **`derive: None` is REPLACED by an explicit `absence:` field over a CLOSED vocabulary:**
+>
+> - **`PREDATES_ARCHIVE`** — the archive has no counterpart because the key landed after it was written. **The
+>   absence is EXPLAINED and is not a finding.**
+> - **`EXPECTED_PRESENT`** — the archive should carry it. **Absence is a hard finding.**
+>
+> **AND THE EXCUSE IS MACHINE-CHECKED, NOT NARRATED, BECAUSE THE MAP ALREADY CARRIES ITS OPERAND: every row has
+> a `landed` string** (`"5856eeb1 BEN-106 2026-08-11"`, `"lane D 2026-08-18"`, …) **and the archive's own file
+> date is readable.** So `PREDATES_ARCHIVE` is **DERIVABLE**: assert `landed_date > archive_date`, and a row
+> claiming it while landing *before* the archive is itself the finding. **The comparator verifies its own
+> exemption.** Nine keys at `2026-08-11` against an archive at `2026-07-14` classify automatically.
+>
+> **THIS IS §11i's DISCIPLINE ON A SECOND FIELD: an absence requires a STATED REASON, and the reason determines
+> the verdict.** Same as `recomputable: no` requiring a writer-gap-versus-impossibility distinction, and the same
+> species as `BEN-290` — **a two-valued field standing where three states exist, its third state reached only by
+> real data.**
+
+**AND THE PART THAT MUST NOT DISSOLVE: THE ARCHIVE'S AGE IS AN EXPLANATION, NOT A LICENCE.**
+
+> **A `PAYLOAD` key uncompared because the archive predates it is NOT VERIFIED BY THE ANCHOR AT ALL** — the
+> member could carry it wrong and stage 1 would pass. **So: a key uncompared by reference-absence MUST be
+> covered by mandatory recomputation from the member's own file (§11i), or DECLARED UNVERIFIED.** Declared beats
+> silent, and `upstream_*` stamps will mostly land in the second bucket.
+>
+> **AND §17c's TWO-NUMBER RULE GENERALISES FROM ELEMENTS TO KEYS: the report states KEY COVERAGE.** Stage 1's
+> anchor compares **4 of ~13 keys** on that artifact. **That number belongs in the verdict, because a `PASS` over
+> four keys and a `PASS` over thirteen are different claims wearing one word** — which is §17's whole argument,
+> one level up from matrix elements.
+
+### 19e. RULED on D's second finding — **every `[FAIL]` PATH MUST EXIT 2**, and my own §17 makes this a PRECONDITION rather than a parallel item
+
+**Confirmed by reading:** `:314` returns `{"PASS": 0, "INCOMPLETE": 1, "FAIL": 2}[verdict]`, while
+`raise SystemExit("[FAIL] …")` at **`:144`, `:177`, `:179`, `:181`, `:213`** exits **`1`** — Python's default for
+a string argument. **So five fail-closed paths PRINT `[FAIL]` AND RETURN `INCOMPLETE`,** among them
+`zombie/unopenable` and `kRecovered (truncated/uncleanly-closed write)` — the corrupt-archive detectors.
+
+> **AND `INCOMPLETE` IS A DELIBERATE, MEANINGFUL STATE, WHICH IS WHAT MAKES THE COLLISION DANGEROUS RATHER THAN
+> UNTIDY.** `:236`: *"`compare()` returns INCOMPLETE while any recompute-required key is unverified."* **So `rc=1`
+> genuinely means two things — *"proceed, some recomputes unverified"* and *"stop, the archive is corrupt"* — and
+> a driver treating `2` as stop and `1` as continue walks straight past a truncated file.**
+>
+> **RULED: every `[FAIL]` exit returns `2`. The printed verdict and the exit code are TWO CHANNELS AND THEY MUST
+> NOT DISAGREE** — a defect whose human-readable channel says `FAIL` while its machine channel says `INCOMPLETE`
+> is the worst available arrangement, because **the human review passes and the automation proceeds.**
+> `BEN-290`'s remedy verbatim: *enumerate a verdict-flag's states and name the ones meaning "no measurement"*.
+>
+> **⚠ AND THE SEQUENCING IS MINE TO OWN: §17c's streaming full-array pass touches far more of every file, so it
+> MULTIPLIES the opportunities for a corrupt-file fail-closed exit.** **Therefore (b) is a PRECONDITION of §17's
+> implementation, not a parallel fix** — landing the full-array digest first would increase the exposure to a
+> defect that is already live. **My ruling raised the risk; the ordering is my responsibility and not B's.**
+
+### 19f. **THE BIT-EXACTNESS DEPENDS ON THE SUMMATION ROUTE — a latent pin with nothing pinning it**
+
+**D's caveat, and it is the most easily lost thing in the report: all four recomputations are bit-exact on the
+real archive BECAUSE numpy's pairwise summation is on both sides** — `np.trace` in the writer,
+`np.sum` in `_sqrt_trace_from_diag`. **A sequential Python sum of the same diagonal differs in the last ulps on
+all three sqrt-traces.**
+
+> **So the gate passes on a property of the SUMMATION ROUTE, not of the mathematics, and nothing asserts it.
+> Anyone "simplifying" either side to a loop breaks the gate with a change that reviews as a no-op.**
+>
+> **RULED, in the executable form: a control that asserts BOTH directions — that `_sqrt_trace_from_diag`
+> reproduces the writer bit-exactly, AND that a naive sequential sum DOES NOT.** The second half is the one that
+> matters: **it makes the dependency visible, and it fails the moment someone removes it.** A comment cannot,
+> because a comment is exactly what a no-op-looking refactor steps over. *(A filter needs a test in the
+> direction it acts, applied to an accidental invariant rather than a guard.)*
+
+### 19g. ATTRIBUTION, and what HELD
+
+**D declines the two ratios and it is right to: `484,384:1` and `161,461:1` are mine.** D supplied the operand
+(`10,694 x 8 B = 85.6 kB` against `41.44 GB`); the mediator relayed `~484,000:1`; **I did the divisions and the
+`46 x 0.915 = 42.09 GB` route, and D has independently reproduced both** (`484,382` / `161,461` — the first
+differs in the last digit by rounding of the operand). **Confirmation, not authorship, and worth keeping straight
+because the value of an independent reproduction is destroyed by mistaking it for the original.**
+
+**RECORDED SO IT IS NOT RE-LITIGATED — three things HELD on first contact with real archive data:**
+`read_keys_pyroot` **executed correctly** (its author's own flagged worry was unfounded); **all four
+recomputations are bit-exact**; and **`rtol` cannot loosen the payload comparison at all** — it reaches only the
+recompute check. **The gate's tolerance surface is therefore smaller than I had assumed, which is the one piece
+of good news in the report and deserves to survive the four corrections around it.**
+
 ## 12. R1 RULED — **`_sb` IS CANONICAL FOR BOTH LEGS**, and there is exactly ONE wrong literal
 
 **Not a judgement — the receipt says so.** `receipt_construction_contract_5d.py:313-314`:
@@ -1521,6 +1683,26 @@ and now the mask is already in the product. Worth noting as a rate, not an anecd
 - **§18d: flagged, NOT mine — two archive CVs differ on `100 %` of support, `28.8 %` above `1 %`,** and
   nobody has recorded it. A reproducibility item for the archive's CV owner. **Do not quote the
   `max = 1.262e-01`** — one bin, near-zero denominator, `BEN-064`.
+- **CORRECTED (§19a): §17a's *"nothing separates the third"* is WRONG — §17c separates it.** I stated a
+  gap and its remedy in one section without connecting them, which is worse than either alone.
+- **CORRECTED (§19b): peak memory is `~2 GB` per LIVE `TH2D`** (measured `2,027 MB` / `3,773 MB`; ROOT
+  resides `sumw2` alongside contents), not `0.915 GB`. **"One key at a time" is now a REQUIREMENT and
+  needs explicit `obj.Delete()`** — `:182-183` holds every object until `f.Close()`.
+- **⚠ (§19c): I CORRECTED THE NUMBER IN MY DOCUMENT AND NOT AT THE CALLEE.**
+  `origin/lane-b-member-axis-wip:nd-unfolding/mii_root_payload_classes.py:39` `FLAT_NBINS = 65856` and its comment carry my `0.527 MB` verbatim, and
+  `origin/lane-b-member-axis-wip:nd-unfolding/mii_anchor_comparator.py:171` derives `34.7 GB` from it. **The constant written to prevent my first
+  error encodes my second. A comment that records a corrected VALUE inherits the next error; one that
+  records the DERIVATION cannot.**
+- **RULED (§19d): `derive: None` is SPLIT into `PREDATES_ARCHIVE` / `EXPECTED_PRESENT`, and the excuse is
+  MACHINE-CHECKED** against the `landed` string the map already carries versus the archive's file date.
+  **The archive's age EXPLAINS an absence and does not LICENCE it: an uncompared `PAYLOAD` key must be
+  covered by recomputation or DECLARED UNVERIFIED — and the verdict states KEY COVERAGE (4 of ~13),
+  §17c's rule one level up.**
+- **RULED (§19e): every `[FAIL]` path exits `2`.** Five exit `1` = `INCOMPLETE`, including
+  `zombie/unopenable` and `kRecovered`. **The printed verdict and the exit code must not disagree.** And
+  **§17c multiplies the exposure, so this PRECEDES §17's implementation — my ruling raised the risk.**
+- **RULED (§19f): the bit-exactness depends on numpy PAIRWISE SUMMATION on both sides** and nothing
+  asserts it. A control must assert BOTH that the recompute matches AND that a sequential sum does NOT.
 - **AUTHORIZED: nothing.** No launcher edited, nothing submitted.
 
 *Second sought: B on §3's derived-target predicate (its module) and on whether stage 1 can be run as a single

@@ -157,3 +157,51 @@ Nothing here touches `C_syst`, `C_ML`, the ROOT legs, adoption, or the archive c
 **Cheap executable form:** the receipts already carry `reported_bins (n, 65856)`. **A per-bin fraction quotes
 against the first element and prints both.** A report that prints the pair cannot express this defect — which
 is why the repair belongs in the reporter, where B put it, and not in a convention document.
+
+## 8. `BEN-467` — the third instance, **in code this time**, and the fix for the first instance is its carrier
+
+**Filed 2026-08-19, after lane D read the real artifacts on `origin/lane-b-member-axis-wip`.**
+
+```python
+# origin/lane-b-member-axis-wip:nd-unfolding/mii_root_payload_classes.py:37-39
+#: The 5D flat length. RECORDED EXPLICITLY because C sized a per-bin array off the extended-FPS
+#: 285-bin grid and was wrong by 230x; the mediator caught it. A per-bin float64 array is 0.527 MB.
+FLAT_NBINS = 65856
+
+# origin/lane-b-member-axis-wip:nd-unfolding/mii_anchor_comparator.py:171
+#   "...avoids materializing a 34.7 GB matrix."       <- 65856^2 x 8 B = 34.70 GB; real size 0.915 GB
+```
+
+> **THE CONSTANT WRITTEN TO PREVENT §4's FIRST INSTANCE ENCODES ITS SECOND, VERBATIM, INCLUDING MY PROSE.** The
+> comment cites the `230x` correction — **which was itself wrong** — and states *"a per-bin float64 array is
+> `0.527 MB`"*, the exact figure §4 corrects. **And `FLAT_NBINS = 65856` is the GRID, while every array these
+> payload classes describe is on the ~`10,694` SUPPORT** (`nd-unfolding/adopt_unified_5d.py:120-121`).
+
+**THE RULE, and it is the one transferable thing here:**
+
+> **A COMMENT THAT RECORDS A CORRECTED *VALUE* INHERITS THE NEXT ERROR. ONE THAT RECORDS THE *DERIVATION*
+> CANNOT.**
+>
+> Had `:37-38` read *"derive `n` from `xfull > 0`; never from the grid — see `adopt_unified_5d.py:120-121`"*, **it
+> would have been right without knowing the number.** It recorded the answer to the first question instead of the
+> method, **so it was defenceless against the second** — and a comment whose stated purpose is *"recorded
+> explicitly to prevent this defect"* is the last place anyone re-checks.
+
+**AND THE PROCEDURAL HALF IS MINE.** §4 corrected the figure in the document that **originated** it. **The
+executing copies are the two modules above, and those are what a future reader acts on.**
+
+> **A NUMBER CORRECTED ONLY IN THE DOCUMENT THAT FIRST STATED IT HAS NOT BEEN CORRECTED.** *What EXECUTES versus
+> what is CITED — and the unit is the callee.* **Applied to my own arithmetic one day after I wrote the rule
+> down.**
+
+### 8a. A second-order instance, caught by the check this campaign built
+
+**My first draft of the ruling section citing those two modules used BARE repo-relative paths — and they exist
+only on `origin/lane-b-member-axis-wip`.** So the citations were **unresolvable from `main`, the branch the
+citing document lives on**, and `docs/orchestration/lanec_citation_resolution_check.py` failed on four of them.
+
+> **Repaired by making each citation CARRY ITS REF**, and the checker now resolves a `<ref>:<path>` citation
+> against that ref's tree, **failing closed on a ref nobody can fetch.** **An allowlist entry would have hidden
+> it: the citation needed the ref, not an exemption.** *(The check's second real outing, and it caught its author
+> rather than anyone else — which is the only kind of evidence that it is not merely tuned to what it already
+> found.)*
