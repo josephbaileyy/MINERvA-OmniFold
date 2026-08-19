@@ -190,9 +190,33 @@ def compare_member_pair(root_a, root_b, offset_a, offset_b):
         delta = np.abs(xb - xa)
         scale = float(np.abs(xa).max()) or 1.0
         changed = int((delta > 0).sum())
+        # THE DENOMINATOR THAT MATTERS IS THE SUPPORT, NOT THE GRID -- and my first version shipped only
+        # the grid, which made the headline number wrong by construction.
+        #
+        # `changed/nbins` reads as "the seed moved 16% of bins". But ~84% of the 65,856-bin 5D grid is
+        # EMPTY (the analysis reports on the `cv > 0` mask, 10,694 bins -- analyze_universes_5d.py:160,
+        # and "the same 10694 support" at p4_evidence.py:137). A bin that is zero in both members cannot
+        # change, so it is not evidence of anything. Against the support the same measurement reads
+        # "the seed moved ~98% of the bins that CAN move", which is a far stronger statement and the
+        # correct one. SHIPPING ONLY THE GRID SIZE MADE A STRONG RESULT LOOK WEAK.
+        #
+        # This is BEN-077 against my own report: a derived quantity must ship its ingredients, and the
+        # ingredient of "changed bins" is HOW MANY BINS WERE EVER IN PLAY.
+        nz_a = int(np.count_nonzero(xa))
+        nz_either = int(np.count_nonzero(np.abs(xa) + np.abs(xb)))
         row = {"replica": rid, "nbins": int(xa.size), "changed_bins": changed,
+               "support_a": nz_a, "support_either": nz_either,
+               "changed_frac_of_support": (changed / nz_either) if nz_either else None,
                "max_abs_delta": float(delta.max()), "scale_max_abs_a": float(np.abs(xa).max()),
-               "max_rel_delta": float(delta.max() / scale),
+               # NAMED PRECISELY BECAUSE THE SHORT NAME MISLED A READER: this is max|delta| divided by
+               # the PEAK bin value of side a, i.e. the largest absolute change expressed as a fraction
+               # of the largest bin. It is NOT a per-bin relative error and NOT a typical bin's change.
+               # A report saying "0.6-1.2% relative" invites exactly that second reading, so the median
+               # per-bin relative change over the support is shipped beside it.
+               "max_delta_over_peak": float(delta.max() / scale),
+               "median_rel_delta_on_support": float(np.median(
+                   (delta[np.abs(xa) > 0] / np.abs(xa)[np.abs(xa) > 0]))) if nz_a else None,
+               "max_rel_delta": float(delta.max() / scale),   # retained: existing readers
                "digest_a": hashlib.sha256(xa.tobytes()).hexdigest()[:16],
                "digest_b": hashlib.sha256(xb.tobytes()).hexdigest()[:16],
                "estimator_seed_a": int(A["estimator_seed"]),
@@ -229,10 +253,15 @@ def format_report(verdict, rep):
     if rep.get("partial"):
         L.append(f"[stage0]   NOTE {rep['partial']}")
     for r in rep["replicas"]:
+        frac = r.get("changed_frac_of_support")
+        med = r.get("median_rel_delta_on_support")
         L.append(f"[stage0]   r{r['replica']:<4} est {r['estimator_seed_a']}->{r['estimator_seed_b']} "
                  f"{'IDENTICAL' if r['identical'] else 'differs'} "
-                 f"changed {r['changed_bins']}/{r['nbins']} "
-                 f"max|d| {r['max_abs_delta']:.6e} rel {r['max_rel_delta']:.3e} "
+                 f"changed {r['changed_bins']}/{r.get('support_either', '?')} of support "
+                 f"({'--' if frac is None else format(100*frac, '.2f')}%) "
+                 f"[grid {r['nbins']}] "
+                 f"max|d| {r['max_abs_delta']:.6e} = {r['max_delta_over_peak']:.3e} of peak "
+                 f"median rel on support {'--' if med is None else format(med, '.3e')} "
                  f"{r['digest_a']}->{r['digest_b']}")
     if rep.get("why"):
         L.append(f"[stage0]   WHY: {rep['why']}")
