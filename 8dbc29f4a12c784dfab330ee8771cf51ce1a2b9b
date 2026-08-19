@@ -1,0 +1,20 @@
+CORRECTION to this commit MESSAGE (the commit CONTENT is correct and unaffected).
+
+The sentence beginning "The new render code earns its place here:" lost its two-word
+subject. It should read:
+
+    ... earns its place here: the wakerctl-watches line now reports NO EVIDENCE naming
+    the unreadable state dir instead of the bare "none" it printed two hours ago while
+    one watch was armed on the cluster ...
+
+CAUSE: the message was passed through a zsh -c string in which that subject was wrapped
+in backticks, so zsh ran it as command substitution. It failed ("command not found:
+wakerctl") and substituted the empty string. Same author, same session, fourth instance of
+this shell-quoting class -- the other three were piping a command whose exit status I then
+read, which reported the pipe tail status instead.
+
+WHY A NOTE AND NOT AN AMEND: the commit is already pushed to a branch other sessions share,
+so rewriting it would need a force-push; and any NEW commit on main would move HEAD, making
+the LIVE-STATE.md this very commit carries stale again (freshness is Git: == HEAD or HEAD^).
+A note annotates without either cost. Fetch with:
+    git fetch origin "refs/notes/*:refs/notes/*"
