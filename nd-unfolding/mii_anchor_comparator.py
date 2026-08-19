@@ -180,99 +180,54 @@ def digest(array):
 
 
 def _th2_content(h):
-    """All (nx x ny) CONTENT bins of a TH2D as a float64 array, under/overflow excluded.
+    """All (nx x ny) CONTENT bins of a TH2D as a float64 array, under/overflow excluded. ONE ROUTE.
 
-    H1, LANE D, AGAINST THE REAL ARCHIVE -- THE SEVEREST DEFECT IN THIS MODULE. The previous reader
-    reduced every TH2D to its DIAGONAL and `compare_files` digested THAT as the PAYLOAD. For a
-    10,694 x 10,694 covariance the gate therefore compared 10,694 of 114,361,636 elements = 0.00935%,
-    and D measured the mass on the real `C_unified`:
-        sum|diag| 3.317e-79    sum|off-diag| 3.307e-76    ratio 997x
-    THE UNCHECKED PART CARRIED ~1000x THE MASS OF THE CHECKED PART. A member reproducing the diagonal
-    exactly and getting every off-diagonal wrong was a PASS, under a gate whose word was "bit-exact".
-    My docstring claimed "the diagonal is enough for every recomputation this comparator performs" --
-    TRUE OF THE RECOMPUTE HALF, FALSE OF THE COMPARISON HALF, and the comparison is the primary purpose.
-    One function serving two roles, documented for the lesser one.
+    H1, LANE D -- WHAT THIS REPLACED. The original reader reduced every TH2D to its DIAGONAL and the
+    comparator digested THAT as the PAYLOAD: for a 10,694 x 10,694 covariance, 10,694 of 114,361,636
+    elements = 0.00935%, with the mass measured on the real `C_unified` at
+        sum|diag| 3.317e-79   sum|off-diag| 3.307e-76   ratio 997x
+    so a member reproducing the diagonal exactly and getting every off-diagonal wrong was a PASS. My
+    docstring justified it as "enough for every recomputation this comparator performs" -- true of the
+    RECOMPUTE half, false of the COMPARISON half, which is the primary purpose.
 
-    AND WHY NO STUB TEST COULD HAVE CAUGHT IT, which is D's general form and worth more than the fix:
-    A FIXTURE HANDS BACK WHATEVER ARRAY THE AUTHOR NAMES "THE DIAGONAL"; THERE IS NO OFF-DIAGONAL FOR
-    THE READER TO LOSE. AN INJECTED READER CAN BE TESTED FOR WHAT IT RETURNS AND NEVER FOR WHAT IT
-    DISCARDS. The injected-reader design was right for testability; the suspicion belonged on the
-    DISCARD, not the parse.
+    THE BUFFER FAST PATH IS DELETED, C's ruling, AND MY OWN STUB HAD ALREADY TOLD ME WHY.
+    I wrote `buf.SetSize(...)` from the OLD PyROOT buffer API. On ROOT 6.28/12 -- the only interpreter
+    this repo has -- `h.GetArray()` returns a `cppyy.LowLevelView` whose attributes are
+    ['format', 'reshape', 'typecode']: NO SetSize. So the call raised AttributeError on line 1 of the try
+    block and THE FALLBACK RAN ON EVERY INVOCATION IT WOULD EVER HAVE HAD. When my local stub lacked
+    SetSize I read that as a deficiency in the stub; THE STUB MATCHED THE WORLD, and the cross-check that
+    declined was reporting the true state of it. Making the fixture agree with my code instead of with the
+    interpreter would have greened a route that cannot execute.
 
-    THERE IS ALSO NO MEMORY ARGUMENT FOR THE DIAGONAL HERE: D measured peak RSS 3,773 MB reading the
-    throw root, because `key.ReadObj()` materialises the full matrix regardless. The diagonal saved
-    NUMPY memory, not ROOT memory -- so it bought nothing and cost the comparison.
+    WHY DELETING BEATS REPAIRING, and this is the part worth keeping:
+      VALUE   the row loop runs at 2,147,141 elem/s -> 53.3 s per matrix, 5.3 min for six, ONCE. That is
+              0.226% of ONE member's 39.223 A100-h. Same shape as the 250.6 KiB-against-41.44 GB trade:
+              WHEN ONE SIDE OF A TRADE IS NEGLIGIBLE, DO NOT OPTIMISE IT.
+      HAZARD  deleting removes THREE succeeds-but-wrong routes at once -- the bare `except`, the
+              `len(buf)` sentinel trap below, and the view-aliasing that C's own Delete() ruling made live.
+      PREMISE it was written to avoid a memory problem THAT DOES NOT EXIST. `key.ReadObj()` materialises
+              the matrix regardless, so the buffer route saved NUMPY copies, not ROOT memory: measured
+              peak RSS 3,819 MB for the loop vs 3,773 MB for the diagonal, +46 MB on ~3.8 GB. It optimised
+              neither dominant cost, so deleting forfeits nothing that was ever obtained.
 
-    NOT EXECUTED ANYWHERE. ROOT is absent on the machine this was written on, so the buffer fast path
-    below is unverified and falls back to a row loop. Labelled rather than claimed; see the module
-    docstring.
+    THE TRAP A "REPAIR" WOULD HAVE WALKED INTO, recorded even though the route is gone because 2**28-1 is
+    not recognisable as a sentinel unless somebody writes it down:
+        len(h.GetArray())  ->  268,435,455  ==  2**28 - 1, a cppyy SENTINEL
+        true length        ->  (10694 + 2)**2  =  114,404,416
+    A repair that sized the read with `len(buf)` would OVER-READ 1.23 GB PAST THE END AND SUCCEED
+    SILENTLY. That is succeeds-but-wrong arriving through the fix, written by someone who had just been
+    warned about exactly this class.
+
+    NOT EXECUTED HERE: ROOT is absent on this machine. Gate 2's discharge is now one run of THIS function
+    against one real matrix, reported with its digest -- with a single route there is no two-path test to
+    stand in for it.
     """
     nx, ny = h.GetNbinsX(), h.GetNbinsY()
-    try:
-        buf = h.GetArray()
-        buf.SetSize((nx + 2) * (ny + 2))
-        flat = np.frombuffer(buf, dtype=np.float64, count=(nx + 2) * (ny + 2))
-        # np.array, NOT np.ascontiguousarray -- AN UNCONDITIONAL COPY.
-        # C's finding, and this was safe only BY ACCIDENT: `np.frombuffer` returns a VIEW, and
-        # [1:ny+1, 1:nx+1] of an (ny+2, nx+2) array is NON-CONTIGUOUS, which is the only reason
-        # `ascontiguousarray` copied at all. Remove the under/overflow padding arithmetic -- a plausible
-        # "simplification" -- and the slice becomes contiguous, ascontiguousarray returns ITS INPUT
-        # UNCHANGED, and this function returns a live view into a ROOT buffer. `read_keys_pyroot` then
-        # calls obj.Delete() on that object, so A FREED BUFFER AND A LIVE VIEW WOULD COEXIST BY
-        # CONSTRUCTION. Two separately-correct rulings -- explicit Delete(), and padding-aware slicing --
-        # interacting destructively.
-        out = np.array(flat.reshape(ny + 2, nx + 2)[1:ny + 1, 1:nx + 1], dtype=np.float64, copy=True)
-        # PINNED, because "np.array copies" is a property of an argument someone can change back:
-        assert not np.shares_memory(out, flat), (
-            "the returned array MUST NOT alias the ROOT buffer -- read_keys_pyroot Delete()s the object")
-        return out, "buffer"
-    except (AttributeError, TypeError, ValueError, BufferError) as exc:
-        # NARROWED, and it ANNOUNCES ITSELF. A bare `except Exception` over five operations made the fast
-        # path's failure INVISIBLE: any failure returned the RIGHT answer by the slow route and no run
-        # ever said so, so the fast path could be permanently broken and unnoticed. A bare catch is also
-        # a promise that every future failure is benign, which is not a promise this code can make.
-        print(f"[reader] BUFFER PATH FAILED ({exc.__class__.__name__}: {exc}); using the row loop. "
-              "WHICH READER EXECUTED IS AN INGREDIENT OF THE DIGEST -- record it.", file=sys.stderr)
-        out = np.empty((ny, nx), dtype=np.float64)
-        for j in range(ny):
-            for i in range(nx):
-                out[j, i] = h.GetBinContent(i + 1, j + 1)
-        return out, "rowloop"
-
-
-def cross_check_readers(h):
-    """Run BOTH read paths on one real TH2D and require them BIT-EXACTLY equal. Returns a report.
-
-    C's ruling, and it is the only test that can catch the failure the fallback structurally cannot:
-    THE DANGEROUS FAILURE DOES NOT RAISE. A wrong dtype, a single-precision TH2D, an off-by-one in the
-    under/overflow slice, or a future ROOT layout change each returns an array of the RIGHT SHAPE with
-    WRONG NUMBERS. The fallback never triggers, and the coverage line reports
-    "compared 114,361,636 of 114,361,636 (100.00%)" -- 100% COVERAGE OF THE WRONG BYTES.
-    That is H1 INVERTED: there the word was wrong and the bytes right; here the word is right and the
-    bytes wrong. COVERAGE COUNTS ELEMENTS COMPARED AND CANNOT SEE WHETHER THEY WERE READ CORRECTLY.
-
-    It needs no oracle and no fixture -- the two paths compute the same quantity by INDEPENDENT ROUTES,
-    so they check each other. One slow read of one matrix, once.
-    """
-    nx, ny = h.GetNbinsX(), h.GetNbinsY()
-    fast, which = _th2_content(h)
-    if which != "buffer":
-        return {"ok": False, "why": "the buffer path did not execute, so there is nothing to cross-check",
-                "path": which}
-    slow = np.empty((ny, nx), dtype=np.float64)
+    out = np.empty((ny, nx), dtype=np.float64)
     for j in range(ny):
         for i in range(nx):
-            slow[j, i] = h.GetBinContent(i + 1, j + 1)
-    same = bool(np.array_equal(fast, slow))
-    r = {"ok": same, "nx": nx, "ny": ny, "elements": int(fast.size),
-         "digest_buffer": digest(fast), "digest_rowloop": digest(slow)}
-    if not same:
-        d = np.abs(fast - slow)
-        r["why"] = ("THE TWO READ PATHS DISAGREE. The buffer read is returning the wrong bytes at the "
-                    "right shape, which no fallback can detect and which coverage reports as 100%.")
-        r["n_differing"] = int((d > 0).sum())
-        r["max_abs_difference"] = float(d.max())
-    return r
+            out[j, i] = h.GetBinContent(i + 1, j + 1)
+    return out, "rowloop"
 
 
 def read_keys_pyroot(path):
@@ -281,16 +236,18 @@ def read_keys_pyroot(path):
     `matrix_digests[name] = (sha256_hex, n_elements)` -- A DIGEST AND A COUNT, NOT THE ARRAY. `diagonals`
     holds small arrays (10,694 floats) for the recomputation half only.
 
-    MEMORY, WHICH LANE C CORRECTED AND WHICH MADE MY FIRST VERSION OF THIS FUNCTION WRONG:
-    a live TH2D costs **~2 GB, not 0.915 GB**, because ROOT resides the sumw2 array alongside the
-    contents -- D measured 2,027 MB for the adopted root and 3,773 MB for the throw root's three. And
-    `GetListOfKeys()` HOLDS EVERY OBJECT UNTIL `f.Close()`, so my previous version -- which returned all
-    full arrays in a dict -- streamed NOTHING: it held ROOT's copies *and* numpy's, ~6 GB for the throw
-    root. Restructuring the digest alone does not stream; the objects have to be released.
+    MEMORY, WHICH C CORRECTED: a live TH2D costs **~2 GB, not 0.915 GB**, because ROOT resides the sumw2
+    array alongside the contents -- D measured 2,027 MB for the adopted root and 3,773 MB for the throw
+    root's three. And `GetListOfKeys()` HOLDS EVERY OBJECT UNTIL `f.Close()`, so an earlier version that
+    returned all full arrays in a dict streamed NOTHING: it held ROOT's copies *and* numpy's, ~6 GB for
+    the throw root. Restructuring the digest alone does not stream; the objects have to be RELEASED.
     SO: digest one key, then `Delete()` it, and never retain a full array. Peak is one live TH2D.
 
-    NOT EXECUTED ANYWHERE. ROOT is absent here. D's run exercised the previous (diagonal) version, so the
-    buffer fast path and the Delete() discipline below have never run -- labelled, not claimed.
+    The row-loop read costs 53.3 s per 10,694^2 matrix, 5.3 min for six, ONCE -- 0.226% of one member's
+    39.223 A100-h. WHEN ONE SIDE OF A TRADE IS NEGLIGIBLE, DO NOT OPTIMISE IT: that is why there is one
+    read route and not two (see `_th2_content`).
+
+    NOT EXECUTED HERE. ROOT is absent on this machine, and D's run exercised the older diagonal version.
     """
     import ROOT                                            # noqa: local, like every ROOT user here
     try:
@@ -302,7 +259,7 @@ def read_keys_pyroot(path):
     if f.TestBit(ROOT.TFile.kRecovered):
         _fail(f"kRecovered (truncated/uncleanly-closed write): {path}")
     scalars, diagonals, matrix_digests = {}, {}, {}
-    readers_used = set()          # WHICH READER EXECUTED IS AN INGREDIENT OF THE DIGEST (BEN-077)
+    routes_used = set()          # WHICH ROUTE EXECUTED IS AN INGREDIENT OF THE DIGEST (BEN-077)
     for key in f.GetListOfKeys():
         name, obj = key.GetName(), key.ReadObj()
         try:
@@ -312,7 +269,7 @@ def read_keys_pyroot(path):
                 scalars[name] = obj.GetTitle()              # TNamed
             elif hasattr(obj, "GetNbinsY") and obj.GetNbinsY() > 1:
                 arr, which = _th2_content(obj)
-                readers_used.add(which)
+                routes_used.add(which)
                 matrix_digests[name] = (digest(arr), int(arr.size))
                 diagonals[name] = np.ascontiguousarray(np.diagonal(arr))   # small; survives
                 del arr
@@ -323,15 +280,46 @@ def read_keys_pyroot(path):
                 diagonals[name] = arr
         finally:
             # RELEASE ROOT'S COPY IMMEDIATELY. Without this the loop accumulates every object until
-            # f.Close() and "one key at a time" is a description of the code's shape, not its footprint.
+            # f.Close() and "one key at a time" describes the code's shape, not its footprint.
             try:
                 obj.Delete()
             except Exception:
                 pass
     f.Close()
-    if readers_used:
-        print(f"[reader] {path}: TH2D read path(s) used = {sorted(readers_used)}", file=sys.stderr)
+    if routes_used:
+        print(f"[reader] {path}: TH2D read route(s) = {sorted(routes_used)}", file=sys.stderr)
     return scalars, diagonals, matrix_digests
+
+
+def read_one_matrix_for_gate2(h):
+    """Read ONE real TH2D through the shipped route and report its digest. GATE 2's DISCHARGE.
+
+    THE TWO-PATH CROSS-CHECK IS MOOT NOW AND I AM NOT PRETENDING OTHERWISE. It was the only instrument
+    that could catch a buffer read succeeding with the wrong bytes; with a single route there is no second
+    route to check it against, so the discharge rests on THE SURVIVING ROUTE HAVING RUN IN THE TREE'S OWN
+    CODE against real data, reported with its digest. C was explicit that this changes shape rather than
+    being satisfied by the previous instrument, and blurring the two would be the exact move this campaign
+    keeps filing.
+
+    THE DISCIPLINE THAT DID SURVIVE, and C rated it the most valuable thing in 40fbc789: REFUSE TO CLAIM A
+    CHECK YOU COULD NOT RUN. The old cross-check returned ok=False / "nothing to cross-check" rather than
+    ok=True over one path run twice. Its other subjects are `mask_order_hash` against its positive
+    control, the summation-route control, and the post-deletion read -- the pattern outlives the route.
+    """
+    nx, ny = h.GetNbinsX(), h.GetNbinsY()
+    arr, which = _th2_content(h)
+    expected = classes.EXPECTED_ELEMENTS.get(h.GetName()) if hasattr(h, "GetName") else None
+    r = {"route": which, "nx": nx, "ny": ny, "elements": int(arr.size),
+         "digest": digest(arr), "finite": bool(np.all(np.isfinite(arr)))}
+    if expected is not None:
+        r["expected_elements"] = expected
+        r["complete"] = int(arr.size) == expected
+    r["ok"] = bool(r["finite"] and r.get("complete", True))
+    if not r["ok"]:
+        r["why"] = ("the read is not usable as a gate-2 discharge: "
+                    + ("non-finite values present; " if not r["finite"] else "")
+                    + ("element count != the derived expectation; " if not r.get("complete", True) else ""))
+    return r
 
 
 #: KEYS ACCEPTED AS UNVERIFIED BY THE ANCHOR, EXPLICITLY. C: the archive's age EXPLAINS an absence and
@@ -572,13 +560,11 @@ def compare_files(artifact, archive_path, member_path, offset, read_keys=read_ke
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--cross-check-reader", metavar="FILE:KEY", default=None,
-                    help="Run BOTH TH2D read paths on one real matrix and require them BIT-EXACTLY "
-                         "equal. THE ONLY TEST THAT CAN CATCH A BUFFER READ THAT SUCCEEDS AND RETURNS "
-                         "THE WRONG BYTES -- the fallback cannot, because that failure does not raise, "
-                         "and coverage cannot, because it counts elements compared rather than elements "
-                         "read correctly. Needs no oracle: the two paths are independent routes to the "
-                         "same quantity. One slow read of one matrix, once.")
+    ap.add_argument("--read-one-matrix", metavar="FILE:KEY", default=None,
+                    help="GATE 2's DISCHARGE. Read ONE real TH2D through the shipped route and report its "
+                         "digest, element count against the derived expectation, and finiteness. With a "
+                         "single read route there is no two-path cross-check to stand in for this -- the "
+                         "discharge is that THIS code ran on real data. ~53 s for a 10694^2 matrix.")
     ap.add_argument("--artifact", required=False, choices=sorted(classes.ARTIFACTS))
     ap.add_argument("--archive", required=False)
     ap.add_argument("--member", required=False)
@@ -596,22 +582,22 @@ def main(argv=None):
                          f"checked. Declared today: {' '.join(sorted(declared_unrecomputable()))}")
     a = ap.parse_args(argv)
 
-    if a.cross_check_reader:
+    if a.read_one_matrix:
         # FIRST BRANCH AFTER PARSE, with no path to a comparison -- the same discipline as --gate-only.
         import ROOT                                              # noqa: local
-        path, _, keyname = a.cross_check_reader.rpartition(":")
+        path, _, keyname = a.read_one_matrix.rpartition(":")
         if not path or not keyname:
-            _fail("--cross-check-reader takes FILE:KEY")
+            _fail("--read-one-matrix takes FILE:KEY")
         f = ROOT.TFile.Open(path)
         h = f.Get(keyname)
         if not h:
             _fail(f"no key {keyname!r} in {path}")
-        r = cross_check_readers(h)
-        print(f"[cross-check] {path}:{keyname}")
-        for k in ("ok", "nx", "ny", "elements", "digest_buffer", "digest_rowloop",
-                  "path", "why", "n_differing", "max_abs_difference"):
+        r = read_one_matrix_for_gate2(h)
+        print(f"[gate2-read] {path}:{keyname}")
+        for k in ("ok", "route", "nx", "ny", "elements", "expected_elements", "complete",
+                  "finite", "digest", "why"):
             if k in r:
-                print(f"[cross-check]   {k} = {r[k]}")
+                print(f"[gate2-read]   {k} = {r[k]}")
         f.Close()
         return 0 if r.get("ok") else 2
 
