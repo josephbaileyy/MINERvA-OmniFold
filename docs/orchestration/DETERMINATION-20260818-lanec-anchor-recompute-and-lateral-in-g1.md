@@ -690,13 +690,17 @@ computes** `diag_comb = np.clip(np.diag(C_new), 0, None).copy()`, in memory at t
 formed. **Ship it as a `TH1D`.**
 
 ```
-diag_comb + R4's vb + vu  =  3 x 65,856 doubles  =  1.58 MB
-against the 4.46 GB retained member : 0.035 %
-against the 41.44 GB released       : 26,219 : 1
+diag_comb + R4's vb + vu  =  3 x 10,694 doubles  =  256,656 B  =  250.6 KiB
+against the 4.46 GB retained member : 0.00575 %
+against the 41.44 GB released       : 161,461 : 1
+
+  [CORRECTED 2026-08-18: first written as 3 x 65,856 = 1.58 MB, which is 6.16x too big.
+   `adopt_unified_5d.py:110,120-121` settles it: n = vu.size and `assert x.size == n` where
+   x = xfull[xfull > 0], so every one of these arrays is on the REPORTED-BIN set, not the grid.]
 ```
 
 > **RULED: the diagonal SHIPS FIRST, and DELETION IS CONTINGENT ON IT.** Not a reversal — `41.44 GB` against
-> `1.58 MB` is not a close trade, and B says so too. **It is a SEQUENCING constraint, and it is §10c's invariant
+> `250.6 KiB` is not a close trade, and B says so too. **It is a SEQUENCING constraint, and it is §10c's invariant
 > in its third form: nothing accepted without a stamp, nothing deleted without one, and NOTHING DELETED BEFORE
 > THE SURVIVORS' INGREDIENTS ARE RETAINED ELSEWHERE.**
 
@@ -752,6 +756,224 @@ every payload and recomputation question.** That sharpens §11f-i:
 > **REVISED ORDERING: (B) first for the resume hazard, as the mediator proposed and for the reason it gave — no
 > writer change. (A) REQUIRED BEFORE ANY MEMBER CAN BE ADMITTED AT ALL.** And on the adopted root (A) is both most
 > necessary and cheapest: four `TParameter` keys in a 892 MB file.
+
+## 15. STAGE 0 PASSED — and its headline fraction is **`98.25 %`, NOT `~16 %`**. The two indices of this campaign are in the numerator and the denominator
+
+**The verdict itself I accept without qualification, and it is not changed by anything below:** three pairs
+`(0,1200)`, `(0,2400)`, `(1200,2400)`, all **DISTINCT**, exit 0, no `INCOMPARABLE`; the estimator delta equal to
+the offset delta on every row; the data draw held identical on every pair. **The negative branch is closed and
+`M(ii)` is measurable.** The transitive digest consistency is a real property and the mediator is right that
+nobody designed it — **it is available because the report ships its operands, which is `BEN-077` paying out for
+the second time today.**
+
+### 15a. ⚠ THE FRACTION IS MIS-SCALED BY `6.158x`, AND THE DIRECTION MATTERS
+
+> **Reported: *"changed 10,507-10,510 of 65,856 bins"*, read out as *"the estimator seed moves C_stat's
+> replicas on ~16 % of bins."* THE NUMERATOR AND DENOMINATOR INDEX DIFFERENT SETS.**
+>
+> - **`65,856` is `p4_lib.py:22`'s `GRID_NBINS = 14*16*7*7*6` — the FULL 5D grid, most of which is EMPTY.**
+> - **The populated / reported set is `10,694`** — the stored covariance is `10,694 x 10,694`, `hInflation_g`
+>   has `10,694` bins, and `adopt_unified_5d.py:120-121` derives it as `xfull[xfull > 0]` with an assert.
+>
+> ```
+> 10,507 / 65,856      =  15.95 %      <- as reported: changed bins over the WHOLE GRID
+> 10,507 / 10,694      =  98.25 %      <- MY inference, ALSO WRONG: 10,694 is ANOTHER PRODUCT'S mask
+> 10,507 / 10,507      = 100.00 %      <- MEASURED, per product, on all nine comparisons
+> 10,508 / 10,508  and  10,510 / 10,510  likewise
+> ```
+>
+> **⚠ CORRECTED TWICE. The measured answer is `100.00 %`: EVERY BIN THAT CAN MOVE, MOVED.** My `98.25 %` divided
+> a per-product changed-count by `10,694` from `ADVISORY-20260813-oi30-eavail-residuals.md` — **a different
+> product's reported set — so my numerator and denominator came from different artifacts, which is the SAME
+> DEFECT I was correcting.** `10,507`/`10,508`/`10,510` **are the support sizes themselves**, product by product.
+> The mediator and B measured it after B repaired the reporter.
+>
+> **AND THE TELL WAS IN THE SENTENCE I QUOTED APPROVINGLY:** *"remarkably stable across all nine comparisons."*
+> **A *changed* count that barely varies across nine independent comparisons is a POPULATION COUNT WEARING THE
+> LABEL OF A MEASUREMENT.** I read the stability as reassuring; it was the diagnostic.
+>
+> **A SECOND FIGURE I REPEATED WITHOUT INTERROGATING: *"0.6-1.2 % relative"* was `max|delta|` over the PEAK
+> BIN**, not a per-bin change. The median per-bin relative change on the support is `5.098e-03` to `6.273e-03`
+> — **`~0.51-0.63 %`** — and it now ships beside the peak ratio. *(Corrected by the mediator, against itself,
+> twice, both times in the direction of the effect being larger.)*
+
+**AND THIS CAMPAIGN HAS ALREADY WRITTEN THE WARNING FOR EXACTLY THIS PAIR OF NUMBERS.**
+`ADVISORY-20260813-oi30-eavail-residuals.md:289-292` — *"Both numbers are right; they index different things"* —
+and `:299-301` records a scout inferring `10,550²` from a file size and being wrong. **The advisory even gives the
+third index: `10,550` is the PET-COMMON subset, `10,694` the full GBDT reported set.** So there are **three**
+live bin counts here and a bare *"of bins"* selects none of them.
+
+*(Stated plainly because it is my own recurring defect and I have no standing to be gentle about it: I made the
+same error twice in §14a — see the correction there — and the fraction above is the same shape one level out.
+**The rule that catches all three: a fraction ships the DEFINITION of its denominator, not just its value.**)*
+
+### 15b. ⚠ CONSEQUENCE FOR MY OWN BAR — **leg B's SUPPORT was never specified, and it must be fixed NOW, before the numbers exist**
+
+**`PREDECLARATION-20260817-mii-seed-scan-cause-3.md:80-86` defines leg B as
+`f_med = median over bins of sd_i(σ_i)/σ_i ≤ 2.74 %`. *"OVER BINS"* — WHICH BINS IS NOT STATED**, and with
+`65,856` / `10,694` / `10,550` all live, that is under-specified in precisely the way §15a just demonstrated.
+
+**It is not academic. Over the full grid, ~84 % of entries have `σ_i = 0` and `x = 0`, so the per-bin ratio is
+`0/0`: the median is either `NaN` or — if NaNs are dropped — silently the median over the populated set, which
+is a DIFFERENT STATISTIC REACHED BY ACCIDENT.**
+
+> **RULED: leg B's support is the REPORTED-BIN PREDICATE `xfull > 0` evaluated on the MEMBER'S OWN
+> `hXSecND_flat`, exactly as `adopt_unified_5d.py:120` does it — and the specification names the PREDICATE, NOT
+> A COUNT.**
+>
+> **Two reasons, and the second is the one that generalises:**
+>
+> 1. **CALIBRATION. Leg B's `2.74 %` is derived from `\gbdtFiveBlockMedian`'s 4 s.f., and that published
+>    `13.359 %` IS `adopt_unified_5d.py:161`'s `100*np.median(do)` where `do = sqrt(diag_comb)/x` on the masked
+>    `x`.** A threshold calibrated to a published quantity transfers only to the SAME statistic; leg B over a
+>    different support would be a bound imported from a number it is not about.
+> 2. **A COUNT WOULD BE ANOTHER DEFINITE DESCRIPTION THAT RE-POINTS.** `10,694` is right for the GBDT set and
+>    wrong for the `10,550` PET-common one, and a member's own mask is whatever its product carries. **The
+>    predicate is checkable per member; a literal count is a claim about which product you meant** — `BEN-380`
+>    again, and the third time today that the repair is "cite the mechanism, not the value."
+
+**AND ONE BRANCH OF MY PREDECLARATION IS SETTLED BY THIS, IN THE STRICTER DIRECTION.** The predeclaration says
+*"if the contribution is concentrated, leg B is small and leg A binds; if it is uniform, both move together."*
+**At `100.00 %` of the support responding, the CONCENTRATED branch is DEFINITIVELY not the operative one — leg
+B is fully supported and genuinely binds rather than being structurally near-zero.** **This makes the bar harder to
+clear, not easier, and it is recorded before any `f_med` exists.**
+
+> **WHAT I AM NOT CLAIMING, and the mediator drew this bound correctly first: `0.6-1.2 %` RELATIVE BETWEEN TWO
+> OFFSETS IS NOT `f_med`.** That is a replica-level difference between two members; `f_med` is the median over
+> bins of the spread of `σ_i` across FIFTY members. **Different object, different estimator, and no number above
+> licenses a prediction about the bar.** `n=3` is a floor on the effect's existence. **Stage 1 prices it.**
+
+## 16. THREE RULINGS FOR `B1`, AND A SIXTH STAGE-1 GATE
+
+### 16a. RULING 1 — **STOP AFTER (3) IS CONFIRMED AS MY RULING, AND IT IS A PAUSE, NOT A BOUNDARY OF STAGE 1**
+
+**B asked that I confirm the cut rather than the mediator, and named why: *"that cut is also convenient in a way
+worth distrusting — stopping before adoption is exactly where the work gets harder."* That instinct is right,
+and the answer is that the cut is BOTH convenient AND correct — but its correctness is CONTINGENT ON BEING
+TEMPORARY.**
+
+> **CONFIRMED: stop after (3). REFUSED: building (4)/(5) unstamped.** Per §11j, `adopt_unified_5d.py` stamps no
+> identity key, so those roots fail `anchor_identity` UPSTREAM of every payload question — and they are the
+> **TERMINUS**, the artifact `MVFINAL_j` binds and anybody quotes. **An unadmittable CITABLE product is the
+> worst available state: it exists, it looks finished, and the next reader just uses it.**
+
+**AND THE ARGUMENT NEITHER B NOR THE MEDIATOR MADE, WHICH IS WHY THE CUT MUST BE LABELLED A PAUSE.**
+**`sqrt_tr_old` — the predeclared bar's own operand — IS WRITTEN AT `adopt_unified_5d.py:177`,** i.e. inside
+steps (4)/(5).
+
+> **SO STOPPING AFTER (3) MEANS STAGE 1 CANNOT COMPARE THE QUANTITY THE BAR IS ABOUT.** The cut completes the
+> *build* through (3); **it does not discharge stage 1**, whose anchor comparison needs the adopted roots. **A
+> stop-after-(3) member is not a stage-1 pass waiting on paperwork — it is a stage-1 that has not yet been
+> attempted.** Recorded because the two read identically in a status table.
+
+**CONSEQUENCE: REMEDY (A) IS NOW ON THE CRITICAL PATH, not a parallel nicety.** It is four `TParameter` keys in
+one writer, and it gates the only steps that produce a comparable artifact.
+
+**AND A SCOPE LABEL THE CUT MUST CARRY, because it is right for ONE member and wrong for FIFTY.** §11g gates
+deletion of the `41.44 GB` intermediate on `MVFINAL_j` existing — and `MVFINAL_j` needs (4)/(5).
+
+> **⚠ THEREFORE, DURING THE PAUSE, NOTHING IS DELETABLE. A member stopped after (3) holds its intermediate
+> indefinitely, and "stop after (3)" combined with "§11g releases the 41 GB" WOULD DELETE THE ONLY INPUT TO
+> (4)/(5).** At stage 1's single member that is `41.44 GB` and fine. **At fifty it is `2.087 TiB` = `52.1 %` of
+> free scratch — the exact figure §11g exists to avoid.**
+>
+> **So the cut is admissible at STAGE-1 SCOPE ONLY, and it must be recorded with its EXPIRY CONDITION — remedy
+> (A) landing — and not merely with its rationale.** A boundary documented only by its reason gets inherited;
+> one documented by its expiry cannot be.
+
+### 16b. RULING 2 — **THE FLAT-NORM BAND MULTIPLIES THE *MEMBER'S* CV**, conditional on one cheap check, and pinning has a DIRECTION
+
+**First, the settled part: `0.014` is member-INVARIANT. It is the external physics constant and does not vary.**
+The live question is which CV it multiplies, and **B's cancellation result is accepted and is the right kind of
+argument** — `analyze_universes_5d.py:167-172` forms `D = u - cv` then `Z = D - D.mean(axis=0)`, so `cv` drops;
+verified **bit-identical, max abs difference `0.0`**. **A cancellation does not decay the way a tolerance does,
+and it removed a leg.**
+
+**But `--add-norm` builds `outer(0.014·cv_rep, 0.014·cv_rep)`, so this one term scales with CV values directly:
+measured `sqrt-tr 0.47302` vs `0.47573`.**
+
+```
+(0.47573 - 0.47302) / 0.47302  =  0.573 %      one term, one CV substitution
+against leg A's bar of 4.15 %  =  13.8 % of the entire budget
+```
+
+> **RULED: the MEMBER'S CV — because the member re-unfolds its own CV at `42+k`, so THAT CV IS SEED-DEPENDENT,
+> and the flat-norm term is a genuine channel through which the estimator seed reaches the covariance.** Pinning
+> it to the archive **FREEZES that channel**, which is item 7's argument, Q1's argument and the `finalize`
+> header's argument arriving at a **fourth** site: *a frozen leg makes the variation incoherent.*
+>
+> **AND THE DECIDING CONSIDERATION IS THE DIRECTION, NOT THE PRINCIPLE. Pinning SUPPRESSES a real contribution
+> to the spread, so it biases `f_agg` and `f_med` DOWNWARD — TOWARD `MET`.** Therefore:
+>
+> **PINNING IS SAFE FOR REFUTING `MET` AND UNSAFE FOR ASSERTING IT. Since the scan exists to decide `MET` /
+> `UNMET`, A `MET` VERDICT OBTAINED UNDER PINNING IS NOT DISCHARGEABLE** — it would be a pass bought by
+> omitting a term. **An `UNMET` under pinning would still stand.**
+
+**THE CONDITIONAL, and it is cheap to discharge BEFORE any member runs.** There are two CV objects, and my
+ruling names the memberized one — **`universe_sweep_bkgaware/…_uni_full_CV.root`** — **only if it is the same
+estimator of the same quantity as `products/5d/xsec_5d_MEFHC_5iter_lgbm.root`.**
+
+> **DISCHARGE IT ON THE ARCHIVE, where both already exist: compare the archive's `uni_full_CV` against the
+> archive's `products/5d/` CV.**
+>
+> - **They agree** (bit-exact or to round-off) → same quantity, and the member's own is the correct substitution.
+>   **Rule stands as written.**
+> - **They differ materially** → they are DISTINCT products, the member has no memberized counterpart, and
+>   substituting one for the other would inject a difference that **is not estimator noise** — worse than
+>   pinning. **Then pin, AND record the flat-norm term as a FROZEN LEG carrying the bias direction above**, so a
+>   `MET` verdict is flagged as provisional at the moment it is produced rather than argued about afterwards.
+>
+> **I will not guess which: substituting a differently-constructed CV is exactly the asymmetric comparison this
+> determination has spent the day refusing, and the check costs one read of two archive files.**
+
+**B's discipline of recording the choice at the call site is ENDORSED and STRENGTHENED: the call site records
+the DIRECTION OF THE BIAS, not only the choice.** *"We pass the archive's CV"* is a decision; *"we pass the
+archive's CV, which suppresses a seed channel and biases the verdict toward `MET`"* is a decision a later reader
+can act on. **B's own reason — the `SLURM_SUBMIT_DIR` lesson, that an explicit decision later reversed costs one
+line while an inherited default that is wrong is invisible — is the correct one and generalises.**
+
+### 16c. RULING 3 — **THE DIAGONAL IS IMPLEMENTED NOW, IN THE SAME CHANGE AS REMEDY (A)**
+
+> **RULED: now, not later, and the reason is that BOTH are edits to `adopt_unified_5d.py` and both are
+> preconditions of (4)/(5), which under §16a have not run yet.** So the writer is touched **once**, before it is
+> ever invoked for a member.
+>
+> **There is no urgency-versus-risk trade to weigh, because §16a establishes that nothing is deletable during
+> the pause.** The cost of deferring is not a risk of deletion — **it is that (4)/(5) would produce two
+> `892 MB` citable roots MISSING the ingredient, and repairing that re-runs the analyzer**, which is the
+> expensive leg. **`diag_comb` is already in memory at `:128`; the write is `3 * n * 8` bytes for that member's
+> own `n`.**
+>
+> *(Deliberately not a literal: writing `1.58 MB` here is what §14a/`BEN-466` were about.)*
+
+### 16d. A SIXTH STAGE-1 GATE — **the `cv > 0` support is compared as a SET, never as a COUNT**, and the instrument already exists
+
+**B declined to claim its fixture proved anything, because the fixture drew all-positive CVs by construction so
+the mask matched trivially. That is the correct call and it is the right species of care** — a power test proves
+power in its fixture's language, and an all-positive fixture cannot exercise a sign flip. **The mediator is
+right that this is a precondition of the comparison I ruled, not a detail of B's build. RULED as a GATE.**
+
+> **⚠ AND THE HAZARD IS SHARPER THAN A DIMENSION MISMATCH, WHICH IS WHY A COUNT WILL NOT DO IT: TWO SUPPORTS OF
+> EQUAL SIZE CAN DIFFER IN MEMBERSHIP.** If a seed change pushes one bin below zero and another above it, **the
+> cardinality is IDENTICAL and the flat ordering has SHIFTED** — so every bin after the first divergence is
+> misaligned, and a bit-exact comparison then compares **the wrong pairs** and reports a difference whose
+> location is meaningless. **A dimension mismatch fails loudly; an equal-size membership change fails
+> silently.**
+>
+> **THE INSTRUMENT IS ALREADY IN THE REPO AND B SHOULD NOT BUILD ONE: `p4_lib.py:1196` `mask_order_hash`, whose
+> sibling at `:1085-1088` documents that it FAILS CLOSED on `GRID_NBINS`** — it is mask-*order* aware, which is
+> precisely the property a cardinality check lacks. **Stage 1 compares `mask_order_hash`, and a member whose
+> hash differs from the archive's is REFUSED rather than compared.**
+>
+> **AND THE MASK IS `CONFIGURATION` UNDER §11a** — changing it changes what was measured — **so it must be
+> EQUAL, and a difference is a HARD FAILURE, not a provenance note.** That is consistent with the class the
+> taxonomy already assigns and needs no new class.
+
+**THIRD INSTANCE OF ONE FAMILY IN TWO DAYS, and worth naming as a rate rather than three anecdotes:**
+`BEN-465` — *corroborate a population by reading its IDS, not by counting its containers*; `BEN-466` — *a
+fraction must name WHICH INDEX its denominator is*; and now **a support must be compared by MEMBERSHIP, not by
+CARDINALITY.** **All three are the same substitution: a count standing in for an identity, and in all three the
+count agreed while the identity did not.**
 
 ## 12. R1 RULED — **`_sb` IS CANONICAL FOR BOTH LEGS**, and there is exactly ONE wrong literal
 
@@ -950,10 +1172,24 @@ and wherever g > 1:  vu = g^2 * vb   <-- so g plus vb RECOVERS vu on the vu-wins
 > **That is exactly the "by how much" half §14 identified, and it is now the ONLY half.** Ship `vb` and `vu`;
 > note in the receipt that `g` is the mask and is redundant with them wherever `g > 1`.
 
-**AND A NUMBER OF MINE THAT WAS WRONG: §14 said "three arrays of ~285 floats."** The 5D flat length is **65,856**,
-so each array is **`0.527 MB`**, not `~2 KB` — **wrong by 230×.** *(It came from the extended-FPS `15×19 = 285`
+**AND A NUMBER OF MINE THAT WAS WRONG: §14 said "three arrays of ~285 floats."** ~~The 5D flat length is
+**65,856**, so each array is **`0.527 MB`**, not `~2 KB` — **wrong by 230×.**~~
+
+> **⚠ CORRECTED AGAIN, 2026-08-18, AND THE SECOND CORRECTION WAS ALSO WRONG — IN THE OPPOSITE DIRECTION.**
+> **Each array is `10,694` doubles = `83.5 KiB`, not `0.527 MB`.** `65,856` is `p4_lib.py:22`'s
+> `GRID_NBINS = 14*16*7*7*6`, the FULL 5D grid — and `hXSecND_flat` really does have that many bins, which is
+> why the number looked verified. **But `adopt_unified_5d.py:120-121` masks it:** `x = xfull[xfull > 0]` then
+> `assert x.size == n`, so `vb`, `vu`, `diag_comb` and `g` are all on the **REPORTED** set. The stored
+> covariance is `10,694 x 10,694` and `hInflation_g` has `10,694` bins
+> (`ADVISORY-20260813-oi30-eavail-residuals.md:286-288`).
+>
+> **SO: `~2 KB` (too small), then `0.527 MB` (too big by 6.16x), and the truth is `83.5 KiB` between them.
+> THE MECHANISM IS THE ONE I NAMED IN THIS VERY PARAGRAPH AND THEN COMMITTED WHILE NAMING IT — "a quantity true
+> at its own scope quoted at another." I repaired a wrong index by substituting a DIFFERENT wrong index, because
+> I asked "what is the 5D flat length" instead of "WHICH INDEX DOES THIS ARRAY USE."** The second question is the
+> only one that was ever about the arrays. *(It came from the extended-FPS `15×19 = 285`
 grid, a different product entirely — a quantity true at its own scope quoted at another.)* **The ruling is
-unchanged, because `0.527 MB` against a `4.46 GB` retained member is still unmeasurable — but I stated a number
+unchanged, because `83.5 KiB` against a `4.46 GB` retained member is still unmeasurable — but I stated a number
 and it was the wrong one.**
 
 *(This is the fourth time today that checking before building removed work rather than adding it: cause 1's census
@@ -1034,6 +1270,34 @@ and now the mask is already in the product. Worth noting as a rate, not an anecd
   in the enumeration, `no` requiring a stated reason, and B's acknowledge-flag taking the explicit key list.
 - **AMENDED (§11j): remedy (A) is MANDATORY on the adopted roots** — the failure there is ADMISSION, which
   (B) cannot reach.
+- **CORRECTED (§15a): stage 0's `~16 %` is `98.25 %`.** `10,507` changed bins is over the reported set of
+  `10,694`, not `p4_lib.py:22`'s full grid of `65,856` — a `6.158x` mis-scaling, and the campaign's own
+  `ADVISORY-20260813-oi30-eavail-residuals.md:289` already warns that these two indices *"index different
+  things"*. **The seed moves essentially EVERY reported bin.** Verdict DISTINCT unaffected.
+- **RULED (§15b): leg B's support is the PREDICATE `xfull > 0` on the member's own `hXSecND_flat`**, not a
+  bin count — because leg B's `2.74 %` is calibrated to `\gbdtFiveBlockMedian`, which is that masked
+  median. **Over the full grid ~84 % of entries are `0/0`.** Fixed before any `f_med` exists, and it makes
+  the bar HARDER: at `98.25 %` responding, the predeclaration's concentrated branch is not operative, so
+  leg B genuinely binds.
+- **CORRECTED TWICE (§14a): each R4 array is `83.5 KiB`** — `10,694` doubles, not `65,856`. My first
+  correction substituted a different wrong index; §11h's diagonal write is `250.6 KiB`, not `1.58 MB`,
+  making the trade against the released intermediate `161,461:1`.
+- **RULED (§16a): STOP AFTER (3) CONFIRMED — and it is a PAUSE, not a boundary of stage 1**, because
+  `sqrt_tr_old`, the bar's own operand, is written at `adopt_unified_5d.py:177` inside (4)/(5). Building
+  (4)/(5) unstamped REFUSED (§11j: they are the terminus). **Nothing is deletable during the pause** — and
+  the cut must carry its EXPIRY CONDITION, remedy (A), because it is right for one member and `2.087 TiB`
+  wrong for fifty. **Remedy (A) is now the critical path.**
+- **RULED (§16b): the flat-norm band multiplies the MEMBER'S CV** — the member re-unfolds its CV at
+  `42+k`, so pinning freezes a seed channel (`0.573 %` on one term = `13.8 %` of leg A's budget) and
+  **biases toward `MET`: pinning is safe for REFUTING met, unsafe for ASSERTING it.** CONDITIONAL on the
+  archive's two CVs agreeing — cheap, and if they differ, pin and record the frozen leg WITH its direction.
+  **`0.014` itself is member-invariant; B's `cv` cancellation (`max abs diff 0.0`) accepted.**
+- **RULED (§16c): the diagonal lands NOW, in the same change as remedy (A)** — same writer, both
+  preconditions of (4)/(5), so it is touched once before it ever runs for a member.
+- **RULED (§16d): a SIXTH stage-1 gate — the `cv > 0` support is compared as a SET, never a COUNT.** Two
+  supports of equal SIZE can differ in MEMBERSHIP, which shifts the flat ordering and makes a bit-exact
+  comparison compare the wrong pairs SILENTLY. **`p4_lib.py:1196` `mask_order_hash` already exists and
+  already fails closed** — B should not build one. Mask is `CONFIGURATION`: equality is a hard failure.
 - **AUTHORIZED: nothing.** No launcher edited, nothing submitted.
 
 *Second sought: B on §3's derived-target predicate (its module) and on whether stage 1 can be run as a single
