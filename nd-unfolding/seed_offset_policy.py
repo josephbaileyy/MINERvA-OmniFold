@@ -643,3 +643,18 @@ def assert_member_path_is_outside_the_archive(path, container=MII_CONTAINER):
             "        Member-root-first is what makes this a one-line prefix test; a path outside the "
             "container cannot be shown to be outside the archive by inspection.")
     return True
+
+
+#: MEMBER-LOCAL CONSUMERS -- hooked launchers that CONSUME member products rather than producing a leg.
+#: B1 added the first one and the partition test had no category for it: the hooked set had been asserted
+#: equal to `mii_seed_offset_driver.LEG_LAUNCHERS`, i.e. to the seven PRODUCERS, so a legitimate hooked
+#: consumer read as a violation. DECLARED RATHER THAN THE ASSERTION WIDENED, because "hooked set == legs
+#: OR anything else that happens to be hooked" is not a closed set and would absorb a mistake silently.
+#:
+#: `sbatch_finalize_5d_bkgaware_gpu.sh` is here because its own header reuses the ARCHIVE's C_stat/C_ML
+#: by deliberate design -- correct for a background-treatment comparison, and exactly wrong for a member,
+#: whose premise is a different estimator seed. Stage 0 measured that the seed moves C_stat's replicas
+#: across essentially the whole reported support.
+MEMBER_LOCAL_CONSUMERS = (
+    "sbatch_finalize_5d_bkgaware_gpu.sh",
+)

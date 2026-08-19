@@ -21,6 +21,34 @@ Any key in either file that this table does not name FAILS CLOSED. That is the w
 unclassified key is the one a future writer adds without telling the comparator.
 """
 
+import sys
+
+
+def fail_closed(msg):
+    """Fail closed with THE EXIT CODE THE CALLER DEFINES AS FAIL, which is 2, not 1.
+
+    H4, lane D: every `raise SystemExit("[FAIL] ...")` across these modules exited **1**, while
+    `mii_anchor_comparator.main` maps {"PASS": 0, "INCOMPLETE": 1, "FAIL": 2}. So an unclassified key, a
+    ZOMBIE OR kRecovered ROOT FILE, a stale acknowledgement list and a malformed declaration ALL EXITED 1
+    WHILE PRINTING [FAIL] -- and a driver treating rc 2 as stop and rc 1 as continue walks straight past
+    a corrupt archive. THE MESSAGE SAID FAIL AND THE EXIT CODE SAID INCOMPLETE; only the code is
+    machine-read, and the human-readable half was the one that was right.
+
+    ONE definition, used by both modules, because two copies of an exit convention drift and the drift is
+    invisible -- each copy prints the word FAIL.
+    """
+    print(f"[FAIL] {msg}", file=sys.stderr)
+    # THE CODE *AND* THE MESSAGE. `SystemExit(2)` alone gives the right exit status and makes the
+    # exception object carry only "2" -- so any in-process caller that catches it loses the reason
+    # entirely, and the reason is the whole value of a fail-closed guard. Printing to stderr serves the
+    # CLI; `fail_message` serves every programmatic caller, including this repo's own tests.
+    # A guard that cannot report its own reason is a guard whose failures get re-diagnosed, which is the
+    # same objection that made `TFile.Open`'s dead `zombie/unopenable` branch worth fixing.
+    exc = SystemExit(2)
+    exc.fail_message = msg
+    raise exc
+
+
 PAYLOAD = "PAYLOAD"
 CONFIGURATION = "CONFIGURATION"
 PROVENANCE = "PROVENANCE"
@@ -34,9 +62,54 @@ RECOMPUTE_REQUIRED = frozenset({
     "upstream_joint_mean_shift_norm", "upstream_fixed_seed_null_norm",
 })
 
-#: The 5D flat length. RECORDED EXPLICITLY because C sized a per-bin array off the extended-FPS
-#: 285-bin grid and was wrong by 230x; the mediator caught it. A per-bin float64 array is 0.527 MB.
-FLAT_NBINS = 65856
+#: THE GRID, WHICH IS *NOT* THE SIZE OF ANY ARTIFACT. 65,856 is the full 5D (pt,pz,Eavail,q3,W) grid.
+#: Every matrix and per-bin array in these products is on the REPORTED SUPPORT -- the `cv > 0` mask,
+#: measured by lane D against the real archive at 10,694, and 10694/65856 = 16.24%.
+#:
+#: THIS CONSTANT WAS WRONG AND ITS OWN COMMENT SAID WHY. The previous version recorded 65,856 as "the"
+#: length, on the stated grounds that C had sized a per-bin array off the 285-bin extended-FPS grid and
+#: been wrong by 230x. I CORRECTED A WRONG GRID BY SUBSTITUTING A DIFFERENT WRONG GRID -- and it is the
+#: SAME DENOMINATOR ERROR as the stage-0 headline (`changed 10510/65856`), on the same day, in two lanes,
+#: inside the fix for the first instance. Consequences, both verified by lane D:
+#:     "34.7 GB matrix"         -> 10694^2 x 8 B = 0.915 GB     (I was 37.9x over)
+#:     "0.527 MB per-bin array" -> 10694   x 8 B = 0.0856 MB    (I was 6.2x over)
+#: SO C's `diag(C_old)` RETENTION REMEDY COSTS 0.0856 MB, NOT 0.527 MB.
+#: The lesson is narrower than "check your arithmetic": A GRID IS NOT AN ARTIFACT SIZE. Sparse binning
+#: makes them differ by 6x here, and the reported support is the only one any product materialises.
+FLAT_NBINS = 65856          #: the GRID -- do not size anything from this
+REPORTED_NBINS = 10694      #: the cv>0 SUPPORT -- the real dimension of every matrix and per-bin array
+SUPPORT_FRACTION = REPORTED_NBINS / FLAT_NBINS       #: 0.1624
+
+
+#: EXPECTED ELEMENT COUNT PER KEY, derived from each writer's own construction line. THREE DIFFERENT
+#: DIMENSIONS LIVE IN THESE FILES and a single global constant was wrong about all of them -- which is
+#: how `FLAT_NBINS = 65856` came to be quoted as "the" length:
+#:     hXSecND_flat        len(xsec.ravel())        -> 65,856   THE FULL GRID   (sweep_bank_5d.py:278,291)
+#:     hJointMeanShift     nrep = int(rep.sum())    -> 10,694   the support     (unified_throw_cov.py:348,552)
+#:     C_unified/_blocksum/_cross   nrep x nrep     -> 10,694^2                 (unified_throw_cov.py:522)
+#:     hInflation_g        n = vu.size              -> 10,694   the support     (adopt_unified_5d.py:110,173)
+#:     hCov_combined5d_total_uthrow n x n           -> 10,694^2                 (adopt_unified_5d.py:170)
+#: A KEY NOT LISTED HERE HAS ITS COVERAGE *PRINTED* AND NOT *ASSERTED* -- the lateral product's per-axis
+#: `hXSec_*` marginals have binning-dependent lengths I have not derived, and asserting a number I have
+#: not read out of a writer is how the wrong constant got here in the first place.
+EXPECTED_ELEMENTS = {
+    "hXSecND_flat": FLAT_NBINS,
+    "hJointMeanShift": REPORTED_NBINS,
+    "hInflation_g": REPORTED_NBINS,
+    "C_unified": REPORTED_NBINS ** 2,
+    "C_blocksum": REPORTED_NBINS ** 2,
+    "C_cross": REPORTED_NBINS ** 2,
+    "hCov_combined5d_total_uthrow": REPORTED_NBINS ** 2,
+}
+
+
+def artifact_sizes():
+    """Sizes of what this comparator actually reads, from REPORTED_NBINS rather than the grid."""
+    return {
+        "covariance_TH2D_bytes": REPORTED_NBINS ** 2 * 8,
+        "per_bin_array_bytes": REPORTED_NBINS * 8,
+        "diag_C_old_remedy_bytes": REPORTED_NBINS * 8,
+    }
 
 UNIFIED_THROW_COV = {
     "C_unified": PAYLOAD, "C_blocksum": PAYLOAD, "C_cross": PAYLOAD,
@@ -184,10 +257,29 @@ def _g2_baseline():
     import seed_offset_policy
     group, baseline = seed_offset_policy.LEG_BASELINES["unified_throw_cov"]
     if group != "g2":
-        raise SystemExit(
-            f"[FAIL] unified_throw_cov is in group {group!r}, not g2 -- the draw-seed derivation "
+        fail_closed(
+            f"unified_throw_cov is in group {group!r}, not g2 -- the draw-seed derivation "
             "below assumed g2 and must be re-derived, not patched.")
     return baseline
+
+
+IDENTITY_KEYS = ("estimator_seed", "est_seed_offset", "est_seed_offset_declared")
+
+
+def identity_is_checkable(artifact):
+    """Does this artifact's writer stamp identity at all? H3, lane D.
+
+    `anchor_identity` was called unconditionally, but ADOPTED_UTHROW and LATERAL_CV carry NO identity
+    keys -- `STAMP_COVERAGE` records `adopt_unified_5d.py: 0` and `unfold_nd_omnifold_unbinned.py: 0` as
+    the worst gap, and D confirmed it against the real file. So for THREE OF FIVE artifacts the check
+    emitted three problems every run and FAILED regardless of payload.
+
+    D'S REASON THIS MATTERS MORE THAN IT LOOKS, and it is the pressure-toward-green risk arriving from
+    the other side: AT STAGE 1 AN UNAVOIDABLE FAIL IS THE THING MOST LIKELY TO GET THE GATE ROUTED
+    AROUND. A check that cannot pass teaches its caller to skip it, and then it protects nothing.
+    """
+    table = ARTIFACTS.get(artifact, {})
+    return all(k in table for k in IDENTITY_KEYS)
 
 
 def anchor_identity(member_keys, offset):
@@ -226,11 +318,11 @@ def classify(artifact, key):
     try:
         table = ARTIFACTS[artifact]
     except KeyError:
-        raise SystemExit(
-            f"[FAIL] unknown artifact {artifact!r}; known: {sorted(ARTIFACTS)}")
+        fail_closed(
+            f"unknown artifact {artifact!r}; known: {sorted(ARTIFACTS)}")
     if key not in table:
-        raise SystemExit(
-            f"[FAIL] {artifact}: key {key!r} has NO CLASS.\n"
+        fail_closed(
+            f"{artifact}: key {key!r} has NO CLASS.\n"
             "        An unclassified key is exactly the one a future writer added without telling the\n"
             "        comparator, so it must fail rather than default. Classify it in\n"
             "        mii_root_payload_classes.py and say why in the enumeration document.")
@@ -244,7 +336,7 @@ def compare(artifact, archive_keys, member_keys):
     verdict is "PASS" only when every payload matches, every configuration is equal, and every
     mandatory provenance key is PRESENT in the member.
     """
-    findings, owed = [], []
+    findings, owed, uncomparable = [], [], []
     # ITERATE THE TABLE TOO, NOT JUST THE TWO FILES' KEYS -- MY OWN TEST CAUGHT THIS AND IT WAS A REAL
     # DEFECT, NOT A TEST ERROR. The first version iterated `set(archive_keys) | set(member_keys)`, so a
     # key absent from BOTH never entered the loop and the "ABSENT FROM MEMBER" branch never fired. That
@@ -284,12 +376,23 @@ def compare(artifact, archive_keys, member_keys):
                     f"({cls}) -- unexplained; the map is dated and derivable, so add a row or fail")
                 continue
             if entry["derive"] is None:
-                if cls != PROVENANCE:
-                    findings.append(
-                        f"{key}: archive has no counterpart and none is derivable, but the key is "
-                        f"{cls} -- a non-provenance key cannot be member-only "
-                        f"(landed: {entry['landed']})")
-                continue                                   # member-only provenance: expected
+                # H2, LANE D, AGAINST THE REAL ARCHIVE: THIS BRANCH USED TO REQUIRE `cls is PROVENANCE`
+                # AND FAILED A PERFECT ANCHOR WITH NINE FINDINGS. Nine of the thirteen `derive: None`
+                # rows are CONFIGURATION or PAYLOAD, so the map written to stop the archive's AGE from
+                # reddening stage 1 was itself what reddened it.
+                #
+                # THE ERROR WAS CONFLATING TWO REASONS A KEY CAN BE MEMBER-ONLY:
+                #   (a) the ARCHIVE predates the writer that emits it -- dated, expected, admissible,
+                #       AND IT SAYS NOTHING ABOUT THE KEY'S CLASS. `upstream_fixed_seed_null_norm` is
+                #       PAYLOAD and legitimately absent from a 2026-07-14 file.
+                #   (b) the MEMBER is missing something it should have -- fatal, and handled above.
+                # A CLASS IS A COMPARISON RULE. It governs what to do WHEN BOTH SIDES HAVE THE KEY, and
+                # has no content when one side cannot have it at all. Demanding PROVENANCE here was
+                # demanding that the archive's age be a property of the key's physics.
+                uncomparable.append(
+                    f"{key}: {cls} -- NOT COMPARABLE on this artifact; the archive predates the writer "
+                    f"(landed: {entry['landed']}). Admissible member-only, and NOT verified.")
+                continue
             derived = entry["derive"](archive_keys)
             if member_keys[key] != derived:
                 findings.append(
@@ -315,6 +418,9 @@ def compare(artifact, archive_keys, member_keys):
     # mismatch and an unfinished comparator as the same state -- and folding it into PASS is worse,
     # because the pressure at stage 1 is toward green. INCOMPLETE cannot be mistaken for either, and it
     # names what is missing rather than how bad it is.
+    # UNCOMPARABLE keys are RECORDED, never silent -- "admissible" is not "checked". They do not fail
+    # the gate (the archive cannot supply them) and they do not let it claim more than it verified.
+    owed = owed + [f"UNCOMPARABLE {u}" for u in uncomparable]
     if findings:
         return "FAIL", findings + owed
     if owed:

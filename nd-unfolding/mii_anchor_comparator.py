@@ -141,11 +141,27 @@ def assert_reasons_are_stated():
         elif kind is not None:
             problems.append(f"{key}: kind {kind!r} set on a recomputable key")
     if problems:
-        raise SystemExit("[FAIL] recomputability declarations:\n  " + "\n  ".join(problems))
+        _fail("recomputability declarations:\n  " + "\n  ".join(problems))
     return len(RECOMPUTABILITY)
 
 
+
+#: ONE definition of fail-closed, in the classes module. See `classes.fail_closed` for H4 -- every
+#: `raise SystemExit("[FAIL] ...")` used to exit 1, which `main` maps to INCOMPLETE.
+_fail = classes.fail_closed
+
+
 def _sqrt_trace_from_diag(diag):
+    """sqrt(trace) from a diagonal. `trace(C) == sum(diag(C))`, so no matrix is materialised.
+
+    THE BIT-EXACTNESS OF THIS AGAINST THE STAMPED VALUE IS A PROPERTY OF THE SUMMATION ROUTE, NOT OF
+    THE MATHEMATICS -- lane D measured all four recomputations bit-exact against the real archive, AND
+    found that a sequential Python sum over the SAME diagonal differs in the last ulps. It holds only
+    because numpy PAIRWISE summation is on both sides: `np.trace` in the writer
+    (`unified_throw_cov.py:483-484`) and `np.sum` here.
+    SO DO NOT "SIMPLIFY" EITHER SIDE TO A LOOP OR to `math.fsum`. That change reviews as a no-op and
+    breaks a bit-exact gate, which is the worst combination a diff can have.
+    """
     return float(np.sqrt(max(float(np.sum(diag)), 0.0)))
 
 
@@ -163,23 +179,68 @@ def digest(array):
     return hashlib.sha256(np.ascontiguousarray(array, dtype=float).tobytes()).hexdigest()
 
 
-def read_keys_pyroot(path):
-    """Real reader. NEVER EXECUTED ON THE MACHINE THIS WAS WRITTEN ON -- see the module docstring.
+def _th2_content(h):
+    """All (nx x ny) CONTENT bins of a TH2D as a float64 array, under/overflow excluded.
 
-    Returns (scalars, diagonals): scalars are TParameter/TNamed values keyed by name; diagonals are
-    per-bin arrays -- the DIAGONAL for a TH2D, the bin contents for a TH1D. The diagonal is enough for
-    every recomputation this comparator performs and avoids materializing a 34.7 GB matrix.
+    H1, LANE D, AGAINST THE REAL ARCHIVE -- THE SEVEREST DEFECT IN THIS MODULE. The previous reader
+    reduced every TH2D to its DIAGONAL and `compare_files` digested THAT as the PAYLOAD. For a
+    10,694 x 10,694 covariance the gate therefore compared 10,694 of 114,361,636 elements = 0.00935%,
+    and D measured the mass on the real `C_unified`:
+        sum|diag| 3.317e-79    sum|off-diag| 3.307e-76    ratio 997x
+    THE UNCHECKED PART CARRIED ~1000x THE MASS OF THE CHECKED PART. A member reproducing the diagonal
+    exactly and getting every off-diagonal wrong was a PASS, under a gate whose word was "bit-exact".
+    My docstring claimed "the diagonal is enough for every recomputation this comparator performs" --
+    TRUE OF THE RECOMPUTE HALF, FALSE OF THE COMPARISON HALF, and the comparison is the primary purpose.
+    One function serving two roles, documented for the lesser one.
+
+    AND WHY NO STUB TEST COULD HAVE CAUGHT IT, which is D's general form and worth more than the fix:
+    A FIXTURE HANDS BACK WHATEVER ARRAY THE AUTHOR NAMES "THE DIAGONAL"; THERE IS NO OFF-DIAGONAL FOR
+    THE READER TO LOSE. AN INJECTED READER CAN BE TESTED FOR WHAT IT RETURNS AND NEVER FOR WHAT IT
+    DISCARDS. The injected-reader design was right for testability; the suspicion belonged on the
+    DISCARD, not the parse.
+
+    THERE IS ALSO NO MEMORY ARGUMENT FOR THE DIAGONAL HERE: D measured peak RSS 3,773 MB reading the
+    throw root, because `key.ReadObj()` materialises the full matrix regardless. The diagonal saved
+    NUMPY memory, not ROOT memory -- so it bought nothing and cost the comparison.
+
+    NOT EXECUTED ANYWHERE. ROOT is absent on the machine this was written on, so the buffer fast path
+    below is unverified and falls back to a row loop. Labelled rather than claimed; see the module
+    docstring.
+    """
+    nx, ny = h.GetNbinsX(), h.GetNbinsY()
+    try:
+        buf = h.GetArray()
+        buf.SetSize((nx + 2) * (ny + 2))
+        flat = np.frombuffer(buf, dtype=np.float64, count=(nx + 2) * (ny + 2))
+        return np.ascontiguousarray(flat.reshape(ny + 2, nx + 2)[1:ny + 1, 1:nx + 1])
+    except Exception:
+        # FALLBACK, correct but slow. Row-at-a-time so a 114M-element matrix never becomes 114M
+        # individual Python calls held in a list.
+        out = np.empty((ny, nx), dtype=np.float64)
+        for j in range(ny):
+            for i in range(nx):
+                out[j, i] = h.GetBinContent(i + 1, j + 1)
+        return out
+
+
+def read_keys_pyroot(path):
+    """Real reader. Returns (scalars, diagonals, matrices).
+
+    `diagonals` exists ONLY for the recomputation half -- `trace(C) == sum(diag(C))`, so a sqrt-trace
+    never needs the full matrix. `matrices` carries the FULL content array and is what the comparison
+    digests. Keeping them separate is the point: the two halves want different things and conflating
+    them is exactly H1.
     """
     import ROOT                                            # noqa: local, like every ROOT user here
     try:
         f = ROOT.TFile.Open(path)
     except OSError as exc:                                  # pythonized PyROOT 6.28 raises
-        raise SystemExit(f"[FAIL] cannot open {path}: {exc.__class__.__name__}: {exc}")
+        _fail(f"cannot open {path}: {exc.__class__.__name__}: {exc}")
     if not f or f.IsZombie():
-        raise SystemExit(f"[FAIL] zombie/unopenable: {path}")
+        _fail(f"zombie/unopenable: {path}")
     if f.TestBit(ROOT.TFile.kRecovered):
-        raise SystemExit(f"[FAIL] kRecovered (truncated/uncleanly-closed write): {path}")
-    scalars, diagonals = {}, {}
+        _fail(f"kRecovered (truncated/uncleanly-closed write): {path}")
+    scalars, diagonals, matrices = {}, {}, {}
     for key in f.GetListOfKeys():
         name, obj = key.GetName(), key.ReadObj()
         if hasattr(obj, "GetVal"):
@@ -187,13 +248,49 @@ def read_keys_pyroot(path):
         elif hasattr(obj, "GetTitle") and not hasattr(obj, "GetNbinsX"):
             scalars[name] = obj.GetTitle()                  # TNamed
         elif hasattr(obj, "GetNbinsY") and obj.GetNbinsY() > 1:
-            n = obj.GetNbinsX()
-            diagonals[name] = np.array([obj.GetBinContent(i + 1, i + 1) for i in range(n)])
+            arr = _th2_content(obj)
+            matrices[name] = arr
+            diagonals[name] = np.ascontiguousarray(np.diagonal(arr))
         elif hasattr(obj, "GetNbinsX"):
             n = obj.GetNbinsX()
-            diagonals[name] = np.array([obj.GetBinContent(i + 1) for i in range(n)])
+            arr = np.array([obj.GetBinContent(i + 1) for i in range(n)])
+            matrices[name] = arr
+            diagonals[name] = arr
     f.Close()
-    return scalars, diagonals
+    return scalars, diagonals, matrices
+
+
+#: ANY REDUCTION MUST DECLARE **TWO** NUMBERS -- C's ruling, and the template is the defect that
+#: prompted it: element coverage 0.00935% and mass outside 997x. EMPTY, because PAYLOAD-class reduction
+#: is REFUSED; the table exists so that adding one costs a measurement rather than a line.
+#:
+#: C's framing, which is sharper than "don't reduce": THE DEFECT WAS NEVER THAT IT REDUCES. It is that it
+#: reduced SILENTLY and reported the reduced verdict IN THE VOCABULARY OF THE FULL ONE. A digest of the
+#: diagonal is a bit-exact comparison OF A PROJECTION; calling it a bit-exact payload comparison is a
+#: category error, not a matter of degree.
+#: And the diagonal was the WORST available reduction precisely because it LOOKS TARGETED: sqrt(trace)
+#: depends only on the diagonal, so a diagonal-only comparator verifies EXACTLY the bar's operand and
+#: NOTHING about the correlations -- while `project_cov_nd.py` marginalises C_low = M C_high M^T, a sum
+#: over OFF-DIAGONAL sub-blocks, and its own header warns that wrong ordering "silently produces a
+#: plausible number".
+#:
+#: Each entry: key -> {"element_coverage": float, "mass_fraction_outside": float, "measured_on": str}
+DECLARED_REDUCTIONS = {}
+
+
+def assert_reduction_is_declared(key, coverage):
+    """A partial comparison is admissible ONLY with a declared, MEASURED two-number reduction."""
+    if coverage >= 1.0:
+        return None
+    d = DECLARED_REDUCTIONS.get(key)
+    if d is None:
+        return (f"{key}: UNDECLARED REDUCTION at {100*coverage:.4f}% element coverage. A reduction must "
+                "declare BOTH its element coverage AND the mass fraction it excludes, MEASURED -- "
+                "0.00935% and 997x is the template. PAYLOAD-class reduction is refused outright.")
+    for f in ("element_coverage", "mass_fraction_outside", "measured_on"):
+        if f not in d:
+            return f"{key}: declared reduction is missing {f!r} -- two numbers and a provenance, or none"
+    return None
 
 
 def compare_files(artifact, archive_path, member_path, offset, read_keys=read_keys_pyroot,
@@ -210,27 +307,78 @@ def compare_files(artifact, archive_path, member_path, offset, read_keys=read_ke
     if acknowledge_unrecomputable is not None:
         got, want = frozenset(acknowledge_unrecomputable), declared_unrecomputable()
         if got != want:
-            raise SystemExit(
-                "[FAIL] --acknowledge-unrecomputable must match the DECLARED unrecomputable set "
+            _fail(
+                "--acknowledge-unrecomputable must match the DECLARED unrecomputable set "
                 f"exactly.\n        declared : {sorted(want)}\n        given    : {sorted(got)}\n"
                 f"        missing  : {sorted(want - got)}\n        extra    : {sorted(got - want)}\n"
                 "        A blanket acknowledgement lets a FUTURE `no` ride in silently, which is why "
                 "this is a closed set rather than a boolean.")
-    a_sc, a_di = read_keys(archive_path)
-    m_sc, m_di = read_keys(member_path)
+    # THREE-TUPLE READER (H1). `matrices` is the FULL content array and is what the comparison digests;
+    # `diagonals` exists only for the recomputation half. A reader returning one array for both roles is
+    # exactly the defect D found.
+    a_sc, a_di, a_mx = read_keys(archive_path)
+    m_sc, m_di, m_mx = read_keys(member_path)
 
-    # Histograms enter the class comparison as DIGESTS, so `compare()` treats them the same way it
-    # treats scalars and a payload difference is caught without a tolerance question arising.
-    a_keys = dict(a_sc, **{k: digest(v) for k, v in a_di.items()})
-    m_keys = dict(m_sc, **{k: digest(v) for k, v in m_di.items()})
+    # Histograms enter the class comparison as DIGESTS OVER EVERY CONTENT BIN, so `compare()` treats
+    # them like scalars and a payload difference is caught without a tolerance question arising.
+    a_keys = dict(a_sc, **{k: digest(v) for k, v in a_mx.items()})
+    m_keys = dict(m_sc, **{k: digest(v) for k, v in m_mx.items()})
 
     verdict, findings = classes.compare(artifact, a_keys, m_keys)
     lines = list(findings)
     class_failed = verdict == "FAIL"
 
-    # --- the anchor's own identity, which the CLASSES cannot express ---------------------------------
-    identity = classes.anchor_identity(m_sc, offset)
-    lines += identity
+    # --- COVERAGE: WHAT FRACTION OF EACH ARRAY WAS ACTUALLY COMPARED --------------------------------
+    # D's non-optional ask, and it is the part that outlives any particular reader: a gate that says
+    # "bit-exact" while comparing 1 element in 10,700 is the strongest instance of the thing this
+    # campaign keeps filing. PRINTING THE COMPARED FRACTION MAKES THE CLAIM FALSIFIABLE FROM THE
+    # ARTIFACT -- if a future reader silently narrows again, the number moves and somebody sees it.
+    # PER-KEY EXPECTED SIZES, and my own first version of this check used ONE constant and was wrong
+    # about it -- `hXSecND_flat` is on the 65,856 GRID while every covariance is on the 10,694 SUPPORT.
+    # A key with no derived expectation gets its coverage PRINTED but not ASSERTED: asserting a number
+    # I have not read out of a writer is exactly how the wrong constant arrived here.
+    for name in sorted(m_mx):
+        n = int(np.asarray(m_mx[name]).size)
+        expected = classes.EXPECTED_ELEMENTS.get(name)
+        if expected is None:
+            lines.append(f"[coverage] {name}: compared {n} elements; NO DERIVED EXPECTATION, "
+                         "so completeness is reported and NOT asserted")
+            continue
+        frac = n / expected
+        flag = "" if frac >= 1.0 else "   <-- PARTIAL COMPARISON"
+        lines.append(f"[coverage] {name}: compared {n} of {expected} elements "
+                     f"({100 * frac:.4f}%){flag}")
+        undeclared = assert_reduction_is_declared(name, frac)
+        if undeclared:
+            lines.append(f"[coverage] {undeclared}")
+        if frac < 1.0:
+            # APPENDED TO `lines`, NOT TO `findings`. My first version appended to `findings`, which was
+            # already copied into `lines` above -- so the verdict flipped to FAIL and THE REASON NEVER
+            # REACHED THE CALLER. A guard that detects correctly and reports to a list nobody returns is
+            # the same defect as the dead `zombie/unopenable` branch: right direction, no diagnostic.
+            lines.append(
+                f"{name}: PARTIAL COMPARISON -- {n} of {expected} elements ({100*frac:.4f}%). PAYLOAD "
+                "means BIT-EXACT OVER THE WHOLE ARRAY; comparing a subset while reporting bit-exactness "
+                "is the H1 defect and must fail rather than be footnoted.")
+            class_failed = True
+
+    # --- the anchor's own identity, WHERE THE ARTIFACT CAN CARRY IT (H3) -----------------------------
+    # `anchor_identity` was called unconditionally, but three of five artifacts carry NO identity key --
+    # `STAMP_COVERAGE` records adopt_unified_5d.py: 0 and unfold_nd_omnifold_unbinned.py: 0 as the worst
+    # gap. So it emitted three problems every run and FAILED regardless of payload.
+    # D'S REASON THIS IS WORSE THAN IT LOOKS: AT STAGE 1 AN UNAVOIDABLE FAIL IS THE THING MOST LIKELY TO
+    # GET THE GATE ROUTED AROUND. A check that cannot pass teaches its caller to skip it, and then it
+    # protects nothing -- the pressure-toward-green risk arriving from the other side.
+    if classes.identity_is_checkable(artifact):
+        identity = classes.anchor_identity(m_sc, offset)
+        lines += identity
+    else:
+        identity = []
+        lines.append(
+            f"[identity] UNCHECKABLE on {artifact}: this writer stamps no identity key "
+            f"(STAMP_COVERAGE), so the member cannot be told from the archive by its own contents. "
+            "NOT a pass -- remedy (A) is C's ruling and this artifact cannot be admitted until it "
+            "lands. Recorded rather than failed, because a check that can never pass gets skipped.")
 
     # --- THE RECOMPUTATION HALF ---------------------------------------------------------------------
     # `compare()` returns INCOMPLETE while any recompute-required key is unverified; discharging that is

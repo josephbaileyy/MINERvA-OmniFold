@@ -2288,7 +2288,9 @@ class RootPayloadThreeClasses(unittest.TestCase):
         comparator. It must fail, not default to a permissive class."""
         with self.assertRaises(SystemExit) as cm:
             self.m.classify("sweep_universe.root", "some_future_key")
-        self.assertIn("NO CLASS", str(cm.exception))
+        self.assertIn("NO CLASS", cm.exception.fail_message)
+        self.assertEqual(cm.exception.code, 2,
+                         "H4: a fail-closed exit must be 2, which main() maps to FAIL. Exit 1 is INCOMPLETE, and a driver treating rc 1 as continue walks past a corrupt archive.")
 
     def test_a_correct_k0_anchor_is_INCOMPLETE_not_PASS_and_not_FAIL(self):
         """THREE VERDICTS. A correct anchor has no mismatch and still cannot be PASS: 9 keys are
@@ -2297,8 +2299,13 @@ class RootPayloadThreeClasses(unittest.TestCase):
         worse, because the pressure at stage 1 is toward green."""
         verdict, findings = self.m.compare(self.A, self.arch, self.mem)
         self.assertEqual(verdict, "INCOMPLETE")
-        self.assertTrue(all("RECOMPUTATION NOT PERFORMED" in f for f in findings),
-                        f"only recomputation should be owed: {findings}")
+        # TWO kinds of owed, after H2: recomputation not yet performed, and keys the ARCHIVE CANNOT
+        # SUPPLY because it predates their writer. Both are "not verified"; neither is a mismatch.
+        self.assertTrue(all(("RECOMPUTATION NOT PERFORMED" in f) or f.startswith("UNCOMPARABLE ")
+                            for f in findings),
+                        f"only recomputation and archive-predates should be owed: {findings}")
+        self.assertTrue(any(f.startswith("UNCOMPARABLE ") for f in findings),
+                        "and the archive-predates keys must be RECORDED, since admissible is not checked")
 
     def test_a_CONFIGURATION_difference_is_a_HARD_FAILURE(self):
         v, f = self.m.compare(self.A, self.arch, dict(self.mem, n_throws=159))
@@ -2865,22 +2872,56 @@ class AnchorComparatorB2(unittest.TestCase):
         self.C = np.array([1.0, 2.0, 3.0, 4.0])          # trace 10
         self.MS = np.array([0.3, 0.4])                   # norm 0.5
 
+    #: THE FIXTURE'S OWN EXPECTED SIZES. The real ones are 10,694 and 10,694^2 -- 114 million elements,
+    #: which no unit test allocates. So the fixture declares its own, and the COVERAGE MECHANISM is then
+    #: exercised at 100% here and at <100% in the dedicated partial test. Patching the expectation is
+    #: honest; weakening the check to accommodate a small fixture would not be.
+    FIXTURE_SIZES = {"C_unified": 4, "C_blocksum": 4, "C_cross": 4, "hJointMeanShift": 2,
+                     "hCov_combined5d_total_uthrow": 1}
+
+    def setUpSizes(self):
+        """IDEMPOTENT, and it was not.
+
+        `_throw()` calls this, and some tests call it directly as well -- so it ran twice. The second
+        call's `dict(EXPECTED_ELEMENTS)` captured THE FIRST CALL'S PATCH as the "original", and the
+        cleanup then restored the module global to a PATCHED state that LEAKED INTO THE NEXT TEST. That
+        is how `test_a_key_with_NO_derived_expectation` came to see C_unified == 4: a fixture corrupting
+        its own restore, which reads as a defect in the code under test.
+        A SAVE-AND-RESTORE HELPER MUST BE IDEMPOTENT OR IT IS A STATE LEAK WITH EXTRA STEPS.
+        """
+        import mii_root_payload_classes as classes
+        if getattr(self, "_saved_sizes", None) is None:
+            self._saved_sizes = dict(classes.EXPECTED_ELEMENTS)
+            saved = self._saved_sizes
+            self.addCleanup(lambda: (classes.EXPECTED_ELEMENTS.clear(),
+                                     classes.EXPECTED_ELEMENTS.update(saved)))
+        classes.EXPECTED_ELEMENTS.update(self.FIXTURE_SIZES)
+
     def _throw(self, **over):
+        """(scalars, diagonals, matrices) -- the THREE-tuple the H1 fix requires.
+
+        `diagonals` is for the recomputation half; `matrices` is what the comparison digests. The reader
+        returning one array for both roles WAS the H1 defect, so the fixture must distinguish them too or
+        it cannot represent the shape under test.
+        """
+        self.setUpSizes()
         sc = {"sqrt_tr_unified": float(np.sqrt(10.0)), "sqrt_tr_block": float(np.sqrt(10.0)),
               "joint_mean_shift_norm": 0.5, "n_throws": 160, "fixed_seed_null_checked": 0}
         sc.update(over)
         di = {"C_unified": self.C, "C_blocksum": self.C, "C_cross": self.C,
               "hJointMeanShift": self.MS}
-        return sc, di
+        mx = dict(di)                       # full arrays; the fixture's C IS its whole matrix
+        return sc, di, mx
 
     def _reader(self, member_over=None, drop_diag=()):
         arch = self._throw()
         over = {"estimator_seed": 1000, "draw_seed": 1000, "est_seed_offset": 0,
                 "est_seed_offset_declared": 1}
         over.update(member_over or {})          # build THEN update, so member_over can override
-        m_sc, m_di = self._throw(**over)
+        m_sc, m_di, m_mx = self._throw(**over)
         m_di = {k: v for k, v in m_di.items() if k not in drop_diag}
-        return lambda p: (arch if p == "A" else (m_sc, m_di))
+        m_mx = {k: v for k, v in m_mx.items() if k not in drop_diag}
+        return lambda p: (arch if p == "A" else (m_sc, m_di, m_mx))
 
     def _go(self, **kw):
         fixture = {k: v for k, v in kw.items() if k in ("member_over", "drop_diag")}
@@ -2925,7 +2966,7 @@ class AnchorComparatorB2(unittest.TestCase):
         eps = float(np.sqrt(10.0)) * (1 + 1e-12)
         both = lambda p: (self._throw(sqrt_tr_unified=eps) if p == "A"
                           else self._throw(sqrt_tr_unified=eps, estimator_seed=1000, draw_seed=1000,
-                                           est_seed_offset=0, est_seed_offset_declared=1))
+                                           est_seed_offset=0, est_seed_offset_declared=1))   # 3-tuple
         go = lambda **kw: self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
                                                read_keys=both, **kw)
         self.assertEqual(go()[0], "FAIL", "bit-exact by default: 1e-12 self-inconsistency is a FAIL")
@@ -2955,7 +2996,7 @@ class AnchorComparatorB2(unittest.TestCase):
         both = lambda p: (self._throw(fixed_seed_null_norm=NULL) if p == "A"
                           else self._throw(fixed_seed_null_norm=NULL, estimator_seed=1000,
                                            draw_seed=1000, est_seed_offset=0,
-                                           est_seed_offset_declared=1))
+                                           est_seed_offset_declared=1))   # 3-tuple
         go = lambda **kw: self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
                                                read_keys=both, **kw)
         v, lines = go()
@@ -2967,18 +3008,49 @@ class AnchorComparatorB2(unittest.TestCase):
         self.assertEqual(go(acknowledge_unrecomputable=full)[0], "PASS",
                          "the EXACT declared list lets it through, RECORDED as unverified")
 
-    def test_an_ADOPTED_root_FAILS_ON_IDENTITY_before_recomputation_is_reached(self):
-        """THE FIFTH GATE, as an observation rather than a proposal. `adopt_unified_5d.py` stamps no
-        identity key, so a member's adopted root cannot satisfy `anchor_identity` at all -- and it fails
-        there, upstream of every payload and recomputation question. Whether the remedy is the writer
-        stamping (A) or the ensemble receipt's digest binding is C's call; what the comparator shows is
-        that the gate is unreachable today, not merely unverified."""
+    def test_an_ADOPTED_root_reports_IDENTITY_UNCHECKABLE_not_an_UNAVOIDABLE_FAIL(self):
+        """H3 CHANGED THIS TEST'S PREMISE, AND THE OLD VERSION WAS DEFENDING THE DEFECT.
+
+        It asserted FAIL because a member's adopted root cannot satisfy `anchor_identity` --
+        `adopt_unified_5d.py` stamps nothing. The observation is right; making it a FAIL was not. D's
+        reason is the pressure-toward-green risk arriving from the other side: AT STAGE 1 AN UNAVOIDABLE
+        FAIL IS THE THING MOST LIKELY TO GET THE GATE ROUTED AROUND. Three of five artifacts emitted
+        three identity problems every run and failed regardless of payload, which teaches the caller to
+        skip the check -- and a skipped check protects nothing.
+
+        Now UNCHECKABLE is reported explicitly, the artifact still cannot be admitted (remedy (A) is
+        C's ruling, and C has since WIDENED it to LATERAL_CV as well), and the verdict reflects the
+        payload questions rather than an unfixable one.
+        """
+        self.setUpSizes()
         keys = {"sqrt_tr_old": 1.0, "sqrt_tr_new": 2.0}
         diag = {"hCov_combined5d_total_uthrow": np.array([4.0])}
         v, lines = self.B.compare_files("adopted_uthrow.root", "A", "M", 0,
-                                        read_keys=lambda p: (keys, diag))
-        self.assertEqual(v, "FAIL")
-        self.assertTrue(any("ABSENT" in l and "est_seed_offset_declared" in l for l in lines), lines)
+                                        read_keys=lambda p: (keys, diag, diag))
+        self.assertEqual(v, "INCOMPLETE",
+                         "not FAIL -- an unavoidable FAIL gets routed around; and not PASS either")
+        unchk = [l for l in lines if l.startswith("[identity] UNCHECKABLE")]
+        self.assertTrue(unchk, lines)
+        self.assertIn("stamps no identity key", unchk[0])
+        self.assertIn("NOT a pass", unchk[0], "the artifact still cannot be admitted")
+        self.assertIn("remedy (A)", unchk[0], "and the reader must be told what would fix it")
+        self.assertFalse(any("ABSENT FROM MEMBER" in l for l in lines),
+                         "identity keys must not be demanded of a writer that cannot emit them")
+
+    def test_identity_IS_still_enforced_where_the_writer_DOES_stamp(self):
+        """CONTROL for the test above. Relaxing three artifacts must not relax the two that CAN carry
+        identity -- without this, H3's fix could have disabled the check everywhere and nothing would
+        have noticed."""
+        import mii_root_payload_classes as classes
+        self.assertTrue(classes.identity_is_checkable("uq_5d/unified_throw_cov_5d.root"))
+        self.assertTrue(classes.identity_is_checkable("sweep_universe.root"))
+        for a in ("adopted_uthrow.root", "adopted_uthrow_cvcentered.root", "lateral_cv.root"):
+            self.assertFalse(classes.identity_is_checkable(a),
+                             f"{a} carries no identity key -- C widened remedy (A) to cover LATERAL_CV "
+                             "as well, on D's enumeration rather than mine")
+        v, lines = self._go(member_over={"est_seed_offset_declared": 0})
+        self.assertEqual(v, "FAIL", "the throw root DOES stamp, so an undeclared offset still fails")
+        self.assertTrue(any("UNHOOKED" in l for l in lines), lines)
 
     def test_an_ADOPTED_ROOT_CANNOT_carry_an_identity_stamp_TODAY_and_the_table_says_so(self):
         """A REAL GAP THE TABLE SURFACED WHILE I WAS WRITING THIS TEST, and I am recording it rather
@@ -2997,7 +3069,9 @@ class AnchorComparatorB2(unittest.TestCase):
         for key in ("estimator_seed", "est_seed_offset", "est_seed_offset_declared"):
             with self.subTest(key=key), self.assertRaises(SystemExit) as cm:
                 classes.classify("adopted_uthrow.root", key)
-            self.assertIn("NO CLASS", str(cm.exception))
+            self.assertIn("NO CLASS", cm.exception.fail_message)
+        self.assertEqual(cm.exception.code, 2,
+                         "H4: a fail-closed exit must be 2, which main() maps to FAIL. Exit 1 is INCOMPLETE, and a driver treating rc 1 as continue walks past a corrupt archive.")
         self.assertEqual(classes.STAMP_COVERAGE["adopt_unified_5d.py"], 0,
                          "and the reason the table lacks them is that the writer lacks them")
         # the throw root, by contrast, DOES classify all three -- so this is a per-writer gap, not a
@@ -3038,12 +3112,64 @@ class AnchorComparatorB2(unittest.TestCase):
                               f"{k} is classified IN_FILE but has no implementation -- the claim and "
                               "the capability must not drift apart")
 
-    def test_a_sqrt_trace_is_computed_from_the_DIAGONAL_never_the_matrix(self):
-        """One 65856x65856 float64 TH2D is 34.7 GB. `trace(C) == sum(diag(C))`, so the comparator never
-        materializes one -- and `read_keys_pyroot` extracts diagonals for exactly this reason."""
+    def test_the_TWO_HALVES_use_DIFFERENT_arrays_which_is_H1s_whole_lesson(self):
+        """THIS TEST'S PREVIOUS PREMISE WAS THE DEFECT. It asserted the TH2D reader "takes the diagonal
+        only", on the grounds that `trace(C) == sum(diag(C))` so no matrix need be materialised -- and
+        that reasoning is sound FOR THE RECOMPUTATION and false for the COMPARISON, which is what H1 was.
+        The old assertion literally required the bug.
+
+        Two facts now, one per half:
+          RECOMPUTE   still uses the diagonal -- a sqrt-trace never needs the full matrix
+          COMPARE     uses the FULL content array, and `_th2_content` exists to produce it
+        And there was never a memory argument: `key.ReadObj()` materialises the matrix regardless
+        (D measured peak RSS 3,773 MB), so the diagonal saved numpy memory and cost the comparison.
+        """
         self.assertEqual(self.B._sqrt_trace_from_diag(np.array([9.0, 16.0])), 5.0)
         src = (ND / "mii_anchor_comparator.py").read_text()
-        self.assertIn("GetBinContent(i + 1, i + 1)", src, "the TH2D reader takes the diagonal only")
+        self.assertIn("def _th2_content(", src, "the full-matrix reader must exist")
+        self.assertIn("[1:ny + 1, 1:nx + 1]", src,
+                      "content bins only -- under/overflow excluded, and ALL of them")
+        self.assertIn("np.diagonal(arr)", src,
+                      "the diagonal is DERIVED from the full array, not read instead of it")
+        # and the summation-route warning D asked for must be present at the recompute helper
+        self.assertIn("PROPERTY OF THE SUMMATION ROUTE", src)
+
+    def test_a_PARTIAL_comparison_FAILS_and_says_what_fraction(self):
+        """H1's remedy, in the direction it acts. A payload comparison covering 1 element in 114 million
+        must FAIL, and the verdict line must carry the fraction -- D's non-optional ask, and the part
+        that outlives any particular reader."""
+        import mii_root_payload_classes as classes
+        reader = self._reader()            # builds the fixture (and patches the small sizes) FIRST
+        classes.EXPECTED_ELEMENTS["C_unified"] = 114361636      # then the REAL size, so it survives
+        v, lines = self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
+                                        read_keys=reader)
+        self.assertEqual(v, "FAIL")
+        cov = [l for l in lines if l.startswith("[coverage] C_unified")]
+        self.assertTrue(cov, lines)
+        self.assertIn("of 114361636 elements", cov[0])
+        self.assertIn("PARTIAL COMPARISON", cov[0])
+        self.assertTrue(any("PARTIAL COMPARISON" in l and "BIT-EXACT OVER THE WHOLE ARRAY" in l
+                            for l in lines),
+                        "and it must be a FINDING, not merely a footnote")
+
+    def test_a_key_with_NO_derived_expectation_is_reported_not_asserted(self):
+        """My first version of the coverage check used ONE global constant and was wrong about it --
+        `hXSecND_flat` is on the 65,856 GRID while every covariance is on the 10,694 SUPPORT. Asserting a
+        number I have not read out of a writer is exactly how the wrong constant arrived. So an unlisted
+        key gets its coverage printed and NOT asserted."""
+        # NO setUpSizes HERE -- this test reads the SHIPPED table, and calling the fixture would have it
+        # assert against the fixture's own small sizes. That is exactly what it did at first: 4 != 114361636,
+        # a test that looked like it had caught a wrong constant and had only patched one.
+        import mii_root_payload_classes as classes
+        self.assertNotIn("hXSec_pt", classes.EXPECTED_ELEMENTS)
+        self.assertEqual(classes.EXPECTED_ELEMENTS["hXSecND_flat"], classes.FLAT_NBINS,
+                         "hXSecND_flat is len(xsec.ravel()) -- the FULL GRID (sweep_bank_5d.py:278,291)")
+        self.assertEqual(classes.EXPECTED_ELEMENTS["C_unified"], classes.REPORTED_NBINS ** 2,
+                         "a covariance is nrep x nrep on the SUPPORT (unified_throw_cov.py:348,522)")
+        self.assertNotEqual(classes.EXPECTED_ELEMENTS["hXSecND_flat"],
+                            classes.EXPECTED_ELEMENTS["hInflation_g"],
+                            "two different dimensions in one file family is the whole reason a single "
+                            "global constant was wrong about both")
 
 
 class RecomputabilityIsADeclaredAttribute(unittest.TestCase):
@@ -3068,7 +3194,7 @@ class RecomputabilityIsADeclaredAttribute(unittest.TestCase):
             self.B.RECOMPUTABILITY["invented"] = (self.B.NOT_RECOMPUTABLE, None, "")
             with self.assertRaises(SystemExit) as cm:
                 self.B.assert_reasons_are_stated()
-            self.assertIn("law of nature", str(cm.exception))
+            self.assertIn("law of nature", cm.exception.fail_message)
         finally:
             self.B.RECOMPUTABILITY.clear(); self.B.RECOMPUTABILITY.update(saved)
 
@@ -3078,7 +3204,7 @@ class RecomputabilityIsADeclaredAttribute(unittest.TestCase):
             self.B.RECOMPUTABILITY["invented"] = (self.B.NOT_RECOMPUTABLE, self.B.WRITER_GAP, "short")
             with self.assertRaises(SystemExit) as cm:
                 self.B.assert_reasons_are_stated()
-            self.assertIn("no usable reason", str(cm.exception))
+            self.assertIn("no usable reason", cm.exception.fail_message)
         finally:
             self.B.RECOMPUTABILITY.clear(); self.B.RECOMPUTABILITY.update(saved)
 
@@ -3114,7 +3240,14 @@ class RecomputabilityIsADeclaredAttribute(unittest.TestCase):
                   "joint_mean_shift_norm": 0.5, "n_throws": 160, "fixed_seed_null_checked": 1,
                   "fixed_seed_null_norm": 1.9706093906025077e-50}
             sc.update(over)
-            return sc, {"C_unified": C, "C_blocksum": C, "C_cross": C, "hJointMeanShift": MS}
+            d = {"C_unified": C, "C_blocksum": C, "C_cross": C, "hJointMeanShift": MS}
+            return sc, d, dict(d)
+        import mii_root_payload_classes as classes
+        saved = dict(classes.EXPECTED_ELEMENTS)
+        classes.EXPECTED_ELEMENTS.update({"C_unified": 4, "C_blocksum": 4, "C_cross": 4,
+                                          "hJointMeanShift": 2})
+        self.addCleanup(lambda: (classes.EXPECTED_ELEMENTS.clear(),
+                                 classes.EXPECTED_ELEMENTS.update(saved)))
         return lambda p: (mk() if p == "A" else
                           mk(estimator_seed=1000, draw_seed=1000, est_seed_offset=0,
                              est_seed_offset_declared=1))
@@ -3125,8 +3258,8 @@ class RecomputabilityIsADeclaredAttribute(unittest.TestCase):
             self.B.compare_files("uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
                                  read_keys=self._reader(),
                                  acknowledge_unrecomputable=["globalCompleteness"])
-        self.assertIn("must match the DECLARED", str(cm.exception))
-        self.assertIn("missing", str(cm.exception), "and it must NAME what is missing")
+        self.assertIn("must match the DECLARED", cm.exception.fail_message)
+        self.assertIn("missing", cm.exception.fail_message, "and it must NAME what is missing")
 
     def test_a_SUPERSET_acknowledgement_is_ALSO_rejected(self):
         """A superset names a key nobody declared -- a sign the caller is working from a stale list, and
@@ -3136,7 +3269,7 @@ class RecomputabilityIsADeclaredAttribute(unittest.TestCase):
                                  read_keys=self._reader(),
                                  acknowledge_unrecomputable=sorted(
                                      self.B.declared_unrecomputable()) + ["not_a_key"])
-        self.assertIn("extra", str(cm.exception))
+        self.assertIn("extra", cm.exception.fail_message)
 
     def test_the_EXACT_set_is_accepted_and_the_keys_are_LABELLED_unverified(self):
         """Unverified-and-LABELLED versus unverified-and-indistinguishable-from-verified is the whole
@@ -3257,10 +3390,17 @@ class SubstitutionFenceS1(unittest.TestCase):
             flat.extend(v if isinstance(v, (list, tuple)) else [v])
         legs = {f if f.startswith("nd-unfolding/") else "nd-unfolding/" + f for f in map(str, flat)}
         self.assertEqual(len(legs), 7)
-        self.assertEqual(set(hooked), legs,
-                         "the hooked set is EXACTLY the seven legs -- the two lib_* definition files "
-                         "are excluded by rule, so nothing else should appear here")
+        import seed_offset_policy as sp
+        consumers = {"nd-unfolding/" + c for c in sp.MEMBER_LOCAL_CONSUMERS}
+        self.assertEqual(set(hooked), legs | consumers,
+                         "the hooked set is EXACTLY the seven driver LEGS plus the DECLARED member-local "
+                         "CONSUMERS -- declared, not 'whatever happens to be hooked', or the set is not "
+                         "closed and absorbs a mistake silently")
         self.assertEqual(legs - set(hooked), set(), "every leg launcher must require a valid offset")
+        self.assertEqual(consumers - set(hooked), set(),
+                         "every declared consumer must actually be hooked")
+        self.assertEqual(legs & consumers, set(),
+                         "a launcher is a producer or a consumer, not both")
 
     def test_the_UNCLASSIFIED_REMAINDER_IS_PINNED_because_it_is_the_real_exposure(self):
         """245 tracked shell files are in NEITHER set, and that number is the honest statement of what
@@ -3273,9 +3413,10 @@ class SubstitutionFenceS1(unittest.TestCase):
         rather than letting the default be "unfenced".
         """
         hooked, fenced, both, neither = self._partition()
-        self.assertEqual(len(neither), 247,
+        self.assertEqual(len(neither), 246,
                          "if this moved, a launcher was added or removed and needs classifying as "
-                         "hooked, fenced, or explicitly out of scope")
+                         "hooked, fenced, or explicitly out of scope. 247 -> 246 when B1 made "
+                         "sbatch_finalize_5d_bkgaware_gpu.sh a member-local CONSUMER.")
         self.assertEqual(len(hooked) + len(fenced) + len(both) + len(neither), 263,
                          "263 LAUNCHERS = 265 tracked nd-unfolding/*.sh minus the 2 definition files. "
                          "The number moved from 262 across a rebase: peers added launchers AND my own "
@@ -3365,10 +3506,15 @@ class LibraryResolverSurvivesSbatch(unittest.TestCase):
     STILL cannot verify the fix, for the same reason, so these tests simulate the spool directly.
     """
 
-    LAUNCHERS = ("sbatch_bootstrap_5d_gpu.sh", "sbatch_seedscan_split_5d.sh",
-                 "sbatch_sweep_bank_5d_run_bkgaware_gpu.sh",
-                 "sbatch_unfold_5d_detector_bkgaware_gpu.sh", "sbatch_uthrow_block_5d.sh",
-                 "sbatch_uthrow_combine_5d_fast.sh", "sbatch_uthrow_run_5d_fast.sh")
+    #: DERIVED, not hardcoded. My first version listed seven names and B1 added an eighth
+    #: (`sbatch_finalize_5d_bkgaware_gpu.sh`), so a fixed list would have silently stopped covering the
+    #: new copy -- the resolver could drift there and no test would look. The count is asserted below so
+    #: the derivation cannot quietly return nothing either.
+    @property
+    def LAUNCHERS(self):
+        return tuple(sorted(
+            f.name for f in ND.glob("sbatch_*.sh")
+            if "# --- M(ii) member axis: LOCATE" in f.read_text(errors="replace")))
 
     def _block(self):
         """The resolver, extracted VERBATIM from a shipped launcher -- not a copy in the test."""
@@ -3388,9 +3534,12 @@ class LibraryResolverSurvivesSbatch(unittest.TestCase):
         return subprocess.run(["bash", f"./{script_name}"], capture_output=True, text=True,
                               cwd=str(cwd), env=base)
 
-    def test_all_seven_leg_launchers_carry_a_BYTE_IDENTICAL_resolver(self):
-        """It has to be inlined -- it is the code that FINDS the library, so it cannot live in it. Seven
-        inlined copies drift, so identity is pinned instead."""
+    def test_EVERY_launcher_carrying_the_resolver_carries_a_BYTE_IDENTICAL_copy(self):
+        """It has to be inlined -- it is the code that FINDS the library, so it cannot live in it.
+        Inlined copies drift, so identity is pinned instead. EIGHT as of B1: the seven legs plus
+        `sbatch_finalize_5d_bkgaware_gpu.sh`, and the list is derived so a ninth is covered on arrival."""
+        self.assertEqual(len(self.LAUNCHERS), 8,
+                         f"expected 8 resolver-carrying launchers, found {self.LAUNCHERS}")
         import hashlib
         digests = {}
         for f in self.LAUNCHERS:
@@ -3501,6 +3650,182 @@ class LibraryResolverSurvivesSbatch(unittest.TestCase):
             with self.subTest(f=f):
                 self.assertNotIn('source "${_HERE}/lib_member_resume.sh"', body)
                 self.assertIn('source "${_mr_lib}/lib_member_resume.sh"', body)
+
+
+class B1MemberLocalConsumerChain(unittest.TestCase):
+    """B1 steps 1-3. The defect is in `sbatch_finalize_5d_bkgaware_gpu.sh`'s OWN HEADER:
+
+        "C_stat/C_ML are #13-invariant -> reuse existing uq_cov_stat_5d.root / uq_cov_mlsplit_5d.root"
+
+    Correct for a background-treatment comparison where only the vertical sweep changes; EXACTLY WRONG
+    for a member, whose premise is a different estimator seed. Unmodified, it injects the ARCHIVE's
+    C_stat into the member's combined covariance and discards the member's own 100 replicas.
+    Stage 0 made that quantitative: the seed moves C_stat's replicas across essentially the whole
+    reported support (three DISTINCT verdicts, jobs 57252337-9).
+    """
+
+    SCRIPT = "sbatch_finalize_5d_bkgaware_gpu.sh"
+
+    def _resolve(self, offset):
+        """Evaluate the script's own path assignments under the real member library."""
+        import subprocess
+        body = (ND / self.SCRIPT).read_text()
+        wanted = ("OUTD=", "SWEEP_GLOB=", "UTHROW=", "STAT_COV=", "ML_COV=")
+        assigns = [l for l in body.split("\n") if l.startswith(wanted)]
+        script = ("source ./lib_member_resume.sh\n" + "\n".join(assigns) +
+                  '\nfor v in OUTD SWEEP_GLOB UTHROW STAT_COV ML_COV; do'
+                  ' echo "$v=${!v}"; done\n'
+                  'mr_declared && echo DECLARED=yes || echo DECLARED=no\n')
+        env = {k: v for k, v in os.environ.items() if k != "MNV_EST_SEED_OFFSET"}
+        if offset is not None:
+            env["MNV_EST_SEED_OFFSET"] = str(offset)
+        r = subprocess.run(["bash", "-c", script], capture_output=True, text=True,
+                           cwd=str(ND), env=env)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        return dict(l.split("=", 1) for l in r.stdout.strip().split("\n") if "=" in l)
+
+    def test_UNDECLARED_every_path_reduces_to_its_ARCHIVE_LITERAL(self):
+        """The compatibility claim, and it is the hard constraint: this script must remain the
+        CV-background comparator it has always been for every non-scan use."""
+        g = self._resolve(None)
+        self.assertEqual(g["OUTD"], "uq_5d/universe_stage2_5d_bkgaware")
+        self.assertEqual(g["SWEEP_GLOB"],
+                         "uq_5d/universe_sweep_bkgaware/5d_xsec_*_uni_full_*.root")
+        self.assertEqual(g["UTHROW"], "uq_5d/unified_throw_cov_5d.root")
+        self.assertEqual(g["STAT_COV"], "uq_cov_stat_5d.root")
+        self.assertEqual(g["ML_COV"], "uq_cov_mlsplit_5d.root")
+        self.assertEqual(g["DECLARED"], "no")
+
+    def test_DECLARED_every_path_is_MEMBER_SCOPED_including_the_two_covariance_roots(self):
+        g = self._resolve(1200)
+        root = "mii/member_k001200"
+        for k in ("OUTD", "SWEEP_GLOB", "UTHROW", "STAT_COV", "ML_COV"):
+            with self.subTest(var=k):
+                self.assertTrue(g[k].startswith(root + "/"),
+                                f"{k}={g[k]!r} must start with {root!r}")
+        self.assertEqual(g["DECLARED"], "yes")
+
+    def test_the_COVARIANCE_ROOTS_are_member_scoped_which_is_the_WHOLE_POINT(self):
+        """If only the sweep glob were memberized, the member would still consume the archive's C_stat --
+        the defect would survive the patch and look fixed. These two paths are the fix."""
+        g = self._resolve(1200)
+        import seed_offset_policy as sp
+        for k in ("STAT_COV", "ML_COV"):
+            sp.assert_member_path_is_outside_the_archive(g[k])
+
+    def test_the_EXACT_POPULATION_validators_are_KEPT_at_full_range(self):
+        """`--expected-ids 1-100` / `1-24` must not be relaxed for members. A member with a partial
+        replica set must REFUSE rather than combine what it has -- that barrier is what makes its C_stat
+        comparable to the archive's at all, and relaxing it is the obvious way to make a member 'work'."""
+        body = (ND / self.SCRIPT).read_text()
+        self.assertIn("--expected-ids 1-100", body)
+        self.assertIn("--expected-ids 1-24", body)
+
+    def test_the_ADOPTIONS_PAUSE_with_an_EXPIRY_CONDITION_not_a_rationale(self):
+        """C CORRECTED THE FRAMING AND IT CHANGES WHAT MUST BE RECORDED.
+
+        The cut is a PAUSE, not a boundary, and the reason is specific: `sqrt_tr_old` -- THE BAR'S OWN
+        OPERAND -- is written at `adopt_unified_5d.py:177`, INSIDE steps (4)/(5). So stopping here means
+        stage 1 cannot compare the quantity the bar is about. A STOP-AFTER-(3) MEMBER IS A STAGE 1 *NOT
+        ATTEMPTED*, NOT ONE AWAITING PAPERWORK, AND THE TWO READ IDENTICALLY IN A STATUS TABLE. Hence the
+        EXPIRY CONDITION is what goes in the message, not the justification.
+        """
+        body = (ND / self.SCRIPT).read_text()
+        i = body.index("MEMBER PAUSE")
+        j = body.index("adopt (mean-centered)")
+        self.assertLess(i, j, "the pause must precede the adoption calls")
+        self.assertIn("EXPIRY: remedy (A)", body, "the expiry condition, not the rationale")
+        self.assertIn("STAGE 1", body[i:j])
+        self.assertIn("NOT ATTEMPTED", body[i:j],
+                      "the status distinction is the point -- 'not attempted' and 'pending' read the same")
+        self.assertIn("exit 0", body[i:j], "and it must exit rather than fall through")
+
+    def test_the_PAUSE_forbids_deleting_the_intermediate(self):
+        """C: 11g gates deletion on MVFINAL_j, which needs (4)/(5). So "stop after (3)" combined with
+        "11g releases the 41 GB" would delete THE ONLY INPUT to the steps that have not run. Two rulings
+        that are each correct and jointly destructive -- which is why the pause has to say so."""
+        body = (ND / self.SCRIPT).read_text()
+        self.assertIn("DO NOT DELETE", body)
+        self.assertIn("11g gates deletion on MVFINAL_j", body)
+
+    def test_remedy_A_is_recorded_as_covering_BOTH_writers_not_just_adoption(self):
+        """C WIDENED (A) to LATERAL_CV after D's enumeration was longer than mine: I enumerated WRITERS
+        needing stamps, D enumerated ARTIFACTS THE GATE CANNOT READ. Same defect, two directions, and
+        D's direction found more."""
+        body = (ND / self.SCRIPT).read_text()
+        self.assertIn("unfold_nd_omnifold_unbinned.py", body,
+                      "the pause must name BOTH writers (A) now covers")
+        import mii_root_payload_classes as classes
+        self.assertFalse(classes.identity_is_checkable("lateral_cv.root"))
+
+    def test_the_CV_IS_MEMBER_SCOPED_because_C_RULED_SUBSTITUTE(self):
+        """MY HOLD WAS REVERSED, AND THE REASON IS ABOUT SPREADS RATHER THAN VALUES.
+
+        I proposed pinning to the archive's CV, documented as a choice. C's own earlier sentence --
+        "substituting would inject a difference that is NOT estimator noise, which is worse than pinning"
+        -- is the right test for comparing VALUES. THE BAR COMPARES SPREADS, and there it inverts:
+            PIN        sd_j(0.014 * ||cv_arch||) is EXACTLY 0 -> the flat-norm term contributes NOTHING
+            SUBSTITUTE sd is driven by the seed response      -> the term contributes its real sensitivity
+        AND THE DIRECTION OF THE BIAS IS TOWARD *MET* -- a pass bought by omitting a term -- which is why
+        it was not a free choice and why C asked for the direction to be recorded, not just the decision.
+        My call-site documentation instinct was right; what I documented was the wrong conclusion.
+        """
+        body = (ND / self.SCRIPT).read_text()
+        self.assertIn("C RULED **SUBSTITUTE**, REVERSING MY HOLD", body)
+        self.assertIn("THE BAR COMPARES SPREADS", body)
+        self.assertIn("TOWARD *MET*", body, "the DIRECTION of the bias, which is C's specific ask")
+        # case-insensitive: the point is that the cancellation is still stated, not how it is cased.
+        # My first version asserted an ALL-CAPS form and failed on prose that says the same thing --
+        # and pytest then dumped the entire 12 kB launcher into the failure, which is its own argument
+        # for asserting on structure rather than on capitalisation.
+        self.assertIn("cancels algebraically", body.lower(),
+                      "still true of the systematic covariance, and still worth stating")
+        self.assertIn("mask_order_hash", body,
+                      "the mask must not be checked by COUNTING -- equal-size supports can differ in "
+                      "MEMBERSHIP, which silently compares the wrong pairs")
+
+    def test_the_member_CV_resolves_to_the_members_own_uni_full_CV(self):
+        """Behavioural, both regimes, since the whole point is that undeclared must not move."""
+        import subprocess
+        snippet = ('source ./lib_member_resume.sh\n'
+                   'CV_ARCHIVE="products/5d/xsec_5d_MEFHC_5iter_lgbm.root"\n'
+                   'if mr_declared; then CV="$(mr_prefix uq_5d/universe_sweep_bkgaware)'
+                   '/5d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root"; else CV="${CV_ARCHIVE}"; fi\n'
+                   'echo "$CV"\n')
+        base = {k: v for k, v in os.environ.items() if k != "MNV_EST_SEED_OFFSET"}
+        undecl = subprocess.run(["bash", "-c", snippet], capture_output=True, text=True,
+                                cwd=str(ND), env=base).stdout.strip()
+        decl = subprocess.run(["bash", "-c", snippet], capture_output=True, text=True, cwd=str(ND),
+                              env=dict(base, MNV_EST_SEED_OFFSET="1200")).stdout.strip()
+        self.assertEqual(undecl, "products/5d/xsec_5d_MEFHC_5iter_lgbm.root")
+        self.assertEqual(decl, "mii/member_k001200/uq_5d/universe_sweep_bkgaware/"
+                               "5d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root")
+
+    def test_ANY_reduction_needs_TWO_numbers_and_there_are_currently_NONE(self):
+        """C: a reduction must declare element coverage AND the mass fraction it excludes, measured.
+        0.00935% and 997x is the template. The table is EMPTY because PAYLOAD-class reduction is refused;
+        it exists so that adding one costs a MEASUREMENT rather than a line."""
+        import mii_anchor_comparator as B
+        self.assertEqual(B.DECLARED_REDUCTIONS, {})
+        self.assertIsNone(B.assert_reduction_is_declared("C_unified", 1.0),
+                          "full coverage needs no declaration")
+        msg = B.assert_reduction_is_declared("C_unified", 0.0000935)
+        self.assertIn("UNDECLARED REDUCTION", msg)
+        self.assertIn("mass fraction", msg, "both numbers must be named in the refusal")
+
+    def test_the_cv_cancellation_claim_is_TRUE_of_the_analyzer_as_written(self):
+        """Not a comment I can edit freely: re-derive it from the analyzer's actual lines."""
+        src = (ND / "analyze_universes_5d.py").read_text()
+        self.assertIn("load_flat(p, expect_nbins=cv.size) - cv", src, "D_i = u_i - cv")
+        self.assertIn("Z = D - D.mean(axis=0, keepdims=True)", src, "column mean subtracted")
+        u = np.array([[1.0, 5.0], [3.0, 9.0], [2.0, 1.0]])
+        def cov(cv):
+            D = u - cv
+            Z = D - D.mean(axis=0, keepdims=True)
+            return (Z.T @ Z) / D.shape[0]
+        a, b = cov(np.array([0.5, 0.5])), cov(np.array([7.0, -3.0]))
+        self.assertTrue(np.array_equal(a, b),
+                        "the covariance must be BIT-identical under a different cv, not merely close")
 
 if __name__ == "__main__":
     unittest.main()
