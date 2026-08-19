@@ -212,24 +212,85 @@ def _th2_content(h):
         buf = h.GetArray()
         buf.SetSize((nx + 2) * (ny + 2))
         flat = np.frombuffer(buf, dtype=np.float64, count=(nx + 2) * (ny + 2))
-        return np.ascontiguousarray(flat.reshape(ny + 2, nx + 2)[1:ny + 1, 1:nx + 1])
-    except Exception:
-        # FALLBACK, correct but slow. Row-at-a-time so a 114M-element matrix never becomes 114M
-        # individual Python calls held in a list.
+        # np.array, NOT np.ascontiguousarray -- AN UNCONDITIONAL COPY.
+        # C's finding, and this was safe only BY ACCIDENT: `np.frombuffer` returns a VIEW, and
+        # [1:ny+1, 1:nx+1] of an (ny+2, nx+2) array is NON-CONTIGUOUS, which is the only reason
+        # `ascontiguousarray` copied at all. Remove the under/overflow padding arithmetic -- a plausible
+        # "simplification" -- and the slice becomes contiguous, ascontiguousarray returns ITS INPUT
+        # UNCHANGED, and this function returns a live view into a ROOT buffer. `read_keys_pyroot` then
+        # calls obj.Delete() on that object, so A FREED BUFFER AND A LIVE VIEW WOULD COEXIST BY
+        # CONSTRUCTION. Two separately-correct rulings -- explicit Delete(), and padding-aware slicing --
+        # interacting destructively.
+        out = np.array(flat.reshape(ny + 2, nx + 2)[1:ny + 1, 1:nx + 1], dtype=np.float64, copy=True)
+        # PINNED, because "np.array copies" is a property of an argument someone can change back:
+        assert not np.shares_memory(out, flat), (
+            "the returned array MUST NOT alias the ROOT buffer -- read_keys_pyroot Delete()s the object")
+        return out, "buffer"
+    except (AttributeError, TypeError, ValueError, BufferError) as exc:
+        # NARROWED, and it ANNOUNCES ITSELF. A bare `except Exception` over five operations made the fast
+        # path's failure INVISIBLE: any failure returned the RIGHT answer by the slow route and no run
+        # ever said so, so the fast path could be permanently broken and unnoticed. A bare catch is also
+        # a promise that every future failure is benign, which is not a promise this code can make.
+        print(f"[reader] BUFFER PATH FAILED ({exc.__class__.__name__}: {exc}); using the row loop. "
+              "WHICH READER EXECUTED IS AN INGREDIENT OF THE DIGEST -- record it.", file=sys.stderr)
         out = np.empty((ny, nx), dtype=np.float64)
         for j in range(ny):
             for i in range(nx):
                 out[j, i] = h.GetBinContent(i + 1, j + 1)
-        return out
+        return out, "rowloop"
+
+
+def cross_check_readers(h):
+    """Run BOTH read paths on one real TH2D and require them BIT-EXACTLY equal. Returns a report.
+
+    C's ruling, and it is the only test that can catch the failure the fallback structurally cannot:
+    THE DANGEROUS FAILURE DOES NOT RAISE. A wrong dtype, a single-precision TH2D, an off-by-one in the
+    under/overflow slice, or a future ROOT layout change each returns an array of the RIGHT SHAPE with
+    WRONG NUMBERS. The fallback never triggers, and the coverage line reports
+    "compared 114,361,636 of 114,361,636 (100.00%)" -- 100% COVERAGE OF THE WRONG BYTES.
+    That is H1 INVERTED: there the word was wrong and the bytes right; here the word is right and the
+    bytes wrong. COVERAGE COUNTS ELEMENTS COMPARED AND CANNOT SEE WHETHER THEY WERE READ CORRECTLY.
+
+    It needs no oracle and no fixture -- the two paths compute the same quantity by INDEPENDENT ROUTES,
+    so they check each other. One slow read of one matrix, once.
+    """
+    nx, ny = h.GetNbinsX(), h.GetNbinsY()
+    fast, which = _th2_content(h)
+    if which != "buffer":
+        return {"ok": False, "why": "the buffer path did not execute, so there is nothing to cross-check",
+                "path": which}
+    slow = np.empty((ny, nx), dtype=np.float64)
+    for j in range(ny):
+        for i in range(nx):
+            slow[j, i] = h.GetBinContent(i + 1, j + 1)
+    same = bool(np.array_equal(fast, slow))
+    r = {"ok": same, "nx": nx, "ny": ny, "elements": int(fast.size),
+         "digest_buffer": digest(fast), "digest_rowloop": digest(slow)}
+    if not same:
+        d = np.abs(fast - slow)
+        r["why"] = ("THE TWO READ PATHS DISAGREE. The buffer read is returning the wrong bytes at the "
+                    "right shape, which no fallback can detect and which coverage reports as 100%.")
+        r["n_differing"] = int((d > 0).sum())
+        r["max_abs_difference"] = float(d.max())
+    return r
 
 
 def read_keys_pyroot(path):
-    """Real reader. Returns (scalars, diagonals, matrices).
+    """Real reader. Returns (scalars, diagonals, matrix_digests).
 
-    `diagonals` exists ONLY for the recomputation half -- `trace(C) == sum(diag(C))`, so a sqrt-trace
-    never needs the full matrix. `matrices` carries the FULL content array and is what the comparison
-    digests. Keeping them separate is the point: the two halves want different things and conflating
-    them is exactly H1.
+    `matrix_digests[name] = (sha256_hex, n_elements)` -- A DIGEST AND A COUNT, NOT THE ARRAY. `diagonals`
+    holds small arrays (10,694 floats) for the recomputation half only.
+
+    MEMORY, WHICH LANE C CORRECTED AND WHICH MADE MY FIRST VERSION OF THIS FUNCTION WRONG:
+    a live TH2D costs **~2 GB, not 0.915 GB**, because ROOT resides the sumw2 array alongside the
+    contents -- D measured 2,027 MB for the adopted root and 3,773 MB for the throw root's three. And
+    `GetListOfKeys()` HOLDS EVERY OBJECT UNTIL `f.Close()`, so my previous version -- which returned all
+    full arrays in a dict -- streamed NOTHING: it held ROOT's copies *and* numpy's, ~6 GB for the throw
+    root. Restructuring the digest alone does not stream; the objects have to be released.
+    SO: digest one key, then `Delete()` it, and never retain a full array. Peak is one live TH2D.
+
+    NOT EXECUTED ANYWHERE. ROOT is absent here. D's run exercised the previous (diagonal) version, so the
+    buffer fast path and the Delete() discipline below have never run -- labelled, not claimed.
     """
     import ROOT                                            # noqa: local, like every ROOT user here
     try:
@@ -240,24 +301,54 @@ def read_keys_pyroot(path):
         _fail(f"zombie/unopenable: {path}")
     if f.TestBit(ROOT.TFile.kRecovered):
         _fail(f"kRecovered (truncated/uncleanly-closed write): {path}")
-    scalars, diagonals, matrices = {}, {}, {}
+    scalars, diagonals, matrix_digests = {}, {}, {}
+    readers_used = set()          # WHICH READER EXECUTED IS AN INGREDIENT OF THE DIGEST (BEN-077)
     for key in f.GetListOfKeys():
         name, obj = key.GetName(), key.ReadObj()
-        if hasattr(obj, "GetVal"):
-            scalars[name] = obj.GetVal()
-        elif hasattr(obj, "GetTitle") and not hasattr(obj, "GetNbinsX"):
-            scalars[name] = obj.GetTitle()                  # TNamed
-        elif hasattr(obj, "GetNbinsY") and obj.GetNbinsY() > 1:
-            arr = _th2_content(obj)
-            matrices[name] = arr
-            diagonals[name] = np.ascontiguousarray(np.diagonal(arr))
-        elif hasattr(obj, "GetNbinsX"):
-            n = obj.GetNbinsX()
-            arr = np.array([obj.GetBinContent(i + 1) for i in range(n)])
-            matrices[name] = arr
-            diagonals[name] = arr
+        try:
+            if hasattr(obj, "GetVal"):
+                scalars[name] = obj.GetVal()
+            elif hasattr(obj, "GetTitle") and not hasattr(obj, "GetNbinsX"):
+                scalars[name] = obj.GetTitle()              # TNamed
+            elif hasattr(obj, "GetNbinsY") and obj.GetNbinsY() > 1:
+                arr, which = _th2_content(obj)
+                readers_used.add(which)
+                matrix_digests[name] = (digest(arr), int(arr.size))
+                diagonals[name] = np.ascontiguousarray(np.diagonal(arr))   # small; survives
+                del arr
+            elif hasattr(obj, "GetNbinsX"):
+                n = obj.GetNbinsX()
+                arr = np.array([obj.GetBinContent(i + 1) for i in range(n)])
+                matrix_digests[name] = (digest(arr), int(arr.size))
+                diagonals[name] = arr
+        finally:
+            # RELEASE ROOT'S COPY IMMEDIATELY. Without this the loop accumulates every object until
+            # f.Close() and "one key at a time" is a description of the code's shape, not its footprint.
+            try:
+                obj.Delete()
+            except Exception:
+                pass
     f.Close()
-    return scalars, diagonals, matrices
+    if readers_used:
+        print(f"[reader] {path}: TH2D read path(s) used = {sorted(readers_used)}", file=sys.stderr)
+    return scalars, diagonals, matrix_digests
+
+
+#: KEYS ACCEPTED AS UNVERIFIED BY THE ANCHOR, EXPLICITLY. C: the archive's age EXPLAINS an absence and
+#: does not LICENCE it, so a PAYLOAD key uncompared for that reason must be covered by in-file
+#: recomputation OR declared here. `upstream_*` land here because their recomputation is CROSS_FILE --
+#: it needs the throw root, which an adopted-root anchor comparison does not open.
+DECLARED_UNVERIFIED = {
+    "upstream_fixed_seed_null_norm":
+        "PAYLOAD, member-only (landed 5856eeb1 2026-08-11), and CROSS_FILE-recomputable only -- it needs "
+        "the throw root, which this comparison does not open. Unverified and labelled.",
+    "upstream_joint_mean_shift_norm":
+        "PAYLOAD, member-only, CROSS_FILE-recomputable only. Same as above.",
+}
+
+
+def declared_unverified():
+    return frozenset(DECLARED_UNVERIFIED)
 
 
 #: ANY REDUCTION MUST DECLARE **TWO** NUMBERS -- C's ruling, and the template is the defect that
@@ -294,12 +385,20 @@ def assert_reduction_is_declared(key, coverage):
 
 
 def compare_files(artifact, archive_path, member_path, offset, read_keys=read_keys_pyroot,
-                  rtol=0.0, acknowledge_unrecomputable=None):
+                  rtol=0.0, acknowledge_unrecomputable=None, archive_date=None):
     """Stage 1's comparison. Returns (verdict, lines).
 
     `rtol=0.0` by default: THIS IS A BIT-EXACT GATE and a tolerance is a decision, not a default.
     """
     assert_reasons_are_stated()          # declared, never discovered at comparison time
+    # THE PREDATES_ARCHIVE EXCUSE IS ONLY CHECKABLE AGAINST THE ARCHIVE'S DATE, so the date is REQUIRED
+    # rather than defaulted. C: an excuse without its operand is a narration, and the whole point of the
+    # dated `landed` strings is that no hand-maintained exception list is needed.
+    if archive_date is None:
+        _fail("compare_files needs archive_date=(y, m, d). Every PREDATES_ARCHIVE row in the key map is "
+              "excused only if it landed AFTER the archive was written, and that is unverifiable without "
+              "the archive's date. Read it from the file rather than assuming it.")
+    classes.assert_absence_excuses_are_dated(archive_date)
     # CLOSED-SET ACKNOWLEDGEMENT. `None` means "acknowledge nothing"; a list must equal the declared
     # `no` set EXACTLY -- not a subset, not a superset. A subset would leave a blocked key looking
     # acknowledged; a superset names a key nobody declared and is a sign the caller is working from a
@@ -321,11 +420,13 @@ def compare_files(artifact, archive_path, member_path, offset, read_keys=read_ke
 
     # Histograms enter the class comparison as DIGESTS OVER EVERY CONTENT BIN, so `compare()` treats
     # them like scalars and a payload difference is caught without a tolerance question arising.
-    a_keys = dict(a_sc, **{k: digest(v) for k, v in a_mx.items()})
-    m_keys = dict(m_sc, **{k: digest(v) for k, v in m_mx.items()})
+    a_keys = dict(a_sc, **{k: v[0] for k, v in a_mx.items()})
+    m_keys = dict(m_sc, **{k: v[0] for k, v in m_mx.items()})
 
     verdict, findings = classes.compare(artifact, a_keys, m_keys)
     lines = list(findings)
+    uncomparable_keys = [l.split(":", 1)[0].replace("UNCOMPARABLE ", "").strip()
+                         for l in findings if l.startswith("UNCOMPARABLE ")]
     class_failed = verdict == "FAIL"
 
     # --- COVERAGE: WHAT FRACTION OF EACH ARRAY WAS ACTUALLY COMPARED --------------------------------
@@ -338,7 +439,7 @@ def compare_files(artifact, archive_path, member_path, offset, read_keys=read_ke
     # A key with no derived expectation gets its coverage PRINTED but not ASSERTED: asserting a number
     # I have not read out of a writer is exactly how the wrong constant arrived here.
     for name in sorted(m_mx):
-        n = int(np.asarray(m_mx[name]).size)
+        n = int(m_mx[name][1])
         expected = classes.EXPECTED_ELEMENTS.get(name)
         if expected is None:
             lines.append(f"[coverage] {name}: compared {n} elements; NO DERIVED EXPECTATION, "
@@ -360,6 +461,36 @@ def compare_files(artifact, archive_path, member_path, offset, read_keys=read_ke
                 f"{name}: PARTIAL COMPARISON -- {n} of {expected} elements ({100*frac:.4f}%). PAYLOAD "
                 "means BIT-EXACT OVER THE WHOLE ARRAY; comparing a subset while reporting bit-exactness "
                 "is the H1 defect and must fail rather than be footnoted.")
+            class_failed = True
+
+    # --- KEY COVERAGE: C's element-level two-number rule GENERALISED TO KEYS ----------------------
+    # "Stage 1 compares 4 of ~13 keys on that artifact. A PASS over four keys and a PASS over thirteen
+    # are different claims wearing one word." Same argument as the element coverage, one level up -- and
+    # the same remedy: state the fraction so the word cannot carry more than it earned.
+    table_keys = set(classes.ARTIFACTS.get(artifact, {}))
+    compared = sorted(set(a_keys) & set(m_keys) & table_keys)
+    lines.append(f"[coverage] KEYS: compared {len(compared)} of {len(table_keys)} classified keys "
+                 f"({100 * len(compared) / len(table_keys):.1f}%) -- "
+                 f"uncompared: {sorted(table_keys - set(compared))}")
+
+    # --- A PAYLOAD KEY EXCUSED BY THE ARCHIVE'S AGE IS *NOT VERIFIED BY THE ANCHOR AT ALL* -----------
+    # C's point, and it is the one that stops the fix becoming a loophole: the archive's age EXPLAINS an
+    # absence and DOES NOT LICENCE it. The member could carry the key wrong and stage 1 would pass. So
+    # each such key must be covered by in-file recomputation, or DECLARED UNVERIFIED. Declared beats
+    # silent, and neither is the same as checked.
+    for u in uncomparable_keys:
+        cls = classes.classify(artifact, u)
+        if cls is classes.PROVENANCE:
+            continue                                     # provenance is expected to differ; nothing owed
+        how = RECOMPUTABILITY.get(u, (None, None, ""))[0]
+        if how is IN_FILE:
+            continue                                     # recomputation covers it from the member's file
+        if u not in declared_unverified():
+            lines.append(
+                f"{u}: {cls} EXCUSED BY THE ARCHIVE'S AGE AND NOT VERIFIED BY ANYTHING. Its absence is "
+                f"EXPLAINED (landed {classes.ARCHIVE_KEY_MAP[u]['landed']}) but not LICENSED -- the "
+                "member could carry it wrong and this gate would pass. Cover it by in-file recomputation "
+                "or add it to DECLARED_UNVERIFIED. Declared beats silent; neither is checked.")
             class_failed = True
 
     # --- the anchor's own identity, WHERE THE ARTIFACT CAN CARRY IT (H3) -----------------------------
@@ -441,10 +572,21 @@ def compare_files(artifact, archive_path, member_path, offset, read_keys=read_ke
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--artifact", required=True, choices=sorted(classes.ARTIFACTS))
-    ap.add_argument("--archive", required=True)
-    ap.add_argument("--member", required=True)
-    ap.add_argument("--offset", type=int, required=True)
+    ap.add_argument("--cross-check-reader", metavar="FILE:KEY", default=None,
+                    help="Run BOTH TH2D read paths on one real matrix and require them BIT-EXACTLY "
+                         "equal. THE ONLY TEST THAT CAN CATCH A BUFFER READ THAT SUCCEEDS AND RETURNS "
+                         "THE WRONG BYTES -- the fallback cannot, because that failure does not raise, "
+                         "and coverage cannot, because it counts elements compared rather than elements "
+                         "read correctly. Needs no oracle: the two paths are independent routes to the "
+                         "same quantity. One slow read of one matrix, once.")
+    ap.add_argument("--artifact", required=False, choices=sorted(classes.ARTIFACTS))
+    ap.add_argument("--archive", required=False)
+    ap.add_argument("--member", required=False)
+    ap.add_argument("--offset", type=int, required=False)
+    ap.add_argument("--archive-date", metavar="YYYY-MM-DD", default=None,
+                    help="the ARCHIVE's write date. REQUIRED: every PREDATES_ARCHIVE row in the key map "
+                         "is excused only if it landed after it, and an excuse without its operand is a "
+                         "narration.")
     ap.add_argument("--rtol", type=float, default=0.0,
                     help="0.0 (default) means BIT-EXACT. A tolerance is a decision, not a default.")
     ap.add_argument("--acknowledge-unrecomputable", metavar="KEY", nargs="+", default=None,
@@ -453,8 +595,32 @@ def main(argv=None):
                          "`no` ride in silently. They are RECORDED as UNVERIFIED, never treated as "
                          f"checked. Declared today: {' '.join(sorted(declared_unrecomputable()))}")
     a = ap.parse_args(argv)
+
+    if a.cross_check_reader:
+        # FIRST BRANCH AFTER PARSE, with no path to a comparison -- the same discipline as --gate-only.
+        import ROOT                                              # noqa: local
+        path, _, keyname = a.cross_check_reader.rpartition(":")
+        if not path or not keyname:
+            _fail("--cross-check-reader takes FILE:KEY")
+        f = ROOT.TFile.Open(path)
+        h = f.Get(keyname)
+        if not h:
+            _fail(f"no key {keyname!r} in {path}")
+        r = cross_check_readers(h)
+        print(f"[cross-check] {path}:{keyname}")
+        for k in ("ok", "nx", "ny", "elements", "digest_buffer", "digest_rowloop",
+                  "path", "why", "n_differing", "max_abs_difference"):
+            if k in r:
+                print(f"[cross-check]   {k} = {r[k]}")
+        f.Close()
+        return 0 if r.get("ok") else 2
+
+    if not a.artifact:
+        _fail("--artifact is required unless --cross-check-reader is given")
     verdict, lines = compare_files(a.artifact, a.archive, a.member, a.offset, rtol=a.rtol,
-                                  acknowledge_unrecomputable=a.acknowledge_unrecomputable)
+                                  acknowledge_unrecomputable=a.acknowledge_unrecomputable,
+                                  archive_date=(tuple(int(x) for x in a.archive_date.split("-"))
+                                                if a.archive_date else None))
     print(f"[b2] VERDICT: {verdict}")
     print(f"[b2]   artifact {a.artifact}  offset {a.offset}  rtol {a.rtol!r}")
     for l in lines:
