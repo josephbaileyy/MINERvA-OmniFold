@@ -5,9 +5,11 @@
   "codex_bin": "/global/homes/j/josephrb/.nvm/versions/node/v24.18.0/bin/codex",
   "root": {
     "provider": "codex",
-    "profile": "codex-personal",
+    "profile": "codex-waker",
     "thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
-    "disable_features": ["goals"]
+    "disable_features": [
+      "goals"
+    ]
   },
   "poll_seconds": 60,
   "claim_lease_seconds": 900,
@@ -15,7 +17,12 @@
   "max_retries_default": 2,
   "cron_walltime": "12:00:00",
   "idle_guard_ticks": 0,
-  "notify_command": ["/usr/bin/mail", "-s", "{subject}", "josephrb@nersc.gov"],
+  "notify_command": [
+    "/usr/bin/mail",
+    "-s",
+    "{subject}",
+    "josephrb@nersc.gov"
+  ],
   "status_report_interval_seconds": 0,
   "prompt_preamble": null
 }
