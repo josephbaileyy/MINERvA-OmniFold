@@ -34,8 +34,8 @@ weights, owner escalation, bounded playbook, manifest-semantics repair, and the 
 | active unpromoted backlog | 59 |
 | active playbook rules | 22 |
 
-Manifest regeneration produces 1,029 unique tracked rows. Relative to the stale committed manifest,
-five paths disappear and all five are Git-ignored artifacts (four `.pyc`, one `.out`); 38 tracked
+Manifest regeneration produces 1,031 unique tracked rows. Relative to the stale committed manifest,
+five paths disappear and all five are Git-ignored artifacts (four `.pyc`, one `.out`); 40 tracked
 paths appear. No tracked path is dropped, ignored paths are absent, and unused overrides are zero.
 
 ## Review surface

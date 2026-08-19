@@ -136,9 +136,9 @@ pushed until mediator approval. `--adoption-check` proves the structural gates b
    visibly waiting for designation.
 4. **Manifest semantics — repaired and measured.** The generator now inventories tracked plus
    nonignored intended files, emits `tracking`, and excludes ignored artifacts. Regeneration drops
-   exactly five old rows, all independently verified ignored (four `.pyc`, one `.out`), and adds 38
+   exactly five old rows, all independently verified ignored (four `.pyc`, one `.out`), and adds 40
    tracked paths accumulated since the stale manifest plus this change. No tracked path is dropped;
-   the generated manifest has 1,029 unique tracked rows and zero unused overrides.
+   the generated manifest has 1,031 unique tracked rows and zero unused overrides.
 5. **Quiet cutover.** This worktree is based at `4ad061b0`; immediately before push, confirm `main`
    still names that commit. If it moved, rebase and rerun rather than landing a stale generated view.
 6. **Entrypoint measurement.** Run `control_plane_lint.py --entrypoint-report`, which includes
