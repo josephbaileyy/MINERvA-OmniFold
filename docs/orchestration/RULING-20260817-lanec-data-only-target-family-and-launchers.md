@@ -501,6 +501,16 @@ having.
 the question was never *"how do we avoid that cost"* but *"who pays it and how visibly."* The partition makes it
 visible. That is the whole of what this ruling buys.**
 
+> **EMBARGO 2026-08-19 — THE `18/55/4` PARTITION'S PREMISE IS VOID; DO NOT QUOTE IT UNTIL `OI-132` LANDS.**
+> The 55 sites are unexecuted **because the pinned validator returns early on a missing required key, and that
+> key was `bootstrap_seed`** — which `BEN-476` establishes a PINNED producer stamps unconditionally
+> (`train_fullevent_nominal.py:635-637`, `-1` when the meta value is `None`). **With the key present the early
+> return never fires and all 77 sites execute.** `OI-132` re-derives the partition and re-classifies the 55 one
+> by one; some move to `DELEGATED`, some to an executed-and-passes class that could not exist while nothing
+> reached them, and any executed-and-not-covered are NEW exposure. **The sum stays 77 while the buckets change,
+> so a re-derived partition looks unchanged unless the count that MOVED is reported — report that count.**
+> Nothing above this line is withdrawn; only the premise that the 55 were unexecutable is. See `BEN-476`.
+
 ## 1e. MIGRATION REFUSED — **REBUILD.** A migrated key satisfies the LETTER of `T4`/`R3` and defeats their PURPOSE
 
 **`cstat_data_only.py:452-457` fails `F1` closed on an absent `data_bootstrap_seed`** — *"absence is never
