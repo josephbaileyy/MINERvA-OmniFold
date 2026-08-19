@@ -361,6 +361,7 @@ docs/orchestration/RULING-20260817-lanec-pinned-readers-get-wrappers-not-copies.
 docs/orchestration/RULING-20260817-lanec-unity-factor-diagnostic-is-admissible.md	tracked	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	1	207	13931
 docs/orchestration/RULING-20260818-lanec-mii-offset-grid-and-member-count.md	tracked	ARCHIVAL	document		20260818	terminal		exact-path-only		yes	2	347	24439
 docs/orchestration/RULING-20260819-lanec-playbook-promotion-0818-0819.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only		yes	0	168	14248
+docs/orchestration/RULING-20260819-lanec-monitor-liveness-and-lane-owners.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only		yes	0	280	22520
 docs/orchestration/RUNBOOK-20260807-gbdt-closeout.md	tracked	ARCHIVAL	runbook		20260807	terminal		exact-path-only	docs/open-items/verify_open_items_restructure.py;nd-unfolding/p4_lib.py	yes	25	450	34284
 docs/orchestration/RUNS.template.tsv	tracked	DEAD	tabular-data			superseded	docs/orchestration/RUNS.tsv	never		yes	1	2	105
 docs/orchestration/RUNS.tsv	tracked	MACHINE	tabular-data	fe-fps-campaign		generated		exact-path-only	docs/orchestration/test_generate_live_state.py;docs/orchestration/wakerctl.py;nd-unfolding/sbatch_pet_train_fps_delta.sh	no	67	306	179022

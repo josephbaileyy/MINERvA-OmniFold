@@ -2,6 +2,7 @@ owner_id	display_name	accountable_holder	escalation	assignment_state
 joseph	Joseph	Joseph	-	assigned
 pet	PET lane	lane C	Joseph	assigned
 cstat	lane B	lane B	Joseph	assigned
+lane_e	lane E (execution / freezes / submissions)	lane E	Joseph	assigned
 gate6	Gate-6 Leg F / Leg X roles	Gate-6 owning roles	Joseph	assigned
 standard_p4	standard-P4 lane	standard-P4 role	Joseph	assigned
 storage	storage / Joseph	Joseph	-	assigned
