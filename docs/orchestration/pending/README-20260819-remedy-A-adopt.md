@@ -1,4 +1,28 @@
-# PENDING — remedy (A) on `adopt_unified_5d.py` is implemented, reverted, and BLOCKED
+# SUPERSEDED — DO NOT APPLY THIS PATCH AS WRITTEN
+
+> **C ruled at `783d648a` (§25): remedy (A) on the adopted roots is a NEW UNPINNED WRAPPER, not a stamp
+> inside the pinned writer. `adopt_unified_5d.py` IS NOT TOUCHED, BEN-106's binding stays intact, AND NO
+> RECEIPT IS RE-ISSUED.** The preservation was right and **the target was wrong** — so this patch is kept
+> as the specification of WHAT must be stamped, and must not be applied to `adopt_unified_5d.py`.
+>
+> **The conflict was not between a ruling and a freeze.** It was between C's §11j (stamp inside the
+> pinned writer) and C's own earlier `RULING-20260817-lanec-pinned-readers-get-wrappers-not-copies.md`
+> — *"new unpinned files … must be WRAPPERS THAT IMPORT THE PINNED MODULES, never copies of them"*.
+> **The earlier ruling wins.** So my request for a gate re-run was answering the wrong question: I asked
+> how to make the edit legal instead of whether it had to be an edit.
+>
+> **C's preconditions, verified before ruling:** `def main()` at `:72` guarded by `__main__` at `:229`, so
+> the module is importable; `:169` opens the output `RECREATE` and closes it, and ROOT reopens `UPDATE`
+> accepting new `TParameter` keys, so the stamp is a POST-STEP. **C prefers the SUBPROCESS form over the
+> import form** — it runs the exact bytes whose sha256 the receipt binds, so the wrapper cannot silently
+> diverge from what was verified. **And no receipt binds `analyze_universes_5d.py`**, so the third
+> writer's landed edit stands and needs no wrapper.
+>
+> **NOT YET BUILT.** The wrapper is the next piece of work on this axis; this file is its specification.
+
+---
+
+# ORIGINAL NOTE (why the direct edit was abandoned) — remedy (A) on `adopt_unified_5d.py`
 
 **Lane B, 2026-08-19.** The patch beside this file is complete and tested. It is not in the tree.
 
@@ -35,13 +59,16 @@ BEN-106's frozen binding are in direct conflict, and only a gate re-run resolves
    predeclared bar's own operand — stops being recomputable from retained bytes once §11g releases the
    intermediate.
 
-## What must happen, and by whom
+## What must happen, and by whom — **REVISED BY C's §25**
 
-- **BEN-106's stamp-verify gate re-run and its receipt re-issued.** Not a lane's edit, and explicitly not
-  a hash update.
-- Then the patch applies, and `ADOPTED_UTHROW`'s commented-out key block plus
-  `STAMP_COVERAGE["adopt_unified_5d.py"]["stamps"]` flip **in the same commit** — a writer change and a
-  table change are one change, in both directions.
+- **NOT a gate re-run.** Not a receipt re-issue. Not a hash update. C refused all three, and refused the
+  edit itself.
+- **Build a NEW UNPINNED WRAPPER** that invokes `adopt_unified_5d.py` **as a subprocess** and then reopens
+  the output in `UPDATE` to write the keys this patch specifies. The subprocess form is C's preference
+  because it runs the exact bytes the receipt binds, so provenance is not merely preserved but obviously so.
+- Then `ADOPTED_UTHROW`'s commented-out key block plus
+  `STAMP_COVERAGE["adopt_unified_5d.py"]["stamps"]` flip **in the same commit as the wrapper** — a writer
+  change and a table change are one change, in both directions.
 
 **Why the table was NOT left describing the intended state.** With those keys classified,
 `identity_is_checkable("adopted_uthrow.root")` returns `True` while the writer stamps nothing — a gate

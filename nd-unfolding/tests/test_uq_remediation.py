@@ -4088,6 +4088,56 @@ class OneReadRouteAndTheDeletedFastPath(unittest.TestCase):
         self.assertIn("mask_order_hash", flat, "and its other subjects must be named, so the discipline "
                                               "is not read as belonging to the deleted route")
 
+
+    def test_an_UNLISTED_key_FAILS_CLOSED_rather_than_skipping_completeness(self):
+        """LANE D FOUND THIS FAILING OPEN AGAINST REAL PyROOT, and the polarity is the whole finding.
+
+        `classes.classify()` fails CLOSED on an unclassified key -- "an unclassified key is exactly the one
+        a future writer added without telling the comparator, so it must fail rather than default". This,
+        THE DISCHARGE INSTRUMENT, defaulted to True via `r.get("complete", True)`: with no derived
+        expectation `complete` was never SET, so completeness was skipped, `ok` came out True, and THE
+        REPORT CARRIED NO INDICATION THAT ANYTHING HAD BEEN SKIPPED. Same module pair, opposite polarity,
+        and the permissive one was the one a gate rests on.
+
+        Live rather than academic: the table has seven names and member namespacing is the entire M(ii)
+        design, so a member artifact with a differently-named key would have been discharged on finiteness
+        alone.
+        """
+        class _Unlisted(OneReadRouteAndTheDeletedFastPath._TH2):
+            def GetName(self): return "hSomethingNobodyClassified"
+        r = self.B.read_one_matrix_for_gate2(_Unlisted(3, 4))
+        self.assertFalse(r["ok"], "an unlisted key must not yield a discharge")
+        self.assertIsNone(r["complete"], "and 'unknown' must be a VALUE, not a missing field")
+        self.assertIsNone(r["expected_elements"])
+        self.assertIn("NO DERIVED ELEMENT EXPECTATION", r["why"])
+        self.assertIn("hSomethingNobodyClassified", r["why"], "the offending key must be named")
+        self.assertTrue(r["finite"], "finiteness still measured -- it just cannot carry the discharge")
+
+    def test_a_LISTED_key_still_reports_both_fields_explicitly(self):
+        """CONTROL: the fix must not have made every read fail. D's real run on C_unified reported
+        expected_elements and complete=True explicitly, and that must stay true."""
+        import mii_root_payload_classes as classes
+        saved = dict(classes.EXPECTED_ELEMENTS)
+        classes.EXPECTED_ELEMENTS["C_unified"] = 12
+        self.addCleanup(lambda: (classes.EXPECTED_ELEMENTS.clear(),
+                                 classes.EXPECTED_ELEMENTS.update(saved)))
+        r = self.B.read_one_matrix_for_gate2(self._TH2(3, 4))
+        self.assertTrue(r["ok"], r)
+        self.assertEqual(r["expected_elements"], 12)
+        self.assertTrue(r["complete"])
+        self.assertNotIn("why", r, "a clean discharge needs no reason")
+
+    def test_the_two_polarities_now_AGREE_and_that_is_the_invariant(self):
+        """The generalisable form: within one module pair, an unknown key must be refused by BOTH the
+        classifier and the instrument. A gate whose classifier is strict and whose reader is permissive is
+        as strong as the reader."""
+        import mii_root_payload_classes as classes
+        with self.assertRaises(SystemExit):
+            classes.classify("sweep_universe.root", "hNobodyClassified")
+        class _Unlisted(OneReadRouteAndTheDeletedFastPath._TH2):
+            def GetName(self): return "hNobodyClassified"
+        self.assertFalse(self.B.read_one_matrix_for_gate2(_Unlisted(3, 4))["ok"])
+
     def test_gate2_is_NOT_claimed_discharged_by_this_test_file(self):
         """The discharge is one run against REAL data. A stub cannot supply it, and saying so is the
         difference between a labelled gap and a false claim."""

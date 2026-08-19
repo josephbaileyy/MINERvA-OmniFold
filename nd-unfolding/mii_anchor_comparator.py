@@ -308,17 +308,44 @@ def read_one_matrix_for_gate2(h):
     """
     nx, ny = h.GetNbinsX(), h.GetNbinsY()
     arr, which = _th2_content(h)
-    expected = classes.EXPECTED_ELEMENTS.get(h.GetName()) if hasattr(h, "GetName") else None
-    r = {"route": which, "nx": nx, "ny": ny, "elements": int(arr.size),
+    name = h.GetName() if hasattr(h, "GetName") else None
+    expected = classes.EXPECTED_ELEMENTS.get(name) if name else None
+    r = {"route": which, "name": name, "nx": nx, "ny": ny, "elements": int(arr.size),
          "digest": digest(arr), "finite": bool(np.all(np.isfinite(arr)))}
-    if expected is not None:
-        r["expected_elements"] = expected
-        r["complete"] = int(arr.size) == expected
-    r["ok"] = bool(r["finite"] and r.get("complete", True))
+
+    # FAILS CLOSED ON AN UNLISTED KEY. Lane D found this FAILING OPEN against real PyROOT, and the
+    # polarity is the tell: `classes.classify()` fails CLOSED on an unclassified key -- "an unclassified
+    # key is exactly the one a future writer added without telling the comparator, so it must fail rather
+    # than default" -- while this, THE DISCHARGE INSTRUMENT, defaulted to True. Same module pair, opposite
+    # polarity, and the permissive one was the one a gate rests on.
+    #
+    # The mechanism was `r.get("complete", True)`: with no derived expectation, `complete` was never SET,
+    # so the completeness check was skipped, `ok` came out True, AND THE REPORT CARRIED NO INDICATION THAT
+    # ANYTHING HAD BEEN SKIPPED -- the absence of the field was the only signal. That is BEN-450's
+    # absent-observation-versus-observed-absence, in the instrument.
+    #
+    # LIVE RATHER THAN ACADEMIC: the table has SEVEN names and member namespacing is the whole M(ii)
+    # design, so any member artifact carrying a differently-named key would have received a gate-2
+    # discharge that checked FINITENESS ALONE and reported ok=True.
+    if expected is None:
+        r["expected_elements"] = None
+        r["complete"] = None
+        r["ok"] = False
+        r["why"] = (f"NO DERIVED ELEMENT EXPECTATION for key {name!r}. Completeness is UNCHECKABLE here, "
+                    "so this read cannot support a gate-2 discharge. Add the key to "
+                    "`classes.EXPECTED_ELEMENTS` with its size DERIVED FROM THE WRITER'S OWN CONSTRUCTION "
+                    "LINE -- asserting a number not read out of a writer is how the wrong constant got "
+                    "into this module before. Refusing rather than defaulting, for the same reason "
+                    "`classify()` refuses an unclassified key.")
+        return r
+
+    r["expected_elements"] = expected
+    r["complete"] = int(arr.size) == expected
+    r["ok"] = bool(r["finite"] and r["complete"])
     if not r["ok"]:
         r["why"] = ("the read is not usable as a gate-2 discharge: "
                     + ("non-finite values present; " if not r["finite"] else "")
-                    + ("element count != the derived expectation; " if not r.get("complete", True) else ""))
+                    + ("element count != the derived expectation; " if not r["complete"] else ""))
     return r
 
 
@@ -594,7 +621,7 @@ def main(argv=None):
             _fail(f"no key {keyname!r} in {path}")
         r = read_one_matrix_for_gate2(h)
         print(f"[gate2-read] {path}:{keyname}")
-        for k in ("ok", "route", "nx", "ny", "elements", "expected_elements", "complete",
+        for k in ("ok", "route", "name", "nx", "ny", "elements", "expected_elements", "complete",
                   "finite", "digest", "why"):
             if k in r:
                 print(f"[gate2-read]   {k} = {r[k]}")
