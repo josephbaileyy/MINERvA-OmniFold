@@ -295,6 +295,7 @@ def add_watch(ctx: Ctx, watch: dict) -> None:
     watch.setdefault("armed_by", owner_string())
     watch.setdefault("unreliable", 0)
     validate_watch(ctx, watch)
+    check_array_spec_against_slurm(ctx, watch)
     save_watch(ctx, watch)
     ctx.ledger(f"evt-{watch['watch_id']}", "watch-armed", f"kind={watch['kind']}")
 
@@ -675,7 +676,412 @@ def _write_tick_receipt(ctx: Ctx, errors: list[dict] | None = None) -> None:
 # Dispatch
 
 
-def preflight(ctx: Ctx, quiet: bool = False) -> list[str]:
+# ---------------------------------------------------------------------------
+# Control-plane assessment (read-only; consumed by `preflight --` from the CLI)
+#
+# On 2026-08-19 three controls failed together and every one of them was silent:
+#   (1) scron job 56585597 -- the `wakerctl tick` job -- had been PENDING with
+#       Priority=0, Reason="user env retrieval failed requeued held" and
+#       StartTime=Unknown since 2026-08-17T15:05Z (Restarts=1869). wakerctl only
+#       ever read the crontab TEXT (`read_scrontab()`), so it confirmed the
+#       SCHEDULE and never asked Slurm whether the job that schedule creates was
+#       runnable. Presence of a schedule is not execution of a schedule.
+#   (2) watch `gate5-do-train-57266000-r2` was armed with params.tasks="1" while
+#       array 57266000 has only task 0. `expand_spec` reads `tasks` as a task-id
+#       SPEC, not a count, so the watch was armed on a task that does not exist:
+#       build_snapshot -> overall=UNOBSERVED, unknown_tasks=[1], which routes to
+#       unreliable_step() forever and can only ever reach `monitor-error`.
+#   (3) the session that "verified" watch health used `grep -c '...armed'`, which
+#       counts "disarmed" too. State comparisons here go through `watch_state()`
+#       and match the WHOLE FIELD.
+#
+# Every function below is read-only and takes its Slurm access through
+# `ctx.runner`, so all of it is unit-testable on a host with no Slurm. When it
+# cannot reach Slurm it returns a `NO EVIDENCE:` line, never silence: a control
+# that reports green because it could not run is the failure class above.
+
+NO_EVIDENCE_PREFIX = "NO EVIDENCE"
+CRON_QOS = "cron"
+DEFAULT_CRON_STALE_MULTIPLIER = 6.0
+# squeue prints these for "there is no start time", i.e. nothing is scheduled.
+NO_START_TOKENS = {"", "N/A", "NONE", "UNKNOWN", "(NULL)"}
+RUNNABLE_JOB_STATES = {
+    "PENDING",
+    "RUNNING",
+    "COMPLETING",
+    "CONFIGURING",
+    "REQUEUED",
+    "REQUEUE_FED",
+    "RESIZING",
+    "SUSPENDED",
+}
+
+
+def no_evidence(detail: str) -> str:
+    return f"{NO_EVIDENCE_PREFIX}: {detail}"
+
+
+def watch_state(watch: dict) -> str:
+    """The watch's state as a WHOLE FIELD, for equality comparison only.
+
+    Never test a watch state with a substring: "disarmed" contains "armed", and a
+    `grep -c '<job>.*armed'` health check has already reported 2 armed watches on a
+    job that had one disarmed and one armed (2026-08-19).
+    """
+    return str(watch.get("state") or "").strip()
+
+
+def is_armed(watch: dict) -> bool:
+    return watch_state(watch) == "armed"
+
+
+def read_scrontab_lines(ctx: Ctx) -> tuple[list[str] | None, str]:
+    """Like read_scrontab() but distinguishes "empty table" from "could not read".
+
+    `read_scrontab()` returns [] on failure, which is indistinguishable from a user
+    with no crontab -- the null-as-absent shape. Callers that assess health need
+    those apart, so this returns None only when the query itself failed.
+    """
+    result = ctx.runner(["scrontab", "-l"])
+    text = (result.stdout or "").strip()
+    if result.returncode != 0:
+        if "no crontab" in text.lower():
+            return [], text[:200]
+        return None, f"scrontab -l rc={result.returncode}: {text[:200]}"
+    return (result.stdout or "").splitlines(), ""
+
+
+def managed_block_lines(lines: list[str]) -> list[str]:
+    """The contents of the wakerctl-managed block, markers excluded."""
+    inside, block = False, []
+    for line in lines:
+        stripped = line.strip()
+        if stripped == SCRON_BEGIN:
+            inside = True
+            continue
+        if stripped == SCRON_END:
+            inside = False
+            continue
+        if inside:
+            block.append(line)
+    return block
+
+
+def minute_field_interval(field: str) -> int | None:
+    """Minutes between two firings of a cron minute field, or None if unparseable.
+
+    Handles the two forms this block is seen in: the `*/5` we write, and the
+    `0,5,10,...` list Slurm echoes back in `CrontabSpec`.
+    """
+    field = field.strip()
+    if field == "*":
+        return 1
+    if field.startswith("*/"):
+        step = field[2:]
+        return int(step) if step.isdigit() and int(step) > 0 else None
+    parts = [part.strip() for part in field.split(",") if part.strip()]
+    if not parts or not all(part.isdigit() for part in parts):
+        return None
+    values = sorted({int(part) for part in parts})
+    if len(values) == 1:
+        return 60
+    gaps = [b - a for a, b in zip(values, values[1:])]
+    gaps.append(60 - values[-1] + values[0])
+    return min(gap for gap in gaps if gap > 0) or None
+
+
+def cron_interval_minutes(lines: list[str]) -> int | None:
+    for line in managed_block_lines(lines):
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        fields = stripped.split()
+        if len(fields) < 6:
+            continue
+        return minute_field_interval(fields[0])
+    return None
+
+
+def squeue_self_rows(ctx: Ctx) -> tuple[list[dict] | None, str]:
+    """This user's queued jobs, or None when squeue could not be reached.
+
+    REASON IS THE LAST FORMAT FIELD ON PURPOSE: it is the only one that can itself
+    contain the '|' separator, so it is parsed as the remainder.
+    """
+    fields = ["%i", "%T", "%Q", "%S", "%q", "%j", "%r"]
+    result = ctx.runner(["squeue", "--me", "-h", "-o", "|".join(fields)])
+    if result.returncode != 0:
+        return None, f"squeue rc={result.returncode}: {(result.stdout or '').strip()[:200]}"
+    rows = []
+    for raw in (result.stdout or "").splitlines():
+        if not raw.strip():
+            continue
+        parts = raw.split("|", len(fields) - 1)
+        if len(parts) < len(fields) - 1:
+            continue
+        parts.extend([""] * (len(fields) - len(parts)))
+        rows.append(
+            {
+                "job_id": parts[0].strip(),
+                "state": parts[1].strip().upper(),
+                "priority": parts[2].strip(),
+                "start_time": parts[3].strip(),
+                "qos": parts[4].strip(),
+                "name": parts[5].strip(),
+                "reason": parts[6].strip(),
+            }
+        )
+    return rows, ""
+
+
+def _reason_tokens(reason: str) -> set[str]:
+    cleaned = reason.lower()
+    for character in "_,;:()":
+        cleaned = cleaned.replace(character, " ")
+    return set(cleaned.split())
+
+
+def cron_job_problems(row: dict) -> list[str]:
+    """Why this QOS=cron job cannot be relied on to run. Empty means runnable."""
+    problems: list[str] = []
+    label = f"cron job {row.get('job_id', '?')} (name={row.get('name', '?')!r})"
+    state = row.get("state", "")
+    reason = row.get("reason", "")
+    if "held" in _reason_tokens(reason):
+        problems.append(
+            f"{label} is HELD: state={state} reason={reason!r}. The tick schedule exists "
+            "and nothing executes it; `scontrol release` (a human decision) is required."
+        )
+    priority = row.get("priority", "")
+    if priority.strip().lstrip("-").isdigit() and int(priority) == 0:
+        problems.append(
+            f"{label} has Priority=0, so Slurm will never schedule it: state={state} reason={reason!r}."
+        )
+    if state and state not in RUNNABLE_JOB_STATES:
+        problems.append(f"{label} is in non-runnable state {state}: reason={reason!r}.")
+    start = row.get("start_time", "").strip().upper()
+    if state == "PENDING" and start in NO_START_TOKENS:
+        # A healthy scron job is PENDING with its next cron slot as START_TIME.
+        # No start time at all means no next firing is planned.
+        problems.append(
+            f"{label} is PENDING with no eligible start time (START_TIME={row.get('start_time', '')!r}): "
+            f"reason={reason!r}."
+        )
+    return problems
+
+
+def check_cron_job_runnable(ctx: Ctx, expect_job: bool = True) -> list[str]:
+    """Ask SLURM -- not the crontab text -- whether the managed tick can run."""
+    if not expect_job:
+        return []
+    rows, detail = squeue_self_rows(ctx)
+    if rows is None:
+        return [no_evidence(f"cannot assess whether the tick job is runnable: {detail}")]
+    cron_rows = [row for row in rows if row["qos"] == CRON_QOS]  # whole field, not substring
+    python = ctx.python_bin()
+    named = [row for row in cron_rows if row["name"] in {python, Path(python).name}]
+    candidates = named or cron_rows
+    if not candidates:
+        return [
+            "the managed scrontab block is installed but Slurm shows no QOS=cron job for this "
+            "user: the schedule exists and nothing executes it"
+        ]
+    problems: list[str] = []
+    for row in candidates:
+        problems.extend(cron_job_problems(row))
+    return problems
+
+
+def check_tick_freshness(ctx: Ctx, interval_minutes: int | None) -> list[str]:
+    """Staleness of last-tick.json -- the instrument-independent liveness signal.
+
+    This is deliberately not tied to any Slurm Reason string: whatever wedges the
+    ticker next time, the receipt stops advancing, and that is what this measures.
+    """
+    path = ctx.state_dir / "last-tick.json"
+    if interval_minutes is None:
+        return [no_evidence(f"tick interval unknown, so staleness of {path} cannot be bounded")]
+    multiplier = float(ctx.config.get("cron_stale_multiplier", DEFAULT_CRON_STALE_MULTIPLIER))
+    limit = interval_minutes * 60.0 * multiplier
+    if not path.exists():
+        return [f"no tick receipt at {path}: no tick has ever completed against this state dir"]
+    try:
+        receipt = read_json(path)
+        age = ctx.now() - parse_utc(str(receipt["at_utc"]))
+    except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
+        return [f"unreadable tick receipt {path}: {type(exc).__name__}: {exc}"]
+    if age > limit:
+        return [
+            f"the ticker is STALE: last tick {receipt.get('at_utc')} is {age / 60:.0f} min old, "
+            f"past the {limit / 60:.0f} min bound ({interval_minutes}m interval x {multiplier:g}). "
+            "No watch has been evaluated since then."
+        ]
+    return []
+
+
+def check_cron_ticker(ctx: Ctx) -> list[str]:
+    problems: list[str] = []
+    lines, detail = read_scrontab_lines(ctx)
+    interval, expect_job = None, False
+    if lines is None:
+        problems.append(no_evidence(f"cannot read the scrontab: {detail}"))
+    elif not managed_block_lines(lines):
+        problems.append(
+            "the wakerctl-managed scrontab block is absent: nothing schedules `wakerctl tick`"
+        )
+    else:
+        expect_job = True
+        interval = cron_interval_minutes(lines)
+        if interval is None:
+            problems.append(
+                "the managed scrontab block has no parseable schedule line; tick staleness "
+                "cannot be bounded from it"
+            )
+    problems.extend(check_cron_job_runnable(ctx, expect_job=expect_job))
+    problems.extend(check_tick_freshness(ctx, interval))
+    return problems
+
+
+def watch_subject_tasks(watch: dict) -> tuple[str, list[int]]:
+    """(as-written spec, expanded task ids) for a Slurm-subject watch.
+
+    `params.tasks` is a task-id SPEC and never a count: expand_spec("1") == [1],
+    which is task index 1, not "one task". That reading is exactly how
+    gate5-do-train-57266000-r2 came to watch a task its array does not have.
+    """
+    params = watch.get("params") or {}
+    if watch.get("kind") == "slurm-array":
+        raw = str(params.get("tasks", ""))
+        return raw, slurm_array_status.expand_spec(raw)
+    # A non-array job is probed as synthetic task 0, the same convention
+    # slurm_array_status.task_ids() uses.
+    return "(non-array)", [0]
+
+
+def watch_subject_problems(ctx: Ctx, watch: dict) -> list[str]:
+    """Is this armed watch's subject OBSERVABLE? No existing control asks this."""
+    kind = watch.get("kind")
+    if kind not in {"slurm-job", "slurm-array"}:
+        return []
+    wid = watch.get("watch_id") or "<no-watch_id>"
+    params = watch.get("params") or {}
+    job_id = str(params.get("job_id", "")).strip()
+    if not job_id:
+        return [f"watch {wid}: armed {kind} watch has no params.job_id"]
+    try:
+        raw, tasks = watch_subject_tasks(watch)
+    except ValueError as exc:
+        return [f"watch {wid}: params.tasks={params.get('tasks')!r} is not a valid task spec: {exc}"]
+    if not tasks:
+        return [f"watch {wid}: params.tasks={raw!r} expands to no tasks; the watch has no subject"]
+    snapshot = slurm_array_status.build_snapshot(
+        job_id, tasks, runner=lambda argv: _text_runner(ctx, argv)
+    )
+    if snapshot.get("observer_errors"):
+        return [
+            no_evidence(
+                f"watch {wid}: cannot observe job {job_id}: "
+                + "; ".join(str(item) for item in snapshot["observer_errors"])
+            )
+        ]
+    unknown = snapshot.get("unknown_tasks") or []
+    if unknown:
+        return [
+            f"watch {wid} ({kind}) is armed on a subject that DOES NOT EXIST: job {job_id} "
+            f"requested tasks {raw!r} -> {tasks}, and Slurm has no {unknown}. overall="
+            f"{snapshot.get('overall')}. This watch can never report completion; it can only "
+            "count unreliable ticks up to max_unreliable and emit monitor-error."
+        ]
+    return []
+
+
+def check_armed_watch_subjects(ctx: Ctx) -> list[str]:
+    problems: list[str] = []
+    for watch in load_watches(ctx):
+        if not is_armed(watch):  # whole-field equality; "disarmed" must not match
+            continue
+        wid = watch.get("watch_id") or "<no-watch_id>"
+        try:
+            problems.extend(watch_subject_problems(ctx, watch))
+        except Exception as exc:  # noqa: BLE001 -- one unassessable watch must not hide the rest
+            problems.append(
+                no_evidence(f"watch {wid}: subject check raised {type(exc).__name__}: {exc}")
+            )
+    return problems
+
+
+def slurm_known_tasks(ctx: Ctx, job_id: str) -> tuple[set[int] | None, str]:
+    """Task ids Slurm actually knows for job_id; None when neither query worked.
+
+    An EMPTY set is a real answer ("Slurm has no record of this job"), distinct from
+    None ("we could not look"), and the caller must treat them differently.
+    """
+    known: set[int] = set()
+    saw_any_query = False
+    for argv in (
+        ["squeue", "-h", "-r", "-j", job_id, "-o", "%i"],
+        ["sacct", "-X", "-j", job_id, "-n", "-P", "-o", "JobID"],
+    ):
+        result = ctx.runner(argv)
+        if result.returncode != 0:
+            continue
+        saw_any_query = True
+        for raw in (result.stdout or "").splitlines():
+            # Take the first field: these two queries ask for JobID only, but a
+            # caller-supplied runner (or a future --format) may carry more columns,
+            # and a whole line would silently parse as "no tasks known".
+            token = raw.strip().split("|")[0].strip()
+            if not token:
+                continue
+            with contextlib.suppress(ValueError):
+                known.update(slurm_array_status.task_ids(job_id, token))
+    if not saw_any_query:
+        return None, "neither squeue nor sacct could be queried"
+    return known, ""
+
+
+def check_array_spec_against_slurm(ctx: Ctx, watch: dict) -> None:
+    """Reject at ADD time an array watch whose tasks the array does not have.
+
+    Rejects only on POSITIVE evidence: Slurm must know some task of this job and not
+    the requested ones. "Job invisible" and "Slurm unreachable" both arm with a
+    NO EVIDENCE note on stderr rather than blocking -- a watch is often armed for a
+    job whose accounting record has not appeared yet, and preflight remains the net.
+    """
+    if watch.get("kind") != "slurm-array":
+        return
+    job_id = str((watch.get("params") or {}).get("job_id", "")).strip()
+    _, tasks = watch_subject_tasks(watch)
+    known, detail = slurm_known_tasks(ctx, job_id)
+    if known is None or not known:
+        suffix = f" ({detail})" if detail else ""
+        print(
+            "[watch-add] "
+            + no_evidence(
+                f"job {job_id} is not visible to Slurm from here{suffix}; "
+                f"tasks={sorted(tasks)} were NOT verified against the array"
+            ),
+            file=sys.stderr,
+        )
+        return
+    missing = sorted(set(tasks) - known)
+    if missing:
+        raise WakerError(
+            f"array {job_id} has no task {missing} (Slurm knows {sorted(known)}); "
+            f"params.tasks is a task-id spec, not a count -- a watch on a task the array "
+            f"does not have can never fire"
+        )
+
+
+def preflight(ctx: Ctx, quiet: bool = False, control_plane: bool = False) -> list[str]:
+    """Environment checks, plus control-plane checks when explicitly requested.
+
+    `control_plane` DEFAULTS OFF because dispatch_one() uses this function as a
+    fail-closed gate: making a dispatch depend on squeue reachability or on some
+    unrelated watch's subject would strand real events, and would add a Slurm round
+    trip per watch to every dispatch. The CLI turns it on; the dispatch path is
+    byte-for-byte unchanged.
+    """
     problems: list[str] = []
     python = ctx.python_bin()
     if not Path(python).is_file() or not os.access(python, os.X_OK):
@@ -693,11 +1099,18 @@ def preflight(ctx: Ctx, quiet: bool = False) -> list[str]:
             problems.append(f"root provider home missing: {home}")
     except (WakerError, agentctl.AgentCtlError) as exc:
         problems.append(str(exc))
+    if control_plane:
+        # NO EVIDENCE lines stay in `problems` on purpose: an unreachable Slurm must
+        # make this command non-zero, because "could not look" printed as PASS is the
+        # exact shape of the failures this section exists to end.
+        problems.extend(check_cron_ticker(ctx))
+        problems.extend(check_armed_watch_subjects(ctx))
     if not quiet:
         for problem in problems:
             print(f"[preflight] {problem}", file=sys.stderr)
         if not problems:
-            print(f"[preflight] PASS root={binary} python={python}")
+            scope = "checked" if control_plane else "NOT CHECKED (--env-only)"
+            print(f"[preflight] PASS root={binary} python={python} control-plane={scope}")
     return problems
 
 
@@ -1381,13 +1794,22 @@ def main() -> int:
         ("dispatch", "One claim/act pass over spooled events"),
         ("tick", "scan + dispatch once"),
         ("status", "Show watches, events, and tick liveness"),
-        ("preflight", "Validate binaries, root profile, and CODEX_HOME"),
         ("smoke", "Isolated end-to-end proof with a fake provider"),
         ("uninstall-cron", "Remove the managed scrontab block"),
     ):
         sub = commands.add_parser(name, help=help_text)
         if name in {"tick", "scan", "dispatch"}:
             sub.add_argument("--quiet", action="store_true")
+
+    pre = commands.add_parser(
+        "preflight",
+        help="Validate binaries, root profile, CODEX_HOME, the cron ticker, and armed watch subjects",
+    )
+    pre.add_argument(
+        "--env-only",
+        action="store_true",
+        help="Skip the cron-ticker and watch-subject checks (the subset the dispatch path uses)",
+    )
 
     disarm = commands.add_parser("watch-disarm", help="Disarm a watch without deleting it")
     disarm.add_argument("--id", required=True)
@@ -1448,7 +1870,7 @@ def main() -> int:
         elif args.command == "status":
             print(json.dumps(status(ctx), indent=2))
         elif args.command == "preflight":
-            return 1 if preflight(ctx) else 0
+            return 1 if preflight(ctx, control_plane=not args.env_only) else 0
         elif args.command == "install-cron":
             install_cron(ctx, args.interval_minutes)
             print(f"installed scrontab tick every {args.interval_minutes}m")
