@@ -40,13 +40,44 @@ python 3.12.2), so EVERY ROOT-TOUCHING PATH IN THIS FILE IS CLUSTER-UNVERIFIED. 
 `_read_int_scalars`, `_read_double_scalar`, `_read_diagonal`, `_stamp_output`, and `main`'s body
 from the child launch onward
 have never been executed. What HAS been executed locally is every pure function in this module and
-its test file. No ROOT test double is provided: a stub that cannot do what pyROOT does would be
-evidence about the stub (see the campaign's fixture rule), and the three properties that actually
-need proving -- that a `RECREATE`d-and-closed file reopens `UPDATE`, that new `TParameter` keys are
-accepted on reopen, and that `TFile.Open` re-points the global current directory -- are properties
-of ROOT, not of anything a fake could demonstrate. The first two are C's, verified by C before
-ruling; the third is `adopt_unified_5d.py:97-102`'s own measured warning and is why every read here
-completes and closes before the output is opened.
+its test file.
+
+**THERE *IS* A ROOT TEST DOUBLE, and this paragraph said there was not until 2026-08-20.** It is
+`_FakeROOTModule` in `tests/test_remedy_a_adopt_wrapper.py`, injected through `sys.modules["ROOT"]`
+for the duration of a test, and lane C's round-2 verdict rules it *honest instrumentation kept with
+a stated scope* -- the alternative was permanent ZERO coverage on `_stamp_output`, which is where
+this campaign's own precedent puts the damage (`adopt_unified_5d.py:212-219`: "provenance stamped"
+printed while nine writes failed into a read-only file). It bought measured power: every one of
+round 1's five surviving ROOT-path mutations is now caught. **The correction is recorded rather than
+quietly applied, because the false sentence was written by the same change that falsified it** -- an
+earlier revision of this paragraph was edited to rename `_read_scalars` into `_read_int_scalars` /
+`_read_double_scalar` while the clause two lines below it, the one denying that any double existed,
+was left standing. A reader who believes it concludes that 50 green tests are double-free pure logic.
+That is `BEN-469`'s shape applied to a caveat instead of to a diagnostic: **a caveat is a claim, and a
+stale claim about what is NOT established is the most load-bearing kind to get wrong.** (The removed
+clause is quoted verbatim in `BEN-510`'s long form and deliberately NOT reproduced here: a file that
+repeats a false sentence in order to disown it can no longer be swept for it -- `BEN-482`, a text
+search cannot tell a claim from prose about the claim, and the check that pins this paragraph is a
+text search.)
+
+WHAT THE DOUBLE MODELS: that `TFile.Open` re-points the current directory, and that `Write()` lands
+in whatever directory is current. Those are modelled *so that this wrapper's own disciplines have
+something to be exercised against* -- read-then-close before the output is opened, and `fo.cd()`
+before writing. It also models `Get()` returning a falsy value for an absent key, `IsZombie()`,
+`IsWritable()`, and `TParameter.GetVal()` returning the value it was constructed with, which is
+precisely the one-line contract the D1 defect crossed.
+
+WHAT IT ESTABLISHES: facts about THIS WRAPPER's decisions given the answers PyROOT's API is
+documented to give.
+
+WHAT IT DOES NOT ESTABLISH -- and this is the half of the old paragraph worth keeping, because it
+was right: nothing about ROOT. That a `RECREATE`d-and-closed file reopens `UPDATE`, that new
+`TParameter` keys are accepted on reopen, that `TFile.Open` really re-points `gDirectory`, that
+`f.Get(absent)` is really falsy, and that `GetNbinsX()` is 10,694 on a real member intermediate are
+all properties of ROOT. **The double models the third and the fourth and CONFIRMS NEITHER**; if
+PyROOT differs, these tests still pass and this wrapper can still be wrong. The first two are C's,
+verified by C before ruling; the third is `adopt_unified_5d.py:97-102`'s own measured warning and is
+why every read here completes and closes before the output is opened.
 
 THE ONE PLACE THE WRAPPER FORM IS *WORSE* THAN THE IN-FILE EDIT, stated because the specification
 says the opposite and the specification is right only about the edit. The patch justifies
@@ -97,6 +128,10 @@ BINDING_RECEIPT = os.path.join(_REPO_ROOT, "docs", "orchestration", "state",
 #: The identity scalars each input leg is expected to carry. Written by `sweep_bank_5d.py:285-287`
 #: and propagated to the combined intermediate by `analyze_universes_5d.py:276-277` (g1 leg), and by
 #: `unified_throw_cov.py:545,550-551` (g2 leg).
+#: ADDING A KEY HERE IS A TRIGGER, NOT A ONE-LINE CHANGE. All three are genuine `TParameter("int")`,
+#: which is the ONLY reason `_read_int_scalars`'s value-based guard is safe (lane C's round-2
+#: residual -- read that function's comment). A fourth key must be shown to be an int on the bytes
+#: side first. `Q1_TheIntReaderGuardIsVALUE_BASED` fails if this tuple changes, and says so.
 LEG_IDENTITY_KEYS = ("estimator_seed", "est_seed_offset", "est_seed_offset_declared")
 
 #: The leg -> group map is DERIVED from `seed_offset_policy.LEG_BASELINES`, never retyped. `g1` is the
@@ -337,21 +372,42 @@ def assert_diag_matches_sqrt_tr_old(trace_raw, sqrt_tr_old, rtol=TRACE_RTOL):
         # three plausible causes, only one of which is the intermediate.
         # SO IT REPORTS A DISAGREEMENT, ORDERS THE CAUSES BY LIKELIHOOD WITH THIS WRAPPER FIRST, AND
         # SAYS WHAT NOT TO DO ABOUT IT.
+        # TWO ADDITIONS FROM LANE C's ROUND-2 RESIDUALS, and each fixes a way the message misled.
+        # (a) IT SAID "NOTHING HAS BEEN WRITTEN", WHICH IS TRUE OF THE STAMP AND FALSE OF THE PRODUCT:
+        #     the child has already run and --out exists, unstamped. A reader who believed the old
+        #     sentence would go looking for a product that is already on disk.
+        # (b) IT OFFERED NO DISCRIMINATOR FOR CAUSE (3). Causes (1) and (2) are cheaply eliminable, so
+        #     (3) is what a reader is left holding -- and (3) is the one that points at the 41.44 GB
+        #     file. A message that is SAFE but not DIAGNOSTIC leaves the reader with the expensive
+        #     hypothesis and no way to kill it, which is how a do-not-delete banner eventually loses.
+        #     Both discriminators below are READS.
         _fail(f"the two readings of the OLD combined covariance's trace DISAGREE.\n"
               f"        this wrapper re-read diag(hCov_combined5d_total) -> trace {got!r}\n"
               f"        the child stamped {TRACE_ANCHOR_KEY}={float(sqrt_tr_old)!r} -> square "
               f"{want!r}   (rtol={rtol})\n"
-              "        NOTHING HAS BEEN WRITTEN. This is a disagreement between two reads, and it "
-              "does NOT establish which side is wrong. In order of likelihood:\n"
+              "        NO STAMP HAS BEEN WRITTEN -- and that is NOT the same as nothing having "
+              "happened. The child ALREADY RAN and its product at --out EXISTS, ~892 MB and "
+              "UNSTAMPED: it carries no member identity and no "
+              f"{STAMPED_HISTOGRAM_KEY}, so the class table fails closed on it. This wrapper added "
+              "nothing to it and removed nothing from it.\n"
+              "        This is a disagreement between two reads, and it does NOT establish which "
+              "side is wrong. In order of likelihood:\n"
               "          (1) THIS WRAPPER read the wrong key, the wrong histogram, or coerced the "
               "anchor's type -- the last one has already happened once and is why this check exists "
               "in this form;\n"
               "          (2) --combined does not name the file the child was given, so two different "
               "matrices are being compared and both are intact;\n"
               "          (3) the combined intermediate changed between the child's read and this one.\n"
+              "        TO TELL (3) FROM (1) AND (2), TWO READS AND NO WRITES: compare --combined's "
+              "mtime and size against the child's own log line for that path -- an mtime AFTER the "
+              "child started is the only thing that makes (3) live, and an mtime before it kills (3) "
+              f"outright; then re-run the child alone and see whether it reports the SAME "
+              f"{TRACE_ANCHOR_KEY} again -- if it now agrees with {got!r} the file moved under it, and "
+              "if it reproduces its old value the file did not and the fault is in here.\n"
               "        *** DO NOT DELETE, REGENERATE OR RE-STAGE THE COMBINED INTERMEDIATE ON THE "
               "STRENGTH OF THIS MESSAGE. *** It is 41.44 GB and ~2.087 TiB to rebuild, and causes (1) "
-              "and (2) leave it perfectly good. Check the two paths and this wrapper's reads first.")
+              "and (2) leave it perfectly good. Check the two paths and this wrapper's reads first. "
+              "Every step above is a READ; none of them needs the file changed or removed.")
     return True
 
 
@@ -428,7 +484,35 @@ def _read_int_scalars(path, keys):
             # reader is used for is a TParameter("int") -- sweep_bank_5d.py:285-287,
             # analyze_universes_5d.py:277, unified_throw_cov.py:545,550-551 -- so a non-integral value
             # means the caller has the wrong reader, which is exactly what happened.
-            if float(raw) != int(raw):
+            #
+            # ============ THIS GUARD IS VALUE-BASED, NOT TYPE-BASED. READ THIS BEFORE REUSING. =========
+            # Lane C's round-2 residual, ruled SAFE ON THE MERITS with a TRIGGER rather than a date:
+            # an INTEGRAL-VALUED double still passes here and is still coerced silently. The real case
+            # is not hypothetical -- `sqrt_tr_old == 0.0` for a degenerate all-zero combined covariance
+            # is a `TParameter("double")` this guard would wave through. It is unreachable TODAY only
+            # because this reader has exactly two call sites and serves only LEG_IDENTITY_KEYS, all
+            # three of which are genuine `TParameter("int")`.
+            #   THE TRIGGER IS A TEST, NOT THIS COMMENT: `Q1_TheIntReaderGuardIsVALUE_BASED` in
+            #   tests/test_remedy_a_adopt_wrapper.py FAILS the moment a third call site appears or a
+            #   key is added to LEG_IDENTITY_KEYS, and its message says what to do. A narrated trigger
+            #   is read by the last person who needs it; a failing test is read by the first.
+            #   THE COMPLETE FIX asserts the object's ROOT CLASS (`TParameter<int>` vs
+            #   `TParameter<double>`) instead of its value -- and it is DELIBERATELY NOT DONE HERE,
+            #   because no double in this repository can test a ROOT-class assertion, so it would move
+            #   the only discrimination on the production path to the cluster-unverified side as an
+            #   UNTESTED NARROWING that fails closed on every legitimate key if PyROOT's class string
+            #   is not what I guessed. That trade is the decision; it is recorded, not made silently.
+            # A NON-FINITE VALUE FAILS CLOSED NAMING THE KEY. `int(inf)` raises OverflowError and
+            # `int(nan)` raises ValueError, and an uncaught traceback names no key -- unacceptable in
+            # the one wrapper whose whole D1 lesson is what a failure SAYS (BEN-469).
+            try:
+                integral = float(raw) == int(raw)
+            except (OverflowError, ValueError) as exc:
+                _fail(f"{path}: key {k!r} holds {raw!r}, which is not a finite number "
+                      f"({type(exc).__name__}). This reader is for TParameter(\"int\") keys and "
+                      "cannot represent it. Refusing here so the failure names the KEY rather than "
+                      "arriving as an uncaught traceback that names nothing.")
+            if not integral:
                 _fail(f"{path}: key {k!r} holds the NON-INTEGRAL value {raw!r}. This reader is for "
                       "TParameter(\"int\") keys and would silently TRUNCATE it. Use "
                       "`_read_double_scalar` for a double-valued key -- truncating one is how the "

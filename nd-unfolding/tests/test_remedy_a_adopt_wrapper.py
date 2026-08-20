@@ -5,12 +5,25 @@ WHAT THESE TESTS DO AND DO NOT ESTABLISH, stated first because the boundary is t
 in this file. `import ROOT` raises `ModuleNotFoundError` on the lane-B host, so the wrapper's ROOT
 path -- `_read_int_scalars`, `_read_double_scalar`, `_read_diagonal`, `_stamp_output` -- is not
 exercised against REAL PyROOT here.
-IS NOT EXERCISED HERE AT ALL. No ROOT double is provided, deliberately: the three properties that
-would need proving (a `RECREATE`d-and-closed file reopens `UPDATE`; new `TParameter` keys are accepted
-on reopen; `TFile.Open` re-points the global current directory) are properties of PyROOT, and a stub
-that cannot do what PyROOT does would be evidence about the stub. What IS proved here is every
-decision the wrapper makes: which argv the child gets, which keys are derived, when the cross-member
-refusal fires and when it must not, and that the pinned bytes are untouched.
+
+**A ROOT DOUBLE *IS* PROVIDED, and the paragraph that used to sit here said the opposite.** It is
+`_FakeROOTModule` below, and it arrived in round 2 for a measured reason: without it those four
+functions had ZERO coverage and five of lane C's ROOT-path mutations were uncatchable, including
+deleting the entire TOCTOU closure call from `main`. This docstring denied that any double existed
+for a day AFTER the double was added -- the same stale caveat as the wrapper's own `:43`, in the file
+that contains the double, and the denial is quoted only in `BEN-510`'s long form because a file that
+reproduces the false sentence to disown it cannot be swept for it (`BEN-482`). Corrected 2026-08-20;
+see `BEN-510`, whose
+mechanism is this one's sibling: **a caveat is a claim, and it must be pinned by a check or it rots
+in the direction that flatters the suite.**
+
+WHAT IS STILL TRUE, and it is the half worth keeping: the three properties that would need proving --
+that a `RECREATE`d-and-closed file reopens `UPDATE`, that new `TParameter` keys are accepted on
+reopen, and that `TFile.Open` re-points the global current directory -- are properties of PyROOT. The
+double MODELS the third and CONFIRMS NONE of them, and if PyROOT differs these tests still pass and
+the wrapper can still be wrong. What IS proved here is every decision the wrapper makes: which argv
+the child gets, which keys are derived, when the cross-member refusal fires and when it must not, and
+that the pinned bytes are untouched.
 
 The preconditions the specification asserts are RE-DERIVED here rather than trusted -- including one
 the specification gets wrong (`docs/orchestration/pending/README-...md:57` says `diag_comb` is at
@@ -497,10 +510,21 @@ class _FakeTH2D:
 
 
 class _FakeTFile:
+    """A `TFile` stand-in that RECORDS ITS OWN OPEN/CLOSE EVENTS, which is lane C's N4.
+
+    `_path` is stamped on by `_FakeROOTModule.__init__`, so a file object knows which path it is
+    reachable under and a close can be attributed. `Close()` appends to the module's event log rather
+    than only setting a flag: the wrapper's stated discipline is an ORDERING ("every read completes
+    and closes BEFORE the output is opened") and a per-file boolean cannot express an ordering. C
+    removed `f.Close()` from `_read_diagonal` and all 50 tests stayed green precisely because the only
+    observable was a flag nobody read.
+    """
+
     def __init__(self, keys, writable=True, zombie=False):
         self._keys = dict(keys)
         self._writable, self._zombie = writable, zombie
         self.closed = False
+        self._path = None
 
     def Get(self, k):
         return self._keys.get(k)          # None is falsy, which is how the wrapper tests presence
@@ -517,6 +541,8 @@ class _FakeTFile:
 
     def Close(self):
         self.closed = True
+        if _FAKE_ROOT is not None:
+            _FAKE_ROOT.events.append(("close", self._path))
 
 
 class _FakeROOTModule:
@@ -534,8 +560,11 @@ class _FakeROOTModule:
 
     def __init__(self, files):
         self.files = dict(files)          # path -> _FakeTFile
+        for _p, _f in self.files.items():
+            _f._path = _p                 # so a Close() can be ATTRIBUTED, not merely counted
         self.current = None
         self.opened = []                  # (path, mode)
+        self.events = []                  # ("open", path, mode) | ("close", path), IN ORDER
         self.gErrorIgnoreLevel = 0
         outer = self
 
@@ -543,12 +572,42 @@ class _FakeROOTModule:
             @staticmethod
             def Open(path, mode=""):
                 outer.opened.append((path, mode))
+                outer.events.append(("open", path, mode))
                 f = outer.files.get(path)
                 if f is None:
                     return None
                 outer.current = f
                 return f
         self.TFile = _TFile
+
+    def leaked(self):
+        """Paths opened and never closed, IN ORDER. The observable N4 needed and did not have."""
+        out = []
+        for e in self.events:
+            if e[0] == "open" and e[1] in self.files:
+                out.append(e[1])
+            elif e[0] == "close" and e[1] in out:
+                out.remove(e[1])
+        return out
+
+    def open_while_unclosed(self):
+        """(path, still_open) for every open issued while an EARLIER open had not been closed.
+
+        This is the wrapper's read-then-close discipline stated as a property rather than as prose:
+        `adopt_unified_5d.py:97-102` records that `TFile.Open` re-points ROOT's global current
+        directory, so a second open with a first still live is the exact configuration in which a
+        later `Write()` lands in the wrong file. MODELLED, NOT CONFIRMED -- see this class's docstring.
+        """
+        live, bad = [], []
+        for e in self.events:
+            if e[0] == "open":
+                if live:
+                    bad.append((e[1], tuple(live)))
+                if e[1] in self.files:
+                    live.append(e[1])
+            elif e[1] in live:
+                live.remove(e[1])
+        return bad
 
     def TParameter(self, kind):
         def _make(name, value):
@@ -667,10 +726,14 @@ class D1_TheAnchorIsReadAsADoubleThroughTheProducer(unittest.TestCase):
         self.assertTrue(W.assert_diag_matches_sqrt_tr_old(float(raw.sum()), anchor))
 
 
-class D1_MainSucceedsOnARealAnchorAndTheRefusalAccusesNobody(unittest.TestCase):
-    """`main` end to end, with the child stubbed. Covers C's M4 (the TOCTOU closure call deleted from
-    `main` outright) and M5 (the unclipped diagonal stamped), neither of which any pure-function test
-    can reach -- both are facts about `main`'s call graph."""
+class _MainWithStubbedChild:
+    """The `main`-level fixture, as a MIXIN rather than a base class carrying tests.
+
+    Round 3 needed two more `main`-scope classes (N4's ordering, Q3's message). Inheriting from the
+    class below would have re-run its five tests inside each of them -- three copies of every result,
+    which is how a suite comes to report power it does not have. A mixin shares the fixture and shares
+    no assertions. It is also the only copy of the stub set: a second `_files` would drift.
+    """
 
     def _files(self, anchor, diag, out_keys=None):
         out = dict(out_keys or {})
@@ -703,6 +766,12 @@ class D1_MainSucceedsOnARealAnchorAndTheRefusalAccusesNobody(unittest.TestCase):
                 os.environ.pop("MNV_EST_SEED_OFFSET", None)
             else:
                 os.environ["MNV_EST_SEED_OFFSET"] = saved_env
+
+
+class D1_MainSucceedsOnARealAnchorAndTheRefusalAccusesNobody(_MainWithStubbedChild, unittest.TestCase):
+    """`main` end to end, with the child stubbed. Covers C's M4 (the TOCTOU closure call deleted from
+    `main` outright) and M5 (the unclipped diagonal stamped), neither of which any pure-function test
+    can reach -- both are facts about `main`'s call graph."""
 
     def test_main_COMPLETES_at_the_REAL_5D_MAGNITUDE_and_stamps_all_seven_keys(self):
         """THE HEADLINE REGRESSION. C's finding was "the wrapper cannot succeed on any real product";
@@ -766,7 +835,15 @@ class D1_MainSucceedsOnARealAnchorAndTheRefusalAccusesNobody(unittest.TestCase):
         self.assertIn("DISAGREE", msg)
         self.assertIn("does NOT establish which side is wrong", msg)
         self.assertIn("DO NOT DELETE, REGENERATE OR RE-STAGE", msg)
-        self.assertIn("NOTHING HAS BEEN WRITTEN", msg)
+        # ============================== BEN-510 FIRED ON ITS OWN FILING ==============================
+        # This line read `assertIn("NOTHING HAS BEEN WRITTEN", msg)` and lane C's Q3(a) residual is that
+        # the sentence is TRUE OF THE STAMP AND FALSE OF THE PRODUCT. So fixing the message REQUIRED
+        # editing this assertion -- the second time in two rounds that a defect was a requirement of the
+        # green suite, and it happened while filing the finding about it. The replacement asserts the
+        # PROPERTY (the message must not claim nothing was written, and must say what does exist)
+        # instead of the sentence, which is the check `BEN-510` carries.
+        self.assertNotIn("NOTHING HAS BEEN WRITTEN", msg)
+        self.assertIn("EXISTS", msg, "it must say the child's product exists")
         self.assertIn("(1) THIS WRAPPER", msg, "this wrapper must be the FIRST cause listed")
         for accusation in ("is not the matrix this product was built from",
                            "refusing to write hDiagCombinedOld from it"):
@@ -851,6 +928,297 @@ class TheStampWriteDecisions(unittest.TestCase):
         self.assertEqual(f._keys["est_seed_offset"].GetVal(), 1200)
         self.assertEqual(f._keys[W.STAMPED_HISTOGRAM_KEY].contents, {1: 1.0, 2: 2.0})
         self.assertTrue(f.closed, "and the file is closed on the way out")
+
+
+# =====================================================================================================
+# ROUND 3, from lane C's PASS-WITH-SCOPE residuals. Nothing here is a new feature: each class pins a
+# claim that was TRUE WHEN WRITTEN and had no test, which is the only reason it could go false.
+# =====================================================================================================
+
+
+def _fake_is_installable():
+    """Derive -- do not grep -- whether this module actually installs a ROOT double.
+
+    A `grep` for "sys.modules" would be a claim about this file's TEXT. Entering the context manager
+    and observing `sys.modules["ROOT"]` is a claim about its BEHAVIOUR, and behaviour is what a reader
+    of the wrapper's caveat is being told about. `BEN-482`: a regex over source cannot tell a call from
+    prose about a call, and this file is now full of prose about the double.
+    """
+    before = sys.modules.get("ROOT")
+    with _WithFakeROOT({}):
+        installed = sys.modules.get("ROOT")
+    return installed is not None and sys.modules.get("ROOT") is before
+
+
+class TheCaveatMustAGREE_WITH_WHETHER_A_DOUBLE_EXISTS(unittest.TestCase):
+    """LANE C's REQUIRED CORRECTION, TURNED INTO THE CHECK THAT WOULD HAVE CAUGHT IT.
+
+    `mii_adopt_unified_5d_stamped.py:43` read "No ROOT test double is provided" for a day after the
+    double landed -- and it was the SAME COMMIT that added the double which edited that paragraph, to
+    rename the two readers, leaving the sentence its own change falsified. C's reason this is required
+    rather than cosmetic: a reader who believes it concludes that 50 green tests are double-free pure
+    logic, so the caveat overstates the suite in the direction that flatters it.
+
+    WHY THIS IS NOT JUST ANOTHER SENTENCE ASSERTION (`BEN-510`). The property has a LIVE OPERAND ON
+    BOTH SIDES: whether a double is installable is derived by installing one, and the name it must be
+    called by is read off the class object rather than typed here, so renaming `_FakeROOTModule`
+    FAILS this test instead of quietly rotting the paragraph. The residual is stated in `BEN-510`
+    itself: the denial check below is still a substring, pointed at a safety property.
+    """
+
+    def _paragraph(self):
+        src = (ND / "mii_adopt_unified_5d_stamped.py").read_text()
+        self.assertIn("WHAT IS *NOT* ESTABLISHED", src)
+        return src.split("WHAT IS *NOT* ESTABLISHED")[1].split('"""')[0]
+
+    def test_the_double_is_INSTALLABLE_which_is_the_premise_of_this_class(self):
+        self.assertTrue(_fake_is_installable(),
+                        "if this fails the double is gone and the caveat must be re-derived, not kept")
+
+    def test_the_caveat_NAMES_the_double_BY_ITS_LIVE_CLASS_NAME(self):
+        para = self._paragraph()
+        self.assertIn(_FakeROOTModule.__name__, para,
+                      "the wrapper's WHAT IS *NOT* ESTABLISHED paragraph must name the double that "
+                      "exists. Renaming the class without updating the paragraph lands here, which is "
+                      "the point: the operand is the class object, not a string I typed twice.")
+
+    def test_the_caveat_DOES_NOT_DENY_a_double_that_exists(self):
+        """The negation direction. A safety-property substring assertion -- see `BEN-510`'s residual."""
+        para = self._paragraph()
+        for denial in ("No ROOT test double is provided", "No ROOT double is provided",
+                       "no ROOT test double"):
+            self.assertNotIn(denial, para,
+                             f"the paragraph denies a double that {_FakeROOTModule.__name__} provides")
+
+    def test_the_caveat_STILL_STATES_WHAT_THE_DOUBLE_DOES_NOT_ESTABLISH(self):
+        """The valuable half of the old text. Correcting a falsehood must not delete the true part --
+        a paragraph that admits a double and stops there is worse than the one C flagged."""
+        para = self._paragraph()
+        self.assertIn("CONFIRMS NEITHER", para)
+        self.assertIn("these tests still pass and this wrapper can still be wrong", para)
+
+    def test_THIS_FILES_OWN_DOCSTRING_carries_the_same_obligation(self):
+        """It carried the identical false sentence and lane C did not cite it, because C cited the line
+        it measured. The mechanism does not care which file it is in."""
+        doc = __doc__ or ""
+        self.assertNotIn("No ROOT double is provided", doc)
+        self.assertIn(_FakeROOTModule.__name__, doc)
+
+
+class N4_TheReadThenCloseDisciplineIsACTUALLY_EXERCISED(unittest.TestCase):
+    """LANE C's N4, AND IT IS A DEFENCE-OF-THE-FAKE CLAIM RATHER THAN A COVERAGE STATISTIC.
+
+    The wrapper's own comment in `main` says "EVERY READ COMPLETES AND CLOSES BEFORE THE OUTPUT IS
+    OPENED", citing `adopt_unified_5d.py:97-102`'s measured warning that `TFile.Open` re-points ROOT's
+    global current directory. Lane B's defence of the fake said that discipline was exercised. C
+    measured: the `fo.cd()` half was, the close half was NOT -- `f.Close()` deleted from
+    `_read_diagonal` left all 50 tests green. So the claim was standing on nothing.
+
+    WHY A PER-FILE BOOLEAN WAS NEVER GOING TO CATCH IT: the discipline is an ORDERING between two
+    files, and `_FakeTFile.closed` cannot express an ordering. The fake now records an EVENT LOG and
+    these tests assert the order. MODELLED, NOT CONFIRMED: that a live read handle actually diverts a
+    later `Write()` is PyROOT's property and no double establishes it.
+    """
+
+    def test_read_diagonal_CLOSES_THE_41GB_FILE_IT_OPENED(self):
+        diag = [1e-76] * 4
+        f = _FakeTFile({"hCov_combined5d_total": _FakeTH2D(diag)})
+        with _WithFakeROOT({"c.root": f}) as R:
+            W._read_diagonal("c.root")
+        self.assertEqual(R.leaked(), [], "the combined intermediate was left open")
+        self.assertIn(("close", "c.root"), R.events)
+
+    def test_read_diagonal_CLOSES_IT_EVEN_WHEN_IT_REFUSES(self):
+        """The refusal path is the one that matters most: it fires against the 41.44 GB file, and a
+        leaked handle there is the wrapper holding open the artifact nobody may disturb."""
+        with _WithFakeROOT({"c.root": _FakeTFile({})}) as R:      # no histogram -> _fail
+            with self.assertRaises(SystemExit):
+                W._read_diagonal("c.root")
+        self.assertEqual(R.leaked(), [], "refusing must not leak the handle")
+
+    def test_BOTH_SCALAR_READERS_CLOSE_TOO(self):
+        keys = {"estimator_seed": _FakeParam(1242), "est_seed_offset": _FakeParam(1200),
+                "est_seed_offset_declared": _FakeParam(1)}
+        with _WithFakeROOT({"u.root": _FakeTFile(keys)}) as R:
+            W._read_int_scalars("u.root", W.LEG_IDENTITY_KEYS)
+        self.assertEqual(R.leaked(), [])
+        with _WithFakeROOT({"o.root": _FakeTFile({"sqrt_tr_old": _FakeParam(VL1_SQRT_TR_OLD)})}) as R:
+            W._read_double_scalar("o.root", "sqrt_tr_old")
+        self.assertEqual(R.leaked(), [])
+
+
+class N4_MainNeverHoldsTwoFilesOpenAtOnce(_MainWithStubbedChild, unittest.TestCase):
+    """The same discipline at `main`'s scope, which is where the comment claiming it lives.
+
+    Inherits `_files`/`_run` rather than re-deriving the stub set: a second copy of that fixture is a
+    second thing to drift, and the campaign's own lesson is that a re-typed operand diverges silently.
+    """
+
+    def test_EVERY_READ_IS_CLOSED_BEFORE_THE_OUTPUT_IS_OPENED_FOR_UPDATE(self):
+        n = 4
+        diag = [VL1_SQRT_TR_OLD ** 2 / n] * n
+        _calls, R = self._run(self._files(VL1_SQRT_TR_OLD, diag))
+        self.assertEqual(R.open_while_unclosed(), [],
+                         "an open was issued while an earlier file was still open -- the exact "
+                         "configuration adopt_unified_5d.py:97-102 warns diverts a later Write()")
+        idx_update = R.events.index(("open", "o.root", "UPDATE"))
+        closes = {e[1] for e in R.events[:idx_update] if e[0] == "close"}
+        for path in ("u.root", "c.root", "o.root"):
+            self.assertIn(path, closes, f"{path} was still open when the output was reopened UPDATE")
+
+    def test_THE_OUTPUT_IS_CLOSED_AT_THE_END_TOO(self):
+        n = 4
+        diag = [VL1_SQRT_TR_OLD ** 2 / n] * n
+        _calls, R = self._run(self._files(VL1_SQRT_TR_OLD, diag))
+        self.assertEqual(R.leaked(), [], "nothing may be left open when main returns")
+
+
+class Q1_TheIntReaderGuardIsVALUE_BASED(unittest.TestCase):
+    """LANE C's Q1 RESIDUAL, RULED SAFE **WITH A TRIGGER** -- SO THE TRIGGER IS THIS CLASS.
+
+    C's ruling: `float(raw) != int(raw)` discriminates on VALUE, not TYPE, so an integral-valued
+    `double` still coerces silently. It is unreachable today because `_read_int_scalars` has two call
+    sites and serves only `LEG_IDENTITY_KEYS`, all genuine `TParameter("int")`. **TRIGGER TO REVISIT: a
+    third call site, or any key added to `LEG_IDENTITY_KEYS`.**
+
+    LANE B's DECISION, RECORDED RATHER THAN MADE SILENTLY: the guard stays value-based. The complete
+    fix asserts the object's ROOT class, no double in this repository can test a ROOT-class assertion,
+    and an untested NARROWING on the only production path fails closed on every legitimate key if
+    PyROOT's class string is not what I guessed -- turning a residual C ruled safe into a live outage.
+    What IS done: `inf`/`nan` now fail closed NAMING THE KEY, and this class makes the trigger
+    executable. A narrated trigger is read by the last person who needs it (`FINDINGS.md`'s block cell
+    has gone stale twice for exactly this reason); a failing test is read by the first.
+    """
+
+    #: The call sites C measured, by the function each sits in. Derived from the AST, never grepped
+    #: -- `BEN-482`: a regex cannot tell a call from the several paragraphs of prose about this call.
+    EXPECTED_CALLERS = {"main"}
+    EXPECTED_N_CALL_SITES = 2
+
+    def _call_sites(self):
+        tree = ast.parse((ND / "mii_adopt_unified_5d_stamped.py").read_text())
+        sites = []
+        for fn in ast.walk(tree):
+            if not isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            for node in ast.walk(fn):
+                if (isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+                        and node.func.id == "_read_int_scalars"):
+                    sites.append(fn.name)
+        return sites
+
+    def test_the_int_reader_STILL_HAS_EXACTLY_TWO_CALL_SITES_BOTH_IN_MAIN(self):
+        sites = self._call_sites()
+        self.assertEqual(set(sites), self.EXPECTED_CALLERS)
+        self.assertEqual(len(sites), self.EXPECTED_N_CALL_SITES,
+                         "TRIGGER HIT (lane C, round 2): `_read_int_scalars`'s guard is VALUE-based, "
+                         "so an integral-valued double passes it and is coerced silently. It was ruled "
+                         "safe only because the reader served these call sites over keys known to be "
+                         "TParameter ints. A new call site must either prove its keys are ints on the "
+                         "bytes side or make the guard TYPE-based first. Do not just update this "
+                         "number.")
+
+    def test_LEG_IDENTITY_KEYS_IS_STILL_EXACTLY_THE_THREE_GENUINE_INT_KEYS(self):
+        self.assertEqual(W.LEG_IDENTITY_KEYS,
+                         ("estimator_seed", "est_seed_offset", "est_seed_offset_declared"),
+                         "TRIGGER HIT: every key here is read through the VALUE-guarded int reader. A "
+                         "fourth key must be shown to be a TParameter int at its producer "
+                         "(sweep_bank_5d.py:285-287, analyze_universes_5d.py:277, "
+                         "unified_throw_cov.py:545,550-551) before it is added.")
+
+    def test_an_INF_FAILS_CLOSED_AND_NAMES_THE_KEY(self):
+        """C measured an uncaught `OverflowError` naming nothing, in the wrapper whose entire D1 lesson
+        is what a failure SAYS. The property asserted is NAMING, not wording."""
+        with _WithFakeROOT({"c.root": _FakeTFile({"est_seed_offset": _FakeParam(float("inf"))})}):
+            with self.assertRaises(SystemExit) as cm:
+                W._read_int_scalars("c.root", ("est_seed_offset",))
+        msg = str(cm.exception)
+        self.assertIn("est_seed_offset", msg, "the message must name the KEY")
+        self.assertIn("c.root", msg, "and the file it was read from")
+
+    def test_a_NAN_FAILS_CLOSED_AND_NAMES_THE_KEY(self):
+        with _WithFakeROOT({"c.root": _FakeTFile({"estimator_seed": _FakeParam(float("nan"))})}):
+            with self.assertRaises(SystemExit) as cm:
+                W._read_int_scalars("c.root", ("estimator_seed",))
+        self.assertIn("estimator_seed", str(cm.exception))
+
+    def test_a_NON_FINITE_READ_STILL_CLOSES_THE_FILE(self):
+        """A new refusal is a new exit path, and an exit path that leaks a handle is a new defect."""
+        with _WithFakeROOT({"c.root": _FakeTFile({"estimator_seed": _FakeParam(float("nan"))})}) as R:
+            with self.assertRaises(SystemExit):
+                W._read_int_scalars("c.root", ("estimator_seed",))
+        self.assertEqual(R.leaked(), [])
+
+    def test_THE_RESIDUAL_IS_STILL_REAL_AND_THIS_TEST_SAYS_SO(self):
+        """An integral-valued double DOES still coerce. Asserted in the direction of the truth rather
+        than left implicit, so nobody reads the two tests above as a claim that the class is closed."""
+        with _WithFakeROOT({"c.root": _FakeTFile({"est_seed_offset": _FakeParam(3.0)})}):
+            got = W._read_int_scalars("c.root", ("est_seed_offset",))
+        self.assertEqual(got["est_seed_offset"], 3)
+        self.assertIsInstance(got["est_seed_offset"], int)
+
+
+class Q3_TheRefusalDistinguishesSTAMPfromPRODUCTandDISCRIMINATES(
+        _MainWithStubbedChild, unittest.TestCase):
+    """LANE C's Q3 RESIDUALS. The message was SAFE; these make it TRUE and DIAGNOSTIC.
+
+    (a) "NOTHING HAS BEEN WRITTEN" is true of the stamp and FALSE of the product -- the child has
+        already run and `--out`, ~892 MB, exists unstamped. A reader who believed it would go looking
+        for a file that is already on disk.
+    (b) No discriminator was offered for cause (3). C's own reasoning for why the message was safe
+        anyway is that the prescribed action is correct under all three causes -- but a message that
+        leaves the reader holding only the expensive hypothesis is how a do-not-delete banner
+        eventually loses an argument. Both discriminators are READS.
+
+    ASSERTED AS PROPERTIES WHERE POSSIBLE (`BEN-510`): that the stamp/product distinction is DRAWN,
+    that a discriminator for (3) is OFFERED, that the banner SURVIVED. The substring assertions that
+    remain are pointed at safety -- the accusation must be absent, the banner present -- which is the
+    legitimate direction, and the brittleness is recorded in `BEN-510` rather than denied.
+    """
+
+    def _refusal(self):
+        with self.assertRaises(SystemExit) as cm:
+            self._run(self._files(VL1_SQRT_TR_OLD, [1e-76] * 4))
+        return str(cm.exception)
+
+    def test_it_DISTINGUISHES_THE_STAMP_FROM_THE_PRODUCT(self):
+        msg = self._refusal()
+        self.assertNotIn("NOTHING HAS BEEN WRITTEN", msg,
+                         "false of the product: the child ran and --out exists")
+        self.assertIn("NO STAMP HAS BEEN WRITTEN", msg)
+        # the PROPERTY: the message must say the product EXISTS and is UNSTAMPED, in that order
+        self.assertLess(msg.index("EXISTS"), msg.index("UNSTAMPED"))
+        self.assertIn("--out", msg)
+
+    def test_it_OFFERS_A_DISCRIMINATOR_FOR_CAUSE_3_AND_IT_IS_A_READ(self):
+        msg = self._refusal()
+        tail = msg[msg.index("(3)"):]
+        self.assertIn("mtime", tail, "cause (3) must come with a way to kill or confirm it")
+        self.assertIn("TO TELL (3)", tail)
+        self.assertIn("re-run the child", tail)
+        # and the discriminator must not itself invite a write
+        for verb in ("delete", "regenerate", "re-stage", "truncate", "move"):
+            self.assertNotIn(f"{verb} --combined", tail)
+
+    def test_THE_BANNER_AND_THE_ORDERING_SURVIVED_BOTH_EDITS(self):
+        """The regression that matters: an edit adding two paragraphs is exactly how a banner gets
+        pushed out or a cause order gets shuffled."""
+        msg = self._refusal()
+        self.assertIn("DO NOT DELETE, REGENERATE OR RE-STAGE", msg)
+        self.assertIn("41.44 GB", msg)
+        self.assertIn("2.087 TiB", msg)
+        self.assertLess(msg.index("(1) THIS WRAPPER"), msg.index("(2) --combined"))
+        self.assertLess(msg.index("(2) --combined"), msg.index("(3) the combined intermediate changed"))
+        for accusation in ("is not the matrix this product was built from",
+                           "refusing to write hDiagCombinedOld from it"):
+            self.assertNotIn(accusation, msg)
+
+    def test_IT_STILL_REFUSES_BEFORE_WRITING_ANYTHING(self):
+        files = self._files(VL1_SQRT_TR_OLD, [1e-76] * 4)
+        with self.assertRaises(SystemExit):
+            self._run(files)
+        self.assertEqual(files["o.root"]._keys.keys() & set(W.STAMPED_SCALAR_KEYS), set())
+        self.assertNotIn(W.STAMPED_HISTOGRAM_KEY, files["o.root"]._keys)
 
 
 if __name__ == "__main__":
