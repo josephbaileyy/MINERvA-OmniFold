@@ -47,6 +47,25 @@ site-packages, conda and any path outside a checkout are IGNORED, because they a
 not the confusion this exists for and flagging them would make the guard something
 people switch off.
 
+IT DOES NOT CROSS A SUBPROCESS BOUNDARY, AND THAT IS MEASURED, NOT SUSPECTED.
+The wrapped `PathFinder` lives in THIS interpreter's `sys.meta_path`. A child started
+with `subprocess.run([sys.executable, ...])` gets a fresh interpreter with a clean
+`sys.meta_path`, so a rooted `insert(0, ...)` inside the CHILD is not seen and this
+wrapper exits 0. Fixture: a correct parent that resolves its own directory from
+`__file__` and then subprocess-launches a child which inserts another checkout at
+position 0 -- guarded IN-PROCESS it exits 3; guarded through the SUBPROCESS it exits 0
+and the child loads the other tree's module. Both halves are asserted in
+`tests/test_mnv_guarded_run.py::TheSubprocessBoundaryIsNotCovered`.
+
+THIS IS LIVE IN THIS REPO, NOT A TOY. `mii_adopt_unified_5d_stamped.py:124` resolves
+`adopt_unified_5d.py` from its own `_HERE` -- correctly -- and then runs it AS A
+SUBPROCESS, deliberately, so that the bytes whose sha256 is pinned are the bytes that
+execute. `adopt_unified_5d.py` is one of the fail-open 59. So wrapping that adoption
+path in this guard would print a clean banner and refuse nothing. Anyone routing a
+launcher through this wrapper must check whether the work happens in the wrapped
+interpreter or in a child; if it is a child, this guard is not the check they want and
+a green run of it must not be recorded as one.
+
 The marker pair is chosen to hold across checkout GENERATIONS, not just today's:
 both files predate every frozen tree on scratch. `AGENTS.md` would have been the
 obvious marker and is the wrong one -- it was rewritten as the thin front door on

@@ -216,5 +216,72 @@ class MarkerSemantics(unittest.TestCase):
         self.assertNotIn("AGENTS.md", mgr.MARKERS)
 
 
+class TheSubprocessBoundaryIsNotCovered(unittest.TestCase):
+    """PIN THE LIMIT, so a green guarded run is never read as more than it is.
+
+    The guard wraps THIS interpreter's `PathFinder`. A child interpreter starts with a
+    clean `sys.meta_path`, so a hijack that happens inside a subprocess is invisible to
+    it. Both directions are asserted: in-process the guard fires, through a subprocess it
+    does not. Asserting only the failure would leave "maybe the fixture is broken" open;
+    asserting only the pass would leave the limit undocumented in the only place that
+    cannot rot.
+
+    THIS IS THE SHAPE OF THIS REPO'S ADOPTION PATH, NOT A CONTRIVANCE:
+    `mii_adopt_unified_5d_stamped.py` resolves `adopt_unified_5d.py` from its own
+    `__file__` and runs it as a subprocess on purpose, and `adopt_unified_5d.py` is one
+    of the fail-open 59.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        tmp = pathlib.Path(self._tmp.name)
+        self.good = make_checkout(tmp, "expected-tree")
+        self.bad = make_checkout(tmp, "stale-tree")
+        write(self.good / "nd-unfolding" / "victim.py", "MARK = 'RIGHT TREE'\n")
+        write(self.bad / "nd-unfolding" / "victim.py", "MARK = 'WRONG TREE'\n")
+        # The CHILD carries the defect: an absolute insert(0, <other checkout>).
+        write(self.good / "nd-unfolding" / "child.py",
+              "import sys\n"
+              f"sys.path.insert(0, {str(self.bad / 'nd-unfolding')!r})\n"
+              "import victim\n"
+              "print('CHILD-LOADED', victim.MARK)\n")
+        # The PARENT is correct: it derives its own directory, exactly as the fix asks.
+        self.parent_sub = write(
+            self.good / "nd-unfolding" / "parent_sub.py",
+            "import os, subprocess, sys\n"
+            "_HERE = os.path.dirname(os.path.abspath(__file__))\n"
+            "if _HERE not in sys.path: sys.path.insert(0, _HERE)\n"
+            "raise SystemExit(subprocess.run(\n"
+            "    [sys.executable, os.path.join(_HERE, 'child.py')]).returncode)\n")
+        self.parent_in = write(
+            self.good / "nd-unfolding" / "parent_in.py",
+            "import os, runpy, sys\n"
+            "_HERE = os.path.dirname(os.path.abspath(__file__))\n"
+            "if _HERE not in sys.path: sys.path.insert(0, _HERE)\n"
+            "runpy.run_path(os.path.join(_HERE, 'child.py'), run_name='__main__')\n")
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_IN_PROCESS_the_guard_fires_which_proves_the_fixture_hijacks(self):
+        p = run(GUARD, "--expect-root", self.good, "--", self.parent_in)
+        self.assertEqual(p.returncode, mgr.VIOLATION_EXIT,
+                         f"stdout:\n{p.stdout}\nstderr:\n{p.stderr}")
+        self.assertIn("IMPORT TREE VIOLATION", p.stderr)
+        self.assertNotIn("CHILD-LOADED", p.stdout)
+
+    def test_THROUGH_A_SUBPROCESS_the_same_hijack_is_NOT_caught(self):
+        """Exit 0 and the WRONG module loaded. Recorded so nobody assumes otherwise."""
+        p = run(GUARD, "--expect-root", self.good, "--", self.parent_sub)
+        self.assertEqual(p.returncode, 0,
+                         f"stdout:\n{p.stdout}\nstderr:\n{p.stderr}")
+        self.assertIn("CHILD-LOADED WRONG TREE", p.stdout)
+        self.assertNotIn("IMPORT TREE VIOLATION", p.stderr)
+
+    def test_the_docstring_says_so_where_a_caller_will_read_it(self):
+        """A limit known only to a test is a limit callers will not know."""
+        self.assertIn("DOES NOT CROSS A SUBPROCESS BOUNDARY", mgr.__doc__)
+
+
 if __name__ == "__main__":
     unittest.main()
