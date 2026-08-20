@@ -66,7 +66,7 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-120 | WAITING-JOSEPH | explicit-user-decision | WAITING-USER (raised 2026-08-14 by the personal-account mediator; first filing into block 120-129) |
 | OI-121 | NOW | safe-default-active | AUTHORIZED 2026-08-14 by Joseph (raised the same day by the personal-account mediator). SPEC LANDED 2026-08-14 05:00 PDT |
 | OI-96 | NOW | safe-default-active | OPEN — a whole-file occurrence count is a crude proxy for pinning one line, and it is the instrument now standing in for |
-| OI-126 | WAITING-JOSEPH | explicit-user-decision | OPEN — needs Joseph's ruling. UPDATED 2026-08-15 AFTER THE AUTHORIZED DIAGNOSTIC TURNED OUT NOT TO EXIST AS AN OPERATION |
+| OI-126 | WAITING-JOSEPH | explicit-user-decision | RULED BY JOSEPH 2026-08-20 — THIS ROW NO LONGER NEEDS A RULING AND IS NOT A LIVE SCIENTIFIC QUESTION. His decision, VERB |
 | OI-132 | NOW | safe-default-active | OPEN — filed 2026-08-19 by lane E in the same commit as BEN-476. THE DIVERGENCE MANIFEST'S LARGEST BUCKET RESTS ON A CON |
 | OI-133 | NOW | safe-default-active | OPEN — filed 2026-08-19 by lane E with BEN-477. NOTHING BINDS A CHECKPOINT TO THE RUN THAT WROTE IT, so a member's check |
 | OI-135 | BLOCKED-EXTERNAL | explicit-blocker | BLOCKED ON maintenance_20260819 — every remaining step needs the cluster, and ssh exits 255 since 2026-08-19T13:00Z. Fil |
