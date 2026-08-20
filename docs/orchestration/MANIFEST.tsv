@@ -386,7 +386,7 @@ docs/orchestration/RULING-20260817-lanec-oi126-branch-set-not-exhaustive.md	trac
 docs/orchestration/RULING-20260817-lanec-pinned-readers-get-wrappers-not-copies.md	tracked	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	5	244	16354
 docs/orchestration/RULING-20260817-lanec-unity-factor-diagnostic-is-admissible.md	tracked	ARCHIVAL	document		20260817	terminal		exact-path-only	docs/orchestration/lanec_citation_resolution_check.py	yes	2	225	15443
 docs/orchestration/RULING-20260818-lanec-mii-offset-grid-and-member-count.md	tracked	ARCHIVAL	document		20260818	terminal		exact-path-only		yes	2	347	24439
-docs/orchestration/RULING-20260819-lanec-issue54-frozen-deployment.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only	nd-unfolding/pet/cstat_data_only_readback.py	yes	3	240	15913
+docs/orchestration/RULING-20260819-lanec-issue54-frozen-deployment.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only	nd-unfolding/pet/cstat_data_only_readback.py	yes	3	247	16686
 docs/orchestration/RULING-20260819-lanec-measured-leg-is-two-products-not-a-contradiction.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only		yes	0	178	11291
 docs/orchestration/RULING-20260819-lanec-monitor-liveness-and-lane-owners.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only		yes	0	280	22520
 docs/orchestration/RULING-20260819-lanec-playbook-promotion-0818-0819.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only		yes	1	168	14248

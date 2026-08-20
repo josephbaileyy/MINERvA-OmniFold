@@ -155,8 +155,15 @@ defect as filed.
 **AND IT IS A LOSS OF REDUNDANCY, NOT A HOLE — which is why no completed gate needs re-litigating.** In
 both validators the fatal-token scan is *preceded* by the exactly-once scan, and `log_done` is a
 **positive** success witness written last: a member whose driver raised never prints its DONE line, so the
-count is 0, and the validator raises **before** reaching the token scan at all. **A failed member fails
-closed on the positive witness regardless of how many fatal tokens are dead.** On the replica path
+count is 0, and that check FAILS. **CORRECTED 2026-08-20 — the mechanism in this sentence was wrong and
+the conclusion is not:** an earlier revision said the validator "raises **before** reaching the token scan
+at all". It does not raise. `Checks.eq` at `validate_gate5_training_artifacts.py:98-103` ACCUMULATES ---
+`(self.passed if got == want else self.failed).append(row)` --- so the token scan ALWAYS runs and no early
+exit occurs. **A failed member still fails closed, by the POSITIVE WITNESS rather than by an early exit:**
+`log_done_count` is 0 against a want of 1, that lands in `failed`, and the verdict is FAIL regardless of how
+many fatal tokens are dead. Recorded rather than silently rewritten because "it raises before X" is the kind
+of mechanism claim a later reader builds on, and this repair was itself lost once: it was held unpushed by a
+second mediator session that has since been closed, so it is reconstructed here from the source. On the replica path
 `[gate5-train][FAIL]` *does* have its producer, so only `SystemExit:` is dead there.
 
 **RULED:**
