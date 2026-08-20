@@ -35,12 +35,40 @@ also why `refuse_conflicting_passthrough` exists: argparse takes the LAST occurr
 the original -- a silent divergence with no error anywhere.
 
 =================================== WHAT IS *NOT* ESTABLISHED ===================================
-`import ROOT` raises `ModuleNotFoundError` on the lane-B development host (measured 2026-08-19,
-python 3.12.2), so EVERY ROOT-TOUCHING PATH IN THIS FILE IS CLUSTER-UNVERIFIED. Named exactly:
-`_read_int_scalars`, `_read_double_scalar`, `_read_diagonal`, `_stamp_output`, and `main`'s body
-from the child launch onward
-have never been executed. What HAS been executed locally is every pure function in this module and
-its test file.
+**THE ROOT PATH HAS NOW EXECUTED ON THE CLUSTER, AND THIS PARAGRAPH SAID IT NEVER HAD UNTIL
+2026-08-20.** Slurm job `57294218` (`remedyAsmoke`, COMPLETED `0:0`, elapsed `00:06:12`, start
+`2026-08-20T13:42:34Z`) ran `_read_int_scalars`, `_read_double_scalar`, `_read_diagonal`,
+`_stamp_output` and `main`'s body from the child launch onward, TWICE -- mean-centered and
+cv-centered -- against the real 2.68 GB throw ROOT and the real 41.44 GB combined intermediate, and
+produced `hDiagCombinedOld[10694]` both times. The record is committed at `1b9e074c`,
+`docs/orchestration/RUNS.tsv` row `REMEDYA-SMOKE-PASS`. `import ROOT` still raises
+`ModuleNotFoundError` on the lane-B development host (measured 2026-08-19, python 3.12.2); that is a
+fact about that host and it is no longer a fact about this file. What is also still true: every pure
+function in this module is executed by its test file.
+**THE CORRECTION IS RECORDED RATHER THAN QUIETLY APPLIED,** for the same reason as the paragraph
+below it. The retracted sentence -- which is NOT reproduced here, on `BEN-482`'s rule that a file
+repeating a false sentence in order to disown it can no longer be swept for it, and which the guarding
+test pins as a NEGATIVE so it cannot return -- outlived its own falsification: the receipt that
+falsifies it is an ANCESTOR of commits that went on quoting it. A reader who believed it concluded
+that no ROOT byte here had ever run, which is `BEN-510`'s lesson one level up and inverted.
+
+WHAT THAT JOB DOES *NOT* ESTABLISH. This list is the load-bearing half and it is FOUR items:
+  (1) NOTHING IS ADOPTED AND NO ARTIFACT SURVIVES. Its outputs were named
+      `SMOKE_NOT_A_PRODUCT_{mean,cv}centered.root` and were DELETED on 2026-08-20 by Joseph's
+      instruction. The surviving evidence is the job's log and its ledger row, NOT bytes anybody can
+      reopen -- so the read-back inside `_stamp_output` is the only witness that the stamps landed.
+  (2) THE IDENTITY CHECK HAS NEVER SEEN A PRESENT SEED, WHICH IS REMEDY (A)'s ENTIRE PURPOSE. Both
+      legs available today carry NO identity scalar (measured: the throw ROOT holds 9 keys, the
+      combined intermediate 47, and not one is a `TParameter("int")` from `LEG_IDENTITY_KEYS`), so
+      the job recorded `upstream_estimator_seed_{g1,g2}_checked=0` -- ABSENCE, NOT A PASS -- and
+      `assert_legs_are_one_member` and `assert_seeds_match_their_baselines` both returned having
+      compared NOTHING.
+  (3) NO DECLARED MEMBER HAS RUN. The job was undeclared, so `est_seed_offset_declared=0` and every
+      branch guarded by `off_declared` is untaken.
+  (4) NO REFUSAL BRANCH ON THIS PATH HAS FIRED FOR REAL: not `_stamp_output`'s double-stamp refusal,
+      not `_read_int_scalars`' non-integral / inf / nan guards, and not
+      `assert_diag_matches_sqrt_tr_old`'s disagreement branch -- which PASSED. A guard that has only
+      ever passed is a guard nobody has watched fire.
 
 **THERE *IS* A ROOT TEST DOUBLE, and this paragraph said there was not until 2026-08-20.** It is
 `_FakeROOTModule` in `tests/test_remedy_a_adopt_wrapper.py`, injected through `sys.modules["ROOT"]`
@@ -442,12 +470,15 @@ def parse_args(argv=None):
     return a
 
 
-# ===================== ROOT-TOUCHING PATH -- CLUSTER-UNVERIFIED, EVERY LINE =====================
-# Nothing below this banner has ever been executed: `import ROOT` raises ModuleNotFoundError on the
-# lane-B host. Do not read the tests beside this file as evidence about any of it.
+# ============ ROOT-TOUCHING PATH -- CLUSTER-EXECUTED ONCE, SCOPE IN THE HEADER ============
+# Everything below this banner HAS executed on the cluster, twice, under job 57294218 (`1b9e074c`,
+# RUNS.tsv `REMEDYA-SMOKE-PASS`). That is a PLUMBING result and nothing more: read the header's
+# four-item "WHAT THAT JOB DOES *NOT* ESTABLISH" list -- nothing adopted, no present identity seed,
+# no declared member, no refusal branch fired -- rather than this banner, before relying on any of
+# it. And still do not read the tests beside this file as evidence about ROOT itself.
 
 def _open_for_reading(path):
-    """CLUSTER-UNVERIFIED. Factored out so both readers share one zombie check."""
+    """CLUSTER-EXECUTED 2026-08-20, job 57294218. Factored out so both readers share one zombie check."""
     import ROOT
     f = ROOT.TFile.Open(path)
     if not f or f.IsZombie():
@@ -456,7 +487,8 @@ def _open_for_reading(path):
 
 
 def _read_int_scalars(path, keys):
-    """Read `TParameter("int")` keys, INSIDE THE FILE'S OWN OPEN WINDOW. CLUSTER-UNVERIFIED.
+    """Read `TParameter("int")` keys, INSIDE THE FILE'S OWN OPEN WINDOW. CLUSTER-EXECUTED 2026-08-20
+    on ABSENT keys only; NONE of the guards below has fired on the cluster.
 
     ================== THE FUNCTION THIS SPLIT EXISTS TO PREVENT A REPEAT OF ======================
     THIS WAS ONE READER CALLED `_read_scalars` AND IT COERCED EVERY VALUE WITH `int()`. `main` then
@@ -524,7 +556,7 @@ def _read_int_scalars(path, keys):
 
 
 def _read_double_scalar(path, key):
-    """Read ONE `TParameter("double")` key with NO COERCION. CLUSTER-UNVERIFIED.
+    """Read ONE `TParameter("double")` key with NO COERCION. CLUSTER-EXECUTED 2026-08-20, job 57294218.
 
     `GetVal()` on a `TParameter("double")` returns a Python float; it is returned as `float(...)` and
     nothing narrows it. Separate from the int reader on purpose -- see that function's docstring for
@@ -541,7 +573,7 @@ def _read_double_scalar(path, key):
 
 
 def _read_diagonal(path, hist="hCov_combined5d_total"):
-    """`(raw_diagonal, clipped_diagonal)` of a square TH2D. CLUSTER-UNVERIFIED.
+    """`(raw_diagonal, clipped_diagonal)` of a square TH2D. CLUSTER-EXECUTED 2026-08-20, job 57294218.
 
     Reads via `GetBinContent` rather than the raw buffer: `adopt_unified_5d._diag:52-55` already
     does exactly this for the same reason -- no full-matrix numpy materialization on top of the
@@ -564,7 +596,8 @@ def _read_diagonal(path, hist="hCov_combined5d_total"):
 
 
 def _stamp_output(out, pairs, diag):
-    """Reopen `out` UPDATE, write the scalars and the diagonal, READ THEM BACK. CLUSTER-UNVERIFIED.
+    """Reopen `out` UPDATE, write the scalars and the diagonal, READ THEM BACK. CLUSTER-EXECUTED
+    2026-08-20; the double-stamp refusal below has NOT fired on the cluster.
 
     `adopt_unified_5d.py:169` opens the output `RECREATE` and `:225` closes it, so a later `UPDATE`
     is a legitimate post-step (C verified both before ruling). The read-back is not decoration:

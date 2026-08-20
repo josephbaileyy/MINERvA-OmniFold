@@ -419,36 +419,79 @@ class TheDiagonalIsTiedToTheProduct(unittest.TestCase):
             W.assert_diag_matches_sqrt_tr_old(t * (1 + 1e-6), math.sqrt(t))
 
 
-class TheROOTPathIsMarkedUNVERIFIED(unittest.TestCase):
-    """A CLAIM ABOUT WHAT IS NOT ESTABLISHED IS STILL A CLAIM, so it gets a test too.
+class TheROOTPathsSCOPEIsRecordedACCURATELY(unittest.TestCase):
+    """A CLAIM ABOUT WHAT IS NOT ESTABLISHED IS STILL A CLAIM, so it gets a test too -- AND SO DOES
+    ITS RETRACTION.
 
-    These assert the DECLARATION, not the behaviour. They exist because the single most likely way this
-    wrapper does damage is a later reader taking a green suite as evidence that the ROOT writes work.
+    THESE TESTS CHANGED DIRECTION ON 2026-08-20 AND THAT IS THE POINT. They used to assert that the
+    module DECLARED its ROOT path unexecuted. Job `57294218` executed it (`1b9e074c`, RUNS.tsv
+    `REMEDYA-SMOKE-PASS`), which made the declaration FALSE -- and a green suite that pins a false
+    caveat is worse than no caveat, because it converts a stale sentence into a requirement. So the
+    pins now assert (a) that the execution is recorded, (b) that the four things it did NOT establish
+    are recorded beside it, and (c) that the retracted sentence CANNOT COME BACK.
+
+    They still assert the DECLARATION, not the behaviour. Nothing here is evidence about ROOT.
     """
+
+    #: The exact sentence job 57294218 falsified. Pinned as a NEGATIVE so a future edit cannot
+    #: reintroduce it -- `BEN-510`: a test can assert the observable that IS the defect.
+    RETRACTED = "have never been executed"
 
     def test_the_module_says_so_where_the_ROOT_code_is(self):
         src = (ND / "mii_adopt_unified_5d_stamped.py").read_text()
         self.assertIn("WHAT IS *NOT* ESTABLISHED", src)
-        self.assertIn("CLUSTER-UNVERIFIED, EVERY LINE", src)
+        self.assertIn("CLUSTER-EXECUTED ONCE, SCOPE IN THE HEADER", src)
+        self.assertNotIn("CLUSTER-UNVERIFIED", src,
+                         "the blanket marker is now false: job 57294218 executed every function it "
+                         "named. Correct the claim; do not keep a marker the suite has to defend.")
+        self.assertNotIn(self.RETRACTED, src, f"{self.RETRACTED!r} was falsified by job 57294218")
         for fn in ("_read_int_scalars", "_read_double_scalar", "_read_diagonal", "_stamp_output"):
             self.assertIn(f"def {fn}", src)
-            self.assertIn("CLUSTER-UNVERIFIED", src.split(f"def {fn}")[1][:600],
+            self.assertIn("CLUSTER-EXECUTED", src.split(f"def {fn}")[1][:600],
                           f"{fn}'s own docstring must carry the marker; a banner scrolls away")
+
+    def test_the_EXECUTION_is_traceable_to_a_job_and_a_committed_receipt(self):
+        """A capability claim that names no receipt is the thing this campaign keeps filing. The job
+        id AND the commit AND the ledger row must all be in the module, so a reader can re-derive the
+        claim instead of trusting the paragraph that makes it."""
+        src = (ND / "mii_adopt_unified_5d_stamped.py").read_text()
+        for token in ("57294218", "1b9e074c", "REMEDYA-SMOKE-PASS"):
+            self.assertIn(token, src, f"the execution claim must name {token}")
+
+    def test_the_FOUR_things_that_job_did_NOT_establish_are_all_recorded(self):
+        """The half that matters. Each of these is a way a reader could over-read a PASS, and the
+        second is the whole purpose of remedy (A): the identity check has never seen a present seed."""
+        src = (ND / "mii_adopt_unified_5d_stamped.py").read_text()
+        block = src.split("WHAT THAT JOB DOES *NOT* ESTABLISH")[1][:2600]
+        self.assertIn("NOTHING IS ADOPTED", block)
+        self.assertIn("NEVER SEEN A PRESENT SEED", block)
+        self.assertIn("ABSENCE, NOT A PASS", block)
+        self.assertIn("NO DECLARED MEMBER HAS RUN", block)
+        self.assertIn("NO REFUSAL BRANCH", block)
 
     def test_the_STAMP_COVERAGE_row_distinguishes_CAPABILITY_from_DEMONSTRATION(self):
         how = classes.STAMP_COVERAGE["mii_adopt_unified_5d_stamped.py"]["how"]
-        self.assertIn("CLUSTER-UNVERIFIED", how)
+        self.assertIn("CLUSTER-EXECUTED", how)
+        self.assertNotIn("CLUSTER-UNVERIFIED", how,
+                         "the row must not still say unverified after job 57294218")
+        self.assertNotIn("never run", how)
         self.assertIn("2026-08-20", how, "and the claim is dated, since it is meant to expire")
+        self.assertIn("ABSENCE", how,
+                      "the row must carry the scope, not just the flipped boolean: _checked=0 on "
+                      "both legs is absence, and a reader of `stamps: True` needs that beside it")
 
-    def test_ROOT_really_is_unavailable_here(self):
-        """The premise of every caveat above. If this ever fails, the ROOT path can be tested for real
-        and these caveats must be re-derived rather than kept."""
-        try:
-            import ROOT  # noqa: F401
-        except ModuleNotFoundError:
-            return
-        self.skipTest("ROOT IS AVAILABLE on this host -- the wrapper's ROOT path is now testable and "
-                      "the CLUSTER-UNVERIFIED markers in the module must be revisited, not trusted.")
+    def test_the_ROOT_availability_PREMISE_is_no_longer_asserted_ANYWHERE(self):
+        """WHAT THIS REPLACES, AND WHY IT IS NOT JUST A DELETION. The retired test skipped itself
+        whenever `import ROOT` SUCCEEDED, with a message telling the reader the markers "must be
+        revisited, not trusted". On every ROOT-capable host -- which is every host that can actually
+        run this wrapper -- it therefore reported SKIPPED and its instruction was never carried out;
+        the caveat it guarded stayed green for three days on hosts where it was already false. A test
+        whose finding is delivered as a skip is a finding nobody reads. This asserts the conclusion
+        instead: the module must not condition anything on ROOT being unavailable here."""
+        src = (ND / "mii_adopt_unified_5d_stamped.py").read_text()
+        self.assertNotIn("EVERY ROOT-TOUCHING PATH IN THIS FILE IS CLUSTER-UNVERIFIED", src)
+        self.assertIn("no longer a fact about this file", src,
+                      "the lane-B host's ModuleNotFoundError must be scoped TO THAT HOST")
 
 
 # =====================================================================================================

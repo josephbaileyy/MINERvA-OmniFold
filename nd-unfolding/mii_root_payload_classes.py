@@ -225,7 +225,7 @@ ADOPTED_UTHROW = {
     # is receipt-bound (`state/ben106-stamp-verify-active-56695424.json`) and IS NOT TOUCHED -- C ruled
     # at `783d648a` §25 that (A) here is a new unpinned wrapper invoking the pinned writer as a
     # subprocess and reopening its output `UPDATE`. See `STAMP_COVERAGE` for the capability claim and
-    # for what is still CLUSTER-UNVERIFIED.
+    # for the SCOPE of what its one cluster execution did and did not establish.
     #
     # THE COST, STATED: every adopted root built BEFORE the wrapper now FAILS CLOSED here
     # (`anchor_identity:448-450`, `compare():514`). That is an unavoidable FAIL, not a false green, and
@@ -430,11 +430,15 @@ STAMP_COVERAGE = {
                "bytes the receipt's sha256 names -- then reopens the output UPDATE and writes the "
                "offset pair, upstream_estimator_seed_g1/_g2 BY GROUP with _checked flags (never a "
                "single estimator_seed, per VL141), and C's 11g hDiagCombinedOld. Refuses a product "
-               "whose two legs are different members. *** ROOT WRITE PATH CLUSTER-UNVERIFIED as of "
-               "2026-08-20: `import ROOT` raises ModuleNotFoundError on the lane-B host, so this "
-               "boolean is a SOURCE-VERIFIED CAPABILITY CLAIM and not a demonstration. Every pure "
-               "function is executed by tests/test_remedy_a_adopt_wrapper.py; the ROOT readers, "
-               "_read_diagonal and _stamp_output have never run. ***",
+               "whose two legs are different members. *** ROOT WRITE PATH CLUSTER-EXECUTED "
+               "2026-08-20, job 57294218 (1b9e074c, RUNS.tsv REMEDYA-SMOKE-PASS): the readers, "
+               "_read_diagonal and _stamp_output ran TWICE on the real throw ROOT and the real "
+               "41.44 GB combined intermediate and produced hDiagCombinedOld[10694]. SCOPE, AND IT "
+               "IS THE LOAD-BEARING HALF: PLUMBING ONLY -- nothing adopted, the two outputs were "
+               "deleted, no declared member ran, and BOTH LEGS LACKED IDENTITY KEYS so "
+               "upstream_estimator_seed_g1/_g2_checked=0 is ABSENCE and NOT a pass. So this boolean "
+               "is a DEMONSTRATED capability on absent-identity inputs and an UNDEMONSTRATED one on "
+               "a present seed, which is what remedy (A) is actually for. ***",
         "products": "the IDENTITY of the two 892 MB citable adopted roots"},
 }
 
