@@ -11,7 +11,6 @@ language; terminal and deferred records never enter this page.
 
 | item | queue | accountable owner | basis | next action | evidence route |
 |---|---|---|---|---|---|
-| OI-126 | WAITING-JOSEPH | Joseph | publication/P0 | Choose whether the 50-replica spread is estimator instability to publish or evidence that the bootstrap construction must be replaced. | docs/OPEN_ITEMS.md (`OI-126`); docs/orchestration/LIVE-STATE.md |
 | OI-71 | WAITING-JOSEPH | Joseph | publication/P1 | Decide whether recovery evidence may be quoted without a measurement at the promoted configuration. | docs/OPEN_ITEMS.md (`OI-71`) |
 | OI-125 | NOW | PET lane | publication/P1 | Record the end-of-run fold-forward scalar, not the neighbouring consumption-time reduction, and bind the like-for-like result. | docs/OPEN_ITEMS.md (`OI-125`) |
 | OI-93 | NOW | lane B | publication/P2 | Require every truncated C_stat consumer to declare effective rank, ensemble size, precision-bias treatment, and the PPP diagnostic. | docs/OPEN_ITEMS.md (`OI-93`) |
@@ -25,7 +24,6 @@ language; terminal and deferred records never enter this page.
 | OI-128 | NOW | lane B (implementation / write) | safety/P2 | Put the adopter on the protected execution surface and move the gate-name constant to the shared protected module. | docs/OPEN_ITEMS.md (`OI-128`) |
 | OI-70 | NOW | lane C (rulings / schema / launcher policy) | infrastructure/P1 | Fix manifest tracking semantics so ignored and merely intended paths cannot masquerade as committed repository inventory. | docs/OPEN_ITEMS.md (`OI-70`) |
 | OI-73 | BLOCKED-EXTERNAL | lane C (rulings / schema / launcher policy) | infrastructure/P1 | Correct the live-state.json lifecycle classification and distinguish authored input from generated output. | docs/OPEN_ITEMS.md (`OI-73`) |
-| OI-135 | BLOCKED-EXTERNAL | lane E (execution / freezes / submissions) | infrastructure/P1 | Swap the watcher response path from an LLM resume to the tested email script, then retire the r3 watch add-then-retire. | docs/OPEN_ITEMS.md (`OI-135`); docs/orchestration/watch_report_train_run.py |
 
 ## Machine-enforced contract
 

@@ -307,10 +307,10 @@ docs/orchestration/HANDOFF-20260819-lane-e-data-only-cstat-smoke-57266000.md	tra
 docs/orchestration/INDEX-retracted-and-superseded-values.md	tracked	LIVE	index			open		route-only	docs/open-items/verify_open_items_restructure.py;docs/orchestration/findings_row_lint.py;nd-unfolding/pet/check_canonical_designation.py	no	32	187	31465
 docs/orchestration/INTERIM-HANDBACK.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	42	4434
 docs/orchestration/INVENTORY-20260819-OI130-preservation.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only		yes	2	531	35756
-docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_g2_dump_resume.sh;docs/orchestration/watch_slurm_array_resume.sh	no	53	80	32622
+docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_g2_dump_resume.sh;docs/orchestration/watch_slurm_array_resume.sh	no	51	80	32622
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	15	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	10	61	4093
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/lanec_citation_resolution_check.py;docs/orchestration/live_doc_indexed.py	no	19	1094	190554
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/lanec_citation_resolution_check.py;docs/orchestration/live_doc_indexed.py	no	19	1094	190553
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	7	184	13929
 docs/orchestration/MAP-20260817-pet-critical-path.md	tracked	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	197	14433
 docs/orchestration/MEDIATOR-REVIEW-20260818-control-plane.md	tracked	ARCHIVAL	document		20260818	terminal		exact-path-only		yes	1	76	3421
@@ -439,8 +439,8 @@ docs/orchestration/control-plane/owners.tsv	tracked	LIVE	tabular-data			open		ro
 docs/orchestration/control-plane/playbook.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	10	25	5803
 docs/orchestration/control-plane/policy.json	tracked	LIVE	machine-data			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/test_usagectl.py;docs/orchestration/usagectl.py	no	21	69	1674
 docs/orchestration/control-plane/source-record-inventory.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/control_plane_lint.py	no	5	99	17365
-docs/orchestration/control-plane/work-items.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	7	16	2881
-docs/orchestration/control_plane_lint.py	tracked	LIVE	script			open		route-only		no	11	610	30892
+docs/orchestration/control-plane/work-items.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	7	14	2407
+docs/orchestration/control_plane_lint.py	tracked	LIVE	script			open		route-only		no	11	647	33439
 docs/orchestration/delegate_report_check.py	tracked	MACHINE	script			generated		exact-path-only		no	3	171	7588
 docs/orchestration/deploy_oi135_watcher_swap.sh	tracked	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/test_deploy_oi135_watcher_swap.py	no	7	704	33747
 docs/orchestration/fable-prompt-brevity.md	tracked	DEAD	document			superseded		never		yes	1	14	995
@@ -1089,6 +1089,6 @@ docs/orchestration/waker_fired_but_unread.sh	tracked	MACHINE	shell-tool			genera
 docs/orchestration/wakerctl.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/state/probe-pin-exposure-20260817.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/test_wakerctl.py;docs/orchestration/test_wakerctl_preflight_watch_health.py;docs/orchestration/verify_hash_bindings.py;docs/orchestration/waker_fired_but_unread.sh;docs/orchestration/watch_report_train_run.py;nd-unfolding/pet/interactive_step1_trajectory_controller.sh	no	49	1889	75520
 docs/orchestration/watch_g2_dump_resume.sh	tracked	MACHINE	shell-tool			generated		exact-path-only		no	5	94	5041
 docs/orchestration/watch_g2_smoke_resume.sh	tracked	MACHINE	shell-tool			generated		exact-path-only		no	1	108	3560
-docs/orchestration/watch_report_train_run.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_watch_report_train_run.py	no	11	497	23304
+docs/orchestration/watch_report_train_run.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_watch_report_train_run.py	no	9	497	23304
 docs/orchestration/watch_slurm_array_resume.sh	tracked	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/test_watch_slurm_array_resume.py	no	9	162	7177
 docs/orchestration/whose_row.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/ben_filing_owner_check.py;docs/orchestration/merge_guard.sh	no	21	867	49715

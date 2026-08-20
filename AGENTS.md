@@ -24,9 +24,9 @@ a validated central value and a quarantined covariance at the same time.
 | 3D central value, marginal anchor, and closure | `VALIDATED` | The 3D `E_avail` result is complete; its marginal normalization recovers 2D and the injected-shape closure passes. | There is no published 3D reference; the anchor and closure validate the central result, not the old covariance-dependent significances. | `3d-unfolding/3D_OMNIFOLD_STATUS.md`; ledger |
 | Historical 3D covariance and generator significances | `QUARANTINED` | No historical rank-247 block-sum covariance chi-square or significance is a publication number. | The quotable covariance must be projected from the final adopted, selection-complete 5D trunk. | 3D status, “covariance-gate override” |
 | Scalar 4D/5D central values and closures | `VALIDATED` | The 4D and 5D central results pass their dimensional anchors and injected-variable closures. | This does not revive superseded unified covariance products or dependent significances. | `nd-unfolding/ND_OMNIFOLD_STATUS.md`; ledger |
-| Corrected scalar 5D covariance | `VALIDATED` | The background-aware corrected 5D GBDT covariance is the current scalar-5D uncertainty product. | Adoption and provenance of later standard-P4/PET-derived candidates remain separate decisions; read the exact current item before use. | N-D status; `nd-unfolding/uq_5d/`; ledger |
-| Historical unified 4D/FPS and PET uncertainty products | `QUARANTINED` | Old unified 4D/FPS covariances, old PET precision comparisons, `(E_avail,W)` covariance, and dependent significances are unquotable. | Corrected 5D and PET records supersede only the scopes they explicitly name; no replacement is implied for every historical component. | N-D status, “Quarantined historical results”; `KNOWN_ISSUES.md` |
-| PET central/statistical pairing (`C_stat`) | `EXISTS — UNVERIFIED` | A 50-member `C_stat` artifact exists, but it is not independently verified and is not paired with a ratified central value. | The nominal lies outside its replica family over a decision-bearing region; construction is not scientific adoption. | `docs/orchestration/LIVE-STATE.md`; `docs/OPEN_ITEMS.md` `OI-126`; ledger `VL132` |
+| Corrected scalar 5D covariance candidates | `QUARANTINED` | Background-aware corrected block-sum and unified-throw candidates exist, but neither is a publication uncertainty product. | Their ledger values remain measurements, not adoption; mean-centering alone is disqualified and the unified candidate has unresolved seed/provenance qualifications. | `VALIDATION_LEDGER.md`, corrected 5D UQ quarantine; exact `nd-unfolding/uq_5d/` receipts |
+| Historical unified 4D/FPS and PET uncertainty products | `QUARANTINED` | Old unified 4D/FPS covariances, old PET precision comparisons, `(E_avail,W)` covariance, and dependent significances are unquotable. | No full-event PET total covariance is adopted. The corrected recoil-only PET budget is a legacy representation cross-check and cannot satisfy or feed the full-event DAG. | `nd-unfolding/PET_UQ_REMEDIATION_STATUS.md`, “Legacy boundary”; `KNOWN_ISSUES.md` |
+| PET central/statistical pairing (`C_stat`) | `EXISTS — UNVERIFIED` | A 50-member partial covariance artifact exists, but it is not independently verified and is not paired with a ratified central value. | Noncontainment localizes a nominal/family mismatch; it is not a verdict on covariance dispersion or scientific adoption. | `VALIDATION_LEDGER.md` `VL132`; `docs/OPEN_ITEMS.md` `OI-126`; its exact rulings |
 | PET ML covariance / Gate 6 | `BLOCKED` | No `C_ML` is constructed and Gate 6 remains blocked. | Before any action read the exact `prohibitions_applied` keys in `docs/orchestration/state/gate6-member-trajectories-result-56847059.json`; do not paraphrase them. | Gate-6 receipt; N-D status |
 | Standard-P4 and related adoption candidates | `EXISTS — UNVERIFIED` | Mechanical, code, or packet checks may pass without making a candidate adoptable. | A matching hash, successful construction, or worker agreement is not independent verification or adoption. | `docs/CURRENT_WORK.md`; exact governing `OI-*` record and receipt |
 
@@ -52,21 +52,25 @@ a validated central value and a quarantined covariance at the same time.
 
 ## Principal unresolved scientific question
 
-The publication-limiting question is whether the PET estimator's nominal-versus-bootstrap displacement
-represents an uncertainty that should be published as estimator instability, or shows that the current
-bootstrap/central pairing is scientifically invalid and must be replaced. This is `OI-126`; engineering
-defects and scheduler activity are subordinate unless they change the evidence available for that
-decision.
+`OI-126` records a spatially organized location mismatch between the P5A nominal and its bootstrap
+family. It is **not** a live choice between publishing a large family width and rejecting the bootstrap:
+that binary was retracted because width and nominal location are different questions, and the
+construction is total-statistics rather than measured-leg-only. Existing diagnostics have localized the
+mismatch and refuted the named mechanisms without adjudicating a publishable central/statistical
+pairing. Read the end-state of the exact item and its rulings; do not restart completed probes from an
+older paragraph or generated summary.
 
-## Next three scientific actions
+## Next-action discipline
 
-1. Independently verify the existing `C_stat` ingredients and re-derive the nominal-versus-family
-   containment and tail geometry, producing one `OI-126` decision packet without new training. Rebuild
-   `OI-132`'s partition only if that packet relies on its divergence-coverage classification.
-2. Resolve `OI-126` from that packet: ratify an honest central/statistical pairing or specify the
-   replacement construction and the evidence it must supply.
-3. Authorize new compute only if the named decision cannot be answered from existing products; bind
-   any run to the unresolved quantity it measures and state what a terminal result cannot authorize.
+There is no standing authorization here for a new scientific analysis. Read fresh `LIVE-STATE.md` for
+the exact authorized action and terminal-event posture, then the governing `OI-*` record. In particular:
+
+1. Do not repeat the completed `OI-126` containment, tail-geometry, target-factor, extraction, or
+   signal-MC occupancy probes; their surviving conclusions and retractions are already recorded.
+2. Treat independent verification of the existing `C_stat` construction as distinct from scientific
+   adoption or pairing, and perform it only under the exact current authorization.
+3. Launch new compute only after Joseph authorizes the named decision and the run states both the
+   quantity it measures and what a terminal result cannot authorize.
 
 ## Decisions reserved for Joseph
 
@@ -78,7 +82,8 @@ decision.
 
 ## Minimal integrity rules
 
-- A scientific result is live only after its evidence and required ledger/RUN_LOG/STATUS records land
+- This front door and generated state are views, never evidence or authorization.
+- A result is live only after its evidence and required ledger/RUN_LOG/STATUS records land
   in a commit. Uncommitted or merely relayed results are not quotable.
 - Worker agreement is not independence. Trace agreeing statements to their first measurement and count
   shared origins once.
