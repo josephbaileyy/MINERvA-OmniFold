@@ -116,7 +116,21 @@ class PreconditionsAreVerifiedNotTrusted(unittest.TestCase):
         top = [n for n in tree.body if isinstance(n, (ast.Import, ast.ImportFrom))]
         names = {a.name for n in top if isinstance(n, ast.Import) for a in n.names}
         self.assertNotIn("ROOT", names)
-        self.assertNotIn("ROOT", sys.modules, "and nothing imported it as a side effect")
+        # THE SIDE-EFFECT HALF NEEDS A SUBPROCESS AND MY FIRST VERSION GOT THIS WRONG. It asserted
+        # `"ROOT" not in sys.modules`, which is a statement about the WHOLE PYTEST SESSION, not about
+        # this module: a sibling suite installs a ROOT stub, so the assertion passed on the file alone
+        # and FAILED in the full run -- order-dependent, and measuring the wrong subject. A fresh
+        # interpreter is the only instrument that can answer "does importing THIS module pull in ROOT".
+        import subprocess
+        r = subprocess.run(
+            [sys.executable, "-c",
+             "import sys; sys.path.insert(0, %r); import mii_adopt_unified_5d_stamped as m; "
+             "print('ROOT' in sys.modules)" % str(ND)],
+            capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual(r.stdout.strip(), "False",
+                         "importing the wrapper must not pull in ROOT, or the pure logic is untestable "
+                         "on every host a lane develops on")
 
 
 class TheGroupMapIsDerived(unittest.TestCase):
