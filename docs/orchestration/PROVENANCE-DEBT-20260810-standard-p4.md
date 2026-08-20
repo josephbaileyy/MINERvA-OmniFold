@@ -349,7 +349,7 @@ Joseph chose standard **B** (no debt that can affect a *quoted* number) over bot
 declared and attempting standard C (no pipeline debt at all).
 
 **In scope and being closed** — see
-[`PACKET-20260810-B-no-quoted-number-debt.md`](PACKET-20260810-B-no-quoted-number-debt.md):
+[`PACKET-20260810-B-no-quoted-number-debt.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/PACKET-20260810-B-no-quoted-number-debt.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/PACKET-20260810-B-no-quoted-number-debt.md"):
 defect **#6** (band-set completeness — the only item here that can yield a *confidently wrong* number
 rather than an unverifiable one), defect **#2** (resume binds one blob), defect **#1** (consumable
 evidence written before blockers), the **projected artifact not inheriting the rejection marker**, and

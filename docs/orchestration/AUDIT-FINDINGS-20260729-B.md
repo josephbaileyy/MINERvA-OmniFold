@@ -1,7 +1,7 @@
 # Audit findings B — MINERvA-OmniFold full-event PET path (2026-07-29)
 
 > **Read after [`AUDIT-FINDINGS-20260728.md`](AUDIT-FINDINGS-20260728.md) (B1–B5, M1–M14) and
-> [`AUDIT-FINDINGS-20260729.md`](AUDIT-FINDINGS-20260729.md) (N1–N8, G1–G2).** Both stand;
+> [`AUDIT-FINDINGS-20260729.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/AUDIT-FINDINGS-20260729.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/AUDIT-FINDINGS-20260729.md") (N1–N8, G1–G2).** Both stand;
 > this document does not restate them. Everything below was checked for novelty against both
 > before being written, and findings that merely corroborate prior work are segregated into
 > §3 rather than presented as new.

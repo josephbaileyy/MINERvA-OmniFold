@@ -1,7 +1,7 @@
 # Audit findings — repo-wide + analysis note (2026-07-31)
 
 > **Read after [`AUDIT-FINDINGS-20260728.md`](AUDIT-FINDINGS-20260728.md),
-> [`AUDIT-FINDINGS-20260729.md`](AUDIT-FINDINGS-20260729.md) and
+> [`AUDIT-FINDINGS-20260729.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/AUDIT-FINDINGS-20260729.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/AUDIT-FINDINGS-20260729.md") and
 > [`AUDIT-FINDINGS-20260729-B.md`](AUDIT-FINDINGS-20260729-B.md).** All three stand. Findings
 > here that merely corroborate them are marked `[corroborates]` inline rather than presented as
 > new; §6 lists what is genuinely novel.

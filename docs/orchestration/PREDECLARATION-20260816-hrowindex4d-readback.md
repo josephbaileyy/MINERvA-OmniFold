@@ -1,7 +1,7 @@
 # PREDECLARATION — read `hRowIndex4D` out of the closed object and verify it
 
 **Committed BEFORE execution.** Lane B, 2026-08-16. Supersedes
-[`PREDECLARATION-20260816-c4-persisted-projection-identity.md`](PREDECLARATION-20260816-c4-persisted-projection-identity.md),
+[`PREDECLARATION-20260816-c4-persisted-projection-identity.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/PREDECLARATION-20260816-c4-persisted-projection-identity.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/PREDECLARATION-20260816-c4-persisted-projection-identity.md"),
 which I withdrew before running it: the identity it proposed already existed, had already returned
 `ESTABLISHED`, and could not have come out differently because both covariance objects are
 bit-identical in content to the ones audited on 2026-08-10.

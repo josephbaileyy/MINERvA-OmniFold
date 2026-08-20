@@ -191,7 +191,7 @@ non-zero fixed-seed null instead of failing on it.
 
   **BOUNDED INSTEAD, 2026-08-11, which is weaker than a measurement and is labelled as such.** Any such
   scalar can only have been an estimator-noise term, and the largest estimator-noise quantity anywhere in
-  this budget is `\gbdtAiEstTrace` `1.306e-39`, the 12-seed fixed-data estimator scan (`values.tex:62`). **RESOLVED 2026-08-17 — IT CANNOT SERVE, ON FOOTING. `\gbdtAiEstTrace` was computed 2026-07-14 21:04 PDT on `of_inputs_5d.npz` with `--fixed-data-seed 0` (`sbatch_ai1_estimator_scan.sh:23-24`), artifact `uq_cov_ai1est_5d.root`, with NO flux universes and NOT on the bkgaware sweep — seventeen days BEFORE J28 was found in the 2026-07-31 audit (fixed `081ae4a`, *numbers NOT re-rolled*), and never re-rolled since (covering `git grep`: six sites, all citations of that one July-14 result). The candidate's footing is bkgaware, post-J28, block sum `4.357790406860002e-38`. J28 plausibly does not CORRUPT AI1 (it varies only an estimator seed on one fixed draw), but *not corrupted* is not *same footing*, and M(ii) needs commensurability with THIS budget — AI1's own log frames itself as *"~3% of the 4.35e-38 total"*, and that denominator is the J28-affected quantity. So lane C's CONDITIONAL is not reached: the condition fails. **Cause 3 discharges on three legs and needs its own M(ii) measurement**, costed at ~1 GPU-node-hour from the original run's measured 12 seeds at `CONC=6` — NOT the 18 GPU-h that `--time=01:30:00` would imply. Full derivation, sources and limits: [`FOOTING-20260817-gbdtaiesttrace-12-seeds.md`](FOOTING-20260817-gbdtaiesttrace-12-seeds.md).**
+  this budget is `\gbdtAiEstTrace` `1.306e-39`, the 12-seed fixed-data estimator scan (`values.tex:62`). **RESOLVED 2026-08-17 — IT CANNOT SERVE, ON FOOTING. `\gbdtAiEstTrace` was computed 2026-07-14 21:04 PDT on `of_inputs_5d.npz` with `--fixed-data-seed 0` (`sbatch_ai1_estimator_scan.sh:23-24`), artifact `uq_cov_ai1est_5d.root`, with NO flux universes and NOT on the bkgaware sweep — seventeen days BEFORE J28 was found in the 2026-07-31 audit (fixed `081ae4a`, *numbers NOT re-rolled*), and never re-rolled since (covering `git grep`: six sites, all citations of that one July-14 result). The candidate's footing is bkgaware, post-J28, block sum `4.357790406860002e-38`. J28 plausibly does not CORRUPT AI1 (it varies only an estimator seed on one fixed draw), but *not corrupted* is not *same footing*, and M(ii) needs commensurability with THIS budget — AI1's own log frames itself as *"~3% of the 4.35e-38 total"*, and that denominator is the J28-affected quantity. So lane C's CONDITIONAL is not reached: the condition fails. **Cause 3 discharges on three legs and needs its own M(ii) measurement**, costed at ~1 GPU-node-hour from the original run's measured 12 seeds at `CONC=6` — NOT the 18 GPU-h that `--time=01:30:00` would imply. Full derivation, sources and limits: [`FOOTING-20260817-gbdtaiesttrace-12-seeds.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/FOOTING-20260817-gbdtaiesttrace-12-seeds.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/FOOTING-20260817-gbdtaiesttrace-12-seeds.md").**
   Removed in quadrature from the adopted `A1 = 5.2696e-38` that is **−0.0307%** of the sqrt-trace; from
   the unified throw's `4.443674e-38`, **−0.0432%**. Taking the deliberately over-generous bound of
   estimator **and** ML-split (`\gbdtMlSplitTrace` `1.493e-39`) together, `1.9836e-39` in quadrature, gives
@@ -266,7 +266,7 @@ The Provenance leg moved for causes 2, 3 and 4, but **only one hop up the chain*
 > `stamped_bkgaware_{mean,cv}centered_20260812.root` directly:
 > `nd-unfolding/uq_5d/receipt_candidate_stamps_5d.json` (branch **S1**, both negative controls ABSENT).
 > **This moves `P` and discharges nothing** — see
-> [`DETERMINATION-20260817-causes-3-4-provenance-measured.md`](DETERMINATION-20260817-causes-3-4-provenance-measured.md)
+> [`DETERMINATION-20260817-causes-3-4-provenance-measured.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md")
 > §5 for the two `M`-leg judgements that remain, including this document's own §2-vs-§3 disagreement on
 > cause 3's `M`. Row text left as written, per this repo's convention of leaving written history written.
 >
@@ -308,7 +308,7 @@ The Provenance leg moved for causes 2, 3 and 4, but **only one hop up the chain*
 > `14.84%` / `15.74%`), after reproducing all eight committed summary numbers as a positive control.
 > **On the letter of §0 that is four METs for cause 1 — and it is ROUTED, not declared**, exactly as
 > cause 2 was:
-> [`DETERMINATION-20260817-cause1-census-and-magnitude-measured.md`](DETERMINATION-20260817-cause1-census-and-magnitude-measured.md)
+> [`DETERMINATION-20260817-cause1-census-and-magnitude-measured.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/DETERMINATION-20260817-cause1-census-and-magnitude-measured.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/DETERMINATION-20260817-cause1-census-and-magnitude-measured.md")
 > §6 states the one question a decider has to answer. Row text left as written.
 
 **UPDATED 2026-08-11 after job `56695424`. READ THE PRODUCT COLUMN BEFORE READING THE VERDICTS —
@@ -545,7 +545,7 @@ Four documents cite it as `CORRECTED_UQ_PRODUCTION_STATUS.md:73-78`:
 
     VALIDATION_LEDGER.md:303
     docs/orchestration/FINDING-20260806-j28-reroll-exact.md:108
-    docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md:119
+    docs/orchestration/evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md:119
     nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md:47   (self-citation)
 
 **Lines 73-78 today are the GPT doc-guardrails / code-merge paragraph.** The rule is at **112-118**.

@@ -124,7 +124,7 @@ candidate, "provenance only" reads as *nothing left*, when M(ii) is untouched.
 **And the judgement I was about to record as untaken HAS been taken — I had this cell stale in my own
 first draft.** `DETERMINATION-20260817-causes-3-4` §5 left it as *"does `\gbdtAiEstTrace` serve as M(ii)?
 — a decision, not a lookup."* **Lane B answered it the same day** in
-[`FOOTING-20260817-gbdtaiesttrace-12-seeds.md`](FOOTING-20260817-gbdtaiesttrace-12-seeds.md), and the
+[`FOOTING-20260817-gbdtaiesttrace-12-seeds.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/FOOTING-20260817-gbdtaiesttrace-12-seeds.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/FOOTING-20260817-gbdtaiesttrace-12-seeds.md"), and the
 answer is **no, on footing**:
 
 | | the candidate | `\gbdtAiEstTrace` (AI1) |
@@ -140,7 +140,7 @@ costed at **~1 GPU-node-hour**. **Graded `OPEN`, both columns.** That is a *diff
 is small and unstarted.
 
 **A bar for that measurement is proposed and awaiting a second lane** —
-[`PROPOSAL-20260817-mii-bar-for-cause-3.md`](PROPOSAL-20260817-mii-bar-for-cause-3.md), σ inflation ≤ 0.5%
+[`PROPOSAL-20260817-mii-bar-for-cause-3.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/PROPOSAL-20260817-mii-bar-for-cause-3.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/PROPOSAL-20260817-mii-bar-for-cause-3.md"), σ inflation ≤ 0.5%
 primary with `sd(block_sum)/block_sum ≤ 0.10` as its consequence, six rejected alternatives given. Under
 Joseph's 2026-08-17 rule that **two agreeing sessions authorize a run**, this is one confirm away from
 being runnable, and it is the cheapest open cell on the board.

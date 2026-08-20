@@ -200,7 +200,7 @@ Stated explicitly, because this is the section the rest of the document exists t
 
 **Measured in this repo and re-derivable:** every number in §2 and §3, the `OI-59` ratios, and the
 zero-η/K⁰_S census. Operands are in `OI-30`, `OI-56`, `OI-59` and
-`ADVISORY-20260813-eavail-published-conventions.md`.
+`evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/ADVISORY-20260813-eavail-published-conventions.md`.
 
 **Relayed from lane A and NOT independently verified by the author of this document:** the
 `GENIEXSecExtract` commit archaeology — the 8-commit history of `src/XSec.cxx`, the 3m07s gap between

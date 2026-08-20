@@ -345,7 +345,7 @@ that reaches every off-diagonal.** So:
 
 ### 8b. ⚠ AND THE ORDER-OF-MAGNITUDE COST CLAIM IS NOT SUPPORTED — measured, with its unit
 
-**`EXTENT-20260817-2850-a100h-scope-and-missing-legs.md:86`, verbatim:**
+**`evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/EXTENT-20260817-2850-a100h-scope-and-missing-legs.md:86`, verbatim:**
 
 ```
 RE-SEED = 23.840 sweep(169) + 14.2075 lateral+CV(19) + 1.030 finalize(1) = 39.078 A100-h  [189 tasks]
@@ -783,7 +783,7 @@ the second time today.**
 > ```
 >
 > **⚠ CORRECTED TWICE. The measured answer is `100.00 %`: EVERY BIN THAT CAN MOVE, MOVED.** My `98.25 %` divided
-> a per-product changed-count by `10,694` from `ADVISORY-20260813-oi30-eavail-residuals.md` — **a different
+> a per-product changed-count by `10,694` from `evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/ADVISORY-20260813-oi30-eavail-residuals.md` — **a different
 > product's reported set — so my numerator and denominator came from different artifacts, which is the SAME
 > DEFECT I was correcting.** `10,507`/`10,508`/`10,510` **are the support sizes themselves**, product by product.
 > The mediator and B measured it after B repaired the reporter.
@@ -798,7 +798,7 @@ the second time today.**
 > twice, both times in the direction of the effect being larger.)*
 
 **AND THIS CAMPAIGN HAS ALREADY WRITTEN THE WARNING FOR EXACTLY THIS PAIR OF NUMBERS.**
-`ADVISORY-20260813-oi30-eavail-residuals.md:289-292` — *"Both numbers are right; they index different things"* —
+`evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/ADVISORY-20260813-oi30-eavail-residuals.md:289-292` — *"Both numbers are right; they index different things"* —
 and `:299-301` records a scout inferring `10,550²` from a file size and being wrong. **The advisory even gives the
 third index: `10,550` is the PET-COMMON subset, `10,694` the full GBDT reported set.** So there are **three**
 live bin counts here and a bare *"of bins"* selects none of them.
@@ -2486,7 +2486,7 @@ and wherever g > 1:  vu = g^2 * vb   <-- so g plus vb RECOVERS vu on the vu-wins
 > why the number looked verified. **But `adopt_unified_5d.py:120-121` masks it:** `x = xfull[xfull > 0]` then
 > `assert x.size == n`, so `vb`, `vu`, `diag_comb` and `g` are all on the **REPORTED** set. The stored
 > covariance is `10,694 x 10,694` and `hInflation_g` has `10,694` bins
-> (`ADVISORY-20260813-oi30-eavail-residuals.md:286-288`).
+> (`evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/ADVISORY-20260813-oi30-eavail-residuals.md:286-288`).
 >
 > **SO: `~2 KB` (too small), then `0.527 MB` (too big by 6.16x), and the truth is `83.5 KiB` between them.
 > THE MECHANISM IS THE ONE I NAMED IN THIS VERY PARAGRAPH AND THEN COMMITTED WHILE NAMING IT — "a quantity true
@@ -2577,7 +2577,7 @@ and now the mask is already in the product. Worth noting as a rate, not an anecd
   (B) cannot reach.
 - **CORRECTED (§15a): stage 0's `~16 %` is `98.25 %`.** `10,507` changed bins is over the reported set of
   `10,694`, not `p4_lib.py:22`'s full grid of `65,856` — a `6.158x` mis-scaling, and the campaign's own
-  `ADVISORY-20260813-oi30-eavail-residuals.md:289` already warns that these two indices *"index different
+  `evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/ADVISORY-20260813-oi30-eavail-residuals.md:289` already warns that these two indices *"index different
   things"*. **The seed moves essentially EVERY reported bin.** Verdict DISTINCT unaffected.
 - **RULED (§15b): leg B's support is the PREDICATE `xfull > 0` on the member's own `hXSecND_flat`**, not a
   bin count — because leg B's `2.74 %` is calibrated to `\gbdtFiveBlockMedian`, which is that masked

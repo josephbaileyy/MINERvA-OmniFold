@@ -31,14 +31,14 @@ than on a step list.
 **Provenance-debt standard — DECIDED 2026-08-10.** Joseph chose standard **B**: no debt that can affect
 a quoted number. Scoped as five items (band-set completeness, resume blob binding, evidence-before-
 blockers, projected-artifact marker, J36's C++ site) in
-[PACKET-20260810-B](orchestration/PACKET-20260810-B-no-quoted-number-debt.md); the residual stays
+[PACKET-20260810-B](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/PACKET-20260810-B-no-quoted-number-debt.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/PACKET-20260810-B-no-quoted-number-debt.md"); the residual stays
 declared in [the provenance-debt document](orchestration/PROVENANCE-DEBT-20260810-standard-p4.md).
 **Standard C (no pipeline debt at all) is deferred post-publication** — measured across four repair
 rounds the lane closed 9 defects while outstanding went 6 → 14, i.e. introduction ran ~1.9× closure,
 so C is not schedulable as a pre-publication gate. CI is its precondition (debt document §0).
 
 > **Starting a fresh session? Read the latest handoff first:**
-> [`orchestration/HANDOFF-20260806-2246Z.md`](orchestration/HANDOFF-20260806-2246Z.md) — jobs in
+> [`orchestration/HANDOFF-20260806-2246Z.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/HANDOFF-20260806-2246Z.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/HANDOFF-20260806-2246Z.md") — jobs in
 > flight, what was settled 2026-08-06 (D2 powered closure FAILED; `niter` stays at 3; J28 re-roll
 > exact but 122/160), the decisions that are Joseph's, and what to do first.
 > **Handoffs must be indexed here.** The previous one
@@ -667,7 +667,7 @@ Implementation gate, in order:
        Consequence for sequencing: **resolve `test_uq_remediation.py`'s J28 fixture AFTER this**, not
        before --- deciding fixture-stale vs guard-over-strict now risks doing it twice.
        **The joint plan is written up at
-       [`PLAN-20260806-niter3-budget-and-J28-reroll.md`](orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md)**
+       [`PLAN-20260806-niter3-budget-and-J28-reroll.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md")**
        (2026-08-06), including predeclared decision rules. Note what it establishes at §2: the J28
        re-roll is **no longer blocked on the Perlmutter restore** the ledger still cites as its
        blocker --- the ~~365~~ **542** throw/block slabs (the original count missed every block slab;
@@ -681,7 +681,7 @@ Implementation gate, in order:
        superseded and was **not** confirmed, and the `g` direction is **convention-dependent**
        (mean-centered -2.55%, CV-centered +0.62%), so **adoption is blocked on the F7 decision**
        (`CORRECTED_UQ_PRODUCTION_STATUS.md:66`). Step 2:
-       [`STEP2-20260806-niter3-budget-classification.md`](orchestration/STEP2-20260806-niter3-budget-classification.md)
+       [`STEP2-20260806-niter3-budget-classification.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/STEP2-20260806-niter3-budget-classification.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/STEP2-20260806-niter3-budget-classification.md")
        --- **this item's own framing is wrong for the PET lane**: there is no full-event PET covariance
        to *recompute*, so it is a BUILD (which item 6 already required), and the 5D GBDT lane transfers
        on a positive closed-input argument.
