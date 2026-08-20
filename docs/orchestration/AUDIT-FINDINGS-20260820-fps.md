@@ -281,13 +281,36 @@ blurred.
 | `of_inputs_5d_fps_full.npz` | 1,552,038,759 | no |
 | `of_inputs_pc_fps_npy/` | 13,591,352,124 | no |
 
-**CFS — the honest state of this check.** A `-maxdepth 4` name search under
-`/global/cfs/cdirs/m3246` returns only `minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz` and its
-`_RECEIPT.json` — neither target. Two attempts at a deeper walk are **not** usable evidence and I am
-recording that rather than reporting their nulls: one exited **124 (`timeout` killed it)**, and a second
-returned rc 0 that was **`head`'s status through a pipe, not `find`'s**. An unbounded walk was relaunched
-detached (`/pscratch/sd/j/josephrb/oi50-hashverify/cfs.sh`, writing `cfs_walk.rc` unpiped) and had not
-completed when this memo was written. **So: absent from CFS to depth 4, unmeasured below it.**
+**CFS — measured, and a covering null for the question actually asked.**
+
+```
+find /global/cfs/cdirs/m3246/josephrb -name "*FPS*"     # full depth, no -maxdepth
+→ rc 0, stderr 0 lines, 2 hits
+    /global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz
+    /global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12_RECEIPT.json
+```
+
+**Neither target is present.** That null means something, and the reason it means something is worth
+stating: the search exited **0** (read unpiped, not through a pipe), and it produced **zero stderr
+lines**, so there was no unreadable subtree anywhere in our own CFS space for a copy to hide in. The
+only FPS-named objects we hold on CFS are the G2 full-event input npz and its receipt — consistent with
+§5's HPSS finding that the archived FPS objects are full-event and product-side, never event-loop
+sources.
+
+**The boundary, stated because it is real and this search does not cover it.** A walk of the *whole*
+project directory `/global/cfs/cdirs/m3246` hits **34 permission-denied subtrees**, all under five
+**other** members' directories (`kgreif`, `mpettee`, `msmith`, `phebbar`, `Runze`) and **zero under
+`josephrb`**. A copy parked in another member's space would be invisible to any search we can run — and
+equally unusable as a recovery path, since we cannot read it. **Within our own allocation the
+enumeration is complete; outside it, it is not, and cannot be made so.**
+
+**Two earlier attempts are not evidence, and are recorded rather than reported as nulls.** One exited
+**124** — `timeout` killed it. One returned rc 0 that was **`head`'s status through a pipe, not
+`find`'s**. A third, unbounded walk of the full project directory ran ~50 minutes without finishing and
+was terminated; its output file was still empty at that point, which — `find`'s stdout to a file being
+block-buffered — is **not** the same as "no hits found yet" and is not reported as one. The number above
+comes from the scoped search, chosen because it can finish *and* because it has no unreadable regions to
+hide behind. A search that cannot complete does not become a null by being abandoned.
 
 **"Archive instead of delete" — measured, and it does not fit.** HPSS today is **300.17 / 512.00 GiB =
 58.6%**, i.e. **211.83 GiB free**. Against that:
@@ -358,8 +381,11 @@ neither is on tape. It does not discharge OI-50 as an open item — that is a cl
 4. **Whenever the `universes_full`-minus-`bkgaware` glob is written down, write the depth with it.**
    179.62 GiB at `-maxdepth 1`; **876.42 GiB** recursive. Pin it in the script, not in prose — a prose
    caveat did not stop the seed from stating the wrong companion file in §3b.
-5. **Finish the CFS measurement** (detached walk, `cfs_walk.rc`) and get the m3246 CFS project quota
-   from Iris. Until both land, "not on CFS" is true only to depth 4 and no archive plan is costable.
+5. **CFS is settled for the two targets; the project quota is not.** Neither target is anywhere under
+   `/global/cfs/cdirs/m3246/josephrb` — covering search, rc 0, zero unreadable subtrees (§5). What still
+   blocks costing any archive plan is the **m3246 CFS project quota**, which `showquota` does not report
+   and which `df -h /global/cfs` does not answer. That number must come from Iris. Until it does, "move
+   it to CFS" is a direction, not a plan.
 6. **Quarantine is not permission.** `AGENTS.md:28` places *"Historical unified 4D/FPS and PET
    uncertainty products"* at `QUARANTINED` — *"Old unified 4D/FPS covariances … are unquotable."*
    Unquotable is not deletable: those products are retained for audit, and the omnifiles in §0 are their
