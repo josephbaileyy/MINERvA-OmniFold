@@ -159,6 +159,26 @@ headline count was re-verified at `1b9e074c` and is unchanged: 323 files under
 `docs/orchestration`, 703 of the 734 retired paths still absent, 363 of those still cited, 0 of
 those cited by `MANIFEST.tsv`.
 
+`main` then advanced again to `f228ba54 "ledger: backfill 36 unrecorded runs, 2026-08-14 to
+2026-08-20"`, taking `RUNS.tsv` from 306 rows to 344. Because `RUNS.tsv` is the single largest
+citer of retired paths, that count was re-derived at `f228ba54` rather than assumed, at the
+handoff session's request — it expected no change and was right, but expecting is not knowing:
+
+    still absent from main   703 / 734   (unchanged)
+    of those, still cited    363         (unchanged)
+    cited by RUNS.tsv        267         (unchanged, despite +38 rows)
+    cited by MANIFEST.tsv    0           (unchanged)
+    distinct citing files    77          (unchanged)
+
+The 36 backfilled rows cite no retired path — their provenance fields are `-` by design.
+
+**This branch is deliberately based on `1b9e074c`, not on `f228ba54`.** It is not rebased forward
+again because that would require a force-push. The consequence is the trap described next: a
+two-dot `git diff main HEAD` against this branch will show `f228ba54`'s 36 new `RUNS.tsv` rows as
+deletions by this branch. They are not. Use `git diff main...HEAD` (three dots, merge-base
+relative — which is also what a GitHub PR shows), or compare tree objects. The only content this
+branch adds is this one file.
+
 Worth recording because it is the same trap as the two-dot diff this report opens with, in a new
 place: before rebasing, `git diff main HEAD` on this branch showed the peer's two new `RUNS.tsv`
 rows as **deletions by me**, including the `REMEDYA-SMOKE-PASS` record. Nothing was deleted — the
