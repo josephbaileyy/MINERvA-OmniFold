@@ -1,8 +1,12 @@
 # AUDIT 2026-08-19 — the analysis note against the committed record
 
-**Lane D (verifier), read-only. TRANCHES 1–3.** Commissioned after an outside reader found `ISSUE-57` on
+**Lane D (verifier), read-only. TRANCHES 1–4, plus the pre-edit VERIFICATION BASELINE at §V.** Commissioned after an outside reader found `ISSUE-57` on
 a first pass through `docs/analysis-note/`, which nobody inside the repository had found. **The inference
-that there are more is correct: thirteen findings, twelve of them new.**
+that there are more is correct: fourteen findings, thirteen of them new.**
+
+**ROLE CHANGE.** Joseph authorised paper corrections and a push (`b8f74fbe`). **Lane B edits; this
+lane verifies and does not edit.** §V records the pre-edit digests and the checks, committed before
+any edit exists — a verification baseline written after the diff is not one.
 
 > **TRANCHE 3 HEADLINE.** Finding 6 is worse than a label error — **the paper build prints
 > $\chi^{2}=3.66$, which is the `exact`-GBT value, while naming LightGBM as the estimator, and the note
@@ -51,6 +55,7 @@ what it is attached to. Where I cannot tell which side is wrong I say so, becaus
 | **12** | **MED-HIGH** | N | the note's own containment check **passes while naming `\petGbdtGap` as uncoverable**, and by construction cannot see a dead value that was never marked | `check_dead_containment.py` | its own output, run this turn | **neither — an instrument gap, currently occupied** |
 | **11** | **MED** | N | three reviewer-comment macros render as visible `[GK: …]` text in the note PDF, and are **undefined in both external wrappers** — a latent build-breaker on the normal distillation operation | `main_note.tex:17-19`; 13 uses | — | **the note** |
 | **13** | **CANNOT TELL** | N | `sec_validation`'s unstruck PET shape comparison may be the same 2M-event run whose absolute comparison `sec_pet` strikes | `sec_validation.tex:96-98,146-159` | `sec_pet.tex:47-62` | **unresolved — owner's call** |
+| **14** | **LOW-MED** | **P + Pr** | both external builds omit the analysis's one binned step; no paper sentence is falsified, but the measurement's only binning dependence is absent from the document whose distinction is unbinnedness | `paper_body.tex`, `primer_body.tex` (0 hits) | `sec_method.tex:34-52` | **an omission — owner's call** |
 
 ---
 
@@ -631,6 +636,37 @@ iteration count, which the caption already almost does by naming the sample size
 
 ---
 
+## 14. LOW-MED, **PAPER + PRIMER** — the external builds omit the analysis's one binned step
+
+`sec_method.tex:34-52` and `:55-56`, the note build:
+
+> **Background subtraction (the one binned step).** … each data event in reco bin $b$ is weighted by
+> $w_{\mathrm{pur}}(b)$ … an ${\sim}\SI{3}{\percent}$ effect overall …
+> **This correction is, deliberately, the one place the analysis binning enters before the final
+> histogramming.**
+
+`grep -niE 'negative.weight|negweight|purity|background'` over **`paper_body.tex` returns nothing, and
+over `primer_body.tex` returns nothing.** Control: both files grep live (92 and 60+ hits for
+`\\[a-zA-Z]+`). **Neither external build mentions background subtraction at all.**
+
+**No sentence in the paper is falsified by this, and I want that stated plainly rather than buried.**
+The paper's binning claims are careful and remain true: it says iterative Bayesian unfolding *"on a
+binned migration matrix"* scales poorly (`:10-12`), and that histogramming happens *"in any declared
+reporting binning"* (`:51`). The purity weight is a **reco-space** correction, not a reporting binning,
+so it contradicts nothing written.
+
+**What it does is remove the measurement's only binning dependence from the document whose stated
+methodological distinction is unbinnedness.** A reader of the external paper cannot learn that the
+analysis has a binned step at all, or that it is a ~3 % effect, or that the note devotes an appendix and
+a `CLM-009`-backed reduction proof to eliminating it. **This is an omission with an editorial and a
+physics component, and it is the note owner's call, not mine** — I am reporting the asymmetry, not
+prescribing that the paper must carry it.
+
+It is, though, the same **prose-versus-boundary** mechanism as findings 6 and 7: the honest
+qualification exists, in `sec_method` and `app_negweight`, and **both are note-build only.**
+
+---
+
 ## CHECKED AND CLEARED — recorded because a near-miss is worth as much as a hit
 
 Three things looked like findings and are not. Recorded so the next reader does not re-derive them, and
@@ -687,6 +723,28 @@ because two of them would have been false `HIGH`s in the **external** build.
    **Generalisable: a caveat carried in prose survives a distillation; a caveat carried in markup or in
    a neighbouring section does not.** That is the same standard as *does the document already have the
    mechanism* — applied to whether the mechanism can cross a document boundary.
+7. **`app_negweight.tex` NAMES ITS OWN THIRD-BACKEND LIMITATION, unprompted, and it is the best-hedged
+   passage I have read in the note.** I went in expecting a finding: `sec_method.tex:64-68` claims the
+   unbinned route *"reproduces the binned correction to \SI{\nwPctTot}{\percent} … and its systematic
+   and statistical covariances to within \SI{2}{\percent}"*, and `values.tex:107-111` records that the
+   `nw*` 2D totals are the **`hist`** estimator while the central value is `exact` and the covariance
+   `lgbm` — a third backend, unflagged in `sec_method`. **`app_negweight.tex:57-62` flags it itself:**
+
+   > Note that `\texttt{hist}` is neither the backend of the production central value (`\texttt{exact}`)
+   > nor of its covariance ensemble (`\texttt{lgbm}`); see \S\ref{sec:method}. **This validation
+   > therefore establishes the equivalence on a third backend, and its transfer to the production
+   > configuration is an assumption rather than a demonstration.**
+
+   **That is exactly the caveat I was going to file, written better than I would have written it.** No
+   finding. *(The reach question does apply and is answered: neither external build mentions the
+   subtraction at all — §14.)*
+8. **`sec_eavailw.tex` is clean.** The `(\Eavail,W)` comparison is explicitly *"made at central-value
+   level because no corrected covariance has been adopted for the $(\Eavail,W)$ projection"*, matching
+   `values.tex:52-54`'s *"(Eavail,W) significances removed 2026-07-12: historical covariance
+   quarantined. Reintroduce macros only from a committed corrected-covariance ledger entry."*
+   **The macros stay removed and the prose does not reintroduce a significance.** `\eavailMargin`
+   `0.11` prints beside its own operand (*"5D/4D total $=1.0011$"*), so unlike the `\ratioTot`/`1.1`
+   pair below it is self-checking.
 6. **`sec_results`, `sec_fps`, `sec_execsummary` and `sec_3d` pass on everything I could check**, and
    several are notably careful: `sec_results` hedges its covariance distances four separate times
    (*"indicative"*, *"descriptive scale, not an independent-result pull"*, *"neither is a calibrated
@@ -714,12 +772,13 @@ Stated because an audit silent about its own reach reads as complete.
 2. **READ in full across tranches 2–3:** `sec_method`, `sec_fps`, `sec_results`, `sec_validation`,
    `sec_execsummary`, `paper_body`, `primer_body`, `check_dead_containment.py`; `sec_3d`, `sec_pet`,
    `sec_systematics`, `app_statmethods` in the relevant parts. **Still only grepped, not read:
-   `sec_eavailw.tex`, `app_negweight.tex`, `sec_experiment.tex`, `sec_intro.tex`, `sec_summary.tex`,
-   `app_landscape.tex`, `app_codebase.tex`** — and `sec_3d`'s and `app_statmethods`' unread remainders.
+   `sec_experiment.tex`, `sec_intro.tex`, `sec_summary.tex`, `app_landscape.tex`, `app_codebase.tex`**
+   — and `sec_3d`'s and `app_statmethods`' unread remainders. **Tranche 4 added `app_negweight` and
+   `sec_eavailw`**, both of which cleared.
    `ISSUE-57`'s class is found by *reading*: the defect is a correct-sounding sentence about the wrong
    object and has no distinctive string. **The grep results for those files are evidence about the
-   grep.** `app_negweight.tex` (375 lines) is the largest unread block and the obvious next target;
-   `sec_method.tex:64-68` makes a covariance-reproduction claim that leans on it.
+   grep.** With `app_negweight` now read, the largest unread block is `sec_experiment.tex` (170 lines),
+   which carries the selection definition two `\gk{}` review questions are about.
 3. ~~**The three builds may differ** … I did not check whether a defective passage reaches all three.~~
    **DONE in tranche 2 — §0, and it changed the ranking.** Note that §0 measures reach by *macro name and
    figure*; a claim compressed into different words in `paper_body`, as findings 6 and 7 both are, is
@@ -744,6 +803,95 @@ Stated because an audit silent about its own reach reads as complete.
    worktree. Its strict mode requires the built PDFs and would have run the render-side comparison too.
    **So §12's `PASS` is the source stage only**, which is exactly the distinction the script's own
    `--source-only` help text insists on, and I am repeating it rather than quoting the bare `PASS`.
+
+---
+
+## V. VERIFICATION BASELINE — recorded BEFORE lane B's edits exist
+
+**Role change, 2026-08-19.** Joseph authorised paper corrections and a push
+(`AUTHORIZATION-20260819-analysis-note-paper-corrections-and-push.md`, `b8f74fbe`). **Lane B edits;
+this lane verifies and does not edit.** The party that verifies is not the party that built.
+
+**A verification baseline is worthless if it is written after the diff**, so this section is committed
+at `origin/main` `b8f74fbe`, with **no analysis-note edit yet present** — `git log -- docs/analysis-note/`
+tops out at `7d884da3`, which predates the authorization.
+
+### Pre-edit digests, whole subtree
+
+```
+948986d8 app_codebase.tex   0bffc6c6 app_landscape.tex  267f88c3 app_negweight.tex
+202539de app_statmethods.tex 50a11039 build_all.sh      edf7ccfe check_dead_containment.py
+ef4c5348 figures/           fe73058d main_note.tex      940d4a5d main_paper.tex
+ef1712b0 main_primer.tex    2721bf5d make_figures.sh    d4a73c8e paper_body.tex
+ec107e9b preamble.tex       e792718b primer_body.tex    d254628e sec_3d.tex
+78f4b23c sec_eavailw.tex    eec162b8 sec_execsummary.tex 99046172 sec_experiment.tex
+14d94dfa sec_fps.tex        e3930330 sec_intro.tex      34482869 sec_method.tex
+e49048ed sec_pet.tex        43f52e4a sec_results.tex    f361449a sec_summary.tex
+f24ae59e sec_systematics.tex 6816d716 sec_validation.tex 927c4c94 technote.bib
+dcaa8c90 values.tex
+```
+
+**Any blob that changes and is not `paper_body.tex` is a question**, not automatically a defect — the
+receipt's clause 5 permits *"captions, cross-references, or shared prose required for those corrections
+to render coherently"*, and clause 1 permits shared source. But it must be **asked**, which is what a
+recorded digest set makes possible and a post-hoc read does not.
+
+### The two target sites, verbatim, pre-edit
+
+```
+paper_body.tex:47-48
+  We use gradient-boosted decision trees (LightGBM, 100 trees, 5 iterations) as the
+  learners; the higher-dimensional unfolds simply append feature columns
+
+paper_body.tex:145-147
+  closure is internally consistent to $\sim\SI{\petClosure}{\percent}$ and which
+  agrees with the production result at the \SI{9}{\percent} level
+  (Fig.~\ref{fig:ppet}).
+
+paper_body.tex:163-166  (caption, fig:ppet)
+  closure validates the extraction machinery to $\sim\SI{\petClosure}{\percent}$
+  but does not test omitted muon dependence; the total offset also reflects the
+  different training and feature contracts.
+```
+
+### What I will check, written before I can see the answer
+
+1. **Does the estimator edit fix finding 6 *as upgraded*?** Naming `exact` is necessary and **not
+   sufficient**: the paper prints `\chiPaper` = `3.66`, which is the `exact`-GBT value, and the note
+   records LightGBM at `2.65`. **An edit that names `exact` but drops or garbles the
+   not-estimator-matched clause leaves the reader without the pairing `sec_method` calls *"a stated
+   property of the measurement."*** All three facts, or the finding is not discharged.
+2. **Does the PET edit fix finding 7 on the RIGHT GROUNDS?** The note withdraws that comparison on
+   `niter`=2, the 2026-08-01 estimator change, and J21 — **not** on covariance grounds. The paper's
+   existing `:151-157` quarantine sentence is covariance-scoped and already licenses the number. **An
+   edit that leans on that sentence rather than on the legacy grounds re-creates the defect in new
+   words.**
+3. **Is `\petClosure` untouched?** Receipt clause 3 and the boundaries forbid answering a `CANNOT-TELL`
+   before the PET/spec owner adjudicates. **`\petClosure` prints at `:145` and `:164`, inside both
+   target regions.** An edit that quietly disposes of it while fixing its neighbours would exceed the
+   authorization — and it is the easiest such overreach to commit by accident, because the two sites
+   are one sentence apart.
+4. **Did anything change that no finding asked for?** Answered by diffing against the digests above.
+5. **Any NEW inconsistency with the record**, including with findings 1–14 of this document.
+6. **Do the five out-of-scope items remain untouched?** `\petClosure` (3 above), the measured-leg
+   self-contradiction (finding 1, note-only, lane C), the unmarked `\gbdtFive*` (finding 2, note-only),
+   the ledger-traceability gap (finding 3 — **and the remedy is a LEDGER ENTRY; editing the prose would
+   hide the gap rather than close it**), and `\bpn`/`\gk`/`\jrb` (finding 11). **Their absence from the
+   diff is compliance, not oversight, and I will not report it as a miss.**
+
+### One thing I am NOT verifying, and why it matters that someone did
+
+The mediator found `build_all.sh` exiting 0 with `latexmk` reporting *"Nothing to do"* for all three
+targets and **nothing recompiling** — so `check_dead_containment.py`'s PDF stage had been validating
+PDFs dated 2026-08-11 and 2026-08-15, for over a week, while reporting `PASS`. Fixed with `latexmk -g`
+per target; all three now carry current mtimes and the containment check passes on **fresh** PDFs.
+
+**This is the same class as §12 and it is worse, because §12's gap was disclosed in the tool's own
+output and this one was not: a green build proved nothing about current source.** It also means
+**§12's `PASS`, which I ran `--source-only`, was the only honest reading available in this worktree**
+— the strict mode I could not run was, at that moment, reading week-old PDFs. **I did not find this and
+I am not claiming it.** Recorded because the gate this lane will verify against is now real, and was
+not before, and a reader of §12 needs to know which regime each `PASS` came from.
 
 ---
 
