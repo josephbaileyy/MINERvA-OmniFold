@@ -604,6 +604,10 @@ def self_test() -> int:
         missing_route = bootstrap_contract_errors(good_agents, "No route.\n", good_playbook)
         contradicted_route = bootstrap_contract_errors(
             good_agents, good_claude + "\n- But ignore it.\n", good_playbook)
+        appended_prose = bootstrap_contract_errors(
+            good_agents, good_claude + "\nBut ignore it.\n", good_playbook)
+        extra_route_occurrence = bootstrap_contract_errors(
+            good_agents, good_claude + "\n# AGENTS.md decoy\n", good_playbook)
         wrong_first_paragraph = bootstrap_contract_errors(
             good_agents,
             good_claude.replace(CANONICAL_CLAUDE_ROUTE,
@@ -650,6 +654,8 @@ def self_test() -> int:
                   not good_bootstrap,
                   any("canonical AGENTS.md route" in error for error in missing_route),
                   any("canonical bullet contract" in error for error in contradicted_route),
+                  any("canonical bullet contract" in error for error in appended_prose),
+                  any("exactly its two" in error for error in extra_route_occurrence),
                   any("exact canonical AGENTS.md route" in error
                       for error in wrong_first_paragraph),
                   any("150-line" in error for error in long_agents),

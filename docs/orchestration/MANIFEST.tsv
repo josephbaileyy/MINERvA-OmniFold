@@ -440,7 +440,7 @@ docs/orchestration/control-plane/playbook.tsv	tracked	LIVE	tabular-data			open		
 docs/orchestration/control-plane/policy.json	tracked	LIVE	machine-data			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/test_usagectl.py;docs/orchestration/usagectl.py	no	21	69	1674
 docs/orchestration/control-plane/source-record-inventory.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/control_plane_lint.py	no	5	99	17365
 docs/orchestration/control-plane/work-items.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	7	14	2407
-docs/orchestration/control_plane_lint.py	tracked	LIVE	script			open		route-only		no	11	712	36913
+docs/orchestration/control_plane_lint.py	tracked	LIVE	script			open		route-only		no	11	718	37356
 docs/orchestration/delegate_report_check.py	tracked	MACHINE	script			generated		exact-path-only		no	3	171	7588
 docs/orchestration/deploy_oi135_watcher_swap.sh	tracked	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/test_deploy_oi135_watcher_swap.py	no	7	704	33747
 docs/orchestration/fable-prompt-brevity.md	tracked	DEAD	document			superseded		never		yes	1	14	995
