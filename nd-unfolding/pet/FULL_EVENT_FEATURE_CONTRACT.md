@@ -42,7 +42,7 @@ these fingerprints and never mix the two; recoil-only PET UQ is NEVER attached t
   hyperparameter reaching the full-event estimator's definition is the exact leak this document
   quarantines elsewhere. Not yet plumbed — batch size is still absent from `NOMINAL_SEED_POLICY`,
   the driver CLI, and Gate-4's `FROZEN["seed_policy"]`, so nothing enforces this sentence. See
-  `FINDING-20260802-estimator-definition-vs-driver.md`; the plumbing rides the Step 2b re-issue.)*
+  `evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/FINDING-20260802-estimator-definition-vs-driver.md`; the plumbing rides the Step 2b re-issue.)*
 - **seed policy:** estimator seed 42 FIXED for central + vertical/end-to-end universes + C_stat
   (so C_stat varies only the coherent data+MC Poisson replica id); C_ml varies subsample/split
   seed × TF estimator seed (predeclared crossed design), no Poisson.

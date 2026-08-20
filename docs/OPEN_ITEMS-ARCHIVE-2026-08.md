@@ -491,7 +491,7 @@ Implementation gate, in order:
        be RE-RUN at niter=3**, which is now the only thing standing between Gate-4 and a
        runtime verdict. Cancelling cost ~5 min of GPU because it was caught minutes after
        dispatch rather than hours; see
-       [`FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md`](orchestration/FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md).
+       [`FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md").
 
        **RE-RUN COMPLETED AND IT FAILED. Job 56381674, 2026-08-06, `niter=3` confirmed in
        `configuration`, elapsed 01:58:19, rc=3, `verdict=FAIL`.** The two training-independent
@@ -628,7 +628,7 @@ Implementation gate, in order:
        is the seed ensemble this item already called for** --- it needs an `--estimator-seed`
        override the driver still lacks, deliberately not added while the three arms hold a
        submission-time pin on the driver's sha. Detail:
-       [`FINDING-20260807-d2-underfitting-probe.md`](orchestration/FINDING-20260807-d2-underfitting-probe.md).
+       [`FINDING-20260807-d2-underfitting-probe.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/FINDING-20260807-d2-underfitting-probe.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/FINDING-20260807-d2-underfitting-probe.md").
    (a2) ~~**run Step 3, the ordinary P5A closure, with `--json`**~~ --- **DONE 2026-08-05,
        PASS**, job 56358150. `marginal_l1 = 0.006594` (<= 0.10, 15x margin),
        `|median(push)-1| = 0.0858` (<= 0.15), `bkg_mode = mc-only`, not a synthetic fixture,
@@ -731,7 +731,7 @@ Implementation gate, in order:
        this item claimed when it was opened.** `niter` is a regularization parameter: more iterations
        = less regularization = more variance, less bias. As opened, this item read everything in
        `2b2e5f1` and in
-       [`FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md`](orchestration/FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md)
+       [`FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md")
        as arguing the choice from **gate behaviour** --- realized exceedance 0/48 vs 6/48, window width
        to the parameter-free ceiling, false-reject rate --- which establishes the choice is *sound*,
        not that it is *right*. A B1 closure passing is not a bias-variance argument.

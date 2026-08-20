@@ -251,7 +251,7 @@ measurement, which is the thing this board grades other cells down for.
 **`C` corrected from MET to PARTIAL.** I graded it MET both columns off `CRITERIA` §2's citation
 (`unified_throw_cov.py:330-331, 370-371` — `do_combine` rejects mixed-seed slabs). Lane B established that
 the guard's coverage **excludes the dominant block**:
-[`FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-block.md`](FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-block.md)
+[`FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-block.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-block.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-block.md")
 — *"the dominant block's products are not in the guard's population at all, and there is no seed provenance
 anywhere on that path to be present or absent."* Nothing stamps the sweep seed into its products, and
 `analyze_universes_5d.py` has **zero** occurrences of `seed`. **So the single-seed property of the dominant

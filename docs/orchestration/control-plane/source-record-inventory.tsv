@@ -1,10 +1,10 @@
 source_record	lifecycle	queue	classification_rule	source_row_sha256	state_prefix
 OI-70	active	NOW	safe-default-active	fbeafc72e79982d1a8f781cd0ce684425dc53ce83efa5196537a1f181ebe6fe0	MECHANICAL HALF DISCHARGED 2026-08-15 from the MAIN CHECKOUT on Joseph's authorization (relayed by the mediator, grant c
-OI-71	active	WAITING-JOSEPH	explicit-user-decision	ca97bd37e556345e86623f7d01fbdb2aa7a2941402919dcf63012e2ce91a9941	WAITING-USER, AND NARROWER THAN THIS ROW SAID. CORRECTED 2026-08-15: the physics ground for quoting VL100 is MIS-TARGETE
-OI-72	retired	-	explicit-terminal-prefix	23c70831d45ae5faefc64a4931723a4b6f399c8e2bb7250e7f87f43bf310c6ae	WITHDRAWN THE SAME HOUR IT WAS FILED — already found by lane B, already fixed, and the id is kept rather than reused. Fi
+OI-71	active	WAITING-JOSEPH	explicit-user-decision	6bf07285524a7460c8b3cf2e1d2cbab687481a66bc037dd2902476de8f9d2540	WAITING-USER, AND NARROWER THAN THIS ROW SAID. CORRECTED 2026-08-15: the physics ground for quoting VL100 is MIS-TARGETE
+OI-72	retired	-	explicit-terminal-prefix	08453ed7dad41224c113f311a9defc28e773c9cdaa2bff715178f9fc3d76c751	WITHDRAWN THE SAME HOUR IT WAS FILED — already found by lane B, already fixed, and the id is kept rather than reused. Fi
 OI-73	active	BLOCKED-EXTERNAL	explicit-blocker	3dee0253188ebb0fc48e39cd183a79764c62aa5287ec05681650e76ecaf513d0	ITEMS (1) AND (3) DISCHARGED 2026-08-15; ITEM (2) IS BLOCKED BY A CODE DEFECT AND THIS ROW STAYS OPEN ON IT. Raised 2026
 OI-74	active	NOW	safe-default-active	ea9e11bf504a91f57b826d7c8b4afe01919ea43849b5ddac7ff509c4ecc98a04	CORRECTED AND NARROWED 2026-08-17 (lane E) — THE DRIFT IS GONE, THE TREE IS SYNCED AT 7ac36ac, AND EVERY QUANTITY IN THI
-OI-75	active	WAITING-JOSEPH	explicit-user-decision	616ef4e67cd48cf198648524b10c9d45807723705b8476c703a2b12b66dc448c	OPEN — WAITING-USER on item (1), which this lane is DELIBERATELY NOT ADJUDICATING. Filed 2026-08-15 by lane A while corr
+OI-75	active	WAITING-JOSEPH	explicit-user-decision	455e03c9508d19a17167f86d14e29fbb887a233ab00adff8a53aa056871ffe14	OPEN — WAITING-USER on item (1), which this lane is DELIBERATELY NOT ADJUDICATING. Filed 2026-08-15 by lane A while corr
 OI-1	active	BLOCKED-EXTERNAL	explicit-blocker	e96dba9d3913a6dc5ff47820b046c3de891c112effd037458c4ad67e766d12c7	BLOCKED
 OI-2	active	NOW	safe-default-active	b67224d83254be9e57038c6f2853865ce3ac3c655584903989847753d4b1846a	4D SUPERSEDED / scalar-FPS STILL OPEN — SPLIT VERDICT, codex audit 2026-08-13
 OI-3	active	BLOCKED-EXTERNAL	explicit-blocker	0005fd0cd6fb6a274cac73809ee4a37a534add5d6de3ad093e3b9eb5b7f4fb87	BLOCKED — now SCOPED, and the blocker is a decision not compute
@@ -12,10 +12,10 @@ OI-4	active	BLOCKED-EXTERNAL	explicit-blocker	063c2bfc4c2053134774e14f9b93293287
 OI-5	retired	-	explicit-terminal-prefix	81768a5cabbc5f3a442b62ac4058b697eaacd5406ad111342b58e4b04082ca77	DISCHARGED 2026-08-13 — the conflict was a scope collision, both statements are true
 OI-6	active	NOW	safe-default-active	777ebab79d9dff369ecf434e84574cdc22dc18a9fc2172e04a3f78e9b9c22de0	DECIDED 2026-08-15 (purity, reading (A)); the NOTE OBLIGATION IS DISCHARGED; the REVISIT OBLIGATION SURVIVES AS THE OPEN
 OI-7	active	BLOCKED-EXTERNAL	explicit-blocker	ec470a74abc7fe2c0aa873b6cede41a1d4b9397a6e14e8841dd83eb2782b2618	BLOCKED
-OI-8	retired	-	explicit-terminal-prefix	5a43e3be0cf95c7b24f028845e4d31bbb95ac149e64490df2eb9a463a5056fdc	CLOSED 2026-08-15 — ruled, corroboration MET, and the RULING'S BASIS WAS REFUTED WHILE ITS DISPOSITION HELD
+OI-8	retired	-	explicit-terminal-prefix	2d549f64b9a7187ec6fd0d3a0add89acac6bdd6980505ae0c178eb77a3cc0250	CLOSED 2026-08-15 — ruled, corroboration MET, and the RULING'S BASIS WAS REFUTED WHILE ITS DISPOSITION HELD
 OI-9	active	NOW	safe-default-active	00e9f8796f268caab4914f3c9c5df07ec2c63a613d4f4ca1577216627e4c3eb9	OPEN
-OI-10	active	NOW	safe-default-active	17fd83e4e99c3e8a3ce81f260df995404c7b3ad2ad4eee183f7b3d3ce29dfa70	OPEN
-OI-11	active	NOW	safe-default-active	21e22817bfb0fd594b48212e0b0f3c2b86a9894ce18009b77163846f2fdd7d4f	OPEN
+OI-10	active	NOW	safe-default-active	1fff73e47df2038fcc4ff6a1df898ae153347e732447c037b81f262e221b468f	OPEN
+OI-11	active	NOW	safe-default-active	42958d4e5a134926c1ddc76d5acff00a1fde9446781e5fe09d59b6eb71370ce4	OPEN
 OI-12	active	NOW	safe-default-active	664998ca4bb7a148a09de85f5e88c42b5677fc90fa6e00445ec2afa19b7f91e0	OPEN
 OI-13	active	WAITING-JOSEPH	explicit-user-decision	c899bf49b52d5749e43415e88370f87157d28249520d181c134e71651e3e2935	WAITING-USER
 OI-14	active	NOW	safe-default-active	3e3b2d71beb783599766fba6f34e267bf360871acdd05175e49ad03ffe6bed0c	OPEN
@@ -30,7 +30,7 @@ OI-22	active	NOW	safe-default-active	0b5b3069f6e271d31165387d9198f7266ee900d4e09
 OI-23	retired	-	explicit-terminal-prefix	5886a0c74d8051215d3f545fc8f04d1f6b0a36905f48bed304cee968f7fee2f0	DISCHARGED 2026-08-14 on the configuration question, with its second residual TRANSFERRED to OI-71 rather than dropped.
 OI-24	active	BLOCKED-EXTERNAL	explicit-blocker	1ba53f10227e6b78134feca6da57a8a30163819ae4e6510562591a8cf991ae16	BLOCKED
 OI-25	active	BLOCKED-EXTERNAL	explicit-blocker	808103caf5af4fc507354bffd5f3bafb809400e123567138e2d6fde515e386ed	BLOCKED
-OI-26	active	BLOCKED-EXTERNAL	explicit-blocker	c9af032b6fafea2da59a8d8f5aee7ede60fd9392266cbe404891d7fe64a1342e	BLOCKED
+OI-26	active	BLOCKED-EXTERNAL	explicit-blocker	396b1623edc7a9fe6e648965035de9e2bf1db13412a917602273e11520e3cf91	BLOCKED
 OI-27	active	BLOCKED-EXTERNAL	explicit-blocker	e9926f3ab72e043684d57ee895e0d6fcca2e27746de0ab2b0258e02cf5ff613a	BLOCKED
 OI-28	active	BLOCKED-EXTERNAL	explicit-blocker	2785185d9fe8dab015f78e67b0c088498cbe4a34ec7831f48024074869c49e83	BLOCKED
 OI-29	active	WAITING-JOSEPH	explicit-user-decision	fbe9c87f2a4567a2387fdaf1468d85864bb15e55f4386aefbaafa906d2623f0f	WAITING-USER
@@ -52,7 +52,7 @@ OI-43	active	WAITING-JOSEPH	explicit-user-decision	eba3132368ce2a4053c2140289ff9
 OI-44	active	BLOCKED-EXTERNAL	explicit-blocker	e4cedfccf937b17243cc9b71e2b153fdbb5eb3c59d4d6c6eb54caf70d4e15e1f	BLOCKED
 OI-45	active	NOW	safe-default-active	8888e55507e89605d7b169e099bbebac60eee8f8bd8ebed0eaab40d0d1fcb227	OPEN
 OI-46	retired	-	explicit-terminal-prefix	36ffc3c94a84f03f1d0c7b9352bf1fd217c7c9a98973ac6074cf61e02203d09b	DISCHARGED 2026-08-13 as a commit-gate question — the artifact is separately superseded
-OI-47	active	NOW	safe-default-active	7c6af548325f34a9868fc3e10b10050e0ddaf3f486db016cbab26d29ad6d8314	OPEN (re-scoped 2026-08-12, owner Session A)
+OI-47	active	NOW	safe-default-active	3ed755c361fc481291d704a942fcbc69bdd405021c75ab1a1eb20dea83e32441	OPEN (re-scoped 2026-08-12, owner Session A)
 OI-48	retired	-	explicit-terminal-prefix	f47404a910da04702d7bfdfddb978aa9cf6b31ae4f9a9af931eee385b253505a	SUPERSEDED 2026-08-18 by OI-131 — THE DECISION THIS ROW RECORDS WAS REVERSED. Its narrative below is the 2026-08-13 stat
 OI-49	active	NOW	safe-default-active	7aac3cbc470ad696f8a0c74547ea096a0e553a0f53fd1661081d268921366328	OPEN
 OI-50	active	NOW	safe-default-active	8494f1d9ea850bc3d65bbc90b248e15fc5df8d1d0751278a7f2c695b7df825fd	NARROWED 2026-08-18 — one of the two archives is now ANSWERED, the other is not. mnv-p3f-pet-fullevent-final's 240 objec
@@ -64,36 +64,36 @@ OI-55	retired	-	explicit-terminal-prefix	3b5ad0a71fd3df25863bbe657fa374ebb1a513f
 OI-57	active	NOW	safe-default-active	bf4e8b61d23195e2ff51ccc5da6146afc65f1fe43dcc7cabc328a5670b8f1840	CLOSED-ON-MAIN / NOT-IN-PRODUCTION — SCOPE CORRECTED 2026-08-17 WITHIN THE HOUR, AGAINST MY OWN CLOSURE. I first marked
 OI-58	active	NOW	safe-default-active	fcf4f23921c3e08fe2dda996c29b987f99ff61891729205fe29f6129b9d68169	OPEN
 OI-59	active	NOW	safe-default-active	db431fb81c9ecc0c27dcc8a7d55b2aae01a4ff3196ccaac83578b4192edd2366	OPEN (raised 2026-08-13 by lane A)
-OI-60	active	BLOCKED-EXTERNAL	explicit-blocker	b96a1a5a60d5b95f8e1e5a5952d347ea26673093e4a2c060dab04fb232f29b9f	RE-COSTED 2026-08-17 (lane E) — IT IS NOT "BLOCKED ON NOTHING": THE FIX IS BLOCKED ON A GATE-2 RE-RUN, BY THIS REPO'S OW
-OI-61	active	NOW	safe-default-active	4f29d59e1f26cd6f98b9ffed6c4899462195ccf1aa18e1eb6afa43ba93cd336c	OPEN — AND RE-COSTED 2026-08-17 (lane E): IT TOUCHES A HASH-PINNED FILE, so it is not the cosmetic ride-along this row d
-OI-62	active	WAITING-JOSEPH	explicit-user-decision	5faab178d16f076345c7bc3d8eee6b9da0ba89f738ad24c25daec7cf04e22bec	(a) RESOLVED 2026-08-13 by Joseph; (b) MECHANISM LANDED 2026-08-14, CONVENTION STILL HIS; (c) still WAITING-USER
+OI-60	active	BLOCKED-EXTERNAL	explicit-blocker	0b0292a2517539d7c9e65caf457ffbafaf617062df40763613c41837e6de905c	RE-COSTED 2026-08-17 (lane E) — IT IS NOT "BLOCKED ON NOTHING": THE FIX IS BLOCKED ON A GATE-2 RE-RUN, BY THIS REPO'S OW
+OI-61	active	NOW	safe-default-active	0fd8a28478d34f4135a22ba37d74902c288f46f12f5a3800248fc51a2444bb13	OPEN — AND RE-COSTED 2026-08-17 (lane E): IT TOUCHES A HASH-PINNED FILE, so it is not the cosmetic ride-along this row d
+OI-62	active	WAITING-JOSEPH	explicit-user-decision	6456eb27afa16e1af3970e340ec90d9ca99d656049cd313abfd92b6d36497a68	(a) RESOLVED 2026-08-13 by Joseph; (b) MECHANISM LANDED 2026-08-14, CONVENTION STILL HIS; (c) still WAITING-USER
 OI-64#1	active	NOW	safe-default-active	2ea76206e4028fab5d0c0c864878bfc33dbb51a9b7bc362377faa320b3d32d32	⚠ ID COLLISION — this is LANE A's OI-64. Lane C independently allocated the same id (see the other OI-64 row below, C's:
 OI-65#1	active	NOW	safe-default-active	495fbffe70c6ea66cfe69b7c55eaadbe0d0638606c58391f597c5c0d3a617a8b	⚠ ID COLLISION — this is LANE A's OI-65. Lane C independently allocated the same id (see the other OI-65 row below, C's:
 OI-63	deferred	-	explicit-deferred-prefix	d76bf0fa6d33c550a9ed9c90ca76bfd0dafcaf2742812f42e1fdd7b79f0ea513	DEFERRED 2026-08-13 by Joseph — do not re-raise before the publication reorganisation
-OI-64#2	active	NOW	safe-default-active	1e19779e6b14d13628daf48091ee13b2cb79a9b289c6e8d2a924a96bf1e1ae4b	⚠ ID COLLISION — this is LANE C's OI-64. Lane A independently allocated the same id (see the other OI-64 row above, A's:
-OI-65#2	active	NOW	safe-default-active	6a3d414605a82e4d23c74c32e6f4bd470ddbe997e182d5ea0e92156a2eb1b944	⚠ ID COLLISION — this is LANE C's OI-65. Lane A independently allocated the same id (see the other OI-65 row above, A's:
+OI-64#2	active	NOW	safe-default-active	6d607c9880993bc0eb264a40ebfa580c490e49104c4e7c2a78e22023feaaeb0f	⚠ ID COLLISION — this is LANE C's OI-64. Lane A independently allocated the same id (see the other OI-64 row above, A's:
+OI-65#2	active	NOW	safe-default-active	0d3d650c846b80a02c71ecf51d8687445233760f6a842a512569ec63abc7997a	⚠ ID COLLISION — this is LANE C's OI-65. Lane A independently allocated the same id (see the other OI-65 row above, A's:
 OI-90	retired	-	explicit-terminal-prefix	33eef247854f276d8681eab915b20e1f8241b8946b3961ede901a8b5741ae054	CLOSED 2026-08-17 (lane E) — the narrowing is landed in RUNS.tsv:296, verbatim as this row prescribed, with the original
 OI-91	retired	-	explicit-terminal-prefix	5f1d4759e941537c8d96e78f3266efc3156db917eb48f3c4b0f5ade3dc059775	CLOSED BY REFERENCE 2026-08-14, SAME DAY IT WAS RAISED — rank was dispositioned BEFORE LAUNCH and I should have been rea
 OI-93	active	NOW	safe-default-active	d5327defb5420f1777594fe3a7ba3bdf5ab413559267982d08d76968347daff4	OPEN (raised 2026-08-14 by lane C; predeclared before any number exists)
-OI-92	retired	-	explicit-terminal-prefix	15c831b164393625a05841bf1b8cb1d669e0defa852fb6af6aec09aa83f7f559	CLOSED 2026-08-14 — PREMISE REFUTED, C_stat IS CORRECTLY NAMED, NO JOSEPH TURN NEEDED. (raised same day by lane C)
-OI-94	active	NOW	safe-default-active	757337ae53b45bb5f0f3d31ef40e340d5ba6fd2920807f9393ed7c09ae50b852	OPEN (raised 2026-08-14 by lane C, as what survives OI-92's refutation)
+OI-92	retired	-	explicit-terminal-prefix	46814e957d7f5411a0d96e7d821bafeaeb6b83574fc9aa9107dbfc591c220ce6	CLOSED 2026-08-14 — PREMISE REFUTED, C_stat IS CORRECTLY NAMED, NO JOSEPH TURN NEEDED. (raised same day by lane C)
+OI-94	active	NOW	safe-default-active	8c02819dc392a2373d113dc897af5af72d4e142b9b3249575cb54ba2f1cc375a	OPEN (raised 2026-08-14 by lane C, as what survives OI-92's refutation)
 OI-120	active	WAITING-JOSEPH	explicit-user-decision	948b712e48abedfaf5349c21ddc70bf717f2d2b2d8ad68a896f0806c63a0353d	WAITING-USER (raised 2026-08-14 by the personal-account mediator; first filing into block 120-129)
 OI-121	active	NOW	safe-default-active	3f88868dfb4baaadd565771c54f03f3725a18840595dad0d6ab85e2729adcbbe	AUTHORIZED 2026-08-14 by Joseph (raised the same day by the personal-account mediator). SPEC LANDED 2026-08-14 05:00 PDT
 OI-122	retired	-	explicit-terminal-prefix	c68f553dc1b0e9f5d2d42a8252593ce5d12b989562c8b80cfe35a2c1030e3123	BOTH ACTIONS EXECUTED 2026-08-14 by lane C. Action 1 authorized by Joseph, verbatim "Yes I authorize it", committed at 4
 OI-80	retired	-	pointer-to-canonical-OI-122	e8b4350c306744ab52cfc0c2ea217f3047188e8db47a71b519681f34b64426de	OPEN — POINTER, not a second row. Raised 2026-08-14 by lane B independently and CONCURRENTLY with OI-122; that row is th
-OI-81	retired	-	explicit-terminal-prefix	bbfc2c4f23a33e8c51285fc4490e5161ff3d5f009f4dd859b1f2fc25ebaa594c	CLOSED 2026-08-15 by lane C (PET), the script's owner, holding this lane BY DESIGNATION and not by continuity (BEN-324).
-OI-96	active	NOW	safe-default-active	f8138b9c775776f99d9b95fe1403e9264785be2e3a3e85e502c6ac9aac5eccfa	OPEN — a whole-file occurrence count is a crude proxy for pinning one line, and it is the instrument now standing in for
-OI-82	retired	-	explicit-terminal-prefix	a6393491fc78e60c3a9daa68112ba85f42c3825b4a8074c47a55bada7d1f752a	CLOSED 2026-08-17 by measurement (lane E) — AND IT WAS NEVER A THIRD MEASUREMENT. Closed by exactly the method this row
+OI-81	retired	-	explicit-terminal-prefix	36d372e32afb9e1b365fbe3ec3dce7226fd91b43fbd5c8a9c215d925a73493d0	CLOSED 2026-08-15 by lane C (PET), the script's owner, holding this lane BY DESIGNATION and not by continuity (BEN-324).
+OI-96	active	NOW	safe-default-active	36e41e0d7c0d77dce4566c363a0441d1890068feae6a88b84e633aac0a9c916a	OPEN — a whole-file occurrence count is a crude proxy for pinning one line, and it is the instrument now standing in for
+OI-82	retired	-	explicit-terminal-prefix	77adfc76dbf2041be324cb0fa68f4c3762114a5ef19b265be581932f608333ab	CLOSED 2026-08-17 by measurement (lane E) — AND IT WAS NEVER A THIRD MEASUREMENT. Closed by exactly the method this row
 OI-123	active	NOW	safe-default-active	46759cb1792e09a00b0868506e30078202e379c5a5f302eb156e8261d83e37f5	OPEN — a landmine armed by a change that has already landed, and the fix is not this lane's to make. Raised 2026-08-14 b
-OI-124	retired	-	explicit-terminal-prefix	17dbf0485837631082d6b55801f70f4d4dda21dc0072f326442938a38eedc877	CLOSED 2026-08-15 by the OI-124 disposition lane (peer session C) — DISPOSITION (a) TAKEN: P4 RETIRED, the ordering argu
-OI-125	active	NOW	safe-default-active	dd079db36163136e7b4ad3609b1320660cdad536a22e2cf29d510485355fa368	STILL OPEN, AND NARROWED — 2026-08-15, after the instrument ran. The fix landed and it records the WRONG REDUCTION (BEN-
-OI-126	active	WAITING-JOSEPH	explicit-user-decision	ec383612f06b78d7ad48eea08572c5bdceff877ad3fb142e50064e99bdd9c555	OPEN — needs Joseph's ruling. UPDATED 2026-08-15 AFTER THE AUTHORIZED DIAGNOSTIC TURNED OUT NOT TO EXIST AS AN OPERATION
-OI-127	active	NOW	safe-default-active	9f20e041804ef33969cf1a9983962a2e2af0b4ff04bc7a5bdf064d5d76fc9e48	OPEN — raised 2026-08-15 by the propagation-correction lane. THE INTEGRITY GUARD CANNOT SEE THE GATE-5 IMPLEMENTATION PI
+OI-124	retired	-	explicit-terminal-prefix	a9c664e26816376e8daca41caaebac8e084da5a0d61bfa84d81ccc7bccbe3f56	CLOSED 2026-08-15 by the OI-124 disposition lane (peer session C) — DISPOSITION (a) TAKEN: P4 RETIRED, the ordering argu
+OI-125	active	NOW	safe-default-active	8584450811ba75f76493e7f95b07b9627ea5f70f4ba5012295fc6a7b5f29a973	STILL OPEN, AND NARROWED — 2026-08-15, after the instrument ran. The fix landed and it records the WRONG REDUCTION (BEN-
+OI-126	active	WAITING-JOSEPH	explicit-user-decision	99f3e54c3d7bf3a6365b16d0c207687487527b8039a1f4f5e59a9842d128ed91	OPEN — needs Joseph's ruling. UPDATED 2026-08-15 AFTER THE AUTHORIZED DIAGNOSTIC TURNED OUT NOT TO EXIST AS AN OPERATION
+OI-127	active	NOW	safe-default-active	44f6a7db291cf9ce869e0becc6d675e0c412ed3c048691b79f10de87aa9223a8	OPEN — raised 2026-08-15 by the propagation-correction lane. THE INTEGRITY GUARD CANNOT SEE THE GATE-5 IMPLEMENTATION PI
 OI-128	active	NOW	safe-default-active	85be07092b70d97084b6346f95104ee3c57d6d918e4b206d4b66e3e97d019303	NARROWED 2026-08-16 at 84d022b, NOT CLOSED — the receipt-side hole is shut; the execution-surface half is not. The adopt
-OI-129	active	NOW	safe-default-active	5202336a86f0dd1279c05e2d3f598fd9d5b4d11cffef245192b0886fe19ebae3	OPEN — raised 2026-08-16 by lane A (N3/N4 repair lane) while adjudicating the real-product C4 = M C5 Mᵀ identity. THE PR
+OI-129	active	NOW	safe-default-active	08d7f6ceda8ea7b82b965ee50208e1e7b3d37d1451bd7b15928dc6947b583123	OPEN — raised 2026-08-16 by lane A (N3/N4 repair lane) while adjudicating the real-product C4 = M C5 Mᵀ identity. THE PR
 OI-130	active	NOW	safe-default-active	f3f51e86b12a51c219f86c17f6d71c4fb6d400221b4cfea6039f189c081b8242	OPEN — filed 2026-08-17 by the mediator, routed from lane C. A published macro's backing artifact was never tracked at a
 OI-131	active	NOW	safe-default-active	cc61da371d76f36bb44a86443d20c378b749b164355e57ba6774429581226747	OPEN — filed 2026-08-18. Supersedes OI-48, whose decision was reversed.
-OI-132	active	NOW	safe-default-active	c4798e5a1cba00655c8ed339d81242cefc89c410bac4a6de8476958dda98baab	OPEN — filed 2026-08-19 by lane E in the same commit as BEN-476. THE DIVERGENCE MANIFEST'S LARGEST BUCKET RESTS ON A CON
+OI-132	active	NOW	safe-default-active	de13b6579dd187b6f84bbab7c5ed8e66a391794b2128c649096dab72d078d634	OPEN — filed 2026-08-19 by lane E in the same commit as BEN-476. THE DIVERGENCE MANIFEST'S LARGEST BUCKET RESTS ON A CON
 OI-133	active	NOW	safe-default-active	cd0cfeeb6947403f799be81d7ff9aff35e9f8a3b9dad870e5ac6fbe62e16eed1	OPEN — filed 2026-08-19 by lane E with BEN-477. NOTHING BINDS A CHECKPOINT TO THE RUN THAT WROTE IT, so a member's check
 OI-134	retired	-	explicit-terminal-prefix	9f3018a7e1255cef48a068da6d14de467b7d7f6b2c18dded8c0b4fb3adf29d0f	BOTH ACTIONS EXECUTED 2026-08-19T12:40Z — and the authorised one FAILED, so the second was reached by a different route.
 OI-135	active	BLOCKED-EXTERNAL	explicit-blocker	1ed9c80297a40e8c5836fd2071d48b55d4e33e549b4dc40a91226400a1b74dd1	BLOCKED ON maintenance_20260819 — every remaining step needs the cluster, and ssh exits 255 since 2026-08-19T13:00Z. Fil

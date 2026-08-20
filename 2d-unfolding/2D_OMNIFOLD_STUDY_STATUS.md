@@ -27,7 +27,7 @@ legacy CV-centered pair_sumsq rollup (1.473) are superseded.
 
 Companion docs: `2D_OMNIFOLD_REFERENCE.md` (workflow invariants + flag
 contracts), `2D_OMNIFOLD_RUN_LOG.md` (current chronology),
-`2D_OMNIFOLD_RUN_LOG_ARCHIVE.md` (Phases 1–18.1 + the 2026-05-18→28 UQ
+`evidence/prepublication-2026-08-20-0b329e8a:2d-unfolding/2D_OMNIFOLD_RUN_LOG_ARCHIVE.md` (Phases 1–18.1 + the 2026-05-18→28 UQ
 campaign), `PLOT_GUIDE.md`, `docs/technote/app_statmethods.tex` (full UQ
 methods writeup: procedures, MINERvA covariance construction, and the
 ours-only rank-deficiency + open questions for collaborators).

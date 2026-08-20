@@ -215,7 +215,7 @@ Measured 2026-08-17: `core.hooksPath` is **absolute into the main checkout**
 (`/…/MINERvA-OmniFold/.githooks`), so **a linked worktree's commits run the MAIN checkout's hooks.** A
 hook change committed from a worktree therefore does **not** take effect until that checkout's working
 files are refreshed — *a committed hook is not an installed hook*
-([`FINDING-20260813`](FINDING-20260813-a-committed-hook-is-not-an-installed-hook.md)), applying to the
+([`FINDING-20260813`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/FINDING-20260813-a-committed-hook-is-not-an-installed-hook.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/FINDING-20260813-a-committed-hook-is-not-an-installed-hook.md")), applying to the
 commit that introduced this mechanism. **Until the main checkout carries `.githooks/commit-msg`, every
 commit lacks the trailer for a benign reason, and absence means nothing.** Confirm deployment before
 reading any absence as unchecked; the first trailered commit is the evidence that deployment happened.

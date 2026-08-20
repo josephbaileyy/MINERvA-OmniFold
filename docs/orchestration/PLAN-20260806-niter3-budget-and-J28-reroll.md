@@ -99,7 +99,7 @@ quarantine is waiting on. Predeclare the comparison before running (§5).~~ **DO
 are controlled (same slabs both sides); absolute corrected values are **not** drop-in replacements. Also
 36 block units / 100 flux units corrected, `bank_uthrow_5d`, max |r_u − 1| = 0.1371, 10,694 bins.
 Receipt `nd-unfolding/uq_5d/rescaled_20260806/j28_reroll_20260806.json`; write-up
-[`FINDING-20260806-j28-reroll-exact.md`](FINDING-20260806-j28-reroll-exact.md).
+[`FINDING-20260806-j28-reroll-exact.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/FINDING-20260806-j28-reroll-exact.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/FINDING-20260806-j28-reroll-exact.md").
 
 **Headline: the Flux block was *understated* ~4.2×, not inflated.** `sqrt_tr_flux_block` +316.83%,
 `sqrt_tr_blocksum` +10.19%, `sqrt_tr_unified` **−0.72%**, `sqrt_tr_cross` −21.12%,

@@ -47,7 +47,7 @@ fire (`|required − 1|` = 0.1241 / 0.0992 / 0.0319, all discriminating). So the
 This does **not** lift Branch C (a quotability state, not a number), discharges no cause, and is not a
 promotion. Unexplained and new: the annealed arm's **+11.01%** overshoot at iteration 0. The emitted
 verdict *label* on that arm is direction-blind and must not be quoted
-(`../docs/orchestration/FINDING-20260811-trajectory-label-is-direction-blind.md`).
+(`evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/FINDING-20260811-trajectory-label-is-direction-blind.md`).
 
 ## STATUS 2026-08-11 — cause 5's binding half is the JOINT CONSTRUCTION, not the samples
 
@@ -166,7 +166,7 @@ estimator disposition is answered (the **annealed** arm —
 > said *"`nominal_pet_training_allowed` stays **false**"*. **That is false and I propagated it from prose
 > rather than reading the gate.** Measured: `nominal_pet_training_allowed` is **`True` in all four
 > Gate-4 code-gate receipts** — `…-20260810.json`, `…-20260810b.json`, `…-20260810c.json`, and the newest
-> `…-20260812.json` — and has been since 2026-08-10. `KNOWN_ISSUES-ARCHIVE-2026-08.md` already recorded
+> `…-20260812.json` — and has been since 2026-08-10. `evidence/prepublication-2026-08-20-0b329e8a:KNOWN_ISSUES-ARCHIVE-2026-08.md` already recorded
 > this correction on 2026-08-11. **The flag was never the blocker.** What Gate 4 needs is a PROMOTION
 > decision, and the annealed production nominal (`56563761`, complete, `.done`-marked) carries
 > `.predeclared_reproduction.*.verdict = FINDING_CODE_PATHS_DISAGREE`, `artifact_promoted: False`,
@@ -257,7 +257,7 @@ receipt, resolving to that file at HEAD) calls `build_fullevent_loaders(..., bkg
 `:264`. So D2's MC-only construction ran with a fail-closed assertion rather than being a code reading.
 Its completion is also runtime evidence for the no-ROOT claim: the job ran under `tensorflow/2.15.0`,
 and no interpreter on Perlmutter carries both ROOT and TensorFlow
-(`FINDING-20260804-step3-closure-needs-root-and-tf-in-one-interpreter.md`), so an `mc-only` build that
+(`evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/FINDING-20260804-step3-closure-needs-root-and-tf-in-one-interpreter.md`), so an `mc-only` build that
 imported ROOT could not have completed there.
 
 **Feature-schema equivalence is likewise PINNED rather than inferred** (`docs/OPEN_ITEMS.md` OI-23).

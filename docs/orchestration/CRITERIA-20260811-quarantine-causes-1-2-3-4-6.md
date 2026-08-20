@@ -283,7 +283,7 @@ The Provenance leg moved for causes 2, 3 and 4, but **only one hop up the chain*
 > edited the cell** (`BEN-381`: the lane that measured a leg must not grade it) — that is lane C's or the
 > mediator's. Cause 4's `P` is **NOT** withdrawn; its criterion is about the null, not a seed. `M(i)`, `C`
 > and `T` are untouched. Full measurement, including what a real MET would require:
-> [`FINDING-20260817-a-seed-census-that-cannot-reach-the-product-it-grades.md`](FINDING-20260817-a-seed-census-that-cannot-reach-the-product-it-grades.md)
+> [`FINDING-20260817-a-seed-census-that-cannot-reach-the-product-it-grades.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/FINDING-20260817-a-seed-census-that-cannot-reach-the-product-it-grades.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/FINDING-20260817-a-seed-census-that-cannot-reach-the-product-it-grades.md")
 > (`BEN-246`). **No number moves** — every leg is internally single-seeded; what fails is a verification claim.
 > **AMENDED same day: my recommended cell was TOO GENEROUS and lane C's harsher grade is the right one.**
 > Clause (i) fails on **both** legs, not only on `combined_source`: covering search over every tracked

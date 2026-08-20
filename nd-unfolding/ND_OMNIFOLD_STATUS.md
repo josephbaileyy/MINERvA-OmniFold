@@ -132,7 +132,7 @@ replacement is implied for 4D/FPS or dependent significances. See
   Numbers are the receipts' own (`STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json`,
   `STEP1_TRAJECTORY.slurm-56691812.json`), not the arms' stored verdict strings — ARM 2's label reads
   `UNDER_ACHIEVES_AT_ITER0_SAME_SIGN`, which is direction-blind and must not be quoted
-  (`docs/orchestration/FINDING-20260811-trajectory-label-is-direction-blind.md`). Full entry:
+  (`evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/FINDING-20260811-trajectory-label-is-direction-blind.md`). Full entry:
   `VALIDATION_LEDGER.md` §2026-08-11. This does **not** lift Branch C and promotes no cross section.
 - Full-event diagnostic extraction job 56525297 is reconciled FAILED after its complete, validated
   GPU push: the combined launcher crossed into the ROOT-only stage while still in the TensorFlow

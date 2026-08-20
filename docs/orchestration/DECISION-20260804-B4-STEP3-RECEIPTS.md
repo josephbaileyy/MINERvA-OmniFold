@@ -27,7 +27,7 @@ event (`2d-unfolding/2D_OMNIFOLD_REFERENCE.md`, Python-contract item 6 and boots
 
 The measured consequence and the old behavior are evidence, not repeated here as a second source
 of numbers; see
-[`FINDING-20260804-b4-is-active-gate2-cannot-be-reissued.md`](FINDING-20260804-b4-is-active-gate2-cannot-be-reissued.md).
+[`FINDING-20260804-b4-is-active-gate2-cannot-be-reissued.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/FINDING-20260804-b4-is-active-gate2-cannot-be-reissued.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/FINDING-20260804-b4-is-active-gate2-cannot-be-reissued.md").
 
 Implementation requirements:
 
@@ -83,7 +83,7 @@ Closure semantics are part of the decision:
    label an MC-only closure `bkg_mode=negweight-refined` or imply that it exercised refinement.
 
 The environment survey remains useful diagnostic evidence in
-[`FINDING-20260804-step3-closure-needs-root-and-tf-in-one-interpreter.md`](FINDING-20260804-step3-closure-needs-root-and-tf-in-one-interpreter.md),
+[`FINDING-20260804-step3-closure-needs-root-and-tf-in-one-interpreter.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/FINDING-20260804-step3-closure-needs-root-and-tf-in-one-interpreter.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/FINDING-20260804-step3-closure-needs-root-and-tf-in-one-interpreter.md"),
 but its three-option recommendation is superseded by this decision. A combined conda environment
 may be used for non-receipt diagnostics only.
 
