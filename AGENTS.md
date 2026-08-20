@@ -41,8 +41,18 @@ a validated central value and a quarantined covariance at the same time.
 - Gate 6 is controlled by five exact receipt keys. Route to the receipt rather than translating them.
 - Legacy pre-MINOS-fix 1D outputs, pre-Phase-18 2D outputs, and superseded covariance families remain
   diagnostic or historical only.
-- `OI-126`'s ruling does **not** invalidate the row's measurements and does **not** name a cause.
-  "bootstrap-centering/bias" is explicitly not part of the ruling and may not be quoted as Joseph's.
+- `OI-126`'s ruling does **not** invalidate the row's measurements. **CORRECTED 2026-08-20: the two
+  sentences that stood here were false, and their falsehood was a DROPPED QUALIFIER, not a typo.**
+  Joseph's ruling text, quoted verbatim at `docs/OPEN_ITEMS.md` `OI-126`, **does** contain the phrase
+  *"a large, spatially coherent bootstrap-centering/bias anomaly whose coverage has not been
+  validated"* — so it is his, it **is** part of the ruling, and a session told otherwise will
+  wrongly "correct" a faithful quotation. What may not be quoted as his is that phrase **as a
+  determined cause**: the row's own measured history refutes both mechanisms this campaign named, so
+  the MECHANISM is not established even though the WORDS are Joseph's. Read the operative content as
+  *a large, spatially coherent anomaly whose coverage has not been validated*, and never cite
+  "bootstrap-centering" as a settled mechanism. `live-state.json`'s blocker kept the
+  "as a determined cause" qualifier; this front door had dropped it, which is how a true caution
+  became a false claim about what Joseph said.
 - `OI-136`: 59 `.py` files put the hardcoded cluster root at `sys.path[0]`, so an entrypoint can import
   another checkout's modules while deployment parity truthfully reports every pinned file `CURRENT`.
   This cost 3 h 08 m of A100 on `57266000_0`. `PYTHONPATH` cannot outrank position 0 and a re-deploy
