@@ -521,22 +521,34 @@ def compare_files(artifact, archive_path, member_path, offset, read_keys=read_ke
             class_failed = True
 
     # --- the anchor's own identity, WHERE THE ARTIFACT CAN CARRY IT (H3) -----------------------------
-    # `anchor_identity` was called unconditionally, but three of five artifacts carry NO identity key --
-    # `STAMP_COVERAGE` records adopt_unified_5d.py: 0 and unfold_nd_omnifold_unbinned.py: 0 as the worst
-    # gap. So it emitted three problems every run and FAILED regardless of payload.
+    # `anchor_identity` was called unconditionally, but on 2026-08-18 three of five artifacts declared
+    # NO identity key, so it emitted three problems every run and FAILED regardless of payload.
     # D'S REASON THIS IS WORSE THAN IT LOOKS: AT STAGE 1 AN UNAVOIDABLE FAIL IS THE THING MOST LIKELY TO
     # GET THE GATE ROUTED AROUND. A check that cannot pass teaches its caller to skip it, and then it
     # protects nothing -- the pressure-toward-green risk arriving from the other side.
+    #
+    # THE COMMENT HERE USED TO CITE "STAMP_COVERAGE records adopt_unified_5d.py: 0 and
+    # unfold_nd_omnifold_unbinned.py: 0". THAT SCHEMA WAS DELETED on 2026-08-20 -- the table is a
+    # boolean plus a `how` string now, and both writers' products carry identity -- so the citation
+    # named a count that no longer exists about a gap that no longer holds. It is removed rather than
+    # updated: this branch's condition is `classes.ARTIFACTS`, and pointing at a different table for
+    # its justification is what let the two go stale independently. Ask `identity_is_checkable`.
+    #
+    # ALL SIX ARTIFACTS DECLARE THE KEYS AS OF 2026-08-20, so the `else` is unreachable for every real
+    # artifact today. Kept, because a predicate that can no longer answer NO is not a predicate.
     if classes.identity_is_checkable(artifact):
         identity = classes.anchor_identity(m_sc, offset)
         lines += identity
     else:
         identity = []
         lines.append(
-            f"[identity] UNCHECKABLE on {artifact}: this writer stamps no identity key "
-            f"(STAMP_COVERAGE), so the member cannot be told from the archive by its own contents. "
-            "NOT a pass -- remedy (A) is C's ruling and this artifact cannot be admitted until it "
-            "lands. Recorded rather than failed, because a check that can never pass gets skipped.")
+            f"[identity] UNCHECKABLE on {artifact}: its ARTIFACTS table declares no identity key, so "
+            "the member cannot be told from the archive by its own contents. NOT a pass, and NOT a "
+            "statement about any writer -- under C's 783d648a §25 the file that stamps identity need "
+            "not be the file that writes the payload, so an artifact can be unchecked here while its "
+            "writer is fine. Recorded rather than failed, because a check that can never pass gets "
+            "skipped. To fix: classify the keys in mii_root_payload_classes.ARTIFACTS and make some "
+            "writer emit them.")
 
     # --- THE RECOMPUTATION HALF ---------------------------------------------------------------------
     # `compare()` returns INCOMPLETE while any recompute-required key is unverified; discharging that is
