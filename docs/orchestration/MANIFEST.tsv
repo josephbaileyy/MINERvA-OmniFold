@@ -176,7 +176,7 @@ docs/orchestration/state/RECEIPT-vl100-shape-corrected-foldforward-20260815.json
 docs/orchestration/state/annealed-nominal-complete-56563761.json	tracked	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh;nd-unfolding/tests/test_hash_bindings.py	yes	13	262	20808
 docs/orchestration/state/annealed-nominal-error-56563092.json	tracked	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	3	87	4505
 docs/orchestration/state/ben106-stamp-verify-active-56695424.json	tracked	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/mii_adopt_unified_5d_stamped.py;nd-unfolding/mii_root_payload_classes.py;nd-unfolding/tests/test_remedy_a_adopt_wrapper.py	yes	5	36	1857
-docs/orchestration/state/ben106-stamp-verify-complete-56695424.json	tracked	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/receipt_candidate_stamps_5d.py	yes	6	80	3274
+docs/orchestration/state/ben106-stamp-verify-complete-56695424.json	tracked	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/receipt_candidate_stamps_5d.py	yes	5	80	3274
 docs/orchestration/state/canonical-namespace-field-pins-20260817.json	tracked	MACHINE	state-artifact		20260817	generated		exact-path-only	docs/orchestration/state/regen_canonical_namespace_field_pins.py;docs/orchestration/verify_hash_bindings.py;nd-unfolding/tests/test_hash_bindings.py	yes	4	368	13674
 docs/orchestration/state/cluster-ignored-set-walk-20260812.json	tracked	MACHINE	state-artifact		20260812	generated		exact-path-only	nd-unfolding/uq_5d/sbatch_digest_quoted_products.sh;nd-unfolding/uq_5d/sbatch_hpss_protect_quoted_products.sh	yes	3	497	16680
 docs/orchestration/state/cluster-local-fork-freeze-20260812.json	tracked	MACHINE	state-artifact		20260812	generated		exact-path-only	nd-unfolding/tests/test_cstat_data_only_predicates.py	yes	6	306	17689
@@ -279,7 +279,7 @@ docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260812.json	tracked	MA
 docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260813.json	tracked	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	6	273	24098
 docs/orchestration/state/p3f-pet-gate4-nominal-promotion-56563761.json	tracked	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/pet/closure_foldforward_instrumented.py;nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh	yes	7	105	7858
 docs/orchestration/state/p4-stages456-20260816-run.out	tracked	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	1	122	12720
-docs/orchestration/state/p4-sweep-snapshots.json	tracked	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/tests/test_p4_sweep_snapshots.py	yes	6	315	8743
+docs/orchestration/state/p4-sweep-snapshots.json	tracked	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/tests/test_p4_sweep_snapshots.py	yes	5	315	8743
 docs/orchestration/state/p5a-nominal-vs-cstat-family-percell-20260815.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-oi126-mechanism-narrowing-20260815.py	yes	4	1	15456
 docs/orchestration/state/probe-gate5-verified-input-sha-20260813.py	tracked	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	2	136	5562
 docs/orchestration/state/probe-gate6-floor-mutation-20260813.py	tracked	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	1	94	4736
