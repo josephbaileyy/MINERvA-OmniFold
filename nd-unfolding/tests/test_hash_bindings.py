@@ -8,6 +8,7 @@ Perlmutter, so only the hashes changed and nothing caught it.
 This test fails on any NEW mismatch. The four pre-existing drifts are allowed by
 the verifier's KNOWN_PREEXISTING list; run it with --strict to see those too.
 """
+import importlib.util
 import json
 import os
 import re
@@ -457,3 +458,101 @@ def test_coverage_does_not_fire_on_a_receipt_whose_only_mention_is_prose():
         "receipts whose only namespace occurrence is prose are being demanded of the pin "
         "set. The coverage rule must be the generator's field-level one, not a grep.\n"
         + r.stdout)
+
+
+# ---------------------------------------------------------------------------
+# OI-70: the inventory must be a property of the COMMIT, not of the disk.
+#
+# `receipt_inventory` used to resolve any bound path that merely EXISTED, while calling
+# itself "committed repository inventory". Receipts bind data products, and data products
+# are gitignored (`.gitignore` carries a bare `*.npz`), so a bound artifact present but
+# untracked ADDED a live binding and tripped the identity check -- with the very same
+# commit green in a clean checkout. That is how a docs-only commit got rejected on
+# 2026-08-20 by `NONQUOTABLE-DIAGNOSTIC.xsec.slurm-56527676.npz`, which is ignored by
+# `.gitignore:29`. 320 receipt-bound paths are gitignored, so on Perlmutter -- where those
+# products actually exist -- the gate was systematically red for reasons unrelated to any
+# edit, and its cheapest exit was bumping the constant the hook explicitly forbids bumping.
+#
+# THE FIXTURE IS A REAL GIT REPOSITORY, not a stubbed tracked-set. Gitignore semantics are
+# git's, not this test's, and a fixture built from my own understanding of the rule cannot
+# disagree with the rule. It is also why this is a unit test on `receipt_inventory` rather
+# than on `main()`: `main()` asserts the real repo's 117/7586d636 constant, which a
+# synthetic repo can never satisfy, and a test that has to fake the constant is testing the
+# fake.
+#
+# A NARROWING GETS A TEST THAT IT DOES NOT FIRE, and one that it does not over-narrow. Both
+# directions are asserted below off a single fixture, because "ignored file excluded" is
+# only meaningful next to "same file, once tracked, included".
+def _mkrepo(tmp_path):
+    """A real git repo with an ignored data file bound by a committed receipt."""
+    import hashlib
+    import subprocess as sp
+    root = tmp_path / "repo"
+    (root / "docs").mkdir(parents=True)
+    payload = b"synthetic bound product\n"
+    (root / "data.npz").write_bytes(payload)
+    digest = hashlib.sha256(payload).hexdigest()
+    (root / ".gitignore").write_text("*.npz\n")
+    (root / "docs" / "receipt.json").write_text(
+        json.dumps({"path": "data.npz", "sha256": digest}))
+    git = ["git", "-C", str(root)]
+    sp.run(git + ["init", "-q"], check=True)
+    sp.run(git + ["add", ".gitignore", "docs/receipt.json"], check=True)
+    sp.run(git + ["-c", "user.email=t@t", "-c", "user.name=t",
+                  "commit", "-qm", "receipt"], check=True)
+    return root, digest
+
+
+def _verifier_module():
+    spec = importlib.util.spec_from_file_location("vhb_under_test", _VERIFIER)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+@pytest.mark.skipif(not os.path.exists(_VERIFIER), reason="verifier not present")
+def test_ignored_bound_artifact_is_not_inventoried(tmp_path):
+    """The narrowing must NOT fire on an ignored artifact -- the OI-70 regression."""
+    root, digest = _mkrepo(tmp_path)
+    m = _verifier_module()
+    pairs = [("data.npz", digest, "docs/receipt.json")]
+
+    assert m.localize("data.npz", str(root)) is not None, (
+        "fixture is inert: the bound file must EXIST, or this test would pass "
+        "for the trivial reason that there was nothing to exclude")
+
+    rows, _ = m.receipt_inventory(pairs, str(root), m.tracked_paths(str(root)))
+    assert rows == [], (
+        "an ignored, untracked bound artifact was inventoried as committed repository "
+        f"inventory (OI-70). Present-on-disk is not committed. rows={rows}")
+
+
+@pytest.mark.skipif(not os.path.exists(_VERIFIER), reason="verifier not present")
+def test_tracking_the_same_artifact_does_inventory_it(tmp_path):
+    """...and must not over-narrow: tracked bound paths are still inventoried."""
+    import subprocess as sp
+    root, digest = _mkrepo(tmp_path)
+    m = _verifier_module()
+    pairs = [("data.npz", digest, "docs/receipt.json")]
+
+    sp.run(["git", "-C", str(root), "add", "-f", "data.npz"], check=True)
+    sp.run(["git", "-C", str(root), "-c", "user.email=t@t", "-c", "user.name=t",
+            "commit", "-qm", "track the product"], check=True)
+
+    rows, _ = m.receipt_inventory(pairs, str(root), m.tracked_paths(str(root)))
+    assert rows == [("data.npz", digest)], (
+        "force-adding the artifact made it committed content, so it MUST be "
+        f"inventoried; the filter is over-narrow. rows={rows}")
+
+
+@pytest.mark.skipif(not os.path.exists(_VERIFIER), reason="verifier not present")
+def test_tracked_paths_fails_closed_outside_a_repository(tmp_path):
+    """An unreadable tracked-set must raise, never degrade to an empty inventory.
+
+    An empty tracked set would drop every binding and report `0 / e3b0c442...` -- a
+    green-looking number for a check that measured nothing, which is the exact quiet
+    pass this file exists to prevent.
+    """
+    m = _verifier_module()
+    with pytest.raises(RuntimeError, match="cannot enumerate tracked files"):
+        m.tracked_paths(str(tmp_path))

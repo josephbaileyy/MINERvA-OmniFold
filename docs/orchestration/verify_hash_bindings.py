@@ -70,6 +70,7 @@ import importlib.util
 import json
 import os
 import re
+import subprocess
 import sys
 
 PERLMUTTER_ROOT = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/"
@@ -298,11 +299,54 @@ def localize(p, root):
     return cand if os.path.isfile(cand) else None
 
 
-def receipt_inventory(pairs, root):
-    """Return the canonical resolved receipt-binding rows and their digest."""
-    rows = sorted({(os.path.relpath(lp, root), want)
+def tracked_paths(root):
+    """Checkout-relative paths git actually tracks at `root`.
+
+    OI-70. The inventory below claims to describe COMMITTED REPOSITORY INVENTORY, but
+    `localize()` answers a question about the FILESYSTEM: it resolves any path that
+    happens to exist. Those are not the same question, and the gap is not hypothetical.
+    Receipts bind data products as well as code, and data products are gitignored
+    (`.gitignore` carries a bare `*.npz`), so a bound artifact sitting untracked in a
+    working tree silently ADDS a live binding and trips the identity check -- while the
+    same commit is green in a clean checkout. Measured 2026-08-20: 320 receipt-bound
+    paths are gitignored, so on Perlmutter, where those products actually exist, this
+    gate was systematically red for reasons that had nothing to do with any edit.
+
+    Restricting the INVENTORY to tracked paths makes the constant a property of the
+    commit rather than of whoever's disk it ran on. It is deliberately not applied to
+    verification: an untracked-but-present bound file is still hashed and still reported
+    below, so this narrows what counts as inventory without reducing what gets checked.
+
+    Fails closed. A non-repository `--root`, or any git failure, raises rather than
+    returning an empty set -- an empty tracked set would silently drop every binding and
+    render the inventory 0/e3b0c442..., which is precisely the quiet pass this file
+    exists to make impossible.
+    """
+    r = subprocess.run(["git", "-C", root, "ls-files", "-z"],
+                       capture_output=True)
+    if r.returncode != 0:
+        raise RuntimeError(
+            f"cannot enumerate tracked files under {root!r} (git exited "
+            f"{r.returncode}): {r.stderr.decode('utf-8', 'replace').strip()}. "
+            "The receipt-binding inventory is defined over committed content, so it "
+            "cannot be computed here; run the verifier inside the checkout.")
+    names = [n for n in r.stdout.decode("utf-8", "surrogateescape").split("\0") if n]
+    if not names:
+        raise RuntimeError(
+            f"git reports ZERO tracked files under {root!r}. Refusing to compute an "
+            "inventory that would be empty by construction.")
+    return set(names)
+
+
+def receipt_inventory(pairs, root, tracked):
+    """Return the canonical resolved receipt-binding rows and their digest.
+
+    Only TRACKED bound paths are inventoried; see `tracked_paths` for why.
+    """
+    rows = sorted({(rel, want)
                    for p, want, _src in pairs
-                   for lp in [localize(p, root)] if lp is not None})
+                   for lp in [localize(p, root)] if lp is not None
+                   for rel in [os.path.relpath(lp, root)] if rel in tracked})
     payload = "".join(f"{rel}\t{want}\n" for rel, want in rows).encode("utf-8")
     return rows, hashlib.sha256(payload).hexdigest()
 
@@ -372,7 +416,8 @@ def main():
 
     # Identity, not a scalar floor: a floor catches collapse but permits erosion.
     # Derive this from receipt_pairs only; shell pins are separate remediation sites.
-    receipt_rows, receipt_digest = receipt_inventory(receipt_pairs, a.root)
+    receipt_rows, receipt_digest = receipt_inventory(
+        receipt_pairs, a.root, tracked_paths(a.root))
     receipt_inventory_changed = (
         len(receipt_rows) != RECEIPT_BINDING_COUNT
         or receipt_digest != RECEIPT_BINDING_SHA256
@@ -383,8 +428,16 @@ def main():
     print(f"  {ok} OK")
     print(f"  {shell_resolved} of them from EXPECTED_*_SHA guards in *.sh "
           f"({len(shell_pairs)} pins seen, floor {SHELL_PIN_FLOOR})")
+    # These two numbers are DIFFERENT QUESTIONS and may legitimately differ: the first
+    # is how many bound files were hashed, the second is how many of those are tracked
+    # and therefore inventoried (OI-70). An untracked bound product present on disk is
+    # verified but not inventoried, so `verified > inventory` means exactly that -- it is
+    # not a discrepancy. Printed with the gap named so nobody reads it as one.
+    _untracked_verified = receipt_resolved - len(receipt_rows)
     print(f"  {receipt_resolved} of them from receipt bindings "
-          f"(inventory {len(receipt_rows)}, sha256 {receipt_digest})")
+          f"(inventory {len(receipt_rows)} tracked, sha256 {receipt_digest}"
+          + (f"; {_untracked_verified} verified but untracked, so not inventoried"
+             if _untracked_verified else "") + ")")
 
     field_ok, field_bad, _field_missing = check_field_pins(a.root)
     field_blind = (field_ok + len(field_bad)) < FIELD_PIN_FLOOR
