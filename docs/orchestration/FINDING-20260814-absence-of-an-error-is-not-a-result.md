@@ -86,3 +86,50 @@ died and respawned within the same second at 18:20:24). **Assume a session can v
 two tool calls.** That makes commit-then-verify not merely good practice here but the only way work
 survives, and it is why the `git push` instance above mattered: an unverified push is
 indistinguishable from a lost session.
+
+## AMENDMENT 2026-08-20 — a fourth instance, and the silence was CONFIGURED SOMEWHERE ELSE
+
+The three instances above are tools that *say nothing by nature*. This one is worse, because the tool
+had plenty to say and a **config setting made for an unrelated purpose suppressed it.**
+
+`ssh saul.nersc.gov` had been recorded as *"exits 255"* since `2026-08-19T13:00Z`, in `OI-135`, in
+`LIVE-STATE.md`, and by three separate parties. Every one of those probes returned an exit status and
+**no text at all**, so the cause was attributed — reasonably, and as it happens correctly — to
+`maintenance_20260819`. Nobody had the server's own statement, because `~/.ssh/config:40` sets
+`LogLevel QUIET` for `Host dtn*.nersc.gov perlmutter*.nersc.gov *.nersc.gov`, which is there for
+**connection-noise reduction** and has nothing to do with diagnostics.
+
+Re-probed at `2026-08-20T04:5xZ` with `-o LogLevel=DEBUG1`, the same command prints the answer:
+
+    Perlmutter is currently down for maintenance.
+    Received disconnect from 128.55.126.2 port 22:2: Too many authentication failures
+
+**So an empty 255 was never evidence about the cluster; it was evidence about the log level.** The
+attribution happened to be right, which is exactly why this survived a day — a silent instrument that
+agrees with your hypothesis is indistinguishable from a working one.
+
+### The near-miss that makes the point
+
+The mediator, probing at `2026-08-20T04:51Z`, found `~/.ssh/nersc-cert.pub` **expired**
+(`Valid: from 2026-08-18T19:50:00 to 2026-08-19T19:51:37`) and was one step from telling Joseph to
+re-run `sshproxy.sh` — a wrong instruction that would have burned a round-trip with an away user and
+left the real blocker in place. What stopped it was **reading the config file rather than reasoning
+about it**: `~/.ssh/config:19-22` already records, from a prior verification, that
+
+> this account authenticates to Perlmutter with the PLAIN key `~/.ssh/nersc` (verified: no cert
+> offered, no `~/.ssh/authorized_keys` on the cluster, so the key is registered centrally), which
+> does not expire -- so cert lifetime is not the usual failure mode here **despite appearances**.
+
+Confirmed by measurement rather than by trusting the comment: with `CertificateFile=none`,
+`IdentityAgent=none`, `IdentitiesOnly=yes` and the plain key alone, ssh **still** exits 255. The
+expired cert is real, is present, and is **not the cause** — recorded here so nobody re-raises it.
+
+*The phrase "despite appearances" was written by whoever verified it, for precisely this reader. A
+prior session's warning was worth more than the fresh, true, irrelevant measurement.*
+
+### The executable remedy
+
+**An `ssh` exit status quoted as evidence must come from a probe the server can speak through.**
+`LogLevel QUIET` is correct for the multiplexed working connections and wrong for any probe whose
+output becomes a record. Probe with `-o LogLevel=DEBUG1` (or `ERROR`) and quote the server's line, or
+write `255, reason not captured` — never `255` bare, which reads as an attributed finding and is not one.
