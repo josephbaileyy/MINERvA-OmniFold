@@ -109,7 +109,14 @@ Deleting the scratch copy of the merged plain omnifile would therefore make an *
 the sole surviving copy of a paper-cited artifact.** That is not a recovery path; it is a hope.
 
 Cheap discharge, already specified in OI-50: `hsi hashverify` over `mnv-quoted-products-20260812` —
-digests are already stored, so it reads metadata and moves zero bytes. Chunk path arguments at 6
+digests are already stored, so no local re-upload is needed. **CORRECTED 2026-08-20 after the run:
+this sentence originally read "it reads metadata and moves zero bytes" and that is WRONG.
+`hashverify` RECOMPUTES the digest, so it read all 300.17 GiB back off tape** — proven by `ls -V`
+showing a single storage level `1 (tape)` with no disk-cache copy, and `dump` giving
+`TimeLastRead` inside the job window. Cheap in WALL-CLOCK (7m04s for 36 objects, Slurm 57287380
+on `-q xfer`), not cheap in bytes moved; anyone sizing a larger archive off the original wording
+would under-budget. Recursion is `-R`, NOT `-A` — `-A` enables auto-scheduling of retrievals, and
+`hashverify` on a bare directory without `-R` no-ops with a warning and still exits 0. Chunk path arguments at 6
 (`hsi` segfaults above ~36) and use `ssh -n` in any driving loop.
 
 ### 1c. "Archive rather than delete" does not fit — measured
