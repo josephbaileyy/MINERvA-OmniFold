@@ -178,15 +178,29 @@ if mr_declared; then
   exit 0
 fi
 echo "[fin-bkg] adopt (mean-centered) $(date -u '+%F %T UTC')"
-python3 adopt_unified_5d.py \
+# REWIRED TO REMEDY (A)'s WRAPPER 2026-08-20 on Joseph's authorization, scoped by him to THESE TWO
+# CALL SITES ONLY ("yes, those two lines only"). The other six scripts that invoke
+# adopt_unified_5d.py directly are OUT OF SCOPE and deliberately unchanged: this is the only
+# declared-member adoption path, so it is the only one D2 blocks. Widening it would be a
+# frozen-provenance change nobody authorised.
+#
+# THE LITERAL `--` IS MANDATORY, NOT COSMETIC. mii_adopt_unified_5d_stamped.py:431-437 splits on
+# `--` itself and REFUSES bare positionals; without it argparse exits 2. That loudness is the
+# point -- a silently dropped `--cv-centered` would build the MEAN-centered product under the
+# CV-centered product's NAME, which that file calls "the single worst outcome available here":
+# two roots differing in nothing but payload and centering. Paths stay in the HEAD (one copy,
+# forwarded verbatim); only child-specific flags go in the tail. Never put --out in the tail --
+# argparse takes the LAST occurrence, so it would redirect the child while the wrapper stamps a
+# file the child did not write, and report success.
+python3 mii_adopt_unified_5d_stamped.py \
   --uthrow "${UTHROW}" \
   --combined "${COMB}" \
   --out "${OUTD}/uq_universe_5d_covariance_combined_bkgaware_uthrow.root"
 echo "[fin-bkg] adopt (CV-centered, F7) $(date -u '+%F %T UTC')"
-python3 adopt_unified_5d.py \
+python3 mii_adopt_unified_5d_stamped.py \
   --uthrow "${UTHROW}" \
   --combined "${COMB}" \
-  --cv-centered \
-  --out "${OUTD}/uq_universe_5d_covariance_combined_bkgaware_uthrow_cvcentered.root"
+  --out "${OUTD}/uq_universe_5d_covariance_combined_bkgaware_uthrow_cvcentered.root" \
+  -- --cv-centered
 echo "[fin-bkg] done $(date -u '+%F %T UTC')"
 ls -la "${OUTD}"/*.root
