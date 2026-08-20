@@ -48,7 +48,7 @@ what it is attached to. Where I cannot tell which side is wrong I say so, becaus
 | 3 | **MED** | **N + P + Pr** | 16 of 70 `values.tex` macros have no `VALIDATION_LEDGER` row, against `CLAUDE.md`'s canonical-home rule — and three of them print in the paper and primer | `values.tex`, 16 lines listed | `CLAUDE.md` routing table | **neither — a gap** |
 | **8** | **CANNOT TELL** | **P** | `\petClosure` prints twice in the paper build; `values.tex`'s PET block header calls the block *"NOT QUOTABLE … niter=2 legacy"* but only two of its three macros carry per-line legacy markers | `paper_body.tex:145,164` | `values.tex:65-74` | **unresolved — owner's call** |
 | 1 | **HIGH** | N | the full-event `C_stat` bootstrap is described as **one** stream; the note says **two** elsewhere; the record specifies **three** | `app_statmethods.tex:1472-1476`, `:1479-1480` | `DETERMINATION-20260817-lanec-cstat-object-is-total-statistics.md:27,48` | **the note** |
-| 2 | **HIGH** | N | four dead `\gbdtFive*` values print as unmarked prose while the note's own `\dead{}` marker is used 26× elsewhere | `sec_systematics.tex:163,165,166,168` | `VALIDATION_LEDGER.md:916,940`; `INDEX-retracted-and-superseded-values.md` | **the note** |
+| 2 | **HIGH** | N | four dead `\gbdtFive*` values print as unmarked prose while the note's own `\dead{}` marker is used 26× elsewhere | `sec_systematics.tex:165,167,168,170` | `VALIDATION_LEDGER.md:916,940`; `INDEX-retracted-and-superseded-values.md` | **the note** |
 | 4 | LOW | N | `CLM-012` cited as authority for the `niter=3` policy, which `CLM-012` does not state | `sec_pet.tex:55-56` | `CLAIMS.md` `CLM-012` | **the note** |
 | **9** | LOW | N | *"production iteration count `n=5`"* and *"the campaign's pinned policy is `niter`=3"* stand unreconciled | `sec_method.tex:145-147`; `sec_pet.tex:55-56` | — | **neither — a scope hazard** |
 | 5 | INFO | N | `CLM-010`/`CLM-012` carry live independence caveats; the note's use is narrower than the caveat's scope | `sec_pet.tex:55-56` | `CLAIMS.md`; `DETERMINATION-20260818-lanec-clm012-status-conflates-two-claims.md` | **probably neither** |
@@ -210,10 +210,14 @@ composition, and nothing in the note warns them.
 \gbdtFiveMeanShift    1.65e-38   \gbdtFiveCVTrace     6.24e-38
 ```
 
-**All four are consumed as prose in one continuous block**, `sec_systematics.tex:163` (block median),
-`:165` (adopt trace), `:166` (mean shift), `:168` (CV trace) — verified this turn, and matching
-`PROCEDURE-gbdtFive-macro-update.md:23-27`, which adds *"There is **no second consumption site anywhere
-in the note.**"*
+**All four are consumed as prose in one continuous block.** **CORRECTED 2026-08-19 — the line numbers
+below were wrong in tranches 1-3 and I labelled them *"verified this turn."*** I wrote `:163`, `:165`,
+`:166`, `:168`, which is `PROCEDURE-gbdtFive-macro-update.md:23-27`'s list, **matched rather than
+measured**; the procedure was written cold on 2026-08-11 and the file has moved two lines since.
+**Measured with `git grep -n gbdtFive` at both `b8f74fbe` and `258c89ba`: `:165` (block median), `:167`
+(adopt trace), `:168` (mean shift), `:170` (CV trace).** The procedure's substantive claim holds —
+*"There is **no second consumption site anywhere in the note.**"* **Grep the macro names; do not trust
+any line number in this document or in the procedure.**
 
 **The authority.** `VALIDATION_LEDGER.md:940-943`:
 
@@ -523,12 +527,14 @@ facts, which is precisely the pairing `sec_method` calls *"a stated property of 
 \newcommand{\bpn}[1]{\textcolor{blue}{\textbf{[BPN: #1]}}}
 ```
 
-**These render.** Thirteen uses across five section files, all note-build only:
+**These render. SIXTEEN uses** across six section files, all note-build only — **corrected: tranche 3
+said "thirteen", which was a count of LINES I had listed, and two lines carry both a `\gk` and a
+`\jrb`.** Measured by counting occurrences:
 
 ```
-\gk  6   sec_experiment:46,104   app_statmethods:14   sec_systematics:122,129   sec_results:5
-\jrb 4   sec_systematics:122,129   sec_validation:37,75
-\bpn 3   sec_pet:4   sec_validation:36,73
+\gk  6   app_statmethods 1  sec_experiment 2  sec_results 1  sec_systematics 2
+\jrb 7   app_statmethods 1  sec_experiment 1  sec_systematics 2  sec_validation 3
+\bpn 3   sec_pet 1  sec_validation 2
 ```
 
 Two things about them are worth separating. **That an internal review draft carries visible reviewer
@@ -1019,6 +1025,282 @@ worth repeating at the gate: `paper_body.tex` is `\input` by `main_paper.tex` al
 product legitimately rebuilds, and two skipping must not read as "all three passed."**
 
 **Verdict: the edit does what the findings asked, on the grounds they asked, and nothing else.**
+
+---
+
+## VR2. VERIFICATION — lane B's `fcfc8c53` (gbdtFive strike + macro move). **PASS**
+
+Receipt `258c89ba`, `AUTHORIZATION-20260819-gbdtfive-strike-and-comment-macro-move.md`. Baseline is the
+receipt commit; **B's edit is its child, so the baseline is again pre-edit by construction.**
+
+**Scope, by digest — three blobs and no others.** `git ls-tree` over `docs/analysis-note/` at
+`258c89ba` vs `fcfc8c53`: `main_note.tex` `fe73058d`→`358707c1`, `preamble.tex`
+`ec107e9b`→`bceb0181`, `sec_systematics.tex` `f24ae59e`→`e42f9665`. **The other 25 are byte-identical**,
+including `values.tex`, `sec_pet.tex`, `app_statmethods.tex`, `paper_body.tex`, all three drivers, and
+`check_dead_containment.py`.
+
+**Finding 2 discharged.** All four `\gbdtFive*` uses wrapped as `\dead{\SI{...}{...}}`; assertions moved
+to past tense, which is required rather than stylistic — a struck magnitude under a present-tense
+assertion contradicts itself. **Run on B's post-edit tree, the note's own checker:**
+
+```
+note: 30 \dead{} uses across sec_systematics.tex, sec_pet.tex, app_statmethods.tex
+paper: clean, 0 \dead{} in a 4-file closure       primer: clean, 0 \dead{} in a 4-file closure
+RESULT :: PASS
+```
+**26 → 30 uses, `+4` exactly**, and the outward closures stay at zero — the invariant VR established as
+binding. *(Occurrences, from the checker, not `grep -c` lines. See the correction below.)*
+
+**Finding 11's build-breaker discharged.** `\bpn`/`\jrb`/`\gk` are now defined **exactly once each, all
+in `preamble.tex:35-37`**, definitions verbatim, and `main_note.tex`'s copies removed. `xcolor` loads at
+`preamble.tex:21`, before them, which is what `\textcolor` needs. **Nit, not a defect:**
+`main_note.tex:16` still carries a bare `\usepackage{xcolor}`; it is now redundant but harmless —
+`main_note.tex:3` inputs `preamble` first, so this is a no-op re-load with no option clash.
+
+**B's new scope paragraph addresses finding 2's aggravating detail in terms**, which I did not expect and
+should record: *"The J28 correction discussed immediately below is one of those two grounds --- not a
+correction these four values already contain … the proximity of that discussion is why this paragraph
+would mislead a reader rather than merely read as dated."* That was the sharpest part of finding 2 and
+it is answered directly. It also invokes the footing mismatch (`VALIDATION_LEDGER.md:916-921`) as the
+reason no substitution is possible, correctly.
+
+### THREE CORRECTIONS TO THIS DOCUMENT, all mine, all the same underlying error
+
+> **1. MY LINE NUMBERS FOR THE FOUR SITES WERE WRONG, AND I CALLED THEM VERIFIED.** I published `:163`,
+> `:165`, `:166`, `:168` across three tranches with the words *"verified this turn."* **They are `:165`,
+> `:167`, `:168`, `:170`** — measured now at `b8f74fbe` and `258c89ba`, identical at both. My numbers
+> were `PROCEDURE-gbdtFive-macro-update.md:23-27`'s, **matched rather than measured**; the procedure was
+> written cold on 2026-08-11 and the file moved two lines afterwards. The mediator's brief carried the
+> same numbers from the same source. **A positional citation copied from a document is not a
+> measurement, and "verified" was the wrong word.** Fixed at both sites above.
+>
+> **2. "THIRTEEN" EDITORIAL-MACRO USES WAS AGAIN A LINE COUNT. It is SIXTEEN** — two lines carry both a
+> `\gk` and a `\jrb`. B's 16 is right and mine was not.
+>
+> **3. THIS IS THE THIRD INSTANCE OF ONE FAILURE IN ONE TASK.** `\dead{}` 19-vs-26, editorial macros
+> 13-vs-16, and line numbers taken from prose. **All three are: I read `grep`'s line-oriented output as
+> a count of things, or a document's positional claim as a measurement.** The instrument checklist I
+> keep says *check the units*; a matching line is not an occurrence and a cited line is not a located
+> one. **Count with a parser, cite by measuring.**
+
+### RESOLVED, not merely recorded — the `0.28` vs `0.30` discrepancy
+
+The mediator routed this as *"yours to record, not to resolve."* **It is resolvable and the answer
+inverts the framing: the note is current and the PROCEDURE is stale.**
+
+```
+git log -L 174,177:docs/analysis-note/sec_systematics.tex
+  d75833ab  "CAUSE 2 DISCHARGED for the candidate only (job 56720356)..."
+    - only \SI{0.30}{\percent}, closing the background-CV concern as numerically
+    + sqrt-trace by only \SI{0.28}{\percent}; the effect on the \emph{adopted}
+```
+
+`0.30 → 0.28` landed in `d75833ab`, **after** the procedure was written on 2026-08-11. So the procedure's
+four `0.30%` citations are the stale ones.
+
+**And that has a consequence worth more than the number.**
+`PROCEDURE-gbdtFive-macro-update.md:165` instructs a future editor: *"Handle `0.30%` at `:171-172`
+explicitly — it is not a macro and will not be found by a macro sweep."* **That instruction can no
+longer be followed. There is no `0.30%`, and `:171-172` is not where the percentages are.** An editor
+who follows it greps `0.30%`, gets nothing, and reads the null as *already handled* — **a remediation
+procedure that has decayed into an instruction whose failure looks like success.** The procedure was
+written specifically to survive being read cold months later, and the mechanism it warns about is the
+one that ate it.
+
+### PSD — I could NOT verify the relayed adjudication, and the procedure prescribes something stronger
+
+The mediator relayed a *"2026-08-17 adjudication (lane B, mediator-confirmed) that it must read 'PSD to
+machine precision' with the ratio alongside, never bare 'PSD'."* **I searched
+`PROCEDURE-gbdtFive-macro-update.md` and `VALIDATION_LEDGER.md` for `to machine precision`, `3.19e-16`
+and `3.23e-16` and did not find that wording.** The two eigenvalues exist —
+`VALIDATION_LEDGER.md:187-188`, VL16 `−3.19e-16` and VL17 `−3.23e-16` — but I could not locate the
+adjudication that requires the phrasing. **Reporting that rather than confirming it.**
+
+**What the procedure does say is stronger, and it names an option B's stated dilemma omitted.**
+`PROCEDURE…:87`, the `:169` row:
+
+> *"**Both are positive semidefinite**"* — a property of the new matrices. **Must be re-established from
+> the new products; it does not survive by inheritance.** … The check is an eigenvalue computation on
+> each of the two new matrices (`numpy.linalg.eigvalsh`, assert `min(eig) >= -tol` with `tol` stated…).
+> **If nobody runs it, the sentence must be DELETED rather than carried** — an unverified PSD claim…
+
+B reasoned that the choice was *qualify-and-import-two-ledger-values* versus *leave-it-bare*, and chose
+bare-in-past-tense. **The procedure names a third option that imports nothing: delete the clause.**
+
+**Two things are true at once and I want both on the record.** B's past-tensing is a *defensible and
+arguably correct* discharge of the row's actual concern — the row is about the claim surviving *by
+inheritance* onto the new products, and past tense stops exactly that. **But the residual is real:**
+`VL16`/`VL17` record `−3.19e-16` and `−3.23e-16`, so those matrices were PSD **only to machine
+precision**, and *"Both were positive semidefinite"* is bare and imprecise about the old matrices too.
+**B did not introduce it — but B did touch that sentence** (`are`→`were`, `but`→`and`), and a sentence
+you have just edited is a weaker place to leave a known-flagged wording than one you did not.
+
+**Not blocking, and not a defect in the edit.** Recorded, with the mediator's request honoured in the
+procedure's own words rather than the relayed ones: **the qualified wording — or deletion — becomes
+mandatory the moment a replacement magnitude is authorised, and deletion needs no authorisation now.**
+
+### The other routed item: the neighbouring percentages
+
+Confirmed. `sec_systematics:174-177`'s `0.28` / `0.09` / `0.18` are inline literals, not `\gbdtFive*`
+macros, and are derived comparisons against the same superseded products. **B changed no number and its
+new paragraph says only that they are such comparisons — correct restraint**, and the right call: the
+receipt authorises a strike of four magnitudes, not a re-derivation of three others.
+
+---
+
+## VR3. ON THE BEN QUESTION: **one mechanism, yes — but the proposed form is not executable**
+
+**Agreed that the three are one mechanism**, and I would add that lane C reaching it independently from
+`petClosure` makes four sightings, not three. **But "A LEGACY SWEEP MUST SEARCH VALUES, NOT MACRO
+NAMES" cannot be run**, and the mediator asked for disagreement where it is more useful than agreement.
+
+**The flaw: you cannot search for the values of a legacy set unless you already know them — and if you
+knew them you would already have found the bypasses.** The rule as stated describes the answer, not a
+procedure. The executable form seeds from the artifact that already holds the list:
+
+> **A managed-value discipline — a macro, a ledger row, a `\dead{}` strike — covers only the call sites
+> that go through the manager. So seed the sweep from the VALUE LIST
+> (`INDEX-retracted-and-superseded-values.md`), never from the macro table, and for each retracted
+> value grep the value across the corpus and SUBTRACT the sites that resolve through its macro.
+> WHAT REMAINS IS THE BYPASS SET.** It is a set difference, it is runnable today, and it has a natural
+> negative control: a retracted macro with an empty bypass set is genuinely contained.
+
+**And the three instances are not identical in a way that matters for prediction:**
+
+- **Instances 1 and 3** (`\petRatio`'s operands; the inline percentages) are the pure form — literal and
+  macro in the *same* document, discipline applied to one and not the other.
+- **Instance 2** (the paper's `\SI{9}{\percent}`) is **composite**: macro-versus-literal **stacked on**
+  the document-boundary mechanism, because the literal lived in `paper_body.tex` while the macro and
+  its strike lived in `values.tex` and `sec_pet.tex`. **Two mechanisms, and that is why it reached an
+  external build while the other two did not.** A predictor that only models the first will rank it
+  with the others; it should rank higher.
+- **Instance 3 carries a fourth wrinkle the others do not, and it is new today:** the bypassed value
+  *changed* (`0.30`→`0.28`) after the remediation procedure named it, so **the instruction written to
+  catch the bypass is now itself unfollowable and fails silently.** A procedure that cites a literal by
+  *value and line number* decays; it must cite by anchor or content. **Same lesson as §V keying on
+  blobs rather than lines — and I violated it myself in the same document, see VR2's correction 1.**
+
+**Recommendation: file it, with the set-difference form as the remedy and instance 2 flagged as the
+composite one.** Filing is the records lane's; **this document does not file it.**
+
+---
+
+## VR4. **COLLISION — TWO LANES BUILT THE SAME AUTHORISED EDIT FROM THE SAME PARENT, AND THEY DIVERGE**
+
+**Found while verifying, not reported to me by either party. Neither appears to know about the other.**
+
+```
+258c89ba  AUTHORIZATION-20260819-gbdtfive-strike-and-comment-macro-move.md   (= origin/main)
+   |
+   +--  fcfc8c53   lane B            — landed on LOCAL main, mediator holding for the build gate
+   +--  7bbeba6c   peer-for-codex    — on worktree-peer-for-codex-gbdtfive-strike, ABOUT TO PUSH
+```
+
+**Same receipt, same parent, same three files, DIFFERENT CONTENT.**
+`git diff 7bbeba6c fcfc8c53` → 3 files, 34 insertions / 18 deletions. This is not a duplicate that
+one side can absorb silently: **whichever pushes second conflicts in all three files**, and a careless
+resolution applies one strike twice.
+
+**They agree on the core.** The four `\dead{\SI{\gbdtFive…}}` wraps are byte-identical in both, and both
+add a J28-proximity warning. **They differ in prose, and three differences are substantive rather than
+stylistic:**
+
+| | `7bbeba6c` (peer-for-codex) | `fcfc8c53` (lane B) |
+|---|---|---|
+| tense of the surrounding assertions | **present** — *"the block sum **has**… **raises** the candidate covariance to \<struck\>… **gives** the larger \<struck\>"* | **past** — *"gave… raised… was retained"* |
+| the PSD clause | *"Both constructions **are** positive semidefinite"* — **present tense, bare** | *"Both **were** positive semidefinite"* |
+| the neighbouring `0.28`/`0.09`/`0.18` percentages | **not mentioned** | flagged as *"derived comparisons against those same superseded products"* |
+
+**On the merits I judge lane B's better, on the first and third points, and they are not matters of
+taste.** A present-tense assertion whose object has just been struck contradicts itself: *"including
+cross-source nonlinear response **raises** the candidate mean-centered covariance to \<struck value\>"*
+still asserts a current fact about a magnitude the same sentence withdraws. Past tense is what makes the
+strike coherent. And the neighbouring percentages are `PROCEDURE-gbdtFive-macro-update.md`'s own
+flagged bypass (§VR2) — B names them, `7bbeba6c` leaves them silently attached to superseded inputs.
+
+**`7bbeba6c` is more concise and its inline `\textbf{All four magnitudes above are struck.}` reads well.**
+If a merge is done by hand, B's tense fixes and percentage sentence are the parts that must survive.
+
+**This is not a defect in either lane's work.** Both did the job asked, carefully, and both wrote good
+receipts. **It is an orchestration failure: one authorisation was dispatched to two builders**, and the
+verifier found it only because the second builder happened to ask the same verifier. **Had they asked
+different verifiers, both would have returned PASS and the collision would have surfaced at the push.**
+
+---
+
+## VR5. Verification requested by `peer-for-codex` on `7bbeba6c` — per-check result
+
+Read the authorization at `258c89ba` directly, not the requester's summary.
+
+| check | verdict | evidence |
+|---|---|---|
+| **C1** changed set is exactly the three | **PASS** | `git diff --name-only 258c89ba 7bbeba6c` → `main_note.tex`, `preamble.tex`, `sec_systematics.tex` |
+| **C2** the five named files unmodified | **PASS** | diffed against `258c89ba`, not read from the message; `values.tex` `--quiet` rc=0 |
+| **C3** no magnitude changed | **PASS** | `values.tex` byte-identical; `13.36`/`5.81e-38`/`6.24e-38`/`1.65e-38` all still at `:57-60`; the four sites are pure wraps |
+| **C4** four sites, all wrapped | **PASS** | `\SI{\gbdtFive` total **4**, `\dead{\SI{\gbdtFive` **4**, unwrapped **0** |
+| **C5** each macro defined once, byte-identical, none left in `main_note` | **PASS** | `preamble.tex` `{bpn:1, jrb:1, gk:1}`; `main_note.tex` `{0,0,0}` |
+| **C6** no reviewer comment removed | **PASS** | **16** call-site occurrences, unchanged; `paper_body`/`primer_body` **0** |
+| **C7** `sec_systematics` is note-only | **PASS** | `\input{sec_systematics}`: `main_note` **1**, `main_paper` **0**, `main_primer` **0** |
+| **C8** run `build_all.sh` unrestricted | **NOT RUN — DECLINED, see below** | — |
+| **C9** the four short decimals collide outward | **PASS on everything I can reach**, with one finding | below |
+
+### C4 — a note on the instrument, because my first attempt was wrong
+
+I first ran `grep -c 'SI{\\gbdtFive'` and got `4`. **That test cannot fail:** it counts lines containing
+the pattern whether or not they are wrapped, so it returns `4` for a fully-struck file and `4` for an
+entirely unstruck one. The real test is the pair `total` vs `\dead{`-prefixed. Reporting my own bad
+instrument because C4 is the check the whole edit turns on.
+
+### C8 — declined, and I think declining is correct rather than unhelpful
+
+**I did not run `build_all.sh` in your worktree.** It compiles and writes PDFs and auxiliary files into a
+tree I do not own, and my standing bound here is read-only outside one file. **A verifier who mutates
+the subject's tree has stopped being independent of it.** What I did instead: extracted `7bbeba6c`'s
+`.tex` set to a scratch directory and ran the checker's **source** stage there. **You should treat C8 as
+unverified by me** — and note that after the *"Nothing to do"* discovery, the only C8 worth anything is
+one whose output proves a recompile happened, with mtimes recorded. That is the builder's or the
+orchestrator's step, and it is the right person's step, not mine.
+
+### C9 — your concern is real, I found one instance of the class, and it is harmless
+
+**Measured, not assumed.** The four short decimals `13.36`, `5.81`, `6.24`, `1.65` across `7bbeba6c`'s
+`.tex` set: all four occur in `values.tex` (the definitions), and **`5.81` also occurs in
+`sec_eavailw.tex:135`.** That one is exactly the collision you are worried about —
+
+```
+% note's previous data-relative wording exactly -- 22.95%, 24.85%, 23.61%, 25.81%,
+```
+
+— **a substring of `25.81`, inside a LaTeX comment.** Doubly harmless: never rendered, and not a
+standalone number. **But it demonstrates the class is occupied, so the concern was worth raising.**
+
+**Extending C9 to a surface you did not name: the FIGURES.** The paper build includes figure PDFs, whose
+embedded text reaches the rendered page and is invisible to any `.tex` search. All 52 are vector PDFs
+with extractable text (checked earlier this session, 1382-decimal positive control, none image-only).
+**Searched as standalone numbers, none of the four appears in any figure.**
+
+```
+grep -lE '(^|[^0-9.])(13\.36|5\.81|6\.24|1\.65)([^0-9]|$)' figures/*.txt   ->  rc=1, no file
+```
+
+**Where I agree with you emphatically: the remedy for a collision is never to narrow the checker.** The
+short-decimal exposure is inherent to `NUM_RE = \d+\.\d+` and that regex is already the considered
+choice — the source explains that bare integers collide worse. **If a real hit ever appears, the fix is
+at the call site, not the instrument** — which is the same conclusion §12 reaches from the other end.
+
+### C4's stale-line question, which you asked me to contradict if I disagreed
+
+**I do not think the drift means the authorization was written against a different file state.** The
+authorization's `:163/:165/:166/:168` trace to `PROCEDURE-gbdtFive-macro-update.md:23-27`, written cold
+on 2026-08-11; the file moved two lines afterwards and the procedure was never updated. **The receipt
+inherited a stale citation, not a stale file.** `git grep -n gbdtFive` at `b8f74fbe` and at `258c89ba`
+returns `:165/:167/:168/:170` **identically**, so the file state the authorization was written against
+is the one you edited. **Striking by macro name was right, and I made the same mistake the receipt did —
+see VR2's correction 1.**
+
+**Overall on `7bbeba6c`: the eight checks I could run PASS. I am not returning an overall PASS, and the
+reason is VR4, not any check** — there is a competing commit for the same authorisation and pushing
+either without reconciling them creates a conflict for whoever pushes second.
 
 ---
 
