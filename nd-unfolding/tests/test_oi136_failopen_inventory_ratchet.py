@@ -41,9 +41,21 @@ REPO = os.path.dirname(os.path.dirname(HERE))
 PROBE = os.path.join("docs", "orchestration", "state",
                      "probe-oi136-sys-path-hijack-20260820.py")
 
-# Measured at fa123ec9 by running the probe; see the module docstring for the update rule.
-FAILOPEN_COUNT = 59
-FAILOPEN_SHA256 = "605310c881a38671e2dbfc003955715be6ff2ef0db930827c1f6dfcd61c07940"
+# Measured by running the probe; see the module docstring for the update rule.
+#
+# 59 -> 58 on 2026-08-20, ONE SITE REPAIRED, named as the rule requires:
+# `nd-unfolding/uq_fps/corrected/test_fps_corrected_uq.py` now derives its import root from
+# `Path(__file__).resolve().parents[2]` instead of inserting the hardcoded cluster root at
+# position 0. It was the OI-136 pilot because it is a TEST -- a green run of it was evidence
+# about the hardcoded tree rather than the tree under test -- and because it carried no receipt
+# or launcher hash pin. Its exposure was LATENT, not realized: `uq_math.py` did diverge over the
+# drift window (0132b60c at 683bdcca vs b382e609 at HEAD, +52 lines) but purely by appending the
+# F7 helpers after `joint_throw_covariance`, so all three imported function bodies were
+# byte-identical. The repaired file no longer contains the root literal at all, so the probe's
+# CANDIDATE count moves 122 -> 121 in the same step; the FAIL-OPEN set below is what is pinned.
+# 58 IS NOT A TARGET. It is the count of sites still to be repaired, one authorized site at a time.
+FAILOPEN_COUNT = 58
+FAILOPEN_SHA256 = "21828143e40961c9c8f5ee9f0e7a3473f915462a6e440581af8859963943be66"
 
 # The probe's own positive controls, restated here so this file does not inherit its blind
 # spots. Relative to the repo root, as the probe prints them.

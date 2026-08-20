@@ -155,10 +155,14 @@ to *"those two lines only"*:
 called it a frozen-provenance launcher edit in a file Joseph scoped. **Not done**; treat as needing
 his word.
 
-### 2.7 `OI-136`: 57 of the 59 fail-open sites remain
+### 2.7 `OI-136`: 58 fail-open sites remain (one pilot repaired)
 
 Re-measured at HEAD: **122 candidates / 59 FAIL-OPEN / 13 / 50**, both probe controls holding, and
-the fail-open set is **byte-identical** to `2e210468`. Cross-checked by an independently written AST
+the fail-open set was **byte-identical** to `2e210468`. **ONE PILOT SITE WAS THEN REPAIRED under single-site
+authorization, so the live count is now `121 / 58 / 13 / 50`** — `nd-unfolding/uq_fps/corrected/test_fps_corrected_uq.py`, provably carrying no receipt or launcher pin.
+**58 is not a target; it is the number of sites still to repair, one authorized site at a time.** The only
+EXECUTABLE pin of the number is `nd-unfolding/tests/test_oi136_failopen_inventory_ratchet.py`, which went
+red on the repair as designed and was updated deliberately. Cross-checked by an independently written AST
 classifier: same 59, zero difference.
 
 - **6 are hash-pinned** and need a re-issued owning gate, not a refactor:
@@ -168,8 +172,9 @@ classifier: same 59, zero difference.
 - **13 are tier A** — they already derive their own location and then insert the hardcoded root at 0
   *on top of it*, so they lose on insert **order**; a one-line change each. Two of the 13 are among
   the pinned six.
-- **~40 are tier B** — never compute their own location; same edit shape, `__file__` must be
-  introduced. Depth is uniform per directory.
+- **~39 are tier B** — never compute their own location; same edit shape, `__file__` must be
+  introduced. Depth is uniform per directory. **The pilot came from this group** (it was ~40 before
+  the repair), which is why the tier split below sums to 58 and not 59.
 - **Do not touch** the three `probe-oi22*`/`probe-oi120c*` scripts: they are *recorded evidence
   artifacts*, and editing them destroys the correspondence between the artifact and the script that
   produced it. Re-run under `--expect-root` instead.

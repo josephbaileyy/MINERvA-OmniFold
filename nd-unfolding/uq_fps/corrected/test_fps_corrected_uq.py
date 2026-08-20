@@ -15,10 +15,21 @@ Run:  python uq_fps/corrected/test_fps_corrected_uq.py   (from nd-unfolding/)
 import glob
 import os
 import sys
+from pathlib import Path
 
 import numpy as np
 
-_ND = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding"
+# OI-136: the tree is derived from THIS FILE, never from the hardcoded cluster root that used to
+# stand here. An absolute insert at position 0 executes the HARDCODED tree's `uq_math` whichever
+# checkout this file was copied into, and PYTHONPATH cannot outrank position 0 -- so a green run of
+# a TEST would have been evidence about that other tree, not about the tree under test. Measured
+# before the change: run from a scratch checkout carrying its own `nd-unfolding/uq_math.py`, this
+# file imported the cluster copy. Same idiom and the same reason as `tests/test_p4_repair.py:14`
+# and `pet/gate2_target_runtime.py:38-40`. `parents[2]` is `nd-unfolding/` seen from
+# `nd-unfolding/uq_fps/corrected/`; the data products below hang off the SAME derived root on
+# purpose, so one run speaks about exactly one tree. On the cluster the derived value is
+# byte-identical to the literal it replaces, so nothing about the recorded 2026-07-15 pass moves.
+_ND = str(Path(__file__).resolve().parents[2])
 if _ND not in sys.path:
     sys.path.insert(0, _ND)
 from uq_math import (interpolate_asymmetric_ratio, joint_throw_covariance,  # noqa: E402
