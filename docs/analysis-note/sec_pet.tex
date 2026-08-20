@@ -3,6 +3,24 @@
 
 \bpn{left off here}
 
+\paragraph{Status: diagnostic and method development, not a publication
+uncertainty product.}
+Everything in this section is reported as a diagnostic and method-development
+result. No PET covariance --- historical recoil-only or full-event --- is adopted
+as a publication uncertainty product, and the full-event PET
+central/statistical pairing was declined on 2026-08-20 rather than resolved: the
+corresponding statistical covariance remains constructed but not independently
+verified, and it is not paired with a PET central value. That decision does not
+claim a PET central value is wrong and does not invalidate the dispersion
+measured from a replica family; the missing evidence is coverage. No mechanism
+for the anomaly it rests on is established, and none is asserted here.
+Reconsideration requires estimator equivalence \emph{and} coverage evidence, and
+coverage is a different object from checking how a replica covariance was
+assembled --- independently verifying the construction would not satisfy that
+gate. The publication uncertainty critical path runs through the adopted scalar
+five-dimensional covariance (\S\ref{sec:uq-combine}), not through this section.
+Routed record: \texttt{OI-126} in \texttt{docs/OPEN\_ITEMS.md}.
+
 As a low-level-representation cross-check, a point-cloud transformer (PET, the architecture of
 OmniLearn~\cite{Mikuni:2024qsr}, vendored with the upstream OmniFold
 implementation) unfolds the same ME~FHC data using, on the reconstructed
@@ -16,7 +34,8 @@ retained for selection and binning the extracted result, but they are not
 classifier features at either level. The learned weight is therefore a
 function of the recoil representation, not of the complete joint muon--hadron
 event. We therefore compare its absolutely normalized central value, closure
-and uncertainty only as properties of the recoil-only estimator. A full-event
+and replica dispersion only as diagnostic properties of the recoil-only
+estimator. A full-event
 estimator would instead train jointly on the declared muon and recoil inputs.
 
 \subsection{From shape check to absolute cross section}
@@ -94,7 +113,7 @@ recoil, the conditional muon distribution remains inherited from the prior.
   \label{fig:petabs}
 \end{figure}
 
-\subsection{Uncertainty of the recoil-only estimator}
+\subsection{Statistical and training diagnostics of the recoil-only estimator}
 \label{sec:pet-syst}
 The PET statistical replicas independently
 Poisson-fluctuate data and MC, retrain PET at a fixed estimator seed, and apply
@@ -107,10 +126,14 @@ nominal PET extraction, an identical-seed GPU-floor repeat, a
 20-member coherent-Poisson retraining ensemble, and a 12-member crossed
 subsample/estimator-seed ensemble have all passed their ordering, event-alignment, and
 finite-output gates. The GPU nondeterminism is negligible relative to both
-sampling and training variation. The $C_{\rm stat}$ estimate is based on 20
-coherent replicas, so its finite-ensemble precision is more limited than the
-100-replica target. These statements characterize the recoil-only estimator
-and do not supply an uncertainty for a joint muon--recoil estimator.
+sampling and training variation. The $C_{\rm stat}$ block is a diagnostic
+dispersion measurement built from 20 coherent replicas. It is not an
+independently verified covariance, it is not the statistical uncertainty of any
+PET result, and it is not paired with a PET central value; a larger ensemble
+would sharpen the dispersion estimate and would still not supply coverage
+evidence. These statements characterize the recoil-only estimator as method
+development and do not supply a publication uncertainty for it or for a joint
+muon--recoil estimator.
 
 The historical recoil-PET campaign produced vertical, retraining, ML,
 statistical and detector blocks on a common nominal.  That assembly is now
@@ -128,12 +151,14 @@ cross term.
 
 The historical detector block is additionally CV-support-limited: it propagates
 shifted weights and observables through the nominal cloud membership instead of
-regenerating the selected cloud for every lateral endpoint.  The replacement
-therefore uses end-to-end joint nuisance/retraining shifts and the
-selection-complete FPS lateral samples.  It belongs to the full-event PET
-estimator and receives a fresh statistical and ML ensemble.  Until that product
-lands, this section quotes only the recoil-PET central value and closure; no PET
-precision comparison is made.
+regenerating the selected cloud for every lateral endpoint.  A replacement
+construction would need end-to-end joint nuisance/retraining shifts and the
+selection-complete FPS lateral samples, and would belong to a full-event PET
+estimator with its own statistical and ML ensembles.  That is method-development
+design and not a pending publication deliverable: no PET total covariance is
+adopted for publication.  This section therefore quotes only the recoil-PET
+central value and closure; no PET precision comparison is made and no PET
+uncertainty magnitude is quoted.
 
 \subsection{Truth-cloud projection within the recoil cross-check}
 \label{sec:pet-projection}

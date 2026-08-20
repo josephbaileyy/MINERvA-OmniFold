@@ -149,7 +149,9 @@ recoil-representation cross-check: step~1 uses non-muon reconstructed
 calorimeter clusters and step~2 uses truth final-state hadrons with the muon
 removed. It yields an absolutely-normalized central value whose ordinary
 closure is internally consistent to $\sim\SI{\petClosure}{\percent}$
-(Fig.~\ref{fig:ppet}). No current quantitative PET--GBDT level of agreement is
+(Fig.~\ref{fig:ppet}). This track is reported as a diagnostic,
+method-development study: it contributes no cross section and no uncertainty to
+the measurements above. No current quantitative PET--GBDT level of agreement is
 quoted. The only such comparison that exists was taken with a two-iteration
 training, against the campaign's pinned three-iteration policy; before the
 2026-08-01 full-event schema change, which makes a pre-08-01 PET total a
@@ -165,9 +167,9 @@ with asymmetric endpoints, a fixed estimator seed, and mean-centered throws.
 Those uncertainty products remain candidates until the selection-complete
 lateral replacement lands. The historical recoil-PET covariance is also
 quarantined: its fixed-map and retraining responses share nuisance endpoints and
-were added without their cross term. Neither a PET central-value comparison nor a
-recoil-PET covariance is used here; the full-event estimator receives a fresh
-uncertainty budget.
+were added without their cross term. Neither a PET central-value comparison nor
+any PET covariance is used here, and no PET uncertainty magnitude is quoted: no
+PET total covariance is adopted for publication.
 
 \begin{figure}[H]
   \centering
@@ -220,6 +222,7 @@ known low-recoil/2p2h deficit, agree with the dedicated published low-recoil
 measurement, and localize a deep-inelastic excess in a high-$W$ corner that all
 tested generators underpredict. A
 recoil-only point-cloud transformer establishes low-level-input infrastructure
-without yet unfolding the complete joint muon--hadron event. The scalar
+without yet unfolding the complete joint muon--hadron event; that track is
+method development and carries no adopted uncertainty product. The scalar
 extended-fiducial study identifies a modest acceptance-supported extension and
 a much larger, separately labeled prior-dominated region.
