@@ -11,12 +11,14 @@ canonical driver — a deliberate, separately authorized step (needs --i-underst
 import argparse, json, os, sys
 import p4_lib as P
 
-# OI-128 (2026-08-16). The gate name `p4_validate_active_lateral.py` records once the systematic
-# band set has actually been refereed against the SUPPORT FAMILY. It is duplicated from that
-# module's literal rather than shared: `p4_lib.py` is the natural home but is under repair by
-# another lane, so `tests/test_p4_repair.py` asserts the two spellings agree instead of leaving
-# the duplication unchecked. Move it to `p4_lib` when that file is free.
-BAND_COMPLETENESS_GATE = "band_set_completeness_vs_support_family"
+# OI-128, resolved 2026-08-20. The gate name now lives in `p4_lib.py` -- the shared module that
+# IS on the standard-P4 execution surface, so rules 4b/4c invalidate an authorizing verdict if it
+# is renamed. Previously it was a private literal here, because `p4_lib.py` was under repair by
+# another lane, which made the gate exactly as durable as this file: and this file is on no
+# surface at all. Re-exported rather than referenced only inline, because
+# `tests/test_p4_repair.py` reads `ADOPT.BAND_COMPLETENESS_GATE` as the consumer's spelling when
+# it compares it against the producer's literal in `p4_validate_active_lateral.py`.
+BAND_COMPLETENESS_GATE = P.BAND_COMPLETENESS_GATE
 
 
 def main():

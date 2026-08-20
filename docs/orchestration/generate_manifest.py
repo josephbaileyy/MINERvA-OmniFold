@@ -66,10 +66,32 @@ def repo_path(path: Path) -> str:
     return path.relative_to(REPO).as_posix()
 
 
-def inventory() -> tuple[list[Path], dict[str, str]]:
+def inventory(committed_only: bool = False) -> tuple[list[Path], dict[str, str]]:
+    """Git-defined inventory. `committed_only` drops the `intended` half entirely.
+
+    OI-70, second half, measured 2026-08-20. Emitting `tracking` stops an uncommitted file
+    MASQUERADING as committed, and that was the filed defect. It does not make the default
+    inventory safe to publish from a SHARED checkout: this tree carried 49 nonignored untracked
+    paths belonging to other lanes and other sessions, and the default run inventories all of
+    them AND lets them drive `inbound_count` on 73 already-committed rows through
+    `reference_sources()`. Row-count acceptance passes on that run -- 0 dropped, 50 added -- and
+    passing it does not make one lane entitled to declare another's work-in-progress as
+    repository inventory.
+
+    So the row's OTHER prescribed remedy ("or exclude `intended` paths from the table") is
+    available as an explicit mode rather than as a new default: the default is right for a lane
+    generating from its own clean tree immediately before committing, which is what the
+    docstring at the top of this file describes. `--committed-only` is right for a shared
+    checkout, because it makes the emitted PATH SET a statement about `HEAD` alone.
+
+    IT IS NOT A CLEAN-TREE SUBSTITUTE, and saying so here so nobody reads it as one: `lines`,
+    `bytes` and `inbound_count` are still measured from WORKING-TREE bytes, so an uncommitted
+    edit to a file that is already tracked still reaches the table. Generate from a tree whose
+    inventory scope is clean; `main()` prints the dirty tracked paths for exactly this reason.
+    """
     tracked = set(git_lines("ls-files", "--", "docs/orchestration"))
-    intended = set(git_lines("ls-files", "--others", "--exclude-standard", "--",
-                             "docs/orchestration"))
+    intended = set() if committed_only else set(
+        git_lines("ls-files", "--others", "--exclude-standard", "--", "docs/orchestration"))
     target_rel = repo_path(TARGET)
     tracked.add(target_rel)
     relpaths = sorted(tracked | intended)
@@ -197,11 +219,26 @@ def derive_read_policy(classification: str, name: str) -> str:
     return "route-only"
 
 
-def derive_immutable(classification: str, rel: str, tracking_state: str) -> str:
-    if classification in {"ARCHIVAL", "DEAD"} or is_runs_or_state(rel):
+def derive_immutable(classification: str, rel: str, event_status: str) -> str:
+    """Immutability follows the LIFECYCLE, not the directory.
+
+    OI-73. `is_runs_or_state(rel)` alone answers "does this sit under `runs/` or `state/`?",
+    which is a question about the DIRECTORY, and it returned `yes` for
+    `state/live-state.json` -- the hand-authored INPUT that `generate_live_state.py` only ever
+    READS. That is the deadlock the row names: the one file able to clear a dead blocker read
+    `immutable yes` in the artifact `CLAUDE.md` calls the authority, so every lane correctly
+    refused to touch it while the blocker could not be cleared by regenerating either. A
+    GENERATED run/state record is immutable evidence; an AUTHORED input under those trees is
+    not, and `event_status` is where that difference is already recorded.
+
+    The former `tracking_state == "ignored"` branch is removed as PROVABLY DEAD, not as a
+    behaviour change: `inventory()` emits only `tracked` and `intended`, and `--self-test`
+    asserts exactly that (`set(states.values()) <= {"tracked", "intended"}`).
+    """
+    if classification in {"ARCHIVAL", "DEAD"}:
         return "yes"
-    if classification == "MACHINE" and tracking_state == "ignored":
-        return "yes"
+    if is_runs_or_state(rel):
+        return "yes" if event_status == "generated" else "no"
     return "no"
 
 
@@ -280,8 +317,20 @@ def render(rows: list[dict[str, object]]) -> bytes:
     return stream.getvalue().encode("utf-8")
 
 
-def generate() -> tuple[bytes, Counter[str], int, int, Counter[str], list[str]]:
-    paths, states = inventory()
+def dirty_inventory_paths() -> list[str]:
+    """Tracked paths inside the inventory scope that differ from the index or from HEAD.
+
+    BEN-183. `lines`/`bytes`/`inbound_count` are read from the working tree, so generating over
+    a dirty inventory scope publishes a transient as a description of the repository. Named
+    rather than blocked: a lane regenerating alongside its OWN edit is doing the normal thing.
+    """
+    rows = git_lines("status", "--porcelain", "--", "docs/orchestration")
+    return sorted({line[3:].split(" -> ")[-1] for line in rows if not line.startswith("??")})
+
+
+def generate(committed_only: bool = False) -> tuple[
+        bytes, Counter[str], int, int, Counter[str], list[str]]:
+    paths, states = inventory(committed_only)
     overrides = load_overrides()
     basename_bytes = {path.name.encode("utf-8") for path in paths}
     matches = build_match_index(basename_bytes, reference_sources(paths, states))
@@ -302,10 +351,24 @@ def generate() -> tuple[bytes, Counter[str], int, int, Counter[str], list[str]]:
         if override is not None:
             classification = override["class"]
             event_status = override["event_status"]
-            successor = override["canonical_successor"]
+            # A three-column override row leaves `canonical_successor` MISSING, and
+            # `csv.DictReader` fills a short row with None -- which `sanitize()` then
+            # stringified, so three committed rows named a successor document called
+            # `None`. Measured 2026-08-20 on the three `CONVENTION-*` rows.
+            successor = override["canonical_successor"] or ""
             applied_overrides.add(rel)
 
-        if is_runs_or_state(rel):
+        # OI-73 / BEN-321. This coercion used to run AFTER the override and reset it
+        # UNCONDITIONALLY, so every `runs/` or `state/` override was applied and then
+        # silently discarded -- while still being counted in `applied_overrides`, which kept
+        # the dead entry out of the `unused_overrides` warning. Two consequences, and the
+        # second is why this is a code change rather than a data change: the remedy `OI-73`
+        # prescribes for the `live-state.json` misclassification was STRUCTURALLY INCAPABLE
+        # of working, and a reader of the summary line could not tell a live override from an
+        # inert one. The coercion is right for a GENERATED run/state artifact and wrong for an
+        # AUTHORED control-plane input that happens to live under `state/`, so it now applies
+        # only where the hand-maintained overrides file has declared nothing.
+        if is_runs_or_state(rel) and override is None:
             classification = "MACHINE"
             event_status = "generated"
             successor = ""
@@ -336,7 +399,7 @@ def generate() -> tuple[bytes, Counter[str], int, int, Counter[str], list[str]]:
                 "canonical_successor": successor,
                 "read_policy": read_policy,
                 "consumer": ";".join(consumers),
-                "immutable": derive_immutable(classification, rel, states[rel]),
+                "immutable": derive_immutable(classification, rel, event_status),
                 "inbound_count": inbound,
                 "lines": data.count(b"\n"),
                 "bytes": len(data),
@@ -387,12 +450,25 @@ def self_test() -> int:
             ignored_path = Path(handle.name)
         paths, states = inventory()
         rels = {repo_path(path) for path in paths}
+        # OI-73. The override-survival guard is asserted in the SOURCE as well as in
+        # behaviour, because its failure mode is silent: delete `and override is None` and
+        # every `runs/`+`state/` override goes inert again while this file still reports a
+        # clean pass and `unused_overrides` still reads 0 (BEN-321's exact shape).
+        source = Path(__file__).read_text(encoding="utf-8")
+        authored = "docs/orchestration/state/authored-input-selftest.json"
+        generated = "docs/orchestration/state/generated-record-selftest.json"
         checks = (
             repo_path(intended_path) in rels,
             states.get(repo_path(intended_path)) == "intended",
             repo_path(ignored_path) not in rels,
             set(states.values()) <= {"tracked", "intended"},
             "tracking" in COLUMNS,
+            "if is_runs_or_state(rel) and override is None:" in source,
+            # an AUTHORED input under state/ is editable by its owner...
+            derive_immutable("LIVE", authored, "open") == "no",
+            # ...and a GENERATED record under state/ is still an immutable receipt.
+            derive_immutable("MACHINE", generated, "generated") == "yes",
+            derive_immutable("ARCHIVAL", "docs/orchestration/x.md", "terminal") == "yes",
         )
         if not all(checks):
             print("manifest self-test: FAIL", file=sys.stderr)
@@ -416,6 +492,12 @@ def main() -> int:
         action="store_true",
         help="exit nonzero when MANIFEST.tsv differs from generated output",
     )
+    parser.add_argument(
+        "--committed-only",
+        action="store_true",
+        help="OI-70: inventory only tracked paths, so a shared checkout's foreign untracked "
+             "files are neither published as inventory nor allowed to move inbound_count",
+    )
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
 
@@ -423,7 +505,8 @@ def main() -> int:
         return self_test()
 
     try:
-        output, counts, overridden, defaults, tracking, unused = generate()
+        output, counts, overridden, defaults, tracking, unused = generate(args.committed_only)
+        dirty = dirty_inventory_paths()
     except (OSError, subprocess.CalledProcessError, ValueError) as exc:
         print(f"generate_manifest.py: {exc}", file=sys.stderr)
         return 2
@@ -435,8 +518,22 @@ def main() -> int:
         + " tracking="
         + ",".join(f"{name}:{tracking[name]}" for name in sorted(tracking))
     )
+    if args.committed_only:
+        summary += " mode=committed-only"
     if unused:
         summary += f" unused_overrides={len(unused)}"
+    # DISCLOSED, never silent. An exclusion nobody is told about is how `MANIFEST-overrides.tsv`
+    # went inert reporting as applied (BEN-321), and a transient published as repo state is
+    # BEN-183. Both are announced on stdout beside the summary rather than left to be inferred.
+    if args.committed_only:
+        excluded = git_lines("ls-files", "--others", "--exclude-standard", "--",
+                             "docs/orchestration")
+        print(f"committed-only: {len(excluded)} nonignored untracked path(s) EXCLUDED from "
+              f"both the table and the reference sources")
+    if dirty:
+        print(f"WARNING: {len(dirty)} tracked path(s) in the inventory scope are DIRTY, so "
+              f"their lines/bytes/inbound_count describe the WORKING TREE, not any commit: "
+              f"{', '.join(dirty[:6])}{' ...' if len(dirty) > 6 else ''}")
 
     if args.check:
         current = TARGET.read_bytes() if TARGET.exists() else None

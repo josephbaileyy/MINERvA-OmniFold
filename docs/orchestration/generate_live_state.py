@@ -570,12 +570,29 @@ def check_freshness(repo_root) -> int:
         r = subprocess.run(["git", "-C", str(repo_root), "rev-parse", "--short", spec],
                            capture_output=True, text=True)
         return r.stdout.strip() if r.returncode == 0 else None
+    # OI-73. This caveat used to print on the STALE path ONLY -- i.e. exactly where the reader
+    # was already being told not to trust the file -- and was SILENT on both FRESH paths, which
+    # are the ones a reader acts on. `FRESH` therefore read as "this file is current", and the
+    # authored fields (`state`, `blockers`, `next_authorized_action`) are carried forward
+    # VERBATIM from `state/live-state.json`, so they can assert something false while this
+    # command exits 0. That is the whole of OI-73's second half: what is machine-checked here
+    # is the SHA AND THE TIMESTAMP, and nothing else. Emitted on every outcome so the scope of
+    # a green is stated where the green is.
+    def _scope_of_a_green():
+        print("  SCOPE OF THIS GREEN: only `Git:` and `Observed:` are checked. `Declared state`,")
+        print("        `Exact blockers` and `Next authorized action` are AUTHORED prose in")
+        print("        state/live-state.json, carried forward verbatim; regenerating fixes the sha")
+        print("        and the timestamp and REVALIDATES NOTHING. Re-derive them from the governing")
+        print("        OI-* record before acting on them.")
+
     head, parent = rev("HEAD"), rev("HEAD^")
     if recorded == head:
         print(f"FRESH :: Git: {recorded} == HEAD")
+        _scope_of_a_green()
         return 0
     if parent and recorded == parent:
         print(f"FRESH :: Git: {recorded} is HEAD's parent ({head}) -- the normal born-stale-by-one state")
+        _scope_of_a_green()
         return 0
     print(f"STALE :: Git: {recorded}, HEAD {head}, HEAD^ {parent}. Regenerate before quoting any field.")
     print("  NOTE: regeneration fixes the sha and timestamp; it does NOT revalidate `Declared state`,")

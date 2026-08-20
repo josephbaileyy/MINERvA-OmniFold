@@ -649,6 +649,19 @@ def check_resume_surface(receipt, closure, head_blobs):
     return True, "producing closure matches HEAD"
 
 
+# OI-128, second residual. The name of the gate that records the systematic band set having
+# actually been refereed against the SUPPORT FAMILY. It lived as a private literal in
+# `p4_adopt_standard.py` because this file was under repair by another lane when that check
+# landed, with `tests/test_p4_repair.py` asserting the two spellings agree so the duplication
+# was at least watched. It is moved here now, and the move is the DURABILITY point rather than
+# tidiness: `p4_lib.py` is on the standard-P4 execution surface (every entrypoint imports it),
+# so rules 4b/4c invalidate an authorizing verdict if this string is renamed -- whereas
+# `p4_adopt_standard.py` is on no surface, and the gate was exactly as durable as an unprotected
+# file. `p4_validate_active_lateral.py` deliberately keeps its own literal at the append site:
+# the producer and the consumer being separately spelled is what the drift test can compare, and
+# collapsing both onto this constant would make that test vacuous.
+BAND_COMPLETENESS_GATE = "band_set_completeness_vs_support_family"
+
 NON_ADOPTABLE_KEY = "publication_gate_rejects_this"
 NON_ADOPTABLE_ENV = "P4_NON_ADOPTABLE"
 NON_ADOPTABLE_REASON = (

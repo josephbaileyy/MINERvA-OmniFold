@@ -229,13 +229,42 @@ def sha256(path):
     return h.hexdigest()
 
 
-def collect(obj, src, out):
-    """Harvest (path, sha256) pairs from the two shapes receipts actually use."""
+# OI-127. Role-name prefixes whose UNPAIRED hash plausibly freezes repo CODE rather than a
+# data product or a content digest of the receipt itself. This BOUNDS the reported subset; it
+# does NOT adjudicate membership, and it is deliberately never used to guess a path. Inferring
+# `loader_ -> .../fullevent_fps_dataloader.py` inside the checker would make the guard assert a
+# target THE RECEIPT NEVER NAMED and then compare rigorously against the wrong file, which is
+# BEN-312 exactly. If a role key is ever to be resolved, the mapping must be declared
+# RECEIPT-SIDE and reviewed, never inferred here.
+CODE_ROLE_PREFIXES = ("launcher_", "validator_", "script_", "engine_net_", "driver_",
+                      "loader_", "preflight_", "runner_", "tool_", "generator_",
+                      "module_", "reconciler_", "wrapper_", "adopter_")
+
+
+def collect(obj, src, out, unpaired=None):
+    """Harvest (path, sha256) pairs from the two shapes receipts actually use.
+
+    OI-127 / BEN-322. A `<role>_sha256` whose dict carries no `<role>`/`<role>_path`/
+    `<role>_file` sibling -- and a dict carrying `sha256` with no `path`/`file`/`script` --
+    is BOUND TO NOTHING, and it was in NEITHER accounting cell. It never entered `pairs`, so
+    it could not be counted as "unresolvable" either: that cell counts only pairs this
+    function DID harvest whose path then failed to localize. A reader asking *did it account
+    for everything it saw?* got a ledger that balanced while the Gate-5 implementation pins
+    were invisible to it. They are now recorded in `unpaired` and PRINTED.
+
+    Purely additive: `out` is unchanged, so `RECEIPT_BINDING_COUNT`/`_SHA256` and every past
+    `ALL BINDINGS INTACT` mean exactly what they meant. This is the before/after baseline any
+    later widening of this collector needs -- it is NOT that widening, and it is not a fix.
+    """
     if isinstance(obj, dict):
         p = obj.get("path") or obj.get("file") or obj.get("script")
         s = obj.get("sha256") or obj.get("sha")
-        if isinstance(p, str) and isinstance(s, str) and len(s) == 64:
-            out.append((p, s, src))
+        if isinstance(s, str) and len(s) == 64:
+            if isinstance(p, str):
+                out.append((p, s, src))
+            elif unpaired is not None:
+                unpaired.append(("sha256" if isinstance(obj.get("sha256"), str) else "sha",
+                                 src))
         for k, v in obj.items():
             if k.endswith("_sha256") and isinstance(v, str) and len(v) == 64:
                 base = k[:-len("_sha256")]
@@ -243,11 +272,14 @@ def collect(obj, src, out):
                     if isinstance(obj.get(cand), str):
                         out.append((obj[cand], v, src))
                         break
+                else:
+                    if unpaired is not None:
+                        unpaired.append((k, src))
         for v in obj.values():
-            collect(v, src, out)
+            collect(v, src, out, unpaired)
     elif isinstance(obj, list):
         for v in obj:
-            collect(v, src, out)
+            collect(v, src, out, unpaired)
 
 
 # A pin is only credible where it is USED, so pairing is read off the comparison
@@ -361,10 +393,12 @@ def main():
     a = ap.parse_args()
 
     receipt_pairs = []
+    receipt_unpaired = []
     for f in (glob.glob(os.path.join(a.root, "docs/**/*.json"), recursive=True)
               + glob.glob(os.path.join(a.root, "nd-unfolding/**/*.json"), recursive=True)):
         try:
-            collect(json.load(open(f)), os.path.relpath(f, a.root), receipt_pairs)
+            collect(json.load(open(f)), os.path.relpath(f, a.root), receipt_pairs,
+                    receipt_unpaired)
         except (json.JSONDecodeError, OSError):
             continue
 
@@ -425,6 +459,25 @@ def main():
 
     print(f"resolved {ok + len(new_bad) + len(known_bad)} bindings "
           f"({unresolved} unresolvable: data files, off-repo artifacts, binaries)")
+    # OI-127, THE THIRD CELL. Neither number above can see a hash that names no file. Role-keyed
+    # pins never enter `pairs`, so they were not "resolved" and could not become "unresolvable"
+    # either, and the two-cell ledger BALANCED while `gate5-target-array-active-56857232`'s whole
+    # `implementation` block was invisible to it. Printed and NOT gated: no floor, no exit-code
+    # contribution, nothing about what is verified changes -- so this reclassifies no past
+    # `ALL BINDINGS INTACT`. The achievable goal is that the output stop implying a coverage it
+    # never had; historical coverage of immutable, largely terminal receipts is UNRECOVERABLE.
+    # NOT MEASURED HERE, and left explicit rather than silent: `collect_shell()` was not examined
+    # for the same hole, so this cell speaks only for the receipt-side collector.
+    _code_unpaired = [(k, s) for k, s in receipt_unpaired if k.startswith(CODE_ROLE_PREFIXES)]
+    print(f"  {len(receipt_unpaired)} receipt hash keys are UNPAIRED across "
+          f"{len({s for _, s in receipt_unpaired})} receipts -- a `<role>_sha256` with no "
+          f"sibling path key, so they name no file, are in NEITHER cell above, and were "
+          f"never compared against anything")
+    print(f"    {len(_code_unpaired)} of those, across "
+          f"{len({s for _, s in _code_unpaired})} receipts, carry a role name that denotes "
+          f"repo CODE: {', '.join(sorted({k for k, _ in _code_unpaired}))}")
+    print(f"    this is COVERAGE, not drift: no binding is shown broken. Resolving a role key "
+          f"needs a RECEIPT-SIDE declared mapping, never one inferred here (BEN-312)")
     print(f"  {ok} OK")
     print(f"  {shell_resolved} of them from EXPECTED_*_SHA guards in *.sh "
           f"({len(shell_pairs)} pins seen, floor {SHELL_PIN_FLOOR})")
