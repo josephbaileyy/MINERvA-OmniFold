@@ -97,6 +97,21 @@ PYTHON_BIN=$(command -v python3 || true)
 # EXIT SEMANTICS ARE THE TOOL'S, NOT REINTERPRETED HERE: 0 only if every pair is CURRENT, 3 if any
 # pair is stale/uncommitted/missing, and 2 for "could not look" -- deliberately NOT 3, so an
 # unreadable tree can never be misread as measured drift. Both non-zero cases die.
+# ---------------------------------------------------------------------------------------------
+# OI-136 IMPORT-TREE GUARD -- the fail-CLOSED half, and it is NOT redundant with the parity
+# check above. That check answers "are the FILES AT THESE PATHS the committed ones" and on
+# 57266000_0 it answered YES, five for five, honestly. This one answers "are the MODULES THE
+# INTERPRETER LOADED from $CODE_ROOT", and on that same run the answer was NO: the drivers
+# hardcode /pscratch/sd/j/josephrb/MINERvA-OmniFold and insert it at sys.path[0], which beats
+# the PYTHONPATH set above -- position 0 cannot be outranked by an env var -- so 3 h 08 m of
+# A100 ran 211-commit-behind predicates and failed on a contract already repaired here.
+#
+# THE GUARD MUST COME FROM $CODE_ROOT AND IS PARITY-CHECKED WITH EVERYTHING ELSE. A guard
+# imported from the tree it is supposed to be policing is theatre. Frozen deployments cut
+# before 2026-08-20 do not contain it, and that is the correct failure: re-deploy, because a
+# re-deploy is required to get the fix anyway.
+GUARD=${CODE_ROOT}/nd-unfolding/mnv_guarded_run.py
+[[ -s "$GUARD" && ! -L "$GUARD" ]] || die "OI-136 import-tree guard missing at $GUARD -- this deployment predates it; re-deploy $CODE_ROOT" 2
 PARITY=${CODE_ROOT}/nd-unfolding/pet/verify_executing_copy_is_committed.py
 [[ -s "$PARITY" && ! -L "$PARITY" ]] || die "deployment parity checker missing at $PARITY"
 "$PYTHON_BIN" "$PARITY" --repo "$CODE_ROOT" \
@@ -104,11 +119,16 @@ PARITY=${CODE_ROOT}/nd-unfolding/pet/verify_executing_copy_is_committed.py
   --pair "${LOADER}=nd-unfolding/pet/fullevent_fps_dataloader.py" \
   --pair "${PREDICATES}=nd-unfolding/pet/cstat_data_only.py" \
   --pair "${PARITY}=nd-unfolding/pet/verify_executing_copy_is_committed.py" \
+  --pair "${GUARD}=nd-unfolding/mnv_guarded_run.py" \
   || die "deployment parity: the executing copies are not the committed ones in $CODE_ROOT" $?
 echo "[gate5-do-target] deployment parity CURRENT for all pinned executing copies in $CODE_ROOT"
 
 echo "[gate5-do-target] index=$INDEX seed=$SEED job=${SLURM_ARRAY_JOB_ID}_${INDEX} head=$EXPECTED_HEAD product=data-only-v1"
-"$PYTHON_BIN" "$DRIVER" \
+# ROUTED THROUGH THE OI-136 GUARD. The `--` is MANDATORY: the wrapper splits on it and refuses
+# bare positionals, so no child flag below can be silently eaten (remedy (A)'s wrapper learned
+# this the expensive way). Child argv after `--` is forwarded verbatim; exit 3 means an import
+# escaped $CODE_ROOT and NOTHING RAN.
+"$PYTHON_BIN" "$GUARD" --expect-root "$CODE_ROOT" -- "$DRIVER" \
   --inputs "$INPUT" \
   --output "$TARGET" \
   --receipt "$RECEIPT" \

@@ -57,14 +57,24 @@ def ok(name, cond, detail=""):
 # ----------------------------------------------------------------------------------------------------
 # PRODUCER-DERIVED FIXTURES
 # ----------------------------------------------------------------------------------------------------
-def _launcher_src_line(lineno):
-    return LAUNCHER.read_text().splitlines()[lineno - 1]
+def _launcher_line_matching(pred, what):
+    """The UNIQUE launcher source line satisfying `pred`.
+
+    CONTENT-ANCHORED ON PURPOSE, and it used to be line-numbered. Line numbers were right when
+    written and broke the moment the OI-136 import-tree guard inserted lines above them, which is
+    the fragile direction: `launcher_echo(111)` then lifts a COMMENT and the fixture is built from
+    text the launcher never prints. Uniqueness is asserted so a second matching line is a loud
+    ambiguity rather than a silent first-hit.
+    """
+    hits = [(i + 1, l) for i, l in enumerate(LAUNCHER.read_text().splitlines()) if pred(l)]
+    assert len(hits) == 1, f"{what}: expected exactly 1 launcher line, got {[h[0] for h in hits]}"
+    return hits[0][1]
 
 
-def launcher_echo(lineno):
-    """Run the launcher's own `echo` at `lineno` under bash and return its stdout verbatim."""
-    line = _launcher_src_line(lineno)
-    assert line.lstrip().startswith("echo "), f"{lineno} is not an echo: {line!r}"
+def launcher_echo(needle):
+    """Run the launcher's own `echo` containing `needle` under bash; return its stdout verbatim."""
+    line = _launcher_line_matching(
+        lambda l: l.lstrip().startswith("echo ") and needle in l, f"echo containing {needle!r}")
     script = (
         f'INDEX={IDX}\nSEED={SEED}\nSLURM_ARRAY_JOB_ID={JOB}\n'
         'EXPECTED_HEAD=377c713d0000000000000000000000000000beef\n'
@@ -77,8 +87,7 @@ def launcher_echo(lineno):
 
 def launcher_die(msg="loader hash drift"):
     """Run the launcher's own die() at :57 and return the STDERR it writes."""
-    line = _launcher_src_line(57)
-    assert line.startswith("die()"), f":57 is not die(): {line!r}"
+    line = _launcher_line_matching(lambda l: l.startswith("die()"), "die() definition")
     r = subprocess.run(["bash", "-c", f'{line}\ndie "{msg}"\n'], capture_output=True, text=True)
     assert r.returncode != 0, "die() must exit non-zero"
     assert r.stdout == "", f"die() must write to stderr, not stdout: {r.stdout!r}"
@@ -109,14 +118,14 @@ def healthy_stdout():
     launcher :111 parity, :113 start, :124 DONE; nominal :350's config-gate JSON; the driver's PASS
     receipt (:696/:756) and the LR-anneal proof line."""
     return "".join([
-        launcher_echo(111),
-        launcher_echo(113),
+        launcher_echo("deployment parity CURRENT"),
+        launcher_echo("index=$INDEX seed=$SEED job="),
         # train_fullevent_nominal.py:350 -- json.dumps({"config_gate": "PASS", ...})
         json.dumps({"config_gate": "PASS", "tag": "data-only-v1"}) + "\n",
         R.optimizer_proof_line() + "\n",
         # train_fullevent_replica.py:696 -- the PASS receipt block, same serializer
         json.dumps({"status": "PASS", "replica_index": IDX}) + "\n",
-        launcher_echo(124),
+        launcher_echo("DONE index=$INDEX"),
     ])
 
 
@@ -228,7 +237,7 @@ def main():
         # What the real filesystem holds after a driver guard rejection: parity + start line on stdout,
         # the guard message on stderr, and NO DONE line because :124 never runs.
         _, _, gse = driver_guard_stderr()
-        partial = launcher_echo(111) + launcher_echo(113)
+        partial = launcher_echo("deployment parity CURRENT") + launcher_echo("index=$INDEX seed=$SEED job=")
         d = write_logs(tmp, partial, gse)
         raised, msg = call(d)
         ok("aborted_member_raises", raised, f"info={msg}")
@@ -242,7 +251,7 @@ def main():
 
     print("== 6. the != 1 double-run detector is PRESERVED ==")
     with tempfile.TemporaryDirectory() as tmp:
-        d = write_logs(tmp, healthy_stdout() + launcher_echo(124), "")
+        d = write_logs(tmp, healthy_stdout() + launcher_echo("DONE index=$INDEX"), "")
         raised, msg = call(d)
         ok("two_done_lines_raise", raised and "appears 2 times" in msg, f"{raised} {msg}")
         ok("double_run_message_kept", raised and "ran twice" in msg, msg)

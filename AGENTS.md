@@ -9,6 +9,8 @@ compute, or deciding a gate, open the routed canonical artifact and re-measure a
 This repository develops MINERvA ME-FHC inclusive charged-current cross sections with unbinned
 OmniFold: the finalized 2D `(p_T, p_parallel)` reproduction of arXiv:2106.16210, a 3D
 `E_avail` extension, scalar 4D/5D extensions through `q3` and `W`, and PET/FPS full-event studies.
+**PET is diagnostic and method-development, not a publication uncertainty product** — ruled by Joseph
+on 2026-08-20; it must read that way in note, primer *and* paper.
 Publication completion requires a ratified central value and uncertainty construction, supported
 reproduction paths, clean note/primer/paper builds, and no unresolved publication blocker.
 
@@ -26,7 +28,7 @@ a validated central value and a quarantined covariance at the same time.
 | Scalar 4D/5D central values and closures | `VALIDATED` | The 4D and 5D central results pass their dimensional anchors and injected-variable closures. | This does not revive superseded unified covariance products or dependent significances. | `nd-unfolding/ND_OMNIFOLD_STATUS.md`; ledger |
 | Corrected scalar 5D covariance candidates | `QUARANTINED` | Background-aware corrected block-sum and unified-throw candidates exist, but neither is a publication uncertainty product. | Their ledger values remain measurements, not adoption; mean-centering alone is disqualified and the unified candidate has unresolved seed/provenance qualifications. | `VALIDATION_LEDGER.md`, corrected 5D UQ quarantine; exact `nd-unfolding/uq_5d/` receipts |
 | Historical unified 4D/FPS and PET uncertainty products | `QUARANTINED` | Old unified 4D/FPS covariances, old PET precision comparisons, `(E_avail,W)` covariance, and dependent significances are unquotable. | No full-event PET total covariance is adopted. The corrected recoil-only PET budget is a legacy representation cross-check and cannot satisfy or feed the full-event DAG. | `nd-unfolding/PET_UQ_REMEDIATION_STATUS.md`, “Legacy boundary”; `KNOWN_ISSUES.md` |
-| PET central/statistical pairing (`C_stat`) | `EXISTS — UNVERIFIED` | A 50-member partial covariance artifact exists, but it is not independently verified and is not paired with a ratified central value. | Noncontainment localizes a nominal/family mismatch; it is not a verdict on covariance dispersion or scientific adoption. | `VALIDATION_LEDGER.md` `VL132`; `docs/OPEN_ITEMS.md` `OI-126`; its exact rulings |
+| PET central/statistical pairing (`C_stat`) | `EXISTS — UNVERIFIED, PAIRING DECLINED` | A 50-member partial covariance artifact exists; it is not independently verified, and `OI-126` was RULED on 2026-08-20 to decline the pairing and demote the result. | The ruling is a fourth move, not a choice among the three refuted branches. Reconsideration needs estimator-equivalence **plus coverage**, and coverage is a different object from verifying the construction. | `VALIDATION_LEDGER.md` `VL132`; `docs/OPEN_ITEMS.md` `OI-126`; its exact rulings |
 | PET ML covariance / Gate 6 | `BLOCKED` | No `C_ML` is constructed and Gate 6 remains blocked. | Before any action read the exact `prohibitions_applied` keys in `docs/orchestration/state/gate6-member-trajectories-result-56847059.json`; do not paraphrase them. | Gate-6 receipt; N-D status |
 | Standard-P4 and related adoption candidates | `EXISTS — UNVERIFIED` | Mechanical, code, or packet checks may pass without making a candidate adoptable. | A matching hash, successful construction, or worker agreement is not independent verification or adoption. | `docs/CURRENT_WORK.md`; exact governing `OI-*` record and receipt |
 
@@ -39,6 +41,12 @@ a validated central value and a quarantined covariance at the same time.
 - Gate 6 is controlled by five exact receipt keys. Route to the receipt rather than translating them.
 - Legacy pre-MINOS-fix 1D outputs, pre-Phase-18 2D outputs, and superseded covariance families remain
   diagnostic or historical only.
+- `OI-126`'s ruling does **not** invalidate the row's measurements and does **not** name a cause.
+  "bootstrap-centering/bias" is explicitly not part of the ruling and may not be quoted as Joseph's.
+- `OI-136`: 59 `.py` files put the hardcoded cluster root at `sys.path[0]`, so an entrypoint can import
+  another checkout's modules while deployment parity truthfully reports every pinned file `CURRENT`.
+  This cost 3 h 08 m of A100 on `57266000_0`. `PYTHONPATH` cannot outrank position 0 and a re-deploy
+  does not fix it. Route new compute through `nd-unfolding/mnv_guarded_run.py`.
 
 ## Complete work that should not be repeated
 
@@ -53,13 +61,17 @@ a validated central value and a quarantined covariance at the same time.
 
 ## Principal unresolved scientific question
 
-`OI-126` records a spatially organized location mismatch between the P5A nominal and its bootstrap
-family. It is **not** a live choice between publishing a large family width and rejecting the bootstrap:
-that binary was retracted because width and nominal location are different questions, and the
-construction is total-statistics rather than measured-leg-only. Existing diagnostics have localized the
-mismatch and refuted the named mechanisms without adjudicating a publishable central/statistical
-pairing. Read the end-state of the exact item and its rulings; do not restart completed probes from an
-older paragraph or generated summary.
+**`OI-126` is no longer it — Joseph ruled it on 2026-08-20 and it has left the routed queue.** The
+P5A nominal does lie outside its own bootstrap family, spatially organized, and those measurements
+stand; what the ruling settles is that the pairing is declined and PET is demoted rather than any
+branch being chosen. Do not reopen it, and do not restart the completed containment, tail-geometry,
+target-factor, extraction, or occupancy probes.
+
+The open scientific question is now **the adopted scalar-5D covariance**, because every non-2D
+uncertainty must be projected from it and no candidate is adoptable yet. 2D is complete on both
+central value and uncertainty; 3D, 4D and 5D central values are validated while their covariances
+stay quarantined pending that trunk. Read the routed `OI-*` end-state, never an older paragraph or a
+generated summary.
 
 ## Next-action discipline
 
