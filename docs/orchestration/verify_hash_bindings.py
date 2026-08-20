@@ -128,8 +128,8 @@ SHELL_PIN_FLOOR = 15
 # `<path>\t<sha256>\n` record per unique binding. Any added, removed, or repointed live
 # binding therefore requires an explicit count+digest update in the same reviewed
 # commit. No second inventory file is added to the repository.
-RECEIPT_BINDING_COUNT = 114
-RECEIPT_BINDING_SHA256 = "59a2b067c86c5a73551f6d13c49d15248c8eca77b77b29f5c8317db508e62643"
+RECEIPT_BINDING_COUNT = 117
+RECEIPT_BINDING_SHA256 = "7586d636e6c4cde2af89e075d12d02633d21acc6709f796417ba25c37d5eec0c"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

@@ -1,0 +1,45 @@
+npz files found: 28
+   .../replica_00/extraction/GATE5_REPLICA_FULL_PUSH.npz 257123356
+   .../replica_00/extraction/GATE5_REPLICA_XSEC.npz 7807
+   .../replica_01/extraction/GATE5_REPLICA_FULL_PUSH.npz 262719604
+   .../replica_01/extraction/GATE5_REPLICA_XSEC.npz 7825
+   .../replica_02/extraction/GATE5_REPLICA_FULL_PUSH.npz 264795837
+   .../replica_02/extraction/GATE5_REPLICA_XSEC.npz 7803
+
+non-push candidates: 14
+
+=== reading /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_00/extraction/GATE5_REPLICA_XSEC.npz ===
+keys: ['background_factor_sha256', 'bootstrap_seed', 'campaign_role', 'edges_pparallel', 'edges_pt', 'extraction_telemetry', 'inputs_sha256', 'push_sha256', 'push_source', 'replica_index', 'signal_factor_sha256', 'total_sigma_cm2_per_nucleon', 'training_artifact_sha256', 'xsec', 'xsec_schema']
+
+xsec.shape      = (15, 19)   dtype=float64
+xsec.size       = 285   <-- THE DIMENSION C_stat WOULD HAVE
+edges_pt        n=16 -> 15 bins: [0.0, 0.07, 0.15, 0.25, 0.33, 0.4, 0.47, 0.55, 0.7, 0.85, 1.0, 1.25, 1.5, 2.5, 4.5, 30.0]
+edges_pparallel n=20 -> 19 bins: [0.0, 0.75, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0, 60.0, 120.0]
+product of bins = 285
+
+total_sigma     = 1.800137e-37
+replica_index   = 0
+bootstrap_seed  = 50000
+xsec_schema     = pet-fullevent-fps-gate5-replica-xsec-v1
+
+nonzero bins    = 262 of 285   (91.9%)
+exactly-zero    = 23  <-- zero-variance directions if zero in EVERY replica
+finite          = 285 of 285
+min/max nonzero = 4.346363e-47 / 5.309878e-38
+
+telemetry keys: ['bin_order', 'completeness_anchor', 'completeness_applied', 'completeness_applied_why_not', 'completeness_median_populated', 'completeness_min_populated', 'completeness_retained_as', 'data_pot', 'flux_hist', 'flux_reference_edges', 'flux_source', 'gate5_background_factor_reuse', 'gate5_signal_factor_applied_to_completeness_and_reporting_mask', 'gate5_signal_factor_applied_to_truth_counts', 'gate5_signal_factor_sha256', 'n_cells', 'n_cells_masked_zero_acceptance', 'n_cells_no_denominator', 'n_cells_populated', 'n_nucleons', 'n_pass_truth', 'n_pass_truth_and_reco', 'reported_domain_set_by', 'reporting_mask_is_not_the_tiering_decision', 'shape', 'truth_denominator_coverage']
+  bin_order = pt-major row-major: cell = i_pt * n_pparallel_bins + i_pparallel
+  completeness_anchor = UNITY, and measured rather than inferred. The previous value of this field read 'NONE -- no such anchor exists for this domain', which was FALSE: the anchor exi
+  completeness_applied = False
+  completeness_applied_why_not = coverage of the truth denominator by the OmniFold input is 1 BY CONSTRUCTION -- the declared fiducial domain IS pass_truth -- and counts is already acceptance-c
+  completeness_median_populated = 0.7636544800493896
+  completeness_min_populated = 0.0
+  completeness_retained_as = reporting mask only (comp > 0), not a divisor
+  flux_hist = pTmu_reweightedflux_integrated
+  flux_reference_edges = [0.0, 0.07, 0.15, 0.25, 0.33, 0.4, 0.47, 0.55, 0.7, 0.85, 1.0, 1.25, 1.5, 2.5, 4.5]
+  flux_source = /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root
+  gate5_signal_factor_applied_to_completeness_and_reporting_mask = True
+  n_cells_masked_zero_acceptance = 4
+  n_nucleons = 3.2352943296224835e+30
+  reported_domain_set_by = comp > 0, which subsumes denom > 0 by construction
+  reporting_mask_is_not_the_tiering_decision = excludes only cells with zero reco-accepted events; the acceptance-supported vs model-dependent tiering of OPEN_ITEMS:430-438 is open and covers far more truth 

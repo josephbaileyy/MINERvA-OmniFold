@@ -1,0 +1,100 @@
+=== (1) total_sigma per member, sorted by replica_index ===
+  replica_00  1.800137e-37   dev from mean  -1.587%
+  replica_01  1.816595e-37   dev from mean  -0.687%
+  replica_02  1.775403e-37   dev from mean  -2.939%
+  replica_03  1.899823e-37   dev from mean  +3.863%
+  replica_04  1.770781e-37   dev from mean  -3.192%
+  replica_05  1.794763e-37   dev from mean  -1.881%
+  replica_06  1.786403e-37   dev from mean  -2.338%
+  replica_07  1.686562e-37   dev from mean  -7.796%
+  replica_08  1.970902e-37   dev from mean  +7.749%
+  replica_09  1.644919e-37   dev from mean -10.073%
+  replica_10  1.821261e-37   dev from mean  -0.432%
+  replica_11  1.826521e-37   dev from mean  -0.145%
+  replica_12  1.761177e-37   dev from mean  -3.717%
+  replica_13  1.737723e-37   dev from mean  -4.999%
+  replica_14  1.953656e-37   dev from mean  +6.806%
+  replica_15  1.872597e-37   dev from mean  +2.374%
+  replica_16  1.915760e-37   dev from mean  +4.734%
+  replica_17  2.001189e-37   dev from mean  +9.404%
+  replica_18  1.832419e-37   dev from mean  +0.178%
+  replica_19  1.763722e-37   dev from mean  -3.578%
+  replica_20  1.871471e-37   dev from mean  +2.313%
+  replica_21  1.813032e-37   dev from mean  -0.882%
+  replica_22  1.714863e-37   dev from mean  -6.249%
+  replica_23  1.833263e-37   dev from mean  +0.224%
+  replica_24  1.774193e-37   dev from mean  -3.005%
+  replica_25  1.869282e-37   dev from mean  +2.193%
+  replica_26  1.726838e-37   dev from mean  -5.594%
+  replica_27  1.873757e-37   dev from mean  +2.438%
+  replica_28  1.736247e-37   dev from mean  -5.080%
+  replica_29  1.781011e-37   dev from mean  -2.633%
+  replica_30  1.843937e-37   dev from mean  +0.808%
+  replica_31  1.883459e-37   dev from mean  +2.968%
+  replica_32  1.796670e-37   dev from mean  -1.777%
+  replica_33  1.878066e-37   dev from mean  +2.673%
+  replica_34  1.839404e-37   dev from mean  +0.560%
+  replica_35  1.868959e-37   dev from mean  +2.175%
+  replica_36  1.802978e-37   dev from mean  -1.432%
+  replica_37  1.866401e-37   dev from mean  +2.036%
+  replica_38  1.878383e-37   dev from mean  +2.691%
+  replica_39  1.872064e-37   dev from mean  +2.345%
+  replica_40  1.796277e-37   dev from mean  -1.798%
+  replica_41  1.852533e-37   dev from mean  +1.277%
+  replica_42  1.732861e-37   dev from mean  -5.265%
+  replica_43  1.923767e-37   dev from mean  +5.172%
+  replica_44  1.837226e-37   dev from mean  +0.441%
+  replica_45  1.720427e-37   dev from mean  -5.945%
+  replica_46  1.853245e-37   dev from mean  +1.316%
+  replica_47  1.804311e-37   dev from mean  -1.359%
+  replica_48  1.732256e-37   dev from mean  -5.298%
+  replica_49  2.248828e-37   dev from mean +22.943%
+
+  mean 1.829166e-37  sd(ddof=1) 9.451872e-39
+  relative sd            = 5.167%
+  (max-min)/mean         = 33.016%
+  median abs dev / mean  = 2.657%
+
+  scale references:
+    Poisson on n_data=4116128 -> 0.0493%
+    Poisson on n_sig =49152885 -> 0.0143%
+  => a counting-only spread would be ~0.05%; anything ~10% is NOT counting statistics.
+
+=== (2) hunt for a nominal (non-replica) extraction to centre on ===
+  candidates outside the replica family: 18
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_diagnostic_nonquotable/NONQUOTABLE-DIAGNOSTIC.xsec.slurm-56527676.npz
+      shape=(15, 19) total=1.656869e-37 schema=pet-fullevent-fps-xsec-v1
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/cml/pet_s0_e42_bkgsub_5d_xsec.npz
+      shape=None total=None schema=-
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/cml/pet_s0_e43_bkgsub_5d_xsec.npz
+      shape=None total=None schema=-
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/cml/pet_s0_e44_bkgsub_5d_xsec.npz
+      shape=None total=None schema=-
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/cml/pet_s1_e42_bkgsub_5d_xsec.npz
+      shape=None total=None schema=-
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/cml/pet_s1_e43_bkgsub_5d_xsec.npz
+      shape=None total=None schema=-
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/cml/pet_s1_e44_bkgsub_5d_xsec.npz
+      shape=None total=None schema=-
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/cml/pet_s2_e42_bkgsub_5d_xsec.npz
+      shape=None total=None schema=-
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/cml/pet_s2_e43_bkgsub_5d_xsec.npz
+      shape=None total=None schema=-
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/cml/pet_s2_e44_bkgsub_5d_xsec.npz
+      shape=None total=None schema=-
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/cml/pet_s3_e42_bkgsub_5d_xsec.npz
+      shape=None total=None schema=-
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/cml/pet_s3_e43_bkgsub_5d_xsec.npz
+      shape=None total=None schema=-
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/cml/pet_s3_e44_bkgsub_5d_xsec.npz
+      shape=None total=None schema=-
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/pet_floor_bkgsub_5d_xsec.npz
+      shape=None total=None schema=-
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/bkgsub/pet_nominal_bkgsub_5d_xsec.npz
+      shape=None total=None schema=-
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/fps_envelope_5d/fps_gbdt_prior_xsec_5d.npz
+      shape=None total=None schema=-
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/fps_envelope_5d_xps/fps_gbdt_prior_xsec_5d.npz
+      shape=None total=None schema=-
+    /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/fps_envelope_5d_xps2/fps_gbdt_prior_xsec_5d.npz
+      shape=None total=None schema=-
