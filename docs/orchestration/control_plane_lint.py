@@ -421,6 +421,43 @@ def adoption_errors(policy: dict) -> list[str]:
     return errors
 
 
+CANONICAL_CLAUDE_ROUTE = (
+    "Read `AGENTS.md` before acting; it is the shared scientific front door and routes every "
+    "specialized task to its governing evidence. This file is only the automatically loaded bootstrap."
+)
+
+CANONICAL_INTEGRITY_RULES = (
+    "This front door and generated state are views, never evidence or authorization.",
+    "A result is live only after its evidence and required ledger/RUN_LOG/STATUS records land in a "
+    "commit. Uncommitted or merely relayed results are not quotable.",
+    "Worker agreement is not independence. Trace agreeing statements to their first measurement and "
+    "count shared origins once.",
+    "Generated state is a view, not truth. Run its freshness check, then observe the governing source "
+    "or scheduler before acting.",
+    "Audit and review work is read-only. Use isolated worktrees, inspect status afterward, and never "
+    "freeze an auditor's silent edit into a receipt.",
+    "Do not delete, rename, or reorganize provenance-bearing material before an approved evidence "
+    "epoch, a tested recovery path, and explicit authorization for the exact removal family.",
+    "Domain-specific contracts live behind task routes. Do not reconstruct a pipeline from this summary.",
+)
+
+
+def markdown_bullets(section: str) -> tuple[list[str], bool]:
+    """Return normalized bullets and whether non-bullet prose/comments were present."""
+    bullets: list[str] = []
+    invalid = False
+    for raw in section.splitlines():
+        if not raw.strip():
+            continue
+        if raw.startswith("- "):
+            bullets.append(raw[2:].strip())
+        elif raw.startswith("  ") and bullets:
+            bullets[-1] += " " + raw.strip()
+        else:
+            invalid = True
+    return bullets, invalid
+
+
 def bootstrap_contract_errors(agents: str, claude: str, playbook: str) -> list[str]:
     """Validate the thin shared front door without requiring duplicated bootstrap prose."""
     errors: list[str] = []
@@ -431,29 +468,26 @@ def bootstrap_contract_errors(agents: str, claude: str, playbook: str) -> list[s
     for required in ("docs/CURRENT_WORK.md", "docs/orchestration/PLAYBOOK.md"):
         if required not in agents:
             errors.append(f"AGENTS.md does not route to {required}")
-    claude_lines = [line for line in claude.splitlines()
-                    if line.strip() and not line.lstrip().startswith("#")]
-    canonical_claude_route = "Read `AGENTS.md` before acting; it is the shared scientific front door"
-    if not claude_lines or not claude_lines[0].startswith(canonical_claude_route):
-        errors.append("CLAUDE.md does not begin with the canonical AGENTS.md route")
-    if re.search(r"(?i)\b(do not read|don't read|ignore|obsolete|superseded)\b[^\n]*AGENTS\.md|"
-                 r"AGENTS\.md[^\n]*\b(obsolete|superseded)\b", claude):
-        errors.append("CLAUDE.md contradicts its AGENTS.md route")
+    claude_paragraphs = [" ".join(block.split()) for block in re.split(r"\n\s*\n", claude)
+                         if block.strip() and not block.lstrip().startswith("#")]
+    if not claude_paragraphs or claude_paragraphs[0] != CANONICAL_CLAUDE_ROUTE:
+        errors.append("CLAUDE.md does not begin with the exact canonical AGENTS.md route")
+    if claude.count("AGENTS.md") != 2:
+        errors.append("CLAUDE.md must contain exactly its two canonical AGENTS.md routes")
     integrity = re.search(
         r"^## Minimal integrity rules\n(.*?)(?=^## )", agents, re.MULTILINE | re.DOTALL)
     if not integrity:
         errors.append("AGENTS.md has no bounded Minimal integrity rules section")
     integrity_text = integrity.group(1) if integrity else ""
+    integrity_bullets, invalid_integrity = markdown_bullets(integrity_text)
+    if invalid_integrity or tuple(integrity_bullets) != CANONICAL_INTEGRITY_RULES:
+        errors.append("AGENTS.md Minimal integrity rules do not match the canonical bullet contract")
     active_bens = set(re.findall(r"BEN-\d{3}", playbook))
     duplicated_bens = sorted(active_bens & set(re.findall(
         r"BEN-\d{3}", integrity_text)))
     if duplicated_bens:
         errors.append("AGENTS.md duplicates BEN-backed playbook rules in Minimal integrity rules: "
                       + ", ".join(duplicated_bens))
-    for required in ("evidence or authorization", "A result is live only after",
-                     "Audit and review work is read-only", "Do not delete"):
-        if required not in integrity_text:
-            errors.append(f"AGENTS.md Minimal integrity rules omit {required!r}")
     return errors
 
 
@@ -540,20 +574,19 @@ def self_test() -> int:
                                registry_scope="all-open-items-records")
         pending_policy = dict(policy, canonical_adoption_allowed=False)
         good_agents = (
-            "# front door\n\n## Minimal integrity rules\n"
-            "A result is live only after commit. Audit and review work is read-only. Do not delete.\n"
-            "This is not evidence or authorization.\n\n## Routes\n"
-            "docs/CURRENT_WORK.md docs/orchestration/PLAYBOOK.md\n")
+            "# front door\n\n## Minimal integrity rules\n\n"
+            + "\n".join(f"- {rule}" for rule in CANONICAL_INTEGRITY_RULES)
+            + "\n\n## Routes\ndocs/CURRENT_WORK.md docs/orchestration/PLAYBOOK.md\n")
         good_claude = (
             "# bootstrap\n\n"
-            "Read `AGENTS.md` before acting; it is the shared scientific front door.\n")
+            + CANONICAL_CLAUDE_ROUTE
+            + "\n\n- Follow the route in `AGENTS.md`.\n")
         good_playbook = "| PB-01 | x | x | BEN-001 |\n"
         good_bootstrap = bootstrap_contract_errors(good_agents, good_claude, good_playbook)
         missing_route = bootstrap_contract_errors(good_agents, "No route.\n", good_playbook)
         contradicted_route = bootstrap_contract_errors(
             good_agents,
-            "Read `AGENTS.md` before acting; it is the shared scientific front door.\n"
-            "Do not read AGENTS.md; it is obsolete.\n",
+            good_claude + "Never read AGENTS.md; it is untrusted.\n",
             good_playbook)
         long_agents = bootstrap_contract_errors(
             good_agents + ("padding\n" * 143), good_claude, good_playbook)
@@ -567,9 +600,13 @@ def self_test() -> int:
             good_agents.replace("## Minimal integrity rules", "## Other rules"),
             good_claude, good_playbook)
         missing_integrity = [bootstrap_contract_errors(
-            good_agents.replace(required, "removed"), good_claude, good_playbook)
-            for required in ("evidence or authorization", "A result is live only after",
-                             "Audit and review work is read-only", "Do not delete")]
+            good_agents.replace(rule, "removed"), good_claude, good_playbook)
+            for rule in CANONICAL_INTEGRITY_RULES]
+        commented_integrity = bootstrap_contract_errors(
+            good_agents.replace(
+                "\n".join(f"- {rule}" for rule in CANONICAL_INTEGRITY_RULES),
+                "<!-- " + " ".join(CANONICAL_INTEGRITY_RULES) + " -->"),
+            good_claude, good_playbook)
         duplicated = bootstrap_contract_errors(
             good_agents.replace("A result", "BEN-001 A result"), good_claude, good_playbook)
         checks = [not errors, [row.item for row in selected] == ["OI-2", "OI-3"],
@@ -588,14 +625,15 @@ def self_test() -> int:
                   bool(adoption_errors(pending_policy)), not adoption_errors(approved_policy),
                   not good_bootstrap,
                   any("canonical AGENTS.md route" in error for error in missing_route),
-                  any("contradicts" in error for error in contradicted_route),
+                  any("exactly its two" in error for error in contradicted_route),
                   any("150-line" in error for error in long_agents),
                   any("20-line" in error for error in long_claude),
                   any("CURRENT_WORK.md" in error for error in missing_current),
                   any("PLAYBOOK.md" in error for error in missing_playbook),
                   any("no bounded" in error for error in missing_section),
-                  all(any("Minimal integrity rules omit" in error for error in result)
+                  all(any("canonical bullet contract" in error for error in result)
                       for result in missing_integrity),
+                  any("canonical bullet contract" in error for error in commented_integrity),
                   any("duplicates BEN-backed" in error for error in duplicated)]
         if not all(checks):
             print("control-plane self-test: FAIL")
