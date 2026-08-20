@@ -17,9 +17,17 @@
 # because this script SHARES boot_nd_5d/ with a concurrent array job, so it could see a
 # peer's half-written npz and skip it permanently. Converted to the content-validated
 # guard in lib/resume_guard.sh: complete npz adopted without recompute, truncated redone.
-set -uo pipefail
+# 2026-08-20: `set -u` must NOT be in force while sourcing the environment. setup_salloc_env.sh
+# activates a conda env whose activate-binutils_linux-64.sh reads an unset ADDR2LINE; under
+# nounset bash 4.4 exits the SHELL, so the job dies before its first line of work. Measured:
+# job 57290646 died in 16s, rc=1, with zero-byte logs. The sibling
+# sbatch_evloop_array_5d_active_laterals.sh:30 already documents this hazard for setup_MAT.sh.
+# pipefail is safe to set early; -u goes on AFTER both sources so the script's own logic is
+# still protected (the sourced FUNCTIONS execute below, hence under -u exactly as before).
+set -o pipefail
 REPO=/pscratch/sd/j/josephrb/MINERvA-OmniFold; source "$REPO/setup_salloc_env.sh"
 source "$REPO/lib/resume_guard.sh"
+set -u
 export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=8 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 \
        NUMEXPR_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2
 cd "$REPO/nd-unfolding"; mkdir -p boot_nd_5d
