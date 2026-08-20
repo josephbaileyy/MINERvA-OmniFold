@@ -3,7 +3,9 @@
 > **Scope.** The scientific-removability question for the non-background-aware 5D event-loop files on
 > pscratch, i.e. the `bkgaware` pair set — **not** the tracked `nd-unfolding/products/pet/bkgsub/`
 > product JSONs, which is a different tree that the near-homophone suffix makes easy to substitute.
-> One test remains in flight: Slurm **57285260**, see §5. Its result does not change §2 or §6.
+> The one test this audit ran has landed: Slurm **57285260** + **57285779**, §5 — the merge-completeness
+> blocker is **discharged**. It does not change §2, and it changes §6 only by retiring one of three
+> blockers on the 12 per-playlist files.
 
 **Read-only audit. Nothing was deleted, moved, or archived. No `hsi` mutating call was issued; every
 cluster command was `ls`/`find`/`sacct`/`squeue`/`hpssquota`/`hsi -q ls`.** Written 2026-08-20.
@@ -180,16 +182,18 @@ pattern is the one that answers the question.)
 
 1. **Sole copy.** Not on HPSS (§1), not on CFS (§1). There is no recovery path at all.
 2. **Regeneration is an event loop, not a download** — 12 playlists over the 9.6 TiB MC input.
-3. **No merge-completeness receipt located.** The merged file (169,974,191,800 B) is
-   **21,264,905 B smaller** than the sum of its 12 parts (169,995,456,705 B). A ~21 MB deficit across
-   12 files is the right order for per-file TTree headers/metadata not duplicated in a merge, and the
-   mtimes are consistent (parts 06-29→06-30 02:46, merge 06-30 03:18) — but **a size relation is not a
-   completeness proof.** The test that settles it is specified, authorized, and running: see §5.
+3. ~~**No merge-completeness receipt.**~~ **DISCHARGED 2026-08-20 by §5.** The merged file
+   (169,974,191,800 B) is **21,264,905 B smaller** than the sum of its 12 parts (169,995,456,705 B),
+   and a size relation is not a completeness proof — so it was measured instead. It passes on every
+   axis. The size deficit is explained: the parts carry AutoSave leftover tree cycles that the merge
+   does not (§5).
 
-**If those three are discharged — hashverify or a CFS copy for recovery, plus an entry-count merge
-proof — the 12 plain per-playlist files (158.32 GiB) are scientifically removable.** They carry no
-citation, no digest binding, no code reference, and no control role. That is 158.32 GiB, or roughly
-0.8 pp of pscratch.
+**One of the three is now discharged (blocker 3, §5). The other two are not, and they are the ones that
+matter for an irreversible action:** there is no second copy of these 12 files anywhere, and no verified
+recovery path exists even for the merged file that supersedes them (§1b). **If those two are discharged —
+`hsi hashverify` or a CFS copy — the 12 plain per-playlist files (158.32 GiB) are scientifically
+removable.** They carry no citation, no digest binding, no code reference, and no control role. That is
+158.32 GiB, or roughly 0.8 pp of pscratch.
 
 ---
 
@@ -234,58 +238,95 @@ does not license deletion of either.
 
 ---
 
-## 5. The test that is running, and the test that would not have helped
+## 5. The merge-completeness test — RESULT: PASS (blocker 3 only)
 
-**Redirected before launch, and the reason is in this report.** The obvious experiment — does the
-background-aware omnifile reproduce the plain one's row alignment, so `PCPROJ_OMNI` and
-`sweep_bank_5d.py:40` could be repointed? — **cannot change the verdict it targets.** Even a clean pass
-collapses only §2(a) and §2(b); §2(c) (the `sha256 afaaedaf74…` binding) and §2(d) (the paper citation)
-survive untouched, and the merged plain file stays RETAIN either way. So it was not run.
+**Slurm `57285260`** (COMPLETED, 46.8 s) and follow-up **`57285779`** (COMPLETED), both
+`--qos=shared -C cpu`, inside the standing under-12 h approval. Script and JSON in
+`/pscratch/sd/j/josephrb/mnv-5d-merge-completeness/`, **outside** the `MINERvA-OmniFold` tree so the
+probe does not perturb the inventory it measures. Every open is `TFile::Open(..., "READ")`.
 
-The blocker that *is* dischargeable is the one gating the 12 per-playlist files: **no merge-completeness
-receipt exists.** That test is running as Slurm job **57285260** (`--qos=shared -C cpu`, 8 CPUs, 64 GB,
-6 h limit — inside the standing under-12 h approval), script
-`/pscratch/sd/j/josephrb/mnv-5d-merge-completeness/merge_completeness_5d.py`, writing its JSON to that
-same work dir, **outside** the `MINERvA-OmniFold` tree so it does not perturb the inventory it measures.
-Every file is opened `TFile::Open(..., "READ")`.
+**Redirected before launch, and the redirect mattered.** The obvious experiment — can the
+background-aware omnifile stand in as the row-alignment reference, so `PCPROJ_OMNI` and
+`sweep_bank_5d.py:40` could be repointed? — **cannot change the verdict it targets**: even a clean pass
+leaves §2(c) (the `sha256 afaaedaf74…` binding) and §2(d) (the paper citation) untouched, so the merged
+plain file stays RETAIN either way. It was not run. The dischargeable blocker was merge completeness.
 
-**Four checks, and the structure that forced two of them.** A probe of `1L` first showed that "the entry
-count of the tree" is not well defined in these files:
+### What the structure forced
+
+A probe of `1L` showed that "the entry count of the tree" is not well defined in these files:
 
 ```
-mcPOTUsed;1        TParameter<double>  5.822833555494932e+19
-dataPOTUsed;1      TParameter<double>  1.3370718209243894e+19
-mc_truth_denom;20  TTree  383848        mc_truth_denom;19  TTree  378765
-mc_signal_reco;33  TTree  383848        mc_signal_reco;32  TTree  382752
-mc_background;1    TTree    7820        data;1             TTree   49872
+mc_truth_denom;20  383848   |  mc_truth_denom;19  378765
+mc_signal_reco;33  383848   |  mc_signal_reco;32  382752
+mc_background;1      7820   |  data;1              49872
+mcPOTUsed;1  5.822833555494932e+19   dataPOTUsed;1  1.3370718209243894e+19
 ```
 
-Two trees carry **multiple cycles with different entry counts** — AutoSave snapshots, where the highest
-cycle is the complete one. So:
+Two trees carry **multiple cycles with different entry counts** — AutoSave snapshots, highest cycle
+complete. A `TFileMerger` that merged every key rather than the highest would **double-count**, and a bare
+entry-count check would have reported that as an unexplained surplus (for `1L` alone, ~5,083 entries high).
 
-1. **Entry count of the highest-cycle key**, per tree, **reported per playlist** so a shortfall localizes
-   instead of merely failing.
-2. **Cycle census on the merge.** A `TFileMerger` that merges every key rather than the highest cycle
-   would **double-count**; check 1 alone would report that as an unexplained surplus. The job records
-   both the highest-cycle entries and the all-cycles sum for each side.
-3. **Order-independent column aggregates** — `Min`, `Max` and `Count` (exact) plus `Sum` (float,
-   compared at a stated 1e-12 relative tolerance) on the first present column of
-   `w_truth, MC_W, MC, MC_pz, MC_eavail`, with the column used recorded. Entry-count equality shows no
-   events were *lost*; it does not show none were *altered or duplicated*, and for an irreversible
-   deletion decision that gap is the whole question. RDataFrame runs single-threaded on purpose so the
-   summation order is stable.
-4. **`mcPOTUsed` / `dataPOTUsed`.** `hadd` does **not** sum `TParameter<double>`. The job reports whether
-   the merge carries the 12-playlist sum, or instead equals some single playlist's value. This one is not
-   about deletability at all: if the merged file's POT is not the sum, the **normalisation of a live,
-   paper-cited product is wrong**, and that outranks everything else in this memo.
+### Results
 
-**What a PASS does and does not authorize.** A pass discharges the **merge-completeness blocker only**
-— blocker (iii) of the three in §3. Blockers (i) *no second copy anywhere* and (ii) *no verified recovery
-path* (§1b, OI-50) are untouched by it. **A passing completeness test is not a deletion authorization.
-Deletion is Joseph's call, and nothing in this audit licenses it.** A FAIL is the more informative
-outcome: it would mean the merged plain omnifile — live in PET point-cloud projection and nine other
-drivers — does not faithfully represent its inputs, which is a defect in a quoted product rather than a
-storage finding.
+**Entry counts — exact on all four trees, delta 0.** Per-playlist counts are recorded in the JSON so a
+shortfall would localize; they sum to the merged total exactly.
+
+| tree | Σ 12 parts | merged | delta | merged cycles |
+|---|---|---|---|---|
+| `mc_truth_denom` | 32,849,103 | 32,849,103 | 0 | `[1]` |
+| `mc_signal_reco` | 32,849,103 | 32,849,103 | 0 | `[1]` |
+| `mc_background` | 658,227 | 658,227 | 0 | `[1]` |
+| `data` | 4,119,797 | 4,119,797 | 0 | `[1]` |
+
+**The multi-cycle risk resolved in the good direction, and only measurement could say so.** The merge
+reports a single cycle on every tree while the parts retain their AutoSave leftovers — the merger took the
+highest cycle. This also **explains the 21 MB size deficit** of §3: the parts carry bytes the merge
+correctly does not.
+
+**Column aggregates — `Min`/`Max`/`Count` exact, `Sum` at float precision.**
+
+| tree | column | count | min | max | Sum rel. diff |
+|---|---|---|---|---|---|
+| `mc_truth_denom` | `w_truth` | exact | 0.0012975226026944284 | 18.338888775570414 | 1.37e-16 |
+| `mc_signal_reco` | `w_truth` | exact | 0.0012975226026944284 | 18.338888775570414 | 1.37e-16 |
+| `mc_background` | `w_bkg` | exact | 0.0042967455694679435 | 11.354676060364943 | 1.97e-16 |
+| `data` | `measured_W` | exact | 0.0 | 20.750233409290523 | 1.16e-16 |
+
+Min/Max/Count are exact and order-independent, so they catch alteration and duplication, not only loss.
+The Sum differences are pure float reassociation — four orders inside a 1e-12 tolerance and twelve inside
+double precision. RDataFrame ran single-threaded so summation order was stable.
+
+**POT — the check that outranked the rest, and it is clean.** `hadd` does **not** sum
+`TParameter<double>`, so the merged file's normalisation was an open question about a **live, paper-cited
+product**, not a storage question.
+
+| parameter | Σ 12 parts | merged | equals sum | equals any single playlist |
+|---|---|---|---|---|
+| `mcPOTUsed` | 4.978198462880827e+21 | 4.978198462880827e+21 | yes | no |
+| `dataPOTUsed` | 1.057394261158926e+21 | 1.057394261158926e+21 | yes | no |
+
+`hadd_universes_full.py` does sum them. **No normalisation defect.** The "equals no single playlist" column
+is what makes this a positive result rather than a coincidence.
+
+**One instrument gap, recorded rather than buried.** The first job printed `overall: NOT_PASS`. That was
+**my column-preference list, not the merge**: `mc_background` carries `sim_background*`/`w_bkg` and `data`
+carries `measured*`, and none of `w_truth, MC_W, MC, MC_pz, MC_eavail` exists in either, so both returned
+`NO_AGG_COLUMN` while their entry counts already matched exactly. A null from a search that could not have
+matched is evidence about the search. `57285779` re-ran those two with `w_bkg` and `measured_W`: both PASS.
+
+**An independent corroboration, and it cuts toward retaining.** 32,849,103 is exactly the row count
+`POINTCLOUD_PROJECTION.md:160-162` cites for the `MC == truth_scalars[:,0]` assertion. Two unrelated
+records agree on the merged file's size, which **strengthens §2(a)'s retain case** — it does not support
+deletion.
+
+### What this PASS does and does not authorize
+
+It discharges **blocker 3 of §3, merge completeness, and nothing else.** Blockers (i) *no second copy
+anywhere* and (ii) *no verified recovery path* (§1b, OI-50, still open) are untouched by it. **A passing
+completeness test is not a deletion authorization. Deletion is Joseph's call, and nothing in this audit
+licenses it.** A FAIL would have been the more consequential outcome — it would have meant the merged
+plain omnifile, live in PET point-cloud projection and nine other drivers, does not faithfully represent
+its inputs. It does.
 
 ---
 
@@ -299,8 +340,9 @@ storage finding.
    not the quoted results. Still a real exposure, and it wants a decision on its own.
 3. **Run `hsi hashverify` on `mnv-quoted-products-20260812` (OI-50).** Zero bytes moved, and it is the
    precondition for every later sentence about the merged plain file.
-4. **Then, and only then, the 12 plain per-playlist files (158.32 GiB) are the defensible candidates** —
-   after the §5 completeness proof passes *and* a recovery copy exists. Both, not either.
+4. **The 12 plain per-playlist files (158.32 GiB) are the defensible candidates, and one of their three
+   blockers is now discharged** (§5 passed). What remains is a **recovery path**, not a completeness
+   question. Neither a `hashverify` nor a CFS copy has been done, so the answer today is still no.
 5. **Re-measure the m3246 CFS project quota** before any archive plan; `df` on `/global/cfs` is not it.
 6. **Do not treat pscratch relief as urgent on atime grounds.** Every large path reports atime within a
    minute of 2026-08-20 02:00–02:01 because something walked the tree, so NERSC's purge timer has been
@@ -323,3 +365,59 @@ reported to me as running. `sacct` now returns **State=FAILED, Elapsed 03:08:52,
 2026-08-20T02:17:00** (batch step FAILED; only `.extern` COMPLETED). `squeue -u josephrb` shows no
 running job — one PENDING cron entry (`57275989`, BeginTime). So the "do not touch" hazard on those two
 trees has expired, and **a Gate-5 job failed** — unrelated to this audit, but it should not sit unnoticed.
+
+## 9. Process appendix — three notes for whoever regenerates `MANIFEST.tsv` next
+
+Not scientific findings; kept separate so they do not dilute §1–§8. All measured at `ee52b08a`.
+
+**(a) Stage the new file BEFORE regenerating, or the generated row is stale on arrival.**
+`generate_manifest.py` inventories the **git index** (`:70` `git ls-files`, `:71`
+`git ls-files --others --exclude-standard`), not `HEAD`. Add a doc and regenerate, and its row reads
+`tracking=intended` — which becomes wrong the instant the commit lands and the file turns tracked
+(observed here: `tracking=...,intended:1`). `git add` the doc **first**, then regenerate, then add the
+manifest: the row reads `tracked`, and `--check` exits 0 *after* the commit rather than immediately
+before it. The manifest cannot be hand-edited either — it has a byte-count fixed point that raises if it
+does not converge (`:350-360`).
+
+**(b) `MANIFEST.tsv` was already out of date on `main`, and this commit repairs five rows that are not
+this audit's.** A bare `--check` in a detached worktree at `ee52b08a`, with nothing added, exits **1**
+(`OUT OF DATE`, rows=319). The drifting rows are `docs/orchestration/.gitignore`, `LIVE-STATE.md`,
+`MANIFEST.tsv`'s own self-size, `state/live-state.json` and `verify_hash_bindings.py`. The `.gitignore`
+and `verify_hash_bindings.py` rows belong to `18d6b43d`, which landed a code change without regenerating
+the manifest; its author has confirmed that. The generator emits the whole file, so those rows could not
+be excluded from this commit — they are attributed here and in the commit message rather than left to
+read as this audit's work.
+
+**(c) OI-70's row describing this generator is stale on four counts, and the row still reads as current
+instructions.** Measured, not relayed:
+
+- The **mechanism claim is false.** The row says the generator "walks the filesystem (`:83`) rather than
+  the git index and `.gitignore` is not consulted". Inventory is git-defined at `:69-71`, the docstring
+  at `:4-5` states ignored files are excluded, and `--self-test` (`:376-394`) creates a file under an
+  ignored directory and asserts its absence from the rows — it **passes**.
+- **Both line citations have drifted.** `:83` is now inside `load_overrides()`, reading
+  `MANIFEST-overrides.tsv` — nothing to do with inventory. The `states[rel] = "intended"` computation the
+  row cites at `:103` is now at `:77`. A citation that has drifted is worse than a vague one: it looks
+  falsifiable and is not.
+- **The remedy it asks for has landed.** The row asks to "Add a `tracking` column, or exclude `intended`
+  paths from the table". The committed header is `path  tracking  class  kind  …`.
+- **Its blocker is retired, which makes its acceptance criterion vacuous.** The row records that two
+  lanes declined to regenerate because doing so from a worktree "drops every `__pycache__`, `.DS_Store`
+  and `.pytest_cache` row… measured at 30 rows dropped" (`BEN-183`), and sets the criterion "check that
+  the ROW COUNT DOES NOT FALL". The committed manifest contains **0** `__pycache__`/`.pyc` rows and **0**
+  `.DS_Store`/`.pytest_cache` rows, so that drop can no longer occur and the criterion now guards a
+  retired failure mode.
+
+**Stated explicitly to forestall a wrong inference — including one this audit initially drew.** The row's
+instruction "Run `generate_manifest.py` IN THE MAIN CHECKOUT" is **unnecessary, not dangerous.**
+`inventory()` is **pathspec-scoped**: both calls carry `-- docs/orchestration`, so untracked files at the
+repository root cannot enter the table. Measured by running `inventory()` in the main checkout: 319 rows,
+**0 `intended`**, no row outside `docs/orchestration`; the repo-wide `git ls-files` at `:264` feeds
+`reference_sources()` for inbound counts, not rows. The real sweeping hazard is narrower and genuine —
+an *uncommitted file inside `docs/orchestration`* is inventoried, which OI-70 itself records happening to
+a peer's predeclaration. A detached worktree remains correct hygiene for keeping a regeneration off a
+shared checkout; it is not a defence against a repo-root sweep.
+
+The row is not amended here: `docs/OPEN_ITEMS.md` rows are digest-coupled to
+`control-plane/source-record-inventory.tsv`, so editing one alone is unsatisfiable, and the row belongs to
+another lane. It is routed rather than rewritten.
