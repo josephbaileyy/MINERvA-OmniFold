@@ -92,15 +92,27 @@ RECOMPUTABILITY = {
                            "of_in.sum()/denom_nd.sum(); NEITHER IS WRITTEN, and sweep_bank_5d.py emits "
                            "NO completeness histogram (0 occurrences of hCompleteness) though "
                            "unfold_nd_omnifold_unbinned.py has one. Writing either closes this."),
-    # WRITER GAP TODAY, and C's 11g sequencing closes it: `diag_comb` is ALREADY IN MEMORY at
-    # adopt_unified_5d.py:128 at the moment sqrt_tr_comb is computed, so the remedy is a WRITE, not a
-    # computation, and not even an extra read of the 41 GB file. Until that write lands the key is `no`,
-    # because THE DECLARED SET DESCRIBES THE TREE AS IT IS, not as it is about to be.
+    # STILL A WRITER GAP ON 2026-08-20, AND THE REASON CHANGED WHILE THE VERDICT DID NOT. `how` stays
+    # NOT_RECOMPUTABLE because THE DECLARED SET DESCRIBES THE TREE AS IT IS: no adopted root in
+    # existence carries `hDiagCombinedOld`. The remedy has landed as a WRITER
+    # (`mii_adopt_unified_5d_stamped.py`, remedy (A)'s wrapper) but not as a PRODUCT -- the cluster is
+    # down and nothing has been rebuilt through it. Flipping this to IN_FILE would claim
+    # recomputability for six products that cannot satisfy it, and would also silently shrink
+    # `declared_unrecomputable()`, which every `--acknowledge-unrecomputable` call site must equal
+    # exactly. THAT FLIP IS A SEPARATE, COUPLED CHANGE and is enumerated in this commit's message: it
+    # needs a `RECOMPUTE` implementation for the key (sum(hDiagCombinedOld)) or the IN_FILE/RECOMPUTE
+    # agreement test fails, and it needs the acknowledgement lists re-derived.
+    # TWO CORRECTIONS TO THE PREVIOUS TEXT: the size is 0.0856 MB, not 0.527 MB -- 10,694 x 8 B on the
+    # cv>0 SUPPORT, where 0.527 MB was the 65,856 GRID, and a grid is not an artifact size. And "already
+    # in memory" is true of the IN-FILE edit only: under §25's wrapper the child process has exited, so
+    # the wrapper must RE-READ hCov_combined5d_total (one 10694^2 TH2D, ~0.915 GB, not 41 GB) and tie it
+    # back to this very key to prove the re-read is the same matrix.
     "sqrt_tr_old": (NOT_RECOMPUTABLE, WRITER_GAP,
                     "trace(hCov_combined5d_total), which lives ONLY in the 41.44 GB member "
-                    "intermediate. THE PREDECLARED BAR'S OPERAND. Closed by C's 11g sequencing: ship "
-                    "diag(C_old) (0.527 MB, already in memory at adopt_unified_5d.py:128) BEFORE any "
-                    "member intermediate is released. `no` until that write lands."),
+                    "intermediate. THE PREDECLARED BAR'S OPERAND. The write that closes it exists -- "
+                    "mii_adopt_unified_5d_stamped.py ships diag(C_old) as hDiagCombinedOld, 0.0856 MB "
+                    "on the cv>0 support -- but NO PRODUCT CARRIES IT YET, so `no` stands: the declared "
+                    "set describes the tree as it is, not as it is about to be."),
 }
 
 
