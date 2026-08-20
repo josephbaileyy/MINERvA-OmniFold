@@ -59,61 +59,14 @@ freeness check and a closed ten-block claimed with its first filing.
 
 All pre-freeze long forms are indexed by the frozen `FINDINGS.md` at the evidence tag.
 
-The following long forms remain in the live checkout because code, tests, or active records consume
-them. Their full evidence rows remain in the frozen index.
+Three long forms remain in the live checkout because the canonical-designation guard inventories their
+paths. All other long forms are recovered from the frozen index.
 
 | retained long form | route |
 |---|---|
-| `FINDING-20260730-event-feature-nonfinite.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260802-estimator-definition-vs-driver.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260802-extractor-pass-truth-mask.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260802-orchestration-tests-never-run.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260804-b4-is-active-gate2-cannot-be-reissued.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260804-gate2-units-resolved-gev.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260804-step3-closure-needs-root-and-tf-in-one-interpreter.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260804-step7b-corr-cosphi-pt-measured.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260806-j28-reroll-exact.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260806-niter4-decision.md` | Full evidence row at the evidence tag. |
 | `FINDING-20260807-checkpoint-is-not-the-trained-model.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260807-d2-acceptance-limited-oracle.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260807-d2-underfitting-probe.md` | Full evidence row at the evidence tag. |
 | `FINDING-20260807-step1-under-achieves.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260809-derived-from-merged-extensives.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260809-stage6-central-gate-cannot-pass.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260809-tparameter-merge-semantics.md` | Full evidence row at the evidence tag. |
 | `FINDING-20260811-promotion-by-move-silently-repoints-artifacts.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260811-trajectory-label-is-direction-blind.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260812-exit-contract-drifted-into-prose.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260812-nested-conflict-markers-false-pass.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260812-orchestrator-instrument-defects.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260812-session-health-metric-counts-its-own-subject.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260813-a-committed-hook-is-not-an-installed-hook.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260813-attribution-drift-has-no-natural-discoverer.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260813-colliding-in-a-namespace-you-just-warned-about.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260813-committed-is-not-deployed.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260813-local-git-config-is-not-lane-local.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260813-same-key-name-different-quantity.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260813-the-gate-was-relative-to-its-own-argument.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260813-unverified-stream-was-the-one-carrying-physics.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260814-a-decision-that-reached-its-own-record-and-nowhere-else.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260814-a-scalar-gate-cannot-answer-a-shape-question.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260814-a-sentinel-that-collided-with-a-result.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260814-ninety-times-counting-statistics.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260814-the-guards-most-reassuring-sentence-is-its-empty-one.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260815-a-consumer-is-not-a-file-extension.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260815-a-guard-that-cannot-tell-a-mention-from-a-consumer.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260815-a-guard-with-no-cell-for-what-it-cannot-see.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260815-a-restatement-is-not-a-second-measurement.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260815-a-share-of-total-without-bin-widths.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260815-an-arm-whose-answer-was-entailed-by-statement-order.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260815-the-quarantine-measured-a-different-run.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260815-true-when-written-then-copied-forward.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260816-a-recomputation-identity-cannot-validate-its-premise.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260816-the-gate-that-measures-blas-blocking-noise.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260817-a-seed-census-that-cannot-reach-the-product-it-grades.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260817-cause3-C-leg-does-not-cover-the-dominant-block.md` | Full evidence row at the evidence tag. |
-| `FINDING-20260819-a-guard-forbade-what-a-pinned-producer-must-produce.md` | Full evidence row at the evidence tag. |
 
 | id | frozen evidence |
 |---|---|
