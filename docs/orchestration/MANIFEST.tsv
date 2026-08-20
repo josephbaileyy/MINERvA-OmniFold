@@ -47,7 +47,7 @@ docs/orchestration/INDEX-retracted-and-superseded-values.md	tracked	LIVE	index		
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	32	80	30962
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	3	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	7	48	2966
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	7	321	66518
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	7	322	66668
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	2	184	13929
 docs/orchestration/MIGRATION-DELTA.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	4	67	4450
 docs/orchestration/MIGRATION-HANDOFF.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	6	146	9653
@@ -117,7 +117,7 @@ docs/orchestration/audit_validator_tolerance_units.py	tracked	MACHINE	script			g
 docs/orchestration/control-plane/owners.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	3	13	747
 docs/orchestration/control-plane/playbook.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	3	25	5803
 docs/orchestration/control-plane/policy.json	tracked	LIVE	machine-data			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/test_usagectl.py;docs/orchestration/usagectl.py	no	7	69	1674
-docs/orchestration/control-plane/source-record-inventory.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/control_plane_lint.py	no	4	99	17365
+docs/orchestration/control-plane/source-record-inventory.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/control_plane_lint.py	no	4	100	17591
 docs/orchestration/control-plane/work-items.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	3	14	2407
 docs/orchestration/control_plane_lint.py	tracked	LIVE	script			open		route-only		no	7	717	37240
 docs/orchestration/deploy_oi135_watcher_swap.sh	tracked	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/test_deploy_oi135_watcher_swap.py	no	6	704	33747
@@ -269,8 +269,9 @@ docs/orchestration/state/probe-oi126-target-comparison-20260815.json	tracked	MAC
 docs/orchestration/state/probe-oi126-target-comparison-20260815.py	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-oi126-mechanism-narrowing-20260815.py	yes	3	47	2513
 docs/orchestration/state/probe-oi126-zero-fraction-per-column-20260815.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	1	1	12660
 docs/orchestration/state/probe-oi126-zero-fraction-per-column-20260815.py	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	1	141	8225
-docs/orchestration/state/probe-oi22-leakage-real-input-20260814.py	tracked	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	1	119	5853
-docs/orchestration/state/probe-oi22-schema-parity-real-input-20260814.py	tracked	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	1	181	8291
+docs/orchestration/state/probe-oi136-sys-path-hijack-20260820.py	tracked	MACHINE	state-artifact		20260820	generated		exact-path-only		yes	1	123	5641
+docs/orchestration/state/probe-oi22-leakage-real-input-20260814.py	tracked	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	2	119	5853
+docs/orchestration/state/probe-oi22-schema-parity-real-input-20260814.py	tracked	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	2	181	8291
 docs/orchestration/state/probe-projection-identity-leg-20260816.py	tracked	MACHINE	state-artifact		20260816	generated		exact-path-only	nd-unfolding/p4_lib.py	yes	1	183	9512
 docs/orchestration/state/probe-vl100-foldforward-shape-20260814.py	tracked	MACHINE	state-artifact		20260814	generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	1	204	10671
 docs/orchestration/state/probe-vl100-nominal-residual-field-20260815.py	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	1	38	2365
