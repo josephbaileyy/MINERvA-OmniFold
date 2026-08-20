@@ -59,11 +59,13 @@ freeness check and a closed ten-block claimed with its first filing.
 
 All pre-freeze long forms are indexed by the frozen `FINDINGS.md` at the evidence tag.
 
-Three long forms remain in the live checkout because the canonical-designation guard inventories their
-paths. All other long forms are recovered from the frozen index.
+Four long forms remain in the live checkout: three because the canonical-designation guard inventories
+their paths, and one because hash-pinned runtime diagnostics route to it. All other long forms are
+recovered from the frozen index.
 
 | retained long form | route |
 |---|---|
+| `FINDING-20260730-event-feature-nonfinite.md` | Retained for hash-pinned runtime diagnostics; exact full evidence also exists at the evidence tag. |
 | `FINDING-20260807-checkpoint-is-not-the-trained-model.md` | Full evidence row at the evidence tag. |
 | `FINDING-20260807-step1-under-achieves.md` | Full evidence row at the evidence tag. |
 | `FINDING-20260811-promotion-by-move-silently-repoints-artifacts.md` | Full evidence row at the evidence tag. |
