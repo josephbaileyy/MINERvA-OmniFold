@@ -35,7 +35,7 @@ docs/orchestration/AUTHORIZATION-20260819-gbdtfive-strike-and-comment-macro-move
 docs/orchestration/AUTHORIZATION-20260819-psd-qualified-wording.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only		yes	0	61	4100
 docs/orchestration/B1-FIX-IMPLEMENTER-BRIEF.md	tracked	DEAD	document			superseded	docs/orchestration/B1-NORMALIZATION-FIX-DESIGN.md	never		yes	1	240	13246
 docs/orchestration/B1-NORMALIZATION-FIX-DESIGN.md	tracked	ARCHIVAL	document			terminal		exact-path-only	nd-unfolding/pet/closure_b1_rate_injection.py;nd-unfolding/pet/fullevent_fps_dataloader.py;nd-unfolding/pet/validate_gate2_target_receipt.py;nd-unfolding/tests/test_b1_normalization_fix.py	yes	17	388	24602
-docs/orchestration/CATALOG.md	tracked	LIVE	router			open		always	docs/orchestration/control_plane_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	14	62	18026
+docs/orchestration/CATALOG.md	tracked	LIVE	router			open		always	docs/orchestration/control_plane_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	14	65	18302
 docs/orchestration/CERTIFICATION-20260815-repair8-defect6.md	tracked	ARCHIVAL	document		20260815	terminal		exact-path-only		yes	2	90	6601
 docs/orchestration/CLAIM-CLM-001.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	686
 docs/orchestration/CLAIM-CLM-002.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	515
@@ -64,7 +64,7 @@ docs/orchestration/CONVENTION-verifying-a-check-is-deployed.md	tracked	LIVE	docu
 docs/orchestration/CORPUS-20260811-gates-that-cannot-fail-sweep.md	tracked	LIVE	document		20260811	open		route-only		no	3	237	16785
 docs/orchestration/CORROBORATION-20260816-oi8-g1-landing.md	tracked	ARCHIVAL	document		20260816	terminal		exact-path-only		yes	0	176	9887
 docs/orchestration/COST-20260817-mii-seed-scan-derivation.md	tracked	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	6	240	14574
-docs/orchestration/COVERAGE-SURVEY-20260802.md	tracked	ARCHIVAL	document		20260802	terminal		exact-path-only		yes	7	1753	186197
+docs/orchestration/COVERAGE-SURVEY-20260802.md	tracked	ARCHIVAL	document		20260802	terminal		exact-path-only		yes	6	1753	186197
 docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md	tracked	LIVE	document		20260811	open		route-only	nd-unfolding/receipt_candidate_stamps_5d.py;nd-unfolding/receipt_cause1_endpoint_census_5d.py;nd-unfolding/receipt_construction_contract_5d.py;nd-unfolding/tests/test_uq_remediation.py	no	26	735	60133
 docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md	tracked	ARCHIVAL	document		20260804	terminal		exact-path-only	docs/open-items/verify_open_items_restructure.py	yes	17	126	7737
 docs/orchestration/DECISION-20260815-joseph-oi6-oi8-oi126.md	tracked	ARCHIVAL	document		20260815	terminal		exact-path-only		yes	5	262	15435
@@ -399,7 +399,7 @@ docs/orchestration/RULING-20260820-lanec-stamp-coverage-is-a-file-claim-the-clas
 docs/orchestration/RUNBOOK-20260807-gbdt-closeout.md	tracked	ARCHIVAL	runbook		20260807	terminal		exact-path-only	docs/open-items/verify_open_items_restructure.py;nd-unfolding/p4_lib.py	yes	25	450	34284
 docs/orchestration/RUNNABILITY-20260819-oi126-test2.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only		yes	2	285	17271
 docs/orchestration/RUNS.template.tsv	tracked	DEAD	tabular-data			superseded	docs/orchestration/RUNS.tsv	never		yes	1	2	105
-docs/orchestration/RUNS.tsv	tracked	MACHINE	tabular-data	fe-fps-campaign		generated		exact-path-only	docs/orchestration/test_generate_live_state.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;nd-unfolding/sbatch_pet_train_fps_delta.sh	no	69	306	179022
+docs/orchestration/RUNS.tsv	tracked	MACHINE	tabular-data	fe-fps-campaign		generated		exact-path-only	docs/orchestration/test_generate_live_state.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;nd-unfolding/sbatch_pet_train_fps_delta.sh	no	68	306	179022
 docs/orchestration/SCHEDULING-STRATEGY.md	tracked	LIVE	document			open		route-only		no	9	212	14246
 docs/orchestration/SCOPE-20260818-gate1-seed-separation-two-keys.md	tracked	ARCHIVAL	document		20260818	terminal		exact-path-only	nd-unfolding/unified_throw_cov.py	yes	2	340	23755
 docs/orchestration/SCOPING-20260810-engine-rebaseline-cost.md	tracked	ARCHIVAL	document		20260810	terminal		exact-path-only		yes	6	182	12988
@@ -440,7 +440,7 @@ docs/orchestration/control-plane/playbook.tsv	tracked	LIVE	tabular-data			open		
 docs/orchestration/control-plane/policy.json	tracked	LIVE	machine-data			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/test_usagectl.py;docs/orchestration/usagectl.py	no	21	69	1674
 docs/orchestration/control-plane/source-record-inventory.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/control_plane_lint.py	no	5	99	17365
 docs/orchestration/control-plane/work-items.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	7	14	2407
-docs/orchestration/control_plane_lint.py	tracked	LIVE	script			open		route-only		no	11	718	37356
+docs/orchestration/control_plane_lint.py	tracked	LIVE	script			open		route-only		no	11	718	37332
 docs/orchestration/delegate_report_check.py	tracked	MACHINE	script			generated		exact-path-only		no	3	171	7588
 docs/orchestration/deploy_oi135_watcher_swap.sh	tracked	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/test_deploy_oi135_watcher_swap.py	no	7	704	33747
 docs/orchestration/fable-prompt-brevity.md	tracked	DEAD	document			superseded		never		yes	1	14	995

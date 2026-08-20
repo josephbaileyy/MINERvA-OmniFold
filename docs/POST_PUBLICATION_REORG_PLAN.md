@@ -1,242 +1,89 @@
-# Post-publication reorganization plan
+# Active-tree compaction and post-publication reorganization
 
-**Instructions only — no move has occurred.** This plan is deliberately gated
-behind the publication result freeze. It is not authority to clean the current
-worktree, move an active output, or merge dimensional pipelines now.
+Two different operations share this plan. Do not infer publication completion from active-tree
+compaction.
 
-## Gate: the publication-results tag
+## Evidence boundary now in force
 
-Reorganization may begin only after an annotated tag named
-`publication-results-YYYY-MM-DD` points to the reviewed freeze commit. That
-commit must:
+The complete committed pre-compaction tree is frozen at:
 
-- contain all publication production summaries and canonical ledger/RUN_LOG/
-  STATUS updates;
-- build the analysis note, primer, and paper from a clean checkout;
-- identify ignored heavy artifacts by manifest and stable fingerprint;
-- have no unresolved publication blocker in `OPEN_ITEMS.md`;
-- be pushed with the tag so concurrent sessions share the same immutable base.
+`evidence/prepublication-2026-08-20-0b329e8a`
 
-If any result changes after the candidate freeze, rebuild and review the
-documents and create a new freeze commit/tag. Do not reorganize between a result
-change and its replacement tag.
+That pushed annotated tag points to `0b329e8ae8482e6334a68faf947fc80ae7265ac9`. A full-tree inventory,
+all-ref bundle, ref/worktree/job snapshots, cited-commit reachability report, and fresh-clone recovery
+proofs are stored outside the repository at both:
 
-Canonical STATUS and RUN_LOG files stay at their current locations throughout:
+- local: `/Users/josephbailey/local-research/evidence-epochs/prepublication-2026-08-20-0b329e8a/`
+- NERSC: `/global/homes/j/josephrb/evidence/repository-epochs/prepublication-2026-08-20-0b329e8a/`
 
-- `2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md` and
-  `2d-unfolding/2D_OMNIFOLD_RUN_LOG.md`;
-- `3d-unfolding/3D_OMNIFOLD_STATUS.md` and
-  `3d-unfolding/3D_OMNIFOLD_RUN_LOG.md`;
-- `nd-unfolding/ND_OMNIFOLD_STATUS.md` and
-  `nd-unfolding/ND_OMNIFOLD_RUN_LOG.md`.
+The bundle SHA-256 is `9d4c6806f97781c1da27a45337ad5429c05c43f48346174e41a17b30afa80dc2`.
+This is an evidence epoch, not a publication-results tag and not scientific adoption.
 
-PET/FPS execution trackers may be retired only by a short tombstone at their
-old path that points to the final canonical STATUS/RUN_LOG entries and freeze
-tag.
+## Lane A — active-tree compaction, authorized now
 
-## Non-negotiable method
+`main` may retain current science, supported reproduction, publication source, active tests, exact
+live receipts, compact canonical records, and a searchable historical router. Complete pre-freeze
+chronology and terminal campaign machinery may live only at the evidence tag when every removal
+family passes the following gate:
 
-Use a series of small, reviewable `git mv` commits. For each commit:
+1. Enumerate exact paths; do not act on an unresolved glob.
+2. Confirm no dirty worktree, live writer, queued job, runtime reader, test, import, hash pin, or
+   publication build depends on those paths in `main`.
+3. Separate references internal to the removed family from references in surviving files.
+4. Prove every path exists at the pushed evidence tag and restore a representative sample with a
+   matching digest.
+5. Make each surviving reference resolve locally or name the evidence tag and historical path.
+6. Keep a compact old-path/identifier discovery route.
+7. Run affected lint, tests, dry runs, and all three publication builds from a clean checkout.
+8. Verify scientific products and build outputs are unchanged when the family can affect them.
+9. Obtain read-only independent review of the family-scoped diff.
+10. Record before/after tracked-file, Markdown-file, and Markdown-line counts.
 
-1. move one family or one coherent group only;
-2. update direct references in the same commit;
-3. search the full tracked tree for stale old paths and retired names;
-4. run the moved family's help/smoke/wrapper tests without scientific
-   production;
-5. verify every publication artifact still resolves through its frozen product
-   summary and fingerprint;
-6. compare document builds or tracked outputs where the move can affect them.
+Pre-freeze RUN_LOG text may be replaced at its canonical path by an evidence-tag pointer, final-summary
+route, and post-freeze chronology. A cited pre-freeze script may leave `main` under the same gate; its
+tag and old path become the citation. Do not leave path-shaped prose that silently resolves to a
+different current file.
 
-Never combine cleanup with a physics-method change. Never use a bulk filesystem
-move followed by repair. **A big-bang dimensional merge is explicitly
-rejected:** 2D, 3D, 4D, 5D, PET, and FPS have different contracts, masks,
-resources, and provenance. Shared utilities may be extracted only after callers
-are protected by wrappers and tests.
+Compaction commits contain no physics-method change, product promotion, compute launch, history
+rewrite, or unrelated refactor. The evidence tag and external bundle are immutable inputs, not targets.
 
-## Stage 1 — transient job files
+## Protected active surface
 
-Inventory logs, scheduler receipts, scratch workdirs, partial outputs, and
-one-off helper files by owner and campaign.
+Retain unless an exact later review proves otherwise:
 
-- Preserve tracked compact summaries and receipts that establish provenance.
-- Move retained stale logs/one-offs to the dated external scratch archive
-  convention in `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`.
-- Delete only regenerable, untracked transients whose owning campaign is frozen
-  and whose summary does not cite them.
-- Never delete or relocate a heavy artifact until its summary fingerprint and
-  current path have been verified against the freeze tag.
-- Confirm no queued/running job writes any candidate path before touching it.
+- `AGENTS.md`, `CLAUDE.md`, current generated queue/playbook sources and guards;
+- `VALIDATION_LEDGER.md`, active `KNOWN_ISSUES.md`, `docs/OPEN_ITEMS.md`, and current claims;
+- supported 2D, 3D, scalar N-D, PET, FPS, and standard-P4 source/launch/test paths;
+- `docs/analysis-note/` source and build-critical inputs;
+- current STATUS files and compact canonical RUN_LOG paths;
+- exact receipts read by retained code or governing a live gate;
+- cluster-frozen worktrees and outputs used by live job `57266000_0`.
 
-Acceptance: `git status` contains only the scoped cleanup; no publication
-summary loses an input; scheduler/output namespaces are quiet.
+The live job executes from `/pscratch/sd/j/josephrb/gate5-data-only-frozen-377c713`; compaction of local
+`main` must never rewrite or delete that frozen worktree or its `gate5-do-g2` outputs.
 
-## Stage 2 — status and layout index
+## Lane B — publication-results freeze, later
 
-Create or refresh one concise repository-layout index that points to, rather
-than duplicates, canonical STATUS, RUN_LOG, reference, issue, ledger, open-item,
-and publication documents.
+Create `publication-results-YYYY-MM-DD` only after publication blockers close, required product
+summaries and canonical records land, ignored heavy artifacts are fingerprinted and preserved, supported
+reproduction passes, and note/primer/paper build from a clean checkout. If science changes after a
+candidate tag, review and replace the tag; never relabel this prepublication evidence epoch as final.
 
-- Keep all canonical STATUS/RUN_LOG paths unchanged.
-- Mark frozen production roots, cold/historical families, compatibility entry
-  points, and heavy-output locations.
-- Record the freeze tag in the index.
-- Add a machine-readable old-path → intended-new-path table before any cold
-  family moves.
+## Lane C — layout moves, only after publication freeze
 
-Acceptance: every current top-level workstream has one discoverable status and
-chronology path; the index contains no verified number or copied chronology.
+Directory moves and abstractions remain post-publication work. Move one coherent family per commit,
+update callers and references together, retain compatibility wrappers for external entry points, and
+run family fixtures plus all three document builds. PET and FPS move last. Do not build a universal
+dimensional driver or combine distinct masks, resources, defaults, and provenance behind implicit flags.
 
-## Stage 3 — cold-family moves
+## Completion criteria
 
-Move only families with no active publication consumer. Candidate order is
-oldest/coldest first: superseded diagnostics and archived launchers, completed
-binned studies, then other frozen auxiliary families. Decide the exact candidate
-list from the Stage-2 index; do not infer “cold” from file age alone.
+Active-tree compaction is complete only when:
 
-For each family:
-
-- use `git mv` and preserve internal relative structure where possible;
-- update AGENTS/reference/index links and all tracked launchers that refer to it;
-- search with `rg` for the old directory, filenames, output stems, and import
-  paths;
-- run syntax/help/unit tests and any ROOT-free fixture for that family;
-- check frozen product summaries still point either to the unchanged heavy
-  output or an explicit compatibility path.
-
-Acceptance: zero unexplained stale references and no change to a scientific
-artifact fingerprint.
-
-## Stage 4 — compatibility wrappers
-
-Before moving a launcher or import path used by external notes, batch recipes,
-or collaborators, leave a small wrapper at the old path.
-
-- Wrappers forward arguments and exit status without changing defaults.
-- They resolve the repository root dynamically; no new personal HOME path.
-- They print one concise deprecation/new-path message.
-- Shell wrappers pass `bash -n` and a no-production `--help`/fixture test;
-  Python wrappers pass compile/import/help tests.
-- Keep wrappers for at least one publication cycle or until all external
-  consumers explicitly migrate.
-
-Acceptance: recorded old invocations and new invocations resolve the same
-configuration and output namespace in dry-run/fixture mode.
-
-## Stage 5 — limited parameterization
-
-Only after wrappers and family tests pass, parameterize code that is demonstrably
-identical apart from a small declared set of values.
-
-Allowed examples include common manifest parsing, replica-manifest validation,
-covariance projection, or launcher fields such as axes/output root when their
-contracts are already identical. Requirements:
-
-- a table of old caller → parameter set;
-- golden fixture outputs for every caller;
-- unchanged defaults and output names through compatibility wrappers;
-- no weakening of fail-closed validation;
-- one shared change per commit with all caller tests.
-
-Do not create a universal dimensional driver, merge PET and scalar estimators,
-or hide standard/FPS phase-space differences behind implicit flags. Duplication
-is preferable to an abstraction that obscures a physics contract.
-
-Acceptance: wrapper and direct calls agree on configuration, schema, and fixture
-outputs; publication summaries still resolve to the freeze-tag implementation.
-
-## Stage 6 — PET and FPS moves last
-
-PET and FPS move only after all other stages are stable. They have the deepest
-links to large point-cloud inputs, GPU launchers, standard/FPS selection modes,
-W-source alignment, and support-complete lateral products.
-
-- Freeze a PET/FPS path inventory including NPZ memmaps, ignored ROOTs, model
-  weights, replica directories, active-universe inputs, and summaries.
-- Move one of PET or FPS at a time, never both in one commit.
-- Retain old entry-point wrappers and explicit standard-versus-FPS mode checks.
-- Run PET ROOT-free tests, extraction fixture, wrapper tests, manifest readback,
-  and output-provenance checks without retraining.
-- Verify W-source and event-row alignment metadata after every path change.
-- Rebuild all three publication documents after each family move.
-
-Acceptance: no stale path in tracked files; all wrappers pass; every PET/FPS
-published claim maps to the same freeze-tag summary and artifact fingerprint;
-no GPU or event-loop production was triggered by the move.
-
-## Measured coupling (recorded 2026-07-29, no move performed)
-
-Numbers to size Stage 3's stale-reference search before it starts, rather than
-discovering them during it. Re-measure at the freeze tag; these will have grown.
-
-- **115 distinct `sbatch_*.sh` filenames are cited by name** in tracked `.md`/
-  `.json` records; `sbatch_g2_fullevent_evloop_array.sh` alone is cited 20×.
-  **55 distinct `nd-unfolding/<file>.py|sh` paths** are likewise cited. Build the
-  citation set as a worklist before the first move:
-
-  ```
-  grep -rhoE '(nd-unfolding/)?[a-zA-Z0-9_]+\.(py|sh)' --include='*.md' \
-    --include='*.json' --include='*.sh' --include='*.py' . | sort -u
-  ```
-
-- `nd-unfolding/` carries **280 files in its flat root** (177 `.sh`, 85 `.py`).
-  It is not a cold family, so Stage 3 does not reach it; sequence it explicitly
-  or it will be the largest remaining item after Stage 6.
-
-- **`docs/orchestration/` (322 files) is not covered by any stage** and does not
-  split cleanly. Its tooling and dispatch transcripts are separable, but
-  `docs/orchestration/state/` holds provenance receipts read at runtime by
-  analysis code — `nd-unfolding/p4_evidence.py:45,170`,
-  `fps_verify_merged_receipt.py:23`, `tests/conftest.py:6`, and three `pet/*.sh`
-  launchers. Any split must keep `state/` on the analysis side. The root symlink
-  `orchestration -> docs/orchestration` and `.gitattributes` need updating too.
-
-### Added 2026-08-02 — the unexercised inventory, measured
-
-`docs/orchestration/COVERAGE-SURVEY-20260802.md` §2 (+ Appendix A) is the worklist
-this section asks for, already built. **Read it before Stage 3, and read its
-caveats before believing it.** Headline: of **577 runnable artifacts**, **371 have
-no `RUNS.tsv` row, no test, and no in-tree caller** (261 `.sh`, 107 `.py`, 3
-`.cpp`). A stricter independent pass — basename named *nowhere at all*, including
-RUN_LOGs and receipts — leaves **88 shell scripts**, a strict subset, so the two
-methods bracket the answer.
-
-**That is not a deletion list, and the gap between 88 and 371 is exactly why.**
-`RUNS.tsv` covers 38 of 577, so "no row" means *not logged*, not *never run* — most
-of the 261 `sbatch_*.sh` plainly did run, and this plan's own paragraph above says
-115 of those names are load-bearing provenance cited in tracked records. An earlier
-pass this campaign produced a 95-file "unreferenced" list of which at least 10 were
-live Step 0b launchers; reference-counting is a lead, not a verdict. The 88 is the
-only subset worth opening at the freeze tag, and each entry still needs a reason.
-
-Two other survey categories touch this plan and both argue for *not* acting:
-
-- §3's **30 guards with an unreachable failing branch** are mostly `raise
-  ValueError(f"unknown {x}")` that is dead only because every caller passes a
-  literal. Deleting them converts a disciplined-callers invariant into a silent
-  wrong answer. Leave them. No shell guard was confirmed dead at all, over 309
-  files — an absence of findings, not a clean bill.
-- §4's binding enumeration is the concrete version of this plan's precedent
-  paragraph below: `fps_control_manifest.json` records paths relative to
-  `nd-unfolding/` while `verify_hash_bindings.localize()` joins to the repo root,
-  so **three of its bindings were invisible to the verifier and one had already
-  drifted**. A move that rewrites paths in receipts can produce exactly this, and
-  the verifier will report success.
-
-Precedent for this plan's "never bulk-move then repair" rule: the 2026-07-26
-`__file__` de-rooting across 26 `pet/` and `tests/` modules voided six gate hash
-bindings, restored two days later in a separate commit. That refactor was an
-order of magnitude smaller than Stage 3.
-
-## Final reorganization audit
-
-The reorganization is complete only when:
-
-- the old-path search is empty except for intentional wrappers, tombstones, and
-  historical RUN_LOG text;
-- all wrappers and family fixtures pass from a clean checkout;
-- note, primer, and paper build successfully;
-- frozen product summaries and heavy-output fingerprints are unchanged;
-- canonical STATUS/RUN_LOG locations remain intact;
-- the final layout index matches the filesystem;
-- a reviewer can compare every reorganization commit to the
-  `publication-results-YYYY-MM-DD` tag without disentangling a physics change.
+- the tree has at most 950 tracked files, 200 Markdown files, and 45,000 Markdown lines, or a failed
+  removal gate demonstrates why the target cannot safely be reached;
+- every historical lookup resolves through the evidence tag and old path;
+- no supported runtime, test, publication input, or active gate loses a dependency;
+- a fresh clone passes the repository checks and all three publication builds;
+- independent reviewers approve every removal family;
+- the final counts and recovery commands are recorded without promoting a scientific result.

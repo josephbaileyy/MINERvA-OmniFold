@@ -8,7 +8,7 @@ task to its governing evidence. This file is only the automatically loaded boots
   re-measure volatile fields.
 - A result is live only after its evidence and required records land in a commit.
 - Audit and review work is read-only and uses an isolated worktree; inspect status afterward.
-- Do not delete, rename, or reorganize provenance-bearing material without an approved evidence epoch,
-  tested recovery, and explicit authorization for the exact removal family.
+- Pre-freeze provenance may leave `main` only through the pushed evidence tag, tested recovery, an
+  exact removal-family authorization, and a surviving discovery route.
 - Domain, environment, and scheduler rules are task-specific; follow the route in `AGENTS.md` rather
   than inferring them from memory.

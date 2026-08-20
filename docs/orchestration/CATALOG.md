@@ -4,6 +4,8 @@ This file is a pointer-only router. [`MANIFEST.tsv`](MANIFEST.tsv) is the author
 
 ## Start here
 
+- Complete pre-compaction evidence: tag `evidence/prepublication-2026-08-20-0b329e8a`; recover any
+  historical path with `git show evidence/prepublication-2026-08-20-0b329e8a:<old-path>`
 - Classification and exact-path lookup: [`MANIFEST.tsv`](MANIFEST.tsv)
 - Current control-plane snapshot: [`LIVE-STATE.md`](LIVE-STATE.md)
 - Bounded current-work queue: [`../CURRENT_WORK.md`](../CURRENT_WORK.md)
@@ -47,6 +49,7 @@ This file is a pointer-only router. [`MANIFEST.tsv`](MANIFEST.tsv) is the author
 
 ## History and machine artifacts
 
+- Complete pre-freeze tree and old paths: `evidence/prepublication-2026-08-20-0b329e8a`
 - Orchestration chronology: [`RUNS.tsv`](RUNS.tsv)
 - Workstream chronology: [`ND_OMNIFOLD_RUN_LOG.md`](../../nd-unfolding/ND_OMNIFOLD_RUN_LOG.md)
 - Archival or machine-artifact lookup: [`MANIFEST.tsv`](MANIFEST.tsv)

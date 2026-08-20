@@ -91,8 +91,8 @@ the exact authorized action and terminal-event posture, then the governing `OI-*
   scheduler before acting.
 - Audit and review work is read-only. Use isolated worktrees, inspect status afterward, and never freeze
   an auditor's silent edit into a receipt.
-- Do not delete, rename, or reorganize provenance-bearing material before an approved evidence epoch,
-  a tested recovery path, and explicit authorization for the exact removal family.
+- Pre-freeze provenance may leave `main` only through the pushed evidence tag, tested recovery, an
+  exact removal-family authorization, and a surviving discovery route.
 - Domain-specific contracts live behind task routes. Do not reconstruct a pipeline from this summary.
 
 ## Evidence routes
@@ -107,5 +107,5 @@ the exact authorized action and terminal-event posture, then the governing `OI-*
 | Run 2D/3D/N-D/PET | The relevant workstream status; `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`; for PET also `nd-unfolding/PET_UQ_REMEDIATION_STATUS.md` |
 | Launch or monitor compute | Fresh live state, direct scheduler observation, the exact runbook/launcher receipt, and environment rules routed by the workstream reference |
 | Apply process rules | `docs/orchestration/PLAYBOOK.md`; open `FINDINGS.md` only by routed `BEN-*` id |
-| Understand history | The relevant append-only `*_RUN_LOG.md` or exact frozen evidence path; never load the orchestration directory wholesale |
+| Understand or recover pre-freeze history | `evidence/prepublication-2026-08-20-0b329e8a`, then the old path; never load the orchestration directory wholesale |
 | Build deliverables | `docs/analysis-note/`; `build_all.sh` must build note, primer, and paper |
