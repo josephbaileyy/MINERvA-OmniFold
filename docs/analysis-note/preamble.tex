@@ -27,6 +27,14 @@
 % \ensuremath restores math for the (usual) numeric argument. Needed because most
 % call sites are numbers already inside $...$, where \sout alone fails.
 \newcommand{\dead}[1]{\mbox{\textcolor{gray}{\sout{\ensuremath{#1}}}}}
+% Reviewer-comment macros. Defined HERE rather than in main_note.tex because all
+% three external drivers input this file: they were note-local, and the paper build
+% would have failed with Undefined control sequence the first time a commented
+% paragraph was distilled into paper_body.tex. Definitions are verbatim from
+% main_note.tex; xcolor is loaded above, which is what these need.
+\newcommand{\bpn}[1]{\textcolor{blue}{\textbf{[BPN: #1]}}}
+\newcommand{\jrb}[1]{\textcolor{violet}{\textbf{[JRB: #1]}}}
+\newcommand{\gk}[1]{\textcolor{orange}{\textbf{[GK: #1]}}}
 % biblatex + biber: clickable arXiv/doi links, "et al." rendering.
 \usepackage[backend=biber, style=numeric-comp, sorting=none, giveninits=true,
             maxbibnames=3, minbibnames=1, doi=true, eprint=true, isbn=false, url=false]{biblatex}

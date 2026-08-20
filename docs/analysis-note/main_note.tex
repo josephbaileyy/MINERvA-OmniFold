@@ -14,9 +14,11 @@
 }
 
 \usepackage{xcolor}
-\newcommand{\bpn}[1]{\textcolor{blue}{\textbf{[BPN: #1]}}}
-\newcommand{\jrb}[1]{\textcolor{violet}{\textbf{[JRB: #1]}}}
-\newcommand{\gk}[1]{\textcolor{orange}{\textbf{[GK: #1]}}}
+% \bpn / \jrb / \gk moved to the shared preamble.tex: they were defined HERE only,
+% used 16 times in the note sections and 0 times in paper_body/primer_body, and
+% neither external wrapper defines them -- so the first time a commented paragraph
+% was distilled into the paper, that build would have died on Undefined control
+% sequence. Behaviour is unchanged for this build.
 
 
 %\title{Unbinned OmniFold measurement of the MINERvA ME FHC\\

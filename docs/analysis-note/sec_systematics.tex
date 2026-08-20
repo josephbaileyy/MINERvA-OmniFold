@@ -161,15 +161,32 @@ and its norm; per-band endpoint displacements are not stored. The matched block 
 uses the MAT convention: universe-mean centering and the biased $1/N$
 normalization, with both endpoints re-unfolded.
 
-For the 5D candidate, the background-aware block sum has median per-bin uncertainty
-\SI{\gbdtFiveBlockMedian}{\percent}; including cross-source nonlinear response
-raises the candidate mean-centered covariance to
-$\sqrt{\mathrm{Tr}\,C}=\SI{\gbdtFiveAdoptTrace}{cm^2/nucleon}$. The joint mean
-shift, norm $\SI{\gbdtFiveMeanShift}{cm^2/nucleon}$, is reported separately
-rather than folded into that covariance. A CV-centered construction gives the
-larger $\SI{\gbdtFiveCVTrace}{cm^2/nucleon}$ and is retained as a conservative
-variant. Both are positive semidefinite, but neither is adopted for publication
-until the selection-complete lateral replacement lands. Repeating all 188 universe unfolds with
+For the 5D candidate, the background-aware block sum gave median per-bin uncertainty
+\dead{\SI{\gbdtFiveBlockMedian}{\percent}}; including cross-source nonlinear response
+raised the candidate mean-centered covariance to
+$\sqrt{\mathrm{Tr}\,C}=\dead{\SI{\gbdtFiveAdoptTrace}{cm^2/nucleon}}$. The joint mean
+shift, norm $\dead{\SI{\gbdtFiveMeanShift}{cm^2/nucleon}}$, was reported separately
+rather than folded into that covariance. A CV-centered construction gave the
+larger $\dead{\SI{\gbdtFiveCVTrace}{cm^2/nucleon}}$ and was retained as a conservative
+variant. Both were positive semidefinite, and neither is adopted for publication
+until the selection-complete lateral replacement lands.
+
+\paragraph{Scope of the four struck 5D magnitudes above: quarantined, and no
+replacement is supplied here.}
+Every struck figure in the preceding paragraph is retained only as a record of what
+the superseded sweep gave. They are \textbf{not} current magnitudes, on \emph{two}
+independent grounds: the 2026-07-12 construction-cause quarantine, of which one of
+seven causes is discharged, and the flux (J28) correction. \emph{The J28 correction
+discussed immediately below is one of those two grounds --- not a correction these
+four values already contain.} They are pre-J28, and the proximity of that discussion
+is why this paragraph would mislead a reader rather than merely read as dated.
+\textbf{No replacement magnitude is quoted, and none is authorized}: the corrected
+J28 products are footed on the \emph{non}-background-aware configuration while the
+struck values above are background-aware, so substituting them would make these
+sentences false rather than current. The percentages in the paragraph that follows
+are likewise derived comparisons \emph{against those same superseded products}. See \texttt{docs/orchestration/PROCEDURE-gbdtFive-macro-update.md}.
+
+Repeating all 188 universe unfolds with
 per-universe background subtraction changes the combined \emph{block-sum}
 sqrt-trace by only \SI{0.28}{\percent}; the effect on the \emph{adopted}
 covariance is smaller still, \SI{0.09}{\percent} before the flux (J28)
