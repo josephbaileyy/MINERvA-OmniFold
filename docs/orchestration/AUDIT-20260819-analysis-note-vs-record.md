@@ -895,6 +895,133 @@ not before, and a reader of §12 needs to know which regime each `PASS` came fro
 
 ---
 
+## VR. VERIFICATION RESULT — lane B's `8fd842af` against §V. **PASS**, with one residual question
+
+**Verified by this lane, which did not edit.** Checked against the §V digests recorded before the edit
+existed. `8fd842af`, author `Claude (lane B)`, **one file, 24 insertions / 10 deletions.**
+
+| §V check | result |
+|---|---|
+| 1. estimator edit fixes finding 6 **as upgraded** — all three facts | **PASS** |
+| 2. PET edit uses the **legacy** grounds, not covariance | **PASS**, and it added the direction |
+| 3. `\petClosure` untouched | **PASS** — 2 occurrences, byte-identical construct, both sites |
+| 4. nothing changed that no finding asked for | **PASS** — 1 of 28 blobs differs |
+| 5. no new inconsistency with the record or findings 1–14 | **PASS**, one observation below |
+| 6. the five out-of-scope items untouched | **PASS** — by digest, not by inspection |
+
+### Check 4, first, because it is the one only a pre-recorded baseline can answer
+
+`git ls-tree` over `docs/analysis-note/` at `8fd842af`, compared to §V line by line: **exactly one blob
+differs, `paper_body.tex` `d4a73c8e` → `f91f74d3`. The other 27 are byte-identical**, including
+`values.tex`, `sec_pet.tex`, `sec_method.tex`, `preamble.tex`, all three drivers, `build_all.sh`,
+`check_dead_containment.py` and `figures/`. **Nothing was changed that no finding asked for, and this
+is a measurement rather than a reading of the diff.**
+
+### Checks 1 and 2 — the substance, and B's two new claims are the note's own words
+
+Both edits add material, so both add claims that need sources. **Neither is B's derivation:**
+
+| B's new text | source, verbatim |
+|---|---|
+| *"100 trees, depth-3 capacity, 5 iterations … LightGBM at matched capacity ($\texttt{num\_leaves}=8=2^{3}$)"* | `sec_method.tex:156-160`: *"100 trees, learning rate $0.1$, and depth-3 capacity are the sklearn `GradientBoosting` defaults, and the production LightGBM backend is configured to the matched capacity ($\texttt{num\_leaves}=8=2^{3}$)"* |
+| *"which biases PET high, so the underlying gap is \emph{larger} than the withdrawn figure"* | `sec_pet.tex:62-66`: *"At this analysis's ${\sim}\SI{3}{\percent}$ background scale, leaving background in biases PET high, so the underlying gap is \emph{larger} than the struck value, by an amount that is a first-order estimate and deliberately not quoted."* |
+
+The `$\texttt{num\_leaves}=8=2^{3}$` token is **byte-identical** to `sec_method.tex`'s, which compiles.
+
+**Two things B got right that I would flag if they were absent.** It carried the direction across
+**without** the magnitude, matching the note's *"deliberately not quoted"*; and it dropped the
+*"~3 % background scale"* qualifier, which is correct here because the direction does not depend on the
+scale, only the magnitude does — and the paper never states that scale (**finding 14**), so importing it
+would have introduced an unexplained number.
+
+**Finding 6 is discharged on all three facts:** `exact` named for the central value with its sklearn
+identity, LightGBM named for the uncertainty ensemble, `\chiPaper` **kept**, the clause restored as
+*"so the central value and its covariance are \emph{not} estimator-matched"*, and — beyond what I asked
+— the band's operands made explicit as *"(exact-GBT $\chiPaper$ versus LightGBM $2.65$)"*, so a reader
+can now check the "$\sim$1 unit" instead of taking it. **Finding 7 is discharged on the right grounds:**
+all three are the legacy ones, none is covariance, and `:156-157` was **narrowed** to *"Neither a PET
+central-value comparison nor a recoil-PET covariance is used here"* rather than leaned on — necessary,
+because after the removal the old sentence would have been false.
+
+### Mechanical checks, run independently rather than accepted
+
+```
+\petClosure                  pre 2  post 2      \SI{\petClosure}{\percent}  pre 2  post 2
+\SI{9}{\percent}             pre 1  post 0      \petGbdtGap                 pre 0  post 0
+\dead{} uses                 pre 0  post 0      \gk{} \jrb{} \bpn{}         pre 0  post 0
+braces                       pre 107/107 balanced   post 111/111 balanced
+inline $                     pre 90 even            post 96 even
+macros new in post: NONE     macros removed: NONE
+```
+
+**B's own static figures reproduce exactly (111/111 and 96).** A `\dead{}` count of 0 is not a
+formality — see below.
+
+### The judgement call: **B is right, and it was FORCED, not merely persuasive**
+
+The mediator asked whether the strike would have been better than removal. **No — and the reason is
+stronger than B's own argument.** B argued that a greyed strikethrough advertises internal bookkeeping
+to a reader with no note to consult. True, but the repository has already decided this in writing, in
+the very instrument that enforces containment. `check_dead_containment.py:6-7`:
+
+> `\dead{}` … renders a retracted value struck-through and grey. **Strike-not-erase is right for an
+> internal audit trail and wrong for anything outward-facing.**
+
+and its fail condition, `:331-335`, makes it executable: any non-note driver whose closure contains
+even one `\dead{}` use is a **failure** — *"struck retracted values would render in an outward-facing
+PDF."* **A strike in `paper_body.tex` would have turned the build gate red.** Removal was not the better
+of two permitted options; **it was the only one consistent with the invariant the note enforces.**
+
+> **AND THAT CORRECTS MY OWN FRAMING, which I am fixing in terms rather than quietly.** In tranches 2
+> and 3 I wrote that the paper build *"inputs the shared preamble, so `\dead{}` is available to it and
+> used zero times"*, and offered that as an instance of the equipped-to-mark standard — as though the
+> zero were a missed opportunity. **For the paper build it is the enforced invariant.** The
+> equipped-to-mark standard still holds exactly where I first applied it — **finding 2,
+> `sec_systematics.tex`, note build, where striking is right and is what the neighbouring files do** —
+> but it does **not** transfer to the outward builds, and I extended it there without checking. **The
+> mechanism a document is equipped with is not automatically the mechanism it is permitted to use, and
+> `check_dead_containment.py` had written that distinction down before I generalised past it.**
+
+### Check 5 — one observation and one residual question, neither blocking
+
+**Observation, and it sharpens finding 14 rather than answering it.** The paper now contains the phrase
+*"unit measured weights and no background subtraction"* — its **first and only** mention of background
+subtraction, correctly, as a property of the withdrawn PET run. **So the external build now presupposes
+a background-subtraction step that it still never describes.** B's sentence is right and the gap is
+pre-existing; finding 14 is unchanged in substance and slightly sharper in form.
+
+**RESIDUAL QUESTION — the only thing in this pass I would put to the owner.** The text now says
+*"Neither a PET central-value comparison nor a recoil-PET covariance is **used** here"*, while the paper
+**still displays `pet_vs_gbdt_absolute`**, which *is* a PET-vs-GBDT central-value comparison, plotted.
+The caption carries the weight: *"The total offset shown is a two-iteration legacy result, withdrawn as
+a current comparison (see text) and not quoted here as a level of agreement."*
+
+**I think this holds — *used* is not *shown*, and the caption is explicit — and B anticipated it
+(*"necessary because the figure still shows the legacy data"*).** But it is the one place a careful
+external reader could press: a figure given a full-width panel is arguably in use. **Two cheap
+resolutions, both the owner's call and neither required by the receipt:** say *"shown for completeness,
+not used"* in the text, or drop the figure from the paper build. **This does not block the push.** I
+raise it because "the text withdraws it and the figure still shows it" is the same *disposition
+mismatch on one artifact* that produced finding 7 — now much smaller, and moved from a number to a
+plot.
+
+**Nit, no render effect:** the new `:158` source line is over-long
+(*"…re-extracted under the pinned configuration. Because the muon is used only for selection and"*).
+Cosmetic only.
+
+### What I did NOT verify
+
+**No LaTeX was run by this lane.** B states its own verification is static-only and that the compile is
+the mediator's; **that is the correct split and I am not reporting its absence as a gap.** My checks are
+static too — a balanced brace count is not a successful compile. **The push should wait on the forced
+`latexmk -g` and a containment run on fresh PDFs**, which the mediator has in flight, and B's point is
+worth repeating at the gate: `paper_body.tex` is `\input` by `main_paper.tex` alone, so **exactly one
+product legitimately rebuilds, and two skipping must not read as "all three passed."**
+
+**Verdict: the edit does what the findings asked, on the grounds they asked, and nothing else.**
+
+---
+
 ## Routing
 
 > **CORRECTION TO TRANCHE 1, kept visible rather than merged away.** Tranche 1's routing section opened
