@@ -3,7 +3,8 @@
 
 WHAT THESE TESTS DO AND DO NOT ESTABLISH, stated first because the boundary is the most useful thing
 in this file. `import ROOT` raises `ModuleNotFoundError` on the lane-B host, so the wrapper's ROOT
-path -- `_read_scalars`, `_read_diagonal`, `_stamp_output`, and `main` from the child launch onward --
+path -- `_read_int_scalars`, `_read_double_scalar`, `_read_diagonal`, `_stamp_output` -- is not
+exercised against REAL PyROOT here.
 IS NOT EXERCISED HERE AT ALL. No ROOT double is provided, deliberately: the three properties that
 would need proving (a `RECREATE`d-and-closed file reopens `UPDATE`; new `TParameter` keys are accepted
 on reopen; `TFile.Open` re-points the global current directory) are properties of PyROOT, and a stub
@@ -361,16 +362,32 @@ class TheDiagonalIsTiedToTheProduct(unittest.TestCase):
     The in-file edit wrote `diag_comb` from the same read that produced `sqrt_tr_old`. The wrapper
     re-reads the combined intermediate after the child has exited, so the file could have changed in
     between and `hDiagCombinedOld` would be a different matrix's diagonal shipped inside this product.
+
+    *** THIS CLASS IS WHERE D1 GOT IN, AND THE ADMISSION BELONGS HERE RATHER THAN ONLY IN A COMMIT
+    MESSAGE. *** Every test here hands the assertion a FLOAT built with `math.sqrt`, while `main`
+    obtained the same argument through an `int()`-coercing reader -- so the function was tested
+    exclusively on values its own caller could not produce, and the suite had no power in either
+    direction. Worse, one of these tests PINNED THE FALSE ACCUSATION: it asserted the message said the
+    combined intermediate "is not the matrix this product was built from", which made the accusatory
+    wording a REQUIREMENT of the suite. A test can hold a defect in place, and this one did.
+    The producer-derived replacements are in `D1_TheAnchorIsReadAsADoubleThroughTheProducer`; these
+    remain as unit coverage of the arithmetic, with their scope now stated.
     """
 
     def test_a_matching_trace_passes(self):
         import math
         self.assertTrue(W.assert_diag_matches_sqrt_tr_old(4.0, math.sqrt(4.0)))
 
-    def test_a_DIFFERENT_MATRIX_is_refused(self):
+    def test_a_DISAGREEMENT_is_refused_WITHOUT_BLAMING_AN_INPUT_FILE(self):
+        """Renamed from `test_a_DIFFERENT_MATRIX_is_refused`, because the old name asserted the
+        conclusion the message is not entitled to draw: a trace mismatch does not establish that the
+        matrix differs, and two of the three causes leave every input file intact."""
         with self.assertRaises(SystemExit) as cm:
             W.assert_diag_matches_sqrt_tr_old(4.0, 3.0)
-        self.assertIn("not the matrix this product was built from", str(cm.exception))
+        msg = str(cm.exception)
+        self.assertIn("DISAGREE", msg)
+        self.assertIn("does NOT establish which side is wrong", msg)
+        self.assertNotIn("not the matrix this product was built from", msg)
 
     def test_an_ABSENT_anchor_is_refused_rather_than_skipped(self):
         """No `sqrt_tr_old` means no tie at all, and an untied diagonal inside a citable product is
@@ -400,7 +417,7 @@ class TheROOTPathIsMarkedUNVERIFIED(unittest.TestCase):
         src = (ND / "mii_adopt_unified_5d_stamped.py").read_text()
         self.assertIn("WHAT IS *NOT* ESTABLISHED", src)
         self.assertIn("CLUSTER-UNVERIFIED, EVERY LINE", src)
-        for fn in ("_read_scalars", "_read_diagonal", "_stamp_output"):
+        for fn in ("_read_int_scalars", "_read_double_scalar", "_read_diagonal", "_stamp_output"):
             self.assertIn(f"def {fn}", src)
             self.assertIn("CLUSTER-UNVERIFIED", src.split(f"def {fn}")[1][:600],
                           f"{fn}'s own docstring must carry the marker; a banner scrolls away")
@@ -419,6 +436,421 @@ class TheROOTPathIsMarkedUNVERIFIED(unittest.TestCase):
             return
         self.skipTest("ROOT IS AVAILABLE on this host -- the wrapper's ROOT path is now testable and "
                       "the CLUSTER-UNVERIFIED markers in the module must be revisited, not trusted.")
+
+
+# =====================================================================================================
+# ROUND 2, after lane C's verification came back FAIL. Everything below exists because of a defect the
+# 34 tests above did not have the power to catch in either direction.
+# =====================================================================================================
+
+class _FakeParam:
+    """A `TParameter` stand-in. ONE METHOD, AND THAT IS THE POINT.
+
+    WHAT THIS ESTABLISHES: what the wrapper does with the value `GetVal()` returns. The D1 defect lived
+    entirely on this side of the boundary -- `int()` applied to a float -- so this is the producer whose
+    contract matters, and it is a one-line contract.
+    WHAT IT DOES NOT ESTABLISH: anything about PyROOT. It does not show that a `TParameter("double")`
+    read off a real file returns a Python float, that `Write()` reaches disk, or that a key is findable
+    after a reopen. Those are PyROOT's properties and no fake can speak to them.
+    """
+
+    def __init__(self, value):
+        self._v = value
+        self._name = None
+        self.written = False
+
+    def GetVal(self):
+        return self._v
+
+    def Write(self):
+        self.written = True
+        _FAKE_ROOT.current._keys[self._name] = self          # ROOT writes into the current directory
+        return 1
+
+
+class _FakeTH1D:
+    def __init__(self, name, title, nbins, lo, hi):
+        self.name, self.title, self.nbins = name, title, nbins
+        self.contents = {}
+        self.written = False
+
+    def SetBinContent(self, i, v):
+        self.contents[i] = v
+
+    def Write(self):
+        self.written = True
+        _FAKE_ROOT.current._keys[self.name] = self
+        return 1
+
+
+class _FakeTH2D:
+    """Square, diagonal-only. `_read_diagonal` uses GetNbinsX + GetBinContent(i,i) and nothing else."""
+
+    def __init__(self, diag):
+        self._d = list(diag)
+
+    def GetNbinsX(self):
+        return len(self._d)
+
+    def GetBinContent(self, i, j):
+        return self._d[i - 1] if i == j else 0.0
+
+
+class _FakeTFile:
+    def __init__(self, keys, writable=True, zombie=False):
+        self._keys = dict(keys)
+        self._writable, self._zombie = writable, zombie
+        self.closed = False
+
+    def Get(self, k):
+        return self._keys.get(k)          # None is falsy, which is how the wrapper tests presence
+
+    def IsZombie(self):
+        return self._zombie
+
+    def IsWritable(self):
+        return self._writable
+
+    def cd(self):
+        _FAKE_ROOT.current = self
+        return True
+
+    def Close(self):
+        self.closed = True
+
+
+class _FakeROOTModule:
+    """Minimal `ROOT` stand-in, installed into `sys.modules` for the duration of a test.
+
+    IT MODELS TWO DOCUMENTED BEHAVIOURS AND VERIFIES NEITHER: that `Open` re-points the current
+    directory, and that `Write()` lands in the current directory. They are modelled so that the
+    wrapper's OWN discipline (read-then-close before opening the output; `fo.cd()` before writing) is
+    exercised against something -- not so that ROOT's semantics are established. If PyROOT differs,
+    these tests still pass and the wrapper can still be wrong. That is stated here rather than
+    discovered later.
+    """
+
+    kError = 0
+
+    def __init__(self, files):
+        self.files = dict(files)          # path -> _FakeTFile
+        self.current = None
+        self.opened = []                  # (path, mode)
+        self.gErrorIgnoreLevel = 0
+        outer = self
+
+        class _TFile:
+            @staticmethod
+            def Open(path, mode=""):
+                outer.opened.append((path, mode))
+                f = outer.files.get(path)
+                if f is None:
+                    return None
+                outer.current = f
+                return f
+        self.TFile = _TFile
+
+    def TParameter(self, kind):
+        def _make(name, value):
+            p = _FakeParam(value)
+            p._name, p._kind = name, kind
+            return p
+        return _make
+
+    def TH1D(self, *a):
+        return _FakeTH1D(*a)
+
+
+_FAKE_ROOT = None
+
+
+class _WithFakeROOT:
+    """Install the fake for one test. `mii_adopt_unified_5d_stamped` imports ROOT lazily INSIDE each
+    function, which is what makes injection through `sys.modules` possible at all."""
+
+    def __init__(self, files):
+        self.files = files
+
+    def __enter__(self):
+        global _FAKE_ROOT
+        _FAKE_ROOT = _FakeROOTModule(self.files)
+        self._saved = sys.modules.get("ROOT")
+        sys.modules["ROOT"] = _FAKE_ROOT
+        return _FAKE_ROOT
+
+    def __exit__(self, *e):
+        global _FAKE_ROOT
+        if self._saved is None:
+            sys.modules.pop("ROOT", None)
+        else:
+            sys.modules["ROOT"] = self._saved
+        _FAKE_ROOT = None
+        return False
+
+
+#: THE REAL VALUE, from VL1 via lane C. The whole D1 defect is that `int()` of this is 0.
+VL1_SQRT_TR_OLD = 4.357790406860002e-38
+
+
+class D1_TheAnchorIsReadAsADoubleThroughTheProducer(unittest.TestCase):
+    """LANE C's D1, AND THE REASON MY FIRST 34 TESTS HAD NO POWER HERE.
+
+    `TheDiagonalIsTiedToTheProduct` handed `assert_diag_matches_sqrt_tr_old` a `math.sqrt(...)` -- a
+    FLOAT -- while `main` obtained the same argument through a reader that coerced it with `int()`. The
+    assertion was therefore tested on a value its own caller could never produce, and C's mutation
+    *fixing* the defect left all 34 tests green: no power in either direction.
+
+    THE FIXTURE IS BUILT FROM THE PRODUCER. Every test here starts from the bytes-side value and reaches
+    the assertion the way `main` does, through the reader, so the coercion is INSIDE the circuit under
+    test rather than outside it.
+    """
+
+    def test_int_of_the_real_anchor_IS_ZERO_which_is_the_whole_defect(self):
+        """Stated as an arithmetic fact first, so the rest of the class is not arguing about it."""
+        self.assertEqual(int(VL1_SQRT_TR_OLD), 0)
+        self.assertNotEqual(VL1_SQRT_TR_OLD, 0.0)
+
+    def test_the_DOUBLE_READER_returns_the_value_UNNARROWED(self):
+        with _WithFakeROOT({"out.root": _FakeTFile({"sqrt_tr_old": _FakeParam(VL1_SQRT_TR_OLD)})}):
+            v = W._read_double_scalar("out.root", "sqrt_tr_old")
+        self.assertIsInstance(v, float)
+        self.assertEqual(v, VL1_SQRT_TR_OLD, "no narrowing, no rounding, no coercion")
+
+    def test_the_INT_READER_REFUSES_the_anchor_instead_of_TRUNCATING_it(self):
+        """THE GUARD THAT KILLS THE CLASS RATHER THAN THE INSTANCE. A future caller reaching for the
+        wrong reader gets an error naming the key; the old reader returned 0 and carried on."""
+        with _WithFakeROOT({"out.root": _FakeTFile({"sqrt_tr_old": _FakeParam(VL1_SQRT_TR_OLD)})}):
+            with self.assertRaises(SystemExit) as cm:
+                W._read_int_scalars("out.root", ("sqrt_tr_old",))
+        msg = str(cm.exception)
+        self.assertIn("sqrt_tr_old", msg)
+        self.assertIn("NON-INTEGRAL", msg)
+        self.assertIn("_read_double_scalar", msg, "and it must name the reader to use instead")
+
+    def test_the_INT_READER_still_reads_GENUINE_INTS(self):
+        """The narrowing gets a test that it does NOT fire: all three identity keys are TParameter(int)
+        and must come back as ints, including the legitimate 0."""
+        keys = {"estimator_seed": _FakeParam(1242), "est_seed_offset": _FakeParam(1200),
+                "est_seed_offset_declared": _FakeParam(1)}
+        with _WithFakeROOT({"c.root": _FakeTFile(keys)}):
+            got = W._read_int_scalars("c.root", W.LEG_IDENTITY_KEYS)
+        self.assertEqual(got, {"estimator_seed": 1242, "est_seed_offset": 1200,
+                              "est_seed_offset_declared": 1})
+        with _WithFakeROOT({"c.root": _FakeTFile({"est_seed_offset": _FakeParam(0)})}):
+            self.assertEqual(W._read_int_scalars("c.root", ("est_seed_offset", "absent")),
+                             {"est_seed_offset": 0, "absent": None})
+
+    def test_the_ASSERTION_REFUSES_an_INT_ANCHOR_and_BLAMES_THIS_WRAPPER(self):
+        """The second line of defence, and the direction of the accusation is the point. An int-typed
+        anchor is a defect in this wrapper; the message must say so instead of comparing and then
+        blaming an input file."""
+        with self.assertRaises(SystemExit) as cm:
+            W.assert_diag_matches_sqrt_tr_old(1.9e-75, 0)
+        msg = str(cm.exception)
+        self.assertIn("TRUNCATED TO ZERO", msg)
+        self.assertIn("not in any input file", msg)
+        with self.assertRaises(SystemExit):
+            W.assert_diag_matches_sqrt_tr_old(1.9e-75, True)   # bool is an int in Python
+
+    def test_the_FULL_PRODUCER_CHAIN_at_the_REAL_MAGNITUDE_PASSES(self):
+        """THE TEST WHOSE ABSENCE WAS THE DEFECT. Value -> reader -> assertion, at 4.36e-38.
+
+        Under the old coercion this raises; it is the direct regression test for D1 and the one C's M1
+        mutation would flip.
+        """
+        n = 5
+        diag = [VL1_SQRT_TR_OLD ** 2 / n] * n
+        with _WithFakeROOT({"out.root": _FakeTFile({"sqrt_tr_old": _FakeParam(VL1_SQRT_TR_OLD)}),
+                            "c.root": _FakeTFile({"hCov_combined5d_total": _FakeTH2D(diag)})}):
+            anchor = W._read_double_scalar("out.root", "sqrt_tr_old")
+            raw, _clipped = W._read_diagonal("c.root")
+        self.assertTrue(W.assert_diag_matches_sqrt_tr_old(float(raw.sum()), anchor))
+
+
+class D1_MainSucceedsOnARealAnchorAndTheRefusalAccusesNobody(unittest.TestCase):
+    """`main` end to end, with the child stubbed. Covers C's M4 (the TOCTOU closure call deleted from
+    `main` outright) and M5 (the unclipped diagonal stamped), neither of which any pure-function test
+    can reach -- both are facts about `main`'s call graph."""
+
+    def _files(self, anchor, diag, out_keys=None):
+        out = dict(out_keys or {})
+        out["sqrt_tr_old"] = _FakeParam(anchor)
+        legs = {"estimator_seed": _FakeParam(1242), "est_seed_offset": _FakeParam(1200),
+                "est_seed_offset_declared": _FakeParam(1)}
+        legs2 = dict(legs, estimator_seed=_FakeParam(2200))
+        return {"o.root": _FakeTFile(out),
+                "c.root": _FakeTFile(dict(legs, hCov_combined5d_total=_FakeTH2D(diag))),
+                "u.root": _FakeTFile(legs2)}
+
+    def _run(self, files, env_offset="1200"):
+        import subprocess as sp
+        saved_call, saved_exists = sp.call, os.path.exists
+        saved_env = os.environ.get("MNV_EST_SEED_OFFSET")
+        calls = []
+        sp.call = lambda argv, *a, **k: calls.append(argv) or 0
+        os.path.exists = lambda p: True if p == "o.root" else saved_exists(p)
+        if env_offset is None:
+            os.environ.pop("MNV_EST_SEED_OFFSET", None)
+        else:
+            os.environ["MNV_EST_SEED_OFFSET"] = env_offset
+        try:
+            with _WithFakeROOT(files) as R:
+                W.main(["--uthrow", "u.root", "--combined", "c.root", "--out", "o.root"])
+            return calls, R
+        finally:
+            sp.call, os.path.exists = saved_call, saved_exists
+            if saved_env is None:
+                os.environ.pop("MNV_EST_SEED_OFFSET", None)
+            else:
+                os.environ["MNV_EST_SEED_OFFSET"] = saved_env
+
+    def test_main_COMPLETES_at_the_REAL_5D_MAGNITUDE_and_stamps_all_seven_keys(self):
+        """THE HEADLINE REGRESSION. C's finding was "the wrapper cannot succeed on any real product";
+        this is that sentence turned into a test, at VL1's own value."""
+        n = 4
+        diag = [VL1_SQRT_TR_OLD ** 2 / n] * n
+        files = self._files(VL1_SQRT_TR_OLD, diag)
+        calls, R = self._run(files)
+        self.assertEqual(len(calls), 1, "the pinned writer must be invoked exactly once")
+        self.assertIn("adopt_unified_5d.py", calls[0][1])
+        landed = files["o.root"]._keys
+        for k in W.STAMPED_SCALAR_KEYS:
+            self.assertIn(k, landed, f"{k} did not land")
+        self.assertIn(W.STAMPED_HISTOGRAM_KEY, landed)
+        self.assertEqual(landed["est_seed_offset"].GetVal(), 1200)
+        self.assertEqual(landed["upstream_estimator_seed_g1"].GetVal(), 1242)
+        self.assertEqual(landed["upstream_estimator_seed_g2"].GetVal(), 2200)
+        # and the output was reopened UPDATE, after both inputs were read
+        self.assertEqual(R.opened[-1], ("o.root", "UPDATE"))
+
+    def test_main_STAMPS_THE_CLIPPED_DIAGONAL_not_the_raw_one(self):
+        """C's M5. A negative diagonal entry must reach the artifact as 0. The anchor is built from the
+        RAW trace, because that is what `adopt_unified_5d.py:127` traces -- so this also pins that the
+        two are deliberately different quantities rather than an oversight."""
+        import math
+        diag = [3e-76, -1e-76, 5e-76, 2e-76]
+        anchor = math.sqrt(sum(diag))
+        files = self._files(anchor, diag)
+        self._run(files)
+        h = files["o.root"]._keys[W.STAMPED_HISTOGRAM_KEY]
+        self.assertEqual(h.nbins, 4)
+        self.assertEqual(h.contents[2], 0.0, "the negative entry must be CLIPPED in the artifact")
+        self.assertEqual(h.contents[1], 3e-76)
+        self.assertEqual(h.contents[3], 5e-76)
+        self.assertTrue(h.written)
+
+    def test_main_ACTUALLY_CALLS_the_TOCTOU_closure(self):
+        """C's M4: the closure I advertise as the compensating benefit for the extra 0.915 GB read could
+        be DELETED FROM `main` and the whole suite stayed green. The only way to catch a deleted call is
+        to make a mismatch reach `main` and require the refusal."""
+        diag = [1e-76] * 4
+        files = self._files(VL1_SQRT_TR_OLD, diag)       # anchor^2 = 1.9e-75, trace = 4e-76: mismatch
+        with self.assertRaises(SystemExit) as cm:
+            self._run(files)
+        self.assertIn("DISAGREE", str(cm.exception))
+        self.assertEqual(files["o.root"]._keys.keys() & set(W.STAMPED_SCALAR_KEYS), set(),
+                         "and it must refuse BEFORE writing anything")
+
+    def test_the_REFUSAL_DOES_NOT_ACCUSE_THE_41GB_INTERMEDIATE(self):
+        """LANE C's SECOND HALF OF D1, AND IT IS THE PART THAT COULD HAVE COST 2.087 TiB.
+
+        The old message ended "The combined intermediate is not the matrix this product was built from",
+        and the coercion defect made that the wrapper's DEFAULT output on every real product -- a false
+        corruption finding aimed at the one artifact that cannot be cheaply regenerated. The message must
+        report a DISAGREEMENT, put this wrapper first among the causes, and forbid acting on it.
+        """
+        diag = [1e-76] * 4
+        with self.assertRaises(SystemExit) as cm:
+            self._run(self._files(VL1_SQRT_TR_OLD, diag))
+        msg = str(cm.exception)
+        self.assertIn("DISAGREE", msg)
+        self.assertIn("does NOT establish which side is wrong", msg)
+        self.assertIn("DO NOT DELETE, REGENERATE OR RE-STAGE", msg)
+        self.assertIn("NOTHING HAS BEEN WRITTEN", msg)
+        self.assertIn("(1) THIS WRAPPER", msg, "this wrapper must be the FIRST cause listed")
+        for accusation in ("is not the matrix this product was built from",
+                           "refusing to write hDiagCombinedOld from it"):
+            self.assertNotIn(accusation, msg, "the old accusation must be gone, not softened")
+
+    def test_main_reads_the_ANCHOR_with_the_DOUBLE_reader(self):
+        """The call-site regression for D1, asserted at the call site rather than inferred from a pass:
+        `main` must not route the anchor through the int reader again."""
+        src = (ND / "mii_adopt_unified_5d_stamped.py").read_text()
+        body = src.split("def main(")[1]
+        self.assertIn("_read_double_scalar(a.out, TRACE_ANCHOR_KEY)", body)
+        self.assertNotIn("_read_int_scalars(a.out", body)
+
+
+class TheStampWriteDecisions(unittest.TestCase):
+    """C's M6 (double-stamp refusal deleted), M7 (read-back deleted) and M8 (read-only guard deleted).
+
+    These are decisions `_stamp_output` makes given what the file object answers, so they are testable
+    against the fake -- but ONLY as decisions. See `_FakeROOTModule` for what that does and does not
+    establish: nothing here shows a real reopen works, only that the wrapper reacts correctly to the
+    answers PyROOT's API is documented to give.
+    """
+
+    PAIRS = [("est_seed_offset_declared", 1), ("est_seed_offset", 1200)]
+    DIAG = [1.0, 2.0]
+
+    def test_a_READ_ONLY_reopen_is_REFUSED(self):
+        f = _FakeTFile({}, writable=False)
+        with _WithFakeROOT({"o.root": f}):
+            with self.assertRaises(SystemExit) as cm:
+                W._stamp_output("o.root", self.PAIRS, self.DIAG)
+        self.assertIn("cannot reopen", str(cm.exception))
+        self.assertEqual(f._keys, {}, "and nothing may be attempted against it")
+
+    def test_a_ZOMBIE_reopen_is_REFUSED(self):
+        with _WithFakeROOT({"o.root": _FakeTFile({}, zombie=True)}):
+            with self.assertRaises(SystemExit) as cm:
+                W._stamp_output("o.root", self.PAIRS, self.DIAG)
+        self.assertIn("cannot reopen", str(cm.exception))
+
+    def test_a_SECOND_STAMP_is_REFUSED_rather_than_appending_a_CYCLE(self):
+        """ROOT appends a new cycle instead of replacing a key, so a re-run would leave two answers to
+        one question inside a citable artifact. This is the guard firing."""
+        f = _FakeTFile({"est_seed_offset": _FakeParam(999)})
+        with _WithFakeROOT({"o.root": f}):
+            with self.assertRaises(SystemExit) as cm:
+                W._stamp_output("o.root", self.PAIRS, self.DIAG)
+        msg = str(cm.exception)
+        self.assertIn("already carries", msg)
+        self.assertIn("est_seed_offset", msg)
+        self.assertEqual(f._keys["est_seed_offset"].GetVal(), 999, "and the existing key is untouched")
+
+    def test_a_FAILED_WRITE_is_CAUGHT_BY_THE_READ_BACK_not_reported_as_success(self):
+        """`adopt_unified_5d.py:212-219` records the writer printing "provenance stamped" while all nine
+        writes had silently failed into a read-only file. The read-back is the whole defence, so it gets
+        a test in which the writes silently land somewhere else."""
+        sink = _FakeTFile({})
+
+        class _Deaf(_FakeTFile):
+            """`cd()` lands on a DIFFERENT directory -- BEN-106's exact hazard, modelled. The writes all
+            "succeed" and none of them reach the file the wrapper thinks it opened."""
+
+            def cd(self):
+                _FAKE_ROOT.current = sink
+                return True
+        f = _Deaf({})
+        with _WithFakeROOT({"o.root": f}):
+            with self.assertRaises(SystemExit) as cm:
+                W._stamp_output("o.root", self.PAIRS, self.DIAG)
+        self.assertEqual(f._keys, {}, "the target file got nothing")
+        self.assertIn("est_seed_offset", sink._keys, "and the writes went somewhere else entirely")
+        msg = str(cm.exception)
+        self.assertIn("did not land", msg)
+        self.assertIn("est_seed_offset", msg)
+
+    def test_the_HAPPY_PATH_writes_every_key_and_the_histogram(self):
+        """The narrowing's own direction: with a writable file and working writes, none of the three
+        guards may fire."""
+        f = _FakeTFile({})
+        with _WithFakeROOT({"o.root": f}):
+            self.assertTrue(W._stamp_output("o.root", self.PAIRS, self.DIAG))
+        self.assertEqual(f._keys["est_seed_offset"].GetVal(), 1200)
+        self.assertEqual(f._keys[W.STAMPED_HISTOGRAM_KEY].contents, {1: 1.0, 2: 2.0})
+        self.assertTrue(f.closed, "and the file is closed on the way out")
 
 
 if __name__ == "__main__":

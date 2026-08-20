@@ -37,7 +37,8 @@ the original -- a silent divergence with no error anywhere.
 =================================== WHAT IS *NOT* ESTABLISHED ===================================
 `import ROOT` raises `ModuleNotFoundError` on the lane-B development host (measured 2026-08-19,
 python 3.12.2), so EVERY ROOT-TOUCHING PATH IN THIS FILE IS CLUSTER-UNVERIFIED. Named exactly:
-`_read_scalars`, `_read_diagonal`, `_stamp_output`, and `main`'s body from the child launch onward
+`_read_int_scalars`, `_read_double_scalar`, `_read_diagonal`, `_stamp_output`, and `main`'s body
+from the child launch onward
 have never been executed. What HAS been executed locally is every pure function in this module and
 its test file. No ROOT test double is provided: a stub that cannot do what pyROOT does would be
 evidence about the stub (see the campaign's fixture rule), and the three properties that actually
@@ -313,17 +314,44 @@ def assert_diag_matches_sqrt_tr_old(trace_raw, sqrt_tr_old, rtol=TRACE_RTOL):
         _fail(f"the child's product carries no {TRACE_ANCHOR_KEY}, so the diagonal we re-read cannot "
               "be tied to the matrix the child actually adopted. Refusing to ship an unanchored "
               f"{STAMPED_HISTOGRAM_KEY}.")
+    # THE ANCHOR IS A DOUBLE AND ITS TYPE IS ASSERTED, BECAUSE THE DEFECT ARRIVED THROUGH ITS TYPE.
+    # An `int` here means the caller read a TParameter("double") through the int reader, which for the
+    # real 5D magnitude (~4.36e-38) yields exactly 0 and sends this function into a comparison it
+    # cannot pass. A bool is an int in Python, so it is excluded explicitly.
+    if isinstance(sqrt_tr_old, bool) or not isinstance(sqrt_tr_old, float):
+        _fail(f"{TRACE_ANCHOR_KEY} arrived as {type(sqrt_tr_old).__name__} {sqrt_tr_old!r}, not a "
+              "float. `adopt_unified_5d.py:177` writes it as a TParameter(\"double\") of order "
+              "1e-38, so an integer-typed anchor means it was read with `_read_int_scalars` and "
+              "TRUNCATED TO ZERO -- a defect in THIS WRAPPER, not in any input file. Refusing before "
+              "the comparison, so that the failure names its real cause.")
     want = float(sqrt_tr_old) ** 2
     got = float(trace_raw)
-    if want == 0.0:
-        ok = got == 0.0
-    else:
-        ok = abs(got - want) <= rtol * abs(want)
+    ok = (got == 0.0) if want == 0.0 else (abs(got - want) <= rtol * abs(want))
     if not ok:
-        _fail(f"the re-read diagonal of hCov_combined5d_total has trace {got!r}, but the child "
-              f"stamped {TRACE_ANCHOR_KEY}={float(sqrt_tr_old)!r} whose square is {want!r} "
-              f"(rtol={rtol}). The combined intermediate is not the matrix this product was built "
-              f"from -- refusing to write {STAMPED_HISTOGRAM_KEY} from it.")
+        # ==================== THIS MESSAGE MUST NOT ACCUSE A FILE THAT IS FINE =====================
+        # It used to end "The combined intermediate is not the matrix this product was built from",
+        # which on the cluster reads as CORRUPTION of the one artifact this campaign cannot regenerate
+        # for under 2.087 TiB -- and the coercion defect above made that false accusation the wrapper's
+        # DEFAULT output on every real product. A diagnostic that names the most expensive possible
+        # culprit had better be right, and this one cannot know: the comparison has two operands and
+        # three plausible causes, only one of which is the intermediate.
+        # SO IT REPORTS A DISAGREEMENT, ORDERS THE CAUSES BY LIKELIHOOD WITH THIS WRAPPER FIRST, AND
+        # SAYS WHAT NOT TO DO ABOUT IT.
+        _fail(f"the two readings of the OLD combined covariance's trace DISAGREE.\n"
+              f"        this wrapper re-read diag(hCov_combined5d_total) -> trace {got!r}\n"
+              f"        the child stamped {TRACE_ANCHOR_KEY}={float(sqrt_tr_old)!r} -> square "
+              f"{want!r}   (rtol={rtol})\n"
+              "        NOTHING HAS BEEN WRITTEN. This is a disagreement between two reads, and it "
+              "does NOT establish which side is wrong. In order of likelihood:\n"
+              "          (1) THIS WRAPPER read the wrong key, the wrong histogram, or coerced the "
+              "anchor's type -- the last one has already happened once and is why this check exists "
+              "in this form;\n"
+              "          (2) --combined does not name the file the child was given, so two different "
+              "matrices are being compared and both are intact;\n"
+              "          (3) the combined intermediate changed between the child's read and this one.\n"
+              "        *** DO NOT DELETE, REGENERATE OR RE-STAGE THE COMBINED INTERMEDIATE ON THE "
+              "STRENGTH OF THIS MESSAGE. *** It is 41.44 GB and ~2.087 TiB to rebuild, and causes (1) "
+              "and (2) leave it perfectly good. Check the two paths and this wrapper's reads first.")
     return True
 
 
@@ -362,18 +390,68 @@ def parse_args(argv=None):
 # Nothing below this banner has ever been executed: `import ROOT` raises ModuleNotFoundError on the
 # lane-B host. Do not read the tests beside this file as evidence about any of it.
 
-def _read_scalars(path, keys):
-    """Read `TParameter` ints from a file, INSIDE ITS OWN OPEN WINDOW. CLUSTER-UNVERIFIED."""
+def _open_for_reading(path):
+    """CLUSTER-UNVERIFIED. Factored out so both readers share one zombie check."""
     import ROOT
     f = ROOT.TFile.Open(path)
     if not f or f.IsZombie():
         _fail(f"cannot open {path} for reading")
+    return f
+
+
+def _read_int_scalars(path, keys):
+    """Read `TParameter("int")` keys, INSIDE THE FILE'S OWN OPEN WINDOW. CLUSTER-UNVERIFIED.
+
+    ================== THE FUNCTION THIS SPLIT EXISTS TO PREVENT A REPEAT OF ======================
+    THIS WAS ONE READER CALLED `_read_scalars` AND IT COERCED EVERY VALUE WITH `int()`. `main` then
+    used it for `sqrt_tr_old`, which `adopt_unified_5d.py:177` writes as a `TParameter("double")` with
+    a real value of `4.357790406860002e-38` (VL1). `int(4.357790406860002e-38) == 0`, so the anchor
+    arrived as `0`, `assert_diag_matches_sqrt_tr_old` took its `want == 0.0` branch, and THE WRAPPER
+    REFUSED EVERY REAL PRODUCT before writing a single key -- with a message that blamed the 41.44 GB
+    intermediate. Found by lane C, reproduced end-to-end on the real VL1 value.
+    A UNIVERSAL COERCION IN A READER IS A TYPE ASSERTION ABOUT EVERY KEY ANY CALLER WILL EVER PASS IT,
+    and it silently truncates rather than failing. So the readers are now TYPED AND SEPARATE: the call
+    site has to say which ROOT type it expects, and an int reader handed a genuine double FAILS CLOSED
+    rather than returning a plausible integer.
+    """
+    f = _open_for_reading(path)
     try:
         out = {}
         for k in keys:
             obj = f.Get(k)
-            out[k] = int(obj.GetVal()) if obj else None
+            if not obj:
+                out[k] = None
+                continue
+            raw = obj.GetVal()
+            # THE GUARD THAT KILLS THE CLASS AND NOT JUST THE INSTANCE. A future caller passing a
+            # double-valued key here gets an error naming the key, not a truncation. Every key this
+            # reader is used for is a TParameter("int") -- sweep_bank_5d.py:285-287,
+            # analyze_universes_5d.py:277, unified_throw_cov.py:545,550-551 -- so a non-integral value
+            # means the caller has the wrong reader, which is exactly what happened.
+            if float(raw) != int(raw):
+                _fail(f"{path}: key {k!r} holds the NON-INTEGRAL value {raw!r}. This reader is for "
+                      "TParameter(\"int\") keys and would silently TRUNCATE it. Use "
+                      "`_read_double_scalar` for a double-valued key -- truncating one is how the "
+                      "wrapper came to refuse every real product on a 4.36e-38 anchor.")
+            out[k] = int(raw)
         return out
+    finally:
+        f.Close()
+
+
+def _read_double_scalar(path, key):
+    """Read ONE `TParameter("double")` key with NO COERCION. CLUSTER-UNVERIFIED.
+
+    `GetVal()` on a `TParameter("double")` returns a Python float; it is returned as `float(...)` and
+    nothing narrows it. Separate from the int reader on purpose -- see that function's docstring for
+    the defect that made the separation necessary.
+    """
+    f = _open_for_reading(path)
+    try:
+        obj = f.Get(key)
+        if not obj:
+            return None
+        return float(obj.GetVal())
     finally:
         f.Close()
 
@@ -459,10 +537,13 @@ def main(argv=None):
     # EVERY READ COMPLETES AND CLOSES BEFORE THE OUTPUT IS OPENED. `adopt_unified_5d.py:97-102`:
     # `TFile.Open` re-points ROOT's global current directory, so writes issued after a later open
     # land in THAT file -- and a READ-mode file swallows them while the Python carries on.
-    g2_keys = _read_scalars(a.uthrow, LEG_IDENTITY_KEYS)
-    g1_keys = _read_scalars(a.combined, LEG_IDENTITY_KEYS)
+    g2_keys = _read_int_scalars(a.uthrow, LEG_IDENTITY_KEYS)
+    g1_keys = _read_int_scalars(a.combined, LEG_IDENTITY_KEYS)
     diag_raw, diag_clipped = _read_diagonal(a.combined)
-    anchor = _read_scalars(a.out, (TRACE_ANCHOR_KEY,))[TRACE_ANCHOR_KEY]
+    # A DOUBLE, READ WITH THE DOUBLE READER. `adopt_unified_5d.py:177` writes `sqrt_tr_old` as a
+    # `TParameter("double")` and the real 5D value is ~4.36e-38, so reading it through an
+    # int-coercing reader yields 0 and refuses every real product. That was the defect.
+    anchor = _read_double_scalar(a.out, TRACE_ANCHOR_KEY)
 
     assert_legs_are_one_member(g1_keys, g2_keys, off_declared, off_value)
     assert_seeds_match_their_baselines(g1_keys, g2_keys, off_declared, off_value, groups)

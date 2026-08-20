@@ -433,7 +433,7 @@ STAMP_COVERAGE = {
                "whose two legs are different members. *** ROOT WRITE PATH CLUSTER-UNVERIFIED as of "
                "2026-08-20: `import ROOT` raises ModuleNotFoundError on the lane-B host, so this "
                "boolean is a SOURCE-VERIFIED CAPABILITY CLAIM and not a demonstration. Every pure "
-               "function is executed by tests/test_remedy_a_adopt_wrapper.py; _read_scalars, "
+               "function is executed by tests/test_remedy_a_adopt_wrapper.py; the ROOT readers, "
                "_read_diagonal and _stamp_output have never run. ***",
         "products": "the IDENTITY of the two 892 MB citable adopted roots"},
 }
@@ -485,12 +485,26 @@ OPTIONAL_IDENTITY_KEYS = ("estimator_seed",)
 
 
 def identity_is_checkable(artifact):
-    """Does this artifact's writer stamp identity at all? H3, lane D.
+    """Does THIS ARTIFACT'S TABLE declare the identity keys? H3, lane D.
 
-    `anchor_identity` was called unconditionally, but ADOPTED_UTHROW and LATERAL_CV carry NO identity
-    keys -- `STAMP_COVERAGE` records `adopt_unified_5d.py: 0` and `unfold_nd_omnifold_unbinned.py: 0` as
-    the worst gap, and D confirmed it against the real file. So for THREE OF FIVE artifacts the check
-    emitted three problems every run and FAILED regardless of payload.
+    IT IS A QUESTION ABOUT THE ARTIFACT, NOT ABOUT A WRITER, and the previous sentence of this
+    docstring said "writer" -- which was wrong in a way that mattered as soon as remedy (A) became a
+    WRAPPER. The predicate reads `ARTIFACTS` (below); it cannot see writers at all, and under §25 the
+    file that stamps these keys is not the file that writes the payload. Asking it about a writer
+    invites exactly the inference that held the adopted roots out of this set for a day.
+
+    THE EVIDENCE THIS DOCSTRING USED TO CITE NO LONGER EXISTS, WHICH IS WHY THE CITATION WAS REPLACED
+    RATHER THAN REWORDED. It read *"`STAMP_COVERAGE` records `adopt_unified_5d.py: 0` and
+    `unfold_nd_omnifold_unbinned.py: 0`"* -- a TALLY schema deleted in the same commit that converted
+    that table to a boolean plus a `how` string, so the quoted numbers were doubly stale: the counts
+    are gone AND both writers' products now carry identity. Read `STAMP_COVERAGE` for the current
+    state; do not read it here.
+
+    THE HISTORY IS KEPT BECAUSE IT IS WHY THE BRANCH EXISTS: on 2026-08-18 three of five artifacts
+    carried no identity key, `anchor_identity` was called unconditionally, and the check emitted three
+    problems every run and FAILED regardless of payload. All six declare the keys as of 2026-08-20, so
+    the relaxation is currently unreachable for every real artifact -- and is retained anyway, because
+    a predicate that can no longer answer NO is not a predicate.
 
     D'S REASON THIS MATTERS MORE THAN IT LOOKS, and it is the pressure-toward-green risk arriving from
     the other side: AT STAGE 1 AN UNAVOIDABLE FAIL IS THE THING MOST LIKELY TO GET THE GATE ROUTED
