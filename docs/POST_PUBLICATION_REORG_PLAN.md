@@ -92,7 +92,7 @@ Active-tree compaction is complete only when:
 
 The evidence boundary and seven reviewed removal families reduced the active tree from 2,481 tracked
 files, 640 Markdown files, and 126,234 Markdown lines to **1,446 tracked files, 197 Markdown files,
-and **43,425 Markdown lines**. The Markdown gates are met. The 950-file gate is not met, and
+and **43,427 Markdown lines**. The Markdown gates are met. The 950-file gate is not met, and
 the failed-removal evidence below is the completion condition allowed by this plan; the count was
 not forced by weakening an active gate.
 
