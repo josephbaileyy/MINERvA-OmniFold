@@ -70,3 +70,4 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-132 | NOW | safe-default-active | OPEN — filed 2026-08-19 by lane E in the same commit as BEN-476. THE DIVERGENCE MANIFEST'S LARGEST BUCKET RESTS ON A CON |
 | OI-133 | NOW | safe-default-active | OPEN — filed 2026-08-19 by lane E with BEN-477. NOTHING BINDS A CHECKPOINT TO THE RUN THAT WROTE IT, so a member's check |
 | OI-135 | BLOCKED-EXTERNAL | explicit-blocker | BLOCKED ON maintenance_20260819 — every remaining step needs the cluster, and ssh exits 255 since 2026-08-19T13:00Z. Fil |
+| OI-136 | NOW | safe-default-active | OPEN — the hardcoded cluster root is the FAIL-OPEN twin of OI-123, and today's fast-forward made it harmless-for-now rat |
