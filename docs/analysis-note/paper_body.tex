@@ -45,8 +45,13 @@ likelihood-ratio weight, pulls that weight back to truth through the
 simulation's truth--reco pairing (treating unmatched ``miss'' events natively, so
 no separate efficiency correction is applied), and trains a second classifier to
 propagate it to a smooth truth-level reweight for the next iteration. We use
-gradient-boosted decision trees (LightGBM, 100 trees, 5 iterations) as the
-learners; the higher-dimensional unfolds simply append feature columns
+gradient-boosted decision trees (100 trees, depth-3 capacity, 5 iterations) as
+the learners: the published central value uses the \texttt{exact} backend
+(sklearn \texttt{GradientBoosting}, single-threaded exact-split CART), while the
+uncertainty ensemble --- the systematic universe sweep and the Poisson
+bootstrap --- uses LightGBM at matched capacity ($\texttt{num\_leaves}=8=2^{3}$),
+so the central value and its covariance are \emph{not} estimator-matched. The
+higher-dimensional unfolds simply append feature columns
 $(\pT,\pPar,\Eavail,q_{3},W)$. Histogramming the reweighted truth ensemble (in
 any declared reporting binning) and dividing by flux, exposure and
 target-nucleon count gives the cross section. For the finalized 2D result, the
@@ -65,7 +70,8 @@ size (median per-bin \SI{\uqMedian}{\percent} vs \SI{\uqPaper}{\percent}),
 flux-dominated as in the publication. The residual indicative paper-covariance
 distance of $\chiPaper$ per bin is shape, not normalization, and traces to the
 off-diagonal structure of the published covariance on the low-$\pT$ peak; it
-carries a $\sim1$-unit method-dependence band from the choice of GBDT estimator.
+carries a $\sim1$-unit method-dependence band from the choice of GBDT estimator
+(exact-GBT $\chiPaper$ versus LightGBM $2.65$).
 
 \begin{figure}[H]
   \centering
@@ -142,9 +148,15 @@ point-cloud transformer (PET~\cite{Mikuni:2024qsr}) provides a complementary
 recoil-representation cross-check: step~1 uses non-muon reconstructed
 calorimeter clusters and step~2 uses truth final-state hadrons with the muon
 removed. It yields an absolutely-normalized central value whose ordinary
-closure is internally consistent to $\sim\SI{\petClosure}{\percent}$ and which
-agrees with the production result at the \SI{9}{\percent} level
-(Fig.~\ref{fig:ppet}). Because the muon is used only for selection and
+closure is internally consistent to $\sim\SI{\petClosure}{\percent}$
+(Fig.~\ref{fig:ppet}). No current quantitative PET--GBDT level of agreement is
+quoted. The only such comparison that exists was taken with a two-iteration
+training, against the campaign's pinned three-iteration policy; before the
+2026-08-01 full-event schema change, which makes a pre-08-01 PET total a
+different estimator rather than a differently-trained one; and with unit
+measured weights and no background subtraction, which biases PET high, so the
+underlying gap is \emph{larger} than the withdrawn figure. It has not been
+re-extracted under the pinned configuration. Because the muon is used only for selection and
 post-hoc binning, this is not a full joint muon--hadron unfold; ordinary
 closure cannot test omitted muon dependence at fixed recoil. The study tests
 low-level point-cloud inputs without unfolding the joint muon--recoil event.
@@ -153,8 +165,9 @@ with asymmetric endpoints, a fixed estimator seed, and mean-centered throws.
 Those uncertainty products remain candidates until the selection-complete
 lateral replacement lands. The historical recoil-PET covariance is also
 quarantined: its fixed-map and retraining responses share nuisance endpoints and
-were added without their cross term. Only central-value PET comparisons are
-used here; the full-event estimator receives a fresh uncertainty budget.
+were added without their cross term. Neither a PET central-value comparison nor a
+recoil-PET covariance is used here; the full-event estimator receives a fresh
+uncertainty budget.
 
 \begin{figure}[H]
   \centering
@@ -162,8 +175,9 @@ used here; the full-event estimator receives a fresh uncertainty budget.
   \caption{Recoil-only representation cross-check: absolutely-normalized 4D
   cross section from PET versus the production scalar GBDT, per axis. Ordinary
   closure validates the extraction machinery to $\sim\SI{\petClosure}{\percent}$
-  but does not test omitted muon dependence; the total offset also reflects the
-  different training and feature contracts.}
+  but does not test omitted muon dependence. The total offset shown is a
+  two-iteration legacy result, withdrawn as a current comparison (see text) and
+  not quoted here as a level of agreement.}
   \label{fig:ppet}
 \end{figure}
 
