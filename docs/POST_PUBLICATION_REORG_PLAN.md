@@ -87,3 +87,39 @@ Active-tree compaction is complete only when:
 - a fresh clone passes the repository checks and all three publication builds;
 - independent reviewers approve every removal family;
 - the final counts and recovery commands are recorded without promoting a scientific result.
+
+## Compaction outcome — 2026-08-20
+
+The evidence boundary and seven reviewed removal families reduced the active tree from 2,481 tracked
+files, 640 Markdown files, and 126,234 Markdown lines to **1,446 tracked files, 197 Markdown files,
+and **43,425 Markdown lines**. The Markdown gates are met. The 950-file gate is not met, and
+the failed-removal evidence below is the completion condition allowed by this plan; the count was
+not forced by weakening an active gate.
+
+- The current orchestration surface has 319 files: 199 machine/guard artifacts, 32 live records,
+  87 archival records with surviving consumers, and one dead compatibility path. The exact live
+  receipt inventory remains 117 path/hash bindings at digest
+  `7586d636e6c4cde2af89e075d12d02633d21acc6709f796417ba25c37d5eec0c`.
+- The old launcher survey named 64 root N-D launchers unreferenced as of 2026-08-12. A current audit
+  found 17 had since acquired tests, policies, status routes, or current scientific consumers; those
+  stayed. The independently reviewed 47-path remainder moved to the evidence tag.
+- The remaining N-D tree has 734 files, including 89 test/fixture files and 141 flat-root shell
+  launchers. Exact consumer scans of the remaining archival Markdown and orchestration state
+  surfaces found active open-item, receipt, code, test, or quarantine dependencies on nearly every
+  further candidate. Shallow absence of a caller was not treated as proof that a standalone
+  scientific CLI was unsupported.
+- Reaching 950 would require at least 496 additional deletions. The remaining conservative
+  no-consumer scans are orders of magnitude smaller than that and include active standalone
+  diagnostics when inspected by name. Therefore another size-driven family would require changing
+  the supported reproduction surface, deleting current evidence, or weakening guards—none is
+  authorized by Lane A.
+
+Historical recovery remains:
+
+```bash
+git show evidence/prepublication-2026-08-20-0b329e8a:<old-path>
+git grep '<identifier>' evidence/prepublication-2026-08-20-0b329e8a --
+```
+
+This outcome is active-tree hygiene only. It creates no publication-results freeze and promotes no
+scientific result.
