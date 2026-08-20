@@ -21,6 +21,28 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 - Bugs and traps: [`../../KNOWN_ISSUES.md`](../../KNOWN_ISSUES.md).
 - Retracted values: [`INDEX-retracted-and-superseded-values.md`](INDEX-retracted-and-superseded-values.md).
 
+### Documents that open items route to but this router did not list
+
+Added 2026-08-20. `live_doc_indexed.py --check` reports **19 LIVE docs absent from this
+catalog and does NOT enforce it**, so an item's own governing document could be
+unreachable from the router. These five are the subset that `docs/OPEN_ITEMS.md` rows
+actually cite; the other fourteen are not routed to by any open item and are left out
+deliberately, because this file is a pointer-only router and not an exhaustive index.
+
+- [`PROVENANCE-DEBT-20260810-standard-p4.md`](PROVENANCE-DEBT-20260810-standard-p4.md) — **`OI-7`'s
+  own blocker**: its §3e is the sentence that row is open on. Cited 4× in `OPEN_ITEMS.md` and
+  reachable from no router until now.
+- [`SPEC-20260814-gate5-cstat-construction-v1.md`](SPEC-20260814-gate5-cstat-construction-v1.md) —
+  the ruled `C_stat` construction spec; cited 6×, including by `OI-93`, whose row is stale against
+  it.
+- [`RANK-AND-INVERSION-20260810.md`](RANK-AND-INVERSION-20260810.md) — the rank and pseudo-inverse
+  measurements behind the N-D χ² protocol; routed to by `OI-137`.
+- [`RECONCILIATION-20260817-gbdtfive-macros-vs-rebuilt-candidate.md`](RECONCILIATION-20260817-gbdtfive-macros-vs-rebuilt-candidate.md)
+  — traces the `\gbdtFive*` note macros to their artifacts; one of them had been destroyed.
+- [`DETERMINATION-20260811-cause5-binding-half.md`](DETERMINATION-20260811-cause5-binding-half.md),
+  [`CONVENTION-verifying-a-check-is-deployed.md`](CONVENTION-verifying-a-check-is-deployed.md) —
+  each cited once.
+
 ## Task routes
 
 | Task | Route |

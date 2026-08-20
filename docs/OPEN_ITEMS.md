@@ -3,7 +3,20 @@
 Only genuinely open leaf actions belong here. Verified numbers, defects, decisions, and chronology live in their canonical homes. The August 2026 pre-restructure record is preserved verbatim in [the archive](OPEN_ITEMS-ARCHIVE-2026-08.md).
 
 > **Starting a fresh session? Read the latest handoff first:**
-> [`orchestration/HANDOFF-20260815-0455Z.md`](orchestration/HANDOFF-20260815-0455Z.md) — **THE LATEST, and
+> [`orchestration/HANDOFF-20260820-2154Z-publication-closeout.md`](orchestration/HANDOFF-20260820-2154Z-publication-closeout.md)
+> — **THE LATEST (2026-08-20). The UNFINISHED ledger from the six-lane publication close-out.** Read §0
+> first: **exactly ONE of the nine recorded blockers is a live publication blocker** (the B1 steps 4-5
+> pause); three are PET/method-development after the `OI-126` ruling, one was ruled and closed by
+> decision, two are discharged or fixed. Before 2026-08-20 all nine READ as live because their
+> corrections were appended at the END of multi-thousand-character fields, so a session working the list
+> top-to-bottom worked the wrong queue. Also carries: the nine decisions reserved for Joseph; why
+> `MANIFEST.tsv` is blocked on exactly one dirty file owned by another session; why `build_all.sh`
+> cannot exit 0 on this host; and the two verification instruments a remedy-(A) Round 3 would need and
+> does not have.
+>
+> [`orchestration/HANDOFF-20260815-0455Z.md`](orchestration/HANDOFF-20260815-0455Z.md) — **SUPERSEDED AS
+> "THE LATEST" BY THE 08-20 HANDOFF ABOVE; still live for its own content, and this line is the "THE
+> LATEST" claim being corrected rather than left to rot. It reads as
 > it was UNINDEXED here for its whole life until 2026-08-15, which is the exact defect the rule at the end
 > of this block names.** In-flight Slurm state written before a planned reboot, the two `sacct` traps, and
 > the Leg 0 partial result. **Read its `RESOLVED TONIGHT` section with the warning now at its head:** one
