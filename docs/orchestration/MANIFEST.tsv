@@ -5,7 +5,7 @@ docs/orchestration/ADVISORY-20260813-eavail-published-conventions.md	tracked	ARC
 docs/orchestration/ADVISORY-20260813-oi30-eavail-residuals.md	tracked	ARCHIVAL	document		20260813	terminal		exact-path-only		yes	10	432	29168
 docs/orchestration/AGENTS.project-template.md	tracked	DEAD	document			superseded	AGENTS.md	never		yes	2	22	1003
 docs/orchestration/ANALYSIS-20260818-cause6-coverage-guard-detects-but-does-not-propagate.md	tracked	ARCHIVAL	document		20260818	terminal		exact-path-only		yes	1	128	8130
-docs/orchestration/AUDIT-20260819-analysis-note-vs-record.md	tracked	ARCHIVAL	audit		20260819	terminal		exact-path-only		yes	1	1093	74741
+docs/orchestration/AUDIT-20260819-analysis-note-vs-record.md	tracked	ARCHIVAL	audit		20260819	terminal		exact-path-only		yes	1	1375	94247
 docs/orchestration/AUDIT-FINDINGS-20260728.md	tracked	ARCHIVAL	audit		20260728	terminal		exact-path-only	nd-unfolding/pet/closure_fullevent_fps.py;nd-unfolding/pet/closure_powered_truth_reweight.py;nd-unfolding/pet/fullevent_fps_dataloader.py;nd-unfolding/pet/validate_pet_nominal_gate4.py;nd-unfolding/tests/test_fullevent_schema.py	yes	12	1540	105511
 docs/orchestration/AUDIT-FINDINGS-20260729-B.md	tracked	ARCHIVAL	audit		20260729	terminal		exact-path-only	nd-unfolding/pet/closure_b1_rate_injection.py;nd-unfolding/pet/demo_b5_refiner_feature_space.py;nd-unfolding/pet/gate2_target_runtime.py;nd-unfolding/pet/stress_closure_muon.py;nd-unfolding/pet/validate_pet_nominal_gate4.py;nd-unfolding/tests/test_b1_normalization_fix.py;nd-unfolding/tests/test_b4_gating.py;nd-unfolding/tests/test_fullevent_extract.py;nd-unfolding/tests/test_g2_guards_collected.py	yes	34	610	35967
 docs/orchestration/AUDIT-FINDINGS-20260729.md	tracked	ARCHIVAL	audit		20260729	terminal		exact-path-only		yes	3	565	35433
@@ -31,7 +31,8 @@ docs/orchestration/AUTHORIZATION-20260817-arm0-rerun-prohibition-lifted.md	track
 docs/orchestration/AUTHORIZATION-20260817-data-only-cstat-second-ensemble.md	tracked	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	2	125	7588
 docs/orchestration/AUTHORIZATION-20260818-mii-seed-scan-and-cause6-rebuild.md	tracked	ARCHIVAL	document		20260818	terminal		exact-path-only		yes	0	172	9947
 docs/orchestration/AUTHORIZATION-20260819-analysis-note-paper-corrections-and-push.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only		yes	2	51	2990
-docs/orchestration/AUTHORIZATION-20260819-gbdtfive-strike-and-comment-macro-move.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only		yes	0	59	4104
+docs/orchestration/AUTHORIZATION-20260819-gbdtfive-strike-and-comment-macro-move.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only		yes	1	59	4104
+docs/orchestration/AUTHORIZATION-20260819-psd-qualified-wording.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only		yes	0	61	4100
 docs/orchestration/B1-FIX-IMPLEMENTER-BRIEF.md	tracked	DEAD	document			superseded	docs/orchestration/B1-NORMALIZATION-FIX-DESIGN.md	never		yes	1	240	13246
 docs/orchestration/B1-NORMALIZATION-FIX-DESIGN.md	tracked	ARCHIVAL	document			terminal		exact-path-only	nd-unfolding/pet/closure_b1_rate_injection.py;nd-unfolding/pet/fullevent_fps_dataloader.py;nd-unfolding/pet/validate_gate2_target_receipt.py;nd-unfolding/tests/test_b1_normalization_fix.py	yes	17	388	24602
 docs/orchestration/CATALOG.md	tracked	LIVE	router			open		always	docs/orchestration/control_plane_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	16	62	18026
@@ -305,7 +306,7 @@ docs/orchestration/INVENTORY-20260819-OI130-preservation.md	tracked	ARCHIVAL	doc
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/control_plane_lint.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_g2_dump_resume.sh;docs/orchestration/watch_slurm_array_resume.sh	no	53	79	20893
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	15	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	10	61	4093
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/lanec_citation_resolution_check.py;docs/orchestration/live_doc_indexed.py	no	21	1085	188786
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/lanec_citation_resolution_check.py;docs/orchestration/live_doc_indexed.py	no	21	1086	188930
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	7	184	13929
 docs/orchestration/MAP-20260817-pet-critical-path.md	tracked	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	197	14433
 docs/orchestration/MEDIATOR-REVIEW-20260818-control-plane.md	tracked	ARCHIVAL	document		20260818	terminal		exact-path-only		yes	1	76	3421
@@ -353,7 +354,7 @@ docs/orchestration/PREDECLARE-20260811-gibuu-corner-ratio.md	tracked	ARCHIVAL	pr
 docs/orchestration/PREDECLARE-20260812-stamped-footing-adoption-candidate.md	tracked	ARCHIVAL	predeclaration		20260812	terminal		exact-path-only	nd-unfolding/sbatch_adopt_stamped_footing.sh	yes	4	68	4313
 docs/orchestration/PREDECLARE-20260817-candidate-stamp-receipt-causes-3-4.md	tracked	ARCHIVAL	predeclaration		20260817	terminal		exact-path-only	nd-unfolding/receipt_candidate_stamps_5d.py	yes	5	131	8755
 docs/orchestration/PREDECLARE-20260817-cause1-endpoint-census-and-magnitude.md	tracked	ARCHIVAL	predeclaration		20260817	terminal		exact-path-only	nd-unfolding/receipt_cause1_endpoint_census_5d.py	yes	6	158	10120
-docs/orchestration/PROCEDURE-gbdtFive-macro-update.md	tracked	LIVE	procedure			open		route-only		no	13	176	16639
+docs/orchestration/PROCEDURE-gbdtFive-macro-update.md	tracked	LIVE	procedure			open		route-only		no	15	176	16639
 docs/orchestration/PROMPTS-20260811-four-session-closeout.md	tracked	LIVE	document		20260811	open		route-only	docs/orchestration/waker_fired_but_unread.sh	no	11	396	26920
 docs/orchestration/PROPOSAL-20260815-instrumented-and-corrected-foldforward-closure.md	tracked	ARCHIVAL	document		20260815	terminal		exact-path-only	nd-unfolding/pet/closure_foldforward_instrumented.py;nd-unfolding/pet/sbatch_foldforward_instrumented_closure.sh	yes	5	168	11735
 docs/orchestration/PROPOSAL-20260815-oi126-fixed-network-propagation.md	tracked	ARCHIVAL	document		20260815	terminal		exact-path-only		yes	3	87	5513
