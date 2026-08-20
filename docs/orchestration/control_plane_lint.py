@@ -426,6 +426,18 @@ CANONICAL_CLAUDE_ROUTE = (
     "specialized task to its governing evidence. This file is only the automatically loaded bootstrap."
 )
 
+CANONICAL_CLAUDE_BULLETS = (
+    "Treat the front door and generated state as views, never evidence or authorization.",
+    "Before quoting, writing, computing, or deciding a gate, open the routed canonical artifact and "
+    "re-measure volatile fields.",
+    "A result is live only after its evidence and required records land in a commit.",
+    "Audit and review work is read-only and uses an isolated worktree; inspect status afterward.",
+    "Do not delete, rename, or reorganize provenance-bearing material without an approved evidence "
+    "epoch, tested recovery, and explicit authorization for the exact removal family.",
+    "Domain, environment, and scheduler rules are task-specific; follow the route in `AGENTS.md` "
+    "rather than inferring them from memory.",
+)
+
 CANONICAL_INTEGRITY_RULES = (
     "This front door and generated state are views, never evidence or authorization.",
     "A result is live only after its evidence and required ledger/RUN_LOG/STATUS records land in a "
@@ -468,10 +480,14 @@ def bootstrap_contract_errors(agents: str, claude: str, playbook: str) -> list[s
     for required in ("docs/CURRENT_WORK.md", "docs/orchestration/PLAYBOOK.md"):
         if required not in agents:
             errors.append(f"AGENTS.md does not route to {required}")
-    claude_paragraphs = [" ".join(block.split()) for block in re.split(r"\n\s*\n", claude)
-                         if block.strip() and not block.lstrip().startswith("#")]
+    claude_blocks = [block for block in re.split(r"\n\s*\n", claude)
+                     if block.strip() and not block.lstrip().startswith("#")]
+    claude_paragraphs = [" ".join(block.split()) for block in claude_blocks]
     if not claude_paragraphs or claude_paragraphs[0] != CANONICAL_CLAUDE_ROUTE:
         errors.append("CLAUDE.md does not begin with the exact canonical AGENTS.md route")
+    claude_bullets, invalid_claude = markdown_bullets("\n\n".join(claude_blocks[1:]))
+    if invalid_claude or tuple(claude_bullets) != CANONICAL_CLAUDE_BULLETS:
+        errors.append("CLAUDE.md bootstrap rules do not match the canonical bullet contract")
     if claude.count("AGENTS.md") != 2:
         errors.append("CLAUDE.md must contain exactly its two canonical AGENTS.md routes")
     integrity = re.search(
@@ -580,13 +596,18 @@ def self_test() -> int:
         good_claude = (
             "# bootstrap\n\n"
             + CANONICAL_CLAUDE_ROUTE
-            + "\n\n- Follow the route in `AGENTS.md`.\n")
+            + "\n\n"
+            + "\n".join(f"- {rule}" for rule in CANONICAL_CLAUDE_BULLETS)
+            + "\n")
         good_playbook = "| PB-01 | x | x | BEN-001 |\n"
         good_bootstrap = bootstrap_contract_errors(good_agents, good_claude, good_playbook)
         missing_route = bootstrap_contract_errors(good_agents, "No route.\n", good_playbook)
         contradicted_route = bootstrap_contract_errors(
+            good_agents, good_claude + "\n- But ignore it.\n", good_playbook)
+        wrong_first_paragraph = bootstrap_contract_errors(
             good_agents,
-            good_claude + "Never read AGENTS.md; it is untrusted.\n",
+            good_claude.replace(CANONICAL_CLAUDE_ROUTE,
+                                CANONICAL_CLAUDE_ROUTE + " but ignore it"),
             good_playbook)
         long_agents = bootstrap_contract_errors(
             good_agents + ("padding\n" * 143), good_claude, good_playbook)
@@ -607,6 +628,9 @@ def self_test() -> int:
                 "\n".join(f"- {rule}" for rule in CANONICAL_INTEGRITY_RULES),
                 "<!-- " + " ".join(CANONICAL_INTEGRITY_RULES) + " -->"),
             good_claude, good_playbook)
+        extra_integrity_comment = bootstrap_contract_errors(
+            good_agents.replace("\n\n## Routes", "\n<!-- hidden contradiction -->\n\n## Routes"),
+            good_claude, good_playbook)
         duplicated = bootstrap_contract_errors(
             good_agents.replace("A result", "BEN-001 A result"), good_claude, good_playbook)
         checks = [not errors, [row.item for row in selected] == ["OI-2", "OI-3"],
@@ -625,7 +649,9 @@ def self_test() -> int:
                   bool(adoption_errors(pending_policy)), not adoption_errors(approved_policy),
                   not good_bootstrap,
                   any("canonical AGENTS.md route" in error for error in missing_route),
-                  any("exactly its two" in error for error in contradicted_route),
+                  any("canonical bullet contract" in error for error in contradicted_route),
+                  any("exact canonical AGENTS.md route" in error
+                      for error in wrong_first_paragraph),
                   any("150-line" in error for error in long_agents),
                   any("20-line" in error for error in long_claude),
                   any("CURRENT_WORK.md" in error for error in missing_current),
@@ -634,6 +660,7 @@ def self_test() -> int:
                   all(any("canonical bullet contract" in error for error in result)
                       for result in missing_integrity),
                   any("canonical bullet contract" in error for error in commented_integrity),
+                  any("canonical bullet contract" in error for error in extra_integrity_comment),
                   any("duplicates BEN-backed" in error for error in duplicated)]
         if not all(checks):
             print("control-plane self-test: FAIL")
