@@ -1,6 +1,4 @@
 path	class	event_status	canonical_successor
-docs/orchestration/AGENTS.project-template.md	DEAD	superseded	AGENTS.md
-docs/orchestration/B1-FIX-IMPLEMENTER-BRIEF.md	DEAD	superseded	docs/orchestration/B1-NORMALIZATION-FIX-DESIGN.md
 docs/orchestration/CATALOG.md	LIVE	open	
 docs/orchestration/CLAIM-CLM-001.md	ARCHIVAL	terminal	
 docs/orchestration/CLAIM-CLM-002.md	ARCHIVAL	terminal	
@@ -14,35 +12,26 @@ docs/orchestration/CLAIM-CLM-009.md	ARCHIVAL	terminal
 docs/orchestration/CLAIM-CLM-010.md	ARCHIVAL	terminal	
 docs/orchestration/CLAIM-CLM-011.md	ARCHIVAL	terminal	
 docs/orchestration/CLAIM-CLM-012.md	ARCHIVAL	terminal	
-docs/orchestration/CLAIMS-ARCHIVE-2026-08.md	ARCHIVAL	terminal	
 docs/orchestration/CLAIMS.md	LIVE	open	
-docs/orchestration/CLAIMS.template.md	DEAD	superseded	docs/orchestration/CLAIMS.md
-docs/orchestration/CLAUDE.project-template.md	DEAD	superseded	CLAUDE.md
 docs/orchestration/CONVENTION-document-retention.md	LIVE	open
 docs/orchestration/CONVENTION-receipt-ingredients.md	LIVE	open
 docs/orchestration/CONVENTION-verifying-a-check-is-deployed.md	LIVE	open
 docs/orchestration/CORPUS-20260811-gates-that-cannot-fail-sweep.md	LIVE	open	
 docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md	LIVE	open	
 docs/orchestration/DETERMINATION-20260811-cause5-binding-half.md	LIVE	open	
-docs/orchestration/FINDING-20260817-testing-the-gate-disabled-the-gate.md	ARCHIVAL	terminal	
 docs/orchestration/FINDINGS.md	LIVE	open	
 docs/orchestration/INDEX-retracted-and-superseded-values.md	LIVE	open	
 docs/orchestration/LIVE-STATE.md	LIVE	generated	
 docs/orchestration/LIVE-USAGE.md	LIVE	open	
-docs/orchestration/MEDIATOR-REVIEW-20260818-control-plane.md	ARCHIVAL	terminal	""
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	LIVE	open	
 docs/orchestration/PLAYBOOK.md	LIVE	open	""
-docs/orchestration/PROPOSAL-20260818-control-plane-compaction.md	ARCHIVAL	terminal	""
-docs/orchestration/OMNIFOLD-DOSSIER.template.md	DEAD	superseded	docs/orchestration/OMNIFOLD-DOSSIER.md
 docs/orchestration/PREDECLARATION-20260812-fullevent-cstat-100-replicas.md	ARCHIVAL	superseded	docs/orchestration/PREDECLARATION-20260813-gate5-coherent-replicas-n50.md
-docs/orchestration/PREDECLARE-20260811-gibuu-corner-ratio.md	ARCHIVAL	terminal	nd-unfolding/ND_OMNIFOLD_RUN_LOG.md
 docs/orchestration/PROCEDURE-gbdtFive-macro-update.md	LIVE	open	
 docs/orchestration/PROMPTS-20260811-four-session-closeout.md	LIVE	open	
 docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md	LIVE	open	
 docs/orchestration/RANK-AND-INVERSION-20260810.md	LIVE	open	
 docs/orchestration/README.md	DEAD	superseded	docs/orchestration/CATALOG.md
 docs/orchestration/RECONCILIATION-20260817-gbdtfive-macros-vs-rebuilt-candidate.md	LIVE	open	
-docs/orchestration/RUNS.template.tsv	DEAD	superseded	docs/orchestration/RUNS.tsv
 docs/orchestration/SCHEDULING-STRATEGY.md	LIVE	open	
 docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	LIVE	open	
 docs/orchestration/SESSION-WORKFLOW.md	LIVE	open	""
@@ -57,5 +46,3 @@ docs/orchestration/control-plane/policy.json	LIVE	open	""
 docs/orchestration/control-plane/source-record-inventory.tsv	MACHINE	generated	""
 docs/orchestration/control-plane/work-items.tsv	LIVE	open	""
 docs/orchestration/control_plane_lint.py	LIVE	open	""
-docs/orchestration/fable-prompt-brevity.md	DEAD	superseded	
-docs/orchestration/followup-agent-E-g2-source-06.md	DEAD	superseded	nd-unfolding/ND_OMNIFOLD_STATUS.md

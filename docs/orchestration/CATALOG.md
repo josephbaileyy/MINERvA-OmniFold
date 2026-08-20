@@ -1,65 +1,65 @@
-# Orchestration read router
+# Orchestration router
 
-This file is a pointer-only router. [`MANIFEST.tsv`](MANIFEST.tsv) is the authority on classification and read policy.
+This is a pointer-only active-tree router. It contains no scientific evidence or authorization.
 
-## Start here
+## Current work
 
-- Complete pre-compaction evidence: tag `evidence/prepublication-2026-08-20-0b329e8a`; recover any
-  historical path with `git show evidence/prepublication-2026-08-20-0b329e8a:<old-path>`
-- Classification and exact-path lookup: [`MANIFEST.tsv`](MANIFEST.tsv)
-- Current control-plane snapshot: [`LIVE-STATE.md`](LIVE-STATE.md)
-- Bounded current-work queue: [`../CURRENT_WORK.md`](../CURRENT_WORK.md)
-- Eligible work below the cap: [`../CURRENT_WORK_OVERFLOW.md`](../CURRENT_WORK_OVERFLOW.md)
-- Active source records not promoted into the bounded queue: [`../CURRENT_WORK_BACKLOG.md`](../CURRENT_WORK_BACKLOG.md)
-- Active process playbook: [`PLAYBOOK.md`](PLAYBOOK.md)
-- Multi-session operating policy: [`SESSION-WORKFLOW.md`](SESSION-WORKFLOW.md)
-- Joseph-only choice register: [`USER-DECISIONS.md`](USER-DECISIONS.md)
-- Agent-process failure casebook (on demand): [`FINDINGS.md`](FINDINGS.md)
-- Physics-claim index: [`CLAIMS.md`](CLAIMS.md)
-- Retracted and superseded value index: [`INDEX-retracted-and-superseded-values.md`](INDEX-retracted-and-superseded-values.md)
+- Live snapshot: [`LIVE-STATE.md`](LIVE-STATE.md); run its freshness check before use.
+- Bounded queue: [`../CURRENT_WORK.md`](../CURRENT_WORK.md); sources live in
+  [`control-plane/`](control-plane/).
+- Queue overflow: [`../CURRENT_WORK_OVERFLOW.md`](../CURRENT_WORK_OVERFLOW.md).
+- Unpromoted active records: [`../CURRENT_WORK_BACKLOG.md`](../CURRENT_WORK_BACKLOG.md).
+- Active process rules: [`PLAYBOOK.md`](PLAYBOOK.md).
+- Open/deferred source records: [`../OPEN_ITEMS.md`](../OPEN_ITEMS.md).
+- Joseph-only decisions: [`USER-DECISIONS.md`](USER-DECISIONS.md).
 
-## Route by task
+## Evidence and claims
 
-| Task | Read |
+- Verified numbers: [`../../VALIDATION_LEDGER.md`](../../VALIDATION_LEDGER.md).
+- Physics claims: [`CLAIMS.md`](CLAIMS.md).
+- Active BEN identifiers: [`FINDINGS.md`](FINDINGS.md); full evidence is at the frozen tag.
+- Bugs and traps: [`../../KNOWN_ISSUES.md`](../../KNOWN_ISSUES.md).
+- Retracted values: [`INDEX-retracted-and-superseded-values.md`](INDEX-retracted-and-superseded-values.md).
+
+## Task routes
+
+| Task | Route |
 |---|---|
-| Create or dispatch a bounded worker task | [`../CURRENT_WORK.md`](../CURRENT_WORK.md), [`PLAYBOOK.md`](PLAYBOOK.md), [`TASK-HANDOFF.template.md`](TASK-HANDOFF.template.md), [`TASK.template.md`](TASK.template.md); open exact `BEN-*` evidence from [`FINDINGS.md`](FINDINGS.md) only as needed |
-| Maintain generated current-work and playbook views | [`control-plane/policy.json`](control-plane/policy.json), [`control-plane/owners.tsv`](control-plane/owners.tsv), [`control-plane/work-items.tsv`](control-plane/work-items.tsv), [`control-plane/playbook.tsv`](control-plane/playbook.tsv), generated [`control-plane/source-record-inventory.tsv`](control-plane/source-record-inventory.tsv), [`../CURRENT_WORK.md`](../CURRENT_WORK.md), [`../CURRENT_WORK_OVERFLOW.md`](../CURRENT_WORK_OVERFLOW.md), [`../CURRENT_WORK_BACKLOG.md`](../CURRENT_WORK_BACKLOG.md), [`PLAYBOOK.md`](PLAYBOOK.md) |
-| Operate or rotate Claude/Codex sessions | [`SESSION-WORKFLOW.md`](SESSION-WORKFLOW.md), [`USER-DECISIONS.md`](USER-DECISIONS.md) |
-| Record a Joseph-only choice | [`USER-DECISIONS.md`](USER-DECISIONS.md) |
-| Inspect current jobs, owners, blockers, or next action | [`LIVE-STATE.md`](LIVE-STATE.md) |
-| Check provider capacity or dispatch policy | [`LIVE-USAGE.md`](LIVE-USAGE.md), [`SCHEDULING-STRATEGY.md`](SCHEDULING-STRATEGY.md) |
-| Configure event-driven continuation | [`WAKER.md`](WAKER.md) |
-| Verify a physics claim | [`CLAIMS.md`](CLAIMS.md), [`VALIDATION_LEDGER.md`](../../VALIDATION_LEDGER.md) |
-| Quote or replace a value | [`INDEX-retracted-and-superseded-values.md`](INDEX-retracted-and-superseded-values.md), [`VALIDATION_LEDGER.md`](../../VALIDATION_LEDGER.md) |
-| Apply receipt requirements | [`CONVENTION-receipt-ingredients.md`](CONVENTION-receipt-ingredients.md) |
-| Verify a check is deployed / added a gate or hook check | [`CONVENTION-verifying-a-check-is-deployed.md`](CONVENTION-verifying-a-check-is-deployed.md). **Before characterising an existing guard, MUTATE it — `BEN-387`:** the canonical-designation occurrence count was filed as *"a crude proxy"* and measured **inverted** — silent on an in-directory repoint (the class it exists for) and red on deleting a prose sentence. Replaced 2026-08-17 by 44 declared FIELD pins in check 6, derived by [`state/regen_canonical_namespace_field_pins.py`](state/regen_canonical_namespace_field_pins.py) into [`state/canonical-namespace-field-pins-20260817.json`](state/canonical-namespace-field-pins-20260817.json). **These pin a POINTER, not bytes: green says the receipts still point where they pointed and NOTHING about whether the artifacts changed.** Also recorded there: **the dispatcher's own unlock trigger for `check_canonical_designation.py` has FIRED (it exits 0) and must not be honoured as written** — wiring it installs a check that reddens on a prose deletion, violating the admitting rule eleven lines above the trigger. Hook owner's call; unwired. **AND BEFORE PROPOSING ANY NEW HOOK CHECK, read** [`DETERMINATION-20260817-sha-identity-hook-not-buildable.md`](DETERMINATION-20260817-sha-identity-hook-not-buildable.md) — an authorized dispatcher check, measured and **NOT built**: the rule as specified rejects **66% of real sha citations**, its narrow variant's false-positive rate **grows as lanes adopt `BEN-382`'s bind-to-a-sha remedy**, and decisively **it would have caught ZERO of the two instances, because both travelled by peer message and neither was ever in a commit message** (`git log --all --grep` → nothing, for both). **The channel a defect travels on is an empirical question and a hook is a commit-channel instrument** (`BEN-388`). |
-| **Work on quarantine discharge / ask what blocks the note's GBDT section** | [`MAP-20260817-gbdt-note-section-blockers.md`](MAP-20260817-gbdt-note-section-blockers.md) — one row per cause, state derived at HEAD, and the count is **per artifact** (0 of 7 for the quoted product, 1 of 7 for its replacement). Criteria and legs: [`CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md`](CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md); cause 5: [`DETERMINATION-20260811-cause5-binding-half.md`](DETERMINATION-20260811-cause5-binding-half.md); **causes 3 and 4's shared provenance leg, measured on the adoption candidate 2026-08-17:** [`DETERMINATION-20260817-causes-3-4-provenance-measured.md`](DETERMINATION-20260817-causes-3-4-provenance-measured.md) — the `P` leg is MET for both and **neither cause is discharged**; also corrects the `P` citation both `CRITERIA` §3 and the map inherited (it named a test product), receipt `nd-unfolding/uq_5d/receipt_candidate_stamps_5d.json`; **cause 3's `M(ii)` footing, established 2026-08-17:** [`FOOTING-20260817-gbdtaiesttrace-12-seeds.md`](FOOTING-20260817-gbdtaiesttrace-12-seeds.md) — `\gbdtAiEstTrace` CANNOT serve (pre-J28, `of_inputs_5d.npz`, not the bkgaware sweep), so cause 3 discharges on three legs and needs its own measurement, costed at ~1 GPU-node-hour; **cause 1's census and magnitude, measured 2026-08-17:** [`DETERMINATION-20260817-cause1-census-and-magnitude-measured.md`](DETERMINATION-20260817-cause1-census-and-magnitude-measured.md) — `P` MET and `M` measured (the number `CRITERIA` says "does not exist anywhere"), **four METs on the letter of §0 and ROUTED not declared**; receipt `nd-unfolding/uq_5d/receipt_cause1_endpoint_census_5d.json`. **`CRITERIA` §3's cause-1 `C` cell cites `§4.8`, which does not exist — the audit is `Cause1PathAuditTests`** **Cause 3's `M(ii)` BAR — proposed 2026-08-17, awaiting a second lane's confirm/deny, no run made:** [`PROPOSAL-20260817-mii-bar-for-cause-3.md`](PROPOSAL-20260817-mii-bar-for-cause-3.md) — σ inflation ≤ 0.5% as the primary form, `sd(block_sum)/block_sum ≤ 0.10` as its consequence, derived from `VL130`'s accepted 5.40% and cause 4's relative-to-a-reference principle; six rejected alternatives with reasons. **START HERE FOR THE WHOLE PICTURE AT ONCE:** [`SCOREBOARD-20260817-quarantine-seven-causes.md`](SCOREBOARD-20260817-quarantine-seven-causes.md) — all seven causes x four legs with **CANDIDATE and QUOTED PRODUCT in separate columns**, every cell citing the artifact that establishes it. Counts reproduce at **1 of 7** candidate / **0 of 7** quoted. Three cells are weaker than the running narrative implied: cause 3's `M` is graded two ways inside `CRITERIA` and the map inherited the looser one; cause 4's `M` had a **false stated reason** (the retired specification survives at `a0cdc01` with its derivation — it was retired by an in-place edit, invisible to `--diff-filter=D`); and **cause 5's applicability to X has never been written by anyone**, so it is graded `N/A — undeclared` rather than `N/A`. Cause 7's only discharge is for a THIRD artifact (FPS, 266 bins) in neither column. |
-| **Ask what mechanism is live for `OI-126`** | [`DETERMINATION-20260817-oi126-band-is-not-the-mc-sparse-end.md`](DETERMINATION-20260817-oi126-band-is-not-the-mc-sparse-end.md) — **the MC-thinning mechanism DIES BY AVAILABILITY.** Poisson(1) thinning is uniform in share (surviving fraction 0.63205 band / 0.63253 outside vs 1−1/e = 0.63212), so it needs a local amplifier, and **the band is not the starved end: min 42 rows/cell against 1 outside, q25 912 against 421, sub-100-row cells 4.8% against 15.5%.** The amplifier is OUTSIDE the band while the effect is confined TO it. **The band MEDIAN says the opposite (2 382 vs 5 506) and is the wrong statistic — the mechanism acts through the low tail** (`BEN-412`). Killed: the amplifier. **NOT killed: the smoothness claim, and the comparability argument — the data factors are Poisson(1) too, so the nominal trains on the full inventory while every replica trains thinned. The 151 A100-h ensemble stays warranted on comparability; its predeclaration must stop citing MC-thinning.** |
-| **Build or review `C_stat^data` (the data-only ensemble)** | [`DETERMINATION-20260817-cstat-data-only-build-complete.md`](DETERMINATION-20260817-cstat-data-only-build-complete.md) — **BUILT, NOT RUN.** P1-P8 in one shared module `nd-unfolding/pet/cstat_data_only.py` (imported by both drivers; a second copy would be `OI-65`'s shape). **30 controls, 0 skipped**, each mutating a synthetic store and shown to fire. **P5 could not pass as specified** — the MC DataLoader normalizes, and the loader's own comment at `:1344-1347` rules out the identity P5 asserted — so it is split into a bit-exact zero-pattern limb and a toleranced-closure limb with the scalar derived independently (`BEN-413`). **`R` must vary**: `normalize` divides the data draw back out exactly, so freezing it yields a shape-only sigma under a total-rate name. Differential pin test: mismatch set did not grow. **NOT done: the reconciler's verdict path** (scheduled during the run, but it is the only FAMILY-level check so it must exist before anyone reads a number off the family). |
-| **Build `C_stat^data` (the data-only ensemble) / route an edit off a pinned file** | [`DETERMINATION-20260817-cstat-data-only-route-and-cost-to-build.md`](DETERMINATION-20260817-cstat-data-only-route-and-cost-to-build.md) — **the prescribed override in the replica driver CANNOT WORK for the signal stream**: `fullevent_fps_dataloader.py:1321-1325` multiplies `sig_factor` into the training weights itself and the driver only *verifies* it, so `sig_factor = 1` there changes nothing — and the multiply is not undoable (36.8% of factors are exactly zero). **Route A ships a receipt that claims unity while training consumed thinned MC, and the reconciler's own note says it is *"blind to what the LOADER applied"*.** Viable route found off the pinned files (`bootstrap_seed=None`), costed to BUILD at four sites; **not called cheap.** The reconciler needs **two** fixes — the `:519-530` replay hash comparison fails before the `:837-845` distinctness labels are reached. `BEN-411`. |
-| **Sync `CODE_ROOT` / ask whether the cluster checkout may be updated** | [`DETERMINATION-20260817-cluster-sync-step1-safe-and-the-fork-is-gone.md`](DETERMINATION-20260817-cluster-sync-step1-safe-and-the-fork-is-gone.md) — **the 08-12 fork NO LONGER EXISTS: `5fb7e38` is an ancestor of `origin/main` and 0 commits are unique to the cluster, so the operation is a FAST-FORWARD and Joseph's item-10 *"no wholesale merge"* does not govern it** — but re-run `git merge-base --is-ancestor` before relying on that, because the decision is live and only its subject has ceased to exist. Safe structurally: 0 of 128 incoming commits touch the four modified tracked files (18 touch each parent directory, so the null is covered), and 0 of 78 added paths collide with the 721 untracked artifacts. **Separate and live regardless of the sync: `p4_standard_manifest.json`'s current cluster content is cited NOWHERE** — the freeze receipt records a different digest — so it exists only on purgeable scratch. **The write itself is NOT done; it is held for Joseph.** |
-| Work on standard-P4 provenance | [`PROVENANCE-DEBT-20260810-standard-p4.md`](PROVENANCE-DEBT-20260810-standard-p4.md), [`P4_STANDARD_STATUS.md`](../../nd-unfolding/active_universe_5d/standard/P4_STANDARD_STATUS.md) |
-| Work on PET remediation | [`PET_UQ_REMEDIATION_STATUS.md`](../../nd-unfolding/PET_UQ_REMEDIATION_STATUS.md) |
-| **Build or review the Gate-5 `C_stat` covariance** | [`SPEC-20260814-gate5-cstat-construction-v1.md`](SPEC-20260814-gate5-cstat-construction-v1.md) — the written spec one builder implements, plus its machine contract `nd-unfolding/pet/gate5_cstat_contract.json`. **No implementation in either.** Pins the covaried key, the `15 x 19 = 285` grid (**not** `AGENTS.md`'s 224-cell paper grid), the flattening string, replica ordering, centring on the replica mean, `1/(N-1)`, and the reporting domain; **emits both `C_full` (285x285) and the reduced form with the reduction asserted bit-identically**. All three construction preconditions MET at 50/50 (`GATE5_EXTRACTION_FAMILY_COMPLETE_PASS`, validator `56936016`). Two live threads: `OI-94` (the family spread is **104.8x** Poisson, of which a measured non-determinism floor accounts for only 13.78% of the variance) and `CSTAT-O3` (which assembler consumes a 2D `C_stat`, given `RUNBOOK:213`'s named P5A authority was never produced). |
-| **Route PET work / find what PET is blocked on** | [`MAP-20260817-pet-critical-path.md`](MAP-20260817-pet-critical-path.md) — item-level, partitioned by blocker type; names the single decision (`OI-126`) that gates the most. Coarse July-era phase path is `SCHEDULING-STRATEGY.md:17-19`. **READ ALONGSIDE IT:** [`DETERMINATION-20260817-pet-ten-items-state-and-oi126-shape.md`](DETERMINATION-20260817-pet-ten-items-state-and-oi126-shape.md) — the ten "blocked on nothing" items re-derived from artifacts (**`OI-57` is CLOSED**, `OI-58` half-closed with a state JSON that now asserts a false claim, `OI-41` has no closure condition at all), and **the map's one-line `OI-126` summary asks a SPREAD question where the row asks a CONTAINMENT question, so its binary cannot express the row's own leading candidate** (`BEN-383`). Also: **do NOT renumber `OI-64`/`OI-65`** — §1, four reasons, one of them the check's own failure text. **Follow-on:** [`DETERMINATION-20260817-pet-oi82-oi60-oi41.md`](DETERMINATION-20260817-pet-oi82-oi60-oi41.md) — **`OI-82` CLOSED** (the "third measurement" is the numerator over a rounded denominator, `num/1e6`, bit-identical to the old comment), **`OI-60` re-costed** because the loader is hash-pinned into the Gate-2 receipt (`BEN-384`) — ~~blocked on a GATE-2 re-run~~, **corrected below: that re-run is CPU and is the cheapest blocker, not the blocker**, and **`OI-57` is `CLOSED-ON-MAIN / NOT-IN-PRODUCTION`** — the fix is absent from `CODE_ROOT`. **Before costing any remaining PET item as cheap, read** [`SWEEP-20260817-pet-pin-exposure-complete.md`](SWEEP-20260817-pet-pin-exposure-complete.md) — **SUPERSEDES** the partial [`RECOST-20260817-pet-items-pin-exposure.md`](RECOST-20260817-pet-items-pin-exposure.md), which is left in place because its `OI-61` finding stands and its error is instructive. The complete sweep runs **three** instruments — a tree-wide inventory built from `verify_hash_bindings.py`'s own collectors (173 bound files), a **digest-side** search that finds the pins the gate structurally cannot resolve (`BEN-322`), and the original perturbation probe **demoted to validator** (19/19 predictions, 0 disagreements). **What it changes: C's `OI-64` and C's `OI-65` move from cheap to BLOCKED** (the earlier pass measured a file that is not C's `OI-64`'s edit site), ~~**`OI-61` SPLITS**~~ — **STRUCK the same day by §‡ of that document: it does NOT split.** The unpinned caller's one-liner is rejected by the pinned callee's `choices=["nominal","floor"]` (`--tag replica_07` → exit 2), so **both halves ride `OI-60`'s re-issue** and a pin sweep can tell you an item is expensive but never that it is cheap (`BEN-386`). Also — **`OI-58` is confirmed cheap on two independent instruments**. `OI-96`/`OI-12`/A's `OI-64`/`OI-65` stay clean. `BEN-385`. **For `OI-60`'s price, read** [`DETERMINATION-20260817-oi60-rerun-costed.md`](DETERMINATION-20260817-oi60-rerun-costed.md) — **Gate-2 is a CPU job, not GPU** (0.41 CPU node-h, **0 A100-h**, from `sacct` on `56847028`), and the re-run is the cheapest blocker rather than the blocker: the loader digest is compared at **eleven sites of which the gate sees two**, and the family-constant in `reconcile_gate5_family.py` routes the fix to a **151.175 A100-hour** Gate-5 re-run that would not evidence the already-published family. |
-| Prepare the macro update after authorization | [`PROCEDURE-gbdtFive-macro-update.md`](PROCEDURE-gbdtFive-macro-update.md), then [`RECONCILIATION-20260817-gbdtfive-macros-vs-rebuilt-candidate.md`](RECONCILIATION-20260817-gbdtfive-macros-vs-rebuilt-candidate.md) for what each macro IS, whether the 2026-08-16 rebuild moved it (no), and the three inline `\SI{}` operands outside `values.tex` |
-| Audit the open cannot-fail sweep | [`CORPUS-20260811-gates-that-cannot-fail-sweep.md`](CORPUS-20260811-gates-that-cannot-fail-sweep.md) |
-| Interpret covariance rank or inversion | [`RANK-AND-INVERSION-20260810.md`](RANK-AND-INVERSION-20260810.md) |
-| Coordinate the current closeout sessions | [`PROMPTS-20260811-four-session-closeout.md`](PROMPTS-20260811-four-session-closeout.md) |
+| Change code | `KNOWN_ISSUES.md`, relevant status/reference, callers, tests, and hash bindings |
+| Quote a result | `VALIDATION_LEDGER.md`, then the exact product or live receipt |
+| Run or monitor compute | fresh `LIVE-STATE.md`, direct scheduler observation, then the exact launcher receipt |
+| Work on 2D/3D/N-D/PET | relevant workstream status; PET also `PET_UQ_REMEDIATION_STATUS.md` |
+| Maintain queue/playbook | [`control-plane/policy.json`](control-plane/policy.json), [`control-plane/source-record-inventory.tsv`](control-plane/source-record-inventory.tsv), then `control_plane_lint.py` |
+| Maintain classifications | `MANIFEST-overrides.tsv`, then `generate_manifest.py` |
+| Operate continuation | `WAKER.md`, `wakerctl.py`, `waker-config.json`, and `profiles.json` |
+| Build deliverables | `docs/analysis-note/build_all.sh` for note, primer, and paper |
 
-## History and machine artifacts
+## Frozen pre-compaction evidence
 
-- Complete pre-freeze tree and old paths: `evidence/prepublication-2026-08-20-0b329e8a`
-- Orchestration chronology: [`RUNS.tsv`](RUNS.tsv)
-- Workstream chronology: [`ND_OMNIFOLD_RUN_LOG.md`](../../nd-unfolding/ND_OMNIFOLD_RUN_LOG.md)
-- Archival or machine-artifact lookup: [`MANIFEST.tsv`](MANIFEST.tsv)
-- Successor lookup for a dead path: [`MANIFEST.tsv`](MANIFEST.tsv)
+Complete history, terminal receipts, long-form findings, audits, determinations, prompts, and old paths
+live at:
+
+`evidence/prepublication-2026-08-20-0b329e8a`
+
+Recover a known path without changing the current checkout:
+
+```bash
+git show evidence/prepublication-2026-08-20-0b329e8a:<old-path>
+```
+
+Search the complete frozen tree:
+
+```bash
+git grep '<identifier>' evidence/prepublication-2026-08-20-0b329e8a --
+```
+
+The independently stored bundle and recovery proof are recorded in
+[`../POST_PUBLICATION_REORG_PLAN.md`](../POST_PUBLICATION_REORG_PLAN.md).
 
 ## Regenerate
 
-Run [`generate_manifest.py`](generate_manifest.py) from the repository root:
-
 ```bash
+python3 docs/orchestration/control_plane_lint.py
 python3 docs/orchestration/generate_manifest.py
 python3 docs/orchestration/generate_manifest.py --check
 ```

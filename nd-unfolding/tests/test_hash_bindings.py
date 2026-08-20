@@ -31,6 +31,33 @@ def test_no_new_broken_hash_bindings():
         "re-issued -- do not just update the hash.\n\n" + r.stdout + r.stderr)
 
 
+def test_receipt_inventory_fires_when_a_live_binding_disappears():
+    """The epoch inventory must detect erosion, not only total collector collapse."""
+    receipt = os.path.join(_REPO, "docs", "orchestration", "state",
+                           "gate5-cstat-spec-measurements-20260814.json")
+    with open(receipt, "rb") as f:
+        original = f.read()
+    anchor = b'"sha256": "4fed4e2b7cd9444dcdec3a728cfdb9cc9088a10866efc965202592e1c37eaa8d"'
+    replacement = anchor.replace(b'"sha256"', b'"sha256_at_issue"')
+    assert original.count(anchor) == 1, "unique live-binding mutation anchor moved"
+    try:
+        with open(receipt, "wb") as f:
+            f.write(original.replace(anchor, replacement, 1))
+        r = subprocess.run([sys.executable, _VERIFIER, "--root", _REPO],
+                           capture_output=True, text=True)
+    finally:
+        with open(receipt, "wb") as f:
+            f.write(original)
+        with open(receipt, "rb") as f:
+            assert f.read() == original, f"RESTORE FAILED for {receipt}"
+    assert r.returncode == 1, (
+        "removing one live receipt binding left the verifier green; an exact inventory "
+        "must catch gradual erosion, not only collapse.\n" + r.stdout + r.stderr)
+    assert "RECEIPT BINDING INVENTORY CHANGED" in r.stdout, (
+        "the mutation failed for an unrelated reason, so inventory erosion is still untested.\n"
+        + r.stdout + r.stderr)
+
+
 # Launch-code receipts are DISCOVERED, not named. Two reasons, both learned the hard way:
 #
 #  1. A hardcoded filename plus `pytest.skip(f"{receipt} absent")` is a vacuous pass waiting to

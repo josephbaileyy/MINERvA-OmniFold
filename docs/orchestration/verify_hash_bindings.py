@@ -116,41 +116,20 @@ KNOWN_PREEXISTING = {
 SHELL_PIN_FLOOR = 15
 
 
-# Minimum RECEIPT bindings the json collector must still resolve. Added 2026-08-13
-# (lane A, on lane D's BEN-184) because until then `failed` consulted no receipt
-# count at all -- `failed = bool(new_bad) or blind or (strict and known_bad)`, where
-# `blind` covered only shell pins. Resolve ZERO receipt bindings and this file
-# printed ALL BINDINGS INTACT, which is the exact failure its own docstring says it
-# exists to catch, one layer in.
+# Exact live receipt-binding inventory at the post-freeze compaction boundary.
+# Historical receipts retired from the checkout remain recoverable at annotated tag
+# `evidence/prepublication-2026-08-20-0b329e8a`; they must not force their redundant
+# bindings to remain live forever. The former scalar floor (140) could detect a large
+# collapse but was deliberately blind to gradual erosion. This identity check is
+# stronger: it hashes every unique, resolvable (checkout-relative path, expected sha256)
+# pair after the same localization and deduplication used by the verifier.
 #
-# WHY IT IS NOT THE EXACT COUNT, unlike SHELL_PIN_FLOOR. Shell pins only ever grow:
-# launchers add guards, so an exact floor fires only when a guard is deleted.
-# Receipt bindings also SHRINK, legitimately -- retiring a superseded receipt means
-# renaming `sha256` -> `sha256_at_issue`, which is precisely what drops it from
-# collect(). An exact floor would therefore go red on a lane doing the documented
-# right thing, whose only remedy would be lowering the floor: the one move forbidden
-# here. So this floor is set BELOW the current count on purpose.
-#
-# THE ARITHMETIC, so the margin is auditable rather than a vibe. 152 resolve today
-# and all 152 are git-tracked (measured against `git ls-files`; no scratch-only
-# artifact inflates it, so a fresh clone resolves 152 too -- the hazard
-# SHELL_PIN_FLOOR's note is about does not apply). Erosion per legitimate retirement
-# is ~1, not the ~17 pins a receipt carries, because the successor re-pins the same
-# files at the same hashes and receipts dedupe on (path, hash): retiring
-# ...gate4-...20260812.json removed exactly one binding, the driver's superseded
-# digest. 140 therefore leaves ~12 retirements of headroom, while a collector that
-# has gone blind resolves ~0 and trips this immediately.
-#
-# WHAT THIS FLOOR DOES NOT DO, stated because the gap is the reason it was asked for.
-# A floor catches COLLAPSE, not EROSION. Coverage sliding 152 -> 140 one correct
-# retirement at a time is invisible to it, and at 140 the pressure to lower returns.
-# Erosion needs a different instrument -- a per-commit coverage delta, or requiring a
-# retirement to state the bindings it removes. Tracked as OI-66; do not read a green
-# here as evidence that coverage held.
-#
-# Raise this when receipts add durable bindings. Lowering it needs the same
-# justification as deleting a receipt, because that is what it launders.
-RECEIPT_BINDING_FLOOR = 140
+# Canonical serialization is UTF-8, sorted lexicographically, one
+# `<path>\t<sha256>\n` record per unique binding. Any added, removed, or repointed live
+# binding therefore requires an explicit count+digest update in the same reviewed
+# commit. No second inventory file is added to the repository.
+RECEIPT_BINDING_COUNT = 114
+RECEIPT_BINDING_SHA256 = "59a2b067c86c5a73551f6d13c49d15248c8eca77b77b29f5c8317db508e62643"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"
@@ -319,6 +298,15 @@ def localize(p, root):
     return cand if os.path.isfile(cand) else None
 
 
+def receipt_inventory(pairs, root):
+    """Return the canonical resolved receipt-binding rows and their digest."""
+    rows = sorted({(os.path.relpath(lp, root), want)
+                   for p, want, _src in pairs
+                   for lp in [localize(p, root)] if lp is not None})
+    payload = "".join(f"{rel}\t{want}\n" for rel, want in rows).encode("utf-8")
+    return rows, hashlib.sha256(payload).hexdigest()
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -328,11 +316,11 @@ def main():
                     help="also fail on the known pre-existing drift")
     a = ap.parse_args()
 
-    pairs = []
+    receipt_pairs = []
     for f in (glob.glob(os.path.join(a.root, "docs/**/*.json"), recursive=True)
               + glob.glob(os.path.join(a.root, "nd-unfolding/**/*.json"), recursive=True)):
         try:
-            collect(json.load(open(f)), os.path.relpath(f, a.root), pairs)
+            collect(json.load(open(f)), os.path.relpath(f, a.root), receipt_pairs)
         except (json.JSONDecodeError, OSError):
             continue
 
@@ -344,7 +332,7 @@ def main():
             collect_shell(open(f).read(), os.path.relpath(f, a.root), shell_pairs)
         except OSError:
             continue
-    pairs += shell_pairs
+    pairs = receipt_pairs + shell_pairs
 
     seen, ok, new_bad, known_bad, unresolved = set(), 0, [], [], 0
     receipt_resolved = 0
@@ -382,12 +370,13 @@ def main():
     shell_resolved = sum(1 for p, _, _ in shell_pairs if localize(p, a.root))
     blind = shell_resolved < SHELL_PIN_FLOOR
 
-    # Same device, for the receipt side, which had none until 2026-08-13.
-    # `receipt_resolved` is incremented inside the comparison loop above, so it counts
-    # comparisons ACTUALLY PERFORMED on receipt bindings, post-dedup. Deriving it as
-    # `total - shell_resolved` would be wrong: shell_resolved is counted pre-dedup off
-    # `shell_pairs`, and mixing the two agrees on this tree only by coincidence.
-    receipt_blind = receipt_resolved < RECEIPT_BINDING_FLOOR
+    # Identity, not a scalar floor: a floor catches collapse but permits erosion.
+    # Derive this from receipt_pairs only; shell pins are separate remediation sites.
+    receipt_rows, receipt_digest = receipt_inventory(receipt_pairs, a.root)
+    receipt_inventory_changed = (
+        len(receipt_rows) != RECEIPT_BINDING_COUNT
+        or receipt_digest != RECEIPT_BINDING_SHA256
+    )
 
     print(f"resolved {ok + len(new_bad) + len(known_bad)} bindings "
           f"({unresolved} unresolvable: data files, off-repo artifacts, binaries)")
@@ -395,7 +384,7 @@ def main():
     print(f"  {shell_resolved} of them from EXPECTED_*_SHA guards in *.sh "
           f"({len(shell_pairs)} pins seen, floor {SHELL_PIN_FLOOR})")
     print(f"  {receipt_resolved} of them from receipt bindings "
-          f"(floor {RECEIPT_BINDING_FLOOR})")
+          f"(inventory {len(receipt_rows)}, sha256 {receipt_digest})")
 
     field_ok, field_bad, _field_missing = check_field_pins(a.root)
     field_blind = (field_ok + len(field_bad)) < FIELD_PIN_FLOOR
@@ -453,14 +442,14 @@ def main():
               f"  A repoint is NOT repaired by regenerating the pin file -- that adopts\n"
               f"  whatever the receipt now says, which is this file's own forbidden move\n"
               f"  one level out. Re-issue the receipt, or justify the move in the commit.")
-    if receipt_blind:
-        print(f"\n*** RECEIPT BINDING COLLECTOR WENT BLIND ***\n"
-              f"  resolved {receipt_resolved}, expected at least "
-              f"{RECEIPT_BINDING_FLOOR}.\n"
-              f"  Either receipts were retired en masse or collect() no longer sees\n"
-              f"  their shape. Do NOT lower the floor to make this pass -- resolving\n"
-              f"  zero receipt bindings printed ALL BINDINGS INTACT until 2026-08-13,\n"
-              f"  which is this file's own failure mode one layer in (BEN-184).")
+    if receipt_inventory_changed:
+        print(f"\n*** RECEIPT BINDING INVENTORY CHANGED ***\n"
+              f"  expected {RECEIPT_BINDING_COUNT} bindings / {RECEIPT_BINDING_SHA256}\n"
+              f"  observed {len(receipt_rows)} bindings / {receipt_digest}\n"
+              f"  A live binding was added, removed, or repointed, or collect() no longer\n"
+              f"  sees its shape. Do not update these constants merely to make this pass;\n"
+              f"  inspect the inventory delta and review it with the owning receipt change.\n"
+              f"  Pre-freeze retired receipts remain at evidence/prepublication-2026-08-20-0b329e8a.")
     if blind:
         print(f"\n*** SHELL PIN COLLECTOR WENT BLIND ***\n"
               f"  resolved {shell_resolved}, expected at least {SHELL_PIN_FLOOR}.\n"
@@ -474,7 +463,7 @@ def main():
     for rel, want, got, src in new_bad:
         print(f"\nMISMATCH {rel}\n  want {want}\n  got  {got}\n  from {src}")
 
-    failed = (bool(new_bad) or blind or receipt_blind
+    failed = (bool(new_bad) or blind or receipt_inventory_changed
               or bool(field_bad) or field_blind
               or bool(uncovered) or frozen_blind
               or (a.strict and bool(known_bad)))

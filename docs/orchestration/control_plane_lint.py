@@ -39,7 +39,6 @@ BACKLOG = REPO / "docs/CURRENT_WORK_BACKLOG.md"
 PLAYBOOK = REPO / "docs/orchestration/PLAYBOOK.md"
 OPEN_ITEMS = REPO / "docs/OPEN_ITEMS.md"
 FINDINGS = REPO / "docs/orchestration/FINDINGS.md"
-FINDINGS_ARCHIVE = REPO / "docs/orchestration/FINDINGS-ARCHIVE-2026-08.md"
 AGENTS = REPO / "AGENTS.md"
 CLAUDE = REPO / "CLAUDE.md"
 ENTRYPOINTS = (CLAUDE, AGENTS)
@@ -159,7 +158,7 @@ def source_ben_ids(paths: tuple[Path, ...]) -> set[str]:
 def load_model(policy_path: Path = POLICY, owners_path: Path = OWNERS,
                work_path: Path = WORK_ITEMS, playbook_path: Path = PLAYBOOK_SOURCE,
                open_items_path: Path = OPEN_ITEMS,
-               findings_paths: tuple[Path, ...] = (FINDINGS, FINDINGS_ARCHIVE)):
+               findings_paths: tuple[Path, ...] = (FINDINGS,)):
     errors: list[str] = []
     policy = json.loads(policy_path.read_text(encoding="utf-8"))
     owner_rows = read_tsv(owners_path, OWNER_COLUMNS)
