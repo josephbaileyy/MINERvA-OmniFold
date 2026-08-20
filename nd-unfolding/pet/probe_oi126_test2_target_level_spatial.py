@@ -25,6 +25,14 @@ the 2026-08-15 push-versus-extraction split localised the band deficit to TRAINI
 extraction are BOTH downstream of the targets, so nothing on the record probes the layer above them.
 This is that probe, and that is the only inference its output supports.
 
+§5 QUOTABILITY, ADDED 2026-08-20. `RULING-20260819-lanec-reconstructed-cell-assignment-admissible.md`
+§5 rules that a Test 2 number is quotable ONLY alongside the `-1` count AND its weight share, reported
+PER ARM, and that a count alone is insufficient. This file previously reported ONE POOLED COUNT and no
+share -- and because the assignment comes from the shared reco kinematics, that count is arm-invariant
+by construction, so it was precisely the half that cannot discriminate between arms. Any number this
+probe produced would therefore have been unquotable under its own governing ruling. See
+`out_of_grid_stats` and the `QUOTABILITY_out_of_grid_by_arm` block.
+
 NO UNFOLDING, NO TRAINING, NO GPU, NO WRITE INSIDE THE PROMOTED ARM. It reads the 51 target arrays and
 the source dump's measured kinematics, and writes one JSON to a path the caller names.
 
@@ -107,6 +115,51 @@ def cell_index(pt, ppar):
     # comparison is about.
     cell = np.where(inside, ipt * n_pp + ipp, -1)
     return cell, int(n_pt * n_pp), inside
+
+
+def out_of_grid_stats(w, inside, miss):
+    """The §5 QUOTABILITY payload for ONE arm: the `-1` count AND its weight share.
+
+    `RULING-20260819-lanec-reconstructed-cell-assignment-admissible.md` §5 rules that a Test 2 number
+    is quotable ONLY alongside these, per arm, and that a COUNT ALONE IS INSUFFICIENT -- "the comparison
+    is over weighted mass, so a small count carrying large weight is the case that matters".
+
+    WHY THIS IS PER ARM WHEN THE COUNT IS NOT. The cell assignment is reconstructed from the SHARED reco
+    kinematics of the source dump, so `inside` is identical for every arm and the COUNTS below are
+    arm-invariant BY CONSTRUCTION. The WEIGHT SHARE is not: each arm is a different set of per-event
+    weights over the same events. So the count is the one quantity that cannot discriminate between arms
+    and the share is the one that can -- which is exactly why §5 requires the share and not the count.
+    Reporting only the arm-invariant half is the failure this function exists to prevent.
+
+    BOTH A SIGNED AND AN ABSOLUTE SHARE ARE RETURNED, and neither is a substitute for the other. These
+    are SIGNED weights (the refined negative-weight targets), so a signed share can be small through
+    CANCELLATION while a large amount of weight sits outside the grid. The absolute share cannot cancel.
+    A reader comparing arms should look at both; this function ranks neither and draws no conclusion.
+    """
+    w = np.asarray(w, float)
+    out = ~inside                      # out-of-grid OR FPS-miss: everything the histogram drops
+    oog = out & ~miss                  # out-of-grid PROPER, i.e. inside the dump but off the grid
+    tot_signed, tot_abs = float(w.sum()), float(np.abs(w).sum())
+
+    def _share(num, den):
+        # A zero denominator is reported as None rather than as 0.0: "no weight anywhere" and "no weight
+        # outside" are different facts, and a 0.0 here would read as the reassuring one.
+        return None if den == 0.0 else float(num / den)
+
+    return {
+        "n_dropped_total": int(out.sum()),
+        "n_out_of_grid_proper": int(oog.sum()),
+        "n_fps_miss_SENTINEL": int(miss.sum()),
+        "weight_signed_total": tot_signed,
+        "weight_signed_dropped": float(w[out].sum()),
+        "weight_signed_out_of_grid_proper": float(w[oog].sum()),
+        "weight_abs_total": tot_abs,
+        "weight_abs_dropped": float(np.abs(w[out]).sum()),
+        "weight_abs_out_of_grid_proper": float(np.abs(w[oog]).sum()),
+        "share_signed_dropped": _share(float(w[out].sum()), tot_signed),
+        "share_abs_dropped": _share(float(np.abs(w[out]).sum()), tot_abs),
+        "share_abs_out_of_grid_proper": _share(float(np.abs(w[oog]).sum()), tot_abs),
+    }
 
 
 def band_masks(n_pp):
@@ -222,13 +275,22 @@ def main():
         return h.reshape(-1, n_pp)
 
     h_nom = hist(nom)
+    # §5 quotability accounting, accumulated in the SAME pass that builds the histograms so an arm can
+    # never be histogrammed without its out-of-grid share being recorded.
+    oog_nominal = out_of_grid_stats(nom, inside, miss)
+    oog_replicas = []
     h_rep = np.zeros_like(h_nom)
-    for p, s in zip(rep_p, rep_sha):
+    for i, (p, s) in enumerate(zip(rep_p, rep_sha)):
         r = np.asarray(np.load(str(p)), float)
         if r.shape != pt.shape:
             die(f"replica target {p} has {r.shape[0]} rows, dump has {pt.shape[0]}")
         h_rep += hist(r)
+        oog_replicas.append(dict(replica_index=i, seed=SEED0 + i, **out_of_grid_stats(r, inside, miss)))
     h_rep /= float(N_REPLICAS)
+
+    if len(oog_replicas) != N_REPLICAS:
+        die(f"recorded §5 shares for {len(oog_replicas)} replicas, not {N_REPLICAS}; a Test 2 number "
+            f"is not quotable without one per arm")
 
     gap = h_rep - h_nom          # mean replica MINUS nominal, at the TARGET level
     regions = {name: float(gap[:, m].sum()) for name, m in masks.items()}
@@ -254,6 +316,32 @@ def main():
         "nominal_target_sha256": nom_sha,
         "replica_target_sha256": rep_sha,
         "source_npz_sha256_NOT_COMPUTED": "9.9 GB; digest is the caller's to supply if required",
+        # ---- §5 QUOTABILITY CONDITION, per arm and never pooled --------------------------------
+        # RULING-20260819-lanec-reconstructed-cell-assignment-admissible.md §5: a Test 2 number is
+        # quotable ONLY alongside the -1 count AND its weight share, reported PER ARM. Before
+        # 2026-08-20 this file reported a single pooled COUNT and no share at all -- i.e. exactly the
+        # arm-invariant half (see out_of_grid_stats) -- so any number it produced was unquotable under
+        # the ruling that governs it. The spread below is supplied because §5.2 asks whether the arms
+        # differ MATERIALLY; whether they do is a ruling, not a computation, so no verdict is set here.
+        "QUOTABILITY_out_of_grid_by_arm": {
+            "ruling": "RULING-20260819-lanec-reconstructed-cell-assignment-admissible.md#5",
+            "nominal": oog_nominal,
+            "replicas": oog_replicas,
+            "cross_arm_share_abs_dropped": {
+                "nominal": oog_nominal["share_abs_dropped"],
+                "replica_min": min(r["share_abs_dropped"] for r in oog_replicas),
+                "replica_max": max(r["share_abs_dropped"] for r in oog_replicas),
+                "replica_mean": float(np.mean([r["share_abs_dropped"] for r in oog_replicas])),
+                "NOTE": ("§5.2: if the nominal and the replicas differ materially here, the "
+                         "target-level gap is partly an out-of-grid-fraction difference rather than "
+                         "the spatial structure under test -- a confound, not a result. This file "
+                         "reports the shares and does not judge materiality."),
+            },
+            "WHY_COUNTS_ARE_ARM_INVARIANT": (
+                "The assignment is reconstructed from the SHARED reco kinematics, so every arm drops "
+                "the same EVENTS; only the WEIGHT carried out of the grid differs by arm. A count-only "
+                "report therefore cannot discriminate between arms, which is why §5 requires shares."),
+        },
         "target_level_gap_by_region": regions,
         "expected_from_the_measured_downstream_structure": expected,
         "sign_agreement_by_region": signs_match,
@@ -268,6 +356,13 @@ def main():
     print(f"[oi126-test2] wrote {a.out}")
     print(f"[oi126-test2] gap by region: {json.dumps(regions)}")
     print(f"[oi126-test2] sign agreement: {json.dumps(signs_match)}")
+    # Printed, not only written: §5 makes these the condition on quoting anything above, so an operator
+    # who reads the gap off the terminal must meet them in the same breath.
+    print(f"[oi126-test2] §5 out-of-grid |w| share -- nominal "
+          f"{oog_nominal['share_abs_dropped']}, replicas "
+          f"[{payload['QUOTABILITY_out_of_grid_by_arm']['cross_arm_share_abs_dropped']['replica_min']}, "
+          f"{payload['QUOTABILITY_out_of_grid_by_arm']['cross_arm_share_abs_dropped']['replica_max']}] "
+          f"over {len(oog_replicas)} arms")
     return 0
 
 
