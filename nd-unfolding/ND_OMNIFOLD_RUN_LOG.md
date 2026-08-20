@@ -10127,3 +10127,57 @@ check the claim lacks rather than a substitute for it. The claim's state is deli
 `VERDICT`/`CORRECTED_VERDICT` never disagree when both exist. General rather than scoped to this file
 — the defect is *a receipt disagreeing with itself about its own verdict*. Carries a positive control
 and fails if no receipt exercises it.
+
+## 2026-08-20 — remedy (A)'s wrapper landed, and lane C's verification FAILED it
+
+**No compute. Perlmutter refused logins throughout** (`saul.nersc.gov` prints *"Perlmutter is currently down
+for maintenance."*; array `57266000_0` still queued and unstarted, zero A100-h burned).
+
+**Landed:** `nd-unfolding/mii_adopt_unified_5d_stamped.py` (lane B, `e94ef110` + `11ab9f82`) — the unpinned
+wrapper of `DETERMINATION-20260818-...-lateral-in-g1.md` §25 and
+`RULING-20260820-lanec-stamp-coverage-is-a-file-claim-the-class-table-is-an-artifact-claim.md`:
+`adopt_unified_5d.py` invoked as a **subprocess**, its output reopened `UPDATE`, 7 keys written and read back.
+Plus the coupled table changes in `mii_root_payload_classes.py`, `mii_anchor_comparator.py`, and 19 coupled
+tests in `test_uq_remediation.py`.
+
+**Mechanically checked by the mediator as a non-builder** (`VERIFICATION-20260820-mediator-remedy-a-wrapper-mechanical.md`):
+pinned files absent from the diff, `ALL BINDINGS INTACT`, 34/34 wrapper tests, and a **symmetric** full-suite
+comparison from a detached worktree at `8602a694` — **5 failed / 1879 passed** baseline vs **5 failed / 1914
+passed**, sorted `FAILED` lists diffing to nothing: **+35 tests, 0 regressions.** Lane B had reported 7-and-7
+under random ordering; comparing its 7 against the mediator's 5 would have been an asymmetric comparison.
+
+**LANE C's VERDICT: FAIL** (`VERDICT-20260820-lanec-remedy-a-FAIL.md`), by a fresh session that was neither the
+builder nor the author of the governing ruling. **B1 steps 4-5 STAY PAUSED. The 41.44 GB intermediate is
+untouched and this verdict licenses nothing about it.**
+
+- **D1:** `mii_adopt_unified_5d_stamped.py:375` reads scalars as `int(obj.GetVal())`, but the TOCTOU anchor
+  `sqrt_tr_old` is a `TParameter("double")` = `4.357790406860002e-38` (VL1), so `int(...) == 0` and the wrapper
+  **refuses on every real product** before writing a key — `hDiagCombinedOld` is never produced. **Worse, the
+  refusal names the 41.44 GB combined intermediate as the culprit**, i.e. a false corruption report aimed at the
+  one artifact that costs 2.087 TiB to regenerate. Reproduced by C with a control; re-confirmed independently by
+  the mediator.
+- **D2:** the wrapper has **zero callers**; `sbatch_finalize_5d_bkgaware_gpu.sh:181,186` and six other launchers
+  still invoke the unwrapped writer. **A PASS would have run steps 4-5 through the unwrapped writer**, producing
+  two 892 MB roots that the just-landed class-table flip then fails closed on — the direct line from a wrong PASS
+  to the loss the pause exists to prevent. **Rewiring is a launcher change inside frozen provenance and was NOT
+  authorised or attempted.**
+- **D3:** ruling §5(e)'s prose correction, a requirement of the landing commit, is unmet at
+  `mii_root_payload_classes.py:488,491` and `mii_anchor_comparator.py:525,536-537` — the docstring still cites a
+  `STAMP_COVERAGE` **schema the same commit deleted**.
+- **The suite has zero power over the ROOT path: 6 of C's 8 mutations survived**, including deleting the entire
+  TOCTOU closure call. Cause is the fixture rule — the existing test hands the assertion a `float` while its own
+  docstring records that the traces are ~1e-76.
+
+**Passed and on the record:** exact 7-key set both directions; VL141 compliance with the row read to its end;
+pinned writer untouched with the digest re-derived and only 4 boilerplate lines shared; three of four
+specification defects real and correctly fixed with both sizes re-derived on the `cv>0` support; the table
+changes followed the ruling **including `:3872`, replaced rather than dropped**; nothing lifted as a side effect.
+
+**Also this session:** the `ssh` 255 was attributed for the first time — a day of empty exit codes was evidence
+about `~/.ssh/config:40`'s `LogLevel QUIET`, not about the cluster (`BEN-251` amendment); an expired sshproxy
+cert was ruled **not** a second blocker before anyone was asked to act on it; and lane E's
+`deploy_oi135_watcher_swap.sh` was verified by a non-builder — 66 tests OK, and PLAN mode against the genuinely
+unreachable cluster exits 2 at the first preflight with nothing mutated.
+
+**No ledger entry is filed for remedy (A), deliberately:** `VALIDATION_LEDGER.md` is for verified numbers and
+remedy (A) produced none — it FAILED, and its ROOT write path has never executed.
