@@ -3556,24 +3556,24 @@ class SubstitutionFenceS1(unittest.TestCase):
                          "a launcher is a producer or a consumer, not both")
 
     def test_the_UNCLASSIFIED_REMAINDER_IS_PINNED_because_it_is_the_real_exposure(self):
-        """245 tracked shell files are in NEITHER set, and that number is the honest statement of what
+        """199 tracked shell files are in NEITHER set, and that number is the honest statement of what
         S1 does NOT cover.
 
         THE FENCE IS ONLY AS GOOD AS THE HAZARD LIST. `FROZEN_SUBSTITUTION_HAZARDS` is nine files
-        somebody enumerated; the other 245 are unreviewed, and any of them that writes a canonical
+        somebody enumerated; the other 199 are unreviewed, and any of them that writes a canonical
         product would be an unfenced substitution. Pinning the count means the remainder cannot GROW
         silently -- a new launcher lands in NEITHER and this test reddens, which forces a classification
         rather than letting the default be "unfenced".
         """
         hooked, fenced, both, neither = self._partition()
-        self.assertEqual(len(neither), 246,
+        self.assertEqual(len(neither), 199,
                          "if this moved, a launcher was added or removed and needs classifying as "
-                         "hooked, fenced, or explicitly out of scope. 247 -> 246 when B1 made "
-                         "sbatch_finalize_5d_bkgaware_gpu.sh a member-local CONSUMER.")
-        self.assertEqual(len(hooked) + len(fenced) + len(both) + len(neither), 263,
-                         "263 LAUNCHERS = 265 tracked nd-unfolding/*.sh minus the 2 definition files. "
-                         "The number moved from 262 across a rebase: peers added launchers AND my own "
-                         "library became visible to `git ls-files` once committed.")
+                         "hooked, fenced, or explicitly out of scope. The reviewed compaction moved "
+                         "47 unreferenced launchers to the evidence tag; exact inventory sha256 "
+                         "5ec9f1184d4bd6cfdcc2ef33e3bfb854ccb4a8c928713e532b6ab023ae6bded8.")
+        self.assertEqual(len(hooked) + len(fenced) + len(both) + len(neither), 216,
+                         "216 LAUNCHERS = the pre-compaction 263 minus the reviewed 47-path "
+                         "unreferenced-launcher family.")
 
     def test_the_fence_fires_on_a_DECLARATION_including_ZERO_and_EMPTY(self):
         """DECLARED-AT-ALL, not truthy, and the k=0 case is the one worth arguing.
