@@ -25,6 +25,14 @@ the 2026-08-15 push-versus-extraction split localised the band deficit to TRAINI
 extraction are BOTH downstream of the targets, so nothing on the record probes the layer above them.
 This is that probe, and that is the only inference its output supports.
 
+QUOTABILITY IS CONDITIONAL, per `RULING-20260819-lanec-reconstructed-cell-assignment-admissible.md` §5:
+the out-of-grid (`cell == -1`) COUNT **and WEIGHT SHARE** must be reported PER ARM, not pooled, and a
+Test 2 number is quotable only alongside them. The count is arm-INVARIANT by construction (the assignment
+comes from the shared reco kinematics, so every arm gets the same masks) and is reported once; the SHARE is
+the arm-dependent half, because each arm is a different set of weights and the comparison is over weighted
+mass. See `out_of_grid_weight_share` in the payload. An earlier revision of this file reported only the
+pooled count -- i.e. exactly the half that cannot differ between arms, and none of the half that can.
+
 NO UNFOLDING, NO TRAINING, NO GPU, NO WRITE INSIDE THE PROMOTED ARM. It reads the 51 target arrays and
 the source dump's measured kinematics, and writes one JSON to a path the caller names.
 
@@ -107,6 +115,43 @@ def cell_index(pt, ppar):
     # comparison is about.
     cell = np.where(inside, ipt * n_pp + ipp, -1)
     return cell, int(n_pt * n_pp), inside
+
+
+def arm_weight_mass(w, label, *, inside, miss):
+    """One arm's weight mass split three ways, and the out-of-grid SHARE with its denominator named.
+
+    Module-level rather than a closure so the regression test can exercise THIS function instead of a
+    copy of it. `inside` and `miss` are passed in because they are properties of the SHARED assignment,
+    not of the arm -- which is the whole reason the count cannot differ across arms and the share can.
+
+    Rows partition exactly three ways: FPS misses (SENTINEL kinematics, excluded by the ruling's §4),
+    out-of-grid (`cell == -1`), and in-grid. `share_of_gridable` divides by (out + in) -- the mass the
+    grid COULD have held, which is the denominator the gap is actually computed over. `share_of_all_rows`
+    divides by the arm's total mass including misses. Both are reported because they differ by the miss
+    mass and a reader must not have to guess which one a bare "share" meant.
+
+    Plain (signed) sums, safe only because a refined target is non-negative by construction -- the loader
+    refuses a precomputed target carrying negatives. Asserted per arm rather than assumed: with mixed
+    signs a share can exceed 1 or cancel, and a silently meaningless share is worse than a missing one.
+    """
+    w = np.asarray(w, float)
+    n_neg = int((w < 0.0).sum())
+    if n_neg:
+        die(f"{label} carries {n_neg} negative weights; a refined target is non-negative by "
+            f"construction, and a weight SHARE over mixed signs is not interpretable -- refusing "
+            f"rather than publishing a share whose denominator can cancel")
+    m_miss = float(w[miss].sum())
+    m_in = float(w[inside].sum())
+    m_out = float(w[(~inside) & (~miss)].sum())
+    gridable = m_out + m_in
+    return {
+        "sum_w_all_rows": m_miss + gridable,
+        "sum_w_fps_miss": m_miss,
+        "sum_w_in_grid": m_in,
+        "sum_w_out_of_grid": m_out,
+        "share_of_gridable_signed": (m_out / gridable) if gridable > 0.0 else None,
+        "share_of_all_rows_signed": (m_out / (m_miss + gridable)) if (m_miss + gridable) > 0.0 else None,
+    }
 
 
 def band_masks(n_pp):
@@ -221,14 +266,67 @@ def main():
         h = np.bincount(cell[inside], weights=np.asarray(w, float)[inside], minlength=n_cells)
         return h.reshape(-1, n_pp)
 
+    # THE QUOTABILITY CONDITION, and it is not optional: `RULING-20260819-lanec-reconstructed-cell-
+    # assignment-admissible.md` §5 requires the `-1` COUNT **and its WEIGHT SHARE**, PER ARM (nominal and
+    # each of the 50 replicas), not pooled, in every JSON this probe writes -- "a Test 2 number is quotable
+    # only alongside those shares".
+    #
+    # WHY THE COUNT ALONE IS THE WRONG HALF, which is the thing worth not re-deriving: the cell assignment
+    # is built from the SHARED reco kinematics, so `inside` and `~inside` are the same masks for all 51
+    # arms and **the out-of-grid COUNT IS IDENTICAL ACROSS ARMS BY CONSTRUCTION**. It is the one quantity
+    # that cannot differ. What differs is the WEIGHT SHARE, because each arm is a different set of
+    # per-event weights and the comparison is over weighted MASS. Reporting the count per arm would be 51
+    # copies of one number; the count is therefore reported ONCE, below, and the share PER ARM here.
+    #
+    # DENOMINATOR, stated rather than implied (it is in the key names too). Each arm's rows partition
+    # exactly three ways: FPS misses (SENTINEL kinematics, excluded by §4), out-of-grid (`cell == -1`),
+    # and in-grid. `share_of_gridable` divides by (out + in), i.e. the mass that the grid COULD have held,
+    # which is the denominator the gap is actually computed over. `share_of_all_rows` divides by the arm's
+    # total mass including FPS misses, reported alongside because the two differ by the miss mass and a
+    # reader should not have to guess which one a "share" means.
+    #
+    # SIGNED OR ABSOLUTE: these are plain (signed) sums, and that is only safe because a refined target is
+    # non-negative by construction -- the loader refuses a precomputed target carrying negative weights.
+    # Asserted per arm rather than assumed, because with mixed signs a "share" can exceed 1 or cancel to
+    # nonsense, and a silently meaningless share is worse than a missing one.
+    def arm_mass(w, label):
+        return arm_weight_mass(w, label, inside=inside, miss=miss)
+
+    per_arm = {"nominal": dict(arm_mass(nom, "nominal target"), sha256=nom_sha)}
+
     h_nom = hist(nom)
     h_rep = np.zeros_like(h_nom)
-    for p, s in zip(rep_p, rep_sha):
+    for i, (p, s) in enumerate(zip(rep_p, rep_sha)):
         r = np.asarray(np.load(str(p)), float)
         if r.shape != pt.shape:
             die(f"replica target {p} has {r.shape[0]} rows, dump has {pt.shape[0]}")
+        # Same loop, same already-resident array: the per-arm mass costs three boolean reductions over a
+        # 4.68M float64 vector, no extra I/O and no second pass over the 9.9 GB npz, which is read once
+        # for the two scalars blocks well before this point.
+        per_arm[f"replica_{i:02d}"] = dict(arm_mass(r, f"replica {i} target"), sha256=s)
         h_rep += hist(r)
     h_rep /= float(N_REPLICAS)
+
+    # Dispersion ACROSS arms, because §5's confound is a DIFFERENCE between arms, not a level. Reported,
+    # never thresholded: whether a spread is "non-negligible" is the ruling's call, not this file's.
+    _sh = [v["share_of_gridable_signed"] for v in per_arm.values()
+           if v["share_of_gridable_signed"] is not None]
+    out_of_grid_share = {
+        "per_arm": per_arm,
+        "min_share_of_gridable": min(_sh) if _sh else None,
+        "max_share_of_gridable": max(_sh) if _sh else None,
+        "spread_max_minus_min": (max(_sh) - min(_sh)) if _sh else None,
+        "n_arms_reported": len(per_arm),
+        "WHY_COUNT_IS_NOT_PER_ARM": (
+            "the assignment comes from the shared reco kinematics, so the -1 COUNT is identical across "
+            "all 51 arms by construction; it is reported once as "
+            "n_events_out_of_grid_REPORTED_NOT_CLIPPED. Only the weight share can differ across arms."),
+        "QUOTABILITY": (
+            "RULING-20260819 §5: a Test 2 number is quotable ONLY alongside these shares, and NOT "
+            "quotable as evidence about the -0.128/+3.555/-1.828 structure if they are non-negligible "
+            "and differ across arms. This file reports the shares and their spread and does not judge "
+            "negligibility."),
+    }
 
     gap = h_rep - h_nom          # mean replica MINUS nominal, at the TARGET level
     regions = {name: float(gap[:, m].sum()) for name, m in masks.items()}
@@ -238,7 +336,10 @@ def main():
 
     payload = {
         "schema": "oi126-test2-target-level-spatial-v1",
-        "ruling": "RULING-20260817-lanec-oi126-branch-set-not-exhaustive.md#4",
+        "ruling": "RULING-20260817-lanec-oi126-branch-set-not-exhaustive.md#4 (Test 2 as specified; "
+                  "its 'loader\'s own per-event assignment' phrase was amended -- see §6 of the "
+                  "admissibility ruling); RULING-20260819-lanec-reconstructed-cell-assignment-"
+                  "admissible.md §4 (reconstructed assignment) and §5 (the quotability condition below)",
         "WHAT_THIS_DOES_NOT_SETTLE": (
             "Branch (c) is ALREADY REFUTED by lane D independently of this probe. This output "
             "adjudicates NOTHING about (c). Its only value is LOCALISATION: whether the band "
@@ -249,6 +350,7 @@ def main():
         "n_rows_fps_miss_SENTINEL": int(miss.sum()),
         "n_events_in_grid": int(inside.sum()),
         "n_events_out_of_grid_REPORTED_NOT_CLIPPED": int((~inside).sum()),
+        "out_of_grid_weight_share": out_of_grid_share,
         "grid": {"n_pt_bins": int(np.asarray(fe.CANONICAL_PT_EDGES).size - 1),
                  "n_pparallel_bins": n_pp, "n_cells": n_cells},
         "nominal_target_sha256": nom_sha,
