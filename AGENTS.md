@@ -48,7 +48,8 @@ a validated central value and a quarantined covariance at the same time.
   are complete. The covariance override does not invalidate those components.
 - Scalar 4D/5D central-value anchors and closures are complete. Current uncertainty and adoption gates
   are narrower than repeating those central campaigns.
-- The 1D binned study is a closed equivalence/debug cross-check, not a publication result.
+- The 1D binned study is a closed equivalence/debug cross-check, not a publication result; recover
+  its complete workspace at `evidence/prepublication-2026-08-20-0b329e8a:2d-unfolding/binned_study/`.
 
 ## Principal unresolved scientific question
 
