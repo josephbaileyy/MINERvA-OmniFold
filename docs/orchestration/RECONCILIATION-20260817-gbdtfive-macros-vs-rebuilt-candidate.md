@@ -64,8 +64,24 @@ The `values.tex` comments are narration. These are the derivations.
 
 ### 2a. `\gbdtFiveBlockMedian` = `13.36`
 
-**Producer:** `nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_summary.txt` — **tracked,
-487 bytes, readable, mtime Jul 23**. Line 5:
+**Producer:** `nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_summary.txt`.
+
+> **CORRECTED 2026-08-20. THIS PARAGRAPH SAID "tracked, 487 bytes, readable, mtime Jul 23" AND THAT
+> BECAME FALSE ON 2026-08-19 WITHOUT ANY GATE FIRING.** The file was **deleted from git by commit
+> `afad036e`** ("D's four defects fixed, C's rulings applied, …"), whose message has five headline
+> sections and **never mentions the deletion**; it was also absent from `/pscratch`. So the sole
+> backing artifact for a value live in the analysis note was destroyed, this document went on
+> asserting it was readable, and **nothing in the repo could detect either fact** — there is no check
+> binding a `values.tex` macro to a tracked artifact (`build_all.sh` runs only
+> `check_dead_containment.py`, which checks `\dead{}` containment).
+>
+> **RESTORED 2026-08-20** from `afad036e^`, byte-for-byte: 487 bytes, sha256
+> `b5aab7d8ca31a744dc8b904678580042b933851ce088fbe2b4d1d3e14a99fdc4`. Line 5 below is the backing for
+> `\gbdtFiveBlockMedian` = `13.36` (`combined sqrt-trace=4.3578e-38 median rel=13.359%`) and reads as
+> quoted. Found by the provenance lane while enumerating `OI-130`; it is the only artifact in that
+> enumeration that had been destroyed rather than merely left untracked.
+
+Line 5:
 
 ```
 CV: products/5d/xsec_5d_MEFHC_5iter_lgbm.root

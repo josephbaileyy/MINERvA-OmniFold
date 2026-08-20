@@ -13,7 +13,7 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-3 | BLOCKED-EXTERNAL | explicit-blocker | BLOCKED — now SCOPED, and the blocker is a decision not compute |
 | OI-4 | BLOCKED-EXTERNAL | explicit-blocker | BLOCKED |
 | OI-6 | NOW | safe-default-active | DECIDED 2026-08-15 (purity, reading (A)); the NOTE OBLIGATION IS DISCHARGED; the REVISIT OBLIGATION SURVIVES AS THE OPEN |
-| OI-7 | BLOCKED-EXTERNAL | explicit-blocker | BLOCKED |
+| OI-7 | BLOCKED-EXTERNAL | explicit-blocker | BLOCKED RE-SCOPED BY MEASUREMENT 2026-08-20: THE RESIDUAL IS DOCUMENTATION AND RECEIPT-ROUTING, NOT PHYSICS, AND IT IS S |
 | OI-9 | NOW | safe-default-active | OPEN |
 | OI-10 | NOW | safe-default-active | OPEN |
 | OI-11 | NOW | safe-default-active | OPEN |
@@ -53,7 +53,7 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-53 | WAITING-JOSEPH | explicit-user-decision | WAITING-USER |
 | OI-54 | WAITING-JOSEPH | explicit-user-decision | WAITING-USER |
 | OI-57 | NOW | safe-default-active | CLOSED-ON-MAIN / NOT-IN-PRODUCTION — SCOPE CORRECTED 2026-08-17 WITHIN THE HOUR, AGAINST MY OWN CLOSURE. I first marked |
-| OI-58 | NOW | safe-default-active | OPEN |
+| OI-58 | NOW | safe-default-active | OPEN RE-TRIAGE RECOMMENDATION 2026-08-20 AFTER THE OI-126 RULING — RECOMMENDED, NOT RULED. Recommend reclassifying as a |
 | OI-59 | NOW | safe-default-active | OPEN (raised 2026-08-13 by lane A) |
 | OI-60 | BLOCKED-EXTERNAL | explicit-blocker | RE-COSTED 2026-08-17 (lane E) — IT IS NOT "BLOCKED ON NOTHING": THE FIX IS BLOCKED ON A GATE-2 RE-RUN, BY THIS REPO'S OW |
 | OI-61 | NOW | safe-default-active | OPEN — AND RE-COSTED 2026-08-17 (lane E): IT TOUCHES A HASH-PINNED FILE, so it is not the cosmetic ride-along this row d |
@@ -71,3 +71,4 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-133 | NOW | safe-default-active | OPEN — filed 2026-08-19 by lane E with BEN-477. NOTHING BINDS A CHECKPOINT TO THE RUN THAT WROTE IT, so a member's check |
 | OI-135 | BLOCKED-EXTERNAL | explicit-blocker | BLOCKED ON maintenance_20260819 — every remaining step needs the cluster, and ssh exits 255 since 2026-08-19T13:00Z. Fil |
 | OI-136 | NOW | safe-default-active | OPEN — the hardcoded cluster root is the FAIL-OPEN twin of OI-123, and today's fast-forward made it harmless-for-now rat |
+| OI-137 | NOW | safe-default-active | OPEN — filed 2026-08-20 by the close-out orchestrator. A HAZARD THAT IS PRESENTLY UNOWNED ON THE PUBLICATION CRITICAL PA |

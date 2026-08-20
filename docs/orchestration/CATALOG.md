@@ -56,6 +56,40 @@ git grep '<identifier>' evidence/prepublication-2026-08-20-0b329e8a --
 The independently stored bundle and recovery proof are recorded in
 [`../POST_PUBLICATION_REORG_PLAN.md`](../POST_PUBLICATION_REORG_PLAN.md).
 
+### Anchored-but-unreachable commits — `git fetch github` will NEVER bring these down
+
+Several commits cited in the record are reachable from **no branch**; that is exactly why they were
+anchored by `evidence/*` tags. **Git only auto-follows tags that point at objects it is already
+downloading**, and `remote.github.fetch` is branches-only
+(`+refs/heads/*:refs/remotes/github/*`) with `remote.github.tagOpt` unset — so a tag on a commit
+unreachable from `refs/heads/*` can never arrive from an ordinary fetch. **Measured 2026-08-20: six
+of the ten `evidence/*` tags on the remote were absent from the main checkout, and `git cat-file -t`
+failed outright on all six anchored commits — including `ecee9ff1`, the one carrying
+`array_equal True across all 114,361,636 elements`.** Preservation had succeeded; discovery had not,
+and a session here would reasonably have concluded the evidence was lost.
+
+Fetch them explicitly — once per checkout:
+
+```bash
+git fetch github 'refs/tags/evidence/*:refs/tags/evidence/*'
+```
+
+Or make an ordinary `git fetch github` do it permanently, per checkout:
+
+```bash
+git config --add remote.github.fetch '+refs/tags/evidence/*:refs/tags/evidence/*'
+```
+
+**The remote is `github`.** There is no remote named `origin` — `git rev-parse origin/main` is
+fatal — so any witness phrased against `origin/…` is unfollowable as written.
+
+**Test reachability with `git for-each-ref --contains <sha>`, never `git branch -a --contains`,**
+which cannot see tags and will declare an anchored commit disposable.
+
+**Resolve citations by SHA, not by path.** A path can resolve at HEAD and read a *different* file
+with no error. Measured: `nd-unfolding/mii_anchor_comparator.py` is blob `a7cb2d9b…` at both
+`ecee9ff1` and `f7ab02ff`, and `cbeac61d…` at HEAD.
+
 ## Regenerate
 
 ```bash
