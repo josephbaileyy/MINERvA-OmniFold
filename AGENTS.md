@@ -1,530 +1,106 @@
-# MINERvA-OmniFold Agent Context
+# MINERvA-OmniFold scientific front door
 
-> **Companion file: `CLAUDE.md` (repo root).** Codex reads this file; Claude Code auto-loads `CLAUDE.md`
-> and does **not** read `AGENTS.md`. Before 2026-08-06 no `CLAUDE.md` existed, so Claude sessions started
-> with no project context at all. `CLAUDE.md` is orientation + hard rules and routes here for domain
-> depth; this file remains the full domain reference. **When you change a hard rule, a canonical-home
-> row, or the read-first order, update both.**
+This is the shared orientation surface for Codex and Claude. It summarizes the current scientific
+picture but is **not evidence or authorization**. Before quoting a result, changing code, launching
+compute, or deciding a gate, open the routed canonical artifact and re-measure any volatile state.
 
-## Project Scope
-MINERvA-101 cross-section and OmniFold studies for muon kinematics:
-- 1D **p_T** unbinned OmniFold (revalidated 2026-05-02 against playlist 1A;
-  patched to the 2D contract; OmniFold-vs-IBU comparison plot regenerated.
-  Legacy `Documents/` 2026-03-26 ROOTs remain superseded — diagnostic only)
-- 1D binned OmniFold (debug campaign complete — closure verified, found
-  equivalent to D'Agostini IBU)
-- 2D **(p_T, p_||)** double-differential — current active campaign,
-  reproducing arXiv:2106.16210. **Pipeline finalized at Phase 18.2
-  (2026-05-18).**
+## Objective and publication scope
 
-## Current Campaign — 2D OmniFold
+This repository develops MINERvA ME-FHC inclusive charged-current cross sections with unbinned
+OmniFold: the finalized 2D `(p_T, p_parallel)` reproduction of arXiv:2106.16210, a 3D
+`E_avail` extension, scalar 4D/5D extensions through `q3` and `W`, and PET/FPS full-event studies.
+Publication completion requires a ratified central value and uncertainty construction, supported
+reproduction paths, clean note/primer/paper builds, and no unresolved publication blocker.
 
-**Goal**: Reproduce arXiv:2106.16210 (Ruterbories et al., Phys. Rev. D 106,
-032001) — MINERvA ME FHC d²σ/(dp_T dp_||) CC inclusive — with 2D unbinned
-OmniFold in place of D'Agostini IBU. Validated on playlist 1A; full
-12-playlist MEFHC production complete.
+## Scientific picture
 
-**Documentation convention — one canonical home per kind of fact** (declared
-2026-06-09; a fact is WRITTEN once and INDEXED elsewhere, never re-narrated):
+The controlled states below apply to result components, not whole workstreams. A workstream may have
+a validated central value and a quarantined covariance at the same time.
 
-| Kind of fact | Canonical home |
+| Result component | State | Safe current statement | Decisive qualification | Evidence route |
+|---|---|---|---|---|
+| 2D central value and Phase-18.2 pipeline | `VALIDATED` | The 5-iteration MEFHC result is frozen at `3.073e-38 cm2/nucleon`, 1.11% above the paper total; closure, completeness, and iteration controls pass. | The paper+ours combined-covariance chi-square double-counts shared systematics and is not the standalone validation claim. | `2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md`; `VALIDATION_LEDGER.md` |
+| 2D standalone uncertainty construction | `VALIDATED` | The MAT-conformant, flux-fixed 187-universe construction plus statistical and ML blocks gives a 6.87% median relative budget. | Quote only the committed matched-CV construction; predecessor covariance rollups are superseded. | 2D status; `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`; ledger |
+| 3D central value, marginal anchor, and closure | `VALIDATED` | The 3D `E_avail` result is complete; its marginal normalization recovers 2D and the injected-shape closure passes. | There is no published 3D reference; the anchor and closure validate the central result, not the old covariance-dependent significances. | `3d-unfolding/3D_OMNIFOLD_STATUS.md`; ledger |
+| Historical 3D covariance and generator significances | `QUARANTINED` | No historical rank-247 block-sum covariance chi-square or significance is a publication number. | The quotable covariance must be projected from the final adopted, selection-complete 5D trunk. | 3D status, “covariance-gate override” |
+| Scalar 4D/5D central values and closures | `VALIDATED` | The 4D and 5D central results pass their dimensional anchors and injected-variable closures. | This does not revive superseded unified covariance products or dependent significances. | `nd-unfolding/ND_OMNIFOLD_STATUS.md`; ledger |
+| Corrected scalar 5D covariance | `VALIDATED` | The background-aware corrected 5D GBDT covariance is the current scalar-5D uncertainty product. | Adoption and provenance of later standard-P4/PET-derived candidates remain separate decisions; read the exact current item before use. | N-D status; `nd-unfolding/uq_5d/`; ledger |
+| Historical unified 4D/FPS and PET uncertainty products | `QUARANTINED` | Old unified 4D/FPS covariances, old PET precision comparisons, `(E_avail,W)` covariance, and dependent significances are unquotable. | Corrected 5D and PET records supersede only the scopes they explicitly name; no replacement is implied for every historical component. | N-D status, “Quarantined historical results”; `KNOWN_ISSUES.md` |
+| PET central/statistical pairing (`C_stat`) | `EXISTS — UNVERIFIED` | A 50-member `C_stat` artifact exists, but it is not independently verified and is not paired with a ratified central value. | The nominal lies outside its replica family over a decision-bearing region; construction is not scientific adoption. | `docs/orchestration/LIVE-STATE.md`; `docs/OPEN_ITEMS.md` `OI-126`; ledger `VL132` |
+| PET ML covariance / Gate 6 | `BLOCKED` | No `C_ML` is constructed and Gate 6 remains blocked. | Before any action read the exact `prohibitions_applied` keys in `docs/orchestration/state/gate6-member-trajectories-result-56847059.json`; do not paraphrase them. | Gate-6 receipt; N-D status |
+| Standard-P4 and related adoption candidates | `EXISTS — UNVERIFIED` | Mechanical, code, or packet checks may pass without making a candidate adoptable. | A matching hash, successful construction, or worker agreement is not independent verification or adoption. | `docs/CURRENT_WORK.md`; exact governing `OI-*` record and receipt |
+
+## Quarantined and superseded traps
+
+- `OI-132` forbids quoting its historical divergence split until every member is reclassified with
+  `bootstrap_seed` present. Do not reproduce the prohibited values in summaries.
+- `C_stat` must never be shortened to “verified,” “adopted,” or “the statistical uncertainty.” Its
+  existence, digest, and ledger row do not supply the missing independent check or central pairing.
+- Gate 6 is controlled by five exact receipt keys. Route to the receipt rather than translating them.
+- Legacy pre-MINOS-fix 1D outputs, pre-Phase-18 2D outputs, and superseded covariance families remain
+  diagnostic or historical only.
+
+## Complete work that should not be repeated
+
+- The 2D Phase-18.2 production, closure, completeness, iteration, model-comparison, and literature
+  validation campaigns are complete. Reopen them only for new evidence or an explicit question.
+- The 3D framework, central unfold, marginal anchor, injected-shape closure, and generator comparison
+  are complete. The covariance override does not invalidate those components.
+- Scalar 4D/5D central-value anchors and closures are complete. Current uncertainty and adoption gates
+  are narrower than repeating those central campaigns.
+- The 1D binned study is a closed equivalence/debug cross-check, not a publication result.
+
+## Principal unresolved scientific question
+
+The publication-limiting question is whether the PET estimator's nominal-versus-bootstrap displacement
+represents an uncertainty that should be published as estimator instability, or shows that the current
+bootstrap/central pairing is scientifically invalid and must be replaced. This is `OI-126`; engineering
+defects and scheduler activity are subordinate unless they change the evidence available for that
+decision.
+
+## Next three scientific actions
+
+1. Independently verify the existing `C_stat` ingredients and re-derive the nominal-versus-family
+   containment and tail geometry, producing one `OI-126` decision packet without new training. Rebuild
+   `OI-132`'s partition only if that packet relies on its divergence-coverage classification.
+2. Resolve `OI-126` from that packet: ratify an honest central/statistical pairing or specify the
+   replacement construction and the evidence it must supply.
+3. Authorize new compute only if the named decision cannot be answered from existing products; bind
+   any run to the unresolved quantity it measures and state what a terminal result cannot authorize.
+
+## Decisions reserved for Joseph
+
+- The `OI-126` scientific interpretation and resulting central/statistical pairing.
+- Any publication adoption or replacement that changes the central estimator, uncertainty model, or
+  claims in the note.
+- Construction of `C_ML`, changed Gate-6 compute beyond existing authorization, and material resource
+  commitments not already covered by a standing grant.
+
+## Minimal integrity rules
+
+- A scientific result is live only after its evidence and required ledger/RUN_LOG/STATUS records land
+  in a commit. Uncommitted or merely relayed results are not quotable.
+- Worker agreement is not independence. Trace agreeing statements to their first measurement and count
+  shared origins once.
+- Generated state is a view, not truth. Run its freshness check, then observe the governing source or
+  scheduler before acting.
+- Audit and review work is read-only. Use isolated worktrees, inspect status afterward, and never freeze
+  an auditor's silent edit into a receipt.
+- Do not delete, rename, or reorganize provenance-bearing material before an approved evidence epoch,
+  a tested recovery path, and explicit authorization for the exact removal family.
+- Domain-specific contracts live behind task routes. Do not reconstruct a pipeline from this summary.
+
+## Evidence routes
+
+| Task | Read next |
 |---|---|
-| Verified numbers (anything technote-quoted) | `VALIDATION_LEDGER.md` |
-| Bugs, code debt, recurring traps (index) | `KNOWN_ISSUES.md` |
-| Current priority and routing | generated `docs/CURRENT_WORK.md`; unpromoted active records in generated `docs/CURRENT_WORK_BACKLOG.md` |
-| Open / deferred item records | `docs/OPEN_ITEMS.md` |
-| Current state per workstream | `*_STATUS.md` (kept short; prune on update) |
-| Chronology / archaeology | `*_RUN_LOG.md` (append-only, never trimmed) |
-| Durable invariants & gotchas (full detail) | `2d-unfolding/2D_OMNIFOLD_REFERENCE.md` (shared by 3D/ND) |
-| Deliverables | `docs/analysis-note/` (Overleaf subtree; ALL THREE builds: note/primer/paper), slides |
-| **Active operating lessons** | generated `docs/orchestration/PLAYBOOK.md` — bounded, points to `BEN-*` |
-| **How agents/campaigns fail** (evidence/casebook) | `docs/orchestration/FINDINGS.md` — `BEN-*` ledger |
-| **Physics claims + verification status** | `docs/orchestration/CLAIMS.md` — `CLM-*` ledger |
-| Long-form finding detail | `docs/orchestration/FINDING-<YYYYMMDD>-<slug>.md`, indexed at the top of `FINDINGS.md` |
-
-`docs/PREPUB_READINESS.md` and `docs/FUTURE_DIRECTIONS.md` are RETIRED
-tombstones (content → OPEN_ITEMS/KNOWN_ISSUES/ledger; full text in git
-history). `docs/technote/` is RETIRED (2026-07-02): the note lives ONLY in
-the `docs/analysis-note/` Overleaf subtree, which carries all three builds
-(`build_all.sh` → main_note / main_primer / main_paper).
-
-**Commit gate (declared 2026-07-02, after the June doc-staleness audit): a
-result does not exist until its commit lands.** The commit that introduces a
-campaign's scripts/launchers must ALSO carry its products summary (JSON/txt)
-and the ledger entry + RUN_LOG entry + STATUS one-liner. An uncommitted
-result is not quotable in the note and must not be relied on by other
-sessions (claude-school runs this repo concurrently — unpushed work is
-invisible to it). When a result lands: ledger entry (numbers) + RUN_LOG
-entry (narrative) + STATUS one-liner — nothing else.
-
-**Per-workstream mirror.** Each analysis workstream keeps its own STATUS +
-RUN_LOG co-located in its directory, prefixed by dimensionality
-(`2D_OMNIFOLD_*`, `3D_OMNIFOLD_*`, `ND_OMNIFOLD_*`).
-
-**Authoritative docs (read these before touching the pipeline):**
-- `docs/orchestration/LIVE-STATE.md` — **read BEFORE FINDINGS.** GENERATED control-plane snapshot
-  (campaign, DAG node, declared state, owners, live jobs, armed watches). ~70 lines. It is the only
-  doc that answers *"what is happening right now"*; everything below answers "what is true in
-  general". Regenerate with `generate_live_state.py`; never hand-edit. Verify its `Observed:`/`Git:`
-  fields against `HEAD` before trusting it.
-- `docs/orchestration/CATALOG.md` — pointer-only router for `docs/orchestration/` (498 files, ~14%
-  live). Route by task rather than reading the directory; `MANIFEST.tsv` is the classification
-  authority, `CONVENTION-document-retention.md` the rule for keeping it true.
-- `docs/CURRENT_WORK.md` — generated bounded attention queue (10–15 leaves). Never hand-edit it;
-  change the `docs/orchestration/control-plane/` sources and regenerate. Read the cited `OI-*` row
-  before acting; terminal and merely deferred records stay off this default surface.
-- `docs/CURRENT_WORK_BACKLOG.md` — generated list of active source records without a promoted leaf.
-  Read when reprioritizing; omission from the bounded queue is not retirement.
-- `docs/orchestration/PLAYBOOK.md` — generated bounded active process rules (15–25), each backed by
-  `BEN-*` evidence and an observable check. Read this before the full casebook.
-- `docs/orchestration/FINDINGS.md` — the full `BEN-*` process-failure casebook. Read **on demand** by
-  id when the playbook, a task, or a review routes you there; do not context-load it wholesale.
-- `KNOWN_ISSUES.md` — bugs/traps index. Read FIRST among code docs.
-- `2d-unfolding/2D_OMNIFOLD_REFERENCE.md` — stable invariants and gotchas (shared 2D+3D+ND).
-- `2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md` — 2D dashboard, current numbers, next actions.
-- `2d-unfolding/2D_OMNIFOLD_RUN_LOG.md` — 2D append-only chronology of phases 1-18.2.
-- `2d-unfolding/PLOT_GUIDE.md` — PNG reading guide.
-- `3d-unfolding/3D_OMNIFOLD_STATUS.md` — 3D Eavail dashboard (Workstream C).
-- `3d-unfolding/3D_OMNIFOLD_RUN_LOG.md` — 3D append-only chronology (C1→C2→C3).
-- `nd-unfolding/ND_OMNIFOLD_STATUS.md` / `ND_OMNIFOLD_RUN_LOG.md` — N-D (4D/5D/FPS) workstream.
-- `nd-unfolding/PET_UQ_REMEDIATION_STATUS.md` — ordered PET-only remediation
-  DAG, reuse/rerun matrix, and the gate for targeted versus full per-universe
-  retraining. Read before launching PET UQ work.
-
-**BEN filing pressure.** Search `FINDINGS.md`, its archives, and long forms before adding a row.
-Amend or cross-reference an existing mechanism unless the new finding changes an executable check,
-an active `PLAYBOOK.md` rule, or an existing BEN's established scope. Put chronology and detailed
-evidence in a long-form finding rather than expanding the index row.
-
-Recurring operating rules are written only in generated `PLAYBOOK.md`. The domain reference may
-route to a playbook key but must not maintain a second prose copy of an active rule.
-
-**Headline numbers (Phase 18.2 MEFHC, 5-iter production):**
-- σ_total = 3.073e-38 cm²/nucleon (paper: 3.039e-38; ours runs 1.12 % high).
-- Strict-interior χ²/ndf vs paper (185 bins, full cov) = 3.549.
-- All-reported-bins χ²/ndf (205 bins) = 3.565.
-- Median bin ratio (ours/paper, strict interior) = 1.0084.
-- Bins within 5/10/20 % of paper (185 strict interior) = 81.1 / 95.7 / 98.4 %.
-- Global OmniFold input completeness c = 1.000000 (exact by construction).
-
-**Defining properties of the Phase-18.2 pipeline:**
-1. **Truth-tree-authoritative reco gate.** Event loop walks `mc_truth_denom`
-   first to build a `(mc_run, mc_subrun, mc_nthEvtInFile)` key set, then
-   walks reco and fills `mc_signal_reco` only when the key is in the set.
-   Truth-only events are appended as native OmniFold miss entries.
-2. **Bilateral upstream-dup dedupe.** Both loops dedupe on the same key
-   (handles 1,102 truth + 7 reco duplicates from one upstream-double-filled
-   AnaTuple, `MasterAnaDev_mc_AnaTuple_run00111353_Playlist.root`).
-3. **By-construction completeness.** `mc_signal_reco` entries ==
-   `mc_truth_denom` entries (32,849,103 each at MEFHC). The Phase-16 c
-   division in `unfold_2d_omnifold_unbinned.py` becomes a no-op self-check.
-
-**Residual disagreement.** The remaining ~3 χ²/ndf is dominated by
-sub-2 % shape disagreement in the highest p_|| tails (paper / weighted
-reaches 1.15 at 40-60 GeV/c). Attributed to a small reweighter-detail
-effect at high E_ν. Method-blindness confirmed by IBU 1D-projection
-cross-check (post-Phase-16): IBU and OmniFold-2D agree on the same inputs
-to ~1.7 %, both reproduce paper to within ~1-2 %.
-
-## 2D workflow
-
-### Environment
-From the repo root (`MINERvA-OmniFold/`):
-```bash
-source setup_salloc_env.sh
-```
-That self-locating script loads the `root_6_28` conda env, sources
-`unbinned_unfolding/build/setup.sh` (built in-tree), exports
-`MINERVA_PREFIX=$REPO/MINERvA101/opt`, and sources
-`MINERvA101/opt/bin/setup.sh`.
-
-`root_6_28` is activated **by full prefix** (`$HOME/.conda/envs/root_6_28`) via the
-conda-24.10.0 base that created it — *not* `module load python; conda activate root_6_28`,
-which broke on 2026-07-02 when the default `python` module moved to a newer conda base that
-no longer registers the env by name (`EnvironmentNameNotFound`). Override with
-`ROOT628_PREFIX` / `ROOT628_CONDA` if the env or base moves. sbatch/salloc set `HOME` to the
-real home so `$HOME` resolves; for Claude's redirected-HOME **interactive** shell, source the
-scratch `rootenv.sh` (adds a `HOME=` override) instead. Legacy `module load python` path
-remains as a fallback if the prefix is absent.
-
-Canonical runtime binary: `MINERvA101/opt/bin/runEventLoopOmniFold` (do
-**not** call build-tree copies — they have silently shadowed the installed
-patched binary in the past; see `memory/project_build_source_path.md`).
-Rebuild via `sbatch_build.sh`.
-
-### Per-playlist event loop, then hadd
-`runEventLoopOmniFold.cpp` picks ONE global playlist flux/calibration from
-the first event's run number. **Never** feed it a combined MEFHC manifest
-— it silently applies the first playlist's flux to all events and
-corrupts 11/12 of the dataset. Run per-playlist, then `hadd`.
-
-### 2D pipeline (canonical filenames; no phase tag suffix)
-1. Per-playlist event loops via `2d-unfolding/sbatch_evloop_array.sh` (1B–1P
-   as 11-task array; 1A run separately or via interactive shell). Outputs:
-   `runEventLoopOmniFold_1{A..P}.root`.
-2. `2d-unfolding/sbatch_hadd_MEFHC.sh` → `runEventLoopOmniFold_MEFHC.root`.
-3. `2d-unfolding/sbatch_unfold_2d_MEFHC.sh` → runs
-   `unfold_2d_omnifold_unbinned.py --use-weights --iters 5` →
-   `2d_crossSection_omnifold_MEFHC_5iter.root`.
-4. Plotting (see `PLOT_GUIDE.md` for the full list):
-   `plot_2d_cross_section.py`, `plot_2d_paper_comparison.py`,
-   `plot_2d_threeway_fig13.py`, `plot_efficiency_fig5_style.py`,
-   `compare_to_paper_interior.py`, `compare_to_paper_fullcov.py`,
-   `normalize_xsec_shape.py` + `plot_2d_paper_comparison_shape.py`.
-
-### Flux
-`runEventLoopOmniFold.cpp` does NOT write `pTmu_reweightedflux_integrated`.
-Use `sbatch_runEventLoop_baseline_flux_array.sh` to regenerate per-playlist
-baseline flux, then `combine_flux_MEFHC.py` to build the POT-weighted MEFHC
-flux at `2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root`. The 2D
-Python script embeds the flux histogram into its output for self-contained
-auditing.
-
-## 2D Python contract (must hold)
-1. **Mask measured data to phase space** (0 ≤ p_T ≤ 4.5,
-   1.5 ≤ p_|| ≤ 60) before step-1 training.
-2. **Subtract background** to build a non-negative reco target;
-   pass per-event `measured_weights` into `ohf.omnifold(...)`.
-3. **Include signal fakes in the reco-side subtraction.** Fakes (reco in
-   phase space, truth out) appear in `mc_signal_reco` but are filtered by
-   `omnifold.py`'s `MC_pass_truth_mask`. Add their POT-scaled reco weights
-   into `hBkgReco2D` so both measured and MC reco sides are fake-free.
-   Under Phase 18.2 the truth-tree-authoritative reco gate makes this set
-   empty in practice — `passesReco && !inPhaseSpace` is vacuous on MINERvA
-   AnaTuples — but the code path is retained as a regression check.
-4. **`hUnfold2D` is a truth-space event yield.** Fill with
-   `step2_weights * truth_w_in`, not raw `step2_weights`.
-5. **Divide by `hOFCompleteness2D`** (`hOFInputTruth2D / hOFTruthDenom2D`),
-   not by absolute selection efficiency `hEff2D`. Under Phase 18.2 this
-   ratio is ≡ 1 by construction; the division is a no-op self-check.
-6. **Closure mode** (`--closure`) restricts pseudo-data to
-   `pass_reco & pass_truth` and uses `sig["w_reco"]` as `measured_weights`
-   when `--use-weights`. Sets completeness ≡ 1.
-7. **Production sbatch must pass `--use-weights`** to match the 1A
-   validation footing.
-
-## Paper / ancillary comparison
-- No HepData entry. Authoritative target: `2d-unfolding/minerva_paper_anc/`.
-- Use `bin_mapping.txt`, **not** the axis labels on the ancillary TH2D
-  (those are cosmetic rounding 0.075/0.325/0.475).
-- `pzb=1` is first p_|| bin (1.5 < p_|| < 2.0 GeV/c).
-- Paper reports 205 / 224 bins (19 diagonal bins with pt/p|| > tan 20°
-  unreported); strict-interior comparison uses 185 bins.
-
-## NERSC SLURM gotchas
-
-### Running past the 3-hour interactive limit — use `alloc_run.sh`
-The agent runs on the **login node** (start it inside `tmux`/`screen` so it
-survives disconnects), NOT inside an salloc shell. An salloc shell dies at the
-180-min `interactive` limit and would take the agent with it. Instead, dispatch
-every compute command through the wrapper:
-```bash
-./alloc_run.sh '<command>'        # quote the whole command if it has pipes/&&/redirects
-./alloc_run.sh --status           # show the shared allocation
-./alloc_run.sh --end              # release it (scancel)
-```
-- It holds **exactly one** shared allocation (job-name `claude-hold`, guarded by
-  a job-name check + `flock`), detached via `setsid` so it outlives the shell.
-- It **reuses** that allocation across calls and **auto-requests a fresh one**
-  when the previous 3-hour allocation has expired — so total wall-clock is
-  unbounded while each underlying allocation stays ≤ 3 h.
-- The command runs on the compute node via `srun --jobid=<JOB> --overlap`, from
-  the repo root, with `setup_salloc_env.sh` already sourced (env chatter goes to
-  stderr; the command's stdout stays clean).
-- **Never** launch a bare interactive `salloc`/`source start_alloc.sh` for agent
-  work, and never start a second holder — one allocation at a time. Tune with
-  `ALLOC_HOLD_SECONDS` / `ALLOC_CPUS` / `ALLOC_JOB_NAME` if needed.
-- **Leave the allocation running between commands.** Do NOT call `--end` just
-  because a command finished — the next command reuses the live node, and
-  tearing it down only to re-request one wastes queue time and compute on
-  repeated start/stop churn. Only run `./alloc_run.sh --end` when the user
-  explicitly says they're done / closing the session, or asks to free the node.
-  Absent any such signal, keep it up; an idle allocation self-expires at the
-  3-hour limit anyway, and the next dispatch transparently requests a fresh one.
-- This is for interactive-style work that fits one node. Multi-node arrays /
-  multi-hour walls still go through `sbatch` (see below).
-
-- **Use the running interactive allocation when one exists, instead of
-  submitting a new sbatch.** The regular and shared queues at NERSC
-  routinely sit on `Priority` for several minutes to hours. If
-  `squeue -u $USER` shows a live `interactive` job with time remaining,
-  any task that fits inside that node (the build job, a short event-loop
-  smoke, a single short-wall unfold, a Python analysis script) should
-  run there via `srun --jobid=<INTERACTIVE_JOBID> --overlap -n 1
-  --cpus-per-task=<N> bash -lc '...'`. **Cancel the equivalent queued
-  sbatch** if you submitted one before noticing the interactive — running
-  in two places leaks compute and risks output-file races. Reserve fresh
-  sbatch submissions for jobs that don't fit a single interactive
-  allocation (multi-node arrays, multi-hour walls, or work that needs to
-  outlive your shell). The submit-vs-interactive decision is also
-  documented in `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`.
-- Do NOT combine `set -u` with `conda activate root_6_28`. The conda
-  `deactivate-root.sh` hook references `CONDA_BACKUP_ROOTSYS` and aborts
-  under nounset in a fresh batch shell.
-- Export `PYTHONUNBUFFERED=1` so Python stdout flushes to `.out` live.
-- Do NOT use `srun` inside 2D OmniFold sbatch scripts. Inherited
-  `SRUN_CPUS_PER_TASK` from a live interactive allocation breaks nested
-  srun. Bare `python ...` is the safe default. (The interactive-shell
-  case is the opposite: `srun --jobid=<INTERACTIVE> --overlap` is the
-  correct primitive for launching work onto the existing allocation.)
-- Templates: `sbatch_unfold_2d_MEFHC.sh` (full-node 128 CPU regular QOS),
-  `sbatch_iter_scan_2d.sh` (shared QOS 2 CPU).
-
-## Runtime notes (2D)
-| Task | Resource | Wall time |
-|---|---|---|
-| C++ event loop, one playlist | shared QOS, 1 task | ~2 h |
-| Event loop, all 12 playlists | 11-task array | ~3-4 h (parallel) |
-| hadd MEFHC | shared QOS | < 1 min |
-| 2D OmniFold, 5-iter, 1A stats | shared QOS, 2 CPU | ~1.5 h |
-| 2D OmniFold, 5-iter, full MEFHC | regular QOS, 128 CPU | ~19 h (≈3h50m/iter × 5) |
-
-Iter-count: original pre-Phase-16 1A iter-scan showed 5-iter 0.08 % off
-10-iter total xsec, so production uses 5. A Phase-18.2 re-scan is in
-flight (job `53116867_[1,3,5,8,10]`) to confirm this still holds under
-native miss handling.
-
-## Patched code
-
-### `MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp`
-Phase-18.2 truth-tree-authoritative reco gate with bilateral key dedupe:
-- `makeEventKey(run, subrun, nth)` packs the triplet into a `uint64_t`.
-- `LoopAndFillUnbinnedMCTruthDenom` runs first; populates an
-  `outTruthDenomIDs` set and `outTruthDenomCache` vector. Truth-side
-  `seenKeys` dedupe (Phase 18.1) skips upstream double-fills.
-- `LoopAndFillUnbinnedMCSelectedSignalReco` consults `truthDenomIDs` and
-  fills `mc_signal_reco` only when `inPhaseSpace && key ∈ truthDenomIDs`.
-  Reco-side `seenRecoKeys` dedupe (Phase 18.2) mirrors the truth-side fix.
-- `AppendTruthOnlyMisses(sigOut, truthDenomCache, recoIDs)` writes one
-  miss entry per truth-pass event whose key isn't in the reco set.
-- Output ROOT carries `TParameter`s `hasTruthOnlyMisses`,
-  `nTruthOnlyMisses`. Python pipeline reads them and emits a WARN if
-  `c_global` deviates from 1.0 by >0.5 %.
-- Writes 4 TTrees with both `p_T` and `p_||` branches per event.
-- Does **not** write `pTmu_fiducial_nucleons` (hadd-corrupted: hadd sums
-  `TParameter<double>` across inputs, inflating the detector-geometry
-  constant 12×). Python uses the fixed tracker constant 3.2353e30.
-- Environment flags: `MNV101_DISABLE_TRUTH_MISSES=1` falls back to legacy
-  no-miss behavior; `MNV101_TRUTH_ONLY=1` short-circuits reco loops;
-  `MNV101_DUMP_COMPONENTS=1` writes per-reweighter dump branches.
-
-### `MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h:107`
-`IsMinosMatchMuon()` patched (2026-04-25, Phase 11):
-```cpp
-virtual bool IsMinosMatchMuon() const {
-  const std::string ok_branch = GetAnaToolName() + "_minos_trk_is_ok";
-  return GetInt("isMinosMatchTrack") == 1 && GetInt(ok_branch.c_str()) == 1;
-}
-```
-Current state: matches the upstream MINERvA-101 tutorial's `isMinosMatchTrack==1`
-plus our `minos_trk_is_ok==1` fit-quality bit. (An early tutorial revision used
-the `has_interaction_vertex==1` stub; that is no longer on the tutorial `main`.)
-
-### Active 2D files
-- **C++**: `runEventLoopOmniFold.cpp`, `cuts/MaxPtMu.h`,
-  `util/Binning.h` (paper's 14 p_T × 16 p_|| edges).
-- **Python**: `2d-unfolding/unfold_2d_omnifold_unbinned.py`,
-  `plot_2d_cross_section.py`, `plot_2d_paper_comparison.py`,
-  `plot_2d_paper_comparison_shape.py`, `plot_2d_threeway_fig13.py`,
-  `plot_efficiency_fig5_style.py`, `plot_closure_2d.py`,
-  `plot_iter_convergence.py`, `normalize_xsec_shape.py`,
-  `compare_to_paper_{fullcov,interior}.py`, `combine_flux_MEFHC.py`,
-  `diagnose_truth_shape_unweighted.py`, `compare_flux_to_paper_2019.py`,
-  `verify_eff_fix_predicted_xsec.py`.
-- **SLURM** (canonical, no phase suffix): `sbatch_build.sh`,
-  `sbatch_evloop_array.sh`, `sbatch_hadd_MEFHC.sh`,
-  `sbatch_unfold_2d_MEFHC.sh`, `sbatch_iter_scan_2d.sh`,
-  `sbatch_runEventLoop_baseline_flux_array.sh`,
-  `sbatch_finalize_MEFHC.sh`, `sbatch_validate_1A_corrected.sh`,
-  `sbatch_download_playlist.sh`. Pre-Phase-18 sbatch scripts preserved
-  in `2d-unfolding/archive_pre_phase18/` with git history.
-- **Outputs**: `runEventLoopOmniFold_MEFHC.root`,
-  `runEventLoopOmniFold_1{A..P}.root`,
-  `2d_crossSection_omnifold_MEFHC_5iter.root` (production),
-  `2d_crossSection_omnifold_1A_5iter.root`.
-- **Manifests**: `2d-unfolding/playlist_manifests/1{A..P}_{MC,Data}.txt`.
-
-### TTree schema
-All TTrees carry both p_T and p_|| branches:
-- `mc_truth_denom`: `MC` (p_T), `MC_pz` (p_||), `w_truth`
-- `mc_signal_reco`: `sim`, `sim_pz`, `sim_pass`, `w_reco`, `MC`, `MC_pz`, `w_truth`
-- `mc_background`: `sim_background`, `sim_background_pz`, `sim_background_pass`, `w_bkg`
-- `data`: `measured`, `measured_pz`, `measured_pass`
-
-Metadata (`TParameter<double>`): `mcPOTUsed`, `dataPOTUsed`.
-Phase-17/18 additions (`TParameter<int>`/`<long>`): `hasTruthOnlyMisses`,
-`nTruthOnlyMisses`. No `pTmu_fiducial_nucleons` (intentional — see hadd
-note above).
-
-### Paper bin edges (authoritative; matches `bin_mapping.txt`)
-```python
-pt_edges = [0, 0.07, 0.15, 0.25, 0.33, 0.40, 0.47, 0.55,
-            0.70, 0.85, 1.00, 1.25, 1.50, 2.50, 4.50]   # 14 bins
-pz_edges = [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0,
-            6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0, 60.0]  # 16 bins
-```
-Phase space: θ_μ < 20°, p_T < 4.5 GeV/c, 1.5 < p_|| < 60 GeV/c.
-
-## 1D unbinned baseline (revalidated 2026-05-02)
-Status doc:
-`2d-unfolding/unbinned_1d_study/UNBINNED_BASELINE_2026-03-26.md`
-(SUPERSEDED → REVALIDATED block at the top). Production script
-`2d-unfolding/unbinned_1d_study/unfold_ptmu_omnifold_unbinned.py` was
-patched 2026-04-30 to honour the 2D Python contract.
-
-Patched-vs-patched 1A rerun (SLURM job 52271486, 2026-05-02) produced the
-current valid outputs in `2d-unfolding/unbinned_1d_study/`:
-`runEventLoop{OmniFold,Data,MC}.root`,
-`pTmu_crossSection_omnifold.root` (5 iter, `--use-weights`),
-`pTmu_crossSection.root` (D'Agostini IBU on the same selection),
-`ptmu_gaussian_style_unbinned.pdf`. OmniFold and IBU agree at the QE
-peak; OmniFold tracks data more flexibly at the spectrum tails.
-
-The legacy `Documents/` 2026-03-26 ROOTs remain pre-MINOS-fix and are
-diagnostic-only — do not quote against the paper.
-
-**Pending 1D work** (deferred until after 2D campaign closes): apply the
-same Phase-18 truth-tree-authoritative gate to the 1D pipelines
-(`unbinned_1d_study/unfold_ptmu_omnifold_unbinned.py` and
-`ibu_1d_projection/build_1d_ibu_inputs.py`). Both currently filter
-`tru_ok` on the pT rectangle alone; neither reads `MC_pz`. With the
-Phase-18 MEFHC ROOT pointed in, they inherit a clean c by construction;
-the explicit gating tightening is still on the to-do list.
-
-### 1D quick start
-```bash
-sbatch 2d-unfolding/unbinned_1d_study/sbatch_unfold_1d_unbinned_1A.sh
-```
-
-## Binned OmniFold (complete, March 2026)
-Status file: `2d-unfolding/binned_study/BINNED_PTmu_STUDY_STATUS.md`.
-Workspace `2d-unfolding/binned_study/`. Three upstream bugs found in
-`rymilton/unbinned_unfolding` 1D binned path
-(`Hresponse()` axis mismatch; truth-axis uniformization; garbled
-`_res` content), all fixed locally; closure unfolded/truth = 1.0001.
-Binned OmniFold proven mathematically equivalent to D'Agostini IBU at
-1 iteration; divergence at higher iter is GBT classifier
-approximation, not algorithmic. Treat the binned path as a
-cross-check, not a final result.
-
-## Important directories
-- `MINERvA101/MINERvA-101-Cross-Section/` — C++ event loops + baseline extraction.
-- `2d-unfolding/` — production scripts, ROOT outputs, plots, control docs.
-- `2d-unfolding/binned_study/` — binned debug workspace (frozen, complete).
-- `2d-unfolding/archive_pre_phase16/` — pre-Phase-16 outputs and plots.
-- `2d-unfolding/archive_pre_phase18/` — Phase-16/17 era artifacts (postfix
-  ROOTs, Phase-17 side-experiment ROOTs, superseded sbatch scripts and
-  SLURM logs).
-- `2d-unfolding/minerva_paper_anc/` — arXiv ancillary release.
-- `2d-unfolding/playlist_manifests/` — per-playlist Data/MC file lists.
-- `2d-unfolding/baseline_flux/` — per-playlist baseline-flux ROOTs (gitignored).
-- `2d-unfolding/reference/` — reference papers (Ruterbories PDF + slide deck).
-- `3d-unfolding/` — 3D production scripts, outputs, STATUS/RUN_LOG.
-- `nd-unfolding/` — 4D/5D/PET/FPS production. Its subdirectories are the
-  working units: `pet/`, `tests/`, `uq_4d/`, `uq_5d/`, `uq_fps/`, `products/`,
-  `active_universe_5d/`, `g2_fullevent/`.
-- `unbinned_unfolding/` — RooUnfold/OmniFold source + in-tree `build/`.
-- `unbinned_unfolding/examples/` — reference OmniFold usage.
-
-## Output hygiene
-- Pre-Phase-18 outputs live under `archive_pre_phase16/` (pre-Phase-16) and
-  `archive_pre_phase18/` (Phase-16/17 era). Never re-introduce phase-tagged
-  filenames at the canonical level once the pipeline is finalized.
-- Never leave invalidated outputs at canonical production paths once a
-  corrected rerun is complete.
-- Do not rename or delete a tracked script that is cited in a RUN_LOG, ledger,
-  or receipt JSON. 115 `sbatch_*.sh` names are load-bearing provenance; the
-  2026-07-26 `__file__` de-rooting voided six gate hash bindings this way.
-- **Audit and review lanes get read-only tooling. Always `git status` after a
-  delegate finishes.** An audit that mutates the tree contaminates the thing being
-  audited, and here a silent edit to a gate-critical file can be frozen into a
-  receipt as certified. Use `codex exec --sandbox read-only`, or `claude -p
-  --allowedTools "Read,Grep,Glob,Bash"`; give `agy` a throwaway `git worktree`,
-  because it edits files under a pure audit prompt even when told to report only.
-  On 2026-07-31 the prompt "Audit this repo for correctness bugs." caused it to
-  refactor `omnifold_nn/omnifold/net.py` — including changing the training loss
-  from `tf.reduce_mean(t_loss)` to `t_loss` — and report the edits as fixes. That
-  file was hash-pinned into the Gate-4 launch-code gate roughly two hours later;
-  had the revert not happened first, the re-issue would have certified an
-  unreviewed refactor of the shared PET model with a matching hash and no red
-  flag. Preserve a delegate's diff before reverting: parts of it may be real
-  findings that should be raised as findings, not applied as edits.
-- `nd-unfolding/`'s root is at capacity (280 files) and is a known reorg target
-  (`docs/POST_PUBLICATION_REORG_PLAN.md`, "Measured coupling"). Put new work in
-  the subdirectory that owns it — `pet/` for PET/full-event, `uq_*/` for
-  covariance and throws, `tests/` for fixtures. Add to the root only for a
-  genuinely shared library (`xsec_nd.py`, `p4_lib.py`, `fps_provenance.py`,
-  `omnifold_nn_core.py` are each imported 4–18×). Do not start a new top-level
-  `scripts/` split before the freeze tag — that move belongs to the reorg.
-
-## Common failure modes
-- Branch mismatch between writer and reader.
-- Missing/invalid POT metadata in OmniFold ROOT inputs.
-- Wrong binary on `$PATH` (build-tree shadowing the installed patched copy
-  — Phase-18 hit this trap; see `memory/project_build_source_path.md`).
-- Pre-patch event-loop outputs (before 2026-04-25 `IsMinosMatchMuon` fix,
-  or before Phase-18.2 dedupe) used in paper comparisons.
-- Pre-fix merged OmniFold ROOTs carrying summed `pTmu_fiducial_nucleons`
-  metadata — treat as untrustworthy.
-- Mixing UF/OF vs in-range conventions when comparing totals.
-- Substituting the paper scalar `6.32e-8 /cm²/POT` for the
-  flux-normalization term used by this code path (blows up xsec ~13.8×).
-- PyROOT unavailable (`ModuleNotFoundError: ROOT`) — env not sourced.
-
-## Notes for future agents
-- **`LITERATURE_NOTES.md`** (repo root) holds the 2026-06-03 audit vs the 2025
-  OmniFold literature (T2K arXiv:2504.06857; Practical Guide arXiv:2507.09582) and
-  the MINERvA data-release catalogue. Verdict: no critical defects. New `uq/`
-  diagnostics — `ensemble_mean_cv.py`, `bottom_line_test.py` (closure +
-  data-prior modes), `classifier_calibration.py` (GBDT vs NN) — and
-  `3d-unfolding/genie/compare_ascencio_eavail.py`. The technote open questions are
-  resolved in `docs/technote/sec_eavailw.tex` (only the high-E_avail DIS-tail
-  excess and publication precedent remain).
-- **`docs/HIGHER_DIM_OMNIFOLD_DESIGN.md`** plans the next dimensional step (Phase 1:
-  q3 as a 4th scalar axis, GBDT-native; Phase 2: a vendored NN/point-cloud track) and
-  states the **GBDT→NN crossover criterion** (stay on LightGBM for ≲10 fixed scalar
-  features; switch to NN only for variable-length point clouds). Design/hand-off only.
-- The 2D campaign is **finalized at Phase 18.2**. Read the four
-  `2d-unfolding/2D_OMNIFOLD_*` docs before changing the pipeline.
-- Memory pointers under `~/.claude/projects/.../memory/MEMORY.md` capture
-  rolling context. Verify referenced files still exist before acting on a
-  memory.
-- For physics results, do not use binned OmniFold output without upstream
-  package fixes; use the unbinned path.
-- Do binned work inside `2d-unfolding/binned_study/`, not at the top level.
-
-## Running compute on interactive nodes (salloc) — hard-won lessons (2026-06-04)
-
-When the batch (shared/regular) queue is fairshare-throttled (you get only ~1-2 slots after
-running many jobs), `qos=interactive` is a SEPARATE queue that grabs a fresh node fast. It is
-worth using for **many small concurrent jobs that fit on one node** (e.g. lean npz-based
-bank-unfolds, or the ~12 per-playlist event loops). It is NOT a substitute for a large array
-(can't fit hundreds at once; interactive is time-/alloc-limited, typically <=2 allocs, <=4h).
-
-Pitfalls that cost real time here — DO NOT repeat:
-
-1. **Run the orchestrator INSIDE the salloc.** `salloc --qos interactive ... bash orchestrator.sh`
-   where the script launches up to ~10 concurrent `srun --overlap --exact -n1 -cN ...` steps,
-   then `wait`. Working examples: `nd-unfolding/run_q3_sweep_interactive.sh`,
-   `run_pc_evloop_interactive.sh`. Do NOT salloc-then-external-`srun --jobid=<id> --overlap`
-   from another shell: it races node configuration and fails with
-   "Unable to create step ... Invalid job id specified".
-
-2. **MONITOR BY OUTPUT ARTIFACTS, NOT salloc stdout.** salloc/srun stdout is heavily BUFFERED
-   when backgrounded/non-tty, so a perfectly healthy run shows an EMPTY log for many minutes.
-   A working q3 sweep was once CANCELLED because the log looked "stuck" — it was actually
-   mid-processing (visible only via `pgrep -af srun` and the produced `.root` files). Track
-   progress by counting output files + `squeue -j <allocid>` liveness; give each job its full
-   runtime before judging. Use skip-if-exists so cancel/relaunch is always safe & resumable.
-
-3. **Clean up holders.** `alloc_run.sh --end` scancels the SLURM job but the login-node
-   `salloc ... sleep` CLIENT process can linger and accumulate. After --end, verify with
-   `squeue --me --name=claude-hold` AND `pgrep -u $USER -af 'qos interactive'`; scancel/kill
-   leftovers so the queue stays clean.
-
-4. **Never background salloc with a bare `&`** from a returning shell (SIGHUP risk). Use the
-   harness `run_in_background`, or `nohup`/`setsid`.
-
-5. The `alloc_run.sh` wrapper (one held node, reused across calls, auto-renews past 3h) is the
-   right tool for SERIAL on-demand validation/plotting (login node can't run ROOT/LGBM).
-   For PARALLEL throughput, use the inside-salloc orchestrator pattern above instead.
+| What is happening now? | `docs/orchestration/LIVE-STATE.md`; run `python3 docs/orchestration/generate_live_state.py --check-freshness`, then query the scheduler/source directly |
+| What should happen next? | `docs/CURRENT_WORK.md`, then the exact cited row in `docs/OPEN_ITEMS.md`; consult `docs/CURRENT_WORK_BACKLOG.md` when reprioritizing |
+| Quote a number | `VALIDATION_LEDGER.md`, then its exact product summary or receipt |
+| Assess a physics claim | `docs/orchestration/CLAIMS.md`, then the claim's original evidence and independent check |
+| Change code | `KNOWN_ISSUES.md`, the relevant `*_STATUS.md` and reference, callers, tests, and hash bindings |
+| Run 2D/3D/N-D/PET | The relevant workstream status; `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`; for PET also `nd-unfolding/PET_UQ_REMEDIATION_STATUS.md` |
+| Launch or monitor compute | Fresh live state, direct scheduler observation, the exact runbook/launcher receipt, and environment rules routed by the workstream reference |
+| Apply process rules | `docs/orchestration/PLAYBOOK.md`; open `FINDINGS.md` only by routed `BEN-*` id |
+| Understand history | The relevant append-only `*_RUN_LOG.md` or exact frozen evidence path; never load the orchestration directory wholesale |
+| Build deliverables | `docs/analysis-note/`; `build_all.sh` must build note, primer, and paper |
