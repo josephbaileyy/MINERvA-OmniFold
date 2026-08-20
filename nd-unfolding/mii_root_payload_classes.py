@@ -213,25 +213,37 @@ ADOPTED_UTHROW = {
     # these keys exist to catch. A third independent argument for C's path ruling, reached from the
     # ROOT keys rather than from globs or the preflight.
     "uthrow_source": CONFIGURATION, "combined_source": CONFIGURATION,
-    # ============ REMEDY (A) ON THIS ARTIFACT IS *BLOCKED*, AND THE TABLE SAYS SO ==================
-    # The keys below are NOT WRITTEN. Remedy (A) on `adopt_unified_5d.py` is implemented and REVERTED,
-    # preserved as docs/orchestration/pending/PENDING-20260819-remedy-A-adopt-blocked-on-ben106-rebinding.patch
-    # -- because ANY edit to that file breaks a receipt sha256 binding owned by
-    # `docs/orchestration/state/ben106-stamp-verify-active-56695424.json`, and the pre-commit hook refuses
-    # the commit. The hook's own instruction is "the owning gate must be deliberately re-run and its
-    # receipt re-issued -- DO NOT JUST UPDATE THE HASH", so this needs a gate re-run, not a lane's edit.
+    # ================= REMEDY (A) ON THIS ARTIFACT, 2026-08-20: THE KEYS ARE CLASSIFIED ============
+    # THESE SEVEN WERE COMMENTED OUT UNTIL 2026-08-20 and the reason they are now live is a CORRECTION
+    # to the argument that commented them, not a change of mind about it. The old note said "a table
+    # describing a writer that does not exist yet is worse than one admitting the gap", which was right
+    # about the writer and wrong about the table: THIS TABLE IS A REQUIREMENT ON THE ARTIFACT AND IS
+    # AGNOSTIC ABOUT WHICH FILE WRITES IT. `identity_is_checkable` reads ARTIFACTS (`:431-432`), not
+    # STAMP_COVERAGE, so "the writer stamps nothing" was never the property this table asserted.
     #
-    # I ALMOST LEFT THEM CLASSIFIED, WHICH WOULD HAVE BEEN THE WORST DIRECTION. With them present,
-    # `identity_is_checkable("adopted_uthrow.root")` returns True while the writer stamps NOTHING -- a gate
-    # reporting that identity is checkable on an artifact that carries none. A table describing a writer
-    # that does not exist yet is worse than a table admitting the gap.
-    # THEY GO BACK IN THE SAME COMMIT THAT LANDS THE PATCH. A writer change and a table change are one
-    # change, in both directions.
-    #   "est_seed_offset": PROVENANCE, "est_seed_offset_declared": PROVENANCE,
-    #   "upstream_estimator_seed_g1": PROVENANCE, "upstream_estimator_seed_g2": PROVENANCE,
-    #   "upstream_estimator_seed_g1_checked": CONFIGURATION,
-    #   "upstream_estimator_seed_g2_checked": CONFIGURATION,
-    #   "hDiagCombinedOld": PAYLOAD,      <- C's 11g precondition, 0.0856 MB, same blocked patch
+    # WHO WRITES THEM: `mii_adopt_unified_5d_stamped.py`, the remedy (A) WRAPPER. `adopt_unified_5d.py`
+    # is receipt-bound (`state/ben106-stamp-verify-active-56695424.json`) and IS NOT TOUCHED -- C ruled
+    # at `783d648a` §25 that (A) here is a new unpinned wrapper invoking the pinned writer as a
+    # subprocess and reopening its output `UPDATE`. See `STAMP_COVERAGE` for the capability claim and
+    # for what is still CLUSTER-UNVERIFIED.
+    #
+    # THE COST, STATED: every adopted root built BEFORE the wrapper now FAILS CLOSED here
+    # (`anchor_identity:448-450`, `compare():514`). That is an unavoidable FAIL, not a false green, and
+    # it is the direction this campaign chose -- an absent stamp is not a weak yes.
+    "est_seed_offset": PROVENANCE, "est_seed_offset_declared": PROVENANCE,
+    # BY GROUP, AND NEVER A SINGLE `estimator_seed` -- VL141 (`VALIDATION_LEDGER.md:1974`). This product
+    # mixes the sweep leg's g1 seed (42+k, via the combined intermediate) with the throw leg's g2 seed
+    # (1000+k), so one key would be the exact false quotable claim VL141 exists to correct. Note the
+    # asymmetry with SWEEP_UNIVERSE/LATERAL_CV above, which DO carry a single `estimator_seed`: those
+    # products have one leg.
+    "upstream_estimator_seed_g1": PROVENANCE, "upstream_estimator_seed_g2": PROVENANCE,
+    "upstream_estimator_seed_g1_checked": CONFIGURATION,
+    "upstream_estimator_seed_g2_checked": CONFIGURATION,
+    # C's 11g precondition: 10,694 x 8 B = 0.0856 MB, the cv>0 SUPPORT and not the 65,856 grid. It is
+    # `sqrt_tr_old`'s only ingredient, and `sqrt_tr_old` is the predeclared bar's own operand, so
+    # without it BEN-077 could never again be satisfied for the bar once 11g releases the 41.44 GB
+    # intermediate.
+    "hDiagCombinedOld": PAYLOAD,
 }
 
 SWEEP_UNIVERSE = {
@@ -335,6 +347,31 @@ ARCHIVE_KEY_MAP = {
     "centering_convention": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None, "absence": PREDATES_ARCHIVE},
     "uthrow_source": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None, "absence": PREDATES_ARCHIVE},
     "combined_source": {"landed": "5856eeb1 BEN-106 2026-08-11", "derive": None, "absence": PREDATES_ARCHIVE},
+    # ===== THE FIVE ROWS NOBODY ENUMERATED, AND THEY WOULD HAVE REDDENED THE WRAPPER'S FIRST RUN =====
+    # `compare():522-526` FAILS a key that is present in the member and absent from the archive with no
+    # map row -- "unexplained; the map is dated and derivable, so add a row or fail". Remedy (A)'s seven
+    # keys were classified above WITHOUT these rows, so the wrapper's first real product would have
+    # failed stage 1 for a reason that has nothing to do with the wrapper. Found by enumerating the
+    # OTHER table the flip touches rather than by running anything -- the cluster is down.
+    #
+    # PREDATES_ARCHIVE IS CODE-JUSTIFIED HERE, not assumed: the archive's adopted roots were written by
+    # `adopt_unified_5d.py` at 5856eeb1, whose only upstream loop covers exactly
+    # `fixed_seed_null_norm`/`joint_mean_shift_norm`/`n_throws` (`:198-204`), and
+    # `grep -c est_seed_offset nd-unfolding/adopt_unified_5d.py` is 0. No adopted root in existence
+    # carries any of these five, and none can until it is rebuilt through the wrapper.
+    "upstream_estimator_seed_g1": {"landed": "lane B remedy (A) wrapper 2026-08-20", "derive": None,
+                                   "absence": PREDATES_ARCHIVE},
+    "upstream_estimator_seed_g2": {"landed": "lane B remedy (A) wrapper 2026-08-20", "derive": None,
+                                   "absence": PREDATES_ARCHIVE},
+    "upstream_estimator_seed_g1_checked": {"landed": "lane B remedy (A) wrapper 2026-08-20",
+                                           "derive": None, "absence": PREDATES_ARCHIVE},
+    "upstream_estimator_seed_g2_checked": {"landed": "lane B remedy (A) wrapper 2026-08-20",
+                                           "derive": None, "absence": PREDATES_ARCHIVE},
+    # NOT `derive`-able from the archive's own keys, and the near-miss is worth naming: the archive DOES
+    # carry `sqrt_tr_old`, whose square is this histogram's SUM. A sum does not determine 10,694 bins,
+    # so there is no derivation -- only the reverse check the wrapper performs before writing.
+    "hDiagCombinedOld": {"landed": "lane B remedy (A) wrapper 2026-08-20", "derive": None,
+                         "absence": PREDATES_ARCHIVE},
 }
 
 #: Measured 2026-08-18 from source: which ROOT writers on a member's chain stamp the four identity
@@ -366,26 +403,57 @@ STAMP_COVERAGE = {
                                "adopt at all, however carefully adopt was patched",
         "products": "the 41.44 GB combined intermediate"},
     "adopt_unified_5d.py": {
-        # BLOCKED, NOT DONE. The implementation exists as a preserved patch; committing it breaks
-        # ben106-stamp-verify's sha256 binding and the pre-commit hook refuses. `stamps: False` is the
-        # true state of the tree, and reporting the intended state would be the claim this campaign has
-        # spent the day learning not to make.
-        "stamps": False, "how": "BLOCKED on a BEN-106 receipt re-issue. Implemented and reverted; see "
-                               "docs/orchestration/pending/"
-                               "PENDING-20260819-remedy-A-adopt-blocked-on-ben106-rebinding.patch. Would "
-                               "stamp the offset pair plus upstream_estimator_seed_g1/_g2 BY GROUP -- not "
-                               "a single estimator_seed, per VL141 -- and C's 11g diagonal in the same "
-                               "touch. ANY edit to this file breaks the binding, so C's mandatory (A) and "
-                               "BEN-106's frozen binding are in DIRECT CONFLICT and only a gate re-run "
-                               "resolves it",
-        "products": "the two 892 MB citable adopted roots"},
+        # `stamps: False` IS PERMANENT UNLESS THIS FILE'S BYTES CHANGE, and that is now a statement
+        # about a receipt rather than about a backlog. C ruled at `783d648a` §25 that remedy (A) here is
+        # a WRAPPER, so nothing will ever be added to this file: its bytes are bound by
+        # `state/ben106-stamp-verify-active-56695424.json` and the pre-commit hook refuses any edit.
+        # `grep -c est_seed_offset nd-unfolding/adopt_unified_5d.py` is 0 and will stay 0.
+        # NOT "BLOCKED" ANY MORE. "Blocked" says the work is waiting on a receipt re-issue; C refused
+        # the re-issue AND the edit, so the work is DONE ELSEWHERE. Leaving the word would misdirect the
+        # next reader toward a gate re-run that has been explicitly declined.
+        "stamps": False,
+        "covered_by": "mii_adopt_unified_5d_stamped.py",
+        "how": "STAMPS NOTHING AND NEVER WILL: receipt-bound bytes "
+               "(state/ben106-stamp-verify-active-56695424.json), so C REFUSED the edit, the receipt "
+               "re-issue and the hash update alike (783d648a §25). Identity on this writer's products "
+               "is supplied by the wrapper named in `covered_by`, which runs these exact bytes as a "
+               "subprocess and then reopens the output UPDATE. The preserved specification is "
+               "docs/orchestration/pending/"
+               "PENDING-20260819-remedy-A-adopt-blocked-on-ben106-rebinding.patch -- kept as the spec "
+               "of WHAT to stamp, NOT to be applied to this file",
+        "products": "the PAYLOAD of the two 892 MB citable adopted roots (identity is the wrapper's)"},
+    "mii_adopt_unified_5d_stamped.py": {
+        "stamps": True,
+        "covers": "adopt_unified_5d.py",
+        "how": "remedy (A) 2026-08-20, as a WRAPPER because the writer it wraps is receipt-bound. Runs "
+               "adopt_unified_5d.py as a SUBPROCESS -- C's preference, because that executes the exact "
+               "bytes the receipt's sha256 names -- then reopens the output UPDATE and writes the "
+               "offset pair, upstream_estimator_seed_g1/_g2 BY GROUP with _checked flags (never a "
+               "single estimator_seed, per VL141), and C's 11g hDiagCombinedOld. Refuses a product "
+               "whose two legs are different members. *** ROOT WRITE PATH CLUSTER-UNVERIFIED as of "
+               "2026-08-20: `import ROOT` raises ModuleNotFoundError on the lane-B host, so this "
+               "boolean is a SOURCE-VERIFIED CAPABILITY CLAIM and not a demonstration. Every pure "
+               "function is executed by tests/test_remedy_a_adopt_wrapper.py; _read_scalars, "
+               "_read_diagonal and _stamp_output have never run. ***",
+        "products": "the IDENTITY of the two 892 MB citable adopted roots"},
 }
 
 
 def writers_without_identity_stamps():
-    """Writers remedy (A) has not reached. THREE on 2026-08-18; ONE now -- `adopt_unified_5d.py`, blocked
-    on a BEN-106 receipt re-issue rather than on work. Empty is the goal and is not the state."""
-    return sorted(k for k, v in STAMP_COVERAGE.items() if not v["stamps"])
+    """Writers remedy (A) has not reached AND nothing else covers. Empty is the goal.
+
+    `covered_by` EXISTS BECAUSE §25 MADE "EMPTY" UNREACHABLE BY CONSTRUCTION. `adopt_unified_5d.py`'s
+    bytes are frozen by a receipt, so it can never stamp anything, so a function that only reads
+    `stamps` would have reported an open gap forever while the gap was closed by design -- a permanent
+    red that teaches its caller to ignore it, which is the exact failure mode D named for
+    `identity_is_checkable`.
+    THE EDGE IS NOT A DEFINITE DESCRIPTION. A `covered_by` naming a file that does not exist, does not
+    name the identity keys, or does not name the writer it claims to cover would be an unfalsifiable
+    excuse; `test_uq_remediation.py`'s producer-derived test re-reads the covering file's source for all
+    three, so the exemption is checked against code rather than asserted here.
+    """
+    return sorted(k for k, v in STAMP_COVERAGE.items()
+                  if not v["stamps"] and not v.get("covered_by"))
 
 
 

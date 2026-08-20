@@ -2399,15 +2399,28 @@ class RootPayloadThreeClasses(unittest.TestCase):
         """Three writers had zero identity stamps on 2026-08-18 -- adopt, the lateral, and the analyzer.
         The analyzer is the one NOBODY had enumerated: C listed writers needing stamps, D listed artifacts
         the gate cannot read, and neither covered THE WRITER WHOSE SILENCE BLOCKS A DOWNSTREAM STAMP."""
-        # BLOCKED, NOT DONE, AND THE TEST SAYS THE TRUE THING. Two of the three landed; `adopt` is
-        # blocked on a BEN-106 receipt re-issue, not on work -- ANY edit to that file breaks a sha256
-        # binding and the pre-commit hook refuses the commit. Asserting [] here would make the suite
-        # certify an intent.
-        self.assertEqual(self.m.writers_without_identity_stamps(), ["adopt_unified_5d.py"])
-        self.assertEqual(len(self.m.STAMP_COVERAGE), 5)
-        self.assertIn("BLOCKED", self.m.STAMP_COVERAGE["adopt_unified_5d.py"]["how"])
-        self.assertIn("PENDING-20260819", self.m.STAMP_COVERAGE["adopt_unified_5d.py"]["how"],
-                      "and the preserved patch must be findable from the table")
+        # 2026-08-20: NOW EMPTY, AND *NOT* BECAUSE `adopt_unified_5d.py` STARTED STAMPING. It never
+        # will -- its bytes are receipt-bound and C refused the edit, the re-issue and the hash update
+        # alike (783d648a §25), so `stamps` stays False permanently. What closes the gap is a WRAPPER,
+        # and the exemption is the `covered_by` edge rather than a flipped boolean. Asserting [] on the
+        # old schema would have been certifying an intent; asserting it on this schema is certifying a
+        # named covering file whose source is re-read by the test below.
+        self.assertEqual(self.m.writers_without_identity_stamps(), [])
+        self.assertFalse(self.m.STAMP_COVERAGE["adopt_unified_5d.py"]["stamps"],
+                         "the pinned writer's own bytes stamp nothing, and the table must not pretend "
+                         "otherwise just because its products are now stamped")
+        self.assertEqual(len(self.m.STAMP_COVERAGE), 6, "five writers plus remedy (A)'s wrapper")
+        # "BLOCKED" IS DELETED ON PURPOSE AND ITS ABSENCE IS ASSERTED. It said the work was waiting on a
+        # receipt re-issue; C declined the re-issue, so the word would send the next reader after a gate
+        # re-run that has been explicitly refused. Same for the PENDING patch's role: it is the
+        # SPECIFICATION of what to stamp, not a change awaiting application.
+        adopt_how = self.m.STAMP_COVERAGE["adopt_unified_5d.py"]["how"]
+        self.assertNotIn("BLOCKED", adopt_how,
+                         "nothing is blocked any more -- the remedy moved, it did not stall")
+        self.assertIn("PENDING-20260819", adopt_how,
+                      "and the preserved specification must still be findable from the table")
+        self.assertIn("NOT to be applied", adopt_how,
+                      "with its status: a specification, never a patch to apply to these bytes")
 
     def test_each_writer_that_CLAIMS_to_stamp_ACTUALLY_MENTIONS_an_identity_key(self):
         """The capability boolean checked against the source -- a claim about code is dated unless
@@ -2421,6 +2434,38 @@ class RootPayloadThreeClasses(unittest.TestCase):
                 self.assertIn("est_seed_offset", src,
                               f"{name} claims to stamp identity but never names the offset key")
                 self.assertIn("TParameter", src, f"{name} must write it as a TParameter")
+
+    def test_a_COVERED_BY_edge_is_FALSIFIABLE_FROM_CODE_not_a_definite_description(self):
+        """`covered_by` EXEMPTS A WRITER FROM THE ONE CHECK THAT WOULD OTHERWISE CATCH IT, so it has to
+        be worth more than its own assertion.
+
+        A definite description -- "the wrapper covers it" -- re-points the moment a second file satisfies
+        it, and nothing can falsify it. So every edge is checked against the covering file's SOURCE, in
+        three directions: the file exists in `nd-unfolding/`, it names the identity key it claims to
+        supply, and it names the writer it claims to cover. The third is the one that matters: a wrapper
+        that stamps identity into somebody ELSE's product would satisfy the first two.
+        """
+        edges = {k: v["covered_by"] for k, v in self.m.STAMP_COVERAGE.items() if v.get("covered_by")}
+        self.assertTrue(edges, "the schema exists because at least one writer is covered rather than "
+                               "fixed; an empty set means the field is dead and should be removed")
+        for covered, coverer in sorted(edges.items()):
+            with self.subTest(covered=covered, coverer=coverer):
+                self.assertIn(coverer, self.m.STAMP_COVERAGE,
+                              "a covering file must itself be a row, or its capability is unchecked")
+                self.assertTrue(self.m.STAMP_COVERAGE[coverer]["stamps"],
+                                "a writer that does not stamp cannot cover one that does not either")
+                p = ND / coverer
+                self.assertTrue(p.exists(), f"{coverer} does not exist -- the exemption names nothing")
+                src = p.read_text()
+                self.assertIn("est_seed_offset", src,
+                              f"{coverer} claims to supply identity for {covered} but never names the "
+                              "offset key")
+                self.assertIn(covered, src,
+                              f"{coverer} never names {covered}, so nothing ties it to the product it "
+                              "claims to cover -- this is the definite-description failure")
+                self.assertIn(covered, self.m.STAMP_COVERAGE[coverer].get("covers", ""),
+                              "and the edge must be declared in BOTH directions, so a future reader of "
+                              "either row learns the other exists")
 
     def test_adopt_DOES_NOT_stamp_a_single_estimator_seed_and_that_is_VL141(self):
         """The adopted root combines the throw leg (g2, 1000+k) with the vertical sweep's covariance
@@ -3079,21 +3124,28 @@ class AnchorComparatorB2(unittest.TestCase):
         Recorded rather than deleted, because "this used to be unreachable" is why the code has the branch.
         """
         import mii_root_payload_classes as classes
+        # 2026-08-20: THE LAST TWO JOIN, AND THE ARGUMENT THAT HELD THEM BACK WAS AIMED AT THE WRONG
+        # TABLE. The old note said a table must not "describe a writer that does not exist yet" -- but
+        # `identity_is_checkable` reads ARTIFACTS, which is a REQUIREMENT ON THE ARTIFACT and says
+        # nothing about which file writes it. The writer now exists in any case:
+        # `mii_adopt_unified_5d_stamped.py`, remedy (A)'s wrapper.
+        # THE COST IS PAID IN THE RIGHT DIRECTION AND IS NAMED: every adopted root built before the
+        # wrapper now FAILS CLOSED rather than reporting UNCHECKABLE. An unavoidable FAIL on a stale
+        # product is what this campaign chose over a green tick on an unidentifiable one.
         CHECKABLE = {"combined_intermediate.root", "lateral_cv.root", "sweep_universe.root",
-                     "uq_5d/unified_throw_cov_5d.root"}
-        BLOCKED = {"adopted_uthrow.root", "adopted_uthrow_cvcentered.root"}
-        self.assertEqual(set(classes.ARTIFACTS), CHECKABLE | BLOCKED)
+                     "uq_5d/unified_throw_cov_5d.root",
+                     "adopted_uthrow.root", "adopted_uthrow_cvcentered.root"}
+        self.assertEqual(set(classes.ARTIFACTS), CHECKABLE)
         for a in sorted(CHECKABLE):
             with self.subTest(artifact=a):
                 self.assertTrue(classes.identity_is_checkable(a))
-        for a in sorted(BLOCKED):
-            with self.subTest(artifact=a):
-                # I ALMOST LEFT THESE CLASSIFIED, WHICH WOULD HAVE BEEN THE WORST DIRECTION: a gate
-                # reporting identity as CHECKABLE on an artifact whose writer stamps nothing. A table
-                # describing a writer that does not exist yet is worse than one admitting the gap.
-                self.assertFalse(classes.identity_is_checkable(a),
-                                 f"{a}'s writer is blocked on a receipt re-issue; the table must not "
-                                 "claim otherwise")
+        # AND THE OPPOSITE DIRECTION STILL HAS A TEST, because a predicate that can no longer say NO is
+        # not a predicate. An artifact whose table lacks the offset pair must still read UNCHECKABLE.
+        classes.ARTIFACTS["__probe__.root"] = {"hXSecND_flat": classes.PAYLOAD}
+        try:
+            self.assertFalse(classes.identity_is_checkable("__probe__.root"))
+        finally:
+            del classes.ARTIFACTS["__probe__.root"]
 
     def test_IDENTITY_IS_THE_OFFSET_PAIR_and_NOT_a_single_estimator_seed(self):
         """The refinement VL141 forced, and my predicate had it wrong in the direction that matters.
@@ -3869,9 +3921,21 @@ class B1MemberLocalConsumerChain(unittest.TestCase):
         import mii_root_payload_classes as classes
         self.assertTrue(classes.identity_is_checkable("lateral_cv.root"),
                         "(A) HAS landed on the lateral")
-        self.assertFalse(classes.identity_is_checkable("adopted_uthrow.root"),
-                         "and has NOT on the adopted roots -- blocked on a receipt re-issue, so the "
-                         "pause stands on that ground too and not only on C's verification")
+        # ============ THE PAUSE NOW RESTS ON EXACTLY ONE GROUND, AND THAT IS STATED, NOT DROPPED =======
+        # Until 2026-08-20 this asserted `assertFalse(identity_is_checkable("adopted_uthrow.root"))`,
+        # with the comment that "the pause stands on that ground too and not only on C's verification".
+        # Remedy (A)'s wrapper + the class-table flip DELETE that second ground. Saying so explicitly is
+        # the whole point of this edit: silently removing the assertion would be me lifting my own
+        # blocker as a side effect of a table change, and per BEN-485 that reviews as a no-op diff --
+        # which is that finding's named tell.
+        self.assertTrue(classes.identity_is_checkable("adopted_uthrow.root"),
+                        "(A) has now landed on the adopted roots too, via the wrapper")
+        self.assertIn("VERIFIED BY C", body,
+                      "SO THE PAUSE NOW RESTS SOLELY ON C's VERIFICATION. The second, independent "
+                      "ground -- the adopted roots being identity-UNCHECKABLE -- is gone, and I am the "
+                      "author of the change that removed it. That is precisely why the remaining ground "
+                      "must be someone else's: nothing here verifies remedy (A), nothing here unblocks "
+                      "B1 steps 4-5, and nothing here licenses releasing the 41.44 GB intermediate.")
 
     def test_the_CV_IS_MEMBER_SCOPED_because_C_RULED_SUBSTITUTE(self):
         """MY HOLD WAS REVERSED, AND THE REASON IS ABOUT SPREADS RATHER THAN VALUES.
