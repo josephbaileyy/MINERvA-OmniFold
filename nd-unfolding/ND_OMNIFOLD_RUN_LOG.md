@@ -10181,3 +10181,54 @@ unreachable cluster exits 2 at the first preflight with nothing mutated.
 
 **No ledger entry is filed for remedy (A), deliberately:** `VALIDATION_LEDGER.md` is for verified numbers and
 remedy (A) produced none — it FAILED, and its ROOT write path has never executed.
+
+## 2026-08-20 — maintenance ended early, the smoke is RUNNING, and OI-135's watcher swap is EXECUTED
+
+**Measured from `login30` at `2026-08-20T06:50Z`, not inferred:** `scontrol show res maintenance_20260819` →
+**"not found"** (the reservation ended well before its 08-26 outer bound, exactly as that bound was labelled), and
+`squeue -j 57266000` → **`57266000_0 RUNNING` on `nid008608`, 42:28 elapsed**, qos `gpu_shared`, `cpus_per_task 32`,
+`memory_per_task 1796M`, `time_limit 08:00:00`. **Every earlier "PENDING behind a reservation" statement is now
+false**, which is why `LIVE-STATE.md` was re-authored in the same commit.
+
+**OI-135 EXECUTED — (a), (b), (c), (d), (f) done; (e) deliberately not.** Run via the rehearsed
+`deploy_oi135_watcher_swap.sh`, which had been verified against the *unreachable* cluster earlier the same day.
+`gate5-do-train-57266000-r4` is **ARMED** with `action=command` → `watch_report_train_run.py`, `params.tasks "0-0"`,
+and `r3` is **DISARMED** — add-then-retire, in that order. **`ISSUE-53`'s exposure is closed for this job:** a
+terminal event now emails Joseph instead of `root-resume`-ing a 2026-07-18 thread carrying
+`--dangerously-bypass-approvals-and-sandbox`. The swap happened while the job was already **running**, so this was
+a live exposure and not a hypothetical one.
+
+**The outcome was read from the watch store, not from an exit status — and that mattered.** The script exited **1**,
+because a *later*, non-critical step failed. Trusting the exit code would have reported the safety-critical swap as
+failed when it had in fact completed correctly.
+
+**(e) NOT done, deliberately.** The script's own note: regenerating `LIVE-STATE.md` inside a checkout 98 commits
+behind main makes **the generator** the stale artifact, so it would produce a worse file. The Compute and Wake
+sections therefore still read `NO EVIDENCE` from the authoring host; the measured facts live in `Declared state`
+with their provenance instead.
+
+**THREE DEFECTS IN THE DEPLOY SCRIPT, all found only by running it against a live cluster — for lane E:**
+
+1. **The preflight tests `github/main` for the three blobs BEFORE step (a) runs the `git fetch github` that makes
+   that ref correct**, so a first run **always** refuses. The cluster's `github/main` was at `9cd0c91c`, predating
+   the file; after a read-only fetch it was `70ed4e33` and the blob was present, `HEAD` untouched at `52df3985`.
+   **This is `BEN-410`'s un-fetched-remote trap, now inside a launcher** — a precondition evaluated against a ref
+   that only the mutation it guards makes true. Fix: fetch (read-only) before the preflight.
+2. **Step (c) writes into the CLUSTER checkout's copy of `state/gate5-do-train-array-active-57266000.json`, which
+   does not exist there at all** — the checkout is 98 commits behind and that file landed later. So (c) can only
+   ever fail. That path belongs in the main tree, and the five measured fields were written there instead.
+3. **The mode gate compares `== 755` while the requirement is only that the file be owner-executable.** NERSC's
+   login `umask 0007` materialised git's recorded `100755` as **770** on checkout — which *is* executable, so
+   `wakerctl` could have exec'd it and the refusal was a false alarm (`BEN-474`: stricter is a false alarm).
+   **Restoring the mode git actually recorded was nevertheless the right repair, not loosening the check** — and
+   note the deployment's own content check said *"byte-identical to `github/main`"* while the mode differed:
+   **byte-identical is not identical, and the attribute that made it runnable was the one not compared.**
+
+**Also measured and worth keeping:** the login node's default `python3` is too old for the codebase (`SyntaxError`
+on `from __future__ import annotations`); the scron ticker already pins `/usr/bin/python3.11`, and so must any
+manual `wakerctl` invocation. The deployed script's shebang is `#!/usr/bin/python3.11`, which is why direct
+`argv[0]` exec works.
+
+**No new compute was launched, nothing was deleted, no pinned file or launcher was touched, and the cluster
+checkout was never reset, pulled or cleaned** — a `fetch` updates remote-tracking refs only, and `HEAD` was
+verified unchanged before and after.

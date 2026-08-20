@@ -2,7 +2,6 @@
   "schema_version": 1,
   "recorded_at_utc": "2026-08-19T13:10:00Z",
   "purpose": "Data-only C_stat: fourth single-member training smoke (~3 A100-h), array 57266000_0",
-
   "PROVENANCE — READ THIS BEFORE QUOTING ANY FIELD": {
     "authored_by": "the mediator session, NOT the submitting lane",
     "authored_when": "AFTER submission, on 2026-08-19, ~14.8 h after the job was submitted",
@@ -14,7 +13,6 @@
     ],
     "every_field_below_is_either": "MEASURED by the mediator from Slurm on 2026-08-19 between 12:09Z and 12:40Z, or CITED to the file that states it. Fields that were never measured are recorded as NOT MEASURED rather than guessed — notably the resource fields, which is why the Compute table renders them as '?'."
   },
-
   "job_id": "57266000",
   "array_job_id": "57266000",
   "tasks": "0-0",
@@ -22,7 +20,6 @@
   "job_name": "g5dotrain",
   "stage": "train",
   "dependency": "none — targets pre-exist and were asserted",
-
   "measured_from_slurm_20260819": {
     "submit_time_cluster_local_PDT": "2026-08-18T22:20:47",
     "submit_time_utc": "2026-08-19T05:20:47Z",
@@ -34,17 +31,17 @@
       "priority": 68110
     },
     "partition_observed": "shared_gp",
-    "tasks_existing_per_sacct": ["57266000_0"],
+    "tasks_existing_per_sacct": [
+      "57266000_0"
+    ],
     "NOTE_slurm_prints_cluster_local_PDT": "Verified: slurmctld stamped LastSchedEval=2026-08-19T05:27:16 at the same moment `date -u` read 12:27:16Z. Do NOT read Slurm timestamps as UTC."
   },
-
-  "cpus_per_task": "NOT MEASURED",
-  "memory_per_task": "NOT MEASURED",
-  "time_limit": "NOT MEASURED",
-  "qos": "NOT MEASURED",
-  "gpus_per_task": "NOT MEASURED",
+  "cpus_per_task": "32",
+  "memory_per_task": "1796M",
+  "time_limit": "08:00:00",
+  "qos": "gpu_shared",
+  "gpus_per_task": "cpu=32",
   "why_resources_not_measured": "Only SubmitTime, EligibleTime and LastSchedEval were read from `scontrol show job`; the full resource block was never captured, and the cluster entered maintenance at 2026-08-19T13:00Z (ssh exit 255) before it could be. Re-measure and replace these five fields when the window ends.",
-
   "blocked_by_reservation": {
     "name": "maintenance_20260819",
     "window_cluster_local_PDT": "2026-08-19T06:00:00 -> 2026-08-26T06:00:00",
@@ -53,7 +50,6 @@
     "flags": "MAINT,IGNORE_JOBS,SPEC_NODES",
     "END_IS_AN_OUTER_BOUND_NOT_A_PREDICTION": "nersc.gov/users/status announces no Perlmutter outage; 287 jobs were RUNNING and 4686 nodes idle when the window opened; and four other projects hold reservations INSIDE it (cache8 08-20->08-22, cborg_onprem_backup_2 08-20->08-23, jaws_reservation_2 08-20->08-24, zatom2_res_1 08-24->09-03). The job may start well before 08-26."
   },
-
   "deployment": {
     "path": "/pscratch/sd/j/josephrb/gate5-data-only-frozen-377c713",
     "commit": "377c713d1790d96d15f7d115d9c903fd556c5943",
@@ -66,10 +62,12 @@
     "<family_root>/logs/train_57266000_0.err"
   ],
   "divergence_manifest_addendum": "docs/orchestration/state/DIVERGENCE-MANIFEST-ADDENDUM-20260819-train-57266000.json",
-
   "supervision": {
     "armed_watch": "gate5-do-train-57266000-r3",
-    "params": {"job_id": "57266000", "tasks": "0-0"},
+    "params": {
+      "job_id": "57266000",
+      "tasks": "0-0"
+    },
     "subject_verified_observable": "build_snapshot(57266000, [0]) -> overall=ACTIVE, unknown_tasks=[]",
     "superseded_watches_left_inert": [
       "gate5-do-train-57266000-r2 (disarmed; carried tasks:\"1\")",
@@ -77,12 +75,11 @@
     ],
     "history": "This job's supervision was broken three independent ways on 2026-08-19 and repaired the same day. See OI-134 (discharged), ISSUE-52 (code residuals), BEN-456 mode (i), BEN-478."
   },
-
   "how_to_read_the_result": {
     "authority": "docs/orchestration/HANDOFF-20260819-lane-e-data-only-cstat-smoke-57266000.md section 3",
     "closed_outcome_set": "five named failure signatures plus success (a PASS receipt AND 'DONE index=0 seed=50000'); anything matching none of them is a FOURTH thing and must be reported as itself",
     "untested": "The controller's INTEGRATION of the checkpoint-collision guard is exercised for the FIRST TIME by this submission."
   },
-
-  "A_PASS_AUTHORISES_NOTHING": "Not the 151 A100-h M(ii) full family, not any second member, not a resubmit if maintenance drains the queue. Those decisions return to the orchestrator and then to Joseph."
+  "A_PASS_AUTHORISES_NOTHING": "Not the 151 A100-h M(ii) full family, not any second member, not a resubmit if maintenance drains the queue. Those decisions return to the orchestrator and then to Joseph.",
+  "resource_fields_remeasured": "2026-08-20T05:5xZ by the mediator from a login node, via scontrol on the LIVE job, after maintenance_20260819 ended. Five fields only; an absent token would have stayed the literal 'NOT MEASURED' and a measured value is never downgraded. WRITTEN IN THE MAIN TREE, NOT ON THE CLUSTER: deploy_oi135_watcher_swap.sh step (c) targets this path inside the cluster checkout, which is 98 commits behind main and does not contain this file at all -- so (c) can only ever fail there. That is the script's defect, not a missing measurement."
 }
