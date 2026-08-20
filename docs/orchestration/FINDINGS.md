@@ -9,6 +9,27 @@ detail lives in sibling `FINDING-<YYYYMMDD>-<slug>.md` files **in this directory
 
 > **BEN id allocation — take the next id from YOUR LANE'S BLOCK. Never `max(existing)+1`.**
 >
+> **DERIVE FREENESS FROM FILED ROWS, NOT FROM A BARE-TOKEN SWEEP — the bare-token form has TWO KNOWN DECOYS and
+> both were hit on 2026-08-20.** Every cell below tells you to derive with `grep -rhoE 'BEN-4[0-9][0-9]'` or
+> similar. **That pattern matches any mention of an id, and a mention is not a filing.** Use the row-anchored
+> form, or the checker, which is immune to both:
+>
+>     grep -cE '^\| BEN-NNN \|' docs/orchestration/FINDINGS.md
+>     python3 docs/orchestration/ben_filing_owner_check.py --findings docs/orchestration/FINDINGS.md
+>
+> **Decoy 1 — a FIXTURE STRING.** `BEN-505` exists only at `test_ben_filing_owner_check.py:102`, inside the
+> filing checker's own test, where it is *supposed* to look like a collision. A naive `max(id)` sweep returns
+> `505` and makes `500-509` look occupied. Lane C declined that block on 2026-08-20 for exactly this reason:
+> **taking a block that already contains a decoy makes its occupancy permanently ambiguous to every future
+> naive sweep.**
+> **Decoy 2 — a FORWARD STATEMENT, created by the lane that had just objected to reserving ids.** The
+> `510-519` row says lane B's next filing takes `486`. That is good guidance and it puts a bare `BEN-486`
+> token in the tree, so the prescribed sweep reports `486` occupied when **no row is filed** — and the
+> mediator misread it that way within the hour. *Two lanes, one hour, opposite roles, same mechanism: the
+> instrument the rule prescribes cannot tell a mention from a use.*
+> **So the rule is fixed rather than the instances**: neither decoy is removed, because a token written to
+> disown a token is still a token (`BEN-482`), and the checker already ignores both.
+>
 > | lane | block |
 > |---|---|
 > | *(pre-block era)* | `001-089` — filed before the block system existed. **`047-059` IS UNFILED (13 ids) AND IS `DO NOT USE`** — see the annotation below; it is a hole, not a free block. |
