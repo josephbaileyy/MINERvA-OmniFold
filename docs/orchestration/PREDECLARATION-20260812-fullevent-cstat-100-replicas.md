@@ -100,7 +100,7 @@ blessing the decision refuses.
 ## 2. Status of the existing 20-replica `C_stat` — unchanged, and now explicitly bounded
 
 `products/pet/bkgsub/pet_cstat_bkgsub_5d.npz`, 20 replicas, per-bin 7.85%, √tr `7.439e-39`
-(`docs/orchestration/evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/STEP2-20260806-niter3-budget-classification.md:37`). It **remains**:
+(`evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/STEP2-20260806-niter3-budget-classification.md:37`). It **remains**:
 
 - a **recoil-only** product, inside the 2026-07-12 quarantine, on the disclosed diagnostic path;
 - **not** enlarged, **not** re-run, **not** promoted;

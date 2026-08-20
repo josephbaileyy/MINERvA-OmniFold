@@ -570,7 +570,7 @@ not a builder.** **AMENDED-BY-REFERENCE 2026-08-15 — READ THIS BEFORE READING 
 the contract **by designation** and not by continuity (`BEN-324`), ruled that a **reduced-`n` diagnostic is
 COHERENT** under it as a non-quotable arm on five conditions, and that comparing such an arm's spread to the
 family's is licensed for **description only** —
-`../docs/orchestration/evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/RULING-20260815-lanec-reduced-n-diagnostic-coherence.md`. **The ruling is NOT in the
+`evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/RULING-20260815-lanec-reduced-n-diagnostic-coherence.md`. **The ruling is NOT in the
 contract and CANNOT BE:** `state/gate5-cstat-spec-measurements-20260814.json` hash-pins both the machine
 contract and the prose spec, so an additive amendment breaks a committed receipt's provenance and was
 reverted rather than repinned (`BEN-238`, `OI-123`). **This paragraph exists because a contract reader has

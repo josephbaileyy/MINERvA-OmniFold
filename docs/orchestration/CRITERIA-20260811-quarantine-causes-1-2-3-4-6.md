@@ -545,7 +545,7 @@ Four documents cite it as `CORRECTED_UQ_PRODUCTION_STATUS.md:73-78`:
 
     VALIDATION_LEDGER.md:303
     docs/orchestration/FINDING-20260806-j28-reroll-exact.md:108
-    docs/orchestration/evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md:119
+    evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/PLAN-20260806-niter3-budget-and-J28-reroll.md:119
     nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md:47   (self-citation)
 
 **Lines 73-78 today are the GPT doc-guardrails / code-merge paragraph.** The rule is at **112-118**.

@@ -29,7 +29,7 @@ and CV-centering turns into spurious rank-1 variance — **X as built is unaffec
 job. `CRITERIA` §3's cause-1 `C` cell cites **`§4.8`, which does not exist**; the audit is
 `Cause1PathAuditTests`. New defect `BEN-381`: the outer-product guard's `file:line` allow-list goes red on
 a bare comment line — filed, deliberately not fixed.
-`docs/orchestration/evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/DETERMINATION-20260817-cause1-census-and-magnitude-measured.md`.
+`evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/DETERMINATION-20260817-cause1-census-and-magnitude-measured.md`.
 
 **2026-08-17 causes 3/4 one-liner (Lane E) — the `P` leg is now MET for BOTH, read off the adoption
 candidate itself, and NEITHER CAUSE IS DISCHARGED.** Both arms of job `56720356` carry all nine
@@ -40,7 +40,7 @@ on a login node. **This corrects the citation the line below and `CRITERIA` §3 
 from the adopted product (job `56695424`)"* names `STAMPTEST2`, whose own receipt says `adopts_nothing:
 true`, and which is mean-centered only. Cause 4 stays OPEN on `M` (UNRESOLVED by construction) and cause
 3's `M` is graded two ways inside `CRITERIA-20260811`; both are judgements and neither was taken.
-`docs/orchestration/evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md`, `BEN-380`.
+`evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/DETERMINATION-20260817-causes-3-4-provenance-measured.md`, `BEN-380`.
 
 **2026-08-11 BEN-106 verification one-liner — repaired stamp propagation is committed, but its
 provenance legs remain OPEN pending artifact read-back.** The first test product silently received no
