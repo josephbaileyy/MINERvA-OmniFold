@@ -6,7 +6,21 @@
     "n_ratio_used": 205,
     "rule": "reported bins with a positive paper central value"
   },
-  "git_head_at_run": "a3a4d3d136547d6a657099ba6b86abb525baa939",
+  "git_head_at_run": "5996eb292f139d82cdce07b5f2b5e4a3c54a61a6",
+  "headline_totals_oi130": {
+    "convention_note": "A BARE SUM OF BIN CONTENTS IS NOT A CROSS SECTION. These histograms hold d2sigma/(dpT dp_par), so the total needs the bin-area Jacobian. The bare sums are RETAINED as the negative result: they came out 12.14x the quoted \\sigTwoD and 12.14x the quoted \\sigTwoDpaper, THE SAME FACTOR ON TWO INDEPENDENT FILES to 3.3e-3. The RATIO was unaffected because the Jacobian cancels -- which is precisely why a ratio reproducing is NOT evidence that its operands do. All-bins and reported-bins sums were also measured IDENTICAL for both files, so the reported/all convention question is moot here: unreported bins contribute zero.",
+    "values": {
+      "bare_content_sum_ours": 3.7315426459249167e-37,
+      "bare_content_sum_paper": 3.6891976275220914e-37,
+      "integral_ours_all_bins": 3.0733131599571655e-38,
+      "integral_ours_reported": 3.0733131599571655e-38,
+      "integral_paper_all_bins": 3.03901139455691e-38,
+      "integral_paper_reported": 3.03901139455691e-38,
+      "ratio_bare_sums": 1.011478110602404,
+      "ratio_integrals_reported": 1.0112871460310062
+    },
+    "why": "\\sigTwoD, \\sigTwoDpaper and \\ratioTot cite no backing artifact anywhere in values.tex, which is OI-130's hard core: nothing can bind them. They derive from the two artifacts pinned under `sources` above, so this receipt attests them."
+  },
   "hostname": "login34",
   "mask": {
     "n_global": 224,
