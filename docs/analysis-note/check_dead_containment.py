@@ -118,6 +118,50 @@ NUM_RE = re.compile(r"\d+\.\d+")
 # 0.986, 0.982, 0.999, 1.000, 10.9 all carry three or more significant digits.
 SIG_MIN = 3
 
+#: A GATE SCOPED TO ONE FILE CANNOT REACH A USAGE IN ANOTHER, and the 6c gate proved it: all 16
+#: `\nw*` macros were struck in `app_negweight.tex` and the gate was recorded as complete, while
+#: `sec_method.tex` quoted `\nwPctTot` LIVE the whole time. Found by the negweight durability lane,
+#: not by this checker, which is the gap being closed here. Same mechanism as OI-146's derived
+#: descendants: enumerate the USAGES, never one file's usages.
+#: THE GATED SET IS DECLARED, NOT INFERRED, so ungating is a deliberate act that has to edit this
+#: list. The twelve real-data/production values rest on untracked scratch and stay gated until a
+#: durability step lands; the four synthetic-toy values (nwToyNeg, nwToyPur, nwToyBias, nwToySeed)
+#: are attested by a committed deterministic producer and are NOT in this set.
+GATED_NW_MACROS = (
+    "nwSigPur", "nwSigNeg", "nwRatioTot", "nwPctTot", "nwMedianBin", "nwRmsBin", "nwWorstBin",
+    "nwSystRatio", "nwStatRatio", "nwSpMedian", "nwSpWithin", "nwSpRawMax",
+    "nwSystResid", "nwStatResid",
+)
+
+
+def gated_macro_usages(note_dir):
+    """Every usage of a GATED macro outside values.tex, with whether it is inside `\dead{}`.
+
+    Returns `(live, struck)` as lists of "file:line". A macro NAMED as text -- e.g.
+    `\texttt{\textbackslash nwSigPur}` in a provenance notice -- is not a usage and is excluded,
+    because printing a macro's NAME is how a gate notice explains itself without defeating itself.
+    """
+    live, struck = [], []
+    for path in sorted(note_dir.glob("*.tex")):
+        if path.name == "values.tex":
+            continue
+        text = path.read_text(encoding="utf-8", errors="replace")
+        spans = []
+        for m in DEAD_RE.finditer(text):
+            body = match_braced(text, m.end() - 1)
+            if body is not None:
+                spans.append((m.start(), text.index(body, m.end() - 1) + len(body)))
+        for name in GATED_NW_MACROS:
+            for m in re.finditer(r"\\" + name + r"(?![A-Za-z])", text):
+                # `\textbackslash nwFoo` is the macro's NAME in prose, not a use of it
+                before = text[max(0, m.start() - 40):m.start()]
+                if "textbackslash" in before:
+                    continue
+                where = f"{path.name}:{text.count(chr(10), 0, m.start()) + 1}"
+                inside = any(a <= m.start() <= b for a, b in spans)
+                (struck if inside else live).append(f"{where} \\{name}")
+    return live, struck
+
 
 def sig_digits(v: str) -> int:
     """Significant digits in a decimal literal: leading zeros are not significant."""
@@ -374,6 +418,18 @@ def main() -> int:
                                 f"retracted values would render in an outward-facing PDF")
         else:
             notes.append(f"{label}: clean, 0 \\dead{{}} in a {len(closure)}-file closure")
+
+    # THE CROSS-FILE GATE CHECK. Scoped to the USAGES, not to one file.
+    gated_live, gated_struck = gated_macro_usages(note_dir)
+    if gated_live:
+        failures.append(
+            f"{len(gated_live)} GATED \\nw* usage(s) are NOT inside \\dead{{}}: "
+            f"{gated_live}. A gate recorded as complete while a usage survives in another file is "
+            f"the 6c defect verbatim -- either strike these or remove the macro from "
+            f"GATED_NW_MACROS deliberately.")
+    else:
+        notes.append(f"all {len(gated_struck)} gated \\nw* usage(s) are inside \\dead{{}}, across "
+                     f"every .tex in the closure -- not just app_negweight.tex")
 
     if unresolved:
         uncovered = sorted(set(unresolved))
