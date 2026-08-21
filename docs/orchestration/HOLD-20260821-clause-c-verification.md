@@ -19,7 +19,21 @@ quotable. That lane crossed nothing it could have seen; the omission is mine.
 sha256` per module plus the launcher's adopt segment digest. If those bytes move mid-run its verdict
 is about different code than it ran.
 
-**NOT HELD: `docs/orchestration/`, `docs/`, `docs/analysis-note/`, anything generated.** My first
+**ALSO HELD, one file and not the directory: `docs/orchestration/state/ben106-stamp-verify-active-56695424.json`.**
+Added 2026-08-21 on the verifier's correction, after I published a scope that was incomplete by
+exactly this path. It is **a gate operand, not documentation**:
+`mii_adopt_unified_5d_stamped.assert_pinned_writer_is_intact` opens it every run
+(`BINDING_RECEIPT`, set at `:154`), reads `rec["implementation_sha256"]`, and refuses if it does not
+equal the on-disk sha256 of `adopt_unified_5d.py`. Verified here rather than taken on trust: both
+sides currently read `e1260e8dec2d39cb4653…`, and the module also carries a `launcher_sha256`.
+The verifier's whole subject is a wrapper whose safety argument is that it *runs the bytes the
+receipt names*, so if this file moves mid-run every subsequent arm either refuses for a reason
+unrelated to what is under test, or — worse — passes against a **re-pinned** digest, certifying a
+re-binding nobody measured. **I missed it because I scoped the hold by what the verdict CITES rather
+than by what the executing code READS.** Those are different sets and the second is the one that can
+invalidate a run.
+
+**NOT HELD: the rest of `docs/orchestration/`, `docs/`, `docs/analysis-note/`, anything generated.** My first
 statement of this hold included `docs/orchestration/`, and that was over-application on my part:
 the verifier told me plainly that it pins per-module blobs rather than a tree state, so
 `docs/orchestration/` moving under it is harmless. I relayed the wider version to two lanes before
