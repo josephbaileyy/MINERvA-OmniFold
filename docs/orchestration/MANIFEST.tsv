@@ -159,7 +159,7 @@ docs/orchestration/state/RECEIPT-20260815-oi126-boundary-feasibility.json	tracke
 docs/orchestration/state/RECEIPT-20260815-oi126-mechanism-narrowing.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-oi126-mechanism-narrowing-20260815.py	yes	4	243	12687
 docs/orchestration/state/RECEIPT-20260815-oi126-push-vs-extraction-RESULT.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	3	75	6062
 docs/orchestration/state/RECEIPT-20260815-oi126-tiebreak-retirement.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	1	317	12304
-docs/orchestration/state/RECEIPT-20260816-hrowindex4d-readback.json	tracked	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	1	137	9743
+docs/orchestration/state/RECEIPT-20260816-hrowindex4d-readback.json	tracked	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	2	137	9743
 docs/orchestration/state/RECEIPT-20260816-p4-standard-stages456.json	tracked	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	2	166	10327
 docs/orchestration/state/RECEIPT-foldforward-instrumented-closure-20260815.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only	nd-unfolding/pet/sbatch_foldforward_instrumented_closure.sh	yes	5	432	26144
 docs/orchestration/state/RECEIPT-vl100-shape-corrected-foldforward-20260815.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-vl100-shape-correction-scan-20260815.py;nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh	yes	8	355	17212
