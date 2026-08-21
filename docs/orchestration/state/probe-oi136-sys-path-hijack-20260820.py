@@ -75,7 +75,19 @@ def rooted_names(src: str) -> set[str]:
 
 
 def main() -> int:
-    found = subprocess.run(["grep", "-rl", "--include=*.py", ROOT, "."],
+    # `--exclude-dir=worktrees` IS LOAD-BEARING, and it is not a narrowing of the subject.
+    # `.claude/worktrees/` holds transient `git worktree` checkouts that concurrent sessions create.
+    # Every .py inside one is a CHECKOUT OF A TRACKED FILE this search already visits at its true
+    # path, so counting it inflates the inventory with copies of what is already counted. Measured
+    # 2026-08-21 in the primary checkout while peers held live audit worktrees: 369 paths against
+    # the recorded 58, and the ratchet read as a regression no lane had caused. With the exclusion
+    # this tree's own set is EXACTLY 58 / 21828143...be66 -- the recorded constants, UNCHANGED.
+    # THIS IS THE SAME EXCLUSION `test_resume_guard._shell_files()` ALREADY CARRIES, with a comment
+    # recording that on 2026-08-07 two live worktrees turned that test red while nothing in the repo
+    # had changed. That precedent is why the fix is an exclusion and not a new constant: a pin that
+    # moves whenever a peer opens a worktree is not pinning anything.
+    found = subprocess.run(["grep", "-rl", "--include=*.py", "--exclude-dir=worktrees",
+                            "--exclude-dir=.git", ROOT, "."],
                            capture_output=True, text=True, cwd=REPO).stdout.split()
     candidates = [f for f in found if pathlib.Path(REPO / f).resolve() != SELF]
     if not candidates:
