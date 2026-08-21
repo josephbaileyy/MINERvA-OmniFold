@@ -1,0 +1,6 @@
+OK      LABEL.txt size=1802 sha256=d52d6af2acb6b39fe0ddc99837e7906ba44495a025128b613bb04a9075d794aa
+OK      negweight_boot_51.tar size=3246080 sha256=4fabfbe92a5b1e29d44e514d9c86ef18288d63c41c7d4405e7276f4dcdda82ba
+OK      negweight_runs_8.tar size=460800 sha256=4d18d46650a03a47942d3033b36276433af3a2a48d6a56482081232be1249291
+OK      negweight_sidecars.tar size=14489600 sha256=5ff20b00a0dc4704c3af822b1e08d342a786ee9807b254887466f26d73e4816b
+OK      negweight_uni_188.tar size=10946560 sha256=c468e8c3dad7a8f075545cd628e8628d5d6d9faf55cb036664ffc3fbd94c1269
+objects_checked=5 bad=0

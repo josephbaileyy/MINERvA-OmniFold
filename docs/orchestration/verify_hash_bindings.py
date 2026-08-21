@@ -166,8 +166,31 @@ NEGATIVE_CONTROL_MARKER = "_fixture"
 FIXTURE_COUNT = 12
 FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed52a1e1"
 
-RECEIPT_BINDING_COUNT = 117
-RECEIPT_BINDING_SHA256 = "7586d636e6c4cde2af89e075d12d02633d21acc6709f796417ba25c37d5eec0c"
+#: MOVED 117 -> 118 ON 2026-08-21, DELIBERATELY, WITH THE REASON AND WITH THE DELTA NAMED.
+#: The negweight durability step added ONE live binding, and it is the only row that changed:
+#:
+#:     2d-unfolding/HANDOFF_bkg_negweight/hpss_recover_negweight.sh
+#:       e989051b7ff95bc0620f253e35ab5b8adf613d26c1adcdb403bad48e4b3bd970
+#:
+#: bound by `recovery.route_sha256` beside its `recovery.route` sibling in
+#: state/negweight-hpss-durability-20260821.json. It is the committed HPSS recovery route, pinned
+#: at the revision that was actually executed and power-tested, so the pin is the point of the
+#: receipt rather than incidental to it.
+#: THIS IS NOT THE FORBIDDEN MOVE, and the distinction is the one this message itself draws.
+#: Bumping "merely to make this pass" is forbidden because it makes the gate agree with whatever
+#: happens to be in the tree -- the OI-143b shape, where the count moved because untracked scratch
+#: receipts resolve differently per checkout and NOTHING was reviewed. Here the delta was
+#: enumerated before the constant moved (one row, printed above), the new binding VERIFIES rather
+#: than mismatching, and it arrives with the receipt that owns it.
+#: AND IT IS POWER-TESTED, so it is not a pin that cannot fail: changing one hex digit of
+#: `route_sha256` makes this file report
+#:   MISMATCH 2d-unfolding/HANDOFF_bkg_negweight/hpss_recover_negweight.sh ... rc 1
+#: measured before the bump, not argued.
+#: NOTE FOR ANYONE READING THIS ON THE CLUSTER: that checkout resolves untracked scratch receipts
+#: and read 119 against the old 117 (OI-143b). It will now read 120 against 118. The divergence is
+#: pre-existing and per-tree; this change does not create it and does not fix it.
+RECEIPT_BINDING_COUNT = 118
+RECEIPT_BINDING_SHA256 = "b16e9e8e6b451539c1a583daef32ce0cb8d94d92c169856934ec7fd7fba469d7"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

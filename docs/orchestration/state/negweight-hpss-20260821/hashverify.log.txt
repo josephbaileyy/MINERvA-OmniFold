@@ -1,0 +1,5 @@
+/home/j/josephrb/mnv-negweight-historical-20260821/negweight_boot_51.tar: (md5) OK
+/home/j/josephrb/mnv-negweight-historical-20260821/LABEL.txt: (md5) OK
+/home/j/josephrb/mnv-negweight-historical-20260821/negweight_uni_188.tar: (md5) OK
+/home/j/josephrb/mnv-negweight-historical-20260821/negweight_sidecars.tar: (md5) OK
+/home/j/josephrb/mnv-negweight-historical-20260821/negweight_runs_8.tar: (md5) OK

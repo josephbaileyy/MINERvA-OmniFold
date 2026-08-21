@@ -1,0 +1,26 @@
+=== RESIDENCY INSTRUMENT NEGATIVE CONTROL, 2026-08-21T21:54:25Z on login34
+=== PURPOSE: prove  CAN report zero bytes at the tape level, i.e. that the
+=== tape-residency check is capable of failing. A freshly-put object is the case.
+=== This also reproduces the state all five archive objects were in immediately after
+=== their put, before hsi migrate -R ran.
+mkdir: /home/j/josephrb/mnv-negweight-residency-control-20260821
+--- put ---
+put  '/pscratch/sd/j/josephrb/negweight-durability-20260821/residency_control.txt' : '/home/j/josephrb/mnv-negweight-residency-control-20260821/residency_control.txt' ( 65 bytes, 8.1 KBS (cos=4))
+--- ls -V IMMEDIATELY after put (expect: 1 (tape) 0, no data at this level) ---
+mnv-negweight-residency-control-20260821:
+-rw-r-----    1 josephrb  josephrb      4       112498 DISK            65 Aug 21 14:54 residency_control.txt
+Storage   VV   Stripe  
+ Level   Count  Width  Bytes at Level
+----------------------------------------------------------------------------
+ 1 (tape)   0       1                                 (no data at this level)
+
+--- for contrast, an archive object AFTER migrate (expect: bytes at the tape level) ---
+mnv-negweight-historical-20260821:
+-rw-r-----    1 josephrb  josephrb      4       112498 DISK        460800 Aug 21 14:43 negweight_runs_8.tar
+Storage   VV   Stripe  
+ Level   Count  Width  Bytes at Level
+----------------------------------------------------------------------------
+ 1 (tape)   1       1  460800
+  VV[ 0]:   Object ID: 000186a4-04-00000001-01eea03634ef0e70-3f1d
+  Pos:  12880+0   PV List: AB038000   
+

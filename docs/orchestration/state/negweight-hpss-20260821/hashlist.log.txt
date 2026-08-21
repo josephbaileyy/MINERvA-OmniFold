@@ -1,0 +1,5 @@
+053c770fa92346167069d45da25a4f2f md5 mnv-negweight-historical-20260821/LABEL.txt [hsi]
+24cf4f20bfeb83822a9df4974cc141e4 md5 mnv-negweight-historical-20260821/negweight_sidecars.tar [hsi]
+927928975d51b0ce0e732b66575c1bce md5 mnv-negweight-historical-20260821/negweight_runs_8.tar [hsi]
+8358a7cb62a5564c8456fc02d7fb91d0 md5 mnv-negweight-historical-20260821/negweight_uni_188.tar [hsi]
+a02622ea1834f4e8da216874fc2e0fd6 md5 mnv-negweight-historical-20260821/negweight_boot_51.tar [hsi]

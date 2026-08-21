@@ -1,0 +1,24 @@
+               JobID                            JobName        State               Start                 End    Elapsed ExitCode  AllocCPUS            Partition 
+-------------------- ---------------------------------- ------------ ------------------- ------------------- ---------- -------- ---------- -------------------- 
+            55663096                    bkgnw_purity_s2    COMPLETED 2026-07-07T21:35:08 2026-07-07T21:53:22   00:18:14      0:0        256   regular_milan_ss11 
+            55663098                 bkgnw_negweight_s2    COMPLETED 2026-07-07T23:34:11 2026-07-07T23:51:48   00:17:37      0:0        256   regular_milan_ss11 
+            55663099                 bkgnw_negweight_s3    COMPLETED 2026-07-08T01:43:23 2026-07-08T02:01:56   00:18:33      0:0        256   regular_milan_ss11 
+            55665504                        claude-hold      TIMEOUT 2026-07-07T19:15:36 2026-07-07T22:15:38   03:00:02      0:0        256    urgent_milan_ss11 
+            55667224              bkgnw_exact_purity_s1    COMPLETED 2026-07-08T02:43:40 2026-07-08T21:48:42   19:05:02      0:0        256   regular_milan_ss11 
+            55667225           bkgnw_exact_negweight_s1    COMPLETED 2026-07-08T04:29:30 2026-07-08T23:41:50   19:12:20      0:0        256   regular_milan_ss11 
+          55668087_1               unfold_MEFHC_boot_nw       FAILED 2026-07-08T05:19:57 2026-07-08T05:20:07   00:00:10      1:0        256   regular_milan_ss11 
+          55668087_2               unfold_MEFHC_boot_nw       FAILED 2026-07-08T06:40:18 2026-07-08T06:40:27   00:00:09      1:0        256   regular_milan_ss11 
+          55668087_3               unfold_MEFHC_boot_nw       FAILED 2026-07-08T07:23:54 2026-07-08T07:24:10   00:00:16      1:0        256   regular_milan_ss11 
+          55668087_4               unfold_MEFHC_boot_nw       FAILED 2026-07-08T07:55:07 2026-07-08T07:55:14   00:00:07      1:0        256   regular_milan_ss11 
+          55668087_5               unfold_MEFHC_boot_nw       FAILED 2026-07-08T08:35:52 2026-07-08T08:35:59   00:00:07      1:0        256   regular_milan_ss11 
+          55668087_6               unfold_MEFHC_boot_nw       FAILED 2026-07-08T08:53:01 2026-07-08T08:53:08   00:00:07      1:0        256   regular_milan_ss11 
+          55668087_7               unfold_MEFHC_boot_nw       FAILED 2026-07-08T12:50:17 2026-07-08T12:50:36   00:00:19      1:0        256   regular_milan_ss11 
+          55668087_8               unfold_MEFHC_boot_nw       FAILED 2026-07-08T14:48:59 2026-07-08T14:49:15   00:00:16      1:0        256   regular_milan_ss11 
+          55668087_9               unfold_MEFHC_boot_nw       FAILED 2026-07-08T16:27:23 2026-07-08T16:27:34   00:00:11      1:0        256   regular_milan_ss11 
+         55668087_10               unfold_MEFHC_boot_nw       FAILED 2026-07-08T18:00:41 2026-07-08T18:00:47   00:00:06      1:0        256   regular_milan_ss11 
+         55668087_11               unfold_MEFHC_boot_nw       FAILED 2026-07-08T18:00:41 2026-07-08T18:00:45   00:00:04      1:0        256   regular_milan_ss11 
+    55668087_[12-50]               unfold_MEFHC_boot_nw CANCELLED b+                None 2026-07-08T19:00:49   00:00:00      0:0          0   regular_milan_ss11 
+ 55668380_[1-400%30]                unfold_MEFHC_uni_nw CANCELLED b+                None 2026-07-08T04:55:48   00:00:00      0:0          0   regular_milan_ss11 
+            55668400                   unfold_uni_nw_CV CANCELLED b+                None 2026-07-08T04:55:48   00:00:00      0:0          0   regular_milan_ss11 
+            55713526             bkgnw_exact_refined_s1    COMPLETED 2026-07-09T09:30:23 2026-07-10T04:59:26   19:29:03      0:0        256   regular_milan_ss11 
+            56322135                               bash    COMPLETED 2026-08-04T07:02:04 2026-08-04T07:54:01   00:51:57      0:0        256    urgent_milan_ss11 

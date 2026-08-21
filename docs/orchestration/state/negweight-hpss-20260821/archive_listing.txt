@@ -1,0 +1,7 @@
+
+mnv-negweight-historical-20260821:
+-rw-r-----    1 josephrb  josephrb        1802 Fri Aug 21 14:43:48 2026 LABEL.txt
+-rw-r-----    1 josephrb  josephrb     3246080 Fri Aug 21 14:43:44 2026 negweight_boot_51.tar
+-rw-r-----    1 josephrb  josephrb      460800 Fri Aug 21 14:43:43 2026 negweight_runs_8.tar
+-rw-r-----    1 josephrb  josephrb    14489600 Fri Aug 21 14:43:47 2026 negweight_sidecars.tar
+-rw-r-----    1 josephrb  josephrb    10946560 Fri Aug 21 14:43:46 2026 negweight_uni_188.tar

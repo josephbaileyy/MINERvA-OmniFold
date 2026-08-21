@@ -1,0 +1,29 @@
+=== RECOVERY ROUTE NEGATIVE CONTROLS, 2026-08-21T21:58:41Z on login34
+=== route sha256: e989051b7ff95bc0620f253e35ab5b8adf613d26c1adcdb403bad48e4b3bd970
+=== A route that has only ever passed has not been shown able to fail.
+=== Expected: (a) exit 3 at step 2, (b) exit 4 at step 4, (c) exit 2, (d) exit 2.
+
+--- (a) one hex digit changed in an objects[].sha256 ---
+exit=3
+MISMATCH negweight_runs_8.tar size=460800 sha256=4d18d46650a03a47942d3033b36276433af3a2a48d6a56482081232be1249291
+[FATAL] retrieved object digests do not match the manifest.
+
+--- (b) one hex digit changed in a ruled_products[].sha256 ---
+exit=4
+MISMATCH 2d-unfolding/uq/negweight_uni/2d_xsec_MEFHC_5iter_lgbm_nw_uni_Flux_27.root want 0045d99e21eff9dd23d660d1a35f172ffafbf2b945ec85d92539d6c05e0e220c got 3045d99e21eff9dd23d660d1a35f172ffafbf2b945ec85d92539d6c05e0e220c
+[FATAL] member digests or the path-set diff failed.
+
+--- (c) non-empty destination must be REFUSED ---
+exit=2
+[FATAL] destination /pscratch/sd/j/josephrb/negweight-durability-20260821/recovery-confirm exists and is not empty.
+
+--- (d) a manifest listing zero objects must be REFUSED ---
+exit=2
+[FATAL] manifest lists no objects
+
+--- POSITIVE ARM RE-RUN with the repaired script, against the FINAL manifest ---
+exit=0
+root_files_opened=247 unusable=0 total_keys=6154
+[ok  ] step 6: every recovered ROOT opens and carries keys
+
+RECOVERY ROUTE PROVEN: steps 1-6 all pass. Evidence under /pscratch/sd/j/josephrb/negweight-durability-20260821/recovery-final

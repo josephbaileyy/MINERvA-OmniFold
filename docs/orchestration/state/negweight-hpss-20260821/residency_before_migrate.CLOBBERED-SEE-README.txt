@@ -1,0 +1,50 @@
+--- BEFORE migrate: ls -V negweight_runs_8.tar
+mnv-negweight-historical-20260821:
+-rw-r-----    1 josephrb  josephrb      4       112498 DISK        460800 Aug 21 14:43 negweight_runs_8.tar
+Storage   VV   Stripe  
+ Level   Count  Width  Bytes at Level
+----------------------------------------------------------------------------
+ 1 (tape)   1       1  460800
+  VV[ 0]:   Object ID: 000186a4-04-00000001-01eea03634ef0e70-3f1d
+  Pos:  12880+0   PV List: AB038000   
+
+--- BEFORE migrate: ls -V negweight_boot_51.tar
+mnv-negweight-historical-20260821:
+-rw-r-----    1 josephrb  josephrb      4       112498 DISK       3246080 Aug 21 14:43 negweight_boot_51.tar
+Storage   VV   Stripe  
+ Level   Count  Width  Bytes at Level
+----------------------------------------------------------------------------
+ 1 (tape)   1       1  3246080
+  VV[ 0]:   Object ID: 000186a4-04-00000001-01eea03634ef0e70-3f1d
+  Pos:  12881+0   PV List: AB038000   
+
+--- BEFORE migrate: ls -V negweight_uni_188.tar
+mnv-negweight-historical-20260821:
+-rw-r-----    1 josephrb  josephrb      4       112498 DISK      10946560 Aug 21 14:43 negweight_uni_188.tar
+Storage   VV   Stripe  
+ Level   Count  Width  Bytes at Level
+----------------------------------------------------------------------------
+ 1 (tape)   1       1  10946560
+  VV[ 0]:   Object ID: 000186a4-04-00000001-01eea03634ef0e70-3f1d
+  Pos:  12877+0   PV List: AB038000   
+
+--- BEFORE migrate: ls -V negweight_sidecars.tar
+mnv-negweight-historical-20260821:
+-rw-r-----    1 josephrb  josephrb      4       112498 DISK      14489600 Aug 21 14:43 negweight_sidecars.tar
+Storage   VV   Stripe  
+ Level   Count  Width  Bytes at Level
+----------------------------------------------------------------------------
+ 1 (tape)   1       1  14489600
+  VV[ 0]:   Object ID: 000186a4-04-00000001-01eea03634ef0e70-3f1d
+  Pos:  12879+0   PV List: AB038000   
+
+--- BEFORE migrate: ls -V LABEL.txt
+mnv-negweight-historical-20260821:
+-rw-r-----    1 josephrb  josephrb      4       112498 DISK          1802 Aug 21 14:43 LABEL.txt
+Storage   VV   Stripe  
+ Level   Count  Width  Bytes at Level
+----------------------------------------------------------------------------
+ 1 (tape)   1       1  1802
+  VV[ 0]:   Object ID: 000186a4-04-00000001-01eea03634ef0e70-3f1d
+  Pos:  12878+0   PV List: AB038000   
+

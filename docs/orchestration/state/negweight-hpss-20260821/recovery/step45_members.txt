@@ -1,0 +1,5 @@
+
+ruled_members_in_manifest=247 recovered_and_matched=247 bad=0
+manifest_not_recovered=0
+recovered_beside_scope=30
+recovered_unexplained=0

@@ -1,0 +1,15 @@
+bkgnw_exact_negweight_s1     COMPLETED    n=   1  ids 55667225..55667225  2026-07-08T04:29:30 .. 2026-07-08T23:41:50
+bkgnw_exact_purity_s1        COMPLETED    n=   1  ids 55667224..55667224  2026-07-08T02:43:40 .. 2026-07-08T21:48:42
+bkgnw_exact_refined_s1       COMPLETED    n=   1  ids 55713526..55713526  2026-07-09T09:30:23 .. 2026-07-10T04:59:26
+bkgnw_negweight_s2           COMPLETED    n=   1  ids 55663098..55663098  2026-07-07T23:34:11 .. 2026-07-07T23:51:48
+bkgnw_negweight_s3           COMPLETED    n=   1  ids 55663099..55663099  2026-07-08T01:43:23 .. 2026-07-08T02:01:56
+bkgnw_purity_s2              COMPLETED    n=   1  ids 55663096..55663096  2026-07-07T21:35:08 .. 2026-07-07T21:53:22
+claude-hold                  CANCELLED    n=   1  ids 55808629..55808629  2026-07-11T20:16:49 .. 2026-07-11T23:04:28
+claude-hold                  TIMEOUT      n=  11  ids 55622959..55811283  2026-07-07T01:40:26 .. 2026-07-12T02:05:03
+nw_cov_analysis              CANCELLED    n=   1  ids 55795507..55795507  - .. 2026-07-11T05:21:03
+nw_cov_analysis              FAILED       n=   1  ids 55677847..55677847  2026-07-11T05:14:08 .. 2026-07-11T05:14:16
+unfold_MEFHC_boot_nw         CANCELLED    n=   1  ids 55668087..55668087  - .. 2026-07-08T19:00:49
+unfold_MEFHC_boot_nw         COMPLETED    n=  50  ids 55702331..55786530  2026-07-08T20:46:42 .. 2026-07-10T22:11:31
+unfold_MEFHC_boot_nw         FAILED       n=  11  ids 55675734..55700181  2026-07-08T05:19:57 .. 2026-07-08T18:00:47
+unfold_MEFHC_uni_nw          COMPLETED    n= 400  ids 55677842..55792262  2026-07-08T09:23:28 .. 2026-07-11T01:27:13
+unfold_uni_nw_CV             COMPLETED    n=   1  ids 55677844..55677844  2026-07-08T10:35:53 .. 2026-07-08T11:18:34

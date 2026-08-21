@@ -1,0 +1,48 @@
+=== hpss_negweight job nojob on login34 at 2026-08-21T21:43:36Z
+=== ruled scope 8/51/188 = 247 ROOTs
+=== beside-scope sidecars: 29 files (own tar, own name, never counted in the 247)
+=== digested 247 ruled + 29 sidecar files
+[tar ] negweight_runs_8.tar 460800 B from 8 members
+[tar ] negweight_boot_51.tar 3246080 B from 51 members
+[tar ] negweight_uni_188.tar 10946560 B from 188 members
+[tar ] negweight_sidecars.tar 14489600 B from 29 members
+[label] 1802 B
+mkdir: /home/j/josephrb/mnv-negweight-historical-20260821
+[put ] negweight_runs_8.tar 460800 B md5 927928975d51b0ce0e732b66575c1bce at 21:43:42Z
+put  '/pscratch/sd/j/josephrb/negweight-durability-20260821/tars/negweight_runs_8.tar' : '/home/j/josephrb/mnv-negweight-historical-20260821/negweight_runs_8.tar' ( 460800 bytes, 15206.4 KBS (cos=4))
+[ok  ] negweight_runs_8.tar server-side md5 927928975d51b0ce0e732b66575c1bce size 460800
+[put ] negweight_boot_51.tar 3246080 B md5 a02622ea1834f4e8da216874fc2e0fd6 at 21:43:44Z
+put  '/pscratch/sd/j/josephrb/negweight-durability-20260821/tars/negweight_boot_51.tar' : '/home/j/josephrb/mnv-negweight-historical-20260821/negweight_boot_51.tar' ( 3246080 bytes, 163416.5 KBS (cos=4))
+[ok  ] negweight_boot_51.tar server-side md5 a02622ea1834f4e8da216874fc2e0fd6 size 3246080
+[put ] negweight_uni_188.tar 10946560 B md5 8358a7cb62a5564c8456fc02d7fb91d0 at 21:43:45Z
+put  '/pscratch/sd/j/josephrb/negweight-durability-20260821/tars/negweight_uni_188.tar' : '/home/j/josephrb/mnv-negweight-historical-20260821/negweight_uni_188.tar' ( 10946560 bytes, 277436.2 KBS (cos=4))
+[ok  ] negweight_uni_188.tar server-side md5 8358a7cb62a5564c8456fc02d7fb91d0 size 10946560
+[put ] negweight_sidecars.tar 14489600 B md5 24cf4f20bfeb83822a9df4974cc141e4 at 21:43:47Z
+put  '/pscratch/sd/j/josephrb/negweight-durability-20260821/tars/negweight_sidecars.tar' : '/home/j/josephrb/mnv-negweight-historical-20260821/negweight_sidecars.tar' ( 14489600 bytes, 419138.2 KBS (cos=4))
+[ok  ] negweight_sidecars.tar server-side md5 24cf4f20bfeb83822a9df4974cc141e4 size 14489600
+[put ] LABEL.txt 1802 B md5 053c770fa92346167069d45da25a4f2f at 21:43:48Z
+put  '/pscratch/sd/j/josephrb/negweight-durability-20260821/tars/LABEL.txt' : '/home/j/josephrb/mnv-negweight-historical-20260821/LABEL.txt' ( 1802 bytes, 387.4 KBS (cos=4))
+[ok  ] LABEL.txt server-side md5 053c770fa92346167069d45da25a4f2f size 1802
+=== put/verify: ok 5 failed 0
+=== migrate rc 0
+=== residency written (before and after migrate)
+=== archive listing written
+=== hpss_negweight job nojob on login34 at 2026-08-21T21:50:03Z
+=== ruled scope 8/51/188 = 247 ROOTs
+=== beside-scope sidecars: 29 files (own tar, own name, never counted in the 247)
+=== digested 247 ruled + 29 sidecar files
+[tar ] negweight_runs_8.tar 460800 B from 8 members
+[tar ] negweight_boot_51.tar 3246080 B from 51 members
+[tar ] negweight_uni_188.tar 10946560 B from 188 members
+[tar ] negweight_sidecars.tar 14489600 B from 29 members
+[label] 1802 B
+mkdir: /home/j/josephrb/mnv-negweight-historical-20260821
+[skip] negweight_runs_8.tar marker records a verified digest match
+[skip] negweight_boot_51.tar marker records a verified digest match
+[skip] negweight_uni_188.tar marker records a verified digest match
+[skip] negweight_sidecars.tar marker records a verified digest match
+[skip] LABEL.txt marker records a verified digest match
+=== put/verify: ok 5 failed 0
+=== migrate rc 0
+=== residency written (before and after migrate)
+=== archive listing written
