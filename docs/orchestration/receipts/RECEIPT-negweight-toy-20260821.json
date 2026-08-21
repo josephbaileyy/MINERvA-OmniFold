@@ -1,0 +1,62 @@
+{
+  "authorization": "Joseph's 6c ruling, 2026-08-21 -- the four synthetic-toy macros; OI-130 family",
+  "determinism": "FULLY DETERMINISTIC AND RE-RUNNABLE: seeds are the literal list [0, 1, 2], sampling uses np.random.RandomState(seed), and the classifier is LGBMClassifier(random_state=seed). No data, no ROOT, no Slurm. Only lightgbm is needed, which is why this could not run on the macOS checkout.",
+  "gating_status": "THESE FOUR REMAIN GATED. Joseph's 6c ruling gated all 16 and did NOT state an ungating condition the way the 6b ruling did, so this receipt is evidence offered for that decision and is NOT authority to un-strike them. Do not remove the \\dead{} without his ruling.",
+  "git_head_at_run": "29d2983eadb79c703c0aa83dd66417cceed82308",
+  "hostname": "login34",
+  "interpreter": {
+    "lightgbm": "4.6.0",
+    "numpy": "1.26.4",
+    "python": "Python 3.11.14"
+  },
+  "macros_attested": {
+    "nwToyBias": {
+      "from": "[none] vs clean (D-B)/S: med=0.109 (no-subtraction contamination bias)",
+      "units": "percent",
+      "value": 10.9
+    },
+    "nwToyNeg": {
+      "from": "[neg ] med=0.068 (negweight median rel-err vs (D-B)/S)",
+      "units": "percent",
+      "value": 6.8
+    },
+    "nwToyPur": {
+      "from": "[pur ] med=0.067 (binned-purity median rel-err vs (D-B)/S)",
+      "units": "percent",
+      "value": 6.7
+    },
+    "nwToySeed": {
+      "from": "[neg ] med=0.068+/-0.003 (seed-to-seed spread over seeds [0,1,2])",
+      "units": "percent",
+      "value": 0.3
+    }
+  },
+  "produced_by": "2d-unfolding/HANDOFF_bkg_negweight/negweight_toy.py",
+  "raw_stdout": [
+    "==============================================================================",
+    "LightGBM signed-weight background-subtraction toy",
+    "  N_Smc=40000 N_Dsig=40000 N_B=8000 (contamination 16.7%) N_Bmc=40000",
+    "  signal MC ~N(0,1), data signal ~N(0.3,1.1), bkg ~N(2.0,0.7)",
+    "==============================================================================",
+    "",
+    "[none ] learns D/S (contaminated). rel-err vs D/S: med=0.063 p90=0.147; vs clean (D-B)/S: med=0.109  <- contamination bias",
+    "[pur  ] binned max(0,(D-B)/D). rel-err vs (D-B)/S: med=0.067 p90=0.159",
+    "[neg  ] negative-weight injection (matched bkg). rel-err vs (D-B)/S over seeds [0, 1, 2]: med=0.068+/-0.003 p90=0.221",
+    "[pur~neg] negweight/purity ratio in pos region: med=0.089 p90=0.286  (should be small: same estimand)",
+    "",
+    "[over ] over-subtraction stress: tail bkg ~N(3.8,0.5), N_Binj=1.3*N_B. true-negative grid fraction=0.20",
+    "        signal-core region rel-err vs true (D-1.3B)/S: med=0.054 p90=1.000",
+    "        learned reweight max over the true B>D region = 1e-06  (>=0: probabilistic classifier structurally floors at 0; a post-hoc clip is exact, matching max(0,.))",
+    "        all learned reweights finite (no NaN/inf): True; no crash -> LGBM tolerates negative sample weights.",
+    "        NOTE: floor is structural, not a well-posed fit in B>D; that region is where Stay-Positive (negweight-refined) would refine.",
+    "",
+    "DONE"
+  ],
+  "result": "ALL FOUR REPRODUCE EXACTLY.",
+  "scope": "This attests the FOUR SYNTHETIC-TOY macros only. It says NOTHING about the twelve real-data/production \\nw* macros, which rest on untracked scratch products and need a durability step, not a re-run.",
+  "script": {
+    "git_blob_at_head": "470352eb8aa8129a4cd5861deeda1271d6f2621a",
+    "path": "2d-unfolding/HANDOFF_bkg_negweight/negweight_toy.py",
+    "sha256_on_disk": "c015272a33046f192c5980bb3e910c047daf4f5bd63505503b0e4f15488561d3"
+  }
+}
