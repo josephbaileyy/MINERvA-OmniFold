@@ -110,9 +110,20 @@ file.** This paragraph read *"The remote is `github`. There is no remote named `
 phrased against *either* name is unfollowable in the other tree. Resolve it first and substitute:
 
 ```bash
-R=$(git remote | head -1)          # or: git remote -v, and pick deliberately
-git fetch "$R" 'refs/tags/evidence/*:refs/tags/evidence/*'
+# NAME the remote. Do NOT use `git remote | head -1`.
+git remote -v                       # look, then substitute the right name below
+git fetch github 'refs/tags/evidence/*:refs/tags/evidence/*'   # on Perlmutter
+git fetch origin 'refs/tags/evidence/*:refs/tags/evidence/*'   # in the local clone
 ```
+
+**`git remote | head -1` IS ITSELF A DEFINITE DESCRIPTION AND IT IS WRONG HERE.** This file recommended
+it until 2026-08-21, and it failed the same day it was written: the Perlmutter checkout has TWO
+remotes, `analysis-note` and `github`, and `head -1` returns **`analysis-note`** on alphabetical
+order. Every downstream number was then computed against the wrong repository -- it reported the
+checkout as *"9 behind"* only once the remote was named, having first reported *"behind 94, ahead
+2069"*, which was a true measurement of the distance to the ANALYSIS-NOTE repo and meaningless as an
+answer to the question asked. **A command that silently answers about a different subject is the
+failure mode this campaign keeps paying for; substituting one guess for another is not a fix.**
 
 **The generalisation, and it has now cost this campaign four separate errors:** a remote name, an
 interpreter version, a hook's liveness and a file's dirtiness are **properties of a checkout, not of
@@ -144,8 +155,7 @@ All four resolve at `evidence/prepublication-2026-08-20-0b329e8a`, verified 2026
 | `state/hpss-residency-inventory-20260812.json` | preservation state behind `OI-131` |
 
 ```bash
-R=$(git remote | head -1)
-git fetch "$R" 'refs/tags/evidence/*:refs/tags/evidence/*'
+git fetch github 'refs/tags/evidence/*:refs/tags/evidence/*'   # `origin` in the local clone; NAME it
 git show evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/<path-above>
 ```
 
