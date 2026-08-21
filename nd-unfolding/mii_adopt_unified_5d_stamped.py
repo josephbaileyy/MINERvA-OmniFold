@@ -306,6 +306,38 @@ def assert_legs_are_one_member(g1_keys, g2_keys, off_declared, off_value):
                 _fail(f"this process declares est_seed_offset={int(off_value)} but its {group} leg "
                       f"was built at {int(o)}. Refusing to relabel another member's covariance as "
                       "this one.")
+
+    # OI-149, 2026-08-21, on Joseph's ruling: COMPARE EACH LEG'S OWN `est_seed_offset_declared`
+    # AGAINST THIS PROCESS'S. Before this the legs' flags were read off disk into LEG_IDENTITY_KEYS
+    # and consulted by NOTHING -- not here, not in assert_seeds_match_their_baselines, not in
+    # stamp_pairs -- while the flag the PRODUCT carries came from this process's environment. A
+    # declared adopter could therefore stamp `1` over two legs that each said `0`, and stage 1 saw a
+    # declared member. Measured end-to-end on the real archive: admitted, `[identity] OK` on both.
+    #
+    # WHY THE CHECKS ABOVE CANNOT SEE IT, and it is arithmetic rather than an oversight: at k=0 the
+    # cross-leg test `int(o1) != int(o2)` and the per-leg test `int(o) != int(off_value)` are both
+    # `0 != 0`. Two never-hooked legs, each stamping its own baseline offset of 0, are NUMERICALLY
+    # IDENTICAL to a deliberate zero anchor at every site that looked -- and k=0 is the only member
+    # stage 1 is declared to gate. This flag is the discriminator the offsets cannot be, which is why
+    # it is stamped per leg at all. Producers write it: unified_throw_cov.py:550, sweep_bank_5d.py:286
+    # and unfold_nd_omnifold_unbinned.py:1039.
+    #
+    # RUNS LAST, DELIBERATELY: it is an ADDITIONAL refusal, so the offset checks above must keep
+    # surfacing their own more specific messages for the cases they own.
+    # MISMATCH ONLY, AND ABSENCE IS DELIBERATELY NOT REFUSED HERE. A leg carrying no flag predates
+    # the stamp, which this function's own tests model on purpose (`{}` for a combined leg). Refusing
+    # absence here would be stricter than the ruling and would break a modelled legacy case; the
+    # GATE already covers it -- mii_anchor_comparator.verify_leg_identity reports a declared member
+    # with absent identity keys as UNVERIFIABLE and fails it, and
+    # mii_root_payload_classes.py:535 already holds that an absent stamp "is not a weak yes".
+    for group, keys in (("g1", g1_keys), ("g2", g2_keys)):
+        leg_decl = keys.get("est_seed_offset_declared")
+        if leg_decl is not None and int(leg_decl) != int(off_declared):
+            _fail(f"DECLARATION MISMATCH on the {group} leg: this process declares "
+                  f"est_seed_offset_declared={int(off_declared)} while that leg was built with "
+                  f"{int(leg_decl)}. At k=0 the offsets alone cannot tell an UNHOOKED leg from a "
+                  "deliberate zero anchor -- this flag is what distinguishes them. Refusing to "
+                  "relabel a leg's hooked-ness.")
     return True
 
 
