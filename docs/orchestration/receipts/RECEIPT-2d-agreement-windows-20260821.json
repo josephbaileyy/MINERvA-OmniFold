@@ -1,0 +1,47 @@
+{
+  "authorization": "Joseph's 6b ruling, 2026-08-21; OI-130",
+  "caveat": "These are a NEW measurement under a STATED mask and denominator. They are not a reproduction of the suppressed \\medianBinRatio / \\binsFive / \\binsTen / \\binsTwenty, which have no recoverable provenance. A difference is a finding, not an error.",
+  "denominator": {
+    "n_excluded_nonpositive_paper": 0,
+    "n_ratio_used": 205,
+    "rule": "reported bins with a positive paper central value"
+  },
+  "git_head_at_run": "a3a4d3d136547d6a657099ba6b86abb525baa939",
+  "hostname": "login34",
+  "mask": {
+    "n_global": 224,
+    "n_reported": 205,
+    "n_reported_asserted": 205,
+    "rule": "positive diagonal of StatOnlyCovariance on the paper's 224-bin global grid"
+  },
+  "produced_by": "2d-unfolding/agreement_windows_receipt.py",
+  "results": {
+    "median_bin_ratio": 1.0064,
+    "within_10_percent": {
+      "count": 193,
+      "percent": 94.1
+    },
+    "within_20_percent": {
+      "count": 202,
+      "percent": 98.5
+    },
+    "within_5_percent": {
+      "count": 159,
+      "percent": 77.6
+    }
+  },
+  "root_version": "6.28/12",
+  "sources": {
+    "ours": {
+      "central_value_object": "hXSec2D",
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root",
+      "sha256": "142a45b0efc753d91e95376c28ac3f6a477d582014a919e49d6d71079a127fd5"
+    },
+    "paper": {
+      "central_value_object": "pt_pl_cross_section",
+      "mask_object": "StatOnlyCovariance",
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+      "sha256": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3"
+    }
+  }
+}
