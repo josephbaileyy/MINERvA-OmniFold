@@ -1,11 +1,13 @@
 source_record	lifecycle	queue	classification_rule	source_row_sha256	state_prefix
-OI-140	active	WAITING-JOSEPH	explicit-user-decision	b095daae782f28826c146f28a75542fd194a6cf3665304cf56bcd7d4c63f5221	WAITING-USER
-OI-141	active	WAITING-JOSEPH	explicit-user-decision	ecd017b48787a6d21c8ae8accc4d10a4578bc454bb45d30c0194fad747e251d5	WAITING-USER
-OI-142	active	NOW	safe-default-active	eb5184ecc902dafa2143054ddd3b18857d9a4a6b35e3bcc7bec81dc30f53a3e5	OPEN
-OI-143	active	WAITING-JOSEPH	explicit-user-decision	bfe27317714e09d43e8c73232f2c8eb2490b5bd9ed6c12e6f8b56e6b2446767a	WAITING-USER
-OI-144	active	NOW	safe-default-active	b0213c2f569bc912bf168f3945b432f75355209f090949eec0afb693c281e712	OPEN
-OI-145	active	NOW	safe-default-active	c0b18cd3db073a6a516ed9399dbe3179eb83088e2e824fcb3bb8fe9357c1788d	OPEN
-OI-146	active	NOW	safe-default-active	e68d4716ef43f22114fc2192587536bf23ab3e0738d06dde56af107824100a73	OPEN
+OI-147	active	WAITING-JOSEPH	explicit-user-decision	29f19f86f609d65048de30cd921edb7c46c1862e3fb46d3140820265dc751902	WAITING-USER
+OI-148	active	NOW	safe-default-active	18f3a709af32ed233522c60cec5233107862e74477be690f83a9f812ac726ea7	OPEN
+OI-140	active	WAITING-JOSEPH	explicit-user-decision	1b42ec8fd6a971989a4e3ab9144ad28628711a80d446ba0de4fe3e7af962c6a6	VERIFICATION LANDED 2026-08-21 (3cb46337) -- AND THE GATE IS STILL NOT PASSABLE; SEE OI-147. Route chosen: REAL in-file
+OI-141	active	WAITING-JOSEPH	explicit-user-decision	182e2d52a1023ff49f33990f4e4fa01030216fce7661be86816983df1be1952d	FIXED AND LANDED 2026-08-21 (3cb46337). compare() returns ComparisonResult, a 2-long tuple subclass carrying .uncomparab
+OI-142	active	NOW	safe-default-active	e16344c285c7ff00b0207e59651f52e5a23959101214c741b00777ea6ac94877	OWNER ASSIGNED 2026-08-21 per the closure review: the shared resume/infrastructure owner. Recommended fix, recorded so i
+OI-143	active	WAITING-JOSEPH	explicit-user-decision	b684117260f3624a0035afb53544bd556bf88552884ca342e26109fd52542798	(a) LANDED 2026-08-21 (ea1a3fd6); (b) NARROWED AND STILL OPEN. (a) A JSON declaring a top-level _fixture key is held out
+OI-144	active	NOW	safe-default-active	b36a04adbbeff71f46255d743911c9980cbbc6af5b46161dd0bd01b1b20d7076	OWNER ASSIGNED 2026-08-21 per the closure review: the control-plane generator owner. Recommended fix: carry last-known v
+OI-145	active	NOW	safe-default-active	138f6190877e6e7be2ee8e3d1f7679e07deb1f9889696cd401c5d2726db09ae8	REPINNED 2026-08-21 (ea1a3fd6) -- ACCEPTED AS A VERSIONED REPIN, NOT REVERTED AND NOT OVERWRITTEN. All 7 edits verified
+OI-146	retired	-	explicit-terminal-prefix	a42d3e352cf634917ce69aaf5c9da9ccd39d3b2f3d0389564bd3d53541c94e7c	CLOSED 2026-08-21 (4fb0e3d4) -- GATED WITH THEIR PARENTS AND NOW DEFINED FROM THEM. The bare literals 1.4 % / 1.8 % beca
 OI-70	active	NOW	safe-default-active	fbeafc72e79982d1a8f781cd0ce684425dc53ce83efa5196537a1f181ebe6fe0	MECHANICAL HALF DISCHARGED 2026-08-15 from the MAIN CHECKOUT on Joseph's authorization (relayed by the mediator, grant c
 OI-71	active	WAITING-JOSEPH	explicit-user-decision	6bf07285524a7460c8b3cf2e1d2cbab687481a66bc037dd2902476de8f9d2540	WAITING-USER, AND NARROWER THAN THIS ROW SAID. CORRECTED 2026-08-15: the physics ground for quoting VL100 is MIS-TARGETE
 OI-72	retired	-	explicit-terminal-prefix	08453ed7dad41224c113f311a9defc28e773c9cdaa2bff715178f9fc3d76c751	WITHDRAWN THE SAME HOUR IT WAS FILED — already found by lane B, already fixed, and the id is kept rather than reused. Fi

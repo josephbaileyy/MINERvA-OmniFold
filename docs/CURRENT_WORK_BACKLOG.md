@@ -7,13 +7,14 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 
 | source record | derived queue | classification rule | source state prefix |
 |---|---|---|---|
-| OI-140 | WAITING-JOSEPH | explicit-user-decision | WAITING-USER |
-| OI-141 | WAITING-JOSEPH | explicit-user-decision | WAITING-USER |
-| OI-142 | NOW | safe-default-active | OPEN |
-| OI-143 | WAITING-JOSEPH | explicit-user-decision | WAITING-USER |
-| OI-144 | NOW | safe-default-active | OPEN |
-| OI-145 | NOW | safe-default-active | OPEN |
-| OI-146 | NOW | safe-default-active | OPEN |
+| OI-147 | WAITING-JOSEPH | explicit-user-decision | WAITING-USER |
+| OI-148 | NOW | safe-default-active | OPEN |
+| OI-140 | WAITING-JOSEPH | explicit-user-decision | VERIFICATION LANDED 2026-08-21 (3cb46337) -- AND THE GATE IS STILL NOT PASSABLE; SEE OI-147. Route chosen: REAL in-file |
+| OI-141 | WAITING-JOSEPH | explicit-user-decision | FIXED AND LANDED 2026-08-21 (3cb46337). compare() returns ComparisonResult, a 2-long tuple subclass carrying .uncomparab |
+| OI-142 | NOW | safe-default-active | OWNER ASSIGNED 2026-08-21 per the closure review: the shared resume/infrastructure owner. Recommended fix, recorded so i |
+| OI-143 | WAITING-JOSEPH | explicit-user-decision | (a) LANDED 2026-08-21 (ea1a3fd6); (b) NARROWED AND STILL OPEN. (a) A JSON declaring a top-level _fixture key is held out |
+| OI-144 | NOW | safe-default-active | OWNER ASSIGNED 2026-08-21 per the closure review: the control-plane generator owner. Recommended fix: carry last-known v |
+| OI-145 | NOW | safe-default-active | REPINNED 2026-08-21 (ea1a3fd6) -- ACCEPTED AS A VERSIONED REPIN, NOT REVERTED AND NOT OVERWRITTEN. All 7 edits verified |
 | OI-74 | NOW | safe-default-active | CORRECTED AND NARROWED 2026-08-17 (lane E) — THE DRIFT IS GONE, THE TREE IS SYNCED AT 7ac36ac, AND EVERY QUANTITY IN THI |
 | OI-1 | BLOCKED-EXTERNAL | explicit-blocker | BLOCKED |
 | OI-2 | NOW | safe-default-active | 4D SUPERSEDED / scalar-FPS STILL OPEN — SPLIT VERDICT, codex audit 2026-08-13 |
