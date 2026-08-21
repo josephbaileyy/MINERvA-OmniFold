@@ -15,48 +15,44 @@
 \newcommand{\sigTwoD}{3.073e-38}      % our 2D total cross section, cm^2/nucleon
 \newcommand{\sigTwoDpaper}{3.039e-38} % published 2D total
 \newcommand{\ratioTot}{1.011}         % sigma_tot ours/paper
-% PROVENANCE GAP for the next four macros (recorded 2026-08-20; values deliberately
-% untouched). \medianBinRatio, \binsFive, \binsTen and \binsTwenty have NO committed
-% producing script. The only committed script in the repo that computes 5/10/20%
-% agreement windows against the published result is
-% 2d-unfolding/compare_to_paper_interior.py (windows at :146-148, p||-scan at
-% :167-183), and it masks to the STRICT INTERIOR -- interior_mask(),
-% pt_hi/pz_lo <= tan(20 deg) -- intersected with the paper-reported mask
-% (:131-133, m_both = m_int & m_rep; the scan additionally does `m_scan &= m_rep`
-% at :173). Its bin counts are therefore SMALLER than the ones the note
-% prints: the audit's re-run reports 185/179/171/162/152/141 (NOT re-run here -- the
-% mask is confirmed in the source, the counts are the audit's), while
-% app_statmethods.tex:704-710 prints 205/196/186/175/163/151 and credits
-% compare_to_paper_fullcov.py, which contains no window and no median-ratio
-% computation at all (grep for 0.05/0.10/0.20/median returns nothing there).
-% `git log --follow` shows that interior mask present since the initial commit
-% (d3239355), so NO committed version of ANY script reproduces the quoted trio.
-% Consequence under the repo liveness rule (a result is live only once its evidence
-% is committed): these four are NOT QUOTABLE as measured values until a producing
-% script and its output land.
-%
-% SUPPRESSION IS NOW IN FORCE (2026-08-21, on Joseph's ruling). THE FOUR DEFINITIONS
-% BELOW ARE DELIBERATELY LEFT INTACT AND ARE NOW UNUSED BY EVERY BUILD -- do not
-% "clean up" the unused macros. The values are not known WRONG, they are UNATTESTED,
-% and they are the operands an authorized producer must reproduce.
-%   note   -- struck with \dead{} at the point of use, each with a \textbf{struck: ...}
-%             sentence: sec_results.tex:58-60 and :82-83, sec_execsummary.tex:19,
-%             sec_summary.tex:7.
-%   paper  -- REMOVED, not struck, with a %% comment at the removal site
-%             (paper_body.tex:66-71). \dead{} is FORBIDDEN outside the note build and
-%             check_dead_containment.py enforces it, so outward the rule is
-%             remove-and-say-so.
-%   primer -- REMOVED the same way (primer_body.tex:70-73).
-% Verified by pdftotext, not by the checker's word alone: 94.1 appears 4x in
-% main_note.pdf and 0x in main_primer.pdf and main_paper.pdf.
-% RESTORE ONLY FROM THE AUTHORIZED PRODUCER'S OUTPUT -- a receipt-backed script that
-% derives the reported mask, asserts N=205, and emits counts plus source identities.
-% Re-deriving or correcting the numbers by hand is a number-producing act reserved for
-% their owner; this comment only records the gap and its suppression.
-\newcommand{\medianBinRatio}{1.006}   % median per-bin ratio ours/paper; UNREPRODUCIBLE, see note above
-\newcommand{\binsFive}{77.6}          % percent of bins within 5%; UNREPRODUCIBLE, see note above
-\newcommand{\binsTen}{94.1}           % within 10%; UNREPRODUCIBLE, see note above
-\newcommand{\binsTwenty}{98.5}        % within 20%; UNREPRODUCIBLE, see note above
+% PROVENANCE FOR THE NEXT FOUR MACROS -- RESOLVED 2026-08-21, AND THE HISTORY MATTERS.
+% \medianBinRatio, \binsFive, \binsTen and \binsTwenty had NO committed producing script
+% (OI-130). They were suppressed from all three deliverables on 2026-08-21 and are RESTORED
+% here only because an authorized producer now attests them.
+%   PRODUCER  2d-unfolding/agreement_windows_receipt.py
+%   RECEIPT   docs/orchestration/receipts/RECEIPT-2d-agreement-windows-20260821.json
+%   RUN       saul login34, ROOT 6.28/12, at git a3a4d3d1
+%   MASK      205 of 224 bins, DERIVED as the positive diagonal of the paper ancillary's
+%             StatOnlyCovariance on its own 224-bin global grid -- the same predicate
+%             compare_to_paper_fullcov.py uses for its chi^2 ndf. The count is ASSERTED to be
+%             205 and the producer exits 3 on any other value.
+%   DENOM     205 of 205; ZERO bins excluded for a non-positive paper value, so the
+%             denominator rule never bit and cannot be the source of the agreement.
+%   INPUTS    ours  hXSec2D             from 2d_crossSection_omnifold_MEFHC_5iter.root
+%                                       sha256 142a45b0efc753d91e95376c28ac3f6a477d582014a919e49d6d71079a127fd5
+%             paper pt_pl_cross_section  from minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+%                                       sha256 6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3
+%   MEASURED  median 1.0064; 159/205 = 77.6 %; 193/205 = 94.1 %; 202/205 = 98.5 %
+% ALL FOUR REPRODUCE THE PREVIOUSLY UNATTESTED VALUES EXACTLY. The producer was not aimed at
+% them -- its receipt predeclares, in a field written before the run, that it attempts no
+% reproduction and that a difference would be a finding.
+% \medianBinRatio KEEPS ITS THREE-DECIMAL FORM: the receipt measures 1.0064 and 1.006 is that
+% number at the precision the note has always printed. Changing the displayed precision would
+% be a new editorial claim, not a restoration; the full value lives in the receipt.
+% WHAT IS STILL NOT ESTABLISHED, and do not let the agreement blur it: this is not shown to be
+% the method that ORIGINALLY produced these four. That provenance remains unrecoverable. OI-130's
+% finding -- that no committed script reproduced the trio -- was TRUE OF THE TREE AS IT STOOD and
+% stopped being true only when the producer landed.
+% NOT THE PRODUCER, and the reason is worth keeping: 2d-unfolding/compare_to_paper_interior.py
+% computes 5/10/20 % windows but masks to the STRICT INTERIOR (interior_mask(), pt_hi/pz_lo <=
+% tan(20 deg)) intersected with the reported mask, so its denominators are SMALLER than 205
+% (the audit's re-run reports 185/179/171/162/152/141). `git log --follow` puts that interior
+% mask in the initial commit (d3239355), so no committed version of IT ever produced these.
+% Any future change to these four goes through the producer and a fresh receipt.
+\newcommand{\medianBinRatio}{1.006}   % median per-bin ratio ours/paper; receipt measures 1.0064, ATTESTED above
+\newcommand{\binsFive}{77.6}          % percent of bins within 5%; 159/205, ATTESTED above
+\newcommand{\binsTen}{94.1}           % within 10%; 193/205, ATTESTED above
+\newcommand{\binsTwenty}{98.5}        % within 20%; 202/205, ATTESTED above
 \newcommand{\pullMean}{0.089}
 \newcommand{\pullRMS}{0.598}
 \newcommand{\pullRMSr}{0.60}          % rounded, for prose
