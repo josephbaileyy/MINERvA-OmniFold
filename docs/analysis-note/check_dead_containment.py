@@ -96,6 +96,38 @@ NEWCMD_RE = re.compile(r"\\newcommand\{\\([A-Za-z]+)\}\{([^}]*)\}")
 # collision-prone to search for in a rendered PDF
 NUM_RE = re.compile(r"\d+\.\d+")
 
+# NARROWED 2026-08-21, on this check's own instruction ("narrow this check rather than deleting
+# it") after the 6c negweight gate made it FAIL on five values that were ALL digit coincidences,
+# verified by eye in both outward PDFs:
+#     0.13 -> the arXiv id `2110.13372`      1.4  -> figure axis ticks `1.45`, `1.40`
+#     12.6 -> the generator version `2.12.6`  6.8  -> the LIVE values `6.87 %` / `6.86 %`
+#     0.3  -> figure axis ticks `0.25 < p_T < 0.33` and a bare tick `x 0.3`
+# TWO INDEPENDENT NARROWINGS, because either alone still misfires:
+#   (1) TOKEN BOUNDARY. The old test was `v in txt`, a substring, so `6.8` matched `6.87` -- it
+#       reported a struck value leaking when what was present was a DIFFERENT, LIVE number that
+#       happens to start with the same digits. A struck literal now has to appear as a whole
+#       number token, with no digit or `.` adjacent on either side.
+#   (2) MINIMUM SIGNIFICANT DIGITS. Boundary matching alone still fails on `0.3`, because a bare
+#       `0.3` is a real axis tick in a document full of plots. The existing comment above already
+#       reasons this way about bare integers ("far too collision-prone"); two significant digits
+#       is the same problem one step along. Values below the threshold are NOT dropped silently --
+#       they are reported in the same named coverage-gap line as integer-only bodies, so the gap
+#       stays legible and the source stage still guards them.
+# WHAT THIS DELIBERATELY DOES NOT DO: it does not weaken coverage of any value that can actually
+# discriminate. Every 6b/6a literal stays covered -- 94.1, 77.6, 98.5, 1.006, 3.0727e-38, 0.9987,
+# 0.986, 0.982, 0.999, 1.000, 10.9 all carry three or more significant digits.
+SIG_MIN = 3
+
+
+def sig_digits(v: str) -> int:
+    """Significant digits in a decimal literal: leading zeros are not significant."""
+    return len(v.replace(".", "").lstrip("0"))
+
+
+def token_hit(value: str, text: str) -> bool:
+    """True only if `value` appears as a complete number token, not inside a longer number."""
+    return re.search(r"(?<![\d.])" + re.escape(value) + r"(?![\d.])", text) is not None
+
 
 def resolve_closure(root: Path, seen: set[Path] | None = None) -> list[Path]:
     """Transitive \\input/\\include closure of a driver .tex, in discovery order."""
@@ -143,8 +175,15 @@ def literals_from(body: str, macros: dict[str, str]) -> tuple[set[str], list[str
     for name in re.findall(r"\\([A-Za-z]+)", body):
         if name in macros:
             expanded += " " + macros[name]
-    nums = set(NUM_RE.findall(expanded))
-    if not nums:
+    all_nums = set(NUM_RE.findall(expanded))
+    nums = {v for v in all_nums if sig_digits(v) >= SIG_MIN}
+    thin = sorted(all_nums - nums)
+    if thin:
+        unresolved.append(
+            " ".join(body.split()) + f"  [PDF-uncoverable: {', '.join(thin)} "
+            f"-- under {SIG_MIN} significant digits, indistinguishable from an axis tick or a "
+            f"version number in a rendered PDF; source check only]")
+    if not all_nums:
         # No decimal literal, so the PDF stage cannot search for this one. Usually an
         # integer-only body (`\approx\!70\%`): a bare integer collides with page numbers, bin
         # counts and years in a rendered PDF, so searching for it would produce false failures.
@@ -339,7 +378,8 @@ def main() -> int:
     if unresolved:
         uncovered = sorted(set(unresolved))
         notes.append(f"PDF stage does NOT cover {len(uncovered)} \\dead{{}} bod(ies) -- no decimal "
-                     f"literal to search for, so only the source check guards these: "
+                     f"literal, or none with >={SIG_MIN} significant digits, so only the source "
+                     f"check guards these: "
                      + "; ".join(uncovered))
 
     # ---- PDF-level ------------------------------------------------------------------------
@@ -364,7 +404,7 @@ def main() -> int:
             _skipped("main_note.pdf absent, pdftotext unavailable, or the PDF extracted EMPTY -- "
                       "PDF stage did not run")
         else:
-            seen_in_note = sorted(v for v in struck_values if v in note_txt)
+            seen_in_note = sorted(v for v in struck_values if token_hit(v, note_txt))
             if not seen_in_note:
                 failures.append(
                     f"none of the {len(struck_values)} derived struck literals appear in "
@@ -381,7 +421,7 @@ def main() -> int:
                                  f"NOT PDF-checked, and this is an outward-facing build the "
                                  f"whole check exists to protect")
                         continue
-                    hits = sorted(v for v in seen_in_note if v in txt)
+                    hits = sorted(v for v in seen_in_note if token_hit(v, txt))
                     if hits:
                         failures.append(
                             f"{driver}.pdf contains struck literal(s) {hits} that main_note.pdf "
