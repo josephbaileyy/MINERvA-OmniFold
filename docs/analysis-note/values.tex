@@ -243,6 +243,44 @@
 % this node. So the App.~negweight numbers rest on untracked scratch products plus
 % their Slurm/interactive logs, and a durability step is owed before they are quoted
 % as live.
+%
+% DURABILITY STEP DONE 2026-08-21, and the paragraph above is kept rather than
+% rewritten because two of its sentences are now FALSE and the falsehood is
+% instructive. Corrections, in order of how badly each misleads:
+%   * "HPSS coverage is NOT CONFIRMED HERE: `hsi` cannot authenticate
+%     non-interactively from this node" is WRONG. `hsi` authenticated from login34
+%     on the first attempt. That sentence is the whole reason this file recorded
+%     coverage as unknown, and it was a claim about an instrument that nobody had
+%     re-run. Coverage is now confirmed: all 247 products are on tape at
+%     mnv-negweight-historical-20260821, server-side digest-verified,
+%     `hashverify -R` rc 0 with 5 of 5 `(md5) OK`, and RESTORED end to end --
+%     247 of 247 recovered, digest-matched and reopened as ROOT files.
+%   * "a durability step is owed before they are quoted as live" is DISCHARGED, on
+%     Joseph's ruling, which also fixed its shape: preserve, do NOT git-track the
+%     ROOT population, do NOT rerun the study. So the FIRST sentence stays true --
+%     nothing here is under version control and .gitignore:2 is untouched, by
+%     instruction. Untracked is no longer the same as unbacked.
+%   * "No RUNS.tsv row ... cites any of the jobids above" was true and is now half
+%     false: a row cites the DURABILITY run. No row yet cites the 2026-07
+%     PRODUCING jobs, which is a smaller residual and is left named rather than
+%     quietly closed.
+% AND A CORRECTION TO THE PROVENANCE COMMENT ABOVE, measured from `sacct` on
+% 2026-08-21: the jobids `bkg_negweight_state.md` credits for the bootstrap and
+% universe replicas produced NOTHING. Arrays 55668087 and 55668380 and job 55668400
+% all FAILED or were CANCELLED. What ran was 50 separate submissions after twelve
+% failures (55702331..55786530), 400 submissions yielding 187 distinct universe
+% outputs (55677842..55792262), and 55677844 for the CV. The two covariance rollups
+% behind \nwSystRatio and \nwStatRatio were not batch products at all -- they were
+% made interactively in hold allocation 55795538, 42 s and 65 s after the batch
+% attempt was cancelled. That job list was a LAUNCH PLAN read as a record; the same
+% trap as the CANCELLED 55663097 already corrected above, one level out.
+% Receipt: docs/orchestration/RECEIPT-20260821-negweight-hpss-durability.md
+% Manifest: docs/orchestration/state/negweight-hpss-durability-20260821.json
+% THESE PRODUCTS ARE HISTORICAL DIAGNOSTIC EVIDENCE. Preservation does not make
+% negative-weight injection a supported production path, does not revive the
+% archived pre-freeze arm, and changes no default: the headline 2D path is the
+% binned per-reco-bin purity weight. Do not let a future edit read the archive's
+% existence as authorization to run or adopt that arm.
 \newcommand{\nwSigPur}{3.0727e-38}    % 2D total sigma, binned purity (hist), cm^2/nucleon
 \newcommand{\nwSigNeg}{3.0687e-38}    % 2D total sigma, negative-weight (hist), cm^2/nucleon
 \newcommand{\nwRatioTot}{0.9987}      % negweight/purity total ratio

@@ -124,18 +124,32 @@ SIG_MIN = 3
 #: not by this checker, which is the gap being closed here. Same mechanism as OI-146's derived
 #: descendants: enumerate the USAGES, never one file's usages.
 #: THE GATED SET IS DECLARED, NOT INFERRED, so ungating is a deliberate act that has to edit this
-#: list. The twelve real-data/production values rest on untracked scratch and stay gated until a
-#: durability step lands; the four synthetic-toy values (nwToyNeg, nwToyPur, nwToyBias, nwToySeed)
-#: are attested by a committed deterministic producer and are NOT in this set.
-GATED_NW_MACROS = (
-    "nwSigPur", "nwSigNeg", "nwRatioTot", "nwPctTot", "nwMedianBin", "nwRmsBin", "nwWorstBin",
-    "nwSystRatio", "nwStatRatio", "nwSpMedian", "nwSpWithin", "nwSpRawMax",
-    "nwSystResid", "nwStatResid",
-)
+#: list. The four synthetic-toy values (nwToyNeg, nwToyPur, nwToyBias, nwToySeed) were never in it:
+#: they are attested by a committed deterministic producer.
+#:
+#: EMPTIED 2026-08-21 BY THE NEGWEIGHT DURABILITY LANE, on Joseph's ruling, and empty rather than
+#: deleted so the next gating has somewhere to go. The twelve real-data/production values were gated
+#: because they rested on untracked scratch; their 247 backing ROOTs are now on tape, digest-verified
+#: server-side, confirmed by a full read off tape, and RESTORED end to end -- 247 of 247 recovered,
+#: digest-matched and reopened -- by a committed, adversarially tested route.
+#: nwSystResid and nwStatResid leave with them because they are \fpeval-DERIVED from nwSystRatio and
+#: nwStatRatio (OI-146): a descendant cannot be gated independently of its parent without the gate
+#: asserting two different things about one number.
+#: Evidence: docs/orchestration/RECEIPT-20260821-negweight-hpss-durability.md and
+#: docs/orchestration/state/negweight-hpss-durability-20260821.json.
+#: WHAT UNGATING DID NOT DO: it did not make negative-weight injection a supported production path
+#: and it changed no default. That is a claim about the note's PROSE, which this checker does not and
+#: should not police -- do not add a keyword rule here for it.
+#: AN EMPTY SET MAKES THIS CHECK INERT, WHICH IS WHY IT NOW HAS A TEST. With no gated names the
+#: detector iterates over nothing and reports success by looking at nothing -- this repo's most
+#: repeated defect shape, and installing it silently would be worse than the gap it replaced.
+#: test_build_all.py::GatedMacroDetectorTest exercises it against a synthetic note directory in both
+#: directions, so the mechanism stays proven while the production set is empty.
+GATED_NW_MACROS = ()
 
 
 def gated_macro_usages(note_dir):
-    """Every usage of a GATED macro outside values.tex, with whether it is inside `\dead{}`.
+    r"""Every usage of a GATED macro outside values.tex, with whether it is inside `\dead{}`.
 
     Returns `(live, struck)` as lists of "file:line". A macro NAMED as text -- e.g.
     `\texttt{\textbackslash nwSigPur}` in a provenance notice -- is not a usage and is excluded,
@@ -427,6 +441,13 @@ def main() -> int:
             f"{gated_live}. A gate recorded as complete while a usage survives in another file is "
             f"the 6c defect verbatim -- either strike these or remove the macro from "
             f"GATED_NW_MACROS deliberately.")
+    elif not GATED_NW_MACROS:
+        # Say INERT, not PASS. "all 0 gated usages are inside \dead{}" is true of any tree and would
+        # read as coverage in a log skimmed months later.
+        notes.append("GATED_NW_MACROS is EMPTY -- the gated-macro check is inert by declaration, not "
+                     "passing on evidence. Nothing is currently gated; see this file's comment for "
+                     "who emptied it and why. The detector itself stays covered by "
+                     "test_build_all.py::GatedMacroDetectorTest.")
     else:
         notes.append(f"all {len(gated_struck)} gated \\nw* usage(s) are inside \\dead{{}}, across "
                      f"every .tex in the closure -- not just app_negweight.tex")

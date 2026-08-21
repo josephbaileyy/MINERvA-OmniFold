@@ -13,12 +13,12 @@ measurement. It is the continuous version of the purity weight recommended for
 nontrivial backgrounds by Ref.~\cite{unbinnedguide}, and the natural treatment
 for the extended-fiducial analysis, where the background is larger.
 
-\paragraph{Provenance gate on this appendix's numbers.}
-\textbf{The twelve real-data/production comparison values in this appendix are STRUCK
-(\texttt{OI-130}, gated 2026-08-21); the four synthetic-toy values are ATTESTED and stand.} The
-analytic derivation, the estimand identity and the displacement argument need none of them.
+\paragraph{Provenance of this appendix's numbers.}
+\textbf{All sixteen values in this appendix now rest on preserved, verified evidence, and none of
+them is a publication uncertainty product.} The analytic derivation, the estimand identity and the
+displacement argument need none of them.
 
-\emph{Struck --- twelve real-data/production values} ---
+\emph{Preserved --- twelve real-data/production values} ---
 seven central-comparison (\texttt{\textbackslash nwSigPur}, \texttt{\textbackslash nwSigNeg},
 \texttt{\textbackslash nwRatioTot}, \texttt{\textbackslash nwPctTot},
 \texttt{\textbackslash nwMedianBin}, \texttt{\textbackslash nwRmsBin},
@@ -27,13 +27,29 @@ seven central-comparison (\texttt{\textbackslash nwSigPur}, \texttt{\textbacksla
 (\texttt{\textbackslash nwSpMedian}, \texttt{\textbackslash nwSpWithin},
 \texttt{\textbackslash nwSpRawMax}) --- together with the two \emph{derived} residual differences
 (\texttt{\textbackslash nwSystResid}, \texttt{\textbackslash nwStatResid}), which are defined from
-their two covariance parents so that they cannot outlive a retraction of those parents. All rest on
-\emph{untracked scratch products}: \texttt{.gitignore} carries a blanket \texttt{*.root} and
-\texttt{git ls-files} returns zero \texttt{.root} files anywhere under \texttt{2d-unfolding/}, so
-none of the eight ROOTs in \texttt{HANDOFF\_bkg\_negweight/runs/} nor the 51 bootstrap and 188
-universe replicas behind the two covariance ratios is under version control, and no
-\texttt{RUNS.tsv} or \texttt{VALIDATION\_LEDGER.md} row cites any of them. Recovering these needs a
-\emph{durability} step, not a re-derivation.
+their two covariance parents so that they cannot outlive a revision of those parents. These were
+struck between 2026-08-21 and their durability step because they rested on \emph{untracked scratch
+products}: \texttt{.gitignore} carries a blanket \texttt{*.root}, so none of the eight ROOTs in
+\texttt{HANDOFF\_bkg\_negweight/runs/} nor the 51 bootstrap and 188 universe replicas behind the two
+covariance ratios was under version control, and all 247 sat single-copy on purgeable scratch. That
+is now remedied rather than re-derived: the 247 products are archived on tape, digest-verified
+server-side, confirmed by a full read off tape, and \emph{restored end to end} --- all 247 recovered,
+digest-matched and reopened --- by a committed, adversarially tested recovery route. Nothing here was
+recomputed, and the durability step deliberately did not re-run the study. Per-file digests, the
+producing commit and the recovery route are recorded in the repository's
+\texttt{RECEIPT-20260821-negweight-hpss-durability} and its manifest.
+
+\emph{What preservation does not license.} These products are \textbf{historical diagnostic
+evidence}. The background subtraction used for every result in this note is the \emph{binned purity}
+weight of \S\ref{sec:method-algo}; negative-weight injection is documented here as an equivalence
+study and an argument for the extended-fiducial analysis, and preserving its outputs neither makes it
+a supported production path nor changes any default. The two covariance ratios are agreement
+diagnostics between two realizations of one subtraction, not uncertainty products, and only the
+negative-weight side of each ratio is preserved --- so the ratios are quotable as measured but are not
+reproducible from the archive alone. Two provenance limits are recorded with the numbers rather than
+against them: the driver was uncommitted when these outputs were written, so the executing revision
+is corroborated by a version-distinct log string rather than pinned by a digest; and no output
+carries a producing job identifier, which no later run can supply.
 
 \emph{Attested --- four synthetic-toy values} (\texttt{\textbackslash nwToyNeg},
 \texttt{\textbackslash nwToyPur}, \texttt{\textbackslash nwToyBias},
@@ -42,9 +58,9 @@ universe replicas behind the two covariance ratios is under version control, and
 fully deterministic --- literal seeds \texttt{[0, 1, 2]}, \texttt{RandomState(seed)} sampling and
 \texttt{LGBMClassifier(random\_state=seed)}, no data and no cluster inputs. It was re-run on
 2026-08-21 and reproduced all four exactly; the receipt is
-\texttt{docs/orchestration/receipts/RECEIPT-negweight-toy-20260821.json}. They are therefore no
-longer struck. The distinction the two classes make is \emph{attestability}, not importance: a toy
-needs a re-run, real data needs its products to exist somewhere durable.
+\texttt{docs/orchestration/receipts/RECEIPT-negweight-toy-20260821.json}. The distinction the two
+classes make is \emph{attestability}, not importance, and it is why they were discharged by different
+means: a toy needs a re-run, real data needs its products to exist somewhere durable.
 
 \subsection{Estimator}
 \label{sec:negweight-estimator}
@@ -86,7 +102,7 @@ by an explicit zero clip of the learned refinement factor, before step-1
 training. Whether the plain injection and this clipped refinement coincide in
 practice depends on the classifier.
 With the histogrammed gradient-boosted density estimator used for \emph{this
-comparison} they agree to the median of $\dead{\nwMedianBin}$ reported below, at
+comparison} they agree to the median of $\nwMedianBin$ reported below, at
 the sub-percent genuine-background scale of this measurement. Note that
 \texttt{hist} is neither the backend of the production central value
 (\texttt{exact}) nor of its covariance ensemble (\texttt{lgbm}); see
@@ -95,10 +111,10 @@ third backend, and its transfer to the production configuration is an assumption
 rather than a demonstration. With an
 \emph{exact} (tree-boosted) classifier the raw signed weights instead
 destabilize training --- a full low-$p_T$ row of the cross section inflates by
-up to a factor ${\sim}\dead{\nwSpRawMax}$ where the local background is large --- and
+up to a factor ${\sim}\nwSpRawMax$ where the local background is large --- and
 the clipped Stay-Positive refinement removes the pathology, recovering
-agreement with the binned purity to a median of $\dead{\nwSpMedian}$
-($\dead{\nwSpWithin}$ bins within \SI{5}{\percent}). This clipped refinement is
+agreement with the binned purity to a median of $\nwSpMedian$
+($\nwSpWithin$ bins within \SI{5}{\percent}). This clipped refinement is
 therefore what makes the unbinned subtraction robust across estimators, and it
 matters most for the larger, more structured backgrounds of the
 extended-fiducial analysis.
@@ -187,12 +203,12 @@ floors cleanly at zero over the region where $B>D$, as anticipated above.
 Table~\ref{tab:negweight} compares the two background treatments on the
 ME~FHC data, unfolded with identical settings and a common classifier
 seed so that the difference isolates the background treatment. The two agree to
-\dead{\SI{\nwPctTot}{\percent}} on the total cross section --- an order of magnitude
+\SI{\nwPctTot}{\percent} on the total cross section --- an order of magnitude
 inside the ${\sim}\SI{3}{\percent}$ purity correction itself --- with a median
-per-bin ratio of $\dead{\nwMedianBin}$ and a \dead{\SI{\nwRmsBin}{\percent}} RMS scatter
+per-bin ratio of $\nwMedianBin$ and a \SI{\nwRmsBin}{\percent} RMS scatter
 across the plane (Fig.~\ref{fig:negweight-ratio}).
 The only bin differing by more than a few percent is a single low-$p_T$,
-high-background edge bin (\dead{\SI{\nwWorstBin}{\percent}}), exactly where the
+high-background edge bin (\SI{\nwWorstBin}{\percent}), exactly where the
 background concentrates and the subtraction is largest. The unbinned
 subtraction thus reproduces the adopted binned correction wherever the
 correction is well determined, and departs from it only in the regime where the
@@ -210,11 +226,11 @@ binned $\max(0,\cdot)$ floor and the structural floor of
     \hline\hline
     & binned purity & negative-weight \\
     \hline
-    total $\sigma$ (cm$^2$/nucleon) & $\dead{\nwSigPur}$ & $\dead{\nwSigNeg}$ \\
-    total ratio (neg/pur)           & \multicolumn{2}{c}{$\dead{\nwRatioTot}$ (\dead{\SI{\nwPctTot}{\percent}})} \\
-    median per-bin ratio            & \multicolumn{2}{c}{$\dead{\nwMedianBin}$} \\
-    per-bin RMS deviation           & \multicolumn{2}{c}{\dead{\SI{\nwRmsBin}{\percent}}} \\
-    largest single-bin deviation    & \multicolumn{2}{c}{\dead{\SI{\nwWorstBin}{\percent}} (low $p_T$, high background)} \\
+    total $\sigma$ (cm$^2$/nucleon) & $\nwSigPur$ & $\nwSigNeg$ \\
+    total ratio (neg/pur)           & \multicolumn{2}{c}{$\nwRatioTot$ (\SI{\nwPctTot}{\percent})} \\
+    median per-bin ratio            & \multicolumn{2}{c}{$\nwMedianBin$} \\
+    per-bin RMS deviation           & \multicolumn{2}{c}{\SI{\nwRmsBin}{\percent}} \\
+    largest single-bin deviation    & \multicolumn{2}{c}{\SI{\nwWorstBin}{\percent} (low $p_T$, high background)} \\
     \hline\hline
   \end{tabular}
 \end{table}
@@ -224,7 +240,7 @@ binned $\max(0,\cdot)$ floor and the structural floor of
   \includegraphics[width=0.62\textwidth]{negweight_ratio_2d}
   \caption{Per-bin ratio of the negative-weight to the binned-purity
     cross section on the 2D ME~FHC measurement (common estimator and seed),
-    over the populated bins. The two agree to a median of $\dead{\nwMedianBin}$ across
+    over the populated bins. The two agree to a median of $\nwMedianBin$ across
     the plane (near-white); the only departure beyond a few percent is the
     single low-$p_T$, high-background edge bin, where the background is largest
     and the $\max(0,\cdot)$/structural floor of \S\ref{sec:negweight-estimator}
@@ -243,18 +259,17 @@ genuine background varied consistently within each universe rather than frozen
 at nominal, and a statistical bootstrap --- and compared to the binned-purity
 construction with identical settings. The two agree at the level the $(D-B)/S$
 identity predicts: the systematic covariance matches in overall magnitude to a
-$\sqrt{\mathrm{tr}}$ ratio of $\dead{\nwSystRatio}$ (negative-weight/purity), and the
-statistical covariance, compared on matched bootstrap seeds, to $\dead{\nwStatRatio}$.
-The residual differences --- \dead{\SI{\nwSystResid}{\percent}} and
-\dead{\SI{\nwStatResid}{\percent}} --- \textbf{struck with their parents: these are DERIVED from
-$\dead{\nwSystRatio}$ and $\dead{\nwStatRatio}$ and are now DEFINED FROM THEM MECHANICALLY, so
-they cannot survive their parents' retraction again} --- consistent with
-the ``to within \SI{2}{\percent}'' stated in \S\ref{sec:method} --- are bootstrap and
-classifier-seed sampling noise, not a method bias. Negative-weight injection thus
-reproduces the central cross section \emph{per bin} (median $1.000$, RMS
-\SI{1.4}{\percent}, worst bin $-\SI{12.6}{\percent}$) and its covariance \emph{in
-aggregate}. The covariance comparison is two trace ratios; per-bin, correlation and
-eigenmode equivalence are not established.
+$\sqrt{\mathrm{tr}}$ ratio of $\nwSystRatio$ (negative-weight/purity), and the
+statistical covariance, compared on matched bootstrap seeds, to $\nwStatRatio$.
+The residual differences --- \SI{\nwSystResid}{\percent} and
+\SI{\nwStatResid}{\percent}, each defined from its parent ratio rather than written
+out, so that a later revision of either ratio propagates to it --- are consistent
+with the ``to within \SI{2}{\percent}'' stated in \S\ref{sec:method} and are
+bootstrap and classifier-seed sampling noise, not a method bias. Negative-weight
+injection thus reproduces the central cross section \emph{per bin} (median
+$\nwMedianBin$, RMS \SI{\nwRmsBin}{\percent}, worst bin \SI{\nwWorstBin}{\percent})
+and its covariance \emph{in aggregate}. The covariance comparison is two trace
+ratios; per-bin, correlation and eigenmode equivalence are not established.
 
 The equivalence at the 2D scale --- in the central value, the closed-form
 estimator recovery, and now the full systematic and statistical covariance ---
@@ -352,12 +367,12 @@ what we claim, rather than uniform across both, which we do not.
 It has been measured at full statistics with the adopted estimator on the 2D
 ME~FHC measurement, and it is one to two percent on the covariance. The
 $187$-universe systematic covariance agrees to a $\sqrt{\mathrm{Tr}}$ ratio of
-$\dead{\nwSystRatio}$, from \dead{\SI{2.9828e-39}{cm^2/nucleon}} negative-weight against
-\dead{\SI{3.0242e-39}{cm^2/nucleon}} purity; the statistical covariance on matched
-bootstrap seeds agrees to $\dead{\nwStatRatio}$, from \dead{\SI{1.7260e-40}{cm^2/nucleon}}
-against \dead{\SI{1.7576e-40}{cm^2/nucleon}}; and the real-data totals agree to
-\dead{\SI{\nwPctTot}{\percent}}, with per-bin median $\dead{\nwMedianBin}$ and
-\dead{\SI{\nwRmsBin}{\percent}} RMS. These are the comparisons of
+$\nwSystRatio$, from \SI{2.9828e-39}{cm^2/nucleon} negative-weight against
+\SI{3.0242e-39}{cm^2/nucleon} purity; the statistical covariance on matched
+bootstrap seeds agrees to $\nwStatRatio$, from \SI{1.7260e-40}{cm^2/nucleon}
+against \SI{1.7576e-40}{cm^2/nucleon}; and the real-data totals agree to
+\SI{\nwPctTot}{\percent}, with per-bin median $\nwMedianBin$ and
+\SI{\nwRmsBin}{\percent} RMS. These are the comparisons of
 \S\ref{sec:negweight-2d} and \S\ref{sec:negweight-uq}, restated here with the
 operands of each ratio so that the ratios can be checked rather than taken.
 
@@ -369,7 +384,7 @@ of order \SI{0.1}{\percent} per universe. A systematic covariance is the spread
 \emph{across} universes about their own mean. A footing change that displaces
 every universe by the same small amount therefore leaves that spread almost
 unchanged: the two covariances agree by construction, not by coincidence, which
-is why the $187$-universe ratio lands at $\dead{\nwSystRatio}$ rather than anywhere near
+is why the $187$-universe ratio lands at $\nwSystRatio$ rather than anywhere near
 the size of the purity correction itself (${\sim}\SI{3}{\percent}$). A reader is
 entitled to ask how a comparison on a handful of universes can support a
 statement about a $187$-universe object; the displacement argument is the reason

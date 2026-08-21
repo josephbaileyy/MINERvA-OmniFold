@@ -349,6 +349,99 @@ def run_mutations():
     return 0 if caught == len(MUTANTS) else 1
 
 
+class GatedMacroDetectorTest(unittest.TestCase):
+    r"""Keep `gated_macro_usages` proven while `GATED_NW_MACROS` is EMPTY.
+
+    The negweight durability step ungated all twelve production `\nw*` macros, which left the
+    declared gated set empty. With nothing declared the detector iterates over nothing and its
+    caller reports success by looking at nothing -- a check that cannot fail, which is the defect
+    shape `check_dead_containment.py`'s own header exists to argue against. The production set
+    being empty is correct; the detector going unexercised is not.
+
+    So the mechanism is tested against a SYNTHETIC note directory with the gated set injected,
+    in BOTH directions -- a filter needs a test that it fires and a test that it does not. If a
+    later lane re-gates a macro, these tests already cover the machinery it will rely on.
+    """
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="gatedmacro-"))
+        # `values.tex` is skipped by the detector by design (definitions are not usages), so a
+        # definition here must NOT be reported even though it names a gated macro.
+        (self.tmp / "values.tex").write_text(r"\newcommand{\nwFake}{0.986}" + "\n")
+        self.mod = self._load()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, True)
+
+    def _load(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "cdc_under_test", str(HERE / "check_dead_containment.py"))
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        mod.GATED_NW_MACROS = ("nwFake",)
+        return mod
+
+    def _run(self, body):
+        (self.tmp / "body.tex").write_text(body + "\n")
+        return self.mod.gated_macro_usages(self.tmp)
+
+    def test_live_gated_usage_is_reported(self):
+        """The direction that matters: an un-struck gated macro must be FOUND."""
+        live, struck = self._run(r"agreement of $\nwFake$ across the plane")
+        self.assertEqual(len(live), 1, f"detector missed a live gated usage: {live} {struck}")
+        self.assertIn("body.tex:1", live[0])
+        self.assertEqual(struck, [])
+
+    def test_struck_gated_usage_is_not_reported(self):
+        """The opposite direction: a properly struck usage must NOT be flagged."""
+        live, struck = self._run(r"agreement of $\dead{\nwFake}$ across the plane")
+        self.assertEqual(live, [], f"detector flagged a struck usage: {live}")
+        self.assertEqual(len(struck), 1)
+
+    def test_struck_inside_SI_wrapper_is_not_reported(self):
+        r"""`\dead{\SI{\nwFake}{\percent}}` is the real idiom and must read as struck.
+
+        This is the shape the note actually uses. `\SI{\dead{x}}{\percent}` is invalid siunitx and
+        broke the note build for four hours on 2026-08-21, so the wrapper is always outside.
+        """
+        live, struck = self._run(r"to \dead{\SI{\nwFake}{\percent}} of the total")
+        self.assertEqual(live, [], f"detector flagged a struck \\SI usage: {live}")
+        self.assertEqual(len(struck), 1)
+
+    def test_macro_named_as_prose_is_not_a_usage(self):
+        r"""`\texttt{\textbackslash nwFake}` prints the NAME; a gate notice must be able to say
+        which macros it gates without tripping itself."""
+        live, struck = self._run(r"the gated set is \texttt{\textbackslash nwFake} and no other")
+        self.assertEqual((live, struck), ([], []))
+
+    def test_definition_in_values_tex_is_not_a_usage(self):
+        """setUp put a gated definition in values.tex; the detector must skip that file."""
+        live, struck = self._run("no macros here at all")
+        self.assertEqual((live, struck), ([], []))
+
+    def test_longer_macro_name_is_not_a_prefix_match(self):
+        r"""`\nwFakeExtra` is a different macro. A prefix match would gate it by accident."""
+        live, struck = self._run(r"value $\nwFakeExtra$ is unrelated")
+        self.assertEqual((live, struck), ([], []))
+
+    def test_production_set_is_empty_and_that_is_deliberate(self):
+        """Pin the current state so a silent re-gating cannot slip in unexplained.
+
+        Not a value judgement: if a lane re-gates something it should edit this assertion in the
+        same commit, which is the same discipline `GATED_NW_MACROS` exists to impose on the tex.
+        """
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "cdc_pristine", str(HERE / "check_dead_containment.py"))
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        self.assertEqual(
+            mod.GATED_NW_MACROS, (),
+            "GATED_NW_MACROS changed. If you re-gated a macro, update this test in the same "
+            "commit and say which macro and on whose authority.")
+
+
 # The mutation runner points the whole suite at a mutated copy without editing anything.
 if os.environ.get("BUILD_ALL_SCRIPT"):
     SCRIPT = Path(os.environ["BUILD_ALL_SCRIPT"])
