@@ -225,9 +225,16 @@ which is a larger job than a comment fix and touches quoted numbers.
 
 ### 2.11 Off-`main` artifacts with no discovery route
 
-`84607aa3` removed **1,035** tracked files in a commit whose message names **none** of the four
-conditions `CLAUDE.md` requires. Most removals *are* covered by `CATALOG.md`'s generic route and
-per-file stubs. **Four have no route at all**, and the first two matter for `OI-7`:
+`84607aa3` removed **734** tracked files in a commit whose message names **none** of the four
+conditions `CLAUDE.md` requires. (**Corrected 2026-08-21: this read 1,035, which does not
+reproduce.** 734 verified three ways at `80eeb441` — 734 `D` rows in `--name-status`, 741 files
+changed = 734 `D` + 7 `M`, and tracked files under `docs/orchestration` go 1,093 -> 359, a
+difference of exactly 734. The commit touches **nothing** outside that subtree: 0 of the 734 `D`
+paths are outside it. The nearest plausible operand for 1,035 is **1,093**, the count immediately
+BEFORE the commit, i.e. a pre-state mistaken for a delta. The four-with-no-route claim below is a
+list of four specific files and does not depend on this denominator.)
+
+Most removals *are* covered by `CATALOG.md`'s generic route and per-file stubs. **Four have no route at all**, and the first two matter for `OI-7`:
 
 - `runs/standard-p4-verifier/20260811T132822Z-packetB-final-pass.md` — **`OI-7`'s PB3/PB4 evidence**
 - `runs/standard-p4-verifier/20260817T045149Z-repair12-verdict.json` — supersedes repair-11, which

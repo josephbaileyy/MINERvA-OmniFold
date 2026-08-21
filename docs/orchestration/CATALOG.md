@@ -102,11 +102,56 @@ Or make an ordinary `git fetch github` do it permanently, per checkout:
 git config --add remote.github.fetch '+refs/tags/evidence/*:refs/tags/evidence/*'
 ```
 
-**The remote is `github`.** There is no remote named `origin` — `git rev-parse origin/main` is
-fatal — so any witness phrased against `origin/…` is unfollowable as written.
+**THE REMOTE NAME IS CHECKOUT-LOCAL — do not hardcode it, and do not trust either name from this
+file.** This paragraph read *"The remote is `github`. There is no remote named `origin` —
+`git rev-parse origin/main` is fatal"* until 2026-08-21. That is true on the Perlmutter checkout and
+**exactly inverted in the local clone**, where `git remote -v` lists only `origin`,
+`git rev-parse origin/main` resolves, and `git rev-parse github/main` is the fatal one. A witness
+phrased against *either* name is unfollowable in the other tree. Resolve it first and substitute:
+
+```bash
+R=$(git remote | head -1)          # or: git remote -v, and pick deliberately
+git fetch "$R" 'refs/tags/evidence/*:refs/tags/evidence/*'
+```
+
+**The generalisation, and it has now cost this campaign four separate errors:** a remote name, an
+interpreter version, a hook's liveness and a file's dirtiness are **properties of a checkout, not of
+`main`**. `HANDOFF-20260820-2154Z-publication-closeout.md` §2.1 (a dirty `state/sessions.json` at
+51,542 B blocking `MANIFEST.tsv`), §2.2 (`build_all.sh` cannot exit 0) and §2.12 (the pre-commit hook
+is inert, 7 of 12 checks `SyntaxError`) are all `login19` facts. Measured in the local clone at
+`80eeb441`: `sessions.json` is **clean at its committed 46,746 B**, `core.hooksPath` **is** set, and
+the hook reports **12 checks passed** under python 3.12.2. Re-measure with an explicit `-C <path>`
+and say which tree you are in.
 
 **Test reachability with `git for-each-ref --contains <sha>`, never `git branch -a --contains`,**
 which cannot see tags and will declare an anchored commit disposable.
+
+### The four removed artifacts with no routed citation
+
+`84607aa3` removed 734 tracked files, all under `docs/orchestration`. Most are covered by the generic
+route above. **These four were cited by nothing live**, so a reader had no way to learn they exist;
+`HANDOFF-20260820-2154Z-publication-closeout.md` §2.11 identified them. They are **recoverable, and
+were never lost** — this section is the missing *route*, not a recovery. Restoring the paths into the
+live tree is a separate freeze-scope question and is **not** what this section does.
+
+All four resolve at `evidence/prepublication-2026-08-20-0b329e8a`, verified 2026-08-21:
+
+| artifact (under `docs/orchestration/`) | why it matters |
+|---|---|
+| `runs/standard-p4-verifier/20260811T132822Z-packetB-final-pass.md` | `OI-7`'s PB3/PB4 evidence |
+| `runs/standard-p4-verifier/20260817T045149Z-repair12-verdict.json` | supersedes repair-11, which *is* on `main` |
+| `AUDIT-20260819-analysis-note-vs-record.md` (1,375 lines) | the only prior enumeration of the 70; bears on `OI-130`, which is 22% enumerated |
+| `state/hpss-residency-inventory-20260812.json` | preservation state behind `OI-131` |
+
+```bash
+R=$(git remote | head -1)
+git fetch "$R" 'refs/tags/evidence/*:refs/tags/evidence/*'
+git show evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/<path-above>
+```
+
+**Note the self-contamination, because it recurs in this campaign:** before this section existed, the
+`AUDIT` file's *only* live citation was the document reporting that it had none. A write moves the
+population it measures — so "cited nowhere" needs a timestamp and a tree, like any other measurement.
 
 **Resolve citations by SHA, not by path.** A path can resolve at HEAD and read a *different* file
 with no error. Measured: `nd-unfolding/mii_anchor_comparator.py` is blob `a7cb2d9b…` at both
