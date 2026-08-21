@@ -1,13 +1,13 @@
 source_record	lifecycle	queue	classification_rule	source_row_sha256	state_prefix
 OI-150	active	NOW	safe-default-active	de8ff9391fbfa6054bf0dcbe976bcdcf8287119bd7743cd0264b832d9847121a	OPEN
-OI-149	active	WAITING-JOSEPH	explicit-user-decision	6e890237067464596aa9da84b7d749d2661f68bb72b2e7b2c1066ecf34c2129c	WAITING-USER
+OI-149	active	WAITING-JOSEPH	explicit-user-decision	25631bddecba24c6519d18485f9a0d7cf502d17bf67929c3119e3cad5f6be787	WAITING-USER
 OI-147	active	WAITING-JOSEPH	explicit-user-decision	75a162687c94a147c1299561b6f405c05857633b2c5e47957460ea6934fbac1e	WAITING-USER
 OI-148	active	NOW	safe-default-active	18f3a709af32ed233522c60cec5233107862e74477be690f83a9f812ac726ea7	OPEN
 OI-140	active	WAITING-JOSEPH	explicit-user-decision	1b42ec8fd6a971989a4e3ab9144ad28628711a80d446ba0de4fe3e7af962c6a6	VERIFICATION LANDED 2026-08-21 (3cb46337) -- AND THE GATE IS STILL NOT PASSABLE; SEE OI-147. Route chosen: REAL in-file
 OI-141	active	WAITING-JOSEPH	explicit-user-decision	182e2d52a1023ff49f33990f4e4fa01030216fce7661be86816983df1be1952d	FIXED AND LANDED 2026-08-21 (3cb46337). compare() returns ComparisonResult, a 2-long tuple subclass carrying .uncomparab
 OI-142	active	NOW	safe-default-active	a1e28d670068b62611450ada9480822611b53878a2a3f4c17ee94d9dcd5e34fa	SHELL LIBRARY FIXED 2026-08-21; ONE RESIDUAL, NAMED AND NOT SILENTLY DROPPED. rg_is_complete now REFUSES a marker carryi
 OI-143	active	WAITING-JOSEPH	explicit-user-decision	b684117260f3624a0035afb53544bd556bf88552884ca342e26109fd52542798	(a) LANDED 2026-08-21 (ea1a3fd6); (b) NARROWED AND STILL OPEN. (a) A JSON declaring a top-level _fixture key is held out
-OI-144	active	NOW	safe-default-active	9f1c5c0ae18c57f253cc7c135f612e12b29fb6cfa4e8ad47d2676cefeebc466c	THE CODE FIX LANDED 2026-08-21 AND THE ROW STAYS OPEN ON ONE ITEM: the carry-forward store is only PARTIALLY seeded, bec
+OI-144	retired	-	explicit-terminal-prefix	3d1e3464fc51b6c4b770ccbf361341bef62b5e14a26acd78fba5bd572101b114	DISCHARGED 2026-08-21. The fix landed at e135a657/fc4293ef and the residual it was left open on is now closed by measure
 OI-145	active	NOW	safe-default-active	138f6190877e6e7be2ee8e3d1f7679e07deb1f9889696cd401c5d2726db09ae8	REPINNED 2026-08-21 (ea1a3fd6) -- ACCEPTED AS A VERSIONED REPIN, NOT REVERTED AND NOT OVERWRITTEN. All 7 edits verified
 OI-146	retired	-	explicit-terminal-prefix	a42d3e352cf634917ce69aaf5c9da9ccd39d3b2f3d0389564bd3d53541c94e7c	CLOSED 2026-08-21 (4fb0e3d4) -- GATED WITH THEIR PARENTS AND NOW DEFINED FROM THEM. The bare literals 1.4 % / 1.8 % beca
 OI-70	active	NOW	safe-default-active	fbeafc72e79982d1a8f781cd0ce684425dc53ce83efa5196537a1f181ebe6fe0	MECHANICAL HALF DISCHARGED 2026-08-15 from the MAIN CHECKOUT on Joseph's authorization (relayed by the mediator, grant c

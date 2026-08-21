@@ -15,7 +15,6 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-141 | WAITING-JOSEPH | explicit-user-decision | FIXED AND LANDED 2026-08-21 (3cb46337). compare() returns ComparisonResult, a 2-long tuple subclass carrying .uncomparab |
 | OI-142 | NOW | safe-default-active | SHELL LIBRARY FIXED 2026-08-21; ONE RESIDUAL, NAMED AND NOT SILENTLY DROPPED. rg_is_complete now REFUSES a marker carryi |
 | OI-143 | WAITING-JOSEPH | explicit-user-decision | (a) LANDED 2026-08-21 (ea1a3fd6); (b) NARROWED AND STILL OPEN. (a) A JSON declaring a top-level _fixture key is held out |
-| OI-144 | NOW | safe-default-active | THE CODE FIX LANDED 2026-08-21 AND THE ROW STAYS OPEN ON ONE ITEM: the carry-forward store is only PARTIALLY seeded, bec |
 | OI-145 | NOW | safe-default-active | REPINNED 2026-08-21 (ea1a3fd6) -- ACCEPTED AS A VERSIONED REPIN, NOT REVERTED AND NOT OVERWRITTEN. All 7 edits verified |
 | OI-74 | NOW | safe-default-active | CORRECTED AND NARROWED 2026-08-17 (lane E) — THE DRIFT IS GONE, THE TREE IS SYNCED AT 7ac36ac, AND EVERY QUANTITY IN THI |
 | OI-1 | BLOCKED-EXTERNAL | explicit-blocker | BLOCKED |

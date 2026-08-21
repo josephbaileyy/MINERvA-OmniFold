@@ -127,7 +127,7 @@ docs/orchestration/audit_validator_tolerance_units.py	tracked	MACHINE	script			g
 docs/orchestration/control-plane/owners.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	3	13	747
 docs/orchestration/control-plane/playbook.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	3	25	5803
 docs/orchestration/control-plane/policy.json	tracked	LIVE	machine-data			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/test_usagectl.py;docs/orchestration/usagectl.py	no	9	69	1674
-docs/orchestration/control-plane/source-record-inventory.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/control_plane_lint.py	no	5	112	20232
+docs/orchestration/control-plane/source-record-inventory.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/control_plane_lint.py	no	5	112	20236
 docs/orchestration/control-plane/work-items.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	3	14	2407
 docs/orchestration/control_plane_lint.py	tracked	LIVE	script			open		route-only		no	7	717	37240
 docs/orchestration/deploy_oi135_watcher_swap.sh	tracked	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/test_deploy_oi135_watcher_swap.py	no	6	704	33747
@@ -327,7 +327,7 @@ docs/orchestration/test_wakerctl_preflight_watch_health.py	tracked	MACHINE	test-
 docs/orchestration/test_watch_report_train_run.py	tracked	MACHINE	test-script			generated		exact-path-only		no	2	564	27923
 docs/orchestration/test_watch_slurm_array_resume.py	tracked	MACHINE	test-script			generated		exact-path-only		no	1	70	2995
 docs/orchestration/usage-policy.json	tracked	MACHINE	machine-data			generated		exact-path-only	docs/orchestration/usagectl.py	no	2	17	403
-docs/orchestration/usagectl.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/generate_live_state.py;docs/orchestration/wakerctl.py	no	10	1075	44286
+docs/orchestration/usagectl.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/generate_live_state.py;docs/orchestration/wakerctl.py	no	11	1075	44286
 docs/orchestration/verify_hash_bindings.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/state/regen_canonical_namespace_field_pins.py;docs/orchestration/whose_row.py;lib/enumerate_backfill_families.py;nd-unfolding/pet/atomic_write.py;nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/sbatch_gate5_data_only_target_array.sh;nd-unfolding/pet/sbatch_gate6_leg0_tier_calibration_array.sh;nd-unfolding/pet/sbatch_powered_closure.sh;nd-unfolding/pet/sbatch_powered_closure_budget_probe.sh;nd-unfolding/tests/test_hash_bindings.py;nd-unfolding/tests/test_oi136_failopen_inventory_ratchet.py;nd-unfolding/tests/test_powered_closure_preflight.py	no	38	658	35965
 docs/orchestration/verify_receipt_artifacts.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/live_doc_indexed.py	no	5	177	7770
 docs/orchestration/waker-config.json	tracked	MACHINE	machine-data			generated		exact-path-only	docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_wakerctl.py;docs/orchestration/test_wakerctl_preflight_watch_health.py;docs/orchestration/wakerctl.py	no	15	28	681
