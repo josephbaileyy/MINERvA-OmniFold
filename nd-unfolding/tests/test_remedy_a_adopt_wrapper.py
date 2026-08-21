@@ -269,7 +269,9 @@ class TheStampedKeys(unittest.TestCase):
         two sets must be equal, and this is the test that would have caught either drift.
         """
         table = set(classes.ADOPTED_UTHROW)
-        wrapper = set(W.STAMPED_SCALAR_KEYS) | {W.STAMPED_HISTOGRAM_KEY}
+        # OI-147 added RAW_HISTOGRAM_KEY. This coupling is what caught it -- a written key the
+        # class table did not classify would have FAILED compare() on the first real product.
+        wrapper = set(W.STAMPED_SCALAR_KEYS) | {W.STAMPED_HISTOGRAM_KEY, W.RAW_HISTOGRAM_KEY}
         pinned_writer_keys = {
             "hCov_combined5d_total_uthrow", "hInflation_g", "sqrt_tr_old", "sqrt_tr_new",
             "upstream_fixed_seed_null_norm", "upstream_joint_mean_shift_norm", "upstream_n_throws",
@@ -917,14 +919,14 @@ class TheStampWriteDecisions(unittest.TestCase):
         f = _FakeTFile({}, writable=False)
         with _WithFakeROOT({"o.root": f}):
             with self.assertRaises(SystemExit) as cm:
-                W._stamp_output("o.root", self.PAIRS, self.DIAG)
+                W._stamp_output("o.root", self.PAIRS, self.DIAG, self.DIAG)
         self.assertIn("cannot reopen", str(cm.exception))
         self.assertEqual(f._keys, {}, "and nothing may be attempted against it")
 
     def test_a_ZOMBIE_reopen_is_REFUSED(self):
         with _WithFakeROOT({"o.root": _FakeTFile({}, zombie=True)}):
             with self.assertRaises(SystemExit) as cm:
-                W._stamp_output("o.root", self.PAIRS, self.DIAG)
+                W._stamp_output("o.root", self.PAIRS, self.DIAG, self.DIAG)
         self.assertIn("cannot reopen", str(cm.exception))
 
     def test_a_SECOND_STAMP_is_REFUSED_rather_than_appending_a_CYCLE(self):
@@ -933,7 +935,7 @@ class TheStampWriteDecisions(unittest.TestCase):
         f = _FakeTFile({"est_seed_offset": _FakeParam(999)})
         with _WithFakeROOT({"o.root": f}):
             with self.assertRaises(SystemExit) as cm:
-                W._stamp_output("o.root", self.PAIRS, self.DIAG)
+                W._stamp_output("o.root", self.PAIRS, self.DIAG, self.DIAG)
         msg = str(cm.exception)
         self.assertIn("already carries", msg)
         self.assertIn("est_seed_offset", msg)
@@ -955,7 +957,7 @@ class TheStampWriteDecisions(unittest.TestCase):
         f = _Deaf({})
         with _WithFakeROOT({"o.root": f}):
             with self.assertRaises(SystemExit) as cm:
-                W._stamp_output("o.root", self.PAIRS, self.DIAG)
+                W._stamp_output("o.root", self.PAIRS, self.DIAG, self.DIAG)
         self.assertEqual(f._keys, {}, "the target file got nothing")
         self.assertIn("est_seed_offset", sink._keys, "and the writes went somewhere else entirely")
         msg = str(cm.exception)
@@ -967,7 +969,7 @@ class TheStampWriteDecisions(unittest.TestCase):
         guards may fire."""
         f = _FakeTFile({})
         with _WithFakeROOT({"o.root": f}):
-            self.assertTrue(W._stamp_output("o.root", self.PAIRS, self.DIAG))
+            self.assertTrue(W._stamp_output("o.root", self.PAIRS, self.DIAG, self.DIAG))
         self.assertEqual(f._keys["est_seed_offset"].GetVal(), 1200)
         self.assertEqual(f._keys[W.STAMPED_HISTOGRAM_KEY].contents, {1: 1.0, 2: 2.0})
         self.assertTrue(f.closed, "and the file is closed on the way out")

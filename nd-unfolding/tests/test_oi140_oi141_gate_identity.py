@@ -206,6 +206,74 @@ class OI149_ALegsOwnDeclarationIsCompared(unittest.TestCase):
         is what reports that member UNVERIFIABLE -- this function must not double-refuse it."""
         self.assertTrue(self._run(0, 0, 0))
 
+class OI147_BothDiagonalsShipAndBothAreChecked(unittest.TestCase):
+    """OI-147. The product carries the RAW diagonal as well as the clipped one, and each is checked.
+
+    THE DEFECT THIS CLOSES: `sqrt_tr_old` is sqrt(trace(C_comb)) over the UNCLIPPED matrix, while the
+    product carried only the diagonal CLIPPED at zero. They are intentionally different quantities
+    whenever any entry is negative, so nothing in the product could recompute the scalar -- and
+    recomputing from the clipped sum is the weaker test the writer explicitly rejects, because it
+    "would make the check pass on a matrix with negative diagonal entries and fail on nothing".
+    """
+
+    RAW = [4.0, -1.0, 9.0, 0.0]
+    CLIPPED = [4.0, 0.0, 9.0, 0.0]
+
+    def test_the_ingredient_is_the_RAW_histogram_not_the_clipped_one(self):
+        ingredient, _fn = C.RECOMPUTE["sqrt_tr_old"]
+        self.assertEqual(ingredient, "hDiagCombinedOldRaw")
+
+    def test_the_recompute_reproduces_sqrt_of_the_RAW_trace(self):
+        _ing, fn = C.RECOMPUTE["sqrt_tr_old"]
+        self.assertAlmostEqual(fn(self.RAW), 12.0 ** 0.5, places=12)
+
+    def test_AND_THE_CLIPPED_ARRAY_WOULD_GIVE_A_DIFFERENT_ANSWER(self):
+        """The discriminating case. If these agreed, the choice of histogram would not matter and
+        OI-147 would be cosmetic. sum(raw)=12 against sum(clipped)=13."""
+        _ing, fn = C.RECOMPUTE["sqrt_tr_old"]
+        self.assertNotAlmostEqual(fn(self.RAW), fn(self.CLIPPED), places=6)
+
+    def test_clip_consistency_ACCEPTS_a_legitimate_negative_entry(self):
+        """A negative RAW entry is legitimate and must remain zero in the clipped histogram --
+        the direction the check must NOT act in."""
+        ok, detail = C._clip_consistency(self.RAW, self.CLIPPED)
+        self.assertTrue(ok, detail)
+        self.assertIn("1 negative", detail, "and it must report how many were clipped")
+
+    def test_clip_consistency_REFUSES_a_clipped_histogram_that_kept_a_negative(self):
+        ok, detail = C._clip_consistency(self.RAW, self.RAW)
+        self.assertFalse(ok)
+        self.assertIn("disagree", detail)
+
+    def test_clip_consistency_REFUSES_a_mutated_clipped_bin(self):
+        bad = list(self.CLIPPED); bad[2] = 8.5
+        ok, _ = C._clip_consistency(self.RAW, bad)
+        self.assertFalse(ok)
+
+    def test_clip_consistency_REFUSES_a_shape_mismatch(self):
+        ok, detail = C._clip_consistency(self.RAW, self.CLIPPED[:-1])
+        self.assertFalse(ok)
+        self.assertIn("shapes differ", detail)
+
+    def test_the_pair_is_registered_so_the_IN_FILE_claim_is_backed(self):
+        self.assertIn("hDiagCombinedOldRaw", C.DIAGONAL_CONSISTENCY)
+        other, _fn = C.DIAGONAL_CONSISTENCY["hDiagCombinedOldRaw"]
+        self.assertEqual(other, "hDiagCombinedOld")
+        self.assertIs(C.RECOMPUTABILITY["hDiagCombinedOldRaw"][0], C.IN_FILE)
+
+    def test_sqrt_tr_old_left_the_closed_acknowledgement_set(self):
+        """The coupled half. A key leaving declared_unrecomputable() is as deliberate as one
+        entering, and every --acknowledge-unrecomputable call site must equal it exactly."""
+        self.assertEqual(sorted(C.declared_unrecomputable()),
+                         ["fixed_seed_null_norm", "globalCompleteness"])
+
+    def test_the_closed_set_contains_no_key_that_does_not_exist(self):
+        """A phantom member is the same defect as a blanket acknowledgement, pointing the other way.
+        My first pass renamed the superseded entry instead of deleting it and put one here."""
+        for k in C.declared_unrecomputable():
+            self.assertIn(k, C.RECOMPUTABILITY)
+            self.assertFalse(k.startswith("_"), f"{k} looks like a placeholder, not a real key")
+
 
 if __name__ == "__main__":
     unittest.main()

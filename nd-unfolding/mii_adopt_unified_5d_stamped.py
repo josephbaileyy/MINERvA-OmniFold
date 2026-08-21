@@ -179,6 +179,17 @@ STAMPED_SCALAR_KEYS = (
 )
 STAMPED_HISTOGRAM_KEY = "hDiagCombinedOld"
 
+#: OI-147, 2026-08-21, on Joseph's ruling: SHIP BOTH DIAGONALS.
+#: The product used to carry only the CLIPPED diagonal while `sqrt_tr_old` is the RAW trace, so the
+#: two were intentionally different quantities whenever any raw entry is negative -- and the gate
+#: therefore could not recompute `sqrt_tr_old` from anything the product held. Recomputing it from the
+#: clipped sum would have been the weaker test `assert_diag_matches_sqrt_tr_old` explicitly rejects
+#: ("would make the check pass on a matrix with negative diagonal entries and fail on nothing").
+#: mii_anchor_comparator's claim that "the write that closes it exists" was false for exactly this
+#: reason; corrected there in the same change.
+#: 0.0856 MB on the cv>0 support, against a ~892 MB product.
+RAW_HISTOGRAM_KEY = "hDiagCombinedOldRaw"
+
 #: The scalar the child stamps from its OWN read of the combined intermediate. Our re-read must
 #: reproduce it, or the file changed underneath us.
 TRACE_ANCHOR_KEY = "sqrt_tr_old"
@@ -641,7 +652,7 @@ def _read_diagonal(path, hist="hCov_combined5d_total"):
     return raw, np.clip(raw, 0, None)
 
 
-def _stamp_output(out, pairs, diag):
+def _stamp_output(out, pairs, diag, diag_raw):
     """Reopen `out` UPDATE, write the scalars and the diagonal, READ THEM BACK. CLUSTER-EXECUTED
     2026-08-20; the double-stamp refusal below has NOT fired on the cluster.
 
@@ -656,7 +667,8 @@ def _stamp_output(out, pairs, diag):
     if not fo or fo.IsZombie() or not fo.IsWritable():
         _fail(f"cannot reopen {out} in UPDATE mode; the stamp cannot land")
     try:
-        already = [k for k in STAMPED_SCALAR_KEYS + (STAMPED_HISTOGRAM_KEY,) if fo.Get(k)]
+        already = [k for k in STAMPED_SCALAR_KEYS + (STAMPED_HISTOGRAM_KEY, RAW_HISTOGRAM_KEY)
+                   if fo.Get(k)]
         if already:
             _fail(f"{out} already carries {already}. ROOT would append a second cycle of each key "
                   "rather than replacing it, leaving two answers to one question in a citable "
@@ -664,15 +676,23 @@ def _stamp_output(out, pairs, diag):
         fo.cd()   # ROOT's current directory is global state; be explicit (BEN-106)
         for key, val in pairs:
             ROOT.TParameter("int")(key, int(val)).Write()
-        hd = ROOT.TH1D(STAMPED_HISTOGRAM_KEY,
-                       "diag of the OLD combined covariance (sqrt_tr_old's ingredient)",
-                       len(diag), 0, len(diag))
-        for i, v in enumerate(diag):
-            hd.SetBinContent(i + 1, float(v))
-        hd.Write()
+        # TWO HISTOGRAMS, AND THE TITLES NO LONGER LIE. The clipped one used to be titled
+        # "sqrt_tr_old's ingredient", which it is not -- that conflation is the whole of OI-147.
+        for key, arr, title in (
+                (STAMPED_HISTOGRAM_KEY, diag,
+                 "diag of the OLD combined covariance, CLIPPED at zero -- the downstream "
+                 "representation, NOT sqrt_tr_old's ingredient"),
+                (RAW_HISTOGRAM_KEY, diag_raw,
+                 "diag of the OLD combined covariance, RAW (unclipped) -- sqrt_tr_old's actual "
+                 "ingredient; sqrt(sum(this)) == sqrt_tr_old")):
+            hd = ROOT.TH1D(key, title, len(arr), 0, len(arr))
+            for i, v in enumerate(arr):
+                hd.SetBinContent(i + 1, float(v))
+            hd.Write()
         missing = [k for k, _ in pairs if not fo.Get(k)]
-        if not fo.Get(STAMPED_HISTOGRAM_KEY):
-            missing.append(STAMPED_HISTOGRAM_KEY)
+        for k in (STAMPED_HISTOGRAM_KEY, RAW_HISTOGRAM_KEY):
+            if not fo.Get(k):
+                missing.append(k)
         if missing:
             _fail(f"remedy (A) stamps did not land in {out}: {missing}")
     finally:
@@ -712,7 +732,7 @@ def main(argv=None):
     assert_seeds_match_their_baselines(g1_keys, g2_keys, off_declared, off_value, groups)
     assert_diag_matches_sqrt_tr_old(float(diag_raw.sum()), anchor)
     pairs = stamp_pairs(g1_keys, g2_keys, off_declared, off_value)
-    _stamp_output(a.out, pairs, diag_clipped)
+    _stamp_output(a.out, pairs, diag_clipped, diag_raw)
     print(f"[remedyA] stamped AND read back in {a.out}: "
           f"{ {k: v for k, v in pairs} } + {STAMPED_HISTOGRAM_KEY}[{len(diag_clipped)}]")
 

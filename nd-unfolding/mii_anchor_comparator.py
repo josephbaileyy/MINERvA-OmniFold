@@ -108,6 +108,13 @@ RECOMPUTABILITY = {
     # NOT_RECOMPUTABLE because THE DECLARED SET DESCRIBES THE TREE AS IT IS: no adopted root in
     # existence carries `hDiagCombinedOld`. The remedy has landed as a WRITER
     # (`mii_adopt_unified_5d_stamped.py`, remedy (A)'s wrapper) but not as a PRODUCT.
+    # CORRECTED 2026-08-21 (OI-147): THE CLAIM "THE WRITE THAT CLOSES IT EXISTS" WAS FALSE, and this
+    # is the correction rather than a caveat on it. The write shipped the CLIPPED diagonal, while
+    # `sqrt_tr_old` is the RAW trace -- intentionally different quantities whenever any diagonal entry
+    # is negative, and the writer's own `assert_diag_matches_sqrt_tr_old` says comparing the clipped
+    # sum "would make the check pass on a matrix with negative diagonal entries and fail on nothing".
+    # So no write closed it until the RAW diagonal was shipped alongside the clipped one. It is now,
+    # and `sqrt_tr_old` is IN_FILE below.
     # TWO PREMISES IN THIS PARAGRAPH EXPIRED AND ARE CORRECTED 2026-08-21 rather than left to be read
     # as current. (i) "the cluster is down" IS FALSE -- it is up, and stage 1 was run end-to-end on it
     # against the real 892 MB archive on 2026-08-21. (ii) "no adopted root in existence carries
@@ -128,18 +135,28 @@ RECOMPUTABILITY = {
     # in memory" is true of the IN-FILE edit only: under §25's wrapper the child process has exited, so
     # the wrapper must RE-READ hCov_combined5d_total (one 10694^2 TH2D, ~0.915 GB, not 41 GB) and tie it
     # back to this very key to prove the re-read is the same matrix.
-    "sqrt_tr_old": (NOT_RECOMPUTABLE, WRITER_GAP,
-                    "trace(hCov_combined5d_total), which lives ONLY in the 41.44 GB member "
-                    "intermediate. THE PREDECLARED BAR'S OPERAND. The write that closes it exists -- "
-                    "mii_adopt_unified_5d_stamped.py ships diag(C_old) as hDiagCombinedOld, 0.0856 MB "
-                    "on the cv>0 support -- and as of 2026-08-21 a PRODUCT BUILT THROUGH THAT WRITER "
-                    "DOES carry it (measured end-to-end against the real archive), which retires the "
-                    "'NO PRODUCT CARRIES IT YET' ground this row used to give. `no` still stands, on "
-                    "the coupling in the comment above rather than on product absence: the flip needs "
-                    "a RECOMPUTE implementation or the IN_FILE/RECOMPUTE agreement test fails, and it "
-                    "needs declared_unrecomputable() and every --acknowledge-unrecomputable call site "
-                    "re-derived. The declared set describes the tree as it is -- which now includes "
-                    "that the key is reachable. See OI-147."),
+    # OI-147, 2026-08-21: FLIPPED FROM NOT_RECOMPUTABLE TO IN_FILE, because the ingredient now
+    # SHIPS. The raw (unclipped) diagonal is written alongside the clipped one, so
+    # sqrt(sum(hDiagCombinedOldRaw)) == sqrt_tr_old is a real in-file recomputation. This flip
+    # SHRINKS declared_unrecomputable(), which every --acknowledge-unrecomputable call site must
+    # equal exactly; those all derive from the function rather than hardcoding, and the one pinned
+    # expected list in the tests moves with this change.
+    "hDiagCombinedOldRaw": (IN_FILE, None,
+                            "clip(raw) compared bin-for-bin against the retained hDiagCombinedOld"),
+    "sqrt_tr_old": (IN_FILE, None, "sqrt(sum(hDiagCombinedOldRaw)) -- the RAW diagonal, never the "
+                                   "clipped one"),
+    # THE SUPERSEDED `sqrt_tr_old` ENTRY IS DELETED, NOT RENAMED. My first pass left it as
+    # `_sqrt_tr_old_superseded` so its reasoning would survive -- which put a KEY THAT DOES NOT
+    # EXIST into `declared_unrecomputable()`, a CLOSED SET every `--acknowledge-unrecomputable`
+    # call site must equal exactly. A phantom member is the same class of defect as a blanket
+    # acknowledgement, pointing the other way. Its reasoning, kept as prose instead:
+    #   It read NOT_RECOMPUTABLE / WRITER_GAP -- "trace(hCov_combined5d_total), which lives ONLY
+    #   in the 41.44 GB member intermediate. THE PREDECLARED BAR'S OPERAND." Two of its grounds
+    #   expired. "NO PRODUCT CARRIES IT YET" retired when a product built through the writer
+    #   appeared. And "the write that closes it exists" was FALSE: the write shipped the CLIPPED
+    #   diagonal, which is not this scalar's ingredient. Shipping the RAW diagonal (OI-147) is
+    #   what actually closed it, and the flip carried the coupling that entry demanded --
+    #   a RECOMPUTE implementation, and declared_unrecomputable() re-derived.
 }
 
 
@@ -211,6 +228,44 @@ RECOMPUTE = {
     "sqrt_tr_block":         ("C_blocksum", _sqrt_trace_from_diag),
     "sqrt_tr_new":           ("hCov_combined5d_total_uthrow", _sqrt_trace_from_diag),
     "joint_mean_shift_norm": ("hJointMeanShift", lambda v: float(np.linalg.norm(v))),
+    # OI-147, 2026-08-21. THE RAW diagonal, never the clipped one. `sqrt_tr_old` is
+    # sqrt(trace(C_comb)) computed by the child from the UNCLIPPED matrix, so recomputing it from
+    # `hDiagCombinedOld` would compare a different quantity and, per the writer's own docstring,
+    # "would make the check pass on a matrix with negative diagonal entries and fail on nothing".
+    # Same summation route as its siblings, which is what makes the comparison bit-exact rather
+    # than merely close (see _sqrt_trace_from_diag).
+    "sqrt_tr_old":           ("hDiagCombinedOldRaw", _sqrt_trace_from_diag),
+}
+
+
+def _clip_consistency(raw, clipped):
+    """`clip(raw, 0, inf)` must equal the retained clipped histogram BIN FOR BIN. `(ok, detail)`.
+
+    OI-147's SECOND check, and it is the one that stops the two histograms drifting into being two
+    unrelated arrays. Shipping both diagonals makes `sqrt_tr_old` recomputable; it also creates a new
+    way to be wrong -- a product could carry a raw diagonal that is not the pre-image of its own
+    clipped one, and every scalar check would still pass. Compared exactly, not with a tolerance:
+    clipping is a copy-and-threshold, so any difference is a different array rather than arithmetic
+    drift.
+    """
+    raw, clipped = np.asarray(raw, dtype=float), np.asarray(clipped, dtype=float)
+    if raw.shape != clipped.shape:
+        return False, f"shapes differ: raw {raw.shape} vs clipped {clipped.shape}"
+    want = np.clip(raw, 0, None)
+    bad = int(np.count_nonzero(want != clipped))
+    if bad:
+        i = int(np.flatnonzero(want != clipped)[0])
+        return False, (f"{bad} bin(s) disagree; first at {i}: clip(raw)={want[i]!r} but the retained "
+                       f"clipped histogram holds {clipped[i]!r}")
+    return True, f"{raw.size} bins; {int(np.count_nonzero(raw < 0))} negative raw entr(ies) clipped to 0"
+
+
+#: OI-147. IN_FILE keys whose check is over the member's DIAGONALS rather than a scalar or a
+#: histogram-to-scalar recomputation. Kept as a registry, not a free-standing call, so the existing
+#: "every IN_FILE key has an implementation" invariant keeps binding -- the same reason
+#: SCALAR_RECOMPUTE exists.
+DIAGONAL_CONSISTENCY = {
+    "hDiagCombinedOldRaw": ("hDiagCombinedOld", _clip_consistency),
 }
 
 
@@ -695,6 +750,23 @@ def compare_files(artifact, archive_path, member_path, offset, read_keys=read_ke
         v_lines, v_failed = fn(artifact, m_sc)
         lines += v_lines
         class_failed = class_failed or v_failed
+
+    # OI-147's SECOND check: clip(raw) must equal the retained clipped histogram bin for bin.
+    # Shipping both diagonals makes sqrt_tr_old recomputable and creates a new way to be wrong -- a
+    # product could carry a raw diagonal that is not the pre-image of its own clipped one, and every
+    # scalar check would still pass. Runs whenever BOTH are present; a member carrying one and not the
+    # other is a FAILURE, not a skip, because half a pair is not a state.
+    for key, (other, fn) in DIAGONAL_CONSISTENCY.items():
+        if key not in m_di and other not in m_di:
+            continue
+        if key not in m_di or other not in m_di:
+            lines.append(f"[diag] {key}/{other}: only ONE of the pair is present -- the clipped "
+                         "histogram and its raw pre-image are written together or not at all")
+            class_failed = True
+            continue
+        ok, detail = fn(m_di[key], m_di[other])
+        lines.append(f"[diag] {'OK  ' if ok else 'FAIL'} clip({key}) vs {other}: {detail}")
+        class_failed = class_failed or not ok
 
     # --- the anchor's own identity, WHERE THE ARTIFACT CAN CARRY IT (H3) -----------------------------
     # `anchor_identity` was called unconditionally, but on 2026-08-18 three of five artifacts declared

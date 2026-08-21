@@ -3229,21 +3229,31 @@ class AnchorComparatorB2(unittest.TestCase):
         self.assertEqual(go(acknowledge_unrecomputable=full)[0], "PASS",
                          "the EXACT declared list lets it through, RECORDED as unverified")
 
-    def test_THE_BARS_OPERAND_IS_NOT_RECOMPUTABLE_and_the_table_says_why(self):
-        """THE FINDING. `sqrt_tr_old` is the predeclared bar's operand and its sole ingredient is
-        `hCov_combined5d_total` in the 41.44 GB intermediate C ruled need not be retained. C's argument
-        was that the bar's operands live downstream in the 892 MB adopted roots -- true of
-        `sqrt_tr_new`, false of `sqrt_tr_old`."""
-        how, kind, why = self.B.RECOMPUTABILITY["sqrt_tr_old"]
-        self.assertEqual(how, self.B.NOT_RECOMPUTABLE)
-        self.assertEqual(kind, self.B.WRITER_GAP,
-                         "a WRITER GAP, not a mathematical impossibility -- diag_comb is already in "
-                         "memory at adopt_unified_5d.py:128, so C's 11g remedy is a WRITE")
-        self.assertIn("41.44 GB", why)
-        self.assertEqual(self.B.RECOMPUTABILITY["sqrt_tr_new"][0], self.B.IN_FILE,
-                         "the OTHER operand IS recomputable, which is what makes this specific")
+    def test_THE_BARS_OPERAND_IS_NOW_RECOMPUTABLE_and_from_the_RAW_diagonal(self):
+        """THE FINDING, AND ITS CLOSURE. `sqrt_tr_old` is the predeclared bar's operand, and its sole
+        ingredient was `hCov_combined5d_total` inside the 41.44 GB intermediate C ruled need not be
+        retained -- so the bar's operands lived downstream for `sqrt_tr_new` and NOT for this one.
+        That was a WRITER_GAP, not a mathematical impossibility, and it is closed as of 2026-08-21
+        (OI-147) by shipping the RAW diagonal in the product.
 
-    def test_only_SIX_of_the_recompute_keys_are_IN_FILE(self):
+        THE INGREDIENT IS THE RAW HISTOGRAM AND THIS TEST PINS THAT, because the obvious wrong answer
+        is the clipped one: the product already carried `hDiagCombinedOld`, but that is clipped at
+        zero while `sqrt_tr_old` is the RAW trace. Recomputing from the clipped sum is the weaker test
+        the writer's own `assert_diag_matches_sqrt_tr_old` rejects -- it "would make the check pass on
+        a matrix with negative diagonal entries and fail on nothing".
+        """
+        how, _kind, why = self.B.RECOMPUTABILITY["sqrt_tr_old"]
+        self.assertEqual(how, self.B.IN_FILE)
+        self.assertIn("RAW", why, "the table must say WHICH diagonal, since the clipped one is wrong")
+        ingredient, _fn = self.B.RECOMPUTE["sqrt_tr_old"]
+        self.assertEqual(ingredient, "hDiagCombinedOldRaw",
+                         "recomputing from the CLIPPED diagonal is the defect OI-147 is about")
+        self.assertEqual(self.B.RECOMPUTABILITY["sqrt_tr_new"][0], self.B.IN_FILE,
+                         "the other operand was always recomputable; now both are")
+        self.assertNotIn("sqrt_tr_old", self.B.declared_unrecomputable(),
+                         "and the closed acknowledgement set must have shrunk with it")
+
+    def test_only_EIGHT_of_the_recompute_keys_are_IN_FILE(self):
         """C classified seven scalars as mandatory-recomputation; four can be recomputed from the file
         that carries them. Derived, not assumed, and pinned so the count cannot drift silently.
 
@@ -3256,9 +3266,12 @@ class AnchorComparatorB2(unittest.TestCase):
         by = {}
         for k, (how, _kind, _why) in self.B.RECOMPUTABILITY.items():
             by.setdefault(how, []).append(k)
-        self.assertEqual(len(by[self.B.IN_FILE]), 6)
+        self.assertEqual(len(by[self.B.IN_FILE]), 8)
+        # sqrt_tr_old LEFT this set on 2026-08-21 (OI-147): its ingredient now ships, so it is
+        # IN_FILE. The set shrinking is the coupled half -- declared_unrecomputable() is derived from
+        # it and every --acknowledge-unrecomputable call site must equal that exactly.
         self.assertEqual(sorted(by[self.B.NOT_RECOMPUTABLE]),
-                         ["fixed_seed_null_norm", "globalCompleteness", "sqrt_tr_old"])
+                         ["fixed_seed_null_norm", "globalCompleteness"])
         for k in self.B.RECOMPUTE:
             self.assertEqual(self.B.RECOMPUTABILITY[k][0], self.B.IN_FILE,
                              f"{k} has a recompute implementation, so it must be classified IN_FILE")
@@ -3267,13 +3280,17 @@ class AnchorComparatorB2(unittest.TestCase):
         # row backed by neither is a claim of coverage that nothing provides.
         for k, (how, _kind, _why) in self.B.RECOMPUTABILITY.items():
             if how is self.B.IN_FILE:
-                self.assertTrue(k in self.B.RECOMPUTE or k in self.B.SCALAR_RECOMPUTE,
-                                f"{k} is classified IN_FILE but has no implementation in either "
-                                "RECOMPUTE or SCALAR_RECOMPUTE -- the claim and the capability must "
-                                "not drift apart")
+                self.assertTrue(k in self.B.RECOMPUTE or k in self.B.SCALAR_RECOMPUTE
+                                or k in self.B.DIAGONAL_CONSISTENCY,
+                                f"{k} is classified IN_FILE but has no implementation in RECOMPUTE, "
+                                "SCALAR_RECOMPUTE or DIAGONAL_CONSISTENCY -- the claim and the "
+                                "capability must not drift apart")
         for k in self.B.SCALAR_RECOMPUTE:
             self.assertIs(self.B.RECOMPUTABILITY[k][0], self.B.IN_FILE,
                           f"{k} has a scalar verifier, so it must be classified IN_FILE")
+        for k in self.B.DIAGONAL_CONSISTENCY:
+            self.assertIs(self.B.RECOMPUTABILITY[k][0], self.B.IN_FILE,
+                          f"{k} has a diagonal check, so it must be classified IN_FILE")
 
     def test_the_TWO_HALVES_use_DIFFERENT_arrays_which_is_H1s_whole_lesson(self):
         """THIS TEST'S PREVIOUS PREMISE WAS THE DEFECT. It asserted the TH2D reader "takes the diagonal
@@ -3350,8 +3367,9 @@ class RecomputabilityIsADeclaredAttribute(unittest.TestCase):
         self.B = B
 
     def test_every_entry_declares_how_kind_and_reason(self):
-        # 9 until 2026-08-21; OI-140 added the two upstream_estimator_seed_*_checked rows.
-        self.assertEqual(self.B.assert_reasons_are_stated(), 11)
+        # 9 -> 11 on OI-140 (the two upstream_estimator_seed_*_checked rows), 11 -> 12 on OI-147
+        # (hDiagCombinedOldRaw added; sqrt_tr_old stayed, reclassified rather than removed).
+        self.assertEqual(self.B.assert_reasons_are_stated(), 12)
 
     def test_a_BARE_no_IS_THE_FAIL_CLOSED_CASE(self):
         """A `no` without a stated kind reads as a law of nature and freezes a writer gap forever."""
@@ -3391,8 +3409,11 @@ class RecomputabilityIsADeclaredAttribute(unittest.TestCase):
         """C's strengthening. A blanket flag lets a FUTURE `no` ride in silently: someone adds a key,
         declares it unrecomputable, and every existing invocation swallows it without anyone deciding.
         Same defect as the comparator being blind to a key absent from both files."""
+        # SHRANK on 2026-08-21 (OI-147): sqrt_tr_old became IN_FILE once the RAW diagonal shipped.
+        # A key LEAVING this closed set is as deliberate as one entering it -- and note the set must
+        # never contain a key that does not exist, which a rename-instead-of-delete briefly did.
         self.assertEqual(sorted(self.B.declared_unrecomputable()),
-                         ["fixed_seed_null_norm", "globalCompleteness", "sqrt_tr_old"])
+                         ["fixed_seed_null_norm", "globalCompleteness"])
         import inspect
         self.assertIsNone(inspect.signature(self.B.compare_files)
                           .parameters["acknowledge_unrecomputable"].default,

@@ -244,6 +244,10 @@ ADOPTED_UTHROW = {
     # without it BEN-077 could never again be satisfied for the bar once 11g releases the 41.44 GB
     # intermediate.
     "hDiagCombinedOld": PAYLOAD,
+    # OI-147, 2026-08-21: the RAW (unclipped) diagonal, shipped alongside the clipped one because
+    # `sqrt_tr_old` is the RAW trace and the clipped sum cannot reproduce it when any entry is
+    # negative. PAYLOAD for the same reason its clipped sibling is.
+    "hDiagCombinedOldRaw": PAYLOAD,
 }
 
 SWEEP_UNIVERSE = {
@@ -370,6 +374,13 @@ ARCHIVE_KEY_MAP = {
     # NOT `derive`-able from the archive's own keys, and the near-miss is worth naming: the archive DOES
     # carry `sqrt_tr_old`, whose square is this histogram's SUM. A sum does not determine 10,694 bins,
     # so there is no derivation -- only the reverse check the wrapper performs before writing.
+    # OI-147, 2026-08-21. NOT a ninth unexplained archive-absent key: it is covered by an IN_FILE
+    # recomputation in mii_anchor_comparator (clip(raw) compared bin-for-bin against the retained
+    # clipped histogram), and it is itself the ingredient that makes `sqrt_tr_old` IN_FILE. The
+    # archive cannot carry it -- it postdates the archive by more than a month -- so PREDATES_ARCHIVE
+    # is code-justified here exactly as for its clipped sibling.
+    "hDiagCombinedOldRaw": {"landed": "OI-147 raw-diagonal ship 2026-08-21", "derive": None,
+                            "absence": PREDATES_ARCHIVE},
     "hDiagCombinedOld": {"landed": "lane B remedy (A) wrapper 2026-08-20", "derive": None,
                          "absence": PREDATES_ARCHIVE},
 }
