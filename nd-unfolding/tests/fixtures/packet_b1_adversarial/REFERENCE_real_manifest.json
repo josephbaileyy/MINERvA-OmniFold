@@ -1,4 +1,12 @@
 {
+  "_fixture": {
+    "packet": "B1",
+    "variant": "REFERENCE",
+    "role": "the suite's SHARED REFERENCE, not an adversarial variant. test_p4_repair.py's `_real()` loads this file and feeds all_syst_bands, component_content_hash and support_family_sha256 to every arm -- both the ten MUST_REJECT variants and the MUST_ACCEPT one.",
+    "must_be": "ACCEPTED by the B1 completeness check (test_real_manifest_is_accepted)",
+    "declared_2026_08_21": "Added so this file is covered by the SEMANTIC `_fixture` designation in docs/orchestration/verify_hash_bindings.py rather than entering the PRODUCTION provenance verdict. It was the only JSON in this directory that did not self-declare, and as a result it was the file the gate resolved a binding through -- reporting MISMATCH on std_final5_candidate.root off a value this fixture holds for historical reasons.",
+    "candidate_sha256_is_historical": "602bbcf2... is the PRE-REWRITE value, shared verbatim by all twelve fixtures in this directory. It is NOT a live binding and no test reads it. The artifact's real digest is 950f8cb1..., which five non-fixture receipts and manifests already bind correctly, so holding this file out removes no coverage. Do NOT 'refresh' this field to silence a gate: that would erase that this fixture records the state before retraction-index row 72's documented authorized rewrite, and greening a check nothing consumes is the OI-123 hazard."
+  },
   "support_family": "uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root",
   "support_family_sha256": "9f7b2f55d7581bb687e214e7f5a38235fd07b6d9522c2223fa3a3395c803c92a",
   "stat_cov": "uq_cov_stat_5d.root:hCov_stat5d_reported",

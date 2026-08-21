@@ -146,8 +146,25 @@ NEGATIVE_CONTROL_MARKER = "_fixture"
 
 #: The self-declaring fixtures, pinned by count and by a digest over (path, sha256) pairs.
 #: Counted by running the collector, not assumed.
-FIXTURE_COUNT = 11
-FIXTURE_SET_SHA256 = "f4a3a539cff3cefd31ac2e6a00fb5d3a5c0dbc5635087858ef49a851db7d6e91"
+#: MOVED 11 -> 12 ON 2026-08-21, DELIBERATELY, WITH THE REASON. `REFERENCE_real_manifest.json` now
+#: self-declares. It was the ONLY JSON in packet_b1_adversarial/ that did not, and as a direct result
+#: it was the file this gate resolved a binding through -- reporting MISMATCH on the 42.3 GB
+#: `std_final5_candidate.root` off a `candidate_sha256` that all twelve fixtures there share for
+#: historical reasons. Declaring it brings it under the SEMANTIC rule rather than widening the rule to
+#: a path.
+#: WHY THIS COSTS NO COVERAGE, measured on the cluster before acting rather than argued: the
+#: artifact's on-disk sha256 is `950f8cb1...` and FIVE non-fixture files bind it at exactly that value
+#: -- two committed receipts under state/ plus the three production manifests beside the artifact. The
+#: production chain was already correct and self-consistent; the gate was reporting a FALSE POSITIVE
+#: by consulting a test fixture as though it were a receipt.
+#: WHY NOT INSTEAD REFRESH THE FIXTURE'S FIELD: no test reads it, so the sole effect would be to green
+#: a check -- the OI-123 hazard -- and it would erase that the fixture records the state before
+#: retraction-index row 72's documented authorized rewrite.
+#: SAFE BECAUSE AN EXISTING PASSING TEST ALREADY PROVES IT: `B1_K` is the MUST_ACCEPT variant and it
+#: already carries a `_fixture` block, so the accept path demonstrably tolerates the key. 129/129 in
+#: tests/test_p4_repair.py after the change.
+FIXTURE_COUNT = 12
+FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed52a1e1"
 
 RECEIPT_BINDING_COUNT = 117
 RECEIPT_BINDING_SHA256 = "7586d636e6c4cde2af89e075d12d02633d21acc6709f796417ba25c37d5eec0c"
