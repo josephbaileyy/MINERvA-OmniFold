@@ -1,0 +1,86 @@
+{
+  "authorization": "OI-145, 2026-08-21. Accepted as a VERSIONED REPIN, not an overwrite.",
+  "commits": [
+    {
+      "payload_delta_bytes": 676,
+      "sha": "276ff242",
+      "subject": "repair family 4 historical evidence routes"
+    },
+    {
+      "payload_delta_bytes": 826,
+      "sha": "568d9208",
+      "subject": "retire archival Markdown evidence family"
+    }
+  ],
+  "not_authorized_by_this": "This does not permit further edits to the payload. A change that is not the permitted transformation must come back as a new decision, and the checker will refuse it.",
+  "permitted_transformation": {
+    "description": "a MARKDOWN LINK TARGET may be rewritten from a repository-relative path to a GitHub permalink at the frozen evidence commit, carrying a title that names the evidence tag it resolves through. The link TEXT, the surrounding prose and the referenced DOCUMENT NAME must all be unchanged.",
+    "documents": [
+      "FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md",
+      "FINDING-20260807-d2-underfitting-probe.md",
+      "HANDOFF-20260806-2246Z.md",
+      "PACKET-20260810-B-no-quoted-number-debt.md",
+      "PLAN-20260806-niter3-budget-and-J28-reroll.md",
+      "STEP2-20260806-niter3-budget-classification.md"
+    ],
+    "instances": [
+      {
+        "document": "PACKET-20260810-B-no-quoted-number-debt.md",
+        "target_commit": "0b329e8ae8482e6334a68faf947fc80ae7265ac9",
+        "via_tag": "evidence/prepublication-2026-08-20-0b329e8a"
+      },
+      {
+        "document": "HANDOFF-20260806-2246Z.md",
+        "target_commit": "0b329e8ae8482e6334a68faf947fc80ae7265ac9",
+        "via_tag": "evidence/prepublication-2026-08-20-0b329e8a"
+      },
+      {
+        "document": "FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md",
+        "target_commit": "0b329e8ae8482e6334a68faf947fc80ae7265ac9",
+        "via_tag": "evidence/prepublication-2026-08-20-0b329e8a"
+      },
+      {
+        "document": "FINDING-20260807-d2-underfitting-probe.md",
+        "target_commit": "0b329e8ae8482e6334a68faf947fc80ae7265ac9",
+        "via_tag": "evidence/prepublication-2026-08-20-0b329e8a"
+      },
+      {
+        "document": "PLAN-20260806-niter3-budget-and-J28-reroll.md",
+        "target_commit": "0b329e8ae8482e6334a68faf947fc80ae7265ac9",
+        "via_tag": "evidence/prepublication-2026-08-20-0b329e8a"
+      },
+      {
+        "document": "STEP2-20260806-niter3-budget-classification.md",
+        "target_commit": "0b329e8ae8482e6334a68faf947fc80ae7265ac9",
+        "via_tag": "evidence/prepublication-2026-08-20-0b329e8a"
+      },
+      {
+        "document": "FINDING-20260806-campaign-pin-inverted-on-insignificant-variance.md",
+        "target_commit": "0b329e8ae8482e6334a68faf947fc80ae7265ac9",
+        "via_tag": "evidence/prepublication-2026-08-20-0b329e8a"
+      }
+    ],
+    "target_commit": "0b329e8ae8482e6334a68faf947fc80ae7265ac9",
+    "verified_instances": 7,
+    "via_tag": "evidence/prepublication-2026-08-20-0b329e8a"
+  },
+  "schema": "open-items-archive-payload-repin/v1",
+  "subject": "docs/OPEN_ITEMS-ARCHIVE-2026-08.md, the verbatim payload after '> VERBATIM-PAYLOAD-START'",
+  "v1": {
+    "compact_bytes": 84068,
+    "compact_sha256": "ea18ab1dc267529fc8e7ad64574c07713700e8ecc4b69dc90e8fdd1f09467ff1",
+    "describes": "the payload at 276ff242^ and every commit back to c28a8d0a",
+    "payload_bytes": 102146,
+    "payload_sha256": "7cc80b34e2e025bf3096233f330bffa8fd76f8d584d6d34a8291fb1889e1e9e1"
+  },
+  "v2": {
+    "compact_bytes": 85563,
+    "compact_sha256": "2481fa5e4c508bc9f7a7f80c6c6592100833a2cb667f387a7dd138860b458e8b",
+    "describes": "the payload from 568d9208 onward",
+    "payload_bytes": 103648,
+    "payload_sha256": "48a7438d3eea38a09bcede11596cc7de9f6a9300e1ab8dc7f9f14f6fd802f7e0"
+  },
+  "verification": "Measured 2026-08-21, not asserted: a line-level diff of the v1 and v2 payloads yields 7 replacement groups, each one line to one line. Normalising every link target on both sides down to its bare document name makes all 7 pairs BYTE-EQUAL, and each new target names the same document it replaced. Anything-else count: 0. So the delta is exactly the permitted transformation and nothing more.",
+  "why_not_a_bare_repin": "Overwriting the four constants would convert a conservation guarantee into a rubber stamp: nothing would then record that the payload changed, or bound HOW it may change. v1 is retained and the permitted transformation is stated, so the checker can assert that the delta is ONLY that transformation.",
+  "why_not_reverted": "The edits are link-target migrations, not changes to scientific prose or to any number. Reverting them would restore relative paths to documents the prepublication compaction removed from the live tree, i.e. it would damage the surviving discovery routes the freeze exists to preserve."
+}

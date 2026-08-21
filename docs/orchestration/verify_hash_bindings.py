@@ -129,6 +129,26 @@ SHELL_PIN_FLOOR = 15
 # `<path>\t<sha256>\n` record per unique binding. Any added, removed, or repointed live
 # binding therefore requires an explicit count+digest update in the same reviewed
 # commit. No second inventory file is added to the repository.
+#: OI-143a. A JSON that declares this top-level key is a TEST FIXTURE and its bindings are held out
+#: of the PRODUCTION verdict. `std_component_manifest.B1_E.json` pins a digest that is DELIBERATELY
+#: DEAD -- its own `_fixture` block says `"must_be": "REJECTED by the B1 completeness check"` and
+#: `tests/test_p4_repair.py` lists B1_E in MUST_REJECT -- so on the cluster, where the bound artifact
+#: exists, this gate reported a deliberate negative control as provenance drift. Updating that digest
+#: would have silently broken the control.
+#: WHY A SEMANTIC DESIGNATION AND NOT `tests/fixtures/**`. Measured: 12 JSONs live under
+#: nd-unfolding/tests/fixtures/ and 11 of them self-declare. A blanket path exclusion would
+#: therefore ALSO have dropped one file that makes no such claim, untested and invisibly. A fixture
+#: has to SAY it is one.
+#: HELD OUT IS NOT UNCHECKED: `fixture_integrity` below pins the set and each file's own sha256, so a
+#: fixture still cannot be edited silently -- what it no longer does is assert that the world matches
+#: a digest it exists to contradict.
+NEGATIVE_CONTROL_MARKER = "_fixture"
+
+#: The self-declaring fixtures, pinned by count and by a digest over (path, sha256) pairs.
+#: Counted by running the collector, not assumed.
+FIXTURE_COUNT = 11
+FIXTURE_SET_SHA256 = "f4a3a539cff3cefd31ac2e6a00fb5d3a5c0dbc5635087858ef49a851db7d6e91"
+
 RECEIPT_BINDING_COUNT = 117
 RECEIPT_BINDING_SHA256 = "7586d636e6c4cde2af89e075d12d02633d21acc6709f796417ba25c37d5eec0c"
 
@@ -331,6 +351,41 @@ def localize(p, root):
     return cand if os.path.isfile(cand) else None
 
 
+def fixture_integrity(root, fixture_files):
+    """OI-143a. `(count, digest, problems)` over the SELF-DECLARED fixtures.
+
+    Held out of the production verdict is NOT unchecked. A fixture's whole job can be to carry a
+    value the world contradicts -- `std_component_manifest.B1_E.json` pins a deliberately dead
+    digest and `test_p4_repair.py` requires it to be REJECTED -- so asserting that its digests match
+    live artifacts is exactly wrong. What CAN be asserted is that the fixture set has not changed
+    under us: the file list and each file's own sha256. That catches a silent edit, which is the real
+    risk once these stop entering the main verdict.
+    """
+    rows = []
+    for rel in sorted(fixture_files):
+        h = hashlib.sha256()
+        try:
+            with open(os.path.join(root, rel), "rb") as fh:
+                for chunk in iter(lambda: fh.read(1 << 20), b""):
+                    h.update(chunk)
+        except OSError as e:
+            return len(fixture_files), None, [f"{rel}: unreadable ({e})"]
+        rows.append(f"{rel} {h.hexdigest()}")
+    digest = hashlib.sha256(("\n".join(rows) + "\n").encode()).hexdigest()
+    problems = []
+    if len(rows) != FIXTURE_COUNT:
+        problems.append(
+            f"self-declared fixture count is {len(rows)}, pinned at {FIXTURE_COUNT}. A fixture "
+            f"appearing or vanishing changes what the production verdict does NOT cover, so it is "
+            f"a deliberate change: update FIXTURE_COUNT/FIXTURE_SET_SHA256 with the reason.")
+    if FIXTURE_SET_SHA256 != "PENDING" and digest != FIXTURE_SET_SHA256:
+        problems.append(
+            f"self-declared fixture set digest is {digest}, pinned {FIXTURE_SET_SHA256}. One of the "
+            f"held-out fixtures was EDITED. These are negative controls; an edit is how a control "
+            f"stops controlling.")
+    return len(rows), digest, problems
+
+
 def tracked_paths(root):
     """Checkout-relative paths git actually tracks at `root`.
 
@@ -394,12 +449,23 @@ def main():
 
     receipt_pairs = []
     receipt_unpaired = []
+    fixture_pairs = []
+    fixture_files = []
     for f in (glob.glob(os.path.join(a.root, "docs/**/*.json"), recursive=True)
               + glob.glob(os.path.join(a.root, "nd-unfolding/**/*.json"), recursive=True)):
         try:
-            collect(json.load(open(f)), os.path.relpath(f, a.root), receipt_pairs,
-                    receipt_unpaired)
+            doc = json.load(open(f))
         except (json.JSONDecodeError, OSError):
+            continue
+        rel = os.path.relpath(f, a.root)
+        # OI-143a: a SELF-DECLARED fixture's bindings do not enter the production verdict.
+        if isinstance(doc, dict) and NEGATIVE_CONTROL_MARKER in doc:
+            fixture_files.append(rel)
+            collect(doc, rel, fixture_pairs, None)
+            continue
+        try:
+            collect(doc, rel, receipt_pairs, receipt_unpaired)
+        except OSError:
             continue
 
     shell_pairs = []
@@ -573,6 +639,17 @@ def main():
               or bool(field_bad) or field_blind
               or bool(uncovered) or frozen_blind
               or (a.strict and bool(known_bad)))
+    # OI-143a: what the production verdict deliberately does NOT cover, and its own integrity.
+    fx_n, fx_digest, fx_problems = fixture_integrity(a.root, fixture_files)
+    print(f"\n{len(fixture_pairs)} binding(s) in {fx_n} SELF-DECLARED fixture(s) held out of the "
+          f"production verdict (semantic `{NEGATIVE_CONTROL_MARKER}` marker, not a path rule)")
+    print(f"  fixture-set integrity digest: {fx_digest}")
+    print("  these pin values the world may CONTRADICT on purpose; their integrity is the set and "
+          "each file's own sha256, never a match against a live artifact")
+    for pb in fx_problems:
+        print(f"  FIXTURE-INTEGRITY FAIL {pb}")
+    failed = failed or bool(fx_problems)
+
     print("\n" + ("*** BINDINGS BROKEN ***" if failed else "ALL BINDINGS INTACT"))
     return 1 if failed else 0
 
