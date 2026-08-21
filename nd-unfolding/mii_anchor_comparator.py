@@ -89,6 +89,28 @@ RECOMPUTABILITY = {
     "upstream_estimator_seed_g2_checked": (IN_FILE, None,
         "verify_leg_identity: the flag must equal presence-of-seed, and for a DECLARED member the "
         "seed must equal seed_offset_policy.LEG_BASELINES['g2'] + est_seed_offset"),
+    # OI-147, 2026-08-21: the seven remaining archive-absent keys become IN_FILE, each backed by
+    # `verify_configuration_identity`. CONFIGURATION IDENTITY, not recomputation -- three are TNamed
+    # strings and `upstream_n_throws` is checked against the PREDECLARED ensemble size, since the
+    # adopted root carries no local `n_throws`. Stated that way in the reasons below rather than
+    # overclaiming, per the ruling.
+    "fixed_seed_null_norm_checked":  (IN_FILE, None,
+        "verify_configuration_identity: binary, and agrees with the presence of "
+        "upstream_fixed_seed_null_norm"),
+    "joint_mean_shift_norm_checked": (IN_FILE, None,
+        "verify_configuration_identity: binary, and agrees with the presence of "
+        "upstream_joint_mean_shift_norm"),
+    "n_throws_checked":              (IN_FILE, None,
+        "verify_configuration_identity: binary, and agrees with the presence of upstream_n_throws"),
+    "upstream_n_throws":             (IN_FILE, None,
+        "verify_configuration_identity: equals the PREDECLARED member ensemble size from "
+        "receipt_candidate_stamps_5d.EXPECT_UPSTREAM -- a configuration check, NOT a recount"),
+    "centering_convention":          (IN_FILE, None,
+        "verify_configuration_identity: matches the product's role, mean-centered vs cv-centered"),
+    "uthrow_source":                 (IN_FILE, None,
+        "verify_configuration_identity: basename matches the pinned launcher contract"),
+    "combined_source":               (IN_FILE, None,
+        "verify_configuration_identity: basename matches the pinned launcher contract"),
     "upstream_fixed_seed_null_norm":  (CROSS_FILE, None, "the throw root's fixed_seed_null_norm"),
     "upstream_joint_mean_shift_norm": (CROSS_FILE, None, "the throw root's joint_mean_shift_norm"),
     # WRITER GAP, not impossible: `x_cv2` and `base` are ordinary per-bin vectors that unified_throw_cov
@@ -143,6 +165,12 @@ RECOMPUTABILITY = {
     # expected list in the tests moves with this change.
     "hDiagCombinedOldRaw": (IN_FILE, None,
                             "clip(raw) compared bin-for-bin against the retained hDiagCombinedOld"),
+    # THE CLIPPED HALF IS COVERED BY THE SAME CHECK, and it needs saying: the comparison is between
+    # the two histograms, so it verifies both. Registering only the raw key left this one uncovered
+    # and it would have failed the gate on the first real product.
+    "hDiagCombinedOld": (IN_FILE, None,
+                         "the clipped half of the DIAGONAL_CONSISTENCY pair -- clip(raw) is compared "
+                         "against it bin-for-bin"),
     "sqrt_tr_old": (IN_FILE, None, "sqrt(sum(hDiagCombinedOldRaw)) -- the RAW diagonal, never the "
                                    "clipped one"),
     # THE SUPERSEDED `sqrt_tr_old` ENTRY IS DELETED, NOT RENAMED. My first pass left it as
@@ -267,6 +295,20 @@ def _clip_consistency(raw, clipped):
 DIAGONAL_CONSISTENCY = {
     "hDiagCombinedOldRaw": ("hDiagCombinedOld", _clip_consistency),
 }
+
+
+def diagonal_pair_covered():
+    """Every key a `DIAGONAL_CONSISTENCY` entry covers -- BOTH sides of each pair.
+
+    Found by sweeping the uncovered set after OI-147's seven keys landed: registering the check under
+    the RAW key alone left `hDiagCombinedOld` itself covered by NOTHING, so it would still have set
+    `class_failed` on the first real product. The check compares the two, so it covers the two.
+    """
+    out = set()
+    for key, (other, _fn) in DIAGONAL_CONSISTENCY.items():
+        out.add(key)
+        out.add(other)
+    return out
 
 
 def digest(array):
@@ -608,9 +650,133 @@ def verify_leg_identity(artifact, m_sc, baselines=None):
 SCALAR_RECOMPUTE = {}          # populated below, once verify_leg_identity is defined
 
 
+#: OI-147, 2026-08-21, on Joseph's ruling: THE PINNED MEMBER/LAUNCHER CONTRACT for the seven
+#: remaining archive-absent keys. Each of these was uncomparable (the archive predates them) and
+#: covered by NOTHING, so each independently set `class_failed`.
+#: THESE ARE CONFIGURATION-IDENTITY CHECKS, NOT RECOMPUTATIONS, and the ruling says to describe them
+#: that way rather than overclaim: three of the seven are TNamed STRINGS where "recompute" has no
+#: arithmetic meaning, and `upstream_n_throws` is compared against a PREDECLARED ensemble size rather
+#: than a recount of the source throws -- the adopted root carries `upstream_n_throws` and
+#: `n_throws_checked` but no local `n_throws` to compare against.
+#: THE BASENAMES ARE STABLE UNDER MEMBER SCOPING, which is what makes them usable as a contract:
+#: `lib_member_resume._mr_insert` inserts a member directory and PRESERVES the basename, and the
+#: writer stores `os.path.basename(...)`. Sources: the launcher's own COMB and UTHROW definitions.
+CONFIG_CENTERING = {"adopted_uthrow.root": "mean-centered",
+                    "adopted_uthrow_cvcentered.root": "cv-centered"}
+CONFIG_SOURCES = {"uthrow_source": "unified_throw_cov_5d.root",
+                  "combined_source": "uq_universe_5d_covariance_combined_bkgaware.root"}
+#: `(flag, value)` -- the flag must be binary AND must agree with the PRESENCE of its value.
+CONFIG_FLAG_PAIRS = (("fixed_seed_null_norm_checked", "upstream_fixed_seed_null_norm"),
+                     ("joint_mean_shift_norm_checked", "upstream_joint_mean_shift_norm"),
+                     ("n_throws_checked", "upstream_n_throws"))
+
+
+def _pinned_ensemble_size():
+    """The predeclared member ensemble size. IMPORTED, never restated here.
+
+    `receipt_candidate_stamps_5d.EXPECT_UPSTREAM` already holds it, predeclared in
+    `docs/orchestration/PREDECLARE-20260817-candidate-stamp-receipt-causes-3-4.md` section 3 with the
+    property that the verdict is computed from it BY CODE and so cannot be chosen after seeing the
+    numbers. Duplicating the constant here would create a second source that can drift from the
+    predeclaration, which is the whole failure this file keeps filing.
+    """
+    try:
+        import receipt_candidate_stamps_5d as rc
+    except Exception as exc:                              # noqa: BLE001 -- fail closed, loudly
+        _fail(f"cannot import the predeclared stamp contract ({exc.__class__.__name__}: {exc}); "
+              "refusing to verify upstream_n_throws against a locally restated constant")
+    n = rc.EXPECT_UPSTREAM.get("upstream_n_throws")
+    if n is None:
+        _fail("receipt_candidate_stamps_5d.EXPECT_UPSTREAM has no upstream_n_throws; the contract "
+              "this check reads has moved and must be re-derived rather than guessed")
+    return int(n)
+
+
+def verify_configuration_identity(artifact, m_sc):
+    """OI-147's seven keys. `(lines, failed)`. CONFIGURATION IDENTITY, not recomputation.
+
+    The archive predates all seven, so each was `uncomparable` and covered by nothing -- and
+    `audit_uncomparable` therefore failed the gate on each independently. What CAN be asserted is
+    that the member agrees with the PINNED CONTRACT it was built under, which is a real check with a
+    stated scope rather than a claim that the source files were re-read.
+    """
+    lines, failed = [], False
+
+    # (1) the three flag/value pairs: binary, and agreeing with PRESENCE
+    for flag, value in CONFIG_FLAG_PAIRS:
+        if flag not in m_sc:
+            continue
+        f = m_sc[flag]
+        if int(f) not in (0, 1):
+            lines.append(f"[config] {flag} = {f!r} is not binary; a flag that is not 0 or 1 records "
+                         "no state")
+            failed = True
+            continue
+        present = value in m_sc
+        if int(f) != int(present):
+            lines.append(f"[config] {flag} = {int(f)} but {value} is "
+                         f"{'PRESENT' if present else 'ABSENT'} -- THE FLAG CONTRADICTS ITS OWN "
+                         "VALUE, so the two stamps describe different states")
+            failed = True
+        else:
+            lines.append(f"[config] OK   {flag} = {int(f)} agrees with {value} "
+                         f"{'present' if present else 'absent'}")
+
+    # (2) upstream_n_throws against the PREDECLARED ensemble size
+    if "upstream_n_throws" in m_sc:
+        want = _pinned_ensemble_size()
+        got = int(m_sc["upstream_n_throws"])
+        if got != want:
+            lines.append(f"[config] upstream_n_throws = {got} but the predeclared member ensemble "
+                         f"size is {want} (receipt_candidate_stamps_5d.EXPECT_UPSTREAM). This is a "
+                         "configuration check against the contract, NOT a recount of the throws.")
+            failed = True
+        else:
+            lines.append(f"[config] OK   upstream_n_throws = {got} == predeclared ensemble size")
+
+    # (3) centering_convention must match THE PRODUCT'S ROLE
+    if "centering_convention" in m_sc:
+        want = CONFIG_CENTERING.get(artifact)
+        got = m_sc["centering_convention"]
+        if want is None:
+            lines.append(f"[config] centering_convention present on {artifact}, which the contract "
+                         "does not assign a centering role -- add the artifact or drop the key")
+            failed = True
+        elif got != want:
+            lines.append(f"[config] centering_convention = {got!r} but {artifact} must be {want!r}. "
+                         "A mean-centered product under the CV-centered name is the single worst "
+                         "outcome this path can produce.")
+            failed = True
+        else:
+            lines.append(f"[config] OK   centering_convention = {got!r} matches {artifact}")
+
+    # (4) the two source basenames against the pinned launcher contract
+    for key, want in CONFIG_SOURCES.items():
+        if key not in m_sc:
+            continue
+        got = m_sc[key]
+        if got != want:
+            lines.append(f"[config] {key} = {got!r} but the pinned contract names {want!r}. "
+                         "Basenames are stable under member scoping, so this is a real mismatch "
+                         "rather than a path artifact.")
+            failed = True
+        else:
+            lines.append(f"[config] OK   {key} = {got!r} matches the pinned contract")
+
+    return lines, failed
+
+
 SCALAR_RECOMPUTE.update({
     "upstream_estimator_seed_g1_checked": verify_leg_identity,
     "upstream_estimator_seed_g2_checked": verify_leg_identity,
+    # OI-147's seven, all served by one verifier -- deduplicated by function at the call site.
+    "fixed_seed_null_norm_checked": verify_configuration_identity,
+    "joint_mean_shift_norm_checked": verify_configuration_identity,
+    "n_throws_checked": verify_configuration_identity,
+    "upstream_n_throws": verify_configuration_identity,
+    "centering_convention": verify_configuration_identity,
+    "uthrow_source": verify_configuration_identity,
+    "combined_source": verify_configuration_identity,
 })
 
 

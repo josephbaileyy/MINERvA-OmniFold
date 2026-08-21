@@ -62,17 +62,32 @@ class OI141_TheVerdictIsStructuredNotParsed(unittest.TestCase):
                          C.audit_uncomparable(ADOPTED, list(self.result.uncomparable)))
 
     def test_the_audit_is_not_dead_a_key_with_no_coverage_still_FAILS(self):
-        """Negative control. If everything were skipped the audit would be vacuously green."""
-        # `n_throws_checked` on this artifact is CONFIGURATION, derive:None, has no
-        # RECOMPUTABILITY row and is not declared -- so it lands squarely in the failing branch.
-        # (globalCompleteness was the first choice and is UNCLASSIFIED here, which exits 2 rather
-        # than reaching the branch: a control has to be able to arrive at what it is controlling.)
-        uncovered = "n_throws_checked"
-        self.assertNotIn(uncovered, C.declared_unverified())
-        self.assertIsNot(C.RECOMPUTABILITY.get(uncovered, (None,))[0], C.IN_FILE)
-        self.assertIsNot(K.classify(ADOPTED, uncovered), K.PROVENANCE)
-        _, failed = C.audit_uncomparable(ADOPTED, [uncovered])
-        self.assertTrue(failed, "a key that is neither PROVENANCE, IN_FILE nor declared must FAIL")
+        """Negative control. If everything were skipped the audit would be vacuously green.
+
+        SYNTHETIC ON PURPOSE, and the reason is a lesson rather than convenience. This control first
+        used `globalCompleteness`, which turned out to be UNCLASSIFIED on the artifact and exited 2
+        before reaching the branch. It was then re-pointed at `n_throws_checked` -- which OI-147
+        subsequently COVERED, breaking the control again. A control that depends on some real key
+        still being uncovered decays as coverage improves, and coverage improving is the goal. So it
+        injects its own key and restores the tables afterwards.
+        """
+        FAKE = "_oi141_control_key"
+        saved_cls = dict(K.ARTIFACTS[ADOPTED])
+        saved_map = dict(K.ARCHIVE_KEY_MAP)
+        try:
+            K.ARTIFACTS[ADOPTED][FAKE] = K.CONFIGURATION
+            K.ARCHIVE_KEY_MAP[FAKE] = {"landed": "synthetic control 2026-08-21", "derive": None,
+                                       "absence": K.PREDATES_ARCHIVE}
+            self.assertNotIn(FAKE, C.declared_unverified())
+            self.assertIsNot(C.RECOMPUTABILITY.get(FAKE, (None,))[0], C.IN_FILE)
+            _, failed = C.audit_uncomparable(ADOPTED, [FAKE])
+            self.assertTrue(failed,
+                            "a key that is neither PROVENANCE, IN_FILE nor declared must FAIL")
+        finally:
+            K.ARTIFACTS[ADOPTED].clear(); K.ARTIFACTS[ADOPTED].update(saved_cls)
+            K.ARCHIVE_KEY_MAP.clear(); K.ARCHIVE_KEY_MAP.update(saved_map)
+        # and the tables are back
+        self.assertNotIn(FAKE, K.ARCHIVE_KEY_MAP)
 
 
 class OI140_IdentityIsRecomputedNotDeclared(unittest.TestCase):
@@ -273,6 +288,95 @@ class OI147_BothDiagonalsShipAndBothAreChecked(unittest.TestCase):
         for k in C.declared_unrecomputable():
             self.assertIn(k, C.RECOMPUTABILITY)
             self.assertFalse(k.startswith("_"), f"{k} looks like a placeholder, not a real key")
+
+class OI147_TheSevenConfigurationKeys(unittest.TestCase):
+    """OI-147's other seven. CONFIGURATION IDENTITY against the pinned contract, not recomputation.
+
+    Each was archive-absent, uncomparable and covered by nothing, so each independently set
+    `class_failed` -- which is why the gate could not pass any product the path would create.
+    """
+
+    A = "adopted_uthrow.root"
+    GOOD = {"fixed_seed_null_norm_checked": 1, "upstream_fixed_seed_null_norm": 5.8223488501140625e-50,
+            "joint_mean_shift_norm_checked": 1, "upstream_joint_mean_shift_norm": 1.878696733368378e-38,
+            "n_throws_checked": 1, "upstream_n_throws": 160,
+            "centering_convention": "mean-centered",
+            "uthrow_source": "unified_throw_cov_5d.root",
+            "combined_source": "uq_universe_5d_covariance_combined_bkgaware.root"}
+
+    def _run(self, artifact=None, **over):
+        sc = dict(self.GOOD); sc.update(over)
+        for k, v in list(over.items()):
+            if v is None:
+                sc.pop(k, None)
+        return C.verify_configuration_identity(artifact or self.A, sc)
+
+    def test_the_INTENDED_product_passes(self):
+        """The direction the check must not act in."""
+        lines, failed = self._run()
+        self.assertFalse(failed, lines)
+
+    def test_a_flag_contradicting_its_own_value_is_caught(self):
+        _, failed = self._run(upstream_n_throws=None)      # flag says 1, value absent
+        self.assertTrue(failed)
+
+    def test_a_nonbinary_flag_is_caught(self):
+        _, failed = self._run(n_throws_checked=2)
+        self.assertTrue(failed)
+
+    def test_the_ensemble_size_is_compared_to_the_PREDECLARED_value(self):
+        _, failed = self._run(upstream_n_throws=159)
+        self.assertTrue(failed)
+
+    def test_the_predeclared_size_is_IMPORTED_not_restated(self):
+        """A second copy of the constant can drift from the predeclaration it cites."""
+        import receipt_candidate_stamps_5d as rc
+        self.assertEqual(C._pinned_ensemble_size(), int(rc.EXPECT_UPSTREAM["upstream_n_throws"]))
+
+    def test_centering_must_match_the_PRODUCTS_ROLE_both_ways(self):
+        """A mean-centered product under the CV-centered name is the worst outcome on this path."""
+        _, failed = self._run(centering_convention="cv-centered")
+        self.assertTrue(failed, "mean-centered artifact must reject a cv-centered stamp")
+        lines, ok_failed = self._run(artifact="adopted_uthrow_cvcentered.root",
+                                     centering_convention="cv-centered")
+        self.assertFalse(ok_failed, lines)
+
+    def test_a_source_basename_mismatch_is_caught(self):
+        for k in ("uthrow_source", "combined_source"):
+            with self.subTest(key=k):
+                _, failed = self._run(**{k: "not_the_contract.root"})
+                self.assertTrue(failed)
+
+    def test_all_seven_are_registered_so_the_IN_FILE_claim_is_backed(self):
+        for k in ("fixed_seed_null_norm_checked", "joint_mean_shift_norm_checked",
+                  "n_throws_checked", "upstream_n_throws", "centering_convention",
+                  "uthrow_source", "combined_source"):
+            with self.subTest(key=k):
+                self.assertIs(C.RECOMPUTABILITY[k][0], C.IN_FILE)
+                self.assertIn(k, C.SCALAR_RECOMPUTE)
+
+    def test_NO_ARCHIVE_ABSENT_KEY_IS_LEFT_UNCOVERED(self):
+        """THE POINT OF OI-147, as a sweep rather than a list. Before it, eight keys were covered by
+        nothing and each failed the gate alone. This is what caught that registering the diagonal
+        check under the RAW key alone left the CLIPPED half uncovered."""
+        import mii_root_payload_classes as K2
+        for art in ("adopted_uthrow.root", "adopted_uthrow_cvcentered.root"):
+            uncovered = []
+            for k, e in K2.ARCHIVE_KEY_MAP.items():
+                if e["derive"] is not None:
+                    continue
+                try:
+                    cls = K2.classify(art, k)
+                except BaseException:
+                    continue
+                if cls is K2.PROVENANCE:
+                    continue
+                if C.RECOMPUTABILITY.get(k, (None,))[0] is C.IN_FILE:
+                    continue
+                if k in C.declared_unverified():
+                    continue
+                uncovered.append(k)
+            self.assertEqual(uncovered, [], f"{art} has archive-absent keys covered by nothing")
 
 
 if __name__ == "__main__":

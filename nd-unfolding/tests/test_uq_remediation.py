@@ -3253,7 +3253,7 @@ class AnchorComparatorB2(unittest.TestCase):
         self.assertNotIn("sqrt_tr_old", self.B.declared_unrecomputable(),
                          "and the closed acknowledgement set must have shrunk with it")
 
-    def test_only_EIGHT_of_the_recompute_keys_are_IN_FILE(self):
+    def test_only_SIXTEEN_of_the_recompute_keys_are_IN_FILE(self):
         """C classified seven scalars as mandatory-recomputation; four can be recomputed from the file
         that carries them. Derived, not assumed, and pinned so the count cannot drift silently.
 
@@ -3266,7 +3266,10 @@ class AnchorComparatorB2(unittest.TestCase):
         by = {}
         for k, (how, _kind, _why) in self.B.RECOMPUTABILITY.items():
             by.setdefault(how, []).append(k)
-        self.assertEqual(len(by[self.B.IN_FILE]), 8)
+        # 4 -> 6 on OI-140, 6 -> 8 on OI-147's raw diagonal, 8 -> 16 on OI-147's seven
+        # configuration keys plus the clipped half of the diagonal pair. Each addition brought its
+        # own implementation; the assertion below is what enforces that.
+        self.assertEqual(len(by[self.B.IN_FILE]), 16)
         # sqrt_tr_old LEFT this set on 2026-08-21 (OI-147): its ingredient now ships, so it is
         # IN_FILE. The set shrinking is the coupled half -- declared_unrecomputable() is derived from
         # it and every --acknowledge-unrecomputable call site must equal that exactly.
@@ -3281,7 +3284,7 @@ class AnchorComparatorB2(unittest.TestCase):
         for k, (how, _kind, _why) in self.B.RECOMPUTABILITY.items():
             if how is self.B.IN_FILE:
                 self.assertTrue(k in self.B.RECOMPUTE or k in self.B.SCALAR_RECOMPUTE
-                                or k in self.B.DIAGONAL_CONSISTENCY,
+                                or k in self.B.diagonal_pair_covered(),
                                 f"{k} is classified IN_FILE but has no implementation in RECOMPUTE, "
                                 "SCALAR_RECOMPUTE or DIAGONAL_CONSISTENCY -- the claim and the "
                                 "capability must not drift apart")
@@ -3367,9 +3370,9 @@ class RecomputabilityIsADeclaredAttribute(unittest.TestCase):
         self.B = B
 
     def test_every_entry_declares_how_kind_and_reason(self):
-        # 9 -> 11 on OI-140 (the two upstream_estimator_seed_*_checked rows), 11 -> 12 on OI-147
-        # (hDiagCombinedOldRaw added; sqrt_tr_old stayed, reclassified rather than removed).
-        self.assertEqual(self.B.assert_reasons_are_stated(), 12)
+        # 9 -> 11 on OI-140, 11 -> 12 on OI-147's raw diagonal, 12 -> 20 on OI-147's seven
+        # configuration keys plus the clipped half of the pair.
+        self.assertEqual(self.B.assert_reasons_are_stated(), 20)
 
     def test_a_BARE_no_IS_THE_FAIL_CLOSED_CASE(self):
         """A `no` without a stated kind reads as a law of nature and freezes a writer gap forever."""
