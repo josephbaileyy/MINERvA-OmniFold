@@ -62,14 +62,80 @@ class TestCompletionMarker:
               rg_is_complete out.npz && exit 8
               exit 0''', tmp_path, expect_rc=0)
 
-    def test_p4_style_marker_without_size_binding_is_honoured(self, tmp_path):
-        """run_p4_unfold_std.sh receipts predate the size/mtime binding and validated
-        content before writing. They must keep working, or the fix breaks the one
-        launcher that already had this right."""
+    # ------------------------------------------------------------------------------
+    # OI-142. THE GUARD FIRES: a marker with no size/mtime binding is not proof.
+    #
+    # The test that stood here asserted the OPPOSITE -- that a fieldless marker "must keep
+    # working" -- and it was the defect's own pin. Its premise was that such markers come
+    # from run_p4_unfold_std.sh, which content-validated before writing. But the premise is
+    # about PROVENANCE while the test was over SHAPE, and "neither field present" is also the
+    # shape of an empty, truncated or malformed marker. So the exemption readmitted the
+    # BEN-023 defect it was written inside the fix for.
+    #
+    # It is not replaced by "P4 receipts now re-run". They are validated by
+    # nd-unfolding/p4_check_receipt.py, which checks every recorded identity and the whole
+    # producing closure -- strictly more than this library can -- and that launcher never
+    # routed a resume decision through rg_is_complete. See TestTheNarrowingDidNotBreakP4.
+    # ------------------------------------------------------------------------------
+    def test_a_marker_carrying_neither_size_nor_mtime_is_REFUSED(self, tmp_path):
+        """The exact shape OI-142 names, in its most favourable disguise: valid JSON, a real
+        `tag`, a real `root_sha256`. None of that is a completion claim about THIS file."""
         (tmp_path / "out.root").write_text("payload")
         (tmp_path / "out.root.done").write_text(
             '{"tag":"x","mode":"produced","root_sha256":"deadbeef"}\n')
-        sh('rg_is_complete out.root', tmp_path, expect_rc=0)
+        rc, out = sh('rg_is_complete out.root', tmp_path)
+        assert rc == 2, f"an unbound marker must be refused with rc=2, got {rc}\n{out}"
+
+    def test_a_TRUNCATED_marker_is_refused(self, tmp_path):
+        """Why the honour branch was a defect and not merely a loose rule: this is a real
+        stamp cut off mid-write, and under the old rule it was indistinguishable from a
+        legitimate P4 receipt -- so it read as a completed step."""
+        (tmp_path / "out.npz").write_text("payload")
+        (tmp_path / "out.npz.done").write_text('{"output":"out.npz","si')
+        rc, _ = sh('rg_is_complete out.npz', tmp_path)
+        assert rc == 2
+
+    def test_a_marker_truncated_after_size_but_before_mtime_is_refused(self, tmp_path):
+        """One-of-two is refused as well. A recorded size says nothing about a same-size
+        rewrite, and here it is not a partial credential -- it is a partial WRITE."""
+        rc, out = sh("""echo payload > out.npz
+                        rg_mark_complete out.npz
+                        SZ="$(rg_stat_size out.npz)"
+                        printf '{"output":"out.npz","size":%s' "$SZ" > out.npz.done
+                        rg_is_complete out.npz""", tmp_path)
+        assert rc == 2, out
+
+    def test_an_mtime_only_marker_is_refused(self, tmp_path):
+        rc, _ = sh("""echo payload > out.npz
+                      printf '{"output":"out.npz","mtime":%s}' "$(rg_stat_mtime out.npz)" \
+                        > out.npz.done
+                      rg_is_complete out.npz""", tmp_path)
+        assert rc == 2
+
+    # --- and the narrowing does NOT fire on a well-formed marker ---------------------
+    def test_a_marker_with_BOTH_bindings_still_passes(self, tmp_path):
+        """THE TEST THE NARROWING REQUIRES. A refusal rule that also refused the good case
+        would turn every resume in ~90 launchers into a full recompute, and would report
+        itself as a correct fix while burning the allocation."""
+        rc, out = sh("""echo payload > out.npz
+                        rg_mark_complete out.npz
+                        grep -q '"size"'  out.npz.done || exit 7
+                        grep -q '"mtime"' out.npz.done || exit 8
+                        rg_is_complete out.npz""", tmp_path)
+        assert rc == 0, f"the ordinary marker must still be honoured\n{out}"
+
+    def test_the_refusal_and_the_stale_case_are_DISTINGUISHABLE(self, tmp_path):
+        """rc=1 and rc=2 are different facts. Collapsing them is how the old code came to
+        report a never-bound marker as one whose size/mtime had moved."""
+        rc_stale, _ = sh("""echo payload > out.npz
+                            rg_mark_complete out.npz
+                            printf 'truncated' > out.npz
+                            rg_is_complete out.npz""", tmp_path)
+        assert rc_stale == 1, "a genuinely stale marker is rc=1"
+        rc_unbound, _ = sh("""echo p > b.npz
+                              printf '{"tag":"x"}' > b.npz.done
+                              rg_is_complete b.npz""", tmp_path)
+        assert rc_unbound == 2, "an unbound marker is rc=2"
 
 
 @pytest.mark.skipif(not os.path.exists(_LIB), reason="resume_guard.sh not present")
@@ -147,6 +213,194 @@ class TestTransactionalRun:
     def test_require_complete_input_refuses_an_unmarked_upstream(self, tmp_path):
         rc, out = sh('echo p > in.root; rg_require_complete_input in.root "merged ROOT"', tmp_path)
         assert rc == 3 and "no valid completion marker" in out
+
+
+@pytest.mark.skipif(not os.path.exists(_LIB), reason="resume_guard.sh not present")
+class TestTheRefusalTellsTheTRUTHAndLaundersNothing:
+    """OI-142's second half. A refusal that reports the wrong reason, or that lets the
+    marker be overwritten on the way out, closes the hole and opens another."""
+
+    def test_the_message_does_not_claim_the_binding_MOVED(self, tmp_path):
+        """It never had one. `rg_skip_if_complete` used to print "size/mtime moved since it
+        was stamped" for EVERY non-matching marker, which sends an operator looking for a
+        mutation that did not happen -- and the true cause (a truncated stamp) then reads as
+        benign drift instead of a partial write."""
+        (tmp_path / "out.root").write_text("payload")
+        (tmp_path / "out.root.done").write_text('{"tag":"x","root_sha256":"dead"}')
+        rc, out = sh('rg_skip_if_complete out.root', tmp_path, expect_rc=1)
+        assert "NEITHER size nor mtime" in out, out
+        assert "moved since it was stamped" not in out, (
+            "the false diagnostic is back: this marker never carried either field\n" + out)
+
+    def test_a_P4_LOOKING_receipt_is_routed_to_its_OWN_validator_by_name(self, tmp_path):
+        """Refusing is right; refusing without saying where the answer lives sends the
+        operator to RESUME_ADOPT_LEGACY=1, which is the defect opted into deliberately."""
+        (tmp_path / "out.root").write_text("payload")
+        (tmp_path / "out.root.done").write_text(
+            '{"tag":"BeamAngleX_0","mode":"produced","root_sha256":"dead"}')
+        rc, out = sh('rg_skip_if_complete out.root', tmp_path, expect_rc=1)
+        assert "p4_check_receipt.py" in out, out
+
+    def test_the_refused_marker_is_NOT_overwritten(self, tmp_path):
+        """The laundering path. If control reached the adopt branches, rg_adopt would stamp a
+        generic size/mtime marker OVER the receipt -- manufacturing exactly the pass that was
+        just correctly withheld, and destroying whatever the receipt did record."""
+        (tmp_path / "out.root").write_text("payload")
+        rec = tmp_path / "out.root.done"
+        original = '{"tag":"x","mode":"produced","root_sha256":"deadbeef"}'
+        rec.write_text(original)
+        sh('rg_skip_if_complete out.root', tmp_path, expect_rc=1)
+        assert rec.read_text() == original, "the receipt was rewritten"
+        # even with the loud legacy opt-in, an EXISTING marker is not ours to replace
+        sh('rg_skip_if_complete out.root', tmp_path, expect_rc=1,
+           env={"RESUME_ADOPT_LEGACY": "1"})
+        assert rec.read_text() == original, (
+            "RESUME_ADOPT_LEGACY=1 overwrote a marker it could not read")
+
+    def test_a_validator_cannot_overwrite_an_unreadable_marker_either(self, tmp_path):
+        """The adopt-on-validator path is the library's *preferred* route, so it is the one
+        most likely to be pointed at a receipt. It must still not rewrite one."""
+        (tmp_path / "out.root").write_text("GOOD")
+        rec = tmp_path / "out.root.done"
+        rec.write_text('{"tag":"x","root_sha256":"dead"}')
+        rc, out = sh("""ok(){ grep -q GOOD "$1"; }
+                        rg_skip_if_complete out.root ok""", tmp_path, expect_rc=1)
+        assert "ADOPT+SKIP" not in out, out
+        assert rec.read_text() == '{"tag":"x","root_sha256":"dead"}'
+
+
+_BACKFILL = os.path.join(_REPO, "lib", "backfill_completion_markers.sh")
+
+
+@pytest.mark.skipif(not os.path.exists(_BACKFILL), reason="backfill script not present")
+class TestBackfillDoesNotClobberAMarkerItCannotRead:
+    """The hazard the OI-142 narrowing INTRODUCED, closed in the same change.
+
+    Before the narrowing a fieldless marker made rg_is_complete return 0, so backfill
+    counted the file as `already` and moved on. After it, control fell through to
+    `rg_adopt` -- which calls rg_mark_complete and overwrites `${f}.done`. A backfill sweep
+    over a directory holding P4 endpoint receipts would have replaced each one with a
+    generic size+mtime stamp. A narrowing has to be checked for what it lets through NEXT,
+    not only for what it now rejects.
+    """
+
+    def _run(self, cwd, *args):
+        r = subprocess.run(["bash", _BACKFILL, *args], cwd=str(cwd),
+                           capture_output=True, text=True)
+        return r.returncode, r.stdout + r.stderr
+
+    def test_an_existing_unreadable_marker_is_LEFT_ALONE(self, tmp_path):
+        (tmp_path / "a.root").write_text("payload")
+        rec = tmp_path / "a.root.done"
+        original = '{"tag":"BeamAngleX_0","mode":"produced","root_sha256":"deadbeef"}'
+        rec.write_text(original)
+        # --validator size PASSES on this file, so nothing but the marker check stops the stamp
+        rc, out = self._run(tmp_path, "--validator", "size", "--glob", "*.root")
+        assert rc == 0, out
+        assert rec.read_text() == original, "backfill overwrote a receipt it could not read"
+        assert "1 LEFT ALONE" in out, out
+
+    def test_backfill_STILL_STAMPS_an_unmarked_file_that_validates(self, tmp_path):
+        """THE TEST THE NARROWING REQUIRES: the tool's entire purpose must survive it. A
+        refusal rule that also refused every unmarked artifact would silently turn the
+        backfill into a no-op, and it would still exit 0 while doing nothing."""
+        (tmp_path / "b.root").write_text("payload")
+        rc, out = self._run(tmp_path, "--validator", "size", "--glob", "*.root")
+        assert rc == 0, out
+        assert (tmp_path / "b.root.done").exists(), out
+        assert "ADOPTED" in (tmp_path / "b.root.done").read_text()
+        assert "0 LEFT ALONE" in out, out
+
+    def test_a_stale_marker_is_also_left_alone_rather_than_re_stamped(self, tmp_path):
+        """Deliberate scope note: `already` still means "marker present and current". A
+        marker present but STALE is now reported, not silently refreshed -- re-stamping it
+        would erase the evidence that the file changed after being marked complete."""
+        (tmp_path / "c.root").write_text("payload")
+        r = subprocess.run(["bash", "-c", f'source "{_LIB}"; rg_mark_complete c.root'],
+                           cwd=str(tmp_path), capture_output=True, text=True)
+        assert r.returncode == 0, r.stdout + r.stderr
+        (tmp_path / "c.root").write_text("rewritten-and-longer")
+        rc, out = self._run(tmp_path, "--validator", "size", "--glob", "*.root")
+        assert rc == 0, out
+        assert "LEFT ALONE" in out and "no longer describe the file" in out, out
+
+
+class TestTheNarrowingDidNotBreakP4:
+    """P4 receipts are validated by their own validator, and that is not a claim about
+    intent -- it is checkable from the source, so it cannot quietly stop being true.
+
+    This is the other half of "a narrowing needs a test that it does not fire": the
+    narrowing is only safe because this launcher never depended on the honour branch.
+    """
+
+    def _p4(self):
+        return open(os.path.join(_REPO, "nd-unfolding", "run_p4_unfold_std.sh")).read()
+
+    def test_the_p4_launcher_never_resumes_through_the_generic_guard(self):
+        body = _strip_full_line_comments(self._p4())
+        assert "rg_is_complete" not in body, (
+            "run_p4_unfold_std.sh now calls rg_is_complete, so the OI-142 narrowing DOES "
+            "reach it and its receipts need a legacy=1 credential after all")
+        assert "rg_skip_if_complete" not in body
+
+    def test_the_p4_launcher_validates_its_receipts_with_p4_check_receipt(self):
+        body = _strip_full_line_comments(self._p4())
+        assert "p4_check_receipt.py" in body, (
+            "the dedicated receipt validator is no longer invoked, so nothing validates a "
+            "P4 receipt now that the generic guard refuses it")
+
+    def test_no_rg_caller_reads_the_p4_endpoint_directory(self):
+        """The enumeration OI-142 asked for, kept live. If a launcher ever guards an output
+        in the P4 unfolds namespace with rg_*, the refusal stops being harmless and this
+        decision has to be revisited."""
+        offenders = []
+        for rel in _shell_files():
+            if rel.startswith("lib/"):
+                continue
+            t = _strip_full_line_comments(open(os.path.join(_REPO, rel)).read())
+            if "active_universe_5d/standard/unfolds" not in t:
+                continue
+            if re.search(r'(?<!\w)rg_(skip_if_complete|is_complete|require_complete_input)\b', t):
+                offenders.append(rel)
+        assert not offenders, (
+            "these read the P4 endpoint namespace through the generic resume guard, which "
+            "OI-142's enumeration found empty:\n  " + "\n  ".join(offenders))
+
+
+class TestTheFinalizeCombGuardStaysIndependent:
+    """`nd-unfolding/sbatch_finalize_5d_bkgaware_gpu.sh`'s undeclared route checks size and
+    mtime DIRECTLY, per Joseph's amended ruling, and OI-142 explicitly says it must stay
+    that way. Now that rg_is_complete agrees with it, "simplify this into the shared guard"
+    is the obvious and wrong next edit: it would re-delegate a ruling to a function other
+    callers may change. Content-anchored deliberately -- the line numbers have moved twice.
+    """
+
+    SCRIPT = os.path.join(_REPO, "nd-unfolding", "sbatch_finalize_5d_bkgaware_gpu.sh")
+
+    def _body(self):
+        return _strip_full_line_comments(open(self.SCRIPT).read())
+
+    def test_the_comb_guard_does_not_call_rg_is_complete(self):
+        assert "rg_is_complete" not in self._body(), (
+            "the COMB guard was refactored onto rg_is_complete. OI-142 requires this route "
+            "to remain unexposed, and its ruling is not the shared library's default.")
+
+    def test_the_comb_guard_still_checks_BOTH_fields_itself(self):
+        body = self._body()
+        for needle in ('rg__marker_field "$_comb_marker" size',
+                       'rg__marker_field "$_comb_marker" mtime',
+                       'rg_stat_size  "${COMB}"', 'rg_stat_mtime "${COMB}"'):
+            assert needle in body, f"the direct size/mtime check lost: {needle!r}"
+
+    def test_the_stale_rationale_about_the_honour_branch_was_CORRECTED(self):
+        """A comment asserting a live fact about another file is a claim that can rot. This
+        one said rg_is_complete "RETURNS SUCCESS" for an unbound marker -- true when written,
+        false the moment OI-142 landed, and sitting in the one script whose guard exists
+        because of it."""
+        text = open(self.SCRIPT).read()
+        assert "OI-142" in text, "the correction is not recorded where the claim was made"
+        assert "RETURNS SUCCESS for a marker carrying NEITHER size nor" not in text, (
+            "the launcher still asserts the honour branch exists in the present tense")
 
 
 # ---------------------------------------------------------------------------------

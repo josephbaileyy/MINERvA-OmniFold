@@ -23,8 +23,11 @@
 #
 # The marker convention (${OUT}.done, JSON) is deliberately the one
 # nd-unfolding/run_p4_unfold_std.sh already uses -- that script is the in-repo
-# precedent for a transactional, content-validated resume, and its receipts stay
-# readable by rg_is_complete.
+# precedent for a transactional, content-validated resume.  Its receipts are NOT
+# readable by rg_is_complete, and deliberately so since OI-142: they carry no size/mtime
+# binding, and honouring that absence is exactly what let a truncated marker pass here.
+# They are validated by nd-unfolding/p4_check_receipt.py, which checks strictly more than
+# this library can -- see the OI-142 note on rg_is_complete.
 #
 # TWO CALL SHAPES.  Prefer the transactional one where the producer writes a single
 # self-contained file:
@@ -98,15 +101,68 @@ rg_mark_complete() {
 }
 
 # 0 iff OUT is present AND its marker is present AND the marker still describes it.
+#
+# OI-142: A MARKER CARRYING NEITHER size NOR mtime IS REFUSED, NOT HONOURED.  This function
+# used to `return 0` for one.  The stated reason was that run_p4_unfold_std.sh's receipts
+# predate the size/mtime binding and were content-validated before being written -- a claim
+# about a marker's PROVENANCE, authorising a test over its SHAPE.  Those are not the same
+# thing, and the shape "neither field present" is indistinguishable from an EMPTY, TRUNCATED
+# or otherwise malformed marker.  So a half-written stamp read as a finished step: the exact
+# BEN-023 defect this library exists to close, re-entering through the library's own
+# exemption.  The absence of two fields cannot be a positive credential for anything.
+#
+# P4 RECEIPTS ARE VALIDATED BY THEIR OWN VALIDATOR, WHICH IS STRICTLY BETTER.
+# nd-unfolding/p4_check_receipt.py re-derives every recorded identity and the whole
+# producing closure, and rejects an absent, empty, non-JSON or explicitly-null receipt by
+# name.  run_p4_unfold_std.sh already resumes through it and has never routed a resume
+# decision through this function.  Enumerated for OI-142: no rg_* caller in the repo reads
+# nd-unfolding/active_universe_5d/standard/unfolds at all, so this branch protected no live
+# caller -- it was pure attack surface.  A legacy shape that genuinely needs honouring must
+# bring a credential OF ITS OWN (an explicit `legacy=1`, say), never the absence of fields.
+#
+# nd-unfolding/sbatch_finalize_5d_bkgaware_gpu.sh's undeclared-route COMB guard checks size
+# and mtime directly, by ruling, rather than calling this function.  That stays true and
+# stays independent: its ruling is about what that one route may reuse, not about this
+# library's default, and it must not be refactored into this call now that the two agree.
+#
+# Return codes, because "not complete" has two causes an operator must be able to tell apart:
+#   0  complete -- marker present and its size+mtime still describe OUT
+#   1  not complete -- OUT absent, marker absent/empty, or the binding no longer matches
+#   2  marker present but carries NO usable size/mtime binding, so it proves nothing
 rg_is_complete() {
   local out="$1" marker size mtime msize mmtime; marker="$(rg_marker_path "$out")"
   [[ -e "$out" && -s "$marker" ]] || return 1
-  msize="$(rg__marker_field "$marker" size)"; mmtime="$(rg__marker_field "$marker" mtime)"
-  # A marker from run_p4_unfold_std.sh predates this binding and carries neither
-  # field.  Honour it: that script validated content before writing it.
-  [[ -z "$msize" && -z "$mmtime" ]] && return 0
+  # `|| =""` on the ASSIGNMENT, not inside the substitution: rg__marker_field returns 1 on a
+  # missing key, which would abort a `set -e` caller that is not inside an `if` condition.
+  msize="$(rg__marker_field "$marker" size)"  || msize=""
+  mmtime="$(rg__marker_field "$marker" mtime)" || mmtime=""
+  # BOTH bindings required.  One-of-two is refused too: a marker naming only `size` says
+  # nothing about a same-size rewrite, and is just as likely to be a truncation mid-key.
+  [[ -n "$msize" && -n "$mmtime" ]] || return 2
   size="$(rg_stat_size "$out")"; mtime="$(rg_stat_mtime "$out")"
   [[ "$msize" == "$size" && "$mmtime" == "$mtime" ]]
+}
+
+# Why a marker cannot serve as completion proof, in words that are TRUE of this marker.
+# "stale" and "never carried a binding" are different facts and imply different operator
+# actions, and before OI-142 every non-matching case was reported as the first one.
+rg_marker_defect() {
+  local marker="$1" ms mt
+  [[ -e "$marker" ]] || { printf 'absent\n'; return 0; }
+  [[ -s "$marker" ]] || { printf 'present but EMPTY -- a stamp truncated to nothing\n'; return 0; }
+  ms="$(rg__marker_field "$marker" size)"  || ms=""
+  mt="$(rg__marker_field "$marker" mtime)" || mt=""
+  if [[ -z "$ms" && -z "$mt" ]]; then
+    if grep -q '"root_sha256"' "$marker" 2>/dev/null; then
+      printf '%s' 'carries NEITHER size nor mtime and looks like a P4 endpoint receipt; '
+      printf '%s\n' 'validate it with nd-unfolding/p4_check_receipt.py, which this guard cannot substitute for'
+    else
+      printf '%s\n' 'carries NEITHER size nor mtime, so it is indistinguishable from a truncated stamp (OI-142)'
+    fi
+  elif [[ -z "$ms" ]]; then printf 'records mtime but no size, so it is malformed or truncated\n'
+  elif [[ -z "$mt" ]]; then printf 'records size but no mtime, so it is malformed or truncated\n'
+  else printf 'records size=%s mtime=%s, which no longer describe the file\n' "$ms" "$mt"
+  fi
 }
 
 # Invalidate any stale marker BEFORE overwriting OUT in place, so a crash midway
@@ -136,8 +192,13 @@ rg_skip_if_complete() {
   if rg_is_complete "$out"; then
     echo "[resume] SKIP ${out} (completion marker present and current)"; return 0
   fi
+  # A marker EXISTS but did not prove completion.  Say which, and re-run either way: this
+  # used to report every such marker as "size/mtime moved since it was stamped", which is a
+  # false statement about a marker that never carried those fields (OI-142).  Note this
+  # returns BEFORE the adopt paths below, so a marker we could not read is never overwritten
+  # by an adoption stamp -- laundering an unreadable marker into a pass is the same defect.
   if [[ -e "$(rg_marker_path "$out")" && -e "$out" ]]; then
-    echo "[resume] STALE MARKER for ${out} (size/mtime moved since it was stamped) -- re-running" >&2
+    echo "[resume] UNUSABLE MARKER for ${out} -- re-running. The marker $(rg_marker_defect "$(rg_marker_path "$out")")" >&2
     return 1
   fi
   if [[ -s "$out" ]]; then

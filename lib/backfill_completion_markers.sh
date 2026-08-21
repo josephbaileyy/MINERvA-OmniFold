@@ -63,12 +63,33 @@ FILES=( $PATTERN )
 shopt -u nullglob
 (( ${#FILES[@]} )) || { echo "[backfill] no files matched: ${PATTERN}"; exit 0; }
 
-marked=0; already=0; failed=0
+marked=0; already=0; failed=0; unusable=0
 declare -a FAILED_LIST=()
+declare -a UNUSABLE_LIST=()
 for f in "${FILES[@]}"; do
   [[ -f "$f" ]] || continue
   case "$f" in *.done|*.tmp) continue ;; esac
-  if rg_is_complete "$f"; then already=$((already+1)); continue; fi
+  rg_is_complete "$f" && { already=$((already+1)); continue; }
+  # OI-142: A MARKER WE COULD NOT READ IS NOT OURS TO OVERWRITE.
+  #
+  # This mattered the moment rg_is_complete stopped honouring a marker that carries neither
+  # size nor mtime.  Before that narrowing such a marker returned 0 here and the file counted
+  # as `already`; after it, control would fall straight through to `rg_adopt`, which calls
+  # rg_mark_complete and OVERWRITES ${f}.done.  For a P4 endpoint receipt that would replace a
+  # record of root/merged/central identities, config hash, bkg_mode and the whole producing
+  # closure with a generic size+mtime stamp -- destroying provenance to manufacture the pass
+  # that the narrowing had just correctly withheld.  That is the OI-142 defect in a new
+  # costume: an unreadable marker laundered into a completion claim.
+  #
+  # So: existing marker, whatever it says -> report it and move on.  A backfill exists to
+  # stamp artifacts that have NO marker; adjudicating one that already has a marker it cannot
+  # parse is a different decision and belongs to whoever wrote it.
+  _bf_marker="$(rg_marker_path "$f")"
+  if [[ -e "$_bf_marker" ]]; then
+    unusable=$((unusable+1))
+    UNUSABLE_LIST+=("${f} -- marker $(rg_marker_defect "$_bf_marker")")
+    continue
+  fi
   if validate_one "$f"; then
     if (( DRY )); then echo "[backfill] WOULD MARK ${f}"
     else rg_adopt "$f" "backfill, validator=${VALIDATOR}${OBJECT:+ object=${OBJECT}}" >/dev/null; fi
@@ -79,7 +100,13 @@ for f in "${FILES[@]}"; do
 done
 
 echo "[backfill] pattern=${PATTERN} validator=${VALIDATOR}"
-echo "[backfill]   ${already} already marked, ${marked} $( ((DRY)) && echo 'would be ' )marked, ${failed} FAILED validation"
+echo "[backfill]   ${already} already marked, ${marked} $( ((DRY)) && echo 'would be ' )marked, ${failed} FAILED validation, ${unusable} LEFT ALONE (unreadable marker)"
+if (( unusable )); then
+  echo "[backfill] These already carry a marker this library cannot read as completion proof."
+  echo "[backfill] They were NOT re-stamped: overwriting a marker we cannot parse would destroy"
+  echo "[backfill] whatever it does record (a P4 endpoint receipt, say) to manufacture a pass."
+  printf '[backfill]   LEFT ALONE %s\n' "${UNUSABLE_LIST[@]}"
+fi
 if (( failed )); then
   echo "[backfill] These did NOT validate and were left unmarked, so the resume will regenerate"
   echo "[backfill] them. Under the old size-only guard they would have been skipped as done:"

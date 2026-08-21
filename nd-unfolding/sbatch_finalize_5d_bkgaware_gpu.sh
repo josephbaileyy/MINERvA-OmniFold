@@ -213,10 +213,22 @@ else
     echo "[fin-bkg]   Forcing here means re-running the analyzer over the do-not-delete intermediate." >&2
     exit 5
   fi
-  # DELIBERATELY NOT `rg_is_complete`: it RETURNS SUCCESS for a marker carrying NEITHER size nor
-  # mtime (its legacy honour branch for run_p4_unfold_std.sh markers). The ruling requires a marker
-  # EXPLICITLY BOUND to size and mtime, so both fields must be present AND match. An unbound legacy
-  # marker is a refusal here, not a pass.
+  # DELIBERATELY NOT `rg_is_complete`, AND STILL DELIBERATE NOW THAT THE TWO AGREE.
+  #
+  # The original reason was factual: rg_is_complete RETURNED SUCCESS for a marker carrying neither
+  # size nor mtime (its legacy honour branch for run_p4_unfold_std.sh receipts), while the ruling
+  # here requires a marker EXPLICITLY BOUND to size and mtime, both present AND matching. That
+  # honour branch is GONE as of OI-142 -- rg_is_complete now refuses an unbound marker itself -- so
+  # THAT SENTENCE NO LONGER DESCRIBES THE LIBRARY, and it is corrected rather than left to be read
+  # as current. This route was never exposed to the defect; it is recorded here as the reason the
+  # code does not change.
+  #
+  # THE CHECK STAYS INLINE ANYWAY, and the reason is now the ruling rather than a library bug: what
+  # the undeclared route may reuse is decided by Joseph's amended ruling, not by whatever the shared
+  # default happens to be this week. Routing it through rg_is_complete would silently re-delegate
+  # that decision to a function other callers are free to change. Two functions agreeing today is
+  # not a reason to make one depend on the other -- so do NOT "simplify" this into rg_is_complete.
+  # An unbound legacy marker is a refusal here, not a pass.
   _comb_marker="$(rg_marker_path "${COMB}")"
   _comb_msize=""; _comb_mmtime=""
   if [[ -s "$_comb_marker" ]]; then
