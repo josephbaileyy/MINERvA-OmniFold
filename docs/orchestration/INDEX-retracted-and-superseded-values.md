@@ -12,7 +12,13 @@ that had retracted its parent value eight hours earlier. Treat it as a checklist
 
 **THE RULE THAT MAKES THAT NECESSARY: a retraction propagates by STRING MATCH, and derived quantities do not
 string-match.** `188.4×` was caught because it *is* the retracted number. `0.0383` was missed because it is
-`0.05 −` the retracted number. **So grepping the retracted value does not find its descendants.** Before
+`0.05 −` the retracted number. **So grepping the retracted value does not find its descendants.**
+
+**AND THE SAME RULE RUNS THE OTHER WAY, WHICH THIS FILE DID NOT SAY UNTIL 2026-08-21: GREPPING THE RETRACTED VALUE *DOES* FIND ITS OWN RETRACTION.** Every row below, and every corrected `OI-*` cell in `docs/OPEN_ITEMS.md`, quotes the dead value or the withdrawn phrase inside the sentence retracting it — that is the convention, and it is the right one, because a retraction a reader cannot check against the words it retracts is not falsifiable. The cost is that **a substring test cannot distinguish "still asserted" from "quoted while being retracted", and it fails toward the accusation.** Measured instance: a lane verified a correction of mine with `'already failing' not in cell`, got FALSE, and would have reported the correction as never landed — the phrase survives only as an italic quotation inside its own retraction. Had it trusted the check instead of opening the diff, the report would have been the opposite of the truth.
+
+**SO AN AUDIT OF THIS FILE, OR OF ANY RETRACTED VALUE, CANNOT BE A GREP IN EITHER DIRECTION.** A hit is not evidence the value is live and a miss is not evidence it is dead. Read the ROLE of the occurrence: is it asserted, or is it quoted while being withdrawn? That is the same class as three other faces of one error recorded this campaign — characterising an artifact instead of its execution, scoping a hold by what a verdict CITES instead of what the code READS, and reading `--dir` as changing the script when it changes the inputs. **This is the cheapest of the four to fall for, because the check looks exactly like it tests the claim.**
+
+Before
 committing any number, ask what it was computed *from* and whether that operand is on this list — not whether
 the number itself is.
 
