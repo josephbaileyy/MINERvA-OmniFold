@@ -77,6 +77,18 @@ RECOMPUTABILITY = {
     "sqrt_tr_block":    (IN_FILE, None, "trace(C_blocksum)"),
     "joint_mean_shift_norm": (IN_FILE, None, "norm(hJointMeanShift)"),
     "sqrt_tr_new":      (IN_FILE, None, "trace(hCov_combined5d_total_uthrow)"),
+    # OI-140, 2026-08-21. THESE ARE IN_FILE BECAUSE `verify_leg_identity` ACTUALLY RECOMPUTES THEM,
+    # not so that `audit_uncomparable` will skip them. The alternative on the table was adding them to
+    # DECLARED_UNVERIFIED, which would have greened the gate while leaving remedy (A)'s CENTRAL claim
+    # -- that a declared member's legs carry consistent upstream seeds -- unchecked. Both routes to a
+    # passing gate were declarations that identity is unverified, one level up from the `_checked = 0`
+    # this whole item is about; this is the route that verifies instead of declaring.
+    "upstream_estimator_seed_g1_checked": (IN_FILE, None,
+        "verify_leg_identity: the flag must equal presence-of-seed, and for a DECLARED member the "
+        "seed must equal seed_offset_policy.LEG_BASELINES['g1'] + est_seed_offset"),
+    "upstream_estimator_seed_g2_checked": (IN_FILE, None,
+        "verify_leg_identity: the flag must equal presence-of-seed, and for a DECLARED member the "
+        "seed must equal seed_offset_policy.LEG_BASELINES['g2'] + est_seed_offset"),
     "upstream_fixed_seed_null_norm":  (CROSS_FILE, None, "the throw root's fixed_seed_null_norm"),
     "upstream_joint_mean_shift_norm": (CROSS_FILE, None, "the throw root's joint_mean_shift_norm"),
     # WRITER GAP, not impossible: `x_cv2` and `base` are ordinary per-bin vectors that unified_throw_cov
@@ -411,6 +423,157 @@ def assert_reduction_is_declared(key, coverage):
     return None
 
 
+def leg_baselines():
+    """`{"g1": int, "g2": int}` from the POLICY TABLE. Never hardcoded here.
+
+    `seed_offset_policy.LEG_BASELINES` maps module -> (group, baseline) and several modules share a
+    group, so the baseline is taken per group and a within-group disagreement is a hard failure --
+    a silent re-grouping upstream would relabel a seed rather than error, which is the VL141 class.
+    """
+    import seed_offset_policy
+    out = {}
+    for module, (group, baseline) in seed_offset_policy.LEG_BASELINES.items():
+        if group in out and out[group] != int(baseline):
+            _fail(f"seed_offset_policy.LEG_BASELINES gives coherence group {group!r} two different "
+                  f"baselines ({out[group]} and {int(baseline)}); the identity recomputation cannot "
+                  f"pick one. Re-derive the table rather than choosing here.")
+        out[group] = int(baseline)
+    return out
+
+
+def verify_leg_identity(artifact, m_sc, baselines=None):
+    """RECOMPUTE the upstream-seed identity from the member's OWN scalars. `(lines, failed)`.
+
+    OI-140. This is what makes `upstream_estimator_seed_g{1,2}_checked` IN_FILE rather than
+    DECLARED_UNVERIFIED. The archive can never supply these keys -- it predates their writer -- so
+    the only honest alternative to declaring them unchecked is to check them against something the
+    member itself carries. It carries everything needed:
+
+        est_seed_offset_declared, est_seed_offset,
+        upstream_estimator_seed_g1/_g2 (present iff that leg had a seed),
+        upstream_estimator_seed_g1/_g2_checked (the writer's own claim about that presence)
+
+    THREE INVARIANTS, and the middle one is the substantive one:
+      (1) SELF-CONSISTENCY, always checkable. `_checked` must equal presence-of-seed. The writer
+          stamps the flag unconditionally and the seed conditionally
+          (`mii_adopt_unified_5d_stamped.stamp_pairs`), so a flag disagreeing with its own seed means
+          the two stamps came from different states.
+      (2) BASELINE CONSISTENCY, checkable only for a DECLARED member. Each leg's seed must be that
+          leg's own pinned baseline plus the declared offset. This is the check that catches a leg
+          which ran UNHOOKED -- it stamps its baseline, indistinguishable from k = 0 unless a
+          non-zero k is declared, in which case a baseline-valued seed is provably wrong.
+      (3) COMPLETENESS FOR A DECLARED MEMBER. Both legs must actually carry a seed. The WRITER
+          tolerates a missing one (it skips that leg), which is right for a writer -- absence must
+          be a readable state. It is NOT right for the gate: `_checked = 0` is ABSENCE AND NOT A
+          PASS, and a declared member whose leg carries no seed has an unverifiable identity.
+
+    An UNDECLARED member fails (2) and (3) by construction -- nothing is declared, so nothing can be
+    concluded -- and that is reported as UNVERIFIABLE rather than as a mismatch. It still fails the
+    gate, which is the status quo; the difference is that it now fails for a stated, checkable
+    reason instead of as a side effect of two mandatory-provenance keys being absent.
+    """
+    keys = ("upstream_estimator_seed_g1_checked", "upstream_estimator_seed_g2_checked")
+    if not any(k in m_sc for k in keys):
+        return [], False                      # artifact does not carry them; nothing to verify
+    lines, failed = [], False
+    base = leg_baselines() if baselines is None else baselines
+    declared = int(m_sc.get("est_seed_offset_declared", 0))
+    offset = m_sc.get("est_seed_offset")
+
+    for group in ("g1", "g2"):
+        flag_key, seed_key = f"upstream_estimator_seed_{group}_checked", f"upstream_estimator_seed_{group}"
+        if flag_key not in m_sc:
+            lines.append(f"[identity] {flag_key} ABSENT from a member that carries its sibling -- "
+                         "half a stamp is not a state")
+            failed = True
+            continue
+        flag, seed = int(m_sc[flag_key]), m_sc.get(seed_key)
+        # (1) self-consistency
+        if flag != (0 if seed is None else 1):
+            lines.append(f"[identity] {flag_key} = {flag} but {seed_key} is "
+                         f"{'ABSENT' if seed is None else int(seed)} -- THE FLAG CONTRADICTS ITS OWN "
+                         "SEED, so the two stamps describe different states")
+            failed = True
+            continue
+        if not declared:
+            lines.append(f"[identity] {group}: UNVERIFIABLE -- est_seed_offset_declared = 0, so there "
+                         "is no declared offset to check the seed against. Self-consistency holds; "
+                         "identity is NOT established. `_checked` is absence, not a pass.")
+            failed = True
+            continue
+        # (3) completeness, for a declared member
+        if seed is None:
+            lines.append(f"[identity] {group}: DECLARED member carries NO seed for this leg "
+                         f"({flag_key} = 0). A declared member's identity cannot be established from "
+                         "an absent seed.")
+            failed = True
+            continue
+        # (2) baseline consistency
+        if group not in base:
+            lines.append(f"[identity] {group}: no baseline in seed_offset_policy.LEG_BASELINES")
+            failed = True
+            continue
+        expect = base[group] + int(offset)
+        if int(seed) != expect:
+            lines.append(f"[identity] {group}: RECOMPUTED {expect} = baseline {base[group]} + declared "
+                         f"offset {int(offset)}, but the member stamps {seed_key} = {int(seed)}. Either "
+                         "that leg ran unhooked (its seed is its baseline) or it belongs to a "
+                         "different member.")
+            failed = True
+            continue
+        lines.append(f"[identity] OK   {group}: {seed_key} = {int(seed)} = baseline {base[group]} + "
+                     f"declared offset {int(offset)}; {flag_key} = 1 agrees with presence")
+    return lines, failed
+
+
+#: IN_FILE keys whose recomputation is over the member's OWN SCALARS rather than a histogram.
+#: `RECOMPUTE` cannot express these: its contract is `fn(m_di[ingredient]) -> float` compared against
+#: `float(m_sc[name])`, i.e. ONE histogram ingredient and ONE scalar. The identity invariant spans
+#: four scalars and a pinned policy table, so it needs a second shape.
+#: THIS EXISTS TO KEEP AN EXISTING INVARIANT TRUE, not to dodge it. `test_only_FOUR_of_the_recompute
+#: _keys_are_IN_FILE` asserts that every IN_FILE key has an implementation -- "the claim and the
+#: capability must not drift apart" -- and adding an IN_FILE row with the implementation in a
+#: free-standing function would have made that assertion false. Each value takes `m_sc` and returns
+#: `(lines, failed)`.
+SCALAR_RECOMPUTE = {}          # populated below, once verify_leg_identity is defined
+
+
+SCALAR_RECOMPUTE.update({
+    "upstream_estimator_seed_g1_checked": verify_leg_identity,
+    "upstream_estimator_seed_g2_checked": verify_leg_identity,
+})
+
+
+def audit_uncomparable(artifact, uncomparable_keys):
+    """`(lines, class_failed)` for keys the ARCHIVE cannot supply. PURE -- no files, no ROOT.
+
+    C's point, and the one that stops the archive-age fix becoming a loophole: the archive's age
+    EXPLAINS an absence and DOES NOT LICENCE it. The member could carry the key wrong and stage 1
+    would pass. So each such key must be covered by in-file recomputation, or DECLARED UNVERIFIED.
+    Declared beats silent, and neither is the same as checked.
+
+    Extracted from `compare_files` for OI-141 so the branch that decides the verdict can be
+    exercised directly. Its input is now `ComparisonResult.uncomparable` rather than a prefix
+    parsed out of the callee's message text.
+    """
+    lines, class_failed = [], False
+    for u in uncomparable_keys:
+        cls = classes.classify(artifact, u)
+        if cls is classes.PROVENANCE:
+            continue                                     # provenance is expected to differ; nothing owed
+        how = RECOMPUTABILITY.get(u, (None, None, ""))[0]
+        if how is IN_FILE:
+            continue                                     # recomputation covers it from the member's file
+        if u not in declared_unverified():
+            lines.append(
+                f"{u}: {cls} EXCUSED BY THE ARCHIVE'S AGE AND NOT VERIFIED BY ANYTHING. Its absence is "
+                f"EXPLAINED (landed {classes.ARCHIVE_KEY_MAP[u]['landed']}) but not LICENSED -- the "
+                "member could carry it wrong and this gate would pass. Cover it by in-file recomputation "
+                "or add it to DECLARED_UNVERIFIED. Declared beats silent; neither is checked.")
+            class_failed = True
+    return lines, class_failed
+
+
 def compare_files(artifact, archive_path, member_path, offset, read_keys=read_keys_pyroot,
                   rtol=0.0, acknowledge_unrecomputable=None, archive_date=None):
     """Stage 1's comparison. Returns (verdict, lines).
@@ -450,10 +613,15 @@ def compare_files(artifact, archive_path, member_path, offset, read_keys=read_ke
     a_keys = dict(a_sc, **{k: v[0] for k, v in a_mx.items()})
     m_keys = dict(m_sc, **{k: v[0] for k, v in m_mx.items()})
 
-    verdict, findings = classes.compare(artifact, a_keys, m_keys)
+    result = classes.compare(artifact, a_keys, m_keys)
+    verdict, findings = result
     lines = list(findings)
-    uncomparable_keys = [l.split(":", 1)[0].replace("UNCOMPARABLE ", "").strip()
-                         for l in findings if l.startswith("UNCOMPARABLE ")]
+    # OI-141: STRUCTURED, not parsed out of the callee's prose. The previous version rebuilt this
+    # list with `l.startswith("UNCOMPARABLE ")` against a string literal in another module, so
+    # rewording that string emptied the list, skipped the audit below and turned FAIL into
+    # INCOMPLETE -- or PASS with --acknowledge-unrecomputable. Fail-open, and measured: a symmetric
+    # full-suite mutation was caught by 0 of ~1992 tests.
+    uncomparable_keys = list(result.uncomparable)
     class_failed = verdict == "FAIL"
 
     # --- COVERAGE: WHAT FRACTION OF EACH ARRAY WAS ACTUALLY COMPARED --------------------------------
@@ -500,25 +668,18 @@ def compare_files(artifact, archive_path, member_path, offset, read_keys=read_ke
                  f"({100 * len(compared) / len(table_keys):.1f}%) -- "
                  f"uncompared: {sorted(table_keys - set(compared))}")
 
-    # --- A PAYLOAD KEY EXCUSED BY THE ARCHIVE'S AGE IS *NOT VERIFIED BY THE ANCHOR AT ALL* -----------
-    # C's point, and it is the one that stops the fix becoming a loophole: the archive's age EXPLAINS an
-    # absence and DOES NOT LICENCE it. The member could carry the key wrong and stage 1 would pass. So
-    # each such key must be covered by in-file recomputation, or DECLARED UNVERIFIED. Declared beats
-    # silent, and neither is the same as checked.
-    for u in uncomparable_keys:
-        cls = classes.classify(artifact, u)
-        if cls is classes.PROVENANCE:
-            continue                                     # provenance is expected to differ; nothing owed
-        how = RECOMPUTABILITY.get(u, (None, None, ""))[0]
-        if how is IN_FILE:
-            continue                                     # recomputation covers it from the member's file
-        if u not in declared_unverified():
-            lines.append(
-                f"{u}: {cls} EXCUSED BY THE ARCHIVE'S AGE AND NOT VERIFIED BY ANYTHING. Its absence is "
-                f"EXPLAINED (landed {classes.ARCHIVE_KEY_MAP[u]['landed']}) but not LICENSED -- the "
-                "member could carry it wrong and this gate would pass. Cover it by in-file recomputation "
-                "or add it to DECLARED_UNVERIFIED. Declared beats silent; neither is checked.")
-            class_failed = True
+    unc_lines, unc_failed = audit_uncomparable(artifact, uncomparable_keys)
+    lines += unc_lines
+    class_failed = class_failed or unc_failed
+
+    # OI-140: run every SCALAR_RECOMPUTE verifier whose key this member carries. UNCONDITIONAL --
+    # if these were reached only via the uncomparable list they would inherit exactly the
+    # skip-on-reword fragility OI-141 is about. Deduplicated by function, since one verifier can
+    # cover several keys.
+    for fn in dict.fromkeys(SCALAR_RECOMPUTE[k] for k in SCALAR_RECOMPUTE if k in m_sc):
+        v_lines, v_failed = fn(artifact, m_sc)
+        lines += v_lines
+        class_failed = class_failed or v_failed
 
     # --- the anchor's own identity, WHERE THE ARTIFACT CAN CARRY IT (H3) -----------------------------
     # `anchor_identity` was called unconditionally, but on 2026-08-18 three of five artifacts declared

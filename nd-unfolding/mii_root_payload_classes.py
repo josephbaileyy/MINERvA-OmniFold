@@ -567,6 +567,32 @@ def classify(artifact, key):
     return table[key]
 
 
+class ComparisonResult(tuple):
+    """`(verdict, findings)` -- plus `.uncomparable`, the STRUCTURED uncomparable-key list.
+
+    WHY A TUPLE SUBCLASS AND NOT A 3-TUPLE (OI-141). The caller used to rebuild this list by
+    PARSING the strings in `findings`:
+
+        [l.split(":", 1)[0].replace("UNCOMPARABLE ", "").strip()
+         for l in findings if l.startswith("UNCOMPARABLE ")]
+
+    against the `f"UNCOMPARABLE {u}"` written below. That made a GATE'S VERDICT depend on a
+    MESSAGE PREFIX in a different module, and it failed OPEN: measured, prefixing the producer
+    string emptied the caller's list, its audit loop never ran, and the verdict went from FAIL to
+    INCOMPLETE -- or to PASS outright with `--acknowledge-unrecomputable`, which is exactly what
+    that flag's own help text instructs. A symmetric full-suite mutation confirmed nothing caught
+    it: 5 failed / 1987 passed in both arms, failure sets identical by name.
+    Returning a 3-tuple would have been cleaner but breaks every `verdict, findings = compare(...)`
+    call site, including tests this change has no business editing. A 2-long tuple with one extra
+    attribute keeps all of them working and gives the caller structured data.
+    """
+
+    def __new__(cls, verdict, findings, uncomparable):
+        self = super().__new__(cls, (verdict, findings))
+        self.uncomparable = tuple(uncomparable)
+        return self
+
+
 def compare(artifact, archive_keys, member_keys):
     """Apply the three classes plus the archive key map. Returns (verdict, findings).
 
@@ -658,9 +684,12 @@ def compare(artifact, archive_keys, member_keys):
     # names what is missing rather than how bad it is.
     # UNCOMPARABLE keys are RECORDED, never silent -- "admissible" is not "checked". They do not fail
     # the gate (the archive cannot supply them) and they do not let it claim more than it verified.
+    # THE KEY NAMES ARE CARRIED STRUCTURALLY; the strings below stay for humans only. Reword them
+    # freely -- `ComparisonResult.uncomparable` is what decides anything, and a test asserts that.
+    uncomparable_keys = [u.split(":", 1)[0].strip() for u in uncomparable]
     owed = owed + [f"UNCOMPARABLE {u}" for u in uncomparable]
     if findings:
-        return "FAIL", findings + owed
+        return ComparisonResult("FAIL", findings + owed, uncomparable_keys)
     if owed:
-        return "INCOMPLETE", owed
-    return "PASS", []
+        return ComparisonResult("INCOMPLETE", owed, uncomparable_keys)
+    return ComparisonResult("PASS", [], uncomparable_keys)

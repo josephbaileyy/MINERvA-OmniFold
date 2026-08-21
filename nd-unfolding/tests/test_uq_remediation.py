@@ -3243,23 +3243,37 @@ class AnchorComparatorB2(unittest.TestCase):
         self.assertEqual(self.B.RECOMPUTABILITY["sqrt_tr_new"][0], self.B.IN_FILE,
                          "the OTHER operand IS recomputable, which is what makes this specific")
 
-    def test_only_FOUR_of_the_recompute_keys_are_IN_FILE(self):
+    def test_only_SIX_of_the_recompute_keys_are_IN_FILE(self):
         """C classified seven scalars as mandatory-recomputation; four can be recomputed from the file
-        that carries them. Derived, not assumed, and pinned so the count cannot drift silently."""
+        that carries them. Derived, not assumed, and pinned so the count cannot drift silently.
+
+        WAS FOUR UNTIL 2026-08-21. OI-140 added `upstream_estimator_seed_g{1,2}_checked`, whose
+        recomputation is over the member's own SCALARS (flag == presence-of-seed, and for a declared
+        member seed == pinned baseline + declared offset) rather than over a histogram. The pin moves
+        because a real verification landed; it must NOT be moved to accommodate an IN_FILE row that
+        has no implementation, which is what the last assertion in this test exists to prevent.
+        """
         by = {}
         for k, (how, _kind, _why) in self.B.RECOMPUTABILITY.items():
             by.setdefault(how, []).append(k)
-        self.assertEqual(len(by[self.B.IN_FILE]), 4)
+        self.assertEqual(len(by[self.B.IN_FILE]), 6)
         self.assertEqual(sorted(by[self.B.NOT_RECOMPUTABLE]),
                          ["fixed_seed_null_norm", "globalCompleteness", "sqrt_tr_old"])
         for k in self.B.RECOMPUTE:
             self.assertEqual(self.B.RECOMPUTABILITY[k][0], self.B.IN_FILE,
                              f"{k} has a recompute implementation, so it must be classified IN_FILE")
+        # THE ANTI-DRIFT INVARIANT, now over BOTH implementation shapes. `RECOMPUTE` is
+        # one-histogram-one-scalar; `SCALAR_RECOMPUTE` is over the member's own scalars. An IN_FILE
+        # row backed by neither is a claim of coverage that nothing provides.
         for k, (how, _kind, _why) in self.B.RECOMPUTABILITY.items():
             if how is self.B.IN_FILE:
-                self.assertIn(k, self.B.RECOMPUTE,
-                              f"{k} is classified IN_FILE but has no implementation -- the claim and "
-                              "the capability must not drift apart")
+                self.assertTrue(k in self.B.RECOMPUTE or k in self.B.SCALAR_RECOMPUTE,
+                                f"{k} is classified IN_FILE but has no implementation in either "
+                                "RECOMPUTE or SCALAR_RECOMPUTE -- the claim and the capability must "
+                                "not drift apart")
+        for k in self.B.SCALAR_RECOMPUTE:
+            self.assertIs(self.B.RECOMPUTABILITY[k][0], self.B.IN_FILE,
+                          f"{k} has a scalar verifier, so it must be classified IN_FILE")
 
     def test_the_TWO_HALVES_use_DIFFERENT_arrays_which_is_H1s_whole_lesson(self):
         """THIS TEST'S PREVIOUS PREMISE WAS THE DEFECT. It asserted the TH2D reader "takes the diagonal
@@ -3336,7 +3350,8 @@ class RecomputabilityIsADeclaredAttribute(unittest.TestCase):
         self.B = B
 
     def test_every_entry_declares_how_kind_and_reason(self):
-        self.assertEqual(self.B.assert_reasons_are_stated(), 9)
+        # 9 until 2026-08-21; OI-140 added the two upstream_estimator_seed_*_checked rows.
+        self.assertEqual(self.B.assert_reasons_are_stated(), 11)
 
     def test_a_BARE_no_IS_THE_FAIL_CLOSED_CASE(self):
         """A `no` without a stated kind reads as a law of nature and freezes a writer gap forever."""

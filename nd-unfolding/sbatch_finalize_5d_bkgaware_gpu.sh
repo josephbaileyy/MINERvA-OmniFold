@@ -254,7 +254,34 @@ if mr_declared; then
   # would look complete, and the missing artifacts would be discovered by whatever consumed them next.
   # THE CUT IS A **PAUSE** WITH AN EXPIRY CONDITION, NOT A BOUNDARY -- C's correction, and it changes
   # how this must be reported rather than what it does.
-  #   EXPIRY CONDITION: remedy (A) **VERIFIED BY C** -- NOT merely landed.
+  #   EXPIRY CONDITION, REWRITTEN 2026-08-21 AS A **PROPERTY** RATHER THAN A **PARTY**.
+  #   It used to read "remedy (A) **VERIFIED BY C** -- NOT merely landed", and that wording became
+  #   unsatisfiable in a way nobody intended: lane C the SESSION went unreachable (BEN-324), so a
+  #   condition naming it could never be met no matter how much verification happened. The ROLE was
+  #   re-designated and filled as recently as 2026-08-20, so the intent survives; only the addressing
+  #   was broken. It now reads:
+  #
+  #     THE PAUSE EXPIRES WHEN ALL THREE HOLD:
+  #       (a) OI-141 has landed -- the gate's verdict is derived from STRUCTURED data, not by parsing
+  #           another module's message prose. Until then a reworded diagnostic can silently turn the
+  #           FAIL this pause depends on into an INCOMPLETE, or into a PASS with
+  #           --acknowledge-unrecomputable. Measured: that mutation was caught by 0 of ~1992 tests.
+  #       (b) The selected OI-140 verification has landed -- the upstream-seed identity is RECOMPUTED
+  #           from the member's own scalars against the pinned per-leg baselines, NOT merely declared
+  #           unverified. Both were on the table; declaring would have greened the gate while leaving
+  #           remedy (A)'s central identity claim unchecked.
+  #       (c) A FRESH NON-BUILDER has verified the REAL steps (4)/(5) path on a PRESENT-SEED artifact,
+  #           INCLUDING A NEGATIVE CONTROL. "Fresh non-builder" is a property of the verifier, not a
+  #           name: whoever it is must not have written the code under review and must not be the
+  #           author of the governing ruling. "Present-seed" matters because the identity check has
+  #           never once run against a seed that exists -- every available leg records
+  #           upstream_estimator_seed_g{1,2}_checked=0, which is ABSENCE, not a pass. "Real path"
+  #           excludes invoking the wrapper directly: job 57294218 did that and never ran stage 1.
+  #
+  #   WHY A PROPERTY AND NOT A PARTY: a condition naming a session expires with the session, and this
+  #   one outlived its addressee by days while everyone kept treating it as open. A condition naming
+  #   properties can be checked by whoever is here.
+  #   NOTHING ABOUT (c) IS SATISFIED BY THIS SCRIPT RUNNING SUCCESSFULLY. Only Joseph lifts the pause.
   #   (A) HAS NOW LANDED, BY MY HAND, on all three writers: adopt_unified_5d.py,
   #   unfold_nd_omnifold_unbinned.py (C's widening, on D's enumeration), and analyze_universes_5d.py --
   #   the third being the one NOBODY HAD ENUMERATED, whose silence blocked g1's seed from reaching adopt
@@ -273,9 +300,15 @@ if mr_declared; then
   # (4)/(5) -- so "stop after (3)" combined with "11g releases the 41 GB" would delete the ONLY INPUT to
   # the steps that have not run. The intermediate stays until MVFINAL_j exists and validates.
   echo "[fin-bkg] MEMBER PAUSE (not a boundary): intermediate built at ${COMB}" >&2
-  echo "[fin-bkg]   EXPIRY: remedy (A) -- identity stamps on adopt_unified_5d.py AND" >&2
-  echo "[fin-bkg]           unfold_nd_omnifold_unbinned.py. Until then this member is STAGE 1" >&2
-  echo "[fin-bkg]           NOT ATTEMPTED, not stage 1 pending." >&2
+  echo "[fin-bkg]   EXPIRY (a PROPERTY, not a party -- rewritten 2026-08-21): all three of" >&2
+  echo "[fin-bkg]     (a) OI-141 landed: the gate verdict is structured, not parsed from prose;" >&2
+  echo "[fin-bkg]     (b) the OI-140 verification landed: upstream-seed identity RECOMPUTED from" >&2
+  echo "[fin-bkg]         the member's own scalars vs the pinned per-leg baselines, not declared;" >&2
+  echo "[fin-bkg]     (c) a FRESH NON-BUILDER verified the REAL steps (4)/(5) path on a" >&2
+  echo "[fin-bkg]         PRESENT-SEED artifact, including a negative control." >&2
+  echo "[fin-bkg]   The previous wording named lane C, whose session is gone (BEN-324), so it was" >&2
+  echo "[fin-bkg]   unsatisfiable by addressing rather than by merit. Until all three hold this" >&2
+  echo "[fin-bkg]   member is STAGE 1 NOT ATTEMPTED, not stage 1 pending. Only Joseph lifts it." >&2
   echo "[fin-bkg]   DO NOT DELETE ${COMB} -- 11g gates deletion on MVFINAL_j, which needs (4)/(5)." >&2
   echo "[fin-bkg]   ADOPTION IS NOT RUN FOR A MEMBER until remedy (A) lands -- adopt_unified_5d.py" >&2
   echo "[fin-bkg]   writes no estimator_seed/est_seed_offset, so the adopted roots cannot satisfy" >&2
