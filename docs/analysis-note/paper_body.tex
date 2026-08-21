@@ -147,9 +147,10 @@ The unfolded result is stable across GBDT and MLP classifier families. A
 point-cloud transformer (PET~\cite{Mikuni:2024qsr}) provides a complementary
 recoil-representation cross-check: step~1 uses non-muon reconstructed
 calorimeter clusters and step~2 uses truth final-state hadrons with the muon
-removed. It yields an absolutely-normalized central value whose ordinary
-closure is internally consistent to $\sim\SI{\petClosure}{\percent}$
-(Fig.~\ref{fig:ppet}). This track is reported as a diagnostic,
+removed. It yields an absolutely-normalized central value
+(Fig.~\ref{fig:ppet}). Its ordinary closure was assessed only as a legacy
+two-iteration self-consistency diagnostic, and no current closure level is
+quoted. This track is reported as a diagnostic,
 method-development study: it contributes no cross section and no uncertainty to
 the measurements above. No current quantitative PET--GBDT level of agreement is
 quoted. The only such comparison that exists was taken with a two-iteration
@@ -176,8 +177,9 @@ PET total covariance is adopted for publication.
   \includegraphics[width=0.95\textwidth]{pet_vs_gbdt_absolute}
   \caption{Recoil-only representation cross-check: absolutely-normalized 4D
   cross section from PET versus the production scalar GBDT, per axis. Ordinary
-  closure validates the extraction machinery to $\sim\SI{\petClosure}{\percent}$
-  but does not test omitted muon dependence. The total offset shown is a
+  closure was assessed only as a legacy two-iteration self-consistency
+  diagnostic; no current closure level is quoted, and it does not test omitted
+  muon dependence. The total offset shown is a
   two-iteration legacy result, withdrawn as a current comparison (see text) and
   not quoted here as a level of agreement.}
   \label{fig:ppet}

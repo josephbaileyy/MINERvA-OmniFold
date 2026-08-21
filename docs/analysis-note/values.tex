@@ -93,25 +93,31 @@
 % the 2026-08-01 full-event estimator change, and J21 (no background subtraction).
 % See docs/orchestration/INDEX-retracted-and-superseded-values.md.
 \newcommand{\petRatio}{0.912}         % PET/GBDT absolute total ratio; niter=2 LEGACY, struck at use
-\newcommand{\petClosure}{1}           % closure unbiased to ~this (%); legacy status OPEN, see below
-% OPEN QUESTION on \petClosure (recorded 2026-08-20 -- NOT resolved, nothing struck).
-% Its two siblings in this block carry an explicit legacy marking ("niter=2 LEGACY,
-% struck at use") and are struck with \dead{} at every print (\petRatio at
-% sec_pet.tex:62,110; \petGbdtGap at sec_pet.tex:96). \petClosure carries no such
-% marking and prints UNSTRUCK in the external paper -- paper_body.tex:151 and the
-% Fig. caption at :179 -- and in the note at sec_pet.tex:112. The block header above
-% declares the block "NOT QUOTABLE as current values -- niter=2 legacy" but then
-% argues only about \petRatio, so whether \petClosure falls inside or outside that
-% retraction is UNDETERMINED BY THE RECORD.
-% One plausible reason it was never struck: an ordinary-closure self-consistency
-% check is arguably a DIFFERENT OBJECT from an absolute cross-section comparison.
-% The stated grounds (niter=2 vs pinned niter=3, the 2026-08-01 full-event estimator
-% change, J21 no-background-subtraction) all bite on a PET-vs-GBDT level of
-% agreement; it is not obvious that they bite on whether the extraction machinery
-% closes on itself. That is an argument, not a ruling.
-% Deliberately left unresolved and unstruck here: striking a number that prints in
-% the outward paper changes a published claim, which is Joseph's call, not an
-% editing pass's.
+\newcommand{\petClosure}{1}           % niter=2 LEGACY, struck at use; NOT QUOTABLE as a current value
+% RULED 2026-08-21 BY JOSEPH -- the OPEN QUESTION recorded here on 2026-08-20 is CLOSED.
+% Ruling: \petClosure is LEGACY and must not remain a current quantitative claim. The
+% number and any present-tense "validates" language are removed from every print site.
+% A qualitative statement may remain ONLY where it is explicitly labelled a legacy
+% two-iteration self-consistency diagnostic. Basis:
+% docs/orchestration/DETERMINATION-20260819-lanec-petclosure-is-legacy.md.
+%
+% Applied, and the treatment DIFFERS BY BUILD ON PURPOSE:
+%   paper_body.tex (external paper, paper build only) -- REMOVED, and said so in the
+%     prose. \dead{} is FORBIDDEN outside the note build and is checker-enforced, so an
+%     outward-facing retraction is remove-and-say-so, never a strike.
+%   sec_pet.tex:112 (note build only) -- STRUCK as $\SI{\dead{\petClosure}}{\percent}$
+%     with an explicit "struck: legacy two-iteration self-consistency diagnostic, not a
+%     current validation" label, matching \dead{\petRatio} in that same caption.
+%
+% THE MACRO IS MARKED, NOT RETIRED, AND THAT IS DELIBERATE: sec_pet.tex still references
+% it inside \dead{}, so deleting the definition would break the note build. Its comment
+% now carries the same "niter=2 LEGACY, struck at use" marking as its two siblings --
+% which is precisely the marking whose ABSENCE made its status undetermined before.
+%
+% The prior argument is preserved because it was sound and is now superseded rather than
+% wrong: an ordinary-closure self-consistency check IS arguably a different object from an
+% absolute PET-vs-GBDT comparison, so the niter=2 / full-event-estimator / J21 grounds do
+% not obviously bite on it. That was an argument, not a ruling. The ruling supersedes it.
 \newcommand{\petGbdtGap}{9}           % PET-vs-GBDT data-side gap (%); niter=2 LEGACY, struck at use
 \newcommand{\petTotalMedian}{15.10}   % historical recoil-PET candidate; QUARANTINED
 \newcommand{\petTotalTrace}{3.878e-38}% historical recoil-PET candidate; QUARANTINED
