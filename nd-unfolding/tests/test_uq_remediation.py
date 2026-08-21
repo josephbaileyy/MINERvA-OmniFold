@@ -3902,7 +3902,20 @@ class B1MemberLocalConsumerChain(unittest.TestCase):
         i = body.index("MEMBER PAUSE")
         j = body.index("adopt (mean-centered)")
         self.assertLess(i, j, "the pause must precede the adoption calls")
-        self.assertIn("EXPIRY: remedy (A)", body, "the expiry condition, not the rationale")
+        # REWORDED 2026-08-21: the expiry became a PROPERTY instead of a PARTY. It used to read
+        # "EXPIRY: remedy (A) -- identity stamps on ...", which pinned a message naming lane C; that
+        # session is gone (BEN-324), so the condition was unsatisfiable by ADDRESSING rather than on
+        # merit. The intent of this assertion -- the CONDITION is echoed, not the justification -- is
+        # unchanged and is now checked more strictly: all three clauses must be present, and the
+        # party wording must be ABSENT from what the script prints at runtime.
+        self.assertIn("EXPIRY (a PROPERTY, not a party", body,
+                      "the expiry condition, not the rationale")
+        for clause in ("(a) OI-141 landed", "(b) the OI-140 verification landed",
+                       "(c) a FRESH NON-BUILDER"):
+            self.assertIn(clause, body, f"the expiry must state {clause!r} as a checkable clause")
+        echoed = "\n".join(l for l in body.splitlines() if l.strip().startswith("echo "))
+        self.assertNotIn("VERIFIED BY C", echoed,
+                         "the runtime message must not name a party as the expiry condition")
         self.assertIn("STAGE 1", body[i:j])
         self.assertIn("NOT ATTEMPTED", body[i:j],
                       "the status distinction is the point -- 'not attempted' and 'pending' read the same")
