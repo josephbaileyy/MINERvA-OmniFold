@@ -7,6 +7,13 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 
 | source record | derived queue | classification rule | source state prefix |
 |---|---|---|---|
+| OI-140 | WAITING-JOSEPH | explicit-user-decision | WAITING-USER |
+| OI-141 | WAITING-JOSEPH | explicit-user-decision | WAITING-USER |
+| OI-142 | NOW | safe-default-active | OPEN |
+| OI-143 | WAITING-JOSEPH | explicit-user-decision | WAITING-USER |
+| OI-144 | NOW | safe-default-active | OPEN |
+| OI-145 | NOW | safe-default-active | OPEN |
+| OI-146 | NOW | safe-default-active | OPEN |
 | OI-74 | NOW | safe-default-active | CORRECTED AND NARROWED 2026-08-17 (lane E) — THE DRIFT IS GONE, THE TREE IS SYNCED AT 7ac36ac, AND EVERY QUANTITY IN THI |
 | OI-1 | BLOCKED-EXTERNAL | explicit-blocker | BLOCKED |
 | OI-2 | NOW | safe-default-active | 4D SUPERSEDED / scalar-FPS STILL OPEN — SPLIT VERDICT, codex audit 2026-08-13 |
