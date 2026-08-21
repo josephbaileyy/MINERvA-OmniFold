@@ -57,6 +57,49 @@ if [[ -z "$_mr_lib" ]]; then
 fi
 source "${_mr_lib}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
 
+# THE MISSING DEPENDENCY, restored 2026-08-21 under Joseph's amended ruling 1, ATOMICALLY WITH THE
+# COMB GUARD BELOW AND NEVER WITHOUT IT. lib_member_resume.sh's own header says it "Requires
+# lib/resume_guard.sh to be sourced first" and this launcher never did, while all three sibling
+# launchers that call `mr_run` do. MEASURED, not inferred: with only lib_member_resume.sh sourced,
+# every rg_* helper is undefined and `mr_run` dies at `rg_begin: command not found`
+# (lib_member_resume.sh:217) under the `set -eo pipefail` above -- BEFORE it invokes its command. So
+# both the declared and undeclared routes have been failing at the first mr_run, and the destructive
+# undeclared re-run over the 41.44 GB intermediate was NOT reachable.
+#
+# RESTORING THIS LINE IS WHAT MAKES THAT RE-RUN REACHABLE. That is precisely why it may not land, be
+# deployed, or be launched on its own: a source-only change re-arms the 2.087 TiB hazard with nothing
+# in front of it. The guard below is the other half and they are one commit.
+#
+# Resolved from `_mr_lib`, NOT from `${REPO}` -- the block above exists because a candidate that can
+# resolve to the CANONICAL library instead of the frozen one reintroduces the frozen-deployment defect
+# invisibly. The sibling launchers use `${REPO}/lib/resume_guard.sh`; that is wrong here for the same
+# reason this file resolves lib_member_resume.sh the way it does.
+#
+# WHY THIS SITS *AFTER* THE lib_member_resume.sh SOURCE AND NOT BEFORE IT, which is a deliberate
+# deviation from the letter of the ruling and satisfies its substance. The resolver block above is
+# PINNED BYTE-IDENTICAL across all eight launchers that carry it
+# (test_uq_remediation.py::test_EVERY_launcher_carrying_the_resolver_carries_a_BYTE_IDENTICAL_copy),
+# and it ENDS on the lib_member_resume.sh line -- so "before lib_member_resume.sh" is necessarily
+# INSIDE the pinned region. Putting it there diverged this launcher's digest from the other seven, and
+# the fail-closed check also broke
+# test_a_DECOY_library_in_the_spool_would_be_used_and_that_is_CORRECT, whose docstring says the
+# semantics are pinned so nobody "fixes" them. Both measured, not predicted.
+#
+# Sourcing here is equivalent because NOTHING between the two lines calls an rg_* helper:
+# lib_member_resume.sh makes every rg_* call from INSIDE a function body (`:173,:190,:204,:217,:225`),
+# and `mr_require_valid_offset` calls none at all. The requirement that actually matters -- BEFORE ANY
+# mr_* CALL -- holds: the first is the guard below.
+_mr_rg="${_mr_lib}/../lib/resume_guard.sh"
+if [[ ! -r "$_mr_rg" ]]; then
+  echo "[member] FAIL: cannot read ${_mr_rg}" >&2
+  echo "[member]   lib_member_resume.sh requires it, and without it every mr_* call dies at" >&2
+  echo "[member]   'rg_begin: command not found'. Failing closed rather than proceeding into a" >&2
+  echo "[member]   launcher whose resume guards silently do not exist." >&2
+  exit 2
+fi
+source "$_mr_rg"
+
+
 # ============================ B1: THE MEMBER-LOCAL CONSUMER CHAIN ==================================
 # WHY THIS SCRIPT IS THE ONE THAT NEEDED IT, and the defect is written in its own header above:
 #   "C_stat/C_ML are #13-invariant -> reuse existing uq_cov_stat_5d.root / uq_cov_mlsplit_5d.root"
@@ -126,14 +169,78 @@ if mr_declared; then
 else
   echo "[fin-bkg] undeclared: reusing the archive's C_stat/C_ML, per this script's original contract"
 fi
-echo "[fin-bkg] analyze start $(date -u '+%F %T UTC') on $(hostname)"
-mr_run "${COMB}" python3 analyze_universes_5d.py \
-  --cv "${CV}" \
-  --glob "${SWEEP_GLOB}" \
-  --add-norm 0.014 \
-  --bootstrap-cov "${STAT_COV}:hCov_stat5d_reported" \
-                  "${ML_COV}:hCov_mlsplit5d_reported" \
-  --outdir "${OUTD}/" --out-root uq_universe_5d_covariance_combined_bkgaware.root
+# ========================= THE COMB GUARD -- Joseph's amended ruling 1, 2026-08-21 =================
+# Authorized shape, verbatim from the ruling. NOT the proposed `mr_run` -> `mr_skip_if_complete`
+# one-word substitution, which was withdrawn because `rg_skip_if_complete` can ADOPT an unmarked
+# product on a bare size check and WRITE a marker -- an action the ruling forbids.
+#
+#   declared   + matching marker            -> reuse
+#   declared   + incomplete                 -> generate
+#   declared   + wrong-member marker         -> exit 3   (raised inside mr_skip_if_complete, untouched)
+#   undeclared + marker bound to size+mtime  -> reuse
+#   undeclared + absent/stale/malformed/unbound marker -> exit 5
+#   RESUME_ADOPT_LEGACY=1 (either regime)    -> exit 5
+#   undeclared + RESUME_FORCE=1              -> exit 5
+#
+# EXIT 5 IS NEW AND DELIBERATE. Exit 3 stays RESERVED for the wrong-member-marker condition that
+# lib_member_resume.sh already raises; reusing it here would make two unrelated causes
+# indistinguishable in the exit code.
+if [[ "${RESUME_ADOPT_LEGACY:-0}" == "1" ]]; then
+  echo "[fin-bkg] REFUSE (exit 5): RESUME_ADOPT_LEGACY=1 is FORBIDDEN for ${COMB}, both regimes." >&2
+  echo "[fin-bkg]   It would adopt this product on a bare SIZE check and WRITE a completion marker." >&2
+  echo "[fin-bkg]   resume_guard.sh names that branch the BEN-023 defect; on a 41.44 GB intermediate" >&2
+  echo "[fin-bkg]   a partial file is indistinguishable from a complete one. Marker backfill is NOT" >&2
+  echo "[fin-bkg]   authorized, and it must never be performed by setting this variable." >&2
+  exit 5
+fi
+if mr_declared; then
+  if mr_skip_if_complete "${COMB}"; then
+    echo "[fin-bkg] MEMBER $(mr_member_root): reusing complete ${COMB} (marker matches this member)"
+  else
+    echo "[fin-bkg] analyze start $(date -u '+%F %T UTC') on $(hostname)"
+    mr_run "${COMB}" python3 analyze_universes_5d.py \
+      --cv "${CV}" \
+      --glob "${SWEEP_GLOB}" \
+      --add-norm 0.014 \
+      --bootstrap-cov "${STAT_COV}:hCov_stat5d_reported" \
+                      "${ML_COV}:hCov_mlsplit5d_reported" \
+      --outdir "${OUTD}/" --out-root uq_universe_5d_covariance_combined_bkgaware.root
+  fi
+else
+  # UNDECLARED: REUSE-OR-REFUSE. The analyzer is not reachable from this branch at all.
+  if [[ "${RESUME_FORCE:-0}" == "1" ]]; then
+    echo "[fin-bkg] REFUSE (exit 5): RESUME_FORCE=1 is forbidden on the undeclared route." >&2
+    echo "[fin-bkg]   Forcing here means re-running the analyzer over the do-not-delete intermediate." >&2
+    exit 5
+  fi
+  # DELIBERATELY NOT `rg_is_complete`: it RETURNS SUCCESS for a marker carrying NEITHER size nor
+  # mtime (its legacy honour branch for run_p4_unfold_std.sh markers). The ruling requires a marker
+  # EXPLICITLY BOUND to size and mtime, so both fields must be present AND match. An unbound legacy
+  # marker is a refusal here, not a pass.
+  _comb_marker="$(rg_marker_path "${COMB}")"
+  _comb_msize=""; _comb_mmtime=""
+  if [[ -s "$_comb_marker" ]]; then
+    _comb_msize="$(rg__marker_field "$_comb_marker" size)"   || _comb_msize=""
+    _comb_mmtime="$(rg__marker_field "$_comb_marker" mtime)" || _comb_mmtime=""
+  fi
+  if [[ -e "${COMB}" && -n "$_comb_msize" && -n "$_comb_mmtime" \
+        && "$_comb_msize"  == "$(rg_stat_size  "${COMB}")" \
+        && "$_comb_mmtime" == "$(rg_stat_mtime "${COMB}")" ]]; then
+    echo "[fin-bkg] undeclared: reusing ${COMB} on a marker BOUND to size=${_comb_msize} mtime=${_comb_mmtime}"
+  else
+    echo "[fin-bkg] REFUSE (exit 5): the undeclared route may only REUSE ${COMB}, never produce it." >&2
+    echo "[fin-bkg]   marker:        ${_comb_marker}" >&2
+    echo "[fin-bkg]   product exists: $([[ -e "${COMB}" ]] && echo yes || echo NO)" >&2
+    echo "[fin-bkg]   marker size:   ${_comb_msize:-<absent>}   file size:  $(rg_stat_size  "${COMB}" 2>/dev/null || echo '<unreadable>')" >&2
+    echo "[fin-bkg]   marker mtime:  ${_comb_mmtime:-<absent>}  file mtime: $(rg_stat_mtime "${COMB}" 2>/dev/null || echo '<unreadable>')" >&2
+    echo "[fin-bkg]   A marker that is absent, stale, malformed, or missing either binding is a" >&2
+    echo "[fin-bkg]   REFUSAL. Running the analyzer here would re-derive the 41.44 GB intermediate" >&2
+    echo "[fin-bkg]   in place (2.087 TiB to regenerate). Content-validating this product and" >&2
+    echo "[fin-bkg]   backfilling its marker is a SEPARATE ruling and is NOT authorized here --" >&2
+    echo "[fin-bkg]   and it must not be done by setting RESUME_ADOPT_LEGACY=1." >&2
+    exit 5
+  fi
+fi
 if mr_declared; then
   # ================= B1 STOPS HERE, AND THE STOP IS DELIBERATE AND VISIBLE ==========================
   # C ruled remedy (A) -- identity stamps on the adopted roots -- MANDATORY rather than preferable, and
