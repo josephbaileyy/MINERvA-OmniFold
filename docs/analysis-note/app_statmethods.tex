@@ -647,9 +647,34 @@ N-D $\chi^{2}$ shall instead quote (i) the inverse actually used --- pseudo-inve
 reference; (ii) the \emph{retained rank} as $\mathrm{ndf}$; (iii) the rank-truncation scan for that
 covariance, which is expected \emph{not} to be smooth, and whose smoothness is precisely what
 licensed the 2D choice above; and (iv) which covariance is meant, since the 5D candidate, its 4D
-projection and the published 2D block have different ranks. Measurements and derivation:
-\texttt{docs/orchestration/RANK-AND-INVERSION-20260810.md}; the predeclared rank cut itself is a
-statistics decision recorded in \texttt{docs/STATVAL\_REPAIR.md}.
+projection and the published 2D block have different ranks; and (v) \emph{for every
+sample-covariance block entering the sum}, its ensemble size $N$, its normalization convention
+(biased $1/N$ or unbiased $1/(N-1)$), the effective dimension $p$ actually inverted after
+truncation, and the finite-ensemble treatment applied --- or the explicit statement that none was.
+Measurements and derivation: \texttt{docs/orchestration/RANK-AND-INVERSION-20260810.md}; the
+predeclared rank cut itself is a statistics decision recorded in
+\texttt{docs/STATVAL\_REPAIR.md}.
+
+\paragraph{Why declaration (v), and why it does not yet mandate a correction.}
+Requirements (i)--(iv) can all be satisfied while a quoted $\mathrm{ndf}$ silently inherits an
+uncorrected finite-ensemble bias from the sample-covariance blocks inside the sum, because not one
+of them is the ensemble size of any such block. The inverse of a noisy sample covariance is biased
+\emph{upward}: for an unbiased $1/(N-1)$ estimator over $N$ independent Gaussian realizations the
+standard debiasing factor is $(N-p-2)/(N-1)$, and for this analysis's biased $1/N$ production
+convention (\texttt{nd-unfolding/uq\_math.py}, ``universe-mean centered, biased 1/N'') the
+corresponding factor is $(N-p-2)/N$. On the unified-throw 5D candidate, with $N=160$ joint throws
+and a truncated $p=100$, that is $58/160\simeq0.363$ --- the uncorrected precision matrix is too
+large by a factor $\simeq2.76$. \textbf{The consequence runs the opposite way to the intuition:} a
+$\chi^{2}$ evaluated on a fixed residual is \emph{inflated}, not flattered, so tension is
+overstated rather than hidden; what becomes over-optimistic is any confidence region derived from
+the same over-tight covariance.
+\textbf{No generic correction is mandated here, deliberately.} The quoted covariance is a
+\emph{sum} of about 45 deterministic rank-one MAT band outer products plus statistical and ML
+blocks, and a sum of that kind has no single debiasing factor; the standard factor also assumes
+independent Gaussian realizations and a truncation dimension chosen independently of the data,
+neither of which is established for a data-dependent rank cut. The treatment is therefore to be
+decided \emph{for the covariance and inverse actually adopted}, once (v) makes its operands exist.
+The cheap half is unconditional: record $N$ beside each block in the construction receipts.
 
 The implementation (\texttt{chi2\_with\_cov} in
 \texttt{compare\_to\_paper\_fullcov.py}) builds the $205\times205$

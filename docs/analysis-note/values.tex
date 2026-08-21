@@ -238,6 +238,18 @@
 % syst: sqrt-trace neg 2.9828e-39 / pur 3.0242e-39; stat: neg 1.7260e-40 / pur(50) 1.7576e-40
 \newcommand{\nwSystRatio}{0.986}      % negweight/purity systematic-covariance sqrt-trace ratio (187 universes)
 \newcommand{\nwStatRatio}{0.982}      % negweight/purity statistical-covariance sqrt-trace ratio (matched 50-seed bootstrap)
+% DERIVED DESCENDANTS (OI-146, added 2026-08-21). app_negweight.tex used to quote these as the bare
+% literals 1.4 % and 1.8 %. They are 1 - the two ratios above, so a retraction of a PARENT did not
+% reach them: a retraction propagates by string match and `1.4` does not string-match `0.986`. The
+% 6c gate struck all 16 \nw* macros and could not touch these, because the sentence carrying them
+% contains no \nw* macro at all. Defining them from their parents makes that structurally impossible
+% to repeat -- change or strike a parent and the descendant follows.
+% \fpeval is a LaTeX kernel command (2020-10 onward) and siunitx accepts its expansion as a number;
+% both were verified by building, not assumed.
+% NOTE the \nwRmsBin COLLISION that makes this easy to mis-audit: \nwRmsBin is ALSO 1.4, so grepping
+% `1.4` in this appendix finds two different quantities sharing one value.
+\newcommand{\nwSystResid}{\fpeval{round((1-\nwSystRatio)*100,1)}}   % = 1.4; systematic residual
+\newcommand{\nwStatResid}{\fpeval{round((1-\nwStatRatio)*100,1)}}   % = 1.8; statistical residual
 % Stay-Positive refinement on the exact (gradient-boosted) backend (seed1, 5-iter, vs exact purity)
 \newcommand{\nwSpMedian}{0.999}       % refined/purity median per-bin ratio, exact estimator
 \newcommand{\nwSpWithin}{141/148}     % refined/purity bins within 5%, exact estimator

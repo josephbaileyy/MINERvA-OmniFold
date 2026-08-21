@@ -14,27 +14,37 @@ nontrivial backgrounds by Ref.~\cite{unbinnedguide}, and the natural treatment
 for the extended-fiducial analysis, where the background is larger.
 
 \paragraph{Provenance gate on this appendix's numbers.}
-\textbf{Every quantitative comparison value in this appendix is STRUCK
-(\texttt{OI-130}, gated 2026-08-21). The analytic derivation, the estimand
-identity and the displacement argument stand unchanged --- they need none of
-them.} The struck values fall in two classes with two different recovery routes.
-\emph{Twelve real-data/production values} --- seven central-comparison
-(\texttt{\textbackslash nwSigPur}, \texttt{\textbackslash nwSigNeg}, \texttt{\textbackslash nwRatioTot}, \texttt{\textbackslash nwPctTot}, \texttt{\textbackslash nwMedianBin}, \texttt{\textbackslash nwRmsBin}, \texttt{\textbackslash nwWorstBin}),
-two covariance (\texttt{\textbackslash nwSystRatio}, \texttt{\textbackslash nwStatRatio})
-and three exact-estimator (\texttt{\textbackslash nwSpMedian}, \texttt{\textbackslash nwSpWithin}, \texttt{\textbackslash nwSpRawMax}) ---
-rest on \emph{untracked scratch products}: \texttt{.gitignore} carries a blanket
-\texttt{*.root} and \texttt{git ls-files} returns zero \texttt{.root} files
-anywhere under \texttt{2d-unfolding/}, so none of the eight ROOTs in
-\texttt{HANDOFF\_bkg\_negweight/runs/} nor the 51 bootstrap and 188 universe
-replicas behind the two covariance ratios is under version control, and no
-\texttt{RUNS.tsv} or \texttt{VALIDATION\_LEDGER.md} row cites any of them.
-Recovering these needs a durability step, not a re-derivation. \emph{Four
-synthetic-toy values} (\texttt{\textbackslash nwToyNeg}, \texttt{\textbackslash nwToyPur}, \texttt{\textbackslash nwToyBias}, \texttt{\textbackslash nwToySeed})
-come from the closed-form toy \texttt{2d-unfolding/HANDOFF\_bkg\_negweight/%
-negweight\_toy.py}, which \emph{is} committed: they need no data and no
-cluster, only a re-run whose output is committed as a receipt. The two classes
-are struck alike because neither is attested today, not because they are equally
-hard to attest.
+\textbf{The twelve real-data/production comparison values in this appendix are STRUCK
+(\texttt{OI-130}, gated 2026-08-21); the four synthetic-toy values are ATTESTED and stand.} The
+analytic derivation, the estimand identity and the displacement argument need none of them.
+
+\emph{Struck --- twelve real-data/production values} ---
+seven central-comparison (\texttt{\textbackslash nwSigPur}, \texttt{\textbackslash nwSigNeg},
+\texttt{\textbackslash nwRatioTot}, \texttt{\textbackslash nwPctTot},
+\texttt{\textbackslash nwMedianBin}, \texttt{\textbackslash nwRmsBin},
+\texttt{\textbackslash nwWorstBin}), two covariance (\texttt{\textbackslash nwSystRatio},
+\texttt{\textbackslash nwStatRatio}) and three exact-estimator
+(\texttt{\textbackslash nwSpMedian}, \texttt{\textbackslash nwSpWithin},
+\texttt{\textbackslash nwSpRawMax}) --- together with the two \emph{derived} residual differences
+(\texttt{\textbackslash nwSystResid}, \texttt{\textbackslash nwStatResid}), which are defined from
+their two covariance parents so that they cannot outlive a retraction of those parents. All rest on
+\emph{untracked scratch products}: \texttt{.gitignore} carries a blanket \texttt{*.root} and
+\texttt{git ls-files} returns zero \texttt{.root} files anywhere under \texttt{2d-unfolding/}, so
+none of the eight ROOTs in \texttt{HANDOFF\_bkg\_negweight/runs/} nor the 51 bootstrap and 188
+universe replicas behind the two covariance ratios is under version control, and no
+\texttt{RUNS.tsv} or \texttt{VALIDATION\_LEDGER.md} row cites any of them. Recovering these needs a
+\emph{durability} step, not a re-derivation.
+
+\emph{Attested --- four synthetic-toy values} (\texttt{\textbackslash nwToyNeg},
+\texttt{\textbackslash nwToyPur}, \texttt{\textbackslash nwToyBias},
+\texttt{\textbackslash nwToySeed}) come from the closed-form toy
+\texttt{2d-unfolding/HANDOFF\_bkg\_negweight/negweight\_toy.py}, which \emph{is} committed and is
+fully deterministic --- literal seeds \texttt{[0, 1, 2]}, \texttt{RandomState(seed)} sampling and
+\texttt{LGBMClassifier(random\_state=seed)}, no data and no cluster inputs. It was re-run on
+2026-08-21 and reproduced all four exactly; the receipt is
+\texttt{docs/orchestration/receipts/RECEIPT-negweight-toy-20260821.json}. They are therefore no
+longer struck. The distinction the two classes make is \emph{attestability}, not importance: a toy
+needs a re-run, real data needs its products to exist somewhere durable.
 
 \subsection{Estimator}
 \label{sec:negweight-estimator}
@@ -161,12 +171,12 @@ $\mathcal{N}(0.3,1.1)$ with equal normalization, and a background
 $\mathcal{N}(2,0.7)$ contributing \SI{16.7}{\percent} of the pseudo-data, so
 that the target reweight $(D-B)/S=\phi(x;0.3,1.1)/\phi(x;0,1)$ is a smooth
 positive function. A gradient-boosted classifier trained with the signed-weight
-construction recovers this ratio to a median \dead{\SI{\nwToyNeg}{\percent}} relative
-error --- matching the binned purity construction's \dead{\SI{\nwToyPur}{\percent}} on
+construction recovers this ratio to a median \SI{\nwToyNeg}{\percent} relative
+error --- matching the binned purity construction's \SI{\nwToyPur}{\percent} on
 the identical problem, and reproducing it bin-for-bin --- while omitting the
-subtraction leaves a \dead{\SI{\nwToyBias}{\percent}} bias from the residual
+subtraction leaves a \SI{\nwToyBias}{\percent} bias from the residual
 background. The result is stable across classifier seeds
-($\pm$\,\dead{\SI{\nwToySeed}{\percent}}), and the negative sample weights introduce no
+($\pm\SI{\nwToySeed}{\percent}$), and the negative sample weights introduce no
 numerical instability. In a stress configuration with the background moved into
 the sparse signal tail and deliberately over-subtracted, the learned reweight
 floors cleanly at zero over the region where $B>D$, as anticipated above.
@@ -235,7 +245,10 @@ construction with identical settings. The two agree at the level the $(D-B)/S$
 identity predicts: the systematic covariance matches in overall magnitude to a
 $\sqrt{\mathrm{tr}}$ ratio of $\dead{\nwSystRatio}$ (negative-weight/purity), and the
 statistical covariance, compared on matched bootstrap seeds, to $\dead{\nwStatRatio}$.
-The residual differences --- \SI{1.4}{\percent} and \SI{1.8}{\percent}, consistent with
+The residual differences --- \dead{\SI{\nwSystResid}{\percent}} and
+\dead{\SI{\nwStatResid}{\percent}} --- \textbf{struck with their parents: these are DERIVED from
+$\dead{\nwSystRatio}$ and $\dead{\nwStatRatio}$ and are now DEFINED FROM THEM MECHANICALLY, so
+they cannot survive their parents' retraction again} --- consistent with
 the ``to within \SI{2}{\percent}'' stated in \S\ref{sec:method} --- are bootstrap and
 classifier-seed sampling noise, not a method bias. Negative-weight injection thus
 reproduces the central cross section \emph{per bin} (median $1.000$, RMS
