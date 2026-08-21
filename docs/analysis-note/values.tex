@@ -12,9 +12,30 @@
 % ====================================================================
 
 % --- 2D reproduction (the demonstrator) ---
-\newcommand{\sigTwoD}{3.073e-38}      % our 2D total cross section, cm^2/nucleon
-\newcommand{\sigTwoDpaper}{3.039e-38} % published 2D total
-\newcommand{\ratioTot}{1.011}         % sigma_tot ours/paper
+% PROVENANCE, ADDED 2026-08-21 (OI-130). These three were the HARD CORE of the OI-130
+% enumeration: of 71 macros they were the only ones naming NO backing artifact anywhere, even
+% under the generous bound -- which makes them UNBINDABLE BY CONSTRUCTION, since no hash-binding,
+% freeze gate or receipt check can fire on a macro that cites no path. They are the most-quoted
+% numbers in the note, so that was the worst place for the gap to be.
+%   PRODUCER  2d-unfolding/agreement_windows_receipt.py
+%   RECEIPT   docs/orchestration/receipts/RECEIPT-2d-agreement-windows-20260821.json
+%   RUN       saul, ROOT 6.28/12, at git 5996eb29
+%   ARTIFACTS ours  hXSec2D             from 2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root
+%                                       sha256 142a45b0efc753d91e95376c28ac3f6a477d582014a919e49d6d71079a127fd5
+%             paper pt_pl_cross_section  from minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+%                                       sha256 6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3
+%   MEASURED  integral ours 3.0733e-38; paper 3.0390e-38; ratio 1.0113
+% THE TOTAL IS AN INTEGRAL, NOT A SUM OF BIN CONTENTS, and getting that wrong is easy here: these
+% histograms hold d2sigma/(dpT dp_par), so the bin-area Jacobian is required. Measured without it,
+% the sums came out 12.14x these values -- THE SAME FACTOR ON BOTH FILES -- while the RATIO still
+% reproduced, because the Jacobian cancels. A ratio agreeing is not evidence that its operands do;
+% the receipt keeps both numbers so nobody repeats it.
+% STILL NOT ESTABLISHED: that this producer is the method that ORIGINALLY produced these three, and
+% both artifacts live on PURGEABLE SCRATCH and are untracked, so this closes the CITATION gap and
+% not the DURABILITY one (OI-130's class, and OI-75 for the same shape elsewhere).
+\newcommand{\sigTwoD}{3.073e-38}      % our 2D total; integral 3.0733e-38, receipt above
+\newcommand{\sigTwoDpaper}{3.039e-38} % published 2D total; integral 3.0390e-38, receipt above
+\newcommand{\ratioTot}{1.011}         % sigma_tot ours/paper; integral ratio 1.0113, receipt above
 % PROVENANCE FOR THE NEXT FOUR MACROS -- RESOLVED 2026-08-21, AND THE HISTORY MATTERS.
 % \medianBinRatio, \binsFive, \binsTen and \binsTwenty had NO committed producing script
 % (OI-130). They were suppressed from all three deliverables on 2026-08-21 and are RESTORED
