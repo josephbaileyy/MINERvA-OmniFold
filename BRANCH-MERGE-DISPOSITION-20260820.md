@@ -227,6 +227,39 @@ route covering a subtree — which is why `CATALOG.md` scores 0 here while §2.1
 removals. **336 does not contradict §2.11's 4**; the two measure different things, and reconciling
 them needs the routing criterion expressed as a command.
 
+## Addendum 2026-08-21 (2) — the disposition's subject changed: five paths restored at `d4de994f`
+
+The handoff session accepted both corrections, adopted the recoverable-vs-routed narrowing, and
+acted. Verified independently at `main = d4de994f`:
+
+- **All four unrouted artifacts from §2.11 now have a `CATALOG.md` route**, including
+  `AUDIT-20260819-analysis-note-vs-record.md`. This is the light remedy this report argued for: a
+  route, not a resurrection.
+- **Five of the 734 retired paths were restored to the live tree**, taking the total back from 31 to
+  **36 of 734** (`docs/orchestration` 325 → 330 files). Every one is **blob-identical to the pushed
+  tag** — faithful copies, no content drift:
+  `DECISION-BRIEF-20260819-oi71-recovery-evidence.md`,
+  `DETERMINATION-20260819-lanec-petclosure-is-legacy.md`,
+  `VERDICT-20260820-lanec-remedy-a-FAIL.md`,
+  `VERDICT-20260820-lanec-remedy-a-ROUND2-PASS-WITH-SCOPE.md`,
+  `VERIFICATION-20260820-mediator-remedy-a-wrapper-mechanical.md`.
+- **Still retired**, as intended: the AUDIT's 1,375 lines, the measured-leg RULING, and the BEN-510
+  FINDING.
+
+**Two of those five are the documents this report reserved for Joseph** — the OI-71 decision brief
+and the petClosure determination — restored on the stated ground that each is input to a decision he
+owes. The restores are faithful and the ground was stated openly, so this is not a defect; but it is
+the authorization boundary §"For Joseph" named, and **it has now been crossed by a peer rather than
+ratified by him.** Flagging it as owed ratification, not as a problem to undo.
+
+Instrument correction, since this report's own method should be falsifiable: an earlier pass here
+reported three of these paths as restored-with-drift when they do not exist at `d4de994f` at all.
+Cause — **`git rev-parse <rev>:<path>` prints its own ARGUMENT to stdout and exits 128 when the path
+is missing**, so `now=$(git rev-parse … || echo ABSENT)` captures the argument *and* the sentinel,
+and every string comparison against `ABSENT` fails. `git cat-file -e` is the existence check; the
+counts above use it. Third instrument failure on this task, same family as the two-dot diff and the
+zsh `path` collision: the command produced confident output about an adjacent subject.
+
 ## Authorization
 
 No merge to `main` was performed, attempted, or authorized. The handoff relayed Joseph's sentence
