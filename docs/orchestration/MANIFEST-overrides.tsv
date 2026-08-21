@@ -46,4 +46,5 @@ docs/orchestration/control-plane/policy.json	LIVE	open	""
 docs/orchestration/control-plane/source-record-inventory.tsv	MACHINE	generated	""
 docs/orchestration/control-plane/work-items.tsv	LIVE	open	""
 docs/orchestration/control_plane_lint.py	LIVE	open	""
+docs/orchestration/state/live-state-last-known.json	LIVE	open	
 docs/orchestration/state/live-state.json	LIVE	open	

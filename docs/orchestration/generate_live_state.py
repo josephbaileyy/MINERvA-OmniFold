@@ -9,6 +9,7 @@ import json
 import os
 import pathlib
 import re
+import socket
 import subprocess
 import sys
 import tempfile
@@ -32,6 +33,12 @@ ASSUMED_TICK_INTERVAL_MINUTES = 5
 # PASS/FAIL has to call "I could not look" one of them, and BEN-323 is what
 # happens when it picks PASS.
 QUIET, NO_EVIDENCE, LOUD = "quiet", "no-evidence", "loud"
+# Where each probe's last MEASURED value is kept. Tracked and committed on
+# purpose: the whole point of OI-144 is that the cluster's Slurm measurement
+# survives into a snapshot regenerated from a laptop, and the laptop's provider
+# capacity survives into one regenerated from a login node. A store that did not
+# travel through git could not do that.
+LAST_KNOWN_PATH = HERE / "state" / "live-state-last-known.json"
 
 
 def utc_now() -> str:
@@ -105,6 +112,195 @@ def codex_capacity(usage: dict[str, Any], profile: str) -> str:
     protected = credits.get("protected_reserve", "unknown")
     return f"{remaining}% weekly remaining; reset {reset}; Full resets {available} available/{protected} protected"
 
+
+# ---------------------------------------------------------------------------
+# Carry-forward for probes THIS host cannot run (OI-144).
+#
+# Until 2026-08-21 every field this generator could not measure was OVERWRITTEN
+# with the local non-observation, so no single host could produce a fully
+# measured LIVE-STATE.md. Measured that day at one commit: from a laptop the
+# Slurm rows blanked while the usage section was real; from a Perlmutter login
+# node Slurm was real while the usage helper could not read a single profile
+# home, so `Usage gate` degraded to BLOCKED/UNKNOWN and every percentage became
+# `unknown`. Each regeneration traded one section's truth for another's, and
+# nothing in the output separated "measured as absent" from "this host could not
+# look" -- BEN-323's conflation one level up, at the scale of a whole section.
+#
+# THE RULE HERE, and every renderer below obeys it:
+#   * a probe that RAN records its value with the host and UTC time that
+#     measured it, into a tracked store that travels through git;
+#   * a probe that COULD NOT RUN renders the last recorded value, attributed and
+#     aged, and NEVER in the vocabulary of a current verdict.
+# A carried value is history. It is not evidence that anything is true now, so
+# no carried render may emit a live state word (`ACTIVE`, `FRESH`, `PASS`,
+# `subject OBSERVED`) in the position a reader takes as this snapshot's finding.
+# That is why the formatters below re-word rather than replay the live text.
+
+
+def hostname() -> str:
+    try:
+        return socket.gethostname() or "unknown-host"
+    except OSError:
+        return "unknown-host"
+
+
+def parse_stamp(value: Any) -> dt.datetime | None:
+    try:
+        return dt.datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    except (TypeError, ValueError):
+        return None
+
+
+def age_between(then: Any, now: Any) -> str:
+    """`age_phrase` across two ISO stamps, or "" if either one cannot be parsed.
+
+    Returns "" rather than a guess: an age that cannot be computed must not be
+    rendered as a small one, which is the same failure as rendering an
+    unreachable scheduler as ACTIVE.
+    """
+    start, end = parse_stamp(then), parse_stamp(now)
+    if start is None or end is None:
+        return ""
+    return age_phrase((end - start).total_seconds())
+
+
+class LastKnown:
+    """Per-probe last MEASURED value, with the host and timestamp that measured it.
+
+    `record` is called ONLY on a real observation and `get` is read ONLY where
+    this host could not observe; keeping those two callers disjoint is what stops
+    a carried value from laundering itself into a measurement. An instance built
+    with `path=None` -- the default inside `render`, and therefore what every
+    unit test gets -- neither loads nor persists anything, so a caller that
+    passes no store carries nothing and writes nothing.
+    """
+
+    def __init__(
+        self,
+        path: pathlib.Path | None = None,
+        *,
+        host: str | None = None,
+        observed_at: str | None = None,
+        head: str | None = None,
+    ) -> None:
+        self.path = path
+        self.host = host or hostname()
+        self.observed_at = observed_at
+        self.head = head
+        self.probes: dict[str, Any] = {}
+        self.changed = False
+        if path is not None and path.exists():
+            try:
+                loaded = json.loads(path.read_text())
+            except (OSError, json.JSONDecodeError):
+                # A corrupt store must degrade to "no history", never take the
+                # dashboard down: the whole feature exists for degraded hosts.
+                loaded = {}
+            if isinstance(loaded, dict) and isinstance(loaded.get("probes"), dict):
+                self.probes = loaded["probes"]
+
+    def get(self, key: str) -> dict[str, Any] | None:
+        entry = self.probes.get(key)
+        return entry if isinstance(entry, dict) and "value" in entry else None
+
+    def record(self, key: str, value: Any) -> None:
+        self.probes[key] = {
+            "value": value,
+            "host": self.host,
+            "at_utc": self.observed_at,
+            "git_head": self.head,
+        }
+        self.changed = True
+
+    def save(self) -> bool:
+        """Persist iff something was actually measured this run. Returns whether it wrote."""
+        if self.path is None or not self.changed:
+            return False
+        payload = {
+            "schema_version": 1,
+            "_what": (
+                "GENERATED by generate_live_state.py; do not hand-edit. One entry per probe: the"
+                " last value actually MEASURED, plus the host and UTC time that measured it. A"
+                " host that cannot run a probe carries the entry into LIVE-STATE.md as attributed"
+                " history instead of overwriting the field (OI-144). An entry here becomes a"
+                " published statement about what some host observed, so editing one by hand"
+                " fabricates an observation."
+            ),
+            "probes": dict(sorted(self.probes.items())),
+        }
+        atomic_write(self.path, json.dumps(payload, indent=2) + "\n")
+        return True
+
+
+def measured_by(entry: dict[str, Any], observed_at: str) -> str:
+    host = entry.get("host") or "an unrecorded host"
+    at = entry.get("at_utc") or "an unrecorded time"
+    text = f"measured on `{host}` at `{at}`"
+    age = age_between(at, observed_at)
+    if age:
+        text += f", {age} before this snapshot"
+    head = entry.get("git_head")
+    if head:
+        text += f", at commit `{head}`"
+    return text
+
+
+def carried(entry: dict[str, Any] | None, observed_at: str, formatter, what: str) -> str:
+    """Render a probe this host could not run, from the last host that could.
+
+    An absent entry is its own answer and says so: "no history" and "history I am
+    withholding" must not render the same way either.
+    """
+    if entry is None:
+        return (
+            f"NO LAST-KNOWN VALUE EITHER: no host has ever recorded {what} in"
+            " `state/live-state-last-known.json`, so this snapshot has no history to offer."
+        )
+    return (
+        f"LAST KNOWN, NOT MEASURED HERE: {formatter(entry.get('value'))}"
+        f" -- {measured_by(entry, observed_at)}. THIS HOST COULD NOT LOOK, so that is history,"
+        " not a claim about now."
+    )
+
+
+def _fmt_compute(value: Any) -> str:
+    value = value if isinstance(value, dict) else {}
+    return (
+        f"job state was {value.get('overall', 'unknown')} with counts"
+        f" {value.get('counts', 'unknown')}; errors {value.get('errors', 'unknown')}"
+    )
+
+
+def _fmt_watches(value: Any) -> str:
+    value = value if isinstance(value, dict) else {}
+    armed = value.get("armed") or []
+    listed = ", ".join(f"`{item}`" for item in armed) if armed else "none armed"
+    return (
+        f"{value.get('count', '?')} watch record(s), {len(armed)} armed ({listed}); worst"
+        f" severity recorded then: {value.get('worst', 'unknown')}"
+    )
+
+
+def _fmt_events(value: Any) -> str:
+    value = value if isinstance(value, dict) else {}
+    return f"{value.get('count', '?')} event record(s): {value.get('summary', 'unknown')}"
+
+
+def _fmt_tick(value: Any) -> str:
+    value = value if isinstance(value, dict) else {}
+    return (
+        f"tick receipt `{value.get('at_utc', 'unknown')}` on `{value.get('node', 'unknown')}`,"
+        f" which the last host that could judge it classified `{value.get('verdict', 'unknown')}`"
+    )
+
+
+def _fmt_gate(value: Any) -> str:
+    value = value if isinstance(value, dict) else {}
+    return f"the usage gate read {value.get('verdict', 'unknown')} (helper rc={value.get('rc', '?')})"
+
+
+def _fmt_text(value: Any) -> str:
+    return str(value)
 
 
 # ---------------------------------------------------------------------------
@@ -227,6 +423,21 @@ def _watch_store_readable(ctx: Any) -> bool:
         return False
 
 
+def _events_dir_readable(ctx: Any) -> bool:
+    """True only if this host can actually enumerate the event store.
+
+    `wakerctl.status()` returns `events: []` when `ctx.events_dir` is not a
+    directory, exactly as it returns `watches: []` -- and the events line
+    rendered that as `none` long after the watches line had been fixed to say
+    NO EVIDENCE. Same defect, same section, one bullet apart.
+    """
+    try:
+        store = pathlib.Path(ctx.events_dir)
+        return store.is_dir() and os.access(store, os.R_OK)
+    except Exception:
+        return False
+
+
 def render_watch(watch: dict[str, Any], waker_ctx) -> tuple[str, str]:
     """(severity, rendered) for one watch. Never renders `state` alone."""
     wakerctl = _wakerctl()
@@ -341,18 +552,32 @@ def render(
     wake_state: dict[str, Any],
     observed_at: str,
     waker_ctx=None,
+    last_known: LastKnown | None = None,
 ) -> str:
     owners = validate_owners(config, sessions)
+    # No store passed means carry nothing and persist nothing (OI-144). Rendering
+    # must never be the thing that decides to write a measurement record.
+    store = last_known if last_known is not None else LastKnown()
+    host = git_state.get("host") or store.host
     lines = [
         "# Live orchestration state",
         "",
         "> GENERATED by `generate_live_state.py`; do not hand-edit. This is the normal-turn control-plane entrypoint.",
         "",
-        f"- Observed: `{observed_at}`",
+        f"- Observed: `{observed_at}` on host `{host}`. Every field below was measured HERE"
+        " unless it says otherwise: a probe this host could not run now says so and carries the"
+        " last value some host did measure, with that host and time (OI-144). No single host can"
+        " measure every section, so a section that reads LAST KNOWN is not a defect in this"
+        " snapshot -- it is the part of it that would otherwise have been silently blanked.",
         f"- Campaign: {config['campaign']}",
         f"- Current DAG node: **{config['current_dag_node']}**",
         f"- Declared state: **{config['state']}**",
-        f"- Git: `{git_state['head']}`; worktree entries: {git_state['dirty_count']} (uncommitted science is never live evidence)",
+        f"- Git: `{git_state['head']}`; the GENERATING CHECKOUT on `{host}` had"
+        f" {git_state['dirty_count']} uncommitted worktree entries -- **a property of that one"
+        " checkout, never campaign state**. Two checkouts at one commit measured 721 and 726 on"
+        " 2026-08-21 (OI-144), and a lane's dirty tree published 4 against 1 committed (BEN-183)."
+        " Read it as \"how dirty was the tree that ran the generator\", nothing more; uncommitted"
+        " science is never live evidence, in any checkout.",
         "- FRESHNESS TEST, and read it before comparing anything: this snapshot is **born one "
         "commit stale by construction** -- the generator reads `HEAD`, then the commit that "
         "carries the output moves `HEAD`. So `Git:` is normally its own commit's PARENT. "
@@ -386,6 +611,9 @@ def render(
             " Until 2026-08-15 these rows rendered as **ACTIVE** (`BEN-323`): Leg F"
             " `56863958_[2-5]` was displayed ACTIVE for over 24 h after all four tasks"
             " COMPLETED, and a ~39 GPU-h scheduling constraint was built on it."
+            " A row that also carries a LAST KNOWN value names the host and time that measured"
+            " it (OI-144): that is the state Slurm last reported to somebody, NOT the state now,"
+            " and a job can have started, finished or failed since."
             " **Regenerate from a host with Slurm to make this table evidence.**",
             "",
         ])
@@ -402,14 +630,22 @@ def render(
         # here, so the one piece of evidence proving Slurm was never reached did not
         # reach the reader. It is now the Errors cell whenever the state is UNOBSERVED.
         # BEN-323.
+        # OI-144: the row for a job this host cannot see used to carry ONLY the
+        # local non-observation, so a laptop regeneration destroyed the cluster's
+        # last real reading of the same job at the same commit. It is recorded on
+        # the observing host and carried here instead.
+        key = f"compute:{job['job_id']}"
         if overall == "UNOBSERVED":
             why = "; ".join(str(x) for x in job["snapshot"].get("observer_errors", []))
             errors = f"NOT OBSERVED — {why}" if why else "NOT OBSERVED — no Slurm reply"
             resources = f"declared (not observed): {resources}"
+            history = carried(store.get(key), observed_at, _fmt_compute, f"job {job['job_id']}'s Slurm state")
             lines.append(
-                f"| `{label}` | **STATE UNAVAILABLE — NOT A LIVENESS CLAIM**: {counts} | {errors} | {resources} |"
+                f"| `{label}` | **STATE UNAVAILABLE — NOT A LIVENESS CLAIM**: {counts}."
+                f" {history} | {errors} | {resources} |"
             )
         else:
+            store.record(key, {"overall": overall, "counts": counts, "errors": errors})
             lines.append(f"| `{label}` | **{overall}**: {counts} | {errors} | {resources} |")
     lines.extend(["", "## Wake", ""])
     if "waker_status" in wake_state:
@@ -421,33 +657,82 @@ def render(
         if waker_ctx is not None:
             for record in safe_load_watches(waker_ctx):
                 full[str(record.get("watch_id"))] = record
-        rendered, severities = [], []
+        rendered, severities, armed_ids = [], [], []
         for projected in waker.get("watches", []):
             watch = full.get(str(projected.get("watch_id"))) or projected
             severity, text = render_watch(watch, waker_ctx)
             severities.append(severity)
             rendered.append(text)
+            if _wakerctl().is_armed(watch):
+                armed_ids.append(str(watch.get("watch_id") or "<no-watch_id>"))
         # An ABSENT state dir must not render as "none". "none" is a claim about the
         # world ("there are no watches"); absence is a fact about this HOST. Rendering
         # the second as the first is the defect this whole section exists to prevent --
         # on 2026-08-19 exactly one watch was armed on the cluster while a Mac
         # regeneration would have printed "none" under a banner nobody had to read.
+        #
+        # READABILITY, not `rendered`, is what licenses a RECORD (OI-144). A
+        # status-only projection renders watch text with no state dir behind it and
+        # every verdict NO EVIDENCE; recording that would write a non-observation
+        # into the store as though some host had measured it.
+        store_readable = waker_ctx is not None and _watch_store_readable(waker_ctx)
         if rendered:
             watches = ", ".join(rendered)
-        elif waker_ctx is None or not _watch_store_readable(waker_ctx):
+            if store_readable:
+                worst = LOUD if LOUD in severities else (NO_EVIDENCE if NO_EVIDENCE in severities else QUIET)
+                store.record("waker:watches", {"count": len(rendered), "armed": armed_ids, "worst": worst})
+        elif not store_readable:
             watches = _wakerctl().no_evidence(
                 "the waker state dir is not present or not readable on this host, so this "
                 "host knows of NO watches -- that is NOT the same as there being none. "
                 "Regenerate from the host that owns state/waker."
-            )
+            ) + " " + carried(store.get("waker:watches"), observed_at, _fmt_watches, "the waker watch store")
             severities.append(NO_EVIDENCE)
         else:
             watches = "none (state dir readable; 0 watch records present)"
-        events = ", ".join(
-            f"`{e['event_id']}`:{e['state']}" for e in waker.get("events", [])
-        ) or "none"
+            store.record("waker:watches", {"count": 0, "armed": [], "worst": QUIET})
+        # The events bullet had the SAME defect the watches bullet above was fixed
+        # for, one line down and unnoticed: `... or "none"` turned an unreadable
+        # events dir into the claim that no events exist.
+        event_records = waker.get("events", []) or []
+        events_readable = waker_ctx is not None and _events_dir_readable(waker_ctx)
+        if event_records:
+            events = ", ".join(f"`{e['event_id']}`:{e['state']}" for e in event_records)
+            if events_readable:
+                store.record("waker:events", {"count": len(event_records), "summary": events})
+        elif not events_readable:
+            events = _wakerctl().no_evidence(
+                "the waker events dir is not present or not readable on this host, so this host "
+                "knows of NO events -- that is NOT the same as there being none."
+            ) + " " + carried(store.get("waker:events"), observed_at, _fmt_events, "the waker event store")
+            severities.append(NO_EVIDENCE)
+        else:
+            events = "none (events dir readable; 0 event records present)"
+            store.record("waker:events", {"count": 0, "summary": "none"})
         last_tick = waker.get("last_tick") or {}
         tick_severity, tick_text = tick_line(last_tick, waker_ctx)
+        tick_entry = store.get("waker:last-tick")
+        if tick_severity == NO_EVIDENCE:
+            tick_text += " " + carried(tick_entry, observed_at, _fmt_tick, "a waker tick receipt")
+            recorded = tick_entry.get("value") if isinstance(tick_entry, dict) else None
+            stamp_age = age_between((recorded or {}).get("at_utc"), observed_at) if isinstance(recorded, dict) else ""
+            if stamp_age:
+                tick_text += (
+                    f" Arithmetic on that carried stamp alone puts it {stamp_age} behind this"
+                    " snapshot's clock -- arithmetic ONLY, and deliberately not a verdict: this"
+                    " host read neither the scrontab bound nor whether the scron tick job is"
+                    " runnable, and both are required before the ticker can be called healthy or"
+                    " dead."
+                )
+        else:
+            store.record(
+                "waker:last-tick",
+                {
+                    "at_utc": str(last_tick.get("at_utc", "never")),
+                    "node": str(last_tick.get("node", "unknown")),
+                    "verdict": tick_severity,
+                },
+            )
         if LOUD in severities or tick_severity == LOUD:
             lines.extend([
                 "> **\u26a0 THE SUPERVISION NET IS NOT HEALTHY IN THIS SNAPSHOT.** An armed watch"
@@ -491,18 +776,90 @@ def render(
             "",
             "## Provider capacity",
             "",
-            f"- Usage gate: **{'PASS' if usage.get('gate_ok') else 'BLOCKED/UNKNOWN'}** (helper rc={usage_rc})",
-            f"- Codex personal: {codex_capacity(usage, 'codex-personal')}",
-            f"- Codex school: {codex_capacity(usage, 'codex-school')}",
         ]
     )
+    # OI-144, the mirror image of the Compute table above. `usagectl.py` turns a
+    # profile it could not READ into `status: "error"` with a policy violation, and
+    # a policy violation makes `gate_ok` false -- so on a Perlmutter login node,
+    # where no Codex/Claude profile home exists, an UNREADABLE profile rendered as
+    # a BLOCKED gate and every percentage as `unknown`. "This host cannot see the
+    # accounts" and "the accounts are over policy" are opposite findings and had
+    # one rendering. A gate cannot pass or fail on evidence nobody collected.
+    profiles = usage.get("profiles") if isinstance(usage.get("profiles"), dict) else {}
+    unreadable = sorted(
+        name for name, record in profiles.items()
+        if isinstance(record, dict) and record.get("status") == "error"
+    )
+    helper_ran = usage_rc in (0, 3) and bool(profiles)
+    if helper_ran and not unreadable:
+        verdict = "PASS" if usage.get("gate_ok") else "BLOCKED/UNKNOWN"
+        lines.append(f"- Usage gate: **{verdict}** (helper rc={usage_rc})")
+        store.record("usage:gate", {"verdict": verdict, "rc": usage_rc})
+    else:
+        why = (
+            f"{len(unreadable)} of {len(profiles)} profiles could not be READ on this host"
+            f" ({', '.join(unreadable)}), so `gate_ok` is false for a reason about the host"
+            if unreadable
+            else f"the usage helper produced no profile snapshot here (rc={usage_rc})"
+        )
+        lines.append(
+            "- Usage gate: **NOT ASSESSABLE ON THIS HOST — NEITHER A PASS NOR A BLOCK** (helper"
+            f" rc={usage_rc}): {why}. "
+            + carried(store.get("usage:gate"), observed_at, _fmt_gate, "the usage gate")
+        )
+    for label, profile_name in (("Codex personal", "codex-personal"), ("Codex school", "codex-school")):
+        key = f"usage:{profile_name}"
+        if profile_name in unreadable:
+            lines.append(
+                f"- {label}: "
+                + carried(store.get(key), observed_at, _fmt_text, f"`{profile_name}` capacity")
+            )
+            continue
+        capacity = codex_capacity(usage, profile_name)
+        lines.append(f"- {label}: {capacity}")
+        if (profiles.get(profile_name) or {}).get("status") == "ok":
+            store.record(key, capacity)
     school = usage.get("accounts", {}).get("claude-school", {})
     agy = usage.get("profiles", {}).get("agy", {})
-    lines.append(f"- Claude school shared account: {school.get('status','unknown')} (school + legacy are one quota; never sum aliases)")
-    lines.append(f"- agy/Gemini: {agy.get('status','unknown')} (no percentage API; heartbeat/cap evidence only)")
+    claude_unreadable = [
+        name for name in unreadable if (profiles.get(name) or {}).get("provider") == "claude"
+    ]
+    if claude_unreadable:
+        lines.append(
+            "- Claude school shared account: "
+            + carried(
+                store.get("usage:claude-school"), observed_at, _fmt_text,
+                "the shared Claude account's status",
+            )
+            + " (school + legacy are one quota; never sum aliases)"
+        )
+    else:
+        school_status = school.get("status", "unknown")
+        lines.append(
+            f"- Claude school shared account: {school_status}"
+            " (school + legacy are one quota; never sum aliases)"
+        )
+        if school_status not in (None, "", "unknown"):
+            store.record("usage:claude-school", school_status)
+    # agy is NOT carried: `unknown` here is a measured property of the installed
+    # CLI, which has no usage API on any host. Carrying it would replace a real
+    # finding with an older copy of the same finding.
+    lines.append(
+        f"- agy/Gemini: {agy.get('status','unknown')} (no percentage API in the installed CLI, so"
+        " `unknown` is a MEASURED absence here and not a host limitation; heartbeat/cap evidence"
+        " only)"
+    )
     warnings = usage.get("warnings", [])
-    if warnings:
-        lines.append(f"- Capacity warnings: {len(warnings)}; inspect the complete snapshot before dispatch.")
+    if warnings or unreadable:
+        tail = (
+            "; inspect the complete snapshot before dispatch."
+            if not unreadable
+            else f"; but {len(unreadable)} profile(s) were unreadable here, so this COUNT is a"
+                 " property of THIS host and is not comparable with another host's at the same"
+                 " commit — 12 from a laptop against 10 from a login node (OI-144). Inspect the"
+                 " complete snapshot before dispatch."
+        )
+        lines.append(f"- Capacity warnings: {len(warnings)}{tail}")
     lines.extend(["", "## Exact blockers", ""])
     lines.extend(f"- {value}" for value in config["blockers"])
     lines.extend(["", "## Next authorized action", "", config["next_authorized_action"], "", "## Source routing", "", "| Class | Sources |", "|---|---|"])
@@ -646,16 +1003,40 @@ def main() -> int:
         }
     git_state = {
         "head": run_text(["git", "rev-parse", "--short", "HEAD"]).strip(),
+        # A count of THIS checkout's uncommitted entries, and labelled as such in
+        # the render. It is not campaign state and never was (OI-144, BEN-183).
         "dirty_count": len(run_text(["git", "status", "--short"]).splitlines()),
+        "host": hostname(),
     }
+    observed_at = utc_now()
+    last_known = LastKnown(
+        LAST_KNOWN_PATH,
+        host=git_state["host"],
+        observed_at=observed_at,
+        head=git_state["head"],
+    )
     output = render(
-        config, sessions, usage, usage_rc, jobs, git_state, wake_state, utc_now(), waker_ctx=waker_ctx
+        config, sessions, usage, usage_rc, jobs, git_state, wake_state, observed_at,
+        waker_ctx=waker_ctx, last_known=last_known,
     )
     if args.stdout:
+        # --stdout is the read-only rehearsal path, so it must not move the record
+        # of what any host has measured either.
         print(output)
     else:
         atomic_write(args.output, output)
         print(f"wrote {args.output} ({len(output.splitlines())} lines)")
+        if last_known.save():
+            print(
+                f"updated {LAST_KNOWN_PATH}: this host's measurements are now the last known"
+                " values other hosts will carry. COMMIT IT WITH THE DASHBOARD -- an uncommitted"
+                " store is a measurement no other host can reach."
+            )
+        else:
+            print(
+                f"{LAST_KNOWN_PATH} unchanged: no probe on this host produced a measurement"
+                " to record, so nothing here can be carried forward for another host."
+            )
     return 0
 
 
