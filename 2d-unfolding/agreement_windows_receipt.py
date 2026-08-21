@@ -62,6 +62,29 @@ DEFAULT_ANC = FULLCOV_ANC_DIR
 DEFAULT_OURS = FULLCOV_DEFAULT_OURS
 
 
+def bin_areas(h):
+    r"""224-vector of bin AREAS (dpT * dp_par) in the paper's GlobalID convention.
+
+    WHY THIS EXISTS: a bare sum of bin CONTENTS is not a cross section. These histograms hold
+    d2sigma/(dpT dp_par), so the total is sum(content * bin area) -- the bin-width Jacobian is not
+    optional. Measured before adding it: the bare sums came out 12.14x the quoted \sigTwoD and
+    12.14x the quoted \sigTwoDpaper, THE SAME FACTOR ON TWO INDEPENDENT FILES to 3.3e-3, which is
+    the signature of a missing normalization rather than a data problem. The RATIO was unaffected
+    because the Jacobian cancels, which is exactly why a ratio agreeing is not evidence that its
+    operands do.
+    Axis order is DETECTED the same way `flatten_th2d` detects it -- never assumed.
+    """
+    nx, ny = h.GetNbinsX(), h.GetNbinsY()
+    x_is_pt = (nx == N_PT)
+    a = np.zeros(N)
+    for ix in range(1, nx + 1):
+        for iy in range(1, ny + 1):
+            ptb, pzb = (ix, iy) if x_is_pt else (iy, ix)
+            a[(ptb - 1) * N_PZ + (pzb - 1)] = (h.GetXaxis().GetBinWidth(ix)
+                                               * h.GetYaxis().GetBinWidth(iy))
+    return a
+
+
 def sha256(path: str) -> str:
     h = hashlib.sha256()
     with open(path, "rb") as f:
@@ -142,18 +165,31 @@ def main() -> int:
     # BOTH SUMMATION CONVENTIONS ARE EMITTED, NOT ONE. `compare_to_paper_fullcov.py` prints the
     # paper total over REPORTED bins and ours over ALL bins, and that asymmetry is exactly how a
     # ratio goes quietly wrong. Reporting both makes the choice visible instead of assumed.
+    a_ours, a_paper = bin_areas(fo.Get(a.ours_hist)), bin_areas(h_paper)
     totals = {
-        "ours_all_bins": float(ours_v.sum()),
-        "ours_reported_bins": float(ov.sum()),
-        "paper_all_bins": float(paper_v.sum()),
-        "paper_reported_bins": float(pv.sum()),
+        # BARE CONTENT SUMS -- retained deliberately as the negative result. These are NOT cross
+        # sections and must not be quoted as \sigTwoD; they are kept so the receipt shows what was
+        # measured and rejected rather than only the answer that worked.
+        "bare_content_sum_ours": float(ours_v.sum()),
+        "bare_content_sum_paper": float(paper_v.sum()),
+        # THE INTEGRALS -- content * bin area, which is what a total cross section is.
+        "integral_ours_all_bins": float((ours_v * a_ours).sum()),
+        "integral_ours_reported": float((ours_v * a_ours)[mask].sum()),
+        "integral_paper_all_bins": float((paper_v * a_paper).sum()),
+        "integral_paper_reported": float((paper_v * a_paper)[mask].sum()),
     }
-    totals["ratio_ours_all_over_paper_reported"] = totals["ours_all_bins"] / totals["paper_reported_bins"]
-    totals["ratio_both_reported"] = totals["ours_reported_bins"] / totals["paper_reported_bins"]
-    print(f"[totals] ours  all={totals['ours_all_bins']:.4e}  reported={totals['ours_reported_bins']:.4e}")
-    print(f"[totals] paper all={totals['paper_all_bins']:.4e}  reported={totals['paper_reported_bins']:.4e}")
-    print(f"[totals] ratio ours_all/paper_reported = {totals['ratio_ours_all_over_paper_reported']:.4f}")
-    print(f"[totals] ratio both_reported           = {totals['ratio_both_reported']:.4f}")
+    totals["ratio_integrals_reported"] = (totals["integral_ours_reported"]
+                                          / totals["integral_paper_reported"])
+    totals["ratio_bare_sums"] = (totals["bare_content_sum_ours"]
+                                 / totals["bare_content_sum_paper"])
+    print(f"[bare  ] ours={totals['bare_content_sum_ours']:.4e}  "
+          f"paper={totals['bare_content_sum_paper']:.4e}  (NOT cross sections)")
+    print(f"[integ ] ours  all={totals['integral_ours_all_bins']:.4e}  "
+          f"reported={totals['integral_ours_reported']:.4e}")
+    print(f"[integ ] paper all={totals['integral_paper_all_bins']:.4e}  "
+          f"reported={totals['integral_paper_reported']:.4e}")
+    print(f"[integ ] ratio (reported) = {totals['ratio_integrals_reported']:.4f}   "
+          f"bare-sum ratio = {totals['ratio_bare_sums']:.4f}")
 
     rev = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True,
                          cwd=os.path.dirname(os.path.abspath(__file__))).stdout.strip() or None
@@ -183,9 +219,15 @@ def main() -> int:
             "why": ("\\sigTwoD, \\sigTwoDpaper and \\ratioTot cite no backing artifact anywhere in "
                     "values.tex, which is OI-130's hard core: nothing can bind them. They derive from "
                     "the two artifacts pinned under `sources` above, so this receipt attests them."),
-            "convention_note": ("BOTH summation conventions are given because compare_to_paper_fullcov.py "
-                                "mixes them -- paper over REPORTED bins, ours over ALL bins. Which one "
-                                "reproduces the quoted macro is a FINDING to read off, not an input."),
+            "convention_note": ("A BARE SUM OF BIN CONTENTS IS NOT A CROSS SECTION. These histograms hold "
+                                "d2sigma/(dpT dp_par), so the total needs the bin-area Jacobian. The bare "
+                                "sums are RETAINED as the negative result: they came out 12.14x the quoted "
+                                "\\sigTwoD and 12.14x the quoted \\sigTwoDpaper, THE SAME FACTOR ON TWO "
+                                "INDEPENDENT FILES to 3.3e-3. The RATIO was unaffected because the Jacobian "
+                                "cancels -- which is precisely why a ratio reproducing is NOT evidence that "
+                                "its operands do. All-bins and reported-bins sums were also measured "
+                                "IDENTICAL for both files, so the reported/all convention question is moot "
+                                "here: unreported bins contribute zero."),
             "values": totals,
         },
         "caveat": ("These are a NEW measurement under a STATED mask and denominator. They are not "
