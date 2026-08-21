@@ -7,6 +7,8 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 
 | source record | derived queue | classification rule | source state prefix |
 |---|---|---|---|
+| OI-150 | NOW | safe-default-active | OPEN |
+| OI-149 | WAITING-JOSEPH | explicit-user-decision | WAITING-USER |
 | OI-147 | WAITING-JOSEPH | explicit-user-decision | WAITING-USER |
 | OI-148 | NOW | safe-default-active | OPEN |
 | OI-140 | WAITING-JOSEPH | explicit-user-decision | VERIFICATION LANDED 2026-08-21 (3cb46337) -- AND THE GATE IS STILL NOT PASSABLE; SEE OI-147. Route chosen: REAL in-file |

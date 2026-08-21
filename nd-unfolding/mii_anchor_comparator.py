@@ -107,8 +107,17 @@ RECOMPUTABILITY = {
     # STILL A WRITER GAP ON 2026-08-20, AND THE REASON CHANGED WHILE THE VERDICT DID NOT. `how` stays
     # NOT_RECOMPUTABLE because THE DECLARED SET DESCRIBES THE TREE AS IT IS: no adopted root in
     # existence carries `hDiagCombinedOld`. The remedy has landed as a WRITER
-    # (`mii_adopt_unified_5d_stamped.py`, remedy (A)'s wrapper) but not as a PRODUCT -- the cluster is
-    # down and nothing has been rebuilt through it. Flipping this to IN_FILE would claim
+    # (`mii_adopt_unified_5d_stamped.py`, remedy (A)'s wrapper) but not as a PRODUCT.
+    # TWO PREMISES IN THIS PARAGRAPH EXPIRED AND ARE CORRECTED 2026-08-21 rather than left to be read
+    # as current. (i) "the cluster is down" IS FALSE -- it is up, and stage 1 was run end-to-end on it
+    # against the real 892 MB archive on 2026-08-21. (ii) "no adopted root in existence carries
+    # hDiagCombinedOld" was true of the six products that existed when it was written and is FALSIFIED
+    # BY THE PATH ITSELF: `STAMPED_HISTOGRAM_KEY = "hDiagCombinedOld"` is stamped UNCONDITIONALLY, so
+    # every product this route produces carries it, and it was MEASURED firing in the
+    # audit_uncomparable branch in every arm of that run. `how` STILL STAYS NOT_RECOMPUTABLE, because
+    # the flip is coupled exactly as the rest of this comment says -- the verdict is unchanged and only
+    # its grounds were stale, which is the distinction worth preserving. See OI-147.
+    # Flipping this to IN_FILE would claim
     # recomputability for six products that cannot satisfy it, and would also silently shrink
     # `declared_unrecomputable()`, which every `--acknowledge-unrecomputable` call site must equal
     # exactly. THAT FLIP IS A SEPARATE, COUPLED CHANGE and is enumerated in this commit's message: it
@@ -123,8 +132,14 @@ RECOMPUTABILITY = {
                     "trace(hCov_combined5d_total), which lives ONLY in the 41.44 GB member "
                     "intermediate. THE PREDECLARED BAR'S OPERAND. The write that closes it exists -- "
                     "mii_adopt_unified_5d_stamped.py ships diag(C_old) as hDiagCombinedOld, 0.0856 MB "
-                    "on the cv>0 support -- but NO PRODUCT CARRIES IT YET, so `no` stands: the declared "
-                    "set describes the tree as it is, not as it is about to be."),
+                    "on the cv>0 support -- and as of 2026-08-21 a PRODUCT BUILT THROUGH THAT WRITER "
+                    "DOES carry it (measured end-to-end against the real archive), which retires the "
+                    "'NO PRODUCT CARRIES IT YET' ground this row used to give. `no` still stands, on "
+                    "the coupling in the comment above rather than on product absence: the flip needs "
+                    "a RECOMPUTE implementation or the IN_FILE/RECOMPUTE agreement test fails, and it "
+                    "needs declared_unrecomputable() and every --acknowledge-unrecomputable call site "
+                    "re-derived. The declared set describes the tree as it is -- which now includes "
+                    "that the key is reachable. See OI-147."),
 }
 
 
