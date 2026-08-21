@@ -175,6 +175,21 @@ def verify_table() -> None:
     # present, so the file cannot get quietly worse while the real intent (no HTML tables, exactly
     # seven columns, ids in blocks) keeps being enforced below. Raising either pin is a deliberate
     # act that has to state why -- which is what the 400 never made anyone do, because it never ran.
+    # WHY THIS PIN WENT STALE FOUR TIMES, and the diagnosis is not "somebody forgot".
+    # Raised 2026-08-21 by the OI-148 lane, against my own account of it. I had written that three of
+    # the four stale-pin commits were mine and that a ratchet whose author does not maintain it hides
+    # what it measures. The second half stands; the first is the wrong diagnosis. The pre-commit
+    # dispatcher's own admitting rule is that a check belongs in the hook IFF a committer who did
+    # nothing wrong can always make it pass. A HAND-MAINTAINED COUNT PIN FAILS THAT FROM THE OTHER
+    # DIRECTION: a blameless committer CANNOT make it pass without editing a constant.
+    # AND THE REACHABILITY IS THE HALF NEITHER OF US NAMED AT FIRST: this checker is NOT in
+    # .githooks/pre-commit, so no commit path executes it. The pin did not drift past an inattentive
+    # author -- it drifted past FOUR COMMITS THAT NEVER RAN THE CHECK. A ratchet nothing invokes is a
+    # comment with an assert in it.
+    # THE CONCRETE FIX, deliberately NOT taken here: extract the ratchet into a standalone check the
+    # hook can run, since this file cannot go in the hook while `expected_ids`, CONTROLLED_STATES and
+    # the per-row detail pointer are still dead asserts that would fail every commit. That is a
+    # shared-gate change, it would land while three lanes are mid-commit, and it is Joseph's.
     LONG_LINE_BYTES = 400
     # RAISED 105 -> 112, OI-148, 2026-08-21, and the reason is NOT this commit's repair.
     # The repair is ratchet-neutral: measured 112 at 54bb48f4 BEFORE any edit and 112 after, because
