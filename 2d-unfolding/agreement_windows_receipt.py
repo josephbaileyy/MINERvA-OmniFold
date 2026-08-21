@@ -133,6 +133,28 @@ def main() -> int:
     for w in (5, 10, 20):
         print(f"[ratio] within {w:2d} % : {cnt[w]:3d}/{n_used} = {frac[w]:.1f} %")
 
+    # ---- OI-130: the three headline macros name NO backing artifact, so attest them here -------
+    # \sigTwoD, \sigTwoDpaper and \ratioTot are the 2D demonstrator's headline numbers and the
+    # OI-130 enumeration found them to be the hard core: they cite no path even under the generous
+    # bound, so no hash-binding, freeze gate or receipt check can fire on them. They come from the
+    # two artifacts this producer already opens and pins by sha256, so attesting them costs nothing
+    # extra and closes that hole.
+    # BOTH SUMMATION CONVENTIONS ARE EMITTED, NOT ONE. `compare_to_paper_fullcov.py` prints the
+    # paper total over REPORTED bins and ours over ALL bins, and that asymmetry is exactly how a
+    # ratio goes quietly wrong. Reporting both makes the choice visible instead of assumed.
+    totals = {
+        "ours_all_bins": float(ours_v.sum()),
+        "ours_reported_bins": float(ov.sum()),
+        "paper_all_bins": float(paper_v.sum()),
+        "paper_reported_bins": float(pv.sum()),
+    }
+    totals["ratio_ours_all_over_paper_reported"] = totals["ours_all_bins"] / totals["paper_reported_bins"]
+    totals["ratio_both_reported"] = totals["ours_reported_bins"] / totals["paper_reported_bins"]
+    print(f"[totals] ours  all={totals['ours_all_bins']:.4e}  reported={totals['ours_reported_bins']:.4e}")
+    print(f"[totals] paper all={totals['paper_all_bins']:.4e}  reported={totals['paper_reported_bins']:.4e}")
+    print(f"[totals] ratio ours_all/paper_reported = {totals['ratio_ours_all_over_paper_reported']:.4f}")
+    print(f"[totals] ratio both_reported           = {totals['ratio_both_reported']:.4f}")
+
     rev = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True,
                          cwd=os.path.dirname(os.path.abspath(__file__))).stdout.strip() or None
     receipt = {
@@ -157,6 +179,15 @@ def main() -> int:
                     "within_5_percent": {"count": cnt[5], "percent": round(frac[5], 1)},
                     "within_10_percent": {"count": cnt[10], "percent": round(frac[10], 1)},
                     "within_20_percent": {"count": cnt[20], "percent": round(frac[20], 1)}},
+        "headline_totals_oi130": {
+            "why": ("\\sigTwoD, \\sigTwoDpaper and \\ratioTot cite no backing artifact anywhere in "
+                    "values.tex, which is OI-130's hard core: nothing can bind them. They derive from "
+                    "the two artifacts pinned under `sources` above, so this receipt attests them."),
+            "convention_note": ("BOTH summation conventions are given because compare_to_paper_fullcov.py "
+                                "mixes them -- paper over REPORTED bins, ours over ALL bins. Which one "
+                                "reproduces the quoted macro is a FINDING to read off, not an input."),
+            "values": totals,
+        },
         "caveat": ("These are a NEW measurement under a STATED mask and denominator. They are not "
                    "a reproduction of the suppressed \\medianBinRatio / \\binsFive / \\binsTen / "
                    "\\binsTwenty, which have no recoverable provenance. A difference is a finding, "
