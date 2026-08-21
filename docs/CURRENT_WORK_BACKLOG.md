@@ -12,7 +12,7 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-150 | NOW | safe-default-active | OPEN |
 | OI-149 | NOW | safe-default-active | FIXED AND LANDED 2026-08-21 (89e0c62f) -- NO LONGER AWAITING A USER DECISION. Joseph ruled it and the code is in: assert |
 | OI-147 | NOW | safe-default-active | COMPLETE 2026-08-21. The seven configuration keys landed at aa989794, the eighth (hDiagCombinedOld, via the raw diagonal |
-| OI-148 | NOW | safe-default-active | OPEN |
+| OI-148 | NOW | safe-default-active | OPEN — NARROWED 2026-08-21. The four rows are RECONSTRUCTED and the seven-column check PASSES; what stays open is that n |
 | OI-140 | WAITING-JOSEPH | explicit-user-decision | VERIFICATION LANDED 2026-08-21 (3cb46337) -- AND THE GATE IS STILL NOT PASSABLE; SEE OI-147. Route chosen: REAL in-file |
 | OI-141 | WAITING-JOSEPH | explicit-user-decision | FIXED AND LANDED 2026-08-21 (3cb46337). compare() returns ComparisonResult, a 2-long tuple subclass carrying .uncomparab |
 | OI-142 | NOW | safe-default-active | SHELL LIBRARY FIXED 2026-08-21; ONE RESIDUAL, NAMED AND NOT SILENTLY DROPPED. rg_is_complete now REFUSES a marker carryi |

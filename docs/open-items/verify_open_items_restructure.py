@@ -176,8 +176,17 @@ def verify_table() -> None:
     # seven columns, ids in blocks) keeps being enforced below. Raising either pin is a deliberate
     # act that has to state why -- which is what the 400 never made anyone do, because it never ran.
     LONG_LINE_BYTES = 400
-    OVER_LIMIT_PINNED = 105        # 97 of these predate 2026-08-21; 8 are the OI-140..OI-146 rows
-    LONGEST_LINE_PINNED = 23503    # unchanged by those rows; it is an older row
+    # RAISED 105 -> 112, OI-148, 2026-08-21, and the reason is NOT this commit's repair.
+    # The repair is ratchet-neutral: measured 112 at 54bb48f4 BEFORE any edit and 112 after, because
+    # all four repaired rows were already over 400 and stay over it. The pin went stale in the four
+    # commits that filed rows after it was set at c98e2a6e (105): 8779f020 -> 107, a1854f62 -> 110,
+    # 1b6a66bd -> 111, 4c8a5287 -> 112. None moved it, so this assertion has been RED since
+    # 8779f020 -- which means `verify_table` has not reached the seven-column check since either,
+    # and OI-148 could not have been closed against a green run without moving it.
+    # Re-derive rather than trust: `git show <sha>:docs/OPEN_ITEMS.md | awk '{ if (length($0) > 400) n++ } END { print n }'`
+    # under-counts (awk counts characters); count encoded bytes per line as this function does.
+    OVER_LIMIT_PINNED = 112        # 97 predate 2026-08-21; 15 are rows filed on 2026-08-21
+    LONGEST_LINE_PINNED = 23503    # unchanged by those rows and by this repair; it is an older row
     over = [n for n in byte_lengths if n > LONG_LINE_BYTES]
     assert len(over) <= OVER_LIMIT_PINNED, (
         f"{len(over)} lines exceed {LONG_LINE_BYTES} bytes, pinned at {OVER_LIMIT_PINNED}. Adding "
