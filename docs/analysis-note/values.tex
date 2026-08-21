@@ -33,11 +33,26 @@
 % (d3239355), so NO committed version of ANY script reproduces the quoted trio.
 % Consequence under the repo liveness rule (a result is live only once its evidence
 % is committed): these four are NOT QUOTABLE as measured values until a producing
-% script and its output land. \binsTen currently prints in the external paper
-% (paper_body.tex:66) and in primer_body.tex:70, sec_execsummary.tex:19 and
-% sec_summary.tex:7; the trio and \medianBinRatio also print in sec_results.tex:58-59
-% and the Tab. at :78-79. Re-deriving or correcting the numbers is a
-% number-producing act reserved for their owner; this comment only records the gap.
+% script and its output land.
+%
+% SUPPRESSION IS NOW IN FORCE (2026-08-21, on Joseph's ruling). THE FOUR DEFINITIONS
+% BELOW ARE DELIBERATELY LEFT INTACT AND ARE NOW UNUSED BY EVERY BUILD -- do not
+% "clean up" the unused macros. The values are not known WRONG, they are UNATTESTED,
+% and they are the operands an authorized producer must reproduce.
+%   note   -- struck with \dead{} at the point of use, each with a \textbf{struck: ...}
+%             sentence: sec_results.tex:58-60 and :82-83, sec_execsummary.tex:19,
+%             sec_summary.tex:7.
+%   paper  -- REMOVED, not struck, with a %% comment at the removal site
+%             (paper_body.tex:66-71). \dead{} is FORBIDDEN outside the note build and
+%             check_dead_containment.py enforces it, so outward the rule is
+%             remove-and-say-so.
+%   primer -- REMOVED the same way (primer_body.tex:70-73).
+% Verified by pdftotext, not by the checker's word alone: 94.1 appears 4x in
+% main_note.pdf and 0x in main_primer.pdf and main_paper.pdf.
+% RESTORE ONLY FROM THE AUTHORIZED PRODUCER'S OUTPUT -- a receipt-backed script that
+% derives the reported mask, asserts N=205, and emits counts plus source identities.
+% Re-deriving or correcting the numbers by hand is a number-producing act reserved for
+% their owner; this comment only records the gap and its suppression.
 \newcommand{\medianBinRatio}{1.006}   % median per-bin ratio ours/paper; UNREPRODUCIBLE, see note above
 \newcommand{\binsFive}{77.6}          % percent of bins within 5%; UNREPRODUCIBLE, see note above
 \newcommand{\binsTen}{94.1}           % within 10%; UNREPRODUCIBLE, see note above
@@ -105,7 +120,7 @@
 %   paper_body.tex (external paper, paper build only) -- REMOVED, and said so in the
 %     prose. \dead{} is FORBIDDEN outside the note build and is checker-enforced, so an
 %     outward-facing retraction is remove-and-say-so, never a strike.
-%   sec_pet.tex:112 (note build only) -- STRUCK as $\SI{\dead{\petClosure}}{\percent}$
+%   sec_pet.tex:112 (note build only) -- STRUCK as $\sim$\,\dead{\SI{\petClosure}{\percent}}
 %     with an explicit "struck: legacy two-iteration self-consistency diagnostic, not a
 %     current validation" label, matching \dead{\petRatio} in that same caption.
 %
