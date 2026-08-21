@@ -389,8 +389,21 @@ def main():
             return open(os.path.join(R, n)).read()
         def rc(n):
             return int(rd(n).strip())
-        m45 = dict(re.findall(r"^(\w+)=(\d+)$", rd("step45_members.txt"), re.M))
+        # NOT anchored with ^...$: the step-4/5 summary puts THREE keys on one line
+        # ("ruled_members_in_manifest=247 recovered_and_matched=247 bad=0") while the rest sit on
+        # their own, so an anchored pattern silently matched only the single-key lines and left the
+        # three that matter reading -1. Fifth parse-shape assumption of this task and the fifth to
+        # be a REPORTING defect in a check that was substantively right; each key is asserted
+        # present below rather than defaulted, so a future format change fails loudly.
+        m45 = dict(re.findall(r"(\w+)=(\d+)", rd("step45_members.txt")))
+        for _k in ("ruled_members_in_manifest", "recovered_and_matched", "bad",
+                   "manifest_not_recovered", "recovered_beside_scope", "recovered_unexplained"):
+            if _k not in m45:
+                sys.exit(f"FATAL: step45_members.txt carries no {_k}= field; parse is stale")
         m6 = dict(re.findall(r"(\w+)=(\d+)", rd("step6_root_open.txt").splitlines()[-1]))
+        for _k in ("root_files_opened", "unusable", "total_keys"):
+            if _k not in m6:
+                sys.exit(f"FATAL: step6_root_open.txt carries no {_k}= field")
         payload["recovery"] = {
             "verdict": "PROVEN -- steps 1-6 all pass",
             "why_this_is_needed_on_top_of_hashverify": (
@@ -415,20 +428,20 @@ def main():
             "step3_extract": {"rc": 0},
             "steps45_member_digests_and_two_way_path_set_diff": {
                 "rc": rc("step45.rc"),
-                "ruled_members_in_manifest": int(m45.get("ruled_members_in_manifest", -1)),
-                "recovered_and_matched": int(m45.get("recovered_and_matched", -1)),
-                "bad": int(m45.get("bad", -1)),
-                "manifest_not_recovered": int(m45.get("manifest_not_recovered", -1)),
-                "recovered_beside_scope": int(m45.get("recovered_beside_scope", -1)),
-                "recovered_unexplained": int(m45.get("recovered_unexplained", -1)),
+                "ruled_members_in_manifest": int(m45["ruled_members_in_manifest"]),
+                "recovered_and_matched": int(m45["recovered_and_matched"]),
+                "bad": int(m45["bad"]),
+                "manifest_not_recovered": int(m45["manifest_not_recovered"]),
+                "recovered_beside_scope": int(m45["recovered_beside_scope"]),
+                "recovered_unexplained": int(m45["recovered_unexplained"]),
                 "stated_as": ("a two-way set difference, not a count. Count-only would accept 247 of "
                               "the wrong things; both directions are reported and both are empty."),
             },
             "step6_usability_not_just_byte_identity": {
                 "rc": rc("step6.rc"),
-                "root_files_opened": int(m6.get("root_files_opened", -1)),
-                "unusable": int(m6.get("unusable", -1)),
-                "total_keys": int(m6.get("total_keys", -1)),
+                "root_files_opened": int(m6["root_files_opened"]),
+                "unusable": int(m6["unusable"]),
+                "total_keys": int(m6["total_keys"]),
                 "why": ("byte-identity to a digest taken off pscratch would inherit any corruption the "
                         "original already carried, so every recovered file is opened as a ROOT file and "
                         "its key list read. Zombie, kRecovered and zero-key files all count as failures."),

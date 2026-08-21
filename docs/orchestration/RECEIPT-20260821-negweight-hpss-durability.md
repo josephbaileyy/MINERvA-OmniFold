@@ -19,7 +19,7 @@ values only; the four synthetic-toy values were already attested by
 waiting on. The ungating lands separately, after this record is in a commit.
 
 Machine-readable companion: `state/negweight-hpss-durability-20260821.json`
-(sha256 `d368c2be6d9bba67b76f184e0ac475efef26e7e26d3bcb7bb1f5e3e3a06f7b13`).
+(sha256 `826f68e7f0e720500ab759774ba81615228d2946bba9d728399f185f85ae05fe`).
 Raw evidence: `state/negweight-hpss-20260821/` (see its `README.md`).
 
 ---
@@ -330,10 +330,28 @@ evidence directory's `README.md`. Worth someone's judgement separately: whether
 `verify_receipt_artifacts.py`'s extension list should include text-log extensions, since a receipt's
 evidence is more often a log than an array.
 
-**The generalisation, since this is four for four:** every one of these was a *reporting* defect in
+### 8e. Three recovery counts shipped as `-1` in the first committed manifest
+
+Caught by re-reading the committed record rather than the builder. The step-4/5 summary puts three
+keys on ONE line (`ruled_members_in_manifest=247 recovered_and_matched=247 bad=0`) while the rest sit
+on their own, and the parse was anchored `^(\w+)=(\d+)$` — so it matched only the single-key lines
+and `recovered_and_matched`, `ruled_members_in_manifest` and `bad` all defaulted to the sentinel
+`-1`. The measured values were in the committed evidence the whole time; only the derived record was
+wrong.
+
+`-1` is at least visibly absurd rather than plausibly wrong, which is why it was caught. Fixed by
+dropping the anchors and, more importantly, **replacing every `.get(key, -1)` with `m45[key]` plus an
+explicit presence assertion**, so a future format change fails loudly instead of silently reporting a
+sentinel. Same treatment applied to the step-6 counts.
+
+**The generalisation, since this is five for five:** every one of these was a *reporting* defect in
 a check that was substantively right. None of them would have changed the verdict, and none of them
 would have been visible from a passing run. The one that would have done real damage is 8d, and it
-was caught by asking an instrument (`git check-ignore`) rather than by reading the code.
+was caught by asking an instrument (`git check-ignore`) rather than by reading the code. The common
+root is a **format assumed instead of measured** — `hashlist`'s field layout, a filename's
+uniqueness across runs, a checker's exit path, `git add`'s silence, a summary line's key-per-line
+shape. In every case the substantive measurement was right and the thing that carried it was wrong,
+which is the failure mode a receipt is least able to detect about itself.
 
 ---
 

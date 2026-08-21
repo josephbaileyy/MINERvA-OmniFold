@@ -1,6 +1,6 @@
 {
   "schema": "negweight-historical-hpss-durability-v1",
-  "generated_at_utc": "2026-08-21T22:05:00Z",
+  "generated_at_utc": "2026-08-21T22:30:00Z",
   "authorization": "Joseph's negweight durability ruling, 2026-08-21: preserve to HPSS, do NOT git-track the ROOT population, do NOT rerun the study. Scope is the twelve real-data/production \\nw* values only; the four synthetic-toy values are already attested by docs/orchestration/receipts/RECEIPT-negweight-toy-20260821.json and are ungated.",
   "classification": "HISTORICAL DIAGNOSTIC EVIDENCE",
   "what_this_record_does_not_do": [
@@ -2700,9 +2700,9 @@
     },
     "steps45_member_digests_and_two_way_path_set_diff": {
       "rc": 0,
-      "ruled_members_in_manifest": -1,
-      "recovered_and_matched": -1,
-      "bad": -1,
+      "ruled_members_in_manifest": 247,
+      "recovered_and_matched": 247,
+      "bad": 0,
       "manifest_not_recovered": 0,
       "recovered_beside_scope": 30,
       "recovered_unexplained": 0,
