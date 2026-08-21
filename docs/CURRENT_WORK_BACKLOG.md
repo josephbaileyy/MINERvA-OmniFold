@@ -10,8 +10,8 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-152 | NOW | safe-default-active | OPEN |
 | OI-151 | NOW | safe-default-active | OPEN |
 | OI-150 | NOW | safe-default-active | OPEN |
-| OI-149 | WAITING-JOSEPH | explicit-user-decision | WAITING-USER |
-| OI-147 | WAITING-JOSEPH | explicit-user-decision | WAITING-USER |
+| OI-149 | NOW | safe-default-active | FIXED AND LANDED 2026-08-21 (89e0c62f) -- NO LONGER AWAITING A USER DECISION. Joseph ruled it and the code is in: assert |
+| OI-147 | WAITING-JOSEPH | explicit-user-decision | RULED AND LANDED 2026-08-21 (fdc0792a) -- OPTION 1: BOTH DIAGONALS SHIP. Joseph ruled the repair after the first proposa |
 | OI-148 | NOW | safe-default-active | OPEN |
 | OI-140 | WAITING-JOSEPH | explicit-user-decision | VERIFICATION LANDED 2026-08-21 (3cb46337) -- AND THE GATE IS STILL NOT PASSABLE; SEE OI-147. Route chosen: REAL in-file |
 | OI-141 | WAITING-JOSEPH | explicit-user-decision | FIXED AND LANDED 2026-08-21 (3cb46337). compare() returns ComparisonResult, a 2-long tuple subclass carrying .uncomparab |
