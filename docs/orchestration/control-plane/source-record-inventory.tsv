@@ -1,6 +1,6 @@
 source_record	lifecycle	queue	classification_rule	source_row_sha256	state_prefix
 OI-150	active	NOW	safe-default-active	de8ff9391fbfa6054bf0dcbe976bcdcf8287119bd7743cd0264b832d9847121a	OPEN
-OI-149	active	WAITING-JOSEPH	explicit-user-decision	25631bddecba24c6519d18485f9a0d7cf502d17bf67929c3119e3cad5f6be787	WAITING-USER
+OI-149	active	WAITING-JOSEPH	explicit-user-decision	631a07f432d749a449bc39c304fefa47296bffb7de076150d762c027b36e8d1c	WAITING-USER
 OI-147	active	WAITING-JOSEPH	explicit-user-decision	75a162687c94a147c1299561b6f405c05857633b2c5e47957460ea6934fbac1e	WAITING-USER
 OI-148	active	NOW	safe-default-active	18f3a709af32ed233522c60cec5233107862e74477be690f83a9f812ac726ea7	OPEN
 OI-140	active	WAITING-JOSEPH	explicit-user-decision	1b42ec8fd6a971989a4e3ab9144ad28628711a80d446ba0de4fe3e7af962c6a6	VERIFICATION LANDED 2026-08-21 (3cb46337) -- AND THE GATE IS STILL NOT PASSABLE; SEE OI-147. Route chosen: REAL in-file
