@@ -499,8 +499,22 @@ def _read_int_scalars(path, keys):
     intermediate. Found by lane C, reproduced end-to-end on the real VL1 value.
     A UNIVERSAL COERCION IN A READER IS A TYPE ASSERTION ABOUT EVERY KEY ANY CALLER WILL EVER PASS IT,
     and it silently truncates rather than failing. So the readers are now TYPED AND SEPARATE: the call
-    site has to say which ROOT type it expects, and an int reader handed a genuine double FAILS CLOSED
-    rather than returning a plausible integer.
+    site has to say which ROOT type it expects.
+
+    **CORRECTED 2026-08-21 -- THIS PARAGRAPH SAID "an int reader handed a genuine double FAILS CLOSED",
+    AND THAT IS OVER-GENERAL.** The guard below is `float(raw) == int(raw)`: it is VALUE-based, not
+    TYPE-based. So a `TParameter("double")` holding an INTEGRAL value is ACCEPTED AND COERCED SILENTLY
+    -- measured on the cluster 2026-08-21 (ROOT 6.28/12, python 3.11.14, module sha256
+    `5059501158992e47...`, fixtures built from the producers' own call forms): `3.0 -> 3` and
+    `0.0 -> 0`, no refusal, both returning a python `int`. What DOES fail closed is a NON-INTEGRAL
+    double (`3.5`), and `inf`/`nan` (each naming the key, via the `OverflowError`/`ValueError` catch
+    below). Lane C characterised this correctly as a residual and ruled it safe with a TRIGGER rather
+    than a date; the trigger is `Q1_TheIntReaderGuardIsVALUE_BASED` in
+    `tests/test_remedy_a_adopt_wrapper.py`. It is unreachable on today's two call sites (`:657`, `:658`)
+    because both pass only `LEG_IDENTITY_KEYS`, all genuine `TParameter("int")` from the producers.
+    **The reachable case this file's own comment already names -- `sqrt_tr_old == 0.0` on a degenerate
+    all-zero combined covariance -- is exactly the arm that is waved through**, and it is out of reach
+    only because that key is read by `_read_double_scalar`. A third call site here changes that.
     """
     f = _open_for_reading(path)
     try:
