@@ -226,8 +226,15 @@ Figure/table provenance (note → source):
 - [x] Provenance index (above) + gated-claim list
 - [x] #4 χ² reconcile (recomputed + macro-sourced) + cosmetics (bib math-mode, overfull box) — DONE 2026-07-16
 - [ ] FOLLOW-UP (number-dependent / other agents): #6 Valencia/generator-ratio recompute;
-      pull mean/RMS inconsistency (appendix 0.069/0.466 vs body \pullMean/\pullRMS 0.089/0.598
-      vs ledger 0.051/0.409 — determine the correct combined-cov pull + macro-source);
+      ~~pull mean/RMS inconsistency~~ **RESOLVED 2026-08-21 by Joseph's ruling — NOT an
+      inconsistency. The three pairs are THREE DIFFERENT COVARIANCE DEFINITIONS, not one measurement
+      disagreeing with itself: `0.089/0.598` is the artifact-backed PAPER-covariance pair and is the
+      one the body macros `\pullMean`/`\pullRMS` use; `0.069/0.466` is the STRUCK pre-flux-fix
+      combined-covariance pair; `0.051/0.409` is the flux-fixed combined-covariance LEDGER pair whose
+      producing artifact was overwritten (2026-07-16). The ledger-only pair is NOT promoted — it has
+      no surviving artifact, which is exactly why it may not become the quoted value. No macro
+      changes; nothing to determine. See `VALIDATION_LEDGER.md` for the ledger pair and
+      `receipt_model_chi2_2d.json` for the backed one.**;
       appendix efficiency wording (app_statmethods:773/791/854); remaining hardcoded
       6.86%/3.66/1.011 duplicates → macros; full figure-by-figure provenance index;
       minor #2/#7/#12/#14 prose sharpening
