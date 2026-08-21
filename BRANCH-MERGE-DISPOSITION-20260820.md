@@ -187,6 +187,46 @@ branch simply predated those commits, and one side had moved. This branch is now
 `HEAD:docs/orchestration` is byte-identical to `main:docs/orchestration` (tree `5158abe4`), so the
 compaction's deletions and the peer's ledger rows are both intact.
 
+## Addendum 2026-08-21 — re-derived at `main = 383d5ee1`, and one correction to a live doc
+
+`main` advanced again (a six-lane close-out campaign). Counts re-derived rather than carried
+forward, at the handoff session's request:
+
+    still absent from main   703   (unchanged)
+    of those, still cited    367   (was 363 at f228ba54)
+    cited by RUNS.tsv        267   (unchanged)
+    cited by MANIFEST.tsv    0     (unchanged)
+    distinct citing files    78    (was 77)
+    cited nowhere live       336
+
+**Correction to `docs/orchestration/HANDOFF-20260820-2154Z-publication-closeout.md` §2.11**, which
+is live on `main` and states that `84607aa3` removed **1,035** tracked files. It removed **734**,
+measured three independent ways: 734 `D` rows in `--name-status`, all under `docs/orchestration`;
+741 files changed = 734 `D` + 7 `M`; and tracked files under that subtree go **1,093 → 359** across
+the commit, a difference of exactly 734. 1,035 does not reproduce under any derivation tried (333
+`D` across `84607aa3..main`; 807 unique `D` paths in all of `main`'s history for the subtree; 1,375
+repo-wide). The nearest plausible operand is **1,093** — the count immediately *before* the commit,
+i.e. a pre-state quoted as a delta. §2.11's "four have no route at all" is scoped to that
+denominator, so the denominator is worth fixing even though the four-file finding may well stand.
+
+**"Recoverable" and "routed" are different properties, and this report only ever claimed the
+first.** §2.11 finds `AUDIT-20260819-analysis-note-vs-record.md` has "no discovery route"; measured
+at `383d5ee1` it is absent from `main`, **readable from the pushed tag at exactly 1,375 lines**, not
+cited in `CATALOG.md`, and cited live in exactly one file — the handoff document that reports its
+absence. Both statements hold: it is recoverable and it is unrouted.
+
+That distinction makes the remedy lighter than a merge. **Giving the file a routed citation is not
+a resurrection** — it adds a pointer to a tag-resolvable artifact without re-adding a path the
+freeze removed, so it does not need the authorization this report reserves for Joseph. That
+reservation was specifically about putting the 1,375 lines back into the live tree. "Leave it
+retired" and "give it a routed citation" are compatible.
+
+Instrument limit, stated so the larger number is not mistaken for the stronger claim: the 336
+"cited nowhere live" figure counts **per-file basename mentions only**, so it cannot see a generic
+route covering a subtree — which is why `CATALOG.md` scores 0 here while §2.11 says it routes most
+removals. **336 does not contradict §2.11's 4**; the two measure different things, and reconciling
+them needs the routing criterion expressed as a command.
+
 ## Authorization
 
 No merge to `main` was performed, attempted, or authorized. The handoff relayed Joseph's sentence
