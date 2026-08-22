@@ -181,13 +181,35 @@ cat: … No such file or directory
 ```
 
 No marker ⇒ the undeclared route takes `:242`'s else-branch and **`exit 5`** at `:253`. And the member
-tree holds only bootstrap replicas — 18 files, `res_boot_{1,2,3}.npz` plus markers across
-`member_k000000`, `member_k001200`, `member_k002400`; **no member `COMB`, no member sweep leg, no
-member uthrow.**
+tree holds only bootstrap replicas — **18 regular files, of which 9 are `res_boot_{1,2,3}.npz` and 9
+are their `.done` markers** (3 `.npz` in each of `member_k000000`, `member_k001200`, `member_k002400`;
+measured by class, and nothing under `mii/` is anything else); **no member `COMB`, no member sweep leg,
+no member uthrow.**
 
 So as of 2026-08-22 a real `sbatch` of this launcher terminates before `:347` in **both** regimes:
-`exit 0` at `:330` declared, `exit 5` at `:253` undeclared. There is no present-seed g1 or g2 leg
-anywhere on the cluster — archive or member.
+`exit 0` at `:330` declared, `exit 5` at `:253` undeclared.
+
+**Present-seed legs DO exist, and this scope correction matters more than the count.** An earlier
+revision of this section said "there is no present-seed g1 or g2 leg anywhere on the cluster," which is
+**false**, and false in the direction that reads as a stronger claim than I measured — I had checked
+only the two archive paths and `mii/`. Measured properly: `unified_throw_cov_5d.root` has **20 copies**
+under `/pscratch/sd/j/josephrb`, of which **one is the production leg** (2.677 GB, Jul 13, seed-absent
+per §2) and **19 are fixtures** in the two clause-(c) sandboxes — 11 at ~7 KB in
+`expiry-c-sandbox-20260821/`, 8 at ~8.27 MB in `clausec-rerun-20260821-sandbox/mirror/`. Those
+fixtures **carry identity keys**:
+
+| fixture | keys | identity |
+|---|---|---|
+| `expiry-c-sandbox-20260821/F_anchor_k0/` | 14 | `estimator_seed=1000`, `declared=1`, `offset=0` |
+| `expiry-c-sandbox-20260821/E_undeclared/` | 14 | `estimator_seed=2200`, `declared=0`, `offset=0` |
+| `clausec-rerun-…/mirror/…/uq_5d/A1/` | 9 | `estimator_seed=1000`, `declared=1`, `offset=0` |
+
+`F_anchor_k0` is precisely the present-seed k=0 anchor configuration. **So the correct claim is
+narrower and still sufficient for §5: no present-seed leg exists in any PRODUCTION namespace — archive
+or member — which is the only place the launcher's own path selection can point.** Fixture legs exist
+and are what the clause (c) discharge ran against; that is not a criticism of it, it is how a fixture
+works. This also answers, with evidence, the question the **Scope and limits** section previously left
+open about where the discharge's present-seed artifact came from.
 
 ---
 
@@ -203,9 +225,14 @@ Set against `VERDICT-20260821-expiry-c-real-path-present-seed.md` (`33c0e0fa`), 
   accounted for, which is what upgrades "I could not find a way in" to "there is no way in." That
   verdict's own "what I did NOT verify" list names **"a real `sbatch` submission"** as untested — this
   document is that gap, closed to the extent a harness can close it (§1, and see the bash-3.2 limit).
-* **New: the artifact census.** The archive legs re-measured today rather than cited (§2), plus the
-  fact that **no present-seed leg exists anywhere** — the member tree is 18 bootstrap `.npz` with no
-  `COMB`, sweep leg, or uthrow (§4). That verdict explicitly did not open the 41.44 GB intermediate.
+* **New: the artifact census** — the archive legs re-measured today rather than cited (§2), and the
+  20-copy `unified_throw_cov_5d.root` census that locates the 19 fixture legs (§4). That verdict
+  explicitly did not open the 41.44 GB intermediate. **Two corrections landed on this bullet after a
+  reviewing lane pushed back, and both were mine:** the member-tree figure is **18 files = 9 `.npz` +
+  9 markers**, not "18 `.npz`" (a mislabel, not a wrong measurement — I counted files and named them
+  after the wrong class); and "no present-seed leg **anywhere**" was an over-claim from a two-path
+  search, now scoped to production namespaces. The count changes no conclusion — 9 and 18 are both far
+  short of the 100 replicas a member needs — but the scope error would have.
 * **New: the synthesis.** That the two properties clause (c) conjoins sit in mutually exclusive
   branches, so the clause is unsatisfiable *as written* — and therefore that the disposition is a
   forced choice (§5) rather than a judgement call.
@@ -292,10 +319,18 @@ question, and this addendum does not.
   `env.get(OFFSET_ENV)`, and an enumeration of every non-test reference in `nd-unfolding/` shows it is
   only ever **read** — `mii_seed_offset_driver.py:63` aliases it, and nothing rebinds it. So §3's
   chain has no second input to be wrong about.
-* **Out of scope and deliberately not concluded:** where the present-seed k=0 product used by the
-  clause (c) discharge run came from. No production present-seed leg exists (§2, §4), so it was not a
-  production leg — but I did not locate or audit that lane's scratch products, and I am not
-  characterising them. That is a question for whoever reviews `2b6bf689`, not an assertion here.
+* **ANSWERED, having started as out-of-scope:** where the clause (c) discharge's present-seed k=0
+  artifact came from. It is a **fixture** — `expiry-c-sandbox-20260821/F_anchor_k0/` carries
+  `estimator_seed=1000, declared=1, offset=0`, and the production-dimension rerun's mirror fixtures
+  carry the same identity (§4, measured). I still have not audited those sandboxes beyond reading the
+  g2 leg's identity keys, and nothing here characterises the discharge's correctness — a fixture being
+  a fixture is how that verification was supposed to work.
+* **The scope error this document made, kept visible because it is the transmissible part.** I wrote
+  "no present-seed leg exists anywhere on the cluster" on the strength of checking two archive paths
+  and `mii/`. There are 20 copies of that leg on `pscratch`. **A search over the paths a claim is
+  ABOUT does not license a claim quantified over the filesystem** — the fix is to scope the claim to
+  what was searched (production namespaces, which is all the launcher can select) rather than to widen
+  the search until the sentence becomes true. Caught by a reviewing lane, not by me.
 * **This branch's base does not contain the prior verdict.** The worktree branched from `origin/main`,
   which is behind local `main`; `VERDICT-20260821-expiry-c-real-path-present-seed.md` and
   `FINDING-20260822-a-hold-that-instructed-its-own-deletion.md` exist in local `main` only. The four
