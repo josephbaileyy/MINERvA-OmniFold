@@ -1,0 +1,421 @@
+{
+  "receipt_id": "RECEIPT-20260822-quarantine-member-k000000-stale-replicas",
+  "kind": "physical-file-quarantine",
+  "created_utc": "2026-08-22T14:42:00Z",
+  "lane": "MINERvA-OmniFold quarantine lane",
+  "branch": "quarantine-k000000-stale-replicas",
+  "action": "MOVE (same-filesystem rename). NOTHING WAS DELETED AND NOTHING WAS COPIED.",
+
+  "authorization": {
+    "principal": "Joseph (PI)",
+    "date": "2026-08-22",
+    "ruling_text_verbatim": "Authorized disposition (Joseph, 2026-08-22): quarantine, do not delete and do not reuse. Move exactly those six files to a recoverable location outside every production and resume glob, after recording for each: original path, sha256, size, mtime, complete marker contents, and Slurm job identity. Then regenerate ids 1-3 with the new production set. No other file may be moved or removed under this authorization.",
+    "citations": [
+      "docs/orchestration/PLAN-20260822-oneMember-mii-staged.md:187-197 (Amendment 1 SS A -- the operative authorization text)",
+      "docs/orchestration/PLAN-20260822-oneMember-mii-staged.md:75-98 (SS3 -- the member, the offset, and the blocker)",
+      "docs/orchestration/DECISION-20260822-joseph-b1-lift-and-clause-c.md (rulings 3, 12, 14 -- pause lifted, target is the M(ii) member scan, first member is the Slurm rehearsal)"
+    ],
+    "explicitly_overridden": "The plan's own SS3 recommended DELETING the files (\"Recommended: delete those 9 files\"). Joseph overrode that with quarantine. This receipt executes the override, not the recommendation.",
+    "not_authorized_by_this_receipt": [
+      "regeneration of replica ids 1-3 or 1-100 (gated on a review that has not happened)",
+      "any Slurm submission (none was made)",
+      "marker backfill (unauthorized per ruling 12)",
+      "deletion of anything, including the 41.44 GB combined_bkgaware intermediate"
+    ]
+  },
+
+  "why": {
+    "hazard": "The three .npz products carry matching .done completion markers. mr_skip_if_complete (nd-unfolding/lib_member_resume.sh:158-205) accepts a marker whose note matches this run's offset -- and all three notes read est_seed_offset=0, which is exactly the offset the k=0 submission declares. A regeneration would therefore SKIP ids 1-3 and produce only 4-100, mixing the 2026-08-18 revision with the current one inside one statistical covariance.",
+    "why_the_gate_would_not_catch_it": "combine_cov_nd.py is invoked with --expected-ids 1-100 (nd-unfolding/sbatch_finalize_5d_bkgaware_gpu.sh:167). That validates the POPULATION, not the PROVENANCE. A mixed-revision ensemble of exactly 100 members passes it.",
+    "code_distance_measured_not_asserted": {
+      "claim_in_plan": "the tree has moved 20+ commits since",
+      "measured": "340 commits",
+      "operands": {
+        "producing_worktree": "/pscratch/sd/j/josephrb/laneb-c1-30c4d766",
+        "producing_worktree_head_measured_20260822": "576b0cd5e8fc7a7b3ebbd444dc5c566235907cd2",
+        "producing_worktree_dirty_entries_measured_20260822": 0,
+        "main_head_at_receipt": "064496cd6b3435d4da47f280d04cf195b7ace893",
+        "command": "git rev-list --count 576b0cd5..main",
+        "result": 340
+      },
+      "CAVEAT_THIS_IS_A_MEASUREMENT_OF_TODAY_NOT_OF_RUN_TIME": "576b0cd5 is the producing worktree's HEAD as read on 2026-08-22, four days after the run. It is CONSISTENT with being the executing revision -- that commit is dated 2026-08-18T20:25:54-0400 = 17:25:54 PDT, sixteen minutes before the array's first task started at 17:41:42 PDT, and the worktree is clean -- but nothing recorded the executing sha at run time, so this is corroboration, not proof. The quarantine does not depend on the exact number: any nonzero distance carries the mixing hazard."
+    }
+  },
+
+  "destination": {
+    "path": "/pscratch/sd/j/josephrb/quarantine/20260822-member-k000000-stale-replicas",
+    "created_by": "mkdir -p (did not previously exist; verified empty before the move)",
+    "filesystem": "lustre (/pscratch), SAME filesystem as the source",
+    "justification": [
+      "OUTSIDE the repository root /pscratch/sd/j/josephrb/MINERvA-OmniFold entirely. Every replica glob in the tree is CWD-relative and every launcher runs with CWD=<repo>/nd-unfolding, so no relative pattern can name it. The only recursive walker found in the tree, protect_throw_slabs.py:67, walks os.path.join(root, \"nd-unfolding\") -- also out of reach.",
+      "NOT under mii/. The member-scoped globs are built by mr_prefix (lib_member_resume.sh:137-142), which can only emit mii/member_kNNNNNN/... , so they are structurally incapable of naming this path.",
+      "NO path component equals boot_nd_5d. Both anchored patterns -- sbatch_finalize_5d_bkgaware_gpu.sh:167 and mii_stage0_distinctness.py:103 -- require a literal boot_nd_5d directory component.",
+      "SAME filesystem as the source, so mv is a directory-entry rename: not one byte is rewritten and no unlink of data occurs. This is the strongest available reading of \"a move, not a delete\" -- a cross-filesystem move would have been copy-then-unlink, which briefly makes the evidence depend on a copy succeeding.",
+      "Sibling of the established top-level work areas under /pscratch/sd/j/josephrb (negweight-durability-20260821, mnv-digest-work, gate5-do-g2), so it follows existing convention rather than inventing a location.",
+      "Filenames PRESERVED. The markers' own \"output\" field names res_boot_N.npz; renaming would break the self-description that makes these files evidence. Exclusion is achieved by location and verified by running the globs, not by mangling names."
+    ],
+    "DISCLOSED_RESIDUAL_NOT_CLOSED": "pscratch is a PURGED filesystem. This quarantine is recoverable today but is not durable storage, and Joseph's word was 'recoverable'. Total payload is 278,611 bytes -- trivially small for HPSS or CFS. A durability copy is NOT made here because it is outside the six-file authorization and would be a second, unauthorized artifact. RECOMMENDED AS A SEPARATE AUTHORIZED STEP. Until then the retention of this evidence rests on the purge clock.",
+    "quota_context_at_receipt": "lfs quota -u josephrb /pscratch: 15.99T used of 20T soft / 30T hard; 91545 inodes of 10000000. The move adds six inodes and zero net bytes."
+  },
+
+  "files": [
+    {
+      "id": 1,
+      "original_absolute_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/mii/member_k000000/boot_nd_5d/res_boot_1.npz",
+      "quarantine_absolute_path": "/pscratch/sd/j/josephrb/quarantine/20260822-member-k000000-stale-replicas/res_boot_1.npz",
+      "sha256": "df738b592fd67ec6fa3f7d153873511aa47c96f61a9da784d59704156ea4e970",
+      "size_bytes": 92696,
+      "mtime_epoch": 1787100633,
+      "mtime_utc": "2026-08-19T00:50:33Z",
+      "mtime_local_pdt": "2026-08-18 17:50:33.000000000 -0700",
+      "role": "bootstrap replica payload",
+      "slurm_identity": {
+        "array_job_id": 57252337,
+        "array_task_id": 1,
+        "sacct_jobid": "57252337_1",
+        "jobid_raw": 57252343,
+        "job_name": "boot5dG",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "submit": "2026-08-18T17:27:23",
+        "start": "2026-08-18T17:41:42",
+        "end": "2026-08-18T17:50:33",
+        "elapsed": "00:08:51",
+        "nodelist": "nid002257",
+        "account": "m3246_g",
+        "partition": "shared_gpu_ss11",
+        "qos": "gpu_shared",
+        "workdir": "/pscratch/sd/j/josephrb/laneb-c1-30c4d766/nd-unfolding"
+      }
+    },
+    {
+      "id": 2,
+      "original_absolute_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/mii/member_k000000/boot_nd_5d/res_boot_1.npz.done",
+      "quarantine_absolute_path": "/pscratch/sd/j/josephrb/quarantine/20260822-member-k000000-stale-replicas/res_boot_1.npz.done",
+      "sha256": "39cef13615766e6c8112f413b6e608aeeab7cd8bbf6c5f6b673e41639c663440",
+      "size_bytes": 190,
+      "mtime_epoch": 1787100633,
+      "mtime_utc": "2026-08-19T00:50:33Z",
+      "mtime_local_pdt": "2026-08-18 17:50:33.000000000 -0700",
+      "role": "COMPLETE marker for res_boot_1.npz (rg_marker_path = <out>.done, lib/resume_guard.sh:70)",
+      "marker_contents_verbatim_full_text": "{\"output\":\"mii/member_k000000/boot_nd_5d/res_boot_1.npz\",\"size\":92696,\"mtime\":1787100633,\"marked_at\":\"2026-08-19T00:50:33Z\",\"host\":\"nid002257\",\"job\":\"57252343:1\",\"note\":\"est_seed_offset=0\"}",
+      "marker_trailing_newline": true,
+      "slurm_identity": {
+        "array_job_id": 57252337,
+        "array_task_id": 1,
+        "sacct_jobid": "57252337_1",
+        "jobid_raw": 57252343,
+        "job_name": "boot5dG",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "submit": "2026-08-18T17:27:23",
+        "start": "2026-08-18T17:41:42",
+        "end": "2026-08-18T17:50:33",
+        "elapsed": "00:08:51",
+        "nodelist": "nid002257",
+        "account": "m3246_g",
+        "partition": "shared_gpu_ss11",
+        "qos": "gpu_shared",
+        "workdir": "/pscratch/sd/j/josephrb/laneb-c1-30c4d766/nd-unfolding"
+      }
+    },
+    {
+      "id": 3,
+      "original_absolute_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/mii/member_k000000/boot_nd_5d/res_boot_2.npz",
+      "quarantine_absolute_path": "/pscratch/sd/j/josephrb/quarantine/20260822-member-k000000-stale-replicas/res_boot_2.npz",
+      "sha256": "a7f4984248277296d9dafd06f3c2da73f7d7782ef32a85995007f970783059b2",
+      "size_bytes": 92664,
+      "mtime_epoch": 1787100608,
+      "mtime_utc": "2026-08-19T00:50:08Z",
+      "mtime_local_pdt": "2026-08-18 17:50:08.000000000 -0700",
+      "role": "bootstrap replica payload",
+      "slurm_identity": {
+        "array_job_id": 57252337,
+        "array_task_id": 2,
+        "sacct_jobid": "57252337_2",
+        "jobid_raw": 57252344,
+        "job_name": "boot5dG",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "submit": "2026-08-18T17:27:23",
+        "start": "2026-08-18T17:41:42",
+        "end": "2026-08-18T17:50:08",
+        "elapsed": "00:08:26",
+        "nodelist": "nid002644",
+        "account": "m3246_g",
+        "partition": "shared_gpu_ss11",
+        "qos": "gpu_shared",
+        "workdir": "/pscratch/sd/j/josephrb/laneb-c1-30c4d766/nd-unfolding"
+      }
+    },
+    {
+      "id": 4,
+      "original_absolute_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/mii/member_k000000/boot_nd_5d/res_boot_2.npz.done",
+      "quarantine_absolute_path": "/pscratch/sd/j/josephrb/quarantine/20260822-member-k000000-stale-replicas/res_boot_2.npz.done",
+      "sha256": "60cb72c793bb571fc65a4bd8243d19d0bd64e08af4f3f357fa7957c34152b07a",
+      "size_bytes": 190,
+      "mtime_epoch": 1787100608,
+      "mtime_utc": "2026-08-19T00:50:08Z",
+      "mtime_local_pdt": "2026-08-18 17:50:08.000000000 -0700",
+      "role": "COMPLETE marker for res_boot_2.npz",
+      "marker_contents_verbatim_full_text": "{\"output\":\"mii/member_k000000/boot_nd_5d/res_boot_2.npz\",\"size\":92664,\"mtime\":1787100608,\"marked_at\":\"2026-08-19T00:50:08Z\",\"host\":\"nid002644\",\"job\":\"57252344:2\",\"note\":\"est_seed_offset=0\"}",
+      "marker_trailing_newline": true,
+      "slurm_identity": {
+        "array_job_id": 57252337,
+        "array_task_id": 2,
+        "sacct_jobid": "57252337_2",
+        "jobid_raw": 57252344,
+        "job_name": "boot5dG",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "submit": "2026-08-18T17:27:23",
+        "start": "2026-08-18T17:41:42",
+        "end": "2026-08-18T17:50:08",
+        "elapsed": "00:08:26",
+        "nodelist": "nid002644",
+        "account": "m3246_g",
+        "partition": "shared_gpu_ss11",
+        "qos": "gpu_shared",
+        "workdir": "/pscratch/sd/j/josephrb/laneb-c1-30c4d766/nd-unfolding"
+      }
+    },
+    {
+      "id": 5,
+      "original_absolute_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/mii/member_k000000/boot_nd_5d/res_boot_3.npz",
+      "quarantine_absolute_path": "/pscratch/sd/j/josephrb/quarantine/20260822-member-k000000-stale-replicas/res_boot_3.npz",
+      "sha256": "943ac6665899c0301bb526435cc52880b81376a35b268a60892badc64f57f059",
+      "size_bytes": 92681,
+      "mtime_epoch": 1787101990,
+      "mtime_utc": "2026-08-19T01:13:10Z",
+      "mtime_local_pdt": "2026-08-18 18:13:10.000000000 -0700",
+      "role": "bootstrap replica payload",
+      "slurm_identity": {
+        "array_job_id": 57252337,
+        "array_task_id": 3,
+        "sacct_jobid": "57252337_3",
+        "jobid_raw": 57252337,
+        "job_name": "boot5dG",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "submit": "2026-08-18T17:27:23",
+        "start": "2026-08-18T18:04:47",
+        "end": "2026-08-18T18:13:11",
+        "elapsed": "00:08:24",
+        "nodelist": "nid008560",
+        "account": "m3246_g",
+        "partition": "shared_gpu_ss11",
+        "qos": "gpu_shared",
+        "workdir": "/pscratch/sd/j/josephrb/laneb-c1-30c4d766/nd-unfolding"
+      }
+    },
+    {
+      "id": 6,
+      "original_absolute_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/mii/member_k000000/boot_nd_5d/res_boot_3.npz.done",
+      "quarantine_absolute_path": "/pscratch/sd/j/josephrb/quarantine/20260822-member-k000000-stale-replicas/res_boot_3.npz.done",
+      "sha256": "688ae59eaae02f7336d43c900d895719c03f2bba4f5f7c0e2a6ffb5bea5f9fdf",
+      "size_bytes": 190,
+      "mtime_epoch": 1787101991,
+      "mtime_utc": "2026-08-19T01:13:11Z",
+      "mtime_local_pdt": "2026-08-18 18:13:11.000000000 -0700",
+      "role": "COMPLETE marker for res_boot_3.npz",
+      "marker_contents_verbatim_full_text": "{\"output\":\"mii/member_k000000/boot_nd_5d/res_boot_3.npz\",\"size\":92681,\"mtime\":1787101990,\"marked_at\":\"2026-08-19T01:13:11Z\",\"host\":\"nid008560\",\"job\":\"57252337:3\",\"note\":\"est_seed_offset=0\"}",
+      "marker_trailing_newline": true,
+      "slurm_identity": {
+        "array_job_id": 57252337,
+        "array_task_id": 3,
+        "sacct_jobid": "57252337_3",
+        "jobid_raw": 57252337,
+        "job_name": "boot5dG",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "submit": "2026-08-18T17:27:23",
+        "start": "2026-08-18T18:04:47",
+        "end": "2026-08-18T18:13:11",
+        "elapsed": "00:08:24",
+        "nodelist": "nid008560",
+        "account": "m3246_g",
+        "partition": "shared_gpu_ss11",
+        "qos": "gpu_shared",
+        "workdir": "/pscratch/sd/j/josephrb/laneb-c1-30c4d766/nd-unfolding"
+      }
+    }
+  ],
+
+  "totals": {
+    "file_count": 6,
+    "npz_count": 3,
+    "marker_count": 3,
+    "payload_bytes": 278611,
+    "payload_bytes_operands": [92696, 190, 92664, 190, 92681, 190]
+  },
+
+  "slurm_mapping_determination": {
+    "STATUS": "DETERMINED HERE, NOT INHERITED -- and the handoff's stated candidate set was RIGHT while the naive way of checking it is WRONG.",
+    "what_the_handoff_said": "candidates are jobs 57252337, 57252338, 57252339, tasks 1-3 each, nine COMPLETED tasks on 2026-08-18",
+    "the_trap": "The markers for res_boot_1 and res_boot_2 name jobs 57252343 and 57252344 -- neither of which appears in the handoff's candidate list, and neither of which is an array job. Grepping the three markers for '57252337' finds ONE of three and would look like a two-thirds mismatch. It is not: the marker's `job` field records SLURM_JOB_ID (the per-task RAW job id), not SLURM_ARRAY_JOB_ID. Slurm assigns each array task its own raw id and only ONE task inherits the array base, which is why exactly one marker per member cites the array id.",
+    "resolution": "sacct --format=JobID,JobIDRaw maps 57252337_1 -> raw 57252343 and 57252337_2 -> raw 57252344. Both markers are therefore consistent with array job 57252337.",
+    "four_independent_axes_all_agreeing": {
+      "axis_1_submitted_offset": "sacct SubmitLine for 57252337 = `sbatch --parsable --export=ALL,HOME=...,MNV_EST_SEED_OFFSET=0,MNV_LAUNCHER_DIR=... --array=1-3 ./sbatch_bootstrap_5d_gpu.sh`. MNV_EST_SEED_OFFSET=0 IS member_k000000 by definition (mr_member_dir). This axis is independent of the marker entirely and is the decisive one. 57252338 carries offset 1200 and 57252339 carries offset 2400, so the other two members are accounted for and the partition is exhaustive.",
+      "axis_2_jobid_raw": "markers' raw ids 57252343 / 57252344 / 57252337 map exactly onto array tasks 57252337_1 / _2 / _3",
+      "axis_3_hostname": "marker host nid002257 / nid002644 / nid008560 == sacct NodeList for 57252337_1 / _2 / _3",
+      "axis_4_end_time": "marker marked_at 00:50:33Z / 00:50:08Z / 01:13:11Z == sacct End 17:50:33 / 17:50:08 / 18:13:11 PDT for 57252337_1 / _2 / _3 (PDT = UTC-7)"
+    },
+    "conclusion": "member_k000000's three replicas were ALL produced by array job 57252337, tasks 1, 2, 3. member_k001200 = 57252338; member_k002400 = 57252339.",
+    "sacct_window_note": "sacct was queried with -S 2026-08-17 -E 2026-08-20. A wide window (-S now-60days) fails with 'Too wide of a date range in query' onto stderr, which a piped count reports as 0 rows rather than as an error."
+  },
+
+  "postconditions": {
+    "ALL_MEASURED_AFTER_THE_MOVE": true,
+    "exit_codes_read_unpiped": true,
+    "PC1_six_present_at_destination_sha256_RECOMPUTED": {
+      "result": "PASS",
+      "method": "cd <dest> && sha256sum -c against the six pre-move digests",
+      "per_file": {
+        "res_boot_1.npz": "OK",
+        "res_boot_1.npz.done": "OK",
+        "res_boot_2.npz": "OK",
+        "res_boot_2.npz.done": "OK",
+        "res_boot_3.npz": "OK",
+        "res_boot_3.npz.done": "OK"
+      },
+      "exit_code": 0,
+      "destination_file_count": 6,
+      "mtimes_preserved": "yes -- same-filesystem rename preserves mtime; destination listing shows Aug 18 17:50 / 17:50 / 18:13 unchanged"
+    },
+    "PC2_six_absent_from_source": {
+      "result": "PASS",
+      "per_file_test_e": {
+        "res_boot_1.npz": "absent",
+        "res_boot_1.npz.done": "absent",
+        "res_boot_2.npz": "absent",
+        "res_boot_2.npz.done": "absent",
+        "res_boot_3.npz": "absent",
+        "res_boot_3.npz.done": "absent"
+      },
+      "source_dir_file_count": 0,
+      "source_dir_still_exists": true,
+      "note": "The now-empty boot_nd_5d/ directory was deliberately LEFT IN PLACE. Removing it was not authorized and mr_prefix would recreate it anyway."
+    },
+    "PC3_production_replica_glob_returns_nothing": {
+      "result": "PASS",
+      "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding (the launchers' CWD)",
+      "measurements": [
+        {"instrument": "ls mii/member_k000000/boot_nd_5d/res_boot_*.npz", "exit_code": 2, "stdout": "", "stderr": "ls: cannot access 'mii/member_k000000/boot_nd_5d/res_boot_*.npz': No such file or directory"},
+        {"instrument": "bash shopt -s nullglob array expansion (counts, immune to the literal-echo failure mode of an unmatched glob)", "count": 0},
+        {"instrument": "python glob.glob('mii/member_k000000/boot_nd_5d/res_boot_*.npz') -- the pattern sbatch_finalize_5d_bkgaware_gpu.sh:167 hands to combine_cov_nd.py --glob", "hits": 0},
+        {"instrument": "python glob.glob(os.path.join('mii/member_k000000','boot_nd_5d','res_boot_*.npz')) -- mii_stage0_distinctness.py:103", "hits": 0}
+      ],
+      "NEGATIVE_CONTROL_the_glob_can_still_match_when_files_exist": "The same pattern shape run against the legacy unprefixed directory, glob('boot_nd_5d/res_boot_*.npz'), returns 100 hits. The zero above is therefore a property of the emptied directory, not of a broken pattern."
+    },
+    "PC4_resume_marker_glob_returns_nothing": {
+      "result": "PASS",
+      "marker_pattern_derivation": "rg_marker_path() { printf '%s.done\\n' \"$1\"; } at lib/resume_guard.sh:70, so the marker glob is the replica glob with .done appended",
+      "measurements": [
+        {"instrument": "ls mii/member_k000000/boot_nd_5d/res_boot_*.npz.done", "exit_code": 2, "stdout": "", "stderr": "ls: cannot access 'mii/member_k000000/boot_nd_5d/res_boot_*.npz.done': No such file or directory"},
+        {"instrument": "bash nullglob array count", "count": 0}
+      ]
+    },
+    "PC5_mii_file_count_18_to_12_and_nothing_else_changed": {
+      "result": "PASS",
+      "before": 18,
+      "after": 12,
+      "delta": -6,
+      "command": "find mii/ -type f | wc -l",
+      "content_level_check": "A sha256sum inventory of every file under mii/ was taken BEFORE the move and again AFTER. comm -23 (pre-only) lists exactly the six k000000 lines. comm -13 (post-only) is EMPTY -- no file was added, and no surviving file's digest changed.",
+      "pre_only_lines": 6,
+      "post_only_lines": 0,
+      "member_k001200_untouched": "6 files, all six sha256 identical pre and post, mtimes Aug 18 18:02/18:04/18:32 unchanged",
+      "member_k002400_untouched": "6 files, all six sha256 identical pre and post, mtimes Aug 18 18:12/18:41/18:42 unchanged"
+    },
+    "PC6_exclusion_verified_by_RUNNING_the_globs_not_by_reading_the_path": {
+      "result": "PASS",
+      "recursive_find_over_the_whole_repo_root": {
+        "command": "find /pscratch/sd/j/josephrb/MINERvA-OmniFold -name 'res_boot_*' -print",
+        "total_hits": 1012,
+        "hits_under_mii": 12,
+        "hits_under_mii_detail": "all 12 are member_k001200 and member_k002400; zero under member_k000000",
+        "hits_beginning_with_the_quarantine_path": 0
+      },
+      "structural_tests": {
+        "quarantine_inside_repo_root": false,
+        "quarantine_inside_nd_unfolding_the_protect_throw_slabs_walk_root": false,
+        "any_path_component_equals_boot_nd_5d": false,
+        "any_path_component_equals_mii": false
+      }
+    },
+    "PC7_prohibited_artifacts_untouched": {
+      "result": "PASS",
+      "combined_bkgaware_root": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root",
+        "size_bytes": 41436632945,
+        "mtime": "2026-07-14T13:59:17",
+        "note": "unchanged; never opened, never named as an operand of any command run by this lane"
+      },
+      "slurm_jobs_submitted_by_this_lane": 0,
+      "files_deleted_by_this_lane": 0,
+      "files_moved_by_this_lane": 6,
+      "directories_created_by_this_lane": 2
+    }
+  },
+
+  "commands_run": {
+    "note": "Every cluster command was run over `ssh saul.nersc.gov`. Ordered as executed. Read-only inspection commands that only produced the recorded fields are included so the receipt's own numbers can be recomputed.",
+    "before_the_move": [
+      "find /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/mii -type f | sort   # 18",
+      "cat <dir>/res_boot_{1,2,3}.npz.done   # verbatim marker text, all three members",
+      "cd <dir> && sha256sum res_boot_1.npz res_boot_1.npz.done res_boot_2.npz res_boot_2.npz.done res_boot_3.npz res_boot_3.npz.done",
+      "stat -c '%n|%s|%Y|%y' <each of the six>",
+      "stat -f -c '%n : fstype=%T' <source dir> /pscratch/sd/j/josephrb   # both lustre",
+      "sacct -S 2026-08-17 -E 2026-08-20 -j 57252337,57252338,57252339 --format=JobID,JobIDRaw,JobName,State,End,NodeList -X -P",
+      "sacct -S 2026-08-17 -E 2026-08-20 -j 57252343,57252344 --format=JobID,JobIDRaw,... -X -P",
+      "sacct -S 2026-08-17 -E 2026-08-20 -j 57252337 --format=JobID,SubmitLine -X -P",
+      "sacct -S 2026-08-17 -E 2026-08-20 -j 57252338,57252339 --format=JobID,SubmitLine -X -P",
+      "sacct -S 2026-08-17 -E 2026-08-20 -j 57252337 --format=JobID,JobIDRaw,JobName,User,Account,Partition,QOS,Submit,Start,End,Elapsed,ExitCode,State,NodeList,WorkDir -X -P",
+      "git -C /pscratch/sd/j/josephrb/laneb-c1-30c4d766 rev-parse HEAD; git -C ... status --porcelain | wc -l",
+      "cd <mii> && find . -type f | sort | xargs sha256sum > /tmp/mii_pre_20260822.txt   # 18-line baseline"
+    ],
+    "the_move": [
+      "mkdir -p /pscratch/sd/j/josephrb/quarantine/20260822-member-k000000-stale-replicas",
+      "find <dest> -mindepth 1 | wc -l   # 0, confirmed empty first",
+      "for f in res_boot_1.npz res_boot_1.npz.done res_boot_2.npz res_boot_2.npz.done res_boot_3.npz res_boot_3.npz.done; do mv -n --no-clobber \"$S/$f\" \"$Q/$f\"; done   # explicit filenames, NO glob, NO -r, NO rm"
+    ],
+    "after_the_move": [
+      "cd <dest> && sha256sum -c <the six pre-move digests>   # exit 0",
+      "find <dest> -type f | wc -l   # 6",
+      "test -e <source>/<each of six>   # all absent",
+      "find <source dir> -type f | wc -l   # 0",
+      "cd <nd-unfolding> && ls mii/member_k000000/boot_nd_5d/res_boot_*.npz          # exit 2",
+      "cd <nd-unfolding> && ls mii/member_k000000/boot_nd_5d/res_boot_*.npz.done     # exit 2",
+      "shopt -s nullglob; a=(mii/member_k000000/boot_nd_5d/res_boot_*.npz); echo ${#a[@]}         # 0",
+      "shopt -s nullglob; b=(mii/member_k000000/boot_nd_5d/res_boot_*.npz.done); echo ${#b[@]}    # 0",
+      "python3 -c \"import glob; print(len(glob.glob('mii/member_k000000/boot_nd_5d/res_boot_*.npz')))\"   # 0",
+      "python3 -c \"import glob; print(len(glob.glob('boot_nd_5d/res_boot_*.npz')))\"   # 100, the negative control",
+      "find /pscratch/sd/j/josephrb/MINERvA-OmniFold -name 'res_boot_*' -print | sort   # 1012 hits, 12 under mii/, 0 in quarantine",
+      "find mii/ -type f | wc -l   # 12",
+      "cd <mii> && find . -type f | sort | xargs sha256sum > /tmp/mii_post_20260822.txt; diff /tmp/mii_pre_20260822.txt /tmp/mii_post_20260822.txt; comm -23 <(sort pre) <(sort post); comm -13 <(sort pre) <(sort post)",
+      "ls -la <mii>/member_k001200/boot_nd_5d <mii>/member_k002400/boot_nd_5d",
+      "find /pscratch/sd/j/josephrb/MINERvA-OmniFold -name '*combined_bkgaware.root' -printf '%p %s bytes mtime=...'",
+      "lfs quota -h -u josephrb /pscratch"
+    ],
+    "inventory_baselines_left_on_the_cluster": [
+      "/tmp/mii_pre_20260822.txt  (18 lines, pre-move sha256 inventory)",
+      "/tmp/mii_post_20260822.txt (12 lines, post-move sha256 inventory)",
+      "NOTE: these are in /tmp on a login node and are NOT durable. The six digests they matter for are reproduced in full in this receipt."
+    ]
+  },
+
+  "what_this_receipt_does_NOT_establish": [
+    "That the quarantined replicas are scientifically wrong. Nothing here evaluates their contents. They are quarantined because their PROVENANCE cannot be paired with the current revision, not because a defect was found in them.",
+    "The exact executing revision at run time. See the caveat under why.code_distance_measured_not_asserted.",
+    "That regeneration is now safe. Regeneration is a separate, unauthorized step (ruling 12 / plan SS D).",
+    "Durability. The quarantine is on a purged filesystem -- see destination.DISCLOSED_RESIDUAL_NOT_CLOSED."
+  ],
+
+  "manifest_row": {
+    "path": "docs/orchestration/state/RECEIPT-20260822-quarantine-member-k000000-stale-replicas.json",
+    "class": "MACHINE",
+    "event_status": "open",
+    "canonical_successor": "",
+    "why_open_and_not_generated": "generate_manifest.py coerces any un-overridden path under docs/orchestration/state/ to MACHINE/generated (:371-374), and derive_immutable(:239-241) then returns immutable=yes. That coercion is correct for GENERATOR OUTPUT and wrong here on OI-73's own stated grounds -- 'a GENERATED run/state record is immutable evidence; an AUTHORED input under those trees is not'. This file is hand-authored; no script in the tree emits it. Two concrete reasons `open` is the right call rather than a formality: (1) the destination carries an explicitly disclosed, explicitly UNCLOSED residual -- pscratch is purged -- and when a durability copy is authorized, this receipt is where it must be recorded; immutable=yes would reproduce exactly the OI-73 deadlock in which the one file able to clear a blocker is the one no lane may touch. (2) Mutability costs nothing in evidentiary strength here, because every load-bearing field is independently recomputable: the six sha256 values can be re-derived from the quarantined files, and the Slurm identities from sacct. A reader does not have to trust this file's bytes."
+  }
+}
