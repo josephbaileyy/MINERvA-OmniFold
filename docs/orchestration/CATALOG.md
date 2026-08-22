@@ -98,6 +98,19 @@ Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any subm
   import repository code through it, and those are where the scoped source repair belongs. Also:
   the clean tree must be split into a code root and a data root, and `mnv_guarded_run.py` never
   checks that the script it runs is inside `--expect-root`.
+- [`VERIFICATION-20260822-k0-execution-integrity.md`](VERIFICATION-20260822-k0-execution-integrity.md)
+  — the fresh non-builder's clause-by-clause verdict on `build-k0-execution-integrity` @ `ae42ae8d`
+  against the contract's eighteen §F criteria. **The verdict is NOT A PASS (7 PASS / 6 FAIL /
+  5 NOT-EVALUABLE), so Amendment 2's conditional authorization does NOT become operative and the
+  seven jobs are not submitted.** Its headline: **Joseph's correction 2 is not met** — zero of the
+  eight launchers invoke `mnv_guarded_run.py` and `build_child_argv` still does not emit it, so the
+  contract's whole positive arm (P-1 inventories, F-4/F-5) has no carrier on legs 1-6 and a green
+  run would be vacuous in exactly the way the contract's §0 forbids. What *is* verified: the six
+  `parents[N]` repairs with no absolute fallback surviving, the two-root launcher work refusing both
+  unset and empty on bash 3.2 and on Perlmutter's 4.4, the ratchet's 58→52 and both digests
+  re-derived from the probe's own output with exactly six paths leaving, and
+  `verify_hash_bindings.py` green after the edits. Read it before quoting anything about this branch,
+  and note Finding 1: `generate_manifest.py --check` exits **1** at `ae42ae8d`.
 
 ## Task routes
 
