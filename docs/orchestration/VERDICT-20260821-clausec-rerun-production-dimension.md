@@ -521,3 +521,63 @@ and the driver prints which it used and labels anything else `HARNESS REHEARSAL 
 Nothing was written inside any git checkout: the mirror is a symlink tree over the worktree with only
 `products/` and `uq_5d/` as real directories in the sandbox, and the worktree's
 `git status --porcelain` was 0 lines before the run and is re-checked after it.
+
+---
+
+# ADDENDUM, 2026-08-21, after filing: FINDINGS A AND C ARE BOTH REMEDIED, AND I RE-MEASURED RATHER THAN ACCEPTING THE REPORT
+
+**THE BODY OF THIS VERDICT IS UNCHANGED AND STILL BINDS TO `00be534f`.** This addendum exists because
+two of its three findings were acted on within the hour, and a reader arriving later would otherwise
+be sent to fix things that are already fixed — Finding A in particular is written as a gating
+precondition for the lift.
+
+**The `publication closeout` lane reported both remediations to me. I verified both by measurement, on
+the tree that executes, because that lane is one of the five disqualified authors this file names and
+its report is not evidence here.**
+
+## Finding A — REMEDIED, verified on the tree the launcher actually cds to
+
+| | at filing | now |
+|---|---|---|
+| HEAD of `/pscratch/sd/j/josephrb/MINERvA-OmniFold` | `9bf92bde` (6 behind) | **`b2d7d4ca`** |
+| `mii_adopt_unified_5d_stamped.py` | `401d8845…` (pre-OI-149) | **`fc520bfd…`** — byte-identical to the digest this verdict certifies |
+| OI-149's `DECLARATION MISMATCH` guard in the executing bytes | **absent** | **present** |
+| dirty entries | 721 | 721 — **unchanged, so no lane's work was disturbed** |
+
+**So the operative sentence of Finding A is spent: submitting the launcher no longer runs code that
+admits the product arm 2 refuses.** What survives from it is the mechanism, and it is the part worth
+keeping: **a `${REPO}` hardcode means the tree you review is not the tree that runs, and "6 commits
+behind, clean" is a different remedy from "721 dirty entries".** That distinction is why the fix was
+one fast-forward and not a reconciliation. The finding's *class* recurs on every future submission and
+should be re-measured then, not assumed from this row.
+
+## Finding C — REMEDIED by candidate `B`, and I re-ran my own power controls against it
+
+Landed at `b2d7d4ca`: both `EXPECTED_ELEMENTS` rows **and** `m_mx` completeness asserting equality
+with a distinct `OVER-LENGTH` branch — i.e. candidate `B`, not `A`. Re-measured by me on the **real
+production-dimension artifacts**, from a clean detached worktree at `b2d7d4ca`:
+
+```
+A3d  (the hole: diagonals zero-padded to 10695)      EXIT = 2   VERDICT: FAIL
+     [coverage] hDiagCombinedOld:    10695 of 10694 elements (100.0094%)   <-- OVER-LENGTH
+     [coverage] hDiagCombinedOldRaw: 10695 of 10694 elements (100.0094%)   <-- OVER-LENGTH
+A1   (the good product, unchanged)                   EXIT = 0   VERDICT: PASS
+     [coverage] hDiagCombinedOld:    10694 of 10694 elements (100.0000%)
+     [coverage] hDiagCombinedOldRaw: 10694 of 10694 elements (100.0000%)
+```
+
+**Both power controls behave as specified: A3d flips 0 -> 2 and A1 stays 0.** The remedy fires on the
+defect and is silent on a correct product, which is the pair that separates a fix from a new
+unavoidable FAIL. Finding C is closed, and it is closed on the artifact rather than in a unit test.
+
+**Finding B is NOT remedied and was never a defect** — it is a property of the launcher, and it stays
+true: the declared regime still cannot reach adopt, so arm 1 remains the post-lift configuration.
+
+## What this addendum does NOT change
+
+**THE PAUSE IS STILL NOT LIFTED, AND NOTHING HERE MOVES IT.** Clause (c) was one of three before these
+remediations and it is one of three after them. The arm table above stands as measured at `00be534f`;
+the two re-measurements in this addendum are at `b2d7d4ca` and are labelled as such, so no reader can
+merge the two revisions into one claim. **I did not land either fix and I did not move the primary
+checkout** — both were done by the lane that owns the code, which is the correct division, and I
+verified rather than performed them.
