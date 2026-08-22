@@ -136,6 +136,22 @@ def check(recs, pins, manifest=None, require_empty_allow=()):
                      f"A production inventory set contains only runs that happened.")
         if not rec.get("guard_installed"):
             v.append(f"{where}: no guard was installed, so this record measures nothing")
+        # A ZERO IN `checked` IS NOT SELF-EXPLANATORY, and ruling 20 makes zero the EXPECTED value
+        # on the B-4 containment path -- exactly when a DEFAULTED zero passes unnoticed. So the
+        # provenance is checked before the value: "the guard installed and saw nothing" and "no
+        # guard was ever installed" are different findings and only one of them is about the tree.
+        prov = rec.get("checked_provenance")
+        if prov is None:
+            v.append(f"{where}: no `checked_provenance`. A bare zero cannot distinguish 'the guard "
+                     f"installed and resolved nothing' from 'no guard was installed', and this "
+                     f"record predates the field that says which.")
+        elif prov != "measured-by-installed-guard":
+            v.append(f"{where}: checked_provenance is {prov!r} -- the count was never measured, so "
+                     f"neither it nor the empty origin set is evidence about any tree.")
+        if rec.get("refusal_site") is not None:
+            v.append(f"{where}: refusal_site is {rec['refusal_site']!r}. Every refusal returns the "
+                     f"same exit 3, so the SITE is the only thing that says which protection "
+                     f"fired; a refused run does not belong in a production inventory set.")
         if rec.get("checked", 0) <= 0:
             v.append(f"{where}: checked == {rec.get('checked')}; the guard resolved no absolute "
                      f"origin at all, so its silence is not evidence")

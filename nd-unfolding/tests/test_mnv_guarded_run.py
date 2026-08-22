@@ -164,23 +164,51 @@ class ChildContract(GuardFixture):
 
 
 class CannotCheckIsNotClean(GuardFixture):
+    """EVERY ARM ASSERTS ITS `outcome`, NOT ONLY THE EXIT CODE. Four distinct conditions here all
+    return CANNOT_CHECK_EXIT, so the code alone cannot say which one fired -- the same blindness
+    that let B-4 quietly take over F-9's exit 3. Added when the refusal-site coverage gate below
+    went red on its first run and named these three as uncontrolled."""
+
+    def _cc_record(self, name, *args):
+        # NOT `_outcome`: unittest.TestCase already owns `self._outcome` and shadowing
+        # it makes every arm in this class die with '_Outcome object is not callable'.
+        inv = pathlib.Path(self._tmp.name) / "cc" / f"{name}.jsonl"
+        # `--inventory` FIRST, before the caller's args. Appending it put the flag AFTER the `--`,
+        # where the wrapper forwards it to the child verbatim -- which is the documented behaviour
+        # this file's own `test_argv_after_the_split_is_forwarded_verbatim...` pins, and it bit the
+        # first version of this helper: no record was written and every arm died on a missing file.
+        cp = run(GUARD, "--inventory", inv, *args)
+        self.assertEqual(cp.returncode, mgr.CANNOT_CHECK_EXIT, cp.stdout + cp.stderr)
+        return json.loads(inv.read_text().strip())
+
     def test_missing_split_exits_2(self):
         cp = run(GUARD, "--expect-root", self.good, self.entry)
         self.assertEqual(cp.returncode, mgr.CANNOT_CHECK_EXIT, cp.stdout + cp.stderr)
         self.assertIn("MANDATORY", cp.stderr)
+        rec = self._cc_record("usage", "--expect-root", str(self.good), str(self.entry))
+        self.assertEqual(rec["outcome"], "cannot-check:usage")
+        self.assertEqual(rec["checked_provenance"], mgr.CHECKED_NOT_MEASURED)
 
     def test_nothing_after_the_split_exits_2(self):
         cp = run(GUARD, "--expect-root", self.good, "--")
         self.assertEqual(cp.returncode, mgr.CANNOT_CHECK_EXIT, cp.stderr)
+        rec = self._cc_record("split", "--expect-root", str(self.good), "--")
+        self.assertEqual(rec["outcome"], "cannot-check:nothing-after-split")
 
     def test_expect_root_that_is_not_a_checkout_exits_2_not_3(self):
         cp = run(GUARD, "--expect-root", self.good / "nd-unfolding", "--", self.entry)
         self.assertEqual(cp.returncode, mgr.CANNOT_CHECK_EXIT, cp.stdout + cp.stderr)
         self.assertNotEqual(cp.returncode, mgr.VIOLATION_EXIT)
+        rec = self._cc_record("noroot", "--expect-root", str(self.good / "nd-unfolding"),
+                            "--", str(self.entry))
+        self.assertEqual(rec["outcome"], "cannot-check:expect-root-is-not-a-checkout")
 
     def test_missing_script_exits_2(self):
         cp = run(GUARD, "--expect-root", self.good, "--", self.good / "nope.py")
         self.assertEqual(cp.returncode, mgr.CANNOT_CHECK_EXIT, cp.stderr)
+        rec = self._cc_record("noscript", "--expect-root", str(self.good), "--",
+                            str(self.good / "nope.py"))
+        self.assertEqual(rec["outcome"], "cannot-check:no-such-script")
 
 
 class MarkerSemantics(unittest.TestCase):
@@ -450,6 +478,64 @@ class TheInventoryIsThePositiveEvidence(GuardFixture):
         self.assertIn("COULD NOT LOOK", rec["verdict"])
         self.assertNotEqual(rec["verdict"], mgr.VERDICT_EMPTY)
 
+    def test_the_two_kinds_of_ZERO_are_distinguishable(self):
+        """Ruling 20 makes `checked = 0` the EXPECTED value on the containment path, which is
+        exactly when a defaulted zero passes unnoticed. Two states produce a zero and they are
+        completely different evidence: the guard installed and resolved nothing, versus the guard
+        was never installed because the run was refused first. `checked` alone cannot tell them
+        apart, so it never carries the claim on its own -- the triple does.
+        """
+        other = make_checkout(pathlib.Path(self._tmp.name), "another-tree")
+        stray = write(other / "nd-unfolding" / "stray.py", "print('never')\n")
+        inv_a = self._inv("zero_not_measured.jsonl")
+        cp = run(GUARD, "--expect-root", self.good, "--inventory", inv_a, "--", stray)
+        self.assertEqual(cp.returncode, mgr.VIOLATION_EXIT, cp.stdout + cp.stderr)
+        a = json.loads(inv_a.read_text().strip())
+
+        entry = write(self.good / "nd-unfolding" / "nothing_at_all.py", "pass\n")
+        inv_b = self._inv("zero_measured.jsonl")
+        cp = run(GUARD, "--expect-root", self.good, "--inventory", inv_b, "--", entry)
+        self.assertEqual(cp.returncode, 0, cp.stdout + cp.stderr)
+        b = json.loads(inv_b.read_text().strip())
+
+        self.assertEqual(a["checked"], 0)
+        self.assertEqual(a["checked_provenance"], mgr.CHECKED_NOT_MEASURED)
+        self.assertFalse(a["guard_installed"])
+        self.assertEqual(a["refusal_site"], mgr.SITE_SCRIPT_CONTAINMENT)
+
+        self.assertEqual(b["checked_provenance"], mgr.CHECKED_MEASURED)
+        self.assertTrue(b["guard_installed"])
+        self.assertIsNone(b["refusal_site"])
+        self.assertNotEqual(a["checked_provenance"], b["checked_provenance"])
+
+    def test_the_refusal_SITE_is_a_field_because_exit_3_cannot_carry_it(self):
+        """Every refusal here returns the same VIOLATION_EXIT. That is how B-4 silently invalidated
+        F-9's import-specific expectation the day B-4 landed: both arms were "exit 3" and nothing in
+        the artifact said which check refused."""
+        other = make_checkout(pathlib.Path(self._tmp.name), "yet-another")
+        stray = write(other / "nd-unfolding" / "s.py", "pass\n")
+        inv_a = self._inv("site_b4.jsonl")
+        a_rc = run(GUARD, "--expect-root", self.good, "--inventory", inv_a, "--", stray).returncode
+        inv_b = self._inv("site_import.jsonl")
+        b_rc = run(GUARD, "--expect-root", self.good, "--inventory", inv_b, "--",
+                   self.entry).returncode
+        self.assertEqual(a_rc, b_rc, "the two refusals are INDISTINGUISHABLE by exit code")
+        a, b = (json.loads(x.read_text().strip()) for x in (inv_a, inv_b))
+        self.assertEqual(a["refusal_site"], mgr.SITE_SCRIPT_CONTAINMENT)
+        self.assertEqual(b["refusal_site"], mgr.SITE_IMPORT_RESOLUTION)
+        self.assertNotEqual(a["refusal_site"], b["refusal_site"])
+        self.assertNotEqual(a["outcome"], b["outcome"])
+
+    def test_the_label_is_recorded_so_an_ARM_is_identifiable_from_its_artifact(self):
+        """Two arms differing only in --expect-root are easy to confuse in a directory of records,
+        and a distinction the reader has to reconstruct is not carried by the artifact."""
+        inv = self._inv("labelled.jsonl")
+        cp = run(GUARD, "--expect-root", self.good, "--inventory", inv,
+                 "--label", "N-1 forbidden configuration", "--", self.entry)
+        self.assertEqual(cp.returncode, mgr.VIOLATION_EXIT, cp.stdout + cp.stderr)
+        self.assertEqual(json.loads(inv.read_text().strip())["label"],
+                         "N-1 forbidden configuration")
+
     def test_the_two_green_verdicts_are_actually_different_strings(self):
         """If they were equal the whole distinction would be decorative."""
         self.assertNotEqual(mgr.VERDICT_INSPECTED, mgr.VERDICT_EMPTY)
@@ -525,6 +611,64 @@ class TheInventoryIsThePositiveEvidence(GuardFixture):
         cp = run(GUARD, "--expect-root", self.good, "--", entry)
         self.assertEqual(cp.returncode, 0, cp.stderr)
         self.assertNotIn("[oi136] inventory:", cp.stderr)
+
+
+class EveryRefusalSiteHasAControlThatNamesItsOutcome(unittest.TestCase):
+    """THE RULE THAT WOULD HAVE CAUGHT B-4 INVALIDATING F-9 THE DAY B-4 LANDED.
+
+    Every exit path in `mnv_guarded_run.py` that refuses or declines to look records an `outcome`
+    string. Adding a check AHEAD of an existing one changes which site fires first, so every
+    downstream control has to be re-derived -- and that re-derivation is a memory exercise unless
+    something enumerates the sites and demands a control for each. This does the enumeration from
+    the SOURCE and the demand from the TEST FILES, so a new refusal site with no control is red on
+    the commit that adds it rather than on the review that misses it.
+
+    It is a coverage check against the implementation, which is the instrument I did not have when
+    P-4 went undisclosed in round 1: a list of the decisions I remember taking is not one of these.
+    """
+
+    #: Prefixes of dynamically-built outcomes. Their suffixes are runtime values, so the prefix is
+    #: the whole of what a control can name.
+    DYNAMIC = ("child-systemexit:", "child-exception:")
+
+    @staticmethod
+    def _outcomes():
+        import re
+        src = GUARD.read_text()
+        lit = set(re.findall(r'"(refused:[a-z0-9:-]+)"', src))
+        lit |= set(re.findall(r'"(cannot-check:[a-z0-9:-]+)"', src))
+        lit |= set(re.findall(r'f"(child-[a-z]+):', src))
+        return lit
+
+    def _corpus(self):
+        return "\n".join(p.read_text() for p in sorted(HERE.glob("test_*.py")))
+
+    def test_the_enumeration_is_not_empty_and_finds_both_refusal_families(self):
+        """Power arm. A regex that matched nothing would make the next test pass forever."""
+        got = self._outcomes()
+        self.assertGreaterEqual(len(got), 5, got)
+        self.assertIn("refused:script-outside-expect-root", got)
+        self.assertIn("refused:import-tree-violation", got)
+        self.assertTrue(any(o.startswith("cannot-check:") for o in got), got)
+
+    def test_every_outcome_string_is_NAMED_by_some_control(self):
+        corpus = self._corpus()
+        missing = sorted(o for o in self._outcomes() if o not in corpus)
+        self.assertEqual(missing, [],
+                         "these refusal outcomes have no control naming them; a new check added "
+                         "ahead of an existing one silently re-routes the arms that used to reach "
+                         f"it: {missing}")
+
+    def test_every_refusal_SITE_constant_is_named_by_some_control(self):
+        corpus = self._corpus()
+        for name in ("SITE_SCRIPT_CONTAINMENT", "SITE_IMPORT_RESOLUTION"):
+            self.assertIn(name, corpus, f"{name} has no control")
+
+    def test_the_two_site_constants_are_distinct_and_neither_is_None(self):
+        self.assertNotEqual(mgr.SITE_SCRIPT_CONTAINMENT, mgr.SITE_IMPORT_RESOLUTION)
+        self.assertIsNotNone(mgr.SITE_SCRIPT_CONTAINMENT)
+        self.assertIsNotNone(mgr.SITE_IMPORT_RESOLUTION)
+        self.assertIsNone(mgr.SITE_NONE)
 
 
 if __name__ == "__main__":

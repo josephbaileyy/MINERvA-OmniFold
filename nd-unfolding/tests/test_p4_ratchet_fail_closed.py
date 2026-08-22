@@ -52,6 +52,9 @@ def record(script="nd-unfolding/entry.py", modules=(("victim", "aa" * 32),), **o
         "script": f"{CODE}/{script}",
         "script_checkout_root": CODE,
         "checked": 7,
+        "checked_provenance": "measured-by-installed-guard",
+        "refusal_site": None,
+        "label": "",
         "guard_installed": True,
         "repo_origin_count": len(origins),
         "repo_origin_inventory_is_empty": not origins,
@@ -227,6 +230,31 @@ class P2_TheOriginsThemselves(Fixture):
         self.write_pins({"nd-unfolding/entry.py": {"modules": ["victim"]}})
         cp = self.run_tool()
         self.assertRefused(cp, "the guard resolved no absolute origin at all")
+
+    def test_a_DEFAULTED_zero_is_refused_where_a_MEASURED_zero_would_be_reportable(self):
+        """Ruling 20 makes checked==0 the expected value on the containment path, which is exactly
+        when a defaulted zero slips through. The provenance is what separates the two."""
+        self.write_records(record(checked=0, guard_installed=False,
+                                  checked_provenance="not-measured-no-guard-was-installed",
+                                  modules=()))
+        self.write_pins({"nd-unfolding/entry.py": {"modules": [], "declared_empty": True,
+                                                   "disclosure": "d"}})
+        cp = self.run_tool()
+        self.assertRefused(cp, "the count was never measured")
+
+    def test_a_record_with_NO_provenance_field_at_all_is_refused(self):
+        r = record()
+        del r["checked_provenance"]
+        self.write_records(r)
+        self.write_pins({"nd-unfolding/entry.py": {"modules": ["victim"]}})
+        cp = self.run_tool()
+        self.assertRefused(cp, "no `checked_provenance`")
+
+    def test_a_record_carrying_a_REFUSAL_SITE_is_refused(self):
+        self.write_records(record(refusal_site="b4-script-containment"))
+        self.write_pins({"nd-unfolding/entry.py": {"modules": ["victim"]}})
+        cp = self.run_tool()
+        self.assertRefused(cp, "refusal_site is")
 
     def test_a_guard_that_was_never_installed_is_refused(self):
         self.write_records(record(guard_installed=False))

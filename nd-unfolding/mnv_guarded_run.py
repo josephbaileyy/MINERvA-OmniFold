@@ -153,6 +153,26 @@ VERDICT_REFUSED = "REFUSED -- AN IMPORT RESOLVED OUTSIDE THE EXPECTED TREE"
 VERDICT_REFUSED_SCRIPT = ("REFUSED -- THE SCRIPT ITSELF LIES IN A CHECKOUT THAT IS NOT "
                           "--expect-root; nothing was imported because nothing was run")
 
+#: WHICH PROTECTION FIRED, as a field rather than as a string a reader has to parse out of
+#: `outcome`. Every refusal in this file returns the same VIOLATION_EXIT, so AN EXIT CODE OF 3 NEVER
+#: SAYS WHICH CHECK REFUSED -- and that is not a cosmetic gap: it is exactly how B-4 silently
+#: invalidated F-9's import-specific expectation the day B-4 landed, because both arms were "exit
+#: 3" and nothing in the artifact distinguished them. Any check added AHEAD of an existing one
+#: changes which site fires first, so every downstream control has to be re-derived; naming the site
+#: is what makes that re-derivation mechanical instead of a memory exercise.
+SITE_NONE = None
+SITE_SCRIPT_CONTAINMENT = "b4-script-containment"
+SITE_IMPORT_RESOLUTION = "import-tree-violation"
+
+#: `checked` provenance. A ZERO IS NOT SELF-EXPLANATORY and F-9 now makes zero the EXPECTED value on
+#: the containment path, which is precisely when a defaulted zero would pass unnoticed. Two states
+#: produce it and they are completely different evidence:
+#:   * the guard installed and resolved no absolute origin  -> MEASURED zero
+#:   * the guard was never installed, because the run was refused first -> NOT MEASURED at all
+#: `guard_installed` already carried half of this; the reader had to infer the rest.
+CHECKED_MEASURED = "measured-by-installed-guard"
+CHECKED_NOT_MEASURED = "not-measured-no-guard-was-installed"
+
 
 class ImportTreeViolation(Exception):
     """An import resolved inside a checkout that is not the expected one."""
@@ -314,7 +334,8 @@ def _verdict(outcome, origins, violation) -> str:
     return VERDICT_INSPECTED if origins else VERDICT_EMPTY
 
 
-def write_inventory(dest, guard, script, expect_root, allow, outcome, violation=None) -> str | None:
+def write_inventory(dest, guard, script, expect_root, allow, outcome, violation=None,
+                    site=SITE_NONE, label="") -> str | None:
     """P-1: append ONE json object, on ONE line, describing THIS process. Returns the path written.
 
     APPEND MODE AND ONE LINE PER PROCESS, because a run is many processes and the reviewer's F-4 is
@@ -342,8 +363,18 @@ def write_inventory(dest, guard, script, expect_root, allow, outcome, violation=
         "script_checkout_root": (checkout_root_of(str(pathlib.Path(script).resolve()))
                                  if script is not None else None),
         "script_sha256": _sha256_or_none(str(script)) if script is not None else None,
+        # ZERO WHEN NO GUARD WAS INSTALLED, BUT NEVER A BARE ZERO. `checked_provenance` says which
+        # of the two zeros this is; `guard_installed` and `outcome` are the other two legs. F-9 is
+        # read off that triple, never off `checked` alone.
         "checked": (guard.checked if guard is not None else 0),
+        "checked_provenance": (CHECKED_MEASURED if guard is not None else CHECKED_NOT_MEASURED),
         "guard_installed": guard is not None,
+        # Which protection refused, or null when nothing did. An exit code cannot carry this.
+        "refusal_site": site,
+        # Free text from --label, so an artifact says WHICH ARM produced it. Two arms of the same
+        # binary that differ only in --expect-root are otherwise easy to mistake for each other in
+        # a directory of records, and a distinction a reader has to reconstruct is not carried.
+        "label": label,
         # WRITTEN UNCONDITIONALLY (P-3). A zero here is a REPORTABLE STATE, never a pass.
         "repo_origin_count": len(origins),
         "repo_origin_inventory_is_empty": not origins,
@@ -419,6 +450,10 @@ def main(argv=None) -> int:
                     help="P-1 resolved-origin inventory: append one JSON object for this process "
                          f"to this path. Defaults to ${INVENTORY_ENV}. When neither is set NO "
                          "record is written, and a run with no record establishes nothing.")
+    ap.add_argument("--label", default="",
+                    help="free text recorded in the inventory so an artifact says which ARM "
+                         "produced it. Two arms differing only in --expect-root are otherwise "
+                         "easy to confuse in a directory of records.")
     ap.add_argument("rest", nargs=argparse.REMAINDER)
     args = ap.parse_args(sys.argv[1:] if argv is None else argv)
     dest = args.inventory
@@ -431,13 +466,14 @@ def main(argv=None) -> int:
               "[oi136] the `--` is MANDATORY and bare positionals are refused, so a child flag\n"
               "[oi136] can never be silently eaten by this wrapper (see remedy (A)'s wrapper).",
               file=sys.stderr)
-        _safe_inventory(dest, None, None, args.expect_root, args.allow, "cannot-check:usage")
+        _safe_inventory(dest, None, None, args.expect_root, args.allow, "cannot-check:usage",
+                        label=args.label)
         return CANNOT_CHECK_EXIT
     rest = rest[1:]
     if not rest:
         print("[oi136] nothing to run after `--`", file=sys.stderr)
         _safe_inventory(dest, None, None, args.expect_root, args.allow,
-                        "cannot-check:nothing-after-split")
+                        "cannot-check:nothing-after-split", label=args.label)
         return CANNOT_CHECK_EXIT
 
     expect = pathlib.Path(args.expect_root).resolve()
@@ -446,13 +482,14 @@ def main(argv=None) -> int:
               f"(needs {' and '.join(MARKERS)}). Exit 2 and not 3 on purpose: this is "
               f"'we could not check', never 'we checked and it was clean'.", file=sys.stderr)
         _safe_inventory(dest, None, None, str(expect), args.allow,
-                        "cannot-check:expect-root-is-not-a-checkout")
+                        "cannot-check:expect-root-is-not-a-checkout", label=args.label)
         return CANNOT_CHECK_EXIT
 
     script = pathlib.Path(rest[0])
     if not script.is_file():
         print(f"[oi136] COULD NOT LOOK: no such script {script}", file=sys.stderr)
-        _safe_inventory(dest, None, None, str(expect), args.allow, "cannot-check:no-such-script")
+        _safe_inventory(dest, None, None, str(expect), args.allow, "cannot-check:no-such-script",
+                        label=args.label)
         return CANNOT_CHECK_EXIT
 
     # B-4, ADDED 2026-08-22 (REVIEW-CONTRACT-20260822 M-7 and B-4; Joseph's correction 3).
@@ -482,7 +519,8 @@ def main(argv=None) -> int:
               "[oi136] does not cover this: it declares an IMPORT tree, never an execution tree.\n",
               file=sys.stderr)
         _safe_inventory(dest, None, script, str(expect), args.allow,
-                        "refused:script-outside-expect-root")
+                        "refused:script-outside-expect-root",
+                        site=SITE_SCRIPT_CONTAINMENT, label=args.label)
         return VIOLATION_EXIT
 
     guard = install(str(expect), args.allow)
@@ -493,11 +531,11 @@ def main(argv=None) -> int:
     sys.path.insert(0, str(script.resolve().parent))
     sys.argv = [str(script), *rest[1:]]
 
-    outcome, violation, recorded = "ok", None, True
+    outcome, violation, recorded, site = "ok", None, True, SITE_NONE
     try:
         runpy.run_path(str(script), run_name="__main__")
     except ImportTreeViolation as exc:
-        outcome, violation = "refused:import-tree-violation", exc
+        outcome, violation, site = "refused:import-tree-violation", exc, SITE_IMPORT_RESOLUTION
         _report(exc)
         return VIOLATION_EXIT
     except SystemExit as exc:
@@ -511,7 +549,7 @@ def main(argv=None) -> int:
         raise
     finally:
         recorded = _safe_inventory(dest, guard, script, str(expect), args.allow,
-                                   outcome, violation)
+                                   outcome, violation, site=site, label=args.label)
     return 0 if recorded else CANNOT_CHECK_EXIT
 
 
