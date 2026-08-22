@@ -50,6 +50,7 @@ docs/orchestration/TASK.template.md	LIVE	open
 docs/orchestration/USER-DECISIONS.md	LIVE	open	""
 docs/orchestration/VERDICT-20260821-clausec-rerun-production-dimension.md	ARCHIVAL	terminal	
 docs/orchestration/VERDICT-20260821-expiry-c-real-path-present-seed.md	ARCHIVAL	superseded	docs/orchestration/VERDICT-20260821-clausec-rerun-production-dimension.md
+docs/orchestration/VERIFICATION-20260822-k0-execution-integrity.md	LIVE	open	
 docs/orchestration/WAKER.md	LIVE	open	
 docs/orchestration/control-plane/owners.tsv	LIVE	open	""
 docs/orchestration/control-plane/playbook.tsv	LIVE	open	""

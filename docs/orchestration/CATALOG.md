@@ -89,6 +89,16 @@ Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any subm
   ruling 4. **Its headline is that the launcher must NOT be submitted yet**: both routes refuse today
   for reasons unrelated to the pause, measured on the cluster.
 - [`REVIEW-CONTRACT-20260822-k0-execution-integrity.md`](REVIEW-CONTRACT-20260822-k0-execution-integrity.md)
+  **AMENDED 2026-08-22 (§7.0): §F is now TWO GATES.** Joseph ruled that the contract must separate
+  pre-submission readiness from post-rehearsal completion. The eighteen criteria are unedited and
+  keep their numbers; §7.0 adds the one-question test that reproduces the partition (8 criteria are
+  pre-submission, 10 split, **none** is purely post-rehearsal), the two gates and what each unlocks,
+  and the eligibility rule. **If you are grading this contract, read §7.0 before §F.** Two traps it
+  names: a NOT-EVALUABLE in the pre-submission column is a FAIL of Gate 1, and "needs the cluster"
+  is not "needs a run" — F-9's negative control is pre-submission and performable today.
+- [`VERIFICATION-20260822-k0-execution-integrity.md`](VERIFICATION-20260822-k0-execution-integrity.md)
+  — the round-1 verdict against that contract: **NOT A PASS**, 7/7/4. It predates the §7.0 split and
+  is not revised; it grades build `ae42ae8d`, which is **NOT on main**.
   — **the controls for corrections 2-4, agreed by a fresh non-builder BEFORE the builder implements**,
   on Joseph's instruction that the evidence cannot be selected afterwards. Read it before writing any
   OI-136 wrapper, guard or negative control on the k=0 path. Its headline correction to the plan: the

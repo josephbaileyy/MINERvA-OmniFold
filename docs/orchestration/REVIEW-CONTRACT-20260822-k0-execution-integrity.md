@@ -484,6 +484,203 @@ a sweep. Anything outside the M-1 table and the eight launchers of M-5 is out of
 A **PASS** requires every one of the following, each with the command and its output filed. Any
 single miss is a **FAIL**; there is no partial credit and no waiver by caveat.
 
+> **READ §7.0 FIRST.** As of 2026-08-22 these eighteen criteria are graded at **two** gates, not
+> one. The criteria themselves are unchanged and keep their numbers; §7.0 says which gate each
+> belongs to and gives the one-question test that reproduces the partition.
+
+### 7.0 AMENDMENT, 2026-08-22 — §F IS TWO GATES, NOT ONE
+
+**Authority.** Joseph, 2026-08-22, verbatim:
+
+> "The contract is to distinguish pre-submission readiness from post-rehearsal completion; no
+> submission occurs until the former passes, and no rehearsal product or further member is
+> authorized until the latter passes."
+
+**Nothing in this amendment changes what any criterion REQUIRES.** F-1 through F-18 below are
+unedited and keep their numbers, so every existing citation of them — including
+[`VERIFICATION-20260822-k0-execution-integrity.md`](VERIFICATION-20260822-k0-execution-integrity.md)
+and Joseph's rulings — still resolves. This amendment says only **when** each criterion is settled
+and **which of two verdicts** it belongs to.
+
+**Where the split came from.** It was not asserted. The first review of
+`build-k0-execution-integrity` graded all eighteen and returned four NOT-EVALUABLE — F-1, F-2, F-3
+and F-17 — and the reason recorded for every one of them was the same: *the criterion requires a
+production run that does not exist*. That common reason is the boundary, discovered by measurement.
+What follows generalises it and makes it re-derivable.
+
+#### 7.0.1 The classification test — one question, and anyone can re-run it
+
+> **Does settling this criterion require an artifact or an observation that ONLY A PRODUCTION RUN of
+> the k=0 path can produce?**
+>
+> **No → PRE-SUBMISSION.  Yes → POST-REHEARSAL.**
+
+"A production run" means the seven submitted jobs of logical legs 1–5. Nothing else counts as one.
+
+#### 7.0.2 "Needs the cluster" is NOT "needs a run" — and F-9 is the worked example
+
+The test asks about a *production run*, not about *locality*. A read-only `ssh`, a `sha256sum` taken
+on `pscratch`, a `git status --porcelain` on the canonical checkout, and a **negative control run by
+hand with throwaway paths** are all **PRE-SUBMISSION**: they are observations a bench can make, and
+the bench merely happens to be a login node.
+
+**F-9 (N-1) is the case that will be misfiled if this is not said.** N-1 runs the real
+`mii_adopt_unified_5d_stamped.py` from the canonical checkout under the guard with `--uthrow`,
+`--combined` and `--out` pointed at throwaway scratch paths. It touches the cluster. It is **not a
+production run**: no `sbatch`, no scientific workload, no archive product, no member output. It
+needs no fixture, no copy, no edit and no ROOT — §5 says so. **F-9 is PRE-SUBMISSION and it is
+performable today.** A lane that files it under post-rehearsal has deferred the one negative control
+that speaks to the configuration correction 3 forbids.
+
+#### 7.0.3 A criterion with both halves SPLITS; it is never filed whole under the later gate
+
+Most of §F's criteria carry an obligation to *read an instrument* and, implicitly, an obligation to
+*have armed that instrument*. Reading is post-rehearsal. **Arming is always pre-submission**, because
+an unarmed instrument is a bench-visible fact. Such a criterion is marked **SPLIT** and is written as
+`F-n(a)` — the pre-submission half — and `F-n(b)` — the post-rehearsal half. Both must pass, each at
+its own gate.
+
+Where an arming half is not literally spelled out in the criterion's original wording, it is marked
+**derived** in the table. It is derived by entailment, not invented: an obligation to read an
+inventory entails an obligation to emit one, and F-4's own text — *"a missing inventory is a FAIL,
+not a gap"* — already says the contract treats it that way.
+
+#### 7.0.4 F-2 IS NOT DEFERRED. Its arming half is pre-submission and it is SATISFIABLE
+
+Recorded explicitly because this is the criterion most likely to be mishandled, and because the
+first review found it **unsatisfiable as specified** — F-2 names two instruments, P-2's inventories
+and A-3's `--pair` set, and at `ae42ae8d` *neither existed on the path* (0 of 8 launchers invoked
+`mnv_guarded_run.py`; 0 of 8 called `verify_executing_copy_is_committed.py --pair`).
+
+Joseph has since authorized both the guard invocations and the executing-file parity calls. **That
+authorization must not be read as permission to postpone F-2.** It converts F-2's arming half from
+*unsatisfiable* to *satisfiable and due now*:
+
+**F-2(a), PRE-SUBMISSION, and it is a counting test with no judgement in it.** Across the eight
+launchers of M-5, both counts must be **zero**:
+- the number of production `python3` invocations **not** routed through `mnv_guarded_run.py` with
+  `--expect-root "${MNV_CODE_ROOT}"` and a **mandatory** (not defaulted, not optional) inventory
+  destination; and
+- the number of `.py` and `.sh` files that will execute on the path, plus `mnv_guarded_run.py`
+  itself, **not** covered by an A-3 `--pair`.
+
+**F-2(b), POST-REHEARSAL.** P-2 holds across every emitted inventory and every `--pair` reported
+CURRENT.
+
+**The honest residual, stated rather than smoothed over.** F-2(a) cannot be promoted to the whole of
+F-2. No bench check establishes that no production process imported a file from the canonical
+checkout — only the run's own inventories can, and claiming otherwise would be exactly the vacuous
+green arm §0 of this contract exists to forbid. The correct disposition is therefore: **the defect is
+closed at Gate 1, the measurement is taken at Gate 2, and neither substitutes for the other.**
+
+#### 7.0.5 The partition
+
+Read the class column, then settle the half named in the column for the gate you are grading.
+
+| # | class | PRE-SUBMISSION half — what settles it on the bench | POST-REHEARSAL half — what settles it |
+|---|---|---|---|
+| F-1 | SPLIT | code root constituted at a **named sha**; A-2(a)–(g) all measured and filed, including the A-2(f) source-manifest digest | the same measurements repeated after the last leg; porcelain zero and the manifest digest identical at both ends |
+| F-2 | SPLIT — see **7.0.4** | both counts zero: unguarded production invocations, and executing files not covered by a `--pair` *(derived)* | P-2 holds across every inventory; every `--pair` CURRENT |
+| F-3 | SPLIT | grep the eight launchers and every guard invocation → zero `--allow`; publish the command | grep the job stdout → zero `--allow`; publish the command |
+| F-4 | SPLIT | the **denominator** is fixed on the bench: guarded production invocations == production Python invocations, and **> 0** *(derived — see 7.0.8)* | count of inventories == count of guarded processes |
+| F-5 | SPLIT | the source-manifest generator and the inventory-vs-manifest comparator exist, and each carries a test that **fires on a mismatch** and is **silent on a match** *(derived)* | P-2 holds for every real inventory: origins under the code root, sha256 matching the manifest, `checked > 0` |
+| F-6 | SPLIT | `build_child_argv` emits the guard and an inventory for the pinned-writer child; a test asserts an explicitly flagged `repo_origin_count: 0` record for that argv shape *(derived)* | the child's record is present in the run's inventory and the run receipt carries the B-2 disclosure sentence in the contract's own terms |
+| F-7 | SPLIT | the P-4 mechanism exists: a per-entrypoint expected-set pin, a comparator aborting on a difference in **either** direction, tests for added / removed / exact-match, and an **absent pin failing closed** *(derived — see 7.0.9)* | the sets are recorded from the rehearsal and pinned |
+| F-8 | SPLIT | P-6's enumeration re-run on `MNV_CODE_ROOT` at the pinned sha, published with its command and its **full** output and reconciled; P-5's blind-spot inventory produced, including the subprocess enumeration with each child either wrapped or recorded as uncovered | the receipt states the blind spots in the receipt's own words |
+| F-9 | **PRE-SUBMISSION** | N-1 performed — exit 3, names `seed_offset_policy`, names both roots, satisfies O-1…O-4. **See 7.0.2: this needs the cluster, not a run** | — |
+| F-10 | **PRE-SUBMISSION** | N-2 (as replaced by ruling 19) exits 3 through the child wrapper on the `build_child_argv` template, O-1…O-4 | — |
+| F-11 | **PRE-SUBMISSION** | N-3 holds for each of the six B-1 files, both directions | — |
+| F-12 | **PRE-SUBMISSION** | §5.5's hijack arm demonstrated for N-1, N-2 and each N-3, asserted on the loaded module's `__file__` | — |
+| F-13 | **PRE-SUBMISSION** | B-4's script-containment refusal implemented and covered in both directions | — |
+| F-14 | **PRE-SUBMISSION** | every row of §6 discharged in the same commit as the repair that moves it — **and see 7.0.7** | — |
+| F-15 | **PRE-SUBMISSION** | the two named suites green under `python3 -m unittest`, counts quoted **as measured at the graded sha**, explicit `TMPDIR` | — |
+| F-16 | **PRE-SUBMISSION** | `verify_hash_bindings.py` exits 0 with `ALL BINDINGS INTACT` after all edits | — |
+| F-17 | SPLIT | M-1…M-6 re-measured on `MNV_CODE_ROOT` at the pinned sha **and** on the canonical checkout, at submission time; differences reported as findings | re-measured **again after the path runs**; M-2's inventory claim over the untracked set is the perishable one and is re-tested here |
+| F-18 | SPLIT | a fresh non-builder records the **PRE-SUBMISSION** verdict clause by clause | a fresh non-builder records the **POST-REHEARSAL** verdict clause by clause |
+
+**Count: 8 criteria pure PRE-SUBMISSION, 10 SPLIT, 0 pure POST-REHEARSAL.** That last number is a
+finding, not a tidy result — see 7.0.8.
+
+#### 7.0.6 The two gates, and what each one unlocks
+
+**GATE 1 — PRE-SUBMISSION READINESS.** Passes when every pre-submission half in the table above
+passes, each with its command and output filed. **A PASS unlocks exactly one thing: submission of
+the seven jobs of logical legs 1–5 for k=0.** It unlocks nothing else. Leg 6 stays separately gated
+by Amendment 1 §C, no member k≠0 is authorized, and §G is unchanged.
+
+**GATE 2 — POST-REHEARSAL COMPLETION.** Passes when every post-rehearsal half passes, **plus** the
+re-measurements the perishable pre-submission halves require at the far end (F-1(b), F-17(b)).
+**Until Gate 2 passes, the rehearsal's products stay where they land: not adopted, not consumed by
+anything outside the seven rehearsal jobs, not quoted, and no further member is authorized.**
+Consumption *within* the rehearsal is the rehearsal — leg 4 depending on leg 3 is the dependency
+graph, not an adoption — and is not what this restricts.
+
+§F's no-partial-credit rule applies **within each gate**: any single miss at a gate is a FAIL of
+that gate.
+
+#### 7.0.7 Two additions, marked so a reader may strike them
+
+These go beyond partitioning and are flagged rather than folded in silently. **Striking either
+leaves the split intact.**
+
+1. **F-14 pre-submission also requires the repository's coupled generated artifacts to be
+   consistent at the graded sha** — concretely, `generate_manifest.py --check` exiting 0, measured
+   in a clean worktree. Grounds: at `ae42ae8d` it exited **1** while the commit message asserted 0,
+   and `MANIFEST.tsv` is a generated file coupled to the very test files §6 moves. §6's six rows do
+   not name it, which is why this is an addition and not a reading.
+2. **F-15's counts are bound to the graded sha and must be re-measured, never carried forward.**
+   The suite has already moved 21 → 24 → 41. Grounds: M-8.
+
+#### 7.0.8 Finding — no criterion is purely post-rehearsal, and that is why round 1 could stall
+
+Applying 7.0.1 honestly to all eighteen yields **zero** criteria that are settled only by a run.
+Every post-rehearsal obligation turns out to sit on top of a bench-visible arming obligation. That is
+the structural reason the first round produced four NOT-EVALUABLE verdicts and six FAILs that all
+had the same shape: **the instruments were absent, and their absence was able to present itself as
+"we cannot evaluate that yet."**
+
+The operational consequence, and it is the point of the whole split:
+
+> **A NOT-EVALUABLE in the PRE-SUBMISSION column is a FAIL of Gate 1.** There is nothing a
+> pre-submission half can legitimately be waiting on. If it cannot be evaluated, the instrument is
+> missing, and a missing instrument is the defect — not a reason to defer.
+
+**Anti-vacuity, stated because F-4 invites the mistake.** At `ae42ae8d` the number of guarded
+production processes was zero, so F-4's "count of inventories == count of guarded processes" read
+`0 == 0`. **Do not grade that as a pass.** F-4(a) exists to fix the denominator on the bench first:
+the count of guarded production invocations must equal the count of production Python invocations
+and must be greater than zero. The same reasoning is why P-3 writes its flag unconditionally and why
+the ratchet asserts non-vacuity independently of the probe's exit code.
+
+#### 7.0.9 Finding — F-7's post-rehearsal half cannot be TESTED by the rehearsal
+
+P-4 pins the per-entrypoint import set as an **identity** taken from the first clean run. The k=0
+rehearsal is that first clean run, so it can only **establish** the pin; the first run that the pin
+can **fail** is a later one. Since §G and Gate 1 authorize no further member, **F-7's ratchet is
+never exercised inside this contract's scope.**
+
+This is a finding about the criterion, not something to force. Disposition: F-7(b) is discharged by
+*recording and committing* the sets, and the reviewer must say in those words that the pin is
+recorded and untested. Whoever proposes the first k≠0 member inherits F-7's first real test, and
+should be told so.
+
+#### 7.0.10 Who may grade, and a disclosure
+
+F-18's eligibility rule applies to **each** gate independently, and is tightened here so it is
+enforceable from the document rather than from memory:
+
+- the lane that **built** the work under review may not record either verdict;
+- the lane that **wrote this split** may not record the verdict graded against it;
+- a summary attesting "all controls passed" is a FAIL of F-18 at either gate, unchanged.
+
+**Disclosure.** §7.0 was written by the same fresh non-builder who recorded the round-1 verdict in
+`VERIFICATION-20260822-k0-execution-integrity.md`. That reviewer reshaped this rubric and is
+therefore **not eligible** to grade Gate 1 against it; a separate lane takes that verdict. The
+round-1 verdict itself predates this amendment, graded §F as a single undifferentiated gate, and is
+not restated or revised by it.
+
+---
+
 **Tree**
 
 - F-1 `MNV_CODE_ROOT` satisfies A-2(a)–(g), measured **immediately before** the first `sbatch` and
