@@ -607,10 +607,29 @@ error.**
 
 Found by the `publication closeout` lane while checking my own warning that this verdict sits on an
 unmerged branch. It pushed `verdict/expiry-c-20260821` to origin — additive, `main` untouched, not
-merged. **Verified here across every ref namespace rather than taken on report:** origin now carries 44
-refs where it carried 33; `git for-each-ref --contains 33c0e0fa` returns exactly
-`refs/heads/verdict/expiry-c-20260821` and its new remote-tracking ref; and
-`git merge-base --is-ancestor 33c0e0fa origin/main` is still **false** — pushed, not merged.
+merged. **Verified here across every ref namespace rather than taken on report:**
+
+```
+git ls-remote origin | grep -vc '\^{}'          ->  34   (was 33 before the push: +1, the one branch)
+git for-each-ref --contains 33c0e0fa            ->  refs/heads/verdict/expiry-c-20260821
+                                                    refs/remotes/origin/verdict/expiry-c-20260821
+git merge-base --is-ancestor 33c0e0fa origin/main -> false   (pushed, NOT merged)
+```
+
+**CORRECTED: this sentence first read "origin now carries 44 refs where it carried 33", and those two
+numbers are not the same quantity.** 44 is the RAW line count of `git ls-remote`, which emits a second
+`^{}` line for every annotated tag — this repo has 10 tags, which is the entire difference. 33 was the
+NON-PEELED count. Either pairing is right (33→34 non-peeled, 43→44 raw); the cross-pairing reads as
+**+11 when the real change is +1**. Caught by the lane that supplied the 33, which had given me the
+bare number without its command.
+
+**AND IT IS THE SAME DEFECT THIS ADDENDUM IS ABOUT, ONE LEVEL DOWN.** Two sides measured differently
+and compared anyway, neither wrong on its own — in the line whose whole job is to establish that the
+push changed the reachability picture. A reader checking "+11 refs" against a repo that gained one
+branch would conclude the addendum is unreliable and discount the finding, which is the opposite of
+what a real single-copy hazard deserves. **A confident wrong number does more damage than an error**,
+and the fix is the one this file keeps arriving at from different directions: quote the command beside
+the figure, so the quantity is falsifiable rather than merely stated.
 
 **THE POINT THAT GENERALISES, and it is a correction to how I framed my own warning.** I wrote that
 putting this evidence on `main` "is a merge decision someone has to take", as though the cost of not
