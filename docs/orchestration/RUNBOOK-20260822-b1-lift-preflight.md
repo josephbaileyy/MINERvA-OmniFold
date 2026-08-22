@@ -16,7 +16,7 @@ reasons that have nothing to do with the pause, and lifting the pause does not c
 
 | route | where it stops | why |
 |---|---|---|
-| **declared** (`MNV_EST_SEED_OFFSET` set) | `:167`, the FIRST `mr_run` | the member has **3 of 100** bootstrap replicas |
+| **declared** (`MNV_EST_SEED_OFFSET` set) | the FIRST `mr_run`, `sbatch_finalize_5d_bkgaware_gpu.sh:167` | the member has **3 of 100** bootstrap replicas |
 | **undeclared** (offset unset) | `:253`, `exit 5` | the 41.44 GB intermediate has **no completion marker** |
 
 Neither is a defect. Both are guards working as designed. But it means **the first production
@@ -38,7 +38,8 @@ is a decision, not an oversight:
 
 - Ruling 1 says **do not reword the clause**, and the clause text lives inside the pause branch's
   comment block. Deleting the branch deletes the clause.
-- The declared route **cannot reach the pause branch today** (it dies 89 lines earlier, at `:167`), so
+- The declared route **cannot reach the pause branch today** (it dies 89 lines earlier, at
+  `sbatch_finalize_5d_bkgaware_gpu.sh:167`), so
   removing it buys nothing now.
 - `nd-unfolding/` is on the publication critical path and the edit deserves its own review when a
   member is actually ready to run.
@@ -48,10 +49,13 @@ is a separate step that has NOT been taken.** Whoever takes it should quote the 
 decision record first — it is already quoted there — and should expect the byte-identity pin across
 the eight launchers carrying the resolver block to be checked.
 
-## 2. Control flow, transcribed with line numbers at `c7f27ec0`
+## 2. Control flow of `nd-unfolding/sbatch_finalize_5d_bkgaware_gpu.sh`, at `c7f27ec0`
 
-Line numbers in this launcher **have moved three times** and the file's own comments say so. These are
-current as of `c7f27ec0`; anchor on content if they disagree.
+**Every bare `:NNN` in this document refers to that file** unless another path is named. Line numbers
+in this launcher **have moved three times** and the file's own comments say so; these are current as
+of `c7f27ec0`, and if they disagree with what you read, **anchor on content, not on the number**. A
+reviewer reasonably read `:167` as a line in `combine_cov_nd.py` — which is 27 lines long — so the
+file is now named at each citation rather than left to a definite description.
 
 ```
 :162  if mr_declared; then
@@ -129,8 +133,8 @@ Measured, identically for **all three existing members** (`member_k000000`, `mem
 | `seedscan_split_5d/res_split_*.npz` | 24 | **0** |
 | vertical sweep roots | ≥1 | **0** |
 | the member's own CV | 1 | **absent** |
-| `uq_5d/unified_throw_cov_5d.root` | 1 | **absent** |
-| `uq_cov_stat_5d.root`, `uq_cov_mlsplit_5d.root` | produced at `:167`/`:168` | absent |
+| `uq_5d/unified_throw_cov_5d.root` | 1 | **absent UNDER `mii/` — see the warning below** |
+| `uq_cov_stat_5d.root`, `uq_cov_mlsplit_5d.root` | produced at `sbatch_finalize_5d_bkgaware_gpu.sh:167`/`:168` | absent |
 
 **`--expected-ids` is an EXACT-POPULATION validator, not a minimum.** Verified in the code rather
 than from the flag name: `replica_manifest.py:44-48` computes `got != expected_ids` and raises
@@ -138,7 +142,50 @@ than from the flag name: `replica_manifest.py:44-48` computes `got != expected_i
 says this is deliberate — *"a member with a partial replica set must REFUSE rather than quietly
 combine what it has."*
 
-So a declared submission today dies at `:167` with
+**EVERY ABSENCE IN THAT TABLE IS SCOPED TO `mii/member_kNNNNNN/`, AND ONE OF THEM MUST NOT BE READ
+WIDER.** `unified_throw_cov_5d.root` is **not** missing from the repository — there are **23 copies on
+pscratch**, including the main-line `nd-unfolding/uq_5d/unified_throw_cov_5d.root` that the adopted 5D
+covariance depends on, plus `_fluxfix_20260806`, `_rescaledhalf`, and the clause (c) sandbox copies.
+What is absent is a **member-local** copy. Unqualified, that row would read as "the publication
+critical path's covariance is gone," which is false. Caught in review by the verifying lane; the first
+draft of this table was unscoped.
+
+**A COVERING SEARCH, because a null from my query was evidence about my query.** I named two ways I
+could be wrong — a member tree outside `mii/`, and inputs staged on a filesystem I did not check — and
+both are now closed by the verifying lane rather than by me. A full-depth `find` (no `maxdepth`,
+unpiped, exit code and stderr counted separately) across **all four `josephrb` roots** —
+`/pscratch/sd/j`, `/global/homes/j`, `/global/cfs/cdirs/gt`, `/global/cfs/cdirs/m3246` — returns
+**exactly three `member_k*` directories, all under `mii/`**, with `find_exit=0` and `stderr_lines=0` on
+every root. A separate search **by filename** rather than by directory finds 609 `res_boot_*.npz`
+across nine locations: **five complete 100-replica sets exist and none of them is a member.** So the
+population really is 3, and it is not hiding behind a naming convention either of us assumed.
+
+**THE REFUSAL IS EXECUTED, NOT READ — and it has a positive control.** Run on the cluster under the
+ROOT environment against the real member files, on bytes verified byte-identical to `main`
+(`replica_manifest.py` `82fc5afe…`, `combine_cov_nd.py` `fc8514d8…`, matching `git show 01b88de9:`):
+
+```
+--expected-ids 1-100  ->  EXIT 1
+    combine_cov_nd.py:18 -> replica_manifest.py:48
+    ValueError: replica id mismatch: missing=[4, 5, ... 100] extra=[]
+
+--expected-ids 1-3    ->  EXIT 0   (positive control, same files)
+    [refusal_probe] 3 replicas, reported 10694 bins, sqrt-trace=1.674e-39 median rel=0.738%
+```
+
+**The control is what makes the first line mean anything**: it proves the refusal is about
+**population**, not about the member `.npz` being malformed or unreadable. The ids present are exactly
+`{1,2,3}`, so the failure signature below is the right one. Also measured rather than assumed: the id
+key in those files is **`seed`**, not `replica_id`, and `xsec_flat` is 65856 long (10694 after the
+`cv>0` mask).
+
+**Provenance of the partial, stated without a motive attached:** all three replicas were written
+**2026-08-18, 17:50–18:13**, and nothing has been written under `mii/` since except `member_k001200`'s
+`uq_5d/` on 08-20. There are **no logs, `.out` or `.err` anywhere under `mii/`**. So this is a
+four-day-stale partial rather than a completed three-replica pilot — but absence of a log is not proof
+of intent, and nothing here should be read as one.
+
+So a declared submission today dies at `sbatch_finalize_5d_bkgaware_gpu.sh:167` with
 
 ```
 [member] producer FAILED (rc=1) for .../uq_cov_stat_5d.root -- no completion marker written
