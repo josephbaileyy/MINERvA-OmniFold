@@ -593,3 +593,35 @@ the two re-measurements in this addendum are at `b2d7d4ca` and are labelled as s
 merge the two revisions into one claim. **I did not land either fix and I did not move the primary
 checkout** — both were done by the lane that owns the code, which is the correct division, and I
 verified rather than performed them.
+
+---
+
+## ADDENDUM 2, 2026-08-21: THE PREDECESSOR THIS VERDICT CITES WAS SINGLE-COPY WHEN I CITED IT
+
+This file's opening section cites the first clause (c) run as *"`33c0e0fa`, branch
+`verdict/expiry-c-20260821`"*. **At the moment I wrote that, `33c0e0fa` was reachable from ZERO remote
+refs.** It existed on one branch in one local checkout and nowhere else — its 267-line verdict
+included. One `git branch -D`, or the loss of that checkout, and the record this rerun is built on top
+of would have been gone, **and nothing would have reported it, because a missing branch is not an
+error.**
+
+Found by the `publication closeout` lane while checking my own warning that this verdict sits on an
+unmerged branch. It pushed `verdict/expiry-c-20260821` to origin — additive, `main` untouched, not
+merged. **Verified here across every ref namespace rather than taken on report:** origin now carries 44
+refs where it carried 33; `git for-each-ref --contains 33c0e0fa` returns exactly
+`refs/heads/verdict/expiry-c-20260821` and its new remote-tracking ref; and
+`git merge-base --is-ancestor 33c0e0fa origin/main` is still **false** — pushed, not merged.
+
+**THE POINT THAT GENERALISES, and it is a correction to how I framed my own warning.** I wrote that
+putting this evidence on `main` "is a merge decision someone has to take", as though the cost of not
+taking it were merely inconvenience. It is not. **The last time this decision went untaken, the
+verification record became single-copy and silently so** — for a repo whose own integrity rule is that
+*a result is live only after its evidence and required records land in a commit*, a commit reachable
+from one local branch satisfies the letter and not the purpose.
+
+**Both verdict branches remain unmerged and that is deliberate.** The owning lane will not merge a
+verdict about its own code, and I will not merge my own verdict. It is Joseph's, and the measurement
+above is the argument for putting it in front of him rather than leaving it implied. The cost of
+merging, stated so the decision is informed: 35+ evidence files enter the inventory's scope, so
+`MANIFEST.tsv` must be regenerated **from a tree containing them** — which is exactly what the
+corrected clause in the Evidence section above now says, and the reason that correction mattered.
