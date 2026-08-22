@@ -198,7 +198,7 @@ under this authorization.**
 Slurm identities already located for the receipt: `57252337_{1,2,3}`, `57252338_{1,2,3}`,
 `57252339_{1,2,3}` — nine `COMPLETED` tasks at 8:17–8:51 on 2026-08-18, three per member.
 
-## B. The leg count was also wrong: SEVEN jobs, not six
+## B. SIX LOGICAL LEGS, SEVEN SBATCH SUBMISSIONS — the structure, corrected
 
 `uthrow` is **three** submissions, not two. `sbatch_uthrow_combine_5d_fast.sh:10` states it:
 *"Submit with `--dependency=afterok:<throwjob>:<blockjob>`. Writes the SAME target."* I had counted
@@ -318,3 +318,80 @@ executing unchanged and keeps that safety argument intact. Setting `PYTHONPATH` 
 5. a **fresh non-builder** verification of all of the above.
 
 **None of this is verified by me and none of it authorizes submission.** Item 5 is the gate.
+
+
+---
+
+# AMENDMENT 2, 2026-08-22 — Joseph's three clarifications to corrections 2–4
+
+## 1. Six logical legs, seven submissions — and the combine cost stays unmeasured
+
+The structure is **six logical legs requiring seven `sbatch` submissions**: the unified-throw leg is one
+logical leg delivered by three jobs (`uthrow5d_runF`, `uthrow5d_blkF`, and `uthrow5d_combF` on
+`--dependency=afterok:<run>:<block>`). Amendment 1 said "seven jobs, not six" and Joseph's framing is the
+right one — it keeps the dependency graph and the leg count from being confused for each other.
+
+**`uthrow5d_combF`'s cost remains UNMEASURED and is to be recorded from the k=0 run**, not estimated
+now. Its walltime request bounds it at 3 CPU-h. Carrying an unmeasured field as unmeasured is the point:
+a plausible placeholder becomes a quoted number the moment someone reads past the caveat.
+
+## 2. THE GUARD CATCHES A RESOLUTION, NOT AN INSERTION — and a green production arm may be vacuous
+
+**Correcting my own Amendment 1 wording before anyone relies on it.** I wrote that the child-wrap means
+`adopt_unified_5d.py`'s rooted `insert(0, …)` "is caught at import resolution". **Do not say that.**
+`mnv_guarded_run.py` fires when an import **resolves** inside a checkout other than `--expect-root`. A
+`sys.path.insert()` that no import ever traverses is invisible to it and always will be.
+
+**The consequence, which is the real risk and which I had not stated:** if the production k=0 arm inserts
+the canonical root but imports **no repository module through it**, the guard refuses nothing and exits 0
+— and that zero is **indistinguishable from a clean run**. "No refusals" is exactly what a guard that
+never saw a repository import produces. A green arm is therefore **not** evidence on its own.
+
+Joseph's requirement, verbatim, and it is now the specification:
+
+> "For the pinned adopter, demonstrate that the production arm imports no repository code from another
+> checkout. The negative control must introduce or select a genuine repository-local import resolving
+> from the wrong checkout and prove exit 3 before any scientific output is opened or written. Do not
+> claim that the path insertion itself was caught."
+
+So two separate obligations, and the first is **positive evidence**, not an absence:
+
+- **Production arm:** demonstrate — by enumerating what `adopt_unified_5d.py` actually imports and where
+  each resolves from — that **no repository module resolves outside the approved clean tree**. A refusal
+  count of zero does not establish this. **What that module imports is UNMEASURED as of this writing, and
+  deliberately so:** the review contract is being agreed before the builder measures it, so the controls
+  cannot be shaped around the answer.
+- **Negative control:** a **genuine repository-local import** resolving from the wrong checkout, proving
+  **exit 3**, with evidence that the refusal preceded any scientific output being **opened or written** —
+  ordering evidence, not just an exit code. Inherits the existing suite's rule that the fixture must
+  **genuinely hijack when unguarded**, since a control whose fixture does not hijack passes vacuously.
+
+## 3. The submission commands must name the approved clean tree
+
+Amendment 1 §C shows the working directory as
+`/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding`. **That is the 721-entry dirty canonical
+checkout and it is NOT the approved execution tree.** The final commands must name the clean tree, and
+the `--expect-root` passed to the guard must be that same tree. Amendment 1 §C stands only as the
+dependency graph and argument shape; **its paths are superseded here** and will be rewritten once the
+clean tree is designated in the review contract.
+
+**`--allow` for the dirty canonical checkout is FORBIDDEN.** It would make the guard green by declaring
+the problem acceptable, which is the "re-point a receipt-bound file to make a check pass" move in
+another costume.
+
+**Where a wrapper is not enough, a scoped source repair is authorized:** *"For entrypoints whose
+hardcoded insert would actually resolve repository imports from the canonical checkout, make the minimum
+authorized scoped repair needed for clean-tree execution."* Bounded by correction 4 — this k=0 path's
+launchers and entrypoints and their necessary hash bindings only. **Not** the repository-wide 59-file
+`OI-136` migration, and no scientific-model change.
+
+## Review contract status
+
+A fresh non-builder has been engaged **before implementation**, on Joseph's instruction, so the controls
+are agreed before the builder selects the evidence. The reviewer has been asked to specify the positive
+arm, the negative control and its ordering evidence, the clean-tree definition and binding method, any
+entrypoint needing a scoped repair rather than a wrapper, and written PASS/FAIL criteria. **Nothing is
+built until that contract exists, and nothing is submitted until the reviewer records a clean PASS.**
+
+On a clean PASS the conditional authorization becomes operative without a further permission round:
+quarantine the six files, regenerate ids 1–3, and submit the seven jobs of logical legs 1–5 for k=0.
