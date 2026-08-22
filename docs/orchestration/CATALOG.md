@@ -116,6 +116,19 @@ Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any subm
   import repository code through it, and those are where the scoped source repair belongs. Also:
   the clean tree must be split into a code root and a data root, and `mnv_guarded_run.py` never
   checks that the script it runs is inside `--expect-root`.
+- [`GATE1-VERDICT-20260822-k0-execution-integrity.md`](GATE1-VERDICT-20260822-k0-execution-integrity.md)
+  — **the GATE-1 verdict against the amended contract: GATE 1 DOES NOT PASS.** Recorded by an
+  independent lane that neither built the package nor wrote the §7.0 split, as ruling 23 and §7.0.10
+  require. Grades **only** the pre-submission column, against `main` `7165ea5c` — *the build branch
+  carries a superseded contract with a different F-9, and a verdict graded against it would be void.*
+  Thirteen pass, **five fail** — F-1(a), F-2(a), F-7(a), F-8(a), F-17(a) — and none is recorded
+  NOT-EVALUABLE. **F-9 PASSES**, verified on the live cluster records including ruling 20's
+  `checked=0` inversion, so the criterion that forced the restatement is closed. What is not closed:
+  two executing `.sh` files bound by no `--pair`, the 16-call preflight exclusion enumerated nowhere
+  and pinned to nothing, **P-5 and P-6 absent from the package entirely and absent from the builder's
+  own gap list**, an A-2(f) digest filed at a superseded sha, and F-17 freshness open. **No
+  submission is authorized.** Read §5 for the shortest list that would close the gate, and §2 for
+  three builder claims that reproduce differently.
 
 ## Task routes
 
