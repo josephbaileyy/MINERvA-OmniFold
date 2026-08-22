@@ -49,6 +49,19 @@ deliberately, because this file is a pointer-only router and not an exhaustive i
   instructs its deletion.** That instruction is wrong, the hold's bytes are preserved on Joseph's
   ruling, and this route is the only thing that disarms it.
 
+### B1 steps 4-5: the lift, and the preflight that gates the first submission
+
+Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any submission touching
+`nd-unfolding/sbatch_finalize_5d_bkgaware_gpu.sh`.
+
+- [`DECISION-20260822-joseph-b1-lift-and-clause-c.md`](DECISION-20260822-joseph-b1-lift-and-clause-c.md)
+  — Joseph's eight rulings of 2026-08-22, including the lift itself and the ruling that the `srun`
+  execution satisfies expiry clause (c). **The lift is authorized here and nowhere else**; a relay of
+  it is not quotable.
+- [`RUNBOOK-20260822-b1-lift-preflight.md`](RUNBOOK-20260822-b1-lift-preflight.md) — required by
+  ruling 4. **Its headline is that the launcher must NOT be submitted yet**: both routes refuse today
+  for reasons unrelated to the pause, measured on the cluster.
+
 ## Task routes
 
 | Task | Route |
