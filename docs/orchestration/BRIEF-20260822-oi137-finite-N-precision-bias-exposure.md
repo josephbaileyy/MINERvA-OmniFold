@@ -72,8 +72,9 @@ the search and not about the world. Two axes were widened: the **file set** (the
 covered `.py` and `.tex`; this covers eleven extensions including `.md`, `.json`, `.tsv`, `.sh`
 and the notebooks) and the **term set** (three terms → sixteen).
 
-Two harness defects were found and fixed during this work, and both are worth recording because
-each would have produced a **false null**:
+**Three** harness defects were found and fixed, and every one would have produced a **false null**.
+The first two were caught before the first commit; the third was caught *after* this brief reached
+`main`, and it is the most instructive:
 
 1. **The harness matched its own term list.** The first run reported `kaufman hits=1`,
    `sellentin hits=1`, `percival hits=1`, `wishart hits=1` — every one of them the search script
@@ -82,6 +83,25 @@ each would have produced a **false null**:
 2. **There was no positive control.** A null from a broken harness is indistinguishable from a
    null from a clean world. The script now asserts that `hartlap` matches `docs/OPEN_ITEMS.md`
    and **exits 1** if it does not, so every null below is void unless that arm passed.
+3. **The same defect recurred one level out, and defect 1's fix is what exposed it.** When this
+   brief merged to `main` at `7ab15877`, those same four terms went to `hits=2` and
+   `effective ndf` / `unbiased inverse` to `hits=1` — **every hit being this document's own
+   results table below, reporting them as zero.** The script had excluded *itself* but not the
+   document that *documents* it, so re-running the harness to **check** the brief produced numbers
+   that contradicted the brief. Fixed by promoting the single `SELF` path to a declared
+   `SELF_REFERENCE_SET` (the script and this brief), printed in the output so the exclusion is
+   auditable, and guarded: a **rename** of either member would silently stop the exclusion matching
+   and quietly restore all six false hits, so the script now verifies each member is still a
+   tracked path and **exits 1** if not. Both arms proven, not assumed — the positive arm returns
+   the six nulls to `0` while `ledoit`/`wolf` still finds the real
+   `analyze_universes.py` implementation (so the exclusion measures the null rather than
+   manufacturing it), and a negative control with a deliberately renamed member exits `1` with
+   the stale-set message.
+
+   The reusable shape: **an instrument and its write-up are the same self-reference problem at two
+   scales**, and fixing the narrow case is exactly what makes the wider one reachable. Excluding a
+   file is only legitimate when that file is *about* the search; excluding one that could
+   legitimately hold an implementation would fabricate the result.
 
 ---
 

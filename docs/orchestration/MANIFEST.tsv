@@ -10,7 +10,7 @@ docs/orchestration/AUTHORIZATION-20260812-ignored-set-scope.md	tracked	ARCHIVAL	
 docs/orchestration/AUTHORIZATION-20260813-gate4-estimator-disposition.md	tracked	ARCHIVAL	document		20260813	terminal		exact-path-only		yes	9	500	33411
 docs/orchestration/AUTHORIZATION-20260815-foldforward-closure-run.md	tracked	ARCHIVAL	document		20260815	terminal		exact-path-only	nd-unfolding/pet/sbatch_foldforward_instrumented_closure.sh	yes	6	59	2891
 docs/orchestration/B1-NORMALIZATION-FIX-DESIGN.md	tracked	ARCHIVAL	document			terminal		exact-path-only	nd-unfolding/pet/closure_b1_rate_injection.py;nd-unfolding/pet/fullevent_fps_dataloader.py;nd-unfolding/pet/validate_gate2_target_receipt.py;nd-unfolding/tests/test_b1_normalization_fix.py	yes	11	388	24602
-docs/orchestration/BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/state/oi137-covering-search-20260822.sh	no	4	377	25321
+docs/orchestration/BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/state/oi137-covering-search-20260822.sh	no	4	397	26997
 docs/orchestration/CATALOG.md	tracked	LIVE	router			open		always	docs/orchestration/control_plane_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	14	202	12151
 docs/orchestration/CLAIM-CLM-001.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	686
 docs/orchestration/CLAIM-CLM-002.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	515
@@ -55,7 +55,7 @@ docs/orchestration/INDEX-retracted-and-superseded-values.md	tracked	LIVE	index		
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	39	81	57236
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	3	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	8	58	3813
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	15	419	87580
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	15	419	87581
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	2	184	13929
 docs/orchestration/MIGRATION-DELTA.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	4	67	4450
 docs/orchestration/MIGRATION-HANDOFF.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	6	146	9653
@@ -321,7 +321,7 @@ docs/orchestration/state/negweight-hpss-20260821/verified.paths	tracked	MACHINE	
 docs/orchestration/state/negweight-hpss-durability-20260821.json	tracked	MACHINE	state-artifact		20260821	generated		exact-path-only	docs/analysis-note/check_dead_containment.py;docs/orchestration/verify_hash_bindings.py	yes	7	2734	130032
 docs/orchestration/state/oi120c-loader-purity-perturbation-56975592.json	tracked	MACHINE	state-artifact			generated		exact-path-only	docs/orchestration/test_receipt_verdict_is_not_the_superseded_one.py	yes	4	153	7927
 docs/orchestration/state/oi120c-loader-purity-perturbation-56975592.txt	tracked	MACHINE	state-artifact			generated		exact-path-only	docs/orchestration/test_probe_oi120c_verdict.py	yes	4	138	5047
-docs/orchestration/state/oi137-covering-search-20260822.sh	tracked	MACHINE	state-artifact		20260822	open		exact-path-only		no	4	96	4974
+docs/orchestration/state/oi137-covering-search-20260822.sh	tracked	MACHINE	state-artifact		20260822	open		exact-path-only		no	4	132	6902
 docs/orchestration/state/oi22-legA-real-input-verification-20260814.json	tracked	MACHINE	state-artifact		20260814	generated		exact-path-only		yes	1	195	7986
 docs/orchestration/state/opendata-input-integrity-20260813.json	tracked	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	3	174	12766
 docs/orchestration/state/opendata-input-integrity-fullcoverage-20260813.json	tracked	MACHINE	state-artifact		20260813	generated		exact-path-only		yes	2	69	5960

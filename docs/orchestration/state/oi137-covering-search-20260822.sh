@@ -21,23 +21,59 @@ trap 'rm -rf "$TMP"' EXIT
 # Tracked AND untracked (--exclude-standard drops gitignored), minus the
 # worktree tree: a peer's live audit checkout under .claude/worktrees/ would
 # otherwise be counted as repository content and inflate every hit count.
-# SELF-EXCLUSION, and it is not cosmetic: the first run of this harness reported
-# `kaufman hits=1`, `sellentin hits=1`, `percival hits=1`, `wishart hits=1` -- every
-# one of them THIS FILE matching its own term list. An absence test that names the
-# thing it is looking for cannot find its own null. The true count for those terms
-# is 0. Same failure shape as the OI-147 docstring exclusion.
-SELF='docs/orchestration/state/oi137-covering-search-20260822.sh'
+# ---- SELF-REFERENCE SET, and it is not cosmetic -----------------------------
+# This harness reports a NULL. Any file that DISCUSSES the harness necessarily
+# names every term it searches for, so such a file matches, and the match is the
+# instrument observing itself rather than the world.
+#
+# This bit us TWICE, one level apart, which is why it is a declared SET and not
+# an inline `grep -v`:
+#   1. Run 1 (pre-commit): `kaufman hits=1`, `sellentin hits=1`, `percival hits=1`,
+#      `wishart hits=1` -- every one THIS FILE matching its own term list.
+#   2. After the brief merged to main at `7ab15877`: the SAME four terms went to
+#      `hits=2`, plus `effective ndf` and `unbiased inverse` to `hits=1`, every
+#      hit being the BRIEF's own results table reporting them as zero. The script
+#      had excluded itself but not the document that documents it, so re-running
+#      the harness to CHECK the brief produced numbers contradicting the brief.
+# The true count for all six is 0. Same shape as the OI-147 docstring exclusion.
+#
+# Anything added here must be a file ABOUT this search, never a file that could
+# legitimately contain an implementation -- excluding one of those would
+# manufacture the null instead of measuring it.
+SELF_REFERENCE_SET="docs/orchestration/state/oi137-covering-search-20260822.sh
+docs/orchestration/BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md"
 
 git ls-files -c -o --exclude-standard \
   | grep -E '\.(py|tex|md|ipynb|json|tsv|sh|cxx|C|h|txt|yaml|yml|cfg|toml)$' \
   | grep -v '^\.claude/worktrees/' \
-  | grep -vxF "$SELF" > "$TMP/searchset.txt"
+  | grep -vxF "$SELF_REFERENCE_SET" > "$TMP/searchset.txt"
 
 echo "HEAD: $(git rev-parse HEAD)"
 echo "search set: $(wc -l < "$TMP/searchset.txt" | tr -d ' ') files"
 echo "--- by extension ---"
 sed 's/.*\.//' "$TMP/searchset.txt" | sort | uniq -c | sort -rn
 echo
+# A RENAME MUST NOT SILENTLY RE-ENABLE THE FALSE HITS. If a member of the
+# self-reference set is moved, the `grep -vxF` above stops matching it, the
+# exclusion quietly stops working, and the six nulls come back as 1s with no
+# error anywhere. So assert every member still exists, by path, and fail loudly.
+while IFS= read -r _m; do
+  [ -n "$_m" ] || continue
+  if ! git ls-files --error-unmatch "$_m" >/dev/null 2>&1; then
+    echo "SELF-REFERENCE SET IS STALE: '$_m' is no longer a tracked path." >&2
+    echo "It was probably renamed. Update SELF_REFERENCE_SET or the nulls below" >&2
+    echo "will silently report this harness's own documentation as real hits." >&2
+    exit 1
+  fi
+done <<< "$SELF_REFERENCE_SET"
+
+echo "EXCLUDED AS SELF-REFERENCE (files ABOUT this search, which necessarily"
+echo "name every term it looks for -- printed so the exclusion is auditable):"
+while IFS= read -r _m; do
+  [ -n "$_m" ] && echo "  * $_m"
+done <<< "$SELF_REFERENCE_SET"
+echo
+
 echo "NOT IN THE SEARCH SET (stated so the null can be falsified):"
 echo "  * binary ROOT payloads -- a correction applied inside a .root TNamed"
 echo "    would not be found here. Checked separately: the adopted 5D roots"
