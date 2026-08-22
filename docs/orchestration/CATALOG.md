@@ -95,7 +95,15 @@ Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any subm
   pre-submission, 10 split, **none** is purely post-rehearsal), the two gates and what each unlocks,
   and the eligibility rule. **If you are grading this contract, read §7.0 before §F.** Two traps it
   names: a NOT-EVALUABLE in the pre-submission column is a FAIL of Gate 1, and "needs the cluster"
-  is not "needs a run" — F-9's negative control is pre-submission and performable today.
+  is not "needs a run" — F-9's negative control is pre-submission. **FURTHER AMENDED 2026-08-22 by
+  rulings 20-22 (§7.0.11-§7.0.16): F-9 and F-12 are RESTATED.** B-4 containment refuses the
+  canonical-checkout wrapper before the import guard installs, so F-9 no longer requires
+  `seed_offset_policy` to be named — it forbids it — and **`checked=0` is the EXPECTED value there,
+  inverting the anti-vacuity rule that applies everywhere else.** Also lands ruling 21's 14/30
+  guarding boundary with the preflight ORDERING requirement graded as a criterion, and ruling 22's
+  A-2(d)/(e)/(g) fail-closed checks and P-4 pin-vs-mechanism split. The transferable lesson, and it
+  has now recurred twice: **a protection can invalidate the control written to test a different
+  protection, and the control then presents as merely unperformed rather than as impossible.**
 - [`VERIFICATION-20260822-k0-execution-integrity.md`](VERIFICATION-20260822-k0-execution-integrity.md)
   — the round-1 verdict against that contract: **NOT A PASS**, 7/7/4. It predates the §7.0 split and
   is not revised; it grades build `ae42ae8d`, which is **NOT on main**.
