@@ -379,6 +379,7 @@ def main(argv=None) -> int:
                   file=sys.stderr)
             return CANNOT_CHECK_EXIT
         n = set_readonly(a.repo, sorted(live["files"]), on=a.apply_readonly)
+        n_protected, n_other = n, 0
         # The non-tracked writable files too, or protection is a statement about git rather than
         # about the tree. Owner write is restored on undo; nothing else is touched.
         for rel in other_writable_files(a.repo, sorted(live["files"])):
@@ -388,12 +389,14 @@ def main(argv=None) -> int:
                 new = (m & ~0o222) if a.apply_readonly else (m | 0o200)
                 if new != m:
                     os.chmod(full, new)
-                    n += 1
+                    n_other += 1
             except OSError as err:
                 print(f"[srcman] could not chmod {full}: {err}", file=sys.stderr)
+        # TWO COUNTS, REPORTED SEPARATELY. One combined number would be read as "of N in the
+        # protected set" and it is not -- the non-tracked files are the OTHER half of A-2(g).
         print(f"[srcman] {'applied' if a.apply_readonly else 'undid'} A-2(g) write protection: "
-              f"{n} path(s) changed mode, of "
-              f"{len(protected_paths(a.repo, sorted(live['files'])))} in the protected set")
+              f"{n_protected} of {len(protected_paths(a.repo, sorted(live['files'])))} protected "
+              f"path(s) changed mode, plus {n_other} non-tracked writable file(s)")
         live = build(a.repo)
         live["label"] = a.label
 
