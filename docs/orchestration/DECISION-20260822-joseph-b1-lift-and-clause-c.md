@@ -32,6 +32,41 @@ at `:256` and exits at `:330`, **before both adopt calls at `:347` and `:352`**.
 holds, the present-seed path cannot reach steps (4)/(5) through a real `sbatch`, and a clause
 demanding it would be its own precondition.
 
+### Which document supports which half of "measured, not argued"
+
+**Added 2026-08-22 to correct an overclaim of mine.** My merge commit `63cbf995` described
+`FINDING-20260822-clause-c-adopt-is-unreachable-under-its-own-pause.md` as *"the only one that RAN
+the launcher rather than reading it"* and pointed the sentence above at it. **Its author objected and
+is right on both counts**, in the direction this whole thread has been correcting — over-claiming
+scope. The commit message cannot be edited after pushing, so the correction lives here, where a reader
+chasing the evidence for ruling 1 will actually arrive.
+
+| claim | cite | why |
+|---|---|---|
+| **the adopt semantics were measured** | `33c0e0fa` / `81905bba` | the real extracted segment under `srun`, **real ROOT at production dimension** *n* = 10694, 22 arms, 16 refusals firing |
+| **no configuration reaches `:347`/`:352`** | the reachability finding | a control-flow harness plus a covering enumeration of the environment |
+
+**What that finding actually ran, in its own words and in its own scope section:** a **copy** of the
+launcher with line 15's hardcoded `REPO` repointed at a sandbox (verified by diff as the sole hunk); a
+**stub `python3`** recording argv and touching output paths, so **not one ROOT byte was read** and the
+two 892 MB products were never built; a stubbed `setup_salloc_env.sh`; bash 3.2.57 locally, **never
+under `sbatch` or Slurm**; and in the single arm that reached adopt, **a fabricated `.done` marker** —
+on the real tree that marker is absent, which is the point of its own §4. So the resolver block at
+`:18-100`, the `BASH_SOURCE`/spool behaviour and the `${REPO}` hardcode's real effect are all
+**untested by it**.
+
+That makes it the right instrument for the **branch** question and **weaker**, not stronger, evidence
+about anything downstream of the branch. Its value is real and specific: the launcher takes **no
+positional arguments**, so behaviour is a pure function of the environment, and a covering enumeration
+of every `${VAR}` on an uncommented line leaves `MNV_EST_SEED_OFFSET` as the only lever on `:256`.
+That is a structural claim, and structural is what ruling 1 needs.
+
+**On "third independent method", which I also wrote:** its author declines to certify the count,
+noting it can only attest that neither of the other two routes is its own — it has not audited whether
+the runbook's route and `33c0e0fa`'s are independent **of each other**. They are not fully: the runbook
+reads the same control flow the verdict does. **Two methods are demonstrably independent — the stubbed
+harness and the real-ROOT `srun` arms. The runbook is a third reading, not a third measurement.**
+
 ## Ruling 2 — merge both verdict branches
 
 > "Integrate both verdict branches into main, including the full correction chain through 81905bba.
