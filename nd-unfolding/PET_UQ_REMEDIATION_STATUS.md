@@ -576,6 +576,37 @@ contract and the prose spec, so an additive amendment breaks a committed receipt
 reverted rather than repinned (`BEN-238`, `OI-123`). **This paragraph exists because a contract reader has
 no other way to learn the ruling exists** — `CSTAT-O1`'s re-opened-four-times failure, one level up.
 
+**ERRATUM 2026-08-22, ON JOSEPH'S RULING — THE BIAS DIRECTION IN BOTH PINNED GATE-5 RECORDS IS
+BACKWARDS.** `pet/gate5_cstat_contract.json:299-300` and
+`state/gate5-cstat-spec-measurements-20260814.json:258` say the finite-`N` bias makes chi-square
+*"too SMALL"*, *"an error in the flattering direction"*. **That is the wrong way round.** The inverse
+of a noisy sample covariance is biased **UPWARD**, so for a fixed residual chi-square is **INFLATED**
+and tension is **OVERSTATED**, never hidden. What does become over-optimistic is any confidence region
+drawn from the same over-tight covariance — a materially different hazard: *conservative* for a quoted
+significance, *live* for an interval. `docs/analysis-note/app_statmethods.tex:666-670` says so in as
+many words (*"The consequence runs the opposite way to the intuition"*).
+
+**The two records are PRESERVED BYTE-FOR-BYTE and Gate 5 is NOT re-run for this.** Joseph ruled that
+explicitly on 2026-08-22: the prose error does not justify re-running the gate and re-issuing its
+receipts, and Gate 5 is off the publication critical path under `OI-126` in any case. **The erratum
+lands here for the reason the paragraph above already gives** — this file is the only channel a
+contract reader has, the same constraint that forced `BEN-238`/`OI-123` to revert rather than repin.
+Note the pin covers the **prose SPEC as well as the machine contract**, so the SPEC is not an
+available home either; verified 2026-08-22, its live sha256 is `4fed4e2b…`, exactly the value the
+receipt records, and `verify_hash_bindings.py` reports ALL BINDINGS INTACT.
+
+**Corrected records to read instead:** `OI-93` and `OI-137` in `../docs/OPEN_ITEMS.md`, and
+`docs/orchestration/BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md`. **`OI-93`'s
+`(N−p−2)/(N−1)` form is NOT a typo against the note's `(N−p−2)/N`** and must not be "fixed" to match:
+the PET `C_stat` is built with `np.cov(..., ddof=1)` (`pet_systematics.py:191`), so the unbiased
+denominator is correct there, while the note's biased `1/N` is correct for the MAT/joint-throw
+convention it describes (`uq_math.py:104`). Two conventions, each right in its own scope.
+
+**Nothing downstream moves.** No builder truncates, inverts or corrects anything (`SPEC` §11), and the
+requirement the reversed rationale was attached to — *state `p_effective`, `N`, and whether a
+correction was applied* — is the right requirement whichever way the bias runs. That is precisely why
+a reversed *rationale* survived eight days with no action looking wrong.
+
 `SPEC-20260814-gate5-cstat-construction-v1.md` + `pet/gate5_cstat_contract.json` pin the
 covaried key (`xsec`), the **`15 × 19 = 285`** grid (**not** `AGENTS.md`'s 224-cell paper grid — the dump is
 extended-FPS), the flattening string, replica ordering, **centring on the replica mean** (nominal-centring

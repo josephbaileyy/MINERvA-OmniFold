@@ -215,3 +215,106 @@ different hazard, and the row has been corrected.
 
 `PROJECT_STATE_PILOT_PROPOSAL.tmp.md` and `log_test.txt` remain untracked at the repository root,
 untouched.
+
+
+---
+
+# SECOND SET OF RULINGS, 2026-08-22 — rulings 9–14
+
+Recorded on the same basis as rulings 1–8: verbatim from Joseph in session, committed because a
+relayed result is not quotable.
+
+## Ruling 9 — the two pinned Gate-5 records stay; erratum elsewhere
+
+> "Preserve the two pinned Gate-5 records byte-for-byte; do not rerun Gate 5 or reissue their receipts
+> for this prose error. Add a concise erratum to the live, non-pinned Gate-5 specification stating that
+> the noisy sample-covariance inverse is biased upward: for a fixed residual, χ² is inflated and
+> tension is overstated. Point from there to the corrected OI-93/OI-137 record."
+
+**EXECUTED, WITH ONE SUBSTITUTION THAT THE RULING'S OWN PREMISE REQUIRES.** *"The live, non-pinned
+Gate-5 specification"* **does not exist.** Measured 2026-08-22:
+`state/gate5-cstat-spec-measurements-20260814.json` pins **both** records —
+`SPEC-20260814-gate5-cstat-construction-v1.md` at `4fed4e2b…` under `"SPEC (markdown)"` **and**
+`pet/gate5_cstat_contract.json` at `ef5fe362…` under `"machine contract"`. The SPEC's live sha256 is
+exactly `4fed4e2b…`, `verify_hash_bindings.py` reports ALL BINDINGS INTACT, and that same digest is
+the mutation anchor at `tests/test_hash_bindings.py:41`. Editing the SPEC breaks a live binding and
+fails pre-commit, which is the same cost the ruling declines to pay for the contract.
+
+**The erratum therefore landed in `nd-unfolding/PET_UQ_REMEDIATION_STATUS.md`** — unpinned, `LIVE`, and
+already citing both Gate-5 records at `:579`. This is not a workaround: that file **already contains a
+paragraph explaining that the pin makes amendment impossible**, ending *"This paragraph exists because
+a contract reader has no other way to learn the ruling exists"*, with precedent at `BEN-238` / `OI-123`
+where an additive amendment was **reverted rather than repinned**. The ruling's intent — an erratum a
+Gate-5 reader will reach, pointing at the corrected record — is satisfied at the established channel.
+
+## Ruling 10 — declaration (v) assigned to the standard-P4 lane
+
+> "Assign the remaining declaration-(v) work to the standard-P4 lane, acting as the scalar-5D
+> adoption/statistics owner. Its scope is to record, for each 5D sample-covariance block, ensemble
+> size, normalization convention, effective inversion dimension, and finite-ensemble treatment. This
+> assignment authorizes record/provenance completion only—not adoption or an uncertainty-model change.
+> Do not route it back to the measurement lane or the PET C_stat lane."
+
+**Recorded on `OI-137`'s owner cell**, superseding `UNOWNED`, with the scope limit and the
+do-not-reroute instruction stated in the cell so they travel with the assignment.
+
+## Ruling 11 — disclose, do not correct
+
+> "I accept the recommendation to disclose and not correct. Apply no blanket Hartlap factor to the
+> summed covariance and make no covariance change. The disclosure must use the mixed-block/
+> data-dependent-truncation rationale. Do not justify this using the finite-N blocks' trace share. For
+> the quoted 2D headline, the relevant protection is that the paper's external rank-205 StatOnlyCov
+> sets the small-eigenvalue floor; the result remains explicitly non-calibrated as a goodness-of-fit
+> statistic."
+
+**LARGELY ALREADY SATISFIED IN THE NOTE — measured before writing anything, so that no redundant prose
+is added to a publication artifact.**
+
+| requirement | status |
+|---|---|
+| mixed-block / data-dependent-truncation rationale | **present**, `app_statmethods.tex:673-675` — *"a sum of that kind has no single debiasing factor; the standard factor also assumes independent Gaussian realizations and a truncation dimension chosen independently of the data, neither of which is established for a data-dependent rank cut"* |
+| explicitly non-calibrated as a GoF statistic | **present**, `sec_results.tex:63` |
+| no blanket Hartlap factor, no covariance change | **holds** — nothing implements one; `app_statmethods.tex:672` says *"No generic correction is mandated here, deliberately"* |
+| StatOnlyCov as the small-eigenvalue floor **for the quoted headline** | **partially present and framed differently** — see below |
+
+**The gap, and it is narrow.** `app_statmethods.tex:874-884` states the StatOnlyCov comparison, but as
+an argument about why an **ours-only** χ² is out of reach, not as the protection for the **quoted**
+headline. Those are adjacent, not identical. **No note edit is made on my own reading** — the note is a
+publication artifact and the ruling does not in terms require new text. Flagged for Joseph.
+
+**A NUMBER TRAP TO CARRY, because both values are correct at different scopes.** The brief says our
+bootstrap is **6.41×** smaller than `StatOnlyCov`; the note says **2.5×**
+(`sqrt(Tr C^boot) = 1.8e-40` vs `sqrt(Tr StatOnlyCov) = 4.6e-40`). **2.5 is the sqrt-trace ratio and
+6.4 is the trace ratio** — 2.56² = 6.53 from the note's rounded operands. Neither is wrong; quoting
+either at the other's scope is. **Say which power you mean.**
+
+## Ruling 12 — the target is option (a), the M(ii) member scan
+
+> "The scientific target is option (a), the M(ii) member scan—not stamped re-adoption of the archive
+> products. Marker backfill remains unauthorized. This selects the target but does not authorize the
+> 151 A100-hour family, C_ML production, or a full member scan."
+
+**Selection only.** A staged one-member plan is required before production authorization is sought,
+covering: exact jobs and per-leg resource estimates; scratch quota and output disposition below the
+runbook threshold; the exact member/offset for the first submission; terminal success and abort
+conditions; **what a one-member pass cannot authorize**; and the remaining cost and storage for the
+full family.
+
+## Ruling 13 — pause-branch removal deferred
+
+> "Defer removal of the launcher's pause branch until a member is actually runnable. Preserve the
+> clause text and existing pins in the meantime."
+
+No action. Matches the disposition already recorded under ruling 1.
+
+## Ruling 14 — the first complete member IS the Slurm rehearsal
+
+> "For option (a), the first complete member should also serve as the real Slurm rehearsal. That
+> rehearsal is a production submission, not a stub test, and therefore must wait for explicit approval
+> of the one-member plan. It should exercise the real launcher, executing-tree/digest checks, Slurm
+> resolver behavior, gates, and abort conditions. A successful rehearsal does not authorize the
+> remaining family."
+
+This closes the open item the reachability lane left: its harness ran a patched copy with stubbed
+producers, never under Slurm, so `BASH_SOURCE`/spool behaviour, the resolver block and the `${REPO}`
+hardcode's real effect are untested. Ruling 14 makes the first real member the test of exactly those.
