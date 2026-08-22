@@ -12,6 +12,15 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 - Active process rules: [`PLAYBOOK.md`](PLAYBOOK.md).
 - Open/deferred source records: [`../OPEN_ITEMS.md`](../OPEN_ITEMS.md).
 - Joseph-only decisions: [`USER-DECISIONS.md`](USER-DECISIONS.md).
+- **The whole remaining publication path, ordered by dependency:**
+  [`PUBLICATION-READINESS-20260822.md`](PUBLICATION-READINESS-20260822.md) — every item with its
+  measured state and command, split into Joseph decisions / lane work / gated / done. It answers two
+  questions no other document settles: **the `M(ii)` member family IS on the critical path**, via the
+  seven-cause quarantine named as *the binding gate* in `../INTEGRATION_CHECKLIST.md` rather than via
+  any runbook packet; and the **P3S lateral is BUILT and validated but not committed and not
+  adopted**, which makes `VALIDATION_LEDGER.md` `VL68` and
+  [`RUNBOOK-20260807-gbdt-closeout.md`](RUNBOOK-20260807-gbdt-closeout.md)`:38` stale.
+  **A view, never evidence** — re-measure any field before deciding a gate on it.
 
 ## Evidence and claims
 
