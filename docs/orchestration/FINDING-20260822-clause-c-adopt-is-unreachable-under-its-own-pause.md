@@ -12,6 +12,11 @@ as written is circular, on three independent grounds, two of them structural and
 about the artifacts that exist today. This is a finding about the *condition's satisfiability*, not
 about anyone's code quality: every branch involved is doing what its own comment says it does.
 
+**Read §4b before citing anything here.** One of the three grounds (§3) was already committed by
+another lane in `VERDICT-20260821-expiry-c-real-path-present-seed.md` (`33c0e0fa`); I re-derived it
+without knowing that. §4b separates what is new from what is a rediscovery, and names the one point on
+which this document *corrects* that verdict.
+
 This document changes no code and no `nd-unfolding/` file. It edits nothing under
 `docs/OPEN_ITEMS.md` either — see **Scope and limits**.
 
@@ -108,7 +113,22 @@ regimes.
 
 ## 3. Second circularity — the check clause (c) exists to exercise is itself gated on `declared`
 
-This one is stronger, because it does not depend on any file's bytes.
+**THIS SECTION IS NOT MINE AND I FOUND THAT OUT AFTER WRITING IT.** Both halves of it are already
+committed, in `VERDICT-20260821-expiry-c-real-path-present-seed.md` ("Corrections to the framing I was
+given", item 2), added by `33c0e0fa`. That verdict states that the launcher "cannot reach the wrapper
+in the declared regime at all", names `mr_declared` as reading "the same variable
+`seed_offset_policy.declared_offset()` reads", and says that on the undeclared route
+"`assert_seeds_match_their_baselines` returns immediately." That is this section, in full, first.
+I re-derived it independently and then measured it; **the measurement below is a corroboration with a
+negative control, not a discovery,** and the credit is theirs. It is recorded here rather than deleted
+because §5's conclusion depends on it and a reader should not have to reconstruct the chain — but
+nobody should cite this document as its source.
+
+(That verdict is present in local `main` and **absent from this branch's base**, which is why it is
+cited by commit rather than by link. It was also the thing I should have read first: see
+**Scope and limits**.)
+
+The reasoning does not depend on any file's bytes, which is what makes it the load-bearing ground.
 
 The OI-140 recompute — the thing "verified the real path on a present-seed artifact" is *for* — is
 `assert_seeds_match_their_baselines` (`mii_adopt_unified_5d_stamped.py:355`). Its first statement is:
@@ -136,7 +156,7 @@ stand-in; nothing ROOT-dependent called):
   `SystemExit: [FAIL] g1 leg's estimator_seed is 42 but this process declares offset 1200 against
   baseline 42, i.e. 1242.` The check has power; the fixture can fire.
 
-Arm 1 is the finding: **even if you handed the undeclared route perfect present-seed legs, the
+Arm 1 is the operative point: **even if you handed the undeclared route perfect present-seed legs, the
 identity check would still compare nothing.** The undeclared route cannot exercise it at any price.
 `stamp_pairs` on seed-absent legs confirms what such a run would record —
 `[('est_seed_offset_declared', 0), ('est_seed_offset', 0), ('upstream_estimator_seed_g1_checked', 0),
@@ -170,6 +190,32 @@ So as of 2026-08-22 a real `sbatch` of this launcher terminates before `:347` in
 anywhere on the cluster — archive or member.
 
 ---
+
+## 4b. What is actually new here, stated so nobody over-credits this document
+
+Set against `VERDICT-20260821-expiry-c-real-path-present-seed.md` (`33c0e0fa`), which got to §3 first:
+
+* **New — and it CORRECTS that verdict on one point.** It says "the only route to the adopt call is
+  the **undeclared** one." That was a statement about the code, and as a statement about the code it is
+  right. As a statement about what a submission would do **today** it is not: the archive `COMB` has no
+  `.done` marker, so the undeclared route `exit 5`s at `:253` (§4). There is currently **no** route.
+* **New: the covering enumeration.** No positional arguments, and every `${VAR}` on an uncommented line
+  accounted for, which is what upgrades "I could not find a way in" to "there is no way in." That
+  verdict's own "what I did NOT verify" list names **"a real `sbatch` submission"** as untested — this
+  document is that gap, closed to the extent a harness can close it (§1, and see the bash-3.2 limit).
+* **New: the artifact census.** The archive legs re-measured today rather than cited (§2), plus the
+  fact that **no present-seed leg exists anywhere** — the member tree is 18 bootstrap `.npz` with no
+  `COMB`, sweep leg, or uthrow (§4). That verdict explicitly did not open the 41.44 GB intermediate.
+* **New: the synthesis.** That the two properties clause (c) conjoins sit in mutually exclusive
+  branches, so the clause is unsatisfiable *as written* — and therefore that the disposition is a
+  forced choice (§5) rather than a judgement call.
+* **Not new:** §3 in its entirety, and the declared-regime half of §1.
+
+The general lesson is the one this repo keeps re-learning, and I re-learned it the expensive way:
+**I ran the measurements before searching for prior work on the same question.** The prior verdict was
+one `git log` away over the obvious path. Measuring first is not the error — publishing without
+checking who already answered it is, because a rediscovery presented as a discovery inflates the
+evidence base with one fact counted twice.
 
 ## 5. What this forces
 
@@ -220,6 +266,13 @@ document lifts anything.
   clause (c) discharge run came from. No production present-seed leg exists (§2, §4), so it was not a
   production leg — but I did not locate or audit that lane's scratch products, and I am not
   characterising them. That is a question for whoever reviews `2b6bf689`, not an assertion here.
+* **This branch's base does not contain the prior verdict.** The worktree branched from `origin/main`,
+  which is behind local `main`; `VERDICT-20260821-expiry-c-real-path-present-seed.md` and
+  `FINDING-20260822-a-hold-that-instructed-its-own-deletion.md` exist in local `main` only. The four
+  source files this document analyses are **byte-identical** across both
+  (`sbatch_finalize_5d_bkgaware_gpu.sh` = `765c5875`, `lib_member_resume.sh` = `7abfb331`,
+  `mii_adopt_unified_5d_stamped.py` = `14e65124`), so every line citation holds on either tree — that
+  was checked, not assumed. But the §3 cross-reference will not resolve until this branch merges.
 * **No `docs/OPEN_ITEMS.md` row was edited.** Those rows are digest-bound to
   `source-record-inventory.tsv`, so touching one is a coupled multi-file change outside the brief I
   was given ("file your finding under `docs/orchestration/`"). If this finding should carry an OI row,
