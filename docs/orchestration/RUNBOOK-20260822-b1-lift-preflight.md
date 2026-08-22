@@ -16,7 +16,7 @@ reasons that have nothing to do with the pause, and lifting the pause does not c
 
 | route | where it stops | why |
 |---|---|---|
-| **declared** (`MNV_EST_SEED_OFFSET` set) | the FIRST `mr_run`, `sbatch_finalize_5d_bkgaware_gpu.sh:167` | the member has **3 of 100** bootstrap replicas |
+| **declared** (`MNV_EST_SEED_OFFSET` set) | **two** back-to-back `mr_run` calls, `sbatch_finalize_5d_bkgaware_gpu.sh:167` **and** `:168` | `:167` wants **100** bootstrap replicas and finds **3**; `:168` wants **24** seedscan splits and finds **0**, with `seedscan_split_5d/` **absent entirely**. Clearing the first does not clear the second. |
 | **undeclared** (offset unset) | `:253`, `exit 5` | the 41.44 GB intermediate has **no completion marker** |
 
 Neither is a defect. Both are guards working as designed. But it means **the first production
@@ -120,7 +120,10 @@ that runs.
 
 ```bash
 ls mii/member_k000000/boot_nd_5d/res_boot_*.npz      | wc -l   # need 100
-ls mii/member_k000000/seedscan_split_5d/res_split_*.npz | wc -l   # need 24
+# NOT `ls ... | wc -l` for this one: it prints 0 for an EMPTY directory and 0 for an
+# ABSENT one, and here the directory is absent. Ask the two questions separately.
+[ -d mii/member_k000000/seedscan_split_5d ] && echo PRESENT || echo ABSENT
+ls mii/member_k000000/seedscan_split_5d/res_split_*.npz 2>/dev/null | wc -l   # need 24
 ls mii/member_k000000/uq_5d/universe_sweep_bkgaware/5d_xsec_*_uni_full_*.root | wc -l
 ```
 
@@ -130,7 +133,7 @@ Measured, identically for **all three existing members** (`member_k000000`, `mem
 | input | required | present |
 |---|---|---|
 | `boot_nd_5d/res_boot_*.npz` | 100 | **3** |
-| `seedscan_split_5d/res_split_*.npz` | 24 | **0** |
+| `seedscan_split_5d/res_split_*.npz` | 24 | **0 — and the directory itself is ABSENT** |
 | vertical sweep roots | ≥1 | **0** |
 | the member's own CV | 1 | **absent** |
 | `uq_5d/unified_throw_cov_5d.root` | 1 | **absent UNDER `mii/` — see the warning below** |
@@ -387,9 +390,27 @@ the moment it becomes useful is the moment it may already be wrong. Two specific
    intermediate (47 keys, zero `TParameter<int>`). **Any authorized re-production of either leg
    falsifies it.** If a later lane cites it to justify skipping an identity check, that is the reading
    it will not survive: **re-measure the keys, do not inherit the row.**
-2. **"No member is runnable — 3 of 100 replicas."** Measured 2026-08-22 and confirmed by a second lane
-   with an executed refusal. It becomes false the instant member production starts, which is the first
-   thing anyone acting on this runbook would do.
+2. **"No member is runnable."** Measured 2026-08-22 and confirmed by a second lane with an executed
+   refusal. It becomes false the instant member production starts, which is the first thing anyone
+   acting on this runbook would do. **AND IT IS TWO INDEPENDENT REFUSALS, NOT ONE — fixing the first
+   does not clear the second:**
+
+   | call | validator | found |
+   |---|---|---|
+   | `:167` `STAT_COV` | `--expected-ids 1-100` over `<member>/boot_nd_5d/res_boot_*.npz` | **3** of 100 |
+   | `:168` `ML_COV` | `--expected-ids 1-24` over `<member>/seedscan_split_5d/res_split_*.npz` | **0** of 24, and `seedscan_split_5d/` is **absent entirely** |
+
+   Verified across all three members 2026-08-22: the only subdirectory under each is `boot_nd_5d`
+   (plus a `uq_5d/` under `member_k001200`). **Re-measure BOTH. A member is runnable only when both
+   pass.** A lane that reads "3 of 100", produces the hundred replicas and resubmits will clear `:167`
+   and die at `:168` on a directory that does not exist — and will read that as a regression, because
+   the runbook told it what was missing and it fixed exactly that.
+
+   **This is the failure §6b exists to prevent, one level up, and it was in this document until
+   2026-08-22:** a stated blocker that is one of two reads as sufficient. Same family as the
+   one-directional coverage guard that let an over-length array through — **satisfying the named
+   condition implies nothing about the unnamed one.** Caught by the reachability lane reading the
+   section I had just written about perishable claims.
 
 **The general form, and the reason this section exists at all:** the clause (c) reachability finding
 went from open question to confirmatory in **eight minutes** when Joseph ruled. **A measurement can go
