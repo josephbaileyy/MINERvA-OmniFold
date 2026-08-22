@@ -78,6 +78,16 @@ Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any subm
 - [`RUNBOOK-20260822-b1-lift-preflight.md`](RUNBOOK-20260822-b1-lift-preflight.md) — required by
   ruling 4. **Its headline is that the launcher must NOT be submitted yet**: both routes refuse today
   for reasons unrelated to the pause, measured on the cluster.
+- [`REVIEW-CONTRACT-20260822-k0-execution-integrity.md`](REVIEW-CONTRACT-20260822-k0-execution-integrity.md)
+  — **the controls for corrections 2-4, agreed by a fresh non-builder BEFORE the builder implements**,
+  on Joseph's instruction that the evidence cannot be selected afterwards. Read it before writing any
+  OI-136 wrapper, guard or negative control on the k=0 path. Its headline correction to the plan: the
+  pinned adopter `adopt_unified_5d.py` imports **no repository module at all**, so guarding its
+  subprocess is vacuous **by construction** and no source repair is authorized there — while
+  **five other entrypoints plus one imported module** on legs 1-5 do carry a rooted insert *and*
+  import repository code through it, and those are where the scoped source repair belongs. Also:
+  the clean tree must be split into a code root and a data root, and `mnv_guarded_run.py` never
+  checks that the script it runs is inside `--expect-root`.
 
 ## Task routes
 
