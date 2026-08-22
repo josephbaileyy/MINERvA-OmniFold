@@ -420,6 +420,36 @@ class TheInventoryIsThePositiveEvidence(GuardFixture):
         self.assertGreater(rec["checked"], 0)   # it DID look; it found nothing repository-local
         self.assertIn("verdict=EMPTY-REPOSITORY-ORIGIN-SET", cp.stderr)
 
+    def test_a_B4_REFUSAL_never_records_itself_as_an_EMPTY_GREEN_RUN(self):
+        """FOUND BY RUNNING THE REAL N-1 ARM ON THE CLUSTER, 2026-08-22, not by a test.
+
+        A script-containment refusal raises no `ImportTreeViolation`, so the verdict fell through
+        to the empty-green string and the record of a refusal read "THE GUARD REFUSED NOTHING
+        BECAUSE IT SAW NOTHING". Both clauses were false. The record of a red run must not be
+        readable as the record of a vacuous green one -- that is the same conflation P-3 exists to
+        prevent, reintroduced inside the field that prevents it.
+        """
+        other = make_checkout(pathlib.Path(self._tmp.name), "another-tree")
+        stray = write(other / "nd-unfolding" / "stray.py", "print('should never run')\n")
+        inv = self._inv("b4refusal.jsonl")
+        cp = run(GUARD, "--expect-root", self.good, "--inventory", inv, "--", stray)
+        self.assertEqual(cp.returncode, mgr.VIOLATION_EXIT, cp.stdout + cp.stderr)
+        rec = json.loads(inv.read_text().strip())
+        self.assertTrue(rec["outcome"].startswith("refused:script-outside-expect-root"))
+        self.assertTrue(rec["verdict"].startswith("REFUSED"), rec["verdict"])
+        self.assertNotIn("REFUSED NOTHING", rec["verdict"])
+        self.assertNotEqual(rec["verdict"], mgr.VERDICT_EMPTY)
+        self.assertNotIn("should never run", cp.stdout)
+
+    def test_a_cannot_check_record_says_COULD_NOT_LOOK_and_not_EMPTY(self):
+        inv = self._inv("cannotlook.jsonl")
+        cp = run(GUARD, "--expect-root", self.good / "nd-unfolding",
+                 "--inventory", inv, "--", self.entry)
+        self.assertEqual(cp.returncode, mgr.CANNOT_CHECK_EXIT, cp.stdout + cp.stderr)
+        rec = json.loads(inv.read_text().strip())
+        self.assertIn("COULD NOT LOOK", rec["verdict"])
+        self.assertNotEqual(rec["verdict"], mgr.VERDICT_EMPTY)
+
     def test_the_two_green_verdicts_are_actually_different_strings(self):
         """If they were equal the whole distinction would be decorative."""
         self.assertNotEqual(mgr.VERDICT_INSPECTED, mgr.VERDICT_EMPTY)

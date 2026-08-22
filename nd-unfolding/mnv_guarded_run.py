@@ -144,6 +144,15 @@ VERDICT_INSPECTED = "REPOSITORY-ORIGINS-INSPECTED"
 VERDICT_EMPTY = "EMPTY-REPOSITORY-ORIGIN-SET -- THE GUARD REFUSED NOTHING BECAUSE IT SAW NOTHING"
 VERDICT_REFUSED = "REFUSED -- AN IMPORT RESOLVED OUTSIDE THE EXPECTED TREE"
 
+#: FOUND BY RUNNING IT, 2026-08-22, on the real N-1 arm against the canonical checkout. A B-4
+#: script-containment refusal raises no `ImportTreeViolation`, so the verdict fell through to
+#: VERDICT_EMPTY and the record of a REFUSAL read "THE GUARD REFUSED NOTHING BECAUSE IT SAW
+#: NOTHING". Both clauses were false and the sentence was the exact inversion of what happened --
+#: precisely the confusion P-3 exists to prevent, reintroduced by the field meant to prevent it.
+#: The verdict is now derived from the OUTCOME as well as from the exception.
+VERDICT_REFUSED_SCRIPT = ("REFUSED -- THE SCRIPT ITSELF LIES IN A CHECKOUT THAT IS NOT "
+                          "--expect-root; nothing was imported because nothing was run")
+
 
 class ImportTreeViolation(Exception):
     """An import resolved inside a checkout that is not the expected one."""
@@ -290,6 +299,21 @@ def _sha256_or_none(path: str) -> str | None:
         return None
 
 
+def _verdict(outcome, origins, violation) -> str:
+    """The one-line human summary. It must never contradict `outcome`.
+
+    ORDER MATTERS AND IS THE WHOLE POINT: a refusal outranks emptiness, because a refused run is
+    empty for a reason that has nothing to do with what the entrypoint imports.
+    """
+    if violation is not None:
+        return VERDICT_REFUSED
+    if str(outcome).startswith("refused"):
+        return VERDICT_REFUSED_SCRIPT
+    if str(outcome).startswith("cannot-check"):
+        return f"COULD NOT LOOK -- {outcome}; this is never 'we checked and it was clean'"
+    return VERDICT_INSPECTED if origins else VERDICT_EMPTY
+
+
 def write_inventory(dest, guard, script, expect_root, allow, outcome, violation=None) -> str | None:
     """P-1: append ONE json object, on ONE line, describing THIS process. Returns the path written.
 
@@ -326,8 +350,7 @@ def write_inventory(dest, guard, script, expect_root, allow, outcome, violation=
         "repo_origins_outside_expect_root": len(outside),
         "repo_origins": origins,
         "outcome": outcome,
-        "verdict": (VERDICT_REFUSED if violation is not None
-                    else (VERDICT_INSPECTED if origins else VERDICT_EMPTY)),
+        "verdict": _verdict(outcome, origins, violation),
         "violation": (None if violation is None else {
             "module": violation.module, "origin": violation.origin,
             "found_root": violation.found_root, "expect_root": violation.expect_root}),

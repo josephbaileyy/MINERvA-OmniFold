@@ -125,6 +125,15 @@ def check(recs, pins, manifest=None, require_empty_allow=()):
         sr = rec.get("script_checkout_root")
         if sr != expect:
             v.append(f"{where}: the SCRIPT resolves under {sr}, not {expect}")
+        # A REFUSAL SITTING IN A PRODUCTION INVENTORY SET IS A VIOLATION, not a curiosity. The
+        # verdict is checked as well as the outcome because the two are written by different lines
+        # and disagreed once already: a B-4 refusal recorded itself as an empty GREEN run until
+        # 2026-08-22, found by running the real N-1 arm.
+        if str(rec.get("outcome", "")).startswith(("refused", "cannot-check")) \
+                or str(rec.get("verdict", "")).startswith(("REFUSED", "COULD NOT LOOK")):
+            v.append(f"{where}: this record is a REFUSAL or a CANNOT-LOOK "
+                     f"(outcome={rec.get('outcome')!r}, verdict={str(rec.get('verdict'))[:60]!r}). "
+                     f"A production inventory set contains only runs that happened.")
         if not rec.get("guard_installed"):
             v.append(f"{where}: no guard was installed, so this record measures nothing")
         if rec.get("checked", 0) <= 0:
