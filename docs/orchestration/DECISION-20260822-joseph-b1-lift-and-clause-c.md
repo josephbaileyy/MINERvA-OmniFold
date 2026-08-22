@@ -288,6 +288,51 @@ bootstrap is **6.41×** smaller than `StatOnlyCov`; the note says **2.5×**
 6.4 is the trace ratio** — 2.56² = 6.53 from the note's rounded operands. Neither is wrong; quoting
 either at the other's scope is. **Say which power you mean.**
 
+### Ruling 11 amendment — AUTHORIZED AND EXECUTED 2026-08-22, superseding "no note edit is made"
+
+Joseph authorized the narrow clarification on 2026-08-22: *"connect the quoted combined chi-square
+explicitly to the external rank-205 near-diagonal StatOnlyCov floor... Do not use trace share alone as
+the safety argument and do not change any quoted result."* **Done**, on branch
+`note-statonlycov-floor-clarification`, as one new `\paragraph{}` in `app_statmethods.tex` (now at
+`:679`, immediately after the declaration-(v) paragraph and before the `chi2_with_cov` implementation
+note, i.e. in the same subsection as the quoted headline). It states that the headline inverts the
+paper+ours **sum**, that the sum carries the paper's rank-205 near-diagonal `StatOnlyCov`, that a
+finite-`N` debiasing factor would act on small-eigenvalue directions an external published block
+supplies, and — explicitly — that this is *not* a trace-share argument, because a trace weights
+eigenvalues by `lambda` and a precision matrix by `1/lambda`. No quoted result changed; note, primer
+and paper rebuilt (`build_all.sh` exit 0).
+
+**The paper needs no counterpart, and this is the measured reason rather than a judgement.**
+`paper_body.tex` quotes `\chiPaper` (`3.66`, paper-covariance-only) at `:71` and `:74` and **never**
+`\chiCombined`; it contains no occurrence of `StatOnly`, `Hartlap`, or any finite-ensemble statement.
+`primer_body.tex` quotes no chi-square at all. The sentence protects the *combined* number, so the
+distillation has nothing for it to attach to; adding it would import a discussion of an object the
+paper does not quote.
+
+**THE TRACE RATIO IS 6.5, NOT 6.41 — the `6.41` above is an asymmetric-rounding artefact.**
+Re-derived 2026-08-22 from the note's own operands, and reported rather than adopted:
+
+| route | operands | sqrt-trace ratio | trace ratio |
+|---|---|---|---|
+| note's displayed values, both 2 s.f. | `4.6e-40 / 1.8e-40` | 2.556 | **6.53** |
+| this document / the brief, mixed precision | `4.6e-40 / 1.817e-40` | 2.532 | **6.41** |
+| **the note's own recorded ratio** (`app_statmethods.tex:927`) | `C^boot/StatOnly = 0.392 = 1/2.55` | **2.551** | **6.51** |
+
+The middle row divides a **2-significant-figure** numerator by a **4-significant-figure** denominator.
+It is refuted by the note itself: `1.817/4.6 = 0.395`, not the recorded `0.392`, so `4.6e-40` is the
+rounded form of `4.635e-40` and the honest ratio is `2.55`. Propagating the last recorded digit
+(`0.392 +/- 0.0005`) gives a sqrt-trace ratio of `2.548-2.554` and a trace ratio of **`6.49-6.52`** —
+an interval that contains 6.5 and **excludes 6.41**. The note therefore says `2.55^2 ~ 6.5`, written
+as the square so the derivation is visible inline. Joseph's `~6.4` is the one figure in the
+authorization not adopted; the deviation is deliberate and is flagged for him to overrule.
+
+The prose mislabel that produced the trap is also corrected at `app_statmethods.tex:899`: *"smaller by
+trace"* now reads *"smaller in square-root trace"*, which is what its own displayed operands measure.
+No number changed on that line. Left alone deliberately, because fixing it would change a claim rather
+than a label: the same sentence's *"regularizes the small systematic modes 2.5x less"* is a
+variance-scale statement, and in variance the factor is 6.5, not 2.5. That is a substantive edit, is
+outside this authorization, and is recorded here for its owner.
+
 ## Ruling 12 — the target is option (a), the M(ii) member scan
 
 > "The scientific target is option (a), the M(ii) member scan—not stamped re-adoption of the archive
