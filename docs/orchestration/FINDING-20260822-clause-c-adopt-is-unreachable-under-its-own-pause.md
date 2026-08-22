@@ -248,6 +248,36 @@ document lifts anything.
 
 ---
 
+## ADDENDUM 2026-08-22 — the question was ruled 8 minutes after this was filed, and it went the way §5 said it could
+
+**Joseph lifted the B1 pause** in `DECISION-20260822-joseph-b1-lift-and-clause-c.md` (`01b88de9`,
+committed 00:26:49 −0500; this finding's commit `452a8b64` is 00:18:07 −0500 — **eight minutes
+earlier**). **Ruling 1 selects option 1 of §5's four**: the `srun` execution of the launcher's exact
+steps 4–5 segment *satisfies* clause (c), the clause is **not** reworded, and — in the ruling's own
+words — requiring a real `sbatch` "would make the expiry circular because the declared launcher exits"
+at the pause. The decision record states the circularity "is real and was measured, not argued."
+**So this document is confirmatory, not decision-forcing: the disposition is made.**
+
+Two things worth separating, because the dates decide which is which:
+
+* **§3 was prior work and that is my error.** `33c0e0fa` is 2026-08-21 13:54 — **10.5 hours** before I
+  started. I should have found it; §4b already says so.
+* **The both-regimes-refuse state was CONCURRENT, not prior.**
+  `RUNBOOK-20260822-b1-lift-preflight.md`, landed in `01b88de9`, independently records the same exit
+  map I measured — declared refuses at `:167`'s first `mr_run` (the member holds 3 of 100 bootstrap
+  replicas) and undeclared refuses at `:253` with `exit 5` because the 41.44 GB intermediate has no
+  completion marker. That runbook did not exist when §1–§4 were measured. **Two independent
+  measurements, different methods, same answer** — which is worth more than either alone, and neither
+  is a rediscovery of the other. My route was a launcher harness plus a cluster key census; theirs is a
+  preflight of the real submission.
+
+**Net standing of this document after the ruling:** §5's option list is spent (option 1 was taken).
+What survives as useful is the *reason* the option set was closed — the covering
+env/argument enumeration of §1, which is what makes "no configuration reaches `:347`" a statement
+about the launcher rather than about my search — and the §2 archive-leg key census
+(9 / 47 keys, no `LEG_IDENTITY_KEYS`), re-measured rather than inherited. Nothing here reopens a ruled
+question, and this addendum does not.
+
 ## Scope and limits
 
 * **Read-only on `nd-unfolding/`.** No file under it was modified. The sandbox ran *copies*, with the
