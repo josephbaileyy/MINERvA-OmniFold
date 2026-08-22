@@ -98,6 +98,13 @@ Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any subm
   import repository code through it, and those are where the scoped source repair belongs. Also:
   the clean tree must be split into a code root and a data root, and `mnv_guarded_run.py` never
   checks that the script it runs is inside `--expect-root`.
+  **AMENDED 2026-08-22 (§7.0): §F is now TWO GATES.** Joseph ruled that the contract must separate
+  pre-submission readiness from post-rehearsal completion. The eighteen criteria are unedited and
+  keep their numbers; §7.0 adds the one-question test that reproduces the partition (8 criteria are
+  pre-submission, 10 split, **none** is purely post-rehearsal), the two gates and what each unlocks,
+  and the eligibility rule. **If you are grading this contract, read §7.0 before §F.** Two traps it
+  names: a NOT-EVALUABLE in the pre-submission column is a FAIL of Gate 1, and "needs the cluster"
+  is not "needs a run" — F-9's negative control is pre-submission and performable today.
 - [`VERIFICATION-20260822-k0-execution-integrity.md`](VERIFICATION-20260822-k0-execution-integrity.md)
   — the fresh non-builder's clause-by-clause verdict on `build-k0-execution-integrity` @ `ae42ae8d`
   against the contract's eighteen §F criteria. **The verdict is NOT A PASS (7 PASS / 7 FAIL /

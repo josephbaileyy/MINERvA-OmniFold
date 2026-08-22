@@ -25,6 +25,18 @@ one commit, branched from `main` `8c156a37`. `git diff --stat 8c156a37 ae42ae8d`
 rulings 17, 18 and 19; [`PLAN-20260822-oneMember-mii-staged.md`](PLAN-20260822-oneMember-mii-staged.md)
 Amendments 1, 2 and the builder's Amendment 3.
 
+**LATER NOTE, 2026-08-22, added by the same reviewer — read this before reconciling the two
+documents.** After Joseph acted on this verdict he ruled that the contract must *"distinguish
+pre-submission readiness from post-rehearsal completion"*, and §F now carries that split at
+[`REVIEW-CONTRACT-…` §7.0](REVIEW-CONTRACT-20260822-k0-execution-integrity.md). **This verdict
+predates the split and is not revised by it.** It graded §F as one undifferentiated gate, which is
+the only way it could have been graded at the time, so its four NOT-EVALUABLE verdicts (F-1, F-2,
+F-3, F-17) should be read as what they were: the empirical discovery of the boundary, not a class
+the new rubric would still allow. Under §7.0 a NOT-EVALUABLE in the pre-submission column is a FAIL
+of Gate 1, and **F-2's arming half and F-9 are pre-submission and satisfiable** — see §7.0.4 and
+§7.0.2. I wrote that split, which disqualifies me from grading Gate 1 against it (§7.0.10); a
+separate lane takes that verdict. Nothing in the eighteen per-criterion findings below is amended.
+
 ---
 
 ## 0. THE ANSWER TO THE QUESTION THAT MATTERS MOST — CORRECTION 2 IS **NOT** MET
