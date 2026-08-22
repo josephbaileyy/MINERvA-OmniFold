@@ -211,8 +211,11 @@ document lifts anything.
 * **Local shell is bash 3.2.57**, Perlmutter is 4.4. The constructs on this path (`[[ -n ]]`, `if`,
   `exit`, `=~`) are version-insensitive, but the arms were not run on 4.4 and I am not claiming they
   were. The `set -eo pipefail` at `:11` was preserved in the copies.
-* **`--diff`-free claim about `off_declared`:** I did not re-derive `seed_offset_policy.OFFSET_ENV`
-  from anywhere but `seed_offset_policy.py:193`, where it is `"MNV_EST_SEED_OFFSET"`.
+* **`off_declared`'s input is corroborated, not assumed.** `OFFSET_ENV` is a module constant
+  (`seed_offset_policy.py:193 = "MNV_EST_SEED_OFFSET"`), consumed by `declared_offset` at `:220` via
+  `env.get(OFFSET_ENV)`, and an enumeration of every non-test reference in `nd-unfolding/` shows it is
+  only ever **read** — `mii_seed_offset_driver.py:63` aliases it, and nothing rebinds it. So §3's
+  chain has no second input to be wrong about.
 * **Out of scope and deliberately not concluded:** where the present-seed k=0 product used by the
   clause (c) discharge run came from. No production present-seed leg exists (§2, §4), so it was not a
   production leg — but I did not locate or audit that lane's scratch products, and I am not
