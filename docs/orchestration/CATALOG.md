@@ -88,6 +88,13 @@ Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any subm
 - [`RUNBOOK-20260822-b1-lift-preflight.md`](RUNBOOK-20260822-b1-lift-preflight.md) — required by
   ruling 4. **Its headline is that the launcher must NOT be submitted yet**: both routes refuse today
   for reasons unrelated to the pause, measured on the cluster.
+- [`RECEIPT-20260822-k0-n1-and-guarded-arms.md`](RECEIPT-20260822-k0-n1-and-guarded-arms.md) — the
+  measured N-1 arm, its paired unguarded hijack control, and the first guarded production arm, run
+  on `saul.nersc.gov` against the real canonical checkout. **Read it before quoting F-9 as
+  satisfiable**: B-4 script containment now refuses strictly earlier than the import guard can fire,
+  so N-1 exits 3 without naming `seed_offset_policy`, and that is a question for Joseph rather than a
+  builder's judgement. Also records the one runtime confirmation of M-1 — `adopt_unified_5d.py`
+  resolved **213** absolute origins and **zero** repository modules.
 - [`REVIEW-CONTRACT-20260822-k0-execution-integrity.md`](REVIEW-CONTRACT-20260822-k0-execution-integrity.md)
   — **the controls for corrections 2-4, agreed by a fresh non-builder BEFORE the builder implements**,
   on Joseph's instruction that the evidence cannot be selected afterwards. Read it before writing any

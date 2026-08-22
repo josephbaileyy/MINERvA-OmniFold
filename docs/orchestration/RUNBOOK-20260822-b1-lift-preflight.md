@@ -40,10 +40,51 @@ starts, so no Python-side work reaches it. They now take **two mandatory variabl
 |---|---|---|
 | `MNV_CODE_ROOT` | the approved clean execution tree | every `.sh` sourced and every `.py` executed or imported resolves under it; immutable and `git status --porcelain`-empty for the run, at a **named sha** recorded in the receipt |
 | `MNV_DATA_ROOT` | inputs and products | the canonical checkout `/pscratch/sd/j/josephrb/MINERvA-OmniFold` is acceptable **in this role only**; nothing is executed or imported from it |
+| `MNV_GUARD_INVENTORY_DIR` | run-scoped directory for the OI-136 resolved-origin records | added round 2. One file per guarded process. A guarded run that emits no record establishes nothing, so this is REQUIRED |
+| `MNV_SOURCE_MANIFEST` | the A-2(f) source manifest recorded from `MNV_CODE_ROOT` **before the first `sbatch`** | added round 2. Compared on every leg; a moved source byte aborts before any Python starts |
 
 **Why two and not one.** A clean checkout cannot simultaneously host ~47.7 GB of gitignored member
 products and remain clean, and `of_inputs_5d.npz` is absent from a fresh clone, so a clean tree
 cannot serve as the working directory at all.
+
+### 0b-0. ROUND 2, 2026-08-22: EVERY PRODUCTION PYTHON INVOCATION IS GUARDED
+
+Joseph, round 2: *"every production Python invocation across the eight k=0 launchers is to be routed
+through `mnv_guarded_run.py`, with a required inventory ... including the contract-required
+executing-file parity calls, source-manifest comparison, and P-4 import-set mechanism."*
+
+**FOURTEEN invocations, not eight.** Re-derived with `grep -nE 'python[0-9]*'` over the eight
+launchers: bootstrap 1, seedscan 1, detector 2 (CV and universe branches), sweep 1, uthrow run 1,
+uthrow block 2 (knobs and flux), uthrow combine 1, finalize 5. Do not assume one per launcher.
+
+Each now runs as `python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv <tag>)" --
+<entrypoint>`, and every launcher first runs, in this order and failing closed at each step:
+
+1. `mnv_source_manifest.py --repo "$CODE_ROOT" --compare "$MNV_SOURCE_MANIFEST" --require-clean`
+2. `verify_executing_copy_is_committed.py --repo "$CODE_ROOT" --pair ...` over the files it executes
+   plus the guard, the parity checker and the manifest tool
+3. a containment check that `lib_member_resume.sh` resolved under `${MNV_CODE_ROOT}/nd-unfolding`
+
+**Why this became worth doing between round 1 and round 2, and it is not a change of mind.** The
+contract's B-1 held that a wrapper "cannot help them and would block the run" — true of the
+PRE-REPAIR bytes, where `import xsec_nd` resolved under the canonical checkout and the guard
+correctly exited 3. That argument expired with the six source repairs. Measured on the cluster
+2026-08-22 (`RECEIPT-20260822-k0-n1-and-guarded-arms.md` §3): the guarded parent reports
+`checked = 9`, `repo_origin_count = 1`, `seed_offset_policy` resolved **under the code root**. Green
+AND non-vacuous, which a bare exit 0 never was.
+
+**After the last leg**, read the verdict off the records rather than off any exit code:
+
+```bash
+python3 "${MNV_CODE_ROOT}/nd-unfolding/mnv_import_set_ratchet.py" \
+  --inventory-dir "${MNV_GUARD_INVENTORY_DIR}" --pins <the pins> \
+  --source-manifest "${MNV_SOURCE_MANIFEST}"
+```
+
+It checks P-2 (every origin under the code root, every sha256 in the manifest, `checked > 0`), P-3
+(the emptiness flags PRESENT, and a zero only where declared with its disclosure) and P-4 (the
+per-entrypoint import set as an IDENTITY, not a floor). Pins come from `--write-pins` on the first
+clean run; there is no hand-authored expected list.
 
 **`${VAR:-<hardcode>}` IS FORBIDDEN.** A default is the hardcode wearing a flag, and a defaulted
 variable that is silently empty makes every path below name a different subject without erroring.
@@ -341,6 +382,11 @@ ssh saul.nersc.gov
 # propagates the environment, and the launcher refuses to start without them.
 export MNV_CODE_ROOT=<the approved clean tree at the declared sha>   # section 0b-i
 export MNV_DATA_ROOT=/pscratch/sd/j/josephrb/MINERvA-OmniFold        # DATA ROLE ONLY
+export MNV_GUARD_INVENTORY_DIR=<a run-scoped directory>              # one record per process
+export MNV_SOURCE_MANIFEST=<the A-2(f) manifest, written BEFORE this> # see 0b-0
+# Written once, before the first submission, from the code root itself:
+#   python3 "${MNV_CODE_ROOT}/nd-unfolding/mnv_source_manifest.py" --repo "${MNV_CODE_ROOT}" \
+#     --require-clean --write "${MNV_SOURCE_MANIFEST}"
 export MNV_LAUNCHER_DIR="${MNV_CODE_ROOT}/nd-unfolding"   # sbatch runs a spool COPY; see 5b
 export MNV_EST_SEED_OFFSET=0          # canonical integer, NO leading zeros
 cd "${MNV_DATA_ROOT}/nd-unfolding"    # products land here; nothing is executed from here

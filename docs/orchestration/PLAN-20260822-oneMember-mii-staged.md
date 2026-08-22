@@ -468,18 +468,44 @@ JC=$(sbatch --parsable --dependency=afterok:$JR:$JK "$L/sbatch_uthrow_combine_5d
 `${MNV_DATA_ROOT}/nd-unfolding` would spool the data root's copy of the launcher, which is not the
 approved bytes — and `sbatch` would report success either way.
 
-## C-5. What is still MISSING from this path, stated so no reader infers otherwise
+## C-5. What was missing in round 1, and what is missing now
 
-- **The production legs are not routed through `mnv_guarded_run.py`.** The two-root repair fixes
-  which tree is *selected*; the guard is what *measures* which modules were actually loaded. Contract
-  B-5 does not require the wrapper on these launchers and ruling 18 does not name it, so it was not
-  added. Until it is, section 4's positive arm (P-1 inventories, F-4/F-5) has **no carrier on legs
-  1–6** and a green run of them is not evidence about the import tree.
-- **`build_child_argv` does not emit the guard.** The child boundary is demonstrated armed by
-  `nd-unfolding/tests/test_n2_child_boundary.py`, but the production adopter still launches its
-  child unwrapped.
-- **`verify_executing_copy_is_committed.py --pair` is not called by these eight launchers.** Contract
-  A-3 asks for it in the shape the two Gate-5 launchers use. It is not in ruling 18's list either.
+**Round 1 listed three gaps. Joseph closed all three on 2026-08-22 (round 2) and they are now
+built.** The list is kept rather than deleted, because a disclosure that vanishes when it is
+addressed teaches a later reader that nothing was ever open.
 
-These three are execution-integrity work that is specified and **not** authorized, and each is a
-place the reviewer should expect to find a gap rather than a control.
+| round-1 gap | disposition |
+|---|---|
+| production legs not routed through `mnv_guarded_run.py` | **CLOSED.** All fourteen production invocations across the eight launchers are guarded, with a mandatory `MNV_GUARD_INVENTORY_DIR`. |
+| `build_child_argv` does not emit the guard | **CLOSED.** It does, and `main()` fails closed with no bypass flag. Its value is the explicitly empty flagged record and §H.1 insurance, **not** import protection — `adopt_unified_5d.py` makes no repository import and the guard cannot protect it from one it does not make. |
+| `verify_executing_copy_is_committed.py --pair` called by 0 of 8 | **CLOSED**, in the Gate-5 shape, alongside a new whole-tree A-2(f) source-manifest comparison. |
+
+**A FOURTH GAP THAT WAS NOT ON THE ROUND-1 LIST AT ALL, and its absence is the more useful finding.**
+P-4, the per-entrypoint import-set identity ratchet, had never been built and I did not disclose it.
+The reason is specific rather than general: my round-1 disclosure was assembled by walking the
+*things I had decided not to do* — each of the three above was a live decision I took and could
+therefore recall. P-4 was never a decision. It sat in §4 of the contract, in the same list as P-1,
+and once P-1 was built the whole of §4 read as discharged. **A list of my own declined choices is
+not a coverage check against the specification**, and only the second kind would have caught it. The
+fix is mechanical and is now applied here: C-5 is written against the contract's clause numbers, not
+against memory.
+
+## C-6. What is STILL missing, checked clause by clause against the contract
+
+- **F-9 as written is not satisfiable.** N-1 exits 3 but does not name `seed_offset_policy`, because
+  B-4 script containment refuses strictly earlier than the import guard can fire. Measured, with the
+  full argument, in [`RECEIPT-20260822-k0-n1-and-guarded-arms.md`](RECEIPT-20260822-k0-n1-and-guarded-arms.md)
+  §2. **Joseph's and the reviewer's to rule on.**
+- **F-17 freshness is open.** M-1 through M-6 have not been re-measured on `MNV_CODE_ROOT` at the
+  pinned sha and on the canonical checkout as it stands. Two fragments exist (M-1's empty import set
+  for the adopter, confirmed at runtime; the canonical checkout's 721 dirty entries) and nothing else.
+- **A-2(d), (e) and (g) are unenforced.** No check refuses a nested checkout under the code root, a
+  code root nested inside another checkout, or an unprotected (writable) code root. `mnv_source_manifest.py`
+  detects a change after the fact; (g) would prevent one.
+- **The production P-4 pins do not exist.** The pins in the receipt were written from a two-process
+  arm with throwaway inputs and are not the production set.
+- **Nothing has run under `sbatch`.** `BASH_SOURCE`-under-spool, the Slurm resolver and the real
+  `${REPO}` effect remain ruling 14's business, and the two adopt invocations are unreachable
+  end to end while the pause branch stands.
+- **The `2d-unfolding` in-function rooted insert stays out of scope**, measured latent rather than
+  live: the insert sits inside `main()` and nothing calls `u2d.main()`.
