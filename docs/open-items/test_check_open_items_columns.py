@@ -218,6 +218,10 @@ def scratch_repo(tmp_path: Path) -> Path:
     shutil.copy(OPEN_ITEMS, root / "docs" / "OPEN_ITEMS.md")
     for name in (CHECKER.name, PARSER.name):
         shutil.copy(HERE / name, root / "docs" / "open-items" / name)
+    # A second TRACKED file, so the attribution arms can commit by pathspec. A pathspec naming an
+    # untracked path makes git refuse before the hook runs -- which the first version of those arms
+    # mistook for the hook blocking the commit.
+    (root / "other.txt").write_text("v1\n", encoding="utf-8")
     for args in (
         ["init", "-q", "."],
         ["add", "-A"],
@@ -274,6 +278,151 @@ def test_self_test_passes_on_a_clean_tree(tmp_path):
     root = scratch_repo(tmp_path)
     done = run_checker(root, "--self-test")
     assert done.returncode == 0, done.stdout + done.stderr
+
+
+# --------------------------------------------------------------------------------------------------
+# ATTRIBUTION. Added after a peer objected that reading the index only NARROWS the shared-checkout
+# hole rather than closing it: a STAGED row is uncommitted too, so a pathspec commit would be refused
+# over a row it does not contain. The objection is sound in form; the prediction does not reproduce,
+# and these arms are why. Nothing above covers "the path is staged by someone else and is absent from
+# this commit" -- the suite was strong on malformation SHAPES and silent on WHOSE row it is.
+#
+# They run the checker as a REAL installed pre-commit hook, because the whole question is what the
+# hook process sees: git hands a partial commit a temporary index through GIT_INDEX_FILE, and that is
+# invisible to any probe run outside the hook.
+# --------------------------------------------------------------------------------------------------
+HOOK_BODY = """#!/bin/bash
+cd "$(git rev-parse --show-toplevel)" || exit 2
+exec python3 docs/open-items/check_open_items_columns.py --check
+"""
+
+
+def install_hook(root: Path) -> None:
+    hook = root / ".git" / "hooks" / "pre-commit"
+    hook.write_text(HOOK_BODY, encoding="utf-8")
+    hook.chmod(0o755)
+
+
+def commit(root: Path, *args: str) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        ["git", "-c", "user.name=a", "-c", "user.email=a@a", "commit", *args],
+        cwd=root, capture_output=True, text=True,
+    )
+
+
+def peer_stages_a_malformed_row(root: Path) -> None:
+    """Lane B's edit, staged into the shared index. Lane A never touched this file."""
+    malform(root)
+    subprocess.run(["git", "add", "docs/OPEN_ITEMS.md"], cwd=root, capture_output=True)
+
+
+def test_a_pathspec_commit_is_not_blocked_by_another_lanes_staged_row(tmp_path):
+    """THE PEER'S ARM: fires-and-should-not, if it fired. It does not. Git builds a temporary index
+    for a partial commit and exports it as GIT_INDEX_FILE, so the hook reads what the commit will
+    record -- lane B's staged row is simply not in it."""
+    root = scratch_repo(tmp_path)
+    install_hook(root)
+    peer_stages_a_malformed_row(root)
+    (root / "other.txt").write_text("lane A's own work\n", encoding="utf-8")
+
+    done = commit(root, "-m", "lane A, unrelated", "--", "other.txt")
+    assert done.returncode == 0, "an innocent pathspec commit was blocked:\n" + done.stdout + done.stderr
+
+    # And the commit really does exclude the malformed row -- otherwise passing would be the bug.
+    recorded = subprocess.run(
+        ["git", "show", "HEAD:docs/OPEN_ITEMS.md"], cwd=root, capture_output=True, text=True
+    ).stdout
+    assert mod.violations(recorded) == []
+
+
+def test_git_gives_a_partial_commit_its_own_index(tmp_path):
+    """PINS THE GIT BEHAVIOUR THE ARM ABOVE DEPENDS ON. The correctness of the pathspec case is not a
+    property of this check -- it is a property of git. If a future git stops exporting a temporary
+    index, the false block returns and the test above would still pass for the wrong reason until it
+    didn't. Fail loudly here instead."""
+    root = scratch_repo(tmp_path)
+    probe = root / ".git" / "hooks" / "pre-commit"
+    probe.write_text(
+        '#!/bin/bash\ncd "$(git rev-parse --show-toplevel)" || exit 2\n'
+        '{ echo "INDEX=${GIT_INDEX_FILE:-<unset>}"; '
+        'echo "STAGED=$(git diff --cached --name-only | tr \'\\n\' \' \')"; } > probe.out\n'
+        "exit 0\n",
+        encoding="utf-8",
+    )
+    probe.chmod(0o755)
+    peer_stages_a_malformed_row(root)
+    (root / "other.txt").write_text("lane A\n", encoding="utf-8")
+    commit(root, "-m", "partial", "--", "other.txt")
+
+    seen = (root / "probe.out").read_text(encoding="utf-8")
+    assert "next-index" in seen, f"git no longer isolates a partial commit's index:\n{seen}"
+    assert "docs/OPEN_ITEMS.md" not in seen, f"the peer's row leaked into the partial index:\n{seen}"
+
+
+def test_scrubbing_git_index_file_reintroduces_the_false_block(tmp_path):
+    """NEGATIVE CONTROL for the two arms above, and the reason they are not vacuous. The pathspec case
+    is correct only because this module inherits GIT_INDEX_FILE; that inheritance is invisible in the
+    source -- there is no line to read -- so a future author could scrub the environment "for
+    hygiene" and silently restore the false block. Drop the variable and the innocent pathspec commit
+    IS refused. If this test ever passes-by-not-blocking, the arms above prove nothing."""
+    root = scratch_repo(tmp_path)
+    target = root / "docs" / "open-items" / CHECKER.name
+    text = target.read_text(encoding="utf-8")
+    anchor = "def read_index() -> str:\n"
+    assert anchor in text
+    target.write_text(
+        text.replace(anchor, anchor + '    import os as _os; _os.environ.pop("GIT_INDEX_FILE", None)\n', 1),
+        encoding="utf-8",
+    )
+    install_hook(root)
+    peer_stages_a_malformed_row(root)
+    (root / "other.txt").write_text("lane A's own work\n", encoding="utf-8")
+
+    done = commit(root, "-m", "lane A, unrelated", "--", "other.txt")
+    assert done.returncode != 0, "scrubbing GIT_INDEX_FILE no longer changes the outcome"
+    assert "8 fields" in done.stdout + done.stderr
+
+
+def test_a_plain_commit_is_blocked_and_the_block_is_correct(tmp_path):
+    """THE RESIDUAL, and it is NOT a false block. With no pathspec the commit really would contain the
+    peer's row -- measured, not assumed -- so refusing it is the check working. On a shared checkout a
+    no-pathspec `git commit` commits the other lane's staged work; this makes that loud."""
+    root = scratch_repo(tmp_path)
+    peer_stages_a_malformed_row(root)
+    (root / "other.txt").write_text("lane A\n", encoding="utf-8")
+    subprocess.run(["git", "add", "other.txt"], cwd=root, capture_output=True)
+
+    assert run_checker(root, "--check").returncode == 1
+
+    # Prove the block is right: with the hook OFF, the commit does carry the malformed row.
+    done = commit(root, "-m", "plain, no pathspec", "--no-verify")
+    assert done.returncode == 0, done.stdout + done.stderr
+    recorded = subprocess.run(
+        ["git", "show", "HEAD:docs/OPEN_ITEMS.md"], cwd=root, capture_output=True, text=True
+    ).stdout
+    assert mod.violations(recorded) != [], "the block would have been spurious"
+
+
+def test_the_failure_message_does_not_misdirect_the_committer(tmp_path):
+    """A blocked author reading only "6 fields, expected 7" hunts for their own mistake. When the row
+    is another lane's, that search is unbounded and the check has cost more than it saved."""
+    root = scratch_repo(tmp_path)
+    peer_stages_a_malformed_row(root)
+    out = run_checker(root, "--check").stdout.lower()
+    assert "git diff --cached" in out
+    assert "another lane" in out
+    assert "pathspec" in out
+    assert "--no-verify" in out
+
+
+def test_the_worktree_mode_carries_no_index_advice(tmp_path):
+    """The advice is index-specific; printing it in --worktree mode would be false. The other-lane
+    story does not apply to a file you are editing on disk."""
+    root = scratch_repo(tmp_path)
+    malform(root)
+    out = run_checker(root, "--worktree").stdout
+    assert "8 fields" in out
+    assert "git diff --cached" not in out
 
 
 # --------------------------------------------------------------------------------------------------

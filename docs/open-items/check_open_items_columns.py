@@ -34,11 +34,35 @@ MEASURED BEFORE PROPOSING, not recalled, because that measurement is what decide
 decline ground does not apply. Do not trust those two numbers -- run `--check`, it prints its own.
 
 IT READS THE INDEX, NOT THE WORKING TREE, and on this checkout that is not a detail. Three lanes
-commit through one tree. A worktree read makes lane A's *uncommitted* malformed row block lane B's
-unrelated commit -- an innocent committer who cannot make it pass, i.e. the admitting rule failing
-from the direction that matters. `git show :docs/OPEN_ITEMS.md` is exactly the content the commit
-will record; when the file is unstaged the index still holds HEAD's version, which is green. Use
-`--worktree` to check what is on disk (useful while editing, wrong for a hook).
+commit through one tree, so a worktree read would let lane A's unsaved edit block lane B's unrelated
+commit -- an innocent committer who cannot make it pass, i.e. the admitting rule failing from the
+direction that matters. Use `--worktree` to see what is on disk (useful while editing, wrong here).
+
+  A PEER OBJECTED THAT THE INDEX READ ONLY NARROWS THAT HOLE RATHER THAN CLOSING IT -- a STAGED row
+  is uncommitted too, and lanes stage constantly -- so a pathspec commit (`git commit -- other.txt`)
+  would be refused over another lane's staged row that the commit does not contain. THE OBJECTION IS
+  SOUND IN FORM AND THE PREDICTION DOES NOT REPRODUCE, measured from inside a real installed hook on
+  git 2.39.3 rather than by reasoning about it. GIT HANDS A PARTIAL COMMIT ITS OWN INDEX:
+
+    lane B: <malform docs/OPEN_ITEMS.md> && git add docs/OPEN_ITEMS.md
+    lane A: git commit -m x -- other.txt
+      in the hook: GIT_INDEX_FILE=.git/next-index-<pid>.lock   <- a TEMPORARY index, not the shared one
+                   git show :docs/OPEN_ITEMS.md   -> the GOOD row
+                   git diff --cached --name-only  -> other.txt        (OPEN_ITEMS.md absent)
+      the commit lane A produced: the GOOD row.  This check stays SILENT. Correctly.
+
+  `git show` and `git cat-file` honour `GIT_INDEX_FILE`, and this module shells out without scrubbing
+  the environment, so it inherits that index automatically. Do not "fix" that by passing an explicit
+  index path -- the inheritance is what makes the pathspec case correct.
+
+  THE RESIDUAL IS REAL BUT IT IS NOT A FALSE BLOCK. On a plain `git commit` (no pathspec) or
+  `git commit -a`, the hook does see a peer's staged malformed row -- and measurement confirms the
+  resulting commit CONTAINS that row. So the check fires on a defect the committer is genuinely about
+  to publish under their own name. That is the shared-checkout hazard already recorded in this
+  campaign (a no-pathspec `git commit` commits the other lane's staged work); this check makes it
+  loud instead of silent. It can still be someone else's row, which is why the failure output says so
+  and points at `git diff --cached` rather than letting the author hunt for a mistake they did not
+  make. A diagnostic that misdirects costs more than the block.
 
 THE PARSER IS IMPORTED, NOT COPIED. `split_pipe_row` comes from `verify_open_items_restructure` so
 that the two cannot disagree about what a field is -- a vendored copy would be a second escaping rule
@@ -141,6 +165,25 @@ def check(source: str = "index") -> int:
         print(f"OPEN_ITEMS COLUMNS :: FAIL -- {len(bad)} violation(s) in the {source}")
         for line in bad:
             print("  " + line)
+        if source == "index":
+            # THE ROW MAY NOT BE YOURS, and saying so is the point. Three lanes stage into one index,
+            # and a no-pathspec `git commit` commits the other lane's staged work -- so a committer
+            # who touched nothing here can be stopped by a row they did not write. Sending them to
+            # hunt for their own mistake is the expensive failure; name the possibility and hand them
+            # the command that settles it in one line.
+            print(
+                "\n  This reads the INDEX -- the content your commit will record, not your editor "
+                "buffer.\n"
+                "  If you did not write that row, it is another lane's staged work and a plain "
+                "`git commit`\n"
+                "  would publish it under your name. Settle it, then choose:\n"
+                f"    git diff --cached -- {REL}      # is the malformed row in what you are about to commit?\n"
+                f"    git log -1 --format=%an -- {REL}  # who last touched it on HEAD\n"
+                "  Yours     -> fix the row; an unescaped `|` in a narrative cell must be written `\\|`.\n"
+                "  Theirs    -> commit BY PATHSPEC (`git commit -- <your paths>`); git gives a partial\n"
+                "               commit its own index, so this check then sees your content, not theirs.\n"
+                "  Do NOT --no-verify: on a plain commit the malformed row really is in your commit."
+            )
         return 1
     print(
         f"OPEN_ITEMS COLUMNS :: OK -- {len(rows)} table line(s), all {WIDTH} fields, "
