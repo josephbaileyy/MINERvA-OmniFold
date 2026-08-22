@@ -3,7 +3,7 @@
 **Verdict: NOT A PASS.** Against
 [`REVIEW-CONTRACT-20260822-k0-execution-integrity.md`](REVIEW-CONTRACT-20260822-k0-execution-integrity.md)
 §F — whose own rule is *"Any single miss is a FAIL; there is no partial credit and no waiver by
-caveat"* — the eighteen criteria come out **7 PASS, 6 FAIL, 5 NOT-EVALUABLE**. Nothing here
+caveat"* — the eighteen criteria come out **7 PASS, 7 FAIL, 4 NOT-EVALUABLE**. Nothing here
 authorizes a submission and nothing here is a merge.
 
 **Reviewer eligibility (F-18).** Written by a fresh non-builder who has authored no code in this
@@ -324,6 +324,8 @@ summary attesting 'all controls passed' is a FAIL of F-18"* — is avoided.
 
 **Tally: PASS F-10, F-11, F-13, F-14, F-15, F-16, F-18 (7). FAIL F-4, F-5, F-6, F-7, F-8, F-9, F-12
 (7). NOT-EVALUABLE F-1, F-2, F-3, F-17 (4).**
+
+*7 + 7 + 4 = 18, which is the whole of §F. My first draft of the header line said "7 PASS, 6 FAIL, 5 NOT-EVALUABLE"; that was my own miscount against this same list and it is corrected here rather than quietly. The per-criterion verdicts above never changed.*
 
 ---
 

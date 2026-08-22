@@ -100,8 +100,8 @@ Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any subm
   checks that the script it runs is inside `--expect-root`.
 - [`VERIFICATION-20260822-k0-execution-integrity.md`](VERIFICATION-20260822-k0-execution-integrity.md)
   — the fresh non-builder's clause-by-clause verdict on `build-k0-execution-integrity` @ `ae42ae8d`
-  against the contract's eighteen §F criteria. **The verdict is NOT A PASS (7 PASS / 6 FAIL /
-  5 NOT-EVALUABLE), so Amendment 2's conditional authorization does NOT become operative and the
+  against the contract's eighteen §F criteria. **The verdict is NOT A PASS (7 PASS / 7 FAIL /
+  4 NOT-EVALUABLE), so Amendment 2's conditional authorization does NOT become operative and the
   seven jobs are not submitted.** Its headline: **Joseph's correction 2 is not met** — zero of the
   eight launchers invoke `mnv_guarded_run.py` and `build_child_argv` still does not emit it, so the
   contract's whole positive arm (P-1 inventories, F-4/F-5) has no carrier on legs 1-6 and a green

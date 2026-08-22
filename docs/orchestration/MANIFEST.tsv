@@ -132,7 +132,7 @@ docs/orchestration/VERDICT-20260821-clausec-rerun-production-dimension.md	tracke
 docs/orchestration/VERDICT-20260821-expiry-c-real-path-present-seed.md	tracked	ARCHIVAL	verdict		20260821	superseded	docs/orchestration/VERDICT-20260821-clausec-rerun-production-dimension.md	exact-path-only		yes	4	267	19245
 docs/orchestration/VERDICTS-20260811-session-D.md	tracked	ARCHIVAL	verdict		20260811	terminal		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	4	2629	180256
 docs/orchestration/VERIFICATION-20260820-mediator-remedy-a-wrapper-mechanical.md	tracked	ARCHIVAL	document		20260820	terminal		exact-path-only		yes	3	86	6763
-docs/orchestration/VERIFICATION-20260822-k0-execution-integrity.md	tracked	LIVE	document		20260822	open		route-only		no	2	699	45852
+docs/orchestration/VERIFICATION-20260822-k0-execution-integrity.md	tracked	LIVE	document		20260822	open		route-only		no	2	701	46114
 docs/orchestration/WAKER.md	tracked	LIVE	document			open		route-only	docs/orchestration/generate_live_state.py;docs/orchestration/wakerctl.py	no	10	262	15686
 docs/orchestration/agentctl.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/generate_live_state.py;docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py	no	13	611	22259
 docs/orchestration/audit_gates_that_cannot_fail.py	tracked	MACHINE	script			generated		exact-path-only	nd-unfolding/tests/test_cannot_fail_auditor.py	no	5	369	17861
