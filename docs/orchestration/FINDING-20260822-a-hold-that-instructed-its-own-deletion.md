@@ -72,9 +72,19 @@ for concluded records — the retention convention says the bias protects the re
 
 Obligation 2 of the retention convention (*"when you create a document a session must read, declare
 it `LIVE` in the same commit"*) is the only thing standing between a new live document and that
-state, and it is **unenforced prose**. `generate_manifest.py --check` fails when the tree and the
-manifest disagree, which catches a document *missing from* the inventory. It cannot catch a live
-document *defaulted into* archival, because that manifest is not stale — it is correct.
+state, and **the half that matters here is unenforced**. `generate_manifest.py --check` fails when the
+tree and the manifest disagree, which catches a document *missing from* the inventory. It cannot catch
+a live document *defaulted into* archival, because that manifest is not stale — it is correct.
+
+**PRECISION ADDED 2026-08-22, HOURS AFTER FILING, BECAUSE I MET THE ENFORCEMENT I HAD JUST CALLED
+ABSENT.** Obligation 2 has two halves and only one is bare. Declaring a document `LIVE` **is** enforced
+onward: `live_doc_indexed.py` runs in the pre-commit hook and **refused a commit of mine** that added a
+`LIVE` override with no `CATALOG.md` pointer — *"An unindexed LIVE document is one nobody reads."* What
+is unenforced is the step **before** that: nothing requires you to declare `LIVE` at all. Miss it and
+the default is silent, correct, and archival. So the gap is narrower than "unenforced prose" and
+sharper: **the guard fires for someone who declares a live document badly, and never for someone who
+does not declare it.** That is the hold's case exactly, and it is the harder direction to catch,
+because the omission has no artifact.
 
 ## Relation to `OI-70`, and why the fix differs
 

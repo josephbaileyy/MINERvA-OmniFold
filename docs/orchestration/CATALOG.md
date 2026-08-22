@@ -49,6 +49,13 @@ deliberately, because this file is a pointer-only router and not an exhaustive i
   instructs its deletion.** That instruction is wrong, the hold's bytes are preserved on Joseph's
   ruling, and this route is the only thing that disarms it.
 
+- [`BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md`](BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md)
+  — `OI-137`'s measured exposure and **the recommendation Joseph's ruling 7 requires before any
+  uncertainty-model change: disclose, do not correct.** Routed to by `OI-137` and `OI-93`. Re-runnable
+  covering search beside it at [`state/oi137-covering-search-20260822.sh`](state/oi137-covering-search-20260822.sh).
+  **Do not carry "0.2% of the headline trace" forward as the reason the exposure is small** — a trace
+  weights eigenvalues by `lambda` and a precision matrix by `1/lambda`; the brief gives the real reason.
+
 ### B1 steps 4-5: the lift, and the preflight that gates the first submission
 
 Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any submission touching

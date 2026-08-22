@@ -1,4 +1,5 @@
 path	class	event_status	canonical_successor
+docs/orchestration/BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md	LIVE	open	
 docs/orchestration/CATALOG.md	LIVE	open	
 docs/orchestration/CLAIM-CLM-001.md	ARCHIVAL	terminal	
 docs/orchestration/CLAIM-CLM-002.md	ARCHIVAL	terminal	
@@ -54,3 +55,4 @@ docs/orchestration/control-plane/work-items.tsv	LIVE	open	""
 docs/orchestration/control_plane_lint.py	LIVE	open	""
 docs/orchestration/state/live-state-last-known.json	LIVE	open	
 docs/orchestration/state/live-state.json	LIVE	open	
+docs/orchestration/state/oi137-covering-search-20260822.sh	MACHINE	open	
