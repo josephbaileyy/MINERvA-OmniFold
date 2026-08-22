@@ -3039,6 +3039,50 @@ class AnchorComparatorB2(unittest.TestCase):
         self.assertEqual(v, "PASS", [l for l in lines if "OK" not in l])
         self.assertEqual(sum(1 for l in lines if l.startswith("[recompute] OK")), 3)
 
+    def _over_length_reader(self, key, extra):
+        """Both sides carry the SAME longer array, so digests agree and ONLY coverage can object.
+
+        That is the shape of the clause (c) rerun's arm A3d: the class comparison is satisfied and the
+        length error survives to whatever checks lengths. If the fixture made the two sides differ, the
+        digest comparison would fail first and the test would pass for the wrong reason.
+        """
+        sc, di, mx = self._throw()
+        m_sc, m_di, m_mx = self._throw(estimator_seed=1000, draw_seed=1000,
+                                       est_seed_offset=0, est_seed_offset_declared=1)
+        for table in (mx, m_mx):
+            digest_only = table[key][0]
+            table[key] = (digest_only, int(table[key][1]) + extra)
+        return lambda path: ((sc, di, mx) if path == "A" else (m_sc, m_di, m_mx))
+
+    def test_an_OVER_LENGTH_array_is_REFUSED_and_not_reported_as_complete(self):
+        """THE DIRECTION THE OLD CHECK COULD NOT ACT IN, and it was measured before it was fixed.
+
+        The clause (c) rerun (`2b6bf689`, arm A3d) rewrote both retained diagonals to 10695 bins with
+        the extra bin exactly 0.0 and the COMPLETE gate returned exit 0. `frac = 10695/10694` is
+        `>= 1.0`, so the flag string, `assert_reduction_is_declared` and the only `class_failed` branch
+        were all on the permissive side. Adding the two `EXPECTED_ELEMENTS` rows alone did NOT fix it:
+        that was arm A of the same probe, also exit 0. Completeness had to become EQUALITY.
+        """
+        v, lines = self.B.compare_files(
+            "uq_5d/unified_throw_cov_5d.root", "A", "M", 0,
+            read_keys=self._over_length_reader("C_cross", 1), archive_date=(2026, 7, 14))
+        self.assertEqual(v, "FAIL", [l for l in lines if "OK" not in l])
+        self.assertTrue(any("OVER-LENGTH" in l and "C_cross" in l for l in lines), lines)
+        self.assertFalse(any("PARTIAL COMPARISON" in l for l in lines),
+                         "a longer array must NOT be reported as a partial comparison")
+
+    def test_a_CORRECT_LENGTH_array_is_NOT_flagged_over_length(self):
+        """The negative control for the branch above, and the arm I nearly failed to ask for.
+
+        A polarity change runs through every key in `EXPECTED_ELEMENTS`, so the risk is not that it
+        fails to fire but that it fires on a GOOD product and becomes an unavoidable stage-1 FAIL that
+        gets the gate routed around. The rerun measured this as `B_on_good` (exit 0); this pins it.
+        """
+        v, lines = self._go()
+        self.assertEqual(v, "PASS", [l for l in lines if "OK" not in l])
+        self.assertFalse(any("OVER-LENGTH" in l for l in lines), lines)
+        self.assertTrue(any("[coverage] C_cross: compared 4 of 4 elements" in l for l in lines), lines)
+
     def test_a_FILE_THAT_CONTRADICTS_ITSELF_fails_which_equality_could_NEVER_catch(self):
         """BEN-077's whole point: the archive and the member can agree exactly on a scalar and both be
         inconsistent with their own matrices. Equality is necessary and not sufficient."""

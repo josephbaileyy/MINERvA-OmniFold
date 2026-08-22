@@ -163,6 +163,15 @@ EXPECTED_ELEMENTS = {
     "C_blocksum": REPORTED_NBINS ** 2,
     "C_cross": REPORTED_NBINS ** 2,
     "hCov_combined5d_total_uthrow": REPORTED_NBINS ** 2,
+    # OI-147's TWO RETAINED DIAGONALS. Added 2026-08-21 after the clause (c) rerun MEASURED that the
+    # complete gate admitted a product whose diagonal pair was 10695 bins (arm A3d, exit 0). Both are
+    # per-bin arrays on the support, and the size is DERIVED FROM THE WRITER rather than asserted:
+    # `mii_adopt_unified_5d_stamped._read_diagonal:649` takes `n = h.GetNbinsX()` of the square
+    # `hCov_combined5d_total`, and `_stamp_output:689` builds BOTH histograms as
+    # `ROOT.TH1D(key, title, len(arr), 0, len(arr))` off that same array. So they are REPORTED_NBINS
+    # by construction, and on today's path they are necessarily equal to each other.
+    "hDiagCombinedOld": REPORTED_NBINS,
+    "hDiagCombinedOldRaw": REPORTED_NBINS,
 }
 
 

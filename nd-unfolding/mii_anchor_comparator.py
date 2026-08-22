@@ -877,12 +877,43 @@ def compare_files(artifact, archive_path, member_path, offset, read_keys=read_ke
                          "so completeness is reported and NOT asserted")
             continue
         frac = n / expected
-        flag = "" if frac >= 1.0 else "   <-- PARTIAL COMPARISON"
+        # COMPLETENESS IS EQUALITY, NOT "NOT PARTIAL". Corrected 2026-08-21, and the correction is
+        # measured rather than argued: the clause (c) rerun rewrote both retained diagonals to 10695
+        # bins with the extra bin exactly 0.0 and THE COMPLETE GATE RETURNED EXIT 0 (arm A3d). At
+        # 10695/10694 = 1.0000935 the array is longer than the writer can produce, and every test
+        # below used to be on the permissive side of it: the flag string keyed on `frac >= 1.0`,
+        # `assert_reduction_is_declared` returns None on `coverage >= 1.0` (`:525-526`), and the only
+        # branch that set `class_failed` was `frac < 1.0`. Zero-padding does not move the trace
+        # either -- the raw sum came back bit-identical -- so `sqrt_tr_old`'s recomputation and
+        # `_clip_consistency` both agree and nothing else looks at length.
+        #
+        # THIS MODULE ALREADY HAD THE RIGHT POLARITY ONE FUNCTION AWAY, which is the real finding.
+        # `read_one_matrix_for_gate2` at `:448` sets `r["complete"] = int(arr.size) == expected` --
+        # EQUALITY -- and its comment records lane D finding an EARLIER version of that same check
+        # failing open against real PyROOT. Two readers of the same quantity in one module, opposite
+        # polarity, and the gate rested on the permissive one. Adding the two `EXPECTED_ELEMENTS`
+        # rows alone does NOT fix this: measured as arm A of the rerun's probe, exit 0, still
+        # admitted. The rows are necessary (without them the loop reports NO DERIVED EXPECTATION and
+        # reaches no branch at all) and not sufficient.
+        #
+        # A LONGER ARRAY GETS ITS OWN MESSAGE. Reusing "PARTIAL COMPARISON" for a 10695-bin array
+        # would misreport the defect as a narrowed comparison when it is a wrong-length artifact.
+        flag = "" if n == expected else (
+            "   <-- PARTIAL COMPARISON" if frac < 1.0 else "   <-- OVER-LENGTH")
         lines.append(f"[coverage] {name}: compared {n} of {expected} elements "
                      f"({100 * frac:.4f}%){flag}")
         undeclared = assert_reduction_is_declared(name, frac)
         if undeclared:
             lines.append(f"[coverage] {undeclared}")
+        if n > expected:
+            lines.append(
+                f"{name}: OVER-LENGTH -- {n} elements against a derived expectation of {expected}. "
+                "The writer cannot emit this: both retained diagonals are built as "
+                "`TH1D(key, title, len(arr), ...)` from one `_read_diagonal` return, so a longer "
+                "array means the artifact was altered after the wrapper finished. Extra bins that "
+                "are exactly zero leave the trace and the clip-consistency check bit-identical, so "
+                "NOTHING ELSE IN THIS GATE CAN SEE IT.")
+            class_failed = True
         if frac < 1.0:
             # APPENDED TO `lines`, NOT TO `findings`. My first version appended to `findings`, which was
             # already copied into `lines` above -- so the verdict flipped to FAIL and THE REASON NEVER
