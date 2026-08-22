@@ -605,7 +605,7 @@ Read the class column, then settle the half named in the column for the gate you
 | F-9 | **PRE-SUBMISSION** | **RESTATED — grade §7.0.11's six-row table, not the original bullet.** N-1 performed: exit 3 *through B-4*, `outcome = refused:script-outside-expect-root`, never an empty/green verdict, both roots and the script named, `checked == 0` **and** `guard_installed == false`, O-1…O-4 with no child marker or output, and `seed_offset_policy` **not** named on the refused arm. Still needs the cluster, still not a run (§7.0.2) | — |
 | F-10 | **PRE-SUBMISSION** | N-2 (as replaced by ruling 19) exits 3 through the child wrapper on the `build_child_argv` template, O-1…O-4 | — |
 | F-11 | **PRE-SUBMISSION** | N-3 holds for each of the six B-1 files, both directions | — |
-| F-12 | **PRE-SUBMISSION** | N-2 and N-3 unchanged — `__file__`. **N-1 RESTATED (§7.0.12):** `script_checkout_root` is the canonical root and is not `expect_root`; the O-1 paired arm reaches the marker, proving the arm could have succeeded; the U/U' arm retained as evidence, not mechanism | — |
+| F-12 | **PRE-SUBMISSION** | N-2 and N-3 unchanged — `__file__`. **N-1 RESTATED (§7.0.12):** `script_checkout_root` is the canonical root and is not `expect_root`; the O-1 paired arm reaches the marker, proving the arm could have succeeded; the U/U' arm retained and **required to name `seed_offset_policy`** as counterfactual origin evidence, never as mechanism | — |
 | F-13 | **PRE-SUBMISSION** | B-4's script-containment refusal implemented and covered in both directions | — |
 | F-14 | **PRE-SUBMISSION** | every row of §6 discharged in the same commit as the repair that moves it — **and see 7.0.7** | — |
 | F-15 | **PRE-SUBMISSION** | the two named suites green under `python3 -m unittest`, counts quoted **as measured at the graded sha**, explicit `TMPDIR` | — |
@@ -746,7 +746,7 @@ products). No `--allow` on any arm. All six must hold.
 | 9.3 | names the script, the canonical root and the expected clean root | the B-4 banner prints all three; the record carries `script`, `script_checkout_root`, `expect_root` |
 | 9.4 | `checked == 0` **and `guard_installed == false`**, together | see the inversion note — neither field alone is evidence |
 | 9.5 | O-1…O-4, with **no child marker and no output** | `[remedyA] running the PINNED writer as a subprocess:` absent; `[adopt5d]` absent; `--out` fails `test -e`; the witness directory that started empty is still the empty set |
-| 9.6 | `seed_offset_policy` is **not** named — on the refused arm's banner and record | see the scoping note |
+| 9.6 | `seed_offset_policy` is **neither required nor expected** on the refused arm — a CONSEQUENCE of 9.1–9.4, **not a string prohibition** | **do not grep the arm for the token.** Read 9.4's triple: the property is that no import was resolved. See the 9.6 subsection |
 
 ##### THE `checked=0` INVERSION — read this before applying §7.0.8
 
@@ -771,13 +771,86 @@ inspected nothing. `guard_installed` is the discriminator. Read the **pair**:
 This is P-3's own reasoning — *an absent key cannot distinguish "no repository import occurred" from
 "the inventory did not run"* — applied to a **defaulted** key rather than an absent one.
 
-##### Scoping "it must not name `seed_offset_policy`"
+##### 9.6 is a CONSEQUENCE, not a prohibition — Joseph's clarification of 2026-08-22
 
-Ruling 20 retains the U/U' arm, and that arm **does** name `seed_offset_policy` — that is its whole
-purpose. Unscoped, the prohibition and the retention contradict each other. **The prohibition applies
-to the refused arm's banner and inventory record only.** The U/U' arm may name it freely: it is
-evidence that the canonical module *would* load absent containment, and it is explicitly **not** the
-mechanism of the F-9 refusal. A grader must not fail F-9 on finding `seed_offset_policy` in a U' log.
+Ruling 20 said F-9 *"must not name `seed_offset_policy`"*. Asked to resolve the ambiguity that
+created against the retained U/U' arm, **Joseph clarified, and the clarification is weaker than the
+rule — deliberately so:**
+
+> "In the refused F-9 arm, `seed_offset_policy` is neither required nor expected to appear, because
+> B-4 refuses before imports begin. The separate U/U' comparison must retain and name
+> `seed_offset_policy` as counterfactual origin evidence showing what would load without that
+> containment. U/U' does not establish the mechanism of the F-9 refusal."
+
+**"Neither required nor expected to appear" is not "must not appear", and the difference is
+gradeable.** A prohibition makes the *string* a fail condition. **9.6 is not a string test.** The
+absence is a **consequence** of 9.1–9.4: B-4 refuses before imports begin, so no import is resolved,
+so there is nothing for the guard to name. **The gradeable property is that no import was resolved,
+and 9.4's `guard_installed` / `checked` / `outcome` triple already establishes it positively.**
+
+**How to grade 9.6, and it is a one-line rule:** *do not search the refused arm for a string.* Read
+the triple. A rubric that forbids a token is testing a proxy for the property, and the proxy fails in
+both directions — it can fail an arm that is correct, and it cannot catch an arm that is wrong.
+
+- **What must NOT fail F-9:** an incidental occurrence of the token anywhere in or around the record
+  — in a `sys_path_final` entry whose directory happens to contain the module, in surrounding receipt
+  prose, in an error path, or in a capture that also holds another arm. **None of those is the guard
+  naming a resolved import.**
+- **What DOES fail F-9, and this is the positive falsifier:** `checked > 0`, or
+  `guard_installed == true`, or a non-null `violation` naming a resolved import. Each of those says
+  the import guard ran, which contradicts 9.1 — the refusal did not come from B-4, and the arm is
+  measuring something other than containment.
+
+**Measured, so the expectation is calibrated rather than assumed.** On a two-checkout fixture
+reproducing F-9's shape against the build branch's guard — a wrapper in the canonical tree importing
+a module genuinely named `seed_offset_policy`, run with the clean tree as `--expect-root` — the
+refused arm produced **zero** occurrences of the token: none in the merged log, none anywhere in the
+inventory record, and `sys_path_final` held directory paths only. So in practice the token simply is
+not there. **That is a reason to stop testing for it, not a reason to keep testing for it**: a check
+that always passes on correct input and is not tied to the property is decoration, and this contract
+already refuses decoration elsewhere.
+
+##### What the U/U' arm IS, and what it is NOT
+
+Both halves must be stated together. A later reader who finds U/U' naming `seed_offset_policy`
+beside an F-9 arm that does not will otherwise read a contradiction where there is a division of
+labour.
+
+- **IT IS:** *counterfactual origin evidence showing what would load without that containment*
+  (Joseph, above). It answers "if B-4 were not there, which tree's `seed_offset_policy` would this
+  wrapper have imported?" — and the answer, asserted on the loaded module's `__file__`, is the
+  canonical checkout's copy. **It must retain and name `seed_offset_policy`; that is the whole point
+  of the arm, and removing the name would empty it.**
+- **IT IS NOT:** the mechanism of the F-9 refusal. F-9 refuses through B-4, before any import. U/U'
+  contributes **no** part of 9.1–9.5 and cannot be cited for them. It discharges F-12(N-1)(iii) and
+  nothing else.
+
+Both statements are load-bearing. The first stops a later lane from "tidying" the name out of U/U'
+on the strength of ruling 20's original wording; the second stops anyone citing U/U' as evidence
+that containment fired.
+
+##### THE THREE ARMS, AND HOW A GRADER TELLS THEM APART
+
+They differ in `--expect-root` and in outcome, and two of them legitimately involve the canonical
+checkout, so **the distinction must be carried by the record rather than by the reader's care.**
+
+| arm | `--expect-root` | inventory record | exit | names `seed_offset_policy`? | what it establishes |
+|---|---|---|---|---|---|
+| **F-9 refused** | the **clean tree** (`MNV_CODE_ROOT`) | `script_checkout_root` = canonical, **≠** `expect_root`; `guard_installed=false`; `checked=0`; `outcome=refused:script-outside-expect-root` | **3** | not expected; not graded either way | containment refused before imports began |
+| **O-1 paired** | the **canonical checkout** — the tree it was launched from | `script_checkout_root` **=** `expect_root`; `guard_installed=true`; `checked>0`; `outcome=ok` | **0** | may; not graded | the arm could have succeeded, so the refusal was not breakage |
+| **U/U' unguarded** | **none** — the guard is not invoked at all | **no record exists** | 0 | **must**, on `__file__` | counterfactual origin: what would load without containment |
+
+**`expect_root` is the arm's identity.** In the F-9 arm it is the clean tree and differs from
+`script_checkout_root`; in the paired arm the two are equal; the U/U' arm has no record at all,
+because no guard ran. A grader who cannot tell which arm a capture belongs to should read
+`expect_root` first and everything else second.
+
+**Each arm writes to its own inventory path and its own capture file.** This is a requirement, not
+advice, and it is how the conflation is prevented structurally instead of by care. **O-3's "same
+stream" rule is WITHIN an arm** — it exists so the refusal banner and the last stdout line can be
+interleaved for one process — **and must not be read as one file for the whole control.** A single
+combined capture would put U/U''s naming of `seed_offset_policy` into the same file as the F-9 arm,
+which is the one way the token realistically appears near a refused arm at all.
 
 ##### O-1 for the restated F-9, and why the paired arm is permitted
 
@@ -842,9 +915,11 @@ things settle it:
   not refuse. **Without this, a wrapper that was simply broken would produce the same silent,
   output-free refusal and F-9 would pass vacuously.** This is the direct analogue of N-2's
   `assertIn(STARTED, …)`, and it is the clause that would have caught the original F-9 collision.
-- **F-12(N-1)(iii) — retained as evidence, not as mechanism.** The U/U' arm shows
-  `seed_offset_policy.__file__` under the canonical checkout, i.e. that the canonical module would
-  load absent containment. Ruling 20 permits it and denies it mechanism status.
+- **F-12(N-1)(iii) — retained, and it MUST name `seed_offset_policy`.** The U/U' arm asserts
+  `seed_offset_policy.__file__` under the canonical checkout: *counterfactual origin evidence
+  showing what would load without that containment* (Joseph, 2026-08-22). Removing the name would
+  empty the arm. It is **not** the mechanism of the F-9 refusal and cannot be cited for 9.1–9.5.
+  See the two-halves statement and the three-arm table in §7.0.11.
 
 #### 7.0.13 Ruling 21 — the 14/30 guarding boundary, and the ordering clause as a criterion
 
@@ -944,10 +1019,17 @@ declared configuration and must be pinned **with** it, so that the exclusion can
 
 Recorded so it can be attacked directly rather than rediscovered.
 
-**(a) Two ambiguities in ruling 20 are resolved in §7.0.11 rather than left to the grader** — the
-scope of *"must not name `seed_offset_policy`"* against the retained U/U' arm, and whether O-1's
-paired arm may name the canonical checkout as `--expect-root`. If either resolution is not what
-Joseph intended, the text says which way it was read so it can be reversed in one edit.
+**(a) Both ambiguities in ruling 20 are now ANSWERED, not merely resolved by this lane.** Joseph
+clarified on 2026-08-22 that in the refused F-9 arm `seed_offset_policy` is *"neither required nor
+expected to appear"* and that U/U' *"must retain and name"* it as counterfactual origin evidence.
+The scoping this lane had applied held, **but his formulation is weaker than ruling 20's and the
+difference is gradeable**: a prohibition makes the token a fail condition, whereas an absence of
+expectation makes it a consequence of B-4 refusing first. §7.0.11 now carries his formulation, and
+9.6 is graded on 9.4's triple rather than on a string search. The second ambiguity — whether O-1's
+paired arm may name the canonical checkout as `--expect-root` — is answered affirmatively in the
+same section. **The lesson is worth keeping: when a rule and its rationale disagree, the rationale
+is the thing to encode. A rubric that forbids a token is testing a proxy, and the proxy can fail a
+correct arm while missing a wrong one.**
 
 **(b) 9.2's dependency was real and is discharged**, verified in three directions in §7.0.11 —
 including the silent direction, because a fix that turned every empty inventory into a refusal would

@@ -107,7 +107,7 @@ docs/orchestration/REPAIR4-DEFECT-STATUS-20260807.md	tracked	ARCHIVAL	document		
 docs/orchestration/REPAIR6-RECORDED-NOT-CHECKED-INVENTORY.md	tracked	ARCHIVAL	document			terminal		exact-path-only	nd-unfolding/p4_evidence.py;nd-unfolding/tests/test_p4_sweep_snapshots.py	yes	4	418	30567
 docs/orchestration/REQUIREMENTS-20260814-cstat-assembly-conventions.md	tracked	ARCHIVAL	document		20260814	terminal		exact-path-only	nd-unfolding/pet/build_cstat_gate5_n50.py	yes	6	779	54474
 docs/orchestration/RESTORE-2026-08-03.md	tracked	ARCHIVAL	document			terminal		exact-path-only	lib/enumerate_backfill_families.py;nd-unfolding/pet/closure_fullevent_fps.py;nd-unfolding/pet/fullevent_fps_dataloader.py;nd-unfolding/pet/stress_closure_muon.py;nd-unfolding/pet/validate_pet_nominal_gate4.py;nd-unfolding/tests/test_b1_normalization_fix.py;nd-unfolding/tests/test_pet_nominal_gate4_validator.py	yes	29	1428	91909
-docs/orchestration/REVIEW-CONTRACT-20260822-k0-execution-integrity.md	tracked	LIVE	review		20260822	open		route-only		no	5	1078	75711
+docs/orchestration/REVIEW-CONTRACT-20260822-k0-execution-integrity.md	tracked	LIVE	review		20260822	open		route-only		no	5	1160	82252
 docs/orchestration/ROW-OWNERS.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/whose_row.py	no	2	74	5692
 docs/orchestration/RULING-20260817-lanec-oi126-branch-set-not-exhaustive.md	tracked	ARCHIVAL	document		20260817	terminal		exact-path-only	nd-unfolding/pet/probe_oi126_test2_target_level_spatial.py	yes	5	264	18843
 docs/orchestration/RULING-20260817-lanec-pinned-readers-get-wrappers-not-copies.md	tracked	ARCHIVAL	document		20260817	terminal		exact-path-only	nd-unfolding/mii_adopt_unified_5d_stamped.py	yes	3	244	16354
