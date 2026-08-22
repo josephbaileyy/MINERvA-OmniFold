@@ -20,6 +20,10 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 - Active BEN identifiers: [`FINDINGS.md`](FINDINGS.md); full evidence is at the frozen tag.
 - Bugs and traps: [`../../KNOWN_ISSUES.md`](../../KNOWN_ISSUES.md).
 - Retracted values: [`INDEX-retracted-and-superseded-values.md`](INDEX-retracted-and-superseded-values.md).
+- Why the B1 pause's clause (c) cannot be met through the launcher:
+  [`FINDING-20260822-clause-c-adopt-is-unreachable-under-its-own-pause.md`](FINDING-20260822-clause-c-adopt-is-unreachable-under-its-own-pause.md)
+  — measured: `sbatch_finalize_5d_bkgaware_gpu.sh:347/:352` is unreachable in both regimes, so the
+  condition is circular as written and the disposition is a forced choice, not a judgement call.
 
 ### Documents that open items route to but this router did not list
 
