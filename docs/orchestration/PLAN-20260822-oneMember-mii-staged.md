@@ -176,3 +176,145 @@ running one before authorizing fifty.
 Approval to submit **legs 1–6 for `MNV_EST_SEED_OFFSET=0` only**, after a decision on the three stale
 replicas in §3. No other member, no family, nothing deleted except — if Joseph so rules — those nine
 stale files.
+
+
+---
+
+# AMENDMENT 1, 2026-08-22 — corrections required by Joseph before submission
+
+## A. The file count was wrong: SIX, not nine
+
+**My error, caught by Joseph.** `member_k000000` holds **3 `.npz` + 3 `.done` = 6 files.** I wrote
+"nine" by taking the **9 `.npz` across all three members** and reporting it as one member's file count
+— two right measurements of different populations, quoted as one. The same axis as the 18-vs-9
+confusion earlier the same day, and I made it in the document correcting that one.
+
+**Authorized disposition (Joseph, 2026-08-22): quarantine, do not delete and do not reuse.** Move
+exactly those six files to a recoverable location outside every production and resume glob, after
+recording for each: original path, sha256, size, mtime, **complete marker contents**, and Slurm job
+identity. Then regenerate ids 1–3 with the new production set. **No other file may be moved or removed
+under this authorization.**
+
+Slurm identities already located for the receipt: `57252337_{1,2,3}`, `57252338_{1,2,3}`,
+`57252339_{1,2,3}` — nine `COMPLETED` tasks at 8:17–8:51 on 2026-08-18, three per member.
+
+## B. The leg count was also wrong: SEVEN jobs, not six
+
+`uthrow` is **three** submissions, not two. `sbatch_uthrow_combine_5d_fast.sh:10` states it:
+*"Submit with `--dependency=afterok:<throwjob>:<blockjob>`. Writes the SAME target."* I had counted
+`runF` and `blkF` and missed `combF`.
+
+| # | launcher | job name | array | measured cost |
+|---|---|---|---|---|
+| 1 | `sbatch_bootstrap_5d_gpu.sh` | `boot5dG` | `1-100` | 8.4 min/task → 14.0 A100‑h |
+| 2 | `sbatch_seedscan_split_5d.sh` | `ssplit5d` | `1-24%24` | 9.3 min/task → 3.72 CPU‑h |
+| 3 | `sbatch_unfold_5d_detector_bkgaware_gpu.sh` | `det5dBKG` | 24 | 35.6 min/task → 14.23 A100‑h |
+| 4 | `sbatch_sweep_bank_5d_run_bkgaware_gpu.sh` | `sweep5dBKGrun` | `1-169%48` | 8.5 min/task → 23.84 A100‑h |
+| 5a | `sbatch_uthrow_run_5d_fast.sh` | `uthrow5d_runF` | `0-39%40` | 21.38 CPU‑h total |
+| 5b | `sbatch_uthrow_block_5d.sh` | `uthrow5d_blkF` | `0-20%10` | 22.02 CPU‑h total |
+| 5c | `sbatch_uthrow_combine_5d_fast.sh` | `uthrow5d_combF` | single | **UNMEASURED — see below** |
+| 6 | `sbatch_finalize_5d_bkgaware_gpu.sh` | `fin5dBKG` | single | ≤ 1.5 h walltime |
+
+**`uthrow5d_combF` has no measured cost and I am not estimating one.** `sacct` over the July archive
+window returns no `COMPLETED` record for that name. This is a **real null**, not the failed-query kind:
+the identical query form returned data for the other four names in the same window. Its walltime
+request is **3 h, 1 node, 16 CPUs, 90 GB**, so the budget ceiling is 3 CPU‑h; the actual figure comes
+out of the k=0 run itself.
+
+**The array sizes and the completed counts do not match** (`runF` requests 40 and 30 completed;
+`blkF` requests 21 and 31 completed). That is consistent with reruns in the July window. The **cost**
+figures above are the summed `COMPLETED` elapsed, which is the right operand for a budget; the array
+sizes are what gets submitted. They are different quantities and are listed separately on purpose.
+
+## C. Exact submission commands and dependency order
+
+All from `/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding` on a login node, after
+`source ../setup_salloc_env.sh`, with the member declared in the submitting shell:
+
+```bash
+export MNV_EST_SEED_OFFSET=0          # canonical integer, NO leading zeros
+export MNV_LAUNCHER_DIR="$PWD"        # sbatch runs a spool COPY; BASH_SOURCE is not the script's home
+```
+
+**Independent roots — submit together:**
+
+```bash
+JB=$(sbatch --parsable sbatch_bootstrap_5d_gpu.sh)                    # leg 1
+JS=$(sbatch --parsable sbatch_seedscan_split_5d.sh)                   # leg 2
+JD=$(sbatch --parsable sbatch_unfold_5d_detector_bkgaware_gpu.sh)     # leg 3  -> the member CV
+JR=$(sbatch --parsable sbatch_uthrow_run_5d_fast.sh)                  # leg 5a
+JK=$(sbatch --parsable sbatch_uthrow_block_5d.sh)                     # leg 5b
+```
+
+**Dependent:**
+
+```bash
+JW=$(sbatch --parsable --dependency=afterok:$JD sbatch_sweep_bank_5d_run_bkgaware_gpu.sh)   # leg 4
+JC=$(sbatch --parsable --dependency=afterok:$JR:$JK sbatch_uthrow_combine_5d_fast.sh)       # leg 5c
+# LEG 6 IS NOT SUBMITTED HERE -- it is gated on the staged review (see D).
+```
+
+**Why leg 4 waits on leg 3, established from the code rather than assumed:** leg 3 writes
+`5d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root` into `uq_5d/universe_sweep_bkgaware/` (`:85`), which is
+both the member's CV — the value the finalize launcher reads as `CV` under `mr_declared` — and the
+same directory leg 4's 169 universes populate. Legs 1, 2, 5a and 5b reference nothing the others
+produce; grepping `sbatch_uthrow_{run,block}_5d.sh` for the sweep returns **nothing**, so the unified
+throw is independent of the sweep and can start immediately.
+
+**Leg 6 is deliberately absent from this block.** Under Joseph's staging it is submitted only after
+legs 1–5 validate, the declared-member pause branch is removed, and a fresh non-builder reviews that
+removal.
+
+## D. Correction 2/3/4 — the execution-integrity requirement, and why the parent-only wrapper fails
+
+**The mechanism already exists and its own author documented the hole Joseph named.**
+`nd-unfolding/mnv_guarded_run.py` wraps the stdlib `PathFinder` in `sys.meta_path` and exits **3** when
+any import resolves inside a MINERvA-OmniFold checkout other than `--expect-root`. It is already wired
+into two Gate-5 launchers, and it carries 21 tests whose first assertion is that the fixture
+**genuinely hijacks when unguarded** — a guard test whose fixture does not hijack passes vacuously.
+
+Its docstring states the limit in capitals, measured rather than suspected:
+
+> **IT DOES NOT CROSS A SUBPROCESS BOUNDARY, AND THAT IS MEASURED, NOT SUSPECTED.** […] a child started
+> with `subprocess.run([sys.executable, ...])` gets a fresh interpreter with a clean `sys.meta_path`
+> […] Both halves are asserted in `tests/test_mnv_guarded_run.py::TheSubprocessBoundaryIsNotCovered`.
+
+and it names this exact path as the live instance:
+
+> `mii_adopt_unified_5d_stamped.py` […] runs it AS A SUBPROCESS, deliberately, so that the bytes whose
+> sha256 is pinned are the bytes that execute. `adopt_unified_5d.py` is one of the fail-open 59. So
+> wrapping that adoption path in this guard would print a clean banner and refuse nothing.
+
+Confirmed at the source: `adopt_unified_5d.py:35-38` sets `_REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"`
+and inserts two paths under it at `sys.path[0]`. **`PYTHONPATH` cannot outrank position 0.**
+
+**THE MINIMUM SUFFICIENT FIX, and it does not touch a pinned science file.** Guard the **child**, not
+the parent: have `build_child_argv` (`mii_adopt_unified_5d_stamped.py:287`, separated out *"so a test
+can read it"*) emit
+
+```
+[python, mnv_guarded_run.py, --expect-root <clean tree>, --, adopt_unified_5d.py, ...]
+```
+
+The child interpreter then installs the guard **before** importing anything, so
+`adopt_unified_5d.py`'s rooted `insert(0, …)` is caught **at import resolution**, which is where the
+guard acts — not at path-insert time. Fail-closed, exit 3, before any scientific work.
+
+**Why not the alternatives.** Editing `adopt_unified_5d.py` to resolve from `__file__` is the correct
+END state that `OI-136` asks for, and Joseph's correction 4 does authorize *"their necessary hash
+bindings"* — but that file's sha256 is bound by `ben106-stamp-verify-active-56695424.json`, which
+`mii_adopt_unified_5d_stamped.assert_pinned_writer_is_intact` reads **every run**, so the change
+requires re-issuing the receipt of the owning gate. Wrapping the child leaves the pinned bytes
+executing unchanged and keeps that safety argument intact. Setting `PYTHONPATH` cannot work at all.
+
+**What still has to be built, and it is not done yet:**
+
+1. the `build_child_argv` change plus its `--expect-root` plumbing;
+2. the same guard on every other Python entrypoint on the k=0 path;
+3. **a negative control proving an import from another checkout is refused before scientific work
+   begins** — modelled on the existing suite's rule that the fixture must genuinely hijack unguarded;
+4. binding and verifying the actual executing and imported files against the approved clean tree, and
+   **not executing from the 721-entry dirty canonical checkout**;
+5. a **fresh non-builder** verification of all of the above.
+
+**None of this is verified by me and none of it authorizes submission.** Item 5 is the gate.
