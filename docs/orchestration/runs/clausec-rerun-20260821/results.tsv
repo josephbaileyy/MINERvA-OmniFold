@@ -17,3 +17,6 @@ B3	legs at k=1100, process declares k=1200	segment exit != 0	segment exit 1	FIRE
 C1	flag=0 while upstream_estimator_seed_g1 present	FAIL(2)	2	FIRED
 C2	flag=1 while upstream_estimator_seed_g2 ABSENT	FAIL(2)	2	FIRED
 D1	stamped g1 seed 9999 != baseline 42 + offset 0	FAIL(2)	2	FIRED
+D2	declared member, g1 leg has no seed	segment 0 then FAIL(2)	segment 0, gate 2	FIRED
+E	undeclared adopter, undeclared legs	segment 0 then FAIL(2)	segment 0, gate 2	FIRED
+G2	read_one_matrix_for_gate2 on the real 892 MB archive	ok(0)	0	OK

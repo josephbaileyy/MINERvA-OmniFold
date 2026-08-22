@@ -1,8 +1,12 @@
-# 2026-08-21 — EXPIRY CLAUSE (c), RERUN: **DRAFT — ARMS PENDING**
+# 2026-08-21 — EXPIRY CLAUSE (c), RERUN: **THE COMPLETE GATE ADMITS A CORRECT PRESENT-SEED PRODUCT AND REFUSES EVERY BAD ONE — WITH ONE MEASURED HOLE, AND THE PAUSE IS NOT LIFTED**
 
-**Status: DRAFT. The arm table is not yet filled and this file carries no verdict.** It exists so the
-scope, eligibility and provenance are fixed BEFORE the results are seen, which is the only order in
-which a stated scope can constrain a conclusion.
+**22 arms at PRODUCTION DIMENSION (n = 10694), real ROOT, on a clean detached worktree at
+`00be534f`. Every arm matched its predeclared expectation. Sixteen refusal arms fired. One arm —
+predeclared as a probe with its outcome recorded as unknown — PASSED, and that is Finding C: the gate
+admits a wrong-length diagonal pair.**
+
+**THIS VERDICT DOES NOT LIFT THE PAUSE.** Clause (c) is one of three, only Joseph lifts it, and the
+launcher's own text says *"NOTHING ABOUT (c) IS SATISFIED BY THIS SCRIPT RUNNING SUCCESSFULLY."*
 
 ## What this is
 
@@ -105,6 +109,101 @@ throughout, and a tree-level claim would have been falsified by work that never 
 The receipt binds `nd-unfolding/adopt_unified_5d.py` at `e1260e8dec2d39cb`, which is exactly the
 digest that executed — so `assert_pinned_writer_is_intact`'s claim, that the subprocess form runs the
 bytes the receipt names, is **true on this run** rather than merely asserted.
+## The arms, and whether each fired
+
+**22 arms. Every one matched its predeclared expectation.** Exit codes read UNPIPED from
+`mii_anchor_comparator.main` (`PASS=0, INCOMPLETE=1, FAIL=2`) and from the extracted segment; the
+disposition column is computed by the driver from the code, never typed in after seeing the output.
+
+| # | arm | configuration | required | observed | fired? |
+|---|---|---|---|---|---|
+| **1** | **A1** | present seed both legs, declared `k=0`, legs `est_seed_offset_declared=1` | **COMPLETE gate PASSES** | segment **0**; gate **PASS / exit 0** | n/a (positive) |
+| 1 | **A1C** | the cv-centered sibling the same segment builds | COMPLETE gate PASSES | gate **PASS / exit 0** | n/a (positive) |
+| 1 | **A1R** | the same member vs the **REAL 892 MB archive** | FAIL on payload VALUES only, **0 uncovered** | **exit 2**, `uncovered=0`, `partial=0` | see below |
+| **2** | **A2** | declared `k=0` adopter over two legs each `declared=0` | wrapper REFUSES | `DECLARATION MISMATCH on the g1 leg` — segment **exit 1** | **YES** |
+| **3** | **A3a** | `hDiagCombinedOld[777]` altered | gate FAILS | `[diag] FAIL clip(...) vs ...` — **exit 2** | **YES** |
+| 3 | **A3b** | `hDiagCombinedOld` dropped, raw kept | gate FAILS | `only ONE of the pair is present` — **exit 2** | **YES** |
+| 3 | **A3c** | clipped shortened, raw not (shapes differ) | gate FAILS | `shapes differ` — **exit 2** | **YES** |
+| 3 | **A3d** | **PROBE:** both diagonals zero-padded to **10695** | *unknown — measured* | **PASS / exit 0** | **DID NOT FIRE → Finding C** |
+| 3 | **A3e** | **CONTROL:** both truncated to **10693** | gate FAILS | `sqrt_tr_old` recompute mismatch — **exit 2** | **YES** |
+| **4** | **A4** | one legitimately **negative** raw diagonal entry | **PASSES**, clipped stays 0 | gate **PASS / exit 0**; `[diag] OK … 1 negative raw entr(ies) clipped to 0`; `sqrt_tr_old` recomputed `4.358004296350286e-38` **== stamped** | n/a (positive) |
+| **5** | **A5a** | that negative entry **doubled** — clip unchanged, trace moves | gate FAILS | `[diag] OK` (clip still consistent) **and** `RECOMPUTED 4.3577350143027017e-38 != STAMPED 4.358004296350286e-38` — **exit 2** | **YES** |
+| 5 | **A5b** | a **positive** raw bin changed (clip *and* trace move) | gate FAILS | **exit 2** | **YES** |
+| **6** | **B1** | g1 leg at its baseline `42` while the process declares `k=1200` | wrapper REFUSES | `g1 leg's estimator_seed is 42 … i.e. 1242` — segment **exit 1** | **YES** |
+| 6 | **B2** | the same in the other direction, g2 seed `1000` | wrapper REFUSES | segment **exit 1** | **YES** |
+| 6 | **B3** | both legs built at `k=1100`, process declares `k=1200` | wrapper REFUSES | `Refusing to relabel another member's covariance as this one` — segment **exit 1** | **YES** |
+| 6 | **C1** | `upstream_estimator_seed_g1_checked` → 0, seed still present | gate FAILS | `THE FLAG CONTRADICTS ITS OWN SEED` — **exit 2** | **YES** |
+| 6 | **C2** | `upstream_estimator_seed_g2` deleted, flag still 1 | gate FAILS | `… is ABSENT -- THE FLAG CONTRADICTS ITS OWN SEED` — **exit 2** | **YES** |
+| 6 | **D1** | stamped `upstream_estimator_seed_g1` → `9999` | gate FAILS | `RECOMPUTED 42 = baseline 42 + declared offset 0, but the member stamps … 9999` — **exit 2** | **YES** |
+| 6 | **D2** | declared member, g1 leg carries **no** `estimator_seed` | wrapper admits, gate FAILS | segment **0**; `DECLARED member carries NO seed for this leg` **and** `ABSENT FROM MEMBER (PROVENANCE, MANDATORY)` — **exit 2** | **YES** |
+| 6 | **E** | **UNDECLARED** adopter, seeds present | identity UNVERIFIABLE, gate FAILS | segment **0**; `UNVERIFIABLE` both legs **and** `est_seed_offset_declared == 0 -- … UNHOOKED launcher` — **exit 2** | **YES** |
+| — | **P** | payload POWER control: A1's member vs A4's archive | gate FAILS | **exit 2** | **YES** |
+| — | **G2** | `read_one_matrix_for_gate2` on the real 892 MB archive | ok | **exit 0** | n/a |
+
+**SIXTEEN REFUSAL ARMS, ALL SIXTEEN FIRED, each with the specific message its own invariant owns.**
+The one arm that did not refuse is **A3d**, which is Finding C, and it was predeclared as a probe with
+its outcome recorded as *unknown — measured* before the run.
+
+**D1 AND ARM P ARE THE TWO ARMS THAT MAKE ARM 1 NON-VACUOUS**, and they act on different axes. Delete
+the baseline recomputation from `verify_leg_identity` and D1 goes green — so `[identity] OK` in arm 1
+is a real check, not a tautology. Arm 1's archive is a clone of arm 1's member, so its payload
+agreement is true by construction; arm P shows that two *different* production-dimension payloads are
+distinguished, so `PASS` in arm 1 is not a comparison that compares nothing.
+
+## What arm 1 establishes, and it is the thing that had never happened
+
+```
+[b2] VERDICT: PASS
+  [coverage] hCov_combined5d_total_uthrow: compared 114361636 of 114361636 elements (100.0000%)
+  [coverage] hInflation_g:                 compared 10694 of 10694 elements (100.0000%)
+  [identity] OK  g1: upstream_estimator_seed_g1 = 42   = baseline 42   + declared offset 0
+  [identity] OK  g2: upstream_estimator_seed_g2 = 1000 = baseline 1000 + declared offset 0
+  [config]   OK  upstream_n_throws = 160 == predeclared ensemble size
+  [config]   OK  centering_convention = 'mean-centered' matches adopted_uthrow.root
+  [diag]     OK  clip(hDiagCombinedOldRaw) vs hDiagCombinedOld: 10694 bins
+  [recompute] OK sqrt_tr_new: recomputed 6.891461280320583e-38 == stamped
+  [recompute] OK sqrt_tr_old: recomputed 4.358542810534632e-38 from hDiagCombinedOldRaw == stamped
+```
+
+**THE COMPLETE GATE CAN PASS A CORRECT PRESENT-SEED `k=0` PRODUCT AT PRODUCTION DIMENSION.** Both
+prior runs failed this necessarily — one because `OI-147`'s eight keys were covered by nothing, and
+both because a sub-production fixture cannot satisfy `EXPECTED_ELEMENTS`. Coverage is now
+**100.0000%** on both asserted keys, so the previous run's two `PARTIAL COMPARISON` findings were
+purely its fixture and are gone.
+
+**AND `sqrt_tr_old` RECOMPUTES BIT-EXACTLY, WHICH WAS THE OPEN QUESTION AND NOT A FORMALITY.** The
+child stamps `sqrt(np.trace(C_comb))` — a **strided** diagonal reduction — while
+`_sqrt_trace_from_diag` recomputes `sqrt(np.sum(...))` over a **contiguous** TH1D read-back, compared
+at `rtol=0.0`. `_sqrt_trace_from_diag`'s own docstring says the bit-exactness is a property of the
+summation route, not of the mathematics, and OI-147's unit tests build both sides in one process so
+they cannot exercise that crossing. It holds, measured on the artifact at n=10694, and **it also holds
+with a negative raw entry present** (arm 4: `4.358004296350286e-38`, recomputed == stamped, with the
+clipped histogram correctly 0 at that bin). That pair — arm 4 passing and arm 5a failing on the same
+fixture with the clip check still green — is the whole of OI-147 Option 1 working as ruled.
+
+## `OI-147`'s blocker is closed, measured against the REAL archive
+
+Arm A1R, the direct successor to the previous run's arm A:
+
+| cause | previous run | **this run** |
+|---|---|---|
+| `audit_uncomparable` — archive-absent, covered by nothing | **8** | **0** |
+| coverage `PARTIAL COMPARISON` | 2 | **0** |
+| `[identity]` failures | 0 | **0** |
+| `compare()` PAYLOAD inequality vs the real archive | 4 | 4 |
+
+The four payload inequalities are the synthetic member differing from the real archive's physics —
+`sqrt_tr_old` member `4.358542810534632e-38` vs archive `4.357790406860002e-38`, and two differing
+digests — which is what a synthetic member MUST do and I claim nothing from them. **The eight are
+gone.** Confirmed by a second, independent route: executing the archive-absent sweep over
+`ARCHIVE_KEY_MAP` for both adopted artifacts returns **NONE uncovered**, and
+`declared_unrecomputable()` is now exactly `{fixed_seed_null_norm, globalCompleteness}`.
+
+`OI-140`'s caveat that "nobody has run the gate end-to-end on a real artifact" was already spent by
+the previous run. What is newly spent here is stronger: **nobody had ever built a product through the
+new writer at all**, so `hDiagCombinedOldRaw` had never been read back off any artifact. It has now,
+at production dimension, in five arms.
+
 ## What the fixtures are, and what a pass therefore means
 
 Built at **N = 10694** from the producers' own call forms, with **synthetic VALUES**: every matrix is
@@ -227,6 +326,132 @@ same segment bytes, same wrapper.
 This is not a defect and it is not a way around the clause. It is the reason a present-seed arm has to
 be constructed rather than observed, and it is why "run the launcher and see" cannot satisfy (c).
 
+## Finding C — the gate ADMITS a wrong-length diagonal pair, and the check that looks like cover cannot see it
+
+**Reported to me as a missing assertion by the `publication closeout` lane, which built OI-147.** I
+re-derived it from the source before accepting it, then measured whether it was REACHABLE, because a
+missing assertion is not automatically a defect. It is reachable.
+
+`classes.EXPECTED_ELEMENTS` holds exactly `hXSecND_flat`, `hJointMeanShift`, `hInflation_g`,
+`C_unified`, `C_blocksum`, `C_cross` and `hCov_combined5d_total_uthrow`. **Neither `hDiagCombinedOld`
+nor `hDiagCombinedOldRaw` is in it** — so `mii_anchor_comparator.py:448`'s
+`expected = classes.EXPECTED_ELEMENTS.get(name)` returns `None` for both and the coverage branch
+prints *"NO DERIVED EXPECTATION, so completeness is reported and NOT asserted"* and moves on. Their
+sibling per-bin histograms are both pinned at 10694; the one histogram OI-147 shipped is not.
+
+**MEASURED, ARM A3d.** Starting from the product that passes the complete gate, both diagonals
+rewritten at **10695** bins with the appended bin exactly `0.0`, pair kept mutually consistent:
+
+```
+mii_anchor_comparator.py  EXIT 0   -- the COMPLETE gate PASSED
+  [coverage] hDiagCombinedOld:    compared 10695 elements; NO DERIVED EXPECTATION ...
+  [coverage] hDiagCombinedOldRaw: compared 10695 elements; NO DERIVED EXPECTATION ...
+  [diag] OK   clip(hDiagCombinedOldRaw) vs hDiagCombinedOld: 10695 bins
+  [recompute] OK   sqrt_tr_old: recomputed <v> from hDiagCombinedOldRaw == stamped <v>
+```
+
+**AND THE CONTROL IS WHAT MAKES THIS A FINDING RATHER THAN A GUESS.** Arm A3e truncates the same pair
+to **10693** and is REFUSED (exit 2) on `sqrt_tr_old`'s recomputation. So the trace check has power
+against a length error **only when the length error moves the sum** — and zero-padding does not: the
+raw sum came back **bit-identical** across 10694 -> 10695, so `_clip_consistency` sees equal shapes,
+both recomputations agree, and nothing in the gate looks at the length at all.
+
+I had predicted the opposite outcome as the more likely one — that appending an element would perturb
+numpy's pairwise blocking and refuse A3d by arithmetic accident. It does not, and the distinction
+mattered: a refusal by accident would have read as coverage while leaving the hole open.
+
+**SCOPE, so the fix is not over-landed.** A3d mutates a FINISHED product, i.e. it models corruption or
+hand-editing after the wrapper has run. It does **not** show the wrapper can emit a mismatched pair:
+`_stamp_output` writes both histograms from the same `_read_diagonal` return, so on today's path they
+are the same length by construction. What it shows is that **the gate would admit one** — and the gate
+is precisely what stands between a corrupted or hand-edited artifact and stage 1, which is
+`audit_uncomparable`'s own stated reason for existing (*"the member could carry it wrong and this gate
+would pass"*).
+
+### The remedy, MEASURED — and the obvious fix does not work
+
+The obvious repair is two rows in `classes.EXPECTED_ELEMENTS` pinning both diagonals at
+`REPORTED_NBINS`. **It does not close this.** Measured on patched COPIES outside any commit — a
+forward-looking probe of a proposed remedy, and **not part of the clause (c) certification**:
+
+| run | patch | A3d |
+|---|---|---|
+| `base` | none; `00be534f` as committed | **exit 0** — reproduces arm A3d, so the rest is readable |
+| **`A`** | the two `EXPECTED_ELEMENTS` rows ONLY | **exit 0 — STILL ADMITTED** |
+| **`B`** | `A` + `m_mx` completeness asserts EQUALITY, with a distinct over-length message | **exit 2 — refused** |
+| **`B_on_good`** | `B` against the PASSING product | **exit 0 — no false positive** |
+
+**WHY `A` FAILS, AND IT IS A POLARITY ERROR RATHER THAN A MISSING ROW.** The coverage check is
+one-directional: `mii_anchor_comparator.py:885` is `if frac < 1.0:` and it is the ONLY thing in that
+loop that sets `class_failed`; the flag above it is `"" if frac >= 1.0`; and
+`assert_reduction_is_declared` returns `None` on `coverage >= 1.0` (`:525-526`). At
+`10695/10694 = 1.0000935` an over-length array is `>= 1.0` and falls on the unguarded side of all
+three. So `A` closes only the SHORT direction — which `sqrt_tr_old`'s recomputation already closed, as
+arm A3e shows — and leaves the LONG direction, which is the reachable one.
+
+**THE DEFECT NAMED PROPERLY:** one module, two readers of the same quantity, opposite polarity. The
+TH2D discharge path at `:448-480` asserts `int(arr.size) == expected` — **equality**. The `m_mx`
+coverage path asserts `frac < 1.0` — **partiality**. The gate rests on the permissive one. That is
+verbatim the failure the comment at `:452-460` already records about `r.get("complete", True)` failing
+open, recurring one function away.
+
+**RECOMMENDED, NOT LANDED:** candidate `B` — both rows AND the equality assertion, with an over-length
+branch carrying its own message, because "PARTIAL COMPARISON" is the wrong words for a 10695-bin array
+and reusing them would misreport the defect. `B_on_good` is why this is offered as a fix at all: the
+polarity change touches a branch **every** key in the table traverses, so a version that reddened good
+products would be a new unavoidable FAIL — and `identity_is_checkable`'s own docstring records that an
+unavoidable FAIL at stage 1 is the thing most likely to get the gate routed around. It does not redden
+them.
+
+**I did not land it**, on two grounds: the fix belongs to the lane that owns OI-147, and landing
+anything mid-verification would have invalidated this file's own digest binding — so `00be534f` is
+verified as-is and the hole is REPORTED with its remedy measured. Arm A3d is the power control for
+whoever lands it: it must flip from exit 0 to exit 2, and `B_on_good` must stay 0.
+
+**PROVENANCE, because this finding was not mine alone and the sequence matters.** The
+`publication closeout` lane — the builder of OI-147 — reported the missing rows to me from a source
+reading. I re-derived them and then measured whether they were REACHABLE, rather than reporting a
+missing assertion as a defect. That lane then **self-corrected**: it worked out that its own proposed
+fix would not fire and told me before I could write it in as the remedy. Its correction is why the
+polarity error is named here instead of two ineffective rows being recommended.
+
+**AND ONE MORE INSTANCE OF THE SAME PATTERN, RECORDED AT THAT LANE'S OWN REQUEST.** It asked me to
+measure whether the new guard FIRES. It did not ask whether the guard stays SILENT on a good product —
+the direction a polarity change actually acts in, and the one that decides whether the remedy is a fix
+or a new unavoidable FAIL. So it caught a one-directional check in the comparator and then authored a
+one-directional verification request for the repair, minutes after naming the pattern. `B_on_good`
+exists because of that gap, and it is the arm that makes `B` recommendable rather than merely
+refusing. The inherited instance in the code is the weaker example; this one was authored fresh by
+someone who had just named it.
+
+## The answer to the question clause (c) asks
+
+**A fresh non-builder has run the REAL steps (4)/(5) path on a PRESENT-SEED artifact, at production
+dimension, with real ROOT, and the complete gate ADMITS a correct product and REFUSES every bad one I
+could manufacture — sixteen refusal arms, all sixteen fired, with one measured exception that is
+Finding C.**
+
+Stated as narrowly as the evidence allows, because the clause is one of three and the lift is not
+mine: on the **upstream-seed identity axis, the configuration-identity axis, and the raw/clipped
+diagonal axis**, the chain
+`launcher adopt segment -> mii_adopt_unified_5d_stamped.py -> adopt_unified_5d.py -> stamped adopted
+root -> mii_anchor_comparator.py stage 1` behaves as its authors claim, on artifacts of the size the
+real product has. **`OI-149`'s hole is closed and its closure fires. `OI-147`'s eight-key blocker is
+gone, measured against the real archive.** Both of those were the stated preconditions for this rerun
+and both hold.
+
+**WHAT THIS DOES NOT SAY.** It does not say the payload is right — the fixtures are diagonal and
+synthetic. It does not say any real member reproduces the real archive. It does not say clauses (a) or
+(b) hold. It does not say the gate is free of defects: **Finding C is a hole in it that I found and
+measured, and it is open.** And it does not lift the pause.
+
+**THE ONE THING I WOULD PUT IN FRONT OF JOSEPH BEFORE ANY LIFT**, because it is not recorded anywhere
+else and it is not a matter of judgement: **Finding A.** The launcher hardcodes `REPO` and cds there,
+and that tree is 6 commits behind with the **pre-`OI-149`, pre-`OI-147` bytes** of the three modules
+this whole exercise is about. Submitting the launcher today would run the code that ADMITS the product
+arm 2 refuses. The remedy is one `git pull` in the primary checkout, and it is a precondition of the
+lift rather than a consequence of it.
+
 ## What I did NOT verify — named, so nothing here reads as covered
 
 * **That any real member reproduces the real archive.** The positive arms compare against a CLONE of
@@ -251,6 +476,35 @@ be constructed rather than observed, and it is why "run the launcher and see" ca
   product against the real cv-centered archive.
 * **Any statement about whether the pause SHOULD be lifted.** That is Joseph's, and clause (c) is one
   of three.
+
+## Evidence, committed rather than cited
+
+**THE EVIDENCE TRAVELS WITH THIS FILE.** An earlier draft cited it only by `/pscratch` path, which is
+at 79.9% of 20 TiB and is PURGED — a verdict whose only evidence is a purgeable path degrades to an
+assertion the moment the purge runs. So it is in the commit, at
+`docs/orchestration/runs/clausec-rerun-20260821/`:
+
+| | |
+|---|---|
+| `results.tsv` | the 22-row arm table, written by the driver from exit codes |
+| `production.log.txt` | the full run transcript, including the provenance and self-test sections |
+| `logs/gate_<ARM>.log.txt` | all 20 per-arm gate transcripts |
+| `logs/probe_{base,A,B,B_on_good}.log.txt`, `probe_remedy.log.txt` | Finding C's remedy probe |
+| `harness/` | every script that ran, so the arms can be re-derived rather than re-imagined |
+
+**A NOTE ON `.log` FILES, because it nearly cost this verdict its per-arm evidence silently.**
+`.gitignore:15` is `*.log`, so `production.log` and all 20 gate logs **did not stage and nothing
+errored** — I noticed only because the commit reported 12 files when I had staged 31. They are
+committed as `.log.txt`, which is this repo's existing convention (`MANIFEST.tsv` already carries five
+`.log.txt` rows). A peer swept the committed `docs/**` for other receipts whose evidence had been
+eaten this way and found none it could substantiate, so this appears to be an instance rather than a
+pattern — recorded because the failure mode is silent absence, not error.
+
+**`MANIFEST.tsv` IS NOT UPDATED HERE, DELIBERATELY.** It is GENERATED (`generate_manifest.py`), only 3
+of the 14 previously-tracked files under `runs/` carry rows, and this commit passed all 12 pre-commit
+checks without one. It is also a shared file that three other lanes were editing while this ran, and
+hand-editing a generated view concurrently is the `OI-152` collision exactly. Whoever regenerates it
+will pick these files up; the absence of rows is not an omission.
 
 ## Reproduce
 

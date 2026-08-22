@@ -1,0 +1,11 @@
+[gate2-read] /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware_uthrow.root:hCov_combined5d_total_uthrow
+[gate2-read]   ok = True
+[gate2-read]   route = rowloop
+[gate2-read]   name = hCov_combined5d_total_uthrow
+[gate2-read]   nx = 10694
+[gate2-read]   ny = 10694
+[gate2-read]   elements = 114361636
+[gate2-read]   expected_elements = 114361636
+[gate2-read]   complete = True
+[gate2-read]   finite = True
+[gate2-read]   digest = 7b4331d8e36f670e6fde3709f8027fc96cf45cc3033b017137b2c5036d9897b2
