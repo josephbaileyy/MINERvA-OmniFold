@@ -364,7 +364,13 @@ def test_scrubbing_git_index_file_reintroduces_the_false_block(tmp_path):
     is correct only because this module inherits GIT_INDEX_FILE; that inheritance is invisible in the
     source -- there is no line to read -- so a future author could scrub the environment "for
     hygiene" and silently restore the false block. Drop the variable and the innocent pathspec commit
-    IS refused. If this test ever passes-by-not-blocking, the arms above prove nothing."""
+    IS refused. If this test ever passes-by-not-blocking, the arms above prove nothing.
+
+    DO NOT DELETE THIS AS REDUNDANT WITH THE TWO ARMS ABOVE. The correct behaviour here comes from an
+    ABSENCE OF CODE -- nothing in the module reads GIT_INDEX_FILE, so there is no line for a reader to
+    be suspicious of, and both positive arms keep passing on a plain commit while the pathspec case
+    silently breaks. A dependency that is invisible in the source can only be made visible in a test.
+    (Reviewed and endorsed on exactly that ground by the lane that raised the original objection.)"""
     root = scratch_repo(tmp_path)
     target = root / "docs" / "open-items" / CHECKER.name
     text = target.read_text(encoding="utf-8")

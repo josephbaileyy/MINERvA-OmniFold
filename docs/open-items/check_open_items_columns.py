@@ -55,6 +55,16 @@ direction that matters. Use `--worktree` to see what is on disk (useful while ed
   the environment, so it inherits that index automatically. Do not "fix" that by passing an explicit
   index path -- the inheritance is what makes the pathspec case correct.
 
+  INDEPENDENTLY REPRODUCED, and this paragraph's earlier "recorded as a disagreement to settle" is
+  now stale and replaced. The objecting lane re-ran it from inside a real hook on the SAME git
+  (2.39.3, Apple Git-146) and got the same two rows: pathspec -> next-index-<pid>.lock, GOOD, hook
+  silent; plain commit -> .git/index, MALFORMED, and the commit contained MALFORMED. So it was never
+  a machine difference. THE CAUSE IS WORTH MORE THAN THE RESULT: their first probe ran ALONGSIDE the
+  commit rather than INSIDE the hook, and those are two different subjects. A pre-commit hook is not
+  a shell standing next to git; it is a child git configures on purpose, so any claim about what a
+  hook can see is only measurable in that child. Both readings were real and both commands were
+  correct -- they just answered about different processes.
+
   THE RESIDUAL IS REAL BUT IT IS NOT A FALSE BLOCK. On a plain `git commit` (no pathspec) or
   `git commit -a`, the hook does see a peer's staged malformed row -- and measurement confirms the
   resulting commit CONTAINS that row. So the check fires on a defect the committer is genuinely about
