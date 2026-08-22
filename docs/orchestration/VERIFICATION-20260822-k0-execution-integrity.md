@@ -81,6 +81,15 @@ inventory, and its exit 0 would be indistinguishable from a clean run in exactly
 
 **(a) Route the production entrypoints through the guard — 8 one-line edits, one per launcher.**
 
+> **MY NUMBER WAS WRONG, corrected 2026-08-22 by Joseph's ruling 21 and re-counted here.** It is
+> **14** launcher-level science invocations, not 8: the eight launchers do not carry one apiece —
+> finalize has 5, the detector and uthrow-block launchers 2 each, and one each elsewhere. Plus the
+> pinned-writer child. Re-derived independently against `build-k0-execution-integrity` `80f44084`
+> and it reproduces exactly. I counted launchers and reported invocations; the unit is the
+> invocation. Joseph's own phrasing, *"every production Python invocation"*, was the right one and
+> mine narrowed it. The conclusion of §0 is unaffected and if anything understated — the gap was
+> larger than I said. See the contract's §7.0.13 for the boundary and the counting trap.
+
 ```bash
 mr_run "${OUT}" python3 "${CODE_ROOT}/nd-unfolding/mnv_guarded_run.py" \
        --expect-root "${CODE_ROOT}" --inventory "${INV}" \

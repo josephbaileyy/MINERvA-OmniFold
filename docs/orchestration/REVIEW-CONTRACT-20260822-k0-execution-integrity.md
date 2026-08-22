@@ -496,11 +496,16 @@ single miss is a **FAIL**; there is no partial credit and no waiver by caveat.
 > submission occurs until the former passes, and no rehearsal product or further member is
 > authorized until the latter passes."
 
-**Nothing in this amendment changes what any criterion REQUIRES.** F-1 through F-18 below are
-unedited and keep their numbers, so every existing citation of them — including
+**What this amendment changes, stated precisely.** §7.0 as first written changed **nothing** about
+what any criterion requires; it only said when each is settled. **That is no longer the whole
+truth: Joseph's ruling 20 of 2026-08-22 RESTATES F-9 and, consequentially, F-12** (§7.0.11,
+§7.0.12). Every criterion keeps its number and its original wording — F-9 and F-12 carry an added
+superseded-by pointer above the preserved original text, and nothing else in the eighteen is
+touched. Measured: with the added pointer blocks removed, the criteria text is byte-identical to
+`main` at `115c73bb`. So every existing citation of them — including
 [`VERIFICATION-20260822-k0-execution-integrity.md`](VERIFICATION-20260822-k0-execution-integrity.md)
-and Joseph's rulings — still resolves. This amendment says only **when** each criterion is settled
-and **which of two verdicts** it belongs to.
+and Joseph's rulings — still resolves. Apart from that one restatement, this amendment says only
+**when** each criterion is settled and **which of two verdicts** it belongs to.
 
 **Where the split came from.** It was not asserted. The first review of
 `build-k0-execution-integrity` graded all eighteen and returned four NOT-EVALUABLE — F-1, F-2, F-3
@@ -531,6 +536,16 @@ production run**: no `sbatch`, no scientific workload, no archive product, no me
 needs no fixture, no copy, no edit and no ROOT — §5 says so. **F-9 is PRE-SUBMISSION and it is
 performable today.** A lane that files it under post-rehearsal has deferred the one negative control
 that speaks to the configuration correction 3 forbids.
+
+> **CORRECTION, 2026-08-22 — this worked example was half wrong, and the half that was wrong is
+> instructive.** The *classification* above survives: F-9 is pre-submission, and "needs the cluster"
+> still is not "needs a run". What was wrong is the implicit claim that F-9 was merely **unperformed**.
+> When the round-2 builder actually performed it, F-9 turned out to be **unsatisfiable as originally
+> written** — B-4 containment refuses the canonical-checkout wrapper before the import guard is ever
+> installed. See §7.0.11. I used F-9 as the clean example of a control that could be run today, and
+> it was the one control in §F that could not be run *as specified* at all. **A control that has not
+> been attempted cannot be distinguished from one that is impossible**, which is exactly why a
+> pre-submission NOT-EVALUABLE is graded as a FAIL (§7.0.8) rather than parked.
 
 #### 7.0.3 A criterion with both halves SPLITS; it is never filed whole under the later gate
 
@@ -579,18 +594,18 @@ Read the class column, then settle the half named in the column for the gate you
 
 | # | class | PRE-SUBMISSION half — what settles it on the bench | POST-REHEARSAL half — what settles it |
 |---|---|---|---|
-| F-1 | SPLIT | code root constituted at a **named sha**; A-2(a)–(g) all measured and filed, including the A-2(f) source-manifest digest | the same measurements repeated after the last leg; porcelain zero and the manifest digest identical at both ends |
-| F-2 | SPLIT — see **7.0.4** | both counts zero: unguarded production invocations, and executing files not covered by a `--pair` *(derived)* | P-2 holds across every inventory; every `--pair` CURRENT |
+| F-1 | SPLIT | code root constituted at a **named sha**; A-2(a)–(g) all measured and filed, including the A-2(f) source-manifest digest — and **(d), (e), (g) as executable FAIL-CLOSED checks, not documentation** (ruling 22, §7.0.14); both preflight tools present in the manifest (§7.0.13) | the same measurements repeated after the last leg; porcelain zero and the manifest digest identical at both ends |
+| F-2 | SPLIT — see **7.0.4** | both counts zero: unguarded production invocations **other than the enumerated 16-call preflight set**, and executing files not covered by a `--pair` *(derived)*; **plus the ordering criterion — both preflight tools run BEFORE any science invocation in every launcher, settled by RUNNING it under stubs** (ruling 21, §7.0.13) | P-2 holds across every inventory; every `--pair` CURRENT |
 | F-3 | SPLIT | grep the eight launchers and every guard invocation → zero `--allow`; publish the command | grep the job stdout → zero `--allow`; publish the command |
-| F-4 | SPLIT | the **denominator** is fixed on the bench: guarded production invocations == production Python invocations, and **> 0** *(derived — see 7.0.8)* | count of inventories == count of guarded processes |
+| F-4 | SPLIT | the **denominator** is fixed on the bench: guarded production invocations == production Python invocations **less the enumerated preflight set**, and **> 0** — the accepted figure is **14 launcher-level science invocations plus the pinned-writer child**, re-derived in §7.0.13 *(derived — see 7.0.8)* | count of inventories == count of guarded processes |
 | F-5 | SPLIT | the source-manifest generator and the inventory-vs-manifest comparator exist, and each carries a test that **fires on a mismatch** and is **silent on a match** *(derived)* | P-2 holds for every real inventory: origins under the code root, sha256 matching the manifest, `checked > 0` |
 | F-6 | SPLIT | `build_child_argv` emits the guard and an inventory for the pinned-writer child; a test asserts an explicitly flagged `repo_origin_count: 0` record for that argv shape *(derived)* | the child's record is present in the run's inventory and the run receipt carries the B-2 disclosure sentence in the contract's own terms |
-| F-7 | SPLIT | the P-4 mechanism exists: a per-entrypoint expected-set pin, a comparator aborting on a difference in **either** direction, tests for added / removed / exact-match, and an **absent pin failing closed** *(derived — see 7.0.9)* | the sets are recorded from the rehearsal and pinned |
+| F-7 | SPLIT — **confirmed by ruling 22**, §7.0.15 | the P-4 mechanism exists: a per-entrypoint expected-set pin, a comparator aborting on a difference in **either** direction, tests for added / removed / exact-match, and an **absent or undeclared pin failing closed**; the §7.0.13 exclusion pinned with it *(derived — see 7.0.9)* | the sets are recorded from the rehearsal and pinned — see §7.0.9, the pin's first TEST falls outside this gate |
 | F-8 | SPLIT | P-6's enumeration re-run on `MNV_CODE_ROOT` at the pinned sha, published with its command and its **full** output and reconciled; P-5's blind-spot inventory produced, including the subprocess enumeration with each child either wrapped or recorded as uncovered | the receipt states the blind spots in the receipt's own words |
-| F-9 | **PRE-SUBMISSION** | N-1 performed — exit 3, names `seed_offset_policy`, names both roots, satisfies O-1…O-4. **See 7.0.2: this needs the cluster, not a run** | — |
+| F-9 | **PRE-SUBMISSION** | **RESTATED — grade §7.0.11's six-row table, not the original bullet.** N-1 performed: exit 3 *through B-4*, `outcome = refused:script-outside-expect-root`, never an empty/green verdict, both roots and the script named, `checked == 0` **and** `guard_installed == false`, O-1…O-4 with no child marker or output, and `seed_offset_policy` **not** named on the refused arm. Still needs the cluster, still not a run (§7.0.2) | — |
 | F-10 | **PRE-SUBMISSION** | N-2 (as replaced by ruling 19) exits 3 through the child wrapper on the `build_child_argv` template, O-1…O-4 | — |
 | F-11 | **PRE-SUBMISSION** | N-3 holds for each of the six B-1 files, both directions | — |
-| F-12 | **PRE-SUBMISSION** | §5.5's hijack arm demonstrated for N-1, N-2 and each N-3, asserted on the loaded module's `__file__` | — |
+| F-12 | **PRE-SUBMISSION** | N-2 and N-3 unchanged — `__file__`. **N-1 RESTATED (§7.0.12):** `script_checkout_root` is the canonical root and is not `expect_root`; the O-1 paired arm reaches the marker, proving the arm could have succeeded; the U/U' arm retained as evidence, not mechanism | — |
 | F-13 | **PRE-SUBMISSION** | B-4's script-containment refusal implemented and covered in both directions | — |
 | F-14 | **PRE-SUBMISSION** | every row of §6 discharged in the same commit as the repair that moves it — **and see 7.0.7** | — |
 | F-15 | **PRE-SUBMISSION** | the two named suites green under `python3 -m unittest`, counts quoted **as measured at the graded sha**, explicit `TMPDIR` | — |
@@ -652,6 +667,13 @@ the count of guarded production invocations must equal the count of production P
 and must be greater than zero. The same reasoning is why P-3 writes its flag unconditionally and why
 the ratchet asserts non-vacuity independently of the probe's exit code.
 
+**CARVE-OUT, added 2026-08-22 with ruling 20 — F-9 inverts this rule and is the only criterion that
+does.** On F-9's refused arm the guard is *intentionally never installed*, so `checked == 0` is the
+**required** value and a non-zero `checked` is the failure. Do not apply the paragraph above to F-9.
+The pair to read there is `guard_installed == false` **and** `checked == 0` **and**
+`outcome == refused:script-outside-expect-root`; see the state table in §7.0.11. Everywhere else in
+§F the anti-vacuity rule stands unchanged.
+
 #### 7.0.9 Finding — F-7's post-rehearsal half cannot be TESTED by the rehearsal
 
 P-4 pins the per-entrypoint import set as an **identity** taken from the first clean run. The k=0
@@ -678,6 +700,281 @@ enforceable from the document rather than from memory:
 therefore **not eligible** to grade Gate 1 against it; a separate lane takes that verdict. The
 round-1 verdict itself predates this amendment, graded §F as a single undifferentiated gate, and is
 not restated or revised by it.
+
+#### 7.0.11 F-9 RESTATED — B-4 is preserved, the criterion moves
+
+**Authority: Joseph's ruling 20**, `DECISION-20260822-joseph-b1-lift-and-clause-c.md`, fourth set,
+quoted there verbatim and not re-quoted in full here. Its operative sentence: F-9 now passes when the
+real canonical-checkout wrapper is run with the clean tree as `--expect-root` and exits 3 through
+B-4, records `refused:script-outside-expect-root` and never an empty/green verdict, names the script
+and both roots, records `checked=0` **as expected**, and satisfies O-1…O-4 with no child marker or
+output — and **must not name `seed_offset_policy`**, because the import guard is intentionally never
+reached. *"No B-4 bypass flag or production exception is authorized."*
+
+This subsection transcribes that ruling into gradable form. It is written by the author of §7.0 at
+the coordinator's instruction; it is **not this lane's judgement and confers no eligibility to
+grade** (§7.0.10 stands, and ruling 23 restates it).
+
+**Why the original F-9 became unsatisfiable — the part worth carrying away.** B-4's containment check
+sits above `guard = install(...)`, deliberately, *"so the refusal precedes not just the work but the
+first import."* N-1 runs the real `mii_adopt_unified_5d_stamped.py` **from the canonical checkout**,
+so its script is outside `--expect-root`, containment fires first, and the import guard is never
+installed. `seed_offset_policy` therefore cannot be named and `checked` cannot rise above zero.
+**F-9 was not failed by a defect. It was invalidated by B-4 working exactly as specified.**
+
+> **THE TRANSFERABLE SHAPE, and it has now happened twice.** *A protection can invalidate the control
+> written to test a different protection — and the control then presents as merely UNPERFORMED rather
+> than as IMPOSSIBLE.* Ruling 19 found it in N-2; ruling 20 finds the identical shape in N-1. Both
+> times the invalidating check is deliberately ordered *first*, so the interaction is predictable
+> rather than unlucky. It survived a fresh non-builder's clause-by-clause verdict — which recorded
+> F-9 only as "not performed" — and it survived §7.0.2 of this amendment, which used F-9 as its
+> worked example. **"Not performed" and "cannot be performed" look identical from the outside, and
+> nothing in a verdict distinguishes them unless someone tries to run the control.**
+
+##### F-9, as it is now graded
+
+The refused arm: the **real, unmodified** `mii_adopt_unified_5d_stamped.py`, run from
+`/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding`, under `mnv_guarded_run.py` with
+`--expect-root ${MNV_CODE_ROOT}` and an `--inventory` destination, with `--uthrow/--combined/--out`
+pointed at throwaway scratch paths (**never** the defaults — the defaults name real archive
+products). No `--allow` on any arm. All six must hold.
+
+| # | requirement | how it is settled |
+|---|---|---|
+| 9.1 | exit **3**, through B-4 | the process's own status, captured unpiped (O-4). **Exit 3 alone does not discriminate** — B-4 and an import-tree violation share `VIOLATION_EXIT`. 9.2 is what tells them apart |
+| 9.2 | `outcome` is exactly `refused:script-outside-expect-root`, and the verdict is **never** an empty or green one | read from the inventory record, not from stdout |
+| 9.3 | names the script, the canonical root and the expected clean root | the B-4 banner prints all three; the record carries `script`, `script_checkout_root`, `expect_root` |
+| 9.4 | `checked == 0` **and `guard_installed == false`**, together | see the inversion note — neither field alone is evidence |
+| 9.5 | O-1…O-4, with **no child marker and no output** | `[remedyA] running the PINNED writer as a subprocess:` absent; `[adopt5d]` absent; `--out` fails `test -e`; the witness directory that started empty is still the empty set |
+| 9.6 | `seed_offset_policy` is **not** named — on the refused arm's banner and record | see the scoping note |
+
+##### THE `checked=0` INVERSION — read this before applying §7.0.8
+
+**In F-9, and only in F-9, `checked == 0` is the EXPECTED and REQUIRED value.** Everywhere else an
+empty inspection set is the vacuity trap §0 exists to catch, and §7.0.8 says so in those words. Here
+the guard is *intentionally never installed*, so a **non-zero** `checked` would mean containment did
+not fire first and the arm is measuring something else. A grader carrying §7.0.8 forward unmodified
+will fail F-9 incorrectly. §7.0.8 carries an explicit carve-out.
+
+A bare zero cannot say which of two worlds produced it: `write_inventory` emits
+`"checked": guard.checked if guard is not None else 0`, so the zero on the containment path is a
+**default, not a measurement**, and is indistinguishable on its own from a guard that installed and
+inspected nothing. `guard_installed` is the discriminator. Read the **pair**:
+
+| state | `guard_installed` | `checked` | `outcome` | means |
+|---|---|---|---|---|
+| **F-9's required state** | `false` | `0` | `refused:script-outside-expect-root` | containment refused before install |
+| import refusal — N-2's state | `true` | `> 0` | `refused:import-tree-violation`, `violation` non-null | the import guard refused |
+| genuine empty-but-green — F-6's state | `true` | `> 0` | `ok`, verdict `EMPTY-REPOSITORY-ORIGIN-SET` | it looked and found nothing repository-local |
+| **not evidence** | — | — | no record at all | the run establishes nothing |
+
+This is P-3's own reasoning — *an absent key cannot distinguish "no repository import occurred" from
+"the inventory did not run"* — applied to a **defaulted** key rather than an absent one.
+
+##### Scoping "it must not name `seed_offset_policy`"
+
+Ruling 20 retains the U/U' arm, and that arm **does** name `seed_offset_policy` — that is its whole
+purpose. Unscoped, the prohibition and the retention contradict each other. **The prohibition applies
+to the refused arm's banner and inventory record only.** The U/U' arm may name it freely: it is
+evidence that the canonical module *would* load absent containment, and it is explicitly **not** the
+mechanism of the F-9 refusal. A grader must not fail F-9 on finding `seed_offset_policy` in a U' log.
+
+##### O-1 for the restated F-9, and why the paired arm is permitted
+
+O-1 still requires one binary and two outcomes. The paired arm is **the same real wrapper, same
+launch directory, with `--expect-root` naming the canonical checkout it was launched from**:
+containment then passes, the import guard installs, `seed_offset_policy` resolves *inside*
+`--expect-root` and is allowed, and the process proceeds past
+`[remedyA] running the PINNED writer as a subprocess:` (`mii_adopt_unified_5d_stamped.py:711`).
+Refused arm: marker absent. Paired arm: marker present.
+
+**That paired arm is permitted and a grader must not refuse it.** §2 forbids `--allow` on any
+production arm. It says nothing against `--expect-root`, which is not `--allow`, and this is a
+control rather than a production arm.
+
+##### 9.2's dependency, and its state as measured
+
+9.2 was **unsatisfiable** when ruling 20 was made. On a B-4 refusal the guard called
+`_safe_inventory(..., violation=None, guard=None)`, and `write_inventory` fell through
+`VERDICT_REFUSED if violation is not None else (VERDICT_INSPECTED if origins else VERDICT_EMPTY)` to
+`EMPTY-REPOSITORY-ORIGIN-SET -- THE GUARD REFUSED NOTHING BECAUSE IT SAW NOTHING`. **Both clauses of
+that string are false on a containment refusal**: the guard did refuse, and it refused before it
+could see anything. The same false string was echoed to stderr, so a reader of a Slurm `.out` saw
+"THE GUARD REFUSED NOTHING" on a run that refused.
+
+**That is now fixed on the build branch, and the fix is verified here rather than taken on report.**
+A third verdict constant `VERDICT_REFUSED_SCRIPT` was added at
+`build-k0-execution-integrity` `a902b781`. Re-measured on a two-checkout fixture against
+`nd-unfolding/mnv_guarded_run.py` as of `e39ab74f`, three arms:
+
+| arm | exit | `guard_installed` | `checked` | `outcome` / verdict |
+|---|---|---|---|---|
+| script outside `--expect-root` (**F-9**) | 3 | `false` | 0 | `refused:script-outside-expect-root` / `REFUSED -- THE SCRIPT ITSELF LIES IN A CHECKOUT THAT IS NOT --expect-root` |
+| paired, `--expect-root` = launch tree (**O-1**) | 0 | `true` | 7 | `ok` / `REPOSITORY-ORIGINS-INSPECTED`; marker present |
+| stdlib-only entrypoint inside `--expect-root` (**F-6**) | 0 | `true` | 6 | `ok` / `EMPTY-REPOSITORY-ORIGIN-SET` |
+
+**The third arm is the one that mattered and it is clear.** A fix that made every empty inventory
+read as a refusal would have broken F-6, whose whole subject is the genuinely-empty-but-green record
+for the pinned-writer child. `VERDICT_EMPTY` remains reachable and correct. **A grader must still
+require both directions to be covered by a test in the suite, not only by this one-off fixture** — a
+guard that fires on bad input and is silent on good input needs both arms pinned.
+
+**Grade F-9 against the tree that carries B-4, and say which one.** `main` at `115c73bb` has neither
+the containment check nor the inventory (`grep -c 'SCRIPT OUTSIDE THE EXPECTED TREE'` → 0,
+`grep -c 'write_inventory'` → 0). F-9 is not gradable against `main`; it is gradable against the
+build branch at the sha the Gate-1 submission declares.
+
+#### 7.0.12 F-12 RESTATED for N-1 — the non-vacuity anchor moves, it does not disappear
+
+N-2 and N-3 are **unchanged**: their hijack arms still assert the loaded module's `__file__`, and
+they remain the import-resolution negative controls (ruling 20).
+
+For N-1 the mechanism is no longer an import hijack, so `__file__` can no longer be the anchor —
+**but F-12 must not quietly lose its teeth for N-1.** §5.5's rule is that a control whose fixture does
+not genuinely hijack passes vacuously. The equivalent question here is *"was this arm capable of
+succeeding at all, and is the refusal attributable to containment rather than to breakage?"* Three
+things settle it:
+
+- **F-12(N-1)(i) — the fixture really is misplaced.** From the refused arm's own inventory record:
+  `script_checkout_root` equals the canonical checkout and is **not** `expect_root`. Asserted on the
+  resolved path the guard actually computed, never on the command line as typed.
+- **F-12(N-1)(ii) — the arm can succeed.** The O-1 paired arm reaches the `[remedyA]` marker and does
+  not refuse. **Without this, a wrapper that was simply broken would produce the same silent,
+  output-free refusal and F-9 would pass vacuously.** This is the direct analogue of N-2's
+  `assertIn(STARTED, …)`, and it is the clause that would have caught the original F-9 collision.
+- **F-12(N-1)(iii) — retained as evidence, not as mechanism.** The U/U' arm shows
+  `seed_offset_policy.__file__` under the canonical checkout, i.e. that the canonical module would
+  load absent containment. Ruling 20 permits it and denies it mechanism status.
+
+#### 7.0.13 Ruling 21 — the 14/30 guarding boundary, and the ordering clause as a criterion
+
+**Authority: Joseph's ruling 21.** Guard all **14** launcher-level science invocations and the
+pinned-writer child. The **16** calls to the two preflight integrity tools are excluded from the
+guard **and** from P-4, because guarding the tools *before they have validated the guard* is a
+**trust-order inversion**, and their intentionally empty import sets would weaken P-4 with standing
+exceptions. *"Both preflight tools must remain covered by the source manifest and executing-file
+parity set and must run before any science invocation."*
+
+**This boundary REPAIRS criteria written earlier in §7.0; it is not merely being given a home.**
+F-2(a) and F-4(a) are counting tests of the form *"zero production `python3` invocations not routed
+through the guard."* The 16 preflight calls **are** production `python3` invocations, so without this
+boundary both criteria are unsatisfiable by construction — a defect this lane introduced in §7.0 and
+ruling 21 removes. **F-2(a) and F-4(a) are to be read as: zero unguarded production invocations
+*other than the enumerated preflight set*.** The partition table rows say so.
+
+Three requirements follow. All are **PRE-SUBMISSION** and bench-checkable.
+
+1. **The excluded set is enumerated and pinned, not open-ended** *(derived — from Joseph's own stated
+   reason that standing exceptions weaken P-4)*. Exactly those 16 call sites are listed, and a test
+   must **fail** when a production invocation appears that is neither guarded nor on the list. An
+   exclusion that can grow silently is the standing exception the ruling exists to prevent.
+2. **Both preflight tools remain covered by the A-2(f) source manifest and the A-3 parity set.**
+   Excluded from the guard is not excluded from binding. Graded in **F-1(a)** (manifest membership)
+   and **F-2(a)** (parity coverage).
+3. **Both preflight tools run BEFORE any science invocation, in every launcher. A criterion, not a
+   convention** — *"if a launcher can reach a science invocation without the preflight having run,
+   that is a finding."* Graded in **F-2(a)**, and it must be settled by **running** each launcher
+   under stubs and observing the order of the emitted argv, **not** by reading the file. A launcher
+   is a sequence; `bash -n` has already passed over a hook-truncated command in this repository, and
+   `tests/test_k0_launcher_two_roots.py` already establishes the run-it-under-stubs idiom.
+
+##### The counts, re-derived here, and the instrument trap in re-deriving them
+
+Ruling 21's enumeration — *"finalize 5, detector 2, uthrow-block 2, one each elsewhere"* — was
+re-counted independently against `build-k0-execution-integrity` `80f44084` and **reproduces exactly:
+14**, and the two preflight tools give **2 × 8 = 16**, totalling the 30.
+
+> **Trap, recorded because the obvious command gets it wrong.**
+> `grep -c -- '--expect-root' <the eight>` returns **22**, not 14. The extra eight are one **comment**
+> per launcher that mentions the flag while explaining the nesting hazard. Filter comments first:
+> `grep -v '^[[:space:]]*#' <launcher> | grep -c -- '--expect-root'` → 1, 1, 2, 1, 1, 2, 1, 5 = **14**.
+> A grader who quotes 22 has counted an adjacent subject without erroring.
+
+#### 7.0.14 Ruling 22 — A-2(d), (e), (g) become fail-closed checks; F-1(a) amended
+
+**Authority: Joseph's ruling 22.** These *"may not remain merely documented."* **F-1(a) now requires
+executable, fail-closed checks run before Gate 1**, each **refusing** rather than reporting:
+
+- **(d)** no nested MINERvA-OmniFold checkout anywhere beneath the code root, in particular no
+  `.claude/worktrees/` content;
+- **(e)** the code root is not nested inside another checkout;
+- **(g)** write protection **applied and verified** — not "applied".
+
+(d) and (e) are the two directions of one nesting hazard. `checkout_root_of` returns the **innermost**
+match, which is why a nested checkout inside the code root resolves to itself — the same mechanism
+that once made the OI-136 ratchet read 369 instead of 58.
+
+**Grade A-2(a)–(g) entire, not only the three the ruling names.** The round-3 builder's own commit is
+titled *"A-2(c)(d)(e)(g) become fail-closed checks"* — (c), the both-markers checkout test, is
+included beyond the ruling's list. That is a superset of what was ordered and is welcome, but F-1's
+text has always said (a)–(g), so a grader should not narrow to the three that were singled out.
+
+##### Verifying (g), and its honest residual
+
+**"Verified" means an attempted write, as the job's own user, fails.** A `chmod` that was *issued* is
+not evidence that a write is *refused*; that is the difference between a filter and a test of the
+filter.
+
+The residual, stated so nobody reads (g) as immutability: **every leg runs as the same user, and that
+user can `chmod` the protection back off.** (g) is a barrier against accident and against a stray
+process, not against the account. **(f) — the source manifest re-verified after every leg — is what
+detects the case (g) cannot prevent.** That is the division A-2 already draws between them, and it is
+the reason both exist rather than either alone.
+
+#### 7.0.15 Ruling 22, second half — the P-4 pin is post-rehearsal, the mechanism is Gate-1
+
+**Authority: Joseph's ruling 22.** *"Production P-4 pins are correctly a post-rehearsal artifact, but
+the mechanism and its fail-closed behavior remain Gate-1 requirements."*
+
+This confirms the line §7.0.5's F-7 row already draws, which is therefore unchanged:
+
+- **F-7(a), Gate 1 — the mechanism.** A per-entrypoint expected-set pin; a comparator that aborts on
+  a difference in **either** direction; tests for an added module, a removed module and an exact
+  match; and **an absent or undeclared pin failing closed**. In the ruling's words, *"what must be
+  provable now is that an undeclared or mismatched import set is refused, not that the real pins
+  exist."*
+- **F-7(b), Gate 2 — the pins.** Recorded from the rehearsal and committed.
+
+§7.0.9 stands and is worth re-reading beside this: the rehearsal **establishes** the pin and cannot
+**test** it, so F-7(b) is discharged by recording the sets and saying in those words that the pin is
+recorded and untested. The preflight tools' exclusion from P-4 (§7.0.13) is part of the mechanism's
+declared configuration and must be pinned **with** it, so that the exclusion cannot widen unnoticed.
+
+#### 7.0.16 What this lane thinks is still ambiguous or needs care
+
+Recorded so it can be attacked directly rather than rediscovered.
+
+**(a) Two ambiguities in ruling 20 are resolved in §7.0.11 rather than left to the grader** — the
+scope of *"must not name `seed_offset_policy`"* against the retained U/U' arm, and whether O-1's
+paired arm may name the canonical checkout as `--expect-root`. If either resolution is not what
+Joseph intended, the text says which way it was read so it can be reversed in one edit.
+
+**(b) 9.2's dependency was real and is discharged**, verified in three directions in §7.0.11 —
+including the silent direction, because a fix that turned every empty inventory into a refusal would
+have broken F-6. The suite must still pin both directions; a one-off fixture is not a test.
+
+**(c) `checked = 0` alone is not evidence**, because on the containment path it is a *default* rather
+than a measurement. §7.0.11 requires the `guard_installed` / `checked` / `outcome` triple.
+
+**(d) Ruling 21 repairs F-2(a) and F-4(a)** rather than merely finding them a home (§7.0.13). Two
+criteria this lane wrote would otherwise have been unsatisfiable by construction.
+
+**(e) A standing rule, because one shape has now recurred twice.**
+
+> Every refusal site in `mnv_guarded_run.py` returns the same `VIOLATION_EXIT`, so **exit 3 never
+> identifies which protection fired.** Therefore: **(i)** every exit-3 control must assert the
+> `outcome` field — the stable machine-readable discriminator — and not merely the status; and
+> **(ii)** whenever a fail-closed check is added *ahead of* an existing one, **every negative control
+> downstream of it must be re-derived**, naming which refusal site it intends to fire. A control that
+> does not name its intended site cannot notice when an earlier site begins short-circuiting it.
+
+Ruling 19 found this in N-2 and ruling 20 found it in N-1. In both cases the control did not fail
+loudly — **it presented as merely unperformed**, which is why it survived a clause-by-clause verdict.
+
+**(f) No part of this weakens B-4, and no bypass is authorized.** Ruling 20 is explicit and it is
+repeated here so a later reader cannot mistake a restatement for an exemption: *"No B-4 bypass flag
+or production exception is authorized."* **What moved is the criterion, not the protection.**
+
 
 ---
 
@@ -707,11 +1004,20 @@ not restated or revised by it.
 **Negative controls**
 
 - F-9 N-1 exits **3**, names `seed_offset_policy`, names both roots, and satisfies O-1…O-4.
+  > **RESTATED 2026-08-22 by Joseph's ruling 20 — §7.0.11 supersedes this bullet.** The original
+  > wording is preserved rather than edited: it is the pre-implementation agreement, and the reason
+  > it had to change is itself evidence. B-4 script containment runs *before* `install()`, so the
+  > real wrapper launched from the canonical checkout is refused by containment before any import
+  > fires. **F-9 no longer requires `seed_offset_policy` to be named on the refused arm — it
+  > forbids it — and `checked=0` is now the EXPECTED value.**
 - F-10 N-2 exits **3** through the child wrapper on the `build_child_argv` template, and satisfies
   O-1…O-4.
 - F-11 N-3 holds for each of the six B-1 files, both directions.
 - F-12 §5.5's hijack arm is demonstrated for N-1, N-2 and each N-3, by asserting the loaded module's
   `__file__` — not by asserting exit 0.
+  > **RESTATED 2026-08-22 for N-1 ONLY — §7.0.12 supersedes this bullet for N-1.** N-2 and N-3 are
+  > unchanged and still turn on `__file__`. N-1's non-vacuity is re-anchored, because its mechanism
+  > is no longer an import hijack.
 
 **Repairs and couplings**
 
