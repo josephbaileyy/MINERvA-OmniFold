@@ -449,3 +449,75 @@ strictly better than both my proposal and the reviewer's.
 
 > "None of these rulings authorizes a Slurm submission, the full family, `C_ML`, or a scientific
 > adoption."
+
+
+---
+
+# FOURTH SET OF RULINGS, 2026-08-22 — F-9 restated, the guarding boundary, and A-2 enforcement
+
+## Ruling 20 — B-4 is preserved and F-9 is RESTATED, not exempted
+
+> "Do not disable or exempt B-4. F-9 is restated because its original import-specific expectation is
+> incompatible with the earlier script-containment protection. F-9 now passes when the real
+> canonical-checkout wrapper is run with the clean tree as `--expect-root` and: exits 3 through B-4;
+> records `refused:script-outside-expect-root`, never an empty/green verdict; names the script,
+> canonical root and expected clean root; records `checked=0` as expected; satisfies O-1 through O-4,
+> with no child marker or output. It must not name `seed_offset_policy`, because the import guard is
+> intentionally never reached. N-2 and N-3 remain the import-resolution negative controls. The U/U'
+> arm may remain as evidence that the canonical module would load without containment, but it is not
+> the mechanism of the F-9 refusal. Update F-12 consistently. No B-4 bypass flag or production
+> exception is authorized."
+
+**HOW THIS AROSE, because the shape recurs.** The round-2 builder performed N-1 and found F-9
+**unsatisfiable by its own B-4's success**: containment runs before `install()`
+(`mnv_guarded_run.py:464`), N-1 runs the real wrapper from the canonical checkout, so the script is
+outside `MNV_CODE_ROOT` and is refused *first* — `checked=0`, and `seed_offset_policy` is never
+named. Verified here in the source, not taken on report.
+
+**This is the identical shape ruling 19 found in N-2, arriving in N-1.** Neither the contract nor the
+round-1 verdict caught it: §7.0.2 uses F-9 as its *worked pre-submission example* and the verdict
+recorded only "not performed". **A protection can invalidate the control written to test a different
+protection**, and the control then reads as merely unperformed.
+
+**One inversion a grader will get wrong:** `checked=0` is now the EXPECTED value for F-9, where in
+every other criterion an empty inspection set is the vacuity trap. It must additionally require
+`refused:script-outside-expect-root` **positively** — the builder found a real bug where a B-4
+refusal raised no violation and fell through to `EMPTY-REPOSITORY-ORIGIN-SET — THE GUARD REFUSED
+NOTHING BECAUSE IT SAW NOTHING`, both clauses false.
+
+## Ruling 21 — the 14/30 guarding boundary is ACCEPTED
+
+> "I accept the guarding boundary: guard all 14 launcher-level science invocations and the
+> pinned-writer child. The 16 calls to the two preflight integrity tools are excluded from the guard
+> and from P-4 because guarding the tools before they validate the guard creates a trust-order
+> inversion, and their intentionally empty import sets would weaken P-4 with standing exceptions.
+> Both preflight tools must remain covered by the source manifest and executing-file parity set and
+> must run before any science invocation."
+
+**Fourteen, not eight** — enumerated by the builder and counted independently here: finalize 5,
+detector 2, uthrow-block 2, one each elsewhere. "Eight one-line edits" was my figure and it was wrong;
+Joseph's "every production Python invocation" was the right phrasing.
+
+The ordering clause is now a **criterion, not a convention**: if a launcher can reach a science
+invocation without the preflight having run, that is a finding.
+
+## Ruling 22 — A-2(d), (e), (g) must be enforced before Gate 1
+
+> "A-2(d), (e), and (g) may not remain merely documented. Before Gate 1, add fail-closed checks
+> rejecting a nested checkout, a code root nested inside another checkout, and a writable code root;
+> apply and verify write protection. Production P-4 pins are correctly a post-rehearsal artifact, but
+> the mechanism and its fail-closed behavior remain Gate-1 requirements."
+
+(d) and (e) are the two directions of one nesting hazard, and `checkout_root_of` returning the
+**innermost** match is why a nested checkout inside the code root resolves to itself — the same
+mechanism that made the OI-136 ratchet read 369 instead of 58.
+
+**The pin is post-rehearsal; the mechanism is Gate-1.** What must be provable now is that an
+undeclared or mismatched import set is refused, not that the real pins exist.
+
+## Ruling 23 — the verdict is held
+
+> "Hold the Gate-1 verdict until those changes and the F-9/F-12 amendment are independently verified.
+> No merge or submission is authorized by this ruling."
+
+The grading lane must be neither the builder nor the verifier who amended the rubric.
