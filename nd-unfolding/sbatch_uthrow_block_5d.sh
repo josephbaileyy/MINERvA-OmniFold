@@ -59,6 +59,12 @@ for _mnv_tool in "$GUARD" "$PARITY" "$SRCMAN"; do
     echo "[oi136]   This deployment of MNV_CODE_ROOT predates the round-2 package; re-deploy it." >&2
     exit 2; }
 done
+# NO BYTECODE INTO THE CODE ROOT. Every guarded science process imports repository modules from
+# ${MNV_CODE_ROOT}, and CPython would write `__pycache__/*.pyc` beside them -- mutating the tree
+# A-2(f) certifies and A-2(g) protects, and leaving the NEXT leg's --require-clean to refuse a tree
+# the PREVIOUS leg dirtied. Under A-2(g) the write already fails, but CPython swallows that EACCES
+# silently, so relying on it would make correctness depend on an absence. Set it explicitly.
+export PYTHONDONTWRITEBYTECODE=1
 mkdir -p "${INVDIR}"
 # One record per guarded process. Array task and job id are in the name so nothing collides and so
 # a missing record is attributable to a task rather than merely absent.
@@ -69,7 +75,15 @@ mnv_inv() { echo "${INVDIR}/${SLURM_JOB_NAME:-nojob}.${SLURM_JOB_ID:-nojid}.${SL
 # COMMITTED one", per pair, against git. This asks the whole-tree question, including files nobody
 # thought to name, against a snapshot. Run 4 printed `5 of 5 CURRENT` honestly while the tree it
 # was executing from was not the tree anyone meant.
-python3 "$SRCMAN" --repo "$CODE_ROOT" --compare "$SRCMAN_RECORD" --require-clean || {
+# A-2(c)(d)(e)(g) RUN IN THE SAME CALL AND BEFORE ANYTHING ELSE. (d) and (e) are one hazard from
+# two sides: `checkout_root_of` returns the INNERMOST match, so a checkout nested inside the code
+# root resolves to ITSELF, is not --expect-root, and every module under it is refused on a tree that
+# looks approved -- the recorded instance made the OI-136 ratchet read 369 instead of 58. (g) is
+# enforced on the TREE's mode bits, not on what this uid happens to be able to write; see
+# `writable_sources()` for why, and for what mode bits cannot do.
+python3 "$SRCMAN" --repo "$CODE_ROOT" --compare "$SRCMAN_RECORD" \
+  --require-clean --require-checkout --require-no-nested-checkout \
+  --require-not-nested --require-readonly || {
   echo "[oi136] FAIL: the execution tree is not the tree that was approved (see above)." >&2
   exit 3; }
 

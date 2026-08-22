@@ -50,6 +50,13 @@ import sys
 # is a preflight tool run by absolute path, so its own directory is sys.path[0]; the import resolves
 # beside it, and it is deliberately NOT routed through the guard (see the launchers' preamble for
 # the trust-order reason). `tests/test_source_manifest_constitution.py` asserts the two agree.
+# AN INSTRUMENT MUST NOT MODIFY ITS SUBJECT. Importing a sibling writes
+# `__pycache__/mnv_guarded_run.cpython-3xx.pyc` INTO THE CODE ROOT -- the tree this file exists to
+# certify as unchanged and, under A-2(g), as unwritable. Caught by the launcher fixture, which
+# carries no `.gitignore`: `--require-clean` refused on `?? nd-unfolding/__pycache__/` produced by
+# this very import. The real repository gitignores `__pycache__/`, so it would have stayed invisible
+# there and surfaced later on some tree that does not.
+sys.dont_write_bytecode = True
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mnv_guarded_run import MARKERS, is_checkout  # noqa: E402
 
