@@ -23,9 +23,10 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ### Documents that open items route to but this router did not list
 
-Added 2026-08-20. `live_doc_indexed.py --check` reports **19 LIVE docs absent from this
-catalog and does NOT enforce it**, so an item's own governing document could be
-unreachable from the router. These five are the subset that `docs/OPEN_ITEMS.md` rows
+Added 2026-08-20. `live_doc_indexed.py --check` reports LIVE docs absent from this catalog and
+**does NOT enforce it**, so an item's own governing document could be unreachable from the router.
+The count was written as **19** on 2026-08-20; re-derived from the same command on 2026-08-22 it is
+**13**, so the figure is stated with its date and its command rather than left to drift. These five are the subset that `docs/OPEN_ITEMS.md` rows
 actually cite; the other fourteen are not routed to by any open item and are left out
 deliberately, because this file is a pointer-only router and not an exhaustive index.
 
@@ -42,6 +43,11 @@ deliberately, because this file is a pointer-only router and not an exhaustive i
 - [`DETERMINATION-20260811-cause5-binding-half.md`](DETERMINATION-20260811-cause5-binding-half.md),
   [`CONVENTION-verifying-a-check-is-deployed.md`](CONVENTION-verifying-a-check-is-deployed.md) —
   each cited once.
+- [`FINDING-20260822-a-hold-that-instructed-its-own-deletion.md`](FINDING-20260822-a-hold-that-instructed-its-own-deletion.md)
+  — added 2026-08-22, routed to by `OI-70`. **Read it before acting on
+  [`HOLD-20260821-clause-c-verification.md`](HOLD-20260821-clause-c-verification.md), whose own text
+  instructs its deletion.** That instruction is wrong, the hold's bytes are preserved on Joseph's
+  ruling, and this route is the only thing that disarms it.
 
 ## Task routes
 
