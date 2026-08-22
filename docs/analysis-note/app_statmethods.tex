@@ -676,6 +676,27 @@ neither of which is established for a data-dependent rank cut. The treatment is 
 decided \emph{for the covariance and inverse actually adopted}, once (v) makes its operands exist.
 The cheap half is unconditional: record $N$ beside each block in the construction receipts.
 
+\paragraph{What protects the \emph{quoted} combined $\chi^{2}$: an external statistical floor.}
+The headline $\chiCombined$ does not invert our blocks alone. It inverts the paper$+$ours
+\emph{sum}, and that sum carries the paper's \texttt{StatOnlyCov}, which is rank $205$ and
+near-diagonal (\S\ref{sec:rank}); a full-rank, near-diagonal block puts a variance floor under
+\emph{every} eigendirection of the combined matrix. It is also the larger of the two statistical
+contributions, by a factor $\simeq2.5$ in \emph{square-root} trace and therefore by its square,
+$2.55^{2}\simeq6.5$, in \emph{trace} (operands in \S\ref{sec:rank}). Naming the power matters:
+the two figures describe the same comparison and differ by more than a factor of two. The
+small-eigenvalue directions on which a finite-$N$ debiasing factor would act are consequently set
+by an external, published block rather than by any ensemble of ours, and that is what bounds this
+quoted number's exposure to declaration~(v).
+\emph{This is deliberately not an argument from trace share.} A trace weights eigenvalues by
+$\lambda$ while a precision matrix weights them by $1/\lambda$, so a block holding a negligible
+fraction of the trace can still dominate an inverse. The ours-only construction is the
+demonstration: remove the external floor and our finite-$N$ blocks become precisely what fills the
+null space of $\mathbf{C}^{\syst}$ (rank $140\to201$), and the pseudo-inverse returns
+$\chi^{2}/\mathrm{ndf}=252$ (\S\ref{sec:rank}). The protection therefore concerns \emph{where the
+smallest retained eigenvalues come from}, not how much trace our blocks hold. It does not make
+$\chiCombined$ a calibrated goodness-of-fit --- it is not one, for the separate shared-systematics
+reason given with the worked example above.
+
 The implementation (\texttt{chi2\_with\_cov} in
 \texttt{compare\_to\_paper\_fullcov.py}) builds the $205\times205$
 block, inverts with \texttt{np.linalg.pinv} (\S\ref{sec:invert}), and
@@ -875,10 +896,12 @@ $\mathrm{cond}=3.8\times10^{14}$.
 \paragraph{The real obstruction is statistical, not rank.}
 Even at rank $201$ a defensible single ours-only $\chi^{2}$ is out of
 reach --- but for a \emph{statistical-precision} reason, not a missing-band
-one. Our OmniFold bootstrap stat block is $2.5\times$ smaller by trace than
-the paper's stat block ($\sqrt{\Tr\mathbf{C}^{\boot}}=1.8\times10^{-40}$ vs
-$\sqrt{\Tr\,\texttt{StatOnlyCov}}=4.6\times10^{-40}$), so it regularizes the
-small systematic modes $2.5\times$ less. The naive pseudo-inverse then gives
+one. The bootstrap block is smaller in \emph{global scale} by a factor $2.55$ in
+square-root trace ($\sqrt{\Tr\mathbf{C}^{\boot}}=1.817\times10^{-40}$ vs
+$\sqrt{\Tr\,\texttt{StatOnlyCov}}=4.639\times10^{-40}$), equivalently about
+$6.5$ in trace. The paper's full-rank, near-diagonal \texttt{StatOnlyCov} supplies a
+variance floor in every reported eigendirection; because the covariance structures
+differ, this should \emph{not} be read as a uniform $6.5$-fold per-mode effect. The naive pseudo-inverse then gives
 $\chi^{2}/\mathrm{ndf}=252$ for $\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$,
 dominated by poorly-determined directions, against the paper's $3.66$ with
 its larger stat floor. The lever toward an ours-only $\chi^{2}$ is therefore

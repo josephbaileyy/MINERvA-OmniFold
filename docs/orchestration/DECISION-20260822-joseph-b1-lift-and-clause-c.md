@@ -288,6 +288,51 @@ bootstrap is **6.41×** smaller than `StatOnlyCov`; the note says **2.5×**
 6.4 is the trace ratio** — 2.56² = 6.53 from the note's rounded operands. Neither is wrong; quoting
 either at the other's scope is. **Say which power you mean.**
 
+### Ruling 11 amendment — AUTHORIZED AND EXECUTED 2026-08-22, superseding "no note edit is made"
+
+Joseph authorized the narrow clarification on 2026-08-22: *"connect the quoted combined chi-square
+explicitly to the external rank-205 near-diagonal StatOnlyCov floor... Do not use trace share alone as
+the safety argument and do not change any quoted result."* **Done**, on branch
+`note-statonlycov-floor-clarification`, as one new `\paragraph{}` in `app_statmethods.tex` (now at
+`:679`, immediately after the declaration-(v) paragraph and before the `chi2_with_cov` implementation
+note, i.e. in the same subsection as the quoted headline). It states that the headline inverts the
+paper+ours **sum**, that the sum carries the paper's rank-205 near-diagonal `StatOnlyCov`, that a
+finite-`N` debiasing factor would act on small-eigenvalue directions an external published block
+supplies, and — explicitly — that this is *not* a trace-share argument, because a trace weights
+eigenvalues by `lambda` and a precision matrix by `1/lambda`. No quoted result changed; note, primer
+and paper rebuilt (`build_all.sh` exit 0).
+
+**The paper needs no counterpart, and this is the measured reason rather than a judgement.**
+`paper_body.tex` quotes `\chiPaper` (`3.66`, paper-covariance-only) at `:71` and `:74` and **never**
+`\chiCombined`; it contains no occurrence of `StatOnly`, `Hartlap`, or any finite-ensemble statement.
+`primer_body.tex` quotes no chi-square at all. The sentence protects the *combined* number, so the
+distillation has nothing for it to attach to; adding it would import a discussion of an object the
+paper does not quote.
+
+**THE TRACE RATIO IS 6.5, NOT 6.41 — the `6.41` above is an asymmetric-rounding artefact.**
+Re-derived 2026-08-22 from the note's own operands, and reported rather than adopted:
+
+| route | operands | sqrt-trace ratio | trace ratio |
+|---|---|---|---|
+| note's displayed values, both 2 s.f. | `4.6e-40 / 1.8e-40` | 2.556 | **6.53** |
+| this document / the brief, mixed precision | `4.6e-40 / 1.817e-40` | 2.532 | **6.41** |
+| **the note's own recorded ratio** (`app_statmethods.tex:927`) | `C^boot/StatOnly = 0.392 = 1/2.55` | **2.551** | **6.51** |
+
+The middle row divides a **2-significant-figure** numerator by a **4-significant-figure** denominator.
+It is refuted by the note itself: `1.817/4.6 = 0.395`, not the recorded `0.392`, so `4.6e-40` is the
+rounded form of `4.635e-40` and the honest ratio is `2.55`. Propagating the last recorded digit
+(`0.392 +/- 0.0005`) gives a sqrt-trace ratio of `2.548-2.554` and a trace ratio of **`6.49-6.52`** —
+an interval that contains 6.5 and **excludes 6.41**. The note therefore says `2.55^2 ~ 6.5`, written
+as the square so the derivation is visible inline. Joseph's `~6.4` is the one figure in the
+authorization not adopted; the deviation is deliberate and is flagged for him to overrule.
+
+The prose mislabel that produced the trap is also corrected at `app_statmethods.tex:899`: *"smaller by
+trace"* now reads *"smaller in square-root trace"*, which is what its own displayed operands measure.
+No number changed on that line. Left alone deliberately, because fixing it would change a claim rather
+than a label: the same sentence's *"regularizes the small systematic modes 2.5x less"* is a
+variance-scale statement, and in variance the factor is 6.5, not 2.5. That is a substantive edit, is
+outside this authorization, and is recorded here for its owner.
+
 ## Ruling 12 — the target is option (a), the M(ii) member scan
 
 > "The scientific target is option (a), the M(ii) member scan—not stamped re-adoption of the archive
@@ -318,3 +363,89 @@ No action. Matches the disposition already recorded under ruling 1.
 This closes the open item the reachability lane left: its harness ran a patched copy with stubbed
 producers, never under Slurm, so `BASH_SOURCE`/spool behaviour, the resolver block and the `${REPO}`
 hardcode's real effect are untested. Ruling 14 makes the first real member the test of exactly those.
+
+
+---
+
+# THIRD SET OF RULINGS, 2026-08-22 — the trace ratio, durability, and the k=0 integrity package
+
+## Ruling 15 — the trace ratio is 6.5, and the adjacent wording is repaired rather than patched
+
+Joseph re-measured over the 205 reported bins: `sqrt(Tr StatOnlyCov) = 4.63860e-40`,
+`sqrt(Tr C_boot) = 1.817e-40`, **sqrt-trace 2.5529, trace 6.5172.** Independently reproduced here;
+it falls inside the `[6.49, 6.52]` interval derived earlier from the note's own recorded `0.392`.
+
+**The 6.41 I supplied was an asymmetric-rounding artifact** — a 2-significant-figure numerator over a
+4-significant-figure denominator. It reached this ruling because I relayed it without checking the
+precision of its operands.
+
+**AND THE OLD SENTENCE IS REPLACED, NOT RENUMBERED, ON A POINT OF PHYSICS THAT IS JOSEPH'S NOT MINE.**
+I had proposed changing *"regularizes the small systematic modes 2.5x less"* to `6.5`. That is wrong:
+**a global trace ratio is not a uniform per-eigendirection factor.** The replacement states the global
+scale, gives both powers, and explicitly refuses the per-mode reading:
+
+> The bootstrap block is smaller in *global scale* by a factor 2.55 in square-root trace
+> (`1.817e-40` vs `4.639e-40`), equivalently about 6.5 in trace. The paper's full-rank, near-diagonal
+> `StatOnlyCov` supplies a variance floor in every reported eigendirection; because the covariance
+> structures differ, this should *not* be read as a uniform 6.5-fold per-mode effect.
+
+**One change beyond the ruling's text, disclosed:** the displayed operands move from `1.8`/`4.6` to
+`1.817`/`4.639`. Necessary, not cosmetic — leaving 2-significant-figure operands beside a `2.55` claim
+would reproduce the exact rounding defect this ruling exists to correct. No quoted *result* moved:
+`252`, `3.66` and the headline are untouched.
+
+Rebuilt after the edit, not before: `build_all.sh` exit 0 read unpiped, 4 engine starts, 4
+`Output written on`, all three PDFs newer than a marker stamped before the run, and the new prose
+present in `main_note.pdf` and absent from primer and paper — which is correct, since the paper
+quotes only `\chiPaper` and never the combined number.
+
+## Ruling 16 — durability copy authorized
+
+Copy the six quarantined files to a dedicated directory under `/global/homes/j/josephrb/evidence/`,
+verify all six sha256 at both locations, **retain the pscratch originals**, and amend the existing
+receipt with the destination and the verification results. Home over HPSS for a 278,611-byte object.
+**Copying and receipt amendment only — no deletion, no regeneration, no submission.**
+
+## Ruling 17 (3a) — the two-root design is approved
+
+`MNV_CODE_ROOT` (immutable, clean, named-commit execution tree) and `MNV_DATA_ROOT` (inputs and
+outputs; the canonical checkout may serve **only** in this role). Both mandatory, no default. Every
+executed or imported repository file resolves under the code root; every data product under the data
+root. Grounds, in Joseph's words: *"A clean checkout cannot simultaneously host 47.7 GB of gitignored
+products and remain clean."*
+
+## Ruling 18 (3b) — the bounded source and launcher repair is approved
+
+Authorized **exactly**: the six Python repairs **including `unified_throw_cov.py`** — excluding that
+imported module *"would leave the transitive rooted-import defect open"*; the **eight launchers' shell-root
+repairs**, because otherwise *"the wrong root is selected before Python or the guard starts"*; and the
+necessary guard, tests, OI-136 positive-control replacement, ratchet update, runbook and plan
+couplings. **New ratchet values must come from the probe/test output.** Not authorized: the
+repository-wide 59-file migration, or any scientific-model change.
+
+## Ruling 19 (3c) — N-2 is REJECTED as written, and child-boundary testing is NOT waived
+
+Joseph's reason is a defect neither the reviewer nor I saw, and it is internal to the contract:
+**a copied writer placed outside `MNV_CODE_ROOT` would be refused by the contract's own planned
+script-containment rule (B-4) BEFORE its injected import ever executes.** The control would pass for
+the wrong reason — proving containment, not child-boundary import guarding. Second defect: *"the
+proposed third checkout is not actually on the adopter's hardcoded import path."*
+
+Replacement, authorized:
+
+- a **minimal purpose-built fixture writer INSIDE a disposable expected checkout** — so it passes
+  script containment;
+- accepting the real child argument shape;
+- deliberately importing an **existing repository-local module from a second checkout** — so the
+  resolution guard is what fires;
+- invoked through the actual `build_child_argv(..., writer=fixture)` path;
+- **unguarded: prove the wrong module loads. Guarded: exit 3 before any output is opened.**
+- **No copy or edit of the pinned science writer, and no `--allow`.**
+
+This tests the child-wrapper plumbing directly while the production writer stays untouched. It is
+strictly better than both my proposal and the reviewer's.
+
+## Scope, restated because a package this size reads as broader than it is
+
+> "None of these rulings authorizes a Slurm submission, the full family, `C_ML`, or a scientific
+> adoption."
