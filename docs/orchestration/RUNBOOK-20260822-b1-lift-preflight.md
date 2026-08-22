@@ -372,6 +372,30 @@ Stop and report rather than working around, in every one of these:
 | **any refusal naming the 41.44 GB intermediate as corrupt** | the `D1` false-corruption shape | **stop and do not touch that file.** It has been a false report before. |
 | **pscratch above ~90%** | see 3e | stop and resize |
 
+## 6b. Two measured claims in this document that EXPIRE, and what to do instead of inheriting them
+
+Handed forward by the clause (c) reachability lane on close-out, and recorded here rather than in a
+message because **this is where the question gets asked** — a lane about to submit is reading section
+6, not a peer's transcript.
+
+**Every measurement in sections 3 and 6 is an INVENTORY CLAIM, which is the most perishable kind this
+campaign produces.** An inventory claim is falsified by exactly the work it is meant to authorize, so
+the moment it becomes useful is the moment it may already be wrong. Two specific ones:
+
+1. **"The archive legs carry no `estimator_seed`."** True as measured on 2026-08-22 against those two
+   exact paths — the g2 throw leg (9 keys, only `n_throws` as `TParameter<int>`) and the 41.44 GB g1
+   intermediate (47 keys, zero `TParameter<int>`). **Any authorized re-production of either leg
+   falsifies it.** If a later lane cites it to justify skipping an identity check, that is the reading
+   it will not survive: **re-measure the keys, do not inherit the row.**
+2. **"No member is runnable — 3 of 100 replicas."** Measured 2026-08-22 and confirmed by a second lane
+   with an executed refusal. It becomes false the instant member production starts, which is the first
+   thing anyone acting on this runbook would do.
+
+**The general form, and the reason this section exists at all:** the clause (c) reachability finding
+went from open question to confirmatory in **eight minutes** when Joseph ruled. **A measurement can go
+stale faster than the document describing it.** Treat every number in sections 3 and 6 as carrying its
+date, and re-run the command beside it rather than quoting the result.
+
 ## 7. So what IS the first submission?
 
 Not this launcher. On the measurements in section 3, the ordered prerequisites are:
