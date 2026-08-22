@@ -503,8 +503,20 @@ pattern — recorded because the failure mode is silent absence, not error.
 **`MANIFEST.tsv` IS NOT UPDATED HERE, DELIBERATELY.** It is GENERATED (`generate_manifest.py`), only 3
 of the 14 previously-tracked files under `runs/` carry rows, and this commit passed all 12 pre-commit
 checks without one. It is also a shared file that three other lanes were editing while this ran, and
-hand-editing a generated view concurrently is the `OI-152` collision exactly. Whoever regenerates it
-will pick these files up; the absence of rows is not an omission.
+hand-editing a generated view concurrently is the `OI-152` collision exactly.
+
+**CORRECTED 2026-08-21, AND THE CORRECTED CLAUSE WAS MINE.** This paragraph originally ended *"whoever
+regenerates it will pick these files up; the absence of rows is not an omission."* **The first half is
+FALSE.** `generate_manifest.py` scopes over `git ls-files`, i.e. the tree it runs in — and these 35
+files are on `verdict/clausec-rerun-20260821`, with **0** of them on `main`. Measured after the owning
+lane reconciled the manifest and reported that **zero paths were added or removed**: my files were
+never in the inventory's scope, so no regeneration on `main` can ever pick them up. They enter it only
+if this branch is merged and the manifest is regenerated from a tree that contains them.
+
+The conclusion survives and the reasoning that reached it does not: not hand-editing a generated view
+was right, but for a reason I did not check rather than the one I gave. **The absence of rows is still
+not an omission — it is a consequence of this evidence living on an unmerged branch**, which is a
+different fact and the one a later reader needs.
 
 ## Reproduce
 
