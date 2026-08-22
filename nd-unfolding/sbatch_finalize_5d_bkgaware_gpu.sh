@@ -138,6 +138,65 @@ if [[ ! -r "$_mr_rg" ]]; then
 fi
 source "$_mr_rg"
 
+# --- OI-136 ROUND 2, 2026-08-22: EVERY production Python invocation is GUARDED, and the record is
+# --- REQUIRED. Authorized by Joseph: "every production Python invocation across the eight k=0
+# --- launchers is to be routed through mnv_guarded_run.py, with a required inventory", plus the
+# --- contract-required executing-file parity calls and source-manifest comparison.
+#
+# WHY THIS IS WORTH DOING NOW AND WAS NOT BEFORE. The contract's B-1 argued a wrapper "cannot help
+# them and would block the run" -- true of the PRE-REPAIR bytes, where `import xsec_nd` resolved
+# under the canonical checkout and the guard correctly exited 3. That argument EXPIRED with the
+# six source repairs: post-repair these entrypoints resolve under ${MNV_CODE_ROOT}, so the wrapper
+# now runs GREEN and NON-VACUOUSLY -- `checked > 0` and `repo_origin_count > 0` -- which is exactly
+# the positive evidence a bare exit 0 could never be.
+#
+# THE INVENTORY IS ONE FILE PER PROCESS, NOT ONE PER RUN. An array of 169 tasks appending to a
+# single file across nodes is a corruption risk with no upside; per-process files still give F-4
+# its count (inventories == guarded processes) and `mnv_import_set_ratchet.py` reads the directory.
+GUARD="${CODE_ROOT}/nd-unfolding/mnv_guarded_run.py"
+PARITY="${CODE_ROOT}/nd-unfolding/pet/verify_executing_copy_is_committed.py"
+SRCMAN="${CODE_ROOT}/nd-unfolding/mnv_source_manifest.py"
+INVDIR="${MNV_GUARD_INVENTORY_DIR:?set MNV_GUARD_INVENTORY_DIR to a run-scoped directory for the OI-136 resolved-origin records. It has no default: a guarded run that emits no record establishes nothing, and a defaulted path would put one run over another.}"
+SRCMAN_RECORD="${MNV_SOURCE_MANIFEST:?set MNV_SOURCE_MANIFEST to the A-2(f) source manifest recorded from MNV_CODE_ROOT before the first sbatch. It has no default: comparing against a manifest generated now would compare the tree to itself.}"
+for _mnv_tool in "$GUARD" "$PARITY" "$SRCMAN"; do
+  # `! -L` because a symlink can point out of the code root while every path check still passes.
+  [[ -s "$_mnv_tool" && ! -L "$_mnv_tool" ]] || {
+    echo "[oi136] FAIL: required tool missing or a symlink: $_mnv_tool" >&2
+    echo "[oi136]   This deployment of MNV_CODE_ROOT predates the round-2 package; re-deploy it." >&2
+    exit 2; }
+done
+mkdir -p "${INVDIR}"
+# One record per guarded process. Array task and job id are in the name so nothing collides and so
+# a missing record is attributable to a task rather than merely absent.
+mnv_inv() { echo "${INVDIR}/${SLURM_JOB_NAME:-nojob}.${SLURM_JOB_ID:-nojid}.${SLURM_ARRAY_TASK_ID:-na}.$1.jsonl"; }
+
+# A-2(f): has ANY source byte in the execution tree moved since the manifest was recorded? This is
+# not what the parity check below answers -- that one asks "is the file at this named path the
+# COMMITTED one", per pair, against git. This asks the whole-tree question, including files nobody
+# thought to name, against a snapshot. Run 4 printed `5 of 5 CURRENT` honestly while the tree it
+# was executing from was not the tree anyone meant.
+python3 "$SRCMAN" --repo "$CODE_ROOT" --compare "$SRCMAN_RECORD" --require-clean || {
+  echo "[oi136] FAIL: the execution tree is not the tree that was approved (see above)." >&2
+  exit 3; }
+
+# A-3: bind what EXECUTES, in the shape the two Gate-5 launchers already use. NOT redundant with the
+# guard and NOT sufficient: run 4 printed `5 of 5 CURRENT` honestly while the modules the
+# interpreter loaded came from somewhere else entirely. The guard answers that second question.
+python3 "$PARITY" --repo "$CODE_ROOT" \
+  --pair "${CODE_ROOT}/nd-unfolding/combine_cov_nd.py=nd-unfolding/combine_cov_nd.py" \
+  --pair "${CODE_ROOT}/nd-unfolding/analyze_universes_5d.py=nd-unfolding/analyze_universes_5d.py" \
+  --pair "${CODE_ROOT}/nd-unfolding/mii_adopt_unified_5d_stamped.py=nd-unfolding/mii_adopt_unified_5d_stamped.py" \
+  --pair "${CODE_ROOT}/nd-unfolding/adopt_unified_5d.py=nd-unfolding/adopt_unified_5d.py" \
+  --pair "${CODE_ROOT}/nd-unfolding/sbatch_finalize_5d_bkgaware_gpu.sh=nd-unfolding/sbatch_finalize_5d_bkgaware_gpu.sh" \
+  --pair "${CODE_ROOT}/nd-unfolding/lib_member_resume.sh=nd-unfolding/lib_member_resume.sh" \
+  --pair "${GUARD}=nd-unfolding/mnv_guarded_run.py" \
+  --pair "${PARITY}=nd-unfolding/pet/verify_executing_copy_is_committed.py" \
+  --pair "${SRCMAN}=nd-unfolding/mnv_source_manifest.py"  || {
+  echo "[oi136] FAIL: deployment parity -- the executing copies are not the committed ones in $CODE_ROOT" >&2
+  exit 3; }
+echo "[oi136] executing-copy parity CURRENT, source manifest identical, inventories -> ${INVDIR}"
+
+
 
 # ============================ B1: THE MEMBER-LOCAL CONSUMER CHAIN ==================================
 # WHY THIS SCRIPT IS THE ONE THAT NEEDED IT, and the defect is written in its own header above:
@@ -203,8 +262,8 @@ if mr_declared; then
   # full ranges on purpose: a member with a partial replica set must REFUSE rather than quietly combine
   # what it has. That is the barrier that makes a member's C_stat comparable to the archive's at all.
   echo "[fin-bkg] MEMBER $(mr_member_root): building this member's OWN C_stat and C_ML"
-  mr_run "${STAT_COV}" python3 "${CODE_ROOT}/nd-unfolding/combine_cov_nd.py"     --glob "$(mr_prefix boot_nd_5d)/res_boot_*.npz" --expected-ids 1-100 --cv "${CV}"     --tag stat5d --out "${STAT_COV}"
-  mr_run "${ML_COV}" python3 "${CODE_ROOT}/nd-unfolding/combine_cov_nd.py"     --glob "$(mr_prefix seedscan_split_5d)/res_split_*.npz" --expected-ids 1-24 --cv "${CV}"     --tag mlsplit5d --out "${ML_COV}"
+  mr_run "${STAT_COV}" python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv combine_cov_stat)" -- "${CODE_ROOT}/nd-unfolding/combine_cov_nd.py"     --glob "$(mr_prefix boot_nd_5d)/res_boot_*.npz" --expected-ids 1-100 --cv "${CV}"     --tag stat5d --out "${STAT_COV}"
+  mr_run "${ML_COV}" python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv combine_cov_ml)" -- "${CODE_ROOT}/nd-unfolding/combine_cov_nd.py"     --glob "$(mr_prefix seedscan_split_5d)/res_split_*.npz" --expected-ids 1-24 --cv "${CV}"     --tag mlsplit5d --out "${ML_COV}"
 else
   echo "[fin-bkg] undeclared: reusing the archive's C_stat/C_ML, per this script's original contract"
 fi
@@ -237,7 +296,7 @@ if mr_declared; then
     echo "[fin-bkg] MEMBER $(mr_member_root): reusing complete ${COMB} (marker matches this member)"
   else
     echo "[fin-bkg] analyze start $(date -u '+%F %T UTC') on $(hostname)"
-    mr_run "${COMB}" python3 "${CODE_ROOT}/nd-unfolding/analyze_universes_5d.py" \
+    mr_run "${COMB}" python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv analyze_universes_5d)" -- "${CODE_ROOT}/nd-unfolding/analyze_universes_5d.py" \
       --cv "${CV}" \
       --glob "${SWEEP_GLOB}" \
       --add-norm 0.014 \
@@ -383,15 +442,17 @@ echo "[fin-bkg] adopt (mean-centered) $(date -u '+%F %T UTC')"
 # forwarded verbatim); only child-specific flags go in the tail. Never put --out in the tail --
 # argparse takes the LAST occurrence, so it would redirect the child while the wrapper stamps a
 # file the child did not write, and report success.
-python3 "${CODE_ROOT}/nd-unfolding/mii_adopt_unified_5d_stamped.py" \
+python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv adopt_stamped_mean)" -- "${CODE_ROOT}/nd-unfolding/mii_adopt_unified_5d_stamped.py" \
   --uthrow "${UTHROW}" \
   --combined "${COMB}" \
-  --out "${OUTD}/uq_universe_5d_covariance_combined_bkgaware_uthrow.root"
+  --out "${OUTD}/uq_universe_5d_covariance_combined_bkgaware_uthrow.root" \
+  --guard-expect-root "${CODE_ROOT}" --guard-inventory "$(mnv_inv adopt_child_mean)"
 echo "[fin-bkg] adopt (CV-centered, F7) $(date -u '+%F %T UTC')"
-python3 "${CODE_ROOT}/nd-unfolding/mii_adopt_unified_5d_stamped.py" \
+python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv adopt_stamped_cvcentered)" -- "${CODE_ROOT}/nd-unfolding/mii_adopt_unified_5d_stamped.py" \
   --uthrow "${UTHROW}" \
   --combined "${COMB}" \
   --out "${OUTD}/uq_universe_5d_covariance_combined_bkgaware_uthrow_cvcentered.root" \
+  --guard-expect-root "${CODE_ROOT}" --guard-inventory "$(mnv_inv adopt_child_cvcentered)" \
   -- --cv-centered
 echo "[fin-bkg] done $(date -u '+%F %T UTC')"
 ls -la "${OUTD}"/*.root

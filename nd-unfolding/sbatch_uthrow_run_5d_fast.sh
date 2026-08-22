@@ -37,6 +37,62 @@ export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=32 MKL_NUM_THREADS=2 OPENBLAS_NUM_THRE
        NUMEXPR_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2
 cd "${DATA_ROOT}/nd-unfolding"; mkdir -p uq_5d/uthrow_slabs_5d_sb
 source "${CODE_ROOT}/lib/resume_guard.sh"
+
+# --- OI-136 ROUND 2, 2026-08-22: EVERY production Python invocation is GUARDED, and the record is
+# --- REQUIRED. Authorized by Joseph: "every production Python invocation across the eight k=0
+# --- launchers is to be routed through mnv_guarded_run.py, with a required inventory", plus the
+# --- contract-required executing-file parity calls and source-manifest comparison.
+#
+# WHY THIS IS WORTH DOING NOW AND WAS NOT BEFORE. The contract's B-1 argued a wrapper "cannot help
+# them and would block the run" -- true of the PRE-REPAIR bytes, where `import xsec_nd` resolved
+# under the canonical checkout and the guard correctly exited 3. That argument EXPIRED with the
+# six source repairs: post-repair these entrypoints resolve under ${MNV_CODE_ROOT}, so the wrapper
+# now runs GREEN and NON-VACUOUSLY -- `checked > 0` and `repo_origin_count > 0` -- which is exactly
+# the positive evidence a bare exit 0 could never be.
+#
+# THE INVENTORY IS ONE FILE PER PROCESS, NOT ONE PER RUN. An array of 169 tasks appending to a
+# single file across nodes is a corruption risk with no upside; per-process files still give F-4
+# its count (inventories == guarded processes) and `mnv_import_set_ratchet.py` reads the directory.
+GUARD="${CODE_ROOT}/nd-unfolding/mnv_guarded_run.py"
+PARITY="${CODE_ROOT}/nd-unfolding/pet/verify_executing_copy_is_committed.py"
+SRCMAN="${CODE_ROOT}/nd-unfolding/mnv_source_manifest.py"
+INVDIR="${MNV_GUARD_INVENTORY_DIR:?set MNV_GUARD_INVENTORY_DIR to a run-scoped directory for the OI-136 resolved-origin records. It has no default: a guarded run that emits no record establishes nothing, and a defaulted path would put one run over another.}"
+SRCMAN_RECORD="${MNV_SOURCE_MANIFEST:?set MNV_SOURCE_MANIFEST to the A-2(f) source manifest recorded from MNV_CODE_ROOT before the first sbatch. It has no default: comparing against a manifest generated now would compare the tree to itself.}"
+for _mnv_tool in "$GUARD" "$PARITY" "$SRCMAN"; do
+  # `! -L` because a symlink can point out of the code root while every path check still passes.
+  [[ -s "$_mnv_tool" && ! -L "$_mnv_tool" ]] || {
+    echo "[oi136] FAIL: required tool missing or a symlink: $_mnv_tool" >&2
+    echo "[oi136]   This deployment of MNV_CODE_ROOT predates the round-2 package; re-deploy it." >&2
+    exit 2; }
+done
+mkdir -p "${INVDIR}"
+# One record per guarded process. Array task and job id are in the name so nothing collides and so
+# a missing record is attributable to a task rather than merely absent.
+mnv_inv() { echo "${INVDIR}/${SLURM_JOB_NAME:-nojob}.${SLURM_JOB_ID:-nojid}.${SLURM_ARRAY_TASK_ID:-na}.$1.jsonl"; }
+
+# A-2(f): has ANY source byte in the execution tree moved since the manifest was recorded? This is
+# not what the parity check below answers -- that one asks "is the file at this named path the
+# COMMITTED one", per pair, against git. This asks the whole-tree question, including files nobody
+# thought to name, against a snapshot. Run 4 printed `5 of 5 CURRENT` honestly while the tree it
+# was executing from was not the tree anyone meant.
+python3 "$SRCMAN" --repo "$CODE_ROOT" --compare "$SRCMAN_RECORD" --require-clean || {
+  echo "[oi136] FAIL: the execution tree is not the tree that was approved (see above)." >&2
+  exit 3; }
+
+# A-3: bind what EXECUTES, in the shape the two Gate-5 launchers already use. NOT redundant with the
+# guard and NOT sufficient: run 4 printed `5 of 5 CURRENT` honestly while the modules the
+# interpreter loaded came from somewhere else entirely. The guard answers that second question.
+python3 "$PARITY" --repo "$CODE_ROOT" \
+  --pair "${CODE_ROOT}/nd-unfolding/unified_throw_cov_5d.py=nd-unfolding/unified_throw_cov_5d.py" \
+  --pair "${CODE_ROOT}/nd-unfolding/sbatch_uthrow_run_5d_fast.sh=nd-unfolding/sbatch_uthrow_run_5d_fast.sh" \
+  --pair "${CODE_ROOT}/nd-unfolding/lib_member_resume.sh=nd-unfolding/lib_member_resume.sh" \
+  --pair "${GUARD}=nd-unfolding/mnv_guarded_run.py" \
+  --pair "${PARITY}=nd-unfolding/pet/verify_executing_copy_is_committed.py" \
+  --pair "${SRCMAN}=nd-unfolding/mnv_source_manifest.py"  || {
+  echo "[oi136] FAIL: deployment parity -- the executing copies are not the committed ones in $CODE_ROOT" >&2
+  exit 3; }
+echo "[oi136] executing-copy parity CURRENT, source manifest identical, inventories -> ${INVDIR}"
+
 # SOURCED RELATIVE TO THIS SCRIPT, NOT THROUGH ${REPO}. A launcher frozen at a sha that sources its
 # member-axis library from the MUTABLE canonical checkout is not frozen: at run time it picks up
 # whatever is in /pscratch/.../MINERvA-OmniFold, which is on a divergent local main that does not
@@ -115,6 +171,6 @@ OFF=$(( SLURM_ARRAY_TASK_ID * 4 ))
 # right: one offset in, each leg adds it to its own baseline. Do not replace this with an
 # absolute-seed override; that hands the group structure back to the caller.
 EST_SEED=$(( 1000 + ${MNV_EST_SEED_OFFSET:-0} ))
-python3 "${CODE_ROOT}/nd-unfolding/unified_throw_cov_5d.py" --throws 4 --throw-offset ${OFF} --draw-seed 1000 --estimator-seed ${EST_SEED} \
+python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv uthrow_run)" -- "${CODE_ROOT}/nd-unfolding/unified_throw_cov_5d.py" --throws 4 --throw-offset ${OFF} --draw-seed 1000 --estimator-seed ${EST_SEED} \
   --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral \
   --out "${SLAB_DIR}/uthrow5d_slab_${SLURM_ARRAY_TASK_ID}.npz"

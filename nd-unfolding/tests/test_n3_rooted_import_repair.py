@@ -95,6 +95,167 @@ def make_checkout(base: pathlib.Path, name: str, mark: str) -> pathlib.Path:
     return root
 
 
+def _mentions_root(node) -> bool:
+    """Does this subtree contain the cluster-root literal anywhere?"""
+    return any(isinstance(c, ast.Constant) and isinstance(c.value, str)
+               and CLUSTER_ROOT in c.value for c in ast.walk(node))
+
+
+def _names_in(node) -> set:
+    return {c.id for c in ast.walk(node) if isinstance(c, ast.Name)}
+
+
+def _bound_names(target) -> set:
+    """Names bound by an assignment or `for` target, including tuple/list unpacking."""
+    return {c.id for c in ast.walk(target) if isinstance(c, ast.Name)}
+
+
+def rooted_insert_offenders(src: str) -> list:
+    """Every `sys.path` insert/append argument in `src` that can carry the cluster root.
+
+    WHY A TAINT FIXPOINT AND NOT A NAME SET. The first version of this check collected only names
+    assigned a STRING CONSTANT containing the root, then looked for those names inside an insert
+    call. Mutation-tested, that catches a bare literal and `insert(0, _DATA_ROOT)` and NOTHING
+    ELSE -- it misses `_D = f"{_DATA_ROOT}/nd-unfolding"; insert(0, _D)` (the value is a JoinedStr,
+    not a Constant, so `_D` was never tainted) and it misses
+    `for _p in (f"{_DATA_ROOT}/2d-unfolding", ...): insert(0, _p)` (`_p` is a loop target, not an
+    assignment). THE LOOP FORM IS THE SHAPE FOUR OF THE SIX REPAIRED FILES USE, so over the
+    population it was asked about the old assertion was very nearly vacuous. That is the same
+    defect the OI-136 probe's own docstring records finding in its first two classifiers.
+
+    So taint propagates to a fixpoint through: assignment, annotated assignment, augmented
+    assignment, `for` targets (from the ITERABLE), and `with ... as`. An expression is tainted if
+    it contains the root literal OR references a tainted name. Returns the offending argument
+    source segments, so a failure names what it found.
+    """
+    tree = ast.parse(src)
+    tainted: set = set()
+    for _ in range(10):
+        before = set(tainted)
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.Assign, ast.AnnAssign, ast.AugAssign)):
+                value = getattr(node, "value", None)
+                if value is None:
+                    continue
+                if _mentions_root(value) or (_names_in(value) & tainted):
+                    targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+                    for t in targets:
+                        tainted |= _bound_names(t)
+            elif isinstance(node, (ast.For, ast.AsyncFor)):
+                if _mentions_root(node.iter) or (_names_in(node.iter) & tainted):
+                    tainted |= _bound_names(node.target)
+            elif isinstance(node, ast.withitem):
+                if node.optional_vars is not None and (
+                        _mentions_root(node.context_expr)
+                        or (_names_in(node.context_expr) & tainted)):
+                    tainted |= _bound_names(node.optional_vars)
+        if tainted == before:
+            break
+
+    offenders = []
+    for node in ast.walk(tree):
+        if not (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)):
+            continue
+        if node.func.attr not in ("insert", "append", "extend"):
+            continue
+        # `sys.path.insert(...)` / `path.insert(...)` -- match on the receiver mentioning `path`,
+        # which is what every form in this repository uses.
+        recv = ast.dump(node.func.value)
+        if "path" not in recv:
+            continue
+        for arg in node.args:
+            if _mentions_root(arg) or (_names_in(arg) & tainted):
+                offenders.append(ast.get_source_segment(src, arg) or ast.dump(arg))
+    return offenders
+
+
+class TheOffenderCheckerHasPower(unittest.TestCase):
+    """Mutation tests, BOTH DIRECTIONS. A checker with no demonstrated discrimination reports
+    success on anything, and this one shipped once already in a form that did exactly that."""
+
+    #: Each must be CAUGHT. The last two are the shapes the first version of the check missed.
+    MUST_FIRE = {
+        "bare literal in the insert argument":
+            'import sys\nsys.path.insert(0, "%s/nd-unfolding")\n' % CLUSTER_ROOT,
+        "directly named rooted constant":
+            'import sys\n_D = "%s"\nsys.path.insert(0, _D)\n' % CLUSTER_ROOT,
+        "ONE-HOP derived name (f-string off a rooted constant)":
+            'import sys\n_D = "%s"\n_ND = f"{_D}/nd-unfolding"\nsys.path.insert(0, _ND)\n'
+            % CLUSTER_ROOT,
+        "TWO-HOP derived name":
+            'import sys\n_D = "%s"\n_A = f"{_D}/x"\n_B = _A + "/y"\n'
+            'sys.path.insert(0, _B)\n' % CLUSTER_ROOT,
+        "for-loop iterable holding rooted f-strings (the 4-of-6 shape)":
+            'import sys\n_D = "%s"\n'
+            'for _p in (f"{_D}/2d-unfolding", f"{_D}/nd-unfolding"):\n'
+            '    if _p not in sys.path:\n        sys.path.insert(0, _p)\n' % CLUSTER_ROOT,
+        "for-loop over already-derived names":
+            'import sys\n_D = "%s"\n_2D = f"{_D}/2d-unfolding"\n_ND = f"{_D}/nd-unfolding"\n'
+            'for p in (_2D, _ND):\n    sys.path.insert(0, p)\n' % CLUSTER_ROOT,
+        "os.path.join off a rooted constant":
+            'import os, sys\n_D = "%s"\nsys.path.insert(0, os.path.join(_D, "nd-unfolding"))\n'
+            % CLUSTER_ROOT,
+        "append instead of insert":
+            'import sys\n_D = "%s"\nsys.path.append(_D)\n' % CLUSTER_ROOT,
+    }
+
+    #: Each must stay SILENT. A narrowing needs a test that it does not fire where it should not.
+    MUST_NOT_FIRE = {
+        "the repaired shape: derived import root, separate untouched data root":
+            'import sys\nfrom pathlib import Path\n'
+            '_REPO = str(Path(__file__).resolve().parents[1])\n'
+            'for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):\n'
+            '    if _p not in sys.path:\n        sys.path.insert(0, _p)\n'
+            '_DATA_ROOT = "%s"\n' % CLUSTER_ROOT,
+        "data root used only in an argparse default":
+            'import argparse, sys\nfrom pathlib import Path\n'
+            '_ND = str(Path(__file__).resolve().parents[0])\n'
+            'sys.path.insert(0, _ND)\n'
+            '_DATA_ROOT = "%s"\n'
+            'ap = argparse.ArgumentParser()\n'
+            'ap.add_argument("--mcfile", default=f"{_DATA_ROOT}/2d-unfolding/x.root")\n'
+            % CLUSTER_ROOT,
+        "data root in a plain module constant that is never inserted":
+            'import sys\nfrom pathlib import Path\n'
+            '_ND = str(Path(__file__).resolve().parents[0])\n'
+            'sys.path.insert(0, _ND)\n'
+            '_DATA_ROOT = "%s"\n'
+            'VLIST = f"{_DATA_ROOT}/nd-unfolding/uq_4d/vertical_universes.txt"\n' % CLUSTER_ROOT,
+        "no cluster root anywhere":
+            'import sys\nfrom pathlib import Path\n'
+            'sys.path.insert(0, str(Path(__file__).resolve().parents[1]))\n',
+    }
+
+    def test_every_rooted_insert_shape_is_CAUGHT(self):
+        for name, src in self.MUST_FIRE.items():
+            with self.subTest(shape=name):
+                self.assertNotEqual(rooted_insert_offenders(src), [],
+                                    f"NOT CAUGHT: {name}\n{src}")
+
+    def test_it_is_SILENT_on_every_legitimate_shape(self):
+        for name, src in self.MUST_NOT_FIRE.items():
+            with self.subTest(shape=name):
+                self.assertEqual(rooted_insert_offenders(src), [],
+                                 f"FALSE POSITIVE: {name}\n{src}")
+
+    def test_the_loop_shape_really_is_what_four_of_the_six_files_use(self):
+        """The population claim the mutation set is calibrated against, measured not asserted."""
+        loop_shaped = []
+        for rel, _n in REPAIRED:
+            src = prologue((REPO / rel).read_text(), rel)
+            tree = ast.parse(src)
+            inserts_via_loop = False
+            for node in ast.walk(tree):
+                if isinstance(node, ast.For):
+                    for c in ast.walk(node):
+                        if isinstance(c, ast.Call) and isinstance(c.func, ast.Attribute) \
+                                and c.func.attr == "insert":
+                            inserts_via_loop = True
+            if inserts_via_loop:
+                loop_shaped.append(rel)
+        self.assertEqual(len(loop_shaped), 4, loop_shaped)
+
+
 class TheSixRepairsChangeWhereImportsResolve(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
@@ -178,32 +339,19 @@ class TheSixRepairsChangeWhereImportsResolve(unittest.TestCase):
                                  (self.clean / "nd-unfolding" / f"{VICTIM}.py").resolve())
 
     def test_the_repaired_prologues_derive_from___file___with_no_absolute_fallback(self):
-        """The repair FORM, not just its effect: `parents[N]`, and no rooted literal reachable by
-        any insert. The three files that keep the literal keep it in `_DATA_ROOT`, which no
-        `sys.path` statement touches -- asserted here rather than trusted."""
+        """The repair FORM, not just its effect: `parents[N]`, and no rooted value reachable by any
+        `sys.path` insert. The three files that keep the cluster literal keep it in `_DATA_ROOT`,
+        which no `sys.path` statement touches. Checked by `rooted_insert_offenders`, whose power is
+        mutation-tested in `TheOffenderCheckerHasPower` below -- the FIRST version of this assertion
+        caught only a bare literal and a directly-named constant, and therefore said nothing about
+        the loop-iterable shape that four of these six files actually use."""
         for rel, n in REPAIRED:
             with self.subTest(file=rel):
                 src = prologue((REPO / rel).read_text(), rel)
                 self.assertIn(f"parents[{n}]", src,
                               f"{rel} must derive its import root from parents[{n}]")
                 self.assertIn("Path(__file__).resolve()", src)
-                tree = ast.parse(src)
-                rooted = set()
-                for node in ast.walk(tree):
-                    if isinstance(node, ast.Assign) and isinstance(node.value, ast.Constant) \
-                            and isinstance(node.value.value, str) \
-                            and CLUSTER_ROOT in node.value.value:
-                        rooted |= {t.id for t in node.targets if isinstance(t, ast.Name)}
-                for node in ast.walk(tree):
-                    if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) \
-                            and node.func.attr == "insert":
-                        names = {c.id for c in ast.walk(node) if isinstance(c, ast.Name)}
-                        self.assertFalse(names & rooted,
-                                         f"{rel}: a sys.path.insert argument still reaches a "
-                                         f"rooted constant {sorted(names & rooted)}")
-                        for c in ast.walk(node):
-                            if isinstance(c, ast.Constant) and isinstance(c.value, str):
-                                self.assertNotIn(CLUSTER_ROOT, c.value, rel)
+                self.assertEqual(rooted_insert_offenders(src), [], rel)
 
     def test_the_cut_really_is_the_files_own_insert_statement(self):
         """Non-vacuity of the extraction. A prologue that stopped short would measure nothing."""
