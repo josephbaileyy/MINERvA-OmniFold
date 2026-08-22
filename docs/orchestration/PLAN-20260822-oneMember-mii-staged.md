@@ -228,6 +228,13 @@ sizes are what gets submitted. They are different quantities and are listed sepa
 
 ## C. Exact submission commands and dependency order
 
+> **SUPERSEDED IN ITS PATHS, 2026-08-22, by Amendment 3 below** (Joseph's ruling 17). Amendment 2
+> section 3 already declared these paths superseded and deferred the rewrite until the clean tree was
+> designated; Amendment 3 is that rewrite. **This block survives as the dependency graph and the
+> argument shape only** — its working directory and its bare launcher names are no longer correct
+> and must not be copied. It is preserved rather than edited so the record of what was proposed, and
+> when, stays readable.
+
 All from `/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding` on a login node, after
 `source ../setup_salloc_env.sh`, with the member declared in the submitting shell:
 
@@ -395,3 +402,84 @@ built until that contract exists, and nothing is submitted until the reviewer re
 
 On a clean PASS the conditional authorization becomes operative without a further permission round:
 quarantine the six files, regenerate ids 1–3, and submit the seven jobs of logical legs 1–5 for k=0.
+
+
+---
+
+# AMENDMENT 3, 2026-08-22 — section C rewritten on the two-root design (ruling 17)
+
+**Authority:** [`DECISION-20260822-joseph-b1-lift-and-clause-c.md`](DECISION-20260822-joseph-b1-lift-and-clause-c.md)
+rulings 17 and 18, specified by
+[`REVIEW-CONTRACT-20260822-k0-execution-integrity.md`](REVIEW-CONTRACT-20260822-k0-execution-integrity.md)
+A-1 and B-5. **This amendment authorizes nothing.** Ruling 19's scope note stands verbatim: *"None of
+these rulings authorizes a Slurm submission, the full family, `C_ML`, or a scientific adoption."*
+Nothing here is submitted until the fresh non-builder reviewer records a PASS against the contract.
+
+## C-1. The two roots, both mandatory
+
+| variable | role | rule |
+|---|---|---|
+| `MNV_CODE_ROOT` | the approved clean execution tree | every `.sh` sourced and every `.py` executed or imported resolves under it; `git status --porcelain` empty at a declared sha, re-verified after the last leg |
+| `MNV_DATA_ROOT` | inputs and products | `/pscratch/sd/j/josephrb/MINERvA-OmniFold` is acceptable **in this role only**; nothing is executed or imported from it |
+
+Neither has a default and neither may acquire one: a default is the hardcode wearing a flag. The
+constitution checklist for `MNV_CODE_ROOT` — the (a)–(g) table, and the `MNV_LAUNCHER_DIR` rule — is
+section 0b-i of [`RUNBOOK-20260822-b1-lift-preflight.md`](RUNBOOK-20260822-b1-lift-preflight.md) and
+is not restated here, so it has one home.
+
+## C-2. The submitting shell
+
+```bash
+ssh saul.nersc.gov
+export MNV_CODE_ROOT=<the approved clean tree at the declared sha>
+export MNV_DATA_ROOT=/pscratch/sd/j/josephrb/MINERvA-OmniFold
+export MNV_LAUNCHER_DIR="${MNV_CODE_ROOT}/nd-unfolding"   # sbatch runs a spool COPY of the script
+export MNV_EST_SEED_OFFSET=0          # canonical integer, NO leading zeros (lib_member_resume.sh:63)
+source "${MNV_CODE_ROOT}/setup_salloc_env.sh"             # from the CODE root, never the data root
+cd "${MNV_DATA_ROOT}/nd-unfolding"                        # products land here
+```
+
+`sbatch` propagates the environment, so both roots reach the job. Each launcher re-reads them and
+refuses to start if either is unset **or empty**.
+
+## C-3. Independent roots — submit together
+
+```bash
+L="${MNV_CODE_ROOT}/nd-unfolding"
+JB=$(sbatch --parsable "$L/sbatch_bootstrap_5d_gpu.sh")                    # leg 1
+JS=$(sbatch --parsable "$L/sbatch_seedscan_split_5d.sh")                   # leg 2
+JD=$(sbatch --parsable "$L/sbatch_unfold_5d_detector_bkgaware_gpu.sh")     # leg 3  -> the member CV
+JR=$(sbatch --parsable "$L/sbatch_uthrow_run_5d_fast.sh")                  # leg 5a
+JK=$(sbatch --parsable "$L/sbatch_uthrow_block_5d.sh")                     # leg 5b
+```
+
+## C-4. Dependent
+
+```bash
+JW=$(sbatch --parsable --dependency=afterok:$JD "$L/sbatch_sweep_bank_5d_run_bkgaware_gpu.sh")  # leg 4
+JC=$(sbatch --parsable --dependency=afterok:$JR:$JK "$L/sbatch_uthrow_combine_5d_fast.sh")      # leg 5c
+# LEG 6 IS NOT SUBMITTED HERE -- gated on the staged review, exactly as in Amendment 1 section D.
+```
+
+**The dependency graph is unchanged from Amendment 1 section C**, including why leg 4 waits on leg 3
+(leg 3 writes the member CV into the directory leg 4's 169 universes populate). Only the paths moved.
+
+**Submit by ABSOLUTE PATH UNDER THE CODE ROOT.** `sbatch <bare name>` from
+`${MNV_DATA_ROOT}/nd-unfolding` would spool the data root's copy of the launcher, which is not the
+approved bytes — and `sbatch` would report success either way.
+
+## C-5. What is still MISSING from this path, stated so no reader infers otherwise
+
+- **The production legs are not routed through `mnv_guarded_run.py`.** The two-root repair fixes
+  which tree is *selected*; the guard is what *measures* which modules were actually loaded. Contract
+  B-5 does not require the wrapper on these launchers and ruling 18 does not name it, so it was not
+  added. Until it is, section 4's positive arm (P-1 inventories, F-4/F-5) has **no carrier on legs
+  1–6** and a green run of them is not evidence about the import tree.
+- **`build_child_argv` does not emit the guard.** The child boundary is demonstrated armed by
+  `nd-unfolding/tests/test_n2_child_boundary.py`, but the production adopter still launches its
+  child unwrapped.
+- **`verify_executing_copy_is_committed.py --pair` is not called by these eight launchers.** Contract
+  A-3 asks for it in the shape the two Gate-5 launchers use. It is not in ruling 18's list either.
+
+These three are execution-integrity work that is specified and **not** authorized, and each is a
+place the reviewer should expect to find a gap rather than a control.

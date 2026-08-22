@@ -6,9 +6,26 @@ xsec flat. Many replicas -> C_stat (combine_cov_nd.py). Mirrors the nd driver's
 --bootstrap-seed (data Poisson + MC Poisson) but from the npz so no 120 GB read.
   python bootstrap_nd.py --npz of_inputs_4d.npz --seed 7 --out boot_nd/res_boot_7.npz
 """
-import argparse, sys, numpy as np
-_ND="/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding"
-if _ND not in sys.path: sys.path.insert(0,_ND)
+import argparse, sys
+from pathlib import Path
+
+import numpy as np
+
+# OI-136 REPAIR, 2026-08-22, authorized by Joseph's ruling 18 (DECISION-20260822-joseph-b1-lift-and-clause-c.md)
+# and required by REVIEW-CONTRACT-20260822-k0-execution-integrity.md B-1. THE IMPORT ROOT IS DERIVED
+# FROM THIS FILE, never from the hardcoded cluster root that used to stand here. An absolute
+# `insert(0, ...)` executes THAT tree's modules whichever checkout launched this entrypoint, and
+# PYTHONPATH cannot outrank position 0 -- so deployment parity can report every pinned file CURRENT
+# while the interpreter imports a different file entirely. That is OI-136's measured cause on run
+# 57266000_0 (3 h 08 m of A100 against a tree 211 commits behind).
+# NO ABSOLUTE FALLBACK, deliberately: a fallback is the hardcode wearing a flag, and it would restore
+# the defect silently on the one tree where it matters. Same idiom and the same reason as the OI-136
+# pilot repair at `uq_fps/corrected/test_fps_corrected_uq.py`, `tests/test_p4_repair.py:14` and
+# `pet/combine_cstat_bkgsub_100rep.py:78`.
+# `parents[0]` is `nd-unfolding/` -- this file's own directory, which is where `omnifold_nn_core`,
+# `xsec_nd` and `seed_offset_policy` live.
+_ND = str(Path(__file__).resolve().parents[0])
+if _ND not in sys.path: sys.path.insert(0, _ND)
 from omnifold_nn_core import omnifold_loop
 from xsec_nd import extract_cross_section_nd, project_axis, total_xsec
 import seed_offset_policy

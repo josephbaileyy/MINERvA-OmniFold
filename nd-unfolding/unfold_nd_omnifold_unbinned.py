@@ -40,13 +40,38 @@ import argparse
 import math
 import sys
 from array import array
+from pathlib import Path
 
 import numpy as np
 import ROOT
 
-_REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+# OI-136 REPAIR, 2026-08-22, authorized by Joseph's ruling 18 (DECISION-20260822-joseph-b1-lift-and-clause-c.md)
+# and required by REVIEW-CONTRACT-20260822-k0-execution-integrity.md B-1. THE IMPORT ROOT IS DERIVED
+# FROM THIS FILE, never from the hardcoded cluster root that used to stand here. An absolute
+# `insert(0, ...)` executes THAT tree's modules whichever checkout launched this entrypoint, and
+# PYTHONPATH cannot outrank position 0 -- so deployment parity can report every pinned file CURRENT
+# while the interpreter imports a different file entirely. That is OI-136's measured cause on run
+# 57266000_0 (3 h 08 m of A100 against a tree 211 commits behind).
+# NO ABSOLUTE FALLBACK, deliberately: a fallback is the hardcode wearing a flag, and it would restore
+# the defect silently on the one tree where it matters. Same idiom and the same reason as the OI-136
+# pilot repair at `uq_fps/corrected/test_fps_corrected_uq.py`, `tests/test_p4_repair.py:14` and
+# `pet/combine_cstat_bkgsub_100rep.py:78`.
+# `parents[1]` is the repository root seen from `nd-unfolding/`: this file needs BOTH
+# `2d-unfolding/` (`unfold_2d_omnifold_unbinned`, `flux_universe`) and `nd-unfolding/`
+# (`xsec_nd`, `seed_offset_policy`), and `unbinned_unfolding/python` further down at the
+# second rooted insert, so the derived value has to be the root and not this directory.
+_REPO = str(Path(__file__).resolve().parents[1])
 _2D = f"{_REPO}/2d-unfolding"
 _ND = f"{_REPO}/nd-unfolding"
+
+# THE DATA ROOT IS A SEPARATE OBJECT AND KEEPS ITS ABSOLUTE VALUE (ruling 17's two-root design).
+# `MNV_CODE_ROOT` is the immutable clean execution tree above; the products these defaults name are
+# ~47.7 GB of gitignored inputs that a clean checkout does not and must not contain, so repointing
+# them at the derived root would make every default name a file that is not there. Nothing below is
+# imported or executed -- these are argparse defaults and data paths only, and every launcher on the
+# k=0 path passes them explicitly from `${MNV_DATA_ROOT}`.
+_DATA_ROOT = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+_DATA_2D = f"{_DATA_ROOT}/2d-unfolding"
 for p in (_2D, _ND):
     if p not in sys.path:
         sys.path.insert(0, p)
@@ -554,7 +579,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--omnifile", required=True)
-    ap.add_argument("--mcfile", default=f"{_2D}/baseline_flux/runEventLoopMC_MEFHC.root")
+    ap.add_argument("--mcfile", default=f"{_DATA_2D}/baseline_flux/runEventLoopMC_MEFHC.root")
     ap.add_argument("--flux-hist", default="pTmu_reweightedflux_integrated")
     ap.add_argument("--axes", default="eavail,q3",
                     help="comma list of extra axes after pt,pz (registry: "
@@ -586,7 +611,7 @@ def main():
                          "(lateral bands also swap pt/pz + q3; eavail stays CV). "
                          "Requires --use-weights; incompatible with --closure/--bootstrap-seed.")
     ap.add_argument("--flux-universe-file",
-                    default=f"{_2D}/baseline_flux/flux_integral_universes_MEFHC.root",
+                    default=f"{_DATA_2D}/baseline_flux/flux_integral_universes_MEFHC.root",
                     help="ROOT (hFluxCV/hFluxUniv) per-PPFX flux integrals; used only "
                          "with --universe Flux:IDX to divide by that universe's flux.")
     ap.add_argument("--edges", default=None,

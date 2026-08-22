@@ -12,9 +12,27 @@
 set -eo pipefail
 export HOME=/global/homes/j/josephrb
 export ROOT628_PREFIX=/global/homes/j/josephrb/.conda/envs/root_6_28
-REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"
-source "${REPO}/setup_salloc_env.sh"
-export PYTHONUNBUFFERED=1; cd "${REPO}/nd-unfolding"
+# --- OI-136 / Joseph's ruling 17, 2026-08-22: TWO ROOTS, BOTH MANDATORY, NEITHER DEFAULTED -------
+# This line used to read `REPO="<the canonical checkout>"` unconditionally, and every `source`, every
+# `cd` and every `python3` below hung off it. That decides the EXECUTING TREE before any interpreter
+# or guard starts, so no amount of Python-side work can reach it -- "the wrong root is selected
+# before Python or the guard starts" (Joseph, ruling 18).
+#   MNV_CODE_ROOT  the approved clean execution tree. Every `.sh` sourced and every `.py` executed or
+#                  imported must resolve under it; it is immutable and `git status --porcelain`-empty
+#                  for the duration of the run, at a named sha recorded in the run receipt.
+#   MNV_DATA_ROOT  the working directory for inputs and products. The canonical checkout is
+#                  acceptable in THIS ROLE ONLY. Nothing is executed or imported from it.
+# WHY TWO AND NOT ONE: a clean checkout cannot simultaneously host ~47.7 GB of gitignored member
+# products and remain clean, and `of_inputs_5d.npz` is absent from a fresh clone, so a clean tree
+# cannot serve as the working directory at all.
+# NO `${VAR:-<hardcode>}` DEFAULT ANYWHERE: a default is the hardcode wearing a flag, and a silently
+# empty defaulted variable makes every path below name a different subject without erroring. Same
+# mandatory form, and the same reason, as `pet/sbatch_gate6_leg0_tier_calibration_array.sh:64`.
+# The two roots MAY name the same directory; nothing here requires them to differ.
+CODE_ROOT="${MNV_CODE_ROOT:?set MNV_CODE_ROOT to the approved clean execution tree -- a checkout at a named sha with git status --porcelain empty. It is NOT the data root.}"
+DATA_ROOT="${MNV_DATA_ROOT:?set MNV_DATA_ROOT to the tree holding the inputs for this leg and receiving its products. Nothing is executed or imported from it.}"
+source "${CODE_ROOT}/setup_salloc_env.sh"
+export PYTHONUNBUFFERED=1; cd "${DATA_ROOT}/nd-unfolding"
 # --- M(ii) member axis: LOCATE lib_member_resume.sh, then source it -------------------------------
 # `${BASH_SOURCE[0]}` IS THE SPOOL PATH UNDER sbatch. Slurm copies the batch script to
 # /var/spool/slurmd/job<N>/slurm_script and executes the COPY, so `dirname "${BASH_SOURCE[0]}"` is the
@@ -56,6 +74,27 @@ if [[ -z "$_mr_lib" ]]; then
   exit 2
 fi
 source "${_mr_lib}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
+# RULING 17, THE SHELL HALF: `lib_member_resume.sh` is an EXECUTED repository file, so it must come
+# from the code root. The resolver above may legitimately pick MNV_LAUNCHER_DIR, `dirname
+# $BASH_SOURCE` or `scontrol Command`; this asserts that whichever it picked is
+# ${MNV_CODE_ROOT}/nd-unfolding and FAILS CLOSED if it is not. Without it a launcher can be deployed
+# in the code root and still source another tree's library with nothing saying so.
+#
+# IT IS PLACED AFTER THE `source`, NOT BEFORE, AND THAT IS A DELIBERATE AND DISCLOSED COMPROMISE.
+# The resolver block above is extracted VERBATIM and pinned BYTE-IDENTICAL across all eight
+# launchers by `tests/test_uq_remediation.py::LibraryResolverSurvivesSbatch`, whose window runs from
+# `# --- M(ii) member axis: LOCATE` to this `source` line inclusive. A check inserted INSIDE that
+# window would (a) silently change what that test extracts and (b) be executed by it as a fragment
+# in which `CODE_ROOT` is not defined -- the same defect shape as an extracted tail losing the
+# `set -eo pipefail` above its cut. Measured, not predicted: placing it inside turned three of that
+# class's arms red. The residual exposure is therefore any side effect the wrong tree's library has
+# AT SOURCE TIME; it defines functions, and nothing downstream of here runs before this exits 2.
+if [[ "$(cd "$_mr_lib" 2>/dev/null && pwd -P)" != "$(cd "${CODE_ROOT}/nd-unfolding" 2>/dev/null && pwd -P)" ]]; then
+  echo "[member] FAIL: lib_member_resume.sh resolved to '${_mr_lib}', which is not" >&2
+  echo "[member]   \${MNV_CODE_ROOT}/nd-unfolding = '${CODE_ROOT}/nd-unfolding'." >&2
+  echo "[member]   Refusing: the member axis would run from a tree this job did not approve." >&2
+  exit 2
+fi
 
 # THE MISSING DEPENDENCY, restored 2026-08-21 under Joseph's amended ruling 1, ATOMICALLY WITH THE
 # COMB GUARD BELOW AND NEVER WITHOUT IT. lib_member_resume.sh's own header says it "Requires
@@ -164,8 +203,8 @@ if mr_declared; then
   # full ranges on purpose: a member with a partial replica set must REFUSE rather than quietly combine
   # what it has. That is the barrier that makes a member's C_stat comparable to the archive's at all.
   echo "[fin-bkg] MEMBER $(mr_member_root): building this member's OWN C_stat and C_ML"
-  mr_run "${STAT_COV}" python3 combine_cov_nd.py     --glob "$(mr_prefix boot_nd_5d)/res_boot_*.npz" --expected-ids 1-100 --cv "${CV}"     --tag stat5d --out "${STAT_COV}"
-  mr_run "${ML_COV}" python3 combine_cov_nd.py     --glob "$(mr_prefix seedscan_split_5d)/res_split_*.npz" --expected-ids 1-24 --cv "${CV}"     --tag mlsplit5d --out "${ML_COV}"
+  mr_run "${STAT_COV}" python3 "${CODE_ROOT}/nd-unfolding/combine_cov_nd.py"     --glob "$(mr_prefix boot_nd_5d)/res_boot_*.npz" --expected-ids 1-100 --cv "${CV}"     --tag stat5d --out "${STAT_COV}"
+  mr_run "${ML_COV}" python3 "${CODE_ROOT}/nd-unfolding/combine_cov_nd.py"     --glob "$(mr_prefix seedscan_split_5d)/res_split_*.npz" --expected-ids 1-24 --cv "${CV}"     --tag mlsplit5d --out "${ML_COV}"
 else
   echo "[fin-bkg] undeclared: reusing the archive's C_stat/C_ML, per this script's original contract"
 fi
@@ -198,7 +237,7 @@ if mr_declared; then
     echo "[fin-bkg] MEMBER $(mr_member_root): reusing complete ${COMB} (marker matches this member)"
   else
     echo "[fin-bkg] analyze start $(date -u '+%F %T UTC') on $(hostname)"
-    mr_run "${COMB}" python3 analyze_universes_5d.py \
+    mr_run "${COMB}" python3 "${CODE_ROOT}/nd-unfolding/analyze_universes_5d.py" \
       --cv "${CV}" \
       --glob "${SWEEP_GLOB}" \
       --add-norm 0.014 \
@@ -344,12 +383,12 @@ echo "[fin-bkg] adopt (mean-centered) $(date -u '+%F %T UTC')"
 # forwarded verbatim); only child-specific flags go in the tail. Never put --out in the tail --
 # argparse takes the LAST occurrence, so it would redirect the child while the wrapper stamps a
 # file the child did not write, and report success.
-python3 mii_adopt_unified_5d_stamped.py \
+python3 "${CODE_ROOT}/nd-unfolding/mii_adopt_unified_5d_stamped.py" \
   --uthrow "${UTHROW}" \
   --combined "${COMB}" \
   --out "${OUTD}/uq_universe_5d_covariance_combined_bkgaware_uthrow.root"
 echo "[fin-bkg] adopt (CV-centered, F7) $(date -u '+%F %T UTC')"
-python3 mii_adopt_unified_5d_stamped.py \
+python3 "${CODE_ROOT}/nd-unfolding/mii_adopt_unified_5d_stamped.py" \
   --uthrow "${UTHROW}" \
   --combined "${COMB}" \
   --out "${OUTD}/uq_universe_5d_covariance_combined_bkgaware_uthrow_cvcentered.root" \

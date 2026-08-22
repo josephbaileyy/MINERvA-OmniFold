@@ -13,11 +13,30 @@
 # do_combine hard-fails on duplicate throw ids, so the two must stay in separate
 # globs. Atomic-save (os.replace) means a wall-kill re-runs the whole task cleanly.
 set -eo pipefail
-REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; source "${REPO}/setup_salloc_env.sh"
+# --- OI-136 / Joseph's ruling 17, 2026-08-22: TWO ROOTS, BOTH MANDATORY, NEITHER DEFAULTED -------
+# This line used to read `REPO="<the canonical checkout>"` unconditionally, and every `source`, every
+# `cd` and every `python3` below hung off it. That decides the EXECUTING TREE before any interpreter
+# or guard starts, so no amount of Python-side work can reach it -- "the wrong root is selected
+# before Python or the guard starts" (Joseph, ruling 18).
+#   MNV_CODE_ROOT  the approved clean execution tree. Every `.sh` sourced and every `.py` executed or
+#                  imported must resolve under it; it is immutable and `git status --porcelain`-empty
+#                  for the duration of the run, at a named sha recorded in the run receipt.
+#   MNV_DATA_ROOT  the working directory for inputs and products. The canonical checkout is
+#                  acceptable in THIS ROLE ONLY. Nothing is executed or imported from it.
+# WHY TWO AND NOT ONE: a clean checkout cannot simultaneously host ~47.7 GB of gitignored member
+# products and remain clean, and `of_inputs_5d.npz` is absent from a fresh clone, so a clean tree
+# cannot serve as the working directory at all.
+# NO `${VAR:-<hardcode>}` DEFAULT ANYWHERE: a default is the hardcode wearing a flag, and a silently
+# empty defaulted variable makes every path below name a different subject without erroring. Same
+# mandatory form, and the same reason, as `pet/sbatch_gate6_leg0_tier_calibration_array.sh:64`.
+# The two roots MAY name the same directory; nothing here requires them to differ.
+CODE_ROOT="${MNV_CODE_ROOT:?set MNV_CODE_ROOT to the approved clean execution tree -- a checkout at a named sha with git status --porcelain empty. It is NOT the data root.}"
+DATA_ROOT="${MNV_DATA_ROOT:?set MNV_DATA_ROOT to the tree holding the inputs for this leg and receiving its products. Nothing is executed or imported from it.}"
+source "${CODE_ROOT}/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=32 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 \
        NUMEXPR_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2
-cd "${REPO}/nd-unfolding"; mkdir -p uq_5d/uthrow_slabs_5d_sb
-source "${REPO}/lib/resume_guard.sh"
+cd "${DATA_ROOT}/nd-unfolding"; mkdir -p uq_5d/uthrow_slabs_5d_sb
+source "${CODE_ROOT}/lib/resume_guard.sh"
 # SOURCED RELATIVE TO THIS SCRIPT, NOT THROUGH ${REPO}. A launcher frozen at a sha that sources its
 # member-axis library from the MUTABLE canonical checkout is not frozen: at run time it picks up
 # whatever is in /pscratch/.../MINERvA-OmniFold, which is on a divergent local main that does not
@@ -67,6 +86,27 @@ if [[ -z "$_mr_lib" ]]; then
   exit 2
 fi
 source "${_mr_lib}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
+# RULING 17, THE SHELL HALF: `lib_member_resume.sh` is an EXECUTED repository file, so it must come
+# from the code root. The resolver above may legitimately pick MNV_LAUNCHER_DIR, `dirname
+# $BASH_SOURCE` or `scontrol Command`; this asserts that whichever it picked is
+# ${MNV_CODE_ROOT}/nd-unfolding and FAILS CLOSED if it is not. Without it a launcher can be deployed
+# in the code root and still source another tree's library with nothing saying so.
+#
+# IT IS PLACED AFTER THE `source`, NOT BEFORE, AND THAT IS A DELIBERATE AND DISCLOSED COMPROMISE.
+# The resolver block above is extracted VERBATIM and pinned BYTE-IDENTICAL across all eight
+# launchers by `tests/test_uq_remediation.py::LibraryResolverSurvivesSbatch`, whose window runs from
+# `# --- M(ii) member axis: LOCATE` to this `source` line inclusive. A check inserted INSIDE that
+# window would (a) silently change what that test extracts and (b) be executed by it as a fragment
+# in which `CODE_ROOT` is not defined -- the same defect shape as an extracted tail losing the
+# `set -eo pipefail` above its cut. Measured, not predicted: placing it inside turned three of that
+# class's arms red. The residual exposure is therefore any side effect the wrong tree's library has
+# AT SOURCE TIME; it defines functions, and nothing downstream of here runs before this exits 2.
+if [[ "$(cd "$_mr_lib" 2>/dev/null && pwd -P)" != "$(cd "${CODE_ROOT}/nd-unfolding" 2>/dev/null && pwd -P)" ]]; then
+  echo "[member] FAIL: lib_member_resume.sh resolved to '${_mr_lib}', which is not" >&2
+  echo "[member]   \${MNV_CODE_ROOT}/nd-unfolding = '${CODE_ROOT}/nd-unfolding'." >&2
+  echo "[member]   Refusing: the member axis would run from a tree this job did not approve." >&2
+  exit 2
+fi
 SLAB_DIR="$(mr_dir_prefix uq_5d/uthrow_slabs_5d_sb)"
 OFF=$(( SLURM_ARRAY_TASK_ID * 4 ))
 # M(ii) OFFSET HOOK (spec (B) option (ii), BEN-461). The launcher keeps its OWN baseline
@@ -75,6 +115,6 @@ OFF=$(( SLURM_ARRAY_TASK_ID * 4 ))
 # right: one offset in, each leg adds it to its own baseline. Do not replace this with an
 # absolute-seed override; that hands the group structure back to the caller.
 EST_SEED=$(( 1000 + ${MNV_EST_SEED_OFFSET:-0} ))
-python3 unified_throw_cov_5d.py --throws 4 --throw-offset ${OFF} --draw-seed 1000 --estimator-seed ${EST_SEED} \
+python3 "${CODE_ROOT}/nd-unfolding/unified_throw_cov_5d.py" --throws 4 --throw-offset ${OFF} --draw-seed 1000 --estimator-seed ${EST_SEED} \
   --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral \
   --out "${SLAB_DIR}/uthrow5d_slab_${SLURM_ARRAY_TASK_ID}.npz"

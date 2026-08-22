@@ -18,8 +18,28 @@ export HOME=/global/homes/j/josephrb
 export ROOT628_PREFIX=/global/homes/j/josephrb/.conda/envs/root_6_28
 export PYTHONUNBUFFERED=1
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-32}
-REPO="/pscratch/sd/j/josephrb/MINERvA-OmniFold"; ND="${REPO}/nd-unfolding"
-source "${REPO}/lib/resume_guard.sh"
+# --- OI-136 / Joseph's ruling 17, 2026-08-22: TWO ROOTS, BOTH MANDATORY, NEITHER DEFAULTED -------
+# This line used to read `REPO="<the canonical checkout>"` unconditionally, and every `source`, every
+# `cd` and every `python3` below hung off it. That decides the EXECUTING TREE before any interpreter
+# or guard starts, so no amount of Python-side work can reach it -- "the wrong root is selected
+# before Python or the guard starts" (Joseph, ruling 18).
+#   MNV_CODE_ROOT  the approved clean execution tree. Every `.sh` sourced and every `.py` executed or
+#                  imported must resolve under it; it is immutable and `git status --porcelain`-empty
+#                  for the duration of the run, at a named sha recorded in the run receipt.
+#   MNV_DATA_ROOT  the working directory for inputs and products. The canonical checkout is
+#                  acceptable in THIS ROLE ONLY. Nothing is executed or imported from it.
+# WHY TWO AND NOT ONE: a clean checkout cannot simultaneously host ~47.7 GB of gitignored member
+# products and remain clean, and `of_inputs_5d.npz` is absent from a fresh clone, so a clean tree
+# cannot serve as the working directory at all.
+# NO `${VAR:-<hardcode>}` DEFAULT ANYWHERE: a default is the hardcode wearing a flag, and a silently
+# empty defaulted variable makes every path below name a different subject without erroring. Same
+# mandatory form, and the same reason, as `pet/sbatch_gate6_leg0_tier_calibration_array.sh:64`.
+# The two roots MAY name the same directory; nothing here requires them to differ.
+CODE_ROOT="${MNV_CODE_ROOT:?set MNV_CODE_ROOT to the approved clean execution tree -- a checkout at a named sha with git status --porcelain empty. It is NOT the data root.}"
+DATA_ROOT="${MNV_DATA_ROOT:?set MNV_DATA_ROOT to the tree holding the inputs for this leg and receiving its products. Nothing is executed or imported from it.}"
+# `ND` is a DATA path here: it names the omnifile, the universe list and the output directory.
+ND="${DATA_ROOT}/nd-unfolding"
+source "${CODE_ROOT}/lib/resume_guard.sh"
 # SOURCED RELATIVE TO THIS SCRIPT, NOT THROUGH ${REPO}. A launcher frozen at a sha that sources its
 # member-axis library from the MUTABLE canonical checkout is not frozen: at run time it picks up
 # whatever is in /pscratch/.../MINERvA-OmniFold, which is on a divergent local main that does not
@@ -69,9 +89,30 @@ if [[ -z "$_mr_lib" ]]; then
   exit 2
 fi
 source "${_mr_lib}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
-source "${REPO}/setup_salloc_env.sh"; cd "${ND}"
+# RULING 17, THE SHELL HALF: `lib_member_resume.sh` is an EXECUTED repository file, so it must come
+# from the code root. The resolver above may legitimately pick MNV_LAUNCHER_DIR, `dirname
+# $BASH_SOURCE` or `scontrol Command`; this asserts that whichever it picked is
+# ${MNV_CODE_ROOT}/nd-unfolding and FAILS CLOSED if it is not. Without it a launcher can be deployed
+# in the code root and still source another tree's library with nothing saying so.
+#
+# IT IS PLACED AFTER THE `source`, NOT BEFORE, AND THAT IS A DELIBERATE AND DISCLOSED COMPROMISE.
+# The resolver block above is extracted VERBATIM and pinned BYTE-IDENTICAL across all eight
+# launchers by `tests/test_uq_remediation.py::LibraryResolverSurvivesSbatch`, whose window runs from
+# `# --- M(ii) member axis: LOCATE` to this `source` line inclusive. A check inserted INSIDE that
+# window would (a) silently change what that test extracts and (b) be executed by it as a fragment
+# in which `CODE_ROOT` is not defined -- the same defect shape as an extracted tail losing the
+# `set -eo pipefail` above its cut. Measured, not predicted: placing it inside turned three of that
+# class's arms red. The residual exposure is therefore any side effect the wrong tree's library has
+# AT SOURCE TIME; it defines functions, and nothing downstream of here runs before this exits 2.
+if [[ "$(cd "$_mr_lib" 2>/dev/null && pwd -P)" != "$(cd "${CODE_ROOT}/nd-unfolding" 2>/dev/null && pwd -P)" ]]; then
+  echo "[member] FAIL: lib_member_resume.sh resolved to '${_mr_lib}', which is not" >&2
+  echo "[member]   \${MNV_CODE_ROOT}/nd-unfolding = '${CODE_ROOT}/nd-unfolding'." >&2
+  echo "[member]   Refusing: the member axis would run from a tree this job did not approve." >&2
+  exit 2
+fi
+source "${CODE_ROOT}/setup_salloc_env.sh"; cd "${ND}"
 OMNIFILE="${ND}/runEventLoopOmniFold_5D_MEFHC_universes_full_bkgaware.root"
-FLUX_MC="${REPO}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root"
+FLUX_MC="${DATA_ROOT}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root"
 LIST="${ND}/uq_5d/detector_universes.txt"
 # ITEM 7 RULING (a): THE LATERAL LEG JOINS g1 AT 42+k. Holding laterals at 42 while verticals move
 # is exactly the condition unified_throw_cov.py:450-455 fails closed on ("else C_uni/C_block would
@@ -85,7 +126,7 @@ if [[ "${SLURM_ARRAY_TASK_ID}" -eq 0 ]]; then
   XSEC_OUT="${OUTDIR}/5d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root"
   mr_skip_if_complete "${XSEC_OUT}" && exit 0
   echo "[det-bkg] MATCHED CV node=$(hostname) $(date -u '+%F %T UTC')"
-  mr_run "${XSEC_OUT}" python3 unfold_nd_omnifold_unbinned.py \
+  mr_run "${XSEC_OUT}" python3 "${CODE_ROOT}/nd-unfolding/unfold_nd_omnifold_unbinned.py" \
       --omnifile "${OMNIFILE}" --mcfile "${FLUX_MC}" \
       --axes eavail,q3,W --iters 5 --use-weights --estimator lgbm --seed ${EST_SEED} \
       --closure-slack 5000 \
@@ -99,7 +140,7 @@ BAND="${UNIVERSE%:*}"; UIDX="${UNIVERSE#*:}"; TAG="${BAND}_${UIDX}"
 XSEC_OUT="${OUTDIR}/5d_xsec_MEFHC_5iter_lgbm_uni_full_${TAG}.root"
 mr_skip_if_complete "${XSEC_OUT}" && exit 0
 echo "[det-bkg] universe=${UNIVERSE} node=$(hostname) task=${SLURM_ARRAY_TASK_ID} $(date -u '+%F %T UTC')"
-mr_run "${XSEC_OUT}" python3 unfold_nd_omnifold_unbinned.py \
+mr_run "${XSEC_OUT}" python3 "${CODE_ROOT}/nd-unfolding/unfold_nd_omnifold_unbinned.py" \
     --omnifile "${OMNIFILE}" --mcfile "${FLUX_MC}" \
     --axes eavail,q3,W --iters 5 --use-weights --estimator lgbm --seed ${EST_SEED} \
     --closure-slack 5000 \
