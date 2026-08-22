@@ -1,6 +1,11 @@
 # BRIEF — `OI-137`: finite-`N` precision bias, measured exposure and the decision it needs
 
 **Filed 2026-08-22. Measured at `HEAD = 57d9f3fbdb72282f8da1ca70192de0d7566c3f8c`.**
+
+> **Count correction, recorded rather than amended.** Commit `0aa13221`'s message says
+> *"20 inversion primitives"*. The correct figure is **19 call sites plus one docstring mention**
+> (§4). The commit is pushed and a force-push is not mine to make, so the correction lives here and
+> this brief is the authoritative count.
 **This is a decision brief, not a patch. No estimator, covariance, uncertainty model or
 published number is touched by it.** The one thing it asks Joseph for is at §8.
 
@@ -135,7 +140,10 @@ misses every prose occurrence):
 ## 4. Exposure inventory — every site that inverts a covariance or forms a χ²
 
 Found by searching the same file set for `np.linalg.{pinv,inv,solve,cholesky,lstsq}`,
-`scipy.linalg.*`, `pinvh`, and χ² definitions/uses. **20 inversion primitives across 14 modules.**
+`scipy.linalg.*`, `pinvh`, and χ² definitions/uses. **19 inversion call sites across 14 modules.**
+(The raw grep returns 20 lines; `receipt_model_chi2_2d.py:30` is a docstring naming `np.linalg.pinv`,
+not a call. Counted separately because a comment is not an inversion — the same distinction that
+made this brief's own search harness match its own term list, §2.)
 
 The classification that matters is **pure sample covariance** vs **block sum**, because a single
 debiasing factor is only defined for the former. The note makes this point and it is correct
