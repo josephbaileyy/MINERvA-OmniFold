@@ -182,11 +182,46 @@ class E_TheCodeRootInsideAnotherCheckout(Fixture):
 
 
 class G_WriteProtection(Fixture):
-    def test_it_FIRES_on_a_writable_source_tree_and_says_how_to_fix_it(self):
+    def test_it_FIRES_on_a_writable_source_tree_and_points_at_the_FLAG_not_a_recipe(self):
         cp = self.run_tool("--write", os.devnull, "--require-readonly")
         self.assertEqual(cp.returncode, CANNOT_CHECK, cp.stdout + cp.stderr)
         self.assertIn("A-2(g)", cp.stderr)
-        self.assertIn("chmod a-w", cp.stderr)
+        self.assertIn("--apply-readonly", cp.stderr)
+        # The recipe this message used to carry was WRONG and shipped that way: `dirname` emits
+        # newline-separated output into a `sort -z`, so the directory pass silently did nothing.
+        # Caught by running it on the real cluster tree. It must not come back.
+        self.assertNotIn("sort -zu", cp.stderr)
+
+    def test_APPLY_and_VERIFY_are_ONE_command_and_it_ends_green(self):
+        """"Applied and verified, not asserted" -- and by the same instrument, so the set that is
+        protected cannot drift from the set that is checked."""
+        cp = self.run_tool("--write", os.devnull, "--apply-readonly", "--require-readonly")
+        self.assertEqual(cp.returncode, 0, cp.stdout + cp.stderr)
+        self.assertIn("applied A-2(g) write protection", cp.stdout)
+        self.assertEqual(self.run_tool("--write", os.devnull, "--require-readonly").returncode, 0)
+
+    def test_the_protected_set_INCLUDES_DIRECTORIES_which_is_the_half_that_was_broken(self):
+        rels = ["nd-unfolding/mod.py", "run.sh"]
+        got = msm.protected_paths(str(self.code), rels)
+        self.assertIn(str(self.code / "nd-unfolding"), got)
+        self.assertIn(str(self.code / "nd-unfolding" / "mod.py"), got)
+        self.assertIn(str(self.code / "run.sh"), got)
+        self.assertNotIn(str(self.code), got, "the root holds .git and must stay writable")
+
+    def test_UNDO_restores_write_and_the_check_then_refuses_again(self):
+        """Reversible, because a code root that cannot be refreshed is a code root nobody will use
+        -- and an irreversible protection is one people work around instead of applying."""
+        self.assertEqual(self.run_tool("--write", os.devnull, "--apply-readonly").returncode, 0)
+        self.assertEqual(self.run_tool("--write", os.devnull, "--require-readonly").returncode, 0)
+        self.assertEqual(self.run_tool("--write", os.devnull, "--undo-readonly").returncode, 0)
+        self.assertEqual(self.run_tool("--write", os.devnull, "--require-readonly").returncode,
+                         CANNOT_CHECK)
+        # and the tree is genuinely writable again, not merely reported so
+        (self.code / "nd-unfolding" / "mod.py").write_text("MARK = 2\n")
+
+    def test_apply_and_undo_together_are_refused_rather_than_silently_ordered(self):
+        cp = self.run_tool("--write", os.devnull, "--apply-readonly", "--undo-readonly")
+        self.assertEqual(cp.returncode, CANNOT_CHECK, cp.stdout + cp.stderr)
 
     def test_it_is_SILENT_once_protection_is_APPLIED(self):
         chmod_tree(self.code, writable=False)

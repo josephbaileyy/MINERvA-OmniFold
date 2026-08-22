@@ -191,6 +191,53 @@ def enclosing_checkout(repo: str) -> str | None:
         cur = cur.parent
 
 
+def protected_paths(repo: str, rels: list[str]) -> list[str]:
+    """Exactly the paths A-2(g) covers: every tracked source, and every directory containing one.
+
+    ONE DEFINITION, USED BY BOTH THE CHECK AND THE APPLICATION. The first version of this shipped a
+    shell recipe in the refusal message instead -- `git ls-files -z | xargs -0 -n1 dirname |
+    sort -zu | xargs -0 chmod a-w` -- and it was WRONG: `dirname` emits newline-separated output and
+    `sort -z` expects NUL, so the whole directory pass collapsed into one bogus argument and silently
+    did nothing while the file pass succeeded. Caught by running it on the real cluster tree, which
+    then verified as still-writable. A recipe a reader retypes is a second implementation of the
+    rule; this returns the set instead, so `--apply-readonly` and `--require-readonly` cannot drift.
+
+    The repository root itself is excluded: `.git` lives in it and git must keep writing there.
+    """
+    root = os.path.abspath(repo)
+    out = set()
+    for rel in rels:
+        full = os.path.join(root, rel)
+        out.add(full)
+        d = os.path.dirname(full)
+        while len(d) > len(root):
+            out.add(d)
+            d = os.path.dirname(d)
+    return sorted(out)
+
+
+def set_readonly(repo: str, rels: list[str], on: bool) -> int:
+    """Apply or undo A-2(g). Returns the number of paths whose mode actually changed."""
+    changed = 0
+    # Deepest first when protecting, shallowest first when undoing: a read-only directory does not
+    # prevent chmod of its children (that needs only search permission), but doing it in this order
+    # keeps the tree traversable at every intermediate step on filesystems that are fussier.
+    paths = protected_paths(repo, rels)
+    for full in (reversed(paths) if on else paths):
+        try:
+            m = stat.S_IMODE(os.stat(full).st_mode)
+        except OSError:
+            continue
+        new = (m & ~0o222) if on else (m | 0o200)
+        if new != m:
+            try:
+                os.chmod(full, new)
+                changed += 1
+            except OSError as err:
+                print(f"[srcman] could not chmod {full}: {err}", file=sys.stderr)
+    return changed
+
+
 def writable_sources(repo: str, rels: list[str]) -> dict:
     """A-2(g). Returns both definitions of "writable", because they are not the same question.
 
@@ -214,28 +261,17 @@ def writable_sources(repo: str, rels: list[str]) -> dict:
     replacing a read-only file by unlink-and-create.
     """
     root = os.path.abspath(repo)
-    mode_w, uid_w, dirs = [], [], set()
-    for rel in rels:
-        full = os.path.join(root, rel)
-        dirs.add(os.path.dirname(full))
+    mode_w, uid_w = [], []
+    for full in protected_paths(repo, rels):
         try:
             m = os.stat(full).st_mode
         except OSError:
             continue
+        rel = os.path.relpath(full, root) + ("/" if os.path.isdir(full) else "")
         if stat.S_IMODE(m) & 0o222:
             mode_w.append(rel)
-        if os.access(full, os.W_OK):
+        if not os.path.isdir(full) and os.access(full, os.W_OK):
             uid_w.append(rel)
-    for d in sorted(dirs):
-        if d == root:
-            # The root directory itself is excluded: `.git` lives in it and git must stay able to
-            # write there, so `chmod a-w` on the root would break the very tools that check it.
-            continue
-        try:
-            if stat.S_IMODE(os.stat(d).st_mode) & 0o222:
-                mode_w.append(os.path.relpath(d, root) + "/")
-        except OSError:
-            continue
     return {"mode_writable": sorted(mode_w), "uid_writable": sorted(uid_w)}
 
 
@@ -276,6 +312,12 @@ def main(argv=None) -> int:
                     help="A-2(g): refuse if any tracked source file, or a directory containing "
                          "one, still carries a write bit. See writable_sources() for which of the "
                          "two definitions of 'writable' this enforces and why")
+    ap.add_argument("--apply-readonly", action="store_true",
+                    help="A-2(g): APPLY write protection to exactly the set --require-readonly "
+                         "checks, then re-measure. Applied before any comparison, so one command "
+                         "both protects and verifies")
+    ap.add_argument("--undo-readonly", action="store_true",
+                    help="restore owner write on that same set (for refreshing the tree)")
     ap.add_argument("--label", default="", help="free text carried into the record")
     a = ap.parse_args(sys.argv[1:] if argv is None else argv)
 
@@ -292,6 +334,20 @@ def main(argv=None) -> int:
         print(f"[srcman] COULD NOT LOOK: {err}", file=sys.stderr)
         return CANNOT_CHECK_EXIT
     live["label"] = a.label
+
+    # APPLY OR UNDO FIRST, THEN RE-MEASURE, so one command both protects and verifies and the
+    # record written below describes the tree as it ends up rather than as it arrived.
+    if a.apply_readonly or a.undo_readonly:
+        if a.apply_readonly and a.undo_readonly:
+            print("[srcman] COULD NOT LOOK: --apply-readonly and --undo-readonly together",
+                  file=sys.stderr)
+            return CANNOT_CHECK_EXIT
+        n = set_readonly(a.repo, sorted(live["files"]), on=a.apply_readonly)
+        print(f"[srcman] {'applied' if a.apply_readonly else 'undid'} A-2(g) write protection: "
+              f"{n} path(s) changed mode, of "
+              f"{len(protected_paths(a.repo, sorted(live['files'])))} in the protected set")
+        live = build(a.repo)
+        live["label"] = a.label
 
     if live["file_count"] == 0:
         print("[srcman] COULD NOT LOOK: zero tracked .py/.sh found. A zero here is a broken "
@@ -332,13 +388,15 @@ def main(argv=None) -> int:
     if a.require_readonly and con["mode_writable"]:
         refusals.append(
             f"A-2(g): {len(con['mode_writable'])} tracked source path(s) still carry a write bit, "
-            f"e.g. {con['mode_writable'][:5]}. Apply write protection over the SOURCE (not `.git`, "
-            f"which git must keep writing):\n"
-            f"[srcman]     cd {a.repo} && git ls-files -z | xargs -0 chmod a-w\n"
-            f"[srcman]     git ls-files -z | xargs -0 -n1 dirname | sort -zu | xargs -0 chmod a-w\n"
-            f"[srcman]   To undo: the same two lines with `u+w`. "
-            f"(For information only, NOT enforced: {len(con['uid_writable'])} of them are writable "
-            f"by THIS uid. That is a fact about who is asking, not about the tree.)")
+            f"e.g. {con['mode_writable'][:5]}. Apply it with THIS TOOL rather than by hand:\n"
+            f"[srcman]     python3 {os.path.basename(__file__)} --repo {a.repo} "
+            f"--apply-readonly --require-readonly --write <manifest>\n"
+            f"[srcman]   (`--undo-readonly` restores owner write.) Use the flag, not a shell "
+            f"recipe: a recipe a reader retypes is a second implementation of the rule, and the "
+            f"one this message used to carry was wrong -- `dirname` emits newline-separated output "
+            f"into a `sort -z`, so its directory pass silently did nothing.\n"
+            f"[srcman]   (For information only, NOT enforced: {len(con['uid_writable'])} are "
+            f"writable by THIS uid. That is a fact about who is asking, not about the tree.)")
     if refusals:
         for r in refusals:
             print(f"[srcman] REFUSING: {r}", file=sys.stderr)
