@@ -59,6 +59,16 @@ deliberately, because this file is a pointer-only router and not an exhaustive i
   covering search beside it at [`state/oi137-covering-search-20260822.sh`](state/oi137-covering-search-20260822.sh).
   **Do not carry "0.2% of the headline trace" forward as the reason the exposure is small** — a trace
   weights eigenvalues by `lambda` and a precision matrix by `1/lambda`; the brief gives the real reason.
+- [`PROVENANCE-20260822-declaration-v-scalar5d-blocks.md`](PROVENANCE-20260822-declaration-v-scalar5d-blocks.md)
+  — added 2026-08-22 on Joseph's ruling 10. **Declaration (v) of the N-D χ² protocol, recorded per 5D
+  block**: ensemble size, normalization convention, effective inversion dimension and finite-ensemble
+  treatment, each with a citation. Routed to by `OI-137`. **It CORRECTS the gap statement carried by
+  that row and by the brief above** — `N=160` is recounted and stamped on the throw roots
+  (`unified_throw_cov.py:388,540`) and propagated to the adopted product as `upstream_n_throws` since
+  2026-08-11, so it is *not* only a hardcoded constant; the surviving gap is `C_stat`/`C_ML`, which
+  carry no ensemble-size key on any artifact. **Records/provenance only — it adopts nothing and
+  changes no uncertainty model.** Re-runnable covering search beside it at
+  [`state/declaration-v-5d-covering-search-20260822.sh`](state/declaration-v-5d-covering-search-20260822.sh).
 
 ### B1 steps 4-5: the lift, and the preflight that gates the first submission
 
