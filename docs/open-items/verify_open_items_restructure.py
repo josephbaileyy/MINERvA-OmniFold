@@ -186,10 +186,33 @@ def verify_table() -> None:
     # .githooks/pre-commit, so no commit path executes it. The pin did not drift past an inattentive
     # author -- it drifted past FOUR COMMITS THAT NEVER RAN THE CHECK. A ratchet nothing invokes is a
     # comment with an assert in it.
-    # THE CONCRETE FIX, deliberately NOT taken here: extract the ratchet into a standalone check the
-    # hook can run, since this file cannot go in the hook while `expected_ids`, CONTROLLED_STATES and
-    # the per-row detail pointer are still dead asserts that would fail every commit. That is a
-    # shared-gate change, it would land while three lanes are mid-commit, and it is Joseph's.
+    # THE CONCRETE FIX, deliberately NOT taken here, AND ITS TARGET IS CORRECTED 2026-08-21.
+    # This block used to read "extract THE RATCHET into a standalone check the hook can run". That
+    # contradicts the admitting rule SIX LINES ABOVE, which I had just written: a hand-maintained
+    # count pin is the one thing a blameless committer cannot always pass. Extracting the ratchet
+    # into the hook would install exactly the failure the paragraph above rejects, and .githooks/
+    # pre-commit already declined a guard on that precise ground -- see its header, "wiring it
+    # installs a check that reddens on an innocent edit", eleven lines below the trigger that would
+    # have installed it. I proposed the extraction anyway because I reached for the check I had just
+    # been editing rather than the one that satisfies the rule.
+    #
+    # THE RIGHT EXTRACTION TARGET IS THE SEVEN-COLUMN CHECK -- `widths == {7}` plus the header-row
+    # assert -- which is also what OI-148's next-action cell names. It passes the admitting rule in
+    # both directions: a committer writing a well-formed row always passes it, and the only way to
+    # fail is to emit a malformed row, which is the defect. Measured on main at 46993255, which is
+    # the precondition that decided the check_canonical_designation.py decline ("not because the
+    # check is wrong, but because the tree is"): 115 of 115 table rows are width 7, zero non-7 rows,
+    # header exact. So the tree is green for this check and the decline ground does not apply.
+    #
+    # THE RATCHET BELOW MUST NOT BE HOOKED. It stays here, in a file nothing invokes, and that is a
+    # known and accepted weakness rather than an oversight -- a count pin belongs to a reviewer, not
+    # to a gate three lanes commit through.
+    #
+    # STILL NOT TAKEN HERE, and still Joseph's: it is a shared-gate change that would land while
+    # three lanes are mid-commit. What blocks the WHOLE FILE from the hook is unchanged and measured
+    # at 46993255 -- `expected_ids` (113 data rows, ids spanning 1..152 with 41 archived away, so it
+    # is unsatisfiable without renumbering ids cited in pushed commits), CONTROLLED_STATES (74
+    # narrative state cells), the terminal-period rule (15) and the per-row detail pointer (15).
     LONG_LINE_BYTES = 400
     # RAISED 105 -> 112, OI-148, 2026-08-21, and the reason is NOT this commit's repair.
     # The repair is ratchet-neutral: measured 112 at 54bb48f4 BEFORE any edit and 112 after, because
