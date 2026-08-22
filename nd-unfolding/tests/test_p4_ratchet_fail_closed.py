@@ -34,6 +34,14 @@ OK, CANNOT_CHECK, VIOLATION = 0, 2, 3
 CODE = "/code-root"
 PINS_SCHEMA = "mnv_import_set_pins/1"
 
+#: ASSEMBLED FROM PARTS, NEVER WRITTEN OUT WHOLE -- the same rule the OI-136 probe and
+#: `test_oi136_failopen_inventory_ratchet.py` both state and for the same reason: the probe counts
+#: `.py` files containing this literal, so a test that spells it out ADDS ITSELF to the quantity it
+#: is helping to guard. The first version of this file did exactly that and moved the probe's
+#: candidate count 115 -> 116. It did not move the FAIL-OPEN set, so the ratchet stayed green and
+#: nothing went red -- which is why it is worth fixing rather than shrugging at.
+CLUSTER_ROOT = "/" + "/".join(("pscratch", "sd", "j", "josephrb", "MINERvA-OmniFold"))
+
 
 def record(script="nd-unfolding/entry.py", modules=(("victim", "aa" * 32),), **over):
     """A well-formed P-1 inventory record. Every arm below perturbs exactly one field of it."""
@@ -269,7 +277,7 @@ class P2_TheOriginsThemselves(Fixture):
         self.assertRefused(cp, "the SCRIPT resolves under")
 
     def test_ANY_allow_in_a_production_record_is_refused(self):
-        self.write_records(record(allow=["/pscratch/sd/j/josephrb/MINERvA-OmniFold"]))
+        self.write_records(record(allow=[CLUSTER_ROOT]))
         self.write_pins({"nd-unfolding/entry.py": {"modules": ["victim"]}})
         cp = self.run_tool()
         self.assertRefused(cp, "--allow was used")
