@@ -208,6 +208,47 @@ class G_WriteProtection(Fixture):
         self.assertIn(str(self.code / "run.sh"), got)
         self.assertNotIn(str(self.code), got, "the root holds .git and must stay writable")
 
+    def test_a_PYCACHE_DIRECTORY_is_protected_even_though_it_holds_no_tracked_source(self):
+        """THE HOLE THIS FIXTURE COULD NOT HAVE FOUND, and the real cluster tree did.
+
+        The first `protected_paths` walked UP from each tracked file, so any directory containing
+        no tracked source stayed writable -- and `nd-unfolding/__pycache__/` is exactly that. After
+        applying protection to the real clean tree on `saul.nersc.gov`, a guarded production arm
+        still wrote `nd-unfolding/__pycache__/seed_offset_policy.cpython-311.pyc` into a
+        `drwxrwx---` directory, and `git status` stayed clean because `__pycache__/` is gitignored.
+        A write bit only gitignored paths can use is still a write bit.
+        """
+        cache = self.code / "nd-unfolding" / "__pycache__"
+        cache.mkdir()
+        (cache / "mod.cpython-311.pyc").write_bytes(b"\x00stale")
+        self.assertIn(str(cache), msm.protected_paths(str(self.code), ["nd-unfolding/mod.py"]))
+
+        cp = self.run_tool("--write", os.devnull, "--require-readonly")
+        self.assertEqual(cp.returncode, CANNOT_CHECK, cp.stdout + cp.stderr)
+        self.assertIn("NON-TRACKED path(s)", cp.stderr)
+        self.assertIn("__pycache__", cp.stderr)
+
+        self.assertEqual(self.run_tool("--write", os.devnull, "--apply-readonly",
+                                       "--require-readonly").returncode, 0)
+        # ASSERTED AGAINST THE FILESYSTEM, not against the tool's own opinion of itself.
+        with self.assertRaises(PermissionError):
+            (cache / "new.pyc").write_bytes(b"x")
+        with self.assertRaises(PermissionError):
+            (cache / "mod.cpython-311.pyc").write_bytes(b"y")
+
+    def test_a_directory_holding_NO_tracked_source_is_still_in_the_protected_set(self):
+        (self.code / "products").mkdir()
+        (self.code / "products" / "note.txt").write_text("untracked\n")
+        got = msm.protected_paths(str(self.code), ["nd-unfolding/mod.py"])
+        self.assertIn(str(self.code / "products"), got)
+
+    def test_git_is_never_touched_by_protection(self):
+        """`.git` must keep working, and it is the one directory excluded from the walk."""
+        self.assertEqual(self.run_tool("--write", os.devnull, "--apply-readonly").returncode, 0)
+        for p in msm.protected_paths(str(self.code), ["nd-unfolding/mod.py"]):
+            self.assertNotIn("/.git/", p + "/")
+        self.assertEqual(git(self.code, "status", "--porcelain").strip(), "")
+
     def test_UNDO_restores_write_and_the_check_then_refuses_again(self):
         """Reversible, because a code root that cannot be refreshed is a code root nobody will use
         -- and an irreversible protection is one people work around instead of applying."""

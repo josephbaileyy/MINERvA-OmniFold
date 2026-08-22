@@ -202,17 +202,52 @@ def protected_paths(repo: str, rels: list[str]) -> list[str]:
     then verified as still-writable. A recipe a reader retypes is a second implementation of the
     rule; this returns the set instead, so `--apply-readonly` and `--require-readonly` cannot drift.
 
+    EVERY DIRECTORY, NOT JUST THE ONES HOLDING A TRACKED SOURCE. The first version walked up from
+    each tracked file, which left any directory containing no tracked source WRITABLE -- and
+    `nd-unfolding/__pycache__/` is exactly such a directory, so CPython could still write a `.pyc`
+    into a code root this tool had just certified as protected. MEASURED, not imagined: after
+    applying protection to the real cluster clean tree, a guarded production arm left
+    `nd-unfolding/__pycache__/seed_offset_policy.cpython-311.pyc` behind in a `drwxrwx---`
+    directory, and `git status` stayed clean because `__pycache__/` is gitignored. A write bit that
+    only gitignored paths can use is still a write bit, and immutability that holds only for the
+    files git happens to track is not immutability.
+
     The repository root itself is excluded: `.git` lives in it and git must keep writing there.
+    `.git` is excluded for the same reason.
     """
     root = os.path.abspath(repo)
     out = set()
     for rel in rels:
-        full = os.path.join(root, rel)
-        out.add(full)
-        d = os.path.dirname(full)
-        while len(d) > len(root):
-            out.add(d)
-            d = os.path.dirname(d)
+        out.add(os.path.join(root, rel))
+    for dirpath, dirnames, _files in os.walk(root):
+        dirnames[:] = [d for d in dirnames if d != ".git"]
+        if os.path.abspath(dirpath) != root:
+            out.add(os.path.abspath(dirpath))
+    return sorted(out)
+
+
+def other_writable_files(repo: str, rels: list[str]) -> list[str]:
+    """Files under the code root that are NOT tracked sources and still carry a write bit.
+
+    The other half of the same hole. A directory made read-only stops new files appearing; it does
+    not stop an EXISTING writable file from being rewritten in place. `--require-clean` does not
+    catch these because the ones that matter -- `*.pyc`, and anything else in `.gitignore` -- are
+    invisible to `git status` by construction. `.git` is excluded.
+    """
+    root = os.path.abspath(repo)
+    tracked = {os.path.join(root, r) for r in rels}
+    out = []
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [d for d in dirnames if d != ".git"]
+        for name in filenames:
+            full = os.path.join(dirpath, name)
+            if full in tracked:
+                continue
+            try:
+                if stat.S_IMODE(os.stat(full).st_mode) & 0o222:
+                    out.append(os.path.relpath(full, root))
+            except OSError:
+                continue
     return sorted(out)
 
 
@@ -272,7 +307,8 @@ def writable_sources(repo: str, rels: list[str]) -> dict:
             mode_w.append(rel)
         if not os.path.isdir(full) and os.access(full, os.W_OK):
             uid_w.append(rel)
-    return {"mode_writable": sorted(mode_w), "uid_writable": sorted(uid_w)}
+    return {"mode_writable": sorted(mode_w), "uid_writable": sorted(uid_w),
+            "other_writable": other_writable_files(repo, rels)}
 
 
 def compare(recorded: dict, live: dict) -> dict:
@@ -343,6 +379,18 @@ def main(argv=None) -> int:
                   file=sys.stderr)
             return CANNOT_CHECK_EXIT
         n = set_readonly(a.repo, sorted(live["files"]), on=a.apply_readonly)
+        # The non-tracked writable files too, or protection is a statement about git rather than
+        # about the tree. Owner write is restored on undo; nothing else is touched.
+        for rel in other_writable_files(a.repo, sorted(live["files"])):
+            full = os.path.join(os.path.abspath(a.repo), rel)
+            try:
+                m = stat.S_IMODE(os.stat(full).st_mode)
+                new = (m & ~0o222) if a.apply_readonly else (m | 0o200)
+                if new != m:
+                    os.chmod(full, new)
+                    n += 1
+            except OSError as err:
+                print(f"[srcman] could not chmod {full}: {err}", file=sys.stderr)
         print(f"[srcman] {'applied' if a.apply_readonly else 'undid'} A-2(g) write protection: "
               f"{n} path(s) changed mode, of "
               f"{len(protected_paths(a.repo, sorted(live['files'])))} in the protected set")
@@ -385,6 +433,13 @@ def main(argv=None) -> int:
             f"A-2(e): the code root is nested inside the checkout {con['enclosing_checkout']}. An "
             f"'immutable' tree that is a subdirectory of another checkout is immutable only until "
             f"someone touches the outer one.")
+    if a.require_readonly and con["other_writable"]:
+        refusals.append(
+            f"A-2(g): {len(con['other_writable'])} NON-TRACKED path(s) under the code root still "
+            f"carry a write bit, e.g. {con['other_writable'][:5]}. These are invisible to "
+            f"--require-clean because the ones that matter (`*.pyc`, anything in .gitignore) are "
+            f"invisible to `git status` by construction -- and a code root CPython can still write "
+            f"a .pyc into is not immutable. `--apply-readonly` covers them.")
     if a.require_readonly and con["mode_writable"]:
         refusals.append(
             f"A-2(g): {len(con['mode_writable'])} tracked source path(s) still carry a write bit, "
