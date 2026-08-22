@@ -17,6 +17,22 @@ another lane in `VERDICT-20260821-expiry-c-real-path-present-seed.md` (`33c0e0fa
 without knowing that. §4b separates what is new from what is a rediscovery, and names the one point on
 which this document *corrects* that verdict.
 
+### How to cite this document, because it has twice been credited past its evidence
+
+**Citable for:** that **no configuration reaches `:347`/`:352`** — the covering enumeration (no
+positional arguments; `MNV_EST_SEED_OFFSET` the only environment lever on `:256`) plus the four-arm
+control-flow harness of §1, and the archive-leg key census of §2.
+
+**NOT citable for:** anything about adopt *semantics*, and **not** as the referent for Ruling 1's
+"the circularity is real and was measured, not argued." That measurement is
+`33c0e0fa`'s — real extracted segment under `srun`, real ROOT, production dimension n=10694. This
+document ran a **patched copy** of the launcher with **stubbed producers**: not one ROOT byte was read,
+nothing ran under Slurm, the shell was bash 3.2 rather than 4.4, and the single arm that reached adopt
+did so only because the harness **fabricated** the `.done` marker that is absent in production. What
+was exercised is the launcher's **control flow with stubbed leaves** — the right instrument for the
+branch question and weaker than `srun` for everything downstream of the branch. §4b records the one
+section that is not mine at all.
+
 This document changes no code and no `nd-unfolding/` file. It edits nothing under
 `docs/OPEN_ITEMS.md` either — see **Scope and limits**.
 
