@@ -43,6 +43,32 @@ starts, so no Python-side work reaches it. They now take **two mandatory variabl
 | `MNV_GUARD_INVENTORY_DIR` | run-scoped directory for the OI-136 resolved-origin records | added round 2. One file per guarded process. A guarded run that emits no record establishes nothing, so this is REQUIRED |
 | `MNV_SOURCE_MANIFEST` | the A-2(f) source manifest recorded from `MNV_CODE_ROOT` **before the first `sbatch`** | added round 2. Compared on every leg; a moved source byte aborts before any Python starts |
 
+**A-2(c)(d)(e)(g) ARE ENFORCED FROM ROUND 3, not documented.** Every launcher runs, before anything
+else and failing closed at each step:
+
+```bash
+python3 "${MNV_CODE_ROOT}/nd-unfolding/mnv_source_manifest.py" --repo "${MNV_CODE_ROOT}" \
+  --compare "${MNV_SOURCE_MANIFEST}" --require-clean --require-checkout \
+  --require-no-nested-checkout --require-not-nested --require-readonly
+```
+
+Constitute and protect the code root with the SAME tool, in one command, before the first `sbatch`:
+
+```bash
+python3 "${MNV_CODE_ROOT}/nd-unfolding/mnv_source_manifest.py" --repo "${MNV_CODE_ROOT}" \
+  --apply-readonly --require-clean --require-checkout --require-no-nested-checkout \
+  --require-not-nested --require-readonly --write "${MNV_SOURCE_MANIFEST}"
+```
+
+`--undo-readonly` lifts it when the tree must be refreshed. **Do not hand-roll the `chmod`** — the
+recipe this runbook nearly carried was wrong in a way that silently protected only half the tree
+(receipt §7.2), and the flag chmods exactly the set the check verifies.
+
+(d) and (e) are one hazard from two sides: `checkout_root_of` returns the INNERMOST match, so a
+checkout nested inside the code root resolves to itself, is not `--expect-root`, and every module
+under it is refused on a tree that looks approved. A peer's live `.claude/worktrees/` audit checkout
+is the recorded instance — it made the OI-136 ratchet read 369 instead of 58.
+
 **Why two and not one.** A clean checkout cannot simultaneously host ~47.7 GB of gitignored member
 products and remain clean, and `of_inputs_5d.npz` is absent from a fresh clone, so a clean tree
 cannot serve as the working directory at all.

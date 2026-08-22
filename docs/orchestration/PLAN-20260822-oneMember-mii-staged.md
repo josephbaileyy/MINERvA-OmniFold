@@ -492,18 +492,37 @@ against memory.
 
 ## C-6. What is STILL missing, checked clause by clause against the contract
 
-- **F-9 as written is not satisfiable.** N-1 exits 3 but does not name `seed_offset_policy`, because
-  B-4 script containment refuses strictly earlier than the import guard can fire. Measured, with the
-  full argument, in [`RECEIPT-20260822-k0-n1-and-guarded-arms.md`](RECEIPT-20260822-k0-n1-and-guarded-arms.md)
-  §2. **Joseph's and the reviewer's to rule on.**
+- **F-9: CLOSED by ruling 20, which restated the criterion rather than exempting the check.** N-1
+  exits 3 through B-4 and does not name `seed_offset_policy`; Joseph ruled the original
+  import-specific expectation incompatible with the earlier containment protection, kept B-4, and
+  made the refusal record the passing condition. Its absence is a *consequence*, neither required
+  nor expected, and the claim rests on the `guard_installed`/`checked_provenance`/`outcome` triple.
+  U/U' retains and NAMES the module as counterfactual origin evidence — what would load without
+  containment — and does not establish the mechanism of the refusal. Measured in
+  [`RECEIPT-20260822-k0-n1-and-guarded-arms.md`](RECEIPT-20260822-k0-n1-and-guarded-arms.md)
+  §§1-2 and 7.3.
 - **F-17 freshness is open.** M-1 through M-6 have not been re-measured on `MNV_CODE_ROOT` at the
   pinned sha and on the canonical checkout as it stands. Two fragments exist (M-1's empty import set
   for the adopter, confirmed at runtime; the canonical checkout's 721 dirty entries) and nothing else.
-- **A-2(d), (e) and (g) are unenforced.** No check refuses a nested checkout under the code root, a
-  code root nested inside another checkout, or an unprotected (writable) code root. `mnv_source_manifest.py`
-  detects a change after the fact; (g) would prevent one.
-- **The production P-4 pins do not exist.** The pins in the receipt were written from a two-process
-  arm with throwaway inputs and are not the production set.
+- **A-2(c), (d), (e) and (g): CLOSED.** Four fail-closed flags on `mnv_source_manifest.py`, called
+  by all eight launchers before anything else runs. Each has a control that FIRES and one that stays
+  SILENT on a legitimate clean code root, plus an arm turning all of them on at once — three new
+  fail-closed checks on the execution path are three new ways to block an innocent run. Write
+  protection is APPLIED by the tool (`--apply-readonly`) and verified three ways on the real cluster
+  tree, including a filesystem witness; receipt §7.1. Two holes found by RUNNING it rather than by
+  testing it are recorded in §7.2 — a wrong `chmod` recipe in my own refusal message, and
+  `__pycache__` sitting outside the protected set because it holds no tracked source.
+- **Preflight ordering: VERIFIED, not arranged.** The parity line precedes every guarded science
+  invocation in all eight; the only shell function any launcher defines is `mnv_inv`, which runs
+  nothing, so nothing can be hoisted ahead of the preflight; and six preflight preconditions broken
+  one at a time each leave ZERO inventories. The preamble is byte-identical across all eight except
+  its `--pair` list, which carries the single-launcher dynamic arm to the other seven.
+- **P-4: the MECHANISM and its fail-closed behaviour are built and proven; the PRODUCTION PINS ARE
+  NOT, AND MUST NOT BE.** 30 arms over synthetic records: identity in both directions, an undeclared
+  entrypoint, a pinned entrypoint with no inventory, an undeclared empty set, a missing provenance
+  field, a defaulted zero, a refusal record in a production set, and every CANNOT-LOOK path. **No
+  pins were manufactured.** The production set is written from the first clean k=0 run and reviewed
+  then; the two in the receipt came from a two-process arm with throwaway inputs and are not it.
 - **TWO PYTHON CALLS PER LAUNCHER ARE DELIBERATELY NOT GUARDED, and this is a scope question for the
   reviewer rather than a builder's ruling.** Counting every `python3` line in the eight launchers
   gives **30**: the **14** science-entrypoint invocations, all guarded, plus **16** preflight tool

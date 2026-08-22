@@ -35,7 +35,12 @@ environment. `source setup_salloc_env.sh` first, and never pipe that source.
 
 ---
 
-## 1. §5.5 — the fixture rule: the hijack is genuine, asserted on the module's origin
+## 1. §5.5 — U / U′: COUNTERFACTUAL ORIGIN EVIDENCE
+
+**What this arm is, in ruling 20's words: it shows what *would* load without containment. It does
+NOT establish the mechanism of the F-9 refusal.** Both halves must be said together. A later reader
+who finds U′ naming `seed_offset_policy` beside an F-9 arm that does not will read a contradiction
+unless the labels are on the artifacts, which they now are (§7.3).
 
 Two arms of the **same real unmodified binary**, from the canonical checkout, no fixture, no copy,
 no edit, and **no `--allow` anywhere**.
@@ -73,10 +78,19 @@ and its record carries the resolved origin. **No `--allow`.**
      ORIGIN seed_offset_policy -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/seed_offset_policy.py
 ```
 
-**The hijack is real and it is asserted on the loaded module's origin, not on an exit code.** Run
-from the canonical checkout, real production code imports the canonical checkout's
-`seed_offset_policy`, and the process proceeds past the O-1 marker. Compare §3, where the same
-module resolves elsewhere.
+**The counterfactual is real and it is asserted on the loaded module's origin, not on an exit
+code.** Run from the canonical checkout with containment not in play, real production code imports
+the canonical checkout's `seed_offset_policy` and proceeds past the O-1 marker. Compare §3, where
+the same module resolves under the code root instead.
+
+**`--expect-root` here names the canonical checkout, and that is permitted.** `--expect-root` is not
+`--allow`: it declares which tree the run is *expected* to be in, so pointing it at the tree the
+binary was launched from is what makes this arm refuse nothing and record origins. `--allow` is
+empty on **both** arms and is forbidden on every production arm.
+
+**This arm must RETAIN and NAME `seed_offset_policy` (ruling 20).** It is the only place the module's
+origin is on the record, and the F-9 arm cannot supply it — by construction, since B-4 refuses before
+imports begin.
 
 ---
 
@@ -106,35 +120,41 @@ python3 $CLEAN/nd-unfolding/mnv_guarded_run.py --expect-root $CLEAN \
 | O-3 single-stream log order | §5.4 | one merged stream; the banner is the only content |
 | O-4 status captured unpiped | §5.4 | `RC=$?` immediately, before any `grep`/`wc` |
 
-### F-9 IS NOT SATISFIABLE AS WRITTEN, AND THAT IS THIS PACKAGE'S OWN DOING
+### F-9 WAS RESTATED BY JOSEPH RATHER THAN WORKED AROUND — ruling 20
 
-F-9 requires N-1 to "exit 3, **name `seed_offset_policy`**". It exits 3 and it does **not** name
-`seed_offset_policy`, because **B-4 script containment refuses strictly earlier than the import
-guard can fire**. The script lies in a checkout that is not `--expect-root`, so the run is refused
-before the first import — `checked = 0`.
+**The finding, recorded because the resolution only makes sense beside it.** F-9 originally required
+N-1 to "exit 3, **name `seed_offset_policy`**". It exits 3 and does not name it, because **B-4
+script containment refuses strictly earlier than the import guard can fire** — the script lies in a
+checkout that is not `--expect-root`, so the run is refused before the first import. That is the
+same defect shape ruling 19 found in N-2, appearing in N-1: a control passing for the wrong reason.
+It could not be repaired by reconfiguring the arm; the only alternatives were to disable B-4 on a
+production arm or to change the criterion.
 
-**This is the same defect shape ruling 19 found in N-2, now appearing in N-1**: a control that
-passes for the wrong reason. Ruling 19 rejected N-2 because "a copied writer placed outside
-`MNV_CODE_ROOT` would be refused by the contract's own planned script-containment rule BEFORE its
-injected import ever executes". N-1 places the *real* writer outside `MNV_CODE_ROOT`, so it meets
-exactly that description. **The verifier's round-2 prediction that this arm "already refuses on
-`seed_offset_policy`" was measured against pre-B-4 behaviour and is now wrong.**
+**Joseph's ruling 20, verbatim in the operative part:** *"Do not disable or exempt B-4. F-9 is
+restated because its original import-specific expectation is incompatible with the earlier
+script-containment protection."* The refusal now passes on the record below, and *"N-2 and N-3 remain
+the import-resolution negative controls."*
 
-**It cannot be repaired by re-configuring the arm.** For the import half to fire on this file, the
-script must be in the canonical checkout while `--expect-root` names another tree — which is
-precisely the configuration B-4 refuses first. The only ways to see the import refusal on *this*
-file are to disable B-4 on a production arm, which is not something this lane will do, or to accept
-the substitute evidence below. **This is Joseph's and the reviewer's to rule on, not the builder's.**
+**Measured at code root `de040d9b`, read off the record and not off the exit code:**
 
-Substitute evidence that the import half is armed, both on real repository modules:
+| clause | result |
+|---|---|
+| exits 3 through B-4 | `rc=3`, captured unpiped |
+| `outcome` | `refused:script-outside-expect-root` |
+| `refusal_site` | `b4-script-containment` — see §7.2; exit 3 alone cannot say which protection fired |
+| verdict is never empty/green | `REFUSED -- THE SCRIPT ITSELF LIES IN A CHECKOUT THAT IS NOT --expect-root…` |
+| names the script | `…/MINERvA-OmniFold/nd-unfolding/mii_adopt_unified_5d_stamped.py` |
+| names the canonical root | `/pscratch/sd/j/josephrb/MINERvA-OmniFold` |
+| names the expected clean root | `/pscratch/sd/j/josephrb/k0r2/clean` |
+| `checked = 0` **as expected** | `checked=0`, `checked_provenance=not-measured-no-guard-was-installed`, `guard_installed=false` |
+| `--allow` empty | `[]` |
+| O-1…O-4, no child marker, no output | marker count 0, `[adopt5d]` count 0, witness `[]`, `--out` absent |
 
-- `nd-unfolding/tests/test_n2_child_boundary.py` — a fixture writer INSIDE the expected checkout (so
-  B-4 passes) importing the **real** `seed_offset_policy` from a **second real checkout**: `rc=3`,
-  banner names `seed_offset_policy`, witness directory empty, refusal before the O-1 marker.
-- `nd-unfolding/tests/test_n3_rooted_import_repair.py` — the pre-repair bytes of all six repaired
-  files, both directions, asserted on `__file__`.
-
----
+**`seed_offset_policy` appears 0 times in the record, and that is an OBSERVATION, not a
+requirement.** Ruling 20 as refined: it is *neither required nor expected* to appear, because the
+import guard is intentionally never reached. Its absence is a **consequence** of B-4 refusing first,
+not a property imposed on the record — so nothing here scrubs the string, and what carries the claim
+is the **triple** `guard_installed` / `checked_provenance` / `outcome`, never a missing substring.
 
 ## 3. The first guarded PRODUCTION arm — green, and NON-VACUOUS
 
@@ -201,10 +221,97 @@ emptiness, and both directions are pinned in `test_mnv_guarded_run.py`. The P-4 
 refuses any refusal record found in a production inventory set, checking `outcome` **and** `verdict`
 because those two fields disagreed once already.
 
+## 7. ROUND 3, 2026-08-22 — A-2(c)(d)(e)(g) applied and verified, and three guard defects
+
+### 7.1 Write protection APPLIED and VERIFIED, on the real tree, three independent ways
+
+Joseph: *"apply and verify write protection"* — not assert it. Measured on
+`/pscratch/sd/j/josephrb/k0r2/clean` at `de040d9b`:
+
+| step | result |
+|---|---|
+| POWER ARM, before applying | `rc=2`, `A-2(g): 814 tracked source path(s) still carry a write bit` |
+| apply + verify, ONE command | `rc=0`, `applied A-2(g) write protection: 922 of 922 protected path(s) changed mode, plus 794 non-tracked writable file(s)` |
+| re-verify as a SEPARATE observation | `rc=0` |
+| filesystem witness, tracked source | `Permission denied`, mode `-r--r-----` |
+| filesystem witness, new file in `nd-unfolding/` | create refused, mode `dr-xr-x---` |
+| after a full guarded production arm | still clean **and** still protected, `rc=0`; **0** stray `.pyc` |
+
+**"Writable" has two testable definitions and only one is enforced.** `mode_writable` — any write
+bit on a tracked source, on any directory under the root, or on any non-tracked file — is ENFORCED,
+because it is what `chmod -R a-w over the source` produces and it is a property of the TREE.
+`uid_writable` — `os.access(W_OK)` for the asking process — is RECORDED but NOT enforced, because it
+is a property of who is asking: false for a peer's unprotected tree, true for root regardless of any
+bit. Enforcing the uid form alone would pass a tree any other account can rewrite mid-run, and the
+hazard A-2(g) guards is mutation DURING the run. Neither form stops the owner from `chmod`-ing back
+or stops root; this prevents ACCIDENTAL mutation and makes deliberate mutation leave a trace in
+A-2(f). `.git` is excluded throughout — git must keep writing there, and a protection that breaks
+the tools which verify it protects nothing.
+
+### 7.2 Three defects in my own package, each found by running it rather than by a test
+
+1. **The remedy string I shipped was wrong.** The A-2(g) refusal message told the reader to run
+   `git ls-files -z | xargs -0 -n1 dirname | sort -zu | xargs -0 chmod a-w`. `dirname` emits
+   NEWLINE-separated output into a `sort -z`, so the directory pass collapsed into one bogus
+   argument and silently did nothing while the file pass succeeded. Visible only because apply and
+   verify were two instruments and they disagreed. Replaced by `--apply-readonly` on the tool, which
+   chmods exactly the set `--require-readonly` checks: one definition, so the protected set cannot
+   drift from the verified set.
+2. **`__pycache__` was outside the protected set.** After protection was applied and verified, a
+   guarded production arm still wrote
+   `nd-unfolding/__pycache__/seed_offset_policy.cpython-311.pyc` into a `drwxrwx---` directory, and
+   `git status` stayed clean because `__pycache__/` is gitignored. Cause: the protected set was
+   built by walking UP from tracked files, so a directory holding no tracked source was never in it.
+   Both instruments that should have caught it are blind by construction — `--require-clean` because
+   the path is gitignored, the A-2(f) manifest because it covers tracked `.py`/`.sh` only. **A local
+   fixture could not have found this**; it took the real tree. Fixed in both directions: every
+   directory under the root is protected, and non-tracked writable files are refused separately.
+3. **`checked = 0` was a DEFAULT on the containment path.** See §7.3.
+
+### 7.3 What ruling 20 changed in the guard, not in the rubric
+
+Ruling 20 makes `checked = 0` the EXPECTED value for F-9 — which is exactly when a defaulted zero
+passes unnoticed. `write_inventory` wrote `guard.checked if guard is not None else 0`, so the
+containment path recorded a zero indistinguishable, on its own, from a guard that installed and
+inspected nothing. Two new fields, both written unconditionally:
+
+- **`checked_provenance`** — `measured-by-installed-guard` or `not-measured-no-guard-was-installed`.
+  F-9 is read off the triple with `guard_installed` and `outcome`, never off `checked` alone.
+- **`refusal_site`** — `b4-script-containment`, `import-tree-violation`, or null. **Every refusal
+  returns the same exit 3**, which is precisely how B-4 took over F-9's exit 3 the day it landed
+  with nothing in the artifact to show it. A test asserts the two refusals are indistinguishable by
+  exit code and distinguishable by site.
+- **`--label`** — so an artifact says which ARM produced it.
+
+**The two arms are separated by the artifact, not by the reader:**
+
+| field | N-1 (refused) | U′ (counterfactual) |
+|---|---|---|
+| `expect_root` | the clean tree | the canonical checkout |
+| `outcome` | `refused:script-outside-expect-root` | `child-systemexit:…` |
+| `refusal_site` | `b4-script-containment` | `null` |
+| `checked_provenance` | `not-measured-no-guard-was-installed` | `measured-by-installed-guard` |
+| `checked` / `repo_origin_count` | 0 / 0 | 9 / 1 |
+| `seed_offset_policy` | absent — a consequence of B-4 | **NAMED**, origin under the canonical checkout |
+| `allow` | `[]` | `[]` |
+
+### 7.4 The rule that would have caught B-4 invalidating F-9, made executable
+
+*"Any check added ahead of an existing one requires re-deriving every downstream control."* That is a
+memory exercise unless something enumerates the sites and demands a control for each.
+`EveryRefusalSiteHasAControlThatNamesItsOutcome` enumerates every `refused:` / `cannot-check:` /
+`child-` outcome string **from the source** and requires each to be named by a control in the test
+corpus, with a power arm so an empty enumeration cannot pass forever. **It went red on its first run**
+and named three uncontrolled `cannot-check:` outcomes; those arms now assert their `outcome`.
+
 ## 6. What this receipt does not cover
 
 - No leg of the k=0 path was run. The entrypoints exercised here are the adopter pair only.
 - Nothing was measured under `sbatch`. `BASH_SOURCE`-under-spool remains ruling 14's business.
 - M-1…M-6 are **not** re-measured here beyond the two facts above; F-17 is still open.
+- **The A-2(g) protection is applied to the k0r2 scratch clean tree, not to whatever tree the real
+  submission uses.** It must be applied and verified again on that tree, and re-verified after the
+  last leg. `--undo-readonly` is how the tree is refreshed; a protection nobody can lift is one
+  people work around.
 - The canonical checkout's 721 untracked entries are the most perishable statement in §0 and must be
   re-measured at submission time, and again after the path runs.
