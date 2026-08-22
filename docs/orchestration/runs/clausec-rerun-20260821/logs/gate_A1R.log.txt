@@ -1,0 +1,44 @@
+[reader] /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware_uthrow.root: TH2D read route(s) = ['rowloop']
+[reader] /pscratch/sd/j/josephrb/clausec-rerun-20260821-sandbox/mirror/nd-unfolding/uq_5d/A1/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware_uthrow.root: TH2D read route(s) = ['rowloop']
+[b2] VERDICT: FAIL
+[b2]   artifact adopted_uthrow.root  offset 0  rtol 0.0
+[b2]   hCov_combined5d_total_uthrow: PAYLOAD member differs -- archive '7b4331d8e36f670e6fde3709f8027fc96cf45cc3033b017137b2c5036d9897b2' != member 'b176c62f1f6182b95dc95dd9bacbe953b0babac0727019a3ffc9865633ad21a9'
+[b2]   hInflation_g: PAYLOAD member differs -- archive '535160aab1f51678df515df3ae79ecd3e466cf3a152e10c90043d4a53fd7e755' != member '2096cb8e6c6905423f86be5ef8c97c8b7a170905b16ef2bbb6b059419f46ca7e'
+[b2]   sqrt_tr_new: PAYLOAD member differs -- archive 5.807716496958672e-38 != member 6.891461280320583e-38
+[b2]   sqrt_tr_old: PAYLOAD member differs -- archive 4.357790406860002e-38 != member 4.358542810534632e-38
+[b2]   UNCOMPARABLE centering_convention: CONFIGURATION -- NOT COMPARABLE on this artifact; the archive predates the writer (landed: 5856eeb1 BEN-106 2026-08-11). Admissible member-only, and NOT verified.
+[b2]   UNCOMPARABLE combined_source: CONFIGURATION -- NOT COMPARABLE on this artifact; the archive predates the writer (landed: 5856eeb1 BEN-106 2026-08-11). Admissible member-only, and NOT verified.
+[b2]   UNCOMPARABLE est_seed_offset: PROVENANCE -- NOT COMPARABLE on this artifact; the archive predates the writer (landed: lane D 2026-08-18). Admissible member-only, and NOT verified.
+[b2]   UNCOMPARABLE est_seed_offset_declared: PROVENANCE -- NOT COMPARABLE on this artifact; the archive predates the writer (landed: lane D 2026-08-18). Admissible member-only, and NOT verified.
+[b2]   UNCOMPARABLE fixed_seed_null_norm_checked: CONFIGURATION -- NOT COMPARABLE on this artifact; the archive predates the writer (landed: 5856eeb1 BEN-106 2026-08-11). Admissible member-only, and NOT verified.
+[b2]   UNCOMPARABLE hDiagCombinedOld: PAYLOAD -- NOT COMPARABLE on this artifact; the archive predates the writer (landed: lane B remedy (A) wrapper 2026-08-20). Admissible member-only, and NOT verified.
+[b2]   UNCOMPARABLE hDiagCombinedOldRaw: PAYLOAD -- NOT COMPARABLE on this artifact; the archive predates the writer (landed: OI-147 raw-diagonal ship 2026-08-21). Admissible member-only, and NOT verified.
+[b2]   UNCOMPARABLE joint_mean_shift_norm_checked: CONFIGURATION -- NOT COMPARABLE on this artifact; the archive predates the writer (landed: 5856eeb1 BEN-106 2026-08-11). Admissible member-only, and NOT verified.
+[b2]   UNCOMPARABLE n_throws_checked: CONFIGURATION -- NOT COMPARABLE on this artifact; the archive predates the writer (landed: 5856eeb1 BEN-106 2026-08-11). Admissible member-only, and NOT verified.
+[b2]   UNCOMPARABLE upstream_estimator_seed_g1: PROVENANCE -- NOT COMPARABLE on this artifact; the archive predates the writer (landed: lane B remedy (A) wrapper 2026-08-20). Admissible member-only, and NOT verified.
+[b2]   UNCOMPARABLE upstream_estimator_seed_g1_checked: CONFIGURATION -- NOT COMPARABLE on this artifact; the archive predates the writer (landed: lane B remedy (A) wrapper 2026-08-20). Admissible member-only, and NOT verified.
+[b2]   UNCOMPARABLE upstream_estimator_seed_g2: PROVENANCE -- NOT COMPARABLE on this artifact; the archive predates the writer (landed: lane B remedy (A) wrapper 2026-08-20). Admissible member-only, and NOT verified.
+[b2]   UNCOMPARABLE upstream_estimator_seed_g2_checked: CONFIGURATION -- NOT COMPARABLE on this artifact; the archive predates the writer (landed: lane B remedy (A) wrapper 2026-08-20). Admissible member-only, and NOT verified.
+[b2]   UNCOMPARABLE upstream_fixed_seed_null_norm: PAYLOAD -- NOT COMPARABLE on this artifact; the archive predates the writer (landed: 5856eeb1 BEN-106 2026-08-11). Admissible member-only, and NOT verified.
+[b2]   UNCOMPARABLE upstream_joint_mean_shift_norm: PAYLOAD -- NOT COMPARABLE on this artifact; the archive predates the writer (landed: 5856eeb1 BEN-106 2026-08-11). Admissible member-only, and NOT verified.
+[b2]   UNCOMPARABLE upstream_n_throws: CONFIGURATION -- NOT COMPARABLE on this artifact; the archive predates the writer (landed: 5856eeb1 BEN-106 2026-08-11). Admissible member-only, and NOT verified.
+[b2]   UNCOMPARABLE uthrow_source: CONFIGURATION -- NOT COMPARABLE on this artifact; the archive predates the writer (landed: 5856eeb1 BEN-106 2026-08-11). Admissible member-only, and NOT verified.
+[b2]   [coverage] hCov_combined5d_total_uthrow: compared 114361636 of 114361636 elements (100.0000%)
+[b2]   [coverage] hDiagCombinedOld: compared 10694 elements; NO DERIVED EXPECTATION, so completeness is reported and NOT asserted
+[b2]   [coverage] hDiagCombinedOldRaw: compared 10694 elements; NO DERIVED EXPECTATION, so completeness is reported and NOT asserted
+[b2]   [coverage] hInflation_g: compared 10694 of 10694 elements (100.0000%)
+[b2]   [coverage] KEYS: compared 4 of 21 classified keys (19.0%) -- uncompared: ['centering_convention', 'combined_source', 'est_seed_offset', 'est_seed_offset_declared', 'fixed_seed_null_norm_checked', 'hDiagCombinedOld', 'hDiagCombinedOldRaw', 'joint_mean_shift_norm_checked', 'n_throws_checked', 'upstream_estimator_seed_g1', 'upstream_estimator_seed_g1_checked', 'upstream_estimator_seed_g2', 'upstream_estimator_seed_g2_checked', 'upstream_fixed_seed_null_norm', 'upstream_joint_mean_shift_norm', 'upstream_n_throws', 'uthrow_source']
+[b2]   [identity] OK   g1: upstream_estimator_seed_g1 = 42 = baseline 42 + declared offset 0; upstream_estimator_seed_g1_checked = 1 agrees with presence
+[b2]   [identity] OK   g2: upstream_estimator_seed_g2 = 1000 = baseline 1000 + declared offset 0; upstream_estimator_seed_g2_checked = 1 agrees with presence
+[b2]   [config] OK   fixed_seed_null_norm_checked = 1 agrees with upstream_fixed_seed_null_norm present
+[b2]   [config] OK   joint_mean_shift_norm_checked = 1 agrees with upstream_joint_mean_shift_norm present
+[b2]   [config] OK   n_throws_checked = 1 agrees with upstream_n_throws present
+[b2]   [config] OK   upstream_n_throws = 160 == predeclared ensemble size
+[b2]   [config] OK   centering_convention = 'mean-centered' matches adopted_uthrow.root
+[b2]   [config] OK   uthrow_source = 'unified_throw_cov_5d.root' matches the pinned contract
+[b2]   [config] OK   combined_source = 'uq_universe_5d_covariance_combined_bkgaware.root' matches the pinned contract
+[b2]   [diag] OK   clip(hDiagCombinedOldRaw) vs hDiagCombinedOld: 10694 bins; 0 negative raw entr(ies) clipped to 0
+[b2]   [recompute] DEFERRED upstream_fixed_seed_null_norm: CROSS_FILE -- the throw root's fixed_seed_null_norm
+[b2]   [recompute] DEFERRED upstream_joint_mean_shift_norm: CROSS_FILE -- the throw root's joint_mean_shift_norm
+[b2]   [recompute] OK   sqrt_tr_new: recomputed 6.891461280320583e-38 from hCov_combined5d_total_uthrow == stamped 6.891461280320583e-38
+[b2]   [recompute] OK   sqrt_tr_old: recomputed 4.358542810534632e-38 from hDiagCombinedOldRaw == stamped 4.358542810534632e-38

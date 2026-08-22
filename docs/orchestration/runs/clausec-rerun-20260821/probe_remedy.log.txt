@@ -1,0 +1,30 @@
+=== BASELINE: 00be534f as committed (already measured as arm A3d) ===
+--- base ---
+    [b2] VERDICT: PASS
+    [b2]   [coverage] hDiagCombinedOld: compared 10695 elements; NO DERIVED EXPECTATION, so completeness is reported and NOT asserted
+    [b2]   [coverage] hDiagCombinedOldRaw: compared 10695 elements; NO DERIVED EXPECTATION, so completeness is reported and NOT asserted
+    EXIT = 0   (0=PASS 2=FAIL)
+=== CANDIDATE A: the two EXPECTED_ELEMENTS entries ONLY ===
+  patched: EXPECTED_ELEMENTS + 2 diagonal rows
+--- A ---
+    [b2] VERDICT: PASS
+    [b2]   [coverage] hDiagCombinedOld: compared 10695 of 10694 elements (100.0094%)
+    [b2]   [coverage] hDiagCombinedOldRaw: compared 10695 of 10694 elements (100.0094%)
+    EXIT = 0   (0=PASS 2=FAIL)
+=== CANDIDATE B: A + completeness asserts EQUALITY ===
+  patched: EXPECTED_ELEMENTS + 2 diagonal rows
+  patched: m_mx completeness now asserts EQUALITY
+--- B ---
+    [b2] VERDICT: FAIL
+    [b2]   [coverage] hDiagCombinedOld: compared 10695 of 10694 elements (100.0094%)
+    [b2]   hDiagCombinedOld: WRONG LENGTH -- 10695 elements where the writer's own construction gives 10694. An OVER-LENGTH array is not a partial comparison and must not borrow that word: every element compared equal and the array is still not the one the writer emits.
+    [b2]   [coverage] hDiagCombinedOldRaw: compared 10695 of 10694 elements (100.0094%)
+    [b2]   hDiagCombinedOldRaw: WRONG LENGTH -- 10695 elements where the writer's own construction gives 10694. An OVER-LENGTH array is not a partial comparison and must not borrow that word: every element compared equal and the array is still not the one the writer emits.
+    EXIT = 2   (0=PASS 2=FAIL)
+
+=== CONTROL: candidate B must still PASS the GOOD product (no false positive) ===
+--- B_on_good ---
+    [b2] VERDICT: PASS
+    [b2]   [coverage] hDiagCombinedOld: compared 10694 of 10694 elements (100.0000%)
+    [b2]   [coverage] hDiagCombinedOldRaw: compared 10694 of 10694 elements (100.0000%)
+    EXIT = 0   (0=PASS 2=FAIL)

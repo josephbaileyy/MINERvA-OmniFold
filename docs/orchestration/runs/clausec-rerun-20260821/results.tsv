@@ -1,0 +1,22 @@
+A1	present-seed k=0, COMPLETE gate, matched archive	PASS(0)	0	POSITIVE-PASSED
+A1C	cv-centered sibling, COMPLETE gate	PASS(0)	0	POSITIVE-PASSED
+A1R	real archive; expect payload-value FAIL and ZERO uncovered keys	FAIL(2), uncovered=0	2 uncovered=0 partial=0	OI147-CLOSED
+A2	declared k=0 adopter, both legs est_seed_offset_declared=0	segment exit != 0	segment exit 1	FIRED
+A4	negative raw diag entry, clipped stays 0	PASS(0)	0	POSITIVE-PASSED
+A6	mismatched payload at 10694^2, bit-exact digests	FAIL(2)	2	FIRED
+A3a	clipped diagonal not the clip of its raw pre-image	FAIL(2)	2	FIRED
+A3b	hDiagCombinedOld absent, raw present (half a pair)	FAIL(2)	2	FIRED
+A3c	clipped shorter than raw (shape mismatch)	FAIL(2)	2	FIRED
+A3d	PROBE: pair zero-padded to 10695; raw sum unchanged mathematically	unknown - measured	0	GAP-REACHABLE
+A3e	CONTROL: pair truncated to 10693; raw sum genuinely changes	FAIL(2)	2	FIRED
+A5a	raw entry made more negative: clip unchanged, RAW TRACE moves	FAIL(2)	2	FIRED
+A5b	raw entry changed on a positive bin (clip AND trace move)	FAIL(2)	2	FIRED
+B1	unhooked g1 leg (seed 42) vs declared k=1200	segment exit != 0	segment exit 1	FIRED
+B2	unhooked g2 leg (seed 1000) vs declared k=1200	segment exit != 0	segment exit 1	FIRED
+B3	legs at k=1100, process declares k=1200	segment exit != 0	segment exit 1	FIRED
+C1	flag=0 while upstream_estimator_seed_g1 present	FAIL(2)	2	FIRED
+C2	flag=1 while upstream_estimator_seed_g2 ABSENT	FAIL(2)	2	FIRED
+D1	stamped g1 seed 9999 != baseline 42 + offset 0	FAIL(2)	2	FIRED
+D2	declared member, g1 leg has no seed	segment 0 then FAIL(2)	segment 0, gate 2	FIRED
+E	undeclared adopter, undeclared legs	segment 0 then FAIL(2)	segment 0, gate 2	FIRED
+G2	read_one_matrix_for_gate2 on the real 892 MB archive	ok(0)	0	OK

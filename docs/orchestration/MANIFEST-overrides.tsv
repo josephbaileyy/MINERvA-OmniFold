@@ -41,6 +41,8 @@ docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md	LIVE	open
 docs/orchestration/TASK-HANDOFF.template.md	LIVE	open	""
 docs/orchestration/TASK.template.md	LIVE	open	
 docs/orchestration/USER-DECISIONS.md	LIVE	open	""
+docs/orchestration/VERDICT-20260821-clausec-rerun-production-dimension.md	ARCHIVAL	terminal	
+docs/orchestration/VERDICT-20260821-expiry-c-real-path-present-seed.md	ARCHIVAL	superseded	docs/orchestration/VERDICT-20260821-clausec-rerun-production-dimension.md
 docs/orchestration/WAKER.md	LIVE	open	
 docs/orchestration/control-plane/owners.tsv	LIVE	open	""
 docs/orchestration/control-plane/playbook.tsv	LIVE	open	""
