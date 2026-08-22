@@ -64,7 +64,7 @@ docs/orchestration/MIGRATION-TAKEOVER-STATUS.md	tracked	ARCHIVAL	document			term
 docs/orchestration/OMNIFOLD-DOSSIER.md	tracked	ARCHIVAL	document	fe-fps-campaign		terminal		exact-path-only	nd-unfolding/pet/feature_rank_arms.py;nd-unfolding/pet/feature_rank_summarize.py	yes	4	106	7764
 docs/orchestration/OPERATOR-GUIDE.md	tracked	ARCHIVAL	document			terminal		exact-path-only	docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py	yes	4	98	4815
 docs/orchestration/PLAN-20260813-gate6-cml-retry-design.md	tracked	ARCHIVAL	plan		20260813	terminal		exact-path-only	nd-unfolding/tests/test_step1_trajectory_checkpoint_tier.py	yes	6	290	19853
-docs/orchestration/PLAN-20260822-oneMember-mii-staged.md	tracked	LIVE	plan		20260822	open		route-only		no	7	511	31472
+docs/orchestration/PLAN-20260822-oneMember-mii-staged.md	tracked	LIVE	plan		20260822	open		route-only		no	7	525	32745
 docs/orchestration/PLAYBOOK.md	tracked	LIVE	document			open		route-only	docs/orchestration/control_plane_lint.py	no	6	39	6473
 docs/orchestration/PORTING.md	tracked	ARCHIVAL	document			terminal		exact-path-only	docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py	yes	6	162	9152
 docs/orchestration/PREDECLARATION-20260808-gate4-and-d2-fraction.md	tracked	ARCHIVAL	predeclaration		20260808	terminal		exact-path-only	nd-unfolding/pet/pet_diagnostic_quarantine.py;nd-unfolding/pet/sbatch_fullevent_diagnostic_extract.sh;nd-unfolding/pet/validate_pet_nominal_gate4.py	yes	5	248	16826

@@ -504,6 +504,20 @@ against memory.
   detects a change after the fact; (g) would prevent one.
 - **The production P-4 pins do not exist.** The pins in the receipt were written from a two-process
   arm with throwaway inputs and are not the production set.
+- **TWO PYTHON CALLS PER LAUNCHER ARE DELIBERATELY NOT GUARDED, and this is a scope question for the
+  reviewer rather than a builder's ruling.** Counting every `python3` line in the eight launchers
+  gives **30**: the **14** science-entrypoint invocations, all guarded, plus **16** preflight tool
+  calls (`mnv_source_manifest.py` and `verify_executing_copy_is_committed.py`, two per launcher).
+  Read literally, "every production Python invocation" covers all 30. Two reasons it was built as
+  14, both stated so they can be overruled:
+  1. **Bootstrapping.** The manifest comparison and the parity check are what establish that the
+     tools in the code root are the approved bytes — including the guard itself, via
+     `--pair "${GUARD}=nd-unfolding/mnv_guarded_run.py"`. Running them THROUGH the guard would mean
+     trusting the guard before the check that validates it, inverting the order. Their integrity is
+     instead established the way the two Gate-5 launchers already establish it.
+  2. **Signal cost.** Both tools import stdlib only, so each would emit an explicitly-empty record
+     and the P-4 ratchet's "an undeclared empty set is a failure" rule would need three permanent
+     standing exceptions. That rule is worth more than the literal count.
 - **Nothing has run under `sbatch`.** `BASH_SOURCE`-under-spool, the Slurm resolver and the real
   `${REPO}` effect remain ruling 14's business, and the two adopt invocations are unreachable
   end to end while the pause branch stands.
