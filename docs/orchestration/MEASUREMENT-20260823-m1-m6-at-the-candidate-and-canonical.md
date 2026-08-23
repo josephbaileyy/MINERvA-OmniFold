@@ -103,11 +103,32 @@ Zero in both directions on both trees. The 127/125 difference is the candidate's
   instrument was still running" and "the instrument returned a failure" are different claims and
   only the second is a finding.
 
-  The itemized list of which bindings break is **not yet captured** — it needs another ~30-minute
-  run and is recorded as owed, not as absent. What is established is the verdict, not the inventory.
-  **Do not read the candidate's `rc=0` as covering the canonical tree**, and do not read this `rc=1`
-  as touching the candidate: nothing is executed or imported from the canonical checkout, so this is
-  a finding about the data-role tree, not about what runs.
+  **THE INVENTORY IS NOW CAPTURED, and it is narrower than the verdict sounds — exactly one
+  binding:**
+
+  ```
+  MISMATCH nd-unfolding/pet/train_fullevent_nominal.py
+    want 66aa1f8f62087e6ef6ca79928aca954ed25aea1bb304d71e8dbf159ec417dadd
+    got  91144bee2ff89ae62497c8282174f0fc1c344f455945d6b52b7b8219ecb4e7bc
+    from nd-unfolding/pet/step1_iteration_dynamics/cold_fresh_split/slurm-56534116_2/STEP1_DYNAMICS.json
+  ```
+
+  Measured, not inferred:
+
+  - The **file is byte-identical on both trees** (`91144bee…`) and at the **same git blob**
+    (`9719049c…`). The tracked tree is not corrupt and the file is not locally modified.
+  - The **receipt is UNTRACKED** — a run product from job `slurm-56534116_2` — and **exists only on
+    the canonical checkout.** It is one of that tree's 718 `??` entries.
+  - So the mismatch is a **stale PET provenance receipt** pinning the script digest as it stood when
+    that job ran, against a script that has since changed in the repo. It is **not a k=0 file** and
+    it is **not reachable from the candidate**: the receipt is not there, so the binding cannot be
+    resolved, let alone broken.
+
+  **This therefore cannot appear on the candidate, and the candidate's `rc=0` is not hiding it.**
+  Whether a historical run receipt should count as a live binding at all is a real question — the
+  checker already carries a *"known pre-existing drift (submit-time provenance)"* category for
+  `sbatch_dump_g2_mefhc.sh`, and this one is simply **not in that allowlist.** Recorded as a finding
+  about the data-role tree; **no repair is attempted here and none is authorized.**
 
 ## M-4 — tree identity
 
@@ -152,7 +173,7 @@ it found.
 |---|---|---|---|
 | 1 | **M-1** | the filing had **nine** rows and said "three"; there are **ten** and **four** | **against the builder** — an entrypoint was missing from the filing entirely |
 | 2 | **M-1** | candidate 3 `_DATA_ROOT` + 1 inert `_REPO`; canonical **5 `_REPO`**, one of them active with 5 repo imports after it | the trees disagree; only the candidate executes |
-| 3 | **M-3** | candidate `rc=0`; canonical **`rc=1`, bindings NOT intact** | **against the builder** — the previous filing recorded M-3 as simply "UNCHANGED", and an earlier draft of *this* filing recorded the canonical run as merely slow |
+| 3 | **M-3** | candidate `rc=0`; canonical **`rc=1` on exactly one binding** — a stale, untracked PET run receipt that cannot exist on the candidate | **against the builder** — the previous filing recorded M-3 as simply "UNCHANGED", and an earlier draft of *this* filing recorded the canonical run as merely slow |
 | 4 | **M-4** | canonical dirty `721 → 722` | neither; a drifting quantity |
 | 5 | **M-5** | candidate `0 of 8`; canonical `8 of 8` | reported both ways this time |
 | 6 | **M-6** | canonical has **no inventory write at all**, which the previous instrument would have scored as clean | **against the builder** |

@@ -170,4 +170,8 @@ which bindings break is **owed, not captured.**
 - No Slurm job was submitted, no science was run, no covariance work was done, no artifact deleted.
 - `set -u` was **not** added anywhere.
 - The M-6 vacuity hole remains **open** on the candidate, unchanged and out of scope.
-- Canonical M-3's failing bindings are **unenumerated**.
+- Canonical M-3's failing binding is now **enumerated**: exactly one,
+  `nd-unfolding/pet/train_fullevent_nominal.py` bound by an **untracked** run receipt
+  (`…/slurm-56534116_2/STEP1_DYNAMICS.json`) that exists only on the canonical checkout. The file is
+  byte-identical and at the same git blob on both trees, so this is a stale PET provenance receipt,
+  not tree corruption, and it **cannot appear on the candidate**. No repair attempted; none authorized.
