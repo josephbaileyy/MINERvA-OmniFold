@@ -4,6 +4,13 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ## Current work
 
+- **M-1…M-6, re-measured 2026-08-23 on BOTH trees:**
+  [`MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md`](MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md)
+  — the `F-17(a)` filing repair. Ten M-1 rows (the previous filing had nine and dropped
+  `unified_throw_cov.py`), **four** surviving literals on the candidate, **five** on the canonical
+  checkout. Re-run it with `docs/orchestration/measure_m1_m6.py --tree <TREE>`; do not inherit a number.
+
+
 - Live snapshot: [`LIVE-STATE.md`](LIVE-STATE.md); run its freshness check before use.
 - Bounded queue: [`../CURRENT_WORK.md`](../CURRENT_WORK.md); sources live in
   [`control-plane/`](control-plane/).

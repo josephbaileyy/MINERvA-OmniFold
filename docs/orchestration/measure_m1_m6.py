@@ -175,15 +175,33 @@ def m5(tree):
 
 
 def m6(tree):
-    """The guard counts resolutions -- but does a containment-path zero MEAN zero, or default to it?"""
+    """Does the guard emit evidence that it LOOKED, and is a zero a measurement or a default?
+
+    THREE STATES, NOT TWO, and they must never collapse into one boolean. A substring test for the
+    `else 0` default reports "no hits" both when the default was removed AND when the whole inventory
+    write is absent -- and the canonical checkout is the second case: its `mnv_guarded_run.py` counts
+    resolutions but writes no inventory at all, so "hole closed" would be exactly backwards. That is
+    this campaign's named substring failure, committed by this very function's first version.
+    """
     f = tree / "nd-unfolding" / "mnv_guarded_run.py"
     if not f.is_file():
-        return {"present": False}
+        return {"present": False, "state": "FILE ABSENT"}
     txt = f.read_text(encoding="utf-8", errors="replace")
-    hits = [i + 1 for i, l in enumerate(txt.splitlines())
-            if "guard.checked if guard is not None else 0" in l]
-    return {"present": True, "counts_resolutions": "self.checked" in txt,
-            "else_zero_default_lines": hits, "vacuity_hole_open": bool(hits)}
+    lines = txt.splitlines()
+    counts = "self.checked" in txt
+    writes = [i + 1 for i, l in enumerate(lines) if '"checked"' in l and ":" in l]
+    defaulted = [i + 1 for i, l in enumerate(lines)
+                 if "guard.checked" in l and "else 0" in l]
+    if not writes:
+        state = "NO INVENTORY WRITE -- the guard counts but emits nothing; the vacuity question " \
+                "cannot even be asked of this tree"
+    elif defaulted:
+        state = "WRITTEN BUT DEFAULTED -- a containment-path zero is a default, not a measurement"
+    else:
+        state = "WRITTEN AND MEASURED"
+    return {"present": True, "n_lines": len(lines), "counts_resolutions": counts,
+            "inventory_write_lines": writes, "else_zero_default_lines": defaulted,
+            "state": state}
 
 
 def main():
