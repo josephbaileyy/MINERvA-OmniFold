@@ -68,7 +68,7 @@ PR-01"*; `PR-01` *"falsified by … any change to `k0r2/clean`; any `.py`/`.sh` 
 
 | order | # | repair | blocked by | cluster? |
 |---|---|---|---|---|
-| 1 | `PR-03` | **F-7(a)** — pin the §7.0.13 preflight exclusion; three-arm mutation test | **nothing — this is the one item that can start today** | no |
+| 1 | `PR-03` | **F-7(a)** — pin the §7.0.13 preflight exclusion; three-arm mutation test | **DONE 2026-08-22, `b49bc360` on `build-k0-execution-integrity`** | no |
 | 2 | `PR-02` | **F-2(a)** — bind `setup_salloc_env.sh` and `lib/resume_guard.sh` in the `--pair` sets | **`PR-J5`** (Joseph) | no |
 | 3 | — | **refresh `k0r2/clean`**; re-assert porcelain 0 and `dr-xr-x---` | `PR-02` (it edits executing bytes) | **write** |
 | 4 | `PR-01` | **F-1(a)** — declare the submission sha; file A-2(a)–(g) against the refreshed tree | the refresh | read |
@@ -78,9 +78,22 @@ PR-01"*; `PR-01` *"falsified by … any change to `k0r2/clean`; any `.py`/`.sh` 
 
 **`PR-04` and `PR-05` are independent of each other** and are the only pair that can run in parallel.
 
-**`PR-03` is the only repair that can begin before Joseph answers anything.** Everything else in this
-step waits on `PR-J5`, which is therefore worth asking at the same time as Step 0 even though it is a
-much smaller question. **Ask both in one message.**
+**`PR-03` was the only repair that could begin before Joseph answers anything, and it is DONE** —
+`b49bc360`, pushed. Three artifacts: `nd-unfolding/mnv_preflight_exclusions.json` (schema
+`mnv_preflight_exclusions/1`), `nd-unfolding/mnv_preflight_census.py` (enumerate first, classify
+second; exits 0/2/3), and 13 test arms. Measured by **two independent instruments before either was
+written down**: 8 launchers, **30 non-comment `python3` invocations = 14 guarded + 16
+declared-preflight + 0 unclassified**, plus **9 commented-out `python3` lines**. Ruling 21's 14/30
+boundary reproduces for a fourth time, and **a test asserts 14, 30 and 16 for the first time.** Suite:
+13 new arms pass, 127 pass across the four coupled modules.
+
+> **It moved the file count, exactly as the ordering predicted:** 773 → **775** tracked `.py`/`.sh`.
+> `PR-01` must be taken after this and after the refresh. No committed manifest record went stale in
+> the meantime — `SRCMAN_RECORD` has no default and is generated from `MNV_CODE_ROOT` at deploy time.
+
+**Everything else in Step 1 now waits on `PR-J5`**, which is a small question sitting in front of the
+whole remaining queue. **Ask it in the same message as Step 0** so the lane is not idle behind the
+cheap one.
 
 **ORDERING CORRECTION, made before anyone walked this — `PR-01` runs FOURTH, and my first draft had
 it first.** (It is not "last" either: `PR-04` and `PR-05` both depend on it.) My first draft said *"`PR-01` first and alone, because the other four are
