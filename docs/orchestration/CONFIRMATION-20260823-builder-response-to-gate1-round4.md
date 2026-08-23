@@ -52,7 +52,46 @@ my code.
 
 ---
 
-## 3. WHERE I THINK THE GRADER WAS TOO LENIENT — and it is my artifact
+## 3. WHERE I THOUGHT THE GRADER WAS TOO LENIENT — **I WAS WRONG, AND I WITHDRAW IT**
+
+> ### WITHDRAWN 2026-08-23. The grader declined, and its reason is better than my objection.
+>
+> **The argument that decided it — and it is one I should have reached myself, because this repo
+> already has a rule for it.** `P-5` is a register of **blind spots that must be DISCLOSED because
+> they cannot be closed.** `lib_member_resume.sh` bind-after-use is **not a blind spot**: it is a
+> repairable ordering defect with a known one-hunk fix — *move the `if` above the `source`* — and
+> **I already shipped exactly that fix for `_mr_rg` in `finalize`.** Filing it in `P-5` would convert
+> a defect that has a remedy into a permanent disclosure. **A caveat standing in for a fix.**
+> `F-2(a)` is its correct home precisely because `F-2(a)` FAILS, gets repaired, and the launcher
+> stops being wrong; `P-5` would have absorbed it and the launcher would have stayed wrong with
+> paperwork attached. **My objection would have made the package worse while looking stricter.**
+>
+> **And the procedural half is right too.** §4 enumerates `P-5`'s content — four named items — and
+> `F-8`'s row asks for those plus the subprocess enumeration with each child wrapped or uncovered.
+> My document delivers all of it, and the absent `.sh` closure falls inside named item 4. Failing a
+> criterion for omitting something the contract does not name is **selecting the criterion after
+> seeing the evidence**, which is the mirror of what this contract exists to prevent.
+>
+> **My `NOT-EVALUABLE` alternative was the worse of my two suggestions**, and I now think clearly so.
+> `P-5` is a static bench artifact that does not need the path to run, and *"the path does not run so
+> nothing is evaluable"* propagates to `F-3(a)`, `F-4(a)`, `F-5(a)`, `F-6(a)`, `F-7(a)`, `F-13`,
+> `F-15` — every bench criterion. §7.0.8 exists to kill that move. It would have turned a specific,
+> locatable, repairable defect into a blanket *"cannot tell"*.
+>
+> **The grade stands at 16/2. What I was actually right about gets recorded as a repair, not a
+> tally:** `P-5` **must gain the `PATH`/`PYTHONPATH`/`LD_LIBRARY_PATH` channel as a fifth blind spot
+> BEFORE re-grade**, and the next grader must treat `F-8(a)` as **RE-OPENED at the new sha, never
+> inherited**. It is mechanically re-opened anyway — `F-8(a)` is bound to the pinned sha and `PR-01`
+> expires on the repair — but a document can be carried forward by hand, so it is said here.
+>
+> The grader also stated, unprompted, that it considered `FAIL` on my argument and declined it on the
+> grounds above, and that the reason it landed on is not the one it would have given an hour earlier.
+> That is recorded because a decline with a *new* reason is worth more than one that restates the
+> original grade.
+
+### The original objection, kept as the record
+
+
 
 The grader offered its `16/2` versus a stricter `13/5` for attack. **I think one criterion is graded
 too generously, and it is `F-8(a)` — mine.**
@@ -93,7 +132,7 @@ not.
 
 ## 5. WHAT I DID NOT DO, AND WHY
 
-**I did not implement the repair.** It requires a **third root, `MNV_ENV_ROOT`** — an architecture
+**I did not implement the repair.** (Refined in §6 and §7 below.) It requires a **third root, `MNV_ENV_ROOT`** — an architecture
 change of exactly the class Joseph ruled on for the two-root split (ruling 17). A third mandatory
 root, a digest-bound environment manifest substituting for git, and a fail-closed `PATH`/`PYTHONPATH`/
 `LD_LIBRARY_PATH` scrub are design decisions, not clerical repairs. **They are Joseph's.**
@@ -103,3 +142,75 @@ references `ADDR2LINE` unbound and already killed job `57235710` in ten seconds.
 
 **The re-grade must be a third party.** Not this lane, and — the grader's own instruction — not the
 grader either.
+
+---
+
+## 6. `MNV_ENV_ROOT` MAY BE A SHARED TREE — measured, with one condition that decides it
+
+I asked whether *"not a symlink"* rules out a bind mount or only the symlink form. The grader's repair
+text was too broad and said so. **Measured independently by both of us on `saul` (bash 4.4.23), using
+the exact `SCRIPT_DIR` expression from `setup_salloc_env.sh:2`:**
+
+| arm | form | `SCRIPT_DIR` resolves to | transitive `source` | exit |
+|---|---|---|---|---|
+| **A** | real tree | the real tree | **OK** | 0 |
+| **B** | symlink the **FILE** into a bare dir | **the bare dir** | *No such file or directory* | **1** |
+| **C** | symlink the **DIRECTORY** | the link path | **OK** | 0 |
+
+**So the prohibition is on ARM B only.** `BASH_SOURCE[0]` is the path *as sourced*, and bare `pwd` is
+logical, so a directory link keeps the link path and `${SCRIPT_DIR}/unbinned_unfolding/…` resolves
+**through** it. **A bind mount is strictly safer than ARM C** — it changes what is *at* the path
+rather than redirecting the path. **`MNV_ENV_ROOT` does not have to be a real per-deploy directory.**
+
+**Availability today is ARM C, not the mount.** `mount --bind` → **rc=32**, *"must be superuser"* —
+unavailable to a plain `sbatch` job. `unshare -rm` → rc=0, so a bind inside a user namespace is
+possible in principle, but the mount is private to that namespace and every leg would need wrapping.
+(The grader notes it tested a login node only, and that its own first attempt read `sed`'s status and
+reported rc=0 for a mount that had failed — the pipe-status trap, caught before it was filed.)
+
+### The condition, and it would defeat the whole exercise if missed
+
+**The only existing copy of the env closure lives inside the canonical checkout**, which carries both
+checkout markers. **A shared env tree that is a symlink or mount OF THAT PATH resolves back into the
+canonical checkout**, and `checkout_root_of` on the resolved path says so. The shared tree must be a
+**real copy outside every checkout**, never a view onto the canonical one.
+
+**And no mounting scheme touches the content defect.** `unbinned_unfolding/build/setup.sh:3-5`
+hardcodes the canonical path into `PATH`, `PYTHONPATH` and `LD_LIBRARY_PATH` **by content**, so it
+must be **regenerated** however the tree is presented.
+
+**One consequence runs opposite to intuition:** a *shared* tree makes the digest manifest **more**
+important, not less. It is mutable by an owner outside the deploy and can move between preflight and
+the science invocation, where a per-deploy copy under A-2(g) cannot. And with a directory symlink
+there are **two paths to the same bytes**, so the manifest's path keys must be expressed **the way the
+activator expresses them** — a `realpath`-keyed manifest will not match what actually sourced.
+
+---
+
+## 7. CREDIT — corrected in my favour by the grader, and it goes further than either of us said
+
+The grader volunteered that two of its findings were **not first discoveries**: the *"absent, not
+merely unbound"* inference and the file-vs-directory symlink distinction were already in
+`nd-unfolding/pet/g2_data_root_setup_salloc_env.template.sh`, written by whoever wrote that template.
+
+**Checked, and the template is even further ahead than that.** It already contains, in prose,
+essentially the entire diagnosis *and* the repair now being escalated to Joseph:
+
+- **the three-reference count** — *"the failure list is three long, not one"* (`:13`);
+- **absence by construction** — *"NO git worktree or frozen deployment will ever contain them …
+  unavailable by construction"* (`:15-17`);
+- **the file-symlink trap**, i.e. ARM B — *"`BASH_SOURCE[0]` is the path AS SOURCED, so symlinking
+  that file into a bare data root makes `SCRIPT_DIR` the DATA root"* (`:11-12`);
+- **the `set -u` kill**, with the job id — `57235710`, *"in 10 seconds"* (`:26-30`);
+- **and the third root itself** — *"the right long-term fix is a separate `GATE5_ENV_ROOT`"* (`:22`).
+
+**So the repair Joseph is being asked to design already exists as a written diagnosis in this
+repository, for the Gate-5 path, and is referenced by nothing on the k=0 path.** The grader's actual
+contribution — which is the hard part and is properly its own — was *noticing the template existed*
+and applying it here. The **fixture-stub** observation is the grader's outright.
+
+**This is the campaign's most expensive recurring failure in its purest form:** the answer was
+committed, correct, and unrouted. `A-1`'s two-root split then reproduced the same conflation one level
+deeper — it separated code from data and left the **environment** bound to the code root through
+`SCRIPT_DIR`. **Whatever else the repair does, the template must be routed** so the next lane cannot
+re-derive it a third time.

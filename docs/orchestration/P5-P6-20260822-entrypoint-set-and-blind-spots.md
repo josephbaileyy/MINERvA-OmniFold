@@ -5,8 +5,23 @@
 > path:** the `.sh` closure below `setup_salloc_env.sh` being **absent and unsatisfiable**, and
 > `lib_member_resume.sh` being **bind-after-use in all eight launchers**. The builder lane's own
 > position is that this should have **failed** `F-8(a)` rather than passed it — a blind-spot
-> inventory that misses the operative blind spots has not done its job. See
-> `CONFIRMATION-20260823-builder-response-to-gate1-round4.md` §3.
+>
+> **THE BUILDER'S "SHOULD HAVE FAILED" OBJECTION IS WITHDRAWN (2026-08-23) and `F-8(a)` PASSES.**
+> The grader declined it on a better argument: `P-5` is a register of blind spots that must be
+> **disclosed because they cannot be closed**, and `lib_member_resume.sh` bind-after-use is a
+> **repairable ordering defect with a one-hunk fix**, not a blind spot. Filing it here would have
+> laundered a fix into a permanent caveat and left the launcher wrong with paperwork attached.
+> `F-2(a)` is its correct home.
+>
+> **TWO THINGS ARE NONETHELESS REQUIRED BEFORE RE-GRADE, and they are repairs, not a tally change:**
+> 1. **`P-5` must gain a FIFTH blind spot** — the `PATH` / `PYTHONPATH` / `LD_LIBRARY_PATH` channel.
+>    `unbinned_unfolding/build/setup.sh:3-5` injects the canonical checkout into all three, and the
+>    Python import guard is blind to two of them.
+> 2. **`F-8(a)` must be treated as RE-OPENED at the new sha, never inherited.** It is mechanically
+>    re-opened — bound to the pinned sha, and `PR-01` expires on the repair — but a document can be
+>    carried forward by hand, so it is written down.
+>
+> See `CONFIRMATION-20260823-builder-response-to-gate1-round4.md` §3.
 
 **CITABLE FOR:** the guarded entrypoint set measured on `MNV_CODE_ROOT` at the declared sha, and an
 enumeration of what the OI-136 guard cannot see, with every child process marked **WRAPPED** or

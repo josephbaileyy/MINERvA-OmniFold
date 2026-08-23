@@ -1,5 +1,25 @@
 # GATE-1 VERDICT (ROUND 4) 2026-08-23 — pre-submission readiness for the k=0 M(ii) member
 
+> ## ERRATUM (2026-08-23) — six of eight `lib_member_resume.sh` line numbers below are ONE LINE LATE
+> Filed by the grader, reproduced independently by the builder lane. Six rows in the body anchor on
+> the **echo** rather than the containment **`if`** (a timeline grep matched `"which is not"`). **Use
+> this table**, source line / containment `if` line, at `6113a34d`:
+>
+> | launcher | src | `if` | | launcher | src | `if` |
+> |---|---|---|---|---|---|---|
+> | bootstrap | 202 | **218** | | uthrow_run | 198 | **214** |
+> | seedscan | 189 | **205** | | uthrow_block | 192 | **208** |
+> | unfold | 201 | **217** | | uthrow_combine | 208 | **224** |
+> | sweep | 197 | **213** | | finalize | 116 | **132** |
+>
+> **The gap is exactly 16 in all eight** — its own corroboration, consistent with
+> `test_the_preflight_block_is_BYTE_IDENTICAL_across_all_eight`. The builder's earlier `219/133/225`
+> were the echo lines and are also wrong. **The finding itself is unaffected**; only the citations move.
+>
+> **This banner is the ONLY edit to the grader's text.** The body below is verbatim as delivered.
+> Original artifact sha256 **`55e6b7710091405585cf50b7c0eebe8761cfa0a7cbbc0da1c0b3f2e92e79cdf4`**,
+> recorded so byte-identity with the grader's copy remains checkable.
+
 **GATE 1 DOES NOT PASS.**
 
 Stated in the words §7.0.6 requires: **Gate 1 DOES NOT PASS.** Sixteen of the eighteen
