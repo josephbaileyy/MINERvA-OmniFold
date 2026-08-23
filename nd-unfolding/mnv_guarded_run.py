@@ -72,6 +72,46 @@ obvious marker and is the wrong one -- it was rewritten as the thin front door o
 2026-08-20, so a tree frozen on 2026-08-18 is still a real checkout that a fresh
 marker would fail to recognise, and the guard would then wave it through.
 
+IT ALSO EMITS A LOADED-CHECKOUT INVENTORY, WHICH IS A RECEIPT AND NOT A GATE
+---------------------------------------------------------------------------
+At the end of the wrapped run this walks `sys.modules` and reports, on STDERR under
+the prefix `[oi136-inv]`, every checkout root the interpreter ACTUALLY LOADED a
+module from, the module names under each, and the total count. It answers the
+COVERING form of the question the refusal half answers by exception: not "did an
+import escape" but "which trees did this interpreter end up holding code from".
+
+WHY IT IS NOT REDUNDANT WITH THE REFUSAL, which is the whole reason it is here.
+The refusal sees only what passes through the WRAPPED `PathFinder` AFTER `install()`
+returns. Everything imported before that -- this file itself, and anything a
+`sitecustomize` or `PYTHONSTARTUP` pulled in -- was resolved by the unwrapped finder
+and the guard is structurally blind to it. `sys.modules` is blind to none of it. So a
+green refusal-half and a two-root inventory are consistent, and the second is the one
+that would have named run 4's second tree without needing the import to still be
+pending.
+
+IT CANNOT REFUSE, BY CONSTRUCTION, AND THAT IS A DESIGN CONSTRAINT NOT AN ACCIDENT.
+Every lane routing compute through this wrapper depends on WHEN it refuses. So the
+emission runs from a `finally`, returns nothing, and swallows `BaseException` --
+`BaseException` and not `Exception` because a receipt must not be able to change a
+run's outcome, and a `KeyboardInterrupt` arriving inside the emission would otherwise
+replace the child's own exit status with the receipt's failure. A failed emission
+prints `INVENTORY EMISSION FAILED` and the run's verdict is untouched.
+
+STDERR, NOT STDOUT, AND NOT A FILE. Consumers parse the child's stdout -- the two
+Gate-5 launchers grep it -- so writing there would make this wrapper a producer on a
+surface that belongs to the child, which is the same class of error the mandatory
+`--` exists to prevent. Every other diagnostic in this file is already on stderr. A
+file would need a path, a flag, a default and a failure mode for an unwritable
+directory, and would make the receipt absent exactly where nobody passed the flag.
+
+THE SCOPE IS ONE INTERPRETER, AND THE EMISSION SAYS SO IN ITS OWN OUTPUT. It reports
+the PARENT's `sys.modules`. A child started with `subprocess.run([sys.executable,
+...])` is a fresh interpreter and NOTHING it imports appears -- the same boundary the
+refusal half does not cross, for the same reason. Modules imported by the child's own
+`atexit` handlers land after this runs and are not counted either, and the wrapped
+script is not itself a module unless something imported it by name. Read the
+inventory as "at least these trees", never as "only these trees".
+
 USAGE, AND THE `--` IS MANDATORY
 --------------------------------
     mnv_guarded_run.py --expect-root <tree> [--allow <tree> ...] -- <script> [argv ...]
@@ -99,6 +139,11 @@ import runpy
 import sys
 
 MARKERS = ("VALIDATION_LEDGER.md", "nd-unfolding")
+
+#: Prefix for the loaded-checkout inventory. Distinct from `[oi136]` on purpose: a log
+#: merged with `2>&1` must let a reader separate the RECEIPT from the GATE, because the
+#: two have different authority and only one of them can fail a run.
+INVENTORY_PREFIX = "[oi136-inv]"
 
 VIOLATION_EXIT = 3
 CANNOT_CHECK_EXIT = 2
@@ -210,6 +255,104 @@ def install(expect_root: str, allow=()) -> GuardedPathFinder:
     raise RuntimeError("no PathFinder in sys.meta_path; refusing to run unguarded")
 
 
+def loaded_checkout_roots(modules=None) -> "dict[str, list[str]]":
+    """Every checkout root THIS interpreter has actually loaded a module from.
+
+    `{root: [module names]}`, names sorted, built by walking `sys.modules` and handing
+    each module's `__file__` to `checkout_root_of` -- THE SAME resolver and therefore the
+    same marker pair the refusal half uses. There is deliberately no second marker test
+    here: a receipt that answered "is this a checkout" differently from the gate could
+    report a clean single root for a tree the gate would have refused, and the two
+    products would then disagree without either being wrong.
+
+    WHAT IT SKIPS, WHICH IS THE SAME SET THE DOCSTRING SAYS THE GUARD IGNORES: a module
+    with no `__file__` (built-in, frozen, and namespace packages), and any file whose
+    walk reaches the filesystem root without finding both markers -- the stdlib,
+    site-packages and conda. Skipped because they are not the confusion this exists for,
+    exactly as in `GuardedPathFinder.find_spec`.
+
+    `sys.modules` is SNAPSHOTTED before iterating: it is mutated by any import, and an
+    emission that raised `RuntimeError: dictionary changed size` would be a receipt that
+    can fail a run. `getattr` is guarded per module for the same reason -- a lazy-loader
+    module object may raise from `__getattr__`, and one such module must not cost the
+    whole inventory.
+    """
+    mods = sys.modules if modules is None else modules
+    by_root: dict[str, list[str]] = {}
+    for name, mod in sorted(list(mods.items()), key=lambda kv: kv[0]):
+        try:
+            origin = getattr(mod, "__file__", None)
+        except BaseException:
+            origin = None
+        if not origin or not isinstance(origin, str):
+            continue
+        root = checkout_root_of(origin)
+        if root is None:
+            continue
+        by_root.setdefault(root, []).append(name)
+    return by_root
+
+
+def _emit_inventory(expect_root: str, refused: "ImportTreeViolation | None" = None,
+                    stream=None) -> None:
+    """Print the loaded-checkout inventory. Returns None on every path, always.
+
+    THIS FUNCTION MAY NOT CHANGE A RUN'S OUTCOME. It is called from a `finally`, it
+    returns nothing a caller can branch on, and it swallows `BaseException`. See the
+    module docstring for why `BaseException` and not `Exception`.
+    """
+    out = sys.stderr if stream is None else stream
+    try:
+        by_root = loaded_checkout_roots()
+        total = sum(len(v) for v in by_root.values())
+        guard_root = checkout_root_of(__file__)
+        say = [
+            f"{INVENTORY_PREFIX} LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports "
+            f"and never refuses; the run's verdict is decided above this line.",
+            f"{INVENTORY_PREFIX} modules loaded from inside a checkout: {total}"
+            f"   distinct checkout roots: {len(by_root)}",
+        ]
+        for root in sorted(by_root):
+            tags = []
+            if root == expect_root:
+                tags.append("expect-root")
+            if root == guard_root:
+                tags.append("this-guard")
+            label = ",".join(tags) if tags else "NOT expect-root"
+            say.append(f"{INVENTORY_PREFIX}   [{label}] {root}  "
+                       f"({len(by_root[root])}) {', '.join(by_root[root])}")
+        if not by_root:
+            say.append(f"{INVENTORY_PREFIX} NO module resolved inside any checkout. That is a "
+                       f"statement about this interpreter, not a clean bill of health: read it "
+                       f"beside the scope note below before recording it as one.")
+        if len(by_root) > 1:
+            say.append(f"{INVENTORY_PREFIX} MORE THAN ONE CHECKOUT IS LOADED. This is reported, "
+                       f"not refused -- it is legitimate when this wrapper is itself deployed "
+                       f"outside --expect-root (the [this-guard] row above), and it is run 4's "
+                       f"signature when it is not. Compare the roots, do not count them.")
+        if refused is not None:
+            say.append(f"{INVENTORY_PREFIX} THE RUN WAS REFUSED, so {refused.module} under "
+                       f"{refused.found_root} was NEVER LOADED and is correctly absent above. A "
+                       f"refusal's inventory is what got in BEFORE the refusal, never what would "
+                       f"have.")
+        say.append(f"{INVENTORY_PREFIX} SCOPE -- THIS INTERPRETER ONLY, stated here so the line "
+                   f"above is not read as coverage it does not have. A child started with "
+                   f"subprocess.run([sys.executable, ...]) is a fresh interpreter and NOTHING it "
+                   f"imports is counted, the same boundary the refusal half does not cross. Nor "
+                   f"is anything imported after this point, including by the child's own atexit "
+                   f"handlers. Read it as 'AT LEAST these trees', never as 'only these trees'.")
+        print("\n".join(say), file=out)
+    except BaseException as err:  # a receipt must not be able to fail a run
+        try:
+            print(f"{INVENTORY_PREFIX} INVENTORY EMISSION FAILED: {err!r}\n"
+                  f"{INVENTORY_PREFIX} This is a RECEIPT failure and NOT a gate failure. The exit "
+                  f"status of this run is whatever the guard and the child decided, unchanged. "
+                  f"What is lost is the evidence, so do not record this run as inventoried.",
+                  file=out)
+        except BaseException:
+            pass
+
+
 def _report(exc: ImportTreeViolation) -> None:
     print(
         "\n[oi136] IMPORT TREE VIOLATION -- REFUSING BEFORE THE WORK RUNS.\n"
@@ -269,11 +412,20 @@ def main(argv=None) -> int:
     sys.path.insert(0, str(script.resolve().parent))
     sys.argv = [str(script), *rest[1:]]
 
+    # ADDITIVE ONLY. The `finally` exists so the inventory survives the child's own
+    # SystemExit -- which is the NORMAL exit path for most entrypoints, so an emission
+    # placed after `run_path` would be absent from almost every real run. It cannot
+    # change the outcome: `_emit_inventory` returns None on every path and swallows
+    # BaseException, and neither the refusal nor its exit code moved to accommodate it.
+    refused: list[ImportTreeViolation] = []
     try:
         runpy.run_path(str(script), run_name="__main__")
     except ImportTreeViolation as exc:
+        refused.append(exc)
         _report(exc)
         return VIOLATION_EXIT
+    finally:
+        _emit_inventory(str(expect), refused[0] if refused else None)
     return 0
 
 
