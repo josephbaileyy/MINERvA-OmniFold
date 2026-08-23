@@ -13,54 +13,23 @@ measurement. It is the continuous version of the purity weight recommended for
 nontrivial backgrounds by Ref.~\cite{unbinnedguide}, and the natural treatment
 for the extended-fiducial analysis, where the background is larger.
 
-\paragraph{Provenance of this appendix's numbers.}
-\textbf{All sixteen values in this appendix now rest on preserved, verified evidence, and none of
-them is a publication uncertainty product.} The analytic derivation, the estimand identity and the
-displacement argument need none of them.
-
-\emph{Preserved --- twelve real-data/production values} ---
-seven central-comparison (\texttt{\textbackslash nwSigPur}, \texttt{\textbackslash nwSigNeg},
-\texttt{\textbackslash nwRatioTot}, \texttt{\textbackslash nwPctTot},
-\texttt{\textbackslash nwMedianBin}, \texttt{\textbackslash nwRmsBin},
-\texttt{\textbackslash nwWorstBin}), two covariance (\texttt{\textbackslash nwSystRatio},
-\texttt{\textbackslash nwStatRatio}) and three exact-estimator
-(\texttt{\textbackslash nwSpMedian}, \texttt{\textbackslash nwSpWithin},
-\texttt{\textbackslash nwSpRawMax}) --- together with the two \emph{derived} residual differences
-(\texttt{\textbackslash nwSystResid}, \texttt{\textbackslash nwStatResid}), which are defined from
-their two covariance parents so that they cannot outlive a revision of those parents. These were
-struck between 2026-08-21 and their durability step because they rested on \emph{untracked scratch
-products}: \texttt{.gitignore} carries a blanket \texttt{*.root}, so none of the eight ROOTs in
-\texttt{HANDOFF\_bkg\_negweight/runs/} nor the 51 bootstrap and 188 universe replicas behind the two
-covariance ratios was under version control, and all 247 sat single-copy on purgeable scratch. That
-is now remedied rather than re-derived: the 247 products are archived on tape, digest-verified
-server-side, confirmed by a full read off tape, and \emph{restored end to end} --- all 247 recovered,
-digest-matched and reopened --- by a committed, adversarially tested recovery route. Nothing here was
-recomputed, and the durability step deliberately did not re-run the study. Per-file digests, the
-producing commit and the recovery route are recorded in the repository's
-\texttt{RECEIPT-20260821-negweight-hpss-durability} and its manifest.
-
-\emph{What preservation does not license.} These products are \textbf{historical diagnostic
-evidence}. The background subtraction used for every result in this note is the \emph{binned purity}
-weight of \S\ref{sec:method-algo}; negative-weight injection is documented here as an equivalence
-study and an argument for the extended-fiducial analysis, and preserving its outputs neither makes it
-a supported production path nor changes any default. The two covariance ratios are agreement
-diagnostics between two realizations of one subtraction, not uncertainty products, and only the
-negative-weight side of each ratio is preserved --- so the ratios are quotable as measured but are not
-reproducible from the archive alone. Two provenance limits are recorded with the numbers rather than
-against them: the driver was uncommitted when these outputs were written, so the executing revision
-is corroborated by a version-distinct log string rather than pinned by a digest; and no output
-carries a producing job identifier, which no later run can supply.
-
-\emph{Attested --- four synthetic-toy values} (\texttt{\textbackslash nwToyNeg},
-\texttt{\textbackslash nwToyPur}, \texttt{\textbackslash nwToyBias},
-\texttt{\textbackslash nwToySeed}) come from the closed-form toy
-\texttt{2d-unfolding/HANDOFF\_bkg\_negweight/negweight\_toy.py}, which \emph{is} committed and is
-fully deterministic --- literal seeds \texttt{[0, 1, 2]}, \texttt{RandomState(seed)} sampling and
-\texttt{LGBMClassifier(random\_state=seed)}, no data and no cluster inputs. It was re-run on
-2026-08-21 and reproduced all four exactly; the receipt is
-\texttt{docs/orchestration/receipts/RECEIPT-negweight-toy-20260821.json}. The distinction the two
-classes make is \emph{attestability}, not importance, and it is why they were discharged by different
-means: a toy needs a re-run, real data needs its products to exist somewhere durable.
+\paragraph{Scope of this appendix's numbers.}
+None of them is a publication uncertainty product, and the analytic derivation, the
+estimand identity and the displacement argument need none of them. \textbf{The
+background subtraction used for every result in this note is the binned purity weight
+of \S\ref{sec:method-algo}}; negative-weight injection is documented here as an
+equivalence study and as the natural treatment for the extended-fiducial analysis, and
+nothing here makes it a supported production path or changes any default. The two
+covariance ratios are agreement diagnostics between two realizations of one
+subtraction, not uncertainty products. The real-data products behind the twelve
+production values are archived and were restored end to end from tape under a tested
+recovery route; the synthetic-toy values come from a committed, fully deterministic
+script that reproduces all four on re-run. Two provenance limits travel with the
+production numbers: the driver was uncommitted when those outputs were written, so the
+executing revision is corroborated by a version-distinct log string rather than pinned
+by a digest, and no output carries a producing job identifier, which no later run can
+supply. Receipts: \texttt{RECEIPT-20260821-negweight-hpss-durability} and
+\texttt{docs/orchestration/receipts/RECEIPT-negweight-toy-20260821.json}.
 
 \subsection{Estimator}
 \label{sec:negweight-estimator}
@@ -391,36 +360,28 @@ statement about a $187$-universe object; the displacement argument is the reason
 it can, and the full $187$-universe rebuild of \S\ref{sec:negweight-uq} is that
 reasoning's test at 2D, which it passes.
 
-\paragraph{What this does not establish, and must not be edited into
-establishing.} \textbf{There is no full five-dimensional $187$-universe
-both-footing comparison at the publication configuration} ($5$ iterations,
-\texttt{lgbm}). The five-dimensional evidence is a two-universe spot check at one
-iteration on the \texttt{hist} backend --- on the on-disk five-dimensional
-universe file, \texttt{2p2h:0} gives $3.014\times10^{-38}$ under both footings
-with per-bin median $1.0005$, and \texttt{MaCCQE:0} differs by
-\SI{-0.03}{\percent} with median $0.9990$ --- together with the displacement
-argument above and the full-statistics 2D result. That is ample for quoting the
-standard chain on purity and saying so, which is what this subsection does. It is
-\emph{not} ample for the stronger statement that the background footing is
-irrelevant in five dimensions, and \textbf{that statement should not be
-introduced here by a later edit}: it would require the comparison named at the
-head of this paragraph, and that comparison has not been run. The same limit
-applies to the one estimator caveat: raw negative weights destabilise the
-\texttt{exact} backend (\S\ref{sec:negweight-estimator}) and the standard chain
-runs \texttt{lgbm}, so neither footing risks that pathology here --- which is a
-reason the choice is safe, not evidence that it is immaterial.
+\paragraph{What the five-dimensional evidence does and does not cover.}
+\textbf{There is no full five-dimensional $187$-universe both-footing comparison at the
+publication configuration} ($5$ iterations, \texttt{lgbm}). The five-dimensional
+evidence is a two-universe spot check at one iteration on the \texttt{hist} backend ---
+on the on-disk five-dimensional universe file, \texttt{2p2h:0} gives
+$3.014\times10^{-38}$ under both footings with per-bin median $1.0005$, and
+\texttt{MaCCQE:0} differs by \SI{-0.03}{\percent} with median $0.9990$ --- together with
+the displacement argument above and the full-statistics 2D result. That supports quoting
+the standard chain on purity and saying so, which is what this subsection does. It does
+not support the stronger statement that the background footing is irrelevant in five
+dimensions, which would require the comparison named at the head of this paragraph. The
+same limit applies to the estimator caveat: raw negative weights destabilise the
+\texttt{exact} backend (\S\ref{sec:negweight-estimator}) and the standard chain runs
+\texttt{lgbm}, so neither footing risks that pathology here --- a reason the choice is
+safe, not evidence that it is immaterial.
 
-\paragraph{The footing question is settled; the adoption gate is a different
-one.} \textbf{Nothing here adopts the standard five-dimensional covariance}, and
-this subsection must not be read as doing so. That covariance remains a candidate
-(\S\ref{sec:uq-combine}) because its selection-complete active-lateral component
-is not built: the ten purity-footed endpoint unfolds named above exist but carry
-no completion receipt and were produced by a since-retired launcher, and building
-the component from them is gated by an internal verifier that has not authorised
-it. That verifier's current verdict
-(\texttt{docs/orchestration/runs/standard-p4-verifier/}\allowbreak
-\texttt{20260810T012645Z-repair7-verdict.json}) is \texttt{BLOCK}, with fourteen
-defects outstanding, and it does not authorise the covariance-construction
-stages. The two questions are independent, and settling the footing removes a
-decision that was blocking while leaving every other precondition on that
-component exactly where it stood.
+\paragraph{The footing question is settled; the adoption gate is a different one.}
+\textbf{Nothing here adopts the standard five-dimensional covariance.} It remains a
+candidate (\S\ref{sec:uq-combine}) because its selection-complete active-lateral
+component is not built: the purity-footed endpoint unfolds named above exist but carry
+no completion receipt, and building the component from them is gated by an internal
+verifier that has not authorised it. The two questions are independent, and settling the
+footing removes one blocking decision while leaving every other precondition on that
+component exactly where it stood. Routed record:
+\texttt{docs/orchestration/runs/standard-p4-verifier/}.

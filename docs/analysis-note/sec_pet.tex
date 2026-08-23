@@ -3,21 +3,13 @@
 
 \paragraph{Status: diagnostic and method development, not a publication
 uncertainty product.}
-Everything in this section is reported as a diagnostic and method-development
-result. No PET covariance --- historical recoil-only or full-event --- is adopted
-as a publication uncertainty product, and the full-event PET
-central/statistical pairing was declined on 2026-08-20 rather than resolved: the
-corresponding statistical covariance remains constructed but not independently
-verified, and it is not paired with a PET central value. That decision does not
-claim a PET central value is wrong and does not invalidate the dispersion
-measured from a replica family; the missing evidence is coverage. No mechanism
-for the anomaly it rests on is established, and none is asserted here.
-Reconsideration requires estimator equivalence \emph{and} coverage evidence, and
-coverage is a different object from checking how a replica covariance was
-assembled --- independently verifying the construction would not satisfy that
-gate. The publication uncertainty critical path runs through the adopted scalar
-five-dimensional covariance (\S\ref{sec:uq-combine}), not through this section.
-Routed record: \texttt{OI-126} in \texttt{docs/OPEN\_ITEMS.md}.
+Everything in this section is a diagnostic and method-development result. No PET
+covariance --- historical recoil-only or full-event --- is adopted as a publication
+uncertainty product, and the full-event central/statistical pairing was declined on
+2026-08-20 rather than resolved, with coverage the missing evidence rather than any
+branch having been chosen. The publication uncertainty critical path runs through the
+adopted scalar five-dimensional covariance (\S\ref{sec:uq-combine}), not through this
+section. Routed record: \texttt{OI-126} in \texttt{docs/OPEN\_ITEMS.md}.
 
 As a low-level-representation cross-check, a point-cloud transformer (PET, the architecture of
 OmniLearn~\cite{Mikuni:2024qsr}, vendored with the upstream OmniFold
@@ -44,7 +36,7 @@ iterations); the learned step-2 truth reweight is then applied to the
 (\texttt{MultiFold.reweight}), binned on the 4D grid, and pushed through the
 standard extraction (\texttt{extract\_cross\_section\_nd} with the GBDT
 run's completeness --- completeness is reweight-independent --- and the same
-flux/POT/nucleon constants). Three gates validate the absolute path:
+flux/POT/nucleon constants). Two gates validate the absolute path:
 \begin{enumerate}[itemsep=2pt]
   \item \textbf{Full-statistics reweight sanity}: the pushed weights over the
         32.8M generator events are finite with mean $1.028$;
@@ -53,51 +45,26 @@ flux/POT/nucleon constants). Three gates validate the absolute path:
         residuals of $\sim\SI{1.1}{\percent}$ --- the absolute machinery is
         internally consistent. Because pseudo-data and prior come from the
         same simulation, this test cannot expose omitted muon dependence at
-        fixed recoil;
-  \item \textbf{Cross-check vs GBDT} (\textbf{\texttt{niter}${}={}$2 legacy --- not
-        a current number}; see the scope note below): on data, the PET absolute total was
-        $\dead{\SI{2.796e-38}{cm^2/nucleon}}$ versus the GBDT
-        $\dead{\SI{3.066e-38}{}}$, ratio $\dead{\petRatio}$, with per-axis median
-        differences of \dead{\SIrange{6.5}{9.9}{\percent}} (Fig.~\ref{fig:petabs}).
+        fixed recoil.
 \end{enumerate}
 
-\paragraph{Scope of the GBDT cross-check: \texttt{niter}${}={}$2 legacy, withdrawn
-as a current comparison.}
-Every struck figure in item~3 above, and every quantity derived from them, is
-retained here only as a record of what the two-iteration run gave. They are
-\textbf{not} the current PET/GBDT comparison, for reasons that are mechanical
-rather than matters of judgement:
-\begin{itemize}[nosep]
-  \item \textbf{Iteration count.} The PET run used a 2M-event, \emph{two}-iteration
-        training. The campaign's pinned policy is \texttt{niter}${}={}$3 (CLM-010,
-        CLM-012, \textsc{frozen}), and full-event PET moved to it. The comparison
-        has not been re-extracted at \texttt{niter}${}={}$3.
-  \item \textbf{Estimator definition.} The full-event schema landed 2026-08-01 and
-        the loader now reads the whole event, so a pre-08-01 PET total is a
-        different estimator, not a differently-trained one.
-  \item \textbf{Background subtraction.} The quoted 4D ratio was taken with unit
-        measured weights and \emph{no} background subtraction (audit finding J21).
-        At this analysis's ${\sim}\SI{3}{\percent}$ background scale, leaving
-        background in biases PET high, so the underlying gap is \emph{larger} than
-        the struck value, by an amount that is a first-order estimate and
-        deliberately not quoted.
-\end{itemize}
-Note that the struck ratio is \emph{arithmetically correct} --- it is exactly the
-quotient of the two struck operands. It is withdrawn because its operands describe
-a training configuration that no longer exists, which is a failure a consistency
-check cannot detect. Both operands are inline literals rather than managed macros,
-so they are marked here at the point of use; the macro itself is flagged in
-\texttt{values.tex}. See
+\paragraph{No current PET--GBDT level of agreement is quoted.}
+The only such comparison that exists was taken with a two-iteration training,
+against the campaign's pinned three-iteration policy (\texttt{CLM-010},
+\texttt{CLM-012}, \textsc{frozen}); before the 2026-08-01 full-event schema change,
+which makes a pre-08-01 PET total a different estimator rather than a
+differently-trained one; and with unit measured weights and \emph{no} background
+subtraction (audit finding J21), which at this analysis's
+${\sim}\SI{3}{\percent}$ background scale biases PET high, so the underlying gap is
+\emph{larger} than the withdrawn figure. It has not been re-extracted under the
+pinned configuration, and the same three grounds withdraw the legacy closure level
+and the higher-epoch retrain response. Routed record:
 \texttt{docs/orchestration/INDEX-retracted-and-superseded-values.md}.
 
-What survives independently of the withdrawn comparison: the
-$\dead{\sim\SI{\petGbdtGap}{\percent}}$ data-side gap is not
-a normalization bug, but ordinary closure alone cannot assign it uniquely to
-training configuration. A higher-epoch retrain moved the PET total by
-$\dead{-1.6\%}$ (ratio $\dead{0.897}$) --- struck on the same grounds, being the
-same legacy run --- which demonstrated training sensitivity qualitatively. The
-recoil-only feature contract is an additional structural difference: at fixed
-recoil, the conditional muon distribution remains inherited from the prior.
+What survives independently of the withdrawn comparison is structural rather than
+numerical: ordinary closure alone cannot assign a data-side gap uniquely to training
+configuration, and the recoil-only feature contract is a further difference --- at
+fixed recoil, the conditional muon distribution remains inherited from the prior.
 
 \begin{figure}[H]
   \centering
@@ -105,11 +72,10 @@ recoil, the conditional muon distribution remains inherited from the prior.
   \caption{Recoil-only PET representation cross-check: absolutely-normalized
   4D cross section from the point-cloud unfold (full-statistics reweight of the generator sample) versus the
   production scalar GBDT result, projected on each axis. The PET/GBDT total
-  ratio is $\dead{\petRatio}$ --- \textbf{struck: \texttt{niter}${}={}$2 legacy, see
-  the scope note in the text}; ordinary closure was assessed to
-  $\sim$\,\dead{\SI{\petClosure}{\percent}} --- \textbf{struck: legacy two-iteration
-  self-consistency diagnostic, not a current validation} --- and it does not test
-  omitted muon dependence.}
+  offset shown is a two-iteration legacy result, withdrawn as a current comparison
+  (see text) and not quoted here as a level of agreement. Ordinary closure was
+  assessed only as a legacy two-iteration self-consistency diagnostic; no current
+  closure level is quoted, and it does not test omitted muon dependence.}
   \label{fig:petabs}
 \end{figure}
 
@@ -131,9 +97,7 @@ dispersion measurement built from 20 coherent replicas. It is not an
 independently verified covariance, it is not the statistical uncertainty of any
 PET result, and it is not paired with a PET central value; a larger ensemble
 would sharpen the dispersion estimate and would still not supply coverage
-evidence. These statements characterize the recoil-only estimator as method
-development and do not supply a publication uncertainty for it or for a joint
-muon--recoil estimator.
+evidence.
 
 The historical recoil-PET campaign produced vertical, retraining, ML,
 statistical and detector blocks on a common nominal.  That assembly is now
@@ -154,11 +118,8 @@ shifted weights and observables through the nominal cloud membership instead of
 regenerating the selected cloud for every lateral endpoint.  A replacement
 construction would need end-to-end joint nuisance/retraining shifts and the
 selection-complete FPS lateral samples, and would belong to a full-event PET
-estimator with its own statistical and ML ensembles.  That is method-development
-design and not a pending publication deliverable: no PET total covariance is
-adopted for publication.  This section therefore quotes only the recoil-PET
-central value and closure; no PET precision comparison is made and no PET
-uncertainty magnitude is quoted.
+estimator with its own statistical and ML ensembles.  This section therefore
+quotes only the recoil-PET central value and its closure.
 
 \subsection{Truth-cloud projection within the recoil cross-check}
 \label{sec:pet-projection}

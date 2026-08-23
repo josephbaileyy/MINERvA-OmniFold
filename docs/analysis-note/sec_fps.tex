@@ -41,7 +41,7 @@ what prior cost}; this section quantifies that.
 \end{figure}
 
 \paragraph{Validation battery.}
-Three results establish the extension (Fig.~\ref{fig:fpscmp}):
+Four results establish the extension (Fig.~\ref{fig:fpscmp}):
 \begin{enumerate}[itemsep=2pt]
   \item \textbf{Anchor.} Restricted to the published-phase-space sub-block,
         the extended-fiducial unfold reproduces a control unfold (standard
@@ -141,16 +141,8 @@ their populated-bin counts, prior-transfer envelope and retraining floor are
 not a final full-event measurement and are not used to argue that
 low-efficiency cells are data-constrained.
 
-A full-event estimator must satisfy two independent gates. It must first
-carry a distinguished muon and validated event context through separate
-observable reco/data and truth interfaces, and pass an omitted-variable stress
-closure that shifts muon kinematics at fixed recoil. It must also consume the
-canonical extended-fiducial event loops and $15\times19$ muon grid while
-preserving the enlarged truth denominator, native misses and unchanged
-reconstructed selection.
-
-Its validation would need to repeat the ordinary and stress closures,
-acceptance census, anchor, coverage and prior envelope before constructing
-statistical, ML, vertical, retraining-response and selection-complete-lateral
-uncertainties. Additional features can use more observed information, but
-cannot create detector information in zero-efficiency cells.
+A full-event estimator on this population would carry the requirements set out in
+\S\ref{sec:pet}, and additionally consume the canonical extended-fiducial event loops
+and $15\times19$ muon grid while preserving the enlarged truth denominator, native
+misses and unchanged reconstructed selection. Additional features can use more observed
+information, but cannot create detector information in zero-efficiency cells.
