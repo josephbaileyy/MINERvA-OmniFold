@@ -1,5 +1,11 @@
 # M-1…M-6 RE-MEASURED at the declared sha — and four of the six have MOVED
 
+> ## ⚠ THIS DOCUMENT IS THE `F-17(a)` FAIL (2026-08-23), and the grader is right about why.
+> **`M-5` below reports `REPO=` at `0 of 8` and reads as though the `.sh` half is repaired.** True of
+> `REPO=`; **false of the `.sh` route**, which still carries an absent environment closure and
+> `lib_member_resume.sh` bind-after-use in all eight launchers. `REPO=` was the cheap greppable half.
+> **Measurability chose the specification** — this campaign's own named error, committed here.
+
 **CITABLE FOR:** the state of the six measurements the review contract rests on, taken **2026-08-22
 after the deploy refresh**, on the pinned tree and on the canonical checkout.
 

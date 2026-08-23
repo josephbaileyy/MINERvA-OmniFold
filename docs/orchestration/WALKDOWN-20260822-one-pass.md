@@ -15,7 +15,32 @@ the *route through it*. Read them together: a step here is a pointer, and the po
 
 ---
 
-## STATUS — 2026-08-22, END OF THE AUTHORIZED PASS
+## STATUS — GATE 1 GRADED 2026-08-23 AND IT DOES NOT PASS
+
+**16 PASS / 2 FAIL / 0 NOT-EVALUABLE**, by a fresh non-builder
+(`GATE1-VERDICT-ROUND4-20260823-k0-execution-integrity.md`). Failing `F-2(a)` and `F-17(a)`.
+**The k=0 rehearsal is NOT launched; `PR-J1` does not become operative; Gate 2 cannot be graded.**
+
+**The decisive finding invalidates the shape of Step 1, not just two of its rows.** Every
+repo-relative shell file below `setup_salloc_env.sh` is **ABSENT from the declared code root**, so
+every launcher aborts at the activator with exit 1 — **`PR-02`'s gate passes and is the last thing
+that happens.** The builder lane re-measured every decisive claim and **contradicted none**
+(`CONFIRMATION-20260823-builder-response-to-gate1-round4.md`).
+
+**So Steps 1.1–1.5b are DONE-BUT-VOID rather than done.** They are correct work on a tree that
+cannot run. `PR-01`'s declaration is **true and void** and expires on the repair; `P-5` is
+incomplete; `M-5` is the `F-17(a)` FAIL. The table below is kept as the record of what was built.
+
+**THE NEXT STEP IS A JOSEPH DESIGN DECISION, not a repair this lane may take.** The minimal fix needs
+a **third root, `MNV_ENV_ROOT`**, mandatory with no default, plus a **digest-bound environment
+manifest** verified before the source (git structurally cannot bind those bytes), a fail-closed
+`PATH`/`PYTHONPATH`/`LD_LIBRARY_PATH` scrub, and the `_mr_lib` check moved above the source in all
+eight. That is the same class as ruling 17's two-root split. **Do not add `set -u`** — a documented
+job kill.
+
+---
+
+## STATUS — 2026-08-22, THE BUILD PASS (superseded above, kept as the record)
 
 **Every already-authorized step is DONE. What remains is Joseph-only or a fresh non-builder.**
 

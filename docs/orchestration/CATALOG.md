@@ -91,6 +91,19 @@ deliberately, because this file is a pointer-only router and not an exhaustive i
   recording an independent peer review whose four objections were all accepted. **Where this and a
   canonical artifact disagree, the canonical artifact wins.**
 
+### Gate-1 round 4 — GRADED 2026-08-23, and it DOES NOT PASS
+
+- [`GATE1-VERDICT-ROUND4-20260823-k0-execution-integrity.md`](GATE1-VERDICT-ROUND4-20260823-k0-execution-integrity.md)
+  — **the independent grade: GATE 1 DOES NOT PASS, 16 PASS / 2 FAIL / 0 NOT-EVALUABLE** (`F-2(a)`,
+  `F-17(a)`), by a fresh non-builder. **The decisive finding is not a filing gap:** every
+  repo-relative shell file below `setup_salloc_env.sh` is **ABSENT from the declared code root**, so
+  every launcher aborts at the activator with exit 1 before any preflight tool, guard or science
+  invocation runs. **The k=0 rehearsal is NOT launched and `PR-J1` does not become operative.**
+- [`CONFIRMATION-20260823-builder-response-to-gate1-round4.md`](CONFIRMATION-20260823-builder-response-to-gate1-round4.md)
+  — the builder lane's independent re-measurement of the decisive claims. **All reproduced; nothing
+  contradicted.** Records what the builder got wrong, and argues that one criterion (`F-8(a)`, the
+  builder's own `P-5`) was graded **too leniently**.
+
 ### Gate-1 round 4 — the k=0 execution-integrity repairs and their evidence
 
 Added 2026-08-22. **Gate 1 DOES NOT PASS and none of these close it.** `F-2(a)` is repaired in its

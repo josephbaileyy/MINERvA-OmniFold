@@ -1,5 +1,14 @@
 # DECLARATION — the k=0 submission sha, and A-2(a)–(g) filed against it
 
+> ## ⚠ TRUE AND VOID — read this before citing anything below (2026-08-23)
+> **Every measurement in this document stands**, and the round-4 grader independently reproduced the
+> digest (`cc00489464b0e803247eeb7cd90afa2f59f010340f6db64123e12b20eafc2239`, 775 files, `A2_CHECK_EXIT=0`).
+> **But the tree it declares CANNOT EXECUTE the k=0 path.** `setup_salloc_env.sh` sources files that
+> are **absent** from any tree satisfying A-2, so every launcher aborts at the activator with exit 1.
+> `F-1(a)` is **MET**; the declaration is **void in effect**, and `PR-01` **expires on the repair**.
+> See `GATE1-VERDICT-ROUND4-20260823-k0-execution-integrity.md` and
+> `CONFIRMATION-20260823-builder-response-to-gate1-round4.md`.
+
 **CITABLE FOR:** the single commit the k=0 execution tree is constituted at, and the seven A-2
 results measured **on that tree**. This is the referent that `F-1(a)` said did not exist.
 

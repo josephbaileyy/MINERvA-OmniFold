@@ -610,6 +610,29 @@ checker"* — and the checker used is **pure git** (`rev-parse HEAD:<f>` vs `has
 
 ## THE TRANSITIVE ENVIRONMENT TRUST BOUNDARY — Joseph's instruction, and it is a GATE-1 BLOCKER
 
+> ### ⚠ CORRECTED 2026-08-23: this section UNDERSTATED the defect in three ways.
+> Graded by a fresh non-builder and **independently re-measured by the builder lane; nothing was
+> contradicted.**
+> 1. **"Two untracked scripts" is wrong.** There are **three** `SCRIPT_DIR` references
+>    (`:18` source, `:20` `export MINERVA_PREFIX`, `:21` source) and **five** closure files across
+>    two hops, plus **12** conda `activate.d` scripts, plus `ROOT628_PREFIX`/`ROOT628_CONDA` being
+>    `${VAR:-default}` and therefore env-overridable — so verifying the activator's bytes does not
+>    determine which conda executes.
+> 2. **"Unbound" is the wrong word. It is UNSATISFIED.** Both hop-1 files are **ABSENT** from
+>    `k0r2/clean` @ `6113a34d`. Measured on `saul` (bash 4.4.23), replicating the preamble:
+>    `line 18: … No such file or directory`, **`REPRO_EXIT=1`**. Every launcher dies at the activator
+>    before any preflight tool, guard or science invocation. **`PR-02`'s gate passes and is the last
+>    thing that happens.**
+> 3. **It is STRUCTURAL, and the content is ADVERSE.** `.gitignore:48`/`:71` mean **any** tree
+>    satisfying A-2 necessarily lacks the closure. And `unbinned_unfolding/build/setup.sh:3-5`
+>    exports the canonical checkout onto **`PATH`, `PYTHONPATH` AND `LD_LIBRARY_PATH`** — F-2's
+>    substantive prohibition violated by content, with the Python guard blind to two of the three.
+>
+> **Consequence:** disclosure and first-hop binding cannot close this, and neither can a copy —
+> A-2(b) would still emit zero lines and A-2(f) still excludes the paths. **Green instruments over
+> unmeasured bytes.** The repair needs a **third root (`MNV_ENV_ROOT`)** and a digest-bound
+> environment manifest substituting for git. **That is a design decision and it is Joseph's.**
+
 > "Do not call Gate 1 closed until the transitive environment trust boundary is explicitly settled and
 > a fresh non-builder passes it."
 
