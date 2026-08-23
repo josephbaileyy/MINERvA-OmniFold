@@ -1526,7 +1526,12 @@ construction, estimator training, and cross-section extraction --- on an indepen
 $\mathrm{Poisson}(1)$ bootstrap of \emph{all three} contributing inventories: one global factor per
 data event, per signal-MC event and per background-MC event, drawn from distinct reproducible streams
 before any training subset is taken and thereafter reused wherever that event appears
-(\S\ref{app:poisson}). The data and background factors rebuild each member's background-subtracted
+(\S\ref{app:poisson}). The three streams sit at offsets $s$, $s+10^{7}$ and $s+2{\times}10^{7}$ on
+the replica seed $s$, and the signal stream is drawn through the same primitive the recoil-only
+replicas use, so those two contracts are bit-consistent and share their first two offsets. A reader
+checking this against the code should identify the streams \emph{by offset}: the full-event loader
+draws the background factor a second time as a verification, so a count of draws in that one file is
+right here for the wrong reason, and the signal draw is not in that file at all. The data and background factors rebuild each member's background-subtracted
 target through the Stay-Positive refinement rather than rescaling the nominal target, and the signal
 factors follow the signal MC everywhere it is used. This is a \emph{third} stream relative to the
 scalar bootstrap of \S\ref{sec:bootstrap}, which draws data and MC factors only: the full-event
