@@ -1,0 +1,36 @@
+{
+ "schema": "oi126-successor-R5-aggregate-guard-and-independence-limit-v1",
+ "supplements": "97c9b0d9",
+ "status": "PREDECLARED while 57483483 is still running and before any threshold-choice-dependent case has been observed",
+ "AGGREGATE_GUARD_predeclared": {
+  "why_needed": "The absolute 2.4e-3 bar is biased in OPPOSITE directions per member. Measured own-noise sd: replica_00 6.17e-4 (bar = 3.89 sd, LOOSER than a 2-sigma within-noise test, so it can PASS a member whose dL is outside its own noise); replica_49 7.276e-4 (3.30 sd); replica_45 1.485e-3 (bar = 1.62 sd, STRICTER, so it can FAIL a member whose dL is inside its own noise). Factor 2.4 across three members. Quiet members get a CONFIRM-ward bias, noisy members an away-from-CONFIRM bias.",
+  "statistic": "count of members whose verdict DIFFERS between the absolute bar and their own-noise framing",
+  "ROBUST": "<= 1 of 6 -- the aggregate verdict stands as a measurement of the mechanism",
+  "QUALIFIED": "2 of 6 -- aggregate stands with the dependent members named inline",
+  "BOUNDARY_DEPENDENT": ">= 3 of 6 -- the sweep CANNOT support any claim about the mechanism; report as an R4-class outcome at the AGGREGATE level",
+  "taint_basis_stated": "Only two members' dL are known (replica_00 at 11.04 thresholds / 42.95 sd, replica_49 at 2.17 thresholds / 7.15 sd) and NEITHER is threshold-choice-dependent under either framing. So this boundary is set on a count of which zero instances have been observed."
+ },
+ "INDEPENDENCE_LIMIT_the_read_set_is_smaller_than_six": {
+  "shared_origins_to_count_once": [
+   "R2's leading-mode see-saw loading and replica_00's structural PASS -- replica_00 is one of the 50 members whose SVD produced that loading. One family-level loading plus one member-level realisation FROM THAT SAME FAMILY. More than a restatement (the realized displacement is a different object from the leading eigenvector), less than two measurements. FLAGGED SYMMETRICALLY because this is the only CONFIRMING result of the day.",
+   "The iteration sweep's Q(2) reproducing R1's primary exactly is a deliberate internal cross-check, not a second result.",
+   "R3's '4:1 predicted, 4.05 measured' matched ONE of three available statistics for the same amplitude ratio (2.07 peak-to-trough, 4.05 unweighted sd, 4.77 mass-weighted) -- the band-factor multiplicity problem inside R3's own agreement.",
+   "R2's UNRESOLVED and replica_49's structural failure are the same fact seen twice: a leading mode at 75.8% of variance necessarily leaves off-mode structure, and replica_49's (-,-) signs are some of it."
+  ],
+  "count": "four shared origins on six reads",
+  "consequence": "THE EFFECTIVE NUMBER OF INDEPENDENT MEASUREMENTS IS MATERIALLY FEWER THAN SIX. A later summary of 'six diagnostics, two confirmed' would be counting a family loading and a member drawn from that family as two, and a statistic against its own reproduction as two. State the smaller number rather than letting a later reader discover it.",
+  "where_the_read_set_actually_stands": "R1 CONFIRM but on a NEIGHBOURING quantity to the one the mechanism needs (pointwise per-column Fisher density, not curvature along the realized displacement). R3 CONFIRM for SEPARABILITY only and explicitly NOT localising (band 42.21 against control 45.09). R2 UNRESOLVED. R4 cannot answer its own question. Iteration sweep UNRESOLVED with a decomposition (62% of the log-collapse present at iteration 0). R5 possibly unable to answer, per the barrier ruling. Defensible, not a failure, and a long way from a mechanism -- the write-up must not lead with the two CONFIRMs."
+ },
+ "THE_REVIEW_STRUCTURE_IS_ITSELF_EVIDENCE_AND_MUST_BE_RECORDED": {
+  "the_measured_fact": "Four of six mediator errors and three executing-lane errors today ran in the direction of whatever the author was arguing. In the latest instance the executing lane had ALREADY WRITTEN DOWN the lesson within the hour and repeated the error anyway; the pairing caught it, the written lesson did not.",
+  "consequence": "The error rate absent the adversarial pairing is comparable to the results themselves, so the review structure is a fact a later reader needs in order to evaluate the numbers -- not a process nicety to omit for brevity.",
+  "required_in_the_writeup": "a short factual section recording that these reads were produced under adversarial review with objections required BEFORE runs, enumerating what it caught: the arithmetically-empty R1 window, the effect-selected 63-cell set, the undeclared R2 sign convention, the endpoint-only CONFIRM criterion, the family-derived structural sign applied to a deliberately atypical member, the one-directional OPPOSITE claim, the pooled power statistic, and two magnitude mechanisms retracted by their own authors.",
+  "the_common_property": "NONE of these produced a wrong number. Every one would have produced a wrong or empty QUESTION.",
+  "tone_instruction": "Written as fact, not self-congratulation. A reader who does not know the reads were adversarially specified will over-trust the ones that passed and under-trust the ones that returned UNRESOLVED."
+ },
+ "UNCHANGED": [
+  "No PET covariance adopted. The 2026-08-20 ruling is not reopened and nothing here bears on coverage.",
+  "Gate 4 and Gate 6 untouched.",
+  "'The nominal is the outlier' remains forbidden pending the reciprocal arm."
+ ]
+}
