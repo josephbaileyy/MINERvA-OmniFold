@@ -163,6 +163,40 @@ not complete in 26 minutes."* It does complete, in about 30, and it returns **`r
 intact.** A slow check reads as an inconvenience; a failing one is a finding. The itemized list of
 which bindings break is **owed, not captured.**
 
+## ROUND-7 VERDICT AND THE F-17(a) FIX (appended 2026-08-23, after the terminal regrade)
+
+The round-7 regrade returned **17 PASS / 1 FAIL / 0 NOT-EVALUABLE** — `F-2(a)` and `F-14` **pass**;
+`F-17(a)` fails. Verdict `GATE1-VERDICT-ROUND7-20260823-k0-execution-integrity.md`, sha256
+`3173c83c76efae4e07dbfaacad2cea68f4b837f01c676d74aefd03f9ae2c760a`, 439 lines.
+
+**The failure was in this packet's own instrument and the grader was right.** `measure_m1_m6.py`
+matched the canonical root by **exact equality**, so canonical M-1 reported **five** literals where
+there are **seven**: `bootstrap_nd.py:10` and `seedscan_split.py:21` hold it as
+`_ND = ".../MINERvA-OmniFold/nd-unfolding"` — the **subpath** form — each feeding
+`sys.path.insert(0, _ND)` with three repository modules straight after. Two of ten rows read
+`literal=-` for files carrying an active rooted insert.
+
+**Fixed:** `canonical_form()` now returns `exact` / `subpath` / `None`, bounded at
+**exact-or-followed-by-a-separator** so a real sibling repository (`…-Analysis-Note`) is *not*
+matched — over-broad is not the safe direction either. The scan now walks **every** string constant,
+not only assignment right-hand sides, so a bare inline path is visible too. New arms in
+`docs/orchestration/test_measure_m1_m6.py`: **9 pass; reverting the detector to exact equality fails
+3.** Re-measured: **candidate 4 (unchanged), canonical 7.**
+
+**The root cause is not the missing branch.** The identical exact-match/substring failure was found
+and fixed in `m6` **earlier the same day, in this same file**, and the sibling function four
+definitions above was never swept — and the instrument shipped with **no tests at all**. A known
+limit is now stated in the filing rather than left to be discovered: it counts **literals, not
+computed paths**.
+
+The grader also **corrected the commission's framing in the builder's favour** — `e93364d1` touched
+only `MANIFEST.tsv`, so executable bytes froze earlier still — and reported two of its own harness
+errors against its own interest.
+
+**A separate live hazard, not part of this repair:** the candidate branch carries a **575-line
+superseded copy** of the operative rubric (`80402f75…`) against main's authoritative **1160 lines**
+(`e0fb342b6466…`). **Grading from the branch would be void.** Unrepaired; flagged.
+
 ## What is NOT claimed
 
 - **Gate 1 does not pass**, and this packet does not assert that `F-2(a)` or `F-17(a)` is closed.

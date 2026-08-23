@@ -28,7 +28,9 @@ of them is true of the thing that executes.
 
 ## THE INSTRUMENT
 
-`docs/orchestration/measure_m1_m6.py`. The tree is a **mandatory argument with no default** — every
+`docs/orchestration/measure_m1_m6.py`, with arms in `docs/orchestration/test_measure_m1_m6.py`
+(9 arms; reverting the canonical-root detector to exact equality fails 3 of them). The tree is a
+**mandatory argument with no default** — every
 number here is tree-dependent. It **refuses on CPython < 3.10** rather than degrading: on the
 pre-conda 3.6.15 a string literal parses to `ast.Str`, not `ast.Constant`, so the M-1 scan would print
 a clean, silent, wrong **zero**. Refusal verified on saul (`rc=1`).
@@ -71,9 +73,34 @@ Interpreter for every number below: **CPython 3.11.14**, `…/.conda/envs/root_6
 
 ### CANONICAL CHECKOUT
 
-**FIVE surviving literals, all `_REPO`, none `_DATA_ROOT`** — the unrepaired world:
-`unified_throw_cov.py:42`, `unified_throw_cov_5d.py:24`, `unfold_nd_omnifold_unbinned.py:47`,
-`sweep_bank_5d.py:32`, `adopt_unified_5d.py:35`.
+**SEVEN surviving literals, none `_DATA_ROOT`** — the unrepaired world:
+
+| file | name | line | form | insert | repo modules after |
+|---|---|---|---|---|---|
+| `bootstrap_nd.py` | `_ND` | :10 | **subpath** | :11 | 3 |
+| `seedscan_split.py` | `_ND` | :21 | **subpath** | :23 | 3 |
+| `unified_throw_cov.py` | `_REPO` | :42 | exact | :45 | 5 |
+| `unified_throw_cov_5d.py` | `_REPO` | :24 | exact | :27 | 3 |
+| `unfold_nd_omnifold_unbinned.py` | `_REPO` | :47 | exact | :52 | 4 |
+| `sweep_bank_5d.py` | `_REPO` | :32 | exact | :35 | 6 |
+| `adopt_unified_5d.py` | `_REPO` | :35 | exact | :38 | 0 |
+
+> **⚠ THIS COUNT WAS FIVE UNTIL 2026-08-23 AND FIVE WAS WRONG — round-7 `F-17(a)`.** The instrument
+> matched the root by **exact equality**, so it could not see
+> `_ND = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding"` — the **subpath** form, which is
+> what `bootstrap_nd.py` and `seedscan_split.py` use. Two of ten rows printed `literal=-` for files
+> that carry an **active rooted insert** with three repository modules imported straight after, and
+> nothing disclosed the blind spot. The error **understated** the hazard.
+>
+> The root cause is not the missing branch. The same exact-match/substring failure was found and
+> fixed in `m6` **earlier the same day, in this same file**, and the sibling function four
+> definitions above was never swept. `measure_m1_m6.py` also had **no tests at all**;
+> `test_measure_m1_m6.py` now pins both directions, including that
+> `…/MINERvA-OmniFold-Analysis-Note` — a real sibling repository — must **not** match, which a bare
+> `startswith` would have got wrong in the opposite direction.
+>
+> **The CANDIDATE column did not move: four, all exact form.** Verified independently — no file in
+> the ten carries a canonical subpath literal on that tree.
 
 **`unified_throw_cov.py:42` on this tree is the hazardous one and is NOT inert.** `_REPO` at `:42`
 feeds `sys.path.insert(0, …)` at `:45`, and **five** repository modules are imported after it
@@ -172,7 +199,8 @@ it found.
 | # | measurement | difference | direction |
 |---|---|---|---|
 | 1 | **M-1** | the filing had **nine** rows and said "three"; there are **ten** and **four** | **against the builder** — an entrypoint was missing from the filing entirely |
-| 2 | **M-1** | candidate 3 `_DATA_ROOT` + 1 inert `_REPO`; canonical **5 `_REPO`**, one of them active with 5 repo imports after it | the trees disagree; only the candidate executes |
+| 2 | **M-1** | candidate 3 `_DATA_ROOT` + 1 inert `_REPO`; canonical **7**, two of them subpath-form `_ND` with active inserts | the trees disagree; only the candidate executes |
+| 2b | **M-1 instrument** | canonical count was reported as **5**; it is **7**. Exact-equality match, no subpath branch, no tests | **against the builder** — the round-7 `F-17(a)` failure, fixed and pinned in both directions |
 | 3 | **M-3** | candidate `rc=0`; canonical **`rc=1` on exactly one binding** — a stale, untracked PET run receipt that cannot exist on the candidate | **against the builder** — the previous filing recorded M-3 as simply "UNCHANGED", and an earlier draft of *this* filing recorded the canonical run as merely slow |
 | 4 | **M-4** | canonical dirty `721 → 722` | neither; a drifting quantity |
 | 5 | **M-5** | candidate `0 of 8`; canonical `8 of 8` | reported both ways this time |
@@ -195,6 +223,14 @@ the change. That comparison was discarded rather than reported.
 **Failure sets identical — zero regressions and zero accidental fixes** (`comm` both directions
 empty). The `+10 passed` are the new parity arms; the `+62 subtests` are their per-launcher and
 per-library loops. The 13 are pre-existing at `fabeedc2` and are not touched by this change.
+
+## A LIMIT OF THIS INSTRUMENT, STATED RATHER THAN DISCOVERED
+
+**It counts string LITERALS, not computed paths.** A file that assembled the canonical root by
+concatenation or `os.path.join` would carry the hazard and show zero literals here. **No such
+construction exists in the ten M-1 files on either tree** — checked, not assumed — but if one
+appears, this instrument goes blind to it. That is the same shape as the defect above, named in
+advance this time.
 
 ## EXPIRY
 
