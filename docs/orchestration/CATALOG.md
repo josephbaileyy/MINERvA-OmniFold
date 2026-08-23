@@ -4,6 +4,11 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ## Current work
 
+- **ROUND-7 REPAIR PACKET (2026-08-23), awaiting the terminal regrade:**
+  [`PACKET-20260823-round7-f2a-parity-and-f17a-filing.md`](PACKET-20260823-round7-f2a-parity-and-f17a-filing.md)
+  — final candidate `e93364d1…`, deployed, `porcelain=0`, 0 writable. **Gate 1 is NOT claimed passed.**
+
+
 - **M-1…M-6, re-measured 2026-08-23 on BOTH trees:**
   [`MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md`](MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md)
   — the `F-17(a)` filing repair. Ten M-1 rows (the previous filing had nine and dropped
