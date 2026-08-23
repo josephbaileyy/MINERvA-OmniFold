@@ -1,0 +1,128 @@
+{
+  "receipt_id": "RECEIPT-k0-a54038b2-20260823T185046Z-k0-legs-1-5-submission",
+  "kind": "slurm-submission",
+  "created_utc": "2026-08-23T18:53:59Z",
+  "authorization": {
+    "principal": "Joseph (PI)",
+    "date": "2026-08-23",
+    "scope": "exactly the seven sbatch submissions constituting logical legs 1-5 for MNV_EST_SEED_OFFSET=0",
+    "explicitly_prohibited": [
+      "sbatch_finalize_5d_bkgaware_gpu.sh / leg 6",
+      "any member k != 0",
+      "the 50-member family",
+      "automatic resubmission, repair, or adoption"
+    ],
+    "gate": "Gate 1 PASSED round 9, 18/0/0, GATE1-VERDICT-ROUND9-20260823 sha256 d5bfb863e534179eed36be7c2cd1952a7d1b5962ce22d1d2add99f9d52e9200d"
+  },
+  "run": {
+    "run_id": "k0-a54038b2-20260823T185046Z",
+    "run_root": "/pscratch/sd/j/josephrb/k0r2/runs/k0-a54038b2-20260823T185046Z"
+  },
+  "execution_object": {
+    "declared_sha": "a54038b21fdebfc975bec452a05866ffa571a36c",
+    "measured_head": "a54038b21fdebfc975bec452a05866ffa571a36c",
+    "porcelain_lines": 0,
+    "writable_files_independent_walk": 0,
+    "tracked_source_files": 780,
+    "listing_sha256": "1b45da558929b0ec6eedbc56504a440252e39a9270e6d8f9796c02eb3d2895ad",
+    "source_manifest_path": "/pscratch/sd/j/josephrb/k0r2/runs/k0-a54038b2-20260823T185046Z/source-manifest.json",
+    "source_manifest_sha256": "f2b0a9ab24e6ea3edecd6d9c10ec70cd0f856b98d4501496e2899f6430d2ec4c",
+    "interpreter": "/global/u2/j/josephrb/.conda/envs/root_6_28/bin/python3 = Python 3.11.14"
+  },
+  "roots": {
+    "MNV_CODE_ROOT": "/pscratch/sd/j/josephrb/k0r2/clean",
+    "MNV_DATA_ROOT": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "MNV_ENV_ROOT": "/pscratch/sd/j/josephrb/k0env",
+    "MNV_CONDA_PREFIX": "/global/u2/j/josephrb/.conda/envs/root_6_28",
+    "MNV_EST_SEED_OFFSET": "0",
+    "MNV_LAUNCHER_DIR": "/pscratch/sd/j/josephrb/k0r2/clean/nd-unfolding",
+    "MNV_SOURCE_MANIFEST": "/pscratch/sd/j/josephrb/k0r2/runs/k0-a54038b2-20260823T185046Z/source-manifest.json",
+    "MNV_GUARD_INVENTORY_DIR": "/pscratch/sd/j/josephrb/k0r2/runs/k0-a54038b2-20260823T185046Z/guard-inventories"
+  },
+  "preconditions_measured": {
+    "member_local_products_before": 0,
+    "member_output_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/mii/member_k000000",
+    "member_scoping_executed_not_assumed": "mr_prefix seedscan_split_5d/res_split_7.npz -> mii/member_k000000/seedscan_split_5d/res_split_7.npz at MNV_EST_SEED_OFFSET=0",
+    "archive_namespace_is_a_different_path": "nd-unfolding/seedscan_split_5d holds 24 npz + 24 .done from 2026-07-13; NOT written by this run",
+    "quarantine": "already complete; all six sha256 recomputed at the far end and matched RECEIPT-20260822-quarantine-member-k000000-stale-replicas.json; production globs see zero; NOT repeated",
+    "pscratch": "15.99/20.00 TiB = 79.9% before submit; one member declared 47.7 GB",
+    "conflicting_jobs": "none; 57275989 is an unrelated held cron job from 2026-08-20 and was not altered"
+  },
+  "legs": [
+    {
+      "leg": "1-bootstrap",
+      "launcher_absolute_path": "/pscratch/sd/j/josephrb/k0r2/clean/nd-unfolding/sbatch_bootstrap_5d_gpu.sh",
+      "jobid": "57481855",
+      "array_spec": "3-100%32",
+      "dependency": "-",
+      "time_limit": "03:00:00",
+      "partition": "shared_gpu_ss11",
+      "submitted_utc": "2026-08-23T18:53:10Z"
+    },
+    {
+      "leg": "2-seedscan",
+      "launcher_absolute_path": "/pscratch/sd/j/josephrb/k0r2/clean/nd-unfolding/sbatch_seedscan_split_5d.sh",
+      "jobid": "57481856",
+      "array_spec": "3-24%24",
+      "dependency": "-",
+      "time_limit": "03:00:00",
+      "partition": "shared_milan_ss11",
+      "submitted_utc": "2026-08-23T18:53:11Z"
+    },
+    {
+      "leg": "3-detector",
+      "launcher_absolute_path": "/pscratch/sd/j/josephrb/k0r2/clean/nd-unfolding/sbatch_unfold_5d_detector_bkgaware_gpu.sh",
+      "jobid": "57481857",
+      "array_spec": "0-18%8",
+      "dependency": "-",
+      "time_limit": "04:00:00",
+      "partition": "shared_gpu_ss11",
+      "submitted_utc": "2026-08-23T18:53:11Z"
+    },
+    {
+      "leg": "5a-uthrow-run",
+      "launcher_absolute_path": "/pscratch/sd/j/josephrb/k0r2/clean/nd-unfolding/sbatch_uthrow_run_5d_fast.sh",
+      "jobid": "57481858",
+      "array_spec": "0-39%40",
+      "dependency": "-",
+      "time_limit": "06:00:00",
+      "partition": "shared_milan_ss11",
+      "submitted_utc": "2026-08-23T18:53:11Z"
+    },
+    {
+      "leg": "5b-uthrow-block",
+      "launcher_absolute_path": "/pscratch/sd/j/josephrb/k0r2/clean/nd-unfolding/sbatch_uthrow_block_5d.sh",
+      "jobid": "57481859",
+      "array_spec": "0-20%10",
+      "dependency": "-",
+      "time_limit": "12:00:00",
+      "partition": "shared_milan_ss11",
+      "submitted_utc": "2026-08-23T18:53:11Z"
+    },
+    {
+      "leg": "4-sweep",
+      "launcher_absolute_path": "/pscratch/sd/j/josephrb/k0r2/clean/nd-unfolding/sbatch_sweep_bank_5d_run_bkgaware_gpu.sh",
+      "jobid": "57481860",
+      "array_spec": "1-169%48",
+      "dependency": "afterok:57481857",
+      "time_limit": "01:30:00",
+      "partition": "shared_gpu_ss11",
+      "submitted_utc": "2026-08-23T18:53:11Z"
+    },
+    {
+      "leg": "5c-uthrow-combine",
+      "launcher_absolute_path": "/pscratch/sd/j/josephrb/k0r2/clean/nd-unfolding/sbatch_uthrow_combine_5d_fast.sh",
+      "jobid": "57481861",
+      "array_spec": "(non-array)",
+      "dependency": "afterok:57481858:57481859",
+      "time_limit": "03:00:00",
+      "partition": "shared_milan_ss11",
+      "submitted_utc": "2026-08-23T18:53:11Z"
+    }
+  ],
+  "not_established_by_this_receipt": [
+    "Gate 2",
+    "publication readiness",
+    "any result about the products"
+  ]
+}
