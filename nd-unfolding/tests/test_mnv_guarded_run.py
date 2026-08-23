@@ -415,6 +415,12 @@ class TheProbeMeasurement(TenModuleFixture):
         the same configuration a later walk legitimately returns a larger number. So
         the count is asserted only against a fixture whose measurement point is fixed
         here, and the SET is what carries across.
+
+    CONFIRMED BY THE ORIGINAL IMPLEMENTER 2026-08-23, which is what makes this a
+    reproduction and not two programs agreeing by luck: the probe's 10 and this
+    fixture's 11 differ by EXACTLY the `__main__` term and nothing else. Its `croot()`
+    returned None for `__main__` because the probe sat outside every checkout; this
+    wrapper sits inside one. Two host programs, one enumeration.
     """
 
     def test_the_child_tree_contributes_ten_modules_under_one_root(self):
