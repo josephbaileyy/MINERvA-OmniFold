@@ -18,14 +18,24 @@ not a result. The builder does not grade it.
 
 Deployment path is `canonical → k0r2/bare.git → k0r2/clean`, **fast-forward only**.
 
-**A NOTE ON WHICH SHA IS "FINAL", because a document cannot name its own commit.** `e93364d1` is the
-last sha at which any **executable** file changed — the eight launchers, the test file, the
-measurement tool. Commits after it are this packet, a correction inside the M-1…M-6 filing, and the
-regenerated manifest/catalog views. **The deployed sha is whatever `git -C /pscratch/sd/j/josephrb/
-k0r2/clean rev-parse HEAD` returns, and it is the one to grade;** verify with
-`git diff --name-only e93364d1..HEAD`, which must list **only** files under `docs/orchestration/`.
-If that command ever lists an `.sh` or a test, this note is void and the measurements above were
-taken on different bytes than the deployed ones.
+**WHICH BYTES FROZE WHEN — three points, not one, because a document cannot name its own commit.**
+
+| froze at | what |
+|---|---|
+| `60cf728d` | **the eight launchers and `test_k0_launcher_two_roots.py`.** Unchanged since. `git diff --name-only 60cf728d..HEAD -- 'nd-unfolding/**'` must be **empty**. |
+| `1d2b795d` | **`measure_m1_m6.py` and `test_measure_m1_m6.py`** — the round-7 `F-17(a)` fix. Corrected here by the grader: an earlier note claimed `e93364d1`, which touched only `MANIFEST.tsv`, and then the instrument moved again for this fix. |
+| HEAD | this packet, the filing, and regenerated views. |
+
+**The deployed sha is whatever `git -C /pscratch/sd/j/josephrb/k0r2/clean rev-parse HEAD` returns,
+and it is the one to grade.** Verify the launcher freeze with the command above; if it ever lists a
+file, the `F-2(a)` evidence was taken on different bytes than the deployed ones and this note is
+void. **`docs/orchestration/` is not a synonym for "not executable"** — the M-1…M-6 instrument lives
+there and it *is* executed, which is exactly the distinction an earlier draft of this note blurred.
+
+**GRADE AGAINST `main`'s RUBRIC, NOT THE BRANCH'S.** The build branch carries a **575-line
+superseded** copy of `REVIEW-CONTRACT-20260822-k0-execution-integrity.md` (`80402f75…`); the
+operative one is on `main` at **1160 lines**, `e0fb342b6466ab9bb7fbcdef4b7a65a40351a2a0b22ab8f4fb534486dd5f1173`.
+
 
 ## Authorization
 
