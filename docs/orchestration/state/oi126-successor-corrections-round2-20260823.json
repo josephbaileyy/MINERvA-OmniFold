@@ -1,0 +1,68 @@
+{
+ "schema": "oi126-successor-corrections-round2-v1",
+ "corrects": [
+  "f1e2f10e (PREDECLARATION R1 sourcing and the columns/GeV ambiguity)",
+  "f6006d1a (its band-factor list used an effect-selected set without saying so)"
+ ],
+ "found_by": "the executing lane's PRE-RUN objections, before any statistic was computed. Two of the defects are mine.",
+ "C1_R1_SOURCING_WAS_WRONG_pull_is_NOT_weights_push": {
+  "what_the_predeclaration_said": "'from the nominal's existing weights npz plus truth scalars'",
+  "why_wrong": "That npz carries exactly one per-row float array, weights_push. The quantity in the step-2 curvature W*pull/(1+pull)^2 is the step-2 CLASS-WEIGHT RATIO, i.e. r1, and omnifold.py:200 is weights_pull = weights_push * r1, so pull and push are different objects. The record keeps them as separate fields: at iteration 2, pull_mean_w_reco = 0.9676806416024684 against push_mean_w_reco = 1.0840529523260116.",
+  "the_lane_s_bound_on_push_is_CORRECT_and_worth_keeping": "f(w)=w/(1+w)^2 over the observed push range [0.367695, 8.012750] attains 0.196566 to 0.098643 with max 0.25 at w=1, so ANY ratio of column means of f on PUSH is bounded by 0.25/0.098643 = 2.5344. A 5-10x window is unreachable on push. Anyone running this statistic on push would read a null as physics.",
+  "but_on_r1_the_window_is_reachable": {
+   "source": "nd-unfolding/pet/fullevent_nominal_annealed/STEP1_TRAJECTORY.slurm-56691812.json, r1_percentiles_w_unweighted at iteration 2, read here not relayed",
+   "r1_percentiles": {
+    "1": 0.0034166197758167985,
+    "25": 0.021152290515601635,
+    "50": 0.1137533038854599,
+    "75": 0.6095033288002014,
+    "95": 2.2386770248413086,
+    "99": 9.924538326263434
+   },
+   "r1_weight_mass_below_one": 0.9114042079488984,
+   "attainable_ratio": "f(0.0034166)=0.0033934 against f(1)=0.25 gives 73.7x. 5x needs typical r1 near 0.05; 12x near 0.021.",
+   "verdict": "R1 is RUNNABLE and its CONFIRM branch is NOT empty. The magnitude mechanism is NOT settled by arithmetic."
+  },
+  "consequence": "per-row r1 is NOT persisted, so R1 requires a forward pass through the step-1 checkpoint. R1 moves from the free-numpy class to the cheap-TF class and is bundled with R3 on the same checkpoint."
+ },
+ "C2_THE_63_CELL_BAND_IS_EFFECT_SELECTED_AND_MY_OWN_RECEIPT_USED_IT": {
+  "evidence": "RECEIPT-20260815-cstat-tail-geometry-and-weighting-correction.json names the field `the_tail.n_cells_ratio_gt_1p5 = 63`, and carries `the_63` as a region key DISTINCT from `band_cols_10_15` (n = 84). So the 63 is selected by per-cell ratio > 1.5, not geometrically.",
+  "why_it_matters": "Any amplitude statistic computed on the 63 conditions on the dependent variable and is biased high by construction. f6006d1a listed values from the 63 alongside geometric ones without recording that one of them is post-selected.",
+  "there_are_FOUR_band_definitions_in_the_record": [
+   "63 = effect-selected, ratio > 1.5",
+   "84 = geometric columns 10-15",
+   "70 = geometric columns 10-14, excluding the [15,20) zero crossing",
+   "per-column profiles"
+  ],
+  "ruling_for_the_successor_reads": "Use GEOMETRIC sets only. Band = columns 10-14 (70 cells); tail = columns 16-18 (45). Column 15 [15,20) is excluded deliberately: it is the zero crossing at ratio 1.005 and the receipt itself notes those cells dilute the band statistic. NEVER use the 63 for an amplitude correlation."
+ },
+ "C3_R2_SIGN_CONVENTION_WAS_UNDECLARED_AND_DECIDED_THE_VERDICT": {
+  "the_defect": "Band has nominal ABOVE family and tail BELOW, so log(member/nominal) has opposite sign in the two regions. A perfectly rank-1 family with one mode loading oppositely returns corr near -1 on SIGNED amplitudes, which fails CONFIRM (needs >= +0.5) and fails REFUTE (|corr| >= 0.2), landing UNRESOLVED for a convention reason rather than a physics one.",
+  "adjudicated": "MAGNITUDES. a_region(k) = sign(family-mean deviation in that region) * mean over that region's cells of log(member_k/nominal), with the sign fixed ONCE from the family and not per member. Report the raw signed corr and |corr| alongside so the convention is auditable."
+ },
+ "C4_columns_meant_GeV_not_indices": {
+  "the_ambiguity": "f1e2f10e and f6006d1a both use 'columns' for indices AND for GeV ranges.",
+  "resolved_decisively_by_the_lane": "indices 7,8,9 are 4.0-4.5 / 4.5-5.0 / 5.0-6.0 GeV, all INSIDE the 'p_parallel < 6' control set, so the index reading makes R1's CONFIRM compare a subset to its own superset. GeV is the only coherent reading."
+ },
+ "C5_R3_checkpoint_named_on_a_RECORDED_basis": {
+  "file": "OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5",
+  "why_not_preference": "The trajectory file's checkpoints block designates it: step1_iter2 carries provenance_tier = 'final(BEN-043)' while step1_iter0, step1_iter1 and step2_iter1 all carry 'best-epoch'.",
+  "phrase_retracted": "'the promoted nominal step-1 checkpoint' -- nothing here is promoted (P5A-ANNEALED-UNPROMOTED, nominal_pet_training_allowed false). Read as 'the nominal arm's terminal step-1 fit'.",
+  "ADDITION_authorized": "Run the step-2 Jacobian on the same pass. Step-2's FiLM takes only (pt, pparallel), so the column-count account predicts a ratio near 1 there against ~4 at step 1. That CONTRAST discriminates the two lanes' opposite redundancy claims, which the step-1 number alone cannot. Declared as a contrast with no invented numeric boundary."
+ },
+ "C6_a_FIFTH_object_reads_as_the_nominal": {
+  "new": "central_vector (285,) sits in GATE5_CSTAT_N50.npz beside reported_bin_mask (285,) and is NOT a cross section -- central_vector/xsec has median 6.18e+35. It is correctly masked and correctly shaped, so it reads as the natural choice.",
+  "the_full_set_now": [
+   "central_vector",
+   "LANED_CSTAT_CROSSCHECK cv (= the replica mean)",
+   "GATE5_CSTAT_N50 mean (the replica mean)",
+   "the unpromoted P5A extraction npz (the real nominal)",
+   "the push payload"
+  ]
+ },
+ "UNCHANGED": [
+  "No GPU sweep. R1's gate is live rather than settled, so it must be reported and adjudicated.",
+  "R3's 2.0-3.0 hold stands: report and stop, do not re-centre.",
+  "No PET covariance adopted; the 2026-08-20 ruling is not reopened."
+ ]
+}
