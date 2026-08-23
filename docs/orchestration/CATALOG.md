@@ -79,6 +79,18 @@ deliberately, because this file is a pointer-only router and not an exhaustive i
   changes no uncertainty model.** Re-runnable covering search beside it at
   [`state/declaration-v-5d-covering-search-20260822.sh`](state/declaration-v-5d-covering-search-20260822.sh).
 
+### START HERE for the remaining publication work
+
+- [`WALKDOWN-20260822-one-pass.md`](WALKDOWN-20260822-one-pass.md) — **the ORDER of everything left
+  before publication, and which step blocks which.** Deliberately thin: it is a route, not a second
+  source of state, and every factual field it points at lives in the readiness list below. Two
+  independent tracks — execution integrity (five Gate-1 repairs, then the k=0 rehearsal) and one
+  scope ruling that decides whether the 50-member M(ii) family exists at all. **Read this first.**
+- [`PUBLICATION-READINESS-20260822.md`](PUBLICATION-READINESS-20260822.md) — the measured INVENTORY
+  behind that route: every remaining item with the command that measured it, plus `AMENDMENT 1`
+  recording an independent peer review whose four objections were all accepted. **Where this and a
+  canonical artifact disagree, the canonical artifact wins.**
+
 ### B1 steps 4-5: the lift, and the preflight that gates the first submission
 
 - [`PLAN-20260822-oneMember-mii-staged.md`](PLAN-20260822-oneMember-mii-staged.md) — **the staged
