@@ -1528,10 +1528,29 @@ data event, per signal-MC event and per background-MC event, drawn from distinct
 before any training subset is taken and thereafter reused wherever that event appears
 (\S\ref{app:poisson}). The data and background factors rebuild each member's background-subtracted
 target through the Stay-Positive refinement rather than rescaling the nominal target, and the signal
-factors follow the signal MC everywhere it is used. The object is therefore \emph{total} statistical
-uncertainty --- data and MC together --- which is why the declared budget carries no separate
-MC-statistics component. The covariance is the sample covariance of the $50$ resulting cross sections
-about their own mean, normalised $1/(N-1)$, on the density scale.
+factors follow the signal MC everywhere it is used. This is a \emph{third} stream relative to the
+scalar bootstrap of \S\ref{sec:bootstrap}, which draws data and MC factors only: the full-event
+pipeline injects its background as a separate weighted inventory, so that inventory has counting
+noise of its own. The object is therefore \emph{total} statistical uncertainty --- data and MC
+together --- which is why the declared budget carries no separate MC-statistics component. The
+covariance is the sample covariance of the $50$ resulting cross sections about their own mean,
+normalised $1/(N-1)$, on the density scale.
+
+\medskip\noindent
+\textbf{This is not a data-statistical error and must not be compared with one.} Published
+statistical uncertainties from this and other experiments are data-statistics; this object is not,
+and the difference is not small. At the counting floor $1/\sqrt{N}$ of each resampled inventory ---
+$4{,}116{,}128$ data, $49{,}152{,}885$ signal-MC and $564{,}591$ background-MC rows, giving
+$0.0493\%$, $0.0143\%$ and $0.1331\%$ --- MC accounts for ${\sim}88\%$ of the variance and the
+\emph{background} MC alone for $87\%$, because that inventory is by far the smallest. The quadrature
+floor is $0.1426\%$ against the data stream's $0.0493\%$, a ratio of $2.89$ in $\sigma$. Two limits
+travel with those numbers. First, $1/\sqrt{N}$ per stream is a raw counting fraction on a rate: the
+background enters as a negative injection and the signal MC through the trained estimator, so neither
+propagates to the cross section with unit leverage --- the \emph{set} of streams that belongs in the
+denominator is certain, its \emph{value} needs propagation weights that we have not computed.
+Second, the measured family spread is far above this floor, so the floor decomposition describes what
+the object resamples and not how the observed band divides. Neither reading makes the quoted band
+field-comparable.
 
 This is a method choice and we state it as one. A coherent $\mathrm{Poisson}(1)$ bootstrap of the
 contributing samples is the standard non-parametric stand-in for statistical uncertainty, but for a
