@@ -1,0 +1,59 @@
+{
+ "schema": "oi126-successor-R5-rulings-and-reciprocal-arm-predeclaration-v1",
+ "status": "PREDECLARATION for the reciprocal arm, written BEFORE that arm runs. Rulings on the running sweep applied in post-processing.",
+ "authorization": "Joseph 2026-08-23 diagnostic grant. PET remains diagnostic/method-development; nothing here reopens OI-126 or bears on coverage.",
+ "RULING_1_interior_barrier_blocks_CONFIRM": {
+  "the_defect_was_mine": "I specified the t grid so the path would be visible, then wrote a boundary that reads only its endpoints. CONFIRM's stated meaning is 'flat direction'; an interior barrier with near-coincident endpoints is a BARRIER BETWEEN TWO BASINS, a different object with arguably opposite implications.",
+  "amended_criterion": "CONFIRM requires BOTH |dL| <= 2.4e-3 AND max_t[L(t)-L(0)] <= 2.4e-3",
+  "new_branch": "BARRIER (ENDPOINTS FLAT, PATH NOT) -- reported with max_t[L(t)-L(0)] and its ratio to |dL|",
+  "why_the_number_was_reused_not_chosen": "2.4e-3 is inherited from the existing predeclaration rather than selected after seeing data -- the least-tainted option once replica_49's midpoint was known",
+  "TAINT_CLAUSE_RESOLVED_AS_INERT": {
+   "what_I_wrote": "replica_49's BARRIER verdict is tainted by construction, hypothesis-generating only",
+   "what_the_executing_lane_established": "BARRIER requires |dL| <= 2.4e-3 as a PRECONDITION. replica_49's |dL| = 5.199e-03 = 2.17x threshold, so it never reaches that branch. UNRESOLVED before the amendment and UNRESOLVED after. No verdict of replica_49 rests on the added criterion.",
+   "the_transferable_distinction": "A MEASUREMENT is not tainted by when you looked at it; a VERDICT derived from it would be. The interior value stands as a reported quantity and as the amendment's motivating example. The five unseen members are the clean test.",
+   "verified_here": true
+  },
+  "WHAT_A_BARRIER_DOES_AND_DOES_NOT_REFUTE": [
+   "REFUTES linear flatness on the measured segment",
+   "does NOT establish the OPPOSITE branch -- a barrier is not 'the members are loss-preferred'",
+   "does NOT refute a low-curvature direction locally at either solution: the mechanism's claim is about local curvature and a straight line in parameter space is not a path the fit ever traversed",
+   "MEANS the sweep is not measuring the quantity it was built to measure (curvature along the realized displacement) -- R4's class, an instrument that cannot answer its own question. An honest outcome and a real result, not a refutation."
+  ],
+  "background_NOT_leaned_on": "nominal and members share initialization (set_random_seed(42)), the same 2M subsample and the same split, so these are not independently-trained networks. But NEITHER LANE has established the barrier scale for this architecture, so 'more informative than otherwise' is an open question, not support."
+ },
+ "RULING_2_structural_arm_scope_EIGHTH_BOUNDARY_MODE": {
+  "the_eighth_mode": "a per-unit test whose reference is a POPULATION AGGREGATE, applied to a unit deliberately SELECTED for departing from that aggregate. The rule is well-formed, the sample is well-chosen, and they are incompatible.",
+  "how_it_arose": "I wrote the structural arm's sign from the family loading (+0.10970 band, -0.03351 tail) and then approved a member list built to include the member least like the family.",
+  "ruling": "report the arm BOTH ways per member -- family-derived sign as the PREDECLARED verdict, each member's own measured band/tail deviation signs alongside, divergences flagged. Aggregate over the FIVE family-pattern members; replica_49 reported separately.",
+  "exclusion_basis_is_PRE_SWEEP": "replica_49's own deviations, band -0.1661 and tail -0.1893, signs (-,-) against the mode's (-,+), were known before the sweep and were the stated reason for its selection. Predeclarable-in-principle, not a post-hoc drop.",
+  "substantive_point": "(-,-) is OFF-MODE, not a quiet version of the mode. A leading mode at 75.8% of variance necessarily leaves off-mode structure.",
+  "SHARED_ORIGIN_WARNING": "R2's UNRESOLVED and replica_49's structural failure are THE SAME FACT SEEN TWICE and must be counted once."
+ },
+ "RULING_3_my_OPPOSITE_LABEL_OVER_CLAIMED_NINTH_MODE": {
+  "the_defect": "I labelled the branch 'the members are loss-preferred and the NOMINAL is the outlier'. theta_k was trained to minimise objective_k, so L_k(theta_k) < L_k(theta_nom) is close to expected BY CONSTRUCTION. dL > 0 in SIGN is not evidence.",
+  "what_IS_informative": "the MAGNITUDE against the epoch-noise null, which is what the 2.4e-3 threshold tests. replica_00's dL = +2.648768e-02 = 11.04 thresholds, 42.95x its own sd -> theta_nom is genuinely DISTINGUISHABLE from theta_k under k's objective. That result stands.",
+  "what_does_NOT_follow": "'the nominal is the outlier'. The test measured only one direction: L_k at both parameter points, never L_nom at both. If both penalties are large and comparable, neither point is an outlier -- two distinct solutions each better on its own data, the ordinary consequence of fitting perturbed data. ONLY AN ASYMMETRY singles one out.",
+  "the_ninth_mode": "a one-directional test used to support a claim that requires a comparison of two directions. The measurement cannot distinguish 'the nominal is special' from 'the two fits simply differ', and the latter is the null.",
+  "binding_verdict_language": "Until the reciprocal arm lands, replica_00's verdict line reads: theta_nom is distinguishable from theta_k under k's objective at 11 thresholds; whether the nominal is anomalous is NOT determined. 'The nominal is the outlier' may not appear anywhere, including in summaries.",
+  "PATTERN_DEFLATED": "'both members have the same sign' is expected by construction and must NOT be carried as an emerging finding."
+ },
+ "RECIPROCAL_ARM_PREDECLARED_BEFORE_IT_RUNS": {
+  "design": "a separate short job AFTER the current sweep completes -- do not jeopardise the running job. Two extra evaluations per member: the NOMINAL's objective at theta_nom and theta_k. Same +/-1.3% bracket applied, since the nominal's own weights_pull carries the same provenance offset and cancels the same way.",
+  "statistics": {
+   "dL_k": "L_k(theta_nom) - L_k(theta_k)",
+   "dL_nom": "L_nom(theta_k) - L_nom(theta_nom)",
+   "A": "dL_nom / dL_k"
+  },
+  "SYMMETRIC_two_fits_merely_differ_NO_outlier": "A in [0.5, 2.0]",
+  "THE_NOMINAL_IS_THE_OUTLIER": "A <= 0.25",
+  "THE_MEMBER_IS_THE_OUTLIER": "A >= 4.0",
+  "UNRESOLVED": "otherwise",
+  "TAINT_CLAUSE": "dL_k is known for replica_00 (2.648768e-02) and replica_49 (5.198768e-03) -- two of six denominators. NO dL_nom is known for any member. Report A for those two with the taint noted; the four unseen members carry the evidential weight."
+ },
+ "SHARED_ORIGINS_TO_COUNT_ONCE": [
+  "R2's leading-mode loading and replica_00's structural PASS: one family-level loading plus one member-level realisation drawn from that same 50-member family. More than a restatement, less than two independent measurements. FLAGGED SYMMETRICALLY because this is the only CONFIRMING result of the day.",
+  "The iteration sweep's Q(2) reproducing R1's primary exactly is a deliberate cross-check, not a second result.",
+  "R3's '4:1 predicted, 4.05 measured' matched one of three available statistics for the same amplitude ratio (2.07 peak-to-trough, 4.05 unweighted sd, 4.77 mass-weighted)."
+ ],
+ "max_over_min_is_STRUCTURALLY_SIGN_BLIND": "Stronger than my original 'inflated by non-monotonicity': a ratio bounded below by 1 CANNOT express that the endpoint moved in the opposite direction. replica_00's band max/min is 5.4029 against an endpoint ratio of 0.2097. That is an instrument incapable of falsifying a directional hypothesis, not merely an inflated one. Endpoint-to-endpoint stays primary; report both with the endpoint DIRECTION stated."
+}
