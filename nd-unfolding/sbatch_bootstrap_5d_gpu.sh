@@ -100,7 +100,7 @@ mnv_env_pathcheck "$ENV_ROOT" "$CODE_ROOT" "$DATA_ROOT" || exit $?
 #     right refusal, which is worse than the refusal. Both tools open with
 #     `from __future__ import annotations` (3.7+), so that is the floor asserted.
 if ! python3 -c 'import sys; sys.exit(0 if sys.version_info[:2] >= (3, 7) else 9)' 2>/dev/null; then
-  echo "[preflight] FAIL: the active python3 cannot run the preflight tools." >&2
+  echo "[preflight] FAIL: the active interpreter cannot run the preflight tools." >&2
   echo "[preflight]   $(command -v python3 || echo '<none on PATH>'): $(python3 -V 2>&1 || true)" >&2
   echo "[preflight]   mnv_source_manifest.py and verify_executing_copy_is_committed.py both open" >&2
   echo "[preflight]   with 'from __future__ import annotations', which requires 3.7+." >&2

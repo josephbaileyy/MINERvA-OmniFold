@@ -41,10 +41,14 @@ GUARDED_RE = re.compile(r'python3 "\$GUARD" --expect-root')
 PY_TOKEN = "python3"
 
 
-def classify(text: str, excluded_vars: list[str]) -> dict:
+def classify(text: str, excluded_vars: list[str], decl: dict) -> dict:
     """Partition a launcher's python3 lines. Comments are counted, never silently dropped."""
     excl_re = re.compile(r'python3 "\$(' + "|".join(re.escape(v) for v in excluded_vars) + r')"')
-    out = {"guarded": [], "excluded": [], "unknown": [], "commented": []}
+    # THIRD CATEGORY, round 6: an interpreter capability probe invokes python3 itself and no
+    # repository module, so the guard has nothing to contain. Declared, counted, and pinned --
+    # not waved through, which is what "unclassified" would have become if the pin were bumped.
+    probes = [m for e in decl.get("excluded_inline_probes", []) for m in e["match_any"]]
+    out = {"guarded": [], "excluded": [], "probe": [], "unknown": [], "commented": []}
     for i, line in enumerate(text.splitlines(), 1):
         if PY_TOKEN not in line:
             continue
@@ -55,6 +59,8 @@ def classify(text: str, excluded_vars: list[str]) -> dict:
             out["guarded"].append((i, line.strip()))
         elif excl_re.search(line):
             out["excluded"].append((i, line.strip()))
+        elif any(m in line for m in probes):
+            out["probe"].append((i, line.strip()))
         else:
             out["unknown"].append((i, line.strip()))
     return out
@@ -64,7 +70,7 @@ def census(decl: dict, nd: pathlib.Path = ND) -> tuple[list[str], dict]:
     """Return (violations, totals). An empty violation list is the only clean result."""
     v: list[str] = []
     excluded_vars = [t["shell_var"] for t in decl["excluded_tools"]]
-    totals = {"guarded": 0, "excluded": 0, "unknown": 0, "commented": 0, "launchers": 0}
+    totals = {"guarded": 0, "excluded": 0, "probe": 0, "unknown": 0, "commented": 0, "launchers": 0}
 
     for sh in decl["launchers"]:
         p = nd / sh
@@ -84,8 +90,8 @@ def census(decl: dict, nd: pathlib.Path = ND) -> tuple[list[str], dict]:
                          f'{tool["resolves_to"]}. Expected the literal definition {want!r}. '
                          f'A declared exclusion is only as good as what the name points at.')
 
-        parts = classify(text, excluded_vars)
-        for k in ("guarded", "excluded", "unknown", "commented"):
+        parts = classify(text, excluded_vars, decl)
+        for k in ("guarded", "excluded", "probe", "unknown", "commented"):
             totals[k] += len(parts[k])
         for ln, src in parts["unknown"]:
             v.append(f"{sh}:{ln}: UNCLASSIFIED python3 invocation -- neither routed through "
@@ -105,8 +111,10 @@ def census(decl: dict, nd: pathlib.Path = ND) -> tuple[list[str], dict]:
               ("guarded", totals["guarded"], c["guarded"]),
               ("excluded_preflight", totals["excluded"], c["excluded_preflight"]),
               ("unclassified", totals["unknown"], c["unclassified"]),
+              ("inline_interpreter_probes", totals["probe"],
+               c.get("inline_interpreter_probes", 0)),
               ("non_comment_python3_invocations",
-               totals["guarded"] + totals["excluded"] + totals["unknown"],
+               totals["guarded"] + totals["excluded"] + totals["probe"] + totals["unknown"],
                c["non_comment_python3_invocations"]),
               ("commented_out_python3_lines", totals["commented"],
                decl["commented_out_python3_lines"]))
@@ -152,8 +160,8 @@ def main(argv=None) -> int:
 
     print(f"[preflight-census] {totals['launchers']} launcher(s): "
           f"{totals['guarded']} guarded + {totals['excluded']} declared-preflight + "
-          f"{totals['unknown']} unclassified = "
-          f"{totals['guarded'] + totals['excluded'] + totals['unknown']} non-comment python3 "
+          f"{totals['probe']} interpreter-probe + {totals['unknown']} unclassified = "
+          f"{totals['guarded'] + totals['excluded'] + totals['probe'] + totals['unknown']} non-comment python3 "
           f"invocation(s); {totals['commented']} commented out")
     if violations:
         for line in violations:

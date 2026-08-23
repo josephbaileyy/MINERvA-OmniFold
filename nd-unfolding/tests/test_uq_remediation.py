@@ -3581,11 +3581,22 @@ class SubstitutionFenceS1(unittest.TestCase):
             (both if (h and fe) else hooked if h else fenced if fe else neither).append(f)
         return sorted(hooked), sorted(fenced), sorted(both), sorted(neither)
 
-    def test_the_DEFINITION_FILES_are_excluded_BY_RULE_and_are_exactly_two(self):
-        """The exclusion must not become a place to hide a launcher. Two files, both `lib_*`, both of
-        which DEFINE a symbol rather than guarding an output with it."""
+    def test_the_DEFINITION_FILES_are_excluded_BY_RULE_and_are_exactly_four(self):
+        """The exclusion must not become a place to hide a launcher. Four files, all `lib_*`, all of
+        which DEFINE a symbol rather than guarding an output with it.
+
+        MOVED 2 -> 4 ON 2026-08-23, WITH THE DELTA NAMED AND THE PROPERTIES STILL ASSERTED. The
+        round-5 repair added `lib_mnv_env_preflight.sh` and `lib_mnv_env_pathcheck.sh`. They first
+        shipped as `mnv_env_*.sh`, landed in NEITHER partition, and reddened the 199 remainder pin --
+        which is that pin working: it forced a classification instead of letting the default be
+        "unfenced". They are definition files on this test's OWN criteria -- each defines a function
+        and neither carries `#SBATCH` -- so they were RENAMED to satisfy the rule rather than added
+        to a name-list exemption, and the 199 remainder is unchanged. The count is asserted here so
+        the exclusion still cannot quietly widen."""
         defs = sorted(f for f in self._sh() if f.split("/")[-1].startswith(self.DEFINITION_PREFIX))
         self.assertEqual(defs, ["nd-unfolding/lib_member_resume.sh",
+                                "nd-unfolding/lib_mnv_env_pathcheck.sh",
+                                "nd-unfolding/lib_mnv_env_preflight.sh",
                                 "nd-unfolding/lib_substitution_fence.sh"])
         for d in defs:
             body = (ND.parent / d).read_text(errors="replace")

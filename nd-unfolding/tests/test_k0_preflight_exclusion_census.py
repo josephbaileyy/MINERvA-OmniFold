@@ -70,7 +70,8 @@ class ThePreflightExclusionIsPinnedAndCanFail(unittest.TestCase):
         """The arm the other two are worthless without."""
         p = self.run_census()
         self.assertEqual(p.returncode, OK, f"stdout={p.stdout}\nstderr={p.stderr}")
-        self.assertIn("14 guarded + 16 declared-preflight + 0 unclassified", p.stdout)
+        self.assertIn("14 guarded + 16 declared-preflight + 16 interpreter-probe + 0 unclassified",
+                      p.stdout)
 
     def test_ARM_silent_on_the_REAL_tree_too_not_only_the_copy(self):
         """The copy could differ from the tree under review; assert against the real one as well."""
@@ -122,7 +123,7 @@ class ThePreflightExclusionIsPinnedAndCanFail(unittest.TestCase):
         r = self.run_census()
         self.assertEqual(r.returncode, VIOLATION, f"stdout={r.stdout}\nstderr={r.stderr}")
         self.assertIn("COUNT guarded: measured 13, declared 14", r.stderr)
-        self.assertIn("COUNT commented_out_python3_lines: measured 18, declared 17", r.stderr)
+        self.assertIn("COUNT commented_out_python3_lines: measured 19, declared 18", r.stderr)
 
     # ---- the declaration must point at something ------------------------------------------
     def test_ARM_fires_on_REPOINTING_a_declared_preflight_variable(self):
@@ -172,7 +173,8 @@ class ThePreflightExclusionIsPinnedAndCanFail(unittest.TestCase):
         self.assertEqual(totals["guarded"], c["guarded"])
         self.assertEqual(totals["excluded"], c["excluded_preflight"])
         self.assertEqual(totals["unknown"], 0)
-        self.assertEqual(totals["guarded"] + totals["excluded"],
+        self.assertEqual(totals["probe"], c["inline_interpreter_probes"])
+        self.assertEqual(totals["guarded"] + totals["excluded"] + totals["probe"],
                          c["non_comment_python3_invocations"])
 
     def test_ruling_21s_14_of_30_boundary_is_asserted_by_a_TEST_for_the_first_time(self):
@@ -180,7 +182,10 @@ class ThePreflightExclusionIsPinnedAndCanFail(unittest.TestCase):
         _, totals = mpc.census(self.decl, self.nd)
         self.assertEqual(totals["guarded"], 14)
         self.assertEqual(totals["excluded"], 16)
-        self.assertEqual(totals["guarded"] + totals["excluded"] + totals["unknown"], 30)
+        # 30 is the GUARDING boundary and it is unchanged; round 6 added a third category
+        # (interpreter capability probes) which is counted separately and deliberately not folded in.
+        self.assertEqual(totals["guarded"] + totals["excluded"], 30)
+        self.assertEqual(totals["unknown"], 0)
 
 
 if __name__ == "__main__":
