@@ -33,6 +33,31 @@ if sys.version_info < (3, 10):
 
 CANONICAL_LITERAL = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 
+
+def canonical_form(value):
+    """"exact", "subpath", or None — does this string name the canonical checkout?
+
+    ROUND-7 F-17(a). The first version tested `value == CANONICAL_LITERAL` and therefore could not
+    see `_ND = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding"`, which is the form
+    `bootstrap_nd.py` and `seedscan_split.py` use on the canonical checkout — each feeding
+    `sys.path.insert(0, _ND)` with three repository modules imported straight after. Two of ten rows
+    printed `literal=-` for a tree where they carry an ACTIVE rooted insert, so the enumeration
+    understated the hazard and said nothing about the blind spot.
+
+    THE BOUNDARY IS EXACT-OR-FOLLOWED-BY-A-SEPARATOR, NOT `startswith`. A bare prefix test would
+    match `/pscratch/sd/j/josephrb/MINERvA-OmniFold-Analysis-Note` — a real sibling of this
+    checkout, and a different repository. Over-broad here is not the safe direction either: it would
+    report a hazard in a tree that has none. Both directions are pinned by tests.
+    """
+    if not value.startswith(CANONICAL_LITERAL):
+        return None
+    rest = value[len(CANONICAL_LITERAL):]
+    if rest == "":
+        return "exact"
+    if rest.startswith("/"):
+        return "subpath"
+    return None            # a longer sibling path such as ...-Analysis-Note
+
 # The M-1 population: the entrypoints and modules the review contract's B-1 covers. unified_throw_cov
 # .py is the TENTH row -- it was dropped from the 2026-08-22 filing, which is the F-17(a) fail.
 M1_FILES = (
@@ -77,15 +102,23 @@ def m1(tree):
             continue
         src = f.read_text(encoding="utf-8", errors="replace")
         t = ast.parse(src)
-        literals = []          # (name, lineno) for assignments of the canonical absolute path
+        # WHICH NAME, IF ANY, IS THIS STRING ASSIGNED TO. Built first so the literal scan below can
+        # walk EVERY string constant rather than only the ones on the right of an assignment.
+        assigned_to = {}
+        for node in ast.walk(t):
+            if isinstance(node, ast.Assign) and isinstance(node.value, ast.Constant):
+                for tgt in node.targets:
+                    if isinstance(tgt, ast.Name):
+                        assigned_to[id(node.value)] = tgt.id
+
+        literals = []          # every canonical-root string in the file, exact form OR subpath
         first_insert = None    # lineno of the first sys.path.insert/append
         for node in ast.walk(t):
-            if isinstance(node, ast.Assign):
-                v = node.value
-                if isinstance(v, ast.Constant) and v.value == CANONICAL_LITERAL:
-                    for tgt in node.targets:
-                        if isinstance(tgt, ast.Name):
-                            literals.append({"name": tgt.id, "line": node.lineno})
+            if isinstance(node, ast.Constant) and isinstance(node.value, str):
+                form = canonical_form(node.value)
+                if form:
+                    literals.append({"name": assigned_to.get(id(node), "<inline>"),
+                                     "line": node.lineno, "form": form, "value": node.value})
             if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
                 if node.func.attr in ("insert", "append"):
                     base = node.func.value
@@ -224,8 +257,8 @@ def main():
     for r in res["M-1"]:
         if not r["present"]:
             print(f"    {r['file']:<52} ABSENT"); continue
-        lit = ",".join(f"{l['name']}@{l['line']}" for l in r["literals"]) or "-"
-        print(f"    {r['file']:<52} literal={lit:<18} insert={r['first_insert']} "
+        lit = ",".join(f"{l['name']}@{l['line']}({l['form'][:3]})" for l in r["literals"]) or "-"
+        print(f"    {r['file']:<44} literal={lit:<34} insert={r['first_insert']} "
               f"repo_mods_after={r['n_after']}")
     print(f"--- M-2  importable={res['M-2']['importable']} "
           f"stdlib_collisions={len(res['M-2']['stdlib_collisions'])} py={res['M-2']['python']}")
