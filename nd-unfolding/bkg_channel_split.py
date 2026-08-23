@@ -40,6 +40,7 @@ are absent so a pre-change file is never silently misread.
 
   python3 bkg_channel_split.py --omnifile <MEFHC omnifile> [--json out.json]
 """
+from pathlib import Path
 import argparse
 import json
 import math
@@ -47,7 +48,12 @@ import sys
 
 import numpy as np
 
-_REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+# OI-136: the import root is DERIVED from this file, never the hardcoded cluster root that
+# stood here. An absolute insert(0, ...) executes THAT tree's modules whichever checkout
+# launched this entrypoint, and PYTHONPATH cannot outrank position 0 -- so a parity check can
+# report every pinned file CURRENT while the interpreter loads a different file entirely.
+# NO ABSOLUTE FALLBACK, deliberately: a fallback is the hardcode wearing a flag.
+_REPO = str(Path(__file__).resolve().parents[1])
 if f"{_REPO}/2d-unfolding" not in sys.path:
     sys.path.insert(0, f"{_REPO}/2d-unfolding")
 

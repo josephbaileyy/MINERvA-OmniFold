@@ -14,12 +14,18 @@ Usage:
   # NN (after `module load tensorflow/2.15.0`):
   python nn_run_from_npz.py --npz of_inputs_3d.npz --kind nn   --iters 5 --out res_nn.npz
 """
+from pathlib import Path
 import argparse
 import sys
 
 import numpy as np
 
-_ND = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding"
+# OI-136: the import root is DERIVED from this file, never the hardcoded cluster root that
+# stood here. An absolute insert(0, ...) executes THAT tree's modules whichever checkout
+# launched this entrypoint, and PYTHONPATH cannot outrank position 0 -- so a parity check can
+# report every pinned file CURRENT while the interpreter loads a different file entirely.
+# NO ABSOLUTE FALLBACK, deliberately: a fallback is the hardcode wearing a flag.
+_ND = str(Path(__file__).resolve().parents[0])
 if _ND not in sys.path:
     sys.path.insert(0, _ND)
 from omnifold_nn_core import omnifold_loop          # noqa: E402

@@ -10,8 +10,14 @@ closure xsec (completeness = 1). The truth reference is toy-independent
 script (fps_extension_validation.py). Many toys -> per-bin coverage.
   python coverage_toy_nd.py --npz of_inputs_fps.npz --seed 1001 --out cov_fps/res_toy_1.npz
 """
+from pathlib import Path
 import argparse, sys, numpy as np
-_ND="/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding"
+# OI-136: the import root is DERIVED from this file, never the hardcoded cluster root that
+# stood here. An absolute insert(0, ...) executes THAT tree's modules whichever checkout
+# launched this entrypoint, and PYTHONPATH cannot outrank position 0 -- so a parity check can
+# report every pinned file CURRENT while the interpreter loads a different file entirely.
+# NO ABSOLUTE FALLBACK, deliberately: a fallback is the hardcode wearing a flag.
+_ND = str(Path(__file__).resolve().parents[0])
 if _ND not in sys.path: sys.path.insert(0,_ND)
 from omnifold_nn_core import omnifold_loop
 from xsec_nd import extract_cross_section_nd, total_xsec
