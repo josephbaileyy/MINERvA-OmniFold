@@ -1,0 +1,631 @@
+{
+ "schema": "oi126-r1-iteration-sweep-v1",
+ "what": "R1's columnar statistic run on all three step-1 iterations, to separate a curvature collapse that DEVELOPS by compounding from one PRESENT FROM THE START.",
+ "predeclaration": {
+  "by": "the routing lane, sent before this ran, unvaried",
+  "quantity": "Q(i) = F_ctrl/F_band at iteration i, control [0,6) GeV, band [7,10) GeV, weight-mass-weighted mean of f(x)=x/(1+x)^2, operand r1, truth-p_parallel binning -- identical to R1's primary",
+  "DEVELOPS": "Q(0) <= 2.0 AND Q(2)/Q(0) >= 2.5 (compounding supported)",
+  "PRESENT_FROM_THE_START": "Q(0) >= 5.0 (compounding refuted as the source)",
+  "UNRESOLVED": "Q(0) in (2.0,5.0), or Q(2)/Q(0) in (1.0,2.5) while Q(0) <= 2.0. Licenses neither.",
+  "motivation_as_given": "the mechanism claims compounding over three iterations, b^3 vs b being 6.5x vs 1.9x"
+ },
+ "VERDICT": "UNRESOLVED -- licenses NEITHER branch",
+ "Q0": 3.161635526502738,
+ "Q1": 5.451883540341198,
+ "Q2": 6.435111352438863,
+ "Q2_over_Q0": 2.0353741911412224,
+ "VERDICT_DERIVATION": "Q(0) = 3.161636 is inside the predeclared UNRESOLVED interval (2.0, 5.0), so both named branches fail on their first clause. DEVELOPS additionally fails its second: Q(2)/Q(0) = 2.035374 < 2.5. UNRESOLVED licenses neither and does not default.",
+ "READING": "The curvature collapse is SUBSTANTIALLY PRESENT before any reweighting has accumulated -- at iteration 0 the band already sits at F = 0.04877575 against a control of 0.15421114, a 3.16x collapse -- AND it roughly doubles by iteration 2 to 6.435111. Neither created by compounding nor fully pre-existing. That is a real intermediate result, not a failure to measure, and it constrains the mechanism from both sides.",
+ "internal_consistency_check": "Q(2) = 6.435111 reproduces R1's independently computed primary ratio 6.435111352438863 exactly, from a separate script and a separate job.",
+ "positive_control_all_three_iterations": {
+  "0": {
+   "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/w_nominal/OmniFold_fe_nominal_nominal_iter0_step1.weights.h5",
+   "provenance_tier": "best-epoch",
+   "r1_percentile_max_rel_dev": 0.0,
+   "PASS": true
+  },
+  "1": {
+   "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/w_nominal/OmniFold_fe_nominal_nominal_iter1_step1.weights.h5",
+   "provenance_tier": "best-epoch",
+   "r1_percentile_max_rel_dev": 0.0,
+   "PASS": true
+  },
+  "2": {
+   "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/w_nominal/OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5",
+   "provenance_tier": "final(BEN-043)",
+   "r1_percentile_max_rel_dev": 0.0,
+   "PASS": true
+  }
+ },
+ "positive_control_reading": "All three iterations reproduce the committed r1 percentiles to max rel dev 0.0, so each iteration's r1 is the run's own r1 at that iteration, not a re-implementation.",
+ "CHECKPOINT_TIER_CAVEAT_CARRIED": "iterations 0 and 1 have only BEST-EPOCH weights; only iteration 2 carries BEN-043 _final. The source trajectory's caveat puts the best-vs-final gap at ~1.3%. So Q(0) and Q(1) are best-epoch quantities and Q(2) is final-epoch; the gap is small against the 2.03x ratio the verdict turns on but is not zero.",
+ "per_iteration": {
+  "0": {
+   "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/w_nominal/OmniFold_fe_nominal_nominal_iter0_step1.weights.h5",
+   "provenance_tier": "best-epoch",
+   "checkpoint_sha256": "77a38d05d493125bee270cc01e191aaae6b221641649034174331212f9bbce95",
+   "positive_control_r1_percentiles_max_rel_dev": 0.0,
+   "positive_control_PASS": true,
+   "F_control_lt6": 0.1542111353201008,
+   "F_band_7_10": 0.048775747244554274,
+   "Q": 3.161635526502738,
+   "per_column": [
+    {
+     "column": 0,
+     "lo": 0.0,
+     "hi": 0.75,
+     "n": 484,
+     "F": 0.22324449398568247,
+     "median_r1": 0.9119944274425507,
+     "weight_mass": 603.3231631097335
+    },
+    {
+     "column": 1,
+     "lo": 0.75,
+     "hi": 1.5,
+     "n": 1565,
+     "F": 0.2261000068502458,
+     "median_r1": 0.9049549102783203,
+     "weight_mass": 1787.5912389648165
+    },
+    {
+     "column": 2,
+     "lo": 1.5,
+     "hi": 2.0,
+     "n": 15416,
+     "F": 0.2394505460148794,
+     "median_r1": 0.9176630675792694,
+     "weight_mass": 17000.698128853557
+    },
+    {
+     "column": 3,
+     "lo": 2.0,
+     "hi": 2.5,
+     "n": 35500,
+     "F": 0.23026163027576432,
+     "median_r1": 0.9043987989425659,
+     "weight_mass": 39131.10696620596
+    },
+    {
+     "column": 4,
+     "lo": 2.5,
+     "hi": 3.0,
+     "n": 55919,
+     "F": 0.2063656456341889,
+     "median_r1": 0.7853094339370728,
+     "weight_mass": 62233.776442188624
+    },
+    {
+     "column": 5,
+     "lo": 3.0,
+     "hi": 3.5,
+     "n": 71237,
+     "F": 0.18070748282431734,
+     "median_r1": 0.6075822114944458,
+     "weight_mass": 79661.90028315927
+    },
+    {
+     "column": 6,
+     "lo": 3.5,
+     "hi": 4.0,
+     "n": 80476,
+     "F": 0.16198180258078893,
+     "median_r1": 0.46226930618286133,
+     "weight_mass": 90394.989289432
+    },
+    {
+     "column": 7,
+     "lo": 4.0,
+     "hi": 4.5,
+     "n": 84632,
+     "F": 0.14890486887235957,
+     "median_r1": 0.37005244195461273,
+     "weight_mass": 95862.63282144636
+    },
+    {
+     "column": 8,
+     "lo": 4.5,
+     "hi": 5.0,
+     "n": 84158,
+     "F": 0.13729587436486476,
+     "median_r1": 0.2788858711719513,
+     "weight_mass": 96709.91964148663
+    },
+    {
+     "column": 9,
+     "lo": 5.0,
+     "hi": 6.0,
+     "n": 146934,
+     "F": 0.1052207604505649,
+     "median_r1": 0.11115622892975807,
+     "weight_mass": 173700.07106100916
+    },
+    {
+     "column": 10,
+     "lo": 6.0,
+     "hi": 7.0,
+     "n": 98046,
+     "F": 0.052807692652090746,
+     "median_r1": 0.029915141873061657,
+     "weight_mass": 119655.52301754666
+    },
+    {
+     "column": 11,
+     "lo": 7.0,
+     "hi": 8.0,
+     "n": 52480,
+     "F": 0.04283480726371521,
+     "median_r1": 0.02426894847303629,
+     "weight_mass": 65320.06421242836
+    },
+    {
+     "column": 12,
+     "lo": 8.0,
+     "hi": 9.0,
+     "n": 26459,
+     "F": 0.05094975961842785,
+     "median_r1": 0.030158841982483864,
+     "weight_mass": 33945.05339334638
+    },
+    {
+     "column": 13,
+     "lo": 9.0,
+     "hi": 10.0,
+     "n": 14631,
+     "F": 0.06480378809676533,
+     "median_r1": 0.04021138325333595,
+     "weight_mass": 19607.238203308152
+    },
+    {
+     "column": 14,
+     "lo": 10.0,
+     "hi": 15.0,
+     "n": 32203,
+     "F": 0.11157884499534712,
+     "median_r1": 0.112358957529068,
+     "weight_mass": 46708.32410205841
+    },
+    {
+     "column": 15,
+     "lo": 15.0,
+     "hi": 20.0,
+     "n": 15623,
+     "F": 0.18948314721699988,
+     "median_r1": 0.5126006007194519,
+     "weight_mass": 22987.170623014295
+    },
+    {
+     "column": 16,
+     "lo": 20.0,
+     "hi": 40.0,
+     "n": 19472,
+     "F": 0.23692339601884313,
+     "median_r1": 1.133341133594513,
+     "weight_mass": 30093.875924364133
+    },
+    {
+     "column": 17,
+     "lo": 40.0,
+     "hi": 60.0,
+     "n": 2164,
+     "F": 0.24569385143776623,
+     "median_r1": 1.2129632234573364,
+     "weight_mass": 4211.909527873513
+    },
+    {
+     "column": 18,
+     "lo": 60.0,
+     "hi": 120.0,
+     "n": 200,
+     "F": 0.2481083933541642,
+     "median_r1": 1.167202353477478,
+     "weight_mass": 296.1421940188236
+    }
+   ]
+  },
+  "1": {
+   "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/w_nominal/OmniFold_fe_nominal_nominal_iter1_step1.weights.h5",
+   "provenance_tier": "best-epoch",
+   "checkpoint_sha256": "64bd820fce9454ec52ceb55cc2c3ee4436c1b94d08bee6cc1e168fb73d48108d",
+   "positive_control_r1_percentiles_max_rel_dev": 0.0,
+   "positive_control_PASS": true,
+   "F_control_lt6": 0.1424778373363445,
+   "F_band_7_10": 0.02613369054604342,
+   "Q": 5.451883540341198,
+   "per_column": [
+    {
+     "column": 0,
+     "lo": 0.0,
+     "hi": 0.75,
+     "n": 484,
+     "F": 0.21219660509502597,
+     "median_r1": 0.7998139560222626,
+     "weight_mass": 603.3231631097335
+    },
+    {
+     "column": 1,
+     "lo": 0.75,
+     "hi": 1.5,
+     "n": 1565,
+     "F": 0.21654323512032148,
+     "median_r1": 0.7728098034858704,
+     "weight_mass": 1787.5912389648165
+    },
+    {
+     "column": 2,
+     "lo": 1.5,
+     "hi": 2.0,
+     "n": 15416,
+     "F": 0.2331328591975357,
+     "median_r1": 0.8746492862701416,
+     "weight_mass": 17000.698128853557
+    },
+    {
+     "column": 3,
+     "lo": 2.0,
+     "hi": 2.5,
+     "n": 35500,
+     "F": 0.2179795757480489,
+     "median_r1": 0.8134998381137848,
+     "weight_mass": 39131.10696620596
+    },
+    {
+     "column": 4,
+     "lo": 2.5,
+     "hi": 3.0,
+     "n": 55919,
+     "F": 0.18776620350114767,
+     "median_r1": 0.5850636959075928,
+     "weight_mass": 62233.776442188624
+    },
+    {
+     "column": 5,
+     "lo": 3.0,
+     "hi": 3.5,
+     "n": 71237,
+     "F": 0.164297628191425,
+     "median_r1": 0.39034536480903625,
+     "weight_mass": 79661.90028315927
+    },
+    {
+     "column": 6,
+     "lo": 3.5,
+     "hi": 4.0,
+     "n": 80476,
+     "F": 0.15003378293981695,
+     "median_r1": 0.3051043003797531,
+     "weight_mass": 90394.989289432
+    },
+    {
+     "column": 7,
+     "lo": 4.0,
+     "hi": 4.5,
+     "n": 84632,
+     "F": 0.13907304753334512,
+     "median_r1": 0.2564551532268524,
+     "weight_mass": 95862.63282144636
+    },
+    {
+     "column": 8,
+     "lo": 4.5,
+     "hi": 5.0,
+     "n": 84158,
+     "F": 0.12771062376662826,
+     "median_r1": 0.20101295411586761,
+     "weight_mass": 96709.91964148663
+    },
+    {
+     "column": 9,
+     "lo": 5.0,
+     "hi": 6.0,
+     "n": 146934,
+     "F": 0.09552742249501661,
+     "median_r1": 0.08025669679045677,
+     "weight_mass": 173700.07106100916
+    },
+    {
+     "column": 10,
+     "lo": 6.0,
+     "hi": 7.0,
+     "n": 98046,
+     "F": 0.04011679911848716,
+     "median_r1": 0.019768545404076576,
+     "weight_mass": 119655.52301754666
+    },
+    {
+     "column": 11,
+     "lo": 7.0,
+     "hi": 8.0,
+     "n": 52480,
+     "F": 0.024946943090045495,
+     "median_r1": 0.01313874451443553,
+     "weight_mass": 65320.06421242836
+    },
+    {
+     "column": 12,
+     "lo": 8.0,
+     "hi": 9.0,
+     "n": 26459,
+     "F": 0.026295867409544163,
+     "median_r1": 0.014801934361457825,
+     "weight_mass": 33945.05339334638
+    },
+    {
+     "column": 13,
+     "lo": 9.0,
+     "hi": 10.0,
+     "n": 14631,
+     "F": 0.029806483062374073,
+     "median_r1": 0.01665193773806095,
+     "weight_mass": 19607.238203308152
+    },
+    {
+     "column": 14,
+     "lo": 10.0,
+     "hi": 15.0,
+     "n": 32203,
+     "F": 0.036463111155631424,
+     "median_r1": 0.018075689673423767,
+     "weight_mass": 46708.32410205841
+    },
+    {
+     "column": 15,
+     "lo": 15.0,
+     "hi": 20.0,
+     "n": 15623,
+     "F": 0.07651747564275953,
+     "median_r1": 0.04678840935230255,
+     "weight_mass": 22987.170623014295
+    },
+    {
+     "column": 16,
+     "lo": 20.0,
+     "hi": 40.0,
+     "n": 19472,
+     "F": 0.18815500090462728,
+     "median_r1": 0.5477948486804962,
+     "weight_mass": 30093.875924364133
+    },
+    {
+     "column": 17,
+     "lo": 40.0,
+     "hi": 60.0,
+     "n": 2164,
+     "F": 0.2436718128854616,
+     "median_r1": 0.8871177732944489,
+     "weight_mass": 4211.909527873513
+    },
+    {
+     "column": 18,
+     "lo": 60.0,
+     "hi": 120.0,
+     "n": 200,
+     "F": 0.24534386672109282,
+     "median_r1": 0.8428490459918976,
+     "weight_mass": 296.1421940188236
+    }
+   ]
+  },
+  "2": {
+   "checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/w_nominal/OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5",
+   "provenance_tier": "final(BEN-043)",
+   "checkpoint_sha256": "9023202396a0db67c81d4affca4f302f719fbdbfedd237a6647899247ac56893",
+   "positive_control_r1_percentiles_max_rel_dev": 0.0,
+   "positive_control_PASS": true,
+   "F_control_lt6": 0.141291404726627,
+   "F_band_7_10": 0.02195632631486299,
+   "Q": 6.435111352438863,
+   "per_column": [
+    {
+     "column": 0,
+     "lo": 0.0,
+     "hi": 0.75,
+     "n": 484,
+     "F": 0.2092951616779731,
+     "median_r1": 0.7314386963844299,
+     "weight_mass": 603.3231631097335
+    },
+    {
+     "column": 1,
+     "lo": 0.75,
+     "hi": 1.5,
+     "n": 1565,
+     "F": 0.2132365252094299,
+     "median_r1": 0.7129632234573364,
+     "weight_mass": 1787.5912389648165
+    },
+    {
+     "column": 2,
+     "lo": 1.5,
+     "hi": 2.0,
+     "n": 15416,
+     "F": 0.23058093353294914,
+     "median_r1": 0.7759855091571808,
+     "weight_mass": 17000.698128853557
+    },
+    {
+     "column": 3,
+     "lo": 2.0,
+     "hi": 2.5,
+     "n": 35500,
+     "F": 0.21333805375629702,
+     "median_r1": 0.7230458855628967,
+     "weight_mass": 39131.10696620596
+    },
+    {
+     "column": 4,
+     "lo": 2.5,
+     "hi": 3.0,
+     "n": 55919,
+     "F": 0.18228951249651248,
+     "median_r1": 0.5121724605560303,
+     "weight_mass": 62233.776442188624
+    },
+    {
+     "column": 5,
+     "lo": 3.0,
+     "hi": 3.5,
+     "n": 71237,
+     "F": 0.16267992038998458,
+     "median_r1": 0.3656192719936371,
+     "weight_mass": 79661.90028315927
+    },
+    {
+     "column": 6,
+     "lo": 3.5,
+     "hi": 4.0,
+     "n": 80476,
+     "F": 0.15037561910974434,
+     "median_r1": 0.29602740705013275,
+     "weight_mass": 90394.989289432
+    },
+    {
+     "column": 7,
+     "lo": 4.0,
+     "hi": 4.5,
+     "n": 84632,
+     "F": 0.139603745542497,
+     "median_r1": 0.2507074624300003,
+     "weight_mass": 95862.63282144636
+    },
+    {
+     "column": 8,
+     "lo": 4.5,
+     "hi": 5.0,
+     "n": 84158,
+     "F": 0.12782377318647611,
+     "median_r1": 0.19986077398061752,
+     "weight_mass": 96709.91964148663
+    },
+    {
+     "column": 9,
+     "lo": 5.0,
+     "hi": 6.0,
+     "n": 146934,
+     "F": 0.09454914702403759,
+     "median_r1": 0.0757969506084919,
+     "weight_mass": 173700.07106100916
+    },
+    {
+     "column": 10,
+     "lo": 6.0,
+     "hi": 7.0,
+     "n": 98046,
+     "F": 0.03764859043765187,
+     "median_r1": 0.01819208450615406,
+     "weight_mass": 119655.52301754666
+    },
+    {
+     "column": 11,
+     "lo": 7.0,
+     "hi": 8.0,
+     "n": 52480,
+     "F": 0.021684138754462668,
+     "median_r1": 0.011723209638148546,
+     "weight_mass": 65320.06421242836
+    },
+    {
+     "column": 12,
+     "lo": 8.0,
+     "hi": 9.0,
+     "n": 26459,
+     "F": 0.021603779700278464,
+     "median_r1": 0.012838221155107021,
+     "weight_mass": 33945.05339334638
+    },
+    {
+     "column": 13,
+     "lo": 9.0,
+     "hi": 10.0,
+     "n": 14631,
+     "F": 0.023473445771996414,
+     "median_r1": 0.014153789728879929,
+     "weight_mass": 19607.238203308152
+    },
+    {
+     "column": 14,
+     "lo": 10.0,
+     "hi": 15.0,
+     "n": 32203,
+     "F": 0.02557818387780747,
+     "median_r1": 0.01352904923260212,
+     "weight_mass": 46708.32410205841
+    },
+    {
+     "column": 15,
+     "lo": 15.0,
+     "hi": 20.0,
+     "n": 15623,
+     "F": 0.049559926087395206,
+     "median_r1": 0.021733324974775314,
+     "weight_mass": 22987.170623014295
+    },
+    {
+     "column": 16,
+     "lo": 20.0,
+     "hi": 40.0,
+     "n": 19472,
+     "F": 0.1702672135375824,
+     "median_r1": 0.4526875615119934,
+     "weight_mass": 30093.875924364133
+    },
+    {
+     "column": 17,
+     "lo": 40.0,
+     "hi": 60.0,
+     "n": 2164,
+     "F": 0.241879178835548,
+     "median_r1": 1.1323884725570679,
+     "weight_mass": 4211.909527873513
+    },
+    {
+     "column": 18,
+     "lo": 60.0,
+     "hi": 120.0,
+     "n": 200,
+     "F": 0.2462157553417369,
+     "median_r1": 1.0868592262268066,
+     "weight_mass": 296.1421940188236
+    }
+   ]
+  }
+ },
+ "AN_ARITHMETIC_COINCIDENCE_FLAGGED_NOT_CLAIMED": "The predeclaration's motivating figures were 6.5x (b^3) against 1.9x (b). Measured Q(2) = 6.435 and Q(2)/Q(0) = 2.035. Close enough to be worth checking and NOT offered as agreement: Q(2) is a control-over-band curvature ratio and b^3 is a bias compounding factor. Matching numbers across different quantities is the definite-description problem in numeric form. Flagged for the routing lane to accept or dismiss.",
+ "THE_ITERATION_HAZARD_THIS_CONFIRMS": "r1 is iteration-dependent and the record holds three. 68d9104d quotes iteration-0 percentiles (1% 0.0082, 50% 0.2454, 83.0% weight mass below one); the terminal fit is governed by iteration 2 (1% 0.0034166, 50% 0.11375, 91.1%). Quoting r1 REQUIRES naming the iteration.",
+ "CITABLE_FOR": [
+  "how much of the curvature collapse pre-exists iteration 0",
+  "that neither compounding branch is licensed"
+ ],
+ "NOT_CITABLE_FOR": [
+  "a magnitude claim",
+  "pairing C_stat with P5A",
+  "adopting any PET covariance",
+  "promoting P5A",
+  "either half of the reconsideration gate",
+  "clearing any Gate-6 prohibition"
+ ],
+ "module_digests": {
+  "train_fullevent_nominal": {
+   "sha256": "91144bee2ff89ae62497c8282174f0fc1c344f455945d6b52b7b8219ecb4e7bc",
+   "realpath": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/train_fullevent_nominal.py"
+  },
+  "omnifold": {
+   "sha256": "bbec850924ca15162f370ee63837b88371bf336746425afebfc95e36d39a8eea",
+   "realpath": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/__init__.py"
+  },
+  "extract_fullevent_fps": {
+   "sha256": "de0f044b612782edb58e152205b426e6dbbca7637b7f3f342a1373fe4dc7d51a",
+   "realpath": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/extract_fullevent_fps.py"
+  },
+  "fullevent_fps_dataloader": {
+   "sha256": "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1",
+   "realpath": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_fps_dataloader.py"
+  }
+ },
+ "what_this_read_did_not_do": [
+  "no training",
+  "no target",
+  "no ROOT",
+  "one interactive-QOS A100 job, forward passes only"
+ ]
+}

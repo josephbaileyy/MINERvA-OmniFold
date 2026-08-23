@@ -134,7 +134,8 @@
    },
    "_tensorflow": "2.15.0"
   },
-  "gradient_definition": "d logit / d z where z is the STANDARDISED event-feature vector fed to the model (the loader's own normalisation), so the ratio is scale-free by construction. Mean over rows of |grad| per feature, then summed within each group."
+  "gradient_definition": "d logit / d z where z is the STANDARDISED event-feature vector fed to the model (the loader's own normalisation), so the ratio is scale-free by construction. Mean over rows of |grad| per feature, then summed within each group.",
+  "OI136_note": "CORRECTED 2026-08-23, see the correction block. The modules that executed were digested AFTER import and are byte-identical to local main; THAT is the evidence. My original claim that sys.path[0] was a scratch dir holding no repo module names, so no hardcoded-root insert could shadow them, was FALSE: the insert DID happen. Measured in the iteration-sweep run, which printed sys.path[0] AFTER the imports rather than before: sys.path[0] = /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding. mnv_guarded_run.py was NOT used and no green run of it is claimed."
  },
  "CITABLE_FOR": [
   "the step-1 vs step-2 Jacobian anisotropy contrast",
@@ -155,5 +156,14 @@
   "no target",
   "no ROOT",
   "forward passes and gradients only, two interactive-QOS A100 jobs"
- ]
+ ],
+ "CORRECTION_20260823_my_OI136_claim_was_wrong": {
+  "what_was_wrong": "Both receipts asserted that sys.path[0] remained a scratch dir holding no repo module names, and inferred from that that no hardcoded-root insert could shadow the imports. The premise is false.",
+  "how_it_was_found": "The iteration-sweep script printed sys.path[0] AFTER importing, where the R1/R3 script printed it BEFORE. The two runs are the same in fact; only the measurement point differed. The later print read /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding.",
+  "the_actual_mechanism": "extract_fullevent_fps.py:84 loops over (_HERE, _ND, _REPO + '/2d-unfolding', _REPO + '/omnifold_nn') calling sys.path.insert(0, _p), with _REPO hardcoded to /pscratch/sd/j/josephrb/MINERvA-OmniFold. omnifold_nn was already on sys.path via my PYTHONPATH so its insert was skipped by the not-in-sys.path guard, leaving 2d-unfolding at position 0. train_fullevent_nominal.py:39 and fullevent_fps_dataloader.py:60 insert hardcoded roots the same way. These are three of OI-136's 59.",
+  "why_the_RESULT_still_stands": "No shadowing occurred. That 2d-unfolding directory holds 18 .py files and NONE is named omnifold, train_fullevent_nominal, extract_fullevent_fps, fullevent_fps_dataloader, diagnostic_target_override or step1_pull_push_decomposition -- checked per module by name, not assumed. Independently, the post-import digests of every repo module loaded matched local main byte-for-byte, which settles it either way.",
+  "the_lesson_and_it_is_the_one_OI136_ALREADY_RECORDS": "A path is not evidence about which file executed; the digest of the loaded module is. I substituted a path argument for the digest argument I had already made, which made the receipt claim more than it had measured. OI-136's own finding is that a parity check can be truthful about paths while the interpreter loads something else -- and I reproduced the inverse of that error in the receipt reporting it.",
+  "SCOPE_OF_THE_CORRECTION": "Only the stated REASON was wrong. No measured number in either receipt changes and no verdict changes. R1 CONFIRM and R3 CONFIRM rest on the digests, which held.",
+  "instrument_added": "Runs in this lane now print sys.path[0] BOTH before and after the repo imports, and enumerate every loaded module whose file lies inside a MINERvA-OmniFold checkout rather than a hand-picked four."
+ }
 }
