@@ -384,7 +384,13 @@ def main():
 
     # --- Run OmniFold via direct Python helper to pass measured_weights. ---
     import sys
-    _OF_PY = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/python"
+    # OI-136: the import root is DERIVED from this file, never the hardcoded cluster root that
+    # stood here. An absolute insert(0, ...) executes THAT tree's modules whichever checkout
+    # launched this entrypoint, and PYTHONPATH cannot outrank position 0 -- so a parity check can
+    # report every pinned file CURRENT while the interpreter loads a different file entirely.
+    # NO ABSOLUTE FALLBACK, deliberately: a fallback is the hardcode wearing a flag.
+    from pathlib import Path
+    _OF_PY = str(Path(__file__).resolve().parents[2]/"unbinned_unfolding"/"python")
     if _OF_PY not in sys.path:
         sys.path.insert(0, _OF_PY)
     from omnifold import OmniFold_helper_functions as ohf

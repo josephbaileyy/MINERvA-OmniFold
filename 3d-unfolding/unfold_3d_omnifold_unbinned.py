@@ -27,6 +27,7 @@ Usage (full MEFHC):
     --iters 5 --use-weights --estimator lgbm \
     --out xsec_3d_MEFHC.root
 """
+from pathlib import Path
 import argparse
 import math
 import sys
@@ -36,7 +37,12 @@ import numpy as np
 import ROOT
 
 # --- Reuse the mature 2D driver helpers (data loading, flux, POT, gate) ------
-_REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+# OI-136: the import root is DERIVED from this file, never the hardcoded cluster root that
+# stood here. An absolute insert(0, ...) executes THAT tree's modules whichever checkout
+# launched this entrypoint, and PYTHONPATH cannot outrank position 0 -- so a parity check can
+# report every pinned file CURRENT while the interpreter loads a different file entirely.
+# NO ABSOLUTE FALLBACK, deliberately: a fallback is the hardcode wearing a flag.
+_REPO = str(Path(__file__).resolve().parents[1])
 _2D = f"{_REPO}/2d-unfolding"
 if _2D not in sys.path:
     sys.path.insert(0, _2D)
