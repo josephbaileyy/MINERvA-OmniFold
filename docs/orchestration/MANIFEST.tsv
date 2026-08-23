@@ -25,7 +25,7 @@ docs/orchestration/CLAIM-CLM-010.md	tracked	ARCHIVAL	document			terminal		exact-
 docs/orchestration/CLAIM-CLM-011.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	1714
 docs/orchestration/CLAIM-CLM-012.md	tracked	ARCHIVAL	document			terminal		exact-path-only	docs/open-items/verify_open_items_restructure.py	yes	4	97	20772
 docs/orchestration/CLAIMS.md	tracked	LIVE	ledger	fe-fps-campaign		open		route-only	docs/orchestration/generate_manifest.py;docs/orchestration/whose_row.py;nd-unfolding/pet/extract_fullevent_fps.py;nd-unfolding/tests/test_fullevent_extract.py	no	26	23	11557
-docs/orchestration/CONFIRMATION-20260823-builder-response-to-gate1-round4.md	tracked	LIVE	document		20260823	open		route-only		no	7	293	19690
+docs/orchestration/CONFIRMATION-20260823-builder-response-to-gate1-round4.md	tracked	LIVE	document		20260823	open		route-only		no	7	321	21331
 docs/orchestration/CONVENTION-document-retention.md	tracked	LIVE	document			open		route-only	docs/orchestration/live_doc_indexed.py	no	5	83	4925
 docs/orchestration/CONVENTION-lane-worktrees.md	tracked	ARCHIVAL	document			terminal		exact-path-only	docs/orchestration/merge_guard.sh;docs/orchestration/shared_push.sh;nd-unfolding/tests/test_p4_token_gate_scope_and_rev.py	yes	8	354	25006
 docs/orchestration/CONVENTION-receipt-ingredients.md	tracked	LIVE	document			open		route-only	2d-unfolding/receipt_model_chi2_2d.py;nd-unfolding/launcher_argv_probe.py;nd-unfolding/mii_stage0_distinctness.py;nd-unfolding/p4_check_verifier_token.py	no	19	67	4366

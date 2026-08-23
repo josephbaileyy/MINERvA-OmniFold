@@ -274,10 +274,38 @@ strip the 20-line erratum banner (lines 3-22) from the landed file
 rather than arguing it, and it fails closed: a single altered character anywhere in the 529 lines
 changes the digest, whereas a diff can be read past.
 
-> **The general form, worth using for any landed third-party artifact with a declared single edit:
-> STRIP THE DECLARED EDIT AND REPRODUCE THE ORIGINAL DIGEST.** "The diff shows only my banner" and
-> "the original bytes are still all there" are different claims, and only the second is what a reader
-> of a relayed artifact needs.
+> **The general form, for any landed third-party artifact with a declared single edit: REPRODUCE THE
+> ORIGINAL DIGEST, don't inspect the diff.** "The diff shows only my banner" and "the original bytes
+> are still all there" are different claims, and only the second is what a reader of a relayed
+> artifact needs.
+
+### PRECEDENCE — and the strip is the FALLBACK, not the method
+
+**Refined 2026-08-23 after the strip's line range turned out to be right for the wrong reason.**
+
+**1. If a commit landed the artifact byte-identical, compare against THAT and diff forward.** No line
+arithmetic at all, and two independent checks:
+
+```
+$ git show 19045340:<path> | shasum -a 256
+  55e6b7710091405585cf50b7c0eebe8761cfa0a7cbbc0da1c0b3f2e92e79cdf4     # == the grader's copy
+$ git diff 19045340 HEAD -- <path>
+  @@ -1,5 +1,25 @@                                                     # +20 lines, 0 removed
+```
+
+**2. Only when the artifact arrived ALREADY ANNOTATED — no clean ancestor — strip. And take the range
+from the diff HUNK HEADER, never by counting lines by eye.** `@@ -1,5 +1,25 @@` states 20 added after
+line 2; that is a measurement, and counting is not.
+
+**Why this refinement exists, and it is the seam point one level down.** The grader's strip command
+was `sed '2,21d'`; this lane's recorded range is lines **3–22**. **Both reproduce
+`55e6b771…`** — but only because lines **2 and 22 are BOTH BLANK** (verified: `sed -n '2p;22p' … | cat -e`
+prints `$` twice), so the two ranges differ by which interchangeable blank they delete. **The
+grader's range deletes the ORIGINAL blank and leaves the ADDED one.** Right answer, wrong span. It
+fails closed either way so nothing was at risk here — but reused on an artifact whose declared edit is
+**not** flanked by a blank, that command would not match, and a genuine verbatim landing would look
+like tampering. **`3–22` is the correct span and is what §9 records; do not reuse the `sed '2,21d'`
+form.**
 
 **And the method symmetry both lanes agreed on:** *diff the landing against the source* is the
 default **in both directions**. The grader found this round's two defects that way after a careful
