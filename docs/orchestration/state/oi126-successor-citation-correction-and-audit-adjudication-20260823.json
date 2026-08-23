@@ -1,0 +1,52 @@
+{
+ "schema": "oi126-successor-citation-correction-and-audit-adjudication-v1",
+ "corrects": "a citation carried in this lane's R5 rulings",
+ "found_by": "the PB-16 audit lane (minerva-omnifold-e1), checking a ruling's citations rather than its conclusions",
+ "CITATION_CORRECTED": {
+  "what_this_lane_wrote": "omnifold.py:212-213's two-class construction over concat([mc.gen, mc.gen])",
+  "what_is_actually_there": {
+   "208": "np.concatenate((self.labels_mc, self.labels_gen)) -- the LABELS",
+   "212_213": "the two WEIGHT vectors: mc.weight*mc.pass_gen and mc.weight*weights_pull*mc.pass_gen",
+   "352": "cloud2 = np.concatenate([self.mc.gen,self.mc.gen],0)[self.idx_2] -- inside RunModel"
+  },
+  "the_error_was_COMPRESSION": "The estimator lane's original citation was CORRECT -- it gave :212-213 for the weights and :352 for cloud2 as two separate references. This lane merged them and attributed the cloud to the weight lines. Substantively right about the curvature result, referentially wrong.",
+  "AND_MY_CHECK_OF_IT_FAILED_WORSE": "First attempt grepped `concat(\\[.*gen.*gen` and returned nothing, which I nearly reported as 'concat([mc.gen, mc.gen]) does not exist in the file'. It does. The file writes np.concatenate(( with parens in some places and np.concatenate([ with brackets in others, and the pattern matched one form. A NULL ABOUT MY PATTERN, REPORTED AS A FACT ABOUT THE FILE -- while auditing an audit."
+ },
+ "AUDIT_FINDINGS_VERIFIED_BY_THIS_LANE": {
+  "top_finding_confirmed": {
+   "site": "nd-unfolding/pet/test_g2_fullevent_dump_schema.py:179-180 comment claims EVERY new-schema branch decl is gated; :183-191 implements membership in a 26-name tuple",
+   "measured_here": "part_reco_E / part_reco_pos / part_reco_z each carry 3 declarations in MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp, exactly matching the checked part_reco_view and part_reco_time at 3 each",
+   "two_counts_with_their_definitions": {
+    "38": "every out->Branch name outside the whitelist and the five default-schema needles (this lane's raw upper bound)",
+    "8": "that set filtered to full-event/new-schema families -- part_reco_E/pos/z plus part_gen_E/pdg/px/py/pz (the audit's careful number, and the correct hazard count)"
+   },
+   "archaeology": "486e53e6 derives its 26 names correctly, but derives what THAT COMMIT ADDED; part_reco_E/pos/z already existed at that revision. The population was the diff and the wording was universal.",
+   "severity": "WEAK CONTROL, not a live defect. The escalation test came back clean: G2_FULLEVENT_CPP_DUMP_STATUS.md:101-103 asserts byte-identity citing nothing, and the Tests section at :141-147 self-limits."
+  },
+  "second_instance_found_by_the_pattern_sweep": {
+   "site": "same file, :264-269 -- comment 'no line may assign a mu_true_*/vtx_true_* branch from a reco getter' implemented as a 5-name blacklist",
+   "why_worse_placed": "CVUniverse.h exposes 50 Get*/Is* symbols; 8 further reco-side muon/vertex getters are unscreened, and GetEmu / GetEmuGeV / GetPmu / GetThetamu are the EXACT reco counterparts of the truth getters the guard requires -- the most natural leakage anyone could introduce, and they exist NOW rather than latently",
+   "two_independent_blind_spots": "the blacklist, and the per-line `for line in cpp.splitlines()` loop (a wrapped assignment escapes either form)"
+  },
+  "producer_side_C4_evidence": "G2_FULLEVENT_CPP_DUMP_STATUS.md:113-114 and :131 name the five part_reco_* as ONE family, twice. The guard splits that family 2/3 on which members were new in 486e53e6. C4 evidenced from the producer rather than inferred from the diff."
+ },
+ "RULING_on_inverting_the_blacklist": {
+  "question_from_the_audit": "inverting to a whitelist requires the complete truth-getter set, and GetTruthMuonKin is a repo-authored helper -- does inverting just move the enumeration problem?",
+  "answer": "NO, and for three reasons",
+  "1_asymmetric_ownership": "The forbidden set is CVUniverse.h's reco getters -- 50 symbols, owned by the experiment's framework, growing outside this repo, so every upstream addition silently widens the gap. The allowed set is defined by this repo's own intent: small, closed, locally controlled.",
+  "2_THE_FAILURE_DIRECTION_FLIPS_and_this_is_decisive": "An incomplete BLACKLIST fails SILENTLY -- a new reco getter passes and nothing notices, which is the measured state today. An incomplete WHITELIST fails LOUDLY -- a legitimate new truth getter trips the guard on the first commit that uses it. A guard that decays noisily is strictly better than one that decays silently. Same property as PB-17 from the other side.",
+  "3_the_helper_needs_TWO_arms_not_one": "If the whitelist merely allows GetTruthMuonKin, the helper becomes an unscreened chokepoint. ARM A: truth mu_*/vtx_* assignments source only from the named truth getters or from GetTruthMuonKin. ARM B: GetTruthMuonKin's own body sources only from truth getters. That is PB-16 C3 in its amended form -- the narrowing names the mechanism covering the excluded case and asserts it fires.",
+  "and_the_design_already_exists_in_the_same_file": ":270-273 is a whitelist-positive and the audit measured that direction COMPLETE. The fix is making the two halves of that section consistent, not inventing a design.",
+  "the_per_line_loop_is_separate_and_should_be_fixed_regardless": "Operate on statements (split on ';') rather than lines. The audit flagged it latent because 0 current truth assignments end in a bare '='; 'latent' is a claim about TODAY'S population, which is the entire finding above -- the whitelist was also complete on the day it was written."
+ },
+ "omnifold_nn_REFRAMED_BY_THE_AUDIT_ON_A_STRONGER_BASIS": {
+  "this_lane_said": "the estimator engine every PET entrypoint imports has no repo-owned guard",
+  "the_audit_established_more": "omnifold.py and net.py carry FOUR repo-authored commits and six annotations citing this repo's own identifiers (B-4/D1 at :153/:187/:209; KNOWN_ISSUES #19 at :36/:334; F3 LOGIT-SPACE reweight publication form at :466; 0c99cd62 the leg-split commit). So it is REPO-MODIFIED PUBLICATION-FORM LOGIC WITH ZERO TESTS, which is a different and worse claim than depending on unguarded third-party code.",
+  "the_proposed_pin_was_TESTED_not_agreed_with": "net.py:14 reduce_mean gives k=2 -> 2.000000, k=10 -> 10.000000, k=0.5 -> 0.500000; the sum(w)-normalised mutant gives 1.000000 for every k. Separates the two implementations exactly in both directions -- a discriminating witness rather than a smoke test. Validated as arithmetic rather than by import, since local TF is Keras-3 against a Keras-2 net."
+ },
+ "UNCHANGED": [
+  "No PET covariance adopted; the 2026-08-20 ruling is not reopened.",
+  "Gate 4 and Gate 6 untouched.",
+  "The audit edited nothing; tree was 91e5de0a throughout and every mutation ran against scratchpad copies."
+ ]
+}
