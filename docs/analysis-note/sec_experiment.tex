@@ -43,8 +43,6 @@ with vertex in the central-tracker fiducial volume, with muon phase space
 The fiducial volume is the tracker region $5980 < z < \SI{8422}{mm}$ within an
 \SI{850}{mm} apothem, containing $3.2353\times10^{30}$ nucleons (the fixed
 tracker-geometry constant).
-\gk{Are these the selection criteria for events that have \texttt{E\_recoil\_CCinc} set to a positive value?}
-\jrb{No. \texttt{E\_recoil\_CCinc} is the \texttt{minerva-ml} alias for the ntuple branch \texttt{MasterAnaDev\_hadron\_recoil\_CCInc}, where a negative entry is that code's \emph{invalid} sentinel (\texttt{np.where(x >= 0, x, -1)}). The criteria quoted here are the \emph{truth-level} signal and phase-space definitions; they do not gate that branch's validity, and neither does the reco selection listed below --- no cut in this analysis tests any recoil quantity. We do not read \texttt{MasterAnaDev\_hadron\_recoil\_CCInc} at all. Our reconstructed available energy is \texttt{NewEavail()}: \texttt{blob\_recoil\_E\_tracker} $+$ \texttt{blob\_recoil\_E\_ecal}, each less its per-plane muon fuzz, scaled by $1.17$. It is computed \emph{after} selection and never used as a cut input, and carries no positivity requirement --- the $\Eavail$ binning starts at exactly $0$ and a negative value would fall outside the grid rather than into the first bin. Truth $\Eavail$ is generator-defined and is retained for truth-signal events with no reco counterpart, where the reco slot instead carries $-9999$. \textbf{Worth reconciling separately:} our truth $\Eavail$ (\texttt{GetEAvailableTrue}) and \texttt{minerva-ml}'s (\texttt{get\_E\_available\_true}) are not the same construction --- we take charged-pion \emph{kinetic} energy and drop $e^{\pm}$, $K^{\pm}$ and $\bar{p}$, where that code takes charged-pion \emph{total} energy and keeps them. The charged-pion term alone is $\sim\SI{140}{MeV}$ per pion.}
 
 Reconstructed events are selected by requiring: a reconstructed vertex in the
 same tracker fiducial volume and apothem; a muon track with
@@ -101,7 +99,6 @@ more-than-\SI{100}{GB} universe dumps). The flux histogram
 baseline histogram event loop and is POT-weighted across playlists;
 playlist-to-playlist flux differences are a $\sim\SI{0.2}{\percent}$ effect.
 
-\gk{I'm not sure how analysis note is supposed to look like, but to me it's a bit unusual that we are mixing description of more generic methods (OmniFold, uncertainty quantification...) with Minerva dataset-specific plots. To me, sections 2,3,4 read somewhat like how one would start approaching a problem like this, but reading a typical paper feels a little more organized to me, something like Introduction - Methods - Data - Results or similar, where generic methods that are either original or taken from somewhere else (like OmniFold) that could be in principle used on non-Minerva data are very clearly separated from the Minerva-specific plots and results.}
 
 
 \subsection{Reco-level control distributions}

@@ -119,14 +119,14 @@ covariance over seeds is the ML block. It is the smallest block
 (median \SI{0.166}{\percent} per bin). Two refinements harden it: (i) a
 \emph{train/test-split} variant, which also re-draws the internal training
 split, gives a band $1.24\times$ the pure-seed band, moving the combined 3D
-budget by only $+0.04\%$ in $\sqrt{\mathrm{Tr}\,C}$ \gk{ $\sqrt{\mathrm{Tr}C}$} \jrb{Fixed!} --- the published budgets use
+budget by only $+0.04\%$ in $\sqrt{\mathrm{Tr}\,C}$ --- the published budgets use
 the split-inclusive band; (ii) the ensemble-mean central value (averaging the
 seed ensemble) agrees with the production single-run CV to \SI{0.28}{\percent}.
 For the corrected 5D candidate campaign, the ML ensemble fixes the estimator seed
 at 42 and varies the train/test split seed. It therefore measures split response,
 not the full estimator stochasticity. A dedicated fixed-data estimator-seed scan
 (twelve estimator seeds at fixed data and fixed split) closes this scope: its
-covariance matrix \gk{matrix} \jrb{Fixed!} has $\sqrt{\mathrm{Tr}\,C}=\SI{\gbdtAiEstTrace}{cm^2/nucleon}$,
+covariance matrix has $\sqrt{\mathrm{Tr}\,C}=\SI{\gbdtAiEstTrace}{cm^2/nucleon}$,
 \SI{\gbdtAiEstFrac}{\percent} of the candidate split-varied band
 (\SI{\gbdtMlSplitTrace}{cm^2/nucleon}), so the adopted band is dominated by
 genuine estimator stochasticity rather than by the particular train/test
