@@ -1,0 +1,79 @@
+{
+ "schema": "oi126-successor-adjudications-R1-R4-and-R5-predeclaration-v1",
+ "adjudicates": "d4df202b (the executing lane's four reads)",
+ "R2_CENTERED_UPHELD_VERDICT_IS_UNRESOLVED": {
+  "ruling": "The predeclaration says 'share of VARIANCE'. Variance is centered by definition. Centered share 0.757763 against the 0.80 bar -> UNRESOLVED.",
+  "why_uncentered_is_the_wrong_object": "The uncentered 0.964608 is share of total sum of squares and is dominated by the common mean offset (band -1.215078, tail +0.504205), which is not variance. Uncentered asks 'is there a common pattern across members', trivially yes since every member has a band dip and a tail excess. Rank-1 asks whether ONE mode explains how members differ FROM EACH OTHER -- centered by construction.",
+  "knife_edge_handled_correctly": "One of six geometric cell sets cleared the bar (0.8032 on band 11-13 + tail 17-18, 72 cells, the smallest set). Taking that set would be selection on the outcome. UNRESOLVED upheld.",
+  "the_sign_convention_was_NOT_decisive": "corr = +0.524673 under the magnitude convention clears +0.5; the SVD leg fails independently. The lane flagged the convention as decisive and then reported that it was not."
+ },
+ "R3_CONFIRMS_SEPARABILITY_AND_NOT_LOCALISATION": {
+  "measured": {
+   "S_long_over_S_tran": 46.81363210194603,
+   "step1_over_step2_ratio": 18.506029651804386,
+   "band_ratio_exploratory": 42.21,
+   "control_ratio_exploratory": 45.09
+  },
+  "ruling": "R3 MUST NEVER BE QUOTED AS EXPLAINING THE BAND. The anisotropy is a GLOBAL property of the trained net and the band is marginally LESS longitudinally dominated than the control. Two CONFIRMs do not compose into a confirmed mechanism.",
+  "what_they_do_compose_into": "R3 answers SEPARABILITY (why responses live along p_parallel rather than pT) and settles the two lanes' dispute for step-1 collinearity at 18.51x. R1 answers LOCALISATION. Both necessary, jointly still insufficient for MAGNITUDE.",
+  "collinearity_honestly_scoped": "participation ratio 1.3975 of 4 columns; pparallel~mu_pz at |corr| 0.9999999999999982. Collapsing to one representative per group gives 31.65 against 46.81 -- inflated but the verdict survives, both far above 3.0.",
+  "open_tension_NOT_resolved": "46.81 against an honest output amplitude ratio of ~2.1 is a factor ~22 unaccounted. Candidate but NOT a resolution: a gradient anisotropy need not imply a response anisotropy of the same size, because the realized displacement need not align with the gradient."
+ },
+ "THE_SEE_SAW_IS_NOW_LOAD_BEARING_FOR_THE_MECHANISM": {
+  "measured_by_the_lane": {
+   "leading_mode_band_loading": 0.1097,
+   "leading_mode_tail_loading": -0.03351,
+   "corr_total_with_band_dev": 0.5752,
+   "corr_total_with_tail_dev": -0.2182
+  },
+  "it_is_NOT_a_refutation_and_this_needs_saying": "A drift deficit is one-signed IN PARAMETER SPACE. The OUTPUT response is (d output/d theta)*v*deficit, whose per-cell sign is set by v's output loading, not by the sign of the deficit. So ONE one-signed deficit along ONE direction DOES produce a band dip and a tail excess. 'Opposite signs' reads like a refutation and is not one here.",
+  "but_it_BREAKS_the_per_region_magnitude_arithmetic": "The mechanism was stated as bias proportional to lambda^-1 with lambda read PER REGION. Under the see-saw there is ONE direction with ONE lambda and the per-region pattern comes from the loading instead.",
+  "consequence_for_R1": "R1 measures the POINTWISE Fisher weight per column (a per-region density). The mechanism needs the curvature ALONG THE REALIZED DISPLACEMENT (a single scalar). R1's CONFIRM is genuine evidence that the loss is locally insensitive in the band and is consistent with a flat direction loading there, but it is NOT the same measurement, and the mechanism's own arithmetic remains unmeasured.",
+  "the_check_that_makes_this_load_bearing": "R1's curvature RECOVERS in the tail -- F = 0.170267 at [20,40) and 0.246216 at [60,120) against a theoretical max of 0.25, roughly 11x the band's 0.021604. Under a naive per-region lambda^-1 the tail should show ~9% of the band's magnitude; it shows 41% (log +0.504205 against -1.215078). Under the per-region reading that is a REFUTATION. Under the see-saw reading it dissolves. So the see-saw reading is required for the mechanism to survive its own numbers."
+ },
+ "R1_ITERATION_SWEEP_PREDECLARED_BEFORE_RUNNING": {
+  "why": "the mechanism claims compounding over three iterations (b^3 vs b is 6.5x vs 1.9x), so whether the curvature collapse is present at the start or develops is decisive between them",
+  "statistic": "Q(i) = F_ctrl/F_band at iteration i; control [0,6) GeV, band [7,10) GeV, weight-mass-weighted mean of x/(1+x)^2, operand r1, truth-p_parallel binning, iteration-matched checkpoint (do not mix)",
+  "DEVELOPS_compounding_supported": "Q(0) <= 2.0 AND Q(2)/Q(0) >= 2.5",
+  "PRESENT_FROM_THE_START_compounding_refuted_as_the_source": "Q(0) >= 5.0",
+  "UNRESOLVED": "Q(0) in (2.0,5.0), or Q(2)/Q(0) in (1.0,2.5) while Q(0) <= 2.0. Licenses neither."
+ },
+ "R5_AUTHORIZED_AND_PREDECLARED": {
+  "authorization": "Joseph 2026-08-23 covers diagnostic tests including Slurm. Inference-only, no training, no target, 6 jobs each far inside the standing 12 h approval. R1's gate is met.",
+  "design": "For each of 6 members evaluate that member's own step-2 objective along theta(t) = theta_nom + t(theta_k - theta_nom), t in {0,0.25,0.5,0.75,1}, via the existing test_step on that member's held-out slice, reading the output response on the same forward passes",
+  "members": "replica_49 (sign-flipped, +22.94% total outlier), replica_00 (the reference), the two extreme band-ratio members (1.0859 and 6.8865), two medians named in the receipt BEFORE running",
+  "CONFIRM": "L_k(theta_nom) - L_k(theta_k) <= 2.4e-3 (3x the measured 8e-4 val_loss scatter) WHILE the band output response moves >= 3x along the segment",
+  "OPPOSITE_redirects_everything": ">= 2.4e-2 -- the members' solutions are genuinely loss-preferred and the NOMINAL is the outlier",
+  "UNRESOLVED": "2.4e-3 to 2.4e-2. Does not default.",
+  "REQUIRED_STRUCTURAL_ARM": "Read the TAIL output response along the same segment, not only the band. The displacement must load band-negative and tail-positive matching +0.10970/-0.03351. If it does NOT reproduce the see-saw -- same sign in both regions, or a tail response below 10% of the band's in magnitude -- the flat-direction account fails on STRUCTURE regardless of the loss profile, and CONFIRM is not available."
+ },
+ "SECOND_INSTANCE_OF_THE_MULTIPLICITY_FAMILY": {
+  "hazard": "quoting r1 requires naming the ITERATION",
+  "68d9104d_quoted_iteration_0": {
+   "1": 0.0082,
+   "50": 0.2454,
+   "95": 5.15,
+   "99": 14.68,
+   "weight_mass_below_one": 0.83
+  },
+  "d19dc019_quoted_iteration_2": {
+   "1": 0.0034166,
+   "50": 0.1137533,
+   "95": 2.238677,
+   "99": 9.9245383,
+   "weight_mass_below_one": 0.9114042
+  },
+  "both_correct": "different objects; only iteration 2 governs the terminal step-1 fit",
+  "also_new": "the recorded r1_percentiles_w_unweighted are over PASS_RECO, which the field name does not state -- established by the lane's positive control reproducing them to max rel dev 0.000e+00 on pass_reco and deviating 9.802e+00 on all rows"
+ },
+ "GATE1_CLOUD_COVERAGE_SETTLED_IN_THE_SAFE_DIRECTION": {
+  "result": "the 2026-06-28 cloud-coverage fix HOLDS for the FPS full-event dump",
+  "has_cloud_on_miss_rows": "0.9999995 (15 empty of 28,579,364) -- marginally BETTER than the matched rows at 0.9999922 (160 empty of 20,571,564)",
+  "validator_gap_is_real_and_benign": "validate_g2_fullevent_smoke.py:124 checks branch NAMES only; :204-223 asserts len(part_reco_E)==0 and truth identity but never len(part_gen_E)>0; part_gen appears only at 114/124/139, all name-level",
+  "not_patched_deliberately": "editing a Gate-1 validator is outside this authorization. A one-line assertion would close it. Routed to Joseph."
+ },
+ "UNCHANGED": [
+  "No PET covariance adopted. The 2026-08-20 ruling is not reopened and nothing here bears on coverage.",
+  "Gate 4 and Gate 6 untouched."
+ ]
+}
