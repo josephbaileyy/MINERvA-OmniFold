@@ -82,7 +82,19 @@ entries rather than by substring: `nd-unfolding/lib_mnv_env_preflight.sh` **pres
 
 The count moved with its cause, exactly as the round-8 verdict traced it:
 `f3c27870` → 778, `60cf728d`/`0b556379`/`14980486` → 779, `1d2b795d`/`a54038b2` → **780**. The two
-additions since the filed figure are the round-7 parity libraries and the round-8 instrument test.
+additions since the filed figure are **`docs/orchestration/measure_m1_m6.py` and
+`docs/orchestration/test_measure_m1_m6.py`** — the M-1…M-6 instrument and its test. Zero deletions.
+
+> **⚠ CORRECTED 2026-08-23, after the round-9 PASS; the graded version of this file said otherwise.**
+> It read *"the round-7 parity libraries and the round-8 instrument test."* That is **false**: the
+> parity libraries were **RENAMED**, not added — `git diff --name-status -M f3c27870..a54038b2`
+> gives `R100 nd-unfolding/mnv_env_pathcheck.sh -> lib_mnv_env_pathcheck.sh` and the same for
+> preflight — so they were already inside the 778, and a rename is **count-neutral**. The round-9
+> grader flagged it without failing on it, and its diagnosis of why the error is tempting is worth
+> keeping: the commit that moved the count to 779 is also the commit that renamed them, so *"what
+> else that commit did"* got substituted for *"what moved the count."* Third instance in this
+> campaign of **state the class you counted alongside the number.** The count, digest, falsifier and
+> all seven clauses were and remain correct; only this gloss was wrong.
 
 **THIS DECLARATION IS FALSIFIED BY ANY ADD OR REMOVAL OF A TRACKED `*.py` OR `*.sh`, AND BY NOTHING
 ELSE.** A-2(f) covers only those two suffixes, so a Markdown-only commit **cannot** move the listing

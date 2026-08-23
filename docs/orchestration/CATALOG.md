@@ -4,6 +4,24 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ## Current work
 
+### ✅ GATE 1 PASSES — round 9, 2026-08-23, 18 PASS / 0 FAIL / 0 NOT-EVALUABLE
+
+- [`GATE1-VERDICT-ROUND9-20260823-k0-execution-integrity.md`](GATE1-VERDICT-ROUND9-20260823-k0-execution-integrity.md)
+  — **the terminal verdict.** sha256 `d5bfb863…`, 350 lines, landed byte-identical. Declared and
+  deployed candidate `a54038b21fdebfc975bec452a05866ffa571a36c`.
+  **IT UNLOCKS THE SEVEN JOBS OF LOGICAL LEGS 1–5 FOR k=0 AND NOTHING ELSE.** It is **not** a
+  submission authorization — the grader states the decision to submit is Joseph's. Leg 6 stays gated
+  by Amendment 1 §C, no member k≠0 is authorized, and Gate 2 still owes `F-1(b)`, `F-2(b)`,
+  `F-4(b)`–`F-8(b)`, `F-17(b)`, `F-18(b)`.
+- [`GATE1-VERDICT-ROUND8-…md`](GATE1-VERDICT-ROUND8-20260823-k0-execution-integrity.md) — 17/1,
+  `F-2(a)` and `F-17(a)` closed here; failed `F-1(a)`.
+- [`GATE1-VERDICT-ROUND7-…md`](GATE1-VERDICT-ROUND7-20260823-k0-execution-integrity.md) — 17/1,
+  failed `F-17(a)`. **Landed now rather than earlier**: rounds 7 and 8 were outside the repo, so the
+  passing verdict cited artifacts a reader could not reach.
+- [`DECLARATION-20260823-k0-candidate-sha.md`](DECLARATION-20260823-k0-candidate-sha.md) — the
+  A-2(a)–(g) filing the pass rests on. **780** tracked source files, listing sha256 `1b45da55…`.
+
+
 - Live snapshot: [`LIVE-STATE.md`](LIVE-STATE.md); run its freshness check before use.
 - Bounded queue: [`../CURRENT_WORK.md`](../CURRENT_WORK.md); sources live in
   [`control-plane/`](control-plane/).
