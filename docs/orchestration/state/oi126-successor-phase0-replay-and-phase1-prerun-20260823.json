@@ -1,0 +1,64 @@
+{
+ "schema": "oi126-successor-phase0-replayability-and-phase1-preruin-v1",
+ "recorded_at_commit": "ab6331a417be489bc421783f66f51459a04a125f",
+ "authorization": "Joseph 2026-08-23: code building and diagnostic tests, incl. Slurm. PET remains diagnostic/method-development; the OI-126 ruling is NOT reopened and nothing here reopens it.",
+ "PHASE_0": {
+  "question": "Is the Gate-5 full-event 50-member family replayable from its recorded seeds, and is it the right family?",
+  "method": "Independently redrew all three coherent Poisson(1) streams for every member via the ACTUAL producer (fullevent_fps_dataloader.coherent_bootstrap_factors, imported not reimplemented) and hashed with the in-tree hash_array contract, verified behaviourally identical across all FIVE in-tree definitions.",
+  "source_of_seeds": "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/state/gate5-family-promotion-evidence-20260814/family-20260814-FULLSTRENGTH-50of50.json (retired from the live tree at 84607aa3; recovered via the sanctioned evidence tag)",
+  "members": 50,
+  "members_missing_bootstrap_seed": 0,
+  "seed_range": [
+   50000,
+   50049
+  ],
+  "inventory_triple": {
+   "n_data_full": 4116128,
+   "n_sig_full": 49152885,
+   "n_bkg_full": 564591
+  },
+  "vs_target_stage_receipt_all_three_PASS": 50,
+  "vs_promotion_time_replay_all_three_PASS": 50,
+  "why_the_second_comparison_is_not_redundant": "The family record already carries *_REDRAWN digests. Reading them would be a restatement, not a measurement. This redrew independently and agrees with BOTH.",
+  "full_event_discriminator": "Binding is by inventory triple + the +2e7 background stream, NOT by name, seed or stream count: seed and seed+1e7 are shared with the recoil-only contract BY DESIGN, so all three of those bind ambiguously (cc9374c8).",
+  "VERDICT": "REPLAYABLE 50/50. OI-132's missing-bootstrap_seed concern does NOT apply to this family."
+ },
+ "PHASE_1": {
+  "question": "Does the band deficit track signal-MC support loss / sparsity under thinning?",
+  "VERDICT": "REFUTED BEFORE RUNNING, on evidence already on record. NOT RUN, and it should not be run.",
+  "refuting_evidence": "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/state/oi126-band-mc-occupancy-20260817.json (BEN-412, lane E), cited by PREDECLARATION-20260817-cstat-data-only.md:35-40",
+  "reason_1_regressor_is_constant_by_construction": {
+   "expected_surviving_fraction_1_minus_1_over_e": 0.6321205588285577,
+   "BAND_median_surviving": 0.632049554199878,
+   "OUTSIDE_median_surviving": 0.6325315336102137,
+   "note": "Thinning is i.i.d. and kinematics-independent, so support loss is uniform IN SHARE. Same defect that retired the OI-126 tiebreak, whose discriminating variable was exp(-1)."
+  },
+  "reason_2_the_amplifier_is_mislocated": {
+   "rows_per_cell_BAND": {
+    "n": 84,
+    "min": 42.0,
+    "q25": 912.5,
+    "median": 2382.0,
+    "q75": 4738.75,
+    "max": 22273.0
+   },
+   "rows_per_cell_OUTSIDE": {
+    "n": 174,
+    "min": 1.0,
+    "q25": 421.25,
+    "median": 5505.5,
+    "q75": 17652.5,
+    "max": 52840.0
+   },
+   "STATED_PRECISELY_BECAUSE_THE_TWO_COMPARISONS_DISAGREE": "A sparsity amplifier predicts the effect at the LOW TAIL, and there the band is the DENSER set (min 42 vs 1, q25 912.5 vs 421.25). At the MEDIAN the band is the sparser set (2382 vs 5505.5). Only the low tail is the mechanism's prediction, and the mechanism does not get it. Quoting the median comparison would reverse the conclusion."
+  },
+  "what_this_does_NOT_establish": "It does not exonerate the signal stream. Occupancy is a support statistic; signal MC enters through a TRAINED NETWORK, which can respond non-uniformly to a uniform perturbation. What is refuted is the SPARSITY AMPLIFIER, which was the only local amplifier the campaign had named."
+ },
+ "CONSEQUENCE_FOR_PHASE_2": {
+  "status": "NOT LAUNCHED. Premise changed under measurement; the decision is Joseph's.",
+  "override_point_EXISTS": "train_fullevent_replica.py:665 --cstat-product {three-stream-v1,data-only-v1}, with cstat_data_only.py plumbing and a separate validator and root namespace. This resolves the 'blocked on whether a non-pinned override point exists' blocker OI-126 recorded for the analogous arm; no pinned driver needs editing.",
+  "BUT_A_PREDECLARED_NEGATIVE_BINDS": "PREDECLARATION-20260817-cstat-data-only.md:35-40 states categorically that no OI-126 conclusion may be drawn from the data-only family, for exactly the occupancy reason above. Repurposing that family would override a predeclared negative, which is not this lane's call.",
+  "no_named_mechanism_remains": "Target refuted, extraction refuted (control 0.139%, band ratio 1.0000), gate5_signal_factor exonerated, sparsity amplifier refuted. The surviving statement is a ~3.6x p_parallel-localised nonlinearity with no mechanism, uniform occupancy loss, faithful extraction and faithful target.",
+  "net_effect_on_the_ruling": "This makes the 2026-08-20 ruling look BETTER SUPPORTED, not weaker. Reported that way deliberately: the lane was looking for a reason to reconsider and found the opposite."
+ }
+}
