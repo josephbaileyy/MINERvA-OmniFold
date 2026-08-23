@@ -75,6 +75,58 @@ among files under the code root" was **false**, and false at `f3c27870` for the 
 their former names; and F-14 ground (i) was withdrawn in the round-5 document itself at `:585`.
 Neither changed a verdict.
 
+## Joseph's dispositions on the round-6 FUTURE FINDINGS (2026-08-23)
+
+Recorded verbatim from Joseph in session, and **authorized by him to be recorded as his direct
+rulings** rather than as a relay. The round-6 grader raised three items it explicitly declined to
+fail Gate 1 on, recording them as future findings for Joseph to ratify. He has ratified them:
+
+> "The 16 pinned interpreter-capability probes are accepted as a distinct, enumerated category
+> outside the guard/P-4 boundary."
+
+> "ROOT628_CONDA's declared system default is accepted for this k=0 rehearsal as a recorded residual,
+> not a Gate-1 blocker."
+
+> "The unreadable-member diagnostic wording is nonblocking and must not expand Gate 1."
+
+**None of the three expands Gate 1, and none is a repair authorization.** Ruling 21's guarding
+boundary stays at 14 guarded + 16 declared-preflight, with the 16 interpreter probes as a **visible
+third category** rather than folded into either — the census prints all three and totals them, so the
+boundary cannot drift silently. The `ROOT628_CONDA` default is a **recorded residual**: it is accepted
+for this rehearsal only, and accepting it is not a finding that it is correct.
+
+**The third disposition carries an instruction, not just a permission** — *"must not expand Gate 1."*
+A wording defect in a diagnostic is repairable, and a repairable defect does not belong in a
+disclosure register; but it is also not a Gate-1 criterion, and it may not be made one.
+
+## The authorized round-7 repair
+
+Issued with the dispositions above. Three items, no unrelated changes:
+
+1. **Extend the pure-git parity gate**, before either environment library is sourced, to bind
+   `nd-unfolding/lib_mnv_env_preflight.sh`, `nd-unfolding/lib_mnv_env_pathcheck.sh` and
+   `lib/resume_guard.sh`, with positive-parity and mutation-refusal controls proving refusal occurs
+   **before** the source, and **no** new helper or trust layer.
+2. **Re-run and correct the complete M-1…M-6 filing** at the final candidate sha and the current
+   canonical checkout, restoring `unified_throw_cov.py` as the tenth M-1 row, **reporting both tree
+   states explicitly and not pre-answering the result.**
+3. **Update the operative runbook and plan §C** to export the mandatory `MNV_ENV_ROOT` and
+   `MNV_CONDA_PREFIX` values.
+
+**Explicitly withheld:** Slurm submission, any science run, any further repair round, and any claim
+that Gate 1 passed. *"The same round-6 grader will perform the terminal regrade. Whether PASS or FAIL,
+return the verdict to me and stop."*
+
+**A correction Joseph made to the builder, recorded because it changed the work.** The builder
+measured `unified_throw_cov.py` on **`main`**, found an active hardcoded `_REPO` feeding a
+`sys.path.insert(0, …)`, and reported it as the *candidate's* state — arguing on that basis that
+instruction 2 pre-specified a wrong answer. Joseph re-measured the candidate directly
+(`git show fabeedc2:nd-unfolding/unified_throw_cov.py`) and established that it carries the B-1
+repair, with `_DATA_ROOT` as its only absolute canonical literal. **His expected split — three
+`_DATA_ROOT` and one inert `_REPO` — is what the candidate actually measures.** The hardcoded `_REPO`
+is real and is on the canonical checkout, where it is one of five. Both are true of different trees;
+only one is true of what executes.
+
 ## Process note
 
 This is a **terminal handoff**. The round-6 grader requested no further grader, and the freeze on

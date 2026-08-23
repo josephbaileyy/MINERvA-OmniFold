@@ -1,5 +1,16 @@
 # M-1…M-6 RE-MEASURED at the declared sha — and four of the six have MOVED
 
+> ## ⚠ SUPERSEDED 2026-08-23 — this filing is the `F-17(a)` FAIL and its replacement has landed
+> **Do not cite the M-1 table below.** It has **nine** rows and says *"the three that remain"*; there
+> are **ten** and **four**. `unified_throw_cov.py` — one of the six B-1 files — was missing entirely,
+> which is precisely what the round-6 grader failed `F-17(a)` on.
+>
+> The replacement is
+> [`MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md`](MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md):
+> ten rows, both trees reported separately, and produced by a committed instrument
+> (`measure_m1_m6.py`) rather than by hand. **The text below is retained as the record of what was
+> wrong, not as a source of numbers.**
+
 > ## ⚠ `M-5` IS RESTATED AND `F-17(a)` IS REPAIRED (2026-08-23) — re-measured at `f3c27870`
 > The `.sh` route, not just `REPO=`: **unguarded activator sources 8 of 8 → 0 of 8**; activator
 > sourced from `ENV_ROOT` **0 of 8 → 8 of 8**; **`_mr_lib` bind-after-use 8 of 8 → 0 of 8**.

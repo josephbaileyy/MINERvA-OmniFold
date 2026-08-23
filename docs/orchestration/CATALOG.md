@@ -91,6 +91,12 @@ deliberately, because this file is a pointer-only router and not an exhaustive i
   recording an independent peer review whose four objections were all accepted. **Where this and a
   canonical artifact disagree, the canonical artifact wins.**
 
+- [`MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md`](MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md)
+  — the `F-17(a)` filing repair, 2026-08-23. **Ten** M-1 rows and **four** surviving literals on the
+  candidate (three `_DATA_ROOT`, one inert `_REPO`); **five**, all `_REPO`, on the canonical checkout,
+  one of them active. The 2026-08-22 filing it replaces had nine rows and said "three". Re-run it —
+  `python3 docs/orchestration/measure_m1_m6.py --tree <TREE>` — and do not inherit a number.
+
 ### Gate-1 round 6 — GRADED, TERMINAL, and it DOES NOT PASS
 
 - [`GATE1-VERDICT-ROUND6-20260823-k0-execution-integrity.md`](GATE1-VERDICT-ROUND6-20260823-k0-execution-integrity.md)
