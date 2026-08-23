@@ -178,12 +178,20 @@ nominal PET extraction, an identical-seed GPU-floor repeat, a
 20-member coherent-Poisson retraining ensemble, and a 12-member crossed
 subsample/estimator-seed ensemble have all passed their ordering, event-alignment, and
 finite-output gates. The GPU nondeterminism is negligible relative to both
-sampling and training variation. The $C_{\rm stat}$ block is a diagnostic
-dispersion measurement built from 20 coherent replicas. It is not an
-independently verified covariance, it is not the statistical uncertainty of any
-PET result, and it is not paired with a PET central value; a larger ensemble
-would sharpen the dispersion estimate and would still not supply coverage
-evidence.
+sampling and training variation. The recoil-only statistical block is a diagnostic
+dispersion measurement built from 20 coherent replicas, and the pre-publication plan
+to raise that to 100 has not been run. It is not an independently verified covariance,
+it is not the statistical uncertainty of any PET result, and it is not paired with a
+PET central value; a larger ensemble would sharpen the dispersion estimate and would
+still not supply coverage evidence.
+
+\emph{This block is not the object called} $C_{\rm stat}$ \emph{elsewhere in the
+campaign.} That name denotes the full-event extended-fiducial 50-member Gate-5 family
+(\texttt{VL132}), whose properties, limitations and declined pairing are the subject of
+App.~\ref{app:cstatlimit}. The two are different constructions on different
+populations --- 20 recoil-only replicas here against 50 full-event members there, and
+two resampled inventories here against three there --- so neither object's measurements,
+disclaimers or rulings transfer to the other.
 
 The historical recoil-PET campaign produced vertical, retraining, ML,
 statistical and detector blocks on a common nominal.  That assembly is now
