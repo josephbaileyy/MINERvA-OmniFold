@@ -732,6 +732,12 @@ def orchestration_volume() -> str:
         if proc.returncode != 0:
             return f"prose/instrument volume unavailable (ls-files rc={proc.returncode})"
         names = [n for n in proc.stdout.decode("utf-8", "replace").split("\0") if n]
+        if not names:
+            # PB-15: zero must be distinguishable from unmeasured. `git ls-files` exits 0 for
+            # a path it knows nothing about, so an empty match set would otherwise print
+            # "0 prose / 0 instrument" -- a measurement never made, and indistinguishable
+            # from a genuinely empty layer. Fires on a rename of the path with no code change.
+            return "prose/instrument volume unavailable (no tracked paths under docs/orchestration)"
 
         def lines(suffix: str) -> int:
             total = 0
@@ -745,7 +751,8 @@ def orchestration_volume() -> str:
                     continue    # tracked but absent from the worktree: skip, never fail
             return total
 
-        return f"{lines('.md')} prose / {lines('.py')} instrument lines"
+        return (f"{lines('.md')} prose / {lines('.py')} instrument lines"
+                f" over {len(names)} tracked files")
     except (OSError, subprocess.SubprocessError):
         return "prose/instrument volume unavailable"
 
