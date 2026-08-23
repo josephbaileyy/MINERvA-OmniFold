@@ -1620,7 +1620,7 @@ $13.1\%$. The two are not the same object --- data statistics on a standard sele
 bootstrap over a learned estimator on an extended phase space --- and we do not treat the comparison as
 decisive. We state it because a reader is entitled to it.
 
-\subsubsection{Why the resampling scheme is the sampling distribution, not a proxy}
+\subsubsection{Why the two readings of the band are not a live fork}
 
 The family disagrees with the central value by a factor of order three, coherently, in the
 best-accepted region of the plane. Two readings of that are available a priori.
@@ -1633,14 +1633,24 @@ Both are consistent with the measurements above: a genuinely unstable estimator 
 perturbation both act during training, both concentrate where information is scarcest, and
 both leave the extraction faithful.
 
-Reading (b) is not available, for a reason that does not require a discriminating run. The
+\textbf{That binary is not live, and it was retracted rather than decided.} It was withdrawn on
+2026-08-19 on a type mismatch: a covariance measures dispersion \emph{about a centre} and does not
+establish finite-family \emph{containment} of a separately trained nominal, so non-containment of the
+nominal by $50$ draws is not the quantity this covariance reports and \emph{no} choice between (a)
+and (b) follows from it. The two readings are recorded here because the measurements above were
+gathered while they were live and a reader will meet them in that form elsewhere; neither is asserted,
+and the fork is not resolved in favour of either.
+
+The argument below is therefore a statement about the resampling scheme alone, and it is offered as an
+argument rather than a ratified result. It bears on reading (b) without adjudicating the retracted
+fork. The
 resampled objects are individual reconstructed events. A $\mathrm{Poisson}(1)$ multiplicity on
 a row states that, were the data retaken, that event occurred $k$ times; multiplicity zero
 states that it did not occur, which is exactly what counting noise does to an event observed
 once, so the zero atom is not an artifact of the method. Independent $\mathrm{Poisson}(1)$
 multiplicities also reproduce exact Poisson fluctuations in every aggregate of those rows
 (\S\ref{app:poisson}), which variance-matched continuous alternatives do not: they match the
-first two moments and get the discreteness wrong. The resampling scheme is therefore the
+first two moments and get the discreteness wrong. On that ground the resampling scheme is the
 sampling distribution rather than a stand-in that might be the wrong one.
 
 A discriminating contrast was designed --- $\mathrm{Exponential}(1)$ shares mean and variance
@@ -1660,9 +1670,10 @@ includes the estimator's own sensitivity to which events are present. Second, it
 an \emph{upper bound} on how poorly the data constrain the cross section in that region: a
 differently regularised estimator could do better on the same data, and none could do worse
 purely for want of information. That bound is on the statistical component only and says
-nothing about systematics. The argument above is an argument, not a ratified result: nothing
-here licenses promoting the central value, quoting the covariance as verified, or treating the
-region as settled.
+nothing about systematics. Ratification rests with the estimator's owner and the
+covariance-construction reviewer, the open item recording the question is not closed by anything here,
+and nothing here licenses promoting the central value, quoting the covariance as verified, or treating
+the region as settled.
 
 \subsubsection{Limitations of the covariance object itself}
 
@@ -1673,7 +1684,10 @@ ordering only, not over domain or centring. No claim of independent construction
 made for this object, and none should be inferred from the clause count.
 
 Every estimated standard deviation carries a $10.1\%$ fractional uncertainty of its own from the family
-size alone, $1/\sqrt{2(N-1)}=1/\sqrt{98}$.
+size alone, $1/\sqrt{2(N-1)}=1/\sqrt{98}$, against the $7.11\%$ that $N=100$ would give. The design
+document specifying $N=100$ labels a family of this size \texttt{INSUFFICIENT}, and because that
+document's supersession is unratified, the label stands in the record as written (\texttt{VL132},
+\texttt{CSTAT-R7}).
 
 The reporting domain and the invertible domain differ, and quoting one for the other is an error. The
 measurement is reported on $262$ cells, those with non-zero reconstruction acceptance. The covariance is
@@ -1700,6 +1714,8 @@ integral and the external comparison are in
 \texttt{state/RECEIPT-20260815-cstat-tail-geometry-and-weighting-correction}; and the two per-cell
 relative standard deviations tabulated above are fields of
 \texttt{state/p5a-nominal-vs-cstat-family-percell-20260815}, recomputable from that receipt's own
-shipped per-cell array. The input file the members were built from is measured in
+shipped per-cell array. That receipt carries two retracted share-of-total fields, marked in place;
+neither relative-standard-deviation field is among them, and no share-of-total figure from it is used
+here. The input file the members were built from is measured in
 \texttt{state/gate5-source-npz-verified-20260813}, which should be cited for that purpose in preference
 to the members' own recorded input digest.
