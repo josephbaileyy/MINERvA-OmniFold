@@ -1,0 +1,159 @@
+{
+ "schema": "oi126-r3-jacobian-probe-v1",
+ "what": "R3 of the four predeclared free reads: the step-1 Jacobian anisotropy S_long/S_tran, discriminating the two lanes' OPPOSITE redundancy claims (step-2 bottleneck vs step-1 4:1 collinearity).",
+ "predeclaration": {
+  "file": "docs/orchestration/state/PREDECLARATION-20260823-oi126-successor-free-reads.json",
+  "commit": "f1e2f10e",
+  "item": "R3_Jacobian_probe"
+ },
+ "authorization": "Joseph 2026-08-23, code building and diagnostic tests including Slurm. PET remains diagnostic/method-development (2e210468).",
+ "VERDICT": "CONFIRM",
+ "boundaries_as_predeclared": {
+  "CONFIRM": "S_long/S_tran >= 3.0",
+  "REFUTE": "<= 1.5",
+  "UNRESOLVED": "1.5 to 3.0; the author's asymmetric convention is that unresolved counts as REFUTED-AS-EXPLANATORY"
+ },
+ "measured_ratio": 46.81363210194603,
+ "S_long": 152.8452896229656,
+ "S_tran": 3.264973956520068,
+ "long_features": [
+  "pparallel",
+  "mu_pz",
+  "mu_E",
+  "mu_qp"
+ ],
+ "tran_features": [
+  "pt",
+  "mu_px",
+  "mu_py"
+ ],
+ "per_feature_mean_abs_grad": {
+  "pt": 1.3043779676746974,
+  "pparallel": 34.41235710903822,
+  "mu_px": 1.382776278130171,
+  "mu_py": 0.5778197107151994,
+  "mu_pz": 24.210755235524942,
+  "mu_E": 25.302907820980614,
+  "mu_cos_phi": 1.0782639252121407,
+  "mu_sin_phi": 0.4942451761959691,
+  "mu_qp": 68.91926945742182,
+  "mu_minos_ok": 13.704967788074958,
+  "vtx_x": 0.3030300278937863,
+  "vtx_y": 0.12458315225465717,
+  "vtx_z": 2.124589294474776
+ },
+ "n_rows": 100000,
+ "THE_2p0_TO_3p0_HOLD_DID_NOT_TRIGGER": {
+  "the_hold": "The predeclaration recorded that its 3.0 confirm boundary was chosen against a measured output amplitude ratio of 4.05 which has since been corrected to about 2.1, so a return in 2.0-3.0 MUST NOT be read as confirmation and the reader must not re-centre.",
+  "measured": 46.81363210194603,
+  "status": "The measured ratio is 46.81, which is 15.6x the confirm boundary and far outside the 2.0-3.0 hold. The hold therefore does not apply and NO re-centring was performed or needed.",
+  "the_boundary_defect_is_still_real": "The recorded defect stands as a defect in the predeclaration; it simply did not bite on this value. It should not be quoted as resolved."
+ },
+ "A_TENSION_I_AM_NOT_EXPLAINING_AWAY": "The Jacobian anisotropy is 46.81 while the honest OUTPUT amplitude ratio is about 2.1. The predeclaration already states these are different quantities that need not be equal, and that is correct, but a factor ~22 between input sensitivity and output effect is large and is NOT accounted for by anything measured here. Recorded as an open tension rather than smoothed over.",
+ "COLLINEARITY_THE_COLUMN_COUNT_IS_NOT_THE_INDEPENDENT_CONTENT": {
+  "why_this_matters": "S_long/S_tran sums over COLUMNS. If the long columns are near-duplicates the ratio inherits the multiplicity rather than the independent dimensionality -- and this is exactly the quantity the '4:1 collinearity' claim turns on, so it is measured rather than inferred from the contract.",
+  "exactly_equal_column_pairs": {},
+  "abs_corr_above_0p95": {
+   "pparallel~mu_pz": 0.9999999999999982,
+   "pparallel~mu_E": 0.9998942581159347,
+   "mu_pz~mu_E": 0.9998942581101443
+  },
+  "degenerate_zero_sd_columns": [
+   "mu_minos_ok"
+  ],
+  "S_long_block_corr_eigenvalues": [
+   2.2695056641537176e-15,
+   0.00013888681290204888,
+   0.6865965075248726,
+   3.313264605662224
+  ],
+  "S_long_effective_rank_participation": 1.3974852268369071,
+  "reading": "pparallel~mu_pz at |corr| 0.9999999999999982 and both ~mu_E at 0.99989: THREE of the four S_long columns are one physical direction. The S_long correlation block has participation ratio 1.3975 out of 4 columns. mu_qp is independent of that triple. mu_minos_ok is degenerate (zero sd, contract norm std 1e-6) and is in NEITHER group, so it does not enter the ratio.",
+  "COLLAPSED_VARIANT": "Keeping one representative per collinear group (pparallel + mu_qp) gives ratio_collapsed = 31.6485, against 46.8136 for the 4-column sum. The verdict is CONFIRM either way -- 31.6 and 46.8 are both far above 3.0 -- so the collinearity inflates the number but does not manufacture the verdict.",
+  "THE_4_TO_1_CLAIM_IS_NOW_QUANTIFIED": "The '4:1 collinearity' description is literally true as a column count and overstates the independent content: 4 nominal long columns carry ~1.4 independent directions."
+ },
+ "ROBUSTNESS_subset_choice": {
+  "why_checked": "the predeclared pass used the FIRST 1e5 pass_reco rows and mc_indices ARE sorted ascending (measured: True), so the first rows are the lowest MC indices and could track run/subrun and beam conditions.",
+  "ratios": [
+   46.81363210194603,
+   47.003495269739375,
+   47.03525205242029
+  ],
+  "min": 46.81363210194603,
+  "max": 47.03525205242029,
+  "max_over_min": 1.0047340900614514,
+  "all_above_confirm_boundary": true,
+  "reading": "first 46.8136, last 47.0035, seeded-random 47.0353; spread max/min = 1.0047. The subset choice is immaterial."
+ },
+ "STEP2_CONTRAST_authorized_addition": {
+  "status": "AUTHORIZED ADDITION, declared as a CONTRAST with NO numeric boundary. No boundary was invented after seeing step 1.",
+  "predeclared_reading": "step-1 ratio materially ABOVE step-2 ratio supports the step-1 collinearity account; comparable ratios refute it. No numeric boundary was declared and none is invented here.",
+  "step2_checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/w_nominal/OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5",
+  "step2_per_feature_mean_abs_grad": {
+   "pt": 0.06668968399775098,
+   "pparallel": 0.16870103368505893
+  },
+  "step2_ratio": 2.5296421211224835,
+  "step1_ratio_over_step2_ratio": 18.506029651804386,
+  "VERDICT_ON_THE_CONTRAST": "The step-1 ratio (46.81) is 18.51x the step-2 ratio (2.5296). That is materially above, so the CONTRAST SUPPORTS THE STEP-1 COLLINEARITY ACCOUNT and does not support the step-2 bottleneck account as the dominant one.",
+  "note": "Step 2's FiLM takes only (pt, pparallel), so its ratio is a single-feature quotient and 2.53 is close to the ~1 the column-count argument predicted for it; the discrimination comes from the CONTRAST, which the step-1 number alone could not provide."
+ },
+ "THE_MOST_IMPORTANT_CAVEAT_R3_DOES_NOT_LOCALISE_TO_THE_BAND": {
+  "exploratory_not_a_predeclared_statistic": true,
+  "band_7_10_GeV_ratio": 42.211550827344425,
+  "control_lt6_GeV_ratio": 45.09181561669156,
+  "band_ratio_collapsed": 33.11508615393793,
+  "control_ratio_collapsed": 26.55757850963134,
+  "reading": "42.21 in the band against 45.09 in the control on the 4-column sum (33.12 against 26.56 collapsed). The Jacobian anisotropy is a GLOBAL property of the trained step-1 net and does NOT single out the band. So R3 confirms the redundancy claim but supplies NO band localisation, and must not be quoted as explaining the band. R1 is the read that localises; R3 is not.",
+  "caveat": "The band/control split is NOT a predeclared R3 statistic. It is reported as exploratory structure and must not be quoted as an R3 verdict."
+ },
+ "provenance": {
+  "step1_checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/w_nominal/OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5",
+  "step1_checkpoint_sha256": "9023202396a0db67c81d4affca4f302f719fbdbfedd237a6647899247ac56893",
+  "checkpoint_designation_basis": "TWO independent bases, not a preference: (1) STEP1_TRAJECTORY checkpoints block gives step1_iter2 provenance_tier 'final(BEN-043)' while iter0/iter1 are 'best-epoch'; (2) the artifact's OWN inference_contract names this file as step1_checkpoint. Nothing here is 'promoted' -- the estimator is P5A-ANNEALED-UNPROMOTED and Gate 4 keeps nominal_pet_training_allowed false; read the phrase as 'the nominal arm's terminal step-1 fit'.",
+  "module_digests_of_what_actually_executed": {
+   "train_fullevent_nominal": {
+    "sha256": "91144bee2ff89ae62497c8282174f0fc1c344f455945d6b52b7b8219ecb4e7bc",
+    "realpath": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/train_fullevent_nominal.py"
+   },
+   "omnifold": {
+    "sha256": "bbec850924ca15162f370ee63837b88371bf336746425afebfc95e36d39a8eea",
+    "realpath": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/__init__.py"
+   },
+   "extract_fullevent_fps": {
+    "sha256": "de0f044b612782edb58e152205b426e6dbbca7637b7f3f342a1373fe4dc7d51a",
+    "realpath": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/extract_fullevent_fps.py"
+   },
+   "fullevent_fps_dataloader": {
+    "sha256": "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1",
+    "realpath": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_fps_dataloader.py"
+   },
+   "step1_pull_push_decomposition": {
+    "sha256": "175edde3860da313cf07024514922a0b1a89fb802aaaa94abdf120674f92fabe",
+    "realpath": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/step1_pull_push_decomposition.py"
+   },
+   "_tensorflow": "2.15.0"
+  },
+  "gradient_definition": "d logit / d z where z is the STANDARDISED event-feature vector fed to the model (the loader's own normalisation), so the ratio is scale-free by construction. Mean over rows of |grad| per feature, then summed within each group."
+ },
+ "CITABLE_FOR": [
+  "the step-1 vs step-2 Jacobian anisotropy contrast",
+  "the measured collinearity of the step-1 event-feature block",
+  "that the anisotropy is global rather than band-localised"
+ ],
+ "NOT_CITABLE_FOR": [
+  "explaining the band",
+  "pairing C_stat with P5A",
+  "adopting any PET covariance",
+  "promoting P5A",
+  "either half of the reconsideration gate",
+  "clearing any Gate-6 prohibition",
+  "any mechanism CLAIM on its own"
+ ],
+ "what_this_read_did_not_do": [
+  "no training",
+  "no target",
+  "no ROOT",
+  "forward passes and gradients only, two interactive-QOS A100 jobs"
+ ]
+}

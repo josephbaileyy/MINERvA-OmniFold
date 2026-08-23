@@ -1,0 +1,163 @@
+{
+ "schema": "oi126-r2-rank1-and-dip-plateau-correlation-v1",
+ "what": "R2 of the four predeclared free reads: is the Gate-5 50-member full-event family rank-1, and do per-member band dip depth and tail plateau height co-vary?",
+ "predeclaration": {
+  "file": "docs/orchestration/state/PREDECLARATION-20260823-oi126-successor-free-reads.json",
+  "commit": "f1e2f10e",
+  "item": "R2_rank_one_SVD_and_dip_plateau_correlation"
+ },
+ "authorization": "Joseph 2026-08-23, diagnostic tests. PET remains diagnostic/method-development (ruling 2e210468). Nothing here reopens OI-126.",
+ "VERDICT": "UNRESOLVED",
+ "VERDICT_MEANING": "UNRESOLVED licenses NEITHER branch. Every mode-based mechanism from all three lanes is left exactly as it was: not licensed, not refuted. It does NOT default to confirm.",
+ "CITABLE_FOR": [
+  "whether the band+tail log-deviation matrix is rank-1 by the predeclared 80/50 bar",
+  "whether per-member dip depth and plateau height co-vary by the predeclared 0.5/0.2 bar",
+  "the SIGN STRUCTURE of the leading mode (band and tail load OPPOSITELY)"
+ ],
+ "NOT_CITABLE_FOR": [
+  "pairing C_stat with P5A",
+  "adopting any PET covariance",
+  "promoting P5A",
+  "either half of the reconsideration gate (estimator-equivalence AND coverage)",
+  "clearing any Gate-6 prohibition",
+  "any mechanism CLAIM (which additionally requires R1)",
+  "the MAGNITUDE of the band effect -- 'the band factor' has no single value (f6006d1a)"
+ ],
+ "binding": {
+  "family_artifact": "docs/orchestration/state/gate5-cstat-n50/GATE5_CSTAT_N50.npz",
+  "family_sha256": "6c3b4e00910397953269527964d2803966f73ee01548a6164f04cd78501623bc",
+  "is_the_VL132_digest": true,
+  "D": 262,
+  "dof": 49,
+  "n_members": 50,
+  "centering": "replica_mean",
+  "ravel_order": "C",
+  "layout_fingerprint": "53119a407987c3b65911581ead7701b6a12d10742c6156682603a30da80a97fe",
+  "bootstrap_seeds": "50000-50049 (from the npz, all 50 present)",
+  "inventory_triple_verified_in_inputs_npz": {
+   "data": 4116128,
+   "signal": 49152885,
+   "bkg": 564591
+  },
+  "member_binding_method": "sha256 of each of the 50 scratch GATE5_REPLICA_XSEC.npz vs member_xsec_sha256 in replica_index order",
+  "member_binding_result": "50/50 MATCH, 0 mismatch",
+  "bound_WITHOUT": "the name C_stat, bootstrap_seed, and stream count -- all three collide with the recoil-only family",
+  "CORRECTION_TO_THE_ROUTING_BRIEF": "The per-member record is NOT only at the evidence tag. GATE5_CSTAT_N50.npz on main carries replica_index(50), bootstrap_seed(50) and member_xsec_sha256(50). Binding by member_xsec_sha256 binds the ARTIFACTS rather than their metadata and is strictly stronger than the retired-JSON route.",
+  "nominal_used": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed_extraction_unpromoted/P5A-ANNEALED-UNPROMOTED.xsec.slurm-56989462.npz"
+ },
+ "pipeline_positive_control": {
+  "what": "reproduce the committed per-cell record from the raw 50 member files via cell_index[quotable_mask]",
+  "reference": "docs/orchestration/state/p5a-nominal-vs-cstat-family-percell-20260815.json",
+  "per_cell_ratio_max_rel_dev": 6.661338147750939e-16,
+  "per_cell_family_rel_sd_max_rel_dev": 5.551115123125783e-16,
+  "domain_reproduced": "285 grid / 262 nominal-populated / 257 all-members-positive",
+  "PASS": true
+ },
+ "domain": {
+  "cells": "the 257 all-members-positive quotable cells",
+  "n_cells_used": 115,
+  "why_not_262": "log(member/nominal) is undefined or meaningless on the 5 flicker cells [209,254,255,256,281] at n_replicas_reported 47/44/24/49/49; VL132 records cell 255 reported in only 24 of 50 draws.",
+  "band": "p_parallel columns 10-14 = 6-15 GeV, 70 cells, GEOMETRIC",
+  "tail": "p_parallel columns 16-18 = >=20 GeV, 45 cells, GEOMETRIC",
+  "column_15_excluded": "[15,20) GeV is the zero crossing (nominal/family 1.0050) and dilutes the band statistic"
+ },
+ "THE_63_CELL_SET_IS_EFFECT_SELECTED_AND_WAS_NOT_USED": "the_tail.n_cells_ratio_gt_1p5 = 63 selects cells BY ratio>1.5, i.e. on the effect itself; correlating amplitudes there conditions on the dependent variable and is biased high by construction. The record now holds FOUR band definitions -- 63 effect-selected, 84 geometric 10-15, 70 geometric 10-14, per-column -- and only the geometric ones are usable here.",
+ "measurement": {
+  "matrix": "50 x 115 log(member/nominal)",
+  "leading_singular_value_share_of_variance_CENTERED": 0.7577629945365298,
+  "leading_share_UNCENTERED_second_moment": 0.9646079980332434,
+  "top2_cumulative_centered": 0.8640243755230688,
+  "singular_values_centered_first5": [
+   28.86543,
+   10.809337,
+   7.341967,
+   5.851134,
+   3.910635
+  ],
+  "WHY_CENTERED": "'share of variance' is a centered quantity. The uncentered 96.46% is share of total SUM OF SQUARES, dominated by the common mean offset (band mean -1.215078, tail mean +0.504205), which is not variance.",
+  "amplitude_convention_adjudicated_by_the_routing_lane": "a_band(k)=sign(family-mean band dev)*mean_band log(member_k/nominal); a_tail likewise; signs fixed ONCE from the family, not per member",
+  "sign_band_family": -1.0,
+  "sign_tail_family": 1.0,
+  "corr_adjudicated_convention": 0.5246729775055925,
+  "corr_raw_signed_deviations": -0.5246729775055925,
+  "abs_corr": 0.5246729775055925,
+  "band_signed_dev_mean": -1.2150779388195045,
+  "band_signed_dev_sd": 0.4540002353371142,
+  "tail_signed_dev_mean": 0.5042049734823386,
+  "tail_signed_dev_sd": 0.23983144793759126
+ },
+ "boundaries_as_predeclared": {
+  "CONFIRM": "leading singular value >=80% of variance AND corr >= +0.5",
+  "REFUTE": "leading singular value <50% OR |corr| < 0.2",
+  "UNRESOLVED": "anything between"
+ },
+ "verdict_derivation": "leading centered share 0.757763 is BELOW the 80% confirm bar and ABOVE the 50% refute bar; |corr| 0.524673 is above the 0.2 refute bar. Neither branch is met under EITHER amplitude convention, because the SVD leg alone already fails CONFIRM.",
+ "A_PREDECLARATION_DEFECT_FOUND_AND_ADJUDICATED_NOT_SILENTLY_RESOLVED": "'per-member band dip amplitude' and 'tail plateau amplitude' were undeclared as to SIGN, and the band and tail deviations have OPPOSITE sign by construction (nominal above the family in the band, below it in the tail). Read literally as signed deviations, a perfectly rank-1 family loading oppositely on the two regions returns corr near -1 and the rule yields UNRESOLVED for a SIGN-CONVENTION reason rather than a physical one. The convention was raised BEFORE the correlation was computed and adjudicated to MAGNITUDES by the routing lane. Recorded rather than quietly fixed.",
+ "robustness_across_cell_sets": [
+  {
+   "band": "cols10-14 (6-15 GeV)",
+   "tail": "cols16-18 (>=20 GeV)",
+   "n_cells": 115,
+   "leading_share_centered": 0.7577629945365298,
+   "corr_adjudicated_convention": 0.5246729775055925,
+   "verdict": "UNRESOLVED"
+  },
+  {
+   "band": "cols10-14 (6-15 GeV)",
+   "tail": "cols17-18 (>=40 GeV)",
+   "n_cells": 100,
+   "leading_share_centered": 0.7791758926976918,
+   "corr_adjudicated_convention": 0.5194683665355923,
+   "verdict": "UNRESOLVED"
+  },
+  {
+   "band": "cols11-13 (7-10 GeV)",
+   "tail": "cols16-18 (>=20 GeV)",
+   "n_cells": 87,
+   "leading_share_centered": 0.7759099493372204,
+   "corr_adjudicated_convention": 0.5479095205425238,
+   "verdict": "UNRESOLVED"
+  },
+  {
+   "band": "cols11-13 (7-10 GeV)",
+   "tail": "cols17-18 (>=40 GeV)",
+   "n_cells": 72,
+   "leading_share_centered": 0.8031856311394424,
+   "corr_adjudicated_convention": 0.5380020699658294,
+   "verdict": "CONFIRM"
+  },
+  {
+   "band": "cols10-13 (6-10 GeV)",
+   "tail": "cols16-18 (>=20 GeV)",
+   "n_cells": 101,
+   "leading_share_centered": 0.7626881099518961,
+   "corr_adjudicated_convention": 0.5421995241426505,
+   "verdict": "UNRESOLVED"
+  },
+  {
+   "band": "cols10-13 (6-10 GeV)",
+   "tail": "cols17-18 (>=40 GeV)",
+   "n_cells": 86,
+   "leading_share_centered": 0.7868959962967214,
+   "corr_adjudicated_convention": 0.5307569416048895,
+   "verdict": "UNRESOLVED"
+  }
+ ],
+ "ROBUSTNESS_READING": "UNRESOLVED holds in 5 of 6 geometric band/tail combinations. The 1 exception(s) sit a hair over the 80% bar on the smallest cell sets; a verdict that flips on a knife-edge combination is not a CONFIRM.",
+ "STRUCTURAL_FINDING_NOT_A_VERDICT": {
+  "what": "The leading mode is a band<->tail SEE-SAW, not an overall normalisation mode.",
+  "leading_right_vector_mean_loading_on_band": 0.10970055969897366,
+  "leading_right_vector_mean_loading_on_tail": -0.03351271617947962,
+  "same_sign_on_both_regions": false,
+  "corr_member_total_sigma_with_band_dev": 0.5752108025098724,
+  "corr_member_total_sigma_with_tail_dev": -0.21816678620449945,
+  "reading": "Members sitting lower in the band sit HIGHER in the tail. Any surviving mode-based mechanism must predict OPPOSITE-SIGN response in band and tail; a mechanism predicting a common-direction shift is inconsistent with this regardless of R2's verdict. Offered as a CONSTRAINT on future proposals, not as evidence for any."
+ },
+ "what_this_read_did_not_do": [
+  "no GPU",
+  "no training",
+  "no target construction",
+  "no ROOT",
+  "read-only over committed npz/json plus the 50 scratch member files"
+ ]
+}

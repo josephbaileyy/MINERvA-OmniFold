@@ -1,0 +1,74 @@
+{
+ "schema": "g2-fullevent-truthcloud-coverage-v1",
+ "what": "The predeclaration's SEPARATE_AND_WORTH_SETTLING item. NOT one of R1-R4 and NOT a mechanism question: a Gate-1 class check that the 2026-06-28 cloud-coverage fix holds for the FPS full-event dump that pet-fullevent-fps-v1 trains on.",
+ "predeclaration_item": "SEPARATE_AND_WORTH_SETTLING_REGARDLESS_OF_OI126",
+ "VERDICT": "THE FIX HOLDS. The unverified claim is now verified, in the safe direction.",
+ "validator_gap_confirmed": {
+  "claim": "validate_g2_fullevent_smoke.py:204-223 asserts the appended miss rows' RECO vectors are empty but never asserts a non-empty TRUTH cloud; :124 sig_has_truthcloud is branch-existence only.",
+  "verified_by_reading_the_source": true,
+  "line_124": "ck('sig_has_truthcloud', {'part_gen_E','part_gen_pdg'} <= b_sig) -- tests BRANCH NAMES only, no content",
+  "lines_204_223": "asserts len(part_reco_E)==0, len(part_reco_view)==0, len(part_reco_time)==0 and truth identity validity; there is NO len(part_gen_E)>0 assertion anywhere in the file",
+  "grep_for_part_gen_in_the_validator": "lines 114, 124, 139 only -- all name-level"
+ },
+ "measurement": {
+  "all_rows": {
+   "n": 49152885,
+   "has_cloud_any_nonzero_frac": 0.9999964396799903,
+   "tok0_feat0_nonzero_frac": 0.9999964396799903,
+   "n_empty_cloud": 175,
+   "median_n_tokens": 4.0,
+   "mean_n_tokens": 4.5925104294488515
+  },
+  "pass_truth": {
+   "n": 49150928,
+   "has_cloud_any_nonzero_frac": 0.9999964395382321,
+   "tok0_feat0_nonzero_frac": 0.9999964395382321,
+   "n_empty_cloud": 175,
+   "median_n_tokens": 4.0,
+   "mean_n_tokens": 4.592482933384289
+  },
+  "matched(pass_truth&pass_reco)": {
+   "n": 20571564,
+   "has_cloud_any_nonzero_frac": 0.9999922222734255,
+   "tok0_feat0_nonzero_frac": 0.9999922222734255,
+   "n_empty_cloud": 160,
+   "median_n_tokens": 4.0,
+   "mean_n_tokens": 4.260874671463968
+  },
+  "MISS(pass_truth&~pass_reco)": {
+   "n": 28579364,
+   "has_cloud_any_nonzero_frac": 0.999999475145773,
+   "tok0_feat0_nonzero_frac": 0.999999475145773,
+   "n_empty_cloud": 15,
+   "median_n_tokens": 4.0,
+   "mean_n_tokens": 4.8311761591335625
+  },
+  "pass_reco": {
+   "n": 20573521,
+   "has_cloud_any_nonzero_frac": 0.9999922230132606,
+   "tok0_feat0_nonzero_frac": 0.9999922230132606,
+   "n_empty_cloud": 160,
+   "median_n_tokens": 4.0,
+   "mean_n_tokens": 4.260971906558921
+  }
+ },
+ "reading": "has_cloud on the MISS rows (pass_truth & ~pass_reco), n = 28,579,364, is 0.9999995 with 15 empty clouds -- matching the recorded post-fix figure of 99.9995%. The matched rows are marginally WORSE (0.9999922, 160 empty of 20,571,564). Median tokens per event is 4.0 on every domain. So the appended miss rows, which are exactly what the validator fails to check, are the BEST-covered subset and the gap is real but benign.",
+ "method": "streamed part_gen (49152885 x 12 x 5 float32, deflate-compressed) in 200k-row chunks off the committed G2 npz; has_cloud defined two ways -- any non-zero element in the row, and the model's own padding convention part_gen[:,0,0] != 0 -- which AGREE to all printed digits on every domain.",
+ "inputs_npz": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+ "RECOMMENDATION_NOT_AN_ACTION": "The validator still cannot catch a regression here. A one-line assertion that the miss rows carry a non-empty truth cloud would close it. NOT implemented: validate_g2_fullevent_smoke.py is a Gate-1 validator and editing it is not this read's authorization.",
+ "CITABLE_FOR": [
+  "that the truth-cloud coverage fix holds for the FPS full-event dump",
+  "the validator's missing assertion"
+ ],
+ "NOT_CITABLE_FOR": [
+  "anything about OI-126",
+  "any mechanism",
+  "any gate on PET"
+ ],
+ "what_this_read_did_not_do": [
+  "no GPU",
+  "no training",
+  "no edit to any validator",
+  "read-only over the committed G2 npz"
+ ]
+}

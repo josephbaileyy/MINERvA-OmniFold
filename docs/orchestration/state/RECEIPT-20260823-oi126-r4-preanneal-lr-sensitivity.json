@@ -1,0 +1,328 @@
+{
+ "schema": "oi126-r4-preanneal-control-lr-sensitivity-v1",
+ "what": "R4 of the four predeclared free reads: the annealed arm against the pre-anneal control, as an LR-sensitivity bound on an Adam-normalisation mechanism.",
+ "predeclaration": {
+  "file": "docs/orchestration/state/PREDECLARATION-20260823-oi126-successor-free-reads.json",
+  "commit": "f1e2f10e",
+  "item": "R4_pre_anneal_control_as_an_LR_sensitivity_bound"
+ },
+ "STATUS_AS_PREDECLARED": "DIRECTIONAL EVIDENCE ONLY, NOT A GATE. Declared as such in the predeclaration so it cannot later be quoted as one. No numeric boundary is declared because the two arms differ in more than LR.",
+ "authorization": "Joseph 2026-08-23, diagnostic tests. Read-only over committed json. PET remains diagnostic/method-development (2e210468).",
+ "PRIMARY_FINDING_THE_DECLARED_QUANTITY_IS_NOT_IN_THE_DECLARED_INPUT": {
+  "predeclared_quantity": "band behaviour of the annealed arm against the pre-anneal control, from STEP1_TRAJECTORY.slurm-56691812.json and STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json",
+  "measured": "NEITHER FILE CONTAINS ANY BAND-RESOLVED FIELD. An exhaustive recursive key walk for cell / column / band / pparallel / bin / percell / tail over both files returns NONE. Every field is a GLOBAL mean over w_reco, plus global unweighted r1 percentiles.",
+  "instrument_note": "This is a covering search over the whole key tree of both files, not a grep for a guessed name, so the null is evidence about the files rather than about the search.",
+  "consequence": "R4 CANNOT measure band behaviour from its declared inputs. It can only bound GLOBAL LR sensitivity. Any future citation of R4 as band-localised evidence would be false.",
+  "what_would_be_needed": "a per-column or per-cell decomposition of the step-1 increment for both arms; no such artifact exists on either arm today."
+ },
+ "WHAT_R4_CAN_SAY": {
+  "reading_as_predeclared": "An Adam-normalisation mechanism must be strongly LR-dependent. INDISTINGUISHABLE band behaviour is evidence AGAINST it.",
+  "measured": "The two arms are STRONGLY DISTINGUISHABLE globally -- they are not indistinguishable.",
+  "verdict": "R4 supplies NO EVIDENCE AGAINST an Adam-normalisation mechanism. It is weak directional evidence CONSISTENT with strong LR dependence of the step-1 dynamics. It does NOT localise to the band and therefore cannot support or refute the mechanism as a BAND explanation.",
+  "NOT_A_CONFIRMATION": "Consistency with LR dependence is not evidence for the mechanism: the anneal changes the fit globally, and every difficulty-based account predicts some LR dependence. This is a bound, not a signal."
+ },
+ "arms": {
+  "annealed": {
+   "file": "STEP1_TRAJECTORY.slurm-56691812.json",
+   "sha256": "30b9ea3ca5ba7479e35f72874fd045fd925a6c76bef7a52d7f6c3601ce9e73a3",
+   "verdict": "UNDER_ACHIEVES_AT_ITER0_SAME_SIGN",
+   "reading": "step 1 under-achieves at iteration 0 but with the CORRECT sign, so the sign inversion is an iteration effect layered on a step-1 capacity/convergence shortfall present from the start."
+  },
+  "pre_anneal_control": {
+   "file": "STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json",
+   "sha256": "d560fec76b0b7b45f66150b984d4e3818174c07fd5d29d43218d1d9699aab931",
+   "verdict": "RIGHT_SIGN_AT_ITER0_INVERTS_LATER",
+   "reading": "step 1's correction has the RIGHT SIGN at iteration 0 and inverts only later, so the defect is in the iteration dynamics -- what push feeds back, or the cached training-data reuse at omnifold.py:194/335. NOTE the sign is the claim, not accuracy: end-to-end at iteration 0 the correction UNDERSHOOTS by ~2.8% (0.9721 of required). The predecessor label CORRECT_AT_ITER0_DEGRADES_LATER overstated this and is retired; receipt STEP1_TRAJECTORY.slurm-56525829.json carries the old string and means exactly this."
+  },
+  "R_required_both_arms": 1.1240802949941018,
+  "niter": 3,
+  "logit_cap": 30.0,
+  "VERDICTS_DIFFER": true
+ },
+ "job_id_ambiguity_RESOLVED": {
+  "issue": "the predeclaration names slurm-56691812, but a SECOND complete pair exists at slurm-56818470 with its own GATE_AB_PUSH_PROVENANCE and STEP1_DECOMPOSITION. A definite description that two artifacts satisfy.",
+  "control_files_byte_identical": true,
+  "annealed_files_byte_identical": false,
+  "annealed_per_iteration_numbers_identical": true,
+  "resolution": "The two control files are byte-identical. The two annealed files DIFFER IN BYTES but carry identical numbers on every trajectory field. So the choice of job id does not change any R4 number, and the ambiguity is immaterial. Recorded rather than left as a silent choice."
+ },
+ "per_iteration_comparison": {
+  "annealed": [
+   {
+    "push_prev_mean_w_reco": 1.0,
+    "r1_mean_w_reco": 1.2722809399604016,
+    "r1_required_mean": 1.1240802949941018,
+    "end_to_end_achieved": 1.2478123121854545,
+    "end_to_end_achieved_over_required": 1.1100740024910782,
+    "end_to_end_sign_is_wrong": false,
+    "r1_is_below_one": false,
+    "correction_sign_is_wrong": false,
+    "pull_mean_w_reco": 1.2722809399604016,
+    "push_mean_w_reco": 1.2478123121854545,
+    "push_dev_vs_R": 0.11007400249107824,
+    "r1_weight_mass_below_one": 0.830088331320607,
+    "r1_cap_saturated_frac": 0.0,
+    "checkpoint_tier_step1": "best-epoch",
+    "iteration": 0,
+    "r1_percentiles_w_unweighted": {
+     "1": 0.00823240950703621,
+     "5": 0.012999708764255047,
+     "25": 0.04347294196486473,
+     "50": 0.24539032578468323,
+     "75": 0.8095355927944183,
+     "95": 5.153844594955444,
+     "99": 14.683006763458309
+    }
+   },
+   {
+    "push_prev_mean_w_reco": 1.2478123121854545,
+    "r1_mean_w_reco": 1.06398657191608,
+    "r1_required_mean": 0.9008408428230325,
+    "end_to_end_achieved": 0.9304860165597121,
+    "end_to_end_achieved_over_required": 1.0329083366644194,
+    "end_to_end_sign_is_wrong": false,
+    "r1_is_below_one": false,
+    "correction_sign_is_wrong": true,
+    "pull_mean_w_reco": 1.3011441277299185,
+    "push_mean_w_reco": 1.1610719077796074,
+    "push_dev_vs_R": 0.03290833666441939,
+    "r1_weight_mass_below_one": 0.8995358503147007,
+    "r1_cap_saturated_frac": 0.0,
+    "checkpoint_tier_step1": "best-epoch",
+    "iteration": 1,
+    "r1_percentiles_w_unweighted": {
+     "1": 0.004158663703128696,
+     "5": 0.007441680179908872,
+     "25": 0.024609974585473537,
+     "50": 0.12698298692703247,
+     "75": 0.6590165793895721,
+     "95": 3.1504465341567993,
+     "99": 12.685530090332081
+    }
+   },
+   {
+    "push_prev_mean_w_reco": 1.1610719077796074,
+    "r1_mean_w_reco": 0.8391059338951816,
+    "r1_required_mean": 0.9681401190248009,
+    "end_to_end_achieved": 0.9336656455663593,
+    "end_to_end_achieved_over_required": 0.9643910289626595,
+    "end_to_end_sign_is_wrong": false,
+    "r1_is_below_one": true,
+    "correction_sign_is_wrong": false,
+    "pull_mean_w_reco": 0.9676806416024684,
+    "push_mean_w_reco": 1.0840529523260116,
+    "push_dev_vs_R": -0.03560897103734051,
+    "r1_weight_mass_below_one": 0.9114042079488984,
+    "r1_cap_saturated_frac": 0.0,
+    "checkpoint_tier_step1": "final(BEN-043)",
+    "iteration": 2,
+    "r1_percentiles_w_unweighted": {
+     "1": 0.0034166197758167985,
+     "5": 0.006437093485146761,
+     "25": 0.021152290515601635,
+     "50": 0.1137533038854599,
+     "75": 0.6095033288002014,
+     "95": 2.2386770248413086,
+     "99": 9.924538326263434
+    }
+   }
+  ],
+  "pre_anneal_control": [
+   {
+    "push_prev_mean_w_reco": 1.0,
+    "r1_mean_w_reco": 1.233512164852833,
+    "r1_required_mean": 1.1240802949941018,
+    "end_to_end_achieved": 1.0927362925830193,
+    "end_to_end_achieved_over_required": 0.972115868812337,
+    "end_to_end_sign_is_wrong": false,
+    "r1_is_below_one": false,
+    "correction_sign_is_wrong": false,
+    "pull_mean_w_reco": 1.233512164852833,
+    "push_mean_w_reco": 1.0927362925830193,
+    "push_dev_vs_R": -0.027884131187662975,
+    "r1_weight_mass_below_one": 0.8157062708479212,
+    "r1_cap_saturated_frac": 0.0,
+    "checkpoint_tier_step1": "best-epoch",
+    "iteration": 0,
+    "r1_percentiles_w_unweighted": {
+     "1": 0.0066435547079890965,
+     "5": 0.010587119497358799,
+     "25": 0.040172189474105835,
+     "50": 0.23770558834075928,
+     "75": 0.8092957437038422,
+     "95": 4.647374391555786,
+     "99": 14.25855388641363
+    }
+   },
+   {
+    "push_prev_mean_w_reco": 1.0927362925830193,
+    "r1_mean_w_reco": 0.9151659489996286,
+    "r1_required_mean": 1.0286839584480088,
+    "end_to_end_achieved": 0.8855372138276758,
+    "end_to_end_achieved_over_required": 0.8608447779857473,
+    "end_to_end_sign_is_wrong": true,
+    "r1_is_below_one": true,
+    "correction_sign_is_wrong": true,
+    "pull_mean_w_reco": 0.9945993522632561,
+    "push_mean_w_reco": 0.9676586519823509,
+    "push_dev_vs_R": -0.13915522201425268,
+    "r1_weight_mass_below_one": 0.8725748143141965,
+    "r1_cap_saturated_frac": 0.0,
+    "checkpoint_tier_step1": "best-epoch",
+    "iteration": 1,
+    "r1_percentiles_w_unweighted": {
+     "1": 0.0047548066824674605,
+     "5": 0.009318855591118336,
+     "25": 0.025936972349882126,
+     "50": 0.1729825884103775,
+     "75": 0.7094152569770813,
+     "95": 2.792629599571228,
+     "99": 11.743462657928546
+    }
+   },
+   {
+    "push_prev_mean_w_reco": 0.9676586519823509,
+    "r1_mean_w_reco": 0.6483314255077571,
+    "r1_required_mean": 1.1616496092824724,
+    "end_to_end_achieved": 0.7613699816781974,
+    "end_to_end_achieved_over_required": 0.6554213728427802,
+    "end_to_end_sign_is_wrong": true,
+    "r1_is_below_one": true,
+    "correction_sign_is_wrong": true,
+    "pull_mean_w_reco": 0.6589437921453905,
+    "push_mean_w_reco": 0.7367462501305516,
+    "push_dev_vs_R": -0.34457862715721976,
+    "r1_weight_mass_below_one": 0.9164748925010212,
+    "r1_cap_saturated_frac": 0.0,
+    "checkpoint_tier_step1": "final(BEN-043)",
+    "iteration": 2,
+    "r1_percentiles_w_unweighted": {
+     "1": 0.004421238275244832,
+     "5": 0.010528655257076025,
+     "25": 0.02571446355432272,
+     "50": 0.1293494999408722,
+     "75": 0.6726011037826538,
+     "95": 1.46820467710495,
+     "99": 8.9413531303406
+    }
+   }
+  ],
+  "headline_iteration_2": {
+   "end_to_end_achieved_over_required": {
+    "annealed": 0.9643910289626595,
+    "control": 0.6554213728427802
+   },
+   "push_dev_vs_R": {
+    "annealed": -0.03560897103734051,
+    "control": -0.34457862715721976
+   },
+   "r1_mean_w_reco": {
+    "annealed": 0.8391059338951816,
+    "control": 0.6483314255077571
+   },
+   "correction_sign_is_wrong": {
+    "annealed": false,
+    "control": true
+   },
+   "end_to_end_sign_is_wrong": {
+    "annealed": false,
+    "control": true
+   }
+  },
+  "reading": "At iteration 2 the annealed arm reaches 0.9644 of required with push_dev_vs_R -0.0356 and the correct sign; the control reaches 0.6554 with push_dev_vs_R -0.3446 and BOTH sign flags wrong. The anneal materially changes the step-1 outcome."
+ },
+ "AN_ITERATION_INDEX_HAZARD_WORTH_RECORDING": {
+  "what": "The r1 distribution quoted in the record is ITERATION-DEPENDENT and the record contains three of them without always naming which.",
+  "iteration_0_annealed": {
+   "r1_percentiles": {
+    "1": 0.00823240950703621,
+    "5": 0.012999708764255047,
+    "25": 0.04347294196486473,
+    "50": 0.24539032578468323,
+    "75": 0.8095355927944183,
+    "95": 5.153844594955444,
+    "99": 14.683006763458309
+   },
+   "weight_mass_below_one": 0.830088331320607
+  },
+  "iteration_2_annealed": {
+   "r1_percentiles": {
+    "1": 0.0034166197758167985,
+    "5": 0.006437093485146761,
+    "25": 0.021152290515601635,
+    "50": 0.1137533038854599,
+    "75": 0.6095033288002014,
+    "95": 2.2386770248413086,
+    "99": 9.924538326263434
+   },
+   "weight_mass_below_one": 0.9114042079488984
+  },
+  "note": "68d9104d's '1% = 0.0082, 50% = 0.2454, 95% = 5.15, 99% = 14.68, 83.0% of weight mass below one' is ITERATION 0. The r1 distribution governing the terminal step-1 fit is ITERATION 2: 1% = 0.0034166, 50% = 0.11375, 95% = 2.2387, 99% = 9.9245, 91.1% of weight mass below one. Both are correct; they are different objects. Same family as the C_stat symbol collision and the band-factor multiplicity: quoting requires naming the iteration."
+ },
+ "caveats_carried_from_the_source_files": {
+  "checkpoint_tier": "iterations below niter-1 use BEST-epoch checkpoints; only iter{niter-1} has the BEN-043 _final weights",
+  "verbatim_caveat": "iterations below niter-1 use BEST-epoch checkpoints; only iter{niter-1} has the BEN-043 _final weights. The ~1.3% best-vs-final gap cannot blur the 1.124-vs-0.65 discrimination this script turns on.",
+  "reproduction_gate_annealed": {
+   "increment1": {
+    "receipt": 0.8391059338951816,
+    "reproduced": 0.8391059338951816,
+    "rel_dev": 0.0,
+    "ok": true
+   },
+   "push_prev": {
+    "receipt": 1.1610719077796074,
+    "reproduced": 1.1610719077796074,
+    "rel_dev": 0.0,
+    "ok": true
+   },
+   "push_final": {
+    "receipt": 1.0840529523260116,
+    "reproduced": 1.0840529523260116,
+    "rel_dev": 0.0,
+    "ok": true
+   }
+  },
+  "reproduction_gate_control": {
+   "increment1": {
+    "receipt": 0.6483314255077571,
+    "reproduced": 0.6483314255077571,
+    "rel_dev": 0.0,
+    "ok": true
+   },
+   "push_prev": {
+    "receipt": 0.9676586519823509,
+    "reproduced": 0.9676586519823509,
+    "rel_dev": 0.0,
+    "ok": true
+   },
+   "push_final": {
+    "receipt": 0.7367462501305516,
+    "reproduced": 0.7367462501305516,
+    "rel_dev": 0.0,
+    "ok": true
+   }
+  },
+  "arms_differ_in_more_than_LR": "stated in the predeclaration; this is why no numeric boundary exists and why the read cannot be made two-sided."
+ },
+ "CITABLE_FOR": [
+  "that the step-1 dynamics are strongly LR-dependent globally",
+  "that R4's declared inputs contain no band-resolved quantity",
+  "that the slurm-56691812 vs 56818470 choice is immaterial"
+ ],
+ "NOT_CITABLE_FOR": [
+  "any band-localised claim",
+  "any gate",
+  "confirming an Adam-normalisation mechanism",
+  "pairing C_stat with P5A",
+  "adopting any PET covariance",
+  "promoting P5A",
+  "either half of the reconsideration gate",
+  "clearing any Gate-6 prohibition"
+ ],
+ "what_this_read_did_not_do": [
+  "no compute of any kind",
+  "no GPU",
+  "no training",
+  "read-only over two committed json files plus their two siblings at the second job id"
+ ]
+}
