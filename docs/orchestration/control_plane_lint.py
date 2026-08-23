@@ -703,10 +703,19 @@ def orchestration_volume() -> str:
     Counts TRACKED files only. The first version walked the working tree with rglob and so
     counted other lanes' untracked strays: measured 42785 vs 42777 tracked with one lane's
     scratch present, meaning two lanes at the SAME commit printed different numbers and a
-    quoted trend could show the layer growing when nothing had been written. `git ls-files`
-    measured 0.018 s against that walk's 0.028 s, so this is cheaper as well as reproducible
-    -- the earlier objection to a subprocess here came from a `git log` HISTORY query at
-    0.87 s, which is a different command and did not generalize.
+    quoted trend could show the layer growing when nothing had been written.
+
+    THIS COSTS ABOUT 2x AND IS WORTH IT. Measured like-for-like, both arms doing the full
+    line count, best of 5: the rglob walk 17.2 ms, this 33.5 ms. Roughly 16 ms per commit to
+    make a published number reproducible across lanes is an obvious buy, but it is NOT free
+    and nobody should reason from a claim that it was. The commit that introduced this
+    function (d3cdc6d3) says "cheaper as well as reproducible" and that is FALSE: it
+    compared `git ls-files` ALONE (18.3 ms) against the rglob path INCLUDING every
+    `read_text` (28 ms). The reads are common to both arms and belong on both sides or
+    neither; the honest enumeration-only pair is 18.3 ms of git against 2.1 ms of walk.
+    Separately and still true: the 0.87 s that first ruled a git subprocess out of this
+    function was `git log --since --name-only` walking HISTORY, which is a different command
+    from an index read and did not generalize.
 
     Boundary, stated so this is not mistaken for a tree-of-record figure: it counts
     tracked PATHS with WORKING-TREE content. A lane's uncommitted edit to a tracked file
