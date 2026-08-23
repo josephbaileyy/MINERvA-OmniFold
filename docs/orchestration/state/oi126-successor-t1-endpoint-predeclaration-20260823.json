@@ -1,0 +1,46 @@
+{
+ "schema": "oi126-successor-t1-endpoint-verification-predeclared-v1",
+ "status": "PREDECLARED BEFORE THE ARM RUNS. Authorized by this lane under Joseph's 2026-08-23 diagnostic grant. Sequenced AFTER the main sweep and the reciprocal arm.",
+ "WHY_THIS_ARM_EXISTS_and_it_is_not_the_reason_first_given": {
+  "the_weak_reason": "closing a blind spot in the t=0 control for its own sake",
+  "THE_ACTUAL_REASON": "Without t=1 verification, EVERY STRUCTURAL FAIL IS CONFOUNDED WITH A FLIPPED SEGMENT. The structural arm's expected sign comes from log(member/nominal) family deviations. A segment running nominal -> (2*nominal - member) would produce a response roughly opposite in sign to the real displacement -- which is exactly what a structural FAIL looks like. So 'this member genuinely fails' and 'the interpolation direction is wrong' are not distinguished by anything currently measured.",
+  "the_asymmetry_that_makes_it_urgent": "Members that PASS are self-covering, because the pass is itself weak evidence the direction is right. Members that FAIL are covered by nothing. replica_49 already FAILED and replica_45 is trending same-signed at t=0.25.",
+  "binding_consequence": "Do NOT interpret any structural FAIL, including replica_45's, until this arm has run."
+ },
+ "SCOPE_OF_THE_t0_CONTROL_CORRECTED_TWICE": {
+  "the_lane_s_original_claim": "the t=0 agreement would catch 'a weight-loading or interpolation-direction error'",
+  "MY_over_correction": "I replied that the direction half does not follow because both directions share t=0. FALSE for one of the two cases.",
+  "the_correct_split_which_is_the_lane_s": {
+   "CHECKPOINT_SWAP": "t=0 DOES catch it. theta(t) = W_member + t*(W_nominal - W_member) puts W_member at t=0, which differs per member; the band effect spans a factor 4-6 against a measured spread of 0.306%. Excluded.",
+   "SIGN_FLIP": "t=0 does NOT catch it. theta(t) = (1+t)*Wn - t*Wm gives Wn at t=0 for every member, so the agreement is uninformative. Blind by construction."
+  },
+  "honest_scope": "the t=0 control EXCLUDES a checkpoint swap and is BLIND to a sign flip. Narrower than the original claim, wider than my correction.",
+  "my_error": "I collapsed two distinct failure modes into one word and then corrected the lane on the word."
+ },
+ "CHECK_1_RUN_ON_THE_CONTROL_ITSELF": {
+  "question": "can the declared artifact EXPRESS the quantity to be compared against?",
+  "answer": "YES, and exactly rather than approximately",
+  "evidence": {
+   "artifact": "replica_45/extraction/GATE5_REPLICA_FULL_PUSH.npz carrying w_push (49152885,) float64 and step2_checkpoint_sha256",
+   "recorded_sha": "6a5e87f46fef664a671e6cc25690957c0de49dbf6d0e0686f656cfba5f2c56ca",
+   "sha_of_the_file_R5_loads_at_t1_iter2_step2_final": "6a5e87f46fef664a671e6cc25690957c0de49dbf6d0e0686f656cfba5f2c56ca -- MATCH",
+   "sha_of_the_best_epoch_sibling_iter2_step2": "4c9ed64ddd125d35ec70bc23b2ce43ca980fc5156ba7137cb200139cf8a940ff -- DIFFERS",
+   "why_that_matters": "the digest discriminates against the obvious wrong choice, which is what makes this an instrument rather than a coincidence"
+  },
+  "MY_COST_PREMISE_WAS_WRONG": "I asserted the comparison would be free from passes already being done. R5 persists only the aggregates O_band and O_tail, not per-row push. The arm needs its own short GPU job (one forward pass per member over ~148k band+tail rows) or a CPU job rebuilding each member's loader (~4 min and ~15 GB per member). The lane declined to pretend otherwise."
+ },
+ "PREDECLARED_BOUNDARY": {
+  "statistic": "max relative deviation between the recomputed per-row push at t=1 and the recorded w_push on the same rows",
+  "VERIFIED": "max rel dev <= 1e-5 -> t=1 is theta_k; a sign flip is excluded",
+  "FAILED": "max rel dev >= 1e-2 -> t=1 is not theta_k; the segment is suspect and EVERY structural verdict is void pending repair",
+  "UNRESOLVED": "between -> report the deviation and state whether it is consistent with GPU nondeterminism; do NOT pick a branch",
+  "check_2_reachable": "YES -- the lane's Gate B(i) obtained max_rel_dev 0.0 on a related comparison, so 1e-5 is comfortably attainable for a deterministic forward pass at fixed weights",
+  "check_3_discriminating": "YES with enormous margin -- a sign flip puts t=1 at 2*Wn - Wm, neither checkpoint, so the deviation would be order unity, three orders above the FAILED bar"
+ },
+ "IF_DECLINED": "the t=1 endpoint would be recorded as UNVERIFIED and every structural FAIL as CONFOUNDED. The lane framed the decline explicitly rather than letting silence become coverage, which is why the choice was visible at all.",
+ "UNCHANGED": [
+  "No PET covariance adopted; the 2026-08-20 ruling is not reopened.",
+  "Gate 4 and Gate 6 untouched.",
+  "'The nominal is the outlier' remains forbidden pending the reciprocal arm."
+ ]
+}
