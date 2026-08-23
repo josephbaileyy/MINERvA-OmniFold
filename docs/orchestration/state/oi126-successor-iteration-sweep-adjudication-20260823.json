@@ -1,0 +1,59 @@
+{
+ "schema": "oi126-successor-iteration-sweep-adjudication-v1",
+ "adjudicates": "68f979fe (iteration sweep) and the lane's self-correction of d4df202b's OI-136 claim",
+ "VERDICT": "UNRESOLVED as predeclared, and the reason is a defect in MY predeclaration rather than in the read",
+ "measured": {
+  "Q0": 3.161636,
+  "Q1": 5.451884,
+  "Q2": 6.435111,
+  "Q2_over_Q0": 2.035374,
+  "Q2_reproduces_R1_primary_exactly": "6.435111 against R1's 6.435111352438863, separate script, separate job"
+ },
+ "MY_DICHOTOMY_WAS_NOT_EXHAUSTIVE": {
+  "what_I_predeclared": "DEVELOPS (Q0<=2.0 and Q2/Q0>=2.5) versus PRESENT FROM THE START (Q0>=5.0), as though the system had to be one or the other",
+  "what_the_system_does": "BOTH, which a dichotomy cannot express",
+  "what_I_should_have_predeclared": "a DECOMPOSITION -- what fraction of the final collapse exists before any reweighting accumulates",
+  "the_decomposition_from_their_numbers": {
+   "log_fraction_present_at_iteration_0": 0.6183,
+   "reading": "~62% of the log-collapse is present at iteration 0; the remaining ~38% accumulates over three iterations, a further factor 2.04"
+  },
+  "two_sided_constraint": "compounding is REAL but a MINORITY contributor, and the collapse is NOT an initialisation artifact either",
+  "instruction_for_later_readers": "Record this as the decomposition, not as 'UNRESOLVED'. 'UNRESOLVED' will read as 'we learned nothing' and that is false."
+ },
+ "THE_COINCIDENCE_DISMISSED_BUT_AN_ADJACENT_REAL_TEST_IS_NOT": {
+  "dismissed": "Q(2)=6.435 against the mechanism's b^3=6.5. A control-over-band CURVATURE ratio and a bias COMPOUNDING factor are different quantities, and 6.5 was an illustrative round figure, not a measurement.",
+  "the_adjacent_test_MY_derivation_not_measured_by_the_lane": "If bias goes as 1/lambda per region, the band-over-control EFFECT ratio should equal Q. Control columns 0-8 give nominal/family 0.982-1.019 so |log effect| <= 0.019, against a band dev of 1.215: ratio ~64 against Q(2)=6.44, a factor ~10.",
+  "consequence": "The per-region 1/lambda reading now under-predicts at BOTH ends of the grid -- 3.39x in the tail and ~10x against the control. Two independent failures of the same reading, strengthening the see-saw / one-global-lambda account.",
+  "caveat_that_can_only_worsen_it": "the control's ~0.019 may be a FLOOR rather than a measurement, as the 0.0846 rel_sd elsewhere is argued to be. If so the true ratio is larger and the discrepancy worse; it cannot go the other way.",
+  "status": "needs no compute; belongs in the R5 write-up as context, not as a new read"
+ },
+ "THE_LANES_OI136_SELF_CORRECTION_ACCEPTED_AND_ENDORSED": {
+  "what_was_false": "d4df202b's R1 and R3 receipts said sys.path[0] stayed a scratch dir and inferred no hardcoded-root insert could shadow the imports. The insert DID happen: extract_fullevent_fps.py:84 inserts _REPO/2d-unfolding at position 0 with _REPO hardcoded, and omnifold_nn's insert was skipped by the not-in-sys.path guard because PYTHONPATH already carried it. The R1/R3 script printed sys.path[0] BEFORE the repo imports; the sweep printed it AFTER.",
+  "no_number_changes": "the actual evidence was always the post-import digest of each loaded module, and those matched local main byte-for-byte; and no shadowing occurred -- that 2d-unfolding holds 18 .py files, none matching the loaded module names, checked per module by name",
+  "why_it_is_the_best_item_in_the_exchange": "OI-136's finding is that a parity check can be truthful about PATHS while the interpreter loads something else. The receipt reporting OI-136 reproduced the INVERSE of that defect inside itself.",
+  "endorsed_process": "fixed IN PLACE rather than filed as a caveat -- a wrong stated REASON beside a correct measurement is repairable, and putting a repairable defect in a disclosure register launders a fix into a caveat",
+  "the_new_instrument": "print sys.path[0] BOTH before and after the repo imports, and ENUMERATE every loaded module whose file sits inside a MINERvA-OmniFold checkout (VALIDATION_LEDGER.md + nd-unfolding/ marker pair, the same test mnv_guarded_run.py uses) rather than a hand-picked four -- a covering question where the previous check was a spot check",
+  "ROUTED_NOT_EXECUTED": "That instrument probably belongs in mnv_guarded_run.py rather than in one probe. It is a shared protected tool, so proposing it is in scope and editing it is not. To be routed by this lane; the executing lane was told not to patch it."
+ },
+ "R5_TERMS_MADE_EXPLICIT_BEFORE_THE_RUN": {
+  "held_out_slice_DEFINED": "the slice the run actually validated on -- the first val_steps*512 rows after skip(NTRAIN-NTEST), NOT the full 800k. validation_steps = NTEST//BATCH_SIZE. The thresholds are calibrated on THAT slice's scatter and transfer only if the same slice is used.",
+  "scatter_is_larger_than_I_stated_and_the_threshold_STAYS": {
+   "measured_from_the_nominal_iter2_step2_history": {
+    "sd": 0.00087,
+    "max_successive_difference": 0.0023,
+    "full_range": 0.0027
+   },
+   "consequence": "my CONFIRM threshold of 2.4e-3 is 3x the sd but about 0.9x the RANGE, so a difference at the threshold is comparable to the largest single-arm epoch swing and CONFIRM is easier to reach than '3 sigma' sounds",
+   "ruling": "threshold NOT moved -- adjusting a boundary after the noise is measured is the defect being avoided. Instead: report the difference in units of BOTH sd and range, and if it passes CONFIRM while exceeding 1x sd, label it 'within tolerance, not within one sigma'."
+  },
+  "TRAP_that_would_spuriously_hit_OPPOSITE": {
+   "requirement": "both evaluations must use MEMBER k's OWN objective -- k's labels and k's weights -- at the two parameter points. One objective at two points, not two objectives.",
+   "why": "absolute step-2 losses differ ACROSS arms purely because the weight distribution changed: at iter0, nominal 0.9083 against replica_00 0.8253, replica_01 0.8477, replica_07 0.7791 -- differences of 0.05 to 0.13, i.e. 2 to 5 times the OPPOSITE threshold of 2.4e-2.",
+   "consequence": "a mismatched objective lands the read in OPPOSITE ('the members are loss-preferred, the nominal is the outlier') for a bookkeeping reason, and that branch redirects the whole investigation. An explicit assertion of objective identity is required in the receipt."
+  }
+ },
+ "UNCHANGED": [
+  "No PET covariance adopted; the 2026-08-20 ruling is not reopened and nothing here bears on coverage.",
+  "Gate 4 and Gate 6 untouched."
+ ]
+}
