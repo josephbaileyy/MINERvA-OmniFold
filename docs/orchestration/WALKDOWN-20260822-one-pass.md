@@ -15,6 +15,50 @@ the *route through it*. Read them together: a step here is a pointer, and the po
 
 ---
 
+## STATUS — 2026-08-22, END OF THE AUTHORIZED PASS
+
+**Every already-authorized step is DONE. What remains is Joseph-only or a fresh non-builder.**
+
+| step | item | state |
+|---|---|---|
+| 0 | cause-3 scope | **RULED** — ruling 24, `X`-specific, 2D not reopened |
+| 1.1 | `PR-03` / F-7(a) — pin the preflight exclusion | **DONE** `b49bc360` |
+| 1.2 | `PR-02` / F-2(a) — verify before source | **DONE** `6113a34d` — **FIRST HOP ONLY** |
+| 1.3 | refresh `k0r2/clean` | **DONE** — `de040d9b` → `6113a34d`, ff, A-2(g) re-applied and re-verified |
+| 1.4 | `PR-01` / F-1(a) — declare the sha | **DONE** — 775 files, `cc004894…`, A-2(a)–(g) all MET |
+| 1.5a | `PR-04` / F-8(a) — P-5 and P-6 | **DONE** — 8 entrypoints / 14 invocations; one child, WRAPPED |
+| 1.5b | `PR-05` / F-17(a) — M-1…M-6 | **DONE** — four moved, two stale in the builder's favour |
+| 1.6 | **grade Gate 1** | **BLOCKED — FRESH NON-BUILDER.** This lane built 1.1–1.5 |
+| 5 | `PR-06` — commit the P3S packet | **DONE** — packet committed; three tracked files were also STALE |
+| 5 | two stale canonical rows | **DONE** — ledger corrected; the runbook is `immutable=yes` and was NOT edited |
+
+**GATE 1 IS NOT CLOSED, and must not be recorded closed**, per Joseph 2026-08-22: the
+**transitive environment trust boundary** must be settled *and* passed by a fresh non-builder.
+`setup_salloc_env.sh` sources two **untracked** scripts that activate conda and ROOT/MINERvA101; no
+git-based check can bind them.
+
+### What is left, and who owns it
+
+| owner | item |
+|---|---|
+| **fresh non-builder** | grade Gate 1 (1.6); settle the transitive trust boundary |
+| **Joseph** | `PR-J1` (confirm k=0 once Gate 1 passes — already conditionally granted by ruling 12); `PR-J3` sizing; `PR-J2`/`OI-75`; `PR-J8`; `PR-J9` (**split it first**); `PR-J10` |
+| **gated** | the k=0 rehearsal (step 3) — needs Gate 1 **and** `PR-J1` |
+
+### Two items deliberately NOT started, with reasons
+
+- **Cause 3's `P-i` and `P-ii`** — cheap, no compute, and identified in ruling 24 as independent of
+  the family. **Not started because they edit production estimator code**
+  (`analyze_universes_5d.py` needs a new write site), which would move the `.py` count and
+  **invalidate the sha declared today**. They belong after the k=0 rehearsal, or before a fresh
+  declaration — not between the two.
+- **The specification-side checklist/linter** — endorsed in its narrow form (18 Gate-1 rows, explicit
+  P-5/P-6 subrows, three mutation tests). **Not started because this lane is the builder**, and the
+  builder authoring the artifact the grader grades against is the conflict the fresh-non-builder rule
+  exists to prevent. It should be written by the grading lane.
+
+---
+
 ## THE SHAPE, IN ONE PARAGRAPH
 
 There are **two independent tracks** and they do not block each other. **Track A** is execution
