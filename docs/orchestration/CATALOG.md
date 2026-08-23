@@ -84,8 +84,9 @@ deliberately, because this file is a pointer-only router and not an exhaustive i
 - [`PLAN-20260822-oneMember-mii-staged.md`](PLAN-20260822-oneMember-mii-staged.md) — **the staged
   one-member request required by ruling 12, and it is a REQUEST, not an authorization.** Read it
   before any M(ii) submission. Carries the measured per-leg costs, the k=0 choice, and two blockers
-  that need Joseph: three stale 08-18 replicas inside the chosen member, and a **17.8x discrepancy**
-  between the recorded 151 A100-h family figure and the 2 680 A100-h this measures.
+  that need Joseph: three stale 08-18 replicas inside the chosen member, and family SIZING under the
+  pscratch line. **Its "17.8x discrepancy" section is WITHDRAWN** -- 151 and 2 680 count different
+  populations, never one quantity; see `PUBLICATION-READINESS-20260822.md` PR-J4.
 
 Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any submission touching
 `nd-unfolding/sbatch_finalize_5d_bkgaware_gpu.sh`.

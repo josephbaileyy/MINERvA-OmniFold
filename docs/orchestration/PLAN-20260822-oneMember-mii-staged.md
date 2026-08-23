@@ -161,13 +161,23 @@ threshold.** The family does not fit as-is. Either members are archived to HPSS 
 the intermediate is released per member once `MVFINAL_j` exists — and `MVFINAL_j` does not exist. **That
 is a prerequisite for the family, not a detail of it.**
 
-**THE DISCREPANCY, AND IT SHOULD BE SETTLED BEFORE ANY FAMILY AUTHORIZATION.** The figure on record for
-the M(ii) family is **151 A100‑h**. This plan measures **2 680 A100‑h** — **17.8× larger**. I have not
-reconciled them and I am not going to guess: the likely explanation is that 151 covers a *subset* of
-legs (plausibly the training legs alone, excluding the 169‑task sweep at 23.84 A100‑h/member and the
-detector leg at 14.23), but **that is a hypothesis, not a finding.** Both numbers cannot be quoted as
-the same quantity. **The one-member run settles it by measurement**, which is a further argument for
-running one before authorizing fifty.
+**~~THE DISCREPANCY~~ — WITHDRAWN 2026-08-22, AND THE HYPOTHESIS BELOW WAS WRONG.** This section read:
+*"The figure on record for the M(ii) family is 151 A100‑h. This plan measures 2 680 A100‑h — 17.8×
+larger … the likely explanation is that 151 covers a subset of legs (plausibly the training legs
+alone …)."* **There is no discrepancy, and the subset hypothesis is false.** The two figures count
+**different populations**: 151 A100‑h counts **50 Gate-5 PET `C_stat` training replicas**; 2 680
+counts **50 M(ii) members**. They were never the same quantity, so no measurement of an M(ii) member
+could ever have reconciled them — the one-member run does **not** settle this, and citing it as a
+reason to run one was wrong.
+
+**The tell was available without any run.** `2680/151.175 = 17.728` and `53.6/3.0235 = 17.728`
+*identically*, because the 50 cancels on both sides. A ratio invariant under population size is a
+**per-unit** comparison wearing a total's clothing. Against the correct in-family prior of
+**1 961.2 GPU‑h** the real gap is **1.37×** — one leg re-priced, not an order of magnitude.
+
+**What survives as a live question is SIZING, not cost:** 50 members at 2.17 TiB cross the pscratch
+operational line, and 46 do not. That is `PR-J3` in `PUBLICATION-READINESS-20260822.md`, and it is a
+policy call on a soft quota, not a physical limit — see that row for the soft/hard figures.
 
 ---
 

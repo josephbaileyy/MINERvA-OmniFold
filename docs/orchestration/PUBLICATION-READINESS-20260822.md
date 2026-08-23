@@ -22,6 +22,34 @@ exit status 1
 `c4cfbe81` is neither `HEAD` nor `HEAD^`, so this is genuinely stale rather than the born-one-commit-
 stale state the generator's own rule permits.
 
+## AMENDMENT 1 — 2026-08-22, peer review by an independent LLM session, ALL FOUR OBJECTIONS ACCEPTED
+
+**Recorded here rather than applied silently, because three of the four objections were to the
+CLOSE-OUT LANE'S CHAT SUMMARY of this document rather than to the document's own rows, and that
+distinction is the useful part.** A measured document can be compressed into a false headline by the
+same lane that measured it, and no check in this repo catches that.
+
+| # | objection | verdict | where it landed |
+|---|---|---|---|
+| 1 | The cause-5 precedent is **weak support for waiving cause 3**; `VL66` turned on a construction-path trace showing PET weights are not inputs to `X`, whereas cause 3 concerns estimator-seed variation in `X`'s **own** estimator. "Nothing enforces the gate in code" is an **enforcement defect**, not evidence the cause is irrelevant. | **ACCEPTED, and the repo's own record backs the objector over this lane** — `SCOREBOARD:670-676`. The precedent's *reasoning runs adverse*; only the *route* transfers. | §0 falsifier (a), rewritten |
+| 2 | **12 `PR-J*` headings ≠ 12 open decisions**; `PR-J4` needs no decision, `PR-J11` is closed, `PR-J1` is conditionally granted, `PR-J9` bundles several. | **ACCEPTED.** §10 already decomposed to "9 live asks"; the **chat summary said "12 Joseph decisions"** and that is the number that would have sized the work. | §10 `JOSEPH DECISIONS` row |
+| 3 | *"Fifty do not fit"* means fifty cross a **lane-authored ~90% operational line on a soft quota**, not that the filesystem cannot hold them (soft 20 TiB, hard 30 TiB). | **ACCEPTED.** `PR-J3`'s bullets already disclosed soft/hard and the unsourced threshold; the **row's title and the chat summary both asserted a physical impossibility.** | `PR-J3` framing correction |
+| 4 | The control plane **still propagates the old error**: freshness fails and `LIVE-STATE.md` still calls 151 vs 2 680 a 17.8× discrepancy, so the front door can recreate the mistake. | **ACCEPTED AND FIXED — and the objector was right about the mechanism, not just the symptom.** `LIVE-STATE.md` is a **generated view**; the error lives in the hand-authored `state/live-state.json` `next_authorized_action`, and the generator prints that regeneration *"does NOT revalidate `Declared state`, which is authored prose the generator carries forward."* Regenerating alone would have preserved it. | `state/live-state.json` corrected → view regenerated; `CATALOG.md:87` and `PLAN-…-mii-staged.md:165` withdrawn |
+
+**One objection is only partly accepted, and the difference is now measured rather than argued.**
+The peer's decision procedure — *"first decide the publication scope"* — is right, but it treats the
+scope of the **paper** as an open decision. **It is not: it is already the state at HEAD**, and §0
+falsifier (c) now carries the build-graph measurement (`sec_systematics.tex` is reachable from
+`main_note.tex` only; `paper_body.tex` has zero `\input` and zero 5D magnitudes). **What that
+measurement also surfaced is `PR-X3`** — the paper *does* publish an **ML training-seed-variation**
+covariance for the finalized **2D** result, and **cause 3's scope over the 2D artifact has never been
+written down by anyone.** That, not the 5D magnitudes, is the live scope question.
+
+**Nothing in this amendment authorizes, adopts or lifts anything.** The `NOT CITABLE FOR` block above
+applies unchanged.
+
+---
+
 Every decision-bearing field below was re-measured from source. Where a figure could not be measured
 from this host the item says so and its basis reads **UNMEASURED** or **RELAYED**.
 
@@ -106,12 +134,36 @@ than it is:**
   publication step. It is not one or the other.
 
 **What would falsify Q1's YES.** Any one of these, and the branch collapses:
-(a) a ruling declaring cause 3 `N/A` for the adopted artifact on the merits — the precedent exists,
-cause 5 was declared `N/A` for `X` in `VL66` on 2026-08-17;
+(a) a ruling declaring cause 3 `N/A` for the adopted artifact **on the merits — and note the cause-5
+precedent's REASONING RUNS AGAINST THIS, not for it** (peer review, 2026-08-22, and this lane
+accepts it). `VL66` declared cause 5 `N/A` for `X` on 2026-08-17 by a **construction-path trace
+showing ABSENCE of an input route** — *"the recoil-PET budget is a DOWNSTREAM CONSUMER of the shared
+bkgaware bank rather than an input to it"*, recoil being *"a different estimator"*
+(`SCOREBOARD-20260817-quarantine-seven-causes.md:670-676`). **Cause 3 is estimator-seed variation in
+`X`'s OWN estimator** (`lgbm` on every leg), so the same trace runs the *other* way: the thing cause
+3 concerns **is** an input to `X`'s construction. What `VL66` establishes is that the *route* exists
+for a per-(cause × artifact) `N/A` ruling — **it supplies no argument that cause 3 is such a case,
+and "nothing enforces the gate in code" is an ENFORCEMENT DEFECT, not evidence the cause is
+inapplicable.** Anyone reaching for (a) must produce a fresh construction-path argument;
 (b) a ruling that `M(ii)` may be discharged `UNRESOLVED-BY-DECISION` rather than measured;
-(c) publication choosing to quote no 5D covariance magnitude at all — note that **all four
-`\gbdtFive*` magnitudes are ALREADY struck at HEAD** (`docs/analysis-note/sec_systematics.tex:165,
-167, 168, 170`, each wrapped in `\dead{}`), so the note currently survives *without* them;
+(c) publication choosing to quote no 5D covariance magnitude at all — **and this is now MEASURED
+against the build graph rather than assumed** (2026-08-22, added on peer review). Three builds exist:
+`main_note.tex`, `main_paper.tex`, `main_primer.tex`. **`sec_systematics.tex` is `\input` by
+`main_note.tex` ONLY** (`grep -rln sec_systematics *.tex` → one file), and **`paper_body.tex`
+contains no `\input` at all**, so the four `\gbdtFive*` magnitudes are **unreachable from the paper
+build** — they are defined in `values.tex:112-115` and used only at `sec_systematics.tex:165,167,168,170`,
+each already wrapped in `\dead{}`. Confirming counts on `paper_body.tex`: `gbdtFive` **0**, `sqrt`
+**0**, `e-38` **0**. **The external paper therefore already quotes NO 5D covariance magnitude**, and
+at `paper_body.tex:200-203` it says so in its own voice — the corrected 5D joint throws are described
+as built *"with … a fixed estimator seed"* and *"Those uncertainty products remain candidates until
+the selection-complete lateral replacement lands."* **So for the PAPER, falsifier (c) is not a
+decision to be taken — it is already the state at HEAD.**
+  **SCOPE THIS CLAIM TO WHAT WAS SEARCHED, because the temptation to over-read it is the whole
+  point of this row.** It says the paper quotes no 5D covariance *magnitude*. It does **not** say the
+  paper is free of covariance-dependent claims: `grep -ciE covarian paper_body.tex` → **12**, `GBDT`
+  → **5**. What remains genuinely open is therefore **(i) the NOTE**, where `sec_systematics.tex`
+  still *discusses* the four magnitudes as struck text rather than removing them, and **(ii) a
+  question nobody has written down — see `PR-X3`.**
 (d) a smaller-than-50 grid being ruled sufficient.
 
 ### Q2 — Is the P3S lateral replacement done?
@@ -258,7 +310,17 @@ Ordered by how much they unblock. **Three of these are cheap to answer and unblo
 - **Expires.** A `/pscratch` purge closes the option without closing the question.
 - **Path.** CRITICAL.
 
-### PR-J3 — authorize (or resize) the M(ii) family, and the number is 46, not 50
+### PR-J3 — authorize (or resize) the M(ii) family: **46 members clear the operational line, 50 do not**
+
+> **FRAMING CORRECTION (peer review, 2026-08-22, accepted).** *"Fifty do not fit"* is the wrong
+> sentence and this row previously invited it. **Fifty members do not cross a PHYSICAL limit; they
+> cross a lane-authored ~90% OPERATIONAL ABORT LINE on a SOFT quota.** Measured: soft **20.00 TiB**,
+> hard **30.00 TiB** (`lfs quota -u josephrb /pscratch` → `21474836480 / 32212254720` KiB). The
+> projected 18.16 TiB is **60.6% of the hard limit** and would not be blocked by the filesystem.
+> The ~90% line is **unsourced, single-lane, same-day, and enforced by nothing in code** (evidenced
+> in the bullets below). It remains a **serious operational warning** — Lustre performance and purge
+> exposure degrade well before a hard limit, and nothing reserves the headroom — but the decision
+> Joseph is being asked for is a **policy** one, not an acknowledgement of impossibility.
 - **What is being asked.** 50 members at 2.17 TiB do **not** fit. Measured live
   **2026-08-22T20:56:31Z** (this is the freshest number in this document and it expires fastest):
   ```
@@ -1090,7 +1152,7 @@ been updated for that ruling and will mislead anyone who plans from it.
 
 ---
 
-## 7. TWO COUPLINGS THIS DOCUMENT FOUND AND NOBODY HAS RECORDED
+## 7. THREE COUPLINGS THIS DOCUMENT FOUND AND NOBODY HAS RECORDED
 
 These are **this lane's inferences from measurement, not rulings.** They are stated with their
 falsifiers so they can be killed cheaply.
@@ -1147,6 +1209,37 @@ falsifiers so they can be killed cheaply.
   decision needed. (It cannot be a relative link — the files are not in the tree.)
 
 ---
+### PR-X3 — the PAPER publishes a training-seed-variation covariance, and cause 3's scope over it has never been written down
+
+**Found 2026-08-22 while measuring falsifier (c); this is a question, not a finding, and it is
+stated as a question deliberately.**
+
+`paper_body.tex:58-60` says the finalized **2D** budget *"combines systematic (MAT universe),
+statistical (Poisson bootstrap) and **ML (training-seed variation)** covariances."* **Training-seed
+variation is precisely cause 3's subject matter.** But the seven causes are graded per
+**(cause × artifact)** and every existing cause-3 record is scoped to **`X`, the scalar-5D GBDT
+covariance** — not to the 2D budget.
+
+**Two things this is NOT, both checked, so nobody re-raises them as alarms:**
+- **It is not an unbuilt-component claim.** The prohibited `do_not_construct_C_ML`
+  (Gate-6 receipt, `19585b7`) is the **recoil-PET** `C_ML`. The 2D one is built and complete —
+  `LIVE-STATE.md:7`, 2D COMPLETE on central value *and* uncertainty, 6.87% median relative budget
+  vs paper 6.86%. **The two share a NAME and not an artifact**, which is the `OI-137` collision this
+  document already flags at `PR-J12`.
+- **It is not a claim that cause 3 applies to 2D.** Nobody has said it does, and this lane is not
+  saying it either. **Asserting `N/A` here without an artifact-side statement would be exactly the
+  error `SCOREBOARD §4` caught** — reading a true statement about one artifact as settled for another.
+
+**Why it matters to the plan.** If cause 3 is scoped to `X` only, then falsifier (c) plus the
+measured build graph means the *paper* branch is already clear and only the *note* is gated. If
+cause 3 reaches any training-seed-variation covariance the collaboration publishes, then **the 2D
+result is inside the quarantine and the branch does not collapse by scoping at all** — which would
+be the single largest change to this document.
+
+- **Actor.** A ruling, informed by whoever owns cause 3's scope statement. **Not this lane.**
+- **Cost to answer.** One artifact-side sentence, of the same form `VL66` wrote for cause 5.
+- **Path.** Decides whether `PR-G7`/`PR-J6` is note-only or paper-wide.
+
 ## 8. UNMEASURED — stated as such rather than estimated
 
 Each of these is a field a reader will want and this document does **not** supply. Filling one in is
@@ -1202,11 +1295,11 @@ something false. **None of them is repaired by this commit** — this is a read-
 
 | category | items |
 |---|---|
-| **JOSEPH DECISIONS** (§2) | **12** — `PR-J1`…`PR-J12`. Of these, **PR-J4 and PR-J11 need him told, not asked**, and `PR-J12` needs no decision from him at all; so **9 are live asks.** |
+| **JOSEPH DECISIONS** (§2) | **12 HEADINGS, and the heading count is NOT the ask count — do not size work from it** (peer review, 2026-08-22). **PR-J4 and PR-J11 need him TOLD, not asked**; **PR-J12** needs no decision from him at all; **PR-J1 is CONDITIONALLY GRANTED ALREADY** by ruling 12 and needs only confirmation once Gate 1 passes, not a fresh authorization; and **PR-J9 BUNDLES several distinct questions** under one heading, so it is >1 ask. Net: **8 fresh asks + 1 confirmation, and PR-J9 expands.** |
 | **LANE WORK, dispatchable now** (§3) | **6** — `PR-01`…`PR-06`. Five are the Gate-1 round-4 repairs; the sixth is the P3S packet commit. **Plus 11 parallel items in §6 (`PR-P1`…`PR-P11`), of which 4 are Joseph's and already counted above** — so **13 distinct lane-dispatchable items.** |
 | **GATED** (§4) | **15** — `PR-G1`…`PR-G15`. |
 | **DONE** (§5) | **10** — `PR-D1`…`PR-D10`. |
-| **New couplings found here** (§7) | **2** — `PR-X1`, `PR-X2`. |
+| **New couplings found here** (§7) | **3** — `PR-X1`, `PR-X2`, `PR-X3` (added on peer review). |
 | **Canonical records measured STALE** (§9) | **12**. |
 
 *(Stated with what each number counts, because two right counts of different populations are the
