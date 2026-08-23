@@ -1,0 +1,61 @@
+{
+ "schema": "oi126-successor-band-factor-has-no-single-value-v1",
+ "supersedes": "my own retraction of the >20 GeV plateau, relayed to Joseph and NOT committed. The retraction was wrong.",
+ "CORRECTION_the_family_level_tail_profile_EXISTS": {
+  "what_a_lane_claimed": "'There is NO family-level >20 GeV profile on record at all' -- probe-oi126-band-Rpush-sigma-20260815.json covers p_parallel columns 10-15 only.",
+  "why_that_was_wrong": "Inference from absence. A null in ONE file is evidence about the search. The family per-cell ratio lives in p5a-nominal-vs-cstat-family-percell-20260815.json:per_cell_ratio, which is 257 long and covers the WHOLE quotable grid including the tail.",
+  "and_I_propagated_it_without_checking": "Deference to the latest objection. Two corrections in opposite directions on one fact in one session; the second was the wrong one.",
+  "MEASURED_HERE_family_over_nominal_median_per_column": {
+   "[20,40)": 1.629,
+   "[40,60)": 1.895,
+   "[60,120)": 1.911
+  },
+  "so_the_plateau_is_real_but_NOT_flat_across_the_whole_range": "It rises 1.63 -> 1.90 across [20,40) -> [40,60) and only then flattens (1.895 vs 1.911). 'Flat across the entire 20-120 GeV range' overstates it."
+ },
+ "MY_MEASUREMENT_nominal_over_family_median_per_pparallel_column": {
+  "method": "per_cell_ratio (257) indexed through GATE5_CSTAT_N50.npz cell_index[quotable_mask]; cell = i_pt*19 + i_pparallel per the npz's own bin_order",
+  "all_pT_rows": {
+   "[5,6)": 1.172,
+   "[6,7)": 2.259,
+   "[7,8)": 4.045,
+   "[8,9)": 4.621,
+   "[9,10)": 4.474,
+   "[10,15)": 2.913,
+   "[15,20)": 1.005,
+   "[20,40)": 0.614,
+   "[40,60)": 0.528,
+   "[60,120)": 0.523
+  },
+  "pT_rows_0_to_9_only": {
+   "[6,7)": 2.443,
+   "[7,8)": 4.292,
+   "[8,9)": 4.825,
+   "[9,10)": 4.544,
+   "[10,15)": 2.913,
+   "[15,20)": 0.932,
+   "[20,40)": 0.57,
+   "[40,60)": 0.51,
+   "[60,120)": 0.507
+  },
+  "third_lane_reproduced_EXACTLY": "An independent lane's pT0-9 figures (2.44/4.29/4.83/4.54/2.91/0.93 and 0.57/0.51/0.51) match this to three decimals across all reported columns.",
+  "also_new": "There is a shallow DEFICIT below the band: columns [3,3.5)/[3.5,4)/[4,4.5) sit at 0.992/0.983/0.982, i.e. slightly below 1. The control region is not flat, consistent with the receipt's 4 cells below all 50 at p_parallel<6."
+ },
+ "THE_FINDING_the_band_factor_has_NO_SINGLE_VALUE_IN_THE_RECORD": {
+  "values_all_called_the_band_effect": {
+   "3.5969": "family MEAN of band R_push over the 84 geometric band cells (boundary-feasibility receipt)",
+   "4.045_to_4.621": "THIS measurement, median cross-section ratio at the peak columns, all pT rows",
+   "4.825": "same, restricted to pT rows 0-9",
+   "5.0467": "replica_00's band median R_push -- a 70th-percentile draw, already flagged in OI-126",
+   "6.573": "a lane's per-column median R_push"
+  },
+  "spread": "a factor of 1.8 between the smallest and largest",
+  "why_they_differ": "Different OBJECT (pre-extraction R_push vs extracted cross-section ratio), different CELL SET (84 geometric vs 63 quotable vs 257 domain), different pT RANGE (all rows vs 0-9), different AGGREGATION (mean vs median, per-cell vs per-column).",
+  "consequence": "Three independent lanes produced three different per-column profiles and none was wrong. This is the definite-description problem at the level of a NUMBER: 'the band factor' re-points depending on object, cell set and aggregation. Any quotation of it must name all four.",
+  "class": "same family as the C_stat symbol collision (00b4cb01) and the cv-is-the-replica-mean trap (68d9104d)"
+ },
+ "WHAT_STANDS": [
+  "The corrections in 68d9104d stand: the sparsity amplifier is narrowed not refuted, and the sign reversal was over-weighted by this lane.",
+  "The >20 GeV region is a SATURATION rather than a clean sign flip, and it is family-level. My retraction of that was the error, not the original claim.",
+  "No PET covariance is adopted. The 2026-08-20 ruling is not reopened."
+ ]
+}
