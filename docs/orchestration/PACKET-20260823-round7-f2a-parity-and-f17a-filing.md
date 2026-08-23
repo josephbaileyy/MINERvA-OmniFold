@@ -9,8 +9,8 @@ not a result. The builder does not grade it.
 
 | | value |
 |---|---|
-| **FINAL CANDIDATE** | `e93364d158ab16c109f124c54199caaad28c0708` (`build-k0-execution-integrity`) |
-| **DEPLOYED AT** | `/pscratch/sd/j/josephrb/k0r2/clean`, HEAD `e93364d1…`, `porcelain=0`, **0 writable files** (A-2(g) re-applied) |
+| **DECLARED CANDIDATE** | `a54038b21fdebfc975bec452a05866ffa571a36c` — filed with A-2(a)–(g) in [`DECLARATION-20260823-k0-candidate-sha.md`](DECLARATION-20260823-k0-candidate-sha.md) |
+| **DEPLOYED AT** | `/pscratch/sd/j/josephrb/k0r2/clean`. **This row no longer names a sha.** Read it from the declaration, or measure it: `git -C /pscratch/sd/j/josephrb/k0r2/clean rev-parse HEAD`. `porcelain=0`, **0 writable files** (A-2(g) applied) |
 | **main** | `c76fdbfac67d39f86bc0ea633e815c926de04add` — carries the ruling record and the same filing bytes |
 | graded predecessor | `fabeedc2bf78c81d2931ff4876d161c0abfbdbc4` (round-6, 16 PASS / 2 FAIL) |
 | `MNV_ENV_ROOT` | `/pscratch/sd/j/josephrb/k0env` |
@@ -26,9 +26,12 @@ Deployment path is `canonical → k0r2/bare.git → k0r2/clean`, **fast-forward 
 | `1d2b795d` | **`measure_m1_m6.py` and `test_measure_m1_m6.py`** — the round-7 `F-17(a)` fix. Corrected here by the grader: an earlier note claimed `e93364d1`, which touched only `MANIFEST.tsv`, and then the instrument moved again for this fix. |
 | HEAD | this packet, the filing, and regenerated views. |
 
-**The deployed sha is whatever `git -C /pscratch/sd/j/josephrb/k0r2/clean rev-parse HEAD` returns,
-and it is the one to grade.** Verify the launcher freeze with the command above; if it ever lists a
-file, the `F-2(a)` evidence was taken on different bytes than the deployed ones and this note is
+**The deployed sha is `a54038b21fdebfc975bec452a05866ffa571a36c`, declared and filed in
+[`DECLARATION-20260823-k0-candidate-sha.md`](DECLARATION-20260823-k0-candidate-sha.md).** An earlier
+draft said *"whatever `rev-parse` returns"* — round 8 correctly rejected that: **a definite
+description re-points at every commit, so nothing can falsify it**, and it silently contradicted a
+table above it that named a stale sha. Verify the launcher freeze with the command above; if it ever
+lists a file, the `F-2(a)` evidence was taken on different bytes than the deployed ones and this note is
 void. **`docs/orchestration/` is not a synonym for "not executable"** — the M-1…M-6 instrument lives
 there and it *is* executed, which is exactly the distinction an earlier draft of this note blurred.
 
@@ -119,11 +122,16 @@ ran `source "${MNV_CODE_ROOT}/setup_salloc_env.sh"` — the round-4 F-2(a) findi
 
 ---
 
-## Post-commit checks, in the deployed tree at the final sha
+## Post-commit checks, in the deployed tree
+
+**Taken at `e93364d1`, superseded by the round-8 re-measurement at `a54038b2`.** Retained as the
+record of what was run then; **the citable figures are in the declaration**, which re-took all seven
+A-2 clauses at the declared sha. Round 8 also re-ran these itself rather than inheriting them, and
+manifest rows moved 428 → 429 in the interval.
 
 ```
 $ git -C /pscratch/sd/j/josephrb/k0r2/clean rev-parse HEAD
-e93364d158ab16c109f124c54199caaad28c0708
+e93364d158ab16c109f124c54199caaad28c0708      # HEAD AT THE TIME OF THIS BLOCK, not now
 $ git -C ... status --porcelain | wc -l                       0
 $ find ... -type f -writable | wc -l                          0
 $ python3 docs/orchestration/measure_m1_m6.py --tree ...      rc=0
@@ -145,7 +153,7 @@ Both are fresh writable clones from the same bare repo, same host, same interpre
 
 | tree | result |
 |---|---|
-| candidate `e93364d1` | **13 failed, 2531 passed, 17 skipped, 643 subtests passed** |
+| candidate `e93364d1` *(measured there; the F-17(a) fix landed later at `1d2b795d`)* | **13 failed, 2531 passed, 17 skipped, 643 subtests passed** |
 | baseline `fabeedc2` | **13 failed, 2521 passed, 17 skipped, 581 subtests passed** |
 
 **Failure sets identical; zero regressions, zero accidental fixes.** `+10 passed` are the new arms.
@@ -172,6 +180,36 @@ The 13 are pre-existing at the graded predecessor.
 not complete in 26 minutes."* It does complete, in about 30, and it returns **`rc=1` — bindings NOT
 intact.** A slow check reads as an inconvenience; a failing one is a finding. The itemized list of
 which bindings break is **owed, not captured.**
+
+## ⚠ ROUND-8: `F-2(a)` AND `F-17(a)` PASS; `F-1(a)` FAILED AND IS REPAIRED HERE
+
+Round 8 returned **17 PASS / 1 FAIL / 0 NOT-EVALUABLE** — verdict sha256
+`c289aed5ceaca4f216479664da6d1bf57fc1f55d0223d47937ed9753e9a1a221`, 787 lines. **The two criteria
+this campaign chased since round 5 are closed.** Gate 1 failed on `F-1(a)`, on two limbs, **both of
+which were defects in this packet:**
+
+1. **The A-2(f) digest was never filed at the candidate sha.** The filed figure was 778 /
+   `70fb59d4…` at `f3c27870`, three shas stale. The true figure is **780 / `1b45da55…`**.
+2. **The table above named `e93364d1` as `DEPLOYED AT` while `HEAD` was `a54038b2`** — a *present
+   and false* declaration about the row a reader uses to decide which bytes were graded.
+
+**Limb 2 is a seam failure and it is mine.** When the sha note was corrected, the "three freeze
+points" section was added *below* and **the wrong table was left standing above it**. A correction
+that does not delete what it supersedes leaves the false text reachable — and here it was reachable
+first, at the top of the document. The rule this campaign already records is to check a correction's
+seams; I wrote the correction and did not check them.
+
+The repair is [`DECLARATION-20260823-k0-candidate-sha.md`](DECLARATION-20260823-k0-candidate-sha.md)
+and the table above. **No executable byte changed.**
+
+Also from round 8, recorded rather than deflected: the published `sha256(gate block) = 3e211fe6…`
+below **reproduces only under the `awk` line-range that produced it, which the packet never stated** —
+and this package's own test computes a *different* extent (`fdc87463…`) for the same "gate block". The
+claim it supports (one identical block across all eight launchers) is independently true and the
+grader re-derived it as `480faeb9…` under its own extent; **the number is unusable and the extent is
+the reason.** And the M-1…M-6 filing says "the inventory is now captured" of canonical M-3, while the
+same run also reports `expected 118 / observed 120` — two bindings **added**. Nothing stated is false;
+"captured" was incomplete.
 
 ## ROUND-7 VERDICT AND THE F-17(a) FIX (appended 2026-08-23, after the terminal regrade)
 

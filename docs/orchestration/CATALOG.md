@@ -97,6 +97,14 @@ deliberately, because this file is a pointer-only router and not an exhaustive i
   one of them active. The 2026-08-22 filing it replaces had nine rows and said "three". Re-run it —
   `python3 docs/orchestration/measure_m1_m6.py --tree <TREE>` — and do not inherit a number.
 
+### Gate-1 round 8 — F-2(a) AND F-17(a) PASS; F-1(a) failed and is repaired
+
+- [`DECLARATION-20260823-k0-candidate-sha.md`](DECLARATION-20260823-k0-candidate-sha.md)
+  — the declared candidate `a54038b21fdebfc975bec452a05866ffa571a36c`, **780** tracked source files,
+  listing sha256 `1b45da55…`, **A-2(a)–(g) all MET and each measured separately**. Repairs the
+  round-8 `F-1(a)` failure: the digest was three shas stale and the packet named a sha that was not
+  `HEAD`. **Declares a sha; clears no gate. Gate 1 does NOT pass.**
+
 ### Round-7 repair — BUILT AND DEPLOYED, awaiting the terminal regrade
 
 - [`PACKET-20260823-round7-f2a-parity-and-f17a-filing.md`](PACKET-20260823-round7-f2a-parity-and-f17a-filing.md)
