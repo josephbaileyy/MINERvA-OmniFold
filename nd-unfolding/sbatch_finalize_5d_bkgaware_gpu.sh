@@ -31,47 +31,60 @@ export ROOT628_PREFIX=/global/homes/j/josephrb/.conda/envs/root_6_28
 # The two roots MAY name the same directory; nothing here requires them to differ.
 CODE_ROOT="${MNV_CODE_ROOT:?set MNV_CODE_ROOT to the approved clean execution tree -- a checkout at a named sha with git status --porcelain empty. It is NOT the data root.}"
 DATA_ROOT="${MNV_DATA_ROOT:?set MNV_DATA_ROOT to the tree holding the inputs for this leg and receiving its products. Nothing is executed or imported from it.}"
-# --- PR-J5 / F-2(a), Joseph's ruling of 2026-08-22: VERIFY BEFORE SOURCE, NEVER BIND AFTER USE. ----
-# The ruling, verbatim on the point that decides the shape: a file sourced before the parity check
-# "can be bound afterward as historical provenance ... but that cannot establish the stronger claim
-# needed here: unverified bytes were prevented from executing. The file has already executed and may
-# already have changed the environment or exited before the check."
-# So these two are verified HERE, before they are sourced, and they are deliberately NOT added to the
-# late --pair set further down. Binding them there would record provenance and prove nothing.
+# --- F-2(a) ROUND-5 REPAIR: THREE ROOTS, AND THE ENVIRONMENT CLOSURE IS DIGEST-BOUND BEFORE USE ---
+# Authorized by Joseph 2026-08-23 after the round-4 verdict (16 PASS / 2 FAIL). What round 4 found,
+# and it was not a filing gap: `setup_salloc_env.sh` sources files that are ABSENT from any tree
+# satisfying A-2 -- `.gitignore` excludes `unbinned_unfolding/**` and `MINERvA101/**`, so a clone or
+# worktree at a named sha NECESSARILY lacks them. Measured on saul (bash 4.4.23): every launcher
+# died at `line 18: ... No such file or directory`, exit 1, before any preflight tool, guard or
+# science invocation. The round-4 gate passed and was the last thing that happened.
 #
-# WHY PURE GIT AND NOT "$PARITY". MEASURED 2026-08-22 on saul.nersc.gov, not assumed: the pre-conda
-# interpreter is /usr/bin/python3 == Python 3.6.15, and verify_executing_copy_is_committed.py opens
-# with `from __future__ import annotations`, which is 3.7+ -- it dies with
-# "SyntaxError: future feature annotations is not defined" on the frozen tree. And setup_salloc_env.sh
-# is ITSELF what activates the conda env that provides a modern python, so no Python checker can
-# precede it. git is 2.51.0 pre-conda. The failure mode here was a toolchain dependency, so this
-# REMOVES one rather than relocating it.
+# THE ENVIRONMENT IS NOW ITS OWN ROOT, because git structurally cannot bind those bytes -- so the
+# MECHANISM is substituted rather than the check relocated, the same move PR-02 made for the
+# interpreter. `MNV_ENV_ROOT` is mandatory with NO default: a default is the hardcode wearing a flag.
+# Its resolved target must sit outside every checkout, which `mnv_env_preflight.sh` verifies on the
+# CANONICAL path -- a directory symlink is permitted, a view onto the canonical checkout is not.
 #
-# WHAT THIS DOES NOT COVER -- READ BEFORE RECORDING F-2(a) AS CLOSED. setup_salloc_env.sh itself
-# sources ${SCRIPT_DIR}/unbinned_unfolding/build/setup.sh and ${SCRIPT_DIR}/MINERvA101/opt/bin/setup.sh.
-# NEITHER IS TRACKED BY GIT (`git ls-files` returns nothing for either), so no git-based check can bind
-# them -- and they are what activate conda and set up ROOT/MINERvA101. This gate proves the committed
-# bytes of setup_salloc_env.sh and NOT what those bytes pull in: it moves the environment trust
-# boundary ONE HOP, it does not close it. lib/resume_guard.sh sources nothing at all (311 lines) and is
-# therefore fully bound here. The open half is the TRANSITIVE ENVIRONMENT TRUST BOUNDARY, and Gate 1
-# must not be recorded closed on F-2(a) until it is settled and a fresh non-builder passes it.
-for _mnv_pre in setup_salloc_env.sh lib/resume_guard.sh; do
-  _mnv_head="$(git -C "$CODE_ROOT" rev-parse "HEAD:${_mnv_pre}" 2>/dev/null || true)"
-  _mnv_work="$(git -C "$CODE_ROOT" hash-object "${CODE_ROOT}/${_mnv_pre}" 2>/dev/null || true)"
-  if [[ -z "$_mnv_head" || -z "$_mnv_work" ]]; then
-    echo "[preflight] FAIL: cannot compute git parity for ${_mnv_pre} under ${CODE_ROOT}" >&2
-    echo "[preflight]   A check that could not run is not a check that passed." >&2
-    exit 3
-  fi
-  if [[ "$_mnv_head" != "$_mnv_work" ]]; then
-    echo "[preflight] FAIL: ${_mnv_pre} differs from HEAD in ${CODE_ROOT}" >&2
-    echo "[preflight]   HEAD=${_mnv_head}  working=${_mnv_work}" >&2
-    echo "[preflight]   It is SOURCED below. Refusing to execute unverified bytes." >&2
-    exit 3
-  fi
-done
-unset _mnv_pre _mnv_head _mnv_work
-source "${CODE_ROOT}/setup_salloc_env.sh"
+# WHAT IS BOUND: the COMPLETE transitive closure, 14 members -- the activator, the two scripts it
+# sources, the three MAT scripts below them, and the eight conda `activate.d/*.sh` that activation
+# GLOBS and executes. Hop 3 is empty, measured. `lib/resume_guard.sh` stays on the git check below
+# because it IS tracked and git CAN bind it; only what git cannot reach moved to the manifest.
+#
+# NO `set -u`. The closure reaches conda's activate-binutils_linux-64.sh, which references ADDR2LINE
+# unbound; under `set -u` that is fatal to this shell and it killed job 57235710 in ten seconds.
+ENV_ROOT="${MNV_ENV_ROOT:?set MNV_ENV_ROOT to the verified environment tree -- a real directory OUTSIDE every repository checkout, holding the activation closure named by nd-unfolding/mnv_env_manifest.tsv. It has NO default: the round-4 failure was an environment resolved relative to the code root.}"
+ENV_MANIFEST="${MNV_ENV_MANIFEST:-${CODE_ROOT}/nd-unfolding/mnv_env_manifest.tsv}"
+: "${MNV_CONDA_PREFIX:?set MNV_CONDA_PREFIX to the conda env whose activate.d scripts the manifest binds. It has no default: ROOT628_PREFIX used to be env-overridable, so verifying the activator bytes did not determine which conda executed.}"
+
+# (1) lib/resume_guard.sh is TRACKED, so git binds it -- verified before it is sourced.
+_mnv_head="$(git -C "$CODE_ROOT" rev-parse "HEAD:lib/resume_guard.sh" 2>/dev/null || true)"
+_mnv_work="$(git -C "$CODE_ROOT" hash-object "${CODE_ROOT}/lib/resume_guard.sh" 2>/dev/null || true)"
+if [[ -z "$_mnv_head" || -z "$_mnv_work" ]]; then
+  echo "[preflight] FAIL: cannot compute git parity for lib/resume_guard.sh under ${CODE_ROOT}" >&2
+  echo "[preflight]   A check that could not run is not a check that passed." >&2
+  exit 3
+fi
+if [[ "$_mnv_head" != "$_mnv_work" ]]; then
+  echo "[preflight] FAIL: lib/resume_guard.sh differs from HEAD in ${CODE_ROOT}" >&2
+  echo "[preflight]   HEAD=${_mnv_head}  working=${_mnv_work}" >&2
+  echo "[preflight]   It is SOURCED below. Refusing to execute unverified bytes." >&2
+  exit 3
+fi
+unset _mnv_head _mnv_work
+
+# (2) The environment closure is digest-verified BEFORE the activator is sourced. Pure bash: this
+#     runs before conda exists, and the pre-conda /usr/bin/python3 on saul is 3.6.15.
+source "${CODE_ROOT}/nd-unfolding/mnv_env_preflight.sh"
+mnv_env_preflight "$ENV_MANIFEST" "$ENV_ROOT" "$CODE_ROOT" "$DATA_ROOT" || exit $?
+source "${CODE_ROOT}/nd-unfolding/mnv_env_pathcheck.sh"
+source "${ENV_ROOT}/setup_salloc_env.sh"
+
+# (3) AFTER activation: refuse any PATH/PYTHONPATH/LD_LIBRARY_PATH entry that resolves inside a
+#     repository checkout, or outside the declared environment except for predeclared system
+#     prefixes. Binding the BYTES is not enough -- the round-4 verdict found the hop-1 activator
+#     injecting the canonical checkout into all three channels BY CONTENT, and the OI-136 Python
+#     import guard sees only the sys.path consequence, never PATH and never LD_LIBRARY_PATH.
+mnv_env_pathcheck "$ENV_ROOT" "$CODE_ROOT" "$DATA_ROOT" || exit $?
 export PYTHONUNBUFFERED=1; cd "${DATA_ROOT}/nd-unfolding"
 # --- M(ii) member axis: LOCATE lib_member_resume.sh, then source it -------------------------------
 # `${BASH_SOURCE[0]}` IS THE SPOOL PATH UNDER sbatch. Slurm copies the batch script to
@@ -113,28 +126,26 @@ if [[ -z "$_mr_lib" ]]; then
   echo "[member]   Set MNV_LAUNCHER_DIR to the launcher's directory to resolve this explicitly." >&2
   exit 2
 fi
-source "${_mr_lib}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
-# RULING 17, THE SHELL HALF: `lib_member_resume.sh` is an EXECUTED repository file, so it must come
-# from the code root. The resolver above may legitimately pick MNV_LAUNCHER_DIR, `dirname
-# $BASH_SOURCE` or `scontrol Command`; this asserts that whichever it picked is
-# ${MNV_CODE_ROOT}/nd-unfolding and FAILS CLOSED if it is not. Without it a launcher can be deployed
-# in the code root and still source another tree's library with nothing saying so.
+# --- M(ii) member axis: END RESOLVER ----------------------------------------------------------
+# The byte-identity extraction window for `LibraryResolverSurvivesSbatch` ends HERE, at the end of
+# the RESOLVER, not at the `source` below. It was moved 2026-08-23 so that the containment check can
+# precede the source; the test was updated rather than the check left after use, on Joseph's
+# instruction ("update affected extraction/identity tests rather than retaining bind-after-use to
+# keep an old fixture green").
 #
-# IT IS PLACED AFTER THE `source`, NOT BEFORE, AND THAT IS A DELIBERATE AND DISCLOSED COMPROMISE.
-# The resolver block above is extracted VERBATIM and pinned BYTE-IDENTICAL across all eight
-# launchers by `tests/test_uq_remediation.py::LibraryResolverSurvivesSbatch`, whose window runs from
-# `# --- M(ii) member axis: LOCATE` to this `source` line inclusive. A check inserted INSIDE that
-# window would (a) silently change what that test extracts and (b) be executed by it as a fragment
-# in which `CODE_ROOT` is not defined -- the same defect shape as an extracted tail losing the
-# `set -eo pipefail` above its cut. Measured, not predicted: placing it inside turned three of that
-# class's arms red. The residual exposure is therefore any side effect the wrong tree's library has
-# AT SOURCE TIME; it defines functions, and nothing downstream of here runs before this exits 2.
+# RULING 17, THE SHELL HALF, NOW BIND-BEFORE-USE. `lib_member_resume.sh` is an EXECUTED repository
+# file, so it must come from the code root. The resolver above may legitimately pick
+# MNV_LAUNCHER_DIR, `dirname $BASH_SOURCE` or `scontrol Command`; this asserts that whichever it
+# picked resolves to ${MNV_CODE_ROOT}/nd-unfolding and FAILS CLOSED if it is not -- BEFORE the file
+# executes. Round 4 found this check running AFTER the source in all eight launchers, the same shape
+# PR-02 had already fixed for `_mr_rg` in the finalize launcher and left standing here.
 if [[ "$(cd "$_mr_lib" 2>/dev/null && pwd -P)" != "$(cd "${CODE_ROOT}/nd-unfolding" 2>/dev/null && pwd -P)" ]]; then
   echo "[member] FAIL: lib_member_resume.sh resolved to '${_mr_lib}', which is not" >&2
   echo "[member]   \${MNV_CODE_ROOT}/nd-unfolding = '${CODE_ROOT}/nd-unfolding'." >&2
   echo "[member]   Refusing: the member axis would run from a tree this job did not approve." >&2
   exit 2
 fi
+source "${_mr_lib}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
 
 # THE MISSING DEPENDENCY, restored 2026-08-21 under Joseph's amended ruling 1, ATOMICALLY WITH THE
 # COMB GUARD BELOW AND NEVER WITHOUT IT. lib_member_resume.sh's own header says it "Requires

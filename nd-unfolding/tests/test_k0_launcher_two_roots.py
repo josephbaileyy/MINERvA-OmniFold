@@ -111,16 +111,63 @@ class LauncherFixture(unittest.TestCase):
         (self.data / "nd-unfolding").mkdir(parents=True)
 
         (self.code / "VALIDATION_LEDGER.md").write_text("# fixture ledger\n")
-        (self.code / "setup_salloc_env.sh").write_text(
-            'echo "[stub] setup_salloc_env sourced from $BASH_SOURCE"\n')
         (self.code / "lib" / "resume_guard.sh").write_text(
             'echo "[stub] resume_guard sourced from $BASH_SOURCE"\nrg_valid_npz(){ return 1; }\n')
+
+        # ---- A REAL ACTIVATOR CLOSURE, IN ITS OWN ROOT ------------------------------------------
+        # THIS IS THE ROUND-4 FINDING'S ACTUAL FIX. The previous fixture wrote a ONE-LINE
+        # `setup_salloc_env.sh` into the code root that sourced nothing -- it replaced the single
+        # file whose real content is the blocker, so twenty-nine green arms were silent about an
+        # environment closure that does not exist in any A-2-satisfying tree. A fixture must agree
+        # with the world, not with the code under test.
+        #
+        # So the fixture now builds a MULTI-HOP closure outside the code root: an activator that
+        # sources two files, one of which sources three more, plus a conda-shaped `activate.d`
+        # directory that activation globs. The transitivity is real, which is the only reason the
+        # arms below can fail for the reason they claim.
+        self.env = tmp / "env-root"
+        (self.env / "unbinned_unfolding" / "build").mkdir(parents=True)
+        (self.env / "MINERvA101" / "opt" / "bin").mkdir(parents=True)
+        (self.env / "setup_salloc_env.sh").write_text(
+            'SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"\n'
+            'source "${SCRIPT_DIR}/unbinned_unfolding/build/setup.sh"\n'
+            'export MINERVA_PREFIX="${SCRIPT_DIR}/MINERvA101/opt"\n'
+            'source "${SCRIPT_DIR}/MINERvA101/opt/bin/setup.sh"\n')
+        (self.env / "unbinned_unfolding" / "build" / "setup.sh").write_text(
+            '_D="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"\n'
+            'export PATH=${_D}:${PATH}\nexport PYTHONPATH=${_D}:${PYTHONPATH}\n'
+            'export LD_LIBRARY_PATH=${_D}:${LD_LIBRARY_PATH}\nunset _D\n')
+        (self.env / "MINERvA101" / "opt" / "bin" / "setup.sh").write_text(
+            'INSTALL_DIR=${MINERVA_PREFIX:?set MINERVA_PREFIX}\n'
+            'source ${INSTALL_DIR}/bin/setup_MAT.sh\n'
+            'source ${INSTALL_DIR}/bin/setup_MAT-MINERvA.sh\n'
+            'source ${INSTALL_DIR}/bin/setup_UnfoldUtils.sh\n')
+        for leaf in ("setup_MAT.sh", "setup_MAT-MINERvA.sh", "setup_UnfoldUtils.sh"):
+            (self.env / "MINERvA101" / "opt" / "bin" / leaf).write_text(
+                'PREFIX=${MINERVA_PREFIX:?set MINERVA_PREFIX}\nexport PATH=${PREFIX}/bin:$PATH\n')
+        # A shared `bin/` legitimately holds scripts the closure never sources; the EXTRA check must
+        # not fire on them. This one exists so that arm is exercised rather than assumed.
+        (self.env / "MINERvA101" / "opt" / "bin" / "unrelated_tool.sh").write_text("echo unrelated\n")
+
+        self.conda = tmp / "conda-prefix"
+        (self.conda / "etc" / "conda" / "activate.d").mkdir(parents=True)
+        for n in ("activate-root.sh", "libglib_activate.sh"):
+            (self.conda / "etc" / "conda" / "activate.d" / n).write_text(f"# {n}\n")
+
+        self.envmanifest = tmp / "env-manifest.tsv"
+        r = subprocess.run([sys.executable, str(ND / "mnv_env_manifest.py"),
+                            "--env-root", str(self.env), "--conda-prefix", str(self.conda),
+                            "--write-tsv", str(self.envmanifest)],
+                           capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         (cnd / "lib_member_resume.sh").write_text(STUB_MR)
         (cnd / f"{SIBLING}.py").write_text("MARK = 'code root sibling'\n")
 
         # REAL tools, byte-copied. The launchers refuse a symlink here on purpose.
         for src, dst in ((ND / "mnv_guarded_run.py", cnd / "mnv_guarded_run.py"),
                          (ND / "mnv_source_manifest.py", cnd / "mnv_source_manifest.py"),
+                         (ND / "mnv_env_preflight.sh", cnd / "mnv_env_preflight.sh"),
+                         (ND / "mnv_env_pathcheck.sh", cnd / "mnv_env_pathcheck.sh"),
                          (ND / "pet" / "verify_executing_copy_is_committed.py",
                           cnd / "pet" / "verify_executing_copy_is_committed.py")):
             shutil.copy2(src, dst)
@@ -174,6 +221,23 @@ class LauncherFixture(unittest.TestCase):
                 m = stat.S_IMODE(os.stat(dirpath).st_mode)
                 os.chmod(dirpath, m & ~0o222 if on else m | 0o200)
 
+    @staticmethod
+    def _ambient_prefixes():
+        """Every directory this host already has on the three search paths, resolved."""
+        out = []
+        for var in ("PATH", "PYTHONPATH", "LD_LIBRARY_PATH"):
+            for e in os.environ.get(var, "").split(":"):
+                if not e:
+                    continue
+                try:
+                    r = os.path.realpath(e)
+                except OSError:
+                    continue
+                if r not in out:
+                    out.append(r)
+        out.append(os.path.realpath(tempfile.gettempdir()))
+        return " ".join(out)
+
     def good_env(self, **over):
         env = dict(os.environ, SLURM_ARRAY_TASK_ID="1", SLURM_JOB_NAME="fx", SLURM_JOB_ID="1",
                    PYTHONDONTWRITEBYTECODE="1")
@@ -186,6 +250,17 @@ class LauncherFixture(unittest.TestCase):
             "MNV_GUARD_INVENTORY_DIR": str(self.invdir),
             "MNV_SOURCE_MANIFEST": str(self.manifest),
             "MNV_EST_SEED_OFFSET": "0",
+            # The three roots, all mandatory and none defaulted.
+            "MNV_ENV_ROOT": str(self.env),
+            "MNV_CONDA_PREFIX": str(self.conda),
+            "MNV_ENV_MANIFEST": str(self.envmanifest),
+            # DERIVED FROM THIS HOST, not hardcoded, and predeclared exactly the way a real
+            # submitter predeclares theirs -- there is no special case for being a test. A fixed
+            # list would pass on the author's laptop and refuse a correct configuration everywhere
+            # else, which is the fixture-disagrees-with-the-world failure this whole round is about.
+            # NOTE the contamination arm does NOT depend on this: the checkout check is absolute and
+            # runs before the allowlist, so widening this cannot make a checkout path acceptable.
+            "MNV_ENV_SYSTEM_PREFIXES": self._ambient_prefixes(),
         })
         env.update(over)
         return env
@@ -540,126 +615,151 @@ if __name__ == "__main__":
     unittest.main(verbosity=2)
 
 
-class SourcedFilesAreVerifiedBEFORETheyAreSourced(LauncherFixture):
-    """PR-02 / F-2(a), under Joseph's PR-J5 ruling of 2026-08-22.
+class TheENVIRONMENTIsItsOwnRootAndIsVerifiedBEFOREItIsSourced(LauncherFixture):
+    """Round-5 repair of `F-2(a)`, authorized by Joseph 2026-08-23 after the round-4 verdict.
 
-    The ruling: a file sourced before the parity check "can be bound afterward as historical
-    provenance ... but that cannot establish the stronger claim needed here: unverified bytes were
-    prevented from executing." So `setup_salloc_env.sh` and `lib/resume_guard.sh` are checked BEFORE
-    the `source` that executes them, and are deliberately NOT in the late `--pair` set.
+    WHAT ROUND 4 FOUND, and why the round-4 arms this class replaces were not enough: they proved a
+    git parity gate fired on `setup_salloc_env.sh`, in a fixture that wrote a ONE-LINE activator
+    sourcing nothing. The real activator sources files that are ABSENT from any A-2-satisfying tree
+    (`.gitignore` excludes `unbinned_unfolding/**` and `MINERvA101/**`), so every launcher died at
+    the activator with exit 1 and the gate was the last thing that happened. **A fixture must agree
+    with the world, not with the code under test** -- so `LauncherFixture` now builds a REAL
+    multi-hop closure in its own root, and these arms mutate it.
 
-    THE FIRST ARM EXISTS BECAUSE A PASSING SUITE IS NOT EVIDENCE THE GATE RAN. The fixture commits
-    both files, so an added check that never executes and a check that executes and passes look
-    identical from the outside. Every arm below therefore MUTATES and demands a refusal; the silent
-    arm is meaningful only because they do.
+    THE POSITIVE CONTROL IS LISTED FIRST because the negatives are worthless without it: a valid
+    three-root configuration must actually RUN.
     """
 
-    PRE = ("setup_salloc_env.sh", "lib/resume_guard.sh")
+    def tamper_env(self, rel, text):
+        (self.env / rel).write_text(text)
 
-    def tamper(self, rel, text):
-        """A-2(g) write protection is ON in this fixture, exactly as the real deploy is
-        `dr-xr-x---`. Lift it to plant the mutation, then put it back, so the arm measures the
-        PARITY gate and not the filesystem mode."""
-        self.set_protection(False)
-        (self.code / rel).write_text(text)
-        self.set_protection(True)
+    # ---- POSITIVE CONTROLS -------------------------------------------------------------------
+    def test_POSITIVE_a_valid_three_root_configuration_RUNS(self):
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                cp = self.run_launcher(sh, self.good_env())
+                self.assertNotIn("[env-preflight] VIOLATION", cp.stderr)
+                self.assertNotIn("[env-pathcheck] VIOLATION", cp.stderr)
+                self.assertIn("[env-preflight] OK:", cp.stdout)
 
-    def test_the_gate_RAN_a_modified_setup_salloc_env_is_REFUSED(self):
-        self.tamper("setup_salloc_env.sh", 'echo "tampered"\n')
+    def test_POSITIVE_the_complete_closure_passes_and_execution_REACHES_the_next_line(self):
+        """The exact statement round 4 could not make: the activator is sourced and the line after
+        it runs. `[env-pathcheck] OK` is only printed AFTER the source returns."""
+        cp = self.run_launcher(LAUNCHERS[0][0], self.good_env())
+        self.assertIn("[env-pathcheck] OK:", cp.stdout, cp.stdout + cp.stderr)
+
+    def test_POSITIVE_an_unrelated_script_in_a_shared_bin_is_NOT_an_extra(self):
+        """`MINERvA101/opt/bin` legitimately holds scripts the closure never sources. The first
+        draft of the EXTRA check refused a correct environment over four of them."""
+        self.assertTrue((self.env / "MINERvA101" / "opt" / "bin" / "unrelated_tool.sh").is_file())
+        cp = self.run_launcher(LAUNCHERS[0][0], self.good_env())
+        self.assertNotIn("EXTRA unbound", cp.stderr)
+
+    # ---- THE CLOSURE ---------------------------------------------------------------------------
+    def test_an_ABSENT_closure_member_fails_BEFORE_the_source(self):
+        (self.env / "MINERvA101" / "opt" / "bin" / "setup_MAT.sh").unlink()
         for sh, _e, _t in LAUNCHERS:
             with self.subTest(launcher=sh):
                 cp = self.run_launcher(sh, self.good_env())
                 self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
-                self.assertIn("setup_salloc_env.sh differs from HEAD", cp.stderr)
-                self.assertIn("Refusing to execute unverified bytes", cp.stderr)
+                self.assertIn("MISSING closure member", cp.stderr)
+                self.assertNotIn("[env-pathcheck]", cp.stdout)   # never reached the source
 
-    def test_the_gate_RAN_a_modified_resume_guard_is_REFUSED(self):
-        self.tamper("lib/resume_guard.sh", 'echo "tampered"\n')
+    def test_a_DIGEST_that_MOVED_fails_before_the_source(self):
+        self.tamper_env("unbinned_unfolding/build/setup.sh", "echo tampered\n")
+        cp = self.run_launcher(LAUNCHERS[0][0], self.good_env())
+        self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
+        self.assertIn("DIGEST MISMATCH", cp.stderr)
+        self.assertNotIn("[env-pathcheck]", cp.stdout)
+
+    def test_a_HOP_TWO_digest_move_is_caught_not_only_hop_one(self):
+        """Binding the first hop was the round-4 half-fix. The closure is bound to its depth."""
+        self.tamper_env("MINERvA101/opt/bin/setup_UnfoldUtils.sh", "echo tampered\n")
+        cp = self.run_launcher(LAUNCHERS[0][0], self.good_env())
+        self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
+        self.assertIn("setup_UnfoldUtils.sh", cp.stderr)
+
+    def test_an_EXTRA_activate_d_script_is_refused_because_conda_GLOBS_that_directory(self):
+        (self.conda / "etc" / "conda" / "activate.d" / "zz_injected.sh").write_text("echo hi\n")
+        cp = self.run_launcher(LAUNCHERS[0][0], self.good_env())
+        self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
+        self.assertIn("EXTRA unbound activate.d script", cp.stderr)
+
+    # ---- THE ROOT ITSELF -----------------------------------------------------------------------
+    def test_MNV_ENV_ROOT_is_MANDATORY_with_no_default(self):
         for sh, _e, _t in LAUNCHERS:
-            with self.subTest(launcher=sh):
-                cp = self.run_launcher(sh, self.good_env())
+            for mode in ("unset", "empty"):
+                with self.subTest(launcher=sh, mode=mode):
+                    env = self.good_env()
+                    if mode == "unset":
+                        env.pop("MNV_ENV_ROOT")
+                    else:
+                        env["MNV_ENV_ROOT"] = ""
+                    cp = self.run_launcher(sh, env)
+                    self.assertNotEqual(cp.returncode, 0)
+                    self.assertIn("MNV_ENV_ROOT", cp.stderr)
+
+    def test_MNV_CONDA_PREFIX_is_MANDATORY_with_no_default(self):
+        env = self.good_env(); env.pop("MNV_CONDA_PREFIX")
+        cp = self.run_launcher(LAUNCHERS[0][0], env)
+        self.assertNotEqual(cp.returncode, 0)
+        self.assertIn("MNV_CONDA_PREFIX", cp.stderr)
+
+    def test_an_env_root_INSIDE_the_code_root_is_refused(self):
+        """A view onto a checkout resolves back into it; the separation is checked on the CANONICAL
+        target, which is also why a directory symlink is permitted and a checkout is not."""
+        env = self.good_env(MNV_ENV_ROOT=str(self.code))
+        cp = self.run_launcher(LAUNCHERS[0][0], env)
+        self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
+        self.assertIn("inside a repository checkout", cp.stderr)
+
+    def test_a_DIRECTORY_symlink_to_a_clean_target_is_ALLOWED(self):
+        """Measured on saul: a FILE symlink breaks SCRIPT_DIR and a DIRECTORY symlink does not."""
+        link = self.env.parent / "env-link"
+        link.symlink_to(self.env, target_is_directory=True)
+        cp = self.run_launcher(LAUNCHERS[0][0], self.good_env(MNV_ENV_ROOT=str(link)))
+        self.assertNotIn("[env-preflight] VIOLATION", cp.stderr)
+        self.assertIn("[env-preflight] OK:", cp.stdout)
+
+    # ---- THE PATH CHANNELS ---------------------------------------------------------------------
+    def test_canonical_checkout_contamination_is_refused_on_ALL_THREE_channels(self):
+        """The guard sees only `sys.path`; PATH and LD_LIBRARY_PATH are invisible to it. This is
+        the channel the round-4 verdict found the hop-1 activator poisoning BY CONTENT."""
+        for var in ("PATH", "PYTHONPATH", "LD_LIBRARY_PATH"):
+            with self.subTest(channel=var):
+                self.tamper_env(
+                    "unbinned_unfolding/build/setup.sh",
+                    f'export {var}="{self.code}/nd-unfolding:${{{var}}}"\n')
+                # re-bind the manifest so the DIGEST arm cannot be what fires here
+                r = subprocess.run([sys.executable, str(ND / "mnv_env_manifest.py"),
+                                    "--env-root", str(self.env), "--conda-prefix", str(self.conda),
+                                    "--write-tsv", str(self.envmanifest)],
+                                   capture_output=True, text=True)
+                self.assertEqual(r.returncode, 0, r.stderr)
+                cp = self.run_launcher(LAUNCHERS[0][0], self.good_env())
                 self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
-                self.assertIn("lib/resume_guard.sh differs from HEAD", cp.stderr)
+                self.assertIn("REPOSITORY CHECKOUT path", cp.stderr)
 
-    def test_a_DELETED_sourced_file_is_a_refusal_not_a_silent_pass(self):
-        """`ls | wc -l` gives 0 for empty AND absent; a parity check must not do the same."""
-        self.set_protection(False)
-        (self.code / "setup_salloc_env.sh").unlink()
-        self.set_protection(True)
-        cp = self.run_launcher(LAUNCHERS[0][0], self.good_env())
-        self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
-        self.assertIn("cannot compute git parity", cp.stderr)
-        self.assertIn("A check that could not run is not a check that passed", cp.stderr)
-
-    def test_a_CODE_ROOT_that_is_not_a_git_repo_is_a_refusal(self):
-        shutil.rmtree(self.code / ".git")
-        cp = self.run_launcher(LAUNCHERS[0][0], self.good_env())
-        self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
-        self.assertIn("cannot compute git parity", cp.stderr)
-
-    def test_SILENT_on_an_unmutated_tree(self):
-        """The arm the five above are worthless without."""
+    # ---- THE MEMBER LIBRARY ----------------------------------------------------------------------
+    def test_a_WRONG_TREE_member_library_fails_BEFORE_it_is_sourced(self):
+        """Round 4: the containment check ran AFTER the source in all eight. It now precedes it."""
         for sh, _e, _t in LAUNCHERS:
             with self.subTest(launcher=sh):
-                cp = self.run_launcher(sh, self.good_env())
-                self.assertNotIn("differs from HEAD", cp.stderr)
-                self.assertNotIn("cannot compute git parity", cp.stderr)
+                lines = (ND / sh).read_text().split("\n")
+                chk = next(i for i, l in enumerate(lines) if "lib_member_resume.sh resolved to" in l)
+                src = next(i for i, l in enumerate(lines)
+                           if l.startswith('source "${_mr_lib}/lib_member_resume.sh"'))
+                self.assertLess(chk, src, f"{sh}: containment still runs after the source")
 
-    def test_the_gate_is_TEXTUALLY_before_every_source_of_those_two_files(self):
-        """The whole content of the ruling is an ORDER, so the order is what gets asserted."""
-        import re
+    def test_the_member_library_containment_FIRES_from_a_rogue_tree(self):
+        cp = self.run_launcher(LAUNCHERS[0][0], self.good_env(MNV_LAUNCHER_DIR=str(self.rogue)))
+        self.assertNotEqual(cp.returncode, 0, cp.stdout + cp.stderr)
+        self.assertIn("lib_member_resume.sh", cp.stderr)
+
+    # ---- THE DISCLOSURE IS GONE BECAUSE THE DEFECT IS ---------------------------------------------
+    def test_no_launcher_still_sources_the_activator_from_the_CODE_ROOT(self):
         for sh, _e, _t in LAUNCHERS:
             with self.subTest(launcher=sh):
-                lines = (ND / sh).read_text().splitlines()
-                gate = [i for i, l in enumerate(lines, 1) if "PR-J5 / F-2(a)" in l]
-                self.assertEqual(len(gate), 1, f"{sh}: expected exactly one gate")
-                srcs = [i for i, l in enumerate(lines, 1)
-                        if re.match(r'^\s*source\s', l) and not l.lstrip().startswith("#")
-                        and ("setup_salloc_env.sh" in l or "resume_guard.sh" in l
-                             or '"$_mr_rg"' in l)]
-                self.assertGreater(len(srcs), 0, "power arm: there ARE sources to be ordered against")
-                self.assertLess(gate[0], min(srcs),
-                                f"{sh}: a sourced file executes before it is verified")
-
-    def test_these_two_are_NOT_in_the_late_pair_set(self):
-        """Ruling PR-J5: binding after use records provenance and proves nothing. Adding them to the
-        late set would make F-2(a) look closed by the mechanism the ruling rejected."""
-        import re
-        for sh, _e, _t in LAUNCHERS:
-            with self.subTest(launcher=sh):
-                text = (ND / sh).read_text()
-                for hit in re.findall(r'--pair\s+"?([^"\s]+)', text):
-                    self.assertNotIn("setup_salloc_env.sh", hit, f"{sh}: bound after use")
-                    self.assertNotIn("resume_guard.sh", hit, f"{sh}: bound after use")
-
-    def test_the_TRANSITIVE_gap_is_disclosed_in_every_launcher(self):
-        """`setup_salloc_env.sh` sources two UNTRACKED scripts, so this gate moves the environment
-        trust boundary one hop rather than closing it. A limit that is not written down is a limit
-        the next reader inherits silently -- so the disclosure is pinned here, not left to prose."""
-        for sh, _e, _t in LAUNCHERS:
-            with self.subTest(launcher=sh):
-                text = (ND / sh).read_text()
-                self.assertIn("unbinned_unfolding/build/setup.sh", text)
-                self.assertIn("MINERvA101/opt/bin/setup.sh", text)
-                self.assertIn("NEITHER IS TRACKED BY GIT", text)
-                self.assertIn("TRANSITIVE ENVIRONMENT TRUST BOUNDARY", text)
-
-    def test_the_disclosure_is_TRUE_those_two_scripts_really_are_untracked(self):
-        """A disclosure asserted by a test that never checks the world is a slogan. Verify it."""
-        for rel in ("unbinned_unfolding/build/setup.sh", "MINERvA101/opt/bin/setup.sh"):
-            r = subprocess.run(["git", "-C", str(REPO), "ls-files", "--error-unmatch", rel],
-                               capture_output=True, text=True)
-            self.assertNotEqual(r.returncode, 0, f"{rel} IS tracked now -- the disclosure is stale "
-                                                 f"and the gate may be able to bind it")
-        self.assertIn('source "${SCRIPT_DIR}/unbinned_unfolding/build/setup.sh"',
-                      (REPO / "setup_salloc_env.sh").read_text())
-
-    def test_finalize_binds_the_resume_guard_it_ACTUALLY_sources(self):
-        """`_mr_rg` derives from a DISCOVERED `_mr_lib`, not from CODE_ROOT, so the file verified at
-        preflight and the file sourced later can be two different objects."""
-        text = (ND / "sbatch_finalize_5d_bkgaware_gpu.sh").read_text()
-        self.assertIn("_mr_rg_real", text)
-        self.assertIn("is NOT the one verified at preflight", text)
-        i_chk = text.index("_mr_rg_real=")
-        i_src = text.index('source "$_mr_rg"')
-        self.assertLess(i_chk, i_src, "the binding must precede the source it binds")
+                t = (ND / sh).read_text()
+                self.assertNotIn('source "${CODE_ROOT}/setup_salloc_env.sh"', t)
+                self.assertIn('source "${ENV_ROOT}/setup_salloc_env.sh"', t)

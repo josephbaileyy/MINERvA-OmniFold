@@ -3752,13 +3752,26 @@ class LibraryResolverSurvivesSbatch(unittest.TestCase):
             f.name for f in ND.glob("sbatch_*.sh")
             if "# --- M(ii) member axis: LOCATE" in f.read_text(errors="replace")))
 
+    #: The window now ends at the explicit END RESOLVER marker rather than at the `source` line.
+    #: MOVED 2026-08-23 with the round-5 repair: the ruling-17 containment check was relocated to
+    #: BEFORE the source (it was bind-after-use in all eight, which round 4 found), and that check
+    #: references CODE_ROOT, which an extracted fragment does not define. Ending the window at the
+    #: resolver keeps this test measuring THE RESOLVER -- which is what it is for -- instead of
+    #: forcing the check to stay after the file it guards. Joseph: "update affected
+    #: extraction/identity tests rather than retaining bind-after-use to keep an old fixture green."
+    END_MARK = "# --- M(ii) member axis: END RESOLVER"
+
+    @classmethod
+    def _window(cls, lines):
+        a = next(i for i, l in enumerate(lines) if l.startswith("# --- M(ii) member axis: LOCATE"))
+        b = next(i for i, l in enumerate(lines) if l.startswith(cls.END_MARK))
+        return a, b
+
     def _block(self):
         """The resolver, extracted VERBATIM from a shipped launcher -- not a copy in the test."""
         lines = (ND / self.LAUNCHERS[0]).read_text().split("\n")
-        a = next(i for i, l in enumerate(lines) if l.startswith("# --- M(ii) member axis: LOCATE"))
-        b = next(i for i, l in enumerate(lines)
-                 if "mr_require_valid_offset" in l and l.startswith("source "))
-        return "\n".join(lines[a:b + 1]) + "\necho RESOLVED=$_mr_lib\n"
+        a, b = self._window(lines)
+        return "\n".join(lines[a:b]) + "\necho RESOLVED=$_mr_lib\n"
 
     def _run(self, cwd, env, script_name="slurm_script"):
         import subprocess
@@ -3780,10 +3793,8 @@ class LibraryResolverSurvivesSbatch(unittest.TestCase):
         digests = {}
         for f in self.LAUNCHERS:
             lines = (ND / f).read_text().split("\n")
-            a = next(i for i, l in enumerate(lines) if l.startswith("# --- M(ii) member axis: LOCATE"))
-            b = next(i for i, l in enumerate(lines)
-                     if "mr_require_valid_offset" in l and l.startswith("source "))
-            digests[f] = hashlib.sha256("\n".join(lines[a:b + 1]).encode()).hexdigest()
+            a, b = self._window(lines)
+            digests[f] = hashlib.sha256("\n".join(lines[a:b]).encode()).hexdigest()
         self.assertEqual(len(set(digests.values())), 1,
                          f"the seven resolvers have diverged: {digests}")
 

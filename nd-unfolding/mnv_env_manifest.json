@@ -1,0 +1,107 @@
+{
+  "conda_prefix": "/global/u2/j/josephrb/.conda/envs/root_6_28",
+  "entries": [
+    {
+      "base": "env_root",
+      "path": "/pscratch/sd/j/josephrb/k0env/setup_salloc_env.sh",
+      "relpath": "setup_salloc_env.sh",
+      "role": "activator",
+      "sha256": "c1e6e253eb1700e7994c68cdb2e62d024d83fc50c1fc25d4041184a9bb75cbe2"
+    },
+    {
+      "base": "env_root",
+      "path": "/pscratch/sd/j/josephrb/k0env/unbinned_unfolding/build/setup.sh",
+      "relpath": "unbinned_unfolding/build/setup.sh",
+      "role": "hop1",
+      "sha256": "ada4e7dfd434bad10692f5fc3c77f0e55a87a501f3fc96989532e7364ab14a2d"
+    },
+    {
+      "base": "env_root",
+      "path": "/pscratch/sd/j/josephrb/k0env/MINERvA101/opt/bin/setup.sh",
+      "relpath": "MINERvA101/opt/bin/setup.sh",
+      "role": "hop1",
+      "sha256": "57f713fe1c6709ff5403732b586b7cdbbba9f1c2913bc9933b2fd0d7af16cf41"
+    },
+    {
+      "base": "env_root",
+      "path": "/pscratch/sd/j/josephrb/k0env/MINERvA101/opt/bin/setup_MAT.sh",
+      "relpath": "MINERvA101/opt/bin/setup_MAT.sh",
+      "role": "hop2",
+      "sha256": "858ba5f4efbff2a95156d6a62c6d17edddc8784e7a01619c26f846fc6f0dfff2"
+    },
+    {
+      "base": "env_root",
+      "path": "/pscratch/sd/j/josephrb/k0env/MINERvA101/opt/bin/setup_MAT-MINERvA.sh",
+      "relpath": "MINERvA101/opt/bin/setup_MAT-MINERvA.sh",
+      "role": "hop2",
+      "sha256": "72226eb3d95a3427f4c1ed859c45719dfd0371f84f0e145d4bafaeecebefe254"
+    },
+    {
+      "base": "env_root",
+      "path": "/pscratch/sd/j/josephrb/k0env/MINERvA101/opt/bin/setup_UnfoldUtils.sh",
+      "relpath": "MINERvA101/opt/bin/setup_UnfoldUtils.sh",
+      "role": "hop2",
+      "sha256": "b0d094339f4a19bfe1e073322fd7ce2ac5c62b8f955c1046d7fa070bfea51e6e"
+    },
+    {
+      "base": "conda_prefix",
+      "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/etc/conda/activate.d/activate-binutils_linux-64.sh",
+      "relpath": "etc/conda/activate.d/activate-binutils_linux-64.sh",
+      "role": "conda-activate",
+      "sha256": "d85f375fb924f4144f5becd1798a647fe0e27da8b3596ffbce4026a4352a0773"
+    },
+    {
+      "base": "conda_prefix",
+      "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/etc/conda/activate.d/activate-gcc_linux-64.sh",
+      "relpath": "etc/conda/activate.d/activate-gcc_linux-64.sh",
+      "role": "conda-activate",
+      "sha256": "38f63f03d2b541fafaeb30b1dc50e83aa5aaa9caba15f59edb9d2bc9c8ecae9a"
+    },
+    {
+      "base": "conda_prefix",
+      "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/etc/conda/activate.d/activate-gfortran_linux-64.sh",
+      "relpath": "etc/conda/activate.d/activate-gfortran_linux-64.sh",
+      "role": "conda-activate",
+      "sha256": "ec34318c90db400fe9d294027fa4d4f74aadb4335979507e083fd49e9ee9451c"
+    },
+    {
+      "base": "conda_prefix",
+      "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/etc/conda/activate.d/activate-gxx_linux-64.sh",
+      "relpath": "etc/conda/activate.d/activate-gxx_linux-64.sh",
+      "role": "conda-activate",
+      "sha256": "b06bda1d994f2c8bebedd0df0b93ace83bff189d875719ec26c255d5325dd31c"
+    },
+    {
+      "base": "conda_prefix",
+      "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/etc/conda/activate.d/activate-pythia8.sh",
+      "relpath": "etc/conda/activate.d/activate-pythia8.sh",
+      "role": "conda-activate",
+      "sha256": "768c26dc64ec52164ca85718dfaa24b0c2ad37ff353c3bbd91df131bc02e3dd9"
+    },
+    {
+      "base": "conda_prefix",
+      "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/etc/conda/activate.d/activate-root.sh",
+      "relpath": "etc/conda/activate.d/activate-root.sh",
+      "role": "conda-activate",
+      "sha256": "25353e11856ddf0288c19a3eb0df74701b471665e468f723c38af7395c36290e"
+    },
+    {
+      "base": "conda_prefix",
+      "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/etc/conda/activate.d/libglib_activate.sh",
+      "relpath": "etc/conda/activate.d/libglib_activate.sh",
+      "role": "conda-activate",
+      "sha256": "7f972f0bd85732e0d85b15dfee7606127fa6d468db61342e4d59be4339254a16"
+    },
+    {
+      "base": "conda_prefix",
+      "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/etc/conda/activate.d/libxml2_activate.sh",
+      "relpath": "etc/conda/activate.d/libxml2_activate.sh",
+      "role": "conda-activate",
+      "sha256": "631478a9cfbd337b86ee1df94497c21821cd561312c94892d156e43f499cf5c4"
+    }
+  ],
+  "entry_count": 14,
+  "env_root": "/pscratch/sd/j/josephrb/k0env",
+  "schema": "mnv_env_manifest/1",
+  "tsv_sha256": "499e923aaabfcf310e0abdc4a5bdd877cf58d3a9c52bd41d76fa0a05eb131392"
+}
