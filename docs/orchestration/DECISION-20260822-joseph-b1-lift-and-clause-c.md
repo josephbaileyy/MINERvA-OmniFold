@@ -521,3 +521,112 @@ undeclared or mismatched import set is refused, not that the real pins exist.
 > No merge or submission is authorized by this ruling."
 
 The grading lane must be neither the builder nor the verifier who amended the rubric.
+
+## Ruling 24 — cause 3 is scoped to `X` per (cause × artifact × covariance role), and 2D is NOT reopened
+
+> "Cause 3 is assessed per cause × artifact and per covariance role. It remains applicable to `X`'s
+> construction. It is N/A to an intentionally isolated training-seed covariance, including the
+> validated 2D ML block, because seed variation is that block's declared estimand rather than
+> contamination of another uncertainty component."
+
+**This closes `PR-X3`, and it closes it NARROWLY: the carve-out names the 2D ML BLOCK, not the 2D
+artifact.** Nothing here reopens 2D and nothing here clears it beyond that block. In particular the
+question of whether 2D's own 187-universe systematic sweep is single-seeded is **neither asked nor
+answered**, and "per covariance role" must not be read as having settled it.
+
+**The factual basis is verified, not relayed** — `2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md:94`:
+
+| Component | N | √tr(C) |
+|---|---|---|
+| ML noise (lgbm seedscan) | 10 | 5.061e-41 |
+| Statistical (Poisson bootstrap, **pinned ML seed**) | 300 | 1.817e-40 |
+
+Separately constructed, separately reported, and the bootstrap pins the seed so the two cannot
+double-count. The earlier contaminated bootstrap family was replaced with negligible movement.
+
+### The criterion as stated does not describe `X`, and this record repairs it rather than inheriting it
+
+The ruling's general clause — cause 3 applies where seed variation *"leaks into a covariance intended
+to measure something else and is consequently misclassified"* — **is not what cause 3 is about on
+`X`.** `SCOREBOARD-20260817` §2b, on `X`: *"**NO NUMBER MOVES.** Every leg is internally
+single-seeded, so nothing is mis-computed. What fails is a **verification claim**."* Nothing leaks.
+Read literally the stated criterion would make cause 3 `N/A` for `X` too, contradicting the ruling's
+own next sentence.
+
+**Nor can "has an isolated training-seed block" be the discriminator: `X` has one.**
+`sbatch_finalize_5d_bkgaware_gpu.sh:280` builds `C_ML` from `seedscan_split`. Both artifacts have a
+seedscan block.
+
+**The discriminator that yields both of the ruling's answers is the DOMINANT block.** `X`'s dominant
+term is the 188-universe systematic sweep, computed at a **hardcoded seed 42** —
+`sweep_bank_5d.py:252`, the only occurrence of `seed` in that file. Cause 3 on `X` is three separate
+defects with three separate remedies:
+
+| leg | defect | remedy | needs compute? |
+|---|---|---|---|
+| **P-i** | no product or receipt records the seed **value**, anywhere | add a stamp | **no** |
+| **P-ii** | the dominant arm has **nowhere to put one** — `analyze_universes_5d.py` contains `seed` zero times. **Survives P-i's fix** | a new write site | **no** |
+| **M(ii)** | the magnitude is unmeasured | the member scan | **yes** |
+
+**So the operative form of the ruling is:** *cause 3 asks whether an artifact's **dominant** block's
+estimator-seed dependence is **recorded** and **measured**.* `N/A` for the 2D ML block — its estimand
+*is* seed variation and it is not a dominant block. **APPLICABLE** to `X`. No contradiction, and both
+halves are falsifiable from named files.
+
+**Consequence worth acting on: two of cause 3's three legs cost nothing.** `P-i` and `P-ii` are
+dispatchable independently of the family and of `M(ii)`.
+
+## Ruling 25 — PR-J5: no binding-after-use for Gate 1; verify before source
+
+> "A file sourced before the parity check can be bound afterward as historical provenance … But that
+> cannot establish the stronger claim needed here: 'unverified bytes were prevented from executing.'
+> … resolve frozen code root → verify `setup_salloc_env.sh` and `resume_guard.sh` → source them → run
+> remaining preflight checks → invoke science. … do not redefine an after-the-fact check as preflight."
+
+**Implemented in `PR-02`, `6113a34d` on `build-k0-execution-integrity`.** The ordering was cheap:
+`CODE_ROOT` is already resolved before the first `source` in all eight launchers.
+
+### The ruling's feasibility note is FALSIFIED, and the ruling's own fallback is what was used
+
+> "The current verifier is deliberately lightweight — standard library plus git — so an earlier
+> invocation appears practical."
+
+The imports are indeed stdlib. **The interpreter is not.** Measured on `saul.nersc.gov`:
+
+```
+$ command -v python3; python3 -V          # bare login shell, nothing sourced
+/usr/bin/python3
+Python 3.6.15
+$ /usr/bin/python3 -m py_compile nd-unfolding/pet/verify_executing_copy_is_committed.py
+  File ".../verify_executing_copy_is_committed.py", line 54
+    from __future__ import annotations
+SyntaxError: future feature annotations is not defined
+```
+
+And **`setup_salloc_env.sh` is itself what activates the conda env that provides a modern Python**, so
+no Python checker can precede it. The ruling anticipated this branch — *"use a minimal bootstrap
+checker"* — and the checker used is **pure git** (`rev-parse HEAD:<f>` vs `hash-object <f>`; git is
+2.51.0 pre-conda), which **removes** the toolchain dependency rather than relocating it.
+
+## THE TRANSITIVE ENVIRONMENT TRUST BOUNDARY — Joseph's instruction, and it is a GATE-1 BLOCKER
+
+> "Do not call Gate 1 closed until the transitive environment trust boundary is explicitly settled and
+> a fresh non-builder passes it."
+
+**`setup_salloc_env.sh` is 24 committed lines that source two files which are NOT tracked by git:**
+
+```
+18: source "${SCRIPT_DIR}/unbinned_unfolding/build/setup.sh"
+21: source "${SCRIPT_DIR}/MINERvA101/opt/bin/setup.sh"
+$ git ls-files -- unbinned_unfolding/build/setup.sh MINERvA101/opt/bin/setup.sh   -> (empty)
+```
+
+They are build-tree artifacts, and they are **what activates conda and sets up ROOT/MINERvA101** — the
+executing environment. **A git-based check cannot bind them, structurally.** `PR-02` therefore moves
+the boundary one hop and does not close it. `lib/resume_guard.sh` sources nothing (311 lines) and **is**
+fully bound.
+
+**Standing consequence:** `F-2(a)` may be recorded as *repaired in its first hop*, never as *closed*,
+until this is settled and a **fresh non-builder** passes it. The disclosure is pinned by a test in all
+eight launchers, plus a second arm that re-checks the two scripts really are untracked, so a future
+`git add` fails the test rather than leaving a stale slogan in eight files.

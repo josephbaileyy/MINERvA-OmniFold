@@ -33,7 +33,7 @@ docs/orchestration/CORPUS-20260811-gates-that-cannot-fail-sweep.md	tracked	LIVE	
 docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md	tracked	LIVE	document		20260811	open		route-only	nd-unfolding/receipt_candidate_stamps_5d.py;nd-unfolding/receipt_cause1_endpoint_census_5d.py;nd-unfolding/receipt_construction_contract_5d.py;nd-unfolding/tests/test_uq_remediation.py	no	18	735	61135
 docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md	tracked	ARCHIVAL	document		20260804	terminal		exact-path-only	docs/open-items/verify_open_items_restructure.py	yes	8	126	8226
 docs/orchestration/DECISION-20260815-joseph-oi6-oi8-oi126.md	tracked	ARCHIVAL	document		20260815	terminal		exact-path-only		yes	2	262	15435
-docs/orchestration/DECISION-20260822-joseph-b1-lift-and-clause-c.md	tracked	LIVE	document		20260822	open		route-only		no	13	523	34361
+docs/orchestration/DECISION-20260822-joseph-b1-lift-and-clause-c.md	tracked	LIVE	document		20260822	open		route-only		no	13	632	40709
 docs/orchestration/DECISION-BRIEF-20260819-oi71-recovery-evidence.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only		yes	0	184	14025
 docs/orchestration/DETERMINATION-20260811-cause5-binding-half.md	tracked	LIVE	document		20260811	open		route-only		no	11	289	20575
 docs/orchestration/DETERMINATION-20260817-lanec-cstat-object-is-total-statistics.md	tracked	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	185	13331
