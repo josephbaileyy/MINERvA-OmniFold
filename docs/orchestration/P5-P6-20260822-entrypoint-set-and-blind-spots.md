@@ -3,8 +3,10 @@
 > ## ⚠ P-5 IS INCOMPLETE (2026-08-23). P-6 stands.
 > The round-4 grader reproduced **`P-6` exactly**. **`P-5` omits the two live blind spots on the
 > path:** the `.sh` closure below `setup_salloc_env.sh` being **absent and unsatisfiable**, and
-> `lib_member_resume.sh` being **bind-after-use in all eight launchers**. The builder lane's own
-> position is that this should have **failed** `F-8(a)` rather than passed it — a blind-spot
+> `lib_member_resume.sh` being **bind-after-use in all eight launchers**. The builder lane's
+> position **WAS** that this should have **failed** `F-8(a)` rather than passed it — a blind-spot
+> inventory that misses the operative blind spots has not done its job. **That objection is
+> WITHDRAWN; see below.**
 >
 > **THE BUILDER'S "SHOULD HAVE FAILED" OBJECTION IS WITHDRAWN (2026-08-23) and `F-8(a)` PASSES.**
 > The grader declined it on a better argument: `P-5` is a register of blind spots that must be

@@ -214,3 +214,43 @@ committed, correct, and unrouted. `A-1`'s two-root split then reproduced the sam
 deeper — it separated code from data and left the **environment** bound to the code root through
 `SCRIPT_DIR`. **Whatever else the repair does, the template must be routed** so the next lane cannot
 re-derive it a third time.
+
+---
+
+## 8. TWO DEFECTS IN THIS LANE'S OWN CORRECTIONS — and the rule they yield
+
+The grader verified the landing by **diffing it against its own copy** rather than reading the
+result, and found two defects. Both are at **edit seams**, both were in canonical records, neither
+touched a finding. Both are repaired.
+
+**Defect 1 — a truncated sentence that misrepresented a withdrawn position as live.** Replacing the
+`See …` pointer in the `P5-P6` banner took the tail of the preceding sentence with it. Line 7 ended
+mid-clause at *"— a blind-spot"*, and paragraph 1 then read *"The builder lane's own position **is**
+that this should have failed `F-8(a)`"* — **present tense, unterminated, directly above its own
+withdrawal.** A reader stopping after the first paragraph would have taken the objection as live.
+**That is exactly the mis-citation the withdrawal exists to prevent.** Repaired: clause restored,
+tense moved to `WAS`, explicit *"That objection is WITHDRAWN; see below."*
+
+**Defect 2 — the front door asserted both framings, and the superseded one carried the
+attribution.** My new leading text says the closure is **absent**, three references, five files. The
+old sentence survived unedited below it: *"two UNTRACKED scripts … that no git-based check can
+bind"*, attributed to Joseph. One field, both *unbound* and *unsatisfied*, both *two* and
+*three/five*, with the superseded pair wearing the attribution and no marker. **Struck**, on the
+grader's recommendation and this lane's agreement: Joseph's wording is preserved verbatim in the
+`DECISION` record with the correction banner above it, and **the view does not need a second copy**.
+A comma splice at the same seam is fixed.
+
+### The rule, which is worth more than the two fixes
+
+**Both defects are the same shape as the finding they document: a repair whose write-up re-creates
+the thing being repaired.** The `P-5` fix laundered a sentence the way the objection would have
+laundered a fix. The front door's fix left the understatement it corrected standing next to the
+correction.
+
+> **A correction needs its SEAMS checked, not just its content** — the *deleted* lines of the hunk,
+> and whether the superseded text is still reachable. Reading the result does not catch either;
+> **diffing the landing against the source does**, which is how both of these were found.
+
+This is the third instance today of a write-up reproducing its own subject, after the harness that
+excluded itself and the brief that re-created its own false hits. It is the normal case here, not an
+unlucky one: every measurement runs over the repo and every finding is written into it.
