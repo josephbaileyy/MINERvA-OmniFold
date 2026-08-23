@@ -91,6 +91,28 @@ deliberately, because this file is a pointer-only router and not an exhaustive i
   recording an independent peer review whose four objections were all accepted. **Where this and a
   canonical artifact disagree, the canonical artifact wins.**
 
+### Gate-1 round 4 — the k=0 execution-integrity repairs and their evidence
+
+Added 2026-08-22. **Gate 1 DOES NOT PASS and none of these close it.** `F-2(a)` is repaired in its
+first hop only; the **transitive environment trust boundary** must be settled and passed by a **fresh
+non-builder** first (Joseph, `DECISION-20260822-joseph-b1-lift-and-clause-c.md`). The close-out lane
+built all of these and is disqualified from grading them.
+
+- [`DECLARATION-20260822-k0-submission-sha.md`](DECLARATION-20260822-k0-submission-sha.md) —
+  **`PR-01` / `F-1(a)`: the submission sha, which previously had no referent anywhere.**
+  `MNV_CODE_ROOT = /pscratch/sd/j/josephrb/k0r2/clean` @ `6113a34d`, 775 tracked source files,
+  listing sha256 `cc004894…`, with all seven **A-2(a)–(g)** clauses measured separately against it.
+  Read this before quoting any "pinned sha" phrase.
+- [`P5-P6-20260822-entrypoint-set-and-blind-spots.md`](P5-P6-20260822-entrypoint-set-and-blind-spots.md)
+  — **`PR-04` / `F-8(a)`: the two artifacts that did not exist and were undisclosed.** `P-6` is the
+  entrypoint-set search with its command and full output (8 entrypoints, 14 invocations — an
+  independent cross-check of ruling 21's boundary). `P-5` is the blind-spot inventory, including the
+  subprocess enumeration: **one child on the whole k=0 path, and it is WRAPPED.**
+- [`MEASUREMENT-20260822-m1-m6-at-pinned-sha.md`](MEASUREMENT-20260822-m1-m6-at-pinned-sha.md) —
+  **`PR-05` / `F-17(a)`: M-1…M-6 re-measured, and FOUR MOVED.** Two are stale **in the builder's
+  favour** (`M-1`'s literal table, `M-5`'s `8 of 8` → `0 of 8`). **The fastest-expiring document in
+  the package** — re-run all six immediately before the first `sbatch`.
+
 ### B1 steps 4-5: the lift, and the preflight that gates the first submission
 
 - [`PLAN-20260822-oneMember-mii-staged.md`](PLAN-20260822-oneMember-mii-staged.md) — **the staged
