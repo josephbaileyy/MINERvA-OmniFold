@@ -1258,6 +1258,35 @@ cheap; guessing one is the failure this campaign keeps filing.
 
 ## 9. CANONICAL RECORDS THIS DOCUMENT MEASURED AS STALE
 
+> **DISPOSITION, 2026-08-22 — rows 1 and 2 were re-verified from the cluster and ONE OF THEM CANNOT
+> BE FIXED IN PLACE.**
+>
+> **Both claims are confirmed stale.** `std_final5_candidate.root` exists —
+> `nd-unfolding/active_universe_5d/standard/candidate/`, **42.3 GB**, 2026-08-16, sha256 `950f8cb1…`
+> — and `p4_standard_validation.json` records **`"result": "PASS"` over 11 gates**, 40 retained
+> components of 45 required bands, `full_total_identity_relerr = 4.6e-14`, support ratio **0.99971**
+> (the lateral block moves **−0.0288%**). Verified by reading the artifacts, not by relay.
+>
+> **Row 1, `VALIDATION_LEDGER.md:733` — CORRECTED IN PLACE.** Only its *build* clause was stale; its
+> cause-7 verdict is unchanged and still right, because **built is not adopted**:
+> `p4_adopt_standard.py` has never run and the packet is uncommitted.
+>
+> **Row 2, `RUNBOOK-20260807-gbdt-closeout.md:38` — NOT CORRECTED, DELIBERATELY.** Its manifest row
+> is `ARCHIVAL / terminal / immutable=yes`. Editing it would violate the classification that governs
+> it, and **retirement is classification, never rewriting.** The correction therefore lives here and
+> in the ledger, and the runbook keeps its 2026-08-07 text.
+>
+> **The hazard class this exposes, which nothing in the control plane currently catches:** an
+> **immutable ARCHIVAL** document can carry a **false present-tense claim** — *"NOT BUILT, AND NOT
+> ONE RUN AWAY"* — with no mechanism to mark it superseded in place and no requirement that a reader
+> check elsewhere first. A dated past-tense record ages honestly; a present-tense one does not.
+>
+> **And note WHY the runbook was wrong, because the sentence is literally true:** its test was
+> `find … *activelat*`, and the product is named `std_final5_candidate.root`. **The glob never
+> matched the artifact's naming convention.** True about the search, false about the world — the
+> same class as this campaign's other absence failures.
+
+
 Recorded here rather than silently worked around, because each is currently teaching a reader
 something false. **None of them is repaired by this commit** — this is a read-only lane.
 
