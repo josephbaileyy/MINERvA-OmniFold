@@ -11,7 +11,7 @@ not a result. The builder does not grade it.
 |---|---|
 | **DECLARED CANDIDATE** | `a54038b21fdebfc975bec452a05866ffa571a36c` — filed with A-2(a)–(g) in [`DECLARATION-20260823-k0-candidate-sha.md`](DECLARATION-20260823-k0-candidate-sha.md) |
 | **DEPLOYED AT** | `/pscratch/sd/j/josephrb/k0r2/clean`. **This row no longer names a sha.** Read it from the declaration, or measure it: `git -C /pscratch/sd/j/josephrb/k0r2/clean rev-parse HEAD`. `porcelain=0`, **0 writable files** (A-2(g) applied) |
-| **main** | `c76fdbfac67d39f86bc0ea633e815c926de04add` — carries the ruling record and the same filing bytes |
+| **main** | **This row no longer names a sha**, for the same reason `DEPLOYED AT` stopped: it went stale and became false. It read `c76fdbfa…` *"carries the ruling record and the same filing bytes"* — the declaration is **absent** at `c76fdbfa` and present only from `8a5c2f05` on, so a grader routed there would have found no declaration and failed `F-1(a)` again. Measure it: `git rev-parse main`. |
 | graded predecessor | `fabeedc2bf78c81d2931ff4876d161c0abfbdbc4` (round-6, 16 PASS / 2 FAIL) |
 | `MNV_ENV_ROOT` | `/pscratch/sd/j/josephrb/k0env` |
 | `MNV_CONDA_PREFIX` | `/global/u2/j/josephrb/.conda/envs/root_6_28` |
@@ -180,6 +180,23 @@ The 13 are pre-existing at the graded predecessor.
 not complete in 26 minutes."* It does complete, in about 30, and it returns **`rc=1` — bindings NOT
 intact.** A slow check reads as an inconvenience; a failing one is a finding. The itemized list of
 which bindings break is **owed, not captured.**
+
+## ✅ ROUND-9: GATE 1 PASSES — 18 PASS / 0 FAIL / 0 NOT-EVALUABLE
+
+Verdict [`GATE1-VERDICT-ROUND9-20260823-k0-execution-integrity.md`](GATE1-VERDICT-ROUND9-20260823-k0-execution-integrity.md),
+sha256 `d5bfb863e534179eed36be7c2cd1952a7d1b5962ce22d1d2add99f9d52e9200d`, 350 lines. The arrangement
+was **upheld** — the deployment stays at the declared sha `a54038b2`, on the decisive point that the
+filing commit changed **zero** `.py`/`.sh`, so A-2(f) is `780 / 1b45da55…` at both shas and the only
+difference between the trees is Markdown.
+
+**Two findings were flagged and not failed, both defects of mine, both corrected here:** the false
+provenance gloss in the declaration's §3 (renames counted as adds), and the `main` row above — the
+*same seam failure one row up*, since rows 12 and 13 were edited in `bafe2557` and row 14 was not.
+
+**The pass unlocks the seven jobs of logical legs 1–5 for k=0 and nothing else.** It is not a
+submission authorization; the grader states plainly that the decision to submit is Joseph's. Leg 6
+stays gated, no member k≠0 is authorized, and Gate 2 still owes `F-1(b)`, `F-2(b)`,
+`F-4(b)`–`F-8(b)`, `F-17(b)` and `F-18(b)`.
 
 ## ⚠ ROUND-8: `F-2(a)` AND `F-17(a)` PASS; `F-1(a)` FAILED AND IS REPAIRED HERE
 
