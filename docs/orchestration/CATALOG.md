@@ -4,6 +4,13 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ## Current work
 
+- **THE DECLARED CANDIDATE SHA, with A-2(a)–(g) filed against it:**
+  [`DECLARATION-20260823-k0-candidate-sha.md`](DECLARATION-20260823-k0-candidate-sha.md) —
+  `a54038b21fdebfc975bec452a05866ffa571a36c`, **780** tracked source files, listing sha256
+  `1b45da55…`, all seven clauses MET. Repairs the round-8 `F-1(a)` failure. **Declares a sha; clears
+  no gate.** Re-run before the first `sbatch`; do not inherit the numbers.
+
+
 - **ROUND-7 REPAIR PACKET (2026-08-23), awaiting the terminal regrade:**
   [`PACKET-20260823-round7-f2a-parity-and-f17a-filing.md`](PACKET-20260823-round7-f2a-parity-and-f17a-filing.md)
   — final candidate `e93364d1…`, deployed, `porcelain=0`, 0 writable. **Gate 1 is NOT claimed passed.**
