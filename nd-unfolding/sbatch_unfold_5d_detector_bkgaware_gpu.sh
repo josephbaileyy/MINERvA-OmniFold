@@ -50,7 +50,7 @@ ND="${DATA_ROOT}/nd-unfolding"
 # THE ENVIRONMENT IS NOW ITS OWN ROOT, because git structurally cannot bind those bytes -- so the
 # MECHANISM is substituted rather than the check relocated, the same move PR-02 made for the
 # interpreter. `MNV_ENV_ROOT` is mandatory with NO default: a default is the hardcode wearing a flag.
-# Its resolved target must sit outside every checkout, which `mnv_env_preflight.sh` verifies on the
+# Its resolved target must sit outside every checkout, which `lib_mnv_env_preflight.sh` verifies on the
 # CANONICAL path -- a directory symlink is permitted, a view onto the canonical checkout is not.
 #
 # WHAT IS BOUND: the COMPLETE transitive closure, 14 members -- the activator, the two scripts it
@@ -82,9 +82,41 @@ unset _mnv_head _mnv_work
 
 # (2) The environment closure is digest-verified BEFORE the activator is sourced. Pure bash: this
 #     runs before conda exists, and the pre-conda /usr/bin/python3 on saul is 3.6.15.
-source "${CODE_ROOT}/nd-unfolding/mnv_env_preflight.sh"
+source "${CODE_ROOT}/nd-unfolding/lib_mnv_env_preflight.sh"
 mnv_env_preflight "$ENV_MANIFEST" "$ENV_ROOT" "$CODE_ROOT" "$DATA_ROOT" || exit $?
-source "${CODE_ROOT}/nd-unfolding/mnv_env_pathcheck.sh"
+source "${CODE_ROOT}/nd-unfolding/lib_mnv_env_pathcheck.sh"
+
+# ORDERING, AND THIS LAUNCHER IS THE ONE THAT GOT IT WRONG. Round 5 left the activator at the
+# position it held before the repair -- BELOW the two Python preflight tools at :139/:148 --
+# because that was where it already was. Both tools open with `from __future__ import
+# annotations`, so on the un-activated interpreter (/usr/bin/python3 == 3.6.15 on saul) they
+# die with a SyntaxError before any guard or science runs, and the launcher reports
+# "[oi136] FAIL: the execution tree is not the tree that was approved" -- which MISATTRIBUTES
+# the cause. The other seven were correct by accident of layout, not by design. The activator
+# is therefore hoisted here, level with the other seven: nothing between the env gate and the
+# first Python invocation may depend on an interpreter the activator has not yet provided.
+source "${ENV_ROOT}/setup_salloc_env.sh"
+# (3) AFTER activation: refuse any PATH/PYTHONPATH/LD_LIBRARY_PATH entry that resolves inside a
+#     repository checkout, or outside the declared environment except for predeclared system
+#     prefixes. Binding the BYTES is not enough -- the round-4 verdict found the hop-1 activator
+#     injecting the canonical checkout into all three channels BY CONTENT, and the OI-136 Python
+#     import guard sees only the sys.path consequence, never PATH and never LD_LIBRARY_PATH.
+mnv_env_pathcheck "$ENV_ROOT" "$CODE_ROOT" "$DATA_ROOT" || exit $?
+
+# (4) THE INTERPRETER MUST BE ABLE TO RUN THE PREFLIGHT TOOLS, checked HERE so a failure is reported
+#     as ITSELF. Round 5 shipped one launcher whose Python tools ran BEFORE the activator; on the
+#     un-activated 3.6.15 interpreter they die with a SyntaxError and the launcher reported
+#     "[oi136] FAIL: the execution tree is not the tree that was approved" -- a WRONG DIAGNOSIS of a
+#     right refusal, which is worse than the refusal. Both tools open with
+#     `from __future__ import annotations` (3.7+), so that is the floor asserted.
+if ! python3 -c 'import sys; sys.exit(0 if sys.version_info[:2] >= (3, 7) else 9)' 2>/dev/null; then
+  echo "[preflight] FAIL: the active python3 cannot run the preflight tools." >&2
+  echo "[preflight]   $(command -v python3 || echo '<none on PATH>'): $(python3 -V 2>&1 || true)" >&2
+  echo "[preflight]   mnv_source_manifest.py and verify_executing_copy_is_committed.py both open" >&2
+  echo "[preflight]   with 'from __future__ import annotations', which requires 3.7+." >&2
+  echo "[preflight]   This is an ENVIRONMENT fault, not a wrong-tree fault. Do not read it as one." >&2
+  exit 3
+fi
 source "${CODE_ROOT}/lib/resume_guard.sh"
 
 # --- OI-136 ROUND 2, 2026-08-22: EVERY production Python invocation is GUARDED, and the record is
@@ -224,13 +256,6 @@ if [[ "$(cd "$_mr_lib" 2>/dev/null && pwd -P)" != "$(cd "${CODE_ROOT}/nd-unfoldi
   exit 2
 fi
 source "${_mr_lib}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
-source "${ENV_ROOT}/setup_salloc_env.sh"
-# (3) AFTER activation: refuse any PATH/PYTHONPATH/LD_LIBRARY_PATH entry that resolves inside a
-#     repository checkout, or outside the declared environment except for predeclared system
-#     prefixes. Binding the BYTES is not enough -- the round-4 verdict found the hop-1 activator
-#     injecting the canonical checkout into all three channels BY CONTENT, and the OI-136 Python
-#     import guard sees only the sys.path consequence, never PATH and never LD_LIBRARY_PATH.
-mnv_env_pathcheck "$ENV_ROOT" "$CODE_ROOT" "$DATA_ROOT" || exit $?
 cd "${ND}"
 OMNIFILE="${ND}/runEventLoopOmniFold_5D_MEFHC_universes_full_bkgaware.root"
 FLUX_MC="${DATA_ROOT}/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root"

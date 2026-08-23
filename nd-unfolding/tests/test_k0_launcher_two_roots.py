@@ -128,11 +128,17 @@ class LauncherFixture(unittest.TestCase):
         self.env = tmp / "env-root"
         (self.env / "unbinned_unfolding" / "build").mkdir(parents=True)
         (self.env / "MINERvA101" / "opt" / "bin").mkdir(parents=True)
+        # THE ACTIVATOR LEAVES AN OBSERVABLE MARK. Without one, "the tools ran before activation"
+        # is only assertable textually -- and a textual arm is exactly what let round 5 ship a
+        # launcher whose Python preflight tools ran on the un-activated 3.6.15 interpreter. The
+        # marker plus the python3 shim below make the ordering settleable BY RUNNING.
+        (self.env / "activation-marker").write_text("")
         (self.env / "setup_salloc_env.sh").write_text(
             'SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"\n'
             'source "${SCRIPT_DIR}/unbinned_unfolding/build/setup.sh"\n'
             'export MINERVA_PREFIX="${SCRIPT_DIR}/MINERvA101/opt"\n'
-            'source "${SCRIPT_DIR}/MINERvA101/opt/bin/setup.sh"\n')
+            'source "${SCRIPT_DIR}/MINERvA101/opt/bin/setup.sh"\n'
+            'export MNV_TEST_ACTIVATED=1\n')
         (self.env / "unbinned_unfolding" / "build" / "setup.sh").write_text(
             '_D="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"\n'
             'export PATH=${_D}:${PATH}\nexport PYTHONPATH=${_D}:${PYTHONPATH}\n'
@@ -166,8 +172,8 @@ class LauncherFixture(unittest.TestCase):
         # REAL tools, byte-copied. The launchers refuse a symlink here on purpose.
         for src, dst in ((ND / "mnv_guarded_run.py", cnd / "mnv_guarded_run.py"),
                          (ND / "mnv_source_manifest.py", cnd / "mnv_source_manifest.py"),
-                         (ND / "mnv_env_preflight.sh", cnd / "mnv_env_preflight.sh"),
-                         (ND / "mnv_env_pathcheck.sh", cnd / "mnv_env_pathcheck.sh"),
+                         (ND / "lib_mnv_env_preflight.sh", cnd / "lib_mnv_env_preflight.sh"),
+                         (ND / "lib_mnv_env_pathcheck.sh", cnd / "lib_mnv_env_pathcheck.sh"),
                          (ND / "pet" / "verify_executing_copy_is_committed.py",
                           cnd / "pet" / "verify_executing_copy_is_committed.py")):
             shutil.copy2(src, dst)
@@ -613,6 +619,89 @@ class TheP4RatchetReadsWhatTheRunProduced(LauncherFixture):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class NoPythonRunsBeforeTheActivator(LauncherFixture):
+    """ROUND-6: the ordering that round 5 got wrong in exactly one launcher, settled BY RUNNING.
+
+    `sbatch_unfold_5d_detector_bkgaware_gpu.sh` invoked both Python preflight tools at :139/:148 and
+    sourced its activator at :227 -- because that was where the activator already sat before the
+    repair. Both tools open with `from __future__ import annotations`, so on the un-activated
+    interpreter (`/usr/bin/python3` == 3.6.15 on saul) they die with a SyntaxError before any guard
+    or science, and the launcher then reports "the execution tree is not the tree that was approved",
+    MISATTRIBUTING the cause. The other seven were correct by accident of layout, not by design.
+
+    IT SURVIVED 34 GREEN ARMS because `good_env()` inherits the runner's PATH, so the fixture handed
+    the launcher the very interpreter the activator exists to supply. A fixture that supplies what
+    the thing under test is supposed to supply cannot see the thing under test fail.
+    """
+
+    def test_TEXTUAL_the_activator_precedes_EVERY_python3_invocation(self):
+        import re
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                lines = (ND / sh).read_text().splitlines()
+                act = [i for i, l in enumerate(lines, 1)
+                       if 'source "${ENV_ROOT}/setup_salloc_env.sh"' in l]
+                py = [i for i, l in enumerate(lines, 1)
+                      if re.search(r'(^|[^#\w])python3 ', l) and not l.lstrip().startswith("#")]
+                self.assertEqual(len(act), 1, f"{sh}: expected exactly one activator source")
+                self.assertGreater(len(py), 0, "power arm: there ARE python3 invocations to order")
+                self.assertLess(act[0], min(py),
+                                f"{sh}: python3 runs at line {min(py)}, before the activator at "
+                                f"{act[0]} -- on the un-activated interpreter that is a SyntaxError")
+
+    def test_DYNAMIC_a_python3_that_refuses_before_activation_still_lets_every_launcher_run(self):
+        """The discriminator. A `python3` shim earlier on PATH than the real one exits 42 unless the
+        activator has already run. If any launcher invoked Python first, it would die 42."""
+        shim = pathlib.Path(self._tmp.name) / "shimbin"
+        shim.mkdir()
+        (shim / "python3").write_text(
+            "#!/bin/bash\n"
+            'if [[ -z "${MNV_TEST_ACTIVATED}" ]]; then\n'
+            '  echo "[shim] python3 invoked BEFORE the activator" >&2; exit 42\n'
+            "fi\n"
+            'exec %s "$@"\n' % sys.executable)
+        (shim / "python3").chmod(0o755)
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                env = self.good_env()
+                env["PATH"] = f"{shim}:{env['PATH']}"
+                cp = self.run_launcher(sh, env)
+                self.assertNotEqual(cp.returncode, 42,
+                                    f"{sh}: a Python tool ran before the activator\n{cp.stderr}")
+                self.assertNotIn("invoked BEFORE the activator", cp.stderr)
+
+    def test_the_DYNAMIC_arm_can_FAIL_negative_control(self):
+        """A detector that cannot fire is not a detector. Re-point the marker so the shim refuses,
+        and assert the arm above would have caught it."""
+        shim = pathlib.Path(self._tmp.name) / "shimbin2"
+        shim.mkdir()
+        (shim / "python3").write_text(
+            "#!/bin/bash\n"
+            'echo "[shim] python3 invoked BEFORE the activator" >&2; exit 42\n')
+        (shim / "python3").chmod(0o755)
+        env = self.good_env()
+        env["PATH"] = f"{shim}:{env['PATH']}"
+        cp = self.run_launcher(LAUNCHERS[0][0], env)
+        self.assertNotEqual(cp.returncode, 0, cp.stdout + cp.stderr)
+        self.assertIn("invoked BEFORE the activator", cp.stderr)
+
+    def test_an_UNUSABLE_interpreter_is_reported_as_ITSELF_not_as_a_wrong_tree(self):
+        """The misattribution the round-5 grader found, pinned. An interpreter that cannot run the
+        preflight tools used to surface as '[oi136] FAIL: the execution tree is not the tree that
+        was approved' -- a wrong diagnosis of a right refusal, which is worse than the refusal."""
+        shim = pathlib.Path(self._tmp.name) / "oldpy"
+        shim.mkdir()
+        (shim / "python3").write_text('#!/bin/bash\nexit 9\n')
+        (shim / "python3").chmod(0o755)
+        env = self.good_env()
+        env["PATH"] = f"{shim}:{env['PATH']}"
+        cp = self.run_launcher(LAUNCHERS[0][0], env)
+        self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
+        self.assertIn("cannot run the preflight tools", cp.stderr)
+        self.assertIn("ENVIRONMENT fault, not a wrong-tree fault", cp.stderr)
+        self.assertNotIn("is not the tree that was approved", cp.stderr)
 
 
 class TheENVIRONMENTIsItsOwnRootAndIsVerifiedBEFOREItIsSourced(LauncherFixture):
