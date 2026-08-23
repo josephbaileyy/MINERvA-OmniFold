@@ -61,16 +61,38 @@ whereas cause 3 concerns `X`'s **own** estimator. A fresh construction-path argu
 The five Gate-1 round-4 repairs. Gate 1 currently **DOES NOT PASS: 13 PASS / 5 FAIL / 0 NOT-EVALUABLE.**
 All five are inside rulings 18–22 and need no new authorization.
 
-| # | repair | needs from Joseph |
-|---|---|---|
-| `PR-01` | **F-1(a)** — declare the submission sha; file A-2(a)–(g) against it | — |
-| `PR-02` | **F-2(a)** — bind `setup_salloc_env.sh` and `lib/resume_guard.sh` in the `--pair` sets | **`PR-J5`**: can a file sourced *before* the preflight be bound at all? |
-| `PR-03` | **F-7(a)** — pin the §7.0.13 preflight exclusion; three-arm mutation test | — |
-| `PR-04` | **F-8(a)** — produce **P-5 and P-6**, which do not exist and were undisclosed | — |
-| `PR-05` | **F-17(a)** — re-measure M-1…M-6 at the pinned sha on the canonical checkout | — |
+| order | # | repair | needs from Joseph |
+|---|---|---|---|
+| 1 | `PR-02` | **F-2(a)** — bind `setup_salloc_env.sh` and `lib/resume_guard.sh` in the `--pair` sets | **`PR-J5`**: can a file sourced *before* the preflight be bound at all? |
+| 2 | `PR-03` | **F-7(a)** — pin the §7.0.13 preflight exclusion; three-arm mutation test | — |
+| 3 | `PR-04` | **F-8(a)** — produce **P-5 and P-6**, which do not exist and were undisclosed | — |
+| 4 | — | **refresh `k0r2/clean`**; re-assert porcelain 0 and `dr-xr-x---` | — |
+| 5 | `PR-01` | **F-1(a)** — declare the submission sha; file A-2(a)–(g) against the refreshed tree | — |
+| 6 | `PR-05` | **F-17(a)** — re-measure M-1…M-6 **at that sha** on the canonical checkout | — |
 
-**`PR-01` first and alone**, because F-1(a) is *"no document declares the submission sha"* and the
-other four are measured **against** that sha. Freezing it closes F-1(a) and gives F-17(a) its anchor.
+**ORDERING CORRECTION, made before anyone walked this — `PR-01` must run LAST of the five, not
+first.** My first draft of this file said *"`PR-01` first and alone, because the other four are
+measured against that sha."* **That is wrong and it would have produced a false declaration.**
+
+- The tree that actually executes is the frozen deploy at `/pscratch/sd/j/josephrb/k0r2/clean`,
+  `de040d9b`, porcelain 0, `dr-xr-x---`. `PR-01` declares **that** sha.
+- **`PR-02` edits the eight launchers themselves** — it adds `--pair` arguments to
+  `sbatch_bootstrap_5d_gpu.sh`, `sbatch_seedscan_split_5d.sh`,
+  `sbatch_unfold_5d_detector_bkgaware_gpu.sh`, `sbatch_sweep_bank_5d_run_bkgaware_gpu.sh`,
+  `sbatch_uthrow_run_5d_fast.sh`, `sbatch_uthrow_block_5d.sh`,
+  `sbatch_uthrow_combine_5d_fast.sh`, `sbatch_finalize_5d_bkgaware_gpu.sh`. **Those are executing
+  bytes.** They must reach `k0r2/clean`, and `PR-01`'s own expiry clause says *"falsified by … any
+  change to `k0r2/clean`; any `.py`/`.sh` add or delete (moves `file_count`)."*
+- So declaring first would pin a sha that `PR-02` then invalidates — **`measure after the rebase, not
+  before`**, in its exact classic form.
+
+**The order is therefore:** `PR-02` (needs `PR-J5`), `PR-03`, `PR-04` → **refresh `k0r2/clean` and
+re-assert porcelain 0 + write protection** → `PR-01` declares the sha and files A-2(a)–(g) against
+the refreshed tree → `PR-05` re-measures M-1…M-6 **at that sha** → fresh non-builder grades Gate 1.
+
+`PR-01` remains correctly described in the readiness list as *"blocked by nothing"* — nothing
+**blocks** it. What it needs is to be **last**, which is a different property, and this file is where
+that belongs.
 
 **`PR-04` carries the round's own lesson.** P-5 and P-6 being absent *and undisclosed* is the same
 shape as round 1's P-4. A mechanism that does not exist must be reported as **NOT-EVALUABLE**, never
@@ -78,9 +100,14 @@ folded into a green count — and a green arm with no repository imports is indi
 clean run, so `"checked": guard.checked if guard is not None else 0` makes the containment-path zero a
 **default, not a measurement**.
 
-**`PR-05` is the only one needing the cluster** (read-only `ssh`, no submission), and it is
-**self-falsifying**: its M-2 is a name intersection over 717 untracked files that the k=0 run itself
-perturbs. Run it **last** in this step and re-run it immediately before Gate 1 is graded.
+**`PR-05` is SELF-FALSIFYING** — its M-2 is a name intersection over 717 untracked files that the
+k=0 run itself perturbs. It is last in the order above, and it must be **re-run immediately before
+Gate 1 is graded**, not inherited from the first run.
+
+**Cluster steps, corrected.** The readiness list calls `PR-05` *"the only one of the five that needs
+the cluster"*. With the refresh inserted that is no longer true: **steps 4, 5 and 6 all touch
+`saul.nersc.gov`** — the refresh writes to `k0r2/clean`, and `PR-01` and `PR-05` read it. Only the
+refresh is a write, and **no job is submitted anywhere in Step 1.**
 
 **Grading rule, unchanged:** the grader is a **fresh non-builder**. This lane built the repairs and is
 disqualified from grading them.
