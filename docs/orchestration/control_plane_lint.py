@@ -20,6 +20,7 @@ import csv
 import hashlib
 import json
 import re
+import subprocess
 import sys
 import tempfile
 from collections import Counter
@@ -695,23 +696,48 @@ def coverage_report() -> int:
 def orchestration_volume() -> str:
     """Prose lines and instrument lines under docs/orchestration, reported SEPARATELY.
 
-    Never sum them. One number over the total makes deleting an instrument the cheapest way to
-    pass a size target, and the instruments are what catch defects the prose does not. Reported
-    here rather than in a document so the measurement costs no reading.
+    Never sum them. One number over the total makes deleting an instrument the cheapest way
+    to pass a size target, and the instruments are what catch defects the prose does not.
+    Reported here rather than in a document so the measurement costs no reading.
 
-    Filesystem-only and non-raising by design: this runs as pre-commit check 10 for every lane,
-    so a metric must not be able to fail anyone's commit. A git-history metric was rejected for
-    the same reason -- measured at 0.87 s per invocation against 0.08 s for this.
+    Counts TRACKED files only. The first version walked the working tree with rglob and so
+    counted other lanes' untracked strays: measured 42785 vs 42777 tracked with one lane's
+    scratch present, meaning two lanes at the SAME commit printed different numbers and a
+    quoted trend could show the layer growing when nothing had been written. `git ls-files`
+    measured 0.018 s against that walk's 0.028 s, so this is cheaper as well as reproducible
+    -- the earlier objection to a subprocess here came from a `git log` HISTORY query at
+    0.87 s, which is a different command and did not generalize.
+
+    Boundary, stated so this is not mistaken for a tree-of-record figure: it counts
+    tracked PATHS with WORKING-TREE content. A lane's uncommitted edit to a tracked file
+    still moves it; an untracked file no longer does.
+
+    Non-raising: this is pre-commit check 10 for every lane. On any git failure it reports
+    unavailable rather than falling back to a working-tree walk, because silently changing
+    the measurement basis under the same label is worse than a missing number.
     """
     try:
-        root = REPO / "docs/orchestration"
+        proc = subprocess.run(
+            ["git", "-C", str(REPO), "ls-files", "-z", "--", "docs/orchestration"],
+            capture_output=True, timeout=15, check=False)
+        if proc.returncode != 0:
+            return f"prose/instrument volume unavailable (ls-files rc={proc.returncode})"
+        names = [n for n in proc.stdout.decode("utf-8", "replace").split("\0") if n]
 
-        def lines(pattern: str) -> int:
-            return sum(len(f.read_text(encoding="utf-8", errors="replace").splitlines())
-                       for f in root.rglob(pattern) if f.is_file())
+        def lines(suffix: str) -> int:
+            total = 0
+            for name in names:
+                if not name.endswith(suffix):
+                    continue
+                try:
+                    total += len((REPO / name).read_text(
+                        encoding="utf-8", errors="replace").splitlines())
+                except OSError:
+                    continue    # tracked but absent from the worktree: skip, never fail
+            return total
 
-        return f"{lines('*.md')} prose / {lines('*.py')} instrument lines"
-    except OSError:
+        return f"{lines('.md')} prose / {lines('.py')} instrument lines"
+    except (OSError, subprocess.SubprocessError):
         return "prose/instrument volume unavailable"
 
 
