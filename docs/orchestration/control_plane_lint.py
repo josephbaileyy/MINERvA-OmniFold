@@ -41,7 +41,13 @@ OPEN_ITEMS = REPO / "docs/OPEN_ITEMS.md"
 FINDINGS = REPO / "docs/orchestration/FINDINGS.md"
 AGENTS = REPO / "AGENTS.md"
 CLAUDE = REPO / "CLAUDE.md"
-ENTRYPOINTS = (CLAUDE, AGENTS)
+LIVE_STATE = REPO / "docs/orchestration/LIVE-STATE.md"
+# The prescribed default path is what AGENTS.md ROUTES as required reading, not only the two
+# bootstrap files: its "Evidence routes" table sends every session to live state, the bounded
+# queue, and the governing OI row before it may act. Measuring CLAUDE.md + AGENTS.md alone
+# reported 1847 words for a path that is far longer, so orientation cost read as small. No
+# rationale for the two-file form is recorded and the constant had one use site.
+ENTRYPOINTS = (CLAUDE, AGENTS, LIVE_STATE, CURRENT, OPEN_ITEMS)
 
 OWNER_COLUMNS = ("owner_id", "display_name", "accountable_holder", "escalation", "assignment_state")
 WORK_COLUMNS = ("item", "source_record", "queue_override", "owner_id", "impact", "urgency",
@@ -533,7 +539,8 @@ def check_or_write(write: bool, adoption: bool = False) -> int:
     active_pb = len(re.findall(r"^\| PB-", outputs[PLAYBOOK], re.MULTILINE))
     inventory = len(outputs[SOURCE_INVENTORY].splitlines()) - 1
     print(f"CONTROL-PLANE {verb}: {selected} selected; {overflow} overflow; {backlog} backlog; "
-          f"{inventory} source records; {active_pb} playbook rules")
+          f"{inventory} source records; {active_pb} playbook rules; "
+          f"{orchestration_volume()}")
     return 0
 
 
@@ -685,12 +692,44 @@ def coverage_report() -> int:
     return 0
 
 
+def orchestration_volume() -> str:
+    """Prose lines and instrument lines under docs/orchestration, reported SEPARATELY.
+
+    Never sum them. One number over the total makes deleting an instrument the cheapest way to
+    pass a size target, and the instruments are what catch defects the prose does not. Reported
+    here rather than in a document so the measurement costs no reading.
+
+    Filesystem-only and non-raising by design: this runs as pre-commit check 10 for every lane,
+    so a metric must not be able to fail anyone's commit. A git-history metric was rejected for
+    the same reason -- measured at 0.87 s per invocation against 0.08 s for this.
+    """
+    try:
+        root = REPO / "docs/orchestration"
+
+        def lines(pattern: str) -> int:
+            return sum(len(f.read_text(encoding="utf-8", errors="replace").splitlines())
+                       for f in root.rglob(pattern) if f.is_file())
+
+        return f"{lines('*.md')} prose / {lines('*.py')} instrument lines"
+    except OSError:
+        return "prose/instrument volume unavailable"
+
+
 def entrypoint_report() -> int:
     total = 0
     for path in ENTRYPOINTS:
-        words = len(re.findall(r"\S+", path.read_text(encoding="utf-8")))
+        try:
+            label = str(path.relative_to(REPO))
+        except ValueError:          # an entrypoint outside REPO must still be reportable
+            label = str(path)
+        if not path.exists():
+            # A routed file that is absent is a finding, not a crash: report it and keep going,
+            # so the total is never silently short by one file.
+            print(f"{'absent':>7}  {label}")
+            continue
+        words = len(re.findall(r"\S+", path.read_text(encoding="utf-8", errors="replace")))
         total += words
-        print(f"{words:7d}  {path.relative_to(REPO)}")
+        print(f"{words:7d}  {label}")
     print(f"{total:7d}  TOTAL prescribed default path")
     return 0
 
