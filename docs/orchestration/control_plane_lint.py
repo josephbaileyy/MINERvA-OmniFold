@@ -48,7 +48,14 @@ LIVE_STATE = REPO / "docs/orchestration/LIVE-STATE.md"
 # queue, and the governing OI row before it may act. Measuring CLAUDE.md + AGENTS.md alone
 # reported 1847 words for a path that is far longer, so orientation cost read as small. No
 # rationale for the two-file form is recorded and the constant had one use site.
-ENTRYPOINTS = (CLAUDE, AGENTS, LIVE_STATE, CURRENT, OPEN_ITEMS)
+# AGENTS.md's Evidence-routes table prescribes these two ways of reading, and they are not
+# interchangeable. FULL_READ is read whole by every session. ROW_ROUTED is SEARCHED: the route
+# at AGENTS.md "What should happen next?" says `docs/CURRENT_WORK.md`, then **the exact cited
+# row** in OPEN_ITEMS.md -- one record, not the file. Summing them under one total prices a
+# corpus as if it were prescribed reading and overstates the path ~5.4x.
+FULL_READ = (CLAUDE, AGENTS, LIVE_STATE, CURRENT)
+ROW_ROUTED = (OPEN_ITEMS,)
+ENTRYPOINTS = FULL_READ + ROW_ROUTED
 
 OWNER_COLUMNS = ("owner_id", "display_name", "accountable_holder", "escalation", "assignment_state")
 WORK_COLUMNS = ("item", "source_record", "queue_override", "owner_id", "impact", "urgency",
@@ -757,22 +764,63 @@ def orchestration_volume() -> str:
         return "prose/instrument volume unavailable"
 
 
+def _label(path: Path) -> str:
+    try:
+        return str(path.relative_to(REPO))
+    except ValueError:      # an entrypoint outside REPO must still be reportable
+        return str(path)
+
+
+def _words(path: Path) -> int:
+    return len(re.findall(r"\S+", path.read_text(encoding="utf-8", errors="replace")))
+
+
 def entrypoint_report() -> int:
-    total = 0
-    for path in ENTRYPOINTS:
-        try:
-            label = str(path.relative_to(REPO))
-        except ValueError:          # an entrypoint outside REPO must still be reportable
-            label = str(path)
+    """Two populations, never one number.
+
+    The PRESCRIBED PATH is what every session reads before it may act. The SEARCHED CORPUS is
+    what a routed file contains, of which the route asks for one record. An earlier version of
+    this function summed both and labelled the result "TOTAL prescribed default path": it
+    reported 69009 where the route prescribes 12848, a 5.4x overstatement, because it counted
+    the container and reported about the contents. Keeping the two apart is PB-15's rule --
+    print the populations, and never a figure the instrument did not measure.
+    """
+    prescribed = 0
+    print("PRESCRIBED PATH -- read in full by every session")
+    for path in FULL_READ:
         if not path.exists():
-            # A routed file that is absent is a finding, not a crash: report it and keep going,
-            # so the total is never silently short by one file.
-            print(f"{'absent':>7}  {label}")
+            print(f"{'absent':>7}  {_label(path)}")
             continue
-        words = len(re.findall(r"\S+", path.read_text(encoding="utf-8", errors="replace")))
-        total += words
-        print(f"{words:7d}  {label}")
-    print(f"{total:7d}  TOTAL prescribed default path")
+        words = _words(path)
+        prescribed += words
+        print(f"{words:7d}  {_label(path)}")
+    print(f"{prescribed:7d}  subtotal")
+
+    corpus = 0
+    print("\nPLUS the exact cited record -- NOT the whole file (AGENTS.md, Evidence routes)")
+    for path in ROW_ROUTED:
+        if not path.exists():
+            print(f"{'absent':>7}  {_label(path)}")
+            continue
+        full = _words(path)
+        corpus += full
+        rows = sorted(len(re.findall(r"\S+", line))
+                      for line in path.read_text(encoding="utf-8", errors="replace").splitlines()
+                      if re.match(r"^\| *OI-", line))
+        if rows:
+            med = rows[len(rows) // 2]
+            print(f"{med:7d}  {_label(path)}  median record of {len(rows)} "
+                  f"(min {rows[0]}, max {rows[-1]})")
+            print(f"{prescribed + med:7d}  PRESCRIBED PATH TOTAL, median record")
+            print(f"{prescribed + rows[-1]:7d}  PRESCRIBED PATH TOTAL, largest record")
+        else:
+            print(f"{'n/a':>7}  {_label(path)}  no OI records matched -- cannot price a record")
+
+    print("\nSEARCHED CORPUS -- present in routed files, not prescribed reading")
+    for path in ROW_ROUTED:
+        if path.exists():
+            print(f"{_words(path):7d}  {_label(path)} in full")
+    print(f"{prescribed + corpus:7d}  routed corpus total")
     return 0
 
 
