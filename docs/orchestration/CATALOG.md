@@ -91,6 +91,27 @@ deliberately, because this file is a pointer-only router and not an exhaustive i
   recording an independent peer review whose four objections were all accepted. **Where this and a
   canonical artifact disagree, the canonical artifact wins.**
 
+### Gate-1 round 6 — GRADED, TERMINAL, and it DOES NOT PASS
+
+- [`GATE1-VERDICT-ROUND6-20260823-k0-execution-integrity.md`](GATE1-VERDICT-ROUND6-20260823-k0-execution-integrity.md)
+  — **16 PASS / 2 FAIL / 0 NOT-EVALUABLE** (`F-2(a)`, `F-17(a)`), graded at `fabeedc2`. Landed
+  **byte-identical**, sha256 `bf2ad6e1415391bb5eba3e15b9e818fb10a6ee65ce4e7ca1b8b08dd57c3d0125`,
+  415 lines. The operative rubric was confirmed byte-identical to round 5 (1160 lines,
+  `e0fb342b6466…`) — **no criterion was added.** Round 6's two targets are genuinely fixed and the
+  grader could not break either; **both `F-14` grounds are closed.** `F-2(a)` fails on a **new
+  ground**: `lib_mnv_env_preflight.sh` and `lib_mnv_env_pathcheck.sh` are **tracked** and sourced
+  from the code root by all eight launchers with **zero git-parity gate**, executing 77–193 lines
+  before the only instrument covering their bytes — while the pure-git gate sits 17 lines above,
+  naming only `lib/resume_guard.sh`. `F-17(a)` is unrepaired and outside round-6 scope.
+  **This is a terminal handoff: no further grader was requested.**
+
+- [`DECISION-20260823-joseph-a2f-does-not-substitute-for-a3.md`](DECISION-20260823-joseph-a2f-does-not-substitute-for-a3.md)
+  — Joseph's ruling of 2026-08-23: **A-2(f) does not substitute for A-3 executing-file parity.** A
+  tracked file that executes before the later source-manifest comparison requires **pre-use git
+  parity**, so `F-2(a)` **stands**; `F-17(a)` stands until the canonical M-1…M-6 filing is corrected
+  **and re-measured at the eventual candidate sha**. **No repair is authorized by it.** The ruling
+  is authorized here and nowhere else; a relay of it is not quotable.
+
 ### Gate-1 round 5 — GRADED BY A THIRD PARTY, and it DOES NOT PASS
 
 - [`GATE1-VERDICT-ROUND5-20260823-k0-execution-integrity.md`](GATE1-VERDICT-ROUND5-20260823-k0-execution-integrity.md)
