@@ -28,6 +28,92 @@ and replica dispersion only as diagnostic properties of the recoil-only
 estimator. A full-event
 estimator would instead train jointly on the declared muon and recoil inputs.
 
+\subsection{Shape cross-check against the scalar result}
+\label{sec:pet-shape}
+The first use of the recoil representation is a shape comparison against the production
+scalar unfold, which tests the classifier family and the engineered-scalar versus
+recoil-cloud input choice together. Here \texttt{cluster\_pos} is the measured
+coordinate in one X/U/V scintillator view. Area-normalized against the frozen 4D GBDT result, the PET unfold
+reproduces the scalar shape to a median \SIrange{2.3}{3.9}{\percent} per bin
+($\pT$~\SI{3.9}{\percent}, $\pPar$~\SI{2.4}{\percent}, $\Eavail$~\SI{2.6}{\percent},
+$q_{3}$~\SI{2.3}{\percent}; Fig.~\ref{fig:petgbdt}). In its role here this is a
+recoil-representation sensitivity check: it compares classifier families and
+engineered-scalar versus recoil-cloud inputs, but does not test a complete
+joint muon--hadron representation. Figure~\ref{fig:petdisplays}
+visualizes representative events on a common energy--polar-angle plane and
+shows the reconstructed and truth muon together with the recoil activity. The
+PET classifier receives a variable-length set of single-view energy
+deposits at reconstruction level and particles with full four-momenta at truth
+level. The muon kinematics exist at both levels and are stored as event scalars
+for downstream binning, but are not part of the recoil-PET classifier tensor.
+Figure~\ref{fig:petcardinality} shows the
+per-event cardinality of each cloud. The remainder of this section takes the same
+representation from this shape check to an absolutely-normalized cross section.
+
+Figure~\ref{fig:petcardinality} uses the coverage-complete point-cloud input:
+only 174 of the \num{32849103} truth events have an empty cloud. Including the
+GENIE residual-nucleus bookkeeping particles, as the PET input does, gives a
+mean truth cardinality of $4.57$. The depleted $k=1$ bin is a generator-record
+feature: a nominally single-hadron event, most often quasielastic, usually also
+contains a residual-nucleus pseudo-particle and therefore enters at $k=2$.
+Removing those pseudo-particles gives a mean physical-hadron multiplicity of
+$4.43$ and a distribution that rises smoothly to its $k=2$ maximum. The
+twelve-constituent cap is a compute/memory choice: PET cost grows with
+cardinality, while only \SI{2.31}{\percent} of truth events reach the cap and
+the twelfth constituent carries only \SI{0.09}{\percent} of the retained truth
+energy on average.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{pet_vs_gbdt}
+  \caption{Recoil-representation cross-check: area-normalized 4D unfolded shapes from the
+    recoil-only PET point-cloud transformer (solid) versus the production scalar GBDT (dashed),
+    projected onto each axis. Median per-bin shape differences are
+    \SIrange{2.3}{3.9}{\percent}; the only visible deviation is the wide $q_{3}$
+    catch bin, which collects a large, structured high-$q_{3}$ tail into one wide
+    bin --- a binning artifact of that catch bin rather than a genuine shape
+    disagreement. Shape-only comparison (PET on a 2M-event
+    subsample), not an independent physics result.}
+  \label{fig:petgbdt}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.98\textwidth]{pet_event_displays_energy_angle}
+  \caption{Four representative PET events on a common energy--polar-angle
+  plane. Gray points are reconstructed recoil clusters; colored stars are
+  truth final-state hadrons, and the reconstructed (X) and truth (six-point
+  star) muons nearly overlap. The muon momentum and direction are measured from
+  the MINERvA--MINOS track and stored as event-level $(\pT,\pPar)$ scalars. The
+  cluster angle is illustrative, formed relative to a nominal upstream vertex
+  because the current reco-cloud dump stores $[E_{\rm dep},\mathrm{pos}_{\rm
+  view},z]$ but not the reconstructed vertex. Thus this common projection is a
+  visual comparison, not the PET input tensor: the classifier consumes the raw
+  single-view cluster set at reco level and hadron four-vectors at truth level,
+  with the muon currently omitted from both classifier inputs.}
+  \label{fig:petdisplays}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  % _withremnant shows the truth cloud inputs to PET (including GENIE nuclear-remnant
+  % pseudo-particles), which produces the depleted k=1 bin.
+  % _real is the physical-hadron-only version.
+  %   \includegraphics[width=0.72\textwidth]{pet_cardinality_real}
+  \includegraphics[width=0.72\textwidth]{pet_cardinality_withremnant}
+  \caption{Per-event point-cloud cardinality (number of constituents) for the
+  truth final-state hadrons, the reconstructed clusters in MC, and the
+  reconstructed clusters in data, POT-weighted. The reco-cluster multiplicity
+  greatly exceeds the truth hadron multiplicity --- a single hadron deposits
+  energy in many detector clusters --- while data and MC reco agree closely
+  (means \num{11.09} vs.\ \num{11.15}). Clouds are truncated to the twelve
+  highest-energy constituents per event, so the reco distributions pile up at
+  the cap; the truth clouds are sparser (mean \num{4.57}, including GENIE
+  nuclear-remnant bookkeeping particles) and rarely reach it. The depleted
+  $k=1$ truth bin and the truncation choice are explained in the text.}
+  \label{fig:petcardinality}
+\end{figure}
+
 \subsection{From shape check to absolute cross section}
 \label{sec:pet-abs}
 The PET network trains on a GPU on a 2M-event subsample (2 OmniFold

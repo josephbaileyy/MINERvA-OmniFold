@@ -112,6 +112,36 @@ same comparison bin-by-bin in $\pT$ and $\pPar$ slices.
   \label{fig:pzslices}
 \end{figure}
 
+\subsection{Uncertainty budget}
+\label{sec:results-uq}
+Table~\ref{tab:uq} gives the budget over the 205 reported bins, constructed as
+described in \S\ref{sec:systematics}. Our \emph{standalone} combined budget matches
+the published total in size --- median per-bin \SI{\uqMedian}{\percent} against the
+published \SI{\uqPaper}{\percent} --- and is flux-dominated as in the publication
+(Fig.~\ref{fig:uqbands}). The systematic block dominates: the statistical and ML
+blocks together contribute under a tenth of the combined $\sqrt{\mathrm{Tr}\,C}$.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    Component & $N$ & $\sqrt{\mathrm{Tr}\,C}$ & per-bin median rel.\ $\sigma$ \\
+    \midrule
+    ML noise (lgbm training-seed var.) & 10 & \num{5.06e-41} & \SI{0.166}{\percent} \\
+    Statistical (Poisson bootstrap) & 300 & \num{1.82e-40} & \SI{0.549}{\percent} \\
+    Systematic (universe sweep $+$ \SI{1.4}{\percent} norm) & $187{+}1$ & \num{3.21e-39} & \SI{6.830}{\percent} \\
+    \textbf{Combined (block sum)} & --- & \num{3.22e-39} & \SI{6.865}{\percent} \\
+    Paper TotalCov (reference) & --- & \num{2.68e-39} & \SI{6.86}{\percent} \\
+    \bottomrule
+  \end{tabular}
+  \caption{Uncertainty budget for the 2D cross section over the 205 reported
+  bins. For each component, $C$ denotes its $205\times205$ covariance matrix;
+  $\sqrt{\mathrm{Tr}\,C}$ is the quadrature sum of its absolute per-bin
+  uncertainties. The standalone combined median relative uncertainty
+  (\SI{6.865}{\percent}) matches the published total
+  (\SI{6.86}{\percent}).}
+  \label{tab:uq}
+\end{table}
 \subsection{Anatomy of the $\chi^{2}=3.66$ tension}
 \label{sec:results-tension}
 Using the published uncertainties as a descriptive scale, the central values
