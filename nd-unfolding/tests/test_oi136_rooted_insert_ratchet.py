@@ -49,11 +49,21 @@ KNOWN_UNREPAIRED = {
     "nd-unfolding/pet/push_vs_acceptance.py":
         "PET lane's file. Not this lane's to edit; routed, not owned.",
     "2d-unfolding/unfold_2d_omnifold_unbinned.py":
-        "THE PUBLISHED 2D ARM, and it is HASH-BOUND by 7 artifacts including "
-        "negweight-hpss-durability-20260821.json and G2_GATE2_TARGET_RUNTIME_RECEIPT.json. The "
-        "repair was written and REVERTED: landing it changes the file's sha256, and re-pointing a "
-        "receipt-bound file to make a check pass is a standing prohibition (OI-123). Needs Joseph "
-        "to decide receipt re-issue vs. leaving it; not a thing a lane may work around.",
+        "THE PUBLISHED 2D ARM. Repair written, then REVERTED. Its sha256 8ebe0277... is pinned in "
+        "THREE PLACES THAT NEED THREE DIFFERENT TREATMENTS, and the pre-commit hook reports the "
+        "first two identically:  (i) LIVE ENFORCEMENT -- EXPECTED_U2D_SHA in "
+        "nd-unfolding/pet/run_gate2_target_validator.sh. Advancing it is NOT a text edit: that "
+        "file's own header refuses argument-based bumps ('exactly the reasoning hash pins exist to "
+        "reject') and requires a RE-RUN whose weights come out BIT-IDENTICAL to the archived ones. "
+        "(ii) IMMUTABLE HISTORY -- /producer/sha256 in "
+        "docs/orchestration/state/negweight-hpss-durability-20260821.json, recording which version "
+        "wrote 247 HPSS-archived products between 2026-07-07 and 2026-07-11. Rewriting it would "
+        "silently falsify the provenance of archived data. (iii) INVISIBLE TO THE HOOK -- "
+        "canonical_u2d in family-20260814-FULLSTRENGTH-50of50.json, which lives only at "
+        "evidence/prepublication-2026-08-20-0b329e8a and is absent from the live tree, so no gate "
+        "will ever flag it; also historical. Found by the PET mediator, verified here. "
+        "Re-pointing any of these to make a check pass is a standing prohibition (OI-123). "
+        "JOSEPH'S CALL, and it costs a Gate-2 re-run, not a commit.",
     "docs/orchestration/state/probe-oi120c-loader-purity-perturbation-20260814.py":
         "One-off probe artifact, 2026-08-14. A probe is a RECORD of what was run; editing it "
         "falsifies the record. Retire by classification, never by patching.",
