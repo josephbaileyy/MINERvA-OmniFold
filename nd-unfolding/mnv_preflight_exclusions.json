@@ -35,6 +35,7 @@
     "unclassified": 0
   },
   "counts_are_derived_not_authored": "Every number above is reproduced by mnv_preflight_census.py against the launcher bytes. 16 = 2 per launcher x 8; 14 is NOT one per launcher (unfold and uthrow_block have 2, finalize has 5), which is why 'one per launcher' would have been the wrong shape to assume.",
-  "commented_out_python3_lines": 9,
-  "why_that_last_number_is_here": "A census that does not exclude comments reports 39, and commenting out a guarded call is a way to REMOVE a guard while leaving the line visible. The number is pinned so that a change in it is a finding rather than a rounding difference between two instruments."
+  "commented_out_python3_lines": 17,
+  "why_that_last_number_is_here": "A census that does not exclude comments reports 47, and commenting out a guarded call is a way to REMOVE a guard while leaving the line visible. The number is pinned so that a change in it is a finding rather than a rounding difference between two instruments.",
+  "commented_out_count_history": "9 at b49bc360 (the pin's first value). 17 from PR-02: the verify-before-source gate carries one comment line per launcher quoting the measured pre-conda interpreter (/usr/bin/python3 == Python 3.6.15), 8 launchers, +8. RAISED DELIBERATELY AND WITH ITS REASON, never to make a check pass -- and note what did NOT move: guarded stayed 14, declared-preflight stayed 16, unclassified stayed 0. The guarding boundary was untouched by PR-02, which is the thing this file exists to say."
 }

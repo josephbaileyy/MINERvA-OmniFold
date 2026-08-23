@@ -122,7 +122,7 @@ class ThePreflightExclusionIsPinnedAndCanFail(unittest.TestCase):
         r = self.run_census()
         self.assertEqual(r.returncode, VIOLATION, f"stdout={r.stdout}\nstderr={r.stderr}")
         self.assertIn("COUNT guarded: measured 13, declared 14", r.stderr)
-        self.assertIn("COUNT commented_out_python3_lines: measured 10, declared 9", r.stderr)
+        self.assertIn("COUNT commented_out_python3_lines: measured 18, declared 17", r.stderr)
 
     # ---- the declaration must point at something ------------------------------------------
     def test_ARM_fires_on_REPOINTING_a_declared_preflight_variable(self):

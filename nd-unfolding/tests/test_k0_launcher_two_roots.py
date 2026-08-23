@@ -538,3 +538,128 @@ class TheP4RatchetReadsWhatTheRunProduced(LauncherFixture):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class SourcedFilesAreVerifiedBEFORETheyAreSourced(LauncherFixture):
+    """PR-02 / F-2(a), under Joseph's PR-J5 ruling of 2026-08-22.
+
+    The ruling: a file sourced before the parity check "can be bound afterward as historical
+    provenance ... but that cannot establish the stronger claim needed here: unverified bytes were
+    prevented from executing." So `setup_salloc_env.sh` and `lib/resume_guard.sh` are checked BEFORE
+    the `source` that executes them, and are deliberately NOT in the late `--pair` set.
+
+    THE FIRST ARM EXISTS BECAUSE A PASSING SUITE IS NOT EVIDENCE THE GATE RAN. The fixture commits
+    both files, so an added check that never executes and a check that executes and passes look
+    identical from the outside. Every arm below therefore MUTATES and demands a refusal; the silent
+    arm is meaningful only because they do.
+    """
+
+    PRE = ("setup_salloc_env.sh", "lib/resume_guard.sh")
+
+    def tamper(self, rel, text):
+        """A-2(g) write protection is ON in this fixture, exactly as the real deploy is
+        `dr-xr-x---`. Lift it to plant the mutation, then put it back, so the arm measures the
+        PARITY gate and not the filesystem mode."""
+        self.set_protection(False)
+        (self.code / rel).write_text(text)
+        self.set_protection(True)
+
+    def test_the_gate_RAN_a_modified_setup_salloc_env_is_REFUSED(self):
+        self.tamper("setup_salloc_env.sh", 'echo "tampered"\n')
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                cp = self.run_launcher(sh, self.good_env())
+                self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
+                self.assertIn("setup_salloc_env.sh differs from HEAD", cp.stderr)
+                self.assertIn("Refusing to execute unverified bytes", cp.stderr)
+
+    def test_the_gate_RAN_a_modified_resume_guard_is_REFUSED(self):
+        self.tamper("lib/resume_guard.sh", 'echo "tampered"\n')
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                cp = self.run_launcher(sh, self.good_env())
+                self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
+                self.assertIn("lib/resume_guard.sh differs from HEAD", cp.stderr)
+
+    def test_a_DELETED_sourced_file_is_a_refusal_not_a_silent_pass(self):
+        """`ls | wc -l` gives 0 for empty AND absent; a parity check must not do the same."""
+        self.set_protection(False)
+        (self.code / "setup_salloc_env.sh").unlink()
+        self.set_protection(True)
+        cp = self.run_launcher(LAUNCHERS[0][0], self.good_env())
+        self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
+        self.assertIn("cannot compute git parity", cp.stderr)
+        self.assertIn("A check that could not run is not a check that passed", cp.stderr)
+
+    def test_a_CODE_ROOT_that_is_not_a_git_repo_is_a_refusal(self):
+        shutil.rmtree(self.code / ".git")
+        cp = self.run_launcher(LAUNCHERS[0][0], self.good_env())
+        self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
+        self.assertIn("cannot compute git parity", cp.stderr)
+
+    def test_SILENT_on_an_unmutated_tree(self):
+        """The arm the five above are worthless without."""
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                cp = self.run_launcher(sh, self.good_env())
+                self.assertNotIn("differs from HEAD", cp.stderr)
+                self.assertNotIn("cannot compute git parity", cp.stderr)
+
+    def test_the_gate_is_TEXTUALLY_before_every_source_of_those_two_files(self):
+        """The whole content of the ruling is an ORDER, so the order is what gets asserted."""
+        import re
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                lines = (ND / sh).read_text().splitlines()
+                gate = [i for i, l in enumerate(lines, 1) if "PR-J5 / F-2(a)" in l]
+                self.assertEqual(len(gate), 1, f"{sh}: expected exactly one gate")
+                srcs = [i for i, l in enumerate(lines, 1)
+                        if re.match(r'^\s*source\s', l) and not l.lstrip().startswith("#")
+                        and ("setup_salloc_env.sh" in l or "resume_guard.sh" in l
+                             or '"$_mr_rg"' in l)]
+                self.assertGreater(len(srcs), 0, "power arm: there ARE sources to be ordered against")
+                self.assertLess(gate[0], min(srcs),
+                                f"{sh}: a sourced file executes before it is verified")
+
+    def test_these_two_are_NOT_in_the_late_pair_set(self):
+        """Ruling PR-J5: binding after use records provenance and proves nothing. Adding them to the
+        late set would make F-2(a) look closed by the mechanism the ruling rejected."""
+        import re
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                text = (ND / sh).read_text()
+                for hit in re.findall(r'--pair\s+"?([^"\s]+)', text):
+                    self.assertNotIn("setup_salloc_env.sh", hit, f"{sh}: bound after use")
+                    self.assertNotIn("resume_guard.sh", hit, f"{sh}: bound after use")
+
+    def test_the_TRANSITIVE_gap_is_disclosed_in_every_launcher(self):
+        """`setup_salloc_env.sh` sources two UNTRACKED scripts, so this gate moves the environment
+        trust boundary one hop rather than closing it. A limit that is not written down is a limit
+        the next reader inherits silently -- so the disclosure is pinned here, not left to prose."""
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                text = (ND / sh).read_text()
+                self.assertIn("unbinned_unfolding/build/setup.sh", text)
+                self.assertIn("MINERvA101/opt/bin/setup.sh", text)
+                self.assertIn("NEITHER IS TRACKED BY GIT", text)
+                self.assertIn("TRANSITIVE ENVIRONMENT TRUST BOUNDARY", text)
+
+    def test_the_disclosure_is_TRUE_those_two_scripts_really_are_untracked(self):
+        """A disclosure asserted by a test that never checks the world is a slogan. Verify it."""
+        for rel in ("unbinned_unfolding/build/setup.sh", "MINERvA101/opt/bin/setup.sh"):
+            r = subprocess.run(["git", "-C", str(REPO), "ls-files", "--error-unmatch", rel],
+                               capture_output=True, text=True)
+            self.assertNotEqual(r.returncode, 0, f"{rel} IS tracked now -- the disclosure is stale "
+                                                 f"and the gate may be able to bind it")
+        self.assertIn('source "${SCRIPT_DIR}/unbinned_unfolding/build/setup.sh"',
+                      (REPO / "setup_salloc_env.sh").read_text())
+
+    def test_finalize_binds_the_resume_guard_it_ACTUALLY_sources(self):
+        """`_mr_rg` derives from a DISCOVERED `_mr_lib`, not from CODE_ROOT, so the file verified at
+        preflight and the file sourced later can be two different objects."""
+        text = (ND / "sbatch_finalize_5d_bkgaware_gpu.sh").read_text()
+        self.assertIn("_mr_rg_real", text)
+        self.assertIn("is NOT the one verified at preflight", text)
+        i_chk = text.index("_mr_rg_real=")
+        i_src = text.index('source "$_mr_rg"')
+        self.assertLess(i_chk, i_src, "the binding must precede the source it binds")

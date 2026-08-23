@@ -31,6 +31,46 @@ export ROOT628_PREFIX=/global/homes/j/josephrb/.conda/envs/root_6_28
 # The two roots MAY name the same directory; nothing here requires them to differ.
 CODE_ROOT="${MNV_CODE_ROOT:?set MNV_CODE_ROOT to the approved clean execution tree -- a checkout at a named sha with git status --porcelain empty. It is NOT the data root.}"
 DATA_ROOT="${MNV_DATA_ROOT:?set MNV_DATA_ROOT to the tree holding the inputs for this leg and receiving its products. Nothing is executed or imported from it.}"
+# --- PR-J5 / F-2(a), Joseph's ruling of 2026-08-22: VERIFY BEFORE SOURCE, NEVER BIND AFTER USE. ----
+# The ruling, verbatim on the point that decides the shape: a file sourced before the parity check
+# "can be bound afterward as historical provenance ... but that cannot establish the stronger claim
+# needed here: unverified bytes were prevented from executing. The file has already executed and may
+# already have changed the environment or exited before the check."
+# So these two are verified HERE, before they are sourced, and they are deliberately NOT added to the
+# late --pair set further down. Binding them there would record provenance and prove nothing.
+#
+# WHY PURE GIT AND NOT "$PARITY". MEASURED 2026-08-22 on saul.nersc.gov, not assumed: the pre-conda
+# interpreter is /usr/bin/python3 == Python 3.6.15, and verify_executing_copy_is_committed.py opens
+# with `from __future__ import annotations`, which is 3.7+ -- it dies with
+# "SyntaxError: future feature annotations is not defined" on the frozen tree. And setup_salloc_env.sh
+# is ITSELF what activates the conda env that provides a modern python, so no Python checker can
+# precede it. git is 2.51.0 pre-conda. The failure mode here was a toolchain dependency, so this
+# REMOVES one rather than relocating it.
+#
+# WHAT THIS DOES NOT COVER -- READ BEFORE RECORDING F-2(a) AS CLOSED. setup_salloc_env.sh itself
+# sources ${SCRIPT_DIR}/unbinned_unfolding/build/setup.sh and ${SCRIPT_DIR}/MINERvA101/opt/bin/setup.sh.
+# NEITHER IS TRACKED BY GIT (`git ls-files` returns nothing for either), so no git-based check can bind
+# them -- and they are what activate conda and set up ROOT/MINERvA101. This gate proves the committed
+# bytes of setup_salloc_env.sh and NOT what those bytes pull in: it moves the environment trust
+# boundary ONE HOP, it does not close it. lib/resume_guard.sh sources nothing at all (311 lines) and is
+# therefore fully bound here. The open half is the TRANSITIVE ENVIRONMENT TRUST BOUNDARY, and Gate 1
+# must not be recorded closed on F-2(a) until it is settled and a fresh non-builder passes it.
+for _mnv_pre in setup_salloc_env.sh lib/resume_guard.sh; do
+  _mnv_head="$(git -C "$CODE_ROOT" rev-parse "HEAD:${_mnv_pre}" 2>/dev/null || true)"
+  _mnv_work="$(git -C "$CODE_ROOT" hash-object "${CODE_ROOT}/${_mnv_pre}" 2>/dev/null || true)"
+  if [[ -z "$_mnv_head" || -z "$_mnv_work" ]]; then
+    echo "[preflight] FAIL: cannot compute git parity for ${_mnv_pre} under ${CODE_ROOT}" >&2
+    echo "[preflight]   A check that could not run is not a check that passed." >&2
+    exit 3
+  fi
+  if [[ "$_mnv_head" != "$_mnv_work" ]]; then
+    echo "[preflight] FAIL: ${_mnv_pre} differs from HEAD in ${CODE_ROOT}" >&2
+    echo "[preflight]   HEAD=${_mnv_head}  working=${_mnv_work}" >&2
+    echo "[preflight]   It is SOURCED below. Refusing to execute unverified bytes." >&2
+    exit 3
+  fi
+done
+unset _mnv_pre _mnv_head _mnv_work
 source "${CODE_ROOT}/setup_salloc_env.sh"
 export PYTHONUNBUFFERED=1; cd "${DATA_ROOT}/nd-unfolding"
 # --- M(ii) member axis: LOCATE lib_member_resume.sh, then source it -------------------------------
@@ -136,6 +176,20 @@ if [[ ! -r "$_mr_rg" ]]; then
   echo "[member]   launcher whose resume guards silently do not exist." >&2
   exit 2
 fi
+# PR-J5 COROLLARY, and it is a hole the early gate above does NOT cover on this launcher alone.
+# `_mr_rg` is derived from `_mr_lib`, which is DISCOVERED by the search loop above -- it is not
+# `${CODE_ROOT}`. So the file verified in the early gate and the file sourced HERE can be two
+# different objects, and verifying the first would say nothing about the second. Bind them.
+_mr_rg_real="$(cd "$(dirname "$_mr_rg")" 2>/dev/null && pwd -P)/$(basename "$_mr_rg")"
+_mr_rg_want="$(cd "${CODE_ROOT}/lib" 2>/dev/null && pwd -P)/resume_guard.sh"
+if [[ -z "$_mr_rg_real" || "$_mr_rg_real" != "$_mr_rg_want" ]]; then
+  echo "[member] FAIL: the resume guard about to be sourced is NOT the one verified at preflight." >&2
+  echo "[member]   about to source: ${_mr_rg_real:-<unresolvable>}" >&2
+  echo "[member]   verified:        ${_mr_rg_want}" >&2
+  echo "[member]   _mr_lib was DISCOVERED, not derived from MNV_CODE_ROOT, so these can diverge." >&2
+  exit 3
+fi
+unset _mr_rg_real _mr_rg_want
 source "$_mr_rg"
 
 # --- OI-136 ROUND 2, 2026-08-22: EVERY production Python invocation is GUARDED, and the record is
