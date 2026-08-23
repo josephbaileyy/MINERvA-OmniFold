@@ -61,17 +61,29 @@ whereas cause 3 concerns `X`'s **own** estimator. A fresh construction-path argu
 The five Gate-1 round-4 repairs. Gate 1 currently **DOES NOT PASS: 13 PASS / 5 FAIL / 0 NOT-EVALUABLE.**
 All five are inside rulings 18–22 and need no new authorization.
 
-| order | # | repair | needs from Joseph |
-|---|---|---|---|
-| 1 | `PR-02` | **F-2(a)** — bind `setup_salloc_env.sh` and `lib/resume_guard.sh` in the `--pair` sets | **`PR-J5`**: can a file sourced *before* the preflight be bound at all? |
-| 2 | `PR-03` | **F-7(a)** — pin the §7.0.13 preflight exclusion; three-arm mutation test | — |
-| 3 | `PR-04` | **F-8(a)** — produce **P-5 and P-6**, which do not exist and were undisclosed | — |
-| 4 | — | **refresh `k0r2/clean`**; re-assert porcelain 0 and `dr-xr-x---` | — |
-| 5 | `PR-01` | **F-1(a)** — declare the submission sha; file A-2(a)–(g) against the refreshed tree | — |
-| 6 | `PR-05` | **F-17(a)** — re-measure M-1…M-6 **at that sha** on the canonical checkout | — |
+**The order below is a topological sort of the dependency edges the readiness list already records,
+not a hand-written sequence.** The edges, quoted: `PR-04` *"Blocked by PR-01"*; `PR-05` *"Blocked by
+PR-01"*; `PR-01` *"falsified by … any change to `k0r2/clean`; any `.py`/`.sh` add or delete"*; `PR-02`
+*"plus one Joseph decision"* (`PR-J5`); `PR-03` blocked by nothing. **All five block Gate 1.**
 
-**ORDERING CORRECTION, made before anyone walked this — `PR-01` must run LAST of the five, not
-first.** My first draft of this file said *"`PR-01` first and alone, because the other four are
+| order | # | repair | blocked by | cluster? |
+|---|---|---|---|---|
+| 1 | `PR-03` | **F-7(a)** — pin the §7.0.13 preflight exclusion; three-arm mutation test | **nothing — this is the one item that can start today** | no |
+| 2 | `PR-02` | **F-2(a)** — bind `setup_salloc_env.sh` and `lib/resume_guard.sh` in the `--pair` sets | **`PR-J5`** (Joseph) | no |
+| 3 | — | **refresh `k0r2/clean`**; re-assert porcelain 0 and `dr-xr-x---` | `PR-02` (it edits executing bytes) | **write** |
+| 4 | `PR-01` | **F-1(a)** — declare the submission sha; file A-2(a)–(g) against the refreshed tree | the refresh | read |
+| 5a | `PR-04` | **F-8(a)** — produce **P-5 and P-6**, which do not exist and were undisclosed | `PR-01` | no |
+| 5b | `PR-05` | **F-17(a)** — re-measure M-1…M-6 **at that sha** | `PR-01` | read |
+| 6 | — | **fresh non-builder grades Gate 1** | 5a and 5b | — |
+
+**`PR-04` and `PR-05` are independent of each other** and are the only pair that can run in parallel.
+
+**`PR-03` is the only repair that can begin before Joseph answers anything.** Everything else in this
+step waits on `PR-J5`, which is therefore worth asking at the same time as Step 0 even though it is a
+much smaller question. **Ask both in one message.**
+
+**ORDERING CORRECTION, made before anyone walked this — `PR-01` runs FOURTH, and my first draft had
+it first.** (It is not "last" either: `PR-04` and `PR-05` both depend on it.) My first draft said *"`PR-01` first and alone, because the other four are
 measured against that sha."* **That is wrong and it would have produced a false declaration.**
 
 - The tree that actually executes is the frozen deploy at `/pscratch/sd/j/josephrb/k0r2/clean`,
@@ -86,9 +98,10 @@ measured against that sha."* **That is wrong and it would have produced a false 
 - So declaring first would pin a sha that `PR-02` then invalidates — **`measure after the rebase, not
   before`**, in its exact classic form.
 
-**The order is therefore:** `PR-02` (needs `PR-J5`), `PR-03`, `PR-04` → **refresh `k0r2/clean` and
-re-assert porcelain 0 + write protection** → `PR-01` declares the sha and files A-2(a)–(g) against
-the refreshed tree → `PR-05` re-measures M-1…M-6 **at that sha** → fresh non-builder grades Gate 1.
+**And the same draft put `PR-04` third, which is wrong for a second reason:** the readiness list
+records `PR-04` as *"Blocked by PR-01"* outright, because both of its artifacts are defined *"at the
+pinned sha"*. So does `PR-05`. **Three of the five repairs sit downstream of a declaration my draft
+had scheduled first.** The corrected order is the table above.
 
 `PR-01` remains correctly described in the readiness list as *"blocked by nothing"* — nothing
 **blocks** it. What it needs is to be **last**, which is a different property, and this file is where

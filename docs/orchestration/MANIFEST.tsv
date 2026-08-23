@@ -136,7 +136,7 @@ docs/orchestration/VERDICTS-20260811-session-D.md	tracked	ARCHIVAL	verdict		2026
 docs/orchestration/VERIFICATION-20260820-mediator-remedy-a-wrapper-mechanical.md	tracked	ARCHIVAL	document		20260820	terminal		exact-path-only		yes	3	86	6763
 docs/orchestration/VERIFICATION-20260822-k0-execution-integrity.md	tracked	LIVE	document		20260822	open		route-only		no	4	722	47961
 docs/orchestration/WAKER.md	tracked	LIVE	document			open		route-only	docs/orchestration/generate_live_state.py;docs/orchestration/wakerctl.py	no	10	262	15686
-docs/orchestration/WALKDOWN-20260822-one-pass.md	tracked	LIVE	document		20260822	open		route-only		no	2	190	11597
+docs/orchestration/WALKDOWN-20260822-one-pass.md	tracked	LIVE	document		20260822	open		route-only		no	2	203	12614
 docs/orchestration/agentctl.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/generate_live_state.py;docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py	no	13	611	22259
 docs/orchestration/audit_gates_that_cannot_fail.py	tracked	MACHINE	script			generated		exact-path-only	nd-unfolding/tests/test_cannot_fail_auditor.py	no	5	369	17861
 docs/orchestration/audit_validator_tolerance_units.py	tracked	MACHINE	script			generated		exact-path-only	nd-unfolding/tests/test_validator_units_auditor.py	no	4	232	10103
