@@ -1,5 +1,11 @@
 # M-1…M-6 RE-MEASURED at the declared sha — and four of the six have MOVED
 
+> ## ⚠ `M-5` IS RESTATED AND `F-17(a)` IS REPAIRED (2026-08-23) — re-measured at `f3c27870`
+> The `.sh` route, not just `REPO=`: **unguarded activator sources 8 of 8 → 0 of 8**; activator
+> sourced from `ENV_ROOT` **0 of 8 → 8 of 8**; **`_mr_lib` bind-after-use 8 of 8 → 0 of 8**.
+> See `PACKET-20260823-round5-f2a-f17a-repair.md` §4. The banner below records why the original
+> `M-5` was the failure, and it is kept.
+>
 > ## ⚠ THIS DOCUMENT IS THE `F-17(a)` FAIL (2026-08-23), and the grader is right about why.
 > **`M-5` below reports `REPO=` at `0 of 8` and reads as though the `.sh` half is repaired.** True of
 > `REPO=`; **false of the `.sh` route**, which still carries an absent environment closure and

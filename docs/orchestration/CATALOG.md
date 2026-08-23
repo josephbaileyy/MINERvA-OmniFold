@@ -91,6 +91,17 @@ deliberately, because this file is a pointer-only router and not an exhaustive i
   recording an independent peer review whose four objections were all accepted. **Where this and a
   canonical artifact disagree, the canonical artifact wins.**
 
+### Gate-1 round 5 — the AUTHORIZED REPAIR, built and awaiting a THIRD-PARTY grader
+
+- [`PACKET-20260823-round5-f2a-f17a-repair.md`](PACKET-20260823-round5-f2a-f17a-repair.md) —
+  **the repair packet for `F-2(a)` and `F-17(a)`, and the read-only commands a grader runs.**
+  Three roots (`MNV_ENV_ROOT` mandatory, no default), a **14-member digest manifest over the full
+  transitive closure** verified before any source, the activator regenerated so no checkout reaches
+  `PATH`/`PYTHONPATH`/`LD_LIBRARY_PATH`, `_mr_lib` bound before use in all eight, and the Gate-5
+  template routed rather than duplicated. **Re-declared sha `f3c27870`, 778 files, `70fb59d4…`.**
+  **GATE 1 IS NOT CLOSED — the verdict stands at 16/2** until a grader who is neither this builder
+  nor the round-4 verifier re-grades. **All criteria are re-opened by the sha move.**
+
 ### Gate-1 round 4 — GRADED 2026-08-23, and it DOES NOT PASS
 
 - [`GATE1-VERDICT-ROUND4-20260823-k0-execution-integrity.md`](GATE1-VERDICT-ROUND4-20260823-k0-execution-integrity.md)

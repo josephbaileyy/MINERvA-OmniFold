@@ -1,5 +1,11 @@
 # P-5 and P-6 — the entrypoint set, and the blind-spot inventory
 
+> ## ⚠ SUPERSEDED BY THE ROUND-5 REPAIR (2026-08-23) — bound to sha `6113a34d`, which has MOVED.
+> Both artifacts are **re-opened at `f3c27870`** and must be **re-measured, never inherited**
+> (`PACKET-20260823-round5-f2a-f17a-repair.md` §5). `P-5` gains a **FIFTH blind spot** — the
+> `PATH`/`PYTHONPATH`/`LD_LIBRARY_PATH` channel, which the OI-136 guard cannot see on two of its
+> three legs and which `mnv_env_pathcheck.sh` now measures after activation.
+>
 > ## ⚠ P-5 IS INCOMPLETE (2026-08-23). P-6 stands.
 > The round-4 grader reproduced **`P-6` exactly**. **`P-5` omits the two live blind spots on the
 > path:** the `.sh` closure below `setup_salloc_env.sh` being **absent and unsatisfiable**, and

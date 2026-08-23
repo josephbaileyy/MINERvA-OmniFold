@@ -1,5 +1,11 @@
 # DECLARATION — the k=0 submission sha, and A-2(a)–(g) filed against it
 
+> ## ⚠ SUPERSEDED 2026-08-23 — the sha is now `f3c27870`, 778 files, `70fb59d4…`
+> The round-5 repair added three env tools, so this declaration expired exactly as its own clause
+> said: *"falsified by … any `.py`/`.sh` add or delete."* Cite
+> `PACKET-20260823-round5-f2a-f17a-repair.md` §0 instead. Everything below remains a true record of
+> `6113a34d`; it is no longer the executing tree.
+>
 > ## ⚠ TRUE AND VOID — read this before citing anything below (2026-08-23)
 > **Every measurement in this document stands**, and the round-4 grader independently reproduced the
 > digest (`cc00489464b0e803247eeb7cd90afa2f59f010340f6db64123e12b20eafc2239`, 775 files, `A2_CHECK_EXIT=0`).
