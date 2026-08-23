@@ -189,8 +189,32 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: NOTE FOR ANYONE READING THIS ON THE CLUSTER: that checkout resolves untracked scratch receipts
 #: and read 119 against the old 117 (OI-143b). It will now read 120 against 118. The divergence is
 #: pre-existing and per-tree; this change does not create it and does not fix it.
-RECEIPT_BINDING_COUNT = 118
-RECEIPT_BINDING_SHA256 = "b16e9e8e6b451539c1a583daef32ce0cb8d94d92c169856934ec7fd7fba469d7"
+#: MOVED 118 -> 119 ON 2026-08-22, DELIBERATELY, WITH THE REASON AND WITH THE DELTA NAMED.
+#: PR-06 committed the P3S standard lateral packet, which added ONE live binding:
+#:
+#:     nd-unfolding/active_universe_5d/standard/candidate/std_component_manifest.json
+#:       269232245870632884d6e589ac8d7aa9ba7fb4e07d0860e077cbd98fe6de04b5
+#:
+#: bound by `component_manifest_sha256` beside its `component_manifest` sibling in
+#: candidate/p4_standard_validation.json. Both files arrive in the same commit, and the pin is the
+#: point of that receipt: it is what lets a later reader tell the validated component manifest from
+#: a substituted one after the 42.3 GB candidate itself is purged.
+#: THE DELTA WAS ENUMERATED BEFORE THE CONSTANT MOVED, and enumerating it took bisection rather
+#: than a read, which is worth recording: each of the three new candidate JSONs is CLEAN ON ITS OWN
+#: (rc=0, ALL BINDINGS INTACT) and the count moves only when p4_standard_validation.json and
+#: std_component_manifest.json are BOTH present. The binding is a PAIR -- a sha256 in one file
+#: naming a path satisfied by another -- so "which file added it" has no single-file answer, and a
+#: one-at-a-time check would have concluded that nothing did.
+#: AND IT IS POWER-TESTED, so it is not a pin that cannot fail: flipping the last hex digit of
+#: `component_manifest_sha256` makes this file report
+#:   MISMATCH nd-unfolding/active_universe_5d/standard/candidate/std_component_manifest.json  rc 1
+#: measured before the bump, then reverted, not argued.
+#: THE OTHER HALF OF PR-06 MOVED NOTHING: the three updated evidence/*.json are clean on their own
+#: (rc=0), which was checked separately so that one change could not be credited to the other.
+#: CLUSTER NOTE, carried forward and re-based: that checkout resolves untracked scratch receipts and
+#: read 120 against 118. It will now read 121 against 119. Pre-existing and per-tree; unchanged here.
+RECEIPT_BINDING_COUNT = 119
+RECEIPT_BINDING_SHA256 = "09301df6f3bcc110fbe2ce347c0c1c5019416056f139f397caaefc0c8773f240"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

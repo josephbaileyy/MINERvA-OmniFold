@@ -2,103 +2,133 @@
   "endpoints": {
     "BeamAngleX_0": {
       "exists": true,
-      "sha256": "f7a1efe5059fff96ad1fe43fb974954c8d4269aa0b2043c228488deaa98fb1b8",
+      "sha256": "4c2ce06071004a93b5cb79bb91e0c95a0db2c3eba33b69b559023545136f9118",
       "zombie": false,
       "recovered": false,
       "nbins": 65856,
       "finite": true,
-      "sum": 7.803830681010665e-36,
-      "mask_matches_central": true
+      "sum": 7.803830681010923e-36,
+      "mask_matches_central": true,
+      "log_bkg_mode": "purity",
+      "log_bkg_mode_reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "6bcbb47032c16e7455e3c15ecd15f07c1b0e5757320b9750b251863912025109"
     },
     "BeamAngleX_1": {
       "exists": true,
-      "sha256": "ebb1c94fa080e77ef47708d1e8de7250c2c0121320e368c33b904da0472c2533",
+      "sha256": "933c082182957695488d7cdc5d8f754e18f689869d03a7eee11d379cfc630040",
       "zombie": false,
       "recovered": false,
       "nbins": 65856,
       "finite": true,
-      "sum": 7.818599914343706e-36,
-      "mask_matches_central": true
+      "sum": 7.818599914342112e-36,
+      "mask_matches_central": true,
+      "log_bkg_mode": "purity",
+      "log_bkg_mode_reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "b2f0ed6438b7caea23ed2734ae88970baeadced05ac75732f69ea46da72b515b"
     },
     "BeamAngleY_0": {
       "exists": true,
-      "sha256": "546c8836f51e11b720dc26719a5cd8b1c3d2ea38485a51aee6a1eb3faf286895",
+      "sha256": "087d1bd552f2cbc33fa3f964c471eb4f531b047f43c9c5926178d308f40a0e4e",
       "zombie": false,
       "recovered": false,
       "nbins": 65856,
       "finite": true,
-      "sum": 7.802977262269522e-36,
-      "mask_matches_central": true
+      "sum": 7.802977262269588e-36,
+      "mask_matches_central": true,
+      "log_bkg_mode": "purity",
+      "log_bkg_mode_reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "57186e8c362641c58ee44dc27e0221ed1b471257deecfcd93819a0fe15a387ff"
     },
     "BeamAngleY_1": {
       "exists": true,
-      "sha256": "eb1db91db7f6654e99d2811c552fd8188a8f3c26a7c67087b1b3c7ac3fc3636b",
+      "sha256": "c033bed38778f25367c95411bc3dda7c11ff918fac855e47be9db5cf1ffef23b",
       "zombie": false,
       "recovered": false,
       "nbins": 65856,
       "finite": true,
-      "sum": 7.823362497777556e-36,
-      "mask_matches_central": true
+      "sum": 7.823362497800042e-36,
+      "mask_matches_central": true,
+      "log_bkg_mode": "purity",
+      "log_bkg_mode_reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "3b0580350ed8545dc68f779a234a65a43ccb4e3153e653e68a8956fb82f85fd0"
     },
     "MuonResolution_0": {
       "exists": true,
-      "sha256": "c5bdaa6e01be6bc51ce06787e1e7951f2e4e7de5e3923e22b6a0b094faac0873",
+      "sha256": "ebf4004d81137476d965188044331021be8f74ef209ed0866220fee2a3f5b952",
       "zombie": false,
       "recovered": false,
       "nbins": 65856,
       "finite": true,
-      "sum": 7.804874231472407e-36,
-      "mask_matches_central": true
+      "sum": 7.804874231468976e-36,
+      "mask_matches_central": true,
+      "log_bkg_mode": "purity",
+      "log_bkg_mode_reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "364b73af58c701789309c6c7ce2ad4a3083fb8544e87b6c5e17e24b6318d693d"
     },
     "MuonResolution_1": {
       "exists": true,
-      "sha256": "8722bdfe53e84a179671a17e9b0a46951305b03fb65109deecb65a269021efad",
+      "sha256": "2638afdeac2fd3e2dc93725d22bb06804b4292c9645f4a8b97264099a4c9ca09",
       "zombie": false,
       "recovered": false,
       "nbins": 65856,
       "finite": true,
-      "sum": 7.818714217043214e-36,
-      "mask_matches_central": true
+      "sum": 7.818714217043224e-36,
+      "mask_matches_central": true,
+      "log_bkg_mode": "purity",
+      "log_bkg_mode_reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "9094122d13f7c2ab69933c060938f2c4e51aebd0a35137f8f8722f7ecbf907c5"
     },
     "Muon_Energy_MINERvA_0": {
       "exists": true,
-      "sha256": "114b331cca789c1608bfaedef023e202563397965e4b3c83970ea2ea29fead9b",
+      "sha256": "2802759c455b066e981bbc441a330f3b599c096da3c208cb0099c838b71dd6df",
       "zombie": false,
       "recovered": false,
       "nbins": 65856,
       "finite": true,
-      "sum": 7.667905362339527e-36,
-      "mask_matches_central": true
+      "sum": 7.667905362341081e-36,
+      "mask_matches_central": true,
+      "log_bkg_mode": "purity",
+      "log_bkg_mode_reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "c59eb8ed7c43dc69c011afb6b8e46b38fa706fcf83572357a56ad47438e12027"
     },
     "Muon_Energy_MINERvA_1": {
       "exists": true,
-      "sha256": "01257d2aa82d6057d80fd15263079561b8e890612c64c7aedf4d3a20cc20b7ff",
+      "sha256": "de5e18a16b46506ccd5d029f0fabdfc2bba23de9020a177749a5e449a8e874dd",
       "zombie": false,
       "recovered": false,
       "nbins": 65856,
       "finite": true,
-      "sum": 7.949983283611487e-36,
-      "mask_matches_central": true
+      "sum": 7.94998328361509e-36,
+      "mask_matches_central": true,
+      "log_bkg_mode": "purity",
+      "log_bkg_mode_reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "6184ecde8efabe62698cc8990287a86074d57bf750dfbc388750e76e55c0ea1b"
     },
     "Muon_Energy_MINOS_0": {
       "exists": true,
-      "sha256": "b8aa9ce5b3840c0192af852f46b1d2d8dc02a5c84d561a07d8190d4317820c43",
+      "sha256": "3d460c437e193b6b452255565189410e17f49cf30961305d549eabea496c411d",
       "zombie": false,
       "recovered": false,
       "nbins": 65856,
       "finite": true,
-      "sum": 7.639436340510476e-36,
-      "mask_matches_central": true
+      "sum": 7.63943634050939e-36,
+      "mask_matches_central": true,
+      "log_bkg_mode": "purity",
+      "log_bkg_mode_reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "6a14b26af0ff932dfb1934f21555ea6c2c0f826f3362194681e3742b6547f484"
     },
     "Muon_Energy_MINOS_1": {
       "exists": true,
-      "sha256": "a51b767aad57f0c8935c24bf1f0fef2cbdede07e59850e6cb2fd687ae7d11e1b",
+      "sha256": "7461a6c4a8f75ee182bb23226a63b7572b110468b7b8004832a5a11b8d0d144f",
       "zombie": false,
       "recovered": false,
       "nbins": 65856,
       "finite": true,
-      "sum": 7.973822806897408e-36,
-      "mask_matches_central": true
+      "sum": 7.973822806897958e-36,
+      "mask_matches_central": true,
+      "log_bkg_mode": "purity",
+      "log_bkg_mode_reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "5f99c710fc97e486ffade9985d30e5ead84fdc413ffbe16146f2d005d99276a8"
     }
   }
 }

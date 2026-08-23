@@ -1,0 +1,42 @@
+{
+  "gates": [
+    "merged_inseparability",
+    "merged_audit_census_and_migration",
+    "component_manifest_bound",
+    "exact_5_active_bands",
+    "traces_pos_finite",
+    "active_total_eq_sum5",
+    "symmetric_psd",
+    "full_total_identity_recomputed",
+    "band_set_completeness_vs_support_family",
+    "c_syst_recomputed_from_components",
+    "support_trace_ratio_recorded"
+  ],
+  "result": "PASS",
+  "candidate": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/candidate/std_final5_candidate.root",
+  "candidate_sha256": "950f8cb15c5a0bd785d65e7f85f4cb40fa86e27383973f82ef15c7ef525c1263",
+  "component_manifest_sha256": "269232245870632884d6e589ac8d7aa9ba7fb4e07d0860e077cbd98fe6de04b5",
+  "component_manifest": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/candidate/std_component_manifest.json",
+  "active_traces": {
+    "BeamAngleX": 5.46161681583476e-79,
+    "BeamAngleY": 8.858031064704215e-79,
+    "MuonResolution": 7.48142492268435e-79,
+    "Muon_Energy_MINERvA": 8.761528981008667e-77,
+    "Muon_Energy_MINOS": 1.2755638084632411e-76
+  },
+  "active_only_sum_relerr": 0.0,
+  "full_total_identity_relerr": 4.6027194117555535e-14,
+  "c_syst_identity_relerr": 0.0,
+  "n_retained_components": 40,
+  "band_completeness": {
+    "n_required_bands": 45,
+    "n_retained_expected": 40,
+    "n_candidate_keys_expected": 48
+  },
+  "support_comparison": {
+    "sqrt_tr_active": 1.4742855148740122e-38,
+    "sqrt_tr_support": 1.474709838719496e-38,
+    "ratio": 0.9997122662137712
+  },
+  "support_ratio_is_diagnostic_not_bounded": true
+}

@@ -1,7 +1,7 @@
 {
   "grid_nbins": 65856,
   "corder": "C",
-  "code_rev": "721b6003d2ffae8db291f10f1a90d216e20ba1b1",
+  "code_rev": "5fb7e38bf5e6f41a86f8860413820fa3d907420c",
   "central5d_sha256": "630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a952820aec8",
   "central4d_sha256": "1fb8250820c00428fc547cb05aa95535023146723acdccb61f615f3fa763f9d2",
   "mask5d_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
@@ -9,18 +9,18 @@
   "mask4d_hash": "c977c643d4017a3cc909f85e7f2725b4a96a0060a5b79b56294c231290039d25",
   "mask4d_nreported": 4830,
   "endpoint_sha256": {
-    "BeamAngleX_0": "f7a1efe5059fff96ad1fe43fb974954c8d4269aa0b2043c228488deaa98fb1b8",
-    "BeamAngleX_1": "ebb1c94fa080e77ef47708d1e8de7250c2c0121320e368c33b904da0472c2533",
-    "BeamAngleY_0": "546c8836f51e11b720dc26719a5cd8b1c3d2ea38485a51aee6a1eb3faf286895",
-    "BeamAngleY_1": "eb1db91db7f6654e99d2811c552fd8188a8f3c26a7c67087b1b3c7ac3fc3636b",
-    "MuonResolution_0": "c5bdaa6e01be6bc51ce06787e1e7951f2e4e7de5e3923e22b6a0b094faac0873",
-    "MuonResolution_1": "8722bdfe53e84a179671a17e9b0a46951305b03fb65109deecb65a269021efad",
-    "Muon_Energy_MINERvA_0": "114b331cca789c1608bfaedef023e202563397965e4b3c83970ea2ea29fead9b",
-    "Muon_Energy_MINERvA_1": "01257d2aa82d6057d80fd15263079561b8e890612c64c7aedf4d3a20cc20b7ff",
-    "Muon_Energy_MINOS_0": "b8aa9ce5b3840c0192af852f46b1d2d8dc02a5c84d561a07d8190d4317820c43",
-    "Muon_Energy_MINOS_1": "a51b767aad57f0c8935c24bf1f0fef2cbdede07e59850e6cb2fd687ae7d11e1b"
+    "BeamAngleX_0": "4c2ce06071004a93b5cb79bb91e0c95a0db2c3eba33b69b559023545136f9118",
+    "BeamAngleX_1": "933c082182957695488d7cdc5d8f754e18f689869d03a7eee11d379cfc630040",
+    "BeamAngleY_0": "087d1bd552f2cbc33fa3f964c471eb4f531b047f43c9c5926178d308f40a0e4e",
+    "BeamAngleY_1": "c033bed38778f25367c95411bc3dda7c11ff918fac855e47be9db5cf1ffef23b",
+    "MuonResolution_0": "ebf4004d81137476d965188044331021be8f74ef209ed0866220fee2a3f5b952",
+    "MuonResolution_1": "2638afdeac2fd3e2dc93725d22bb06804b4292c9645f4a8b97264099a4c9ca09",
+    "Muon_Energy_MINERvA_0": "2802759c455b066e981bbc441a330f3b599c096da3c208cb0099c838b71dd6df",
+    "Muon_Energy_MINERvA_1": "de5e18a16b46506ccd5d029f0fabdfc2bba23de9020a177749a5e449a8e874dd",
+    "Muon_Energy_MINOS_0": "3d460c437e193b6b452255565189410e17f49cf30961305d549eabea496c411d",
+    "Muon_Energy_MINOS_1": "7461a6c4a8f75ee182bb23226a63b7572b110468b7b8004832a5a11b8d0d144f"
   },
-  "endpoint_manifest_hash": "af568b4a2bb2f08e66e7a4380cb0c5b9af72a37ddec94a5b3297c2f50d999c54",
+  "endpoint_manifest_hash": "8d148bbe18ebf66d4d4e3e259f42ccfd0f2a65e1de5b9e866d324a3325248fda",
   "config": {
     "axes": "eavail,q3,W",
     "iters": 5,
@@ -28,27 +28,89 @@
     "estimator": "lgbm",
     "use_weights": true,
     "universe": null,
+    "bkg_mode": "purity",
     "full_phase_space_reported_grid": 65856
   },
-  "config_hash": "5efd31a4250a9084864e091ed6f8bd28ae81b029a747c3c2cd4e1fd5b6358917",
+  "config_hash": "4b41fab90a83df08b57361cec4e769447815afe4f751c9f57848a022bf06a382",
+  "footing": {
+    "estimator": "lgbm",
+    "seed": 42,
+    "iters": 5,
+    "use_weights": true,
+    "full_phase_space": false,
+    "bkg_mode": "purity"
+  },
+  "footing_evidence": {
+    "BeamAngleX_0": {
+      "log_bkg_mode": "purity",
+      "reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "6bcbb47032c16e7455e3c15ecd15f07c1b0e5757320b9750b251863912025109"
+    },
+    "BeamAngleX_1": {
+      "log_bkg_mode": "purity",
+      "reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "b2f0ed6438b7caea23ed2734ae88970baeadced05ac75732f69ea46da72b515b"
+    },
+    "BeamAngleY_0": {
+      "log_bkg_mode": "purity",
+      "reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "57186e8c362641c58ee44dc27e0221ed1b471257deecfcd93819a0fe15a387ff"
+    },
+    "BeamAngleY_1": {
+      "log_bkg_mode": "purity",
+      "reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "3b0580350ed8545dc68f779a234a65a43ccb4e3153e653e68a8956fb82f85fd0"
+    },
+    "MuonResolution_0": {
+      "log_bkg_mode": "purity",
+      "reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "364b73af58c701789309c6c7ce2ad4a3083fb8544e87b6c5e17e24b6318d693d"
+    },
+    "MuonResolution_1": {
+      "log_bkg_mode": "purity",
+      "reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "9094122d13f7c2ab69933c060938f2c4e51aebd0a35137f8f8722f7ecbf907c5"
+    },
+    "Muon_Energy_MINERvA_0": {
+      "log_bkg_mode": "purity",
+      "reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "c59eb8ed7c43dc69c011afb6b8e46b38fa706fcf83572357a56ad47438e12027"
+    },
+    "Muon_Energy_MINERvA_1": {
+      "log_bkg_mode": "purity",
+      "reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "6184ecde8efabe62698cc8990287a86074d57bf750dfbc388750e76e55c0ea1b"
+    },
+    "Muon_Energy_MINOS_0": {
+      "log_bkg_mode": "purity",
+      "reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "6a14b26af0ff932dfb1934f21555ea6c2c0f826f3362194681e3742b6547f484"
+    },
+    "Muon_Energy_MINOS_1": {
+      "log_bkg_mode": "purity",
+      "reason": "no bkg-mode announcement + build_measured_training_nd signature present => purity branch (the silent branch)",
+      "log_sha256": "5f99c710fc97e486ffade9985d30e5ead84fdc413ffbe16146f2d005d99276a8"
+    }
+  },
   "source_blobs": {
-    "unfold": "7b65ebcf0b343d2d09269f4de8b7b251eacef859",
+    "unfold": "dc74c38f8ec7b5f6723fa231630e9fc43e7a93f0",
     "omnifold": "5966663bfe88809fd245d4dd2edb472eb6514480",
     "xsec": "75aacef48ae8f01d635f73ddc3666af3c8c5a4b4",
-    "launcher": "559bc3fb78082c433886d4d860fbee9d777632b9",
-    "evidence_generator": "780708f64591ec978ac2837398c70d27abd4f280",
-    "builder": "01bdce480acbdacc502c64bdf45fc65a955a68ad"
+    "launcher": "f2a49e7d40a43778db7e332322eb2734377234c3",
+    "evidence_generator": "495056504449e79993de3d7843cafc2d68b9dccf",
+    "builder": "d98e85c37506d9e5af3d443661eba4b2f17738e3"
   },
   "source_commits": {
-    "unfold": "07c18aee030888613da0bfa6811a9739ad037f46",
-    "omnifold": "21f2a003010c4440ce71d6d57db45689b724d1c6",
+    "unfold": "b596b3cef90b48e6774f3669b15ac883b00ceaaf",
+    "omnifold": "541dd48ce05119d465e2b1b2818903cb34e94d90",
     "xsec": "21f2a003010c4440ce71d6d57db45689b724d1c6",
-    "launcher": "2393ac2bcc2d64a9194792d04d4314a293d0755a",
-    "evidence_generator": "9428ca8df387735749d75dcd9832d8f27433263c",
-    "builder": "9428ca8df387735749d75dcd9832d8f27433263c"
+    "launcher": "069c3b84ef06abf8546691b616e4eebe4373b0aa",
+    "evidence_generator": "d4a22e21e2bcebc087f58949b885e757441bb9d4",
+    "builder": "dd01fa36cf5f8b2ce5ebf466921708d2ac87db74"
   },
-  "binary_sha256": "6b60fc51a0838e51e44a25eb48d54661efbddcf8aad47899623589984cccc04d",
-  "binary_mtime": 1784119877.0,
+  "binary_sha256": "61d7dfbf7ee38f39e51c656b48702056c773c3d1c5d1b2d9bf08a6da42d2e19b",
+  "binary_mtime": 1784410610.0,
+  "binary_sha256_semantics": "hash of the binary present at evidence-generation time; NOT proof that this binary produced the merged inputs",
   "axis_edges": [
     [
       0.0,
@@ -133,10 +195,56 @@
   },
   "merged_hash_list_digest": "6e6c4752842f3a254053f0c11ad53b836208ec856aa74dbfb50c74bca56c8dd0",
   "merged_receipt_dir": "docs/orchestration/state/merged-input-hashes/p4-merged-20260718",
+  "endpoint_reproduction": {
+    "BeamAngleX_0": {
+      "max_rel_bin": 5.154880024477235e-13,
+      "rel_integral": 3.3084646133829665e-14
+    },
+    "BeamAngleX_1": {
+      "max_rel_bin": 6.009664162541735e-12,
+      "rel_integral": 2.0394796962364126e-13
+    },
+    "BeamAngleY_0": {
+      "max_rel_bin": 4.817213992580782e-13,
+      "rel_integral": 8.43769498715119e-15
+    },
+    "BeamAngleY_1": {
+      "max_rel_bin": 1.8306972169305224e-11,
+      "rel_integral": 2.8741453661496053e-12
+    },
+    "MuonResolution_0": {
+      "max_rel_bin": 3.3847571010059225e-12,
+      "rel_integral": 4.3953729544909947e-13
+    },
+    "MuonResolution_1": {
+      "max_rel_bin": 7.740291496571691e-13,
+      "rel_integral": 1.1102230246251565e-15
+    },
+    "Muon_Energy_MINERvA_0": {
+      "max_rel_bin": 2.7552019206049036e-12,
+      "rel_integral": 2.0272672429655358e-13
+    },
+    "Muon_Energy_MINERvA_1": {
+      "max_rel_bin": 2.240482359075124e-12,
+      "rel_integral": 4.531930386519889e-13
+    },
+    "Muon_Energy_MINOS_0": {
+      "max_rel_bin": 4.319584596380405e-12,
+      "rel_integral": 1.4221956945448255e-13
+    },
+    "Muon_Energy_MINOS_1": {
+      "max_rel_bin": 1.8194901124565848e-11,
+      "rel_integral": 6.88338275267597e-14
+    }
+  },
+  "endpoint_reference_dir": "nd-unfolding/active_universe_5d/standard/unfolds__SUPERSEDED_20260718",
+  "endpoint_reproduction_tolerance": {
+    "per_bin": 1e-09,
+    "integral": 1e-11
+  },
   "verifier_crosscheck": {
     "central5d": true,
     "mask5d": true,
-    "endpoint_manifest": true,
     "central4d": true,
     "mask4d": true
   }
