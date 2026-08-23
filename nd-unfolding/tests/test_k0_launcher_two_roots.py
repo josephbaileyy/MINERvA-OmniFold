@@ -852,3 +852,194 @@ class TheENVIRONMENTIsItsOwnRootAndIsVerifiedBEFOREItIsSourced(LauncherFixture):
                 t = (ND / sh).read_text()
                 self.assertNotIn('source "${CODE_ROOT}/setup_salloc_env.sh"', t)
                 self.assertIn('source "${ENV_ROOT}/setup_salloc_env.sh"', t)
+
+
+# =================================================================================================
+# ROUND-7 / F-2(a): PRE-USE GIT PARITY FOR EVERY TRACKED FILE THE PREAMBLE SOURCES
+#
+# Joseph's ruling 2026-08-23 (DECISION-20260823-joseph-a2f-does-not-substitute-for-a3.md):
+# A-2(f) DOES NOT SUBSTITUTE FOR A-3 EXECUTING-FILE PARITY. Round 6 sourced two TRACKED libraries
+# from the code root with no gate of their own, 77-193 lines before the source-manifest comparison
+# that was supposed to cover them -- while the pure-git gate sat 17 lines above, naming only
+# lib/resume_guard.sh.
+#
+# FOUR ARM DIRECTIONS, because a guard needs a test that it FIRES and a narrowing needs a test that
+# it does NOT, and neither says anything about ORDER:
+#   (1) SILENT ON GOOD      -- clean tree, no parity complaint, launcher proceeds
+#   (2) FIRES ON BAD        -- each of the three mutated, refused by name, exit 3
+#   (3) OPPOSITE DIRECTION  -- a file that cannot be hashed refuses too ("could not run" != "passed"),
+#                              and a tracked file the preamble does NOT source is left alone
+#   (4) BEFORE, NOT AFTER   -- dynamic: the mutation IS the marker, so marker absence proves the
+#                              refusal beat the source. Round 5 shipped an ordering defect through
+#                              34 green arms because every arm was textual.
+# =================================================================================================
+PARITY_LIBS = ("lib/resume_guard.sh",
+               "nd-unfolding/lib_mnv_env_preflight.sh",
+               "nd-unfolding/lib_mnv_env_pathcheck.sh")
+
+
+class EveryTrackedSourcedFileIsGitBoundBEFOREAnyOfThemIsSourced(LauncherFixture):
+
+    def _rewrite(self, rel, text):
+        """Rewrite a protected tracked file in the code root, restoring protection after."""
+        self.set_protection(False)
+        (self.code / rel).write_text(text)
+        self.set_protection(True)
+
+    def _append(self, rel, extra):
+        self.set_protection(False)
+        p = self.code / rel
+        p.write_text(p.read_text() + extra)
+        self.set_protection(True)
+
+    def _remove(self, rel):
+        self.set_protection(False)
+        (self.code / rel).unlink()
+        self.set_protection(True)
+
+    # ---- (1) SILENT ON GOOD ---------------------------------------------------------------------
+    def test_the_parity_gate_is_SILENT_when_all_three_match_HEAD(self):
+        """The arm that a guard-only test set cannot supply. If this ever fails, the gate refuses a
+        correct tree -- a wrong refusal, which is worse than the defect it was added for."""
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                cp = self.run_launcher(sh, self.good_env())
+                self.assertNotIn("cannot compute git parity", cp.stderr)
+                self.assertNotIn("differs from HEAD", cp.stderr)
+                self.assertEqual(cp.returncode, 0, cp.stdout + cp.stderr)
+
+    # ---- (2) FIRES ON BAD -----------------------------------------------------------------------
+    def test_a_mutation_to_ANY_of_the_three_is_REFUSED_by_name(self):
+        for rel in PARITY_LIBS:
+            for sh, _e, _t in LAUNCHERS:
+                with self.subTest(library=rel, launcher=sh):
+                    self._append(rel, "\n# tampered\n")
+                    try:
+                        cp = self.run_launcher(sh, self.good_env())
+                        self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
+                        self.assertIn(rel, cp.stderr)
+                        self.assertIn("differs from HEAD", cp.stderr)
+                    finally:
+                        self.set_protection(False)
+                        subprocess.run(["git", "-C", str(self.code), "checkout", "--", rel],
+                                       capture_output=True, text=True)
+                        self.set_protection(True)
+
+    # ---- (3) OPPOSITE DIRECTION -----------------------------------------------------------------
+    def test_a_library_that_cannot_be_HASHED_is_refused_not_waved_through(self):
+        """`hash-object` on a missing file yields the empty string. A one-directional check that
+        only compares two values would treat empty == empty as agreement and pass."""
+        for rel in PARITY_LIBS:
+            with self.subTest(library=rel):
+                self._remove(rel)
+                try:
+                    cp = self.run_launcher(LAUNCHERS[0][0], self.good_env())
+                    self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
+                    self.assertIn(rel, cp.stderr)
+                    self.assertIn("could not run is not a check that passed", cp.stderr)
+                finally:
+                    self.set_protection(False)
+                    subprocess.run(["git", "-C", str(self.code), "checkout", "--", rel],
+                                   capture_output=True, text=True)
+                    self.set_protection(True)
+
+    def test_the_gate_does_NOT_fire_on_a_tracked_file_the_preamble_never_sources(self):
+        """The narrowing arm. A blanket 'is the tree clean' check would pass every arm above and be
+        a different, wrong gate -- A-2(g)'s job, not this one's."""
+        self._append("VALIDATION_LEDGER.md", "\nnot a sourced file\n")
+        cp = self.run_launcher(LAUNCHERS[0][0], self.good_env())
+        # THE PARITY GATE IS SILENT. It is scoped to the three files the preamble sources, and a
+        # dirty ledger is none of them.
+        self.assertNotIn("differs from HEAD", cp.stderr)
+        self.assertNotIn("cannot compute git parity", cp.stderr)
+        # AND THE TREE IS STILL REFUSED -- by the LATER source-manifest gate, which is the one whose
+        # job whole-tree cleanliness is. Asserting only silence would leave "the parity gate got
+        # narrower and nothing else covers this" indistinguishable from a correct narrowing, so the
+        # arm names the gate that DOES cover it.
+        self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
+        self.assertIn("[srcman] REFUSING", cp.stderr)
+        # ...and it got there THROUGH a clean parity gate and a sourced resume_guard, which is the
+        # positive half of this arm: the preamble ran to completion and the later gate caught it.
+        self.assertIn("[env-preflight] OK", cp.stdout + cp.stderr)
+        self.assertIn("VALIDATION_LEDGER.md", cp.stderr)
+
+    # ---- (4) BEFORE, NOT AFTER ------------------------------------------------------------------
+    def test_the_refusal_happens_BEFORE_the_library_is_sourced__dynamically(self):
+        """THE MUTATION IS THE MARKER. Appending a line that writes a file both (a) changes the blob
+        so the gate must refuse and (b) leaves physical evidence if the library was sourced anyway.
+        An exit code alone cannot distinguish 'refused before' from 'sourced, then refused'."""
+        for rel in PARITY_LIBS:
+            with self.subTest(library=rel):
+                marker = self.data / f"SOURCED-{rel.replace('/', '_')}"
+                self.assertFalse(marker.exists())
+                self._append(rel, f'\n: > "{marker}"\n')
+                try:
+                    cp = self.run_launcher(LAUNCHERS[0][0], self.good_env())
+                    self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
+                    self.assertFalse(marker.exists(),
+                                     f"{rel} WAS SOURCED before/despite the parity refusal")
+                finally:
+                    self.set_protection(False)
+                    subprocess.run(["git", "-C", str(self.code), "checkout", "--", rel],
+                                   capture_output=True, text=True)
+                    self.set_protection(True)
+                    if marker.exists():
+                        marker.unlink()
+
+    def test_the_NEGATIVE_CONTROL_marker_DOES_appear_when_the_library_is_allowed_to_run(self):
+        """Proves the marker mechanism can fire at all. Without this, every assertFalse above would
+        also pass if the append silently never happened -- a fixture that cannot detect the thing it
+        is asserting the absence of."""
+        marker = self.data / "SOURCED-negative-control"
+        self._append("nd-unfolding/lib_mnv_env_preflight.sh", f'\n: > "{marker}"\n')
+        self.set_protection(False)
+        subprocess.run(["git", "-C", str(self.code), "add", "-A"], capture_output=True, text=True)
+        subprocess.run(["git", "-C", str(self.code), "-c", "user.name=f", "-c", "user.email=f@f",
+                        "commit", "-qm", "accept the marker into HEAD"],
+                       capture_output=True, text=True)
+        self.set_protection(True)
+        cp = self.run_launcher(LAUNCHERS[0][0], self.good_env())
+        self.assertNotIn("differs from HEAD", cp.stderr)
+        self.assertTrue(marker.exists(),
+                        "the marker never appears even when parity HOLDS -- the arms above prove "
+                        f"nothing. stdout+stderr: {cp.stdout + cp.stderr}")
+
+    # ---- STRUCTURE: the loop is inline, identical, and ahead of every source --------------------
+    def test_the_gate_covers_EXACTLY_the_three_and_names_them(self):
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                t = (ND / sh).read_text()
+                for rel in PARITY_LIBS:
+                    self.assertIn(rel, t.split("done\nunset _mnv_rel")[0])
+
+    def test_the_parity_block_is_BYTE_IDENTICAL_in_all_eight(self):
+        blocks = set()
+        for sh, _e, _t in LAUNCHERS:
+            t = (ND / sh).read_text()
+            s = t.index("# (1) EVERY TRACKED FILE")
+            e = t.index("unset _mnv_rel _mnv_head _mnv_work")
+            blocks.add(t[s:e])
+        self.assertEqual(len(blocks), 1, f"{len(blocks)} distinct parity blocks across eight launchers")
+
+    def test_no_launcher_sources_ANY_of_the_three_before_the_parity_loop(self):
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                lines = (ND / sh).read_text().splitlines()
+                gate = next(i for i, l in enumerate(lines) if l.startswith("for _mnv_rel in "))
+                done = next(i for i, l in enumerate(lines)
+                            if l.startswith("unset _mnv_rel _mnv_head _mnv_work"))
+                for rel in PARITY_LIBS:
+                    for i, l in enumerate(lines):
+                        if l.strip().startswith("source ") and rel in l:
+                            self.assertGreater(i, done,
+                                               f"{sh}: {rel} sourced at :{i+1}, gate ends :{done+1}")
+                self.assertLess(gate, done)
+
+    def test_the_parity_check_is_INLINE_and_not_delegated_to_a_sourced_helper(self):
+        """A helper doing this check would itself execute unbound -- F-2(a) one level down."""
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                lines = (ND / sh).read_text().splitlines()
+                gate = next(i for i, l in enumerate(lines) if l.startswith("for _mnv_rel in "))
+                head = [l for l in lines[:gate] if l.strip().startswith(("source ", ". "))]
+                self.assertEqual(head, [], f"{sh}: sources something before the parity gate: {head}")

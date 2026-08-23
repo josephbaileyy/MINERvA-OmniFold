@@ -42,6 +42,14 @@ starts, so no Python-side work reaches it. They now take **two mandatory variabl
 | `MNV_DATA_ROOT` | inputs and products | the canonical checkout `/pscratch/sd/j/josephrb/MINERvA-OmniFold` is acceptable **in this role only**; nothing is executed or imported from it |
 | `MNV_GUARD_INVENTORY_DIR` | run-scoped directory for the OI-136 resolved-origin records | added round 2. One file per guarded process. A guarded run that emits no record establishes nothing, so this is REQUIRED |
 | `MNV_SOURCE_MANIFEST` | the A-2(f) source manifest recorded from `MNV_CODE_ROOT` **before the first `sbatch`** | added round 2. Compared on every leg; a moved source byte aborts before any Python starts |
+| `MNV_ENV_ROOT` | the activation closure's own root, **outside every checkout** | added round 5, round-4 `F-2(a)`. No default. Its 14 members are digest-verified in pure bash BEFORE the activator is sourced |
+| `MNV_CONDA_PREFIX` | the conda env whose `activate.d/*.sh` the manifest binds | added round 5. No default: binding the activator's bytes does not determine which conda runs |
+
+**`MNV_SOURCE_MANIFEST` does not cover the files the preamble SOURCES.** It is compared far below,
+after those bytes have already executed. Every tracked file sourced by the preamble
+(`lib/resume_guard.sh`, `nd-unfolding/lib_mnv_env_preflight.sh`, `nd-unfolding/lib_mnv_env_pathcheck.sh`)
+gets **pre-use git parity** in the launcher's own inline loop — Joseph's ruling of 2026-08-23,
+`DECISION-20260823-joseph-a2f-does-not-substitute-for-a3.md`: **A-2(f) does not substitute for A-3.**
 
 **A-2(c)(d)(e)(g) ARE ENFORCED FROM ROUND 3, not documented.** Every launcher runs, before anything
 else and failing closed at each step:
@@ -404,10 +412,23 @@ Two consequences, and they point in opposite directions:
 
 ```bash
 ssh saul.nersc.gov
-# BOTH ROOTS ARE MANDATORY AND NEITHER IS DEFAULTED. Set them in the SUBMITTING shell; sbatch
+# THREE ROOTS, ALL MANDATORY AND NONE DEFAULTED. Set them in the SUBMITTING shell; sbatch
 # propagates the environment, and the launcher refuses to start without them.
 export MNV_CODE_ROOT=<the approved clean tree at the declared sha>   # section 0b-i
 export MNV_DATA_ROOT=/pscratch/sd/j/josephrb/MINERvA-OmniFold        # DATA ROLE ONLY
+# THE ENVIRONMENT IS ITS OWN ROOT (round-4 F-2(a)). It must be a REAL directory OUTSIDE every
+# checkout: `.gitignore` excludes `MINERvA101/**` and `unbinned_unfolding/**`, so any tree that
+# satisfies A-2 NECESSARILY lacks the activation closure. There is no default, deliberately -- a
+# default would be the hardcode wearing a flag, and it would resolve back into a checkout on the
+# one tree where that matters. A DIRECTORY symlink is acceptable; a FILE symlink breaks SCRIPT_DIR.
+export MNV_ENV_ROOT=/pscratch/sd/j/josephrb/k0env
+# The conda env whose activate.d scripts the manifest binds. Mandatory for the same reason:
+# ROOT628_PREFIX used to be env-overridable, so verifying the activator bytes did not determine
+# which conda actually executed.
+export MNV_CONDA_PREFIX=/global/u2/j/josephrb/.conda/envs/root_6_28
+# Optional; defaults to ${MNV_CODE_ROOT}/nd-unfolding/mnv_env_manifest.tsv. Set it only to point at
+# a manifest outside the code root.
+# export MNV_ENV_MANIFEST=<path to mnv_env_manifest.tsv>
 export MNV_GUARD_INVENTORY_DIR=<a run-scoped directory>              # one record per process
 export MNV_SOURCE_MANIFEST=<the A-2(f) manifest, written BEFORE this> # see 0b-0
 # Written once, before the first submission, from the code root itself:

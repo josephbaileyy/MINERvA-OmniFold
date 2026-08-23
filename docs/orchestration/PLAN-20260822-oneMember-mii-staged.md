@@ -415,12 +415,14 @@ A-1 and B-5. **This amendment authorizes nothing.** Ruling 19's scope note stand
 these rulings authorizes a Slurm submission, the full family, `C_ML`, or a scientific adoption."*
 Nothing here is submitted until the fresh non-builder reviewer records a PASS against the contract.
 
-## C-1. The two roots, both mandatory
+## C-1. The three roots, all mandatory
 
 | variable | role | rule |
 |---|---|---|
 | `MNV_CODE_ROOT` | the approved clean execution tree | every `.sh` sourced and every `.py` executed or imported resolves under it; `git status --porcelain` empty at a declared sha, re-verified after the last leg |
 | `MNV_DATA_ROOT` | inputs and products | `/pscratch/sd/j/josephrb/MINERvA-OmniFold` is acceptable **in this role only**; nothing is executed or imported from it |
+| `MNV_ENV_ROOT` | the activation closure | a REAL directory **outside every checkout**; 14 members digest-verified in pure bash before the activator is sourced. A directory symlink is acceptable, a file symlink is not |
+| `MNV_CONDA_PREFIX` | the conda env the closure activates | binds the `activate.d/*.sh` set; without it, verifying the activator's bytes does not determine which conda runs |
 
 Neither has a default and neither may acquire one: a default is the hardcode wearing a flag. The
 constitution checklist for `MNV_CODE_ROOT` — the (a)–(g) table, and the `MNV_LAUNCHER_DIR` rule — is
@@ -433,14 +435,24 @@ is not restated here, so it has one home.
 ssh saul.nersc.gov
 export MNV_CODE_ROOT=<the approved clean tree at the declared sha>
 export MNV_DATA_ROOT=/pscratch/sd/j/josephrb/MINERvA-OmniFold
+export MNV_ENV_ROOT=/pscratch/sd/j/josephrb/k0env         # OUTSIDE every checkout; no default
+export MNV_CONDA_PREFIX=/global/u2/j/josephrb/.conda/envs/root_6_28   # no default
+export MNV_GUARD_INVENTORY_DIR=<a run-scoped directory>   # one record per guarded process
+export MNV_SOURCE_MANIFEST=<the A-2(f) manifest>          # written before the first sbatch
 export MNV_LAUNCHER_DIR="${MNV_CODE_ROOT}/nd-unfolding"   # sbatch runs a spool COPY of the script
 export MNV_EST_SEED_OFFSET=0          # canonical integer, NO leading zeros (lib_member_resume.sh:63)
-source "${MNV_CODE_ROOT}/setup_salloc_env.sh"             # from the CODE root, never the data root
 cd "${MNV_DATA_ROOT}/nd-unfolding"                        # products land here
 ```
 
-`sbatch` propagates the environment, so both roots reach the job. Each launcher re-reads them and
-refuses to start if either is unset **or empty**.
+`sbatch` propagates the environment, so all three roots reach the job. Each launcher re-reads them
+and refuses to start if any is unset **or empty**.
+
+**THE SUBMITTING SHELL NO LONGER SOURCES THE ACTIVATOR, AND MUST NOT.** This block previously ran
+`source "${MNV_CODE_ROOT}/setup_salloc_env.sh"` — from the *code* root, which is the round-4 `F-2(a)`
+finding verbatim: `.gitignore` excludes the closure, so any A-2-satisfying tree lacks that file and
+the line dies at exit 1. Each launcher now sources the activator from `${MNV_ENV_ROOT}` itself, after
+verifying all 14 closure members by digest. A submitting shell that pre-activates would also mask an
+environment fault that the job must catch on its own.
 
 ## C-3. Independent roots — submit together
 

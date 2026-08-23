@@ -54,21 +54,39 @@ ENV_ROOT="${MNV_ENV_ROOT:?set MNV_ENV_ROOT to the verified environment tree -- a
 ENV_MANIFEST="${MNV_ENV_MANIFEST:-${CODE_ROOT}/nd-unfolding/mnv_env_manifest.tsv}"
 : "${MNV_CONDA_PREFIX:?set MNV_CONDA_PREFIX to the conda env whose activate.d scripts the manifest binds. It has no default: ROOT628_PREFIX used to be env-overridable, so verifying the activator bytes did not determine which conda executed.}"
 
-# (1) lib/resume_guard.sh is TRACKED, so git binds it -- verified before it is sourced.
-_mnv_head="$(git -C "$CODE_ROOT" rev-parse "HEAD:lib/resume_guard.sh" 2>/dev/null || true)"
-_mnv_work="$(git -C "$CODE_ROOT" hash-object "${CODE_ROOT}/lib/resume_guard.sh" 2>/dev/null || true)"
-if [[ -z "$_mnv_head" || -z "$_mnv_work" ]]; then
-  echo "[preflight] FAIL: cannot compute git parity for lib/resume_guard.sh under ${CODE_ROOT}" >&2
-  echo "[preflight]   A check that could not run is not a check that passed." >&2
-  exit 3
-fi
-if [[ "$_mnv_head" != "$_mnv_work" ]]; then
-  echo "[preflight] FAIL: lib/resume_guard.sh differs from HEAD in ${CODE_ROOT}" >&2
-  echo "[preflight]   HEAD=${_mnv_head}  working=${_mnv_work}" >&2
-  echo "[preflight]   It is SOURCED below. Refusing to execute unverified bytes." >&2
-  exit 3
-fi
-unset _mnv_head _mnv_work
+# (1) EVERY TRACKED FILE THIS PREAMBLE SOURCES IS GIT-BOUND BEFORE ANY OF THEM IS SOURCED.
+#     Round-6 F-2(a) and Joseph's ruling 2026-08-23 (DECISION-20260823-joseph-a2f-does-not-substitute
+#     -for-a3.md): A-2(f) DOES NOT SUBSTITUTE FOR A-3 executing-file parity. A tracked file that
+#     EXECUTES before the later source-manifest comparison requires PRE-USE parity -- and that
+#     comparison runs far below, which is too late for bytes that have already run. Round 6 shipped
+#     the two environment libraries sourced from the code root with no gate of their own while this
+#     very block sat 17 lines above them, naming only lib/resume_guard.sh. All three are TRACKED, so
+#     git binds them; the closure files under ENV_ROOT are NOT tracked, which is why they get the
+#     digest manifest in (2) instead and cannot use this route.
+#     NO SOURCED HELPER, DELIBERATELY. A helper performing this check would itself execute before
+#     anything bound ITS bytes -- F-2(a) reproduced exactly, one level down. The loop is inline in
+#     all eight launchers for that reason; the duplication is the point, and a test asserts the eight
+#     copies are identical.
+#     THE LOOP VERIFIES ALL THREE BEFORE IT SOURCES ANY. Verifying each immediately before its own
+#     source would still leave file 2 unverified while file 1 executes.
+for _mnv_rel in lib/resume_guard.sh \
+                nd-unfolding/lib_mnv_env_preflight.sh \
+                nd-unfolding/lib_mnv_env_pathcheck.sh; do
+  _mnv_head="$(git -C "$CODE_ROOT" rev-parse "HEAD:${_mnv_rel}" 2>/dev/null || true)"
+  _mnv_work="$(git -C "$CODE_ROOT" hash-object "${CODE_ROOT}/${_mnv_rel}" 2>/dev/null || true)"
+  if [[ -z "$_mnv_head" || -z "$_mnv_work" ]]; then
+    echo "[preflight] FAIL: cannot compute git parity for ${_mnv_rel} under ${CODE_ROOT}" >&2
+    echo "[preflight]   A check that could not run is not a check that passed." >&2
+    exit 3
+  fi
+  if [[ "$_mnv_head" != "$_mnv_work" ]]; then
+    echo "[preflight] FAIL: ${_mnv_rel} differs from HEAD in ${CODE_ROOT}" >&2
+    echo "[preflight]   HEAD=${_mnv_head}  working=${_mnv_work}" >&2
+    echo "[preflight]   It is SOURCED below. Refusing to execute unverified bytes." >&2
+    exit 3
+  fi
+done
+unset _mnv_rel _mnv_head _mnv_work
 
 # (2) The environment closure is digest-verified BEFORE the activator is sourced. Pure bash: this
 #     runs before conda exists, and the pre-conda /usr/bin/python3 on saul is 3.6.15.
