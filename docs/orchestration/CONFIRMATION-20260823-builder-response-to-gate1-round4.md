@@ -254,3 +254,40 @@ correction.
 This is the third instance today of a write-up reproducing its own subject, after the harness that
 excluded itself and the brief that re-created its own false hits. It is the normal case here, not an
 unlucky one: every measurement runs over the repo and every finding is written into it.
+
+---
+
+## 9. A BETTER INSTRUMENT FOR A LANDED ARTIFACT — strip the declared edit, reproduce the digest
+
+The grader closed by running a check neither of us had run, and it is stronger than what we had.
+
+**Both of us had been verifying the landed verdict by INSPECTING THE DIFF** — "the only change is the
+erratum banner". That is an argument about what a diff *looks like*. The better instrument:
+
+```
+strip the 20-line erratum banner (lines 3-22) from the landed file
+  -> sha256 55e6b7710091405585cf50b7c0eebe8761cfa0a7cbbc0da1c0b3f2e92e79cdf4
+  -> IDENTICAL to the grader's original artifact digest
+```
+
+**Reproduced independently by this lane, not accepted on report.** It proves the body is verbatim
+rather than arguing it, and it fails closed: a single altered character anywhere in the 529 lines
+changes the digest, whereas a diff can be read past.
+
+> **The general form, worth using for any landed third-party artifact with a declared single edit:
+> STRIP THE DECLARED EDIT AND REPRODUCE THE ORIGINAL DIGEST.** "The diff shows only my banner" and
+> "the original bytes are still all there" are different claims, and only the second is what a reader
+> of a relayed artifact needs.
+
+**And the method symmetry both lanes agreed on:** *diff the landing against the source* is the
+default **in both directions**. The grader found this round's two defects that way after a careful
+read had passed over them; this lane should apply it to the grader's landings rather than trust its
+reports, and has said so.
+
+**One correction to §8's attribution, made in the direction that costs this lane something.** The
+grader credits the sharper half of the seam rule to this lane — that the self-reference is *the normal
+case* here rather than bad luck, because every measurement runs over the repo and every finding is
+written into it, so the seam check is not tidiness but **the only instrument that covers the class**.
+That framing is accepted, and it is recorded that **the observation itself came from the grader**;
+this lane generalised a coincidence the grader had already spotted. Both halves belong in the record
+and neither lane should be cited alone for it.
