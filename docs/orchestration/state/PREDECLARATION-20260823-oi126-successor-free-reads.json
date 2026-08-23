@@ -1,0 +1,60 @@
+{
+ "schema": "predeclaration-oi126-successor-free-reads-v1",
+ "status": "PREDECLARED BEFORE ANY READ RUNS. No compute has been spent on any of these.",
+ "authorization": "Joseph 2026-08-23: code building and diagnostic tests, incl. Slurm. PET remains diagnostic/method-development. Nothing here reopens OI-126.",
+ "WHAT_A_TERMINAL_RESULT_OF_ANY_READ_BELOW_CANNOT_AUTHORIZE": [
+  "pairing C_stat with P5A",
+  "adopting any PET covariance",
+  "promoting P5A",
+  "satisfying EITHER half of the reconsideration gate (estimator-equivalence AND coverage)",
+  "clearing any of the five Gate-6 prohibitions",
+  "a mechanism CLAIM without the localiser read (R1) passing"
+ ],
+ "BINDING_RULE_FOR_EVERY_READ": "Bind the family by inventory triple (4116128/49152885/564591) + D=262 + dof=49 + the VL132 digest 6c3b4e00... and require the +2e7 background stream. NEVER by the name C_stat, by bootstrap_seed, or by stream count -- all three collide with the recoil-only family (68d9104d, cc9374c8).",
+ "KNOWN_ARTIFACT_TRAPS_THAT_WILL_SILENTLY_GIVE_A_WRONG_ANSWER": [
+  "laned-cstat-crosscheck/LANED_CSTAT_CROSSCHECK.npz field `cv` is the REPLICA MEAN, not the nominal. Naive use returns 1.0000 in every bin. It is 285 long against mean's 262; align through GATE5_CSTAT_N50.npz cell_index.",
+  "`C_stat` denotes TWO objects: the recoil-only 20-replica block and this 50-member full-event family (fixed in the note at 00b4cb01).",
+  "'the band factor' has NO single value: 3.5969 / 4.045-4.621 / 4.825 / 5.0467 / 6.573 all appear in the record, a factor 1.8 apart, differing by object (R_push vs cross section), cell set (84 geometric vs 63 quotable vs 257), pT range and aggregation (f6006d1a). Any quotation must name all four."
+ ],
+ "R1_per_column_Fisher_weight": {
+  "gates": "the magnitude mechanism, and the R5 GPU sweep. Run FIRST.",
+  "quantity": "per p_parallel column, the weight-mass-weighted mean of pull/(1+pull)^2, from the nominal's existing weights npz plus truth scalars",
+  "hypothesis": "the loss curvature collapses in the band because per-row pull sits further from 1 there",
+  "CONFIRM": "columns [7,10) are 5x to 10x lower than p_parallel < 6",
+  "REFUTE": "within 1.5x -- the Fisher-collapse localiser dies and with it the magnitude mechanism",
+  "UNRESOLVED": "between 1.5x and 5x. Licenses NEITHER branch and does NOT default to confirm.",
+  "note": "This is the correct re-run of the item cd3b2f31 called refuted: that measured OCCUPANCY share, this measures FISHER weight. Different variable (68d9104d)."
+ },
+ "R2_rank_one_SVD_and_dip_plateau_correlation": {
+  "gates": "EVERY mode-based mechanism from all three lanes. If the family is not rank-1 they are all wrong.",
+  "quantity": "50 x N matrix of log(member/nominal) over band+tail cells from the 50 GATE5_REPLICA_XSEC.npz; leading singular value share of variance; Pearson corr(per-member band dip amplitude, per-member tail plateau amplitude)",
+  "CONFIRM": "leading singular value >= 80% of variance AND corr >= +0.5",
+  "REFUTE": "leading singular value < 50% of variance OR |corr| < 0.2",
+  "UNRESOLVED": "anything between. Licenses neither; leaves the mechanism unnamed exactly as it is now."
+ },
+ "R3_Jacobian_probe": {
+  "gates": "the two lanes' OPPOSITE redundancy claims (step-2 bottleneck vs step-1 4:1 collinearity)",
+  "quantity": "S_long = sum|d logit/d z| over {pparallel, mu_pz, mu_E, mu_qp}; S_tran over {pt, mu_px, mu_py}; 1e5 rows of event_reco through the promoted nominal step-1 checkpoint. Forward+gradient only, no training, no target, no ROOT. Needs the cluster TF env (vendored Keras-2; Mac cannot run this net).",
+  "CONFIRM": "S_long/S_tran >= 3.0",
+  "REFUTE": "<= 1.5",
+  "UNRESOLVED": "1.5 to 3.0. Its author declared unresolved counts as REFUTED-AS-EXPLANATORY, and that asymmetric convention is preserved here as the author set it.",
+  "BOUNDARY_DEFECT_FOUND_WHILE_PREDECLARING_AND_RECORDED_RATHER_THAN_SILENTLY_KEPT": "The 3.0 confirm-boundary was chosen against a measured output amplitude ratio of 4.05. The separability correction has since moved the honest output ratio to about 2.1 (pT residual log-range 0.89 against the p_parallel peak amplitude 1.883, ~47%), and the peak-to-trough statistic was 2.07 all along. If the Jacobian ratio tracked the output ratio, a 3.0 boundary would sit ABOVE the hypothesis it is meant to confirm -- the EXACT defect that retired OI-126's 4.0 boundary, where the measured truth was 3.60 and the boundary sat 0.40 away inside a quarter of a sigma.",
+  "MITIGATION_BINDING_ON_THE_READER": "The Jacobian ratio and the output amplitude ratio are DIFFERENT quantities and need not be equal, so 3.0 is not thereby wrong. But a return in 2.0-3.0 MUST NOT be read as confirmation, and if the read lands there the boundary must be re-centred on the midpoint of the null (1.0) and the column-count prediction (4.0), i.e. 2.5, BEFORE any conclusion is drawn -- re-centring after seeing the value is not permitted."
+ },
+ "R4_pre_anneal_control_as_an_LR_sensitivity_bound": {
+  "status": "DIRECTIONAL EVIDENCE ONLY, NOT A GATE, and declared as such so it cannot later be quoted as one.",
+  "quantity": "band behaviour of the annealed arm against the pre-anneal control, from STEP1_TRAJECTORY.slurm-56691812.json and STEP1_TRAJECTORY.control-prenneal.slurm-56691812.json",
+  "reading": "An Adam-normalisation mechanism must be strongly LR-dependent. Indistinguishable band behaviour is evidence AGAINST it. No numeric boundary is declared because the two arms differ in more than LR, so this cannot be made two-sided."
+ },
+ "ORDERING_CONSTRAINT": "R1 and R2 are independent of each other and may run in parallel. R1 gates the GPU loss-interpolation sweep: do NOT launch it if R1 refutes. R2 gates every mode-based mechanism. R3 is independent. R4 is free and non-binding.",
+ "DEAD_DO_NOT_RE_RUN": [
+  "band deficit against signal-MC SUPPORT LOSS (uniform in share by construction)",
+  "per-sample feature standardisation drift (code-refuted: norms computed unweighted over the fixed imc subsample BEFORE any bootstrap factor)",
+  "the replica target construction, the extraction, gate5_signal_factor, shrinkage toward the prior, a diverged subset of trainings",
+  "local-statistics Jensen as a MAGNITUDE mechanism (retracted by its own author: ESS >= 1e4 in those columns gives ~5e-5, seven orders short)",
+  "variance rectifying through exp() as a MAGNITUDE mechanism (the family's own scatter gives a Jensen term 13.6x too small: 0.139 against 1.883)",
+  "zeroed !pass_reco rows at the feature-space origin (they contribute zero gradient)",
+  "empty-truth-cloud annihilation of the FiLM conditioning (killed on localisation: blind fraction is smallest inside the bump)"
+ ],
+ "SEPARATE_AND_WORTH_SETTLING_REGARDLESS_OF_OI126": "validate_g2_fullevent_smoke.py:206-223 verifies the appended miss rows' RECO vectors are empty but never asserts a non-empty TRUTH cloud; sig_has_truthcloud at :124 is branch-existence only. So the 2026-06-28 cloud-coverage fix (has_cloud 72.6% -> 99.9995%) is UNVERIFIED for the FPS full-event dump that pet-fullevent-fps-v1 trains on. One read of part_gen[:,0,0] on the G2 npz settles it. This is a Gate-1 class question, not a mechanism question."
+}
