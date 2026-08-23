@@ -53,7 +53,8 @@ freeness check and a closed ten-block claimed with its first filing.
 | storage migration | `490-499` |
 | fixture-decoy block — do not allocate without exact review | `500-509` |
 | remedy-(A) verification | `510-519` |
-| unallocated | `520+` |
+| review-round governance | `520-529` |
+| unallocated | `530+` |
 
 ## Long-form findings index
 
@@ -113,3 +114,4 @@ recovered from the frozen index.
 | BEN-482 | Pre-freeze `docs/orchestration/FINDINGS.md` at the evidence tag. |
 | BEN-483 | Pre-freeze `docs/orchestration/FINDINGS.md` at the evidence tag. |
 | BEN-484 | Pre-freeze `docs/orchestration/FINDINGS.md` at the evidence tag. |
+| BEN-520 | Post-freeze. Evidence: `docs/orchestration/GATE1-VERDICT-ROUND4-20260823-k0-execution-integrity.md`, `docs/orchestration/GATE1-VERDICT-ROUND5-20260823-k0-execution-integrity.md`, `docs/orchestration/GATE1-VERDICT-ROUND6-20260823-k0-execution-integrity.md`, `docs/orchestration/DECISION-20260823-joseph-a2f-does-not-substitute-for-a3.md`. |
