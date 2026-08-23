@@ -91,7 +91,20 @@ deliberately, because this file is a pointer-only router and not an exhaustive i
   recording an independent peer review whose four objections were all accepted. **Where this and a
   canonical artifact disagree, the canonical artifact wins.**
 
-### Gate-1 round 5 — the AUTHORIZED REPAIR, built and awaiting a THIRD-PARTY grader
+### Gate-1 round 5 — GRADED BY A THIRD PARTY, and it DOES NOT PASS
+
+- [`GATE1-VERDICT-ROUND5-20260823-k0-execution-integrity.md`](GATE1-VERDICT-ROUND5-20260823-k0-execution-integrity.md)
+  — **15 PASS / 3 FAIL / 0 NOT-EVALUABLE** (`F-2(a)`, `F-14`, `F-17(a)`), regraded first-hand at
+  `f3c27870` inheriting nothing. Landed **byte-identical**, sha256 `c2143e2e…`. **The decisive
+  finding:** `sbatch_unfold_5d_detector_bkgaware_gpu.sh` invoked both Python preflight tools at
+  `:139`/`:148` and sourced its activator at `:227` — a **SyntaxError on the un-activated 3.6.15
+  interpreter**, surfacing as *"the execution tree is not the tree that was approved"*, a **wrong
+  diagnosis of a right refusal**. It survived 34 green arms because `good_env()` inherited the
+  runner's PATH, so the fixture supplied the interpreter the activator exists to supply.
+  **Two of the builder's packet claims were also contradicted by measurement** — the suite count and
+  a `--check` run made in the wrong tree.
+
+### Gate-1 round 5 — the repair as built (superseded by the grade above)
 
 - [`PACKET-20260823-round5-f2a-f17a-repair.md`](PACKET-20260823-round5-f2a-f17a-repair.md) —
   **the repair packet for `F-2(a)` and `F-17(a)`, and the read-only commands a grader runs.**

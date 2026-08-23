@@ -1,5 +1,44 @@
 # ROUND-5 REPAIR PACKET — `F-2(a)` and `F-17(a)`, ready for an independent grader
 
+> ## ⚠ GRADED 2026-08-23: **15 PASS / 3 FAIL** — and TWO CLAIMS IN THIS PACKET WERE FALSE
+>
+> `GATE1-VERDICT-ROUND5-…md` (sha256 `c2143e2e…`, landed byte-identical). Failing `F-2(a)`,
+> `F-14`, `F-17(a)`. **All three findings verified first-hand by this lane; none contradicted.**
+>
+> **THE DEFECT THIS PACKET SHIPPED.** `sbatch_unfold_5d_detector_bkgaware_gpu.sh` invoked both
+> Python preflight tools at `:139`/`:148` and sourced its activator at `:227` — **because that is
+> where the activator already sat, and I re-pointed it without asking whether its POSITION was still
+> right.** Both tools open with `from __future__ import annotations`; on the un-activated 3.6.15
+> interpreter neither even compiles. **The other seven were correct by accident of layout, not by
+> design.** Worse, the launcher reported *"the execution tree is not the tree that was approved"* —
+> **a wrong diagnosis of a right refusal.**
+>
+> **WHY 34 GREEN ARMS WERE SILENT:** `good_env()` inherits the runner's PATH, so the fixture handed
+> the launcher the very interpreter the activator exists to supply. **That is the round-4 stub
+> finding one level deeper — inside the fixture I rebuilt to fix the round-4 stub finding.**
+>
+> **TWO CLAIMS BELOW ARE WITHDRAWN:**
+> - **§6 "390 passed, 2 skipped" is FALSE.** The true count then was **389 passed / 1 failed**. I
+>   ran the suite **before `git add`**, and `SubstitutionFenceS1` partitions via `git ls-files`,
+>   which cannot see untracked files. **That test's own docstring warns of exactly this** — *"a
+>   corpus test measured before its own commit is measured against a tree that will never exist
+>   again. Measure after the commit."* I read it while editing that file and did it anyway.
+> - **§6 "`generate_manifest.py --check` → rc 0" is FALSE for the graded tree.** rc 0 on `main`,
+>   **rc 1 on the branch**. I ran it in the wrong tree and reported it as evidence for the other —
+>   asymmetric comparison, in my own evidence table, in a packet whose §7 lists three prior
+>   instances of that family.
+>
+> **ROUND-6 STATE**, deployed at **`fabeedc2`**, 778 files, listing sha256 `528dae8f…`, A-2 rc=0:
+> the activator is hoisted above the Python tools in all eight (act 74–98, SRCMAN 133–255); a new
+> **interpreter-capability check** reports an unusable `python3` as *"an ENVIRONMENT fault, not a
+> wrong-tree fault"*; a **dynamic** ordering arm (a `python3` shim that exits 42 unless the activator
+> has run) replaces the purely textual one, with a negative control proving it can fire. Measured
+> **after** the commit this time: **394 passed / 2 skipped**, manifest rc=0, bindings rc=0, census
+> rc=0. **Ruling 21's boundary is untouched — still 14 guarded + 16 preflight**; the interpreter
+> probe is declared as a visible **third category** (16) rather than folded into the total.
+>
+> **GATE 1 IS STILL NOT CLOSED.** Round 6 is unreviewed. The next grade needs a **fourth party**.
+
 **CITABLE FOR:** what was repaired, the sha it is constituted at, and the exact read-only commands a
 grader runs to check it.
 
