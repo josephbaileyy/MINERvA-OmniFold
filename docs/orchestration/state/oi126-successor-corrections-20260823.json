@@ -1,0 +1,53 @@
+{
+ "schema": "oi126-successor-corrections-to-cd3b2f31-v1",
+ "supersedes_in_part": "cd3b2f31 (docs/orchestration/state/oi126-successor-phase0-replay-and-phase1-prerun-20260823.json)",
+ "why_a_separate_receipt": "cd3b2f31 is committed and its Phase 0 result stands unchanged. Only its Phase 1 CONCLUSION is narrowed. Rewriting it would erase that the enumeration was over-claimed once.",
+ "CORRECTION_1_the_sparsity_amplifier_is_NARROWED_not_REFUTED": {
+  "what_cd3b2f31_said": "'What died is the sparsity amplifier - the only local amplifier this campaign had named.'",
+  "what_is_correct": "BEN-412 refutes the ROW-OCCUPANCY form and its share statistic is a TAUTOLOGY. It is SILENT on the operative variable, which is the effective sample size of the WEIGHT, not of the rows.",
+  "the_tautology": "Poisson(1) factors are i.i.d. per row, so the surviving-row SHARE is 1-1/e in every cell BY CONSTRUCTION. Band 0.632050 vs outside 0.632532 vs 1-1/e = 0.632121 therefore cannot discriminate anything. That statistic had no power to begin with.",
+  "the_part_that_DOES_have_power": "The rows/cell comparison is a real measurement and does refute a ROW-COUNT amplifier at the low tail (band min 42 vs 1, q25 912.5 vs 421.25).",
+  "why_rows_are_not_the_operative_variable": "n_eff = (sum w)^2 / sum w^2 can be O(1) at thousands of rows when weights are heterogeneous, and the step-1 ratio r1 is heterogeneous over four decades: unweighted percentiles 1% = 0.0082, 50% = 0.2454, 95% = 5.15, 99% = 14.68, with 83.0% of weight mass below one (fullevent_nominal_annealed/STEP1_TRAJECTORY.slurm-56691812.json).",
+  "consequence": "The WEIGHT-n_eff form of the amplifier is UNTESTED and is now a free, high-priority read.",
+  "attribution": "Found by the estimator/optimization lane contradicting this lane's framing, as instructed."
+ },
+ "CORRECTION_2_the_sign_reversal_was_OVER_WEIGHTED_by_this_lane": {
+  "what_this_lane_did": "Presented '44 of 45 cells with the nominal below the family mean' as a co-equal constraint to the band and asked two lanes to RANK mechanisms by it.",
+  "why_that_was_an_asymmetric_comparison": "'below the family MEAN' and 'above ALL FIFTY members' are different statistics; this lane quoted one for each region and treated them as equal strength.",
+  "measured": {
+   "the_63_band": {
+    "median_z": 3.808940990223355,
+    "n_nominal_above_all_50": 44,
+    "n_nominal_below_all_50": 0
+   },
+   "pparallel_gt_20": {
+    "n": 45,
+    "median_z": -1.8279048320852105,
+    "n_nominal_above_all_50": 0,
+    "n_nominal_below_all_50": 0
+   }
+  },
+  "reading": "Above 20 GeV ZERO cells have the nominal outside the family range in EITHER direction. A -1.8 sigma median shift produces a lopsided sign count trivially, so the 44-of-45 is close to a restatement of the median z rather than independent evidence. Region carries ~1.9% of fiducial mass.",
+  "consequence": "Do not rank mechanisms by the sign reversal and do not discard one for failing to explain it. Rank by SEPARABILITY. Both lanes were sent this correction.",
+  "source": "docs/orchestration/state/RECEIPT-20260815-cstat-tail-geometry-and-weighting-correction.json, re-measured here"
+ },
+ "CORRECTION_3_acceptance_does_not_discriminate": {
+  "true_as_stated": "median a_b of the 63 = 0.8585589519100529 vs 0.7130291890211585 for the other 194",
+  "but": "spread is ANTI-correlated with acceptance in the direction that undercuts the intuition: median relative sd 0.049656340478354224 where a_b < 0.05 against 0.24340354871262507 where a_b > 0.5",
+  "consequence": "'highest acceptance on the grid' is not evidence for a mechanism and should not be used as one."
+ },
+ "TRAP_a_field_named_cv_is_the_REPLICA_MEAN": {
+  "file": "docs/orchestration/state/laned-cstat-crosscheck/LANED_CSTAT_CROSSCHECK.npz",
+  "field": "cv",
+  "what_it_actually_is": "the replica mean, matching gate5-cstat-n50/GATE5_CSTAT_N50.npz:mean to a max relative difference of 6.027e-16",
+  "alignment_required": "cv is length 285 (full grid); mean is length 262 (declared domain). Index cv through the n50 file's cell_index.",
+  "the_silent_failure": "Computing nominal-versus-family from these two committed npz files returns 1.0000 in every bin and reads as NO DISCREPANCY.",
+  "this_lane_also_got_it_wrong_first": "An element-wise 285-vs-262 comparison returned a confident WRONG verdict ('cv is NOT the replica mean') before alignment. Two traps stacked: a misleading field name and a length mismatch that does not raise.",
+  "class": "Same family as the C_stat symbol collision fixed at 00b4cb01 - a name denoting a different object than a reader expects. Bind by digest and by declared domain, never by field name."
+ },
+ "WHAT_STANDS_UNCHANGED_FROM_cd3b2f31": [
+  "PHASE 0: 50/50 members replay all three streams exactly against both the target-stage receipts and the promotion-time replay. Zero missing bootstrap_seed.",
+  "The specific regressor this lane proposed for Phase 1 (band deficit against signal-MC SUPPORT LOSS) is powerless, because support loss is uniform in share by construction. Not running it remains correct.",
+  "No PET covariance is adopted; the 2026-08-20 ruling is not reopened by anything here."
+ ]
+}
