@@ -97,6 +97,14 @@ deliberately, because this file is a pointer-only router and not an exhaustive i
   one of them active. The 2026-08-22 filing it replaces had nine rows and said "three". Re-run it —
   `python3 docs/orchestration/measure_m1_m6.py --tree <TREE>` — and do not inherit a number.
 
+### Round-7 repair — BUILT AND DEPLOYED, awaiting the terminal regrade
+
+- [`PACKET-20260823-round7-f2a-parity-and-f17a-filing.md`](PACKET-20260823-round7-f2a-parity-and-f17a-filing.md)
+  — Joseph's three authorized items: the parity gate extended to all three tracked files the preamble
+  sources (one block digest across all eight launchers, ten new arms in four directions, power
+  checked), the M-1…M-6 filing corrected to ten rows on both trees, and the runbook/plan §C exports.
+  Final candidate `c35bed58…`, deployed, `porcelain=0`, 0 writable. **Gate 1 is NOT claimed passed.**
+
 ### Gate-1 round 6 — GRADED, TERMINAL, and it DOES NOT PASS
 
 - [`GATE1-VERDICT-ROUND6-20260823-k0-execution-integrity.md`](GATE1-VERDICT-ROUND6-20260823-k0-execution-integrity.md)

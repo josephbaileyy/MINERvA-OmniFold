@@ -95,11 +95,19 @@ Zero in both directions on both trees. The 127/125 difference is the candidate's
 ## M-3 — hash-bound files
 
 - **CANDIDATE: `rc=0`, `ALL BINDINGS INTACT`.** Status read directly, never through a pipe.
-- **CANONICAL: DID NOT COMPLETE.** Still running after **26 minutes** and abandoned. This is an
-  honest non-result and is not recorded as a pass. A plausible cause — *offered as a hypothesis, not
-  a measurement* — is that bindings which are unresolvable on the clean tree resolve to real
-  multi-gigabyte artifacts on the canonical one and are hashed. **Do not read the candidate's `rc=0`
-  as covering the canonical tree.**
+- **CANONICAL: `rc=1`, `ALL BINDINGS INTACT` is FALSE.** It takes roughly **30 minutes** on that
+  tree, which is why an earlier draft of this document recorded it as "did not complete in 26
+  minutes." **That draft was wrong, and wrong in the safe-sounding direction** — a slow check reads
+  as an inconvenience, whereas the actual answer is that the canonical checkout's hash bindings are
+  **not intact**. The correction is recorded here rather than silently applied, because "the
+  instrument was still running" and "the instrument returned a failure" are different claims and
+  only the second is a finding.
+
+  The itemized list of which bindings break is **not yet captured** — it needs another ~30-minute
+  run and is recorded as owed, not as absent. What is established is the verdict, not the inventory.
+  **Do not read the candidate's `rc=0` as covering the canonical tree**, and do not read this `rc=1`
+  as touching the candidate: nothing is executed or imported from the canonical checkout, so this is
+  a finding about the data-role tree, not about what runs.
 
 ## M-4 — tree identity
 
@@ -144,12 +152,28 @@ it found.
 |---|---|---|---|
 | 1 | **M-1** | the filing had **nine** rows and said "three"; there are **ten** and **four** | **against the builder** — an entrypoint was missing from the filing entirely |
 | 2 | **M-1** | candidate 3 `_DATA_ROOT` + 1 inert `_REPO`; canonical **5 `_REPO`**, one of them active with 5 repo imports after it | the trees disagree; only the candidate executes |
-| 3 | **M-3** | candidate `rc=0`; canonical **did not complete in 26 min** | **against the builder** — a measurement the previous filing recorded as simply "UNCHANGED" |
+| 3 | **M-3** | candidate `rc=0`; canonical **`rc=1`, bindings NOT intact** | **against the builder** — the previous filing recorded M-3 as simply "UNCHANGED", and an earlier draft of *this* filing recorded the canonical run as merely slow |
 | 4 | **M-4** | canonical dirty `721 → 722` | neither; a drifting quantity |
 | 5 | **M-5** | candidate `0 of 8`; canonical `8 of 8` | reported both ways this time |
 | 6 | **M-6** | canonical has **no inventory write at all**, which the previous instrument would have scored as clean | **against the builder** |
 
 **M-2 is unchanged on both trees.**
+
+## SUITE, ON MATCHED TREES
+
+Both runs are **fresh writable clones from the same bare repo, same host, same interpreter**
+(Linux, CPython 3.13.15, pytest 9.1.1). The first attempt compared the *read-only deployed* candidate
+against a *writable* baseline clone and produced 39-vs-13 — a difference in tree protection, not in
+the change. That comparison was discarded rather than reported.
+
+| tree | result |
+|---|---|
+| candidate `e93364d1` | **13 failed, 2531 passed, 17 skipped, 643 subtests passed** |
+| baseline `fabeedc2` | **13 failed, 2521 passed, 17 skipped, 581 subtests passed** |
+
+**Failure sets identical — zero regressions and zero accidental fixes** (`comm` both directions
+empty). The `+10 passed` are the new parity arms; the `+62 subtests` are their per-launcher and
+per-library loops. The 13 are pre-existing at `fabeedc2` and are not touched by this change.
 
 ## EXPIRY
 
