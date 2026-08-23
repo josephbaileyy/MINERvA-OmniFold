@@ -18,6 +18,15 @@ not a result. The builder does not grade it.
 
 Deployment path is `canonical → k0r2/bare.git → k0r2/clean`, **fast-forward only**.
 
+**A NOTE ON WHICH SHA IS "FINAL", because a document cannot name its own commit.** `e93364d1` is the
+last sha at which any **executable** file changed — the eight launchers, the test file, the
+measurement tool. Commits after it are this packet, a correction inside the M-1…M-6 filing, and the
+regenerated manifest/catalog views. **The deployed sha is whatever `git -C /pscratch/sd/j/josephrb/
+k0r2/clean rev-parse HEAD` returns, and it is the one to grade;** verify with
+`git diff --name-only e93364d1..HEAD`, which must list **only** files under `docs/orchestration/`.
+If that command ever lists an `.sh` or a test, this note is void and the measurements above were
+taken on different bytes than the deployed ones.
+
 ## Authorization
 
 Joseph, 2026-08-23, three items and no unrelated changes; ruling recorded at
