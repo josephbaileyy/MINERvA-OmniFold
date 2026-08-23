@@ -1,0 +1,40 @@
+{
+  "schema": "mnv_preflight_exclusions/1",
+  "what_this_pins": "The set of python3 invocations in the eight k=0 launchers that are DELIBERATELY not routed through mnv_guarded_run.py, and the counts that make the exclusion falsifiable. Before this file the exclusion was implicit: nothing named the sixteen, and nothing failed if a seventeenth appeared (Gate-1 F-7(a)).",
+  "authority": "Joseph, ruling 21 of 2026-08-22 -- the 14/30 guarding boundary is ACCEPTED. This file records that boundary; it does not widen or narrow it.",
+  "why_these_are_excluded": "They ARE the preflight. mnv_guarded_run.py checks that imports resolve inside --expect-root; the two preflight tools are what establish that the executing copy IS the declared root. Routing them through the guard would make the check depend on the thing it is checking. They are excluded from the GUARD; they are NOT excluded from binding -- both are --pair'd and both are covered by the source manifest, asserted separately.",
+  "launchers": [
+    "sbatch_bootstrap_5d_gpu.sh",
+    "sbatch_seedscan_split_5d.sh",
+    "sbatch_unfold_5d_detector_bkgaware_gpu.sh",
+    "sbatch_sweep_bank_5d_run_bkgaware_gpu.sh",
+    "sbatch_uthrow_run_5d_fast.sh",
+    "sbatch_uthrow_block_5d.sh",
+    "sbatch_uthrow_combine_5d_fast.sh",
+    "sbatch_finalize_5d_bkgaware_gpu.sh"
+  ],
+  "excluded_tools": [
+    {
+      "shell_var": "SRCMAN",
+      "resolves_to": "nd-unfolding/mnv_source_manifest.py",
+      "per_launcher": 1,
+      "role": "A-2(f): compares the executing tree's source manifest against the declared record."
+    },
+    {
+      "shell_var": "PARITY",
+      "resolves_to": "nd-unfolding/pet/verify_executing_copy_is_committed.py",
+      "per_launcher": 1,
+      "role": "A-2: proves the executing copy is committed and matches the named commit."
+    }
+  ],
+  "counts": {
+    "launchers": 8,
+    "non_comment_python3_invocations": 30,
+    "guarded": 14,
+    "excluded_preflight": 16,
+    "unclassified": 0
+  },
+  "counts_are_derived_not_authored": "Every number above is reproduced by mnv_preflight_census.py against the launcher bytes. 16 = 2 per launcher x 8; 14 is NOT one per launcher (unfold and uthrow_block have 2, finalize has 5), which is why 'one per launcher' would have been the wrong shape to assume.",
+  "commented_out_python3_lines": 9,
+  "why_that_last_number_is_here": "A census that does not exclude comments reports 39, and commenting out a guarded call is a way to REMOVE a guard while leaving the line visible. The number is pinned so that a change in it is a finding rather than a rounding difference between two instruments."
+}
