@@ -1,0 +1,62 @@
+{
+ "schema": "oi126-successor-correction-to-beac7712-v1",
+ "corrects": "beac7712, which carried wrong numbers in the argument it declared load-bearing",
+ "found_by": "the executing lane, before building R5",
+ "C1_MY_11x_WAS_ONE_COLUMN_WITH_200_ROWS": {
+  "what_beac7712_said": "the tail's curvature is ~11x the band's, so per-region 1/lambda predicts the tail at ~9% of the band's magnitude against 41% measured, a discrepancy of ~4.6x",
+  "what_is_correct": {
+   "F_band_7to10GeV_weight_mass_weighted": 0.021956,
+   "F_tail_ge20GeV_weight_mass_weighted": 0.179634,
+   "ratio": 8.1814,
+   "per_region_prediction_pct": 12.22,
+   "measured_tail_over_band_pct": 41.5,
+   "discrepancy_factor": 3.39
+  },
+  "the_error": "11x is COLUMN 18 ALONE (F = 0.246216, n = 200 rows), not the weight-mass-weighted tail. I substituted an extreme single column for a region aggregate.",
+  "why_this_one_matters_more_than_the_arithmetic": "It is the band-factor multiplicity problem -- MY OWN finding, from f6006d1a -- reappearing inside MY OWN reasoning about it, two messages after I committed it. Committing a lesson does not vaccinate against it.",
+  "conclusion_survives_with_the_aggregation_NAMED": "The per-region 1/lambda reading under-predicts the tail by 3.39x from an 8.18x curvature ratio, weight-mass-weighted over p_parallel >= 20 GeV. Still a refutation of the per-region reading; still dissolved by the see-saw reading."
+ },
+ "C2_THE_R5_MEMBER_LIST_NAMED_FIVE_MEMBERS_NOT_SIX": {
+  "the_statistic_reverse_engineered_not_guessed": "84 geometric cells (p_parallel columns 10-15), MEDIAN PER-CELL nominal/member. Pinned by replica_45 matching to 3e-4.",
+  "the_collision": "'the two extreme band-ratio members' = replica_49 (min 1.08849) and replica_45 (max 6.88679). replica_49 is ALSO 'the sign-flipped total outlier'. So 49 + 00 + 45 + 2 medians = FIVE distinct replicas.",
+  "cause": "I inherited the member list from a lane's proposal and never checked whether the DESCRIPTIONS picked distinct members -- the definite-description failure at the level of a sample selection.",
+  "resolution": "replica_26 approved as an explicitly-labelled SIXTH, because it is the max under the cols 11-13 and 10-13 aggregations and therefore spans the aggregation degree of freedom. Medians named before running: replica_29 (3.0359) and replica_43 (3.0481) against the median 3.0420.",
+  "THIRD_INSTANCE_TODAY": "'the extreme member' is aggregation-dependent -- r45 or r26 by cell set and statistic. After 'the band factor' (five values) and 'r1' (needs its iteration named)."
+ },
+ "C3_PLUS_22_94_PCT_IS_WITHDRAWN_NOT_RECONCILED": {
+  "status": "UNSOURCED. It came from a lane's addendum and this lane relayed it without checking.",
+  "measured_instead": {
+   "rep49_total_over_nominal_pct": 6.48,
+   "over_family_mean_pct": 12.5,
+   "over_median_member_pct": 12.59,
+   "over_lowest_member_pct": 23.92,
+   "family_spread_max_over_min": 1.2392
+  },
+  "what_stands": "replica_49 IS the highest-total member, so 'outlier' is correct and its selection reason is intact.",
+  "instruction": "Do not quote +22.94% and do not hunt a denominator for it. Treat it as withdrawn.",
+  "the_failure_mode": "same as the plateau retraction earlier today -- assertions get verified, NUMBERS ride when they arrive inside an argument already found congenial."
+ },
+ "C4_SIGN_FLIPPED_IS_THE_TAIL_AND_IS_NOT_UNIQUE": {
+  "no_member_flips_the_band": "min band statistic 1.0885 > 1 across all 50",
+  "tail_flipped_members": [
+   14,
+   37,
+   49
+  ],
+  "consequence": "'the sign-flipped member' is satisfied by THREE members; replicas 14 and 37 are equally entitled to it.",
+  "the_correct_justification_for_replica_49": "band dev -0.1661 (the SHALLOWEST dip of the 50) and tail dev -0.1893 -- the member least like the family pattern in BOTH regions. Different from the reason originally given.",
+  "FOURTH_INSTANCE_TODAY": true
+ },
+ "R5_READINGS_ADJUDICATED": {
+  "output_observable": "APPROVED: O_band(t) = sum(w_truth * push_t)/sum(w_truth) over pass_gen rows with truth p_parallel in [7,10) GeV",
+  "why_push_is_LICENSED_not_merely_cheaper": "OI-126 established R_push/R_xsec = 1.0000 in the band (median R_push 5.0467 against R_xsec 5.0365), so the extraction is MEASURED to be faithful there and the push response is the same quantity to within that agreement. The 30-extraction cross-section version buys nothing the record does not already give in the band.",
+  "TIGHTENING": "endpoint-to-endpoint is PRIMARY -- CONFIRM requires |O_band(1)/O_band(0)| >= 3. max/min over t is secondary and more permissive, and could be inflated by non-monotonic wiggle along a straight segment, making CONFIRM reachable for the wrong reason. Report both; a large max/min with a small endpoint ratio is itself a finding.",
+  "structural_arm": "APPROVED as read, including the sign expectation re-derived independently: band log-deviation negative, tail positive, segment runs nominal -> member, so O_band must FALL and O_tail must RISE. Same-signed is the structural failure and CONFIRM is then unavailable regardless of the loss leg.",
+  "held_out_split_fallback_WITH_A_BINDING_CONDITION": {
+   "if_recoverable": "original thresholds 2.4e-3 / 2.4e-2 stand",
+   "if_not": "do NOT substitute the full sample and call it held-out. The fallback IS usable because the 2M subsample is IDENTICAL between nominal and all members (seed pinned, imc rebuilt bit-identical), so a full-sample loss difference is contaminated SYMMETRICALLY and is interpretable as a TRAINING-loss difference.",
+   "BINDING": "the 2.4e-3 / 2.4e-2 thresholds were calibrated on the epoch-to-epoch VAL_loss scatter of ~8e-4 and DO NOT TRANSFER to a training loss. Derive the train-loss epoch scatter from the same histories, set thresholds at 3x and 30x of THAT, declare them before computing, report both, and label the result a training-loss difference throughout."
+  }
+ },
+ "AUTHORIZATION_FRAMING_CORRECTED": "I wrote 'R5 is authorized'. The executing lane's framing is better and is adopted: Joseph's 2026-08-23 grant is the authorization; a mediator message can only lift a predeclared blocker. Those are different acts and conflating them would let authorization appear to flow from a lane."
+}
