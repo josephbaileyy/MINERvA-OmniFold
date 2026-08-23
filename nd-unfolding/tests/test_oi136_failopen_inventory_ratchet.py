@@ -53,9 +53,40 @@ PROBE = os.path.join("docs", "orchestration", "state",
 # F7 helpers after `joint_throw_covariance`, so all three imported function bodies were
 # byte-identical. The repaired file no longer contains the root literal at all, so the probe's
 # CANDIDATE count moves 122 -> 121 in the same step; the FAIL-OPEN set below is what is pinned.
-# 58 IS NOT A TARGET. It is the count of sites still to be repaired, one authorized site at a time.
-FAILOPEN_COUNT = 58
-FAILOPEN_SHA256 = "21828143e40961c9c8f5ee9f0e7a3473f915462a6e440581af8859963943be66"
+# 58 -> 52 on 2026-08-23, SIX SITES REPAIRED IN ONE AUTHORIZED SWEEP, named as the rule requires.
+# Joseph granted the close-out lane ownership of the rooted-insert set that day; commits c752f73e
+# (four nd-unfolding entrypoints) and a0a84a2e (the 1D study and 3D sibling):
+#   nd-unfolding/bkg_channel_split.py                                parents[1]
+#   nd-unfolding/coverage_toy_nd.py                                  parents[0]
+#   nd-unfolding/nn_run_from_npz.py                                  parents[0]
+#   nd-unfolding/unbinned_gof.py                                     parents[1]
+#   2d-unfolding/unbinned_1d_study/unfold_ptmu_omnifold_unbinned.py  parents[2]/unbinned_unfolding/python
+#   3d-unfolding/unfold_3d_omnifold_unbinned.py                      parents[1]
+# Each now derives its import root from Path(__file__).resolve(), with NO absolute fallback. Proved
+# a no-op before applying: on the canonical checkout every derived path is byte-identical to the
+# literal it replaced, so behaviour on the tree that produced existing products is unchanged and the
+# repair bites only on trees that are NOT that one -- which is the hazard. The parents index is
+# depth-dependent and was computed per file.
+#
+# THIS UPDATE IS LATE AND THAT IS A DEFECT, recorded rather than smoothed over. The docstring above
+# requires the two constants to move IN THE SAME COMMIT as the repair. They did not: c752f73e and
+# a0a84a2e landed without them, leaving this ratchet RED on main. It is not wired into the
+# pre-commit hook, so nothing caught it and no lane was blocked -- a check outside the hook is a
+# check that depends on somebody running it. It was found by `minerva-omnifold-9e` in a detached
+# worktree at 813a2159 while verifying something else, and that lane correctly DECLINED to update
+# these constants itself: making a check green by editing its input is the move this file exists to
+# prevent, and naming the moved sites is the repairing lane's to write. This is that lane doing it.
+#
+# THE SEVENTH SITE IN THAT AUTHORIZATION IS DELIBERATELY ABSENT.
+# 2d-unfolding/unfold_2d_omnifold_unbinned.py -- the published 2D arm -- was written and REVERTED.
+# Its sha256 8ebe0277... is pinned in three places needing three different treatments; advancing
+# the live one (EXPECTED_U2D_SHA in nd-unfolding/pet/run_gate2_target_validator.sh) requires a
+# Gate-2 RE-RUN producing bit-identical weights, not a commit, by that file's own header. See
+# test_oi136_rooted_insert_ratchet.py for the full structure. It remains in the fail-open set below.
+#
+# 52 IS NOT A TARGET. It is the count of sites still to be repaired, one authorized site at a time.
+FAILOPEN_COUNT = 52
+FAILOPEN_SHA256 = "cccdb89a74ee51429685772d794f7e8557c5e010315b074eb41734e9255f1134"
 
 # The probe's own positive controls, restated here so this file does not inherit its blind
 # spots. Relative to the repo root, as the probe prints them.
