@@ -1,5 +1,14 @@
 # DECLARATION — the k=0 candidate sha, and A-2(a)–(g) filed against it
 
+> ## ⚠ SUPERSEDED 2026-08-23 — the candidate is now `aa67c426`
+> **Everything below was true of `a54038b2` when measured and remains historically valid.** It is
+> superseded because that tree **cannot execute legs 5a/5b**: `compare_unified_throw.py` hardcoded
+> the canonical root into `sys.path.insert(0, …)` and the OI-136 guard refused before any work ran.
+> Round 9's 18/0/0 at this sha is likewise historically valid and **does not carry forward** —
+> see [`PACKET-20260823-round10-oi136-runtime-violation-repair.md`](PACKET-20260823-round10-oi136-runtime-violation-repair.md).
+> The replacement is [`DECLARATION-20260823-k0-candidate-aa67c426.md`](DECLARATION-20260823-k0-candidate-aa67c426.md).
+> **Do not cite the numbers below for the current candidate.**
+
 **CITABLE FOR:** the constitution of the execution tree at the declared sha, measured 2026-08-23.
 
 **NOT CITABLE FOR:** a Gate-1 pass, and not for an `sbatch` authorization. **This declares a sha; it

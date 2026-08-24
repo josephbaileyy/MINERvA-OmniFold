@@ -4,6 +4,17 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ## Current work
 
+### ⚠ ROUND 10 — the k=0 rehearsal FAILED at runtime; repaired and AWAITING AN INDEPENDENT FULL REGRADE
+
+- [`PACKET-20260823-round10-oi136-runtime-violation-repair.md`](PACKET-20260823-round10-oi136-runtime-violation-repair.md)
+  — **round 9's 18/0/0 at `a54038b2` is historically valid and does NOT carry forward.** The OI-136
+  guard refused legs 5a/5b before any work ran. Repaired candidate **`aa67c426`**, deployed,
+  `porcelain 0`, 0 writable. Census **53 / 2 / 1**. **Gate 1 is NOT claimed passed.**
+- [`DECLARATION-20260823-k0-candidate-aa67c426.md`](DECLARATION-20260823-k0-candidate-aa67c426.md)
+  — A-2(a)–(g) all MET at the new sha; 782 files, listing `fa3489e2…`.
+
+
+
 - **THE DECLARED CANDIDATE SHA, with A-2(a)–(g) filed against it:**
   [`DECLARATION-20260823-k0-candidate-sha.md`](DECLARATION-20260823-k0-candidate-sha.md) —
   `a54038b21fdebfc975bec452a05866ffa571a36c`, **780** tracked source files, listing sha256
