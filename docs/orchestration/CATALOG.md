@@ -6,6 +6,15 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ### ✅ GATE 1 PASSES — round 9, 2026-08-23, 18 PASS / 0 FAIL / 0 NOT-EVALUABLE
 
+- [`DECISION-20260824-joseph-deployment-freeze-until-f1b.md`](DECISION-20260824-joseph-deployment-freeze-until-f1b.md)
+  — **THE DEPLOYED TREE IS FROZEN AT `aa67c426` UNTIL F-1(b) IS FILED.** No `checkout`, `reset`,
+  `fetch`-and-merge, re-declaration or branch repoint in `/pscratch/sd/j/josephrb/k0r2/clean`, by any
+  lane. **It expires when F-1(b) is TAKEN, not when the rehearsal "looks done"** — `combine`'s
+  conjunctive `afterok` can read as queued while terminal. Contract **§7.0.19**. A **prose** hold:
+  preventive by convention, detective by A-2(a), **not** a mechanical guarantee. Residual measured —
+  10 `refs/tags/evidence/*` in that tree, none at the candidate, so `checkout <tag>` is still a live
+  route. **Authorizes nothing.**
+
 - [`DECISION-20260824-joseph-f6b-scoped-out-of-gate2.md`](DECISION-20260824-joseph-f6b-scoped-out-of-gate2.md)
   — **Joseph's ruling, and the authority §7.0.18 was held against. GATE 2 IS NINE CLAUSES:** F-1(b),
   F-2(b), F-3(b), F-4(b), F-5(b), F-7(b), F-8(b), F-17(b), F-18(b). **`F-6(b)` is NOT waived — it is

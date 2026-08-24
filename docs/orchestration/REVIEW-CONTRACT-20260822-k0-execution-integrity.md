@@ -1367,6 +1367,53 @@ routed here rather than to the builder. **The builder may not record a ruling th
 of a gate it is graded against.** This lane records neither the F-9/F-12 re-grade nor either Gate-2
 verdict, unchanged.
 
+#### 7.0.19 THE DEPLOYMENT IS FROZEN AT `aa67c426` UNTIL F-1(b) IS FILED
+
+**Authority: `DECISION-20260824-joseph-deployment-freeze-until-f1b.md`**, where Joseph's approval is
+quoted verbatim. **Read its provenance box before citing this:** his words are an approval — *"sure add
+that rule"* — and **the scope wording below is the builder lane's drafting ratified by him, not his
+words.** He did not type it into the repository; it arrived by authorized relay.
+
+**THE RULE.** The deployed tree `/pscratch/sd/j/josephrb/k0r2/clean` **stays detached at `aa67c426`
+until F-1(b)'s far-end A-2(a)–(g) measurement is filed.** No `checkout`, no `reset`, no
+`fetch`-and-merge, no re-declaration, no branch repoint in that directory. **This applies to every
+lane, including the producing lane and including this one.**
+
+**IT EXPIRES WHEN F-1(b) IS TAKEN — not before, and NOT on anyone's judgement that the rehearsal
+"looks done."** That clause is load-bearing rather than decorative: `combine` sits on a **conjunctive
+`afterok`** over both `uthrow_run` and `uthrow_block`, and a partial failure in either array leaves it
+reading as **queued in `squeue` while being terminal**. **So "the queue looks empty" is exactly the
+inference this rule forbids** — read per-array task-state completeness, and `sacct` reason codes rather
+than `squeue` states.
+
+**WHY IT EXISTS, and this is the part worth carrying.** Every other way this rehearsal could be voided
+is caught by something mechanical — a `.py`/`.sh` change by the A-2(f) listing digest
+`sha256:fa3489e2…535420`; a docs commit **provably unable** to move that listing, because
+`mnv_source_manifest.py:70` sets `SOURCE_SUFFIXES = (".py", ".sh")`; a write bit by
+`--require-readonly`. **The deployment's POSITION is enforced by nothing.** A-2(a) requires
+`rev-parse HEAD == aa67c426` at the far end, the rehearsal is ~230 tasks in with zero failures, and one
+careless command destroys a measurement recoverable only by re-running everything.
+
+> **THIS IS A PROSE HOLD. IT IS PREVENTIVE BY CONVENTION AND DETECTIVE BY A-2(a), AND IT IS NOT A
+> MECHANICAL GUARANTEE — do not read it as one.** A-2(a) will *catch* a moved HEAD at the far end; it
+> cannot *prevent* the move. This contract's own record is the reason to say so out loud: a hold that
+> exists only as someone's intention is not a hold, and four commits once described as *"held pending
+> Joseph's call"* published themselves as ancestors of another lane's push. **The rule's value is that
+> a lane reasoning "nobody said I couldn't" now has something citable to hit.** A mechanical version
+> would be a fail-closed check reading `HEAD` in that directory; it is outside §6's authorized set and
+> is **not** created by this subsection.
+
+**THE RESIDUAL, MEASURED, because a rule that restates an existing guarantee is worse than none.**
+Measured in the deployed tree on 2026-08-24: `HEAD=aa67c426…`, **detached**, `git status --porcelain`
+**0 lines**, **0 local branches, 0 remotes** — the two routes that caused the round-10 excursion are
+closed. **But `git checkout refs/tags/evidence/…` is still live: that tree carries 10
+`refs/tags/evidence/*` tags and NONE points at `aa67c426`.** They are other lanes' provenance anchors
+and **must not be deleted to satisfy this rule.** That gap is what this subsection closes.
+
+**IT AUTHORIZES NOTHING.** Not leg 6, not adoption, not consumption, not any member k≠0, not
+re-declaration of the candidate, and no relaxation of any Gate-1 or Gate-2 clause. §7.0.6 and §7.0.18
+are unchanged.
+
 ---
 
 **Tree**
