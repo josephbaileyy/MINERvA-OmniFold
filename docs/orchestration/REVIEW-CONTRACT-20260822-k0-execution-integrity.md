@@ -481,6 +481,14 @@ a sweep. Anything outside the M-1 table and the eight launchers of M-5 is out of
 
 ## 7. §F — PASS / FAIL
 
+> **BEFORE GRADING ANY CLAUSE IN THIS SECTION, read**
+> [`READING-ORDER-20260824-k0-package-annotations.md`](READING-ORDER-20260824-k0-package-annotations.md).
+> §7 has been amended in place seven times across three days, and four of those annotations **change
+> what a clause requires** (§7.0.11's paired-arm row and its two tables, per §7.0.17). That file lists
+> every annotation in the k=0 package, marks which are BINDING and which are HISTORICAL, and names the
+> four places where a withdrawn sentence is printed *after* its own retraction. **It is a router, not
+> evidence — cite the artifact, never that file.**
+
 A **PASS** requires every one of the following, each with the command and its output filed. Any
 single miss is a **FAIL**; there is no partial credit and no waiver by caveat.
 
@@ -837,7 +845,7 @@ checkout, so **the distinction must be carried by the record rather than by the 
 | arm | `--expect-root` | inventory record | exit | names `seed_offset_policy`? | what it establishes |
 |---|---|---|---|---|---|
 | **F-9 refused** | the **clean tree** (`MNV_CODE_ROOT`) | `script_checkout_root` = canonical, **≠** `expect_root`; `guard_installed=false`; `checked=0`; `outcome=refused:script-outside-expect-root` | **3** | not expected; not graded either way | containment refused before imports began |
-| **O-1 paired** | the **canonical checkout** — the tree it was launched from | `script_checkout_root` **=** `expect_root`; `guard_installed=true`; `checked>0`; `outcome=ok` | **0** | may; not graded | the arm could have succeeded, so the refusal was not breakage |
+| **O-1 paired** | the **canonical checkout** — the tree it was launched from | `script_checkout_root` **=** `expect_root`; `guard_installed=true`; `checked>0`; ~~`outcome=ok`~~ **→ AMENDED, see §7.0.17: `outcome` is not graded as `ok`; grade P.1–P.5** | ~~**0**~~ **→ NOT GRADED AS 0 (§7.0.17); must not be 3** | may; not graded | the arm could have succeeded, so the refusal was not breakage |
 | **U/U' unguarded** | **none** — the guard is not invoked at all | **no record exists** | 0 | **must**, on `__file__` | counterfactual origin: what would load without containment |
 
 **`expect_root` is the arm's identity.** In the F-9 arm it is the clean tree and differs from
@@ -865,6 +873,12 @@ Refused arm: marker absent. Paired arm: marker present.
 production arm. It says nothing against `--expect-root`, which is not `--allow`, and this is a
 control rather than a production arm.
 
+> **AMENDED 2026-08-24 — §7.0.17 governs how this arm is graded.** The paragraph above is intact
+> and still correct: the arm is permitted. What changed is its success criterion. The real arm exits
+> **1** with `outcome=child-systemexit`, because N-1 mandates throwaway `--out` paths and the ROOT
+> child fails downstream of everything the arm establishes. **Grade P.1–P.5 of §7.0.17; the marker
+> in the sentence above is the discriminator, and the exit status is not graded as 0.**
+
 ##### 9.2's dependency, and its state as measured
 
 9.2 was **unsatisfiable** when ruling 20 was made. On a B-4 refusal the guard called
@@ -884,6 +898,13 @@ A third verdict constant `VERDICT_REFUSED_SCRIPT` was added at
 |---|---|---|---|---|
 | script outside `--expect-root` (**F-9**) | 3 | `false` | 0 | `refused:script-outside-expect-root` / `REFUSED -- THE SCRIPT ITSELF LIES IN A CHECKOUT THAT IS NOT --expect-root` |
 | paired, `--expect-root` = launch tree (**O-1**) | 0 | `true` | 7 | `ok` / `REPOSITORY-ORIGINS-INSPECTED`; marker present |
+
+> **⚠ THIS TABLE IS A MEASUREMENT ON A TWO-CHECKOUT FIXTURE, AND ITS PAIRED ROW DOES NOT TRANSFER TO
+> THE REAL ARM (2026-08-24, §7.0.17).** The fixture had **no ROOT child to fail**, so its paired row
+> reads `0` / `ok` / `checked=7`; the real `mii_adopt_unified_5d_stamped.py` arm measures **exit 1** /
+> `child-systemexit` / `checked=9`, marker present. **The numbers above are left exactly as measured —
+> rewriting a measured row to match a later requirement would falsify a receipt.** Read the paired row
+> as evidence about the fixture only. The F-9 and F-6 rows are unaffected.
 | stdlib-only entrypoint inside `--expect-root` (**F-6**) | 0 | `true` | 6 | `ok` / `EMPTY-REPOSITORY-ORIGIN-SET` |
 
 **The third arm is the one that mattered and it is clear.** A fix that made every empty inventory
@@ -915,6 +936,9 @@ things settle it:
   not refuse. **Without this, a wrapper that was simply broken would produce the same silent,
   output-free refusal and F-9 would pass vacuously.** This is the direct analogue of N-2's
   `assertIn(STARTED, …)`, and it is the clause that would have caught the original F-9 collision.
+  **This bullet is CORRECT AS WRITTEN and needs no change — note 2026-08-24 that it never mentioned an
+  exit code, which is why §7.0.17 strikes the exit code from §7.0.11's table rather than from here.
+  Grade the paired arm on §7.0.17's P.1–P.5.**
 - **F-12(N-1)(iii) — retained, and it MUST name `seed_offset_policy`.** The U/U' arm asserts
   `seed_offset_policy.__file__` under the canonical checkout: *counterfactual origin evidence
   showing what would load without that containment* (Joseph, 2026-08-22). Removing the name would
@@ -1056,6 +1080,115 @@ loudly — **it presented as merely unperformed**, which is why it survived a cl
 **(f) No part of this weakens B-4, and no bypass is authorized.** Ruling 20 is explicit and it is
 repeated here so a later reader cannot mistake a restatement for an exemption: *"No B-4 bypass flag
 or production exception is authorized."* **What moved is the criterion, not the protection.**
+
+#### 7.0.17 AMENDMENT, 2026-08-24 — the O-1 paired arm's exit status and `outcome` are NOT graded as `0`/`ok`
+
+**What changes, in one sentence.** §7.0.11's three-arm table required the O-1 paired arm to exit
+**0** with `outcome=ok`. **That requirement is struck.** It is unreachable under N-1's own mandate,
+and it was never the property the arm exists to establish.
+
+**Scope — this is a Gate-1 clause, and saying so is part of the ruling.** F-9 and F-12 are both
+PRE-SUBMISSION halves (§7.0.5), so what moves here is how F-9's paired arm is graded at **Gate 1**.
+It reaches a Gate-2 lane only through the package that lane re-reads. **No post-rehearsal half is
+touched, and this amendment authorizes nothing.**
+
+##### The measurement, on the real arm rather than on a fixture
+
+Filed by the round-12 lane as FINDING 2 of
+`docs/orchestration/RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings.md`
+(`build-k0-execution-integrity`), and re-verified against the executing file before this amendment
+was written rather than taken on report:
+
+| field | the struck requirement | measured on the real paired arm |
+|---|---|---|
+| exit status | **0** | **1** |
+| `outcome` | `ok` | `child-systemexit` |
+| `guard_installed` | `true` | `true` |
+| `checked` | `> 0` | **9** (the fixture row below reads 7) |
+| `verdict` | — | `REPOSITORY-ORIGINS-INSPECTED` |
+| `[remedyA]` marker | present | **present** |
+
+**Why it is unreachable, and why that is not a defect in the arm.** N-1 mandates throwaway
+`--uthrow/--combined/--out` paths — *"never the defaults; the defaults name real archive products."*
+A zero-byte throwaway makes the ROOT child fail inside `TFile::ReadBuffer`, **strictly downstream of
+everything the arm establishes.** In `nd-unfolding/mnv_guarded_run.py` (blob `2459aafd`, sha256
+`bd2ccce1…`, on `build-k0-execution-integrity` — the tree that carries B-4): `:534` initialises
+`outcome, violation, recorded, site = "ok", None, True, SITE_NONE`; `:541-545` overwrite it to
+`child-systemexit:<code>` when the child raises `SystemExit`; and `write_inventory` is called **once,
+at `:552`, after the child's fate is known.** `:106` states the process's own status is *"0 or the
+child's own status -- the child ran; its SystemExit is preserved."* **So `0` and `ok` fail together
+on this arm, and forcing either requires feeding real archive inputs — which §5 forbids and which
+Joseph has prohibited on this path.** The 2026-08-22 receipt recorded the same `rc=1` on its
+unguarded arm and treated it as downstream.
+
+**Where the exit code came from: a fixture whose child was synthetic.** §7.0.11's fixture table was
+*"re-measured on a two-checkout fixture against `nd-unfolding/mnv_guarded_run.py` as of `e39ab74f`"*.
+That fixture exercised the guard, not the real adopter, so it had **no ROOT child to fail** — which
+is why its paired row reads `0` / `ok` / `checked=7` where the real arm reads `1` /
+`child-systemexit` / `checked=9`. **The `0` is a property of the fixture, not a requirement on the
+arm.** That table is a MEASUREMENT and its numbers are therefore left untouched; it is annotated in
+place instead. Rewriting a measured row to match a later requirement would falsify a receipt.
+
+**The contract already stated the requirement correctly in two other places, and they need no
+change.** §7.0.12's F-12(N-1)(ii) reads *"the O-1 paired arm reaches the `[remedyA]` marker and does
+not refuse"* — no exit code — and §F's F-12 bullet settles non-vacuity on the loaded module's
+`__file__`, *"not by asserting exit 0."* **The requirement is stated three times and only the
+comparison table carried the exit code.** That is the whole defect, and it is why the repair is two
+table cells and this subsection rather than a re-derivation.
+
+##### How the paired arm is graded from now on — all five hold
+
+| # | requirement | how it is settled |
+|---|---|---|
+| P.1 | `script_checkout_root` **=** `expect_root` | the inventory record. This is the arm's identity (§7.0.11), and it is what distinguishes this arm from the F-9 refused arm |
+| P.2 | `guard_installed == true` **and** `checked > 0` **and** `checked_provenance == measured-by-installed-guard` | the triple, per the inversion table. `checked` alone is never evidence |
+| P.3 | the `[remedyA] running the PINNED writer as a subprocess:` marker is **PRESENT** | the arm's own capture. **This is F-12(N-1)(ii)'s discriminator and it is the load-bearing row** |
+| P.4 | the run did **not** refuse: `outcome` begins with neither `refused:` nor `cannot-check:`, `violation` is `null`, and `refusal_site` is `null` | the record's own fields. `refusal_site` is `SITE_NONE = None` at `:163`, so `null` is the pass value |
+| P.5 | exit status is **NOT graded as 0**. It must not be **3**, and any nonzero status must be attributable to a cause strictly AFTER the marker of P.3 | the process's own status, captured unpiped (O-4), read together with P.3 and P.4 — never alone |
+
+**P.4 and P.5 are the direction that keeps the arm honest, and they are why this is not "any nonzero
+exit now passes".** A guard that fires on bad input and is silent on good input needs a test in both
+directions; the "silent on good input" arm here is P.3 with P.4. Without them, a genuine containment
+or import refusal on the paired arm — which is a real failure — would be waved through as though it
+were the benign downstream ROOT failure, and the paired arm's entire job is to show the refusal on
+the *other* arm was not breakage. **`≠ 3` is stated explicitly because B-4 and an import-tree
+violation share `VIOLATION_EXIT`, so an exit code cannot carry which protection fired (`:157`);
+`refusal_site` is what carries it.**
+
+##### A citation offset that would otherwise cost a grader an hour
+
+§7.0.11 cites the marker at `mii_adopt_unified_5d_stamped.py:711`. **That is correct for the tree the
+arm actually runs from** — the canonical checkout, and `main`, both carry it at `:711`. On
+`build-k0-execution-integrity` the same `print` is at **`:787`** (the child spawn at `:788`), because
+the guard work shifted the file. **Neither line number is wrong; they are different trees.** A grader
+who greps the build branch for `:711` and finds an unrelated `finally:` block should read this note
+rather than file a defect.
+
+##### Authority, and what this amendment is NOT
+
+**The authority for this is the measurement above together with the contract's own §7.0.12 wording —
+not the number of lanes that agree.** Four parties concurring is not evidence; the re-verification
+against `mnv_guarded_run.py:534-552` is. Recorded that way deliberately, because a consensus that
+nobody re-measures is how this campaign has previously converged on a wrong answer.
+
+**This is not a B-4 bypass and not an exemption.** Ruling 20's *"No B-4 bypass flag or production
+exception is authorized"* is unchanged, as is every clause of the F-9 refused arm (9.1–9.6). What
+moved is one control arm's success criterion. **The refused arm still requires exit 3.**
+
+**STRIKEABLE, and flagged rather than folded in silently (the §7.0.7 convention).** P.5's
+*attributability* clause — that a nonzero status must be traceable to a cause after the marker — is
+this lane's judgement, not a transcription of anything Joseph ruled. Striking it leaves P.1–P.4 and
+the struck `0`/`ok` intact; the arm would then be graded purely on the record's fields with the exit
+status ungraded except for `≠ 3`. **It is included because P.3 and P.4 are assertions about a
+successful path, and without P.5 nothing in the rubric reads the failure that actually occurred.**
+
+##### Eligibility disclosure, per §7.0.10
+
+This subsection was written by the coordinating lane at Joseph's instruction, on the record that the
+builder and both the round-11 and round-12 graders are conflicted for it. **Per §7.0.10's second
+bullet, the lane that wrote this may not record the verdict graded against it: this lane will record
+neither the Gate-1 re-grade of F-9/F-12 nor either Gate-2 verdict.** A third, fresh non-builder lane
+takes them, and must derive its checklist from this document rather than from any summary of it.
 
 
 ---

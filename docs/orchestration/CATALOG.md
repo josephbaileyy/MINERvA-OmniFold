@@ -6,6 +6,30 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ### ✅ GATE 1 PASSES — round 9, 2026-08-23, 18 PASS / 0 FAIL / 0 NOT-EVALUABLE
 
+- [`READING-ORDER-20260824-k0-package-annotations.md`](READING-ORDER-20260824-k0-package-annotations.md)
+  — **READ FIRST if you are grading either gate.** The k=0 package was corrected by annotating in
+  place, so its correctness depended on a reader finding all nine annotations across five files. This
+  lists them in one reading order, marks the **4 BINDING** (they change what a clause requires) apart
+  from the **5 HISTORICAL**, and names the four places a withdrawn sentence is printed *after* its own
+  retraction — so a grep cannot tell asserted from withdrawn. **Router only; cite the artifact.**
+  Records two live conditions: the contract's `main` and build-branch copies have **diverged again**
+  (§7.0.17 is on `main` only, where `b2075558` had made them byte-identical), and the `[remedyA]`
+  marker is `:711` in the canonical checkout and on `main` but `:787` on the build branch.
+
+> **⚠ THIS HEADING IS A DATED SNAPSHOT, 2026-08-24.** Round 9's 18/0/0 was graded at `a54038b2` and
+> **does not carry forward**: the OI-136 guard refused legs 5a/5b, the repaired candidate is
+> `aa67c426`, and rounds 10–12 have since run (round 10 FAILED `F-1(a)` on a deployment excursion;
+> round 11 stood at 16/2). **Gate 1 is not currently claimed passed on this branch's record**, and
+> this section is behind `build-k0-execution-integrity`'s copy of this router. Read the round-10 packet
+> and the 2026-08-24 receipt on that branch before treating any count here as current.
+>
+> **AND THE Gate-2 LIST BELOW IS INCOMPLETE — `F-3(b)` IS MISSING.** §7.0.5 makes **F-3 SPLIT**, with a
+> post-rehearsal half: *"grep the job stdout → zero `--allow`; publish the command."* The enumeration
+> below jumps `F-2(b)` to `F-4(b)`. §7.0.5's own arithmetic — **10 SPLIT criteria** — is the check:
+> F-1…F-8, F-17, F-18. **A Gate-2 lane that inherits the list below grades nine clauses and misses
+> one, and §F's no-partial-credit rule means the miss is silent.** Derive the list from §7.0.5's
+> POST-REHEARSAL column, never from this router.
+
 - [`GATE1-VERDICT-ROUND9-20260823-k0-execution-integrity.md`](GATE1-VERDICT-ROUND9-20260823-k0-execution-integrity.md)
   — **the terminal verdict.** sha256 `d5bfb863…`, 350 lines, landed byte-identical. Declared and
   deployed candidate `a54038b21fdebfc975bec452a05866ffa571a36c`.
