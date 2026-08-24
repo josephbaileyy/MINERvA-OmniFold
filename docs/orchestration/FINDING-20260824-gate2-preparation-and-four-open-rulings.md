@@ -139,7 +139,45 @@ lane's:** `contract-f9-restatement` (`8e4878eb…`), `review-contract-k0-integri
 three-way divergence nobody had named, and it is not the two-way one the brief described.** Grade
 against path + digest + sha, and treat "the contract" as a definite description that re-points.
 
-## 5. What this lane did NOT do
+## 5. DISCLOSURE — two of my own commits are red on `generate_manifest.py --check`, and the fix is one line of procedure
+
+**Stated here before anyone finds it.** `e1596f00` and `585b1f3a` each ADD a document and each carry a
+`MANIFEST.tsv` row for that document reading **`tracking=intended`** — for a file the same commit
+**commits**. So `--check` at those two shas returns **rc=1**, bracketed by green at `2e805d6f` and
+`eb3a417e`. This is the exact pattern already recorded against `82727fe3`: a pushed commit red on
+`--check` with green on both sides.
+
+**Cause, measured rather than guessed.** `generate_manifest.py:92` computes the tracked set as
+`git_lines("ls-files", "--", "docs/orchestration")`, and **`git ls-files` reads the INDEX.** So a file
+that is written but not yet `git add`ed is `intended` at regeneration time and `tracked` the instant
+the commit lands — the row is guaranteed stale for any newly-added file. **The second mechanism is
+separate:** `MANIFEST.tsv` carries its own `bytes` cell, so writing it perturbs the value it reports
+(98425 → 98424 in one observed pass).
+
+**THE FIX, VERIFIED IN A THROWAWAY REPO RATHER THAN REASONED ABOUT: `git add` THE NEW FILE *BEFORE*
+REGENERATING.** Measured on a scratch `git init`: a new file under `docs/orchestration` appears only
+in `ls-files --others` before `git add`, and in **`ls-files`** immediately after `git add` — *before
+any commit*. So the correct order is:
+
+1. write the documents;
+2. **`git add <every path, including the new ones>`**;
+3. regenerate the manifest — it now sees the new file as `tracked`;
+4. `git add docs/orchestration/MANIFEST.tsv`;
+5. **bare `git commit`** — never a pathspec, because the generator reads working-tree bytes only
+   (three `read_bytes()` calls, no `git show`/`cat-file`/`--cached`), so a pathspec-scoped commit can
+   publish a row describing content the commit excludes while `--check` still passes;
+6. re-run `--check` **after** `git commit` returns, and quote only that rc.
+
+**This commit uses that order, so it is the control.** Step 6 is the only measurement whose rc may be
+put in a commit message — which is the half I got wrong twice today, once in the commit immediately
+after writing the rule down.
+
+**Not repaired by rewriting history, deliberately.** `e1596f00` and `585b1f3a` are published on shared
+`main` with another lane's commit (`c9f331f0`) interleaved between them, and graders' verdicts cite
+shas by line. **A force-push would dangle those citations to fix a stale cell in a generated index.**
+The rows are correct at `eb3a417e` and forward; the two shas are disclosed here instead.
+
+## 6. What this lane did NOT do
 
 No file was edited, no job launched or cancelled, nothing committed by it. The held scron
 `57275989` (`Reason=user_env_retrieval_failed_requeued_held`, `Restarts=199`, unchanged) was
