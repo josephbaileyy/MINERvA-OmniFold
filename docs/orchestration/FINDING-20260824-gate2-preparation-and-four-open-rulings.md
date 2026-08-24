@@ -173,6 +173,49 @@ its argument to stdout when the path is absent**, so a `for`-loop piping `rev-pa
 counts those echoes as objects. Mine reported 32 distinct blobs where there are 5. Resolve, then
 check `git cat-file -t`, and never count what `rev-parse` printed.
 
+## 4b. NEW FINDING — the DECLARED candidate sha carries the SUPERSEDED 575-line rubric, and `FINDING 5`'s disposition is scoped to the branch instead
+
+Found 2026-08-24 while verifying an unrelated claim. **Not an F-1(b) or A-2(f) problem — see the scope
+paragraph — but it falsifies a sentence three lanes have relied on.**
+
+`RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings.md` `FINDING 5` closes with: an independent lane landed
+the sync at `b2075558`, *"so §7.0.11/12/13 are now present on the candidate itself."* **Measured:**
+
+| ref | contract blob | lines | §7.0.11/12/13 |
+|---|---|---|---|
+| `aa67c426` — **the DECLARED candidate sha**, and what the deployment is pinned to | `cf53f587` | **575** | **ABSENT** |
+| `b2075558` — the sync | `e2b95207` | 1160 | present |
+| `30ec0707`, `a89c9694`, `264f6c61` — branch tips | `e2b95207` | 1160 | present |
+
+**`git merge-base --is-ancestor b2075558 aa67c426` → rc=1: the sync is NOT an ancestor of the declared
+sha.** It is an ancestor of the branch tip (rc=0). So *"present on the candidate itself"* is **true of
+the branch and false of the declared sha** — and the declared sha is what `DECLARATION-20260823-k0-candidate-aa67c426.md`
+pins, what the deployed tree at `/pscratch/sd/j/josephrb/k0r2/clean` is checked out to (detached), and
+what A-2(f) measures.
+
+**This is the campaign's own recurring shape, one level up from code.** `OI-136` is *the file that
+EXECUTES is not the file that was approved*; this is **the rubric that SHIPS is not the rubric that was
+graded**. And it is a definite description re-pointing: *"the candidate"* resolves to two different
+objects — a detached sha and a moving branch — and the disposition sentence does not say which.
+
+**SCOPE, stated so this is not read as worse than it is.** `nd-unfolding/mnv_source_manifest.py:70`
+sets `SOURCE_SUFFIXES = (".py", ".sh")` and builds the listing from `git ls-files` filtered to those
+suffixes. **So the rubric is outside the A-2(f) listing entirely, `fa3489e2…535420` is unaffected, and
+F-1(b) is untouched.** This also confirms from the producer why the docs-only constraint both lanes
+followed is exactly the right boundary: the 782 files are all `.py`/`.sh`.
+
+**What it does cost:** a grader who reads the rubric **from the deployed execution tree** gets the
+575-line copy — missing §7.0.11, §7.0.12 and §7.0.13, which are precisely the restatements F-9 and
+F-12 are graded by, and now also missing §7.0.17 and §7.0.18. **`FINDING 5` retired a caveat that had
+headed the round-10 and round-11 verdicts — *"grade by digest, not by branch"* — on the strength of
+that sentence. That caveat should not have been retired, and it is the correct instruction.**
+
+**Disposition: none taken here, and the reason is not caution.** Re-declaring the candidate to pick up
+a docs commit would move `HEAD` on a tree the rehearsal is running against, and F-1(b) requires
+`git rev-parse HEAD` to equal `aa67c426` at both ends. **The fix is not to move the tree; it is to stop
+saying "the candidate".** Grade the rubric by path **plus blob** — `e2b95207` for the 1160-line copy,
+and neither `cf53f587` nor any branch name — and state which tree the reader's copy came from.
+
 ## 5. DISCLOSURE — two of my own commits are red on `generate_manifest.py --check`, and the fix is one line of procedure
 
 **Stated here before anyone finds it.** `e1596f00` and `585b1f3a` each ADD a document and each carry a
