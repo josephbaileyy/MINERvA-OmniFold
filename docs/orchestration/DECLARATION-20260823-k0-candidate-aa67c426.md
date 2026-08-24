@@ -185,19 +185,89 @@ live tree:
 - **silent on good:** `chmod a-w` restores 440 → **rc=0**, and the tree returns to
   porcelain 0, HEAD `aa67c426`, 0 writable outside `.git`.
 
-### 6.6 A DEVIATION I INTRODUCED AND CANNOT UNDO
+### 6.6 A DEVIATION I INTRODUCED, WRONGLY CALLED IRREVERSIBLE, AND NOW RESTORED
 
-`.git` now holds **1939** writable files where the graded tree held **30**. My unlock in step 1 was
-tree-wide and the re-lock scoped `.git` out, so user-write persists on objects the original lock had
-left read-only. **I cannot restore the original state exactly, because I never recorded which 30 files
-they were** — the count was measured, the membership was not.
+**What this section said before, and why it was wrong.** It reported that `.git` held **1939**
+writable files where the graded tree held **30**, and that exact restoration was *impossible because
+I never recorded which 30 files they were*. The round-11 grader refused both my disclosure and my
+excuse and **partitioned the delta** instead:
 
-Why this is disclosed rather than repaired: A-2(g) is contracted over **the source** (*"`chmod -R
-a-w` over the source, or a read-only bind"*), `.git` is not source, and the clause's own instrument
-returns **rc=0**. The scoped walk — the scoping round 10 asked for — gives **0** writable files and
-**0** writable directories outside `.git`. Unscoped it gives **1939**, and **every one of them is
-inside `.git`** (`grep -vc '^./.git/'` → 0). Both numbers are printed here precisely because the
-unscoped one is the misleading one and was already misread once, at **30**.
+| | round 10 | after my reset | after the restore |
+|---|---|---|---|
+| writable in `.git` | 30 | 1939 | **29** |
+| of which under `.git/objects/` | ~0 | **1910** | **0** |
+| writable in `.git`, non-object | 30 | 29 | **29** |
+| writable outside `.git` | 0 | 0 | **0** |
+
+The entire delta was `.git/objects/` — **one uniformly classified set**, so no record of the original
+membership was ever needed. `.git/HEAD`, `index`, `config` and `packed-refs` are mode **660 in both
+states**; loose objects had landed at 640/644 where git creates them 444. Restored 2026-08-24 with
+`find .git/objects -type f -exec chmod a-w {} +` — **files only**, since the object *directories* must
+stay writable or git cannot create new objects (259 remain writable). Verified after: `rev-parse`
+`aa67c426`, still DETACHED, porcelain **0**, `cat-file -t aa67c426` = commit, and
+`--compare --require-clean --require-readonly` **rc=0** with `SOURCE MANIFEST IDENTICAL (782 files,
+fa3489e2…)`.
+
+**THE BASIS I GAVE FOR DEFERRING THIS WAS ALSO WRONG, and the correction matters more than the
+chmod.** I declined to run it on the grounds that it would *mutate an object an independent grader had
+just certified*. It would not have. **A-2 measures none of it:** (f) is sha256 over tracked
+`*.py`/`*.sh`, (g) is modes over tracked source files and their containing directories — the tool
+reports its own scope as **931 protected paths**, which is the 782 sources plus their 149 directories
+— and (b) is porcelain. Loose-object file modes appear in no clause. So the caution was real but its
+stated reason was false, and a false reason for a correct decision propagates further than a wrong
+decision does.
+
+**Both of my errors here ran through the same shape and it is worth naming:** *"I cannot undo this"*
+and *"this would invalidate the grade"* are both claims **against my own interest**, and a
+self-critical over-claim gets scrutiny from neither direction — not from me, because it is not
+flattering, and not from a reviewer, because it errs toward caution. It is therefore the shape most
+likely to survive unchallenged. Two of my three corrections this round were of that kind.
+
+### 6.6.1 rc=2 IS "COULD NOT LOOK", AND TWO DIFFERENT MISTAKES BOTH PRODUCE A FULL FALSE SLATE
+
+Recorded because it happened twice in one session, from unrelated causes, and both times it looked
+like a verdict:
+
+- Sending the four `--require-*` flags to `mnv_guarded_run.py`, which owns none of them, made argparse
+  exit **2** before measuring. Four clauses read as FAIL; none had been tested.
+- Checking a past sha with `git archive | tar` leaves **no `.git`**, so `git ls-files` fails and
+  `generate_manifest.py --check` returns **rc=2 at every sha**, including the ones that are green.
+
+**In this toolchain rc=2 means "could not look" in BOTH directions.** Any harness that removes, hides
+or bypasses `.git` converts every clause to CANNOT-LOOK, and a reader who scores CANNOT-LOOK as FAIL
+gets a full slate of false failures from a working tree.
+
+### 6.6.2 A RED INTERMEDIATE COMMIT ON THIS BRANCH — disclosed, and deliberately NOT rewritten
+
+`82727fe3` fails `generate_manifest.py --check` with **rc=1 OUT OF DATE**. Measured in real
+worktrees at three shas: `9db42a6d` **rc=0**, `82727fe3` **rc=1**, `d268a95b` **rc=0**. Cause: I split
+one change into "edit the docs" and "regenerate the manifest", and the intermediate commit is
+therefore red on a gate the tip passes.
+
+**It is not gate-relevant** — §7.0.7(1) is scoped *at the graded sha* in its own words, and both graded
+objects are green. The round-11 grader initially prescribed *amend or squash*, then **withdrew that
+remedy on the record** for three reasons: squashing produces a new tip and destroys `d268a95b`, the
+object certified in that same verdict; it requires a force-push to a shared branch other lanes may
+have fetched; and the hazard analogy inverts — round 10's failure was a sha green on everything except
+the clause nobody ran, whereas a red sha **announces itself** with two independent signals (an A-2(a)
+mismatch and `--check` rc=1) and is thus *more* detectable, not less.
+
+**And the obvious mechanical fix is already refuted inside this repo.** `.githooks/pre-commit`
+deliberately does not run the corpus scan — `generate_manifest.py --check` appears **0 times** in it,
+only `--self-test` (line 256) — and its own header records why: the whole-tree variant *"fails on
+pre-existing debt and therefore violates the real rule"*, the rule that a commit is not failed for
+defects it did not introduce. It records the corpus scan as *"an explicit pre-landing check"*. So the
+red intermediate was possible **by design**, and "bind it in the hook" is the proposal that same
+header records lane A as having made **wrongly**.
+
+**Disposition is all three layers, not one instead of another:** (1) the forward rule — a docs edit
+and its manifest regeneration are **ONE commit**, applied from this commit onward; (2) a *narrow*
+path-local coupling hook is admissible where the corpus scan is not, because `lines` and `bytes` are
+path-local and can be recomputed for only the paths a commit touches, refusing when `MANIFEST.tsv` is
+absent from that commit — O(changed files), and it admits pre-existing debt; (3) `--check` retained as
+the pre-landing gate, because that hook **cannot be complete**: the same rows carry `inbound_count`,
+which is **corpus-global**, so editing one document can move another document's row without touching
+it. That incompleteness is very likely why `--check` is a pre-landing step in the first place.
 
 ### 6.7 WHAT THIS SECTION DOES NOT DO
 
