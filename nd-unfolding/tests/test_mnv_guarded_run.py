@@ -890,7 +890,12 @@ class TheInventoryReusesTheGuardsOwnResolver(unittest.TestCase):
         def names_used(node):
             return {n.id for n in ast.walk(node) if isinstance(n, ast.Name)}
 
-        used = names_used(funcs["loaded_checkout_roots"]) | names_used(funcs["_emit_inventory"])
+        used = (names_used(funcs["loaded_checkout_roots"])
+                | names_used(funcs["_emit_inventory"])
+                # the MNV_REPO capture is held to the same one-resolver rule. Extending
+                # this set is the point: a new function that answered "is this a checkout"
+                # its own way would otherwise satisfy the rule by not being looked at.
+                | names_used(funcs["_repo_env_capture"]))
         self.assertIn("checkout_root_of", used)
         self.assertNotIn("is_checkout", used)
         self.assertNotIn("MARKERS", used)
@@ -1088,3 +1093,196 @@ class TheNamespacePackageExclusionIsDeclaredNotSilent(unittest.TestCase):
         # and this class's own docstring must keep saying what is lost
         self.assertIn("the tree was on the path",
                       TheNamespacePackageExclusionIsDeclaredNotSilent.__doc__)
+
+
+def run_env(extra, drop, *args):
+    """Like `run`, but lets a test control the child's environment.
+
+    Separate helper rather than a kwarg on `run`, because `run` already passes `env=` and
+    a second one is a TypeError, not an override.
+    """
+    env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
+    for k in drop:
+        env.pop(k, None)
+    env.update(extra)
+    return subprocess.run([sys.executable, *[str(a) for a in args]],
+                          capture_output=True, text=True, env=env)
+
+
+class TheCaptureReportsHowTheRootWasCHOSEN(unittest.TestCase):
+    """`MNV_REPO` and whether it was SET or DERIVED (OI-126 item (6), Joseph 2026-08-24,
+    `DECISION-20260824-joseph-eight-dispositions-and-mnv-repo-ownership.md`).
+
+    The inventory answers "which trees were loaded". It cannot answer "how was that tree
+    chosen", and two runs with identical inventories can differ on that -- one stable
+    under redeployment and one not. These arms are built from the PRODUCER's idiom
+    (`os.environ.get("MNV_REPO") or os.path.dirname(...)` at
+    `nd-unfolding/pet/pointcloud_projection.py:29`), not from the rule under test, per
+    `PB-16`.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        tmp = pathlib.Path(self._tmp.name)
+        self.good = make_checkout(tmp, "expected-tree")
+        self.other = make_checkout(tmp, "another-tree")
+        self.plain = tmp / "not-a-checkout"
+        self.plain.mkdir()
+        self.entry = write(self.good / "nd-unfolding" / "quiet.py", "print('ran')\n")
+        self.addCleanup(self._tmp.cleanup)
+
+    def go(self, extra, drop=()):
+        return run_env(extra, drop, GUARD, "--expect-root", self.good, "--", self.entry)
+
+    # ---- arm 1: SET, and agreeing with --expect-root
+    def test_SET_prints_the_value_and_says_it_agrees_with_expect_root(self):
+        cp = self.go({"MNV_REPO": str(self.good)})
+        self.assertEqual(cp.returncode, 0, cp.stderr)
+        self.assertIn("MNV_REPO resolution=SET", cp.stderr)
+        self.assertIn(repr(str(self.good)), cp.stderr)
+        self.assertIn("resolves to --expect-root", cp.stderr)
+
+    # ---- arm 2: ABSENT -- the derive-per-reader case
+    def test_ABSENT_says_every_reader_derives_its_own(self):
+        cp = self.go({}, drop=("MNV_REPO",))
+        self.assertEqual(cp.returncode, 0, cp.stderr)
+        self.assertIn("MNV_REPO resolution=ABSENT", cp.stderr)
+        self.assertIn("DERIVES its own root", cp.stderr)
+        self.assertNotIn("resolution=SET", cp.stderr)
+
+    # ---- arm 3: the third state. Presence and effect disagree, and the effect is what runs.
+    def test_PRESENT_BUT_EMPTY_is_not_reported_as_SET(self):
+        """`MNV_REPO=""` is in the environment and every reader still derives, because
+        the producer's `or` treats the empty string as absent. A capture that asked
+        `"MNV_REPO" in os.environ` would call this SET and be wrong about the effect --
+        which is the only thing that decides which modules execute."""
+        cp = self.go({"MNV_REPO": ""})
+        self.assertEqual(cp.returncode, 0, cp.stderr)
+        self.assertIn("MNV_REPO resolution=PRESENT-BUT-EMPTY", cp.stderr)
+        self.assertIn("presence and effect disagree", cp.stderr)
+        self.assertNotIn("resolution=SET", cp.stderr)
+
+    # ---- arm 4: THE DEFECT MUTATION FIRES. Exported root != intended root is OI-136's shape.
+    def test_a_DIFFERENT_checkout_in_MNV_REPO_is_flagged_and_names_both_sides(self):
+        cp = self.go({"MNV_REPO": str(self.other)})
+        self.assertEqual(cp.returncode, 0, cp.stderr)          # reported, never refused
+        self.assertIn("A DIFFERENT CHECKOUT FROM --expect-root", cp.stderr)
+        self.assertIn(str(self.other), cp.stderr)              # both sides named, with
+        self.assertIn(str(self.good), cp.stderr)               # neither left implicit
+
+    def test_a_non_checkout_in_MNV_REPO_is_distinguished_from_a_wrong_checkout(self):
+        """Two different findings, and collapsing them would lose the one that matters:
+        a non-checkout on `sys.path[0]` cannot shadow this tree's modules, so it is NOT
+        run 4's shape, while a wrong checkout is exactly it."""
+        cp = self.go({"MNV_REPO": str(self.plain)})
+        self.assertEqual(cp.returncode, 0, cp.stderr)
+        self.assertIn("NOT A CHECKOUT ROOT", cp.stderr)
+        self.assertNotIn("A DIFFERENT CHECKOUT FROM", cp.stderr)
+
+    # ---- arm 5: the innocent mutation stays green. A receipt may not fail a run.
+    def test_the_capture_cannot_change_the_exit_code_on_any_arm(self):
+        for extra, drop in (({"MNV_REPO": str(self.good)}, ()),
+                            ({"MNV_REPO": str(self.other)}, ()),
+                            ({"MNV_REPO": str(self.plain)}, ()),
+                            ({"MNV_REPO": ""}, ()),
+                            ({}, ("MNV_REPO",))):
+            with self.subTest(extra=extra, drop=drop):
+                self.assertEqual(self.go(extra, drop).returncode, 0)
+
+    def test_a_capture_that_raises_still_does_not_fail_the_run(self):
+        """The capture sits inside the emission's `try`, so it inherits the
+        BaseException swallow. Measured by breaking it, not by reading the `try`."""
+        import io
+        original = mgr._repo_env_capture
+        try:
+            def boom(_):
+                raise RuntimeError("capture exploded")
+            mgr._repo_env_capture = boom
+            buf = io.StringIO()
+            self.assertIsNone(mgr._emit_inventory(str(self.good), stream=buf))
+            self.assertIn("INVENTORY EMISSION FAILED", buf.getvalue())
+        finally:
+            mgr._repo_env_capture = original
+
+
+class TheCaptureCannotGoMISSINGSilently(unittest.TestCase):
+    """THE ARM THAT FIRES ON ABSENCE.
+
+    Every other arm above compares one emission to another. If someone deletes the
+    capture, all of them still describe a tool that runs, exits 0 and prints a valid
+    inventory -- a does-not-fire control cannot tell "correctly scoped" from "nothing
+    covers this any more", and those have identical output (`PB-16` @ `9a7f6529`). So
+    this class asserts PRESENCE on every emission path, and then proves that assertion
+    has power by removing the capture and requiring the check to fail.
+    """
+
+    PATHS = ("a clean run", "a refused run", "an emission with no roots at all")
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        tmp = pathlib.Path(self._tmp.name)
+        self.good = make_checkout(tmp, "expected-tree")
+        self.bad = make_checkout(tmp, "stale-tree")
+        write(self.good / "nd-unfolding" / "victim.py", "MARK = 'RIGHT'\n")
+        write(self.bad / "nd-unfolding" / "victim.py", "MARK = 'WRONG'\n")
+        self.quiet = write(self.good / "nd-unfolding" / "quiet.py", "print('ran')\n")
+        self.hijack = write(
+            self.good / "nd-unfolding" / "hijack.py",
+            "import sys\n"
+            f"sys.path.insert(0, {str(self.bad / 'nd-unfolding')!r})\n"
+            "import victim\n")
+        self.addCleanup(self._tmp.cleanup)
+
+    def emissions(self):
+        """One text per path in PATHS, in that order."""
+        import io
+        clean = run_env({"MNV_REPO": str(self.good)}, (),
+                        GUARD, "--expect-root", self.good, "--", self.quiet)
+        refused = run_env({"MNV_REPO": str(self.good)}, (),
+                          GUARD, "--expect-root", self.good, "--", self.hijack)
+        self.assertEqual(clean.returncode, 0, clean.stderr)
+        self.assertEqual(refused.returncode, mgr.VIOLATION_EXIT, refused.stderr)
+        original = mgr.loaded_checkout_roots
+        try:
+            mgr.loaded_checkout_roots = lambda *_a, **_k: {}
+            buf = io.StringIO()
+            mgr._emit_inventory(str(self.good), stream=buf)
+            noroots = buf.getvalue()
+        finally:
+            mgr.loaded_checkout_roots = original
+        self.assertIn("NO module resolved inside any checkout", noroots)
+        return [clean.stderr, refused.stderr, noroots]
+
+    def test_the_MNV_REPO_line_is_on_every_emission_path(self):
+        texts = self.emissions()
+        self.assertEqual(len(texts), len(self.PATHS))
+        for name, text in zip(self.PATHS, texts):
+            with self.subTest(path=name):
+                self.assertIn("MNV_REPO resolution=", text)
+
+    def test_that_presence_check_actually_HAS_power(self):
+        """Remove the capture and the check above must fail. Without this, a deleted
+        capture and a working one give the same green suite."""
+        import io
+        original = mgr._repo_env_capture
+        try:
+            mgr._repo_env_capture = lambda _expect: []
+            buf = io.StringIO()
+            mgr._emit_inventory(str(self.good), stream=buf)
+            text = buf.getvalue()
+            self.assertNotIn("INVENTORY EMISSION FAILED", text)   # it still emits happily
+            self.assertNotIn("MNV_REPO resolution=", text)        # and the line is GONE
+            with self.assertRaises(AssertionError):
+                self.assertIn("MNV_REPO resolution=", text)
+        finally:
+            mgr._repo_env_capture = original
+
+    def test_the_capture_is_wired_into_the_emission_and_not_merely_defined(self):
+        """A defined-but-uncalled helper would satisfy an import test and emit nothing.
+        Read off the AST, so a rename breaks this instead of silently passing."""
+        import ast
+        tree = ast.parse(GUARD.read_text())
+        funcs = {n.name: n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)}
+        called = {n.func.id for n in ast.walk(funcs["_emit_inventory"])
+                  if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)}
+        self.assertIn("_repo_env_capture", called)

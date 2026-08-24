@@ -293,6 +293,66 @@ def loaded_checkout_roots(modules=None) -> "dict[str, list[str]]":
     return by_root
 
 
+def _repo_env_capture(expect_root: str) -> "list[str]":
+    """`MNV_REPO` and whether it was SET or DERIVED. OI-136's other half.
+
+    THE GAP THIS CLOSES. The inventory above answers "which trees did the interpreter
+    load from". It does NOT answer "how was that tree CHOSEN", and those are different
+    questions with the same answer surface: two runs with identical inventories can have
+    arrived there by different routes, and only one route is stable under redeployment.
+    35 files in this tree read `MNV_REPO` with the idiom
+    `os.environ.get("MNV_REPO") or os.path.dirname(...)` and insert the result at
+    `sys.path[0]` -- see `nd-unfolding/pet/pointcloud_projection.py:29` and `:298`. So the
+    same line resolves to an EXPORTED value in one run and to a value DERIVED from each
+    reader's own `__file__` in the next, with nothing in the output distinguishing them.
+
+    THREE STATES, NOT TWO, and the third is why presence is not the question. Under that
+    idiom an EMPTY string is falsy, so `MNV_REPO=""` is present in the environment and
+    yet every reader derives anyway. Reporting `"MNV_REPO" in os.environ` would call that
+    SET and be wrong about the effect. What is reported here is the resolution the
+    READERS compute, which is the thing that decides which modules execute.
+
+    It routes to the marker pair only through `checkout_root_of`, the same resolver the
+    gate uses, for the reason in `TheInventoryReusesTheGuardsOwnResolver`: a receipt with
+    its own checkout predicate could call a tree clean that the gate would refuse.
+    `checkout_root_of` starts walking at the path's PARENT, so a DIRECTORY has to be
+    probed through a child path -- passing the directory itself would silently answer
+    about its parent, which is this defect's own shape one level up.
+    """
+    raw = os.environ.get("MNV_REPO")
+    if raw is None:
+        state, note = "ABSENT", ("every reader DERIVES its own root from its own __file__, so "
+                                "there is no single value to report and the inventory above is "
+                                "the only evidence of where modules came from")
+    elif raw == "":
+        state, note = "PRESENT-BUT-EMPTY", ("the variable is exported and every reader still "
+                                            "DERIVES, because `os.environ.get(...) or ...` treats "
+                                            "the empty string as absent -- presence and effect "
+                                            "disagree here, and the effect is what runs")
+    else:
+        state, note = "SET", "every reader uses this one value, so it is stable across readers"
+    lines = [f"{INVENTORY_PREFIX} MNV_REPO resolution={state}  value={raw!r}",
+             f"{INVENTORY_PREFIX}   {note}"]
+    if state == "SET":
+        root = checkout_root_of(os.path.join(raw, "__mnv_repo_probe__"))
+        if root is None:
+            lines.append(f"{INVENTORY_PREFIX}   AND IT IS NOT A CHECKOUT ROOT. Reported, not "
+                         f"refused. A non-checkout on sys.path[0] cannot shadow this tree's "
+                         f"modules, so it is not run 4's shape -- but it is also not the value "
+                         f"anyone intended, and it is invisible without this line.")
+        elif root != expect_root:
+            lines.append(f"{INVENTORY_PREFIX}   AND IT IS A DIFFERENT CHECKOUT FROM --expect-root: "
+                         f"{root} vs {expect_root}. This is OI-136's exact shape at the ENV layer. "
+                         f"It is reported and not refused, because the refusal half already "
+                         f"decided this run on what was actually LOADED, and a receipt may not "
+                         f"change an outcome -- but a reader who sees only the roots above would "
+                         f"not know the intended root and the exported one disagree.")
+        else:
+            lines.append(f"{INVENTORY_PREFIX}   and it resolves to --expect-root, so the exported "
+                         f"root and the intended root agree.")
+    return lines
+
+
 def _emit_inventory(expect_root: str, refused: "ImportTreeViolation | None" = None,
                     stream=None) -> None:
     """Print the loaded-checkout inventory. Returns None on every path, always.
@@ -312,6 +372,10 @@ def _emit_inventory(expect_root: str, refused: "ImportTreeViolation | None" = No
             f"{INVENTORY_PREFIX} modules loaded from inside a checkout: {total}"
             f"   distinct checkout roots: {len(by_root)}",
         ]
+        # MECHANISM BEFORE RESULT: how the root was chosen is a precondition for reading the
+        # rows below, so it goes above them. Inside the same `try`, so it inherits the same
+        # failure isolation and still cannot change a run's outcome.
+        say += _repo_env_capture(expect_root)
         for root in sorted(by_root):
             tags = []
             if root == expect_root:
