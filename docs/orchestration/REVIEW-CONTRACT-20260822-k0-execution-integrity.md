@@ -1269,6 +1269,82 @@ neither the Gate-1 re-grade of F-9/F-12 nor either Gate-2 verdict.** A third, fr
 takes them, and must derive its checklist from this document rather than from any summary of it.
 
 
+#### 7.0.18 F-6(b) SCOPED OUT OF GATE 2 — **TRANSCRIBED, NOT YET OPERATIVE. F-6(b) IS STILL A GATE-2 CLAUSE.**
+
+> **READ THIS BOX BEFORE THE RULING. AUTHORITY IS RELAYED AND NO RECORD EXISTS.** The text below was
+> delivered to this lane by the builder lane as Joseph's ruling. **It is not in any `DECISION-*`
+> document, and it is nowhere in this repository.** Measured before writing this subsection:
+> `grep -rl "scope F-6(b) out of Gate 2" .` → **rc=1, 0 hits**, with the covering control
+> `grep -rl "leg-6 completion gate" .` also **0 hits** — so the search works and the text is absent,
+> not merely unfound. `DECISION-20260824-joseph-eight-dispositions-and-mnv-repo-ownership.md`, the
+> only decision document of that date, contains **no** `F-6`, `leg 6` or `leg-6` match.
+>
+> **Every other ruling in §7.0 cites a decision document** — §7.0.11 opens *"Authority: Joseph's
+> ruling 20, `DECISION-20260822-joseph-b1-lift-and-clause-c.md`, fourth set, quoted there
+> verbatim."* This one cannot, because that record does not exist yet.
+>
+> **CONSEQUENCE, and it is deliberately the conservative one: until the decision record lands,
+> GATE 2 IS STILL TEN CLAUSES AND F-6(b) IS STILL ONE OF THEM.** A Gate-2 verdict may **not** rely on
+> this subsection. Nothing here waives, narrows or defers anything. **This is a transcription held
+> against confirmation, not an amendment.**
+>
+> **Why it is recorded at all rather than refused:** the builder cannot self-record a ruling that
+> relaxes a gate it is graded against, the wording should not decay in a chat channel, and the
+> pending branch sync should carry it. **Why it is not operative:** a gate's definition changing on
+> relayed authority is precisely how a false assurance reaches a decision-maker, and this campaign
+> has a recorded instance of a peer-relayed "Joseph authorized it" that did not survive contact with
+> the record. **The remedy is one line from Joseph, not a judgement by any lane.**
+
+**The ruling as relayed, quoted rather than paraphrased:**
+
+> *"I scope F-6(b) out of Gate 2 and into the separate leg-6 completion gate. It remains mandatory and
+> is not waived. This ruling does not authorize leg 6, adoption, consumption, any member k≠0, or relax
+> any other Gate-2 clause."*
+
+Accompanying instruction, also relayed: **"record it that narrowly."**
+
+##### What it will mean WHEN a decision record lands, stated once so the transcription is unambiguous
+
+- **Gate 2 becomes NINE clauses:** F-1(b), F-2(b), F-3(b), F-4(b), F-5(b), F-7(b), F-8(b), F-17(b),
+  F-18(b). §F's no-partial-credit rule then applies over those nine.
+- **F-6(b) SURVIVES INTACT under a separate leg-6 completion gate.** It is **mandatory and not
+  waived**. It moves; it does not weaken. A later reader must not cite this as F-6(b) being satisfied,
+  excused, or optional.
+- **The four negations, carried explicitly because a later reader will try to lean on this.** It does
+  **not** authorize leg 6; does **not** authorize adoption; does **not** authorize consumption; does
+  **not** authorize any member k≠0; and does **not** relax any other Gate-2 clause. §7.0.6's own
+  model applies — *"a PASS unlocks exactly one thing"* — and this ruling unlocks **nothing**.
+- **§7.0.6's second sentence is unchanged:** until Gate 2 passes, the rehearsal's products stay where
+  they land — not adopted, not consumed outside the seven rehearsal jobs, not quoted, and no further
+  member authorized.
+
+##### Why a ruling was needed and a grader's judgement would not do — the shape, now at THREE
+
+This contract already names the shape twice: *"a protection can invalidate the control written to test
+a different protection — and the control then presents as merely UNPERFORMED rather than as
+IMPOSSIBLE."* Ruling 19 found it in N-2; ruling 20 found it in N-1 (§7.0.11). **This is the third
+instance, and the first where the invalidating protection is a SCOPE LIMIT rather than a code path:**
+§7.0.6 unlocks only legs 1–5, and that is what makes F-6(b) impossible rather than pending. **A
+grader cannot resolve it, because grading it either way would either fail a gate for a reason outside
+the gate's control or silently excuse a mandatory clause** — and §7.0.8 forbids reading an
+impossibility as a deferral.
+
+**The mechanism, independently measured by two lanes.** The Gate-2 lane: `adopt_unified_5d.py` and
+`mii_adopt_unified_5d_stamped.py` occur in **exactly one** of the eight in-scope launchers,
+`sbatch_finalize_5d_bkgaware_gpu.sh`, holding 5 of the 14 guarded invocations, and
+`finalize_submitted=NO`. The builder lane, independently and before the ruling: those entrypoints
+appear in **0 of the 7 submitted launchers**, appear only in the finalize launcher (5 and 3 live
+lines), and **0 of 118** run inventory records name the writer. **Two lanes, two instruments, same
+conclusion.**
+
+##### Eligibility
+
+Transcribed by the coordinating lane, which wrote §7.0.17 and is therefore already disqualified under
+§7.0.10 from grading either gate — so this costs no further independence, which is the reason it was
+routed here rather than to the builder. **The builder may not record a ruling that scopes a clause out
+of a gate it is graded against.** This lane records neither the F-9/F-12 re-grade nor either Gate-2
+verdict, unchanged.
+
 ---
 
 **Tree**

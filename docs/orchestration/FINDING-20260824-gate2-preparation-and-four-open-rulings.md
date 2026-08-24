@@ -59,6 +59,14 @@ inventory records … this is never a clean result."*
 
 ### Ruling 1 — F-6(b) is unsatisfiable within the scope Gate 1 unlocks, so **Gate 2 cannot pass as written**
 
+> **RULED, RELAYED, AND NOT YET OPERATIVE — 2026-08-24.** Joseph's ruling scoping F-6(b) out of Gate 2
+> and into a separate leg-6 completion gate was relayed to this lane by the builder and is transcribed
+> at **§7.0.18** of the review contract. **It is not in any `DECISION-*` document — measured, 0 hits
+> with a passing covering control — so F-6(b) REMAINS A GATE-2 CLAUSE and Gate 2 remains TEN clauses
+> until that record lands.** The ruling waives nothing: F-6(b) stays mandatory under the leg-6 gate,
+> and it authorizes no leg 6, no adoption, no consumption, no member k≠0, and no relaxation of any
+> other Gate-2 clause. **Do not grade nine clauses on the strength of §7.0.18 alone.**
+
 §7.0.6: a Gate-1 PASS *"unlocks exactly one thing: submission of the seven jobs of logical legs 1–5"*,
 and leg 6 *"stays separately gated."* F-6(b) requires the B-2 pinned-writer child's record to be
 present in the run's inventory. **Measured:** `adopt_unified_5d.py` and
@@ -131,13 +139,39 @@ transferable part is that a delegated measurement is bound to the sha it ran aga
 long-running lane's "not present anywhere" can expire mid-run.** Bind a lane's finding to a sha, and
 re-check any absence claim against `HEAD` before acting on it.
 
-**(b) The divergence the coordinating lane recorded was real but mis-stated, and the lane found the
-larger one.** `main` and `build-k0-execution-integrity` were byte-identical at `e0fb342b…` when the
-lane looked; they diverge **now**, after `e1596f00`. **But the more important measurement is the
-lane's:** `contract-f9-restatement` (`8e4878eb…`), `review-contract-k0-integrity` (`80402f75…`) and
-`verify-k0-execution-integrity` (`504803c2…`) each carry **different contract bytes**. **That is a
-three-way divergence nobody had named, and it is not the two-way one the brief described.** Grade
-against path + digest + sha, and treat "the contract" as a definite description that re-points.
+**(b) RETRACTED AND CORRECTED 2026-08-24 — the three digests below are NOT GIT OBJECTS AT ALL, and I
+published them without re-deriving them.** The struck text read: *"`contract-f9-restatement`
+(`8e4878eb…`), `review-contract-k0-integrity` (`80402f75…`) and `verify-k0-execution-integrity`
+(`504803c2…`) each carry different contract bytes … a three-way divergence."* **Measured:
+`git cat-file -t` on each returns `fatal: Not a valid object name` — none of the three exists in this
+repository, as a blob or as a commit.** They came from a delegated lane's report and I relayed them
+into a commit message and into this document without checking one of them.
+
+**The correct measurement, taken over `refs/heads` by resolving the path in each ref: NINE branches
+carry the file and there are FIVE distinct blobs.**
+
+| blob | lines | branches |
+|---|---|---|
+| `7a7ce03b4533` | **1371** | `main` |
+| `e2b952075205` | 1160 | `build-k0-execution-integrity`, `contract-f9-u-arm-scoping`, `gate1-verdict-k0`, `publication-readiness-list`, `worktree-regrade-round10` |
+| `a51b15770195` | 1078 | `contract-f9-restatement` |
+| `8dfd88c2f362` | **772** | `verify-k0-execution-integrity` |
+| `cf53f58789ca` | 575 | `review-contract-k0-integrity` |
+
+**Found by the builder lane, which measured it after I relayed my figure to it; the correction is
+theirs and the error was mine.** Two lessons, and the second is the one that generalises: **(i) a
+delegate's digest is not a measurement until I resolve it myself** — `git cat-file -t` is one command
+and it falsifies a fabricated hash instantly; **(ii) my unchecked numbers erred toward my active
+argument** — I was arguing the divergence was worse than the builder had described, and every
+unverified digit I passed on made that case. **The load-bearing fact survives and is now stronger:
+`main` at 1371 lines is AHEAD of the candidate branch at 1160, so the candidate lacks both the
+§7.0.11 amendment and the §7.0.17 disqualification record — and Gate 2 is graded against the
+candidate.** That, not the fork count, is what makes the sync critical-path.
+
+**A caution for whoever writes the next inventory of this kind:** `git rev-parse <ref>:<path>` **echoes
+its argument to stdout when the path is absent**, so a `for`-loop piping `rev-parse` into `sort -u`
+counts those echoes as objects. Mine reported 32 distinct blobs where there are 5. Resolve, then
+check `git cat-file -t`, and never count what `rev-parse` printed.
 
 ## 5. DISCLOSURE — two of my own commits are red on `generate_manifest.py --check`, and the fix is one line of procedure
 
