@@ -1,0 +1,817 @@
+{
+ "schema": "oi126-r5-loss-interpolation-sweep-v1",
+ "what": "R5 of the OI-126 successor free reads: the loss-interpolation sweep along theta(t) = theta_nom + t*(theta_k - theta_nom) for six Gate-5 members, with the step-2 output response read on the same forward passes.",
+ "predeclaration": {
+  "file": "docs/orchestration/state/PREDECLARATION-20260823-oi126-successor-free-reads.json",
+  "commit": "f1e2f10e",
+  "item": "R5 (gated on R1, unblocked by RECEIPT-20260823-oi126-r1-per-column-fisher-weight)"
+ },
+ "authorization": "Joseph 2026-08-23, code building and diagnostic tests including Slurm; single jobs well inside the standing 12 h grant. PET remains diagnostic/method-development (2e210468). Nothing here reopens OI-126.",
+ "HEADLINE": "Six members measured. Under the DECLARED bars four are OPPOSITE and none reaches CONFIRM. Under the declaration's own stated INTENT with the corrected scatter, ZERO members are distinguishable from the nominal. The declared bars were built from a val-loss scatter estimated at 8.0e-04 whose measured value is 1.320e-03, and BOTH bars are consequently displaced in the same direction -- toward 'distinguishable', away from 'flat'. That is the single largest caveat on this read.",
+ "THREE_FRAMINGS_WITH_THEIR_STANDINGS": {
+  "(a) DECLARED": {
+   "CONFIRM": 0.0024,
+   "OPPOSITE": 0.024,
+   "standing": "the declaration's construction with a WRONG input. No defence as an instrument -- only the standing of having been declared first.",
+   "OPPOSITE_count": "4 of 6"
+  },
+  "(b) OWN-NOISE per member": {
+   "CONFIRM": "3*sd_k",
+   "OPPOSITE": "30*sd_k",
+   "standing": "a supplementary instrument authorized later; arguably the scientifically BETTER one, since the relevant noise for comparing L_k(theta_nom) against L_k(theta_k) is that member's own evaluation noise. Never the declared bar.",
+   "OPPOSITE_count": "2 of 6"
+  },
+  "(c) INTENT-GLOBAL corrected": {
+   "CONFIRM": 0.00396,
+   "OPPOSITE": 0.0396,
+   "standing": "the FAITHFUL correction of the declaration: 3x/30x the MEASURED scatter 1.320e-03. Nothing about it is a new choice.",
+   "OPPOSITE_count": "0 of 6"
+  },
+  "DIRECTION_OF_THE_ERROR": "declared CONFIRM 2.4e-3 < intent 3.96e-3 -> HARDER to confirm; declared OPPOSITE 2.4e-2 < intent 3.96e-2 -> EASIER to oppose. Both bars share ONE denominator, so a single error in it moves both, and moves them the same way relative to 'distinguishable'. Checked in isolation either bar looks defensible; only the pair reveals the systematic push.",
+  "EVERY_MEMBER_MOVES_TOWARD_FLAT": "all six move toward the flat reading under the corrected bars and none moves the other way: 49 goes from missing CONFIRM by +116.6% to +31.3%; 00/29/26/45 go from clearing OPPOSITE by +10.4/+10.8/+29.8/+30.6% to missing it by 33.1/32.9/21.3/20.8%.",
+  "verdicts_stand_as_DECLARED": "bars were NOT moved; all three columns are reported."
+ },
+ "per_member": {
+  "replica_49": {
+   "dL": 0.005198768447700064,
+   "dL_in_thresholds_declared": 2.166153519875027,
+   "dL_in_own_sd": 7.144841922675823,
+   "own_val_sd": 0.000727625398009235,
+   "verdict_a_declared": "UNRESOLVED (sign +)",
+   "verdict_b_own_noise": "UNRESOLVED (sign +)",
+   "framings_diverge_a_vs_b": false,
+   "divergence_kind": null,
+   "interior_max_L_minus_L0": 0.008108328660129005,
+   "interior_in_thresholds": 3.3784702750537523,
+   "interior_pct_of_dL": 155.96633590626894,
+   "structural_clauses": {
+    "family_sign_clause": false,
+    "own_sign_clause": false,
+    "magnitude_clause_tail_over_band_ge_0p10": true,
+    "magnitude_ratio": 0.9386806533509406,
+    "magnitude_margin_above_floor": 0.8386806533509407,
+    "which_clause_carries_the_verdict": "FAIL on the SIGN clause (see-saw direction inverted); magnitude clause would have passed"
+   },
+   "own_band_dev": -0.16609604883756526,
+   "own_tail_dev": -0.18931208843813102,
+   "matches_family_pattern": false,
+   "band_response": {
+    "endpoint": 1.147265075443825,
+    "max_over_min": 1.2491526692912909,
+    "endpoint_direction": "UP",
+    "maxmin_inflated_by_nonmonotonicity": false,
+    "note": "max/min is bounded below by 1 and is STRUCTURALLY SIGN-BLIND -- it cannot express that the endpoint moved in the opposite direction"
+   },
+   "tail_response": {
+    "endpoint": 0.8790119320823837,
+    "max_over_min": 2.7523414148094956,
+    "endpoint_direction": "DOWN",
+    "maxmin_inflated_by_nonmonotonicity": true,
+    "note": "max/min is bounded below by 1 and is STRUCTURALLY SIGN-BLIND -- it cannot express that the endpoint moved in the opposite direction"
+   },
+   "dL_by_rowset": {
+    "A_heldout_primary": 0.005198768447700091,
+    "B_train_region": 0.006808307075837249,
+    "C_independent_perm": 0.006998610054927823
+   },
+   "dL_rowset_max_dev": 0.0017998416072277324,
+   "dL_rowset_dev_pct_of_dL": 34.62053802423116,
+   "dL_rowset_VERDICT": "ROW-SET IMMATERIAL -- dL moves less than the CONFIRM threshold across row sets",
+   "weights_pull_bracket_max_shift": 0.0004516729439654815,
+   "weights_pull_bracket_VERDICT": "PARTIAL -- licenses neither",
+   "S0S1_vs_direct_loss_max_dev": 0.0,
+   "objective_digest_fixed_across_t": "cd713c3237482a22c4deb5a0fd4c1e4042680882ee3fe2335788afff241b48cd",
+   "L_by_t": {
+    "0.0": 0.8798146238848586,
+    "0.25": 0.8797635338172347,
+    "0.5": 0.8879229525449877,
+    "0.75": 0.878691787527584,
+    "1.0": 0.8746158554371586
+   },
+   "O_band_by_t": {
+    "0.0": 1.1043928698434358,
+    "0.25": 1.2161544967224551,
+    "0.5": 1.201265828399256,
+    "0.75": 1.379555301311197,
+    "1.0": 1.2670313691405517
+   },
+   "O_tail_by_t": {
+    "0.0": 0.9336262111224628,
+    "0.25": 1.468960071673388,
+    "0.5": 2.2587601196903107,
+    "0.75": 1.6729229394635405,
+    "1.0": 0.8206685796815115
+   },
+   "provenance": null
+  },
+  "replica_00": {
+   "dL": 0.026487677076978855,
+   "dL_in_thresholds_declared": 11.036532115407857,
+   "dL_in_own_sd": 42.95340426842387,
+   "own_val_sd": 0.0006166607170750053,
+   "verdict_a_declared": "OPPOSITE-BRANCH",
+   "verdict_b_own_noise": "OPPOSITE-BRANCH",
+   "framings_diverge_a_vs_b": false,
+   "divergence_kind": null,
+   "interior_max_L_minus_L0": 0.004445011250037045,
+   "interior_in_thresholds": 1.8520880208487691,
+   "interior_pct_of_dL": 16.78143099192463,
+   "structural_clauses": {
+    "family_sign_clause": true,
+    "own_sign_clause": true,
+    "magnitude_clause_tail_over_band_ge_0p10": true,
+    "magnitude_ratio": 0.2290343706629453,
+    "magnitude_margin_above_floor": 0.1290343706629453,
+    "which_clause_carries_the_verdict": "PASS on both clauses"
+   },
+   "own_band_dev": -1.5443559618162381,
+   "own_tail_dev": 0.5521714691132451,
+   "matches_family_pattern": true,
+   "band_response": {
+    "endpoint": 0.20969819383000501,
+    "max_over_min": 5.402906451491536,
+    "endpoint_direction": "DOWN",
+    "maxmin_inflated_by_nonmonotonicity": true,
+    "note": "max/min is bounded below by 1 and is STRUCTURALLY SIGN-BLIND -- it cannot express that the endpoint moved in the opposite direction"
+   },
+   "tail_response": {
+    "endpoint": 1.430138615438944,
+    "max_over_min": 1.6271938683308182,
+    "endpoint_direction": "UP",
+    "maxmin_inflated_by_nonmonotonicity": false,
+    "note": "max/min is bounded below by 1 and is STRUCTURALLY SIGN-BLIND -- it cannot express that the endpoint moved in the opposite direction"
+   },
+   "dL_by_rowset": {
+    "A_heldout_primary": 0.026487677076978917,
+    "B_train_region": 0.028785022068929342,
+    "C_independent_perm": 0.02802529017493475
+   },
+   "dL_rowset_max_dev": 0.0022973449919504244,
+   "dL_rowset_dev_pct_of_dL": 8.673259588879192,
+   "dL_rowset_VERDICT": "ROW-SET IMMATERIAL -- dL moves less than the CONFIRM threshold across row sets",
+   "weights_pull_bracket_max_shift": 0.00018209385782762266,
+   "weights_pull_bracket_VERDICT": "CANCELLATION HOLDS at R5 separation",
+   "S0S1_vs_direct_loss_max_dev": 0.0,
+   "objective_digest_fixed_across_t": "de65846ae311e96e744153f63d0683474fea6865a867b5c1e53a304d655190b4",
+   "L_by_t": {
+    "0.0": 0.8085460126074622,
+    "0.25": 0.8129910238574992,
+    "0.5": 0.8125596868855011,
+    "0.75": 0.7940716920066334,
+    "1.0": 0.7820583355304833
+   },
+   "O_band_by_t": {
+    "0.0": 1.1063977709996924,
+    "0.25": 1.2535262415647141,
+    "0.5": 1.0918220725474463,
+    "0.75": 0.5557805283604101,
+    "1.0": 0.232009614236179
+   },
+   "O_tail_by_t": {
+    "0.0": 0.9323709480673339,
+    "0.25": 0.8470289953108104,
+    "0.5": 0.8194596370451785,
+    "0.75": 1.1024593136568757,
+    "1.0": 1.3334196967445124
+   },
+   "provenance": null
+  },
+  "replica_45": {
+   "dL": 0.03134393670852431,
+   "dL_in_thresholds_declared": 13.059973628551798,
+   "dL_in_own_sd": 21.107490882136457,
+   "own_val_sd": 0.0014849674404005591,
+   "verdict_a_declared": "OPPOSITE-BRANCH",
+   "verdict_b_own_noise": "UNRESOLVED (sign +)",
+   "framings_diverge_a_vs_b": true,
+   "divergence_kind": "own-noise looser than absolute: absolute OPPOSITE vs own-noise UNRESOLVED",
+   "interior_max_L_minus_L0": 0.0014132756930848034,
+   "interior_in_thresholds": 0.5888648721186681,
+   "interior_pct_of_dL": 4.508928493019986,
+   "structural_clauses": {
+    "family_sign_clause": true,
+    "own_sign_clause": true,
+    "magnitude_clause_tail_over_band_ge_0p10": true,
+    "magnitude_ratio": 0.22288484070125741,
+    "magnitude_margin_above_floor": 0.12288484070125741,
+    "which_clause_carries_the_verdict": "PASS on both clauses"
+   },
+   "own_band_dev": -1.9297728724028977,
+   "own_tail_dev": 0.7442279666892734,
+   "matches_family_pattern": true,
+   "band_response": {
+    "endpoint": 0.1403055343063526,
+    "max_over_min": 7.5880879121083895,
+    "endpoint_direction": "DOWN",
+    "maxmin_inflated_by_nonmonotonicity": true,
+    "note": "max/min is bounded below by 1 and is STRUCTURALLY SIGN-BLIND -- it cannot express that the endpoint moved in the opposite direction"
+   },
+   "tail_response": {
+    "endpoint": 1.5491879022882895,
+    "max_over_min": 1.5560411582421725,
+    "endpoint_direction": "UP",
+    "maxmin_inflated_by_nonmonotonicity": false,
+    "note": "max/min is bounded below by 1 and is STRUCTURALLY SIGN-BLIND -- it cannot express that the endpoint moved in the opposite direction"
+   },
+   "dL_by_rowset": {
+    "A_heldout_primary": 0.03134393670852443,
+    "B_train_region": 0.04190534730667632,
+    "C_independent_perm": 0.040122424790736036
+   },
+   "dL_rowset_max_dev": 0.01056141059815189,
+   "dL_rowset_dev_pct_of_dL": 33.69522691538489,
+   "dL_rowset_VERDICT": "THRESHOLD-INDETERMINATE -- dL moves more than the CONFIRM threshold across row sets",
+   "weights_pull_bracket_max_shift": 0.00031053696607580977,
+   "weights_pull_bracket_VERDICT": "PARTIAL -- licenses neither",
+   "S0S1_vs_direct_loss_max_dev": 0.0,
+   "objective_digest_fixed_across_t": "9db5c007907a484c2cc27694070bae637992941337bb2176bb243641be8a2276",
+   "L_by_t": {
+    "0.0": 0.8148303430681231,
+    "0.25": 0.8162436187612079,
+    "0.5": 0.8119489235769967,
+    "0.75": 0.7895487420836207,
+    "1.0": 0.7834864063595988
+   },
+   "O_band_by_t": {
+    "0.0": 1.1030155450777248,
+    "0.25": 1.1743263040240832,
+    "0.5": 0.9855742336350547,
+    "0.75": 0.31734061909808947,
+    "1.0": 0.15475918540034292
+   },
+   "O_tail_by_t": {
+    "0.0": 0.9350543309408466,
+    "0.25": 1.020673687058464,
+    "0.5": 1.1902400782012166,
+    "0.75": 1.4549830241365544,
+    "1.0": 1.4485748574758301
+   },
+   "provenance": null
+  },
+  "replica_29": {
+   "dL": 0.026588668915084046,
+   "dL_in_thresholds_declared": 11.078612047951687,
+   "dL_in_own_sd": 19.57239217773027,
+   "own_val_sd": 0.0013584782418848624,
+   "verdict_a_declared": "OPPOSITE-BRANCH",
+   "verdict_b_own_noise": "UNRESOLVED (sign +)",
+   "framings_diverge_a_vs_b": true,
+   "divergence_kind": "own-noise looser than absolute: absolute OPPOSITE vs own-noise UNRESOLVED",
+   "interior_max_L_minus_L0": 0.0,
+   "interior_in_thresholds": 0.0,
+   "interior_pct_of_dL": 0.0,
+   "structural_clauses": {
+    "family_sign_clause": true,
+    "own_sign_clause": true,
+    "magnitude_clause_tail_over_band_ge_0p10": true,
+    "magnitude_ratio": 0.12291495140349405,
+    "magnitude_margin_above_floor": 0.022914951403494047,
+    "which_clause_carries_the_verdict": "PASS on both clauses"
+   },
+   "own_band_dev": -1.2231202204018954,
+   "own_tail_dev": 0.36844103288452923,
+   "matches_family_pattern": true,
+   "band_response": {
+    "endpoint": 0.2757657280925039,
+    "max_over_min": 3.805198436067227,
+    "endpoint_direction": "DOWN",
+    "maxmin_inflated_by_nonmonotonicity": true,
+    "note": "max/min is bounded below by 1 and is STRUCTURALLY SIGN-BLIND -- it cannot express that the endpoint moved in the opposite direction"
+   },
+   "tail_response": {
+    "endpoint": 1.1715638509249167,
+    "max_over_min": 2.1309044388779514,
+    "endpoint_direction": "UP",
+    "maxmin_inflated_by_nonmonotonicity": true,
+    "note": "max/min is bounded below by 1 and is STRUCTURALLY SIGN-BLIND -- it cannot express that the endpoint moved in the opposite direction"
+   },
+   "dL_by_rowset": {
+    "A_heldout_primary": 0.026588668915084046,
+    "B_train_region": 0.026414423654711385,
+    "C_independent_perm": 0.024619673097196985
+   },
+   "dL_rowset_max_dev": 0.0019689958178870613,
+   "dL_rowset_dev_pct_of_dL": 7.405394471515001,
+   "dL_rowset_VERDICT": "ROW-SET IMMATERIAL -- dL moves less than the CONFIRM threshold across row sets",
+   "weights_pull_bracket_max_shift": 0.00018693455223446273,
+   "weights_pull_bracket_VERDICT": "CANCELLATION HOLDS at R5 separation",
+   "S0S1_vs_direct_loss_max_dev": 0.0,
+   "objective_digest_fixed_across_t": "6263936179187f85c9da282df8579d62c2cff3d63bd26be3183b934ae42dcf2c",
+   "L_by_t": {
+    "0.0": 0.8046375353831006,
+    "0.25": 0.8043039687534647,
+    "0.5": 0.7986366235145822,
+    "0.75": 0.7848564691596951,
+    "1.0": 0.7780488664680165
+   },
+   "O_band_by_t": {
+    "0.0": 1.1036526701922245,
+    "0.25": 1.1581105540407497,
+    "0.5": 0.925985855158674,
+    "0.75": 0.5392545339250798,
+    "1.0": 0.3043495821567948
+   },
+   "O_tail_by_t": {
+    "0.0": 0.9343084639337507,
+    "0.25": 1.4486982604546215,
+    "0.5": 1.9909220530776697,
+    "0.75": 1.7183304680231897,
+    "1.0": 1.0946020219579686
+   },
+   "provenance": null
+  },
+  "replica_43": {
+   "dL": 0.023656075769052154,
+   "dL_in_thresholds_declared": 9.856698237105064,
+   "dL_in_own_sd": 18.962333752831423,
+   "own_val_sd": 0.0012475297649225201,
+   "verdict_a_declared": "UNRESOLVED (sign +)",
+   "verdict_b_own_noise": "UNRESOLVED (sign +)",
+   "framings_diverge_a_vs_b": false,
+   "divergence_kind": null,
+   "interior_max_L_minus_L0": 0.002050469843119851,
+   "interior_in_thresholds": 0.8543624346332713,
+   "interior_pct_of_dL": 8.667835963741542,
+   "structural_clauses": {
+    "family_sign_clause": true,
+    "own_sign_clause": true,
+    "magnitude_clause_tail_over_band_ge_0p10": true,
+    "magnitude_ratio": 0.4191579388477574,
+    "magnitude_margin_above_floor": 0.31915793884775745,
+    "which_clause_carries_the_verdict": "PASS on both clauses"
+   },
+   "own_band_dev": -1.2925249002149692,
+   "own_tail_dev": 0.7895112338248969,
+   "matches_family_pattern": true,
+   "band_response": {
+    "endpoint": 0.26421016402636355,
+    "max_over_min": 3.9122425400159386,
+    "endpoint_direction": "DOWN",
+    "maxmin_inflated_by_nonmonotonicity": true,
+    "note": "max/min is bounded below by 1 and is STRUCTURALLY SIGN-BLIND -- it cannot express that the endpoint moved in the opposite direction"
+   },
+   "tail_response": {
+    "endpoint": 1.7470062048099892,
+    "max_over_min": 1.9187369075439737,
+    "endpoint_direction": "UP",
+    "maxmin_inflated_by_nonmonotonicity": false,
+    "note": "max/min is bounded below by 1 and is STRUCTURALLY SIGN-BLIND -- it cannot express that the endpoint moved in the opposite direction"
+   },
+   "dL_by_rowset": {
+    "A_heldout_primary": 0.023656075769052078,
+    "B_train_region": 0.02456432912216233,
+    "C_independent_perm": 0.02296496019794629
+   },
+   "dL_rowset_max_dev": 0.0009082533531102541,
+   "dL_rowset_dev_pct_of_dL": 3.8394083700833774,
+   "dL_rowset_VERDICT": "ROW-SET IMMATERIAL -- dL moves less than the CONFIRM threshold across row sets",
+   "weights_pull_bracket_max_shift": 5.202384512461786e-05,
+   "weights_pull_bracket_VERDICT": "CANCELLATION HOLDS at R5 separation",
+   "S0S1_vs_direct_loss_max_dev": 0.0,
+   "objective_digest_fixed_across_t": "2ac87469b18395668096f7bf97d0e954d94f6b109cbdc37a990faa35e073a689",
+   "L_by_t": {
+    "0.0": 0.8343987654720385,
+    "0.25": 0.8353552230504463,
+    "0.5": 0.8364492353151584,
+    "0.75": 0.8203791971258351,
+    "1.0": 0.8107426897029864
+   },
+   "O_band_by_t": {
+    "0.0": 1.1052613609346105,
+    "0.25": 1.142458095584493,
+    "0.5": 0.9880084937571518,
+    "0.75": 0.5258764908506437,
+    "1.0": 0.29202128546453526
+   },
+   "O_tail_by_t": {
+    "0.0": 0.9331105997508032,
+    "0.25": 0.8495953776306165,
+    "0.5": 0.8635420445843163,
+    "0.75": 1.3315938389031057,
+    "1.0": 1.6301500075386237
+   },
+   "provenance": null
+  },
+  "replica_26": {
+   "dL": 0.03115953032208585,
+   "dL_in_thresholds_declared": 12.983137634202437,
+   "dL_in_own_sd": 62.48965464513909,
+   "own_val_sd": 0.0004986350220533611,
+   "verdict_a_declared": "OPPOSITE-BRANCH",
+   "verdict_b_own_noise": "OPPOSITE-BRANCH",
+   "framings_diverge_a_vs_b": false,
+   "divergence_kind": null,
+   "interior_max_L_minus_L0": 0.008450438431211515,
+   "interior_in_thresholds": 3.5210160130047985,
+   "interior_pct_of_dL": 27.1199159418069,
+   "structural_clauses": {
+    "family_sign_clause": true,
+    "own_sign_clause": true,
+    "magnitude_clause_tail_over_band_ge_0p10": true,
+    "magnitude_ratio": 0.15370611147476068,
+    "magnitude_margin_above_floor": 0.053706111474760676,
+    "which_clause_carries_the_verdict": "PASS on both clauses"
+   },
+   "own_band_dev": -1.9612669922112822,
+   "own_tail_dev": 0.5392604862358916,
+   "matches_family_pattern": true,
+   "band_response": {
+    "endpoint": 0.13254922165966948,
+    "max_over_min": 8.843358496433128,
+    "endpoint_direction": "DOWN",
+    "maxmin_inflated_by_nonmonotonicity": true,
+    "note": "max/min is bounded below by 1 and is STRUCTURALLY SIGN-BLIND -- it cannot express that the endpoint moved in the opposite direction"
+   },
+   "tail_response": {
+    "endpoint": 1.364256371398627,
+    "max_over_min": 1.4369807117830526,
+    "endpoint_direction": "UP",
+    "maxmin_inflated_by_nonmonotonicity": false,
+    "note": "max/min is bounded below by 1 and is STRUCTURALLY SIGN-BLIND -- it cannot express that the endpoint moved in the opposite direction"
+   },
+   "dL_by_rowset": {
+    "A_heldout_primary": 0.03115953032208575,
+    "B_train_region": 0.040134197413279504,
+    "C_independent_perm": 0.036594046809757114
+   },
+   "dL_rowset_max_dev": 0.008974667091193753,
+   "dL_rowset_dev_pct_of_dL": 28.80231825841263,
+   "dL_rowset_VERDICT": "THRESHOLD-INDETERMINATE -- dL moves more than the CONFIRM threshold across row sets",
+   "weights_pull_bracket_max_shift": 0.0003065326895645773,
+   "weights_pull_bracket_VERDICT": "PARTIAL -- licenses neither",
+   "S0S1_vs_direct_loss_max_dev": 0.0,
+   "objective_digest_fixed_across_t": "ccd5272a85e985f2f0a9b858bf3e82e8780172e39774a0f8fc8a5a84f9d96843",
+   "L_by_t": {
+    "0.0": 0.8070098405524206,
+    "0.25": 0.8120990133900137,
+    "0.5": 0.8154602789836322,
+    "0.75": 0.7919332163731104,
+    "1.0": 0.7758503102303348
+   },
+   "O_band_by_t": {
+    "0.0": 1.1046261094037237,
+    "0.25": 1.2948209483574866,
+    "0.5": 1.1218847526637383,
+    "0.75": 0.3879417933524036,
+    "1.0": 0.1464173310264125
+   },
+   "O_tail_by_t": {
+    "0.0": 0.932813397771957,
+    "0.25": 0.9137115291534107,
+    "0.5": 0.8856045253782947,
+    "0.75": 1.0725117905510448,
+    "1.0": 1.2725966212363944
+   },
+   "provenance": null
+  }
+ },
+ "AGGREGATE_GUARD": {
+  "members_scored_m": 6,
+  "planned_n": 6,
+  "missing_members": [],
+  "divergences_observed_d": 2,
+  "divergent_members": [
+   "replica_45",
+   "replica_29"
+  ],
+  "count_at_n6_lower_bound": 2,
+  "count_at_n6_upper_bound": 2,
+  "band_interval": "QUALIFIED",
+  "is_point_verdict": true,
+  "attainable_bands": [
+   "QUALIFIED"
+  ],
+  "excluded_bands": [
+   "ROBUST",
+   "BOUNDARY-DEPENDENT"
+  ],
+  "excluded_bands_note": "computed over the whole integer count range, not its endpoints -- endpoint-only would wrongly exclude an attainable intermediate band",
+  "SCOPE_FORBIDDING_SENTENCE": "This count is a property of THESE SIX members, not a rate for the 50. The six were selected on BAND-RATIO statistics (two extremes, two medians, the shallowest-dip outlier, and one spanning an aggregation ambiguity) while divergence depends on each member's own NOISE (val successive-difference sd). Noise is therefore incidental to the selection rather than balanced by it, so the divergence rate here is plausibly but not demonstrably representative of the family. The guard answers whether THIS SWEEP's verdicts are boundary-dependent -- it is NOT an estimate of what fraction of the 50 would diverge, and must not be read as one.",
+  "reported_with_denominator": "d of m, with m and the missing member ids stated (PB-15)",
+  "divergence_kinds_observed": {
+   "replica_45": "own-noise looser than absolute: absolute OPPOSITE vs own-noise UNRESOLVED",
+   "replica_29": "own-noise looser than absolute: absolute OPPOSITE vs own-noise UNRESOLVED"
+  },
+  "INVERTED_BRANCH": {
+   "declared": "dL <= -2.4e-02: theta_nom distinguishably BETTER on k's own HELD-OUT objective",
+   "ruled_before_the_prompting_value_emitted": true,
+   "READING_IF_IT_FIRES": "NOT a training failure. L_k is evaluated on a HELD-OUT slice while theta_k minimised the TRAINING objective, so theta_nom beating theta_k on k's held-out data is an ordinary generalisation result -- and theta_k trained on Poisson-thinned weights, which halve the effective sample size, so it had a noisier optimisation than theta_nom on unthinned weights. (a) It does NOT support the flat-direction mechanism: a large |dL| in either direction means the two points are distinguishable, the opposite of flat. (b) It is evidence about OVERFITTING rather than under-drifting -- a different mechanism from the one the sweep probes, and not a version of the drift-deficit claim. (c) It does NOT impugn that member's cross section or its C_stat contribution: generalisation on a held-out LOSS slice is a different object from the extracted cross section and nothing licenses transferring one to the other.",
+   "members_reaching_it": []
+  },
+  "DIVERGENCE_KIND_COVERAGE": {
+   "kinds_possible": [
+    "above-crossover: absolute OPPOSITE vs own-noise UNRESOLVED",
+    "below-crossover: own-noise OPPOSITE vs absolute UNRESOLVED"
+   ],
+   "kinds_observed": [
+    "own-noise looser than absolute: absolute OPPOSITE vs own-noise UNRESOLVED"
+   ],
+   "below_crossover_kind_STATUS": "UNTESTED, explicitly NOT absent -- no selected member's own noise sits low enough for its divergence window to contain a plausible dL. The lowest-noise member (replica_26, sd 4.986e-04) has window [1.496e-02, 2.400e-02], entirely BELOW where every OPPOSITE member landed (2.649e-02 / 3.134e-02 / 2.659e-02). So the guard has two kinds and this sample can exercise one. Third branch today to end unexercised.",
+   "falsification_recorded_before_measurement": "if replica_26's dL DOES land in [1.496e-02, 2.400e-02] that is TWO findings, not one: the first reverse-kind divergence, AND a member behaving unlike the other three OPPOSITE members."
+  },
+  "VERDICT_FRAGILITY": {
+   "hinges_on": "replica_43 alone, given 2 divergences on 4 and replica_26 predicted not to diverge",
+   "window": [
+    0.024,
+    0.03744
+   ],
+   "window_width": 0.01344,
+   "branches": {
+    "43 diverges, 26 does not": "3 of 6 -> BOUNDARY-DEPENDENT",
+    "neither diverges": "2 of 6 -> QUALIFIED",
+    "both diverge": "4 of 6 -> BOUNDARY-DEPENDENT"
+   },
+   "WHY_FRAGILE_AND_IT_BELONGS_IN_THE_VERDICT": "Divergence depends on each member's OWN NOISE against a fixed bar, and the six members were selected on BAND-RATIO statistics, not on noise. So the aggregate turns on which noise levels happened to land in the sample -- an axis the selection did not control. Whether this sweep can support a claim about the mechanism at all hinges on one member's dL falling in a 1.344e-02-wide window. This is the guard working as specified, NOT a defect in it, but a reader seeing BOUNDARY-DEPENDENT without this will take it as a property of the mechanism."
+  },
+  "MISSING_MEMBER_SCOPE": {
+   "replica_26": "the flagged ADDITION, but added for a specific job: it is the max under the cols 11-13 and 10-13 aggregations, so it alone spans the aggregation ambiguity replica_45 does not cover. If absent, record that THE AGGREGATION-AMBIGUITY SPAN WAS NOT COVERED -- not that an optional member was lost. An uncovered case must be distinguishable from one covered and found unremarkable.",
+   "replica_43": "one of two medians; replica_29 already covers the median region, so its absence is the least costly on coverage grounds."
+  },
+  "LABEL_SCOPE": "report as QUALIFIED(boundary-sensitivity), never bare QUALIFIED. The guard classifies BOUNDARY-SENSITIVITY, not mechanism evidence, and ROBUST/QUALIFIED/BOUNDARY-DEPENDENT all parse as claims about the world while all three are claims about criteria. OPPOSITE, INVERTED, CONFIRM, BARRIER and UNRESOLVED keep bare tokens because they are about the measurement -- the annotated set is a considered subset, not an oversight.",
+  "NO_MECHANISM_CLAUSE": "QUALIFIED(boundary-sensitivity) does NOT license a mechanism claim. Under the faithful framing (c) there are ZERO OPPOSITE verdicts, so there is no distinguishability result for a mechanism to explain.",
+  "COUNT_AGREEMENT_IS_COINCIDENCE": "a-vs-b {29,45} and c-vs-b {00,26} both have count 2 with an EMPTY intersection. The verdict is invariant under the correction; the evidence for it is entirely disjoint. At m=6 the count agreement is coincidence and is NOT convergence."
+ },
+ "SUB_CASE_STRUCTURE_AND_WHAT_IS_UNEXERCISED": {
+  "A1": "(a)OPP,(b)UNRES -> dL>=2.4e-02 AND dL<30sd -> sd>8.0e-04. Members {29,45}. TAUTOLOGICALLY above-crossover.",
+  "A2": "(a)UNRES,(b)OPP -> dL<2.4e-02 AND dL>=30sd -> sd<8.0e-04. ZERO members. UNEXERCISED, NOT empty.",
+  "C1": "(b)OPP,(c)UNRES -> dL>=30sd AND dL<3.96e-02 -> sd<1.320e-03 (NOT 8.0e-04). Members {00,26}.",
+  "A2_windows_are_nonempty": {
+   "replica_49": [
+    0.021829,
+    0.024
+   ],
+   "replica_00": [
+    0.0185,
+    0.024
+   ],
+   "replica_26": [
+    0.014959,
+    0.024
+   ]
+  },
+  "BOTH_STRUCTURAL_CLAIMS_COLLAPSE_TO_ONE_CONTINGENT_FACT": "disjointness of the divergence sets AND 'a-vs-b admits only above-crossover members' are both consequences of A2 being empty, and A2 is the only sub-case that can produce overlap. One unwitnessed sub-case carries two claims that read as structure.",
+  "PREDECLARED_RETRACTION_TRIGGER": "if any further member lands in [30*sd_k, 2.400e-02) with sd_k < 8.000e-04 it is a both-sets divergence, and BOTH the disjointness statement and the above-crossover statement are RETRACTED rather than qualified. Declared while no such member exists.",
+  "RETRACTION_HISTORY": "'the below-crossover kind is UNTESTED' was stated, then retracted on the ground that (c)-vs-(b) exhibits it, then REINSTATED because C1 is a different framing's divergence at a different threshold and is not a-vs-b's below-crossover sub-case. A later reader is given the reasoning that would tempt a re-retraction, and why it fails."
+ },
+ "BARRIER_BRANCH": {
+  "reached": [],
+  "not_reached_precondition_failed": [
+   "replica_49",
+   "replica_00",
+   "replica_45",
+   "replica_29",
+   "replica_43",
+   "replica_26"
+  ],
+  "STATUS": "UNEXERCISED -- precondition |dL| <= 2.4e-3 failed on every scored member. This is an ABSENCE OF TEST, explicitly NOT a finding that no barriers exist."
+ },
+ "CONFIRM_REACHABILITY": {
+  "per_member_interior": {
+   "replica_49": 0.008108328660129005,
+   "replica_00": 0.004445011250037045,
+   "replica_45": 0.0014132756930848034,
+   "replica_29": 0.0,
+   "replica_43": 0.002050469843119851,
+   "replica_26": 0.008450438431211515
+  },
+  "min_interior": 0.0,
+  "bar": 0.0024,
+  "min_over_bar": null,
+  "CONFIRM_interior_clause_REACHABLE": true,
+  "witness": "replica_29",
+  "STATEMENT": "No member reached CONFIRM, and the interior clause is NOT the binding constraint -- |dL| is. Every scored member is excluded by dL alone."
+ },
+ "REPLICATE_CONTROL": {
+  "STATUS": "NOT-RUN",
+  "why": "the DECLARED PRIMARY (main sweep 57483483's replica_26 copy) never completed -- cluster access was lost while it was running. The only copy is the rescue job's. Comparing it against itself would return a difference of exactly 0 by construction, which is not a measurement.",
+  "declared_boundary_UNUSED": {
+   "REPRODUCIBLE": "D <= 5.5e-04",
+   "MATERIAL": "D >= 1.83e-03"
+  },
+  "consequence": "replica_29's C anomaly is NEITHER retired nor confirmed by this control -- it remains UNEXPLAINED with the discriminator unrun. The C2 discriminator was also not run.",
+  "what_was_measured_before_access_was_lost": "t=0 only, and identically on both nodes: L 0.80700984, O_band 1.104626, O_tail 0.932813 on nid001469 and nid001089. Since dL = L(0) - L(1) and dL(0) cancels, |D| = |dL L(1) difference| and L(1) was never measured on the primary. So the t=0 identity constrains NOTHING about D. It is cross-node forward-pass determinism at the one t where the interpolation is a literal no-op, and is recorded as that and nothing more."
+ },
+ "PIPELINE_VALIDATION_t1_ENDPOINT_CHECK": {
+  "what": "bit-level comparison of the recomputed step-2 push at t=1 against each member's recorded GATE5_REPLICA_FULL_PUSH.npz w_push, on 148024 band+tail pass_gen rows.",
+  "why_it_gates_everything": "this is the ONLY absolute validation of the computation every R5 number rests on. The t=0 cross-member control tests consistency, not correctness; the endpoint-vs-own-deviation agreements are between two DIFFERENT objects at 2-4% and would tolerate a compensating error. A FAILED result would have voided every R5 number, not merely the structural verdicts.",
+  "predeclared": {
+   "VERIFIED": "max rel dev <= 1e-5",
+   "FAILED": ">= 1e-2",
+   "UNRESOLVED": "between"
+  },
+  "result": {
+   "replica_00": {
+    "max_rel_dev": 5.800780214171297e-06,
+    "median_rel_dev": 9.332864453481804e-08,
+    "VERDICT": "VERIFIED",
+    "digest_match": true,
+    "best_epoch_sha256_differs": true
+   },
+   "replica_26": {
+    "max_rel_dev": 9.043175299483508e-06,
+    "median_rel_dev": 1.9668477968526332e-07,
+    "VERDICT": "VERIFIED",
+    "digest_match": true,
+    "best_epoch_sha256_differs": true
+   },
+   "replica_29": {
+    "max_rel_dev": 3.4810541518215388e-06,
+    "median_rel_dev": 2.0917068788151028e-07,
+    "VERDICT": "VERIFIED",
+    "digest_match": true,
+    "best_epoch_sha256_differs": false
+   },
+   "replica_43": {
+    "max_rel_dev": 1.794724201120701e-05,
+    "median_rel_dev": 1.429183068557549e-07,
+    "VERDICT": "UNRESOLVED",
+    "digest_match": true,
+    "best_epoch_sha256_differs": true
+   },
+   "replica_45": {
+    "max_rel_dev": 2.1096381350727e-06,
+    "median_rel_dev": 1.4108115786726216e-07,
+    "VERDICT": "VERIFIED",
+    "digest_match": true,
+    "best_epoch_sha256_differs": true
+   },
+   "replica_49": {
+    "max_rel_dev": 2.754880174649088e-06,
+    "median_rel_dev": 1.706532984369069e-07,
+    "VERDICT": "VERIFIED",
+    "digest_match": true,
+    "best_epoch_sha256_differs": true
+   }
+  },
+  "AGGREGATE": "5 VERIFIED, 1 UNRESOLVED, 0 FAILED -- the sweep is NOT voided",
+  "largest_dev_below_FAILED_bar_by": "557x",
+  "CITABLE_FOR": "the R5 push computation reproduces an independently recorded artifact",
+  "NOT_CITABLE_FOR": "interpolation direction, which is settled separately",
+  "replica_43_UNRESOLVED": {
+   "max_rel_dev": 1.795e-05,
+   "times_the_VERIFIED_bar": 1.79,
+   "median_rel_dev": 1.429e-07,
+   "consistency_statement": "all six median rel devs span 9.333e-08 to 2.092e-07, a factor 2.24, and 43's 1.429e-07 is INSIDE that range. So the bulk of its 148024 rows agrees as well as every other member's and only its MAXIMUM is elevated.",
+   "MECHANISM_PLAUSIBLE_AND_UNMEASURED": "the small-denominator account -- relative deviation blows up where the recorded push is near zero -- FITS and is also the FAVOURABLE reading, and it is NOT measured. 'The bulk agrees and the max is a tail statistic' is true of any elevated max whatever its cause. The discriminating measurement is the max ABSOLUTE deviation plus min|w_push| per member, which this script did not persist.",
+   "DISCRIMINATOR_PREDECLARED_BUT_NOT_RUN": {
+    "MECHANISM_DEMONSTRATED": "43's max_abs_dev lies within [min,max] of the other five members' max_abs_dev AND rank(min|w_push|) <= 2 of 6",
+    "MECHANISM_REFUTED": "43's max_abs_dev lies ABOVE the other five's range",
+    "INDETERMINATE": "max_abs_dev within range but rank(min|w_push|) > 2 of 6",
+    "note": "the rank rule replaces an earlier 'smallest or near-smallest', which had no rule and would therefore have been decided after seeing the number -- the undeclared-convention failure. Fixed before any value existed; the job was never launched.",
+    "STATUS": "NOT RUN -- cluster access was lost before it could complete",
+    "endpoint_verdict_under_every_branch": "UNRESOLVED"
+   },
+   "WHY_A_RERUN_AND_NOT_A_REREAD": "the endpoint script persisted max and median RELATIVE deviation and discarded the operands, so the absolute column costs a re-run. That is the 'persist the operands, not just the answer' lesson recorded earlier the same day and not applied to this script. Recorded here so the cause is 'the script discarded its operands' rather than 'we wanted another column'."
+  },
+  "A_DEFECT_IN_MY_OWN_PRECONDITION_FOUND_BY_ITS_OWN_OUTPUT": "I told two lanes the digest precondition 'cannot pass by accident on the wrong file'. For replica_29 best_epoch_sha256_differs is FALSE: its iter2_step2 and iter2_step2_final files are BYTE-IDENTICAL because its last epoch was also its best. So the precondition discriminates for 5 of 6 members and for replica_29 discriminates for none -- a property of that member's training, not a fault in the check. The comparison is unaffected (identical bytes, identical weights). GENERAL FORM: a precondition that reports its own discriminating power is the only kind whose scope claims are falsifiable -- when asserting that a precondition discriminates, emit the DISCRIMINANT, not the outcome."
+ },
+ "replica_43_TWO_AXIS_CITATION_CONSTRAINT": {
+  "sweep_verdict": "UNRESOLVED, and the knife-edge member at 1.43% below the declared OPPOSITE bar",
+  "pipeline_validation": "UNRESOLVED, 1.79x the VERIFIED bar, the only non-VERIFIED member",
+  "CONSTRAINT": "both qualifications travel together on any statement about replica_43 and neither may be quoted without the other. NAMED HAZARD: 43's sweep result must not be cited with 'the pipeline validated' borrowed from the aggregate -- true of the aggregate, false of that member.",
+  "not_a_finding": "no common cause is proposed; two instruments, two questions, same member."
+ },
+ "BEST_EPOCH_HYPOTHESIS_TESTED_AND_NOT_SUPPORTED": {
+  "hypothesis": "a member whose training had not turned over is still descending at theta_k, so it has no interior bump and its last epoch is its best -- which would explain replica_29's zero interior and its identical checkpoints with one cause, and if it reached the C anomaly would make that a training artifact rather than a finding.",
+  "direction": "UNFAVOURABLE to the findings, which is why it was pursued first",
+  "data": {
+   "replica_49": {
+    "from_end": 2,
+    "interior": 0.008108
+   },
+   "replica_00": {
+    "from_end": 2,
+    "interior": 0.004445
+   },
+   "replica_45": {
+    "from_end": 2,
+    "interior": 0.001413
+   },
+   "replica_29": {
+    "from_end": 0,
+    "interior": 0.0
+   },
+   "replica_43": {
+    "from_end": 1,
+    "interior": 0.00205
+   },
+   "replica_26": {
+    "from_end": 2,
+    "interior": 0.00845
+   }
+  },
+  "predictor_has_THREE_LEVELS_not_six_values": "from_end in {0,1,2} with FOUR of six tied at 2; removing replica_29 leaves TWO levels with four of five tied",
+  "corr_all_six": 0.6839,
+  "p_all_six": 0.134,
+  "corr_excluding_29": 0.4826,
+  "p_excluding_29": 0.41,
+  "within_tie_spread": 0.007037,
+  "between_group_span": 0.005604,
+  "within_over_between": 1.256,
+  "ordering_violated": "replica_45 turned over 2 epochs early yet has interior 1.413e-03, SMALLER than replica_43 which turned over 1 epoch early. The predictor mis-orders that pair.",
+  "VERDICT": "NOT SUPPORTED. The within-tie spread EXCEEDS the between-group span -- which needs no distributional assumption -- neither correlation is distinguishable from chance, and a correlation with two levels of predictor variation has no interpretable magnitude.",
+  "WHAT_THIS_DOES_NOT_ESTABLISH": "'hypothesis not supported' is NOT 'the C anomaly is real'. The C anomaly remains UNEXPLAINED with both of its discriminators unrun."
+ },
+ "GUARDS_THAT_HELD": {
+  "objective_identity": "the quantity is ONE objective at TWO parameter points. lab/w/rows built once per member and the sha256 re-asserted at EVERY t, failing closed. Justification measured: L at the SAME parameter point t=0 differs by 7.127e-02 across members (30x the CONFIRM bar, 3.0x the OPPOSITE bar) because each L uses that member's own objective. A shared objective would have produced a confident OPPOSITE for a bookkeeping reason.",
+  "loss_normalisation_pin": "two-armed mutation test on the vendored weighted_binary_crossentropy: POSITIVE arm, scaling every weight by 7 must scale the loss by exactly 7 (measured ratio 7.00000022); NEGATIVE arm, a sum(w) normalisation would leave it INVARIANT, asserted not. Non-vacuous: an independent numpy fixture PREDICTED 0.82064543 before the run and TF returned 0.82064551, matching to float32. A control whose expected value is computed after the fact from the same code path cannot fail; predicting it from a second implementation first is what makes it an instrument. The property tested comes from an ABSENCE of code -- the function ends in tf.reduce_mean and never divides by the weight sum -- so the test is the only place the dependency is visible.",
+  "S0_S1_decomposition": "the loss is LINEAR in the weights_pull scale because only the label-1 half carries pull, so the +/-1.3% bracket is EXACT and costs zero extra forward passes. Asserted equal to the directly-measured loss at every t: max deviation 0.000e+00 on all six members.",
+  "t0_cross_member_control": "at t=0 the model is theta_nom for EVERY member, so O_band and O_tail must agree across members. Measured over five same-node members: O_band spread 0.306% of mean, O_tail 0.287%. This EXCLUDES a checkpoint SWAP (a swap would make t=0 member-specific across a band effect spanning 4-6x) and is BLIND to a sign flip, because (1+t)Wn - t*Wm still gives Wn at t=0. Scope: swap excluded on the members with a t=0 point, not in general.",
+  "interpolation_direction": "closed independently of the endpoint check: O_band(1)/O_band(0) must equal exp(own band dev). replica_00 measured 0.2097 against a predicted 0.2134 (-1.8%); replica_45 0.1403 against 0.1452 (-3.4%); a flipped segment would have given 4.69 and 6.89. The direction is a property of ONE expression, identical for every member, so one member's agreement settles it sweep-wide.",
+  "row_set_composition_control": "dL(C) ~= w*dL(B) + (1-w)*dL(A) with w = 3199796/4000000 = 0.799949, from C's known composition. Residuals -3.001e-04 / +3.299e-04 / +5.123e-04 / -1.830e-03 across four members: the first three within a factor 1.7 in ABSOLUTE terms (the informative reading; the relative spread of 9.5x is a small-denominator artifact). 'A is smallest' held on all members, which is what establishes the row sets are what they claim to be -- theta_k fits its own training rows best. Nothing else in the design checks this and it was not designed."
+ },
+ "OPEN_AND_UNEXPLAINED": {
+  "replica_29_C_anomaly": {
+   "measurement": "its independent-permutation row set C sits 6.9% below the composition prediction, an absolute residual of -1.830e-03 against 3.0e-04 to 5.1e-04 for the other three, and 10.50x its OWN leverage range |B-A| = 1.742e-04 -- so no choice of w can produce it. Where A ~= B the model is at its MOST constrained, which makes this the most anomalous of the four rather than merely the largest residual.",
+   "verdict_did_NOT_depend_on_it": "all three row sets put dL above the declared OPPOSITE bar: A 2.6589e-02 (1.11x), B 2.6414e-02 (1.10x), C 2.4620e-02 (1.03x). NEAR-MISS: a further ~3% drop in C would have put one row set below the bar.",
+   "candidates_not_discriminated": "(i) a per-member failure of the split reconstruction -- the split was never certified, since the anchor was SENSITIVE (S = 2.354880e-02) but NOT DIAGNOSTIC; (ii) heavy-tail sampling variance. The split-error branch fits worse: a mis-reconstructed A would resemble C, and A is 7.4% above C and within 0.66% of B.",
+   "BOTH_DISCRIMINATORS_UNRUN": "the C2 second-permutation test and the replicate comparison were both predeclared and neither ran. The anomaly is neither retired nor confirmed."
+  },
+  "replica_49_band_sign_inversion": {
+   "measurement": "band response +0.1374 where its own deviation of -0.1661 predicts -0.1661: RIGHT-SIZED (83% of expected magnitude) and WRONG-SIGNED. Its tail response DOES follow its own deviation, 0.8790 measured against 0.8275 predicted, +6.2% and correct sign.",
+   "status": "UNEXPLAINED, not excused",
+   "why_the_weak_signal_story_fails": "no applicable noise scale exists for endpoint band-response DIRECTION -- the t=0 cross-member spread of 0.306% is at a FIXED parameter point and says nothing about response-direction stability along a segment. And its 93.9% tail/band ratio is INHERITED from its own near-balanced deviations (1.14 against ~0.30-0.39 for the others), not a second anomaly.",
+   "structural_clause": "FAILS the SIGN clause only; PASSES the magnitude clause by the widest margin"
+  },
+  "R3_factor_22_tension": "recorded open: the step-1 Jacobian anisotropy is 46.81 while the honest output amplitude ratio is ~2.1. Different quantities that need not be equal, but nothing measured accounts for a factor ~22. Candidate, NOT a resolution: a gradient anisotropy need not imply a response anisotropy of the same size because the realized displacement need not align with the gradient."
+ },
+ "NOT_RUN": {
+  "reciprocal_arm": "PREDECLARED on A = dL_nom/dL_k (SYMMETRIC 0.5-2.0, NOMINAL-IS-OUTLIER <= 0.25, MEMBER-IS-OUTLIER >= 4.0, UNRESOLVED otherwise), written, staged, NEVER LAUNCHED. Consequence: the OPPOSITE label's directional claim is UNTESTED. dL > 0 in SIGN is near-trivial -- theta_k was trained to minimise objective_k -- so only an ASYMMETRY between dL_k and dL_nom could single out the nominal, and that was never measured. The receipt therefore renders every OPPOSITE verdict as 'theta_nom is distinguishable from theta_k under k's objective at N thresholds; whether the nominal is anomalous is NOT determined'.",
+  "C2_discriminator": "predeclared, written, staged, never launched. replica_29's C anomaly stays open.",
+  "replicate_comparison": "NOT-RUN; see REPLICATE_CONTROL. Declared primary never completed.",
+  "absolute_deviation_column": "predeclared with a rank rule, never launched.",
+  "why": "the NERSC certificate expired at 2026-08-23T20:22:13Z mid-task, ~5h20m before this receipt was written. Renewal needs sshproxy with the account holder's password and MFA and cannot be done from this session. Recorded as NOT-RUN rather than as controls that came back clean."
+ },
+ "WHAT_NONE_OF_THIS_AUTHORIZES": [
+  "pairing C_stat with P5A",
+  "adopting any PET covariance",
+  "promoting P5A",
+  "either half of the reconsideration gate (estimator-equivalence AND coverage)",
+  "clearing any Gate-6 prohibition",
+  "any mechanism claim -- the guard classifies boundary-sensitivity and the faithful framing finds zero distinguishable members",
+  "reading OPPOSITE as 'the nominal is the outlier', which requires the unrun reciprocal arm"
+ ],
+ "EFFECTIVE_N_AND_SHARED_ORIGINS": {
+  "statement": "the effective number of independent measurements across the six reads is materially fewer than six",
+  "shared_origins_to_count_ONCE": [
+   "R2's see-saw loading and replica_00's structural PASS -- replica_00 is one of the 50 members whose SVD produced that loading. One family-level loading plus one member-level realisation, more than a restatement and less than two measurements.",
+   "R1's primary ratio and the iteration sweep's Q(2) -- 6.435111 reproduced exactly, a deliberate cross-check, NOT a second result.",
+   "R3's '4:1 predicted, 4.05 measured' -- the same amplitude ratio is 2.07 peak-to-trough and 4.77 mass-weighted, so a prediction matching one of three available statistics is weaker than it reads.",
+   "R2's UNRESOLVED and replica_49's structural failure -- a leading mode at 75.8% necessarily leaves off-mode structure, and replica_49 is some of it. The same fact seen twice."
+  ],
+  "genuinely_independent_pair": "the DEAD-list feature-standardisation item has both a CODE-level basis (norms computed unweighted over the fixed imc subsample BEFORE any bootstrap factor) and an ARTIFACT-level confirmation (truth_norm_mean/std and reco_norm_mean bit-identical across replicas 00/26/29/43/45/49 and the nominal). Two directions, neither reading the other. The only DEAD-list item with that footing."
+ },
+ "THE_READ_SET_IN_CONTEXT": {
+  "R1": "CONFIRM at 6.4351 -- but on the POINTWISE per-column Fisher density, a NEIGHBOURING quantity to the curvature along the realized displacement that the mechanism needs",
+  "R2": "UNRESOLVED at 75.78% against an 80% bar",
+  "R3": "CONFIRM at 46.81 -- separability only, and explicitly NOT localising (band 42.21 vs control 45.09)",
+  "R4": "cannot answer its own question -- no band-resolved field exists in its declared input",
+  "iteration_sweep": "UNRESOLVED, with a real decomposition: 61.8% of the log-collapse pre-exists iteration 0",
+  "R5": "QUALIFIED(boundary-sensitivity) under the declared bars; ZERO distinguishable members under the faithful corrected bars; the directional half of every OPPOSITE label untested; two discriminators unrun",
+  "HONEST_SUMMARY": "two CONFIRMs, neither measuring the quantity the mechanism needs, on a read set whose effective N is materially below six. That is a defensible position and it is a long way from a mechanism. Lead with this rather than with the two CONFIRMs."
+ },
+ "ADVERSARIAL_REVIEW_STRUCTURE": {
+  "why_this_is_in_the_receipt": "a reader who does not know these reads were adversarially specified will over-trust the ones that passed and under-trust the ones that came back UNRESOLVED. Stated as fact.",
+  "what_the_review_caught": [
+   "R1's CONFIRM window empty against the wrong operand (weights_push caps any column ratio at 2.5344 against a 5-10x window) -- and the OPERAND itself was wrong, which would have retired a live hypothesis",
+   "the 63-cell band set being selected BY ratio>1.5, i.e. on the effect itself",
+   "R2's undeclared sign convention, which would have decided the verdict",
+   "CONFIRM's endpoint-only criterion missing an interior barrier of 3.4 thresholds",
+   "the structural arm's family-derived sign applied to a member deliberately selected for departing from the family",
+   "the one-directional OPPOSITE claim -- dL > 0 in sign is near-trivial by construction",
+   "a pooled power statistic that would have let a generalisation gap masquerade as permutation power",
+   "an absolute row-set bar whose meaning depends on which branch the verdict took",
+   "my own OI-136 claim being FALSE while the result stood -- a wrong REASON attached to a correct measurement",
+   "the digest precondition asserted to discriminate, refuted for one member by the discriminant column itself",
+   "the val-loss scatter mis-measured at 8.0e-04 against 1.320e-03, displacing BOTH bars toward 'distinguishable'",
+   "two magnitude mechanisms retracted by their own authors within hours of proposal"
+  ],
+  "the_mechanism_sentence": "NONE of these produced a wrong NUMBER. All would have produced a wrong or empty QUESTION. That is why re-deriving arithmetic -- the obvious check -- caught none of them, and why the review structure is a fact a reader needs in order to evaluate the numbers.",
+  "not_a_rate": "the enumeration shows a mechanism operating in identifiable individual cases; it does NOT establish a rate. A 4-of-5 directional tally gives one-sided p = 0.1875, indistinguishable from a coin. The defensible claim is about the instrument that caught them, not about frequency.",
+  "both_parties": "items above are drawn from both lanes. The list is not one party auditing another."
+ },
+ "THREE_PRE_RUN_CHECKS": {
+  "1_artifact": "can the declared INPUT EXPRESS the declared quantity? -- R4's trajectory files carry no band-resolved field at all",
+  "2_arithmetic": "is the declared BOUNDARY REACHABLE by the statistic? -- R1's 5-10x window against a quantity capped at 2.5344",
+  "2b_sample": "is the branch reachable by the SAMPLE, not only the statistic? -- the A2 sub-case, reachable in principle and unwitnessed",
+  "3_noise": "does the STATISTIC DISCRIMINATE? -- the split anchor, SENSITIVE at S = 2.354880e-02 but not DIAGNOSTIC",
+  "why_the_set_matters": "none of the three is implied by the others, and re-deriving arithmetic only ever touches the second. This is the most transferable product of the work and belongs above any of the physics."
+ },
+ "PROPOSALS_ROUTED_NOT_EXECUTED": {
+  "mnv_guarded_run_instrument": "promote the checkout-enumeration walk into nd-unfolding/mnv_guarded_run.py. PROMOTED INDEPENDENTLY by minerva-omnifold-9e at 7054426a on main, as a reproduction rather than a copy, with a discrimination arm this lane's measurement could not provide. The figure this lane measured -- 10 modules, 1 distinct root -- is single-root BY CONSTRUCTION and validates the enumeration, not the discrimination.",
+  "self_confirming_control_audit": "'a control that recomputes its own reference from the code under test is self-confirming' is greppable, so a repo-wide audit is a real checkable task. FILED, not run: repo-wide and touches other lanes' test files, so it needs its own authorization.",
+  "validate_g2_fullevent_smoke_gap": "a one-line assertion that the appended miss rows carry a non-empty truth cloud would close the gap measured in RECEIPT-20260823-g2-fullevent-truthcloud-coverage. NOT implemented: editing a Gate-1 validator is not this authorization."
+ },
+ "CAPABILITY_VS_AUTHORIZATION": "two ceilings with similar-sounding numbers and the tighter one is not the standing grant: QOSMaxWallDurationPerJobLimit on the interactive QOS is 04:00:00 (measured by `sacctmgr show qos interactive format=Name,MaxWall`), while Joseph's standing pre-authorization covers any single job under 12 h. Authorization does NOT imply capability, and a 5-hour interactive submission was bounced on exactly this.",
+ "what_this_read_did_not_do": [
+  "no training",
+  "no target construction",
+  "no ROOT",
+  "no writes into the repo tree on the cluster",
+  "no GPU sweep beyond the predeclared inference passes",
+  "Gate 4 and Gate 6 untouched",
+  "docs/analysis-note/ untouched",
+  "data-only family unused",
+  "finalize launcher not submitted"
+ ]
+}
