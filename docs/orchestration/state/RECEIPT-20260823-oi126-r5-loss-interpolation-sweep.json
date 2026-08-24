@@ -589,7 +589,8 @@
    "MATERIAL": "D >= 1.83e-03"
   },
   "consequence": "replica_29's C anomaly is NEITHER retired nor confirmed by this control -- it remains UNEXPLAINED with the discriminator unrun. The C2 discriminator was also not run.",
-  "what_was_measured_before_access_was_lost": "t=0 only, and identically on both nodes: L 0.80700984, O_band 1.104626, O_tail 0.932813 on nid001469 and nid001089. Since dL = L(0) - L(1) and dL(0) cancels, |D| = |dL L(1) difference| and L(1) was never measured on the primary. So the t=0 identity constrains NOTHING about D. It is cross-node forward-pass determinism at the one t where the interpolation is a literal no-op, and is recorded as that and nothing more."
+  "what_was_measured_before_access_was_lost": "t=0 only, and identically on both nodes: L 0.80700984, O_band 1.104626, O_tail 0.932813 on nid001469 and nid001089. Since dL = L(0) - L(1) and dL(0) cancels, |D| = |dL L(1) difference| and L(1) was never measured on the primary. So the t=0 identity constrains NOTHING about D. It is cross-node forward-pass determinism at the one t where the interpolation is a literal no-op, and is recorded as that and nothing more.",
+  "ZERO_DIFFERENCE_IS_A_DETECTOR": "A replicate difference of IDENTICALLY ZERO should be treated as a self-comparison until proven otherwise, because two independent runs agreeing to the last bit is rarer than a merge bug. That is how this one was caught: merging the rescue copy into the six-member set to reach m=6 briefly made the post-processor compare that copy against itself, and the tell was not a suspicious value but an exactly-zero one. Bit-identity is the most fragile receipt basis in this repo; here it served as the alarm rather than as evidence. The post-processor now detects the condition and refuses the comparison, recording NOT-RUN with the reason instead of a zero-difference REPRODUCIBLE."
  },
  "PIPELINE_VALIDATION_t1_ENDPOINT_CHECK": {
   "what": "bit-level comparison of the recomputed step-2 push at t=1 against each member's recorded GATE5_REPLICA_FULL_PUSH.npz w_push, on 148024 band+tail pass_gen rows.",
@@ -786,9 +787,10 @@
    "the val-loss scatter mis-measured at 8.0e-04 against 1.320e-03, displacing BOTH bars toward 'distinguishable'",
    "two magnitude mechanisms retracted by their own authors within hours of proposal"
   ],
-  "the_mechanism_sentence": "NONE of these produced a wrong NUMBER. All would have produced a wrong or empty QUESTION. That is why re-deriving arithmetic -- the obvious check -- caught none of them, and why the review structure is a fact a reader needs in order to evaluate the numbers.",
+  "the_mechanism_sentence": "NONE of the PROCESS defects above produced a wrong NUMBER; all would have produced a wrong or empty QUESTION -- which is why re-deriving arithmetic, the obvious check, caught none of them. BUT that sentence is incomplete as a summary of the sweep and must not stand alone: the LARGEST single defect here WAS a wrong number. The val-loss scatter was supplied as 8.0e-04 against a measured 1.320e-03, and that one number produced FOUR OPPOSITE verdicts that do not survive its correction. So: the review found process defects, and the sweep's biggest defect was arithmetic. A reader given only the first half would conclude the numbers were sound and only the framing needed work, and that is false.",
   "not_a_rate": "the enumeration shows a mechanism operating in identifiable individual cases; it does NOT establish a rate. A 4-of-5 directional tally gives one-sided p = 0.1875, indistinguishable from a coin. The defensible claim is about the instrument that caught them, not about frequency.",
-  "both_parties": "items above are drawn from both lanes. The list is not one party auditing another."
+  "both_parties": "items above are drawn from both lanes. The list is not one party auditing another.",
+  "attribution_of_the_largest_defect": "the mis-derived scatter was supplied by the routing lane, which identified it, worked out that it displaced BOTH bars in the same direction, and required both columns be reported rather than moving the bars. Recorded because a review section that lists only the reviewer's catches would misrepresent where the load-bearing error came from."
  },
  "THREE_PRE_RUN_CHECKS": {
   "1_artifact": "can the declared INPUT EXPRESS the declared quantity? -- R4's trajectory files carry no band-resolved field at all",
