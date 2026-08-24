@@ -166,6 +166,23 @@ data*. **The builder:** its `git cat-file -t` "verification" answered *"is this 
 wrong question, run as a verification and then used to ground a lesson about relaying unverified
 numbers. **The only false claim in the whole chain was my retraction.**
 
+> **THE COST WAS NOT THE FIRST ERROR BUT THE SECOND LANE'S CONFIRMATION OF IT — and this is the part
+> that generalises to every multi-lane review in this repository.** A single lane's mistake is one
+> commit to reverse. A mistake that a second lane independently *"verifies"* **reads as corroborated**,
+> and it then took a third accident — the deployed rubric happening to hash to a struck digest — to
+> unwind it. The `cat-file -t` check did not merely fail to catch the retraction; it **ratified** it,
+> and the ratification was generalised into a stated principle about relaying unverified numbers, so a
+> false premise was on its way to being inherited by later lanes. **Two lanes agreeing is not
+> independent evidence when the second lane's instrument cannot discriminate the claim.** Recorded at
+> the builder lane's own insistence, against its own interest.
+>
+> **OPERATIONAL RULE: when you are the CONFIRMING party, state what your check can and cannot
+> distinguish, in the same breath as the result.** *"`cat-file -t` says this is not in git's object
+> store; it cannot tell a fabricated hex string from one produced by a different hash function."* That
+> sentence would have stopped this at the first step. It is the same discipline as
+> `CITABLE FOR` / `NOT CITABLE FOR` at the top of a document, applied to a single instrument reading —
+> and it is why "an independent lane confirmed it" must name the instrument, never just the agreement.
+
 > **TWO HALVES WORTH KEEPING TOGETHER, because they are mirrors.** Elsewhere in this document I filed
 > *verifying a mechanism EXISTS is not verifying it EXPLAINS the case in front of you*. This is the
 > other side: **falsifying a mechanism is not falsifying the claim.** `cat-file -t` failing is evidence
