@@ -807,7 +807,30 @@ changed. Neither `PYTHONDONTWRITEBYTECODE` nor `-B` was set on this arm; it was 
 > same idea. **State the tokens searched alongside the conclusion**, so a reader can see what the claim
 > is actually a claim about.
 >
-> **AND THE PRACTICAL RULE IMPROVES, which is why this is a gift rather than just a correction.**
+> **⚠ THE RULE BELOW IS RIGHT AND ITS STATED MECHANISM IS WRONG — corrected 2026-08-24 after the
+> rubric-sync lane tested both arms, which I had not.** I wrote that staging must precede generation
+> *because* the tracked set comes from `git ls-files`, which reads the index. **`ls-files` really does
+> read the index — but for an ALREADY-TRACKED file the index already contains it, so staging is a
+> no-op.** Measured: append to a tracked doc, generate unstaged, `git add`, generate again, compare the
+> two manifests — **IDENTICAL**.
+>
+> **There are two distinct causes here and I merged them into one rule with the wrong mechanism
+> attached.** Staging order matters **only for a brand-new untracked file**, where `ls-files` cannot
+> see it and the row lands as `tracking=intended` — which is what made the 5d-worker lane's `e1596f00`
+> and `585b1f3a` red. **My own `82727fe3` was red for a different reason: it edited two already-tracked
+> docs and did not regenerate the manifest AT ALL in that commit.** The rule that covers my case is
+> simply *regenerate in the same commit*; the staging clause covers theirs.
+>
+> **The error worth keeping is how I accepted it.** I verified that `ls-files` appears in the generator
+> and reads the index — so the mechanism is real — and then treated that as confirming it caused my
+> observation. **Verifying that a mechanism EXISTS is not verifying that it EXPLAINS the case in front
+> of you.** I skipped the two-arm test because the lane handing me the explanation had just corrected
+> me correctly on something else, which is credit-by-association rather than evidence. The lane that
+> caught it did the thing I should have: ran both arms and diffed the outputs.
+>
+> **The procedure below is retained because it is harmless and covers both causes**; only its stated
+> reason was wrong.
+
 > Because the tracked set comes from the index, **`git add` the new paths BEFORE regenerating** and the
 > row is correct in the same commit — no discipline, no convergence commit, no red intermediate. Full
 > order: **write → `git add` all paths including new ones → regenerate → `git add` MANIFEST → bare
