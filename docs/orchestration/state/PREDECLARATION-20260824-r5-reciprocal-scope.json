@@ -1,0 +1,28 @@
+{
+ "schema": "predeclaration-r5-reciprocal-scope-v1",
+ "status": "PREDECLARED BEFORE run_recip.sh WAS LAUNCHED. No value of dL_nom exists for any member. Written because a result landing is exactly when the SCOPE SENTENCE would be rewritten rather than the verdict.",
+ "authorization_basis": "Joseph's OWN 2026-08-23 grant, read from PREDECLARATION-20260823-oi126-successor-free-reads.json at f1e2f10e: 'code building and diagnostic tests, incl. Slurm.' Plus the standing 12 h single-job compute approval. All four jobs are inference-only diagnostics well inside both. NOT acting on the relayed grant -- see AUTHORIZATION_NOTE.",
+ "AUTHORIZATION_NOTE": "A peer session relayed that Joseph authorized these four. That relay is hearsay and is NOT the basis for running them. The basis is Joseph's own committed authorization, which already covered them; the only thing that had changed was CAPABILITY (an expired certificate), which is a different ceiling from authorization and which I verified myself: cert valid to 2026-08-24T21:19:22Z, ssh connected as josephrb on login29. Had the standing grant NOT covered this work, a relayed authorization would not have been sufficient and I would have gone to Joseph.",
+ "the_existing_A_ratio_predeclaration": {
+  "A": "dL_nom / dL_k",
+  "SYMMETRIC": "0.5 <= A <= 2.0",
+  "NOMINAL_IS_OUTLIER": "A <= 0.25",
+  "MEMBER_IS_OUTLIER": "A >= 4.0",
+  "UNRESOLVED": "otherwise",
+  "taint": "the routing lane had seen dL_k for two of six members and no dL_nom for any when the A-boundary was set; the four unseen members carry the evidential weight."
+ },
+ "WHAT_EACH_OUTCOME_LICENSES_FOR_THE_SCOPE_SENTENCE": {
+  "current_sentence": "theta_nom is distinguishable from theta_k under k's objective at N thresholds; whether the nominal is anomalous is NOT determined.",
+  "SYMMETRIC": "replace with: 'neither point is an outlier -- two distinct solutions each better on its own data, which is the ordinary consequence of fitting perturbed data.' This POSITIVELY answers the open half and is the NULL, not a finding.",
+  "NOMINAL_IS_OUTLIER": "replace with: 'theta_nom is anomalous relative to theta_k, asymmetrically, under both objectives.' Licenses THAT AND NOTHING MORE -- not a mechanism, not a cause, and not any statement about the member's cross section or its C_stat contribution.",
+  "MEMBER_IS_OUTLIER": "replace with: 'theta_k is the anomalous point', which INVERTS the reading the OPPOSITE label invites. Report the inversion plainly rather than as a surprise.",
+  "UNRESOLVED": "the current sentence STANDS unchanged."
+ },
+ "THE_CONSTRAINT_THAT_BINDS_EVERY_OUTCOME": "the reciprocal arm can only qualify verdicts that the DECLARED bars produced, and under the faithful corrected bars (3x/30x the measured 1.320e-03 scatter) there are ZERO OPPOSITE verdicts. So NO outcome of run_recip.sh can license a mechanism claim: even NOMINAL_IS_OUTLIER would attach an asymmetry to verdicts that do not survive the correction of the bar that produced them. The sweep constrains the METHOD, not the nominal, under every branch of this arm.",
+ "AND_IT_DOES_NOT_TOUCH_THE_RULING": "Joseph's OI-126 gate is estimator-equivalence PLUS coverage (2e210468). None of these four bears on either half. Run for the record, not for a reversal.",
+ "the_other_three": {
+  "run_ep.sh": "absolute-deviation column. Rank rule declared before any value existed: MECHANISM DEMONSTRATED if 43's max_abs_dev is within [min,max] of the other five AND rank(min|w_push|) <= 2 of 6; REFUTED if max_abs_dev is above that range; INDETERMINATE otherwise. The endpoint verdict on replica_43 stays UNRESOLVED under EVERY branch.",
+  "run_c2.sh": "C2 discriminator, replica_29, seed 987654321. SAMPLING NOISE if |C2 - C_pred| <= 5.5e-04; NOT SAMPLING if >= 1.4e-03 with the same sign as C1's residual; UNRESOLVED between.",
+  "run_r5_26.sh": "the DECLARED PRIMARY replica_26 copy, enabling the replicate comparison. REPRODUCIBLE if D <= 5.5e-04, MATERIAL if D >= 1.83e-03, INDETERMINATE between. MATERIAL would RETIRE replica_29's C anomaly. Primary is this copy, declared in advance, not reassignable."
+ }
+}
