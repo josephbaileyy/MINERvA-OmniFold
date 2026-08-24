@@ -121,6 +121,58 @@ def rooted_insert_files(read):
     return sorted(hazard)
 
 
+# THE 2D ARM IS LEFT UNREPAIRED ON PURPOSE, AND THIS IS THE CONDITION THAT MAKES THAT SAFE.
+# Joseph ruled 2026-08-23: leave 2d-unfolding/unfold_2d_omnifold_unbinned.py alone rather than spend
+# a Gate-2 re-run on it. The reasoning rests on TWO measured facts, and the second one can expire:
+#
+#   (1) The insert is inside main() at :1679, NOT at module level. The eight nd-unfolding files that
+#       `import unfold_2d_omnifold_unbinned` -- including compare_unified_throw.py on the live k=0
+#       path -- do NOT trigger it. It fires only when that driver is executed AS A SCRIPT.
+#   (2) The exposure is LATENT, not realized: unbinned_unfolding/python/omnifold.py is byte-identical
+#       between the canonical checkout's HEAD (b2d7d4ca) and main, so even when the hazard fires it
+#       loads identical bytes.
+#
+# (1) is structural and holds until someone moves the insert. (2) IS AN OBSERVATION ABOUT TODAY.
+# The moment omnifold.py changes, the exposure becomes REAL: anyone running the 2D driver from a
+# non-canonical tree silently gets a different OmniFold helper, and no existing gate would warn them
+# -- the hook pins unfold_2d's own hash and knows nothing about this relationship.
+#
+# So the latency is asserted here rather than left as a note. If this fires, "leave it alone" has
+# expired and the decision goes back to Joseph AT THE MOMENT IT STARTS MATTERING, which is the only
+# time the answer could differ. A reason that outlives its evidence is an allowlist with prose on it.
+OMNIFOLD_HELPER = "unbinned_unfolding/python/omnifold.py"
+OMNIFOLD_SHA256 = "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+
+
+class TheLatencyOfTheUnrepaired2DArmIsAsserted(unittest.TestCase):
+
+    def test_the_omnifold_helper_has_not_moved(self):
+        """FIRES when omnifold.py changes -- which converts the 2D hazard from latent to real."""
+        import hashlib
+        blob = (REPO / OMNIFOLD_HELPER).read_bytes()
+        self.assertEqual(hashlib.sha256(blob).hexdigest(), OMNIFOLD_SHA256,
+                         f"{OMNIFOLD_HELPER} has changed. The 2D arm's rooted insert at "
+                         "unfold_2d_omnifold_unbinned.py:1679 is no longer a no-op: a script run "
+                         "from a non-canonical tree now loads DIFFERENT bytes. Joseph's 2026-08-23 "
+                         "decision to leave that file unrepaired rested on this digest holding. "
+                         "Do not update this constant to make the test pass -- take the decision "
+                         "back to him.")
+
+    def test_the_2D_driver_still_confines_its_insert_to_a_function(self):
+        """The other half. If the insert reaches module level, every importer is exposed and the
+        'only fires as a script' half of the reasoning is void."""
+        tree = ast.parse((REPO / "2d-unfolding/unfold_2d_omnifold_unbinned.py")
+                         .read_text(encoding="utf-8", errors="replace"))
+        spans = [(f.lineno, f.end_lineno) for f in ast.walk(tree)
+                 if isinstance(f, (ast.FunctionDef, ast.AsyncFunctionDef))]
+        for node in ast.walk(tree):
+            if (isinstance(node, ast.Assign) and isinstance(node.value, ast.Constant)
+                    and _canonical_form(node.value.value)):
+                self.assertTrue(any(a <= node.lineno <= (b or a) for a, b in spans),
+                                f"the rooted literal at :{node.lineno} is now at MODULE level; "
+                                "every importer of this module is exposed")
+
+
 class TheCanonicalRootMustNotReachPositionZero(unittest.TestCase):
 
     def setUp(self):
