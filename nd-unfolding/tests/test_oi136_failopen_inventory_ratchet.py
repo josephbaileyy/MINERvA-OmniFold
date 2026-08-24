@@ -83,8 +83,15 @@ PROBE = os.path.join("docs", "orchestration", "state",
 #
 # BOTH VALUES BELOW WERE TAKEN FROM THIS TEST'S OWN PRINTED FAILURE MESSAGE
 # (`measured: 52 files / 40bd83ca...`), never computed by hand.
-FAILOPEN_COUNT = 52
-FAILOPEN_SHA256 = "40bd83ca3993f1a383d38a3a57e9479058224f6d7f0bd00a241f8955a6269d86"
+# BRANCH VALUE, and it differs from main BY DESIGN. This ratchet measures the WORKING TREE, so
+# its constants are ref-dependent: build-k0-execution-integrity carries the six B-1 source
+# repairs that main lacks, and main carries the six 2026-08-23 sweep repairs that this branch
+# lacks. The two refs are symmetric -- each is missing the other's six -- so the COUNT matches
+# at 51 while the SET does not, and the digest is what distinguishes them. Do not reconcile
+# these constants across refs by copying; re-measure on the ref you are on.
+# Advanced here for compare_unified_throw.py, cherry-picked from main (f7dc9f1d).
+FAILOPEN_COUNT = 51
+FAILOPEN_SHA256 = "f37af2e3ec1613f90cbbe1208e213da505b0908fc561c6bde9a2ff628c3a3635"
 
 # The probe's own positive controls, restated here so this file does not inherit its blind
 # spots. Relative to the repo root, as the probe prints them.

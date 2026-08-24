@@ -35,7 +35,22 @@ import sys
 
 import numpy as np
 
-_REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+# OI-136: the import root is DERIVED from this file, never the hardcoded cluster root that stood
+# here. An absolute insert(0, ...) executes THAT tree's modules whichever checkout launched the
+# entrypoint, and PYTHONPATH cannot outrank position 0. NO ABSOLUTE FALLBACK: a fallback is the
+# hardcode wearing a flag.
+#
+# CAUGHT AT RUNTIME, NOT BY REVIEW, and that is why this comment is here. On 2026-08-23 the k=0
+# rehearsal's legs 5a/5b refused at the guard with
+#   [oi136] module uq_math resolved to .../MINERvA-OmniFold/nd-unfolding/uq_math.py
+#   expected .../k0r2/clean
+# The chain is unified_throw_cov_5d.py -> unified_throw_cov.py -> HERE. Both callers already
+# derived their roots correctly; this file put the canonical tree at sys.path[0] underneath them,
+# so their correctness bought nothing. A repaired importer does not protect you from an
+# unrepaired import.
+from pathlib import Path
+
+_REPO = str(Path(__file__).resolve().parents[1])
 for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
     if _p not in sys.path:
         sys.path.insert(0, _p)
