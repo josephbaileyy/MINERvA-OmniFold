@@ -1,0 +1,80 @@
+{
+ "WHAT_THIS_IS": "the producers and launchers that generated the OI-126 R5 / C2 / permutation-ensemble results. They lived ONLY on /pscratch/sd/j/josephrb/oi126_r1r3_work, which is a purgeable filesystem, while five committed receipts cite them BY PATH AND LINE NUMBER as evidence. That was a dangling evidence route and this directory closes it. 864 KB.",
+ "PROVENANCE_IS_VERIFIED_NOT_ASSERTED": "every producer_sha256 recorded at run time by the two ensemble receipts resolves to a byte-exact file here -- 6 of 6, checked before this was committed. So these are the copies that EXECUTED, not a later edit of them.",
+ "WHAT_IS_NOT_HERE": "r5_sweep.py and r5_c2_discriminator.py have no producer_sha256 recorded in any receipt, because those runs predate that field. Their bytes are preserved here and their line citations resolve, but nothing binds them to a specific job the way the two c_perm files are bound. State it that way; do not read this directory as uniform provenance.",
+ "NOT_CITABLE_FOR": "any scientific claim. These are instruments. The results live in the receipts, and the receipts' own CITABLE_FOR blocks govern.",
+ "source_path_on_cluster": "/pscratch/sd/j/josephrb/oi126_r1r3_work",
+ "preserved_utc": "2026-08-24",
+ "files": [
+  {
+   "file": "c_perm_ensemble.PRE-5MEMBER.py",
+   "sha256": "823efe1e8cdaa080faae1db212ac2de22ce14ce09ac7eac834cf490bfc3ccffe",
+   "bytes": 34974,
+   "cited_by": "RECEIPT-20260824-oi126-c-permutation-ensemble.json",
+   "what_it_is": "the EXECUTING producer of job 57517628 (replica_29). Its sha256 is that receipt's run_provenance.producer_sha256 -- verified, not assumed."
+  },
+  {
+   "file": "c_perm_ensemble.py",
+   "sha256": "6546e599a9e33c33814e2409b199f4ce5722c2473a848d4d84085e536a37930b",
+   "bytes": 40331,
+   "cited_by": "RECEIPT-20260824-oi126-c-permutation-ensemble-5member.json",
+   "what_it_is": "the EXECUTING producer of job 57519250 (all five remaining members). Its sha256 is every per-member run_provenance.producer_sha256 in that receipt. Differs from PRE-5MEMBER by three things only: published controls became CLI args, the leverage gate was corrected per BEN-535, and R4 was added. It also carries the CLOSED-branch prose defect recorded in that receipt."
+  },
+  {
+   "file": "r5_c2_discriminator.py",
+   "sha256": "4cc85758f59638a873e9f4bdfac5947aa3d2a885a6b1bb10a6718db253accd84",
+   "bytes": 8343,
+   "cited_by": "RECEIPT-20260823 key C2_DISCRIMINATOR_20260824",
+   "what_it_is": "the C2 test. Line 91 is `rs = np.random.RandomState(a.c2_seed); alt = rs.permutation(n2)`, the row-set construction cited as making the C2 comparison a HARD control rather than a caveat."
+  },
+  {
+   "file": "r5_sweep.py",
+   "sha256": "5d374360dc88a16e3422a5cdb5943d47e8dd0880e72463e519e25fd518cf39e2",
+   "bytes": 27399,
+   "cited_by": "RECEIPT-20260823-oi126-r5-loss-interpolation-sweep.json",
+   "what_it_is": "the loss-interpolation sweep. Lines 194-199 are the row-set robustness PREDECLARATION quoted in that receipt and in FINDING-20260824; :412-416 are the json writes that structurally exclude an echo of the artifact."
+  },
+  {
+   "file": "run_c2.sh",
+   "sha256": "bd7eda4ea14d78e3afd8ac6ebccc262f97b249b0980de0a86deced55a97781b3",
+   "bytes": 742,
+   "cited_by": "RECEIPT-20260823",
+   "what_it_is": "srun launcher for the C2 job; line 15 carries the timestamped --json path that replaced a constant one."
+  },
+  {
+   "file": "run_ep.sh",
+   "sha256": "7cd9b8ca9b3214d1c7f605609f6fb501316537c7ecb2040bb42f751facacacc7",
+   "bytes": 657,
+   "cited_by": "RECEIPT-20260823",
+   "what_it_is": "srun launcher, epoch-scatter read."
+  },
+  {
+   "file": "run_r5_26.sh",
+   "sha256": "2e6321abb93f487183d71f18c500d5c731d8a49e1afc5ea9b2e9c43e2acb9b2a",
+   "bytes": 812,
+   "cited_by": "RECEIPT-20260823",
+   "what_it_is": "srun launcher, member 26 rescue run. No #SBATCH directives -- must be executed, not sbatch'd."
+  },
+  {
+   "file": "run_recip.sh",
+   "sha256": "9541d73199050c2605c95098ca68e6624ae87db6557f0297df9d2595b82c5022",
+   "bytes": 655,
+   "cited_by": "RECEIPT-20260823 key RECIPROCAL_ARM_20260824",
+   "what_it_is": "srun launcher, reciprocal arm."
+  },
+  {
+   "file": "sbatch_c_perm_ens.sh",
+   "sha256": "5d255172f73f476a7e36b3690891b6e105f79222820698804e0a2869854f7f4b",
+   "bytes": 2559,
+   "cited_by": "RECEIPT-20260824-...-ensemble.json",
+   "what_it_is": "launcher for 57517628."
+  },
+  {
+   "file": "sbatch_c_perm_ens5.sh",
+   "sha256": "42a3a5d2b80c8d157298998413547f8ca6eb5c1e5a78faf8c1d415dbe31ef7ba",
+   "bytes": 3032,
+   "cited_by": "RECEIPT-20260824-...-5member.json",
+   "what_it_is": "launcher for 57519250. Shows MNV_REPO exported SET, and the deliberate member ORDER putting the two THRESHOLD-INDETERMINATE members first."
+  }
+ ]
+}
