@@ -46,7 +46,7 @@ simulation's truth--reco pairing (treating unmatched ``miss'' events natively, s
 no separate efficiency correction is applied), and trains a second classifier to
 propagate it to a smooth truth-level reweight for the next iteration. We use
 gradient-boosted decision trees (100 trees, depth-3 capacity, 5 iterations) as
-the learners: the published central value uses the \texttt{exact} backend
+the learners: the production central value uses the \texttt{exact} backend
 (sklearn \texttt{GradientBoosting}, single-threaded exact-split CART), while the
 uncertainty ensemble --- the systematic universe sweep and the Poisson
 bootstrap --- uses LightGBM at matched capacity ($\texttt{num\_leaves}=8=2^{3}$),
@@ -74,7 +74,7 @@ off-diagonal structure of the published covariance on the low-$\pT$ peak; it
 carries a $\sim1$-unit method-dependence band from the choice of GBDT estimator
 (exact-GBT $\chiPaper$ versus LightGBM $2.65$).
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \includegraphics[width=0.6\textwidth]{MEFHC_5iter_fig13}\\
   \includegraphics[width=0.7\textwidth]{MEFHC_5iter_pull_full}
@@ -102,7 +102,7 @@ grid~\cite{MINERvA:2022incl} agrees at central-value level. No covariance-based
 consistency metric is reported without a corrected 4D covariance
 (Fig.~\ref{fig:pasc}).
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \includegraphics[width=0.99\textwidth]{generators_vs_unfolded_band}
   \caption{Unfolded 3D central cross section (black)
@@ -112,7 +112,7 @@ consistency metric is reported without a corrected 4D covariance
   \label{fig:pgen}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \includegraphics[width=0.75\textwidth]{ascencio_fullcov_compare}
   \caption{Bin-identical central-value comparison to the published low-recoil
@@ -134,7 +134,7 @@ low $W$ --- and the independent NuWro and GiBUU generators miss it by the same o
 a larger margin. The excess is thus a genuinely deep-inelastic ($W\gtrsim\SI{1.8}{GeV}$)
 modeling deficit, robust across generator and tune.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \includegraphics[width=0.99\textwidth]{eavailW_band}
   \caption{Unfolded $(\Eavail,W)$ cross section versus the four-generator band.
@@ -163,7 +163,7 @@ summed central value includes both tiers, but only the first is interpreted as
 an acceptance-supported measurement. No corrected covariance is reported for
 the extended domain.
 
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \includegraphics[width=0.99\textwidth]{fps_pilot_compare_MEFHC}
   \caption{Extended-fiducial scalar study: (a)~anchor ratio in the published

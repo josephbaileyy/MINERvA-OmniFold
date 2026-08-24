@@ -3,7 +3,7 @@
 Sole integration owner of `docs/analysis-note/` + canonical provenance while
 Agents A–C run compute. Numbers live only in `VALIDATION_LEDGER.md`; candidate/
 uncommitted values are not quotable. Companion: `docs/ESTIMATOR_REGISTRY.md`.
-Last updated 2026-07-16.
+Last updated 2026-08-24.
 
 ## Build environment (task #10)
 - `module load texlive/2024` is a **no-op on this login node**. Use the direct path:
@@ -43,6 +43,17 @@ Last updated 2026-07-16.
 | 12 | GiBUU constrained subspace | **NOTED (already ~ok)** | sec_3d:175-178 already separates the 23.5% out-of-subspace residual from the normalization offset. Optional: sharpen "in-subspace residual vs uncaptured covariance fraction". |
 | 13 | Same-data χ² / non-cross-fitted C2ST | **DONE** | sec_validation C2ST relabeled a "descriptive binning-free diagnostic ... trained and evaluated on the same unfolded sample without cross-fitting ... not a calibrated hypothesis test; cross-fitted C2ST deferred". app_statmethods:952 same-data χ² already hedged. |
 | 14 | Legacy / corrected recoil / full-event PET | **DONE (registry) / mostly ok prose** | Registry keeps `pet-recoil-legacy` / `pet-recoil-bkgsub` / `pet-fullevent-fps-v1` distinct. Note already separates recoil-only (current) from full-event (future). Optional: make legacy-vs-corrected *recoil* explicit in sec_pet (currently only app_codebase:31). |
+
+## Publication-scope decisions before submission
+
+- [ ] **Record the artifact-side scope of uncertainty-remediation cause 3 for the finalized 2D
+  uncertainty product.** The paper states that its validated 2D budget includes an ML
+  training-seed-variation covariance, while every existing cause-3 discharge record is scoped to
+  `X`, the scalar-5D GBDT covariance. Decide explicitly whether cause 3 applies only to `X` or also
+  to the distinct 2D ML block, and record that scope in the governing artifact status/ledger before
+  submission. This is a scope ruling, not authorization to repeat the completed 2D campaign and not
+  a claim that the 2D block is defective. Route and full statement:
+  `docs/orchestration/PUBLICATION-READINESS-20260822.md` `PR-X3`.
 
 ## Claims GATED on unfinished computation (placeholder only — do NOT quote)
 
