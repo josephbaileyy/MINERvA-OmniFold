@@ -958,22 +958,41 @@ class TheNamespacePackageExclusionIsDeclaredNotSilent(unittest.TestCase):
         git ls-files '*__init__.py'                                     -> exactly ONE
 
     THE 7-OF-7 IS TRUE AND DOES NOT MEAN WHAT IT LOOKS LIKE, so it is written out rather
-    than quoted as a severity. Those seven are `sys.path` ENTRIES, not imported packages
-    -- nothing does `import nd_unfolding`, and four of the seven carry hyphens so they
-    are not even legal module names. A directory only meets this exclusion when it is
-    imported AS a package, and none of them is.
+    than quoted as a severity. Those seven are `sys.path` ENTRIES, not imported packages:
 
-    The one regular package in the tree is `omnifold_nn/omnifold/`, imported by 33
-    files, and it HAS `__init__.py` -- so it has a real `__file__` and is COUNTED, not
-    excluded. It is also exactly what the OI-126 probe's ten-module measurement
-    exercised (`omnifold`, `.dataloader`, `.net`, `.omnifold`, `.utils`), which is why
-    that measurement saw the tree at all.
+        git grep -E '^[[:space:]]*(import|from)[[:space:]]+<tree>'   -> 0 sites, each of 7
 
-    SO THE HONEST SEVERITY IS: current exposure in this repo is NIL, and this arm is
-    PROSPECTIVE -- it covers the first namespace package anyone adds, and the `import
-    pkg` case below proves the blind spot is real rather than theoretical. Recorded
-    this way because "7 of 7 trees lack __init__.py" reads as a large live exposure and
-    is a correct count of the wrong population for that claim.
+    A directory only meets this exclusion when it is imported AS a package, and today
+    none of them is. The one regular package in the tree is `omnifold_nn/omnifold/`,
+    which HAS `__init__.py` -- real `__file__`, COUNTED, not excluded -- and is exactly
+    what the OI-126 probe's ten-module measurement exercised (`omnifold`, `.dataloader`,
+    `.net`, `.omnifold`, `.utils`). That is why that measurement saw its tree at all:
+    the single genuine package here is the one this exclusion cannot touch. (Import-site
+    count deliberately omitted -- two patterns gave 33 and 37, neither load-bearing, and
+    a number whose predicate is not stated is not worth carrying.)
+
+    BUT "NIL TODAY" IS NOT "HYPOTHETICAL", AND THE DIFFERENCE IS WHAT KEEPS THIS ARM
+    FROM BEING RETIRED. Four of the seven are LEGAL module names, and the ingredient
+    that would make them live already exists in this repo:
+
+        [t for t in trees if t.isidentifier()]
+            -> docs, lib, omnifold_nn, unbinned_unfolding        (3 hyphenated, not 4)
+        the repo ROOT reaching sys.path -- measured, two live routes:
+            technote_style.py                       a tracked .py AT the root, so
+                                                    running it puts the root at path[0]
+            pet/pointcloud_projection.py:298        sys.path.insert(0, _REPO) -- the
+                                                    ROOT, at POSITION 0, in live code
+        with the root on sys.path, all four resolve as NAMESPACE packages,
+        `spec.origin is None`, measured directly via importlib.
+
+    So this is not "prospective for the first namespace package anyone adds". It is
+    prospective for FOUR directories that already exist in the shape the exclusion is
+    blind to, already reachable by an existing position-0 insert, and one import
+    statement from being live. Current exposure NIL; distance to exposure, one line.
+
+    Recorded this way because "7 of 7 trees lack __init__.py" reads as a large live
+    exposure and is a correct count of a population the predicate never ranged over --
+    while "someone might add one someday" is the rationale a later reader retires.
     """
 
     def setUp(self):
