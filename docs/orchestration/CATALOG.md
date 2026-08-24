@@ -6,6 +6,16 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ### ✅ GATE 1 PASSES — round 9, 2026-08-23, 18 PASS / 0 FAIL / 0 NOT-EVALUABLE
 
+> **§7.0.18 IS PUBLISHED AND IS NOT OPERATIVE. GATE 2 IS TEN CLAUSES.** The review contract now carries
+> a transcription of Joseph's ruling scoping `F-6(b)` out of Gate 2 into a separate leg-6 completion
+> gate. **It is held against confirmation and changes nothing yet**, because the ruling is not in any
+> `DECISION-*` record — measured, 0 hits with a passing covering control. **Publication is not
+> adoption:** the bytes on `origin/main` (`a7ac92b9`, 1447 lines) themselves say *"GATE 2 IS STILL TEN
+> CLAUSES AND F-6(b) IS STILL ONE OF THEM."* F-6(b) is **mandatory and not waived** either way; the
+> ruling authorizes no leg 6, no adoption, no consumption, no member k≠0, and no relaxation of any
+> other clause. **Do not grade nine clauses until a decision record exists that §7.0.18 can cite by
+> name.**
+
 - [`FINDING-20260824-gate2-preparation-and-four-open-rulings.md`](FINDING-20260824-gate2-preparation-and-four-open-rulings.md)
   — **Gate 2 is PREPARED and needs FOUR RULINGS before it can be graded.** Clause list derived
   independently as **ten** (F-1(b)…F-8(b), F-17(b), F-18(b)), agreeing with §7.0.5's arithmetic and

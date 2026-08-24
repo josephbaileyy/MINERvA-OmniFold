@@ -82,6 +82,15 @@ credit, the miss is silent rather than loud.** The router is annotated; **derive
 §7.0.5's POST-REHEARSAL column, never from a summary of it.** Filed here rather than repaired in
 silence because a partial enumeration repaired in full erases that it was ever partial.
 
+**(e) §7.0.18 IS PUBLISHED, INERT, AND THE ONE ANNOTATION WHOSE HAZARD IS THAT A READER TREATS ITS
+EXISTENCE AS ITS ADOPTION.** It transcribes Joseph's `F-6(b)` ruling and is held against confirmation:
+no `DECISION-*` record contains the ruling, so **Gate 2 remains ten clauses and F-6(b) remains one of
+them.** Its own header says so in bold. **Publication is not adoption** — it reached `origin/main` at
+`0a61972f` while the confirmation question was still open with Joseph, which is a provenance fact
+about the commit and not a change in the clause's status. Classify it **HISTORICAL until the decision
+record lands, then BINDING.** The distinction that matters for a grader: the bytes narrow nothing, and
+a reader who cites §7.0.18 as authority for nine clauses is citing a document that says ten.
+
 **(d) §7.0.17 HAS ITSELF BEEN CORRECTED TWICE, on 2026-08-24, by the third grading lane — so read it
 to its end.** Both corrections are inside the subsection and both are BINDING. **(i)** Its mechanism
 sentence originally read *"`write_inventory` is called once, at `:552`"*; the callee, the count and the
