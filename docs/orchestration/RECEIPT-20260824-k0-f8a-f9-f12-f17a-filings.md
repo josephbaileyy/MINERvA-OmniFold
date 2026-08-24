@@ -519,7 +519,32 @@ it in the same session, in opposite directions.** My own contribution to the con
 receipt role keys denoting repo code) as a possible source. That hypothesis was wrong. The
 `per_launcher: 2` declaration is the real explanation.
 
-### FINDING 5 — THE CANDIDATE BRANCH CARRIES A SUPERSEDED RUBRIC
+### FINDING 5 — THE CANDIDATE BRANCH CARRIED A SUPERSEDED RUBRIC — **CLOSED, AND THIS ENTRY WAS STALE THE MOMENT IT WAS FILED**
+
+> **⚠ THE TEXT BELOW WAS TRUE WHEN DRAFTED AND FALSE WHEN COMMITTED. FOURTH INSTANCE OF THIS CLASS IN
+> THREE DAYS, AND THE WORST OF THE FOUR.** It says the branch's rubric *"is 575 lines (`cf53f587`)"*.
+> At `30ec0707` — the commit that files this very receipt — that path is blob
+> `e2b952075205a4383fcc99811692add83bce8ef9`, **1160 lines**, sha256 `e0fb342b…`. **The disposition
+> the finding asks for was already actioned**: an independent non-builder lane synced it at
+> `b2075558`, which `git merge-base --is-ancestor` confirms is an **ancestor of `30ec0707`**. So the
+> finding is **CLOSED**, not wrong — but it was filed describing a world its own commit had already
+> left.
+>
+> **The check that would have caught it is one command on one path**, and it names the answer:
+> `git log --oneline 30ec0707 -- docs/orchestration/REVIEW-CONTRACT-…md` → `b2075558 Sync k=0 rubric
+> on the build branch to main's copy, byte for byte`. **The correction was upstream in its own
+> history.** The first three instances of this class needed a re-measurement on the cluster or a
+> peer's grep; this one needed a `git log` on the path I was writing about.
+>
+> **And `CLAUDE.md:8` instructs exactly this** — *"before quoting, writing, computing, or deciding a
+> gate, open the routed canonical artifact and re-measure volatile fields."* The rule was loaded into
+> context for the whole session. **The mechanism is that I re-measure when I MEASURE and not when I
+> FILE**: every number in §1–§4 was measured minutes before commit, and this one was drafted hours
+> before it and never re-read against the tree. A receipt is committed at one instant and drafted over
+> many, so **every factual sentence needs its truth checked at the commit, not at the keystroke.**
+> Found by the round-11 grader.
+
+**The finding as originally filed, retained verbatim:**
 
 `docs/orchestration/REVIEW-CONTRACT-20260822-k0-execution-integrity.md` is **575 lines**
 (`cf53f587`) on `build-k0-execution-integrity` and **1160 lines** (`e2b95207`) on `main`. Rounds 10
@@ -528,6 +553,15 @@ restatements F-9 and F-12 are now graded by.
 
 **I am not syncing it.** A builder editing the contract it is graded against is a conflict of
 interest even when the edit is a pure copy from `main`. Flagged for Joseph or a non-builder lane.
+
+**DISPOSITION, added at the annotation above:** Joseph authorized delegation; an independent lane
+landed it at `b2075558` with blob `e2b95207…` matching `main` exactly, verified on both the local ref
+and origin, `--check` rc=0, no force-push, `d268a95b`/`35777aad`/`aa67c426` all still ancestors. That
+lane also established the stronger non-destructiveness result my own `comm -23` set comparison could
+not: the old copy is an exact **ordered subsequence** of the new one, 576/576 lines in order, **585
+added, 0 deleted, 0 modified**. And it retired a caveat that headed both of the round-10 and round-11
+verdicts — *"grade by digest, not by branch"* — so §7.0.11/12/13 are now present on the candidate
+itself.
 
 ### FINDING 6 — `setup_salloc_env.sh` SOURCES TWO FILES THAT NO CONFORMING CLONE CAN CONTAIN, AND THE OBVIOUS FIX IS THE HAZARD
 
