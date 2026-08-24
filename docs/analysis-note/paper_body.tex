@@ -182,4 +182,64 @@ known low-recoil/2p2h deficit, agree with the dedicated published low-recoil
 measurement, and localize a deep-inelastic excess in a high-$W$ corner that all
 tested generators underpredict. The scalar extended-fiducial study identifies a
 modest acceptance-supported extension and a much larger, separately labeled
-prior-dominated region.
+prior-dominated region. A prospective full-event point-cloud implementation and
+the validation evidence required before it can contribute a result are described
+in App.~\ref{app:pet-prospective}.
+
+\appendix
+\section{Prospective full-event point-cloud OmniFold}
+\label{app:pet-prospective}
+
+A point-cloud transformer (PET, using the architecture developed for
+OmniLearn~\cite{Mikuni:2024qsr}) can replace the scalar classifiers within the
+same two-step OmniFold procedure while retaining the event pairing, signal
+definition and cross-section normalization used above. At reconstruction level,
+the classifier would jointly consume the measured muon kinematics and a
+variable-length set of calorimetric deposits. At truth level, it would consume
+the truth muon and the final-state particle cloud. The muon may be represented
+as distinguished event-level features or as a distinguished token, but it must
+be available to both steps: a recoil-only classifier cannot learn the complete
+joint muon--hadron response.
+
+At each iteration the reconstructed classifier would distinguish data from
+reconstructed simulation using this full-event representation. Its per-event
+likelihood-ratio weight would be transferred through the simulation's
+truth--reconstruction association, including unmatched events, and the truth
+classifier would propagate it to the next iteration. The resulting truth-event
+weights could then be projected onto any observable carried by the truth record,
+without training a separate response model for each projection. Background
+treatment, reconstructed selection and the acceptance-supported versus
+prior-dominated reporting split would remain the same as in the scalar analysis.
+
+The validation burden is correspondingly broader than ordinary closure. It
+includes lower-dimensional marginal anchors, injected-shape closure, a stress
+closure sensitive to omitted-muon dependence, point-cloud truncation and input
+coverage checks, and explicit tests of the extrapolation into inefficient
+regions. Statistical replicas must rerun the same estimator used for the
+nominal, and nuisance variations must regenerate the affected selection and
+cloud membership and retrain the estimator. Statistical, training and joint
+nuisance--retraining covariance components must share one nominal, reporting
+mask and bin ordering before they can be combined.
+
+\clearpage
+\paragraph{Why this extension is not presently a result.}
+A 50-member statistical-replica covariance has been constructed for a
+full-event development estimator, but its proposed pairing with the nominal was
+declined. The nominal lies outside the replica family in a large, spatially
+coherent part of the reported space. This observation does not establish that
+the nominal is wrong or that the measured replica dispersion is invalid: a
+covariance describes dispersion about an ensemble center, and containment of a
+separately trained nominal by a finite replica family is not itself a coverage
+test. It instead exposes two missing demonstrations. First,
+\emph{estimator equivalence} must show that the resampling construction reruns
+the same estimator that defines the nominal. Second, a dedicated coverage study
+must show that intervals built from the replicas contain known truths at their
+advertised rate. These are separate from checking that the covariance matrix was
+assembled correctly.
+
+No training-variation covariance or full PET total covariance has been adopted,
+and the required selection-complete detector variations have not been combined
+with a common full-event nominal. Consequently no point-cloud central value,
+uncertainty or comparison enters the measurements in this paper. This appendix
+specifies a methodological extension and the evidence required to reconsider it,
+not an interim PET result.
