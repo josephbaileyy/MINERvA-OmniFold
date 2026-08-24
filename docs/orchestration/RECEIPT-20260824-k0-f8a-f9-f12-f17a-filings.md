@@ -576,12 +576,15 @@ receipt role keys denoting repo code) as a possible source. That hypothesis was 
 > many, so **every factual sentence needs its truth checked at the commit, not at the keystroke.**
 > Found by the round-11 grader.
 
-**The finding as originally filed, retained verbatim:**
+**The finding as originally filed, retained verbatim. EVERY PARAGRAPH BELOW IS SUPERSEDED — the
+markers are inline so that a reader landing here, rather than at the box above, still sees it:**
 
-`docs/orchestration/REVIEW-CONTRACT-20260822-k0-execution-integrity.md` is **575 lines**
-(`cf53f587`) on `build-k0-execution-integrity` and **1160 lines** (`e2b95207`) on `main`. Rounds 10
-and 11 were graded against `main`'s. The branch copy is missing §7.0.11, §7.0.12 and §7.0.13 — the
-restatements F-9 and F-12 are now graded by.
+**[SUPERSEDED — the "branch copy" was the CURRENT one; it is `aa67c426`, the declared and deployed
+sha, that ships 575 lines.]** `docs/orchestration/REVIEW-CONTRACT-20260822-k0-execution-integrity.md`
+is **575 lines** (`blob:cf53f587`) on `build-k0-execution-integrity` and **1160 lines**
+(`blob:e2b95207`) on `main`. Rounds 10 and 11 were graded against `main`'s. The branch copy is missing
+§7.0.11, §7.0.12 and §7.0.13 — the restatements F-9 and F-12 are now graded by. **[SUPERSEDED — and
+understated: the deployed copy has NO §7.0 AT ALL. See §7's box and the correction above.]**
 
 **I am not syncing it.** A builder editing the contract it is graded against is a conflict of
 interest even when the edit is a pure copy from `main`. Flagged for Joseph or a non-builder lane.
@@ -870,7 +873,9 @@ changed. Neither `PYTHONDONTWRITEBYTECODE` nor `-B` was set on this arm; it was 
 > **The procedure below is retained because it is harmless and covers both causes**; only its stated
 > reason was wrong.
 
-> Because the tracked set comes from the index, **`git add` the new paths BEFORE regenerating** and the
+> **[MECHANISM SUPERSEDED, PROCEDURE RETAINED — staging is a no-op for an ALREADY-TRACKED file; both
+> arms give byte-identical manifests. It matters only for a brand-new UNTRACKED file.]** Because the
+> tracked set comes from the index, **`git add` the new paths BEFORE regenerating** and the
 > row is correct in the same commit — no discipline, no convergence commit, no red intermediate. Full
 > order: **write → `git add` all paths including new ones → regenerate → `git add` MANIFEST → bare
 > `git commit`**. That closes the defect §6.6.2 records, at its cause rather than by care. The
@@ -878,7 +883,10 @@ changed. Neither `PYTHONDONTWRITEBYTECODE` nor `-B` was set on this arm; it was 
 > only under `ls-files --others` before `git add`, and under `ls-files` immediately after, with no
 > commit in between. **This commit is the control** and was produced by that order.
 
-**The original finding, retained, with its scope now corrected to CONTENT:**
+**The original finding, retained, with its scope now corrected to CONTENT. INLINE MARKER, because
+the correction is above and a reader may land here: every use of "index-blind" below means
+CONTENT-blind only — `git ls-files` at `:92`, `:94`, `:301`, `:529` DOES read the index, and the
+"verified by exhaustion" claim was made over a token set that omitted it.**
 
 `generate_manifest.py` reads **working-tree bytes and nothing else**. Verified by exhaustion: the only
 reads in the file are `read_bytes()` at `:281`, `:345` and `:539` — **no `git show`, no `cat-file`, no
