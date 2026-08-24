@@ -322,6 +322,23 @@
    }
   }
  },
+ "REPLICATE_CONTROL_20260824": {
+  "VERDICT": "AMBIGUOUS-BYTE-IDENTICAL -- terminal, not pending. NOT reported as REPRODUCIBLE.",
+  "CITABLE_FOR": "that two independent executions of r5_sweep.py on replica_26 produced byte-identical output, together with the external timestamp evidence that a second write occurred.",
+  "NOT_CITABLE_FOR": "the declared REPRODUCIBLE verdict. The bytes are equally consistent with a perfectly deterministic pair and with a copy of one arm over the other, and the artifact carries no run provenance to separate them. Also NOT citable for the noise-floor machinery: byte-identity short-circuits before any difference is computed, so the min()-across-arms floor and the noise-floor gate were exercised ON FIXTURES ONLY in this comparison.",
+  "OPERANDS": {
+   "job": "57506820, COMPLETED, Elapsed 00:29:30, ExitCode 0:0, End 2026-08-24T00:27:21 (PDT)",
+   "t_values_completed": "0.00 0.25 0.50 0.75 1.00 -- all five of the artifact's own t_grid, which was READ from the artifact rather than assumed",
+   "primary": "OI126_R5_SWEEP_26.json  5260 B  mtime 2026-08-24 00:27:20 -0700  md5 69738f762105f6f60eb5b51838a05e25",
+   "rescue": "OI126_R5_SWEEP_26.PRE-2026-08-23T2317.rescue-arm.json  5260 B  mtime 2026-08-23 23:48:34 -0700  md5 69738f762105f6f60eb5b51838a05e25",
+   "cmp": "BYTE-IDENTICAL",
+   "declared_bars": "REPRODUCIBLE <= 5.5e-04 ; MATERIAL >= 1.83e-03 ; otherwise UNRESOLVED. NOT MOVED."
+  },
+  "THE_WRITE_DID_HAPPEN_AND_THAT_IS_EXTERNAL_TO_THE_BYTES": "The live file's mtime (00:27:20) is one second before the job's End (00:27:21) and it replaced a file whose mtime was 2026-08-23 15:17:24. So a write occurred, evidenced independently of the file's CONTENTS. The copy hypothesis therefore requires that 57506820 wrote bytes identical to the 15:17 run -- which is the determinism reading. This does NOT close the gap (a degenerate reason for writing the same bytes is not excluded), so the verdict stays AMBIGUOUS; but the timestamps are the only discriminating evidence that exists outside the artifact and they are recorded here.",
+  "MY_ORIGINAL_PRECONDITION_WOULD_HAVE_REJECTED_THIS_RESULT": "Arm 3 was first written as `if primary_md5 == RESCUE_PINNED_MD5: fail`, on the assumption that bit-identity between two independent runs was rarer than a merge bug. On this data it would have emitted NOT-RUN with the reason 'the primary run did not write, or wrote the preserved arm's bytes' -- WRONG ON BOTH DISJUNCTS: the run did write at 00:27:20, and the identical bytes are the finding rather than the failure. A 29-minute run and the cleanest determinism evidence in the campaign would have been discarded as a broken precondition with a plausible reason attached. The defect passed a three-arm test because arm 2's fixture used two files with DIFFERENT contents, so the byte-identical case -- the guard's own strictest input -- was never exercised. A guard's does-not-fire arm is not a formality; here it was the arm that fired on the first real invocation.",
+  "THE_PRESERVED_ARM_WAS_LOAD_BEARING": "run_r5_26.sh writes the same path the earlier arm occupied. Without the byte-identical copy taken before this run, there would be ONE file at that path and the comparison would have been a self-comparison returning a difference of exactly zero, with no tell. The same file has now been the wrong operand in two opposite ways -- self-comparison when duplicated into the member set, and a destroyed operand when overwritten in place -- both from the PATH being reused rather than the RUNS being distinguished.",
+  "WHAT_STAMPING_WILL_DO_TO_THIS_VERDICT": "r5_sweep.py captures no run provenance (verified at the PRODUCER: zero references to SLURM|gethostname|getfqdn|uname|socket|datetime|time.time|strftime|getpid, AND zero to the wholesale routes os.environ|locals()|vars()|globals()|**kwargs, and no other script post-processes the artifact -- a producer-capability search is covering only once the wholesale routes are closed). Once stamped, two legitimate runs MUST differ in jobid and host, so byte-identity becomes IMPOSSIBLE for legitimate runs -- and the determinism result here makes that inversion sharper, not weaker: because the numerics are deterministic, any FUTURE byte-identical pair is unambiguously a PROVENANCE-CAPTURE FAILURE rather than a determinism success. The stamp and this branch's semantics must land in one commit."
+ },
  "per_member": {
   "replica_49": {
    "dL": 0.005198768447700064,
