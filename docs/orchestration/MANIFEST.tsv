@@ -35,7 +35,7 @@ docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md	tracked	ARCHIVAL	docum
 docs/orchestration/DECISION-20260815-joseph-oi6-oi8-oi126.md	tracked	ARCHIVAL	document		20260815	terminal		exact-path-only		yes	2	262	15435
 docs/orchestration/DECISION-20260822-joseph-b1-lift-and-clause-c.md	tracked	LIVE	document		20260822	open		route-only	nd-unfolding/bootstrap_nd.py;nd-unfolding/seedscan_split.py;nd-unfolding/sweep_bank_5d.py;nd-unfolding/tests/test_oi136_failopen_inventory_ratchet.py;nd-unfolding/unfold_nd_omnifold_unbinned.py;nd-unfolding/unified_throw_cov.py;nd-unfolding/unified_throw_cov_5d.py	no	19	451	29855
 docs/orchestration/DECISION-BRIEF-20260819-oi71-recovery-evidence.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only		yes	0	184	14025
-docs/orchestration/DECLARATION-20260823-k0-candidate-aa67c426.md	tracked	LIVE	document		20260823	open		route-only		no	4	70	3694
+docs/orchestration/DECLARATION-20260823-k0-candidate-aa67c426.md	tracked	LIVE	document		20260823	open		route-only		no	4	213	13352
 docs/orchestration/DECLARATION-20260823-k0-candidate-sha.md	tracked	LIVE	document		20260823	open		route-only		no	4	120	7498
 docs/orchestration/DETERMINATION-20260811-cause5-binding-half.md	tracked	LIVE	document		20260811	open		route-only		no	11	289	20575
 docs/orchestration/DETERMINATION-20260817-lanec-cstat-object-is-total-statistics.md	tracked	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	185	13331
@@ -58,7 +58,7 @@ docs/orchestration/INDEX-retracted-and-superseded-values.md	tracked	LIVE	index		
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	39	81	57470
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	3	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	8	70	4813
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	16	433	91382
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	16	433	91384
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	2	184	13929
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	tracked	LIVE	document		20260823	open		route-only		no	3	239	14244
 docs/orchestration/MIGRATION-DELTA.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	4	67	4450
@@ -66,7 +66,7 @@ docs/orchestration/MIGRATION-HANDOFF.md	tracked	ARCHIVAL	document			terminal		ex
 docs/orchestration/MIGRATION-TAKEOVER-STATUS.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	8	157	20741
 docs/orchestration/OMNIFOLD-DOSSIER.md	tracked	ARCHIVAL	document	fe-fps-campaign		terminal		exact-path-only	nd-unfolding/pet/feature_rank_arms.py;nd-unfolding/pet/feature_rank_summarize.py	yes	4	106	7764
 docs/orchestration/OPERATOR-GUIDE.md	tracked	ARCHIVAL	document			terminal		exact-path-only	docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py	yes	4	98	4815
-docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	tracked	LIVE	document		20260823	open		route-only		no	3	138	7386
+docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	tracked	LIVE	document		20260823	open		route-only		no	3	149	8296
 docs/orchestration/PACKET-20260823-round7-f2a-parity-and-f17a-filing.md	tracked	LIVE	document		20260823	open		route-only		no	2	276	17593
 docs/orchestration/PLAN-20260813-gate6-cml-retry-design.md	tracked	ARCHIVAL	plan		20260813	terminal		exact-path-only	nd-unfolding/tests/test_step1_trajectory_checkpoint_tier.py	yes	6	290	19853
 docs/orchestration/PLAN-20260822-oneMember-mii-staged.md	tracked	LIVE	plan		20260822	open		route-only		no	7	556	35798
