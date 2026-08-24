@@ -132,8 +132,19 @@ at mode 440 went 1423 → 1421, which is the three `.md`/`.tsv` paths the checko
 
 The graded round-8/9 state had HEAD **on a branch** whose ref simply lagged `origin`. I did not
 restore that, and the difference is the point: **a detached HEAD cannot be fast-forwarded**, so the
-mechanism of §6.1 is unavailable rather than merely discouraged. `refs/heads/build-k0-execution-integrity`
-is left **unmoved at `9db42a6d`**, still equal to `origin`, so nothing was rewound.
+mechanism of §6.1 is unavailable rather than merely discouraged.
+
+> **⚠ THE NEXT SENTENCE WAS TRUE WHEN WRITTEN AND IS NOW FALSE. Third instance of this exact class in
+> three days, and §6.1 predicts it.** It says `refs/heads/build-k0-execution-integrity` is *"left
+> unmoved at `9db42a6d`, still equal to `origin`, so nothing was rewound."* True at the time. **I then
+> deleted that branch and the remote myself**, in the later hardening of §6.9, so the ref does not
+> exist and there is no `origin` to be equal to. The round-11 grader found the sentence false before I
+> reported the change and correctly could not tell whether I or another lane had done it. **It was me,
+> deliberately, and the disclosure lag is the defect.** Annotated in place rather than edited, for the
+> same reason as §1.
+
+`refs/heads/build-k0-execution-integrity` is left **unmoved at `9db42a6d`**, still equal to `origin`,
+so nothing was rewound.
 
 Measured before relying on it: **no file on the run path reads a branch name** — `git grep -E
 'abbrev-ref|show-current|symbolic-ref'` over `nd-unfolding`, `lib` and `*.sh` at `aa67c426` returns
@@ -196,7 +207,7 @@ excuse and **partitioned the delta** instead:
 |---|---|---|---|
 | writable in `.git` | 30 | 1939 | **29** |
 | of which under `.git/objects/` | ~0 | **1910** | **0** |
-| writable in `.git`, non-object | 30 | 29 | **29** |
+| writable in `.git`, non-object | 30 | 29 | **23** (see §6.9) |
 | writable outside `.git` | 0 | 0 | **0** |
 
 The entire delta was `.git/objects/` — **one uniformly classified set**, so no record of the original
@@ -269,6 +280,13 @@ the pre-landing gate, because that hook **cannot be complete**: the same rows ca
 which is **corpus-global**, so editing one document can move another document's row without touching
 it. That incompleteness is very likely why `--check` is a pre-landing step in the first place.
 
+**And it is worse than corpus-global — it is a FIXPOINT over a self-describing file.** `MANIFEST.tsv`
+contains a row about **itself**, carrying its own `lines` and `bytes`; the generator iterates to
+convergence and raises `MANIFEST.tsv byte-count fixed point did not converge` if it cannot. Writing
+this section moved that self-row `91382 → 91384`. **A path-scoped hook cannot express a fixpoint at
+all**, so layer (3) is not merely more complete than layer (2) — it is doing a different kind of
+computation. Observed by the round-11 grader while trying to strengthen its own push-back.
+
 ### 6.7 WHAT THIS SECTION DOES NOT DO
 
 - It does **not** pass Gate 1 and does not assert `F-1(a)` is closed.
@@ -281,3 +299,84 @@ it. That incompleteness is very likely why `--check` is a pre-landing step in th
   to this branch above `aa67c426`, because a new tracked `.py`/`.sh` would falsify A-2(f) and the
   docs-only invariant this whole arrangement rests on. **It therefore belongs after this candidate
   retires, and it is being tracked rather than quietly dropped.**
+
+### 6.8 THE REFLOG, TRANSCRIBED BECAUSE IT EXPIRES
+
+§6.1 claimed a mechanism: the deployment was *routinely* fast-forwarded, so the excursion needed no
+wrong belief. That was an inference when written. The deployed tree's own `HEAD` reflog is the
+evidence, and it is stronger than the claim — **12 `Fast-forward` entries and 6
+`reset: moving to origin/build-k0-execution-integrity`, eighteen advances in under two days**, ending
+at the excursion and then the repair:
+
+```
+2026-08-24 04:34:10  checkout: moving from build-k0-execution-integrity to aa67c426…   <- the repair
+2026-08-23 21:03:28  merge 9db42a6d…: Fast-forward                                     <- THE EXCURSION
+2026-08-23 21:00:00  merge aa67c426…: Fast-forward
+2026-08-23 07:52:00  merge a54038b2…: Fast-forward      (the sha round 9 graded 18/0)
+2026-08-23 07:50:30  merge 1d2b795d…: Fast-forward
+2026-08-23 00:44:48  merge 14980486…: Fast-forward
+2026-08-23 00:16:05  merge c35bed58…: Fast-forward
+2026-08-22 23:38:48  merge e93364d1…: Fast-forward
+2026-08-22 23:36:37  merge 0b556379…: Fast-forward
+2026-08-22 23:20:02  merge 60cf728d…: Fast-forward
+2026-08-22 21:33:53  merge fabeedc2…: Fast-forward
+2026-08-22 20:25:09  merge f3c27870…: Fast-forward
+2026-08-22 18:17:42  merge 6113a34d…: Fast-forward
+2026-08-22 12:58:33  reset: moving to origin/build-k0-execution-integrity   (x6, 10:43–12:58)
+2026-08-22 10:40:01  clone: from /pscratch/sd/j/josephrb/k0r2/bare.git
+```
+
+**The upstream was a LOCAL bare repository**, `/pscratch/sd/j/josephrb/k0r2/bare.git`, not GitHub —
+so no network was involved in any of it. Transcribed here because reflog entries expire on a timer
+and this is the only record of it inside the tree.
+
+**`9db42a6d` is now reachable from no ref in that tree** — 0 refs contain it, one HEAD reflog entry
+does — so it will eventually stop being resolvable there. It remains permanently reachable on
+`origin`/GitHub as an ancestor of this branch's tip, which is where the excursion should be inspected
+from.
+
+### 6.9 THE HARDENING, AND EXACTLY WHAT IT DOES NOT CLOSE
+
+Round 11 established a residual: **a detached HEAD blocks fast-forward, not `git checkout`.**
+`.git/HEAD`, `index`, `config` and `packed-refs` are mode 660 and must be — **`.git` cannot be locked,
+because git must write it to function**, which is the durable form of the "1939 writable" confusion.
+No A-2 claim should ever be phrased over the whole tree; the tool already scopes `--require-readonly`
+to tracked source and their containing directories, and this prose now matches the tool rather than
+the reverse.
+
+**A read-only bind mount is NOT available to me.** Measured, not assumed: `mount --bind -o ro` returns
+*"must be superuser to use mount"* and `sudo -n` requires a password. A-2(g) offers the bind as an
+alternative to `chmod`, but on this system it needs NERSC staff. `fuse-overlayfs` is present and is a
+different mechanism, not attempted.
+
+What I did instead, in user space, both reversible in one command:
+
+| action | what it removes |
+|---|---|
+| `git remote remove origin` | the fetch path — and with it the `merge …: Fast-forward` route that produced every one of §6.8's eighteen advances |
+| `git branch -D build-k0-execution-integrity` | the offline `git checkout <branch>` route, which needed no network at all |
+
+A-2(a)–(g) re-measured after both: HEAD `aa67c426`, DETACHED, porcelain **0**, and `--compare` plus
+all four `--require-*` at **rc=0**, `782 files, fa3489e2…`.
+
+**WHAT IT DOES NOT CLOSE, stated because a peer generously called the mechanism "structurally
+impossible" and that is too strong.** The tree carries **10 annotated `refs/tags/evidence/*` tags,
+every one pointing at a commit that is not `aa67c426`**. A tag is checkoutable, so
+`git checkout refs/tags/evidence/…` still moves the tree. The correct claim is narrower and is the one
+worth having: **the two routes that actually caused the excursion are gone; a third, never-exercised
+route remains.** I did not delete the evidence tags — they are other lanes' provenance anchors and are
+not mine to remove.
+
+**AND I AM DECLINING THE GRADER'S ONE RECOMMENDATION, which was to
+`git tag deployment-excursion-9db42a6d` in that tree** so the excursion stays citable locally. A tag
+is precisely the surface named above, so that tag would install a one-command path back to the exact
+wrong state this section exists to prevent — a hazard strictly worse than a generic evidence anchor.
+Citability is preserved the durable way instead: §6.8 transcribes the reflog into this document, and
+`9db42a6d` lives on `origin` as an ancestor of the tip.
+
+**Side effects of the two commands, measured rather than assumed.** Writable non-object files in
+`.git` went **29 → 23**: the six are 3 loose refs plus their 3 reflogs under `logs/refs`, removed with
+the branch and the remote. **I ran no `gc` and no `pack-refs`**; deleting a packed ref rewrites
+`packed-refs`, which accounts for it without a repack. `packed-refs` now holds tags only, 19 packs,
+1850 loose objects, 0 of them writable, no `gc.log`.
+
