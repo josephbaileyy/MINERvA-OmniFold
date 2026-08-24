@@ -1,5 +1,29 @@
 {
  "schema": "oi126-r5-loss-interpolation-sweep-v1",
+ "CITABLE_FOR_AND_NOT": {
+  "WHY_THIS_IS_AT_THE_TOP": "this receipt accumulated seven amendments across two days and its boundaries were scattered through the sections that carry them. Caveats do not COMPOSE into a boundary: a reader who opens one section meets that section's qualifier and not the others. This block is the boundary. It is placed at index 1 so it is met before any number. NOTE for anyone who recorded key INDICES of this file earlier: inserting this block shifted every later index by one. Cite keys by NAME.",
+  "CITABLE_FOR": [
+   "per_member.*.dL and L_by_t -- the loss-interpolation measurements themselves, on row set A",
+   "the reciprocal arm's result: 2 of 6 members received a declared verdict, and which two",
+   "the replicate control: byte-identical across two runs nine hours apart on different nodes, with the copy branch refuted by three operands outside the artifact",
+   "the structural/output-response arms (band and tail) as measured",
+   "the guards that held, and the enumerated defects in this lane's own instruments"
+  ],
+  "NOT_CITABLE_FOR": [
+   "ANY statement about OI-126's status. Nothing in this file is estimator-equivalence or coverage, which are the two conditions reconsideration requires and which remain untested.",
+   "'ROW-SET IMMATERIAL' as a stability claim, for ANY of the six members. See ROWSET_ROBUSTNESS_SUPERSEDED_20260824 at index 6: the three row sets are three different POPULATIONS, so all six cells report composition, not row-set sensitivity. The four reassuring cells are affected exactly as much as the two alarming ones.",
+   "the own_epoch_scatter noise floor or anything built on it. It is a WITHIN-run epoch statistic and the quantities it was used to judge are BETWEEN-run and between-row-set. Retracted at 7da3b3d6; the (b)-framing justification struck at 74cee642.",
+   "the C2 discriminator's 18.35 as a significance. Its denominator is an interpolation SPAN, not a sampling scale. And its 'NOT SAMPLING' label is superseded: the mechanism is now measured and is neither of its two branches -- see RECEIPT-20260824-oi126-c-permutation-ensemble.json.",
+   "adoption, pairing, or promotion of any PET product; C_ML; or Gate-6 compute.",
+   "the R5_SPLIT_PROBE module-count figure, which has no operands in this receipt and is single-root by construction."
+  ],
+  "WHAT_SUPERSEDES_WHAT": {
+   "replica_29's row-set reading": "superseded by RECEIPT-20260824-oi126-c-permutation-ensemble.json; by NEITHER of its two labels",
+   "the (b) own-noise framing's justification": "struck 74cee642 -- evaluating fixed weights on a fixed row set is deterministic",
+   "the first REPLICATE_CONTROL section": "superseded at e938969e; the surviving dated section is the live one",
+   "the other five members' row-set cells": "NOT superseded and NOT re-measured. They stand as recorded, and the population defect applies to them structurally without being quantified for them."
+  }
+ },
  "what": "R5 of the OI-126 successor free reads: the loss-interpolation sweep along theta(t) = theta_nom + t*(theta_k - theta_nom) for six Gate-5 members, with the step-2 output response read on the same forward passes.",
  "predeclaration": {
   "file": "docs/orchestration/state/PREDECLARATION-20260823-oi126-successor-free-reads.json",
