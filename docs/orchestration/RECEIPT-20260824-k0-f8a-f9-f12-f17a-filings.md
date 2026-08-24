@@ -595,6 +595,45 @@ added, 0 deleted, 0 modified**. And it retired a caveat that headed both of the 
 verdicts — *"grade by digest, not by branch"* — so §7.0.11/12/13 are now present on the candidate
 itself.
 
+> **⚠ THE SENTENCE ABOVE IS FALSE OF THE OBJECT THAT MATTERS, AND THE CAVEAT IT RETIRED IS HEREBY
+> RESTORED. Found by the 5d-worker lane; verified by me on the deployed tree.** *"The candidate"*
+> resolves to **two** objects and that sentence does not say which:
+>
+> | object | contract blob | lines | §7.0.11 |
+> |---|---|---|---|
+> | **`aa67c426` — the DECLARED sha, what `/pscratch/…/k0r2/clean` is detached at** | `cf53f587` | **575** | **0** |
+> | `a89c9694` — the branch tip | `e2b95207` | 1160 | 10 |
+>
+> `git merge-base --is-ancestor b2075558 aa67c426` → **rc=1: the sync is NOT an ancestor of the declared
+> sha.** Measured on the deployed tree itself: the rubric there is **575 lines**, sha256 `80402f75…`,
+> with §7.0.11, §7.0.12, §7.0.13, §7.0.17 and §7.0.18 each appearing **0 times**. **So a grader who
+> reads the rubric out of the execution tree gets the superseded copy — missing precisely the
+> restatements F-9 and F-12 are graded by.**
+>
+> **`"grade by digest, not by branch"` IS THEREFORE BACK IN FORCE.** I retired it on the strength of a
+> sentence that was true of a branch and false of the deployed sha, and this is the exact case it was
+> written for. Grade the rubric by **path plus blob** — `e2b95207`, never `cf53f587`, never a branch
+> name — and state which tree the copy came from.
+>
+> **This is OI-136 one level up from code.** OI-136 is *"the file that EXECUTES is not the file that was
+> approved."* This is *"the rubric that SHIPS is not the rubric that was graded."* The 5d-worker lane's
+> framing, and it is exact.
+>
+> **NOT REPAIRED BY MOVING THE TREE, deliberately.** Re-declaring to pick up a docs commit would move
+> `HEAD` on a tree with seven jobs running, and **F-1(b) requires `rev-parse HEAD == aa67c426` at both
+> ends.** The fix is to stop writing *"the candidate."*
+>
+> **Scope, measured from the producer rather than assumed:** `mnv_source_manifest.py:70` is
+> `SOURCE_SUFFIXES = (".py", ".sh")`, filtered at `:99`. The contract is `.md`, so **the rubric is
+> outside the 782-file A-2(f) population entirely** — `fa3489e2…535420` is unaffected and **F-1(b) is
+> untouched**, re-confirmed live against the declared baseline: `IDENTICAL (782 files, fa3489e2…)`.
+> That is also the producer-side proof that none of this campaign's docs-only commits could ever have
+> moved the digest.
+>
+> **AND IT WILL READ WORSE AFTER THE PENDING SYNC, NOT BETTER:** the branch will carry 1447 lines while
+> the declared sha still carries 575, so *"the candidate has the amendment"* becomes **more** misleading
+> once the sync lands. That instruction is with the sync lane.
+
 ### FINDING 6 — `setup_salloc_env.sh` SOURCES TWO FILES THAT NO CONFORMING CLONE CAN CONTAIN, AND THE OBVIOUS FIX IS THE HAZARD
 
 My own `cap/env.log` carries two errors that no previous filing has mentioned:
