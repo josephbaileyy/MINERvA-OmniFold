@@ -108,7 +108,7 @@ docs/orchestration/RECEIPT-20260812-hpss-space-audit.md	tracked	ARCHIVAL	documen
 docs/orchestration/RECEIPT-20260820-oi50-hashverify.md	tracked	ARCHIVAL	document		20260820	terminal		exact-path-only	2d-unfolding/HANDOFF_bkg_negweight/build_negweight_hpss_manifest.py;2d-unfolding/HANDOFF_bkg_negweight/hpss_preserve_negweight.sh;2d-unfolding/HANDOFF_bkg_negweight/hpss_recover_negweight.sh	yes	8	167	7895
 docs/orchestration/RECEIPT-20260821-negweight-hpss-durability.md	tracked	ARCHIVAL	document		20260821	terminal		exact-path-only	2d-unfolding/HANDOFF_bkg_negweight/hpss_preserve_negweight.sh;docs/analysis-note/check_dead_containment.py	yes	5	408	23906
 docs/orchestration/RECEIPT-20260822-k0-n1-and-guarded-arms.md	tracked	LIVE	document		20260822	open		route-only		no	4	317	19645
-docs/orchestration/RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings.md	tracked	LIVE	document		20260824	open		route-only		no	2	812	49297
+docs/orchestration/RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings.md	tracked	LIVE	document		20260824	open		route-only		no	2	829	50560
 docs/orchestration/RECONCILIATION-20260817-gbdtfive-macros-vs-rebuilt-candidate.md	tracked	LIVE	document		20260817	open		route-only	docs/orchestration/live_doc_indexed.py	no	5	295	15939
 docs/orchestration/REPAIR4-DEFECT-STATUS-20260807.md	tracked	ARCHIVAL	document		20260807	terminal		exact-path-only	nd-unfolding/run_p4_standard.sh	yes	3	201	13579
 docs/orchestration/REPAIR6-RECORDED-NOT-CHECKED-INVENTORY.md	tracked	ARCHIVAL	document			terminal		exact-path-only	nd-unfolding/p4_evidence.py;nd-unfolding/tests/test_p4_sweep_snapshots.py	yes	4	418	30567

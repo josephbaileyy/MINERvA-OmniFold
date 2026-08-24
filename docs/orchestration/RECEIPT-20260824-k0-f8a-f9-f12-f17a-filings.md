@@ -148,8 +148,25 @@ mii_adopt_unified_5d_stamped.py:788:    rc = subprocess.call(argv_child)
 
 **Every other entrypoint spawns nothing**, so there is no second child to wrap or to record as
 uncovered. `unified_throw_cov.py` and `compare_unified_throw.py` were checked separately and also
-return zero. **One child, covered; zero uncovered.** That is the whole disposition, and it is small
-because the enumeration is small — not because it was narrowed.
+return zero. **One child, covered; zero uncovered ACROSS THE ENTRYPOINT SET**, which is the population
+P-5's command names.
+
+> **⚠ SCOPE CORRECTED 2026-08-24 by the round-12 lane. The search was right; the SENTENCE was wider
+> than the search.** As first written this said *"one child, covered; zero uncovered"* full stop, which
+> reads as a statement about the whole import closure. It is not. A **closure-wide** search finds a
+> second subprocess: **`nd-unfolding/seed_offset_policy.py:420`**, which is
+> `subprocess.run(["git", "-C", repo_root, "ls-files", …])`. `seed_offset_policy.py` is a closure member,
+> not an entrypoint, so it is outside P-5's stated population and outside what I searched.
+>
+> **It is harmless, and for a reason that is a measurement rather than a judgement: the child is `git`,
+> not an interpreter.** A `git ls-files` subprocess cannot resolve a Python import, so the guard's
+> subprocess blind spot — which is about *import* resolution in a child interpreter — does not reach
+> it. Nothing changes in the disposition.
+>
+> **What was wrong was the claim's scope, and that is the exact error this campaign keeps making**:
+> state the population beside the number, and scope the CLAIM to what was searched rather than widening
+> the search until the sentence becomes true. Third form of it in this document alone — the census
+> population, the P-6 raw-versus-collapsed count, and now this.
 
 ---
 
