@@ -382,10 +382,32 @@ class TheProbeMeasurement(TenModuleFixture):
     """Reproduce the figure the OI-126 lane measured with its own implementation.
 
     THE PROBE'S MEASUREMENT, and its provenance, because it changes how much this is
-    worth. Reported by the PET/OI-126 lane 2026-08-23 from an untracked scratch probe
+    worth. Reported by the OI-126 lane 2026-08-23 from an untracked scratch probe
     (`/pscratch/sd/j/josephrb/oi126_r1r3_work/split_probe.py`, output in
-    `R5_SPLIT_PROBE.json`); NOT in any committed receipt at the time this landed, so it
-    is a scratch measurement and not a live result:
+    `R5_SPLIT_PROBE.json`).
+
+    THE MEASUREMENT IS NOT IN ANY COMMIT AND IS NOT EXPECTED TO BE. Three commits are
+    adjacent to it and NONE of them carries it; the distinction is the point, so the
+    citations are split rather than collapsed onto whichever is newest:
+
+      68f979fe   the CORRECTION THAT MOTIVATED the instrument -- verified present as
+                 `CORRECTION_20260823_my_OI136_claim_was_wrong.instrument_added` in both
+                 the R1 and R3 receipts. Prose. Carries no measured output.
+      9a881c03   the R5 receipt, which records THIS promotion at `7054426a` and
+                 attributes the by-construction caveat below. **IT ALSO SPELLS THE
+                 FIGURE "10 modules, 1 distinct root" IN PROSE, AND THAT IS NOT A
+                 RECEIPT OF THE MEASUREMENT** -- no command, cwd, interpreter, module
+                 set or exit status, and no reference to `R5_SPLIT_PROBE.json`. Anyone
+                 grepping for the figure lands here and gets a confident hit on a
+                 citation that cannot support it. Cite it for the ROUTING, never for
+                 the number.
+      (none)     the measured output itself. The scratch file became unretrievable when
+                 the NERSC certificate expired 2026-08-23T20:22:13Z, and the measuring
+                 lane declined to transcribe the figure from memory into a receipt --
+                 which is the right call and the reason this stays a scratch
+                 measurement rather than a live result.
+
+    The emitted lines, as reported:
 
         [probe] loaded modules inside a checkout: 10
         [probe] distinct checkout roots: ['<CANONICAL-CLUSTER-ROOT>']
