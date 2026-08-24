@@ -4,14 +4,25 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ## Current work
 
-### ⚠ ROUND 10 — the k=0 rehearsal FAILED at runtime; repaired and AWAITING AN INDEPENDENT FULL REGRADE
+### ⚠ ROUND 11 — Gate 1 at **16 PASS / 2 FAIL**; F-1(a), F-9, F-12 CLOSED; F-8(a) and F-17(a) filed and awaiting grade
 
 - [`PACKET-20260823-round10-oi136-runtime-violation-repair.md`](PACKET-20260823-round10-oi136-runtime-violation-repair.md)
   — **round 9's 18/0/0 at `a54038b2` is historically valid and does NOT carry forward.** The OI-136
   guard refused legs 5a/5b before any work ran. Repaired candidate **`aa67c426`**, deployed,
-  `porcelain 0`, 0 writable. Census **53 / 2 / 1**. **Gate 1 is NOT claimed passed.**
+  `porcelain 0`, 0 writable. Census **52 / 2 / 1** (53 is the PRE-repair figure). **Gate 1 is NOT claimed passed.**
 - [`DECLARATION-20260823-k0-candidate-aa67c426.md`](DECLARATION-20260823-k0-candidate-aa67c426.md)
-  — A-2(a)–(g) all MET at the new sha; 782 files, listing `fa3489e2…`.
+  — A-2(a)–(g) all MET at the new sha; 782 files, listing `fa3489e2…`. **§6 records the deployment
+  excursion**: the declaration commit was deployed on top of the candidate, round 10 failed `F-1(a)`
+  on it, and the deployment was reset to the declared sha on 2026-08-24. §6.3's branch-ref sentence is
+  annotated as since-falsified; §6.8 transcribes the tree's reflog (18 advances in two days) because it
+  expires; §6.9 records the hardening and what it does **not** close.
+- [`RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings.md`](RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings.md)
+  — **F-8(a), F-9, F-12 and F-17(a) measured at `aa67c426`.** P-6's launcher grep with its full output
+  raw and collapsed (171/114; 101/27/**12**, reconciling to the contract's nine plus three apparatus
+  tools); P-5's blind spots; the import closure **18 module-level / 20 any-depth / 2 hazards** with
+  both index scopes named, replacing an unpublished "15"; N-1's three arms with exit statuses filed;
+  M-1…M-6 on **both** trees with one identified difference. **Ten findings, four against this lane's
+  own work.** Builder-produced evidence — **it grades nothing**.
 
 
 
