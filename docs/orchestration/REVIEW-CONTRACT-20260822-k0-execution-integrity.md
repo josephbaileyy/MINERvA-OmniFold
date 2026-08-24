@@ -607,7 +607,7 @@ Read the class column, then settle the half named in the column for the gate you
 | F-3 | SPLIT | grep the eight launchers and every guard invocation → zero `--allow`; publish the command | grep the job stdout → zero `--allow`; publish the command |
 | F-4 | SPLIT | the **denominator** is fixed on the bench: guarded production invocations == production Python invocations **less the enumerated preflight set**, and **> 0** — the accepted figure is **14 launcher-level science invocations plus the pinned-writer child**, re-derived in §7.0.13 *(derived — see 7.0.8)* | count of inventories == count of guarded processes |
 | F-5 | SPLIT | the source-manifest generator and the inventory-vs-manifest comparator exist, and each carries a test that **fires on a mismatch** and is **silent on a match** *(derived)* | P-2 holds for every real inventory: origins under the code root, sha256 matching the manifest, `checked > 0` |
-| F-6 | SPLIT | `build_child_argv` emits the guard and an inventory for the pinned-writer child; a test asserts an explicitly flagged `repo_origin_count: 0` record for that argv shape *(derived)* | the child's record is present in the run's inventory and the run receipt carries the B-2 disclosure sentence in the contract's own terms |
+| F-6 | SPLIT — **but F-6(b) IS NO LONGER A GATE-2 CLAUSE (§7.0.18, operative 2026-08-24).** F-6(a) is unchanged | `build_child_argv` emits the guard and an inventory for the pinned-writer child; a test asserts an explicitly flagged `repo_origin_count: 0` record for that argv shape *(derived)* | **MOVED TO THE LEG-6 COMPLETION GATE — mandatory, NOT waived.** Was: the child's record is present in the run's inventory and the run receipt carries the B-2 disclosure sentence in the contract's own terms. **Do not grade this at Gate 2** |
 | F-7 | SPLIT — **confirmed by ruling 22**, §7.0.15 | the P-4 mechanism exists: a per-entrypoint expected-set pin, a comparator aborting on a difference in **either** direction, tests for added / removed / exact-match, and an **absent or undeclared pin failing closed**; the §7.0.13 exclusion pinned with it *(derived — see 7.0.9)* | the sets are recorded from the rehearsal and pinned — see §7.0.9, the pin's first TEST falls outside this gate |
 | F-8 | SPLIT | P-6's enumeration re-run on `MNV_CODE_ROOT` at the pinned sha, published with its command and its **full** output and reconciled; P-5's blind-spot inventory produced, including the subprocess enumeration with each child either wrapped or recorded as uncovered | the receipt states the blind spots in the receipt's own words |
 | F-9 | **PRE-SUBMISSION** | **RESTATED — grade §7.0.11's six-row table, not the original bullet.** N-1 performed: exit 3 *through B-4*, `outcome = refused:script-outside-expect-root`, never an empty/green verdict, both roots and the script named, `checked == 0` **and** `guard_installed == false`, O-1…O-4 with no child marker or output, and `seed_offset_policy` **not** named on the refused arm. Still needs the cluster, still not a run (§7.0.2) | — |
@@ -631,7 +631,7 @@ passes, each with its command and output filed. **A PASS unlocks exactly one thi
 the seven jobs of logical legs 1–5 for k=0.** It unlocks nothing else. Leg 6 stays separately gated
 by Amendment 1 §C, no member k≠0 is authorized, and §G is unchanged.
 
-**GATE 2 — POST-REHEARSAL COMPLETION.** Passes when every post-rehearsal half passes, **plus** the
+**GATE 2 — POST-REHEARSAL COMPLETION.** **NINE clauses as of §7.0.18 (2026-08-24): F-1(b), F-2(b), F-3(b), F-4(b), F-5(b), F-7(b), F-8(b), F-17(b), F-18(b) — `F-6(b)` has moved to the leg-6 completion gate and is still mandatory there.** Passes when every post-rehearsal half passes, **plus** the
 re-measurements the perishable pre-submission halves require at the far end (F-1(b), F-17(b)).
 **Until Gate 2 passes, the rehearsal's products stay where they land: not adopted, not consumed by
 anything outside the seven rehearsal jobs, not quoted, and no further member is authorized.**
@@ -1292,31 +1292,30 @@ takes them, and must derive its checklist from this document rather than from an
 > reads 575, which makes *"the candidate has the amendment"* **more** misleading, not less.
 
 
-#### 7.0.18 F-6(b) SCOPED OUT OF GATE 2 — **TRANSCRIBED, NOT YET OPERATIVE. F-6(b) IS STILL A GATE-2 CLAUSE.**
+#### 7.0.18 F-6(b) SCOPED OUT OF GATE 2 — **OPERATIVE 2026-08-24. GATE 2 IS NINE CLAUSES.**
 
-> **READ THIS BOX BEFORE THE RULING. AUTHORITY IS RELAYED AND NO RECORD EXISTS.** The text below was
-> delivered to this lane by the builder lane as Joseph's ruling. **It is not in any `DECISION-*`
-> document, and it is nowhere in this repository.** Measured before writing this subsection:
-> `grep -rl "scope F-6(b) out of Gate 2" .` → **rc=1, 0 hits**, with the covering control
-> `grep -rl "leg-6 completion gate" .` also **0 hits** — so the search works and the text is absent,
-> not merely unfound. `DECISION-20260824-joseph-eight-dispositions-and-mnv-repo-ownership.md`, the
-> only decision document of that date, contains **no** `F-6`, `leg 6` or `leg-6` match.
+> **AUTHORITY: `DECISION-20260824-joseph-f6b-scoped-out-of-gate2.md`, quoted there verbatim.**
+> **THIS SUBSECTION IS OPERATIVE AS OF 2026-08-24. GATE 2 IS NINE CLAUSES: F-1(b), F-2(b), F-3(b),
+> F-4(b), F-5(b), F-7(b), F-8(b), F-17(b), F-18(b).** §F's no-partial-credit rule applies over those
+> nine.
 >
-> **Every other ruling in §7.0 cites a decision document** — §7.0.11 opens *"Authority: Joseph's
-> ruling 20, `DECISION-20260822-joseph-b1-lift-and-clause-c.md`, fourth set, quoted there
-> verbatim."* This one cannot, because that record does not exist yet.
+> **`F-6(b)` IS NOT WAIVED. It remains MANDATORY under the separate leg-6 completion gate.** It moved;
+> it did not weaken, and it must never be cited as satisfied, excused or optional.
 >
-> **CONSEQUENCE, and it is deliberately the conservative one: until the decision record lands,
-> GATE 2 IS STILL TEN CLAUSES AND F-6(b) IS STILL ONE OF THEM.** A Gate-2 verdict may **not** rely on
-> this subsection. Nothing here waives, narrows or defers anything. **This is a transcription held
-> against confirmation, not an amendment.**
+> **THE HOLD IS DISCHARGED, AND THE SEAM IS KEPT RATHER THAN SMOOTHED.** From the time this subsection
+> was written until 2026-08-24 it read *"TRANSCRIBED, NOT YET OPERATIVE — F-6(b) IS STILL A GATE-2
+> CLAUSE"*, and **Gate 2 was ten clauses for that interval.** The hold existed because the ruling was
+> relayed by the builder lane and no decision record contained it — measured at the time,
+> `grep -rl "scope F-6(b) out of Gate 2" .` → rc=1, 0 hits, covering control passing. **Joseph then
+> instructed this session directly that relayed content attributed to him is to be trusted as his**,
+> which supplied the missing authority; the decision record above was written to that instruction and
+> the ruling's wording never changed. **A verdict recorded against this document BEFORE 2026-08-24
+> correctly grades ten clauses; one recorded after grades nine.** Say which.
 >
-> **Why it is recorded at all rather than refused:** the builder cannot self-record a ruling that
-> relaxes a gate it is graded against, the wording should not decay in a chat channel, and the
-> pending branch sync should carry it. **Why it is not operative:** a gate's definition changing on
-> relayed authority is precisely how a false assurance reaches a decision-maker, and this campaign
-> has a recorded instance of a peer-relayed "Joseph authorized it" that did not survive contact with
-> the record. **The remedy is one line from Joseph, not a judgement by any lane.**
+> **The authorization governs ATTRIBUTION, not measurement.** A relay saying "Joseph ruled X" is
+> Joseph ruling X. It does **not** convert relayed numbers, digests or tree states into verified ones —
+> today's record holds three cases of a relayed measurement being wrong and one of a correct
+> measurement being wrongly retracted. **Re-derive figures; accept attribution.**
 
 **The ruling as relayed, quoted rather than paraphrased:**
 
@@ -1326,9 +1325,9 @@ takes them, and must derive its checklist from this document rather than from an
 
 Accompanying instruction, also relayed: **"record it that narrowly."**
 
-##### What it will mean WHEN a decision record lands, stated once so the transcription is unambiguous
+##### What it means, now that the decision record exists
 
-- **Gate 2 becomes NINE clauses:** F-1(b), F-2(b), F-3(b), F-4(b), F-5(b), F-7(b), F-8(b), F-17(b),
+- **Gate 2 IS NINE clauses:** F-1(b), F-2(b), F-3(b), F-4(b), F-5(b), F-7(b), F-8(b), F-17(b),
   F-18(b). §F's no-partial-credit rule then applies over those nine.
 - **F-6(b) SURVIVES INTACT under a separate leg-6 completion gate.** It is **mandatory and not
   waived**. It moves; it does not weaken. A later reader must not cite this as F-6(b) being satisfied,

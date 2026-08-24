@@ -95,14 +95,17 @@ work, not just in someone else's. **Convention to carry: write the digest as `sh
 because at 8 hex characters the two are indistinguishable and the absent unit silently selects which
 check the next reader runs.**
 
-**(e) §7.0.18 IS PUBLISHED, INERT, AND THE ONE ANNOTATION WHOSE HAZARD IS THAT A READER TREATS ITS
-EXISTENCE AS ITS ADOPTION.** It transcribes Joseph's `F-6(b)` ruling and is held against confirmation:
-no `DECISION-*` record contains the ruling, so **Gate 2 remains ten clauses and F-6(b) remains one of
-them.** Its own header says so in bold. **Publication is not adoption** — it reached `origin/main` at
-`0a61972f` while the confirmation question was still open with Joseph, which is a provenance fact
-about the commit and not a change in the clause's status. Classify it **HISTORICAL until the decision
-record lands, then BINDING.** The distinction that matters for a grader: the bytes narrow nothing, and
-a reader who cites §7.0.18 as authority for nine clauses is citing a document that says ten.
+**(e) §7.0.18 IS NOW OPERATIVE — BINDING, and it CHANGES THE CLAUSE COUNT. GATE 2 IS NINE CLAUSES.**
+Reclassified 2026-08-24 from HISTORICAL when `DECISION-20260824-joseph-f6b-scoped-out-of-gate2.md`
+landed, supplying the authority the subsection had been held against. **`F-6(b)` is NOT waived — it is
+mandatory under the leg-6 completion gate.** Two things a grader must carry: **(i)** the interval
+matters — a verdict recorded against this document **before** 2026-08-24 correctly grades **ten**
+clauses and one after grades **nine**, so a verdict must say which and cite the contract digest it
+read; **(ii)** the authorization that unblocked it governs **attribution, not measurement** — a relay
+attributed to Joseph is his, but relayed *numbers* still require re-derivation, which is the distinction
+three separate errors in this package turned on. The earlier hazard — that a reader would take
+publication for adoption — is now moot in the other direction: **the clause is adopted, and the thing
+to check is which side of the date a verdict sits on.**
 
 **(d) §7.0.17 HAS ITSELF BEEN CORRECTED TWICE, on 2026-08-24, by the third grading lane — so read it
 to its end.** Both corrections are inside the subsection and both are BINDING. **(i)** Its mechanism

@@ -59,13 +59,17 @@ inventory records … this is never a clean result."*
 
 ### Ruling 1 — F-6(b) is unsatisfiable within the scope Gate 1 unlocks, so **Gate 2 cannot pass as written**
 
-> **RULED, RELAYED, AND NOT YET OPERATIVE — 2026-08-24.** Joseph's ruling scoping F-6(b) out of Gate 2
-> and into a separate leg-6 completion gate was relayed to this lane by the builder and is transcribed
-> at **§7.0.18** of the review contract. **It is not in any `DECISION-*` document — measured, 0 hits
-> with a passing covering control — so F-6(b) REMAINS A GATE-2 CLAUSE and Gate 2 remains TEN clauses
-> until that record lands.** The ruling waives nothing: F-6(b) stays mandatory under the leg-6 gate,
-> and it authorizes no leg 6, no adoption, no consumption, no member k≠0, and no relaxation of any
-> other Gate-2 clause. **Do not grade nine clauses on the strength of §7.0.18 alone.**
+> **RULED AND NOW OPERATIVE — 2026-08-24. GATE 2 IS NINE CLAUSES; THIS RULING IS CLOSED.**
+> Joseph's ruling scoping `F-6(b)` out of Gate 2 into a separate leg-6 completion gate is recorded at
+> `DECISION-20260824-joseph-f6b-scoped-out-of-gate2.md` and transcribed at review-contract **§7.0.18**,
+> which is operative. **Grade nine: F-1(b), F-2(b), F-3(b), F-4(b), F-5(b), F-7(b), F-8(b), F-17(b),
+> F-18(b).** `F-6(b)` is **mandatory and not waived** under the leg-6 gate, and the ruling authorizes no
+> leg 6, no adoption, no consumption, no member k≠0, and no relaxation of any other clause.
+>
+> **Superseded state, kept because the interval is gradeable:** this entry read *"NOT YET OPERATIVE …
+> Gate 2 remains TEN clauses"* until the decision record landed. **A verdict recorded against this
+> package before 2026-08-24 correctly grades ten; after, nine** — say which, and cite the contract
+> digest you read.
 
 §7.0.6: a Gate-1 PASS *"unlocks exactly one thing: submission of the seven jobs of logical legs 1–5"*,
 and leg 6 *"stays separately gated."* F-6(b) requires the B-2 pinned-writer child's record to be
