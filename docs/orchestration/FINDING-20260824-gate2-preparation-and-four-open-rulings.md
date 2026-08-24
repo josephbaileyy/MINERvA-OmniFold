@@ -139,7 +139,54 @@ transferable part is that a delegated measurement is bound to the sha it ran aga
 long-running lane's "not present anywhere" can expire mid-run.** Bind a lane's finding to a sha, and
 re-check any absence claim against `HEAD` before acting on it.
 
-**(b) RETRACTED AND CORRECTED 2026-08-24 — the three digests below are NOT GIT OBJECTS AT ALL, and I
+**(b) — ⚠ THE RETRACTION BELOW IS ITSELF RETRACTED. READ THIS PARAGRAPH FIRST; THE THREE DIGESTS ARE
+CORRECT AND THE LANE THAT REPORTED THEM WAS RIGHT.**
+
+**They are file `sha256`s, not git blob ids.** Re-measured by piping each version through
+`shasum -a 256`:
+
+| version | git blob | lines | **file sha256** |
+|---|---|---|---|
+| `contract-f9-restatement` | `a51b1577` | 1078 | **`8e4878eb`** ✓ |
+| `review-contract-k0-integrity` **and `aa67c426`** | `cf53f587` | 575 | **`80402f75`** ✓ |
+| `verify-k0-execution-integrity` | `8dfd88c2` | 772 | **`504803c2`** ✓ |
+| `build-k0-execution-integrity` | `e2b95207` | 1160 | `e0fb342b` |
+| `main` | `a7ac92b9` | 1447 | `a3a1299b` |
+
+**All three match exactly. Nothing was fabricated and the Gate-2 lane measured correctly.**
+`80402f75` is the **most** load-bearing of the three, not the most doubtful: it is also the sha256 of
+the rubric in the deployed tree at `aa67c426` — the finding in §4b above. Identified by the builder
+lane, which noticed the deployed rubric hashed to a digest this document had struck.
+
+**What was actually wrong, in each party's own column.** The lane: nothing — its digests were right and
+its "three branches carry different bytes" was true, merely narrower than the five-version picture.
+**Me, twice:** I relayed correct numbers **without naming the unit**, and then I *retracted correct
+data*. **The builder:** its `git cat-file -t` "verification" answered *"is this a git object"*, which
+**cannot distinguish "fabricated" from "hashed with a different function"** — a true answer to the
+wrong question, run as a verification and then used to ground a lesson about relaying unverified
+numbers. **The only false claim in the whole chain was my retraction.**
+
+> **TWO HALVES WORTH KEEPING TOGETHER, because they are mirrors.** Elsewhere in this document I filed
+> *verifying a mechanism EXISTS is not verifying it EXPLAINS the case in front of you*. This is the
+> other side: **falsifying a mechanism is not falsifying the claim.** `cat-file -t` failing is evidence
+> about git's object store, not about the number.
+>
+> **And the unit was in my own citations the whole time.** I had been identifying this very document by
+> file sha256 all day — `e0fb342b…` for the 1160-line copy, in this document and in the contract — and
+> then treated three file sha256s **of the same document** as non-existent because they were not blob
+> ids. **A bare 8-character hex string is not self-describing, and blob-vs-sha256 is indistinguishable
+> by eye.** The rule is not "re-derive harder"; it is **name the function beside the digest** —
+> `sha256:80402f75`, `blob:cf53f587` — because with the unit absent the *check* I reach for is chosen
+> by which function I happen to assume.
+
+**The superseded retraction is kept below rather than deleted, per this package's convention — but note
+its own text quotes the digests as non-existent, so a reader who lands mid-paragraph sees the opposite
+of the truth. That ordering hazard is exactly what `READING-ORDER-…` exists to catch, and this entry is
+now an instance of it.**
+
+---
+
+**(b) SUPERSEDED — RETRACTED AND CORRECTED 2026-08-24 — the three digests below are NOT GIT OBJECTS AT ALL, and I
 published them without re-deriving them.** The struck text read: *"`contract-f9-restatement`
 (`8e4878eb…`), `review-contract-k0-integrity` (`80402f75…`) and `verify-k0-execution-integrity`
 (`504803c2…`) each carry different contract bytes … a three-way divergence."* **Measured:
@@ -158,8 +205,9 @@ carry the file and there are FIVE distinct blobs.**
 | `8dfd88c2f362` | **772** | `verify-k0-execution-integrity` |
 | `cf53f58789ca` | 575 | `review-contract-k0-integrity` |
 
-**Found by the builder lane, which measured it after I relayed my figure to it; the correction is
-theirs and the error was mine.** Two lessons, and the second is the one that generalises: **(i) a
+**Found by the builder lane, which measured it after I relayed my figure to it.** *(Still true as a
+completeness correction: there are five distinct versions, not three. What was NOT true is the claim
+above that the lane's digests do not exist — see the un-retraction at the top of §4(b).)* Two lessons, and the second is the one that generalises: **(i) a
 delegate's digest is not a measurement until I resolve it myself** — `git cat-file -t` is one command
 and it falsifies a fabricated hash instantly; **(ii) my unchecked numbers erred toward my active
 argument** — I was arguing the divergence was worse than the builder had described, and every

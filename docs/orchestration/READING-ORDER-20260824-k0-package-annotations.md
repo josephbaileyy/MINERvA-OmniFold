@@ -82,6 +82,19 @@ credit, the miss is silent rather than loud.** The router is annotated; **derive
 §7.0.5's POST-REHEARSAL column, never from a summary of it.** Filed here rather than repaired in
 silence because a partial enumeration repaired in full erases that it was ever partial.
 
+**(f) A THREE-LAYER CORRECTION IN THE FINDING DOC'S §4(b), AND IT IS THE ONE PLACE IN THIS PACKAGE
+WHERE A RETRACTION IS ITSELF RETRACTED.** Three digests (`8e4878eb`, `80402f75`, `504803c2`) were
+reported by the Gate-2 lane, relayed by me without their unit, retracted by me as "not git objects",
+and then **confirmed correct** — they are **file `sha256`s**, not blob ids, and all three match. **The
+lane was right; my retraction was the only false claim in the chain.** `80402f75` is also the deployed
+tree's rubric sha256, which makes it the most load-bearing of the three. **Read §4(b) top-down: the
+un-retraction is placed FIRST, deliberately, because the superseded retraction quotes the digests as
+non-existent and a reader landing mid-paragraph would see the opposite of the truth.** That is the same
+ordering defect this file flags at DECLARATION §6.3 (row 8) — recorded here as an instance in our own
+work, not just in someone else's. **Convention to carry: write the digest as `sha256:…` or `blob:…`,
+because at 8 hex characters the two are indistinguishable and the absent unit silently selects which
+check the next reader runs.**
+
 **(e) §7.0.18 IS PUBLISHED, INERT, AND THE ONE ANNOTATION WHOSE HAZARD IS THAT A READER TREATS ITS
 EXISTENCE AS ITS ADOPTION.** It transcribes Joseph's `F-6(b)` ruling and is held against confirmation:
 no `DECISION-*` record contains the ruling, so **Gate 2 remains ten clauses and F-6(b) remains one of
