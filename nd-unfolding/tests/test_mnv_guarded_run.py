@@ -916,3 +916,89 @@ class TheInventoryReusesTheGuardsOwnResolver(unittest.TestCase):
     def test_the_walker_agrees_with_the_gate_on_the_real_repo(self):
         self.assertEqual(mgr.checkout_root_of(str(GUARD)), str(REPO))
         self.assertIn(str(REPO), mgr.loaded_checkout_roots())
+
+
+class TheNamespacePackageExclusionIsDeclaredNotSilent(unittest.TestCase):
+    """PB-16 @ 9a7f6529, second sentence: a narrowing's control must name what covers
+    the excluded case, or say nothing does.
+
+    `loaded_checkout_roots` skips any module with no `__file__`. For built-in and frozen
+    modules that is free -- they are outside every checkout anyway. For NAMESPACE
+    PACKAGES it is not free, because a namespace package's `__file__` IS None while the
+    directory it resolved to can sit inside a real checkout. `nd-unfolding/` has no
+    `__init__.py`, so this is the repo's own shape and not a contrived one.
+
+    MEASURED, BOTH BRANCHES, before either was claimed:
+
+      import pkg            -> the fixture checkout is ABSENT from the inventory
+                               entirely (1 module / 1 root, and that root is the
+                               wrapper's own). Covered by NOTHING.
+      import pkg.sub        -> `pkg.sub` has a real `__file__`, so the tree appears.
+                               The submodule is the covering mechanism.
+
+    SO THE FIRST PB-16 BRANCH IS AVAILABLE AND IS TAKEN: the mechanism covering the
+    excluded case is any submodule import, and the test below ASSERTS THAT IT FIRES
+    rather than merely observing that the bare case does not.
+
+    AND THE RESIDUAL IS DECLARED RATHER THAN LEFT TO LOOK COVERED. A bare `import pkg`
+    that never reaches a submodule is invisible here, and that is defensible on the
+    guard's own subject: a namespace package has no `__init__.py`, so NO CODE FROM THAT
+    TREE EXECUTED. OI-136 is about which tree's code ran, and in that state none did.
+    The moment any of it does run, it runs through a submodule and the arm below
+    catches it. What is genuinely lost is the weaker fact that the tree was on the path
+    at all -- so this is a narrowing with a stated cost, not a clean scoping.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        tmp = pathlib.Path(self._tmp.name)
+        self.tree = make_checkout(tmp, "ns-tree")
+        # deliberately NO __init__.py -- that is what makes it a namespace package,
+        # and the fixture is the producer of that condition rather than a restatement
+        # of the `__file__ is None` rule under test.
+        write(self.tree / "nd-unfolding" / "pkg" / "sub.py", "NAME = 'sub'\n")
+        self.bare = write(self.tree / "nd-unfolding" / "bare.py",
+                          "import pkg\n"
+                          "assert getattr(pkg, '__file__', None) is None, 'not a namespace pkg'\n"
+                          "print('BARE OK')\n")
+        self.viasub = write(self.tree / "nd-unfolding" / "viasub.py",
+                            "import pkg.sub\nprint('SUB OK')\n")
+
+    def test_the_fixture_really_produces_a_namespace_package(self):
+        """The precondition, asserted in the child. If `pkg` ever gained an
+        `__init__.py` this whole class would pass vacuously against a normal package."""
+        cp = run(GUARD, "--expect-root", self.tree, "--", self.bare)
+        self.assertEqual(cp.returncode, 0, cp.stdout + cp.stderr)
+        self.assertIn("BARE OK", cp.stdout)
+
+    def test_a_bare_namespace_import_leaves_the_checkout_ABSENT(self):
+        """The excluded case, measured rather than reasoned about."""
+        cp = run(GUARD, "--expect-root", self.tree, "--", self.bare)
+        rows, _, _ = inventory(cp.stderr)
+        self.assertNotIn(str(self.tree), rows)
+        self.assertEqual(list(only_child_roots(rows, GUARD_ROOT)), [])
+
+    def test_the_covering_mechanism_FIRES_as_soon_as_a_submodule_is_imported(self):
+        """PB-16's first branch: name the mechanism and assert it fires.
+
+        This is the arm that distinguishes "correctly scoped" from "nothing covers this
+        any more" -- without it the previous test is a does-not-fire control with
+        identical output in both worlds.
+        """
+        cp = run(GUARD, "--expect-root", self.tree, "--", self.viasub)
+        self.assertEqual(cp.returncode, 0, cp.stdout + cp.stderr)
+        rows, _, _ = inventory(cp.stderr)
+        self.assertIn(str(self.tree), rows)
+        self.assertEqual(rows[str(self.tree)][2], ["pkg.sub"])
+
+    def test_the_guard_half_skips_namespace_origins_too_so_neither_half_covers_it(self):
+        """The exclusion is not an asymmetry between the two halves -- `find_spec`
+        returns early on `origin in ("built-in", "frozen", "namespace")`. Pinned so a
+        future reader does not "fix" the inventory into disagreeing with the gate."""
+        import ast
+        tree = ast.parse(GUARD.read_text())
+        fn = next(n for n in ast.walk(tree)
+                  if isinstance(n, ast.FunctionDef) and n.name == "find_spec")
+        consts = {c.value for c in ast.walk(fn) if isinstance(c, ast.Constant)}
+        self.assertIn("namespace", consts)
