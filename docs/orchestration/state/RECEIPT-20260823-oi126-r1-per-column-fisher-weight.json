@@ -9,6 +9,19 @@
  "authorization": "Joseph 2026-08-23, code building and diagnostic tests including Slurm. PET remains diagnostic/method-development (2e210468). Nothing here reopens OI-126.",
  "VERDICT": "CONFIRM",
  "VERDICT_DERIVATION": "CONFIRM requires the band [7,10) GeV to be 5x-10x LOWER than p_parallel < 6 GeV. Measured ratio control/band = 6.4351 on the predeclared operand and binning, inside [5,10]. All four operand x binning combinations land inside the confirm window (5.70 to 7.97).",
+ "WHAT_THIS_LICENSES_AND_WHAT_IT_DOES_NOT": {
+  "licenses": "R1 was the predeclared gate on (a) the magnitude mechanism and (b) the R5 GPU loss-interpolation sweep. R1 PASSES, so that gate is met and the Fisher-collapse localiser SURVIVES.",
+  "does_not_license": [
+   "pairing C_stat with P5A",
+   "adopting any PET covariance",
+   "promoting P5A",
+   "either half of the reconsideration gate (estimator-equivalence AND coverage)",
+   "clearing any Gate-6 prohibition",
+   "the R5 GPU sweep being LAUNCHED -- passing its gate is not authorisation to run it, and it was NOT run"
+  ],
+  "explicit": "THE GPU LOSS-INTERPOLATION SWEEP WAS NOT LAUNCHED. R1 passing removes the predeclared blocker; the launch decision is reserved to the routing lane and Joseph."
+ },
+ "ORDERING_NOTE": "The load-bearing limitation is placed IMMEDIATELY AFTER the verdict, not at the end. A receipt that leads with method and closes with limitations has a conventional order that is ALSO an argument, so correcting the text leaves the argument standing -- a reader meets the verdict and the scope limit sixteen keys apart. Reordered 2026-08-23 after the same defect was found and fixed in the R5 receipt's review section; the wording here was already correct and the ORDERING was doing the opposite work.",
  "boundaries_as_predeclared": {
   "CONFIRM": "columns [7,10) are 5x to 10x lower than p_parallel < 6",
   "REFUTE": "within 1.5x",
@@ -799,18 +812,6 @@
  },
  "ROBUSTNESS": "CONFIRM on all four operand x binning combinations: r1/truth 6.4351, r1/reco 7.9731, pull/truth 5.7017, pull/reco 6.8706. The verdict does not depend on the operand ambiguity or on truth-vs-reco binning.",
  "THE_SHAPE_IS_A_LOCALISED_COLLAPSE_AND_RECOVERY": "f falls monotonically from 0.2306 at [1.5,2.0) GeV to a minimum of 0.0216 at [8,9) GeV, then RECOVERS to 0.2462 at [60,120) GeV -- close to the theoretical maximum of 0.25. So the curvature collapse is confined to the band and the tail has near-maximal curvature. Median r1 in the band is ~0.012-0.014 against ~0.72-0.78 below 2.5 GeV.",
- "WHAT_THIS_LICENSES_AND_WHAT_IT_DOES_NOT": {
-  "licenses": "R1 was the predeclared gate on (a) the magnitude mechanism and (b) the R5 GPU loss-interpolation sweep. R1 PASSES, so that gate is met and the Fisher-collapse localiser SURVIVES.",
-  "does_not_license": [
-   "pairing C_stat with P5A",
-   "adopting any PET covariance",
-   "promoting P5A",
-   "either half of the reconsideration gate (estimator-equivalence AND coverage)",
-   "clearing any Gate-6 prohibition",
-   "the R5 GPU sweep being LAUNCHED -- passing its gate is not authorisation to run it, and it was NOT run"
-  ],
-  "explicit": "THE GPU LOSS-INTERPOLATION SWEEP WAS NOT LAUNCHED. R1 passing removes the predeclared blocker; the launch decision is reserved to the routing lane and Joseph."
- },
  "what_this_read_did_not_do": [
   "no training",
   "no target construction",

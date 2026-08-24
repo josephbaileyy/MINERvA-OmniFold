@@ -8,6 +8,17 @@
  },
  "authorization": "Joseph 2026-08-23, code building and diagnostic tests including Slurm. PET remains diagnostic/method-development (2e210468).",
  "VERDICT": "CONFIRM",
+ "THE_MOST_IMPORTANT_CAVEAT_R3_DOES_NOT_LOCALISE_TO_THE_BAND": {
+  "exploratory_not_a_predeclared_statistic": true,
+  "band_7_10_GeV_ratio": 42.211550827344425,
+  "control_lt6_GeV_ratio": 45.09181561669156,
+  "band_ratio_collapsed": 33.11508615393793,
+  "control_ratio_collapsed": 26.55757850963134,
+  "reading": "42.21 in the band against 45.09 in the control on the 4-column sum (33.12 against 26.56 collapsed). The Jacobian anisotropy is a GLOBAL property of the trained step-1 net and does NOT single out the band. So R3 confirms the redundancy claim but supplies NO band localisation, and must not be quoted as explaining the band. R1 is the read that localises; R3 is not.",
+  "caveat": "The band/control split is NOT a predeclared R3 statistic. It is reported as exploratory structure and must not be quoted as an R3 verdict."
+ },
+ "A_TENSION_I_AM_NOT_EXPLAINING_AWAY": "The Jacobian anisotropy is 46.81 while the honest OUTPUT amplitude ratio is about 2.1. The predeclaration already states these are different quantities that need not be equal, and that is correct, but a factor ~22 between input sensitivity and output effect is large and is NOT accounted for by anything measured here. Recorded as an open tension rather than smoothed over.",
+ "ORDERING_NOTE": "The load-bearing limitation is placed IMMEDIATELY AFTER the verdict, not at the end. A receipt that leads with method and closes with limitations has a conventional order that is ALSO an argument, so correcting the text leaves the argument standing -- a reader meets the verdict and the scope limit sixteen keys apart. Reordered 2026-08-23 after the same defect was found and fixed in the R5 receipt's review section; the wording here was already correct and the ORDERING was doing the opposite work.",
  "boundaries_as_predeclared": {
   "CONFIRM": "S_long/S_tran >= 3.0",
   "REFUTE": "<= 1.5",
@@ -49,7 +60,6 @@
   "status": "The measured ratio is 46.81, which is 15.6x the confirm boundary and far outside the 2.0-3.0 hold. The hold therefore does not apply and NO re-centring was performed or needed.",
   "the_boundary_defect_is_still_real": "The recorded defect stands as a defect in the predeclaration; it simply did not bite on this value. It should not be quoted as resolved."
  },
- "A_TENSION_I_AM_NOT_EXPLAINING_AWAY": "The Jacobian anisotropy is 46.81 while the honest OUTPUT amplitude ratio is about 2.1. The predeclaration already states these are different quantities that need not be equal, and that is correct, but a factor ~22 between input sensitivity and output effect is large and is NOT accounted for by anything measured here. Recorded as an open tension rather than smoothed over.",
  "COLLINEARITY_THE_COLUMN_COUNT_IS_NOT_THE_INDEPENDENT_CONTENT": {
   "why_this_matters": "S_long/S_tran sums over COLUMNS. If the long columns are near-duplicates the ratio inherits the multiplicity rather than the independent dimensionality -- and this is exactly the quantity the '4:1 collinearity' claim turns on, so it is measured rather than inferred from the contract.",
   "exactly_equal_column_pairs": {},
@@ -97,15 +107,6 @@
   "step1_ratio_over_step2_ratio": 18.506029651804386,
   "VERDICT_ON_THE_CONTRAST": "The step-1 ratio (46.81) is 18.51x the step-2 ratio (2.5296). That is materially above, so the CONTRAST SUPPORTS THE STEP-1 COLLINEARITY ACCOUNT and does not support the step-2 bottleneck account as the dominant one.",
   "note": "Step 2's FiLM takes only (pt, pparallel), so its ratio is a single-feature quotient and 2.53 is close to the ~1 the column-count argument predicted for it; the discrimination comes from the CONTRAST, which the step-1 number alone could not provide."
- },
- "THE_MOST_IMPORTANT_CAVEAT_R3_DOES_NOT_LOCALISE_TO_THE_BAND": {
-  "exploratory_not_a_predeclared_statistic": true,
-  "band_7_10_GeV_ratio": 42.211550827344425,
-  "control_lt6_GeV_ratio": 45.09181561669156,
-  "band_ratio_collapsed": 33.11508615393793,
-  "control_ratio_collapsed": 26.55757850963134,
-  "reading": "42.21 in the band against 45.09 in the control on the 4-column sum (33.12 against 26.56 collapsed). The Jacobian anisotropy is a GLOBAL property of the trained step-1 net and does NOT single out the band. So R3 confirms the redundancy claim but supplies NO band localisation, and must not be quoted as explaining the band. R1 is the read that localises; R3 is not.",
-  "caveat": "The band/control split is NOT a predeclared R3 statistic. It is reported as exploratory structure and must not be quoted as an R3 verdict."
  },
  "provenance": {
   "step1_checkpoint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_nominal_annealed/w_nominal/OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5",
