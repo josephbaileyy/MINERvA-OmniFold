@@ -346,9 +346,24 @@ Instrument `docs/orchestration/measure_m1_m6.py`, interpreter 3.11.14, `--tree` 
 both runs because that tool takes no default *"deliberately"*. Baseline for comparison:
 `MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md` as it stands at `aa67c426`.
 
-**The canonical run took 43 minutes.** The baseline records M-3 on that tree as *"roughly 30
-minutes"*; the round-11 grader's attempt never returned and it could not say why. That is the why, and
-it is worth having on the record as a duration rather than as an unexplained timeout.
+**The canonical run took BETWEEN 42 AND 47 MINUTES.** Stated as a bracket because that is what was
+measured: `ps -o etime` showed it alive at **41:55**, and at the next observation it was gone with its
+output complete. **A first draft of this line said "43 minutes", which is a number I never measured** —
+it sat inside the bracket and read as precise. Corrected on the same principle the rest of this receipt
+applies to other people's figures.
+
+The baseline records M-3 on that tree as *"roughly 30 minutes"*; the round-11 grader's attempt never
+returned and it could not say why. **That is the why** — the full six-measure run on the canonical tree
+exceeds the M-3 stage alone by enough to outlast a patient wait — and it is worth having on the record
+as a duration rather than as an unexplained timeout.
+
+**A defect in my own waiter, recorded because it is the day's recurring shape.** The wait script
+printed `=== canonical run no longer in the process table ===` **unconditionally after its loop**,
+including on the give-up path where it had just printed `WAITER GAVE UP; process may still be running`.
+Two contradictory claims in consecutive lines, one of them asserting something the code had not
+established. Harmless here — the run really had finished, and its capture agrees with §4.2 on every
+value — but it is a message stating more than its own control flow supports, which is the same class as
+a status that exists only in a message and a bar that reads as a measurement.
 
 ### 4.1 CANDIDATE — `/pscratch/sd/j/josephrb/k0r2/clean` at `aa67c426`
 
