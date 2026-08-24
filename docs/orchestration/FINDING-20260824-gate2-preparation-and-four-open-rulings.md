@@ -158,8 +158,13 @@ CORRECT AND THE LANE THAT REPORTED THEM WAS RIGHT.**
 the rubric in the deployed tree at `aa67c426` — the finding in §4b above. Identified by the builder
 lane, which noticed the deployed rubric hashed to a digest this document had struck.
 
-**What was actually wrong, in each party's own column.** The lane: nothing — its digests were right and
-its "three branches carry different bytes" was true, merely narrower than the five-version picture.
+**What was actually wrong, in each party's own column.** **The lane declined the empty column I offered
+it, and it was right to.** Its report's headline citation read *"blob sha256 `e0fb342b6466…`"* — **both
+unit words glued together, naming the wrong one**: at the sha it graded, that document is
+`blob:e2b95207` / `sha256:e0fb342b`. So the same conflation originated in the document that supplied
+the disputed digests, and the lane holds the mislabel that made the ambiguity available. **Its
+measurements were correct and its label was not** — recorded at its own insistence, which is the
+second time today a lane has corrected an apportionment in the direction against itself.
 **Me, twice:** I relayed correct numbers **without naming the unit**, and then I *retracted correct
 data*. **The builder:** its `git cat-file -t` "verification" answered *"is this a git object"*, which
 **cannot distinguish "fabricated" from "hashed with a different function"** — a true answer to the
@@ -268,6 +273,22 @@ sets `SOURCE_SUFFIXES = (".py", ".sh")` and builds the listing from `git ls-file
 suffixes. **So the rubric is outside the A-2(f) listing entirely, `fa3489e2…535420` is unaffected, and
 F-1(b) is untouched.** This also confirms from the producer why the docs-only constraint both lanes
 followed is exactly the right boundary: the 782 files are all `.py`/`.sh`.
+
+**STRONGER THAN FIRST FILED, by the third grading lane 2026-08-24: the deployed rubric does not merely
+LACK the restatements — it has no §7.0 AT ALL.** Measured on `aa67c426`'s copy (`sha256:80402f75`):
+`7.0` **0 hits**, `7.0.5` 0, `7.0.11` 0, `7.0.18` 0, `POST-REHEARSAL` 0, `GATE 2` 0, with covering
+control `REVIEW CONTRACT` = 1 and §F present at `:482`. **There is no two-gate split in the graded
+tree — no partition table and no post-rehearsal concept.** Its §F is one undifferentiated gate.
+
+**The consequence is a live contradiction inside §7.0.17, and it is the sharpest form of this whole
+class.** §7.0.17 closes by instructing the fresh lane to *"derive its checklist from this document
+rather than from any summary of it."* **From the copy inside `MNV_CODE_ROOT` that instruction is
+unsatisfiable**, and obeying it yields §F as a single gate — *precisely the round-1 failure mode §7.0
+exists to prevent.* **"This document" is a definite description that re-points to a tree in which the
+document being described does not exist.** Annotated in the contract; the fix is that "this document"
+must always carry a digest. The lane's own checklist is unaffected **only** because it derived from the
+committed contract at a named sha and never from the deployed tree — its words: *"that was discipline
+about which tree, and it happened to be the one thing standing between this and a fourth accident."*
 
 **What it does cost:** a grader who reads the rubric **from the deployed execution tree** gets the
 575-line copy — missing §7.0.11, §7.0.12 and §7.0.13, which are precisely the restatements F-9 and

@@ -1253,6 +1253,16 @@ evidence.
 exception is authorized"* is unchanged, as is every clause of the F-9 refused arm (9.1–9.6). What
 moved is one control arm's success criterion. **The refused arm still requires exit 3.**
 
+> **⚠ SUPERSEDED, 2026-08-24 — THE PARAGRAPH BELOW OFFERS A CHOICE THAT HAS ALREADY BEEN MADE, AND
+> DESCRIBES A FALLBACK STATE THAT NO LONGER EXISTS.** Found by the third grading lane. Both of its
+> operative halves are now false: the *attributability* clause it invites you to strike **is already
+> struck** (see the two P.5 corrections above), and the `≠ 3` it names as the surviving remnant **was
+> struck with it**. **Do not act on it.** The live text is: P.5 grades nothing; the exit status is
+> recorded and read only through P.4. It is retained rather than deleted because it is the
+> pre-correction agreement and the reason it had to change is itself evidence — **but note it is the
+> third instance in this document of superseded text left reachable at its point of use, which is the
+> hazard `READING-ORDER-20260824-k0-package-annotations.md` exists to catch.**
+
 **STRIKEABLE, and flagged rather than folded in silently (the §7.0.7 convention).** P.5's
 *attributability* clause — that a nonzero status must be traceable to a cause after the marker — is
 this lane's judgement, not a transcription of anything Joseph ruled. Striking it leaves P.1–P.4 and
@@ -1267,6 +1277,19 @@ builder and both the round-11 and round-12 graders are conflicted for it. **Per 
 bullet, the lane that wrote this may not record the verdict graded against it: this lane will record
 neither the Gate-1 re-grade of F-9/F-12 nor either Gate-2 verdict.** A third, fresh non-builder lane
 takes them, and must derive its checklist from this document rather than from any summary of it.
+
+> **AND "THIS DOCUMENT" MEANS A NAMED DIGEST, NOT WHICHEVER COPY IS TO HAND — THE INSTRUCTION IS
+> UNSATISFIABLE FROM THE DEPLOYED TREE.** Found by the third grading lane, 2026-08-24. The rubric
+> inside `MNV_CODE_ROOT` at the declared sha `aa67c426` is the 575-line copy (`sha256:80402f75`,
+> `blob:cf53f587`), and it contains **`7.0` zero times** — measured, with a passing covering control.
+> **There is no §7.0 in it at all: no two-gate split, no partition table, no `POST-REHEARSAL` column,
+> no `GATE 2`.** Its §F is one undifferentiated gate. **So a grader who obeys the sentence above while
+> reading the copy in the execution tree gets exactly the round-1 failure mode §7.0 was written to
+> prevent.** Derive from the committed contract at a stated digest — as of this writing
+> `sha256:a3a1299b`, 1447 lines, on `main` — and **say which digest you read.** The sync commit
+> `b2075558` is **not** an ancestor of `aa67c426` (`merge-base --is-ancestor` → rc=1), so this will not
+> be fixed by the pending branch sync: after it, the branch reads 1447 and the declared sha still
+> reads 575, which makes *"the candidate has the amendment"* **more** misleading, not less.
 
 
 #### 7.0.18 F-6(b) SCOPED OUT OF GATE 2 — **TRANSCRIBED, NOT YET OPERATIVE. F-6(b) IS STILL A GATE-2 CLAUSE.**
