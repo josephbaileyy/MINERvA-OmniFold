@@ -82,6 +82,17 @@ credit, the miss is silent rather than loud.** The router is annotated; **derive
 §7.0.5's POST-REHEARSAL column, never from a summary of it.** Filed here rather than repaired in
 silence because a partial enumeration repaired in full erases that it was ever partial.
 
+**(d) §7.0.17 HAS ITSELF BEEN CORRECTED TWICE, on 2026-08-24, by the third grading lane — so read it
+to its end.** Both corrections are inside the subsection and both are BINDING. **(i)** Its mechanism
+sentence originally read *"`write_inventory` is called once, at `:552`"*; the callee, the count and the
+line were each wrong (`write_inventory` is called at `:415` inside `_safe_inventory`, which has **six**
+call sites; the executing one on this arm is the `finally:` at `:550-552`). The verdict is unchanged.
+**(ii) P.5's two original clauses are STRUCK** — `≠ 3` was redundant given P.4 and a false-fail risk,
+and the attributability clause cited **O-4** (a no-pipe rule) for an ordering requirement whose real
+authority is **O-3**, which forbids exactly the stdout-vs-stderr comparison the clause needed.
+**P.4 is the test; the exit status is recorded, not graded.** A grader working from the amendment's
+first three paragraphs alone will grade a struck clause.
+
 ## Maintenance rule, so this file does not become the next hazard
 
 **Any new in-place annotation in the k=0 package gets a row here in the same commit as the

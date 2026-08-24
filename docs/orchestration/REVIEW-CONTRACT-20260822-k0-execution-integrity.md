@@ -1114,8 +1114,25 @@ A zero-byte throwaway makes the ROOT child fail inside `TFile::ReadBuffer`, **st
 everything the arm establishes.** In `nd-unfolding/mnv_guarded_run.py` (blob `2459aafd`, sha256
 `bd2ccce1…`, on `build-k0-execution-integrity` — the tree that carries B-4): `:534` initialises
 `outcome, violation, recorded, site = "ok", None, True, SITE_NONE`; `:541-545` overwrite it to
-`child-systemexit:<code>` when the child raises `SystemExit`; and `write_inventory` is called **once,
-at `:552`, after the child's fate is known.** `:106` states the process's own status is *"0 or the
+`child-systemexit:<code>` when the child raises `SystemExit`; and the record is written from the
+`finally:` at `:550`, **after the child's fate is known.**
+
+> **CORRECTED 2026-08-24 by the third grading lane, and the correction is to the one sentence that
+> carries this whole ruling.** As first written this said *"`write_inventory` is called **once, at
+> `:552`**"*. **Three things were wrong in it and none is the substance.** Re-measured on the blob it
+> cites: `write_inventory` is *defined* at `:337` and called **once at `:415`, inside
+> `_safe_inventory`** (defined `:404`); `_safe_inventory` is called from **six** sites in `main()` —
+> `:469`, `:475`, `:484`, `:491`, `:521`, `:551`; and `:552` is the **continuation line** of the
+> `:551` call, not a call site. **So the callee name, the call count and the line were each wrong.**
+> Correct form: *`_safe_inventory` (→ `write_inventory` at `:415`) is reachable from six sites; on the
+> O-1 paired arm the site that executes is the `finally:` at `:550-552`, which runs after the child's
+> fate is known.* `:534`, `:541-545`, `:106`, `:157` and `:163` all re-derive exactly.
+> **The mechanism and the verdict are unchanged; a sentence that fails re-derivation is still a
+> defect, and this one was in the load-bearing position.**
+
+**And `child-systemexit` is a PREFIX, not a field value.** `:545` writes
+`f"child-systemexit:{exc.code!r}"`. The measured cell above and P.4 below both test the **prefix**, so
+neither is affected — but a grader matching the string exactly will not find it. `:106` states the process's own status is *"0 or the
 child's own status -- the child ran; its SystemExit is preserved."* **So `0` and `ok` fail together
 on this arm, and forcing either requires feeding real archive inputs — which §5 forbids and which
 Joseph has prohibited on this path.** The 2026-08-22 receipt recorded the same `rc=1` on its
@@ -1144,16 +1161,53 @@ table cells and this subsection rather than a re-derivation.
 | P.2 | `guard_installed == true` **and** `checked > 0` **and** `checked_provenance == measured-by-installed-guard` | the triple, per the inversion table. `checked` alone is never evidence |
 | P.3 | the `[remedyA] running the PINNED writer as a subprocess:` marker is **PRESENT** | the arm's own capture. **This is F-12(N-1)(ii)'s discriminator and it is the load-bearing row** |
 | P.4 | the run did **not** refuse: `outcome` begins with neither `refused:` nor `cannot-check:`, `violation` is `null`, and `refusal_site` is `null` | the record's own fields. `refusal_site` is `SITE_NONE = None` at `:163`, so `null` is the pass value |
-| P.5 | exit status is **NOT graded as 0**. It must not be **3**, and any nonzero status must be attributable to a cause strictly AFTER the marker of P.3 | the process's own status, captured unpiped (O-4), read together with P.3 and P.4 — never alone |
+| P.5 | exit status is **NOT graded as 0** and is **NOT graded at all except through P.4**. Record it; do not pass or fail on it | the process's own status, captured unpiped (O-4), read together with P.3 and P.4 — never alone. **See the two corrections below: the earlier `≠ 3` and attributability clauses are struck** |
 
-**P.4 and P.5 are the direction that keeps the arm honest, and they are why this is not "any nonzero
+> **P.5 CORRECTED 2026-08-24, twice, by the third grading lane — both of its original clauses are
+> STRUCK.** They were the two things in this amendment least tied to a measurement, and both failed
+> one.
+>
+> **(i) `≠ 3` is struck as redundant on the good path and a false-fail risk on the bad one.**
+> `VIOLATION_EXIT = 3` at `mnv_guarded_run.py:126`, and **every** refusal returning 3 also sets
+> `outcome` to `refused:*`/`cannot-check:*` with a non-null `refusal_site` — so **P.4 already excludes
+> all of them** and `≠ 3` adds nothing. Meanwhile the paired arm's status is the *child's* own
+> (`:106`, `:545-546 raise`), so a future child exiting 3 for a benign downstream reason would
+> false-fail P.5 while P.4 correctly passed it. **P.4 is the whole test; the exit code was never
+> able to carry it.**
+>
+> **(ii) The attributability clause is struck because it cited the wrong ordering authority and was
+> unsettleable as written.** It required a nonzero status to be *"attributable to a cause strictly
+> AFTER the marker of P.3"*, settled by **O-4** — but O-4 is only *"never read `$?` after a pipe."*
+> The ordering clause is **O-3**, which says in its own words: *"Do not compare a stdout file to a
+> stderr file and call it ordering."* P.3's marker is a `print` → **stdout**; the attributed cause
+> surfaces as `SystemExit`'s message → **stderr**. **So the clause demanded exactly the comparison
+> O-3 forbids, and required no `2>&1` that would make it gradeable.**
+>
+> **What replaces it is stronger than what it claimed, and it is a measurement.** Exit **1** on this
+> arm is *structurally guaranteed*, not merely observed: `mii_adopt_unified_5d_stamped.py` fails only
+> through `_fail` (`:206-207` on the build branch, `:201` on `main`), which is
+> `raise SystemExit(<str>)` — and **`SystemExit` with a string argument is always status 1 in
+> CPython** (measured, not recalled). The site is `:788` `rc = subprocess.call(argv_child)` then
+> `:789-791` `if rc != 0: _fail("the pinned writer exited {rc}…")`, which **discards** the
+> grandchild's code (`:712`/`:714` on `main`). **A grader wanting the ordering evidence should require
+> the `[FAIL] the pinned writer exited <rc>` line in a single-stream O-3-conforming capture** — that
+> names the site, per §7.0.16(e), instead of asserting an ordering nobody captured.
+>
+> **THE COUPLING THIS CREATES, and it must be pinned rather than trusted.** That guarantee comes from
+> what the code does **not** do — it does not propagate the writer's status. An obvious "improvement"
+> (`sys.exit(rc)`) would remove it silently, and there is no line to grep for a behaviour that is an
+> absence. **`_fail`'s string-`SystemExit` and the discarded `rc` need a test arm asserting status 1,
+> or this amendment's premise can be invalidated by an unrelated tidy-up.** Filed as a coupling, not
+> as a repair; it is outside §6's authorized set.
+
+**P.4 is the direction that keeps the arm honest, and it is why this is not "any nonzero
 exit now passes".** A guard that fires on bad input and is silent on good input needs a test in both
 directions; the "silent on good input" arm here is P.3 with P.4. Without them, a genuine containment
 or import refusal on the paired arm — which is a real failure — would be waved through as though it
 were the benign downstream ROOT failure, and the paired arm's entire job is to show the refusal on
-the *other* arm was not breakage. **`≠ 3` is stated explicitly because B-4 and an import-tree
-violation share `VIOLATION_EXIT`, so an exit code cannot carry which protection fired (`:157`);
-`refusal_site` is what carries it.**
+the *other* arm was not breakage. **B-4 and an import-tree violation share `VIOLATION_EXIT`, so an
+exit code cannot carry which protection fired (`:157`); `refusal_site` is what carries it — which is
+why P.4 tests the record and the struck `≠ 3` clause was never load-bearing.**
 
 ##### A citation offset that would otherwise cost a grader an hour
 
@@ -1168,8 +1222,32 @@ rather than file a defect.
 
 **The authority for this is the measurement above together with the contract's own §7.0.12 wording —
 not the number of lanes that agree.** Four parties concurring is not evidence; the re-verification
-against `mnv_guarded_run.py:534-552` is. Recorded that way deliberately, because a consensus that
-nobody re-measures is how this campaign has previously converged on a wrong answer.
+against `mnv_guarded_run.py:534`, `:541-545` and the `finally:` at `:550-552` is. Recorded that way
+deliberately, because a consensus that nobody re-measures is how this campaign has previously
+converged on a wrong answer. **And the round-11/12 graders were right on the merits while this
+amendment's own first draft mis-cited the mechanism** — which is the same lesson pointing the other
+way.
+
+**PROVENANCE CORRECTED 2026-08-24 — this was measured TWO DAYS before the round-12 lane filed it, and
+§7.0.11's cell contradicted a receipt of its own date.** `RECEIPT-20260822-k0-n1-and-guarded-arms.md`
+(`build-k0-execution-integrity`) already recorded, on 2026-08-22, `rc=1`, `outcome`
+`child-systemexit:…`, `refusal_site: null`, `checked: 9`, `checked_provenance:
+measured-by-installed-guard`, the O-1 marker reached, and the cause named as the zero-byte throwaway
+in `TFile::ReadBuffer` — at `:55-62` and in the field table at `:288-291`. **§7.0.11's `0`/`ok` cell
+was written the same day and contradicted it.** The round-12 lane's FINDING 2 rediscovered it; it did
+not first find it. That matters because it locates the defect in **filing discipline rather than in
+measurement**, and because crediting the later lane over the earlier receipt would bury the earlier
+evidence.
+
+> **A LABEL COLLISION IN THAT RECEIPT, AND IT WILL MISLEAD A GRADER WHO TRUSTS THE COLUMN HEADING.**
+> The 2026-08-22 receipt heads that column **`U′ (counterfactual)`** — but describes it at `:66` as
+> *"the same binary with the guard installed and `--expect-root` set to the tree it was launched
+> from"*, **which is §7.0.11's O-1 PAIRED arm, not its `U/U'` arm.** §7.0.11's `U/U'` row is *"the
+> guard is not invoked at all … no record exists."* **So a grader reading that receipt's `U′` column
+> against §7.0.11's table will read a GUARDED record as an UNGUARDED one.** The numbers quoted above
+> are the **paired** arm's and are correct as used here; the heading is what is wrong. Read
+> `expect_root` and `guard_installed`, never the column label — §7.0.11 already says `expect_root` is
+> the arm's identity, and this is the case it was written for.
 
 **This is not a B-4 bypass and not an exemption.** Ruling 20's *"No B-4 bypass flag or production
 exception is authorized"* is unchanged, as is every clause of the F-9 refused arm (9.1–9.6). What

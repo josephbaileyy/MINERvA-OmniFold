@@ -6,6 +6,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ### ✅ GATE 1 PASSES — round 9, 2026-08-23, 18 PASS / 0 FAIL / 0 NOT-EVALUABLE
 
+- [`FINDING-20260824-gate2-preparation-and-four-open-rulings.md`](FINDING-20260824-gate2-preparation-and-four-open-rulings.md)
+  — **Gate 2 is PREPARED and needs FOUR RULINGS before it can be graded.** Clause list derived
+  independently as **ten** (F-1(b)…F-8(b), F-17(b), F-18(b)), agreeing with §7.0.5's arithmetic and
+  confirming `F-3(b)` was missing from this router. **`F-6(b)` is structurally unsatisfiable inside the
+  scope a Gate-1 PASS unlocks**, so Gate 2 cannot pass as written; F-4(b)'s population is undefined;
+  F-7(b)'s exclusion half has no instrument (a §7.0.8 FAIL surface, not a pending input); F-1(b) must
+  name `listing_sha256`, not a file digest. Instruments all verified non-vacuous, so Gate 2 is **not**
+  tooling-blocked. **No clause is graded.**
 - [`READING-ORDER-20260824-k0-package-annotations.md`](READING-ORDER-20260824-k0-package-annotations.md)
   — **READ FIRST if you are grading either gate.** The k=0 package was corrected by annotating in
   place, so its correctness depended on a reader finding all nine annotations across five files. This
