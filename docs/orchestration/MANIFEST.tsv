@@ -70,7 +70,7 @@ docs/orchestration/INDEX-retracted-and-superseded-values.md	tracked	LIVE	index		
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/control_plane_lint.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	41	81	74364
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	3	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	10	84	5926
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	25	485	98425
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	25	485	98424
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	3	184	13929
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/measure_m1_m6.py	no	9	146	8336
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	tracked	LIVE	document		20260823	open		route-only		no	4	239	14244
@@ -118,7 +118,7 @@ docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md	tracked	LIVE	document
 docs/orchestration/PUBLICATION-READINESS-20260822.md	tracked	LIVE	document		20260822	open		route-only		no	4	1352	101099
 docs/orchestration/QUIET-PERIODS.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only		no	4	10	6453
 docs/orchestration/RANK-AND-INVERSION-20260810.md	tracked	LIVE	document		20260810	open		route-only		no	5	120	7144
-docs/orchestration/READING-ORDER-20260824-k0-package-annotations.md	intended	LIVE	document		20260824	open		route-only		no	3	91	9211
+docs/orchestration/READING-ORDER-20260824-k0-package-annotations.md	tracked	LIVE	document		20260824	open		route-only		no	3	91	9211
 docs/orchestration/README.md	tracked	DEAD	document			superseded	docs/orchestration/CATALOG.md	never	docs/orchestration/test_watch_report_train_run.py;omnifold_nn/setup.py	yes	8	35	2036
 docs/orchestration/RECEIPT-20260812-hpss-space-audit.md	tracked	ARCHIVAL	document	non-campaign	20260812	terminal		exact-path-only		yes	3	309	20023
 docs/orchestration/RECEIPT-20260820-oi50-hashverify.md	tracked	ARCHIVAL	document		20260820	terminal		exact-path-only	2d-unfolding/HANDOFF_bkg_negweight/build_negweight_hpss_manifest.py;2d-unfolding/HANDOFF_bkg_negweight/hpss_preserve_negweight.sh;2d-unfolding/HANDOFF_bkg_negweight/hpss_recover_negweight.sh	yes	8	167	7895
