@@ -115,6 +115,37 @@ authority is **O-3**, which forbids exactly the stdout-vs-stderr comparison the 
 **P.4 is the test; the exit status is recorded, not graded.** A grader working from the amendment's
 first three paragraphs alone will grade a struck clause.
 
+## MEASURED — where in this package a superseded sentence sits AFTER its own correction
+
+The hazard this file was built for is now counted rather than asserted. **Audited read-only on the
+receipt at candidate tip `d90591ef` (`sha256:8c25361b`, 993 lines)** — the builder lane stated its own
+ordering had never been audited, so this closes that.
+
+**Six annotation blocks. Three point DOWNWARD at text a reader meets after the correction.**
+
+| block | section | direction | risk |
+|---|---|---|---|
+| `:556` + `:579` | `FINDING 5` | **BELOW** — and `:579` is an explicit *"The finding as originally filed, retained verbatim"* | **WORST.** A reader landing at `:579` reads the false 575-line claim with nothing adjacent marking it dead |
+| `:833` | `FINDING 9` | **below** (*"the claim below is half right"*) | real — "half right" is the hardest state to carry forward correctly |
+| `:849` | `FINDING 9` | **BELOW** (*"the rule below is right and its stated mechanism is wrong"*) | milder — the rule survives; only the mechanism is wrong |
+| `:154` | §1.7 | claim ABOVE, correction after | safe ordering |
+| `:598` | `FINDING 5` | **ABOVE** (*"the sentence above is false"*) | safe ordering |
+| `:928` | §7 far-end method | prefixed *"FIRST"* | safe by construction — the fix pattern, applied |
+
+**So `FINDING 5` carries both orderings at once** — `:598` corrects upward and `:556` downward — which
+is why the section can look correctly annotated while still containing the defect. **`FINDING 9`
+carries it twice.** Those are exactly the two the builder lane named from memory before any audit; the
+audit corroborates the self-diagnosis and bounds it at three.
+
+**ONE CAUSE, NOT SIX JUDGEMENTS: correcting in a block ABOVE the original instead of AT the original.**
+Both this lane and the builder did it, independently, *while documenting the defect in a third party's
+document* (DECLARATION §6.3). **The fix is proven and cheap — `:928` and this document's own §4(b)
+both do it:** put the correction where the reader meets the claim, or lead with it and mark the
+retained text as superseded at its own line, not only in the banner above.
+
+**This is a measurement of someone else's file and nothing here was edited.** The receipt is the
+builder lane's; the three rows are reported, not repaired.
+
 ## Maintenance rule, so this file does not become the next hazard
 
 **Any new in-place annotation in the k=0 package gets a row here in the same commit as the
