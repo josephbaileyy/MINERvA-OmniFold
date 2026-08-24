@@ -925,6 +925,34 @@ F-1(b) and F-17(b) are mine to produce when the last leg lands. **Both choices b
 here so that I cannot later pick the comparison that flatters the result** — the failure the campaign
 calls measurability choosing the specification.
 
+> **⚠ FIRST, THE CLAUSE TEXT ITSELF MUST BE CITED BY DIGEST AND BY TREE, because the clauses I am
+> pre-committing to DO NOT EXIST IN THE EXECUTION TREE.** Measured on the deployed rubric at
+> `/pscratch/sd/j/josephrb/k0r2/clean`, which is `aa67c426`'s copy, **575 lines, `sha256:80402f75`**:
+>
+> ```
+> "7.0"            0        "POST-REHEARSAL"  0        F-1(b)   0
+> "7.0.5"          0        "GATE 2"          0        F-17(b)  0
+> "PRE-SUBMISSION" 0        §F present at :482 as ONE undifferentiated gate
+> "REVIEW CONTRACT" 1  <- covering control: the grep works, the text is absent
+> ```
+>
+> **So the deployed rubric has no §7.0 at all** — no two-gate split, no post-rehearsal concept, and
+> **no `F-1(b)`, `F-17(b)`, `F-4(b)` or `F-6(b)`**. A lane deriving the far-end obligations from the
+> execution tree would conclude they do not exist, and would grade §F as a single gate — the round-1
+> failure mode §7.0 was written to prevent. Found by the Gate-2 preparation lane; verified here on the
+> deployed copy.
+>
+> **THEREFORE: the clause text this section commits to is `main`'s copy, cited by digest, not "the
+> contract".** At the time of writing that is **`sha256:9c9e5f25`, 1470 lines, on `origin/main`**.
+> Anything I file at the far end names that digest and the tree it came from. **This is the restored
+> *"grade by digest, not by branch"* caveat applied to my own pre-commitment** — the one place it would
+> have been easiest to skip, because I wrote both the method and the thing it measures.
+>
+> **And it does not weaken the two choices below.** They are choices about which *manifest* and which
+> *inventory* to compare — both of which live on the cluster and are unaffected by which copy of the
+> rubric a reader holds. What changes is only that the obligations must be quoted from a digest-pinned
+> source.
+
 ### 7.1 F-1(b) COMPARES AGAINST THE DECLARED BASELINE, NOT THE RUN'S OWN MANIFEST
 
 **Two A-2(f) manifests exist for `aa67c426` and using the wrong one is a self-comparison.** Measured:
