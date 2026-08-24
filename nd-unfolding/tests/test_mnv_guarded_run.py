@@ -947,6 +947,11 @@ class TheNamespacePackageExclusionIsDeclaredNotSilent(unittest.TestCase):
     The moment any of it does run, it runs through a submodule and the arm below
     catches it. What is genuinely lost is the weaker fact that the tree was on the path
     at all -- so this is a narrowing with a stated cost, not a clean scoping.
+
+    THE SHAPE IS THE REPO'S OWN, WHICH IS WHY THIS WAS WORTH AN ARM RATHER THAN A NOTE:
+    `nd-unfolding/`, `omnifold_nn/`, `2d-unfolding/` and `3d-unfolding/` ALL lack
+    `__init__.py`. The uncontrolled exclusion covered most of this repo's own source
+    trees, not an exotic import style.
     """
 
     def setUp(self):
@@ -1002,3 +1007,43 @@ class TheNamespacePackageExclusionIsDeclaredNotSilent(unittest.TestCase):
                   if isinstance(n, ast.FunctionDef) and n.name == "find_spec")
         consts = {c.value for c in ast.walk(fn) if isinstance(c, ast.Constant)}
         self.assertIn("namespace", consts)
+
+    def test_the_scope_sentence_this_narrowing_LEANS_ON_is_required_output(self):
+        """This exclusion is discharged by a sentence in the emission, so the sentence
+        is load-bearing for THIS class and not only for the subprocess one.
+
+        It was already pinned once, by
+        `TheInventoryReportsOneInterpreterAndSaysSo::test_the_emission_states_that_
+        limit_...`. That is not enough on its own: that test is NAMED for the
+        subprocess boundary, so someone who concludes the subprocess clause is
+        redundant would delete or reflow the line while looking only at a test about
+        interpreters, and every arm in THIS class would still pass. A shared
+        dependency needs an assertion from each side that depends on it, or the second
+        dependant is invisible at the point of edit.
+
+        The precise thing relied on: "AT LEAST these trees" is what stops a one-root
+        inventory being read as "only one tree was reachable" -- which is exactly the
+        reading a bare namespace-package import would make false.
+        """
+        cp = run(GUARD, "--expect-root", self.tree, "--", self.bare)
+        self.assertIn("AT LEAST these trees", cp.stderr)
+        self.assertNotIn("only these trees'.\n[oi136-inv] modules", cp.stderr)
+
+    def test_the_residual_is_stated_where_a_PARITY_reader_would_be_misled(self):
+        """Names the consumer who can misread this, because "someone might" is not a
+        risk statement until it says who.
+
+        A parity reader. This repo has the case already: a hardcoded root put a
+        211-behind checkout ahead of the frozen tree and `5 of 5 CURRENT` was TRUE AND
+        BLIND -- right about digests, wrong about what executed. An inventory that
+        omits a namespace-package tree because nothing ran from it is right about
+        EXECUTION, and a reader can turn that into "that tree is not involved" and use
+        it for a PATH-level parity claim. The two questions are the ones OI-136 exists
+        to keep apart, so the warning belongs in the file, not in a review comment.
+        """
+        text = GUARD.read_text()
+        self.assertIn("MODULES THE INTERPRETER ACTUALLY LOADED", text)
+        self.assertIn("are the FILES AT THESE PATHS the", text)
+        # and this class's own docstring must keep saying what is lost
+        self.assertIn("the tree was on the path",
+                      TheNamespacePackageExclusionIsDeclaredNotSilent.__doc__)
