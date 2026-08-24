@@ -14,6 +14,12 @@ The allocation table remains machine-readable because the merge guard derives ow
 allocation rationale is frozen at the evidence tag; new allocations still require a fetched-remote
 freeness check and a closed ten-block claimed with its first filing.
 
+**`530-539` freeness check, 2026-08-24.** `git fetch origin`, then this file's own allocation tail
+read at every one of the 43 refs under `refs/heads`, `refs/remotes` and `refs/tags` — all 43 carry a
+`FINDINGS.md`, so the search covers the ref set rather than a sample. 39 refs read `unallocated 520+`
+and 4 read `unallocated 530+`; none allocates any id in `530-539`. The block is claimed here with its
+first filing (`BEN-530`).
+
 | lane | block |
 |---|---|
 | pre-block era | `001-089` |
@@ -54,7 +60,8 @@ freeness check and a closed ten-block claimed with its first filing.
 | fixture-decoy block — do not allocate without exact review | `500-509` |
 | remedy-(A) verification | `510-519` |
 | review-round governance | `520-529` |
-| unallocated | `530+` |
+| C — PET sixth block | `530-539` |
+| unallocated | `540+` |
 
 ## Long-form findings index
 
@@ -115,3 +122,8 @@ recovered from the frozen index.
 | BEN-483 | Pre-freeze `docs/orchestration/FINDINGS.md` at the evidence tag. |
 | BEN-484 | Pre-freeze `docs/orchestration/FINDINGS.md` at the evidence tag. |
 | BEN-520 | Post-freeze. Evidence: `docs/orchestration/GATE1-VERDICT-ROUND4-20260823-k0-execution-integrity.md`, `docs/orchestration/GATE1-VERDICT-ROUND5-20260823-k0-execution-integrity.md`, `docs/orchestration/GATE1-VERDICT-ROUND6-20260823-k0-execution-integrity.md`, `docs/orchestration/DECISION-20260823-joseph-a2f-does-not-substitute-for-a3.md`. |
+| BEN-530 | Post-freeze. A bar calibrated against one noise source is silent about a second, not conservative about it. Evidence: `docs/orchestration/FINDING-20260824-five-rules-from-the-r5-night.md` (BEN-530); `docs/orchestration/state/RECEIPT-20260823-oi126-r5-loss-interpolation-sweep.json` per-member `dL_rowset_max_dev`; retraction at `7da3b3d6`, strike at `74cee642`. |
+| BEN-531 | Post-freeze. A discriminating test publishes its endpoint separation, the residual it must resolve, and its size under its own null BEFORE it runs. Evidence: `docs/orchestration/FINDING-20260824-five-rules-from-the-r5-night.md` (BEN-531); `docs/orchestration/state/RECEIPT-20260823-oi126-r5-loss-interpolation-sweep.json` key `C2_DISCRIMINATOR_20260824`; job `57507676`. |
+| BEN-532 | Post-freeze. ssh ControlMaster multiplexing pins repeated connections to one login node, so a process list answers about that node and reads as corroborated. Evidence: `docs/orchestration/FINDING-20260824-five-rules-from-the-r5-night.md` (BEN-532). |
+| BEN-533 | Post-freeze. Another lane's scheduler state is not yours to act on, and `squeue --me` returns the whole shared account. Evidence: `docs/orchestration/FINDING-20260824-five-rules-from-the-r5-night.md` (BEN-533); duplicate job `57506433`; foreign job `57275989` in the same `--me` output. Ruled by Joseph 2026-08-24. |
+| BEN-534 | Post-freeze. A hold is a property of the branch, not of restraint: five commits described as held published as ancestors of another lane's push. Evidence: `docs/orchestration/FINDING-20260824-five-rules-from-the-r5-night.md` (BEN-534); `9a881c03`, `82cac45f`, `87310615`, `bc76ac6c`, `0e53f962` under `origin/main`. |
