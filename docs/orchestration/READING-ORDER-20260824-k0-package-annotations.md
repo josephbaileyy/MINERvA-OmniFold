@@ -144,7 +144,30 @@ both do it:** put the correction where the reader meets the claim, or lead with 
 retained text as superseded at its own line, not only in the banner above.
 
 **This is a measurement of someone else's file and nothing here was edited.** The receipt is the
-builder lane's; the three rows are reported, not repaired.
+builder lane's; the three rows were reported, not repaired.
+
+> **✅ ALL THREE REPAIRED, AND VERIFIED HERE RATHER THAN TAKEN ON REPORT.** The table above is measured
+> at `d90591ef` (`sha256:8c25361b`, 993 lines) and **is historical from that sha forward.** At
+> `43efbc2d` (`sha256:2459ab3e`, 1001 lines) the builder lane repaired all three **at the point of
+> use**, which is the fix this section argued for:
+>
+> - `:579` — the retained text now opens *"EVERY PARAGRAPH BELOW IS SUPERSEDED — the markers are inline
+>   so that a reader landing here, rather than at the box above, still sees it"*, with per-paragraph
+>   `[SUPERSEDED]` tags (5 in the file). It also records that the original claim was **understated**,
+>   not merely wrong: it said the *branch* copy lacked §7.0.11/12/13, when it is `aa67c426` — the
+>   declared and deployed sha — that ships 575 lines with **no §7.0 at all.**
+> - `FINDING 9` — the retained claim is now scoped inline to **CONTENT-blind only**, naming the four
+>   `git ls-files` sites (`:92`, `:94`, `:301`, `:529`) that the original "verified by exhaustion"
+>   token set had missed.
+> - the procedure block — now carries `[MECHANISM SUPERSEDED, PROCEDURE RETAINED]` at the sentence.
+>
+> **A NEAR-MISS IN MY OWN VERIFICATION, WORTH MORE THAN THE VERIFICATION.** My first check grepped
+> `content-blind` and returned **0 hits** — because the repair is written `CONTENT-blind`. **A case and
+> hyphen variant produced a false null that read as "the repair is missing", and I was one step from
+> reporting an incomplete repair.** Substring searches fail in *both* directions; the covering search
+> (reading the region) is what settled it. **This is the third time in this package that a null result
+> was evidence about the search rather than about the world** — and here the wrong conclusion would
+> have been an accusation, which is the direction that travels.
 
 ## Maintenance rule, so this file does not become the next hazard
 
