@@ -948,10 +948,32 @@ class TheNamespacePackageExclusionIsDeclaredNotSilent(unittest.TestCase):
     catches it. What is genuinely lost is the weaker fact that the tree was on the path
     at all -- so this is a narrowing with a stated cost, not a clean scoping.
 
-    THE SHAPE IS THE REPO'S OWN, WHICH IS WHY THIS WAS WORTH AN ARM RATHER THAN A NOTE:
-    `nd-unfolding/`, `omnifold_nn/`, `2d-unfolding/` and `3d-unfolding/` ALL lack
-    `__init__.py`. The uncontrolled exclusion covered most of this repo's own source
-    trees, not an exotic import style.
+    HOW EXPOSED THIS REPO ACTUALLY IS -- measured 2026-08-23 at `fc4fe7d1`, derived from
+    the population rather than from the directories anyone thought to check, because two
+    of us hand-enumerated it and got two different wrong answers (three, then four):
+
+        git ls-files '*.py' | awk -F/ 'NF>1{print $1}' | sort -u        -> 7 trees
+        ... and all 7 lack __init__.py                                  -> 7 of 7
+        git grep -E '^[[:space:]]*(import|from)[[:space:]]+<tree>'      -> 0 sites, each
+        git ls-files '*__init__.py'                                     -> exactly ONE
+
+    THE 7-OF-7 IS TRUE AND DOES NOT MEAN WHAT IT LOOKS LIKE, so it is written out rather
+    than quoted as a severity. Those seven are `sys.path` ENTRIES, not imported packages
+    -- nothing does `import nd_unfolding`, and four of the seven carry hyphens so they
+    are not even legal module names. A directory only meets this exclusion when it is
+    imported AS a package, and none of them is.
+
+    The one regular package in the tree is `omnifold_nn/omnifold/`, imported by 33
+    files, and it HAS `__init__.py` -- so it has a real `__file__` and is COUNTED, not
+    excluded. It is also exactly what the OI-126 probe's ten-module measurement
+    exercised (`omnifold`, `.dataloader`, `.net`, `.omnifold`, `.utils`), which is why
+    that measurement saw the tree at all.
+
+    SO THE HONEST SEVERITY IS: current exposure in this repo is NIL, and this arm is
+    PROSPECTIVE -- it covers the first namespace package anyone adds, and the `import
+    pkg` case below proves the blind spot is real rather than theoretical. Recorded
+    this way because "7 of 7 trees lack __init__.py" reads as a large live exposure and
+    is a correct count of the wrong population for that claim.
     """
 
     def setUp(self):
