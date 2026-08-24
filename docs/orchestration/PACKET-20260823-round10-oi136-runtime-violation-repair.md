@@ -95,10 +95,21 @@ in a **child process**, because `sys.path` and `sys.modules` are process state.
 `unfold_2d_omnifold_unbinned` is never pulled in — with a negative control proving the arm can see it
 when it is.
 
-## THE CENSUS — 53 / 2 / 1
+## THE CENSUS — 52 / 2 / 1
+
+> **CORRECTED 2026-08-24, after the round-10 grade.** The headline and the first row read
+> **53**. That is the count at `aa67c426^`, *before* the repair — the figure that correctly
+> appears in the scanner block above. On the deployed candidate the repaired file no longer
+> matches, so the census there is **52**. The right number was already printed four lines
+> below (*"52 remain"*), which is what makes this a stated-class error rather than an
+> arithmetic one: one digit was doing duty for two different populations, and the sentence
+> naming the population was the part that was wrong. Measured three independent ways at
+> `aa67c426`, at `9db42a6d` and in a working tree: **52**, with `KNOWN_UNREPAIRED` at
+> **52** entries and the census set equal to it exactly (0 in one and not the other).
 
 ```
-53  repository-wide on the deployed candidate
+52  repository-wide on the deployed candidate aa67c426, POST-repair
+    (53 at aa67c426^, PRE-repair -- that is the scanner-block figure, not this one)
  2  in the static k=0 import closure (15 files)
  1  ACTUALLY EXECUTED violation -- compare_unified_throw.py, repaired here
 ```
