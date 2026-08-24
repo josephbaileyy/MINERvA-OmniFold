@@ -1,245 +1,137 @@
 % ====================================================================
-% paper_body.tex -- selective, results-first publication-style distillation.
-% Inputs only into main_paper.tex.  Numbers from values.tex; figures shared
-% with the collaboration note.  Cross-checks are one-line; the full statistical
-% methodology and validation suite live in the companion analysis note.
+% paper_body.tex -- compact PRL-style scientific narrative.
+% The full technical and diagnostic record lives in the analysis note.
 % ====================================================================
 
-\section{Introduction}
-Differential cross sections from neutrino experiments are extracted by
-\emph{unfolding} the detector response. The standard tool, iterative Bayesian
-unfolding on a binned migration matrix, scales poorly because each additional
-observable multiplies the bin count. Unbinned
-machine-learning unfolding (OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk})
-avoids constructing an explicit response tensor by learning per-event weights in
-the full observable space. Higher dimension still increases training, support,
-sparsity, and uncertainty-propagation demands.
+Differential neutrino cross sections require correcting observed event samples
+for detector response.  Iterative Bayesian unfolding on a binned migration
+matrix is widely used, but the response tensor grows rapidly when additional
+observables are reported.  OmniFold instead learns event weights in an unbinned
+feature space through classifier-based density-ratio estimation
+\cite{Andreassen:2019cjw,Andreassen:2021zzk}.  This makes simultaneous
+higher-dimensional unfolding possible without specifying a separate binned
+response tensor for every projection.
 
-We apply OmniFold to MINERvA medium-energy (ME) FHC
-$\nu_\mu$ data. We first reproduce the published double-differential
-CC-inclusive cross section $d^{2}\sigma/(d\pT\,d\pPar)$~\cite{MINERvA:2021owq} as
-a validation, then extend the unbinned formulation to simultaneous
-three-, four- and five-observable MINERvA unfolds, adding
-available energy $\Eavail$, three-momentum transfer $q_{3}$, and hadronic mass
-$W$. Binned MINERvA multi-differential cross sections, up to
-triple-differential~\cite{MINERvA:2022qe}, exist already; the methodological distinction is the unbinned,
-simultaneously-unfolded formulation rather than multi-dimensionality itself. These
-expose the known low-recoil/2p2h deficit through an independent route,
-localize a residual deep-inelastic excess that all four tested generators underpredict,
-and demonstrate the reach and current limitations of the method. A preliminary
-extended-fiducial study additionally tests the extrapolation beyond the
-published muon phase space.
+We apply this strategy to MINERvA medium-energy forward-horn-current
+$\nu_{\mu}$ data.  We first reproduce the published double-differential
+charged-current inclusive cross section in transverse and longitudinal muon
+momentum, $d^{2}\sigma/(d\pT\,d\pPar)$ \cite{MINERvA:2021owq}.  We then add
+available hadronic energy $\Eavail$, three-momentum transfer $q_{3}$, and
+hadronic invariant mass $W$ to obtain simultaneous three-, four-, and
+five-observable central values.  Existing MINERvA measurements reach three
+reported dimensions \cite{MINERvA:2022qe}; here the methodological advance is
+the unbinned simultaneous construction and its projection to multiple
+lower-dimensional observables.
 
-\section{Data and method}
-The analysis uses the twelve ME FHC playlists ($1.057\times10^{21}$ protons on
-target, $\langle E_\nu\rangle\sim\SI{6}{GeV}$), with the signal definition,
-fiducial volume, flux~\cite{MINERvA:2016iqn} and selection of
-Ref.~\cite{MINERvA:2021owq}; after selection the data sample is $4.12$M events
-against $32.8$M simulated signal events (GENIE 2.12.6 with the MINERvA Tune v1).
-A dedicated event loop writes per-event truth and reconstructed observables for
-the unbinned unfold.
+The analysis uses the twelve MINERvA medium-energy playlists, corresponding to
+$1.057\times10^{21}$ protons on target and an average neutrino energy near
+\SI{6}{GeV}.  The signal definition, fiducial volume, flux treatment
+\cite{MINERvA:2016iqn}, and reconstruction-level selection follow
+Ref.~\cite{MINERvA:2021owq}.  After selection, the sample contains $4.12$
+million data events and $32.8$ million simulated signal events, generated with
+GENIE~2.12.6 and the MINERvA Tune~v1.
 
-OmniFold unfolds by iterated reweighting. Each iteration trains a classifier to
-separate data from reconstructed simulation, converts its output to a per-event
-likelihood-ratio weight, pulls that weight back to truth through the
-simulation's truth--reco pairing (treating unmatched ``miss'' events natively, so
-no separate efficiency correction is applied), and trains a second classifier to
-propagate it to a smooth truth-level reweight for the next iteration. We use
-gradient-boosted decision trees (100 trees, depth-3 capacity, 5 iterations) as
-the learners: the production central value uses the \texttt{exact} backend
-(sklearn \texttt{GradientBoosting}, single-threaded exact-split CART), while the
-uncertainty ensemble --- the systematic universe sweep and the Poisson
-bootstrap --- uses LightGBM at matched capacity ($\texttt{num\_leaves}=8=2^{3}$),
-so the central value and its covariance are \emph{not} estimator-matched. The
-higher-dimensional unfolds simply append feature columns
-$(\pT,\pPar,\Eavail,q_{3},W)$. Histogramming the reweighted truth ensemble (in
-any declared reporting binning) and dividing by flux, exposure and
-target-nucleon count gives the cross section. For the finalized 2D result, the
-uncertainty budget combines systematic (MAT universe), statistical (Poisson
-bootstrap) and ML (training-seed variation) covariances; the complete statistical methodology and
-validation suite are documented in the companion analysis note. Central-value
-robustness checks are stable across GBDT and MLP classifier families.
+Each OmniFold iteration consists of two classification steps.  A
+reconstruction-level classifier distinguishes data from simulated events and
+defines a likelihood-ratio weight.  The event pairing transfers that weight to
+truth, including unmatched events, and a truth-level classifier propagates a
+smooth reweighting to the next iteration.  We use five iterations of
+depth-three gradient-boosted decision trees with 100 trees.  The production
+central value uses exact-split scikit-learn gradient boosting, whereas the
+finalized two-dimensional systematic-universe and Poisson-bootstrap ensembles
+use LightGBM at matched nominal capacity.  This backend difference is retained
+as an explicit qualification rather than treated as estimator equivalence.
+Cross sections are formed by histogramming the reweighted truth events in a
+declared reporting binning and dividing by integrated flux, target count, and
+bin width.
 
-\section{Two-dimensional reproduction}
-The unbinned $d^{2}\sigma/(d\pT\,d\pPar)$ reproduces the published measurement
-(Fig.~\ref{fig:pxsec}): the total cross section is \SI{\sigTwoD}{cm^2/nucleon}
-(published \SI{\sigTwoDpaper}{cm^2/nucleon}, ratio $\ratioTot$),
-\SI{\binsTen}{\percent} of the 205 reported bins agree within \SI{10}{\percent},
-and the published-$\sigma$ per-bin standardized differences are sub-$1\sigma$
-(RMS $\pullRMS$). Our standalone uncertainty budget matches the published total in
-size (median per-bin \SI{\uqMedian}{\percent} vs \SI{\uqPaper}{\percent}),
-flux-dominated as in the publication. The residual indicative paper-covariance
-distance of $\chiPaper$ per bin is shape, not normalization, and traces to the
-off-diagonal structure of the published covariance on the low-$\pT$ peak; it
-carries a $\sim1$-unit method-dependence band from the choice of GBDT estimator
-(exact-GBT $\chiPaper$ versus LightGBM $2.65$).
+The two-dimensional result provides a stringent end-to-end validation.  Its
+integrated cross section is \SI{\sigTwoD}{cm^2/nucleon}, compared with
+\SI{\sigTwoDpaper}{cm^2/nucleon} in the published analysis, a ratio of
+$\ratioTot$.  Of the 205 reported bins, \SI{\binsTen}{\percent} agree within
+\SI{10}{\percent}; the standardized bin differences formed with the published
+uncertainties have an RMS of $\pullRMS$.  The standalone covariance combines
+matched-central-value systematic universes with statistical and training-seed
+blocks.  Its median relative uncertainty is \SI{\uqMedian}{\percent}, compared
+with \SI{\uqPaper}{\percent} for the publication.  Figure~\ref{fig:validation}
+shows the principal one-dimensional projections.  These tests validate the
+five-iteration two-dimensional result without interpreting a covariance sum
+between two measurements derived from the same data.
 
-\begin{figure}[tbp]
+\begin{figure*}[t]
   \centering
-  \includegraphics[width=0.6\textwidth]{MEFHC_5iter_fig13}\\
-  \includegraphics[width=0.7\textwidth]{MEFHC_5iter_pull_full}
-  \caption{Top: unfolded 2D cross section. Bottom: per-bin standardized
-  difference using the published uncertainty on the $14\times16$ grid; the
-  distribution is sub-$1\sigma$ (RMS $\pullRMS$). The two results share data,
-  so this is descriptive rather than an independent-result pull.}
-  \label{fig:pxsec}
-\end{figure}
+  \includegraphics[width=0.82\textwidth]{model_comp_projections}
+  \caption{Projections of the published binned result
+  \cite{MINERvA:2021owq} and the unbinned five-iteration OmniFold result onto
+  $\pT$ (left) and $\pPar$ (right).  The comparison is a validation using the
+  same data sample, not a comparison of statistically independent
+  measurements.}
+  \label{fig:validation}
+\end{figure*}
 
-\section{Higher-dimensional cross sections}
+For the higher-dimensional results, every central-value construction is tested
+against its lower-dimensional predecessor.  The three-, four-, and
+five-observable marginal normalizations agree at the approximately
+$1$--$2\%$ level, and injected distortions in each newly added variable are
+recovered in closure tests.  These controls validate the central values, but do
+not promote superseded higher-dimensional covariance products.
 
-\subsection{Available energy: the low-recoil deficit}
-Extending to $(\pT,\pPar,\Eavail)$ and then $(\pT,\pPar,\Eavail,q_{3})$ yields
-\emph{unbinned} three- and four-observable MINERvA unfolds; each passes the
-projection anchors against its lower-dimensional predecessor to $\approx$1--2\,\%. Four truth-level generators
-(GENIE CV, MINERvA Tune v1, NuWro, GiBUU) all underpredict the data at low
-$\Eavail$ (Fig.~\ref{fig:pgen}), the established MINERvA low-recoil/2p2h deficit.
-We confirm its origin directly: pion final-state-interaction dials move
-$d\sigma/d\Eavail$ by less than \SI{1}{\percent}, whereas adding the empirical Valencia
-2p2h fills the quasielastic--$\Delta$ dip. The four-dimensional $(\Eavail,q_{3})$
-result resolves the deficit's momentum-transfer structure, and a bin-identical
-comparison to the published low-recoil measurement on the maximal common
-grid~\cite{MINERvA:2022incl} agrees at central-value level. No covariance-based
-consistency metric is reported without a corrected 4D covariance
-(Fig.~\ref{fig:pasc}).
+The $\Eavail$ dimension provides an independent view of the established
+low-recoil discrepancy.  GENIE, the MINERvA Tune~v1, NuWro, and GiBUU all
+underpredict the unfolded central value at low $\Eavail$.  Pion final-state
+interaction variations change $d\sigma/d\Eavail$ by less than one percent,
+whereas the empirical Valencia two-particle--two-hole contribution fills the
+quasielastic--$\Delta$ dip.  Adding $q_{3}$ resolves the momentum-transfer
+dependence of this feature.  On the maximal common $(\Eavail,q_{3})$ grid, the
+central value agrees with the dedicated published low-recoil measurement
+\cite{MINERvA:2022incl}.  We do not assign a covariance-based consistency
+metric to this comparison.
 
-\begin{figure}[tbp]
+The fifth observable, $W$, separates the remaining discrepancy from the
+low-mass enhancement.  Figure~\ref{fig:joint} shows the joint
+$(\Eavail,W)$ projection relative to GENIE.  The positive central-value
+difference is concentrated where both $\Eavail$ and $W$ are large, rather than
+being distributed uniformly across either one-dimensional projection.  This
+localization is precisely the information lost when the two observables are
+viewed separately.
+
+\begin{figure*}[t]
   \centering
-  \includegraphics[width=0.99\textwidth]{generators_vs_unfolded_band}
-  \caption{Unfolded 3D central cross section (black)
-  versus four truth-level generators. The generators track the muon-momentum
-  projections but split on $\Eavail$, all underpredicting the low-recoil peak.
-  Only the central values are interpreted.}
-  \label{fig:pgen}
-\end{figure}
+  \includegraphics[width=0.96\textwidth]{excess_eavail_W}
+  \vspace{0.5em}
+  \includegraphics[width=0.86\textwidth]{eavailW_band}
+  \caption{Joint $(\Eavail,W)$ central-value result and its generator context.
+  The upper panels compare the unfolded $\Eavail$ projection with GENIE and
+  show the unfolded-to-GENIE ratio and absolute difference in the joint plane.
+  The lower panels compare the $\Eavail$ and $W$ projections with four
+  generator configurations.  No uncertainty or significance is assigned to
+  the joint excess pending adoption of the common five-dimensional covariance.}
+  \label{fig:joint}
+\end{figure*}
 
-\begin{figure}[tbp]
-  \centering
-  \includegraphics[width=0.75\textwidth]{ascencio_fullcov_compare}
-  \caption{Bin-identical central-value comparison to the published low-recoil
-  measurement~\cite{MINERvA:2022incl} on the maximal common $(\Eavail,q_{3})$
-  grid. The uncertainty-derived annotations do not use a corrected 4D
-  covariance and are not interpreted.}
-  \label{fig:pasc}
-\end{figure}
+The lower one-dimensional projections in Fig.~\ref{fig:joint} compare the same
+central result with GENIE, the MINERvA Tune~v1, NuWro, and GiBUU.  All four
+underpredict the high-$W$ region.  Turning on the Valencia two-particle--two-hole
+component does not remove that difference because it primarily populates lower
+$W$.  The agreement of several generators on the direction of the discrepancy
+is a useful model diagnostic; it is not a substitute for the unresolved
+five-dimensional uncertainty construction.
 
-\subsection{Hadronic mass: a deep-inelastic excess no generator reproduces}
-Adding $W$ as a fifth axis isolates the discrepancy that survives 2p2h. The
-unfolded-minus-generator excess concentrates at high $\Eavail$ \emph{and} high
-$W$ --- the deep-inelastic region (Fig.~\ref{fig:pdis}). All four generators
-underpredict the central result in the high-$W$ corner. Statistical
-significances are not reported without a corrected covariance for this
-projection. Enabling Valencia
-2p2h does not close the corner --- it slightly worsens it, because 2p2h populates
-low $W$ --- and the independent NuWro and GiBUU generators miss it by the same or
-a larger margin. The excess is thus a genuinely deep-inelastic ($W\gtrsim\SI{1.8}{GeV}$)
-modeling deficit, robust across generator and tune.
+These results demonstrate that an unbinned event-weight construction can be
+validated against an established two-dimensional measurement and extended to
+five simultaneous observables.  The higher-dimensional central values recover
+the known low-recoil behavior and expose a localized high-$\Eavail$, high-$W$
+generator deficit.  A publication-level significance for any non-two-dimensional
+projection requires the adopted, selection-complete scalar five-dimensional
+covariance; no historical covariance or dependent significance is used here.
 
-\begin{figure}[tbp]
-  \centering
-  \includegraphics[width=0.99\textwidth]{eavailW_band}
-  \caption{Unfolded $(\Eavail,W)$ cross section versus the four-generator band.
-  Every generator underpredicts the high-$W$, high-$\Eavail$ deep-inelastic
-  corner; 2p2h does not help there.}
-  \label{fig:pdis}
-\end{figure}
-
-\section{Extended-fiducial central-value study}
-The published phase space discards about a third of the simulated signal rate
-(events with the muon below \SI{1.5}{GeV/c} or beyond $20^{\circ}$); the fraction is
-computed from the MnvTune-weighted GENIE truth denominator and is therefore
-model-dependent. Because OmniFold corrects
-for acceptance natively, removing those truth-level cuts is a configuration change,
-and the unfold extrapolates into the unmeasured regions through the miss
-regressor. The resulting preliminary extended-fiducial CC-inclusive central value is
-$\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$, \SI{\fpsAbove}{\percent}
-above the restricted measurement (Fig.~\ref{fig:pfps}). Inside the published
-region it reproduces the restricted result to \SI{\fpsAnchor}{\percent} median per
-cell; a three-prior envelope reports the extrapolation cost cell by cell
-(few-percent where the detector has acceptance, explicit tens-of-percent flags in
-the dead regions). Approximately \SI{6}{\percent} of the rate is in a newly
-acceptance-supported extension, while approximately \SI{28}{\percent} is in
-low- or zero-efficiency cells and is separately labeled prior-dominated. The
-summed central value includes both tiers, but only the first is interpreted as
-an acceptance-supported measurement. No corrected covariance is reported for
-the extended domain.
-
-\begin{figure}[tbp]
-  \centering
-  \includegraphics[width=0.99\textwidth]{fps_pilot_compare_MEFHC}
-  \caption{Extended-fiducial scalar study: (a)~anchor ratio in the published
-  sub-block (reproduces the restricted result to \SI{\fpsAnchor}{\percent}),
-  (b)~prior-swap ratio, and (c)~the full cross section (log$_{10}$). Panels
-  (a),(b) are ratios (diverging scale centered at unity); (c) is an absolute
-  magnitude (sequential scale).}
-  \label{fig:pfps}
-\end{figure}
-
-\section{Conclusions}
-Unbinned OmniFold reproduces a flagship MINERvA cross section and its uncertainty
-budget without constructing an explicit response tensor, then extends to simultaneous
-three-, four- and five-observable MINERvA unfolds. These independently recover the
-known low-recoil/2p2h deficit, agree with the dedicated published low-recoil
-measurement, and localize a deep-inelastic excess in a high-$W$ corner that all
-tested generators underpredict. The scalar extended-fiducial study identifies a
-modest acceptance-supported extension and a much larger, separately labeled
-prior-dominated region. A prospective full-event point-cloud implementation and
-the validation evidence required before it can contribute a result are described
-in App.~\ref{app:pet-prospective}.
-
-\appendix
-\section{Prospective full-event point-cloud OmniFold}
-\label{app:pet-prospective}
-
-A point-cloud transformer (PET, using the architecture developed for
-OmniLearn~\cite{Mikuni:2024qsr}) can replace the scalar classifiers within the
-same two-step OmniFold procedure while retaining the event pairing, signal
-definition and cross-section normalization used above. At reconstruction level,
-the classifier would jointly consume the measured muon kinematics and a
-variable-length set of calorimetric deposits. At truth level, it would consume
-the truth muon and the final-state particle cloud. The muon may be represented
-as distinguished event-level features or as a distinguished token, but it must
-be available to both steps: a recoil-only classifier cannot learn the complete
-joint muon--hadron response.
-
-At each iteration the reconstructed classifier would distinguish data from
-reconstructed simulation using this full-event representation. Its per-event
-likelihood-ratio weight would be transferred through the simulation's
-truth--reconstruction association, including unmatched events, and the truth
-classifier would propagate it to the next iteration. The resulting truth-event
-weights could then be projected onto any observable carried by the truth record,
-without training a separate response model for each projection. Background
-treatment, reconstructed selection and the acceptance-supported versus
-prior-dominated reporting split would remain the same as in the scalar analysis.
-
-The validation burden is correspondingly broader than ordinary closure. It
-includes lower-dimensional marginal anchors, injected-shape closure, a stress
-closure sensitive to omitted-muon dependence, point-cloud truncation and input
-coverage checks, and explicit tests of the extrapolation into inefficient
-regions. Statistical replicas must rerun the same estimator used for the
-nominal, and nuisance variations must regenerate the affected selection and
-cloud membership and retrain the estimator. Statistical, training and joint
-nuisance--retraining covariance components must share one nominal, reporting
-mask and bin ordering before they can be combined.
-
-\clearpage
-\paragraph{Why this extension is not presently a result.}
-A 50-member statistical-replica covariance has been constructed for a
-full-event development estimator, but its proposed pairing with the nominal was
-declined. The nominal lies outside the replica family in a large, spatially
-coherent part of the reported space. This observation does not establish that
-the nominal is wrong or that the measured replica dispersion is invalid: a
-covariance describes dispersion about an ensemble center, and containment of a
-separately trained nominal by a finite replica family is not itself a coverage
-test. It instead exposes two missing demonstrations. First,
-\emph{estimator equivalence} must show that the resampling construction reruns
-the same estimator that defines the nominal. Second, a dedicated coverage study
-must show that intervals built from the replicas contain known truths at their
-advertised rate. These are separate from checking that the covariance matrix was
-assembled correctly.
-
-No training-variation covariance or full PET total covariance has been adopted,
-and the required selection-complete detector variations have not been combined
-with a common full-event nominal. Consequently no point-cloud central value,
-uncertainty or comparison enters the measurements in this paper. This appendix
-specifies a methodological extension and the evidence required to reconsider it,
-not an interim PET result.
+Two extensions are intentionally kept outside the main result.  Removing the
+published truth-level muon cuts produces a preliminary extended-fiducial study,
+whose analysis-note record separates acceptance-supported and prior-dominated
+regions.  A full-event point-cloud classifier could replace the scalar learner
+while preserving the two-step event pairing, but it remains a diagnostic
+method-development program: the proposed nominal/statistical pairing was
+declined, coverage has not been demonstrated, and neither a training-variation
+nor total point-cloud covariance has been adopted.  The analysis note preserves
+the full methodology, blocker rationale, validation suite, and numerical
+extended-fiducial results.

@@ -1,44 +1,66 @@
 % ====================================================================
-% PAPER DRAFT -- selective, results-first publication-style distillation
-% (~15-20 pp).  Build: latexmk -pdf main_paper.tex
-% Leads with the 2D reproduction and the (Eavail,W) DIS-tail result;
-% method compressed; cross-checks one-line; statistics deferred to the note.
-% Shares preamble.tex / values.tex / figures with the other two builds.
+% PRL-style paper draft. Build: latexmk -pdf main_paper.tex
+% The companion analysis note contains the complete validation record,
+% technical details, extended-fiducial study, and PET methodology.
 % ====================================================================
-\documentclass[11pt]{article}
-\input{preamble}
-\PAPERtrue
+\documentclass[aps,prl,reprint,superscriptaddress,nofootinbib]{revtex4-2}
+
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{siunitx}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,allcolors=blue!55!black]{hyperref}
+
+\graphicspath{{figures/}}
+\DeclareGraphicsExtensions{.pdf}
+\newcommand{\pT}{p_{T}}
+\newcommand{\pPar}{p_{\parallel}}
+\newcommand{\Eavail}{E_{\mathrm{avail}}}
+
 \input{values}
 
-\title{Unbinned simultaneous multi-observable unfolding of the
-MINERvA medium-energy CC-inclusive cross section}
-\author{Joseph Bailey \and Benjamin Nachman}
+\begin{document}
+
+\title{Unbinned Simultaneous Five-Observable Unfolding of MINERvA
+Charged-Current Neutrino Interactions}
+
+\author{Joseph Bailey}
+\email{josephrb@stanford.edu}
+\affiliation{Department of Physics, Stanford University, Stanford, California 94305, USA}
+\author{Benjamin Nachman}
+\email{nachman@stanford.edu}
+\affiliation{Department of Particle Physics and Astrophysics, Stanford University, Stanford, California 94305, USA}
+\affiliation{SLAC National Accelerator Laboratory, Menlo Park, California 94025, USA}
+
 \date{\today}
 
-\begin{document}
-\maketitle
-
 \begin{abstract}
-We apply unbinned machine-learning unfolding (OmniFold) to MINERvA
-medium-energy $\nu_\mu$ data. The unbinned
-$d^{2}\sigma/(d\pT\,d\pPar)$ reproduces the published iterative-Bayesian
-measurement ($\sigma_{\mathrm{tot}}$ ratio $\ratioTot$; median per-bin
-uncertainty \SI{\uqMedian}{\percent} vs \SI{\uqPaper}{\percent}). Without
-constructing a new explicit response tensor for each dimensional extension,
-we then perform
-\emph{unbinned} simultaneous three-, four- and five-observable MINERvA unfolds, adding
-available energy $\Eavail$, momentum transfer $q_{3}$ and hadronic mass $W$. The
-low-$\Eavail$ region independently recovers the known low-recoil/2p2h deficit
-and agrees at central-value level with the published low-recoil measurement
-without a corrected 4D covariance comparison; the $(\Eavail,W)$ plane
-localizes a residual deep-inelastic excess that all tested generators
-underpredict. Removing the truth-level muon kinematic cuts also gives a
-preliminary extended-fiducial central-value study, with acceptance-supported
-and prior-dominated regions reported separately.
+We apply unbinned machine-learning unfolding to MINERvA medium-energy
+$\nu_{\mu}$ charged-current data. As a validation, a simultaneous
+two-observable unfold reproduces the published
+$d^{2}\sigma/(d\pT\,d\pPar)$ measurement and its uncertainty scale. We then
+unfold up to five observables by adding available energy, three-momentum
+transfer, and hadronic invariant mass without constructing an explicit
+five-dimensional response tensor. The higher-dimensional central values pass
+lower-dimensional marginal anchors and injected-shape closure tests. They
+recover the established low-recoil discrepancy and localize a generator
+deficit in the joint high-available-energy, high-mass region. The latter is a
+central-value result; its significance awaits adoption of a common
+five-dimensional covariance.
 \end{abstract}
+
+\maketitle
 
 \input{paper_body}
 
-\printbibliography
+\begin{acknowledgments}
+We thank the MINERvA Collaboration for making the data products used in this
+study publicly available.
+\end{acknowledgments}
+
+\bibliographystyle{apsrev4-2}
+\bibliography{technote}
 
 \end{document}
