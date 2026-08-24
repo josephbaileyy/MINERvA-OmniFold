@@ -7,6 +7,7 @@
   "item": "R3_Jacobian_probe"
  },
  "authorization": "Joseph 2026-08-23, code building and diagnostic tests including Slurm. PET remains diagnostic/method-development (2e210468).",
+ "READ_THIS_FIRST_A_CLAIM_HERE_WAS_CORRECTED": "A PROVENANCE CLAIM IN THIS RECEIPT WAS MEASURED FALSE AND REPAIRED. The original claim that sys.path[0] remained a clean scratch dir, so no hardcoded-root insert could shadow the imports, is FALSE: the OI-136 insert DID fire (extract_fullevent_fps.py:84), leaving /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding at position 0. The correction is in 'provenance' and in 'CORRECTION_20260823_my_OI136_claim_was_wrong'. The VERDICT below is UNAFFECTED -- the evidence was always the post-import module digests, not the path. Measured in three independent runs: 10 modules inside a checkout, 1 distinct root, and that root is the intended checkout.",
  "VERDICT": "CONFIRM",
  "THE_MOST_IMPORTANT_CAVEAT_R3_DOES_NOT_LOCALISE_TO_THE_BAND": {
   "exploratory_not_a_predeclared_statistic": true,

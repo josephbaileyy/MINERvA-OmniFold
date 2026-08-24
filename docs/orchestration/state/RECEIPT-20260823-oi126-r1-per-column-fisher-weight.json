@@ -7,6 +7,7 @@
   "item": "R1_per_column_Fisher_weight"
  },
  "authorization": "Joseph 2026-08-23, code building and diagnostic tests including Slurm. PET remains diagnostic/method-development (2e210468). Nothing here reopens OI-126.",
+ "READ_THIS_FIRST_A_CLAIM_HERE_WAS_CORRECTED": "A PROVENANCE CLAIM IN THIS RECEIPT WAS MEASURED FALSE AND REPAIRED. The original claim that sys.path[0] remained a clean scratch dir, so no hardcoded-root insert could shadow the imports, is FALSE: the OI-136 insert DID fire (extract_fullevent_fps.py:84), leaving /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding at position 0. The correction is in 'provenance' and in 'CORRECTION_20260823_my_OI136_claim_was_wrong'. The VERDICT below is UNAFFECTED -- the evidence was always the post-import module digests, not the path. Measured in three independent runs: 10 modules inside a checkout, 1 distinct root, and that root is the intended checkout.",
  "VERDICT": "CONFIRM",
  "VERDICT_DERIVATION": "CONFIRM requires the band [7,10) GeV to be 5x-10x LOWER than p_parallel < 6 GeV. Measured ratio control/band = 6.4351 on the predeclared operand and binning, inside [5,10]. All four operand x binning combinations land inside the confirm window (5.70 to 7.97).",
  "WHAT_THIS_LICENSES_AND_WHAT_IT_DOES_NOT": {
