@@ -206,6 +206,18 @@ any commit*. So the correct order is:
 put in a commit message — which is the half I got wrong twice today, once in the commit immediately
 after writing the rule down.
 
+> **SCOPE CORRECTED 2026-08-24 by the sync lane, and the correction is against my own over-claim.**
+> **Staging is a NO-OP for a file that is already tracked** — it is in `ls-files` either way — so this
+> mechanism explains **only** a commit that ADDS a file. Measured both arms in a throwaway repo: a
+> tracked file modified-and-unstaged versus staged gives **identical** `ls-files` output; a new file
+> gives `--others` before `git add` and `ls-files` after. **So the fix above is real and correctly
+> scoped to new files, and it does NOT explain `82727fe3`, which was red for not regenerating at
+> all.** I offered it to that lane as the explanation of *their* red commit without measuring their
+> case. **TEST: verifying that a mechanism EXISTS is not verifying that it EXPLAINS the case in front
+> of me** — the two questions feel identical and the first one is the one that comes back green. That
+> is the same shape as this document's other retraction (§4(b)): a plausible cause that fits, adopted
+> without the one command that would separate it from the alternative.
+
 **Not repaired by rewriting history, deliberately.** `e1596f00` and `585b1f3a` are published on shared
 `main` with another lane's commit (`c9f331f0`) interleaved between them, and graders' verdicts cite
 shas by line. **A force-push would dangle those citations to fix a stale cell in a generated index.**

@@ -52,7 +52,7 @@ docs/orchestration/FINDING-20260811-promotion-by-move-silently-repoints-artifact
 docs/orchestration/FINDING-20260822-a-hold-that-instructed-its-own-deletion.md	tracked	LIVE	finding		20260822	open		route-only		no	5	111	6931
 docs/orchestration/FINDING-20260822-clause-c-adopt-is-unreachable-under-its-own-pause.md	tracked	LIVE	finding		20260822	open		route-only		no	3	369	24738
 docs/orchestration/FINDING-20260824-five-rules-from-the-r5-night.md	tracked	ARCHIVAL	finding		20260824	terminal		exact-path-only		yes	2	162	9267
-docs/orchestration/FINDING-20260824-gate2-preparation-and-four-open-rulings.md	tracked	LIVE	finding		20260824	open		route-only		no	2	222	16086
+docs/orchestration/FINDING-20260824-gate2-preparation-and-four-open-rulings.md	tracked	LIVE	finding		20260824	open		route-only		no	2	234	17170
 docs/orchestration/FINDINGS-ARCHIVE-2026-08.md	tracked	ARCHIVAL	document	2026-07-16-fe-campaign		terminal		exact-path-only	docs/orchestration/findings_row_lint.py;nd-unfolding/pet/check_canonical_designation.py	yes	4	155	365050
 docs/orchestration/FINDINGS.md	tracked	LIVE	ledger			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/findings_row_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/whose_row.py;nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/orchestrate_gpu_node.sh;nd-unfolding/sbatch_bootstrap_5d_gpu.sh;nd-unfolding/tests/test_hash_bindings.py;nd-unfolding/tests/test_remedy_a_adopt_wrapper.py	no	36	130	9431
 docs/orchestration/FLAG-20260824-gregor-pet2-worktree-unpreserved.md	tracked	ARCHIVAL	document		20260824	terminal		exact-path-only		yes	0	51	2954
