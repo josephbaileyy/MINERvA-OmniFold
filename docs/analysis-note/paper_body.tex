@@ -26,9 +26,9 @@ triple-differential~\cite{MINERvA:2022qe}, exist already; the methodological dis
 simultaneously-unfolded formulation rather than multi-dimensionality itself. These
 expose the known low-recoil/2p2h deficit through an independent route,
 localize a residual deep-inelastic excess that all four tested generators underpredict,
-and --- together with a recoil-point-cloud representation cross-check and a
-preliminary extended-fiducial study --- demonstrate the reach and current
-limitations of the method.
+and demonstrate the reach and current limitations of the method. A preliminary
+extended-fiducial study additionally tests the extrapolation beyond the
+published muon phase space.
 
 \section{Data and method}
 The analysis uses the twelve ME FHC playlists ($1.057\times10^{21}$ protons on
@@ -57,7 +57,8 @@ any declared reporting binning) and dividing by flux, exposure and
 target-nucleon count gives the cross section. For the finalized 2D result, the
 uncertainty budget combines systematic (MAT universe), statistical (Poisson
 bootstrap) and ML (training-seed variation) covariances; the complete statistical methodology and
-validation suite are documented in the companion analysis note.
+validation suite are documented in the companion analysis note. Central-value
+robustness checks are stable across GBDT and MLP classifier families.
 
 \section{Two-dimensional reproduction}
 The unbinned $d^{2}\sigma/(d\pT\,d\pPar)$ reproduces the published measurement
@@ -142,49 +143,6 @@ modeling deficit, robust across generator and tune.
   \label{fig:pdis}
 \end{figure}
 
-\section{Method robustness and the recoil-point-cloud track}
-The unfolded result is stable across GBDT and MLP classifier families. A
-point-cloud transformer (PET~\cite{Mikuni:2024qsr}) provides a complementary
-recoil-representation cross-check: step~1 uses non-muon reconstructed
-calorimeter clusters and step~2 uses truth final-state hadrons with the muon
-removed. It yields an absolutely-normalized central value
-(Fig.~\ref{fig:ppet}). Its ordinary closure was assessed only as a legacy
-two-iteration self-consistency diagnostic, and no current closure level is
-quoted. This track is reported as a diagnostic,
-method-development study: it contributes no cross section and no uncertainty to
-the measurements above. No current quantitative PET--GBDT level of agreement is
-quoted. The only such comparison that exists was taken with a two-iteration
-training, against the campaign's pinned three-iteration policy; before the
-2026-08-01 full-event schema change, which makes a pre-08-01 PET total a
-different estimator rather than a differently-trained one; and with unit
-measured weights and no background subtraction, which biases PET high, so the
-underlying gap is \emph{larger} than the withdrawn figure. It has not been
-re-extracted under the pinned configuration. Because the muon is used only for selection and
-post-hoc binning, this is not a full joint muon--hadron unfold; ordinary
-closure cannot test omitted muon dependence at fixed recoil. The study tests
-low-level point-cloud inputs without unfolding the joint muon--recoil event.
-Corrected five-dimensional joint throws test the standard block-sum construction
-with asymmetric endpoints, a fixed estimator seed, and mean-centered throws.
-Those uncertainty products remain candidates until the selection-complete
-lateral replacement lands. The historical recoil-PET covariance is also
-quarantined: its fixed-map and retraining responses share nuisance endpoints and
-were added without their cross term. Neither a PET central-value comparison nor
-any PET covariance is used here, and no PET uncertainty magnitude is quoted: no
-PET total covariance is adopted for publication.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.95\textwidth]{pet_vs_gbdt_absolute}
-  \caption{Recoil-only representation cross-check: absolutely-normalized 4D
-  cross section from PET versus the production scalar GBDT, per axis. Ordinary
-  closure was assessed only as a legacy two-iteration self-consistency
-  diagnostic; no current closure level is quoted, and it does not test omitted
-  muon dependence. The total offset shown is a
-  two-iteration legacy result, withdrawn as a current comparison (see text) and
-  not quoted here as a level of agreement.}
-  \label{fig:ppet}
-\end{figure}
-
 \section{Extended-fiducial central-value study}
 The published phase space discards about a third of the simulated signal rate
 (events with the muon below \SI{1.5}{GeV/c} or beyond $20^{\circ}$); the fraction is
@@ -222,9 +180,6 @@ budget without constructing an explicit response tensor, then extends to simulta
 three-, four- and five-observable MINERvA unfolds. These independently recover the
 known low-recoil/2p2h deficit, agree with the dedicated published low-recoil
 measurement, and localize a deep-inelastic excess in a high-$W$ corner that all
-tested generators underpredict. A
-recoil-only point-cloud transformer establishes low-level-input infrastructure
-without yet unfolding the complete joint muon--hadron event; that track is
-method development and carries no adopted uncertainty product. The scalar
-extended-fiducial study identifies a modest acceptance-supported extension and
-a much larger, separately labeled prior-dominated region.
+tested generators underpredict. The scalar extended-fiducial study identifies a
+modest acceptance-supported extension and a much larger, separately labeled
+prior-dominated region.
