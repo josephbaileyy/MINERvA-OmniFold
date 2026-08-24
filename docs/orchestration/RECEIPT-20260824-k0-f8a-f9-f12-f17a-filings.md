@@ -789,7 +789,34 @@ changed. Neither `PYTHONDONTWRITEBYTECODE` nor `-B` was set on this arm; it was 
 **Any future arm executing from the canonical checkout must set `PYTHONDONTWRITEBYTECODE=1` or pass
 `-B`.** Filed as contingent, not as "canonical is safe from `-v`". Raised by the round-11 grader.
 
-### FINDING 9 — `MANIFEST.tsv` IS INDEX-BLIND, SO "ONE COMMIT" NEEDS A SECOND HALF
+### FINDING 9 — `MANIFEST.tsv` IS INDEX-BLIND **FOR CONTENT ONLY**, AND MY "VERIFICATION BY EXHAUSTION" WAS NOT EXHAUSTIVE
+
+> **⚠ CORRECTED 2026-08-24 by the 5d-worker lane. The claim below is half right and the METHOD I used
+> to establish it was wrong in a way worth more than the fact.** I wrote that the generator reads
+> working-tree bytes *"and nothing else"*, verified *"by exhaustion"*: no `git show`, no `cat-file`, no
+> `--cached`, no `GIT_INDEX_FILE`. **`git ls-files` was not in my pattern, and `git ls-files` reads the
+> INDEX.** It appears at `generate_manifest.py:92`, `:94`, `:301` and `:529`.
+>
+> **So the true statement is narrower:** the generator is index-blind for **content** — `lines`,
+> `bytes` and `inbound_count` all come from `read_bytes()` — but index-**aware** for the **path set and
+> the `tracking` column**, which come from `ls-files`.
+>
+> **The method error is the lesson.** A null grep is evidence about the grep, and I did not merely
+> report a null — I called it *exhaustive*, which asserts completeness over a pattern I chose. Naming
+> four absent tokens feels like coverage and is not: the mechanism I missed was a fifth spelling of the
+> same idea. **State the tokens searched alongside the conclusion**, so a reader can see what the claim
+> is actually a claim about.
+>
+> **AND THE PRACTICAL RULE IMPROVES, which is why this is a gift rather than just a correction.**
+> Because the tracked set comes from the index, **`git add` the new paths BEFORE regenerating** and the
+> row is correct in the same commit — no discipline, no convergence commit, no red intermediate. Full
+> order: **write → `git add` all paths including new ones → regenerate → `git add` MANIFEST → bare
+> `git commit`**. That closes the defect §6.6.2 records, at its cause rather than by care. The
+> 5d-worker lane verified it in a throwaway `git init` rather than reasoning about it: a new file shows
+> only under `ls-files --others` before `git add`, and under `ls-files` immediately after, with no
+> commit in between. **This commit is the control** and was produced by that order.
+
+**The original finding, retained, with its scope now corrected to CONTENT:**
 
 `generate_manifest.py` reads **working-tree bytes and nothing else**. Verified by exhaustion: the only
 reads in the file are `read_bytes()` at `:281`, `:345` and `:539` — **no `git show`, no `cat-file`, no
@@ -827,3 +854,50 @@ about itself, so its `lines`/`bytes` start at 0/0 and iteration fills them in un
 file that contains them. It is why the self-row can be accurate at all, and why
 `MANIFEST.tsv byte-count fixed point did not converge` is a reachable error rather than dead code.
 Stated beside §6.6.2's fixpoint paragraph so `b""` is not read as the defect it resembles.
+
+---
+
+## 7. THE FAR-END METHOD, DECLARED BEFORE THE MEASUREMENT RATHER THAN AFTER
+
+F-1(b) and F-17(b) are mine to produce when the last leg lands. **Both choices below are pre-committed
+here so that I cannot later pick the comparison that flatters the result** — the failure the campaign
+calls measurability choosing the specification.
+
+### 7.1 F-1(b) COMPARES AGAINST THE DECLARED BASELINE, NOT THE RUN'S OWN MANIFEST
+
+**Two A-2(f) manifests exist for `aa67c426` and using the wrong one is a self-comparison.** Measured:
+
+| manifest | file sha256 | built_at_utc |
+|---|---|---|
+| `declarations/aa67c426/source-manifest.json` (**the baseline**) | `622ddc0ada33234d…` | 2026-08-24T04:00:20Z |
+| `runs/k0-aa67c426-20260824T145751Z/source-manifest.json` | `b46e4f57664692d0…` | 2026-08-24T14:57:52Z |
+
+Their entire difference is **one line, `built_at_utc`**; `listing_sha256`, `file_count` and `head` are
+identical. The run's copy was written **9 seconds before the first `sbatch`**, so comparing the far end
+against it is exactly what the launcher's own error text forbids: *"comparing against a manifest
+generated now would compare the tree to itself."* **F-1(b) will be measured against the `declarations/`
+baseline.**
+
+**And "the manifest digest" in F-1(b) is ambiguous, so I am naming the field: `listing_sha256`.** The
+quantity is `fa3489e22168954bebcc9a602338d924582fd231643bfa285b3a9225e7535420` over 782 files. A
+grader comparing **file** digests at both ends would see `622ddc0a…` against `b46e4f57…` and read a
+difference that carries no information about the tree. Raised by the Gate-2 preparation lane.
+
+### 7.2 THE INVENTORY POPULATION IS SCOPED TO ONE RUN_ID, NOT A GLOB
+
+`runs/` now holds **four** directories and a `runs/*/inv` glob is a well-formed query over the wrong
+rows — it would not error, which is what makes it dangerous:
+
+```
+k0-a54038b2-20260823T185046Z    0 jsonl
+k0-a54038b2-20260823T205254Z  298 jsonl   <- the FAILED 08-23 rehearsal
+k0-aa67c426-20260824T143517Z    0 jsonl   <- my attempt 1, cwd was the read-only code root
+k0-aa67c426-20260824T145751Z  118 jsonl   <- THE ONLY IN-SCOPE RUN
+```
+
+**Pooling would silently add 298 records from a superseded, failed run.** F-4(b) will be measured with
+`--inventory-dir` scoped to `k0-aa67c426-20260824T145751Z`, whose own `SUBMISSION.txt` records
+`supersedes=k0-aa67c426-20260824T143517Z`. Note also that F-4(b)'s *"count of guarded processes"* has
+**no stated population** in the contract — F-4(a)'s 15 is per-launcher while F-4(b)'s is per-process
+and array-multiplied — so I will publish the count **with its population named** and not present it as
+satisfying a number the contract never states.
