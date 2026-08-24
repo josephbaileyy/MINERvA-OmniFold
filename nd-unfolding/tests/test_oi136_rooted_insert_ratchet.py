@@ -37,42 +37,130 @@ CANONICAL = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 REPO = pathlib.Path(__file__).resolve().parents[2]
 
 # Each entry MUST carry a reason. A bare path list decays into an allowlist nobody revisits.
-KNOWN_UNREPAIRED = {
-    "nd-unfolding/bootstrap_nd.py":
-        "REPAIRED on build-k0-execution-integrity and executing in the k=0 rehearsal; awaiting merge to main.",
-    "nd-unfolding/seedscan_split.py":
-        "REPAIRED on build-k0-execution-integrity and executing in the k=0 rehearsal; awaiting merge to main.",
-    "nd-unfolding/pet/d2_oracle.py":
+_R = {
+    'branch_repaired':
+        'REPAIRED on build-k0-execution-integrity by the round-5/6 B-1 sweep and NOT YET on main. Executing correctly on the deployed candidate. Awaiting merge, not repair.',
+    'pet':
         "PET lane's file. Not this lane's to edit; routed, not owned.",
-    "nd-unfolding/pet/inversion_screen.py":
-        "PET lane's file. Not this lane's to edit; routed, not owned.",
-    "nd-unfolding/pet/push_vs_acceptance.py":
-        "PET lane's file. Not this lane's to edit; routed, not owned.",
-    "2d-unfolding/unfold_2d_omnifold_unbinned.py":
-        "THE PUBLISHED 2D ARM. Repair written, then REVERTED. Its sha256 8ebe0277... is pinned in "
-        "THREE PLACES THAT NEED THREE DIFFERENT TREATMENTS, and the pre-commit hook reports the "
-        "first two identically:  (i) LIVE ENFORCEMENT -- EXPECTED_U2D_SHA in "
-        "nd-unfolding/pet/run_gate2_target_validator.sh. Advancing it is NOT a text edit: that "
-        "file's own header refuses argument-based bumps ('exactly the reasoning hash pins exist to "
-        "reject') and requires a RE-RUN whose weights come out BIT-IDENTICAL to the archived ones. "
-        "(ii) IMMUTABLE HISTORY -- /producer/sha256 in "
-        "docs/orchestration/state/negweight-hpss-durability-20260821.json, recording which version "
-        "wrote 247 HPSS-archived products between 2026-07-07 and 2026-07-11. Rewriting it would "
-        "silently falsify the provenance of archived data. (iii) INVISIBLE TO THE HOOK -- "
-        "canonical_u2d in family-20260814-FULLSTRENGTH-50of50.json, which lives only at "
-        "evidence/prepublication-2026-08-20-0b329e8a and is absent from the live tree, so no gate "
-        "will ever flag it; also historical. Found by the PET mediator, verified here. "
-        "Re-pointing any of these to make a check pass is a standing prohibition (OI-123). "
-        "JOSEPH'S CALL, and it costs a Gate-2 re-run, not a commit.",
-    "docs/orchestration/state/probe-oi120c-loader-purity-perturbation-20260814.py":
-        "One-off probe artifact, 2026-08-14. A probe is a RECORD of what was run; editing it "
-        "falsifies the record. Retire by classification, never by patching.",
-    "docs/orchestration/state/probe-oi22-leakage-real-input-20260814.py":
-        "One-off probe artifact, 2026-08-14. See above.",
-    "docs/orchestration/state/probe-oi22-schema-parity-real-input-20260814.py":
-        "One-off probe artifact, 2026-08-14. See above.",
+    'probe':
+        'One-off probe artifact. A probe is a RECORD of what was run; editing it falsifies the record. Retire by classification, never by patching.',
+    'twod':
+        'THE PUBLISHED 2D ARM. Joseph ruled 2026-08-23 to leave it: reachable in the k=0 static closure but DORMANT -- its insert is inside main(), which the k=0 route never calls, and that dormancy is executed as a test in test_k0_5ab_separated_roots.py rather than asserted. Its sha256 is pinned in three places needing three different treatments; advancing the live one needs a Gate-2 RE-RUN, not a commit.',
+    'other_nd':
+        'OFF THE k=0 IMPORT CLOSURE. Real, unrepaired, and NEITHER REPAIRED NOR AUTHORIZED -- listed so the count is honest, not because anyone has decided about them. Fixing them was explicitly not authorised on 2026-08-23; the authorisation covered the one file the k=0 route actually executes.',
 }
 
+KNOWN_UNREPAIRED = {
+    # --- twod: THE PUBLISHED 2D ARM. Joseph ruled 2026-08-23 to leave it: reachable in the k=0 static closure b...
+    '2d-unfolding/unfold_2d_omnifold_unbinned.py':
+        _R['twod'],
+    # --- branch_repaired: REPAIRED on build-k0-execution-integrity by the round-5/6 B-1 sweep and NOT YET on main. Executi...
+    'nd-unfolding/bootstrap_nd.py':
+        _R['branch_repaired'],
+    'nd-unfolding/seedscan_split.py':
+        _R['branch_repaired'],
+    'nd-unfolding/sweep_bank_5d.py':
+        _R['branch_repaired'],
+    'nd-unfolding/unfold_nd_omnifold_unbinned.py':
+        _R['branch_repaired'],
+    'nd-unfolding/unified_throw_cov.py':
+        _R['branch_repaired'],
+    'nd-unfolding/unified_throw_cov_5d.py':
+        _R['branch_repaired'],
+    # --- pet: PET lane's file. Not this lane's to edit; routed, not owned....
+    'nd-unfolding/pet/d2_oracle.py':
+        _R['pet'],
+    'nd-unfolding/pet/dump_pointcloud_inputs.py':
+        _R['pet'],
+    'nd-unfolding/pet/fullevent_fps_dataloader.py':
+        _R['pet'],
+    'nd-unfolding/pet/gate2_target_runtime.py':
+        _R['pet'],
+    'nd-unfolding/pet/inversion_screen.py':
+        _R['pet'],
+    'nd-unfolding/pet/push_vs_acceptance.py':
+        _R['pet'],
+    'nd-unfolding/pet/train_fullevent_nominal.py':
+        _R['pet'],
+    'nd-unfolding/pet/validate_pet_nominal_gate4.py':
+        _R['pet'],
+    # --- probe: One-off probe artifact. A probe is a RECORD of what was run; editing it falsifies the record. Re...
+    'docs/orchestration/state/probe-oi120c-loader-purity-perturbation-20260814.py':
+        _R['probe'],
+    'docs/orchestration/state/probe-oi22-leakage-real-input-20260814.py':
+        _R['probe'],
+    'docs/orchestration/state/probe-oi22-schema-parity-real-input-20260814.py':
+        _R['probe'],
+    # --- other_nd: OFF THE k=0 IMPORT CLOSURE. Real, unrepaired, and NEITHER REPAIRED NOR AUTHORIZED -- listed so t...
+    'nd-unfolding/adopt_unified_4d.py':
+        _R['other_nd'],
+    'nd-unfolding/adopt_unified_5d.py':
+        _R['other_nd'],
+    'nd-unfolding/build_fps_prior_genie_5d.py':
+        _R['other_nd'],
+    'nd-unfolding/build_fps_prior_nuwro.py':
+        _R['other_nd'],
+    'nd-unfolding/build_fps_prior_nuwro_5d.py':
+        _R['other_nd'],
+    'nd-unfolding/compare_ascencio_fine.py':
+        _R['other_nd'],
+    'nd-unfolding/compare_ascencio_fullcov.py':
+        _R['other_nd'],
+    'nd-unfolding/compare_le_evolution.py':
+        _R['other_nd'],
+    'nd-unfolding/dump_td_q3.py':
+        _R['other_nd'],
+    'nd-unfolding/dump_w_source_fps.py':
+        _R['other_nd'],
+    'nd-unfolding/eavailW_covariance.py':
+        _R['other_nd'],
+    'nd-unfolding/eavail_generator_significance.py':
+        _R['other_nd'],
+    'nd-unfolding/excess_eavail_W.py':
+        _R['other_nd'],
+    'nd-unfolding/fps_3prior_envelope_5d.py':
+        _R['other_nd'],
+    'nd-unfolding/fps_acceptance.py':
+        _R['other_nd'],
+    'nd-unfolding/fps_extension_validation.py':
+        _R['other_nd'],
+    'nd-unfolding/fps_gbdt_prior_reunfold_5d.py':
+        _R['other_nd'],
+    'nd-unfolding/fps_pilot_compare.py':
+        _R['other_nd'],
+    'nd-unfolding/fps_prior_envelope.py':
+        _R['other_nd'],
+    'nd-unfolding/make_control_plots.py':
+        _R['other_nd'],
+    'nd-unfolding/nn_dump_inputs.py':
+        _R['other_nd'],
+    'nd-unfolding/pet_lateral_band.py':
+        _R['other_nd'],
+    'nd-unfolding/pet_lateral_band_5d.py':
+        _R['other_nd'],
+    'nd-unfolding/pet_lateral_correction.py':
+        _R['other_nd'],
+    'nd-unfolding/pet_systematics.py':
+        _R['other_nd'],
+    'nd-unfolding/pet_systematics_5d.py':
+        _R['other_nd'],
+    'nd-unfolding/pet_unified_throw_5d.py':
+        _R['other_nd'],
+    'nd-unfolding/plot_control_corner.py':
+        _R['other_nd'],
+    'nd-unfolding/project_cov_nd.py':
+        _R['other_nd'],
+    'nd-unfolding/q3_excess_projection.py':
+        _R['other_nd'],
+    'nd-unfolding/q3_vs_ascencio_metrics.py':
+        _R['other_nd'],
+    'nd-unfolding/rescale_flux_universes.py':
+        _R['other_nd'],
+    'nd-unfolding/sweep_bank.py':
+        _R['other_nd'],
+    'nd-unfolding/unified_throw.py':
+        _R['other_nd'],
+}
 
 def _canonical_form(value):
     """"exact" / "subpath" / None. Bounded at exact-or-separator: a bare startswith would match
@@ -85,6 +173,52 @@ def _canonical_form(value):
     return "subpath" if rest.startswith("/") else None
 
 
+def _rooted_names(tree):
+    """Names bound, at some line, from an expression mentioning a canonical literal or an
+    already-rooted name. Returns {name: first line it became rooted}.
+
+    DATAFLOW TO A FIXPOINT, because direct-reference matching is not enough and the miss was live:
+    compare_unified_throw.py does
+        for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"): sys.path.insert(0, _p)
+    so the insert argument is `_p`, never `_REPO`. Three rounds of this scanner called that file
+    clean, and the RUNTIME guard caught it when the k=0 rehearsal's legs 5a/5b refused with
+    `uq_math resolved to .../MINERvA-OmniFold`. A static check that only follows direct references
+    is not a covering question about reachability.
+
+    ORDER IS RECORDED, because ignoring it is wrong in the other direction. An earlier draft marked
+    names rooted from assignments occurring AFTER an insert, which flagged unified_throw_cov.py --
+    whose root IS derived and whose only canonical literal is a `_DATA_ROOT` declared eight lines
+    below the insert. That turned an undercount of 15 into an overcount of 53. Both directions are
+    defects; only the overcount is loud.
+    """
+    bound = {}
+    for _ in range(6):
+        grew = False
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign):
+                targets, value = node.targets, node.value
+            elif isinstance(node, ast.For):
+                targets, value = [node.target], node.iter
+            else:
+                continue
+            if value is None:
+                continue
+            mentions = any(isinstance(x, ast.Constant) and _canonical_form(x.value)
+                           for x in ast.walk(value)) or \
+                       any(isinstance(x, ast.Name) and x.id in bound
+                           for x in ast.walk(value))
+            if not mentions:
+                continue
+            for tgt in targets:
+                for nm in ast.walk(tgt):
+                    if isinstance(nm, ast.Name) and nm.id not in bound:
+                        bound[nm.id] = nm.lineno
+                        grew = True
+        if not grew:
+            break
+    return bound
+
+
 def rooted_insert_files(read):
     """Tracked .py where a canonical-root literal REACHES sys.path.insert(0, ...)."""
     listed = subprocess.run(["git", "-C", str(REPO), "ls-files", "*.py"],
@@ -95,11 +229,9 @@ def rooted_insert_files(read):
             tree = ast.parse(read(rel))
         except (SyntaxError, ValueError, OSError):
             continue
-        rooted_names, inline, inserted = set(), False, []
+        bound = _rooted_names(tree)
+        hit = False
         for node in ast.walk(tree):
-            if isinstance(node, ast.Assign) and isinstance(node.value, ast.Constant):
-                if _canonical_form(node.value.value):
-                    rooted_names.update(t.id for t in node.targets if isinstance(t, ast.Name))
             if not (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
                     and node.func.attr == "insert"):
                 continue
@@ -111,35 +243,30 @@ def rooted_insert_files(read):
                     and node.args[0].value == 0):
                 continue
             arg = node.args[1] if len(node.args) > 1 else None
+            if arg is None:
+                continue
             if isinstance(arg, ast.Constant) and _canonical_form(arg.value):
-                inline = True
-            elif arg is not None:
-                # UNCONDITIONAL. Enumerate the expression, not the shapes you thought of.
-                inserted.extend(n.id for n in ast.walk(arg) if isinstance(n, ast.Name))
-        if inline or any(n in rooted_names for n in inserted):
+                hit = True
+                break
+            # UNCONDITIONAL over the expression, ORDER-AWARE on the binding: a name taints only an
+            # insert at or after the line where that name became rooted.
+            if any(isinstance(n, ast.Name) and n.id in bound and node.lineno >= bound[n.id]
+                   for n in ast.walk(arg)):
+                hit = True
+                break
+        if hit:
             hazard.append(rel)
     return sorted(hazard)
 
 
 # THE 2D ARM IS LEFT UNREPAIRED ON PURPOSE, AND THIS IS THE CONDITION THAT MAKES THAT SAFE.
-# Joseph ruled 2026-08-23: leave 2d-unfolding/unfold_2d_omnifold_unbinned.py alone rather than spend
-# a Gate-2 re-run on it. The reasoning rests on TWO measured facts, and the second one can expire:
-#
-#   (1) The insert is inside main() at :1679, NOT at module level. The eight nd-unfolding files that
-#       `import unfold_2d_omnifold_unbinned` -- including compare_unified_throw.py on the live k=0
-#       path -- do NOT trigger it. It fires only when that driver is executed AS A SCRIPT.
-#   (2) The exposure is LATENT, not realized: unbinned_unfolding/python/omnifold.py is byte-identical
-#       between the canonical checkout's HEAD (b2d7d4ca) and main, so even when the hazard fires it
-#       loads identical bytes.
-#
-# (1) is structural and holds until someone moves the insert. (2) IS AN OBSERVATION ABOUT TODAY.
-# The moment omnifold.py changes, the exposure becomes REAL: anyone running the 2D driver from a
-# non-canonical tree silently gets a different OmniFold helper, and no existing gate would warn them
-# -- the hook pins unfold_2d's own hash and knows nothing about this relationship.
-#
-# So the latency is asserted here rather than left as a note. If this fires, "leave it alone" has
-# expired and the decision goes back to Joseph AT THE MOMENT IT STARTS MATTERING, which is the only
-# time the answer could differ. A reason that outlives its evidence is an allowlist with prose on it.
+# Joseph ruled 2026-08-23: leave 2d-unfolding/unfold_2d_omnifold_unbinned.py alone rather than
+# spend a Gate-2 re-run on it. The reasoning rests on two facts and only one is structural:
+#   (1) the insert is inside main() at :1679, so importers do not trigger it -- script runs only;
+#   (2) unbinned_unfolding/python/omnifold.py is byte-identical between the canonical checkout's
+#       HEAD and main, so even when it fires it loads identical bytes.
+# (2) IS AN OBSERVATION ABOUT TODAY and expires silently. Asserted here so the decision returns to
+# Joseph at the moment it starts mattering. Do not update the constant to make the test pass.
 OMNIFOLD_HELPER = "unbinned_unfolding/python/omnifold.py"
 OMNIFOLD_SHA256 = "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
 
