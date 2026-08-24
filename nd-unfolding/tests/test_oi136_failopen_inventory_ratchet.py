@@ -84,9 +84,25 @@ PROBE = os.path.join("docs", "orchestration", "state",
 # Gate-2 RE-RUN producing bit-identical weights, not a commit, by that file's own header. See
 # test_oi136_rooted_insert_ratchet.py for the full structure. It remains in the fail-open set below.
 #
-# 52 IS NOT A TARGET. It is the count of sites still to be repaired, one authorized site at a time.
-FAILOPEN_COUNT = 52
-FAILOPEN_SHA256 = "cccdb89a74ee51429685772d794f7e8557c5e010315b074eb41734e9255f1134"
+# 52 -> 51 on 2026-08-23, ONE SITE REPAIRED, named as the rule requires:
+# `nd-unfolding/compare_unified_throw.py` now derives its import root from
+# `Path(__file__).resolve().parents[1]` instead of hardcoding the canonical cluster root. It was
+# repaired because it is THE ONE SITE THE k=0 ROUTE ACTUALLY EXECUTES: the rehearsal's legs 5a and
+# 5b refused at the OI-136 guard with `uq_math resolved to .../MINERvA-OmniFold` against
+# `expected .../k0r2/clean`. Its exposure was REALIZED, not latent -- unlike the 2026-08-20 pilot,
+# this one stopped a live run. Not hash-bound: its sha256 appears zero times in the tree, checked.
+#
+# AND THIS UPDATE IS LATE FOR THE SECOND TIME TODAY, which is the part worth recording. The docstring
+# requires the constants to move IN THE SAME COMMIT as the repair. They did not, at 91446fdd and
+# again at f7dc9f1d. Both times the repairing commit passed 12/12 pre-commit because THIS RATCHET IS
+# NOT WIRED INTO THE HOOK, and both times it was caught by running the suite afterwards rather than
+# by the gate. Twice is a mechanism, not a slip: a check outside the hook depends on somebody
+# remembering, and I did not. Wiring it in is not this commit's authorization, but the pattern is
+# now on the record where the next reader will meet it.
+#
+# 51 IS NOT A TARGET. It is the count of sites still to be repaired, one authorized site at a time.
+FAILOPEN_COUNT = 51
+FAILOPEN_SHA256 = "4d53806b3817e650454e3ddbb88d372d3111f2ba02c1aa1e6f419aca90b1a91f"
 
 # The probe's own positive controls, restated here so this file does not inherit its blind
 # spots. Relative to the repo root, as the probe prints them.
