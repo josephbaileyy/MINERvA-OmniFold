@@ -8,6 +8,30 @@
  },
  "authorization": "Joseph 2026-08-23, code building and diagnostic tests including Slurm; single jobs well inside the standing 12 h grant. PET remains diagnostic/method-development (2e210468). Nothing here reopens OI-126.",
  "HEADLINE": "Six members measured. Under the DECLARED bars four are OPPOSITE and none reaches CONFIRM. Under the declaration's own stated INTENT with the corrected scatter, ZERO members are distinguishable from the nominal. The declared bars were built from a val-loss scatter estimated at 8.0e-04 whose measured value is 1.320e-03, and BOTH bars are consequently displaced in the same direction -- toward 'distinguishable', away from 'flat'. That is the single largest caveat on this read.",
+ "ROWSET_ROBUSTNESS_SUPERSEDED_20260824": {
+  "WHAT_THIS_QUALIFIES": "per_member.*.dL_by_rowset, dL_rowset_max_dev, dL_rowset_dev_pct_of_dL and dL_rowset_VERDICT -- ALL SIX members' cells. Placed HERE, above per_member, and not appended at the end: a correction that a reader meets after the cells it corrects has already let the cells write the conclusion. The cells themselves are LEFT UNCHANGED so it stays visible that the check was run this way, rather than repaired into looking as though it never was.",
+  "THE_DEFECT": "the three row sets are three different POPULATIONS, so the max-deviation the check reports is dominated by composition and not by row-set sampling. A is ~the entire validation set (0.9994 of it, 799744 of 800204 positions). B is a 0.25 subset of the TRAIN region. C is a 0.20 subset of ALL positions, an 80/20 train-validation mixture. Comparing A to B or C measures what those populations differ by.",
+  "MEASURED_2026_08_24": {
+   "instrument": "200 matched draws per pool, replica_29, job 57517628",
+   "receipt": "docs/orchestration/state/RECEIPT-20260824-oi126-c-permutation-ensemble.json",
+   "pool_means_loss_units": {
+    "validation": 0.02659578,
+    "train": 0.02306519,
+    "uniform": 0.02368517
+   },
+   "spread_ACROSS_populations": "about 3.5e-3, against a 2.4e-3 bar",
+   "genuine_rowset_sampling_sd_on_a_subset_draw": {
+    "uniform": 0.002114879,
+    "train": 0.002392769,
+    "bar_as_multiple": "1.00x to 1.13x -- on a re-drawn subset the bar sits AT the noise"
+   },
+   "dL_A_under_a_redraw": "sd 1.986986e-05, but that is NOT a spread: each validation draw is 0.9994 of the only validation pool there is. What it licenses is that dL(A) is near-deterministic, not that the loss is stable on held-out rows."
+  },
+  "WHAT_HAPPENS_TO_replica_29s_CELL": "it reads ROW-SET IMMATERIAL at 0.82x the bar. The C2 job (57507676) then measured a third row set at 1.39x the bar, which by r5_sweep.py:194-199's own predeclaration is the threshold-indeterminate branch -- and the string 'threshold-indeterminate' occurs nowhere in this receipt, nor does the C2 section mention the row-set check. Both labels are now superseded for this member, and by NEITHER of them: the comparison was across populations, so the cell answered a different question than its name.",
+  "WHAT_HAPPENS_TO_THE_OTHER_FIVE": "unmeasured. Their cells stand exactly as recorded. The population defect is structural and applies to all six by construction, but the two cells reading THRESHOLD-INDETERMINATE (replica_45 4.40x, replica_26 3.74x) are NOT thereby explained away -- a cross-population difference that large may still carry a real effect, and nothing here measures it.",
+  "WHAT_replica_29s_ANOMALY_TURNED_OUT_TO_BE": "neither of the C2 discriminator's declared branches. Its composition prediction used one train-region draw as B, and that draw is +1.40 sd of its own pool. Rebuilt with the pool mean, both published C draws sit within 0.4 sd of the prediction and the composition model reproduces the uniform pool mean to 0.58 standard errors. The error was IN an endpoint, which is why a two-point interpolation could not reach it.",
+  "WHAT_THIS_DOES_NOT_CHANGE": "no dL, no verdict_a_declared, no verdict_b_own_noise, no reciprocal-arm result, and nothing about OI-126. Reconsideration still requires estimator-equivalence and coverage and neither is tested."
+ },
  "THREE_FRAMINGS_WITH_THEIR_STANDINGS": {
   "(a) DECLARED": {
    "CONFIRM": 0.0024,
