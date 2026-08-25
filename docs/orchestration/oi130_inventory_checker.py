@@ -214,16 +214,67 @@ def load_inventory(path):
     return rows, keys
 
 
+#: The scientific content OI-130 requires per row, read from the contract so the two cannot drift.
+#: `key` is additionally required as the machine join column back to extraction.
+def required_columns():
+    c = json.loads(CONTRACT.read_text())
+    return ["key"] + list(c["evidence_binding"]["required_fields"])
+
+
+def allowed_classifications():
+    c = json.loads(CONTRACT.read_text())
+    return set(c["evidence_binding"]["classification_values"]) | {"UNKNOWN-PRESERVATION"}
+
+
+def validate_inventory(rows, header):
+    """Schema and semantic violations. A coverage checker that only joins keys would pass an
+    inventory with no `remediation_class` column at all -- which is most of what OI-130 asks for."""
+    v = []
+    missing = [c for c in required_columns() if c not in header]
+    if missing:
+        v.append(f"MISSING-COLUMNS: {missing}")
+    allowed = allowed_classifications()
+    for r in rows:
+        k = r.get("key", "<no-key>")
+        cl = (r.get("classification") or "").strip()
+        if "classification" in header:
+            if not cl:
+                v.append(f"EMPTY-CLASSIFICATION: {k}")
+            elif cl not in allowed:
+                v.append(f"BAD-CLASSIFICATION: {k} = {cl!r} (allowed {sorted(allowed)})")
+        # OI-130's completion criterion: every 'neither' item has a specific remediation class.
+        if cl == "neither" and not (r.get("remediation_class") or "").strip():
+            v.append(f"NEITHER-WITHOUT-REMEDIATION: {k}")
+        # A preservation claim must not be asserted where the field was never probed.
+        pres = (r.get("preserved_off_scratch") or "").strip().upper()
+        if cl == "preserved-off-scratch" and pres not in ("YES", "TRUE", "1"):
+            v.append(f"PRESERVED-CLAIM-UNSUPPORTED: {k} (preserved_off_scratch={pres!r})")
+    return v
+
+
+def tally(rows):
+    """Counts by classification. UNKNOWN-PRESERVATION is its own bucket and is folded into
+    NEITHER of the others, because an unverifiable preservation claim must not be produced here."""
+    out = {}
+    for r in rows:
+        cl = (r.get("classification") or "<empty>").strip() or "<empty>"
+        out[cl] = out.get(cl, 0) + 1
+    return out
+
+
 def check(tree, inventory):
     values, excluded, _ = extract(tree)
     rows, keys = load_inventory(inventory)
+    with open(inventory, encoding="utf-8") as fh:
+        header = fh.readline().rstrip("\n").split("\t")
     extracted = {v["key"] for v in values}
     unmapped = sorted(extracted - keys)
     orphan = sorted(keys - extracted)
     dupes = sorted({k for k in keys if [r.get("key") for r in rows].count(k) > 1})
     return {"extracted": len(extracted), "rows": len(rows), "unmapped": unmapped,
-            "orphan": orphan, "duplicated": dupes,
-            "excluded": len(excluded), "values": values}
+            "orphan": orphan, "duplicated": dupes, "excluded": len(excluded),
+            "violations": validate_inventory(rows, header), "tally": tally(rows),
+            "values": values}
 
 
 # ---------------------------------------------------------------- fixtures / self-test
@@ -331,33 +382,97 @@ def self_test():
     ok(d.get("3.661") is None, f"finer-precision sibling NOT flagged a duplicate (got {d.get('3.661')!r})")
 
     print("-- FAILING DIRECTION: an unmapped quoted value must be detected --")
+    cols = required_columns()
+
+    def write_inv(path, specs):
+        """specs: list of dicts; every required column is emitted so a coverage failure is not
+        confounded with a schema failure."""
+        with open(path, "w") as fh:
+            fh.write("\t".join(cols) + "\n")
+            for s in specs:
+                fh.write("\t".join(str(s.get(c, "n/a")) for c in cols) + "\n")
+
     inv = pathlib.Path(tempfile.mkdtemp(prefix="oi130inv-")) / "inv.tsv"
-    # inventory deliberately covers the macros but OMITS the inline 1.006
-    with open(inv, "w") as fh:
-        fh.write("key\tclassification\n")
-        fh.write("macro:sigTot\ttracked\n")
-        fh.write("macro:chiP\tno-artifact-named\n")
+    # deliberately covers the macros but OMITS the inline 1.006
+    write_inv(inv, [{"key": "macro:sigTot", "classification": "tracked"},
+                    {"key": "macro:chiP", "classification": "no-artifact-named"}])
     r = check(t, inv)
     ok(r["unmapped"] == ["inline:sec_a.tex:1:1.006"],
        f"the omitted quoted value is reported unmapped (got {r['unmapped']})")
+    ok(r["violations"] == [], f"and it is a COVERAGE failure, not a schema one (got {r['violations']})")
     ok(main(["--check", "--tree", str(t), "--inventory", str(inv)]) != 0,
        "checker EXITS NON-ZERO on an unmapped quoted value")
 
     print("-- and it passes once the row exists (negative control on the same fixture) --")
-    with open(inv, "a") as fh:
-        fh.write("inline:sec_a.tex:1:1.006\tneither\n")
+    write_inv(inv, [{"key": "macro:sigTot", "classification": "tracked"},
+                    {"key": "macro:chiP", "classification": "no-artifact-named"},
+                    {"key": "inline:sec_a.tex:1:1.006", "classification": "neither",
+                     "remediation_class": "R3-name-a-producer"}])
     r2 = check(t, inv)
     ok(r2["unmapped"] == [], f"no unmapped rows once covered (got {r2['unmapped']})")
     ok(main(["--check", "--tree", str(t), "--inventory", str(inv)]) == 0,
        "checker EXITS ZERO when coverage is complete")
 
     print("-- orphan and duplicate detection --")
-    with open(inv, "a") as fh:
-        fh.write("macro:doesNotExist\ttracked\n")
-        fh.write("macro:sigTot\ttracked\n")
+    write_inv(inv, [{"key": "macro:sigTot", "classification": "tracked"},
+                    {"key": "macro:chiP", "classification": "no-artifact-named"},
+                    {"key": "inline:sec_a.tex:1:1.006", "classification": "neither",
+                     "remediation_class": "R3-name-a-producer"},
+                    {"key": "macro:doesNotExist", "classification": "tracked"},
+                    {"key": "macro:sigTot", "classification": "tracked"}])
     r3 = check(t, inv)
     ok(r3["orphan"] == ["macro:doesNotExist"], f"orphan row detected (got {r3['orphan']})")
     ok(r3["duplicated"] == ["macro:sigTot"], f"duplicate key detected (got {r3['duplicated']})")
+
+    print("-- SCHEMA, failing direction: OI-130's own required fields --")
+    ok(len(cols) == 23, f"22 contract fields + join key (got {len(cols)})")
+    thin = pathlib.Path(tempfile.mkdtemp(prefix="oi130thin-")) / "thin.tsv"
+    with open(thin, "w") as fh:                      # the OLD 2-column shape
+        fh.write("key\tclassification\nmacro:sigTot\ttracked\n")
+    vt = check(t, thin)["violations"]
+    ok(any(x.startswith("MISSING-COLUMNS") for x in vt),
+       f"an inventory missing OI-130's required fields is REJECTED (got {vt[:1]})")
+    ok("remediation_class" in str(vt), "the rejection names remediation_class as missing")
+
+    print("-- 'neither' without a remediation class must be rejected --")
+    write_inv(inv, [{"key": "macro:sigTot", "classification": "tracked"},
+                    {"key": "macro:chiP", "classification": "no-artifact-named"},
+                    {"key": "inline:sec_a.tex:1:1.006", "classification": "neither",
+                     "remediation_class": ""}])
+    vn = check(t, inv)["violations"]
+    ok(any(x.startswith("NEITHER-WITHOUT-REMEDIATION") for x in vn),
+       f"a 'neither' row with no remediation class is rejected (got {vn})")
+    ok(main(["--check", "--tree", str(t), "--inventory", str(inv)]) != 0,
+       "and that alone EXITS NON-ZERO even though coverage is complete")
+
+    print("-- an unsupported preservation claim must be rejected --")
+    write_inv(inv, [{"key": "macro:sigTot", "classification": "preserved-off-scratch",
+                     "preserved_off_scratch": "UNKNOWN"},
+                    {"key": "macro:chiP", "classification": "no-artifact-named"},
+                    {"key": "inline:sec_a.tex:1:1.006", "classification": "neither",
+                     "remediation_class": "R3"}])
+    vp = check(t, inv)["violations"]
+    ok(any(x.startswith("PRESERVED-CLAIM-UNSUPPORTED") for x in vp),
+       f"classification 'preserved-off-scratch' with an unprobed field is rejected (got {vp})")
+
+    print("-- a bad classification token must be rejected (closed vocabulary) --")
+    write_inv(inv, [{"key": "macro:sigTot", "classification": "probably-fine"},
+                    {"key": "macro:chiP", "classification": "no-artifact-named"},
+                    {"key": "inline:sec_a.tex:1:1.006", "classification": "neither",
+                     "remediation_class": "R3"}])
+    vb = check(t, inv)["violations"]
+    ok(any(x.startswith("BAD-CLASSIFICATION") for x in vb),
+       f"an out-of-vocabulary classification is rejected (got {vb})")
+
+    print("-- and the fully-valid inventory still passes (negative control on schema) --")
+    write_inv(inv, [{"key": "macro:sigTot", "classification": "tracked"},
+                    {"key": "macro:chiP", "classification": "no-artifact-named"},
+                    {"key": "inline:sec_a.tex:1:1.006", "classification": "neither",
+                     "remediation_class": "R3-name-a-producer"}])
+    rf = check(t, inv)
+    ok(rf["violations"] == [] and rf["unmapped"] == [], f"clean inventory passes (got {rf['violations']})")
+    ok(rf["tally"] == {"tracked": 1, "no-artifact-named": 1, "neither": 1},
+       f"tally reports each classification separately (got {rf['tally']})")
 
     print()
     if fails:
@@ -423,7 +538,14 @@ def main(argv):
         print(f"duplicated keys            : {len(r['duplicated'])}")
         for k in r["duplicated"][:40]:
             print(f"    DUPLICATE {k}")
-        bad = len(r["unmapped"]) + len(r["orphan"]) + len(r["duplicated"])
+        print(f"schema/semantic violations : {len(r['violations'])}")
+        for x in r["violations"][:40]:
+            print(f"    VIOLATION {x}")
+        print("classification tally:")
+        for k in sorted(r["tally"]):
+            print(f"    {k:24} {r['tally'][k]:5}")
+        bad = (len(r["unmapped"]) + len(r["orphan"]) + len(r["duplicated"])
+               + len(r["violations"]))
         print("RESULT :: " + ("PASS" if not bad else f"FAIL ({bad})"))
         return 0 if not bad else 1
 
