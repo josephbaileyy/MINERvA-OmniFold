@@ -36,9 +36,9 @@ scientific analysis, covariance adoption, or compute submission.
   status digest later increased the total to four channel markers.
 - ntfy receives a generic body only; full context stays in email and cluster
   receipts.
-- The external heartbeat command is deployed and succeeds as a no-op. It will
-  become an independent dead-man monitor when the user adds a Healthchecks-style
-  URL to the protected secret file.
+- The external Healthchecks heartbeat URL was added atomically on 2026-08-25;
+  the live ping returned zero, the ntfy topic was preserved, and the secret file
+  remained mode `0600`.
 
 ## Scheduler recovery
 
@@ -62,6 +62,6 @@ scientific analysis, covariance adoption, or compute submission.
   `LIVE-STATE`/`CURRENT_WORK`/governing `OI-*` evidence.
 - On the phone, install ntfy and retrieve the topic with the protected command
   in `OPERATOR-GUIDE.md`; do not paste the topic into a public record.
-- To enable independent dead-waker detection, create a free external check and
-  run `notifyctl.py set-heartbeat --url 'https://hc-ping.com/<check-id>'`; the
-  command atomically preserves the ntfy topic and mode-0600 protection.
+- Independent dead-waker detection is enabled. Keep the Healthchecks period and
+  grace comfortably above the five-minute tick interval (for example, 10 minutes
+  plus 20 minutes grace).
