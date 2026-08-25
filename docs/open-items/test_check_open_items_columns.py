@@ -251,7 +251,18 @@ def test_end_to_end_clean_index_exits_zero(tmp_path):
     root = scratch_repo(tmp_path)
     done = run_checker(root, "--check")
     assert done.returncode == 0, done.stdout + done.stderr
-    assert "OK" in done.stdout and "115" in done.stdout
+    # DERIVED, not pinned. scratch_repo copies the LIVE docs/OPEN_ITEMS.md, so this count moves
+    # every time a row is filed: the literal here read "115" and went red the moment OI-138 and
+    # OI-139 landed and made it 117. Counted by the checker's own rule -- a table line is any line
+    # starting with "|", which is why the header and delimiter are included
+    # (check_open_items_columns.py:113) -- so the two definitions cannot drift apart.
+    expected = sum(
+        1
+        for line in (root / "docs" / "OPEN_ITEMS.md").read_text(encoding="utf-8").split("\n")
+        if line.startswith("|")
+    )
+    assert "OK" in done.stdout, done.stdout
+    assert f"{expected} table line(s)" in done.stdout, done.stdout
 
 
 def test_end_to_end_staged_malformation_exits_one(tmp_path):
