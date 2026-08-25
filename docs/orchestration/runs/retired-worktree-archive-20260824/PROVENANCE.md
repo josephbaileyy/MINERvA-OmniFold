@@ -16,8 +16,8 @@ a fabricated sha absent).
 | bucket | files | bytes |
 |---|---|---|
 | already recoverable from git | 8 | 52,508 |
-| single-copy **and load-bearing** → committed here | 6 | 103,410 |
-| single-copy, safe to lose | 16 | 6,520 |
+| single-copy **and load-bearing** → committed here | 8 | 109,109 |
+| single-copy, safe to lose | 14 | 821 |
 
 The three sums reconcile to the archive's measured total of 162,438 bytes, which is the check
 that nothing was double-counted or dropped.
@@ -49,6 +49,36 @@ Follows `docs/orchestration/runs/clausec-rerun-20260821/` — measured to be the
 the twelve worktrees removed on 2026-08-24 whose artifacts had been preserved this way (35
 tracked files). **n=1: a precedent, not established practice.** `gate5-data-only-frozen-377c713`
 was the second instance; these are the third through seventh.
+
+## THE ADMISSION TEST — apply this, not a judgement
+
+A file from a removed worktree is committed here **if and only if its blob hash is absent from
+the set of objects reachable from pushed `main`.**
+
+    git hash-object <file>          # then test membership in:
+    git rev-list --objects --remotes | awk '{print $1}' | sort -u
+
+Validate that set in **both** directions before trusting it — a known-pushed blob must be
+present and a fabricated sha must be absent — because an unvalidated membership test answers
+"not in git" for everything. Two lanes ran it independently and agreed on every verdict while
+measuring different populations (19,964 objects over all remote-tracking refs; 19,563 over
+`refs/remotes/github/main` alone), which is the useful kind of agreement: same conclusions from
+different denominators.
+
+**This test exists to stop `runs/` becoming a dumping ground.** The risk of preserving anything
+at all is that undecided files accumulate and a later reader cannot distinguish
+*preserved-because-irreplaceable* from *preserved-because-nobody-chose*. Withholding files does
+not prevent that — it leaves the same ambiguity on a filesystem where nothing enforces anything.
+Stating the test does: the next candidate is admitted or refused by a measurement rather than by
+whoever happens to be holding it. Credit for that framing to the branch-cleanup lane.
+
+**Size is explicitly not a criterion.** A standard that preserved a 54 KB working-tree diff
+because its bytes were in no commit, and discarded a 2 KB repair script on the identical finding,
+would be a standard about size. Both were admitted.
+
+**Passing the test is not the same as being citable.** `stamp-reconcile-56695424/`'s superseded
+draft passes it and is marked **NOT CITABLE** in that directory's `PROVENANCE.md`, with the
+authoritative file named. Admission preserves bytes; it confers no standing.
 
 ## CORRECTION 2026-08-25 — one file moved from (a) to (b), and it was nearly deleted
 
@@ -83,8 +113,13 @@ hashes × one character = 14 bytes). Regenerating it today yields 8-hex where th
 
 ## What is NOT here, deliberately
 
-Two archived files are **superseded rather than redundant**, and are therefore neither committed
-here nor safe to delete on a byte-identity argument:
+**AMENDED 2026-08-25 — both of the files described below were subsequently COMMITTED**, under
+Joseph's authorization and with the branch-cleanup lane's agreement, once the admission test above
+was applied to them consistently: both blobs are absent from pushed `main`, exactly as the
+rereview diff's was. They are at `runs/gate5-review.atToYF/repair.py` and
+`runs/stamp-reconcile-56695424/ben106-stamp-verify-complete-56695424.SUPERSEDED-DRAFT-NOT-CITABLE.json`.
+The paragraph below is kept as the reasoning that was current when this file was first written,
+and it is why the counts above changed from 8/6/16 to 8/8/14. The two files were:
 
 - `gate5-review.atToYF/untracked/repair.py` (2030) — a spent one-shot patch script. Its *effect*
   is in the tracked target (`coherent_bootstrap_factors` is present in

@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "receipt_type": "terminal-reconciliation",
+  "recorded_at_utc": "2026-08-12T00:39:00Z",
+  "event": {
+    "event_id": "evt-stamp-verify-56695424",
+    "event_sha256": "d63d16974ebd1e8dfe570a04c88d601e16d473492af56dc5b2a28f12985be09b",
+    "watch_id": "stamp-verify-56695424",
+    "event_type": "slurm-job-complete",
+    "observed_at_utc": "2026-08-12T00:35:08+00:00",
+    "read_exactly_once": true,
+    "validated": true
+  },
+  "slurm": {
+    "job_id": "56695424",
+    "job_name": "stamp_verify",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:02:54",
+    "start": "2026-08-11T17:29:00",
+    "end": "2026-08-11T17:31:54",
+    "allocated_tres": "billing=98,cpu=98,energy=67551,mem=180G,node=1"
+  },
+  "code_binding": {
+    "implementation": "nd-unfolding/adopt_unified_5d.py",
+    "implementation_commit": "5856eeb1c6b77983f8d067eed6127eac0eac9557",
+    "implementation_sha256": "e1260e8dec2d39cb4653a8b4b02a198d04ea103d548a2d90b5f003f0b8044c35",
+    "launcher": "nd-unfolding/sbatch_stamp_verify.sh",
+    "launcher_commit": "034871cb986fcb0d91fa648268ecdcdf54a35e39",
+    "launcher_sha256": "589bc4a16fc2780fd9c90936ebd6ceb4c9a1f467d50fc64650555240bdc27221"
+  },
+  "logs": {
+    "stdout": {
+      "path": "nd-unfolding/uq_5d/stamp_verify_56695424.out",
+      "size_bytes": 829,
+      "sha256": "487d75ba68707aeda37d3a68f23f56e41322ea72172c58ba5427dbe52ca91b1f",
+      "provenance_stamped_and_read_back_count": 1
+    },
+    "stderr": {
+      "path": "nd-unfolding/uq_5d/stamp_verify_56695424.err",
+      "size_bytes": 1164,
+      "sha256": "c0b89ac88c4dea667785089e08266eecf07a0040aa7f8e80ebfb85caba2c12c7",
+      "classification": "Nine ROOT duplicate-class ReadRootmapFile warnings; nonempty stderr is not an acceptance gate and Slurm/artifact validation passed."
+    }
+  },
+  "artifact": {
+    "path": "nd-unfolding/uq_5d/readopt_20260811_footing/STAMPTEST2_bkgaware_meancentered.root",
+    "size_bytes": 892170857,
+    "mtime_ns": 1786494714000000000,
+    "root_opened_non_zombie": true,
+    "keys": [
+      "hCov_combined5d_total_uthrow",
+      "hInflation_g",
+      "sqrt_tr_old",
+      "sqrt_tr_new",
+      "fixed_seed_null_norm_checked",
+      "upstream_fixed_seed_null_norm",
+      "joint_mean_shift_norm_checked",
+      "upstream_joint_mean_shift_norm",
+      "n_throws_checked",
+      "upstream_n_throws",
+      "centering_convention",
+      "uthrow_source",
+      "combined_source"
+    ],
+    "covariance_dimension": [10694, 10694],
+    "inflation_bins": 10694,
+    "sqrt_tr_old": 4.357790406860002e-38,
+    "sqrt_tr_new": 5.269625166386846e-38,
+    "stamps": {
+      "fixed_seed_null_norm_checked": 1,
+      "upstream_fixed_seed_null_norm": 5.8223488501140625e-50,
+      "joint_mean_shift_norm_checked": 1,
+      "upstream_joint_mean_shift_norm": 1.878696733368378e-38,
+      "n_throws_checked": 1,
+      "upstream_n_throws": 160,
+      "centering_convention": "mean-centered",
+      "uthrow_source": "unified_throw_cov_5d_fluxfix_20260806_full160.root",
+      "combined_source": "uq_universe_5d_covariance_combined_bkgaware.root"
+    },
+    "all_required_stamps_read_back": true
+  },
+  "verdict": "BEN106_STAMP_PROPAGATION_PASS",
+  "ben106_closed": true,
+  "provenance_legs_closed_for_causes": [2, 3, 4],
+  "scope": "The committed adopt path now carries the throw construction contract into a downstream covariance and fails closed if required stamps do not land. STAMPTEST2 is validation-only and is not a promoted publication artifact.",
+  "adopts_nothing": true,
+  "values_tex_unchanged": true,
+  "provider_dispatch": false,
+  "reset_credit_consumed": false,
+  "persistent_worker_uuids_preserved": true
+}
