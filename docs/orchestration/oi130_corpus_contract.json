@@ -1,0 +1,198 @@
+{
+  "contract_id": "OI-130-corpus-v1",
+  "filed": "2026-08-24",
+  "lane": "D (audit / inventory / verification, READ-ONLY)",
+  "purpose": "Machine-readable, testable definition of the OI-130 quoted-value corpus: what counts as a quoted value in docs/analysis-note/, what is excluded and under which named class, and how a value is bound to evidence. Consumed by oi130_inventory_checker.py; every class below has at least one positive and one negative fixture in that script's --self-test.",
+
+  "why_this_exists": [
+    "OI-130 asks for 'every value quoted in docs/analysis-note/' mapped to tracked / preserved-off-scratch / neither, with counts. The predecessor instrument (oi130_quoted_value_inventory.py) traced ONLY the values.tex macros and says so; AUDIT-20260819 §'What these tranches did NOT cover' item 1 states the same limit: 'Only values.tex's 70 macros were traced ... the inline numbers are the larger population and none of them was swept.'",
+    "values.tex's own header asserts that single-site numbers 'cannot drift, so they stay inline at their single site'. That premise is FALSIFIED by measurement (see detection class inline_duplicates_macro), so the inline population cannot be excluded on the drift argument it was excluded on."
+  ],
+
+  "corpus_scope": {
+    "roots": {
+      "note": "docs/analysis-note/main_note.tex",
+      "primer": "docs/analysis-note/main_primer.tex",
+      "paper": "docs/analysis-note/main_paper.tex"
+    },
+    "closure_rule": "Transitive \\input{} / \\include{} expansion from each root. A file reached by no root is OUT of corpus and reported separately as unreached_source, never silently dropped.",
+    "closure_is_per_deliverable": true,
+    "render_closure_note": "Source closure is computed from .tex. Render closure (what appears in the built PDF) is a SEPARATE question and is NOT asserted by this contract; a value present in source but inside a false \\if branch would be over-counted here. Predecessor precedent: AUDIT-20260819 item 8 distinguishes check_dead_containment.py --source-only from its strict PDF mode for exactly this reason.",
+    "excluded_from_closure_by_construction": [
+      "preamble.tex macro *definitions* that are formatting, not values",
+      "figure binaries (.pdf) -- their embedded numerals are unreachable to a .tex scan; recorded as a stated limit, not as zero"
+    ]
+  },
+
+  "value_classes": [
+    {
+      "id": "macro_def",
+      "in_corpus": true,
+      "definition": "A \\newcommand / \\renewcommand in values.tex whose body is or contains a numeral. The canonical single-source value.",
+      "identity": "one inventory row per macro NAME, not per use site"
+    },
+    {
+      "id": "inline_numeral",
+      "in_corpus": true,
+      "definition": "A numeral appearing in prose, a table cell, or a caption inside a build closure file, not produced by expanding a values.tex macro and not matching an exclusion class.",
+      "identity": "one inventory row per (file, line, numeral) occurrence"
+    },
+    {
+      "id": "si_literal",
+      "in_corpus": true,
+      "definition": "A literal numeric first argument to \\SI{}{} or \\num{}. Carries an explicit unit, so it is a quoted physical quantity.",
+      "identity": "one row per occurrence"
+    }
+  ],
+
+  "consumption_not_evidence": {
+    "rule": "A macro USE site is consumption, not an independent quoted value. Use sites are recorded as the 'deliverables consume it' column of the macro's single row and are NEVER counted as separate inventory rows.",
+    "why": "OI-130 and AGENTS.md both require that agreeing statements be traced to the first measurement and shared origins counted once. Counting use sites would multiply one measurement into many and inflate every coverage denominator.",
+    "predecessor_failure_this_prevents": "oi130_quoted_value_inventory.py's own comment records a first version that produced 178 artifact rows for 69 macros by attributing a shared comment block to every macro in its run.",
+    "literal_render_sites_share_one_origin": {
+      "rule": "Multiple literal render sites of the same measured quantity -- at any precision -- are ONE evidence row with many render sites, never N independent rows. The row is keyed by the quantity's FIRST MEASUREMENT, and the render sites are an attribute of it.",
+      "why": "OI-130's brief: 'Do not count repeated prose as independent evidence. Trace agreement to the first measurement and count shared origins once.' AGENTS.md states the same rule as 'Worker agreement is not independence.'",
+      "worked_example_chi2_paper": {
+        "first_measurement": "app_statmethods.tex:752 table row -- chi2 750.49 over 205 bins, paper covariance only",
+        "render_sites": 11,
+        "breakdown": "5 sites at 3 s.f. (3.66) + 5 sites at 4 s.f. (3.661) + 1 \\subsection title (3.66) + the macro \\chiPaper itself",
+        "inventory_rows": 1,
+        "consequence": "A naive per-occurrence enumeration would report 11 quoted values needing 11 evidence bindings, when there is one measurement and one evidence question. This is the specific over-count the rule exists to prevent, and it inflates every coverage denominator it touches."
+      }
+    }
+  },
+
+  "status_classes": [
+    {"id": "live", "definition": "quoted without a strike marker; a current publication claim"},
+    {"id": "struck", "definition": "wrapped in \\dead{}; retracted or superseded, retained visibly. IN CORPUS -- a struck value is still a quoted value and its evidence question still exists."},
+    {"id": "inert", "definition": "defined in values.tex but used by no build closure. IN CORPUS as a definition row, with consuming-deliverable set empty."}
+  ],
+
+  "exclusion_classes": [
+    {
+      "id": "latex_length",
+      "reason": "typographic dimension, not a measurement",
+      "matcher": "numeral immediately followed by a TeX unit (em|ex|pt|cm|mm|in|bp|dd|pc|sp) or by \\textwidth/\\linewidth/\\columnwidth/\\textheight",
+      "positive_fixture": "\\includegraphics[width=0.82\\textwidth]{f}",
+      "negative_fixture": "the ratio is $0.82$ of the published value"
+    },
+    {
+      "id": "graphics_option",
+      "reason": "crop/scale geometry, not a measurement",
+      "matcher": "numeral inside the optional argument of \\includegraphics, or inside a pdfcrop --bbox/--margins argument",
+      "positive_fixture": "pdfcrop --bbox '430 0 1152 332' in.pdf",
+      "negative_fixture": "we measure $332$ selected events"
+    },
+    {
+      "id": "float_spec",
+      "reason": "minipage / column width specification",
+      "matcher": "numeral inside \\begin{minipage}[..]{..} or a tabular column spec",
+      "positive_fixture": "\\begin{minipage}[c]{0.31\\textwidth}",
+      "negative_fixture": "the fraction is $0.31$"
+    },
+    {
+      "id": "citation_or_ref",
+      "reason": "bibliographic key or internal cross-reference, not a value",
+      "matcher": "numeral inside \\cite{}, \\ref{}, \\label{}, \\eqref{}, \\autoref{}",
+      "positive_fixture": "as shown in~\\cite{MINERvA:2021owq}",
+      "negative_fixture": "the 2021 sample contains $2021$ events"
+    },
+    {
+      "id": "arxiv_or_doi",
+      "reason": "external identifier",
+      "matcher": "arXiv:NNNN.NNNNN or a doi: string",
+      "positive_fixture": "reproduction of arXiv:2106.16210",
+      "negative_fixture": "the value is $2106.16$"
+    },
+    {
+      "id": "date",
+      "reason": "chronology, not a measurement",
+      "matcher": "ISO date YYYY-MM-DD or YYYY-MM, or a bare 4-digit year in a temporal phrase (in|ending|since|during YYYY)",
+      "positive_fixture": "operation, ending in 2019, MINERvA recorded",
+      "negative_fixture": "the flux band is $2019$ universes wide"
+    },
+    {
+      "id": "software_version",
+      "reason": "environment fact, not a measurement",
+      "matcher": "a dotted version adjacent to a known tool token (python|ROOT|TensorFlow|TF|Keras|numpy|scipy|sklearn|LightGBM|biber|git)",
+      "positive_fixture": "python3 is 3.6.15 on that node",
+      "negative_fixture": "the ratio is 3.6 and the pull is 15"
+    },
+    {
+      "id": "sectioning_or_footnote",
+      "reason": "document structure",
+      "matcher": "numeral that is a section/appendix designator (\\S N, App. N) or a footnote mark",
+      "positive_fixture": "described in \\S\\ref{sec:pet}",
+      "negative_fixture": "the section contains $5$ bins"
+    },
+    {
+      "id": "math_structure",
+      "reason": "an exponent, index, or dimension count that is syntax rather than a measured quantity",
+      "matcher": "numeral that is a bare sub/superscript index (x_{1}, ^{2} in d^{2}\\sigma) or a differential order",
+      "positive_fixture": "$d^{2}\\sigma/(d\\pT\\,d\\pPar)$",
+      "negative_fixture": "the exponent of the cross section is $-38$",
+      "caution": "The MANTISSA and EXPONENT of a cross section (3.073e-38) are part of the value and are NOT excluded by this class. This class covers only structural indices."
+    }
+  ],
+
+  "evidence_binding": {
+    "required_fields": [
+      "inventory_id", "source_file", "source_line_or_macro", "consuming_deliverables",
+      "value", "units", "status", "result_component", "controlled_state",
+      "first_measurement_route", "artifact_path", "artifact_digest", "digest_source",
+      "producer_binding", "git_tracked", "preserved_off_scratch", "preservation_location",
+      "restoration_evidence", "attribution_state", "classification", "gap", "remediation_class"
+    ],
+    "classification_values": ["tracked", "preserved-off-scratch", "neither", "no-artifact-named"],
+    "classification_rule": "no-artifact-named is reported as its OWN state and is never folded into 'neither'. 'neither' asserts an artifact is named AND is both untracked and unpreserved. An unverified preservation question is UNKNOWN-PRESERVATION and is never counted as either.",
+    "preservation_is_not_locally_decidable": "tracked is decidable from git ls-files. preserved-off-scratch is a fact about CFS/HPSS and requires an external probe; without one the field is UNKNOWN and MUST NOT be reported as a count in either direction."
+  },
+
+  "detection_classes": [
+    {
+      "id": "inline_duplicates_macro",
+      "definition": "An inline numeral whose literal value equals the body of a values.tex macro AT THE SAME PRECISION. A drift hazard: the two desync silently when the macro moves. Safe to normalize to the macro.",
+      "why_it_matters": "values.tex's header justifies leaving single-site numbers inline on the grounds that they 'cannot drift'. This class is the measured counterexample and therefore bounds how far that justification reaches.",
+      "measured_at_6d55570e": [
+        "\\pullRMS = 0.598 -- 3 sites: app_statmethods.tex:796, :1021, :1117",
+        "\\pullMean = 0.089 -- 1 site: app_statmethods.tex:796",
+        "\\chiPaper = 3.66 -- 5 sites: app_statmethods.tex:632, :907, :1069, :1117, :1128; plus sec_results.tex:145, which is a \\subsection TITLE"
+      ],
+      "pending_instance_not_at_6d55570e": "paper_body.tex:76 -- literal 0.089 beside a macro'd \\pullRMS on the same line; introduced in the uncommitted integration pass and accepted for fix by the document owner"
+    },
+    {
+      "id": "finer_precision_sibling",
+      "definition": "An inline numeral that is the SAME measured quantity as a values.tex macro but rendered at MORE significant figures than the macro carries. Substituting the macro here would LOSE a digit, so this class is NOT safe to normalize and must be reported separately from inline_duplicates_macro.",
+      "measured_at_6d55570e": [
+        "3.661 -- 5 sites: app_statmethods.tex:721, :726, :752, :859, :1030 -- against \\chiPaper defined at values.tex:89 as 3.66 (3 s.f.)"
+      ],
+      "why_the_macro_is_the_lossy_side": "The producing table row is app_statmethods.tex:752 ('1.5 & 205 & 750.49 & 3.661 & 1.0064'). Re-derived: 750.49/205 = 3.66093, which is 3.661 at 4 s.f. and 3.66 at 3 s.f. So the 4-s.f. inline sites render the producing quantity and \\chiPaper is the ROUNDED derivative -- the naive remedy 'replace the literal with the macro' is actively wrong at these five sites.",
+      "arithmetic_dependency_RETRACTED": {
+        "claim_withdrawn": "An earlier version of this contract asserted that app_statmethods.tex:726 ('The $3.661 \\to \\chiCombined$ drop ($-60\\%$)') makes a precision change move a published percentage. THAT IS FALSE and is retracted.",
+        "measurement": "(3.661-1.481)/3.661 = 59.5466% and (3.66-1.481)/3.66 = 59.5355%. Both round to the stated -60%; the difference is 0.011 percentage points. The arithmetic dependency is real but INSENSITIVE, so :726 is not evidence for 'do not normalize'.",
+        "why_it_is_recorded_rather_than_deleted": "Both this lane and the note-audit lane wanted the do-not-normalize conclusion, which makes a supporting number pointing that way exactly the one neither would check. It was caught by the peer lane recomputing it, not by its author. The conclusion is unaffected -- the producing-row argument below carries it alone -- but a retracted support that is silently deleted leaves the next reader unable to see that the case was once overstated.",
+        "credit": "caught by the note-audit lane"
+      },
+      "prior_partial_awareness_in_tree": "sec_results.tex:169-170 already carries a comment -- 'the estimator-band value \"exact-GBT 3.66\" below is the same number as the paper-covariance chi2 (\\chiPaper); they coincide by construction'. That documents one sub-part of the class and not the precision split."
+    },
+    {
+      "id": "macro_without_provenance_comment",
+      "definition": "A values.tex macro with no trailing or block comment naming a producer, receipt, or artifact.",
+      "relation_to_predecessor": "This is the OI-130 hard core. It is a WEAKER condition than AUDIT-20260819 finding 3 (no VALIDATION_LEDGER row) and the two must be reported as separate columns, not merged -- one is about the repo's verification ledger, the other about a binding to a producing artifact."
+    }
+  ],
+
+  "reconciliation_with_prior_audit": {
+    "prior": "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/AUDIT-20260819-analysis-note-vs-record.md",
+    "prior_scope": "values.tex macros only, 70 at the time",
+    "current_macro_count_at_6d55570e": 71,
+    "relationship": "SUPERSET, not replacement. The prior audit's finding 3 (16 of 70 macros with no VALIDATION_LEDGER row) is a distinct dimension from OI-130's tracked/preserved question and survives as its own column. The prior audit's stated gap #1 (inline numbers unswept) is precisely what this contract's inline_numeral class exists to close."
+  },
+
+  "stated_limits": [
+    "Source closure, not render closure. A value inside a conditional branch is over-counted.",
+    "Numerals baked into figure PDFs are unreachable to a .tex scan. AUDIT-20260819 tranche 3 measured all 52 figures as vector with extractable text, so a PDF-text pass is possible and is NOT done here.",
+    "Mapping a value to an artifact PATH does not verify the artifact CONTAINS the value. Path-level binding only.",
+    "preserved-off-scratch requires an external CFS/HPSS probe and is UNKNOWN without one."
+  ]
+}
