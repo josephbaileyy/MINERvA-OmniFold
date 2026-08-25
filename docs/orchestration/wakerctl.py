@@ -14,6 +14,7 @@ process liveness, tmux visibility, or flock alone. See WAKER.md for the design.
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import contextlib
 import datetime as dt
 import hashlib
@@ -1568,55 +1569,142 @@ def idle_guard(ctx: Ctx) -> str | None:
 
 
 def compose_status_report(ctx: Ctx) -> tuple[str, str]:
-    """Build the periodic digest purely from filesystem/scheduler state."""
+    """Build a concise, action-oriented digest from live machine state."""
     report = status(ctx)
-    if report["blocked_on_user"]:
-        headline = "BLOCKED ON USER — your decision is required"
-    elif report["campaign_idle"]:
-        headline = "idle (guard will act or has acted)"
-    else:
-        armed = sum(1 for w in report["watches"] if w.get("state") == "armed")
-        headline = f"{armed} watch(es) armed"
-    lines = [f"MINERvA orchestration status ({report['observed_at_utc']}): {headline}", ""]
-    for watch in report["watches"]:
-        lines.append(f"watch {watch['watch_id']}: {watch['kind']} {watch.get('state')}")
-    for event in report["events"]:
-        lines.append(f"event {event['event_id']}: {event['state']}")
-    last_tick = report.get("last_tick") or {}
-    lines.append(f"last tick: {last_tick.get('at_utc', 'never')} on {last_tick.get('node', '?')}")
+    armed = [watch for watch in report["watches"] if watch.get("state") == "armed"]
+    live_events = [
+        event for event in report["events"]
+        if event.get("state") in {"new", "claimed", "invoked", "blocked"}
+    ]
+
+    counts = {
+        "staged": 0,
+        "approved": 0,
+        "failed": 0,
+        "stale": 0,
+        "outcome-unknown": 0,
+        "succeeded": 0,
+        "revoked": 0,
+    }
+    queue_evidence = "not-configured"
     queue_status_command = ctx.config.get("campaign_queue_status_command")
     if queue_status_command:
+        queue_evidence = "unavailable"
         queued = ctx.runner(list(queue_status_command), env=ctx.base_env(), cwd=ctx.repo)
         if queued.returncode == 0:
-            with contextlib.suppress(json.JSONDecodeError):
-                counts = json.loads(queued.stdout).get("counts", {})
-                if any(counts.values()):
-                    queue_text = ", ".join(
-                        f"{key}={value}" for key, value in sorted(counts.items()) if value
-                    )
-                    lines.append(f"campaign queue: {queue_text}")
-                else:
-                    lines.append("campaign queue: empty")
-    queue = ctx.runner(["squeue", "-u", os.environ.get("USER", "josephrb"), "-h", "-o", "%i %T %j"])
-    if queue.returncode == 0:
-        jobs = [row for row in queue.stdout.splitlines() if row.strip()]
-        lines.append(f"slurm jobs: {len(jobs)}")
-        lines.extend(f"  {row}" for row in jobs[:10])
-    head = ctx.runner(["git", "-C", str(ctx.repo), "log", "-3", "--format=%h %s"])
-    if head.returncode == 0 and head.stdout.strip():
-        lines.append("recent commits:")
-        lines.extend(f"  {row}" for row in head.stdout.splitlines()[:3])
-    runs_path = ctx.repo / "docs" / "orchestration" / "RUNS.tsv"
-    with contextlib.suppress(OSError):
-        rows = runs_path.read_text().splitlines()
-        lines.append("recent rounds:")
-        for row in rows[-3:]:
-            fields = row.split("\t")
-            if len(fields) > 3:
-                lines.append(f"  {fields[0]} {fields[3]}")
+            with contextlib.suppress(json.JSONDecodeError, AttributeError, TypeError):
+                measured = json.loads(queued.stdout).get("counts", {})
+                for key in counts:
+                    counts[key] = int(measured.get(key, 0) or 0)
+                queue_evidence = "measured"
+
+    scheduler = ctx.runner(
+        ["squeue", "-u", os.environ.get("USER", "josephrb"), "-h", "-r", "-o", "%i|%T|%j"]
+    )
+    compute_rows: list[tuple[str, str, str]] = []
+    ticker_rows = 0
+    scheduler_evidence = "unavailable"
+    if scheduler.returncode == 0:
+        scheduler_evidence = "measured"
+        for raw in scheduler.stdout.splitlines():
+            fields = raw.split("|", 2)
+            if len(fields) != 3:
+                continue
+            job_id, state, name = (field.strip() for field in fields)
+            if name == ctx.python_bin():
+                ticker_rows += 1
+            else:
+                compute_rows.append((job_id, state, name))
+    compute_states = Counter(row[1] for row in compute_rows)
+    compute_names = Counter(row[2] for row in compute_rows)
+
+    last_tick = report.get("last_tick") or {}
+    tick_at = last_tick.get("at_utc")
+    tick_age = None
+    if isinstance(tick_at, str):
+        with contextlib.suppress(ValueError):
+            tick_age = max(0, int(ctx.now() - parse_utc(tick_at)))
+    if tick_age is None:
+        ticker_text = "no completed tick receipt"
+    else:
+        ticker_text = (
+            f"{tick_age // 60}m {tick_age % 60}s ago at {tick_at} "
+            f"on {last_tick.get('node', '?')}; watch_errors={last_tick.get('watch_errors', '?')}"
+        )
+
+    queue_attention = counts["outcome-unknown"]
+    queue_terminal_failures = counts["failed"] + counts["stale"]
+    blocked_events = sum(1 for event in live_events if event.get("state") == "blocked")
+    action_parts = []
+    if report["blocked_on_user"]:
+        action_parts.append("a user decision is required")
+    if counts["staged"]:
+        action_parts.append(f"review {counts['staged']} staged queue item(s)")
+    if queue_attention:
+        action_parts.append(f"inspect {queue_attention} uncertain queue outcome(s)")
+    if queue_evidence == "unavailable":
+        action_parts.append("inspect queue status availability")
+    if scheduler_evidence == "unavailable":
+        action_parts.append("inspect scheduler availability")
+    if blocked_events:
+        action_parts.append(f"inspect {blocked_events} blocked waker event(s)")
+    ticker_stale = tick_age is None or tick_age > 15 * 60
+    if ticker_stale:
+        action_parts.append("inspect ticker freshness")
+
+    working = bool(compute_rows or armed or live_events or counts["approved"])
+    if action_parts:
+        headline = "ACTION REQUIRED — " + "; ".join(action_parts)
+    elif working:
+        headline = "WORKING — no action required"
+    else:
+        headline = "HEALTHY — quiet, no action required"
+
+    lines = [f"MINERvA operator summary ({report['observed_at_utc']}): {headline}", ""]
+    lines.append("Action required: " + ("; ".join(action_parts) if action_parts else "none"))
+    if queue_evidence == "measured":
+        lines.append(
+            "Queue: "
+            f"staged={counts['staged']}, approved={counts['approved']}, "
+            f"attention={queue_attention}, terminal_failures={queue_terminal_failures}, "
+            f"completed={counts['succeeded']}"
+        )
+    else:
+        lines.append("Queue: NO EVIDENCE (status command unavailable)")
+    if scheduler_evidence == "measured":
+        state_text = ", ".join(f"{key}={value}" for key, value in sorted(compute_states.items()))
+        lines.append(f"Compute: {state_text or 'none'}")
+        if compute_names:
+            name_text = ", ".join(f"{key}={value}" for key, value in compute_names.most_common(5))
+            lines.append(f"Compute names: {name_text}")
+        lines.append(f"Ticker scheduler row: {'present' if ticker_rows else 'not visible'}")
+    else:
+        lines.append("Compute: NO EVIDENCE (squeue unavailable)")
+    lines.append(f"Armed watches: {len(armed)}")
+    for watch in armed[:5]:
+        lines.append(f"  {watch['watch_id']} ({watch['kind']})")
+    lines.append(f"Live waker events: {len(live_events)}")
+    for event in live_events[:5]:
+        lines.append(f"  {event['event_id']} ({event['state']})")
+    lines.append(f"Last ticker: {ticker_text}")
+    idle_threshold = int(ctx.config.get("idle_guard_ticks", 3))
+    if report["campaign_idle"]:
+        if idle_threshold <= 0:
+            lines.append("Orchestrator: quiet; automatic idle resume is disabled")
+        else:
+            lines.append(f"Orchestrator: quiet; idle guard threshold={idle_threshold} ticks")
+    else:
+        lines.append("Orchestrator: active")
+    closed_watches = len(report["watches"]) - len(armed)
+    closed_events = len(report["events"]) - len(live_events)
+    lines.append(f"Historical records omitted: {closed_watches} closed watches, {closed_events} terminal events")
     lines.append("")
-    lines.append("Reading and acting: docs/orchestration/OPERATOR-GUIDE.md")
-    return f"[MINERvA waker] status: {headline}", "\n".join(lines)
+    lines.append("Termius commands:")
+    lines.append("  cd /pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration")
+    lines.append("  /usr/bin/python3.11 campaignctl.py list")
+    lines.append("  /usr/bin/python3.11 wakerctl.py status")
+    lines.append("Guide: docs/orchestration/OPERATOR-GUIDE.md")
+    return f"[MINERvA waker] {headline}", "\n".join(lines)
 
 
 def status_report_guard(ctx: Ctx) -> str | None:

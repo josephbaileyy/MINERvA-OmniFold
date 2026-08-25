@@ -783,8 +783,9 @@ class StatusReportTests(WakerTestCase):
         wakerctl.tick(ctx)
         calls = self.mail_calls()
         self.assertEqual(len(calls), 2)
-        self.assertIn("status", calls[0]["argv"][2])
-        self.assertIn("watch steady: file-sentinel armed", calls[0]["input"])
+        self.assertIn("WORKING", calls[0]["argv"][2])
+        self.assertIn("Armed watches: 1", calls[0]["input"])
+        self.assertIn("steady (file-sentinel)", calls[0]["input"])
         self.assertIn("OPERATOR-GUIDE.md", calls[0]["input"])
 
     def test_digest_headline_reflects_blocked_state(self):
@@ -793,9 +794,57 @@ class StatusReportTests(WakerTestCase):
         blocked.parent.mkdir(parents=True, exist_ok=True)
         blocked.write_text("{}")
         wakerctl.tick(ctx)
-        digests = [c for c in self.mail_calls() if "status" in c["argv"][2]]
+        digests = [c for c in self.mail_calls() if "ACTION REQUIRED" in c["argv"][2]]
         self.assertEqual(len(digests), 1)
-        self.assertIn("BLOCKED ON USER", digests[0]["argv"][2])
+        self.assertIn("a user decision is required", digests[0]["argv"][2])
+
+    def test_digest_omits_closed_history_and_names_disabled_idle_guard(self):
+        ctx = self.ctx()
+        self.arm_sentinel(ctx, "historical")
+        watch_path = ctx.watches_dir / "historical.json"
+        watch = wakerctl.read_json(watch_path)
+        watch["state"] = "fired"
+        wakerctl.agentctl.atomic_write_json(watch_path, watch)
+        paths = wakerctl.event_paths(ctx, "evt-historical")
+        wakerctl.agentctl.atomic_write_json(paths["event"], {"event_id": "evt-historical"})
+        wakerctl.agentctl.atomic_write_json(paths["done"], {"outcome": "resumed"})
+        wakerctl.agentctl.atomic_write_json(
+            ctx.state_dir / "last-tick.json",
+            {"at_utc": ctx.now_iso(), "node": "test", "watch_errors": 0},
+        )
+        subject, body = wakerctl.compose_status_report(ctx)
+        self.assertIn("HEALTHY", subject)
+        self.assertNotIn("historical (", body)
+        self.assertIn("Historical records omitted: 1 closed watches, 1 terminal events", body)
+        self.assertIn("automatic idle resume is disabled", body)
+        self.assertNotIn("guard will act", body)
+
+    def test_digest_prioritizes_staged_queue_and_summarizes_compute(self):
+        self.write_config(
+            campaign_queue_status_command=["/bin/campaignctl", "status", "--json"],
+        )
+        queue_status = (
+            '{"counts":{"staged":2,"approved":1,"failed":0,"stale":0,'
+            '"outcome-unknown":0,"succeeded":7,"revoked":0},"items":[]}'
+        )
+        self.runner.add(lambda a: a[0] == "/bin/campaignctl", 0, queue_status)
+        self.runner.add(
+            lambda a: a[0] == "squeue",
+            0,
+            "/usr/bin/python3.11|RUNNING|/usr/bin/python3.11\n"
+            "101|RUNNING|analysis\n102|PENDING|analysis\n103|PENDING|combine\n",
+        )
+        subject, body = wakerctl.compose_status_report(self.ctx())
+        self.assertIn("ACTION REQUIRED", subject)
+        self.assertIn("review 2 staged queue item(s)", body)
+        self.assertIn(
+            "Queue: staged=2, approved=1, attention=0, terminal_failures=0, completed=7",
+            body,
+        )
+        self.assertIn("Compute: PENDING=2, RUNNING=1", body)
+        self.assertIn("Compute names: analysis=2, combine=1", body)
+        self.assertIn("Ticker scheduler row: present", body)
+        self.assertNotIn("/usr/bin/python3.11=", body)
 
     def test_digest_disabled_by_interval_zero(self):
         self.write_config(status_report_interval_seconds=0)

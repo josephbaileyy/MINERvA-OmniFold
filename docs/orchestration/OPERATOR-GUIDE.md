@@ -36,6 +36,11 @@ not placed in the push body. Fires exactly once per channel and condition — ne
 BLOCKED-ON-USER declaration, environment-blocked dispatch, retries
 exhausted — plus a twice-daily status digest.
 
+The periodic digest is an operator summary, not a history dump: it reports
+only action required, queue counts, live Slurm compute, armed watches, live
+waker events, ticker freshness, and whether quiet is intentional. Closed
+watches and terminal events are counted but omitted.
+
 ntfy and heartbeat credentials are in the gitignored, mode-0600 file
 `state/waker/notification-secrets.json`. From Termius, print only the topic
 when you are ready to subscribe:
@@ -63,10 +68,12 @@ a credential: recreate the check to rotate it if the URL is exposed.
 
 Other constraints:
 
-- **Claude/Codex remote sessions** (claude.ai/code, Codex cloud) cannot
-  reach Perlmutter's filesystem, so they cannot watch or wake anything.
-  Use them only to reason about pasted status output; email/ntfy remain
-  the push channel.
+- A standalone Claude Code-on-the-web or Codex cloud task cannot reach
+  Perlmutter's filesystem. Claude **Remote Control launched on Perlmutter** is
+  different: execution and filesystem access remain in that cluster process
+  while the phone/browser is its interface. Use it only as a supervised,
+  separate session; it may stage queue proposals but must never approve them
+  or replace the deterministic ticker. Email/ntfy remain the push channel.
 
 ## 3. Answering when it needs you
 
