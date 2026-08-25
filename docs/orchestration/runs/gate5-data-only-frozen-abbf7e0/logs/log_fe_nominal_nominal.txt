@@ -1,0 +1,23 @@
+13048 training steps at reco and 7812 steps at gen
+INFO: B-4 dual-leg MC weights ACTIVE -- step 1 on weight_reco, step 2 on weight
+ITERATION: 1
+RUNNING STEP 1
+Last val loss 0.20854173600673676
+INFO: Dumping training history ...
+RUNNING STEP 2
+Last val loss 0.9037606120109558
+INFO: Dumping training history ...
+ITERATION: 2
+RUNNING STEP 1
+Last val loss 0.11949975788593292
+INFO: Dumping training history ...
+RUNNING STEP 2
+Last val loss 0.8477861881256104
+INFO: Dumping training history ...
+ITERATION: 3
+RUNNING STEP 1
+Last val loss 0.11099503934383392
+INFO: Dumping training history ...
+RUNNING STEP 2
+Last val loss 0.8058214783668518
+INFO: Dumping training history ...
