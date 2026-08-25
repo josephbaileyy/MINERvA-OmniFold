@@ -113,4 +113,4 @@ OI-135	active	BLOCKED-EXTERNAL	explicit-blocker	1ed9c80297a40e8c5836fd2071d48b55
 OI-136	active	NOW	safe-default-active	cd2c348e5157a96fa89981535233b40dcbd4c934a8abf0c6a57d094f262d64ca	OPEN — the hardcoded cluster root is the FAIL-OPEN twin of OI-123, and today's fast-forward made it harmless-for-now rat
 OI-137	active	NOW	safe-default-active	85713f9290390b74f9b9fb7aa554c903713857f122fdb656423681849e200b30	OPEN — filed 2026-08-20 by the close-out orchestrator. A HAZARD THAT IS PRESENTLY UNOWNED ON THE PUBLICATION CRITICAL PA
 OI-138	active	NOW	safe-default-active	9b39ee77565bf276cd001004b359ecbad16542c287ac90e807662678a3cae7c8	OPEN
-OI-139	active	NOW	safe-default-active	33417fe9f857247180d2a2462e2ed29be4393fd831b3a5f59f74c147691d315c	OPEN
+OI-139	active	NOW	safe-default-active	14643fe9b9b6c823e07089cc53793b3a6e925c4d4ffa7ff6e3d4a384e29f24f5	OPEN
