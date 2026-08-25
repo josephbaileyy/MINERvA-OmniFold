@@ -1,8 +1,9 @@
 {
   "schema_version": 1,
-  "observed_at_utc": "2026-08-25T14:28:29+00:00",
+  "observed_at_utc": "2026-08-25T14:33:47+00:00",
   "scope": "Infrastructure-only deployment of the deterministic approval-gated campaign queue; no scientific action was staged, approved, or run.",
   "source_commit": "e96ba339959491667f00cf8485778c4384b41f6f",
+  "staged_notification_source_commit": "ad2785eadfa7e1f85621fe0606a2e21606e285f9",
   "source_branch": "github/main",
   "deployed_checkout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
   "candidate_checkout": "/pscratch/sd/j/josephrb/approval-queue-e96ba339",
@@ -17,8 +18,8 @@
   ],
   "cluster_test": {
     "command": "PYTHONPATH=. /usr/bin/python3.11 -m unittest test_campaignctl.py test_wakerctl.py test_notifyctl.py",
-    "candidate_result": "73 tests passed",
-    "live_result": "73 tests passed"
+    "candidate_result": "74 tests passed after staged-approval notification extension",
+    "live_result": "74 tests passed after staged-approval notification extension"
   },
   "preflight": "PASS: root Codex binary and /usr/bin/python3.11 available; control plane checked",
   "live_tick": {
@@ -47,6 +48,7 @@
     "The runner invokes an exact argv without a shell and at most one ready item per tick.",
     "Repository HEAD, launcher, and explicitly bound inputs are revalidated before claim.",
     "A claimed item without a terminal outcome is never retried automatically.",
+    "A staged item produces one deduplicated email+ntfy approval alert on the next tick.",
     "Queue approval cannot supply scientific authorization or waive governing OI/runbook gates."
   ],
   "limitation": "The TTY check separates noninteractive automation from human approval but is not cryptographic identity separation for processes sharing the josephrb Unix account."
