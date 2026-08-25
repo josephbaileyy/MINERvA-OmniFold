@@ -83,15 +83,32 @@
   "A_PASS_AUTHORISES_NOTHING": "Not the 151 A100-h M(ii) full family, not any second member, not a resubmit if maintenance drains the queue. Those decisions return to the orchestrator and then to Joseph.",
   "resource_fields_remeasured": "2026-08-20T05:5xZ by the mediator from a login node, via scontrol on the LIVE job, after maintenance_20260819 ended. Five fields only; an absent token would have stayed the literal 'NOT MEASURED' and a measured value is never downgraded. WRITTEN IN THE MAIN TREE, NOT ON THE CLUSTER: deploy_oi135_watcher_swap.sh step (c) targets this path inside the cluster checkout, which is 98 commits behind main and does not contain this file at all -- so (c) can only ever fail there. That is the script's defect, not a missing measurement.",
   "REMOVAL_OF_THE_FROZEN_DEPLOYMENT_TREE": {
-    "status": "AUTHORISED 2026-08-25Z; NOT YET PERFORMED as of this commit",
+    "status": "PERFORMED 2026-08-25T03:16:21Z. The tree no longer exists.",
     "authorised_by": "Joseph, relayed via the interpreter session 2026-08-25: 'yes, authorize deletion of gate5-data-only-frozen-377c713. Please have the cleanup lane annotate the job 57266000 receipt as you suggested (\"tree removed <date>; recreate from 377c713d\") when it goes, so the recovery route stays explicit.'",
     "why_this_record_exists_and_why_it_is_committed_FIRST": "RULING-20260819-lanec-issue54-frozen-deployment.md states: 'Authorization receipts are committed before they are acted on, and this document is a ruling, not a receipt.' Its section 6 also lists 'any deletion or top-level reorg' among things NOT authorised, and that clause is not limited to repo content. So the removal needed an authorization of its own and this is it, landed before the act rather than after.",
     "what_this_does_NOT_do_to_the_protected_citation": "The same ruling forbids 'altering 377c713d's citation in the addendum, the active-run receipt, or the armed watch's context, ON THE GROUNDS OF THIS DEFECT'. This annotation is on different grounds (Joseph's removal authorization) and is STRICTLY ADDITIVE: deployment.path and deployment.commit are byte-identical to their pre-annotation values, asserted by a diff in the committing lane's transcript. Nothing here re-cuts or repoints anything.",
-    "RECOVERY_ROUTE_recreate_the_tree": "git worktree add --detach /pscratch/sd/j/josephrb/gate5-data-only-frozen-377c713 377c713d1790d96d15f7d115d9c903fd556c5943",
+    "RECOVERY_ROUTE_recreate_the_tree": {
+      "IT_IS_TWO_COMMANDS_NOT_ONE": "The sha is a complete route only to what git tracks. The witness log is UNTRACKED and therefore not in the tree object, so the first command alone yields a tree that is 2422/2422 correct and still missing the file the run was diagnosed from.",
+      "1_tracked_tree": "git worktree add --detach /pscratch/sd/j/josephrb/gate5-data-only-frozen-377c713 377c713d1790d96d15f7d115d9c903fd556c5943",
+      "2_untracked_witness": "cp $HOME/retired-worktree-archive-20260824/gate5-data-only-frozen-377c713/untracked/log_fe_nominal_nominal.txt <tree>/",
+      "the_archive_is_now_a_SOLE_COPY": "Before the removal the archive was redundant with the live directory. It is not redundant with git, because the file was never tracked. So $HOME/retired-worktree-archive-20260824 on /global/u2 is now the only copy of log_fe_nominal_nominal.txt (md5 9ad538c385e98adfe74114ce305129e0) and must not be treated as scratch. Credit to the removing lane for keeping it on that reasoning rather than deleting it as spent."
+    },
     "why_that_route_is_sufficient": "377c713d is an ancestor of pushed main (predicate chosen because it reproduces from a fresh clone; per-checkout ref counts do not, and two lanes measured 23-32 vs 16-25 for the same commits). deployment.commit above records the full 40-hex sha, so the tree is reconstructable without this receipt being changed further.",
     "and_what_it_is_NOT": "A surviving RECONSTRUCTION route is not a surviving REFERENCE. Once the directory is gone, this receipt's deployment.path names a path that does not exist until someone runs the command above. That is the whole reason this annotation is required rather than optional, and it is why the path field was left intact instead of being blanked.",
-    "removal_performed_at_utc": "PENDING -- to be filled by the lane that performs the removal, or by this lane on its report",
+    "removal_performed_at_utc": "2026-08-25T03:16:21Z",
     "untracked_content": "The cleanup lane archived each removed tree's untracked files to $HOME/retired-worktree-archive-20260824 on /global/u2 (not purgeable pscratch), md5-verified. For this tree the witness log md5 is 9ad538c385e98adfe74114ce305129e0, verified identical to the archived copy during an earlier restore.",
-    "supervision_note": "This receipt's supervision.armed_watch field names gate5-do-train-57266000-r3 as armed. That was an observation TRUE AT recorded_at_utc 2026-08-19T13:10:00Z and is NOT a current-state claim: deploy_oi135_watcher_swap.sh:76 names r3 as WATCH_OLD and disarms it by design, and the last waker probe (login34) read {\"count\": 84, \"armed\": []}. Recorded here because the field was quoted as live earlier today and that was wrong."
+    "supervision_note": "This receipt's supervision.armed_watch field names gate5-do-train-57266000-r3 as armed. That was an observation TRUE AT recorded_at_utc 2026-08-19T13:10:00Z and is NOT a current-state claim: deploy_oi135_watcher_swap.sh:76 names r3 as WATCH_OLD and disarms it by design, and the last waker probe (login34) read {\"count\": 84, \"armed\": []}. Recorded here because the field was quoted as live earlier today and that was wrong.",
+    "how_that_time_was_taken": "`date -u` on the login node immediately either side of `git worktree remove`, giving the window 03:16:21Z..03:16:22Z. The EARLIER bound is recorded because it is the last instant the tree provably existed; the later bound is the first instant it provably did not.",
+    "removal_verified_INDEPENDENTLY_by_this_lane": {
+      "at_the_moment_of_removal_by_the_removing_lane": "witness log md5 identical between live tree and archive; HEAD 377c713d with only the untracked witness outstanding",
+      "re_measured_afterwards_by_this_lane": [
+        "the directory is absent: `ls -d` returns 'No such file or directory'",
+        "`git worktree list` on the cluster shows 2 rows, neither of them this tree",
+        "377c713d1790d96d15f7d115d9c903fd556c5943 still resolves to a commit object and is an ancestor of pushed main",
+        "the commit carries 2422 tracked entries, matching the removing lane's count of the live directory",
+        "the archived witness exists at 667 bytes with md5 9ad538c385e98adfe74114ce305129e0, matching the removing lane's figure"
+      ],
+      "why_re_measured": "A completion recorded on another lane's report is a relay. Every line above was taken by the committing lane after the fact."
+    }
   }
 }
