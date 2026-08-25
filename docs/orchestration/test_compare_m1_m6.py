@@ -718,13 +718,69 @@ class R8_TheExitVocabularyIsDisjointAndDocumented(BenchCase):
                         cm.main(argv)
                 self.assertEqual(caught.exception.code, 2)
 
-    def test_the_codes_are_DISJOINT_and_1_is_reserved_because_a_traceback_owns_it(self):
-        self.assertEqual(len(set(cm.EXIT_CODES)), len(cm.EXIT_CODES))
-        self.assertEqual(len(set(cm.EXIT_CODES.values())), len(cm.EXIT_CODES))
-        self.assertNotIn(1, cm.EXIT_CODES)
-        self.assertNotIn(2, cm.EXIT_CODES)
-        self.assertEqual(set(cm.RESERVED_EXIT_CODES), {1, 2})
-        self.assertFalse(set(cm.EXIT_CODES) & set(cm.RESERVED_EXIT_CODES))
+    def test_the_FIVE_VERDICTS_ARE_THE_LITERAL_INTEGERS__an_oracle_that_cannot_move(self):
+        """The arm the first version of this suite did not have, and the hole it left.
+
+        A peer mutated `EXIT_DIFFERENCES_SOME_UNEXPECTED` to 10, collapsing "some unexpected" onto
+        "all expected". Measured: 13 references to that constant in this file and ZERO assertions
+        against the literal 20 -- so every behavioural arm compared the observed exit against the
+        constant under test, the oracle moved with the mutation, and the only arm that caught it
+        caught it through the help TEXT. A fixture derived from the rule cannot disagree with the
+        rule. These five assertions are LITERALS on purpose and must never be re-expressed as
+        module constants.
+
+        AND THE HELP-TEXT ARM WAS LUCK, not a backstop. Measured against the pre-repair suite at
+        74c25c3c with the bytecode cache purged: collapsing ALL-EXPECTED onto 20 instead -- the same
+        defect in the other direction -- passed the whole suite, OK, zero arms. Whether that arm
+        notices depends on WHICH of the two names survives the dict's silent dedup, because it
+        iterates the deduped dict; the surviving pair there was one the epilog documents. Five
+        vocabulary mutations, five behavioural survivors, one of them total.
+        """
+        self.assertEqual(self.bench.run(self.two(), self.expected_ok)[0], 0)
+        self.assertEqual(self.bench.run(self.two(lambda d: d["M-4"].__setitem__("behind", 168)),
+                                        self.expected_ok)[0], 10)
+        self.assertEqual(self.bench.run(self.two(lambda d: d["M-4"].__setitem__("head", "b" * 40)),
+                                        self.expected_ok)[0], 20)
+        self.assertEqual(self.bench.run((self.two()[0], str(self.bench.root / "gone.json")),
+                                        self.expected_ok)[0], 4)
+        self.assertEqual(self.bench.run(self.two(), self.bench.write_expected(
+            self.bench.may_differ(["M-4.*"])))[0], 5)
+
+    def test_the_vocabulary_is_PINNED_to_literal_integers_and_names(self):
+        """The table, once, as literals. A vocabulary pin whose expected values are the constants
+        under test pins nothing."""
+        self.assertEqual(tuple(cm.EXIT_VOCABULARY),
+                         ((0, "NO-DIFFERENCES"),
+                          (10, "DIFFERENCES-ALL-EXPECTED"),
+                          (20, "DIFFERENCES-SOME-UNEXPECTED"),
+                          (4, "REFUSAL-INPUT"),
+                          (5, "REFUSAL-EXPECTED-LIST")))
+        self.assertEqual(cm.EXIT_CODES, dict(cm.EXIT_VOCABULARY))
+        self.assertEqual(cm.RESERVED_EXIT_CODES.keys(), {1: "", 2: ""}.keys())
+
+    def test_a_COLLISION_is_REPRESENTABLE_in_the_sequence_and_is_refused(self):
+        """FIRES on each collapsed vocabulary, SILENT on a sound one.
+
+        The assertion this replaces was `len(set(cm.EXIT_CODES)) == len(cm.EXIT_CODES)`, which is
+        TRUE OF EVERY DICT: a dict literal had already deduped 20 onto 10 before the test ran, so it
+        compared 4 against 4 and had zero power in either direction. Over a sequence of pairs the
+        collision exists to be found.
+        """
+        for bad, why in ((((0, "A"), (10, "B"), (10, "C")), "two verdicts on one code"),
+                         (((0, "A"), (10, "A")), "one name on two codes"),
+                         (((0, "A"), (1, "B")), "claiming reserved 1"),
+                         (((0, "A"), (2, "B")), "claiming reserved 2")):
+            with self.subTest(case=why):
+                with self.assertRaises(RuntimeError):
+                    cm.check_vocabulary(bad, cm.RESERVED_EXIT_CODES)
+        self.assertEqual(cm.check_vocabulary(((0, "A"), (10, "B")), cm.RESERVED_EXIT_CODES),
+                         {0: "A", 10: "B"})
+        codes = [code for code, _ in cm.EXIT_VOCABULARY]
+        names = [name for _, name in cm.EXIT_VOCABULARY]
+        self.assertEqual(len(codes), 5)
+        self.assertEqual(len(set(codes)), 5)
+        self.assertEqual(len(set(names)), 5)
+        self.assertFalse(set(codes) & set(cm.RESERVED_EXIT_CODES))
 
     def test_every_code_is_documented_in_help(self):
         for code, name in cm.EXIT_CODES.items():

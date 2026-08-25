@@ -79,6 +79,10 @@ EXIT CODES ARE A DISJOINT VOCABULARY (R8), documented in --help and asserted one
     0  no differences        10  differences, all expected      20  differences, some unexpected
     4  refusal: an input      5  refusal: the expected list      2  refusal: usage (argparse's own)
     1  RESERVED AND NEVER A VERDICT -- an uncaught traceback exits 1, so no verdict may share it.
+The vocabulary is declared as a SEQUENCE and checked by `check_vocabulary` at import, because a dict
+literal cannot represent the collision it would need to refuse. See the comment beside it: collapsing
+two verdicts onto one integer is the silent pass this whole instrument exists to prevent, and the
+first version of it was pinned only by an assertion that was true of every dict.
 """
 import argparse
 import datetime
@@ -96,14 +100,52 @@ EXIT_DIFFERENCES_ALL_EXPECTED = 10
 EXIT_DIFFERENCES_SOME_UNEXPECTED = 20
 EXIT_REFUSAL_INPUT = 4
 EXIT_REFUSAL_EXPECTED_LIST = 5
-EXIT_CODES = {
-    EXIT_NO_DIFFERENCES: "NO-DIFFERENCES",
-    EXIT_DIFFERENCES_ALL_EXPECTED: "DIFFERENCES-ALL-EXPECTED",
-    EXIT_DIFFERENCES_SOME_UNEXPECTED: "DIFFERENCES-SOME-UNEXPECTED",
-    EXIT_REFUSAL_INPUT: "REFUSAL-INPUT",
-    EXIT_REFUSAL_EXPECTED_LIST: "REFUSAL-EXPECTED-LIST",
-}
+# A SEQUENCE OF PAIRS, NOT A DICT LITERAL, AND THAT IS THE FIX.
+#
+# A dict CANNOT REPRESENT a collision: write two entries under one code and the literal silently
+# keeps the last, so `len(set(EXIT_CODES)) == len(EXIT_CODES)` is a TAUTOLOGY for every dict alive
+# and pins nothing in either direction. Found 2026-08-25 by a peer who mutated
+# EXIT_DIFFERENCES_SOME_UNEXPECTED to 10, collapsing "some unexpected" onto "all expected" -- the
+# exact silent pass this instrument exists to prevent. Exactly one arm caught it, and it caught it
+# through the help TEXT rather than through behaviour, because every behavioural assertion in the
+# suite compared the observed exit against THE CONSTANT UNDER TEST, so the oracle moved with the
+# mutation. A collision must be REPRESENTABLE before it can be refused; hence pairs, checked, and
+# only then a dict.
+EXIT_VOCABULARY = (
+    (EXIT_NO_DIFFERENCES, "NO-DIFFERENCES"),
+    (EXIT_DIFFERENCES_ALL_EXPECTED, "DIFFERENCES-ALL-EXPECTED"),
+    (EXIT_DIFFERENCES_SOME_UNEXPECTED, "DIFFERENCES-SOME-UNEXPECTED"),
+    (EXIT_REFUSAL_INPUT, "REFUSAL-INPUT"),
+    (EXIT_REFUSAL_EXPECTED_LIST, "REFUSAL-EXPECTED-LIST"),
+)
 RESERVED_EXIT_CODES = {1: "an uncaught traceback; never a verdict", 2: "argparse usage refusal"}
+
+
+def check_vocabulary(vocabulary, reserved):
+    """Refuse to be IMPORTABLE with a collapsed verdict vocabulary. Returns the dict.
+
+    Fails closed at import, before any comparison can be run, and deliberately by raising: an
+    uncaught raise exits 1, which this file already documents as reserved and never a verdict. A
+    collapsed vocabulary that merely printed a warning would still produce a number a receipt could
+    quote.
+    """
+    codes = [code for code, _ in vocabulary]
+    names = [name for _, name in vocabulary]
+    duplicated = sorted({code for code in codes if codes.count(code) > 1})
+    if duplicated:
+        raise RuntimeError(f"exit vocabulary COLLAPSED: code(s) {duplicated} carry more than one "
+                           f"verdict. Two verdicts on one integer is a silent pass.")
+    repeated = sorted({name for name in names if names.count(name) > 1})
+    if repeated:
+        raise RuntimeError(f"exit vocabulary has repeated name(s) {repeated}")
+    taken = sorted(set(codes) & set(reserved))
+    if taken:
+        raise RuntimeError(f"exit vocabulary claims reserved code(s) {taken}: "
+                           f"{[reserved[c] for c in taken]}")
+    return dict(vocabulary)
+
+
+EXIT_CODES = check_vocabulary(EXIT_VOCABULARY, RESERVED_EXIT_CODES)
 
 MEASUREMENT_IDS = ("M-1", "M-2", "M-3", "M-4", "M-5", "M-6")
 REQUIRED_KEYS = ("label", "tree") + MEASUREMENT_IDS
