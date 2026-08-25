@@ -114,8 +114,10 @@ MEASURER="$CODE_ROOT/docs/orchestration/measure_m1_m6.py"
 TOOLS_ROOT="${MNV_TOOLS_ROOT:-$(cd "$(dirname "$0")/../.." 2>/dev/null && pwd)}"
 COMPARATOR="$TOOLS_ROOT/docs/orchestration/compare_m1_m6.py"
 EXPECTED="$TOOLS_ROOT/docs/orchestration/m1m6_expected_differences.json"
+PRESERVER="$TOOLS_ROOT/docs/orchestration/preserve_f17b_record.py"
 CANON=/pscratch/sd/j/josephrb/MINERvA-OmniFold   # the canonical checkout, per :621
 OUT="${TMPDIR:-/tmp}/f17b.$$"
+DURABLE_RECORD="${MNV_F17B_RECORD_PATH:-/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/state/f17b-k0-aa67c426-20260824T145751Z.json}"
 mkdir -p "$OUT"
 
 echo "  ruler    : $MEASURER  sha256=$(sha256sum "$MEASURER" 2>/dev/null | cut -c1-12)"
@@ -130,8 +132,8 @@ if [ ! -d "$TOOLS_ROOT/.git" ] && ! git -C "$TOOLS_ROOT" rev-parse --git-dir >/d
   echo "          cannot resolve under --repo. Point MNV_TOOLS_ROOT at a real checkout."
   rm -rf "$OUT"; exit 12
 fi
-if [ ! -f "$COMPARATOR" ] || [ ! -f "$EXPECTED" ]; then
-  echo "  REFUSE: the comparator or its expected-list is absent under TOOLS_ROOT=$TOOLS_ROOT."
+if [ ! -f "$COMPARATOR" ] || [ ! -f "$EXPECTED" ] || [ ! -f "$PRESERVER" ]; then
+  echo "  REFUSE: the comparator, expected-list, or durable-record helper is absent under TOOLS_ROOT=$TOOLS_ROOT."
   echo "          Set MNV_TOOLS_ROOT to a checkout that carries docs/orchestration/compare_m1_m6.py."
   echo "          F-17(b) is NOT discharged by skipping the comparison: a step that silently does"
   echo "          nothing is the failure mode this whole file exists to avoid."
@@ -153,7 +155,22 @@ crc=$?
 sed 's/^/    /' "$OUT/cmp.txt" | tail -18
 echo "  COMPARATOR EXIT = $crc"
 if [ "$MODE" = "--measure" ]; then
-  echo "  record kept at $OUT/f17b-record.json -- commit it beside the F-17(b) filing"
+  case "$crc" in
+    0|10|20) ;;
+    *)
+      echo "  REFUSE: comparator exit $crc is not a completed comparison; no durable record published."
+      echo "          scratch output remains at $OUT for diagnosis."
+      exit "$crc"
+      ;;
+  esac
+  echo "  publishing the completed record atomically, without clobber: $DURABLE_RECORD"
+  "$PY" "$PRESERVER" --source "$OUT/f17b-record.json" --destination "$DURABLE_RECORD"
+  prc=$?
+  if [ "$prc" -ne 0 ]; then
+    echo "  REFUSE: durable publication failed; scratch output remains at $OUT for diagnosis."
+    exit "$prc"
+  fi
+  echo "  durable record published; commit it beside the F-17(b) filing"
 else
   rm -rf "$OUT"
 fi

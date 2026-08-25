@@ -135,6 +135,58 @@ class ConditionTests(WakerTestCase):
         self.runner.add(lambda a: a[0] == "sacct", 0, "77|COMPLETED|0:0\n")
         self.assertEqual(wakerctl.slurm_job_state(ctx, "77"), ("COMPLETED", "0:0"))
 
+    def test_slurm_job_dependency_never_satisfied_is_terminal(self):
+        ctx = self.ctx()
+        self.runner.add(
+            lambda a: a[0] == "squeue",
+            0,
+            "PENDING|DependencyNeverSatisfied\n",
+        )
+        self.assertEqual(
+            wakerctl.slurm_job_state(ctx, "77"),
+            ("DEPENDENCY_NEVER_SATISFIED", "N/A"),
+        )
+        self.assertFalse(any(call["argv"][0] == "sacct" for call in self.runner.calls))
+
+    def test_slurm_job_ordinary_pending_reason_stays_active(self):
+        ctx = self.ctx()
+        self.runner.add(lambda a: a[0] == "squeue", 0, "PENDING|Resources\n")
+        self.assertEqual(wakerctl.slurm_job_state(ctx, "77"), ("ACTIVE", ""))
+
+    def test_slurm_job_mixed_visible_rows_stay_active(self):
+        ctx = self.ctx()
+        self.runner.add(
+            lambda a: a[0] == "squeue",
+            0,
+            "PENDING|DependencyNeverSatisfied\nRUNNING|None\n",
+        )
+        self.assertEqual(wakerctl.slurm_job_state(ctx, "77"), ("ACTIVE", ""))
+
+    def test_slurm_job_dependency_never_satisfied_emits_error_event(self):
+        ctx = self.ctx()
+        wakerctl.add_watch(
+            ctx,
+            {
+                "watch_id": "job77-dead-dependency",
+                "kind": "slurm-job",
+                "params": {"job_id": "77"},
+                "action": {"type": "root-resume", "context": ""},
+            },
+        )
+        self.runner.add(
+            lambda a: a[0] == "squeue",
+            0,
+            "PENDING|DependencyNeverSatisfied\n",
+        )
+        emitted = wakerctl.scan(ctx)
+        self.assertEqual(emitted, ["evt-job77-dead-dependency"])
+        event = wakerctl.read_json(
+            wakerctl.event_paths(ctx, "evt-job77-dead-dependency")["event"]
+        )
+        self.assertEqual(event["event_type"], "slurm-job-error")
+        self.assertEqual(event["payload"]["state"], "DEPENDENCY_NEVER_SATISFIED")
+        self.assertEqual(event["payload"]["exit_code"], "N/A")
+
     def test_slurm_job_watch_emits_error_event(self):
         ctx = self.ctx()
         wakerctl.add_watch(

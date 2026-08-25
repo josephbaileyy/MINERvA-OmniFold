@@ -356,8 +356,26 @@ def validate_watch(ctx: Ctx, watch: dict) -> None:
 
 def slurm_job_state(ctx: Ctx, job_id: str) -> tuple[str, str] | None:
     """Return (state, exit_code) once terminal, ('ACTIVE','') if visible, None if invisible."""
-    queue = ctx.runner(["squeue", "-h", "-j", job_id, "-o", "%T"])
+    queue = ctx.runner(["squeue", "-h", "-j", job_id, "-o", "%T|%r"])
     if queue.returncode == 0 and queue.stdout.strip():
+        visible = []
+        for raw in queue.stdout.splitlines():
+            parts = raw.strip().split("|", 1)
+            state = parts[0].strip().upper()
+            reason = parts[1].strip() if len(parts) == 2 else ""
+            if state:
+                visible.append((state, reason))
+        # Slurm leaves a job with an impossible dependency visible as PENDING,
+        # so the sacct fallback is never reached.  It is nevertheless terminal
+        # for orchestration purposes: no future scheduler transition can make
+        # the dependency satisfiable.  Require every visible row to have the
+        # dead dependency reason so an array with any live element stays active.
+        if visible and all(
+            state in {"PENDING", "DEPENDENCY_NEVER_SATISFIED"}
+            and reason.split(maxsplit=1)[0].rstrip("+") == "DependencyNeverSatisfied"
+            for state, reason in visible
+        ):
+            return ("DEPENDENCY_NEVER_SATISFIED", "N/A")
         return ("ACTIVE", "")
     acct = ctx.runner(
         ["sacct", "-X", "-n", "-P", "-j", job_id, "--format=JobIDRaw,State,ExitCode"]
