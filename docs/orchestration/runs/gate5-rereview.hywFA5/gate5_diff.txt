@@ -1,0 +1,1195 @@
+diff --git a/docs/orchestration/state/p4-sweep-snapshots.json b/docs/orchestration/state/p4-sweep-snapshots.json
+index 02a2091..c39ac60 100644
+--- a/docs/orchestration/state/p4-sweep-snapshots.json
++++ b/docs/orchestration/state/p4-sweep-snapshots.json
+@@ -29,6 +29,10 @@
+         "hits": 3,
+         "pipefail": true
+       },
++      "docs/orchestration/hpss_space_audit.sh": {
++        "hits": 7,
++        "pipefail": true
++      },
+       "docs/orchestration/make_handoff_bundle.sh": {
+         "hits": 2,
+         "pipefail": true
+@@ -41,6 +45,10 @@
+         "hits": 1,
+         "pipefail": true
+       },
++      "docs/orchestration/waker_fired_but_unread.sh": {
++        "hits": 1,
++        "pipefail": true
++      },
+       "docs/orchestration/watch_g2_dump_resume.sh": {
+         "hits": 1,
+         "pipefail": true
+@@ -61,6 +69,10 @@
+         "hits": 1,
+         "pipefail": true
+       },
++      "nd-unfolding/pet/sbatch_gate6_member_trajectory_array.sh": {
++        "hits": 4,
++        "pipefail": true
++      },
+       "nd-unfolding/pet/sbatch_hpss_protect_p3f_fullevent.sh": {
+         "hits": 1,
+         "pipefail": true
+@@ -69,18 +81,26 @@
+         "hits": 1,
+         "pipefail": true
+       },
++      "nd-unfolding/pet/submit_gate5_replica_n50.sh": {
++        "hits": 1,
++        "pipefail": true
++      },
+       "nd-unfolding/sbatch_eavailW_cov_wlat.sh": {
+         "hits": 1,
+         "pipefail": true
+       },
++      "nd-unfolding/uq_5d/sbatch_hpss_protect_quoted_products.sh": {
++        "hits": 1,
++        "pipefail": true
++      },
+       "nd-unfolding/uq_fps/corrected/supervise_fps_uq.sh": {
+         "hits": 3,
+         "pipefail": true
+       }
+     },
+     "live_instances": 0,
+-    "n_candidates": 24,
+-    "n_shell_files": 342,
++    "n_candidates": 38,
++    "n_shell_files": 354,
+     "tool": "tools_p4_sweep_pipeline_rc"
+   },
+   "recorded_fields": {
+diff --git a/nd-unfolding/pet/build_fullevent_replica_target.py b/nd-unfolding/pet/build_fullevent_replica_target.py
+new file mode 100755
+index 0000000..e71b6ba
+--- /dev/null
++++ b/nd-unfolding/pet/build_fullevent_replica_target.py
+@@ -0,0 +1,318 @@
++#!/usr/bin/env python3
++"""Gate-5 CPU stage: build one coherent, per-replica Stay-Positive target.
++
++This is deliberately separate from TensorFlow training.  The canonical learned refiner needs the
++ROOT environment, while PET training needs the TensorFlow environment; no production interpreter
++on Perlmutter carries both.  The output receipt is published last and binds the target to the full
++inventory, the coherent factor streams, the source dump, and the replica seed.
++"""
++import argparse
++import datetime as dt
++import hashlib
++import importlib.util
++import json
++import os
++import socket
++import subprocess
++import sys
++import time
++import types
++from pathlib import Path
++
++import numpy as np
++
++HERE = Path(__file__).resolve().parent
++REPO = HERE.parents[1]
++for item in (HERE, REPO / "2d-unfolding", REPO / "nd-unfolding", REPO / "nd-unfolding/pet"):
++    if str(item) not in sys.path:
++        sys.path.insert(0, str(item))
++
++import fullevent_fps_dataloader as fe  # noqa: E402
++import train_fullevent_nominal as nominal  # noqa: E402
++from atomic_write import atomic_write, mark_complete  # noqa: E402
++
++SCHEMA_VERSION = 1
++SEED_POLICY = "gate5-cstat-n50-v1: bootstrap_seed=50000+replica_index"
++REFINEMENT_SEED = 45  # canonical Gate-2 exact target: MASTER_SEED(42) + 3
++
++
++def sha256_file(path, chunk=16 << 20):
++    h = hashlib.sha256()
++    with open(path, "rb") as stream:
++        for block in iter(lambda: stream.read(chunk), b""):
++            h.update(block)
++    return h.hexdigest()
++
++
++def hash_array(value):
++    a = np.ascontiguousarray(value)
++    h = hashlib.sha256()
++    h.update(str(a.dtype).encode("ascii"))
++    h.update(json.dumps(list(a.shape), separators=(",", ":")).encode("ascii"))
++    h.update(memoryview(a).cast("B"))
++    return h.hexdigest()
++
++
++def jsonable(value):
++    if isinstance(value, dict):
++        return {str(k): jsonable(v) for k, v in value.items()}
++    if isinstance(value, (list, tuple)):
++        return [jsonable(v) for v in value]
++    if isinstance(value, np.ndarray):
++        return value.tolist()
++    if isinstance(value, np.generic):
++        return value.item()
++    if isinstance(value, Path):
++        return str(value)
++    return value
++
++
++def git_head():
++    return subprocess.check_output(
++        ["git", "rev-parse", "HEAD"], cwd=REPO, text=True
++    ).strip()
++
++
++def install_target_only_dataloader():
++    """Bind this checkout's exact NumPy DataLoader without importing PET/TensorFlow."""
++    name = "omnifold.dataloader"
++    source = REPO / "omnifold_nn/omnifold/dataloader.py"
++    if not source.is_file() or source.is_symlink():
++        raise SystemExit(f"[gate5-target] canonical NumPy DataLoader invalid: {source}")
++    loaded = sys.modules.get(name)
++    if loaded is not None:
++        if Path(loaded.__file__).resolve() != source.resolve():
++            raise SystemExit("[gate5-target] omnifold.dataloader already bound to another checkout")
++        return loaded
++    parent = sys.modules.get("omnifold")
++    if parent is None:
++        parent = types.ModuleType("omnifold")
++        parent.__package__ = "omnifold"
++        parent.__path__ = [str(source.parent)]
++        sys.modules["omnifold"] = parent
++    spec = importlib.util.spec_from_file_location(name, source)
++    if spec is None or spec.loader is None:
++        raise SystemExit(f"[gate5-target] cannot load {source}")
++    module = importlib.util.module_from_spec(spec)
++    sys.modules[name] = module
++    try:
++        spec.loader.exec_module(module)
++    except Exception:
++        sys.modules.pop(name, None)
++        raise
++    setattr(parent, "dataloader", module)
++    return module
++
++
++def refuse_occupied(*paths):
++    occupied = [str(p) for p in paths if os.path.lexists(p) or os.path.lexists(f"{p}.done")]
++    if occupied:
++        raise SystemExit("[gate5-target] collision/no-clobber guard: " + ", ".join(occupied))
++
++
++def write_npy(path, array):
++    def writer(tmp):
++        with open(tmp, "wb") as stream:
++            np.save(stream, array, allow_pickle=False)
++
++    atomic_write(str(path), writer, suffix=".npy", overwrite=False, fsync=True)
++    mark_complete(str(path), note="Gate-5 coherent replica target")
++
++
++def write_json(path, payload):
++    def writer(tmp):
++        with open(tmp, "w", encoding="utf-8") as stream:
++            json.dump(jsonable(payload), stream, indent=2, sort_keys=True)
++            stream.write("\n")
++            stream.flush()
++            os.fsync(stream.fileno())
++
++    atomic_write(str(path), writer, suffix=".json", overwrite=False, fsync=True)
++    mark_complete(str(path), note="Gate-5 coherent replica target receipt; published last")
++
++
++def main(argv=None):
++    ap = argparse.ArgumentParser(description=__doc__)
++    ap.add_argument("--inputs", required=True)
++    ap.add_argument("--output", required=True, help="collision-isolated target .npy")
++    ap.add_argument("--receipt", required=True, help="receipt JSON, published after target")
++    ap.add_argument("--bootstrap-seed", type=int, required=True)
++    ap.add_argument("--replica-index", type=int, required=True)
++    ap.add_argument("--expected-input-sha256", required=True)
++    ap.add_argument("--gate3-manifest", required=True)
++    ap.add_argument("--max-mc-events", type=int, default=200000)
++    args = ap.parse_args(argv)
++
++    inputs = Path(args.inputs).resolve()
++    output = Path(args.output).resolve()
++    receipt_path = Path(args.receipt).resolve()
++    gate3 = Path(args.gate3_manifest).resolve()
++    if args.replica_index < 0 or args.replica_index >= 50:
++        raise SystemExit("[gate5-target] replica-index must be in [0,49]")
++    expected_seed = 50000 + int(args.replica_index)
++    if int(args.bootstrap_seed) != expected_seed:
++        raise SystemExit(
++            f"[gate5-target] seed {args.bootstrap_seed} != predeclared 50000+index "
++            f"({expected_seed}); fail closed"
++        )
++    refuse_occupied(output, receipt_path)
++    nominal.run_config_gate(str(inputs), str(gate3))
++    source_sha = sha256_file(inputs)
++    if source_sha != args.expected_input_sha256:
++        raise SystemExit(
++            f"[gate5-target] source SHA-256 mismatch: {source_sha} != "
++            f"{args.expected_input_sha256}"
++        )
++
++    # The exact NumPy DataLoader is the Gate-2 precedent for running target construction without
++    # importing TensorFlow.  The learned refiner remains the canonical deferred ROOT implementation.
++    numpy_loader = install_target_only_dataloader()
++    started = time.monotonic()
++    started_utc = dt.datetime.now(dt.timezone.utc).isoformat()
++    data, mc, imc, coord_reco, coord_gen, meta = fe.build_fullevent_loaders(
++        str(inputs),
++        max_events=int(args.max_mc_events),
++        seed=int(nominal.NOMINAL_SEED_POLICY["subsample_seed"]),
++        bootstrap_seed=int(args.bootstrap_seed),
++        bkg_mode=nominal.BKG_MODE,
++        refine_fn=None,
++        refine_kwargs={
++            "estimator": "exact",
++            "device": "cpu",
++            "params": {"random_state": REFINEMENT_SEED},
++            "verbose": True,
++        },
++        verify_identities=True,
++    )
++    target_meta = dict(meta.get("target") or {})
++    fe.assert_refined_target_is_replica(
++        target_meta, bootstrap_seed=int(args.bootstrap_seed)
++    )
++    if target_meta.get("target_mode") != nominal.BKG_MODE:
++        raise SystemExit("[gate5-target] target mode is not negweight-refined")
++    if not target_meta.get("refinement_is_learned_production"):
++        raise SystemExit("[gate5-target] target did not use the learned production refiner")
++
++    weights = np.asarray(data.weight, dtype=np.float32)
++    bootstrap = dict(meta.get("bootstrap") or {})
++    n_data = int(bootstrap.get("n_data_full", -1))
++    n_sig = int(bootstrap.get("n_sig_full", -1))
++    n_bkg = int(bootstrap.get("n_bkg_full", -1))
++    if weights.shape != (n_data + n_bkg,):
++        raise SystemExit(
++            f"[gate5-target] target rows {weights.shape} != data+bkg {(n_data + n_bkg,)}"
++        )
++    if not np.all(np.isfinite(weights)) or np.any(weights < 0.0):
++        raise SystemExit("[gate5-target] target is non-finite or negative")
++    if not np.isclose(
++        weights.sum(dtype=np.float64),
++        float(target_meta["step1_measured_normalization"]),
++        rtol=2e-6,
++        atol=1e-2,
++    ):
++        raise SystemExit("[gate5-target] normalized target sum misses replica 1e6*R")
++
++    # Replay the three full factor streams and prove the loader used their exact restrictions.
++    data_factor, sig_factor, bkg_factor = fe.coherent_bootstrap_factors(
++        n_data, n_sig, n_bkg, int(args.bootstrap_seed)
++    )
++    if not np.array_equal(sig_factor[imc], np.asarray(bootstrap["sig_bootstrap_factor"])):
++        raise SystemExit("[gate5-target] loader signal factors differ from canonical replay")
++    if not np.array_equal(bkg_factor, np.asarray(bootstrap["bkg_bootstrap_factor"])):
++        raise SystemExit("[gate5-target] loader background factors differ from canonical replay")
++
++    output.parent.mkdir(parents=True, exist_ok=True)
++    receipt_path.parent.mkdir(parents=True, exist_ok=True)
++    write_npy(output, weights)
++    target_sha = sha256_file(output)
++    completed_utc = dt.datetime.now(dt.timezone.utc).isoformat()
++    receipt = {
++        "schema_version": SCHEMA_VERSION,
++        "status": "PASS",
++        "verdict": "GATE5_REPLICA_TARGET_PASS_TRAINING_PENDING",
++        "replica_index": int(args.replica_index),
++        "bootstrap_seed": int(args.bootstrap_seed),
++        "seed_policy": SEED_POLICY,
++        "started_at_utc": started_utc,
++        "completed_at_utc": completed_utc,
++        "execution": {
++            "slurm_job_id": os.environ.get("SLURM_JOB_ID", "none"),
++            "slurm_array_job_id": os.environ.get("SLURM_ARRAY_JOB_ID", "none"),
++            "slurm_array_task_id": os.environ.get("SLURM_ARRAY_TASK_ID", "none"),
++            "host": socket.gethostname(),
++            "head_at_runtime": git_head(),
++        },
++        "input_preflight": {
++            "path": str(inputs),
++            "sha256": source_sha,
++            "size_bytes": inputs.stat().st_size,
++            "input_identity_hashes": meta.get("input_identity_hashes"),
++        },
++        "gate3_manifest": {
++            "path": str(gate3),
++            "sha256": sha256_file(gate3),
++        },
++        "runtime_target": target_meta,
++        "configuration": {
++            "target_mode": nominal.BKG_MODE,
++            "refinement_estimator": "exact",
++            "refinement_device": "cpu",
++            "refinement_random_state": REFINEMENT_SEED,
++            "max_mc_events": int(args.max_mc_events),
++            "full_measured_inventory": True,
++        },
++        "step1_feed": {
++            "rows": int(weights.size),
++            "normalized_sum": float(weights.sum(dtype=np.float64)),
++            "min": float(weights.min()),
++            "max": float(weights.max()),
++            "zero_rows": int((weights == 0.0).sum()),
++            "weights": {
++                "path": str(output),
++                "sha256": target_sha,
++                "size_bytes": output.stat().st_size,
++                "dtype": str(weights.dtype),
++            },
++        },
++        "bootstrap": {
++            "n_data_full": n_data,
++            "n_sig_full": n_sig,
++            "n_bkg_full": n_bkg,
++            "mc_subset_rows": int(len(imc)),
++            "inventory_hashes": bootstrap.get("inventory_hashes"),
++            "input_identity_hashes": meta.get("input_identity_hashes"),
++            "data_factor_sha256": hash_array(data_factor),
++            "signal_factor_sha256": hash_array(sig_factor),
++            "background_factor_sha256": hash_array(bkg_factor),
++            "factor_hash_contract": "sha256(dtype || JSON(shape) || contiguous raw bytes)",
++            "canonical_replay_verified": True,
++        },
++        "code": {
++            "target_builder": {"path": str(Path(__file__).resolve()), "sha256": sha256_file(__file__)},
++            "loader": {"path": str(Path(fe.__file__).resolve()), "sha256": sha256_file(fe.__file__)},
++            "numpy_dataloader": {
++                "path": str(Path(numpy_loader.__file__).resolve()),
++                "sha256": sha256_file(numpy_loader.__file__),
++            },
++            "canonical_u2d": {
++                "path": str(REPO / "2d-unfolding/unfold_2d_omnifold_unbinned.py"),
++                "sha256": sha256_file(REPO / "2d-unfolding/unfold_2d_omnifold_unbinned.py"),
++            },
++        },
++        "timing": {"total_seconds": time.monotonic() - started},
++        "pet_training_started": False,
++    }
++    write_json(receipt_path, receipt)
++    print(json.dumps({
++        "status": "PASS",
++        "replica_index": args.replica_index,
++        "bootstrap_seed": args.bootstrap_seed,
++        "target": str(output),
++        "target_sha256": target_sha,
++        "receipt": str(receipt_path),
++    }, sort_keys=True))
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/nd-unfolding/pet/sbatch_gate5_replica_target_array.sh b/nd-unfolding/pet/sbatch_gate5_replica_target_array.sh
+new file mode 100755
+index 0000000..e7e171a
+--- /dev/null
++++ b/nd-unfolding/pet/sbatch_gate5_replica_target_array.sh
+@@ -0,0 +1,66 @@
++#!/bin/bash
++#SBATCH --job-name=g5targ
++#SBATCH --account=m3246
++#SBATCH --qos=shared
++#SBATCH --constraint=cpu
++#SBATCH --nodes=1
++#SBATCH --ntasks=1
++#SBATCH --cpus-per-task=16
++#SBATCH --mem=64G
++#SBATCH --time=03:00:00
++#SBATCH --array=0-49%10
++#SBATCH --export=ALL,HOME=/global/homes/j/josephrb
++#SBATCH --output=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/logs/target_%A_%a.out
++#SBATCH --error=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/logs/target_%A_%a.err
++set -eo pipefail
++
++# Stage 1 of the predeclared Gate-5 two-stage architecture.  This array has no GPU and builds one
++# learned Stay-Positive target per coherent bootstrap seed.  The matching training array uses
++# Slurm aftercorr, so each GPU task becomes eligible only after this exact task succeeds.
++CODE_ROOT=${GATE5_CODE_ROOT:?submit controller must export GATE5_CODE_ROOT}
++DATA_ROOT=${GATE5_DATA_ROOT:-/pscratch/sd/j/josephrb/MINERvA-OmniFold}
++EXPECTED_HEAD=${GATE5_EXPECTED_HEAD:?submit controller must export GATE5_EXPECTED_HEAD}
++EXPECTED_DRIVER_SHA=${GATE5_EXPECTED_TARGET_DRIVER_SHA:?missing target-driver pin}
++EXPECTED_LOADER_SHA=${GATE5_EXPECTED_LOADER_SHA:?missing loader pin}
++EXPECTED_INPUT_SHA=${GATE5_EXPECTED_INPUT_SHA:?missing input pin}
++
++DRIVER=${CODE_ROOT}/nd-unfolding/pet/build_fullevent_replica_target.py
++LOADER=${CODE_ROOT}/nd-unfolding/pet/fullevent_fps_dataloader.py
++INPUT=${DATA_ROOT}/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz
++GATE3=${CODE_ROOT}/docs/orchestration/state/p3f-pet-gate3-source-manifest-56169838.json
++INDEX=${SLURM_ARRAY_TASK_ID:?array task ID missing}
++SEED=$((50000 + INDEX))
++REPLICA=$(printf 'replica_%02d' "$INDEX")
++OUTDIR=${DATA_ROOT}/nd-unfolding/pet/fullevent_cstat_n50/replicas/${REPLICA}/target
++TARGET=${OUTDIR}/GATE5_REPLICA_TARGET.npy
++RECEIPT=${OUTDIR}/GATE5_REPLICA_TARGET_RECEIPT.json
++
++die() { echo "[gate5-target][FAIL] $*" >&2; exit "${2:-1}"; }
++sha_of() { sha256sum "$1" | awk '{print $1}'; }
++[[ -d "$CODE_ROOT/.git" || -f "$CODE_ROOT/.git" ]] || die "invalid code worktree $CODE_ROOT"
++[[ "$(git -C "$CODE_ROOT" rev-parse HEAD)" == "$EXPECTED_HEAD" ]] || die "code HEAD drift"
++[[ "$(sha_of "$DRIVER")" == "$EXPECTED_DRIVER_SHA" ]] || die "target driver hash drift"
++[[ "$(sha_of "$LOADER")" == "$EXPECTED_LOADER_SHA" ]] || die "loader hash drift"
++for f in "$INPUT" "$GATE3"; do [[ -s "$f" && ! -L "$f" ]] || die "missing/symlink $f"; done
++for f in "$TARGET" "$TARGET.done" "$RECEIPT" "$RECEIPT.done"; do
++  [[ ! -e "$f" && ! -L "$f" ]] || die "collision/no-clobber guard: $f"
++done
++mkdir -p "$OUTDIR"
++
++source "${DATA_ROOT}/setup_salloc_env.sh"
++export PYTHONPATH="${CODE_ROOT}/omnifold_nn:${CODE_ROOT}/2d-unfolding:${CODE_ROOT}/nd-unfolding:${CODE_ROOT}/nd-unfolding/pet:${PYTHONPATH:-}"
++export PYTHONUNBUFFERED=1
++PYTHON_BIN=$(command -v python3 || true)
++[[ -n "$PYTHON_BIN" && -x "$PYTHON_BIN" ]] || die "ROOT environment python3 missing"
++"$PYTHON_BIN" -c 'import numpy, sklearn' || die "ROOT target environment missing NumPy/sklearn"
++
++echo "[gate5-target] index=$INDEX seed=$SEED job=${SLURM_ARRAY_JOB_ID}_${INDEX} head=$EXPECTED_HEAD"
++"$PYTHON_BIN" "$DRIVER" \
++  --inputs "$INPUT" \
++  --output "$TARGET" \
++  --receipt "$RECEIPT" \
++  --bootstrap-seed "$SEED" \
++  --replica-index "$INDEX" \
++  --expected-input-sha256 "$EXPECTED_INPUT_SHA" \
++  --gate3-manifest "$GATE3"
++echo "[gate5-target] DONE index=$INDEX seed=$SEED $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+diff --git a/nd-unfolding/pet/sbatch_gate5_replica_train_array.sh b/nd-unfolding/pet/sbatch_gate5_replica_train_array.sh
+new file mode 100755
+index 0000000..245e16f
+--- /dev/null
++++ b/nd-unfolding/pet/sbatch_gate5_replica_train_array.sh
+@@ -0,0 +1,73 @@
++#!/bin/bash
++#SBATCH --job-name=g5train
++#SBATCH --account=m3246
++#SBATCH --qos=gpu_shared
++#SBATCH --constraint=gpu
++#SBATCH --nodes=1
++#SBATCH --ntasks=1
++#SBATCH --gpus=1
++#SBATCH --cpus-per-task=32
++#SBATCH --mem=64G
++#SBATCH --time=08:00:00
++#SBATCH --array=0-49%10
++#SBATCH --export=ALL,HOME=/global/homes/j/josephrb
++#SBATCH --output=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/logs/train_%A_%a.out
++#SBATCH --error=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/logs/train_%A_%a.err
++set -eo pipefail
++
++CODE_ROOT=${GATE5_CODE_ROOT:?submit controller must export GATE5_CODE_ROOT}
++DATA_ROOT=${GATE5_DATA_ROOT:-/pscratch/sd/j/josephrb/MINERvA-OmniFold}
++EXPECTED_HEAD=${GATE5_EXPECTED_HEAD:?submit controller must export GATE5_EXPECTED_HEAD}
++EXPECTED_DRIVER_SHA=${GATE5_EXPECTED_TRAIN_DRIVER_SHA:?missing train-driver pin}
++EXPECTED_NOMINAL_SHA=${GATE5_EXPECTED_NOMINAL_DRIVER_SHA:?missing nominal-driver pin}
++EXPECTED_LOADER_SHA=${GATE5_EXPECTED_LOADER_SHA:?missing loader pin}
++
++DRIVER=${CODE_ROOT}/nd-unfolding/pet/train_fullevent_replica.py
++NOMINAL=${CODE_ROOT}/nd-unfolding/pet/train_fullevent_nominal.py
++LOADER=${CODE_ROOT}/nd-unfolding/pet/fullevent_fps_dataloader.py
++INPUT=${DATA_ROOT}/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz
++GATE3=${CODE_ROOT}/docs/orchestration/state/p3f-pet-gate3-source-manifest-56169838.json
++INDEX=${SLURM_ARRAY_TASK_ID:?array task ID missing}
++SEED=$((50000 + INDEX))
++REPLICA=$(printf 'replica_%02d' "$INDEX")
++BASE=${DATA_ROOT}/nd-unfolding/pet/fullevent_cstat_n50/replicas/${REPLICA}
++TARGET=${BASE}/target/GATE5_REPLICA_TARGET.npy
++TARGET_RECEIPT=${BASE}/target/GATE5_REPLICA_TARGET_RECEIPT.json
++OUTDIR=${BASE}/training
++OUTPUT=${OUTDIR}/GATE5_REPLICA_WEIGHTS.npz
++TRAIN_RECEIPT=${OUTDIR}/GATE5_REPLICA_TRAINING_RECEIPT.json
++
++die() { echo "[gate5-train][FAIL] $*" >&2; exit "${2:-1}"; }
++sha_of() { sha256sum "$1" | awk '{print $1}'; }
++[[ "$(git -C "$CODE_ROOT" rev-parse HEAD)" == "$EXPECTED_HEAD" ]] || die "code HEAD drift"
++[[ "$(sha_of "$DRIVER")" == "$EXPECTED_DRIVER_SHA" ]] || die "replica driver hash drift"
++[[ "$(sha_of "$NOMINAL")" == "$EXPECTED_NOMINAL_SHA" ]] || die "pinned nominal driver hash drift"
++[[ "$(sha_of "$LOADER")" == "$EXPECTED_LOADER_SHA" ]] || die "loader hash drift"
++for f in "$INPUT" "$GATE3" "$TARGET" "$TARGET.done" "$TARGET_RECEIPT" "$TARGET_RECEIPT.done"; do
++  [[ -s "$f" && ! -L "$f" ]] || die "missing/empty/symlink prerequisite $f"
++done
++for f in "$OUTPUT" "$OUTPUT.done" "$TRAIN_RECEIPT" "$TRAIN_RECEIPT.done"; do
++  [[ ! -e "$f" && ! -L "$f" ]] || die "collision/no-clobber guard: $f"
++done
++mkdir -p "$OUTDIR"
++
++source "${DATA_ROOT}/setup_salloc_env.sh"
++module load tensorflow/2.15.0
++export PYTHONPATH="${CODE_ROOT}/omnifold_nn:${CODE_ROOT}/2d-unfolding:${CODE_ROOT}/nd-unfolding:${CODE_ROOT}/nd-unfolding/pet:${PYTHONPATH:-}"
++export PYTHONUNBUFFERED=1
++PYTHON_BIN=$(command -v python3 || true)
++[[ -n "$PYTHON_BIN" && -x "$PYTHON_BIN" ]] || die "TensorFlow environment python3 missing"
++"$PYTHON_BIN" -c 'import tensorflow as tf; import omnifold; print(tf.__version__)' \
++  || die "TensorFlow/PET import preflight failed"
++
++echo "[gate5-train] index=$INDEX seed=$SEED job=${SLURM_ARRAY_JOB_ID}_${INDEX} head=$EXPECTED_HEAD"
++"$PYTHON_BIN" "$DRIVER" \
++  --inputs "$INPUT" \
++  --target-npy "$TARGET" \
++  --target-receipt "$TARGET_RECEIPT" \
++  --output "$OUTPUT" \
++  --train-receipt "$TRAIN_RECEIPT" \
++  --gate3-manifest "$GATE3" \
++  --bootstrap-seed "$SEED" \
++  --replica-index "$INDEX"
++echo "[gate5-train] DONE index=$INDEX seed=$SEED $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+diff --git a/nd-unfolding/pet/submit_gate5_replica_n50.sh b/nd-unfolding/pet/submit_gate5_replica_n50.sh
+new file mode 100755
+index 0000000..918ab48
+--- /dev/null
++++ b/nd-unfolding/pet/submit_gate5_replica_n50.sh
+@@ -0,0 +1,67 @@
++#!/bin/bash
++# Submit the predeclared two-stage N=50 campaign exactly once.
++set -eo pipefail
++
++CODE_ROOT=$(git rev-parse --show-toplevel)
++DATA_ROOT=/pscratch/sd/j/josephrb/MINERvA-OmniFold
++TARGET_SCRIPT=${CODE_ROOT}/nd-unfolding/pet/sbatch_gate5_replica_target_array.sh
++TRAIN_SCRIPT=${CODE_ROOT}/nd-unfolding/pet/sbatch_gate5_replica_train_array.sh
++TARGET_DRIVER=${CODE_ROOT}/nd-unfolding/pet/build_fullevent_replica_target.py
++TRAIN_DRIVER=${CODE_ROOT}/nd-unfolding/pet/train_fullevent_replica.py
++NOMINAL_DRIVER=${CODE_ROOT}/nd-unfolding/pet/train_fullevent_nominal.py
++LOADER=${CODE_ROOT}/nd-unfolding/pet/fullevent_fps_dataloader.py
++INPUT=${DATA_ROOT}/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz
++EXPECTED_INPUT_SHA=fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625
++OUTPUT_ROOT=${DATA_ROOT}/nd-unfolding/pet/fullevent_cstat_n50
++
++die() { echo "[gate5-submit][FAIL] $*" >&2; exit "${2:-1}"; }
++sha_of() { sha256sum "$1" | awk '{print $1}'; }
++[[ -z "$(git -C "$CODE_ROOT" status --porcelain)" ]] || die "code worktree is dirty"
++HEAD=$(git -C "$CODE_ROOT" rev-parse HEAD)
++for f in "$TARGET_SCRIPT" "$TRAIN_SCRIPT" "$TARGET_DRIVER" "$TRAIN_DRIVER" \
++         "$NOMINAL_DRIVER" "$LOADER" "$INPUT"; do
++  [[ -s "$f" && ! -L "$f" ]] || die "missing/empty/symlink prerequisite $f"
++done
++[[ "$(sha_of "$INPUT")" == "$EXPECTED_INPUT_SHA" ]] || die "frozen G2 source hash mismatch"
++if squeue -h -u "$USER" -n g5targ,g5train | grep -q .; then
++  squeue -h -u "$USER" -n g5targ,g5train -o '%i|%j|%T|%R' >&2
++  die "an existing Gate-5 array is already active"
++fi
++for index in $(seq 0 49); do
++  replica=$(printf 'replica_%02d' "$index")
++  base=${OUTPUT_ROOT}/replicas/${replica}
++  for f in \
++    "$base/target/GATE5_REPLICA_TARGET.npy" \
++    "$base/target/GATE5_REPLICA_TARGET.npy.done" \
++    "$base/target/GATE5_REPLICA_TARGET_RECEIPT.json" \
++    "$base/target/GATE5_REPLICA_TARGET_RECEIPT.json.done" \
++    "$base/training/GATE5_REPLICA_WEIGHTS.npz" \
++    "$base/training/GATE5_REPLICA_WEIGHTS.npz.done" \
++    "$base/training/GATE5_REPLICA_TRAINING_RECEIPT.json" \
++    "$base/training/GATE5_REPLICA_TRAINING_RECEIPT.json.done"; do
++    [[ ! -e "$f" && ! -L "$f" ]] || die "collision/no-clobber guard: $f"
++  done
++done
++mkdir -p "$OUTPUT_ROOT/logs"
++
++EXPORTS="ALL,HOME=/global/homes/j/josephrb,GATE5_CODE_ROOT=$CODE_ROOT,GATE5_DATA_ROOT=$DATA_ROOT"
++EXPORTS+=",GATE5_EXPECTED_HEAD=$HEAD,GATE5_EXPECTED_INPUT_SHA=$EXPECTED_INPUT_SHA"
++EXPORTS+=",GATE5_EXPECTED_TARGET_DRIVER_SHA=$(sha_of "$TARGET_DRIVER")"
++EXPORTS+=",GATE5_EXPECTED_TRAIN_DRIVER_SHA=$(sha_of "$TRAIN_DRIVER")"
++EXPORTS+=",GATE5_EXPECTED_NOMINAL_DRIVER_SHA=$(sha_of "$NOMINAL_DRIVER")"
++EXPORTS+=",GATE5_EXPECTED_LOADER_SHA=$(sha_of "$LOADER")"
++
++TARGET_JOB=$(sbatch --parsable --array=0-49%10 --export="$EXPORTS" "$TARGET_SCRIPT") \
++  || die "target-array submission failed"
++[[ "$TARGET_JOB" =~ ^[0-9]+$ ]] || die "unexpected target job id $TARGET_JOB"
++if ! TRAIN_JOB=$(sbatch --parsable --array=0-49%10 --dependency="aftercorr:${TARGET_JOB}" \
++      --export="$EXPORTS" "$TRAIN_SCRIPT"); then
++  scancel "$TARGET_JOB" || true
++  die "training-array submission failed; exact target array $TARGET_JOB cancelled"
++fi
++[[ "$TRAIN_JOB" =~ ^[0-9]+$ ]] || die "unexpected training job id $TRAIN_JOB"
++echo "GATE5_TARGET_JOB=$TARGET_JOB"
++echo "GATE5_TRAIN_JOB=$TRAIN_JOB"
++echo "GATE5_DEPENDENCY=aftercorr:$TARGET_JOB"
++echo "GATE5_CODE_HEAD=$HEAD"
++echo "GATE5_OUTPUT_ROOT=$OUTPUT_ROOT"
+diff --git a/nd-unfolding/pet/train_fullevent_replica.py b/nd-unfolding/pet/train_fullevent_replica.py
+new file mode 100755
+index 0000000..603a15a
+--- /dev/null
++++ b/nd-unfolding/pet/train_fullevent_replica.py
+@@ -0,0 +1,389 @@
++#!/usr/bin/env python3
++"""Gate-5 GPU stage: train one coherent full-event PET statistical replica.
++
++The promoted nominal driver is intentionally not edited or copied.  This dedicated adapter invokes
++that exact driver and injects the only replica-specific operations at its existing seams: the
++bootstrap seed, the receipt-bound precomputed target, and coherent-factor provenance fields.  The
++nominal path therefore still owns the PET architecture, anneal assertion, checkpoint round-trip,
++fold-forward telemetry, and transactional artifact write.
++"""
++import argparse
++import datetime as dt
++import hashlib
++import json
++import os
++import socket
++import subprocess
++import sys
++import time
++from pathlib import Path
++
++import numpy as np
++
++HERE = Path(__file__).resolve().parent
++REPO = HERE.parents[1]
++for item in (HERE, REPO / "nd-unfolding", REPO / "nd-unfolding/pet"):
++    if str(item) not in sys.path:
++        sys.path.insert(0, str(item))
++
++import fullevent_fps_dataloader as fe  # noqa: E402
++import train_fullevent_nominal as nominal  # noqa: E402
++from atomic_write import atomic_write, is_complete, mark_complete  # noqa: E402
++
++SEED_POLICY = "gate5-cstat-n50-v1: bootstrap_seed=50000+replica_index"
++
++
++def sha256_file(path, chunk=16 << 20):
++    h = hashlib.sha256()
++    with open(path, "rb") as stream:
++        for block in iter(lambda: stream.read(chunk), b""):
++            h.update(block)
++    return h.hexdigest()
++
++
++def hash_array(value):
++    a = np.ascontiguousarray(value)
++    h = hashlib.sha256()
++    h.update(str(a.dtype).encode("ascii"))
++    h.update(json.dumps(list(a.shape), separators=(",", ":")).encode("ascii"))
++    h.update(memoryview(a).cast("B"))
++    return h.hexdigest()
++
++
++def jsonable(value):
++    if isinstance(value, dict):
++        return {str(k): jsonable(v) for k, v in value.items()}
++    if isinstance(value, (list, tuple)):
++        return [jsonable(v) for v in value]
++    if isinstance(value, np.ndarray):
++        return value.tolist()
++    if isinstance(value, np.generic):
++        return value.item()
++    return value
++
++
++def git_head():
++    return subprocess.check_output(
++        ["git", "rev-parse", "HEAD"], cwd=REPO, text=True
++    ).strip()
++
++
++def read_replica_target_receipt(target_npy, receipt_path, inputs_npz, bootstrap_seed,
++                                replica_index):
++    try:
++        with open(receipt_path, encoding="utf-8") as stream:
++            receipt = json.load(stream)
++    except (OSError, json.JSONDecodeError) as exc:
++        raise SystemExit(f"[gate5-train] target receipt unreadable: {exc}")
++    if receipt.get("status") != "PASS":
++        raise SystemExit(f"[gate5-train] target receipt status {receipt.get('status')!r} != PASS")
++    if int(receipt.get("replica_index", -1)) != int(replica_index):
++        raise SystemExit("[gate5-train] target receipt replica index mismatch")
++    if int(receipt.get("bootstrap_seed", -1)) != int(bootstrap_seed):
++        raise SystemExit("[gate5-train] target receipt bootstrap seed mismatch")
++    if receipt.get("seed_policy") != SEED_POLICY:
++        raise SystemExit("[gate5-train] target receipt seed policy is not the predeclared N=50 policy")
++    target_meta = dict(receipt.get("runtime_target") or {})
++    fe.assert_refined_target_is_replica(target_meta, bootstrap_seed=int(bootstrap_seed))
++    if target_meta.get("target_mode") != nominal.BKG_MODE:
++        raise SystemExit("[gate5-train] target receipt is not negweight-refined")
++    if not target_meta.get("refinement_is_learned_production"):
++        raise SystemExit("[gate5-train] target receipt is not the learned production refinement")
++
++    feed = (receipt.get("step1_feed") or {}).get("weights") or {}
++    target_npy = os.path.abspath(target_npy)
++    if os.path.abspath(feed.get("path", "")) != target_npy:
++        raise SystemExit("[gate5-train] target path differs from the path owned by its receipt")
++    if not is_complete(target_npy):
++        raise SystemExit("[gate5-train] target lacks a valid size/mtime completion marker")
++    target_sha = sha256_file(target_npy)
++    if target_sha != feed.get("sha256"):
++        raise SystemExit("[gate5-train] target SHA-256 differs from its receipt")
++    if int(feed.get("size_bytes", -1)) != os.path.getsize(target_npy):
++        raise SystemExit("[gate5-train] target size differs from its receipt")
++
++    source = receipt.get("input_preflight") or {}
++    if os.path.abspath(source.get("path", "")) != os.path.abspath(inputs_npz):
++        raise SystemExit("[gate5-train] source dump differs from target receipt")
++    if int(source.get("size_bytes", -1)) != os.path.getsize(inputs_npz):
++        raise SystemExit("[gate5-train] source dump size differs from target receipt")
++    if not source.get("sha256"):
++        raise SystemExit("[gate5-train] target receipt does not bind a source SHA-256")
++    receipt["_verified_input_sha256"] = source["sha256"]
++    receipt["_verified_target_sha256"] = target_sha
++    return receipt
++
++
++def write_json(path, payload):
++    def writer(tmp):
++        with open(tmp, "w", encoding="utf-8") as stream:
++            json.dump(jsonable(payload), stream, indent=2, sort_keys=True)
++            stream.write("\n")
++            stream.flush()
++            os.fsync(stream.fileno())
++
++    atomic_write(path, writer, suffix=".json", overwrite=False, fsync=True)
++    mark_complete(path, note="Gate-5 coherent replica training receipt; published last")
++
++
++def run_nominal_adapter(args, target_receipt):
++    """Invoke the exact nominal main() while injecting the replica-only contract.
++
++    Hooks are restored in a finally block, so importing this module cannot leave the canonical module
++    mutated.  The captured loader metadata is added inside the nominal driver's own atomic write.
++    """
++    original_build = nominal.fe.build_fullevent_loaders
++    original_provenance = nominal.assert_target_provenance
++    original_atomic = nominal.atomic_savez_compressed
++    captured = {}
++
++    def replica_provenance(target_npy, receipt_path, inputs_npz):
++        if os.path.abspath(target_npy) != os.path.abspath(args.target_npy):
++            raise SystemExit("[gate5-train] nominal adapter received an unexpected target path")
++        if os.path.abspath(receipt_path) != os.path.abspath(args.target_receipt):
++            raise SystemExit("[gate5-train] nominal adapter received an unexpected receipt path")
++        if os.path.abspath(inputs_npz) != os.path.abspath(args.inputs):
++            raise SystemExit("[gate5-train] nominal adapter received an unexpected source path")
++        return target_receipt
++
++    def replica_build(*build_args, **build_kwargs):
++        if build_kwargs.get("bootstrap_seed") not in (None, int(args.bootstrap_seed)):
++            raise SystemExit("[gate5-train] conflicting bootstrap seed at loader seam")
++        build_kwargs["bootstrap_seed"] = int(args.bootstrap_seed)
++        build_kwargs["precomputed_target_replica_seed"] = int(args.bootstrap_seed)
++        result = original_build(*build_args, **build_kwargs)
++        meta = result[-1]
++        fe.assert_refined_target_is_replica(
++            meta.get("target") or {}, bootstrap_seed=int(args.bootstrap_seed)
++        )
++        captured["meta"] = meta
++        return result
++
++    def replica_atomic(path, arrays, **kwargs):
++        if "meta" not in captured:
++            raise SystemExit("[gate5-train] artifact write occurred before replica loader evidence")
++        meta = captured["meta"]
++        bootstrap = dict(meta.get("bootstrap") or {})
++        if int(bootstrap.get("bootstrap_seed", -1)) != int(args.bootstrap_seed):
++            raise SystemExit("[gate5-train] loader bootstrap evidence carries the wrong seed")
++        n_data = int(bootstrap.get("n_data_full", -1))
++        n_sig = int(bootstrap.get("n_sig_full", -1))
++        n_bkg = int(bootstrap.get("n_bkg_full", -1))
++        data_factor, sig_factor_full, bkg_factor_full = fe.coherent_bootstrap_factors(
++            n_data, n_sig, n_bkg, int(args.bootstrap_seed)
++        )
++        bkg_factor_loader = np.asarray(
++            bootstrap.get("bkg_bootstrap_factor"), dtype=np.uint8
++        )
++        if bkg_factor_loader.shape != (n_bkg,):
++            raise SystemExit("[gate5-train] full background factor was not retained")
++        if not np.array_equal(bkg_factor_loader, bkg_factor_full):
++            raise SystemExit("[gate5-train] loader background factor differs from canonical replay")
++        imc = np.asarray(bootstrap.get("mc_indices"), dtype=np.int64)
++        sig_factor_subset = np.asarray(
++            bootstrap.get("sig_bootstrap_factor"), dtype=np.uint8
++        )
++        if imc.shape != sig_factor_subset.shape or not np.array_equal(
++            sig_factor_subset, sig_factor_full[imc]
++        ):
++            raise SystemExit("[gate5-train] loader signal subset differs from full canonical replay")
++        factor_meta = dict(target_receipt.get("bootstrap") or {})
++        for label, factor, key in (
++            ("data", data_factor, "data_factor_sha256"),
++            ("signal", sig_factor_full, "signal_factor_sha256"),
++            ("background", bkg_factor_full, "background_factor_sha256"),
++        ):
++            if hash_array(factor) != factor_meta.get(key):
++                raise SystemExit(
++                    f"[gate5-train] canonical {label} factor differs from target-stage receipt"
++                )
++        augmented = dict(arrays)
++        augmented.update({
++            "campaign_role": np.asarray("gate5-cstat-coherent-replica"),
++            "replica_index": np.asarray(int(args.replica_index)),
++            "bootstrap_seed": np.asarray(int(args.bootstrap_seed)),
++            # The existing extraction validator consumes the subset factor paired to mc_indices;
++            # full-inventory extraction consumes the separately named full factor.  Keeping both
++            # prevents either contract from silently treating one cardinality as the other.
++            "sig_bootstrap_factor": sig_factor_subset,
++            "sig_bootstrap_factor_full": sig_factor_full,
++            "bkg_indices": np.arange(n_bkg, dtype=np.int64),
++            "bkg_bootstrap_factor": bkg_factor_full,
++            "n_data_full": np.asarray(n_data),
++            "n_sig_full": np.asarray(n_sig),
++            "n_bkg_full": np.asarray(n_bkg),
++            "inventory_hashes": np.asarray(str(bootstrap.get("inventory_hashes"))),
++            "bkg_inventory_hash": np.asarray(
++                str((meta.get("input_identity_hashes") or {}).get("bkg"))
++            ),
++            "input_identity_hashes": np.asarray(
++                dict(meta.get("input_identity_hashes") or {}), dtype=object
++            ),
++            "bootstrap_factor_sha256": np.asarray(
++                dict(target_receipt.get("bootstrap") or {}), dtype=object
++            ),
++            "replica_target_receipt_path": np.asarray(os.path.abspath(args.target_receipt)),
++            "replica_target_receipt_sha256": np.asarray(sha256_file(args.target_receipt)),
++            "replica_target_sha256": np.asarray(target_receipt["_verified_target_sha256"]),
++            "replica_seed_policy": np.asarray(SEED_POLICY),
++        })
++        return original_atomic(path, augmented, **kwargs)
++
++    nominal.fe.build_fullevent_loaders = replica_build
++    nominal.assert_target_provenance = replica_provenance
++    nominal.atomic_savez_compressed = replica_atomic
++    try:
++        return nominal.main([
++            "--inputs", args.inputs,
++            "--out", args.output,
++            "--tag", "nominal",
++            "--gate3-manifest", args.gate3_manifest,
++            "--target-npy", args.target_npy,
++            "--target-receipt", args.target_receipt,
++        ])
++    finally:
++        nominal.fe.build_fullevent_loaders = original_build
++        nominal.assert_target_provenance = original_provenance
++        nominal.atomic_savez_compressed = original_atomic
++
++
++def validate_artifact(path, bootstrap_seed, replica_index, target_receipt):
++    if not is_complete(path):
++        raise SystemExit("[gate5-train] replica artifact lacks a valid completion marker")
++    with np.load(path, allow_pickle=True) as store:
++        if str(np.asarray(store["campaign_role"]).item()) != "gate5-cstat-coherent-replica":
++            raise SystemExit("[gate5-train] artifact role is not Gate-5 coherent replica")
++        if int(np.asarray(store["replica_index"]).item()) != int(replica_index):
++            raise SystemExit("[gate5-train] artifact replica index mismatch")
++        n_sig = int(np.asarray(store["n_sig_full"]).item())
++        n_bkg = int(np.asarray(store["n_bkg_full"]).item())
++        identities = np.asarray(store["input_identity_hashes"], dtype=object).item()
++        fe.validate_coherent_bootstrap(
++            store,
++            bootstrap_seed=int(bootstrap_seed),
++            n_sig_full=n_sig,
++            n_bkg_full=n_bkg,
++            estimator_fingerprint=nominal.ESTIMATOR_FINGERPRINT,
++            inventory_hashes=str(np.asarray(store["inventory_hashes"]).item()),
++            bkg_inventory_hash=identities["bkg"],
++        )
++        if str(np.asarray(store["replica_target_sha256"]).item()) != target_receipt[
++            "_verified_target_sha256"
++        ]:
++            raise SystemExit("[gate5-train] artifact target hash differs from verified receipt")
++        seed_policy = np.asarray(store["seed_policy"], dtype=object).item()
++        if seed_policy != nominal.NOMINAL_SEED_POLICY:
++            raise SystemExit("[gate5-train] replica drifted from the promoted nominal policy")
++        realized = np.asarray(store["lr_policy_realized"], dtype=object).item()
++        if not realized.get("verified_from_optimizer"):
++            raise SystemExit("[gate5-train] fit-time anneal was not verified from optimizer")
++        if (int(realized.get("n_fits_base_lr", -1)),
++                int(realized.get("n_fits_annealed", -1))) != (2, 4):
++            raise SystemExit("[gate5-train] realized anneal is not the required 2 base + 4 annealed fits")
++        factor_meta = np.asarray(store["bootstrap_factor_sha256"], dtype=object).item()
++        bkg_factor = np.asarray(store["bkg_bootstrap_factor"])
++        sig_factor_full = np.asarray(store["sig_bootstrap_factor_full"])
++        if sig_factor_full.shape != (n_sig,):
++            raise SystemExit("[gate5-train] full signal factor has the wrong inventory length")
++        if hash_array(sig_factor_full) != factor_meta["signal_factor_sha256"]:
++            raise SystemExit("[gate5-train] persisted full signal factor hash mismatch")
++        imc = np.asarray(store["mc_indices"], dtype=np.int64)
++        if not np.array_equal(
++            sig_factor_full[imc], np.asarray(store["sig_bootstrap_factor"])
++        ):
++            raise SystemExit("[gate5-train] subset signal factor is not a restriction of full factor")
++        if hash_array(bkg_factor) != factor_meta["background_factor_sha256"]:
++            raise SystemExit("[gate5-train] persisted background factor hash mismatch")
++        return {
++            "rows": int(np.asarray(store["weights_push"]).size),
++            "n_sig_full": n_sig,
++            "n_data_full": int(np.asarray(store["n_data_full"]).item()),
++            "n_bkg_full": n_bkg,
++            "lr_policy_realized": realized,
++            "input_identity_hashes": identities,
++        }
++
++
++def main(argv=None):
++    ap = argparse.ArgumentParser(description=__doc__)
++    ap.add_argument("--inputs", required=True)
++    ap.add_argument("--target-npy", required=True)
++    ap.add_argument("--target-receipt", required=True)
++    ap.add_argument("--output", required=True)
++    ap.add_argument("--train-receipt", required=True)
++    ap.add_argument("--gate3-manifest", required=True)
++    ap.add_argument("--bootstrap-seed", type=int, required=True)
++    ap.add_argument("--replica-index", type=int, required=True)
++    args = ap.parse_args(argv)
++
++    expected_seed = 50000 + int(args.replica_index)
++    if args.replica_index < 0 or args.replica_index >= 50 or args.bootstrap_seed != expected_seed:
++        raise SystemExit("[gate5-train] replica index/seed violates predeclared N=50 policy")
++    for path in (args.output, args.train_receipt):
++        if os.path.lexists(path) or os.path.lexists(f"{path}.done"):
++            raise SystemExit(f"[gate5-train] collision/no-clobber guard: {path}")
++    nominal.run_config_gate(args.inputs, args.gate3_manifest)
++    target_receipt = read_replica_target_receipt(
++        args.target_npy, args.target_receipt, args.inputs,
++        args.bootstrap_seed, args.replica_index,
++    )
++    started = time.monotonic()
++    started_utc = dt.datetime.now(dt.timezone.utc).isoformat()
++    rc = run_nominal_adapter(args, target_receipt)
++    if rc != 0:
++        raise SystemExit(f"[gate5-train] nominal adapter returned {rc}")
++    evidence = validate_artifact(
++        args.output, args.bootstrap_seed, args.replica_index, target_receipt
++    )
++    receipt = {
++        "schema_version": 1,
++        "status": "PASS",
++        "verdict": "GATE5_REPLICA_TRAINING_PASS_EXTRACTION_PENDING",
++        "replica_index": int(args.replica_index),
++        "bootstrap_seed": int(args.bootstrap_seed),
++        "seed_policy": SEED_POLICY,
++        "started_at_utc": started_utc,
++        "completed_at_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
++        "execution": {
++            "slurm_job_id": os.environ.get("SLURM_JOB_ID", "none"),
++            "slurm_array_job_id": os.environ.get("SLURM_ARRAY_JOB_ID", "none"),
++            "slurm_array_task_id": os.environ.get("SLURM_ARRAY_TASK_ID", "none"),
++            "host": socket.gethostname(),
++            "head_at_runtime": git_head(),
++        },
++        "artifact": {
++            "path": os.path.abspath(args.output),
++            "sha256": sha256_file(args.output),
++            "size_bytes": os.path.getsize(args.output),
++            "completion_marker_valid": True,
++        },
++        "target": {
++            "path": os.path.abspath(args.target_npy),
++            "sha256": target_receipt["_verified_target_sha256"],
++            "receipt_path": os.path.abspath(args.target_receipt),
++            "receipt_sha256": sha256_file(args.target_receipt),
++        },
++        "evidence": evidence,
++        "code": {
++            "replica_driver": {"path": str(Path(__file__).resolve()), "sha256": sha256_file(__file__)},
++            "nominal_driver_unmodified": {
++                "path": str(Path(nominal.__file__).resolve()),
++                "sha256": sha256_file(nominal.__file__),
++            },
++            "loader": {"path": str(Path(fe.__file__).resolve()), "sha256": sha256_file(fe.__file__)},
++        },
++        "timing": {"total_seconds": time.monotonic() - started},
++    }
++    write_json(args.train_receipt, receipt)
++    print(json.dumps({
++        "status": "PASS",
++        "replica_index": args.replica_index,
++        "bootstrap_seed": args.bootstrap_seed,
++        "artifact": os.path.abspath(args.output),
++        "receipt": os.path.abspath(args.train_receipt),
++    }, sort_keys=True))
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/nd-unfolding/tests/test_gate5_replica_driver.py b/nd-unfolding/tests/test_gate5_replica_driver.py
+new file mode 100644
+index 0000000..732ff49
+--- /dev/null
++++ b/nd-unfolding/tests/test_gate5_replica_driver.py
+@@ -0,0 +1,180 @@
++#!/usr/bin/env python3
++"""Acceptance tests for the dedicated Gate-5 two-stage replica path."""
++import json
++import sys
++from pathlib import Path
++from types import SimpleNamespace
++
++import numpy as np
++import pytest
++
++REPO = Path(__file__).resolve().parents[2]
++PET = REPO / "nd-unfolding/pet"
++if str(PET) not in sys.path:
++    sys.path.insert(0, str(PET))
++
++import fullevent_fps_dataloader as fe  # noqa: E402
++import train_fullevent_nominal as nominal  # noqa: E402
++import train_fullevent_replica as replica  # noqa: E402
++from atomic_write import mark_complete  # noqa: E402
++
++
++def target_receipt(tmp_path, seed=50000, index=0):
++    source = tmp_path / "source.npz"
++    source.write_bytes(b"immutable-source-fixture")
++    target = tmp_path / "target.npy"
++    with target.open("wb") as stream:
++        np.save(stream, np.asarray([1.0, 2.0], dtype=np.float32), allow_pickle=False)
++    mark_complete(str(target), note="test")
++    receipt_path = tmp_path / "target-receipt.json"
++    data_factor, sig_factor, bkg_factor = fe.coherent_bootstrap_factors(3, 5, 2, seed)
++    payload = {
++        "status": "PASS",
++        "replica_index": index,
++        "bootstrap_seed": seed,
++        "seed_policy": replica.SEED_POLICY,
++        "runtime_target": {
++            "target_mode": nominal.BKG_MODE,
++            "bootstrap_seed": seed,
++            "refinement_is_learned_production": True,
++            "input_identity_hashes": {"sig": "s", "data": "d", "bkg": "b"},
++        },
++        "step1_feed": {
++            "weights": {
++                "path": str(target.resolve()),
++                "sha256": replica.sha256_file(target),
++                "size_bytes": target.stat().st_size,
++            }
++        },
++        "input_preflight": {
++            "path": str(source.resolve()),
++            "sha256": replica.sha256_file(source),
++            "size_bytes": source.stat().st_size,
++        },
++        "bootstrap": {
++            "n_data_full": 3,
++            "n_sig_full": 5,
++            "n_bkg_full": 2,
++            "data_factor_sha256": replica.hash_array(data_factor),
++            "signal_factor_sha256": replica.hash_array(sig_factor),
++            "background_factor_sha256": replica.hash_array(bkg_factor),
++        },
++    }
++    receipt_path.write_text(json.dumps(payload))
++    return source, target, receipt_path, payload
++
++
++def test_replica_target_receipt_is_seed_and_hash_bound(tmp_path):
++    source, target, receipt_path, _ = target_receipt(tmp_path)
++    rec = replica.read_replica_target_receipt(
++        str(target), str(receipt_path), str(source), 50000, 0
++    )
++    assert rec["_verified_target_sha256"] == replica.sha256_file(target)
++    with pytest.raises((SystemExit, ValueError), match="seed"):
++        replica.read_replica_target_receipt(
++            str(target), str(receipt_path), str(source), 50001, 0
++        )
++    with target.open("ab") as stream:
++        stream.write(b"tamper")
++    with pytest.raises(SystemExit, match="completion marker|SHA-256"):
++        replica.read_replica_target_receipt(
++            str(target), str(receipt_path), str(source), 50000, 0
++        )
++
++
++def test_adapter_injects_replica_seed_and_augments_nominal_atomic_write(tmp_path, monkeypatch):
++    source, target, receipt_path, rec = target_receipt(tmp_path)
++    rec["_verified_input_sha256"] = rec["input_preflight"]["sha256"]
++    rec["_verified_target_sha256"] = rec["step1_feed"]["weights"]["sha256"]
++    seen = {}
++    data_factor, sig_factor, bkg_factor = fe.coherent_bootstrap_factors(3, 5, 2, 50000)
++    imc = np.asarray([0, 4])
++    meta = {
++        "target": {"bootstrap_seed": 50000},
++        "bootstrap": {
++            "bootstrap_seed": 50000,
++            "n_data_full": 3,
++            "n_sig_full": 5,
++            "n_bkg_full": 2,
++            "mc_indices": imc,
++            "sig_bootstrap_factor": sig_factor[imc],
++            "bkg_bootstrap_factor": bkg_factor,
++            "inventory_hashes": "signal-order",
++        },
++        "input_identity_hashes": {"sig": "s", "data": "d", "bkg": "b"},
++    }
++
++    def fake_build(*args, **kwargs):
++        seen["build_kwargs"] = dict(kwargs)
++        return (object(), object(), imc, [], [], meta)
++
++    def fake_atomic(path, arrays, **kwargs):
++        seen["arrays"] = dict(arrays)
++        return path
++
++    original_build = nominal.fe.build_fullevent_loaders
++    original_provenance = nominal.assert_target_provenance
++    original_atomic = nominal.atomic_savez_compressed
++    monkeypatch.setattr(nominal.fe, "build_fullevent_loaders", fake_build)
++    monkeypatch.setattr(nominal, "atomic_savez_compressed", fake_atomic)
++
++    def fake_main(argv):
++        nominal.fe.build_fullevent_loaders(
++            str(source), precomputed_target=str(target), bootstrap_seed=None
++        )
++        got = nominal.assert_target_provenance(str(target), str(receipt_path), str(source))
++        assert got is rec
++        nominal.atomic_savez_compressed(
++            "artifact.npz", {"bootstrap_seed": np.asarray(50000)}, mark=True
++        )
++        return 0
++
++    monkeypatch.setattr(nominal, "main", fake_main)
++    args = SimpleNamespace(
++        target_npy=str(target), target_receipt=str(receipt_path), inputs=str(source),
++        bootstrap_seed=50000, replica_index=0, output=str(tmp_path / "artifact.npz"),
++        gate3_manifest=str(tmp_path / "gate3.json"),
++    )
++    assert replica.run_nominal_adapter(args, rec) == 0
++    assert seen["build_kwargs"]["bootstrap_seed"] == 50000
++    assert seen["build_kwargs"]["precomputed_target_replica_seed"] == 50000
++    assert seen["arrays"]["campaign_role"].item() == "gate5-cstat-coherent-replica"
++    assert np.array_equal(seen["arrays"]["sig_bootstrap_factor"], sig_factor[imc])
++    assert np.array_equal(seen["arrays"]["sig_bootstrap_factor_full"], sig_factor)
++    assert np.array_equal(seen["arrays"]["bkg_bootstrap_factor"], bkg_factor)
++    assert seen["arrays"]["replica_target_sha256"].item() == rec["_verified_target_sha256"]
++    # The adapter must not leave any canonical module seam mutated after the call.
++    assert nominal.fe.build_fullevent_loaders is fake_build
++    assert nominal.atomic_savez_compressed is fake_atomic
++    assert nominal.assert_target_provenance is original_provenance
++    # Explicitly retain references so this assertion also documents the three restored seams.
++    assert original_build is not fake_build
++    assert original_atomic is not fake_atomic
++
++
++def test_production_paths_call_replica_guard_and_leave_nominal_driver_unchanged():
++    target_source = (PET / "build_fullevent_replica_target.py").read_text()
++    train_source = (PET / "train_fullevent_replica.py").read_text()
++    assert "fe.assert_refined_target_is_replica(" in target_source
++    assert "fe.assert_refined_target_is_replica(" in train_source
++    assert "precomputed_target_replica_seed" in train_source
++    assert "train_fullevent_nominal as nominal" in train_source
++    # The dedicated files may invoke the nominal module; they may never rewrite it.
++    assert "--allow-overwrite" not in target_source + train_source
++
++
++def test_n50_launchers_are_two_stage_collision_isolated_and_task_correlated():
++    target = (PET / "sbatch_gate5_replica_target_array.sh").read_text()
++    train = (PET / "sbatch_gate5_replica_train_array.sh").read_text()
++    submit = (PET / "submit_gate5_replica_n50.sh").read_text()
++    assert "#SBATCH --array=0-49%10" in target
++    assert "#SBATCH --array=0-49%10" in train
++    assert "#SBATCH --constraint=cpu" in target and "#SBATCH --gpus" not in target
++    assert "#SBATCH --constraint=gpu" in train and "#SBATCH --gpus=1" in train
++    assert "SEED=$((50000 + INDEX))" in target
++    assert "SEED=$((50000 + INDEX))" in train
++    assert "--dependency=\"aftercorr:${TARGET_JOB}\"" in submit
++    assert "replicas/${REPLICA}/target" in target
++    assert "replicas/${REPLICA}" in train
++    assert "--allow-overwrite" not in target + train + submit
++    assert "scancel \"$TARGET_JOB\"" in submit  # fail closed if stage-2 submit fails

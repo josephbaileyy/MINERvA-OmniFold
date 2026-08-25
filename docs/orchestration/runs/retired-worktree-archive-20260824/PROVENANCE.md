@@ -15,8 +15,8 @@ a fabricated sha absent).
 
 | bucket | files | bytes |
 |---|---|---|
-| already recoverable from git | 9 | 106,971 |
-| single-copy **and load-bearing** → committed here | 5 | 48,947 |
+| already recoverable from git | 8 | 52,508 |
+| single-copy **and load-bearing** → committed here | 6 | 103,410 |
 | single-copy, safe to lose | 16 | 6,520 |
 
 The three sums reconcile to the archive's measured total of 162,438 bytes, which is the check
@@ -40,6 +40,36 @@ Follows `docs/orchestration/runs/clausec-rerun-20260821/` — measured to be the
 the twelve worktrees removed on 2026-08-24 whose artifacts had been preserved this way (35
 tracked files). **n=1: a precedent, not established practice.** `gate5-data-only-frozen-377c713`
 was the second instance; these are the third through seventh.
+
+## CORRECTION 2026-08-25 — one file moved from (a) to (b), and it was nearly deleted
+
+The counts above are the **corrected** ones. As first filed they read 9 / 5 / 16, because this
+lane classified `gate5-rereview.hywFA5/untracked/gate5_diff.txt` (54,463 B) as regenerable via
+`git diff 02a2091 c39ac60`. **That recipe was wrong and produces 1,724 bytes — 3.2% of the
+file.**
+
+Cause: `02a2091..c39ac60` is the `index` line of the **first of seven** file-diffs inside a
+multi-file diff (`p4-sweep-snapshots.json`, `build_fullevent_replica_target.py`, three
+`sbatch_gate5_replica_*.sh`, `train_fullevent_replica.py`, `test_gate5_replica_driver.py`), and
+six of the seven "before" sides are `0000000` — new files. **An index line names two blobs; it
+does not describe the artifact containing it.** Reading one as a provenance recipe is the same
+error as reading a field named `armed_watch` as a live state.
+
+The branch-cleanup lane caught it before deleting anything, and it is the reason that file
+still exists. Verified here independently, and no route regenerates it: `git show 56d35afb` is
+8,890 B, `git diff 56d35afb^ 56d35afb` is 8,707 B, and a `-U3`→`-U25` context sweep on
+`670e62df` spans 51,669–53,474 B / 1,146–1,209 lines, never reaching 54,463 B / 1,195 lines —
+and the archived file uses *shorter* 7-hex index lines, so it genuinely contains more content.
+Most likely a **working-tree** diff, which by definition is in no commit. It is therefore
+sole-copy and load-bearing, and is committed at
+`docs/orchestration/runs/gate5-rereview.hywFA5/gate5_diff.txt`, md5
+`31d2f070aba56cbd3385ddf001c5f7da`, verified against the live archive copy.
+
+Its sibling `gate5-review.atToYF/untracked/gate5_diff.txt` (51,841 B) **is** genuinely
+regenerable and was deleted: it is `git show 670e62df` output, 1,152 lines against 1,152, with
+all 14 differing lines being index-abbreviation width (7-hex vs 8-hex — seven index lines × two
+hashes × one character = 14 bytes). Regenerating it today yields 8-hex where the archive had
+7-hex; that is a `core.abbrev` difference, **not corruption**.
 
 ## What is NOT here, deliberately
 
