@@ -86,7 +86,8 @@ queue starts empty. It executes at most one ready item per five-minute tick,
 never invokes a shell, and never calls an LLM. It binds the repository HEAD
 plus the launcher and any explicitly listed input files; drift makes the item
 permanently `stale`. A claim without a terminal receipt becomes
-`outcome-unknown` and is never retried automatically.
+`outcome-unknown` and is never retried automatically. A newly staged item
+sends one deduplicated email+ntfy approval alert on the next ticker pass.
 
 From Termius:
 

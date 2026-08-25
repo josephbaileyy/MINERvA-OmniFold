@@ -1470,6 +1470,31 @@ def notify_guard(ctx: Ctx) -> list[str]:
                     f"Event {event_id} cannot dispatch:\n{marker.read_text()[:4000]}",
                 ):
                     sent.append(f"env-blocked-{event_id}")
+    queue_status_command = ctx.config.get("campaign_queue_status_command")
+    if queue_status_command:
+        result = ctx.runner(list(queue_status_command), env=ctx.base_env(), cwd=ctx.repo)
+        if result.returncode == 0:
+            with contextlib.suppress(json.JSONDecodeError, AttributeError):
+                for item in json.loads(result.stdout).get("items", []):
+                    if item.get("state") != "staged":
+                        continue
+                    item_id = str(item.get("id", "unknown")).replace("\n", " ")[:100]
+                    item_digest = str(item.get("digest", ""))
+                    stable = hashlib.sha256(
+                        f"{item_id}:{item_digest}".encode("utf-8")
+                    ).hexdigest()[:16]
+                    key = f"campaign-approval-{stable}"
+                    if notify(
+                        ctx,
+                        key,
+                        f"[MINERvA queue] Approval requested: {item_id}",
+                        "A deterministic campaign command is staged and will not run "
+                        "without your approval. From Termius:\n"
+                        "cd /pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration\n"
+                        f"/usr/bin/python3.11 campaignctl.py show --id {item_id}\n"
+                        f"proposal digest: {item_digest}",
+                    ):
+                        sent.append(key)
     return sent
 
 

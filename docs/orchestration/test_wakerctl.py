@@ -893,6 +893,23 @@ class StatusAndCronTests(WakerTestCase):
         self.assertIn("queue-failed", ledger)
         self.assertEqual(len(self.runner.action_calls("notify")), 1)
 
+    def test_staged_queue_item_notifies_once(self):
+        self.write_config(
+            campaign_queue_status_command=["/bin/campaignctl", "status", "--json"],
+            notify_command=["/bin/notify", "{key}", "{subject}"],
+        )
+        status = (
+            '{"counts":{"staged":1},"items":['
+            '{"id":"next-check","state":"staged","digest":"abc123"}]}'
+        )
+        self.runner.add(lambda a: a[0] == "/bin/campaignctl", 0, status)
+        self.runner.add(lambda a: a[0] == "/bin/notify", 0, "")
+        first = wakerctl.tick(self.ctx())
+        second = wakerctl.tick(self.ctx())
+        self.assertEqual(len(first["notified"]), 1)
+        self.assertNotIn("notified", second)
+        self.assertEqual(len(self.runner.action_calls("notify")), 1)
+
     def test_ledger_records_full_lifecycle(self):
         ctx = self.ctx()
         path = self.arm_sentinel(ctx, "led")
