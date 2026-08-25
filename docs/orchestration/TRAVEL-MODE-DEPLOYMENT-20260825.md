@@ -49,6 +49,8 @@ scientific analysis, covariance adoption, or compute submission.
   independently compared unmanaged-line lists were both empty.
 - New scron job: `57575105`, nonzero priority, not held.
 - First proven tick: `2026-08-25T05:45:38Z` on `login09`, `watch_errors=0`.
+- Second proven tick: `2026-08-25T05:50:18Z` on `login06`,
+  `watch_errors=0`; Slurm then scheduled the next recurrence for 22:55 PDT.
 - Post-tick `wakerctl.py preflight`: PASS, including direct scheduler/ticker
   checks. No event was in flight and the resume mutex was free.
 
