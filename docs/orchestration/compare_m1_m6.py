@@ -54,7 +54,12 @@ is not reviewable:
   * NO pattern may target M-2 at all (R7): `F-17(b)` names M-2 as the perishable claim, so an M-2
     difference is never suppressible, is reported in its own block, and forces the some-unexpected
     exit whatever the list says;
-  * the shipped list is deliberately ONE entry. See the REJECTED section below.
+  * ONE CITATION PER FIELD PATTERN. A single `citation` may license exactly one pattern; a
+    multi-field entry needs a `citations` mapping with an entry for each, checked in both
+    directions. The first entry ever shipped here failed exactly this way -- see
+    `resolve_citations`. Note what no check can do: resolving is not SUPPORTING, and no mechanical
+    test reads a quote's aboutness. This shape only stops one quote licensing a list.
+  * the shipped list is deliberately ONE entry over ONE field. See the REJECTED section below.
 
 REJECTED FROM THE SPEC (`SPEC-20260825-f17b-tree-comparison-instrument.md`), re-derived rather than
 re-quoted:
@@ -69,11 +74,23 @@ re-quoted:
     measurements DID show -- M-1's dropped tenth entrypoint, M-5's 0-of-8 against 8-of-8 -- are
     findings against the builder, and a rule that pre-declared them expected is how a gate stops
     being able to fail. Also: "P-6" is not a measurement this tool emits; M-6 is.
-  * R4's first bullet HOLDS and is the one shipped entry:
+  * R4's first bullet HOLDS, for `M-4.behind` ALONE, and is the one shipped entry:
     `MEASUREMENT-20260822-m1-m6-at-pinned-sha.md:89` records the behind-count as having "moved
-    twice" (36 -> 55 -> 65) and `measure_m1_m6.py`'s `--upstream` does default to `origin/main`.
-    The entry covers `M-4.behind` and `M-4.ahead` only -- NOT `M-4.upstream`, because two
-    invocations run against different upstreams are not the same comparison and that must surface.
+    twice" (36 -> 55 -> 65) with `HEAD`, `dirty` and the `717/4` split all unchanged in the same
+    block -- drift demonstrated with the tree held FIXED -- and `measure_m1_m6.py`'s `--upstream`
+    does default to `origin/main`.
+    **`M-4.ahead` was in this entry and has been REMOVED, 2026-08-25, on a peer's reading of the
+    citation.** The cited document mentions `ahead` exactly once, as `ahead = 0 ; --is-ancestor
+    rc=0`: a stable zero, and affirmative evidence that the tree carried no commits of its own. So
+    the citation did not support the field, it recorded the opposite. The counter-argument is real
+    and loses on cost: `ahead` CAN move with the tree unchanged, if someone pushes that tree's
+    commits to the upstream -- but it can also move because the measured tree GAINED a commit
+    nobody else has, which is precisely the drift F-17 exists to surface. Suppressing a field with
+    two causes, one of them the finding, to save a reviewer one dismissible line, is the wrong
+    trade: F-17 says differences are REPORTED as findings, so reporting is the obligation and
+    suppression needs authority. No document supports it yet; if one appears, cite it.
+    Also NOT covered: `M-4.upstream`, because two invocations run against different upstreams are
+    not the same comparison and that must surface.
 
 EXIT CODES ARE A DISJOINT VOCABULARY (R8), documented in --help and asserted one arm per code:
     0  no differences        10  differences, all expected      20  differences, some unexpected
@@ -185,10 +202,13 @@ UNITS = (
      "the same run's stdout"),
     ("M-4.is_git", "boolean", "whether rev-parse HEAD succeeded in the measured tree"),
     ("M-4.head", "40-hex commit sha", "the measured tree's HEAD at measurement time"),
-    ("M-4.dirty", "count of porcelain lines", "the measured tree's working tree"),
-    ("M-4.untracked", "count of porcelain lines starting ??", "the measured tree's working tree"),
-    ("M-4.modified", "count of porcelain lines not starting ??",
-     "the measured tree's working tree"),
+    ("M-4.dirty", "count of NON-BLANK porcelain lines",
+     "the measured tree's working tree; measure_m1_m6.py:177 drops blank lines before"
+     " counting, so this is not simply the porcelain line count"),
+    ("M-4.untracked", "count of non-blank porcelain lines starting ??",
+     "the same non-blank subset as M-4.dirty"),
+    ("M-4.modified", "count of non-blank porcelain lines not starting ??",
+     "the same non-blank subset as M-4.dirty"),
     ("M-4.behind", "count of commits, DRIFTING -- never quotable without its date",
      "a left-right count of <upstream>...HEAD, so the population is whatever <upstream> pointed at"
      " when the measurement ran"),
@@ -207,7 +227,8 @@ UNITS = (
     ("M-6.n_lines", "count of lines", "that file"),
     ("M-6.counts_resolutions", "boolean, substring 'self.checked'", "that file"),
     ("M-6.inventory_write_lines", "set of line numbers",
-     "lines of that file carrying '\"checked\"'"),
+     "lines of that file carrying BOTH '\"checked\"' AND a colon (measure_m1_m6.py:225 tests"
+     " for both; naming only the first would overstate the population)"),
     ("M-6.else_zero_default_lines", "set of line numbers",
      "lines carrying both 'guard.checked' and 'else 0'"),
     ("M-6.state", "one of three named states, never a boolean",
@@ -398,6 +419,85 @@ def bad_pattern(pattern):
     return None
 
 
+def resolve_one_citation(entry_id, pattern, citation, repo):
+    """Resolve a single citation against `repo`, or refuse. Returns the recorded citation."""
+    where = f"entry {entry_id}, field {pattern!r}"
+    if not isinstance(citation, dict):
+        raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                      f"{where}: the citation is not an object. An expected difference with no "
+                      f"citation is a judgement, and this list holds declarations.")
+    doc_rel, quote = citation.get("doc"), citation.get("quote")
+    if not isinstance(doc_rel, str) or not doc_rel:
+        raise Refusal(EXIT_REFUSAL_EXPECTED_LIST, f"{where}: the citation has no 'doc' path")
+    if not isinstance(quote, str) or not quote.strip():
+        raise Refusal(EXIT_REFUSAL_EXPECTED_LIST, f"{where}: the citation has no 'quote'")
+    cited = repo / doc_rel
+    if not cited.is_file():
+        raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                      f"{where}: the cited document does not exist under --repo: {cited}")
+    text = cited.read_text(encoding="utf-8", errors="replace")
+    if quote not in text:
+        raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                      f"{where}: the quote is not in {doc_rel}. An unresolved citation is a hard "
+                      f"error: this list is a whitelist and may not become a silent suppressor.")
+    matched = [n + 1 for n, line in enumerate(text.splitlines()) if quote in line]
+    measured_digest = sha256_of(cited)
+    declared = citation.get("doc_sha256")
+    if isinstance(declared, str) and declared and declared != measured_digest:
+        raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                      f"{where}: {doc_rel} is sha256 {measured_digest[:12]}, the entry pins "
+                      f"{declared[:12]}. The cited document moved; re-read it and re-declare.")
+    return {"doc": doc_rel, "quote": quote, "doc_sha256_measured": measured_digest,
+            "doc_sha256_declared": declared if isinstance(declared, str) else None,
+            "matched_lines": matched}
+
+
+def resolve_citations(entry_id, fields, raw_entry, repo):
+    """ONE CITATION PER FIELD PATTERN, and that is the second thing this guard learned.
+
+    The first version accepted one `citation` for a whole `fields` list, and the very first entry
+    shipped under it was wrong in exactly the way that licence permits. `E1-m4-behind-and-ahead-drift`
+    claimed `M-4.behind` AND `M-4.ahead` on a citation whose heading is "the BEHIND-COUNT has moved
+    twice" and whose only mention of ahead is `ahead = 0 ; --is-ancestor rc=0` -- a STABLE ZERO, and
+    affirmative evidence that the tree carried no commits of its own. The citation did not merely
+    fail to support the second field; it recorded the opposite, and the guard passed because it
+    checks that a quote RESOLVES and is PRESENT, never that it is ABOUT the field.
+
+    Resolving is still not supporting -- no mechanical check can read a quote's aboutness, and this
+    is stated so a green run is not over-read. What the shape can do is stop ONE quote licensing a
+    LIST, so that every suppressed field has a citation a reviewer can read beside it, and a second
+    field cannot ride in on the first field's evidence.
+    """
+    single, per_field = raw_entry.get("citation"), raw_entry.get("citations")
+    if single is not None and per_field is not None:
+        raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                      f"entry {entry_id}: declares both 'citation' and 'citations'; which one "
+                      f"licenses which field is then a guess")
+    if single is not None:
+        if len(fields) != 1:
+            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                          f"entry {entry_id}: a single 'citation' may license exactly ONE field "
+                          f"pattern, and this entry names {len(fields)} ({list(fields)}). One quote "
+                          f"licensing a field list is how a whitelist widens silently: use "
+                          f"'citations', a mapping from each pattern to its own citation.")
+        return {fields[0]: resolve_one_citation(entry_id, fields[0], single, repo)}
+    if not isinstance(per_field, dict) or not per_field:
+        raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                      f"entry {entry_id}: no 'citation' and no 'citations' mapping")
+    missing = [pattern for pattern in fields if pattern not in per_field]
+    if missing:
+        raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                      f"entry {entry_id}: 'citations' has no entry for {missing}; every suppressed "
+                      f"field needs its own citation")
+    extra = [key for key in per_field if key not in fields]
+    if extra:
+        raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                      f"entry {entry_id}: 'citations' names {extra}, which are not in 'fields'; a "
+                      f"citation for a field this entry does not claim is dead evidence")
+    return {pattern: resolve_one_citation(entry_id, pattern, per_field[pattern], repo)
+            for pattern in fields}
+
+
 def load_expected(path_text, repo):
     """The declared-expected list, with every citation RESOLVED. Any failure is exit 5."""
     path = pathlib.Path(path_text)
@@ -447,44 +547,9 @@ def load_expected(path_text, repo):
             if isinstance(value, bool) or not isinstance(value, (int, float)):
                 raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
                               f"entry {entry_id}: max-abs-delta needs a numeric 'value'")
-        citation = raw_entry.get("citation")
-        if not isinstance(citation, dict):
-            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
-                          f"entry {entry_id}: no 'citation'. An expected difference with no citation"
-                          f" is a judgement, and this list holds declarations.")
-        doc_rel, quote = citation.get("doc"), citation.get("quote")
-        if not isinstance(doc_rel, str) or not doc_rel:
-            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
-                          f"entry {entry_id}: the citation has no 'doc' path")
-        if not isinstance(quote, str) or not quote.strip():
-            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST, f"entry {entry_id}: the citation has no "
-                                                      f"'quote'")
-        cited = repo / doc_rel
-        if not cited.is_file():
-            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
-                          f"entry {entry_id}: the cited document does not exist under --repo: "
-                          f"{cited}")
-        text = cited.read_text(encoding="utf-8", errors="replace")
-        if quote not in text:
-            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
-                          f"entry {entry_id}: the quote is not in {doc_rel}. An unresolved citation "
-                          f"is a hard error: this list is a whitelist and may not become a silent "
-                          f"suppressor.")
-        matched = [i + 1 for i, line in enumerate(text.splitlines()) if quote in line]
-        measured_digest = sha256_of(cited)
-        declared = citation.get("doc_sha256")
-        if isinstance(declared, str) and declared and declared != measured_digest:
-            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
-                          f"entry {entry_id}: {doc_rel} is sha256 {measured_digest[:12]}, the entry "
-                          f"pins {declared[:12]}. The cited document moved; re-read it and "
-                          f"re-declare.")
+        citations = resolve_citations(entry_id, fields, raw_entry, repo)
         out.append({"id": entry_id, "fields": list(fields), "rule": dict(rule),
-                    "why": raw_entry.get("why", ""),
-                    "citation": {"doc": doc_rel, "quote": quote,
-                                 "doc_sha256_measured": measured_digest,
-                                 "doc_sha256_declared": declared if isinstance(declared, str)
-                                 else None,
-                                 "matched_lines": matched},
+                    "why": raw_entry.get("why", ""), "citations": citations,
                     "used": False})
     return {"path": str(path.resolve()), "sha256": sha256_of(path), "entries": out}
 
@@ -530,8 +595,13 @@ def compare(records, expected):
                         if any(field_matches(pattern, field) for pattern in entry["fields"])]
             for entry in covering:
                 satisfied, detail = evaluate_rule(entry["rule"], values)
+                # WHICH pattern licensed this field, and therefore WHICH citation applies. With one
+                # citation per pattern, a finding can no longer be annotated with evidence that was
+                # filed for a different field.
+                pattern = next(p for p in entry["fields"] if field_matches(p, field))
                 matched.append({"id": entry["id"], "satisfied": satisfied, "rule_detail": detail,
-                                "citation": entry["citation"]})
+                                "matched_pattern": pattern,
+                                "citation": entry["citations"][pattern]})
                 entry["used"] = True
                 if satisfied:
                     classification = "EXPECTED-BY-RULING"
@@ -627,10 +697,10 @@ def print_human(record):
     print(f"--- expected-differences list: {expected['path']}  "
           f"sha256={expected['sha256'][:12]}  entries={len(expected['entries'])}")
     for entry in expected["entries"]:
-        citation = entry["citation"]
         print(f"      {entry['id']}: {entry['rule']['kind']} over {entry['fields']}")
-        print(f"        cites {citation['doc']}:{citation['matched_lines']} "
-              f"sha256={citation['doc_sha256_measured'][:12]}")
+        for pattern, citation in entry["citations"].items():
+            print(f"        {pattern} cites {citation['doc']}:{citation['matched_lines']} "
+                  f"sha256={citation['doc_sha256_measured'][:12]}")
     print(f"--- fields compared: {record['fields_compared']}   "
           f"field_set_differs={record['field_set_differs']}")
     if not record["findings"]:

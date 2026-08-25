@@ -5,29 +5,44 @@
     "suppresses a finding that F-17(b) would otherwise report, so widening it is a reviewable diff",
     "and never an edit made at measurement time. compare_m1_m6.py refuses (exit 5) any entry whose",
     "citation does not resolve, any pattern that is a bare measurement id or ends in a wildcard",
-    "segment, and any pattern targeting M-2 at all.",
-    "DELIBERATELY ONE ENTRY. The SPEC also offered 'M-1, M-5 and M-6 are falsified by any commit to",
-    "build-k0-execution-integrity'. That is REJECTED and must not be added: measured 2026-08-25 at",
-    "49dbdf8f, only 10 of the 46 commits in 8c156a37..build-k0-execution-integrity touch any file in",
-    "those three populations (2 of 10 M-1 files, 8 of 8 launchers, 3 for mnv_guarded_run.py), so 36",
-    "of 46 cannot move them and 'any commit' is false. Worse, as an entry it would have suppressed",
-    "the actual F-17(a) findings -- M-1's dropped tenth entrypoint and M-5's 0-of-8 against 8-of-8.",
-    "NO doc_sha256 IS DECLARED on the entry below, and that is a choice: the cited document is",
-    "classed LIVE/open, so pinning its digest would turn a peer's correction into a refusal at",
-    "measurement time, which is precisely the moment at which nobody should be widening a whitelist.",
-    "The instrument records the measured digest of every cited document in its output regardless,",
-    "and it does enforce a declared doc_sha256 when one is present."
+    "segment, any pattern targeting M-2 at all, and -- since 2026-08-25 -- any multi-field entry",
+    "that offers one citation for the whole list rather than one citation per field.",
+    "ONE ENTRY OVER ONE FIELD. M-4.ahead WAS in the entry below and was REMOVED on 2026-08-25 after",
+    "a peer read the citation instead of trusting it. The cited document mentions ahead exactly",
+    "once, as `ahead = 0 ; --is-ancestor rc=0` -- a stable zero, and affirmative evidence that the",
+    "tree carried no commits of its own -- while its heading and its drift paragraph are both about",
+    "the BEHIND-count. The citation recorded the opposite of the field it was licensing. Do not",
+    "re-add it without a citation that is ABOUT ahead: the field moves either because someone pushed",
+    "the measured tree's commits to the upstream (harmless) or because that tree GAINED a commit",
+    "nobody else has (the drift F-17 exists to surface), and a whitelist may not swallow the second",
+    "to spare a reviewer the first.",
+    "DELIBERATELY NOT PRESENT. The SPEC also offered 'M-1, M-5 and M-6 are falsified by any commit",
+    "to build-k0-execution-integrity'. That is REJECTED: measured 2026-08-25 at 49dbdf8f, only 10",
+    "of the 46 commits in 8c156a37..build-k0-execution-integrity touch any file in those three",
+    "populations (2 of 10 M-1 files, 8 of 8 launchers, 3 for mnv_guarded_run.py), so 36 of 46",
+    "cannot move them and 'any commit' is false. Worse, as an entry it would have suppressed the",
+    "actual F-17(a) findings -- M-1's dropped tenth entrypoint and M-5's 0-of-8 against 8-of-8.",
+    "That one had no citation offered at all, which is a DIFFERENT defect from the ahead one: it was",
+    "refuted by measurement, not by its own evidence.",
+    "NO doc_sha256 IS DECLARED below, and that is a choice: the cited document is classed LIVE/open,",
+    "so pinning its digest would turn a peer's correction into a refusal at measurement time, which",
+    "is precisely the moment at which nobody should be widening a whitelist. The instrument records",
+    "the measured digest of every cited document in its output regardless, and it does enforce a",
+    "declared doc_sha256 when one is present.",
+    "WHAT NO CHECK HERE CAN DO: resolving is not supporting. The guard proves a quote EXISTS in a",
+    "named document; only a reader can say whether it is ABOUT the field. That is the review this",
+    "file exists to make possible, and it is why every suppressed field now carries its own quote."
   ],
   "entries": [
     {
-      "id": "E1-m4-behind-and-ahead-drift",
-      "fields": ["M-4.behind", "M-4.ahead"],
+      "id": "E1-m4-behind-drift",
+      "fields": ["M-4.behind"],
       "rule": {"kind": "may-differ"},
       "citation": {
         "doc": "docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md",
         "quote": "the BEHIND-COUNT has moved twice"
       },
-      "why": "M-4's behind/ahead counts are a left-right count against --upstream, which defaults to origin/main (measure_m1_m6.py, the --upstream argument). They move whenever the upstream ref moves, without anything in the measured tree changing, and the cited measurement records them moving 36 -> 55 -> 65. NOT M-4.upstream: two invocations run against different upstreams are not the same comparison, and that must surface as a finding. NOT M-4.head or M-4.dirty: those are the tree's identity and a difference in them is the finding F-17(b) asks for."
+      "why": "M-4.behind is a left-right count against --upstream, which defaults to origin/main (measure_m1_m6.py, the --upstream argument). The cited block records it moving 36 -> 55 -> 65 while HEAD, dirty and the 717/4 split are all unchanged in that same block -- drift demonstrated with the measured tree held FIXED, which is what licenses the suppression. NOT M-4.ahead (removed 2026-08-25; the same citation records it as a stable zero, see the notes). NOT M-4.upstream: two invocations run against different upstreams are not the same comparison. NOT M-4.head or M-4.dirty: those are the tree's identity, and a difference in them is the finding F-17(b) asks for."
     }
   ]
 }

@@ -378,8 +378,8 @@ class R4_TheExpectedListIsDeclaredCitedAndCanFail(BenchCase):
         code, record, _ = self.bench.run(self.two(lambda d: d["M-4"].__setitem__("behind", 9)),
                                          expected)
         self.assertEqual(code, cm.EXIT_DIFFERENCES_ALL_EXPECTED)
-        self.assertEqual(record["expected_list"]["entries"][0]["citation"]["doc_sha256_declared"],
-                         digest)
+        entry = record["expected_list"]["entries"][0]
+        self.assertEqual(entry["citations"]["M-4.behind"]["doc_sha256_declared"], digest)
 
     def test_an_OVER_BROAD_pattern_is_refused_so_the_list_cannot_swallow_a_measurement(self):
         for pattern in ("M-4", "M-4.*", "M-1[*].*", "*", "M-4behind", "behind"):
@@ -427,6 +427,79 @@ class R4_TheExpectedListIsDeclaredCitedAndCanFail(BenchCase):
         self.assertEqual(code, cm.EXIT_REFUSAL_EXPECTED_LIST)
         self.assertIn("no expected-differences file", err)
 
+    def test_ONE_QUOTE_MAY_NOT_LICENSE_A_FIELD_LIST__the_defect_in_the_shipped_entry(self):
+        """FIRES. The first entry ever shipped here was wrong in exactly this way.
+
+        `E1-m4-behind-and-ahead-drift` claimed `M-4.behind` AND `M-4.ahead` under one citation whose
+        heading is "the BEHIND-COUNT has moved twice" and whose only mention of ahead is
+        `ahead = 0 ; --is-ancestor rc=0`. The citation did not merely fail to support the second
+        field, it recorded the opposite -- and the guard passed, because resolving is not supporting.
+        A single citation now licenses exactly ONE pattern.
+        """
+        expected = self.bench.write_expected(
+            self.bench.may_differ(["M-4.behind", "M-4.ahead"]))
+        code, _, err = self.bench.run(self.two(), expected)
+        self.assertEqual(code, cm.EXIT_REFUSAL_EXPECTED_LIST)
+        self.assertIn("exactly ONE field pattern", err)
+        self.assertIn("2", err)
+
+    def test_a_multi_field_entry_with_ONE_CITATION_PER_FIELD_is_accepted(self):
+        """SILENT on good: the shape is not banned, only the unsupported licence."""
+        expected = self.bench.write_expected([{
+            "id": "E-multi", "fields": ["M-4.behind", "M-4.ahead"],
+            "rule": {"kind": "may-differ"},
+            "citations": {"M-4.behind": self.bench.citation(),
+                          "M-4.ahead": self.bench.citation()},
+            "why": "two fields, two quotes"}])
+        code, record, _ = self.bench.run(
+            self.two(lambda d: d["M-4"].update({"behind": 168, "ahead": 3})), expected)
+        self.assertEqual(code, cm.EXIT_DIFFERENCES_ALL_EXPECTED)
+        self.assertEqual({f["field"] for f in record["findings"]}, {"M-4.behind", "M-4.ahead"})
+        for finding in record["findings"]:
+            match, = finding["expected_entries_matched"]
+            self.assertEqual(match["matched_pattern"], finding["field"])
+            self.assertTrue(match["citation"]["matched_lines"])
+
+    def test_a_citations_MAPPING_is_checked_in_BOTH_directions(self):
+        cases = {
+            "a field with no citation": {
+                "id": "E", "fields": ["M-4.behind", "M-4.ahead"],
+                "rule": {"kind": "may-differ"},
+                "citations": {"M-4.behind": self.bench.citation()}},
+            "a citation for a field not claimed": {
+                "id": "E", "fields": ["M-4.behind"], "rule": {"kind": "may-differ"},
+                "citations": {"M-4.behind": self.bench.citation(),
+                              "M-4.dirty": self.bench.citation()}},
+            "both citation and citations": {
+                "id": "E", "fields": ["M-4.behind"], "rule": {"kind": "may-differ"},
+                "citation": self.bench.citation(),
+                "citations": {"M-4.behind": self.bench.citation()}},
+            "an empty citations mapping": {
+                "id": "E", "fields": ["M-4.behind"], "rule": {"kind": "may-differ"},
+                "citations": {}},
+            "a per-field citation that does not resolve": {
+                "id": "E", "fields": ["M-4.behind", "M-4.ahead"],
+                "rule": {"kind": "may-differ"},
+                "citations": {"M-4.behind": self.bench.citation(),
+                              "M-4.ahead": self.bench.citation(quote="nobody wrote this")}},
+        }
+        for name, entry in cases.items():
+            with self.subTest(case=name):
+                code, _, err = self.bench.run(self.two(),
+                                              self.bench.write_expected([entry]))
+                self.assertEqual(code, cm.EXIT_REFUSAL_EXPECTED_LIST, err)
+
+    def test_the_refusal_NAMES_the_field_whose_citation_failed(self):
+        """A refusal that cannot say WHICH field is a refusal a reviewer cannot act on."""
+        expected = self.bench.write_expected([{
+            "id": "E", "fields": ["M-4.behind", "M-4.ahead"], "rule": {"kind": "may-differ"},
+            "citations": {"M-4.behind": self.bench.citation(),
+                          "M-4.ahead": self.bench.citation(doc="docs/orchestration/GONE.md")}}])
+        code, _, err = self.bench.run(self.two(), expected)
+        self.assertEqual(code, cm.EXIT_REFUSAL_EXPECTED_LIST)
+        self.assertIn("'M-4.ahead'", err)
+        self.assertNotIn("'M-4.behind'", err)
+
     def test_an_entry_that_matched_nothing_is_reported_as_unused(self):
         _, record, _ = self.bench.run(self.two(), self.expected_ok)
         self.assertEqual(record["summary"]["expected_entries_unused"], ["E-test"])
@@ -443,8 +516,10 @@ class R4_TheShippedListInThisRepository(unittest.TestCase):
         self.assertTrue(loaded["entries"])
         for entry in loaded["entries"]:
             with self.subTest(entry=entry["id"]):
-                self.assertTrue(entry["citation"]["matched_lines"])
-                self.assertEqual(len(entry["citation"]["doc_sha256_measured"]), 64)
+                self.assertEqual(sorted(entry["citations"]), sorted(entry["fields"]))
+                for pattern, citation in entry["citations"].items():
+                    self.assertTrue(citation["matched_lines"], pattern)
+                    self.assertEqual(len(citation["doc_sha256_measured"]), 64)
 
     def test_the_shipped_list_does_NOT_whitelist_M1_M5_or_M6__the_rejected_bullet(self):
         """FIRES if the rejected 'any commit to the build branch' entry is ever added.
@@ -463,16 +538,53 @@ class R4_TheShippedListInThisRepository(unittest.TestCase):
                       "M-1[nd-unfolding/seedscan_split.py].n_after",
                       "M-5.repo_assign", "M-5.activator_from_env_root", "M-5.missing",
                       "M-6.state", "M-6.inventory_write_lines", "M-6.n_lines",
-                      "M-4.head", "M-4.dirty", "M-4.upstream"):
+                      "M-4.head", "M-4.dirty", "M-4.upstream",
+                      # REMOVED from the shipped entry 2026-08-25: its citation recorded
+                      # `ahead = 0 ; --is-ancestor rc=0`, a stable zero, so the quote licensing it
+                      # said the OPPOSITE of the field. Re-adding it needs a citation about ahead.
+                      "M-4.ahead"):
             with self.subTest(field=field):
                 self.assertFalse([p for p in patterns if fnmatch.fnmatchcase(field, p)],
                                  f"{field} must never be pre-declared expected")
+
+    def test_an_M4_ahead_difference_SURFACES_as_a_finding_under_the_shipped_list(self):
+        """The removal, pinned behaviourally rather than by reading the file.
+
+        Pattern-coverage arms check the list's SHAPE. This one runs the instrument against the real
+        shipped file and asserts the consequence: a tree whose `ahead` differs produces an
+        UNEXPECTED finding and the some-unexpected exit. Re-adding `M-4.ahead` to the whitelist
+        without a citation about ahead turns this red.
+        """
+        import subprocess
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = pathlib.Path(tmp)
+            paths = []
+            for label, ahead in (("CANDIDATE", 0), ("CANONICAL", 4)):
+                doc = base_document(label, f"/trees/{label}")
+                doc["M-4"]["ahead"] = ahead
+                path = tmp / f"{label}.json"
+                path.write_text(json.dumps(doc), encoding="utf-8")
+                paths.append(str(path))
+            proc = subprocess.run(
+                [sys.executable, str(_HERE / "compare_m1_m6.py"),
+                 "--input", paths[0], "--input", paths[1],
+                 "--expected", str(self.LIST), "--repo", str(self.REPO), "--json"],
+                capture_output=True, text=True)
+        self.assertEqual(proc.returncode, 20, proc.stderr)
+        record = json.loads(proc.stdout)
+        finding, = record["findings"]
+        self.assertEqual(finding["field"], "M-4.ahead")
+        self.assertEqual(finding["classification"], "UNEXPECTED")
+        self.assertEqual(finding["expected_entries_matched"], [])
+        self.assertEqual([side["value"] for side in finding["sides"]], [0, 4])
+        self.assertIn("commits, DRIFTING", finding["unit"])
 
     def test_the_shipped_list_DOES_cover_the_drifting_counts__silent_on_good(self):
         import fnmatch
         loaded = cm.load_expected(str(self.LIST), self.REPO)
         patterns = [p for entry in loaded["entries"] for p in entry["fields"]]
-        for field in ("M-4.behind", "M-4.ahead"):
+        for field in ("M-4.behind",):
             with self.subTest(field=field):
                 self.assertTrue([p for p in patterns if fnmatch.fnmatchcase(field, p)])
 
