@@ -14,22 +14,40 @@ docs/orchestration/CLAIM-CLM-010.md	ARCHIVAL	terminal
 docs/orchestration/CLAIM-CLM-011.md	ARCHIVAL	terminal	
 docs/orchestration/CLAIM-CLM-012.md	ARCHIVAL	terminal	
 docs/orchestration/CLAIMS.md	LIVE	open	
+docs/orchestration/CONFIRMATION-20260823-builder-response-to-gate1-round4.md	LIVE	open	
 docs/orchestration/CONVENTION-document-retention.md	LIVE	open
 docs/orchestration/CONVENTION-receipt-ingredients.md	LIVE	open
 docs/orchestration/CONVENTION-verifying-a-check-is-deployed.md	LIVE	open
 docs/orchestration/CORPUS-20260811-gates-that-cannot-fail-sweep.md	LIVE	open	
 docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md	LIVE	open	
 docs/orchestration/DECISION-20260822-joseph-b1-lift-and-clause-c.md	LIVE	open	
+docs/orchestration/DECISION-20260823-joseph-a2f-does-not-substitute-for-a3.md	LIVE	open	
+docs/orchestration/DECISION-20260824-joseph-deployment-freeze-until-f1b.md	LIVE	open	
+docs/orchestration/DECISION-20260824-joseph-f6b-scoped-out-of-gate2.md	LIVE	open	
+docs/orchestration/DECLARATION-20260822-k0-submission-sha.md	LIVE	open	
+docs/orchestration/DECLARATION-20260823-k0-candidate-sha.md	LIVE	open	
 docs/orchestration/DETERMINATION-20260811-cause5-binding-half.md	LIVE	open	
 docs/orchestration/FINDING-20260822-a-hold-that-instructed-its-own-deletion.md	LIVE	open	
 docs/orchestration/FINDING-20260822-clause-c-adopt-is-unreachable-under-its-own-pause.md	LIVE	open	
+docs/orchestration/FINDING-20260824-gate2-preparation-and-four-open-rulings.md	LIVE	open	
 docs/orchestration/FINDINGS.md	LIVE	open	
 docs/orchestration/GATE1-VERDICT-20260822-k0-execution-integrity.md	LIVE	open	
+docs/orchestration/GATE1-VERDICT-ROUND4-20260823-k0-execution-integrity.md	LIVE	open	
+docs/orchestration/GATE1-VERDICT-ROUND5-20260823-k0-execution-integrity.md	LIVE	open	
+docs/orchestration/GATE1-VERDICT-ROUND6-20260823-k0-execution-integrity.md	LIVE	open	
+docs/orchestration/GATE1-VERDICT-ROUND7-20260823-k0-execution-integrity.md	LIVE	open	
+docs/orchestration/GATE1-VERDICT-ROUND8-20260823-k0-execution-integrity.md	LIVE	open	
+docs/orchestration/GATE1-VERDICT-ROUND9-20260823-k0-execution-integrity.md	LIVE	open	
 docs/orchestration/HOLD-20260821-clause-c-verification.md	ARCHIVAL	terminal	
 docs/orchestration/INDEX-retracted-and-superseded-values.md	LIVE	open	
 docs/orchestration/LIVE-STATE.md	LIVE	generated	
 docs/orchestration/LIVE-USAGE.md	LIVE	open	
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	LIVE	open	
+docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	LIVE	open	
+docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	LIVE	open	
+docs/orchestration/P5-P6-20260822-entrypoint-set-and-blind-spots.md	LIVE	open	
+docs/orchestration/PACKET-20260823-round5-f2a-f17a-repair.md	LIVE	open	
+docs/orchestration/PACKET-20260823-round7-f2a-parity-and-f17a-filing.md	LIVE	open	
 docs/orchestration/PLAN-20260822-oneMember-mii-staged.md	LIVE	open	
 docs/orchestration/PLAYBOOK.md	LIVE	open	""
 docs/orchestration/PREDECLARATION-20260812-fullevent-cstat-100-replicas.md	ARCHIVAL	superseded	docs/orchestration/PREDECLARATION-20260813-gate5-coherent-replicas-n50.md
@@ -39,6 +57,7 @@ docs/orchestration/PROVENANCE-20260822-declaration-v-scalar5d-blocks.md	LIVE	ope
 docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md	LIVE	open	
 docs/orchestration/PUBLICATION-READINESS-20260822.md	LIVE	open	
 docs/orchestration/RANK-AND-INVERSION-20260810.md	LIVE	open	
+docs/orchestration/READING-ORDER-20260824-k0-package-annotations.md	LIVE	open	
 docs/orchestration/README.md	DEAD	superseded	docs/orchestration/CATALOG.md
 docs/orchestration/RECONCILIATION-20260817-gbdtfive-macros-vs-rebuilt-candidate.md	LIVE	open	
 docs/orchestration/REVIEW-CONTRACT-20260822-k0-execution-integrity.md	LIVE	open	
@@ -47,6 +66,7 @@ docs/orchestration/SCHEDULING-STRATEGY.md	LIVE	open
 docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	LIVE	open	
 docs/orchestration/SESSION-WORKFLOW.md	LIVE	open	""
 docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md	LIVE	open	
+docs/orchestration/SPEC-20260825-f17b-tree-comparison-instrument.md	LIVE	open	
 docs/orchestration/TASK-HANDOFF.template.md	LIVE	open	""
 docs/orchestration/TASK.template.md	LIVE	open	
 docs/orchestration/USER-DECISIONS.md	LIVE	open	""
@@ -54,6 +74,7 @@ docs/orchestration/VERDICT-20260821-clausec-rerun-production-dimension.md	ARCHIV
 docs/orchestration/VERDICT-20260821-expiry-c-real-path-present-seed.md	ARCHIVAL	superseded	docs/orchestration/VERDICT-20260821-clausec-rerun-production-dimension.md
 docs/orchestration/VERIFICATION-20260822-k0-execution-integrity.md	LIVE	open	
 docs/orchestration/WAKER.md	LIVE	open	
+docs/orchestration/WALKDOWN-20260822-one-pass.md	LIVE	open	
 docs/orchestration/control-plane/owners.tsv	LIVE	open	""
 docs/orchestration/control-plane/playbook.tsv	LIVE	open	""
 docs/orchestration/control-plane/policy.json	LIVE	open	""
@@ -65,23 +86,3 @@ docs/orchestration/state/declaration-v-5d-covering-search-20260822.sh	MACHINE	op
 docs/orchestration/state/live-state-last-known.json	LIVE	open	
 docs/orchestration/state/live-state.json	LIVE	open	
 docs/orchestration/state/oi137-covering-search-20260822.sh	MACHINE	open	
-docs/orchestration/WALKDOWN-20260822-one-pass.md	LIVE	open	
-docs/orchestration/DECLARATION-20260822-k0-submission-sha.md	LIVE	open	
-docs/orchestration/P5-P6-20260822-entrypoint-set-and-blind-spots.md	LIVE	open	
-docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	LIVE	open	
-docs/orchestration/GATE1-VERDICT-ROUND4-20260823-k0-execution-integrity.md	LIVE	open	
-docs/orchestration/CONFIRMATION-20260823-builder-response-to-gate1-round4.md	LIVE	open	
-docs/orchestration/PACKET-20260823-round5-f2a-f17a-repair.md	LIVE	open	
-docs/orchestration/GATE1-VERDICT-ROUND5-20260823-k0-execution-integrity.md	LIVE	open	
-docs/orchestration/GATE1-VERDICT-ROUND6-20260823-k0-execution-integrity.md	LIVE	open	
-docs/orchestration/DECISION-20260823-joseph-a2f-does-not-substitute-for-a3.md	LIVE	open	
-docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	LIVE	open	
-docs/orchestration/PACKET-20260823-round7-f2a-parity-and-f17a-filing.md	LIVE	open	
-docs/orchestration/DECLARATION-20260823-k0-candidate-sha.md	LIVE	open	
-docs/orchestration/GATE1-VERDICT-ROUND7-20260823-k0-execution-integrity.md	LIVE	open	
-docs/orchestration/GATE1-VERDICT-ROUND8-20260823-k0-execution-integrity.md	LIVE	open	
-docs/orchestration/GATE1-VERDICT-ROUND9-20260823-k0-execution-integrity.md	LIVE	open	
-docs/orchestration/READING-ORDER-20260824-k0-package-annotations.md	LIVE	open	
-docs/orchestration/FINDING-20260824-gate2-preparation-and-four-open-rulings.md	LIVE	open	
-docs/orchestration/DECISION-20260824-joseph-f6b-scoped-out-of-gate2.md	LIVE	open	
-docs/orchestration/DECISION-20260824-joseph-deployment-freeze-until-f1b.md	LIVE	open	

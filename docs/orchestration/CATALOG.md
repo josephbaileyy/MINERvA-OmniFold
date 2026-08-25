@@ -258,6 +258,13 @@ built all of these and is disqualified from grading them.
   **`PR-05` / `F-17(a)`: M-1…M-6 re-measured, and FOUR MOVED.** Two are stale **in the builder's
   favour** (`M-1`'s literal table, `M-5`'s `8 of 8` → `0 of 8`). **The fastest-expiring document in
   the package** — re-run all six immediately before the first `sbatch`.
+- [`SPEC-20260825-f17b-tree-comparison-instrument.md`](SPEC-20260825-f17b-tree-comparison-instrument.md) —
+  **what a third lane must build so `F-17(b)`'s "differences reported as findings" is a machine
+  statement, not two column sets diffed by eye.** `measure_m1_m6.py` measures one tree per
+  invocation and has **no comparison surface at all**; `F-17(a)` was discharged by hand at
+  `30ec0707`. Also records **DO NOT build an `F-7(b)` exclusion instrument** — §7.0.9 rules it
+  untestable at k=0 and the widening detector already exists at `b49bc360`. Authored by the
+  evidence-producing lane per Joseph's 2026-08-25 ruling, so **every clause is rejectable**.
 
 ### B1 steps 4-5: the lift, and the preflight that gates the first submission
 
