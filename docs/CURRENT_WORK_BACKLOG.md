@@ -83,3 +83,4 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-135 | BLOCKED-EXTERNAL | explicit-blocker | BLOCKED ON maintenance_20260819 — every remaining step needs the cluster, and ssh exits 255 since 2026-08-19T13:00Z. Fil |
 | OI-136 | NOW | safe-default-active | OPEN — the hardcoded cluster root is the FAIL-OPEN twin of OI-123, and today's fast-forward made it harmless-for-now rat |
 | OI-137 | NOW | safe-default-active | OPEN — filed 2026-08-20 by the close-out orchestrator. A HAZARD THAT IS PRESENTLY UNOWNED ON THE PUBLICATION CRITICAL PA |
+| OI-138 | NOW | safe-default-active | OPEN |
