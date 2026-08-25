@@ -17,8 +17,15 @@
 # were deliberately not fixed while the rehearsal was in flight (every one touches a tracked
 # .py or .sh, and the deployment is frozen at aa67c426 until F-1(b) is filed).
 #
-#   1. measure_m1_m6.py computes M-1 non-transitively. A three-tree comparison can therefore
-#      report all pairs consistent while no single tree agrees with both others.
+#   1. CORRECTED 2026-08-25 by re-deriving it instead of re-quoting it. I first wrote this as
+#      "measure_m1_m6.py computes M-1 non-transitively". That is wrong, and wrong in a way worth
+#      recording: the tool has NO cross-tree comparison surface at all. --tree is required with no
+#      default, one tree per invocation, and its own docstring at :11 says "the defect is measuring
+#      one tree and reporting about another." So there is no comparison in the instrument to be
+#      non-transitive. The real defect is larger: F-17(b) obliges M-1..M-6 "on BOTH trees", and the
+#      comparison of those two column sets is UNINSTRUMENTED -- done by eye into a receipt, as
+#      F-17(a) did at 30ec0707. Transitivity does not even arise at n=2; it bites only at n>=3.
+#      I filed this under a cause-name that sort-of fit, and the cause-name displaced the finding.
 #   2. Three stale ratchet docstrings: "Eight files remain", "15 <- what this test counts", and
 #      the overcount gloss. Each was true when written; none was re-derived after the count moved.
 #   3. omnifold.py is coupled to a .gitignore re-include. The coupling is undocumented, so a
