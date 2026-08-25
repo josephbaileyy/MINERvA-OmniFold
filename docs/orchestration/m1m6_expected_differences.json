@@ -1,0 +1,33 @@
+{
+  "schema": "mnv_m1m6_expected_differences/1",
+  "notes": [
+    "The declared-expected differences for compare_m1_m6.py. THIS FILE IS A WHITELIST. Every entry",
+    "suppresses a finding that F-17(b) would otherwise report, so widening it is a reviewable diff",
+    "and never an edit made at measurement time. compare_m1_m6.py refuses (exit 5) any entry whose",
+    "citation does not resolve, any pattern that is a bare measurement id or ends in a wildcard",
+    "segment, and any pattern targeting M-2 at all.",
+    "DELIBERATELY ONE ENTRY. The SPEC also offered 'M-1, M-5 and M-6 are falsified by any commit to",
+    "build-k0-execution-integrity'. That is REJECTED and must not be added: measured 2026-08-25 at",
+    "49dbdf8f, only 10 of the 46 commits in 8c156a37..build-k0-execution-integrity touch any file in",
+    "those three populations (2 of 10 M-1 files, 8 of 8 launchers, 3 for mnv_guarded_run.py), so 36",
+    "of 46 cannot move them and 'any commit' is false. Worse, as an entry it would have suppressed",
+    "the actual F-17(a) findings -- M-1's dropped tenth entrypoint and M-5's 0-of-8 against 8-of-8.",
+    "NO doc_sha256 IS DECLARED on the entry below, and that is a choice: the cited document is",
+    "classed LIVE/open, so pinning its digest would turn a peer's correction into a refusal at",
+    "measurement time, which is precisely the moment at which nobody should be widening a whitelist.",
+    "The instrument records the measured digest of every cited document in its output regardless,",
+    "and it does enforce a declared doc_sha256 when one is present."
+  ],
+  "entries": [
+    {
+      "id": "E1-m4-behind-and-ahead-drift",
+      "fields": ["M-4.behind", "M-4.ahead"],
+      "rule": {"kind": "may-differ"},
+      "citation": {
+        "doc": "docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md",
+        "quote": "the BEHIND-COUNT has moved twice"
+      },
+      "why": "M-4's behind/ahead counts are a left-right count against --upstream, which defaults to origin/main (measure_m1_m6.py, the --upstream argument). They move whenever the upstream ref moves, without anything in the measured tree changing, and the cited measurement records them moving 36 -> 55 -> 65. NOT M-4.upstream: two invocations run against different upstreams are not the same comparison, and that must surface as a finding. NOT M-4.head or M-4.dirty: those are the tree's identity and a difference in them is the finding F-17(b) asks for."
+    }
+  ]
+}

@@ -265,6 +265,17 @@ built all of these and is disqualified from grading them.
   `30ec0707`. Also records **DO NOT build an `F-7(b)` exclusion instrument** — §7.0.9 rules it
   untestable at k=0 and the widening detector already exists at `b49bc360`. Authored by the
   evidence-producing lane per Joseph's 2026-08-25 ruling, so **every clause is rejectable**.
+  **BUILT, by the third lane, 2026-08-25:** `compare_m1_m6.py` (the instrument),
+  `test_compare_m1_m6.py` (46 arms, both directions per requirement) and
+  `m1m6_expected_differences.json` (the reviewable whitelist, deliberately ONE entry). Exit codes
+  `0 / 10 / 20 / 4 / 5`. **Two of the spec's clauses were REJECTED and one requirement is partial:**
+  its `M-1, M-5, M-6 are falsified by ANY commit to build-k0-execution-integrity` is false as
+  measured — 10 of the 46 commits ahead of `8c156a37` touch those populations, not 46 — and as a
+  whitelist entry it would have suppressed the `F-17(a)` findings themselves; R5's stated fixture
+  cannot exist under exact equality; and R3's `detached-or-branch` and R6's
+  `wall-clock of each measurement` are **not in `measure_m1_m6.py --json` at all**, so the record
+  names them `UNAVAILABLE-BY-INPUT-SCHEMA` rather than deriving them from the tree as it is now.
+  **It grades nothing:** F-17(b) is the F-18(b) reviewer's, who must be a fresh non-builder.
 
 ### B1 steps 4-5: the lift, and the preflight that gates the first submission
 

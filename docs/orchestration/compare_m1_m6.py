@@ -1,0 +1,670 @@
+#!/usr/bin/env python3
+"""Turn two or more `measure_m1_m6.py --json` documents into a machine verdict.
+
+CITABLE FOR: whether a named set of M-1..M-6 documents differ, which differences are declared
+expected by a reviewable list, and what was compared. NOT CITABLE FOR: any F-number's verdict, the
+far-end evidence, or authority to grade. This instrument compares documents. It measures no tree.
+
+WHY IT EXISTS. `F-17(b)` (contract `:621`, `:1471`) obliges M-1..M-6 on BOTH trees with
+"differences reported as findings". `measure_m1_m6.py` measures one tree per invocation and does it
+well; nothing turned two of its outputs into a verdict, so the comparison was performed by a human
+reading two columns into a receipt -- no negative control, and no record of what was compared.
+`F-17(a)` was discharged that way at candidate `30ec0707`.
+
+IT COMPUTES NO MEASUREMENT (R1). There is no `ast`, no `subprocess`, no git call, no glob of a tree
+anywhere in this file, and a test asserts that by parsing this module's own imports. A rule retyped
+is a second implementation of it. Every number here comes from a document that `measure_m1_m6.py`
+produced; if a document is wrong, this instrument is wrong in exactly the same way, which is the
+intended failure mode.
+
+THE COMPARISON IS JOINT, NEVER COMPOSED FROM PAIRS (R5). For each field the instrument takes the
+distinct-value set over all n inputs at once. Under exact equality that is the same answer pairwise
+would give -- equality is an equivalence relation, so "pairwise-consistent but jointly inconsistent"
+is IMPOSSIBLE for equality and R5's fixture cannot be built from it. It becomes possible the moment
+an expected-difference rule carries a TOLERANCE (`max-abs-delta`): with values 3, 0, 6 and a
+tolerance of 4, a baseline-relative pass -- input 0 against each of the rest, which is the natural
+shape of a two-column F-17(a) table -- finds every comparison inside tolerance while the joint
+spread is 6. That is the fixture in the test suite, and it is the only form in which this arm can
+fail.
+
+WHAT THE INPUT DOCUMENT CANNOT TELL IT, stated rather than papered over. `measure_m1_m6.py --json`
+emits no timestamp, no digest of itself, and no branch/detached state -- `m4()` returns
+`is_git, head, dirty, untracked, modified, behind, ahead, upstream` and nothing else. So:
+  * R3's "detached-or-branch" and R6's "wall-clock of each measurement" are NOT derivable here and
+    are emitted as `UNAVAILABLE-BY-INPUT-SCHEMA` with the reason attached, never silently dropped.
+    Deriving them by running git against the tree would break R1 AND would answer about the tree as
+    it is NOW rather than as it was when measured, which is this campaign's named defect.
+  * two documents from different revisions of `measure_m1_m6.py` cannot be told apart by this
+    instrument. What it CAN see is that their field sets differ, and it reports that
+    (`field_set_differs`) as an unexpected finding -- the F-17(a) failure was exactly an instrument
+    difference (5 literals reported where there were 7).
+  * the fix belongs in `measure_m1_m6.py`, and NOT NOW: adding fields to it mid-rehearsal would give
+    the post-rehearsal documents fields the already-filed pre-submission documents lack, and this
+    instrument would correctly report that as a finding. Manufacturing findings is worse than
+    declaring a gap. Propose it after Gate 2.
+
+THE EXPECTED LIST IS A WHITELIST, SO IT HAS FAILING ARMS (R4). It is an input file, never a literal
+in this code, so widening it is a reviewable diff. Every entry must carry a citation that RESOLVES
+-- the cited document must exist under `--repo`, must contain the quoted string, and if the entry
+declares a digest the document must still have it -- and an unresolved citation is a hard refusal,
+not a warning. Three further refusals exist because a whitelist that can swallow a whole measurement
+is not reviewable:
+  * a pattern may not be a bare measurement id, and its last dotted segment may not be `*`
+    (so `M-4.behind` is allowed and `M-4.*` is refused);
+  * NO pattern may target M-2 at all (R7): `F-17(b)` names M-2 as the perishable claim, so an M-2
+    difference is never suppressible, is reported in its own block, and forces the some-unexpected
+    exit whatever the list says;
+  * the shipped list is deliberately ONE entry. See the REJECTED section below.
+
+REJECTED FROM THE SPEC (`SPEC-20260825-f17b-tree-comparison-instrument.md`), re-derived rather than
+re-quoted:
+  * R4's second declared-expected bullet -- "M-1, M-5 and P-6 are falsified by any commit to
+    `build-k0-execution-integrity`" -- is NOT in the shipped expected list, because as a whitelist
+    entry it would suppress the very findings F-17(b) exists to catch. Measured 2026-08-25 at
+    `49dbdf8f`: of the 46 commits in `8c156a37..build-k0-execution-integrity`, 2 touch the ten M-1
+    files, 8 touch the eight M-5 launchers, 3 touch `mnv_guarded_run.py`, and 10 touch any of them
+    -- so 36 of 46 commits to that branch cannot move M-1, M-5 or M-6, and "any commit" is false.
+    (Contract 7.0.19 makes the same point from the other side: a docs commit is "provably unable" to
+    move the source listing because `SOURCE_SUFFIXES = (".py", ".sh")`.) The differences those
+    measurements DID show -- M-1's dropped tenth entrypoint, M-5's 0-of-8 against 8-of-8 -- are
+    findings against the builder, and a rule that pre-declared them expected is how a gate stops
+    being able to fail. Also: "P-6" is not a measurement this tool emits; M-6 is.
+  * R4's first bullet HOLDS and is the one shipped entry:
+    `MEASUREMENT-20260822-m1-m6-at-pinned-sha.md:89` records the behind-count as having "moved
+    twice" (36 -> 55 -> 65) and `measure_m1_m6.py`'s `--upstream` does default to `origin/main`.
+    The entry covers `M-4.behind` and `M-4.ahead` only -- NOT `M-4.upstream`, because two
+    invocations run against different upstreams are not the same comparison and that must surface.
+
+EXIT CODES ARE A DISJOINT VOCABULARY (R8), documented in --help and asserted one arm per code:
+    0  no differences        10  differences, all expected      20  differences, some unexpected
+    4  refusal: an input      5  refusal: the expected list      2  refusal: usage (argparse's own)
+    1  RESERVED AND NEVER A VERDICT -- an uncaught traceback exits 1, so no verdict may share it.
+"""
+import argparse
+import datetime
+import hashlib
+import json
+import pathlib
+import sys
+
+SCHEMA = "mnv_m1m6_comparison/1"
+EXPECTED_SCHEMA = "mnv_m1m6_expected_differences/1"
+INSTRUMENT_VERSION = "1"
+
+EXIT_NO_DIFFERENCES = 0
+EXIT_DIFFERENCES_ALL_EXPECTED = 10
+EXIT_DIFFERENCES_SOME_UNEXPECTED = 20
+EXIT_REFUSAL_INPUT = 4
+EXIT_REFUSAL_EXPECTED_LIST = 5
+EXIT_CODES = {
+    EXIT_NO_DIFFERENCES: "NO-DIFFERENCES",
+    EXIT_DIFFERENCES_ALL_EXPECTED: "DIFFERENCES-ALL-EXPECTED",
+    EXIT_DIFFERENCES_SOME_UNEXPECTED: "DIFFERENCES-SOME-UNEXPECTED",
+    EXIT_REFUSAL_INPUT: "REFUSAL-INPUT",
+    EXIT_REFUSAL_EXPECTED_LIST: "REFUSAL-EXPECTED-LIST",
+}
+RESERVED_EXIT_CODES = {1: "an uncaught traceback; never a verdict", 2: "argparse usage refusal"}
+
+MEASUREMENT_IDS = ("M-1", "M-2", "M-3", "M-4", "M-5", "M-6")
+REQUIRED_KEYS = ("label", "tree") + MEASUREMENT_IDS
+PERISHABLE_ID = "M-2"          # F-17(b) singles it out; see R7
+ABSENT = "<FIELD ABSENT FROM THIS DOCUMENT>"
+UNAVAILABLE = "UNAVAILABLE-BY-INPUT-SCHEMA"
+
+# WHAT EACH FIELD IS, AND WHERE ITS VALUE CAME FROM. The recurring defect here is asymmetric
+# comparison: a delta believed without naming the unit of each side and the population each side was
+# drawn from. Matched in order by fnmatch. A field with no entry is reported with unit UNDECLARED
+# and counted separately, so a new field in `measure_m1_m6.py` cannot arrive silently unitless.
+UNITS = (
+    ("M-1[*].present", "boolean",
+     "one of the ten paths in measure_m1_m6.py's M1_FILES, resolved inside the measured tree"),
+    ("M-1[*].literals", "set of canonical-root string literals, rendered name@line(form)",
+     "every string Constant in that file whose value is the canonical root, exact or subpath"),
+    ("M-1[*].first_insert", "line number of the first sys.path insert/append, or null",
+     "that file's parsed syntax tree"),
+    ("M-1[*].repo_modules_after", "list of (module, line)",
+     "imports below the first sys.path insert whose top-level name is a repo module -- and the repo"
+     " module set is the *.py stems under nd-unfolding/ and 2d-unfolding/, tracked or not"),
+    ("M-1[*].n_after", "count of the repo_modules_after list",
+     "same population as repo_modules_after"),
+    ("M-2.importable", "count of distinct top-level importable names",
+     "*.py stems under nd-unfolding/ and 2d-unfolding/ in the measured tree, TRACKED OR UNTRACKED --"
+     " the glob does not consult git, which is what makes this the perishable claim"),
+    ("M-2.stdlib_collisions", "set of module names",
+     "the same glob population intersected with sys.stdlib_module_names of the MEASURING"
+     " interpreter"),
+    ("M-2.python", "version string of the interpreter that RAN measure_m1_m6.py",
+     "NOT a property of the measured tree; a difference here means the two documents are not"
+     " comparable on M-2, and it is never expected"),
+    ("M-3.present", "boolean", "docs/orchestration/verify_hash_bindings.py in the measured tree"),
+    ("M-3.rc", "process exit status of verify_hash_bindings.py",
+     "run with cwd set to the measured tree"),
+    ("M-3.all_intact", "boolean, substring 'ALL BINDINGS INTACT' seen on stdout",
+     "the same run's stdout"),
+    ("M-4.is_git", "boolean", "whether rev-parse HEAD succeeded in the measured tree"),
+    ("M-4.head", "40-hex commit sha", "the measured tree's HEAD at measurement time"),
+    ("M-4.dirty", "count of porcelain lines", "the measured tree's working tree"),
+    ("M-4.untracked", "count of porcelain lines starting ??", "the measured tree's working tree"),
+    ("M-4.modified", "count of porcelain lines not starting ??",
+     "the measured tree's working tree"),
+    ("M-4.behind", "count of commits, DRIFTING -- never quotable without its date",
+     "a left-right count of <upstream>...HEAD, so the population is whatever <upstream> pointed at"
+     " when the measurement ran"),
+    ("M-4.ahead", "count of commits, DRIFTING", "the same left-right count as M-4.behind"),
+    ("M-4.upstream", "the ref name given to --upstream (default origin/main)",
+     "an ARGUMENT of the measurement, not an observation of the tree"),
+    ("M-5.n", "count", "the eight names in measure_m1_m6.py's LAUNCHERS tuple"),
+    ("M-5.missing", "set of launcher filenames", "LAUNCHERS not present under nd-unfolding/"),
+    ("M-5.repo_assign", "set of launcher filenames",
+     "LAUNCHERS carrying a line matching ^\\s*(export\\s+)?REPO="),
+    ("M-5.activator_from_code_root", "set of launcher filenames",
+     "LAUNCHERS containing the literal source \"${CODE_ROOT}/setup_salloc_env.sh\""),
+    ("M-5.activator_from_env_root", "set of launcher filenames",
+     "LAUNCHERS containing the literal source \"${ENV_ROOT}/setup_salloc_env.sh\""),
+    ("M-6.present", "boolean", "nd-unfolding/mnv_guarded_run.py in the measured tree"),
+    ("M-6.n_lines", "count of lines", "that file"),
+    ("M-6.counts_resolutions", "boolean, substring 'self.checked'", "that file"),
+    ("M-6.inventory_write_lines", "set of line numbers",
+     "lines of that file carrying '\"checked\"'"),
+    ("M-6.else_zero_default_lines", "set of line numbers",
+     "lines carrying both 'guard.checked' and 'else 0'"),
+    ("M-6.state", "one of three named states, never a boolean",
+     "derived from the two line sets above"),
+)
+
+
+class Refusal(Exception):
+    """Fail closed with a code that is not 'no differences found'."""
+
+    def __init__(self, code, message):
+        super().__init__(message)
+        self.code = code
+        self.message = message
+
+
+def sha256_of(path):
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 16), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def utc(stamp=None):
+    when = (datetime.datetime.now(datetime.timezone.utc) if stamp is None else
+            datetime.datetime.fromtimestamp(stamp, datetime.timezone.utc))
+    return when.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def canon(value):
+    """A canonical, order-insensitive, JSON-serializable rendering of one measured value.
+
+    Lists are SORTED: M-5's come out in LAUNCHERS order and M-6's in line order, and a difference of
+    order alone is not a difference of measurement. Rendering a list's dict elements as compact json
+    keeps them comparable and readable in one field.
+    """
+    if isinstance(value, dict):
+        return {key: canon(value[key]) for key in sorted(value)}
+    if isinstance(value, list):
+        rendered = []
+        for item in value:
+            if isinstance(item, (dict, list)):
+                rendered.append(json.dumps(canon(item), sort_keys=True, separators=(",", ":")))
+            else:
+                rendered.append(item)
+        try:
+            return sorted(rendered)
+        except TypeError:                  # mixed types: keep them, stringified, rather than crash
+            return sorted(str(item) for item in rendered)
+    return value
+
+
+def field_matches(pattern, field):
+    """Glob a field path with `*` only, because `fnmatch` CANNOT do this job.
+
+    THE FIELD PATHS THEMSELVES CONTAIN BRACKETS. `M-1[nd-unfolding/bootstrap_nd.py].first_insert` is
+    a field, and to `fnmatch` the pattern `M-1[*].first_insert` reads `[*]` as a CHARACTER CLASS
+    matching one literal asterisk -- so the per-file wildcard silently matched nothing and every
+    M-1 difference was classified UNEXPECTED whatever the expected list said. Found by the arm that
+    asserts the narrowing direction still works, which is the arm a one-directional guard omits.
+    Here `*` is the only metacharacter and `[`, `]`, `.` are literal.
+    """
+    parts = pattern.split("*")
+    if len(parts) == 1:
+        return field == pattern
+    if not field.startswith(parts[0]) or not field.endswith(parts[-1]):
+        return False
+    if len(parts[0]) + len(parts[-1]) > len(field):
+        return False
+    cursor = len(parts[0])
+    for middle in parts[1:-1]:
+        found = field.find(middle, cursor)
+        if found < 0:
+            return False
+        cursor = found + len(middle)
+    return cursor <= len(field) - len(parts[-1])
+
+
+def unit_of(field):
+    for pattern, unit, population in UNITS:
+        if field_matches(pattern, field):
+            return unit, population, True
+    return ("UNDECLARED", "UNDECLARED -- this field is not in compare_m1_m6.py's UNITS table, so a"
+                          " delta on it is reported WITHOUT a unit or a population", False)
+
+
+def load_document(path_text, index):
+    """Read one `measure_m1_m6.py --json` document. NO DEFAULTS, and absence is a refusal."""
+    path = pathlib.Path(path_text)
+    if not path.exists():
+        raise Refusal(EXIT_REFUSAL_INPUT, f"input {index} does not exist: {path}")
+    if not path.is_file():
+        raise Refusal(EXIT_REFUSAL_INPUT, f"input {index} is not a file: {path}")
+    raw = path.read_bytes()
+    if not raw.strip():
+        raise Refusal(EXIT_REFUSAL_INPUT,
+                      f"input {index} is empty: {path}. An empty document is not 'no differences'.")
+    try:
+        doc = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise Refusal(EXIT_REFUSAL_INPUT,
+                      f"input {index} is not readable json: {path}: {exc}")
+    if not isinstance(doc, dict):
+        raise Refusal(EXIT_REFUSAL_INPUT,
+                      f"input {index} is a {type(doc).__name__}, not a measure_m1_m6 document: "
+                      f"{path}")
+    missing = [key for key in REQUIRED_KEYS if key not in doc]
+    if missing:
+        raise Refusal(EXIT_REFUSAL_INPUT,
+                      f"input {index} is missing {', '.join(missing)}: {path}. A document short of "
+                      f"a measurement is a refusal, never a silent agreement on the rest.")
+    resolved = path.resolve()
+    return {"index": index, "path": str(resolved), "given_path": path_text,
+            "sha256": sha256_of(resolved), "bytes": len(raw),
+            "file_mtime_utc": utc(resolved.stat().st_mtime), "doc": doc}
+
+
+def identity_of(record):
+    """Who this side IS. R3: resolved path, HEAD, porcelain count -- and the two fields the input
+    schema cannot supply, named as unavailable rather than omitted."""
+    doc = record["doc"]
+    m4 = doc.get("M-4") if isinstance(doc.get("M-4"), dict) else {}
+    return {
+        "index": record["index"],
+        "key": f"[{record['index']}] {doc.get('label') or '(unlabelled)'}",
+        "label": doc.get("label"),
+        "tree_resolved_path": doc.get("tree"),
+        "input_path": record["path"],
+        "input_sha256": record["sha256"],
+        "input_bytes": record["bytes"],
+        "input_file_mtime_utc": record["file_mtime_utc"],
+        "measurement_wall_clock": UNAVAILABLE,
+        "head": m4.get("head", ABSENT),
+        "is_git": m4.get("is_git", ABSENT),
+        "porcelain_dirty": m4.get("dirty", ABSENT),
+        "porcelain_untracked": m4.get("untracked", ABSENT),
+        "porcelain_modified": m4.get("modified", ABSENT),
+        "branch_or_detached": UNAVAILABLE,
+    }
+
+
+def flatten(doc, index):
+    """One document -> {field path: canonical value}. Identity keys are NOT compared fields."""
+    flat = {}
+    rows = doc["M-1"]
+    if not isinstance(rows, list):
+        raise Refusal(EXIT_REFUSAL_INPUT,
+                      f"input {index}: M-1 is a {type(rows).__name__}, expected a list of rows")
+    for row in rows:
+        if not isinstance(row, dict) or "file" not in row:
+            raise Refusal(EXIT_REFUSAL_INPUT,
+                          f"input {index}: an M-1 row has no 'file' key, so rows cannot be paired")
+        for key, value in row.items():
+            if key == "file":
+                continue
+            flat[f"M-1[{row['file']}].{key}"] = canon(value)
+    for measurement in MEASUREMENT_IDS[1:]:
+        block = doc[measurement]
+        if not isinstance(block, dict):
+            raise Refusal(EXIT_REFUSAL_INPUT,
+                          f"input {index}: {measurement} is a {type(block).__name__}, expected an "
+                          f"object")
+        for key, value in block.items():
+            flat[f"{measurement}.{key}"] = canon(value)
+    return flat
+
+
+def bad_pattern(pattern):
+    """Why this expected-list pattern may not be used, or None. A whitelist that can swallow a whole
+    measurement is not reviewable, and M-2 may not be whitelisted at all."""
+    if not isinstance(pattern, str) or not pattern:
+        return "a field pattern must be a non-empty string"
+    if pattern in MEASUREMENT_IDS:
+        return f"'{pattern}' is a bare measurement id and would whitelist all of it; name fields"
+    head = pattern[:3]
+    if head not in MEASUREMENT_IDS:
+        return f"'{pattern}' does not begin with a measurement id (M-1..M-6)"
+    if head == PERISHABLE_ID:
+        return (f"'{pattern}' targets {PERISHABLE_ID}, which F-17(b) names as the perishable claim."
+                f" {PERISHABLE_ID} differences are never expected and never suppressible.")
+    rest = pattern[3:]
+    if not rest or rest[0] not in ".[":
+        return f"'{pattern}': after the measurement id the next character must be '.' or '['"
+    if pattern.rsplit(".", 1)[-1] in ("*", "**"):
+        return (f"'{pattern}' ends in a wildcard segment and would whitelist every field of that"
+                f" object; name the field")
+    return None
+
+
+def load_expected(path_text, repo):
+    """The declared-expected list, with every citation RESOLVED. Any failure is exit 5."""
+    path = pathlib.Path(path_text)
+    if not path.is_file():
+        raise Refusal(EXIT_REFUSAL_EXPECTED_LIST, f"no expected-differences file at {path}")
+    raw = path.read_bytes()
+    if not raw.strip():
+        raise Refusal(EXIT_REFUSAL_EXPECTED_LIST, f"the expected-differences file is empty: {path}")
+    try:
+        doc = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                      f"the expected-differences file is not json: {exc}")
+    if not isinstance(doc, dict) or doc.get("schema") != EXPECTED_SCHEMA:
+        found = doc.get("schema") if isinstance(doc, dict) else None
+        raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                      f"the expected-differences file must declare schema {EXPECTED_SCHEMA!r}, "
+                      f"found {found!r}")
+    entries = doc.get("entries")
+    if not isinstance(entries, list):
+        raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                      "the expected-differences file has no 'entries' list")
+    seen, out = set(), []
+    for raw_entry in entries:
+        if not isinstance(raw_entry, dict):
+            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST, "an entry is not an object")
+        entry_id = raw_entry.get("id")
+        if not isinstance(entry_id, str) or not entry_id:
+            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST, "an entry has no string 'id'")
+        if entry_id in seen:
+            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST, f"duplicate entry id {entry_id!r}")
+        seen.add(entry_id)
+        fields = raw_entry.get("fields")
+        if not isinstance(fields, list) or not fields:
+            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                          f"entry {entry_id}: 'fields' must be a non-empty list")
+        for pattern in fields:
+            why = bad_pattern(pattern)
+            if why:
+                raise Refusal(EXIT_REFUSAL_EXPECTED_LIST, f"entry {entry_id}: {why}")
+        rule = raw_entry.get("rule")
+        if not isinstance(rule, dict) or rule.get("kind") not in ("may-differ", "max-abs-delta"):
+            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                          f"entry {entry_id}: 'rule.kind' must be 'may-differ' or 'max-abs-delta'")
+        if rule["kind"] == "max-abs-delta":
+            value = rule.get("value")
+            if isinstance(value, bool) or not isinstance(value, (int, float)):
+                raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                              f"entry {entry_id}: max-abs-delta needs a numeric 'value'")
+        citation = raw_entry.get("citation")
+        if not isinstance(citation, dict):
+            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                          f"entry {entry_id}: no 'citation'. An expected difference with no citation"
+                          f" is a judgement, and this list holds declarations.")
+        doc_rel, quote = citation.get("doc"), citation.get("quote")
+        if not isinstance(doc_rel, str) or not doc_rel:
+            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                          f"entry {entry_id}: the citation has no 'doc' path")
+        if not isinstance(quote, str) or not quote.strip():
+            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST, f"entry {entry_id}: the citation has no "
+                                                      f"'quote'")
+        cited = repo / doc_rel
+        if not cited.is_file():
+            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                          f"entry {entry_id}: the cited document does not exist under --repo: "
+                          f"{cited}")
+        text = cited.read_text(encoding="utf-8", errors="replace")
+        if quote not in text:
+            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                          f"entry {entry_id}: the quote is not in {doc_rel}. An unresolved citation "
+                          f"is a hard error: this list is a whitelist and may not become a silent "
+                          f"suppressor.")
+        matched = [i + 1 for i, line in enumerate(text.splitlines()) if quote in line]
+        measured_digest = sha256_of(cited)
+        declared = citation.get("doc_sha256")
+        if isinstance(declared, str) and declared and declared != measured_digest:
+            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                          f"entry {entry_id}: {doc_rel} is sha256 {measured_digest[:12]}, the entry "
+                          f"pins {declared[:12]}. The cited document moved; re-read it and "
+                          f"re-declare.")
+        out.append({"id": entry_id, "fields": list(fields), "rule": dict(rule),
+                    "why": raw_entry.get("why", ""),
+                    "citation": {"doc": doc_rel, "quote": quote,
+                                 "doc_sha256_measured": measured_digest,
+                                 "doc_sha256_declared": declared if isinstance(declared, str)
+                                 else None,
+                                 "matched_lines": matched},
+                    "used": False})
+    return {"path": str(path.resolve()), "sha256": sha256_of(path), "entries": out}
+
+
+def evaluate_rule(rule, values):
+    """Joint, over ALL n values at once. Returns (satisfied, detail)."""
+    if rule["kind"] == "may-differ":
+        return True, {"kind": "may-differ"}
+    numeric = [v for v in values if isinstance(v, (int, float)) and not isinstance(v, bool)]
+    if len(numeric) != len(values):
+        return False, {"kind": "max-abs-delta", "value": rule["value"],
+                       "reason": "a value is absent or non-numeric, so the tolerance cannot be "
+                                 "applied; failing closed"}
+    spread = max(numeric) - min(numeric)
+    return spread <= rule["value"], {
+        "kind": "max-abs-delta", "value": rule["value"], "joint_spread": spread,
+        "min": min(numeric), "max": max(numeric),
+        "note": "the spread is max-min over ALL n inputs, never composed from pairs"}
+
+
+def compare(records, expected):
+    identities = [identity_of(record) for record in records]
+    flats = [flatten(record["doc"], record["index"]) for record in records]
+    field_sets = [frozenset(flat) for flat in flats]
+    all_fields = sorted(set().union(*field_sets)) if field_sets else []
+    field_set_differs = len(set(field_sets)) > 1
+
+    findings = []
+    for field in all_fields:
+        values = [flat.get(field, ABSENT) for flat in flats]
+        distinct = {json.dumps(value, sort_keys=True) for value in values}
+        if len(distinct) == 1:
+            continue
+        unit, population, unit_declared = unit_of(field)
+        measurement = field[:3]
+        classification, matched = "UNEXPECTED", []
+        if measurement == PERISHABLE_ID:
+            reason = (f"{PERISHABLE_ID} is the perishable claim F-17(b) singles out; its differences"
+                      f" are never expected and never suppressible")
+        else:
+            reason = "no entry in the expected-differences list covers this field"
+            covering = [entry for entry in expected["entries"]
+                        if any(field_matches(pattern, field) for pattern in entry["fields"])]
+            for entry in covering:
+                satisfied, detail = evaluate_rule(entry["rule"], values)
+                matched.append({"id": entry["id"], "satisfied": satisfied, "rule_detail": detail,
+                                "citation": entry["citation"]})
+                entry["used"] = True
+                if satisfied:
+                    classification = "EXPECTED-BY-RULING"
+            if classification == "EXPECTED-BY-RULING":
+                reason = "declared expected by " + "; ".join(
+                    m["id"] for m in matched if m["satisfied"])
+            elif covering:
+                reason = ("an entry covers this field but its rule is NOT satisfied: "
+                          + "; ".join(m["id"] for m in matched))
+        findings.append({
+            "field": field, "measurement": measurement, "unit": unit,
+            "unit_declared": unit_declared, "population": population,
+            "classification": classification, "reason": reason,
+            "expected_entries_matched": matched,
+            "n_distinct_values": len(distinct),
+            "sides": [{"key": identities[i]["key"], "label": identities[i]["label"],
+                       "tree_resolved_path": identities[i]["tree_resolved_path"],
+                       "input_sha256": identities[i]["input_sha256"],
+                       "head": identities[i]["head"],
+                       "porcelain_dirty": identities[i]["porcelain_dirty"],
+                       "value": values[i]} for i in range(len(records))],
+        })
+
+    m2_findings = [f for f in findings if f["measurement"] == PERISHABLE_ID]
+    unexpected = [f for f in findings if f["classification"] == "UNEXPECTED"]
+    if findings:
+        code = (EXIT_DIFFERENCES_SOME_UNEXPECTED if unexpected
+                else EXIT_DIFFERENCES_ALL_EXPECTED)
+    else:
+        code = EXIT_NO_DIFFERENCES
+    return {
+        "schema": SCHEMA,
+        "instrument": {"name": pathlib.Path(__file__).name, "version": INSTRUMENT_VERSION,
+                       "self_sha256": sha256_of(pathlib.Path(__file__).resolve())},
+        "generated_utc": utc(),
+        "comparison_mode": ("JOINT over all n inputs. Pairwise agreement is never composed into a "
+                            "global verdict: every field's verdict is the distinct-value set over "
+                            "all n, and every tolerance is max-min over all n."),
+        "global_agreement_inferred_from_pairs": False,
+        "input_schema_gaps": {
+            "branch_or_detached": "measure_m1_m6.py --json emits no symbolic-ref state",
+            "measurement_wall_clock": ("measure_m1_m6.py --json emits no timestamp; the "
+                                       "input_file_mtime_utc below is a property of the FILE, not "
+                                       "of the measurement"),
+            "measuring_instrument_digest": ("measure_m1_m6.py --json does not identify its own "
+                                            "revision; field_set_differs is the only visible "
+                                            "symptom of two documents from different revisions"),
+        },
+        "n_inputs": len(records),
+        "inputs": identities,
+        "expected_list": {"path": expected["path"], "sha256": expected["sha256"],
+                          "entries": expected["entries"]},
+        "fields_compared": len(all_fields),
+        "field_set_differs": field_set_differs,
+        "findings": findings,
+        "m2_perishable": {
+            "measurement": PERISHABLE_ID,
+            "status": "DIFFERS" if m2_findings else "IDENTICAL-ACROSS-ALL-INPUTS",
+            "fields": [f["field"] for f in m2_findings],
+            "note": ("F-17(b) names M-2 as the perishable claim. It is reported here separately so "
+                     "it cannot be absorbed into a summary count, it is never suppressible by the "
+                     "expected list, and any M-2 difference forces the some-unexpected verdict."),
+        },
+        "summary": {
+            "all_agree": not findings,
+            "n_findings": len(findings),
+            "n_expected": len(findings) - len(unexpected),
+            "n_unexpected": len(unexpected),
+            "n_unexpected_excluding_m2": len([f for f in unexpected
+                                              if f["measurement"] != PERISHABLE_ID]),
+            "n_m2_findings": len(m2_findings),
+            "n_findings_with_undeclared_unit": len([f for f in findings if not f["unit_declared"]]),
+            "expected_entries_unused": [e["id"] for e in expected["entries"] if not e["used"]],
+        },
+        "verdict": EXIT_CODES[code],
+        "exit_code": code,
+    }
+
+
+def print_human(record):
+    print(f"=== {record['schema']}  n_inputs={record['n_inputs']}  {record['generated_utc']}")
+    print(f"--- comparison mode: {record['comparison_mode']}")
+    for side in record["inputs"]:
+        print(f"  {side['key']}")
+        print(f"      tree     {side['tree_resolved_path']}")
+        print(f"      HEAD     {side['head']}   porcelain={side['porcelain_dirty']}"
+              f"  branch/detached={side['branch_or_detached']}")
+        print(f"      document {side['input_path']}")
+        print(f"      sha256   {side['input_sha256']}")
+        print(f"      file mtime {side['input_file_mtime_utc']}   measured at "
+              f"{side['measurement_wall_clock']}")
+    expected = record["expected_list"]
+    print(f"--- expected-differences list: {expected['path']}  "
+          f"sha256={expected['sha256'][:12]}  entries={len(expected['entries'])}")
+    for entry in expected["entries"]:
+        citation = entry["citation"]
+        print(f"      {entry['id']}: {entry['rule']['kind']} over {entry['fields']}")
+        print(f"        cites {citation['doc']}:{citation['matched_lines']} "
+              f"sha256={citation['doc_sha256_measured'][:12]}")
+    print(f"--- fields compared: {record['fields_compared']}   "
+          f"field_set_differs={record['field_set_differs']}")
+    if not record["findings"]:
+        print("--- NO DIFFERENCES on any compared field, across all inputs jointly.")
+    for finding in record["findings"]:
+        print(f"--- {finding['classification']}  {finding['field']}")
+        print(f"      unit       {finding['unit']}")
+        print(f"      population {finding['population']}")
+        print(f"      because    {finding['reason']}")
+        for side in finding["sides"]:
+            print(f"      {side['key']:<30} = {json.dumps(side['value'])}")
+    perishable = record["m2_perishable"]
+    print(f"--- M-2 PERISHABILITY: {perishable['status']}  fields={perishable['fields']}")
+    summary = record["summary"]
+    print(f"--- summary: findings={summary['n_findings']} expected={summary['n_expected']} "
+          f"unexpected={summary['n_unexpected']} "
+          f"unexpected_excluding_M2={summary['n_unexpected_excluding_m2']} "
+          f"m2={summary['n_m2_findings']} "
+          f"undeclared_unit={summary['n_findings_with_undeclared_unit']}")
+    if summary["expected_entries_unused"]:
+        print(f"--- expected entries that matched nothing: {summary['expected_entries_unused']}")
+    print(f"=== VERDICT {record['verdict']}  exit {record['exit_code']}")
+
+
+EPILOG = """exit codes -- a disjoint, documented vocabulary:
+   0  NO-DIFFERENCES                 every compared field has one distinct value across all inputs
+  10  DIFFERENCES-ALL-EXPECTED       every difference is declared by the --expected list
+  20  DIFFERENCES-SOME-UNEXPECTED    at least one difference is undeclared, or is an M-2 difference
+   4  REFUSAL-INPUT                  an input is absent, empty, unreadable, or not a document
+   5  REFUSAL-EXPECTED-LIST          the expected list is malformed, over-broad, or its citation
+                                     does not resolve
+   2  REFUSAL-USAGE                  argparse's own
+   1  RESERVED. Never a verdict: an uncaught traceback exits 1, so no verdict may share it.
+
+This instrument computes no measurement. Feed it `measure_m1_m6.py --json` documents."""
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__, epilog=EPILOG,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--input", action="append", required=True, metavar="JSON",
+                       help="a measure_m1_m6.py --json document. Repeat it. No default, "
+                            "deliberately; two or more are required.")
+    parser.add_argument("--expected", required=True, metavar="JSON",
+                       help=f"the declared-expected differences list, schema {EXPECTED_SCHEMA}. "
+                            f"No default: an implicit whitelist is not reviewable.")
+    parser.add_argument("--repo", required=True, metavar="DIR",
+                       help="the tree the expected list's citations are resolved against. No "
+                            "default.")
+    parser.add_argument("--json", action="store_true",
+                       help="emit the comparison record on stdout")
+    parser.add_argument("--record", metavar="PATH",
+                       help="also write the comparison record here")
+    args = parser.parse_args(argv)
+    try:
+        if len(args.input) < 2:
+            raise Refusal(EXIT_REFUSAL_INPUT,
+                          f"{len(args.input)} input given; a comparison needs two or more. One "
+                          f"document is a measurement, not a comparison.")
+        repo = pathlib.Path(args.repo)
+        if not repo.is_dir():
+            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST, f"--repo is not a directory: {repo}")
+        expected = load_expected(args.expected, repo.resolve())
+        records = [load_document(text, i) for i, text in enumerate(args.input)]
+        record = compare(records, expected)
+    except Refusal as refusal:
+        print(f"REFUSING ({EXIT_CODES[refusal.code]}): {refusal.message}", file=sys.stderr)
+        return refusal.code
+    if args.record:
+        pathlib.Path(args.record).write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+    if args.json:
+        print(json.dumps(record, indent=2))
+    else:
+        print_human(record)
+    return record["exit_code"]
+
+
+if __name__ == "__main__":
+    sys.exit(main())
