@@ -63,7 +63,7 @@ H=$(git -C "$CODE_ROOT" rev-parse HEAD)
 echo "  a) HEAD=$H  $([ "$H" = "$WANT_SHA" ] && echo MATCHES || echo '*** DIFFERS ***')"
 git -C "$CODE_ROOT" symbolic-ref -q HEAD >/dev/null && echo "     ON BRANCH -- would violate the 7.0.19 freeze" || echo "     DETACHED (7.0.19 intact)"
 git -C "$CODE_ROOT" status --porcelain > /tmp/fe_porc.$$
-echo "  b) porcelain=$(wc -l < /tmp fe_porc.$$ 2>/dev/null || wc -l < /tmp/fe_porc.$$)"
+echo "  b) porcelain=$(wc -l < /tmp/fe_porc.$$)"
 for fl in require-checkout require-no-nested-checkout require-not-nested require-readonly; do
   "$PY" "$CODE_ROOT/nd-unfolding/mnv_source_manifest.py" --repo "$CODE_ROOT" --compare "$BASELINE" --"$fl" >/dev/null 2>&1
   echo "  --$fl rc=$?"
