@@ -19,8 +19,22 @@ a fabricated sha absent).
 | single-copy **and load-bearing** → committed here | 8 | 109,109 |
 | single-copy, safe to lose | 14 | 821 |
 
-The three sums reconcile to the archive's measured total of 162,438 bytes, which is the check
-that nothing was double-counted or dropped.
+The three sums reconcile to the archive's measured total of 162,438 bytes.
+
+**That conservation check is NECESSARY BUT NOT SUFFICIENT, and this file previously overstated it.**
+It was offered here as "the check that nothing was double-counted or dropped". It is not: a total
+that reconciles is evidence against a *single* slip and **no evidence at all against a compensating
+pair** — an off-by-one in one bucket cancelling a mis-scoped term in another. Both are ordinary
+errors, and either alone would have shown up. Demonstrated the same night on unrelated figures: a
+reconciliation of the rehearsal's declared work summed correctly to 373 while carrying two
+offsetting composition errors (a leg recorded as 20 tasks when its `--array=0-20` is 21, and a
+non-array job's `+1` folded into an array-only subtotal). The total matched; the parts were wrong
+throughout, and the parts are what a later reader reuses.
+
+**So one bucket has been checked against its own source, independently of the total.** Bucket (b),
+the 8 files committed here, re-measured by reading each blob's size from `origin/main`: 8347 +
+38422 + 671 + 671 + 836 + 54463 + 2030 + 3669 = **109,109**, matching the figure claimed above.
+Conservation plus one independently verified part is the standard; conservation alone is not.
 
 **That table is a measurement of the archive AS IT STOOD when it was scoped on 2026-08-25, not a
 description of it now** — stating this because an undated classification reads as present tense,
