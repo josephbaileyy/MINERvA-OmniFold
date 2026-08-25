@@ -70,6 +70,17 @@ class NotificationFanoutTests(unittest.TestCase):
             self.assertEqual(marker.parent, state / "notification-channels")
             self.assertNotIn("..", marker.name)
 
+    def test_init_ntfy_creates_mode_0600_and_refuses_overwrite(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "state" / "notification-secrets.json"
+            notifyctl.init_ntfy_secrets(path)
+            self.assertEqual(path.stat().st_mode & 0o777, 0o600)
+            value = notifyctl.load_object(path, required=True)
+            self.assertTrue(value["ntfy"]["topic"].startswith("minerva-"))
+            self.assertGreater(len(value["ntfy"]["topic"]), 40)
+            with self.assertRaisesRegex(notifyctl.NotifyError, "refusing to overwrite"):
+                notifyctl.init_ntfy_secrets(path)
+
 
 if __name__ == "__main__":
     unittest.main()

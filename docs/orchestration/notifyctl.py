@@ -12,6 +12,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import secrets as secrets_module
 import subprocess
 import sys
 import urllib.error
@@ -25,6 +26,26 @@ DEFAULT_SECRETS = HERE / "state" / "waker" / "notification-secrets.json"
 
 class NotifyError(RuntimeError):
     pass
+
+
+def init_ntfy_secrets(path: Path) -> None:
+    """Create a high-entropy ntfy topic without printing it or weakening mode."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {"ntfy": {"topic": "minerva-" + secrets_module.token_urlsafe(32)}}
+    try:
+        descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    except FileExistsError as exc:
+        raise NotifyError(f"refusing to overwrite existing secrets: {path}") from exc
+    try:
+        with os.fdopen(descriptor, "w") as handle:
+            json.dump(payload, handle, indent=2, sort_keys=True)
+            handle.write("\n")
+    except Exception:
+        try:
+            path.unlink()
+        except FileNotFoundError:
+            pass
+        raise
 
 
 def load_object(path: Path, *, required: bool) -> dict:
@@ -184,6 +205,7 @@ def parser() -> argparse.ArgumentParser:
     send_parser.add_argument("--key", required=True)
     send_parser.add_argument("--subject", required=True)
     commands.add_parser("heartbeat")
+    commands.add_parser("init-ntfy")
     return result
 
 
@@ -192,6 +214,10 @@ def main() -> int:
     try:
         config = load_object(Path(args.config).expanduser(), required=True)
         secrets_path = Path(args.secrets).expanduser()
+        if args.command == "init-ntfy":
+            init_ntfy_secrets(secrets_path)
+            print(f"created protected ntfy secrets at {secrets_path}")
+            return 0
         secrets = load_object(secrets_path, required=False)
         if secrets_path.exists() and secrets_path.stat().st_mode & 0o077:
             raise NotifyError(f"secrets file must have mode 0600: {secrets_path}")
