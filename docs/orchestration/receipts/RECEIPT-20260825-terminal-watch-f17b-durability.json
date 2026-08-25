@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-08-25T19:56:14+00:00",
+  "scope": "Treat Slurm DependencyNeverSatisfied as terminal for waker orchestration and preserve the run-specific F-17(b) comparison record atomically in the durable home checkout.",
+  "authorization": "Joseph explicitly requested these changes on 2026-08-25. No scientific compute or analysis was launched by this deployment.",
+  "source_commit": "7127a3982a849249db050df08d557fd4390d0d88",
+  "files": {
+    "docs/orchestration/wakerctl.py": "5810170f88abbf2848ebcd3ac15b7b4cc4701abdfe93067fa9fcd42cb3804c99",
+    "docs/orchestration/test_wakerctl.py": "6c0b7851ea23240e5aa2148c239207888c1b7a2c1b2f5552d52040b569bbb99d",
+    "docs/orchestration/measure_k0_farend_f1b_f17b.sh": "2132194fe1a3ed7a420f19b7b8b7d2f23fed873c12c316fc525a85b11a1253a2",
+    "docs/orchestration/preserve_f17b_record.py": "ea2dea540e24c38abf8d63669f8d06989a05172b95f6b2e31afc7d79358fefd9"
+  },
+  "behavior": {
+    "slurm": "A visible PENDING row whose Reason is DependencyNeverSatisfied now emits slurm-job-error with state DEPENDENCY_NEVER_SATISFIED. Ordinary Dependency and Resources reasons remain active. Mixed array rows remain active while any row is live.",
+    "f17b": "Comparator exits 0, 10, and 20 are completed measurements and publish their JSON record through an atomic same-filesystem hard link. Existing destinations, invalid JSON, incomplete comparator exits, and digest mismatches fail closed without clobbering evidence.",
+    "durable_default": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/state/f17b-k0-aa67c426-20260824T145751Z.json"
+  },
+  "validation": {
+    "local_affected_tests": "9 passed",
+    "cluster_affected_tests": "9 passed under /usr/bin/python3.11",
+    "pre_commit": "12 checks passed",
+    "shell_syntax": "measure_k0_farend_f1b_f17b.sh passed bash -n locally and on Perlmutter",
+    "broader_local_discovery": "392 tests ran; 22 failures and 3 import errors were pre-existing site/environment assumptions, including missing pytest and /usr/bin/python3.11 on the Mac. The unchanged origin/main baseline reproduced the representative waker dispatch failure."
+  },
+  "deployment": {
+    "durable_checkout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold at 7127a398, clean",
+    "live_waker_checkout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold; wakerctl.py and test_wakerctl.py selectively deployed with hashes matching the durable checkout",
+    "frozen_code_root": "/pscratch/sd/j/josephrb/k0r2/clean was not changed",
+    "canonical_comparison_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold was not cleaned, reset, or otherwise altered outside the two live watcher files"
+  },
+  "live_state": {
+    "waker_last_tick": "2026-08-25T19:50:12+00:00 on login14 with watch_errors=0",
+    "array_watch": "k0-uthrow-array-57527872 armed",
+    "combine_watch": "k0-uthrow-combine-57527875 armed",
+    "scheduler_observation": "57527875 was PENDING for ordinary Dependency while four array elements were RUNNING and five were PENDING for Resources",
+    "tmux": "minerva-claude-school-main recreated on login21 as a shell-backed interactive resume of Claude session 0a6252ff-192d-41ee-ab49-c749f55c97f9; remain-on-exit is enabled"
+  },
+  "boundary": "The two current job watches are deliberately notification-only. They notify on terminal status but do not autonomously prompt an LLM or authorize the far-end scientific filing."
+}
