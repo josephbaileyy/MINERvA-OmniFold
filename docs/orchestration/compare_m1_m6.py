@@ -35,9 +35,13 @@ emits no timestamp, no digest of itself, and no branch/detached state -- `m4()` 
     Deriving them by running git against the tree would break R1 AND would answer about the tree as
     it is NOW rather than as it was when measured, which is this campaign's named defect.
   * two documents from different revisions of `measure_m1_m6.py` cannot be told apart by this
-    instrument. What it CAN see is that their field sets differ, and it reports that
-    (`field_set_differs`) as an unexpected finding -- the F-17(a) failure was exactly an instrument
-    difference (5 literals reported where there were 7).
+    instrument. What it CAN see is that their field sets differ. **This paragraph used to claim that
+    was reported as an unexpected finding, and the code did not do it** -- `field_set_differs` was a
+    boolean reaching no count and no exit code, and a field present on one side and absent on the
+    other was an ordinary finding the whitelist could suppress. Since 2026-08-25 it is true in three
+    places: an ABSENT value is never suppressible, `may-differ` fails closed on the sentinel, and
+    `field_set_differs` forces the some-unexpected exit. The F-17(a) failure was exactly an
+    instrument difference (5 literals reported where there were 7).
   * the fix belongs in `measure_m1_m6.py`, and NOT NOW: adding fields to it mid-rehearsal would give
     the post-rehearsal documents fields the already-filed pre-submission documents lack, and this
     instrument would correctly report that as a finding. Manufacturing findings is worse than
@@ -54,6 +58,10 @@ is not reviewable:
   * NO pattern may target M-2 at all (R7): `F-17(b)` names M-2 as the perishable claim, so an M-2
     difference is never suppressible, is reported in its own block, and forces the some-unexpected
     exit whatever the list says;
+  * A CITATION MUST LOCATE. The quote must match at least one whole line and no more than
+    `MAX_CITATION_LINES` of them, because a quote matching 96 of a document's 146 lines -- measured,
+    from `{"quote": "a"}` -- resolves without citing anything. And `--expected` must resolve inside
+    `--repo`: a whitelist from outside the tree is not the reviewable diff this file claims it is.
   * ONE CITATION PER FIELD PATTERN. A single `citation` may license exactly one pattern; a
     multi-field entry needs a `citations` mapping with an entry for each, checked in both
     directions. The first entry ever shipped here failed exactly this way -- see
@@ -164,12 +172,35 @@ def check_vocabulary(vocabulary, reserved):
 
 EXIT_CODES = check_vocabulary(EXIT_VOCABULARY, RESERVED_EXIT_CODES)
 
+# A CITATION MUST LOCATE A PASSAGE, NOT MERELY OCCUR.
+#
+# The guard used to require only that a quote was non-blank and present somewhere in the cited
+# document. A grader fed it `{"quote": "a"}` and suppressed M-3.rc, M-3.all_intact, M-4.modified and
+# M-6.counts_resolutions at exit 10 with every arm green. Measured on the document actually cited by
+# the shipped list: the real quote resolves to 1 line of 146; "a" resolves to 96 of 146. So the
+# defect has a measurable signature -- an uninformative quote matches everywhere -- and the bound
+# below separates the two cases by a wide margin.
+#
+# THE NUMBER IS A JUDGEMENT, and saying so is the point: 3 is not derived from anything, it is chosen
+# to sit far above the legitimate case (1) and far below the attack (96). It is a backstop. The real
+# defence is the covering control in the suite, which fixes the set of suppressible fields against
+# the measured field universe and therefore fires on ANY widening, however well quoted.
+MAX_CITATION_LINES = 3
+
 MEASUREMENT_IDS = ("M-1", "M-2", "M-3", "M-4", "M-5", "M-6")
 REQUIRED_KEYS = ("label", "tree") + MEASUREMENT_IDS
 PERISHABLE_ID = "M-2"          # F-17(b) singles it out; see R7
 ABSENT = "<FIELD ABSENT FROM THIS DOCUMENT>"
 UNAVAILABLE = "UNAVAILABLE-BY-INPUT-SCHEMA"
 
+# MANY OF THESE FIELDS ARE CONDITIONALLY PRESENT, AND ABSENCE IS NOT FALSITY. `M-3.rc` and
+# `M-3.all_intact` are omitted when the script is missing; every `M-4` field but nothing else when
+# the tree is not a repository; `behind`/`ahead`/`upstream` when the upstream ref does not resolve;
+# every `M-6` field but `present`/`state` when the guard file is absent; every `M-1` row field but
+# `present` when that file is absent. The "a field with no UNITS entry is reported UNDECLARED"
+# mechanism does NOT cover this, because absence is not a new field -- what covers it is that an
+# ABSENT value is never suppressible.
+#
 # WHAT EACH FIELD IS, AND WHERE ITS VALUE CAME FROM. The recurring defect here is asymmetric
 # comparison: a delta believed without naming the unit of each side and the population each side was
 # drawn from. Matched in order by fnmatch. A field with no entry is reported with unit UNDECLARED
@@ -177,7 +208,10 @@ UNAVAILABLE = "UNAVAILABLE-BY-INPUT-SCHEMA"
 UNITS = (
     ("M-1[*].present", "boolean",
      "one of the ten paths in measure_m1_m6.py's M1_FILES, resolved inside the measured tree"),
-    ("M-1[*].literals", "set of canonical-root string literals, rendered name@line(form)",
+    ("M-1[*].literals",
+     "sorted list of compact-JSON objects with FOUR keys -- form, line, name, value -- and NOT"
+     " the name@line(form) rendering, which is measure_m1_m6.py:260, the non---json print path."
+     " Two trees agreeing on name, line and form but differing in value produce a delta here",
      "every string Constant in that file whose value is the canonical root, exact or subpath"),
     ("M-1[*].first_insert", "line number of the first sys.path insert/append, or null",
      "that file's parsed syntax tree"),
@@ -197,9 +231,13 @@ UNITS = (
      " comparable on M-2, and it is never expected"),
     ("M-3.present", "boolean", "docs/orchestration/verify_hash_bindings.py in the measured tree"),
     ("M-3.rc", "process exit status of verify_hash_bindings.py",
-     "run with cwd set to the measured tree"),
+     "the MEASURING interpreter (measure_m1_m6.py:161 runs sys.executable) against the script"
+     " in the measured tree, with cwd set to that tree -- so like M-2.python this is NOT a"
+     " property of the tree alone, and the F-17(a) column was taken on a different interpreter"
+     " from any local re-measurement"),
     ("M-3.all_intact", "boolean, substring 'ALL BINDINGS INTACT' seen on stdout",
-     "the same run's stdout"),
+     "the same run's stdout, and therefore also a property of the MEASURING interpreter, not"
+     " of the measured tree alone"),
     ("M-4.is_git", "boolean", "whether rev-parse HEAD succeeded in the measured tree"),
     ("M-4.head", "40-hex commit sha", "the measured tree's HEAD at measurement time"),
     ("M-4.dirty", "count of NON-BLANK porcelain lines",
@@ -231,8 +269,11 @@ UNITS = (
      " for both; naming only the first would overstate the population)"),
     ("M-6.else_zero_default_lines", "set of line numbers",
      "lines carrying both 'guard.checked' and 'else 0'"),
-    ("M-6.state", "one of three named states, never a boolean",
-     "derived from the two line sets above"),
+    ("M-6.state", "one of FOUR named states, never a boolean",
+     "three are derived from the two line sets above; the fourth is 'FILE ABSENT'"
+     " (measure_m1_m6.py:221), returned when mnv_guarded_run.py is missing, where no line sets"
+     " exist at all -- and a tree missing the guard is precisely a difference F-17 must"
+     " surface, so the declared unit must not imply the file is always there"),
 )
 
 
@@ -441,6 +482,16 @@ def resolve_one_citation(entry_id, pattern, citation, repo):
                       f"{where}: the quote is not in {doc_rel}. An unresolved citation is a hard "
                       f"error: this list is a whitelist and may not become a silent suppressor.")
     matched = [n + 1 for n, line in enumerate(text.splitlines()) if quote in line]
+    if not matched:
+        raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                      f"{where}: the quote occurs in {doc_rel} but on no single LINE, so it spans a"
+                      f" line break and names no locatable passage. Quote one line.")
+    if len(matched) > MAX_CITATION_LINES:
+        raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                      f"{where}: the quote matches {len(matched)} lines of {doc_rel} (the limit is "
+                      f"{MAX_CITATION_LINES}). A quote that matches everywhere locates nothing: this"
+                      f" is a citation of no informational content, and a one-character quote is the"
+                      f" limiting case. Quote the passage you mean.")
     measured_digest = sha256_of(cited)
     declared = citation.get("doc_sha256")
     if isinstance(declared, str) and declared and declared != measured_digest:
@@ -557,6 +608,15 @@ def load_expected(path_text, repo):
 def evaluate_rule(rule, values):
     """Joint, over ALL n values at once. Returns (satisfied, detail)."""
     if rule["kind"] == "may-differ":
+        # THE SECOND MECHANISM. `compare` already refuses to consult the list for an absent field, so
+        # this arm is unreachable through `main` -- and it is here because the last time this
+        # instrument had one guard behind another, deleting the inner one changed no test result and
+        # the survey scored it caught. Its own arm calls `evaluate_rule` directly.
+        if any(value == ABSENT for value in values):
+            return False, {"kind": "may-differ",
+                           "reason": "a value is ABSENT: 'may differ' is a licence about how a"
+                                     " measurement MOVES, never about it being missing; failing"
+                                     " closed"}
         return True, {"kind": "may-differ"}
     numeric = [v for v in values if isinstance(v, (int, float)) and not isinstance(v, bool)]
     if len(numeric) != len(values):
@@ -586,9 +646,22 @@ def compare(records, expected):
         unit, population, unit_declared = unit_of(field)
         measurement = field[:3]
         classification, matched = "UNEXPECTED", []
+        absent_somewhere = any(value == ABSENT for value in values)
         if measurement == PERISHABLE_ID:
             reason = (f"{PERISHABLE_ID} is the perishable claim F-17(b) singles out; its differences"
                       f" are never expected and never suppressible")
+        elif absent_somewhere:
+            # A MISSING MEASUREMENT IS NOT A DRIFTING VALUE, and this is the defect that needed no
+            # actor to trigger. `may-differ` returned True without looking at the values, so the one
+            # shipped entry -- written to excuse M-4.behind's drift -- also excused M-4.behind not
+            # having been TAKEN: two documents differing only in that one lacked the key came back
+            # exit 10, DIFFERENCES-ALL-EXPECTED. A truncated write, a partial measurement or a
+            # schema change at the far end reported green. No citation about drift licenses absence,
+            # so absence is classified here and the list is never consulted for it.
+            reason = ("this measurement is MISSING from at least one document. That is not a drift in"
+                      " a value, it is the value not having been taken, and no expected-difference"
+                      " entry can license it: a citation about how a number moves says nothing about"
+                      " the number being absent.")
         else:
             reason = "no entry in the expected-differences list covers this field"
             covering = [entry for entry in expected["entries"]
@@ -615,6 +688,7 @@ def compare(records, expected):
             "field": field, "measurement": measurement, "unit": unit,
             "unit_declared": unit_declared, "population": population,
             "classification": classification, "reason": reason,
+            "absent_from_some_input": absent_somewhere,
             "expected_entries_matched": matched,
             "n_distinct_values": len(distinct),
             "sides": [{"key": identities[i]["key"], "label": identities[i]["label"],
@@ -626,12 +700,26 @@ def compare(records, expected):
         })
 
     m2_findings = [f for f in findings if f["measurement"] == PERISHABLE_ID]
+    absent_findings = [f for f in findings if f["absent_from_some_input"]]
     unexpected = [f for f in findings if f["classification"] == "UNEXPECTED"]
     if findings:
         code = (EXIT_DIFFERENCES_SOME_UNEXPECTED if unexpected
                 else EXIT_DIFFERENCES_ALL_EXPECTED)
     else:
         code = EXIT_NO_DIFFERENCES
+    # THE DOCSTRING PROMISED THIS AND THE CODE DID NOT DO IT. `field_set_differs` was a boolean in
+    # the record that reached no count and no exit code, while the docstring claimed the instrument
+    # "reports that as an unexpected finding". Differing field sets are the visible symptom of two
+    # documents from different revisions of the measuring tool, which is the F-17(a) failure exactly.
+    # AN EQUIVALENT MUTANT, AND RECORDED AS ONE. Deleting these two lines changes no observable
+    # behaviour, because differing field sets always produce at least one field whose value is the
+    # ABSENT sentinel on one side, and absence is already classified UNEXPECTED above -- so the
+    # forced code always equals the natural one. That makes it defensive redundancy that no arm can
+    # pin, not a coverage gap, and the distinction is worth writing down: a survivor list that does
+    # not separate "unpinned" from "unpinnable" over-reports its own weakness. It stays because it
+    # is the line that makes the docstring's promise true independently of the absence rule.
+    if field_set_differs:
+        code = EXIT_DIFFERENCES_SOME_UNEXPECTED
     return {
         "schema": SCHEMA,
         "instrument": {"name": pathlib.Path(__file__).name, "version": INSTRUMENT_VERSION,
@@ -673,6 +761,8 @@ def compare(records, expected):
             "n_unexpected_excluding_m2": len([f for f in unexpected
                                               if f["measurement"] != PERISHABLE_ID]),
             "n_m2_findings": len(m2_findings),
+            "n_absent_findings": len(absent_findings),
+            "absent_fields": [f["field"] for f in absent_findings],
             "n_findings_with_undeclared_unit": len([f for f in findings if not f["unit_declared"]]),
             "expected_entries_unused": [e["id"] for e in expected["entries"] if not e["used"]],
         },
@@ -714,6 +804,14 @@ def print_human(record):
             print(f"      {side['key']:<30} = {json.dumps(side['value'])}")
     perishable = record["m2_perishable"]
     print(f"--- M-2 PERISHABILITY: {perishable['status']}  fields={perishable['fields']}")
+    if record["summary"]["n_absent_findings"]:
+        print(f"--- MEASUREMENTS MISSING FROM AT LEAST ONE DOCUMENT: "
+              f"{record['summary']['absent_fields']}")
+        print("      A missing measurement is not a drifting value. No expected-difference entry "
+              "licenses it.")
+    if record["field_set_differs"]:
+        print("--- FIELD SETS DIFFER between the inputs: the visible symptom of two documents from "
+              "different revisions of measure_m1_m6.py")
     summary = record["summary"]
     print(f"--- summary: findings={summary['n_findings']} expected={summary['n_expected']} "
           f"unexpected={summary['n_unexpected']} "
@@ -763,7 +861,19 @@ def main(argv=None):
         repo = pathlib.Path(args.repo)
         if not repo.is_dir():
             raise Refusal(EXIT_REFUSAL_EXPECTED_LIST, f"--repo is not a directory: {repo}")
-        expected = load_expected(args.expected, repo.resolve())
+        repo = repo.resolve()
+        # THE WHITELIST MUST BE AN IN-TREE ARTIFACT. Every claim made for this list -- that widening
+        # it is a reviewable diff, that its digest can be re-derived from a commit -- is false for a
+        # file passed in from outside the tree whose documents it cites. Refusing that removes the
+        # whole "whitelist from /tmp" branch at no cost, and it is prevention rather than an audit
+        # obligation nobody has yet been given.
+        expected_path = pathlib.Path(args.expected).resolve()
+        if not expected_path.is_relative_to(repo):
+            raise Refusal(EXIT_REFUSAL_EXPECTED_LIST,
+                          f"--expected must resolve INSIDE --repo, so that the whitelist is an"
+                          f" in-tree artifact whose widening is a reviewable diff.\n"
+                          f"    --expected {expected_path}\n    --repo     {repo}")
+        expected = load_expected(str(expected_path), repo)
         records = [load_document(text, i) for i, text in enumerate(args.input)]
         record = compare(records, expected)
     except Refusal as refusal:

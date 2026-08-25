@@ -33,6 +33,12 @@ _spec = importlib.util.spec_from_file_location("cm", _HERE / "compare_m1_m6.py")
 cm = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(cm)
 
+# The MEASURING tool, imported for its populations only -- M1_FILES and LAUNCHERS -- so the covering
+# control builds its universe from the producer rather than from a list retyped here.
+_mspec = importlib.util.spec_from_file_location("mm", _HERE / "measure_m1_m6.py")
+mm = importlib.util.module_from_spec(_mspec)
+_mspec.loader.exec_module(mm)
+
 CITED_QUOTE = "the behind-count is a drifting quantity"
 
 
@@ -74,9 +80,16 @@ class Bench:
         self.repo = self.root / "repo"
         (self.repo / "docs" / "orchestration").mkdir(parents=True)
         self.cited_rel = "docs/orchestration/CITED.md"
+        # LONG ENOUGH TO EXHIBIT THE DEFECT. A three-line fixture cannot show that a one-character
+        # quote matches everywhere: "a" hit 2 of 3 lines, under the bound, so the arm passed against
+        # a document too small to carry the failure. The real cited document is 146 lines and "a"
+        # matches 96. These filler lines all contain "a" and none contains the quote, so the
+        # legitimate citation still resolves to exactly one line.
+        filler = "\n".join(f"a filler paragraph, line {n}, that mentions almost anything"
+                            for n in range(8))
         (self.repo / self.cited_rel).write_text(
-            "# a citable document\n\nSomething, and " + CITED_QUOTE + " so it moves.\n",
-            encoding="utf-8")
+            "# a citable document\n\n" + filler + "\n\nSomething, and " + CITED_QUOTE
+            + " so it moves.\n", encoding="utf-8")
 
     def write_doc(self, name, doc):
         """Unique per call, for the reason in `write_expected`: a case list built eagerly over a
@@ -97,7 +110,9 @@ class Bench:
         not fail; it agrees.
         """
         self._serial += 1
-        path = self.root / (name or f"expected-{self._serial}.json")
+        # INSIDE self.repo: `--expected` must resolve inside `--repo`, because a whitelist from
+        # outside the tree is not the reviewable in-tree diff the design claims it is.
+        path = self.repo / (name or f"expected-{self._serial}.json")
         path.write_text(json.dumps({"schema": schema, "entries": entries}, indent=2),
                         encoding="utf-8")
         return str(path)
@@ -271,7 +286,9 @@ class R3_EveryFindingNamesBothSidesTheUnitAndThePopulation(BenchCase):
         finding, = record["findings"]
         self.assertEqual(finding["field"], "M-3.rc")
         self.assertTrue(finding["unit"].startswith("process exit status"))
-        self.assertIn("cwd set to the measured tree", finding["population"])
+        self.assertIn("cwd set to that tree", finding["population"])
+        # M-3 is a property of the MEASURING interpreter too, and the population must say so.
+        self.assertIn("NOT a property of the tree alone", finding["population"])
         self.assertEqual([s["label"] for s in finding["sides"]], ["CANDIDATE", "CANONICAL"])
         for side in finding["sides"]:
             self.assertTrue(side["tree_resolved_path"])
@@ -307,6 +324,37 @@ class R3_EveryFindingNamesBothSidesTheUnitAndThePopulation(BenchCase):
         self.assertNotEqual(record["inputs"][0]["tree_resolved_path"],
                             record["inputs"][1]["tree_resolved_path"])
 
+    def test_ORDER_ALONE_IS_NOT_A_DIFFERENCE__the_documented_guarantee(self):
+        """G-7: `canon`'s docstring promises this and nothing tested it.
+
+        Removing the sort produced spurious findings -- the safe direction, which is exactly why it
+        went unnoticed: a guarantee whose only failure mode is over-reporting still has to hold, or
+        the reviewer learns to discount the findings.
+        """
+        def shuffle(doc):
+            doc["M-5"]["activator_from_env_root"] = list(
+                reversed(doc["M-5"]["activator_from_env_root"]))
+            doc["M-6"]["inventory_write_lines"] = list(
+                reversed(doc["M-6"]["inventory_write_lines"]))
+            doc["M-1"][0]["literals"] = list(reversed(doc["M-1"][0]["literals"]))
+
+        first = base_document("A", "/trees/A")
+        first["M-5"]["activator_from_env_root"] = ["b.sh", "a.sh", "c.sh"]
+        first["M-6"]["inventory_write_lines"] = [369, 12, 40]
+        first["M-1"][0]["literals"] = [
+            {"name": "_ND", "line": 12, "form": "subpath", "value": "/x"},
+            {"name": "_REPO", "line": 3, "form": "exact", "value": "/y"}]
+        second = json.loads(json.dumps(first))
+        second["label"], second["tree"] = "B", "/trees/B"
+        shuffle(second)
+        self.assertNotEqual(first["M-5"]["activator_from_env_root"],
+                            second["M-5"]["activator_from_env_root"])
+        code, record, _ = self.bench.run(
+            (self.bench.write_doc("a.json", first), self.bench.write_doc("b.json", second)),
+            self.expected_ok)
+        self.assertEqual(code, cm.EXIT_NO_DIFFERENCES, [f["field"] for f in record["findings"]])
+        self.assertTrue(record["summary"]["all_agree"])
+
     def test_a_field_with_NO_DECLARED_UNIT_is_reported_as_undeclared_and_counted(self):
         """FIRES: a new field in measure_m1_m6.py cannot arrive silently unitless."""
         code, record, _ = self.bench.run(self.two(lambda d: d["M-4"].__setitem__("worktrees", 3)),
@@ -340,7 +388,7 @@ class R4_TheExpectedListIsDeclaredCitedAndCanFail(BenchCase):
         self.assertEqual(finding["classification"], "EXPECTED-BY-RULING")
         self.assertEqual(finding["expected_entries_matched"][0]["id"], "E-test")
         citation = finding["expected_entries_matched"][0]["citation"]
-        self.assertEqual(citation["matched_lines"], [3])
+        self.assertEqual(citation["matched_lines"], [12])   # the one line carrying the quote
         self.assertEqual(len(citation["doc_sha256_measured"]), 64)
 
     def test_an_UNDECLARED_difference_stays_unexpected(self):
@@ -423,9 +471,81 @@ class R4_TheExpectedListIsDeclaredCitedAndCanFail(BenchCase):
                 self.assertEqual(code, cm.EXIT_REFUSAL_EXPECTED_LIST)
 
     def test_an_ABSENT_expected_list_is_a_refusal_not_an_empty_whitelist(self):
-        code, _, err = self.bench.run(self.two(), str(self.bench.root / "no-list.json"))
+        # INSIDE the repo, or the containment refusal fires first and this arm stops testing absence.
+        code, _, err = self.bench.run(self.two(), str(self.bench.repo / "no-list.json"))
         self.assertEqual(code, cm.EXIT_REFUSAL_EXPECTED_LIST)
         self.assertIn("no expected-differences file", err)
+
+    def test_an_expected_list_OUTSIDE_the_repo_is_refused(self):
+        """A whitelist from outside the tree cannot be the reviewable in-tree diff it claims to be,
+        and every audit-after story told about this file assumes a committed digest."""
+        outside = self.bench.root / "outside.json"
+        outside.write_text((self.bench.repo / pathlib.Path(self.expected_ok).name).read_text(),
+                           encoding="utf-8")
+        code, _, err = self.bench.run(self.two(), str(outside))
+        self.assertEqual(code, cm.EXIT_REFUSAL_EXPECTED_LIST)
+        self.assertIn("must resolve INSIDE --repo", err)
+
+    def test_a_citation_that_LOCATES_NOTHING_is_refused(self):
+        """G-2: the guard used to require only that a quote was non-blank and PRESENT. A grader used
+        `{"quote": "a"}`, which resolves against any English document -- measured, 96 of the 146
+        lines of the document the shipped list cites -- and suppressed four measurements at exit 10
+        with every arm green. A citation must locate a passage."""
+        code, _, err = self.bench.run(self.two(),
+                                      self.bench.write_expected(
+                                          self.bench.may_differ(["M-4.behind"], quote="a")))
+        self.assertEqual(code, cm.EXIT_REFUSAL_EXPECTED_LIST)
+        self.assertIn("locates nothing", err)
+        self.assertIn("the limit is 3", err)
+
+    def test_a_quote_SPANNING_A_LINE_BREAK_is_refused_even_though_it_resolves(self):
+        """It is `in` the document and on no single line, so `matched_lines` was empty and the
+        citation pointed at nothing recoverable."""
+        spanning = "citable document\n\na filler paragraph, line 0"
+        self.assertIn(spanning, (self.bench.repo / self.bench.cited_rel).read_text())
+        code, _, err = self.bench.run(self.two(), self.bench.write_expected(
+            self.bench.may_differ(["M-4.behind"], quote=spanning)))
+        self.assertEqual(code, cm.EXIT_REFUSAL_EXPECTED_LIST)
+        self.assertIn("no single LINE", err)
+
+    def test_a_quote_matching_a_HANDFUL_of_lines_is_still_accepted__the_narrowing_direction(self):
+        """The bound must not refuse a real citation. The shipped one matches exactly 1 line."""
+        loaded = cm.load_expected(str(_HERE / "m1m6_expected_differences.json"), _HERE.parents[1])
+        for entry in loaded["entries"]:
+            for pattern, citation in entry["citations"].items():
+                with self.subTest(pattern=pattern):
+                    self.assertEqual(len(citation["matched_lines"]), 1)
+                    self.assertLessEqual(len(citation["matched_lines"]), cm.MAX_CITATION_LINES)
+
+    def test_a_NON_OBJECT_citation_is_refused_rather_than_crashing(self):
+        """G-7: the type check existed and no arm fed it. Removing it turned a refusal into an
+        uncaught traceback at exit 1, which this file reserves as never a verdict."""
+        for bad in ("a string", 42, ["a", "list"], None):
+            with self.subTest(citation=repr(bad)):
+                entry = {"id": "E", "fields": ["M-4.behind"], "rule": {"kind": "may-differ"},
+                         "citation": bad}
+                code, _, _ = self.bench.run(self.two(), self.bench.write_expected([entry]))
+                self.assertEqual(code, cm.EXIT_REFUSAL_EXPECTED_LIST)
+
+    def test_a_WHITESPACE_ONLY_quote_is_refused(self):
+        code, _, err = self.bench.run(self.two(), self.bench.write_expected(
+            self.bench.may_differ(["M-4.behind"], quote="   ")))
+        self.assertEqual(code, cm.EXIT_REFUSAL_EXPECTED_LIST)
+        self.assertIn("no 'quote'", err)
+
+    def test_a_matched_but_UNSATISFIED_entry_is_not_reported_as_unused(self):
+        """G-7: `expected_entries_unused` was one-directional. An entry that matched a field but
+        whose rule failed would have read as 'matched nothing', which is the opposite of the truth."""
+        expected = self.bench.write_expected([{
+            "id": "E-tight", "fields": ["M-4.behind"],
+            "rule": {"kind": "max-abs-delta", "value": 1},
+            "citation": self.bench.citation(), "why": "a tolerance that will be exceeded"}])
+        code, record, _ = self.bench.run(
+            self.two(lambda d: d["M-4"].__setitem__("behind", 99)), expected)
+        self.assertEqual(code, cm.EXIT_DIFFERENCES_SOME_UNEXPECTED)
+        self.assertEqual(record["findings"][0]["classification"], "UNEXPECTED")
+        self.assertEqual(record["summary"]["expected_entries_unused"], [])
+
 
     def test_ONE_QUOTE_MAY_NOT_LICENSE_A_FIELD_LIST__the_defect_in_the_shipped_entry(self):
         """FIRES. The first entry ever shipped here was wrong in exactly this way.
@@ -522,7 +642,17 @@ class R4_TheShippedListInThisRepository(unittest.TestCase):
                     self.assertEqual(len(citation["doc_sha256_measured"]), 64)
 
     def test_the_shipped_list_does_NOT_whitelist_M1_M5_or_M6__the_rejected_bullet(self):
-        """FIRES if the rejected 'any commit to the build branch' entry is ever added.
+        """A DENY-LIST over remembered spellings. Kept, but it is NOT the guard -- see the covering
+        control below, which is.
+
+        THIS ARM WAS BLIND IN THE M-1 DIRECTION AND ITS DOCSTRING CLAIMED OTHERWISE. It matched with
+        `fnmatch.fnmatchcase`, and M-1 field paths contain brackets, so `M-1[*].literals` read as a
+        character class and matched nothing: the rejected bullet, re-added in per-file wildcard form
+        with well-formed citations, suppressed four M-1 findings at exit 10 with all 53 arms green.
+        That is the exact bug `compare_m1_m6.py`'s `field_matches` was written to fix, retyped in the
+        test that guards the whitelist -- and `fnmatch` is on the forbidden-import list nine lines
+        into this same file. A rule retyped is a second implementation of it, written from the rule's
+        summary, and the summary is the naive reading. It now CALLS `cm.field_matches`.
 
         Measured 2026-08-25 at 49dbdf8f: 10 of the 46 commits in
         8c156a37..build-k0-execution-integrity touch any file in the M-1, M-5 or M-6 populations,
@@ -530,7 +660,6 @@ class R4_TheShippedListInThisRepository(unittest.TestCase):
         M-1's dropped tenth entrypoint and M-5's 0-of-8 against 8-of-8, which are the F-17(a)
         findings against the builder.
         """
-        import fnmatch
         loaded = cm.load_expected(str(self.LIST), self.REPO)
         patterns = [p for entry in loaded["entries"] for p in entry["fields"]]
         for field in ("M-1[nd-unfolding/bootstrap_nd.py].literals",
@@ -544,7 +673,7 @@ class R4_TheShippedListInThisRepository(unittest.TestCase):
                       # said the OPPOSITE of the field. Re-adding it needs a citation about ahead.
                       "M-4.ahead"):
             with self.subTest(field=field):
-                self.assertFalse([p for p in patterns if fnmatch.fnmatchcase(field, p)],
+                self.assertFalse([p for p in patterns if cm.field_matches(p, field)],
                                  f"{field} must never be pre-declared expected")
 
     def test_an_M4_ahead_difference_SURFACES_as_a_finding_under_the_shipped_list(self):
@@ -580,13 +709,91 @@ class R4_TheShippedListInThisRepository(unittest.TestCase):
         self.assertEqual([side["value"] for side in finding["sides"]], [0, 4])
         self.assertIn("commits, DRIFTING", finding["unit"])
 
+    @unittest.skipIf(sys.version_info < (3, 10), "measure_m1_m6.py refuses below 3.10")
+    def test_ONLY_M4_BEHIND_IS_SUPPRESSIBLE_over_a_MEASURED_field_universe(self):
+        """The covering control, and the reason a deny-list could not be it.
+
+        A deny-list fails on the widenings someone thought to type. This one takes the field universe
+        from a REAL `measure_m1_m6.py --json` document -- a tree built to populate every measurement,
+        including a git repo with an upstream ref so M-4 is whole -- matches it with the instrument's
+        own `field_matches`, and asserts that the set of fields the shipped whitelist can suppress is
+        EXACTLY {M-4.behind}. Any widening fires it, in any spelling, however well cited: the M-1
+        wildcard form that walked through the deny-list, and the one-character-quote form, are both
+        caught here as well as by their own guards.
+        """
+        import subprocess
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = pathlib.Path(tmp) / "tree"
+            (tree / "nd-unfolding").mkdir(parents=True)
+            (tree / "2d-unfolding").mkdir(parents=True)
+            for rel in mm.M1_FILES:
+                (tree / rel).write_text("import sys\nsys.path.insert(0, '/x')\n", encoding="utf-8")
+            for name in mm.LAUNCHERS:
+                (tree / "nd-unfolding" / name).write_text(
+                    'REPO=/x\nsource "${ENV_ROOT}/setup_salloc_env.sh"\n', encoding="utf-8")
+            (tree / "nd-unfolding" / "mnv_guarded_run.py").write_text(
+                'self.checked = 0\nrec = {"checked": guard.checked if guard else 0}\n',
+                encoding="utf-8")
+            # M-3's PRECONDITION. Without this file `m3()` returns {"present": false} alone, so
+            # M-3.rc and M-3.all_intact never enter the universe -- and a widening of the shipped
+            # list over M-3.rc survived this very control until the omission was measured. A
+            # covering control that does not populate every conditional field does not cover.
+            (tree / "docs" / "orchestration").mkdir(parents=True)
+            (tree / "docs" / "orchestration" / "verify_hash_bindings.py").write_text(
+                'print("ALL BINDINGS INTACT")\n', encoding="utf-8")
+            git = ["git", "-C", str(tree)]
+            subprocess.run(git + ["init", "-q"], check=True, capture_output=True)
+            subprocess.run(git + ["-c", "user.name=t", "-c", "user.email=t@t",
+                                  "commit", "-q", "--allow-empty", "-m", "t"],
+                           check=True, capture_output=True)
+            subprocess.run(git + ["update-ref", "refs/remotes/origin/main", "HEAD"],
+                           check=True, capture_output=True)
+            proc = subprocess.run([sys.executable, str(_HERE / "measure_m1_m6.py"),
+                                   "--tree", str(tree), "--label", "universe", "--json"],
+                                  capture_output=True, text=True)
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            document = json.loads(proc.stdout)
+
+        universe = sorted(cm.flatten(document, 0))
+        # The universe must actually be populated, or this control passes by being empty.
+        self.assertGreater(len(universe), 50)
+        # EVERY CONDITIONALLY-PRESENT FIELD, named. These are the fields `measure_m1_m6.py` omits
+        # rather than reports as false when a precondition fails, so they are exactly the ones a
+        # universe can silently lack. The residual, stated: a NEW conditional field added to the
+        # measuring tool would not appear here, and this list would not notice.
+        for required in ("M-1[nd-unfolding/bootstrap_nd.py].present",
+                         "M-1[nd-unfolding/bootstrap_nd.py].literals",
+                         "M-1[nd-unfolding/bootstrap_nd.py].first_insert",
+                         "M-1[nd-unfolding/bootstrap_nd.py].repo_modules_after",
+                         "M-1[nd-unfolding/bootstrap_nd.py].n_after",
+                         "M-2.importable", "M-2.stdlib_collisions", "M-2.python",
+                         "M-3.present", "M-3.rc", "M-3.all_intact",
+                         "M-4.is_git", "M-4.head", "M-4.dirty", "M-4.untracked", "M-4.modified",
+                         "M-4.behind", "M-4.ahead", "M-4.upstream",
+                         "M-5.n", "M-5.missing", "M-5.repo_assign",
+                         "M-5.activator_from_code_root", "M-5.activator_from_env_root",
+                         "M-6.present", "M-6.n_lines", "M-6.counts_resolutions",
+                         "M-6.inventory_write_lines", "M-6.else_zero_default_lines", "M-6.state"):
+            self.assertIn(required, universe, "the universe does not cover this field, so a "
+                                              "widening over it would pass unseen")
+        for measurement in cm.MEASUREMENT_IDS:
+            self.assertTrue([f for f in universe if f.startswith(measurement)], measurement)
+
+        patterns = [p for entry in cm.load_expected(str(self.LIST), self.REPO)["entries"]
+                    for p in entry["fields"]]
+        suppressible = {field for field in universe
+                        if any(cm.field_matches(pattern, field) for pattern in patterns)}
+        self.assertEqual(suppressible, {"M-4.behind"},
+                         "the shipped whitelist may suppress exactly one field of the measured "
+                         "universe; anything else is a widening")
+
     def test_the_shipped_list_DOES_cover_the_drifting_counts__silent_on_good(self):
-        import fnmatch
         loaded = cm.load_expected(str(self.LIST), self.REPO)
         patterns = [p for entry in loaded["entries"] for p in entry["fields"]]
         for field in ("M-4.behind",):
             with self.subTest(field=field):
-                self.assertTrue([p for p in patterns if fnmatch.fnmatchcase(field, p)])
+                self.assertTrue([p for p in patterns if cm.field_matches(p, field)])
 
 
 # --------------------------------------------------------------------------------------------- R5
@@ -630,6 +837,21 @@ class R5_AgreementIsJointAndIsNeverComposedFromPairs(BenchCase):
         self.assertEqual(record["findings"][0]["expected_entries_matched"][0]
                          ["rule_detail"]["joint_spread"], 2)
 
+    def test_MAY_DIFFER_ITSELF_fails_closed_on_ABSENT__the_unreachable_second_mechanism(self):
+        """Called DIRECTLY, because `compare` short-circuits absence before any rule is consulted.
+
+        Deleting this check changed no test result until this arm existed -- the same shape as the
+        M-2 classify-time guard, and the same lesson: a guard behind a guard needs an arm that calls
+        it, or the survey scores it caught on the outer one's evidence.
+        """
+        satisfied, detail = cm.evaluate_rule({"kind": "may-differ"}, [5, cm.ABSENT])
+        self.assertFalse(satisfied)
+        self.assertIn("never about it being missing", detail["reason"])
+        satisfied, _ = cm.evaluate_rule({"kind": "may-differ"}, [5, 9])
+        self.assertTrue(satisfied)
+        satisfied, _ = cm.evaluate_rule({"kind": "max-abs-delta", "value": 100}, [5, cm.ABSENT])
+        self.assertFalse(satisfied)
+
     def test_three_identical_documents_DO_agree_and_the_mode_says_it_was_joint(self):
         code, record, _ = self.bench.run(self.three([3, 3, 3]), self.tolerant(4))
         self.assertEqual(code, cm.EXIT_NO_DIFFERENCES)
@@ -637,7 +859,20 @@ class R5_AgreementIsJointAndIsNeverComposedFromPairs(BenchCase):
         self.assertEqual(record["n_inputs"], 3)
         self.assertIn("JOINT over all n inputs", record["comparison_mode"])
 
-    def test_a_tolerance_over_a_NON_NUMERIC_or_ABSENT_value_fails_closed(self):
+    def test_a_tolerance_over_a_NON_NUMERIC_value_fails_closed(self):
+        first = base_document("A", "/trees/A")
+        second = base_document("B", "/trees/B")
+        second["M-4"]["behind"] = "many"
+        paths = (self.bench.write_doc("x.json", first), self.bench.write_doc("y.json", second))
+        code, record, _ = self.bench.run(paths, self.tolerant(1000))
+        self.assertEqual(code, cm.EXIT_DIFFERENCES_SOME_UNEXPECTED)
+        finding, = [f for f in record["findings"] if f["field"] == "M-4.behind"]
+        self.assertEqual(finding["classification"], "UNEXPECTED")
+        self.assertIn("failing closed",
+                      finding["expected_entries_matched"][0]["rule_detail"]["reason"])
+
+    def test_an_ABSENT_value_is_classified_before_the_rule_is_even_consulted(self):
+        """G-3, at the tolerance surface: absence short-circuits, so no rule can license it."""
         first = base_document("A", "/trees/A")
         second = base_document("B", "/trees/B")
         del second["M-4"]["behind"]
@@ -646,8 +881,9 @@ class R5_AgreementIsJointAndIsNeverComposedFromPairs(BenchCase):
         self.assertEqual(code, cm.EXIT_DIFFERENCES_SOME_UNEXPECTED)
         finding, = [f for f in record["findings"] if f["field"] == "M-4.behind"]
         self.assertEqual(finding["classification"], "UNEXPECTED")
-        self.assertIn("failing closed",
-                      finding["expected_entries_matched"][0]["rule_detail"]["reason"])
+        self.assertTrue(finding["absent_from_some_input"])
+        self.assertEqual(finding["expected_entries_matched"], [])
+        self.assertIn("MISSING from at least one document", finding["reason"])
 
 
 # --------------------------------------------------------------------------------------------- R6
