@@ -46,8 +46,16 @@ cd /pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration
 ```
 
 The external heartbeat remains inactive until that same secret file gets
-`{"heartbeat": {"url": "https://hc-ping.com/..."}}`. Use a period and grace
-comfortably above the five-minute tick interval (30 minutes is ample).
+a URL. After creating the external check, configure it without hand-editing
+the secret file:
+
+```bash
+/usr/bin/python3.11 notifyctl.py set-heartbeat --url 'https://hc-ping.com/<check-id>'
+/usr/bin/python3.11 notifyctl.py heartbeat
+```
+
+Use a period and grace comfortably above the five-minute tick interval (30
+minutes is ample).
 
 Other constraints:
 

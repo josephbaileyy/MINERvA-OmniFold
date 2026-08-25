@@ -81,6 +81,19 @@ class NotificationFanoutTests(unittest.TestCase):
             with self.assertRaisesRegex(notifyctl.NotifyError, "refusing to overwrite"):
                 notifyctl.init_ntfy_secrets(path)
 
+    def test_set_heartbeat_is_atomic_preserves_ntfy_and_requires_https(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "notification-secrets.json"
+            notifyctl.init_ntfy_secrets(path)
+            before = notifyctl.load_object(path, required=True)
+            with self.assertRaisesRegex(notifyctl.NotifyError, "https"):
+                notifyctl.set_heartbeat_url(path, before, "http://unsafe")
+            notifyctl.set_heartbeat_url(path, before, "https://hc-ping.com/secret")
+            after = notifyctl.load_object(path, required=True)
+            self.assertEqual(after["ntfy"], before["ntfy"])
+            self.assertEqual(after["heartbeat"]["url"], "https://hc-ping.com/secret")
+            self.assertEqual(path.stat().st_mode & 0o777, 0o600)
+
 
 if __name__ == "__main__":
     unittest.main()

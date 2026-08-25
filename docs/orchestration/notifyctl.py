@@ -48,6 +48,27 @@ def init_ntfy_secrets(path: Path) -> None:
         raise
 
 
+def set_heartbeat_url(path: Path, value: dict, url: str) -> None:
+    """Atomically add/update the external heartbeat URL, preserving ntfy."""
+    if not url.startswith("https://"):
+        raise NotifyError("heartbeat URL must use https://")
+    updated = dict(value)
+    updated["heartbeat"] = {"url": url}
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    try:
+        descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(descriptor, "w") as handle:
+            json.dump(updated, handle, indent=2, sort_keys=True)
+            handle.write("\n")
+        os.replace(temporary, path)
+        os.chmod(path, 0o600)
+    finally:
+        try:
+            temporary.unlink()
+        except FileNotFoundError:
+            pass
+
+
 def load_object(path: Path, *, required: bool) -> dict:
     try:
         value = json.loads(path.read_text())
@@ -206,6 +227,8 @@ def parser() -> argparse.ArgumentParser:
     send_parser.add_argument("--subject", required=True)
     commands.add_parser("heartbeat")
     commands.add_parser("init-ntfy")
+    heartbeat_parser = commands.add_parser("set-heartbeat")
+    heartbeat_parser.add_argument("--url", required=True)
     return result
 
 
@@ -221,6 +244,12 @@ def main() -> int:
         secrets = load_object(secrets_path, required=False)
         if secrets_path.exists() and secrets_path.stat().st_mode & 0o077:
             raise NotifyError(f"secrets file must have mode 0600: {secrets_path}")
+        if args.command == "set-heartbeat":
+            if not secrets_path.exists():
+                raise NotifyError("initialize ntfy secrets before setting heartbeat")
+            set_heartbeat_url(secrets_path, secrets, args.url)
+            print(f"configured protected heartbeat URL in {secrets_path}")
+            return 0
         if args.command == "heartbeat":
             return heartbeat(config, secrets)
         state_dir = Path(config.get("state_dir", HERE / "state" / "waker"))

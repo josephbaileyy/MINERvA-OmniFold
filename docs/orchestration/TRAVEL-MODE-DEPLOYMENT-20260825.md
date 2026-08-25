@@ -61,4 +61,5 @@ scientific analysis, covariance adoption, or compute submission.
 - On the phone, install ntfy and retrieve the topic with the protected command
   in `OPERATOR-GUIDE.md`; do not paste the topic into a public record.
 - To enable independent dead-waker detection, create a free external check and
-  add its ping URL under `heartbeat.url` in the same mode-0600 secret file.
+  run `notifyctl.py set-heartbeat --url 'https://hc-ping.com/<check-id>'`; the
+  command atomically preserves the ntfy topic and mode-0600 protection.
