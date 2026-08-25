@@ -22,6 +22,15 @@ a fabricated sha absent).
 The three sums reconcile to the archive's measured total of 162,438 bytes, which is the check
 that nothing was double-counted or dropped.
 
+**That table is a measurement of the archive AS IT STOOD when it was scoped on 2026-08-25, not a
+description of it now** — stating this because an undated classification reads as present tense,
+which is the defect `OI-139` is about and which this document would otherwise commit. As of
+2026-08-25 the archive on `/global/u2` holds **3 files, 8,230 apparent bytes**: its own corrected
+README, plus the only two files that are neither committed here nor provably redundant
+(`repair.py`, md5 `ae7eb53dd3e0e3c82ca43a0f13d61f9b`; the `ben106` draft, md5
+`cab014704fe74ba22cbd946ec6ebafda`). Everything else was deleted by the lane that owns it, after
+each file was verified redundant. Nothing enforces the retention of those last two.
+
 ## The five committed here, and why each is irreplaceable
 
 | path | bytes | md5 | why |
@@ -55,8 +64,9 @@ six of the seven "before" sides are `0000000` — new files. **An index line nam
 does not describe the artifact containing it.** Reading one as a provenance recipe is the same
 error as reading a field named `armed_watch` as a live state.
 
-The branch-cleanup lane caught it before deleting anything, and it is the reason that file
-still exists. Verified here independently, and no route regenerates it: `git show 56d35afb` is
+The branch-cleanup lane caught it before deleting anything, and it is the reason the content
+survives at all — it now survives HERE, in git, and the archive's copy was subsequently and
+correctly deleted as redundant once this commit made it so. Verified here independently, and no route regenerates it: `git show 56d35afb` is
 8,890 B, `git diff 56d35afb^ 56d35afb` is 8,707 B, and a `-U3`→`-U25` context sweep on
 `670e62df` spans 51,669–53,474 B / 1,146–1,209 lines, never reaching 54,463 B / 1,195 lines —
 and the archived file uses *shorter* 7-hex index lines, so it genuinely contains more content.
