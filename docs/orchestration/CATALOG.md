@@ -276,6 +276,19 @@ built all of these and is disqualified from grading them.
   `wall-clock of each measurement` are **not in `measure_m1_m6.py --json` at all**, so the record
   names them `UNAVAILABLE-BY-INPUT-SCHEMA` rather than deriving them from the tree as it is now.
   **It grades nothing:** F-17(b) is the F-18(b) reviewer's, who must be a fresh non-builder.
+- [`GRADE-20260825-f17b-comparison-instrument-fitness.md`](GRADE-20260825-f17b-comparison-instrument-fitness.md) —
+  **an independent non-builder's fitness grade of that instrument against the F-17(b) CLAUSE, not
+  against the spec.** Graded at `2790ba90` by digest; **records no F-number verdict and no gate
+  verdict.** Confirms the builder's rejections by re-derivation — the "any commit" bullet is false at
+  **10 of 46** commits by per-commit enumeration, R5's fixture is unbuildable under exact equality,
+  and §7.0.9 independently settles the refusal to build an F-7(b) instrument. **34 mutations, 27
+  caught behaviourally with the arm named, 6 survivors.** Three demonstrated defects still let an
+  obliged difference report as `DIFFERENCES-ALL-EXPECTED` with all 53 arms green: the shipped-list
+  guard arm uses `fnmatch`, so it is **blind to `M-1[*]` patterns**; a **one-character** citation
+  licenses a suppression; and a **MISSING** measurement is suppressible because `field_set_differs`
+  is not a finding — that last one is live in the shipped file today. Also: at that sha the far-end
+  script never invokes the instrument, and the filed pre-submission column is **markdown, not
+  `--json`**, so it is not consumable by it. **Authorizes nothing.**
 
 ### B1 steps 4-5: the lift, and the preflight that gates the first submission
 
