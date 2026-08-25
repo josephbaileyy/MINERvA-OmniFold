@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-08-25T15:44:29+00:00",
+  "scope": "Replace the periodic waker history dump with a concise action-oriented operator digest.",
+  "source_commit": "207e12cb4491ab77eea71aea11e1035025cbc45e",
+  "deployed_checkout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+  "deployed_files": [
+    "docs/orchestration/wakerctl.py",
+    "docs/orchestration/test_wakerctl.py",
+    "docs/orchestration/OPERATOR-GUIDE.md"
+  ],
+  "cluster_validation": {
+    "candidate_command": "PYTHONPATH=. /usr/bin/python3.11 -m unittest test_campaignctl.py test_wakerctl.py test_notifyctl.py",
+    "candidate_result": "76 tests passed",
+    "live_result": "76 tests passed",
+    "preflight": "PASS with control plane checked"
+  },
+  "live_preview": {
+    "subject": "[MINERvA waker] WORKING — no action required",
+    "action_required": "none",
+    "queue": "staged=0, approved=0, attention=0, terminal_failures=0, completed=0",
+    "compute": "PENDING=18, RUNNING=1",
+    "compute_names": "uthrow5d_runF=18, uthrow5d_combF=1",
+    "armed_watches": 0,
+    "live_waker_events": 0,
+    "historical_records_omitted": "84 closed watches, 81 terminal events",
+    "idle_wording": "Orchestrator: quiet; automatic idle resume is disabled"
+  },
+  "delivery_test": {
+    "notification_key": "status-format-preview-207e12cb",
+    "email_and_ntfy_fanout_returncode": 0
+  },
+  "live_tick": {
+    "at_utc": "2026-08-25T15:44:29+00:00",
+    "node": "login40",
+    "emitted": [],
+    "dispatch": [],
+    "campaign_queue_status": "idle",
+    "campaign_queue_returncode": 0,
+    "heartbeat": true,
+    "watch_errors": 0
+  },
+  "repository_audit": {
+    "relevant_file_conflict": false,
+    "relevant_parity_before_change": "wakerctl.py, waker-config.json, OPERATOR-GUIDE.md, campaignctl.py, and test_wakerctl.py were byte-identical across the Mac working tree, origin/main, cluster working tree, and cluster index.",
+    "mac_main_vs_origin_main_after_deployment": "ahead 5, behind 12",
+    "mac_unrelated_worktree_state": "20 modified and 9 untracked entries; none touched by this deployment",
+    "cluster_head_vs_github_main_after_deployment": "cluster HEAD is 229 commits behind; live orchestration files are selectively deployed from github/main",
+    "cluster_worktree_state": "4 unstaged modifications, 12 staged modifications, 7 staged additions, and 718 untracked entries; none outside the three deployed paths was changed"
+  }
+}
