@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import contextlib
 import datetime as dt
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -1558,6 +1559,19 @@ def compose_status_report(ctx: Ctx) -> tuple[str, str]:
         lines.append(f"event {event['event_id']}: {event['state']}")
     last_tick = report.get("last_tick") or {}
     lines.append(f"last tick: {last_tick.get('at_utc', 'never')} on {last_tick.get('node', '?')}")
+    queue_status_command = ctx.config.get("campaign_queue_status_command")
+    if queue_status_command:
+        queued = ctx.runner(list(queue_status_command), env=ctx.base_env(), cwd=ctx.repo)
+        if queued.returncode == 0:
+            with contextlib.suppress(json.JSONDecodeError):
+                counts = json.loads(queued.stdout).get("counts", {})
+                if any(counts.values()):
+                    queue_text = ", ".join(
+                        f"{key}={value}" for key, value in sorted(counts.items()) if value
+                    )
+                    lines.append(f"campaign queue: {queue_text}")
+                else:
+                    lines.append("campaign queue: empty")
     queue = ctx.runner(["squeue", "-u", os.environ.get("USER", "josephrb"), "-h", "-o", "%i %T %j"])
     if queue.returncode == 0:
         jobs = [row for row in queue.stdout.splitlines() if row.strip()]
@@ -1609,9 +1623,40 @@ def heartbeat_guard(ctx: Ctx) -> bool | None:
     return True
 
 
+def campaign_queue_guard(ctx: Ctx) -> dict | None:
+    """Run at most one already-approved deterministic queue item.
+
+    This is deliberately separate from dispatch(): queue entries cannot resume
+    or prompt an LLM, and campaignctl itself enforces interactive approval,
+    exact digests, file bindings, no shell, and exactly-once claims.
+    """
+    command = ctx.config.get("campaign_queue_command")
+    if not command:
+        return None
+    result = ctx.runner(list(command), env=ctx.base_env(), cwd=ctx.repo)
+    output = (result.stdout or "").strip()
+    try:
+        value = json.loads(output) if output else {"status": "unknown"}
+    except json.JSONDecodeError:
+        value = {"status": "invalid-output", "output": output[:1000]}
+    value["returncode"] = result.returncode
+    if result.returncode != 0:
+        stable = hashlib.sha256(output.encode("utf-8")).hexdigest()[:16]
+        key = f"campaign-queue-{stable}"
+        ctx.ledger("campaign-queue", "queue-failed", f"rc={result.returncode} {output[:500]}")
+        notify(
+            ctx,
+            key,
+            "[MINERvA queue] Approved command needs attention",
+            f"campaignctl run-ready returned rc={result.returncode}:\n{output[:4000]}",
+        )
+    return value
+
+
 def tick(ctx: Ctx) -> dict:
     emitted = scan(ctx)
     outcomes = dispatch(ctx)
+    queue_result = campaign_queue_guard(ctx)
     idle_event = idle_guard(ctx)
     if idle_event:
         emitted = emitted + [idle_event]
@@ -1620,6 +1665,8 @@ def tick(ctx: Ctx) -> dict:
     if report_key:
         notified = notified + [report_key]
     result = {"emitted": emitted, "dispatch": outcomes}
+    if queue_result is not None:
+        result["campaign_queue"] = queue_result
     if notified:
         result["notified"] = notified
     heartbeat = heartbeat_guard(ctx)

@@ -32,6 +32,18 @@
     "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/notifyctl.py",
     "heartbeat"
   ],
+  "campaign_queue_command": [
+    "/usr/bin/python3.11",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/campaignctl.py",
+    "run-ready",
+    "--json"
+  ],
+  "campaign_queue_status_command": [
+    "/usr/bin/python3.11",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/campaignctl.py",
+    "status",
+    "--json"
+  ],
   "status_report_interval_seconds": 43200,
   "prompt_preamble": null
 }

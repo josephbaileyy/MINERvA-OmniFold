@@ -864,6 +864,35 @@ class StatusAndCronTests(WakerTestCase):
         self.assertTrue(result["heartbeat"])
         self.assertEqual(len(self.runner.action_calls("heartbeat")), 1)
 
+    def test_tick_runs_optional_approval_queue_without_llm_dispatch(self):
+        self.write_config(campaign_queue_command=["/bin/campaignctl", "run-ready", "--json"])
+        self.runner.add(
+            lambda a: a[0] == "/bin/campaignctl",
+            0,
+            '{"status":"idle"}',
+        )
+        result = wakerctl.tick(self.ctx())
+        self.assertEqual(result["campaign_queue"]["status"], "idle")
+        self.assertEqual(result["campaign_queue"]["returncode"], 0)
+        self.assertEqual(len(self.runner.action_calls("campaignctl")), 1)
+
+    def test_queue_failure_is_ledgered_and_notified(self):
+        self.write_config(
+            campaign_queue_command=["/bin/campaignctl", "run-ready", "--json"],
+            notify_command=["/bin/notify", "{key}", "{subject}"],
+        )
+        self.runner.add(
+            lambda a: a[0] == "/bin/campaignctl",
+            4,
+            '{"id":"x","status":"stale"}',
+        )
+        self.runner.add(lambda a: a[0] == "/bin/notify", 0, "")
+        result = wakerctl.tick(self.ctx())
+        self.assertEqual(result["campaign_queue"]["status"], "stale")
+        ledger = (self.dir / "state" / "LEDGER.tsv").read_text()
+        self.assertIn("queue-failed", ledger)
+        self.assertEqual(len(self.runner.action_calls("notify")), 1)
+
     def test_ledger_records_full_lifecycle(self):
         ctx = self.ctx()
         path = self.arm_sentinel(ctx, "led")

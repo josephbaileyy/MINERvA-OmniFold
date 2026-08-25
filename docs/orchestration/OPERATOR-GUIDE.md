@@ -54,8 +54,12 @@ the secret file:
 /usr/bin/python3.11 notifyctl.py heartbeat
 ```
 
-Use a period and grace comfortably above the five-minute tick interval (30
-minutes is ample).
+The ticker normally pings every five minutes. In Healthchecks.io, set this
+check to a **10-minute period** and **20-minute grace**. The dashboard should
+show a new ping about every five minutes. A missing ping first enters the
+grace period and then becomes Down, at which point Healthchecks sends through
+the notification integration configured in its web dashboard. The ping URL is
+a credential: recreate the check to rotate it if the URL is exposed.
 
 Other constraints:
 
@@ -74,7 +78,49 @@ delete the file. Want a conversation? One bounded `codex exec resume` with
 the pinned flags (exact command in WAKER.md) — only when nothing is
 in-flight.
 
-## 4. Debugging safely
+## 4. Approving staged campaign work from Termius
+
+Agents may stage an exact command, but staging is not authorization and the
+ticker ignores it until you approve its digest from an interactive TTY. The
+queue starts empty. It executes at most one ready item per five-minute tick,
+never invokes a shell, and never calls an LLM. It binds the repository HEAD
+plus the launcher and any explicitly listed input files; drift makes the item
+permanently `stale`. A claim without a terminal receipt becomes
+`outcome-unknown` and is never retried automatically.
+
+From Termius:
+
+```bash
+cd /pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration
+/usr/bin/python3.11 campaignctl.py list
+/usr/bin/python3.11 campaignctl.py show --id <item-id>
+/usr/bin/python3.11 campaignctl.py approve --id <item-id> --digest <full-sha256>
+```
+
+The approval command prints the full proposal and then asks you to type
+`APPROVE <item-id> <first-12-digest>`. Verify the description, `kind`, exact
+`argv`, working directory, dependencies, bound-file hashes, and repository
+commit before typing it. The next healthy ticker executes it. Before it is
+claimed, cancel with:
+
+```bash
+/usr/bin/python3.11 campaignctl.py revoke --id <item-id>
+```
+
+Scientific authorization is a separate gate. Approval means only “execute
+this exact already-authorized command”; it cannot adopt a result, lift an
+`OI-*` hold, authorize material compute, or waive `mnv_guarded_run.py`.
+
+An agent stages work with a command such as:
+
+```bash
+/usr/bin/python3.11 campaignctl.py stage \
+  --id <item-id> --kind read-only --description '<bounded purpose>' \
+  --cwd . --bind <critical-input> -- \
+  /usr/bin/python3.11 /pscratch/sd/j/josephrb/MINERvA-OmniFold/<script.py> <args>
+```
+
+## 5. Debugging safely
 
 Ordered from safest to most invasive; stop at the first level that answers
 your question.
@@ -116,7 +162,7 @@ continuation (re-enable with `install-cron`). Never kill a running resume
 turn; if one is misbehaving, let it end, then correct it with an emitted
 event.
 
-## 5. What a healthy week looks like
+## 6. What a healthy week looks like
 
 Emails: none. `RUNS.tsv`: new rows after each real event. `status`: watches
 cycling armed → fired, events ending `resumed`, ticks advancing across
