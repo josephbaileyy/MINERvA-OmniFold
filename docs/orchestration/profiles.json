@@ -68,6 +68,15 @@
       "web_search": true,
       "yolo": true
     },
+    "codex-school2": {
+      "home": "~/codex-homes/school2",
+      "model": "gpt-5.6-sol",
+      "provider": "codex",
+      "reasoning_effort": "xhigh",
+      "sandbox": "read-only",
+      "web_search": true,
+      "yolo": true
+    },
     "codex-waker": {
       "home": "~/codex-homes/personal",
       "model": "gpt-5.6-luna",

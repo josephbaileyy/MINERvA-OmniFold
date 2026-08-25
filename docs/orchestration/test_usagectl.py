@@ -24,7 +24,11 @@ def policy():
         "codex_personal_reset_credit_reserve": 0,
         "never_consume_codex_reset_credits_automatically": True,
         "seven_day_low_remaining_percent": 20,
-        "required_codex_profiles": ["codex-personal", "codex-school"],
+        "required_codex_profiles": [
+            "codex-personal",
+            "codex-school",
+            "codex-school2",
+        ],
         "profile_account_groups": {
             "claude-school": ["claude-school", "claude-school-legacy"]
         },
@@ -621,6 +625,51 @@ class PolicyAndGateTests(unittest.TestCase):
                 }
             ],
         )
+
+    def test_capacity_classifier_and_selector_skip_exhausted_account(self):
+        profiles = {
+            "codex-personal": {"provider": "codex"},
+            "codex-school": {"provider": "codex"},
+            "codex-school2": {"provider": "codex"},
+        }
+        values = {}
+        for name, remaining in (
+            ("codex-personal", 0),
+            ("codex-school", 12),
+            ("codex-school2", 70),
+        ):
+            value = {
+                "status": "ok",
+                "windows": {"five_hour": {"remaining_percent": remaining}},
+                "warnings": [],
+                "violations": [],
+            }
+            value["capacity"] = usagectl.classify_capacity(value, 20)
+            values[name] = value
+        self.assertEqual(values["codex-personal"]["capacity"]["state"], "EXHAUSTED")
+        self.assertEqual(values["codex-school"]["capacity"]["state"], "LOW")
+        self.assertEqual(values["codex-school2"]["capacity"]["state"], "READY")
+        selected = usagectl.select_profile({"profiles": values}, profiles, "codex")
+        self.assertEqual(selected["selected"], "codex-school2")
+        self.assertIn("never migrate", selected["continuity_rule"])
+
+    def test_capacity_auth_and_unknown_are_not_selectable(self):
+        auth = usagectl.profile_error("codex", "Not logged in")
+        unknown = {"status": "missing", "windows": {}, "warnings": [], "violations": []}
+        for value in (auth, unknown):
+            value["capacity"] = usagectl.classify_capacity(value, 20)
+        self.assertEqual(auth["capacity"]["state"], "AUTH_REQUIRED")
+        self.assertEqual(unknown["capacity"]["state"], "UNKNOWN")
+        profiles = {
+            "codex-personal": {"provider": "codex"},
+            "codex-school": {"provider": "codex"},
+        }
+        result = usagectl.select_profile(
+            {"profiles": {"codex-personal": auth, "codex-school": unknown}},
+            profiles,
+            "codex",
+        )
+        self.assertIsNone(result["selected"])
 
 
 class CleanRuntimeTests(unittest.TestCase):

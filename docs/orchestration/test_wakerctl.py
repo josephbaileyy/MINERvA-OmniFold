@@ -511,6 +511,23 @@ class DispatchTests(WakerTestCase):
         self.assertIn("agentctl.py", call["argv"][1])
         self.assertIn("agent-B-p5b", call["argv"])
 
+    def test_capacity_guard_blocks_root_before_invocation_without_consuming_event(self):
+        self.write_config(capacity_guard=True)
+        ctx = self.ctx()
+        path = self.arm_sentinel(ctx, "capacity")
+        path.write_text("done")
+        wakerctl.scan(ctx)
+        self.runner.add(
+            lambda a: "usagectl.py" in a[1] and "check" in a,
+            3,
+            '{"profile":"codex-personal","state":"EXHAUSTED"}',
+        )
+        self.assertEqual(wakerctl.dispatch(ctx), [("evt-capacity", "blocked")])
+        self.assertEqual(self.runner.action_calls("codex"), [])
+        paths = wakerctl.event_paths(ctx, "evt-capacity")
+        self.assertFalse(paths["invoked"].exists())
+        self.assertTrue(paths["blocked"].exists())
+
     def test_command_action_must_stay_inside_repo(self):
         ctx = self.ctx()
         with self.assertRaises(wakerctl.WakerError):
@@ -766,7 +783,7 @@ class StatusReportTests(WakerTestCase):
         wakerctl.tick(ctx)
         calls = self.mail_calls()
         self.assertEqual(len(calls), 2)
-        self.assertIn("6h status", calls[0]["argv"][2])
+        self.assertIn("status", calls[0]["argv"][2])
         self.assertIn("watch steady: file-sentinel armed", calls[0]["input"])
         self.assertIn("OPERATOR-GUIDE.md", calls[0]["input"])
 
@@ -776,7 +793,7 @@ class StatusReportTests(WakerTestCase):
         blocked.parent.mkdir(parents=True, exist_ok=True)
         blocked.write_text("{}")
         wakerctl.tick(ctx)
-        digests = [c for c in self.mail_calls() if "6h status" in c["argv"][2]]
+        digests = [c for c in self.mail_calls() if "status" in c["argv"][2]]
         self.assertEqual(len(digests), 1)
         self.assertIn("BLOCKED ON USER", digests[0]["argv"][2])
 
@@ -824,6 +841,28 @@ class StatusAndCronTests(WakerTestCase):
         wakerctl.install_cron(ctx, 7)
         self.assertIn("*/7 * * * *", captured["table"])
         self.assertIn(wakerctl.SCRON_BEGIN, captured["table"])
+
+    def test_install_cron_refuses_when_existing_table_cannot_be_read(self):
+        self.runner.add(
+            lambda a: a == ["scrontab", "-l"],
+            1,
+            "temporary controller failure",
+        )
+        ctx = self.ctx()
+        with self.assertRaisesRegex(wakerctl.WakerError, "refusing to replace"):
+            wakerctl.install_cron(ctx, 5)
+        writes = [
+            call for call in self.runner.calls
+            if call["argv"][0] == "scrontab" and call["argv"] != ["scrontab", "-l"]
+        ]
+        self.assertEqual(writes, [])
+
+    def test_tick_runs_optional_heartbeat_without_affecting_dispatch(self):
+        self.write_config(heartbeat_command=["/bin/heartbeat"])
+        self.runner.add(lambda a: a[0] == "/bin/heartbeat", 0, "")
+        result = wakerctl.tick(self.ctx())
+        self.assertTrue(result["heartbeat"])
+        self.assertEqual(len(self.runner.action_calls("heartbeat")), 1)
 
     def test_ledger_records_full_lifecycle(self):
         ctx = self.ctx()

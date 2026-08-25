@@ -110,7 +110,7 @@ $P wakerctl.py watch-add --id g2-driver-done --kind file-sentinel \
 
 $P wakerctl.py status                     # watches/events/tick liveness, any node
 $P wakerctl.py tick                       # one manual scan+dispatch pass
-$P wakerctl.py install-cron               # arm the 5-minute supervision net
+$P wakerctl.py install-cron               # arm after saving a checked scrontab -l
 $P wakerctl.py uninstall-cron             # rollback
 ```
 
@@ -158,10 +158,13 @@ nor blockers nor idle flags → transient (guard will act within
 
 ## Notifications (how the user learns without polling)
 
-`notify_command` in `waker-config.json` (current: `/usr/bin/mail` to
-`josephrb@nersc.gov`, which forwards to the user's Stanford inbox —
-delivery verified by the user 2026-07-20; direct gmail bounced) pushes an
-email, exactly once per condition, whenever the campaign needs a human:
+`notify_command` in `waker-config.json` calls `notifyctl.py`, which fans out
+independently to `/usr/bin/mail` and ntfy. Email goes to
+`josephrb@nersc.gov`, which forwards to the user's Stanford inbox (delivery
+verified 2026-07-20; direct gmail bounced). ntfy carries only a generic alert;
+the detailed body stays in email and cluster receipts. Per-channel markers
+prevent a successful email from being duplicated while a failed ntfy delivery
+retries, and the waker marker is written only after both channels succeed.
 
 - a new `BLOCKED-ON-USER.json` declaration (body includes the ask and the
   answer instructions below);
@@ -172,12 +175,29 @@ email, exactly once per condition, whenever the campaign needs a human:
 Failed sends retry on later ticks; markers under `state/waker/notified/`
 dedupe. Healthy progress, idle-guard self-healing, and ordinary event
 handling never email on their own; instead a **status digest** goes out once
-per `status_report_interval_seconds` bucket (default 21600 s → 00/06/12/18
-UTC): headline (blocked/idle/armed), watches, events, tick liveness, Slurm
+per `status_report_interval_seconds` bucket (travel default 43200 s, twice
+daily): headline (blocked/idle/armed), watches, events, tick liveness, Slurm
 jobs, recent commits and rounds — composed purely from filesystem state,
-zero LLM involvement. Set the interval to 0 to disable. To disable, set `notify_command` to `null`; to use a
-different transport (e.g. `ntfy.sh` push via curl), replace the argv — the
-subject substitutes `{subject}` and the body arrives on stdin.
+zero LLM involvement. Set the interval to 0 to disable. Secrets live only in
+gitignored `state/waker/notification-secrets.json` with mode 0600.
+
+`heartbeat_command` invokes `notifyctl.py heartbeat` after every completed
+tick. Once the secret file contains a Healthchecks-compatible URL, this is an
+external dead-man signal: email and ntfy report campaign problems, while a
+missed heartbeat reports that the reporter itself stopped. No heartbeat URL is
+a deliberate no-op, so enrollment cannot break the ticker.
+
+## Account-capacity routing
+
+`usagectl.py` measures the three independent Codex homes (`personal`, `school`,
+`school2`) and classifies each profile `READY`, `LOW`, `EXHAUSTED`,
+`AUTH_REQUIRED`, or `UNKNOWN`. For a new bounded task,
+`usagectl.py select --provider codex --json` chooses the best measured READY/LOW
+account even if another account is unavailable. It never migrates a live
+session. Before a root resume, the capacity guard checks the root's exact
+profile; an unavailable root leaves the event unconsumed, pushes the block, and
+retries after reset/auth recovery. Command actions and Slurm monitoring need no
+LLM capacity and continue normally.
 
 ## Answering a BLOCKED-ON-USER stop
 
@@ -221,8 +241,9 @@ is the wake signal, and text left inside it is read by nobody.
 ## Migration (live campaign), rollback, and smoke
 
 1. `preflight` + `smoke` must pass (no live UUID, job, or output is touched).
-2. `install-cron`; confirm the managed block via `scrontab -l` and, after one
-   interval, a fresh `state/waker/last-tick.json`.
+2. Save `scrontab -l` with a checked zero exit status. Run `install-cron`, read
+   the table again, and diff it; only the managed block may change. After one
+   interval, confirm a fresh `state/waker/last-tick.json`.
 3. Arm watches for the campaign's next external facts (currently the Gate-2
    target-construction job when it is submitted; the school Codex weekly
    reset if a blocked verifier round is waiting on it).

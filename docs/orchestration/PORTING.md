@@ -51,9 +51,11 @@ cd /pscratch/sd/j/josephrb/MINERvA-OmniFold   # if missing: re-clone + restore u
 git fetch github && git status                # sanity: repo intact at expected head
 cd docs/orchestration
 /usr/bin/python3.11 wakerctl.py preflight     # codex path may change if nvm was rebuilt → edit waker-config.json codex_bin
-scrontab -l | grep -q wakerctl || /usr/bin/python3.11 wakerctl.py install-cron
+scrontab -l > /tmp/waker-scrontab.before      # STOP if this exits nonzero
+grep -q wakerctl /tmp/waker-scrontab.before || /usr/bin/python3.11 wakerctl.py install-cron
+scrontab -l > /tmp/waker-scrontab.after && diff -u /tmp/waker-scrontab.before /tmp/waker-scrontab.after
 /usr/bin/python3.11 wakerctl.py status
-echo test | mail -s "[MINERvA-waker] post-restore check" josephrb@nersc.gov
+echo test | /usr/bin/python3.11 notifyctl.py send --key post-restore-$(date -u +%Y%m%dT%H%M%S) --subject "[MINERvA-waker] post-restore check"
 ```
 
 Then let the ticks run. Any watch armed over a job that died in the shutdown
@@ -68,7 +70,7 @@ Prerequisites: `codex`, `claude`, `agy` CLIs installed and logged out;
 Python ≥3.11; git clone of the repo.
 
 1. Restore provider homes from the bundle to the same relative paths
-   (`~/codex-homes/{personal,school}`, `~/claude-homes/{personal,school}`
+   (`~/codex-homes/{personal,school,school2}`, `~/claude-homes/{personal,school}`
    including the nested `school/claude-homes/personal` legacy home,
    `~/.gemini`), verify the tarball sha256 first.
 2. Update `waker-config.json` `codex_bin`/`python` and `profiles.json` homes

@@ -15,14 +15,23 @@
   "claim_lease_seconds": 900,
   "invoke_grace_seconds": 7200,
   "max_retries_default": 2,
+  "capacity_guard": true,
   "cron_walltime": "12:00:00",
   "idle_guard_ticks": 0,
   "notify_command": [
-    "/usr/bin/mail",
-    "-s",
-    "{subject}",
-    "josephrb@nersc.gov"
+    "/usr/bin/python3.11",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/notifyctl.py",
+    "send",
+    "--key",
+    "{key}",
+    "--subject",
+    "{subject}"
   ],
-  "status_report_interval_seconds": 0,
+  "heartbeat_command": [
+    "/usr/bin/python3.11",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/notifyctl.py",
+    "heartbeat"
+  ],
+  "status_report_interval_seconds": 43200,
   "prompt_preamble": null
 }

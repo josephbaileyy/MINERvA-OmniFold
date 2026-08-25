@@ -6,7 +6,8 @@
   "seven_day_low_remaining_percent": 20,
   "required_codex_profiles": [
     "codex-personal",
-    "codex-school"
+    "codex-school",
+    "codex-school2"
   ],
   "profile_account_groups": {
     "claude-school": [

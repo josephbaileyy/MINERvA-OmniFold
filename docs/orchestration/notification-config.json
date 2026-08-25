@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "state_dir": "state/waker",
+  "email": {
+    "enabled": true,
+    "timeout_seconds": 30,
+    "command": [
+      "/usr/bin/mail",
+      "-s",
+      "{subject}",
+      "josephrb@nersc.gov"
+    ]
+  },
+  "ntfy": {
+    "enabled": true,
+    "base_url": "https://ntfy.sh",
+    "include_body": false,
+    "generic_body": "Open email or Termius for details.",
+    "priority": "default",
+    "timeout_seconds": 15
+  },
+  "heartbeat": {
+    "enabled": true,
+    "timeout_seconds": 15
+  }
+}

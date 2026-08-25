@@ -850,7 +850,8 @@ def cron_job_problems(row: dict) -> list[str]:
     if "held" in _reason_tokens(reason):
         problems.append(
             f"{label} is HELD: state={state} reason={reason!r}. The tick schedule exists "
-            "and nothing executes it; `scontrol release` (a human decision) is required."
+            "and nothing executes it; save `scrontab -l`, reinstall the table, and verify "
+            "that every unmanaged line survived (scrontab jobs cannot be released with scontrol)."
         )
     priority = row.get("priority", "")
     if priority.strip().lstrip("-").isdigit() and int(priority) == 0:
@@ -1248,6 +1249,9 @@ def dispatch(ctx: Ctx) -> list[tuple[str, str]]:
 
 def dispatch_one(ctx: Ctx, event_id: str, paths: dict[str, Path]) -> str:
     problems = preflight(ctx, quiet=True)
+    event = read_json(paths["event"])
+    if not problems:
+        problems.extend(capacity_problems(ctx, event))
     if problems:
         # Fail closed without consuming the event: no invocation happened, so a
         # later tick (possibly after a human repairs the environment) retries.
@@ -1259,7 +1263,6 @@ def dispatch_one(ctx: Ctx, event_id: str, paths: dict[str, Path]) -> str:
         ctx.ledger(event_id, "dispatch-blocked", "; ".join(problems))
         release_claim(paths["claim"])
         return "blocked"
-    event = read_json(paths["event"])
     if not create_exclusive(
         paths["invoked"],
         json.dumps({"at_utc": ctx.now_iso(), "owner": owner_string()}, sort_keys=True) + "\n",
@@ -1300,6 +1303,40 @@ def dispatch_one(ctx: Ctx, event_id: str, paths: dict[str, Path]) -> str:
     if rc != 0:
         schedule_retry(ctx, event, event_id)
     return outcome
+
+
+def capacity_problems(ctx: Ctx, event: dict) -> list[str]:
+    """Fail closed before a root LLM invocation when its account is unavailable.
+
+    Command and role-send actions keep their own provider/session policy.  This
+    check never swaps an existing root thread to a different account.
+    """
+    if ctx.config.get("capacity_guard") is not True:
+        return []
+    watch_file = ctx.watches_dir / f"{event.get('watch_id', '')}.json"
+    action = {"type": "root-resume"}
+    if watch_file.is_file():
+        with contextlib.suppress(OSError, json.JSONDecodeError):
+            action = read_json(watch_file).get("action") or action
+    if action.get("type") != "root-resume":
+        return []
+    profile_name = str(ctx.root().get("profile", "codex-personal"))
+    command = [
+        ctx.python_bin(),
+        str(HERE / "usagectl.py"),
+        "check",
+        "--profile",
+        profile_name,
+        "--json",
+    ]
+    result = ctx.runner(command, env=ctx.base_env(), cwd=ctx.repo)
+    if result.returncode == 0:
+        return []
+    detail = (result.stdout or "").strip()[-1000:]
+    return [
+        f"root profile {profile_name} has no measured READY/LOW capacity; "
+        f"the event remains unconsumed and will retry after reset/auth recovery. {detail}"
+    ]
 
 
 def schedule_retry(ctx: Ctx, event: dict, event_id: str) -> None:
@@ -1384,7 +1421,10 @@ def notify(ctx: Ctx, key: str, subject: str, body: str) -> bool:
     marker = ctx.state_dir / "notified" / f"{key}.sent"
     if marker.exists():
         return False
-    argv = [str(part).replace("{subject}", subject) for part in command]
+    argv = [
+        str(part).replace("{subject}", subject).replace("{key}", key)
+        for part in command
+    ]
     result = ctx.runner(argv, env=ctx.base_env(), cwd=ctx.repo, input_text=body)
     if result.returncode != 0:
         ctx.ledger(key, "notify-failed", f"rc={result.returncode}")
@@ -1537,7 +1577,7 @@ def compose_status_report(ctx: Ctx) -> tuple[str, str]:
                 lines.append(f"  {fields[0]} {fields[3]}")
     lines.append("")
     lines.append("Reading and acting: docs/orchestration/OPERATOR-GUIDE.md")
-    return f"[MINERvA waker] 6h status: {headline}", "\n".join(lines)
+    return f"[MINERvA waker] status: {headline}", "\n".join(lines)
 
 
 def status_report_guard(ctx: Ctx) -> str | None:
@@ -1557,6 +1597,18 @@ def status_report_guard(ctx: Ctx) -> str | None:
     return key if notify(ctx, key, subject, body) else None
 
 
+def heartbeat_guard(ctx: Ctx) -> bool | None:
+    """Ping an optional external dead-man monitor after a deterministic tick."""
+    command = ctx.config.get("heartbeat_command")
+    if not command:
+        return None
+    result = ctx.runner(list(command), env=ctx.base_env(), cwd=ctx.repo)
+    if result.returncode != 0:
+        ctx.ledger("heartbeat", "heartbeat-failed", f"rc={result.returncode}")
+        return False
+    return True
+
+
 def tick(ctx: Ctx) -> dict:
     emitted = scan(ctx)
     outcomes = dispatch(ctx)
@@ -1570,6 +1622,9 @@ def tick(ctx: Ctx) -> dict:
     result = {"emitted": emitted, "dispatch": outcomes}
     if notified:
         result["notified"] = notified
+    heartbeat = heartbeat_guard(ctx)
+    if heartbeat is not None:
+        result["heartbeat"] = heartbeat
     return result
 
 
@@ -1640,10 +1695,10 @@ def scrontab_lines(ctx: Ctx, interval_minutes: int) -> list[str]:
 
 
 def read_scrontab(ctx: Ctx) -> list[str]:
-    result = ctx.runner(["scrontab", "-l"])
-    if result.returncode != 0:
-        return []
-    return result.stdout.splitlines()
+    lines, detail = read_scrontab_lines(ctx)
+    if lines is None:
+        raise WakerError(f"refusing to replace an unreadable scrontab: {detail}")
+    return lines
 
 
 def write_scrontab(ctx: Ctx, lines: list[str]) -> None:

@@ -1,4 +1,9 @@
-## `wakerctl install-cron` fails OPEN: a failed `scrontab -l` silently destroys every unmanaged entry (found 2026-08-10)
+## RESOLVED 2026-08-25 — `wakerctl install-cron` formerly failed OPEN on `scrontab -l` errors
+
+`read_scrontab()` now routes through the tri-state `read_scrontab_lines()` and raises
+`WakerError` when the table cannot be read. Unit coverage proves that a failed listing
+causes no `scrontab <file>` write. The save/install/diff operator procedure below remains
+mandatory defense in depth for cluster recovery.
 
 `install_cron` (`docs/orchestration/wakerctl.py`) is `strip_managed_block(read_scrontab(ctx))` →
 `extend(scrontab_lines(...))` → `write_scrontab(...)`, and `write_scrontab` replaces the **entire** table via
@@ -39,5 +44,4 @@ raise `WakerError` on non-zero rather than returning `[]`.
 `install-cron`, because it replaces the table rather than releasing a job. Verified 2026-08-10: held
 `56160911` → fresh `56585597`, and a real tick at `2026-08-10T22:00:13Z`. Identified by the oversight session
 reading the code; verified here against the file before running.
-
 

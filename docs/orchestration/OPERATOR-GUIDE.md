@@ -29,19 +29,28 @@ in-flight; watch `state/waker/logs/` or ledgers instead.
 
 ## 2. Getting notified
 
-Current transport: `/usr/bin/mail` to **josephrb@nersc.gov** (forwards to
-Stanford; verified 2026-07-20). Fires exactly once per condition — new
+Current transport: independent **email + ntfy** fanout. Email uses
+`/usr/bin/mail` to **josephrb@nersc.gov** (forwards to Stanford; verified
+2026-07-20); ntfy sends a generic phone alert so detailed research context is
+not placed in the push body. Fires exactly once per channel and condition — new
 BLOCKED-ON-USER declaration, environment-blocked dispatch, retries
-exhausted. Healthy operation never emails.
+exhausted — plus a twice-daily status digest.
 
-Alternatives (edit `notify_command` in `waker-config.json`):
+ntfy and heartbeat credentials are in the gitignored, mode-0600 file
+`state/waker/notification-secrets.json`. From Termius, print only the topic
+when you are ready to subscribe:
 
-- **ntfy.sh push** (phone/browser; subscribe to your secret topic in the
-  ntfy app first):
-  ```json
-  "notify_command": ["curl", "-s", "-H", "Title: {subject}", "-d", "@-",
-                     "https://ntfy.sh/<your-secret-topic>"]
-  ```
+```bash
+cd /pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration
+/usr/bin/python3.11 -c 'import json; print(json.load(open("state/waker/notification-secrets.json"))["ntfy"]["topic"])'
+```
+
+The external heartbeat remains inactive until that same secret file gets
+`{"heartbeat": {"url": "https://hc-ping.com/..."}}`. Use a period and grace
+comfortably above the five-minute tick interval (30 minutes is ample).
+
+Other constraints:
+
 - **Claude/Codex remote sessions** (claude.ai/code, Codex cloud) cannot
   reach Perlmutter's filesystem, so they cannot watch or wake anything.
   Use them only to reason about pasted status output; email/ntfy remain
@@ -83,6 +92,15 @@ your question.
    moved codex binary after an nvm update). Fix the path in
    `waker-config.json`, run `preflight`; the event dispatches on the next
    tick — never delete or hand-edit spool files to "unstick" things.
+
+Before creating a new provider task, inspect the capacity-aware recommendation:
+
+```bash
+/usr/bin/python3.11 usagectl.py select --provider codex --json
+```
+
+This may select `codex-school2` while another account is low or exhausted. It
+does not authorize moving an existing UUID/thread between accounts.
 
 Emergency stops (reversible, no state loss): `wakerctl.py watch-disarm
 --id <id>` for one watch; `uninstall-cron` to pause all automatic

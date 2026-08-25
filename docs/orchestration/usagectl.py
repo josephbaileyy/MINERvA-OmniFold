@@ -28,6 +28,7 @@ DEFAULT_CACHE = HERE / "state" / "usage"
 DEFAULT_PROFILES = [
     "codex-personal",
     "codex-school",
+    "codex-school2",
     "claude-personal",
     "claude-school",
     "claude-school-legacy",
@@ -400,7 +401,11 @@ def normalize_codex(
         violations.append(
             f"availableCount={available_count} disagrees with {valid_available} valid available Full reset records"
         )
-    reserve = policy["codex_personal_reset_credit_reserve"] if profile_name == "codex-personal" else 0
+    reserve = (
+        policy["codex_personal_reset_credit_reserve"]
+        if profile_name in {"codex-personal", "codex-waker"}
+        else 0
+    )
     if valid_available < reserve:
         violations.append(
             f"personal reset-credit reserve fell below {reserve}: {valid_available} independently valid"
@@ -722,8 +727,10 @@ def load_policy(path: Path) -> dict:
         100,
     )
     required = value["required_codex_profiles"]
-    if required != ["codex-personal", "codex-school"]:
-        raise UsageError("Policy required_codex_profiles must be codex-personal and codex-school")
+    if required != ["codex-personal", "codex-school", "codex-school2"]:
+        raise UsageError(
+            "Policy required_codex_profiles must be codex-personal, codex-school, and codex-school2"
+        )
     groups = value["profile_account_groups"]
     if not isinstance(groups, dict) or set(groups) != {"claude-school"}:
         raise UsageError("Policy must define the claude-school shared-account group")
@@ -831,7 +838,15 @@ def snapshot_changes(previous: object, current: dict) -> list[dict]:
     if not isinstance(previous, dict) or not isinstance(previous.get("profiles"), dict):
         return [{"field": "baseline", "old": None, "new": "created"}]
     changes = []
-    profile_targets = ("codex-personal", "codex-school", "claude-personal")
+    old_profiles = previous.get("profiles") or {}
+    new_profiles = current.get("profiles") or {}
+    profile_targets = sorted(
+        {
+            name
+            for name in set(old_profiles) | set(new_profiles)
+            if name.startswith("codex-") or name == "claude-personal"
+        }
+    )
     targets = [
         (
             profile_name,
@@ -868,6 +883,97 @@ def snapshot_changes(previous: object, current: dict) -> list[dict]:
                     {"profile": profile_name, "field": field, "old": old_value, "new": new_value}
                 )
     return changes
+
+
+CAPACITY_STATES = {"READY", "LOW", "EXHAUSTED", "AUTH_REQUIRED", "UNKNOWN"}
+
+
+def classify_capacity(value: dict, low_remaining_percent: float) -> dict:
+    """Convert one usage record into a routing-safe capacity state."""
+    status = value.get("status")
+    text = " ".join(
+        str(item)
+        for item in [*(value.get("warnings") or []), *(value.get("violations") or [])]
+    ).lower()
+    if status != "ok" and any(
+        token in text for token in ("auth", "login", "logged in", "credential")
+    ):
+        return {"state": "AUTH_REQUIRED", "reason": "provider authentication is unavailable"}
+    windows = value.get("windows") or {}
+    remaining = [
+        float(window["remaining_percent"])
+        for window in windows.values()
+        if isinstance(window, dict)
+        and isinstance(window.get("remaining_percent"), (int, float))
+        and not isinstance(window.get("remaining_percent"), bool)
+    ]
+    if status != "ok" or not remaining:
+        return {"state": "UNKNOWN", "reason": "no fresh actionable capacity measurement"}
+    minimum = min(remaining)
+    reset_times = [
+        window.get("resets_at_utc")
+        for window in windows.values()
+        if isinstance(window, dict) and window.get("resets_at_utc")
+    ]
+    if minimum <= 0:
+        state = "EXHAUSTED"
+    elif minimum <= low_remaining_percent:
+        state = "LOW"
+    else:
+        state = "READY"
+    return {
+        "state": state,
+        "minimum_remaining_percent": minimum,
+        "next_reset_utc": min(reset_times) if reset_times else None,
+    }
+
+
+def select_profile(
+    snapshot_value: dict,
+    profiles: dict,
+    provider: str,
+    exclude: set[str] | None = None,
+) -> dict:
+    """Choose an account for a new task, never migrate a live session."""
+    exclude = exclude or set()
+    candidates = []
+    seen_accounts = set()
+    for name, value in snapshot_value.get("profiles", {}).items():
+        profile = profiles.get(name)
+        if (
+            not isinstance(profile, dict)
+            or profile.get("provider") != provider
+            or name in exclude
+        ):
+            continue
+        capacity = value.get("capacity") or {}
+        if capacity.get("state") not in {"READY", "LOW"}:
+            continue
+        account_id = value.get("account_id", name)
+        if account_id in seen_accounts:
+            continue
+        seen_accounts.add(account_id)
+        candidates.append(
+            (
+                0 if capacity.get("state") == "READY" else 1,
+                -float(capacity.get("minimum_remaining_percent", 0)),
+                name,
+                capacity,
+            )
+        )
+    if not candidates:
+        return {
+            "selected": None,
+            "provider": provider,
+            "reason": "no READY or LOW measured account",
+        }
+    _rank, _remaining, name, capacity = min(candidates)
+    return {
+        "selected": name,
+        "provider": provider,
+        "capacity": capacity,
+        "continuity_rule": "new tasks only; never migrate an existing session silently",
+    }
 
 
 def snapshot(args: argparse.Namespace) -> dict:
@@ -921,6 +1027,9 @@ def snapshot(args: argparse.Namespace) -> dict:
         except Exception as exc:
             provider = profiles.get(name, {}).get("provider") if isinstance(profiles.get(name), dict) else None
             value = profile_error(provider, str(exc))
+        value["capacity"] = classify_capacity(
+            value, float(policy["seven_day_low_remaining_percent"])
+        )
         result["profiles"][name] = value
         result["warnings"].extend(f"{name}: {item}" for item in value.get("warnings", []))
         if value.get("violations"):
@@ -1033,6 +1142,28 @@ def parser() -> argparse.ArgumentParser:
     show.add_argument("--timeout", type=float, default=12.0)
     show.add_argument("--json", action="store_true")
 
+    select = subparsers.add_parser(
+        "select",
+        help="Select a measured account for a new task without migrating a live session",
+    )
+    select.add_argument("--config", default=str(DEFAULT_CONFIG))
+    select.add_argument("--policy", default=str(DEFAULT_POLICY))
+    select.add_argument("--cache-dir", default=str(DEFAULT_CACHE))
+    select.add_argument("--timeout", type=float, default=12.0)
+    select.add_argument("--provider", required=True, choices=["codex", "claude", "agy"])
+    select.add_argument("--exclude", action="append", default=[])
+    select.add_argument("--json", action="store_true")
+
+    check = subparsers.add_parser(
+        "check", help="Check whether one profile can accept a new provider turn"
+    )
+    check.add_argument("--config", default=str(DEFAULT_CONFIG))
+    check.add_argument("--policy", default=str(DEFAULT_POLICY))
+    check.add_argument("--cache-dir", default=str(DEFAULT_CACHE))
+    check.add_argument("--timeout", type=float, default=12.0)
+    check.add_argument("--profile", required=True)
+    check.add_argument("--json", action="store_true")
+
     record = subparsers.add_parser("record-claude", help="Record Claude status-line JSON from stdin")
     record.add_argument("--profile", required=True)
     record.add_argument("--cache-dir", default=str(DEFAULT_CACHE))
@@ -1048,8 +1179,33 @@ def parser() -> argparse.ArgumentParser:
 def main() -> int:
     args = parser().parse_args()
     try:
-        if args.command == "snapshot":
+        if args.command in {"snapshot", "select", "check"}:
+            if args.command == "select":
+                args.profile = None
+            elif args.command == "check":
+                args.profile = [args.profile]
             value = snapshot(args)
+            if args.command == "check":
+                profile_name = args.profile[0]
+                capacity = (value.get("profiles", {}).get(profile_name) or {}).get(
+                    "capacity", {"state": "UNKNOWN"}
+                )
+                result = {"profile": profile_name, **capacity}
+                if args.json:
+                    print(json.dumps(result, indent=2, sort_keys=True, allow_nan=False))
+                else:
+                    print(f"{profile_name}\t{result['state']}")
+                return 0 if result["state"] in {"READY", "LOW"} else 3
+            if args.command == "select":
+                profiles = agentctl.load_profiles(Path(args.config))
+                selection = select_profile(
+                    value, profiles, args.provider, set(args.exclude)
+                )
+                if args.json:
+                    print(json.dumps(selection, indent=2, sort_keys=True, allow_nan=False))
+                else:
+                    print(selection["selected"] or "NONE")
+                return 0 if selection["selected"] else 3
             if args.json:
                 print(json.dumps(value, indent=2, sort_keys=True, allow_nan=False))
             else:
