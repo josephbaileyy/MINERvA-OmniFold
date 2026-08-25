@@ -548,10 +548,17 @@ and both invited this.
 
 ## 10. STATE AT COMPLETION
 
-Re-fetched after all measurements: `origin/main` at `2790ba904ae31bebd3f96d9a77cf95d0d8698e2e`,
-unchanged from the graded sha, and the three graded files' digests are the ones in §0. **This verdict
-expires the moment any of those digests moves.** If you are reading it against a different digest, the
-mutation survey in §7 and findings G-1…G-7 have not been re-taken.
+**The tip moved twice while this lane ran, and both movements are named.** First by the builder,
+`a72e967f -> 2790ba90`, which moved all three graded files — the grade was re-taken at the new tip and
+§0 records both shas. Then by **this lane's own two commits**, which carry only this document and the
+three index artifacts: `origin/main` is `4fb4d759dc85fb1ad75b3cd79eb253ae1905d0a9` at completion, and
+**none of the three graded files is among the moved ones** — `compare_m1_m6.py` `422ed9e7…`,
+`m1m6_expected_differences.json` `299c5799…` and `test_compare_m1_m6.py` `9b3ef0d4…` are byte-identical
+to §0. `generate_manifest.py --check` exits 0 at that tip and the worktree is clean.
+
+**This verdict expires the moment any of those three digests moves.** If you are reading it against a
+different digest, the mutation survey in §7 and findings G-1…G-7 have not been re-taken, and G-1, G-2
+and G-3 are the ones a repair would most likely have addressed.
 
 No `OPEN_ITEMS.md` row was filed, deliberately: this lane holds no clear ten-block (the spec records
 120–139 as exhausted, and a mis-allocated id is refused by a pre-commit hook), and `OPEN_ITEMS.md`

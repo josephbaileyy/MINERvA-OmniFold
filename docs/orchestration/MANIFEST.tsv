@@ -65,7 +65,7 @@ docs/orchestration/GATE1-VERDICT-ROUND6-20260823-k0-execution-integrity.md	track
 docs/orchestration/GATE1-VERDICT-ROUND7-20260823-k0-execution-integrity.md	tracked	LIVE	document		20260823	open		route-only		no	3	439	29917
 docs/orchestration/GATE1-VERDICT-ROUND8-20260823-k0-execution-integrity.md	tracked	LIVE	document		20260823	open		route-only		no	2	787	47575
 docs/orchestration/GATE1-VERDICT-ROUND9-20260823-k0-execution-integrity.md	tracked	LIVE	document		20260823	open		route-only		no	5	350	21235
-docs/orchestration/GRADE-20260825-f17b-comparison-instrument-fitness.md	tracked	LIVE	document		20260825	open		route-only		no	2	561	41221
+docs/orchestration/GRADE-20260825-f17b-comparison-instrument-fitness.md	tracked	LIVE	document		20260825	open		route-only		no	2	568	41819
 docs/orchestration/HANDOFF-20260815-0455Z.md	tracked	ARCHIVAL	document		20260815	terminal		exact-path-only	nd-unfolding/pet/closure_foldforward_instrumented.py	yes	2	209	15197
 docs/orchestration/HANDOFF-20260819-lane-e-data-only-cstat-smoke-57266000.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only	docs/orchestration/watch_report_train_run.py	yes	3	113	7264
 docs/orchestration/HANDOFF-20260820-2154Z-publication-closeout.md	tracked	ARCHIVAL	document		20260820	terminal		exact-path-only		yes	3	312	20870
@@ -177,7 +177,7 @@ docs/orchestration/findings_row_lint.py	tracked	MACHINE	script			generated		exac
 docs/orchestration/followup-agent-A-standard-05.md	tracked	ARCHIVAL	followup-prompt			terminal		exact-path-only		yes	8	52	3575
 docs/orchestration/gate2_queue_hedge_controller.sh	tracked	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/verify_hash_bindings.py	no	3	331	16015
 docs/orchestration/generate_live_state.py	tracked	MACHINE	generator-script			generated		exact-path-only	docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py	no	23	1044	50052
-docs/orchestration/generate_manifest.py	tracked	MACHINE	generator-script			generated		exact-path-only	docs/orchestration/live_doc_indexed.py	no	27	552	22972
+docs/orchestration/generate_manifest.py	tracked	MACHINE	generator-script			generated		exact-path-only	docs/orchestration/live_doc_indexed.py	no	28	552	22972
 docs/orchestration/live_doc_indexed.py	tracked	MACHINE	script			generated		exact-path-only		no	9	206	10620
 docs/orchestration/m1m6_expected_differences.json	tracked	MACHINE	machine-data			generated		exact-path-only	docs/orchestration/test_compare_m1_m6.py	no	3	48	3973
 docs/orchestration/measure_k0_farend_f1b_f17b.sh	tracked	MACHINE	shell-tool			generated		exact-path-only		no	2	106	7269
