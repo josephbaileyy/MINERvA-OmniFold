@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-25T02:1xZ",
+  "purpose": "k=0 rehearsal, logical leg 4a - universe throws, run arm: Slurm watch receipt for job 57527872 of run k0-aa67c426-20260824T145751Z.",
+  "PROVENANCE — READ THIS BEFORE QUOTING ANY FIELD": {
+    "authored_by": "the publication close-out lane (the lane that SUBMITTED this run), on Joseph's explicit instruction relayed 2026-08-25 via the interpreter session: 'yes, go ahead and wire the seven jobs in. Author the receipts with a negative control per receipt as you proposed.'",
+    "authored_when": "AFTER submission, ~11.2 h after it, while the run was still in flight",
+    "NOT_INDEPENDENT": "The submitting lane authored this. It is a record of WHAT WAS SUBMITTED and what Slurm reported, not an independent check of either. Anything requiring independence -- notably the Gate-2 verdict -- must come from a lane that did not produce this evidence (contract section 7.0.10, F-18 independence).",
+    "why_it_exists": "state/live-state.json listed exactly one job (57266000, which OI-126 put off the publication critical path) and no id from this run at all, so LIVE-STATE.md could not show the only compute in flight FROM ANY HOST. Regenerating on a login node dropped 'COULD NOT LOOK' to zero and still showed none of these seven: the gap was the config, not the observing host.",
+    "this_is_NOT": [
+      "an authorization receipt -- the authorization for this submission predates it and is not restated here",
+      "a Gate-1 or Gate-2 verdict, or any input to one",
+      "evidence that any product of this run is correct, adopted, or quotable",
+      "a claim that the run will finish"
+    ],
+    "every_field_below_is_either": "MEASURED from Slurm/the filesystem on 2026-08-25 between 02:02Z and 02:15Z, or CITED. Fields not measured say NOT MEASURED rather than carrying a guess."
+  },
+  "run_id": "k0-aa67c426-20260824T145751Z",
+  "job_id": "57527872",
+  "array_job_id": "57527872",
+  "tasks": "0-39",
+  "task_count": 40,
+  "job_name": "uthrow5d_runF",
+  "stage": "logical leg 4a - universe throws, run arm",
+  "declared_sbatch_array": "0-39%40",
+  "TASKS_IS_THE_DECLARED_SPEC_NOT_THE_OBSERVED_SUBSET": "Taken from the '#SBATCH --array' directive in the EXECUTING script under the frozen deploy, not from sacct. `sacct -X` collapses not-yet-started tasks into one bracketed row, so counting its per-task rows would have under-declared this leg (it gave 11 of 24 for the seedscan array and 10 of 40 for the run arm). The throttle suffix (%N) is stripped because expand_spec() parses ints.",
+  "dependency": "none",
+  "cpus_per_task": "49",
+  "memory_per_task": "90G",
+  "time_limit": "06:00:00",
+  "qos": "shared",
+  "partition_observed": "shared_milan_ss11",
+  "account": "m3246",
+  "submit_time_cluster_local_PDT": "2026-08-24T07:58:01",
+  "submit_time_utc": "2026-08-24T14:58:01Z",
+  "NOTE_slurm_prints_cluster_local_PDT": "Slurm and the filesystem stamp cluster-local PDT (UTC-7); SUBMISSION.txt stamps UTC. Do not mix them. A `find -newermt` boundary derived from the UTC stamp sat 7 h INSIDE this run and undercounted its products 17 vs 128.",
+  "deployment": {
+    "path": "/pscratch/sd/j/josephrb/k0r2/clean",
+    "commit": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+    "mode_observed": "dr-xr-x--- (A-2(g) write protection in force; a negative-control touch against it fails, which is the arm that proves the guard is live)",
+    "cited_to": "docs/orchestration/DECLARATION-20260823-k0-candidate-aa67c426.md",
+    "executing_script": "/pscratch/sd/j/josephrb/k0r2/clean/nd-unfolding/sbatch_uthrow_run_5d_fast.sh"
+  },
+  "two_roots": {
+    "MNV_CODE_ROOT": "/pscratch/sd/j/josephrb/k0r2/clean",
+    "MNV_DATA_ROOT": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "why_they_differ": "OI-136 / Joseph's ruling 17: two roots, both mandatory, neither defaulted. Code is executed and imported ONLY from CODE_ROOT, which is immutable and porcelain-empty; inputs and products live in DATA_ROOT and nothing is executed or imported from it (sbatch_uthrow_run_5d_fast.sh:34, :124). DATA_ROOT's uncommitted-entry count is therefore BY DESIGN irrelevant to A-2(f), which measures CODE_ROOT.",
+    "consequence_for_readers": "Products of this run are NOT under the run root. The run root holds logs and guard records only."
+  },
+  "run_root": "/pscratch/sd/j/josephrb/k0r2/runs/k0-aa67c426-20260824T145751Z",
+  "logs": [
+    "/pscratch/sd/j/josephrb/k0r2/runs/k0-aa67c426-20260824T145751Z/log/uq_5d/uthrow5d_runF_<task>_57527872.out",
+    "/pscratch/sd/j/josephrb/k0r2/runs/k0-aa67c426-20260824T145751Z/log/uq_5d/uthrow5d_runF_<task>_57527872.err"
+  ],
+  "guard_records": "/pscratch/sd/j/josephrb/k0r2/runs/k0-aa67c426-20260824T145751Z/inv/ -- one jsonl per completed task; measured 1:1 against COMPLETED at receipt time",
+  "products": "mii/member_k000000/uq_5d/uthrow_slabs_5d_sb/uthrow5d_slab_<n>.npz -- one per task",
+  "supervision": {
+    "watch_config_entry": "docs/orchestration/state/live-state.json -> jobs[]",
+    "subject_verified_observable": "build_snapshot(\"57527872\", expand_spec(\"0-39\")) on a login node returned unknown_tasks=[] with 40 task(s) accounted for, BEFORE this entry was added to the shared config.",
+    "negative_control": "Run per receipt. With this file's job_id perturbed to a value that does not match its config entry, generate_live_state.py:980-981 raises RuntimeError('job receipt mismatch for 57527872') and produces NO dashboard; with it correct, the generator completes and this job's row renders. Both arms recorded in the filing receipt. The guard fires BEFORE build_snapshot, so it is host-independent.",
+    "benign_observer_error": "A leg that has left the queue makes `squeue -j <id>` exit 1. build_snapshot records that in observer_errors while still returning overall=COMPLETE from sacct. A non-empty observer_errors on a COMPLETE row is normal and is NOT evidence that Slurm was unreachable."
+  },
+  "state_at_receipt": "See LIVE-STATE.md, which is now live for this job. A state written into this file would be stale the moment the next task turns over, so it is deliberately not duplicated here.",
+  "A_COMPLETION_AUTHORISES_NOTHING": {
+    "scope": "Completion of this leg, or of all seven jobs, unlocks NOTHING by itself. Gate 1's PASS authorised exactly one thing: submission of the seven jobs of logical legs 1-5 for k=0. Everything downstream is gated on Gate 2, whose nine operative clauses (contract section 7.0.18, enumerated at :634) are F-1(b) F-2(b) F-3(b) F-4(b) F-5(b) F-7(b) F-8(b) F-17(b) F-18(b).",
+    "still_prohibited_regardless_of_outcome": [
+      "logical leg 6 and sbatch_finalize_5d_bkgaware_gpu.sh",
+      "adoption, consumption, or quoting of any product of this run",
+      "any member k != 0",
+      "the family"
+    ],
+    "F-6(b)": "Scoped OUT of Gate 2 and INTO the separate leg-6 completion gate by Joseph's ruling. It remains MANDATORY and is NOT waived. That ruling authorised none of the four items above.",
+    "who_grades": "Not this lane. The far-end evidence goes to a third lane that neither produced it nor reshaped the rubric."
+  }
+}

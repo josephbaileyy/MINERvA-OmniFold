@@ -42,6 +42,49 @@
       "job_id": "57266000",
       "tasks": "0-0",
       "receipt": "docs/orchestration/state/gate5-do-train-array-active-57266000.json"
+    },
+    {
+      "job_id": "57527866",
+      "tasks": "1-100",
+      "leg": "k=0 leg 1 bootstrap",
+      "receipt": "docs/orchestration/state/k0r2-bootstrap-array-active-57527866.json"
+    },
+    {
+      "job_id": "57527869",
+      "tasks": "1-24",
+      "leg": "k=0 leg 2 seedscan",
+      "receipt": "docs/orchestration/state/k0r2-seedscan-array-active-57527869.json"
+    },
+    {
+      "job_id": "57527870",
+      "tasks": "0-18",
+      "leg": "k=0 leg 3 detector",
+      "receipt": "docs/orchestration/state/k0r2-detector-array-active-57527870.json"
+    },
+    {
+      "job_id": "57527872",
+      "tasks": "0-39",
+      "leg": "k=0 leg 4a uthrow run",
+      "receipt": "docs/orchestration/state/k0r2-uthrow-run-array-active-57527872.json"
+    },
+    {
+      "job_id": "57527873",
+      "tasks": "0-20",
+      "leg": "k=0 leg 4b uthrow block",
+      "receipt": "docs/orchestration/state/k0r2-uthrow-block-array-active-57527873.json"
+    },
+    {
+      "job_id": "57527874",
+      "tasks": "1-169",
+      "leg": "k=0 leg 5 sweep",
+      "receipt": "docs/orchestration/state/k0r2-sweep-array-active-57527874.json"
+    },
+    {
+      "job_id": "57527875",
+      "tasks": "0",
+      "leg": "k=0 combine (terminal)",
+      "single_job": true,
+      "receipt": "docs/orchestration/state/k0r2-combine-job-active-57527875.json"
     }
   ],
   "blockers": [
