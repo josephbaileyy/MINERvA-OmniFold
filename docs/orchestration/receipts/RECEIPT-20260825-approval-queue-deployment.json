@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-08-25T14:28:29+00:00",
+  "scope": "Infrastructure-only deployment of the deterministic approval-gated campaign queue; no scientific action was staged, approved, or run.",
+  "source_commit": "e96ba339959491667f00cf8485778c4384b41f6f",
+  "source_branch": "github/main",
+  "deployed_checkout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+  "candidate_checkout": "/pscratch/sd/j/josephrb/approval-queue-e96ba339",
+  "deployed_files": [
+    "docs/orchestration/.gitignore",
+    "docs/orchestration/OPERATOR-GUIDE.md",
+    "docs/orchestration/campaignctl.py",
+    "docs/orchestration/test_campaignctl.py",
+    "docs/orchestration/test_wakerctl.py",
+    "docs/orchestration/waker-config.json",
+    "docs/orchestration/wakerctl.py"
+  ],
+  "cluster_test": {
+    "command": "PYTHONPATH=. /usr/bin/python3.11 -m unittest test_campaignctl.py test_wakerctl.py test_notifyctl.py",
+    "candidate_result": "73 tests passed",
+    "live_result": "73 tests passed"
+  },
+  "preflight": "PASS: root Codex binary and /usr/bin/python3.11 available; control plane checked",
+  "live_tick": {
+    "node": "login40",
+    "emitted": [],
+    "dispatch": [],
+    "campaign_queue": {
+      "status": "idle",
+      "returncode": 0
+    },
+    "heartbeat": true,
+    "watch_errors": 0
+  },
+  "queue_counts": {
+    "approved": 0,
+    "failed": 0,
+    "outcome-unknown": 0,
+    "revoked": 0,
+    "staged": 0,
+    "stale": 0,
+    "succeeded": 0
+  },
+  "safety_properties": [
+    "Staging is not authorization.",
+    "Approval requires a matching full proposal digest and an interactive confirmation phrase.",
+    "The runner invokes an exact argv without a shell and at most one ready item per tick.",
+    "Repository HEAD, launcher, and explicitly bound inputs are revalidated before claim.",
+    "A claimed item without a terminal outcome is never retried automatically.",
+    "Queue approval cannot supply scientific authorization or waive governing OI/runbook gates."
+  ],
+  "limitation": "The TTY check separates noninteractive automation from human approval but is not cryptographic identity separation for processes sharing the josephrb Unix account."
+}

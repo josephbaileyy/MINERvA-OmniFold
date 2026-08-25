@@ -103,6 +103,13 @@ The approval command prints the full proposal and then asks you to type
 commit before typing it. The next healthy ticker executes it. Before it is
 claimed, cancel with:
 
+This TTY check prevents the noninteractive ticker from approving its own
+work, but it is not cryptographic identity separation: a tool deliberately
+given an interactive shell under the same Unix account could technically type
+the phrase. The operating contract therefore forbids agents from running
+`approve` or `revoke`; use a separate phone-held signing key in a future
+version if protection from a compromised same-account agent is required.
+
 ```bash
 /usr/bin/python3.11 campaignctl.py revoke --id <item-id>
 ```
