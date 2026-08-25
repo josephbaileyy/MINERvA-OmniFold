@@ -84,3 +84,4 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-136 | NOW | safe-default-active | OPEN — the hardcoded cluster root is the FAIL-OPEN twin of OI-123, and today's fast-forward made it harmless-for-now rat |
 | OI-137 | NOW | safe-default-active | OPEN — filed 2026-08-20 by the close-out orchestrator. A HAZARD THAT IS PRESENTLY UNOWNED ON THE PUBLICATION CRITICAL PA |
 | OI-138 | NOW | safe-default-active | OPEN |
+| OI-139 | NOW | safe-default-active | OPEN |
