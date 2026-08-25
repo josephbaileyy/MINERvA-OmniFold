@@ -120,6 +120,16 @@ mkdir -p "$OUT"
 
 echo "  ruler    : $MEASURER  sha256=$(sha256sum "$MEASURER" 2>/dev/null | cut -c1-12)"
 echo "  comparator: $COMPARATOR  sha256=$(sha256sum "$COMPARATOR" 2>/dev/null | cut -c1-12)"
+# TOOLS_ROOT must be a REAL CHECKOUT, not a staging directory holding just these two files.
+# Measured 2026-08-25: a partial TOOLS_ROOT passes a two-file existence check and then the
+# comparator refuses at exit 5, because the expected-list's CITATIONS resolve relative to --repo
+# and the cited document was not there. A precondition check that is narrower than the thing it
+# gates just moves the failure later and makes it read as a finding instead of a misconfiguration.
+if [ ! -d "$TOOLS_ROOT/.git" ] && ! git -C "$TOOLS_ROOT" rev-parse --git-dir >/dev/null 2>&1; then
+  echo "  REFUSE: TOOLS_ROOT=$TOOLS_ROOT is not a git checkout, so the expected-list's citations"
+  echo "          cannot resolve under --repo. Point MNV_TOOLS_ROOT at a real checkout."
+  rm -rf "$OUT"; exit 12
+fi
 if [ ! -f "$COMPARATOR" ] || [ ! -f "$EXPECTED" ]; then
   echo "  REFUSE: the comparator or its expected-list is absent under TOOLS_ROOT=$TOOLS_ROOT."
   echo "          Set MNV_TOOLS_ROOT to a checkout that carries docs/orchestration/compare_m1_m6.py."
