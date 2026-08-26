@@ -1,56 +1,68 @@
 #!/usr/bin/env python3
-"""F-8(b): refuse a rehearsal run receipt that does not state P-5's blind spots in its own words.
+"""F-8(b) MECHANICAL LINTER. It can never pass. It can only say REVIEW REQUIRED, or refuse.
 
-THE CLAUSE. `REVIEW-CONTRACT-20260822-k0-execution-integrity.md`, F-8, post-rehearsal column, in
-full: *"the receipt states the blind spots in the receipt's own words"*. F-8(a), the pre-submission
-half, is already filed at `RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings.md` §1.6, itself headed "P-5
--- THE BLIND SPOTS, IN MY OWN WORDS". So the far half is an AUTHORING act, and the prospective
-mechanism this file provides is the fail-closed check that the authoring actually happened.
+THE CLAUSE. `REVIEW-CONTRACT-20260822-k0-execution-integrity.md`, F-8, post-rehearsal column:
+*"the receipt states the blind spots in the receipt's own words"*. F-8(a) is filed at
+`RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings.md` §1.6.
 
-WHAT THIS CAN AND CANNOT DECIDE, stated here rather than left for a reader to over-infer, because a
-green check that is read as more than it proves is the failure this repository keeps paying for.
+WHY THIS FILE HAS NO PASSING EXIT STATUS, which is the whole design.
 
-  IT CAN decide three things mechanically:
-    (a) a blind-spots section EXISTS in the receipt;
-    (b) all FOUR blind spots recorded in F-8(a) are each addressed, by concept, not by wording;
-    (c) the section is NOT A TRANSCLUSION -- it shares no long verbatim span with the F-8(a) source.
+An earlier version returned rc=0 on mechanically acceptable prose. It was graded FIT as a prefilter
+and then the independent §10.1 readiness review ruled that exact behaviour a FAIL-OPEN GATE, and it
+was right. Two demonstrated defeats, both of which had returned rc=0:
 
-  IT CANNOT decide whether the words demonstrate UNDERSTANDING. "Own words" in the human sense is
-  not machine-checkable, and this file does not pretend otherwise. A PASS here means "authored, not
-  copied, and covering all four" -- it does NOT mean "F-8(b) is discharged". Discharge is a grader's
-  judgement over the prose. The exit text says so on every pass.
+    KEYWORD-STUFFING, one line, no content:
+        # blind spots
+        origin is none sys.modules child process .sh
 
-WHY NON-TRANSCLUSION IS THE OPERATIVE TEST. The cheap way to fake this clause is to paste F-8(a)'s
-section into the run receipt. That satisfies "the blind spots are stated" and defeats "in the
-receipt's own words" completely, and it is the ONLY failure mode a machine can catch reliably. So
-that is the one it catches, and the check says that is all it catches.
+    MORAL PASTE, F-8(a) §1.6 with the word "potato" interleaved to break every 200-char run.
 
-Exit codes follow the campaign's existing vocabulary:
-    0  PASS         -- all four addressed, no transclusion. NOT a discharge of F-8(b).
-    2  CANNOT CHECK -- a required input could not be read. Never a pass.
-    3  VIOLATION    -- a blind spot is unaddressed, or the section is transcluded.
+The readiness review's reasoning, and the reason a label was not enough: *"a mechanical check that
+outputs a green rc=0 creates a strong anchoring effect, degrading the likelihood that a subsequent
+human or grader will perform the 'mandatory' prose judgment with sufficient skepticism… a label is
+insufficient protection against the systemic risk of a future lane simply citing the rc=0 result as
+proof of compliance."*
+
+So the fix is not a better heuristic -- no word count, no keyword density, no different span
+threshold, all explicitly ruled out. The fix is that **THERE IS NO GREEN TO CITE**. The best outcome
+this file can produce is exit 10, REVIEW_REQUIRED, which no pipeline can mistake for success.
+
+THE ACTUAL F-8(b) GATE IS ELSEWHERE: a separately recorded independent prose attestation, validated
+by `verify_f8b_attestation.py`. That validator is the only thing in this pair that can return 0, and
+it can do so only while bound to this linter's report digest and the receipt digest.
+
+EXIT CODES. 0 IS UNREACHABLE BY CONSTRUCTION and a test asserts it.
+    10  REVIEW_REQUIRED -- mechanically acceptable. NOT a pass. Prose attestation still required.
+     2  CANNOT CHECK    -- an input could not be read. Never a pass.
+     3  NO SECTION      -- no blind-spots section, or it is empty.
+     4  INCOMPLETE      -- a blind spot is not addressed.
+     5  TRANSCLUDED     -- the section shares a long verbatim run with F-8(a) §1.6.
+Three distinct refusal codes because "absent", "incomplete" and "copied" are different defects and
+collapsing them would hide which one fired.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import pathlib
 import re
 import sys
 
-OK_EXIT = 0
+REVIEW_REQUIRED_EXIT = 10
 CANNOT_CHECK_EXIT = 2
-VIOLATION_EXIT = 3
+NO_SECTION_EXIT = 3
+INCOMPLETE_EXIT = 4
+TRANSCLUDED_EXIT = 5
 
-# Derived, never a literal: OI-136's finding is that a hardcoded checkout root makes a tool read the
-# wrong tree. This file lives at <repo>/docs/orchestration/, so parents[2] is the repo root.
+REPORT_SCHEMA = "f8b-linter-report/1"
+
+# Derived, never a literal. OI-136: a hardcoded checkout root makes a tool read the wrong tree.
+# This file lives at <repo>/docs/orchestration/, so parents[2] is the repo root.
 _REPO = pathlib.Path(__file__).resolve().parents[2]
 
 SOURCE_REL = "docs/orchestration/RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings.md"
-SOURCE_SECTION = "P-5 — THE BLIND SPOTS, IN MY OWN WORDS"
 
-# A blind spot is matched by CONCEPT, never by a sentence, so a genuine paraphrase passes and a
-# reworded copy still has to say the same thing. Each entry needs EVERY group to hit, and a group is
-# satisfied by ANY of its alternatives.
 REQUIRED_BLIND_SPOTS = {
     "namespace-packages": [
         ("namespace",),
@@ -68,19 +80,26 @@ REQUIRED_BLIND_SPOTS = {
     ],
 }
 
-# A shared verbatim run of this many characters is transclusion, not paraphrase. Chosen well above
-# any phrase the two documents would share by necessity (clause names, "blind spot", "sys.modules")
-# and well below the length of the shortest real paragraph.
 TRANSCLUSION_SPAN = 200
 
 
+def sha256_text(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def sha256_file(path: pathlib.Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
 def _norm(text: str) -> str:
-    """Collapse whitespace and case so reflowing or re-indenting a paste is still a paste."""
     return re.sub(r"\s+", " ", text).strip().lower()
 
 
 def extract_section(text: str, heading_contains: str) -> str | None:
-    """Return the body under the first heading containing `heading_contains`, else None."""
     lines = text.split("\n")
     start = None
     level = 0
@@ -102,11 +121,6 @@ def extract_section(text: str, heading_contains: str) -> str | None:
 
 
 def longest_common_span(a: str, b: str, cap: int) -> int:
-    """Length of the longest common substring, stopped once it reaches `cap`.
-
-    Rolling comparison over `a`'s windows. Returns as soon as `cap` is met, so the cost is bounded
-    when a transclusion is present -- the case where the answer already decides the verdict.
-    """
     if not a or not b:
         return 0
     best = 0
@@ -123,83 +137,101 @@ def longest_common_span(a: str, b: str, cap: int) -> int:
     return best
 
 
-def check(receipt_text: str, source_text: str) -> tuple[int, list[str]]:
-    notes: list[str] = []
+def lint(receipt_text: str, source_text: str) -> tuple[int, list[str], dict]:
+    """Return (exit_code, notes, report_fields). NEVER returns 0."""
+    facts: dict = {"spots_addressed": [], "spots_unaddressed": [], "longest_shared_span": None}
 
     section = extract_section(receipt_text, "blind spot")
     if section is None or not section.strip():
-        return VIOLATION_EXIT, [
-            "no blind-spots section: the receipt has no heading containing 'blind spot', or it is "
-            "empty. F-8(b) requires the receipt to STATE them; an absent section is not an empty "
-            "set of blind spots, it is an unwritten receipt."]
+        return NO_SECTION_EXIT, [
+            "NO SECTION: no heading containing 'blind spot', or it is empty. An absent section is "
+            "not an empty set of blind spots; it is an unwritten receipt."], facts
 
     norm_section = _norm(section)
+    facts["section_sha256"] = sha256_text(section)
 
-    missing = []
     for spot, groups in sorted(REQUIRED_BLIND_SPOTS.items()):
-        for alts in groups:
-            if not any(a in norm_section for a in alts):
-                missing.append((spot, alts))
-                break
-    if missing:
-        for spot, alts in missing:
-            notes.append("blind spot NOT ADDRESSED: %s -- the section says none of %s"
-                         % (spot, list(alts)))
-        return VIOLATION_EXIT, notes
+        if all(any(a in norm_section for a in alts) for alts in groups):
+            facts["spots_addressed"].append(spot)
+        else:
+            facts["spots_unaddressed"].append(spot)
+    if facts["spots_unaddressed"]:
+        return INCOMPLETE_EXIT, [
+            "INCOMPLETE: blind spot(s) not addressed: %s" % facts["spots_unaddressed"]], facts
 
     src_section = extract_section(source_text, "BLIND SPOTS")
     if src_section is None:
         return CANNOT_CHECK_EXIT, [
-            "cannot locate the F-8(a) source section in %s, so the transclusion arm cannot run. A "
-            "check that cannot run is never a pass." % SOURCE_REL]
+            "CANNOT CHECK: the F-8(a) source section could not be located in %s, so the "
+            "transclusion arm cannot run. A check that cannot run is never a pass." % SOURCE_REL], facts
 
     span = longest_common_span(norm_section, _norm(src_section), TRANSCLUSION_SPAN)
+    facts["longest_shared_span"] = span
     if span >= TRANSCLUSION_SPAN:
-        return VIOLATION_EXIT, [
-            "TRANSCLUDED: the receipt's blind-spots section shares a verbatim run of >= %d "
-            "characters with F-8(a) §1.6. All four spots being present does not satisfy 'in the "
-            "receipt's own words' when the words are the source's. Longest shared span: %d chars."
-            % (TRANSCLUSION_SPAN, span)]
+        return TRANSCLUDED_EXIT, [
+            "TRANSCLUDED: shares a verbatim run of >= %d characters with F-8(a) §1.6 (measured %d). "
+            "All four spots being present does not satisfy 'in the receipt's own words' when the "
+            "words are the source's." % (TRANSCLUSION_SPAN, span)], facts
 
-    notes.append("all four blind spots addressed by concept")
-    notes.append("longest verbatim span shared with F-8(a): %d chars (threshold %d)"
-                 % (span, TRANSCLUSION_SPAN))
-    return OK_EXIT, notes
+    return REVIEW_REQUIRED_EXIT, [
+        "all four blind spots addressed by concept",
+        "longest verbatim span shared with F-8(a): %d chars (threshold %d)" % (span, TRANSCLUSION_SPAN),
+    ], facts
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--receipt", required=True, help="the rehearsal run receipt to check")
-    ap.add_argument("--source", default=str(_REPO / SOURCE_REL),
-                    help="the F-8(a) filing whose §1.6 the receipt must not transclude")
+    ap = argparse.ArgumentParser(description="F-8(b) mechanical linter. Never returns 0.")
+    ap.add_argument("--receipt", required=True)
+    ap.add_argument("--source", default=str(_REPO / SOURCE_REL))
+    ap.add_argument("--report", help="write the structured REVIEW_REQUIRED report here (JSON)")
     a = ap.parse_args(argv)
 
+    receipt_path = pathlib.Path(a.receipt)
     try:
-        receipt_text = pathlib.Path(a.receipt).read_text(encoding="utf-8", errors="replace")
+        receipt_text = receipt_path.read_text(encoding="utf-8", errors="replace")
+        receipt_sha = sha256_file(receipt_path)
     except OSError as err:
-        print("[f8b] CANNOT CHECK: cannot read the receipt %s: %s" % (a.receipt, err),
-              file=sys.stderr)
+        print("[f8b-lint] CANNOT CHECK: cannot read receipt %s: %s" % (a.receipt, err), file=sys.stderr)
         return CANNOT_CHECK_EXIT
     try:
         source_text = pathlib.Path(a.source).read_text(encoding="utf-8", errors="replace")
     except OSError as err:
-        print("[f8b] CANNOT CHECK: cannot read the F-8(a) source %s: %s" % (a.source, err),
+        print("[f8b-lint] CANNOT CHECK: cannot read F-8(a) source %s: %s" % (a.source, err),
               file=sys.stderr)
         return CANNOT_CHECK_EXIT
 
-    rc, notes = check(receipt_text, source_text)
-    stream = sys.stdout if rc == OK_EXIT else sys.stderr
+    rc, notes, facts = lint(receipt_text, source_text)
+    assert rc != 0, "the linter must never return 0"
+
+    stream = sys.stderr if rc != REVIEW_REQUIRED_EXIT else sys.stdout
     for n in notes:
-        print("[f8b]   %s" % n, file=stream)
-    if rc == OK_EXIT:
-        print("[f8b] PASS -- the receipt states all four blind spots and does not transclude "
-              "F-8(a).", file=stream)
-        print("[f8b] THIS IS NOT A DISCHARGE OF F-8(b). It establishes that the section was "
-              "authored, covers all four, and is not a paste. Whether the words demonstrate "
-              "understanding is a GRADER's judgement over the prose and is not machine-checkable.",
-              file=stream)
-    elif rc == VIOLATION_EXIT:
-        print("[f8b] VIOLATION -- the receipt does not satisfy F-8(b)'s stated form.", file=stream)
+        print("[f8b-lint]   %s" % n, file=stream)
+
+    if rc == REVIEW_REQUIRED_EXIT:
+        report = {
+            "schema": REPORT_SCHEMA,
+            "status": "REVIEW_REQUIRED",
+            "receipt_path": str(receipt_path),
+            "receipt_sha256": receipt_sha,
+            "linter_exit_code": rc,
+            **facts,
+            "this_is_not_a_pass": (
+                "REVIEW_REQUIRED is NOT compliance with F-8(b) and NOT a pass. This linter has no "
+                "passing exit status by construction, because a green result was ruled a fail-open "
+                "gate by the independent 10.1 readiness review. It is defeated by keyword-stuffing "
+                "and by a paste broken under the span threshold, both demonstrated. F-8(b) is gated "
+                "ONLY by a separately recorded independent prose attestation validated by "
+                "verify_f8b_attestation.py, which must bind this report's digest and the receipt's."),
+        }
+        text = json.dumps(report, indent=2, sort_keys=True) + "\n"
+        if a.report:
+            pathlib.Path(a.report).write_text(text, encoding="utf-8")
+            print("[f8b-lint] wrote report %s (sha256 %s)"
+                  % (a.report, sha256_text(text)), file=stream)
+        else:
+            print(text, file=stream)
+        print("[f8b-lint] REVIEW REQUIRED (exit %d) -- NOT A PASS. An independent prose attestation "
+              "is required and is the actual F-8(b) gate." % rc, file=stream)
     return rc
 
 

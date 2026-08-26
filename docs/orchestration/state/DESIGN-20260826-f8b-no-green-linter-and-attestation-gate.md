@@ -1,0 +1,142 @@
+# F-8(b) redesign — a linter that cannot pass, and an attestation that can
+
+**CITABLE FOR:** the design and exit-code contract of `verify_run_receipt_blind_spots.py` and
+`verify_f8b_attestation.py`; the measured correction to the recorded BREAK-1 result; two defects
+measured in the §10.1 readiness verdict.
+
+**NOT CITABLE FOR:** discharge of F-8(b) — nothing here discharges it. **Gate 2 remains FAIL.** No
+rehearsal is authorized, none was run, no receipt for `k0-aa67c426-20260824T145751Z` is created or
+backfilled, and no estimator, covariance, adoption, compute result or publication claim is touched.
+
+**AUTHOR.** `claude-school-main` (publication close-out lane), conversation
+`0a6252ff-192d-41ee-ab49-c749f55c97f9`. This lane **wrote both instruments** and therefore cannot
+grade them. Independent grades are recorded separately.
+
+## 1. What was blocked, and by whom
+
+The §10.1 readiness review returned **`READINESS-10-1: NOT READY`**, preserved verbatim at
+`docs/orchestration/runs/agy-g2-gate-verifier/20260826-readiness-10-1-VERDICT.md`, sha256
+`67bee6f2dd710659d1442780c99792ef5c6d4dc0e33dca00b76104c16c87099e`, 8136 B. All three mechanisms
+were answered *present and independently graded: YES*; the block was the fourth question:
+
+> *do the prefilter's rc=0 semantics create a fail-open gate?* **YES**
+
+> *"A mechanical check that outputs a green rc=0 creates a strong anchoring effect, degrading the
+> likelihood that a subsequent human or grader will perform the 'mandatory' prose judgment with
+> sufficient skepticism… While the script prints 'THIS IS NOT A DISCHARGE OF F-8(b)', a label is
+> insufficient protection against the systemic risk of a future lane simply citing the rc=0 result
+> as proof of compliance, especially when the 'mandatory independent prose judgment' is a process
+> intention rather than an encoded, cryptographic gate."*
+
+The redesign below was authorized by the Codex proxy to whom Joseph delegated PASS/BLOCK authority.
+
+## 2. The design
+
+**The linter has no passing exit status.** Not a relabelled one — an absent one. There is no green to
+cite, so the anchoring argument has nothing to anchor on and the "future lane cites rc=0" failure
+mode is unreachable rather than discouraged.
+
+`docs/orchestration/verify_run_receipt_blind_spots.py`
+
+| exit | meaning |
+|---|---|
+| **10** | `REVIEW_REQUIRED` — mechanically acceptable. **Not a pass.** Emits a JSON report bound to the receipt's sha256, whose `this_is_not_a_pass` field says so in the artifact itself, not only on stdout. |
+| 2 | CANNOT CHECK — an input could not be read. |
+| 3 | NO SECTION — absent or empty blind-spots section. |
+| 4 | INCOMPLETE — a blind spot is not addressed; the spot is named. |
+| 5 | TRANSCLUDED — a ≥200-char verbatim run shared with F-8(a) §1.6. |
+
+Missing, incomplete and copied stay **three distinct codes**; collapsing them would hide which
+fired. `0` is unreachable by construction and `test_no_exit_constant_in_the_module_is_zero` plus
+`test_no_input_whatsoever_can_produce_exit_zero` are the encoded form of the ruling.
+
+**The gate is a separately recorded independent prose attestation.**
+`docs/orchestration/verify_f8b_attestation.py` returns 0 only when the attestation:
+
+1. binds the **exact** receipt sha256 **and** the **exact** linter-report sha256, both recomputed
+   from disk at validation time — so editing either artifact afterwards invalidates the attestation
+   without anyone having to remember to mark it superseded;
+2. names **both** parties as `{role, conversation_uuid}` and rejects self-attestation on **either**
+   field — a lane can rename itself, and one conversation can claim two roles;
+3. carries a written independence basis above an emptiness floor;
+4. gives a **distinct, non-empty** semantic finding for **each** of the four blind spots, in the
+   reviewer's own words, with duplicate-across-spots rejected after whitespace/case normalisation;
+5. explicitly addresses the copying / word-salad risk;
+6. ends in an **unambiguous** `PASS` — `FAIL`, `CANNOT CHECK`, absent, and `PASS WITH RESERVATIONS`
+   are all rejected;
+7. is not marked `superseded_by`, `draft` or `withdrawn`.
+
+**Independence is checked structurally, never by grading prose.** Word-count, keyword-density and
+threshold-tuning fixes were explicitly ruled out and none was added. The comparison that does the
+work is two distinct conversation uuids, which is a fact a program can actually check.
+
+**WHAT THE PASS DOES NOT CLAIM,** and the tool prints this on every pass: it validates the recorded
+**decision and its bindings**, not the semantic truth of the judgement. A reviewer who writes four
+thoughtful-looking findings about a bad receipt produces a valid attestation of a wrong judgement.
+What is established is that a named party who is not the author judged **these exact bytes**, and
+cannot silently reuse that judgement for different ones.
+
+## 3. Tests, and their power
+
+58 arms, all OK: 18 in `test_verify_run_receipt_blind_spots.py`, 40 in
+`test_verify_f8b_attestation.py`. Every requirement has an arm that **removes** it and asserts
+rejection, and `EveryRequirementHasARemovalArm` reads the suite's own source so a future field added
+without a removal arm fails the suite.
+
+Mutation-measured, because a suite of only good-input arms proves nothing about refusal:
+
+| mutant | result |
+|---|---|
+| validator returns `PASS` unconditionally | **31 of 40 fail** |
+| linter's `REVIEW_REQUIRED_EXIT` set back to `0` | **5 of 18 fail**, including the two named no-green arms and the recorded-break arm |
+
+The two recorded adversarial texts are **read from the grader's verdict file at test time and its
+digest asserted**, not copied into the suite. A copy could drift from the evidence; this coupling
+makes deletion or edit of the preserved examples a loud test failure.
+
+## 4. CORRECTION — the recorded BREAK 1 result does not reproduce
+
+`20260826-f8b-VERDICT.md` records `rc=0` for both breaks. **Measured, with the exact recorded texts,
+against the pre-redesign instrument at `f31d07df`:**
+
+| example | recorded | **measured (old instrument)** |
+|---|---|---|
+| BREAK 1, keyword-stuffing | `rc=0` | **`rc=3`** — refused. `namespace-packages` and `already-imported-modules` both NOT ADDRESSED |
+| BREAK 2, moral paste | `rc=0` | `rc=0` — **confirmed**, longest shared span 150 chars against a 200 threshold |
+
+BREAK 1's string — `origin is none sys.modules child process .sh` — contains neither `namespace` nor
+any `already-imported` alternate, so the old instrument always refused it. **The keyword-stuffing
+CLASS is real even though the recorded instance is not:** adding exactly the two missing words and
+nothing else gives `namespace origin is none sys.modules install( child process .sh`, one line of
+pure stuffing, which the old instrument passed at **`rc=0`** (measured). That string is
+`STUFFER_THAT_WORKS` in the suite and has its own arm.
+
+The grader's verdict file is **preserved unedited** — it is not this lane's to correct. The false
+annotation is corrected here and in the author disposition, which is this lane's own file.
+
+**This does not overturn the readiness block.** BREAK 2 alone demonstrates the fail-open mode, and
+the readiness review's central argument does not depend on either example.
+
+## 5. Two defects measured in the §10.1 readiness verdict itself
+
+Recorded so the re-run does not inherit them, **not** as grounds to discount the verdict:
+
+1. **It recorded `TIP SHA: 3ae656951734bc90371bd64c56ccc4ce970b1470`** — local `main` — while the
+   brief named branch tip `f31d07df`. Measured: `verify_run_receipt_blind_spots.py` is **ABSENT** at
+   `3ae65695`, ABSENT at `4beb63ee`, and PRESENT only at `f31d07df`; it is also absent from the
+   primary checkout's working tree. **The reviewer never had the instrument source in front of it**,
+   and its verdict quotes no instrument internals.
+2. **It inherited both break results** — *"as demonstrated by the F-8(b) grader"* — rather than
+   measuring them, which is how the false BREAK-1 result propagated into the readiness reasoning.
+
+Its three *present and independently graded: YES* answers are nonetheless **true of `f31d07df`**,
+verified here: the exclusion-digest pin (`57508b31`, an ancestor), `compare_m1_m6.py` and
+`measure_m1_m6.py` are all present in that one tree. The answers are correct; they were not
+established by what the reviewer measured. The §10.1 re-run must name and verify its tip, and must
+measure the adversarial examples rather than inherit them.
+
+## 6. What still stands between here and Gate 2
+
+Unchanged by this work: producer filings for **F-2(b)**, **F-3(b)** and **F-5(b)**; the rehearsal
+itself; and F-17(b)'s `:1471` half, which **cannot be backfilled for this rehearsal** — only a new
+forward-only rehearsal can satisfy it. **Gate 2 remains FAIL, with no partial credit.**

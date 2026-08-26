@@ -380,6 +380,25 @@ overriding another lane's classifications was correct, and this lane does not ad
 its own work. It blocks nothing here **unless the routed publication gate explicitly depends on it**,
 which must be established by reading that gate rather than assumed either way.
 
+### 10.3 §10.1 ran and returned NOT READY; the block is answered by a redesign (2026-08-26)
+
+The readiness check §10.1 creates was run by `agy-g2-gate-verifier` (conversation
+`dc93a0f8-6863-48c8-9b7b-76f22f6deae2`) and returned **`READINESS-10-1: NOT READY`**, preserved
+verbatim at `docs/orchestration/runs/agy-g2-gate-verifier/20260826-readiness-10-1-VERDICT.md`,
+sha256 `67bee6f2dd710659d1442780c99792ef5c6d4dc0e33dca00b76104c16c87099e`, 8136 B. All three
+mechanisms were present and independently graded; the block was the F-8(b) prefilter's `rc=0`
+semantics, ruled a **fail-open gate**.
+
+The redesign that answers it — a linter with **no passing exit status**, plus a fail-closed
+independent-attestation validator that is the actual gate — is recorded at
+`docs/orchestration/state/DESIGN-20260826-f8b-no-green-linter-and-attestation-gate.md`. That record
+also carries two measured corrections: the recorded BREAK-1 `rc=0` **does not reproduce**, and the
+readiness verdict recorded a tip (`3ae65695`) at which the instrument it graded **does not exist**.
+Neither correction changes the direction of the block.
+
+**§10.1 must be re-run on the successor tip.** A NOT READY that has been answered is not thereby
+READY, and this lane built the mechanisms, so it is not the check. **Gate 2 remains FAIL.**
+
 ## 11. Cited artifacts, with the field named
 
 Digests are content `sha256` truncated to 8 unless labelled otherwise. Note that a git **blob id** is

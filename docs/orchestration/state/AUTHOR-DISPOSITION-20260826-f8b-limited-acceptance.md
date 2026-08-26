@@ -1,5 +1,14 @@
 # AUTHOR DISPOSITION — F-8(b) mechanical prefilter, LIMITED acceptance
 
+> **SUPERSEDED IN PART, 2026-08-26.** The instrument this disposition accepts *as a prefilter* has
+> since been redesigned to have **no passing exit status at all**, after the §10.1 readiness review
+> ruled its `rc=0` a fail-open gate. See
+> `DESIGN-20260826-f8b-no-green-linter-and-attestation-gate.md`.
+>
+> **CITABLE FOR:** the grader's verdict, the contradiction inside it, the preserved BREAK texts, and
+> the false-positive surface. **NOT CITABLE FOR:** the `rc=0` semantics, which no longer exist, or
+> for the BREAK-1 result, **which does not reproduce** — corrected in §"Correction" below.
+
 **AUTHOR SYNTHESIS.** Written by `claude-school-main` (publication close-out lane), which **wrote the
 instrument this disposition is about**. It is not grader output. The grader's own file is preserved
 verbatim beside it and governs wherever the two differ.
@@ -41,14 +50,15 @@ nothing about whether the author engaged with the blind spots, which is what the
 Preserved exactly. They are the specification for any future hardening, and the reason `rc=0` is
 weak evidence.
 
-**BREAK 1 — keyword-stuffing, `rc=0`.** Concepts mentioned without saying anything real:
+**BREAK 1 — keyword-stuffing, recorded as `rc=0`; MEASURED `rc=3`, see the correction below.**
+Concepts mentioned without saying anything real:
 
 ```
 # blind spots
 origin is none sys.modules child process .sh
 ```
 
-**BREAK 2 — moral paste under the span, `rc=0`.** F-8(a) §1.6 pasted, with the word `potato`
+**BREAK 2 — moral paste under the span, `rc=0`; measured and CONFIRMED (shared span 150 of 200).** F-8(a) §1.6 pasted, with the word `potato`
 interleaved to break every 200-character run:
 
 ```
@@ -66,6 +76,18 @@ The inventory cannot see four things, and none of them is closed here:
 3. **Anything in a further subprocess.** Enumerated below.
 4. **The `.sh` rout potato e entirely** (B-5). Nothing in this receipt speaks to it.
 ```
+
+## Correction — BREAK 1 was always refused
+
+Measured 2026-08-26 with the exact recorded text against the pre-redesign instrument at `f31d07df`:
+**`rc=3`**, `blind spot NOT ADDRESSED: already-imported-modules` and `namespace-packages`. The
+string contains neither `namespace` nor any already-imported alternate, so the check refused it. The
+grader's `rc=0` for BREAK 1 is wrong; BREAK 2's is right.
+
+The keyword-stuffing **class** is real regardless: adding exactly the two missing words gives
+`namespace origin is none sys.modules install( child process .sh`, one line of pure stuffing, which
+the old instrument passed at `rc=0` (measured). The grader's verdict file is preserved **unedited**
+— it is not this lane's to correct.
 
 ## The false-POSITIVE surface, also recorded
 
