@@ -103,23 +103,64 @@ class Fixture(unittest.TestCase):
         self.assertIn(needle, text)
 
 
-class AValidAttestationPasses(Fixture):
+class AValidAttestationIsWELLFORMEDNeverPASSED(Fixture):
     """The paired silent-on-good arm. Without it every removal arm below is satisfied by `return 3`."""
 
-    def test_a_complete_digest_bound_independent_attestation_passes(self):
+    def test_a_complete_digest_bound_independent_attestation_is_WELL_FORMED(self):
         rc, text = self.run_cli(valid_attestation())
-        self.assertEqual(rc, A.PASS_EXIT, text)
-        self.assertIn("PASS", text)
+        self.assertEqual(rc, A.WELL_FORMED_EXIT, text)
+        self.assertIn("ATTESTATION_WELL_FORMED", text)
+        self.assertIn("NOT A DISCHARGE OF F-8(b)", text)
 
-    def test_the_pass_disclaims_proving_semantic_truth(self):
+    def test_the_well_formed_result_disclaims_BOTH_correctness_and_authorship(self):
         rc, text = self.run_cli(valid_attestation())
-        self.assertEqual(rc, A.PASS_EXIT, text)
-        self.assertIn("does NOT prove", text)
-        self.assertIn("semantically correct", text)
+        self.assertEqual(rc, A.WELL_FORMED_EXIT, text)
+        self.assertIn("DOES NOT PROVE THE JUDGEMENT IS CORRECT", text)
+        self.assertIn("DOES NOT PROVE THE NAMED REVIEWER WROTE IT", text)
+        self.assertIn("RECORDED AUTHORITY DECISION", text)
 
-    def test_the_pass_is_reached_through_validate_not_only_the_cli(self):
+    def test_the_well_formed_status_is_reached_through_validate_not_only_the_cli(self):
         rc, notes = A.validate(valid_attestation(), RECEIPT_SHA, REPORT_SHA)
-        self.assertEqual(rc, A.PASS_EXIT, notes)
+        self.assertEqual(rc, A.WELL_FORMED_EXIT, notes)
+
+
+class ThisCheckerHasNoGreenEITHER(Fixture):
+    """Two independent reviews ruled a green exit beside a printed caveat a fail-open gate.
+
+    The linter already had no zero. This one now has none either, so NOTHING in the F-8(b) toolchain
+    returns 0 and there is no exit code anywhere a future lane can cite as "F-8(b) discharged".
+    """
+
+    def test_no_exit_constant_in_the_module_is_zero(self):
+        names = [n for n in dir(A) if n.endswith("_EXIT")]
+        self.assertGreaterEqual(len(names), 3, names)
+        for n in names:
+            self.assertNotEqual(getattr(A, n), 0,
+                                "%s is 0; this checker must have no passing status" % n)
+
+    def test_no_attestation_whatsoever_can_produce_exit_zero(self):
+        cases = [("valid", valid_attestation())]
+        for field in ("receipt_sha256", "linter_report_sha256", "receipt_author",
+                      "independent_reviewer", "independence_basis", "per_spot_findings",
+                      "copying_and_word_salad_risk", "verdict"):
+            att = valid_attestation()
+            del att[field]
+            cases.append(("no " + field, att))
+        att = valid_attestation(); att["schema"] = "wrong"; cases.append(("bad schema", att))
+        att = valid_attestation(); att["superseded_by"] = "later.json"; cases.append(("superseded", att))
+        seen = set()
+        for label, att in cases:
+            rc, text = self.run_cli(att)
+            self.assertNotEqual(rc, 0, "%s produced exit 0: %s" % (label, text))
+            seen.add(rc)
+        self.assertIn(A.WELL_FORMED_EXIT, seen, "no arm reached WELL_FORMED; suite is blind")
+        self.assertIn(A.REJECTED_EXIT, seen)
+
+    def test_the_word_PASS_is_not_used_for_this_checkers_own_result(self):
+        """The verdict FIELD is still `PASS` -- that is the reviewer's word. The TOOL's is not."""
+        rc, text = self.run_cli(valid_attestation())
+        self.assertEqual(rc, A.WELL_FORMED_EXIT, text)
+        self.assertNotIn("[f8b-att] PASS", text)
 
 
 class TheDigestBindingsAreReal(Fixture):
@@ -151,7 +192,7 @@ class TheDigestBindingsAreReal(Fixture):
         """
         att = valid_attestation()
         rc, text = self.run_cli(att)
-        self.assertEqual(rc, A.PASS_EXIT, text)
+        self.assertEqual(rc, A.WELL_FORMED_EXIT, text)
         self.receipt.write_bytes(RECEIPT_BYTES + b"\na later edit nobody attested to\n")
         rc, text = self.run_cli(att)
         self.assertEqual(rc, A.REJECTED_EXIT, text)
@@ -283,7 +324,7 @@ class TheVerdictMustBeAnUnambiguousPass(Fixture):
         att = valid_attestation()
         att["verdict"] = "pass"
         rc, text = self.run_cli(att)
-        self.assertEqual(rc, A.PASS_EXIT, text)
+        self.assertEqual(rc, A.WELL_FORMED_EXIT, text)
 
 
 class StaleAndSupersededAttestations(Fixture):
@@ -382,7 +423,7 @@ class TheAdversarialInputsFoundByTheIMPLEMENTATIONGRADE(Fixture):
 
     def test_a_real_uuid_pair_still_passes_so_the_form_check_is_not_a_blanket_refusal(self):
         rc, text = self.run_cli(valid_attestation())
-        self.assertEqual(rc, A.PASS_EXIT, text)
+        self.assertEqual(rc, A.WELL_FORMED_EXIT, text)
 
     def test_findings_differing_only_by_a_TRAILING_DIGIT_are_still_one_finding(self):
         """The grade's exact break: the same 80-char run with a trailing 1 and a trailing 2."""
@@ -401,13 +442,13 @@ class TheAdversarialInputsFoundByTheIMPLEMENTATIONGRADE(Fixture):
     def test_four_genuinely_different_findings_are_NOT_caught_by_the_skeleton(self):
         """Control. Without this the arms above are satisfied by rejecting every attestation."""
         rc, notes = A.validate(valid_attestation(), RECEIPT_SHA, REPORT_SHA)
-        self.assertEqual(rc, A.PASS_EXIT, notes)
+        self.assertEqual(rc, A.WELL_FORMED_EXIT, notes)
 
     def test_the_UNCLOSEABLE_hole_is_disclosed_on_the_pass_path_and_in_the_docstring(self):
         """A hole that cannot be closed must at least be impossible to miss."""
         rc, text = self.run_cli(valid_attestation())
-        self.assertEqual(rc, A.PASS_EXIT, text)
-        self.assertIn("NOTHING HERE BINDS THIS FILE TO THE PARTY IT NAMES", text)
+        self.assertEqual(rc, A.WELL_FORMED_EXIT, text)
+        self.assertIn("DOES NOT PROVE THE NAMED REVIEWER WROTE IT", text)
         self.assertIn("no signature", text.lower())
         doc = A.__doc__ or ""
         self.assertIn("OPEN, AND NOT CLOSEABLE HERE", doc)
@@ -442,7 +483,7 @@ class TheSecondRoundOfAdversarialInputs(Fixture):
             att["receipt_author"]["role"] = author
             att["independent_reviewer"]["role"] = reviewer
             rc, text = self.run_cli(att)
-            self.assertEqual(rc, A.PASS_EXIT,
+            self.assertEqual(rc, A.WELL_FORMED_EXIT,
                              "%r and %r are two roles, not one: %s" % (author, reviewer, text))
 
     def test_a_HOMOGLYPH_in_an_identity_field_is_rejected(self):
@@ -461,7 +502,7 @@ class TheSecondRoundOfAdversarialInputs(Fixture):
         att = valid_attestation()
         att["status"] = "filed"
         rc, text = self.run_cli(att)
-        self.assertEqual(rc, A.PASS_EXIT, text)
+        self.assertEqual(rc, A.WELL_FORMED_EXIT, text)
 
     def test_a_FALSY_superseded_by_is_rejected_as_ambiguous_not_read_as_absent(self):
         for value in (False, "", None, 0):
@@ -473,7 +514,7 @@ class TheSecondRoundOfAdversarialInputs(Fixture):
         att = valid_attestation()
         self.assertNotIn("superseded_by", att)
         rc, text = self.run_cli(att)
-        self.assertEqual(rc, A.PASS_EXIT, text)
+        self.assertEqual(rc, A.WELL_FORMED_EXIT, text)
 
     def test_DISCLOSED_AND_OPEN_two_fabricated_uuids_still_pass(self):
         """No signature exists, so form is all this program can check. Pinned, not fixed."""
@@ -481,8 +522,8 @@ class TheSecondRoundOfAdversarialInputs(Fixture):
         att["receipt_author"]["conversation_uuid"] = "00000000-0000-0000-0000-000000000001"
         att["independent_reviewer"]["conversation_uuid"] = "00000000-0000-0000-0000-000000000002"
         rc, text = self.run_cli(att)
-        self.assertEqual(rc, A.PASS_EXIT, text)
-        self.assertIn("NOTHING HERE BINDS THIS FILE TO THE PARTY IT NAMES", text)
+        self.assertEqual(rc, A.WELL_FORMED_EXIT, text)
+        self.assertIn("DOES NOT PROVE THE NAMED REVIEWER WROTE IT", text)
 
     def test_DISCLOSED_AND_OPEN_findings_differing_by_one_WORD_still_pass(self):
         """Closing this needs a similarity threshold on prose, which was explicitly ruled out."""
@@ -491,7 +532,7 @@ class TheSecondRoundOfAdversarialInputs(Fixture):
         att["per_spot_findings"]["namespace-packages"] = body + " potato"
         att["per_spot_findings"]["shell-route"] = body + " tomato"
         rc, text = self.run_cli(att)
-        self.assertEqual(rc, A.PASS_EXIT, text)
+        self.assertEqual(rc, A.WELL_FORMED_EXIT, text)
 
 
 class EveryRequirementHasARemovalArm(unittest.TestCase):

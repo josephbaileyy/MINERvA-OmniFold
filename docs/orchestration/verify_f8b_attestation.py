@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""F-8(b) GATE: validate a recorded INDEPENDENT PROSE ATTESTATION. The only thing here that can pass.
+"""F-8(b) CONFORMANCE CHECKER for a recorded INDEPENDENT PROSE ATTESTATION. IT CANNOT PASS EITHER.
+
+THIS FILE IS NOT THE GATE. Nothing in the F-8(b) toolchain returns 0, including this. The gate is a
+RECORDED AUTHORITY DECISION citing a well-formed attestation. The best outcome here is exit 11,
+ATTESTATION_WELL_FORMED, which means "complete and correctly bound" and never "F-8(b) discharged".
 
 WHY THIS EXISTS. `verify_run_receipt_blind_spots.py` is a linter with no passing exit status. The
 independent §10.1 readiness review ruled that a mechanical `rc=0` on prose is a FAIL-OPEN GATE --
@@ -43,11 +47,32 @@ disclosed instead.
     not mechanical ones, and citing an exit 0 as if they were mechanical is the error this whole
     redesign exists to prevent.**
 
-EXIT CODES.
-    0  PASS         -- a well-formed, digest-bound, independent, complete, unambiguous PASS.
-    2  CANNOT CHECK -- an input could not be read or parsed. Never a pass.
-    3  REJECTED     -- the attestation is missing a requirement, mis-bound, self-attested, stale,
-                       incomplete per-spot, or does not end in PASS.
+WHY IT HAS NO ZERO EXIT, which is a change from the version two reviews rejected.
+
+An earlier version returned 0 on a well-formed attestation. Two independent reviews struck that down
+on the same reasoning, and this lane agrees with both:
+
+    `agy-f8b-impl-grade` (d71dbff7): *"Emitting rc=0 while explicitly relying on a printed label to
+    disclaim mechanical verification is the same structural failure that was ruled insufficient."*
+
+    `agy-readiness-rerun` (2fbd0b4f): *"The fail-open gate was MOVED... A fail-open surface that can
+    be bypassed by spoofing identity is structurally identical to a fail-open surface that can be
+    bypassed by spoofing prose."* Asked whether F-8(b) can be closed by machinery at all: **NO**.
+
+The defence that failed was that the linter's green stood for a judgement that had NOT occurred while
+this one stands for a judgement that HAS. That difference is real and it is not enough: it holds only
+if the attestation is authentic, and **nothing here can establish authenticity** -- there is no
+signature, so anyone who can write the file can type any role and uuid into it. The load-bearing
+question in F-8(b) is whether a real independent party really read the prose. A machine cannot answer
+it. So the machine does not get a green to answer it with.
+
+EXIT CODES. 0 IS UNREACHABLE BY CONSTRUCTION and a test asserts it.
+    11  ATTESTATION_WELL_FORMED -- complete and correctly bound. **NOT a discharge of F-8(b)**, and
+                       not a finding that the judgement is honest or that the named reviewer wrote
+                       it. Discharge is a recorded authority decision that cites this result.
+     2  CANNOT CHECK -- an input could not be read or parsed.
+     3  REJECTED     -- missing a requirement, mis-bound, self-attested, stale, incomplete per-spot,
+                       or does not end in PASS.
 """
 from __future__ import annotations
 
@@ -58,7 +83,7 @@ import pathlib
 import re
 import sys
 
-PASS_EXIT = 0
+WELL_FORMED_EXIT = 11
 CANNOT_CHECK_EXIT = 2
 REJECTED_EXIT = 3
 
@@ -269,7 +294,7 @@ def validate(att: dict, receipt_sha: str, report_sha: str) -> tuple[int, list[st
 
     if bad:
         return REJECTED_EXIT, bad
-    return PASS_EXIT, ["bound to receipt %s and linter report %s" % (receipt_sha[:16], report_sha[:16]),
+    return WELL_FORMED_EXIT, ["bound to receipt %s and linter report %s" % (receipt_sha[:16], report_sha[:16]),
                        "reviewer %r (%s) is not the author %r (%s)"
                        % (reviewer["role"], reviewer["conversation_uuid"][:8],
                           author["role"], author["conversation_uuid"][:8]),
@@ -298,21 +323,22 @@ def main(argv=None) -> int:
         return CANNOT_CHECK_EXIT
 
     rc, notes = validate(att, receipt_sha, report_sha)
-    stream = sys.stdout if rc == PASS_EXIT else sys.stderr
+    assert rc != 0, "this checker must never return 0"
+
+    stream = sys.stdout if rc == WELL_FORMED_EXIT else sys.stderr
     for n in notes:
         print("[f8b-att]   %s" % n, file=stream)
-    if rc == PASS_EXIT:
-        print("[f8b-att] PASS -- a digest-bound, independent, complete prose attestation is on "
-              "record for these exact bytes.", file=stream)
-        print("[f8b-att] THIS VALIDATES THE RECORDED DECISION AND ITS BINDINGS. It does NOT prove "
-              "the decision is semantically correct -- no program can. A thoughtful-looking "
-              "attestation of a bad receipt would validate here. What is established is that an "
-              "independent named party judged THESE bytes and cannot silently reuse it for others.",
+    if rc == WELL_FORMED_EXIT:
+        print("[f8b-att] ATTESTATION_WELL_FORMED (exit %d) -- NOT A DISCHARGE OF F-8(b), and not a "
+              "pass. The attestation is complete and bound to these exact bytes. That is all this "
+              "establishes." % rc, file=stream)
+        print("[f8b-att] IT DOES NOT PROVE THE JUDGEMENT IS CORRECT -- no program can -- AND IT DOES "
+              "NOT PROVE THE NAMED REVIEWER WROTE IT. There is no signature: whoever can write the "
+              "file can type any role and uuid into it. Two independent reviews ruled that a green "
+              "exit beside a printed caveat is a fail-open gate, so there is no green here to cite.",
               file=stream)
-        print("[f8b-att] AND NOTHING HERE BINDS THIS FILE TO THE PARTY IT NAMES. There is no "
-              "signature: whoever can write the file can type any role and uuid into it. The named "
-              "reviewer having actually read the receipt is a PROCESS guarantee, not a mechanical "
-              "one, and this exit 0 is not evidence of it.", file=stream)
+        print("[f8b-att] F-8(b) IS DISCHARGED BY A RECORDED AUTHORITY DECISION that cites this "
+              "result, never by this exit code.", file=stream)
     else:
         print("[f8b-att] REJECTED (%d problem(s))." % len(notes), file=stream)
     return rc

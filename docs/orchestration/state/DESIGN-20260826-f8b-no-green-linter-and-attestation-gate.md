@@ -78,7 +78,7 @@ cannot silently reuse that judgement for different ones.
 
 ## 3. Tests, and their power
 
-76 arms, all OK: 18 in `test_verify_run_receipt_blind_spots.py`, 58 in
+80 arms, all OK: 18 in `test_verify_run_receipt_blind_spots.py`, 62 in
 `test_verify_f8b_attestation.py`. Every requirement has an arm that **removes** it and asserts
 rejection, and `EveryRequirementHasARemovalArm` reads the suite's own source so a future field added
 without a removal arm fails the suite.
@@ -178,6 +178,49 @@ That change **contradicts the standing authorization**, which specifies a valida
 success"* and *"ends in an unambiguous PASS"*. Whether F-8(b) may be closed by machinery at all, or
 only by a recorded human decision, is the decision-maker's call and not this lane's. **It is referred,
 not decided here, and the branch is NOT landed to `main` while it is open.**
+
+## 3.3 RESOLVED against the authorization's letter: the checker has no zero exit either
+
+**The §10.1 re-run agreed with the implementation grade, independently and on the same reasoning.**
+`agy-readiness-rerun` (conversation `2fbd0b4f-da89-4a90-bf95-7f847dfc226d`), a role that neither
+built the mechanisms nor authored the remedy prescription, returned
+**`READINESS-10-1-RERUN: NOT READY`** with all three mechanisms confirmed *present at this tip and
+independently graded: YES*, and:
+
+> *is the fail-open gate closed rather than moved?* **NO** — *"A fail-open surface that can be
+> bypassed by spoofing identity is structurally identical to a fail-open surface that can be
+> bypassed by spoofing prose."*
+>
+> *should the validator also have no zero exit?* **YES**
+>
+> *can F-8(b) be closed by machinery at all?* **NO** — *"F-8(b) can only be closed by a recorded
+> human decision."*
+
+It also verified **both record corrections by its own measurement** — BREAK 1 at `rc=3`, the repaired
+stuffer at `rc=0`, and the first run's tip missing the instrument — and judged the handling proper.
+
+**Three independent reads now agree, including this lane's own.** The defence that failed was that
+the linter's green stood for a judgement that had NOT occurred while the checker's stands for one
+that HAS. That difference is real and it is not sufficient: it holds only if the attestation is
+authentic, and nothing mechanical here can establish authenticity.
+
+**So `verify_f8b_attestation.py` no longer has a zero exit.** Its best outcome is
+**`11 ATTESTATION_WELL_FORMED`** — complete and correctly bound, explicitly *not* a discharge, *not*
+a finding that the judgement is honest, and *not* a finding that the named reviewer wrote it. It is
+no longer described as the gate. **The gate is a recorded authority decision citing a well-formed
+attestation.** Nothing in the F-8(b) toolchain returns 0.
+
+### THIS EXCEEDS THE LETTER OF THE STANDING AUTHORIZATION, DELIBERATELY, AND IS ISOLATED SO IT CAN BE DROPPED
+
+The authorization specified a validator that *"can return success"* and *"ends in an unambiguous
+PASS"*. **This change contradicts that sentence** while serving the same instruction's stated intent
+— *fail-closed* — which two independent reviews say the literal reading defeats.
+
+It is committed **alone**, touching only the checker, its tests and this section, so that reverting
+exactly one commit restores the authorized behaviour without disturbing anything else. It moves only
+in the conservative direction: it removes a passing status and can never manufacture one. **The
+branch is not landed to `main`.** If the decision-maker prefers the literal reading, drop that one
+commit; the referral in §3.2 stands either way.
 
 ## 4. CORRECTION — the recorded BREAK 1 result does not reproduce
 
