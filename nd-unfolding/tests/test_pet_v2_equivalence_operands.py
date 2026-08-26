@@ -231,6 +231,44 @@ def test_controller_has_exact_dependencies_guards_and_no_srun_or_retry():
                           check=False).returncode == 0
 
 
+def test_target_import_closure_stays_inside_the_guarded_checkout(tmp_path):
+    loader = PET / "fullevent_fps_dataloader.py"
+    text = loader.read_text(encoding="utf-8")
+    assert "/pscratch/sd/j/josephrb/MINERvA-OmniFold" in text
+    probe = tmp_path / "probe_pet_v2_import_closure.py"
+    probe.write_text(
+        "import os, pathlib, sys\n"
+        f"repo = pathlib.Path({str(REPO)!r})\n"
+        "for path in (repo / 'nd-unfolding/pet', repo / 'nd-unfolding', "
+        "repo / 'omnifold_nn'):\n"
+        "    sys.path.insert(0, str(path))\n"
+        "os.environ['PETV2_CODE_ROOT'] = str(repo)\n"
+        "import pet_v2_equivalence_root_remap as remap\n"
+        "adapted = remap.install()\n"
+        "import fullevent_fps_dataloader as fe\n"
+        "fe.coherent_bootstrap_factors(7, 11, 5, 50000)\n"
+        "import pet_bootstrap\n"
+        "for module in (fe, pet_bootstrap):\n"
+        "    assert pathlib.Path(module.__file__).resolve().is_relative_to(repo)\n"
+        "assert len(adapted.redirects) == 2\n",
+        encoding="utf-8",
+    )
+    cp = subprocess.run(
+        [
+            sys.executable,
+            str(REPO / "nd-unfolding/mnv_guarded_run.py"),
+            "--expect-root", str(REPO),
+            "--",
+            str(probe),
+        ],
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    assert cp.returncode == 0, cp.stderr
+    assert "IMPORT TREE VIOLATION" not in cp.stderr
+
+
 def test_validator_treats_committed_proposal_as_source_not_runtime_product():
     text = (PET / "validate_pet_v2_equivalence_result.py").read_text(encoding="utf-8")
     assert 'proposal_path = _regular(args.proposal, "proposal")' in text

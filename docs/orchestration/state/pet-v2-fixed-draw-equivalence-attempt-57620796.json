@@ -1,0 +1,98 @@
+{
+  "schema": "pet-v2-fixed-draw-equivalence-attempt-v1",
+  "status": "INVALID_OR_INCOMPLETE_GUARD_REFUSAL",
+  "scope": "PET_DIAGNOSTIC_AND_METHOD_DEVELOPMENT_ONLY",
+  "observed_at_utc": "2026-08-26T08:34:53Z",
+  "submission": {
+    "receipt_path": "/pscratch/sd/j/josephrb/pet-v2-equivalence-run-20260826-ed8244d3/PETV2_SUBMISSION_RECEIPT.json",
+    "receipt_sha256": "2d849370fa44319d2afb4214c540bf5a9970deddb706dd9c331f0121499af818",
+    "proposal_sha256": "314ef43d627066b19f1e8992d33ac4d0a6d7d4a1123adfb19ef463a29437bd9c",
+    "implementation_head": "ed8244d3c9038c7f00dca3ddd6545266519ffd5a",
+    "jobs": {
+      "target": "57620796",
+      "training_array": "57620797",
+      "evaluation": "57620798",
+      "validation": "57620799"
+    },
+    "no_retry_path": true
+  },
+  "direct_scheduler_observation": {
+    "scheduler_timezone": "PDT-0700",
+    "target": {
+      "state": "FAILED",
+      "elapsed": "00:03:58",
+      "start": "2026-08-26T01:24:15",
+      "end": "2026-08-26T01:28:13",
+      "node": "nid004112",
+      "partition": "shared_milan_ss11",
+      "qos": "shared",
+      "allocated_cpus": 36,
+      "requested_memory": "64G",
+      "exit_code": "3:0"
+    },
+    "training_array": {
+      "state": "CANCELLED",
+      "allocated_gpus": 0,
+      "reason": "target afterok dependency could never be satisfied"
+    },
+    "evaluation": {
+      "state": "CANCELLED",
+      "reason": "downstream dependency chain was stopped after target refusal"
+    },
+    "validation": {
+      "state": "CANCELLED",
+      "reason": "downstream dependency chain was stopped after target refusal"
+    }
+  },
+  "resource_consumption": {
+    "cpu_node_hours": 0.0661111111111111,
+    "cpu_core_hours": 2.38,
+    "a100_hours": 0.0,
+    "within_original_ceiling": true
+  },
+  "runtime_evidence": {
+    "stdout_path": "/pscratch/sd/j/josephrb/pet-v2-equivalence-run-20260826-ed8244d3/logs/target_57620796.out",
+    "stdout_sha256": "da74f2592aa11c91a073a315efd93114104968cf9fb40d767a6c8518754c0e1a",
+    "stderr_path": "/pscratch/sd/j/josephrb/pet-v2-equivalence-run-20260826-ed8244d3/logs/target_57620796.err",
+    "stderr_sha256": "f43cf622464b034605faa7d2e125317e4ae3af48b9e7288d14137b6096fb9b8a",
+    "entry_guard": "PASS: authorization, operands, prohibitions, and resource ceiling",
+    "refusal_guard": "OI-136 IMPORT TREE VIOLATION",
+    "requested_module": "pet_bootstrap",
+    "resolved_origin": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet_bootstrap.py",
+    "expected_root": "/pscratch/sd/j/josephrb/pet-v2-equivalence-ed8244d3",
+    "first_causal_source": "nd-unfolding/pet/fullevent_fps_dataloader.py at executed head ed8244d3",
+    "causal_operand": "the loader assigned the primary-checkout literal to _REPO and inserted its nd-unfolding directory at sys.path position 0 before the lazy pet_bootstrap import",
+    "target_artifact_published": false,
+    "scientific_quantity_measured": false
+  },
+  "terminal_interpretation": {
+    "classification": "INVALID_OR_INCOMPLETE",
+    "meaning": "the import-tree guard prevented cross-checkout execution before target materialization",
+    "does_not_measure": [
+      "weighted-versus-literal estimator equivalence",
+      "training convergence",
+      "ordinary closure",
+      "interval coverage"
+    ]
+  },
+  "prohibitions_applied": [
+    "do_not_select_passing_subset",
+    "do_not_construct_C_ML",
+    "do_not_move_central",
+    "do_not_start_leg_2",
+    "do_not_retry_unchanged"
+  ],
+  "what_this_terminal_result_cannot_authorize": [
+    "any unchanged or automatic retry",
+    "any changed retry without a new explicit Joseph decision",
+    "selection of a passing subset",
+    "construction of C_stat, C_ML, or a total covariance",
+    "movement or adoption of a central value",
+    "Leg 2",
+    "coverage, convergence, closure, or estimator-equivalence claims",
+    "a note edit or publication claim"
+  ],
+  "existing_gate6_results_remain_blocked": true,
+  "C_stat": null,
+  "C_ML": null
+}

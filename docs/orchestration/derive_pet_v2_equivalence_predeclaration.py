@@ -12,6 +12,7 @@ import argparse
 import hashlib
 import json
 import math
+import subprocess
 from pathlib import Path
 
 import numpy as np
@@ -28,6 +29,7 @@ FLOOR_RECEIPT = (
 CONTRACT_ID = "PET-V2-FIXED-DRAW-EQUIVALENCE-PREDECLARATION-20260825"
 AUTHORIZATION_TOKEN = "JOSEPH-20260826-PETV2-FIXED-DRAW-EQUIVALENCE-AUTHORIZED"
 AUTHORIZED_PARENT_HEAD = "1f860f0c46d8f247bd81fde6a4b5dfad823d0ac0"
+EXECUTED_IMPLEMENTATION_HEAD = "ed8244d3c9038c7f00dca3ddd6545266519ffd5a"
 
 PROHIBITIONS = (
     "do_not_select_passing_subset",
@@ -98,6 +100,17 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _git_blob_sha256(head: str, path: str) -> str:
+    """Hash a frozen source blob so an executed proposal stays reproducible after HEAD moves."""
+    completed = subprocess.run(
+        ["git", "show", f"{head}:{path}"],
+        cwd=REPO,
+        check=True,
+        stdout=subprocess.PIPE,
+    )
+    return hashlib.sha256(completed.stdout).hexdigest()
+
+
 def _hash_array(value: np.ndarray) -> str:
     """Exact contract used by the current Gate-5 target builder."""
     array = np.ascontiguousarray(value)
@@ -152,7 +165,10 @@ def _rederive_fixed_draw_factors() -> dict:
 
 
 def source_hashes() -> dict[str, str]:
-    observed = {name: _sha256(REPO / name) for name in EXPECTED_SOURCE_SHA256}
+    observed = {
+        name: _git_blob_sha256(EXECUTED_IMPLEMENTATION_HEAD, name)
+        for name in EXPECTED_SOURCE_SHA256
+    }
     if observed != EXPECTED_SOURCE_SHA256:
         mismatch = {
             name: {"expected": EXPECTED_SOURCE_SHA256[name], "observed": observed[name]}
@@ -223,12 +239,15 @@ def build_proposal() -> dict:
     future_operands = [
         {
             "path": path,
-            "sha256": _sha256(REPO / path),
+            "sha256": _git_blob_sha256(EXECUTED_IMPLEMENTATION_HEAD, path),
             "status": "IMPLEMENTED_TESTED_HASH_BOUND",
         }
         for path in FUTURE_OPERANDS
     ]
-    support_sources = {path: _sha256(REPO / path) for path in NEW_SUPPORT_SOURCES}
+    support_sources = {
+        path: _git_blob_sha256(EXECUTED_IMPLEMENTATION_HEAD, path)
+        for path in NEW_SUPPORT_SOURCES
+    }
 
     return {
         "schema": "pet-v2-fixed-draw-equivalence-proposal-v1",

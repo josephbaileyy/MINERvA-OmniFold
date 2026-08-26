@@ -238,8 +238,31 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: found that the explicit ROOT activator must be sourced with Bash nounset temporarily disabled,
 #: exactly as that activator's own comments require. No Slurm job had been submitted; the controller,
 #: proposal, test, and this inventory moved together before the second immutable preflight.
-RECEIPT_BINDING_COUNT = 124
-RECEIPT_BINDING_SHA256 = "f956b52b2619f8d1c32380a7e4ae1fcb9a3165383f9d1eb6e5bb8571e4d61254"
+#: MOVED 124 -> 130 ON 2026-08-26, DELIBERATELY, AFTER GUARDED ATTEMPT 57620796.
+#: The target's OI-136 refusal measured one stale-root insertion before materialization and used no
+#: GPU. The non-launchable changed-retry proposal adds exactly six new bindings while preserving
+#: the receipt-bound loader and all five original executed operands byte-for-byte:
+#:
+#:     nd-unfolding/pet/materialize_pet_v2_equivalence_target_retry1.py
+#:       cab2328dae25adbfe510f38a1ff771962246929cfc1492f51fe1372b272b8b84
+#:     nd-unfolding/pet/train_pet_v2_equivalence_retry1.py
+#:       02fd449f09a92095c965e756385cfa402b0f5c251529128690dd4327faf74d4e
+#:     nd-unfolding/pet/evaluate_pet_v2_equivalence_retry1.py
+#:       4ec32e0adc9acb010172c72611148699d0b905fe134f6cb8474f4e5a27c36acd
+#:     nd-unfolding/pet/validate_pet_v2_equivalence_result_retry1.py
+#:       9d0fa1ed168df93e074e11b38d840aa0121fa5fd37bd2742d33ace34f59b6ece
+#:     nd-unfolding/pet/submit_pet_v2_equivalence_changed_retry.sh
+#:       135673741c89d3cc623813d02755d406fc1c4a645a10791f646f013384d692e2
+#:     nd-unfolding/pet/pet_v2_equivalence_root_remap.py
+#:       646b857861d5102f041215e286e23d53247f8dd33ff957e8864a4fb4beba783c
+#:
+#: The staged inventory was measured before this snapshot moved: 130 bindings at digest
+#: 5d01b61d89ad1f5906ccbc5fdaaa5680e5a9ae76f3acf1c55aacb24f569a2c05. All six reported OK;
+#: the only other reported drift remained the named pre-existing G2 launcher. These pins freeze a
+#: design that still says `launchable: false` and `retry_authorized: false`; inventory membership is
+#: neither compute authorization nor scientific adoption.
+RECEIPT_BINDING_COUNT = 130
+RECEIPT_BINDING_SHA256 = "5d01b61d89ad1f5906ccbc5fdaaa5680e5a9ae76f3acf1c55aacb24f569a2c05"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

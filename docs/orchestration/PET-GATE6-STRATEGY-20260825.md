@@ -67,8 +67,10 @@ do_not_start_leg_2
 do_not_retry_unchanged
 ```
 
-No Slurm job, `srun`, GPU training, note edit, publication change, or primary-checkout operation was
-performed for this strategy.
+At initial strategy drafting, no Slurm job, `srun`, GPU training, note edit, publication change, or
+primary-checkout operation had been performed. The later explicitly authorized fixed-draw attempt
+and its pre-materialization guard refusal are recorded in the execution update at the end of this
+document; no GPU training occurred.
 
 ### Disposition of the additional hypothesis memo
 
@@ -530,3 +532,38 @@ live prohibitions all agree. A failed target, arm, evaluation, or validation blo
 and has no retry path. This authorization remains one fixed-draw method diagnostic: it does not
 authorize convergence tuning, a family, coverage work, `C_stat`, `C_ML`, central movement, Leg 2,
 note edits, or any publication claim.
+
+### Execution update: guarded attempt `57620796`
+
+Freshness was rechecked immediately before action. The generator reported
+`STALE :: Git: 06efa653, HEAD ed8244d3, HEAD^ 45d55f13`; no stale generated field was used.
+Direct Slurm observation showed the shared Milan/GPU partitions recovering from a system-wide
+drain/reboot event. Slurm accepted the exact requests as `shared_milan_ss11/shared` for the CPU
+stages and `shared_gpu_ss11/gpu_shared` with `Features=gpu&a100&hbm80g` for the three training arms.
+
+The immutable preflight passed all authorization, source/input, prohibition, and resource-ceiling
+checks, then submitted target `57620796`, training array `57620797`, evaluation `57620798`, and
+validation `57620799`. The first-party
+[`attempt receipt`](state/pet-v2-fixed-draw-equivalence-attempt-57620796.json) records the terminal
+state. The target ran on `nid004112` for 3 minutes 58 seconds and failed with exit `3:0` when
+`mnv_guarded_run.py` refused a lazy `pet_bootstrap` import from the primary checkout. The first
+causal source was the executed `fullevent_fps_dataloader.py`, whose hardcoded `_REPO` inserted that
+other checkout at `sys.path[0]`. No target artifact was published, no scientific quantity was
+measured, and no GPU was allocated. The dependency-stuck downstream jobs were cancelled and were
+not retried.
+
+This is an `INVALID_OR_INCOMPLETE` machinery result, not evidence about training convergence,
+weighted-versus-literal estimator equivalence, closure, or coverage. It leaves Gate 6 blocked and
+preserves all five exact prohibitions.
+
+The narrow candidate repair preserves the receipt-bound loader and instead uses retry-specific
+entrypoints to remap only its known primary-root insertion to the same relative path under the
+mandatory immutable checkout; the ordinary OI-136 finder remains active for every other escape. It
+changes neither sampling nor training policy and keeps both production loader bindings intact. A
+guarded remap-plus-lazy-import regression passes. The separate
+[`changed-retry predeclaration`](PREDECLARATION-20260826-pet-v2-fixed-draw-equivalence-changed-retry.md)
+and [machine-readable proposal](state/pet-v2-fixed-draw-equivalence-changed-retry-proposal-20260826.json)
+retain the same seed, measured quantities, `S=0.0251`, `M=0.0502`, deterministic/same-arm controls,
+and 13 expected/18 ceiling A100-hours. They are `launchable: false`: the executed contract said
+`retry_authorized: false`, so a changed retry requires a new explicit Joseph decision even though
+the first attempt used zero A100-hours.
