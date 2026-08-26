@@ -2,26 +2,27 @@
 
 ## Status and compute decision
 
-**Proposal complete; compute held.** This is a no-launch PET diagnostic and method-development
-contract. It specifies the scientific comparison, numeric operational thresholds, same-arm and
-determinism controls, guarded future operands, and a scheduler-measured resource ceiling. It does
-not implement or hash-bind the future target, training, evaluation, validation, or submission
-entrypoints. Therefore it is deliberately `launchable: false` and the present compute decision is
-`HOLD_FOR_JOSEPH_AND_EXECUTABLE_IMPLEMENTATION`.
+**Authorized and executable, conditional on complete preflight.** This remains a PET diagnostic and
+method-development contract. Joseph authorized the CPU target/readback work and the three A100 arms
+on 2026-08-26 only while all provenance, determinism, hardware, no-clobber, and dependency guards
+work as specified. The five operands below are implemented, CPU-tested, and content-bound; the
+machine receipt is `launchable: true` with decision
+`AUTHORIZED_CONDITIONAL_SUBMISSION_AFTER_ALL_PREFLIGHTS`. A failed guard exits before `sbatch` or
+prevents dependent work from releasing. There is no retry path.
 
 The CPU-only prerequisite fixture passed `PASS_MACHINERY_VALIDATION_ONLY` in
 [`pet-v2-fixed-draw-equivalence-fixture-result-20260825.json`](state/pet-v2-fixed-draw-equivalence-fixture-result-20260825.json).
 That validates bookkeeping and positive/negative controls, not PET estimator equivalence.
 
 No Slurm job, `srun`, GPU operation, PET training, uncertainty construction, note edit, publication
-change, or primary-checkout operation was performed while preparing this contract.
+change, or primary-checkout operation was performed while implementing and testing the operands.
 
 ## Fresh state and evidence boundary
 
 The live-state freshness check was run before this continuation. It returned:
 
 ```text
-STALE :: Git: 06efa653, HEAD 10ad530d, HEAD^ 0c08d317
+STALE :: Git: 06efa653, HEAD 1f860f0c, HEAD^ 10ad530d
 ```
 
 No field from that stale generated view is used. Direct `./alloc_run.sh --status` showed no
@@ -247,7 +248,7 @@ itself run through [`mnv_guarded_run.py`](../../nd-unfolding/mnv_guarded_run.py)
 parent that starts an unguarded child is invalid because the import guard does not cross a subprocess
 boundary.
 
-The future command prefix is:
+The command prefix is:
 
 ```text
 ${PETV2_PYTHON} ${PETV2_CODE_ROOT}/nd-unfolding/mnv_guarded_run.py \
@@ -261,32 +262,38 @@ individually guarded. `OI-123` and `OI-138` forbid a silent frozen-tree default 
 supplier to be explicit.
 
 `PETV2_PYTHON` is also mandatory and has no default; preflight binds its resolved path, Python and
-package versions, and environment lock. The G2 source and weighted seed-50000 target likewise arrive
-through mandatory explicit staged paths outside the primary checkout and are content-verified before
-use. No current primary-checkout path may act as an implicit artifact supplier.
+package versions, and environment lock. The G2 source, Gate-3 manifest, and twelve per-playlist
+ME-FHC flux ROOTs likewise arrive through mandatory explicit paths outside the primary checkout and
+are content- or manifest-verified before use. The CPU stage rebuilds both targets; its weighted
+result must reproduce the already committed seed-50000 target digest before any A100 dependency
+releases. No current primary-checkout path may act as an implicit artifact supplier.
 
-These future operands and their exact argument contracts are required:
+These operands and their exact argument contracts are required:
 
 | operand | measured action | mandatory arguments | current state |
 |---|---|---|---|
-| `materialize_pet_v2_equivalence_target.py` | build literal seed-50000 target and split manifest | code/input/factor hashes, draw seed, unique-ID split hash, output/receipt paths | not implemented or hash-bound |
-| `train_pet_v2_equivalence.py` | train exactly one of `W_A`, `W_B`, `L` in-process | arm, target/split hashes, frozen policy JSON, isolated output, deterministic env assertions | not implemented or hash-bound |
-| `evaluate_pet_v2_equivalence.py` | unique-ID push and fixed-projection readback | three arm receipts/checkpoints, input/mask/extraction hashes, output receipt | not implemented or hash-bound |
-| `validate_pet_v2_equivalence_result.py` | read-only guards and terminal classification | proposal receipt, all outputs/markers, no artifact mutation | not implemented or hash-bound |
-| `submit_pet_v2_equivalence.sh` | preflight and eventual Slurm submission only after authorization | mandatory code root, exact HEAD, authorization token, output root, every script/source hash | not implemented or hash-bound |
+| `materialize_pet_v2_equivalence_target.py` | rebuild weighted then literal seed-50000 targets, split, and flux vector | code/input/factor hashes, draw seed, unique-ID split hash, explicit flux suppliers, output/receipt paths | implemented, tested, hash-bound |
+| `train_pet_v2_equivalence.py` | train exactly one of `W_A`, `W_B`, `L` in-process and perform full-inventory inference | arm, target/split hashes, frozen policy, isolated output, deterministic environment assertions | implemented, tested, hash-bound |
+| `evaluate_pet_v2_equivalence.py` | unique-ID push and fixed-projection readback | three arm receipts/artifacts, input/mask/extraction/flux hashes, output receipt | implemented, tested, hash-bound |
+| `validate_pet_v2_equivalence_result.py` | read-only guards and terminal reclassification | proposal receipt, all outputs/markers, before/after input hashes | implemented, tested, hash-bound |
+| `submit_pet_v2_equivalence.sh` | exact preflight plus dependent target → arms → evaluation → validation submission | mandatory code root/interpreters/artifacts, exact HEAD, token, new output root, every operand hash | implemented, tested, hash-bound |
 
 The machine-readable operand surface is
 [`pet-v2-fixed-draw-equivalence-proposal-20260825.json`](state/pet-v2-fixed-draw-equivalence-proposal-20260825.json).
-It currently contains `sha256: null` for all five future operands and therefore fails closed with
-`launchable: false`. This is deliberate: naming a planned script is not claiming executable parity.
+It contains the SHA-256 of all five operands and the common deterministic helper. The controller
+recomputes every operand digest from the immutable runtime checkout and validates the exact proposal
+digest, authorization token, resource ceiling, and five live prohibitions before its first `sbatch`.
 
-Every future output uses a new isolated per-arm namespace; refuses a pre-existing nonempty target;
-shares no checkpoint/history path; writes atomically; and binds completion markers to result size,
-SHA-256, and terminal status. Receipts must include code HEAD, clean-tree assertion, every current and
-new source hash, G2/target/factor/split hashes, realized policy, LR and update schedule, GPU identity,
-process identity, and loaded-checkout inventory. The submit controller must require a literal Joseph
-authorization token bound to the final contract and implementation hashes; absent or mismatched
-authorization exits before `sbatch`.
+Every output uses a new isolated per-arm namespace; refuses a pre-existing nonempty target; and
+shares no checkpoint/history path. Published arrays and receipts write atomically; their completion
+markers bind size and modification time, while the receipt published last binds payload SHA-256 and
+terminal status. Interrupted transient checkpoints cannot release a dependency because no passing arm
+receipt exists. Receipts must include code HEAD, clean-tree assertion, every current and new source
+hash, G2/target/factor/split hashes, realized policy, LR and update schedule, GPU identity, process
+identity, and loaded-checkout inventory. The submit controller requires the literal Joseph
+authorization token, a clean exact non-primary HEAD, the proposal digest, all implementation hashes,
+explicit interpreter and artifact suppliers, and the resource ceiling; any absent or mismatched
+operand exits before `sbatch`.
 
 ## Measured resource estimate
 
@@ -308,20 +315,23 @@ per arm:
 rounded expected envelope                         = 13 A100 h
 ```
 
-The `1.25` is a conservative planning assumption, not a measured speed ratio. If later authorized,
-the request ceiling is:
+The `1.25` is a conservative planning assumption, not a measured speed ratio. The authorized request
+ceiling is:
 
-- one literal-target CPU job: 36 CPU, 64G, two-hour walltime;
-- three training/evaluation jobs: one `A100-SXM4-80GB`, 32 CPU, 57,472M, six-hour walltime each;
+- one paired-target CPU job: 36 CPU, 64G, two-hour walltime;
+- three training plus full-inference jobs: one `A100-SXM4-80GB`, 32 CPU, 57,472M, six-hour walltime each;
+- one dependent CPU evaluation: 16 CPU, 64G, two-hour walltime;
+- one dependent read-only validation: 4 CPU, 8G, 30-minute walltime;
 - expected envelope: 13 A100-hours; allocation ceiling: 18 A100-hours;
-- CPU ceiling: two node-hours; and
-- queue-excluded critical path with parallel arms: about 6.21 hours, target then slowest arm.
+- CPU ceiling: five node-hours; and
+- queue-excluded walltime ceiling with parallel arms: 10.5 hours.
 
-The weighted target is staged read-only by exact digest into the isolated run namespace. Nothing
-writes in or executes from the primary checkout. A timeout, memory failure, deterministic-op failure,
-or provenance failure stops the proposal; it does not authorize an unchanged retry. These resources
-are for three diagnostic arms, not a statistical ensemble. They authorize no suggested pseudoexperiment
-count, coverage campaign, `C_stat`, or `C_ML` family.
+The paired CPU stage rebuilds the weighted target first and requires the exact historical digest
+before publishing its receipt; the literal target is a separate canonical refinement over physical
+deletion/duplication. Nothing writes in or executes from the primary checkout. A timeout, memory
+failure, deterministic-op failure, or provenance failure stops the chain; it does not authorize an
+unchanged retry. These resources are for three diagnostic arms, not a statistical ensemble. They
+authorize no suggested pseudoexperiment count, coverage campaign, `C_stat`, or `C_ML` family.
 
 ## Success, failure, and non-authorization
 
@@ -345,10 +355,11 @@ and cannot:
 - edit the note, change a publication claim, or change PET's diagnostic/method-development scope; or
 - authorize a coverage campaign, a larger family, the 6×4 convergence screen, or any further compute.
 
-## Decision requested from Joseph before compute
+## Compute decision received and remaining release condition
 
-The current decision is **do not authorize A100 compute yet**. Please decide whether to authorize
-implementation and CPU-only testing of the five isolated, fail-closed operands above. If that is
-approved, their committed hashes, tests, immutable checkout HEAD, exact authorization-token shape,
-and final `launchable` preflight must return for a compute decision. No implementation approval is a
-Slurm or GPU authorization.
+Joseph authorized the CPU and A100 work on 2026-08-26, conditional on the machinery working exactly
+as specified. The remaining decision is mechanical rather than scientific: commit and push the
+tested operands, create a clean immutable non-primary checkout at that exact HEAD, stage only the
+explicit source/manifest/flux suppliers, and run the controller's no-submit preflight. Only a wholly
+green preflight may submit the dependency chain. Any failure leaves compute unsubmitted or later
+stages dependency-blocked and returns to Joseph with no automatic or unchanged retry.

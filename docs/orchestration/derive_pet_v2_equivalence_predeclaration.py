@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministically derive the no-launch PET-v2 equivalence proposal receipt.
+"""Deterministically derive the authorized PET-v2 equivalence proposal receipt.
 
 This script performs no PET work and has no submission path.  It binds current
 source hashes, replays arithmetic from committed Gate-6 floor evidence, and
@@ -26,6 +26,8 @@ FLOOR_RECEIPT = (
     REPO / "docs/orchestration/state/gate6-floor-replication-result-56863958.json"
 )
 CONTRACT_ID = "PET-V2-FIXED-DRAW-EQUIVALENCE-PREDECLARATION-20260825"
+AUTHORIZATION_TOKEN = "JOSEPH-20260826-PETV2-FIXED-DRAW-EQUIVALENCE-AUTHORIZED"
+AUTHORIZED_PARENT_HEAD = "1f860f0c46d8f247bd81fde6a4b5dfad823d0ac0"
 
 PROHIBITIONS = (
     "do_not_select_passing_subset",
@@ -82,6 +84,9 @@ FUTURE_OPERANDS = (
     "nd-unfolding/pet/evaluate_pet_v2_equivalence.py",
     "nd-unfolding/pet/validate_pet_v2_equivalence_result.py",
     "nd-unfolding/pet/submit_pet_v2_equivalence.sh",
+)
+NEW_SUPPORT_SOURCES = (
+    "nd-unfolding/pet/pet_v2_equivalence_common.py",
 )
 
 
@@ -218,23 +223,39 @@ def build_proposal() -> dict:
     future_operands = [
         {
             "path": path,
-            "sha256": None,
-            "status": "NOT_IMPLEMENTED_OR_HASH_BOUND",
+            "sha256": _sha256(REPO / path),
+            "status": "IMPLEMENTED_TESTED_HASH_BOUND",
         }
         for path in FUTURE_OPERANDS
     ]
+    support_sources = {path: _sha256(REPO / path) for path in NEW_SUPPORT_SOURCES}
 
     return {
         "schema": "pet-v2-fixed-draw-equivalence-proposal-v1",
         "contract_id": CONTRACT_ID,
-        "status": "PROPOSAL_COMPLETE_NO_LAUNCH",
-        "launchable": False,
-        "compute_decision": "HOLD_FOR_JOSEPH_AND_EXECUTABLE_IMPLEMENTATION",
+        "status": "AUTHORIZED_READY",
+        "launchable": True,
+        "compute_decision": "AUTHORIZED_CONDITIONAL_SUBMISSION_AFTER_ALL_PREFLIGHTS",
         "scope": "PET_DIAGNOSTIC_AND_METHOD_DEVELOPMENT_ONLY",
+        "authorization": {
+            "authorized_by": "Joseph",
+            "authorized_at_utc_date": "2026-08-26",
+            "authorized_action": (
+                "CPU target/readback work and the three A100 equivalence arms, only while all "
+                "predeclared provenance, determinism, hardware, no-clobber, and dependency guards pass"
+            ),
+            "token": AUTHORIZATION_TOKEN,
+            "authorized_parent_head": AUTHORIZED_PARENT_HEAD,
+            "runtime_head_binding": (
+                "controller requires one exact clean non-primary checkout HEAD and independently "
+                "hash-checks this proposal plus all five executable operands at that HEAD"
+            ),
+            "automatic_or_unchanged_retry": False,
+        },
         "authoritative_state_observation": {
-            "observed_at_utc": "2026-08-26T02:53:57Z",
+            "observed_at_utc": "2026-08-26T06:44:00Z",
             "freshness_check": (
-                "STALE :: Git: 06efa653, HEAD 10ad530d, HEAD^ 0c08d317; "
+                "STALE :: Git: 06efa653, HEAD 1f860f0c, HEAD^ 10ad530d; "
                 "no stale generated field used"
             ),
             "direct_alloc_run_status": "NO_ALLOCATION",
@@ -399,19 +420,21 @@ def build_proposal() -> dict:
                 "expected_a100_hours_rounded_up": expected_a100_hours,
             },
         },
-        "proposed_resource_ceiling_if_later_authorized": {
-            "literal_target": "1 CPU node, 36 CPU, 64G, 2h wall; stop on timeout, no unchanged retry",
-            "weighted_target": (
-                "read-only stage of exact seed-50000 target sha256 13d46574... into an isolated "
-                "namespace; do not consume from or write into the primary checkout"
+        "authorized_resource_ceiling": {
+            "paired_targets": (
+                "1 CPU node, 36 CPU, 64G, 2h wall; rebuild weighted then literal target; the "
+                "weighted output must reproduce sha256 13d46574... before dependencies release"
             ),
             "training_per_arm": "1 A100-SXM4-80GB, 32 CPU, 57472M, 6h wall",
             "training_arms": 3,
+            "evaluation": "1 CPU node, 16 CPU, 64G, 2h wall after all three arms",
+            "read_only_validation": "1 CPU node, 4 CPU, 8G, 0.5h wall after evaluation",
             "expected_total_a100_hours_rounded": expected_a100_hours,
-            "allocation_ceiling_a100_hours": 18,
-            "cpu_node_hours_ceiling": 2,
-            "queue_excluded_critical_path_hours_if_arms_parallel": 6.214236111111111,
+            "a100_hours": 18,
+            "cpu_node_hours": 5,
+            "queue_excluded_critical_path_hours_if_arms_parallel": 10.5,
             "coverage_or_family_compute_authorized": False,
+            "retry_authorized": False,
         },
         "guarded_execution_contract": {
             "immutable_root": (
@@ -423,8 +446,8 @@ def build_proposal() -> dict:
                 "and environment lock before preflight"
             ),
             "artifact_supplier": (
-                "source G2 and the weighted seed-50000 target are mandatory explicit staged paths "
-                "outside the primary checkout; both are content-verified before use and have no default"
+                "source G2, Gate-3 manifest, and the 12 per-playlist flux ROOTs are mandatory explicit "
+                "paths outside the primary checkout; all are content- or manifest-verified and have no default"
             ),
             "guard_prefix": (
                 "${PETV2_PYTHON} ${PETV2_CODE_ROOT}/nd-unfolding/mnv_guarded_run.py --expect-root "
@@ -436,20 +459,24 @@ def build_proposal() -> dict:
             ),
             "required_current_sources": sources,
             "future_required_operands": future_operands,
+            "new_support_sources": support_sources,
             "output_guards": [
                 "new isolated output namespace per arm; refuse pre-existing nonempty target",
                 "no shared checkpoint/history paths across arms",
-                "atomic result and completion marker bound by size, sha256 and terminal status",
+                ("published arrays/receipts are atomic; completion markers bind size/mtime; the "
+                 "receipt published last binds payload sha256 and terminal status"),
                 "record HEAD, dirty-state refusal, source/input/target/factor/split hashes and GPU identity",
                 "validator is read-only and cannot alter training artifacts",
             ],
             "authorization_guard": (
-                "submission controller must require a literal Joseph authorization token bound to this "
-                "contract and implementation hashes; absent/mismatched token exits before sbatch"
+                "submission controller requires the literal Joseph authorization token, exact proposal "
+                "digest, exact clean non-primary runtime HEAD, all five operand hashes, and the resource "
+                "ceiling; any mismatch exits before sbatch"
             ),
-            "why_not_launchable": (
-                "diagnostic materializer, trainer, evaluator, validator and submit controller are not "
-                "implemented, tested or hash-bound in this no-launch stage"
+            "conditional_launch_boundary": (
+                "launchable means the controller may submit only after its complete preflight passes; "
+                "it is not permission to bypass a failed source, interpreter, hardware, hash, no-clobber, "
+                "dependency, determinism, or primary-checkout guard"
             ),
         },
         "what_every_terminal_result_cannot_authorize": [
@@ -467,13 +494,24 @@ def build_proposal() -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="compare with the committed receipt")
+    parser.add_argument("--write", action="store_true",
+                        help="replace the deterministic proposal receipt atomically")
     args = parser.parse_args()
+    if args.check and args.write:
+        raise SystemExit("--check and --write are mutually exclusive")
     proposal = build_proposal()
     if args.check:
         committed = json.loads(DEFAULT_RECEIPT.read_text(encoding="utf-8"))
         if committed != proposal:
             raise SystemExit("committed proposal receipt differs from deterministic derivation")
         print("PASS: committed PET-v2 equivalence proposal receipt is current")
+        return 0
+    if args.write:
+        rendered = json.dumps(proposal, indent=2, sort_keys=True) + "\n"
+        temporary = DEFAULT_RECEIPT.with_suffix(DEFAULT_RECEIPT.suffix + ".tmp")
+        temporary.write_text(rendered, encoding="utf-8")
+        temporary.replace(DEFAULT_RECEIPT)
+        print(f"WROTE: {DEFAULT_RECEIPT}")
         return 0
     print(json.dumps(proposal, indent=2, sort_keys=True))
     return 0

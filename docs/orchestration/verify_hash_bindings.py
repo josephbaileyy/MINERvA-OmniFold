@@ -213,8 +213,29 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: (rc=0), which was checked separately so that one change could not be credited to the other.
 #: CLUSTER NOTE, carried forward and re-based: that checkout resolves untracked scratch receipts and
 #: read 120 against 118. It will now read 121 against 119. Pre-existing and per-tree; unchanged here.
-RECEIPT_BINDING_COUNT = 119
-RECEIPT_BINDING_SHA256 = "09301df6f3bcc110fbe2ce347c0c1c5019416056f139f397caaefc0c8773f240"
+#: MOVED 119 -> 124 ON 2026-08-26, DELIBERATELY, WITH THE COMPLETE DELTA ENUMERATED.
+#: Joseph's conditional PET-v2 fixed-draw authorization activated the five executable bindings that
+#: already existed as null, non-launchable slots in
+#: state/pet-v2-fixed-draw-equivalence-proposal-20260825.json:
+#:
+#:     nd-unfolding/pet/materialize_pet_v2_equivalence_target.py
+#:       6ae2ee6eaec3c4fc247b54115a8427cfae8e211dbda179d7cc69f2359ddd7fb6
+#:     nd-unfolding/pet/train_pet_v2_equivalence.py
+#:       b004a2ce82128eb4391b50beb1b2d78e6adc439067efc1cd30dd5b82ab817832
+#:     nd-unfolding/pet/evaluate_pet_v2_equivalence.py
+#:       6640970b246fb848f5f48c934de71dc71e2be6fd768e2fa66bcf4db843a57c54
+#:     nd-unfolding/pet/validate_pet_v2_equivalence_result.py
+#:       f4cf134ff14d77592a78594a3fce03e366a74d65d6c11d6adca1339122a8a77f
+#:     nd-unfolding/pet/submit_pet_v2_equivalence.sh
+#:       589a168031c175931a3ee88ea7380395ff307c1d13bffb14f345a2f9e334bf40
+#:
+#: The delta was measured before this snapshot moved: 124 bindings at digest cf0892b5..., with all
+#: five new paths reporting OK and only the gate's named pre-existing G2 launcher drift remaining.
+#: Each digest above was independently recomputed from the staged executable and matched the owning
+#: proposal field. This is the intended new-code freeze, not a refresh of an old receipt to current
+#: bytes; mutating any executable now makes both this verifier and the submission controller fail.
+RECEIPT_BINDING_COUNT = 124
+RECEIPT_BINDING_SHA256 = "cf0892b552d4f0a291a9c4e07992862e7b8cd15e38070933dfe6ffd5f507bb8a"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

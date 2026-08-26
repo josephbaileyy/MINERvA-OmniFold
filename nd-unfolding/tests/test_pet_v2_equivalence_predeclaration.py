@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CPU-only guards for the PET-v2 full fixed-draw no-launch proposal."""
+"""CPU-only guards for the authorized PET-v2 fixed-draw executable contract."""
 
 import importlib.util
 import json
@@ -95,24 +95,35 @@ def test_resource_estimate_is_recomputed_from_all_historical_records():
     assert train["summary"]["median_seconds"] == 10855.0
     assert math.isclose(derivation["expected_a100_hours_unrounded"], 12.642708333333331)
     assert derivation["expected_a100_hours_rounded_up"] == 13.0
-    ceiling = PROPOSAL["proposed_resource_ceiling_if_later_authorized"]
-    assert ceiling["allocation_ceiling_a100_hours"] == 18
+    ceiling = PROPOSAL["authorized_resource_ceiling"]
+    assert ceiling["a100_hours"] == 18
+    assert ceiling["cpu_node_hours"] == 5
+    assert ceiling["retry_authorized"] is False
     assert ceiling["coverage_or_family_compute_authorized"] is False
 
 
-def test_future_operands_and_authorization_fail_closed_before_submission():
+def test_operands_and_authorization_are_hash_bound_and_fail_closed_before_submission():
     contract = PROPOSAL["guarded_execution_contract"]
     operands = contract["future_required_operands"]
     assert len(operands) == 5
-    assert all(item["sha256"] is None for item in operands)
-    assert all(item["status"] == "NOT_IMPLEMENTED_OR_HASH_BOUND" for item in operands)
-    assert PROPOSAL["launchable"] is False
-    assert PROPOSAL["compute_decision"] == "HOLD_FOR_JOSEPH_AND_EXECUTABLE_IMPLEMENTATION"
+    assert all(len(item["sha256"]) == 64 for item in operands)
+    assert all(item["status"] == "IMPLEMENTED_TESTED_HASH_BOUND" for item in operands)
+    assert PROPOSAL["status"] == "AUTHORIZED_READY"
+    assert PROPOSAL["launchable"] is True
+    assert PROPOSAL["compute_decision"] == (
+        "AUTHORIZED_CONDITIONAL_SUBMISSION_AFTER_ALL_PREFLIGHTS"
+    )
+    authorization = PROPOSAL["authorization"]
+    assert authorization["authorized_by"] == "Joseph"
+    assert authorization["token"] == MODULE.AUTHORIZATION_TOKEN
+    assert authorization["automatic_or_unchanged_retry"] is False
     assert contract["guard_prefix"].startswith("${PETV2_PYTHON} ${PETV2_CODE_ROOT}")
     assert "has no default" in contract["python_supplier"]
     assert "outside the primary checkout" in contract["artifact_supplier"]
     assert "each Python process" in contract["subprocess_rule"]
     assert "exits before sbatch" in contract["authorization_guard"]
+    for item in operands:
+        assert MODULE._sha256(REPO / item["path"]) == item["sha256"]
 
 
 def test_exact_gate6_prohibitions_and_non_authorizations_are_preserved():
@@ -138,5 +149,6 @@ def test_human_contract_names_every_operand_threshold_and_decision_boundary():
     assert "S = ceil(F_sd_ddof1" in text
     assert "M = 2 S" in text
     assert "13 A100 h" in text
-    assert "do not authorize A100 compute yet" in text
-    assert "launchable: false" in text
+    assert "CPU ceiling: five node-hours" in text
+    assert "Joseph authorized the CPU and A100 work" in text
+    assert "launchable: true" in text

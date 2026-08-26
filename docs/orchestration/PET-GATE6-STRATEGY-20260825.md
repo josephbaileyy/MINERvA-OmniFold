@@ -510,7 +510,7 @@ fixed-draw equivalence comparison precedes SC-1; it does **not** authorize that 
 Its numeric materiality rule, guarded executable operands, and measured resource estimate must
 return to Joseph before any compute.
 
-### No-launch fixed-draw proposal returned
+### Fixed-draw proposal returned and conditional compute authorized
 
 The required proposal is now
 [`PREDECLARATION-20260825-pet-v2-fixed-draw-equivalence.md`](PREDECLARATION-20260825-pet-v2-fixed-draw-equivalence.md).
@@ -521,7 +521,12 @@ target and 50 completed training scheduler records. It also records the larger i
 single-effect MDE as an annotation, not a gate, because the old floor is a global scalar rather than
 a regional push/extraction calibration.
 
-The proposal is complete but deliberately not executable: its five future entrypoints have no
-implementation or digest, and its receipt says `launchable: false`. The compute decision is **hold**.
-Joseph is asked only whether to authorize implementation and CPU-only testing of those fail-closed
-operands; that decision cannot submit a job or authorize A100 use.
+Joseph subsequently authorized the CPU target/readback work and the three A100 arms on 2026-08-26,
+provided every guard works as specified. The five entrypoints are now implemented, CPU-tested, and
+hash-bound; the authorized ceiling is 18 A100-hours and five CPU node-hours. The controller still
+fails closed before `sbatch` unless its exact proposal, clean non-primary HEAD, explicit interpreter
+and artifact suppliers, five implementation hashes, resource ceiling, authorization token, and five
+live prohibitions all agree. A failed target, arm, evaluation, or validation blocks its dependencies
+and has no retry path. This authorization remains one fixed-draw method diagnostic: it does not
+authorize convergence tuning, a family, coverage work, `C_stat`, `C_ML`, central movement, Leg 2,
+note edits, or any publication claim.

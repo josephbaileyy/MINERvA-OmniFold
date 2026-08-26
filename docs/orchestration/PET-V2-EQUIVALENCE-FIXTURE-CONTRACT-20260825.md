@@ -99,10 +99,12 @@ Joseph must approve that proposal separately before any full fixed-draw comparis
 
 ### Proposal returned
 
-That no-launch proposal is now
+The proposal returned as
 [`PREDECLARATION-20260825-pet-v2-fixed-draw-equivalence.md`](PREDECLARATION-20260825-pet-v2-fixed-draw-equivalence.md),
 with its deterministic machine-readable operand receipt. It derives a `0.0251` same-arm validity cap,
 a `0.0502` cross-arm operational margin, and a scheduler-measured 13 A100-hour expected envelope.
-It is deliberately `launchable: false`: the five future diagnostic/submit operands are not yet
-implemented, tested, or hash-bound. The present decision is therefore to hold compute and ask Joseph
-only whether to authorize that implementation and CPU-only test stage.
+Joseph subsequently authorized its CPU and three-arm A100 work on 2026-08-26 conditional on every
+guard working as specified. The five diagnostic/submit operands are implemented, CPU-tested, and
+hash-bound, and that later contract is now `launchable: true` only through its full fail-closed
+preflight. This does not retroactively turn the fixture into compute authorization or widen what its
+`PASS_MACHINERY_VALIDATION_ONLY` result established.
