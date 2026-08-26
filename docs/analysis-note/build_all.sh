@@ -94,10 +94,11 @@ echo "=== struck-value containment (retracted values must reach the NOTE build o
 #
 # CONTRACT, changed 2026-08-12 on Joseph's decision: exit 0 from this stage means BOTH the
 # source and PDF halves ran and passed. Every skip is fatal here. Previously a missing python3
-# printed "containment UNVERIFIED" and the build went on to exit 0, and a missing pdftotext
-# skipped the PDF half inside the checker with the same result -- so the check was silently
+# printed "containment UNVERIFIED" and the build went on to exit 0, and a missing PDF text
+# extractor skipped the PDF half inside the checker with the same result -- so the check was silently
 # machine-dependent, whole on one box and half on another, with no difference in the build's
-# status.
+# status. The checker prefers Poppler's pdftotext and uses Ghostscript's txtwrite device as a
+# strict fallback; absence or empty output from both remains fatal.
 #
 # --source-only exists in the checker and MUST NEVER be passed from here. It is for a human
 # debugging without a TeX install. Adding it to this line would restore exactly the defect the
