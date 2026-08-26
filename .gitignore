@@ -97,6 +97,7 @@ evloop3d_*.err
 *.synctex.gz
 *.fls
 *.fdb_latexmk
+*Notes.bib
 *.bbl
 *.blg
 

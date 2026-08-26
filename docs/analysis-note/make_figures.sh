@@ -130,7 +130,19 @@ assert_pdf_page_size() {
   local source_pdf="$1"
   local expected_size="$2"
   local actual_size
-  actual_size=$(pdfinfo "$source_pdf" | awk '/^Page size:/ {print $3 " x " $5; exit}')
+  if command -v pdfinfo >/dev/null 2>&1; then
+    actual_size=$(pdfinfo "$source_pdf" | awk '/^Page size:/ {print $3 " x " $5; exit}')
+  elif command -v gs >/dev/null 2>&1; then
+    # NERSC's TeX Live module supplies pdfcrop but not Poppler's pdfinfo.
+    # Query the first-page MediaBox with the system Ghostscript instead.
+    actual_size=$(gs -q -dNOSAFER -dNODISPLAY -sSourcePDF="$source_pdf" -c \
+      'SourcePDF (r) file runpdfbegin /mb 1 pdfgetpage /MediaBox get def
+       mb 2 get mb 0 get sub =only ( x ) print
+       mb 3 get mb 1 get sub =only quit')
+  else
+    echo "REFUSE paper crop: neither pdfinfo nor gs is available to verify $source_pdf" >&2
+    exit 1
+  fi
   if [[ "$actual_size" != "$expected_size" ]]; then
     echo "REFUSE paper crop: $source_pdf is $actual_size pts, expected $expected_size pts" >&2
     exit 1

@@ -135,6 +135,14 @@ class BuildAllHarness(unittest.TestCase):
 
     def run_build(self, mode, containment_rc="0", drop_latexmk=False):
         env = dict(os.environ)
+        # NERSC exports `module` as a Bash function and recreates it through
+        # BASH_ENV.  If either reaches the fixture shell, build_all.sh loads the
+        # real TeX module and its prepended PATH bypasses FAKE_LATEXMK.  Remove
+        # only that shell initialization from the harness; production builds
+        # still exercise the module load normally.
+        env.pop("BASH_ENV", None)
+        env.pop("BASH_FUNC_module%%", None)
+        env.pop("BASH_FUNC_ml%%", None)
         env["BUILD_TEST_MODE"] = mode
         env["BUILD_TEST_LOG"] = str(self.log)
         env["BUILD_TEST_CONTAINMENT_RC"] = containment_rc
