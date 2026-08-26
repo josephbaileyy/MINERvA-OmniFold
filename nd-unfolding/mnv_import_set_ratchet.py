@@ -36,6 +36,8 @@ from __future__ import annotations
 
 import argparse
 import glob
+import hashlib
+import pathlib
 import json
 import os
 import sys
@@ -45,6 +47,29 @@ CANNOT_CHECK_EXIT = 2
 VIOLATION_EXIT = 3
 
 SCHEMA = "mnv_import_set_pins/1"
+
+# 7.0.15 / F-7(b): the preflight exclusion must be pinned WITH the import set, "so that the
+# exclusion cannot widen unnoticed". Before this, the pin carried {"schema", "entrypoints"} only and
+# the exclusion lived in a separate unbound file, so a pin-to-pin comparison across runs could not
+# see a widened exclusion at all. Ruling 3 of FINDING-20260824 filed that as a MISSING INSTRUMENT
+# (7.0.8) and therefore a Gate-2 FAIL surface, repairable by making the pin carry the digest.
+#
+# The root is DERIVED, never a literal: OI-136's whole finding is that a hardcoded checkout root
+# makes a tool read the wrong tree. `parents[1]` because this file sits at <repo>/nd-unfolding/.
+EXCLUSION_REL = "nd-unfolding/mnv_preflight_exclusions.json"
+_REPO = pathlib.Path(__file__).resolve().parents[1]
+
+
+def exclusion_record() -> "tuple[str, str | None]":
+    """(relative path, sha256) for the preflight exclusion, or (path, None) if unreadable.
+
+    A None digest is a CANNOT-CHECK condition for every caller, never a pass: an absent exclusion
+    file and an empty one are different states and must not collapse into the same answer.
+    """
+    try:
+        return EXCLUSION_REL, hashlib.sha256((_REPO / EXCLUSION_REL).read_bytes()).hexdigest()
+    except OSError:
+        return EXCLUSION_REL, None
 INVENTORY_SCHEMA = "mnv_guard_inventory/1"
 
 
@@ -228,7 +253,14 @@ def main(argv=None) -> int:
                   file=sys.stderr)
             return CANNOT_CHECK_EXIT
         _, observed = check(recs, {"entrypoints": {}}, manifest, tuple(a.declare_empty))
-        pins = {"schema": SCHEMA, "entrypoints": {}}
+        excl_rel, excl_sha = exclusion_record()
+        if excl_sha is None:
+            print(f"[p4] COULD NOT LOOK: cannot read the preflight exclusion {excl_rel}, so the "
+                  f"pin cannot carry its digest and 7.0.15 cannot be satisfied. Refusing to write "
+                  f"a pin that would be silent about the exclusion.", file=sys.stderr)
+            return CANNOT_CHECK_EXIT
+        pins = {"schema": SCHEMA, "entrypoints": {},
+                "exclusion": {"path": excl_rel, "sha256": excl_sha}}
         for key, mods in sorted(observed.items()):
             entry = {"modules": sorted(mods)}
             if key in a.declare_empty:
@@ -240,6 +272,7 @@ def main(argv=None) -> int:
             json.dump(pins, fh, indent=2, sort_keys=True)
         print(f"[p4] wrote {len(pins['entrypoints'])} pinned import set(s) to {a.pins} "
               f"from {len(recs)} inventory record(s)")
+        print(f"[p4]   exclusion pinned: {excl_rel} sha256={excl_sha}")
         for key, e in sorted(pins["entrypoints"].items()):
             print(f"[p4]   {key}: {len(e['modules'])} module(s) {e['modules']}"
                   + ("  [DECLARED EMPTY]" if e.get("declared_empty") else ""))
@@ -254,6 +287,28 @@ def main(argv=None) -> int:
     if pins.get("schema") != SCHEMA:
         print(f"[p4] COULD NOT LOOK: {a.pins} is not a {SCHEMA} record", file=sys.stderr)
         return CANNOT_CHECK_EXIT
+
+    # 7.0.15 / F-7(b). Three distinct refusals, because collapsing them would hide which one fired.
+    excl_rel, excl_sha = exclusion_record()
+    pinned_excl = pins.get("exclusion")
+    if not isinstance(pinned_excl, dict) or not pinned_excl.get("sha256"):
+        print(f"[p4] COULD NOT LOOK: {a.pins} records no preflight-exclusion digest. A pin that "
+              f"cannot express the exclusion cannot satisfy 7.0.15, and an absent record is not an "
+              f"unchanged exclusion. Re-write the pin with --write-pins.", file=sys.stderr)
+        return CANNOT_CHECK_EXIT
+    if excl_sha is None:
+        print(f"[p4] COULD NOT LOOK: cannot read the preflight exclusion {excl_rel} to compare "
+              f"against the pinned digest.", file=sys.stderr)
+        return CANNOT_CHECK_EXIT
+    if pinned_excl.get("sha256") != excl_sha:
+        print(f"\n[p4] EXCLUSION MOVED: {excl_rel}\n"
+              f"[p4]   pinned   sha256={pinned_excl.get('sha256')}\n"
+              f"[p4]   observed sha256={excl_sha}\n"
+              f"[p4] The 7.0.13 preflight exclusion is not the one this pin was written against. "
+              f"This fires in BOTH directions -- a widened exclusion and a narrowed one are both a "
+              f"changed guarding boundary -- and it is a VIOLATION, not a note.", file=sys.stderr)
+        return VIOLATION_EXIT
+    print(f"[p4] exclusion pin HELD: {excl_rel} sha256={excl_sha}")
 
     declared_empty = tuple(k for k, e in pins.get("entrypoints", {}).items()
                            if e.get("declared_empty"))

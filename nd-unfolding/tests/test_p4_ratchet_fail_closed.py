@@ -95,7 +95,17 @@ class Fixture(unittest.TestCase):
         (self.invdir / name).write_text("".join(json.dumps(r) + "\n" for r in recs))
 
     def write_pins(self, entrypoints):
-        self.pins.write_text(json.dumps({"schema": PINS_SCHEMA, "entrypoints": entrypoints}))
+        # 7.0.15 / F-7(b): the ratchet now REQUIRES the pin to carry the preflight-exclusion
+        # digest and refuses CANNOT_CHECK without it, so every fixture pin must record the real
+        # one. Read from the file rather than hardcoded, or this fixture rots the moment the
+        # exclusion legitimately changes.
+        import hashlib as _h, pathlib as _p
+        _excl = "nd-unfolding/mnv_preflight_exclusions.json"
+        _repo = _p.Path(__file__).resolve().parents[2]
+        self.pins.write_text(json.dumps(
+            {"schema": PINS_SCHEMA, "entrypoints": entrypoints,
+             "exclusion": {"path": _excl,
+                           "sha256": _h.sha256((_repo / _excl).read_bytes()).hexdigest()}}))
 
     def run_tool(self, *extra, manifest=True):
         argv = [sys.executable, str(TOOL), "--inventory-dir", str(self.invdir),
