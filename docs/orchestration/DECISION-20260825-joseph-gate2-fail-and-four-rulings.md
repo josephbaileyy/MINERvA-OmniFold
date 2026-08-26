@@ -303,7 +303,10 @@ the citation had already acquired a force it was never meant to have.
 | `compare_m1_m6.py` (repaired at `c8a29082`, UNGRADED) | content sha256 | `68b4af12` |
 | `test_compare_m1_m6.py` (repaired at `c8a29082`, UNGRADED) | content sha256 | `b355ecdc` |
 | `m1m6_expected_differences.json` (**historical referent**, as it produced the record) | content sha256 | `56c2e0ef`, 4464 bytes |
-| `m1m6_expected_differences.json` (prose note transcribed from the grade, per §12.1) | content sha256 | `92091ae8` |
+| `m1m6_expected_differences.json` (**intermediate**: transcribed from the D-3 grade) | content sha256 | `92091ae8` |
+| `m1m6_expected_differences.json` (**current**: transcribed from the narrowing grade) | content sha256 | `c2f0d920` |
+| `compare_m1_m6.py` (narrowed at `63262a3a`, graded FIT at `fba7da70`) | content sha256 | `5dc92487` |
+| `test_compare_m1_m6.py` (same) | content sha256 | `762fac14` |
 | `measure_k0_farend_f1b_f17b.sh` (post-repair) | content sha256 | `c40e6b54`, 15722 bytes |
 | `GRADE-20260825-f17b-comparison-instrument-fitness.md` (EXPIRED) | content sha256 | `aa1b6eee`, 41819 bytes |
 
@@ -473,12 +476,19 @@ implementer and the grader are different parties, and neither is the spec author
 specification and its digest are updated ONLY AFTER the implementation passes**, not before. All
 historical digests are preserved as as-of referents; none is rewritten.
 
-Consequence for the note transcribed under §12.1: `m1m6_expected_differences.json` at `92091ae8`
-currently describes partial selectors as accepted, because that is the **graded** behaviour and the
-note is required to describe graded behaviour rather than intent. It is deliberately **left
-unchanged** until the narrowing is implemented and passes, per this ruling. Its sentence deferring to
-Joseph is therefore stale in wording while remaining correct in effect — do not add a partial
-selector — and it is knowingly left so rather than edited early. §12.2.1 governs.
+**DISCHARGED.** Implemented at `63262a3a` by an independent lane, graded **FIT with NO condition**
+at `fba7da70` by a third. The prior grade's mechanical expiry tripped by design (two of its three
+pinned digests moved) and was verified tripped rather than assumed. The prior grade's standing
+precondition — "no partial M-1 selector in the list at filing time" — is now **unnecessary**: the
+guard makes one unrepresentable.
+
+The note was then updated per §12.1's first branch, `92091ae8` → **`c2f0d920`**, transcribed from §8
+of the narrowing grade and verified inert to behaviour (parses; comparator still returns the filed
+`32/0/32` at exit 20; suite 81/81). Both earlier digests are preserved in §11 as as-of referents.
+
+**Newly accepted = 0**, independently measured over 115160 corpus-derived patterns scored in separate
+processes against one serialized population: accepted 42997 → 773, with
+`accepted_new \ accepted_old` empty. That was the column that had to be empty.
 
 ### 12.3 Scope, and what these do not move
 
@@ -514,6 +524,51 @@ depends on the mutation matrix. An inaccurate diagnostic count is not itself an 
 Also recorded from the same grade: claim 2's "breadth is inexpressible" is **overstated** — true of
 field-name breadth, false of selector-space breadth (which is what §12.2.1 now closes). Claim 6 is
 true but over a shipped-list population of **one** pattern, and must be quoted with that denominator.
+
+### 13.1 The narrowing grade's four overstatements, recorded compactly
+
+Per ruling 2's principle — an inaccurate diagnostic count is not an audit campaign — these are
+recorded and not chased. **None is behavioural**; the narrowing's own verdict is FIT with no
+condition.
+
+| Claim | Status |
+|---|---|
+| "4060 of **4840**" | the 4840 denominator is **not recoverable** from committed artifacts. Cite `4060`, or the grader's 115160. Never "4060 of 4840". |
+| `field_matches` untouched because narrowing it would cost unit assignment | **wrong ground.** 0 of 30 UNITS patterns is a partial selector, so mirroring the narrowing there would cost nothing. The correct reason is **backstop independence**: `field_matches` is the independent second implementation that `matcher_disagreement` interrogates, and teaching it the grammar makes the backstop circular. |
+| "prose corrected in three places" | **four** |
+| the `over_broad` assertion demonstrating the old sweep could not catch this | **degenerate as written** — it passes on the bench universe because the pattern reaches 0 fields there, not because the predicate counts field names. The substance holds over the real universe; the cited line does not carry it. |
+
+Also: "all 76 pre-existing arms stay green" — there are **75** name-identical pre-existing arms; the
+76th is the one the implementation inverted.
+
+### 13.2 A pre-existing figure inherited THROUGH a grade
+
+`test_compare_m1_m6.py`'s docstring for the field-name-wildcard arm says "**265 of 721** generated
+candidates are refused although they reach exactly one field name". Measured: **301** (refused and
+exactly one field name) or **360** (refused and not over-broad). **265 is the ACCEPTED count.** Do
+not cite "265 of 721".
+
+It was **not introduced by `63262a3a`** — it came in at `68b4af12` and passed *through* the D-3
+grade unchallenged. Worth noting for what it says about grades in general: a grade that verifies
+behaviour does not thereby verify the prose shipped beside it.
+
+### 13.3 My own briefing was self-contradictory, and the grader caught it
+
+Two defects in how I briefed the narrowing grader, both reported by the grader itself:
+
+- I relayed the implementer's claim 8 as "**nothing previously refused changes even its printed
+  reason**". That is **false as stated** — and my own relay of claim 1, three paragraphs earlier in
+  the same brief, said 305 verdicts were *reworded*. The two cannot both hold and I passed both
+  without noticing. The defensible claim is about the **identity of the check that fires**, not its
+  text; graded that way it holds exactly (one transition, `ACCEPT → partial-selector`, 42224).
+- I asked the grader to "**assess whether the implementation is honest** about that". That is an
+  attitude question and it invites a yes. Testing the same thing as a *proposition* is what produced
+  the finding that the new invariant arm's docstring states the opposite of the claim it supports.
+
+Recorded because the fix is to the briefing, not to anyone's code, and an unrecorded briefing defect
+propagates to the next lane silently. **Rule for future dispatches: relay a claim as a proposition
+with its operand, never as a question about the author's candour, and check a relayed claim set for
+internal contradiction before sending it.**
 
 ## 14. F-14 self-reports: confession is not validation
 
