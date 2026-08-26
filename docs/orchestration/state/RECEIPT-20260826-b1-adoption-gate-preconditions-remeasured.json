@@ -1,0 +1,87 @@
+{
+  "schema": "routed-node-precondition-remeasurement/v1",
+  "recorded_utc": "2026-08-26T08:2xZ",
+  "recorded_by": "publication close-out lane (claude-school-main)",
+  "authority": "Joseph 2026-08-26: after the Gate-2 freeze receipt lands, reroute through a fresh LIVE-STATE.md and the governing OI-*, and if the adopted scalar-5D covariance is still the critical path, continue THAT EXACT adoption gate. Also: bind every claim to the measured commit. This is that re-measurement and nothing more.",
+  "CITABLE_FOR": [
+    "That the two --expected-ids populations the finalize launcher validates are now NUMERICALLY COMPLETE, measured 2026-08-26 at the path recorded below.",
+    "That the 2026-08-22 counts for the same two populations are STALE.",
+    "That the gate nevertheless does NOT advance, for a reason unrelated to those counts.",
+    "The path-resolution trap recorded under `operand_trap`, which the next reader will otherwise repeat."
+  ],
+  "NOT_CITABLE_FOR": [
+    "Any Gate-2 clause. Gate 2 remains FAIL and is held by Joseph.",
+    "Adoption, consumption, or quoting of ANY product of run k0-aa67c426-20260824T145751Z. That prohibition is explicit and unchanged, and these are that run's products.",
+    "Authorizing logical leg 6 or sbatch_finalize_5d_bkgaware_gpu.sh, both prohibited outright.",
+    "Any compute. None is authorized.",
+    "Any scientific value: this receipt quotes FILE COUNTS and existence, never a number inside any .npz."
+  ],
+  "what_was_stale": {
+    "as_recorded_20260822": "the finalize launcher's two exact-population validators REFUSED: :167 wanted 100 bootstrap replicas and found 3; :168 wanted 24 seedscan splits and found 0, with seedscan_split_5d/ ABSENT.",
+    "why_it_went_stale": "the producing arrays ran on 2026-08-24, after that measurement.",
+    "consequence_if_requoted": "a session reading the 08-22 counts would conclude the gate is blocked for want of products, and would work the wrong queue: it is blocked for a different reason."
+  },
+  "validators": {
+    "file": "nd-unfolding/sbatch_finalize_5d_bkgaware_gpu.sh",
+    "lines": [
+      167,
+      168
+    ],
+    "line_167": "combine_cov_nd.py --glob $(mr_prefix boot_nd_5d)/res_boot_*.npz --expected-ids 1-100 --tag stat5d",
+    "line_168": "combine_cov_nd.py --glob $(mr_prefix seedscan_split_5d)/res_split_*.npz --expected-ids 1-24 --tag mlsplit5d",
+    "semantics_quoted_from_the_script": "`--expected-ids` is an EXACT-POPULATION validator and is kept at the full ranges on purpose: a member with a partial replica set must REFUSE rather than quietly combine what it has."
+  },
+  "measured_20260826": {
+    "member_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/mii/member_k000000",
+    "boot_nd_5d": {
+      "res_boot_*.npz": 100,
+      "expected": 100,
+      "complete": true,
+      "done_markers": 100,
+      "directory_entries_total": 200,
+      "zero_length_npz": 0
+    },
+    "seedscan_split_5d": {
+      "res_split_*.npz": 24,
+      "expected": 24,
+      "complete": true,
+      "done_markers": 24,
+      "directory_entries_total": 48,
+      "zero_length_npz": 0
+    },
+    "producers_from_sacct": [
+      {
+        "array": "57527866",
+        "name": "boot5dG",
+        "tasks": "1-100",
+        "state": "COMPLETED (all)",
+        "date": "2026-08-24"
+      },
+      {
+        "array": "57527869",
+        "name": "ssplit5d",
+        "tasks": "1-24",
+        "state": "COMPLETED (all)",
+        "date": "2026-08-24"
+      }
+    ]
+  },
+  "conclusion": "NUMERICALLY COMPLETE, PROCEDURALLY BARRED. Both exact-population validators would now pass on count. The gate still does not advance, because these are products of run k0-aa67c426-20260824T145751Z, whose Gate 2 is FAIL, and because the only consumer is logical leg 6 / sbatch_finalize_5d_bkgaware_gpu.sh, which is prohibited outright. The blocker moved from 'the products do not exist' to 'the products may not be used'. Nothing here changes either prohibition and nothing here is a request to relax one.",
+  "operand_trap": {
+    "what_happened": "state/k0r2-bootstrap-array-active-57527866.json records products as `mii/member_k000000/boot_nd_5d/` and, separately, MNV_DATA_ROOT as /pscratch/sd/j/josephrb/MINERvA-OmniFold. Composing the two gives a path that DOES NOT EXIST. The relative path is resolved against $REPO/nd-unfolding, because the executing launcher does `cd \"${REPO}/nd-unfolding\"` at line 24.",
+    "why_it_is_dangerous": "the first probe returned `ls -1 <glob> | wc -l` = 0 for an ABSENT directory, which is byte-identical to the answer for an EMPTY one -- so the wrong path produced a well-formed '0 products' reading that agreed with the stale 08-22 record. The tell was a separate existence test on each path component, not the count.",
+    "rule": "resolve a relative product path against the CWD the producer actually sets, and test directory existence separately from any count."
+  },
+  "flagged_not_fixed": "the executing launcher hardcodes REPO=\"/pscratch/sd/j/josephrb/MINERvA-OmniFold\" as a literal (sbatch_bootstrap_5d_gpu.sh:22), so a copy deployed to a frozen tree still reads and writes the main pscratch checkout. That is the same hardcoded-literal family as OI-136's _REPO sys.path hijack. Reported, not changed: not this lane's file and not authorized by this re-measurement.",
+  "live_state_freshness_at_recording": {
+    "file": "docs/orchestration/LIVE-STATE.md",
+    "verdict": "FRESH",
+    "checker": "generate_live_state.py --check-freshness, rc=0",
+    "measured": "Git: f9f92d1a is HEAD's parent (e57aca8e) -- the normal born-stale-by-one state",
+    "observed_field": "2026-08-26T08:01:03Z on host login21",
+    "scope_of_that_green_quoted_from_the_checker": "only `Git:` and `Observed:` are checked. `Declared state` and `Current DAG node` are AUTHORED PROSE the generator carries forward verbatim, and regeneration does not revalidate them -- so a fresh snapshot is not a validated one.",
+    "routed_node_as_read": "the publication critical path is the adopted scalar-5D covariance; Gate 2 remains FAIL and is held by Joseph; the codex-school dispatch is UNCLAIMED -- a handoff, not work in progress and not an independent origin -- and if acknowledged and delivered from artifacts only it still requires a separate third-party grade before Joseph's re-evaluation; no scalar-5D covariance candidate is adopted and no science compute is authorized by that state view.",
+    "governing_OI_checked": "OI-7, which OI-6 names as the separate gate on the standard-5D covariance adoption, is BLOCKED and owned by lane D, and re-scoped by measurement to documentation and receipt-routing rather than physics. OI-137 is assigned to the standard-P4 lane as the scalar-5D adoption / statistics owner. Neither is this lane's to execute, and this receipt claims no ownership of either."
+  },
+  "gate_2": "FAIL."
+}
