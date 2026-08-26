@@ -12,6 +12,9 @@ SCRIPT = REPO / "docs/orchestration/plot_pet_gate6_strategy_evidence.py"
 SPEC = importlib.util.spec_from_file_location("pet_gate6_strategy_evidence", SCRIPT)
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
+STRATEGY = (REPO / "docs/orchestration/PET-GATE6-STRATEGY-20260825.md").read_text(
+    encoding="utf-8"
+)
 
 
 def test_strategy_sources_preserve_block_and_all_exact_prohibitions():
@@ -45,3 +48,17 @@ def test_committed_floor_contraction_and_loss_proxy_are_transcribed():
         evidence["truth_loss_entry"],
         np.asarray([1.093201756477356, 0.9419060349464417, 0.8775396347045898]),
     )
+
+
+def test_strategy_keeps_convergence_equivalence_and_coverage_distinct():
+    assert "## Three questions that must not be collapsed" in STRATEGY
+    assert "**Training convergence**" in STRATEGY
+    assert "**Estimator equivalence**" in STRATEGY
+    assert "**Interval coverage**" in STRATEGY
+    assert "ordinary closure is a central-estimator test" in STRATEGY
+
+
+def test_strategy_preserves_closed_oi126_and_no_compute_boundary():
+    assert "does not activate that contingency or\nreopen" in STRATEGY
+    assert "This request authorizes **no GPU run, no pseudoexperiment count" in STRATEGY
+    assert "do_not_construct_C_ML" in STRATEGY

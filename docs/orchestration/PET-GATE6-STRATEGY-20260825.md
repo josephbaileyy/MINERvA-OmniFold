@@ -25,6 +25,21 @@ normalization as a guard. Tolerances should be calibrated before a new family fr
 replicates and injected closure, rather than inferred from the five old members. That proposal
 changes no historical verdict.
 
+## Three questions that must not be collapsed
+
+| question | measured object | what a positive result establishes | what it does **not** establish |
+|---|---|---|---|
+| **Training convergence** | losses, checkpoint dependence, iteration-to-iteration weight changes, response, ESS and global normalization for one frozen estimator | the finite optimizer has reached a prospectively defined stable regime | that weighted and literal resampling implement the same estimator; that any interval covers |
+| **Estimator equivalence** | a controlled contrast between two implementations of the same declared resample | whether representation alone materially changes target, push or extraction | that either implementation has converged under other hyperparameters; that its intervals cover |
+| **Interval coverage** | repeated pseudoexperiments from known truths, each running the frozen estimator and interval procedure | the repeated-sampling containment rate for the declared truths/regions | equivalence outside the tested contract; publication adoption or coverage under untested truths |
+
+The implications run only within each row. A looser convergence diagnostic can improve method
+development, but it cannot validate a PET uncertainty. Likewise, reproducing one fixed draw under two
+representations cannot validate an interval. This separation is already demanded by the current
+`OI-126` end-state: the pairing was declined, PET was demoted to method development, and any
+reconsideration requires estimator-equivalence **and** coverage evidence; correctly assembling a
+finite covariance is a different question.
+
 ## Control-plane observation and evidence boundary
 
 - The required live-state freshness check was run first. The repository generator reported
@@ -54,6 +69,24 @@ do_not_retry_unchanged
 
 No Slurm job, `srun`, GPU training, note edit, publication change, or primary-checkout operation was
 performed for this strategy.
+
+### Disposition of the additional hypothesis memo
+
+The memo was treated as unverified guidance. Every supported point below was re-measured at branch
+HEAD `000c8a5fc9f16edb4f700e59101820ec27de0f1a`; no `f5978fa`-era summary is used. The current
+SHA-256 operands are `net.py f793e537…`, `omnifold.py 3a2022b0…`, `dataloader.py bed9e0b3…`,
+`fullevent_fps_dataloader.py e1402370…`, `train_fullevent_replica.py c92c9cc0…`, and
+`train_fullevent_nominal.py 91144bee…`.
+
+| memo point | disposition from current first-party evidence |
+|---|---|
+| convergence is not uncertainty validity | integrated; the three-question table makes this a hard boundary |
+| audit weighted Poisson versus literal resampling | supported as a real optimization seam, audited below; material impact is unmeasured |
+| one fixed-draw equivalence test | preserved as a prospective PET-v2 prerequisite, not authorized and not a reopened `OI-126` probe |
+| closure versus coverage | integrated; ordinary closure is a central-estimator test, not an interval-containment experiment |
+| staged coverage pseudoexperiments | integrated as a future proposal with machinery validation before power; no sample count is proposed |
+| freeze a PET-v2 estimand | integrated as a design label and contract below; it is not a new adopted fingerprint |
+| repeat `OI-126` containment/localization | rebutted: those probes are closed and are neither repeated nor proposed |
 
 ## Existing evidence, replotted without a new verdict
 
@@ -112,7 +145,7 @@ with continued learning, but it cannot distinguish adequate optimization from un
 the full histories and best/final epochs are absent. Its single-copy provenance is documented in the
 [retired-worktree archive record](runs/retired-worktree-archive-20260824/PROVENANCE.md).
 
-## Hypothesis matrix
+## Evidence-backed hypothesis matrix
 
 | hypothesis | supporting existing evidence | counterevidence or gap | next discriminating measurement | present status |
 |---|---|---|---|---|
@@ -123,6 +156,8 @@ the full histories and best/final epochs are absent. Its single-copy provenance 
 | H5. Seed/subsample policy contributes variation beyond the observed fixed-policy process floor. | Same-policy final process range `0.064529` is much smaller than varied-member `0.348006`. | The floor verdict is explicitly intermediate, only one seed policy was replicated, and early-iteration process ranges are large; the comparison does not apportion variance causally. | Replicate a changed policy across processes and at least two seed policies. | Suggested at the terminal scalar, not established as a mechanism. |
 | H6. The best/final checkpoint seam explains member 3's small rise. | Its only increase is at the mixed-tier transition and is smaller than the previously measured checkpoint effect scale recorded by the retry plan. | No committed terminal tier-clean result was located; members 2, 4, and 5 have failures independent of this seam. | CPU/inference-only tier-clean reading under a separately authorized contract, if still scientifically useful. | Unresolved and non-unblocking. |
 | H7. Weight-tail collapse or local response failure drives the scalar behavior. | These are mechanisms a global mean can hide. | No committed ESS, cap, calibration, or per-event-increment evidence exists. | Instrument all of them before spending on a family. | Open; no mechanism claim. |
+| H8. Poisson multiplicities carried as weights are optimization-equivalent to literal resampling. | Their full-sample weighted objectives are related representations of the same empirical resample. | Current code retains zero-weight rows, averages loss over finite batches, changes weights without changing row count, and uses sequence-dependent Adam state; equality of trained estimators does not follow. | A fixed-draw, split-before-duplication equivalence test with a predeclared materiality rule. | Not established; a real causal seam exists. |
+| H9. Ordinary closure or convergence establishes interval coverage. | Both can reveal bias or instability that would threaten coverage. | Neither measures repeated interval containment; unfolding literature demonstrates that regularized point estimation and bootstrap interval coverage can separate. | Staged known-truth pseudoexperiments of the complete frozen estimator-plus-interval procedure. | Rebutted as an implication; coverage remains unmeasured. |
 
 ## Prospective convergence criterion
 
@@ -175,6 +210,55 @@ supplier, and `OI-136` requires routing through
 [`mnv_guarded_run.py`](../../nd-unfolding/mnv_guarded_run.py). `OI-125` requires end-of-run diagnostic
 recording without overstating it as reconstructed closure.
 
+### Poisson-multiplicity representation audit
+
+The present coherent replica path draws integer Poisson factors and multiplies the signal reco/truth
+weights by them in
+[`fullevent_fps_dataloader.py`](../../nd-unfolding/pet/fullevent_fps_dataloader.py). The measured
+target remains row-aligned to the original data-plus-background inventory and records its number of
+zero-weight rows. In the vendored engine:
+
+1. [`dataloader.py`](../../omnifold_nn/omnifold/dataloader.py) scales weights but does not delete
+   zero-factor rows;
+2. `MultiFold.cache` constructs an index over **all** rows, shuffles it, zips every row with its
+   label and weight, then forms finite batches;
+3. [`net.py`](../../omnifold_nn/omnifold/net.py) computes
+   `reduce_mean(weight * binary_cross_entropy)` over the batch; and
+4. the model uses Adam, early stopping/checkpointing, and fixed finite train/validation partitions.
+
+Literal materialization of the same multiplicities deletes `k=0` rows and repeats a row `k` times.
+It therefore changes the number and composition of batches, examples per epoch, validation
+realization, and the gradient sequence entering Adam's moment state. Assigning unique-event
+train/validation membership **before** duplication prevents leakage of one event into both partitions,
+but it does not make the two optimizer paths identical. Even a constant rescaling of a full-batch
+objective would not prove equality here because minibatch compositions differ.
+
+This audit establishes a **mechanism for non-equivalence**, not a measured discrepancy in PET push or
+cross section. It supports a controlled test; it does not license calling the current bootstrap
+invalid.
+
+### Freeze one PET-v2 estimator before tuning
+
+`PET-v2` below is a strategy label only—not an implemented fingerprint, central value, or adopted
+uncertainty. The memo calls the whole bundle an estimand; more precisely, the target and reporting
+mask define the estimand, training/sampling/stopping semantics define the estimator, and the
+bootstrap/interval construction defines the inference procedure. All three must be frozen together
+in one analysis contract before tuning or equivalence work:
+
+| contract axis | required frozen content |
+|---|---|
+| target | source/target digests, target construction and refinement, background treatment, class-ratio normalization, and coherent draw streams |
+| loss normalization | exact weighted-BCE reduction, loader total-weight normalization, batch size, and treatment of zero weights |
+| sampling semantics | weighted multiplicities with retained rows **or** literal delete/duplicate materialization; split-before-duplication rule if literal |
+| stopping/optimization | reco/truth epoch budgets, patience and restore behavior, LR schedule, optimizer/reset semantics, warm starts, iteration count, checkpoint tier, and all seeds |
+| feature contract | reco/truth features, normalization, point-cloud padding/mask semantics, coordinate columns, and PET architecture/pretraining state |
+| estimand/extraction | truth domain, bin/projection definitions used for diagnostics, acceptance/native-miss policy, POT/flux normalization, central vector, and fixed reporting mask |
+| interval procedure | resampled streams, centering, covariance/interval construction, finite-ensemble treatment, and intended pointwise or simultaneous coverage target |
+
+The current code explicitly separates the feature fingerprint from the training policy. PET-v2 must
+bind both plus the sampling and interval semantics, or two mechanically different estimators can
+truthfully carry the same feature label.
+
 ### Fewer reco/truth epochs but more OmniFold iterations
 
 The clean first comparison is 3×8 versus **6×4**, because both schedule 24 maximum epochs per leg.
@@ -192,6 +276,40 @@ Thus 6×4 is a causal **iteration-versus-within-fit-budget intervention**, not m
 follow after the driver exposes `epochs_reco`, `epochs_truth`, `patience_reco`, `patience_truth`, and
 realized schedules separately.
 
+## Prospective fixed-draw estimator-equivalence test
+
+The current `OI-126` row already preserves this concept as an **explicit no-run/no-compute contingent
+subtest**. Because `OI-126` is ruled and closed, this strategy does not activate that contingency or
+reopen its containment, localization, target-factor, extraction, or occupancy probes. The design can
+be reused only under a new PET-v2 method-development decision.
+
+### Minimal design
+
+- Freeze one complete Poisson draw `k` over data, signal and background inventories.
+- **Arm W:** current representation—integer multiplicities enter the target/training path as weights;
+  zero-weight rows remain present.
+- **Arm L:** the identical `k` is materialized literally—delete `k=0`, duplicate each row `k` times.
+  Assign each original unique event to train or validation **before** materialization.
+- Hold the mathematical target recipe, feature contract, initialization, batch size, LR, optimizer,
+  epoch/stopping policy, OmniFold iterations, extraction, and random streams fixed where the
+  representation intervention permits. Batch composition and optimizer history are outcomes of the
+  intervention and must not be forced equal after the fact.
+- First run a deterministic CPU/small-fixture machinery test: factor replay, unique-event split
+  integrity, duplicate aggregation, target normalization, extraction identity, and guards with
+  positive/negative controls. It is not a scientific result.
+- Only after that machinery passes, a separately authorized full fixed-draw comparison would record
+  target summaries, every loss/checkpoint history, per-event push after mapping duplicates back to
+  unique IDs, global normalization/ESS/tails, and extracted projections in three already-declared
+  response regions: low `p_parallel < 6 GeV`, `6–20 GeV`, and `>20 GeV`. These fixed regions avoid a
+  new localization search.
+
+A numeric material-equivalence tolerance for push and each projection must be set **before** any
+full run, using deterministic replay/numerical precision and a separately justified scientific
+materiality scale. No threshold is invented here. Terminal readings are limited to
+`EQUIVALENT_AT_PREDECLARED_RESOLUTION`, `MATERIALLY_DIFFERENT`, `MIXED`, or
+`INVALID_OR_INCOMPLETE`. None validates coverage, selects a central, constructs a covariance, or
+authorizes a family.
+
 ## Primary literature and implementation sources
 
 Only primary papers and author-maintained implementation sources were used for this table.
@@ -203,31 +321,76 @@ Only primary papers and author-maintained implementation sources were used for t
 | [Neutrino OmniFold study, arXiv:2504.06857](https://arxiv.org/html/2504.06857) | Uses weighted BCE, Adam at `1e-4`, batch 1024, 80/20 train/validation, early stopping after 15 stagnant epochs with best-weight restoration, warm starts, and studies up to 50 iterations. It also proposes monitoring distributions of per-event weight changes over the last iterations when truth is unavailable. | Supports instrumented loss/best-weight handling and event-weight stationarity. Its truth-level χ² plateau and numerical hyperparameters are problem-specific and cannot be transplanted as a MINERvA gate. |
 | [Maintained implementation vendored here](https://github.com/ViniciusMikuni/omnifold/blob/main/omnifold/omnifold.py) | Provides the shared `niter`, `epochs`, LR, and early-stop API that the local audited engine follows. | Confirms the present coupling is implementation-level; a leg-specific causal study requires an explicit wrapper or API extension. |
 | [OmniLearn/PET paper, arXiv:2404.16091](https://arxiv.org/abs/2404.16091) and [author implementation](https://github.com/ViniciusMikuni/OmniLearn) | Establish the pretrained transformer/point-cloud model and fine-tuning implementation family. | Motivates PET initialization/architecture as a controlled hyperparameter axis; it does not provide a MINERvA-specific convergence band or epoch/iteration optimum. |
+| [Efron's original bootstrap paper](https://doi.org/10.1214/aos/1176344552) | Defines resampling from the empirical distribution to estimate a statistic's sampling distribution. | The statistic/estimator must itself be fixed. It does not prove that two finite stochastic optimization implementations are the same statistic. |
+| [Adam, arXiv:1412.6980](https://arxiv.org/abs/1412.6980) | Adam updates use adaptive estimates of gradient moments and are designed for noisy stochastic objectives. | A changed minibatch/gradient sequence can change optimizer state even with related aggregate objectives. |
+| [Neyman's interval construction](https://doi.org/10.1098/rsta.1937.0005) | Defines confidence through repeated-sampling behavior. | Coverage is an ensemble property of the complete interval procedure, not a property of one closure or one covariance matrix. |
+| [Kuusela–Panaretos unfolding UQ, arXiv:1505.04768](https://arxiv.org/abs/1505.04768) | Demonstrates in an unfolding problem that regularization bias can make standard bootstrap intervals miss nominal frequentist coverage, and evaluates a correction by simulation. | Primary reasoning evidence that central-estimator behavior and interval coverage must be checked separately; it is not a PET prescription or a note citation requirement. |
+| [Simulation-based calibration, arXiv:1804.06788](https://arxiv.org/abs/1804.06788) | Validates Bayesian inference machinery through simulated data and rank diagnostics. | Only the workflow lesson is used here: validate machinery before scientific calibration. PET coverage remains a frequentist known-truth pseudoexperiment question, not Bayesian SBC. |
+
+## Future interval-coverage proposal—not authorization
+
+Ordinary closure asks whether the central estimator recovers a known or injected truth under a
+specified response. It can expose bias and is necessary method validation, but it does not count how
+often a constructed interval contains truth. A PET-v2 coverage campaign would instead proceed in
+stages:
+
+1. **Freeze the object.** Lock the PET-v2 estimator, truth-generating ensemble, interval construction,
+   reporting mask, target coverage level, regions, and whether the claim is pointwise or simultaneous.
+2. **Mechanics validation.** Use deterministic analytic/toy fixtures and a deliberately small number
+   of end-to-end pseudoexperiments to prove seed replay, truth bookkeeping, target construction,
+   interval endpoints, containment counting, masks, failure handling, and absence of train/validation
+   leakage. This stage may find software defects; it must not report a coverage decision.
+3. **Pilot for costing only.** Observe runtime, failure rate, interval degeneracy and variance needed
+   for power design. Do not estimate or declare adequate coverage from the pilot.
+4. **Power predeclaration.** Choose the smallest undercoverage worth detecting, allowable Monte Carlo
+   error, multiplicity correction/region aggregation, and a binomial confidence-interval rule. Derive
+   the required pseudoexperiment count from those operands. No sample count in a memo or this strategy
+   authorizes compute.
+5. **Adequately powered campaign.** For every known-truth pseudoexperiment, rerun the complete frozen
+   target, training, extraction and interval construction; record containment indicators and failures.
+   Report coverage with Monte Carlo uncertainty for every predeclared point/region and the simultaneous
+   target if one was claimed.
+6. **Independent replay.** A separate implementation verifies containment bookkeeping and a subset of
+   end-to-end seeds before any scientific interpretation.
+
+Every stage remains PET method development. Even nominal coverage on the chosen truth ensemble would
+not by itself authorize publication adoption, `C_stat`, `C_ML`, a central move, or an uncertainty
+claim outside the tested contract.
 
 ## Ranked prospective experiments
 
-No item is authorized to launch by this document.
+No item is authorized to launch by this document. The order is changed because tuning an estimator
+whose sampling semantics remain open can optimize an object that is later redefined.
 
-1. **SC-1: one fixed-policy 6×4 instrumented screen.** Same `(42,0)`, data, target, batch, and maximum
+1. **Freeze PET-v2 and validate equivalence-test machinery on deterministic CPU fixtures.** No GPU;
+   no coverage or scientific verdict.
+2. **One fixed-draw weighted-versus-literal equivalence test.** Only after a numeric materiality rule,
+   executable contract, resource estimate and Joseph's separate authorization. It precedes any new
+   statistical or ML family and preferably precedes convergence tuning so the tuned estimator is the
+   chosen one.
+3. **SC-1: one fixed-policy 6×4 instrumented screen.** Same `(42,0)`, data, target, batch, and maximum
    24 epochs per leg as the old 3×8 policy. Measure every diagnostic in the contract below. Estimated
    resource: one A100 for `3.3–4.0 h` plus less than one CPU hour; the baseline estimate is the
    measured `3.25 h` mean for four fixed-policy training draws, with allowance for extra inference
    cycles and instrumentation.
-2. **Replicate SC-1 across processes.** Only if SC-1 is valid and directionally promising, run enough
+4. **Replicate SC-1 across processes.** Only if SC-1 is valid and directionally promising, run enough
    identical-policy draws to estimate the new process floor. Start with three additional draws and
    predeclare whether five total are required for a terminal dispersion reading. Approximate cost:
    `10–16 A100 h`, depending on the required total.
-3. **Reco/truth epoch factorial at fixed total budget.** Compare symmetric 6×4 with leg-asymmetric
+5. **Reco/truth epoch factorial at fixed total budget.** Compare symmetric 6×4 with leg-asymmetric
    schedules such as `(reco, truth) = (2,6)` and `(6,2)`, holding iteration count and declared
    optimizer-update accounting fixed. This isolates which leg benefits from within-fit budget;
    schedule values must be finalized after SC-1 histories are seen, then frozen before running.
-4. **Iteration-window scan with stationarity and response.** At a chosen epoch schedule, inspect
+6. **Iteration-window scan with stationarity and response.** At a chosen epoch schedule, inspect
    iterations 3–8 using final-tier outputs each time and predeclared stopping diagnostics. This asks
    where weight increments and held-out response plateau; it does not search for a passing old-gate
    subset.
-5. **Optimization/representation ablations.** Only after the prior experiments identify a leg and
+7. **Optimization/representation ablations.** Only after the prior experiments identify a leg and
    failure mode: active early stopping with best restoration, leg-specific LR, PET depth/heads/`K`,
    or initialization/fine-tuning. Change one causal axis at a time.
+8. **Coverage machinery, pilot, power design and powered campaign.** These are four separate future
+   decisions following the staged proposal above, not one campaign implicitly authorized by listing
+   it here.
 
 ## Predeclaration-style contract for SC-1 (design only; do not launch)
 
@@ -242,6 +405,10 @@ degradation?
 
 This is a one-run method-development screen. It cannot establish convergence, coverage, or a family
 uncertainty.
+
+**Entry prerequisite:** PET-v2 sampling semantics and the estimator-equivalence disposition must be
+frozen first. Otherwise SC-1 would tune a representation that a later equivalence result could
+replace. Meeting this prerequisite still does not authorize SC-1 compute.
 
 ### Frozen controls and changed axis
 
@@ -327,8 +494,9 @@ Every result—valid, invalid, favorable, adverse, or unresolved—leaves Gate 6
 
 ## Decision requested from Joseph before compute
 
-Please decide whether to authorize **SC-1 only**: one guarded, isolated, instrumented `(42,0)` 6×4
-diagnostic run at an estimated `3.3–4.0 A100 h`, under the contract above. A yes should also confirm
-that future convergence development should prioritize the joint stationarity/response/ESS criterion
-while retaining global normalization as a guard. No compute should begin until that explicit decision
-and the executable contract's hashes and source root are filled and checked.
+Please decide the **sequence**, not a job count: (1) approve PET-v2 estimand freezing and the
+deterministic CPU equivalence fixture; and (2) decide whether a separately predeclared one-draw
+weighted-versus-literal equivalence test is required before SC-1 convergence tuning. The recommendation
+is yes to both prerequisites because representation semantics can change the optimizer being tuned.
+This request authorizes **no GPU run, no pseudoexperiment count, and no `C_stat`/`C_ML` campaign**;
+resource and numeric equivalence thresholds must return for a separate decision before compute.
