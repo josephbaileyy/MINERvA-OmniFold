@@ -56,7 +56,9 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   documents agree, and the figure **"517 of the 773"** is **STRUCK as a population conflation**.
   §10.2: the register is **CLOSED for this pass**; the third independent origin against which Gate 2
   will be re-evaluated is the `codex-school` dispatch — **UNCLAIMED**, so not yet an origin — and
-  there is **no compute until it lands on its own evidence.** **Next route, per Joseph 2026-08-26:**
+  there is **no compute until it lands on its own evidence.** **CLAIMED in writing 2026-08-26** by
+  that Codex session; the UNCLAIMED reading is kept as the state as ruled on 08-25 and is not
+  rewritten. A claim is not a delivery, not a grade, and not Gate-2 credit. **Next route, per Joseph 2026-08-26:**
   the assignment remains **publication close-out**; after the Gate-2 freeze receipt, re-read a fresh
   `LIVE-STATE.md` and the governing `OI-*` and resume the **routed** node, continuing the adopted
   scalar-5D covariance **adoption gate** if that is still critical path — not an assumed workstream,
@@ -174,8 +176,11 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   indistinguishable from the exit status alone. **Re-measured at the tip 2026-08-26: `fd58e71b` is
   rc=0 in BOTH modes, rows=537, porcelain 0** — `aaed392d` was rc=1 *when it was the tip*, and any
   precondition citing the older green `17b79fca` result is **stale across the failing interval**.
-  **§6 is UNCLAIMED**: a handoff, not a delivery, and not citable as coverage or as an independent
-  origin until an implementer acknowledges it. **§6 DISPATCH (Joseph, 2026-08-25): the independent implementer is `codex-school`**,
+  **§6 was UNCLAIMED** as ruled on 08-25: a handoff, not a delivery, and not citable as coverage or
+  as an independent origin until an implementer acknowledged it. **It was CLAIMED in writing on
+  2026-08-26** by the `codex-school` Codex session, so that condition is now met and the historical
+  clause is retained rather than rewritten. Still not a delivery, still ungraded, still no Gate-2
+  credit. **§6 DISPATCH (Joseph, 2026-08-25): the independent implementer is `codex-school`**,
   re-deriving from this record and the artifacts and **not** from the close-out lane's reasoning or
   the advisory lane's analysis; the grader must be a third party. **The publication close-out lane is
   disqualified from BOTH** — it authored §4, and §4 is a *specification*, which is the prong ruling 3

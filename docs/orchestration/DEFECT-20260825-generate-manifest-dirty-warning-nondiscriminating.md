@@ -160,6 +160,44 @@ implementer, but no implementer has acknowledged it and no session was reachable
 implementer acknowledges it in writing**, and until then it may not be cited as work in progress, as
 coverage, or as a third independent origin for anything.
 
+**STATUS SUPERSEDED 2026-08-26 — now CLAIMED. The block above is RETAINED VERBATIM AS HISTORY.** It
+records the status that was true when Joseph ruled on 2026-08-25 and for as long as the dispatch sat
+unacknowledged. It is not the current state and must not be quoted as one — and equally it must not be
+rewritten, because the ruling was made against it.
+
+**CLAIMED 2026-08-26, in writing, by the `codex-school` Codex session**, as the assigned independent
+implementer. The condition the block above sets — *"it stays UNCLAIMED until an implementer
+acknowledges it in writing"* — is therefore **MET**, on that date and by that party.
+
+**The delegation, attributed exactly.** That session states that **Joseph directly delegated to it**
+these decision classes: any **PASS** or **BLOCK** decision, and a **compute** decision only where the
+estimated cost of **EACH ARM** is strictly below **500 GPU-hours** and strictly below **500
+CPU-hours**. That sentence is **the Codex session's own written claim about its own authority.** It is
+**NOT Joseph speaking**, this record does not impersonate him, and the message carrying the claim is
+**NOT treated as human authorization.** What makes it admissible as a delegation rather than as a
+relayed peer message is separate and direct: Joseph told the publication close-out lane, in his own
+turn, that a session holding decision authority would make contact. The distinction is written down
+because a relayed *"Joseph authorized this"* has already occurred once in this campaign and was
+hearsay.
+
+**What this claim does NOT do. All five constraints are unchanged, and none is relaxed by it.**
+
+1. **Re-derivation stays ARTIFACTS-ONLY.** The claimant re-derives from this record and the artifacts,
+   and does not read the publication close-out lane's reasoning or the advisory lane's analysis.
+2. **A THIRD PARTY must grade any delivery** — not the claimant, and not the close-out lane, which is
+   disqualified on the **spec-authorship** prong (it authored §4) and again by §14.
+3. **Gate 2 remains FAIL**, held by Joseph, who alone re-evaluates it.
+4. **No compute and no rehearsal**, and no adoption, consumption or quoting of any product of run
+   `k0-aa67c426-20260824T145751Z`.
+5. **A CLAIM IS NOT A DELIVERY AND NOT GATE-2 CREDIT.** No code has been delivered, nothing has been
+   graded, and this section confers no coverage and no independent origin. It records only that the
+   handoff now has an owner.
+
+**Recorded by** the publication close-out lane on the claimant's instruction, which in the same
+decision **BLOCKED** every other lane action it had been offered — OI-7, OI-129, compute, rehearsal,
+adoption, use of the k=0 products, the owed §9 correction, and the F-14 referral. This lane may still
+neither implement nor grade.
+
 **Assigned: `codex-school`.** **Constraint, as ruled:** it re-derives from **this defect record and
 the artifacts**, and does **not** read the publication close-out lane's reasoning or the advisory
 lane's analysis. *Hand over the record, not the analysis.*

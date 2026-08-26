@@ -294,6 +294,14 @@ artifacts only**. That dispatch is **UNCLAIMED** — a handoff, not a delivery �
 origin of anything. Re-evaluation happens when it lands, **on its own evidence**, not on this lane's
 agreement with an advisory lane, which is one origin counted twice. **No compute until then.**
 
+**SUPERSEDING STATUS NOTE, 2026-08-26.** That dispatch was **CLAIMED in writing** on 2026-08-26 by the
+`codex-school` Codex session (`DEFECT-20260825-generate-manifest-dirty-warning-nondiscriminating.md`
+§6, which carries the attribution and the preserved history). **The UNCLAIMED sentence above is
+retained as the state at the time of this ruling and is deliberately not rewritten**, so the ruling
+and the fact it was made against remain readable together. **Nothing else in this paragraph moves:** a
+claim is not a delivery, it is **not yet an origin of anything**, a third party must still grade any
+delivery, Joseph alone re-evaluates Gate 2, and there is still **no compute until it lands.**
+
 **Where this lane goes next, corrected by Joseph 2026-08-26.** The assignment **remains publication
 close-out**; "go back to the 5D uncertainties" was imprecise, not a change of lane. After the Gate-2
 freeze receipt lands, the route is: **re-read a fresh `LIVE-STATE.md` and the governing `OI-*`, then
