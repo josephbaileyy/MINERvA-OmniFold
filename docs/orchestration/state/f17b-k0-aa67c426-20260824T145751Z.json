@@ -1,0 +1,1239 @@
+{
+  "schema": "mnv_m1m6_comparison/1",
+  "instrument": {
+    "name": "compare_m1_m6.py",
+    "version": "1",
+    "self_sha256": "bace69d2c17317d36b2684beb952611d7d6ea4174089086078b785ba4f5cc33f"
+  },
+  "generated_utc": "2026-08-26T00:30:53Z",
+  "comparison_mode": "JOINT over all n inputs. Pairwise agreement is never composed into a global verdict: every field's verdict is the distinct-value set over all n, and every tolerance is max-min over all n.",
+  "global_agreement_inferred_from_pairs": false,
+  "input_schema_gaps": {
+    "branch_or_detached": "measure_m1_m6.py --json emits no symbolic-ref state",
+    "measurement_wall_clock": "measure_m1_m6.py --json emits no timestamp; the input_file_mtime_utc below is a property of the FILE, not of the measurement",
+    "measuring_instrument_digest": "measure_m1_m6.py --json does not identify its own revision; field_set_differs is the only visible symptom of two documents from different revisions"
+  },
+  "n_inputs": 2,
+  "inputs": [
+    {
+      "index": 0,
+      "key": "[0] deploy",
+      "label": "deploy",
+      "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+      "input_path": "/tmp/f17b.9434/deploy.json",
+      "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+      "input_bytes": 5902,
+      "input_file_mtime_utc": "2026-08-25T23:46:05Z",
+      "measurement_wall_clock": "UNAVAILABLE-BY-INPUT-SCHEMA",
+      "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+      "is_git": true,
+      "porcelain_dirty": 0,
+      "porcelain_untracked": 0,
+      "porcelain_modified": 0,
+      "branch_or_detached": "UNAVAILABLE-BY-INPUT-SCHEMA"
+    },
+    {
+      "index": 1,
+      "key": "[1] canonical",
+      "label": "canonical",
+      "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+      "input_path": "/tmp/f17b.9434/canonical.json",
+      "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+      "input_bytes": 6425,
+      "input_file_mtime_utc": "2026-08-26T00:30:52Z",
+      "measurement_wall_clock": "UNAVAILABLE-BY-INPUT-SCHEMA",
+      "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+      "is_git": true,
+      "porcelain_dirty": 742,
+      "porcelain_untracked": 718,
+      "porcelain_modified": 24,
+      "branch_or_detached": "UNAVAILABLE-BY-INPUT-SCHEMA"
+    }
+  ],
+  "expected_list": {
+    "path": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/m1m6_expected_differences.json",
+    "sha256": "56c2e0ef0521ae146d5095643bddc2cececba8aad5088f6a6924ce921fd58c8a",
+    "entries": [
+      {
+        "id": "E1-m4-behind-drift",
+        "fields": [
+          "M-4.behind"
+        ],
+        "rule": {
+          "kind": "may-differ"
+        },
+        "why": "M-4.behind is a left-right count against --upstream, which defaults to origin/main (measure_m1_m6.py, the --upstream argument). The cited block records it moving 36 -> 55 -> 65 while HEAD, dirty and the 717/4 split are all unchanged in that same block -- drift demonstrated with the measured tree held FIXED, which is what licenses the suppression. NOT M-4.ahead (removed 2026-08-25; the same citation records it as a stable zero, see the notes). NOT M-4.upstream: two invocations run against different upstreams are not the same comparison. NOT M-4.head or M-4.dirty: those are the tree's identity, and a difference in them is the finding F-17(b) asks for.",
+        "citations": {
+          "M-4.behind": {
+            "doc": "docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md",
+            "quote": "the BEHIND-COUNT has moved twice",
+            "doc_sha256_measured": "458d540b5e3780732b4e766ecc66a9b47ff879826b87fd2a3c4c3f02ab331666",
+            "doc_sha256_declared": null,
+            "matched_lines": [
+              89
+            ]
+          }
+        },
+        "used": false
+      }
+    ]
+  },
+  "fields_compared": 72,
+  "field_set_differs": false,
+  "findings": [
+    {
+      "field": "M-1[nd-unfolding/bootstrap_nd.py].first_insert",
+      "measurement": "M-1",
+      "unit": "line number of the first sys.path insert/append, or null",
+      "unit_declared": true,
+      "population": "that file's parsed syntax tree",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": 28
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": 11
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/bootstrap_nd.py].literals",
+      "measurement": "M-1",
+      "unit": "sorted list of compact-JSON objects with FOUR keys -- form, line, name, value -- and NOT the name@line(form) rendering, which is measure_m1_m6.py:260, the non---json print path. Two trees agreeing on name, line and form but differing in value produce a delta here",
+      "unit_declared": true,
+      "population": "every string Constant in that file whose value is the canonical root, exact or subpath",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": []
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": [
+            "{\"form\":\"subpath\",\"line\":10,\"name\":\"_ND\",\"value\":\"/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/bootstrap_nd.py].repo_modules_after",
+      "measurement": "M-1",
+      "unit": "list of (module, line)",
+      "unit_declared": true,
+      "population": "imports below the first sys.path insert whose top-level name is a repo module -- and the repo module set is the *.py stems under nd-unfolding/ and 2d-unfolding/, tracked or not",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": [
+            "{\"line\":29,\"module\":\"omnifold_nn_core\"}",
+            "{\"line\":30,\"module\":\"xsec_nd\"}",
+            "{\"line\":31,\"module\":\"seed_offset_policy\"}"
+          ]
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": [
+            "{\"line\":12,\"module\":\"omnifold_nn_core\"}",
+            "{\"line\":13,\"module\":\"xsec_nd\"}",
+            "{\"line\":14,\"module\":\"seed_offset_policy\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/mii_adopt_unified_5d_stamped.py].repo_modules_after",
+      "measurement": "M-1",
+      "unit": "list of (module, line)",
+      "unit_declared": true,
+      "population": "imports below the first sys.path insert whose top-level name is a repo module -- and the repo module set is the *.py stems under nd-unfolding/ and 2d-unfolding/, tracked or not",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": [
+            "{\"line\":255,\"module\":\"seed_offset_policy\"}",
+            "{\"line\":769,\"module\":\"seed_offset_policy\"}"
+          ]
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": [
+            "{\"line\":250,\"module\":\"seed_offset_policy\"}",
+            "{\"line\":707,\"module\":\"seed_offset_policy\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/seedscan_split.py].first_insert",
+      "measurement": "M-1",
+      "unit": "line number of the first sys.path insert/append, or null",
+      "unit_declared": true,
+      "population": "that file's parsed syntax tree",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": 37
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": 23
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/seedscan_split.py].literals",
+      "measurement": "M-1",
+      "unit": "sorted list of compact-JSON objects with FOUR keys -- form, line, name, value -- and NOT the name@line(form) rendering, which is measure_m1_m6.py:260, the non---json print path. Two trees agreeing on name, line and form but differing in value produce a delta here",
+      "unit_declared": true,
+      "population": "every string Constant in that file whose value is the canonical root, exact or subpath",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": []
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": [
+            "{\"form\":\"subpath\",\"line\":21,\"name\":\"_ND\",\"value\":\"/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/seedscan_split.py].repo_modules_after",
+      "measurement": "M-1",
+      "unit": "list of (module, line)",
+      "unit_declared": true,
+      "population": "imports below the first sys.path insert whose top-level name is a repo module -- and the repo module set is the *.py stems under nd-unfolding/ and 2d-unfolding/, tracked or not",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": [
+            "{\"line\":38,\"module\":\"omnifold_nn_core\"}",
+            "{\"line\":39,\"module\":\"xsec_nd\"}",
+            "{\"line\":41,\"module\":\"seed_offset_policy\"}"
+          ]
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": [
+            "{\"line\":24,\"module\":\"omnifold_nn_core\"}",
+            "{\"line\":25,\"module\":\"xsec_nd\"}",
+            "{\"line\":27,\"module\":\"seed_offset_policy\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/sweep_bank_5d.py].first_insert",
+      "measurement": "M-1",
+      "unit": "line number of the first sys.path insert/append, or null",
+      "unit_declared": true,
+      "population": "that file's parsed syntax tree",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": 51
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": 35
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/sweep_bank_5d.py].literals",
+      "measurement": "M-1",
+      "unit": "sorted list of compact-JSON objects with FOUR keys -- form, line, name, value -- and NOT the name@line(form) rendering, which is measure_m1_m6.py:260, the non---json print path. Two trees agreeing on name, line and form but differing in value produce a delta here",
+      "unit_declared": true,
+      "population": "every string Constant in that file whose value is the canonical root, exact or subpath",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": [
+            "{\"form\":\"exact\",\"line\":59,\"name\":\"_DATA_ROOT\",\"value\":\"/pscratch/sd/j/josephrb/MINERvA-OmniFold\"}"
+          ]
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": [
+            "{\"form\":\"exact\",\"line\":32,\"name\":\"_REPO\",\"value\":\"/pscratch/sd/j/josephrb/MINERvA-OmniFold\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/sweep_bank_5d.py].repo_modules_after",
+      "measurement": "M-1",
+      "unit": "list of (module, line)",
+      "unit_declared": true,
+      "population": "imports below the first sys.path insert whose top-level name is a repo module -- and the repo module set is the *.py stems under nd-unfolding/ and 2d-unfolding/, tracked or not",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": [
+            "{\"line\":232,\"module\":\"unfold_nd_omnifold_unbinned\"}",
+            "{\"line\":233,\"module\":\"omnifold_nn_core\"}",
+            "{\"line\":234,\"module\":\"xsec_nd\"}",
+            "{\"line\":295,\"module\":\"flux_universe\"}",
+            "{\"line\":83,\"module\":\"unfold_2d_omnifold_unbinned\"}",
+            "{\"line\":84,\"module\":\"unfold_nd_omnifold_unbinned\"}"
+          ]
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": [
+            "{\"line\":208,\"module\":\"unfold_nd_omnifold_unbinned\"}",
+            "{\"line\":209,\"module\":\"omnifold_nn_core\"}",
+            "{\"line\":210,\"module\":\"xsec_nd\"}",
+            "{\"line\":271,\"module\":\"flux_universe\"}",
+            "{\"line\":59,\"module\":\"unfold_2d_omnifold_unbinned\"}",
+            "{\"line\":60,\"module\":\"unfold_nd_omnifold_unbinned\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/unfold_nd_omnifold_unbinned.py].first_insert",
+      "measurement": "M-1",
+      "unit": "line number of the first sys.path insert/append, or null",
+      "unit_declared": true,
+      "population": "that file's parsed syntax tree",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": 77
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": 52
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/unfold_nd_omnifold_unbinned.py].literals",
+      "measurement": "M-1",
+      "unit": "sorted list of compact-JSON objects with FOUR keys -- form, line, name, value -- and NOT the name@line(form) rendering, which is measure_m1_m6.py:260, the non---json print path. Two trees agreeing on name, line and form but differing in value produce a delta here",
+      "unit_declared": true,
+      "population": "every string Constant in that file whose value is the canonical root, exact or subpath",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": [
+            "{\"form\":\"exact\",\"line\":73,\"name\":\"_DATA_ROOT\",\"value\":\"/pscratch/sd/j/josephrb/MINERvA-OmniFold\"}"
+          ]
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": [
+            "{\"form\":\"exact\",\"line\":47,\"name\":\"_REPO\",\"value\":\"/pscratch/sd/j/josephrb/MINERvA-OmniFold\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/unfold_nd_omnifold_unbinned.py].repo_modules_after",
+      "measurement": "M-1",
+      "unit": "list of (module, line)",
+      "unit_declared": true,
+      "population": "imports below the first sys.path insert whose top-level name is a repo module -- and the repo module set is the *.py stems under nd-unfolding/ and 2d-unfolding/, tracked or not",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": [
+            "{\"line\":1062,\"module\":\"seed_offset_policy\"}",
+            "{\"line\":78,\"module\":\"unfold_2d_omnifold_unbinned\"}",
+            "{\"line\":79,\"module\":\"flux_universe\"}",
+            "{\"line\":80,\"module\":\"xsec_nd\"}"
+          ]
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": [
+            "{\"line\":1037,\"module\":\"seed_offset_policy\"}",
+            "{\"line\":53,\"module\":\"unfold_2d_omnifold_unbinned\"}",
+            "{\"line\":54,\"module\":\"flux_universe\"}",
+            "{\"line\":55,\"module\":\"xsec_nd\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/unified_throw_cov.py].first_insert",
+      "measurement": "M-1",
+      "unit": "line number of the first sys.path insert/append, or null",
+      "unit_declared": true,
+      "population": "that file's parsed syntax tree",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": 61
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": 45
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/unified_throw_cov.py].literals",
+      "measurement": "M-1",
+      "unit": "sorted list of compact-JSON objects with FOUR keys -- form, line, name, value -- and NOT the name@line(form) rendering, which is measure_m1_m6.py:260, the non---json print path. Two trees agreeing on name, line and form but differing in value produce a delta here",
+      "unit_declared": true,
+      "population": "every string Constant in that file whose value is the canonical root, exact or subpath",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": [
+            "{\"form\":\"exact\",\"line\":69,\"name\":\"_DATA_ROOT\",\"value\":\"/pscratch/sd/j/josephrb/MINERvA-OmniFold\"}"
+          ]
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": [
+            "{\"form\":\"exact\",\"line\":42,\"name\":\"_REPO\",\"value\":\"/pscratch/sd/j/josephrb/MINERvA-OmniFold\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/unified_throw_cov.py].repo_modules_after",
+      "measurement": "M-1",
+      "unit": "list of (module, line)",
+      "unit_declared": true,
+      "population": "imports below the first sys.path insert whose top-level name is a repo module -- and the repo module set is the *.py stems under nd-unfolding/ and 2d-unfolding/, tracked or not",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": [
+            "{\"line\":220,\"module\":\"unfold_2d_omnifold_unbinned\"}",
+            "{\"line\":71,\"module\":\"flux_universe\"}",
+            "{\"line\":72,\"module\":\"seed_offset_policy\"}",
+            "{\"line\":73,\"module\":\"compare_unified_throw\"}",
+            "{\"line\":74,\"module\":\"uq_math\"}"
+          ]
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": [
+            "{\"line\":196,\"module\":\"unfold_2d_omnifold_unbinned\"}",
+            "{\"line\":47,\"module\":\"flux_universe\"}",
+            "{\"line\":48,\"module\":\"seed_offset_policy\"}",
+            "{\"line\":49,\"module\":\"compare_unified_throw\"}",
+            "{\"line\":50,\"module\":\"uq_math\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/unified_throw_cov_5d.py].first_insert",
+      "measurement": "M-1",
+      "unit": "line number of the first sys.path insert/append, or null",
+      "unit_declared": true,
+      "population": "that file's parsed syntax tree",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": 42
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": 27
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/unified_throw_cov_5d.py].literals",
+      "measurement": "M-1",
+      "unit": "sorted list of compact-JSON objects with FOUR keys -- form, line, name, value -- and NOT the name@line(form) rendering, which is measure_m1_m6.py:260, the non---json print path. Two trees agreeing on name, line and form but differing in value produce a delta here",
+      "unit_declared": true,
+      "population": "every string Constant in that file whose value is the canonical root, exact or subpath",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": []
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": [
+            "{\"form\":\"exact\",\"line\":24,\"name\":\"_REPO\",\"value\":\"/pscratch/sd/j/josephrb/MINERvA-OmniFold\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "field": "M-1[nd-unfolding/unified_throw_cov_5d.py].repo_modules_after",
+      "measurement": "M-1",
+      "unit": "list of (module, line)",
+      "unit_declared": true,
+      "population": "imports below the first sys.path insert whose top-level name is a repo module -- and the repo module set is the *.py stems under nd-unfolding/ and 2d-unfolding/, tracked or not",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": [
+            "{\"line\":44,\"module\":\"unified_throw_cov\"}",
+            "{\"line\":55,\"module\":\"omnifold_nn_core\"}",
+            "{\"line\":56,\"module\":\"xsec_nd\"}"
+          ]
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": [
+            "{\"line\":29,\"module\":\"unified_throw_cov\"}",
+            "{\"line\":40,\"module\":\"omnifold_nn_core\"}",
+            "{\"line\":41,\"module\":\"xsec_nd\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "field": "M-2.importable",
+      "measurement": "M-2",
+      "unit": "count of distinct top-level importable names",
+      "unit_declared": true,
+      "population": "*.py stems under nd-unfolding/ and 2d-unfolding/ in the measured tree, TRACKED OR UNTRACKED -- the glob does not consult git, which is what makes this the perishable claim",
+      "classification": "UNEXPECTED",
+      "reason": "M-2 is the perishable claim F-17(b) singles out; its differences are never expected and never suppressible",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": 127
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": 125
+        }
+      ]
+    },
+    {
+      "field": "M-3.all_intact",
+      "measurement": "M-3",
+      "unit": "boolean, substring 'ALL BINDINGS INTACT' seen on stdout",
+      "unit_declared": true,
+      "population": "the same run's stdout, and therefore also a property of the MEASURING interpreter, not of the measured tree alone",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": true
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": false
+        }
+      ]
+    },
+    {
+      "field": "M-3.rc",
+      "measurement": "M-3",
+      "unit": "process exit status of verify_hash_bindings.py",
+      "unit_declared": true,
+      "population": "the MEASURING interpreter (measure_m1_m6.py:161 runs sys.executable) against the script in the measured tree, with cwd set to that tree -- so like M-2.python this is NOT a property of the tree alone, and the F-17(a) column was taken on a different interpreter from any local re-measurement",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": 0
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": 1
+        }
+      ]
+    },
+    {
+      "field": "M-4.dirty",
+      "measurement": "M-4",
+      "unit": "count of NON-BLANK porcelain lines",
+      "unit_declared": true,
+      "population": "the measured tree's working tree; measure_m1_m6.py:177 drops blank lines before counting, so this is not simply the porcelain line count",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": 0
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": 742
+        }
+      ]
+    },
+    {
+      "field": "M-4.head",
+      "measurement": "M-4",
+      "unit": "40-hex commit sha",
+      "unit_declared": true,
+      "population": "the measured tree's HEAD at measurement time",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": "aa67c426afaa9b6ca91c9996637a6bade950da9a"
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": "b2d7d4ca24707344cf12f99c0aa51381b81dd445"
+        }
+      ]
+    },
+    {
+      "field": "M-4.modified",
+      "measurement": "M-4",
+      "unit": "count of non-blank porcelain lines not starting ??",
+      "unit_declared": true,
+      "population": "the same non-blank subset as M-4.dirty",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": 0
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": 24
+        }
+      ]
+    },
+    {
+      "field": "M-4.untracked",
+      "measurement": "M-4",
+      "unit": "count of non-blank porcelain lines starting ??",
+      "unit_declared": true,
+      "population": "the same non-blank subset as M-4.dirty",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": 0
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": 718
+        }
+      ]
+    },
+    {
+      "field": "M-5.activator_from_env_root",
+      "measurement": "M-5",
+      "unit": "set of launcher filenames",
+      "unit_declared": true,
+      "population": "LAUNCHERS containing the literal source \"${ENV_ROOT}/setup_salloc_env.sh\"",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": [
+            "sbatch_bootstrap_5d_gpu.sh",
+            "sbatch_finalize_5d_bkgaware_gpu.sh",
+            "sbatch_seedscan_split_5d.sh",
+            "sbatch_sweep_bank_5d_run_bkgaware_gpu.sh",
+            "sbatch_unfold_5d_detector_bkgaware_gpu.sh",
+            "sbatch_uthrow_block_5d.sh",
+            "sbatch_uthrow_combine_5d_fast.sh",
+            "sbatch_uthrow_run_5d_fast.sh"
+          ]
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": []
+        }
+      ]
+    },
+    {
+      "field": "M-5.repo_assign",
+      "measurement": "M-5",
+      "unit": "set of launcher filenames",
+      "unit_declared": true,
+      "population": "LAUNCHERS carrying a line matching ^\\s*(export\\s+)?REPO=",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": []
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": [
+            "sbatch_bootstrap_5d_gpu.sh",
+            "sbatch_finalize_5d_bkgaware_gpu.sh",
+            "sbatch_seedscan_split_5d.sh",
+            "sbatch_sweep_bank_5d_run_bkgaware_gpu.sh",
+            "sbatch_unfold_5d_detector_bkgaware_gpu.sh",
+            "sbatch_uthrow_block_5d.sh",
+            "sbatch_uthrow_combine_5d_fast.sh",
+            "sbatch_uthrow_run_5d_fast.sh"
+          ]
+        }
+      ]
+    },
+    {
+      "field": "M-6.else_zero_default_lines",
+      "measurement": "M-6",
+      "unit": "set of line numbers",
+      "unit_declared": true,
+      "population": "lines carrying both 'guard.checked' and 'else 0'",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": [
+            369
+          ]
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": []
+        }
+      ]
+    },
+    {
+      "field": "M-6.inventory_write_lines",
+      "measurement": "M-6",
+      "unit": "set of line numbers",
+      "unit_declared": true,
+      "population": "lines of that file carrying BOTH '\"checked\"' AND a colon (measure_m1_m6.py:225 tests for both; naming only the first would overstate the population)",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": [
+            369
+          ]
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": []
+        }
+      ]
+    },
+    {
+      "field": "M-6.n_lines",
+      "measurement": "M-6",
+      "unit": "count of lines",
+      "unit_declared": true,
+      "population": "that file",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": 557
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": 281
+        }
+      ]
+    },
+    {
+      "field": "M-6.state",
+      "measurement": "M-6",
+      "unit": "one of FOUR named states, never a boolean",
+      "unit_declared": true,
+      "population": "three are derived from the two line sets above; the fourth is 'FILE ABSENT' (measure_m1_m6.py:221), returned when mnv_guarded_run.py is missing, where no line sets exist at all -- and a tree missing the guard is precisely a difference F-17 must surface, so the declared unit must not imply the file is always there",
+      "classification": "UNEXPECTED",
+      "reason": "no entry in the expected-differences list covers this field",
+      "absent_from_some_input": false,
+      "expected_entries_matched": [],
+      "n_distinct_values": 2,
+      "sides": [
+        {
+          "key": "[0] deploy",
+          "label": "deploy",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/k0r2/clean",
+          "input_sha256": "501326a0de79aad585056da3d84be2f7c6e9d1b4456b2ee2a014c81473191d99",
+          "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+          "porcelain_dirty": 0,
+          "value": "WRITTEN BUT DEFAULTED -- a containment-path zero is a default, not a measurement"
+        },
+        {
+          "key": "[1] canonical",
+          "label": "canonical",
+          "tree_resolved_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+          "input_sha256": "6564ada83a8ba1e946b44f0232f466812ea0abf6193af795d60c1ec40a249262",
+          "head": "b2d7d4ca24707344cf12f99c0aa51381b81dd445",
+          "porcelain_dirty": 742,
+          "value": "NO INVENTORY WRITE -- the guard counts but emits nothing; the vacuity question cannot even be asked of this tree"
+        }
+      ]
+    }
+  ],
+  "m2_perishable": {
+    "measurement": "M-2",
+    "status": "DIFFERS",
+    "fields": [
+      "M-2.importable"
+    ],
+    "note": "F-17(b) names M-2 as the perishable claim. It is reported here separately so it cannot be absorbed into a summary count, it is never suppressible by the expected list, and any M-2 difference forces the some-unexpected verdict."
+  },
+  "summary": {
+    "all_agree": false,
+    "n_findings": 32,
+    "n_expected": 0,
+    "n_unexpected": 32,
+    "n_unexpected_excluding_m2": 31,
+    "n_m2_findings": 1,
+    "n_absent_findings": 0,
+    "absent_fields": [],
+    "n_findings_with_undeclared_unit": 0,
+    "expected_entries_unused": [
+      "E1-m4-behind-drift"
+    ]
+  },
+  "verdict": "DIFFERENCES-SOME-UNEXPECTED",
+  "exit_code": 20
+}

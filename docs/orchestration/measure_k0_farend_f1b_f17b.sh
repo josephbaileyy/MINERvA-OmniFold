@@ -120,8 +120,13 @@ OUT="${TMPDIR:-/tmp}/f17b.$$"
 DURABLE_RECORD="${MNV_F17B_RECORD_PATH:-/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/state/f17b-k0-aa67c426-20260824T145751Z.json}"
 mkdir -p "$OUT"
 
-echo "  ruler    : $MEASURER  sha256=$(sha256sum "$MEASURER" 2>/dev/null | cut -c1-12)"
-echo "  comparator: $COMPARATOR  sha256=$(sha256sum "$COMPARATOR" 2>/dev/null | cut -c1-12)"
+# Digests are deliberately NOT printed here. A digest printed BEFORE the invocation asserts
+# something about a file that can still be swapped before it executes -- measured 2026-08-25,
+# I made exactly that swap by hand between this print and the call, and the log's digest line
+# was false while every other line stayed true. Each tool is now digested immediately before
+# AND immediately after its own invocation, and a mismatch is a refusal, not a footnote.
+echo "  ruler    : $MEASURER"
+echo "  comparator: $COMPARATOR"
 # TOOLS_ROOT must be a REAL CHECKOUT, not a staging directory holding just these two files.
 # Measured 2026-08-25: a partial TOOLS_ROOT passes a two-file existence check and then the
 # comparator refuses at exit 5, because the expected-list's CITATIONS resolve relative to --repo
@@ -140,6 +145,10 @@ if [ ! -f "$COMPARATOR" ] || [ ! -f "$EXPECTED" ] || [ ! -f "$PRESERVER" ]; then
   rm -rf "$OUT"; exit 11
 fi
 
+MEASURER_PRE=$(sha256sum "$MEASURER" 2>/dev/null | cut -c1-12)
+COMPARATOR_PRE=$(sha256sum "$COMPARATOR" 2>/dev/null | cut -c1-12)
+EXPECTED_PRE=$(sha256sum "$EXPECTED" 2>/dev/null | cut -c1-12)
+
 for pair in "deploy:$CODE_ROOT" "canonical:$CANON"; do
   lbl="${pair%%:*}"; tree="${pair#*:}"
   "$PY" "$MEASURER" --tree "$tree" --label "$lbl" --json > "$OUT/$lbl.json" 2>"$OUT/$lbl.err"
@@ -147,13 +156,26 @@ for pair in "deploy:$CODE_ROOT" "canonical:$CANON"; do
   echo "  measured $lbl ($tree) rc=$rc  bytes=$(wc -c < "$OUT/$lbl.json" 2>/dev/null)"
   [ "$rc" -ne 0 ] && sed 's/^/      /' "$OUT/$lbl.err" | tail -3
 done
+MEASURER_POST=$(sha256sum "$MEASURER" 2>/dev/null | cut -c1-12)
 
 echo "  comparing the two trees (exit 0 none / 10 all-expected / 20 some-unexpected / 4,5 refusal):"
 "$PY" "$COMPARATOR" --input "$OUT/deploy.json" --input "$OUT/canonical.json" \
       --expected "$EXPECTED" --repo "$TOOLS_ROOT" --record "$OUT/f17b-record.json" > "$OUT/cmp.txt" 2>&1
 crc=$?
+COMPARATOR_POST=$(sha256sum "$COMPARATOR" 2>/dev/null | cut -c1-12)
+EXPECTED_POST=$(sha256sum "$EXPECTED" 2>/dev/null | cut -c1-12)
 sed 's/^/    /' "$OUT/cmp.txt" | tail -18
 echo "  COMPARATOR EXIT = $crc"
+echo "  ruler      sha256 pre=$MEASURER_PRE   post=$MEASURER_POST"
+echo "  comparator sha256 pre=$COMPARATOR_PRE   post=$COMPARATOR_POST"
+echo "  expected   sha256 pre=$EXPECTED_PRE   post=$EXPECTED_POST"
+if [ "$MEASURER_PRE" != "$MEASURER_POST" ] \
+   || [ "$COMPARATOR_PRE" != "$COMPARATOR_POST" ] \
+   || [ "$EXPECTED_PRE" != "$EXPECTED_POST" ]; then
+  echo "  REFUSE: a tool changed on disk across its own invocation, so this comparison cannot be"
+  echo "          attributed to any single revision. Nothing published; scratch kept at $OUT."
+  exit 13
+fi
 if [ "$MODE" = "--measure" ]; then
   case "$crc" in
     0|10|20) ;;
