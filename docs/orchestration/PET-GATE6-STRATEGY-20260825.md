@@ -564,6 +564,8 @@ guarded remap-plus-lazy-import regression passes. The separate
 [`changed-retry predeclaration`](PREDECLARATION-20260826-pet-v2-fixed-draw-equivalence-changed-retry.md)
 and [machine-readable proposal](state/pet-v2-fixed-draw-equivalence-changed-retry-proposal-20260826.json)
 retain the same seed, measured quantities, `S=0.0251`, `M=0.0502`, deterministic/same-arm controls,
-and 13 expected/18 ceiling A100-hours. They are `launchable: false`: the executed contract said
-`retry_authorized: false`, so a changed retry requires a new explicit Joseph decision even though
-the first attempt used zero A100-hours.
+and 13 expected/18 ceiling A100-hours. Joseph explicitly authorized the named changed retry on
+2026-08-26 after its bounded scope and preflight-before-submission sequence were restated. The
+machine-readable proposal is therefore `launchable: true` only after every frozen guard passes from
+a pushed clean non-primary checkout. The prior authorization remains exhausted, the new decision
+covers this attempt only, and there is no further retry path.

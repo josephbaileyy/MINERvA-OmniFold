@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CPU-only checks for the non-launchable PET-v2 changed-retry proposal."""
+"""CPU-only checks for the authorized PET-v2 changed-retry proposal."""
 
 import importlib.util
 import json
@@ -38,19 +38,29 @@ def test_failed_attempt_is_guard_only_and_used_no_gpu():
     assert ATTEMPT["C_stat"] is None and ATTEMPT["C_ML"] is None
 
 
-def test_changed_retry_is_fail_closed_pending_new_human_decision():
-    assert PROPOSAL["status"] == "BLOCKED_AWAITING_JOSEPH_CHANGED_RETRY_AUTHORIZATION"
-    assert PROPOSAL["launchable"] is False
+def test_changed_retry_has_one_exact_explicit_human_authorization():
+    assert PROPOSAL["status"] == "AUTHORIZED_READY_CHANGED_RETRY"
+    assert PROPOSAL["launchable"] is True
     assert PROPOSAL["authorization"] == {
-        "authorized_by": None,
-        "authorization_token": None,
-        "retry_authorized": False,
-        "decision_required": (
-            "Joseph must explicitly authorize this named changed retry after reviewing the "
-            "guard refusal, code change, tests, frozen operands, and remaining resource request"
+        "authorized_by": "Joseph",
+        "authorized_at_utc": MODULE.AUTHORIZATION_TIME_UTC,
+        "authorization_source": (
+            "Joseph's explicit user message 'I authorize it', received immediately after the "
+            "named changed-retry scope and preflight-before-submission sequence were restated"
         ),
+        "authorization_token": MODULE.AUTHORIZATION_TOKEN,
+        "retry_authorized": True,
+        "authorized_action": (
+            "one CPU target, three dependent single-A100-80GB arms, one CPU evaluation, and "
+            "one read-only CPU validation for this named contract only, conditional on every "
+            "guard and preflight passing"
+        ),
+        "no_further_retry": True,
     }
-    assert PROPOSAL["compute_decision"].startswith("DO_NOT_SUBMIT")
+    assert PROPOSAL["compute_decision"] == (
+        "AUTHORIZED_CONDITIONAL_SUBMISSION_AFTER_ALL_CHANGED_RETRY_PREFLIGHTS"
+    )
+    assert PROPOSAL["prior_authorization_is_exhausted"] is True
 
 
 def test_only_changed_axis_is_retry_specific_checkout_root_remap():
@@ -131,5 +141,5 @@ def test_every_result_preserves_exact_prohibitions_and_non_authorizations():
     for key in MODULE.PROHIBITIONS:
         assert key in cannot
     assert any("interval coverage" in item for item in cannot)
-    assert any("Joseph's new decision" in item for item in cannot)
+    assert any("this one explicitly authorized changed retry" in item for item in cannot)
     assert PROPOSAL["C_stat"] is None and PROPOSAL["C_ML"] is None

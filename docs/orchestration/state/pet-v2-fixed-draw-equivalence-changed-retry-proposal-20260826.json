@@ -2,10 +2,13 @@
   "C_ML": null,
   "C_stat": null,
   "authorization": {
-    "authorization_token": null,
-    "authorized_by": null,
-    "decision_required": "Joseph must explicitly authorize this named changed retry after reviewing the guard refusal, code change, tests, frozen operands, and remaining resource request",
-    "retry_authorized": false
+    "authorization_source": "Joseph's explicit user message 'I authorize it', received immediately after the named changed-retry scope and preflight-before-submission sequence were restated",
+    "authorization_token": "JOSEPH-20260826-PETV2-CHANGED-RETRY1-AUTHORIZED",
+    "authorized_action": "one CPU target, three dependent single-A100-80GB arms, one CPU evaluation, and one read-only CPU validation for this named contract only, conditional on every guard and preflight passing",
+    "authorized_at_utc": "2026-08-26T18:43:31Z",
+    "authorized_by": "Joseph",
+    "no_further_retry": true,
+    "retry_authorized": true
   },
   "changed_operand": {
     "measured_failure": "the executed loader inserted the primary-checkout nd-unfolding directory at sys.path position 0, so its lazy pet_bootstrap import resolved outside the immutable execution root and the OI-136 guard refused before materialization",
@@ -25,7 +28,7 @@
     "sampling_or_training_change": false,
     "scientific_policy_change": false
   },
-  "compute_decision": "DO_NOT_SUBMIT_CHANGED_RETRY_WITHOUT_NEW_EXPLICIT_AUTHORIZATION",
+  "compute_decision": "AUTHORIZED_CONDITIONAL_SUBMISSION_AFTER_ALL_CHANGED_RETRY_PREFLIGHTS",
   "contract_id": "PET-V2-FIXED-DRAW-EQUIVALENCE-CHANGED-RETRY1-20260826",
   "controls": {
     "determinism_and_same_arm_controls": {
@@ -200,7 +203,7 @@
     },
     "runtime_head": "one exact clean non-primary detached checkout containing these hashes; supplied without a default and recorded in any later submission receipt"
   },
-  "launchable": false,
+  "launchable": true,
   "measured_quantity": {
     "distance_scalar": "symrel(a,b)=2*abs(a-b)/(abs(a)+abs(b)); zero/zero is 0 and a one-sided zero is 2",
     "event_push_distance": "D_push(A,B)=sum_i a_i*abs(p_i^A-p_i^B) / sum_i a_i*(abs(p_i^A)+abs(p_i^B))/2 over the same unique signal IDs; a_i is the nonnegative raw truth analysis weight times the fixed signal multiplicity and reporting mask, applied exactly once",
@@ -262,7 +265,7 @@
   },
   "schema": "pet-v2-fixed-draw-equivalence-changed-retry-proposal-v1",
   "scope": "PET_DIAGNOSTIC_AND_METHOD_DEVELOPMENT_ONLY",
-  "status": "BLOCKED_AWAITING_JOSEPH_CHANGED_RETRY_AUTHORIZATION",
+  "status": "AUTHORIZED_READY_CHANGED_RETRY",
   "success_interpretation": "classify only the predeclared fixed-draw push and extracted-projection contrasts after same-arm validity; it is one estimator-equivalence diagnostic at operational resolution",
   "what_every_terminal_result_cannot_authorize": [
     "do_not_select_passing_subset",
@@ -277,6 +280,6 @@
     "cannot change a note, publication claim or PET diagnostic scope",
     "cannot authorize a coverage campaign, a larger family, convergence tuning or further compute",
     "cannot erase or reinterpret the failed 57620796 guard receipt",
-    "cannot spend the remaining numeric resource envelope without Joseph's new decision"
+    "cannot authorize any compute beyond this one explicitly authorized changed retry"
   ]
 }

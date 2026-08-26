@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Derive the non-launchable PET-v2 changed-retry proposal after job 57620796.
+"""Derive the authorized PET-v2 changed-retry proposal after job 57620796.
 
 This script reads committed first-party receipts and current candidate sources.  It performs no
 PET work and has no scheduler/submission path.
@@ -49,6 +49,8 @@ PROHIBITIONS = (
     "do_not_start_leg_2",
     "do_not_retry_unchanged",
 )
+AUTHORIZATION_TOKEN = "JOSEPH-20260826-PETV2-CHANGED-RETRY1-AUTHORIZED"
+AUTHORIZATION_TIME_UTC = "2026-08-26T18:43:31Z"
 
 
 def _sha256(path: Path) -> str:
@@ -105,19 +107,28 @@ def build_proposal() -> dict:
     proposal = {
         "schema": "pet-v2-fixed-draw-equivalence-changed-retry-proposal-v1",
         "contract_id": "PET-V2-FIXED-DRAW-EQUIVALENCE-CHANGED-RETRY1-20260826",
-        "status": "BLOCKED_AWAITING_JOSEPH_CHANGED_RETRY_AUTHORIZATION",
-        "launchable": False,
-        "compute_decision": "DO_NOT_SUBMIT_CHANGED_RETRY_WITHOUT_NEW_EXPLICIT_AUTHORIZATION",
+        "status": "AUTHORIZED_READY_CHANGED_RETRY",
+        "launchable": True,
+        "compute_decision": (
+            "AUTHORIZED_CONDITIONAL_SUBMISSION_AFTER_ALL_CHANGED_RETRY_PREFLIGHTS"
+        ),
         "scope": prior["scope"],
         "prior_authorization_is_exhausted": True,
         "authorization": {
-            "authorized_by": None,
-            "authorization_token": None,
-            "retry_authorized": False,
-            "decision_required": (
-                "Joseph must explicitly authorize this named changed retry after reviewing the "
-                "guard refusal, code change, tests, frozen operands, and remaining resource request"
+            "authorized_by": "Joseph",
+            "authorized_at_utc": AUTHORIZATION_TIME_UTC,
+            "authorization_source": (
+                "Joseph's explicit user message 'I authorize it', received immediately after the "
+                "named changed-retry scope and preflight-before-submission sequence were restated"
             ),
+            "authorization_token": AUTHORIZATION_TOKEN,
+            "retry_authorized": True,
+            "authorized_action": (
+                "one CPU target, three dependent single-A100-80GB arms, one CPU evaluation, and "
+                "one read-only CPU validation for this named contract only, conditional on every "
+                "guard and preflight passing"
+            ),
+            "no_further_retry": True,
         },
         "failed_attempt": {
             "receipt": str(ATTEMPT.relative_to(REPO)),
@@ -215,7 +226,7 @@ def build_proposal() -> dict:
             prior["what_every_terminal_result_cannot_authorize"]
             + [
                 "cannot erase or reinterpret the failed 57620796 guard receipt",
-                "cannot spend the remaining numeric resource envelope without Joseph's new decision",
+                "cannot authorize any compute beyond this one explicitly authorized changed retry",
             ]
         )),
         "C_stat": None,
@@ -235,7 +246,7 @@ def main() -> int:
     if args.check:
         if json.loads(OUTPUT.read_text(encoding="utf-8")) != proposal:
             raise SystemExit("changed-retry proposal differs from deterministic derivation")
-        print("PASS: changed-retry proposal is current and non-launchable")
+        print("PASS: changed-retry proposal is current and explicitly authorized")
         return 0
     rendered = json.dumps(proposal, indent=2, sort_keys=True) + "\n"
     if args.write:

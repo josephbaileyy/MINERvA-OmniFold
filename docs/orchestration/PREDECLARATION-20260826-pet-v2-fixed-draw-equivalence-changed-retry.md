@@ -4,9 +4,9 @@
 
 **Contract:** `PET-V2-FIXED-DRAW-EQUIVALENCE-CHANGED-RETRY1-20260826`
 
-**State:** `BLOCKED_AWAITING_JOSEPH_CHANGED_RETRY_AUTHORIZATION`
+**State:** `AUTHORIZED_READY_CHANGED_RETRY`
 
-**Launchable:** `false`
+**Launchable:** `true`, conditional on every frozen preflight and guard passing
 
 This is a PET diagnostic and method-development proposal. It is not Gate 6, an uncertainty
 construction, a central-value proposal, or an adoption action. The machine-readable contract is
@@ -19,10 +19,13 @@ the OI-136 runtime guard saw `pet_bootstrap` resolve from the primary checkout. 
 target, measured no scientific quantity, and released no GPU dependency. The dependent training,
 evaluation, and validation jobs were cancelled; A100 use was exactly zero.
 
-The executed proposal said `retry_authorized: false` and `no_retry_path: true`. Therefore neither
-the unused numerical resource envelope nor the prior compute approval authorizes this changed
-retry. No job may be submitted unless Joseph explicitly authorizes this named contract after its
-final hashes and tests are reported.
+The executed proposal said `retry_authorized: false` and `no_retry_path: true`, so that earlier
+authorization remains exhausted. At `2026-08-26T18:43:31Z`, after this named changed-retry scope and
+its preflight-before-submission sequence were restated, Joseph replied, **“I authorize it.”** This is
+a new explicit authorization for this contract only. It becomes executable only after final tests,
+hash bindings, a pushed clean commit, a clean detached non-primary checkout, direct scheduler
+observation, and the controller's complete no-submit preflight all pass. It authorizes no further
+retry.
 
 ## Measured failure and only change
 
@@ -153,8 +156,9 @@ hours. The unchanged measured estimate for a complete run is `12.642708333333331
 rounded up to `13`; the proposed ceiling remains `18` A100-hours and five CPU node-hours, with
 three single-A100 arms able to run in parallel after the CPU target.
 
-The unused numerical envelope is `18` A100-hours and `4.933888888888889` CPU node-hours. These are
-costing numbers only. They do not carry authorization forward.
+The unchanged ceiling for this one authorized attempt is `18` A100-hours and five CPU node-hours;
+the first attempt consumed `0.0661111111111111` CPU node-hours and zero A100-hours. The numerical
+envelope is not standing authorization and cannot carry forward to another attempt.
 
 ## Success and failure interpretations
 
@@ -187,11 +191,11 @@ diagnostic scope; authorize convergence tuning, a larger family, Leg 2, coverage
 further compute; or erase/reinterpret the failed `57620796` receipt. Existing Gate-6 results remain
 blocked regardless.
 
-## Decision requested from Joseph
+## Compute decision received
 
-Please decide one binary compute question: **authorize or decline
-`PET-V2-FIXED-DRAW-EQUIVALENCE-CHANGED-RETRY1-20260826` after its final tests and pushed commit are
-reported.** Approval would cover only the new CPU target plus the three predeclared A100-80GB arms,
-within the 18 A100-hour/five CPU-node-hour ceiling and with no automatic retry. It would not cover
-Gate 6, convergence tuning, a family, coverage, `C_stat`, `C_ML`, central movement, Leg 2, note
-changes, or publication claims.
+Joseph authorized `PET-V2-FIXED-DRAW-EQUIVALENCE-CHANGED-RETRY1-20260826` on 2026-08-26. The
+authorization covers only the new CPU target, the three predeclared A100-80GB arms, CPU evaluation,
+and read-only validation, within the 18 A100-hour/five CPU-node-hour ceiling and with no retry. It
+does not cover Gate 6, convergence tuning, a family, coverage, `C_stat`, `C_ML`, central movement,
+Leg 2, note changes, publication claims, or any later compute. Submission is conditional on every
+guard and frozen preflight passing from a pushed clean non-primary checkout.
