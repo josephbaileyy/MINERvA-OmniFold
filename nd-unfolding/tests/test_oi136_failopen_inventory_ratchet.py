@@ -38,8 +38,11 @@ import unittest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
+# REPOINTED 2026-08-26 to the dated successor. The 08-20 probe is retained on disk unedited as the
+# historical record; it can no longer complete, because main repaired one of its declared positive
+# controls (3d-unfolding/unfold_3d_omnifold_unbinned.py) and it must therefore exit 2 forever.
 PROBE = os.path.join("docs", "orchestration", "state",
-                     "probe-oi136-sys-path-hijack-20260820.py")
+                     "probe-oi136-sys-path-hijack-20260826.py")
 
 # Measured by running the probe; see the module docstring for the update rule.
 #
@@ -199,8 +202,14 @@ FAILOPEN_SHA256 = "4201aceed0604f92a3ec88591fd4e471cb723323fb01b88184024d97d6c36
 # the probe exit 2 (`CANNOT CHECK :: positive control(s) absent`) the moment the repair lands, and
 # this ratchet fails with it. Its replacement was chosen from the probe's own post-repair fail-open
 # output -- see the probe's own comment at `POSITIVE_CONTROLS` for why that file and not another.
+# SECOND RETIREMENT, 2026-08-26, and the shape is now twice-observed rather than once.
+# `./3d-unfolding/unfold_3d_omnifold_unbinned.py` was retired as a control for exactly the reason the
+# 08-22 note above gives for its predecessor: main repaired it (c752f73e, a0a84a2e), so a declared
+# control became a repair target and the probe had to exit 2. Its replacement, the published 2D arm,
+# was chosen from the successor probe's own post-repair fail-open output and carries a standing
+# ruling AGAINST repair, which is what makes it stable where the previous two were not.
 POSITIVE_CONTROLS = ("./nd-unfolding/adopt_unified_5d.py",
-                     "./3d-unfolding/unfold_3d_omnifold_unbinned.py")
+                     "./2d-unfolding/unfold_2d_omnifold_unbinned.py")
 
 GUARD_REL = os.path.join("nd-unfolding", "mnv_guarded_run.py")
 GUARDED_LAUNCHERS = (os.path.join("nd-unfolding", "pet",

@@ -82,7 +82,7 @@ docs/orchestration/INDEX-retracted-and-superseded-values.md	tracked	LIVE	index		
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/control_plane_lint.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	52	80	15800
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	3	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	11	102	7448
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	36	551	111668
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	36	552	111882
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	3	184	13929
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/compare_m1_m6.py;docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/measure_m1_m6.py	no	14	146	8336
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	tracked	LIVE	document		20260823	open		route-only		no	6	239	14244
@@ -479,7 +479,8 @@ docs/orchestration/state/probe-oi126-target-comparison-20260815.json	tracked	MAC
 docs/orchestration/state/probe-oi126-target-comparison-20260815.py	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-oi126-mechanism-narrowing-20260815.py	yes	3	47	2513
 docs/orchestration/state/probe-oi126-zero-fraction-per-column-20260815.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	1	1	12660
 docs/orchestration/state/probe-oi126-zero-fraction-per-column-20260815.py	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	1	141	8225
-docs/orchestration/state/probe-oi136-sys-path-hijack-20260820.py	tracked	MACHINE	state-artifact		20260820	generated		exact-path-only	nd-unfolding/tests/test_oi136_failopen_inventory_ratchet.py	yes	4	164	9277
+docs/orchestration/state/probe-oi136-sys-path-hijack-20260820.py	tracked	MACHINE	state-artifact		20260820	generated		exact-path-only	docs/orchestration/state/probe-oi136-sys-path-hijack-20260826.py	yes	4	164	9277
+docs/orchestration/state/probe-oi136-sys-path-hijack-20260826.py	tracked	MACHINE	state-artifact		20260826	generated		exact-path-only	nd-unfolding/tests/test_oi136_failopen_inventory_ratchet.py	yes	1	185	11055
 docs/orchestration/state/probe-oi22-leakage-real-input-20260814.py	tracked	MACHINE	state-artifact		20260814	generated		exact-path-only	nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py	yes	3	119	5853
 docs/orchestration/state/probe-oi22-schema-parity-real-input-20260814.py	tracked	MACHINE	state-artifact		20260814	generated		exact-path-only	nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py	yes	3	181	8291
 docs/orchestration/state/probe-projection-identity-leg-20260816.py	tracked	MACHINE	state-artifact		20260816	generated		exact-path-only	nd-unfolding/p4_lib.py	yes	1	183	9512
