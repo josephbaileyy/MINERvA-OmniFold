@@ -68,7 +68,7 @@ docs/orchestration/GATE1-VERDICT-ROUND6-20260823-k0-execution-integrity.md	track
 docs/orchestration/GATE1-VERDICT-ROUND7-20260823-k0-execution-integrity.md	tracked	LIVE	document		20260823	open		route-only		no	3	439	29917
 docs/orchestration/GATE1-VERDICT-ROUND8-20260823-k0-execution-integrity.md	tracked	LIVE	document		20260823	open		route-only		no	2	787	47575
 docs/orchestration/GATE1-VERDICT-ROUND9-20260823-k0-execution-integrity.md	tracked	LIVE	document		20260823	open		route-only		no	5	350	21235
-docs/orchestration/GRADE-20260825-d3-comparator-repair-fitness.md	intended	LIVE	document		20260825	open		route-only		no	2	513	31338
+docs/orchestration/GRADE-20260825-d3-comparator-repair-fitness.md	tracked	LIVE	document		20260825	open		route-only		no	2	513	31338
 docs/orchestration/GRADE-20260825-f17b-comparison-instrument-fitness.md	tracked	LIVE	document		20260825	open		route-only	docs/orchestration/measure_k0_farend_f1b_f17b.sh	no	6	568	41819
 docs/orchestration/HANDOFF-20260815-0455Z.md	tracked	ARCHIVAL	document		20260815	terminal		exact-path-only	nd-unfolding/pet/closure_foldforward_instrumented.py	yes	2	209	15197
 docs/orchestration/HANDOFF-20260819-lane-e-data-only-cstat-smoke-57266000.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only	docs/orchestration/watch_report_train_run.py	yes	3	113	7264
@@ -78,7 +78,7 @@ docs/orchestration/INDEX-retracted-and-superseded-values.md	tracked	LIVE	index		
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/control_plane_lint.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	50	86	72723
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	3	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	11	94	6765
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	31	531	106542
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	31	531	106541
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	3	184	13929
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/compare_m1_m6.py;docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/measure_m1_m6.py	no	16	146	8336
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	tracked	LIVE	document		20260823	open		route-only		no	5	239	14244
