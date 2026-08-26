@@ -265,6 +265,22 @@ adopted, consumed, or quoted while Gate 2 is open, which it is.
 
 Steps 2 and 3 are independent of each other and may proceed in parallel. Step 4 depends on both.
 
+### 10.1 A SEPARATE READINESS CHECK gates step 4 (Joseph, 2026-08-25)
+
+Completing and grading any prospective mechanism — including the `verify_receipt_artifacts.py`
+repair — **authorizes only that mechanism**. It is not a step toward permission and it accumulates
+no credit.
+
+**Do not start a rehearsal, file Gate-2 evidence, or launch compute without a separate readiness
+check confirming that ALL prospective F-7(b), F-8(b) and F-17(b) mechanisms are present AND
+independently graded.**
+
+Stated as a gate rather than a habit because the failure it prevents is the one this campaign
+already made: a sequence of individually-authorized steps read, at the end, as authorization for the
+thing none of them authorized. The readiness check is a distinct act with its own evidence. A lane
+that has just finished the last mechanism is not thereby cleared to proceed, and "all three are
+done" asserted by the lane that built them is not the check.
+
 ## 11. Cited artifacts, with the field named
 
 Digests are content `sha256` truncated to 8 unless labelled otherwise. Note that a git **blob id** is

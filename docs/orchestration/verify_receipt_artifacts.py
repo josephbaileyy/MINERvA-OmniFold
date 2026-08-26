@@ -34,8 +34,25 @@ import re
 import subprocess
 import sys
 
-REPO_PREFIXES = ("/pscratch/sd/j/josephrb/MINERvA-OmniFold/",)
+#: Absolute-path prefixes that name A CHECKOUT OF THIS REPO and must be stripped before the
+#: deliverable-area test. This used to be a one-element tuple hardcoding the checkout that was
+#: canonical until 2026-08-25. That went FAIL-OPEN the moment the canonical checkout moved
+#: (DECISION-20260825-joseph-gate2-fail-and-four-rulings.md ruling 4, forward-only redesignation):
+#: a receipt written from the new checkout named an absolute path that matched no prefix, was left
+#: absolute, failed `rel.startswith(AREA)`, and was SILENTLY NOT CHECKED. A hardcoded list of
+#: checkout locations rots every time a checkout moves, and it rots in the direction that stops
+#: checking, so the list is now derived rather than written down.
+HISTORICAL_REPO_PREFIXES = (
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/",   # canonical until 2026-08-25; still named by
+                                                   # receipts already committed, so it must keep
+                                                   # normalising or this repair is a regression
+)
 AREA = "docs/orchestration/state/"
+#: Last-resort marker. Any ABSOLUTE path containing this normalises on it, so a checkout nobody
+#: listed -- a worktree, a fresh clone, the next redesignation -- is still checked. Failing this
+#: way is fail-CLOSED: the worst case is checking a path we did not have to, which is visible,
+#: rather than skipping one we did, which is not.
+_AREA_MARKER = "/" + AREA
 EXT = (".npz", ".npy", ".h5", ".hdf5", ".root", ".pkl", ".parquet")
 PATHLIKE = re.compile(r"[\w./\-]+(?:" + "|".join(re.escape(e) for e in EXT) + r")\b")
 
@@ -50,19 +67,41 @@ def repo_root():
     return out or os.getcwd()
 
 
-def normalise(p):
-    """Absolute cluster-checkout paths -> repo-relative. Everything else unchanged."""
-    for pref in REPO_PREFIXES:
+_PREFIX_CACHE = {}
+
+
+def repo_prefixes(root=None):
+    """Every absolute prefix that means "a checkout of this repo", longest first.
+
+    Derived from the CURRENT checkout plus the historical ones, rather than written down, because
+    the written-down version is what went fail-open. Longest-first so a nested path cannot be
+    stripped by a shorter prefix that happens to also match.
+    """
+    root = root or repo_root()
+    if root not in _PREFIX_CACHE:
+        prefixes = {os.path.join(root, "")}
+        prefixes.update(HISTORICAL_REPO_PREFIXES)
+        _PREFIX_CACHE[root] = tuple(sorted(prefixes, key=len, reverse=True))
+    return _PREFIX_CACHE[root]
+
+
+def normalise(p, root=None):
+    """Absolute paths inside ANY checkout of this repo -> repo-relative. Others unchanged."""
+    for pref in repo_prefixes(root):
         if p.startswith(pref):
             return p[len(pref):]
+    if p.startswith("/"):
+        i = p.rfind(_AREA_MARKER)
+        if i != -1:
+            return p[i + 1:]
     return p
 
 
-def named_artifacts(text):
+def named_artifacts(text, root=None):
     """Deliverable-area artifact paths named anywhere in a receipt's text."""
     out = set()
     for m in PATHLIKE.findall(text):
-        rel = normalise(m)
+        rel = normalise(m, root)
         if not rel.startswith("/") and rel.startswith(AREA):
             out.add(rel)
     return out
@@ -91,7 +130,7 @@ def scan(rev=None, root=None):
 
     findings, n_paths = [], 0
     for f in receipts:
-        for rel in sorted(named_artifacts(read(f))):
+        for rel in sorted(named_artifacts(read(f), root)):
             n_paths += 1
             if rel not in tracked:
                 findings.append({"receipt": f, "artifact": rel,
