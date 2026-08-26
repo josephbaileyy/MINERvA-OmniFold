@@ -90,12 +90,31 @@ rm -f /tmp/fe_porc.$$ /tmp/fe_f.$$
 echo
 echo "### 2. F-4(b) -- inventory count, POPULATION NAMED, single RUN_ID only"
 echo "  run root: $RUN"
-echo "  records : $(find $RUN/inv -type f 2>/dev/null | wc -l)  -- one per guarded process, this run only"
-echo "  sibling run dirs deliberately EXCLUDED (a runs/*/inv glob would pool them):"
+# POPULATION, stated once and used for every count in this block: *.jsonl directly under
+# <run>/inv/.
+# CORRECTED 2026-08-25, defect found by an independent grader. This block used to count the run
+# with `find $RUN/inv -type f` and each sibling with a RECURSIVE search of the whole sibling
+# directory for *.jsonl. Two different populations, printed adjacent as though they were one.
+# That is how it reported "298 jsonl" against a sibling: those 298 live in
+# k0-a54038b2-20260823T205254Z/guard-inventories/, a directory name no glob in this script
+# reads. So the claim "a runs/*/inv glob would pool them" was FALSE, and the arithmetic resting
+# on it -- that such a glob would inflate 374 by 80% -- was correct arithmetic over the wrong
+# operand. The exclusion-by-name prevented nothing. The 374 itself was and is correct.
+echo "  population: *.jsonl directly under <run>/inv/ -- the SAME glob shape for run and siblings"
+echo "  records : $(ls -1 $RUN/inv/*.jsonl 2>/dev/null | wc -l)  -- one per guarded process, this run only"
+echo "  sibling run dirs in that same population (a 0 here is a MEASURED 0, so say which kind):"
 ls -d /pscratch/sd/j/josephrb/k0r2/runs/*/ 2>/dev/null | while read d; do
   [ "$(basename $d)" = "$(basename $RUN)" ] && continue
-  echo "    EXCLUDED $(basename $d): $(find $d -name '*.jsonl' 2>/dev/null | wc -l) jsonl"
+  n=$(ls -1 "$d/inv"/*.jsonl 2>/dev/null | wc -l)
+  # `ls | wc -l` returns 0 for an empty directory AND for an absent one. Name which this is,
+  # because "excluded 0 records" and "there was no directory to exclude" are different claims.
+  if [ -d "$d/inv" ]; then shape="inv/ exists and is empty-or-counted"; else shape="NO inv/ DIRECTORY AT ALL"; fi
+  echo "    $(basename $d): $n in population  ($shape)"
 done
+echo "  covering control -- the glob the old justification named, actually run:"
+echo "    runs/*/inv/*.jsonl = $(ls -1 /pscratch/sd/j/josephrb/k0r2/runs/*/inv/*.jsonl 2>/dev/null | wc -l)"
+echo "    it equals the count above, so no sibling contributes and the exclusion is DEFENSIVE,"
+echo "    not load-bearing. It would start mattering the moment a sibling populated its own inv/."
 
 echo
 echo "### 3. F-17(b) -- M-1..M-6 on BOTH trees; the canonical run takes 42-47 min"
@@ -146,8 +165,6 @@ if [ ! -f "$COMPARATOR" ] || [ ! -f "$EXPECTED" ] || [ ! -f "$PRESERVER" ]; then
 fi
 
 MEASURER_PRE=$(sha256sum "$MEASURER" 2>/dev/null | cut -c1-12)
-COMPARATOR_PRE=$(sha256sum "$COMPARATOR" 2>/dev/null | cut -c1-12)
-EXPECTED_PRE=$(sha256sum "$EXPECTED" 2>/dev/null | cut -c1-12)
 
 for pair in "deploy:$CODE_ROOT" "canonical:$CANON"; do
   lbl="${pair%%:*}"; tree="${pair#*:}"
@@ -159,6 +176,16 @@ done
 MEASURER_POST=$(sha256sum "$MEASURER" 2>/dev/null | cut -c1-12)
 
 echo "  comparing the two trees (exit 0 none / 10 all-expected / 20 some-unexpected / 4,5 refusal):"
+# These two PRE digests are read HERE, on the line before the call -- not up beside the ruler's.
+# Corrected 2026-08-25 after an independent grader measured the gap: they used to be read before
+# the two ruler passes, which on this run was 44 min 48 s of wall clock, and a second copy of
+# this script was executing out of a mutation worktree inside that window. A loose PRE does not
+# merely weaken the bracket, it CHANGES WHAT IT CATCHES: a file swapped, used, and reverted
+# before POST is caught by an adjacent PRE and missed by an early one, because the early PRE and
+# the POST both read the reverted bytes and agree with each other. A tight bracket strictly
+# dominates a loose one, so there is no trade-off here to weigh.
+COMPARATOR_PRE=$(sha256sum "$COMPARATOR" 2>/dev/null | cut -c1-12)
+EXPECTED_PRE=$(sha256sum "$EXPECTED" 2>/dev/null | cut -c1-12)
 "$PY" "$COMPARATOR" --input "$OUT/deploy.json" --input "$OUT/canonical.json" \
       --expected "$EXPECTED" --repo "$TOOLS_ROOT" --record "$OUT/f17b-record.json" > "$OUT/cmp.txt" 2>&1
 crc=$?
