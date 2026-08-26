@@ -266,7 +266,14 @@ def validate(att: dict, receipt_sha: str, report_sha: str) -> tuple[int, list[st
                            "that is a checkbox, not a finding" % (spot, len(f.strip()),
                                                                   MIN_FINDING_CHARS))
             key = _skeleton(f)
-            if key and key in seen_norm:
+            if not key:
+                bad.append("per_spot_findings[%s] contains no letters at all. It cleared the length "
+                           "floor on punctuation alone, which is not prose -- and an empty normal "
+                           "form would then have been skipped by the duplicate check below, so two "
+                           "identical letterless findings would have counted as two judgements."
+                           % spot)
+                continue
+            if key in seen_norm:
                 bad.append("per_spot_findings[%s] is the same text as [%s] once digits, punctuation "
                            "and spacing are removed: one finding pasted across spots is word-salad, "
                            "not four judgements" % (spot, seen_norm[key]))

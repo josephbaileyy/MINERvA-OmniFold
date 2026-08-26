@@ -78,7 +78,7 @@ cannot silently reuse that judgement for different ones.
 
 ## 3. Tests, and their power
 
-80 arms, all OK: 18 in `test_verify_run_receipt_blind_spots.py`, 62 in
+82 arms, all OK: 18 in `test_verify_run_receipt_blind_spots.py`, 64 in
 `test_verify_f8b_attestation.py`. Every requirement has an arm that **removes** it and asserts
 rejection, and `EveryRequirementHasARemovalArm` reads the suite's own source so a future field added
 without a removal arm fails the suite.
@@ -221,6 +221,30 @@ exactly one commit restores the authorized behaviour without disturbing anything
 in the conservative direction: it removes a passing status and can never manufacture one. **The
 branch is not landed to `main`.** If the decision-maker prefers the literal reading, drop that one
 commit; the referral in §3.2 stands either way.
+
+## 3.4 Two defects this lane found in its OWN fixes, neither caught by any grader
+
+Both were introduced by a guard added to close a grader's finding, and both were found by asking
+what the new guard does in the direction it was *not* written for. **Neither of the two grades
+caught either one** — both were probing for things that should be refused and were passed, never for
+things that should pass and are refused, nor for a guard that opens a hole one line after closing one.
+
+**(i) A false positive, `4798f927`.** Comparing roles on the findings' letters-only form closed the
+`close-out lane` / `close out lane` alias and collided **`codex-school` with `codex-school2`** — two
+real profiles in this repo — plus `agy-g2-gate-verifier` with `agy-g3-`. All three would have been
+refused as self-attestation. It fails **closed**, so it blocks honest attestations rather than
+passing dishonest ones, which is the safe way to be wrong and still wrong. Role identity now keeps
+digits; findings still strip them, because there the digit was the whole trick.
+
+**(ii) A false negative created by a guard against (i)'s shape.** The duplicate check skipped
+comparison when a finding's normal form was empty (`if key and key in seen…`). 80+ characters of
+punctuation clears the length floor and normalises to the empty string, so **two IDENTICAL letterless
+findings counted as two judgements** — measured `rc=11` before the fix. A finding with no letters is
+now rejected outright.
+
+**The transferable part:** a guard added to fix a reviewer's finding is unreviewed code, and it is
+written in a hurry under the impression that the thinking has already been done. Both of these were
+in the *fix*, not the original.
 
 ## 4. CORRECTION — the recorded BREAK 1 result does not reproduce
 

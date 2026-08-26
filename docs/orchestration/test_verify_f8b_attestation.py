@@ -276,6 +276,25 @@ class ThePerSpotFindingsMustBeComplete(Fixture):
             "  " + FINDINGS["namespace-packages"].upper().replace(" ", "  ") + "\n"
         self.assertRejected(att, "is word-salad, not four judgements")
 
+    def test_a_finding_with_NO_LETTERS_is_rejected_rather_than_skipped(self):
+        """Self-found. The empty-skeleton guard `if key and ...` created its own hole.
+
+        80+ characters of punctuation clears the length floor and normalises to the empty string,
+        which the duplicate check then skipped -- so two IDENTICAL letterless findings counted as
+        two judgements. Measured before the fix: rc=11. A guard added to avoid a false positive
+        opened a false negative one line later.
+        """
+        punct = "!@#$%^&*()-=+[]{};:,.<>/?|~ " * 4
+        att = valid_attestation()
+        att["per_spot_findings"]["namespace-packages"] = punct
+        att["per_spot_findings"]["shell-route"] = punct
+        self.assertRejected(att, "contains no letters at all")
+
+    def test_a_SINGLE_letterless_finding_is_rejected_too_not_only_a_duplicated_pair(self):
+        att = valid_attestation()
+        att["per_spot_findings"]["shell-route"] = "?!." * 40
+        self.assertRejected(att, "contains no letters at all")
+
     def test_an_unknown_spot_key_is_rejected(self):
         att = valid_attestation()
         att["per_spot_findings"]["invented-fifth-spot"] = FINDINGS["shell-route"] + " extra"
