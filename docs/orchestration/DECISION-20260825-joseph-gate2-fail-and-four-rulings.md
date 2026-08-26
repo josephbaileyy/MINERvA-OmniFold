@@ -502,6 +502,11 @@ authorized by anything in this section, and a passing grade confers neither.
 
 ## 13. Withdrawn and non-citable: three mutation figures
 
+> **Scope of authority in this section.** §13 proper is **Joseph's ruling 2** and covers exactly the
+> three mutation figures below. §§13.1–13.3 are **findings by the publication close-out lane**, not
+> rulings, and were nested under a "Ruled by Joseph" heading — which is itself a defect this section
+> now corrects, because it lent his authority to my findings. One of them, §13.2, was wrong.
+
 **Ruled by Joseph, 2026-08-25.** The comparator-repair lane's claim 5 reported a mutation matrix.
 Under independent grading, two figures reproduce exactly and three do not:
 
@@ -538,19 +543,71 @@ condition.
 | "prose corrected in three places" | **four** |
 | the `over_broad` assertion demonstrating the old sweep could not catch this | **degenerate as written** — it passes on the bench universe because the pattern reaches 0 fields there, not because the predicate counts field names. The substance holds over the real universe; the cited line does not carry it. |
 
+| the new invariant arm's docstring | **states the opposite of the claim it supports.** It frames the narrowing's point as a *reach* property — "an accepted M-1 entry covers either one nameable file or, visibly, the whole population" — but `M-1[nd-*]` **satisfies** that (reaches 10 of 10), so the arm advertised as catching under-refusal residue would not have caught the very spelling §12.2.1 banned. Verified at `test_compare_m1_m6.py:957-982`: the assertion is `len(reached) <= 1 or reached == everything`. Coverage survives via the separate 4060-candidate sweep. **Prose defect, not behaviour.** |
+
 Also: "all 76 pre-existing arms stay green" — there are **75** name-identical pre-existing arms; the
 76th is the one the implementation inverted.
 
-### 13.2 A pre-existing figure inherited THROUGH a grade
+**Both prose corrections are now recorded here rather than edited into the file.** Editing either
+moves a pinned digest and voids the live grade; recording them moves nothing. They are **mandatory on
+next touch** — the next commit that moves `test_compare_m1_m6.py` for a behavioural reason must carry
+them. The `field_matches` correction (row 2 above) was already recorded when this table was written;
+the invariant-arm row closes the asymmetry, which was the actual gap.
 
-`test_compare_m1_m6.py`'s docstring for the field-name-wildcard arm says "**265 of 721** generated
-candidates are refused although they reach exactly one field name". Measured: **301** (refused and
-exactly one field name) or **360** (refused and not over-broad). **265 is the ACCEPTED count.** Do
-not cite "265 of 721".
+### 13.2 RETRACTED — the "265 of 721" figure is CORRECT, and this section was wrong
 
-It was **not introduced by `63262a3a`** — it came in at `68b4af12` and passed *through* the D-3
-grade unchallenged. Worth noting for what it says about grades in general: a grade that verifies
-behaviour does not thereby verify the prose shipped beside it.
+**This finding is withdrawn. It was mine, it was wrong, and it was wrong in the direction that
+discredited a correct prior grade.**
+
+What this section previously said: that `test_compare_m1_m6.py`'s docstring figure "265 of 721
+generated candidates are refused although they reach exactly one field name" does not reproduce, that
+the measured values are 301 or 360, that **265 is the ACCEPTED count**, and that the figure "survived
+the D-3 grade unchallenged". It instructed: *do not cite "265 of 721"*.
+
+**Re-derived independently, twice** — by a fresh advisory lane and then by this lane with its own
+probe, both over the suite's own `_candidate_patterns` on the bench universe:
+
+| population | count |
+|---|---|
+| generator candidates | 721 |
+| accepted | **265** |
+| refused | 456 |
+| refused ∧ exactly one field **name** | 301 |
+| **refused ∧ one field name ∧ touches no `M-2`** | **265** |
+| refused ∧ not `over_broad` | 360 |
+
+**265 reproduces exactly** under the third reading, and the 36-pattern gap from 301 is entirely
+`M-2`-targeted (`M-2.i*`, `M-2.im*`, …). Excluding them is substantively right for the claim the arm
+makes: those 36 would be refused by the `M-2` rule regardless, so counting them as cost-of-the-
+field-wildcard-rule double-counts.
+
+**The D-3 grade graded this figure and AFFIRMED it** (`GRADE-20260825-d3-comparator-repair-fitness.md`
+line 253, which states the qualifier and the 456 and the 301). So "survived unchallenged" was false:
+it was tested and upheld. The narrowing grade's §9 tried two readings, missed the third, did not
+consult the prior grade's claim-6 section where it is written out, and concluded from the
+**coincidence** that `accepted` is also 265 (456 + 265 = 721) that 265 "is instead the accepted
+count." Both halves of that sentence are individually true and the inference is wrong.
+
+**The docstring's real defect is a MISSING QUALIFIER, not a wrong number.** Adding "and touch no
+`M-2` field" makes it exactly true at both `68b4af12` and `5dc92487`. That correction is recorded in
+§13.1's mandatory-on-next-touch set, not applied here.
+
+**Still to be corrected elsewhere:** `CATALOG.md` echoes the retracted instruction, and the narrowing
+grade's §9 stands uncorrected in a filed grade whose overall verdict (FIT) is unaffected. The grade
+is its author's artifact; this lane has notified it rather than editing it.
+
+**How I got it wrong, since that is the reusable part.** I received "cannot reproduce under either
+natural reading" from a grader and relayed it into a ruling section without asking *which two
+readings*, or checking whether an earlier grade had already scored the same figure. A negative result
+about a figure is a claim about a **population and its qualifiers**, and I recorded it as a claim
+about a number. That is the campaign's most-repeated failure mode and I committed it while
+maintaining the register that documents it.
+
+**The narrow rule worth keeping**, which is cheaper than "grades should check every figure": a figure
+quoted in a docstring **must name its population and qualifiers inline**, and a grade that touches a
+figure **must state the reading it scored**. Both graders here did correct arithmetic over
+differently-defined sets; no amount of "check more" would have caught that, and stating the reading
+would have caught it immediately.
 
 ### 13.3 My own briefing was self-contradictory, and the grader caught it
 

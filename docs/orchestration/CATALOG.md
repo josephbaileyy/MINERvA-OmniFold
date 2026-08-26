@@ -389,9 +389,11 @@ built all of these and is disqualified from grading them.
   the point AS a reach property that `M-1[nd-*]` satisfies; coverage survives via the 4060-candidate
   sweep, so this is a prose defect, reported and deliberately NOT repaired. **Four claims overstated**
   (the `4840` denominator is unrecoverable — cite `4060`; `field_matches`'s stated ground is wrong
-  though the decision is right; four prose sites not three), plus one **pre-existing** unreproduced
-  docstring figure inherited from `68b4af12` ("265 of 721": measured 301 or 360, and 265 is the
-  ACCEPTED count). §8 is the accepted/rejected shape table the `m1m6_expected_differences.json`
+  though the decision is right; four prose sites not three), Its §9 claim that the pre-existing
+  "265 of 721" docstring figure does not reproduce is **RETRACTED — see DECISION §13.2**: 265
+  reproduces exactly as *refused ∧ one field name ∧ touching no `M-2`*, the D-3 grade had already
+  graded and affirmed it, and `accepted` also being 265 is a coincidence (456+265=721). The
+  docstring needs a missing qualifier, not a retraction. §8 is the accepted/rejected shape table the `m1m6_expected_differences.json`
   prose note is to be transcribed from under §12.1. **Grades no F-number, discharges no clause,
   authorizes no rehearsal, no filing and no compute; Gate 2 stays FAIL and open**, and per §10.1 a
   separate readiness check still gates step 4. Expires mechanically when any of three pinned digests
