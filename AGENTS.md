@@ -122,7 +122,7 @@ the exact authorized action and terminal-event posture, then the governing `OI-*
 
 | Task | Read next |
 |---|---|
-| What is happening now? | `docs/orchestration/LIVE-STATE.md`; run `python3 docs/orchestration/generate_live_state.py --check-freshness`, then query the scheduler/source directly |
+| What is happening now? | `docs/orchestration/LIVE-STATE.md`; on Perlmutter run `/usr/bin/python3.11 docs/orchestration/generate_live_state.py --check-freshness` from canonical main (task worktrees do not inherit main's regenerated view), then query the scheduler/source directly |
 | What should happen next? | `docs/CURRENT_WORK.md`, then the exact cited row in `docs/OPEN_ITEMS.md`; consult `docs/CURRENT_WORK_BACKLOG.md` when reprioritizing |
 | Quote a number | `VALIDATION_LEDGER.md`, then its exact product summary or receipt |
 | Assess a physics claim | `docs/orchestration/CLAIMS.md`, then the claim's original evidence and independent check |

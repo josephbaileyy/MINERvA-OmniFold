@@ -582,10 +582,12 @@ def render(
         "commit stale by construction** -- the generator reads `HEAD`, then the commit that "
         "carries the output moves `HEAD`. So `Git:` is normally its own commit's PARENT. "
         "**FRESH iff `HEAD` equals `Git:` or `Git:` is `HEAD`'s parent; anything further back "
-        "is STALE.** Run `python3 docs/orchestration/generate_live_state.py --check-freshness` "
-        "rather than eyeballing it. A rule of \"`Git:` must equal `HEAD`\" has NO passing "
+        "is STALE.** On Perlmutter run `/usr/bin/python3.11 "
+        "docs/orchestration/generate_live_state.py --check-freshness` from canonical main "
+        "rather than from a task worktree or by eyeballing it. A rule of \"`Git:` must equal "
+        "`HEAD`\" has NO passing "
         "state and a check that always fires is a check nobody reads (BEN-199).",
-        "- AND FRESHNESS IS NOT TRUTH: `Declared state` below is AUTHORED PROSE the generator "
+        "- AND FRESHNESS IS NOT TRUTH: `Declared state` above is AUTHORED PROSE the generator "
         "carries forward verbatim. Regenerating updates the timestamp and the sha; it does NOT "
         "revalidate that text. On 2026-08-12 this field still read \"no cause is discharged\" "
         "after cause 2 was discharged at `d75833a`, through two regenerations.",
