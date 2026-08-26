@@ -92,6 +92,12 @@ ALLOWED_TOP_LEVEL = frozenset((
 # `uuid-1234` and reviewer `uuid-123`: distinct strings, so not self-attestation, but not two
 # conversations either. Requiring canonical form makes "distinct string" and "distinct conversation"
 # the same fact, which is what the check was always assuming.
+FILED_STATUS = "filed"
+
+# Identity fields must be printable ASCII. `аuthor` (Cyrillic a) and `author` are two strings and
+# one party; rejecting the character class is cheaper and more honest than trying to fold homoglyphs.
+ASCII_RE = re.compile(r"^[\x20-\x7e]+$")
+
 UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.I)
 
 _REPO = pathlib.Path(__file__).resolve().parents[2]
@@ -139,8 +145,16 @@ def validate(att: dict, receipt_sha: str, report_sha: str) -> tuple[int, list[st
     if att.get("superseded_by"):
         bad.append("attestation is SUPERSEDED by %r; a superseded attestation never passes"
                    % att["superseded_by"])
-    if att.get("status") and _norm(str(att["status"])) in ("draft", "withdrawn", "retracted"):
-        bad.append("attestation status is %r, which is not a filed decision" % att["status"])
+    if "status" in att and _norm(str(att.get("status"))) != FILED_STATUS:
+        bad.append("attestation status is %r; the only value that means a filed decision is %r. "
+                   "This is an ALLOWLIST because the denylist it replaced waved through every "
+                   "unfiled-sounding value nobody had thought of -- 'pending' passed."
+                   % (att.get("status"), FILED_STATUS))
+    if "superseded_by" in att and not (isinstance(att["superseded_by"], str)
+                                       and att["superseded_by"].strip()):
+        bad.append("superseded_by is present but %r: a falsy or non-string supersession field is "
+                   "ambiguous rather than absent. Omit the key, or name the successor."
+                   % (att["superseded_by"],))
 
     # ---- digest bindings ----------------------------------------------------------
     for key, actual, what in (("receipt_sha256", receipt_sha, "receipt"),
@@ -166,6 +180,10 @@ def validate(att: dict, receipt_sha: str, report_sha: str) -> tuple[int, list[st
             if not val:
                 bad.append("%s.%s is missing or empty: an unattributed party cannot be shown "
                            "independent of anyone" % (key, f))
+            elif not ASCII_RE.match(val):
+                bad.append("%s.%s %r contains non-ASCII characters. A Cyrillic homoglyph makes two "
+                           "identical-looking roles compare as distinct parties, which is the whole "
+                           "independence check defeated by one invisible byte." % (key, f, val))
             elif f == "conversation_uuid" and not UUID_RE.match(val):
                 bad.append("%s.conversation_uuid %r is not a canonical uuid. Two arbitrary strings "
                            "can differ without being two conversations -- a prefix of a real uuid "
@@ -181,7 +199,10 @@ def validate(att: dict, receipt_sha: str, report_sha: str) -> tuple[int, list[st
     if author and reviewer:
         for f, why in (("role", "the same lane cannot grade its own filing"),
                        ("conversation_uuid", "one conversation attesting to itself is not review")):
-            if author[f] and reviewer[f] and _norm(author[f]) == _norm(reviewer[f]):
+            # Roles compare on the letters-only normal form, so `close-out lane` and
+            # `close out lane` are one party. Uuids are already canonical by the time we get here.
+            same = _skeleton if f == "role" else _norm
+            if author[f] and reviewer[f] and same(author[f]) == same(reviewer[f]):
                 bad.append("SELF-ATTESTATION on %s (%r): %s. F-8(b) requires an INDEPENDENT "
                            "judgement." % (f, reviewer[f], why))
 

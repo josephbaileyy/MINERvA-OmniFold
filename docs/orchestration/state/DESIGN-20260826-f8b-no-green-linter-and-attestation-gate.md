@@ -78,7 +78,7 @@ cannot silently reuse that judgement for different ones.
 
 ## 3. Tests, and their power
 
-68 arms, all OK: 18 in `test_verify_run_receipt_blind_spots.py`, 50 in
+76 arms, all OK: 18 in `test_verify_run_receipt_blind_spots.py`, 58 in
 `test_verify_f8b_attestation.py`. Every requirement has an arm that **removes** it and asserts
 rejection, and `EveryRequirementHasARemovalArm` reads the suite's own source so a future field added
 without a removal arm fails the suite.
@@ -121,6 +121,63 @@ judgements whether or not they are. Both are **process** guarantees, not mechani
 validator says so on the pass path and in its docstring, and
 `test_the_UNCLOSEABLE_hole_is_disclosed_on_the_pass_path_and_in_the_docstring` fails if that
 disclosure is removed.
+
+## 3.2 Second grade, also UNFIT: four more closed, and ONE UNRESOLVED STRUCTURAL OBJECTION
+
+`agy-f8b-impl-grade` re-graded `8f1ef2e2` **`F8B-REDESIGN-GRADE-2: UNFIT`**. It confirmed *all three
+of your earlier findings actually closed: **YES***, confirmed the suites, the power measurements and
+the scope, and judged this design record's §3.1 to represent its grade **fairly**. Two items failed.
+
+### The six new inputs: four were closeable, two were the residuals already disclosed
+
+| input | disposition |
+|---|---|
+| author `close-out lane` / reviewer `close out lane` | **CLOSED** — roles now compare on the same letters-only normal form the findings use, so punctuation aliases are one party |
+| `аuthor` (Cyrillic а) vs `author` | **CLOSED** — identity fields must be printable ASCII; one invisible byte defeated the whole independence check |
+| `status: "pending"` | **CLOSED** — the status check was a DENYLIST banning draft/withdrawn/retracted, so it waved through every unfiled-sounding value nobody had thought of. It is now an ALLOWLIST: `filed`, or omit the key |
+| `superseded_by: false` / `""` / `null` | **CLOSED** — present-but-falsy is now rejected as ambiguous rather than read as absent |
+| two fabricated but well-formed uuids pass | **NOT A NEW FINDING** — this is the disclosed fourth hole. No signature exists; form is all a program can check |
+| findings ending `potato` vs `tomato` pass | **NOT A NEW FINDING** — the disclosed residual. Closing it needs a similarity threshold on prose, explicitly ruled out |
+
+Re-measured with a passing control in the same run (unmodified → `rc=0`): the four closed cases
+return `rc=3` naming their own reason; the two residuals return `rc=0` and now have arms that
+**assert they pass**. That is deliberate — an undisclosed hole and a disclosed one are different
+objects, and pinning the disclosed behaviour is what stops it being quietly re-described as closed.
+
+**The grade slightly overstated here, and it should be said:** it listed all six as evidence the
+validator "retains fail-open surfaces", counting two documented, un-closeable residuals as new
+findings. Four were new; two were the thing the previous commit had already written down.
+
+### THE UNRESOLVED ITEM — and it is a governance question, not an engineering one
+
+> *is the fourth hole's disclosure adequate?* **NO.** *"The current validator repeats the exact same
+> mistake: it emits an `rc=0` for an unauthenticated file lacking a cryptographic signature, while
+> merely printing that the independence is a 'PROCESS guarantee, not a mechanical one'. Emitting
+> `rc=0` while explicitly relying on a printed label to disclaim mechanical verification is the same
+> structural failure that was ruled insufficient."*
+
+**Where it is right, and I think it substantially is:** the SHAPE is identical to what §10.1 struck
+down. A machine-readable success plus a human-readable caveat — and the caveat is invisible to every
+pipeline that will ever consume the exit code. "A future lane cites the exit 0 as proof of
+compliance" is exactly as available here as it was for the linter.
+
+**Where it differs, and this is not nothing:** the linter's `rc=0` stood for a judgement that HAD
+NOT OCCURRED. The validator's stands for one that HAS — recorded, bound to exact bytes, by a named
+party who is not the author. The gap is the AUTHENTICITY of the naming, not the EXISTENCE of the
+judgement. Those are different sizes of hole. But the load-bearing part of F-8(b) is precisely
+whether a real independent party really read the prose, so an unauthenticated name is a gap in the
+one place it matters most, and that is why I do not think the distinction rescues the design.
+
+**THE AVAILABLE FIX, AND WHY THIS LANE DID NOT APPLY IT.** Give the validator no zero exit either: a
+distinct non-zero `ATTESTATION_WELL_FORMED`, meaning *"complete and correctly bound; whether F-8(b)
+is discharged is a decision for the gate authority."* Then **nothing in the F-8(b) toolchain returns
+0**, consistently, and the clause is discharged by a recorded authority decision citing a well-formed
+attestation — which is what §10.1 asked for in the first place.
+
+That change **contradicts the standing authorization**, which specifies a validator that *"can return
+success"* and *"ends in an unambiguous PASS"*. Whether F-8(b) may be closed by machinery at all, or
+only by a recorded human decision, is the decision-maker's call and not this lane's. **It is referred,
+not decided here, and the branch is NOT landed to `main` while it is open.**
 
 ## 4. CORRECTION — the recorded BREAK 1 result does not reproduce
 

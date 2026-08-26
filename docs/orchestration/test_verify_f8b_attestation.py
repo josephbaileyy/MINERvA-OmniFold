@@ -295,12 +295,12 @@ class StaleAndSupersededAttestations(Fixture):
     def test_a_DRAFT_attestation_is_not_a_filed_decision(self):
         att = valid_attestation()
         att["status"] = "draft"
-        self.assertRejected(att, "not a filed decision")
+        self.assertRejected(att, "the only value that means a filed decision")
 
     def test_a_WITHDRAWN_attestation_is_rejected(self):
         att = valid_attestation()
         att["status"] = "WITHDRAWN"
-        self.assertRejected(att, "not a filed decision")
+        self.assertRejected(att, "the only value that means a filed decision")
 
     def test_a_wrong_schema_is_rejected_before_anything_else(self):
         att = valid_attestation()
@@ -412,6 +412,69 @@ class TheAdversarialInputsFoundByTheIMPLEMENTATIONGRADE(Fixture):
         doc = A.__doc__ or ""
         self.assertIn("OPEN, AND NOT CLOSEABLE HERE", doc)
         self.assertIn("process guarantees", doc.lower())
+
+
+class TheSecondRoundOfAdversarialInputs(Fixture):
+    """Round two from `agy-f8b-impl-grade`. Four were closeable; two are the disclosed residuals.
+
+    The two that remain OPEN have arms here that assert they PASS. That is deliberate: an
+    undisclosed hole and a disclosed one are different objects, and a test that pins the disclosed
+    behaviour is what stops it from being quietly re-described later as closed.
+    """
+
+    def test_a_role_ALIAS_differing_only_in_punctuation_is_self_attestation(self):
+        att = valid_attestation()
+        att["receipt_author"]["role"] = "close-out lane"
+        att["independent_reviewer"]["role"] = "close out lane"
+        self.assertRejected(att, "SELF-ATTESTATION on role")
+
+    def test_a_HOMOGLYPH_in_an_identity_field_is_rejected(self):
+        att = valid_attestation()
+        att["receipt_author"]["role"] = "\u0430uthor"   # Cyrillic a
+        att["independent_reviewer"]["role"] = "author"
+        self.assertRejected(att, "contains non-ASCII")
+
+    def test_an_UNLISTED_status_is_rejected_because_the_check_is_an_allowlist(self):
+        for value in ("pending", "in review", "provisional", "draft", ""):
+            att = valid_attestation()
+            att["status"] = value
+            self.assertRejected(att, "the only value that means a filed decision")
+
+    def test_the_one_FILED_status_is_accepted(self):
+        att = valid_attestation()
+        att["status"] = "filed"
+        rc, text = self.run_cli(att)
+        self.assertEqual(rc, A.PASS_EXIT, text)
+
+    def test_a_FALSY_superseded_by_is_rejected_as_ambiguous_not_read_as_absent(self):
+        for value in (False, "", None, 0):
+            att = valid_attestation()
+            att["superseded_by"] = value
+            self.assertRejected(att, "ambiguous rather than absent")
+
+    def test_omitting_superseded_by_entirely_is_the_way_to_say_not_superseded(self):
+        att = valid_attestation()
+        self.assertNotIn("superseded_by", att)
+        rc, text = self.run_cli(att)
+        self.assertEqual(rc, A.PASS_EXIT, text)
+
+    def test_DISCLOSED_AND_OPEN_two_fabricated_uuids_still_pass(self):
+        """No signature exists, so form is all this program can check. Pinned, not fixed."""
+        att = valid_attestation()
+        att["receipt_author"]["conversation_uuid"] = "00000000-0000-0000-0000-000000000001"
+        att["independent_reviewer"]["conversation_uuid"] = "00000000-0000-0000-0000-000000000002"
+        rc, text = self.run_cli(att)
+        self.assertEqual(rc, A.PASS_EXIT, text)
+        self.assertIn("NOTHING HERE BINDS THIS FILE TO THE PARTY IT NAMES", text)
+
+    def test_DISCLOSED_AND_OPEN_findings_differing_by_one_WORD_still_pass(self):
+        """Closing this needs a similarity threshold on prose, which was explicitly ruled out."""
+        att = valid_attestation()
+        body = FINDINGS["namespace-packages"]
+        att["per_spot_findings"]["namespace-packages"] = body + " potato"
+        att["per_spot_findings"]["shell-route"] = body + " tomato"
+        rc, text = self.run_cli(att)
+        self.assertEqual(rc, A.PASS_EXIT, text)
 
 
 class EveryRequirementHasARemovalArm(unittest.TestCase):
