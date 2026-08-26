@@ -134,7 +134,12 @@ VALIDATION_RECEIPT=${EVAL_DIR}/PETV2_EQUIVALENCE_VALIDATION.json
 
 case "$STAGE" in
   target)
+    # The explicit ROOT activator reaches conda hooks that legitimately inspect unset
+    # variables.  Its own contract requires `set -eo pipefail` while sourcing; restore the
+    # controller's nounset policy immediately afterward, before checking any supplier.
+    set +u
     source "$ROOT_ENV_SCRIPT"
+    set -u
     [[ "$(real_of "$(command -v python3)")" == "$(real_of "$ROOT_PYTHON")" ]] \
       || die "ROOT environment did not resolve the explicit ROOT interpreter"
     "$ROOT_PYTHON" -c 'import ROOT, numpy, sklearn; assert ROOT.gROOT' \

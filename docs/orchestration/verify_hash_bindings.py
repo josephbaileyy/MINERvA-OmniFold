@@ -227,15 +227,19 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #:     nd-unfolding/pet/validate_pet_v2_equivalence_result.py
 #:       f4cf134ff14d77592a78594a3fce03e366a74d65d6c11d6adca1339122a8a77f
 #:     nd-unfolding/pet/submit_pet_v2_equivalence.sh
-#:       589a168031c175931a3ee88ea7380395ff307c1d13bffb14f345a2f9e334bf40
+#:       77cf7da7f24f9bfefbdd30a08cd8aa13bbec4751fe9ecc935904a80fabc9f80a
 #:
-#: The delta was measured before this snapshot moved: 124 bindings at digest cf0892b5..., with all
+#: The delta was measured before this snapshot moved: 124 bindings at digest f956b52b..., with all
 #: five new paths reporting OK and only the gate's named pre-existing G2 launcher drift remaining.
 #: Each digest above was independently recomputed from the staged executable and matched the owning
 #: proposal field. This is the intended new-code freeze, not a refresh of an old receipt to current
 #: bytes; mutating any executable now makes both this verifier and the submission controller fail.
+#: The submit digest was finalized only after the first no-submit preflight: the worker-path audit
+#: found that the explicit ROOT activator must be sourced with Bash nounset temporarily disabled,
+#: exactly as that activator's own comments require. No Slurm job had been submitted; the controller,
+#: proposal, test, and this inventory moved together before the second immutable preflight.
 RECEIPT_BINDING_COUNT = 124
-RECEIPT_BINDING_SHA256 = "cf0892b552d4f0a291a9c4e07992862e7b8cd15e38070933dfe6ffd5f507bb8a"
+RECEIPT_BINDING_SHA256 = "f956b52b2619f8d1c32380a7e4ae1fcb9a3165383f9d1eb6e5bb8571e4d61254"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

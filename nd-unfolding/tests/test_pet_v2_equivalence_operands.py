@@ -222,6 +222,9 @@ def test_controller_has_exact_dependencies_guards_and_no_srun_or_retry():
     assert "required_current_sources" in text
     assert "new_support_sources" in text
     assert "runEventLoopMC_${playlist}.root" in text
+    source_at = text.index('source "$ROOT_ENV_SCRIPT"')
+    assert text.rindex("set +u", 0, source_at) < source_at
+    assert text.index("set -u", source_at) > source_at
     assert not any(line.lstrip().startswith("srun ") for line in text.splitlines())
     assert "retry" not in text.lower() or '"no_retry_path": True' in text
     assert subprocess.run(["bash", "-n", str(PET / "submit_pet_v2_equivalence.sh")],
