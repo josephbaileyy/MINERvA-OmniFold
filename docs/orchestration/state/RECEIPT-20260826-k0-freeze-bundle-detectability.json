@@ -147,7 +147,7 @@
     "honest_limit_of_this_arm": "recovered_tree matching the primary checkout's aa67c426^{tree} is NOT an independent confirmation -- both are the same git object. What this arm establishes is that the BUNDLE ALONE reconstructs a clean checkout at the pin. Independence comes from the separate measurement that the frozen clone's HEAD IS that commit."
   },
   "limitations": [
-    "The bundle was generated from the PRIMARY checkout, not from the frozen clone's own object store. Reason, measured: that clone has a LOOSE-object store on Lustre -- `git count-objects -vH` exceeded a 120 s timeout, and `git bundle create` there did not complete in 45 minutes and had to be killed. The primary checkout is fully packed (21597 objects, 1 pack, 80.81 MiB) and produced the bundle in seconds.",
+    "The bundle was generated from the PRIMARY checkout, not from the frozen clone's own object store, because `git bundle create` there did not complete in 45 minutes and had to be killed, while the primary produced it in seconds. See `correction_20260826_object_store_layout` for the MEASURED reason -- an earlier version of this field named the wrong mechanism.",
     "Consequence: this is a recovery source for the pinned COMMIT and the frozen clone's REF SET, not a byte-image of that clone's object store. The pinned STATE is identified by HEAD + ref set + commit content, and all three are recorded here.",
     "Reading the frozen clone with git is NOT a read-only act (section 11.1 of the decision record): a git invocation there may write a lock into .git. This receipt's reads were rev-parse, show-ref and stat.",
     "The freeze tag refs/tags/freeze/k0-aa67c426 is LOCAL ONLY and deliberately not pushed. It exists because `git bundle create` refuses a bare sha ('Refusing to create empty bundle'); a recovering party gets the ref from the bundle itself."
@@ -161,5 +161,30 @@
     "git clone --no-local <bundle> <tmp> && git -C <tmp> checkout --detach freeze/k0-aa67c426 && git -C <tmp> status --porcelain   # must be empty",
     "ANY mismatch is a finding, not a maintenance task: it means the pinned state moved."
   ],
-  "gate_2": "FAIL. This receipt discharges no clause and authorizes no compute."
+  "gate_2": "FAIL. This receipt discharges no clause and authorizes no compute.",
+  "correction_20260826_object_store_layout": {
+    "what_this_receipt_said_first": "that the frozen clone has a LOOSE-object store on Lustre, and that this is why `bundle create` crawled.",
+    "verdict": "WRONG MECHANISM. The store is almost entirely PACKED.",
+    "measured_after_lustre_quietened": {
+      "git_dir_total": "2.7 GiB (du -sh)",
+      "pack_dir_entries": 58,
+      "pack_files": 19,
+      "pack_bytes_total": 2789038989,
+      "pack_gib": 2.598,
+      "loose_objects": 1850,
+      "fanout_dirs_present": 256,
+      "primary_checkout_for_contrast": "21597 objects, 1 pack, 80.81 MiB",
+      "pack_byte_ratio_frozen_over_primary": "about 33x"
+    },
+    "the_real_reason_bundle_create_crawled": "19 packs totalling 2.598 GiB had to be read and re-packed over Lustre -- roughly 33 times the primary's single 80.81 MiB pack. Nothing to do with loose objects: there are only 1850, and the 256 fanout directories being present is not evidence of volume.",
+    "why_the_first_reading_was_wrong": "`ls .git/objects` returned the 00/01/02... fanout directories and `count-objects -vH` timed out, and I read 'fanout dirs exist' as 'the store is loose'. Directory PRESENCE is not a count. The byte accounting -- 2.598 GiB of 2.7 GiB sitting in .pack files -- settles it in the opposite direction.",
+    "consequence_if_uncorrected": "someone trying to make the frozen store bundleable would run `gc` to pack loose objects. It is already packed; the available lever is consolidating 19 packs, and it may not be worth pulling at all since this receipt does not need it.",
+    "left_visible_rather_than_overwritten": true
+  },
+  "frozen_working_copy_cleanliness": {
+    "measured": "git status --porcelain in the frozen working copy: rc=0, 0 lines",
+    "when": "a background invocation started 2026-08-25 and completing 2026-08-26; the frozen working copy is dr-xr-x---, so the result is stable, but this is a timestamped OBSERVATION and not a live state",
+    "provenance_note": "an EARLIER claim of this same measurement was retracted at `8f80050c` because the invocation had been KILLED and the 0-byte output was an absent answer, not a measured clean. This is the real one, arriving hours later. The retraction stands: the earlier claim was unfounded when it was made, and this does not make it founded in retrospect."
+  },
+  "no_debris_left_by_the_discarded_attempts": "the two killed `bundle create` runs left no `tmp_pack_*`, no `.lock` and no other temporary entry in the frozen `.git`: `ls` of `.git` and of `.git/objects/pack` show 19 packs with their `.idx`/`.rev` siblings and nothing else. Checked because inspecting that clone with git is not a read-only act."
 }

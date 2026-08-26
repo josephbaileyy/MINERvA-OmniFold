@@ -465,12 +465,30 @@ is emitted. `bundle verify` does **not** cover this: it checks well-formedness a
 that the bundle holds what you meant.
 
 **Stated limitation, because it changes what the receipt can be cited for.** The bundle was generated
-from the **primary checkout**, not from the frozen clone's own object store: that store is
-**loose-object on Lustre**, where `git count-objects -vH` exceeded a 120 s timeout and
-`bundle create` did not complete in **45 minutes** and had to be killed, while the fully packed
-primary (21597 objects, 1 pack, 80.81 MiB) produced it in seconds. So this is a recovery source for
-the pinned **commit and ref set**, not a byte-image of that clone. Detectability of the pinned state
-rests on HEAD + ref set + commit content, and all three are recorded.
+from the **primary checkout**, not from the frozen clone's own object store, because `bundle create`
+there did not complete in **45 minutes** and had to be killed while the primary produced it in
+seconds. So this is a recovery source for the pinned **commit and ref set**, not a byte-image of that
+clone. Detectability of the pinned state rests on HEAD + ref set + commit content, and all three are
+recorded.
+
+**CORRECTION 2026-08-26 — I named the wrong mechanism for that slowness, in a receipt I had already
+committed.** This section and the receipt said the frozen store is **loose-object on Lustre**.
+Measured once Lustre quietened: `.git` is **2.7 GiB**, of which **2.598 GiB is 19 `.pack` files**,
+against **1850** loose objects. The store is **almost entirely PACKED.** The real reason
+`bundle create` crawled is that it had to read and re-pack 2.598 GiB across 19 packs over Lustre —
+roughly **33×** the primary's single 80.81 MiB pack. My error was reading *`ls .git/objects` returns
+the 00/01/02… fanout directories* as *the store is loose*: **directory presence is not a count**, and
+the byte accounting settles it the other way. It matters because the wrong mechanism prescribes the
+wrong lever — someone would run `gc` to pack objects that are already packed. Left visible rather
+than overwritten, per the register's own rule.
+
+**Two facts measured in the same pass, both recorded in the receipt.** The frozen working copy's
+`git status --porcelain` finally returned: **rc=0, 0 lines** — the same measurement whose earlier
+claim was retracted at `8f80050c` because that invocation had been *killed* and its 0-byte output was
+an absent answer. The retraction stands; the claim was unfounded when made and this does not make it
+founded in retrospect. And the two discarded `bundle create` runs left **no `tmp_pack_*`, no `.lock`,
+no debris** in the frozen `.git` — checked because inspecting that clone with `git` is not a
+read-only act.
 
 ## 12. Open determinations delegated to the grader (Joseph, 2026-08-25)
 
