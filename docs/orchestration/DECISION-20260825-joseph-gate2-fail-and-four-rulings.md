@@ -302,6 +302,72 @@ and the fact it was made against remain readable together. **Nothing else in thi
 claim is not a delivery, it is **not yet an origin of anything**, a third party must still grade any
 delivery, Joseph alone re-evaluates Gate 2, and there is still **no compute until it lands.**
 
+**SECOND SUPERSEDING NOTE, 2026-08-26 — THE THIRD ORIGIN NOW EXISTS AND IS GRADED.** The dispatch was
+delivered and then graded by **two independent parties, neither of them the implementer nor this
+lane**: `agy-publication-redteam` returned **FIT** on eight required items (turn 33, rc 0), and
+`agy-g2-gate-verifier` returned **SUPPLEMENT PASS / grade COMPLETE** (turn 9, rc 0) after measuring
+the broad suite at both shas under the mandated Python 3.11.14 — **431 tests, 3 failures + 3 errors,
+identical in both directions, no regression.** Full closure, with the attempt history and every
+digest, is `DEFECT-...-nondiscriminating.md` §8.
+
+**The two sentences above are NOT rewritten.** "Not yet an origin of anything" was true when written
+and is now superseded by measurement; both readings stay visible.
+
+**What does NOT follow, and this is the operative half:** **Gate 2 remains FAIL and Joseph alone
+re-evaluates it.** A complete instrument grade is an input to that re-evaluation, not a substitute for
+it. No compute, rehearsal, adoption, F-14 discharge, or use of the `k0-aa67c426-20260824T145751Z`
+products follows. The closure record lands on branch `closeout/dirty-warning-grade-20260826`;
+**`main` is deliberately not moved and not merged**, and the routed control-plane views are
+deliberately not republished, because doing so would take the merge and state-publication decision
+ahead of the re-evaluation Joseph has reserved.
+
+**DELEGATED GATE-2 RE-EVALUATION, 2026-08-26 — VERDICT: FAIL. BLOCK. The wording above is retained,
+not rewritten.**
+
+The phrase *"Joseph alone re-evaluates"* in the paragraphs above is **preserved as the state of the
+authority at the time it was written**, and it is not edited. What changed is not that phrase's
+accuracy then, but the authority now: **Joseph subsequently delegated, directly and to the
+`codex-school` Codex session, any PASS or BLOCK decision** (and per-arm compute decisions only where
+each arm is strictly under 500 GPU-hours and strictly under 500 CPU-hours). **That direct delegation
+is the whole reason that session could re-evaluate Gate 2 without impersonating him.** The
+re-evaluation below is that session's exercise of its own delegated authority; it is **not Joseph
+speaking**, and no relayed peer message was treated as human authorization.
+
+**VERDICT: Gate 2 remains FAIL, and the decision is BLOCK.**
+
+**Basis, and note what the complete grade does and does not reach.** The complete independent
+comparator grade closes the **third-origin / instrument question only.** The governing nine-clause
+table still carries **six independently sufficient NOT DISCHARGED clauses**, each on its own enough to
+defeat a PASS:
+
+| clause | why it is not discharged |
+|---|---|
+| **F-2(b)** | no producer filing |
+| **F-3(b)** | no producer filing |
+| **F-5(b)** | no producer filing |
+| **F-7(b)** | no rehearsal pin on a ref |
+| **F-8(b)** | no run receipt |
+| **F-17(b)** | its `:1471` half is **impossible for this rehearsal** and cannot be backfilled |
+
+**Therefore no merge, no complete grade, and no inference can turn THIS rehearsal's Gate 2 into
+PASS.** Six clauses would each have to be discharged on their own evidence, and three of them require
+producer filings that do not exist while a fourth is impossible for this run by construction.
+
+**This verdict is SUBSTANTIVE, not a cost-boundary referral.** It is not a decision deferred for want
+of compute budget, and it is not a referral upward for want of authority — the authority was held and
+was exercised. It is a finding on the merits of the clause table.
+
+**It authorizes nothing.** No readiness check, no new rehearsal, no compute, no adoption, no F-14
+discharge for any lane, no use or quoting of any product of run `k0-aa67c426-20260824T145751Z`, and no
+scientific claim. `main` and the routed control-plane views remain unmoved and unrepublished.
+
+**DELIVERY STATUS NOTE, 2026-08-26 — NOT A NEW RULING.** The assigned `codex-school` implementer
+subsequently delivered the repair and its implementer controls in the commit carrying
+`DEFECT-20260825-generate-manifest-dirty-warning-nondiscriminating.md` §7. The delivery is
+**UNGRADED**. It therefore supplies neither the independent grade nor Gate-2 credit; the separate
+third-party grade remains the next admissible action, and Joseph alone still re-evaluates Gate 2.
+There is still **no compute, rehearsal, adoption, consumption, or quotation** authorized here.
+
 **Where this lane goes next, corrected by Joseph 2026-08-26.** The assignment **remains publication
 close-out**; "go back to the 5D uncertainties" was imprecise, not a change of lane. After the Gate-2
 freeze receipt lands, the route is: **re-read a fresh `LIVE-STATE.md` and the governing `OI-*`, then

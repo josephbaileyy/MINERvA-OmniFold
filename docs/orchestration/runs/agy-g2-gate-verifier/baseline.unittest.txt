@@ -1,0 +1,100 @@
+..agent_session_notify: disk full
+...............................................................................................................................................F.F..........F........................................................E.........ntfy: temporary
+..........EE............................................................................................................................................................[watch-add] NO EVIDENCE: job 57266000 is not visible to Slurm from here (neither squeue nor sacct could be queried); tasks=[1] were NOT verified against the array
+......................................
+======================================================================
+ERROR: test_loader_ordering_reco_before_truth_weight (unittest.loader._FailedTest.test_loader_ordering_reco_before_truth_weight)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_loader_ordering_reco_before_truth_weight
+Traceback (most recent call last):
+  File "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/tmp/codex-grade-prep-20260826.c7ILX0/baseline/docs/orchestration/test_loader_ordering_reco_before_truth_weight.py", line 38, in <module>
+    import pytest
+ModuleNotFoundError: No module named 'pytest'
+
+
+======================================================================
+ERROR: test_probe_oi120c_p4_retirement (unittest.loader._FailedTest.test_probe_oi120c_p4_retirement)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_probe_oi120c_p4_retirement
+Traceback (most recent call last):
+  File "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/tmp/codex-grade-prep-20260826.c7ILX0/baseline/docs/orchestration/test_probe_oi120c_p4_retirement.py", line 35, in <module>
+    import pytest
+ModuleNotFoundError: No module named 'pytest'
+
+
+======================================================================
+ERROR: test_probe_oi120c_verdict (unittest.loader._FailedTest.test_probe_oi120c_verdict)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_probe_oi120c_verdict
+Traceback (most recent call last):
+  File "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/unittest/loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/unittest/loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "/tmp/codex-grade-prep-20260826.c7ILX0/baseline/docs/orchestration/test_probe_oi120c_verdict.py", line 42, in <module>
+    import pytest
+ModuleNotFoundError: No module named 'pytest'
+
+
+======================================================================
+FAIL: test_an_absent_token_becomes_the_literal_NOT_MEASURED (test_deploy_oi135_watcher_swap.TestReceiptWriter.test_an_absent_token_becomes_the_literal_NOT_MEASURED)
+Never null, never "", never "?".
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/codex-grade-prep-20260826.c7ILX0/baseline/docs/orchestration/test_deploy_oi135_watcher_swap.py", line 740, in test_an_absent_token_becomes_the_literal_NOT_MEASURED
+    self.assertEqual("NOT MEASURED", self.current()["qos"])
+AssertionError: 'NOT MEASURED' != 'gpu_shared'
+- NOT MEASURED
++ gpu_shared
+
+
+======================================================================
+FAIL: test_only_the_five_keys_change_and_the_other_keys_are_byte_identical (test_deploy_oi135_watcher_swap.TestReceiptWriter.test_only_the_five_keys_change_and_the_other_keys_are_byte_identical)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/codex-grade-prep-20260826.c7ILX0/baseline/docs/orchestration/test_deploy_oi135_watcher_swap.py", line 719, in test_only_the_five_keys_change_and_the_other_keys_are_byte_identical
+    self.assertEqual(
+AssertionError: '"2026-08-20T05:5xZ by the mediator from a[490 chars]nt."' != '{"NOTE_why_resources_not_measured_is_now_[751 chars]35"}'
+Diff is 1330 characters long. Set self.maxDiff to None to see it. : key 'resource_fields_remeasured' was modified; only the five resource keys may change
+
+======================================================================
+FAIL: test_is_executable_with_a_shebang (test_deploy_oi135_watcher_swap.TestScriptHygiene.test_is_executable_with_a_shebang)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/codex-grade-prep-20260826.c7ILX0/baseline/docs/orchestration/test_deploy_oi135_watcher_swap.py", line 833, in test_is_executable_with_a_shebang
+    self.assertEqual(0o755, mode, "mode is %o" % mode)
+AssertionError: 493 != 504 : mode is 770
+
+----------------------------------------------------------------------
+Ran 431 tests in 37.531s
+
+FAILED (failures=3, errors=3)
+
+--- LOUD render ---
+> **⚠ THE SUPERVISION NET IS NOT HEALTHY IN THIS SNAPSHOT.** An armed watch whose subject Slurm does not have, or a ticker that is stale or not runnable, means NOTHING WILL WAKE ANYONE when the job below ends -- and the watch will still read `armed`. A watch on a nonexistent task cannot reach `slurm-array-complete` in either direction: it counts unreliable ticks to `max_unreliable` and emits `monitor-error` (BEN-456, BEN-478). Re-arm the watch with the correct `params`, or release/reinstall the tick job, before treating any row here as supervised.
+- wakerctl watches: `gate5-do-train-57266000-r2`(slurm-array:armed; subject=job 57266000 tasks='1' -> task ids [1]; **⚠ watch gate5-do-train-57266000-r2 (slurm-array) is armed on a subject that DOES NOT EXIST: job 57266000 requested tasks '1' -> [1], and Slurm has no [1]. overall=UNOBSERVED. This watch can never report completion; it can only count unreliable ticks up to max_unreliable and emit monitor-error.**)
+- Last tick: 2026-08-17T15:05:14+00:00 on login11 -- **⚠ SUPERVISION NET NOT HEALTHY: 45.6 h old; bound 30 min = 5 m from the managed scrontab block x 6. the ticker is STALE: last tick 2026-08-17T15:05:14+00:00 is 2735 min old, past the 30 min bound (5m interval x 6). No watch has been evaluated since then. Treat no watch below as supervised.** (scrontab is the supervision net; see WAKER.md)
+
+--- QUIET render ---
+- wakerctl watches: `gate5-do-train-57266000-r2`(slurm-array:armed; subject=job 57266000 tasks='0-0' -> task ids [0]; subject OBSERVED in Slurm)
+- Last tick: 2026-08-19T12:40:28+00:00 on login11 -- FRESH, 3 min old; bound 30 min = 5 m from the managed scrontab block x 6; scron tick job runnable. (scrontab is the supervision net; see WAKER.md)
+[Opus] | 5h:12% used | 7d:34% used
+[Claude usage unavailable; prior cache preserved]
+[Opus] | 5h:12% used | 7d:34% used
+[Opus] | 5h:13% used
+[Opus] | 5h:12% used | 7d:34% used
+[Opus] | 5h:12% used | 7d:34% used
+[Opus] | 5h:12% used | 7d:34% used
+[Claude usage unchanged; per-window cache timestamps preserved]
+[Opus] | 5h:12% used | 7d:34% used

@@ -1,0 +1,50 @@
+VERDICT: **FIT**
+
+**Checkout & Artifact Identity**
+All tests were run natively on isolated, detached git worktrees at `/pscratch/sd/j/josephrb/scratch_grader/wt_base` (for `61b51594`) and `/pscratch/sd/j/josephrb/scratch_grader/grader_wt` (for `9e9fc90e`).
+The exact `generate_manifest.py` executed at `9e9fc90e` possessed the digest:
+`262e6fdbbd94f6a29d46e61fa923de12b4264dfeef727286cc9a5e983ee5549f`
+
+**1. Baseline Proposition (at 61b51594)**
+The proposition is verified. At the base SHA, the dirty warning fails to discriminate:
+- **Clean tree (Negative Control)**: `rc=0` with no warning.
+- **Dirty NOT staged (' M')**: `WARNING: 1 tracked path(s) in the inventory scope are DIRTY, so their lines/bytes/inbound_count describe the WORKING TREE, not any commit: docs/orchestration/CATALOG.md` (`rc=1`)
+- **Dirty STAGED ('M ')**: `WARNING: 1 tracked path(s) in the inventory scope are DIRTY, so their lines/bytes/inbound_count describe the WORKING TREE, not any commit: docs/orchestration/CATALOG.md` (`rc=1`)
+
+**2. The Three XY Arms (at 9e9fc90e)**
+The delivery properly discriminates stagedness:
+- **`' M'` (dirty, NOT staged)**: FIRES. 
+  `WARNING: 1 tracked path(s) in the inventory scope have UNSTAGED working-tree changes, so their lines/bytes/inbound_count do not describe the staged index: docs/orchestration/CATALOG.md (XY=' M')`
+- **`'M '` (dirty, fully staged)**: SILENT. No warning emitted.
+- **`'MM'` (staged plus unstaged edit)**: FIRES.
+  `WARNING: 1 tracked path(s) in the inventory scope have UNSTAGED working-tree changes, so their lines/bytes/inbound_count do not describe the staged index: docs/orchestration/CATALOG.md (XY='MM')`
+
+**3. Direct F-14 Manifest Shape**
+When `docs/orchestration/CATALOG.md` is fully staged (`'M '`) and `MANIFEST.tsv` is regenerated but unstaged (`' M'`), the instrument precisely distinguishes them. It fires a warning exclusively naming the manifest hazard (`docs/orchestration/MANIFEST.tsv (XY=' M')`) and remains totally silent about the correctly staged source.
+
+**4. Default-mode Intended-path Disclosure**
+Tested by creating a single non-ignored untracked file (`untracked.txt`):
+- **Default Mode (`--check`)**: `rc=1`
+  Rows: 540
+  Tracking: `tracking=intended:1,tracked:539`
+  Emits: `WARNING: 1 nonignored untracked path(s) are INCLUDED as tracking=intended in default mode; they may be another lane's work and may make --check report OUT OF DATE without a committed-manifest defect: docs/orchestration/untracked.txt`
+- **Committed-only Mode (`--check --committed-only`)**: `rc=0`
+  Rows: 539
+  Tracking: `tracking=tracked:539 mode=committed-only`
+  Emits: `committed-only: 1 nonignored untracked path(s) EXCLUDED from both the table and the reference sources`
+The rc repair constraint is perfectly satisfied; `rc=1` is correctly maintained in default mode, isolating the `--committed-only` exclusion.
+
+**5. Self-test Power**
+Yes, the test suite aggressively FAILS when reverted. I forcefully patched `classify_inventory_status` to ignore `XY` codes and bundle all tracked items together (the old behavior). The `--self-test` invocation immediately crashed and burned, failing on 10 explicit boolean assertions representing `fires_unstaged`, `silent_staged`, `fires_staged_then_edited`, `direct_f14_shape`, `intended_paths` checks and their specific warning message texts.
+
+**6. Full Diff (61b51594..9e9fc90e)**
+Reviewed natively. The diff exclusively swaps the blunt `dirty_inventory_paths` routine for the explicit `classify_inventory_status` / `status_warnings` engine, hooks it cleanly in `main()`, and seeds the new assertions into `self_test`. The defect record and `LIVE-STATE` were updated precisely as documented. **No extraneous logic, format alterations, or unauthorized repairs were included.** Everything the specification required is present.
+
+**7. Manifest Coupling**
+Yes. `MANIFEST.tsv` is generated and committed atomically within the same `9e9fc90e` delivery commit that moved `generate_manifest.py`.
+
+**8. Clean-sha Checks**
+Executed `--check --committed-only` in a thoroughly clean detached worktree resting on `9e9fc90e`:
+Output: `OK: docs/orchestration/MANIFEST.tsv; rows=539 ARCHIVAL=107 DEAD=1 LIVE=74 MACHINE=357 overrides=97 defaults=442 tracking=tracked:539 mode=committed-only`
+Porcelain line count: **0**
+The mode is `mode=committed-only`, the row count matches exactly (`rows=539`), and the exit code is `rc=0`.

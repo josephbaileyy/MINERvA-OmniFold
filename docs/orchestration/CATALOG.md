@@ -179,8 +179,10 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   **§6 was UNCLAIMED** as ruled on 08-25: a handoff, not a delivery, and not citable as coverage or
   as an independent origin until an implementer acknowledged it. **It was CLAIMED in writing on
   2026-08-26** by the `codex-school` Codex session, so that condition is now met and the historical
-  clause is retained rather than rewritten. Still not a delivery, still ungraded, still no Gate-2
-  credit. **§6 DISPATCH (Joseph, 2026-08-25): the independent implementer is `codex-school`**,
+  clause is retained rather than rewritten. **It was then DELIVERED by that implementer on
+  2026-08-26 and remains UNGRADED**; §7 carries the baseline re-measurement, implementation, and
+  controls. Delivery is not a grade and supplies no Gate-2 credit. **§6 DISPATCH (Joseph,
+  2026-08-25): the independent implementer is `codex-school`**,
   re-deriving from this record and the artifacts and **not** from the close-out lane's reasoning or
   the advisory lane's analysis; the grader must be a third party. **The publication close-out lane is
   disqualified from BOTH** — it authored §4, and §4 is a *specification*, which is the prong ruling 3
