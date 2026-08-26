@@ -321,6 +321,46 @@ products follows. The closure record lands on branch `closeout/dirty-warning-gra
 deliberately not republished, because doing so would take the merge and state-publication decision
 ahead of the re-evaluation Joseph has reserved.
 
+**DELEGATED GATE-2 RE-EVALUATION, 2026-08-26 — VERDICT: FAIL. BLOCK. The wording above is retained,
+not rewritten.**
+
+The phrase *"Joseph alone re-evaluates"* in the paragraphs above is **preserved as the state of the
+authority at the time it was written**, and it is not edited. What changed is not that phrase's
+accuracy then, but the authority now: **Joseph subsequently delegated, directly and to the
+`codex-school` Codex session, any PASS or BLOCK decision** (and per-arm compute decisions only where
+each arm is strictly under 500 GPU-hours and strictly under 500 CPU-hours). **That direct delegation
+is the whole reason that session could re-evaluate Gate 2 without impersonating him.** The
+re-evaluation below is that session's exercise of its own delegated authority; it is **not Joseph
+speaking**, and no relayed peer message was treated as human authorization.
+
+**VERDICT: Gate 2 remains FAIL, and the decision is BLOCK.**
+
+**Basis, and note what the complete grade does and does not reach.** The complete independent
+comparator grade closes the **third-origin / instrument question only.** The governing nine-clause
+table still carries **six independently sufficient NOT DISCHARGED clauses**, each on its own enough to
+defeat a PASS:
+
+| clause | why it is not discharged |
+|---|---|
+| **F-2(b)** | no producer filing |
+| **F-3(b)** | no producer filing |
+| **F-5(b)** | no producer filing |
+| **F-7(b)** | no rehearsal pin on a ref |
+| **F-8(b)** | no run receipt |
+| **F-17(b)** | its `:1471` half is **impossible for this rehearsal** and cannot be backfilled |
+
+**Therefore no merge, no complete grade, and no inference can turn THIS rehearsal's Gate 2 into
+PASS.** Six clauses would each have to be discharged on their own evidence, and three of them require
+producer filings that do not exist while a fourth is impossible for this run by construction.
+
+**This verdict is SUBSTANTIVE, not a cost-boundary referral.** It is not a decision deferred for want
+of compute budget, and it is not a referral upward for want of authority — the authority was held and
+was exercised. It is a finding on the merits of the clause table.
+
+**It authorizes nothing.** No readiness check, no new rehearsal, no compute, no adoption, no F-14
+discharge for any lane, no use or quoting of any product of run `k0-aa67c426-20260824T145751Z`, and no
+scientific claim. `main` and the routed control-plane views remain unmoved and unrepublished.
+
 **DELIVERY STATUS NOTE, 2026-08-26 — NOT A NEW RULING.** The assigned `codex-school` implementer
 subsequently delivered the repair and its implementer controls in the commit carrying
 `DEFECT-20260825-generate-manifest-dirty-warning-nondiscriminating.md` §7. The delivery is
