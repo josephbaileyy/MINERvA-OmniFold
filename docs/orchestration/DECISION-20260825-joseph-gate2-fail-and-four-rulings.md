@@ -148,10 +148,35 @@ The repairer and the grader of the repair must be different parties, and neither
 
 ## 7. Explicitly out of scope
 
-`MANIFEST.tsv` was already stale on `main` before any of this work: `generate_manifest.py --check`
-returned rc=1 in a clean detached worktree at `e428a645`, 23 rows. That is **pre-existing committed
-drift**, not a peer's uncommitted work. It is routed to **F-14 / §7.0.7** and handled separately. It
-neither changes nor repairs the Gate-2 verdict, and no part of this verdict rests on it.
+**CORRECTED 2026-08-25, and the original wording was wrong in a way worth naming.** This section
+said `MANIFEST.tsv` "was already stale on `main`" and was "routed to F-14 / §7.0.7 and handled
+separately" — a dated observation written in a tense that reads as a live condition. It was
+surfaced by the independent comparator-repair lane, which needed to know whether drift in its own
+commit was its own.
+
+Measured, each in a clean detached worktree at the named commit:
+
+| Commit | `generate_manifest.py --check` | rows |
+|---|---|---|
+| `e428a645` | rc=**1**, OUT OF DATE | 525 |
+| `a0d0e5a1` | rc=0, OK | 526 |
+| `dce8e8cc` | rc=0, OK | 527 |
+| `65f95600` | rc=0, OK | 527 |
+| `7d0776b8` | rc=0, OK | 528 |
+
+So the drift **was real at `e428a645` and was CLOSED by `a0d0e5a1`**, the Gate-2 grader's
+second-pass regeneration, and has stayed closed since. It is not an open condition and nothing is
+pending on it. Any manifest drift appearing in a commit after `a0d0e5a1` belongs to that commit's
+author.
+
+The "23 rows" figure originated with the Gate-2 grader and I had relayed it twice without deriving
+it. Now derived: regenerating at `e428a645` and diffing against the committed manifest gives
+**23 differing rows, of which 5 are rows absent from the committed file entirely** — so 23 is
+correct, and it mixes two kinds of drift that are worth separating.
+
+None of this changes or repairs the Gate-2 verdict, and no part of that verdict rests on it. The
+F-14 discipline question is filed separately in
+`DISCIPLINE-20260825-f14-manifest-coupling-omissions.md`.
 
 ## 8. Defect ledger for the far-end evidence path
 
@@ -204,6 +229,16 @@ different expected-list, which the filed path cannot do.
 
 This is a **repairable defect**, not a disclosure. Ruling 3 assigns it.
 
+**REPAIRED 2026-08-25 at `c8a29082`, and UNGRADED.** The repair replaced the deny-list breadth test
+with a positive grammar. Two consequences for this section: the defect was **wider than described
+above** — the implementer reproduced four further fail-open spellings, including one
+(`M-4.*e*`) that reaches `M-4.head`, `.ahead` and `.behind` at once, which shows the class is not
+merely "dotless" and that adding a seventh deny-list entry would not have closed it. And the
+six-spelling deny-list arm described above still exists but is now a **regression pin**; the
+covering control has moved to a fixture generated from the producer. Under ruling 3 this repair
+cannot support another Gate-2 filing until an independent lane grades it, and it has not been
+graded.
+
 ## 9. Compute and authorization
 
 **No compute is authorized by this ruling.**
@@ -233,12 +268,21 @@ Digests are content `sha256` truncated to 8 unless labelled otherwise. Note that
 a sha1 over a header plus content and is a *different field* from a content sha256 — both appear
 below and are labelled, because conflating them is how a receipt stops being falsifiable.
 
+**Every digest below is AS-OF the commit named in its row or in the commit list that follows, not a
+current state.** A later legitimate edit moves the digest and does not falsify this table. Stating
+this because a cited digest otherwise silently converts into a prohibition on editing the file —
+the comparator-repair lane correctly declined to update
+`m1m6_expected_differences.json`'s now-understated prose note on exactly that reasoning, which means
+the citation had already acquired a force it was never meant to have.
+
 | Artifact | Field | Value |
 |---|---|---|
 | `VERDICT-20260825-gate2-k0-rehearsal-nine-clauses.md` | content sha256 | `72da7d60`, 30751 bytes |
 | same file | git blob id (sha1) | `679f1b73` |
 | `state/f17b-k0-aa67c426-20260824T145751Z.json` | content sha256 | `9109f371`, 53226 bytes |
 | `compare_m1_m6.py` (unrepaired, as it produced the record) | content sha256 | `bace69d2`, 53667 bytes |
+| `compare_m1_m6.py` (repaired at `c8a29082`, UNGRADED) | content sha256 | `68b4af12` |
+| `test_compare_m1_m6.py` (repaired at `c8a29082`, UNGRADED) | content sha256 | `b355ecdc` |
 | `m1m6_expected_differences.json` | content sha256 | `56c2e0ef`, 4464 bytes |
 | `measure_k0_farend_f1b_f17b.sh` (post-repair) | content sha256 | `c40e6b54`, 15722 bytes |
 | `GRADE-20260825-f17b-comparison-instrument-fitness.md` (EXPIRED) | content sha256 | `aa1b6eee`, 41819 bytes |

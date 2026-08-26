@@ -16,8 +16,10 @@ commits. This is a discipline record, not a defect disclosure and not a gate doc
 
 - Any Gate-2 clause. F-14 is not one of the nine, and nothing here changes the Gate-2 FAIL recorded
   in `DECISION-20260825-joseph-gate2-fail-and-four-rulings.md`.
-- The pre-existing 23-row drift on `main`. That is a **different and unattributed** population; see
-  §4. Do not read this document as having accounted for it.
+- The pre-existing 23-row drift on `main`. That is a **different and unattributed** population, and
+  it is **CLOSED** — see §4. Do not read this document as having accounted for it, and do not read it
+  as an open item either.
+- Any other lane's coupling omission. One is named in §4.1 and is deliberately **not** counted here.
 - The current state of `MANIFEST.tsv`. That is a measurement with a date, not a property.
 
 ## 1. The obligation
@@ -68,16 +70,38 @@ regeneration; the rest by measuring on Joseph's instruction.
 
 ## 4. Explicitly not accounted for here
 
-`generate_manifest.py --check` returned rc=1 in a clean detached worktree at `e428a645` with **23
-rows** of drift, measured by the Gate-2 grader before any of my commits in this sequence. That is
-**pre-existing committed drift from a population I have not attributed** and it is not mine to
-claim or to clear. It is named here only so that this document is not mistaken for a complete
-account of F-14 drift on `main`.
+`generate_manifest.py --check` returned rc=1 in a clean detached worktree at `e428a645` with 23
+rows of drift, measured by the Gate-2 grader before any of my commits in this sequence. That is
+**pre-existing committed drift from a population I have not attributed**, and it is named here only
+so that this document is not mistaken for a complete account of F-14 drift on `main`.
+
+**It is CLOSED, and an earlier version of this section implied otherwise.** Measured in clean
+detached worktrees: rc=1 at `e428a645` (525 rows), then rc=0 at `a0d0e5a1` (526), `dce8e8cc` (527),
+`65f95600` (527) and `7d0776b8` (528). The Gate-2 grader's `a0d0e5a1` closed it and it has stayed
+closed. I have also now **derived** the 23 rather than relaying it: regenerating at `e428a645` and
+diffing the committed manifest gives 23 differing rows, **5 of which are absent from the committed
+file entirely** — one figure covering two kinds of drift.
+
+The attribution point survives the correction and is sharper for it: because `a0d0e5a1` cleared
+everything upstream of it, **any drift in a commit after `a0d0e5a1` belongs to that commit's
+author**, with no pre-existing pool to attribute it to.
+
+### 4.1 A second lane's instance, which is that lane's to file
+
+`c8a29082` (independent comparator-repair lane) changed two tracked paths —
+`compare_m1_m6.py` and `test_compare_m1_m6.py` — and did not regenerate `MANIFEST.tsv` in that
+commit; `65f95600` regenerated afterwards. That is the same coupling break catalogued in §2 and it
+is **not counted in this document's three**, because attribution belongs to the lane that made it
+and a discipline record that absorbs other lanes' instances stops being an accurate account of
+anyone. Raised with that lane directly. Named here so this section cannot be read as evidence that
+no other instance exists.
 
 ## 5. Remediation, and what it does not do
 
-`109bb130` and `dce8e8cc` regenerated the manifest, and `--check` now returns rc=0 with
-`tracking=tracked:527`, re-run **after** the commit returned rather than before it.
+`109bb130` and `dce8e8cc` regenerated the manifest. Measured **after** each commit returned rather
+than before it: rc=0 at `dce8e8cc` with `tracking=tracked:527`, and rc=0 at `7d0776b8` with
+`tracked:528`. Both figures are as-of their commit, not a current state — the row count rises with
+every added path, so a bare "527" would rot immediately.
 
 **That repairs the manifest state. It does not erase the original gap**, and this record exists
 because the repaired state would otherwise be the only surviving evidence — which would read as
@@ -87,7 +111,7 @@ compliance.
 
 Commits: `30ede740`, `a3ed8631`, `38a7b16b` (the omissions) · `109bb130`, `dce8e8cc` (this lane's
 compliant pair) · `a3000487`, `a0d0e5a1` (the grader's, which absorbed the `a3ed8631` gap) ·
-`e428a645` (where the unattributed 23-row drift was measured).
+`e428a645` (where the unattributed 23-row drift was measured, and which `a0d0e5a1` closed).
 
 Instrument: `docs/orchestration/generate_manifest.py`, run under
 `/global/u2/j/josephrb/.conda/envs/root_6_28/bin/python3` (3.11.14). The system `python3` is 3.6.15
