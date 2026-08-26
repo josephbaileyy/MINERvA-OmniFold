@@ -299,3 +299,137 @@ This is a **delivery, not a grade**. It does not discharge the defect, establish
 authorize a rehearsal or any compute, authorize scalar-5D adoption, or make the barred k=0 products
 consumable or quotable. Per §6, a third party that is neither `codex-school` nor the publication
 close-out lane must re-derive and grade the delivery before Joseph alone re-evaluates Gate 2.
+
+## 8. GRADE AND ATTEMPT CLOSURE (2026-08-26) — COMPLETE, NARROWLY
+
+**STATUS: the delivery in §7 is INDEPENDENTLY GRADED, and the composite grade is COMPLETE for what
+it covers and nothing more.** §§6 and 7 above are retained verbatim; this section supersedes neither.
+
+### 8.1 The two independent verdicts
+
+| party | role / UUID | turn | rc | verdict | receipt (sha256) |
+|---|---|---|---|---|---|
+| `agy-publication-redteam` | `440f42ef-c271-4f77-a410-a4a999166f44` | 33 | 0 | **FIT** on eight required items | `runs/agy-publication-redteam/20260826T090631Z-send-4d7f1e43.txt` · `99d829c2…` |
+| `agy-g2-gate-verifier` | `dc93a0f8-6863-48c8-9b7b-76f22f6deae2` | 9 | 0 | **SUPPLEMENT PASS**, grade **COMPLETE** | `runs/agy-g2-gate-verifier/20260826T144936Z-send-1dbf4872.txt` · `c177289f…` |
+
+**Separation held on both prongs.** The implementer was the `codex-school` Codex session; the
+specification in §4 was written by the publication close-out lane; **neither graded.** The close-out
+lane dispatched and verified, and did not implement, grade, or run a test arm.
+
+### 8.2 What the supplement measured, and it is reproducible from artifacts in this commit
+
+The gap the FIT grade did not cover: §7.3's broad-suite figure was the **implementer measuring its
+own work**, under `/usr/bin/python3.11` rather than the mandated interpreter. Two arms were run by
+the third party, in clean detached worktrees on node-local `/tmp` cut from the canonical checkout:
+
+| arm | revision | rc | total | failures | errors | log (sha256) |
+|---|---|---|---|---|---|---|
+| baseline | `61b51594` | 1 | **431** | 3 | 3 | stored `runs/agy-g2-gate-verifier/baseline.unittest.txt` · `ada4c297…` |
+| candidate | `e94170c0` | 1 | **431** | 3 | 3 | stored `runs/agy-g2-gate-verifier/candidate.unittest.txt` · `cf8f45e8…` |
+
+Command in both arms, no substitution:
+`/global/u2/j/josephrb/.conda/envs/root_6_28/bin/python3 -m unittest discover -s docs/orchestration -p 'test_*.py'`
+Explicit writable TMPDIR; unpiped rc capture; porcelain 0 before **and** after in both worktrees.
+
+**The two sets are identical in both directions — none new, none resolved.** Errors (all
+`unittest.loader._FailedTest`, i.e. import failures): `test_loader_ordering_reco_before_truth_weight`,
+`test_probe_oi120c_p4_retirement`, `test_probe_oi120c_verdict`. Failures (all
+`test_deploy_oi135_watcher_swap`): `test_an_absent_token_becomes_the_literal_NOT_MEASURED`,
+`test_only_the_five_keys_change_and_the_other_keys_are_byte_identical`,
+`test_is_executable_with_a_shebang`.
+
+So **no broad-suite regression under the mandated Python 3.11.14**, and §7.3's self-report is
+independently confirmed rather than inherited. Wall time ~37 s per arm.
+
+**Two limits on the word COMPLETE, stated because the supplement's own prose overreached.** It wrote
+"the delivery satisfies all independent reviews"; what is established is narrower — FIT on eight
+items, plus no broad-suite regression. **The six pre-existing failures are NOT fixed and were never
+in scope.** They are equal across both shas, which is all that was asked; **nobody has graded whether
+they matter.** "Same six at baseline" is now third-party measured; "harmless" is not.
+
+**No delta arose, so the third `9e9fc90e` arm was unnecessary rather than merely unauthorized**, and
+the branch-versus-delivery attribution question never had to be decided.
+
+### 8.3 Attempt history — four dispatches, three failed, and the failures are retained
+
+Recorded because a record showing only the successful pair would read as "dispatched once, graded,
+done", and because **each retained artifact is the sole proof that its attempt consumed no test arm.**
+
+| # | target | outcome | retained evidence (sha256) |
+|---|---|---|---|
+| 1 | `agy-publication-redteam` t33 | **FIT delivered** | the receipt in §8.1 |
+| 2 | `agy-publication-redteam` | 25-min timeout: spent the window on Playwright driver provisioning (404s from two CDNs), **never invoked unittest**; `SEND_RC=143` after cleanup | stored `runs/agy-publication-redteam/20260826T134152Z-send-31c9ce39.agy.log.txt` · `4d9215f4…` |
+| 3 | `agent-A-standard` | **OAuth session expired**; `is_error: true`, `input_tokens: 0`, **no registry turn recorded**; `SEND_RC=1` | `runs/agent-A-standard/20260826T141501Z-send-4585f665.json` · `891be73b…` |
+| 4 | `agy-g2-gate-verifier` | wedged inside `git worktree add` / `git reset --hard` on the Lustre checkout; **no arm ran**; `SEND_RC=143` after cleanup | stored `runs/agy-g2-gate-verifier/20260826T141845Z-send-c3a948fb.agy.log.txt` · `6442d5b2…` |
+| 5 | `agy-g2-gate-verifier` t9 | **SUPPLEMENT PASS**, after worktrees were pre-created on node-local `/tmp` from the canonical checkout | the receipt in §8.1 |
+
+**The transferable cause of #4, and why #5 worked.** Every registry role's `cwd` is
+`/pscratch/sd/j/josephrb/MINERvA-OmniFold`, where git I/O is pathologically slow — corroborated
+independently the same day: `count-objects -vH` exceeded a 120 s timeout, `bundle create` ran 45 min
+without finishing, an `ls` of a pack directory timed out at 30 s. Prep worktrees cut from the
+canonical `/global/u2` checkout onto local `/tmp` took **0.64 s and 0.38 s.** Removing checkout from
+the grader's job is what made the measurement possible.
+
+**Two capability facts worth carrying:** all `claude`-provider profiles are fixed to
+`allowed_tools = [Read, Glob, Grep, WebSearch, WebFetch]`, i.e. **no shell**, so no `claude` role can
+run a test arm at all; and `agy` has `allowed_tools` unset, i.e. unrestricted, which is both why it
+could run the arms and why it could attempt a browser download.
+
+**Omitted deliberately, as redundant:** the provider telemetry of the two *successful* runs
+(`…4d7f1e43.agy.log`, `…1dbf4872.agy.log`), which the text receipts supersede; three 0-byte
+`.stderr.log` files; and two 0-byte dispatch receipts whose only content was `SEND_RC=143`. Nothing
+proving a failed attempt has been dropped.
+
+**One process is left alive and is NOT success:** PID 328234, `git reset --hard`, orphaned from
+attempt #4 and stuck in uninterruptible I/O wait on Lustre, where no signal can be delivered. It was
+deliberately not escalated to SIGKILL.
+
+### 8.3.1 STORED filenames differ from RUNTIME filenames — the graders cited the runtime names
+
+`.gitignore` line 15 carries a repo-wide `*.log` pattern, so a `.log` path **cannot be tracked**, and
+`generate_manifest.py`'s inventory cannot see it either: `inventory()` uses `git ls-files` plus
+`git ls-files --others --exclude-standard`, and `--exclude-standard` honours `.gitignore`, so an
+ignored file is unreachable by the manifest in **both** modes rather than merely absent from it.
+
+The four log artifacts are therefore stored under a `.txt` suffix. Each was renamed **byte-for-byte,
+with sha256 re-verified after the rename**, so the stored bytes are the runtime bytes.
+
+**The graders and the tooling wrote and cited the RUNTIME names. Nothing in this record should be read
+as the grader having cited a `.txt` path — it did not.**
+
+| stored path, durable in this commit | original runtime path | sha256, unchanged by the rename |
+|---|---|---|
+| `runs/agy-g2-gate-verifier/baseline.unittest.txt` | `/tmp/codex-grade-prep-20260826.c7ILX0/logs/baseline.log` | `ada4c29786b12141f07243466bd0f24c4ab840187ec85ead8ff4d143aabec068` |
+| `runs/agy-g2-gate-verifier/candidate.unittest.txt` | `/tmp/codex-grade-prep-20260826.c7ILX0/logs/candidate.log` | `cf8f45e878115b62605500a2400a7cfcb935960fe14a1e5bc4852c57d9c4fb95` |
+| `runs/agy-publication-redteam/20260826T134152Z-send-31c9ce39.agy.log.txt` | `runs/agy-publication-redteam/20260826T134152Z-send-31c9ce39.agy.log` | `4d9215f49240f528…` |
+| `runs/agy-g2-gate-verifier/20260826T141845Z-send-c3a948fb.agy.log.txt` | `runs/agy-g2-gate-verifier/20260826T141845Z-send-c3a948fb.agy.log` | `6442d5b231595a4c…` |
+
+The two arm logs' runtime paths were on **node-local `/tmp` on `login21`** and are volatile; copying
+them here is what makes the supplement verifiable from artifacts rather than from prose plus a digest.
+The two `.agy.log` runtime paths still exist untracked in the working tree of the generating checkout
+and are ignored there.
+
+**Rejected alternatives, recorded so the choice is auditable:** force-adding the ignored paths
+(`git add -f`) would create a policy exception merely to preserve filenames; editing `.gitignore`
+would change ignore policy repository-wide, far outside this record; and omitting the four artifacts
+would leave prose plus a digest, which is the standard §14 rejects.
+
+### 8.4 Boundary — what this closure does NOT do
+
+**Authority.** The decisions to accept the grade and to land this record were taken by the
+`codex-school` Codex session under a delegation **Joseph gave that session directly**: any PASS or
+BLOCK, and compute only where each arm is strictly under 500 GPU-hours and 500 CPU-hours. That is
+**that session's own written claim about its own authority. It is not Joseph speaking**, this record
+does not impersonate him, and no relayed peer message was treated as human authorization.
+
+**Gate 2 remains FAIL, and Joseph alone re-evaluates it.** This closure confers no Gate-2 credit and
+does not itself re-evaluate anything. It also does **not** authorize a rehearsal, any science compute
+or adoption; does **not** discharge any lane's F-14 filing; does **not** make any product of run
+`k0-aa67c426-20260824T145751Z` usable or quotable; and supports **no scientific claim**.
+
+**This record lands on branch `closeout/dirty-warning-grade-20260826` and `main` is deliberately NOT
+moved and NOT merged.** Publishing the graded state into the routed control-plane views would take
+the merge and state-publication decision ahead of Joseph's reserved Gate-2 re-evaluation, so
+`CATALOG.md`, `state/live-state.json`, `LIVE-STATE.md` and `state/live-state-last-known.json` are
+deliberately untouched. **Consequence, stated rather than hidden: `main` still reads §6 as CLAIMED
+and ungraded.** That is accurate for `main` until a separate merge decision is taken.

@@ -1,0 +1,332 @@
+ERROR: logging before google.Init: I0826 06:41:53.092198       1 resolver.go:85] Model ID Gemini 3.1 Pro (High) not in local config, defaulting to CCPA
+ERROR: logging before google.Init: I0826 06:41:53.093490       1 resolver.go:111] Model resolved via default
+ERROR: logging before google.Init: I0826 06:41:53.099511     290 server.go:1485] Starting language server process with pid 223679
+ERROR: logging before google.Init: I0826 06:41:53.104891     290 server.go:1538] Language server version: 1.1.21
+ERROR: logging before google.Init: I0826 06:41:53.104940     290 server.go:582] Language server will attempt to listen on host localhost
+ERROR: logging before google.Init: I0826 06:41:53.117614     290 server.go:597] Language server listening on random port at 46295 for HTTPS (gRPC)
+ERROR: logging before google.Init: I0826 06:41:53.117795     290 server.go:605] Language server listening on random port at 44437 for HTTP
+ERROR: logging before google.Init: E0826 06:41:53.456356     329 errorreport.go:223] Failed to poll ListExperiments: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: I0826 06:41:53.457625     329 model_configs.go:62] Auth mode is unspecified, skipping fetchAvailableModels and returning empty response
+ERROR: logging before google.Init: W0826 06:41:53.465938     290 cache.go:56] Cache(loadCodeAssistResponse): Singleflight refresh failed: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.466316     290 errorreport.go:223] error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: W0826 06:41:53.472544     290 cache.go:56] Cache(userInfo): Singleflight refresh failed: failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.472614     290 errorreport.go:223] failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: W0826 06:41:53.476858     290 cache.go:56] Cache(loadCodeAssistResponse): Singleflight refresh failed: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.476934     290 errorreport.go:223] error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: W0826 06:41:53.477044     290 cache.go:56] Cache(userInfo): Singleflight refresh failed: failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.477092     290 errorreport.go:223] failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: W0826 06:41:53.477208     290 cache.go:56] Cache(loadCodeAssistResponse): Singleflight refresh failed: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.477265     290 errorreport.go:223] error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: W0826 06:41:53.477358     290 cache.go:56] Cache(userInfo): Singleflight refresh failed: failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.477408     290 errorreport.go:223] failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: W0826 06:41:53.479420     335 cache.go:56] Cache(loadCodeAssistResponse): Singleflight refresh failed: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.479521     335 errorreport.go:223] error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: W0826 06:41:53.479927     335 cache.go:56] Cache(userInfo): Singleflight refresh failed: failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.479986     335 errorreport.go:223] failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: W0826 06:41:53.485102     290 launchmanager.go:69] Entering local chrome mode! This is WRONG unless you are running tests or in eval mode on Linux.
+ERROR: logging before google.Init: W0826 06:41:53.492764     290 defaults.go:771] failed to get cs path: cs path /usr/bin/cs invalid
+ERROR: logging before google.Init: I0826 06:41:53.494227     290 manager.go:98] Creating trajectory store manager with proto store and SQLite store
+ERROR: logging before google.Init: W0826 06:41:53.502476     290 cache.go:56] Cache(loadCodeAssistResponse): Singleflight refresh failed: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.502555     290 errorreport.go:223] error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: W0826 06:41:53.502692     290 cache.go:56] Cache(userInfo): Singleflight refresh failed: failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.502749     290 errorreport.go:223] failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: I0826 06:41:53.508041     379 manager.go:88] Migration [MIGRATION_ID_SIDECAR_USER_CONFIG_BYPASS] is disabled, skipping entirely
+ERROR: logging before google.Init: I0826 06:41:53.508149     379 manager.go:91] Migration [MIGRATION_ID_SANITY_CHECK_PROJECT_URIS] is enabled
+ERROR: logging before google.Init: I0826 06:41:53.508205     379 manager.go:100] Migration [MIGRATION_ID_SANITY_CHECK_PROJECT_URIS] already has status MIGRATION_STATUS_COMPLETED, skipping
+ERROR: logging before google.Init: I0826 06:41:53.508254     379 manager.go:91] Migration [MIGRATION_ID_PLUGIN_ENABLEMENT] is enabled
+ERROR: logging before google.Init: I0826 06:41:53.508285     379 manager.go:100] Migration [MIGRATION_ID_PLUGIN_ENABLEMENT] already has status MIGRATION_STATUS_COMPLETED, skipping
+ERROR: logging before google.Init: I0826 06:41:53.508312     379 manager.go:91] Migration [MIGRATION_ID_BUILTIN_SIDECARS_TO_PLUGINS] is enabled
+ERROR: logging before google.Init: I0826 06:41:53.508357     379 manager.go:100] Migration [MIGRATION_ID_BUILTIN_SIDECARS_TO_PLUGINS] already has status MIGRATION_STATUS_COMPLETED, skipping
+ERROR: logging before google.Init: I0826 06:41:53.538538     290 server.go:2850] Auth succeeded, refreshing features and managers
+ERROR: logging before google.Init: E0826 06:41:53.539038     290 errorreport.go:223] Failed to poll ListExperiments: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: I0826 06:41:53.539130     290 server.go:2856] State refresh took 0ms
+ERROR: logging before google.Init: W0826 06:41:53.539353     356 cache.go:56] Cache(loadCodeAssistResponse): Singleflight refresh failed: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.539433     356 errorreport.go:223] error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: W0826 06:41:53.539538     356 cache.go:56] Cache(userInfo): Singleflight refresh failed: failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.539601     356 errorreport.go:223] failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: I0826 06:41:53.539178     290 server.go:2870] [RemoteControl] Subscription callback triggered.
+ERROR: logging before google.Init: I0826 06:41:53.540512     290 server.go:2872] [RemoteControl] RemoteControlEnabled value: false
+ERROR: logging before google.Init: I0826 06:41:53.540550     290 server.go:3365] [RemoteControl] CLI launched without --remote-control, staying disconnected
+ERROR: logging before google.Init: I0826 06:41:53.540594     290 server.go:3183] [RemoteControl] Resolved proxyServerURL: ""
+ERROR: logging before google.Init: I0826 06:41:53.540773     358 manager.go:88] Migration [MIGRATION_ID_SIDECAR_USER_CONFIG_BYPASS] is disabled, skipping entirely
+ERROR: logging before google.Init: I0826 06:41:53.540856     358 manager.go:91] Migration [MIGRATION_ID_SANITY_CHECK_PROJECT_URIS] is enabled
+ERROR: logging before google.Init: I0826 06:41:53.540892     358 manager.go:100] Migration [MIGRATION_ID_SANITY_CHECK_PROJECT_URIS] already has status MIGRATION_STATUS_COMPLETED, skipping
+ERROR: logging before google.Init: I0826 06:41:53.540923     358 manager.go:91] Migration [MIGRATION_ID_PLUGIN_ENABLEMENT] is enabled
+ERROR: logging before google.Init: I0826 06:41:53.540954     358 manager.go:100] Migration [MIGRATION_ID_PLUGIN_ENABLEMENT] already has status MIGRATION_STATUS_COMPLETED, skipping
+ERROR: logging before google.Init: I0826 06:41:53.540984     358 manager.go:91] Migration [MIGRATION_ID_BUILTIN_SIDECARS_TO_PLUGINS] is enabled
+ERROR: logging before google.Init: I0826 06:41:53.541011     358 manager.go:100] Migration [MIGRATION_ID_BUILTIN_SIDECARS_TO_PLUGINS] already has status MIGRATION_STATUS_COMPLETED, skipping
+ERROR: logging before google.Init: I0826 06:41:53.540668     290 profiler.go:174] Continuous pprof profiling is disabled.
+ERROR: logging before google.Init: I0826 06:41:53.541992     290 server.go:2378] initialized server successfully in 440.780138ms
+ERROR: logging before google.Init: W0826 06:41:53.543211     361 cache.go:56] Cache(loadCodeAssistResponse): Singleflight refresh failed: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.543280     361 errorreport.go:223] error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: W0826 06:41:53.543396     361 cache.go:56] Cache(userInfo): Singleflight refresh failed: failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.543451     361 errorreport.go:223] failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: I0826 06:41:53.547779       1 auto_updater.go:305] Spawned background update process with PID 223767
+ERROR: logging before google.Init: I0826 06:41:53.548954       1 common.go:150] Launching CLI mode
+ERROR: logging before google.Init: E0826 06:41:53.549746       1 launchsteps.go:84] Failed to resolve GeminiDir ".gemini": .gemini must be an absolute path: path is not absolute, falling back to default
+ERROR: logging before google.Init: I0826 06:41:53.572876       1 common.go:172] CLI app data directory: /global/homes/j/josephrb/.gemini/antigravity-cli
+ERROR: logging before google.Init: I0826 06:41:53.572980       1 server.go:272] Creating CLI server backend: product=antigravity workspaceDirs=[/pscratch/sd/j/josephrb/MINERvA-OmniFold /pscratch/sd/j/josephrb/MINERvA-OmniFold] appDataDir=/global/homes/j/josephrb/.gemini/antigravity-cli cascadeManager=true codeAssist=true
+ERROR: logging before google.Init: I0826 06:41:53.577666       1 composite_token_storage.go:123] Using file-based token storage because SSH session detected
+ERROR: logging before google.Init: I0826 06:41:53.579153       1 auth_provider.go:734] [AuthProvider] SetEnableBusinessLogin called with enable: true
+ERROR: logging before google.Init: W0826 06:41:53.602813     363 cache.go:56] Cache(loadCodeAssistResponse): Singleflight refresh failed: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.602904     363 errorreport.go:223] error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: W0826 06:41:53.604572     363 cache.go:56] Cache(userInfo): Singleflight refresh failed: failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.604667     363 errorreport.go:223] failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: I0826 06:41:53.704299       1 server.go:2739] GetConversationDetail: found conversation 440f42ef-c271-4f77-a410-a4a999166f44 (active=false)
+ERROR: logging before google.Init: I0826 06:41:53.711195       1 projectresolve.go:86] project: resuming conversation belonging to project ID: default-cli-project
+ERROR: logging before google.Init: I0826 06:41:53.711940       1 projectresolve.go:100] project: synced active project to "CLI Project" (id=default-cli-project) from resumed conversation
+ERROR: logging before google.Init: I0826 06:41:53.712003       1 server.go:1848] Backend project ID updated dynamically to: default-cli-project
+ERROR: logging before google.Init: I0826 06:41:53.712090       1 analytics.go:170] CLI startup completed (took 630.056829ms)
+ERROR: logging before google.Init: W0826 06:41:53.712281     363 cache.go:56] Cache(loadCodeAssistResponse): Singleflight refresh failed: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.712366     363 errorreport.go:223] error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: W0826 06:41:53.712500     363 cache.go:56] Cache(userInfo): Singleflight refresh failed: failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.712555     363 errorreport.go:223] failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: W0826 06:41:53.712688     363 cache.go:56] Cache(loadCodeAssistResponse): Singleflight refresh failed: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.712751     363 errorreport.go:223] error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: W0826 06:41:53.712846     363 cache.go:56] Cache(userInfo): Singleflight refresh failed: failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.712896     363 errorreport.go:223] failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: I0826 06:41:53.712176       1 printmode.go:173] Print mode: starting (promptLength=4211, model="Gemini 3.1 Pro (High)", conversationID="440f42ef-c271-4f77-a410-a4a999166f44")
+ERROR: logging before google.Init: I0826 06:41:53.713057       1 manager.go:392] Initializing CLI store manager for workspace /pscratch/sd/j/josephrb/MINERvA-OmniFold
+ERROR: logging before google.Init: I0826 06:41:53.718161       1 cli_setting_manager.go:156] applyUserSettings: no shared config permissions from /global/homes/j/josephrb/.gemini/config/config.json
+ERROR: logging before google.Init: I0826 06:41:53.719257       1 cli_setting_manager.go:903] Skipping telemetry propagation because user is not logged in
+ERROR: logging before google.Init: I0826 06:41:53.721682       1 cli_setting_manager.go:92] CLI settings initialized: permissions=<nil>, toolPermission=request-review
+ERROR: logging before google.Init: W0826 06:41:53.721974     363 cache.go:56] Cache(loadCodeAssistResponse): Singleflight refresh failed: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.722059     363 errorreport.go:223] error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: W0826 06:41:53.722206     363 cache.go:56] Cache(userInfo): Singleflight refresh failed: failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: E0826 06:41:53.722283     363 errorreport.go:223] failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+ERROR: logging before google.Init: I0826 06:41:53.728903       1 hooks_manager.go:53] loaded 0 named hooks from 0 hooks.json file(s)
+ERROR: logging before google.Init: I0826 06:41:53.729083       1 manager.go:565] CLI store manager initialized successfully
+ERROR: logging before google.Init: I0826 06:41:53.729209       1 session.go:65] Print mode: --dangerously-skip-permissions set, auto-approving all tool permissions
+ERROR: logging before google.Init: I0826 06:41:53.729383       1 printmode.go:364] Print mode: not authenticated, trying silent auth
+ERROR: logging before google.Init: I0826 06:41:53.731279     445 keyring.go:81] keyringAuth: loaded token, expiry=2026-08-26 03:06:32.711091144 -0700 PDT expired=true
+ERROR: logging before google.Init: I0826 06:41:53.852673     445 browser.go:259] token refreshed, new expiry=2026-08-26 07:41:52.852619833 -0700 PDT m=+3600.366265740
+ERROR: logging before google.Init: I0826 06:41:54.009856       1 auth.go:147] ChainedAuth: authenticated via keyring (effective: keyring)
+ERROR: logging before google.Init: I0826 06:41:54.009972       1 server_oauth.go:190] applyAuthResult: email=jrbailey5552@gmail.com, authMethod=consumer, quotaProject=
+ERROR: logging before google.Init: I0826 06:41:54.010059       1 server_oauth.go:195] OAuth: authenticated successfully as jrbailey5552@gmail.com
+ERROR: logging before google.Init: I0826 06:41:54.010111       1 server_oauth.go:201] b.codeAssistClient.AuthProvider (0x26520fc0c0f0) is same as b.cliAuth (0x26520fc0c0f0)
+ERROR: logging before google.Init: W0826 06:41:54.011418     401 cache.go:56] Cache(fetchBAICAdminControls): Singleflight refresh failed: admin controls not applicable
+ERROR: logging before google.Init: E0826 06:41:54.011506     401 errorreport.go:223] admin controls not applicable
+ERROR: logging before google.Init: W0826 06:41:54.011589     401 cache.go:79] Failed to refresh cache in background: admin controls not applicable
+ERROR: logging before google.Init: W0826 06:41:54.011605     473 cache.go:79] Failed to refresh cache in background: admin controls not applicable
+ERROR: logging before google.Init: I0826 06:41:54.656831     399 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:loadCodeAssist Trace: 0x3883569a5220e582
+ERROR: logging before google.Init: I0826 06:41:55.358075     469 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels Trace: 0x672104c425da2e09
+ERROR: logging before google.Init: I0826 06:41:55.377201       1 model_resolver.go:80] Resolving model Gemini 3.1 Pro (High)
+ERROR: logging before google.Init: I0826 06:41:55.377920       1 model_config_manager.go:311] Propagating selected model override to backend: label="Gemini 3.1 Pro (High)"
+ERROR: logging before google.Init: I0826 06:41:55.378360     421 quota_manager.go:45] doRefreshQuota: starting reload (force=true)
+ERROR: logging before google.Init: I0826 06:41:55.566524     422 experiment_manager.go:38] Starting experiment refresh after login
+ERROR: logging before google.Init: I0826 06:41:55.566626       1 printmode.go:366] Print mode: silent auth succeeded
+ERROR: logging before google.Init: I0826 06:41:55.687000     422 experiment_manager.go:42] Experiments refreshed after login
+ERROR: logging before google.Init: I0826 06:41:55.687810     562 manager.go:1243] Reloading system slash commands
+ERROR: logging before google.Init: I0826 06:41:56.157074     527 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:loadCodeAssist Trace: 0x9f2f74b3e540741d
+ERROR: logging before google.Init: E0826 06:41:56.244495     302 browser_context.go:179] failed to install playwright: could not install driver: could not install driver: error: got non 200 status code: 404 (404 Not Found) from https://playwright.azureedge.net/builds/driver/playwright-1.57.0-linux.zip
+error: got non 200 status code: 404 (404 Not Found) from https://playwright-akamai.azureedge.net/builds/driver/playwright-1.57.0-linux.zip
+error: got non 200 status code: 404 (404 Not Found) from https://playwright-verizon.azureedge.net/builds/driver/playwright-1.57.0-linux.zip
+ERROR: logging before google.Init: I0826 06:41:56.812953     527 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:loadCodeAssist Trace: 0xc42b1dd53f074beb
+ERROR: logging before google.Init: I0826 06:41:56.857039     527 model_resolver.go:80] Resolving model Gemini 3.1 Pro (High)
+ERROR: logging before google.Init: I0826 06:41:56.857121     527 model_config_manager.go:311] Propagating selected model override to backend: label="Gemini 3.1 Pro (High)"
+ERROR: logging before google.Init: I0826 06:41:56.857249     421 quota_manager.go:45] doRefreshQuota: starting reload (force=true)
+ERROR: logging before google.Init: I0826 06:41:56.857256     533 model_resolver.go:80] Resolving model Gemini 3.1 Pro (High)
+ERROR: logging before google.Init: I0826 06:41:56.857360     533 model_config_manager.go:311] Propagating selected model override to backend: label="Gemini 3.1 Pro (High)"
+ERROR: logging before google.Init: I0826 06:41:56.867150       1 model_resolver.go:80] Resolving model Gemini 3.1 Pro (High)
+ERROR: logging before google.Init: I0826 06:41:56.885868       1 server.go:2739] GetConversationDetail: found conversation 440f42ef-c271-4f77-a410-a4a999166f44 (active=false)
+ERROR: logging before google.Init: I0826 06:41:56.889657       1 session.go:112] Print mode: resuming conversation 440f42ef-c271-4f77-a410-a4a999166f44
+ERROR: logging before google.Init: I0826 06:41:56.889709       1 conversation_manager.go:722] Streaming conversation 440f42ef-c271-4f77-a410-a4a999166f44
+ERROR: logging before google.Init: I0826 06:41:56.893357       1 server.go:1108] Starting conversation update stream for 440f42ef-c271-4f77-a410-a4a999166f44
+ERROR: logging before google.Init: I0826 06:41:56.893462       1 session.go:150] Print mode: conversation=440f42ef-c271-4f77-a410-a4a999166f44, sending message
+ERROR: logging before google.Init: I0826 06:41:56.893496       1 manager.go:1243] Reloading system slash commands
+ERROR: logging before google.Init: I0826 06:41:56.896585       1 manager.go:1247] Slash commands unchanged, skipping update
+ERROR: logging before google.Init: I0826 06:41:56.896759       1 conversation_manager.go:570] Forwarding user message to conversation 440f42ef-c271-4f77-a410-a4a999166f44 (items=1, media=0)
+ERROR: logging before google.Init: I0826 06:41:56.896808       1 server.go:1558] Sending user message to conversation 440f42ef-c271-4f77-a410-a4a999166f44 (items=1, media=0)
+ERROR: logging before google.Init: I0826 06:41:56.990611     421 quota_manager.go:45] doRefreshQuota: starting reload (force=true)
+ERROR: logging before google.Init: I0826 06:41:57.044957     595 manager.go:486] Ignoring IDLE update because we are waiting for RUNNING
+ERROR: logging before google.Init: I0826 06:41:57.074361     422 experiment_manager.go:38] Starting experiment refresh after login
+ERROR: logging before google.Init: W0826 06:41:57.148652     432 declarative_config_loader.go:251] skipping component during resolution: empty component: prompt section "mcp_servers"
+ERROR: logging before google.Init: W0826 06:41:57.149254     432 declarative_config_loader.go:251] skipping component during resolution: empty component: prompt section "subagent_reminder"
+ERROR: logging before google.Init: W0826 06:41:57.149281     432 declarative_config_loader.go:251] skipping component during resolution: empty component: prompt section "terminal_sandbox"
+ERROR: logging before google.Init: I0826 06:41:57.172536     422 experiment_manager.go:42] Experiments refreshed after login
+ERROR: logging before google.Init: I0826 06:41:57.172742     799 manager.go:1243] Reloading system slash commands
+ERROR: logging before google.Init: I0826 06:41:57.174576     799 manager.go:1247] Slash commands unchanged, skipping update
+ERROR: logging before google.Init: I0826 06:41:57.287533     422 experiment_manager.go:38] Starting experiment refresh after login
+ERROR: logging before google.Init: I0826 06:41:57.332111     979 model_resolver.go:80] Resolving model Gemini 3.1 Pro (High)
+ERROR: logging before google.Init: I0826 06:41:57.332203     979 model_config_manager.go:311] Propagating selected model override to backend: label="Gemini 3.1 Pro (High)"
+ERROR: logging before google.Init: I0826 06:41:57.371186     422 experiment_manager.go:42] Experiments refreshed after login
+ERROR: logging before google.Init: I0826 06:41:57.371362     421 quota_manager.go:45] doRefreshQuota: starting reload (force=true)
+ERROR: logging before google.Init: I0826 06:41:57.371439     576 manager.go:1243] Reloading system slash commands
+ERROR: logging before google.Init: I0826 06:41:57.373409     576 manager.go:1247] Slash commands unchanged, skipping update
+ERROR: logging before google.Init: I0826 06:41:57.517357     422 experiment_manager.go:38] Starting experiment refresh after login
+ERROR: logging before google.Init: I0826 06:41:57.549000     978 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:loadCodeAssist Trace: 0xcd3f0176772beb57
+ERROR: logging before google.Init: I0826 06:41:57.579460     422 experiment_manager.go:42] Experiments refreshed after login
+ERROR: logging before google.Init: I0826 06:41:57.579631     555 manager.go:1243] Reloading system slash commands
+ERROR: logging before google.Init: I0826 06:41:57.581443     555 manager.go:1247] Slash commands unchanged, skipping update
+ERROR: logging before google.Init: I0826 06:42:05.023807     917 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xc45314198909154b ResponseID: Je2Oat7RH_jQjrEP55nBkAo
+ERROR: logging before google.Init: I0826 06:42:17.340815    1070 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xd44c7ffdfd872c16 ResponseID: NO2OavWpGvSPjrEPr4LLyAw
+ERROR: logging before google.Init: I0826 06:42:17.515778    1111 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x3ae47617ee9e2d24 ResponseID: Oe2Oat6cD7PXjMcP3u-r2Aw
+ERROR: logging before google.Init: I0826 06:42:22.474645    1168 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xc63ee33bd74d1b5b ResponseID: Oe2OatbpJ4eSjrEPyLfxsAc
+ERROR: logging before google.Init: I0826 06:42:28.080530    1204 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x85b3d8847ead8caf ResponseID: Pu2OasXwLM6xsOIP_MDB6Ac
+ERROR: logging before google.Init: I0826 06:42:36.206218    1236 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xcbca9722f7e39f0a ResponseID: RO2OavCjGe2wjMcP-J-5qQk
+ERROR: logging before google.Init: I0826 06:42:46.357274    1307 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xc3c9888c4ed6d5b ResponseID: TO2OavaMIPLkjMcP9O-SqQo
+ERROR: logging before google.Init: I0826 06:42:56.843803    1359 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xe51f0655d3a256bf ResponseID: Vu2OaqTsJ_bBsOIP5NGl2Ag
+ERROR: logging before google.Init: I0826 06:43:04.781599    1327 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xbcb0344f2a5d455e ResponseID: Ye2OavjGFYyb-8YPhJrs-Qs
+ERROR: logging before google.Init: I0826 06:43:13.693751    1464 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x31d4f22ab139a681 ResponseID: ae2OaqKEF4mMjrEP-JfuyAc
+ERROR: logging before google.Init: I0826 06:43:21.760995    1502 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x166bf657860ccc0e ResponseID: cu2Oavt85bmw4g_BqtzIBw
+ERROR: logging before google.Init: I0826 06:43:51.317625    1484 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xaa4d4a66c674ad60 ResponseID: jO2Oap3LEazLjMcPzPWWyQk
+ERROR: logging before google.Init: I0826 06:44:06.706215     913 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x8c3f1aca4937209b ResponseID: pu2Oauy-HJPAsOIPv_D8oAg
+ERROR: logging before google.Init: I0826 06:44:11.846850    1599 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x5efbfaefe9b1b74f ResponseID: oe2OatWIJPW-jMcPo77eqAo
+ERROR: logging before google.Init: I0826 06:44:24.035957    1653 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x92dc76f7be56c272 ResponseID: rO2OaqLPBfbBsOIP5NGl2Ag
+ERROR: logging before google.Init: I0826 06:44:36.929657    1685 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xa7bf8d618d8672e5 ResponseID: ue2OaoviA8rQjMcPteHVmQo
+ERROR: logging before google.Init: I0826 06:44:47.292619    1692 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x9690f456352b25c9 ResponseID: z-2OavnZBMqFjrEP6pjT4AQ
+ERROR: logging before google.Init: I0826 06:44:58.563148    1798 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xfe720acc48ef1bb2 ResponseID: yu2Oas3UCunRjMcPzo3gwQo
+ERROR: logging before google.Init: I0826 06:45:08.468447    1866 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xeb81b553622c5684 ResponseID: 2u2OauupNPa5sOIPj4uGsAw
+ERROR: logging before google.Init: I0826 06:45:22.689879    1887 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xd05eb7b02d3504b1 ResponseID: 5O2OatT2LO_hjMcP4NeegQ0
+ERROR: logging before google.Init: I0826 06:45:31.044049    1908 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xc76473ec67366f50 ResponseID: 8-2OalbKr46xD7yjyrAI
+ERROR: logging before google.Init: I0826 06:45:43.081123    1979 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xea37b9f74bd30767 ResponseID: --2OavyPGImMjrEP-JfuyAc
+ERROR: logging before google.Init: I0826 06:45:51.358787    2003 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xa5cb6f15497ae1eb ResponseID: B-6OatfwF_bBsOIP5NGl2Ag
+ERROR: logging before google.Init: I0826 06:46:00.561572    2028 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x237e6f15a638bf54 ResponseID: EO6OaoiZL8eqsOIPy6CB0Qo
+ERROR: logging before google.Init: I0826 06:46:07.851446    2127 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xb4d03bbf7bb3dae ResponseID: GO6OasWsOe2FjrEP6o-asAQ
+ERROR: logging before google.Init: I0826 06:46:18.184010    2169 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xe1074e0de439a858 ResponseID: IO6OavusCcqcjrEPi5epsAk
+ERROR: logging before google.Init: I0826 06:46:25.682233    2080 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x5bc756c5c85c5362 ResponseID: Ku6OaqurHdHVjMcPh8fE-Aw
+ERROR: logging before google.Init: I0826 06:46:38.261318    2294 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x2e59e1e377d68c35 ResponseID: NO6Oar3rA_TRjMcPovzGmQo
+ERROR: logging before google.Init: I0826 06:46:48.821872    2341 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x7506295b3fe3b405 ResponseID: Pu6Oaq3eIe_hjMcP4NeegQ0
+ERROR: logging before google.Init: I0826 06:46:59.391344    2379 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels Trace: 0x84bfb79103cbd7b
+ERROR: logging before google.Init: I0826 06:46:59.762551    2380 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:loadCodeAssist Trace: 0x5b988c22b3842247
+ERROR: logging before google.Init: I0826 06:47:04.608545    2512 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x991da2404773e26 ResponseID: WO6OaqvXF665sOIP86fnuAc
+ERROR: logging before google.Init: I0826 06:47:05.745901    2496 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x57266a3ca66eb553 ResponseID: U-6OarKvJKK9sOIP55mSmAg
+ERROR: logging before google.Init: I0826 06:47:13.883707    2558 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x1f8d4eb908189273 ResponseID: Wu6OarzdBprVjMcP36_wiA0
+ERROR: logging before google.Init: I0826 06:47:21.474274    2593 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xb31c2470424bcc5c ResponseID: Y-6Oarv-DL_UjMcP3461sAo
+ERROR: logging before google.Init: I0826 06:47:28.576621    2652 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xe56245d05ae3b6b7 ResponseID: ae6Oas6vMK-qsOIPzrSTiQw
+ERROR: logging before google.Init: I0826 06:47:39.452786    2725 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xb4f6d30a15ac9032 ResponseID: e-6OauiyC5_ljMcPvLG1wQo
+ERROR: logging before google.Init: I0826 06:47:40.111081     750 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xa5e87eae6edb8a55 ResponseID: du6OarruEZrWjrEPpLThsAs
+ERROR: logging before google.Init: I0826 06:47:47.279790    2749 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xcbb7fdba185874cc ResponseID: fO6OauebHLWjjMcPpon2iQ0
+ERROR: logging before google.Init: I0826 06:47:55.075852    2760 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x51d366fb9cd4ee73 ResponseID: hO6Oas3IFNOa-8YP7Ka3gQw
+ERROR: logging before google.Init: I0826 06:48:04.266491    2840 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xbf6209044402597d ResponseID: jO6Oas-gGc2YjrEPm_jqmQw
+ERROR: logging before google.Init: I0826 06:48:10.603605    2857 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x534503cf88353141 ResponseID: le6Oav3sLsnUjMcPgYCN2Qo
+ERROR: logging before google.Init: I0826 06:48:17.451257    2925 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xf1f14734b2744b91 ResponseID: mu6Oau-HM6zTjMcPpczBoAk
+ERROR: logging before google.Init: I0826 06:48:29.008906    2965 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xc15425d4c7f63bd6 ResponseID: pu6OatLFKvW-jMcPo77eqAo
+ERROR: logging before google.Init: I0826 06:48:37.556609    3009 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x11f5e20a7f260d33 ResponseID: re6OaundEuu8sOIPj5SL0AQ
+ERROR: logging before google.Init: I0826 06:48:44.183007    3023 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x43f2b21521b0102d ResponseID: te6Oau63MNvJjMcP5fqAgQs
+ERROR: logging before google.Init: I0826 06:48:50.674567    3073 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xb0b2112702ea9212 ResponseID: vO6OapSqJMysjrEPrMTAwQg
+ERROR: logging before google.Init: I0826 06:48:56.751978    3089 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x79a80aa92463af3f ResponseID: wu6Oaum9PPiqjrEPhN_04Qg
+ERROR: logging before google.Init: I0826 06:49:05.279137    3190 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x5d87c4926a2eeed6 ResponseID: ye6Oaq-tBZ7VjrEPv6jw4Ag
+ERROR: logging before google.Init: I0826 06:49:14.005634    3182 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x3d4ed969b7446fce ResponseID: 0e6OatSqH5_ljMcPvLG1wQo
+ERROR: logging before google.Init: I0826 06:49:21.713444    2225 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xa1554aa14c03b157 ResponseID: 2-6OatfEBO2wjMcP-J-5qQk
+ERROR: logging before google.Init: I0826 06:49:33.228554    3329 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xb69315feea52357e ResponseID: 5u6Oat3jOb_UjMcP3461sAo
+ERROR: logging before google.Init: I0826 06:49:45.330752    2895 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xd4c25ebbfdb26957 ResponseID: 8u6OaofSIunRjMcPzo3gwQo
+ERROR: logging before google.Init: I0826 06:49:52.018036    3405 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x1c48e1a40cc3dcd6 ResponseID: -e6Oap-eOeaQ-8YP5sfPyAI
+ERROR: logging before google.Init: I0826 06:49:59.242085    3500 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x70a63d2167786360 ResponseID: Ae-Oatj9Iu2wjMcP-J-5qQk
+ERROR: logging before google.Init: I0826 06:50:06.526119    3572 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x9d25e6b832ac6c7c ResponseID: CO-Oap3hJ9HVjMcPh8fE-Aw
+ERROR: logging before google.Init: I0826 06:50:13.537184    3604 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x9d34a4805c517c9d ResponseID: Du-OauiEMv3SjMcP_I6ZoQo
+ERROR: logging before google.Init: I0826 06:50:19.644723    3702 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x1be084d441970d6f ResponseID: Fu-OapjDBqzLjMcPzPWWyQk
+ERROR: logging before google.Init: I0826 06:50:34.548387    3690 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x839f828fbdab1741 ResponseID: Je-OatTgOt7SjMcPlq6MsAk
+ERROR: logging before google.Init: I0826 06:50:35.171808    3783 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x26360dd5a2820bc ResponseID: Ku-OaqSRM9HVjMcPh8fE-Aw
+ERROR: logging before google.Init: I0826 06:50:44.072303    3761 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x95a8ff1a61c7e357 ResponseID: Ku-OavnNMdOa-8YP7Ka3gQw
+ERROR: logging before google.Init: I0826 06:50:54.932879    3883 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x3afdc5c4c3fd6ebc ResponseID: Pu-OasqyJfW-jMcPo77eqAo
+ERROR: logging before google.Init: I0826 06:50:55.995309    3876 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x66b7057a396eb6f ResponseID: Oe-OasbKLZzNjMcPwKP1qQk
+ERROR: logging before google.Init: I0826 06:51:04.131051    3895 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x2bbbc44643451c1e ResponseID: QO-OaufJGq_TjMcP8dunuQ0
+ERROR: logging before google.Init: I0826 06:51:10.801486    3927 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x1dd6a7407dfb5b7a ResponseID: SO-OaqHbGKHyjMcPp5e0qQk
+ERROR: logging before google.Init: I0826 06:51:21.152186    4005 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x87c028e55c32b661 ResponseID: WO-OapnlN-nRjMcPzo3gwQo
+ERROR: logging before google.Init: I0826 06:51:22.499522    3937 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x9ee2c35450cc7c81 ResponseID: VO-OauX_AY7SjMcPzZXIqQk
+ERROR: logging before google.Init: I0826 06:51:29.810455    4001 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x1a6ec20709da9294 ResponseID: Wu-OauXeLI7SjMcPzZXIqQk
+ERROR: logging before google.Init: I0826 06:51:36.388991    4084 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x2c16888c0b5b82c8 ResponseID: Yu-OasmXBu_hjMcP4NeegQ0
+ERROR: logging before google.Init: I0826 06:51:56.147491    4141 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xdd1dd7d6691bbeb ResponseID: c--OatCfOaTcjMcP4eWmmA0
+ERROR: logging before google.Init: I0826 06:52:06.399458    4151 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels Trace: 0xb9abd51a4c7b701a
+ERROR: logging before google.Init: I0826 06:52:06.531573    4152 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:loadCodeAssist Trace: 0xe2a6bc3add0c2721
+ERROR: logging before google.Init: I0826 06:52:21.552541    4196 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xa60c8eb1fda67330 ResponseID: hu-Oar2sJ-WujrEPmaXm2Qc
+ERROR: logging before google.Init: I0826 06:52:29.506537    4221 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x12d6e751ef7d1100 ResponseID: le-Oaq2mNvTJ-8YP8LuB-QY
+ERROR: logging before google.Init: I0826 06:52:35.680889    4279 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xd7f7f986daad98f8 ResponseID: ne-OarfgMJDJ-8YPkIOO6Qk
+ERROR: logging before google.Init: I0826 06:52:43.279838    4340 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x1e8367a2b06a2ec2 ResponseID: o--OasP8OJqMjrEP0P_dmAs
+ERROR: logging before google.Init: I0826 06:52:54.840952    4351 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xa27e19ffb7dcc570 ResponseID: q--OavD1OODUjMcPvtDD-Qk
+ERROR: logging before google.Init: I0826 06:53:04.569126    4305 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x31f62caf0aa126a8 ResponseID: t--OasGcDLPxjrEP_fPMqAs
+ERROR: logging before google.Init: I0826 06:53:14.559427    4564 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x97b91c19554d3d04 ResponseID: wO-OarXKNeD5jrEPn_7j0Qc
+ERROR: logging before google.Init: I0826 06:53:28.303535    4599 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x24cdfaa8d776474f ResponseID: yu-OaoaiOu_hjMcP4NeegQ0
+ERROR: logging before google.Init: I0826 06:53:44.123313    4660 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xa0105e1b9ecdc1f ResponseID: 2O-Oaqq6KNGxjMcPm4OZyAo
+ERROR: logging before google.Init: I0826 06:53:52.268306    4707 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x22f37b020bc42801 ResponseID: 6O-OaoLXGt7djMcPg5bW2Qo
+ERROR: logging before google.Init: I0826 06:53:57.737767    4755 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x3e388ac99f5fed20 ResponseID: 8O-OatfmJdvJjMcP5fqAgQs
+ERROR: logging before google.Init: I0826 06:54:05.359584    4411 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xfedba9ff9d8aba8 ResponseID: 9u-OaobTAd7MjMcP9_HkoQo
+ERROR: logging before google.Init: I0826 06:54:20.793080    4845 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x5d3a2b1440e22225 ResponseID: DPCOapHeHtGxjMcPm4OZyAo
+ERROR: logging before google.Init: I0826 06:54:23.866042    4817 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x1e39d3972e9bbe35 ResponseID: B_COar2jJ43fjMcPxPG3oAk
+ERROR: logging before google.Init: I0826 06:54:31.445929    4898 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x3f0902968d7833bb ResponseID: EPCOaoKGDsrQjMcPteHVmQo
+ERROR: logging before google.Init: I0826 06:54:43.502115    4948 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x3dc0755b69a2a74 ResponseID: GfCOasbKKvW-jMcPo77eqAo
+ERROR: logging before google.Init: I0826 06:54:49.930940    5002 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x54b9f0d3ac1724b6 ResponseID: I_COasLfL8XajMcPyPehgA0
+ERROR: logging before google.Init: I0826 06:55:05.376209    5035 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xba72af6216f93b83 ResponseID: OfCOavKVBfTRjMcPovzGmQo
+ERROR: logging before google.Init: I0826 06:55:07.977226    5030 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x565064c3d8dec5e2 ResponseID: NPCOatW6DtTRjMcPnb6jqQk
+ERROR: logging before google.Init: I0826 06:55:15.388920    5092 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x4a56e0ba84a967a1 ResponseID: PPCOavrJEK_TjMcP8dunuQ0
+ERROR: logging before google.Init: I0826 06:55:22.001357    5108 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xd62af2c1e0eb697 ResponseID: Q_COarPwKcXajMcPyPehgA0
+ERROR: logging before google.Init: I0826 06:55:34.596613    5147 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x28a1b7839510c5ae ResponseID: TPCOaq3aE-bTjMcPiMy0sQk
+ERROR: logging before google.Init: I0826 06:55:42.064024    5204 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x9a70a501737ac1d6 ResponseID: VvCOaqqLObzqjMcPwpjJiAo
+ERROR: logging before google.Init: I0826 06:55:57.757932    5266 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xa904469b984a2332 ResponseID: bfCOau6_IbWjjMcPpon2iQ0
+ERROR: logging before google.Init: I0826 06:55:58.109853    5252 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x3ca506441a69e0a5 ResponseID: aPCOaq71Kv7WjMcPkeqA4Ao
+ERROR: logging before google.Init: I0826 06:56:10.197051    5286 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x351e6c5c0eb8fbf4 ResponseID: bvCOaonLGcnUjMcPgYCN2Qo
+ERROR: logging before google.Init: I0826 06:56:37.485784    1194 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x55297dbd88c555cd ResponseID: jfCOarjHGNzbjMcPpbrNqQk
+ERROR: logging before google.Init: I0826 06:56:43.481784    5335 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xdfd8fb7867e3641f ResponseID: lfCOasX0L6jUjMcP96XRqAk
+ERROR: logging before google.Init: I0826 06:56:55.422530    5368 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x6cfc5d3dab36f6da ResponseID: m_COaoS3MNvJjMcP5fqAgQs
+ERROR: logging before google.Init: I0826 06:57:04.513358    5194 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x8fd9040c15c1598c ResponseID: qPCOarfXCd7SjMcPlq6MsAk
+ERROR: logging before google.Init: I0826 06:57:07.671221    5415 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels Trace: 0xfca44512ec4e9c59
+ERROR: logging before google.Init: I0826 06:57:07.948986    5460 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:loadCodeAssist Trace: 0x9ecd94c24e7e4068
+ERROR: logging before google.Init: I0826 06:57:22.827879    5529 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x428dd0b72a26e4ac ResponseID: wvCOauGIJLWjjMcPpon2iQ0
+ERROR: logging before google.Init: I0826 06:57:23.122938    5522 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x5c363358057a65da ResponseID: vfCOaqC5Me2FjrEP6o-asAQ
+ERROR: logging before google.Init: I0826 06:57:29.664277    5562 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xed165b81fa6096c ResponseID: w_COaoqaGcnUjMcPgYCN2Qo
+ERROR: logging before google.Init: I0826 06:57:35.957321    5603 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xfc52cb5ef60a8084 ResponseID: yvCOata6BMiG-8YPgPmHsQk
+ERROR: logging before google.Init: I0826 06:57:42.071809    5646 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x823fda9eba4ea32b ResponseID: 0PCOaqb3D8XajMcPyPehgA0
+ERROR: logging before google.Init: I0826 06:57:48.521750    5682 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xd98ce59c28023ce ResponseID: 1vCOaq7aFvbBsOIP5NGl2Ag
+ERROR: logging before google.Init: I0826 06:57:58.228279    4470 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x5980c998c3f358c8 ResponseID: 3fCOaoamNr-bjrEPpZ7zqAc
+ERROR: logging before google.Init: I0826 06:58:04.901417    5786 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xe8526c0603d0dbe2 ResponseID: 5_COatLkJ_-vjrEPhdGnsAQ
+ERROR: logging before google.Init: I0826 06:58:11.658668    5820 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xb73117f020027528 ResponseID: 7fCOauDeDNGxjMcPm4OZyAo
+ERROR: logging before google.Init: I0826 06:58:17.491372    1015 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x4a20f8cc253457c4 ResponseID: 9PCOavWVDN-jjMcPrqiIuQk
+ERROR: logging before google.Init: I0826 06:58:25.063692    5916 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xc6046cc524dfea73 ResponseID: -fCOaryWNuCNjrEPxsPTiA4
+ERROR: logging before google.Init: I0826 06:58:49.903176    5957 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x38b9e27bddddfe43 ResponseID: BfGOasLeHO2wjMcP-J-5qQk
+ERROR: logging before google.Init: I0826 06:59:01.213320    4774 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xeae21a45b1a437fc ResponseID: GvGOatjeGMeNjrEP05mcmAc
+ERROR: logging before google.Init: I0826 06:59:11.037945    6050 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x1fc5627e6c6bc5b0 ResponseID: J_GOaoCxLL_UjMcP3461sAo
+ERROR: logging before google.Init: I0826 06:59:22.081601    6062 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x3d93ef1300ef041f ResponseID: OfGOaoHMNPbBsOIP5NGl2Ag
+ERROR: logging before google.Init: I0826 06:59:23.047188    6107 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x130d6b30c7da8a18 ResponseID: NPGOapK1N-DUjMcPvtDD-Qk
+ERROR: logging before google.Init: I0826 06:59:33.412358    6173 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xdf261fb8a308650a ResponseID: RfGOarTGDImMjrEP-JfuyAc
+ERROR: logging before google.Init: I0826 06:59:33.718864    6166 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xeec373b693028c9 ResponseID: QPGOaqHdFJrVjMcP36_wiA0
+ERROR: logging before google.Init: I0826 06:59:39.343916    6180 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xb3a9c9997a441f3f ResponseID: RvGOaruFBNOa-8YP7Ka3gQw
+ERROR: logging before google.Init: I0826 06:59:44.284924    6207 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xa065c8811f472dd2 ResponseID: S_GOavu7JdvJjMcP5fqAgQs
+ERROR: logging before google.Init: I0826 06:59:48.810466    6239 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x4c0e7ff90943ddab ResponseID: UPGOapOoINOa-8YP7Ka3gQw
+ERROR: logging before google.Init: I0826 06:59:54.288787    6326 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xc4872b941c8b326b ResponseID: VfGOaoXRBPvP-8YP3tbu0AE
+ERROR: logging before google.Init: I0826 07:00:00.337895    6366 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xdbefe7dee8bea85d ResponseID: W_GOaqemIpqMjrEPiOzdmAs
+ERROR: logging before google.Init: W0826 07:02:44.375684    6351 declarative_config_loader.go:251] skipping component during resolution: empty component: prompt section "mcp_servers"
+ERROR: logging before google.Init: W0826 07:02:44.375785    6351 declarative_config_loader.go:251] skipping component during resolution: empty component: prompt section "subagent_reminder"
+ERROR: logging before google.Init: W0826 07:02:44.375810    6351 declarative_config_loader.go:251] skipping component during resolution: empty component: prompt section "terminal_sandbox"
+ERROR: logging before google.Init: I0826 07:02:44.466594    5876 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels Trace: 0x1eeef644b9a4cd8a
+ERROR: logging before google.Init: I0826 07:02:44.642895    6282 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:loadCodeAssist Trace: 0x3820764b8b0d8681
+ERROR: logging before google.Init: I0826 07:02:51.804025    6690 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x7cdeecc3cb271030 ResponseID: BPKOarm4LOqSjrEPpMWUmAQ
+ERROR: logging before google.Init: I0826 07:02:58.302985    6763 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x415af5f54a2821da ResponseID: DPKOapaTC6-qsOIPzrSTiQw
+ERROR: logging before google.Init: I0826 07:03:04.096908    6810 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x8f55ede4cb6eeb32 ResponseID: EvKOaoq6J5fBsOIPt4vV2AY
+ERROR: logging before google.Init: I0826 07:03:15.319804    6834 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x632e4caeb72d42f8 ResponseID: GPKOasCjJ8qcjrEPi5epsAk
+ERROR: logging before google.Init: I0826 07:03:21.562819    6796 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xf13fde15adc7c873 ResponseID: I_KOavvPKMqcjrEPi5epsAk
+ERROR: logging before google.Init: I0826 07:03:27.706253    6952 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x8b3a06fdf2480d0e ResponseID: KfKOaoamNeCNjrEPxsPTiA4
+ERROR: logging before google.Init: I0826 07:03:41.937875    6876 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x9045469a3b36d3fc ResponseID: PfKOarLXJ6CR39IPo9GlgAI
+ERROR: logging before google.Init: I0826 07:03:42.793060    6298 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x9facc4e21418b9cf ResponseID: OPKOat-dL86xsOIP_MDB6Ac
+ERROR: logging before google.Init: I0826 07:03:51.037890    7001 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xdcc544420248a561 ResponseID: P_KOas_ZA_TJ-8YP8LuB-QY
+ERROR: logging before google.Init: I0826 07:03:57.842196    7069 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xa062642e52311dd1 ResponseID: R_KOap7LEtHVjrEPktK2uQs
+ERROR: logging before google.Init: I0826 07:04:06.165375    7124 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x773fae0bfcee4081 ResponseID: UfKOauCDKJqMjrEPiOzdmAs
+ERROR: logging before google.Init: I0826 07:04:11.661912    7151 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x6ed04b6ad3c57b60 ResponseID: VvKOapCvHeD5jrEPn_7j0Qc
+ERROR: logging before google.Init: I0826 07:04:16.949891    7206 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xa77ad102fa7cc434 ResponseID: W_KOarr7OOW5sOIPwarcyAc
+ERROR: logging before google.Init: I0826 07:04:23.485261    7268 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x1609243b58e8ba1d ResponseID: YfKOaurJLYmMjrEP-JfuyAc
+ERROR: logging before google.Init: I0826 07:04:33.203793     316 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x2cb0792424d23cbc ResponseID: afKOatbLMdOa-8YP7Ka3gQw
+ERROR: logging before google.Init: I0826 07:04:48.631875    7397 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x6912dc48713491d6 ResponseID: gPKOasS7FYyb-8YPhJrs-Qs
+ERROR: logging before google.Init: I0826 07:04:48.899552    7263 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x48373093a3d3db91 ResponseID: e_KOasn4HaK9sOIPrY2SmAg
+ERROR: logging before google.Init: I0826 07:04:54.042619    7416 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x955357c72dde8ede ResponseID: gfKOaoG_CIeSjrEPyLfxsAc
+ERROR: logging before google.Init: I0826 07:05:00.825564    7450 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x2d08a2e36426015e ResponseID: hvKOap-jFp7VjrEPv6jw4Ag
+ERROR: logging before google.Init: I0826 07:05:06.497435    7481 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x877339f565460f6a ResponseID: jfKOaqCBCq65sOIP86fnuAc
+ERROR: logging before google.Init: I0826 07:05:12.660992    7515 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x89bdc34c430080e1 ResponseID: k_KOarPzBomMjrEP-JfuyAc
+ERROR: logging before google.Init: I0826 07:05:18.763260    7498 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x7b54e721a537886a ResponseID: mPKOar-HO5PAsOIPv_D8oAg
+ERROR: logging before google.Init: I0826 07:05:24.827720    7615 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xdb948d18578516b1 ResponseID: n_KOao-FFZaCjrEPvu72gQk
+ERROR: logging before google.Init: I0826 07:05:44.432533    7685 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x7aaeb02c6e381a5d ResponseID: svKOarfFN5rWjrEPpLThsAs
+ERROR: logging before google.Init: I0826 07:05:52.167282    7715 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x81c8dbb2474df01e ResponseID: uPKOaonfKv7bjrEPqLbByQc
+ERROR: logging before google.Init: I0826 07:06:00.962435    7782 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xe08d4faef25e5676 ResponseID: wvKOapqQLMvN-8YPnpv44Ac
+ERROR: logging before google.Init: I0826 07:06:08.556796    7820 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xff90f105024afd65 ResponseID: y_KOauTIE-W5sOIPwarcyAc
+ERROR: logging before google.Init: I0826 07:06:16.176953    6750 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xd2aa886e6b7cee28 ResponseID: 0PKOatSjOPvP-8YP3tbu0AE
+ERROR: logging before google.Init: I0826 07:06:23.622190    7809 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x92278aa694973e45 ResponseID: 2fKOaty0L8qcjrEPi5epsAk
+ERROR: logging before google.Init: I0826 07:06:29.156509    7854 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xb96f6d371951b858 ResponseID: 3_KOasy1N8qcjrEPi5epsAk
+ERROR: logging before google.Init: I0826 07:06:38.861153    8003 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0xa165ce80255d2a3c ResponseID: 6PKOasvYLpqMjrEPiOzdmAs
+ERROR: logging before google.Init: I0826 07:06:47.761312    8034 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x5258eab30fb61de3 ResponseID: 8PKOateaEMqFjrEP6pjT4AQ
+ERROR: logging before google.Init: I0826 07:06:57.305019    8059 http_helpers.go:246] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse Trace: 0x8ece68ef804c03ce ResponseID: -fKOaoP3JZqMjrEP0P_dmAs
+ERROR: logging before google.Init: E0826 07:06:57.604355       1 printmode.go:521] Print mode: timed out after 7479 polls (printed=918)
+ERROR: logging before google.Init: I0826 07:06:57.604440       1 manager.go:745] CLI store manager shutting down
+ERROR: logging before google.Init: I0826 07:06:57.612170       1 conversation_manager.go:680] Stopping conversation stream
+ERROR: logging before google.Init: I0826 07:06:57.612346     595 server.go:1155] Stream goroutine exited for 440f42ef-c271-4f77-a410-a4a999166f44, sending completion signal
+ERROR: logging before google.Init: I0826 07:06:57.612887    8010 server.go:2709] Language server shutting down
+ERROR: logging before google.Init: I0826 07:06:57.612947    8010 server.go:2714] Waiting for migrations to complete to prevent partial migration state...
+ERROR: logging before google.Init: I0826 07:06:57.612436     595 conversation_manager.go:810] Stream completed for 440f42ef-c271-4f77-a410-a4a999166f44, clearing ResponsePending

@@ -343,9 +343,17 @@
           "returncode": 0,
           "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260719T163712Z-send-e703214a.stderr.log",
           "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260719T163712Z-send-e703214a.txt"
+        },
+        {
+          "action": "send",
+          "number": 9,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260826T144936Z-send-1dbf4872.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260826T144936Z-send-1dbf4872.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260826T144936Z-send-1dbf4872.txt"
         }
       ],
-      "updated_at": "2026-07-19T16:38:16+00:00"
+      "updated_at": "2026-08-26T14:51:47+00:00"
     },
     "agy-pubjudgement-handoff-20260729": {
       "created_at": "2026-07-29T04:52:22+00:00",
@@ -627,9 +635,17 @@
           "returncode": 0,
           "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260721T193131Z-send-fc5cee97.stderr.log",
           "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260721T193131Z-send-fc5cee97.txt"
+        },
+        {
+          "action": "send",
+          "number": 33,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260826T090631Z-send-4d7f1e43.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260826T090631Z-send-4d7f1e43.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260826T090631Z-send-4d7f1e43.txt"
         }
       ],
-      "updated_at": "2026-07-21T19:33:09+00:00"
+      "updated_at": "2026-08-26T09:14:51+00:00"
     },
     "fps-adopt-verifier": {
       "created_at": "2026-07-18T10:33:09+00:00",

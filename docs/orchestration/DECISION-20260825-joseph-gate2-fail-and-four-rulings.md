@@ -302,6 +302,25 @@ and the fact it was made against remain readable together. **Nothing else in thi
 claim is not a delivery, it is **not yet an origin of anything**, a third party must still grade any
 delivery, Joseph alone re-evaluates Gate 2, and there is still **no compute until it lands.**
 
+**SECOND SUPERSEDING NOTE, 2026-08-26 — THE THIRD ORIGIN NOW EXISTS AND IS GRADED.** The dispatch was
+delivered and then graded by **two independent parties, neither of them the implementer nor this
+lane**: `agy-publication-redteam` returned **FIT** on eight required items (turn 33, rc 0), and
+`agy-g2-gate-verifier` returned **SUPPLEMENT PASS / grade COMPLETE** (turn 9, rc 0) after measuring
+the broad suite at both shas under the mandated Python 3.11.14 — **431 tests, 3 failures + 3 errors,
+identical in both directions, no regression.** Full closure, with the attempt history and every
+digest, is `DEFECT-...-nondiscriminating.md` §8.
+
+**The two sentences above are NOT rewritten.** "Not yet an origin of anything" was true when written
+and is now superseded by measurement; both readings stay visible.
+
+**What does NOT follow, and this is the operative half:** **Gate 2 remains FAIL and Joseph alone
+re-evaluates it.** A complete instrument grade is an input to that re-evaluation, not a substitute for
+it. No compute, rehearsal, adoption, F-14 discharge, or use of the `k0-aa67c426-20260824T145751Z`
+products follows. The closure record lands on branch `closeout/dirty-warning-grade-20260826`;
+**`main` is deliberately not moved and not merged**, and the routed control-plane views are
+deliberately not republished, because doing so would take the merge and state-publication decision
+ahead of the re-evaluation Joseph has reserved.
+
 **DELIVERY STATUS NOTE, 2026-08-26 — NOT A NEW RULING.** The assigned `codex-school` implementer
 subsequently delivered the repair and its implementer controls in the commit carrying
 `DEFECT-20260825-generate-manifest-dirty-warning-nondiscriminating.md` §7. The delivery is

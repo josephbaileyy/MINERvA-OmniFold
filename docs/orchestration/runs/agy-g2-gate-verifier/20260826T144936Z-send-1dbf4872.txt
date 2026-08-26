@@ -1,0 +1,50 @@
+I am executing the tests in the provided worktrees now. I'll read the logs and summarize the output as soon as the background task finishes.
+### Step 1 & 3: Worktree Verification
+Both worktrees were validated before and after the test run:
+- **Baseline (`/tmp/codex-grade-prep-20260826.c7ILX0/baseline`)**:
+  - Initial HEAD: `61b51594cc8eb4a2d0865eba51d78a37e75a608f`
+  - State: detached
+  - Pre-run porcelain: 0
+  - Post-run porcelain: 0
+- **Candidate (`/tmp/codex-grade-prep-20260826.c7ILX0/candidate`)**:
+  - Initial HEAD: `e94170c01e49d020319c3e244b004d72b0de055e`
+  - State: detached
+  - Pre-run porcelain: 0
+  - Post-run porcelain: 0
+
+### Step 2: Test Results
+- **TMPDIR Used**: `/tmp/codex-grade-prep-20260826.c7ILX0/scratch_tmp`
+- **Baseline Log Path**: `/tmp/codex-grade-prep-20260826.c7ILX0/logs/baseline.log`
+- **Candidate Log Path**: `/tmp/codex-grade-prep-20260826.c7ILX0/logs/candidate.log`
+
+#### Arm 1: Baseline
+- **rc**: `1`
+- **Total Test Count**: `431`
+- **Errors (3)**:
+  - `test_loader_ordering_reco_before_truth_weight (unittest.loader._FailedTest.test_loader_ordering_reco_before_truth_weight)`
+  - `test_probe_oi120c_p4_retirement (unittest.loader._FailedTest.test_probe_oi120c_p4_retirement)`
+  - `test_probe_oi120c_verdict (unittest.loader._FailedTest.test_probe_oi120c_verdict)`
+- **Failures (3)**:
+  - `test_an_absent_token_becomes_the_literal_NOT_MEASURED (test_deploy_oi135_watcher_swap.TestReceiptWriter.test_an_absent_token_becomes_the_literal_NOT_MEASURED)`
+  - `test_only_the_five_keys_change_and_the_other_keys_are_byte_identical (test_deploy_oi135_watcher_swap.TestReceiptWriter.test_only_the_five_keys_change_and_the_other_keys_are_byte_identical)`
+  - `test_is_executable_with_a_shebang (test_deploy_oi135_watcher_swap.TestScriptHygiene.test_is_executable_with_a_shebang)`
+
+#### Arm 2: Candidate
+- **rc**: `1`
+- **Total Test Count**: `431`
+- **Errors (3)**:
+  - `test_loader_ordering_reco_before_truth_weight (unittest.loader._FailedTest.test_loader_ordering_reco_before_truth_weight)`
+  - `test_probe_oi120c_p4_retirement (unittest.loader._FailedTest.test_probe_oi120c_p4_retirement)`
+  - `test_probe_oi120c_verdict (unittest.loader._FailedTest.test_probe_oi120c_verdict)`
+- **Failures (3)**:
+  - `test_an_absent_token_becomes_the_literal_NOT_MEASURED (test_deploy_oi135_watcher_swap.TestReceiptWriter.test_an_absent_token_becomes_the_literal_NOT_MEASURED)`
+  - `test_only_the_five_keys_change_and_the_other_keys_are_byte_identical (test_deploy_oi135_watcher_swap.TestReceiptWriter.test_only_the_five_keys_change_and_the_other_keys_are_byte_identical)`
+  - `test_is_executable_with_a_shebang (test_deploy_oi135_watcher_swap.TestScriptHygiene.test_is_executable_with_a_shebang)`
+
+### Set Comparison
+- **Baseline -> Candidate Difference**: Identical. No new failures or errors.
+- **Candidate -> Baseline Difference**: Identical. No resolved failures or errors.
+
+### Final Report
+1. **SUPPLEMENT**: **PASS**. There is no broad-suite regression under the mandated Python 3.11.14 interpreter.
+2. **GRADE STATUS**: **COMPLETE**. Taking the existing independent `FIT` grade together with this supplemental `PASS`, the delivery satisfies all independent reviews.
