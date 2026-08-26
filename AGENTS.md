@@ -131,4 +131,10 @@ the exact authorized action and terminal-event posture, then the governing `OI-*
 | Launch or monitor compute | Fresh live state, direct scheduler observation, the exact runbook/launcher receipt, and environment rules routed by the workstream reference |
 | Apply process rules | `docs/orchestration/PLAYBOOK.md`; open `FINDINGS.md` only by routed `BEN-*` id |
 | Understand or recover pre-freeze history | `evidence/prepublication-2026-08-20-0b329e8a`, then the old path; never load the orchestration directory wholesale |
-| Build deliverables | `docs/analysis-note/`; `build_all.sh` must build note, primer, and paper |
+| Build deliverables | `docs/analysis-note/`; `build_all.sh` must build note, primer, and paper; then synchronize, build, commit, and push the standalone `MINERvA-OmniFold-Analysis-Note` repository |
+
+## Deliverable synchronization
+
+A change under `docs/analysis-note/` is incomplete until the corresponding source files are also
+committed and pushed to the standalone `MINERvA-OmniFold-Analysis-Note` repository. Build and verify
+the standalone checkout before declaring the note work complete, and record both remote heads.
