@@ -21,12 +21,27 @@ grade anything, and nothing in it may be read as a grade.
   survives this document.
 - The `:1471` half of F-17(b) being pending, deferred, or scheduled. Ruling 2 forecloses all three
   readings.
-- Authorization for PET covariance adoption, construction of `C_ML`, or reopening the declined PET
-  central/statistical pairing. Ruling text is explicit that none of these are authorized.
+- Gate-2 credit, uncertainty adoption, or any publication claim. None follow from this document or
+  from the mechanism work it sequences.
+- Any PET-scoped conclusion. This work is **GBDT uncertainty**; see §0.
 - The state of `MANIFEST.tsv`. That is routed to F-14 / §7.0.7 and is deliberately out of scope here
   (§7).
 - Any statement about the *canonical* checkout's working tree at submission time. Only its HEAD is
   established (§5, D-C note).
+
+## 0. Scope, and a withdrawn framing
+
+**This is the GBDT uncertainty work.** It is not PET work, and no PET-scoped conclusion may be drawn
+from anything in this document.
+
+Recorded because it is otherwise undiscoverable: the first committed version of this document, and
+the message of commit `109bb130` that carries it, framed the non-authorization clause in PET terms
+-- PET covariance adoption, `C_ML`, and a declined PET central/statistical pairing. Joseph withdrew
+that framing on 2026-08-25 as mistaken and directed that it not enter the canonical record. The body
+of this document is corrected. **A commit message is immutable, so `109bb130`'s still carries the
+withdrawn framing** and a reader who finds it there should treat this section as governing.
+
+**The four rulings themselves are unchanged by the correction.** Only the scope label moved.
 
 ## 1. Verdict
 
@@ -193,10 +208,14 @@ This is a **repairable defect**, not a disclosure. Ruling 3 assigns it.
 
 **No compute is authorized by this ruling.**
 
-Explicitly **not** authorized: PET covariance adoption; construction of `C_ML`; reopening the
-declined PET central/statistical pairing. Leg 6 and the undeclared-member adoption route remain
-prohibited. No product of this run may be adopted, consumed, or quoted while Gate 2 is open, which
-it is.
+Nothing here confers **Gate-2 credit**, authorizes **uncertainty adoption**, or supports any
+**publication claim**. The mechanism construction sequenced in §10 step 3 is authorized as mechanism
+construction only and carries none of those either.
+
+Leg 6 and the undeclared-member adoption route remain prohibited. No product of this run may be
+adopted, consumed, or quoted while Gate 2 is open, which it is.
+
+(An earlier PET-framed version of this paragraph was withdrawn; see §0.)
 
 ## 10. Next admissible sequence
 

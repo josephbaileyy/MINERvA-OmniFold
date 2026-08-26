@@ -1,0 +1,95 @@
+# DISCIPLINE 2026-08-25 — F-14 / §7.0.7 manifest-coupling omissions
+
+Filed by the publication close-out lane, on Joseph's instruction of 2026-08-25, against its own
+commits. This is a discipline record, not a defect disclosure and not a gate document.
+
+## CITABLE FOR
+
+- Three F-14 coupling omissions by this lane on 2026-08-25, each named with its commit and what it
+  left stale.
+- The measurement that `generate_manifest.py --check` returned **rc=1** at `38a7b16b` in a clean
+  detached worktree.
+- The mechanism by which one of these omissions became invisible: another lane's regeneration
+  absorbed it.
+
+## NOT CITABLE FOR
+
+- Any Gate-2 clause. F-14 is not one of the nine, and nothing here changes the Gate-2 FAIL recorded
+  in `DECISION-20260825-joseph-gate2-fail-and-four-rulings.md`.
+- The pre-existing 23-row drift on `main`. That is a **different and unattributed** population; see
+  §4. Do not read this document as having accounted for it.
+- The current state of `MANIFEST.tsv`. That is a measurement with a date, not a property.
+
+## 1. The obligation
+
+F-14 requires every §6 row discharged in the same commit as the repair, **plus** §7.0.7(1):
+`generate_manifest.py --check` = 0. Because a doc-only or tool-only commit still moves
+`MANIFEST.tsv` — the manifest records each tracked path's line and byte counts, and indexes itself —
+the regeneration is **coupled into the same commit**. Regenerating later produces a correct manifest
+and still fails the coupling.
+
+## 2. The omissions, as measured
+
+Joseph named `38a7b16b`. Measured, there are **three**. Recording only the one named would have made
+a partial enumeration look complete, so all three are below.
+
+| Commit | Path changed | Manifest regenerated in-commit | What it left stale |
+|---|---|---|---|
+| `30ede740` | `docs/orchestration/measure_k0_farend_f1b_f17b.sh` | **NO** | the script's line/byte counts |
+| `a3ed8631` | `docs/orchestration/state/f17b-k0-aa67c426-20260824T145751Z.json` | **NO** | **an entire row absent** — not a stale count |
+| `38a7b16b` | `docs/orchestration/measure_k0_farend_f1b_f17b.sh` | **NO** | the script's line/byte counts |
+| `109bb130` | decision doc + overrides + CATALOG | YES | — |
+| `dce8e8cc` | second-pass regeneration | YES | — |
+
+Direct measurement of the worst one: `git show a3ed8631:docs/orchestration/MANIFEST.tsv` contains
+**zero** rows matching `f17b-k0-aa67c426`. The record I had just filed was, at that commit, invisible
+to the router.
+
+Direct measurement of the gate state: at `38a7b16b`, in a **clean detached worktree** (not my working
+tree, because a gate can fail on a dirty tree for reasons that have nothing to do with the commit),
+`generate_manifest.py --check` returns **rc=1**, `OUT OF DATE`, rows=526.
+
+All three are attributable to the publication close-out lane. No peer lane contributed to them.
+
+## 3. Why it stayed invisible, which is the part worth keeping
+
+The missing row from `a3ed8631` was added by **the independent Gate-2 grader's** commit `a3000487`,
+whose own regeneration swept it up as a side effect of doing its work correctly.
+
+The consequence generalises past this incident: **a later "the manifest is current" observation says
+nothing about whether any particular commit complied.** Any lane that regenerates absorbs every
+upstream omission silently, so compliance is only measurable *at the commit*, in a clean worktree,
+and only before someone else regenerates. By the time I looked at `MANIFEST.tsv` and found my record
+correctly classified `MACHINE / state-artifact / generated`, my omission had already been repaired by
+someone else and there was nothing left to see.
+
+I did not detect any of the three. The first was surfaced by comparing counts during an unrelated
+regeneration; the rest by measuring on Joseph's instruction.
+
+## 4. Explicitly not accounted for here
+
+`generate_manifest.py --check` returned rc=1 in a clean detached worktree at `e428a645` with **23
+rows** of drift, measured by the Gate-2 grader before any of my commits in this sequence. That is
+**pre-existing committed drift from a population I have not attributed** and it is not mine to
+claim or to clear. It is named here only so that this document is not mistaken for a complete
+account of F-14 drift on `main`.
+
+## 5. Remediation, and what it does not do
+
+`109bb130` and `dce8e8cc` regenerated the manifest, and `--check` now returns rc=0 with
+`tracking=tracked:527`, re-run **after** the commit returned rather than before it.
+
+**That repairs the manifest state. It does not erase the original gap**, and this record exists
+because the repaired state would otherwise be the only surviving evidence — which would read as
+compliance.
+
+## 6. Cited artifacts
+
+Commits: `30ede740`, `a3ed8631`, `38a7b16b` (the omissions) · `109bb130`, `dce8e8cc` (this lane's
+compliant pair) · `a3000487`, `a0d0e5a1` (the grader's, which absorbed the `a3ed8631` gap) ·
+`e428a645` (where the unattributed 23-row drift was measured).
+
+Instrument: `docs/orchestration/generate_manifest.py`, run under
+`/global/u2/j/josephrb/.conda/envs/root_6_28/bin/python3` (3.11.14). The system `python3` is 3.6.15
+and cannot parse it — a `SyntaxError` on `from __future__ import annotations`, which through a pipe
+reads as rc=0 and would report a false pass.

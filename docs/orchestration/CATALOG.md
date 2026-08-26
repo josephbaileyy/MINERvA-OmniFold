@@ -34,12 +34,27 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   pinned digests moved), so the comparator that produced the filed record has never been graded, and
   the repaired one needs a new independent grade before it can support another Gate-2 filing —
   repairer, grader and spec author must be three different parties. **The ruling authorizes NO
-  compute**, and explicitly not PET covariance adoption, construction of `C_ML`, or reopening the
-  declined PET central/statistical pairing. Carries the defect ledger for the far-end path: two
+  compute**, and confers no Gate-2 credit, no uncertainty adoption and no publication claim. **Scope
+  is GBDT uncertainty, not PET** — an earlier PET framing was withdrawn by Joseph and survives only
+  in the immutable message of `109bb130`; §0 of the document governs. Carries the defect ledger for the far-end path: two
   defects corrected in `38a7b16b` whose **old explanations are retracted, not preserved**, one
   irreparable unanchored "233 behind main" in `a3ed8631`, and the bounded dotless-pattern fail-open
   that leaves the filed record unaffected. `MANIFEST.tsv` drift is routed **out** of this verdict to
   F-14 / §7.0.7.
+
+- [`DISCIPLINE-20260825-f14-manifest-coupling-omissions.md`](DISCIPLINE-20260825-f14-manifest-coupling-omissions.md)
+  — **Three F-14 / §7.0.7 manifest-coupling omissions by the publication close-out lane, filed
+  against itself.** `30ede740`, `a3ed8631` and `38a7b16b` each moved a tracked path without
+  regenerating `MANIFEST.tsv` in the same commit; `generate_manifest.py --check` returns **rc=1 at
+  `38a7b16b`** in a clean detached worktree. **`a3ed8631` left an entire row absent, not a stale
+  count** — the record it filed was invisible to the router at that commit. **Joseph named one
+  commit; the measurement found three**, and all three are recorded so the enumeration is not
+  partial. The keeper: the missing row was silently absorbed by the *independent grader's*
+  regeneration in `a3000487`, so **a later "the manifest is current" says nothing about whether any
+  particular commit complied** — compliance is measurable only at the commit, in a clean worktree,
+  and only until someone else regenerates. Regeneration in `109bb130`/`dce8e8cc` **repairs the
+  manifest state but does not erase the gap.** **NOT** citable for any Gate-2 clause, and explicitly
+  does **not** account for the separate unattributed 23-row drift measured at `e428a645`.
 
 - [`FINDING-20260824-gate2-preparation-and-four-open-rulings.md`](FINDING-20260824-gate2-preparation-and-four-open-rulings.md)
   — **Gate 2 is PREPARED and needs FOUR RULINGS before it can be graded.** Clause list derived
