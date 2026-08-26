@@ -362,6 +362,42 @@ does not discharge it. A negative control that cannot be made to fire is itself 
 points at (c). Controls enumerated from the grammar's own definition of a legal selector will confirm
 the grammar — the standing hazard that a fixture derived from the rule cannot disagree with the rule.
 
+### 12.2.1 RULED (Joseph, 2026-08-25): narrow to bare `*` or an exact literal
+
+The grader returned **(c)** — an ambiguity requiring a specification decision — and it reached that
+by controls rather than by the implementer's argument, which is what the constraint above was for.
+
+**Ruling: selector syntax narrows to a bare `*` or an exact literal. Partial selector wildcards are
+REFUSED.** The decisive control is that a partial can silently broaden one intended file to several,
+and the present corpus pays **zero compatibility cost**.
+
+The measurement, reproduced independently by this lane before relaying it:
+
+    M-1[nd-unfolding/unified_throw_cov*].first_insert
+      bad_pattern() -> None          ACCEPTED, no warning
+      reaches 2 files: unified_throw_cov.py, unified_throw_cov_5d.py
+      the literal form reaches 1
+
+and the inconsistency is *internal to the guard*: it REFUSES `M-4.behin*`, which reaches exactly one
+field today, printing that a wildcard "would whitelist more than one." It applies that reasoning in
+field space and not in selector space. `unified_throw_cov.py` is the row whose omission **was** the
+F-17(a) failure.
+
+**This is a PROSPECTIVE specification decision.** It does not reinterpret the failed rehearsal as
+having satisfied any clause, and it discharges nothing.
+
+**Implementation route, mandatory:** the normal independent implementation-and-grade sequence — the
+implementer and the grader are different parties, and neither is the spec author. **The
+specification and its digest are updated ONLY AFTER the implementation passes**, not before. All
+historical digests are preserved as as-of referents; none is rewritten.
+
+Consequence for the note transcribed under §12.1: `m1m6_expected_differences.json` at `92091ae8`
+currently describes partial selectors as accepted, because that is the **graded** behaviour and the
+note is required to describe graded behaviour rather than intent. It is deliberately **left
+unchanged** until the narrowing is implemented and passes, per this ruling. Its sentence deferring to
+Joseph is therefore stale in wording while remaining correct in effect — do not add a partial
+selector — and it is knowingly left so rather than edited early. §12.2.1 governs.
+
 ### 12.3 Scope, and what these do not move
 
 The four newly identified fail-open spellings (`M-6[*`, `M-4.head*`, `M-3.*x`, `M-4.*e*`) and the
@@ -370,3 +406,46 @@ than constituting a separate finding.
 
 **None of this changes the Gate-2 FAIL recorded in §1.** No new compute and no Gate-2 filing is
 authorized by anything in this section, and a passing grade confers neither.
+
+
+## 13. Withdrawn and non-citable: three mutation figures
+
+**Ruled by Joseph, 2026-08-25.** The comparator-repair lane's claim 5 reported a mutation matrix.
+Under independent grading, two figures reproduce exactly and three do not:
+
+| Figure as claimed | Independently measured | Status |
+|---|---|---|
+| 16 arms RED on restoring the pristine guard | 16 — exact | reproduces |
+| deleting the backstop reddens exactly its own arm | exact | reproduces |
+| "across **5 methods**" | **6** | **WITHDRAWN, non-citable** |
+| re-allowing a field-name wildcard reddens **4** | **1** (9 if the backstop is also removed) | **WITHDRAWN, non-citable** |
+| reject-everything guard reddens **97** | **121** (111 fail + 10 error); two other placements give 151 and 117 — nothing yields 97 | **WITHDRAWN, non-citable** |
+
+The direction of every row holds and **the repair's power is real and independently established**;
+the grader's assessment is that the three were most likely taken against an intermediate tree and
+never re-derived at the committed state.
+
+**Ruled: do NOT dispatch another lane to recover these counts.** The reproducible controls already
+establish the repair's relevant power and D-3's closure. Re-measure only if a later gate actually
+depends on the mutation matrix. An inaccurate diagnostic count is not itself an audit campaign.
+
+Also recorded from the same grade: claim 2's "breadth is inexpressible" is **overstated** — true of
+field-name breadth, false of selector-space breadth (which is what §12.2.1 now closes). Claim 6 is
+true but over a shipped-list population of **one** pattern, and must be quoted with that denominator.
+
+## 14. F-14 self-reports: confession is not validation
+
+**Ruled by Joseph, 2026-08-25**, in answer to a structural objection raised by the comparator-repair
+lane: both lanes had produced a false compliance claim *inside a record whose purpose was to
+establish compliance*, and in both cases the unmeasured belief was the one that excused its author.
+
+**Ruling: independent authorship of an F-14 self-report is NOT required.** A party remains
+responsible for filing its own omission — attribution belongs with the party that made it, and
+outsourcing the confession would break that.
+
+**But independent VERIFICATION is required before such a filing can discharge F-14 or support a gate
+claim.** This separates confession from validation while preserving attribution.
+
+Consequence, stated plainly: the two F-14 discipline records now on `main` are **filings, not
+discharges**. Neither discharges F-14 and neither supports a gate claim until independently
+verified. Nothing currently depends on them doing so.

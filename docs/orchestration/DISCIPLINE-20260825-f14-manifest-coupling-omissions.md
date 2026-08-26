@@ -25,6 +25,22 @@ commits. This is a discipline record, not a defect disclosure and not a gate doc
 - Any other lane's coupling omission. One is named in §4.1 and is deliberately **not** counted here.
 - The current state of `MANIFEST.tsv`. That is a measurement with a date, not a property.
 
+## 0. STATUS — this is a filing, not a discharge
+
+**Ruled by Joseph, 2026-08-25.** Independent authorship of an F-14 self-report is not required: the
+party that made the omission files it, because attribution belongs with that party. **Independent
+VERIFICATION is required before this filing can discharge F-14 or support a gate claim.** Confession
+is separated from validation.
+
+**This record has not been independently verified.** It is therefore a filing only. Do not cite it
+as discharging F-14 and do not rest a gate claim on it. Nothing currently depends on it doing so.
+
+The objection that produced this ruling came from the comparator-repair lane and is worth keeping:
+both lanes produced a false compliance claim inside a record whose purpose was establishing
+compliance, and in both cases the unmeasured belief was the one that excused its author. A record
+written by the party it convicts has that failure mode structurally — the remedy is a verifier, not
+a different author.
+
 ## 1. The obligation
 
 F-14 requires every §6 row discharged in the same commit as the repair, **plus** §7.0.7(1):

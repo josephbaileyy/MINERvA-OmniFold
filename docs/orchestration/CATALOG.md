@@ -132,6 +132,18 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 - [`DECLARATION-20260823-k0-candidate-sha.md`](DECLARATION-20260823-k0-candidate-sha.md) — the
   A-2(a)–(g) filing the pass rests on. **780** tracked source files, listing sha256 `1b45da55…`.
 
+- [`DEFECT-20260825-generate-manifest-dirty-warning-nondiscriminating.md`](DEFECT-20260825-generate-manifest-dirty-warning-nondiscriminating.md)
+  — **`generate_manifest.py`'s DIRTY warning fires identically on correct procedure and on the
+  hazard, and its advice is FALSE in the one case F-14 requires.** Controls, only staged-ness
+  varying: clean tree **silent** (so the instrument is not always-on), staged edit and unstaged edit
+  give **byte-identical warning text and equal rc**. A lane cannot use this output to tell whether it
+  is about to break the F-14 coupling. Measured consequence: six coupling omissions across two lanes
+  in one day, one of them with the warning's own sentence recorded as the reasoning. **Owned defect
+  with an unassigned owner** — a repair must add an arm that FIRES on dirty-and-not-staged, stays
+  SILENT on dirty-and-fully-staged, and covers the opposite direction (staged but not committed),
+  which an obvious implementation will miss. **NOT** citable for any Gate-2 clause, **does not alter
+  Gate 2's FAIL**, is not part of the D-3 repair, and excuses no omission.
+
 
 - Live snapshot: [`LIVE-STATE.md`](LIVE-STATE.md); run its freshness check before use.
 - Bounded queue: [`../CURRENT_WORK.md`](../CURRENT_WORK.md); sources live in
