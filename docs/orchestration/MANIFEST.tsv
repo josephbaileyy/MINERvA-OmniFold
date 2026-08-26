@@ -549,7 +549,7 @@ docs/orchestration/test_probe_oi120c_verdict.py	tracked	MACHINE	test-script			ge
 docs/orchestration/test_receipt_verdict_is_not_the_superseded_one.py	tracked	MACHINE	test-script			generated		exact-path-only		no	0	81	3837
 docs/orchestration/test_slurm_array_status.py	tracked	MACHINE	test-script			generated		exact-path-only		no	0	166	8120
 docs/orchestration/test_usagectl.py	tracked	MACHINE	test-script			generated		exact-path-only		no	2	683	29662
-docs/orchestration/test_verify_f8b_attestation.py	tracked	MACHINE	test-script			generated		exact-path-only		no	1	497	23292
+docs/orchestration/test_verify_f8b_attestation.py	tracked	MACHINE	test-script			generated		exact-path-only		no	1	514	24294
 docs/orchestration/test_verify_receipt_artifacts.py	tracked	MACHINE	test-script			generated		exact-path-only		no	0	169	7985
 docs/orchestration/test_verify_run_receipt_blind_spots.py	tracked	MACHINE	test-script			generated		exact-path-only		no	2	288	14714
 docs/orchestration/test_wakerctl.py	tracked	MACHINE	test-script			generated		exact-path-only	docs/orchestration/verify_hash_bindings.py	no	6	1204	51344
@@ -558,7 +558,7 @@ docs/orchestration/test_watch_report_train_run.py	tracked	MACHINE	test-script			
 docs/orchestration/test_watch_slurm_array_resume.py	tracked	MACHINE	test-script			generated		exact-path-only		no	1	70	2995
 docs/orchestration/usage-policy.json	tracked	MACHINE	machine-data			generated		exact-path-only	docs/orchestration/usagectl.py	no	2	18	424
 docs/orchestration/usagectl.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/generate_live_state.py;docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py	no	13	1231	50203
-docs/orchestration/verify_f8b_attestation.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/test_verify_f8b_attestation.py;docs/orchestration/test_verify_run_receipt_blind_spots.py;docs/orchestration/verify_run_receipt_blind_spots.py	no	6	310	17421
+docs/orchestration/verify_f8b_attestation.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/test_verify_f8b_attestation.py;docs/orchestration/test_verify_run_receipt_blind_spots.py;docs/orchestration/verify_run_receipt_blind_spots.py	no	6	322	18058
 docs/orchestration/verify_hash_bindings.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/compare_m1_m6.py;docs/orchestration/measure_m1_m6.py;docs/orchestration/state/regen_canonical_namespace_field_pins.py;docs/orchestration/test_compare_m1_m6.py;docs/orchestration/whose_row.py;lib/enumerate_backfill_families.py;nd-unfolding/mnv_env_manifest.py;nd-unfolding/pet/atomic_write.py;nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/sbatch_gate5_data_only_target_array.sh;nd-unfolding/pet/sbatch_gate6_leg0_tier_calibration_array.sh;nd-unfolding/pet/sbatch_powered_closure.sh;nd-unfolding/pet/sbatch_powered_closure_budget_probe.sh;nd-unfolding/tests/test_hash_bindings.py;nd-unfolding/tests/test_oi136_failopen_inventory_ratchet.py;nd-unfolding/tests/test_powered_closure_preflight.py	no	63	722	41092
 docs/orchestration/verify_receipt_artifacts.py	tracked	MACHINE	script			generated		exact-path-only	2d-unfolding/HANDOFF_bkg_negweight/build_negweight_hpss_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/test_verify_receipt_artifacts.py	no	12	216	9943
 docs/orchestration/verify_run_receipt_blind_spots.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/test_verify_run_receipt_blind_spots.py;docs/orchestration/verify_f8b_attestation.py	no	6	239	9769

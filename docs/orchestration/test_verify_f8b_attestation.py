@@ -428,6 +428,23 @@ class TheSecondRoundOfAdversarialInputs(Fixture):
         att["independent_reviewer"]["role"] = "close out lane"
         self.assertRejected(att, "SELF-ATTESTATION on role")
 
+    def test_roles_differing_only_by_a_DIGIT_are_two_parties_not_one(self):
+        """The other direction of the alias fix, and it caught a real false positive.
+
+        Comparing roles on the findings' letters-only form collided `codex-school` with
+        `codex-school2` -- two actual profiles in this repo -- and `agy-g2-` with `agy-g3-`. Failing
+        closed is the safe direction but it is still wrong, so role identity keeps digits.
+        """
+        for author, reviewer in (("codex-school", "codex-school2"),
+                                 ("agy-g2-gate-verifier", "agy-g3-gate-verifier"),
+                                 ("agy-lane-1", "agy-lane-2")):
+            att = valid_attestation()
+            att["receipt_author"]["role"] = author
+            att["independent_reviewer"]["role"] = reviewer
+            rc, text = self.run_cli(att)
+            self.assertEqual(rc, A.PASS_EXIT,
+                             "%r and %r are two roles, not one: %s" % (author, reviewer, text))
+
     def test_a_HOMOGLYPH_in_an_identity_field_is_rejected(self):
         att = valid_attestation()
         att["receipt_author"]["role"] = "\u0430uthor"   # Cyrillic a

@@ -128,6 +128,18 @@ def _skeleton(s: str) -> str:
     return re.sub(r"[^a-z]", "", s.lower())
 
 
+def _role_key(s: str) -> str:
+    """Role identity modulo punctuation and case -- but NOT modulo digits.
+
+    `_skeleton` strips digits, which is right for findings (`B*80+1` vs `B*80+2` is one finding) and
+    WRONG for roles: measured, it collides `codex-school` with `codex-school2` -- two real profiles
+    in this repo -- and `agy-g2-gate-verifier` with `agy-g3-gate-verifier`. That direction fails
+    closed, so it would have refused honest attestations rather than passing dishonest ones, but it
+    is still a false positive and a guard needs testing in both directions.
+    """
+    return re.sub(r"[^a-z0-9]", "", s.lower())
+
+
 def validate(att: dict, receipt_sha: str, report_sha: str) -> tuple[int, list[str]]:
     bad: list[str] = []
 
@@ -201,7 +213,7 @@ def validate(att: dict, receipt_sha: str, report_sha: str) -> tuple[int, list[st
                        ("conversation_uuid", "one conversation attesting to itself is not review")):
             # Roles compare on the letters-only normal form, so `close-out lane` and
             # `close out lane` are one party. Uuids are already canonical by the time we get here.
-            same = _skeleton if f == "role" else _norm
+            same = _role_key if f == "role" else _norm
             if author[f] and reviewer[f] and same(author[f]) == same(reviewer[f]):
                 bad.append("SELF-ATTESTATION on %s (%r): %s. F-8(b) requires an INDEPENDENT "
                            "judgement." % (f, reviewer[f], why))
