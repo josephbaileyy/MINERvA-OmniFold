@@ -158,13 +158,11 @@ nor blockers nor idle flags → transient (guard will act within
 
 ## Notifications (how the user learns without polling)
 
-`notify_command` in `waker-config.json` calls `notifyctl.py`, which fans out
-independently to `/usr/bin/mail` and ntfy. Email goes to
-`josephrb@nersc.gov`, which forwards to the user's Stanford inbox (delivery
-verified 2026-07-20; direct gmail bounced). ntfy carries only a generic alert;
-the detailed body stays in email and cluster receipts. Per-channel markers
-prevent a successful email from being duplicated while a failed ntfy delivery
-retries, and the waker marker is written only after both channels succeed.
+`notify_command` in `waker-config.json` calls `notifyctl.py`, which currently
+sends cluster-originated attention events through ntfy only. ntfy carries a
+generic alert; detailed state stays in cluster receipts and is inspected with
+Termius. Per-channel markers deduplicate delivery, and the waker marker is
+written only after the enabled channel succeeds.
 
 - a new `BLOCKED-ON-USER.json` declaration (body includes the ask and the
   answer instructions below);
@@ -173,19 +171,16 @@ retries, and the waker marker is written only after both channels succeed.
 - resume retries exhausted for an event.
 
 Failed sends retry on later ticks; markers under `state/waker/notified/`
-dedupe. Healthy progress, idle-guard self-healing, and ordinary event
-handling never email on their own; instead a **status digest** goes out once
-per `status_report_interval_seconds` bucket (travel default 43200 s, twice
-daily): headline (blocked/idle/armed), watches, events, tick liveness, Slurm
-jobs, recent commits and rounds — composed purely from filesystem state,
-zero LLM involvement. Set the interval to 0 to disable. Secrets live only in
-gitignored `state/waker/notification-secrets.json` with mode 0600.
+dedupe. Healthy progress, idle-guard self-healing, and ordinary event handling
+do not alert. `status_report_interval_seconds` is 0, so routine status digests
+are disabled; inspect status through Termius. Secrets live only in gitignored
+`state/waker/notification-secrets.json` with mode 0600.
 
 `heartbeat_command` invokes `notifyctl.py heartbeat` after every completed
 tick. Once the secret file contains a Healthchecks-compatible URL, this is an
-external dead-man signal: email and ntfy report campaign problems, while a
-missed heartbeat reports that the reporter itself stopped. No heartbeat URL is
-a deliberate no-op, so enrollment cannot break the ticker.
+external dead-man signal: ntfy reports campaign problems, while Healthchecks.io
+emails when the reporter itself stops. No heartbeat URL is a deliberate no-op,
+so enrollment cannot break the ticker.
 
 ## Account-capacity routing
 

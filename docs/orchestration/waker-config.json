@@ -44,6 +44,6 @@
     "status",
     "--json"
   ],
-  "status_report_interval_seconds": 43200,
+  "status_report_interval_seconds": 0,
   "prompt_preamble": null
 }

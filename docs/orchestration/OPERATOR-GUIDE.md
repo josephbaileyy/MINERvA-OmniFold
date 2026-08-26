@@ -20,7 +20,7 @@ tail -f state/waker/logs/<event>.log       # a finished turn's full output
 Interpretation: armed watches or running jobs → working, leave it alone.
 `campaign_idle: true` alone → the idle guard will self-heal within ~15 min.
 With `blocked_on_user: true` → it is waiting for you (you will also be
-emailed). An event stuck in `blocked` → environment broken; see §4.
+notified through ntfy). An event stuck in `blocked` → environment broken; see §4.
 
 **In-flight test** before doing anything that touches the thread: an event
 in `status` shown as `invoked` (not yet a terminal state) means a turn is
@@ -29,17 +29,17 @@ in-flight; watch `state/waker/logs/` or ledgers instead.
 
 ## 2. Getting notified
 
-Current transport: independent **email + ntfy** fanout. Email uses
-`/usr/bin/mail` to **josephrb@nersc.gov** (forwards to Stanford; verified
-2026-07-20); ntfy sends a generic phone alert so detailed research context is
-not placed in the push body. Fires exactly once per channel and condition — new
-BLOCKED-ON-USER declaration, environment-blocked dispatch, retries
-exhausted — plus a twice-daily status digest.
+Current cluster-originated transport is **ntfy only**. It sends a generic phone
+alert so detailed research context is not placed in the push body. It fires
+once per actionable condition — a new BLOCKED-ON-USER declaration,
+environment-blocked dispatch, exhausted retries, staged approval, or an
+interactive agent needing input. Routine status digests are disabled; inspect
+status through Termius when desired.
 
-The periodic digest is an operator summary, not a history dump: it reports
-only action required, queue counts, live Slurm compute, armed watches, live
-waker events, ticker freshness, and whether quiet is intentional. Closed
-watches and terminal events are counted but omitted.
+Outlook is reserved for the external Healthchecks.io dead-man alert. This
+separates ordinary attention events from the independent warning that the
+waker itself stopped reporting. Configure email in the Healthchecks.io web
+dashboard; the cluster does not send that message.
 
 ntfy and heartbeat credentials are in the gitignored, mode-0600 file
 `state/waker/notification-secrets.json`. From Termius, print only the topic
@@ -73,7 +73,7 @@ Other constraints:
   different: execution and filesystem access remain in that cluster process
   while the phone/browser is its interface. Use it only as a supervised,
   separate session; it may stage queue proposals but must never approve them
-  or replace the deterministic ticker. Email/ntfy remain the push channel.
+  or replace the deterministic ticker. ntfy remains the cluster push channel.
 
 ## 3. Answering when it needs you
 
@@ -94,7 +94,7 @@ never invokes a shell, and never calls an LLM. It binds the repository HEAD
 plus the launcher and any explicitly listed input files; drift makes the item
 permanently `stale`. A claim without a terminal receipt becomes
 `outcome-unknown` and is never retried automatically. A newly staged item
-sends one deduplicated email+ntfy approval alert on the next ticker pass.
+sends one deduplicated ntfy approval alert on the next ticker pass.
 
 From Termius:
 

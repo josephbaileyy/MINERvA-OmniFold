@@ -823,6 +823,10 @@ class StatusReportTests(WakerTestCase):
     def mail_calls(self):
         return [c for c in self.runner.calls if c["argv"][0] == "/usr/bin/mail"]
 
+    def test_production_config_disables_routine_digest(self):
+        config = json.loads(wakerctl.DEFAULT_CONFIG.read_text())
+        self.assertEqual(config["status_report_interval_seconds"], 0)
+
     def test_digest_sent_once_per_interval_bucket(self):
         ctx = self.ctx()
         self.arm_sentinel(ctx, "steady")

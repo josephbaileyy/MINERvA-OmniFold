@@ -63,6 +63,13 @@ class NotificationFanoutTests(unittest.TestCase):
             0,
         )
 
+    def test_production_routing_is_ntfy_only_with_external_heartbeat(self):
+        config = notifyctl.load_object(notifyctl.DEFAULT_CONFIG, required=True)
+        self.assertIs(config["email"]["enabled"], False)
+        self.assertIs(config["ntfy"]["enabled"], True)
+        self.assertEqual(config["ntfy"]["generic_body"], "Open Termius for details.")
+        self.assertIs(config["heartbeat"]["enabled"], True)
+
     def test_marker_key_cannot_escape_state_directory(self):
         with tempfile.TemporaryDirectory() as tmp:
             state = Path(tmp)

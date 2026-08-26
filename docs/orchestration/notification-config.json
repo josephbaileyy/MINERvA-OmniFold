@@ -2,7 +2,7 @@
   "schema_version": 1,
   "state_dir": "state/waker",
   "email": {
-    "enabled": true,
+    "enabled": false,
     "timeout_seconds": 30,
     "command": [
       "/usr/bin/mail",
@@ -15,7 +15,7 @@
     "enabled": true,
     "base_url": "https://ntfy.sh",
     "include_body": false,
-    "generic_body": "Open email or Termius for details.",
+    "generic_body": "Open Termius for details.",
     "priority": "default",
     "timeout_seconds": 15
   },
