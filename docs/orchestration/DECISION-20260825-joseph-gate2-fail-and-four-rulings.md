@@ -315,9 +315,36 @@ Run: `/pscratch/sd/j/josephrb/k0r2/runs/k0-aa67c426-20260824T145751Z`, submitted
 all terminal, 1122 accounting rows `COMPLETED 0:0`, 374 guard inventories.
 
 Frozen deploy tree: `/pscratch/sd/j/josephrb/k0r2/clean` at
-`aa67c426afaa9b6ca91c9996637a6bade950da9a`, detached, porcelain 0, 782 tracked files,
-`listing_sha256 fa3489e2...` — note that `listing_sha256` is a **field of the manifest**, not the
-manifest file's own digest, which is `622ddc0a`.
+`aa67c426afaa9b6ca91c9996637a6bade950da9a`, detached, `listing_sha256 fa3489e2...` — note that
+`listing_sha256` is a **field of the manifest**, not the manifest file's own digest, which is
+`622ddc0a`.
+
+**The file count is 782 SOURCE files, and the population matters.** An earlier version of this
+paragraph said "782 tracked files" with no population named, which is the same defect this paragraph
+corrects for digests and D-C records for "233 behind main" — a bare count with no right-hand side.
+Raised by the comparator-repair lane, which measured `git ls-files` on that tree, got **1583**, and
+correctly declined to call the ruling wrong without knowing the population. Measured:
+
+| population | count |
+|---|---|
+| `git ls-files`, all | 1583 |
+| **`git ls-files` filtered to `*.py` or `*.sh`** | **782** |
+| `git ls-files -- docs` | 543 |
+
+782 is the middle row. It is `mnv_source_manifest.py`'s definition of a *source* file
+(`SOURCE_SUFFIXES = (".py", ".sh")`, applied to `git ls-files`), confirmed independently by the
+baseline manifest's own fields: `file_count: 782`, `suffixes: ['.py', '.sh']`. A grader reaching for
+the obvious instrument gets 1583 and would conclude this document is in error.
+
+**On the frozen tree's cleanliness — the evidence is the far-end run, not a later re-check.**
+`porcelain=0` is F-1(b) clause (b) as measured by
+`measure_k0_farend_f1b_f17b.sh` during the run that produced the filed record. A *separate* re-check
+attempted at 19:25 on 2026-08-25 **never completed** — `git status` on that Lustre tree exceeds nine
+minutes — and left a 0-byte output file, which this lane briefly read as a clean result. It is not
+one: an empty file from a killed job is an absent answer. The same trap caught the comparator-repair
+lane independently, in the same shared scratchpad. Cheap bounded evidence that does hold, measured
+2026-08-25: `.git/HEAD` = `aa67c426`, `.git/index` unwritten since 2026-08-24 04:36:13, zero `.git`
+lock files, tree mode `dr-xr-x---`.
 
 ## 12. Open determinations delegated to the grader (Joseph, 2026-08-25)
 
