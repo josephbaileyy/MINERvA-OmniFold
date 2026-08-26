@@ -8,22 +8,79 @@ covariance --- historical recoil-only or full-event --- is adopted as a publicat
 uncertainty product, and the full-event central/statistical pairing was declined on
 2026-08-20 rather than resolved, with coverage the missing evidence rather than any
 branch having been chosen. The publication uncertainty critical path runs through the
-adopted scalar five-dimensional covariance (\S\ref{sec:uq-combine}), not through this
-section. Routed record: \texttt{OI-126} in \texttt{docs/OPEN\_ITEMS.md}.
+eventual adoption of a selection-complete scalar five-dimensional covariance
+(\S\ref{sec:uq-combine}), not through this section. Routed record:
+\texttt{OI-126} in \texttt{docs/OPEN\_ITEMS.md}.
 
-\paragraph{Feature contract.}
-As a low-level-representation cross-check, a point-cloud transformer (PET, the
-architecture of OmniLearn~\cite{Mikuni:2024qsr}, vendored with the upstream
-OmniFold implementation) unfolds the same ME~FHC data. At reconstruction level
-the classifier receives calorimetric recoil clusters:
-per-cluster energy, one view-projected transverse coordinate, and $z$
-(\texttt{cluster\_energy}, \texttt{cluster\_pos}, \texttt{cluster\_z},
-filtered on \texttt{cluster\_isMuontrack} through
-\texttt{CVUniverse::GetRecoClusters()}). At truth level it receives final-state
-hadrons with the muon removed. Muon-derived scalars enter selection and
-downstream binning, not either classifier. The learned weight is therefore a
-function of recoil information; a full-event estimator would train jointly on
-the declared muon and recoil inputs.
+\paragraph{What goes in.}
+\label{sec:pet-inputs}
+PET is the point-cloud transformer architecture used by OmniLearn~\cite{Mikuni:2024qsr},
+here vendored inside the OmniFold implementation.  Table~\ref{tab:pet-inputs}
+separates the historical recoil-only cross-check from the later full-event,
+extended-fiducial-phase-space (extended-FPS) candidate.  Both are unbinned
+classifiers over continuous event features; neither receives reporting-bin edges.
+
+\begin{table}[H]
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{5pt}
+  \renewcommand{\arraystretch}{1.08}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth}
+                      >{\raggedright\arraybackslash}p{0.375\textwidth}
+                      >{\raggedright\arraybackslash}p{0.375\textwidth}@{}}
+    \toprule
+    object & historical recoil-only PET & later full-event extended-FPS PET \\
+    \midrule
+    reco/data tokens & Non-muon calorimetric clusters
+      $(E_{\rm dep},\mathrm{pos}_{\rm view},z)$.  The transverse position is
+      the coordinate in the cluster's X/U/V view. & The same generic
+      calorimeter-cluster objects, extended to
+      $(E_{\rm dep},\mathrm{pos}_{\rm view},z,\mathrm{view},t)$.  View is a
+      detector-plane identifier, not an object-type label. \\
+    \addlinespace[3pt]
+    truth tokens & Final-state hadrons after removing the primary muon and
+      neutrinos.  The dump stores $(E,p_x,p_y,p_z,\mathrm{PDG})$, but
+      \texttt{minerva\_pet\_dataloader.py} slices off PDG before classification,
+      so the classifier receives only the four-momentum. & Final-state-hadron
+      tokens $(E,p_x,p_y,p_z,\mathrm{PDG},\theta,\cos\phi,\sin\phi)$; PDG is
+      retained and azimuth is represented periodically. \\
+    \addlinespace[3pt]
+    event object & None.  Muon variables are used for event selection and for
+      downstream reporting/binning, but are not classifier inputs. & Reco/data:
+      $(\pT,\pPar)$, the reconstructed muon four-vector, $(\cos\phi,\sin\phi)$,
+      $q/p$, the MINOS-match flag, and reconstructed vertex $(x,y,z)$.  Truth:
+      muon $(\pT,\pPar)$.  The muon is a distinguished event-level input, not a
+      cloud token, and conditions the transformer through feature-wise linear
+      modulation (FiLM). \\
+    \addlinespace[3pt]
+    cardinality and grid & \multicolumn{2}{>{\raggedright\arraybackslash}p{0.75\textwidth}}{Clouds are
+      energy-ranked and truncated or zero-padded to 12 tokens.  The extended
+      $(\pT,\pPar)$ edges define domain retention, reporting, covariance and
+      validation for the later estimator; they are never classifier features or
+      training bins.} \\
+    \bottomrule
+  \end{tabular}
+  \caption{Classifier input contract for the two PET representations used in this
+  analysis.  ``Reco/data'' means that simulation at reconstruction level and
+  measured data use the same observable schema; truth-only quantities are not
+  manufactured on that leg.}
+  \label{tab:pet-inputs}
+\end{table}
+
+\paragraph{What comes out.}
+\label{sec:pet-output-contract}
+The classifier score is not the scientific result and PET does not emit a binned
+network prediction.  Its probabilities (implemented through raw logits) are
+intermediate density-ratio estimates.  OmniFold converts the final truth-step
+logit to one push weight per simulated truth event,
+$w_{\rm push}=\exp(\mathrm{logit})$, and those weights remain unbinned.  The
+reported cross section is formed only afterward: apply the push weights to the
+stored truth inventory, then histogram the requested observable and perform the
+standard flux, target and bin-volume normalization~\cite{Andreassen:2019cjw}.
+Consequently any supported observable that is a function of the stored truth
+record or retained truth cloud can be projected without retraining.  This does
+not create configurations absent from the generator support, recover constituents
+lost above the cloud cap, or turn a recoil-only weight into a full-event weight.
 
 \subsection{Shape cross-check against the scalar result}
 \label{sec:pet-shape}
@@ -207,7 +264,10 @@ regenerating the selected cloud for every lateral endpoint.  A replacement
 construction would need end-to-end joint nuisance/retraining shifts and the
 selection-complete FPS lateral samples, and would belong to a full-event PET
 estimator with its own statistical and ML ensembles.  This section therefore
-quotes only the recoil-PET central value and its closure.
+retains the recoil-only central extraction and ordinary closure as historical
+method-development diagnostics.  It quotes neither a current PET--GBDT agreement
+level nor a current closure level, and no recoil-only covariance is paired with
+a PET central value.
 
 \subsection{Truth-cloud projection within the recoil cross-check}
 \label{sec:pet-projection}
@@ -221,7 +281,8 @@ a function of those 4-vectors can therefore be obtained after the
 unfold by re-binning the push-weighted truth events --- no re-training and no
 re-unfolding. We demonstrate this \emph{reweight-then-project} capability on
 three observables computed post-hoc from the stored cloud: available energy
-$\Eavail$, the hadronic-system invariant mass
+$\Eavail$ (using the exact operational definition in
+\S\ref{sec:eavail-definition}), the hadronic-system invariant mass
 $W_{\text{had}}=\sqrt{(\sum E)^2-|\sum\vec p|^2}$, and the proton/charged-pion
 multiplicities. The exercise also quantifies the two
 limitations of the stored cloud.
@@ -319,27 +380,54 @@ study (\S\ref{sec:fps}). Within that limit, hadron-cloud diagnostics can be
 projected over the stored truth spectrum. They do not
 turn the recoil-derived weight into a full-event weight or remove the prior
 conditional for omitted muon information.
-Two extensions lie beyond re-projection from the stored cloud (they would
-require regenerating the event dump):
-adding the muon through separately declared reco/data and truth event-feature
-interfaces (it is excluded from the recoil cloud but retained as a stored
-scalar); and raising the 12-particle cap for the rare
-very-high-multiplicity tail (unnecessary at $\Eavail$ scale per the validation
-above). Full details and reproduction are in
+The stored recoil-only result cannot retroactively acquire the muon dependence
+of the later full-event estimator: those are separate estimators with the
+distinct interfaces in Table~\ref{tab:pet-inputs}.  Nor can re-projection recover
+the rare very-high-multiplicity constituents discarded above the 12-particle cap
+(unnecessary at $\Eavail$ scale per the validation above). Full details and reproduction are in
 \texttt{nd-unfolding/pet/POINTCLOUD\_PROJECTION.md}.
 
-\subsection{Scope of the cross-check and requirements for a full-event extension}
+\subsection{Relation to the Gregor/minerva-ml representation}
+\label{sec:pet-gregor}
+Gregor Krzmanc's \texttt{minerva-ml} study starts from the same broad MINERvA
+ME~FHC simulation but solves different supervised tasks: available-energy
+regression and charged-current-pion classification on an OmniLearned/PET2
+backbone~\cite{Krzmanc:2026transfer}.  At its pinned analysis commit, events are
+represented by typed muon, photon, prong and calorimeter-blob tokens, with
+collider-style $(\eta,\phi,\log p_T,\log E)$ coordinates, learned type embeddings,
+$dE/dx$, position and timing; prongs or blobs above their separate caps are
+combined into aggregate overflow tokens.\footnote{Implementation comparison:
+\href{https://github.com/gregorkrz/minerva-ml/blob/af5d92ed2b3b448a09b6b7cf6b4f179e5757b4ed/DATASET.md}{\texttt{minerva-ml DATASET.md}}
+and
+\href{https://github.com/gregorkrz/minerva-ml/blob/af5d92ed2b3b448a09b6b7cf6b4f179e5757b4ed/MODELS.md}{\texttt{MODELS.md}},
+commit \texttt{af5d92ed}.}
+Our reco leg instead uses generic detector-geometry calorimeter clusters, has no
+reconstructed-object type embedding, and discards tokens beyond the common
+top-12-by-energy cap.  More importantly, our task is OmniFold density-ratio
+estimation against real data with explicit backgrounds and native misses, not
+supervised regression or classification on simulation.  Typed reconstructed
+objects and aggregate overflow tokens are therefore prospective representation
+improvements, not features of the present estimator.
+
+\subsection{Full-event artifacts and present boundary}
+\label{sec:pet-full-event-status}
 Within its recoil-only contract, this study demonstrates paired reconstruction-
 and truth-level point-cloud construction, GPU training, full-sample reweighting,
 absolute cross-section extraction, coherent bootstrap replicas, and the response
 studies above end to end. It does not establish simultaneous muon-plus-hadron
 unfolding, because the muon was not a classifier input.
 
-A full-event extension requires separate observable
-\texttt{event\_reco}/\texttt{event\_data} and truth-level
-\texttt{event\_truth} interfaces containing a distinguished muon, explicit
-masks/types and validated neighborhood geometry. An omitted-variable stress
-closure that changes muon kinematics within narrow recoil strata would test
-whether the joint estimator recovers information that the recoil-only
-estimator necessarily misses. Any such estimator requires its own nominal fit
-and uncertainty budget.
+The later full-event extended-FPS work is not merely prospective: a nominal
+artifact and a 50-member $C_{\rm stat}$ artifact exist.  The latter was
+constructed by one builder and is not independently verified or adopted;
+Joseph declined pairing it with the nominal on 2026-08-20.  The ruling does not
+invalidate the measured dispersion and does not establish a mechanism; it leaves
+a spatially coherent anomaly whose coverage has not been validated, and requires
+estimator-equivalence plus coverage evidence before reconsideration.  No
+$C_{\rm ML}$ and no full PET total covariance exist, and no PET covariance is
+adopted as a publication uncertainty.  Gate~6 remains blocked under the exact
+receipt prohibitions \texttt{do\_not\_select\_passing\_subset},
+\texttt{do\_not\_construct\_C\_ML}, \texttt{do\_not\_move\_central},
+\texttt{do\_not\_start\_leg\_2}, and \texttt{do\_not\_retry\_unchanged}.
+The construction and its limitations are recorded in App.~\ref{app:cstatlimit};
+none of these artifacts changes PET's diagnostic and method-development status.

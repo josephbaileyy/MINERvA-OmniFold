@@ -1515,12 +1515,19 @@ zero. We mean-center throughout, matching MAT (\S\ref{sec:minerva}); the
 bands where the distinction matters are the asymmetric ones (BeamAngle,
 MuonResolution, and the one-sided NC band).
 
-\subsection{The full-event statistical covariance: what it is, and what it is not}
+\subsection{The full-event $C_{\rm stat}$ construction: what it is, and what it is not}
 \label{app:cstatlimit}
+
+\noindent\textbf{Status boundary.}  This artifact exists and its construction is
+recorded, but it has one builder, is not independently verified or adopted, and
+is not paired with the full-event nominal.  Joseph declined that pairing on
+2026-08-20; no PET total covariance is adopted for publication.  The details
+below describe the construction and measured family dispersion, not coverage or
+an adopted ``statistical uncertainty.''
 
 \subsubsection{Construction, stated as a method choice}
 
-The statistical covariance for the full-event extended-phase-space measurement is built from a
+The full-event extended-phase-space $C_{\rm stat}$ artifact is constructed from a
 $50$-member replica family. Each member repeats the whole analysis --- background-subtracted target
 construction, estimator training, and cross-section extraction --- on an independent \emph{coherent}
 $\mathrm{Poisson}(1)$ bootstrap of \emph{all three} contributing inventories: one global factor per
@@ -1536,8 +1543,8 @@ target through the Stay-Positive refinement rather than rescaling the nominal ta
 factors follow the signal MC everywhere it is used. This is a \emph{third} stream relative to the
 scalar bootstrap of \S\ref{sec:bootstrap}, which draws data and MC factors only: the full-event
 pipeline injects its background as a separate weighted inventory, so that inventory has counting
-noise of its own. The object is therefore \emph{total} statistical uncertainty --- data and MC
-together --- which is why the declared budget carries no separate MC-statistics component. The
+noise of its own. The construction therefore resamples data and MC counting variation together;
+this describes its intended scope and does not make it an adopted statistical uncertainty.  The
 covariance is the sample covariance of the $50$ resulting cross sections about their own mean,
 normalised $1/(N-1)$, on the density scale.
 
@@ -1669,7 +1676,7 @@ and is not a defensible basis for tightening an error bar.
 \textbf{What the band figure is.} The $67\%$ is the spread of a \emph{refit} estimator under
 \emph{total-statistics} resampling --- data, signal MC and background MC together, not the measured
 leg alone, and so not a data-statistical error in the sense a published one is. Two consequences
-travel with the number wherever it is quoted. First, it is the sampling uncertainty \emph{of this estimator} --- a learned,
+travel with the number wherever it is quoted. First, it is the observed refit dispersion \emph{of this estimator} --- a learned,
 iterative reweighting refit on every replica --- and not a property of the data alone; it
 includes the estimator's own sensitivity to which events are present. Second, it is therefore
 an \emph{upper bound} on how poorly the data constrain the cross section in that region: a

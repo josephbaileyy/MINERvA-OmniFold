@@ -252,16 +252,36 @@ def literals_from(body: str, macros: dict[str, str]) -> tuple[set[str], list[str
 
 
 def pdf_text(pdf: Path, tmp: Path) -> str | None:
-    if not pdf.exists() or not shutil.which("pdftotext"):
+    """Extract searchable text without allowing an unavailable backend to skip the PDF gate."""
+    if not pdf.exists():
         return None
     dest = tmp / (pdf.stem + ".txt")
+    pdftotext = shutil.which("pdftotext")
+    gs = shutil.which("gs")
+    if pdftotext:
+        command = [pdftotext, "-q", str(pdf), str(dest)]
+    elif gs:
+        # NERSC's TeX module has Ghostscript but not Poppler.  txtwrite supplies
+        # the non-empty rendered-PDF text this literal-containment gate needs.
+        command = [
+            gs,
+            "-q",
+            "-dSAFER",
+            "-dBATCH",
+            "-dNOPAUSE",
+            "-sDEVICE=txtwrite",
+            f"-sOutputFile={dest}",
+            str(pdf),
+        ]
+    else:
+        return None
     try:
-        subprocess.run(["pdftotext", "-q", str(pdf), str(dest)], check=True)
+        subprocess.run(command, check=True)
     except (subprocess.CalledProcessError, OSError):
         return None
     if not dest.exists():
         return None
-    # AN EMPTY EXTRACTION IS NOT A SEARCH. pdftotext can SUCCEED and produce nothing -- an
+    # AN EMPTY EXTRACTION IS NOT A SEARCH. A PDF extractor can SUCCEED and produce nothing -- an
     # image-only or outlined PDF. Returning "" made `v in txt` false for every struck literal, so
     # an outward build reported "0 of 17 struck literals": literally true, completely uninformative,
     # and indistinguishable in the output from a real clean result. The note side was protected by
@@ -269,7 +289,7 @@ def pdf_text(pdf: Path, tmp: Path) -> str | None:
     # were not. Found by Session D on 98b926a with a fake pdftotext that succeeded empty for
     # main_paper.pdf only, so the note control still passed and the run still exited 0.
     # LATENT, NOT OCCUPIED: D could not produce it from latexmk with a real PDF, only by simulating
-    # pdftotext. Same distinction as spaced (emitted by the build today) vs comment (not).
+    # an extractor. Same distinction as spaced (emitted by the build today) vs comment (not).
     # Returning None routes it into the existing strict-fatal path with no new mechanism.
     text = dest.read_text(encoding="utf-8", errors="replace")
     return text if text.strip() else None
@@ -461,16 +481,17 @@ def main() -> int:
 
     # ---- PDF-level ------------------------------------------------------------------------
     # CONTRACT CHANGED 2026-08-12 on Joseph's decision: "exit 0 must mean both the source and PDF
-    # stages ran and passed. Missing PDFs or pdftotext must be nonzero in build_all.sh." Previously
+    # stages ran and passed. Missing PDFs or a supported text extractor must be nonzero in
+    # build_all.sh." Previously
     # every skip below was a `note` and the run still returned 0, so on a machine without
-    # `pdftotext` the check was silently HALF a check -- and worst of all it was machine-dependent,
+    # a text extractor the check was silently HALF a check -- and worst of all it was machine-dependent,
     # passing here and skipping there with no difference in output status. A skip is now a FAILURE
     # unless --source-only is passed explicitly.
     _skip = notes.append if not strict else failures.append
 
     def _skipped(msg: str) -> None:
         _skip(msg + ("" if not strict else "  [PDF stage did not run; exit 0 would misreport it. "
-                                           "Build the PDFs, install pdftotext, or pass "
+                                           "Build the PDFs, install pdftotext or Ghostscript, or pass "
                                            "--source-only to accept a source-only check]"))
 
     if not struck_values:
@@ -478,7 +499,7 @@ def main() -> int:
     else:
         note_txt = pdf_text(note_dir / "main_note.pdf", tmp)
         if note_txt is None:
-            _skipped("main_note.pdf absent, pdftotext unavailable, or the PDF extracted EMPTY -- "
+            _skipped("main_note.pdf absent, no PDF text extractor available, or the PDF extracted EMPTY -- "
                       "PDF stage did not run")
         else:
             seen_in_note = sorted(v for v in struck_values if token_hit(v, note_txt))

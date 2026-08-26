@@ -35,14 +35,59 @@ three, four and five recorded observables, not multidimensionality by itself.
 
 
 
-\subsection{Definitions and pipeline}
+\subsection{Operational definition and provenance}
 \label{sec:3d-method}
-Available energy follows the MINERvA low-recoil convention
-(Ref.~\cite{MINERvA:2023avz}, Eq.~4): truth
-$\Eavail=\sum_{p}\mathrm{KE}+\sum_{\pi^{\pm}}\mathrm{KE}+\sum_{\pi^{0},\gamma}E$
-(excluding neutrons and the muon), via \texttt{CVUniverse::GetEAvailableTrue()};
-reco $\Eavail$ is the calorimetric tracker$+$ECAL estimate scaled by $1.17$,
-\texttt{CVUniverse::NewEavail()}. The event loop evaluates both accessors
+\label{sec:eavail-definition}
+The operational truth definition is the code, not the shorthand ``low-recoil
+convention.''  In MeV, \texttt{CVUniverse::GetEAvailableTrue()} implements
+\begin{equation}
+ E_{\rm avail}^{\rm true}=
+ \sum_{p}(E-938.27)
+ +\sum_{\pi^\pm}(E-135)
+ +\sum_{\pi^0}E
+ +\sum_{\gamma}E .
+ \label{eq:eavail-implemented}
+\end{equation}
+Thus protons and charged pions contribute the indicated kinetic-energy-like
+terms, while neutral pions and photons contribute total energy.  Every other
+final-state species contributes zero: in particular neutrons, the primary muon,
+secondary $e^\pm$, neutrinos, kaons, antiprotons, strange baryons and other
+mesons or nuclear-remnant records are excluded.  Reconstructed available energy
+is the MAT calorimetric quantity
+\begin{equation}
+ E_{\rm avail}^{\rm reco}=1.17\left[(E_{\rm blob}^{\rm tracker}
+ -E_{\mu\text{-fuzz}}^{\rm tracker})+(E_{\rm blob}^{\rm ECAL}
+ -E_{\mu\text{-fuzz}}^{\rm ECAL})\right],
+ \label{eq:eavail-reco-implemented}
+\end{equation}
+implemented by \texttt{CVUniverse::NewEavail()}; the code applies no final
+non-negative clamp.
+
+Both functions were inherited from MAT-MINERvA rather than selected in this
+analysis.  Agreement with a published convention is therefore a defence of the
+inherited position, not its provenance, and there is no unique published
+$E_{\rm avail}$ definition.  Rodrigues \emph{et al.}~\cite{MINERvA:2016lowrecoil}
+give a closed five-species list --- proton and charged-pion kinetic energy plus
+$\pi^0$, electron and photon total energy.  Equation~\eqref{eq:eavail-implemented}
+coincides with four of those five species but excludes the secondary $e^\pm$.
+The later Ascencio \emph{et al.} convention~\cite{MINERvA:2022incl} is open:
+it includes other final-state particles except neutrons and subtracts a nucleon
+mass for strange baryons, so it includes species omitted by our closed list.
+The charged-pion term in Rodrigues and in Henry/Su \emph{et al.}
+Eq.~4~\cite{MINERvA:2023avz} is kinetic energy; the
+\texttt{minerva-ml} implementation discussed in \S\ref{sec:pet-gregor} instead
+uses charged-pion total energy.  We therefore do not claim generically to
+``match the published definition.''
+
+One inherited constant must remain explicit.  Production subtracts
+\SI{135}{MeV} per charged pion rather than the physical charged-pion mass of
+approximately \SI{139.57}{MeV}.  It was not corrected in production.  A
+committed measurement of the effect exists, but there is not yet an adopted
+scalar-5D covariance to project, so materiality against the eventual adopted
+projection has not been established.  This note neither calls the effect
+immaterial nor applies the six-site correction or triggers a rerun.
+
+The event loop evaluates both accessors
 over all twelve ME~FHC playlists, carrying the $\Eavail$
 branches alongside the $\pT$/$\pPar$ branches. The unfolding driver is
 the 2D pipeline with a three-column feature stack
