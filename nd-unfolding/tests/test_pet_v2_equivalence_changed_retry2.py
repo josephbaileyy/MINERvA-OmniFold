@@ -20,11 +20,17 @@ ATTEMPT_PATH = (
     REPO
     / "docs/orchestration/state/pet-v2-fixed-draw-equivalence-changed-retry1-attempt-57626676.json"
 )
+SUBMISSION_PATH = (
+    REPO
+    / "docs/orchestration/state/"
+    "pet-v2-fixed-draw-equivalence-changed-retry2-submission-57629029.json"
+)
 SPEC = importlib.util.spec_from_file_location("derive_pet_v2_changed_retry2", DERIVER)
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
 PROPOSAL = json.loads(PROPOSAL_PATH.read_text(encoding="utf-8"))
 ATTEMPT = json.loads(ATTEMPT_PATH.read_text(encoding="utf-8"))
+SUBMISSION = json.loads(SUBMISSION_PATH.read_text(encoding="utf-8"))
 
 
 def test_retry2_proposal_is_exact_deterministic_render():
@@ -40,6 +46,31 @@ def test_retry1_terminal_receipt_is_machinery_only_and_zero_gpu():
     assert ATTEMPT["resource_consumption"]["a100_hours"] == 0.0
     assert ATTEMPT["C_stat"] is None and ATTEMPT["C_ML"] is None
     assert all(item["allocated_cpus"] == 0 for item in ATTEMPT["cancelled_downstream"].values())
+
+
+def test_retry2_submission_is_one_changed_nonautomatic_chain():
+    assert SUBMISSION == {
+        "C_ML": None,
+        "C_stat": None,
+        "automatic_retry": False,
+        "changed_retry_number": 2,
+        "head": "27df34afa195da31ed4c82accdb9a875c894c295",
+        "host": "login21",
+        "jobs": {
+            "evaluation": "57629031",
+            "target": "57629029",
+            "training_array": "57629030",
+            "validation": "57629032",
+        },
+        "prior_target_job": "57626676",
+        "proposal_sha256": (
+            "ffa29bd36d5b2e9adcb6ca0d82d246cebc6e57950dcbb15e2840de9601757933"
+        ),
+        "schema": "pet-v2-equivalence-changed-retry2-submission-v1",
+        "status": "SUBMITTED",
+        "submitted_at_utc": "2026-08-26T20:58:17.689065+00:00",
+        "unchanged_retry": False,
+    }
 
 
 def test_authorization_allows_changed_but_never_unchanged_retries():

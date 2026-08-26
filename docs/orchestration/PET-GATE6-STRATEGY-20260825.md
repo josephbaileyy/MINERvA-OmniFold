@@ -614,3 +614,12 @@ existing total ceiling, never unchanged or automatic retries. Retry 2 bypasses o
 target package initializer, hash-loads the identical NumPy dataloader, and reuses the unchanged
 training/evaluation wrappers. Every scientific control, threshold, resource limit, non-authorization,
 and exact Gate-6 prohibition remains frozen.
+
+At pushed head `27df34afa195da31ed4c82accdb9a875c894c295`, every retry-2 no-submit,
+ROOT-target, learned-refiner, source/input, prohibition, resource, and scheduler preflight passed.
+The controller submitted target `57629029`, training array `57629030`, evaluation `57629031`, and
+validation `57629032` at `2026-08-26T20:58:17.689065+00:00`. Its exact
+[`submission receipt`](state/pet-v2-fixed-draw-equivalence-changed-retry2-submission-57629029.json)
+records `changed_retry_number: 2`, `unchanged_retry: false`, `automatic_retry: false`, and null
+`C_stat`/`C_ML`. Initial direct observation found the target pending for priority with zero
+allocation and every downstream stage dependency-held; this submission event is not a result.

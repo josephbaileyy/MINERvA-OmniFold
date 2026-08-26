@@ -1,0 +1,20 @@
+{
+  "C_ML": null,
+  "C_stat": null,
+  "automatic_retry": false,
+  "changed_retry_number": 2,
+  "head": "27df34afa195da31ed4c82accdb9a875c894c295",
+  "host": "login21",
+  "jobs": {
+    "evaluation": "57629031",
+    "target": "57629029",
+    "training_array": "57629030",
+    "validation": "57629032"
+  },
+  "prior_target_job": "57626676",
+  "proposal_sha256": "ffa29bd36d5b2e9adcb6ca0d82d246cebc6e57950dcbb15e2840de9601757933",
+  "schema": "pet-v2-equivalence-changed-retry2-submission-v1",
+  "status": "SUBMITTED",
+  "submitted_at_utc": "2026-08-26T20:58:17.689065+00:00",
+  "unchanged_retry": false
+}
