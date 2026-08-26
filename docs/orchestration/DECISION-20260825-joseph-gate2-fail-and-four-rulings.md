@@ -146,6 +146,9 @@ instrument needs a **new independent grade before it can support another Gate-2 
 
 The repairer and the grader of the repair must be different parties, and neither may be me.
 
+Two determinations arising from this ruling are **delegated to the grader and are not decided here**;
+see §12. Joseph declined to pre-rule on one of them deliberately.
+
 ## 7. Explicitly out of scope
 
 **CORRECTED 2026-08-25, and the original wording was wrong in a way worth naming.** This section
@@ -298,3 +301,62 @@ Frozen deploy tree: `/pscratch/sd/j/josephrb/k0r2/clean` at
 `aa67c426afaa9b6ca91c9996637a6bade950da9a`, detached, porcelain 0, 782 tracked files,
 `listing_sha256 fa3489e2...` — note that `listing_sha256` is a **field of the manifest**, not the
 manifest file's own digest, which is `622ddc0a`.
+
+## 12. Open determinations delegated to the grader (Joseph, 2026-08-25)
+
+Both of these post-date §§1–11 and neither is settled by this document. They are recorded here
+because a lane that reads only the message traffic will not find them.
+
+### 12.1 The `m1m6_expected_differences.json` prose note — a CONDITIONAL protocol
+
+That file's prose note still describes the superseded deny-list and now **understates** the guard the
+repair installed. The comparator-repair lane declined to correct it because its digest `56c2e0ef` is
+cited in §11.
+
+**Ruling: the cited digest is an AS-OF identifier, not a permanent prohibition on editing the file.**
+That restraint was correct given how §11 was originally written, and the defect was in my drafting,
+not in the lane's judgement. What follows is conditional on the independent grade:
+
+- **If the repair PASSES:** update the prose note to describe the **exact graded behaviour** — not the
+  intended behaviour and not the implementer's summary of it. Record the new digest, **preserve
+  `56c2e0ef` as the historical referent**, and regenerate `MANIFEST.tsv` **in the same commit**
+  (F-14 / §7.0.7). Do not rewrite history.
+- **If the repair FAILS:** the note is **NOT** updated. Nobody writes prose describing a rejected
+  implementation.
+
+A consequence worth stating: the grade must be specific enough that the note can be written *from*
+it. A verdict of "fit" alone leaves whoever updates the note with nothing to transcribe, so the
+accepted and rejected pattern shapes have to be named precisely.
+
+### 12.2 Partial wildcards in the `M-1` selector — NOT pre-ruled
+
+The repair admits partial wildcards inside the `M-1` bracket, e.g. `M-1[nd-*].n_after`. The
+implementer's justification is that a partial selector cannot exceed the breadth of the already-legal
+bare `*`, and it stated plainly that this is **an argument, not a measurement**.
+
+**Joseph has explicitly declined to rule on this ahead of the grader.** The grader must determine
+which ONE of three things it is:
+
+| | Determination | Escalates? |
+|---|---|---|
+| (a) | Within the **existing** selector contract — already admitted, merely made explicit | No |
+| (b) | An **enlargement** of the admitted language, harmful or not | No |
+| (c) | An **ambiguity** requiring a specification decision — the contract does not determine it | **Yes, to Joseph** |
+
+These are materially different findings and must not be collapsed into "acceptable / not
+acceptable".
+
+**Binding constraint on method:** the verdict must rest on **measured positive and negative
+controls**, not on the argument that bare `*` is broader. Reproducing that argument, however soundly,
+does not discharge it. A negative control that cannot be made to fire is itself the finding, and it
+points at (c). Controls enumerated from the grammar's own definition of a legal selector will confirm
+the grammar — the standing hazard that a fixture derived from the rule cannot disagree with the rule.
+
+### 12.3 Scope, and what these do not move
+
+The four newly identified fail-open spellings (`M-6[*`, `M-4.head*`, `M-3.*x`, `M-4.*e*`) and the
+`M-4` overlap that `M-4.*e*` demonstrates fall **within the current repair's grading scope** rather
+than constituting a separate finding.
+
+**None of this changes the Gate-2 FAIL recorded in §1.** No new compute and no Gate-2 filing is
+authorized by anything in this section, and a passing grade confers neither.
