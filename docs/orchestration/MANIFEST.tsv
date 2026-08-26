@@ -43,7 +43,7 @@ docs/orchestration/DECISION-20260825-joseph-gate2-fail-and-four-rulings.md	track
 docs/orchestration/DECISION-BRIEF-20260819-oi71-recovery-evidence.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only		yes	0	184	14025
 docs/orchestration/DECLARATION-20260822-k0-submission-sha.md	tracked	LIVE	document		20260822	open		route-only		no	7	129	8016
 docs/orchestration/DECLARATION-20260823-k0-candidate-sha.md	tracked	LIVE	document		20260823	open		route-only		no	6	111	6724
-docs/orchestration/DEFECT-20260825-generate-manifest-dirty-warning-nondiscriminating.md	tracked	LIVE	document		20260825	open		route-only		no	2	107	5917
+docs/orchestration/DEFECT-20260825-generate-manifest-dirty-warning-nondiscriminating.md	tracked	LIVE	document		20260825	open		route-only		no	2	149	8671
 docs/orchestration/DETERMINATION-20260811-cause5-binding-half.md	tracked	LIVE	document		20260811	open		route-only		no	11	289	20575
 docs/orchestration/DETERMINATION-20260817-lanec-cstat-object-is-total-statistics.md	tracked	ARCHIVAL	document		20260817	terminal		exact-path-only		yes	3	185	13331
 docs/orchestration/DETERMINATION-20260818-lanec-anchor-recompute-and-lateral-in-g1.md	tracked	ARCHIVAL	document		20260818	terminal		exact-path-only	nd-unfolding/sbatch_finalize_5d_bkgaware_gpu.sh	yes	3	2807	206743
@@ -80,7 +80,7 @@ docs/orchestration/INDEX-retracted-and-superseded-values.md	tracked	LIVE	index		
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/control_plane_lint.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	50	86	72976
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	3	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	11	96	6939
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	32	534	107047
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	33	534	107047
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	3	184	13929
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/compare_m1_m6.py;docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/measure_m1_m6.py	no	16	146	8336
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	tracked	LIVE	document		20260823	open		route-only		no	5	239	14244
@@ -173,7 +173,7 @@ docs/orchestration/agentctl.py	tracked	MACHINE	script			generated		exact-path-on
 docs/orchestration/audit_gates_that_cannot_fail.py	tracked	MACHINE	script			generated		exact-path-only	nd-unfolding/tests/test_cannot_fail_auditor.py	no	5	369	17861
 docs/orchestration/audit_validator_tolerance_units.py	tracked	MACHINE	script			generated		exact-path-only	nd-unfolding/tests/test_validator_units_auditor.py	no	4	232	10103
 docs/orchestration/campaignctl.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/wakerctl.py	no	5	466	17351
-docs/orchestration/compare_m1_m6.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/test_compare_m1_m6.py	no	12	1084	66599
+docs/orchestration/compare_m1_m6.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/test_compare_m1_m6.py	no	13	1084	66599
 docs/orchestration/control-plane/owners.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	3	13	747
 docs/orchestration/control-plane/playbook.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	3	26	8403
 docs/orchestration/control-plane/policy.json	tracked	LIVE	machine-data			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/test_usagectl.py;docs/orchestration/usagectl.py	no	9	69	1674
