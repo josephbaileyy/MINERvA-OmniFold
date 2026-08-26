@@ -290,8 +290,21 @@ its actual assignment.
 **Gate 2 remains FAIL and Joseph is holding it.** The third independent origin is the `codex-school`
 implementation dispatched in
 `DEFECT-20260825-generate-manifest-dirty-warning-nondiscriminating.md` §6, working **from
-artifacts only**. Re-evaluation happens when that lands, **on its own evidence** -- not on this lane's
+artifacts only**. That dispatch is **UNCLAIMED** — a handoff, not a delivery — so it is not yet an
+origin of anything. Re-evaluation happens when it lands, **on its own evidence**, not on this lane's
 agreement with an advisory lane, which is one origin counted twice. **No compute until then.**
+
+**Where this lane goes next, corrected by Joseph 2026-08-26.** The assignment **remains publication
+close-out**; "go back to the 5D uncertainties" was imprecise, not a change of lane. After the Gate-2
+freeze receipt lands, the route is: **re-read a fresh `LIVE-STATE.md` and the governing `OI-*`, then
+resume the node that is actually routed there** — not an assumed workstream. If the adopted scalar-5D
+covariance is still the critical path, continue **that exact adoption gate**; do **not** reopen
+completed or broadly scoped 5D uncertainty work.
+
+**The `MANIFEST` classification finding is an OPEN REFERRAL and is explicitly NON-BLOCKING.** Not
+overriding another lane's classifications was correct, and this lane does not adopt the referral as
+its own work. It blocks nothing here **unless the routed publication gate explicitly depends on it**,
+which must be established by reading that gate rather than assumed either way.
 
 ## 11. Cited artifacts, with the field named
 
@@ -575,10 +588,13 @@ pattern. Leaving it in the record invites exactly the conflation that produced t
 artifact and is **NOT CITABLE for that figure**; this lane records the strike rather than editing a
 filed grade it did not author.
 
-**Owed and undeliverable, stated rather than left implicit:** the narrowing grade also needs its
-§9 corrected (the retracted 265 claim, §13.2 here). Its author is not a live session
-(`ListAgents`, 2026-08-25: no reachable peer), so no notification was sent. The correction lives here
-and in §13.2; the grade's overall verdict (FIT, no condition) is unaffected by either strike.
+**OWED AND UNDELIVERED — recorded as an open obligation, not as a discharged one.** The narrowing
+grade also needs its §9 corrected (the retracted 265 claim, §13.2 here). Its author is **not a live
+session** — `ListAgents` on 2026-08-25 and again on 2026-08-26 reported no reachable peer — so **no
+notification was sent and none is queued.** The correction exists here and in §13.2 and nowhere in
+the grade itself. **Anyone reading that grade directly will not see it.** The grade's overall verdict
+(FIT, no condition) is unaffected by either strike; this obligation closes when its author, or a
+party that adopts the artifact, records the correction in the grade.
 
 
 ## 13. Withdrawn and non-citable: three mutation figures

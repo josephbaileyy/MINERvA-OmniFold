@@ -174,12 +174,19 @@ happens after the rebase and not before it.
 `test_agent_session_notify.py` — and did not touch `MANIFEST.tsv`. Measured in a clean detached probe
 worktree, **porcelain 0 at each sha**, `--check --committed-only`:
 
-| sha | rc | expected rows | recorded rows |
-|---|---|---|---|
-| `17b79fca` (this lane's predecessor) | **0** | 533 | 533 |
-| `e30dbd45` | **1** | 536 | 533 |
-| `7299d22b` (their merge of `origin/main`) | **1** | 537 | 533 |
-| `aaed392d` (their tip, `= github/main` when measured) | **1** | 537 | 533 |
+| sha | mode | rc | expected rows | recorded rows |
+|---|---|---|---|---|
+| `17b79fca` (this lane's predecessor) | `--committed-only` | **0** | 533 | 533 |
+| `17b79fca` | default | **1** | 537 | 533 |
+| `e30dbd45` | `--committed-only` | **1** | 536 | 533 |
+| `7299d22b` (their merge of `origin/main`) | `--committed-only` | **1** | 537 | 533 |
+| `aaed392d` (their tip, `= github/main` **when measured**) | `--committed-only` | **1** | 537 | 533 |
+| `aaed392d` | default | **1** | 537 | 533 |
+| `fd58e71b` (this lane's register-closure commit) | **both** | **0** | 537 | 537 |
+
+Every row is a measurement at a **named commit**, porcelain 0. `aaed392d` was the tip when measured
+and is **not** the tip now; **`fd58e71b` re-measured rc=0 in both modes** on 2026-08-26 in a clean
+tree, which is the repair, not an argument that the gap did not exist.
 
 **rc=1 in BOTH modes at `aaed392d`**, so this is *not* the untracked-file artifact of the sibling
 defect recorded in `DEFECT-20260825-generate-manifest-dirty-warning-nondiscriminating.md` §4 — those
@@ -195,6 +202,14 @@ be notified, because `ListAgents` reported no reachable peer session on 2026-08-
 gap** — precisely the hazard §5 names. That is why the table above was measured *before* the repair
 rather than reconstructed after it, and the repair is not offered as a discharge of anyone's filing
 obligation.
+
+**A stale-precondition consequence, which is the part that could bite a gate.** Any precondition
+written against the **older green result** — "`generate_manifest.py --check` was rc=0, therefore the
+manifest is current" — is **STALE at the failing commits.** It was true at `17b79fca` under
+`--committed-only`, false at `e30dbd45`, `7299d22b` and `aaed392d` in both modes, and true again at
+`fd58e71b`. A precondition that cites the fact without citing the commit **cannot tell those states
+apart**, and re-citing the `17b79fca` measurement inside the failing interval would have asserted a
+green manifest over a red one. Bind such a precondition to a sha or do not write it.
 
 **One consequence that lane needs and cannot see, so it is stated here rather than left in the
 table.** The four paths had no `MANIFEST-overrides.tsv` row, so the regeneration classified them by
