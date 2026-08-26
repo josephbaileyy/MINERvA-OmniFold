@@ -430,7 +430,18 @@ class R4_TheExpectedListIsDeclaredCitedAndCanFail(BenchCase):
         self.assertEqual(entry["citations"]["M-4.behind"]["doc_sha256_declared"], digest)
 
     def test_an_OVER_BROAD_pattern_is_refused_so_the_list_cannot_swallow_a_measurement(self):
-        for pattern in ("M-4", "M-4.*", "M-1[*].*", "*", "M-4behind", "behind"):
+        """A REGRESSION PIN OVER REMEMBERED SPELLINGS. It is NOT the guard, and it is why D-3 shipped.
+
+        The first six are the spellings this arm was written with. `M-1[*` was fail-open and is not
+        among them: the arm and the rule it guards were enumerated from one intuition, so it could
+        not disagree with the rule. `M-6[*`, `M-4.*e*` and `M-4.head*` were fail-open too, in the
+        same class and in spellings nobody had listed either -- which is the measurement that says
+        a seventh entry would not have closed it. The covering control is
+        `R4_ThePatternGrammarIsPositiveNotADenyList`, whose candidates are generated from the
+        producer; these rows stay only so a named historical hole cannot silently reopen.
+        """
+        for pattern in ("M-4", "M-4.*", "M-1[*].*", "*", "M-4behind", "behind",
+                        "M-1[*", "M-6[*", "M-4.*e*", "M-4.head*", "M-1[", "M-1.present"):
             with self.subTest(pattern=pattern):
                 expected = self.bench.write_expected(self.bench.may_differ([pattern]))
                 code, _, err = self.bench.run(self.two(), expected)
@@ -625,11 +636,260 @@ class R4_TheExpectedListIsDeclaredCitedAndCanFail(BenchCase):
         self.assertEqual(record["summary"]["expected_entries_unused"], ["E-test"])
 
 
+def _terminal_name(field):
+    """The FIELD-NAME segment of an emitted field path: `y` in `M-1[x].y` and in `M-4.y` alike."""
+    if field.startswith(cm.ROW_MEASUREMENT_ID + "["):
+        return field.split("].", 1)[-1]
+    return field.split(".", 1)[1]
+
+
+def _candidate_patterns(universe):
+    """Candidate patterns MECHANICALLY DERIVED from the field paths `flatten` really emits.
+
+    Nothing here is typed. Every prefix of every emitted field, each with and without a trailing
+    `*`, plus the two structural substitutions a person would actually write. `M-1[*` -- the exact
+    spelling D-3 was fail-open on -- falls out as the four-character prefix of any M-1 field plus a
+    star, so this fixture GENERATES the known failure rather than remembering it.
+
+    That is the whole reason for building it this way: the deny-list arm above was enumerated from
+    the same intuition as the rule it guarded, and a fixture derived from the rule cannot disagree
+    with the rule.
+    """
+    out = set()
+    row = cm.ROW_MEASUREMENT_ID
+    for field in universe:
+        for i in range(1, len(field) + 1):
+            out.add(field[:i])
+            out.add(field[:i] + cm.WILDCARD)
+        if field.startswith(row + "["):
+            inner = field[len(row) + 1:field.index("]")]
+            tail = field[field.index("]") + 1:]
+            out.add(f"{row}[{cm.WILDCARD}]{tail}")
+            out.add(f"{row}[{inner}].{cm.WILDCARD}")
+        else:
+            out.add(field[:3] + "." + cm.WILDCARD)
+    return sorted(out)
+
+
+class R4_ThePatternGrammarIsPositiveNotADenyList(BenchCase):
+    """D-3. The expected-list guard was FAIL-OPEN on `M-1[*`, the per-file form missing its `]`.
+
+    The breadth test was `pattern.rsplit(".", 1)[-1] in ("*", "**")`. A dotless pattern has no last
+    segment, so the whole of `M-1[*` was compared against `"*"`, passed the guard, and reached
+    `field_matches`, which reads it as prefix `M-1[` with an empty suffix and matches EVERY M-1
+    field. Measured on the real far-end inputs with a genuine one-line citation: all 19 M-1
+    findings suppressed as EXPECTED-BY-RULING, expected 0 -> 19, with no warning and no refusal.
+    See section 8.3 of `DECISION-20260825-joseph-gate2-fail-and-four-rulings.md`.
+
+    THE REPAIR IS A GRAMMAR, NOT A SEVENTH SPELLING, so the arms below are a sweep over generated
+    candidates and a converse sweep over the producer's own output -- not a longer list.
+    """
+
+    def setUp(self):
+        super().setUp()
+        # THE PRODUCER, not a retyped universe: the field paths `flatten` emits for a real document.
+        self.universe = sorted(cm.flatten(base_document("X", "/t"), 0))
+
+    def reach(self, pattern):
+        """What `field_matches` -- the component that would exploit a hole -- actually matches."""
+        return [f for f in self.universe if cm.field_matches(pattern, f)]
+
+    def over_broad(self, pattern):
+        """Over-broad is a property of what a pattern REACHES, never of how it is spelled.
+
+        Two fields with different field NAMES means the entry swallows more than one field of an
+        object; any M-2 reach means it touches the perishable claim. Both come from the design's
+        stated purpose, not from `bad_pattern`'s text, so this predicate can disagree with the
+        guard.
+        """
+        reached = self.reach(pattern)
+        return (len({_terminal_name(f) for f in reached}) > 1
+                or any(f.startswith(cm.PERISHABLE_ID) for f in reached))
+
+    def test_the_D3_pattern_is_REFUSED_end_to_end__fires_on_bad(self):
+        """Through `main`, because a guard that refuses only in-process refuses nobody."""
+        expected = self.bench.write_expected(self.bench.may_differ(["M-1[*"]))
+        code, record, err = self.bench.run(
+            self.two(lambda d: d["M-1"][0].__setitem__("first_insert", 99)), expected)
+        self.assertEqual(code, cm.EXIT_REFUSAL_EXPECTED_LIST)
+        self.assertIsNone(record, "a refused list must emit no record at all")
+        self.assertIn("never closed", err)
+
+    def test_the_D3_pattern_really_WOULD_have_swallowed_M1__the_power_control(self):
+        """Without this the arm above proves only that SOMETHING was refused.
+
+        A control that shows the instrument works leaves the claim untested. This one shows the
+        FIXTURE can carry the failure: unguarded, `M-1[*` reaches several M-1 fields with distinct
+        field names and nothing outside M-1 -- the shape of the real 19-finding suppression.
+        """
+        reached = self.reach("M-1[*")
+        self.assertGreaterEqual(len(reached), 2)
+        self.assertGreater(len({_terminal_name(f) for f in reached}), 1)
+        self.assertEqual({f[:3] for f in reached}, {cm.ROW_MEASUREMENT_ID})
+        self.assertTrue(self.over_broad("M-1[*"))
+
+    def test_every_OVER_BROAD_candidate_the_PRODUCER_generates_is_refused(self):
+        """The covering control. Measured 2026-08-25: 721 candidates, 96 over-broad, 0 accepted.
+
+        The population is stated beside the count because a sweep that swept nothing also reports
+        zero escapes.
+        """
+        candidates = _candidate_patterns(self.universe)
+        self.assertIn("M-1[*", candidates)          # the fixture contains the known failure
+        broad = [p for p in candidates if self.over_broad(p)]
+        self.assertGreaterEqual(len(broad), 50,
+                                f"only {len(broad)} over-broad candidates of {len(candidates)}: "
+                                f"this sweep would pass vacuously")
+        escaped = [p for p in broad if cm.bad_pattern(p) is None]
+        self.assertEqual(escaped, [], f"{len(escaped)} of {len(broad)} over-broad patterns accepted")
+
+    def test_every_field_the_PRODUCER_emits_is_accepted_verbatim__silent_on_good(self):
+        """The converse sweep, and the arm that fails if the repair over-tightens.
+
+        A guard that rejected everything would pass every firing arm above. Each field the
+        instrument can actually report must be nameable as its own whitelist pattern -- except
+        M-2's, which must stay refused.
+        """
+        self.assertGreaterEqual(len(self.universe), 20)
+        for field in self.universe:
+            with self.subTest(field=field):
+                why = cm.bad_pattern(field)
+                if field.startswith(cm.PERISHABLE_ID):
+                    self.assertIsNotNone(why)
+                else:
+                    self.assertIsNone(why, why)
+
+    def test_the_PER_FILE_wildcard_form_is_accepted_for_every_row_field__silent_on_good(self):
+        """`M-1[*].<field>` is the documented per-file form and must survive the repair."""
+        widened = {f"{cm.ROW_MEASUREMENT_ID}[{cm.WILDCARD}].{_terminal_name(f)}"
+                   for f in self.universe if f.startswith(cm.ROW_MEASUREMENT_ID + "[")}
+        self.assertGreaterEqual(len(widened), 3)
+        for pattern in sorted(widened):
+            with self.subTest(pattern=pattern):
+                self.assertIsNone(cm.bad_pattern(pattern), cm.bad_pattern(pattern))
+
+    def test_a_PARTIAL_selector_wildcard_still_narrows_end_to_end__silent_on_good(self):
+        """The wildcard stays legal in SELECTOR space, where it ranges over files.
+
+        It cannot widen past the already-legal bare `*`, so allowing it costs nothing in the
+        direction that loses information.
+        """
+        expected = self.bench.write_expected(
+            self.bench.may_differ([f"{cm.ROW_MEASUREMENT_ID}[nd-unfolding/boot*].first_insert"]))
+        code, record, err = self.bench.run(
+            self.two(lambda d: d["M-1"][0].__setitem__("first_insert", 99)), expected)
+        self.assertEqual(code, cm.EXIT_DIFFERENCES_ALL_EXPECTED, err)
+        self.assertEqual(record["findings"][0]["classification"], "EXPECTED-BY-RULING")
+        self.assertEqual(record["findings"][0]["field"],
+                         "M-1[nd-unfolding/bootstrap_nd.py].first_insert")
+
+    def test_a_pattern_that_can_match_NOTHING_is_refused__the_opposite_direction(self):
+        """The other direction a whitelist fails in: a row that reads as cover and never applies.
+
+        Each of these was ACCEPTED by the predecessor guard and reaches nothing. That is the
+        F-17(a) failure `field_matches` exists to fix, arriving through the guard instead of
+        through `fnmatch`. Note the narrower claim this arm makes: it is about patterns that cannot
+        match the field they NAME, not about patterns whose field is merely absent today -- the
+        latter is legitimate and is surfaced by `expected_entries_unused`, not refused.
+        """
+        for pattern in ("M-1[", "M-1[*]", "M-1[].present", "M-1.present", "M-3[rc].x", "M-1[*]."):
+            with self.subTest(pattern=pattern):
+                self.assertEqual(self.reach(pattern), [], "fixture: this must reach nothing")
+                self.assertIsNotNone(cm.bad_pattern(pattern))
+
+    def test_a_wildcard_in_the_FIELD_NAME_is_refused_even_when_it_narrows_today(self):
+        """A STATED BEHAVIOUR CHANGE, deliberate and not an edge case.
+
+        `M-4.behin*` reaches exactly one field name in today's documents, so a breadth-measuring
+        guard would pass it -- and it silently widens the day `measure_m1_m6.py` adds a field
+        beginning `behin`. The class is made unreachable instead of checked for: the wildcard is a
+        selector-space device and the terminal field name is always literal. Measured 2026-08-25:
+        265 of 721 generated candidates are refused although they reach exactly one field name.
+        """
+        pattern = "M-4.behin*"
+        self.assertEqual({_terminal_name(f) for f in self.reach(pattern)}, {"behind"})
+        why = cm.bad_pattern(pattern)
+        self.assertIsNotNone(why)
+        self.assertIn("SELECTOR-space", why)
+
+    def test_the_matcher_BACKSTOP_fires_where_bad_pattern_cannot_reach_it(self):
+        """The inner guard, exercised directly, because through `bad_pattern` it is unreachable.
+
+        `parse_pattern` refuses `M-1[*` before `matcher_disagreement` ever sees it. Scoring the
+        backstop 'covered' through `bad_pattern` would be scoring the grammar twice -- the same
+        mistake this file records at `evaluate_rule`, where deleting an inner guard changed no test
+        result and the survey called it caught. So this arm hands `matcher_disagreement` the parse
+        a HOLE in the grammar would produce, which is exactly D-3, and checks it fires in both
+        directions and stays silent on a sound pattern.
+        """
+        hole = {"measurement": "M-1", "selector": "*", "field": "first_insert"}
+        why = cm.matcher_disagreement("M-1[*", hole)
+        self.assertIsNotNone(why, "the backstop did not catch a re-introduced D-3")
+        self.assertIn("OVER-BROAD", why)
+
+        dead = {"measurement": "M-4", "selector": None, "field": "behind"}
+        why = cm.matcher_disagreement("M-4.nothing_like_it", dead)
+        self.assertIsNotNone(why)
+        self.assertIn("matches NOTHING", why)
+
+        sound = {"measurement": "M-1", "selector": "*", "field": "first_insert"}
+        self.assertIsNone(cm.matcher_disagreement("M-1[*].first_insert", sound))
+
+    def test_the_UNITS_TABLE_and_the_grammar_are_the_same_language(self):
+        """`UNITS` is the other in-tree producer of patterns in this language, and it is matched by
+        the same `field_matches`. If the grammar could not parse a shipped UNITS pattern, the guard
+        and the units table would be describing two different languages again."""
+        self.assertTrue(cm.UNITS)
+        for pattern, _unit, _population in cm.UNITS:
+            with self.subTest(pattern=pattern):
+                parsed, why = cm.parse_pattern(pattern)
+                self.assertIsNone(why, why)
+                self.assertIn(parsed["measurement"], cm.MEASUREMENT_IDS)
+                self.assertNotIn(cm.WILDCARD, parsed["field"])
+
+
 class R4_TheShippedListInThisRepository(unittest.TestCase):
     """The shipped whitelist is itself under test, in both directions."""
 
     LIST = _HERE / "m1m6_expected_differences.json"
     REPO = _HERE.parents[1]
+    # The filed F-17(b) record. READ ONLY: it is digest-bound and immutable, and its content
+    # sha256 is pinned in section 11 of DECISION-20260825-joseph-gate2-fail-and-four-rulings.md.
+    FILED_RECORD = _HERE / "state" / "f17b-k0-aa67c426-20260824T145751Z.json"
+    FILED_RECORD_SHA256_8 = "9109f371"
+
+    def test_the_D3_pattern_over_the_REAL_FILED_RECORD_is_refused(self):
+        """The defect was demonstrated on real far-end inputs, so the repair is measured there too.
+
+        This reads the filed record and never writes it; the digest arm below is what says so. The
+        19 is not retyped from the decision record -- it is recounted here from the record's own
+        findings, and it is the measured blast radius: `M-1[*` reaches exactly the M-1 findings and
+        nothing else, which is how 19 differences became EXPECTED-BY-RULING with expected 0 -> 19.
+        """
+        self.assertTrue(self.FILED_RECORD.is_file(), self.FILED_RECORD)
+        self.assertTrue(sha256_bytes(self.FILED_RECORD).startswith(self.FILED_RECORD_SHA256_8),
+                        "the filed record has MOVED; it is immutable and this arm is read-only")
+        findings = json.loads(self.FILED_RECORD.read_text(encoding="utf-8"))["findings"]
+        fields = [f["field"] for f in findings]
+        m1 = [f for f in fields if f.startswith(cm.ROW_MEASUREMENT_ID)]
+        reached = [f for f in fields if cm.field_matches("M-1[*", f)]
+        self.assertEqual(reached, m1)
+        self.assertEqual(len(reached), 19)
+        self.assertLess(len(reached), len(fields))
+        self.assertIsNotNone(cm.bad_pattern("M-1[*"),
+                             "D-3 is open again against the artifact it was measured on")
+
+    def test_every_field_in_the_FILED_RECORD_is_nameable_one_at_a_time__silent_on_good(self):
+        """The converse against real data: closing D-3 must not cost the ability to declare a real
+        difference. Every field the filed record reports is accepted as its own pattern, and only
+        M-2's are refused."""
+        findings = json.loads(self.FILED_RECORD.read_text(encoding="utf-8"))["findings"]
+        fields = [f["field"] for f in findings]
+        self.assertEqual(len(fields), 32)
+        for field in fields:
+            with self.subTest(field=field):
+                accepted = cm.bad_pattern(field) is None
+                self.assertEqual(accepted, not field.startswith(cm.PERISHABLE_ID))
 
     def test_every_shipped_entry_RESOLVES_against_this_repository(self):
         loaded = cm.load_expected(str(self.LIST), self.REPO)

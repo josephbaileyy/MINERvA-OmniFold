@@ -53,8 +53,26 @@ in this code, so widening it is a reviewable diff. Every entry must carry a cita
 declares a digest the document must still have it -- and an unresolved citation is a hard refusal,
 not a warning. Three further refusals exist because a whitelist that can swallow a whole measurement
 is not reviewable:
-  * a pattern may not be a bare measurement id, and its last dotted segment may not be `*`
-    (so `M-4.behind` is allowed and `M-4.*` is refused);
+  * A PATTERN MUST NAME ONE FIELD, enforced by a POSITIVE GRAMMAR rather than a deny-list of
+    spellings: `M-1[<file or *>].<field>` for the per-file measurement, `M-k.<field>` for the
+    others, and `*` is a SELECTOR-space device -- legal inside `M-1[...]`, where it ranges over
+    FILES, and nowhere else. The terminal field name is always a literal, so a pattern cannot
+    match two fields of one object. `M-4.behind` and `M-1[*].first_insert` are allowed;
+    `M-4.*`, `M-1[*].*`, `M-4.*e*`, `M-1[`, `M-3[x].y` and `M-1[*` are all refused.
+    THE LAST ONE IS WHY THIS IS A GRAMMAR AND NOT ANOTHER SPELLING. The old test was
+    `pattern.rsplit(".", 1)[-1] in ("*", "**")`. A DOTLESS pattern has no last segment, so
+    `M-1[*` -- the documented per-file form with its `]` dropped -- was compared WHOLE against
+    `"*"`, passed the guard, and then matched every M-1 field. Measured on the real far-end
+    inputs with a genuine one-line citation: all 19 M-1 findings suppressed as
+    EXPECTED-BY-RULING, expected 0 -> 19, no warning and no refusal (defect D-3,
+    `DECISION-20260825-joseph-gate2-fail-and-four-rulings.md` section 8.3). The deny-list arm
+    that reviewed it tested `M-4`, `M-4.*`, `M-1[*].*`, `*`, `M-4behind`, `behind` -- the
+    spellings someone thought to type -- and a fixture enumerated from the same intuition as
+    the rule cannot disagree with the rule. `M-6[*` and `M-4.*e*` were fail-open too, in the
+    same class and in spellings nobody listed. Backed by `matcher_disagreement`, which
+    interrogates `field_matches` ITSELF with canary fields instead of modelling the pattern
+    language a second time -- the divergence between the guard's model and the matcher's
+    behaviour IS the defect;
   * NO pattern may target M-2 at all (R7): `F-17(b)` names M-2 as the perishable claim, so an M-2
     difference is never suppressible, is reported in its own block, and forces the some-unexpected
     exit whatever the list says;
@@ -190,6 +208,19 @@ MAX_CITATION_LINES = 3
 MEASUREMENT_IDS = ("M-1", "M-2", "M-3", "M-4", "M-5", "M-6")
 REQUIRED_KEYS = ("label", "tree") + MEASUREMENT_IDS
 PERISHABLE_ID = "M-2"          # F-17(b) singles it out; see R7
+
+# THE SHAPE OF A FIELD PATH, DECLARED ONCE. `flatten` emits `M-1[<file>].<key>` for the row
+# measurement and `M-k.<key>` for the block ones, and `parse_pattern` accepts exactly that
+# shape. Both read these two names so the emitter and the grammar cannot drift apart: the
+# defect they replace was a guard that modelled the pattern language separately from the
+# matcher that implements it.
+ROW_MEASUREMENT_ID = MEASUREMENT_IDS[0]            # measured once PER FILE, hence the [...]
+BLOCK_MEASUREMENT_IDS = MEASUREMENT_IDS[1:]        # measured once per tree, hence no [...]
+WILDCARD = "*"
+# Canary tokens for `matcher_disagreement`. They carry no `*`, so they are inert as patterns,
+# and no real path or measured key looks like them.
+PROBE_PATH = "__probe__/__probe__.py"
+PROBE_FIELD = "__probe_field__"
 ABSENT = "<FIELD ABSENT FROM THIS DOCUMENT>"
 UNAVAILABLE = "UNAVAILABLE-BY-INPUT-SCHEMA"
 
@@ -415,7 +446,7 @@ def identity_of(record):
 def flatten(doc, index):
     """One document -> {field path: canonical value}. Identity keys are NOT compared fields."""
     flat = {}
-    rows = doc["M-1"]
+    rows = doc[ROW_MEASUREMENT_ID]
     if not isinstance(rows, list):
         raise Refusal(EXIT_REFUSAL_INPUT,
                       f"input {index}: M-1 is a {type(rows).__name__}, expected a list of rows")
@@ -426,8 +457,8 @@ def flatten(doc, index):
         for key, value in row.items():
             if key == "file":
                 continue
-            flat[f"M-1[{row['file']}].{key}"] = canon(value)
-    for measurement in MEASUREMENT_IDS[1:]:
+            flat[f"{ROW_MEASUREMENT_ID}[{row['file']}].{key}"] = canon(value)
+    for measurement in BLOCK_MEASUREMENT_IDS:
         block = doc[measurement]
         if not isinstance(block, dict):
             raise Refusal(EXIT_REFUSAL_INPUT,
@@ -438,26 +469,151 @@ def flatten(doc, index):
     return flat
 
 
-def bad_pattern(pattern):
-    """Why this expected-list pattern may not be used, or None. A whitelist that can swallow a whole
-    measurement is not reviewable, and M-2 may not be whitelisted at all."""
+def parse_pattern(pattern):
+    """Parse an expected-list pattern under a POSITIVE grammar. Returns (parsed, why); one is None.
+
+    THE GRAMMAR IS THE SHAPE `flatten` EMITS, AND NOTHING ELSE:
+
+        M-1 '[' selector ']' '.' field      -- the row measurement, one row per file
+        M-k '.' field                       -- the block measurements, k in BLOCK_MEASUREMENT_IDS
+
+    `*` is a SELECTOR-space device. It may appear inside the `M-1` bracket, where it ranges over
+    FILES, and nowhere else; the terminal field name is always a literal. That single rule is what
+    makes "swallow every field of an object" UNREACHABLE rather than checked-for -- a pattern must
+    terminate in one literal field name, so it cannot match two fields that differ in field name.
+    Permitting `*` inside the selector costs nothing in the breadth direction, because whatever a
+    partial selector matches the already-legal bare `*` matches too.
+
+    WHY A GRAMMAR REPLACED A DENY-LIST. The predecessor asked whether the pattern's last DOTTED
+    segment was `*`. A dotless pattern has no last segment, so `M-1[*` was compared whole against
+    `"*"`, was accepted, and matched every M-1 field -- 19 real findings suppressed with no warning
+    (defect D-3). Its review fixture listed six remembered spellings and omitted that one, and a
+    fixture enumerated from the same intuition as the rule cannot disagree with the rule. Adding a
+    seventh spelling would have left `M-6[*` and `M-4.*e*`, both measured fail-open in the same
+    class. A grammar cannot EXPRESS the class, so there is no spelling left to remember.
+    """
     if not isinstance(pattern, str) or not pattern:
-        return "a field pattern must be a non-empty string"
-    if pattern in MEASUREMENT_IDS:
-        return f"'{pattern}' is a bare measurement id and would whitelist all of it; name fields"
+        return None, "a field pattern must be a non-empty string"
     head = pattern[:3]
     if head not in MEASUREMENT_IDS:
-        return f"'{pattern}' does not begin with a measurement id (M-1..M-6)"
-    if head == PERISHABLE_ID:
+        return None, (f"'{pattern}' does not begin with a measurement id "
+                      f"({MEASUREMENT_IDS[0]}..{MEASUREMENT_IDS[-1]})")
+    rest = pattern[3:]
+    if not rest:
+        return None, f"'{pattern}' is a bare measurement id and would whitelist all of it; name fields"
+    if head == ROW_MEASUREMENT_ID:
+        if not rest.startswith("["):
+            return None, (f"'{pattern}': {ROW_MEASUREMENT_ID} is measured once PER FILE, so its"
+                          f" patterns are {ROW_MEASUREMENT_ID}[<file or {WILDCARD}>].<field>")
+        close = rest.find("]")
+        if close < 0:
+            return None, (f"'{pattern}': the '[' selector is never closed. THIS IS DEFECT D-3: the"
+                          f" per-file form with its ']' dropped used to pass the guard and then"
+                          f" match every field of every file.")
+        selector, after = rest[1:close], rest[close + 1:]
+        if not selector:
+            return None, f"'{pattern}': the selector between '[' and ']' is empty"
+        if not after.startswith("."):
+            return None, (f"'{pattern}': after ']' the next character must be '.', followed by one"
+                          f" literal field name")
+        field = after[1:]
+    else:
+        if "[" in rest or "]" in rest:
+            return None, (f"'{pattern}': only {ROW_MEASUREMENT_ID} is measured per file, so {head}"
+                          f" takes no '[...]' selector and this pattern can match nothing")
+        if not rest.startswith("."):
+            return None, (f"'{pattern}': after the measurement id the next character must be '.'"
+                          f" (or '[' for {ROW_MEASUREMENT_ID})")
+        selector, field = None, rest[1:]
+    if not field:
+        return None, f"'{pattern}': the field name after '.' is empty"
+    if WILDCARD in field:
+        return None, (f"'{pattern}': the field name '{field}' carries a wildcard, which would"
+                      f" whitelist more than one field of that object. The wildcard is a"
+                      f" SELECTOR-space device -- legal inside {ROW_MEASUREMENT_ID}[...], where it"
+                      f" ranges over files, and nowhere else. Name the field.")
+    return {"measurement": head, "selector": selector, "field": field}, None
+
+
+def matcher_probes(parsed):
+    """Canary field paths for one parse: (the field it must match, [(why, field it must not)]).
+
+    Built in the shape `flatten` emits, from the PARSE rather than from the pattern text, so the
+    probes do not inherit whatever the grammar got wrong about the text.
+    """
+    mid, selector, field = parsed["measurement"], parsed["selector"], parsed["field"]
+    other = next(m for m in BLOCK_MEASUREMENT_IDS if m not in (mid, PERISHABLE_ID))
+    if selector is None:
+        live = f"{mid}.{field}"
+        sibling = f"{mid}.{PROBE_FIELD}"
+        longer, shorter = f"{mid}.{field}{PROBE_FIELD}", f"{mid}.{PROBE_FIELD}{field}"
+    else:
+        concrete = selector.replace(WILDCARD, PROBE_PATH)
+        live = f"{mid}[{concrete}].{field}"
+        sibling = f"{mid}[{concrete}].{PROBE_FIELD}"
+        longer = f"{mid}[{concrete}].{field}{PROBE_FIELD}"
+        shorter = f"{mid}[{concrete}].{PROBE_FIELD}{field}"
+    forbidden = [
+        ("a sibling field of the same object", sibling),
+        ("a field whose name merely BEGINS with this one", longer),
+        ("a field whose name merely ENDS with this one", shorter),
+        ("the same field name under a different measurement", f"{other}.{field}"),
+    ]
+    if mid != PERISHABLE_ID:
+        forbidden.append((f"a {PERISHABLE_ID} field, which is never suppressible",
+                          f"{PERISHABLE_ID}.{field}"))
+    return live, forbidden
+
+
+def matcher_disagreement(pattern, parsed):
+    """Ask `field_matches` ITSELF what this pattern does, or None. Fails closed on any surprise.
+
+    THE GUARD AND THE MATCHER ARE TWO IMPLEMENTATIONS OF ONE LANGUAGE, and their divergence is the
+    whole of defect D-3: the guard reasoned with `rsplit(".")` while matching is done by
+    `split("*")`, so the guard's picture of `M-1[*` ("a dotless string, not a wildcard segment")
+    and the matcher's ("prefix M-1[, empty suffix, matches everything") were both internally
+    consistent and not the same language. Restating the grammar more carefully would have produced
+    a third model. This arm instead CALLS the matcher on canary fields, so a future hole in
+    `parse_pattern` is caught by the component that would exploit it.
+
+    Both directions are checked. Over-broad -- the matcher reaches a field the parse does not name
+    -- is the direction that silently suppresses real findings. Matches-nothing is the opposite
+    direction and is refused too: an entry that can never apply is a dead whitelist row that reads
+    as live cover, which is precisely the F-17(a) `fnmatch` failure `field_matches` exists to fix.
+
+    Under the current grammar no arm here can fire through `bad_pattern`; that is the point of a
+    backstop, and it is why its own test calls this function directly with a parse the grammar
+    would never produce, rather than scoring it caught through a path that cannot reach it.
+    """
+    live, forbidden = matcher_probes(parsed)
+    if not field_matches(pattern, live):
+        return (f"'{pattern}' matches NOTHING it names: the matcher does not match '{live}', the"
+                f" field this pattern parses as. A whitelist entry that can never apply is a dead"
+                f" row that reads as live cover -- the F-17(a) failure mode -- so it is refused"
+                f" rather than shipped silent.")
+    for why, probe in forbidden:
+        if field_matches(pattern, probe):
+            return (f"'{pattern}' is OVER-BROAD: the grammar reads it as one field but the matcher"
+                    f" also matches '{probe}' ({why}). The guard and the matcher disagree about"
+                    f" this pattern, which is defect D-3's mechanism; failing closed.")
+    return None
+
+
+def bad_pattern(pattern):
+    """Why this expected-list pattern may not be used, or None. A whitelist that can swallow a whole
+    measurement is not reviewable, and M-2 may not be whitelisted at all.
+
+    Three layers, in order: the grammar (`parse_pattern`) makes breadth inexpressible, the M-2 rule
+    keeps the perishable claim unsuppressible, and `matcher_disagreement` backstops both by asking
+    the matcher rather than a second model of it.
+    """
+    parsed, why = parse_pattern(pattern)
+    if why is not None:
+        return why
+    if parsed["measurement"] == PERISHABLE_ID:
         return (f"'{pattern}' targets {PERISHABLE_ID}, which F-17(b) names as the perishable claim."
                 f" {PERISHABLE_ID} differences are never expected and never suppressible.")
-    rest = pattern[3:]
-    if not rest or rest[0] not in ".[":
-        return f"'{pattern}': after the measurement id the next character must be '.' or '['"
-    if pattern.rsplit(".", 1)[-1] in ("*", "**"):
-        return (f"'{pattern}' ends in a wildcard segment and would whitelist every field of that"
-                f" object; name the field")
-    return None
+    return matcher_disagreement(pattern, parsed)
 
 
 def resolve_one_citation(entry_id, pattern, citation, repo):
