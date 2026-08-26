@@ -368,6 +368,34 @@ built all of these and is disqualified from grading them.
   reproduce** (5 methods, "reddens 4", "reddens 97"; measured 6, 1, 121). **Grades no F-number,
   discharges no clause, authorizes no compute and no filing; Gate 2 stays FAIL and open.** Expires
   mechanically when any of three pinned digests moves.
+- [`GRADE-20260825-selector-narrowing-fitness.md`](GRADE-20260825-selector-narrowing-fitness.md) —
+  **the independent grade of the §12.2.1 selector narrowing (`63262a3a`) required by ruling 3**, at
+  `compare_m1_m6.py` `5dc92487` and `test_compare_m1_m6.py` `762fac14`. **It REPLACES
+  `GRADE-20260825-d3-comparator-repair-fitness.md`, whose mechanical expiry TRIPPED** — two of its
+  three pinned digests moved in `63262a3a`, verified not assumed, so the instrument had no live
+  grade. **Verdict: FIT to support a future Gate-2 filing, with NO condition** — the prior grade's
+  standing precondition ("no partial `M-1` selector in the list at filing time") is now
+  unnecessary, because the guard makes one unrepresentable. **`NEWLY ACCEPTED = 0`**, measured over
+  **115160** grader-built patterns: the ONLY verdict transition anywhere is
+  `ACCEPT -> refused-as-partial-selector` (42224), every other refusal check keeps an
+  identically-sized population, and the 50270 rewordings fall in exactly two cosmetic classes with
+  no third. Both negative controls re-run and reproduce EXACTLY (revert-the-guard 5 distinct red /
+  134 subTests / 0 errors / 0 pre-existing red; over-tighten-to-refuse-literals 6 red including the
+  silent-on-good arm and two pre-existing). Producer-derived fixture re-run: **4060 / 210 / 3850 /
+  0 escaped**, and the graded **721 / 96 / 0** did not move. **Claim 8's LAST placement: CORRECT**,
+  proved by check-identity fingerprinting rather than by reading. **Claim 9: measurement
+  reproduced (`M-1[nd-*]` reaches 10 of 10, so the ruling is genuinely syntactic) but the honesty
+  claim is OVERSTATED** — the code nowhere records it, and the new invariant arm's docstring frames
+  the point AS a reach property that `M-1[nd-*]` satisfies; coverage survives via the 4060-candidate
+  sweep, so this is a prose defect, reported and deliberately NOT repaired. **Four claims overstated**
+  (the `4840` denominator is unrecoverable — cite `4060`; `field_matches`'s stated ground is wrong
+  though the decision is right; four prose sites not three), plus one **pre-existing** unreproduced
+  docstring figure inherited from `68b4af12` ("265 of 721": measured 301 or 360, and 265 is the
+  ACCEPTED count). §8 is the accepted/rejected shape table the `m1m6_expected_differences.json`
+  prose note is to be transcribed from under §12.1. **Grades no F-number, discharges no clause,
+  authorizes no rehearsal, no filing and no compute; Gate 2 stays FAIL and open**, and per §10.1 a
+  separate readiness check still gates step 4. Expires mechanically when any of three pinned digests
+  moves.
 - [`GRADE-20260825-f17b-comparison-instrument-fitness.md`](GRADE-20260825-f17b-comparison-instrument-fitness.md) —
   **an independent non-builder's fitness grade of that instrument against the F-17(b) CLAUSE, not
   against the spec.** Graded at `2790ba90` by digest; **records no F-number verdict and no gate
