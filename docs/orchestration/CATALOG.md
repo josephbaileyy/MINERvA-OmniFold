@@ -22,6 +22,25 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   adoption, no consumption, no member k≠0, no other clause relaxed. **A verdict recorded before
   2026-08-24 correctly grades ten; after, nine — say which.**
 
+- [`DECISION-20260825-joseph-gate2-fail-and-four-rulings.md`](DECISION-20260825-joseph-gate2-fail-and-four-rulings.md)
+  — **Joseph's ruling on run `k0-aa67c426-20260824T145751Z`: GATE 2 IS RECORDED FAIL, no partial
+  credit.** Three clauses PASS (`F-1(b)`, `F-4(b)`, `F-18(b)`), **six are NOT DISCHARGED.** Strict
+  §7.0.10 moves `F-2(b)`, `F-3(b)` and `F-5(b)` to NOT DISCHARGED because the grader measured what it
+  graded — its measurements are **retained as verification evidence but cannot substitute for a
+  missing producer filing.** `F-17(b)`'s `:1471` half is **impossible, not pending and not
+  deferred**, and back-filling the pre-submission column is refused outright. `b2d7d4ca` is the
+  **immutable** historical referent and must not be rewritten to make the rehearsal pass;
+  `mnv-work/` is canonical **forward-only.** The prior instrument GRADE is **EXPIRED** (all three
+  pinned digests moved), so the comparator that produced the filed record has never been graded, and
+  the repaired one needs a new independent grade before it can support another Gate-2 filing —
+  repairer, grader and spec author must be three different parties. **The ruling authorizes NO
+  compute**, and explicitly not PET covariance adoption, construction of `C_ML`, or reopening the
+  declined PET central/statistical pairing. Carries the defect ledger for the far-end path: two
+  defects corrected in `38a7b16b` whose **old explanations are retracted, not preserved**, one
+  irreparable unanchored "233 behind main" in `a3ed8631`, and the bounded dotless-pattern fail-open
+  that leaves the filed record unaffected. `MANIFEST.tsv` drift is routed **out** of this verdict to
+  F-14 / §7.0.7.
+
 - [`FINDING-20260824-gate2-preparation-and-four-open-rulings.md`](FINDING-20260824-gate2-preparation-and-four-open-rulings.md)
   — **Gate 2 is PREPARED and needs FOUR RULINGS before it can be graded.** Clause list derived
   independently as **ten** (F-1(b)…F-8(b), F-17(b), F-18(b)), agreeing with §7.0.5's arithmetic and
