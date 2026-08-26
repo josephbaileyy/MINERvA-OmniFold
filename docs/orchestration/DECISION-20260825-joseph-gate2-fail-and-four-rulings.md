@@ -286,7 +286,8 @@ the citation had already acquired a force it was never meant to have.
 | `compare_m1_m6.py` (unrepaired, as it produced the record) | content sha256 | `bace69d2`, 53667 bytes |
 | `compare_m1_m6.py` (repaired at `c8a29082`, UNGRADED) | content sha256 | `68b4af12` |
 | `test_compare_m1_m6.py` (repaired at `c8a29082`, UNGRADED) | content sha256 | `b355ecdc` |
-| `m1m6_expected_differences.json` | content sha256 | `56c2e0ef`, 4464 bytes |
+| `m1m6_expected_differences.json` (**historical referent**, as it produced the record) | content sha256 | `56c2e0ef`, 4464 bytes |
+| `m1m6_expected_differences.json` (prose note transcribed from the grade, per §12.1) | content sha256 | `92091ae8` |
 | `measure_k0_farend_f1b_f17b.sh` (post-repair) | content sha256 | `c40e6b54`, 15722 bytes |
 | `GRADE-20260825-f17b-comparison-instrument-fitness.md` (EXPIRED) | content sha256 | `aa1b6eee`, 41819 bytes |
 
@@ -323,6 +324,15 @@ not in the lane's judgement. What follows is conditional on the independent grad
   (F-14 / §7.0.7). Do not rewrite history.
 - **If the repair FAILS:** the note is **NOT** updated. Nobody writes prose describing a rejected
   implementation.
+
+**DISCHARGED 2026-08-25.** The independent grade came back **FIT, conditionally** (`69dafb2c`), so
+the first branch applied. The note was updated by transcription from §8 of
+`GRADE-20260825-d3-comparator-repair-fitness.md` — the table that grade produced by *running*
+`bad_pattern`, not by reading it — and it now carries the open §12.2 question rather than
+asserting a resolution. `56c2e0ef` is preserved above as the historical referent. Verified after the
+edit: the file still parses, the comparator still returns the filed `32/0/32` at exit 20 over the
+same inputs, and the suite is 76/76 rc=0 — a prose note must be inert to behaviour, and this one is.
+The grade deliberately does **not** pin this file, so the transcription does not void it.
 
 A consequence worth stating: the grade must be specific enough that the note can be written *from*
 it. A verdict of "fit" alone leaves whoever updates the note with nothing to transcribe, so the
