@@ -500,3 +500,12 @@ weighted-versus-literal equivalence test is required before SC-1 convergence tun
 is yes to both prerequisites because representation semantics can change the optimizer being tuned.
 This request authorizes **no GPU run, no pseudoexperiment count, and no `C_stat`/`C_ML` campaign**;
 resource and numeric equivalence thresholds must return for a separate decision before compute.
+
+### Decision received 2026-08-25
+
+Joseph approved the recommended sequence. The CPU-only first stage is now governed by
+[`PET-V2-EQUIVALENCE-FIXTURE-CONTRACT-20260825.md`](PET-V2-EQUIVALENCE-FIXTURE-CONTRACT-20260825.md)
+and its deterministic machinery receipt. The ordering decision means a separately contracted
+fixed-draw equivalence comparison precedes SC-1; it does **not** authorize that full comparison.
+Its numeric materiality rule, guarded executable operands, and measured resource estimate must
+return to Joseph before any compute.

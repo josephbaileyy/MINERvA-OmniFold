@@ -1,0 +1,295 @@
+{
+  "arms": {
+    "literal_delete_duplicate": {
+      "loss_reduce_mean_all_rows": 0.461932903391747,
+      "n_rows": 19,
+      "n_zero_sample_weight_rows": 0,
+      "train_batch_reduce_means_in_fixed_row_order": [
+        0.573150028682438,
+        0.590258092930987,
+        0.324575911552482,
+        0.25011834397113
+      ],
+      "validation_batch_reduce_means_in_fixed_row_order": [
+        0.518608499966545
+      ]
+    },
+    "weighted_retained_rows": {
+      "loss_reduce_mean_all_rows": 0.7313937637036,
+      "n_rows": 12,
+      "n_zero_sample_weight_rows": 3,
+      "train_batch_reduce_means_in_fixed_row_order": [
+        0.95978802472658,
+        0.954379688556899
+      ],
+      "validation_batch_reduce_means_in_fixed_row_order": [
+        0.288927325961455,
+        0.91872469602036
+      ]
+    }
+  },
+  "contract_id": "PET-V2-FIXED-DRAW-EQUIVALENCE-FIXTURE-20260825",
+  "fixed_draw": {
+    "canonical_sha256": "b6e06d6ba3449cf75de5a1ae3541782f72cd27796c45d57212ef4b22af5c820e",
+    "event_id": [
+      1001,
+      1002,
+      1003,
+      1004,
+      1005,
+      1006,
+      1007,
+      1008,
+      1009,
+      1010,
+      1011,
+      1012
+    ],
+    "is_train": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      1,
+      0
+    ],
+    "multiplicity": [
+      0,
+      1,
+      2,
+      3,
+      1,
+      0,
+      4,
+      2,
+      1,
+      0,
+      3,
+      2
+    ],
+    "n_unique_rows": 12,
+    "sum_multiplicity": 19,
+    "zero_multiplicity_event_ids": [
+      1001,
+      1006,
+      1010
+    ]
+  },
+  "governing_source_sha256": {
+    "nd-unfolding/pet/fullevent_fps_dataloader.py": "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1",
+    "nd-unfolding/pet/train_fullevent_nominal.py": "91144bee2ff89ae62497c8282174f0fc1c344f455945d6b52b7b8219ecb4e7bc",
+    "nd-unfolding/pet/train_fullevent_replica.py": "c92c9cc06033f195ac48cddc86eea95a67b3038ae12fcffcd3cc966540b4e75f",
+    "omnifold_nn/omnifold/dataloader.py": "bed9e0b39df54b465cb7e2a2600ff819ffb09350665603359bf12a52fdbd734a",
+    "omnifold_nn/omnifold/net.py": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953",
+    "omnifold_nn/omnifold/omnifold.py": "3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa"
+  },
+  "interval_coverage": "NOT_MEASURED",
+  "mechanical_equalities": {
+    "literal_arm_deletes_all_zero_multiplicity_rows": true,
+    "literal_copy_counts_equal_fixed_multiplicity": true,
+    "loss_numerator_literal": 8.776725164443196,
+    "loss_numerator_weighted": 8.776725164443198,
+    "no_unique_event_crosses_train_validation": true,
+    "per_event_loss_contribution_max_abs_delta": 0.0,
+    "projection_delta": {
+      "high_p_parallel_gt_20": {
+        "extracted_sum": 0.0,
+        "push_sum": -1e-15
+      },
+      "low_p_parallel_lt_6": {
+        "extracted_sum": 0.0,
+        "push_sum": -1e-15
+      },
+      "mid_p_parallel_6_to_20": {
+        "extracted_sum": 0.0,
+        "push_sum": 0.0
+      }
+    },
+    "projection_literal": {
+      "high_p_parallel_gt_20": {
+        "extracted_sum": 4.0083,
+        "push_sum": 5.739000000000001
+      },
+      "low_p_parallel_lt_6": {
+        "extracted_sum": 6.641399999999999,
+        "push_sum": 6.267
+      },
+      "mid_p_parallel_6_to_20": {
+        "extracted_sum": 9.107199999999999,
+        "push_sum": 9.726
+      }
+    },
+    "projection_max_abs_delta": 1e-15,
+    "projection_weighted": {
+      "high_p_parallel_gt_20": {
+        "extracted_sum": 4.0083,
+        "push_sum": 5.739
+      },
+      "low_p_parallel_lt_6": {
+        "extracted_sum": 6.641399999999999,
+        "push_sum": 6.266999999999999
+      },
+      "mid_p_parallel_6_to_20": {
+        "extracted_sum": 9.107199999999999,
+        "push_sum": 9.726
+      }
+    },
+    "weighted_arm_retains_all_zero_multiplicity_rows": true
+  },
+  "optimization_positive_control": {
+    "adam": {
+      "beta_1": 0.9,
+      "beta_2": 0.999,
+      "epsilon": 1e-08,
+      "initial_theta": 0.2,
+      "learning_rate": 0.05,
+      "shuffle_seed_base": 20260825
+    },
+    "batch_size": 4,
+    "epochs": 4,
+    "is_pet_training_or_pet_bias_measurement": false,
+    "literal_trace": {
+      "epochs": [
+        {
+          "adam_m": -0.11349010322915,
+          "adam_v": 0.000437585824219,
+          "epoch": 1,
+          "theta": 0.398862653979536,
+          "updates_cumulative": 4,
+          "validation_reduce_mean": 1.281927811501698
+        },
+        {
+          "adam_m": -0.1688344423588,
+          "adam_v": 0.000749105569445,
+          "epoch": 2,
+          "theta": 0.592579773120525,
+          "updates_cumulative": 8,
+          "validation_reduce_mean": 1.586431295831606
+        },
+        {
+          "adam_m": -0.1801569883661,
+          "adam_v": 0.000983814899604,
+          "epoch": 3,
+          "theta": 0.775150342226095,
+          "updates_cumulative": 12,
+          "validation_reduce_mean": 1.898829571259032
+        },
+        {
+          "adam_m": -0.173382436351556,
+          "adam_v": 0.001168747145087,
+          "epoch": 4,
+          "theta": 0.941967053073179,
+          "updates_cumulative": 16,
+          "validation_reduce_mean": 2.199836139971435
+        }
+      ],
+      "final": {
+        "adam_m": -0.173382436351556,
+        "adam_v": 0.001168747145087,
+        "epoch": 4,
+        "theta": 0.941967053073179,
+        "updates_cumulative": 16,
+        "validation_reduce_mean": 2.199836139971435
+      }
+    },
+    "optimizer_paths_differ": true,
+    "purpose": "Demonstrate mechanism only: unequal row/batch counts can produce different Adam and validation-loss paths despite equal aggregate loss numerators.",
+    "validation_monitor_paths_differ": true,
+    "weighted_trace": {
+      "epochs": [
+        {
+          "adam_m": -0.142942642824722,
+          "adam_v": 0.001129249187237,
+          "epoch": 1,
+          "theta": 0.300048342926903,
+          "updates_cumulative": 2,
+          "validation_reduce_mean": 0.912180726441359
+        },
+        {
+          "adam_m": -0.242143863977357,
+          "adam_v": 0.002018972999466,
+          "epoch": 2,
+          "theta": 0.399457965116858,
+          "updates_cumulative": 4,
+          "validation_reduce_mean": 1.026249489614264
+        },
+        {
+          "adam_m": -0.296273815549932,
+          "adam_v": 0.003096676585148,
+          "epoch": 3,
+          "theta": 0.493293686029967,
+          "updates_cumulative": 6,
+          "validation_reduce_mean": 1.141070906323234
+        },
+        {
+          "adam_m": -0.33040930949269,
+          "adam_v": 0.003948181723455,
+          "epoch": 4,
+          "theta": 0.580266724357362,
+          "updates_cumulative": 8,
+          "validation_reduce_mean": 1.252927748879448
+        }
+      ],
+      "final": {
+        "adam_m": -0.33040930949269,
+        "adam_v": 0.003948181723455,
+        "epoch": 4,
+        "theta": 0.580266724357362,
+        "updates_cumulative": 8,
+        "validation_reduce_mean": 1.252927748879448
+      }
+    }
+  },
+  "predeclared_projection_regions": [
+    "p_parallel < 6 GeV",
+    "6 GeV <= p_parallel <= 20 GeV",
+    "p_parallel > 20 GeV"
+  ],
+  "prohibitions_applied": {
+    "do_not_construct_C_ML": true,
+    "do_not_move_central": true,
+    "do_not_retry_unchanged": true,
+    "do_not_select_passing_subset": true,
+    "do_not_start_leg_2": true
+  },
+  "schema_version": 1,
+  "scientific_pet_equivalence": "NOT_MEASURED",
+  "scope": "Synthetic CPU fixture for factor replay, split-before-duplication, aggregate push/extraction identity, and a finite-batch Adam positive control. No PET model is trained.",
+  "split": {
+    "assignment": "explicit unique-event membership before literal duplication",
+    "cross_partition_event_ids_after_duplication": [],
+    "train_unique_event_ids": [
+      1001,
+      1002,
+      1003,
+      1004,
+      1007,
+      1008,
+      1011
+    ],
+    "validation_unique_event_ids": [
+      1005,
+      1006,
+      1009,
+      1010,
+      1012
+    ]
+  },
+  "status": "PASS_MACHINERY_VALIDATION_ONLY",
+  "terminal_result_cannot_authorize": [
+    "selection of a passing Gate-6 subset",
+    "construction of C_stat or C_ML",
+    "movement of the PET central estimator",
+    "Gate-6 Leg 2 or any unchanged retry",
+    "a full fixed-draw PET equivalence run",
+    "a convergence, estimator-equivalence, or interval-coverage claim",
+    "publication adoption or a publication uncertainty claim",
+    "Slurm, srun, GPU training, or a pseudoexperiment count"
+  ]
+}
