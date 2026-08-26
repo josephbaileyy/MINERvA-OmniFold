@@ -90,6 +90,7 @@ docs/orchestration/control-plane/source-record-inventory.tsv	MACHINE	generated	"
 docs/orchestration/control-plane/work-items.tsv	LIVE	open	""
 docs/orchestration/control_plane_lint.py	LIVE	open	""
 docs/orchestration/state/RECEIPT-20260822-quarantine-member-k000000-stale-replicas.json	MACHINE	open	
+docs/orchestration/state/RECEIPT-20260826-k0-freeze-bundle-detectability.json	MACHINE	open	
 docs/orchestration/state/declaration-v-5d-covering-search-20260822.sh	MACHINE	open	
 docs/orchestration/state/live-state-last-known.json	LIVE	open	
 docs/orchestration/state/live-state.json	LIVE	open	

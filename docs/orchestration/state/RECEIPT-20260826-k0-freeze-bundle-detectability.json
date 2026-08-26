@@ -1,0 +1,165 @@
+{
+  "schema": "freeze-detectability-receipt/v1",
+  "recorded_utc": "2026-08-26T07:55:36Z",
+  "recorded_by": "publication close-out lane (claude-school-main)",
+  "authority": "Joseph 2026-08-25, DECISION-20260825-joseph-gate2-fail-and-four-rulings.md section 11.1.1: do NOT chmod the frozen deploy's .git; produce a git bundle plus a recorded sha256 instead, because the property the freeze lacks is DETECTABILITY, not resistance. Joseph 2026-08-26: require explicit HEAD inclusion and a list-heads postcondition proving the pinned commit present; emit no recovery receipt unless that postcondition passes.",
+  "CITABLE_FOR": [
+    "That the frozen deploy's HEAD was aa67c426afaa9b6ca91c9996637a6bade950da9a and its ENTIRE ref set was the ten refs/tags/evidence/* rows below, as measured on 2026-08-26.",
+    "That a bundle exists from which the pinned commit and that ref set can be recovered WITHOUT access to any other repository, and that recovery was TESTED, not asserted.",
+    "That .git was NOT chmod'ed: measured drwxrwx--- after the ruling.",
+    "Detecting a LATER change to the pinned state, by re-running the recipe below and comparing against these values."
+  ],
+  "NOT_CITABLE_FOR": [
+    "Any Gate-2 clause. Gate 2 remains FAIL.",
+    "A byte-image of the frozen clone's own object store -- see limitations.",
+    "Any claim that the frozen clone CANNOT be modified. It can: .git is writable, and this receipt makes a change DETECTABLE, not impossible.",
+    "Compute, adoption, or a rehearsal."
+  ],
+  "frozen_deploy": {
+    "path": "/pscratch/sd/j/josephrb/k0r2/clean",
+    "head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+    "head_equals_pin": true,
+    "ref_count": 10,
+    "refs": [
+      {
+        "sha": "ad93836aabcc12a4ed905663fd16418c8872e659",
+        "ref": "refs/tags/evidence/agy-review-wt-c1b63820"
+      },
+      {
+        "sha": "e9ca0f37b454957e1b9af53aff0a3d542f068547",
+        "ref": "refs/tags/evidence/ben-225-ea4a4f3d"
+      },
+      {
+        "sha": "9ab6535587b31cf0d4a26678608eea638810d626",
+        "ref": "refs/tags/evidence/ben-382-e477afb1"
+      },
+      {
+        "sha": "fb6f828803677434ddcf0f7a326c33fccb842150",
+        "ref": "refs/tags/evidence/ben-454-anchor-comparator-ecee9ff1"
+      },
+      {
+        "sha": "dacf2c6c773f2961264ceb0ae1ff3081e58904f2",
+        "ref": "refs/tags/evidence/ben-468-baseline-8e48a811"
+      },
+      {
+        "sha": "e956e495070b1850cd939920937cc1850fd6a385",
+        "ref": "refs/tags/evidence/ben-482-aae49f2a"
+      },
+      {
+        "sha": "3424f18f5d650bc8b94be6be2219de2aa8159690",
+        "ref": "refs/tags/evidence/prepublication-2026-08-20-0b329e8a"
+      },
+      {
+        "sha": "89efca85fde90e5c57d6265bbb61543a64294ee4",
+        "ref": "refs/tags/evidence/prepublication-excluded-audit-bb16c270"
+      },
+      {
+        "sha": "0e6e6a49e307d73bfd8b6e899b447ec3c11e35bc",
+        "ref": "refs/tags/evidence/prepublication-excluded-gregor-b65f9ff2"
+      },
+      {
+        "sha": "e895b3595658d5bf14352c5fc4b1a82fa2d13f03",
+        "ref": "refs/tags/evidence/standing-compute-grant-22668401"
+      }
+    ],
+    "no_branch_or_remote_tracking_refs": true,
+    "permissions": [
+      "dr-xr-x--- /pscratch/sd/j/josephrb/k0r2/clean",
+      "drwxrwx--- /pscratch/sd/j/josephrb/k0r2/clean/.git"
+    ],
+    "chmod_applied": false
+  },
+  "bundle": {
+    "path": "/pscratch/sd/j/josephrb/k0r2/freeze-receipts/k0-clean-aa67c426-20260826T075536Z.bundle",
+    "bytes": 79140251,
+    "sha256": "8ce5839114f4ba6b9b6d231ae343988134cc752b172e5f1b521a9869555022c0",
+    "contains_ref": "refs/tags/freeze/k0-aa67c426",
+    "generated_from": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold (the primary checkout)",
+    "create_rc": 0,
+    "verify_rc": 0,
+    "verify_tail": [
+      "The bundle uses this hash algorithm: sha1",
+      "/pscratch/sd/j/josephrb/k0r2/freeze-receipts/k0-clean-aa67c426-20260826T075536Z.bundle is okay"
+    ],
+    "heads": [
+      {
+        "sha": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+        "ref": "refs/tags/freeze/k0-aa67c426"
+      },
+      {
+        "sha": "ad93836aabcc12a4ed905663fd16418c8872e659",
+        "ref": "refs/tags/evidence/agy-review-wt-c1b63820"
+      },
+      {
+        "sha": "e9ca0f37b454957e1b9af53aff0a3d542f068547",
+        "ref": "refs/tags/evidence/ben-225-ea4a4f3d"
+      },
+      {
+        "sha": "9ab6535587b31cf0d4a26678608eea638810d626",
+        "ref": "refs/tags/evidence/ben-382-e477afb1"
+      },
+      {
+        "sha": "fb6f828803677434ddcf0f7a326c33fccb842150",
+        "ref": "refs/tags/evidence/ben-454-anchor-comparator-ecee9ff1"
+      },
+      {
+        "sha": "dacf2c6c773f2961264ceb0ae1ff3081e58904f2",
+        "ref": "refs/tags/evidence/ben-468-baseline-8e48a811"
+      },
+      {
+        "sha": "e956e495070b1850cd939920937cc1850fd6a385",
+        "ref": "refs/tags/evidence/ben-482-aae49f2a"
+      },
+      {
+        "sha": "3424f18f5d650bc8b94be6be2219de2aa8159690",
+        "ref": "refs/tags/evidence/prepublication-2026-08-20-0b329e8a"
+      },
+      {
+        "sha": "89efca85fde90e5c57d6265bbb61543a64294ee4",
+        "ref": "refs/tags/evidence/prepublication-excluded-audit-bb16c270"
+      },
+      {
+        "sha": "0e6e6a49e307d73bfd8b6e899b447ec3c11e35bc",
+        "ref": "refs/tags/evidence/prepublication-excluded-gregor-b65f9ff2"
+      },
+      {
+        "sha": "e895b3595658d5bf14352c5fc4b1a82fa2d13f03",
+        "ref": "refs/tags/evidence/standing-compute-grant-22668401"
+      }
+    ]
+  },
+  "postconditions": {
+    "pin_present_in_list_heads": true,
+    "frozen_ref_set_reproduced": true,
+    "note": "These are the gate Joseph required. A `--all` bundle would have FAILED them while exiting 0: that clone has NO branch and NO remote-tracking refs, so --all expands to the ten evidence tags alone, and `merge-base --is-ancestor aa67c426 <tag>` is FALSE for all ten -- a verifying, digestible bundle containing nothing to recover. The pin is therefore named EXPLICITLY via a local-only tag and asserted present afterwards."
+  },
+  "tested_recovery": {
+    "method": "git clone --no-local <bundle> <tmp>  (--no-local forbids object sharing, so the bundle is the only source), then fsck, then checkout of the pin",
+    "clone_rc": 0,
+    "fsck_rc": 0,
+    "checkout_rc": 0,
+    "recovered_head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+    "recovered_tree": "60120bfb9fb903da8e209468ef37334e9e0e05a3",
+    "recovered_tree_equals_local_pin_tree": true,
+    "recovered_working_tree_porcelain_lines": 0,
+    "recovered_tracked_files": 1583,
+    "recovered_tags": 11,
+    "honest_limit_of_this_arm": "recovered_tree matching the primary checkout's aa67c426^{tree} is NOT an independent confirmation -- both are the same git object. What this arm establishes is that the BUNDLE ALONE reconstructs a clean checkout at the pin. Independence comes from the separate measurement that the frozen clone's HEAD IS that commit."
+  },
+  "limitations": [
+    "The bundle was generated from the PRIMARY checkout, not from the frozen clone's own object store. Reason, measured: that clone has a LOOSE-object store on Lustre -- `git count-objects -vH` exceeded a 120 s timeout, and `git bundle create` there did not complete in 45 minutes and had to be killed. The primary checkout is fully packed (21597 objects, 1 pack, 80.81 MiB) and produced the bundle in seconds.",
+    "Consequence: this is a recovery source for the pinned COMMIT and the frozen clone's REF SET, not a byte-image of that clone's object store. The pinned STATE is identified by HEAD + ref set + commit content, and all three are recorded here.",
+    "Reading the frozen clone with git is NOT a read-only act (section 11.1 of the decision record): a git invocation there may write a lock into .git. This receipt's reads were rev-parse, show-ref and stat.",
+    "The freeze tag refs/tags/freeze/k0-aa67c426 is LOCAL ONLY and deliberately not pushed. It exists because `git bundle create` refuses a bare sha ('Refusing to create empty bundle'); a recovering party gets the ref from the bundle itself."
+  ],
+  "reverification_recipe": [
+    "sha256sum /pscratch/sd/j/josephrb/k0r2/freeze-receipts/k0-clean-aa67c426-20260826T075536Z.bundle   # must equal bundle.sha256",
+    "git -C /pscratch/sd/j/josephrb/k0r2/clean rev-parse HEAD   # must equal frozen_deploy.head",
+    "git -C /pscratch/sd/j/josephrb/k0r2/clean show-ref   # must equal frozen_deploy.refs, exactly ten rows and no others",
+    "stat -c '%A %n' /pscratch/sd/j/josephrb/k0r2/clean{,/.git}   # must equal frozen_deploy.permissions",
+    "git bundle list-heads <bundle> | grep aa67c426afaa9b6ca91c9996637a6bade950da9a",
+    "git clone --no-local <bundle> <tmp> && git -C <tmp> checkout --detach freeze/k0-aa67c426 && git -C <tmp> status --porcelain   # must be empty",
+    "ANY mismatch is a finding, not a maintenance task: it means the pinned state moved."
+  ],
+  "gate_2": "FAIL. This receipt discharges no clause and authorizes no compute."
+}

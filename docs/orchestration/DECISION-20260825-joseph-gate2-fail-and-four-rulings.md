@@ -440,6 +440,38 @@ lacks is **detectability**, not resistance -- nothing currently distinguishes "t
 intact" from "nobody has looked". A bundle with a recorded digest is inspectable by someone who was
 not there, and it fails loudly rather than silently. Filed as a `state/` receipt.
 
+#### 11.1.2 LANDED 2026-08-26 — the receipt, and the postcondition that nearly did not fire
+
+`docs/orchestration/state/RECEIPT-20260826-k0-freeze-bundle-detectability.json`. Bundle
+`k0-clean-aa67c426-20260826T075536Z.bundle`, **79 140 251 bytes**, sha256
+**`8ce58391…22c0`**. Measured at emission: frozen HEAD **= the pin**, ref set **= exactly the ten
+`refs/tags/evidence/*` rows and nothing else**, and `.git` still **`drwxrwx---`** — the chmod was not
+applied, re-measured rather than assumed.
+
+**Recovery is TESTED, not asserted.** `git clone --no-local` from the bundle (which forbids object
+sharing, so the bundle is the only source) → `fsck` rc=0 → checkout of the pin: HEAD
+`aa67c426…`, tree `60120bfb…`, **porcelain 0**, 1583 tracked files. The receipt also states this
+arm's honest limit: the recovered tree matching the primary checkout's `aa67c426^{tree}` is the *same
+git object*, so it is not independent — what the arm establishes is that the bundle **alone**
+rebuilds a clean checkout at the pin.
+
+**The postcondition Joseph required is the reason this receipt is worth anything.** A `git bundle
+create --all` would have **passed `verify`, produced a digest, and contained nothing to recover**:
+that clone has **no branch and no remote-tracking refs**, so `--all` expands to the ten evidence tags
+alone, and `merge-base --is-ancestor aa67c426 <tag>` is **FALSE for all ten**. The first attempt was
+built that way and was discarded. The pin is now named **explicitly** through a local-only tag
+`refs/tags/freeze/k0-aa67c426`, and `bundle list-heads` is asserted to contain it before any receipt
+is emitted. `bundle verify` does **not** cover this: it checks well-formedness and prerequisites, not
+that the bundle holds what you meant.
+
+**Stated limitation, because it changes what the receipt can be cited for.** The bundle was generated
+from the **primary checkout**, not from the frozen clone's own object store: that store is
+**loose-object on Lustre**, where `git count-objects -vH` exceeded a 120 s timeout and
+`bundle create` did not complete in **45 minutes** and had to be killed, while the fully packed
+primary (21597 objects, 1 pack, 80.81 MiB) produced it in seconds. So this is a recovery source for
+the pinned **commit and ref set**, not a byte-image of that clone. Detectability of the pinned state
+rests on HEAD + ref set + commit content, and all three are recorded.
+
 ## 12. Open determinations delegated to the grader (Joseph, 2026-08-25)
 
 Both of these post-date §§1–11 and neither is settled by this document. They are recorded here

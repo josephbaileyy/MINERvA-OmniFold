@@ -44,7 +44,12 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   deploy's `.git`** — verified not applied — because it is an accident guard the tree owner undoes in
   one command AND it breaks `git worktree add`, this repo's mandated audit mechanism; a **`git bundle`
   plus a recorded `sha256`** is ordered instead, since the property the freeze lacks is
-  **detectability**, not resistance. §12.4: **the dead literal stays, NO CHANGE** — a typo'd
+  **detectability**, not resistance — **LANDED 2026-08-26** at
+  `state/RECEIPT-20260826-k0-freeze-bundle-detectability.json` (bundle 79 140 251 B, sha256
+  `8ce58391…`, recovery TESTED by `clone --no-local` → `fsck` → checkout, porcelain 0), and the
+  postcondition earned its keep: a `--all` bundle would have verified, hashed, and **contained
+  nothing to recover**, because that clone has no branch refs and none of its ten evidence tags
+  contains the pin. §12.4: **the dead literal stays, NO CHANGE** — a typo'd
   whitelist row is **fail-closed UNDER-coverage, the direction OPPOSITE to D-3**, and suppresses
   nothing (measured: still exit **20 UNEXPECTED**); the proposed "unused entry ⇒ non-zero exit"
   middle option is **STRUCK as unsatisfiable**, because a correct entry is unused whenever the two
