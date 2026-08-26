@@ -303,7 +303,10 @@ the citation had already acquired a force it was never meant to have.
 | `compare_m1_m6.py` (repaired at `c8a29082`, UNGRADED) | content sha256 | `68b4af12` |
 | `test_compare_m1_m6.py` (repaired at `c8a29082`, UNGRADED) | content sha256 | `b355ecdc` |
 | `m1m6_expected_differences.json` (**historical referent**, as it produced the record) | content sha256 | `56c2e0ef`, 4464 bytes |
-| `m1m6_expected_differences.json` (prose note transcribed from the grade, per §12.1) | content sha256 | `92091ae8` |
+| `m1m6_expected_differences.json` (**intermediate**: transcribed from the D-3 grade) | content sha256 | `92091ae8` |
+| `m1m6_expected_differences.json` (**current**: transcribed from the narrowing grade) | content sha256 | `c2f0d920` |
+| `compare_m1_m6.py` (narrowed at `63262a3a`, graded FIT at `fba7da70`) | content sha256 | `5dc92487` |
+| `test_compare_m1_m6.py` (same) | content sha256 | `762fac14` |
 | `measure_k0_farend_f1b_f17b.sh` (post-repair) | content sha256 | `c40e6b54`, 15722 bytes |
 | `GRADE-20260825-f17b-comparison-instrument-fitness.md` (EXPIRED) | content sha256 | `aa1b6eee`, 41819 bytes |
 
@@ -473,12 +476,19 @@ implementer and the grader are different parties, and neither is the spec author
 specification and its digest are updated ONLY AFTER the implementation passes**, not before. All
 historical digests are preserved as as-of referents; none is rewritten.
 
-Consequence for the note transcribed under §12.1: `m1m6_expected_differences.json` at `92091ae8`
-currently describes partial selectors as accepted, because that is the **graded** behaviour and the
-note is required to describe graded behaviour rather than intent. It is deliberately **left
-unchanged** until the narrowing is implemented and passes, per this ruling. Its sentence deferring to
-Joseph is therefore stale in wording while remaining correct in effect — do not add a partial
-selector — and it is knowingly left so rather than edited early. §12.2.1 governs.
+**DISCHARGED.** Implemented at `63262a3a` by an independent lane, graded **FIT with NO condition**
+at `fba7da70` by a third. The prior grade's mechanical expiry tripped by design (two of its three
+pinned digests moved) and was verified tripped rather than assumed. The prior grade's standing
+precondition — "no partial M-1 selector in the list at filing time" — is now **unnecessary**: the
+guard makes one unrepresentable.
+
+The note was then updated per §12.1's first branch, `92091ae8` → **`c2f0d920`**, transcribed from §8
+of the narrowing grade and verified inert to behaviour (parses; comparator still returns the filed
+`32/0/32` at exit 20; suite 81/81). Both earlier digests are preserved in §11 as as-of referents.
+
+**Newly accepted = 0**, independently measured over 115160 corpus-derived patterns scored in separate
+processes against one serialized population: accepted 42997 → 773, with
+`accepted_new \ accepted_old` empty. That was the column that had to be empty.
 
 ### 12.3 Scope, and what these do not move
 
@@ -491,6 +501,11 @@ authorized by anything in this section, and a passing grade confers neither.
 
 
 ## 13. Withdrawn and non-citable: three mutation figures
+
+> **Scope of authority in this section.** §13 proper is **Joseph's ruling 2** and covers exactly the
+> three mutation figures below. §§13.1–13.3 are **findings by the publication close-out lane**, not
+> rulings, and were nested under a "Ruled by Joseph" heading — which is itself a defect this section
+> now corrects, because it lent his authority to my findings. One of them, §13.2, was wrong.
 
 **Ruled by Joseph, 2026-08-25.** The comparator-repair lane's claim 5 reported a mutation matrix.
 Under independent grading, two figures reproduce exactly and three do not:
@@ -514,6 +529,103 @@ depends on the mutation matrix. An inaccurate diagnostic count is not itself an 
 Also recorded from the same grade: claim 2's "breadth is inexpressible" is **overstated** — true of
 field-name breadth, false of selector-space breadth (which is what §12.2.1 now closes). Claim 6 is
 true but over a shipped-list population of **one** pattern, and must be quoted with that denominator.
+
+### 13.1 The narrowing grade's four overstatements, recorded compactly
+
+Per ruling 2's principle — an inaccurate diagnostic count is not an audit campaign — these are
+recorded and not chased. **None is behavioural**; the narrowing's own verdict is FIT with no
+condition.
+
+| Claim | Status |
+|---|---|
+| "4060 of **4840**" | the 4840 denominator is **not recoverable** from committed artifacts. Cite `4060`, or the grader's 115160. Never "4060 of 4840". |
+| `field_matches` untouched because narrowing it would cost unit assignment | **wrong ground.** 0 of 30 UNITS patterns is a partial selector, so mirroring the narrowing there would cost nothing. The correct reason is **backstop independence**: `field_matches` is the independent second implementation that `matcher_disagreement` interrogates, and teaching it the grammar makes the backstop circular. |
+| "prose corrected in three places" | **four** |
+| the `over_broad` assertion demonstrating the old sweep could not catch this | **degenerate as written** — it passes on the bench universe because the pattern reaches 0 fields there, not because the predicate counts field names. The substance holds over the real universe; the cited line does not carry it. |
+
+| the new invariant arm's docstring | **states the opposite of the claim it supports.** It frames the narrowing's point as a *reach* property — "an accepted M-1 entry covers either one nameable file or, visibly, the whole population" — but `M-1[nd-*]` **satisfies** that (reaches 10 of 10), so the arm advertised as catching under-refusal residue would not have caught the very spelling §12.2.1 banned. Verified at `test_compare_m1_m6.py:957-982`: the assertion is `len(reached) <= 1 or reached == everything`. Coverage survives via the separate 4060-candidate sweep. **Prose defect, not behaviour.** |
+
+Also: "all 76 pre-existing arms stay green" — there are **75** name-identical pre-existing arms; the
+76th is the one the implementation inverted.
+
+**Both prose corrections are now recorded here rather than edited into the file.** Editing either
+moves a pinned digest and voids the live grade; recording them moves nothing. They are **mandatory on
+next touch** — the next commit that moves `test_compare_m1_m6.py` for a behavioural reason must carry
+them. The `field_matches` correction (row 2 above) was already recorded when this table was written;
+the invariant-arm row closes the asymmetry, which was the actual gap.
+
+### 13.2 RETRACTED — the "265 of 721" figure is CORRECT, and this section was wrong
+
+**This finding is withdrawn. It was mine, it was wrong, and it was wrong in the direction that
+discredited a correct prior grade.**
+
+What this section previously said: that `test_compare_m1_m6.py`'s docstring figure "265 of 721
+generated candidates are refused although they reach exactly one field name" does not reproduce, that
+the measured values are 301 or 360, that **265 is the ACCEPTED count**, and that the figure "survived
+the D-3 grade unchallenged". It instructed: *do not cite "265 of 721"*.
+
+**Re-derived independently, twice** — by a fresh advisory lane and then by this lane with its own
+probe, both over the suite's own `_candidate_patterns` on the bench universe:
+
+| population | count |
+|---|---|
+| generator candidates | 721 |
+| accepted | **265** |
+| refused | 456 |
+| refused ∧ exactly one field **name** | 301 |
+| **refused ∧ one field name ∧ touches no `M-2`** | **265** |
+| refused ∧ not `over_broad` | 360 |
+
+**265 reproduces exactly** under the third reading, and the 36-pattern gap from 301 is entirely
+`M-2`-targeted (`M-2.i*`, `M-2.im*`, …). Excluding them is substantively right for the claim the arm
+makes: those 36 would be refused by the `M-2` rule regardless, so counting them as cost-of-the-
+field-wildcard-rule double-counts.
+
+**The D-3 grade graded this figure and AFFIRMED it** (`GRADE-20260825-d3-comparator-repair-fitness.md`
+line 253, which states the qualifier and the 456 and the 301). So "survived unchallenged" was false:
+it was tested and upheld. The narrowing grade's §9 tried two readings, missed the third, did not
+consult the prior grade's claim-6 section where it is written out, and concluded from the
+**coincidence** that `accepted` is also 265 (456 + 265 = 721) that 265 "is instead the accepted
+count." Both halves of that sentence are individually true and the inference is wrong.
+
+**The docstring's real defect is a MISSING QUALIFIER, not a wrong number.** Adding "and touch no
+`M-2` field" makes it exactly true at both `68b4af12` and `5dc92487`. That correction is recorded in
+§13.1's mandatory-on-next-touch set, not applied here.
+
+**Still to be corrected elsewhere:** `CATALOG.md` echoes the retracted instruction, and the narrowing
+grade's §9 stands uncorrected in a filed grade whose overall verdict (FIT) is unaffected. The grade
+is its author's artifact; this lane has notified it rather than editing it.
+
+**How I got it wrong, since that is the reusable part.** I received "cannot reproduce under either
+natural reading" from a grader and relayed it into a ruling section without asking *which two
+readings*, or checking whether an earlier grade had already scored the same figure. A negative result
+about a figure is a claim about a **population and its qualifiers**, and I recorded it as a claim
+about a number. That is the campaign's most-repeated failure mode and I committed it while
+maintaining the register that documents it.
+
+**The narrow rule worth keeping**, which is cheaper than "grades should check every figure": a figure
+quoted in a docstring **must name its population and qualifiers inline**, and a grade that touches a
+figure **must state the reading it scored**. Both graders here did correct arithmetic over
+differently-defined sets; no amount of "check more" would have caught that, and stating the reading
+would have caught it immediately.
+
+### 13.3 My own briefing was self-contradictory, and the grader caught it
+
+Two defects in how I briefed the narrowing grader, both reported by the grader itself:
+
+- I relayed the implementer's claim 8 as "**nothing previously refused changes even its printed
+  reason**". That is **false as stated** — and my own relay of claim 1, three paragraphs earlier in
+  the same brief, said 305 verdicts were *reworded*. The two cannot both hold and I passed both
+  without noticing. The defensible claim is about the **identity of the check that fires**, not its
+  text; graded that way it holds exactly (one transition, `ACCEPT → partial-selector`, 42224).
+- I asked the grader to "**assess whether the implementation is honest** about that". That is an
+  attitude question and it invites a yes. Testing the same thing as a *proposition* is what produced
+  the finding that the new invariant arm's docstring states the opposite of the claim it supports.
+
+Recorded because the fix is to the briefing, not to anyone's code, and an unrecorded briefing defect
+propagates to the next lane silently. **Rule for future dispatches: relay a claim as a proposition
+with its operand, never as a question about the author's candour, and check a relayed claim set for
+internal contradiction before sending it.**
 
 ## 14. F-14 self-reports: confession is not validation
 

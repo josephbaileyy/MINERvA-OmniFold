@@ -81,18 +81,60 @@ that arises routinely.
 
 The repair is **not** to delete the warning: arm 0 shows it is correctly silent on a clean tree, and
 the general case it warns about is real. What it lacks is an arm distinguishing staged-and-going-in
-from not. Whoever implements this must produce, at minimum:
+from not.
 
-- an arm that FIRES on the hazard (dirty, not staged),
-- an arm SILENT on correct procedure (dirty, fully staged, about to be committed), and
-- the opposite-direction arm: dirty, staged, and *not* committed — where staging is not sufficient.
+**The discriminating information already exists and is thrown away.** Located 2026-08-25 by a fresh
+advisory lane at `generate_manifest.py:328`, in `dirty_inventory_paths`:
 
-The third is the one an obvious implementation will miss.
+    return sorted({line[3:].split(" -> ")[-1] for line in rows if not line.startswith("??")})
 
-**Ownership is unassigned.** Under the separation ruling 3 established for the comparator, the
-implementer and the grader must be different parties. This lane is eligible to implement (it did not
-author `generate_manifest.py`) but may not then grade its own work. `generate_manifest.py` has many
-callers, so a behaviour change to it is wider than it looks.
+It runs `git status --porcelain` and then discards `line[:2]` — the XY code — in the same expression
+that builds the set. The three states are all present in output the tool already has:
+
+| porcelain XY | meaning | which case |
+|---|---|---|
+| `' M'` | dirty, NOT staged | **the hazard** |
+| `'M '` | dirty, fully staged | **correct procedure** |
+| `'MM'` | staged AND further unstaged edit | **staging is not sufficient** |
+
+A fourth, directly F-14-shaped: `MANIFEST.tsv` showing `' M'` while its sources show `'M '` —
+regenerated but not staged with them.
+
+Minimum controls: an arm that FIRES on `' M'`, an arm SILENT on `'M '`, and the opposite-direction
+arm on `'MM'`, which is the one an obvious implementation will miss.
+
+**CORRECTION 2026-08-25 to this section's third control.** It previously demanded an arm for "dirty,
+staged, and *not committed* — where staging is not sufficient." That conflated two different things:
+`'MM'`, which is **observable at run time**, and "staged and then never committed", which is a
+**future fact no implementation inside `generate_manifest.py` can observe**. As written the control
+was unsatisfiable. The observable half is kept above; the unobservable half belongs at commit time as
+a pre-commit check, not as a warning, and is out of this defect's scope.
+
+**In scope, same defect family**, found while measuring the above: in default mode the tool silently
+absorbs a peer's untracked files into the inventory and flips `--check` to rc=1, disclosing them only
+under `--committed-only`. Measured on this shared checkout: default `--check` rc=1, rows=537,
+`tracking=intended:4`, caused entirely by four untracked files a peer left in `docs/orchestration`;
+`--check --committed-only` rc=0, rows=533. **`main` is fine and nobody should "repair" that rc=1.**
+But the shape is identical to the DIRTY defect — the instrument holds the discriminating fact and
+withholds it in the mode where it matters — so it belongs inside this repair rather than in a
+separate filing.
+
+**Ownership: an INDEPENDENT IMPLEMENTER. NOT the publication close-out lane.**
+
+An earlier version of this section said the close-out lane was eligible "because it did not author
+`generate_manifest.py`". That is the **tool-authorship** prong, and it is not the one ruling 3 turns
+on. §6 of the decision record disqualifies that lane from repairing or grading `compare_m1_m6.py`
+because it *authored the instrument's spec*. **This section is a specification** — it enumerates the
+acceptance controls — and the close-out lane wrote it. By the rule that disqualified it from the
+comparator, it is the spec author here and may be neither implementer nor grader.
+
+A second, independent reason: that lane committed **four of the six** F-14 omissions this warning
+contributed to, and §14 rules that confession is not validation. The belief that the instrument
+misled it is the belief that excuses it.
+
+The filing stays with the close-out lane (attribution belongs with the party that made the omission,
+per §14). The repair goes elsewhere, and its grader must differ from its implementer.
+`generate_manifest.py` has many callers, so a behaviour change is wider than it looks.
 
 ## 5. Cited artifacts
 
