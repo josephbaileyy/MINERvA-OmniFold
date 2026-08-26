@@ -588,3 +588,29 @@ during a system-side node drain; all downstream jobs were dependency-held and no
 occurred. This is a submission event, not a PET result. A terminal attempt receipt and validation
 are still required before any measured quantity is interpreted. Existing Gate 6 remains blocked
 and all five prohibitions remain in force.
+
+### Retry-1 terminal and authorized retry-2 design
+
+After the shared-Milan drain released, target `57626676` ran for 4 minutes 15 seconds and failed
+before publishing a target. The checkout-root repair itself worked: two paths were remapped, the
+OI-136 guard did not refuse, and all six observed repository modules came from the detached
+`9bbd26cc` checkout. The next import, `omnifold.dataloader`, executed `omnifold/__init__.py`; that
+initializer imports the TensorFlow training engine, which is unavailable in the ROOT Python 3.11
+environment. The three downstream jobs were cancelled with zero allocation. The committed
+[`attempt receipt`](state/pet-v2-fixed-draw-equivalence-changed-retry1-attempt-57626676.json)
+classifies this as `INVALID_OR_INCOMPLETE`: zero A100-hours, no target, and no scientific quantity.
+
+This is an import-side-effect defect, not evidence that target materialization needs TensorFlow.
+The exact `omnifold/dataloader.py` imports only NumPy. In the exact ROOT environment, ordinary
+package import reproduces the TensorFlow failure, while a target-only package shell loads and
+instantiates the same dataloader at SHA-256 `bed9e0b3…` with TensorFlow absent. The guarded retry-2
+target `--help` path then passes with eight observed modules under one checkout root.
+
+Joseph subsequently stated **“Retries are authorized.”** The separate
+[`retry-2 predeclaration`](PREDECLARATION-20260826-pet-v2-fixed-draw-equivalence-changed-retry2.md)
+and [machine contract](state/pet-v2-fixed-draw-equivalence-changed-retry2-proposal-20260826.json)
+therefore authorize changed machinery retries within this one fixed-draw diagnostic and the
+existing total ceiling, never unchanged or automatic retries. Retry 2 bypasses only the unnecessary
+target package initializer, hash-loads the identical NumPy dataloader, and reuses the unchanged
+training/evaluation wrappers. Every scientific control, threshold, resource limit, non-authorization,
+and exact Gate-6 prohibition remains frozen.

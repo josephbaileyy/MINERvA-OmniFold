@@ -261,8 +261,30 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: the only other reported drift remained the named pre-existing G2 launcher. These pins freeze a
 #: design that still says `launchable: false` and `retry_authorized: false`; inventory membership is
 #: neither compute authorization nor scientific adoption.
-RECEIPT_BINDING_COUNT = 130
-RECEIPT_BINDING_SHA256 = "5d01b61d89ad1f5906ccbc5fdaaa5680e5a9ae76f3acf1c55aacb24f569a2c05"
+#: MOVED 130 -> 135 ON 2026-08-26, DELIBERATELY, FOR PET-V2 CHANGED RETRY 2.
+#: Retry-1 target 57626676 failed before materialization because the ROOT interpreter executed an
+#: unrelated TensorFlow-importing package initializer. Joseph then authorized changed retries. The
+#: staged inventory delta was measured as EXACTLY five additions and zero removals:
+#:
+#:     docs/orchestration/state/pet-v2-fixed-draw-equivalence-changed-retry-submission-57626676.json
+#:       53a6edf2e2b83f3e302d801c46f9834367143387cff4928a6f4a87ee7c509713
+#:     docs/orchestration/state/pet-v2-fixed-draw-equivalence-changed-retry1-attempt-57626676.json
+#:       923ca7456ff4a705dffb690f80522d54fa9a2cd9770d5be8e98417b0a1a963dd
+#:     nd-unfolding/pet/materialize_pet_v2_equivalence_target_retry2.py
+#:       e70848732f9e3a8afaa1f94a6f82b7a833ed7ab463abcf3c9a8fda834605ba76
+#:     nd-unfolding/pet/submit_pet_v2_equivalence_changed_retry2.sh
+#:       35f119d85f3113203ab98df590a85ad0f650c779f7b3d694a8fe609bbf0087f9
+#:     nd-unfolding/pet/validate_pet_v2_equivalence_result_retry2.py
+#:       e3759c98e8eb8e208e5745205e87d612262eb09dd882782bc30ec4afe30ed830
+#:
+#: All five resolved and matched. The proposal's controller separately hash-checks its target-only
+#: package-bypass support file, whose path->digest mapping is not one of collect()'s receipt shapes.
+#: The inventory measured 135 rows at digest
+#: 75b8f7c0af7d416a9af83e843ee768d615c2c8372a7b7e14906e561d32df9139, with the only other
+#: reported drift still the named pre-existing G2 launcher. This freezes new evidence and new
+#: executables; it does not refresh any historical binding or authorize a scientific result.
+RECEIPT_BINDING_COUNT = 135
+RECEIPT_BINDING_SHA256 = "75b8f7c0af7d416a9af83e843ee768d615c2c8372a7b7e14906e561d32df9139"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

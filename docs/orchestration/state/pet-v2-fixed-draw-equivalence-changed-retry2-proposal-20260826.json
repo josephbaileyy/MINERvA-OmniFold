@@ -1,0 +1,276 @@
+{
+  "C_ML": null,
+  "C_stat": null,
+  "authorization": {
+    "authorization_recorded_at_utc": "2026-08-26T20:46:12Z",
+    "authorization_source": "Joseph's explicit user message 'Retries are authorized', after the retry-1 target-environment failure was reported",
+    "authorization_token": "JOSEPH-20260826-PETV2-CHANGED-RETRIES-AUTHORIZED",
+    "authorized_action": "changed machinery retries needed to complete this one fixed-draw PET-v2 diagnostic, only while scientific controls and the total resource ceiling stay frozen; every attempt remains fail-closed and separately receipted",
+    "authorized_by": "Joseph",
+    "changed_retries_authorized": true,
+    "unchanged_retry_authorized": false
+  },
+  "changed_operand": {
+    "candidate_control": "a target-only package shell loads dataloader.py at SHA-256 bed9e0b39df54b465cb7e2a2600ff819ffb09350665603359bf12a52fdbd734a, instantiates DataLoader, and leaves tensorflow absent",
+    "measured_failure": "the ROOT Python 3.11 target process imported omnifold.dataloader; Python first executed omnifold/__init__.py, which imported TensorFlow even though the target uses only the NumPy DataLoader; that interpreter has ROOT but no TensorFlow",
+    "only_change": "install and verify that package shell in the target wrapper before running the unchanged target operand",
+    "positive_control": "ordinary import fails with ModuleNotFoundError for tensorflow in the exact ROOT environment",
+    "sampling_or_training_change": false,
+    "scientific_policy_change": false,
+    "target_dataloader_sha256_preserved": "bed9e0b39df54b465cb7e2a2600ff819ffb09350665603359bf12a52fdbd734a"
+  },
+  "compute_decision": "AUTHORIZED_CHANGED_RETRIES_WITHIN_FROZEN_SCOPE_AND_TOTAL_CEILING",
+  "contract_id": "PET-V2-FIXED-DRAW-EQUIVALENCE-CHANGED-RETRY2-20260826",
+  "controls": {
+    "determinism_and_same_arm_controls": {
+      "fallback": "NONE; unsupported deterministic operation or setup is INVALID_OR_INCOMPLETE",
+      "hardware": "one NVIDIA A100-SXM4-80GB per arm; exact model and 80-GB class must match",
+      "required_environment_before_interpreter_start": {
+        "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+        "PYTHONHASHSEED": "42",
+        "TF_DETERMINISTIC_OPS": "1"
+      },
+      "required_in_process_before_model_creation": [
+        "tf.config.experimental.enable_op_determinism()",
+        "tf.keras.utils.set_random_seed(42)",
+        "tf.data deterministic options on every constructed dataset"
+      ],
+      "same_arm": "W_A and W_B are fresh independent processes with identical inputs, policy, seeds and hashes",
+      "software": "same immutable checkout HEAD, conda lock, TensorFlow/CUDA/cuDNN versions and driver class",
+      "why_same_arm_remains_required": "deterministic mode is a PET-v2 policy control, not evidence that every operation or the historical estimator was deterministic"
+    },
+    "fixed_draw": {
+      "bootstrap_seed": 50000,
+      "existing_weighted_target_sha256": "13d46574b8f8e904aee0d544b33ce0f4fcd3fd5a119b0a2fd64071c70c650c03",
+      "factor_contract": "sha256(dtype || JSON(shape) || contiguous raw bytes)",
+      "factors": {
+        "background": {
+          "maximum": 8,
+          "n": 564591,
+          "sha256": "9e967dc2ff1a977c4940b83171204a41deb200e5d7c6ecb819c63c15c335e84e",
+          "sum": 564471,
+          "zeros": 207687
+        },
+        "data": {
+          "maximum": 9,
+          "n": 4116128,
+          "sha256": "d151dd197c9662da4604c9609d761887d38437d510484efdf851c8de1028ca37",
+          "sum": 4118323,
+          "zeros": 1513511
+        },
+        "signal": {
+          "maximum": 10,
+          "n": 49152885,
+          "sha256": "892d1531b7db788a9782ce2dad470b1514b13c1f1f393af9a0f84f32ea68642f",
+          "sum": 49143888,
+          "zeros": 18087975
+        }
+      },
+      "selection_rule": "first seed in predeclared Gate-5 50000..50049 range, selected by index not outcome",
+      "source_G2_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+      "source_G2_size_bytes": 9897374636
+    },
+    "frozen_training_policy": {
+      "arms": {
+        "L": "same draw literalized as delete k=0 and k copies for k>0",
+        "W_A": "weighted multiplicities; retained zero-weight rows; independent process",
+        "W_B": "exact duplicate of W_A policy in a second independent process"
+      },
+      "batch_size_rows": 512,
+      "class_ratio": "one exact fixed-draw R computed before representation and required bit-identical in all arms",
+      "early_stopping_can_fire_with_eight_epochs": false,
+      "early_stopping_patience": 10,
+      "epochs_reco": 8,
+      "epochs_truth": 8,
+      "estimator_seed": 42,
+      "intervention_consequences_not_equalized": "materialized row count, batches and optimizer updates per epoch, validation reductions, and gradient order",
+      "learning_rate": {
+        "iteration_0": 0.0001,
+        "iterations_1_and_2": 1e-05
+      },
+      "niter": 3,
+      "optimizer": "new Adam state at every fit; model weights warm-start across iterations",
+      "required_class_ratio_R": 1.1253110723074478,
+      "split": "hash-bound unique-event train/validation membership assigned before any duplication; all copies inherit membership",
+      "subsample_seed": 0,
+      "train_events_unique_before_literalization": 2000000,
+      "train_fraction": 0.8
+    },
+    "only_changed_axis": "target-only bypass of the TensorFlow-importing omnifold package initializer while loading the identical hash-bound NumPy dataloader; root remap and all scientific operands remain unchanged",
+    "terminal_classification": {
+      "EQUIVALENT_AT_5P02_PERCENT_OPERATIONAL_RESOLUTION": "all controls valid, every primary D_same <= 0.0251, and every primary D_cross_max <= M=0.0502",
+      "INVALID_OR_NOISY": "any provenance/determinism/split/identity/finite-output guard fails, or any primary D_same exceeds S=0.0251",
+      "MATERIALLY_DIFFERENT_IN_THIS_FIXED_DRAW": "all controls valid and at least one primary metric has D_cross_min > 0.0502 and D_cross_min > 2*D_same, so L differs from both independent W executions",
+      "MIXED_OR_UNRESOLVED": "every other valid result; no favorable default",
+      "order": [
+        "INVALID_OR_NOISY",
+        "EQUIVALENT_AT_5P02_PERCENT_OPERATIONAL_RESOLUTION",
+        "MATERIALLY_DIFFERENT_IN_THIS_FIXED_DRAW",
+        "MIXED_OR_UNRESOLVED"
+      ]
+    },
+    "threshold_derivation": {
+      "F_range": 0.06452911345365375,
+      "F_sd_ddof1": 0.02506515073050877,
+      "cross_arm_materiality_margin_M": 0.0502,
+      "existing_MDE_is_annotation_not_gate": true,
+      "existing_single_effect_MDE": 0.0695920150567661,
+      "materiality_formula": "M=2*S",
+      "same_arm_formula": "S=ceil(F_sd_ddof1*10000)/10000",
+      "same_arm_validity_cap_S": 0.0251,
+      "scope_limit": "F_sd is an old no-draw global-scalar process measurement, not a regional push or projection noise calibration; S and M are operational resolution targets whose transfer must be validated by W_A versus W_B",
+      "source": "docs/orchestration/state/gate6-floor-replication-result-56863958.json"
+    }
+  },
+  "entry_tests_required_before_submission": [
+    "ordinary omnifold.dataloader import fails on the measured TensorFlow initializer side effect",
+    "target-only bypass imports the exact dataloader hash with TensorFlow absent",
+    "guarded retry-2 target --help passes in the exact ROOT worker shell",
+    "training and evaluation retain the unchanged retry-1 wrappers and TensorFlow interpreter",
+    "all proposal/source/input/flux hashes, five prohibitions, output absence, clean detached checkout, scheduler, and A100-80GB constraint pass"
+  ],
+  "existing_gate6_results_remain_blocked": true,
+  "failed_attempts": {
+    "a100_hours": 0.0,
+    "initial_guard_job": "57620796",
+    "retry1_attempt_receipt": "docs/orchestration/state/pet-v2-fixed-draw-equivalence-changed-retry1-attempt-57626676.json",
+    "retry1_attempt_receipt_sha256": "923ca7456ff4a705dffb690f80522d54fa9a2cd9770d5be8e98417b0a1a963dd",
+    "retry1_target_job": "57626676",
+    "scientific_quantity_measured": false
+  },
+  "failure_interpretation": "INVALID_OR_INCOMPLETE supports only diagnosis and a scientifically unchanged, explicitly changed machinery retry within this authorization and total ceiling",
+  "guarded_executable_operands": {
+    "future_required_operands": [
+      {
+        "path": "nd-unfolding/pet/materialize_pet_v2_equivalence_target_retry2.py",
+        "sha256": "e70848732f9e3a8afaa1f94a6f82b7a833ed7ab463abcf3c9a8fda834605ba76",
+        "status": "IMPLEMENTED_TESTED_HASH_BOUND"
+      },
+      {
+        "path": "nd-unfolding/pet/train_pet_v2_equivalence_retry1.py",
+        "sha256": "02fd449f09a92095c965e756385cfa402b0f5c251529128690dd4327faf74d4e",
+        "status": "IMPLEMENTED_TESTED_HASH_BOUND"
+      },
+      {
+        "path": "nd-unfolding/pet/evaluate_pet_v2_equivalence_retry1.py",
+        "sha256": "4ec32e0adc9acb010172c72611148699d0b905fe134f6cb8474f4e5a27c36acd",
+        "status": "IMPLEMENTED_TESTED_HASH_BOUND"
+      },
+      {
+        "path": "nd-unfolding/pet/validate_pet_v2_equivalence_result_retry2.py",
+        "sha256": "e3759c98e8eb8e208e5745205e87d612262eb09dd882782bc30ec4afe30ed830",
+        "status": "IMPLEMENTED_TESTED_HASH_BOUND"
+      },
+      {
+        "path": "nd-unfolding/pet/submit_pet_v2_equivalence_changed_retry2.sh",
+        "sha256": "35f119d85f3113203ab98df590a85ad0f650c779f7b3d694a8fe609bbf0087f9",
+        "status": "IMPLEMENTED_TESTED_HASH_BOUND"
+      }
+    ],
+    "guard": "${PETV2_PYTHON} ${PETV2_CODE_ROOT}/nd-unfolding/mnv_guarded_run.py --expect-root ${PETV2_CODE_ROOT} --",
+    "new_output_namespace": "mandatory and absent before submission; both earlier attempt directories remain immutable evidence",
+    "new_support_sources": {
+      "nd-unfolding/pet/pet_v2_equivalence_common.py": "c4f7768545c5c3ed10ea15df1e463aecf19970cd7425a66d7e117ddcfc8581bb",
+      "nd-unfolding/pet/pet_v2_equivalence_root_remap.py": "646b857861d5102f041215e286e23d53247f8dd33ff957e8864a4fb4beba783c",
+      "nd-unfolding/pet/pet_v2_target_package_bypass_retry2.py": "b12c40fa990746843040270f0a444ad22072bab28c01ddd7705dd4978bc1dcb7"
+    },
+    "no_automatic_or_unchanged_retry": true,
+    "no_srun": true,
+    "required_current_sources": {
+      "nd-unfolding/mnv_guarded_run.py": "145711eb5a247faf7bb5643a47b0f8be6e7ac2f95de0c43c12d3de1105f544c7",
+      "nd-unfolding/pet/annealed_estimator.py": "fdf6556ccd6d0c67883dbeb5d12235ade5625d842555870c92bfa51aaf90b1c2",
+      "nd-unfolding/pet/build_fullevent_replica_target.py": "f5a6dd4b6b78ed199cc579cb319750f8989bbf74792dad58aefd6085bb7bd0c7",
+      "nd-unfolding/pet/evaluate_pet_v2_equivalence.py": "6640970b246fb848f5f48c934de71dc71e2be6fd768e2fa66bcf4db843a57c54",
+      "nd-unfolding/pet/fullevent_fps_dataloader.py": "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1",
+      "nd-unfolding/pet/materialize_pet_v2_equivalence_target.py": "6ae2ee6eaec3c4fc247b54115a8427cfae8e211dbda179d7cc69f2359ddd7fb6",
+      "nd-unfolding/pet/submit_pet_v2_equivalence.sh": "77cf7da7f24f9bfefbdd30a08cd8aa13bbec4751fe9ecc935904a80fabc9f80a",
+      "nd-unfolding/pet/train_fullevent_nominal.py": "91144bee2ff89ae62497c8282174f0fc1c344f455945d6b52b7b8219ecb4e7bc",
+      "nd-unfolding/pet/train_fullevent_replica.py": "c92c9cc06033f195ac48cddc86eea95a67b3038ae12fcffcd3cc966540b4e75f",
+      "nd-unfolding/pet/train_pet_v2_equivalence.py": "b004a2ce82128eb4391b50beb1b2d78e6adc439067efc1cd30dd5b82ab817832",
+      "nd-unfolding/pet/validate_pet_v2_equivalence_result.py": "f4cf134ff14d77592a78594a3fce03e366a74d65d6c11d6adca1339122a8a77f",
+      "nd-unfolding/pet_bootstrap.py": "d99243f868738a0c67e31b5361397f57a5b14af6ffa000bfacda1b4c2cbee49a",
+      "omnifold_nn/omnifold/dataloader.py": "bed9e0b39df54b465cb7e2a2600ff819ffb09350665603359bf12a52fdbd734a",
+      "omnifold_nn/omnifold/net.py": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953",
+      "omnifold_nn/omnifold/omnifold.py": "3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa"
+    },
+    "runtime_head": "one exact clean non-primary detached checkout containing these hashes; supplied without a default and recorded in the submission receipt"
+  },
+  "launchable": true,
+  "measured_quantity": {
+    "distance_scalar": "symrel(a,b)=2*abs(a-b)/(abs(a)+abs(b)); zero/zero is 0 and a one-sided zero is 2",
+    "event_push_distance": "D_push(A,B)=sum_i a_i*abs(p_i^A-p_i^B) / sum_i a_i*(abs(p_i^A)+abs(p_i^B))/2 over the same unique signal IDs; a_i is the nonnegative raw truth analysis weight times the fixed signal multiplicity and reporting mask, applied exactly once",
+    "extracted_projection_distances": [
+      "global reporting-mask total",
+      "p_parallel < 6 GeV",
+      "6 GeV <= p_parallel <= 20 GeV",
+      "p_parallel > 20 GeV"
+    ],
+    "mandatory_diagnostics": [
+      "target sums, zeros and class-ratio operands",
+      "full train and validation loss histories for every reco/truth fit",
+      "best/final epoch and best/final prediction discrepancy",
+      "realized LR, update counts and early-stopping state",
+      "iteration push vectors mapped to unique IDs",
+      "response/calibration summaries in the predeclared projections",
+      "truth/reco ESS, weight quantiles, maximum and cap occupancy"
+    ],
+    "per_metric_controls": {
+      "D_cross_max": "max(D(W_A,L),D(W_B,L))",
+      "D_cross_min": "min(D(W_A,L),D(W_B,L))",
+      "D_same": "D(W_A,W_B)"
+    }
+  },
+  "prohibitions_applied": {
+    "do_not_construct_C_ML": true,
+    "do_not_move_central": true,
+    "do_not_retry_unchanged": true,
+    "do_not_select_passing_subset": true,
+    "do_not_start_leg_2": true
+  },
+  "resource_estimate": {
+    "authorized_total_envelope": {
+      "a100_hour_ceiling": 18.0,
+      "cpu_node_hour_ceiling": 5.0,
+      "expected_a100_hours_rounded": 13.0,
+      "hardware": "three parallel single-GPU A100-SXM4-80GB arms after one CPU target"
+    },
+    "consumed_by_failed_attempts": {
+      "a100_hours": 0.0,
+      "cpu_node_hours": 0.13694444444444442
+    },
+    "method": {
+      "determinism_and_literal_overhead_factor": 1.25,
+      "expected_a100_hours_rounded_up": 13.0,
+      "expected_a100_hours_unrounded": 12.642708333333331,
+      "inference_and_extraction_minutes_per_arm": 14,
+      "maximum_historical_training_hours": 3.1847222222222222,
+      "per_arm_training_hours_with_overhead": 3.9809027777777777,
+      "three_arm_inference_hours": 0.7,
+      "three_arm_training_hours": 11.942708333333332
+    },
+    "numeric_envelope_is_not_authorization_outside_this_scope": true,
+    "remaining_total_envelope": {
+      "a100_hours": 18.0,
+      "cpu_node_hours": 4.8630555555555555
+    }
+  },
+  "schema": "pet-v2-fixed-draw-equivalence-changed-retry2-proposal-v1",
+  "scope": "PET_DIAGNOSTIC_AND_METHOD_DEVELOPMENT_ONLY",
+  "status": "AUTHORIZED_READY_CHANGED_RETRY",
+  "success_interpretation": "classify only the predeclared fixed-draw push and extracted-projection contrasts after same-arm validity; it is one estimator-equivalence diagnostic at operational resolution",
+  "what_every_terminal_result_cannot_authorize": [
+    "do_not_select_passing_subset",
+    "do_not_construct_C_ML",
+    "do_not_move_central",
+    "do_not_start_leg_2",
+    "do_not_retry_unchanged",
+    "cannot establish interval coverage or a valid PET uncertainty",
+    "cannot establish ordinary closure beyond the measured fixed-draw projections",
+    "cannot generalize equivalence beyond seed 50000 and this frozen PET-v2 policy",
+    "cannot construct or adopt C_stat, C_ML, a total covariance or a central value",
+    "cannot change a note, publication claim or PET diagnostic scope",
+    "cannot authorize a coverage campaign, a larger family, convergence tuning, Leg 2, or Gate 6",
+    "cannot erase or reinterpret either failed attempt receipt",
+    "cannot authorize an unchanged retry or compute outside this fixed-draw diagnostic and total ceiling"
+  ]
+}

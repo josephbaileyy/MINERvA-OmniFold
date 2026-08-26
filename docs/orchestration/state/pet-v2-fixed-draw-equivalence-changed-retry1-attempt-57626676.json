@@ -1,0 +1,121 @@
+{
+  "C_ML": null,
+  "C_stat": null,
+  "cancelled_downstream": {
+    "evaluation": {
+      "allocated_cpus": 0,
+      "job": "57626679",
+      "state": "CANCELLED by 112498"
+    },
+    "training_array": {
+      "allocated_cpus": 0,
+      "job": "57626678",
+      "state": "CANCELLED by 112498"
+    },
+    "validation": {
+      "allocated_cpus": 0,
+      "job": "57626680",
+      "state": "CANCELLED by 112498"
+    }
+  },
+  "existing_gate6_results_remain_blocked": true,
+  "failure_mechanism": {
+    "dataloader_is_numpy_only": true,
+    "dataloader_path": "omnifold_nn/omnifold/dataloader.py",
+    "dataloader_sha256": "bed9e0b39df54b465cb7e2a2600ff819ffb09350665603359bf12a52fdbd734a",
+    "exception": "ModuleNotFoundError: No module named 'tensorflow'",
+    "first_failing_import": "omnifold_nn/omnifold/__init__.py imports MultiFold before exposing DataLoader",
+    "first_failing_import_sha256": "bbec850924ca15162f370ee63837b88371bf336746425afebfc95e36d39a8eea",
+    "root_interpreter": {
+      "python": "3.11.14",
+      "root_available": true,
+      "tensorflow_available": false
+    },
+    "tensorflow_interpreter": {
+      "python": "3.9.18",
+      "root_available": false,
+      "tensorflow_available": true
+    },
+    "training_or_sampling_policy_reached": false
+  },
+  "guard_evidence": {
+    "checkout_roots_observed": 1,
+    "modules_observed": 6,
+    "oi136_refusal": false,
+    "root_remaps_observed": 2,
+    "runtime_checkout": "/pscratch/sd/j/josephrb/pet-v2-equivalence-retry1-9bbd26cc"
+  },
+  "logs": {
+    "stderr": {
+      "path": "/pscratch/sd/j/josephrb/pet-v2-equivalence-retry1-run-20260826-9bbd26cc/logs/target_57626676.err",
+      "sha256": "cb4e55935d93c8ef182e4eed30d8bc6afecc67ac97c593e0438101cd69640540",
+      "size_bytes": 4832
+    },
+    "stdout": {
+      "path": "/pscratch/sd/j/josephrb/pet-v2-equivalence-retry1-run-20260826-9bbd26cc/logs/target_57626676.out",
+      "sha256": "264deb747b9e7103b8ab86c333218b600b3e62f3a9885c6b40f7e187f89fcb53",
+      "size_bytes": 80
+    }
+  },
+  "observed_at_utc": "2026-08-26T20:46:12Z",
+  "prohibitions_applied": [
+    "do_not_select_passing_subset",
+    "do_not_construct_C_ML",
+    "do_not_move_central",
+    "do_not_start_leg_2",
+    "do_not_retry_unchanged"
+  ],
+  "resource_consumption": {
+    "a100_hours": 0.0,
+    "cpu_core_hours": 2.55,
+    "cpu_node_hours": 0.07083333333333333,
+    "cumulative_attempt_cpu_node_hours": 0.13694444444444442,
+    "cumulative_attempt_a100_hours": 0.0
+  },
+  "runtime_evidence": {
+    "files_created": [
+      "PETV2_SUBMISSION_RECEIPT.json",
+      "logs/target_57626676.out",
+      "logs/target_57626676.err"
+    ],
+    "scientific_quantity_measured": false,
+    "target_artifact_published": false
+  },
+  "schema": "pet-v2-fixed-draw-equivalence-changed-retry-attempt-v1",
+  "scope": "PET_DIAGNOSTIC_AND_METHOD_DEVELOPMENT_ONLY",
+  "status": "INVALID_OR_INCOMPLETE_TARGET_ENVIRONMENT",
+  "submission": {
+    "implementation_head": "9bbd26ccb72ecabdd9698f679626aaa906be8faf",
+    "proposal_sha256": "c1e63e90c720ef4b353e570c2a0735450712cc135850176cdb73ff4888acf43b",
+    "receipt_path": "docs/orchestration/state/pet-v2-fixed-draw-equivalence-changed-retry-submission-57626676.json",
+    "receipt_sha256": "53a6edf2e2b83f3e302d801c46f9834367143387cff4928a6f4a87ee7c509713",
+    "target_job": "57626676"
+  },
+  "target_scheduler_terminal": {
+    "allocated_cpus": 36,
+    "allocated_nodes": 1,
+    "elapsed": "00:04:15",
+    "elapsed_seconds": 255,
+    "exit_code": "1:0",
+    "partition": "shared_milan_ss11",
+    "state": "FAILED"
+  },
+  "terminal_interpretation": {
+    "classification": "INVALID_OR_INCOMPLETE",
+    "does_not_measure": [
+      "weighted-versus-literal estimator equivalence",
+      "training convergence",
+      "ordinary closure",
+      "interval coverage"
+    ]
+  },
+  "what_this_terminal_result_cannot_authorize": [
+    "an unchanged retry",
+    "selection of a passing subset",
+    "construction of C_stat, C_ML, or a total covariance",
+    "movement or adoption of a central value",
+    "Leg 2",
+    "coverage, convergence, closure, or estimator-equivalence claims",
+    "a note edit or publication claim"
+  ]
+}
