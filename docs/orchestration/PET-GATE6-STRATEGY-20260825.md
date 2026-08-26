@@ -509,3 +509,19 @@ and its deterministic machinery receipt. The ordering decision means a separatel
 fixed-draw equivalence comparison precedes SC-1; it does **not** authorize that full comparison.
 Its numeric materiality rule, guarded executable operands, and measured resource estimate must
 return to Joseph before any compute.
+
+### No-launch fixed-draw proposal returned
+
+The required proposal is now
+[`PREDECLARATION-20260825-pet-v2-fixed-draw-equivalence.md`](PREDECLARATION-20260825-pet-v2-fixed-draw-equivalence.md).
+It binds seed `50000`, independent `W_A/W_B` same-arm controls and one literal `L` arm; derives the
+`0.0251` same-arm cap and `0.0502` cross-arm operational margin from the committed fixed-policy floor;
+and measures a 13 A100-hour expected envelope (18 A100-hour allocation ceiling) from 50 completed
+target and 50 completed training scheduler records. It also records the larger inherited `0.069592`
+single-effect MDE as an annotation, not a gate, because the old floor is a global scalar rather than
+a regional push/extraction calibration.
+
+The proposal is complete but deliberately not executable: its five future entrypoints have no
+implementation or digest, and its receipt says `launchable: false`. The compute decision is **hold**.
+Joseph is asked only whether to authorize implementation and CPU-only testing of those fail-closed
+operands; that decision cannot submit a job or authorize A100 use.

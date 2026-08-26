@@ -96,3 +96,13 @@ A later proposal must bind one production draw, the complete paired-arm PET poli
 material-equivalence criterion for event-level push and every predeclared projection, failure and
 mixed interpretations, guarded source/output identities, and a measured CPU/GPU resource estimate.
 Joseph must approve that proposal separately before any full fixed-draw comparison.
+
+### Proposal returned
+
+That no-launch proposal is now
+[`PREDECLARATION-20260825-pet-v2-fixed-draw-equivalence.md`](PREDECLARATION-20260825-pet-v2-fixed-draw-equivalence.md),
+with its deterministic machine-readable operand receipt. It derives a `0.0251` same-arm validity cap,
+a `0.0502` cross-arm operational margin, and a scheduler-measured 13 A100-hour expected envelope.
+It is deliberately `launchable: false`: the five future diagnostic/submit operands are not yet
+implemented, tested, or hash-bound. The present decision is therefore to hold compute and ask Joseph
+only whether to authorize that implementation and CPU-only test stage.

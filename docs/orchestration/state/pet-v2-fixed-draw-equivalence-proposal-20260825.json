@@ -1,0 +1,373 @@
+{
+  "authoritative_state_observation": {
+    "direct_alloc_run_status": "NO_ALLOCATION",
+    "direct_squeue_pet_jobs": 0,
+    "freshness_check": "STALE :: Git: 06efa653, HEAD 10ad530d, HEAD^ 0c08d317; no stale generated field used",
+    "gpu_inventory_note": "both hbm40g and hbm80g A100 nodes observed; future arm pins hbm80g",
+    "observed_at_utc": "2026-08-26T02:53:57Z",
+    "other_scheduler_record": "57575105 RUNNING cron on login33; unrelated"
+  },
+  "compute_decision": "HOLD_FOR_JOSEPH_AND_EXECUTABLE_IMPLEMENTATION",
+  "contract_id": "PET-V2-FIXED-DRAW-EQUIVALENCE-PREDECLARATION-20260825",
+  "determinism_and_same_arm_controls": {
+    "fallback": "NONE; unsupported deterministic operation or setup is INVALID_OR_INCOMPLETE",
+    "hardware": "one NVIDIA A100-SXM4-80GB per arm; exact model and 80-GB class must match",
+    "required_environment_before_interpreter_start": {
+      "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+      "PYTHONHASHSEED": "42",
+      "TF_DETERMINISTIC_OPS": "1"
+    },
+    "required_in_process_before_model_creation": [
+      "tf.config.experimental.enable_op_determinism()",
+      "tf.keras.utils.set_random_seed(42)",
+      "tf.data deterministic options on every constructed dataset"
+    ],
+    "same_arm": "W_A and W_B are fresh independent processes with identical inputs, policy, seeds and hashes",
+    "software": "same immutable checkout HEAD, conda lock, TensorFlow/CUDA/cuDNN versions and driver class",
+    "why_same_arm_remains_required": "deterministic mode is a PET-v2 policy control, not evidence that every operation or the historical estimator was deterministic"
+  },
+  "fixed_draw": {
+    "bootstrap_seed": 50000,
+    "existing_weighted_target_sha256": "13d46574b8f8e904aee0d544b33ce0f4fcd3fd5a119b0a2fd64071c70c650c03",
+    "factor_contract": "sha256(dtype || JSON(shape) || contiguous raw bytes)",
+    "factors": {
+      "background": {
+        "maximum": 8,
+        "n": 564591,
+        "sha256": "9e967dc2ff1a977c4940b83171204a41deb200e5d7c6ecb819c63c15c335e84e",
+        "sum": 564471,
+        "zeros": 207687
+      },
+      "data": {
+        "maximum": 9,
+        "n": 4116128,
+        "sha256": "d151dd197c9662da4604c9609d761887d38437d510484efdf851c8de1028ca37",
+        "sum": 4118323,
+        "zeros": 1513511
+      },
+      "signal": {
+        "maximum": 10,
+        "n": 49152885,
+        "sha256": "892d1531b7db788a9782ce2dad470b1514b13c1f1f393af9a0f84f32ea68642f",
+        "sum": 49143888,
+        "zeros": 18087975
+      }
+    },
+    "selection_rule": "first seed in predeclared Gate-5 50000..50049 range, selected by index not outcome",
+    "source_G2_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "source_G2_size_bytes": 9897374636
+  },
+  "frozen_training_policy": {
+    "arms": {
+      "L": "same draw literalized as delete k=0 and k copies for k>0",
+      "W_A": "weighted multiplicities; retained zero-weight rows; independent process",
+      "W_B": "exact duplicate of W_A policy in a second independent process"
+    },
+    "batch_size_rows": 512,
+    "class_ratio": "one exact fixed-draw R computed before representation and required bit-identical in all arms",
+    "required_class_ratio_R": 1.1253110723074478,
+    "early_stopping_can_fire_with_eight_epochs": false,
+    "early_stopping_patience": 10,
+    "epochs_reco": 8,
+    "epochs_truth": 8,
+    "estimator_seed": 42,
+    "intervention_consequences_not_equalized": "materialized row count, batches and optimizer updates per epoch, validation reductions, and gradient order",
+    "learning_rate": {
+      "iteration_0": 0.0001,
+      "iterations_1_and_2": 1e-05
+    },
+    "niter": 3,
+    "optimizer": "new Adam state at every fit; model weights warm-start across iterations",
+    "split": "hash-bound unique-event train/validation membership assigned before any duplication; all copies inherit membership",
+    "subsample_seed": 0,
+    "train_events_unique_before_literalization": 2000000,
+    "train_fraction": 0.8
+  },
+  "governing_gate6": {
+    "existing_results_remain_blocked": true,
+    "family_verdict": "BLOCK_GATE6_ML_ENSEMBLE",
+    "prohibitions_applied": {
+      "do_not_construct_C_ML": true,
+      "do_not_move_central": true,
+      "do_not_retry_unchanged": true,
+      "do_not_select_passing_subset": true,
+      "do_not_start_leg_2": true
+    }
+  },
+  "guarded_execution_contract": {
+    "artifact_supplier": "source G2 and the weighted seed-50000 target are mandatory explicit staged paths outside the primary checkout; both are content-verified before use and have no default",
+    "authorization_guard": "submission controller must require a literal Joseph authorization token bound to this contract and implementation hashes; absent/mismatched token exits before sbatch",
+    "future_required_operands": [
+      {
+        "path": "nd-unfolding/pet/materialize_pet_v2_equivalence_target.py",
+        "sha256": null,
+        "status": "NOT_IMPLEMENTED_OR_HASH_BOUND"
+      },
+      {
+        "path": "nd-unfolding/pet/train_pet_v2_equivalence.py",
+        "sha256": null,
+        "status": "NOT_IMPLEMENTED_OR_HASH_BOUND"
+      },
+      {
+        "path": "nd-unfolding/pet/evaluate_pet_v2_equivalence.py",
+        "sha256": null,
+        "status": "NOT_IMPLEMENTED_OR_HASH_BOUND"
+      },
+      {
+        "path": "nd-unfolding/pet/validate_pet_v2_equivalence_result.py",
+        "sha256": null,
+        "status": "NOT_IMPLEMENTED_OR_HASH_BOUND"
+      },
+      {
+        "path": "nd-unfolding/pet/submit_pet_v2_equivalence.sh",
+        "sha256": null,
+        "status": "NOT_IMPLEMENTED_OR_HASH_BOUND"
+      }
+    ],
+    "guard_prefix": "${PETV2_PYTHON} ${PETV2_CODE_ROOT}/nd-unfolding/mnv_guarded_run.py --expect-root ${PETV2_CODE_ROOT} --",
+    "immutable_root": "PETV2_CODE_ROOT is mandatory, has no default, is a clean immutable checkout at the approved implementation commit, and may not be the primary checkout",
+    "output_guards": [
+      "new isolated output namespace per arm; refuse pre-existing nonempty target",
+      "no shared checkpoint/history paths across arms",
+      "atomic result and completion marker bound by size, sha256 and terminal status",
+      "record HEAD, dirty-state refusal, source/input/target/factor/split hashes and GPU identity",
+      "validator is read-only and cannot alter training artifacts"
+    ],
+    "python_supplier": "PETV2_PYTHON is mandatory, has no default, and is bound by resolved path, version and environment lock before preflight",
+    "required_current_sources": {
+      "nd-unfolding/mnv_guarded_run.py": "145711eb5a247faf7bb5643a47b0f8be6e7ac2f95de0c43c12d3de1105f544c7",
+      "nd-unfolding/pet/annealed_estimator.py": "fdf6556ccd6d0c67883dbeb5d12235ade5625d842555870c92bfa51aaf90b1c2",
+      "nd-unfolding/pet/build_fullevent_replica_target.py": "f5a6dd4b6b78ed199cc579cb319750f8989bbf74792dad58aefd6085bb7bd0c7",
+      "nd-unfolding/pet/fullevent_fps_dataloader.py": "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1",
+      "nd-unfolding/pet/train_fullevent_nominal.py": "91144bee2ff89ae62497c8282174f0fc1c344f455945d6b52b7b8219ecb4e7bc",
+      "nd-unfolding/pet/train_fullevent_replica.py": "c92c9cc06033f195ac48cddc86eea95a67b3038ae12fcffcd3cc966540b4e75f",
+      "nd-unfolding/pet_bootstrap.py": "d99243f868738a0c67e31b5361397f57a5b14af6ffa000bfacda1b4c2cbee49a",
+      "omnifold_nn/omnifold/dataloader.py": "bed9e0b39df54b465cb7e2a2600ff819ffb09350665603359bf12a52fdbd734a",
+      "omnifold_nn/omnifold/net.py": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953",
+      "omnifold_nn/omnifold/omnifold.py": "3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa"
+    },
+    "subprocess_rule": "each Python process that imports science modules is itself wrapped; a guarded parent does not cover a child interpreter",
+    "why_not_launchable": "diagnostic materializer, trainer, evaluator, validator and submit controller are not implemented, tested or hash-bound in this no-launch stage"
+  },
+  "launchable": false,
+  "measured_quantities": {
+    "distance_scalar": "symrel(a,b)=2*abs(a-b)/(abs(a)+abs(b)); zero/zero is 0 and a one-sided zero is 2",
+    "event_push_distance": "D_push(A,B)=sum_i a_i*abs(p_i^A-p_i^B) / sum_i a_i*(abs(p_i^A)+abs(p_i^B))/2 over the same unique signal IDs; a_i is the nonnegative raw truth analysis weight times the fixed signal multiplicity and reporting mask, applied exactly once",
+    "extracted_projection_distances": [
+      "global reporting-mask total",
+      "p_parallel < 6 GeV",
+      "6 GeV <= p_parallel <= 20 GeV",
+      "p_parallel > 20 GeV"
+    ],
+    "mandatory_diagnostics": [
+      "target sums, zeros and class-ratio operands",
+      "full train and validation loss histories for every reco/truth fit",
+      "best/final epoch and best/final prediction discrepancy",
+      "realized LR, update counts and early-stopping state",
+      "iteration push vectors mapped to unique IDs",
+      "response/calibration summaries in the predeclared projections",
+      "truth/reco ESS, weight quantiles, maximum and cap occupancy"
+    ],
+    "per_metric_controls": {
+      "D_cross_max": "max(D(W_A,L),D(W_B,L))",
+      "D_cross_min": "min(D(W_A,L),D(W_B,L))",
+      "D_same": "D(W_A,W_B)"
+    }
+  },
+  "proposed_resource_ceiling_if_later_authorized": {
+    "allocation_ceiling_a100_hours": 18,
+    "coverage_or_family_compute_authorized": false,
+    "cpu_node_hours_ceiling": 2,
+    "expected_total_a100_hours_rounded": 13.0,
+    "literal_target": "1 CPU node, 36 CPU, 64G, 2h wall; stop on timeout, no unchanged retry",
+    "queue_excluded_critical_path_hours_if_arms_parallel": 6.214236111111111,
+    "training_arms": 3,
+    "training_per_arm": "1 A100-SXM4-80GB, 32 CPU, 57472M, 6h wall",
+    "weighted_target": "read-only stage of exact seed-50000 target sha256 13d46574... into an isolated namespace; do not consume from or write into the primary checkout"
+  },
+  "resource_evidence": {
+    "derivation": {
+      "determinism_and_literal_overhead_factor": 1.25,
+      "expected_a100_hours_rounded_up": 13.0,
+      "expected_a100_hours_unrounded": 12.642708333333331,
+      "inference_and_extraction_minutes_per_arm": 14,
+      "maximum_historical_training_hours": 3.1847222222222222,
+      "per_arm_training_hours_with_overhead": 3.9809027777777777,
+      "three_arm_inference_hours": 0.7,
+      "three_arm_training_hours": 11.942708333333332
+    },
+    "observed_at_utc": "2026-08-26T02:53:57Z",
+    "target_array": {
+      "allocation_each": "36 CPU, 64G, 1 node",
+      "elapsed_seconds": [
+        2349,
+        2344,
+        2337,
+        2414,
+        2385,
+        2411,
+        2466,
+        2354,
+        2426,
+        2365,
+        2366,
+        2371,
+        2371,
+        2317,
+        2367,
+        2317,
+        2411,
+        2363,
+        2403,
+        2343,
+        2358,
+        2602,
+        2311,
+        2307,
+        2470,
+        2325,
+        2370,
+        2407,
+        2343,
+        2403,
+        2348,
+        2352,
+        2335,
+        2309,
+        2334,
+        2383,
+        2770,
+        2342,
+        2331,
+        2354,
+        2721,
+        2343,
+        2338,
+        2364,
+        2384,
+        2576,
+        2344,
+        2362,
+        2408,
+        2382
+      ],
+      "job_id": 56857232,
+      "query": "sacct -j 56857232 -X -n -P -o JobIDRaw,State,ElapsedRaw,AllocTRES%100",
+      "summary": {
+        "maximum_seconds": 2770,
+        "mean_seconds": 2389.12,
+        "median_seconds": 2363.5,
+        "minimum_seconds": 2307,
+        "n_completed": 50,
+        "p25_seconds": 2343.0,
+        "p75_seconds": 2403.0
+      }
+    },
+    "training_array": {
+      "allocation_each": "1 A100, 32 CPU, 57472M, 1 node",
+      "elapsed_seconds": [
+        10880,
+        10739,
+        10861,
+        10783,
+        10769,
+        10983,
+        10831,
+        10821,
+        10795,
+        11119,
+        10801,
+        10742,
+        10814,
+        10885,
+        10870,
+        11002,
+        10728,
+        11008,
+        10763,
+        10849,
+        10979,
+        10983,
+        10829,
+        10934,
+        10826,
+        10824,
+        10840,
+        10827,
+        10798,
+        11281,
+        10889,
+        10752,
+        10873,
+        10830,
+        10828,
+        10755,
+        10940,
+        10866,
+        10915,
+        10959,
+        10989,
+        11465,
+        10848,
+        10896,
+        10787,
+        10866,
+        11002,
+        10898,
+        10842,
+        10866
+      ],
+      "job_id": 56857233,
+      "query": "sacct -j 56857233 -X -n -P -o JobIDRaw,State,ElapsedRaw,AllocTRES%100",
+      "summary": {
+        "maximum_seconds": 11465,
+        "mean_seconds": 10884.6,
+        "median_seconds": 10855.0,
+        "minimum_seconds": 10728,
+        "n_completed": 50,
+        "p25_seconds": 10815.75,
+        "p75_seconds": 10929.25
+      }
+    }
+  },
+  "schema": "pet-v2-fixed-draw-equivalence-proposal-v1",
+  "scope": "PET_DIAGNOSTIC_AND_METHOD_DEVELOPMENT_ONLY",
+  "status": "PROPOSAL_COMPLETE_NO_LAUNCH",
+  "terminal_classification": {
+    "EQUIVALENT_AT_5P02_PERCENT_OPERATIONAL_RESOLUTION": "all controls valid, every primary D_same <= 0.0251, and every primary D_cross_max <= M=0.0502",
+    "INVALID_OR_NOISY": "any provenance/determinism/split/identity/finite-output guard fails, or any primary D_same exceeds S=0.0251",
+    "MATERIALLY_DIFFERENT_IN_THIS_FIXED_DRAW": "all controls valid and at least one primary metric has D_cross_min > 0.0502 and D_cross_min > 2*D_same, so L differs from both independent W executions",
+    "MIXED_OR_UNRESOLVED": "every other valid result; no favorable default",
+    "order": [
+      "INVALID_OR_NOISY",
+      "EQUIVALENT_AT_5P02_PERCENT_OPERATIONAL_RESOLUTION",
+      "MATERIALLY_DIFFERENT_IN_THIS_FIXED_DRAW",
+      "MIXED_OR_UNRESOLVED"
+    ]
+  },
+  "threshold_derivation": {
+    "F_range": 0.06452911345365375,
+    "F_sd_ddof1": 0.02506515073050877,
+    "cross_arm_materiality_margin_M": 0.0502,
+    "existing_MDE_is_annotation_not_gate": true,
+    "existing_single_effect_MDE": 0.0695920150567661,
+    "materiality_formula": "M=2*S",
+    "same_arm_formula": "S=ceil(F_sd_ddof1*10000)/10000",
+    "same_arm_validity_cap_S": 0.0251,
+    "scope_limit": "F_sd is an old no-draw global-scalar process measurement, not a regional push or projection noise calibration; S and M are operational resolution targets whose transfer must be validated by W_A versus W_B",
+    "source": "docs/orchestration/state/gate6-floor-replication-result-56863958.json"
+  },
+  "what_every_terminal_result_cannot_authorize": [
+    "do_not_select_passing_subset",
+    "do_not_construct_C_ML",
+    "do_not_move_central",
+    "do_not_start_leg_2",
+    "do_not_retry_unchanged",
+    "cannot establish interval coverage or a valid PET uncertainty",
+    "cannot establish ordinary closure beyond the measured fixed-draw projections",
+    "cannot generalize equivalence beyond seed 50000 and this frozen PET-v2 policy",
+    "cannot construct or adopt C_stat, C_ML, a total covariance or a central value",
+    "cannot change a note, publication claim or PET diagnostic scope",
+    "cannot authorize a coverage campaign, a larger family, convergence tuning or further compute"
+  ]
+}
