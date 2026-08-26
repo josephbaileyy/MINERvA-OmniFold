@@ -54,11 +54,15 @@ declares a digest the document must still have it -- and an unresolved citation 
 not a warning. Three further refusals exist because a whitelist that can swallow a whole measurement
 is not reviewable:
   * A PATTERN MUST NAME ONE FIELD, enforced by a POSITIVE GRAMMAR rather than a deny-list of
-    spellings: `M-1[<file or *>].<field>` for the per-file measurement, `M-k.<field>` for the
-    others, and `*` is a SELECTOR-space device -- legal inside `M-1[...]`, where it ranges over
-    FILES, and nowhere else. The terminal field name is always a literal, so a pattern cannot
-    match two fields of one object. `M-4.behind` and `M-1[*].first_insert` are allowed;
-    `M-4.*`, `M-1[*].*`, `M-4.*e*`, `M-1[`, `M-3[x].y` and `M-1[*` are all refused.
+    spellings: `M-1[<exact file path or *>].<field>` for the per-file measurement, `M-k.<field>`
+    for the others, and `*` is a SELECTOR-space device -- legal inside `M-1[...]`, where it
+    ranges over FILES, and nowhere else. The terminal field name is always a literal, so a
+    pattern cannot match two fields of one object. THE SELECTOR IS A BARE `*` OR AN EXACT
+    LITERAL; a PARTIAL selector wildcard is refused, ruled by Joseph 2026-08-25 (section 12.2.1)
+    because it reads as one file while already covering two and its reach moves silently as the
+    file population grows -- see `parse_pattern` for the two measurements. `M-4.behind` and
+    `M-1[*].first_insert` are allowed; `M-4.*`, `M-1[*].*`, `M-4.*e*`, `M-1[`, `M-3[x].y`,
+    `M-1[*` and `M-1[nd-*].first_insert` are all refused.
     THE LAST ONE IS WHY THIS IS A GRAMMAR AND NOT ANOTHER SPELLING. The old test was
     `pattern.rsplit(".", 1)[-1] in ("*", "**")`. A DOTLESS pattern has no last segment, so
     `M-1[*` -- the documented per-file form with its `]` dropped -- was compared WHOLE against
@@ -481,8 +485,28 @@ def parse_pattern(pattern):
     FILES, and nowhere else; the terminal field name is always a literal. That single rule is what
     makes "swallow every field of an object" UNREACHABLE rather than checked-for -- a pattern must
     terminate in one literal field name, so it cannot match two fields that differ in field name.
-    Permitting `*` inside the selector costs nothing in the breadth direction, because whatever a
-    partial selector matches the already-legal bare `*` matches too.
+
+    AND THE SELECTOR IS A BARE `*` OR AN EXACT LITERAL -- PARTIALS ARE REFUSED. Ruled by Joseph on
+    2026-08-25, section 12.2.1 of `DECISION-20260825-joseph-gate2-fail-and-four-rulings.md`, after a
+    grader returned "(c), an ambiguity requiring a specification decision" on measured controls.
+    This code previously argued the opposite -- that permitting a partial "costs nothing in the
+    breadth direction, because whatever a partial selector matches the already-legal bare `*`
+    matches too". That argument is sound and is the WRONG COMPARISON: it measures a whitelist entry
+    against the most permissive form available instead of against the literal actually on the table.
+    Two measurements retired it, both on the real `M1_FILES` population and neither hypothetical:
+
+      * `M-1[nd-unfolding/unified_throw_cov*].first_insert` was ACCEPTED with no warning and reaches
+        TWO files -- `unified_throw_cov.py` and `unified_throw_cov_5d.py` -- where the literal form
+        reaches one. A reviewer sees something shaped like a file path and reads it as one file. The
+        file it silently picks up is the row whose omission WAS the F-17(a) failure.
+      * a partial's reach is not stable as the population grows: add one plausible file and
+        `M-1[nd-unfolding/bootstrap*]` goes 1 -> 2, silently, while the literal stays 1.
+
+    That second property is the exact reason this guard already refuses `M-4.behin*`, which reaches
+    one field TODAY -- so the inconsistency was internal: the guard applied the silent-widening rule
+    in field space and not in selector space. A literal is stable; a bare `*` is honest about
+    covering everything; a partial looks specific and moves. Measured compatibility cost of the
+    narrowing: ZERO -- 0 of 30 `UNITS` patterns and 0 shipped expected-list entries use one.
 
     WHY A GRAMMAR REPLACED A DENY-LIST. The predecessor asked whether the pattern's last DOTTED
     segment was `*`. A dotless pattern has no last segment, so `M-1[*` was compared whole against
@@ -504,7 +528,8 @@ def parse_pattern(pattern):
     if head == ROW_MEASUREMENT_ID:
         if not rest.startswith("["):
             return None, (f"'{pattern}': {ROW_MEASUREMENT_ID} is measured once PER FILE, so its"
-                          f" patterns are {ROW_MEASUREMENT_ID}[<file or {WILDCARD}>].<field>")
+                          f" patterns are"
+                          f" {ROW_MEASUREMENT_ID}[<exact file path or {WILDCARD}>].<field>")
         close = rest.find("]")
         if close < 0:
             return None, (f"'{pattern}': the '[' selector is never closed. THIS IS DEFECT D-3: the"
@@ -530,8 +555,19 @@ def parse_pattern(pattern):
     if WILDCARD in field:
         return None, (f"'{pattern}': the field name '{field}' carries a wildcard, which would"
                       f" whitelist more than one field of that object. The wildcard is a"
-                      f" SELECTOR-space device -- legal inside {ROW_MEASUREMENT_ID}[...], where it"
-                      f" ranges over files, and nowhere else. Name the field.")
+                      f" SELECTOR-space device -- legal inside {ROW_MEASUREMENT_ID}[...] and"
+                      f" nowhere else, and there only as the WHOLE selector. Name the field.")
+    # THE SELECTOR IS A BARE WILDCARD OR AN EXACT LITERAL, AND NOTHING BETWEEN (Joseph, 2026-08-25).
+    # Checked LAST, after every structural check, so that no pattern refused before this ruling
+    # changes the reason it is refused: the only patterns whose behaviour moves are the ones that
+    # parsed clean AND carried a partial selector.
+    if selector is not None and selector != WILDCARD and WILDCARD in selector:
+        return None, (f"'{pattern}': the selector '{selector}' is a PARTIAL wildcard. Inside"
+                      f" {ROW_MEASUREMENT_ID}[...] exactly two forms are legal: the bare"
+                      f" '{WILDCARD}', which is visibly EVERY file, or ONE exact literal file path."
+                      f" A partial is neither -- it reads as one file, can already cover several,"
+                      f" and its reach moves silently when the measured file population changes."
+                      f" Name the file, or use '{WILDCARD}'.")
     return {"measurement": head, "selector": selector, "field": field}, None
 
 

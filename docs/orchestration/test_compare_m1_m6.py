@@ -671,6 +671,60 @@ def _candidate_patterns(universe):
     return sorted(out)
 
 
+def _selector_of(field):
+    """The SELECTOR segment of an emitted M-1 field path: `x` in `M-1[x].y`, else None."""
+    if not field.startswith(cm.ROW_MEASUREMENT_ID + "["):
+        return None
+    return field[len(cm.ROW_MEASUREMENT_ID) + 1:field.index("]")]
+
+
+def _files_reached(pattern, universe):
+    """The distinct M-1 FILES a pattern reaches, asked of `field_matches` and not of the guard.
+
+    The matcher is the component that would exploit a hole in `parse_pattern`, so it is the right
+    thing to interrogate -- the same reason `matcher_disagreement` calls it rather than modelling
+    the pattern language a second time.
+    """
+    return {_selector_of(f) for f in universe if cm.field_matches(pattern, f)} - {None}
+
+
+def _real_m1_universe(keys):
+    """M-1 field paths over the REAL measured file population, in the shape `flatten` emits.
+
+    `base_document` is trimmed to TWO M-1 rows, and neither is one of the two real paths where one
+    is a prefix of the other. The decisive control for the 2026-08-25 selector ruling is exactly
+    that pair, so a fixture built from the bench document cannot carry the failure. This one is
+    built from `measure_m1_m6.M1_FILES` -- the producer of the population the instrument really
+    runs against -- crossed with the row keys `flatten` really emits.
+    """
+    row = cm.ROW_MEASUREMENT_ID
+    return sorted(f"{row}[{rel}].{key}" for rel in mm.M1_FILES for key in keys)
+
+
+def _partial_selector_patterns(files, keys):
+    """Partial-selector candidates MECHANICALLY DERIVED from the real file population.
+
+    Nothing here is typed. Every proper prefix, every proper suffix, and the star-in-the-middle form
+    of each real path, closed into a well-formed `M-1[...].<field>` for each real row key. The
+    generator is built from the CORPUS, never from `parse_pattern`, which is the thing under test --
+    so it can disagree with the guard, and before 2026-08-25 every pattern it emits was ACCEPTED.
+
+    THIS IS A SECOND GENERATOR AND NOT A WIDENING OF `_candidate_patterns`, for a measured reason:
+    that one only ever APPENDS a star to a prefix of an emitted field, so its M-1 candidates are
+    either unclosed (`M-1[nd-*`, which is D-3 and already refused) or carry the star in the terminal
+    field. It emits NO closed partial selector at all, and its 721 / 96 / 0 counts are graded
+    numbers that a widening would silently move.
+    """
+    out = set()
+    row, star = cm.ROW_MEASUREMENT_ID, cm.WILDCARD
+    for rel in files:
+        for i in range(1, len(rel)):
+            for selector in (rel[:i] + star, star + rel[i:], rel[:i] + star + rel[i:]):
+                for key in keys:
+                    out.add(f"{row}[{selector}].{key}")
+    return sorted(out)
+
+
 class R4_ThePatternGrammarIsPositiveNotADenyList(BenchCase):
     """D-3. The expected-list guard was FAIL-OPEN on `M-1[*`, the per-file form missing its `]`.
 
@@ -693,6 +747,11 @@ class R4_ThePatternGrammarIsPositiveNotADenyList(BenchCase):
     def reach(self, pattern):
         """What `field_matches` -- the component that would exploit a hole -- actually matches."""
         return [f for f in self.universe if cm.field_matches(pattern, f)]
+
+    def row_keys(self):
+        """The M-1 row field NAMES the producer emits, e.g. `first_insert`. From `flatten`."""
+        return sorted({_terminal_name(f) for f in self.universe
+                       if f.startswith(cm.ROW_MEASUREMENT_ID + "[")})
 
     def over_broad(self, pattern):
         """Over-broad is a property of what a pattern REACHES, never of how it is spelled.
@@ -768,20 +827,159 @@ class R4_ThePatternGrammarIsPositiveNotADenyList(BenchCase):
             with self.subTest(pattern=pattern):
                 self.assertIsNone(cm.bad_pattern(pattern), cm.bad_pattern(pattern))
 
-    def test_a_PARTIAL_selector_wildcard_still_narrows_end_to_end__silent_on_good(self):
-        """The wildcard stays legal in SELECTOR space, where it ranges over files.
+    def test_a_PARTIAL_selector_wildcard_is_REFUSED_end_to_end__fires_on_bad(self):
+        """RULED BY JOSEPH 2026-08-25 (section 12.2.1): the selector is a bare `*` or a literal.
 
-        It cannot widen past the already-legal bare `*`, so allowing it costs nothing in the
-        direction that loses information.
+        THIS ARM ASSERTED THE OPPOSITE UNTIL TODAY, and its old reason is worth keeping visible: "it
+        cannot widen past the already-legal bare `*`, so allowing it costs nothing in the direction
+        that loses information." That is an asymmetric comparison -- it grades a whitelist entry
+        against the most permissive form available instead of against the literal actually on the
+        table -- and the two controls below falsify it on the real population.
+
+        Through `main`, because a guard that refuses only in-process refuses nobody.
         """
         expected = self.bench.write_expected(
             self.bench.may_differ([f"{cm.ROW_MEASUREMENT_ID}[nd-unfolding/boot*].first_insert"]))
         code, record, err = self.bench.run(
             self.two(lambda d: d["M-1"][0].__setitem__("first_insert", 99)), expected)
-        self.assertEqual(code, cm.EXIT_DIFFERENCES_ALL_EXPECTED, err)
-        self.assertEqual(record["findings"][0]["classification"], "EXPECTED-BY-RULING")
-        self.assertEqual(record["findings"][0]["field"],
-                         "M-1[nd-unfolding/bootstrap_nd.py].first_insert")
+        self.assertEqual(code, cm.EXIT_REFUSAL_EXPECTED_LIST, err)
+        self.assertIsNone(record, "a refused list must emit no record at all")
+        self.assertIn("PARTIAL", err)
+
+    def test_a_PARTIAL_selector_really_DOES_cover_TWO_REAL_FILES__the_power_control(self):
+        """Without this, the arm above proves only that SOMETHING was refused.
+
+        The decisive control, on `measure_m1_m6.M1_FILES` with no hypothetical: two real paths where
+        one is a PREFIX of the other. A reviewer reading the partial sees something shaped like a
+        file path and reads it as one file; it is two. And the file it silently picks up alongside
+        the named one is the row whose omission from the 2026-08-22 filing WAS the F-17(a) failure
+        this instrument exists to prevent.
+
+        The last assertion is the reason this needed a new arm at all: the pre-existing `over_broad`
+        predicate scores this pattern NARROW, because it counts distinct field NAMES and a partial
+        selector spans files at one field name. The old covering sweep could not have caught it.
+        """
+        named = "nd-unfolding/unified_throw_cov.py"
+        alongside = "nd-unfolding/unified_throw_cov_5d.py"
+        self.assertIn(named, mm.M1_FILES)
+        self.assertIn(alongside, mm.M1_FILES)
+        self.assertTrue(alongside.startswith(named[:-len(".py")]))
+
+        universe = _real_m1_universe(self.row_keys())
+        partial = f"{cm.ROW_MEASUREMENT_ID}[{named[:-len('.py')]}{cm.WILDCARD}].first_insert"
+        literal = f"{cm.ROW_MEASUREMENT_ID}[{named}].first_insert"
+        self.assertEqual(_files_reached(partial, universe), {named, alongside})
+        self.assertEqual(_files_reached(literal, universe), {named})
+
+        why = cm.bad_pattern(partial)
+        self.assertIsNotNone(why, "the ruled narrowing did not fire on the decisive control")
+        self.assertIn("PARTIAL", why)
+        self.assertIsNone(cm.bad_pattern(literal), "the literal form must survive the narrowing")
+        self.assertFalse(self.over_broad(partial),
+                         "fixture: the OLD predicate must score this narrow, which is why it hid")
+
+    def test_a_PARTIAL_selector_REACH_MOVES_when_the_population_grows__the_second_reason(self):
+        """The same test this guard ALREADY applies to field names, finally applied to selectors.
+
+        `M-4.behin*` is refused although it reaches exactly one field today, on the reasoning that
+        it silently widens the day `measure_m1_m6.py` adds a field beginning `behin`. That reasoning
+        was applied in field space and not in selector space, and the inconsistency was internal to
+        the guard. Here: add one plausible file and the partial's reach moves while the literal's
+        does not. A literal is stable; a bare `*` is honest about covering everything; a partial
+        looks specific and moves.
+        """
+        keys = self.row_keys()
+        before = _real_m1_universe(keys)
+        after = sorted(before + [f"{cm.ROW_MEASUREMENT_ID}[nd-unfolding/bootstrap_nd_v2.py].{k}"
+                                 for k in keys])
+        row = cm.ROW_MEASUREMENT_ID
+        partial = f"{row}[nd-unfolding/bootstrap{cm.WILDCARD}].first_insert"
+        literal = f"{row}[nd-unfolding/bootstrap_nd.py].first_insert"
+        bare = f"{row}[{cm.WILDCARD}].first_insert"
+
+        self.assertEqual(len(_files_reached(partial, before)), 1)
+        self.assertEqual(len(_files_reached(partial, after)), 2, "fixture: it must WIDEN")
+        self.assertEqual(len(_files_reached(literal, before)), 1)
+        self.assertEqual(len(_files_reached(literal, after)), 1)
+        self.assertEqual(_files_reached(bare, before), set(mm.M1_FILES))
+        self.assertEqual(len(_files_reached(bare, after)), len(mm.M1_FILES) + 1)
+
+        # The one that widened silently is the one now refused; the two stable forms survive.
+        self.assertIsNotNone(cm.bad_pattern(partial))
+        self.assertIsNone(cm.bad_pattern(literal))
+        self.assertIsNone(cm.bad_pattern(bare))
+
+    def test_every_PARTIAL_selector_the_PRODUCER_generates_is_refused__the_covering_control(self):
+        """The covering sweep for the ruled class, over candidates derived from the REAL corpus.
+
+        Both sub-populations are counted beside the total, because the interesting half is the one
+        that reaches exactly ONE file today: those are refused for the same forward-looking reason
+        `M-4.behin*` is, and a sweep that only caught the visibly-broad ones would not implement the
+        ruling. A sweep that swept nothing also reports zero escapes, so the population is asserted
+        non-vacuous first.
+        """
+        keys = self.row_keys()
+        universe = _real_m1_universe(keys)
+        candidates = _partial_selector_patterns(mm.M1_FILES, keys)
+        self.assertGreaterEqual(len(candidates), 200,
+                                f"only {len(candidates)} candidates: this sweep would be vacuous")
+
+        wide = [p for p in candidates if len(_files_reached(p, universe)) > 1]
+        narrow_today = [p for p in candidates if len(_files_reached(p, universe)) == 1]
+        self.assertGreaterEqual(len(wide), 1, "fixture carries no already-broad partial")
+        self.assertGreaterEqual(len(narrow_today), 50, "fixture carries no narrows-today partial")
+
+        escaped = [p for p in candidates if cm.bad_pattern(p) is None]
+        self.assertEqual(escaped, [],
+                         f"{len(escaped)} of {len(candidates)} partial selectors accepted "
+                         f"({len(wide)} already reach >1 file, {len(narrow_today)} reach 1 today)")
+
+    def test_the_TWO_LEGAL_selector_forms_survive_over_the_REAL_population__silent_on_good(self):
+        """The converse sweep, and the arm that fails if the narrowing over-tightens.
+
+        A guard that refused every selector would pass every firing arm above. Both ruled-legal
+        forms -- the bare `*` and each exact literal path -- must stay accepted for every row field
+        the instrument can actually report.
+        """
+        keys = self.row_keys()
+        self.assertGreaterEqual(len(keys), 3)
+        self.assertGreaterEqual(len(mm.M1_FILES), 5)
+        row = cm.ROW_MEASUREMENT_ID
+        for key in keys:
+            with self.subTest(selector=cm.WILDCARD, key=key):
+                pattern = f"{row}[{cm.WILDCARD}].{key}"
+                self.assertIsNone(cm.bad_pattern(pattern), cm.bad_pattern(pattern))
+            for rel in mm.M1_FILES:
+                with self.subTest(selector=rel, key=key):
+                    pattern = f"{row}[{rel}].{key}"
+                    self.assertIsNone(cm.bad_pattern(pattern), cm.bad_pattern(pattern))
+
+    def test_every_ACCEPTED_M1_pattern_reaches_ONE_FILE_or_ALL_of_them__the_opposite_direction(self):
+        """The ruled property itself, asserted over the matcher rather than over spellings.
+
+        The point of the narrowing is not that a particular syntax is banned; it is that an accepted
+        M-1 entry covers either one nameable file or, visibly, the whole population -- never a
+        silent proper subset. This arm states that as an invariant and computes it from what
+        `field_matches` reaches, so it fails if some future spelling slips past `parse_pattern`
+        while landing in the middle. It is paired with the sweep above: that one catches
+        over-refusal, this one catches the residue of under-refusal.
+        """
+        keys = self.row_keys()
+        universe = _real_m1_universe(keys)
+        everything = set(mm.M1_FILES)
+        row = cm.ROW_MEASUREMENT_ID
+        population = (_partial_selector_patterns(mm.M1_FILES, keys)
+                      + [f"{row}[{cm.WILDCARD}].{k}" for k in keys]
+                      + [f"{row}[{rel}].{k}" for rel in mm.M1_FILES for k in keys])
+        accepted = [p for p in population if cm.bad_pattern(p) is None]
+        self.assertGreaterEqual(len(accepted), len(keys) * (len(mm.M1_FILES) + 1),
+                                "the accepted language shrank: over-refusal, not narrowing")
+        for pattern in accepted:
+            reached = _files_reached(pattern, universe)
+            with self.subTest(pattern=pattern):
+                self.assertTrue(len(reached) <= 1 or reached == everything,
+                                f"'{pattern}' reaches {len(reached)} of {len(everything)} files -- "
+                                f"a silent proper subset, which is what the ruling forbids")
 
     def test_a_pattern_that_can_match_NOTHING_is_refused__the_opposite_direction(self):
         """The other direction a whitelist fails in: a row that reads as cover and never applies.
