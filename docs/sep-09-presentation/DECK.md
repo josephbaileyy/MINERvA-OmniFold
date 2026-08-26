@@ -1,195 +1,287 @@
 # Sept 9, 2026 — Nachman ML group
 
 **Category:** technical challenge / methods result I want feedback on
-**Budget:** < 20 min content. 8 slides, ~18 min. ~10 in the room, ~5 on Zoom.
+**Budget:** < 20 min content. 8 slides, ~15:40 spoken, ~4 min questions. ~10 in the room, ~5 on Zoom.
 
-> **Thesis:** two probes of the OmniFold step-1 classifier, both surprising.
-> Change the input representation and nothing happens. Change *nothing* and the
-> learned map moves enough to shift the cross section by 2%. **The step-1 solution
-> is not unique in practice, and representational capacity is not the bottleneck.**
+> **Thesis:** OmniFold's step 1 hands you a closed-form target it must hit if it converges.
+> Ours never got there — in any trajectory we can measure cleanly. Annealing narrows most
+> of the miss; iteration damps some of the run-to-run variation that remains; a residual
+> survives into the estimator. **The talk is about what lives in that gap.**
 >
-> The uncertainty consequence is real but it is **slide 7, one line** — the group
-> would rather talk about methods than covariance bookkeeping, and the methods
-> statement is the stronger one anyway.
+> Framing: OmniFold is Andreassen, Komiske, Metodiev, **Nachman**, Thaler (PRL 124, 2020)
+> and PET is the OmniLearn backbone (Mikuni & **Nachman**, 2024). Both the method and the
+> architecture are the group's — say "your," it's accurate, and it makes the ask *help me
+> use your tools better* rather than a status report.
 >
-> Framing note: OmniFold is Andreassen, Komiske, Metodiev, **Nachman**, Thaler
-> (PRL 124, 2020) and PET is the OmniLearn backbone (Mikuni & **Nachman**, 2024).
-> Both the method and the architecture are the group's — say "your," it's accurate,
-> and it makes the ask *help me use your tools better* rather than a status report.
+> **Emotional arc:** surprise (it misses a target it knows) → trust (we proved it's the
+> same saved model) → hope (annealing and iteration help) → productive discomfort (help is
+> not a definition of better). Any slide that moves none of those gets cut.
+
+**The sentence they should repeat at lunch:**
+> **Step 1 can tell you what its own answer should be — so check whether it got there.**
 
 ---
 
-## Slide 1 — Title
+## Slide 1 — "OmniFold's step 1 tells you what its own answer should be."
 
-**Two things about the OmniFold step-1 classifier that surprised me**
+**Visual:** the loop in three boxes — data vs. MC reco → classifier → weights — with the
+loader's two class totals (`1e6`, `1e6·R`) drawn onto the classifier's inputs.
 
-Sub-line: the input representation doesn't matter. Re-running the same fit does.
+- Step 1 trains a classifier to separate data from simulation at reco level; the learned
+  likelihood ratio becomes a per-event weight. Step 2 pulls it back to truth through the
+  simulation's truth–reco pairing.
+- The loader normalizes the MC side to `1e6` and the data side to `1e6·R`.
+- **The identity, said once, carefully:** *if the fitted classifier attained the population
+  minimizer of the weighted cross-entropy it is actually trained on, then averaging its
+  implied likelihood ratio over the MC leg — under the same weights used in training —
+  returns exactly the ratio of the two class totals.* That is `R = 1.124`.
+- MINERvA in one breath: a neutrino scattering measurement; **nothing after this slide
+  depends on that.**
 
-*(~20 s. The title is the claim; don't preamble it.)*
+*(1:45. Do not recite validation numbers. The only job is to hand them the target.)*
 
----
-
-## Slide 2 — What MINERvA is, in one breath
-
-- νμ charged-current **inclusive** scattering on hydrocarbon, ⟨Eν⟩ ≈ 6 GeV, NuMI beam.
-- We measure a cross section differentially in muon kinematics (pT, p∥) — and, in the
-  higher-dimensional extensions, in hadronic-recoil variables too.
-- Two things make it hard, both relevant here: detector response is broad enough that
-  **unfolding is unavoidable**, and the "truth" we unfold to comes from an event generator
-  we know is wrong in places — which is much of why we're measuring.
-- Anchor so you trust the pipeline: unbinned OmniFold reproduces the published 2D result,
-  total σ **3.073e-38 cm²/nucleon** (1.11% high), median per-bin uncertainty **6.87%** vs
-  published **6.86%**.
-
-*(~90 s. No beamline, no detector diagram. The anchor is one sentence — its only job is to
-buy you the right to show something broken later.)*
+**Transition:** "So we have something unusual — a target the method itself tells us we must
+hit. Let's see whether we did."
 
 ---
 
-## Slide 3 — The object of study
+## Slide 2 — "It doesn't get there."  ⭐ CORE SLIDE
 
-Frame the classifier as the thing under the microscope, not the physics.
+**Figure:** `step1_attainment.png` — full width.
 
-- OmniFold step 1: train a classifier to separate data from simulation at reco level; the
-  learned likelihood ratio becomes a per-event weight. Step 2 pulls it back to truth
-  through the simulation's truth–reco pairing.
-- **In theory the step-1 target is unique** — it's a density ratio, and the population
-  minimizer is the same function no matter how you parameterize it.
-- **In practice you get whatever the optimizer landed on**, and the physics depends on that
-  function through a weighted sum over ~2M events.
-- So two obvious questions, and I have an answer to both:
-  - **(A)** does the *input representation* change the learned function?
-  - **(B)** does *re-running the identical fit* change it?
+![step 1 attainment](step1_attainment.png)
 
-*(~90 s. This slide is the spine of the talk — it converts everything after it from
-"neutrino bookkeeping" into "properties of an estimator." Note honestly that A and B were
-originally separate investigations, not a designed two-arm experiment; you're presenting
-them together because they probe the same object.)*
+- Target line at `R`. **One bar**, at **58.6%**. Hold it there. Then build in the five.
+- Default schedule, **one observed trajectory**: `pull_final` mean over `pass_reco` =
+  `0.658944` against `R = 1.124080`.
+- Annealed schedule, **five replicates**: 87.8% – 93.5%.
+- **What the miss measures:** total deviation from the population optimum. It does **not**
+  decompose — finite-sample gap, optimization gap and approximation error all sit inside it.
 
----
+*(2:30. The default bar must be alone on screen long enough that the n=1 scope is
+unmistakable before anything joins it. Say both caveats out loud: the contrast is 1-vs-5,
+not a balanced design; and the annealed schedule was chosen* because *it improves this
+metric, so it is not independent evidence.)*
 
-## Slide 4 — (A) Change the representation: nothing happens
-
-- Production estimator: **GBDT on 5 event-level scalars**.
-- Swap the step-1 classifier for **PET**, the point-cloud backbone from **OmniLearn**
-  (Mikuni & Nachman, arXiv:2404.16091): raw non-muon **recoil clusters** at reco level,
-  truth final-state hadrons at truth level.
-- The muon is measured from the MINERvA–MINOS track and stored as event-level scalars —
-  it enters selection and binning but is **omitted from both classifiers**, so the learned
-  weight is a function of recoil information only.
-- **Result: 4D unfolded shapes agree to 2.3–3.9% median per-bin.** Independently, MLP vs
-  GBDT on the scalar side gives a total ratio of **1.0078** and median projection
-  differences of **1.20% / 1.36% / 0.66%** in pT / p∥ / E_avail.
-
-**Methods conclusion:** for this measurement, representational capacity is not the
-binding constraint. A point-cloud transformer on low-level detector output and five
-hand-picked scalars land in the same place.
-
-Optional figure: `nd-unfolding/products/pet/pet_vs_gbdt.png`. State the limits rather than
-hiding them: shape-only, area-normalized, PET on a 2M-event subsample; the wide `q3` catch
-bin is a binning artifact. It's a representation cross-check, not an independent result.
-
-*(~2.5 min. Sell it as a genuine negative result — those are useful and this room will
-take it seriously. Then pivot: "so I re-ran the thing to check stability, and that's where
-the talk starts.")*
+**Transition:** "Before I interpret a single number of that, I have to answer the question
+I'd be asking: is that the optimizer, or did you analyze the wrong model?"
 
 ---
 
-## Slide 5 — (B) Change nothing: the map moves  ⭐ CORE SLIDE
+## Slide 3 — "Checkpoint selection is estimator selection."
 
-**Figure:** `refit_spread.png` — full width.
+**Visual:** four boxes, built live.
 
-![five re-fits](refit_spread.png)
+```
+best-validation epoch → saved checkpoint → reloaded inference → recorded push
+                              ↑
+                      HISTORICAL DIVERGENCE
+        training ended on the LAST epoch, held only in memory;
+        the file kept the BEST epoch.  Two different networks.
+        aggregate: agree to 1e-4      per event: differ by up to 87%
 
-- Identical data. Identical 2,000,000-row subsample. `set_random_seed(42)`. **No Poisson
-  draw.** Five separate training processes.
-- The extracted total spans **5.46%**; relative sd **2.047%**.
-- Poisson expectation on 4,116,128 events: **0.0493%** — the hairline band, not a line.
-  So this is **41.5×** the statistical noise floor with **nothing resampled**.
-- It's the learned function moving, visible one level down in `mean(push)` per re-fit:
-  **1.0776 / 1.0913 / 1.0472 / 1.0825** — a ~4% spread in the *mean weight itself*.
-- Negative control: `cap_saturation_frac = 0.0` on every draw, so it is not a
-  logit-clipping artifact.
+                      WHAT THE CLEAN RUN ESTABLISHED
+        reloaded inference reproduces the recorded push
+        to all printed digits.  Same network, start to finish.
+```
 
-**Methods conclusion:** the step-1 solution is not unique in practice. Whatever the
-population minimizer is, five runs found five different functions, and the difference is
-large where it matters.
+- Mechanism, and it is three of the most common lines in Keras: `save_best_only=True`,
+  `EarlyStopping(patience=10)`, `epochs=8`. Patience exceeds the budget, so best-weight
+  restoration never fires. In-memory model is last-epoch; the file is best-epoch.
+- **Why it isn't software hygiene:** in OmniFold the learned classifier *is* the estimator.
+  There is no separate result downstream of it. So "which epoch is the model" is *which
+  estimator you published* — and the two candidates pass identical aggregate validation
+  while assigning materially different weights to individual events.
 
-*(~4–5 min. This is the slide. Carry VL131's caveats out loud: subsample numerator rather
-than the published full-inventory total, and n=5. Both are on the figure.)*
+> ⚠️ **The 87% is measured on the step-2 push**, because that is what the reproduction gate
+> compared. The `.pkl` histories show best ≠ last for the step-1 checkpoints too, so the
+> phenomenon is there — but **do not say "the step-1 classifier moves by 87%."** Say "the
+> saved classifier," or quote it on step 2 explicitly.
 
-> ⚠️ **Do not name a cause.** That separate processes disagree is **measured**. *Why* is
-> **not established** — GPU atomics, threading, library nondeterminism are all unverified
-> here. Naming one from the podium turns your best open question into a claim you can't
-> support, and it is the single likeliest question from the floor. Have ready:
-> *"I don't know yet — that's part of what I'm asking."*
+*(0:55. Hard cap. No filenames, no job IDs, no gate vocabulary on the slide.)*
 
----
-
-## Slide 6 — The movement is structured, not noise
-
-**Figure:** `pet_bootstrap_anomaly.png` — full width.
-
-![bootstrap anomaly](pet_bootstrap_anomaly.png)
-
-Comparing the nominal fit against a 50-member bootstrap family, the disagreement is
-**organized in p∥ with a sign flip**:
-
-- Below 6 GeV the ensemble behaves — median z = −0.13, 4 of 128 cells outside the full
-  50-draw range. This is what "fine" looks like.
-- In the 63-cell **6–20 GeV** band the nominal exceeds **all fifty** replicas in 44 of 63
-  cells, median **1.21×** the largest of the fifty draws; in *every* one of the 63, at
-  least 45 of 50 members lie below it.
-- Above 20 GeV the sign **reverses**: 44 of 45 cells with the nominal below the family mean.
-- The nominal's integral sits at the **98th percentile** of the 50 member totals.
-
-**Methods conclusion:** this isn't white noise on a converged answer. It's a systematic
-tilt in the learned function, localized in a kinematic variable that neither classifier
-sees directly. That's the strongest hint I have about what the extra variance *is*.
-
-*(~3 min. The three bands use three different recorded statistics and don't partition the
-257 quotable cells — 236 shown. It's on the figure; say it once.)*
+**Transition:** "That's why the number on the last slide is the run's own. Now — what could
+explain it?"
 
 ---
 
-## Slide 7 — What it cost me
+## Slide 4 — "What it isn't."
 
-Keep this short. It's consequence, not thesis.
+**Visual:** the claim ladder, three visibly different levels, OPEN deliberately the longest.
 
-- If re-fitting moves the answer by 41× Poisson, a bootstrap family isn't measuring the
-  data — the family spread is **5.167%**, ~**105×** Poisson, and the fixed-seed floor is
-  **15.70%** of that *variance*.
-- Three candidate explanations were on the table; each was refuted by measurement. So
-  rather than pick the least-bad one I **declined the central/statistical pairing** and
-  demoted the result to diagnostic / method-development. No PET covariance is adopted.
-- Reconsideration needs estimator-equivalence **and coverage** — and coverage is a
-  different object from checking the matrix was assembled correctly.
+> **MEASURED.** In every trajectory we can measure cleanly — six of them — step 1 falls
+> short of its own fitted target. One default-schedule trajectory at 58.6%; five annealed
+> replicates at 87.8–93.5%. Annealing narrows the miss.
+>
+> **EXCLUDED HERE** — these four, on these trajectories, and nothing broader.
+> • **Logit cap** — `cap_saturation_frac = 0.0`; implied logits span [−3.141, +1.366]
+>   against a ±30 cap. Nothing is near it.
+> • **Train/val split bias** — the index shuffle precedes the positional `take`/`skip`.
+>   Verified in code, not asserted.
+> • **Input representation** — we swapped a point-cloud transformer for boosted trees on
+>   five hand-picked scalars, and the answer barely moved: 4D unfolded shapes agree to
+>   **2.3–3.9% median per-bin**; MLP vs GBDT total ratio **1.0078**.
+> • **Step 2** — undershoots its own target by **0.44%**. It is doing its job.
+>
+> **OPEN — why the residual gap remains.** Training budget: **no epoch ladder has ever been
+> run against this quantity.** Early-stopping / checkpoint-selection interaction.
+> Class-weight and finite-sample implementation. Approximation error at fixed capacity.
+> The `pass_reco`-only update × acceptance interaction.
 
-Backup figure if anyone pushes: `cstat_variance_budget.png` (Poisson / fixed-seed floor /
-full family, log scale).
+- Worth one sentence, as a pointer and not a conclusion: the implied logits reach −3.14
+  downward but only +1.37 upward. Since `push = exp(logit)`, **the learned ratio is far
+  more willing to suppress than to enhance.**
 
-*(~1.5 min. Do not re-litigate the covariance. If the room wants that conversation they'll
-ask, and you have the backup slide.)*
+*(2:00. Representation is ONE ROW here. It was a whole act in the previous version of this
+talk and it did not earn one — it is a control, and controls belong with the controls.)*
+
+**Transition:** "One thing did move it, and it wasn't a modelling choice at all."
 
 ---
 
-## Slide 8 — What I want from you
+## Slide 5 — "Annealing narrows the shortfall — most of it, not all."
 
-1. **Is 2% at fixed seed normal?** Same data, same seed, separate processes, 2% apart on a
-   physics total. Do you design this out — and how — or budget for it?
-2. **Would you ensemble the classifier?** If the step-1 solution isn't unique, is the right
-   estimator the *average* over re-fits rather than one fit? What breaks if I do that
-   inside an iterative procedure?
-3. **Is the sign flip a known signature?** Coherent tilt in p∥ reversing sign — support /
-   extrapolation boundary, optimizer path dependence, something about the pull-back step?
-4. **The uncomfortable one.** If re-fit variance is generically this large, does
-   bootstrap ⊕ systematics double-count, or miss a cross term, for *every* OmniFold
-   analysis that quotes one?
-5. **Representation.** Given (A), is the real bottleneck the truth-side prior rather than
-   the classifier's input? That would reorder what's worth building next.
+**Visual:** two-row evidence card. Shape recovery is a **caution badge**, not a third row
+of decimals.
 
-*(~3 min, then stop talking. If it's quiet, push #1 — it needs zero neutrino context and
-everyone in that room has hit it.)*
+| | **DEFAULT (full-LR)** | **ANNEALED** |
+|---|---|---|
+| **closure deviation** | `\|dev\|` **34.46%** | `\|dev\|` **1.17%** |
+| **step-1 attainment** | **58.6%** of R *(one trajectory, bit-faithful)* | **87.8–93.5%** of R *(five replicates)* |
+| ⚠️ *shape-recovery check* | *0.546853 = 88.5% of the reference ceiling* | *0.512603 = 82.9%; passes its predeclared bar by +0.018* |
+
+- **Two rows, never merged.** `34.5% → 1.2%` is the closure fold-forward deviation.
+  `58.6% → 87.8–93.5%` is step 1's own attainment. Both improve; they are different
+  quantities, and quoting only "1.2%" would let the room think the gap closed.
+- **Wording on the slide is "narrows."** Never "repairs," never "fixes."
+- **Say the confession out loud:** "we chose this schedule because it fixes this number, so
+  I can't offer it as independent evidence."
+- Recovery, in five seconds: `recovery = 1 − residual/gap`. *We inject a known shape
+  distortion, unfold, and ask what fraction we got back. One is perfect. Higher is better.*
+- The badge's real content: **the original bar was `recovery ≥ 0.80`, and the
+  acceptance-limited ceiling is `0.618228` — no estimator could have reached it.** Of the
+  0.2531 shortfall, **71.8% is specification and 28.2% is the estimator.**
+
+*(2:30.)*
+
+**Transition:** "That's one fit. We ran five more that differ only in which GPU they landed
+on."
+
+---
+
+## Slide 6 — "Iteration contracts the ensemble — but not each trajectory monotonically."
+
+**Figure:** `loop_trajectories.png` — full width.
+
+![loop trajectories](loop_trajectories.png)
+
+- Identical data, identical 2,000,000-row subsample, pinned seed, **no Poisson draw**. The
+  only differences between draws are **process, node and GPU**.
+- **Truth leg** — the leg the cross section consumes: across-refit relative sd
+  **6.25% → 2.05%**. That terminal value reproduces `VL131` to all printed digits
+  (2.0474% / range 5.4614%).
+- **Reco leg**: 22.40% → 7.94% → 2.56%.
+- **Draw 3 gets worse before it comes back**: z = −5.11 → −11.11 → −2.57 against the other
+  four. Contraction is an **ensemble** statement, not a per-fit law.
+
+> ⚠️ **Cumulative push only.** Every draw aims at the same fixed `R`, so draws are
+> comparable. **Per-iteration increments are not** — each has its own target, and a plot
+> built from them invites the audience to infer a monotone correction that is not there.
+> The words "expels," "diverges" and "converges" do not appear on this slide.
+
+> ⚠️ **Checkpoint-tier exposure is graded, and the figure marks it.** Iteration 0 is the
+> *most* exposed — `iter0_step1` is `BEST_IS_LAST=False` in 5/5 with val-loss gaps up to
+> 6.4%, and those last-epoch weights were never written to disk, so no job can recover
+> them. Iteration 1 is mildly exposed (gaps 0.06–0.11%). Iteration 2 is clean. **So the
+> dramatic 22% is the number least entitled to be dramatic.** Say so.
+
+**Answer the hostile question here, not in Q&A** — *"if the spread falls from 22% to 2%,
+isn't OmniFold doing exactly what it should?"*:
+
+> Yes, and I'm reporting that as a result. The loop stabilizes. But "the loop is
+> stabilizing" and "the endpoint is stable enough" are different questions, and only the
+> second depends on what you're doing with the answer. What's unusual about this 2% is what
+> is *not* in it: identical data, identical subsample, pinned seed, no Poisson draw. **It
+> isn't a statistical uncertainty — it's a floor on how well the analysis reproduces its own
+> answer from its own inputs.** I'm not claiming 2% is universally unacceptable. I'm
+> claiming it's a number you should know, and almost nobody measures it, because measuring
+> it means deliberately re-running an identical fit five times.
+
+*(2:30.)*
+
+**Transition:** "So annealing helps and iteration helps. But look at what 'helps' cost us."
+
+---
+
+## Slide 7 — "'Better trained' isn't one thing here."
+
+**Visual:** two objectives, arrows pointing opposite ways — normalization attainment
+improving; the shape check not licensing the same conclusion; its reference marked
+defective.
+
+- **Say:** *Annealing removes most of the normalization shortfall. The available shape check
+  does not license calling the estimator better overall — and its comparison baseline is
+  confounded in a specific, named way.*
+- **Never say:** *Annealing fixes convergence at the cost of shape.*
+- The confound, in plain English: the configuration behind `0.546853` is **shown** to carry
+  a sign-inverting iteration defect — its fold-forward inverts at iterations 1 and 2 and
+  degrades 0.972 → 0.861 → 0.655, while the annealed arm never inverts. **But that does not
+  mean the baseline is inflated:** the job that found the defect measured *sign*, not
+  recovery. "Tail collapse inflates recovery" is a mechanism argument, not a measurement.
+  **The direction of the confound is unknown.**
+- The line to put on the slide, which is the strongest thing that is true:
+  > **A defective configuration's number is a poor reference standard.**
+- The ±0.02 comparison band was a declared **assumption** scaled from a GPU floor, not a
+  measurement. The ceiling is a **reference curve, not a proven bound.**
+
+*(2:00. This is where the talk stops being a fix story. Let it be uncomfortable.)*
+
+**Transition:** "Which leaves me with one ask and one real question."
+
+---
+
+## Slide 8 — "Three checks, one question."
+
+**The ask — concrete, and this group can actually answer it:**
+
+> Should these become standard OmniFold validation?
+> 1. **Target attainment** — does step 1 reach the `R` its own loader normalization implies?
+> 2. **Checkpoint identity** — does reloaded inference reproduce the weights the run recorded?
+> 3. **Fixed-input refits** — what is your reproducibility floor at identical data and a
+>    pinned seed?
+>
+> All three are cheap. The third costs N identical re-runs, which every project's compute
+> budget treats as waste.
+
+**The question:**
+
+> **When two validation objectives disagree, what decides?** We have one that improved and
+> one that didn't, and no principled way to rank them.
+
+*(1:30, then stop talking. Two questions. Not three, not five. If it's quiet, push the
+third check — it needs zero neutrino context and everyone in that room has hit it.)*
+
+---
+
+## KNOWN WEAKNESSES — have the answer ready, don't wait to be caught
+
+Ranked by how likely they are to hurt.
+
+1. **The 87% is a step-2 number.** See the slide-3 warning. This is the one most likely to
+   be a *factual* error from the podium.
+2. **We never explain the miss.** OPEN is longer than EXCLUDED, deliberately. The budget
+   ladder that would answer it has never been run against this quantity.
+3. **The dose-response is 1-vs-5, not a balanced design.** Six clean trajectories, exactly
+   one clean default-schedule measurement, and the other five are near-replicates.
+4. **The anneal was selected on the metric it improves.** Conceded on slide 5. The fix
+   cannot be offered as discovery.
+5. **The shape baseline is confounded in an unknown direction.** Slide 7's discomfort rests
+   partly on a comparison we cannot clean up.
+6. **One dataset, one architecture, one `R`.** Nothing about OmniFold generally is earned.
+   *"Does this happen in the original OmniFold papers?"* has no answer from us.
+7. **Zero event-level or phase-space evidence.** *"Where does step 1 under-deliver?"* —
+   unknown. Everything here is an aggregate mean over the whole sample. The inference job
+   that would answer it is costed (~1–3 A100-h, one job) and has not run.
 
 ---
 
@@ -200,31 +292,49 @@ Live constraints in the repo, not stylistic preference.
 - Never call `C_stat` "verified", "adopted", or "the statistical uncertainty."
 - Never cite "bootstrap-centering" as a settled mechanism. The phrase *is* in Joseph's
   ruling text, so a faithful quotation isn't an error — but the mechanism is **not
-  established** and must never be presented as a determined cause. Operative wording:
-  *a large, spatially coherent anomaly whose coverage has not been validated.*
-- Never name a cause for the re-fit spread. Measured that it happens; unestablished why.
-- The ruling does **not** find the nominal wrong or the dispersion invalid. It says
-  neither. The missing evidence is coverage.
-- Show **no** 3D or N-D covariance band, and no σ or χ² derived from one. The historical 3D
-  covariance and its generator significances are quarantined — that rules out the July
-  deck's `+3.9σ` / `+2.3σ` and the grey bands in `generators_vs_unfolded_band.png` and
+  established** and must never be presented as a determined cause.
+- **Never name a cause for the re-fit spread.** Measured that it happens; unestablished why.
+- **Never present non-convergence as established.** It is the *leading candidate* in the
+  repo's own words, and slide 4's OPEN column is where it lives. "Insufficient optimization"
+  and "estimator dependence on an intentional hyperparameter" are not rival hypotheses at
+  the level of description we can support — only the *directionality* of the movement tips
+  it, and that is suggestive, not exclusion.
+- Show **no** 3D or N-D covariance band, and no σ or χ² derived from one. That rules out the
+  July deck's `+3.9σ` / `+2.3σ` and the grey bands in `generators_vs_unfolded_band.png` and
   `compare_mec_eavail.png` (both draw from `hCov_combined3d_total`).
+- Covariance gets **at most one spoken sentence** if asked. It is not a slide.
 - PET is **diagnostic / method-development**, in the talk exactly as in the note.
-- All three figures **re-plot committed records**; they do not re-measure. Said in every
-  docstring and every caption.
+- Both figures **re-plot committed records**; they do not re-measure. Said in every
+  docstring and every caption, and each script prints a reproduction check.
 
 ## Practical
 
-- Figures are 200 dpi, ~2300 px wide — legible projected and after Zoom re-compression.
-- Regenerate:
+- Figures are 200 dpi, ~2300–2650 px wide — legible projected and after Zoom re-compression.
+- Regenerate (from the repo root):
   ```
   P=/global/u2/j/josephrb/.conda/envs/root_6_28/bin/python
-  $P docs/sep-09-presentation/make_refit_figure.py
-  $P docs/sep-09-presentation/make_anomaly_figure.py
-  $P docs/sep-09-presentation/make_variance_figure.py
+  $P docs/sep-09-presentation/make_attainment_figure.py     # step1_attainment.png
+  $P docs/sep-09-presentation/make_trajectory_figure.py     # loop_trajectories.png
   ```
   The login node's default `python3` has no matplotlib.
-- `make_refit_figure.py` derives range 5.461% and sd 2.047% from the five transcribed
-  totals, reproducing VL131's recorded values — a check that the transcription is right.
-- Numbers come from `VALIDATION_LEDGER.md` (VL131, VL132) and `docs/OPEN_ITEMS.md`
-  (OI-126). If any are re-measured, update the script tables and captions together.
+- Each script prints a self-check: the attainment script re-derives 58.62% and 87.83–93.52%
+  from the transcribed records; the trajectory script re-derives the reco-leg spreads
+  22.402 / 7.939 / 2.560 and the truth-leg 6.245 / 2.047, the last of which reproduces
+  `VL131`'s recorded 2.0474045%.
+- Sources: `FINDING-20260807-step1-under-achieves.md` (§5, §7),
+  `FINDING-20260807-checkpoint-is-not-the-trained-model.md`, `CLAIM-CLM-012.md` (viii),
+  `VALIDATION_LEDGER.md` (VL94–VL97, VL100–VL101, VL130–VL132), and the per-draw
+  `STEP1_TRAJECTORY` / `STEP1_DECOMPOSITION` receipts. If any are re-measured, update the
+  script tables and captions together.
+
+## BACKUP — cut from the spine, keep in the folder
+
+- `refit_spread.png` — the VL131 endpoint on its own. Superseded as a spine slide by
+  `loop_trajectories.png`, which shows the same endpoint *and* how it got there. Good backup
+  if someone wants the endpoint without the trajectory.
+- `pet_bootstrap_anomaly.png` — **cut to backup on Joseph's call.** Visually the best figure
+  in the folder, but it belongs to a different talk: it is about spatial structure in a
+  bootstrap family, not about step 1's attainment of its own objective. Nothing in the
+  current arc depends on it.
+- `cstat_variance_budget.png` — covariance budget. Only if directly asked, and then one
+  sentence.
