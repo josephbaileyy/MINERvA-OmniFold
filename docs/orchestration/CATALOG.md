@@ -57,13 +57,18 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   **not in §7.0.7's own text**, so a lane reading only the contract can satisfy its letter at the
   graded sha while breaking the coupling at every commit before it. The composition is **accepted,
   not rebutted.** **§5.1 records a SECOND omission by the same lane, `3dbca981`, committed while
-  filing this very document** — rc=1 at that sha in a clean worktree — and distinguishes it by
-  measurement: the `intended`->`tracked` flip is **irreducible** for a new path, so the avoidable
-  part was the promised second-pass commit, skipped because `git show HEAD:` was read as "my
-  commit" after a peer had advanced `HEAD`. The peer's `62a40194` then **absorbed** it, which
-  demonstrates the sibling record's §3 mechanism on the lane filing about it. A claim that
-  nothing had absorbed this lane's instance was **false within minutes and is replaced, not
-  softened.** **NOT** citable for any Gate-2 clause, nor for the D-3 repair, which stands as
+  filing this very document** — rc=1 at that sha in a clean worktree — and it is the **same kind**
+  of failure as the first. **§5.2 retracts this lane's own defence that the `intended`->`tracked`
+  flip is irreducible for a new path: it is false.** `generate_manifest.py:92` reads the **INDEX**
+  via `git ls-files`, so staging the new path before regenerating gives `tracked` in one pass —
+  unpushed probe `435de9d3`, rc=0 in a clean worktree. **The two-commit shape is a convention, not
+  a constraint**, and the cited precedent `109bb130` is itself **rc=1 at its own sha** though
+  published as compliant. The defence was reached **without ever opening the code**, inferring
+  necessity from convention and writing it in the grammar of a measurement. Both this lane's
+  "irreducible" and the close-out lane's "compliant pair" are the **same unmeasured belief held
+  from opposite sides**, each exonerating its own commits, untested until one lane was accused.
+  Also corrected: a claim that nothing had absorbed this lane's instance, **false within minutes,
+  replaced not softened** — both retractions share the tell that the claim was *comfortable*. **NOT** citable for any Gate-2 clause, nor for the D-3 repair, which stands as
   filed and remains **UNGRADED** under ruling 3.
 
 - [`DISCIPLINE-20260825-f14-manifest-coupling-omissions.md`](DISCIPLINE-20260825-f14-manifest-coupling-omissions.md)

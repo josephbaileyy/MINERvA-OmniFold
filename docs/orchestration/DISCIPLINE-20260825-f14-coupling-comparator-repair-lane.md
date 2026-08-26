@@ -16,8 +16,11 @@ gate document, and not a grade.
 - A discoverability gap: the same-commit coupling for `MANIFEST.tsv` is **not** in §7.0.7's own text.
 - An instrument-behaviour finding: `generate_manifest.py`'s DIRTY warning steers a reader toward the
   violation.
-- **A SECOND omission by this lane, `3dbca981`, committed while filing this document** — and the
-  measurement distinguishing it from the first, because they are not the same failure.
+- **A SECOND omission by this lane, `3dbca981`, committed while filing this document.** It is the
+  **same kind** of failure as the first — an earlier version of this document argued otherwise and
+  was **wrong**; see §5.2.
+- The measurement that a **new** path can be committed one-pass compliant by staging it before
+  regenerating, which is what makes `3dbca981` avoidable.
 - A demonstration of the sibling record's §3 absorption mechanism, on this lane, within minutes.
 
 ## NOT CITABLE FOR
@@ -38,7 +41,7 @@ gate document, and not a grade.
 |---|---|---|---|
 | `c8a29082` | `compare_m1_m6.py`, `test_compare_m1_m6.py` | **NO** | both files' line/byte counts, the decision record's `consumer`/`inbound_count`, the f17b record's `consumer`, and `MANIFEST.tsv`'s own byte count |
 | `65f95600` | `MANIFEST.tsv` | — (this *is* the late regeneration) | — |
-| `3dbca981` | this document + overrides + CATALOG + `MANIFEST.tsv` | **pass 1 only** | the `intended` -> `tracked` flip and `MANIFEST.tsv`'s own byte count — see §5.1 |
+| `3dbca981` | this document + overrides + CATALOG + `MANIFEST.tsv` | **pass 1 only** | the `intended` -> `tracked` flip and `MANIFEST.tsv`'s own byte count — **avoidable**, see §5.1 and §5.2 |
 
 `git show --name-only c8a29082` returns exactly the two `.py` paths and no `MANIFEST.tsv`.
 
@@ -125,13 +128,10 @@ porcelain 0: **`generate_manifest.py --check` returns rc=1.** Two fields differ 
 generation at that sha — this document's `tracking` (committed `intended`, fresh `tracked`) and
 `MANIFEST.tsv`'s own byte count (committed `106409`, fresh `106408`).
 
-**THIS IS NOT THE SAME FAILURE AS `c8a29082`, and the distinction is a measurement rather than a
-plea.** For a **new** path the flip is irreducible: `tracking` records whether the path is committed,
-so the value is decided by the very commit being created and no single commit can carry the
-post-commit value. That is why the documented shape for a new document is two commits, and why the
-close-out lane's own ledger marks its pair `109bb130` -> `dce8e8cc` compliant at **both** ends. By
-contrast `c8a29082` changed only already-tracked files, where one-pass coupling is achievable — proved
-at rc=0 by probe `3ae2c6ba`. **The first was avoidable and the second was not.**
+**A PARAGRAPH STOOD HERE ARGUING THAT THIS WAS A DIFFERENT KIND OF FAILURE FROM `c8a29082` BECAUSE
+THE `intended` -> `tracked` FLIP IS IRREDUCIBLE FOR A NEW PATH. THAT IS FALSE.** It is retracted, not
+qualified, and §5.2 records how it was reached. **`3dbca981` is avoidable in exactly the way
+`c8a29082` was, and the two are the same kind of omission.**
 
 **WHAT IS STILL THIS LANE'S OMISSION IS THE SECOND-PASS COMMIT.** `3dbca981`'s own message states
 that a second pass follows. It was not committed. The cause was an instrument pointed at the wrong
@@ -153,12 +153,63 @@ an exit code: the LIVE override row, the CATALOG entry, and the `tracked / LIVE`
 lane; it reached `github/main` as an ancestor of the peer's push. Publication on shared `main` is a
 property of the branch, not of any lane's restraint.
 
+### 5.2 The defence I raised for §5.1 was false, and I never opened the code
+
+**The claim.** That for a new path the flip is irreducible — `tracking` records whether the path is
+committed, so the value is decided by the commit being created and no single commit can carry it —
+with the close-out lane's `109bb130` -> `dce8e8cc` pair cited as the documented compliant shape.
+
+**The refutation, measured by this lane rather than accepted on report.**
+`generate_manifest.py:92` computes tracked-ness as
+`set(git_lines("ls-files", "--", "docs/orchestration"))`. **`git ls-files` reads the INDEX, not
+`HEAD`.** So staging the new path *before* regenerating classifies it `tracked` in one pass. Probe,
+throwaway detached worktree at `116b0b82`, removed and never pushed: new document + LIVE override row
++ CATALOG entry, `git add` the document **first**, regenerate while dirty, commit all four together
+-> probe sha `435de9d3`, whose row reads `tracking=tracked` and where `--check` returns **rc=0 in a
+separate clean worktree at that sha**, porcelain 0. One pass. The close-out lane reached the same
+result independently at probe `89a5464f` and then in earnest at `116b0b82`, which returns rc=0 at its
+own sha; this lane reproduced both. **The two-commit shape is a CONVENTION, not a CONSTRAINT.**
+
+The second differing field falls out of the first and was never independent: `intended` is one
+character longer than `tracked`, which is the whole of the `106409` vs `106408` byte delta.
+
+**AND THE CITED PRECEDENT DOES NOT HOLD EITHER.** `109bb130` returns **rc=1 at its own sha**,
+measured here in a clean detached worktree, porcelain 0. It was published in the sibling record's §2
+table as `YES` — an example of compliance — and this lane cited it as authority for a claim of
+impossibility. Neither lane had run the test against it.
+
+**HOW I REACHED IT, WHICH IS THE PART WORTH KEEPING.** I never opened
+`generate_manifest.py`. I observed the value `intended`, observed a two-commit precedent, and
+inferred a *necessity* from a *convention* — then wrote it as a mechanism, in the grammar of a
+measurement ("the distinction is a measurement rather than a plea"), when no measurement existed. A
+claim about what code does needs the file and the line, and I asserted one without either.
+
+**AND IT WAS THE COMFORTABLE THING TO BELIEVE.** It arrived while I was under an accusation and it
+halved that accusation. This document already contains one correction of a comfortable claim — the
+§5 paragraph asserting nothing had absorbed my instance — and I wrote this one *in the same edit*
+that made that correction. Checking whether a framing is flattering does not catch this; checking
+whether it is **comfortable to hold** does, and it would have caught both.
+
+**SYMMETRY, STATED BECAUSE IT IS EVIDENCE AND NOT COURTESY.** The close-out lane's "compliant pair"
+framing and this lane's "irreducible" defence are the **same unmeasured belief held from opposite
+sides** — theirs exonerating their commits, mine exonerating mine — and neither of us tested it until
+one of us was accused. That lane has filed `109bb130` as a fourth omission in its own §2.1. The
+belief, not either instance, is the finding.
+
 ## 6. Cited artifacts
 
-Commits: `c8a29082` (the omission) · `65f95600` (the late regeneration, and the message carrying the
-wrong reasoning) · `dce8e8cc` (the base the probe was built on) · `3ae2c6ba` (unpushed probe proving
-the coupled commit reaches rc=0 in one pass) · `47ad509d` (the close-out lane's corrections, which
-named this instance in §4.1).
+Commits: `c8a29082` (first omission) · `65f95600` (its late regeneration, and the message carrying
+the wrong reasoning) · `3dbca981` (second omission) · `34c16f16` (this document's first correction)
+· `dce8e8cc` (probe base) · `47ad509d`, `62a40194`, `116b0b82` (the close-out lane's corrections and
+its own one-pass commit) · `109bb130` (published as compliant, measured **rc=1** at its own sha).
+
+Unpushed throwaway probes, both removed after measurement: `3ae2c6ba` (already-tracked paths reach
+rc=0 in one commit) and `435de9d3` (**a NEW path also reaches rc=0 in one commit** when staged
+before regeneration — the probe that refutes §5.1's original defence).
+
+**F-14 ledger for every commit this lane authored**, each measured in a clean detached worktree at
+that sha with porcelain 0: `c8a29082` **rc=1** · `65f95600` rc=0 · `3dbca981` **rc=1** ·
+`34c16f16` rc=0. Independently reproduced by the close-out lane, matching exactly.
 
 Related: `DISCIPLINE-20260825-f14-manifest-coupling-omissions.md` §4.1, which named this instance and
 deliberately did not count it; `REVIEW-CONTRACT-20260822-k0-execution-integrity.md` F-14 and §7.0.7,
