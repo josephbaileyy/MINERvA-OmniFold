@@ -42,6 +42,23 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   that leaves the filed record unaffected. `MANIFEST.tsv` drift is routed **out** of this verdict to
   F-14 / §7.0.7.
 
+- [`DISCIPLINE-20260825-f14-coupling-comparator-repair-lane.md`](DISCIPLINE-20260825-f14-coupling-comparator-repair-lane.md)
+  — **One F-14 / §7.0.7 manifest-coupling omission by the independent comparator-repair lane,
+  filed against itself.** `c8a29082` changed `compare_m1_m6.py` and `test_compare_m1_m6.py` without
+  regenerating `MANIFEST.tsv` in the same commit; `generate_manifest.py --check` returns **rc=1 at
+  `c8a29082`** in a clean detached worktree, porcelain 0, and rc=0 at `65f95600` — the shape that
+  makes this class invisible, since the endpoint complies and the intermediate sha does not.
+  **The excuse is removed by measurement:** the coupled single commit reaches rc=0 **in one pass**
+  (unpushed probe `3ae2c6ba`), so committing sources first "so the counts describe a commit" was an
+  error and not a trade-off — when all paths go in together the working tree *is* the commit.
+  Two transferable findings: `generate_manifest.py`'s DIRTY warning **fires identically on correct
+  procedure and on the hazard**, steering a reader into the violation; and the same-commit coupling
+  for the manifest is a **composition** of F-14 with §7.0.7, stated in the sibling record's §1 and
+  **not in §7.0.7's own text**, so a lane reading only the contract can satisfy its letter at the
+  graded sha while breaking the coupling at every commit before it. The composition is **accepted,
+  not rebutted.** **NOT** citable for any Gate-2 clause, nor for the D-3 repair, which stands as
+  filed and remains **UNGRADED** under ruling 3.
+
 - [`DISCIPLINE-20260825-f14-manifest-coupling-omissions.md`](DISCIPLINE-20260825-f14-manifest-coupling-omissions.md)
   — **Three F-14 / §7.0.7 manifest-coupling omissions by the publication close-out lane, filed
   against itself.** `30ede740`, `a3ed8631` and `38a7b16b` each moved a tracked path without
