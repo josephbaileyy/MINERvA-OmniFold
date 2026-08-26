@@ -289,6 +289,23 @@ built all of these and is disqualified from grading them.
   is not a finding — that last one is live in the shipped file today. Also: at that sha the far-end
   script never invokes the instrument, and the filed pre-submission column is **markdown, not
   `--json`**, so it is not consumable by it. **Authorizes nothing.**
+- [`VERDICT-20260825-gate2-k0-rehearsal-nine-clauses.md`](VERDICT-20260825-gate2-k0-rehearsal-nine-clauses.md) —
+  **the Gate-2 verdict for run `k0-aa67c426-20260824T145751Z`, by an independent non-builder, over the
+  NINE clauses of §7.0.18. GATE 2 DOES NOT PASS.** `F-7(b)` and `F-8(b)` have **no evidence of any
+  kind** — no rehearsal pin is recorded and no run receipt has been authored — and `F-17(b)`'s
+  `:1471` half is **impossible, not pending**, because the pre-submission column is prose and the
+  comparator consumes `--json`. `F-1(b)` and `F-4(b)` PASS, re-derived: A-2(a)–(g) all hold at the far
+  end, and 374 inventories == 374 guarded processes with the inventory filenames in **bijection** with
+  `sacct`'s 374 `JobIDRaw`. `F-2(b)`/`F-5(b)` PASS on measurements this verdict files first (P-2 over
+  **all 374** records, 0 sha mismatches against the 782-entry baseline, `checked` min 974).
+  **`F-3(b)`'s own instrument is VACUOUS** — these launchers never echo argv, so a stdout grep for
+  `--allow` cannot answer it; the guard's `allow_is_empty` field does. **Three producing-lane claims
+  did not reproduce**, including a FALSE counterfactual: the excluded sibling's 298 records live under
+  `guard-inventories/`, so the `runs/*/inv` glob it was said to protect against yields **374, zero of
+  them from siblings**. **New repairable defect:** `bad_pattern` admits `M-1[*` (unbalanced bracket),
+  which suppressed **all 19** M-1 findings as `EXPECTED-BY-RULING` with the suite green — the prior
+  GRADE has **self-expired** (all three digests moved) and never examined that guard. **Authorizes
+  nothing; it is NOT CITABLE FOR any Gate-2 PASS.**
 
 ### B1 steps 4-5: the lift, and the preflight that gates the first submission
 
