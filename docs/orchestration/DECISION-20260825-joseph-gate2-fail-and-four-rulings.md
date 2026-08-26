@@ -344,7 +344,46 @@ minutes — and left a 0-byte output file, which this lane briefly read as a cle
 one: an empty file from a killed job is an absent answer. The same trap caught the comparator-repair
 lane independently, in the same shared scratchpad. Cheap bounded evidence that does hold, measured
 2026-08-25: `.git/HEAD` = `aa67c426`, `.git/index` unwritten since 2026-08-24 04:36:13, zero `.git`
-lock files, tree mode `dr-xr-x---`.
+lock files, working-copy mode `dr-xr-x---`.
+
+A second attempt, this one carrying a COMPLETION SENTINEL, also had not finished at the time of
+writing. **The sentinel is the point:** without it a 0-byte output file is indistinguishable from a
+clean result, and that is the form the earlier error took.
+
+### 11.1 THE FREEZE DOES NOT COVER `.git`, and that is measured
+
+Raised by the selector-narrowing lane, which observed a `.git` mtime it had not caused and declined
+to call it benign. Reconciled here because the frozen-deploy route belongs to this lane.
+
+**Permissions, measured 2026-08-25:**
+
+| path | mode | consequence |
+|---|---|---|
+| working-copy root | `dr-xr-x---` | file edits BLOCKED |
+| `.git` | **`drwxrwx---`** | **HEAD, refs and objects are WRITABLE** |
+| `.git/objects`, `.git/refs` | `drwxrwx---` | same |
+
+So §7.0.19's freeze is enforced by permissions **on the working copy only**. A `git update-ref`,
+`git fetch`, `git gc` or `git checkout --detach` would not be stopped by the mode bits. Immutability
+of the pinned state rests on convention plus *partial* permissions, not on permissions alone — a
+weaker basis than "it is read-only" suggests, which is what this document had been saying.
+
+**Nothing actually changed, and that is also measured.** The `.git` *directory* mtime is
+2026-08-25 18:32:35, but no entry inside it is newer than 2026-08-24: `HEAD` content `aa67c426`
+(mtime 08-24 04:34:10), `packed-refs` / `objects/` / `config` at 08-24 05:07:34, `index` at
+08-24 04:36:13, `refs/` and `logs/` at 08-22, and the reflog's last entry is the original 08-24
+checkout to `aa67c426`. A directory mtime moves when an entry is created or removed, so this fits a
+transient `index.lock` written and removed by a `git` read that then died — and there were at least
+two such reads against this deploy copy today, from two different lanes.
+
+**The consequence worth carrying: inspecting the frozen deploy with `git` is not a read-only act.**
+Any git invocation there may write a lock into `.git`. Our own diagnostics are the most likely author
+of the mtime we then had to investigate.
+
+**F-1(b) is NOT disturbed.** HEAD is the pinned sha, and the source manifest was measured IDENTICAL
+during the run that produced the filed record. What weakened is the confidence available *from the
+mode bits*, not the state of the artifact. Whether to `chmod` `.git` read-only is a decision for
+Joseph, not a silent repair to a frozen artifact.
 
 ## 12. Open determinations delegated to the grader (Joseph, 2026-08-25)
 
