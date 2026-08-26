@@ -238,6 +238,13 @@ sizes are what gets submitted. They are different quantities and are listed sepa
 
 ## C. Exact submission commands and dependency order
 
+> **SUPERSEDED IN ITS PATHS, 2026-08-22, by Amendment 3 below** (Joseph's ruling 17). Amendment 2
+> section 3 already declared these paths superseded and deferred the rewrite until the clean tree was
+> designated; Amendment 3 is that rewrite. **This block survives as the dependency graph and the
+> argument shape only** — its working directory and its bare launcher names are no longer correct
+> and must not be copied. It is preserved rather than edited so the record of what was proposed, and
+> when, stays readable.
+
 All from `/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding` on a login node, after
 `source ../setup_salloc_env.sh`, with the member declared in the submitting shell:
 
@@ -405,3 +412,155 @@ built until that contract exists, and nothing is submitted until the reviewer re
 
 On a clean PASS the conditional authorization becomes operative without a further permission round:
 quarantine the six files, regenerate ids 1–3, and submit the seven jobs of logical legs 1–5 for k=0.
+
+
+---
+
+# AMENDMENT 3, 2026-08-22 — section C rewritten on the two-root design (ruling 17)
+
+**Authority:** [`DECISION-20260822-joseph-b1-lift-and-clause-c.md`](DECISION-20260822-joseph-b1-lift-and-clause-c.md)
+rulings 17 and 18, specified by
+[`REVIEW-CONTRACT-20260822-k0-execution-integrity.md`](REVIEW-CONTRACT-20260822-k0-execution-integrity.md)
+A-1 and B-5. **This amendment authorizes nothing.** Ruling 19's scope note stands verbatim: *"None of
+these rulings authorizes a Slurm submission, the full family, `C_ML`, or a scientific adoption."*
+Nothing here is submitted until the fresh non-builder reviewer records a PASS against the contract.
+
+## C-1. The three roots, all mandatory
+
+| variable | role | rule |
+|---|---|---|
+| `MNV_CODE_ROOT` | the approved clean execution tree | every `.sh` sourced and every `.py` executed or imported resolves under it; `git status --porcelain` empty at a declared sha, re-verified after the last leg |
+| `MNV_DATA_ROOT` | inputs and products | `/pscratch/sd/j/josephrb/MINERvA-OmniFold` is acceptable **in this role only**; nothing is executed or imported from it |
+| `MNV_ENV_ROOT` | the activation closure | a REAL directory **outside every checkout**; 14 members digest-verified in pure bash before the activator is sourced. A directory symlink is acceptable, a file symlink is not |
+| `MNV_CONDA_PREFIX` | the conda env the closure activates | binds the `activate.d/*.sh` set; without it, verifying the activator's bytes does not determine which conda runs |
+
+Neither has a default and neither may acquire one: a default is the hardcode wearing a flag. The
+constitution checklist for `MNV_CODE_ROOT` — the (a)–(g) table, and the `MNV_LAUNCHER_DIR` rule — is
+section 0b-i of [`RUNBOOK-20260822-b1-lift-preflight.md`](RUNBOOK-20260822-b1-lift-preflight.md) and
+is not restated here, so it has one home.
+
+## C-2. The submitting shell
+
+```bash
+ssh saul.nersc.gov
+export MNV_CODE_ROOT=<the approved clean tree at the declared sha>
+export MNV_DATA_ROOT=/pscratch/sd/j/josephrb/MINERvA-OmniFold
+export MNV_ENV_ROOT=/pscratch/sd/j/josephrb/k0env         # OUTSIDE every checkout; no default
+export MNV_CONDA_PREFIX=/global/u2/j/josephrb/.conda/envs/root_6_28   # no default
+export MNV_GUARD_INVENTORY_DIR=<a run-scoped directory>   # one record per guarded process
+export MNV_SOURCE_MANIFEST=<the A-2(f) manifest>          # written before the first sbatch
+export MNV_LAUNCHER_DIR="${MNV_CODE_ROOT}/nd-unfolding"   # sbatch runs a spool COPY of the script
+export MNV_EST_SEED_OFFSET=0          # canonical integer, NO leading zeros (lib_member_resume.sh:63)
+cd "${MNV_DATA_ROOT}/nd-unfolding"                        # products land here
+```
+
+`sbatch` propagates the environment, so all three roots reach the job. Each launcher re-reads them
+and refuses to start if any is unset **or empty**.
+
+**THE SUBMITTING SHELL NO LONGER SOURCES THE ACTIVATOR, AND MUST NOT.** This block previously ran
+`source "${MNV_CODE_ROOT}/setup_salloc_env.sh"` — from the *code* root, which is the round-4 `F-2(a)`
+finding verbatim: `.gitignore` excludes the closure, so any A-2-satisfying tree lacks that file and
+the line dies at exit 1. Each launcher now sources the activator from `${MNV_ENV_ROOT}` itself, after
+verifying all 14 closure members by digest. A submitting shell that pre-activates would also mask an
+environment fault that the job must catch on its own.
+
+## C-3. Independent roots — submit together
+
+```bash
+L="${MNV_CODE_ROOT}/nd-unfolding"
+JB=$(sbatch --parsable "$L/sbatch_bootstrap_5d_gpu.sh")                    # leg 1
+JS=$(sbatch --parsable "$L/sbatch_seedscan_split_5d.sh")                   # leg 2
+JD=$(sbatch --parsable "$L/sbatch_unfold_5d_detector_bkgaware_gpu.sh")     # leg 3  -> the member CV
+JR=$(sbatch --parsable "$L/sbatch_uthrow_run_5d_fast.sh")                  # leg 5a
+JK=$(sbatch --parsable "$L/sbatch_uthrow_block_5d.sh")                     # leg 5b
+```
+
+## C-4. Dependent
+
+```bash
+JW=$(sbatch --parsable --dependency=afterok:$JD "$L/sbatch_sweep_bank_5d_run_bkgaware_gpu.sh")  # leg 4
+JC=$(sbatch --parsable --dependency=afterok:$JR:$JK "$L/sbatch_uthrow_combine_5d_fast.sh")      # leg 5c
+# LEG 6 IS NOT SUBMITTED HERE -- gated on the staged review, exactly as in Amendment 1 section D.
+```
+
+**The dependency graph is unchanged from Amendment 1 section C**, including why leg 4 waits on leg 3
+(leg 3 writes the member CV into the directory leg 4's 169 universes populate). Only the paths moved.
+
+**Submit by ABSOLUTE PATH UNDER THE CODE ROOT.** `sbatch <bare name>` from
+`${MNV_DATA_ROOT}/nd-unfolding` would spool the data root's copy of the launcher, which is not the
+approved bytes — and `sbatch` would report success either way.
+
+## C-5. What was missing in round 1, and what is missing now
+
+**Round 1 listed three gaps. Joseph closed all three on 2026-08-22 (round 2) and they are now
+built.** The list is kept rather than deleted, because a disclosure that vanishes when it is
+addressed teaches a later reader that nothing was ever open.
+
+| round-1 gap | disposition |
+|---|---|
+| production legs not routed through `mnv_guarded_run.py` | **CLOSED.** All fourteen production invocations across the eight launchers are guarded, with a mandatory `MNV_GUARD_INVENTORY_DIR`. |
+| `build_child_argv` does not emit the guard | **CLOSED.** It does, and `main()` fails closed with no bypass flag. Its value is the explicitly empty flagged record and §H.1 insurance, **not** import protection — `adopt_unified_5d.py` makes no repository import and the guard cannot protect it from one it does not make. |
+| `verify_executing_copy_is_committed.py --pair` called by 0 of 8 | **CLOSED**, in the Gate-5 shape, alongside a new whole-tree A-2(f) source-manifest comparison. |
+
+**A FOURTH GAP THAT WAS NOT ON THE ROUND-1 LIST AT ALL, and its absence is the more useful finding.**
+P-4, the per-entrypoint import-set identity ratchet, had never been built and I did not disclose it.
+The reason is specific rather than general: my round-1 disclosure was assembled by walking the
+*things I had decided not to do* — each of the three above was a live decision I took and could
+therefore recall. P-4 was never a decision. It sat in §4 of the contract, in the same list as P-1,
+and once P-1 was built the whole of §4 read as discharged. **A list of my own declined choices is
+not a coverage check against the specification**, and only the second kind would have caught it. The
+fix is mechanical and is now applied here: C-5 is written against the contract's clause numbers, not
+against memory.
+
+## C-6. What is STILL missing, checked clause by clause against the contract
+
+- **F-9: CLOSED by ruling 20, which restated the criterion rather than exempting the check.** N-1
+  exits 3 through B-4 and does not name `seed_offset_policy`; Joseph ruled the original
+  import-specific expectation incompatible with the earlier containment protection, kept B-4, and
+  made the refusal record the passing condition. Its absence is a *consequence*, neither required
+  nor expected, and the claim rests on the `guard_installed`/`checked_provenance`/`outcome` triple.
+  U/U' retains and NAMES the module as counterfactual origin evidence — what would load without
+  containment — and does not establish the mechanism of the refusal. Measured in
+  [`RECEIPT-20260822-k0-n1-and-guarded-arms.md`](RECEIPT-20260822-k0-n1-and-guarded-arms.md)
+  §§1-2 and 7.3.
+- **F-17 freshness is open.** M-1 through M-6 have not been re-measured on `MNV_CODE_ROOT` at the
+  pinned sha and on the canonical checkout as it stands. Two fragments exist (M-1's empty import set
+  for the adopter, confirmed at runtime; the canonical checkout's 721 dirty entries) and nothing else.
+- **A-2(c), (d), (e) and (g): CLOSED.** Four fail-closed flags on `mnv_source_manifest.py`, called
+  by all eight launchers before anything else runs. Each has a control that FIRES and one that stays
+  SILENT on a legitimate clean code root, plus an arm turning all of them on at once — three new
+  fail-closed checks on the execution path are three new ways to block an innocent run. Write
+  protection is APPLIED by the tool (`--apply-readonly`) and verified three ways on the real cluster
+  tree, including a filesystem witness; receipt §7.1. Two holes found by RUNNING it rather than by
+  testing it are recorded in §7.2 — a wrong `chmod` recipe in my own refusal message, and
+  `__pycache__` sitting outside the protected set because it holds no tracked source.
+- **Preflight ordering: VERIFIED, not arranged.** The parity line precedes every guarded science
+  invocation in all eight; the only shell function any launcher defines is `mnv_inv`, which runs
+  nothing, so nothing can be hoisted ahead of the preflight; and six preflight preconditions broken
+  one at a time each leave ZERO inventories. The preamble is byte-identical across all eight except
+  its `--pair` list, which carries the single-launcher dynamic arm to the other seven.
+- **P-4: the MECHANISM and its fail-closed behaviour are built and proven; the PRODUCTION PINS ARE
+  NOT, AND MUST NOT BE.** 30 arms over synthetic records: identity in both directions, an undeclared
+  entrypoint, a pinned entrypoint with no inventory, an undeclared empty set, a missing provenance
+  field, a defaulted zero, a refusal record in a production set, and every CANNOT-LOOK path. **No
+  pins were manufactured.** The production set is written from the first clean k=0 run and reviewed
+  then; the two in the receipt came from a two-process arm with throwaway inputs and are not it.
+- **TWO PYTHON CALLS PER LAUNCHER ARE DELIBERATELY NOT GUARDED, and this is a scope question for the
+  reviewer rather than a builder's ruling.** Counting every `python3` line in the eight launchers
+  gives **30**: the **14** science-entrypoint invocations, all guarded, plus **16** preflight tool
+  calls (`mnv_source_manifest.py` and `verify_executing_copy_is_committed.py`, two per launcher).
+  Read literally, "every production Python invocation" covers all 30. Two reasons it was built as
+  14, both stated so they can be overruled:
+  1. **Bootstrapping.** The manifest comparison and the parity check are what establish that the
+     tools in the code root are the approved bytes — including the guard itself, via
+     `--pair "${GUARD}=nd-unfolding/mnv_guarded_run.py"`. Running them THROUGH the guard would mean
+     trusting the guard before the check that validates it, inverting the order. Their integrity is
+     instead established the way the two Gate-5 launchers already establish it.
+  2. **Signal cost.** Both tools import stdlib only, so each would emit an explicitly-empty record
+     and the P-4 ratchet's "an undeclared empty set is a failure" rule would need three permanent
+     standing exceptions. That rule is worth more than the literal count.
+- **Nothing has run under `sbatch`.** `BASH_SOURCE`-under-spool, the Slurm resolver and the real
+  `${REPO}` effect remain ruling 14's business, and the two adopt invocations are unreachable
+  end to end while the pause branch stands.
+- **The `2d-unfolding` in-function rooted insert stays out of scope**, measured latent rather than
+  live: the insert sits inside `main()` and nothing calls `u2d.main()`.

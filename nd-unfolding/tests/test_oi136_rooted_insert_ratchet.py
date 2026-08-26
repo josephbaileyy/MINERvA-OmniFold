@@ -38,8 +38,13 @@ REPO = pathlib.Path(__file__).resolve().parents[2]
 
 # Each entry MUST carry a reason. A bare path list decays into an allowlist nobody revisits.
 _R = {
+    # MERGE 2026-08-26: both classes below are real and each side recorded the OTHER as pending.
+    # The build branch's own words were 'Awaiting merge, not repair.' This is that merge; both
+    # strings are retained as history rather than collapsed into one.
     'branch_repaired':
         'REPAIRED on build-k0-execution-integrity by the round-5/6 B-1 sweep and NOT YET on main. Executing correctly on the deployed candidate. Awaiting merge, not repair.',
+    'main_repaired':
+        "REPAIRED ON main by the 2026-08-23 authorized sweep (c752f73e, a0a84a2e) and NOT YET on this branch. Awaiting merge, not repair. The mirror of this list on main names the six B-1 files repaired HERE and not there -- the two refs are symmetric and each is missing the other's six.",
     'pet':
         "PET lane's file. Not this lane's to edit; routed, not owned.",
     'probe':
@@ -54,19 +59,17 @@ KNOWN_UNREPAIRED = {
     # --- twod: THE PUBLISHED 2D ARM. Joseph ruled 2026-08-23 to leave it: reachable in the k=0 static closure b...
     '2d-unfolding/unfold_2d_omnifold_unbinned.py':
         _R['twod'],
-    # --- branch_repaired: REPAIRED on build-k0-execution-integrity by the round-5/6 B-1 sweep and NOT YET on main. Executi...
-    'nd-unfolding/bootstrap_nd.py':
-        _R['branch_repaired'],
-    'nd-unfolding/seedscan_split.py':
-        _R['branch_repaired'],
-    'nd-unfolding/sweep_bank_5d.py':
-        _R['branch_repaired'],
-    'nd-unfolding/unfold_nd_omnifold_unbinned.py':
-        _R['branch_repaired'],
-    'nd-unfolding/unified_throw_cov.py':
-        _R['branch_repaired'],
-    'nd-unfolding/unified_throw_cov_5d.py':
-        _R['branch_repaired'],
+    # --- DELISTED 2026-08-26 BY THE MERGE, and this is the ratchet working, not a check being
+    # silenced. Six entries classified _R['branch_repaired'] read 'REPAIRED on
+    # build-k0-execution-integrity ... and NOT YET on main'. Merging that branch IS the event
+    # that clears them, so test_the_known_set_only_shrinks fired with exactly those six and its
+    # message instructed 'delete their entries'. Delisted here, measured not assumed:
+    #     nd-unfolding/bootstrap_nd.py            nd-unfolding/unfold_nd_omnifold_unbinned.py
+    #     nd-unfolding/seedscan_split.py          nd-unfolding/unified_throw_cov.py
+    #     nd-unfolding/sweep_bank_5d.py           nd-unfolding/unified_throw_cov_5d.py
+    # KNOWN_UNREPAIRED 52 -> 46, matching the scanner's 46 on the merged tree; and the forward
+    # arm measured NEW-unlisted = 0, so nothing was hidden by the delisting. The _R key itself is
+    # left defined but unreferenced, as history rather than as an active class.
     # --- pet: PET lane's file. Not this lane's to edit; routed, not owned....
     'nd-unfolding/pet/d2_oracle.py':
         _R['pet'],

@@ -101,13 +101,106 @@ PROBE = os.path.join("docs", "orchestration", "state",
 # now on the record where the next reader will meet it.
 #
 # 51 IS NOT A TARGET. It is the count of sites still to be repaired, one authorized site at a time.
-FAILOPEN_COUNT = 51
-FAILOPEN_SHA256 = "4d53806b3817e650454e3ddbb88d372d3111f2ba02c1aa1e6f419aca90b1a91f"
+#
+# ===== MERGE 2026-08-26: main x build-k0-execution-integrity =====
+# THE TWO HISTORIES ABOVE AND BELOW ARE BOTH REAL AND NEITHER SUPERSEDES THE OTHER. Each line
+# repaired SIX sites and they are DIFFERENT six: main took bkg_channel_split, coverage_toy_nd,
+# nn_run_from_npz, unbinned_gof, the 1D study and the 3D sibling; the build branch took the six
+# k=0 leg sites (bootstrap_nd, seedscan_split, unfold_nd_omnifold_unbinned, sweep_bank_5d,
+# unified_throw_cov_5d and unified_throw_cov). BOTH sides recorded FAILOPEN_COUNT = 51 with
+# DIFFERENT digests, which is the tell: the count coincided, the SETS did not.
+#
+# SO THE MERGED SET IS SMALLER THAN EITHER SIDE'S AND NEITHER RECORDED PAIR IS CORRECT HERE.
+# The constants below are RE-MEASURED from the scanner on the merged tree, never carried over
+# and never hand-set to make this check green -- which is the move this file exists to prevent.
+# Superseded pairs, retained as as-of referents:
+#   main         51 / 4d53806b3817...
+#   build branch 51 / f37af2e3ec16...
+#
+# 58 IS NOT A TARGET. It is the count of sites still to be repaired, one authorized site at a time.
+#
+# 58 -> 52 on 2026-08-22, SIX SITES REPAIRED IN ONE AUTHORIZED STEP, named as the rule requires.
+# Authorization: Joseph's ruling 18 in `DECISION-20260822-joseph-b1-lift-and-clause-c.md`, scoped by
+# `REVIEW-CONTRACT-20260822-k0-execution-integrity.md` B-1 to the k=0 M(ii) path. Each derives its
+# import root from `Path(__file__).resolve().parents[N]` with NO absolute fallback:
+#
+#   ./nd-unfolding/bootstrap_nd.py               parents[0]  entrypoint, leg 1
+#   ./nd-unfolding/seedscan_split.py             parents[0]  entrypoint, leg 2
+#   ./nd-unfolding/unfold_nd_omnifold_unbinned.py parents[1] entrypoint, leg 3
+#   ./nd-unfolding/sweep_bank_5d.py              parents[1]  entrypoint, leg 4
+#   ./nd-unfolding/unified_throw_cov_5d.py       parents[1]  entrypoint, legs 5a/5b/5c
+#   ./nd-unfolding/unified_throw_cov.py          parents[1]  MODULE, imported by the line above
+#                                                            AFTER its rooted insert -- excluding it
+#                                                            "would leave the transitive rooted-import
+#                                                            defect open" (Joseph, ruling 18)
+#
+# WHY EXACTLY SIX AND NOT THE 59-FILE SWEEP: the repository-wide migration is explicitly NOT
+# authorized. These are six individually named sites on one path.
+#
+# THE PROBE'S CANDIDATE COUNT MOVES 118 -> 115 IN THE SAME STEP, and the two counts move by different
+# amounts on purpose. Three of the six (`bootstrap_nd.py`, `seedscan_split.py`,
+# `unified_throw_cov_5d.py`) no longer contain the root literal at all. The other three keep it in a
+# `_DATA_ROOT` constant that feeds argparse defaults and data paths ONLY -- ruling 17's two-root
+# design, under which the canonical checkout remains a legitimate DATA root -- so they stay
+# CANDIDATES and move into the probe's `insert-but-not-rooted` bucket (13 -> 16), which is the
+# probe's negative-control population. Nothing is imported or executed from `_DATA_ROOT`.
+#
+# BOTH VALUES BELOW WERE TAKEN FROM THIS TEST'S OWN PRINTED FAILURE MESSAGE
+# (`measured: 52 files / 40bd83ca...`), never computed by hand.
+# BRANCH VALUE, and it differs from main BY DESIGN. This ratchet measures the WORKING TREE, so
+# its constants are ref-dependent: build-k0-execution-integrity carries the six B-1 source
+# repairs that main lacks, and main carries the six 2026-08-23 sweep repairs that this branch
+# lacks. The two refs are symmetric -- each is missing the other's six -- so the COUNT matches
+# at 51 while the SET does not, and the digest is what distinguishes them. Do not reconcile
+# these constants across refs by copying; re-measure on the ref you are on.
+# Advanced here for compare_unified_throw.py, cherry-picked from main (f7dc9f1d).
+# RE-MEASURED 2026-08-26 ON THE MERGED TREE, AND THE EARLIER "UNMEASURABLE" NOTE WAS WRONG.
+# A first attempt here recorded the digest as unobtainable because the probe CLI exits 2. That
+# inferred the QUANTITY's unmeasurability from the INSTRUMENT's refusal, which does not follow: the
+# probe's components are importable and reusable without invoking its CLI.
+#
+# METHOD, read-only, on the merged worktree: the UNCHANGED probe module's own `ROOT`, `INSERT0`,
+# `rooted_names` classifier, grep exclusions and candidate collection were reused directly. Nothing
+# in the probe was edited and its CLI was not driven. The set so measured:
+#
+#     45 paths
+#     sha256 4201aceed0604f92a3ec88591fd4e471cb723323fb01b88184024d97d6c36c8b
+#
+# 45 reconciles two independent ways: it equals main's recorded 51 minus the build branch's six
+# additional k=0 leg-site repairs, and it equals the count this suite's own fallback assertion
+# printed on the merged tree ("114 .py contain the hardcoded root; 45 FAIL-OPEN, 21
+# insert-but-not-rooted, 48 no insert(0,...)").
+#
+# THE SETS DIVERGED WHILE THE COUNTS AGREED, which is why the digest is the load-bearing half. Both
+# lines recorded FAILOPEN_COUNT = 51 with DIFFERENT digests: main repaired bkg_channel_split,
+# coverage_toy_nd, nn_run_from_npz, unbinned_gof, the 1D study and the 3D sibling; the build branch
+# repaired the six k=0 leg sites. Superseded pairs, retained as as-of referents:
+#   main         51 / 4d53806b3817...
+#   build branch 51 / f37af2e3ec16...
+#
+# PROBE CERTIFICATION REMAINS "CANNOT CHECK", AND THIS PAIR DOES NOT CHANGE THAT. The probe CLI must
+# still exit 2 -- `CANNOT CHECK :: positive control(s) absent from the fail-open set:
+# ['3d-unfolding/unfold_3d_omnifold_unbinned.py']` -- because main REPAIRED that file and the
+# probe's positive control is stale against the merged tree. Neither the probe nor its positive
+# controls is authorized for editing in this merge; refreshing them is the probe owner's act.
+#
+# SO THIS RATCHET IS **NOT** CLAIMED GREEN. The inventory constants below are measured and correct;
+# the arms that require the probe CLI to complete are expected to remain RED until the positive
+# control is refreshed by its owner. Recording a measured inventory and an uncertified instrument as
+# two separate facts is the point -- collapsing them in either direction is the error.
+FAILOPEN_COUNT = 45
+FAILOPEN_SHA256 = "4201aceed0604f92a3ec88591fd4e471cb723323fb01b88184024d97d6c36c8b"
 
 # The probe's own positive controls, restated here so this file does not inherit its blind
 # spots. Relative to the repo root, as the probe prints them.
+#
+# `./nd-unfolding/unfold_nd_omnifold_unbinned.py` was RETIRED as a control on 2026-08-22 because it
+# is one of the six repaired above: a declared positive control that is also a repair target makes
+# the probe exit 2 (`CANNOT CHECK :: positive control(s) absent`) the moment the repair lands, and
+# this ratchet fails with it. Its replacement was chosen from the probe's own post-repair fail-open
+# output -- see the probe's own comment at `POSITIVE_CONTROLS` for why that file and not another.
 POSITIVE_CONTROLS = ("./nd-unfolding/adopt_unified_5d.py",
-                     "./nd-unfolding/unfold_nd_omnifold_unbinned.py")
+                     "./3d-unfolding/unfold_3d_omnifold_unbinned.py")
 
 GUARD_REL = os.path.join("nd-unfolding", "mnv_guarded_run.py")
 GUARDED_LAUNCHERS = (os.path.join("nd-unfolding", "pet",

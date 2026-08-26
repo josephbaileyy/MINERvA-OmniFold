@@ -18,10 +18,25 @@ Usage mirrors unified_throw_cov.py, with --bank bank_uthrow_5d:
       --out-root uq_5d/unified_throw_cov_5d.root
 """
 import sys
+from pathlib import Path
 
 import numpy as np
 
-_REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+# OI-136 REPAIR, 2026-08-22, authorized by Joseph's ruling 18 (DECISION-20260822-joseph-b1-lift-and-clause-c.md)
+# and required by REVIEW-CONTRACT-20260822-k0-execution-integrity.md B-1. THE IMPORT ROOT IS DERIVED
+# FROM THIS FILE, never from the hardcoded cluster root that used to stand here. An absolute
+# `insert(0, ...)` executes THAT tree's modules whichever checkout launched this entrypoint, and
+# PYTHONPATH cannot outrank position 0 -- so deployment parity can report every pinned file CURRENT
+# while the interpreter imports a different file entirely. That is OI-136's measured cause on run
+# 57266000_0 (3 h 08 m of A100 against a tree 211 commits behind).
+# NO ABSOLUTE FALLBACK, deliberately: a fallback is the hardcode wearing a flag, and it would restore
+# the defect silently on the one tree where it matters. Same idiom and the same reason as the OI-136
+# pilot repair at `uq_fps/corrected/test_fps_corrected_uq.py`, `tests/test_p4_repair.py:14` and
+# `pet/combine_cstat_bkgsub_100rep.py:78`.
+# `parents[1]` is the repository root seen from `nd-unfolding/`: the inserts below cover BOTH
+# `2d-unfolding/` and `nd-unfolding/` (`omnifold_nn_core`, `xsec_nd`, and `unified_throw_cov`,
+# which carries a rooted insert of its own and is repaired in the same commit for that reason).
+_REPO = str(Path(__file__).resolve().parents[1])
 for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
     if _p not in sys.path:
         sys.path.insert(0, _p)

@@ -26,6 +26,148 @@ in a way that reads as a broken lift.
 This is the finding the runbook exists to produce. Section 3 has the evidence; section 6 says what
 the first submission actually is.
 
+## 0b. THE EXECUTION TREE IS NOW A PARAMETER, AND IT HAS NO DEFAULT
+
+**Added 2026-08-22 on [Joseph's ruling 17](DECISION-20260822-joseph-b1-lift-and-clause-c.md), which
+supersedes every working-directory instruction written before it in this file and in
+[`PLAN-20260822-oneMember-mii-staged.md`](PLAN-20260822-oneMember-mii-staged.md) Amendment 1 section C.**
+
+All eight launchers on this path used to open with an unconditional
+`REPO="<the canonical checkout>"`. That decides the executing tree before any interpreter or guard
+starts, so no Python-side work reaches it. They now take **two mandatory variables with no default**:
+
+| variable | what it is | rule |
+|---|---|---|
+| `MNV_CODE_ROOT` | the approved clean execution tree | every `.sh` sourced and every `.py` executed or imported resolves under it; immutable and `git status --porcelain`-empty for the run, at a **named sha** recorded in the receipt |
+| `MNV_DATA_ROOT` | inputs and products | the canonical checkout `/pscratch/sd/j/josephrb/MINERvA-OmniFold` is acceptable **in this role only**; nothing is executed or imported from it |
+| `MNV_GUARD_INVENTORY_DIR` | run-scoped directory for the OI-136 resolved-origin records | added round 2. One file per guarded process. A guarded run that emits no record establishes nothing, so this is REQUIRED |
+| `MNV_SOURCE_MANIFEST` | the A-2(f) source manifest recorded from `MNV_CODE_ROOT` **before the first `sbatch`** | added round 2. Compared on every leg; a moved source byte aborts before any Python starts |
+| `MNV_ENV_ROOT` | the activation closure's own root, **outside every checkout** | added round 5, round-4 `F-2(a)`. No default. Its 14 members are digest-verified in pure bash BEFORE the activator is sourced |
+| `MNV_CONDA_PREFIX` | the conda env whose `activate.d/*.sh` the manifest binds | added round 5. No default: binding the activator's bytes does not determine which conda runs |
+
+**`MNV_SOURCE_MANIFEST` does not cover the files the preamble SOURCES.** It is compared far below,
+after those bytes have already executed. Every tracked file sourced by the preamble
+(`lib/resume_guard.sh`, `nd-unfolding/lib_mnv_env_preflight.sh`, `nd-unfolding/lib_mnv_env_pathcheck.sh`)
+gets **pre-use git parity** in the launcher's own inline loop — Joseph's ruling of 2026-08-23,
+`DECISION-20260823-joseph-a2f-does-not-substitute-for-a3.md`: **A-2(f) does not substitute for A-3.**
+
+**A-2(c)(d)(e)(g) ARE ENFORCED FROM ROUND 3, not documented.** Every launcher runs, before anything
+else and failing closed at each step:
+
+```bash
+python3 "${MNV_CODE_ROOT}/nd-unfolding/mnv_source_manifest.py" --repo "${MNV_CODE_ROOT}" \
+  --compare "${MNV_SOURCE_MANIFEST}" --require-clean --require-checkout \
+  --require-no-nested-checkout --require-not-nested --require-readonly
+```
+
+Constitute and protect the code root with the SAME tool, in one command, before the first `sbatch`:
+
+```bash
+python3 "${MNV_CODE_ROOT}/nd-unfolding/mnv_source_manifest.py" --repo "${MNV_CODE_ROOT}" \
+  --apply-readonly --require-clean --require-checkout --require-no-nested-checkout \
+  --require-not-nested --require-readonly --write "${MNV_SOURCE_MANIFEST}"
+```
+
+`--undo-readonly` lifts it when the tree must be refreshed. **Do not hand-roll the `chmod`** — the
+recipe this runbook nearly carried was wrong in a way that silently protected only half the tree
+(receipt §7.2), and the flag chmods exactly the set the check verifies.
+
+(d) and (e) are one hazard from two sides: `checkout_root_of` returns the INNERMOST match, so a
+checkout nested inside the code root resolves to itself, is not `--expect-root`, and every module
+under it is refused on a tree that looks approved. A peer's live `.claude/worktrees/` audit checkout
+is the recorded instance — it made the OI-136 ratchet read 369 instead of 58.
+
+**Why two and not one.** A clean checkout cannot simultaneously host ~47.7 GB of gitignored member
+products and remain clean, and `of_inputs_5d.npz` is absent from a fresh clone, so a clean tree
+cannot serve as the working directory at all.
+
+### 0b-0. ROUND 2, 2026-08-22: EVERY PRODUCTION PYTHON INVOCATION IS GUARDED
+
+Joseph, round 2: *"every production Python invocation across the eight k=0 launchers is to be routed
+through `mnv_guarded_run.py`, with a required inventory ... including the contract-required
+executing-file parity calls, source-manifest comparison, and P-4 import-set mechanism."*
+
+**FOURTEEN invocations, not eight.** Re-derived with `grep -nE 'python[0-9]*'` over the eight
+launchers: bootstrap 1, seedscan 1, detector 2 (CV and universe branches), sweep 1, uthrow run 1,
+uthrow block 2 (knobs and flux), uthrow combine 1, finalize 5. Do not assume one per launcher.
+
+Each now runs as `python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv <tag>)" --
+<entrypoint>`, and every launcher first runs, in this order and failing closed at each step:
+
+1. `mnv_source_manifest.py --repo "$CODE_ROOT" --compare "$MNV_SOURCE_MANIFEST" --require-clean`
+2. `verify_executing_copy_is_committed.py --repo "$CODE_ROOT" --pair ...` over the files it executes
+   plus the guard, the parity checker and the manifest tool
+3. a containment check that `lib_member_resume.sh` resolved under `${MNV_CODE_ROOT}/nd-unfolding`
+
+**Why this became worth doing between round 1 and round 2, and it is not a change of mind.** The
+contract's B-1 held that a wrapper "cannot help them and would block the run" — true of the
+PRE-REPAIR bytes, where `import xsec_nd` resolved under the canonical checkout and the guard
+correctly exited 3. That argument expired with the six source repairs. Measured on the cluster
+2026-08-22 (`RECEIPT-20260822-k0-n1-and-guarded-arms.md` §3): the guarded parent reports
+`checked = 9`, `repo_origin_count = 1`, `seed_offset_policy` resolved **under the code root**. Green
+AND non-vacuous, which a bare exit 0 never was.
+
+**After the last leg**, read the verdict off the records rather than off any exit code:
+
+```bash
+python3 "${MNV_CODE_ROOT}/nd-unfolding/mnv_import_set_ratchet.py" \
+  --inventory-dir "${MNV_GUARD_INVENTORY_DIR}" --pins <the pins> \
+  --source-manifest "${MNV_SOURCE_MANIFEST}"
+```
+
+It checks P-2 (every origin under the code root, every sha256 in the manifest, `checked > 0`), P-3
+(the emptiness flags PRESENT, and a zero only where declared with its disclosure) and P-4 (the
+per-entrypoint import set as an IDENTITY, not a floor). Pins come from `--write-pins` on the first
+clean run; there is no hand-authored expected list.
+
+**`${VAR:-<hardcode>}` IS FORBIDDEN.** A default is the hardcode wearing a flag, and a defaulted
+variable that is silently empty makes every path below name a different subject without erroring.
+The form is `"${MNV_CODE_ROOT:?<message>}"`, the same as
+`pet/sbatch_gate6_leg0_tier_calibration_array.sh:64`. Measured 2026-08-22: with either variable unset
+**or empty**, all eight launchers exit non-zero before sourcing anything
+(`nd-unfolding/tests/test_k0_launcher_two_roots.py`).
+
+### 0b-i. Constituting `MNV_CODE_ROOT`, before the first `sbatch` and again after the last leg
+
+`git clone` or `git worktree add` at a named sha. Record all of it; any difference between the two
+measurements aborts the run.
+
+| # | requirement | instrument |
+|---|---|---|
+| a | `git rev-parse HEAD` equals the declared sha | quote the sha, never "main" |
+| b | `git status --porcelain` emits **zero lines** | count lines; never read `$?` after a pipe |
+| c | it is a checkout by the guard's definition — `VALIDATION_LEDGER.md` **and** `nd-unfolding/` both present | otherwise the guard exits **2**, and 2 is "we could not look", never "clean" |
+| d | **no nested MINERvA-OmniFold checkout anywhere beneath it**, in particular no `.claude/worktrees/` content | `checkout_root_of` returns the innermost match, so a nested checkout resolves to itself and is refused |
+| e | it is **not** nested inside another checkout | same reason, opposite direction |
+| f | `sha256` of every tracked `*.py` and `*.sh`, sorted, plus one digest over that list | re-verified after every leg |
+| g | write protection (`chmod -R a-w`, or a read-only bind) | (f) detects a change; (g) prevents it |
+
+`MNV_LAUNCHER_DIR` must be exported to `${MNV_CODE_ROOT}/nd-unfolding` in the submitting shell.
+`$0`, `${BASH_SOURCE[0]}` and `SLURM_SUBMIT_DIR` are all unusable for this — `sbatch` runs a spool
+copy. The launchers now **assert** that whichever directory the resolver picked is
+`${MNV_CODE_ROOT}/nd-unfolding` and exit 2 if it is not.
+
+### 0b-ii. EVERY `:NNN` LINE NUMBER IN THIS FILE THAT NAMES `sbatch_finalize_5d_bkgaware_gpu.sh` HAS MOVED
+
+The two-root header and the member-library containment check add **39 lines above the body**, so
+every reference below written against `8c156a37` is **+39** today. Measured file-by-file with
+`grep -n` on the content, not computed from the offset:
+
+| what it is | cited here as | now at |
+|---|---|---|
+| `STAT_COV` `mr_run` (`--expected-ids 1-100`) | `:167` | **`:206`** |
+| `ML_COV` `mr_run` (`--expected-ids 1-24`) | `:168` | **`:207`** |
+| `RESUME_ADOPT_LEGACY` refusal | `:188` | **`:227`** |
+| `RESUME_FORCE` refusal | `:211` | **`:250`** |
+| undeclared marker comparison | `:238` | **`:277`** |
+| undeclared `exit 5` | `:253` | **`:292`** |
+| `if mr_declared` opening the pause branch | `:256` | **`:295`** |
+| `[fin-bkg] MEMBER PAUSE` | `:314` | **`:353`** |
+| the two adopt calls (steps 4/5) | `:347`, `:352` | **`:386`, `:391`** |
+
+**Anchor on the content, not on these numbers.** They moved once and will move again; the clause (c)
+text inside the pause branch is unchanged and unreworded, per ruling 1.
+
 ## 1. The lift, and exactly what it did and did not change
 
 The B1 steps 4–5 pause is **LIFTED** by Joseph's ruling 3, recorded at
@@ -91,7 +233,10 @@ launcher would have made clause (c) circular, and it is what ruling 1 turns on.
 
 ```bash
 ssh saul.nersc.gov
-cd /pscratch/sd/j/josephrb/MINERvA-OmniFold && git rev-parse HEAD
+# THE DATA ROOT, measured as a fact about the world -- NOT the tree anything executes from.
+cd "${MNV_DATA_ROOT:?}" && git rev-parse HEAD && git status --porcelain | wc -l
+# THE CODE ROOT, which is what the digests below must be taken from.
+cd "${MNV_CODE_ROOT:?}" && git rev-parse HEAD && git status --porcelain | wc -l
 ```
 
 Measured `b2d7d4ca`. **Do not gate on HEAD equality with `main`** — main has moved for
@@ -111,10 +256,15 @@ done
 | `mii_root_payload_classes.py` | `d363a3b28ee1701c` | yes |
 | `sbatch_finalize_5d_bkgaware_gpu.sh` | `f7ce664511092712` | yes |
 
-Compare against `git show main:<path> | shasum -a 256` from the local checkout. **The digest is the
-check; the commit is not** — the deploy tree carries 721 dirty entries and a hardcoded
-`REPO=/pscratch/sd/j/josephrb/MINERvA-OmniFold` at `:15`, so the tree you read locally is not the tree
-that runs.
+Compare against `git show <the declared sha>:<path> | shasum -a 256`. **The digest is the check; the
+commit is not.**
+
+**The `REPO=` hardcode this paragraph used to describe is GONE as of 2026-08-22** — see section 0b.
+The launcher now refuses to start unless `MNV_CODE_ROOT` and `MNV_DATA_ROOT` are both set, and
+sources and executes only from the code root. What has NOT changed is the reason the paragraph
+existed: the canonical checkout carried **721** dirty entries at the last measurement, which is why
+it may serve only as `MNV_DATA_ROOT`. Take these digests from `${MNV_CODE_ROOT}`, and re-measure the
+dirty count on the data root at submission time — it is the most perishable number in this file.
 
 ### 3b. Member readiness — THIS IS THE BLOCKER
 
@@ -262,11 +412,36 @@ Two consequences, and they point in opposite directions:
 
 ```bash
 ssh saul.nersc.gov
-cd /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding
+# THREE ROOTS, ALL MANDATORY AND NONE DEFAULTED. Set them in the SUBMITTING shell; sbatch
+# propagates the environment, and the launcher refuses to start without them.
+export MNV_CODE_ROOT=<the approved clean tree at the declared sha>   # section 0b-i
+export MNV_DATA_ROOT=/pscratch/sd/j/josephrb/MINERvA-OmniFold        # DATA ROLE ONLY
+# THE ENVIRONMENT IS ITS OWN ROOT (round-4 F-2(a)). It must be a REAL directory OUTSIDE every
+# checkout: `.gitignore` excludes `MINERvA101/**` and `unbinned_unfolding/**`, so any tree that
+# satisfies A-2 NECESSARILY lacks the activation closure. There is no default, deliberately -- a
+# default would be the hardcode wearing a flag, and it would resolve back into a checkout on the
+# one tree where that matters. A DIRECTORY symlink is acceptable; a FILE symlink breaks SCRIPT_DIR.
+export MNV_ENV_ROOT=/pscratch/sd/j/josephrb/k0env
+# The conda env whose activate.d scripts the manifest binds. Mandatory for the same reason:
+# ROOT628_PREFIX used to be env-overridable, so verifying the activator bytes did not determine
+# which conda actually executed.
+export MNV_CONDA_PREFIX=/global/u2/j/josephrb/.conda/envs/root_6_28
+# Optional; defaults to ${MNV_CODE_ROOT}/nd-unfolding/mnv_env_manifest.tsv. Set it only to point at
+# a manifest outside the code root.
+# export MNV_ENV_MANIFEST=<path to mnv_env_manifest.tsv>
+export MNV_GUARD_INVENTORY_DIR=<a run-scoped directory>              # one record per process
+export MNV_SOURCE_MANIFEST=<the A-2(f) manifest, written BEFORE this> # see 0b-0
+# Written once, before the first submission, from the code root itself:
+#   python3 "${MNV_CODE_ROOT}/nd-unfolding/mnv_source_manifest.py" --repo "${MNV_CODE_ROOT}" \
+#     --require-clean --write "${MNV_SOURCE_MANIFEST}"
+export MNV_LAUNCHER_DIR="${MNV_CODE_ROOT}/nd-unfolding"   # sbatch runs a spool COPY; see 5b
 export MNV_EST_SEED_OFFSET=0          # canonical integer, NO leading zeros
-export MNV_LAUNCHER_DIR="$PWD"        # see 5b
-sbatch sbatch_finalize_5d_bkgaware_gpu.sh
+cd "${MNV_DATA_ROOT}/nd-unfolding"    # products land here; nothing is executed from here
+sbatch "${MNV_CODE_ROOT}/nd-unfolding/sbatch_finalize_5d_bkgaware_gpu.sh"
 ```
+
+**Submit the launcher BY ABSOLUTE PATH UNDER THE CODE ROOT.** `sbatch <name>` from the data
+directory would spool the data root's copy, and that copy is not the approved bytes.
 
 Directives already in the file: `--account=m3246_g`, `--qos=shared --constraint=gpu --nodes=1
 --ntasks=1 --gpus-per-task=1 --cpus-per-task=32 --time=01:30:00`, output to `uq_4d/fin5dBKG_%j.{out,err}`.
@@ -317,8 +492,8 @@ Run **after** the job, in the ROOT environment (`source setup_salloc_env.sh` fir
 segfaults on a bare login shell):
 
 ```bash
-cd /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding
-PYTHONUNBUFFERED=1 python3 mii_anchor_comparator.py \
+cd "${MNV_DATA_ROOT:?}/nd-unfolding"          # the artifacts are here
+PYTHONUNBUFFERED=1 python3 "${MNV_CODE_ROOT:?}/nd-unfolding/mii_anchor_comparator.py" \
   --artifact adopted_uthrow.root \
   --archive  <the archive product> \
   --member   <the member's adopted root> \

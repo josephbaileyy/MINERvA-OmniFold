@@ -150,6 +150,11 @@ if _HERE not in sys.path:
 
 #: The pinned writer, and the receipt that binds its bytes. ONE copy of the digest, in the receipt.
 PINNED_WRITER = os.path.join(_HERE, "adopt_unified_5d.py")
+
+#: The OI-136 import-tree guard, resolved from THIS FILE's directory exactly as the writer is. Not
+#: from an environment variable and not from a literal: the guard that polices which tree executed
+#: must come from the same tree as the wrapper that invokes it, or it is theatre.
+CHILD_GUARD = os.path.join(_HERE, "mnv_guarded_run.py")
 BINDING_RECEIPT = os.path.join(_REPO_ROOT, "docs", "orchestration", "state",
                               "ben106-stamp-verify-active-56695424.json")
 
@@ -283,12 +288,59 @@ def refuse_conflicting_passthrough(extras):
     return True
 
 
-def build_child_argv(uthrow, combined, out, extras=(), python=None, writer=None):
-    """The exact argv used to run the pinned writer. Separated out so a test can read it."""
+def build_child_argv(uthrow, combined, out, extras=(), python=None, writer=None,
+                     guard=None, expect_root=None, inventory=None):
+    """The exact argv used to run the pinned writer. Separated out so a test can read it.
+
+    WHEN `expect_root` IS GIVEN THE CHILD IS ROUTED THROUGH THE OI-136 GUARD (authorized
+    2026-08-22, Joseph, round 2), emitting
+
+        [python, mnv_guarded_run.py, --expect-root R, --inventory I, --, writer, --uthrow ...]
+
+    BE PRECISE ABOUT WHAT THIS BUYS, BECAUSE IT IS NOT WHAT IT LOOKS LIKE. `adopt_unified_5d.py`
+    imports NO repository module -- its whole import list is `argparse, gc, os, sys` and `numpy`
+    before its rooted insert and `ROOT` after it
+    (`REVIEW-CONTRACT-20260822-k0-execution-integrity.md` M-1). So the import half of the guard has
+    nothing to resolve in the child and CANNOT protect it from an import it does not make. Saying
+    otherwise would be the "path insertion itself was caught" claim Amendment 2 section 2
+    explicitly forbids. What guarding the child DOES buy is exactly two things:
+
+      1. AN EXPLICITLY EMPTY, FLAGGED REPOSITORY-ORIGIN RECORD for the child process. Without it
+         the child is the one process on the path that emits nothing, and "no repository import
+         occurred" is then indistinguishable from "no inventory ran" -- the same reasoning
+         `adopt_unified_5d.py:200-206` already applies to its own `*_checked` flags.
+      2. INSURANCE AGAINST THE CONTRACT'S OWN SECTION H.1. M-1's empty import set rests on M-2, a
+         name intersection over a tree carrying 717 untracked files, which the contract's author
+         names as the weakest leg of the whole document. If a colliding name ever appears, the
+         child's rooted insert becomes live -- and this is the only thing that would catch it.
+
+    It also brings the child under B-4 script containment, which is not nothing: the child is
+    resolved from `_HERE`, so a wrapper executing from the wrong tree would hand the guard a writer
+    from that tree and be refused.
+
+    `expect_root=None` leaves the argv unguarded and is what the unit tests use; `main()` refuses
+    to run unguarded, so the unguarded form cannot reach production through this file.
+    """
     refuse_conflicting_passthrough(list(extras))
-    return [python or sys.executable, writer or PINNED_WRITER,
-            "--uthrow", str(uthrow), "--combined", str(combined), "--out", str(out),
-            *[str(a) for a in extras]]
+    child = [writer or PINNED_WRITER,
+             "--uthrow", str(uthrow), "--combined", str(combined), "--out", str(out),
+             *[str(a) for a in extras]]
+    py = python or sys.executable
+    if expect_root is None:
+        return [py, *child]
+    g = guard or CHILD_GUARD
+    if not os.path.isfile(g):
+        _fail(f"the OI-136 guard is not at {g}. Refusing to launch the pinned writer unguarded: a "
+              "child that emits no resolved-origin record cannot be distinguished from one that "
+              "imported nothing, which is the whole point of guarding it.")
+    if not inventory:
+        _fail("guarding the child requires an inventory path. A guarded run that emits no record "
+              "establishes nothing, so the record is required and not optional.")
+    # `--` IS MANDATORY AND EVERY CHILD TOKEN FOLLOWS IT VERBATIM. Without it the wrapper would eat
+    # a child flag; `--out` in particular would redirect the writer while this process stamped the
+    # original file, and nothing would raise.
+    return [py, g, "--expect-root", str(expect_root),
+            "--inventory", str(inventory), "--", *child]
 
 
 def assert_legs_are_one_member(g1_keys, g2_keys, off_declared, off_value):
@@ -489,6 +541,16 @@ def parse_args(argv=None):
     ap.add_argument("--uthrow", required=True, help="the unified throw ROOT (g2 leg)")
     ap.add_argument("--combined", required=True, help="the combined intermediate (g1 leg)")
     ap.add_argument("--out", required=True, help="the adopted product to write AND stamp")
+    # ROUND 2, 2026-08-22: the child is guarded, and the two operands are MANDATORY at `main()`.
+    # A flag with an environment default is offered here rather than a bare env read so the value
+    # is visible in `ps` and in the launcher's own text; the DEFAULT IS NOT A FALLBACK VALUE, it is
+    # the absence of one -- `main()` refuses when it resolves to nothing.
+    ap.add_argument("--guard-expect-root", default=os.environ.get("MNV_CODE_ROOT") or None,
+                    help="the approved clean execution tree passed to mnv_guarded_run.py for the "
+                         "child. Defaults to $MNV_CODE_ROOT. REQUIRED: there is no unguarded route.")
+    ap.add_argument("--guard-inventory", default=os.environ.get("MNV_GUARD_INVENTORY") or None,
+                    help="where the child's P-1 resolved-origin record is appended. Defaults to "
+                         "$MNV_GUARD_INVENTORY. REQUIRED: a run with no record establishes nothing.")
     ap.add_argument("passthrough", nargs="*",
                     help="everything after a literal `--` is forwarded verbatim to "
                          "adopt_unified_5d.py (e.g. --prod X, --cv-centered)")
@@ -707,7 +769,21 @@ def main(argv=None):
     import seed_offset_policy
     off_declared, off_value = seed_offset_policy.declared_offset()
 
-    argv_child = build_child_argv(a.uthrow, a.combined, a.out, a.extras)
+    # FAIL CLOSED. There is deliberately no `--no-guard` escape: an unguarded child is the one
+    # process on this path that would emit nothing at all, and "the child imported no repository
+    # code" would then be indistinguishable from "nobody looked". If this refuses, set the two
+    # variables -- do not reach for a bypass.
+    if not a.guard_expect_root:
+        _fail("no --guard-expect-root and no $MNV_CODE_ROOT. The pinned writer is run through "
+              "mnv_guarded_run.py and the expected execution tree has no default: a default would "
+              "be the hardcode wearing a flag, and an empty one would guard against nothing.")
+    if not a.guard_inventory:
+        _fail("no --guard-inventory and no $MNV_GUARD_INVENTORY. The child's resolved-origin "
+              "record is required, not optional; without it the child's EMPTY import set is "
+              "indistinguishable from an inventory that never ran (P-3).")
+    argv_child = build_child_argv(a.uthrow, a.combined, a.out, a.extras,
+                                  expect_root=a.guard_expect_root,
+                                  inventory=a.guard_inventory)
     print(f"[remedyA] running the PINNED writer as a subprocess: {' '.join(argv_child)}")
     rc = subprocess.call(argv_child)
     if rc != 0:

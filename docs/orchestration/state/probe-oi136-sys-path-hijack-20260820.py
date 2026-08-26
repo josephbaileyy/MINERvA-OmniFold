@@ -49,8 +49,25 @@ ROOT = "/" + "/".join(("pscratch", "sd", "j", "josephrb", "MINERvA-OmniFold"))
 SELF = pathlib.Path(__file__).resolve()
 REPO = SELF.parents[3]
 
+# CONTROL REPLACED 2026-08-22 (Joseph's ruling 18; REVIEW-CONTRACT-20260822 section 6).
+# `nd-unfolding/unfold_nd_omnifold_unbinned.py` WAS the second positive control and has been
+# REPAIRED, so it is no longer in the fail-open set. Left in place it would make this probe print
+# `CANNOT CHECK :: positive control(s) absent` and exit 2, taking
+# `tests/test_oi136_failopen_inventory_ratchet.py` red with it -- a repair reading as a broken
+# classifier. `adopt_unified_5d.py` SURVIVES as a control precisely because the contract's B-2
+# declines to repair it (it is hash-pinned in four receipts and imports no repository module).
+#
+# THE REPLACEMENT WAS CHOSEN FROM THIS PROBE'S OWN FAIL-OPEN OUTPUT, NOT GUESSED. Run with the
+# retired control removed, the probe printed 52 fail-open paths; `3d-unfolding/unfold_3d_omnifold_unbinned.py`
+# was selected from that printed list because it is the ONLY remaining member that reproduces the
+# retired control's classifier shape: a DERIVED NAME (`_2D = f"{_REPO}/2d-unfolding"` at :40, inserted
+# at :42) as well as a literal-bearing insert argument (:45). Both `adopt_unified_5d.py` and every
+# other obvious candidate bind through the LOOP branch only, so without this file the derived-name
+# branch of `rooted_names()` would have no control at all and could under-count silently.
+# It carries no digest binding (searched by its live sha256 across docs/, nd-unfolding/,
+# 2d-unfolding/, 3d-unfolding/ -> 0 hits) and is not in any authorized repair set.
 POSITIVE_CONTROLS = ("nd-unfolding/adopt_unified_5d.py",
-                     "nd-unfolding/unfold_nd_omnifold_unbinned.py")
+                     "3d-unfolding/unfold_3d_omnifold_unbinned.py")
 
 INSERT0 = re.compile(r"sys\.path\.insert\(\s*0\s*,\s*([^)]*(?:\([^)]*\))?[^)]*)\)")
 

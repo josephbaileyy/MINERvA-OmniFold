@@ -1,6 +1,31 @@
 #!/bin/bash
 # setup_salloc_env.sh for a generation-two DATA root.
 #
+# ============================================================================================
+# ROUTED 2026-08-23. THIS TEMPLATE'S DIAGNOSIS IS NOW THE k=0 CONTRACT, AND THERE IS ONLY ONE.
+#
+# Everything below was written for the Gate-5 path and was referenced by NOTHING on the k=0 path.
+# The round-4 Gate-1 verdict then re-derived it from scratch, at the cost of a failed gate: the
+# three SCRIPT_DIR references ("the failure list is three long, not one"), absence-by-construction
+# ("NO git worktree or frozen deployment will ever contain them"), the FILE-vs-DIRECTORY symlink
+# distinction, the `set -u` job kill (57235710), and the fix itself -- "a separate GATE5_ENV_ROOT".
+#
+# THE k=0 IMPLEMENTATION OF THAT FIX IS `MNV_ENV_ROOT`, and it is the SAME CONTRACT under a
+# path-agnostic name, so that two environment-root conventions cannot drift apart:
+#
+#   mandatory, no default             ->  ENV_ROOT="${MNV_ENV_ROOT:?...}" in all eight launchers
+#   resolved outside every checkout   ->  nd-unfolding/mnv_env_preflight.sh, on the CANONICAL target
+#   the closure bound, not the shim   ->  nd-unfolding/mnv_env_manifest.tsv, 14 members, two hops
+#   no checkout on the search paths   ->  nd-unfolding/mnv_env_pathcheck.sh, all three channels
+#   no `set -u`                       ->  unchanged, and for the reason recorded below
+#
+# GATE-5 USERS: this shim remains correct for a generation-two data root and is NOT superseded as a
+# mechanism. What is superseded is the idea that the environment root is a Gate-5-only concern. If
+# this template is ever extended, extend `MNV_ENV_ROOT` instead and point here -- do not fork a
+# second contract. The reverse is also true: a change to the k=0 contract that invalidates the
+# reasoning below should update this header rather than leave the two disagreeing.
+# ============================================================================================
+#
 # WHY THIS IS A SHIM AND NOT A SYMLINK, and it is the diagnosis rather than a workaround.
 #
 # The real activator computes `SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"` and then

@@ -165,6 +165,98 @@ class TheGroupMapIsDerived(unittest.TestCase):
         self.assertIn("no entry for", str(cm2.exception))
 
 
+class TheChildArgvIsGuarded(unittest.TestCase):
+    """Round 2, 2026-08-22, Joseph: the production pinned-writer child is routed through
+    `mnv_guarded_run.py` and emits its explicitly empty repository-origin record.
+
+    WHAT IS AND IS NOT CLAIMED HERE. `adopt_unified_5d.py` imports no repository module at all
+    (contract M-1), so the guard's IMPORT half has nothing to resolve in the child and this buys no
+    import protection whatsoever. It buys the explicitly-empty FLAGGED record -- without which the
+    child is the one process on the path that says nothing, and "imported nothing" cannot be told
+    from "nobody looked" -- plus insurance against contract section H.1, where the empty import set
+    rests on a name intersection over 717 untracked files that the contract's own author calls its
+    weakest leg. Both halves are asserted below rather than left in prose.
+    """
+
+    def test_the_guarded_argv_is_the_documented_template_and_forwards_the_child_verbatim(self):
+        guarded = W.build_child_argv("u.root", "c.root", "o.root",
+                                     extras=["--cv-centered"], python="PY", writer="WRITER",
+                                     guard=str(ND / "mnv_guarded_run.py"),
+                                     expect_root="/CODE", inventory="/inv/child.jsonl")
+        self.assertEqual(guarded, ["PY", str(ND / "mnv_guarded_run.py"),
+                                   "--expect-root", "/CODE",
+                                   "--inventory", "/inv/child.jsonl", "--",
+                                   "WRITER", "--uthrow", "u.root", "--combined", "c.root",
+                                   "--out", "o.root", "--cv-centered"])
+        plain = W.build_child_argv("u.root", "c.root", "o.root",
+                                   extras=["--cv-centered"], python="PY", writer="WRITER")
+        self.assertEqual(guarded[guarded.index("--") + 1:], plain[1:],
+                         "the guard wrap must forward the child argv VERBATIM")
+
+    def test_no_allow_is_ever_emitted(self):
+        argv = W.build_child_argv("u", "c", "o", python="PY", writer="WRITER",
+                                  guard=str(ND / "mnv_guarded_run.py"),
+                                  expect_root="/CODE", inventory="/i.jsonl")
+        self.assertNotIn("--allow", argv)
+
+    def test_the_default_guard_is_resolved_from_THIS_FILEs_directory(self):
+        """A guard named by an environment variable or a literal could come from another tree."""
+        self.assertEqual(W.CHILD_GUARD, os.path.join(os.path.dirname(str(ND / "x")),
+                                                     "mnv_guarded_run.py"))
+        self.assertTrue(os.path.isfile(W.CHILD_GUARD))
+
+    def test_it_REFUSES_when_the_guard_file_is_missing(self):
+        with self.assertRaises(SystemExit) as cm:
+            W.build_child_argv("u", "c", "o", python="PY", writer="WRITER",
+                               guard="/no/such/guard.py", expect_root="/CODE",
+                               inventory="/i.jsonl")
+        self.assertIn("OI-136 guard is not at", str(cm.exception))
+
+    def test_it_REFUSES_when_the_inventory_is_missing(self):
+        with self.assertRaises(SystemExit) as cm:
+            W.build_child_argv("u", "c", "o", python="PY", writer="WRITER",
+                               guard=str(ND / "mnv_guarded_run.py"), expect_root="/CODE")
+        self.assertIn("requires an inventory path", str(cm.exception))
+
+    def test_main_REFUSES_to_run_the_child_unguarded_in_BOTH_missing_operands(self):
+        """Fail closed, and there is deliberately no bypass flag to find."""
+        saved = {k: os.environ.get(k) for k in ("MNV_CODE_ROOT", "MNV_GUARD_INVENTORY")}
+        try:
+            for k in saved:
+                os.environ.pop(k, None)
+            with self.assertRaises(SystemExit) as cm:
+                W.main(["--uthrow", "u", "--combined", "c", "--out", "o"])
+            self.assertIn("MNV_CODE_ROOT", str(cm.exception))
+            with self.assertRaises(SystemExit) as cm2:
+                W.main(["--uthrow", "u", "--combined", "c", "--out", "o",
+                        "--guard-expect-root", "/CODE"])
+            self.assertIn("MNV_GUARD_INVENTORY", str(cm2.exception))
+        finally:
+            for k, v in saved.items():
+                if v is None:
+                    os.environ.pop(k, None)
+                else:
+                    os.environ[k] = v
+
+    def test_there_is_no_bypass_FLAG_declared_anywhere(self):
+        """AST, not a substring search. A substring cannot tell a DECLARED OPTION from the word in
+        the comment that explains why there is no such option -- and the first version of this test
+        failed on exactly that comment, which is the check reporting about the wrong subject."""
+        import ast as _ast
+        tree = _ast.parse((ND / "mii_adopt_unified_5d_stamped.py").read_text())
+        declared = set()
+        for node in _ast.walk(tree):
+            if isinstance(node, _ast.Call) and isinstance(node.func, _ast.Attribute) \
+                    and node.func.attr == "add_argument":
+                for arg in node.args:
+                    if isinstance(arg, _ast.Constant) and isinstance(arg.value, str):
+                        declared.add(arg.value)
+        self.assertIn("--guard-expect-root", declared, "the power arm: this AST walk does find "
+                                                       "the options that ARE declared")
+        for bad in ("--no-guard", "--unguarded", "--skip-guard", "--allow", "--no-inventory"):
+            self.assertNotIn(bad, declared, f"{bad} would be the escape hatch this must not have")
+
+
 class TheChildArgv(unittest.TestCase):
 
     def test_the_three_paths_are_passed_ONCE_and_forwarded_verbatim(self):
@@ -803,7 +895,13 @@ class _MainWithStubbedChild:
             os.environ["MNV_EST_SEED_OFFSET"] = env_offset
         try:
             with _WithFakeROOT(files) as R:
-                W.main(["--uthrow", "u.root", "--combined", "c.root", "--out", "o.root"])
+                # ROUND 2, 2026-08-22: `main()` now REFUSES to launch the pinned writer unguarded,
+                # so both operands are supplied here. They are passed as FLAGS rather than through
+                # the environment so this helper does not depend on ambient state, and the guarded
+                # shape of the argv it produces is asserted in TheChildArgvIsGuarded below.
+                W.main(["--uthrow", "u.root", "--combined", "c.root", "--out", "o.root",
+                        "--guard-expect-root", str(ND.parent),
+                        "--guard-inventory", "/dev/null"])
             return calls, R
         finally:
             sp.call, os.path.exists = saved_call, saved_exists
@@ -826,7 +924,13 @@ class D1_MainSucceedsOnARealAnchorAndTheRefusalAccusesNobody(_MainWithStubbedChi
         files = self._files(VL1_SQRT_TR_OLD, diag)
         calls, R = self._run(files)
         self.assertEqual(len(calls), 1, "the pinned writer must be invoked exactly once")
-        self.assertIn("adopt_unified_5d.py", calls[0][1])
+        # POSITION 1 IS NOW THE GUARD, NOT THE WRITER (round 2, 2026-08-22). The claim this line
+        # has always made -- "the child that runs is the pinned writer" -- is unchanged and is
+        # asserted here against the token after the mandatory `--`, which is where the child
+        # command begins and where it will stay. Indexing position 1 was pinning the ABSENCE of a
+        # wrapper as much as the presence of the writer, and only one of those was ever the point.
+        self.assertIn("--", calls[0])
+        self.assertIn("adopt_unified_5d.py", calls[0][calls[0].index("--") + 1])
         landed = files["o.root"]._keys
         for k in W.STAMPED_SCALAR_KEYS:
             self.assertIn(k, landed, f"{k} did not land")

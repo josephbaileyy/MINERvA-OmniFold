@@ -66,6 +66,7 @@ docs/orchestration/PUBLICATION-READINESS-20260822.md	LIVE	open
 docs/orchestration/RANK-AND-INVERSION-20260810.md	LIVE	open	
 docs/orchestration/READING-ORDER-20260824-k0-package-annotations.md	LIVE	open	
 docs/orchestration/README.md	DEAD	superseded	docs/orchestration/CATALOG.md
+docs/orchestration/RECEIPT-20260822-k0-n1-and-guarded-arms.md	LIVE	open	
 docs/orchestration/RECONCILIATION-20260817-gbdtfive-macros-vs-rebuilt-candidate.md	LIVE	open	
 docs/orchestration/REVIEW-CONTRACT-20260822-k0-execution-integrity.md	LIVE	open	
 docs/orchestration/RUNBOOK-20260822-b1-lift-preflight.md	LIVE	open	
@@ -96,3 +97,6 @@ docs/orchestration/state/declaration-v-5d-covering-search-20260822.sh	MACHINE	op
 docs/orchestration/state/live-state-last-known.json	LIVE	open	
 docs/orchestration/state/live-state.json	LIVE	open	
 docs/orchestration/state/oi137-covering-search-20260822.sh	MACHINE	open	
+docs/orchestration/DECLARATION-20260823-k0-candidate-aa67c426.md	LIVE	open	
+docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	LIVE	open	
+docs/orchestration/RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings.md	LIVE	open	
