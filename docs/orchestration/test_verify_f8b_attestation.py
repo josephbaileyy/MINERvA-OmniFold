@@ -344,6 +344,76 @@ class TheValidatorCannotPassWhenItCannotLook(Fixture):
         self.assertEqual(rc, A.CANNOT_CHECK_EXIT)
 
 
+class TheAdversarialInputsFoundByTheIMPLEMENTATIONGRADE(Fixture):
+    """The three fail-open surfaces `agy-f8b-impl-grade` (d71dbff7) found, with its exact inputs.
+
+    Its grade was UNFIT and it was right on all three. Two are closed below. The third -- that
+    nothing binds the file to the party it names -- is not closeable by this program and is
+    asserted here as a DISCLOSURE arm instead, so that removing the disclosure fails the suite.
+    """
+
+    def test_a_hedge_smuggled_in_an_UNKNOWN_field_beside_a_clean_verdict_is_rejected(self):
+        att = valid_attestation()
+        att["verdict_hedging"] = "PASS but with some reservations"
+        self.assertRejected(att, "unknown top-level field(s)")
+
+    def test_any_unknown_top_level_field_is_rejected_not_ignored(self):
+        att = valid_attestation()
+        att["EXTRA_FIELD"] = "I am an extra field"
+        self.assertRejected(att, "unknown top-level field(s)")
+
+    def test_an_unknown_field_inside_a_PARTY_is_rejected_too(self):
+        att = valid_attestation()
+        att["independent_reviewer"]["note"] = "I did not really read it"
+        self.assertRejected(att, "unknown field(s)")
+
+    def test_a_reviewer_uuid_that_is_a_PREFIX_of_the_authors_is_rejected(self):
+        """`uuid-1234` vs `uuid-123` are distinct strings and not two conversations."""
+        att = valid_attestation()
+        att["receipt_author"]["conversation_uuid"] = "uuid-1234"
+        att["independent_reviewer"]["conversation_uuid"] = "uuid-123"
+        self.assertRejected(att, "is not a canonical uuid")
+
+    def test_a_non_uuid_conversation_id_is_rejected_even_when_both_parties_agree_on_the_style(self):
+        att = valid_attestation()
+        for party in ("receipt_author", "independent_reviewer"):
+            att[party]["conversation_uuid"] = "session-" + party
+        self.assertRejected(att, "is not a canonical uuid")
+
+    def test_a_real_uuid_pair_still_passes_so_the_form_check_is_not_a_blanket_refusal(self):
+        rc, text = self.run_cli(valid_attestation())
+        self.assertEqual(rc, A.PASS_EXIT, text)
+
+    def test_findings_differing_only_by_a_TRAILING_DIGIT_are_still_one_finding(self):
+        """The grade's exact break: the same 80-char run with a trailing 1 and a trailing 2."""
+        att = valid_attestation()
+        body = "B" * 80
+        att["per_spot_findings"]["namespace-packages"] = body + "1"
+        att["per_spot_findings"]["shell-route"] = body + "2"
+        self.assertRejected(att, "once digits, punctuation")
+
+    def test_findings_differing_only_by_PUNCTUATION_are_still_one_finding(self):
+        att = valid_attestation()
+        att["per_spot_findings"]["shell-route"] = (
+            FINDINGS["namespace-packages"].replace(",", ";").replace(".", "!").upper() + "   ...!!!")
+        self.assertRejected(att, "once digits, punctuation")
+
+    def test_four_genuinely_different_findings_are_NOT_caught_by_the_skeleton(self):
+        """Control. Without this the arms above are satisfied by rejecting every attestation."""
+        rc, notes = A.validate(valid_attestation(), RECEIPT_SHA, REPORT_SHA)
+        self.assertEqual(rc, A.PASS_EXIT, notes)
+
+    def test_the_UNCLOSEABLE_hole_is_disclosed_on_the_pass_path_and_in_the_docstring(self):
+        """A hole that cannot be closed must at least be impossible to miss."""
+        rc, text = self.run_cli(valid_attestation())
+        self.assertEqual(rc, A.PASS_EXIT, text)
+        self.assertIn("NOTHING HERE BINDS THIS FILE TO THE PARTY IT NAMES", text)
+        self.assertIn("no signature", text.lower())
+        doc = A.__doc__ or ""
+        self.assertIn("OPEN, AND NOT CLOSEABLE HERE", doc)
+        self.assertIn("process guarantees", doc.lower())
+
+
 class EveryRequirementHasARemovalArm(unittest.TestCase):
     """A meta-arm: a top-level field with no removal arm is an unenforced requirement.
 

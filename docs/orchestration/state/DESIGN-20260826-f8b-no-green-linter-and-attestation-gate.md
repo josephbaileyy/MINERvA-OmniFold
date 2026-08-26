@@ -78,7 +78,7 @@ cannot silently reuse that judgement for different ones.
 
 ## 3. Tests, and their power
 
-58 arms, all OK: 18 in `test_verify_run_receipt_blind_spots.py`, 40 in
+68 arms, all OK: 18 in `test_verify_run_receipt_blind_spots.py`, 50 in
 `test_verify_f8b_attestation.py`. Every requirement has an arm that **removes** it and asserts
 rejection, and `EveryRequirementHasARemovalArm` reads the suite's own source so a future field added
 without a removal arm fails the suite.
@@ -87,12 +87,40 @@ Mutation-measured, because a suite of only good-input arms proves nothing about 
 
 | mutant | result |
 |---|---|
-| validator returns `PASS` unconditionally | **31 of 40 fail** |
+| validator returns `PASS` unconditionally | **38 of 50 fail** |
 | linter's `REVIEW_REQUIRED_EXIT` set back to `0` | **5 of 18 fail**, including the two named no-green arms and the recorded-break arm |
 
 The two recorded adversarial texts are **read from the grader's verdict file at test time and its
 digest asserted**, not copied into the suite. A copy could drift from the evidence; this coupling
 makes deletion or edit of the preserved examples a loud test failure.
+
+## 3.1 The first implementation grade returned UNFIT, and it was right
+
+`agy-f8b-impl-grade` (conversation `d71dbff7-9710-4bd9-94e3-a0dc3ac436f0`) graded `da6e28aa`
+**`F8B-REDESIGN-GRADE: UNFIT`** — *is the attestation validator fail-closed?* **NO**. The linter's
+unreachable zero, the non-overstatement and the scope were all confirmed YES; the validator was not.
+It found three ways to pass an attestation that should not pass. **All three were real.** Its exact
+inputs are now arms in `TheAdversarialInputsFoundByTheIMPLEMENTATIONGRADE`.
+
+| its finding | status | how |
+|---|---|---|
+| unknown top-level fields were **ignored**, so `verdict_hedging: "PASS but with some reservations"` sat beside a clean `verdict: PASS` | **CLOSED** | the schema is strict at top level and inside both party objects; an undeclared field is a rejection, not a shrug |
+| `conversation_uuid` was any non-empty string, so author `uuid-1234` and reviewer `uuid-123` read as two parties | **CLOSED** | canonical uuid form required, which makes "distinct string" and "distinct conversation" the same fact the check was already assuming |
+| four findings that differ trivially — the same 80-char run plus `1` and plus `2` — counted as four judgements | **CLOSED** | duplicate detection now compares a letters-only normal form. **Not a similarity threshold**: there is no distance and no tunable number, because a similarity metric on prose is exactly what was ruled out |
+
+Re-measured against the fixed validator with a **passing control in the same run** (unmodified
+attestation → `rc=0`), so that a rejection cannot be credited to the wrong cause: all five of its
+bypasses now return `rc=3`, each naming its own reason. Disabling any one of the three new guards
+fails 2 arms.
+
+**A FOURTH HOLE IS OPEN AND IS NOT CLOSEABLE HERE, so it is disclosed rather than papered over:**
+**nothing binds an attestation to the party it names.** There is no signature in this campaign.
+Whoever can write the file can type any role and uuid into it, or retype a real reviewer's digests
+for a different receipt. And findings that differ by more than a trivial edit are accepted as four
+judgements whether or not they are. Both are **process** guarantees, not mechanical ones. The
+validator says so on the pass path and in its docstring, and
+`test_the_UNCLOSEABLE_hole_is_disclosed_on_the_pass_path_and_in_the_docstring` fails if that
+disclosure is removed.
 
 ## 4. CORRECTION — the recorded BREAK 1 result does not reproduce
 

@@ -22,6 +22,27 @@ WHAT THIS VALIDATES, AND WHAT IT EXPLICITLY DOES NOT.
     against THESE EXACT BYTES, and that it cannot be silently reused for different bytes later.
     That is the whole claim. The pass text says so.
 
+THREE RESIDUAL HOLES, NAMED RATHER THAN PAPERED OVER. The independent implementation grade
+(`agy-f8b-impl-grade`, `d71dbff7-9710-4bd9-94e3-a0dc3ac436f0`) returned UNFIT on an earlier version
+and found each of these. Two are now closed; the third cannot be closed by this program and is
+disclosed instead.
+
+    CLOSED -- unknown top-level fields were IGNORED, so `verdict_hedging: "PASS but with some
+    reservations"` could sit beside a clean `verdict: PASS`. The schema is now strict, top level and
+    party objects both.
+
+    CLOSED -- `conversation_uuid` was any non-empty string, so author `uuid-1234` and reviewer
+    `uuid-123` read as two parties. Canonical uuid form is now required.
+
+    OPEN, AND NOT CLOSEABLE HERE -- **nothing binds an attestation to the party it names.** There is
+    no signature in this campaign. Anyone who can write the file can type any role and uuid into it,
+    or take a real reviewer's attestation and retype the digests for a different receipt. This
+    program checks that a distinct party is NAMED, never that they wrote it. Likewise, findings that
+    differ by more than a trivial edit are accepted as four judgements whether or not they are;
+    `_skeleton` catches the pasted duplicate, not a paraphrased one. **Both are process guarantees,
+    not mechanical ones, and citing an exit 0 as if they were mechanical is the error this whole
+    redesign exists to prevent.**
+
 EXIT CODES.
     0  PASS         -- a well-formed, digest-bound, independent, complete, unambiguous PASS.
     2  CANNOT CHECK -- an input could not be read or parsed. Never a pass.
@@ -57,6 +78,22 @@ MIN_COPYING_RISK_CHARS = 80
 # prose basis below carries an emptiness floor only, and the uuid comparison does the real work.
 IDENTITY_FIELDS = ("role", "conversation_uuid")
 
+# STRICT SCHEMA. An unknown top-level key is REJECTED, not ignored. The independent implementation
+# grade broke an earlier version by adding `verdict_hedging: "PASS but with some reservations"`
+# beside a clean `verdict: PASS` -- the validator read the clean field and ignored the contradiction
+# sitting next to it. Any field this program does not check is a field an attestation can carry
+# meaning in without the gate seeing it, so there are no such fields.
+ALLOWED_TOP_LEVEL = frozenset((
+    "schema", "verdict", "receipt_sha256", "linter_report_sha256", "receipt_author",
+    "independent_reviewer", "independence_basis", "per_spot_findings",
+    "copying_and_word_salad_risk", "status", "superseded_by"))
+
+# A conversation uuid must BE a uuid. Same grade defeated the independence check with author
+# `uuid-1234` and reviewer `uuid-123`: distinct strings, so not self-attestation, but not two
+# conversations either. Requiring canonical form makes "distinct string" and "distinct conversation"
+# the same fact, which is what the check was always assuming.
+UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.I)
+
 _REPO = pathlib.Path(__file__).resolve().parents[2]
 
 
@@ -72,11 +109,31 @@ def _norm(s: str) -> str:
     return re.sub(r"\s+", " ", s).strip().lower()
 
 
+def _skeleton(s: str) -> str:
+    """Identity modulo trivial edits: letters only, lowercased.
+
+    The independent grade defeated a plain equality check on the four findings by submitting the
+    same 80-character run with a trailing `1` and a trailing `2`. Stripping digits, punctuation and
+    spacing makes that one string again. This is NOT a similarity threshold -- there is no distance
+    and no tunable number, only a normal form -- because a similarity threshold on prose is exactly
+    what was ruled out for F-8(b). It catches the trivial edit and nothing beyond it; see the module
+    docstring for what stays open.
+    """
+    return re.sub(r"[^a-z]", "", s.lower())
+
+
 def validate(att: dict, receipt_sha: str, report_sha: str) -> tuple[int, list[str]]:
     bad: list[str] = []
 
     if att.get("schema") != SCHEMA:
         return REJECTED_EXIT, ["schema is %r, expected %r" % (att.get("schema"), SCHEMA)]
+
+    unknown = sorted(set(att) - ALLOWED_TOP_LEVEL)
+    if unknown:
+        bad.append("unknown top-level field(s) %s. This schema is STRICT: a field the validator "
+                   "does not check is a field an attestation can carry meaning in unseen -- a "
+                   "hedge, a caveat, a second verdict -- while the field it does check stays "
+                   "clean. Declare it or remove it." % unknown)
 
     # ---- staleness / supersession -------------------------------------------------
     if att.get("superseded_by"):
@@ -109,7 +166,14 @@ def validate(att: dict, receipt_sha: str, report_sha: str) -> tuple[int, list[st
             if not val:
                 bad.append("%s.%s is missing or empty: an unattributed party cannot be shown "
                            "independent of anyone" % (key, f))
+            elif f == "conversation_uuid" and not UUID_RE.match(val):
+                bad.append("%s.conversation_uuid %r is not a canonical uuid. Two arbitrary strings "
+                           "can differ without being two conversations -- a prefix of a real uuid "
+                           "would pass an equality test and name nobody." % (key, val))
             out[f] = val
+        unknown = sorted(set(v) - set(IDENTITY_FIELDS))
+        if unknown:
+            bad.append("%s has unknown field(s) %s; the party schema is strict too" % (key, unknown))
         return out
 
     author = _party("receipt_author")
@@ -143,10 +207,11 @@ def validate(att: dict, receipt_sha: str, report_sha: str) -> tuple[int, list[st
                 bad.append("per_spot_findings[%s] is %d chars, below the %d-char structural floor: "
                            "that is a checkbox, not a finding" % (spot, len(f.strip()),
                                                                   MIN_FINDING_CHARS))
-            key = _norm(f)
-            if key in seen_norm:
-                bad.append("per_spot_findings[%s] is identical to [%s]: one finding pasted across "
-                           "spots is word-salad, not four judgements" % (spot, seen_norm[key]))
+            key = _skeleton(f)
+            if key and key in seen_norm:
+                bad.append("per_spot_findings[%s] is the same text as [%s] once digits, punctuation "
+                           "and spacing are removed: one finding pasted across spots is word-salad, "
+                           "not four judgements" % (spot, seen_norm[key]))
             seen_norm[key] = spot
         extra = [k for k in findings if k not in REQUIRED_SPOTS]
         if extra:
@@ -211,6 +276,10 @@ def main(argv=None) -> int:
               "attestation of a bad receipt would validate here. What is established is that an "
               "independent named party judged THESE bytes and cannot silently reuse it for others.",
               file=stream)
+        print("[f8b-att] AND NOTHING HERE BINDS THIS FILE TO THE PARTY IT NAMES. There is no "
+              "signature: whoever can write the file can type any role and uuid into it. The named "
+              "reviewer having actually read the receipt is a PROCESS guarantee, not a mechanical "
+              "one, and this exit 0 is not evidence of it.", file=stream)
     else:
         print("[f8b-att] REJECTED (%d problem(s))." % len(notes), file=stream)
     return rc
