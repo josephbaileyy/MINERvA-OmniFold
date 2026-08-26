@@ -139,9 +139,8 @@ $8$ leaves, learning rate $0.1$; identical settings for the step-1 classifier,
 step-2 classifier, and miss regressor), which both of those launchers request
 explicitly. \emph{The central value and its covariance are therefore not
 estimator-matched}; the \texttt{lgbm} seed scan quantifies the resulting ML noise
-as the smallest component of the budget (App.~\ref{app:statmethods}), but this
-should be read as a stated property of the measurement rather than an incidental
-configuration detail. The third backend, \texttt{hist} (sklearn
+as the smallest component of the budget (App.~\ref{app:statmethods}). The third
+backend, \texttt{hist} (sklearn
 \texttt{HistGradientBoosting}, matched 8-leaf configuration), is retained for
 method-dependence studies
 (\S\ref{sec:results-tension}). The production iteration count is

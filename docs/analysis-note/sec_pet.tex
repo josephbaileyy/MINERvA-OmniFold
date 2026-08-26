@@ -11,22 +11,19 @@ branch having been chosen. The publication uncertainty critical path runs throug
 adopted scalar five-dimensional covariance (\S\ref{sec:uq-combine}), not through this
 section. Routed record: \texttt{OI-126} in \texttt{docs/OPEN\_ITEMS.md}.
 
-As a low-level-representation cross-check, a point-cloud transformer (PET, the architecture of
-OmniLearn~\cite{Mikuni:2024qsr}, vendored with the upstream OmniFold
-implementation) unfolds the same ME~FHC data using, on the reconstructed
-side, the actual calorimetric recoil clusters --- per-cluster energy,
-one view-projected transverse coordinate and $z$ (\texttt{cluster\_energy},
-\texttt{cluster\_pos}, \texttt{cluster\_z}, filtered on
-\texttt{cluster\_isMuontrack} via
-\texttt{CVUniverse::GetRecoClusters()}). At truth level it receives the
-final-state hadron cloud with the muon removed. Muon-derived event scalars are
-retained for selection and binning the extracted result, but they are not
-classifier features at either level. The learned weight is therefore a
-function of the recoil representation, not of the complete joint muon--hadron
-event. We therefore compare its absolutely normalized central value, closure
-and replica dispersion only as diagnostic properties of the recoil-only
-estimator. A full-event
-estimator would instead train jointly on the declared muon and recoil inputs.
+\paragraph{Feature contract.}
+As a low-level-representation cross-check, a point-cloud transformer (PET, the
+architecture of OmniLearn~\cite{Mikuni:2024qsr}, vendored with the upstream
+OmniFold implementation) unfolds the same ME~FHC data. At reconstruction level
+the classifier receives calorimetric recoil clusters:
+per-cluster energy, one view-projected transverse coordinate, and $z$
+(\texttt{cluster\_energy}, \texttt{cluster\_pos}, \texttt{cluster\_z},
+filtered on \texttt{cluster\_isMuontrack} through
+\texttt{CVUniverse::GetRecoClusters()}). At truth level it receives final-state
+hadrons with the muon removed. Muon-derived scalars enter selection and
+downstream binning, not either classifier. The learned weight is therefore a
+function of recoil information; a full-event estimator would train jointly on
+the declared muon and recoil inputs.
 
 \subsection{Shape cross-check against the scalar result}
 \label{sec:pet-shape}
@@ -37,16 +34,13 @@ coordinate in one X/U/V scintillator view. Area-normalized against the frozen 4D
 reproduces the scalar shape to a median \SIrange{2.3}{3.9}{\percent} per bin
 ($\pT$~\SI{3.9}{\percent}, $\pPar$~\SI{2.4}{\percent}, $\Eavail$~\SI{2.6}{\percent},
 $q_{3}$~\SI{2.3}{\percent}; Fig.~\ref{fig:petgbdt}). In its role here this is a
-recoil-representation sensitivity check: it compares classifier families and
-engineered-scalar versus recoil-cloud inputs, but does not test a complete
-joint muon--hadron representation. Figure~\ref{fig:petdisplays}
+recoil-representation sensitivity check that compares classifier families and
+engineered-scalar versus recoil-cloud inputs together. Figure~\ref{fig:petdisplays}
 visualizes representative events on a common energy--polar-angle plane and
 shows the reconstructed and truth muon together with the recoil activity. The
 PET classifier receives a variable-length set of single-view energy
 deposits at reconstruction level and particles with full four-momenta at truth
-level. The muon kinematics exist at both levels and are stored as event scalars
-for downstream binning, but are not part of the recoil-PET classifier tensor.
-Figure~\ref{fig:petcardinality} shows the
+level. Figure~\ref{fig:petcardinality} shows the
 per-event cardinality of each cloud. The remainder of this section takes the same
 representation from this shape check to an absolutely-normalized cross section.
 
@@ -278,8 +272,7 @@ hadronic mass is just the nucleon rest mass irrespective of leptonic $W$) and
 diagonal bands stepped above it by $\sim$one nucleon mass per extra final-state
 baryon (multi-nucleon knockout, 2p2h), Fermi-smeared. Projecting the cloud
 thus provides a physically interpretable hadron-cloud diagnostic from the
-existing recoil-only unfold; it is not promoted here as a separate full-event
-measurement.
+existing recoil-only unfold.
 
 \begin{figure}[H]
   \centering
@@ -335,13 +328,11 @@ very-high-multiplicity tail (unnecessary at $\Eavail$ scale per the validation
 above). Full details and reproduction are in
 \texttt{nd-unfolding/pet/POINTCLOUD\_PROJECTION.md}.
 
-\subsection{Scope of the recoil-PET cross-check}
-The cross-check establishes that the point-cloud infrastructure works on
-real MINERvA recoil data: paired reco/truth clouds, GPU training, full-sample
-reweighting, absolute extraction, coherent estimator bootstraps and targeted
-response studies all operate end to end. It also provides a useful comparison
-against the scalar result and supports exploratory post-hoc hadron-cloud
-projections. It does \emph{not} establish simultaneous muon-plus-hadron
+\subsection{Scope of the cross-check and requirements for a full-event extension}
+Within its recoil-only contract, this study demonstrates paired reconstruction-
+and truth-level point-cloud construction, GPU training, full-sample reweighting,
+absolute cross-section extraction, coherent bootstrap replicas, and the response
+studies above end to end. It does not establish simultaneous muon-plus-hadron
 unfolding, because the muon was not a classifier input.
 
 A full-event extension requires separate observable

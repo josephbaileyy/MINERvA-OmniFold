@@ -61,6 +61,13 @@ makes everything in the next section possible.
 
 \section{What we found}
 
+The multi-quantity central values below pass the stated validation tests, but
+their joint uncertainty is still being finalized. Until a single combined
+uncertainty covering all five quantities is adopted, the multi-quantity plots
+show central values only and we do not assign statistical significance to their
+differences from the simulations. The two-dimensional trust check retains its
+independently constructed uncertainty.
+
 \subsection*{First, a trust check: reproduce a known result}
 
 Before trusting a new method, one must show it reproduces an established
@@ -84,8 +91,8 @@ reproduces the old answer and its error bars.
 \subsection*{Then, measure more at once --- and rediscover known physics}
 
 With the trust check passed, we used OmniFold's defining ability and unfolded
-several quantities \emph{simultaneously} and \emph{without binning} for the first
-time at MINERvA (earlier MINERvA multi-quantity results used binned methods): the muon
+several quantities \emph{simultaneously} and \emph{without binning} --- a first
+at MINERvA, where earlier multi-quantity results used binned methods: the muon
 momentum together with the available energy ($\Eavail$, roughly how much energy
 the struck nucleus released), the momentum transfer ($q_{3}$), and the hadronic
 mass ($W$). Each richer measurement, when collapsed back down, reproduces the
@@ -101,8 +108,7 @@ independent method rediscovers it: we checked that minor nuclear-physics knobs
 cannot account for the gap (they move the result by under one percent), whereas
 adding the missing two-nucleon process fills it in, exactly as expected. And
 where MINERvA has a dedicated published measurement of this region, ours agrees
-with it at central-value level on the maximal common grid. We do not report a
-covariance-based comparison because the 4D covariance has not been corrected.
+with it at central-value level on the maximal common grid.
 
 \begin{figure}[H]
   \centering
@@ -111,7 +117,7 @@ covariance-based comparison because the 4D covariance has not been corrected.
   four independent simulations. They agree on the muon momentum (left, center)
   but all fall below the data at low available energy (right) --- the known
   ``low-recoil'' shortfall, here rediscovered by an independent method. Only
-  the central values are interpreted.}
+  the central values are interpreted; no significance is assigned.}
   \label{fig:primergen}
 \end{figure}
 
@@ -122,7 +128,7 @@ Adding the hadronic-mass axis $W$ lets us look where the simulations still miss
 in a specific corner: high available energy \emph{and} high $W$ --- the
 ``deep-inelastic'' region where the neutrino shatters the nucleon. There, all
 four simulations undershoot the central result. Its statistical significance
-is not reported without a corrected covariance for this projection. This is the kind of localized discrepancy that
+is not assigned. This is the kind of localized discrepancy that
 points theorists toward what their models are missing --- and it was only
 visible because the unbinned method let us slice the data this finely.
 
@@ -131,23 +137,25 @@ visible because the unbinned method let us slice the data this finely.
   \includegraphics[width=0.99\textwidth]{eavailW_band}
   \caption{The data versus the simulation band in the available-energy /
   hadronic-mass plane. Every simulation underpredicts the high-energy, high-$W$
-  ``deep-inelastic'' corner; adding the two-nucleon process does not help there.}
+  ``deep-inelastic'' corner in the central values; adding the two-nucleon
+  process does not help there. No significance is assigned.}
 \end{figure}
 
 \subsection*{Alternative representations and signal definitions}
 
-First, we ran a
-``point-cloud transformer'' on the non-muon recoil clusters in the detector
-and the final-state hadrons in the simulation. It provides a useful
-low-level-input cross-check, but the muon was not given to either classifier;
-it is therefore a recoil-only cross-check, not an unfold of the joint
-muon--recoil event. This part of the work is method development rather than a
-measurement: it shows that the machinery runs end to end on low-level detector
-data, and it contributes no cross section and no error bar to the results
-above. A full-event version would supply the muon to the
-classifiers and test its added information directly. Second, the published signal
-definition excludes about a third of the simulated interaction rate because of its
-muon kinematic cuts --- a MnvTune-weighted GENIE truth fraction, not a measured one. We relaxed those truth-level cuts while retaining the
+Two studies test the method's limits rather than adding to the measurement.
+
+We ran a ``point-cloud transformer'' on the raw detector deposits instead of
+the summary quantities. It shows that the machinery runs end to end on low-level
+detector data, pairing reconstructed recoil clusters with truth-side final-state
+hadrons. The muon was withheld from both classifiers, so this is a recoil-only
+method-development cross-check, not a measurement of the whole event; it
+contributes no cross section or error bar. A full-event version would supply the
+muon and test its added information directly.
+
+Separately, the published signal definition excludes about a third of the
+simulated interaction rate because of its muon kinematic cuts. This fraction
+is a simulation estimate, not a measured number. We relaxed those truth-level cuts while retaining the
 same tracker interaction volume and reconstructed MINOS-based selection. The
 preliminary central value is
 $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$, but only about
@@ -173,6 +181,7 @@ separately labeled, simulation-dependent extrapolation.
 Unbinned machine-learning unfolding reproduces a flagship MINERvA measurement
 \emph{and} does what the traditional method cannot: measure many quantities at
 once. Using that, this analysis independently confirmed a known nuclear-physics
-effect, exposed a new discrepancy that all four tested simulations underpredict, and
+effect, exposed a localized central-value discrepancy that all four tested
+simulations underpredict, and
 mapped a possible extension of the signal definition while exposing where the
 detector provides too little information for a model-independent result.

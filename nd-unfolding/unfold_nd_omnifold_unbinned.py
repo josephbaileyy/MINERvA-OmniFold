@@ -107,6 +107,36 @@ def histnd(cols, w, edges):
     return counts, np.sqrt(sumw2)
 
 
+def apply_record_only_eavail_shift(reco_extras, axis_names, fractional_shift):
+    """Return pseudo-data reco extras with only the E_avail record shifted.
+
+    This is deliberately *not* a detector calibration and must never be applied
+    to the nominal simulation.  It constructs an adversarial closure target by
+    replacing pseudo-data E_avail with (1 + fractional_shift) E_avail while the
+    response model, truth coordinates, event weights, and event membership stay
+    fixed.  The caller is responsible for restricting it to closure mode.
+
+    Copies are returned for every axis so callers cannot mutate the nominal MC
+    arrays through an alias.
+    """
+    names = list(axis_names)
+    if names.count("eavail") != 1:
+        raise ValueError("record-only response stress requires exactly one eavail axis")
+    frac = float(fractional_shift)
+    if not np.isfinite(frac) or frac <= -1.0 or frac == 0.0:
+        raise ValueError("fractional E_avail shift must be finite, nonzero, and greater than -1")
+
+    shifted = [np.asarray(col, dtype=float).copy() for col in reco_extras]
+    if len(shifted) != len(names):
+        raise ValueError("reco_extras and axis_names must have the same length")
+    if shifted:
+        n = shifted[0].shape[0]
+        if any(col.ndim != 1 or col.shape[0] != n for col in shifted):
+            raise ValueError("all reco extra columns must be aligned one-dimensional arrays")
+    shifted[names.index("eavail")] *= 1.0 + frac
+    return shifted
+
+
 def write_thnd(f_out, arr, err, name, title, edges, axis_labels):
     """Write an N-D array as a flat TH1D (canonical) + a TH2D when N==2.
 
@@ -617,6 +647,11 @@ def main():
                     help="MC reco (pass_reco & pass_truth) as pseudo-data; completeness=1")
     ap.add_argument("--closure-reweight-axis", default=None,
                     help="inject a Gaussian truth bump on this extra axis (needs --closure)")
+    ap.add_argument("--closure-response-eavail-frac", type=float, default=None,
+                    help="NONQUOTABLE diagnostic: multiply pseudo-data reco E_avail by "
+                         "(1+FRAC), leaving truth and the nominal response fixed. Requires "
+                         "--closure and the exact 5D axes eavail,q3,W; incompatible with a "
+                         "truth reweight or bootstrap.")
     ap.add_argument("--closure-amplitude", type=float, default=0.3)
     ap.add_argument("--closure-center", type=float, default=0.3)
     ap.add_argument("--closure-sigma", type=float, default=0.15)
@@ -629,6 +664,26 @@ def main():
     extras = [dict(EXTRA_AXES[a], name=a) for a in axis_names]
     if args.closure_reweight_axis and not args.closure:
         ap.error("--closure-reweight-axis requires --closure")
+    if args.closure_response_eavail_frac is not None:
+        if not args.closure:
+            ap.error("--closure-response-eavail-frac requires --closure")
+        if axis_names != ["eavail", "q3", "W"]:
+            ap.error("--closure-response-eavail-frac requires exact --axes eavail,q3,W "
+                     "so the E_avail-by-W bias can be evaluated")
+        if args.closure_reweight_axis:
+            ap.error("response-mismatch and truth-reweight injections cannot be combined")
+        if args.bootstrap_seed is not None:
+            ap.error("response-mismatch closure cannot be combined with --bootstrap-seed")
+        try:
+            # Validate before opening any input or creating an artifact.
+            apply_record_only_eavail_shift([np.ones(1), np.ones(1), np.ones(1)],
+                                           axis_names,
+                                           args.closure_response_eavail_frac)
+        except ValueError as exc:
+            ap.error(str(exc))
+        if not args.out.rsplit("/", 1)[-1].startswith("NONQUOTABLE-DIAGNOSTIC."):
+            ap.error("response-mismatch output basename must start with "
+                     "'NONQUOTABLE-DIAGNOSTIC.'")
     # hidden-variable closure: the bump axis may be any registry axis NOT being
     # unfolded -- its truth column is loaded for the injection only, so the
     # unfold stays blind to it (FPS extension-region validation).
@@ -854,6 +909,12 @@ def main():
         # (without --use-weights both are the constant pot_scale), or the
         # learned normalization and the binning weights double-count pot_scale.
         measured_weights = sig["w_reco"][cmask].copy()
+        if args.closure_response_eavail_frac is not None:
+            meas_ex = apply_record_only_eavail_shift(
+                meas_ex, axis_names, args.closure_response_eavail_frac)
+            print("[RESPONSE-STRESS] NONQUOTABLE diagnostic: pseudo-data reco E_avail "
+                  f"scaled by 1+({args.closure_response_eavail_frac:+.6g}); nominal MC "
+                  "response, truth, weights, and event membership are unchanged")
         if args.closure_reweight_axis:
             if hidden_ax is not None:
                 tcol = hid_truth[cmask]
@@ -1044,6 +1105,14 @@ def main():
     ROOT.TParameter("double")("dataPOT", data_pot).Write()
     ROOT.TParameter("double")("globalCompleteness", c_global).Write()
     ROOT.TParameter("int")("ndim", ndim).Write()
+    if args.closure_response_eavail_frac is not None:
+        ROOT.TNamed("analysis_status", "NONQUOTABLE-DIAGNOSTIC").Write()
+        ROOT.TNamed("closure_kind", "response-mismatch:reco-eavail-record-only").Write()
+        ROOT.TNamed("closure_response_contract",
+                    "pseudo-data reco Eavail shifted; nominal response, truth, weights, "
+                    "and event membership fixed").Write()
+        ROOT.TParameter("double")("closure_response_eavail_frac",
+                                  args.closure_response_eavail_frac).Write()
     title = "d^{%d}#sigma/(" % ndim + "".join("d%s" % n for n in ["pt", "pz"] + axis_names) + ")"
     write_thnd(f_out, xsec, xsec_err, "hXSecND", title, edges, axis_labels)
     write_thnd(f_out, unfold_nd, unfold_err, "hUnfoldND", "unfolded counts", edges, axis_labels)
@@ -1091,7 +1160,29 @@ def main():
         print("\n=== CLOSURE RESIDUALS (unfold/ref) ===")
         print(f"  {ndim}D bins: median={np.nanmedian(r):.4f} std={np.nanstd(r):.4f} "
               f"max|dev|={np.nanmax(np.abs(r-1)):.4f}")
-        if args.closure_reweight_axis and hidden_ax is not None:
+        if args.closure_response_eavail_frac is not None:
+            # The scientific target is migration of the inferred excess in W,
+            # not only a scalar global residual.  Persist the E_avail x W ratio
+            # map in addition to the generic 5D and 1D products.
+            keep = [2 + axis_names.index("eavail"), 2 + axis_names.index("W")]
+            drop = [i for i in range(ndim) if i not in keep]
+            ew_unf = project_marginal(xsec, edges, drop_axes=drop)
+            ew_ref = project_marginal(ref_xsec, edges, drop_axes=drop)
+            ew_ratio = np.full(ew_ref.shape, np.nan)
+            np.divide(ew_unf, ew_ref, out=ew_ratio, where=ew_ref > 0)
+            ew_edges = [edges[i] for i in keep]
+            ew_labels = [axis_labels[i] for i in keep]
+            write_thnd(f_out, ew_ratio, None, "hClosureRatio_eavail_W",
+                       "response-mismatch closure unfolded/reference;E_{avail} (GeV);W (GeV)",
+                       ew_edges, ew_labels)
+            for name in ("eavail", "W"):
+                ai = 2 + axis_names.index(name)
+                _, y_unf = project_axis(xsec, edges, ai)
+                _, y_ref = project_axis(ref_xsec, edges, ai)
+                ratios = y_unf / np.where(y_ref > 0, y_ref, np.nan)
+                print(f"  response-stress {name} 1D ratios: "
+                      + ", ".join(f"{v:.3f}" for v in ratios))
+        elif args.closure_reweight_axis and hidden_ax is not None:
             print(f"  hidden-axis bump ({hidden_ax['name']}): per-cell recovery map = "
                   "hXSecND / hClosureRefND (region split via fps_extension_validation.py)")
             print(f"  injected mean factor={closure_rw_truthpass.mean():.4f}")

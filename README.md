@@ -263,6 +263,10 @@ Three audience-tiered PDFs are built from one shared LaTeX source set in
 | Primer | `main_primer.tex` | short orientation |
 | External paper | `main_paper.tex` | a distillation, not an extract |
 
+The [publication source map and completion plan](docs/analysis-note/README.md) identifies work that
+can proceed while the scalar-5D covariance and response-robustness paths are active, without
+pre-committing their scientific outcome.
+
 ```bash
 cd docs/analysis-note && bash build_all.sh     # needs pdflatex + biber + python3
 ```

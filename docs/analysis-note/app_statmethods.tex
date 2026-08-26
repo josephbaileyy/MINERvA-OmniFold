@@ -1557,7 +1557,7 @@ Second, the measured family spread is far above this floor, so the floor decompo
 the object resamples and not how the observed band divides. Neither reading makes the quoted band
 field-comparable.
 
-This is a method choice and we state it as one. A coherent $\mathrm{Poisson}(1)$ bootstrap of the
+A coherent $\mathrm{Poisson}(1)$ bootstrap of the
 contributing samples is the standard non-parametric stand-in for statistical uncertainty, but for a
 \emph{learned}, non-linear estimator it is not automatic that it inherits the properties it has for a
 linear one. We verified that the family is what the construction claims: the multiplicity distribution
@@ -1623,7 +1623,7 @@ double-differential inclusive measurement reports all $84$ bins of this longitud
 a median fractional statistical uncertainty of $1.55\%$, its worst reported bin anywhere being
 $13.1\%$. The two are not the same object --- data statistics on a standard selection against a
 bootstrap over a learned estimator on an extended phase space --- and we do not treat the comparison as
-decisive. We state it because a reader is entitled to it.
+decisive.
 
 \subsubsection{Why the two readings of the band are not a live fork}
 
@@ -1638,13 +1638,12 @@ Both are consistent with the measurements above: a genuinely unstable estimator 
 perturbation both act during training, both concentrate where information is scarcest, and
 both leave the extraction faithful.
 
-\textbf{That binary is not live, and it was retracted rather than decided.} It was withdrawn on
-2026-08-19 on a type mismatch: a covariance measures dispersion \emph{about a centre} and does not
+The proposed binary was withdrawn on 2026-08-19 because it rests on a type mismatch: a covariance
+measures dispersion \emph{about a centre} and does not
 establish finite-family \emph{containment} of a separately trained nominal, so non-containment of the
-nominal by $50$ draws is not the quantity this covariance reports and \emph{no} choice between (a)
-and (b) follows from it. The two readings are recorded here because the measurements above were
-gathered while they were live and a reader will meet them in that form elsewhere; neither is asserted,
-and the fork is not resolved in favour of either.
+nominal by $50$ draws is not the quantity this covariance reports and
+\textbf{no choice between (a) and (b) follows from it}. The two readings are recorded here because the measurements above were
+gathered while they were live and a reader will meet them in that form elsewhere; neither is asserted.
 
 The argument below is therefore a statement about the resampling scheme alone, and it is offered as an
 argument rather than a ratified result. It bears on reading (b) without adjudicating the retracted

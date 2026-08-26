@@ -119,3 +119,35 @@ for fig in "$FIGDIR"/*.pdf; do
     cp "$src" "$fig"; echo "  synced $base"
   fi
 done
+
+echo
+echo "== paper-only vector crops =="
+# These are lossless crops of validated source figures, not new measurements.
+# The validation crop keeps only the standardized-residual map and removes the
+# covariance-distance histogram; the generator crop removes the ROOT canvas's
+# large unused margin.
+assert_pdf_page_size() {
+  local source_pdf="$1"
+  local expected_size="$2"
+  local actual_size
+  actual_size=$(pdfinfo "$source_pdf" | awk '/^Page size:/ {print $3 " x " $5; exit}')
+  if [[ "$actual_size" != "$expected_size" ]]; then
+    echo "REFUSE paper crop: $source_pdf is $actual_size pts, expected $expected_size pts" >&2
+    exit 1
+  fi
+}
+
+# Absolute panel crops are intentionally coupled to these source canvases.
+# Refuse rather than silently select the wrong panel after upstream regeneration.
+assert_pdf_page_size "$FIGDIR/MEFHC_5iter_pull_full.pdf" "864 x 360"
+assert_pdf_page_size "$FIGDIR/excess_eavail_W.pdf" "1152 x 331.2"
+
+pdfcrop --bbox '0 0 432 360' \
+  "$FIGDIR/MEFHC_5iter_pull_full.pdf" \
+  "$FIGDIR/paper_validation_residual.pdf"
+pdfcrop --margins '4 4 4 4' \
+  "$FIGDIR/eavailW_band.pdf" \
+  "$FIGDIR/paper_eavailW_generators.pdf"
+pdfcrop --bbox '400 0 1152 331.2' \
+  "$FIGDIR/excess_eavail_W.pdf" \
+  "$FIGDIR/paper_joint_localization.pdf"

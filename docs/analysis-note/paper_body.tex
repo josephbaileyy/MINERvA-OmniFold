@@ -39,8 +39,8 @@ smooth reweighting to the next iteration.  We use five iterations of
 depth-three gradient-boosted decision trees with 100 trees.  The production
 central value uses exact-split scikit-learn gradient boosting, whereas the
 finalized two-dimensional systematic-universe and Poisson-bootstrap ensembles
-use LightGBM at matched nominal capacity.  This backend difference is retained
-as an explicit qualification rather than treated as estimator equivalence.
+use LightGBM at matched nominal capacity; the central value and its covariance
+are therefore not estimator-matched.
 Cross sections are formed by histogramming the reweighted truth events in a
 declared reporting binning and dividing by integrated flux, target count, and
 bin width.
@@ -54,18 +54,36 @@ uncertainties have an RMS of $\pullRMS$.  The standalone covariance combines
 matched-central-value systematic universes with statistical and training-seed
 blocks.  Its median relative uncertainty is \SI{\uqMedian}{\percent}, compared
 with \SI{\uqPaper}{\percent} for the publication.  Figure~\ref{fig:validation}
-shows the principal one-dimensional projections.  These tests validate the
-five-iteration two-dimensional result without interpreting a covariance sum
-between two measurements derived from the same data.
+shows the principal one-dimensional projections.  Because both results derive
+from the same data, this validates the estimator rather than comparing
+independent measurements; no combined-covariance statistic is quoted.
 
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=0.82\textwidth]{model_comp_projections}
-  \caption{Projections of the published binned result
-  \cite{MINERvA:2021owq} and the unbinned five-iteration OmniFold result onto
-  $\pT$ (left) and $\pPar$ (right).  The comparison is a validation using the
-  same data sample, not a comparison of statistically independent
-  measurements.}
+  \includegraphics[width=0.78\textwidth]{model_comp_projections}\\[-0.4em]
+  \begin{minipage}[c]{0.31\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{paper_validation_residual}
+  \end{minipage}\hspace{1.2em}
+  \begin{minipage}[c]{0.30\textwidth}
+    \centering\footnotesize
+    \textbf{Median relative uncertainty}\\[0.35em]
+    \begin{tabular}{@{}lr@{}}
+      This work & \SI{\uqMedian}{\percent} \\
+      Published & \SI{\uqPaper}{\percent}
+    \end{tabular}\\[0.8em]
+    \textbf{Published-$\sigma$ standardized residuals}\\[0.35em]
+    mean $=\pullMean$, RMS $=\pullRMS$
+  \end{minipage}
+  \caption{End-to-end validation against the published binned result
+  \cite{MINERvA:2021owq}.  Top: $\pT$ and $\pPar$ projections of the published
+  result, the five-iteration OmniFold result, and the MINERvA Tune~v1.  The two
+  measurements use the same data, so their overlay validates the estimator
+  rather than comparing independent results.
+  Bottom left: $(\mathrm{OmniFold}-\mathrm{published})/\sigma_{\mathrm{published}}$
+  on the reported two-dimensional grid; it is a descriptive shared-data
+  residual, not an independent-result pull.  Bottom right: the independently
+  reconstructed and published median relative uncertainties.}
   \label{fig:validation}
 \end{figure*}
 
@@ -73,8 +91,7 @@ For the higher-dimensional results, every central-value construction is tested
 against its lower-dimensional predecessor.  The three-, four-, and
 five-observable marginal normalizations agree at the approximately
 $1$--$2\%$ level, and injected distortions in each newly added variable are
-recovered in closure tests.  These controls validate the central values, but do
-not promote superseded higher-dimensional covariance products.
+recovered in closure tests.  These controls validate the central values.
 
 The $\Eavail$ dimension provides an independent view of the established
 low-recoil discrepancy.  GENIE, the MINERvA Tune~v1, NuWro, and GiBUU all
@@ -83,55 +100,58 @@ interaction variations change $d\sigma/d\Eavail$ by less than one percent,
 whereas the empirical Valencia two-particle--two-hole contribution fills the
 quasielastic--$\Delta$ dip.  Adding $q_{3}$ resolves the momentum-transfer
 dependence of this feature.  On the maximal common $(\Eavail,q_{3})$ grid, the
-central value agrees with the dedicated published low-recoil measurement
-\cite{MINERvA:2022incl}.  We do not assign a covariance-based consistency
-metric to this comparison.
+central value agrees to within \SI{10}{\percent} with the dedicated published
+low-recoil measurement~\cite{MINERvA:2022incl}.
 
 The fifth observable, $W$, separates the remaining discrepancy from the
 low-mass enhancement.  Figure~\ref{fig:joint} shows the joint
 $(\Eavail,W)$ projection relative to GENIE.  The positive central-value
 difference is concentrated where both $\Eavail$ and $W$ are large, rather than
-being distributed uniformly across either one-dimensional projection.  This
-localization is precisely the information lost when the two observables are
-viewed separately.
+being distributed uniformly across either one-dimensional projection.  Neither
+one-dimensional projection resolves this structure.
 
-\begin{figure*}[t]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=0.96\textwidth]{excess_eavail_W}
-  \vspace{0.5em}
-  \includegraphics[width=0.86\textwidth]{eavailW_band}
-  \caption{Joint $(\Eavail,W)$ central-value result and its generator context.
-  The upper panels compare the unfolded $\Eavail$ projection with GENIE and
-  show the unfolded-to-GENIE ratio and absolute difference in the joint plane.
-  The lower panels compare the $\Eavail$ and $W$ projections with four
-  generator configurations.  No uncertainty or significance is assigned to
-  the joint excess pending adoption of the common five-dimensional covariance.}
+  \includegraphics[width=\columnwidth]{paper_joint_localization}
+  \caption{Localization in the joint $(\Eavail,W)$ central value.  Left:
+  unfolded-to-GENIE ratio.  Right: absolute unfolded-minus-GENIE difference.
+  The
+  high-$\Eavail$, high-$W$ corner contains the remaining positive difference;
+  no significance is assigned.}
   \label{fig:joint}
-\end{figure*}
+\end{figure}
 
-The lower one-dimensional projections in Fig.~\ref{fig:joint} compare the same
-central result with GENIE, the MINERvA Tune~v1, NuWro, and GiBUU.  All four
+The one-dimensional projections in Fig.~\ref{fig:generator-context} compare
+the same central result with GENIE, the MINERvA Tune~v1, NuWro, and GiBUU.  All four
 underpredict the high-$W$ region.  Turning on the Valencia two-particle--two-hole
 component does not remove that difference because it primarily populates lower
 $W$.  The agreement of several generators on the direction of the discrepancy
-is a useful model diagnostic; it is not a substitute for the unresolved
-five-dimensional uncertainty construction.
+is a useful model diagnostic.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.84\textwidth]{paper_eavailW_generators}
+  \caption{Generator context for the unfolded $\Eavail$ (left) and $W$ (right)
+  central-value projections.  GENIE-CV, GENIE with the Valencia two-particle--
+  two-hole contribution, NuWro, and GiBUU all remain below the unfolded result
+  at high $W$.  No significance is assigned.}
+  \label{fig:generator-context}
+\end{figure*}
 
 These results demonstrate that an unbinned event-weight construction can be
 validated against an established two-dimensional measurement and extended to
 five simultaneous observables.  The higher-dimensional central values recover
 the known low-recoil behavior and expose a localized high-$\Eavail$, high-$W$
-generator deficit.  A publication-level significance for any non-two-dimensional
-projection requires the adopted, selection-complete scalar five-dimensional
-covariance; no historical covariance or dependent significance is used here.
+generator deficit.  Every non-two-dimensional result in this Letter is a
+central value.  A publication-level significance requires the adopted,
+selection-complete scalar five-dimensional covariance, which is not yet in
+hand; no superseded or historical covariance is used here.
 
-Two extensions are intentionally kept outside the main result.  Removing the
-published truth-level muon cuts produces a preliminary extended-fiducial study,
-whose analysis-note record separates acceptance-supported and prior-dominated
-regions.  A full-event point-cloud classifier could replace the scalar learner
-while preserving the two-step event pairing, but it remains a diagnostic
-method-development program: the proposed nominal/statistical pairing was
-declined, coverage has not been demonstrated, and neither a training-variation
-nor total point-cloud covariance has been adopted.  The analysis note preserves
-the full methodology, blocker rationale, validation suite, and numerical
-extended-fiducial results.
+Two extensions lie outside this result.  Removing the published truth-level
+muon cuts gives a preliminary extended-fiducial cross section in which
+detector-supported and prior-dominated regions are reported separately.  A
+full-event point-cloud classifier could replace the scalar learner while
+preserving the two-step pairing; it remains method development because the
+nominal/statistical pairing was declined, coverage has not been demonstrated,
+and no point-cloud uncertainty product is adopted.  Both extensions are
+documented in the companion analysis note.

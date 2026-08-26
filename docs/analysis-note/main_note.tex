@@ -47,7 +47,7 @@ We measure medium-energy charged-current neutrino--nucleus cross sections in
 multiple dimensions using the unbinned machine-learning method OmniFold. We
 first reproduce the published double-differential cross section in muon
 transverse and longitudinal momentum with an independent unfolding method,
-recovering both the spectrum and the uncertainty budget. We then perform
+recovering its uncertainty scale as well as its spectrum. We then perform
 \emph{unbinned} simultaneous three-, four-, and five-observable unfolds of
 MINERvA data by adding available energy ($\Eavail$), three-momentum transfer ($q_{3}$),
 and hadronic invariant mass ($W$); each passes the projection anchors against its
@@ -90,12 +90,15 @@ their authors. I am grateful to the MINERvA Collaboration for the public release
 of the medium-energy CC-inclusive data product on which the reproduction rests.
 
 We thank Callum Wilkinson for connecting us with this dataset and for many helpful discussions.
+We thank Kevin McFarland for suggesting a detector-response-mismatch closure
+targeting correlations among the reconstructed hadronic observables.
 
 Large language model assistants (Anthropic's Claude and OpenAI's ChatGPT) were used to support brainstorming and methodological discussion, code development, analysis scripting, and manuscript preparation. All scientific ideas, results, and claims were critically evaluated and verified by the authors, who take full responsibility for the content.
 
 \appendix
 \input{app_statmethods}
 \input{app_negweight}
+\input{app_response_mismatch}
 \input{app_landscape}
 \input{app_codebase}
 

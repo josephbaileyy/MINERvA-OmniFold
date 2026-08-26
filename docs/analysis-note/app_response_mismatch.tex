@@ -1,0 +1,58 @@
+\section{Detector-response-mismatch closure}
+\label{app:response-mismatch}
+
+The truth-shape and hidden-variable closures in
+\S\ref{sec:validation} test whether the estimator recovers deliberately
+modified event populations. They do not directly test a different question:
+whether the inferred truth distribution is biased when the detector response
+used to generate the pseudo-data disagrees with the nominal response supplied
+to OmniFold. Kevin McFarland suggested this distinction and proposed stressing
+the hadronic record, especially for quasielastic events, to inspect the
+resulting bias at low $W$ (private communication).
+
+\paragraph{Record-only test implemented in the pipeline.}
+The first-stage diagnostic begins with the ordinary five-dimensional closure
+sample. After the pseudo-data arrays have been copied, and before background
+mixing or classifier training, it replaces only the reconstructed pseudo-data
+record
+\begin{equation}
+  \Eavail^{\mathrm{pseudo}} \longrightarrow
+  (1+\epsilon)\Eavail^{\mathrm{pseudo}} .
+\end{equation}
+The nominal simulated reconstructed sample, all truth coordinates, event
+weights, and event membership remain fixed. Consequently the pseudo-data are
+generated with a deliberately incompatible conditional response while the
+unfold still sees the nominal response. Both signs of $\epsilon$ must be run
+at an amplitude fixed before inspecting the result. The amplitude should be
+tied to a documented hadronic-response variation or to a quantified assumption;
+the inherited factor applied in the reconstructed-$\Eavail$ definition does not
+by itself supply that justification.
+
+The diagnostic writes the full five-dimensional unfolded/reference residual,
+the one-dimensional $\Eavail$ and $W$ projections, and an
+$(\Eavail,W)$ ratio map. The primary observable is the signed bias resolved in
+$W$, with the $W<\SI{1.1}{GeV}$ region reported separately from the high-$W$
+tail. The global integral is a control rather than the decision statistic.
+The implementation refuses real-data mode, truth reweighting, bootstrapping,
+or a non-five-dimensional axis list, and marks every output
+\texttt{NONQUOTABLE-DIAGNOSTIC}.
+
+\paragraph{Physically correlated follow-up.}
+The record-only arm is intentionally cheap and adversarial, not a detector
+model. A more faithful follow-up would select quasielastic events, shift the
+leading-nucleon energy up and down, and then recompute reconstructed $\Eavail$,
+$q_{3}$, $W$, and any affected selection from the altered low-level event
+record. The current scalar event-loop output does not preserve enough
+information to perform that recomputation after the fact. This arm therefore
+requires a dedicated diagnostic event-loop output and is deferred unless the
+record-only test shows a material bias or the collaboration requests the
+stronger model.
+
+\paragraph{Status and interpretation.}
+This appendix records a validation protocol, not a result or an uncertainty
+component. No response-mismatch artifact has been produced, no pass threshold
+has been adopted, and the test does not alter the frozen central value or the
+current covariance construction. A small observed bias would support the
+stability of the $(\Eavail,W)$ interpretation only over the tested response
+envelope; a large bias would trigger a model/uncertainty decision rather than
+being silently absorbed as a non-closure error.

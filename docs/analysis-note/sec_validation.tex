@@ -2,14 +2,16 @@
 \label{sec:validation}
 
 \paragraph{Closure.}
-Three closure families, all passing (1A lgbm 5-iter; thresholds in parentheses):
+Three existing closure families were exercised (1A lgbm 5-iter; thresholds in parentheses):
 \begin{itemize}
   \item \textbf{Truth-reweight} (multiply truth and reco weights by the same
         factor): gaussian-$\pT$ residual \SI{0.046}{\percent}, tilt-$\pPar$
         \SI{0.013}{\percent} (thr \SI{1.5}{\percent}) --- injected truth recovered.
   \item \textbf{Hidden-variable} (bias on $\Delta\pT=\pT^{\mathrm{reco}}-\pT^{\mathrm{truth}}$,
         a resolution variable not in the feature set): leakage linear in amplitude,
-        $A=0.05/0.10/0.30\to0.57/1.14/3.43\,\%$ (thr \SI{3.0}{\percent}).
+        $A=0.05/0.10/0.30\to0.57/1.14/3.43\,\%$ (thr \SI{3.0}{\percent});
+        the first two amplitudes pass and the deliberately large $A=0.30$ arm exceeds
+        the threshold.
   \item \textbf{Alt-model} (train on CV, pseudo-data from an alternative universe):
         MaCCQE \SI{0.068}{\percent}, Flux \SI{0.376}{\percent} (thr \SI{2.0}{\percent}).
 \end{itemize}
@@ -34,6 +36,12 @@ non-closure uncertainty. Such an uncertainty would require a predeclared suite
 of injection shapes and amplitudes rather than calibration to a single
 Gaussian bump.
 
+They also do not test the distinct failure mode in which pseudo-data are
+generated with a detector response that disagrees with the response supplied
+to the unfold. Appendix~\ref{app:response-mismatch} defines a complementary
+record-only $\Eavail$ response-mismatch closure and a more complete
+leading-nucleon follow-up. No result from that test is claimed here.
+
 \paragraph{Unbinned diagnostic (C2ST).}
 As a binning-free check that the unfold removes the data\,$\leftrightarrow$\,MC mismatch, we use
 a classifier two-sample test (C2ST): a classifier is trained to separate the data from the
@@ -43,8 +51,8 @@ unfolding to $\approx0.501$ after, indicating that the reweighting removes the r
 data--MC mismatch. We report this strictly as a \emph{descriptive} diagnostic and do \emph{not}
 quote a calibrated $p$-value: the C2ST as run trains and evaluates on the same sample without
 cross-fitting, and a valid null would require re-running the full (cross-fitted) OmniFold
-pipeline per pseudoexperiment (hundreds of unfolds), which is not computationally justified
-here. Calibrated unbinned goodness-of-fit remains an open problem~\cite{unbinnedguide}.
+pipeline per pseudoexperiment. Calibrated unbinned goodness-of-fit remains an
+open problem~\cite{unbinnedguide}.
 
 \paragraph{Toy residuals and coverage status.}
 The existing 200 2D closure toys fluctuate both the unfolded result and the
