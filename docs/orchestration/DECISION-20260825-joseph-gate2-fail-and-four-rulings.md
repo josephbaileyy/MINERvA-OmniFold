@@ -302,6 +302,13 @@ and the fact it was made against remain readable together. **Nothing else in thi
 claim is not a delivery, it is **not yet an origin of anything**, a third party must still grade any
 delivery, Joseph alone re-evaluates Gate 2, and there is still **no compute until it lands.**
 
+**DELIVERY STATUS NOTE, 2026-08-26 — NOT A NEW RULING.** The assigned `codex-school` implementer
+subsequently delivered the repair and its implementer controls in the commit carrying
+`DEFECT-20260825-generate-manifest-dirty-warning-nondiscriminating.md` §7. The delivery is
+**UNGRADED**. It therefore supplies neither the independent grade nor Gate-2 credit; the separate
+third-party grade remains the next admissible action, and Joseph alone still re-evaluates Gate 2.
+There is still **no compute, rehearsal, adoption, consumption, or quotation** authorized here.
+
 **Where this lane goes next, corrected by Joseph 2026-08-26.** The assignment **remains publication
 close-out**; "go back to the 5D uncertainties" was imprecise, not a change of lane. After the Gate-2
 freeze receipt lands, the route is: **re-read a fresh `LIVE-STATE.md` and the governing `OI-*`, then

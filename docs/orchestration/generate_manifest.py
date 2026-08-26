@@ -317,15 +317,60 @@ def render(rows: list[dict[str, object]]) -> bytes:
     return stream.getvalue().encode("utf-8")
 
 
-def dirty_inventory_paths() -> list[str]:
-    """Tracked paths inside the inventory scope that differ from the index or from HEAD.
+def classify_inventory_status(
+        rows: list[str]) -> tuple[list[tuple[str, str]], list[str]]:
+    """Split porcelain rows into observable hazards and intended untracked paths.
 
-    BEN-183. `lines`/`bytes`/`inbound_count` are read from the working tree, so generating over
-    a dirty inventory scope publishes a transient as a description of the repository. Named
-    rather than blocked: a lane regenerating alongside its OWN edit is doing the normal thing.
+    The porcelain ``XY`` columns are load-bearing here.  A non-blank ``Y`` means the working
+    tree differs from the index, so the bytes the generator reads are not the bytes staged for
+    the prospective commit.  A non-blank ``X`` with a blank ``Y`` is the normal, fully-staged
+    F-14 procedure and must not warn.  ``??`` paths are a separate default-mode disclosure:
+    they are intentionally inventoried by default, but may belong to another lane in a shared
+    checkout.
     """
+    unstaged: set[tuple[str, str]] = set()
+    intended: set[str] = set()
+    for line in rows:
+        if len(line) < 4:
+            continue
+        xy = line[:2]
+        path = line[3:].split(" -> ")[-1]
+        if xy == "??":
+            intended.add(path)
+        elif xy[1] != " ":
+            unstaged.add((xy, path))
+    return sorted(unstaged, key=lambda item: item[1]), sorted(intended)
+
+
+def inventory_status() -> tuple[list[tuple[str, str]], list[str]]:
+    """Return unstaged tracked changes and nonignored untracked paths in inventory scope."""
     rows = git_lines("status", "--porcelain", "--", "docs/orchestration")
-    return sorted({line[3:].split(" -> ")[-1] for line in rows if not line.startswith("??")})
+    return classify_inventory_status(rows)
+
+
+def status_warnings(
+        unstaged: list[tuple[str, str]], intended: list[str],
+        committed_only: bool) -> list[str]:
+    """Render only warnings whose condition is observable in the current index/worktree."""
+    warnings: list[str] = []
+    if intended and not committed_only:
+        warnings.append(
+            f"WARNING: {len(intended)} nonignored untracked path(s) are INCLUDED as "
+            "tracking=intended in default mode; they may be another lane's work and may "
+            "make --check report OUT OF DATE without a committed-manifest defect: "
+            f"{', '.join(intended[:6])}{' ...' if len(intended) > 6 else ''}"
+        )
+    if unstaged:
+        details = ", ".join(
+            f"{path} (XY={xy!r})" for xy, path in unstaged[:6]
+        )
+        warnings.append(
+            f"WARNING: {len(unstaged)} tracked path(s) in the inventory scope have "
+            "UNSTAGED working-tree changes, so their lines/bytes/inbound_count do not "
+            "describe the staged index: "
+            f"{details}{' ...' if len(unstaged) > 6 else ''}"
+        )
+    return warnings
 
 
 def generate(committed_only: bool = False) -> tuple[
@@ -457,6 +502,28 @@ def self_test() -> int:
         source = Path(__file__).read_text(encoding="utf-8")
         authored = "docs/orchestration/state/authored-input-selftest.json"
         generated = "docs/orchestration/state/generated-record-selftest.json"
+        fires_unstaged, _ = classify_inventory_status(
+            [" M docs/orchestration/CATALOG.md"]
+        )
+        silent_staged, _ = classify_inventory_status(
+            ["M  docs/orchestration/CATALOG.md"]
+        )
+        fires_staged_then_edited, _ = classify_inventory_status(
+            ["MM docs/orchestration/CATALOG.md"]
+        )
+        direct_f14_shape, _ = classify_inventory_status([
+            "M  docs/orchestration/CATALOG.md",
+            " M docs/orchestration/MANIFEST.tsv",
+        ])
+        _, intended_paths = classify_inventory_status(
+            ["?? docs/orchestration/peer-work-in-progress.md"]
+        )
+        fires_unstaged_messages = status_warnings(fires_unstaged, [], False)
+        silent_staged_messages = status_warnings(silent_staged, [], False)
+        fires_mm_messages = status_warnings(fires_staged_then_edited, [], False)
+        direct_f14_messages = status_warnings(direct_f14_shape, [], False)
+        intended_default_messages = status_warnings([], intended_paths, False)
+        intended_committed_only_messages = status_warnings([], intended_paths, True)
         checks = (
             repo_path(intended_path) in rels,
             states.get(repo_path(intended_path)) == "intended",
@@ -469,6 +536,19 @@ def self_test() -> int:
             # ...and a GENERATED record under state/ is still an immutable receipt.
             derive_immutable("MACHINE", generated, "generated") == "yes",
             derive_immutable("ARCHIVAL", "docs/orchestration/x.md", "terminal") == "yes",
+            fires_unstaged == [(" M", "docs/orchestration/CATALOG.md")],
+            silent_staged == [],
+            fires_staged_then_edited == [("MM", "docs/orchestration/CATALOG.md")],
+            direct_f14_shape == [(" M", "docs/orchestration/MANIFEST.tsv")],
+            intended_paths == ["docs/orchestration/peer-work-in-progress.md"],
+            len(fires_unstaged_messages) == 1 and "XY=' M'" in fires_unstaged_messages[0],
+            silent_staged_messages == [],
+            len(fires_mm_messages) == 1 and "XY='MM'" in fires_mm_messages[0],
+            len(direct_f14_messages) == 1
+            and "docs/orchestration/MANIFEST.tsv" in direct_f14_messages[0],
+            len(intended_default_messages) == 1
+            and "tracking=intended" in intended_default_messages[0],
+            intended_committed_only_messages == [],
         )
         if not all(checks):
             print("manifest self-test: FAIL", file=sys.stderr)
@@ -506,7 +586,7 @@ def main() -> int:
 
     try:
         output, counts, overridden, defaults, tracking, unused = generate(args.committed_only)
-        dirty = dirty_inventory_paths()
+        unstaged, intended = inventory_status()
     except (OSError, subprocess.CalledProcessError, ValueError) as exc:
         print(f"generate_manifest.py: {exc}", file=sys.stderr)
         return 2
@@ -530,10 +610,8 @@ def main() -> int:
                              "docs/orchestration")
         print(f"committed-only: {len(excluded)} nonignored untracked path(s) EXCLUDED from "
               f"both the table and the reference sources")
-    if dirty:
-        print(f"WARNING: {len(dirty)} tracked path(s) in the inventory scope are DIRTY, so "
-              f"their lines/bytes/inbound_count describe the WORKING TREE, not any commit: "
-              f"{', '.join(dirty[:6])}{' ...' if len(dirty) > 6 else ''}")
+    for warning in status_warnings(unstaged, intended, args.committed_only):
+        print(warning)
 
     if args.check:
         current = TARGET.read_bytes() if TARGET.exists() else None

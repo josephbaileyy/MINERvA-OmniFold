@@ -245,3 +245,57 @@ contributed to). **The grader must be a third party: not `codex-school`, not the
 `generate_manifest.py` has many callers, so a behaviour change is wider than it looks. Nothing in
 this dispatch authorizes compute, a Gate-2 filing, or a rehearsal; Gate 2 remains **FAIL**, and this
 implementation is the third independent origin Joseph is holding it against.
+
+## 7. DELIVERY (`codex-school`, 2026-08-26) — EXISTS, UNGRADED
+
+**STATUS: DELIVERED BY THE ASSIGNED IMPLEMENTER; INDEPENDENT GRADE STILL REQUIRED.** This section
+is the `codex-school` Codex session's implementation record, not a finding by the publication
+close-out lane and not Joseph speaking. It supersedes §6's current `CLAIMED` status only; the
+historical `UNCLAIMED` block and the dated claim remain intact.
+
+### 7.1 The filed claim was re-measured before implementation
+
+The implementer used a clean detached worktree at `61b51594` and varied only stagedness of the same
+already-tracked path, `docs/orchestration/CATALOG.md`; path-set membership was fixed in both arms.
+The clean negative control returned rc=0 with no warning. The unstaged edit (`' M'`) and the fully
+staged edit (`'M '`) each returned rc=1 and emitted byte-identical DIRTY-warning lines. The detached
+control worktree was removed after measurement. This reproduces §1 independently and does not rely
+on §2's table.
+
+### 7.2 Implemented behaviour
+
+`generate_manifest.py` now retains the porcelain `XY` code instead of discarding it:
+
+- a non-blank worktree column `Y` warns, including `' M'` and `'MM'`;
+- a fully staged index-only change such as `'M '` is silent;
+- the direct F-14 shape — staged sources with an unstaged `MANIFEST.tsv` — names only the manifest
+  as the unstaged hazard; and
+- default mode explicitly names nonignored untracked paths that it includes as
+  `tracking=intended`, while `--committed-only` retains its existing exclusion disclosure. The
+  default-mode rc semantics are unchanged; the sibling defect is disclosed, not "repaired" by
+  hiding the intended paths or forcing a different verdict.
+
+The existing `--self-test` now asserts all three required porcelain arms, the direct F-14 shape,
+and the default/committed-only untracked distinction at the warning-rendering boundary.
+
+### 7.3 Implementer controls
+
+All controls below were run by the implementer in the isolated implementation worktree; they are
+self-tests and delivery measurements, **not** the required third-party grade.
+
+| Control | Measured result |
+|---|---|
+| `generate_manifest.py --self-test` | PASS |
+| real fully staged source (`'M '`) | no unstaged warning; rc remained 1 because the manifest had not yet been regenerated |
+| same source with a further unstaged edit (`'MM'`) | warning fired and named `XY='MM'`; rc remained 1 |
+| staged source plus regenerated, unstaged `MANIFEST.tsv` | check rc=0 and warning fired only for `MANIFEST.tsv`, `XY=' M'` |
+| default mode with one nonignored untracked control path | rc=1, `tracking=intended:1`, explicit INCLUDED warning naming that path |
+| `py_compile` and `git diff --check` | PASS |
+| `/usr/bin/python3.11 -m unittest discover -s docs/orchestration -p 'test_*.py'` | 431 tests, 3 failures + 3 import errors; the identical clean-baseline command at `61b51594` produced the same six named failures (three missing-`pytest` imports and three watcher-swap fixture/permission assumptions), so there is no delivery regression in this scope |
+
+### 7.4 Boundary
+
+This is a **delivery, not a grade**. It does not discharge the defect, establish Gate-2 credit,
+authorize a rehearsal or any compute, authorize scalar-5D adoption, or make the barred k=0 products
+consumable or quotable. Per §6, a third party that is neither `codex-school` nor the publication
+close-out lane must re-derive and grade the delivery before Joseph alone re-evaluates Gate 2.
