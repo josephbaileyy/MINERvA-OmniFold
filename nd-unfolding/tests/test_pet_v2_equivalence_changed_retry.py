@@ -17,12 +17,18 @@ PROPOSAL_PATH = (
 ATTEMPT_PATH = (
     REPO / "docs/orchestration/state/pet-v2-fixed-draw-equivalence-attempt-57620796.json"
 )
+SUBMISSION_PATH = (
+    REPO
+    / "docs/orchestration/state/"
+    "pet-v2-fixed-draw-equivalence-changed-retry-submission-57626676.json"
+)
 
 SPEC = importlib.util.spec_from_file_location("derive_pet_v2_changed_retry", DERIVER)
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
 PROPOSAL = json.loads(PROPOSAL_PATH.read_text(encoding="utf-8"))
 ATTEMPT = json.loads(ATTEMPT_PATH.read_text(encoding="utf-8"))
+SUBMISSION = json.loads(SUBMISSION_PATH.read_text(encoding="utf-8"))
 
 
 def test_changed_retry_receipt_is_exact_deterministic_render():
@@ -36,6 +42,31 @@ def test_failed_attempt_is_guard_only_and_used_no_gpu():
     assert ATTEMPT["resource_consumption"]["a100_hours"] == 0.0
     assert ATTEMPT["submission"]["no_retry_path"] is True
     assert ATTEMPT["C_stat"] is None and ATTEMPT["C_ML"] is None
+
+
+def test_authorized_submission_is_one_pinned_no_retry_chain():
+    assert SUBMISSION == {
+        "C_ML": None,
+        "C_stat": None,
+        "changed_retry": True,
+        "head": "9bbd26ccb72ecabdd9698f679626aaa906be8faf",
+        "host": "login21",
+        "jobs": {
+            "evaluation": "57626679",
+            "target": "57626676",
+            "training_array": "57626678",
+            "validation": "57626680",
+        },
+        "no_retry_path": True,
+        "proposal_sha256": (
+            "c1e63e90c720ef4b353e570c2a0735450712cc135850176cdb73ff4888acf43b"
+        ),
+        "schema": "pet-v2-equivalence-changed-retry1-submission-v1",
+        "status": "SUBMITTED",
+        "submitted_at_utc": "2026-08-26T18:51:08.242459+00:00",
+        "supersedes_or_alters_attempt_57620796": False,
+    }
+    assert SUBMISSION["head"] != ATTEMPT["submission"]["implementation_head"]
 
 
 def test_changed_retry_has_one_exact_explicit_human_authorization():

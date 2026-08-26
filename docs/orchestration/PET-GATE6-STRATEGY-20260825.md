@@ -569,3 +569,22 @@ and 13 expected/18 ceiling A100-hours. Joseph explicitly authorized the named ch
 machine-readable proposal is therefore `launchable: true` only after every frozen guard passes from
 a pushed clean non-primary checkout. The prior authorization remains exhausted, the new decision
 covers this attempt only, and there is no further retry path.
+
+### Authorized changed-retry submission
+
+The final no-submit controller preflight passed at pushed head
+`9bbd26ccb72ecabdd9698f679626aaa906be8faf`, including the authorization, source/input hashes,
+five exact prohibitions, and resource ceilings. The ROOT worker shell then loaded successfully, and
+the guarded retry target's observed checkout modules all resolved from the clean detached
+non-primary checkout. The controller submitted exactly one dependency chain at
+`2026-08-26T18:51:08.242459+00:00`: target `57626676`, training array `57626678`, evaluation
+`57626679`, and read-only validation `57626680`. The exact
+[`submission receipt`](state/pet-v2-fixed-draw-equivalence-changed-retry-submission-57626676.json)
+records proposal SHA-256 `c1e63e90c720ef4b353e570c2a0735450712cc135850176cdb73ff4888acf43b`,
+`no_retry_path: true`, and null `C_stat`/`C_ML`.
+
+The initial direct scheduler observation found the target pending only for shared-Milan resources
+during a system-side node drain; all downstream jobs were dependency-held and no allocation had
+occurred. This is a submission event, not a PET result. A terminal attempt receipt and validation
+are still required before any measured quantity is interpreted. Existing Gate 6 remains blocked
+and all five prohibitions remain in force.
