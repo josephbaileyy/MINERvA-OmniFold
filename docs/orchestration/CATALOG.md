@@ -56,7 +56,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   for the manifest is a **composition** of F-14 with §7.0.7, stated in the sibling record's §1 and
   **not in §7.0.7's own text**, so a lane reading only the contract can satisfy its letter at the
   graded sha while breaking the coupling at every commit before it. The composition is **accepted,
-  not rebutted.** **NOT** citable for any Gate-2 clause, nor for the D-3 repair, which stands as
+  not rebutted.** **§5.1 records a SECOND omission by the same lane, `3dbca981`, committed while
+  filing this very document** — rc=1 at that sha in a clean worktree — and distinguishes it by
+  measurement: the `intended`->`tracked` flip is **irreducible** for a new path, so the avoidable
+  part was the promised second-pass commit, skipped because `git show HEAD:` was read as "my
+  commit" after a peer had advanced `HEAD`. The peer's `62a40194` then **absorbed** it, which
+  demonstrates the sibling record's §3 mechanism on the lane filing about it. A claim that
+  nothing had absorbed this lane's instance was **false within minutes and is replaced, not
+  softened.** **NOT** citable for any Gate-2 clause, nor for the D-3 repair, which stands as
   filed and remains **UNGRADED** under ruling 3.
 
 - [`DISCIPLINE-20260825-f14-manifest-coupling-omissions.md`](DISCIPLINE-20260825-f14-manifest-coupling-omissions.md)

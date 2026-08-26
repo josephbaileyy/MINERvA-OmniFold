@@ -16,6 +16,9 @@ gate document, and not a grade.
 - A discoverability gap: the same-commit coupling for `MANIFEST.tsv` is **not** in §7.0.7's own text.
 - An instrument-behaviour finding: `generate_manifest.py`'s DIRTY warning steers a reader toward the
   violation.
+- **A SECOND omission by this lane, `3dbca981`, committed while filing this document** — and the
+  measurement distinguishing it from the first, because they are not the same failure.
+- A demonstration of the sibling record's §3 absorption mechanism, on this lane, within minutes.
 
 ## NOT CITABLE FOR
 
@@ -35,6 +38,7 @@ gate document, and not a grade.
 |---|---|---|---|
 | `c8a29082` | `compare_m1_m6.py`, `test_compare_m1_m6.py` | **NO** | both files' line/byte counts, the decision record's `consumer`/`inbound_count`, the f17b record's `consumer`, and `MANIFEST.tsv`'s own byte count |
 | `65f95600` | `MANIFEST.tsv` | — (this *is* the late regeneration) | — |
+| `3dbca981` | this document + overrides + CATALOG + `MANIFEST.tsv` | **pass 1 only** | the `intended` -> `tracked` flip and `MANIFEST.tsv`'s own byte count — see §5.1 |
 
 `git show --name-only c8a29082` returns exactly the two `.py` paths and no `MANIFEST.tsv`.
 
@@ -106,9 +110,48 @@ the one the close-out lane identified and it applies here unchanged: any later r
 lane absorbs every upstream omission, so compliance is measurable only at the commit, in a clean
 worktree, and only until someone else regenerates.
 
-One correction to the general claim, in this lane's favour and therefore stated with the measurement
-rather than asserted: nothing absorbed this instance before it was measured. `65f95600` was this
-lane's own commit, and `rc=1 at c8a29082` was still directly measurable at the time of filing.
+**A PARAGRAPH STOOD HERE CLAIMING NOTHING ABSORBED THIS LANE'S INSTANCE. IT WAS FALSE WITHIN
+MINUTES, AND IT WAS THE COMFORTABLE THING TO WRITE.** It is replaced rather than softened. It was
+true of `c8a29082` only — `65f95600` was this lane's own commit, so `rc=1 at c8a29082` was still
+directly measurable at filing time. It was false of `3dbca981`, the commit that filed this document:
+see §5.1. The absorption mechanism the sibling record's §3 describes then operated on this lane,
+inside the act of filing a record about it.
+
+### 5.1 A second omission, committed while filing this record
+
+`3dbca981` carried this document, its LIVE override row, its CATALOG entry and a regenerated
+`MANIFEST.tsv` in one commit. Measured afterwards in a clean detached worktree at `3dbca981`,
+porcelain 0: **`generate_manifest.py --check` returns rc=1.** Two fields differ from a fresh
+generation at that sha — this document's `tracking` (committed `intended`, fresh `tracked`) and
+`MANIFEST.tsv`'s own byte count (committed `106409`, fresh `106408`).
+
+**THIS IS NOT THE SAME FAILURE AS `c8a29082`, and the distinction is a measurement rather than a
+plea.** For a **new** path the flip is irreducible: `tracking` records whether the path is committed,
+so the value is decided by the very commit being created and no single commit can carry the
+post-commit value. That is why the documented shape for a new document is two commits, and why the
+close-out lane's own ledger marks its pair `109bb130` -> `dce8e8cc` compliant at **both** ends. By
+contrast `c8a29082` changed only already-tracked files, where one-pass coupling is achievable — proved
+at rc=0 by probe `3ae2c6ba`. **The first was avoidable and the second was not.**
+
+**WHAT IS STILL THIS LANE'S OMISSION IS THE SECOND-PASS COMMIT.** `3dbca981`'s own message states
+that a second pass follows. It was not committed. The cause was an instrument pointed at the wrong
+object: `git show HEAD:...MANIFEST.tsv` was read as "my commit", but a peer had already advanced
+`HEAD`, so the `tracked` value it returned was **the peer's regeneration, not this lane's commit**.
+A `--check` run in the shared working tree then returned rc=0 against that peer-updated file and was
+read as "no second pass needed." Both readings were arithmetically correct and about the wrong sha.
+The check that settles it names the sha explicitly and runs in a clean detached worktree, which is
+the form every figure in this document now uses.
+
+**IT WAS ABSORBED BEFORE IT COULD BE REPAIRED.** The peer's `62a40194` regenerated the manifest for
+its own reasons and performed this lane's missing second pass as a side effect. At `62a40194`
+`--check` returns rc=0 and this document's row reads `tracked / LIVE`, so **there is nothing left to
+commit and the repaired state would read as compliance** — which is precisely why §5.1 exists.
+Router visibility was confirmed at `62a40194` by direct inspection of all three requirements, not by
+an exit code: the LIVE override row, the CATALOG entry, and the `tracked / LIVE` manifest row.
+
+**AND THIS LANE'S COMMIT WAS PUBLISHED BY SOMEONE ELSE'S PUSH.** `3dbca981` was never pushed by this
+lane; it reached `github/main` as an ancestor of the peer's push. Publication on shared `main` is a
+property of the branch, not of any lane's restraint.
 
 ## 6. Cited artifacts
 
