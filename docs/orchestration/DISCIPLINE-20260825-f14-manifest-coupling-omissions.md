@@ -163,6 +163,49 @@ Its `3dbca981` and my `109bb130` are the **same** instance of the same false bel
 count its instances and it does not count mine, but the belief was shared and neither record would
 have found it alone.
 
+### 4.2 A THIRD lane's instance, measured while rebasing onto it
+
+Found 2026-08-25 while rebasing this lane's register-closure commit onto `github/main`. The rebase
+applied **cleanly** and `--check` then returned **rc=1** — which is exactly why the re-measurement
+happens after the rebase and not before it.
+
+`e30dbd45` (the notification/waker lane) **added four tracked paths** under `docs/orchestration` —
+`AGENT-NOTIFICATIONS.md`, `agent_session_notify.py`, `install_agent_notifications.py`,
+`test_agent_session_notify.py` — and did not touch `MANIFEST.tsv`. Measured in a clean detached probe
+worktree, **porcelain 0 at each sha**, `--check --committed-only`:
+
+| sha | rc | expected rows | recorded rows |
+|---|---|---|---|
+| `17b79fca` (this lane's predecessor) | **0** | 533 | 533 |
+| `e30dbd45` | **1** | 536 | 533 |
+| `7299d22b` (their merge of `origin/main`) | **1** | 537 | 533 |
+| `aaed392d` (their tip, `= github/main` when measured) | **1** | 537 | 533 |
+
+**rc=1 in BOTH modes at `aaed392d`**, so this is *not* the untracked-file artifact of the sibling
+defect recorded in `DEFECT-20260825-generate-manifest-dirty-warning-nondiscriminating.md` §4 — those
+four paths are now committed. `aaed392d` additionally edited seven tracked paths without
+regenerating, which moves their `lines`/`bytes` rows: the same coupling, reached by content rather
+than by path set.
+
+**Not counted in this document's four**, for the §4.1 reason — attribution belongs to the lane that
+made it. **This is an OPEN referral**, unlike §4.1: it has not been filed by its author and could not
+be notified, because `ListAgents` reported no reachable peer session on 2026-08-25.
+
+**This lane's regeneration repairs the state and thereby erases the only surviving evidence of the
+gap** — precisely the hazard §5 names. That is why the table above was measured *before* the repair
+rather than reconstructed after it, and the repair is not offered as a discharge of anyone's filing
+obligation.
+
+**One consequence that lane needs and cannot see, so it is stated here rather than left in the
+table.** The four paths had no `MANIFEST-overrides.tsv` row, so the regeneration classified them by
+default: `AGENT-NOTIFICATIONS.md` → **`ARCHIVAL` / `document`**, the three `.py` files →
+`MACHINE`. An `ARCHIVAL` row is **invisible to the router and marked do-not-touch**, which is very
+likely the opposite of what a live operator-facing notifications doc is for. Classifying another
+lane's document is not this lane's call, so nothing was overridden — but a lane that omits the
+regeneration also forfeits the moment at which it would have chosen the classification, and someone
+else's compliant regeneration then picks the default on its behalf. **That is a second, quieter cost
+of the omission, and it is not repaired by the row now existing.**
+
 ## 5. Remediation, and what it does not do
 
 `109bb130` and `dce8e8cc` regenerated the manifest. Measured **after** each commit returned rather

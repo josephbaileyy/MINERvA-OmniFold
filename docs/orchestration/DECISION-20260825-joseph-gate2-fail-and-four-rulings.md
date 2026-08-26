@@ -281,6 +281,18 @@ thing none of them authorized. The readiness check is a distinct act with its ow
 that has just finished the last mechanism is not thereby cleared to proceed, and "all three are
 done" asserted by the lane that built them is not the check.
 
+### 10.2 The register is CLOSED for this pass (Joseph, 2026-08-25)
+
+Once §§11.1.1, 12.4, 13.1--13.2, the corrected note and the `codex-school` dispatch land,
+**the register is closed for this pass** and this lane returns to the **5D uncertainties**, which is
+its actual assignment.
+
+**Gate 2 remains FAIL and Joseph is holding it.** The third independent origin is the `codex-school`
+implementation dispatched in
+`DEFECT-20260825-generate-manifest-dirty-warning-nondiscriminating.md` §6, working **from
+artifacts only**. Re-evaluation happens when that lands, **on its own evidence** -- not on this lane's
+agreement with an advisory lane, which is one origin counted twice. **No compute until then.**
+
 ## 11. Cited artifacts, with the field named
 
 Digests are content `sha256` truncated to 8 unless labelled otherwise. Note that a git **blob id** is
@@ -304,7 +316,8 @@ the citation had already acquired a force it was never meant to have.
 | `test_compare_m1_m6.py` (repaired at `c8a29082`, UNGRADED) | content sha256 | `b355ecdc` |
 | `m1m6_expected_differences.json` (**historical referent**, as it produced the record) | content sha256 | `56c2e0ef`, 4464 bytes |
 | `m1m6_expected_differences.json` (**intermediate**: transcribed from the D-3 grade) | content sha256 | `92091ae8` |
-| `m1m6_expected_differences.json` (**current**: transcribed from the narrowing grade) | content sha256 | `c2f0d920` |
+| `m1m6_expected_differences.json` (**intermediate**: transcribed from the narrowing grade) | content sha256 | `c2f0d920` |
+| `m1m6_expected_differences.json` (**current**: §12.4's strike applied to the `notes` array only) | content sha256 | `2e5f3d52` |
 | `compare_m1_m6.py` (narrowed at `63262a3a`, graded FIT at `fba7da70`) | content sha256 | `5dc92487` |
 | `test_compare_m1_m6.py` (same) | content sha256 | `762fac14` |
 | `measure_k0_farend_f1b_f17b.sh` (post-repair) | content sha256 | `c40e6b54`, 15722 bytes |
@@ -387,6 +400,32 @@ of the mtime we then had to investigate.
 during the run that produced the filed record. What weakened is the confidence available *from the
 mode bits*, not the state of the artifact. Whether to `chmod` `.git` read-only is a decision for
 Joseph, not a silent repair to a frozen artifact.
+
+#### 11.1.1 RULED (Joseph, 2026-08-25): do NOT `chmod` `.git`. Produce a bundle receipt instead.
+
+**Ruling: do not `chmod` `.git` read-only, and revert it if it was applied. Verified NOT applied** --
+`/pscratch/sd/j/josephrb/k0r2/clean/.git` measured `drwxrwx---` on 2026-08-25 *after* the ruling,
+i.e. unchanged from the table above, so there is nothing to revert.
+
+Two reasons, in the order Joseph gave them:
+
+1. **It is an accident guard the tree owner undoes in one command**, so it is not a control. It
+   raises the cost of an accident and does nothing against a decision.
+2. **It breaks `git worktree add`, which is this repo's MANDATED mechanism for audit and review
+   work** (`CLAUDE.md`: audit and review work is read-only and uses an isolated worktree). A guard
+   that disables the audit path costs more than the accident it prevents.
+
+The second reason was **not** in this lane's framing, which had scored the chmod "technically safe"
+on the strength of this measurement: on an equivalent read-only replica, all twelve read paths F-1(b)
+uses returned rc=0 with no index write, all write paths failed rc=128, and `clone` / `archive` /
+`bundle` survived -- **`worktree add` was the ONLY thing that broke.** This lane reported that as a
+narrow exception. It is the load-bearing case, and reporting it as an exception is how a measurement
+that contained the answer got relayed as a clearance.
+
+**What is ordered instead: a `git bundle` plus a recorded `sha256`.** The property the freeze actually
+lacks is **detectability**, not resistance -- nothing currently distinguishes "the pinned state is
+intact" from "nobody has looked". A bundle with a recorded digest is inspectable by someone who was
+not there, and it fails loudly rather than silently. Filed as a `state/` receipt.
 
 ## 12. Open determinations delegated to the grader (Joseph, 2026-08-25)
 
@@ -486,6 +525,12 @@ The note was then updated per §12.1's first branch, `92091ae8` → **`c2f0d920`
 of the narrowing grade and verified inert to behaviour (parses; comparator still returns the filed
 `32/0/32` at exit 20; suite 81/81). Both earlier digests are preserved in §11 as as-of referents.
 
+**Moved once more by §12.4's strike, `c2f0d920` → `2e5f3d52`.** Inertness re-established more sharply
+than by re-running: `schema` and `entries` are **structurally equal** across the change and only
+`notes` moved (103 → 109 strings), and `compare_m1_m6.py` contains **zero** occurrences of `notes`
+against **6** of `"entries"` — so the edited region is not on any code path, rather than merely
+having produced the same answer once. Suite re-run in a clean detached worktree: **81/81**.
+
 **Newly accepted = 0**, independently measured over 115160 corpus-derived patterns scored in separate
 processes against one serialized population: accepted 42997 → 773, with
 `accepted_new \ accepted_old` empty. That was the column that had to be empty.
@@ -498,6 +543,42 @@ than constituting a separate finding.
 
 **None of this changes the Gate-2 FAIL recorded in §1.** No new compute and no Gate-2 filing is
 authorized by anything in this section, and a passing grade confers neither.
+
+### 12.4 RULED (Joseph, 2026-08-25): the dead literal stays. NO CHANGE.
+
+The question put to Joseph: a literal naming a file or field that does not exist is **accepted** by
+`bad_pattern` and reaches nothing, so a reviewer now told to "name the exact file" can typo one and
+get a whitelist row that reads as live cover. Should that be a refusal rather than a report?
+
+**Ruling: no change.** The failure is **fail-closed under-coverage, in the direction OPPOSITE to
+D-3**, and it does not justify a repair that has no correct form.
+
+Measured -- and this is the measurement the framing that reached Joseph had omitted: a typo'd row
+**suppresses nothing.** With `M-4.behin` whitelisted while `M-4.behind` genuinely differs, the
+comparator still exits **20, UNEXPECTED**; the finding is reported, not swallowed. A dead row
+under-covers and can never over-cover. D-3's fail-open let a real difference through unreported; this
+lets a real difference be reported while its excuse sits unused. Opposite directions, and only the
+first is a hazard to a gate. Supporting: `expected_entries_unused` reaches neither the exit code nor
+the verdict, so promoting it is a new failure mode, not a stricter reading of an existing one.
+
+**STRUCK, as unsatisfiable:** the middle option this lane proposed -- *"an unused expected entry must
+force a non-zero exit"*. A **correct** entry is unused whenever the two documents agree, which is the
+outcome the instrument exists to certify, so the rule fails the all-agree case. Recorded here struck
+rather than omitted, because it is the obvious repair and the next lane will propose it.
+
+**STRUCK, as a population/qualifier conflation:** the figure **"517 of the 773"** accepted patterns
+being dead literals -- at `GRADE-20260825-selector-narrowing-fitness.md:456` and transcribed from
+there into `m1m6_expected_differences.json`. That ratio is a property of a **generator emitting every
+prefix of every path**, not of anything a reviewer types; the shipped list contains **one** live
+pattern. Leaving it in the record invites exactly the conflation that produced the retracted
+§13.2. The note is corrected in the same commit as this section. The grade is another lane's
+artifact and is **NOT CITABLE for that figure**; this lane records the strike rather than editing a
+filed grade it did not author.
+
+**Owed and undeliverable, stated rather than left implicit:** the narrowing grade also needs its
+§9 corrected (the retracted 265 claim, §13.2 here). Its author is not a live session
+(`ListAgents`, 2026-08-25: no reachable peer), so no notification was sent. The correction lives here
+and in §13.2; the grade's overall verdict (FIT, no condition) is unaffected by either strike.
 
 
 ## 13. Withdrawn and non-citable: three mutation figures
@@ -608,6 +689,12 @@ quoted in a docstring **must name its population and qualifiers inline**, and a 
 figure **must state the reading it scored**. Both graders here did correct arithmetic over
 differently-defined sets; no amount of "check more" would have caught that, and stating the reading
 would have caught it immediately.
+
+**ADOPTED (Joseph, 2026-08-25), and it fixes the relay rather than the figure.** A negative result --
+"cannot reproduce" -- is **not admissible as input to a ruling section** unless it carries (a) the
+readings tried, **verbatim**, and (b) the result of a **search for prior grades touching the same
+figure**. The rule above fixes the figure and the grade; this one fixes the step where it actually
+broke, which was the relay. Both are in force.
 
 ### 13.3 My own briefing was self-contradictory, and the grader caught it
 

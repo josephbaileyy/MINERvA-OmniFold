@@ -40,7 +40,18 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   defects corrected in `38a7b16b` whose **old explanations are retracted, not preserved**, one
   irreparable unanchored "233 behind main" in `a3ed8631`, and the bounded dotless-pattern fail-open
   that leaves the filed record unaffected. `MANIFEST.tsv` drift is routed **out** of this verdict to
-  F-14 / §7.0.7.
+  F-14 / §7.0.7. **Three further rulings, 2026-08-25.** §11.1.1: **do NOT `chmod` the frozen
+  deploy's `.git`** — verified not applied — because it is an accident guard the tree owner undoes in
+  one command AND it breaks `git worktree add`, this repo's mandated audit mechanism; a **`git bundle`
+  plus a recorded `sha256`** is ordered instead, since the property the freeze lacks is
+  **detectability**, not resistance. §12.4: **the dead literal stays, NO CHANGE** — a typo'd
+  whitelist row is **fail-closed UNDER-coverage, the direction OPPOSITE to D-3**, and suppresses
+  nothing (measured: still exit **20 UNEXPECTED**); the proposed "unused entry ⇒ non-zero exit"
+  middle option is **STRUCK as unsatisfiable**, because a correct entry is unused whenever the two
+  documents agree, and the figure **"517 of the 773"** is **STRUCK as a population conflation**.
+  §10.2: the register is **CLOSED for this pass**; the third independent origin against which Gate 2
+  will be re-evaluated is the `codex-school` dispatch, and there is **no compute until it lands on
+  its own evidence.**
 
 - [`DISCIPLINE-20260825-f14-coupling-comparator-repair-lane.md`](DISCIPLINE-20260825-f14-coupling-comparator-repair-lane.md)
   — **One F-14 / §7.0.7 manifest-coupling omission by the independent comparator-repair lane,
@@ -138,11 +149,25 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   varying: clean tree **silent** (so the instrument is not always-on), staged edit and unstaged edit
   give **byte-identical warning text and equal rc**. A lane cannot use this output to tell whether it
   is about to break the F-14 coupling. Measured consequence: six coupling omissions across two lanes
-  in one day, one of them with the warning's own sentence recorded as the reasoning. **Owned defect
-  with an unassigned owner** — a repair must add an arm that FIRES on dirty-and-not-staged, stays
-  SILENT on dirty-and-fully-staged, and covers the opposite direction (staged but not committed),
-  which an obvious implementation will miss. **NOT** citable for any Gate-2 clause, **does not alter
-  Gate 2's FAIL**, is not part of the D-3 repair, and excuses no omission.
+  in one day, one of them with the warning's own sentence recorded as the reasoning. The
+  discriminating fact **already exists and is discarded** at `generate_manifest.py:328`, where the
+  porcelain `XY` code is dropped in the same expression that builds the dirty set. A repair must add
+  an arm that FIRES on `' M'`, stays SILENT on `'M '`, and covers the opposite direction on `'MM'` —
+  **corrected 2026-08-25**: the third arm previously demanded "staged but not committed", a **future
+  fact no implementation inside the tool can observe**, and was therefore unsatisfiable. **In scope,
+  same family:** default-mode `--check` silently absorbs another lane's untracked files (rc=1, 537
+  rows) while `--committed-only` gives rc=0, 533 — that rc=1 is the instrument reporting and must not
+  be "repaired". **Distinguish it from a real one:** hours later `e30dbd45` *committed* those four
+  paths without regenerating, so `main` went rc=1 in **both** modes for a genuinely different reason
+  (a third lane's F-14 omission, measured at
+  `DISCIPLINE-20260825-f14-manifest-coupling-omissions.md` §4.2 and regenerated here). The two are
+  indistinguishable from the exit status alone. **§6 DISPATCH (Joseph, 2026-08-25): the independent implementer is `codex-school`**,
+  re-deriving from this record and the artifacts and **not** from the close-out lane's reasoning or
+  the advisory lane's analysis; the grader must be a third party. **The publication close-out lane is
+  disqualified from BOTH** — it authored §4, and §4 is a *specification*, which is the prong ruling 3
+  turns on (an earlier version of that section wrongly cleared itself on the tool-authorship prong).
+  **NOT** citable for any Gate-2 clause, **does not alter Gate 2's FAIL**, is not part of the D-3
+  repair, and excuses no omission.
 
 
 - Live snapshot: [`LIVE-STATE.md`](LIVE-STATE.md); run its freshness check before use.
@@ -393,7 +418,9 @@ built all of these and is disqualified from grading them.
   "265 of 721" docstring figure does not reproduce is **RETRACTED — see DECISION §13.2**: 265
   reproduces exactly as *refused ∧ one field name ∧ touching no `M-2`*, the D-3 grade had already
   graded and affirmed it, and `accepted` also being 265 is a coincidence (456+265=721). The
-  docstring needs a missing qualifier, not a retraction. §8 is the accepted/rejected shape table the `m1m6_expected_differences.json`
+  docstring needs a missing qualifier, not a retraction. **Its §8's ratio "517 of the 773" is STRUCK
+  by DECISION §12.4** — a property of a generator emitting every path prefix, not of anything a
+  reviewer types — so this grade is **NOT CITABLE for that figure**; the rest of §8 stands. §8 is the accepted/rejected shape table the `m1m6_expected_differences.json`
   prose note is to be transcribed from under §12.1. **Grades no F-number, discharges no clause,
   authorizes no rehearsal, no filing and no compute; Gate 2 stays FAIL and open**, and per §10.1 a
   separate readiness check still gates step 4. Expires mechanically when any of three pinned digests
