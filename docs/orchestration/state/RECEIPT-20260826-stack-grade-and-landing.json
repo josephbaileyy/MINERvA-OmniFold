@@ -1,0 +1,256 @@
+{
+  "schema": "stack-grade-and-landing-receipt/v1",
+  "recorded_utc": "2026-08-26T22:43:30Z",
+  "recorded_by": "claude-school-main (publication close-out lane) -- the AUTHOR of the graded commits",
+  "authority": "Codex proxy under a delegation Joseph gave that session directly, authenticated by Joseph. This receipt is EVIDENCE ONLY. It alters no scientific status, no adoption, no claim, no code, no launcher and no generated state.",
+  "CITABLE_FOR": [
+    "The exact 54-commit range that landed on main and the proof it was a pure fast-forward.",
+    "The independent graders' verdicts, preserved verbatim with pre- and post-copy digests.",
+    "The overall FIT and the attested tested shas for P1-P5.",
+    "The two author corrections (P6 phrasing, P7 unit framing).",
+    "The pre-existing root_6_28 pytest caveat.",
+    "The faulty audit instruments whose output was DISCARDED rather than reported."
+  ],
+  "NOT_CITABLE_FOR": [
+    "Any Gate-2 clause. GATE 2 REMAINS FAIL.",
+    "Scientific adoption, covariance construction, or any publication claim.",
+    "Authorizing compute, a rehearsal, or launcher execution on data.",
+    "Discharging any lane's F-14 filing.",
+    "Use or quoting of any product of run k0-aa67c426-20260824T145751Z."
+  ],
+  "landed_range": {
+    "base": "3ae656951734bc90371bd64c56ccc4ce970b1470",
+    "tip": "d0decbd35b0c4986dc31286a221220d3a29555d1",
+    "commits": 54,
+    "pure_fast_forward": true,
+    "proof": "remote main was re-read immediately pre-push and equalled the base; `merge-base --is-ancestor <remote-tip> <target>` returned 0; the push used an exact non-force refspec of the full 40-char sha to refs/heads/main and reported `3ae65695..d0decbd3`, a fast-forward arrow, not a forced update.",
+    "pushed_from": "a CLEAN isolated worktree at the target sha, porcelain 0 (worktrees/oi136-probe-20260826)",
+    "post_push_remote_tip": "d0decbd35b0c4986dc31286a221220d3a29555d1",
+    "local_main_ref_after": "3ae656951734bc90371bd64c56ccc4ce970b1470",
+    "local_main_deliberately_not_moved": true,
+    "dirty_worktree_untouched": true
+  },
+  "work_packages": [
+    {
+      "package": "build-K0 execution-integrity line",
+      "range": "ae42ae8d..3bdda8cc",
+      "commits": 46,
+      "governance": "REVIEW-CONTRACT-20260822-k0-execution-integrity.md; Gate-1 round 7/8/9 verdicts; PACKET-20260823-round10; DECLARATION-20260823-k0-candidate-aa67c426; RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings -- all present at the tip"
+    },
+    {
+      "package": "dirty-warning delivery",
+      "commits": 2,
+      "shas": [
+        "9e9fc90e",
+        "e94170c0"
+      ],
+      "governance": "DEFECT section 7 delivery; graded FIT plus an independent supplement PASS"
+    },
+    {
+      "package": "closeout grade and delegated Gate-2 re-evaluation",
+      "commits": 2,
+      "shas": [
+        "b8dc7814",
+        "327bc105"
+      ],
+      "governance": "evidence and decision records, author-produced"
+    },
+    {
+      "package": "integration merges",
+      "commits": 2,
+      "shas": [
+        "b68e510b",
+        "1aa055d9"
+      ],
+      "governance": "author-produced; 1aa055d9 is one of the three graded this round"
+    },
+    {
+      "package": "newly graded instrument commits",
+      "commits": 2,
+      "shas": [
+        "57508b31",
+        "d0decbd3"
+      ],
+      "governance": "this round's FIT"
+    }
+  ],
+  "overall_verdict": {
+    "verdict": "FIT",
+    "grader_role": "agy-g2-gate-verifier",
+    "conversation_uuid": "dc93a0f8-6863-48c8-9b7b-76f22f6deae2",
+    "ruled_on_shas": [
+      "3ae656951734bc90371bd64c56ccc4ce970b1470",
+      "1aa055d9cd40964cff3b3d0d63ea616d26d5f515",
+      "57508b319a184cd968b191448aeaafb1bd8ed4b7",
+      "d0decbd35b0c4986dc31286a221220d3a29555d1"
+    ],
+    "cannot_attest_items": 0,
+    "attested_shas_P1_to_P5": {
+      "P1_pin_gate": "57508b319a184cd968b191448aeaafb1bd8ed4b7",
+      "P2_successor_probe": "d0decbd35b0c4986dc31286a221220d3a29555d1",
+      "P3_failopen_constants": "d0decbd35b0c4986dc31286a221220d3a29555d1",
+      "P4_step4_checks": "d0decbd35b0c4986dc31286a221220d3a29555d1",
+      "P5_conflict_resolutions": "1aa055d9cd40964cff3b3d0d63ea616d26d5f515",
+      "basis": "each attested by the grader from its own explicit script record, none inferred"
+    },
+    "what_FIT_closes": "the INSTRUMENT half only",
+    "base_to_tip_basis": "P8 compared base and tip over 1813 tests with IDENTICAL failure-name sets in both directions, and P9 reviewed the four highest-risk files base-to-tip. The 46 build-line commits' CONTENT was not re-reviewed by any grader this round; they carry their own Gate-1 governance, and the range audit below is AUTHOR-PRODUCED."
+  },
+  "suite_arms": {
+    "note": "all under PATH-corrected root_6_28 3.11.14 with an explicit writable TMPDIR",
+    "base_3ae65695": "1646 tests, 8 failures, 18 errors, 11 skipped",
+    "merge_1aa055d9": "1813 tests, 12 failures, 18 errors, 11 skipped",
+    "pin_57508b31": "1813 tests, 12 failures, 18 errors, 11 skipped",
+    "tip_d0decbd3": "1813 tests, 8 failures, 18 errors, 11 skipped",
+    "base_vs_tip_failure_names": "IDENTICAL; set difference EMPTY in both directions",
+    "interpretation": "12 -> 8 is the four OI-136 ratchet arms becoming green once the dated successor probe can complete. No new failure appeared in 1813 tests."
+  },
+  "author_corrections": {
+    "P6": "The author's brief said 'STALE 6 at base'. That was garbled: STALE 6 described the MERGED tree BEFORE the delisting commit, a state neither graded tree exhibits, since 1aa055d9 already contains the fix. agy-capacity-probe's 'REFUTED' is correct about the PHRASING. Substance stands and was independently confirmed: 52 -> 46 with NEW = 0 in both trees. The grader AGREED with this correction.",
+    "P7": "The author's '104 -> 101 BODY ROWS' was a real measurement OF THE DEDUPE OPERATION on the in-conflict file, reported where it reads as a base-to-merge delta. Base to merge is 97 -> 101, an INCREASE. No unit reconciles them as stated. What mattered was confirmed: at merge, 101 body rows == 101 distinct paths, so NO duplicate override path remains. The grader AGREED with this correction."
+  },
+  "caveats": {
+    "pre_existing_pytest": "test_g2_guards_collected.G2GuardsRun.test_guards_are_not_pytest_collectable_on_their_own FAILS AT BASE TOO because the mandated root_6_28 interpreter has no pytest. PRE-EXISTING, classified, NOT a regression and NOT introduced by this range.",
+    "P1_to_P5_sha_provenance": "the original VERDICT file recorded no tested shas; they were attested afterwards by the same grader from its own script record.",
+    "range_audit_is_author_produced": "the 54-commit scope audit was performed by the AUTHOR of two of those commits and has NOT been independently reproduced."
+  },
+  "discarded_faulty_instruments": [
+    {
+      "instrument": "a `numeric-ish-lines` grep over diffs",
+      "why_discarded": "its pattern included `\\*` and `/ *n`, which match shell globs and paths, so it reported 22-39 'numeric' lines in launcher diffs that contained none. Replaced by auditing every DELETED line individually."
+    },
+    {
+      "instrument": "a `join`-based per-file count comparison",
+      "why_discarded": "field mismatch made it print tip=0 for every row, which is impossible when the total rose from 49 to 58. Replaced by a file-list `comm` plus reading the actual added lines."
+    },
+    {
+      "instrument": "a bounded watcher using `{ ...; exit 1; }` in an `until` condition",
+      "why_discarded": "a brace group is not a subshell, so `exit 1` terminated the watcher on its first iteration instead of failing the condition. It never watched. Rewritten with `( ... )`. Cost nothing: the graded window was independent."
+    },
+    {
+      "instrument": "`ps -eo etime,stat -p <pid>`",
+      "why_discarded": "`-e` overrides `-p`, so it dumped every process. Replaced by `ps -o ... -p`."
+    }
+  ],
+  "no_scientific_change_measured": {
+    "deleted_lines_in_range": 78,
+    "classes": [
+      "hardcoded checkout-root literals (the OI-136 repairs)",
+      "path defaults re-derived from those roots -- same files, different root computation",
+      "invocation lines rewrapped through the guard -- same script, same arguments",
+      "mnv_guarded_run.py internals replaced by the semantic union"
+    ],
+    "invariant_science_tokens_base_to_tip": {
+      "draw-seed 1000": "39/39",
+      "throws 4": "3/3",
+      "expected-ids 1-100": "8/8",
+      "expected-ids 1-24": "6/6",
+      "block-knobs all": "3/3",
+      "block-knobs none": "6/6",
+      "estimator-seed ${EST_SEED}": "9/9",
+      "runEventLoopMC_MEFHC.root": "44/44",
+      "flux_integral_universes_MEFHC.root": "7/7"
+    },
+    "one_token_changed_and_resolved": "of_inputs_5d.npz 49 -> 58. Only four distinct added lines mention it: two are the bootstrap and seedscan invocations rewrapped through the guard with `--npz of_inputs_5d.npz` UNCHANGED, two are comments. No new data path, no changed input.",
+    "material_compute_actions_in_range": 0,
+    "commits_without_a_governed_route": 0
+  },
+  "gate_2": "FAIL. Unchanged by this landing and by this receipt. F-7(b)'s far half still requires a rehearsal that is not authorized; F-8(b)'s receipt path is unbuilt; F-2(b), F-3(b) and F-5(b) still require PRODUCER filings; F-17(b)'s :1471 half remains impossible for run k0-aa67c426-20260824T145751Z.",
+  "provenance_limitation_found_by_independent_review": {
+    "found_by": "the independent evidence review, agy-publication-redteam (440f42ef-c271-4f77-a410-a4a999166f44), whose Item 2 conclusion was a FAIL on this exact point while its Item 1 and Item 3 were clean. Recorded here rather than resolved by editing evidence.",
+    "the_gap": "docs/orchestration/runs/agy-g2-gate-verifier/20260826-stackgrade-VERDICT-P1-P8.md carries NO INTERNAL IDENTITY HEADER. Measured: grep for 'grader role' and 'conversation uuid' returns 0 matches in that file, against 2 matches in each of the other four preserved grader files. It begins '# VERDICT' / '## ENVIRONMENT'.",
+    "consequence": "its attribution to agy-g2-gate-verifier / dc93a0f8-6863-48c8-9b7b-76f22f6deae2 is AUTHOR-ASSERTED, not self-evidenced. The author of that assertion also authored the commits the file grades, which is the wrong direction for an unverifiable attribution. The file is NOT edited to add a header: it is a verbatim artifact and its digest is recorded.",
+    "cause": "the identity-header requirement was introduced in the LATER briefs. The window that produced this file predated it.",
+    "what_ATTEST_does_and_does_not_support": {
+      "supports": "VERDICT-ATTEST.md DOES carry the header, and it independently supports ONLY the P1-P5 authorship/attestation it actually states: which worktree and sha each of P1, P2, P3, P4 and P5 used, each attested from that grader's own script record.",
+      "does_NOT_support": "it does NOT extend to the P6, P7 or P8 content inside VERDICT-P1-P8.md, and it is not an attestation of that file's authorship as a whole. Measured: ATTEST contains 0 lines claiming P6, P7 or P8 as its own work.",
+      "separate_fact_not_offered_as_support": "the P6 and P7 results were independently re-derived by agy-capacity-probe in its own header-bearing file, and P8 was completed in agy-g2-gate-verifier's own header-bearing VERDICT-P8-probe.md. Those are separate artifacts; they do not attest the authorship of VERDICT-P1-P8.md."
+    },
+    "header_bearing_measured": {
+      "20260826-stackgrade-VERDICT-P1-P8.md": 0,
+      "20260826-stackgrade-VERDICT-P8-probe.md": 2,
+      "20260826-stackgrade-VERDICT-ATTEST.md": 2,
+      "20260826-stackgrade-VERDICT-P9.md": 2,
+      "20260826-stackgrade-VERDICT-P6-P7-anchor.md": 2
+    }
+  },
+  "preserved_evidence_files": [
+    {
+      "stored_path": "docs/orchestration/runs/agy-g2-gate-verifier/20260826-stackgrade-VERDICT-P1-P8.md",
+      "source_path": "/tmp/grade-stack-20260826/logs/VERDICT.md",
+      "kind": "INDEPENDENT GRADER OUTPUT, VERBATIM",
+      "author_role": "agy-g2-gate-verifier",
+      "conversation_uuid": "dc93a0f8-6863-48c8-9b7b-76f22f6deae2",
+      "sha256_pre_copy": "c41094162b2fd024a9e149318b8fedca2acf70ac0bf56ea289b8142aac2033f2",
+      "sha256_post_copy": "c41094162b2fd024a9e149318b8fedca2acf70ac0bf56ea289b8142aac2033f2",
+      "bytes": 28689,
+      "verbatim_unmodified": true
+    },
+    {
+      "stored_path": "docs/orchestration/runs/agy-g2-gate-verifier/20260826-stackgrade-VERDICT-P8-probe.md",
+      "source_path": "/tmp/grade-stack-20260826/logs/VERDICT-P8-probe.md",
+      "kind": "INDEPENDENT GRADER OUTPUT, VERBATIM",
+      "author_role": "agy-g2-gate-verifier",
+      "conversation_uuid": "dc93a0f8-6863-48c8-9b7b-76f22f6deae2",
+      "sha256_pre_copy": "49fd92b6c7a1714632eb199e5ff1c23c25c501dd2a87d868dba9c465147e5079",
+      "sha256_post_copy": "49fd92b6c7a1714632eb199e5ff1c23c25c501dd2a87d868dba9c465147e5079",
+      "bytes": 4392,
+      "verbatim_unmodified": true
+    },
+    {
+      "stored_path": "docs/orchestration/runs/agy-g2-gate-verifier/20260826-stackgrade-VERDICT-ATTEST.md",
+      "source_path": "/tmp/grade-stack-20260826/logs/VERDICT-ATTEST.md",
+      "kind": "INDEPENDENT GRADER OUTPUT, VERBATIM",
+      "author_role": "agy-g2-gate-verifier",
+      "conversation_uuid": "dc93a0f8-6863-48c8-9b7b-76f22f6deae2",
+      "sha256_pre_copy": "841a7b18e28093f32b2338fa36c61ea24e9be3d26abb5e89d8b20975e9b5ae40",
+      "sha256_post_copy": "841a7b18e28093f32b2338fa36c61ea24e9be3d26abb5e89d8b20975e9b5ae40",
+      "bytes": 2865,
+      "verbatim_unmodified": true
+    },
+    {
+      "stored_path": "docs/orchestration/runs/agy-publication-redteam/20260826-stackgrade-VERDICT-P9.md",
+      "source_path": "/tmp/grade-stack-20260826/logs/VERDICT-P9.md",
+      "kind": "INDEPENDENT GRADER OUTPUT, VERBATIM",
+      "author_role": "agy-publication-redteam",
+      "conversation_uuid": "440f42ef-c271-4f77-a410-a4a999166f44",
+      "sha256_pre_copy": "16b31982649e7388f8043bfdd9eb334519f1c1a22f34bab96c548c82fbd2bb63",
+      "sha256_post_copy": "16b31982649e7388f8043bfdd9eb334519f1c1a22f34bab96c548c82fbd2bb63",
+      "bytes": 5964,
+      "verbatim_unmodified": true
+    },
+    {
+      "stored_path": "docs/orchestration/runs/agy-capacity-probe/20260826-stackgrade-VERDICT-P6-P7-anchor.md",
+      "source_path": "/tmp/grade-stack-20260826/logs/VERDICT-P6-P7-anchor.md",
+      "kind": "INDEPENDENT GRADER OUTPUT, VERBATIM",
+      "author_role": "agy-capacity-probe",
+      "conversation_uuid": "dc2b899d-a8b0-40a4-aa8d-707c49b391a3",
+      "sha256_pre_copy": "f9c0f3c3c354e39a04ddf4207569bd934d5bb6a16010675dafb5c12b8aa3a8f8",
+      "sha256_post_copy": "f9c0f3c3c354e39a04ddf4207569bd934d5bb6a16010675dafb5c12b8aa3a8f8",
+      "bytes": 1988,
+      "verbatim_unmodified": true
+    },
+    {
+      "stored_path": "docs/orchestration/state/AUTHOR-SYNTHESIS-20260826-stackgrade-anchoring.md",
+      "source_path": "/tmp/grade-stack-20260826/logs/ANCHORING.md",
+      "kind": "AUTHOR SYNTHESIS -- written by the AUTHOR of the graded commits, NOT grader output",
+      "author_role": "claude-school-main (publication close-out lane)",
+      "conversation_uuid": "n/a",
+      "sha256_pre_copy": "8f082103d755419a7b569fc9f04cebf4fc2ce409df3f09af17892c8aa7bb993f",
+      "sha256_post_copy": "8f082103d755419a7b569fc9f04cebf4fc2ce409df3f09af17892c8aa7bb993f",
+      "bytes": 1653,
+      "verbatim_unmodified": true
+    },
+    {
+      "stored_path": "docs/orchestration/state/AUTHOR-SYNTHESIS-20260826-stackgrade-reconciliation.md",
+      "source_path": "/tmp/grade-stack-20260826/logs/RECONCILIATION.md",
+      "kind": "AUTHOR SYNTHESIS -- written by the AUTHOR of the graded commits, NOT grader output",
+      "author_role": "claude-school-main (publication close-out lane)",
+      "conversation_uuid": "n/a",
+      "sha256_pre_copy": "2dc3be93fc5c8791c25a06466a491b1a1c985f85f666c5fbd993a7d0a3ebfe5d",
+      "sha256_post_copy": "2dc3be93fc5c8791c25a06466a491b1a1c985f85f666c5fbd993a7d0a3ebfe5d",
+      "bytes": 3385,
+      "verbatim_unmodified": true
+    }
+  ]
+}
