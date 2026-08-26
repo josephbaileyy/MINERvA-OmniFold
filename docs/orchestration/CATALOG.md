@@ -334,6 +334,23 @@ built all of these and is disqualified from grading them.
   `wall-clock of each measurement` are **not in `measure_m1_m6.py --json` at all**, so the record
   names them `UNAVAILABLE-BY-INPUT-SCHEMA` rather than deriving them from the tree as it is now.
   **It grades nothing:** F-17(b) is the F-18(b) reviewer's, who must be a fresh non-builder.
+- [`GRADE-20260825-d3-comparator-repair-fitness.md`](GRADE-20260825-d3-comparator-repair-fitness.md) —
+  **the independent grade of the D-3 repair (`c8a29082`) required by ruling 3**, at
+  `compare_m1_m6.py` `68b4af12` and `test_compare_m1_m6.py` `b355ecdc`. **Verdict: FIT to support a
+  future Gate-2 filing, conditionally** — D-3 is closed (all five fail-open spellings, including the
+  four the implementer newly found, refused; negative control restoring the pristine guard reddens
+  **16 arms**; producer-derived fixture 721/96/**0 accepted**). **The condition is mechanical**: the
+  expected list at filing time must contain no *partial* `M-1` selector — satisfied today, the
+  shipped list has one entry and no selector. **Partial wildcards are RULED (c), an ambiguity
+  requiring a specification decision, and ESCALATE to Joseph**: measured, the pre-repair guard
+  accepted them identically (so not an enlargement), but it accepted them through the very clause
+  that is D-3 (so not an admitted contract), and two negative controls FIRE — on the real
+  population `M-1[nd-unfolding/unified_throw_cov*].first_insert` silently suppresses **two** files
+  including the one whose omission was the F-17(a) failure, and a partial selector's reach is not
+  stable as the file population grows. **Three figures in the implementer's mutation matrix do NOT
+  reproduce** (5 methods, "reddens 4", "reddens 97"; measured 6, 1, 121). **Grades no F-number,
+  discharges no clause, authorizes no compute and no filing; Gate 2 stays FAIL and open.** Expires
+  mechanically when any of three pinned digests moves.
 - [`GRADE-20260825-f17b-comparison-instrument-fitness.md`](GRADE-20260825-f17b-comparison-instrument-fitness.md) —
   **an independent non-builder's fitness grade of that instrument against the F-17(b) CLAUSE, not
   against the spec.** Graded at `2790ba90` by digest; **records no F-number verdict and no gate
