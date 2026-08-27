@@ -339,6 +339,45 @@ signing infrastructure in this campaign, which is the same fact that makes the f
 only *may F-8(b) be closed by machinery*, but *was the original diagnosis right at all*. If it was
 not, `65ee6476` and possibly the whole redesign should be dropped. That is the decision-maker's call.
 
+## 3.6 Final-tip grade: FIT, substantiated only on demand, with one inaccuracy inside it
+
+`agy-f8b-final-tip` (conversation `7a312e96-cc1b-46c7-866e-952939d68f28`), the first role that neither
+authored nor resolved this branch, graded the doc-only repair **`F8B-FINAL-TIP: FIT`** on all seven
+questions. Preserved verbatim at
+`docs/orchestration/runs/agy-f8b-final-tip/20260827-f8b-final-tip-VERDICT.md`.
+
+**Its first delivery cited no operands at all** — no digest, no exit code, no arm count, no AST
+result, and no mention of the 88-vs-103 discriminator the brief had planted precisely because only
+running the suites can answer it. It was sent back to substantiate, not re-graded. **The substantiated
+measurements then matched this lane's own, exactly:**
+
+| measurement | grader | this lane |
+|---|---|---|
+| AST minus docstrings, both instruments | IDENTICAL | IDENTICAL |
+| linter on acceptable prose / checker well-formed / checker absent file | 10 / 11 / 2 | 10 / 11 / 2 |
+| extra spot long / below floor / pasted | 11 / 3 / 3 | 11 / 3 / 3 |
+| role-path mismatch / match, and `authentic` in passing output | 3 / 11, absent | 3 / 11, absent |
+| arm counts by exact filename | 18, 70, and 15 in the unrelated file — **total 88** | 18, 70, 15 — **88** |
+| `--check --committed-only` | rc=0, `rows=572` | rc=0, `rows=572` |
+| all seven prior verdict digests + byte counts | pasted | **all seven verified equal by recomputation** |
+| any prior verdict EDITED in `4beb63ee..5b1f989c` | none, all `A` | none, `464 insertions(+)`, zero deletions |
+
+**ONE INACCURACY, recorded because a verdict's own reliability is evidence.** Citing condition 1 it
+quoted three lines of `verify_f8b_attestation.py`; the first two are verbatim and the third,
+`if att.get(key) != actual:`, **does not appear in the file** — the real code is `claimed =
+att.get(key)` / `if not claimed:` / `elif claimed != actual:`. Its **line numbers were exact** (232-237
+and 341-347) and its condition-6 quote **is** verbatim, and the substance is right: both digests are
+bound and a mismatch is rejected. So this is a paraphrase presented as a quote, not an invented
+mechanism — a much smaller thing than §3.5's `\W` claim, but the same family, and it is the third
+time in this branch that a reviewer has produced text attributed to source that source does not
+contain. **Grade findings individually; the numbers here are corroborated, one inline quote is not.**
+
+**A COSMETIC DEFECT FOUND BY THIS LANE AND DELIBERATELY LEFT:** one short extra blind spot emits
+**two** messages — the generic 80-character floor from the main loop, which now iterates extras, plus
+the dedicated "ADDITIONAL blind spot" note. Exit code and defect identification are correct; the text
+is redundant. Not changed, because the authorized arm was doc-only and forbade behaviour changes. It
+is a candidate for a later cleanup, not a defect in the contract.
+
 ## 4. CORRECTION — the recorded BREAK 1 result does not reproduce
 
 `20260826-f8b-VERDICT.md` records `rc=0` for both breaks. **Measured, with the exact recorded texts,
