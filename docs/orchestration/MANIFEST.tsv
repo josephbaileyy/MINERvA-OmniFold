@@ -24,7 +24,7 @@ docs/orchestration/CLAIM-CLM-008.md	tracked	ARCHIVAL	document			terminal		exact-
 docs/orchestration/CLAIM-CLM-009.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	1564
 docs/orchestration/CLAIM-CLM-010.md	tracked	ARCHIVAL	document			terminal		exact-path-only	docs/open-items/verify_open_items_restructure.py	yes	4	53	8551
 docs/orchestration/CLAIM-CLM-011.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	1714
-docs/orchestration/CLAIM-CLM-012.md	tracked	ARCHIVAL	document			terminal		exact-path-only	docs/open-items/verify_open_items_restructure.py	yes	4	97	20772
+docs/orchestration/CLAIM-CLM-012.md	tracked	ARCHIVAL	document			terminal		exact-path-only	docs/open-items/verify_open_items_restructure.py	yes	5	97	20772
 docs/orchestration/CLAIMS.md	tracked	LIVE	ledger	fe-fps-campaign		open		route-only	docs/orchestration/generate_manifest.py;docs/orchestration/whose_row.py;nd-unfolding/pet/extract_fullevent_fps.py;nd-unfolding/tests/test_fullevent_extract.py	no	26	23	11557
 docs/orchestration/CONFIRMATION-20260823-builder-response-to-gate1-round4.md	tracked	LIVE	document		20260823	open		route-only		no	5	321	21331
 docs/orchestration/CONVENTION-document-retention.md	tracked	LIVE	document			open		route-only	docs/orchestration/live_doc_indexed.py	no	5	83	4925
@@ -54,8 +54,8 @@ docs/orchestration/DISCIPLINE-20260825-f14-coupling-comparator-repair-lane.md	tr
 docs/orchestration/DISCIPLINE-20260825-f14-manifest-coupling-omissions.md	tracked	LIVE	document		20260825	open		route-only		no	5	253	16663
 docs/orchestration/ENUMERATION-20260818-mii-root-payload-three-classes.md	tracked	ARCHIVAL	document		20260818	terminal		exact-path-only	nd-unfolding/mii_root_payload_classes.py	yes	1	442	28785
 docs/orchestration/FINDING-20260730-event-feature-nonfinite.md	tracked	ARCHIVAL	finding		20260730	terminal		exact-path-only	nd-unfolding/pet/extract_fullevent_fps.py;nd-unfolding/pet/fullevent_fps_dataloader.py;nd-unfolding/tests/test_b1_normalization_fix.py	yes	6	103	5781
-docs/orchestration/FINDING-20260807-checkpoint-is-not-the-trained-model.md	tracked	ARCHIVAL	finding		20260807	terminal		exact-path-only	nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/train_fullevent_nominal.py	yes	7	214	13382
-docs/orchestration/FINDING-20260807-step1-under-achieves.md	tracked	ARCHIVAL	finding		20260807	terminal		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	14	221	13873
+docs/orchestration/FINDING-20260807-checkpoint-is-not-the-trained-model.md	tracked	ARCHIVAL	finding		20260807	terminal		exact-path-only	nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/train_fullevent_nominal.py	yes	8	214	13382
+docs/orchestration/FINDING-20260807-step1-under-achieves.md	tracked	ARCHIVAL	finding		20260807	terminal		exact-path-only	docs/sep-09-presentation/make_attainment_figure.py;nd-unfolding/pet/check_canonical_designation.py	yes	16	221	13873
 docs/orchestration/FINDING-20260811-promotion-by-move-silently-repoints-artifacts.md	tracked	ARCHIVAL	finding		20260811	terminal		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	5	124	8326
 docs/orchestration/FINDING-20260822-a-hold-that-instructed-its-own-deletion.md	tracked	LIVE	finding		20260822	open		route-only		no	5	111	6931
 docs/orchestration/FINDING-20260822-clause-c-adopt-is-unreachable-under-its-own-pause.md	tracked	LIVE	finding		20260822	open		route-only		no	3	369	24738
@@ -79,10 +79,10 @@ docs/orchestration/HANDOFF-20260819-lane-e-data-only-cstat-smoke-57266000.md	tra
 docs/orchestration/HANDOFF-20260820-2154Z-publication-closeout.md	tracked	ARCHIVAL	document		20260820	terminal		exact-path-only		yes	3	312	20870
 docs/orchestration/HOLD-20260821-clause-c-verification.md	tracked	ARCHIVAL	document		20260821	terminal		exact-path-only		yes	6	66	4401
 docs/orchestration/INDEX-retracted-and-superseded-values.md	tracked	LIVE	index			open		route-only	docs/open-items/verify_open_items_restructure.py;docs/orchestration/findings_row_lint.py;nd-unfolding/pet/check_canonical_designation.py	no	21	196	37643
-docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/control_plane_lint.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	52	80	19674
+docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/control_plane_lint.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	53	80	19674
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	3	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	11	102	7448
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	39	576	116445
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	39	576	116496
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	3	184	13929
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/compare_m1_m6.py;docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/measure_m1_m6.py	no	15	146	8336
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	tracked	LIVE	document		20260823	open		route-only		no	6	239	14244
