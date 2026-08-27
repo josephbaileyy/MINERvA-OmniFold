@@ -1,0 +1,65 @@
+{
+  "C_ML": null,
+  "C_stat": null,
+  "attempt": 2,
+  "cancelled_downstream": {
+    "evaluation_57629031": {"allocated": false, "elapsed": "00:00:00", "state": "CANCELLED"},
+    "training_array_57629030": {"allocated": false, "elapsed": "00:00:00", "state": "CANCELLED"},
+    "validation_57629032": {"allocated": false, "elapsed": "00:00:00", "state": "CANCELLED"}
+  },
+  "diagnosis": {
+    "archived_weighted_target_sha256": "13d46574b8f8e904aee0d544b33ce0f4fcd3fd5a119b0a2fd64071c70c650c03",
+    "different_rows": 1141467,
+    "max_absolute_row_difference": 0.06442590430378914,
+    "mean_absolute_row_difference": 5.1480511900886795e-08,
+    "new_sum_float64": 1125311.0885482323,
+    "observed_rebuild_sha256": "ecc89300776eb29d630abd7f0a5f751f00836eb74987ef8b7cf8d10f85f7f0d0",
+    "old_sum_float64": 1125311.0963903777,
+    "p99_absolute_row_difference": 4.76837158203125e-07,
+    "same_dtype": true,
+    "same_shape": true,
+    "same_zero_count": true,
+    "settled_cause": false,
+    "supported_conclusion": "the frozen sklearn weighted target is not byte-reproducible in this fresh retry-2 process; the aggregate and most row differences are tiny, but the exact digest guard correctly refused it"
+  },
+  "existing_gate6_results_remain_blocked": true,
+  "logs": {
+    "stderr_sha256": "73557baf6b93160255b9c8d22c14d97b6b888bd2d27078955b8d88a14e0ffd3c",
+    "stdout_sha256": "9f14b50330de2289bb87c4423c16f81e1cafab58de8aa323124aae71c976bcb9"
+  },
+  "prohibitions_applied": [
+    "do_not_select_passing_subset",
+    "do_not_construct_C_ML",
+    "do_not_move_central",
+    "do_not_start_leg_2",
+    "do_not_retry_unchanged"
+  ],
+  "resource_consumption": {
+    "a100_hours": 0.0,
+    "cumulative_attempt_cpu_node_hours": 1.6925,
+    "retry2_cpu_node_hours": 1.5555555555555556
+  },
+  "runtime_evidence": {
+    "literal_target_published": false,
+    "scientific_quantity_measured": false,
+    "target_artifact_published_but_rejected": true,
+    "target_done_sha256": "fab504d07cb0bcc7b336d4c6b42f8c7b2e020f254223c48461d6bcf6cc13c429",
+    "target_sha256": "ecc89300776eb29d630abd7f0a5f751f00836eb74987ef8b7cf8d10f85f7f0d0"
+  },
+  "schema": "pet-v2-equivalence-changed-retry2-attempt-v1",
+  "status": "INVALID_OR_INCOMPLETE_WEIGHTED_TARGET_REPRODUCIBILITY",
+  "submission_receipt": "docs/orchestration/state/pet-v2-fixed-draw-equivalence-changed-retry2-submission-57629029.json",
+  "submission_receipt_sha256": "889264a5fc85b6746037dedcc5bdcb683f7120bdcd5fd24e83bc7a81943b11da",
+  "target_scheduler_terminal": {
+    "elapsed": "01:33:20",
+    "end_utc": "2026-08-26T23:11:07Z",
+    "exit_code": "1:0",
+    "job_id": "57629029",
+    "state": "FAILED"
+  },
+  "what_this_cannot_authorize": [
+    "relaxing or reinterpreting the byte-digest guard",
+    "scientific tuning or selecting a favorable subset",
+    "C_stat, C_ML, central movement, Leg 2, Gate 6, coverage, or publication adoption"
+  ]
+}

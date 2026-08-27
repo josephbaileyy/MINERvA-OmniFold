@@ -283,8 +283,29 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: 75b8f7c0af7d416a9af83e843ee768d615c2c8372a7b7e14906e561d32df9139, with the only other
 #: reported drift still the named pre-existing G2 launcher. This freezes new evidence and new
 #: executables; it does not refresh any historical binding or authorize a scientific result.
-RECEIPT_BINDING_COUNT = 135
-RECEIPT_BINDING_SHA256 = "75b8f7c0af7d416a9af83e843ee768d615c2c8372a7b7e14906e561d32df9139"
+#: MOVED 135 -> 140 ON 2026-08-26, DELIBERATELY, FOR PET-V2 CHANGED RETRY 3.
+#: Retry-2 target 57629029 passed its import/root controls but refused a freshly rebuilt weighted
+#: target whose digest differed from the frozen Gate-5 target. The retry-3 proposal adds exactly
+#: five live bindings and removes none:
+#:
+#:     docs/orchestration/state/pet-v2-fixed-draw-equivalence-changed-retry2-submission-57629029.json
+#:       889264a5fc85b6746037dedcc5bdcb683f7120bdcd5fd24e83bc7a81943b11da
+#:     docs/orchestration/state/pet-v2-fixed-draw-equivalence-changed-retry2-attempt-57629029.json
+#:       3e4bf9a44b51f55d21c76786470748b9b67a4aeb4f0d4d8e713eb0961e2e0e7e
+#:     nd-unfolding/pet/materialize_pet_v2_equivalence_target_retry3.py
+#:       4cbfdc1e66c8fe3f5b1927cc07658ddc20200bda355be7d51f5cf3ceac011b55
+#:     nd-unfolding/pet/validate_pet_v2_equivalence_result_retry3.py
+#:       d49e1096259b9d3ded11785aa008dbbe1cc2911b71a4a1c52f703ecf0ce94bda
+#:     nd-unfolding/pet/submit_pet_v2_equivalence_changed_retry3.sh
+#:       657b03cfe47b09d28f0e21f082de2ea9dffcae37e1fa23eade3c89c32f8053a8
+#:
+#: The staged inventory measured 140 rows at digest
+#: 197d29e0d1677bd6b7ac947a43f90ee29fb6f6a930948f57f263f3fc1d3d6c95. All five resolve and
+#: match. This is a new evidence/operand freeze: no historical digest was refreshed, the archived
+#: weighted target still has to match its original digest exactly, and inventory membership is
+#: neither a scientific result nor publication adoption.
+RECEIPT_BINDING_COUNT = 140
+RECEIPT_BINDING_SHA256 = "197d29e0d1677bd6b7ac947a43f90ee29fb6f6a930948f57f263f3fc1d3d6c95"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"
