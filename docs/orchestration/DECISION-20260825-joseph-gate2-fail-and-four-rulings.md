@@ -399,6 +399,71 @@ Neither correction changes the direction of the block.
 **§10.1 must be re-run on the successor tip.** A NOT READY that has been answered is not thereby
 READY, and this lane built the mechanisms, so it is not the check. **Gate 2 remains FAIL.**
 
+### 10.4 §10.1 re-run on the successor tip: NOT READY, on F-17(b) alone (2026-08-27)
+
+Prior rulings above are **not rewritten**. This subsection records the successor-tip re-run §10.3
+required.
+
+**Reviewer:** `agy-publication-redteam`, conversation `440f42ef-c271-4f77-a410-a4a999166f44`, against
+exact landed `main` `9f088f9a3e6b00e348e47a21b2a0358e51137028`. Verdict preserved byte-identically at
+`docs/orchestration/runs/agy-publication-redteam/20260827-readiness-10-1-successor-VERDICT.md`,
+sha256 `a02140faacd286b864f496aa8db905300abbec5b006eba89aa32e46654a48f39`, 14034 B. It carries **two
+deliveries in one file**: a first pass, then an appended `## CORRECTION AFTER COVERING SEARCH`.
+**The correction SUPERSEDES the first delivery's per-mechanism bases; the first is retained, not
+edited.**
+
+**TWO BASES IN THE FIRST DELIVERY WERE REFUTED BY MEASUREMENT.** Its F-7(b) **NO**, and its broad
+F-17(b) *"no receipt"* finding, both rested on a non-covering instrument: it grepped for a git **blob
+id**, while graders in this campaign pin **commit shas** and **content digests**. The briefing lane
+had made the same error one step later, restricting its own "covering" search to `runs/` and `state/`
+and so missing `docs/orchestration/GRADE-*.md` entirely.
+
+**CORRECTED INDEPENDENT TALLY, and the terminal line:**
+
+| clause | corrected | basis |
+|---|---|---|
+| **F-7(b)** | **YES** | `state/RECEIPT-20260826-stack-grade-and-landing.json`: `overall_verdict` FIT by `agy-g2-gate-verifier` (`dc93a0f8-6863-48c8-9b7b-76f22f6deae2`), `attested_shas_P1_to_P5.P1_pin_gate = 57508b319a184cd968b191448aeaafb1bd8ed4b7`, `cannot_attest_items: 0`, basis *"each attested by the grader from its own explicit script record, none inferred"*; blob `c1e745eb9e494ae7d9070515a323da5c953f224c` identical at that graded sha and at `9f088f9a`. `what_FIT_closes` is *"the INSTRUMENT half only"*, which is the correct scope for a prospective-mechanism question. |
+| **F-8(b)** | **YES** | `runs/agy-f8b-final-tip/20260827-f8b-final-tip-VERDICT.md` (sha256 `73b295c8…c4f7`), `F8B-FINAL-TIP: FIT`, graded sha `5b1f989c`; blobs `4ca2dbe3…` and `0b8baec5…` identical at graded sha and `9f088f9a`. |
+| **F-17(b)** | **NO** | three stacked causes, below. |
+
+**`READINESS-10-1-SUCCESSOR-CORRECTED: NOT READY`.**
+
+**THE PRECISE F-17(b) BASIS — it is NOT "no receipt exists".** Three tracked grade artifacts bear on
+the comparators, and none of them covers the mechanism as the readiness question defines it
+(`compare_m1_m6.py` **with** `measure_m1_m6.py`):
+
+1. **The current `compare_m1_m6.py` is covered only by a SCOPE-LIMITED grade.** Its content digest at
+   `9f088f9a` is `5dc92487bd5c2f6a82d2d4ba51ccd57fa73abeac6eb836ab0343e95206595301`, which appears in
+   exactly ONE of the three — `GRADE-20260825-selector-narrowing-fitness.md` (sha256 `ff273838…d3930`,
+   graded sha `63262a3a`), whose scope is fitness against the *selector-syntax-narrows* spec. It does
+   **not** appear in `GRADE-20260825-d3-comparator-repair-fitness.md` (`6ecb39af…0920c`, pins
+   `68b4af12…`) nor in the on-point `GRADE-20260825-f17b-comparison-instrument-fitness.md`
+   (`aa1b6eee…72fea`, graded sha `2790ba904ae31bebd3f96d9a77cf95d0d8698e2e`, pins `422ed9e7…`). **The
+   most relevant artifact pins a different revision than the one on the tip.**
+2. **The current `measure_m1_m6.py` is EXPRESSLY UNGRADED.** Its digest at `9f088f9a` is
+   `0fcd90f7c92a7071208e62d09ebc38956f1a83b11af41a469b4886a6e6786d79` — the exact digest the f17b
+   instrument grade lists, verbatim, as *"`docs/orchestration/measure_m1_m6.py` (input instrument, not
+   graded)"*. The component is byte-unchanged and still declared outside that grade's scope. A grade of
+   `compare_m1_m6.py` must not be stretched to cover it.
+3. **None of the three carries an identity header.** Measured independently: zero hits for grader
+   role or conversation uuid in all three artifacts. An unattributed grade cannot satisfy the
+   independence requirement §10.1 states.
+
+**DISCLOSURE ON HOW THE CORRECTION AROSE.** It was **prompted**: the briefing lane found the three
+`GRADE-*` artifacts in a whole-tree search, named them and the third one the authorization had not
+named, and told the reviewer both parties had over-narrowed. **The reviewer's F-7(b) reversal was
+therefore prompted, not independent.** What the reviewer did do independently: recompute all three
+artifact digests, recompute the component digests, extract the verbatim *"input instrument, not
+graded"* scoping, and find the absent identity headers. Those checks were re-run by the briefing lane
+and agree exactly.
+
+**WHAT THIS CHANGES: routing only.** F-7(b) and F-8(b) readiness are satisfied at `9f088f9a`, so the
+next step is **not** another §10.1 readiness check but one narrow independent grade of the F-17(b)
+prospective mechanism. **Overall readiness is NOT READY. GATE 2 REMAINS FAIL** on the six clauses of
+the delegated re-evaluation. Nothing here authorizes an F-17(b) grade, a rehearsal, compute, a
+scheduler write, F-8(b), Gate 2, covariance construction, adoption, F-14 discharge, quotation, or any
+publication claim. **OI-126 stays ruled** and no scientific state is touched.
+
 ## 11. Cited artifacts, with the field named
 
 Digests are content `sha256` truncated to 8 unless labelled otherwise. Note that a git **blob id** is
