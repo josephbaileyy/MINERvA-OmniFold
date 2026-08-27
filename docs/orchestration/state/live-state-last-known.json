@@ -9,8 +9,8 @@
         "errors": "0"
       },
       "host": "login21",
-      "at_utc": "2026-08-27T07:31:55Z",
-      "git_head": "f2a1efda"
+      "at_utc": "2026-08-27T20:51:39Z",
+      "git_head": "fe209bce"
     },
     "compute:57527866": {
       "value": {
@@ -19,8 +19,8 @@
         "errors": "none"
       },
       "host": "login21",
-      "at_utc": "2026-08-27T07:31:55Z",
-      "git_head": "f2a1efda"
+      "at_utc": "2026-08-27T20:51:39Z",
+      "git_head": "fe209bce"
     },
     "compute:57527869": {
       "value": {
@@ -29,8 +29,8 @@
         "errors": "none"
       },
       "host": "login21",
-      "at_utc": "2026-08-27T07:31:55Z",
-      "git_head": "f2a1efda"
+      "at_utc": "2026-08-27T20:51:39Z",
+      "git_head": "fe209bce"
     },
     "compute:57527870": {
       "value": {
@@ -39,8 +39,8 @@
         "errors": "none"
       },
       "host": "login21",
-      "at_utc": "2026-08-27T07:31:55Z",
-      "git_head": "f2a1efda"
+      "at_utc": "2026-08-27T20:51:39Z",
+      "git_head": "fe209bce"
     },
     "compute:57527872": {
       "value": {
@@ -49,8 +49,8 @@
         "errors": "none"
       },
       "host": "login21",
-      "at_utc": "2026-08-27T07:31:55Z",
-      "git_head": "f2a1efda"
+      "at_utc": "2026-08-27T20:51:39Z",
+      "git_head": "fe209bce"
     },
     "compute:57527873": {
       "value": {
@@ -59,8 +59,8 @@
         "errors": "none"
       },
       "host": "login21",
-      "at_utc": "2026-08-27T07:31:55Z",
-      "git_head": "f2a1efda"
+      "at_utc": "2026-08-27T20:51:39Z",
+      "git_head": "fe209bce"
     },
     "compute:57527874": {
       "value": {
@@ -69,8 +69,8 @@
         "errors": "none"
       },
       "host": "login21",
-      "at_utc": "2026-08-27T07:31:55Z",
-      "git_head": "f2a1efda"
+      "at_utc": "2026-08-27T20:51:39Z",
+      "git_head": "fe209bce"
     },
     "compute:57527875": {
       "value": {
@@ -79,20 +79,20 @@
         "errors": "none"
       },
       "host": "login21",
-      "at_utc": "2026-08-27T07:31:55Z",
-      "git_head": "f2a1efda"
+      "at_utc": "2026-08-27T20:51:39Z",
+      "git_head": "fe209bce"
     },
     "usage:codex-personal": {
-      "value": "85.0% weekly remaining; reset 2026-09-02T08:07:34+00:00; Full resets 0 available/0 protected",
+      "value": "97.0% weekly remaining; reset 2026-09-03T20:40:15+00:00; Full resets 0 available/0 protected",
       "host": "login21",
-      "at_utc": "2026-08-26T09:02:44Z",
-      "git_head": "9e9fc90e"
+      "at_utc": "2026-08-27T20:51:39Z",
+      "git_head": "fe209bce"
     },
     "usage:codex-school": {
-      "value": "71.0% weekly remaining; reset 2026-09-02T00:18:03+00:00; Full resets 0 available/0 protected",
+      "value": "59.0% weekly remaining; reset 2026-09-02T00:18:03+00:00; Full resets 0 available/0 protected",
       "host": "login21",
-      "at_utc": "2026-08-26T09:02:44Z",
-      "git_head": "9e9fc90e"
+      "at_utc": "2026-08-27T20:51:39Z",
+      "git_head": "fe209bce"
     },
     "usage:gate": {
       "value": {
@@ -100,8 +100,8 @@
         "rc": 0
       },
       "host": "login21",
-      "at_utc": "2026-08-26T09:02:44Z",
-      "git_head": "9e9fc90e"
+      "at_utc": "2026-08-27T20:51:39Z",
+      "git_head": "fe209bce"
     },
     "waker:events": {
       "value": {
@@ -119,8 +119,8 @@
         "verdict": "loud"
       },
       "host": "login21",
-      "at_utc": "2026-08-27T07:31:55Z",
-      "git_head": "f2a1efda"
+      "at_utc": "2026-08-27T20:51:39Z",
+      "git_head": "fe209bce"
     },
     "waker:watches": {
       "value": {
