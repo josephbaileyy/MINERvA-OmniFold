@@ -464,6 +464,126 @@ the delegated re-evaluation. Nothing here authorizes an F-17(b) grade, a rehears
 scheduler write, F-8(b), Gate 2, covariance construction, adoption, F-14 discharge, quotation, or any
 publication claim. **OI-126 stays ruled** and no scientific state is touched.
 
+### 10.5 The F-17(b) prospective mechanism was graded: NOT FIT, on two independent SPEC bases (2026-08-27)
+
+§10.4 left exactly one open readiness item: a narrow independent grade of the F-17(b) prospective
+mechanism. The delegated Codex authority commissioned it as **one read-only arm**, and **REVISED the
+proposed scope** — a two-file grade of `compare_m1_m6.py` plus `measure_m1_m6.py` was ruled too narrow
+for the mechanism the SPEC actually defines — to the **whole eight-file coupled chain**: the two
+instruments, their three unit-test suites, `m1m6_expected_differences.json`,
+`preserve_f17b_record.py`, and `measure_k0_farend_f1b_f17b.sh` by static inspection only.
+
+**Reviewer:** role `agy-capacity-probe`, conversation uuid `dc2b899d-a8b0-40a4-aa8d-707c49b391a3`.
+Neither built nor previously graded any component of this chain. Role and uuid are the artifact's
+first two lines — the identity headers all three *tracked* F-17 grade artifacts lack (§10.4).
+
+**Tip graded:** `7d13066e2a27c672e14124f87ed6ce9f31328550`, the exact landed `main` at the time,
+existence proven with `git cat-file -e <sha>^{commit}` rather than bare `rev-parse --verify`.
+
+**Artifact:** `docs/orchestration/runs/agy-capacity-probe/20260827-f17b-mechanism-VERDICT.md`,
+content sha256 `1a10138997635dd70134fcd68888702d32ff9111417d5c85e026aee471472f72`, **13699 bytes**,
+preserved **byte-identically** from the reviewer's `/tmp` original (`cmp` IDENTICAL).
+
+**Two terminal lines, both preserved, and the second supersedes the first:**
+
+- `F17B-MECHANISM: NOT FIT` — the original delivery, still at its original offset, unedited.
+- `F17B-MECHANISM-CORRECTED: NOT FIT` — the superseding line, after the appended supplement.
+
+**The supplement was PROMPTED, and the artifact says so in its own first sentence.** The delegated
+authority **BLOCKED** preservation of the original 6838-byte receipt: the NOT FIT *direction* was
+substantively supported, but the receipt was procedurally incomplete against the brief (B1–B6 were
+summarised as exit codes rather than reported as reproducible inputs) and three classifications
+needed re-evaluation. The reviewer was told, in writing, not to harden a finding because it was asked
+to re-examine one and not to soften one because the authority called the direction supported. The
+original 6838-byte prefix hashes to `f7fb32b5b1a13dd6432b9c5fbcd0e8a1cd6442c530b0f22a9653b50652d79365`
+and `cmp -n 6838` against the snapshot is IDENTICAL, so the supplement is provably append-only.
+
+**PRESERVED AS GRADER OUTPUT, EXPLICITLY NOT AS AN EXACT REPLAY RECEIPT.** The supplement abbreviates
+several fixture and command paths as `/tmp/...` (§3, at the B1, B4 and B6 transcripts). The controls
+are therefore **not literally replayable from these bytes alone**, even though every fixture carries a
+content sha256. This limitation is recorded here rather than left to be discovered, and this artifact
+**must not be promoted to a replay receipt** without a fresh run that emits absolute paths.
+
+#### The evaluated bases, stated precisely
+
+1. **Missing measurement wall-clock — a strict SPEC R6 violation and a temporal-provenance gap.**
+   R6 requires the output to carry *"each input's sha256, each tree's identity from R3, the
+   instrument's own version, and the wall-clock of each measurement,"* and states that *"a comparison
+   whose operands cannot be recovered later is not evidence."* `measure_m1_m6.py` emits **no timestamp
+   construct of any kind** — a search for `datetime|time.|utcnow|strftime|timestamp|wall_clock`
+   returns nothing — and `compare_m1_m6.py:440` records `"measurement_wall_clock": UNAVAILABLE`. This
+   is independent of the contract's temporal clauses and is alone sufficient for NOT FIT.
+
+2. **Missing `detached-or-branch` identity — a strict SPEC R3 violation, even though path + HEAD may
+   satisfy the narrower contract identity question.** R3 requires each tree's identity to state
+   *"(resolved path, `git rev-parse HEAD`, detached-or-branch, porcelain count), and the unit."*
+   `compare_m1_m6.py:446` records `"branch_or_detached": UNAVAILABLE`. The reviewer's Item D judged
+   that path + HEAD resolves the identity the **contract's** F-17 row needs, and that judgement is
+   preserved; the supplement's §5 finds the **SPEC** nonconformant. Both readings stand because they
+   are about **different operands** — §5 is not a retraction of Item D. The SPEC binds independently,
+   so this too is alone sufficient for NOT FIT.
+
+3. **The preserver is not digest-bracketed and can be swapped across its own invocation.** The
+   drift bracket in `measure_k0_farend_f1b_f17b.sh` covers `MEASURER`, `COMPARATOR` and `EXPECTED`
+   only (`:167`, `:176`, `:187`, `:188`, `:192`, `:193`), tested at `:199-201` with `exit 13`. A
+   search for `PRESERVER_PRE|PRESERVER_POST` returns **no match**. A swapped preserver could
+   fabricate `DURABLE_RECORD`, bypass the atomic no-clobber, or exit 0 having written nothing, and
+   the bracket would not notice.
+
+4. **Measurer nonzero rc lacks an immediate short-circuit, but the chain is still fail-closed
+   through comparator refusal — so this is wasted-work / hardening, NOT a fail-open publication
+   path.** At `:171-174` the measurer's `rc` is captured and its error tail printed with **no exit**.
+   Reachability was then determined rather than asserted: a failed measurer yields empty or malformed
+   JSON, the comparator refuses with `EXIT_REFUSAL_INPUT=4`, and `4` falls outside the script's
+   `case "$crc" in 0|10|20)` gate at `:208`, which exits before the preserver is ever invoked. **No
+   nonzero measurer can reach a completed or preserved record.** Two of the three stages gate their
+   exit code (`crc` at `:208`, `prc` at `:217-221`); only the measurer's does not.
+
+#### What passed, recorded so the repair does not re-litigate it
+
+All ten component digests recomputed by the reviewer and matched. The three unit-test suites were run
+**by exact filename, not by glob** — this campaign has already recorded a wrong arm count produced by
+a glob — giving `Ran 81 / OK`, `Ran 9 / OK`, `Ran 3 / OK`, all rc=0. Controls B1–B6 returned
+`0 / 20 / 20 / 4 / 5 / 0-then-13`. **B1 positive-silence was run**, so the refusal arms are not
+satisfied by a program that refuses everything. **B3 is genuinely M-2-specific**, not a bare `rc=20`:
+the transcript carries `--- M-2 PERISHABILITY: DIFFERS  fields=['M-2.python']` distinct from the
+global unexpected list, which exercises the named **SPEC R7** perishability arm. The reviewer's own
+workspace was a detached clean checkout at the graded tip with `git status --porcelain` = 0 before and
+after, and no repository file was edited.
+
+#### Two further observations by the preserving lane, not by the grader
+
+Recorded because both bear on how a repair must be scoped, and neither is a graded finding:
+
+- **The drift bracket compares 12 hex characters, not a sha256.** Every `*_PRE` / `*_POST` capture is
+  `sha256sum "$FILE" | cut -c1-12`, so `:199-201` is a 48-bit prefix comparison.
+- **This script's digest is pinned in two records with two different values.** §11 of this decision
+  pins `measure_k0_farend_f1b_f17b.sh` at content sha256 `c40e6b54`, 15722 bytes, which matches the
+  graded tip; `receipts/RECEIPT-20260825-terminal-watch-f17b-durability.json` pins the same path at
+  `2132194fe1a3ed7a…`, which does not. The receipt's pin is already superseded in fact. Any repair
+  touching this file therefore has **two** pin surfaces, and the file is also a `MANIFEST.tsv` row,
+  so F-14 / §7.0.7 coupling applies: stage sources first, regenerate the manifest, commit in one pass.
+
+#### WHAT THIS CHANGES: routing only
+
+The one open readiness item of §10.4 is now **answered, and answered NOT FIT.** The next step is to
+**PROPOSE, for a separate decision by the delegated authority, ONE bounded repair of exactly the four
+surfaces above, followed by a FRESH independent full-chain grade** by a reviewer that is neither the
+implementer nor `agy-capacity-probe`. Note for that proposal, because it changes the file count: the
+comparator **hardcodes** both `UNAVAILABLE` fields in `identity_of()` at `compare_m1_m6.py:426-448`,
+whose docstring calls them *"the two fields the input schema cannot supply"* — so repairing
+`measure_m1_m6.py` alone **cannot** discharge R3 or R6, and any correct repair touches both
+instruments.
+
+**GATE 2 REMAINS FAIL** on the six independently sufficient clauses of the delegated re-evaluation at
+`327bc105`. **Readiness remains NOT READY. No rehearsal is authorized.** A fit instrument would not
+make an unrun far-end measurement exist: F-17(b)'s `:1471` half stays impossible for **this**
+rehearsal by construction, and F-2(b), F-3(b) and F-5(b) still want producer filings that do not
+exist. Nothing in this section authorizes a repair, a grade, a rehearsal, compute, a scheduler write,
+an F-8(b) receipt or discharge, F-14 discharge, F-18(b), Gate 2, covariance construction or adoption,
+quotation of any barred product, or any publication claim. **OI-126 stays ruled** and no scientific
+state, ledger, or product is touched by this section.
+
 ## 11. Cited artifacts, with the field named
 
 Digests are content `sha256` truncated to 8 unless labelled otherwise. Note that a git **blob id** is
