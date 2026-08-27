@@ -1,8 +1,15 @@
-# F-8(b) redesign — a linter that cannot pass, and an attestation that can
+# F-8(b) redesign — NOTHING IN THE TOOLCHAIN RETURNS 0
+
+> **SUPERSEDED TITLE, kept because prior verdicts cite this document:** *"a linter that cannot pass,
+> and an attestation that can"*. The second clause stopped being true at `65ee6476`. The filename
+> still says `attestation-gate`; the attestation checker is **not** the gate and the name is retained
+> only because five preserved verdicts and the MANIFEST bind to this path.
 
 **CITABLE FOR:** the design and exit-code contract of `verify_run_receipt_blind_spots.py` and
-`verify_f8b_attestation.py`; the measured correction to the recorded BREAK-1 result; two defects
-measured in the §10.1 readiness verdict.
+`verify_f8b_attestation.py` **as stated in §2, which is the current contract surface**; the measured
+correction to the recorded BREAK-1 result; two defects measured in the §10.1 readiness verdict.
+Sections 3.1–3.5 are a HISTORY of superseded states and are citable only as history — where they
+describe an exit-0 result they describe a version that no longer exists.
 
 **NOT CITABLE FOR:** discharge of F-8(b) — nothing here discharges it. **Gate 2 remains FAIL.** No
 rehearsal is authorized, none was run, no receipt for `k0-aa67c426-20260824T145751Z` is created or
@@ -50,8 +57,19 @@ Missing, incomplete and copied stay **three distinct codes**; collapsing them wo
 fired. `0` is unreachable by construction and `test_no_exit_constant_in_the_module_is_zero` plus
 `test_no_input_whatsoever_can_produce_exit_zero` are the encoded form of the ruling.
 
-**The gate is a separately recorded independent prose attestation.**
-`docs/orchestration/verify_f8b_attestation.py` returns 0 only when the attestation:
+**THE GATE IS A RECORDED AUTHORITY DECISION, NOT A PROGRAM.** No exit code discharges F-8(b).
+`docs/orchestration/verify_f8b_attestation.py` is a CONFORMANCE CHECKER over a recorded independent
+prose attestation. It has **no zero exit**:
+
+| exit | meaning |
+|---|---|
+| **11** | `ATTESTATION_WELL_FORMED` — complete and correctly bound. **Not a pass, not a discharge**, not a finding that the judgement is correct, and **not** a finding that the named reviewer wrote it. |
+| 2 | CANNOT CHECK — an input could not be read or parsed. |
+| 3 | REJECTED — any requirement below unmet. |
+
+`0` is unreachable by construction; `test_no_exit_constant_in_the_module_is_zero` and
+`test_no_attestation_whatsoever_can_produce_exit_zero` are the encoded form of that. It reaches **11**
+only when the attestation:
 
 1. binds the **exact** receipt sha256 **and** the **exact** linter-report sha256, both recomputed
    from disk at validation time — so editing either artifact afterwards invalidates the attestation
@@ -59,27 +77,42 @@ fired. `0` is unreachable by construction and `test_no_exit_constant_in_the_modu
 2. names **both** parties as `{role, conversation_uuid}` and rejects self-attestation on **either**
    field — a lane can rename itself, and one conversation can claim two roles;
 3. carries a written independence basis above an emptiness floor;
-4. gives a **distinct, non-empty** semantic finding for **each** of the four blind spots, in the
-   reviewer's own words, with duplicate-across-spots rejected after whitespace/case normalisation;
-5. explicitly addresses the copying / word-salad risk;
-6. ends in an **unambiguous** `PASS` — `FAIL`, `CANNOT CHECK`, absent, and `PASS WITH RESERVATIONS`
-   are all rejected;
-7. is not marked `superseded_by`, `draft` or `withdrawn`.
+4. gives a **distinct, non-empty** semantic finding of at least 80 characters for **each of the four
+   blind spots — a FLOOR, not a ceiling**: additional blind spots are welcome and held to the same
+   floor. Duplicates across spots are rejected on a **letters-only** normal form, and a finding with
+   no letters at all is rejected outright;
+5. explicitly addresses the copying / word-salad risk (≥80 characters);
+6. carries a `verdict` field of **`PASS`** — the REVIEWER's word, not this tool's. `FAIL`,
+   `CANNOT CHECK`, absent, and `PASS WITH RESERVATIONS` are all rejected. **A `PASS` in that field
+   still yields exit 11, never 0**;
+7. carries only declared top-level and party fields — the schema is **strict**, so an undeclared
+   field such as `verdict_hedging` is a rejection rather than something ignored;
+8. keeps identity fields printable **ASCII**, with `conversation_uuid` in canonical uuid form, and
+   roles compared on a punctuation-and-case normal form that **keeps digits**;
+9. omits `status`, or sets it to exactly `filed` — an **allowlist**; and omits `superseded_by`, or
+   names a real successor, a present-but-falsy value being a rejection;
+10. does not sit under `docs/orchestration/runs/<dir>/` with a `<dir>` disagreeing with the claimed
+   reviewer. That is a **refusal only** — the convention is not authentication, since any writer can
+   create any role directory, and agreement with it establishes nothing and is never reported.
 
 **Independence is checked structurally, never by grading prose.** Word-count, keyword-density and
 threshold-tuning fixes were explicitly ruled out and none was added. The comparison that does the
 work is two distinct conversation uuids, which is a fact a program can actually check.
 
-**WHAT THE PASS DOES NOT CLAIM,** and the tool prints this on every pass: it validates the recorded
-**decision and its bindings**, not the semantic truth of the judgement. A reviewer who writes four
+**WHAT EXIT 11 DOES NOT CLAIM,** and the tool prints all of this whenever it reaches 11: it checks the
+recorded **decision and its bindings**, not the semantic truth of the judgement, and not that the
+named reviewer wrote the file. A reviewer who writes four
 thoughtful-looking findings about a bad receipt produces a valid attestation of a wrong judgement.
 What is established is that a named party who is not the author judged **these exact bytes**, and
 cannot silently reuse that judgement for different ones.
 
 ## 3. Tests, and their power
 
-88 arms, all OK: 18 in `test_verify_run_receipt_blind_spots.py`, 70 in
-`test_verify_f8b_attestation.py`. Every requirement has an arm that **removes** it and asserts
+**88 arms, all OK: 18 in `test_verify_run_receipt_blind_spots.py` and 70 in
+`test_verify_f8b_attestation.py`.** Not 103 — **that figure, which this lane relayed and which
+reached an authorization, was wrong.** It came from running the glob `test_verify_*.py`, which also
+picks up the pre-existing, unrelated `test_verify_receipt_artifacts.py` (15 arms). 18 + 70 + 15 =
+103; the two F-8(b) suites are **88**. Cite the two suites by exact filename, never the glob. Every requirement has an arm that **removes** it and asserts
 rejection, and `EveryRequirementHasARemovalArm` reads the suite's own source so a future field added
 without a removal arm fails the suite.
 

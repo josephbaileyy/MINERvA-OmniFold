@@ -27,9 +27,13 @@ So the fix is not a better heuristic -- no word count, no keyword density, no di
 threshold, all explicitly ruled out. The fix is that **THERE IS NO GREEN TO CITE**. The best outcome
 this file can produce is exit 10, REVIEW_REQUIRED, which no pipeline can mistake for success.
 
-THE ACTUAL F-8(b) GATE IS ELSEWHERE: a separately recorded independent prose attestation, validated
-by `verify_f8b_attestation.py`. That validator is the only thing in this pair that can return 0, and
-it can do so only while bound to this linter's report digest and the receipt digest.
+THE ACTUAL F-8(b) GATE IS ELSEWHERE, AND IT IS NOT A PROGRAM: it is a recorded authority decision
+citing an independent prose attestation. `verify_f8b_attestation.py` checks that such an attestation
+is complete and correctly bound -- to this linter's report digest and the receipt digest -- and its
+best result is exit 11, ATTESTATION_WELL_FORMED. **NEITHER FILE IN THIS PAIR RETURNS 0.** Superseded
+history: an earlier version of that checker did return 0; two independent reviews ruled that a green
+exit beside a printed caveat is the same fail-open gate as this linter's old green, and it was
+removed. Nothing in the F-8(b) toolchain has a success status.
 
 EXIT CODES. 0 IS UNREACHABLE BY CONSTRUCTION and a test asserts it.
     10  REVIEW_REQUIRED -- mechanically acceptable. NOT a pass. Prose attestation still required.

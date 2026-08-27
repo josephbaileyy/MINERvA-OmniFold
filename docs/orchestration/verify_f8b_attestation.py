@@ -9,7 +9,10 @@ WHY THIS EXISTS. `verify_run_receipt_blind_spots.py` is a linter with no passing
 independent §10.1 readiness review ruled that a mechanical `rc=0` on prose is a FAIL-OPEN GATE --
 *"a label is insufficient protection against the systemic risk of a future lane simply citing the
 rc=0 result as proof of compliance"* -- and prescribed the shape used here: the linter emits a report
-requiring review, and the gate is *"a recorded attestation from the independent prose grader"*.
+requiring review, and -- in that review's words -- the gate is *"a recorded attestation from the
+independent prose grader"*. Two rounds later the gate was placed one step further out still: it is
+the AUTHORITY DECISION that cites such an attestation, because nothing mechanical can establish that
+the named grader wrote it.
 
 WHAT THIS VALIDATES, AND WHAT IT EXPLICITLY DOES NOT.
 
@@ -17,14 +20,15 @@ WHAT THIS VALIDATES, AND WHAT IT EXPLICITLY DOES NOT.
     not the receipt's author -- checked on BOTH role and conversation uuid, not on a prose
     assertion of independence -- recorded a concrete independence basis, gave a per-spot semantic
     finding in their own words for each of the four blind spots, addressed the copying and
-    word-salad risk head on, and reached an unambiguous PASS -- and that the attestation is bound by
+    word-salad risk head on, and recorded an unambiguous `PASS` IN THE VERDICT FIELD -- that word is
+    the REVIEWER's, and it yields exit 11 here, never 0 -- and that the attestation is bound by
     digest to the EXACT receipt and the EXACT linter report, both recomputed here from disk.
 
     IT DOES NOT PROVE THE SEMANTIC TRUTH of that decision. No program can. A reviewer who writes
     four thoughtful-looking findings about a bad receipt produces a valid attestation of a wrong
     judgement. What this buys is that the judgement was MADE, by a NAMED party who is NOT the author,
     against THESE EXACT BYTES, and that it cannot be silently reused for different bytes later.
-    That is the whole claim. The pass text says so.
+    That is the whole claim. The exit-11 text says so.
 
 THREE RESIDUAL HOLES, NAMED RATHER THAN PAPERED OVER. The independent implementation grade
 (`agy-f8b-impl-grade`, `d71dbff7-9710-4bd9-94e3-a0dc3ac436f0`) returned UNFIT on an earlier version
