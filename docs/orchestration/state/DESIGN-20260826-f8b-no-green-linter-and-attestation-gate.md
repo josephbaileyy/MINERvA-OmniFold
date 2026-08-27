@@ -78,7 +78,7 @@ cannot silently reuse that judgement for different ones.
 
 ## 3. Tests, and their power
 
-82 arms, all OK: 18 in `test_verify_run_receipt_blind_spots.py`, 64 in
+88 arms, all OK: 18 in `test_verify_run_receipt_blind_spots.py`, 70 in
 `test_verify_f8b_attestation.py`. Every requirement has an arm that **removes** it and asserts
 rejection, and `EveryRequirementHasARemovalArm` reads the suite's own source so a future field added
 without a removal arm fails the suite.
@@ -245,6 +245,66 @@ now rejected outright.
 **The transferable part:** a guard added to fix a reviewer's finding is unreviewed code, and it is
 written in a hurry under the impression that the thinking has already been done. Both of these were
 in the *fix*, not the original.
+
+## 3.5 A fourth, UNINVOLVED review dissents: `F8B-SOUNDNESS: UNSOUND`
+
+`agy-f8b-soundness` (conversation `c12551c8-3da6-43f4-be8b-129c6ad9f48c`) was commissioned because
+the previous reviewer said so itself — *"a fourth, uninvolved role is necessary"* — and because the
+first three parties all agreed with each other, which is the condition under which a shared wrong
+assumption survives. It was told it could conclude the whole redesign was theatre. **It did.** Its
+five findings are recorded here graded individually, because they are not of equal quality.
+
+### ONE FINDING IS REAL AND IS FIXED
+
+**The four blind spots were a CEILING, not a floor.** The validator rejected any `per_spot_findings`
+key outside F-8(a)'s four, so a rehearsal receipt that disclosed a **fifth** blind spot could not
+have that disclosure attested. *"The attestation validator restricts the reviewer to evaluating only
+those four hardcoded spots, actively rejecting any additional blind spots the producer might have
+found."* That is the opposite of what the clause wants and it is now reversed: the four are required,
+extras are welcome and are held to the same floor and distinctness. Nobody else caught it, including
+this lane, and it is the clearest argument for having commissioned a fourth read.
+
+### ONE FINDING IS REFUTED BY MEASUREMENT
+
+**The claimed underscore hole does not exist.** It reported that `_role_key` and `_skeleton`
+*"rely on the `\W` regex character class"*, which does not match underscore, so
+*"`close-out lane` can self-attest by naming the author `close_out_lane`"*.
+
+**Measured at the tip it reviewed: the file contains ZERO occurrences of `\W`.** The normalizers are
+`[^a-z]` and `[^a-z0-9]`, under which underscore IS stripped. `close-out lane` and `close_out_lane`
+both normalise to `closeoutlane` and **do collide**, so that self-attestation is caught; `finding 1`
+and `finding_1` both skeleton to `finding`. **The reviewer described an implementation it did not
+read** — the same failure this campaign already recorded once this week, in the review whose blocker
+started this whole sequence.
+
+### ONE IS OVERSTATED, AND IS TAKEN ONE-DIRECTIONALLY
+
+It proposed `docs/orchestration/runs/<role>/` as an identity mechanism *"the lane missed"*. It is not
+one: the attestation path is a command-line argument and any writer can create any role directory, so
+satisfying the convention proves nothing. Treated as a credential it would be precisely the false
+guarantee this redesign exists to remove. **Implemented as a REFUSAL ONLY** — a path under `runs/`
+naming a role other than the claimed reviewer is rejected; agreement earns nothing and is never
+reported. A test asserts that the passing output mentions neither the path nor authenticity.
+
+### TWO ARE DISSENT ON THE OPEN GOVERNANCE QUESTION, AND ARE RECORDED AS DISSENT
+
+> *is the no-green design sound rather than theatre?* **NO** — *"future lanes will inevitably wrap
+> them in constructs like `verify_f8b.py || [ $? -eq 11 ]`… This wrapper restores the very `rc=0`
+> 'green' the redesign tried to eliminate."*
+>
+> *was the original automation-bias diagnosis correct?* **NO** — *"a mechanical pre-filter returning
+> 0 simply means 'mechanical pre-conditions are met, proceed to human review.' It does not defeat
+> the human review; it enables it… The original pre-filter was adequate."*
+
+**This directly contradicts the two reviews that required the change**, and this lane does not resolve
+it. The wrapper argument is a good one and nobody in the chain had made it. **The count is now two
+reviews for the no-green design and one against, which is not a vote and should not be read as one.**
+The alternative it proposed — a signed artifact consumed downstream — is unavailable here: there is no
+signing infrastructure in this campaign, which is the same fact that makes the fourth hole open.
+
+**The governance question in §3.2 is therefore WIDER, not narrower, than when it was referred:** not
+only *may F-8(b) be closed by machinery*, but *was the original diagnosis right at all*. If it was
+not, `65ee6476` and possibly the whole redesign should be dropped. That is the decision-maker's call.
 
 ## 4. CORRECTION — the recorded BREAK 1 result does not reproduce
 

@@ -295,15 +295,70 @@ class ThePerSpotFindingsMustBeComplete(Fixture):
         att["per_spot_findings"]["shell-route"] = "?!." * 40
         self.assertRejected(att, "contains no letters at all")
 
-    def test_an_unknown_spot_key_is_rejected(self):
+    def test_an_ADDITIONAL_blind_spot_is_WELCOME_not_rejected(self):
+        """Reversed deliberately. Capping at four penalised a receipt that found a fifth.
+
+        `agy-f8b-soundness` caught this: the validator restricted the reviewer to F-8(a)'s four and
+        rejected anything more, so a more thorough rehearsal receipt could not have its extra
+        disclosure attested. The four are a FLOOR.
+        """
         att = valid_attestation()
-        att["per_spot_findings"]["invented-fifth-spot"] = FINDINGS["shell-route"] + " extra"
-        self.assertRejected(att, "unknown spot key")
+        att["per_spot_findings"]["a-fifth-spot-the-rehearsal-found"] = (
+            "The receipt also discloses that the guard cannot see imports performed through "
+            "importlib.reload after install() ran, which is not one of F-8(a)'s four and is real.")
+        rc, text = self.run_cli(att)
+        self.assertEqual(rc, A.WELL_FORMED_EXIT, text)
+
+    def test_an_additional_spot_is_held_to_the_SAME_floor_as_the_four(self):
+        att = valid_attestation()
+        att["per_spot_findings"]["a-fifth-spot"] = "yes"
+        self.assertRejected(att, "ADDITIONAL blind spot, which is welcome")
+
+    def test_an_additional_spot_PASTED_from_one_of_the_four_is_still_word_salad(self):
+        att = valid_attestation()
+        att["per_spot_findings"]["a-fifth-spot"] = FINDINGS["shell-route"]
+        self.assertRejected(att, "once digits, punctuation")
 
     def test_findings_not_an_object_is_rejected(self):
         att = valid_attestation()
         att["per_spot_findings"] = "all four are fine"
         self.assertRejected(att, "per_spot_findings is missing or not an object")
+
+
+class ThePathRoleCheckRefusesButNeverCertifies(Fixture):
+    """`agy-f8b-soundness` proposed runs/<role>/ as identity. It is not identity; it is a refusal.
+
+    Anyone can `mkdir` any role directory, so agreement proves nothing and must never be reported as
+    evidence. The arms below pin both halves: a mismatch rejects, and a match earns no credit in the
+    output.
+    """
+
+    def test_a_path_naming_a_DIFFERENT_role_than_the_reviewer_is_rejected(self):
+        att = valid_attestation()
+        p = pathlib.Path(self._d.name) / "docs" / "orchestration" / "runs" / "some-other-role"
+        p.mkdir(parents=True)
+        self.att = p / "attestation.json"
+        self.assertRejected(att, "is not authentication")
+
+    def test_a_path_that_AGREES_earns_no_credit_in_the_output(self):
+        att = valid_attestation()
+        p = (pathlib.Path(self._d.name) / "docs" / "orchestration" / "runs"
+             / att["independent_reviewer"]["role"])
+        p.mkdir(parents=True)
+        self.att = p / "attestation.json"
+        rc, text = self.run_cli(att)
+        self.assertEqual(rc, A.WELL_FORMED_EXIT, text)
+        self.assertNotIn("filed under", text)
+        self.assertNotIn("authentic", text.lower())
+
+    def test_a_path_outside_runs_is_not_checked_at_all(self):
+        rc, text = self.run_cli(valid_attestation())
+        self.assertEqual(rc, A.WELL_FORMED_EXIT, text)
+
+    def test_the_check_is_reachable_only_as_a_refusal(self):
+        self.assertIsNone(A.path_role_conflict("/x/docs/orchestration/runs/r/a.json", "r"))
+        self.assertIsNone(A.path_role_conflict("/x/elsewhere/a.json", "r"))
+        self.assertIsNotNone(A.path_role_conflict("/x/docs/orchestration/runs/q/a.json", "r"))
 
 
 class TheCopyingRiskMustBeAddressed(Fixture):

@@ -165,7 +165,38 @@ def _role_key(s: str) -> str:
     return re.sub(r"[^a-z0-9]", "", s.lower())
 
 
-def validate(att: dict, receipt_sha: str, report_sha: str) -> tuple[int, list[str]]:
+RUNS_SEGMENT = "docs/orchestration/runs/"
+
+
+def path_role_conflict(att_path: str, claimed_role: str) -> "str | None":
+    """A REFUSAL-ONLY consistency check. It can reject; it can NEVER certify.
+
+    `agy-f8b-soundness` proposed the `runs/<role>/` convention as an identity mechanism this repo
+    already has. It is NOT one: the attestation path is a command-line argument, and any writer can
+    `mkdir` any role directory, so satisfying it proves nothing. Treated as a credential it would be
+    exactly the kind of false guarantee this redesign exists to remove.
+
+    Used one-directionally instead: if an attestation happens to live under `runs/<dir>/`, a `<dir>`
+    that disagrees with the claimed reviewer is a refusal. Agreement earns nothing and is never
+    reported as evidence.
+    """
+    norm = att_path.replace("\\", "/")
+    if RUNS_SEGMENT not in norm or not claimed_role:
+        return None
+    tail = norm.split(RUNS_SEGMENT, 1)[1]
+    if "/" not in tail:
+        return None
+    dir_role = tail.split("/", 1)[0]
+    if _role_key(dir_role) != _role_key(claimed_role):
+        return ("the attestation is filed under %s%s/ but names %r as the independent reviewer. "
+                "A refusal only -- this convention is not authentication, since anyone can create "
+                "any role directory, and agreeing with it would establish nothing."
+                % (RUNS_SEGMENT, dir_role, claimed_role))
+    return None
+
+
+def validate(att: dict, receipt_sha: str, report_sha: str,
+             att_path: str = "") -> tuple[int, list[str]]:
     bad: list[str] = []
 
     if att.get("schema") != SCHEMA:
@@ -243,6 +274,11 @@ def validate(att: dict, receipt_sha: str, report_sha: str) -> tuple[int, list[st
                 bad.append("SELF-ATTESTATION on %s (%r): %s. F-8(b) requires an INDEPENDENT "
                            "judgement." % (f, reviewer[f], why))
 
+    if att_path and reviewer:
+        conflict = path_role_conflict(att_path, reviewer.get("role", ""))
+        if conflict:
+            bad.append(conflict)
+
     basis = (att.get("independence_basis") or "").strip()
     if len(basis) < MIN_INDEPENDENCE_CHARS:
         bad.append("independence_basis is absent or too thin (%d chars, need >= %d): the two "
@@ -255,7 +291,7 @@ def validate(att: dict, receipt_sha: str, report_sha: str) -> tuple[int, list[st
         bad.append("per_spot_findings is missing or not an object")
     else:
         seen_norm = {}
-        for spot in REQUIRED_SPOTS:
+        for spot in list(REQUIRED_SPOTS) + sorted(set(findings) - set(REQUIRED_SPOTS)):
             f = findings.get(spot)
             if not isinstance(f, str) or not f.strip():
                 bad.append("per_spot_findings[%s] is missing or empty: every blind spot needs its "
@@ -278,9 +314,16 @@ def validate(att: dict, receipt_sha: str, report_sha: str) -> tuple[int, list[st
                            "and spacing are removed: one finding pasted across spots is word-salad, "
                            "not four judgements" % (spot, seen_norm[key]))
             seen_norm[key] = spot
-        extra = [k for k in findings if k not in REQUIRED_SPOTS]
-        if extra:
-            bad.append("per_spot_findings has unknown spot key(s) %s; the four are fixed" % extra)
+        # The four are a FLOOR, not a ceiling. An earlier version rejected any extra key, which
+        # capped disclosure at F-8(a)'s four and would have PENALISED a rehearsal receipt that found
+        # a fifth blind spot -- the opposite of what the clause wants. Extras are accepted and held
+        # to the same floor and distinctness as the required four. Found by `agy-f8b-soundness`.
+        for k in sorted(set(findings) - set(REQUIRED_SPOTS)):
+            f = findings[k]
+            if not isinstance(f, str) or len(f.strip()) < MIN_FINDING_CHARS:
+                bad.append("per_spot_findings[%s] is an ADDITIONAL blind spot, which is welcome, but "
+                           "it is held to the same floor as the four: %d chars, need >= %d"
+                           % (k, len(f.strip()) if isinstance(f, str) else 0, MIN_FINDING_CHARS))
 
     # ---- the copying / word-salad risk must be addressed head on --------------------
     risk = (att.get("copying_and_word_salad_risk") or "").strip()
@@ -329,7 +372,7 @@ def main(argv=None) -> int:
         print("[f8b-att] CANNOT CHECK: cannot read a bound artifact: %s" % err, file=sys.stderr)
         return CANNOT_CHECK_EXIT
 
-    rc, notes = validate(att, receipt_sha, report_sha)
+    rc, notes = validate(att, receipt_sha, report_sha, att_path=a.attestation)
     assert rc != 0, "this checker must never return 0"
 
     stream = sys.stdout if rc == WELL_FORMED_EXIT else sys.stderr
