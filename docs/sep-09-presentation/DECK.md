@@ -162,6 +162,16 @@ of decimals.
   acceptance-limited ceiling is `0.618228` — no estimator could have reached it.** Of the
   0.2531 shortfall, **71.8% is specification and 28.2% is the estimator.**
 
+> ⚠️ **The shape check is blind to the thing this talk is about — and that is the reason
+> it is a badge and not a row.** `VALIDATION_LEDGER.md` marks `VL100` **"DO NOT READ THIS
+> ROW WITHOUT `OI-71`"**, and `OI-71`'s live content is not a caveat about precision. It is
+> that **this closure run's fold-forward ratio is close to unity where the nominal run's is
+> not, so the closure does not exercise the deficit at all and is SILENT about that failure
+> mode rather than reassuring about it.** `OI-71` is still OPEN, WAITING-USER, on ground
+> `G4`. So if asked "doesn't the shape closure show the estimator is fine?" the answer is
+> **no, and not because it disagrees — because it never tested this.** Do not use the badge
+> to defend the estimator, in either direction.
+
 *(2:30.)*
 
 **Transition:** "That's one fit. We ran five more that differ only in which GPU they landed
@@ -177,6 +187,29 @@ on."
 
 - Identical data, identical 2,000,000-row subsample, pinned seed, **no Poisson draw**. The
   only differences between draws are **process, node and GPU**.
+
+> ⚠️ **Know where draw 1 comes from before someone else finds out.** Draws 2–5 are
+> `fullevent_floor_42_0/draw_{2,3,4,5}` (job `56863958`). **Draw 1 is not in that
+> directory** — it is `fullevent_ml_ensemble/member_1` (job `56847059_1`), reused as the
+> family's first draw because it is the same pin, `(estimator, subsample) = (42, 0)`.
+> Two things follow, and both should be said rather than discovered.
+> **(a) It is not cherry-picking, and here is the check.** `member_1` is the *only* PASSING
+> member of a Gate-6 family whose verdict is `BLOCK_GATE6_ML_ENSEMBLE`, and whose first
+> prohibition is literally `do_not_select_passing_subset` — so the appearance is bad. The
+> answer is that this figure is not reading that family at all: it is reading **Leg F**, the
+> family `VL130`/`VL131` define, and all five draws reproduce their `VL131` slots. Verified
+> by ratio, not asserted: `T_d/mean(T)` from `VL131` against `push_d/mean(push)` from these
+> receipts agrees to **< 5 × 10⁻⁷** on every draw, in order, and the recomputed relative sd
+> is **2.0474040%** against `VL131`'s recorded **2.0474045%**. Members 2–5 of the ML
+> ensemble are a *different* object and are not on this plot.
+> **(b) One provenance asymmetry, stated because it is real.** Draw 1 ran with
+> `override_used: true` against an archived pre-Gate-5-rerun copy of the target, hash-bound
+> to `544b2f6a…`. Draws 2–5 ran with `override_used: false` and their receipts record
+> **`sha256: null`** for the target. So "identical target" is asserted by the ledger and
+> consistent with the numbers — draw 1 is not the outlier, draw 3 is — but it is **not
+> demonstrated by these receipts**, because four of them carry no target digest to compare.
+
+
 - **Truth leg** — the leg the cross section consumes: across-refit relative sd
   **6.25% → 2.05%**. That terminal value reproduces `VL131` to all printed digits
   (2.0474% / range 5.4614%).
@@ -268,20 +301,43 @@ third check — it needs zero neutrino context and everyone in that room has hit
 Ranked by how likely they are to hurt.
 
 1. **The 87% is a step-2 number.** See the slide-3 warning. This is the one most likely to
-   be a *factual* error from the podium.
-2. **We never explain the miss.** OPEN is longer than EXCLUDED, deliberately. The budget
-   ladder that would answer it has never been run against this quantity.
-3. **The dose-response is 1-vs-5, not a balanced design.** Six clean trajectories, exactly
+   be a *factual* error from the podium. Confirmed at source: `8.663e-01` is Gate **B(i)**,
+   *"checkpoint-rebuilt **push** vs stored, on `pass_gen`"*, and `push` is post-step-2.
+   Note also that the receipt value is **86.6%**; "87%" is a rounding, so do not present it
+   as a quoted figure.
+2. **Our own repo contains a different attainment number, and someone may find it.** Six
+   `p3f-pet-gate4-launch-code-gate-*.json` records dated 2026-08-07 through 2026-08-13 say
+   **68.1%**, from `pull_final = 0.765031`. That is the **superseded** artifact. The
+   finding's own §7 re-measures it on bit-faithful checkpoints at `0.658944` → **58.6%** and
+   says in terms that the verdict *"stands and is sharper than the 68.1% the earlier,
+   superseded run reported."* 58.6% is right; be ready to say *why* the other number exists
+   rather than looking surprised by it.
+3. **Draw 1 comes from a different directory than draws 2–5, and its family was BLOCKED.**
+   See the slide-6 warning. The defence is solid and quantitative — `VL131` slot agreement
+   to `< 5 × 10⁻⁷` — but it has to be *offered*, because the surface reading is
+   cherry-picking from a Gate-6 family whose first prohibition is
+   `do_not_select_passing_subset`. Related: four of the five draws record no target digest,
+   so equality of targets is the ledger's assertion, not these receipts' demonstration.
+4. **We never explain the miss.** OPEN is longer than EXCLUDED, deliberately. The budget
+   ladder that would answer it has never been run against this quantity — still true at the
+   tip (`FINDING-20260807-step1-under-achieves.md:105`). If someone proposes one, `BEN-042`
+   is the trap: a ladder *"read on the scatter axis"* through a decomposition's scatter
+   penalty reported a 68.3% collapse where the MAD moved 5.5%.
+5. **The dose-response is 1-vs-5, not a balanced design.** Six clean trajectories, exactly
    one clean default-schedule measurement, and the other five are near-replicates.
-4. **The anneal was selected on the metric it improves.** Conceded on slide 5. The fix
-   cannot be offered as discovery.
-5. **The shape baseline is confounded in an unknown direction.** Slide 7's discomfort rests
-   partly on a comparison we cannot clean up.
-6. **One dataset, one architecture, one `R`.** Nothing about OmniFold generally is earned.
+6. **The anneal was selected on the metric it improves.** Conceded on slide 5. The fix
+   cannot be offered as discovery. Recorded: the arm's proposer *"explicitly declared a
+   conflict of interest"* (`VALIDATION_LEDGER.md`).
+7. **The shape baseline is confounded in an unknown direction.** Slide 7's discomfort rests
+   partly on a comparison we cannot clean up. And per the slide-5 warning, the shape check
+   is *silent* about the deficit rather than reassuring about it.
+8. **One dataset, one architecture, one `R`.** Nothing about OmniFold generally is earned.
    *"Does this happen in the original OmniFold papers?"* has no answer from us.
-7. **Zero event-level or phase-space evidence.** *"Where does step 1 under-deliver?"* —
-   unknown. Everything here is an aggregate mean over the whole sample. The inference job
-   that would answer it is costed (~1–3 A100-h, one job) and has not run.
+9. **Zero event-level or phase-space evidence.** *"Where does step 1 under-deliver?"* —
+   unknown. Everything here is an aggregate mean over the whole sample. Confirmed by
+   inventory: no event-level or phase-space step-1 map exists anywhere under
+   `nd-unfolding/pet/`; every `STEP1_*` receipt is an aggregate. The inference job that
+   would answer it is costed (~1–3 A100-h, one job) and has not run.
 
 ---
 

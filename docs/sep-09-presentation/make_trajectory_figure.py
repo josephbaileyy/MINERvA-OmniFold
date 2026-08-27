@@ -30,7 +30,38 @@ histories of all five draws:
 So the dramatic iteration-0 number is the one LEAST entitled to be dramatic. Say it.
 
 Sources: five STEP1_TRAJECTORY receipts (reco leg, per iteration) and five
-STEP1_DECOMPOSITION receipts (truth leg, push_prev / push_final).
+STEP1_DECOMPOSITION receipts (truth leg, push_prev / push_final), rooted at
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/ --
+
+    draw 1  fullevent_ml_ensemble/member_1/trajectory/{...}.slurm-56847059_1.json
+    draw 2  fullevent_floor_42_0/draw_2/{...}.slurm-56863958_2.json
+    draw 3  fullevent_floor_42_0/draw_3/{...}.slurm-56863958_3.json
+    draw 4  fullevent_floor_42_0/draw_4/{...}.slurm-56863958_4.json
+    draw 5  fullevent_floor_42_0/draw_5/{...}.slurm-56863958_5.json
+
+DRAW 1 IS NOT IN THE FLOOR DIRECTORY, AND THAT NEEDS ITS OWN PARAGRAPH. It is
+Gate-6 ML-ensemble member 1, reused as the Leg F family's first draw because it
+carries the same pin, (estimator, subsample) = (42, 0). It is also the ONLY
+passing member of a family whose verdict is BLOCK_GATE6_ML_ENSEMBLE and whose
+first prohibition is do_not_select_passing_subset -- so the appearance is bad and
+the defence must be measured, not argued. It is measured: this figure reads Leg F,
+the family VL130/VL131 define, and every draw reproduces its VL131 slot. Checking
+T_d/mean(T) from VL131 against push_d/mean(push) from these receipts gives, in
+order, agreement of 4.8e-07 / 7.3e-08 / 2.0e-07 / 4.1e-08 / 3.1e-07, and the
+recomputed relative sd is 2.0474040% against VL131's recorded 2.0474045%. ML
+ensemble members 2-5 are a different object and are NOT on this plot.
+
+ONE PROVENANCE ASYMMETRY, RECORDED RATHER THAN SMOOTHED. Draw 1 ran with
+override_used=true against an archived pre-Gate-5-rerun copy of the target, hash-
+bound to 544b2f6a2451480abfe867aede35d31a07178d518754428f43b00b26793d54c9. Draws
+2-5 ran with override_used=false and their receipts record sha256=null for the
+target. Identical targets are therefore the LEDGER'S ASSERTION and consistent with
+the numbers -- draw 1 sits at 0.99907 of the family mean, draw 3 at 0.96702, so
+draw 1 is not the outlier -- but four receipts carry no digest, so these files
+cannot demonstrate it.
+
+Checkpoint tiers are ('best-epoch', 'best-epoch', 'final(BEN-043)') in 5/5
+receipts, matching VL124.
 """
 import matplotlib
 matplotlib.use("Agg")
