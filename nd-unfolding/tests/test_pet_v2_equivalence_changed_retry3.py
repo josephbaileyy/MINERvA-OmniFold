@@ -14,6 +14,7 @@ PET = REPO / "nd-unfolding/pet"
 DERIVER = REPO / "docs/orchestration/derive_pet_v2_equivalence_changed_retry3.py"
 PROPOSAL_PATH = REPO / "docs/orchestration/state/pet-v2-fixed-draw-equivalence-changed-retry3-proposal-20260826.json"
 ATTEMPT_PATH = REPO / "docs/orchestration/state/pet-v2-fixed-draw-equivalence-changed-retry2-attempt-57629029.json"
+SUBMISSION_PATH = REPO / "docs/orchestration/state/pet-v2-fixed-draw-equivalence-changed-retry3-submission-57644535.json"
 ARCHIVE = Path("/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_00/target/GATE5_REPLICA_TARGET.npy")
 ARCHIVE_RECEIPT = ARCHIVE.with_name("GATE5_REPLICA_TARGET_RECEIPT.json")
 
@@ -29,6 +30,7 @@ DERIVE = load_module("derive_pet_v2_changed_retry3", DERIVER)
 TARGET = load_module("materialize_pet_v2_retry3", PET / "materialize_pet_v2_equivalence_target_retry3.py")
 PROPOSAL = json.loads(PROPOSAL_PATH.read_text(encoding="utf-8"))
 ATTEMPT = json.loads(ATTEMPT_PATH.read_text(encoding="utf-8"))
+SUBMISSION = json.loads(SUBMISSION_PATH.read_text(encoding="utf-8"))
 
 
 def test_retry3_proposal_is_exact_deterministic_render():
@@ -45,6 +47,24 @@ def test_retry2_attempt_is_preserved_as_zero_gpu_invalid_machinery():
     assert ATTEMPT["runtime_evidence"]["scientific_quantity_measured"] is False
     assert all(not item["allocated"] for item in ATTEMPT["cancelled_downstream"].values())
     assert ATTEMPT["C_stat"] is None and ATTEMPT["C_ML"] is None
+
+
+def test_retry3_submission_is_one_changed_nonautomatic_chain():
+    assert SUBMISSION["schema"] == "pet-v2-equivalence-changed-retry3-submission-v1"
+    assert SUBMISSION["status"] == "SUBMITTED"
+    assert SUBMISSION["head"] == "edccb7285b9ef8a995b70c6beceebb04d4fc2745"
+    assert SUBMISSION["proposal_sha256"] == (
+        "650b3425844be03cd3e0a00bf1289b0ae0d5c8556049815f9e7197038b6d12b4"
+    )
+    assert SUBMISSION["jobs"] == {
+        "target": "57644535", "training_array": "57644536",
+        "evaluation": "57644537", "validation": "57644538",
+    }
+    assert SUBMISSION["prior_target_job"] == "57629029"
+    assert SUBMISSION["changed_retry_number"] == 3
+    assert SUBMISSION["automatic_retry"] is False
+    assert SUBMISSION["unchanged_retry"] is False
+    assert SUBMISSION["C_stat"] is None and SUBMISSION["C_ML"] is None
 
 
 def test_archived_weighted_target_and_receipt_are_exact_operands():
