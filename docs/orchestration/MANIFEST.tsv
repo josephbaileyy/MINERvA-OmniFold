@@ -82,7 +82,7 @@ docs/orchestration/INDEX-retracted-and-superseded-values.md	tracked	LIVE	index		
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/control_plane_lint.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	54	80	19674
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	3	162	8154
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	11	102	7448
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	39	576	116563
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	39	576	116599
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	3	184	13929
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/compare_m1_m6.py;docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/measure_m1_m6.py	no	15	146	8336
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	tracked	LIVE	document		20260823	open		route-only		no	6	239	14244
@@ -172,10 +172,10 @@ docs/orchestration/VERDICT-20260825-gate2-k0-rehearsal-nine-clauses.md	tracked	L
 docs/orchestration/VERDICTS-20260811-session-D.md	tracked	ARCHIVAL	verdict		20260811	terminal		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	5	2629	180256
 docs/orchestration/VERIFICATION-20260820-mediator-remedy-a-wrapper-mechanical.md	tracked	ARCHIVAL	document		20260820	terminal		exact-path-only		yes	1	86	6763
 docs/orchestration/VERIFICATION-20260822-k0-execution-integrity.md	tracked	LIVE	document		20260822	open		route-only		no	5	722	47961
-docs/orchestration/WAKER.md	tracked	LIVE	document			open		route-only	docs/orchestration/generate_live_state.py;docs/orchestration/wakerctl.py	no	12	325	19386
+docs/orchestration/WAKER.md	tracked	LIVE	document			open		route-only	docs/orchestration/generate_live_state.py;docs/orchestration/wakerctl.py	no	12	327	19551
 docs/orchestration/WALKDOWN-20260822-one-pass.md	tracked	LIVE	document		20260822	open		route-only		no	3	285	17962
 docs/orchestration/agent_session_notify.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/install_agent_notifications.py;docs/orchestration/test_agent_session_notify.py	no	3	337	11575
-docs/orchestration/agentctl.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/generate_live_state.py;docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py	no	12	735	26705
+docs/orchestration/agentctl.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/generate_live_state.py;docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py	no	12	742	26945
 docs/orchestration/audit_gates_that_cannot_fail.py	tracked	MACHINE	script			generated		exact-path-only	nd-unfolding/tests/test_cannot_fail_auditor.py	no	5	369	17861
 docs/orchestration/audit_validator_tolerance_units.py	tracked	MACHINE	script			generated		exact-path-only	nd-unfolding/tests/test_validator_units_auditor.py	no	4	232	10103
 docs/orchestration/campaignctl.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/wakerctl.py	no	5	466	17351
@@ -521,7 +521,7 @@ docs/orchestration/state/producers-oi126-r5/sbatch_c_perm_ens.sh	tracked	MACHINE
 docs/orchestration/state/producers-oi126-r5/sbatch_c_perm_ens5.sh	tracked	MACHINE	state-artifact	producers-oi126-r5		generated		exact-path-only		yes	1	64	3032
 docs/orchestration/state/quoted-products-digests-56760314.json	tracked	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/uq_5d/sbatch_hpss_protect_quoted_products.sh	yes	3	525	20354
 docs/orchestration/state/regen_canonical_namespace_field_pins.py	tracked	MACHINE	state-artifact			generated		exact-path-only	docs/orchestration/verify_hash_bindings.py	yes	4	137	6597
-docs/orchestration/state/sessions.json	tracked	MACHINE	state-artifact			generated		exact-path-only	docs/orchestration/agentctl.py;docs/orchestration/generate_live_state.py	yes	17	833	47892
+docs/orchestration/state/sessions.json	tracked	MACHINE	state-artifact			generated		exact-path-only	docs/orchestration/agentctl.py;docs/orchestration/generate_live_state.py;docs/orchestration/test_agentctl.py	yes	18	833	47892
 docs/orchestration/state/step1-dynamics-submit-56531057.json	tracked	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	4	88	3227
 docs/orchestration/state/step1-ihedge-launch-56525829.json	tracked	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	4	77	2975
 docs/orchestration/state/step1-trajectory-complete-56525829.json	tracked	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	4	108	5506
@@ -531,7 +531,7 @@ docs/orchestration/state/vl100-foldforward-shape-test-20260814.json	tracked	MACH
 docs/orchestration/state/vl100-nominal-residual-field-20260815.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-vl100-shape-correction-scan-20260815.py	yes	2	1438	29070
 docs/orchestration/state/vl100-own-run-foldforward-20260815.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-vl100-shape-correction-scan-20260815.py	yes	3	1537	31600
 docs/orchestration/test_agent_session_notify.py	tracked	MACHINE	test-script			generated		exact-path-only		no	1	105	4704
-docs/orchestration/test_agentctl.py	tracked	MACHINE	test-script			generated		exact-path-only		no	1	226	8625
+docs/orchestration/test_agentctl.py	tracked	MACHINE	test-script			generated		exact-path-only		no	1	234	9006
 docs/orchestration/test_campaignctl.py	tracked	MACHINE	test-script			generated		exact-path-only		no	2	105	4240
 docs/orchestration/test_compare_m1_m6.py	tracked	MACHINE	test-script			generated		exact-path-only		no	8	1613	93747
 docs/orchestration/test_deploy_oi135_watcher_swap.py	tracked	MACHINE	test-script			generated		exact-path-only		no	5	929	46880
