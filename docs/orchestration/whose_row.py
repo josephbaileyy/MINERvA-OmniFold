@@ -782,9 +782,7 @@ def main() -> int:
 
     blocks = ben_blocks(REPO / "docs/orchestration/FINDINGS.md")
     files = [Path(f) for f in args.files]
-    discovered = False
     if not files:
-        discovered = True
         try:
             out = subprocess.run(["git", "-C", str(REPO), "diff", "--name-only", "--diff-filter=U"],
                                  capture_output=True, text=True, check=True).stdout

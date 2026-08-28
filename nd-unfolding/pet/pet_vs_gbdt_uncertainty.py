@@ -190,7 +190,6 @@ def main():
     pet_cv_full, pmask, pet_vars = load_pet(args.pet_wlat, args.pet_rebank, args.pet_transfer)
     gbdt_cv_full, gmask, C_gbdt = load_gbdt(args.gbdt_cov, args.gbdt_cov_hist, args.gbdt_cv)
     C_pet = pet_vars["corrected"]          # HEADLINE: rebank clean syst+stat+ML + native lateral
-    C_pet_tr = pet_vars["transferred"]     # secondary cross-check (GBDT-transferred lateral)
 
     print(f"[mask] PET reported = {pmask.size}   GBDT reported = {gmask.size}   "
           f"grid = {NGRID}")

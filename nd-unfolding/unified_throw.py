@@ -312,10 +312,6 @@ def do_run(args):
     m = pass_truth
     sample_sig = np.column_stack([MCgen[m, a] for a in range(MCgen.shape[1])])
     sample_td = np.column_stack([td_pt, td_pz, td_ea])
-    # pt-bin index of each signal/denom truth event (for Flux per-pT ratio)
-    pt_e = edges[0]
-    sig_ptbin = np.clip(np.digitize(MCgen[m, 0], pt_e) - 1, 0, len(pt_e) - 2)
-    td_ptbin = np.clip(np.digitize(td_pt, pt_e) - 1, 0, len(pt_e) - 2)
 
     def mm(name):
         return np.load(os.path.join(bd, name + ".npy"), mmap_mode="r")
