@@ -188,7 +188,6 @@ def _binwise_chi2(our_edges, our_y, a_lo, a_hi, a_y, a_e):
     (A full-covariance chi2 needs the q3-projected combined covariance, which is a
     follow-on once the q3 systematic campaign lands -- see ND_OMNIFOLD_STATUS.md.)
     """
-    a_edges = np.append(a_lo, a_hi[-1])
     matched = []
     for k in range(len(a_y)):
         # find our bin with the same [lo,hi)

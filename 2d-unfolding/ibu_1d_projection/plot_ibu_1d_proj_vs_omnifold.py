@@ -41,7 +41,6 @@ def project_paper_th2d(h, axis):
     use; verify with axis title)."""
     nx = h.GetNbinsX()
     ny = h.GetNbinsY()
-    xt = (h.GetXaxis().GetTitle() or "").lower()
     # Paper file convention: x = p_T (14), y = p_|| (16)
     if nx == 14 and ny == 16:
         pt_axis, pz_axis = h.GetXaxis(), h.GetYaxis()

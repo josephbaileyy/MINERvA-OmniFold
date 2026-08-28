@@ -230,7 +230,6 @@ def draw_pz_slices(h_ours, h_paper, C, niter, out, suptitle):
 
 def draw_pull_map(h_ours, h_paper, C_shape_185, chi2_185, ndf_185, out, suptitle):
     """Pull map: (s_ours - s_paper) / sqrt(C_shape diagonal), 185-bin interior."""
-    diff = np.zeros((N_PT, N_PZ))
     pull = np.full((N_PT, N_PZ), np.nan)
     for ptb in range(1, N_PT + 1):
         for pzb in range(1, N_PZ + 1):

@@ -65,7 +65,7 @@ def main():
     ea_e = np.asarray(und.EXTRA_AXES["eavail"]["edges"], float)
     q3_e = np.asarray(und.EXTRA_AXES["q3"]["edges"], float)
     shape = (len(pt_e) - 1, len(pz_e) - 1, len(ea_e) - 1, len(q3_e) - 1)  # (14,16,7,7)
-    dpt, dpz, dea, dq3 = (np.diff(pt_e), np.diff(pz_e), np.diff(ea_e), np.diff(q3_e))
+    dpt, dpz, _dea, dq3 = (np.diff(pt_e), np.diff(pz_e), np.diff(ea_e), np.diff(q3_e))
     n_ea = len(ea_e) - 1
 
     # --- 4D CV xsec (full grid) + reported mask + covariance (reported bins) ---

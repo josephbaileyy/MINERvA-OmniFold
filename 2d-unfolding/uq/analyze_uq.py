@@ -180,13 +180,9 @@ def main():
     if N > 1:
         pt_std = Xpt.std(axis=0, ddof=1)
         pz_std = Xpz.std(axis=0, ddof=1)
-        pt_cov = np.cov(Xpt, rowvar=False)
-        pz_cov = np.cov(Xpz, rowvar=False)
     else:
         pt_std = np.zeros_like(pt_mean)
         pz_std = np.zeros_like(pz_mean)
-        pt_cov = np.zeros((Xpt.shape[1], Xpt.shape[1]))
-        pz_cov = np.zeros((Xpz.shape[1], Xpz.shape[1]))
     print()
     print("=== 1D projection spread ===")
     with np.errstate(divide="ignore", invalid="ignore"):

@@ -170,7 +170,6 @@ def main():
     print(f"[proj] src reported = {src_report.size}  dst reported = {n_dst}  "
           f"src cells dropped (dst bin not reported) = {dropped}")
     if x_dst_cv is not None:
-        rows_hit = np.zeros(n_dst, bool)
         # count dst-reported bins that received zero source cells
         received = np.asarray(M != 0).any(axis=1)
         n_empty = int((~received).sum())

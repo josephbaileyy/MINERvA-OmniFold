@@ -191,7 +191,6 @@ def setup_paper_axes(ax, row, col, nrows, ncols, xlim, ylim=(0, 4.2),
 
 def draw_panel(ax, log_edges, paper_y, paper_err, omni_y, omni_err, truth_y,
                title, scale):
-    nbins = len(paper_y)
     x_plot_edges = np.asarray(log_edges, dtype=float)
     centers = 0.5 * (x_plot_edges[:-1] + x_plot_edges[1:])
     half_widths = 0.5 * (x_plot_edges[1:] - x_plot_edges[:-1])

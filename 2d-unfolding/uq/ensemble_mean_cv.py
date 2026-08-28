@@ -56,8 +56,6 @@ def load_hist(path, name):
 
 def hist_to_array(h):
     """Flatten a TH1/TH2/TH3 over physical bins (drop under/overflow), C order."""
-    nb = h.GetNcells()
-    vals = np.array([h.GetBinContent(i) for i in range(nb)])
     # mask off under/overflow via the per-axis bin loop instead:
     cls = h.ClassName()
     if cls.startswith("TH3"):

@@ -181,7 +181,6 @@ def main():
     import matplotlib.pyplot as plt
     fig, axx = plt.subplots(1, 3, figsize=(16, 4.6))
     # (a) dsigma/dEavail data vs CV
-    ec = 0.5 * (e_eav[:-1] + e_eav[1:])
     axx[0].step(range(len(y_eav_d)), y_eav_d, where="mid", label="unfolded data")
     axx[0].step(range(len(y_eav_g)), y_eav_g, where="mid", ls="--", label="GENIE CV")
     axx[0].set_yscale("log"); axx[0].set_xlabel("E_avail bin"); axx[0].set_ylabel("dsigma/dEavail")

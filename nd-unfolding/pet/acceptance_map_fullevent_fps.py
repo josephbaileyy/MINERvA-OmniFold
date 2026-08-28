@@ -116,7 +116,6 @@ def main():
 
     # the headline: displacement-unweighted cell census of prior domination
     flat = acc[denom > 0]
-    prior3 = (1.0 - flat) ** 3
     below = {
         "cells_with_acceptance_below_0.01": int((flat < 0.01).sum()),
         "cells_with_acceptance_below_0.05": int((flat < 0.05).sum()),
