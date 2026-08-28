@@ -7,8 +7,11 @@
   "files": {
     "docs/orchestration/wakerctl.py": "5810170f88abbf2848ebcd3ac15b7b4cc4701abdfe93067fa9fcd42cb3804c99",
     "docs/orchestration/test_wakerctl.py": "6c0b7851ea23240e5aa2148c239207888c1b7a2c1b2f5552d52040b569bbb99d",
-    "docs/orchestration/measure_k0_farend_f1b_f17b.sh": "2132194fe1a3ed7a420f19b7b8b7d2f23fed873c12c316fc525a85b11a1253a2 (SUPERSEDED by PIN-20260827-f17b-chain-rgamma-supersession.md)",
+    "docs/orchestration/measure_k0_farend_f1b_f17b.sh": "2132194fe1a3ed7a420f19b7b8b7d2f23fed873c12c316fc525a85b11a1253a2",
     "docs/orchestration/preserve_f17b_record.py": "ea2dea540e24c38abf8d63669f8d06989a05172b95f6b2e31afc7d79358fefd9"
+  },
+  "supersessions": {
+    "docs/orchestration/measure_k0_farend_f1b_f17b.sh": "SUPERSEDED by PIN-20260827-f17b-chain-rgamma-supersession.md"
   },
   "behavior": {
     "slurm": "A visible PENDING row whose Reason is DependencyNeverSatisfied now emits slurm-job-error with state DEPENDENCY_NEVER_SATISFIED. Ordinary Dependency and Resources reasons remain active. Mixed array rows remain active while any row is live.",

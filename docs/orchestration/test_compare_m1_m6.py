@@ -280,7 +280,7 @@ class R2_NoDefaultsAndItFailsClosedOnAbsence(BenchCase):
 # --------------------------------------------------------------------------------------------- R3
 
 class R3_EveryFindingNamesBothSidesTheUnitAndThePopulation(BenchCase):
-    
+
     def test_s2_fires_document_with_no_symbolic_ref_exits_4(self):
         first = base_document("FIRST", "/trees/first")
         del first["branch_or_detached"]
@@ -297,12 +297,12 @@ class R3_EveryFindingNamesBothSidesTheUnitAndThePopulation(BenchCase):
         first["branch_or_detached"] = "detached"
         second = base_document("BRANCH", "/trees/branch")
         second["branch_or_detached"] = "f17b/rgamma-repair-20260827"
-        
+
         path_detached = self.bench.write_doc("detached", first)
         path_branch = self.bench.write_doc("branch", second)
-        
+
         code, record, _ = self.bench.run([path_detached, path_branch], self.expected_ok)
-        
+
         self.assertEqual(record["inputs"][0]["branch_or_detached"], "detached")
         self.assertEqual(record["inputs"][1]["branch_or_detached"], "f17b/rgamma-repair-20260827")
         self.assertEqual(code, cm.EXIT_NO_DIFFERENCES)
@@ -1408,7 +1408,7 @@ class R6_TheRecordCarriesItsOwnOperands(BenchCase):
             for m in missing:
                 del doc[m]
             fixtures.append(doc)
-            
+
         second, = self.two()[:1]
         for i, fixture in enumerate(fixtures):
             path = self.bench.write_doc(f"fix_{i}", fixture)
@@ -1420,11 +1420,11 @@ class R6_TheRecordCarriesItsOwnOperands(BenchCase):
         first = base_document("FIRST", "/trees/first")
         del first["measurement_wall_clock"]
         first_path = self.bench.write_doc("first", first)
-        
+
         # Modify the mtime of the file so it's a known distinct time
         import os, time
         os.utime(first_path, (time.time() - 86400, time.time() - 86400))
-        
+
         second, = self.two()[:1]
         code, record, err = self.bench.run([first_path, second], self.expected_ok)
         self.assertEqual(code, cm.EXIT_REFUSAL_INPUT)
@@ -1438,7 +1438,7 @@ class R6_TheRecordCarriesItsOwnOperands(BenchCase):
         second["measurement_wall_clock"] = "2026-08-27T10:00:00Z"
         first_path = self.bench.write_doc("first", first)
         second_path = self.bench.write_doc("second", second)
-        
+
         _, record, _ = self.bench.run([first_path, second_path], self.expected_ok)
         self.assertEqual(record["inputs"][0]["measurement_wall_clock"], "2026-08-27T10:00:00Z")
         self.assertEqual(record["inputs"][1]["measurement_wall_clock"], "2026-08-27T10:00:00Z")
@@ -1451,7 +1451,7 @@ class R6_TheRecordCarriesItsOwnOperands(BenchCase):
         second["measurement_wall_clock"] = "2026-08-27T10:00:00Z"
         first_path = self.bench.write_doc("a", first)
         second_path = self.bench.write_doc("b", second)
-        
+
         out = self.bench.root / "record.json"
         code, _, _ = self.bench.run([first_path, second_path], self.expected_ok,
                                     extra=("--record", str(out)))

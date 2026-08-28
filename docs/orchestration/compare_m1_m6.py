@@ -31,7 +31,7 @@ WHAT THE INPUT DOCUMENT CANNOT TELL IT, stated rather than papered over. `measur
 emits no timestamp, no digest of itself, and no branch/detached state -- `m4()` returns
 `is_git, head, dirty, untracked, modified, behind, ahead, upstream` and nothing else. So:
   * R3's "detached-or-branch" and R6's "wall-clock of each measurement" are NOT derivable here and
-    are emitted as `UNAVAILABLE-BY-INPUT-SCHEMA` with the reason attached, never silently dropped.
+    cause an immediate refusal, they do not default to an unavailable label.
     Deriving them by running git against the tree would break R1 AND would answer about the tree as
     it is NOW rather than as it was when measured, which is this campaign's named defect.
   * two documents from different revisions of `measure_m1_m6.py` cannot be told apart by this
@@ -226,7 +226,6 @@ WILDCARD = "*"
 PROBE_PATH = "__probe__/__probe__.py"
 PROBE_FIELD = "__probe_field__"
 ABSENT = "<FIELD ABSENT FROM THIS DOCUMENT>"
-UNAVAILABLE = "UNAVAILABLE-BY-INPUT-SCHEMA"
 
 # MANY OF THESE FIELDS ARE CONDITIONALLY PRESENT, AND ABSENCE IS NOT FALSITY. `M-3.rc` and
 # `M-3.all_intact` are omitted when the script is missing; every `M-4` field but nothing else when

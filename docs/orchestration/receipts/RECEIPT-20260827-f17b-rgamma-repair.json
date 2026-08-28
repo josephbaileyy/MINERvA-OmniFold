@@ -1,7 +1,54 @@
 {
-  "task": "f17b-rgamma2-repair",
-  "date": "2026-08-27",
-  "status": "COMPLETED",
-  "notes": "Implemented S-1, S-2, S-3, S-4 fixes. Preserver defect corrected with explicit containment (check before invocation and post-invocation). The earlier instruction to label missing fields as UNAVAILABLE-BY-INPUT-SCHEMA was withdrawn by the coordinating lane, and the comparator now fails closed (exit 4) if either measurement_wall_clock or branch_or_detached is missing from the input.",
-  "commit": "$(git rev-parse HEAD)"
+  "role": "agy-f17b-rgamma2",
+  "conversation_uuid": "6d111a3d-70d7-4164-86b2-9d77b53f2361",
+  "base_sha": "27ee1be39df84197cad3d6920c7cd81f22757560",
+  "commits": [
+    "2ca28a03c2d8e295e928b8a32bc84d2db2f6dc9c",
+    "cdbc3b52fcf0534cf1cca44dc803619a3c2e2249",
+    "e47ee4ecff06d51382583383c571af2c68e97500"
+  ],
+  "surface_changes": {
+    "S-1": "docs/orchestration/measure_m1_m6.py:32 added measurement_wall_clock, docs/orchestration/measure_m1_m6.py:129 added branch_or_detached",
+    "S-2": "docs/orchestration/test_measure_m1_m6.py:141 tests added for S-1",
+    "S-3": "docs/orchestration/compare_m1_m6.py:161 requires these fields and exits 4 if missing",
+    "S-4": "docs/orchestration/test_compare_m1_m6.py:1411 tests added for S-3 fail-closed",
+    "Preserver": "docs/orchestration/measure_k0_farend_f1b_f17b.sh:167,222,232 strict preserver containment using hardcoded EXPECTED_PRESERVER_SHA256"
+  },
+  "pre_repair_instruments": {
+    "docs/orchestration/measure_m1_m6.py": {"sha256": "0fcd90f7c92a7071208e62d09ebc38956f1a83b11af41a469b4886a6e6786d79", "bytes": 13213},
+    "docs/orchestration/compare_m1_m6.py": {"sha256": "5dc92487bd5c2f6a82d2d4ba51ccd57fa73abeac6eb836ab0343e95206595301", "bytes": 66599},
+    "docs/orchestration/preserve_f17b_record.py": {"sha256": "ea2dea540e24c38abf8d63669f8d06989a05172b95f6b2e31afc7d79358fefd9", "bytes": 2354}
+  },
+  "post_repair_instruments": {
+    "docs/orchestration/measure_m1_m6.py": {"sha256": "e7ef2864495c79dda715147e651dce55dc7ea853bd3f6dfc273592dc6a0b83e1", "bytes": 13752},
+    "docs/orchestration/compare_m1_m6.py": {"sha256": "a2aaf41e608ce6f846cf06a1fdef290f0b0baef6168b235898b1552f16e873d8", "bytes": 66272},
+    "docs/orchestration/preserve_f17b_record.py": {"sha256": "ea2dea540e24c38abf8d63669f8d06989a05172b95f6b2e31afc7d79358fefd9", "bytes": 2354}
+  },
+  "tests": [
+    {"command": "PYTHONPATH=docs/orchestration /usr/bin/python3.11 -m unittest discover -s docs/orchestration -p 'test_measure_m1_m6.py'", "output": "Ran 12 tests in 0.349s\n\nOK", "exit_code": 0},
+    {"command": "PYTHONPATH=docs/orchestration /usr/bin/python3.11 -m unittest discover -s docs/orchestration -p 'test_compare_m1_m6.py'", "output": "Ran 88 tests in 0.850s\n\nOK", "exit_code": 0},
+    {"command": "PYTHONPATH=docs/orchestration /usr/bin/python3.11 -m unittest discover -s docs/orchestration -p 'test_preserve_f17b_record.py'", "output": "Ran 9 tests in 4.057s\n\nOK", "exit_code": 0}
+  ],
+  "other_checks": [
+    {"command": "/usr/bin/python3.11 docs/orchestration/verify_hash_bindings.py", "exit_code": 0},
+    {"command": "/usr/bin/python3.11 docs/orchestration/generate_manifest.py", "exit_code": 0},
+    {"command": "bash -n docs/orchestration/measure_k0_farend_f1b_f17b.sh", "exit_code": 0},
+    {"command": "git diff --check 27ee1be3..HEAD", "exit_code": 0}
+  ],
+  "pin_supersessions": {
+    "docs/orchestration/measure_k0_farend_f1b_f17b.sh": {
+      "old_sha256": ["2132194fe1a3ed7a420f19b7b8b7d2f23fed873c12c316fc525a85b11a1253a2", "c40e6b54"],
+      "new_sha256": "43e2453834839f930185d850113cb7b7d48f441b221f0988e605d8b82087ae78"
+    }
+  },
+  "grader_findings": [
+    {
+      "finding": "FINDING 7",
+      "description": "Wall-clock semantics: records measurement start, not per-measurement. Cite SPEC R6"
+    },
+    {
+      "finding": "FINDING 8",
+      "description": "Deliberate old-schema refusal: tradeoff between failing closed and parsing"
+    }
+  ]
 }

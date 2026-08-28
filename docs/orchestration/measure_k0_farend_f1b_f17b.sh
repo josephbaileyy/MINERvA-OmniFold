@@ -164,7 +164,7 @@ if [ ! -f "$COMPARATOR" ] || [ ! -f "$EXPECTED" ] || [ ! -f "$PRESERVER" ]; then
   rm -rf "$OUT"; exit 11
 fi
 
-PRESERVER_EXPECTED=$(sha256sum "$PRESERVER" 2>/dev/null | cut -d' ' -f1)
+EXPECTED_PRESERVER_SHA256=ea2dea540e24c38abf8d63669f8d06989a05172b95f6b2e31afc7d79358fefd9
 
 MEASURER_PRE=$(sha256sum "$MEASURER" 2>/dev/null | cut -d' ' -f1)
 
@@ -220,11 +220,11 @@ if [ "$MODE" = "--measure" ]; then
   esac
   echo "  publishing the completed record atomically, without clobber: $DURABLE_RECORD"
   PRESERVER_PRE=$(sha256sum "$PRESERVER" 2>/dev/null | cut -d' ' -f1)
-  if [ "$PRESERVER_PRE" != "$PRESERVER_EXPECTED" ]; then
+  if [ "$PRESERVER_PRE" != "$EXPECTED_PRESERVER_SHA256" ]; then
     echo "  REFUSE: preserver changed on disk BEFORE invocation. Nothing published."
     exit 13
   fi
-  
+
   [ -e "$DURABLE_RECORD" ] && RECORD_EXISTED=1 || RECORD_EXISTED=0
 
   "$PY" "$PRESERVER" --source "$OUT/f17b-record.json" --destination "$DURABLE_RECORD"
