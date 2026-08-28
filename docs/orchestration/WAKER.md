@@ -239,6 +239,14 @@ The 2026-08-28 recovery applies that boundary explicitly: the former
 names the fresh `claude-school` successor plus its isolated coordinator
 worktree. This is one root replacement, not a second co-owner of `main`.
 
+That replacement supersedes `PORTING.md` §6d, which is headed `ACTIVE` and
+names interim Claude root `4a8668e1-…` with an automatic handback to Codex at
+the weekly reset. Neither is current: the tracked root is the `claude-school`
+successor above, and it is a replacement rather than an interim. `PORTING.md`
+is `ARCHIVAL` and immutable in `MANIFEST.tsv`, so the correction is recorded
+here — read §6d as the record of a port performed on 2026-07-20, never as the
+live binding. `waker-config.json` `root` is the only authority for that.
+
 ## Poisoned-inode recovery
 
 If `status` or `tick` hangs, identify the exact watch file with bounded
