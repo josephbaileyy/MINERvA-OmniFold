@@ -171,7 +171,12 @@ for pair in "deploy:$CODE_ROOT" "canonical:$CANON"; do
   "$PY" "$MEASURER" --tree "$tree" --label "$lbl" --json > "$OUT/$lbl.json" 2>"$OUT/$lbl.err"
   rc=$?
   echo "  measured $lbl ($tree) rc=$rc  bytes=$(wc -c < "$OUT/$lbl.json" 2>/dev/null)"
-  [ "$rc" -ne 0 ] && sed 's/^/      /' "$OUT/$lbl.err" | tail -3
+  if [ "$rc" -ne 0 ]; then
+    sed 's/^/      /' "$OUT/$lbl.err" | tail -3
+    echo "  REFUSE: the $lbl measurement failed; no later measurement or comparison was run."
+    echo "          scratch output remains at $OUT for diagnosis."
+    exit "$rc"
+  fi
 done
 MEASURER_POST=$(sha256sum "$MEASURER" 2>/dev/null | cut -c1-12)
 
@@ -213,8 +218,16 @@ if [ "$MODE" = "--measure" ]; then
       ;;
   esac
   echo "  publishing the completed record atomically, without clobber: $DURABLE_RECORD"
+  PRESERVER_PRE=$(sha256sum "$PRESERVER" 2>/dev/null | awk '{print $1}')
   "$PY" "$PRESERVER" --source "$OUT/f17b-record.json" --destination "$DURABLE_RECORD"
   prc=$?
+  PRESERVER_POST=$(sha256sum "$PRESERVER" 2>/dev/null | awk '{print $1}')
+  echo "  preserver  sha256 pre=$PRESERVER_PRE   post=$PRESERVER_POST"
+  if [ "$PRESERVER_PRE" != "$PRESERVER_POST" ]; then
+    echo "  REFUSE: the durable-record helper changed on disk across its own invocation."
+    echo "          scratch output remains at $OUT for diagnosis."
+    exit 13
+  fi
   if [ "$prc" -ne 0 ]; then
     echo "  REFUSE: durable publication failed; scratch output remains at $OUT for diagnosis."
     exit "$prc"

@@ -16,6 +16,7 @@ column.
 """
 import argparse
 import ast
+import datetime
 import json
 import pathlib
 import subprocess
@@ -168,6 +169,22 @@ def git(tree, *a):
     return cp.returncode, cp.stdout.strip()
 
 
+def utc_now():
+    """Return an unambiguous UTC wall-clock timestamp at one-second precision."""
+    return datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def branch_or_detached(tree):
+    """Capture branch state while the measurement is taken, never by later re-observation."""
+    rc, name = git(tree, "symbolic-ref", "--quiet", "--short", "HEAD")
+    if rc == 0:
+        return {"state": "branch", "name": name}
+    rc, _ = git(tree, "rev-parse", "--verify", "HEAD")
+    if rc == 0:
+        return {"state": "detached", "name": None}
+    return {"state": "not-a-git-checkout", "name": None}
+
+
 def m4(tree, upstream):
     """Identity holds; the behind-count DRIFTS and is never quotable without its date."""
     rc, head = git(tree, "rev-parse", "HEAD")
@@ -248,8 +265,14 @@ def main():
     tree = pathlib.Path(a.tree).resolve()
     if not tree.is_dir():
         sys.exit(f"no such tree: {tree}")
-    res = {"label": a.label, "tree": str(tree), "M-1": m1(tree), "M-2": m2(tree),
-           "M-3": m3(tree), "M-4": m4(tree, a.upstream), "M-5": m5(tree), "M-6": m6(tree)}
+    started_utc = utc_now()
+    identity = branch_or_detached(tree)
+    res = {"label": a.label, "tree": str(tree),
+           "measurement_wall_clock": {"started_utc": started_utc},
+           "branch_or_detached": identity,
+           "M-1": m1(tree), "M-2": m2(tree), "M-3": m3(tree),
+           "M-4": m4(tree, a.upstream), "M-5": m5(tree), "M-6": m6(tree)}
+    res["measurement_wall_clock"]["completed_utc"] = utc_now()
     if a.json:
         print(json.dumps(res, indent=2)); return
     print(f"=== {a.label or 'tree'}: {tree}")

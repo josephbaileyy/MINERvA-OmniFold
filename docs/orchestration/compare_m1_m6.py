@@ -27,13 +27,10 @@ shape of a two-column F-17(a) table -- finds every comparison inside tolerance w
 spread is 6. That is the fixture in the test suite, and it is the only form in which this arm can
 fail.
 
-WHAT THE INPUT DOCUMENT CANNOT TELL IT, stated rather than papered over. `measure_m1_m6.py --json`
-emits no timestamp, no digest of itself, and no branch/detached state -- `m4()` returns
-`is_git, head, dirty, untracked, modified, behind, ahead, upstream` and nothing else. So:
-  * R3's "detached-or-branch" and R6's "wall-clock of each measurement" are NOT derivable here and
-    are emitted as `UNAVAILABLE-BY-INPUT-SCHEMA` with the reason attached, never silently dropped.
-    Deriving them by running git against the tree would break R1 AND would answer about the tree as
-    it is NOW rather than as it was when measured, which is this campaign's named defect.
+WHAT THE INPUT DOCUMENT CAN TELL IT. `measure_m1_m6.py --json` now carries the wall-clock interval
+and branch-or-detached identity captured by the producer while it measures. This consumer copies
+those fields; deriving them by running git here would break R1 AND would answer about the tree as it
+is NOW rather than as it was when measured. The one remaining schema gap is that:
   * two documents from different revisions of `measure_m1_m6.py` cannot be told apart by this
     instrument. What it CAN see is that their field sets differ. **This paragraph used to claim that
     was reported as an unexpected finding, and the code did not do it** -- `field_set_differs` was a
@@ -42,10 +39,9 @@ emits no timestamp, no digest of itself, and no branch/detached state -- `m4()` 
     places: an ABSENT value is never suppressible, `may-differ` fails closed on the sentinel, and
     `field_set_differs` forces the some-unexpected exit. The F-17(a) failure was exactly an
     instrument difference (5 literals reported where there were 7).
-  * the fix belongs in `measure_m1_m6.py`, and NOT NOW: adding fields to it mid-rehearsal would give
-    the post-rehearsal documents fields the already-filed pre-submission documents lack, and this
-    instrument would correctly report that as a finding. Manufacturing findings is worse than
-    declaring a gap. Propose it after Gate 2.
+The input schema deliberately changed only after this rehearsal's Gate-2 verdict and is now
+fail-closed: predecessor documents without the two producer-captured identity fields are refused,
+never upgraded by inference.
 
 THE EXPECTED LIST IS A WHITELIST, SO IT HAS FAILING ARMS (R4). It is an input file, never a literal
 in this code, so widening it is a reviewable diff. Every entry must carry a citation that RESOLVES
@@ -138,9 +134,9 @@ import json
 import pathlib
 import sys
 
-SCHEMA = "mnv_m1m6_comparison/1"
+SCHEMA = "mnv_m1m6_comparison/2"
 EXPECTED_SCHEMA = "mnv_m1m6_expected_differences/1"
-INSTRUMENT_VERSION = "1"
+INSTRUMENT_VERSION = "2"
 
 EXIT_NO_DIFFERENCES = 0
 EXIT_DIFFERENCES_ALL_EXPECTED = 10
@@ -210,7 +206,8 @@ EXIT_CODES = check_vocabulary(EXIT_VOCABULARY, RESERVED_EXIT_CODES)
 MAX_CITATION_LINES = 3
 
 MEASUREMENT_IDS = ("M-1", "M-2", "M-3", "M-4", "M-5", "M-6")
-REQUIRED_KEYS = ("label", "tree") + MEASUREMENT_IDS
+IDENTITY_KEYS = ("measurement_wall_clock", "branch_or_detached")
+REQUIRED_KEYS = ("label", "tree") + IDENTITY_KEYS + MEASUREMENT_IDS
 PERISHABLE_ID = "M-2"          # F-17(b) singles it out; see R7
 
 # THE SHAPE OF A FIELD PATH, DECLARED ONCE. `flatten` emits `M-1[<file>].<key>` for the row
@@ -226,7 +223,6 @@ WILDCARD = "*"
 PROBE_PATH = "__probe__/__probe__.py"
 PROBE_FIELD = "__probe_field__"
 ABSENT = "<FIELD ABSENT FROM THIS DOCUMENT>"
-UNAVAILABLE = "UNAVAILABLE-BY-INPUT-SCHEMA"
 
 # MANY OF THESE FIELDS ARE CONDITIONALLY PRESENT, AND ABSENCE IS NOT FALSITY. `M-3.rc` and
 # `M-3.all_intact` are omitted when the script is missing; every `M-4` field but nothing else when
@@ -417,6 +413,32 @@ def load_document(path_text, index):
         raise Refusal(EXIT_REFUSAL_INPUT,
                       f"input {index} is missing {', '.join(missing)}: {path}. A document short of "
                       f"a measurement is a refusal, never a silent agreement on the rest.")
+    clock = doc["measurement_wall_clock"]
+    if not isinstance(clock, dict) or set(clock) != {"started_utc", "completed_utc"}:
+        raise Refusal(EXIT_REFUSAL_INPUT,
+                      f"input {index}: measurement_wall_clock must contain exactly started_utc "
+                      f"and completed_utc")
+    try:
+        started = datetime.datetime.strptime(clock["started_utc"], "%Y-%m-%dT%H:%M:%SZ")
+        completed = datetime.datetime.strptime(clock["completed_utc"], "%Y-%m-%dT%H:%M:%SZ")
+    except (TypeError, ValueError) as exc:
+        raise Refusal(EXIT_REFUSAL_INPUT,
+                      f"input {index}: invalid measurement_wall_clock: {exc}") from exc
+    if completed < started:
+        raise Refusal(EXIT_REFUSAL_INPUT,
+                      f"input {index}: measurement completed before it started")
+    identity = doc["branch_or_detached"]
+    if not isinstance(identity, dict) or set(identity) != {"state", "name"}:
+        raise Refusal(EXIT_REFUSAL_INPUT,
+                      f"input {index}: branch_or_detached must contain exactly state and name")
+    state, name = identity["state"], identity["name"]
+    if state not in {"branch", "detached", "not-a-git-checkout"}:
+        raise Refusal(EXIT_REFUSAL_INPUT,
+                      f"input {index}: invalid branch_or_detached state {state!r}")
+    if ((state == "branch" and (not isinstance(name, str) or not name))
+            or (state != "branch" and name is not None)):
+        raise Refusal(EXIT_REFUSAL_INPUT,
+                      f"input {index}: branch_or_detached name does not match state {state!r}")
     resolved = path.resolve()
     return {"index": index, "path": str(resolved), "given_path": path_text,
             "sha256": sha256_of(resolved), "bytes": len(raw),
@@ -424,8 +446,7 @@ def load_document(path_text, index):
 
 
 def identity_of(record):
-    """Who this side IS. R3: resolved path, HEAD, porcelain count -- and the two fields the input
-    schema cannot supply, named as unavailable rather than omitted."""
+    """Who this side was when measured, copied from the document without re-observation."""
     doc = record["doc"]
     m4 = doc.get("M-4") if isinstance(doc.get("M-4"), dict) else {}
     return {
@@ -437,13 +458,13 @@ def identity_of(record):
         "input_sha256": record["sha256"],
         "input_bytes": record["bytes"],
         "input_file_mtime_utc": record["file_mtime_utc"],
-        "measurement_wall_clock": UNAVAILABLE,
+        "measurement_wall_clock": doc["measurement_wall_clock"],
         "head": m4.get("head", ABSENT),
         "is_git": m4.get("is_git", ABSENT),
         "porcelain_dirty": m4.get("dirty", ABSENT),
         "porcelain_untracked": m4.get("untracked", ABSENT),
         "porcelain_modified": m4.get("modified", ABSENT),
-        "branch_or_detached": UNAVAILABLE,
+        "branch_or_detached": doc["branch_or_detached"],
     }
 
 
@@ -922,10 +943,6 @@ def compare(records, expected):
                             "all n, and every tolerance is max-min over all n."),
         "global_agreement_inferred_from_pairs": False,
         "input_schema_gaps": {
-            "branch_or_detached": "measure_m1_m6.py --json emits no symbolic-ref state",
-            "measurement_wall_clock": ("measure_m1_m6.py --json emits no timestamp; the "
-                                       "input_file_mtime_utc below is a property of the FILE, not "
-                                       "of the measurement"),
             "measuring_instrument_digest": ("measure_m1_m6.py --json does not identify its own "
                                             "revision; field_set_differs is the only visible "
                                             "symptom of two documents from different revisions"),

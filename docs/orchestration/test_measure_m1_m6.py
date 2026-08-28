@@ -16,8 +16,12 @@ NOT. The over-broad arm matters concretely: `MINERvA-OmniFold-Analysis-Note` is 
 repository, and a bare `startswith` would report a hazard in a tree that has none.
 """
 import ast
+import datetime
 import importlib.util
+import json
 import pathlib
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -133,6 +137,75 @@ _OTHER = "{ROOT}-Analysis-Note"
 sys.path.insert(0, _OTHER)
 ''')
         self.assertEqual(r["literals"], [])
+
+
+class MeasurementIdentityIsCapturedByTheProducer(unittest.TestCase):
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.tree = pathlib.Path(self._tmp.name)
+        subprocess.run(["git", "init", "-b", "fixture-branch", str(self.tree)], check=True,
+                       capture_output=True, text=True)
+        subprocess.run(["git", "-C", str(self.tree), "config", "user.name", "Fixture"],
+                       check=True)
+        subprocess.run(["git", "-C", str(self.tree), "config", "user.email", "fixture@example"],
+                       check=True)
+        (self.tree / "tracked.txt").write_text("fixture\n", encoding="utf-8")
+        subprocess.run(["git", "-C", str(self.tree), "add", "tracked.txt"], check=True)
+        subprocess.run(["git", "-C", str(self.tree), "commit", "-m", "fixture"], check=True,
+                       capture_output=True, text=True)
+
+    def measure(self):
+        completed = subprocess.run(
+            [sys.executable, str(_HERE / "measure_m1_m6.py"), "--tree", str(self.tree),
+             "--label", "fixture", "--json"],
+            check=True, capture_output=True, text=True)
+        return json.loads(completed.stdout)
+
+    def test_branch_and_measurement_interval_are_emitted(self):
+        document = self.measure()
+        self.assertEqual(document["branch_or_detached"],
+                         {"state": "branch", "name": "fixture-branch"})
+        clock = document["measurement_wall_clock"]
+        started = datetime.datetime.strptime(clock["started_utc"], "%Y-%m-%dT%H:%M:%SZ")
+        completed = datetime.datetime.strptime(clock["completed_utc"], "%Y-%m-%dT%H:%M:%SZ")
+        self.assertLessEqual(started, completed)
+
+    def test_detached_state_is_emitted_without_inventing_a_branch_name(self):
+        subprocess.run(["git", "-C", str(self.tree), "switch", "--detach"], check=True,
+                       capture_output=True, text=True)
+        self.assertEqual(self.measure()["branch_or_detached"],
+                         {"state": "detached", "name": None})
+
+
+class FarEndShellFailsClosedAroundTheRepairedSurfaces(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.source = (_HERE / "measure_k0_farend_f1b_f17b.sh").read_text(encoding="utf-8")
+
+    def test_a_failed_measurer_exits_before_the_loop_can_continue(self):
+        loop = self.source[
+            self.source.index('for pair in "deploy:$CODE_ROOT" "canonical:$CANON"; do'):
+            self.source.index("MEASURER_POST=")]
+        rc_check = loop.index('if [ "$rc" -ne 0 ]; then')
+        refusal = loop.index("no later measurement or comparison was run", rc_check)
+        exit_call = loop.index('exit "$rc"', refusal)
+        self.assertLess(rc_check, refusal)
+        self.assertLess(refusal, exit_call)
+
+    def test_preserver_digest_is_bracketed_across_its_own_invocation(self):
+        block = self.source[self.source.index("PRESERVER_PRE="):]
+        before = block.index("PRESERVER_PRE=")
+        invocation = block.index('"$PY" "$PRESERVER" --source')
+        after = block.index("PRESERVER_POST=")
+        mismatch = block.index('if [ "$PRESERVER_PRE" != "$PRESERVER_POST" ]; then')
+        failed = block.index('if [ "$prc" -ne 0 ]; then')
+        self.assertLess(before, invocation)
+        self.assertLess(invocation, after)
+        self.assertLess(after, mismatch)
+        self.assertLess(mismatch, failed)
 
 
 if __name__ == "__main__":

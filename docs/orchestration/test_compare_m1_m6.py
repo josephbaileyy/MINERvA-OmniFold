@@ -47,6 +47,11 @@ def base_document(label, tree):
     return {
         "label": label,
         "tree": tree,
+        "measurement_wall_clock": {
+            "started_utc": "2026-08-28T10:00:00Z",
+            "completed_utc": "2026-08-28T10:01:00Z",
+        },
+        "branch_or_detached": {"state": "branch", "name": "main"},
         "M-1": [
             {"file": "nd-unfolding/bootstrap_nd.py", "present": True,
              "literals": [{"name": "_ND", "line": 12, "form": "subpath",
@@ -246,6 +251,43 @@ class R2_NoDefaultsAndItFailsClosedOnAbsence(BenchCase):
         self.assertEqual(code, cm.EXIT_REFUSAL_INPUT)
         self.assertIn("missing M-4", err)
 
+    def test_predecessor_document_missing_producer_identity_is_refused(self):
+        good, _ = self.two()
+        for key in cm.IDENTITY_KEYS:
+            with self.subTest(key=key):
+                maimed = base_document("CANONICAL", "/trees/canonical")
+                del maimed[key]
+                code, _, err = self.bench.run(
+                    [good, self.bench.write_doc("m.json", maimed)], self.expected_ok)
+                self.assertEqual(code, cm.EXIT_REFUSAL_INPUT)
+                self.assertIn(f"missing {key}", err)
+
+    def test_malformed_or_reversed_measurement_clock_is_refused(self):
+        good, _ = self.two()
+        malformed = base_document("CANONICAL", "/trees/canonical")
+        malformed["measurement_wall_clock"]["completed_utc"] = "later"
+        reversed_clock = base_document("CANONICAL", "/trees/canonical")
+        reversed_clock["measurement_wall_clock"] = {
+            "started_utc": "2026-08-28T10:02:00Z",
+            "completed_utc": "2026-08-28T10:01:00Z",
+        }
+        for document, message in ((malformed, "invalid measurement_wall_clock"),
+                                  (reversed_clock, "completed before it started")):
+            with self.subTest(message=message):
+                code, _, err = self.bench.run(
+                    [good, self.bench.write_doc("clock.json", document)], self.expected_ok)
+                self.assertEqual(code, cm.EXIT_REFUSAL_INPUT)
+                self.assertIn(message, err)
+
+    def test_malformed_branch_identity_is_refused(self):
+        good, _ = self.two()
+        malformed = base_document("CANONICAL", "/trees/canonical")
+        malformed["branch_or_detached"] = {"state": "detached", "name": "main"}
+        code, _, err = self.bench.run(
+            [good, self.bench.write_doc("branch.json", malformed)], self.expected_ok)
+        self.assertEqual(code, cm.EXIT_REFUSAL_INPUT)
+        self.assertIn("name does not match state", err)
+
     def test_unreadable_json_and_a_json_list_are_both_refusals(self):
         good, _ = self.two()
         broken = self.bench.root / "broken.json"
@@ -367,13 +409,17 @@ class R3_EveryFindingNamesBothSidesTheUnitAndThePopulation(BenchCase):
         self.assertTrue(record["field_set_differs"])
         self.assertEqual([s["value"] for s in finding["sides"]], [cm.ABSENT, 3])
 
-    def test_the_two_identity_fields_the_input_schema_CANNOT_supply_are_named_unavailable(self):
+    def test_producer_captured_identity_is_carried_without_remeasurement(self):
         _, record, _ = self.bench.run(self.two(), self.expected_ok)
         for side in record["inputs"]:
-            self.assertEqual(side["branch_or_detached"], cm.UNAVAILABLE)
-            self.assertEqual(side["measurement_wall_clock"], cm.UNAVAILABLE)
-        self.assertIn("symbolic-ref", record["input_schema_gaps"]["branch_or_detached"])
-        self.assertIn("no timestamp", record["input_schema_gaps"]["measurement_wall_clock"])
+            self.assertEqual(side["branch_or_detached"], {"state": "branch", "name": "main"})
+            self.assertEqual(side["measurement_wall_clock"], {
+                "started_utc": "2026-08-28T10:00:00Z",
+                "completed_utc": "2026-08-28T10:01:00Z",
+            })
+        self.assertNotIn("branch_or_detached", record["input_schema_gaps"])
+        self.assertNotIn("measurement_wall_clock", record["input_schema_gaps"])
+        self.assertIn("measuring_instrument_digest", record["input_schema_gaps"])
 
 
 # --------------------------------------------------------------------------------------------- R4
@@ -955,14 +1001,20 @@ class R4_ThePatternGrammarIsPositiveNotADenyList(BenchCase):
                     self.assertIsNone(cm.bad_pattern(pattern), cm.bad_pattern(pattern))
 
     def test_every_ACCEPTED_M1_pattern_reaches_ONE_FILE_or_ALL_of_them__the_opposite_direction(self):
-        """The ruled property itself, asserted over the matcher rather than over spellings.
+        """The reach invariant, asserted over the matcher rather than over spellings.
 
-        The point of the narrowing is not that a particular syntax is banned; it is that an accepted
-        M-1 entry covers either one nameable file or, visibly, the whole population -- never a
-        silent proper subset. This arm states that as an invariant and computes it from what
-        `field_matches` reaches, so it fails if some future spelling slips past `parse_pattern`
-        while landing in the middle. It is paired with the sweep above: that one catches
-        over-refusal, this one catches the residue of under-refusal.
+        An accepted M-1 entry covers either one nameable file or, visibly, the whole population --
+        never a silent proper subset. This arm states that as an invariant and computes it from
+        what `field_matches` reaches, so it fails if some future spelling slips past
+        `parse_pattern` while landing in the middle.
+
+        WHAT THIS ARM DOES NOT DO, corrected per section 13.1 of
+        `DECISION-20260825-joseph-gate2-fail-and-four-rulings.md`: it is NOT the residue check for
+        under-refusal, and the previous docstring said it was -- which stated the opposite of the
+        claim it supports. The banned spelling `M-1[nd-*]` SATISFIES this reach invariant, because
+        it reaches 10 of 10, so a reach property cannot catch the very form section 12.2.1 banned.
+        Coverage for that class comes from the separate candidate sweep above, never from here.
+        The defect was in this prose; the behaviour was and is correct.
         """
         keys = self.row_keys()
         universe = _real_m1_universe(keys)
@@ -1002,7 +1054,12 @@ class R4_ThePatternGrammarIsPositiveNotADenyList(BenchCase):
         guard would pass it -- and it silently widens the day `measure_m1_m6.py` adds a field
         beginning `behin`. The class is made unreachable instead of checked for: the wildcard is a
         selector-space device and the terminal field name is always literal. Measured 2026-08-25:
-        265 of 721 generated candidates are refused although they reach exactly one field name.
+        265 of 721 generated candidates are refused although they reach exactly one field name and
+        touch no `M-2` field. That qualifier is load-bearing, not decoration: without it the count
+        is 301, and the whole 36-pattern gap is `M-2`-targeted, which the `M-2` rule refuses
+        regardless. See section 13.2 of
+        `DECISION-20260825-joseph-gate2-fail-and-four-rulings.md`, which re-derived 265 twice and
+        withdrew the claim that it was wrong.
         """
         pattern = "M-4.behin*"
         self.assertEqual({_terminal_name(f) for f in self.reach(pattern)}, {"behind"})

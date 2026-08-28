@@ -65,6 +65,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   and not a reopening of completed or broadly scoped 5D work. The `MANIFEST` classification finding
   stays an **open referral, non-blocking** unless the routed gate explicitly depends on it.
 
+- [`DECISION-20260828-joseph-f17b-four-surface-repair.md`](DECISION-20260828-joseph-f17b-four-surface-repair.md)
+  — **Joseph approved the bounded four-surface F-17(b) repair.** The measurer now emits a real
+  wall-clock interval and branch-or-detached identity, the comparator requires and carries both,
+  the preserver is digest-bracketed across its own invocation, and a failed measurer short-circuits
+  immediately. It records dated successors for both historical shell-script pins without editing
+  either old value. **This authorizes the repair and fresh independent fixture-only grade only:** no
+  far-end run, rehearsal, compute, covariance adoption, Gate-2 movement or publication claim.
+
 - [`DISCIPLINE-20260825-f14-coupling-comparator-repair-lane.md`](DISCIPLINE-20260825-f14-coupling-comparator-repair-lane.md)
   — **One F-14 / §7.0.7 manifest-coupling omission by the independent comparator-repair lane,
   filed against itself.** `c8a29082` changed `compare_m1_m6.py` and `test_compare_m1_m6.py` without
