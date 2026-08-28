@@ -148,6 +148,7 @@ class Ctx:
             self.state_dir = HERE / self.config.get("state_dir", "state/waker")
         self.repo = HERE.parent.parent
         self.watches_dir = self.state_dir / "watches"
+        self.watch_archive_dir = self.state_dir / "archive" / "watches"
         self.events_dir = self.state_dir / "events"
         self.logs_dir = self.state_dir / "logs"
         self.ledger_path = self.state_dir / "LEDGER.tsv"
@@ -274,6 +275,31 @@ def watch_path(ctx: Ctx, watch_id: str) -> Path:
     return ctx.watches_dir / f"{watch_id}.json"
 
 
+def archived_watch_path(ctx: Ctx, watch_id: str) -> Path:
+    agentctl.safe_role(watch_id)
+    return ctx.watch_archive_dir / f"{watch_id}.json"
+
+
+def archive_watch(ctx: Ctx, watch_id: str) -> bool:
+    """Move one terminal watch out of the live scan directory.
+
+    The event spool carries an immutable snapshot of the action and context, so
+    dispatch and retries no longer need a terminal watch file.  Keeping only
+    non-terminal watches in ``watches/`` prevents an old Lustre inode from
+    wedging every future tick, while the archive preserves the exact record.
+    """
+    source = watch_path(ctx, watch_id)
+    if not source.exists():
+        return False
+    destination = archived_watch_path(ctx, watch_id)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    if destination.exists():
+        raise WakerError(f"refusing to overwrite archived watch: {watch_id}")
+    os.replace(source, destination)
+    ctx.ledger(f"evt-{watch_id}", "watch-archived", str(destination))
+    return True
+
+
 def save_watch(ctx: Ctx, watch: dict) -> None:
     agentctl.atomic_write_json(watch_path(ctx, watch["watch_id"]), watch)
 
@@ -288,9 +314,29 @@ def load_watches(ctx: Ctx) -> list[dict]:
     return result
 
 
+def compact_terminal_watches(ctx: Ctx) -> list[str]:
+    """Archive terminal legacy watches whose event contract is complete.
+
+    Disarmed watches have no future action.  Fired watches move only after a
+    terminal ``.done`` marker exists, so old events that still depend on their
+    watch file retain the legacy routing fallback until they finish.
+    """
+    archived: list[str] = []
+    for watch in load_watches(ctx):
+        watch_id = str(watch.get("watch_id") or "")
+        state = watch_state(watch)
+        if not watch_id or state not in {"disarmed", "fired"}:
+            continue
+        if state == "fired" and not event_paths(ctx, f"evt-{watch_id}")["done"].exists():
+            continue
+        if archive_watch(ctx, watch_id):
+            archived.append(watch_id)
+    return archived
+
+
 def add_watch(ctx: Ctx, watch: dict) -> None:
     path = watch_path(ctx, watch["watch_id"])
-    if path.exists():
+    if path.exists() or archived_watch_path(ctx, watch["watch_id"]).exists():
         raise WakerError(f"watch already exists: {watch['watch_id']}")
     watch.setdefault("state", "armed")
     watch.setdefault("armed_at_utc", ctx.now_iso())
@@ -593,6 +639,7 @@ def emit_event(
     retry_of: str | None = None,
     recon_of: str | None = None,
     context: str | None = None,
+    action: dict | None = None,
 ) -> bool:
     record = {
         "schema_version": 1,
@@ -610,6 +657,10 @@ def emit_event(
         record["recon_of"] = recon_of
     if context:
         record["context"] = context
+    if action:
+        # Snapshot routing before the watch is archived.  Event records are the
+        # durable dispatch contract; live watch files are only condition state.
+        record["action"] = action
     created = create_exclusive(
         event_paths(ctx, event_id)["event"], json.dumps(record, indent=2, sort_keys=True) + "\n"
     )
@@ -650,7 +701,15 @@ def scan(ctx: Ctx) -> list[str]:
                 continue
             event_type, payload = fired
             event_id = f"evt-{wid}"
-            emit_event(ctx, event_id, wid, event_type, payload)
+            emit_event(
+                ctx,
+                event_id,
+                wid,
+                event_type,
+                payload,
+                context=(watch.get("action") or {}).get("context") or None,
+                action=watch.get("action") or {"type": "root-resume"},
+            )
             watch["state"] = "fired"
             watch["fired_at_utc"] = ctx.now_iso()
             save_watch(ctx, watch)
@@ -1196,6 +1255,9 @@ def render_prompt(ctx: Ctx, event: dict) -> str:
 
 
 def watch_context(ctx: Ctx, event: dict) -> str:
+    action = event.get("action")
+    if isinstance(action, dict):
+        return str(action.get("context") or "")
     path = ctx.watches_dir / f"{event.get('watch_id', '')}.json"
     if path.is_file():
         with contextlib.suppress(OSError, json.JSONDecodeError):
@@ -1203,12 +1265,22 @@ def watch_context(ctx: Ctx, event: dict) -> str:
     return ""
 
 
-def run_action(ctx: Ctx, event: dict) -> int:
+def event_action(ctx: Ctx, event: dict) -> dict:
+    """Resolve routing from the immutable event, with legacy-watch fallback."""
+    action = event.get("action")
+    if isinstance(action, dict) and action.get("type"):
+        return action
     watch_file = ctx.watches_dir / f"{event.get('watch_id', '')}.json"
-    action = {"type": "root-resume"}
     if watch_file.is_file():
         with contextlib.suppress(OSError, json.JSONDecodeError):
-            action = read_json(watch_file).get("action") or action
+            legacy = read_json(watch_file).get("action")
+            if isinstance(legacy, dict) and legacy.get("type"):
+                return legacy
+    return {"type": "root-resume"}
+
+
+def run_action(ctx: Ctx, event: dict) -> int:
+    action = event_action(ctx, event)
     log_path = ctx.logs_dir / f"{event['event_id']}.log"
     ctx.logs_dir.mkdir(parents=True, exist_ok=True)
 
@@ -1322,6 +1394,8 @@ def dispatch_one(ctx: Ctx, event_id: str, paths: dict[str, Path]) -> str:
         os.unlink(paths["blocked"])
     if rc != 0:
         schedule_retry(ctx, event, event_id)
+    with contextlib.suppress(FileNotFoundError):
+        archive_watch(ctx, str(event.get("watch_id", "")))
     return outcome
 
 
@@ -1333,11 +1407,7 @@ def capacity_problems(ctx: Ctx, event: dict) -> list[str]:
     """
     if ctx.config.get("capacity_guard") is not True:
         return []
-    watch_file = ctx.watches_dir / f"{event.get('watch_id', '')}.json"
-    action = {"type": "root-resume"}
-    if watch_file.is_file():
-        with contextlib.suppress(OSError, json.JSONDecodeError):
-            action = read_json(watch_file).get("action") or action
+    action = event_action(ctx, event)
     if action.get("type") != "root-resume":
         return []
     profile_name = str(ctx.root().get("profile", "codex-personal"))
@@ -1391,6 +1461,8 @@ def schedule_retry(ctx: Ctx, event: dict, event_id: str) -> None:
         event.get("event_type", "unknown"),
         event.get("payload", {}),
         retry_of=base_id,
+        context=event.get("context"),
+        action=event_action(ctx, event),
     )
 
 
@@ -1413,6 +1485,8 @@ def maybe_reconcile(ctx: Ctx, event_id: str, grace: int) -> str:
         "resume-outcome-unknown",
         {"original_event": event_id},
         recon_of=event_id,
+        context=event.get("context"),
+        action=event_action(ctx, event),
     )
     # The recon event supersedes the original: give the original a terminal
     # disposition so it is never re-dispatched and its record is complete.
@@ -1421,6 +1495,8 @@ def maybe_reconcile(ctx: Ctx, event_id: str, grace: int) -> str:
         {"at_utc": ctx.now_iso(), "owner": owner_string(), "rc": None, "outcome": "reconciled"},
     )
     ctx.ledger(event_id, "recon-emitted", f"invoked_age={int(invoked_age)}s")
+    with contextlib.suppress(FileNotFoundError):
+        archive_watch(ctx, str(event.get("watch_id", "")))
     return "recon-emitted"
 
 
@@ -1846,6 +1922,11 @@ def status(ctx: Ctx) -> dict:
         "observed_at_utc": ctx.now_iso(),
         "node": socket.gethostname(),
         "watches": watches,
+        "archived_watch_count": (
+            len(list(ctx.watch_archive_dir.glob("*.json")))
+            if ctx.watch_archive_dir.is_dir()
+            else 0
+        ),
         "events": events,
         "last_tick": last_tick,
         "resume_mutex_held": ctx.resume_mutex.exists(),
@@ -2023,6 +2104,7 @@ def main() -> int:
 
     for name, help_text in (
         ("watch-list", "List watches"),
+        ("watch-compact", "Archive terminal watches out of the live scan directory"),
         ("scan", "One condition-evaluation pass"),
         ("dispatch", "One claim/act pass over spooled events"),
         ("tick", "scan + dispatch once"),
@@ -2084,12 +2166,16 @@ def main() -> int:
         elif args.command == "watch-list":
             for watch in load_watches(ctx):
                 print(f"{watch['watch_id']}\t{watch['kind']}\t{watch.get('state')}")
+        elif args.command == "watch-compact":
+            archived = compact_terminal_watches(ctx)
+            print(json.dumps({"archived": archived, "count": len(archived)}, indent=2))
         elif args.command == "watch-disarm":
             path = watch_path(ctx, args.id)
             watch = read_json(path)
             watch["state"] = "disarmed"
             save_watch(ctx, watch)
             ctx.ledger(f"evt-{args.id}", "watch-disarmed", "")
+            archive_watch(ctx, args.id)
             print(f"disarmed {args.id}")
         elif args.command == "emit":
             created = emit_event(

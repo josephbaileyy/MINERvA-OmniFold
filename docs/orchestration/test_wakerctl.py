@@ -367,6 +367,11 @@ class DispatchTests(WakerTestCase):
         self.assertIn("evt-w1", prompt)
         self.assertIn("ctx-note", prompt)
         self.assertIn("next dependency-ready campaign action", prompt)
+        event = wakerctl.read_json(wakerctl.event_paths(ctx, "evt-w1")["event"])
+        self.assertEqual(event["action"]["type"], "root-resume")
+        self.assertEqual(event["context"], "ctx-note")
+        self.assertFalse(wakerctl.watch_path(ctx, "w1").exists())
+        self.assertTrue(wakerctl.archived_watch_path(ctx, "w1").exists())
         # Second dispatch performs nothing further.
         self.assertEqual(wakerctl.dispatch(ctx), [])
         self.assertEqual(len(self.runner.action_calls("codex")), 1)
@@ -494,6 +499,29 @@ class DispatchTests(WakerTestCase):
         self.assertIn(("evt-recover.r1", "resumed"), outcomes)
         self.assertEqual(len(self.runner.action_calls("codex")), 2)
         self.assertEqual(wakerctl.dispatch(ctx), [])
+
+    def test_retry_keeps_event_action_after_live_watch_is_archived(self):
+        ctx = self.ctx()
+        state = {"first": True}
+
+        def flaky(argv):
+            if state["first"]:
+                state["first"] = False
+                return types.SimpleNamespace(returncode=1, stdout="first failed")
+            return types.SimpleNamespace(returncode=0, stdout="second passed")
+
+        self.runner.add(lambda a: "codex" in a[0], flaky)
+        self.fire_sentinel(ctx, "snapshot-retry")
+        self.assertEqual(wakerctl.dispatch(ctx), [("evt-snapshot-retry", "failed")])
+        self.assertFalse(wakerctl.watch_path(ctx, "snapshot-retry").exists())
+        retry = wakerctl.read_json(
+            wakerctl.event_paths(ctx, "evt-snapshot-retry.r1")["event"]
+        )
+        self.assertEqual(retry["action"]["type"], "root-resume")
+        self.assertEqual(retry["context"], "ctx-note")
+        self.assertEqual(
+            wakerctl.dispatch(ctx), [("evt-snapshot-retry.r1", "resumed")]
+        )
 
     def test_invoked_without_done_emits_one_reconciliation(self):
         ctx = self.ctx()
@@ -919,7 +947,8 @@ class StatusAndCronTests(WakerTestCase):
         path.write_text("x")
         wakerctl.tick(ctx)
         report = wakerctl.status(ctx)
-        self.assertEqual(report["watches"][0]["state"], "fired")
+        self.assertEqual(report["watches"], [])
+        self.assertEqual(report["archived_watch_count"], 1)
         self.assertEqual(report["events"][0]["state"], "resumed")
         self.assertIsNotNone(report["last_tick"])
 
@@ -1022,9 +1051,26 @@ class StatusAndCronTests(WakerTestCase):
         wakerctl.tick(ctx)
         rows = [line.split("\t") for line in (self.dir / "state" / "LEDGER.tsv").read_text().splitlines()]
         transitions = [row[2] for row in rows if row[1] == "evt-led"]
-        self.assertEqual(transitions, ["watch-armed", "event-emitted", "invoked", "done"])
+        self.assertEqual(
+            transitions,
+            ["watch-armed", "event-emitted", "invoked", "done", "watch-archived"],
+        )
         for row in rows:
             self.assertEqual(len(row), 5)  # ts, id, transition, owner, detail
+
+    def test_compact_archives_only_terminal_legacy_watches(self):
+        ctx = self.ctx()
+        terminal_path = self.arm_sentinel(ctx, "terminal")
+        terminal_path.write_text("done")
+        wakerctl.scan(ctx)
+        wakerctl.event_paths(ctx, "evt-terminal")["done"].write_text(
+            json.dumps({"outcome": "resumed"})
+        )
+        self.arm_sentinel(ctx, "active")
+        archived = wakerctl.compact_terminal_watches(ctx)
+        self.assertEqual(archived, ["terminal"])
+        self.assertTrue(wakerctl.archived_watch_path(ctx, "terminal").exists())
+        self.assertTrue(wakerctl.watch_path(ctx, "active").exists())
 
 
 if __name__ == "__main__":

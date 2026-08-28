@@ -7,6 +7,7 @@ import argparse
 import contextlib
 import datetime as dt
 import fcntl
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -21,6 +22,7 @@ import uuid
 HERE = Path(__file__).resolve().parent
 DEFAULT_CONFIG = HERE / "profiles.json"
 DEFAULT_REGISTRY = HERE / "state" / "sessions.json"
+AUTO_CODEX_PROFILE = "auto-codex"
 
 
 class AgentCtlError(RuntimeError):
@@ -90,6 +92,58 @@ def mutate_registry(path: Path, callback) -> dict:
         return registry
 
 
+def cwd_lock_path(registry_path: Path, cwd: Path) -> Path:
+    digest = hashlib.sha256(str(cwd.resolve()).encode("utf-8")).hexdigest()[:24]
+    return registry_path.parent / "locks" / f"cwd-{digest}.lock"
+
+
+def assert_new_role_cwd_isolated(registry: dict, role: str, cwd: Path) -> None:
+    resolved = str(cwd.resolve())
+    collisions = sorted(
+        name
+        for name, session in registry["sessions"].items()
+        if name != role and str(Path(session.get("cwd", "")).resolve()) == resolved
+    )
+    if collisions:
+        raise AgentCtlError(
+            f"Working directory {resolved} is already owned by role(s) "
+            f"{', '.join(collisions)}; create an isolated git worktree"
+        )
+
+
+def assert_clean_git_start(cwd: Path, runner=subprocess.run) -> None:
+    """Require a clean Git boundary before a new role gets its first turn."""
+    probe = runner(
+        ["git", "-C", str(cwd), "rev-parse", "--is-inside-work-tree"],
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        check=False,
+        timeout=30,
+    )
+    if probe.returncode != 0:
+        return  # Explicit non-Git scratch directories remain supported.
+    status = runner(
+        ["git", "-C", str(cwd), "status", "--porcelain", "--untracked-files=all"],
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        check=False,
+        timeout=30,
+    )
+    if status.returncode != 0:
+        raise AgentCtlError(
+            f"Could not verify clean worktree {cwd}: {(status.stdout or '').strip()[-1000:]}"
+        )
+    dirty = (status.stdout or "").strip()
+    if dirty:
+        raise AgentCtlError(
+            f"Refusing to start a new role in dirty worktree {cwd}: {dirty[:1000]}"
+        )
+
+
 def login_home() -> Path:
     """Return the login account home even when a delegate overrides HOME."""
     try:
@@ -137,6 +191,57 @@ def get_profile(profiles: dict, name: str) -> dict:
     if profile.get("provider") not in {"agy", "claude", "codex"}:
         raise AgentCtlError(f"Profile {name!r} has an invalid provider")
     return profile
+
+
+def resolve_start_profile(
+    requested: str,
+    profiles: dict,
+    config_path: Path,
+    runner=subprocess.run,
+) -> tuple[str, str | None]:
+    """Resolve capacity-aware routing for a new bounded Codex role only.
+
+    Existing sessions remain pinned to their recorded concrete profile.  This
+    avoids the invalid operation of resuming one provider UUID under another
+    account while preventing a newly-created worker from inheriting an already
+    exhausted account merely because its caller hard-coded a profile.
+    """
+    if requested != AUTO_CODEX_PROFILE:
+        get_profile(profiles, requested)
+        return requested, None
+    command = [
+        sys.executable,
+        str(HERE / "usagectl.py"),
+        "select",
+        "--config",
+        str(config_path),
+        "--provider",
+        "codex",
+        "--json",
+    ]
+    completed = runner(
+        command,
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        raise AgentCtlError(
+            "auto-codex could not select a READY/LOW account: "
+            + (completed.stdout or "").strip()[-1000:]
+        )
+    try:
+        selected = json.loads(completed.stdout).get("selected")
+    except (json.JSONDecodeError, AttributeError) as exc:
+        raise AgentCtlError(f"auto-codex returned invalid JSON: {exc}") from exc
+    if not isinstance(selected, str) or not selected:
+        raise AgentCtlError("auto-codex returned no selected profile")
+    profile = get_profile(profiles, selected)
+    if profile.get("provider") != "codex":
+        raise AgentCtlError(f"auto-codex selected non-Codex profile {selected!r}")
+    return selected, requested
 
 
 def prompt_from_args(args: argparse.Namespace) -> str:
@@ -402,33 +507,45 @@ def run_base(role: str, action: str) -> Path:
     return HERE / "runs" / role / f"{stamp}-{action}-{uuid.uuid4().hex[:8]}"
 
 
-def start(args: argparse.Namespace, profiles: dict, registry_path: Path) -> None:
+def start(
+    args: argparse.Namespace,
+    profiles: dict,
+    registry_path: Path,
+    config_path: Path = DEFAULT_CONFIG,
+) -> None:
     role = safe_role(args.role)
-    profile = get_profile(profiles, args.profile)
+    resolved_profile, profile_request = resolve_start_profile(
+        args.profile, profiles, config_path
+    )
+    profile = get_profile(profiles, resolved_profile)
     prompt = prompt_from_args(args)
     cwd = Path(args.cwd).expanduser().resolve()
     if not cwd.is_dir():
         raise AgentCtlError(f"Working directory does not exist: {cwd}")
     role_lock = registry_path.parent / "locks" / f"{role}.lock"
     with exclusive_lock(role_lock):
-        if role in read_registry(registry_path)["sessions"]:
+        registry = read_registry(registry_path)
+        if role in registry["sessions"]:
             raise AgentCtlError(
                 f"Role {role!r} already exists; use send or choose another role"
             )
-        provisional_id = str(uuid.uuid4())
-        base = run_base(role, "start")
-        provider_log = base.with_suffix(".agy.log") if profile["provider"] == "agy" else None
-        command, env = build_start_command(
-            profile, prompt, cwd, provisional_id, provider_log=provider_log
-        )
-        session_id, result, run = run_worker(
-            command,
-            env,
-            cwd,
-            base,
-            profile["provider"],
-            provider_log=provider_log,
-        )
+        assert_new_role_cwd_isolated(registry, role, cwd)
+        assert_clean_git_start(cwd)
+        with exclusive_lock(cwd_lock_path(registry_path, cwd)):
+            provisional_id = str(uuid.uuid4())
+            base = run_base(role, "start")
+            provider_log = base.with_suffix(".agy.log") if profile["provider"] == "agy" else None
+            command, env = build_start_command(
+                profile, prompt, cwd, provisional_id, provider_log=provider_log
+            )
+            session_id, result, run = run_worker(
+                command,
+                env,
+                cwd,
+                base,
+                profile["provider"],
+                provider_log=provider_log,
+            )
         if profile["provider"] in {"agy", "codex"} and not session_id:
             raise AgentCtlError(
                 f"{profile['provider']} completed without reporting a conversation ID"
@@ -440,13 +557,15 @@ def start(args: argparse.Namespace, profiles: dict, registry_path: Path) -> None
                 raise AgentCtlError(f"Role {role!r} was created concurrently")
             registry["sessions"][role] = {
                 "provider": profile["provider"],
-                "profile": args.profile,
+                "profile": resolved_profile,
                 "session_id": session_id,
                 "cwd": str(cwd),
                 "created_at": utc_now(),
                 "updated_at": utc_now(),
                 "turns": [{"number": 1, "action": "start", **run}],
             }
+            if profile_request:
+                registry["sessions"][role]["profile_request"] = profile_request
 
         mutate_registry(registry_path, add_session)
     print(result)
@@ -463,23 +582,24 @@ def send(args: argparse.Namespace, profiles: dict, registry_path: Path) -> None:
         session = registry["sessions"][role]
         profile = get_profile(profiles, session["profile"])
         cwd = Path(session["cwd"])
-        base = run_base(role, "send")
-        provider_log = base.with_suffix(".agy.log") if profile["provider"] == "agy" else None
-        command, env = build_resume_command(
-            profile,
-            prompt,
-            session["session_id"],
-            cwd=cwd,
-            provider_log=provider_log,
-        )
-        _session_id, result, run = run_worker(
-            command,
-            env,
-            cwd,
-            base,
-            profile["provider"],
-            provider_log=provider_log,
-        )
+        with exclusive_lock(cwd_lock_path(registry_path, cwd)):
+            base = run_base(role, "send")
+            provider_log = base.with_suffix(".agy.log") if profile["provider"] == "agy" else None
+            command, env = build_resume_command(
+                profile,
+                prompt,
+                session["session_id"],
+                cwd=cwd,
+                provider_log=provider_log,
+            )
+            _session_id, result, run = run_worker(
+                command,
+                env,
+                cwd,
+                base,
+                profile["provider"],
+                provider_log=provider_log,
+            )
 
         def record_turn(latest: dict) -> None:
             current = latest["sessions"].get(role)
@@ -558,7 +678,11 @@ def parser() -> argparse.ArgumentParser:
 
     start_parser = commands.add_parser("start", help="Start a persistent role")
     start_parser.add_argument("--role", required=True)
-    start_parser.add_argument("--profile", required=True)
+    start_parser.add_argument(
+        "--profile",
+        required=True,
+        help="Concrete profile, or auto-codex for a new capacity-routed Codex role",
+    )
     start_parser.add_argument("--cwd", default=os.getcwd())
     start_parser.add_argument("--prompt-file")
     start_parser.add_argument("prompt", nargs="*")
@@ -594,7 +718,7 @@ def main() -> int:
         if args.handler == "profiles":
             list_profiles(profiles)
         elif args.handler == "start":
-            start(args, profiles, registry_path)
+            start(args, profiles, registry_path, config_path=config_path)
         elif args.handler == "adopt":
             adopt(args, profiles, registry_path)
         elif args.handler == "send":

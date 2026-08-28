@@ -33,6 +33,13 @@ latency. Zero LLM calls occur unless an armed watch condition holds.
   drivers and Codex-owned background sessions signal) — and emit immutable
   event receipts with deterministic ids (`evt-<watch-id>`), so duplicate
   producers collide harmlessly on atomic `link(2)` creation.
+- **The live watch directory contains only non-terminal state.** Event
+  creation snapshots the watch's action and context into the immutable event
+  receipt. After terminal disposition the watch moves to
+  `state/waker/archive/watches/`. This keeps historical Lustre inodes out of
+  the scan path without deleting provenance. `wakerctl watch-compact` applies
+  the same transition to legacy fired/disarmed watches, but moves a fired
+  watch only after its `.done` marker exists.
 - **The dispatcher** (`wakerctl dispatch`) claims each event exclusively
   (lease-stamped hard-link claims; Lustre/GPFS-coherent), serializes provider
   turns through one lease-guarded resume mutex, preflights the environment
@@ -109,6 +116,7 @@ $P wakerctl.py watch-add --id g2-driver-done --kind file-sentinel \
     --param path=/abs/path/DONE --param must_contain=rc=0 --context "..."
 
 $P wakerctl.py status                     # watches/events/tick liveness, any node
+$P wakerctl.py watch-compact              # archive terminal legacy watches
 $P wakerctl.py tick                       # one manual scan+dispatch pass
 $P wakerctl.py install-cron               # arm after saving a checked scrontab -l
 $P wakerctl.py uninstall-cron             # rollback
@@ -193,6 +201,42 @@ session. Before a root resume, the capacity guard checks the root's exact
 profile; an unavailable root leaves the event unconsumed, pushes the block, and
 retries after reset/auth recovery. Command actions and Slurm monitoring need no
 LLM capacity and continue normally.
+
+The continuity rule applies to an existing conversation, not to the whole
+campaign. Do not make several sessions co-own `main` to hide an exhausted
+account. The recovery pattern is:
+
+1. keep exactly one accountable root and one serialized waker mutex;
+2. run every writer in its own worktree and land only reviewed commits.
+   `agentctl start` rejects a dirty Git checkout or a directory already owned
+   by another registered role, and both `start` and `send` hold a cwd-keyed
+   lock for the complete provider turn;
+3. use `usagectl.py select --provider codex --json` for each **new bounded
+   worker**, or let `agentctl.py start --profile auto-codex ...` perform that
+   fail-closed selection and record the concrete profile; never silently
+   resume an existing UUID under another account;
+4. when the root itself exhausts, create one fresh successor on the selected
+   account, rehydrate it from `AGENTS.md`, fresh `LIVE-STATE.md`, and the exact
+   governing `OI-*` record, then change the root binding once. Retire the old
+   root before the successor can write. Conversation history is not the
+   campaign database; committed receipts are;
+5. use `agy` for bounded independent review or grading when its heartbeat is
+   healthy. Its quota is not measurable, so it is not an automatic root or a
+   capacity reserve. Agy must not share a writer checkout or independently
+   push `main`.
+
+This preserves scientific continuity while allowing provider/account
+continuity to change at an explicit, auditable boundary.
+
+## Poisoned-inode recovery
+
+If `status` or `tick` hangs, identify the exact watch file with bounded
+per-file reads. A terminal watch may be moved to `state/waker/quarantine/`
+only after its event receipt and `.done` disposition are independently read.
+The move is recoverable and must name the file exactly. Reinstall the scrontab
+only after saving and checking `scrontab -l`; cancel only the exact wedged cron
+allocation, then run one bounded manual tick and read `last-tick.json`. Never
+reset the repository or delete the runtime tree as a shortcut.
 
 ## Answering a BLOCKED-ON-USER stop
 
