@@ -1,4 +1,4 @@
-import json, yaml
+import yaml
 # matplotlib is only used by the plotting helpers below; the MultiFold/DataLoader/
 # PET training path never plots. Guard the import so `import omnifold` works in a
 # minimal (e.g. NGC-container) env that has no matplotlib -- the plot functions
@@ -48,7 +48,6 @@ def SetStyle():
     mpl.rcParams.update({'axes.labelsize': 18}) 
     mpl.rcParams.update({'legend.frameon': False}) 
     
-    import matplotlib.pyplot as plt
 
 def SetGrid(ratio=True):
     fig = plt.figure(figsize=(9, 9))

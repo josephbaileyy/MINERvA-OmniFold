@@ -35,7 +35,6 @@ default initialization -- which would be a vacuous pass of exactly the kind BEN-
 Cheap: no data, no training, one model construction per step. Reads the architecture from the artifact's
 contract rather than restating it, so it cannot drift from what the driver builds.
 """
-import json
 import os
 import sys
 

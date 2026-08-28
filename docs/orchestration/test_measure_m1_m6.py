@@ -15,7 +15,6 @@ BOTH DIRECTIONS ARE PINNED. A guard needs an arm that it FIRES; a narrowing need
 NOT. The over-broad arm matters concretely: `MINERvA-OmniFold-Analysis-Note` is a real sibling
 repository, and a bare `startswith` would report a hazard in a tree that has none.
 """
-import ast
 import importlib.util
 import pathlib
 import tempfile

@@ -15,7 +15,6 @@ for _a in _pathlib.Path(__file__).resolve().parents:
 import technote_style  # noqa: E402  (no titles + consistent colours)
 
 import argparse
-from array import array
 
 import numpy as np
 import ROOT
@@ -224,7 +223,6 @@ def draw_legend_panel(ax, handles, labels):
 
 def plot_pt_slices(fig, outer, paper, paper_err, reported,
                    omni, omni_err, truth):
-    import matplotlib.pyplot as plt
 
     gs = outer.subgridspec(4, 4, wspace=0.0, hspace=0.0)
     handles = labels = None
@@ -263,7 +261,6 @@ def plot_pt_slices(fig, outer, paper, paper_err, reported,
 
 def plot_pz_slices(fig, outer, paper, paper_err, reported,
                    omni, omni_err, truth):
-    import matplotlib.pyplot as plt
 
     gs = outer.subgridspec(4, 4, wspace=0.0, hspace=0.0)
     axes = []

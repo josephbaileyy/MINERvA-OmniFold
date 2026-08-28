@@ -27,7 +27,7 @@ import numpy as np
 _ND = str(Path(__file__).resolve().parents[0])
 if _ND not in sys.path: sys.path.insert(0, _ND)
 from omnifold_nn_core import omnifold_loop
-from xsec_nd import extract_cross_section_nd, project_axis, total_xsec
+from xsec_nd import extract_cross_section_nd, total_xsec
 import seed_offset_policy
 
 def main():

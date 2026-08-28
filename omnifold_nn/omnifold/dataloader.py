@@ -1,5 +1,4 @@
 import numpy as np
-import sys, os
 
 class DataLoader():
     def __init__(

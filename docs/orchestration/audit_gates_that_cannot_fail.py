@@ -32,7 +32,6 @@ defeated by an import side effect.
 import argparse
 import os
 import re
-import sys
 
 # ---------------------------------------------------------------------------------------------
 # Detectors. Each returns a list of (severity, path, lineno, line, why).

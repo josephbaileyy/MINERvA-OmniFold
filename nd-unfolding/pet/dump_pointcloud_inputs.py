@@ -14,7 +14,6 @@ highest-energy constituents), and writes of_inputs_pc.npz for minerva_pet_datalo
 """
 import argparse
 import math
-import os
 import sys
 from array import array
 

@@ -24,7 +24,6 @@ suite. It also says nothing about python invoked as anything other than the lite
 """
 import argparse
 import json
-import os
 import pathlib
 import re
 import sys

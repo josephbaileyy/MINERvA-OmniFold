@@ -82,7 +82,6 @@ def _headroom(ax, frac=0.40, log=False):
     not sit on top of data markers."""
     y0, y1 = ax.get_ylim()
     if log:
-        import math
         ax.set_ylim(y0, y0 * (y1 / y0) ** (1.0 / (1.0 - frac)))
     else:
         ax.set_ylim(y0, y0 + (y1 - y0) / (1.0 - frac))

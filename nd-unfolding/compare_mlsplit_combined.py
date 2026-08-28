@@ -6,7 +6,7 @@ vs the new train/test-split ML cov (#4), on the shared reported bins, and report
 change in total sqrt-trace + per-bin relative uncertainty. Writes nothing destructive;
 optional --out writes the refreshed combined cov to a NEW file.
 """
-import argparse, numpy as np, ROOT
+import numpy as np, ROOT
 ROOT.gROOT.SetBatch(True)
 
 def load(path, hist):

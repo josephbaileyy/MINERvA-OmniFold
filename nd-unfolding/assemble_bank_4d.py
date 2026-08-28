@@ -14,7 +14,6 @@ them verbatim (symlinks). Only the COORDINATE/binning arrays in cv.npz change:
   python assemble_bank_4d.py    # writes bank_uthrow_4d/cv.npz + symlinks weights
 """
 import os
-import sys
 
 import numpy as np
 

@@ -15,7 +15,6 @@ for _a in _pathlib.Path(__file__).resolve().parents:
 import technote_style  # noqa: E402,F401  (no titles + consistent colours)
 
 import argparse
-import os
 
 import matplotlib
 matplotlib.use("Agg")

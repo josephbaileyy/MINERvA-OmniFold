@@ -17,7 +17,7 @@ gate. Source-text assertions live in the other suites and are explicitly *weaker
 where a guard could only be expressed textually, it is listed in
 `NON_DISCRIMINATING` with the reason.
 """
-import importlib.util, json, os, subprocess, sys, tempfile, unittest
+import importlib.util, os, subprocess, sys, tempfile, unittest
 from pathlib import Path
 
 ND = Path(__file__).resolve().parents[1]

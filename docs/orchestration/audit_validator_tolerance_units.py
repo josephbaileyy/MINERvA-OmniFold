@@ -39,7 +39,6 @@ silently passing.
 import argparse
 import ast
 import os
-import sys
 
 TOL_CUT = 1e-2
 REL_NAME_HINTS = ("rel", "ratio", "frac", "_over_", "relmax", "relerr", "pct", "percent")

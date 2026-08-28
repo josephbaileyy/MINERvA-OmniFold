@@ -1,4 +1,3 @@
-import re
 with open('nd-unfolding/pet/train_fullevent_replica.py', 'r') as f:
     content = f.read()
 

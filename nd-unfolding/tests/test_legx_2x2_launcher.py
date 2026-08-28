@@ -20,7 +20,6 @@ coverage it does not have (BEN-119). Four axes, gaps stated at the bottom:
 import json
 import re
 import subprocess
-import sys
 import tempfile
 from pathlib import Path
 

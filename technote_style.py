@@ -233,7 +233,6 @@ if TECHNOTE_DARK:
         return None
 
     def _dark_fix_artist(art):
-        import numpy as _np
         from matplotlib.lines import Line2D
         from matplotlib.text import Text
         from matplotlib.patches import Patch

@@ -38,7 +38,6 @@ import technote_style  # noqa: E402,F401  (no titles + consistent colours)
 
 import argparse
 import os
-import sys
 
 import numpy as np
 
