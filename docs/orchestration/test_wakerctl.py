@@ -7,6 +7,7 @@ import threading
 import time
 import types
 import unittest
+from unittest import mock
 
 import wakerctl
 
@@ -961,6 +962,21 @@ class StatusAndCronTests(WakerTestCase):
         self.assertIn("#SCRON -q cron", block)
         self.assertIn("#SCRON -t 12:00:00", block)  # wall must outlive a resume turn
         self.assertTrue(any("wakerctl.py tick --quiet" in line for line in block))
+
+    def test_cron_preserves_explicit_runtime_state_directory(self):
+        with mock.patch.dict(
+            os.environ, {"WAKER_STATE_DIR": "/shared/runtime state"}
+        ):
+            ctx = wakerctl.Ctx(
+                config_path=self.config_path,
+                state_dir=Path("/shared/runtime state"),
+                runner=self.runner,
+                clock=lambda: self.now,
+            )
+            cron = "\n".join(wakerctl.scrontab_lines(ctx, 5))
+        self.assertIn(
+            "WAKER_STATE_DIR='/shared/runtime state' /usr/bin/python3.11", cron
+        )
 
     def test_install_cron_writes_table_through_scrontab(self):
         captured = {}

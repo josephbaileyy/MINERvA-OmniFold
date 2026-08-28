@@ -57,6 +57,9 @@ latency. Zero LLM calls occur unless an armed watch condition holds.
 - **Supervision** is `scrontab` (`wakerctl install-cron`), which survives
   login-node reboots and is visible from every node (`scrontab -l`), fixing
   F4. `state/waker/last-tick.json` proves tick liveness from any node.
+  `WAKER_STATE_DIR=/absolute/runtime/path wakerctl install-cron` persists that
+  resolved runtime spool in the managed cron line, allowing a clean pinned
+  control checkout without a state symlink or host-specific tracked edit.
   An optional `wakerctl run --poll-seconds 60` loop (tmux) lowers latency;
   it is redundant with, never a replacement for, the cron net.
 - **Continuation authorization** (F7): every root-resume prompt carries the

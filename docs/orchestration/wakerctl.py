@@ -21,6 +21,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shlex
 import shutil
 import signal
 import socket
@@ -1942,13 +1943,17 @@ def scrontab_lines(ctx: Ctx, interval_minutes: int) -> list[str]:
     # that dispatches an action stays alive for the whole turn, and Slurm
     # killing it mid-resume strands the event (2026-07-19 16:40 UTC incident).
     walltime = ctx.config.get("cron_walltime", "12:00:00")
+    state_prefix = ""
+    if os.environ.get("WAKER_STATE_DIR"):
+        state_prefix = f"WAKER_STATE_DIR={shlex.quote(str(ctx.state_dir))} "
     return [
         SCRON_BEGIN,
         "#SCRON -q cron",
         f"#SCRON -t {walltime}",
         f"#SCRON -o {log}",
         "#SCRON --open-mode=append",
-        f"*/{interval_minutes} * * * * {ctx.python_bin()} {HERE / 'wakerctl.py'} tick --quiet",
+        f"*/{interval_minutes} * * * * {state_prefix}{ctx.python_bin()} "
+        f"{HERE / 'wakerctl.py'} tick --quiet",
         SCRON_END,
     ]
 
