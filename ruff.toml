@@ -1,0 +1,29 @@
+# Dead-code linting only. This file deliberately does NOT configure a formatter, a line length, or a
+# style rule set: reformatting 483 tracked files is a change with its own blast radius and its own
+# `.git-blame-ignore-revs` maintenance, and it is not a polishing decision.
+#
+# THE EXCLUSION BELOW IS LOAD-BEARING, NOT TASTE.
+# Files under `docs/orchestration/state/` are hash-bound producers: their sha256 values are recorded in
+# receipts as `run_provenance.producer_sha256`, and `verify_hash_bindings.py` checks them. Removing an
+# unused import there is behaviour-neutral to Python and destructive to the evidence chain -- the bytes
+# ARE the claim. Excluding them here makes that a tracked decision rather than a remembered one; 28
+# findings sit inside the exclusion and are meant to stay there.
+#
+# `.claude/` is the ignored worktree scratch area, not source.
+
+target-version = "py311"
+
+# WITHOUT THIS, THE EXCLUSION BELOW IS DECORATIVE. ruff applies `exclude` to paths it discovers by
+# walking, but NOT to paths passed explicitly on the command line -- and `ruff check $(git ls-files)`
+# is the natural invocation, the one used to measure this pass, and the one a CI job would write.
+# Measured: with `force-exclude` unset, that invocation reports all 230 findings including the 28
+# inside the exclusion. The guard has to hold under the command people actually run.
+force-exclude = true
+
+exclude = [
+    "docs/orchestration/state",
+    ".claude",
+]
+
+[lint]
+select = ["F401", "F841", "F541"]
