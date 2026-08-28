@@ -2,17 +2,22 @@
   "role": "agy-f17b-rgamma2",
   "conversation_uuid": "6d111a3d-70d7-4164-86b2-9d77b53f2361",
   "base_sha": "27ee1be39df84197cad3d6920c7cd81f22757560",
-  "commits": [
+  "candidate_history_through_parent": [
     "2ca28a03c2d8e295e928b8a32bc84d2db2f6dc9c",
     "cdbc3b52fcf0534cf1cca44dc803619a3c2e2249",
+    "cc5019d11987136d75e027d075e64f7b03230d46"
+  ],
+  "enclosing_commit_absent_note": "A commit ID is a hash over the committed bytes, so a receipt cannot contain the hash of the commit that contains it.",
+  "superseded_unreachable_attempts": [
     "e47ee4ecff06d51382583383c571af2c68e97500"
   ],
+  "superseded_unreachable_attempts_note": "The commit e47ee4ecff06d51382583383c571af2c68e97500 exists as an object but is unreachable from the candidate and is not in the ancestry. It came from a discarded attempt at the same change.",
+  "attribution_correction": "The commit cc5019d11987136d75e027d075e64f7b03230d46's Git author and committer metadata names Joseph Bailey <josephrb@login21.chn.perlmutter.nersc.gov> because the worker omitted the required per-commit identity flags. Joseph did not author that commit; the actual authoring role was agy-f17b-rgamma2, conversation uuid 6d111a3d-70d7-4164-86b2-9d77b53f2361. This is an ADDITIVE provenance correction; the commit is deliberately preserved and history is not rewritten.",
   "surface_changes": {
-    "S-1": "docs/orchestration/measure_m1_m6.py:32 added measurement_wall_clock, docs/orchestration/measure_m1_m6.py:129 added branch_or_detached",
-    "S-2": "docs/orchestration/test_measure_m1_m6.py:141 tests added for S-1",
-    "S-3": "docs/orchestration/compare_m1_m6.py:161 requires these fields and exits 4 if missing",
-    "S-4": "docs/orchestration/test_compare_m1_m6.py:1411 tests added for S-3 fail-closed",
-    "Preserver": "docs/orchestration/measure_k0_farend_f1b_f17b.sh:167,222,232 strict preserver containment using hardcoded EXPECTED_PRESERVER_SHA256"
+    "S-1": "docs/orchestration/measure_m1_m6.py:252-253,260 (measurement wall clock emitted), docs/orchestration/compare_m1_m6.py:213,439 (required and extracted), docs/orchestration/test_measure_m1_m6.py:141 (tests)",
+    "S-2": "docs/orchestration/measure_m1_m6.py:255-261 (branch-or-detached identity emitted), docs/orchestration/compare_m1_m6.py:213,444 (required and extracted), docs/orchestration/test_measure_m1_m6.py:165 (tests)",
+    "S-3": "docs/orchestration/measure_k0_farend_f1b_f17b.sh:167 (hardcoded EXPECTED_PRESERVER_SHA256), 222-240 (PRE/POST check and containment), docs/orchestration/test_preserve_f17b_record.py:98 (tests)",
+    "S-4": "docs/orchestration/measure_k0_farend_f1b_f17b.sh:176-179 (immediate short-circuit on nonzero measurer rc), docs/orchestration/test_preserve_f17b_record.py:125 (tests)"
   },
   "pre_repair_instruments": {
     "docs/orchestration/measure_m1_m6.py": {"sha256": "0fcd90f7c92a7071208e62d09ebc38956f1a83b11af41a469b4886a6e6786d79", "bytes": 13213},
@@ -37,7 +42,10 @@
   ],
   "pin_supersessions": {
     "docs/orchestration/measure_k0_farend_f1b_f17b.sh": {
-      "old_sha256": ["2132194fe1a3ed7a420f19b7b8b7d2f23fed873c12c316fc525a85b11a1253a2", "c40e6b54"],
+      "old_sha256": [
+        "2132194fe1a3ed7a420f19b7b8b7d2f23fed873c12c316fc525a85b11a1253a2",
+        "c40e6b54"
+      ],
       "new_sha256": "43e2453834839f930185d850113cb7b7d48f441b221f0988e605d8b82087ae78"
     }
   },
@@ -49,6 +57,10 @@
     {
       "finding": "FINDING 8",
       "description": "Deliberate old-schema refusal: tradeoff between failing closed and parsing"
+    },
+    {
+      "finding": "EXPECTED_PRESERVER_SHA256_VERIFICATION",
+      "description": "The runtime guard is hardcoded and its tests pass, but the verifier's pattern does not count this declaration form (15 pins seen floor 15 in verify_hash_bindings.py), so the pin is not independently verified by that instrument."
     }
   ]
 }

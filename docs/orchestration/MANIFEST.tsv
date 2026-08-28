@@ -211,7 +211,7 @@ docs/orchestration/profiles.json	tracked	MACHINE	machine-data			generated		exact
 docs/orchestration/receipts/RECEIPT-20260825-actionable-digest-deployment.json	tracked	MACHINE	machine-data		20260825	generated		exact-path-only		no	0	51	2442
 docs/orchestration/receipts/RECEIPT-20260825-approval-queue-deployment.json	tracked	MACHINE	machine-data		20260825	generated		exact-path-only		no	0	55	2441
 docs/orchestration/receipts/RECEIPT-20260825-terminal-watch-f17b-durability.json	tracked	MACHINE	machine-data		20260825	generated		exact-path-only		no	4	42	3583
-docs/orchestration/receipts/RECEIPT-20260827-f17b-rgamma-repair.json	tracked	MACHINE	machine-data		20260827	generated		exact-path-only		no	0	54	3426
+docs/orchestration/receipts/RECEIPT-20260827-f17b-rgamma-repair.json	tracked	MACHINE	machine-data		20260827	generated		exact-path-only		no	0	66	5035
 docs/orchestration/receipts/RECEIPT-2d-agreement-windows-20260821.json	tracked	MACHINE	machine-data		20260821	generated		exact-path-only		no	2	61	3109
 docs/orchestration/receipts/RECEIPT-negweight-toy-20260821.json	tracked	MACHINE	machine-data		20260821	generated		exact-path-only	2d-unfolding/HANDOFF_bkg_negweight/build_negweight_hpss_manifest.py	no	4	62	3584
 docs/orchestration/receipts/RECEIPT-open-items-archive-repin-20260821.json	tracked	MACHINE	machine-data	20260806-campaign	20260821	generated		exact-path-only	docs/open-items/verify_open_items_restructure.py	no	2	86	4853
