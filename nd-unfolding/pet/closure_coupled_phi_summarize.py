@@ -173,7 +173,7 @@ def main():
            for r in usable if abs(r["corr"]) >= 0.05]   # corr^2 ~ 0: the ratio is meaningless
     out_law = {"fit_max_corr": a.law_fit_max_corr, "points": law}
     if law:
-        print(f"\nleak vs corr^2 (the conjecture from the lambda<=2.2 sweep)")
+        print("\nleak vs corr^2 (the conjecture from the lambda<=2.2 sweep)")
         print(f"{'corr':>7s} {'corr^2':>8s} {'leak':>8s} {'ratio':>7s} {'resid':>8s} "
               f"{'leak sd':>8s}  range")
         for L in law:

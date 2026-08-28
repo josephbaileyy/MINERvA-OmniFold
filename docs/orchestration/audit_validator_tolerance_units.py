@@ -209,8 +209,8 @@ def main():
 
     hits.sort(key=lambda h: (h["file"], h["lineno"]))
     if a.markdown:
-        print(f"| file | function | absolute checks | relative checks | floors |")
-        print(f"|---|---|---|---|---|")
+        print("| file | function | absolute checks | relative checks | floors |")
+        print("|---|---|---|---|---|")
         for h in hits:
             ab = [r for r in h["rows"] if r["kind"] == "ABSOLUTE"]
             re_ = [r for r in h["rows"] if r["kind"] == "RELATIVE"]

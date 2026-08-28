@@ -130,13 +130,13 @@ def main():
 
     print(f"[INFO] hist={args.hist}  seeds={n}  reported bins (cv>0)={nbins}")
     print(f"[INFO] frozen file : {args.frozen}")
-    print(f"[ML band]  seed-to-seed std/cv (model-init only):")
+    print("[ML band]  seed-to-seed std/cv (model-init only):")
     print(f"           median={100*np.median(rel_std):.3f}%  "
           f"mean={100*rel_std.mean():.3f}%  max={100*rel_std.max():.3f}%")
-    print(f"[ensemble-mean - frozen]  rel:")
+    print("[ensemble-mean - frozen]  rel:")
     print(f"           median={100*np.median(rel_shift):+.3f}%  "
           f"mean={100*rel_shift.mean():+.3f}%  max|.|={100*np.abs(rel_shift).max():.3f}%")
-    print(f"[under-dispersion check]  |frozen-ensemble|/seedstd (pull):")
+    print("[under-dispersion check]  |frozen-ensemble|/seedstd (pull):")
     print(f"           median={np.median(pull):.2f}  p90={np.percentile(pull,90):.2f}  "
           f"max={pull.max():.2f}")
     if np.median(pull) > 2.0:

@@ -188,7 +188,7 @@ def main():
         pt_cov = np.zeros((Xpt.shape[1], Xpt.shape[1]))
         pz_cov = np.zeros((Xpz.shape[1], Xpz.shape[1]))
     print()
-    print(f"=== 1D projection spread ===")
+    print("=== 1D projection spread ===")
     with np.errstate(divide="ignore", invalid="ignore"):
         print(f"  pT median rel spread = "
               f"{100 * np.median(np.where(pt_mean > 0, pt_std / pt_mean, 0)):.3f}%")

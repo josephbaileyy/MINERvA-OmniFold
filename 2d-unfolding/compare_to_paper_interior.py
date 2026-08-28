@@ -131,7 +131,7 @@ def main():
     m_int = interior_mask()
     m_rep = (np.diag(cov_sta) > 0)
     m_both = m_int & m_rep
-    print(f"\n[masking]")
+    print("\n[masking]")
     print(f"  bins in strict interior (pt_hi/pz_lo <= tan20):  {m_int.sum()} / {N}")
     print(f"  bins reported by paper                        :  {m_rep.sum()} / {N}")
     print(f"  intersection                                  :  {m_both.sum()} / {N}")
@@ -147,14 +147,14 @@ def main():
     print(f"  10% window   = {(np.abs(r_int-1)<0.10).mean()*100:5.1f}%")
     print(f"  20% window   = {(np.abs(r_int-1)<0.20).mean()*100:5.1f}%")
 
-    print(f"\n=== chi^2 on interior bins (strict: pt_hi/pz_lo <= tan(20)) ===")
+    print("\n=== chi^2 on interior bins (strict: pt_hi/pz_lo <= tan(20)) ===")
     chi2(diff, cov_sta, m_int, "stat only")
     chi2(diff, cov_flx, m_int, "flux only")
     chi2(diff, cov_mes, m_int, "muon E scale only")
     c_tot, n_tot, used = chi2(diff, cov_tot, m_int, "TOTAL (stat+syst)")
 
     # Also report the "full reported" baseline for comparison
-    print(f"\n=== chi^2 on ALL reported bins (edge-inclusive, for reference) ===")
+    print("\n=== chi^2 on ALL reported bins (edge-inclusive, for reference) ===")
     chi2(diff, cov_sta, m_rep, "stat only")
     chi2(diff, cov_tot, m_rep, "TOTAL")
 
@@ -162,7 +162,7 @@ def main():
     # pzb=1 (p||=1.5-2.0) is the MINOS range-out regime and inflates
     # chi^2 out of proportion — dropping it yields a physics-meaningful
     # number.
-    print(f"\n=== chi^2 vs p||_min (strict-interior mask, paper-reported) ===")
+    print("\n=== chi^2 vs p||_min (strict-interior mask, paper-reported) ===")
     print(f"  {'p|| cut':>10} {'N':>4}   {'chi2':>10}   {'chi2/ndf':>8}   {'median':>7}   {'%<5%':>5}")
     for pz_min_idx in range(1, 7):
         m_scan = np.zeros(N, dtype=bool)
@@ -209,7 +209,7 @@ def main():
     axs[1].axvline(0, color="k", ls="--", lw=0.8)
     axs[1].set_xlabel("pull (ours - paper) / sigma_total")
     axs[1].set_ylabel("bins")
-    axs[1].set_title(f"Interior-only pull distribution")
+    axs[1].set_title("Interior-only pull distribution")
     mu, sd = pulls_used.mean(), pulls_used.std()
     axs[1].text(
         0.03, 0.95,

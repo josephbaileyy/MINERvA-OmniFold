@@ -96,7 +96,7 @@ def main():
     u = (Vf @ Vf.T) @ (D @ e_hat)
     rho_sub = float(np.linalg.norm(u)
                     / np.sqrt((f_hat @ F @ f_hat) * (e_hat @ E @ e_hat)))
-    print(f"[A] flux<->muon-E correlation:")
+    print("[A] flux<->muon-E correlation:")
     print(f"      (a) Cauchy-Schwarz in published TotalCov : rho = {rho_cs:+.3f}  (defensible, <=1)")
     print(f"      (b) subtraction D=T-S-F-E (contaminated) : rho = {rho_sub:+.3f}  "
           f"({'UNPHYSICAL >1 -> ' if rho_sub>1 else ''}other sources couple to muon-E dir)")
@@ -134,7 +134,7 @@ def main():
     def corr(C):
         return (fdf @ C @ ede) / np.sqrt((fdf @ C @ fdf) * (ede @ C @ ede))
 
-    print(f"\n[B] effect of adding the rederived cross block to C^syst:")
+    print("\n[B] effect of adding the rederived cross block to C^syst:")
     print(f"      rank     : {rank(Csyst)}  ->  {rank(Cnew)}  (of {n})  "
           f"[cross dirs already in range(C^syst): no new rank]")
     print(f"      cond     : {cond(Csyst):.2e}  ->  {cond(Cnew):.2e}")

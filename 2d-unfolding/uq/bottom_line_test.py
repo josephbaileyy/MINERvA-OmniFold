@@ -240,7 +240,7 @@ def run_data_prior(D, tol):
     chi2_truth, ndf_truth = chi2_diag(D_truth, M_truth, vDtruth, vMtruth, cvmask)
 
     print(f"\n===== BOTTOM-LINE TEST ({D}D) =====")
-    print(f"[stat] reco : data Poisson + bkg stat")
+    print("[stat] reco : data Poisson + bkg stat")
     print(f"[stat] truth: {stat_src} + prior MC stat")
     print(f"reco  (data-bkg vs MC-reco):  chi2/ndf = {chi2_reco:.1f}/{ndf_reco} "
           f"= {chi2_reco/ndf_reco:.3f}")

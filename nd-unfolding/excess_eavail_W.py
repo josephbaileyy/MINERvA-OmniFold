@@ -141,7 +141,7 @@ def main():
     sg_eav = y_eav_g * np.diff(e_eav)
 
     print(f"\n[total] data={tot_d:.4e}  GENIE-CV={tot_g:.4e}  data/CV={tot_d/tot_g:.4f}")
-    print(f"\n=== dsigma/dEavail: data vs GENIE CV (open question 6) ===")
+    print("\n=== dsigma/dEavail: data vs GENIE CV (open question 6) ===")
     print(f"  {'Eavail band':14s} {'data':>11s} {'CV':>11s} {'data/CV':>9s} {'excess(=d-CV)':>13s} {'%oftot_excess':>13s}")
     exc_eav = sd_eav - sg_eav
     tot_exc = exc_eav[exc_eav > 0].sum()
@@ -150,7 +150,7 @@ def main():
         print(f"  {eav_e[i]:.1f}-{eav_e[i+1]:<8.1f} {sd_eav[i]:11.3e} {sg_eav[i]:11.3e} "
               f"{sd_eav[i]/sg_eav[i]:9.3f} {exc_eav[i]:+13.3e} {frac:12.1f}%")
 
-    print(f"\n=== WHERE the excess lives in W (data/CV ratio per E_avail x W cell) ===")
+    print("\n=== WHERE the excess lives in W (data/CV ratio per E_avail x W cell) ===")
     hdr = "  eav\\W      " + "".join(f"{W_e[j]:>4.1f}-{W_e[j+1]:>5.1f} " for j in range(len(W_e)-1))
     print(hdr)
     for i in range(sig_d.shape[0]):
@@ -159,7 +159,7 @@ def main():
             for j in range(sig_d.shape[1]))
         print(f"  {eav_e[i]:.1f}-{eav_e[i+1]:<5.1f}{row}")
 
-    print(f"\n=== excess sigma (data-CV) per cell, % of total POSITIVE excess ===")
+    print("\n=== excess sigma (data-CV) per cell, % of total POSITIVE excess ===")
     exc = sig_d - sig_g
     pos = exc[exc > 0].sum()
     print(hdr)

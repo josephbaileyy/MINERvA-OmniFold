@@ -214,7 +214,7 @@ def main():
 
     diff = ours_v - paper_v
 
-    print(f"\n=== chi^2 comparisons (ours vs paper) ===")
+    print("\n=== chi^2 comparisons (ours vs paper) ===")
     chi2_stat, ndf_stat, mask = chi2_with_cov(diff, cov_stat,  "stat only")
     chi2_flux, _, _           = chi2_with_cov(diff, cov_flux,  "flux only")
     chi2_mes,  _, _           = chi2_with_cov(diff, cov_mes,   "muon E scale only")
@@ -243,7 +243,7 @@ def main():
             "COMBINED (" + baseline_tag + "+ " + " + ".join(omnifold_tags) + ")")
 
     if args.log_normal:
-        print(f"\n=== log-normal chi^2 (paper Table I parity) ===")
+        print("\n=== log-normal chi^2 (paper Table I parity) ===")
         chi2_lognormal(ours_v, paper_v, cov_total, "PAPER (stat+syst)")
         if chi2_combined is not None:
             chi2_combined_log, _ = chi2_lognormal(
@@ -273,7 +273,7 @@ def main():
                         extent=[0, N_PT, 0, N_PZ])
     axs[0].set_xlabel("p_T bin")
     axs[0].set_ylabel("p_|| bin")
-    axs[0].set_title(f"Per-bin pull (ours - paper) / sigma_total")
+    axs[0].set_title("Per-bin pull (ours - paper) / sigma_total")
     plt.colorbar(im0, ax=axs[0], label="pull")
 
     axs[1].hist(pull[mask], bins=30, color="steelblue", edgecolor="black")

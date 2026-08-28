@@ -77,7 +77,7 @@ exc = unfold - prior
 exc_in = exc[:, :, :, q3_in].sum(); exc_out = exc[:, :, :, q3_out].sum(); exc_tot = exc.sum()
 print(f" fraction of TOTAL data-GENIE excess at q3>1.2 (outside Ascencio): {100*exc_out/exc_tot:.1f}%")
 
-print(f"\n=== (1b) the same, restricted to the low-Eavail 2p2h dip (Eavail<0.4) ===")
+print("\n=== (1b) the same, restricted to the low-Eavail 2p2h dip (Eavail<0.4) ===")
 ud_in = unfold[:, :, ea_dip, q3_in].sum(); pd_in = prior[:, :, ea_dip, q3_in].sum()
 ud_out = unfold[:, :, ea_dip, q3_out].sum(); pd_out = prior[:, :, ea_dip, q3_out].sum()
 print(f" dip & q3<1.2            data/GENIE = {ud_in/pd_in:.3f}")
@@ -85,7 +85,7 @@ print(f" dip & q3>1.2 (beyond)   data/GENIE = {ud_out/pd_out:.3f}")
 exd = exc[:, :, ea_dip, :]
 print(f" fraction of the DIP excess at q3>1.2: {100*exd[:,:,:,q3_out].sum()/exd.sum():.1f}%")
 
-print(f"\n=== (2) MUON-KINEMATIC dependence Ascencio integrates out ===")
+print("\n=== (2) MUON-KINEMATIC dependence Ascencio integrates out ===")
 print(" low-Eavail (<0.4) data/GENIE in pT slices (flat => excess factorizes from muon kin.):")
 for i in range(shape[0]):
     u_i = unfold[i, :, ea_dip, :].sum(); p_i = prior[i, :, ea_dip, :].sum()

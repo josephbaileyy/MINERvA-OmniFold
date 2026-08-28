@@ -231,7 +231,7 @@ def main():
     print(f"  acceptance-limited oracle recovery   {rec3:.6f}   (per-event, pays sampling)")
     print(f"                          bracketed by {rec_sp3:.6f}   (spectrum-space, sampling-free)")
     print(f"  the bar                              {BAR}")
-    print(f"  statistical oracle (151db63)          0.954204   <- sampling only")
+    print("  statistical oracle (151db63)          0.954204   <- sampling only")
     print(f"  measured estimator                    {met['recovery']:.6f}")
     frac = met["recovery"] / rec3
     print()
@@ -246,11 +246,11 @@ def main():
     print(f"    so the estimator reaches {100*frac:.1f}% of the ceiling acceptance permits")
     print(f"  dilution ideal (mean response)        {ideal_tilt:.6f}")
     if rec3 < BAR:
-        print(f"  -> the bar sits ABOVE what an estimator limited only by acceptance can reach.")
-        print(f"     The 0.80 bar was specified without accounting for dilution. That is a")
-        print(f"     SPECIFICATION finding, not a tolerance question.")
+        print("  -> the bar sits ABOVE what an estimator limited only by acceptance can reach.")
+        print("     The 0.80 bar was specified without accounting for dilution. That is a")
+        print("     SPECIFICATION finding, not a tolerance question.")
     else:
-        print(f"  -> acceptance does NOT explain the shortfall; the estimator is genuinely deficient.")
+        print("  -> acceptance does NOT explain the shortfall; the estimator is genuinely deficient.")
 
     print()
     print("=== THE EMPIRICAL BRIDGE: is cross-cell transport actually helping? ===")

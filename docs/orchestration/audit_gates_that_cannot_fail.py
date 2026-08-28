@@ -280,7 +280,7 @@ def run_power():
         ok &= fired
         print(f"  {name:30s} {'FIRES' if fired else '*** SILENT ***':16s} on {origin}")
         if not fired:
-            print(f"      -> this detector cannot demonstrate power and the sweep is not trustworthy")
+            print("      -> this detector cannot demonstrate power and the sweep is not trustworthy")
     print()
     return ok
 

@@ -130,8 +130,8 @@ def main():
     # ---- report ----
     print(f"[mode-decomp] CC-in-PS events used = {n_sel}; E_avail bins = {nb} "
           f"(last is the catch bin)")
-    print(f"[mode-decomp] MEC fraction in this CV = 0 (confirmed) -> any 2p2h "
-          f"would be ADDED, not reweighted\n")
+    print("[mode-decomp] MEC fraction in this CV = 0 (confirmed) -> any 2p2h "
+          "would be ADDED, not reweighted\n")
     hdr = ("bin  Eavail[GeV]      data        CV     d-CV   (d-CV)/sig   "
            "| QE      RES     DIS     COH   | 2p2h/QE to close")
     print(hdr)
@@ -155,7 +155,7 @@ def main():
     int_d = (data[s] * dea[s]).sum()
     int_cv = (cv[s] * dea[s]).sum()
     int_qe = (cv_mode["qel"][s] * dea[s]).sum()
-    print(f"\n[integrated, catch bin dropped]")
+    print("\n[integrated, catch bin dropped]")
     print(f"  data   = {int_d:.3e}   CV = {int_cv:.3e}   deficit = "
           f"{int_d-int_cv:+.2e} ({100*(int_cv-int_d)/int_d:+.1f}% of data)")
     print(f"  CV QE component = {int_qe:.3e}  -> a 2p2h equal to "

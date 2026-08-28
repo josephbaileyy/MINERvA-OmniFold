@@ -122,7 +122,7 @@ def main():
     print(f"  --> sigma ratio  C_data / paper   = {sqrt_tr(Cd)/sqrt_tr(Cp):.3f}")
     print(f"  --> sigma ratio  C_both / paper   = {sqrt_tr(Cb)/sqrt_tr(Cp):.3f}  "
           f"(the known ~0.39 = 1/2.55)")
-    print(f"\n  STRUCTURE (is ours diagonal like the paper?):")
+    print("\n  STRUCTURE (is ours diagonal like the paper?):")
     print(f"  --> mean |off-diag corr|:  C_data {off_diag_fraction(Cd):.3f}   "
           f"C_both {off_diag_fraction(Cb):.3f}   paper StatOnly {off_diag_fraction(Cp):.3f}"
           f"   (0 = diagonal)")

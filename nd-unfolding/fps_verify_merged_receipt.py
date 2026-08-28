@@ -101,7 +101,7 @@ def main():
     print(f"[receipt] fps_hash_list_sha256={r['fps_hash_list_sha256']}")
     print(f"[receipt] fps_inventory_sha256={r['fps_inventory_sha256']}")
     print(f"[receipt] launcher_sha256={r['launcher_sha256']}")
-    print(f"[receipt] 10/10 live size+int(mtime) match inventory; full input SHA256 bound:")
+    print("[receipt] 10/10 live size+int(mtime) match inventory; full input SHA256 bound:")
     for ap, h in sorted(r["verified_input_sha256"].items()):
         print(f"   {os.path.basename(ap)[:52]:52s} {h[:16]}")
     sys.exit(0)

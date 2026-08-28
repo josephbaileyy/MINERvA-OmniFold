@@ -100,8 +100,8 @@ def main():
     report("GBDT (lgbm)", p_gbm)
     report("NN  (MLP)  ", p_nn)
 
-    print(f"AUC ~ 0.5 means data and MC reco are nearly indistinguishable (the MC models")
-    print(f"the data well), so the step-1 reweight w=p/(1-p) is a small correction near 1.")
+    print("AUC ~ 0.5 means data and MC reco are nearly indistinguishable (the MC models")
+    print("the data well), so the step-1 reweight w=p/(1-p) is a small correction near 1.")
 
     # The OmniFold-relevant quantity is the *binned density ratio* the classifier learns,
     # not the per-event weight (which at AUC~0.5 is dominated by noise). Test whether each

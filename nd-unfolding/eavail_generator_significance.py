@@ -89,7 +89,7 @@ def main():
     C_y = M @ C4 @ M.T                                         # 7x7
     sig = np.sqrt(np.clip(np.diag(C_y), 0, None))
     print(f"[eavail] reported 4D bins={nrep}  marginalized to {n_ea} E_avail bins")
-    print(f"[eavail] data dsigma/dEavail (x1e-39) +- sqrt(diag):")
+    print("[eavail] data dsigma/dEavail (x1e-39) +- sqrt(diag):")
     for k in range(n_ea):
         print(f"   {ea_e[k]:.1f}-{ea_e[k+1]:<6.1f}  {1e39*y_data[k]:8.3f} +- {1e39*sig[k]:6.3f}"
               f"  ({100*sig[k]/y_data[k]:.1f}%)")
@@ -112,7 +112,7 @@ def main():
         z = stats.norm.isf(p / 2.0) if p > 0 else float("inf")
         return p, z
 
-    print(f"\n[eavail] per-generator chi^2 (data - gen)^T C^-1 (data - gen):")
+    print("\n[eavail] per-generator chi^2 (data - gen)^T C^-1 (data - gen):")
     print(f"   {'generator':12s} {'chi2/ndf(all7)':>16s} {'p':>9s} {'Nsigma':>7s} "
           f"| {'chi2/ndf(DIS>=0.8)':>18s} {'p':>9s} {'Nsigma':>7s}")
     for spec in args.gens.split(","):
