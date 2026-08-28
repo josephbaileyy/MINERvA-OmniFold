@@ -900,31 +900,39 @@ def classify_capacity(value: dict, low_remaining_percent: float) -> dict:
     ):
         return {"state": "AUTH_REQUIRED", "reason": "provider authentication is unavailable"}
     windows = value.get("windows") or {}
-    remaining = [
-        float(window["remaining_percent"])
+    measured_windows = [
+        (
+            float(window["remaining_percent"]),
+            window.get("resets_at_utc"),
+        )
         for window in windows.values()
         if isinstance(window, dict)
         and isinstance(window.get("remaining_percent"), (int, float))
         and not isinstance(window.get("remaining_percent"), bool)
     ]
-    if status != "ok" or not remaining:
+    if status != "ok" or not measured_windows:
         return {"state": "UNKNOWN", "reason": "no fresh actionable capacity measurement"}
-    minimum = min(remaining)
-    reset_times = [
-        window.get("resets_at_utc")
-        for window in windows.values()
-        if isinstance(window, dict) and window.get("resets_at_utc")
-    ]
+    minimum = min(remaining for remaining, _reset in measured_windows)
     if minimum <= 0:
         state = "EXHAUSTED"
+        reset_times = [
+            reset
+            for remaining, reset in measured_windows
+            if remaining <= 0 and reset
+        ]
+        next_reset = max(reset_times) if reset_times else None
     elif minimum <= low_remaining_percent:
         state = "LOW"
+        reset_times = [reset for _remaining, reset in measured_windows if reset]
+        next_reset = min(reset_times) if reset_times else None
     else:
         state = "READY"
+        reset_times = [reset for _remaining, reset in measured_windows if reset]
+        next_reset = min(reset_times) if reset_times else None
     return {
         "state": state,
         "minimum_remaining_percent": minimum,
-        "next_reset_utc": min(reset_times) if reset_times else None,
+        "next_reset_utc": next_reset,
     }
 
 

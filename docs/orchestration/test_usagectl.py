@@ -653,6 +653,27 @@ class PolicyAndGateTests(unittest.TestCase):
         self.assertEqual(selected["selected"], "codex-school2")
         self.assertIn("never migrate", selected["continuity_rule"])
 
+    def test_exhausted_capacity_waits_for_every_exhausted_window_reset(self):
+        value = {
+            "status": "ok",
+            "windows": {
+                "five_hour": {
+                    "remaining_percent": 0.0,
+                    "resets_at_utc": "2026-08-28T08:44:00+00:00",
+                },
+                "seven_day": {
+                    "remaining_percent": 0.0,
+                    "resets_at_utc": "2026-09-01T08:44:00+00:00",
+                },
+            },
+        }
+        capacity = usagectl.classify_capacity(value, low_remaining_percent=10.0)
+        self.assertEqual(capacity["state"], "EXHAUSTED")
+        self.assertEqual(
+            capacity["next_reset_utc"],
+            "2026-09-01T08:44:00+00:00",
+        )
+
     def test_capacity_auth_and_unknown_are_not_selectable(self):
         auth = usagectl.profile_error("codex", "Not logged in")
         unknown = {"status": "missing", "windows": {}, "warnings": [], "violations": []}

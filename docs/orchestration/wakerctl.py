@@ -40,6 +40,7 @@ import slurm_array_status  # noqa: E402
 DEFAULT_CONFIG = HERE / "waker-config.json"
 SCRON_BEGIN = "# BEGIN wakerctl managed block"
 SCRON_END = "# END wakerctl managed block"
+DEFERRED_ACTION_RC = 75
 
 SLURM_TERMINAL_FAILURES = {
     "FAILED",
@@ -214,12 +215,25 @@ class Ctx:
     def base_env(self) -> dict:
         env = os.environ.copy()
         env["HOME"] = str(agentctl.login_home())
+        env["WAKER_STATE_DIR"] = str(self.state_dir.resolve())
         extra = [str(agentctl.login_home() / ".local" / "bin"), "/usr/bin", "/bin"]
         codex = self.config.get("codex_bin")
         if codex:
             extra.insert(0, str(Path(codex).parent))
         env["PATH"] = ":".join(extra + [env.get("PATH", "")])
         return env
+
+    def agent_registry_path(self, action: dict | None = None) -> Path:
+        """Resolve the session registry used by one role-send action."""
+        configured = (action or {}).get("registry") or self.config.get(
+            "agent_registry"
+        )
+        if not configured:
+            return agentctl.DEFAULT_REGISTRY.resolve()
+        path = Path(str(configured)).expanduser()
+        if not path.is_absolute():
+            path = self.config_path.parent / path
+        return path.resolve()
 
     def ledger(self, event_id: str, transition: str, detail: str) -> None:
         self.state_dir.mkdir(parents=True, exist_ok=True)
@@ -354,6 +368,7 @@ KINDS = {
     "slurm-array",
     "queue-latency",
     "provider-reset",
+    "provider-capacity",
     "deadline",
     "heartbeat",
     "file-sentinel",
@@ -371,6 +386,7 @@ def validate_watch(ctx: Ctx, watch: dict) -> None:
         "slurm-array": ["job_id", "tasks"],
         "queue-latency": ["job_id", "threshold_seconds"],
         "provider-reset": ["at_utc", "account"],
+        "provider-capacity": ["profile"],
         "deadline": ["at_utc"],
         "heartbeat": ["path", "max_age_seconds"],
         "file-sentinel": ["path"],
@@ -380,12 +396,33 @@ def validate_watch(ctx: Ctx, watch: dict) -> None:
             raise WakerError(f"watch kind {kind} requires params.{key}")
     if "at_utc" in params:
         parse_utc(params["at_utc"])
+    if kind == "provider-capacity" and params.get("not_before_utc"):
+        parse_utc(str(params["not_before_utc"]))
     action_type = action.get("type")
     if action_type == "root-resume":
-        ctx.root()
+        root = resolve_root_session(ctx, action)
+        if kind == "provider-capacity" and params["profile"] != root["profile"]:
+            raise WakerError(
+                "provider-capacity profile must match the configured root profile"
+            )
     elif action_type == "role-send":
         if not action.get("role") or not action.get("prompt_file"):
             raise WakerError("role-send action requires role and prompt_file")
+        prompt_file = Path(str(action["prompt_file"])).expanduser().resolve()
+        if not prompt_file.is_file():
+            raise WakerError(f"role-send prompt file does not exist: {prompt_file}")
+        action["prompt_file"] = str(prompt_file)
+        registry_path, session = resolve_role_send_session(ctx, action)
+        action["registry"] = str(registry_path)
+        action.setdefault("expected_session_id", session["session_id"])
+        if action["expected_session_id"] != session["session_id"]:
+            raise WakerError(
+                f"role {action['role']!r} does not match expected session id"
+            )
+        if kind == "provider-capacity" and params["profile"] != session["profile"]:
+            raise WakerError(
+                "provider-capacity profile must match the registered role profile"
+            )
     elif action_type == "command":
         argv = action.get("argv")
         if not argv or not isinstance(argv, list):
@@ -395,6 +432,182 @@ def validate_watch(ctx: Ctx, watch: dict) -> None:
             raise WakerError("command action argv[0] must be an absolute path inside the repository")
     else:
         raise WakerError(f"unknown action type: {action_type}")
+
+    if kind == "provider-capacity" and action_type not in {
+        "root-resume",
+        "role-send",
+    }:
+        raise WakerError(
+            "provider-capacity watches require a managed LLM action"
+        )
+
+
+def resolve_role_send_session(ctx: Ctx, action: dict) -> tuple[Path, dict]:
+    """Resolve one role action to its exact managed session."""
+    role = agentctl.safe_role(str(action.get("role") or ""))
+    registry_path = ctx.agent_registry_path(action)
+    registry = agentctl.read_registry(registry_path)
+    session = registry["sessions"].get(role)
+    if not isinstance(session, dict):
+        raise WakerError(f"unknown managed role {role!r} in {registry_path}")
+    if not session.get("session_id") or not session.get("profile"):
+        raise WakerError(f"managed role {role!r} has an incomplete registry entry")
+    expected = action.get("expected_session_id")
+    if expected and expected != session["session_id"]:
+        raise WakerError(
+            f"managed role {role!r} now resolves to a different session"
+        )
+    return registry_path, session
+
+
+def resolve_root_session(ctx: Ctx, action: dict) -> dict:
+    """Resolve a root action without allowing its binding to drift."""
+    root = ctx.root()
+    expected = {
+        "expected_thread_id": "thread_id",
+        "expected_profile": "profile",
+        "expected_cwd": "cwd",
+    }
+    for action_key, root_key in expected.items():
+        if action_key in action and action[action_key] != root.get(root_key):
+            raise WakerError(
+                f"configured root {root_key} changed before deferred continuation"
+            )
+    return root
+
+
+def measure_profile_capacity(ctx: Ctx, profile_name: str) -> dict:
+    """Return the measured routing state for one provider profile."""
+    result = ctx.runner(
+        [
+            ctx.python_bin(),
+            str(HERE / "usagectl.py"),
+            "check",
+            "--config",
+            str(HERE / "profiles.json"),
+            "--profile",
+            profile_name,
+            "--json",
+        ],
+        env=ctx.base_env(),
+        cwd=ctx.repo,
+    )
+    try:
+        capacity = json.loads(result.stdout or "")
+    except json.JSONDecodeError:
+        capacity = {}
+    if (
+        result.returncode not in {0, 3}
+        or not isinstance(capacity, dict)
+        or capacity.get("state")
+        not in {"READY", "LOW", "EXHAUSTED", "AUTH_REQUIRED", "UNKNOWN"}
+    ):
+        return {
+            "profile": profile_name,
+            "state": "UNKNOWN",
+            "reason": (result.stdout or "capacity check failed").strip()[-1000:],
+        }
+    return capacity
+
+
+def defer_role(
+    ctx: Ctx,
+    *,
+    watch_id: str,
+    role: str,
+    registry_path: Path,
+    expected_session_id: str,
+    prompt: str,
+    not_before_utc: str | None = None,
+    context: str = "",
+) -> dict:
+    """Persist a prompt and arm one measured-capacity role continuation."""
+    agentctl.safe_role(watch_id)
+    action = {
+        "type": "role-send",
+        "role": role,
+        "registry": str(registry_path.resolve()),
+        "expected_session_id": expected_session_id,
+    }
+    _resolved_registry, session = resolve_role_send_session(ctx, action)
+    profile = agentctl.get_profile(ctx.profiles(), session["profile"])
+    if profile["provider"] == "claude" and not not_before_utc:
+        raise WakerError(
+            "Claude capacity deferral requires a measured --not-before-utc reset"
+        )
+    prompt_path = ctx.state_dir / "prompts" / f"{watch_id}.txt"
+    if not create_exclusive(prompt_path, prompt):
+        raise WakerError(f"deferred prompt already exists: {prompt_path}")
+    prompt_path.chmod(stat.S_IRUSR | stat.S_IWUSR)
+    action["prompt_file"] = str(prompt_path.resolve())
+    action["context"] = context
+    params = {"profile": session["profile"]}
+    if not_before_utc:
+        parse_utc(not_before_utc)
+        params["not_before_utc"] = not_before_utc
+    watch = {
+        "watch_id": watch_id,
+        "kind": "provider-capacity",
+        "params": params,
+        "action": action,
+        "max_retries": 0,
+    }
+    try:
+        add_watch(ctx, watch)
+    except (OSError, WakerError, agentctl.AgentCtlError):
+        with contextlib.suppress(FileNotFoundError):
+            prompt_path.unlink()
+        raise
+    return {
+        "watch_id": watch_id,
+        "role": role,
+        "profile": session["profile"],
+        "session_id": expected_session_id,
+        "registry": str(registry_path.resolve()),
+        "prompt_file": str(prompt_path.resolve()),
+        "not_before_utc": not_before_utc,
+    }
+
+
+def defer_root(ctx: Ctx, event: dict, capacity: dict) -> dict:
+    """Arm one continuation for the current exact root after its reset."""
+    root = ctx.root()
+    profile = agentctl.get_profile(ctx.profiles(), root["profile"])
+    not_before_utc = capacity.get("next_reset_utc")
+    if profile["provider"] == "claude" and not not_before_utc:
+        raise WakerError(
+            "Claude root deferral requires a measured reset timestamp"
+        )
+    watch_id = agentctl.safe_role(f"quota-root-{event['event_id']}")
+    action = {
+        "type": "root-resume",
+        "expected_thread_id": root["thread_id"],
+        "expected_profile": root["profile"],
+        "expected_cwd": root.get("cwd"),
+        "context": (
+            "The preceding root turn stopped at a provider usage limit. "
+            "Continue the interrupted work without repeating completed work."
+        ),
+    }
+    params = {"profile": root["profile"]}
+    if not_before_utc:
+        parse_utc(str(not_before_utc))
+        params["not_before_utc"] = not_before_utc
+    watch = {
+        "watch_id": watch_id,
+        "kind": "provider-capacity",
+        "params": params,
+        "action": action,
+        "max_retries": 0,
+    }
+    add_watch(ctx, watch)
+    return {
+        "watch_id": watch_id,
+        "profile": root["profile"],
+        "thread_id": root["thread_id"],
+        "cwd": root.get("cwd"),
+        "not_before_utc": not_before_utc,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -575,6 +788,48 @@ def evaluate(ctx: Ctx, watch: dict) -> tuple[str, dict] | None:
                 payload["account"] = params["account"]
             return (kind, payload)
         return None
+
+    if kind == "provider-capacity":
+        profile_name = str(params["profile"])
+        not_before_utc = params.get("not_before_utc")
+        if not_before_utc and ctx.now() < parse_utc(str(not_before_utc)):
+            reliable()
+            return None
+        capacity = measure_profile_capacity(ctx, profile_name)
+        state = capacity["state"]
+        if state in {"READY", "LOW"}:
+            reliable()
+            return (
+                "provider-capacity",
+                {
+                    "profile": profile_name,
+                    "state": state,
+                    "next_reset_utc": capacity.get("next_reset_utc"),
+                },
+            )
+        if state == "EXHAUSTED":
+            reliable()
+            return None
+        if state == "UNKNOWN" and not_before_utc:
+            action = watch["action"]
+            if action.get("type") == "role-send":
+                _registry_path, session = resolve_role_send_session(ctx, action)
+                profile_name_for_action = session["profile"]
+            else:
+                profile_name_for_action = resolve_root_session(ctx, action)["profile"]
+            profile = agentctl.get_profile(ctx.profiles(), profile_name_for_action)
+            if profile["provider"] == "claude":
+                reliable()
+                return (
+                    "provider-capacity",
+                    {
+                        "profile": profile_name,
+                        "state": "RESET_BOUNDARY_REACHED",
+                        "measured_state": "UNKNOWN",
+                        "observed_reset_utc": not_before_utc,
+                    },
+                )
+        return unreliable_step()
 
     if kind == "heartbeat":
         path = Path(params["path"])
@@ -1203,7 +1458,7 @@ def build_root_resume(ctx: Ctx, event: dict) -> tuple[list[str], dict]:
     conservation window it may be an interim Claude session (PORTING.md §6d).
     Binary paths are always absolute (F2) and the provider home is explicit.
     """
-    root = ctx.root()
+    root = resolve_root_session(ctx, event_action(ctx, event))
     profile = agentctl.get_profile(ctx.profiles(), root.get("profile", "codex-personal"))
     provider = profile.get("provider")
     prompt = render_prompt(ctx, event)
@@ -1297,12 +1552,17 @@ def run_action(ctx: Ctx, event: dict) -> int:
     ctx.logs_dir.mkdir(parents=True, exist_ok=True)
 
     if action.get("type") == "role-send":
+        registry_path, session = resolve_role_send_session(ctx, action)
         command = [
             ctx.python_bin(),
             str(HERE / "agentctl.py"),
+            "--registry",
+            str(registry_path),
             "send",
             "--role",
             action["role"],
+            "--expected-session-id",
+            str(action.get("expected_session_id") or session["session_id"]),
             "--prompt-file",
             str(action["prompt_file"]),
         ]
@@ -1324,6 +1584,20 @@ def run_action(ctx: Ctx, event: dict) -> int:
         handle.write(f"=== {ctx.now_iso()} rc={result.returncode} argv={redacted}\n")
         handle.write(result.stdout or "")
         handle.write("\n")
+    if action.get("type") == "root-resume" and agentctl.reports_usage_limit(
+        result.stdout or ""
+    ):
+        root = resolve_root_session(ctx, action)
+        capacity = measure_profile_capacity(ctx, str(root["profile"]))
+        if capacity["state"] == "EXHAUSTED":
+            deferred = defer_root(ctx, event, capacity)
+            ctx.ledger(
+                event["event_id"],
+                "provider-capacity-deferred",
+                f"watch={deferred['watch_id']} profile={deferred['profile']}",
+            )
+            return DEFERRED_ACTION_RC
+        return result.returncode or 1
     return result.returncode
 
 
@@ -1401,7 +1675,12 @@ def dispatch_one(ctx: Ctx, event_id: str, paths: dict[str, Path]) -> str:
     finally:
         if in_main_thread and old_handler is not None:
             signal.signal(signal.SIGTERM, old_handler)
-    outcome = "resumed" if rc == 0 else "failed"
+    if rc == 0:
+        outcome = "resumed"
+    elif rc == DEFERRED_ACTION_RC:
+        outcome = "deferred"
+    else:
+        outcome = "failed"
     agentctl.atomic_write_json(
         paths["done"],
         {"at_utc": ctx.now_iso(), "owner": owner_string(), "rc": rc, "outcome": outcome},
@@ -1409,7 +1688,7 @@ def dispatch_one(ctx: Ctx, event_id: str, paths: dict[str, Path]) -> str:
     ctx.ledger(event_id, "done", f"rc={rc} outcome={outcome}")
     with contextlib.suppress(FileNotFoundError):
         os.unlink(paths["blocked"])
-    if rc != 0:
+    if rc not in {0, DEFERRED_ACTION_RC}:
         schedule_retry(ctx, event, event_id)
     with contextlib.suppress(FileNotFoundError):
         archive_watch(ctx, str(event.get("watch_id", "")))
@@ -1417,31 +1696,45 @@ def dispatch_one(ctx: Ctx, event_id: str, paths: dict[str, Path]) -> str:
 
 
 def capacity_problems(ctx: Ctx, event: dict) -> list[str]:
-    """Fail closed before a root LLM invocation when its account is unavailable.
-
-    Command and role-send actions keep their own provider/session policy.  This
-    check never swaps an existing root thread to a different account.
-    """
-    if ctx.config.get("capacity_guard") is not True:
-        return []
+    """Fail closed before a managed LLM invocation lacks measured capacity."""
     action = event_action(ctx, event)
-    if action.get("type") != "root-resume":
+    action_type = action.get("type")
+    if action_type == "root-resume":
+        try:
+            root = resolve_root_session(ctx, action)
+        except WakerError as exc:
+            return [str(exc)]
+        if ctx.config.get("capacity_guard") is not True:
+            return []
+        profile_name = str(root.get("profile", "codex-personal"))
+        provider = str(root.get("provider", "codex"))
+    elif action_type == "role-send":
+        try:
+            _registry_path, session = resolve_role_send_session(ctx, action)
+            profile_name = str(session["profile"])
+            provider = str(
+                agentctl.get_profile(ctx.profiles(), profile_name)["provider"]
+            )
+        except (WakerError, agentctl.AgentCtlError) as exc:
+            return [str(exc)]
+    else:
         return []
-    profile_name = str(ctx.root().get("profile", "codex-personal"))
-    command = [
-        ctx.python_bin(),
-        str(HERE / "usagectl.py"),
-        "check",
-        "--profile",
-        profile_name,
-        "--json",
-    ]
-    result = ctx.runner(command, env=ctx.base_env(), cwd=ctx.repo)
-    if result.returncode == 0:
+    if provider not in {"claude", "codex"}:
         return []
-    detail = (result.stdout or "").strip()[-1000:]
+    capacity = measure_profile_capacity(ctx, profile_name)
+    if capacity["state"] in {"READY", "LOW"}:
+        return []
+    payload = event.get("payload") or {}
+    if (
+        provider == "claude"
+        and capacity["state"] == "UNKNOWN"
+        and event.get("event_type") == "provider-capacity"
+        and payload.get("state") == "RESET_BOUNDARY_REACHED"
+    ):
+        return []
+    detail = json.dumps(capacity, sort_keys=True)
     return [
-        f"root profile {profile_name} has no measured READY/LOW capacity; "
+        f"profile {profile_name} has no measured READY/LOW capacity; "
         f"the event remains unconsumed and will retry after reset/auth recovery. {detail}"
     ]
 
@@ -2155,6 +2448,18 @@ def main() -> int:
     emit.add_argument("--type", default="manual")
     emit.add_argument("--context", default="")
 
+    defer = commands.add_parser(
+        "defer-role",
+        help="Resume an exact managed role once its measured capacity returns",
+    )
+    defer.add_argument("--id", required=True)
+    defer.add_argument("--role", required=True)
+    defer.add_argument("--registry", required=True)
+    defer.add_argument("--expected-session-id", required=True)
+    defer.add_argument("--not-before-utc")
+    defer.add_argument("--prompt-file")
+    defer.add_argument("--context", default="")
+
     cron = commands.add_parser("install-cron", help="Install the scrontab tick")
     cron.add_argument("--interval-minutes", type=int, default=5)
 
@@ -2203,6 +2508,25 @@ def main() -> int:
                 ctx, f"evt-{args.id}", args.id, args.type, {}, context=args.context
             )
             print("emitted" if created else "already-exists")
+        elif args.command == "defer-role":
+            prompt = (
+                Path(args.prompt_file).read_text()
+                if args.prompt_file
+                else sys.stdin.read()
+            )
+            if not prompt:
+                raise WakerError("defer-role requires a non-empty prompt")
+            deferred = defer_role(
+                ctx,
+                watch_id=args.id,
+                role=args.role,
+                registry_path=Path(args.registry),
+                expected_session_id=args.expected_session_id,
+                prompt=prompt,
+                not_before_utc=args.not_before_utc,
+                context=args.context,
+            )
+            print(json.dumps(deferred, indent=2, sort_keys=True))
         elif args.command in {"scan", "dispatch", "tick"}:
             result = {"scan": scan, "dispatch": dispatch, "tick": tick}[args.command](ctx)
             if not getattr(args, "quiet", False):

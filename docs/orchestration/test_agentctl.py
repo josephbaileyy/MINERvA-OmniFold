@@ -44,6 +44,35 @@ class AgentCtlTests(unittest.TestCase):
             ("01964ce7-5ee0-44f9-aa9e-21dd1d73614b", "READY."),
         )
 
+    def test_usage_limit_markers_are_case_insensitive(self):
+        self.assertTrue(
+            agentctl.reports_usage_limit(
+                "You've hit your usage limit. Try again at 8:44 AM."
+            )
+        )
+        self.assertFalse(agentctl.reports_usage_limit("ordinary worker failure"))
+
+    def test_claude_success_exit_with_limit_payload_is_capacity_error(self):
+        payload = json.dumps(
+            {
+                "is_error": True,
+                "session_id": "session-1",
+                "result": "You've hit your usage limit. Try again at 8:44 AM.",
+            }
+        )
+        completed = types.SimpleNamespace(returncode=0, stdout=payload, stderr="")
+        with tempfile.TemporaryDirectory() as temporary, mock.patch.object(
+            agentctl.subprocess, "run", return_value=completed
+        ):
+            with self.assertRaises(agentctl.ProviderCapacityError):
+                agentctl.run_worker(
+                    ["claude"],
+                    {},
+                    Path(temporary),
+                    Path(temporary) / "run",
+                    "claude",
+                )
+
     def test_claude_allowed_tools_cannot_consume_prompt(self):
         profile = {
             "provider": "claude",
@@ -184,6 +213,164 @@ class AutoCodexProfileTests(unittest.TestCase):
                 Path("profiles.json"),
                 runner=self.runner(payload={"selected": "agy"}),
             )
+
+
+class CapacityResumeTests(unittest.TestCase):
+    profile_name = "claude-school"
+    session_id = "session-school-1"
+    role = "school-main"
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="agentctl-capacity.")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.cwd = self.root / "worktree"
+        self.cwd.mkdir()
+        self.registry = self.root / "sessions.json"
+        agentctl.atomic_write_json(
+            self.registry,
+            {
+                "version": 1,
+                "sessions": {
+                    self.role: {
+                        "provider": "claude",
+                        "profile": self.profile_name,
+                        "session_id": self.session_id,
+                        "cwd": str(self.cwd),
+                        "turns": [],
+                    }
+                },
+            },
+        )
+        self.profiles = {
+            self.profile_name: {
+                "provider": "claude",
+                "home": "~/claude-homes/school",
+                "model": "opus",
+            }
+        }
+
+    def args(self, **overrides):
+        values = {
+            "role": self.role,
+            "prompt": ["finish", "the", "task"],
+            "prompt_file": None,
+            "expected_session_id": None,
+            "defer_on_exhaustion": True,
+            "waker_config": str(self.root / "waker-config.json"),
+            "waker_state_dir": str(self.root / "waker-state"),
+        }
+        values.update(overrides)
+        return types.SimpleNamespace(**values)
+
+    def test_capacity_check_accepts_exhausted_exit_code(self):
+        runner = mock.Mock(
+            return_value=types.SimpleNamespace(
+                returncode=3,
+                stdout=json.dumps(
+                    {
+                        "profile": self.profile_name,
+                        "state": "EXHAUSTED",
+                        "next_reset_utc": "2026-08-28T08:44:00+00:00",
+                    }
+                ),
+            )
+        )
+        result = agentctl.check_profile_capacity(
+            self.profile_name, self.root / "profiles.json", runner=runner
+        )
+        self.assertEqual(result["state"], "EXHAUSTED")
+
+    def test_claude_deferral_requires_measured_reset_time(self):
+        with self.assertRaisesRegex(agentctl.AgentCtlError, "measured reset time"):
+            agentctl.queue_deferred_send(
+                self.args(),
+                role=self.role,
+                prompt="continue",
+                registry_path=self.registry,
+                session_id=self.session_id,
+                provider="claude",
+                capacity={"state": "EXHAUSTED"},
+            )
+
+    def test_deferred_send_passes_reset_and_exact_registry_to_waker(self):
+        calls = []
+
+        def runner(argv, **kwargs):
+            calls.append((argv, kwargs))
+            return types.SimpleNamespace(returncode=0, stdout="{}")
+
+        reset_utc = "2026-08-28T08:44:00+00:00"
+        agentctl.defer_role_send(
+            role=self.role,
+            prompt="continue",
+            registry_path=self.registry,
+            session_id=self.session_id,
+            waker_config_path=self.root / "waker-config.json",
+            waker_state_dir=self.root / "waker-state",
+            not_before_utc=reset_utc,
+            runner=runner,
+        )
+        argv, kwargs = calls[0]
+        self.assertIn(str(self.registry.resolve()), argv)
+        self.assertIn(self.session_id, argv)
+        self.assertIn(reset_utc, argv)
+        self.assertEqual(kwargs["input"], "continue")
+
+    def test_expected_session_mismatch_fails_before_capacity_probe(self):
+        with mock.patch.object(agentctl, "check_profile_capacity") as capacity:
+            with self.assertRaisesRegex(agentctl.AgentCtlError, "different session"):
+                agentctl.send(
+                    self.args(expected_session_id="replacement-session"),
+                    self.profiles,
+                    self.registry,
+                )
+        capacity.assert_not_called()
+
+    def test_preflight_exhaustion_defers_original_prompt_without_provider_call(self):
+        exhausted = {
+            "profile": self.profile_name,
+            "state": "EXHAUSTED",
+            "next_reset_utc": "2026-08-28T08:44:00+00:00",
+        }
+        with mock.patch.object(
+            agentctl, "check_profile_capacity", return_value=exhausted
+        ), mock.patch.object(
+            agentctl, "queue_deferred_send", return_value="quota-school-main-1"
+        ) as queue, mock.patch.object(agentctl, "run_worker") as worker:
+            agentctl.send(self.args(), self.profiles, self.registry)
+        worker.assert_not_called()
+        self.assertEqual(queue.call_args.kwargs["prompt"], "finish the task")
+        self.assertEqual(queue.call_args.kwargs["session_id"], self.session_id)
+        self.assertIs(queue.call_args.kwargs["capacity"], exhausted)
+
+    def test_provider_limit_defers_one_continue_prompt(self):
+        capacities = iter(
+            [
+                {"profile": self.profile_name, "state": "READY"},
+                {
+                    "profile": self.profile_name,
+                    "state": "EXHAUSTED",
+                    "next_reset_utc": "2026-08-28T08:44:00+00:00",
+                },
+            ]
+        )
+        with mock.patch.object(
+            agentctl, "check_profile_capacity", side_effect=lambda *_: next(capacities)
+        ), mock.patch.object(
+            agentctl,
+            "run_worker",
+            side_effect=agentctl.ProviderCapacityError("usage limit"),
+        ), mock.patch.object(
+            agentctl, "queue_deferred_send", return_value="quota-school-main-2"
+        ) as queue:
+            agentctl.send(self.args(), self.profiles, self.registry)
+        self.assertEqual(
+            queue.call_args.kwargs["prompt"],
+            agentctl.CONTINUE_AFTER_LIMIT_PROMPT,
+        )
+        self.assertEqual(queue.call_args.kwargs["capacity"]["state"], "EXHAUSTED")
+        self.assertEqual(queue.call_count, 1)
 
 
 class WorktreeIsolationTests(unittest.TestCase):

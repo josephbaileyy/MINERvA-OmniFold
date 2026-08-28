@@ -29,6 +29,24 @@ class AgentCtlError(RuntimeError):
     pass
 
 
+class ProviderCapacityError(AgentCtlError):
+    """A provider command reported an account usage limit."""
+
+
+USAGE_LIMIT_MARKERS = (
+    "hit your usage limit",
+    "usage limit reached",
+    "usage limit has been reached",
+    "rate limit exceeded",
+    "try again at",
+)
+
+CONTINUE_AFTER_LIMIT_PROMPT = (
+    "Continue the interrupted work from the current session state. "
+    "Do not restart work that is already complete."
+)
+
+
 def utc_now() -> str:
     return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
 
@@ -250,6 +268,143 @@ def prompt_from_args(args: argparse.Namespace) -> str:
     if args.prompt:
         return " ".join(args.prompt)
     raise AgentCtlError("Supply a prompt or --prompt-file")
+
+
+def reports_usage_limit(text: str) -> bool:
+    """Return whether provider output identifies a usage-limit stop."""
+    lowered = text.lower()
+    return any(marker in lowered for marker in USAGE_LIMIT_MARKERS)
+
+
+def check_profile_capacity(
+    profile_name: str,
+    config_path: Path,
+    runner=subprocess.run,
+) -> dict:
+    """Measure whether a configured profile can accept another turn."""
+    completed = runner(
+        [
+            sys.executable,
+            str(HERE / "usagectl.py"),
+            "check",
+            "--config",
+            str(config_path),
+            "--profile",
+            profile_name,
+            "--json",
+        ],
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        check=False,
+    )
+    if completed.returncode not in {0, 3}:
+        raise AgentCtlError(
+            f"Could not measure capacity for {profile_name!r}: "
+            f"{(completed.stdout or '').strip()[-1000:]}"
+        )
+    try:
+        capacity = json.loads(completed.stdout)
+    except json.JSONDecodeError as exc:
+        raise AgentCtlError(
+            f"Capacity check for {profile_name!r} returned invalid JSON: {exc}"
+        ) from exc
+    if not isinstance(capacity, dict) or capacity.get("state") not in {
+        "READY",
+        "LOW",
+        "EXHAUSTED",
+        "AUTH_REQUIRED",
+        "UNKNOWN",
+    }:
+        raise AgentCtlError(
+            f"Capacity check for {profile_name!r} returned no actionable state"
+        )
+    return capacity
+
+
+def defer_role_send(
+    *,
+    role: str,
+    prompt: str,
+    registry_path: Path,
+    session_id: str,
+    waker_config_path: Path,
+    waker_state_dir: Path,
+    not_before_utc: str | None = None,
+    runner=subprocess.run,
+) -> str:
+    """Queue one exact-session follow-up in the durable waker."""
+    request_id = f"quota-{safe_role(role)}-{uuid.uuid4().hex[:12]}"
+    env = os.environ.copy()
+    env["WAKER_STATE_DIR"] = str(waker_state_dir.resolve())
+    command = [
+        sys.executable,
+        str(HERE / "wakerctl.py"),
+        "--config",
+        str(waker_config_path.resolve()),
+        "defer-role",
+        "--id",
+        request_id,
+        "--role",
+        role,
+        "--registry",
+        str(registry_path.resolve()),
+        "--expected-session-id",
+        session_id,
+    ]
+    if not_before_utc:
+        command.extend(["--not-before-utc", not_before_utc])
+    completed = runner(
+        command,
+        input=prompt,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        check=False,
+        env=env,
+    )
+    if completed.returncode != 0:
+        raise AgentCtlError(
+            "Could not defer the provider-limited turn: "
+            f"{(completed.stdout or '').strip()[-1000:]}"
+        )
+    return request_id
+
+
+def queue_deferred_send(
+    args: argparse.Namespace,
+    *,
+    role: str,
+    prompt: str,
+    registry_path: Path,
+    session_id: str,
+    provider: str,
+    capacity: dict,
+) -> str:
+    """Resolve waker settings and persist one deferred exact-session send."""
+    state_dir_value = getattr(args, "waker_state_dir", None) or os.environ.get(
+        "WAKER_STATE_DIR"
+    )
+    if not state_dir_value:
+        raise AgentCtlError(
+            "Deferred sends require --waker-state-dir or WAKER_STATE_DIR"
+        )
+    not_before_utc = capacity.get("next_reset_utc")
+    if provider == "claude" and not not_before_utc:
+        raise AgentCtlError(
+            "Cannot defer an exhausted Claude session without a measured reset time"
+        )
+    waker_config = getattr(args, "waker_config", str(HERE / "waker-config.json"))
+    return defer_role_send(
+        role=role,
+        prompt=prompt,
+        registry_path=registry_path,
+        session_id=session_id,
+        waker_config_path=Path(waker_config),
+        waker_state_dir=Path(state_dir_value),
+        not_before_utc=not_before_utc,
+    )
 
 
 def add_codex_options(command: list[str], profile: dict) -> None:
@@ -480,7 +635,10 @@ def run_worker(
         elif provider_log and provider_log.exists():
             detail = "\n".join(provider_log.read_text().splitlines()[-20:]) or detail
         suffix = f": {detail}" if detail else ""
-        raise AgentCtlError(
+        error_type = (
+            ProviderCapacityError if reports_usage_limit(detail) else AgentCtlError
+        )
+        raise error_type(
             f"Worker exited {completed.returncode}{suffix}; "
             f"see {stdout_path} and {stderr_path}"
         )
@@ -488,6 +646,18 @@ def run_worker(
         session_id, result = parse_codex(completed.stdout)
     elif provider == "claude":
         session_id, result = parse_claude(completed.stdout)
+        with contextlib.suppress(json.JSONDecodeError):
+            claude_value = json.loads(completed.stdout)
+            if isinstance(claude_value, dict) and claude_value.get("is_error"):
+                error_type = (
+                    ProviderCapacityError
+                    if reports_usage_limit(result)
+                    else AgentCtlError
+                )
+                raise error_type(
+                    f"Worker reported an error: {result}; "
+                    f"see {stdout_path} and {stderr_path}"
+                )
     else:
         if provider_log is None or not provider_log.exists():
             raise AgentCtlError("agy completed without writing its conversation log")
@@ -578,7 +748,12 @@ def start(
     print(result)
 
 
-def send(args: argparse.Namespace, profiles: dict, registry_path: Path) -> None:
+def send(
+    args: argparse.Namespace,
+    profiles: dict,
+    registry_path: Path,
+    config_path: Path = DEFAULT_CONFIG,
+) -> None:
     role = safe_role(args.role)
     prompt = prompt_from_args(args)
     role_lock = registry_path.parent / "locks" / f"{role}.lock"
@@ -587,8 +762,42 @@ def send(args: argparse.Namespace, profiles: dict, registry_path: Path) -> None:
         if role not in registry["sessions"]:
             raise AgentCtlError(f"Unknown role {role!r}; start it first")
         session = registry["sessions"][role]
+        expected_session_id = getattr(args, "expected_session_id", None)
+        if expected_session_id and session["session_id"] != expected_session_id:
+            raise AgentCtlError(
+                f"Role {role!r} now resolves to a different session; refusing to "
+                "resume a replacement conversation"
+            )
         profile = get_profile(profiles, session["profile"])
         cwd = Path(session["cwd"])
+        should_defer = bool(getattr(args, "defer_on_exhaustion", False))
+        capacity = None
+        if should_defer:
+            if profile["provider"] not in {"claude", "codex"}:
+                raise AgentCtlError(
+                    f"Profile {session['profile']!r} has no measurable reset capacity"
+                )
+            capacity = check_profile_capacity(session["profile"], config_path)
+            if capacity["state"] not in {"READY", "LOW", "EXHAUSTED"}:
+                raise AgentCtlError(
+                    f"Profile {session['profile']!r} capacity is {capacity['state']}; "
+                    "refusing to guess when it can resume"
+                )
+        if capacity and capacity["state"] == "EXHAUSTED":
+            request_id = queue_deferred_send(
+                args,
+                role=role,
+                prompt=prompt,
+                registry_path=registry_path,
+                session_id=session["session_id"],
+                provider=profile["provider"],
+                capacity=capacity,
+            )
+            print(
+                f"Deferred {role} until measured capacity returns "
+                f"(watch {request_id})"
+            )
+            return
         with exclusive_lock(cwd_lock_path(registry_path, cwd)):
             base = run_base(role, "send", registry_path)
             provider_log = base.with_suffix(".agy.log") if profile["provider"] == "agy" else None
@@ -599,14 +808,35 @@ def send(args: argparse.Namespace, profiles: dict, registry_path: Path) -> None:
                 cwd=cwd,
                 provider_log=provider_log,
             )
-            _session_id, result, run = run_worker(
-                command,
-                env,
-                cwd,
-                base,
-                profile["provider"],
-                provider_log=provider_log,
-            )
+            try:
+                _session_id, result, run = run_worker(
+                    command,
+                    env,
+                    cwd,
+                    base,
+                    profile["provider"],
+                    provider_log=provider_log,
+                )
+            except ProviderCapacityError:
+                if not should_defer:
+                    raise
+                capacity = check_profile_capacity(session["profile"], config_path)
+                if capacity["state"] != "EXHAUSTED":
+                    raise
+                request_id = queue_deferred_send(
+                    args,
+                    role=role,
+                    prompt=CONTINUE_AFTER_LIMIT_PROMPT,
+                    registry_path=registry_path,
+                    session_id=session["session_id"],
+                    provider=profile["provider"],
+                    capacity=capacity,
+                )
+                print(
+                    f"Deferred {role} until measured capacity returns "
+                    f"(watch {request_id})"
+                )
+                return
 
         def record_turn(latest: dict) -> None:
             current = latest["sessions"].get(role)
@@ -706,6 +936,17 @@ def parser() -> argparse.ArgumentParser:
 
     send_parser = commands.add_parser("send", help="Resume a persistent role")
     send_parser.add_argument("--role", required=True)
+    send_parser.add_argument("--expected-session-id")
+    send_parser.add_argument(
+        "--defer-on-exhaustion",
+        action="store_true",
+        help="Queue the prompt in wakerctl when measured capacity is exhausted",
+    )
+    send_parser.add_argument(
+        "--waker-config",
+        default=str(HERE / "waker-config.json"),
+    )
+    send_parser.add_argument("--waker-state-dir")
     send_parser.add_argument("--prompt-file")
     send_parser.add_argument("prompt", nargs="*")
     send_parser.set_defaults(handler="send")
@@ -729,7 +970,7 @@ def main() -> int:
         elif args.handler == "adopt":
             adopt(args, profiles, registry_path)
         elif args.handler == "send":
-            send(args, profiles, registry_path)
+            send(args, profiles, registry_path, config_path=config_path)
         else:
             show(args, registry_path)
     except (AgentCtlError, OSError) as exc:

@@ -72,10 +72,11 @@ latency. Zero LLM calls occur unless an armed watch condition holds.
 
 ```
 watch: armed --condition holds--> fired (one event per watch)
-event: NEW --claim(lease)--> CLAIMED --invoked marker--> INVOKED --rc--> DONE(resumed|failed)
+event: NEW --claim(lease)--> CLAIMED --invoked marker--> INVOKED --rc--> DONE(resumed|deferred|failed)
        NEW --preflight fail--> BLOCKED (claim released; retried on a later tick, F2-safe)
        CLAIMED + lease expired + no invoked --> reclaimable
        INVOKED + grace expired + no done --> DONE(reconciled) + one recon event (exactly once)
+       DONE(deferred) --> one provider-capacity watch for the exact session
        DONE(failed) --> retry event evt-X.rN (bounded by max_retries; each retry
                         is its own exactly-once chain)
 ```
@@ -200,10 +201,43 @@ so enrollment cannot break the ticker.
 `AUTH_REQUIRED`, or `UNKNOWN`. For a new bounded task,
 `usagectl.py select --provider codex --json` chooses the best measured READY/LOW
 account even if another account is unavailable. It never migrates a live
-session. Before a root resume, the capacity guard checks the root's exact
-profile; an unavailable root leaves the event unconsumed, pushes the block, and
-retries after reset/auth recovery. Command actions and Slurm monitoring need no
-LLM capacity and continue normally.
+session. Before a root resume or managed role follow-up, the capacity guard
+checks that session's exact profile; an unavailable profile leaves the event
+unconsumed, pushes the block, and retries after reset/auth recovery. Command
+actions and Slurm monitoring need no LLM capacity and continue normally.
+
+### Resume a managed role after a usage-limit reset
+
+The configured root and roles registered in `agentctl` both have durable reset
+paths. `agentctl send --defer-on-exhaustion` checks a role's measured profile
+before invoking the provider. If that profile is exhausted, it stores the
+prompt privately under the waker state directory and arms a
+`provider-capacity` watch. If a role or root invocation itself reports a usage
+limit and a fresh measurement confirms exhaustion, the waker arms one short
+continuation turn. The watcher performs no model calls while capacity is
+exhausted and fires only after `usagectl.py` reports `READY` or `LOW`.
+Claude usage is status-line cached, so an exited session cannot refresh it. For
+that provider only, the watch also retains the reset timestamp from the last
+fresh exhausted measurement. Once that boundary passes it re-checks capacity;
+if the cache is merely stale (`UNKNOWN`), it permits one no-retry continuation
+probe. `AUTH_REQUIRED` never takes this fallback.
+
+```bash
+WAKER_STATE_DIR=/path/to/runtime/waker \
+/usr/bin/python3.11 agentctl.py \
+  --registry /path/to/runtime/sessions.json \
+  send --role school-main --defer-on-exhaustion \
+  --waker-config /path/to/waker-config.json \
+  "Continue the interrupted work."
+```
+
+The deferred action snapshots the root thread/profile/worktree or the role's
+registry path/session UUID. Dispatch fails closed if that identity is removed
+or remapped, or the capacity measurement is `AUTH_REQUIRED`. Its event permits
+no provider retry, so one reset observation can invoke at most one continuation
+turn. This mechanism does not discover or wake arbitrary tmux, Claude Desktop,
+or Codex Desktop chats. Adopt such a conversation into `agentctl` first so its
+UUID, profile, and worktree are explicit.
 
 The continuity rule applies to an existing conversation, not to the whole
 campaign. Do not make several sessions co-own `main` to hide an exhausted

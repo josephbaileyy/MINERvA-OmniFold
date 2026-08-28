@@ -2,6 +2,7 @@ import json
 import os
 from pathlib import Path
 import stat
+import sys
 import tempfile
 import threading
 import time
@@ -100,6 +101,31 @@ class WakerTestCase(unittest.TestCase):
             },
         )
         return path
+
+    def write_registry(
+        self,
+        *,
+        role="agent-B-p5b",
+        profile="codex-personal",
+        session_id="session-agent-b",
+    ):
+        registry = self.dir / "sessions.json"
+        wakerctl.agentctl.atomic_write_json(
+            registry,
+            {
+                "version": 1,
+                "sessions": {
+                    role: {
+                        "provider": profile.split("-", 1)[0],
+                        "profile": profile,
+                        "session_id": session_id,
+                        "cwd": str(self.dir),
+                        "turns": [],
+                    }
+                },
+            },
+        )
+        return registry
 
 
 class ClaimPrimitiveTests(WakerTestCase):
@@ -571,7 +597,14 @@ class DispatchTests(WakerTestCase):
         self.assertEqual(len(self.runner.action_calls("codex")), 1)
 
     def test_role_send_action_routes_through_agentctl(self):
+        self.write_config(python=sys.executable)
         ctx = self.ctx()
+        registry = self.write_registry()
+        self.runner.add(
+            lambda a: len(a) > 1 and "usagectl.py" in a[1],
+            0,
+            '{"profile":"codex-personal","state":"READY"}',
+        )
         prompt = self.dir / "p.md"
         prompt.write_text("hello")
         sentinel = self.dir / "role.sentinel"
@@ -584,6 +617,7 @@ class DispatchTests(WakerTestCase):
                 "action": {
                     "type": "role-send",
                     "role": "agent-B-p5b",
+                    "registry": str(registry),
                     "prompt_file": str(prompt),
                     "context": "",
                 },
@@ -591,11 +625,292 @@ class DispatchTests(WakerTestCase):
         )
         sentinel.write_text("x")
         wakerctl.scan(ctx)
-        outcomes = wakerctl.dispatch(ctx)
+        with mock.patch.object(wakerctl, "preflight", return_value=[]):
+            outcomes = wakerctl.dispatch(ctx)
         self.assertEqual(outcomes, [("evt-role", "resumed")])
         call = self.runner.calls[-1]
         self.assertIn("agentctl.py", call["argv"][1])
         self.assertIn("agent-B-p5b", call["argv"])
+        self.assertIn(str(registry.resolve()), call["argv"])
+        self.assertIn("session-agent-b", call["argv"])
+
+    def test_provider_capacity_deferral_resumes_exact_session_once(self):
+        self.write_config(python=sys.executable, capacity_guard=True)
+        ctx = self.ctx()
+        registry = self.write_registry(
+            role="school-main",
+            profile="claude-school",
+            session_id="claude-session-1",
+        )
+        reset_utc = wakerctl.dt.datetime.fromtimestamp(
+            self.now + 3600,
+            tz=wakerctl.dt.timezone.utc,
+        ).isoformat()
+        deferred = wakerctl.defer_role(
+            ctx,
+            watch_id="quota-school-main-1",
+            role="school-main",
+            registry_path=registry,
+            expected_session_id="claude-session-1",
+            prompt="continue",
+            not_before_utc=reset_utc,
+        )
+        prompt_path = Path(deferred["prompt_file"])
+        self.assertEqual(prompt_path.read_text(), "continue")
+        self.assertEqual(stat.S_IMODE(prompt_path.stat().st_mode), 0o600)
+        watch = wakerctl.read_json(wakerctl.watch_path(ctx, deferred["watch_id"]))
+        self.assertEqual(watch["max_retries"], 0)
+
+        self.now += 3601
+        self.runner.add(
+            lambda a: len(a) > 1 and "usagectl.py" in a[1],
+            3,
+            '{"profile":"claude-school","state":"EXHAUSTED"}',
+        )
+        self.assertEqual(wakerctl.scan(ctx), [])
+
+        self.runner.rules.clear()
+        self.runner.add(
+            lambda a: len(a) > 1 and "usagectl.py" in a[1],
+            0,
+            '{"profile":"claude-school","state":"READY"}',
+        )
+        self.assertEqual(wakerctl.scan(ctx), ["evt-quota-school-main-1"])
+        with mock.patch.object(wakerctl, "preflight", return_value=[]):
+            self.assertEqual(
+                wakerctl.dispatch(ctx),
+                [("evt-quota-school-main-1", "resumed")],
+            )
+            self.assertEqual(wakerctl.dispatch(ctx), [])
+        sends = [
+            call
+            for call in self.runner.calls
+            if len(call["argv"]) > 1 and "agentctl.py" in call["argv"][1]
+        ]
+        self.assertEqual(len(sends), 1)
+        self.assertIn(str(registry.resolve()), sends[0]["argv"])
+        self.assertIn("claude-session-1", sends[0]["argv"])
+
+    def test_claude_stale_cache_uses_observed_reset_boundary_once(self):
+        self.write_config(python=sys.executable, capacity_guard=True)
+        ctx = self.ctx()
+        registry = self.write_registry(
+            role="school-main",
+            profile="claude-school",
+            session_id="claude-session-1",
+        )
+        reset_utc = wakerctl.dt.datetime.fromtimestamp(
+            self.now + 60,
+            tz=wakerctl.dt.timezone.utc,
+        ).isoformat()
+        wakerctl.defer_role(
+            ctx,
+            watch_id="quota-school-main-stale",
+            role="school-main",
+            registry_path=registry,
+            expected_session_id="claude-session-1",
+            prompt="continue",
+            not_before_utc=reset_utc,
+        )
+        self.runner.add(
+            lambda a: len(a) > 1 and "usagectl.py" in a[1],
+            3,
+            '{"profile":"claude-school","state":"UNKNOWN"}',
+        )
+        self.assertEqual(wakerctl.scan(ctx), [])
+        usage_calls = [
+            call
+            for call in self.runner.calls
+            if len(call["argv"]) > 1 and "usagectl.py" in call["argv"][1]
+        ]
+        self.assertEqual(usage_calls, [])
+
+        self.now += 61
+        self.assertEqual(wakerctl.scan(ctx), ["evt-quota-school-main-stale"])
+        event = wakerctl.read_json(
+            wakerctl.event_paths(ctx, "evt-quota-school-main-stale")["event"]
+        )
+        self.assertEqual(event["payload"]["state"], "RESET_BOUNDARY_REACHED")
+        with mock.patch.object(wakerctl, "preflight", return_value=[]):
+            self.assertEqual(
+                wakerctl.dispatch(ctx),
+                [("evt-quota-school-main-stale", "resumed")],
+            )
+            self.assertEqual(wakerctl.dispatch(ctx), [])
+        sends = [
+            call
+            for call in self.runner.calls
+            if len(call["argv"]) > 1 and "agentctl.py" in call["argv"][1]
+        ]
+        self.assertEqual(len(sends), 1)
+
+    def test_root_limit_defers_exact_thread_until_observed_reset(self):
+        claude = self.dir / "claude"
+        claude.write_text("#!/bin/bash\nexit 0\n")
+        claude.chmod(claude.stat().st_mode | stat.S_IXUSR)
+        self.write_config(
+            python=sys.executable,
+            capacity_guard=True,
+            claude_bin=str(claude),
+            root={
+                "provider": "claude",
+                "profile": "claude-school",
+                "thread_id": "claude-root-session",
+                "cwd": str(self.dir),
+            },
+        )
+        ctx = self.ctx()
+        sentinel = self.arm_sentinel(ctx, "root-quota")
+        sentinel.write_text("done")
+        self.assertEqual(wakerctl.scan(ctx), ["evt-root-quota"])
+        reset_utc = wakerctl.dt.datetime.fromtimestamp(
+            self.now + 60,
+            tz=wakerctl.dt.timezone.utc,
+        ).isoformat()
+        capacity_calls = 0
+
+        def capacity_result(_argv):
+            nonlocal capacity_calls
+            capacity_calls += 1
+            if capacity_calls == 1:
+                state = {"profile": "claude-school", "state": "READY"}
+                return types.SimpleNamespace(returncode=0, stdout=json.dumps(state))
+            if capacity_calls == 2:
+                state = {
+                    "profile": "claude-school",
+                    "state": "EXHAUSTED",
+                    "next_reset_utc": reset_utc,
+                }
+                return types.SimpleNamespace(returncode=3, stdout=json.dumps(state))
+            state = {"profile": "claude-school", "state": "UNKNOWN"}
+            return types.SimpleNamespace(returncode=3, stdout=json.dumps(state))
+
+        provider_calls = 0
+
+        def provider_result(_argv):
+            nonlocal provider_calls
+            provider_calls += 1
+            if provider_calls == 1:
+                payload = {
+                    "is_error": True,
+                    "result": "You've hit your usage limit. Try again at 8:44 AM.",
+                }
+            else:
+                payload = {"is_error": False, "result": "continued"}
+            return types.SimpleNamespace(returncode=0, stdout=json.dumps(payload))
+
+        self.runner.add(
+            lambda a: len(a) > 1 and "usagectl.py" in a[1],
+            capacity_result,
+        )
+        self.runner.add(lambda a: a[0] == str(claude), provider_result)
+        with mock.patch.object(wakerctl, "preflight", return_value=[]):
+            self.assertEqual(
+                wakerctl.dispatch(ctx),
+                [("evt-root-quota", "deferred")],
+            )
+        watch_id = "quota-root-evt-root-quota"
+        watch = wakerctl.read_json(wakerctl.watch_path(ctx, watch_id))
+        self.assertEqual(watch["action"]["expected_thread_id"], "claude-root-session")
+        self.assertEqual(watch["max_retries"], 0)
+
+        self.now += 61
+        self.assertEqual(wakerctl.scan(ctx), [f"evt-{watch_id}"])
+        with mock.patch.object(wakerctl, "preflight", return_value=[]):
+            self.assertEqual(
+                wakerctl.dispatch(ctx),
+                [(f"evt-{watch_id}", "resumed")],
+            )
+            self.assertEqual(wakerctl.dispatch(ctx), [])
+        self.assertEqual(provider_calls, 2)
+
+    def test_root_remap_blocks_deferred_event_without_invocation(self):
+        self.write_config(
+            python=sys.executable,
+            capacity_guard=True,
+            root={
+                "provider": "claude",
+                "profile": "claude-school",
+                "thread_id": "claude-root-session",
+                "cwd": str(self.dir),
+            },
+        )
+        ctx = self.ctx()
+        reset_utc = wakerctl.dt.datetime.fromtimestamp(
+            self.now + 60,
+            tz=wakerctl.dt.timezone.utc,
+        ).isoformat()
+        event = {"event_id": "evt-root-remap"}
+        wakerctl.defer_root(
+            ctx,
+            event,
+            {
+                "state": "EXHAUSTED",
+                "next_reset_utc": reset_utc,
+            },
+        )
+        ctx.config["root"]["thread_id"] = "replacement-root-session"
+        self.now += 61
+        self.runner.add(
+            lambda a: len(a) > 1 and "usagectl.py" in a[1],
+            0,
+            '{"profile":"claude-school","state":"READY"}',
+        )
+        watch_id = "quota-root-evt-root-remap"
+        self.assertEqual(wakerctl.scan(ctx), [f"evt-{watch_id}"])
+        with mock.patch.object(wakerctl, "preflight", return_value=[]):
+            self.assertEqual(
+                wakerctl.dispatch(ctx),
+                [(f"evt-{watch_id}", "blocked")],
+            )
+        provider_calls = [
+            call
+            for call in self.runner.calls
+            if call["argv"] and call["argv"][0].endswith("claude")
+        ]
+        self.assertEqual(provider_calls, [])
+
+    def test_role_remap_blocks_deferred_event_without_invocation(self):
+        self.write_config(python=sys.executable, capacity_guard=True)
+        ctx = self.ctx()
+        registry = self.write_registry(
+            role="school-main",
+            profile="claude-school",
+            session_id="claude-session-1",
+        )
+        wakerctl.defer_role(
+            ctx,
+            watch_id="quota-school-main-remap",
+            role="school-main",
+            registry_path=registry,
+            expected_session_id="claude-session-1",
+            prompt="continue",
+            not_before_utc=wakerctl.dt.datetime.fromtimestamp(
+                self.now + 3600,
+                tz=wakerctl.dt.timezone.utc,
+            ).isoformat(),
+        )
+        replacement = wakerctl.agentctl.read_registry(registry)
+        replacement["sessions"]["school-main"]["session_id"] = "replacement"
+        wakerctl.agentctl.atomic_write_json(registry, replacement)
+        self.now += 3601
+        self.runner.add(
+            lambda a: len(a) > 1 and "usagectl.py" in a[1],
+            0,
+            '{"profile":"claude-school","state":"READY"}',
+        )
+        self.assertEqual(wakerctl.scan(ctx), ["evt-quota-school-main-remap"])
+        with mock.patch.object(wakerctl, "preflight", return_value=[]):
+            self.assertEqual(
+                wakerctl.dispatch(ctx),
+                [("evt-quota-school-main-remap", "blocked")],
+            )
+        sends = [
+            call
+            for call in self.runner.calls
+            if len(call["argv"]) > 1 and "agentctl.py" in call["argv"][1]
+        ]
+        self.assertEqual(sends, [])
 
     def test_capacity_guard_blocks_root_before_invocation_without_consuming_event(self):
         self.write_config(capacity_guard=True)
