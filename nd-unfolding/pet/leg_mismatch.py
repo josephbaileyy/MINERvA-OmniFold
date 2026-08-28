@@ -22,7 +22,6 @@ Everything here comes from stored arrays. Also settles, for free:
     cross-check on both.
 """
 import os
-import sys
 
 import numpy as np
 

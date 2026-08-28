@@ -21,7 +21,6 @@ for _a in _pathlib.Path(__file__).resolve().parents:
 import technote_style  # noqa: E402  (no titles + consistent colours)
 
 import argparse
-import os
 
 import numpy as np
 import ROOT
@@ -29,7 +28,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from plot_2d_cross_section import (PT_EDGES, PZ_EDGES, th2_to_slices,
+from plot_2d_cross_section import (th2_to_slices,
                                     compute_truth_xsec_2d,
                                     load_flux_bins_for_truth)
 

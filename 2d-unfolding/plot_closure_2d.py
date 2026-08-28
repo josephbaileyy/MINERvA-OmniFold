@@ -12,14 +12,14 @@ import sys as _sys, pathlib as _pathlib
 for _a in _pathlib.Path(__file__).resolve().parents:
     if (_a / 'technote_style.py').exists():
         _sys.path.insert(0, str(_a)); break
-import technote_style  # noqa: E402  (no titles + consistent colours)
+import technote_style  # noqa: E402,F401  (no titles + consistent colours)
 
 import argparse
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.colors import LogNorm, TwoSlopeNorm
+from matplotlib.colors import TwoSlopeNorm
 import ROOT
 
 

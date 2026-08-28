@@ -100,7 +100,7 @@ def main():
         Z = D - D.mean(axis=0, keepdims=True)
         per_band[b] = (Z.T @ Z) / D.shape[0]                   # MAT biased 1/N, mean-centered
         total += per_band[b]
-    fp.check_active_rollup(per_band, total, tol=a.tol)
+    fp.require_active_rollup(per_band, total, tol=a.tol)
     fp.require_reported_cov(total, n_rep, manifest["reported_mask_hash"], mh)
 
     fo = ROOT.TFile.Open(a.out, "RECREATE")

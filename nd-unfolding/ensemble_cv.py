@@ -69,7 +69,6 @@ def main():
 
     # write ensemble-mean CV + spread back onto the 3D grid (same binning as hXSec3D)
     out = ROOT.TFile.Open(args.out, "RECREATE")
-    xe = [h.GetXaxis().GetBinLowEdge(i) for i in range(1, nx + 2)] if False else None
     mean3d = mean.reshape(shape, order="C")
     std3d = std.reshape(shape, order="C")
     # reuse the CV hist binning

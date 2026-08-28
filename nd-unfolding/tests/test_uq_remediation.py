@@ -1,9 +1,7 @@
 import ast
-import importlib.util
 import sys
 import contextlib
 import os
-import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -2030,7 +2028,6 @@ class CompletenessGuardClassifiesUnopenable(unittest.TestCase):
         """CONTROL. A stub that raises on IMPORT would fail these tests for the wrong reason, and a
         stub too permissive would pass them for the wrong reason. So: a HEALTHY open must reach further
         into check() and fail on a LATER gate, proving the early return is the one under test."""
-        import types
         class _H:
             # IsZombie was missing on the first attempt and the CONTROL is what surfaced it -- the two
             # real tests above never reach this far, so an incomplete healthy-file stub would have gone

@@ -39,7 +39,6 @@ silently passing.
 import argparse
 import ast
 import os
-import sys
 
 TOL_CUT = 1e-2
 REL_NAME_HINTS = ("rel", "ratio", "frac", "_over_", "relmax", "relerr", "pct", "percent")
@@ -209,8 +208,8 @@ def main():
 
     hits.sort(key=lambda h: (h["file"], h["lineno"]))
     if a.markdown:
-        print(f"| file | function | absolute checks | relative checks | floors |")
-        print(f"|---|---|---|---|---|")
+        print("| file | function | absolute checks | relative checks | floors |")
+        print("|---|---|---|---|---|")
         for h in hits:
             ab = [r for r in h["rows"] if r["kind"] == "ABSOLUTE"]
             re_ = [r for r in h["rows"] if r["kind"] == "RELATIVE"]

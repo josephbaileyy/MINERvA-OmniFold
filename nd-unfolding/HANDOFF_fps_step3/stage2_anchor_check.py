@@ -62,7 +62,7 @@ print(f"[anchor] integral ratio (xps2/std) = {integral_ratio:.4f}")
 print(f"[anchor] median |r-1| = {100*median_abs_dev:.2f}%")
 print(f"[anchor] p90 |r-1|    = {100*p90_abs_dev:.2f}%")
 print(f"[anchor] max |r-1|    = {100*np.max(np.abs(ratio-1.0)):.2f}%")
-print(f"[anchor] Stage-1 benchmark: integral ratio 1.0047, median|r-1| 1.03%")
+print("[anchor] Stage-1 benchmark: integral ratio 1.0047, median|r-1| 1.03%")
 
 # also report without the interior restriction (all pt/pz-restricted bins, any theta)
 both_rep_noninterior = rep_std & rep_xps2

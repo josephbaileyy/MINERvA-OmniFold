@@ -507,7 +507,6 @@ def main():
         if bad_endpoints:
             raise SystemExit(f"[FAIL] lateral sweep requires exact endpoints [0,1]: "
                              f"{bad_endpoints}")
-        n_uni = sum(len(v) for v in by_band.values())
         C_lat_sweep = np.zeros((n, n))
         for b_, entries in sorted(by_band.items()):
             Dm = np.stack([d for _, d in sorted(entries)], axis=0)

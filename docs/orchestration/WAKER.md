@@ -2,10 +2,9 @@
 
 Canonical home for the wait/continuation subsystem. Code: `wakerctl.py` (+
 `test_wakerctl.py`); tracked config: `waker-config.json`; runtime state:
-`state/waker/` (gitignored). The skills in
-`.agents/skills/persistent-orchestrator/` and
-`.claude/skills/persistent-orchestrator/` reference this file instead of
-carrying operational detail. Human interaction: `OPERATOR-GUIDE.md`.
+`state/waker/` (gitignored). The retired
+`.agents/retired-skills/persistent-orchestrator/` skill references this file
+instead of carrying operational detail. Human interaction: `OPERATOR-GUIDE.md`.
 Shutdown/migration/bootstrap: `PORTING.md`.
 
 ## Why this exists (forensic findings, 2026-07-18/19)
@@ -43,10 +42,12 @@ latency. Zero LLM calls occur unless an armed watch condition holds.
 - **The dispatcher** (`wakerctl dispatch`) claims each event exclusively
   (lease-stamped hard-link claims; Lustre/GPFS-coherent), serializes provider
   turns through one lease-guarded resume mutex, preflights the environment
-  fail-closed (F2/F3), and performs **at most one** action per event: a root
-  `codex exec resume` with explicit `CODEX_HOME`, the profile's pinned
-  model/reasoning, `--disable goals`, and the authorized bypass flag (F5), or
-  an `agentctl.py send` to a named worker, or a repo-internal command.
+  fail-closed (F2/F3), and performs **at most one** action per event: a resume
+  of the root provider named by `waker-config.json` `root.profile` — `codex exec
+  resume` with explicit `CODEX_HOME`, `--disable goals` and the authorized
+  bypass flag, or `claude --print --resume` with the profile's explicit home
+  (F5), each carrying that profile's pinned model and flags — or an
+  `agentctl.py send` to a named worker, or a repo-internal command.
 - **Exactly-once** comes from per-event claims, not process liveness: any
   login node may scan/dispatch concurrently; crashes are recovered by lease
   expiry (claim without invocation → reclaim; invocation without disposition →
@@ -102,7 +103,7 @@ event: NEW --claim(lease)--> CLAIMED --invoked marker--> INVOKED --rc--> DONE(re
 cd /pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration
 P=/usr/bin/python3.11
 
-$P wakerctl.py preflight                  # binaries, root profile, CODEX_HOME
+$P wakerctl.py preflight                  # binaries, root profile, provider home + cwd
 $P wakerctl.py smoke                      # isolated end-to-end proof (fake provider)
 
 # Arm continuation for a job / array / sentinel / reset / deadline / latency:
@@ -127,7 +128,7 @@ $P wakerctl.py uninstall-cron             # rollback
 ```
 
 Per-watch actions default to resuming the root thread from
-`waker-config.json` (`root.thread_id`, profile `codex-personal`). Use
+`waker-config.json` (`root.thread_id` under `root.profile`). Use
 `--action role-send --role R --prompt-file F` to continue a named worker via
 `agentctl.py` instead. The dispatcher serializes all provider actions, so two
 controllers can never message one persistent worker concurrently.
@@ -272,6 +273,14 @@ The 2026-08-28 recovery applies that boundary explicitly: the former
 names the fresh `claude-school` successor plus its isolated coordinator
 worktree. This is one root replacement, not a second co-owner of `main`.
 
+That replacement supersedes `PORTING.md` §6d, which is headed `ACTIVE` and
+names interim Claude root `4a8668e1-…` with an automatic handback to Codex at
+the weekly reset. Neither is current: the tracked root is the `claude-school`
+successor above, and it is a replacement rather than an interim. `PORTING.md`
+is `ARCHIVAL` and immutable in `MANIFEST.tsv`, so the correction is recorded
+here — read §6d as the record of a port performed on 2026-07-20, never as the
+live binding. `waker-config.json` `root` is the only authority for that.
+
 ## Poisoned-inode recovery
 
 If `status` or `tick` hangs, identify the exact watch file with bounded
@@ -305,18 +314,15 @@ Read the ask, then deliver your decision one of three ways:
    "yes, continue", just delete the file; the idle guard re-wakes the
    campaign with standing authorization within ~15 minutes.
 
-3. **Direct turn.** For a nuanced back-and-forth, send one bounded
-   `codex exec resume` yourself — only when no resume is in flight (no
-   event in `status` without a terminal state), and carry the pinned flags
-   that manual invocations do not inherit:
-
-   ```bash
-   env CODEX_HOME=/global/homes/j/josephrb/codex-homes/personal \
-     codex exec resume --disable goals --dangerously-bypass-approvals-and-sandbox \
-     --model gpt-5.6-sol -c 'model_reasoning_effort="xhigh"' \
-     019f749a-857b-7790-8cec-bc36b22908be \
-     "USER DECISION: <answer>. Delete state/waker/BLOCKED-ON-USER.json, ledger this, proceed, and re-arm watches before ending."
-   ```
+3. **Direct turn.** For a nuanced back-and-forth, resume the root yourself —
+   only when no resume is in flight (no event in `status` without a terminal
+   state). Read `root.profile` and `root.thread_id` from `waker-config.json`
+   and invoke that profile as `build_root_resume()` does: a manual invocation
+   inherits neither the provider home nor the profile's pinned flags, and a
+   hand-written flag set can grant the root a wider tool surface than its
+   profile does. Carry the same decision text as above — `USER DECISION:
+   <answer>. Delete state/waker/BLOCKED-ON-USER.json, ledger this, proceed,
+   and re-arm watches before ending.`
 
 Never answer by editing BLOCKED-ON-USER.json in place — the file's absence
 is the wake signal, and text left inside it is read by nobody.
@@ -342,7 +348,7 @@ is the wake signal, and text left inside it is read by nobody.
    `state/live-state.json` so `generate_live_state.py` renders watch/event/tick
    liveness instead of node-local tmux state.
 
-## Handoff to the root Codex orchestrator
+## Handoff to the root orchestrator
 
 - Your continuation now arrives as `wakerctl` resume turns. Each prompt names
   one event receipt under `docs/orchestration/state/waker/events/`; read it

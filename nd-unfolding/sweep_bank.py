@@ -24,7 +24,6 @@ and the 4D vertical unified throw, both consume this bank without touching the 1
   python sweep_bank.py --run  --universe MaCCQE:0 --bankdir bank_sweep
 """
 import argparse
-import glob
 import math
 import os
 import sys

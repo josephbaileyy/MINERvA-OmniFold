@@ -20,7 +20,7 @@ Not covered here, and deliberately: anything requiring PyROOT (`valid_root`, the
 the projector's ROOT I/O). Those need the cluster interpreter — see KNOWN_ISSUES #17 and the
 Perlmutter ROOT/TF split. This file stays ROOT-free so it runs in CI and on a laptop.
 """
-import json, os, re, subprocess, sys, tempfile, unittest
+import json, re, subprocess, sys, tempfile, unittest
 from pathlib import Path
 
 ND = Path(__file__).resolve().parents[1]

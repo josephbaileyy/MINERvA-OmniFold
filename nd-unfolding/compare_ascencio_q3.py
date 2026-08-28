@@ -35,7 +35,7 @@ import sys as _sys, pathlib as _pathlib
 for _a in _pathlib.Path(__file__).resolve().parents:
     if (_a / 'technote_style.py').exists():
         _sys.path.insert(0, str(_a)); break
-import technote_style  # noqa: E402  (no titles + consistent colours)
+import technote_style  # noqa: E402,F401  (no titles + consistent colours)
 
 import argparse
 import os
@@ -188,7 +188,6 @@ def _binwise_chi2(our_edges, our_y, a_lo, a_hi, a_y, a_e):
     (A full-covariance chi2 needs the q3-projected combined covariance, which is a
     follow-on once the q3 systematic campaign lands -- see ND_OMNIFOLD_STATUS.md.)
     """
-    a_edges = np.append(a_lo, a_hi[-1])
     matched = []
     for k in range(len(a_y)):
         # find our bin with the same [lo,hi)

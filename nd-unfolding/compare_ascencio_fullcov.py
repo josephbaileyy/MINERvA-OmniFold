@@ -205,7 +205,6 @@ def main():
     axs = axs[0]
     for c, (qlo, qhi) in enumerate(cols):
         idx = [s for s, b in enumerate(super_bins) if b[0] == qlo]
-        e = sorted({super_bins[s][2] for s in idx} | {super_bins[s][3] for s in idx})
         ctr = [0.5 * (super_bins[s][2] + super_bins[s][3]) for s in idx]
         we = [0.5 * (super_bins[s][3] - super_bins[s][2]) for s in idx]
         A = axs[c]

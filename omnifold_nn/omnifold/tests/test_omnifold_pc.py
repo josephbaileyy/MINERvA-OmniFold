@@ -1,4 +1,4 @@
-from omnifold import DataLoader, MultiFold, MLP, PET, SetStyle, HistRoutine
+from omnifold import DataLoader, MultiFold, PET, SetStyle, HistRoutine
 import numpy as np
 
 nevts = 1_000_00

@@ -156,15 +156,15 @@ def main():
 
     # CV is the middle (dial 0) column
     icv = int(np.argmin(np.abs(twk)))
-    print(f"\n[fsi] total sigma in PS (cm^2/nucleon) per dial:")
+    print("\n[fsi] total sigma in PS (cm^2/nucleon) per dial:")
     for k in range(npts):
         print(f"   {twk[k]:+.2f} sigma : {totals[k]:.4e}  "
               f"({100*(totals[k]/totals[icv]-1):+.2f}% vs CV)")
 
     # Eavail-spectrum shift table (the headline: FSI moves the hadronic energy)
     ea_lo, ea_hi = EA[:-1], EA[1:]
-    print(f"\n[fsi] dsigma/dEavail fractional shift vs CV (the FSI-sensitive axis):")
-    print(f"   Eavail bin (GeV)      CV          -dial%     +dial%")
+    print("\n[fsi] dsigma/dEavail fractional shift vs CV (the FSI-sensitive axis):")
+    print("   Eavail bin (GeV)      CV          -dial%     +dial%")
     lines = ["# FrInel_pi (and any GSyst dial) effect on the Eavail spectrum",
              f"# dial={args.dial}  grid(sigma)={list(twk)}  CV col={icv}",
              f"# <sigmaCC>/nucleon={sigma_nuc:.4e} cm^2; total CC={n_cc}, "

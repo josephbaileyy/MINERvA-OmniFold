@@ -40,7 +40,7 @@ import sys as _sys, pathlib as _pathlib
 for _a in _pathlib.Path(__file__).resolve().parents:
     if (_a / 'technote_style.py').exists():
         _sys.path.insert(0, str(_a)); break
-import technote_style  # noqa: E402  (no titles + consistent colours)
+import technote_style  # noqa: E402,F401  (no titles + consistent colours)
 
 
 import argparse
@@ -306,7 +306,7 @@ def main():
             comb_diag = np.sqrt(np.maximum(np.diag(combined_cov), 0))
             with np.errstate(divide="ignore", invalid="ignore"):
                 comb_rel = np.where(cv_rep > 0, comb_diag / cv_rep, 0)
-            print(f"\n[COMBINED universe + bootstrap]")
+            print("\n[COMBINED universe + bootstrap]")
             print(f"  median rel = {100*np.median(comb_rel):.3f}%")
             print(f"  p84    rel = {100*np.percentile(comb_rel, 84):.3f}%")
             print(f"  max    rel = {100*np.max(comb_rel):.3f}%")
@@ -416,18 +416,18 @@ def main():
     # --- summary file ---
     summary = os.path.join(args.outdir, "uq_universe_summary.txt")
     with open(summary, "w") as fh:
-        fh.write(f"Universe-covariance summary\n")
+        fh.write("Universe-covariance summary\n")
         fh.write(f"CV: {args.cv}\n")
         fh.write(f"glob: {args.glob}\n")
         fh.write(f"n_reported bins: {n_reported}\n\n")
-        fh.write(f"Per-band median relative sigma over reported bins:\n")
+        fh.write("Per-band median relative sigma over reported bins:\n")
         for band, cov in sorted(band_cov.items()):
             diag = np.sqrt(np.maximum(np.diag(cov), 0))
             with np.errstate(divide="ignore", invalid="ignore"):
                 rel = np.where(cv_rep > 0, diag / cv_rep, 0)
             fh.write(f"  {band:30s} median={100*np.median(rel):.3f}%  "
                      f"max={100*np.max(rel):.3f}%\n")
-        fh.write(f"\nGrouped median relative sigma over reported bins:\n")
+        fh.write("\nGrouped median relative sigma over reported bins:\n")
         for category, cov in active_groups:
             diag = np.sqrt(np.maximum(np.diag(cov), 0))
             with np.errstate(divide="ignore", invalid="ignore"):

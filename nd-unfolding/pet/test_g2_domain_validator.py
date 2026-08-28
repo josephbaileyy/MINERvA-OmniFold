@@ -7,7 +7,6 @@ census split.
 
 Run: python3 test_g2_domain_validator.py   (exit 0 = all pass)
 """
-import math
 import sys
 
 import validate_g2_fullevent_domain as V

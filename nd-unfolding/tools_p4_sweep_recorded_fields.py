@@ -9,7 +9,7 @@ Two enumerations, grep-level, no judgement in the extraction step:
 The point is that the list exists as a checkable artifact. Last round's sweep was a pass I
 performed and it missed an item on its own list.
 """
-import json, re, subprocess, sys
+import re
 from pathlib import Path
 
 ND = Path(__file__).resolve().parent   # re-runnable from any checkout

@@ -39,7 +39,7 @@ VARIANTS = {
     "L": "parent manifest carries the marker as written by the builder (unmodified)",
     "M": f"parent manifest sets {MARKER} to false explicitly",
     "N": "no component manifest beside the candidate at all (delete it before projecting)",
-    "O": f"parent manifest present, marker true, but candidate_sha256 names a DIFFERENT candidate",
+    "O": "parent manifest present, marker true, but candidate_sha256 names a DIFFERENT candidate",
     "P": f"parent manifest omits the {MARKER} key entirely -- the field is absent, not false",
     "Q": "post-projection: project from the L parent, then DELETE the projected sidecar manifest, "
          "leaving only the projected ROOT. Tests whether the ROOT-side copy is load-bearing.",

@@ -606,8 +606,8 @@ def main():
     print(f"    {len(_code_unpaired)} of those, across "
           f"{len({s for _, s in _code_unpaired})} receipts, carry a role name that denotes "
           f"repo CODE: {', '.join(sorted({k for k, _ in _code_unpaired}))}")
-    print(f"    this is COVERAGE, not drift: no binding is shown broken. Resolving a role key "
-          f"needs a RECEIPT-SIDE declared mapping, never one inferred here (BEN-312)")
+    print("    this is COVERAGE, not drift: no binding is shown broken. Resolving a role key "
+          "needs a RECEIPT-SIDE declared mapping, never one inferred here (BEN-312)")
     print(f"  {ok} OK")
     print(f"  {shell_resolved} of them from EXPECTED_*_SHA guards in *.sh "
           f"({len(shell_pairs)} pins seen, floor {SHELL_PIN_FLOOR})")
@@ -661,12 +661,12 @@ def main():
               f"  at least {FROZEN_JSON_FLOOR}. The label or its formatting changed, and an\n"
               f"  empty parse makes the coverage check below pass by seeing nothing.")
     if uncovered:
-        print(f"\n*** RECORD-FROZEN RECEIPTS CARRY NAMESPACE PATHS AND ARE NOT PINNED ***")
+        print("\n*** RECORD-FROZEN RECEIPTS CARRY NAMESPACE PATHS AND ARE NOT PINNED ***")
         for rel in uncovered:
             print(f"      {rel}")
-        print(f"  Regenerate with state/regen_canonical_namespace_field_pins.py -- this is\n"
-              f"  the ONE case where regenerating is the correct remedy, because the pin set\n"
-              f"  grew. It is NOT the remedy for a FIELD PIN mismatch below.")
+        print("  Regenerate with state/regen_canonical_namespace_field_pins.py -- this is\n"
+              "  the ONE case where regenerating is the correct remedy, because the pin set\n"
+              "  grew. It is NOT the remedy for a FIELD PIN mismatch below.")
     if field_blind:
         print(f"\n*** FIELD PIN COLLECTOR WENT BLIND ***\n"
               f"  saw {field_ok + len(field_bad)}, expected at least {FIELD_PIN_FLOOR}.\n"

@@ -32,7 +32,6 @@ defeated by an import side effect.
 import argparse
 import os
 import re
-import sys
 
 # ---------------------------------------------------------------------------------------------
 # Detectors. Each returns a list of (severity, path, lineno, line, why).
@@ -280,7 +279,7 @@ def run_power():
         ok &= fired
         print(f"  {name:30s} {'FIRES' if fired else '*** SILENT ***':16s} on {origin}")
         if not fired:
-            print(f"      -> this detector cannot demonstrate power and the sweep is not trustworthy")
+            print("      -> this detector cannot demonstrate power and the sweep is not trustworthy")
     print()
     return ok
 

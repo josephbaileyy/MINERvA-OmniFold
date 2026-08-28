@@ -109,7 +109,6 @@ def main():
 
     # dsigma/dW: the decisive curve (does any generator rise into the high-W tail?)
     print("\n=== dsigma/dW (data vs generators) ===")
-    hdr = "  W band      " + "  ".join(f"{'data':>10}") + "  " + "  ".join(f"{l:>10}" for l in gens)
     print("  W band         data   " + "   ".join(f"{l:>10}" for l in gens))
     for j in range(len(W_EDGES) - 1):
         row = f"  {W_EDGES[j]:4.1f}-{W_EDGES[j+1]:5.1f}  {data_w[j]:10.3e}"
@@ -122,7 +121,6 @@ def main():
     fo = ROOT.TFile.Open(args.out, "RECREATE")
     c = ROOT.TCanvas("c", "eavailW band", 1400, 600)
     c.Divide(2, 1)
-    colors = [ROOT.kRed + 1, ROOT.kBlue + 1, ROOT.kGreen + 2, ROOT.kMagenta + 1, ROOT.kOrange + 7]
 
     def mk_th1(edges, vals, name, title, xmax):
         # drop the wide [last,100] catch bin from the PLOT (negligible content, but

@@ -20,7 +20,7 @@ import sys as _sys, pathlib as _pathlib
 for _a in _pathlib.Path(__file__).resolve().parents:
     if (_a / 'technote_style.py').exists():
         _sys.path.insert(0, str(_a)); break
-import technote_style  # noqa: E402  (no titles + consistent colours)
+import technote_style  # noqa: E402,F401  (no titles + consistent colours)
 
 import argparse
 import glob
@@ -157,7 +157,7 @@ def main():
     pz_mean = Xpz.mean(axis=0)
     pz_std = Xpz.std(axis=0, ddof=1)
     print()
-    print(f"=== 1D projection spread ===")
+    print("=== 1D projection spread ===")
     print(f"  pT median rel spread = "
           f"{100 * np.median(pt_std / pt_mean):.3f}%")
     print(f"  pz median rel spread = "
@@ -193,7 +193,7 @@ def main():
                 label=f"mean +- std ({N} trials)")
     ax.set_xlabel(r"$p_T$ (GeV/c)")
     ax.set_ylabel(r"d$\sigma$/d$p_T$ (cm$^2$/(GeV/c)/nucleon)")
-    ax.set_title(f"MEFHC 5-iter seed scan: $p_T$ projection")
+    ax.set_title("MEFHC 5-iter seed scan: $p_T$ projection")
     ax.legend(loc="best")
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
@@ -210,7 +210,7 @@ def main():
                 label=f"mean +- std ({N} trials)")
     ax.set_xlabel(r"$p_{||}$ (GeV/c)")
     ax.set_ylabel(r"d$\sigma$/d$p_{||}$ (cm$^2$/(GeV/c)/nucleon)")
-    ax.set_title(f"MEFHC 5-iter seed scan: $p_{{||}}$ projection")
+    ax.set_title("MEFHC 5-iter seed scan: $p_{||}$ projection")
     ax.legend(loc="best")
     ax.grid(True, alpha=0.3)
     fig.tight_layout()

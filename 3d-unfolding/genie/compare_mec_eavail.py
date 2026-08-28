@@ -82,7 +82,7 @@ def main():
     s = slice(0, nb - 1)
     iD = (data[s] * dea[s]).sum(); iCV = (cv[s] * dea[s]).sum()
     iM = (mec_tot[s] * dea[s]).sum()
-    print(f"\n[integrated, catch bin dropped]")
+    print("\n[integrated, catch bin dropped]")
     print(f"  data={iD:.3e}  CV={iCV:.3e} ({100*(iCV-iD)/iD:+.1f}%)  "
           f"CV+MEC={iM:.3e} ({100*(iM-iD)/iD:+.1f}%)")
     print(f"  MEC added {iM-iCV:+.2e} = {100*(iM-iCV)/(iD-iCV):.0f}% of the "

@@ -20,7 +20,7 @@ ALGORITHM difference under identical binned inputs, which is the object the cont
   python ibu_omnifold_paired_cdelta.py --omnifile 2d-unfolding/runEventLoopOmniFold_MEFHC.root \
       --niter 5 --replicas 200 --seed 20260716 --out 2d-unfolding/uq/ibu_omnifold_cdelta.{root,json}
 """
-import argparse, json, os, sys
+import argparse, json, os
 import numpy as np
 
 PT_EDGES = np.array([0.0, 0.075, 0.15, 0.25, 0.325, 0.4, 0.475, 0.55, 0.7, 0.85,

@@ -22,7 +22,6 @@ ctx.runner, so all of it is exercised here, including the must-not-report-PASS p
 """
 
 import json
-import os
 from pathlib import Path
 import stat
 import tempfile

@@ -22,7 +22,6 @@ from __future__ import annotations
 import argparse
 import glob
 import sys
-from pathlib import Path
 
 import numpy as np
 import ROOT
@@ -116,7 +115,7 @@ def main():
         per_toy_abs.append(np.abs(r).mean())
     per_toy_signed = np.array(per_toy_signed)
     per_toy_abs = np.array(per_toy_abs)
-    print(f"\n[coverage] per-toy residual / sigma stats")
+    print("\n[coverage] per-toy residual / sigma stats")
     print(f"  signed mean across toys  = {per_toy_signed.mean():+.3f} +/- "
           f"{per_toy_signed.std(ddof=1):.3f}")
     print(f"  |residual|/sigma mean    = {per_toy_abs.mean():.3f} "
@@ -144,7 +143,7 @@ def main():
     if args.out_summary:
         with open(args.out_summary, "w") as f:
             f.write(f"# Stage-1 #5 coverage summary (n_toys={n_toys})\n")
-            f.write(f"# ix iy coverage sigma truth_mean unfolded_mean\n")
+            f.write("# ix iy coverage sigma truth_mean unfolded_mean\n")
             nx, ny = coverage.shape
             for ix in range(nx):
                 for iy in range(ny):

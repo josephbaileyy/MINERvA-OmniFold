@@ -13,7 +13,6 @@ coverage it does not have (BEN-119). Three axes, and the gaps are stated at the 
 """
 import re
 import subprocess
-import sys
 from pathlib import Path
 
 import pytest

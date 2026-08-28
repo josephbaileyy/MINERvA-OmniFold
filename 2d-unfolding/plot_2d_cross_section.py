@@ -16,9 +16,7 @@ for _a in _pathlib.Path(__file__).resolve().parents:
 import technote_style  # noqa: E402  (no titles + consistent colours)
 
 import argparse
-import math
 import os
-from array import array
 
 import numpy as np
 import ROOT

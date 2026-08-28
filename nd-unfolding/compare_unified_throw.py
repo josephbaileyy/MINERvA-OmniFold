@@ -89,10 +89,10 @@ def do_dump(args):
     print(f"[dump] reading signal (CV + {len(bands)} band weight cols)...", flush=True)
     sig = und.collect_signal_nd(t_sig, extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
                                 use_weights=True, extra_wbranches=sig_wb, verbose=True)
-    print(f"[dump] reading truth_denom...", flush=True)
+    print("[dump] reading truth_denom...", flush=True)
     td = und.collect_truth_denom_nd(t_td, extras, pt_lo, pt_hi, pz_lo, pz_hi, pot_scale,
                                     use_weights=True, extra_wbranches=td_wb, verbose=True)
-    print(f"[dump] reading data + background...", flush=True)
+    print("[dump] reading data + background...", flush=True)
     meas_pt, meas_pz, meas_ex = und.collect_data_nd(t_data, extras, pt_lo, pt_hi, pz_lo, pz_hi)
     bkg_pt, bkg_pz, bkg_ex, bkg_w = und.collect_bkg_nd(t_bkg, extras, pot_scale,
                                                        pt_lo, pt_hi, pz_lo, pz_hi)

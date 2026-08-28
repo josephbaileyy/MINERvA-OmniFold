@@ -26,7 +26,6 @@ the CV-reproduces-central check below proves the binning is consistent.
   python assemble_bank_4d_from5d.py   # -> uq_4d/corrected/bank_uthrow_4d/{cv.npz, symlinks}
 """
 import os
-import sys
 
 import numpy as np
 

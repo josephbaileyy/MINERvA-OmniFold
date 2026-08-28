@@ -1,4 +1,4 @@
-from omnifold import DataLoader, MultiFold, MLP, PET, SetStyle, HistRoutine
+from omnifold import DataLoader, MultiFold, MLP, SetStyle, HistRoutine
 import numpy as np
 
 

@@ -28,7 +28,6 @@ allocation at 128 CPU.
 from __future__ import annotations
 
 import argparse
-import os
 import subprocess
 import sys
 import numpy as np

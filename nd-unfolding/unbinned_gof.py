@@ -167,12 +167,12 @@ def main():
     print(_line("UNFOLDED", unfold))
     verdict = ("PASS" if unfold["acc"] < prior["acc"] and unfold["pval"] > 1e-3
                else "INSPECT")
-    print(f"\n  Interpretation: unfolding should pull accuracy/AUC toward 0.5 "
-          f"(data<->MC indistinguishable).")
+    print("\n  Interpretation: unfolding should pull accuracy/AUC toward 0.5 "
+          "(data<->MC indistinguishable).")
     print(f"  prior acc {prior['acc']:.4f} -> unfolded {unfold['acc']:.4f}; "
           f"VERDICT: {verdict}")
-    print(f"  (acc near 0.5 with p>~1e-3 = no detectable unbinned mismatch; a large z "
-          f"flags residual structure OmniFold did not capture.)")
+    print("  (acc near 0.5 with p>~1e-3 = no detectable unbinned mismatch; a large z "
+          "flags residual structure OmniFold did not capture.)")
 
 
 if __name__ == "__main__":

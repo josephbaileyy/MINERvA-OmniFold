@@ -1,8 +1,6 @@
 import argparse
 import io
 import json
-import math
-import os
 from pathlib import Path
 import subprocess
 import sys

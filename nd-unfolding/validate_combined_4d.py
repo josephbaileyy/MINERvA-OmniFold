@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Validate the corrected combined 4D covariance + emit a compact JSON summary."""
-import json, sys
+import json
 import numpy as np
 import ROOT
 

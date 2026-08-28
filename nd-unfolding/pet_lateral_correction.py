@@ -27,7 +27,6 @@ flux/model-dominated), so this correction is small but removes the one zero in t
   python pet_lateral_correction.py     # updates products/pet/pet_4d_covariance_combined.root
 """
 import argparse
-import os
 import sys
 
 import numpy as np

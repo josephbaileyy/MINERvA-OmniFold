@@ -17,7 +17,7 @@ that must agree: `footing` asserts the declared P4Config value, and `footing_evi
 classifies each endpoint's unfold log by the driver's two-branch print asymmetry. Absent or
 mismatched fails closed, matching fps_provenance.require_footing's "unprovable" semantics.
 """
-import glob, hashlib, json, math, os, sys
+import hashlib, json, os, sys
 import numpy as np
 import ROOT
 import p4_lib as P

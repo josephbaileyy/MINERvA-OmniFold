@@ -708,7 +708,7 @@ def main():
         print(f"  Eavail-marg  : median={np.nanmedian(r2):.4f} "
               f"mean={np.nanmean(r2):.4f} std={np.nanstd(r2):.4f} "
               f"max|dev|={np.nanmax(np.abs(r2-1)):.4f}")
-        print(f"  Eavail 1D    : " + ", ".join(
+        print("  Eavail 1D    : " + ", ".join(
             f"{v:.3f}" for v in rea) + "  (should be ~1 per bin)")
         if args.closure_reweight_eavail:
             inj = closure_rw_truthpass

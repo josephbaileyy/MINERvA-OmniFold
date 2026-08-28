@@ -167,7 +167,7 @@ def main():
     print(f"  against the DILUTION IDEAL {DILUTION_IDEAL_K3:.5f}:")
     print(f"    mean response off by {m0['E_r'] - DILUTION_IDEAL_K3:+.5f}; of the {short_of_ideal:.6f} "
           f"left over, {100*m0['scatter_penalty']/short_of_ideal:.1f}% is the scatter penalty")
-    print(f"    -> '97.8% scatter, no bias left to remove'   [2b's framing]")
+    print("    -> '97.8% scatter, no bias left to remove'   [2b's framing]")
     print(f"  against FULL RECOVERY 1.0, which is what the {BAR} bar compares to:")
     print(f"    coherent under-application {m0['coherent']:.6f} of the {m0['E_abs']:.6f} miss "
           f"= {100*m0['coherent_frac']:.1f}%")
@@ -181,11 +181,11 @@ def main():
           f"(equivalently residual <= {RESID_OVER_GAP_MAX*m0['gap']:.6f} L1)")
     print(f"  published penalty {m0['scatter_penalty']:.6f} is INSIDE that by "
           f"{RESID_OVER_GAP_MAX/m0['scatter_penalty']:.2f}x -- which is why comparing it to the")
-    print(f"    ABSOLUTE 0.046854 (and getting 'exceeds by 1.80x') is a unit mismatch.")
+    print("    ABSOLUTE 0.046854 (and getting 'exceeds by 1.80x') is a unit mismatch.")
     print(f"  but the penalty is NOT the dispersion's cost. MAD {m0['mad']:.6f} is "
           f"{m0['mad']/m0['scatter_penalty']:.2f}x the penalty and EXCEEDS the headroom by "
           f"{m0['mad']/RESID_OVER_GAP_MAX:.2f}x.")
-    print(f"  so 2b's conclusion holds, by a route its own arithmetic did not take.")
+    print("  so 2b's conclusion holds, by a route its own arithmetic did not take.")
     print()
 
     print("=== WHAT WOULD IT TAKE? each term alone, then jointly ===")
@@ -202,7 +202,7 @@ def main():
               f"{m['rec_if_zero_dispersion']:10.6f}")
     print()
     print(f"  bar {BAR}. BOTH single-axis counterfactuals FAIL on every arm, so no one-axis remedy")
-    print(f"  passes D2. In particular seed-ensembling can only reduce dispersion, so its ceiling is")
+    print("  passes D2. In particular seed-ensembling can only reduce dispersion, so its ceiling is")
     print(f"  the 'zero disp' column -- {rows[0][1]['rec_if_zero_dispersion']:.4f} for ANY N.")
     need = m0["mad"] / RESID_OVER_GAP_MAX
     print(f"  and if dispersion fell like 1/sqrt(N) with perfectly independent seeds, reaching the "

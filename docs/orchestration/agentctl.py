@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Persistent, cross-account Claude/Codex session dispatcher."""
+"""Persistent, cross-account session dispatcher for Claude, Codex, and agy workers."""
 
 from __future__ import annotations
 
