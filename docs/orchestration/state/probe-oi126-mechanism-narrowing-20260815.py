@@ -8,15 +8,20 @@ Run from the repo root. Two inputs are NOT in the repo and this is stated rather
 Both are a local cache of read-only cluster reads and are rebuilt by loading `xsec` from
   .../fullevent_cstat_n50/replicas/replica_{00..49}/extraction/GATE5_REPLICA_XSEC.npz   (assert replica_index)
   .../fullevent_nominal_annealed_extraction_unpromoted/P5A-ANNEALED-UNPROMOTED.xsec.slurm-56989462.npz
-Set S to wherever they are. The cluster-side half of the measurement is its sibling
+Point PROBE_INPUT_DIR at the directory holding them. The cluster-side half of the measurement is its sibling
 `probe-oi126-target-comparison-20260815.py`, whose stdout is committed beside it as .json and
 embedded in the receipt verbatim.
 """
-import numpy as np, json, hashlib, subprocess, math
+import numpy as np, json, hashlib, subprocess, math, os
 from math import exp, factorial
 
-S = ("/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/"
-     "1b3c6eb3-efc3-44b1-a331-9bab37c2dc40/scratchpad/")
+# The two cached inputs named in the docstring are not in the repo and never were. Point
+# PROBE_INPUT_DIR at the directory holding jb_X50.npy and jb_nom.npy.
+_S = os.environ.get("PROBE_INPUT_DIR", "")
+if not os.path.isdir(_S):
+    raise SystemExit("probe-oi126-mechanism-narrowing: set PROBE_INPUT_DIR to the directory "
+                     "holding jb_X50.npy and jb_nom.npy (see this file's docstring)")
+S = os.path.join(_S, "")
 sha = lambda p: hashlib.sha256(open(p, 'rb').read()).hexdigest()
 CS = 'docs/orchestration/state/gate5-cstat-n50/GATE5_CSTAT_N50.npz'
 AM = 'nd-unfolding/products/pet/fullevent_fps/acceptance_map_fullevent_fps.json'
