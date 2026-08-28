@@ -188,7 +188,7 @@ docs/orchestration/compare_m1_m6.py	tracked	MACHINE	script			generated		exact-pa
 docs/orchestration/control-plane/owners.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	3	13	747
 docs/orchestration/control-plane/playbook.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	3	26	8403
 docs/orchestration/control-plane/policy.json	tracked	LIVE	machine-data			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/test_usagectl.py;docs/orchestration/usagectl.py	no	9	69	1674
-docs/orchestration/control-plane/source-record-inventory.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/control_plane_lint.py	no	8	116	20974
+docs/orchestration/control-plane/source-record-inventory.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/control_plane_lint.py	no	8	118	21190
 docs/orchestration/control-plane/work-items.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	3	14	2407
 docs/orchestration/control_plane_lint.py	tracked	LIVE	script			open		route-only		no	9	846	44313
 docs/orchestration/deploy_oi135_watcher_swap.sh	tracked	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/test_deploy_oi135_watcher_swap.py	no	5	704	33747
@@ -308,7 +308,7 @@ docs/orchestration/state/RECEIPT-20260815-oi126-push-vs-extraction-RESULT.json	t
 docs/orchestration/state/RECEIPT-20260815-oi126-tiebreak-retirement.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	1	317	12304
 docs/orchestration/state/RECEIPT-20260816-hrowindex4d-readback.json	tracked	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	2	137	9743
 docs/orchestration/state/RECEIPT-20260816-p4-standard-stages456.json	tracked	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	3	166	10327
-docs/orchestration/state/RECEIPT-20260822-quarantine-member-k000000-stale-replicas.json	tracked	MACHINE	state-artifact		20260822	open		exact-path-only		no	3	459	29867
+docs/orchestration/state/RECEIPT-20260822-quarantine-member-k000000-stale-replicas.json	tracked	MACHINE	state-artifact		20260822	open		exact-path-only		no	4	459	29867
 docs/orchestration/state/RECEIPT-20260823-g2-fullevent-truthcloud-coverage.json	tracked	MACHINE	state-artifact		20260823	generated		exact-path-only		yes	0	74	3862
 docs/orchestration/state/RECEIPT-20260823-k0-legs-1-5-submission.json	tracked	MACHINE	state-artifact		20260823	generated		exact-path-only		yes	0	128	5656
 docs/orchestration/state/RECEIPT-20260823-oi126-r1-iteration-sweep.json	tracked	MACHINE	state-artifact		20260823	generated		exact-path-only		yes	0	631	17800
@@ -320,7 +320,7 @@ docs/orchestration/state/RECEIPT-20260823-oi126-r5-loss-interpolation-sweep.json
 docs/orchestration/state/RECEIPT-20260823-quarantine-k0-failed-rehearsal.json	tracked	MACHINE	state-artifact		20260823	generated		exact-path-only		yes	0	3383	209318
 docs/orchestration/state/RECEIPT-20260824-oi126-c-permutation-ensemble-5member.json	tracked	MACHINE	state-artifact		20260824	generated		exact-path-only		yes	2	4599	175970
 docs/orchestration/state/RECEIPT-20260824-oi126-c-permutation-ensemble.json	tracked	MACHINE	state-artifact		20260824	generated		exact-path-only	docs/orchestration/state/producers-oi126-r5/c_perm_ensemble.py	yes	5	958	38670
-docs/orchestration/state/RECEIPT-20260826-b1-adoption-gate-preconditions-remeasured.json	tracked	MACHINE	state-artifact		20260826	open		exact-path-only		no	1	87	6852
+docs/orchestration/state/RECEIPT-20260826-b1-adoption-gate-preconditions-remeasured.json	tracked	MACHINE	state-artifact		20260826	open		exact-path-only		no	2	87	6852
 docs/orchestration/state/RECEIPT-20260826-k0-freeze-bundle-detectability.json	tracked	MACHINE	state-artifact		20260826	open		exact-path-only		no	3	190	11582
 docs/orchestration/state/RECEIPT-20260826-stack-grade-and-landing.json	tracked	MACHINE	state-artifact		20260826	generated		exact-path-only		yes	2	256	16006
 docs/orchestration/state/RECEIPT-20260828-user-authorized-root-probe.json	tracked	MACHINE	state-artifact		20260828	generated		exact-path-only		yes	1	203	10444
