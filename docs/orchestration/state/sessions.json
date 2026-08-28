@@ -269,9 +269,146 @@
           "returncode": 0,
           "stderr": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-capacity-probe/20260719T055245Z-start-41c848e7.stderr.log",
           "stdout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/runs/agy-capacity-probe/20260719T055245Z-start-41c848e7.txt"
+        },
+        {
+          "action": "send",
+          "number": 2,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-capacity-probe/20260826T221529Z-send-77d15e71.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-capacity-probe/20260826T221529Z-send-77d15e71.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-capacity-probe/20260826T221529Z-send-77d15e71.txt"
+        },
+        {
+          "action": "send",
+          "number": 3,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-capacity-probe/20260826T225527Z-send-1bf7ecac.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-capacity-probe/20260826T225527Z-send-1bf7ecac.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-capacity-probe/20260826T225527Z-send-1bf7ecac.txt"
+        },
+        {
+          "action": "send",
+          "number": 4,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-capacity-probe/20260827T074043Z-send-bbc0de4b.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-capacity-probe/20260827T074043Z-send-bbc0de4b.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-capacity-probe/20260827T074043Z-send-bbc0de4b.txt"
+        },
+        {
+          "action": "send",
+          "number": 5,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-capacity-probe/20260827T074807Z-send-40761927.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-capacity-probe/20260827T074807Z-send-40761927.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-capacity-probe/20260827T074807Z-send-40761927.txt"
         }
       ],
-      "updated_at": "2026-07-19T05:52:52+00:00"
+      "updated_at": "2026-08-27T07:50:55+00:00"
+    },
+    "agy-f17b-rgamma2": {
+      "adopted": true,
+      "created_at": "2026-08-28T00:42:14+00:00",
+      "cwd": "/tmp/f17b-rgamma2-20260827",
+      "profile": "agy",
+      "provider": "agy",
+      "session_id": "6d111a3d-70d7-4164-86b2-9d77b53f2361",
+      "turns": [
+        {
+          "action": "send",
+          "number": 1,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f17b-rgamma2/20260828T004220Z-send-f2e73b38.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f17b-rgamma2/20260828T004220Z-send-f2e73b38.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f17b-rgamma2/20260828T004220Z-send-f2e73b38.txt"
+        },
+        {
+          "action": "send",
+          "number": 2,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f17b-rgamma2/20260828T010450Z-send-1373569f.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f17b-rgamma2/20260828T010450Z-send-1373569f.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f17b-rgamma2/20260828T010450Z-send-1373569f.txt"
+        },
+        {
+          "action": "send",
+          "number": 3,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f17b-rgamma2/20260828T012817Z-send-20e5b315.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f17b-rgamma2/20260828T012817Z-send-20e5b315.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f17b-rgamma2/20260828T012817Z-send-20e5b315.txt"
+        }
+      ],
+      "updated_at": "2026-08-28T01:31:57+00:00"
+    },
+    "agy-f8b-final-tip": {
+      "created_at": "2026-08-27T06:40:20+00:00",
+      "cwd": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold",
+      "profile": "agy",
+      "provider": "agy",
+      "session_id": "7a312e96-cc1b-46c7-866e-952939d68f28",
+      "turns": [
+        {
+          "action": "start",
+          "number": 1,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f8b-final-tip/20260827T063610Z-start-a53ad368.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f8b-final-tip/20260827T063610Z-start-a53ad368.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f8b-final-tip/20260827T063610Z-start-a53ad368.txt"
+        },
+        {
+          "action": "send",
+          "number": 2,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f8b-final-tip/20260827T064138Z-send-052ca8a6.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f8b-final-tip/20260827T064138Z-send-052ca8a6.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f8b-final-tip/20260827T064138Z-send-052ca8a6.txt"
+        }
+      ],
+      "updated_at": "2026-08-27T06:44:27+00:00"
+    },
+    "agy-f8b-impl-grade": {
+      "created_at": "2026-08-26T23:35:05+00:00",
+      "cwd": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold",
+      "profile": "agy",
+      "provider": "agy",
+      "session_id": "d71dbff7-9710-4bd9-94e3-a0dc3ac436f0",
+      "turns": [
+        {
+          "action": "start",
+          "number": 1,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f8b-impl-grade/20260826T232931Z-start-d5cd13b5.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f8b-impl-grade/20260826T232931Z-start-d5cd13b5.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f8b-impl-grade/20260826T232931Z-start-d5cd13b5.txt"
+        },
+        {
+          "action": "send",
+          "number": 2,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f8b-impl-grade/20260826T233942Z-send-e98628fe.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f8b-impl-grade/20260826T233942Z-send-e98628fe.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f8b-impl-grade/20260826T233942Z-send-e98628fe.txt"
+        }
+      ],
+      "updated_at": "2026-08-26T23:42:32+00:00"
+    },
+    "agy-f8b-soundness": {
+      "created_at": "2026-08-27T00:06:10+00:00",
+      "cwd": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold",
+      "profile": "agy",
+      "provider": "agy",
+      "session_id": "c12551c8-3da6-43f4-be8b-129c6ad9f48c",
+      "turns": [
+        {
+          "action": "start",
+          "number": 1,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f8b-soundness/20260827T000237Z-start-0fb88cfd.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f8b-soundness/20260827T000237Z-start-0fb88cfd.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-f8b-soundness/20260827T000237Z-start-0fb88cfd.txt"
+        }
+      ],
+      "updated_at": "2026-08-27T00:06:10+00:00"
     },
     "agy-g2-gate-verifier": {
       "created_at": "2026-07-19T00:43:11+00:00",
@@ -351,9 +488,33 @@
           "returncode": 0,
           "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260826T144936Z-send-1dbf4872.stderr.log",
           "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260826T144936Z-send-1dbf4872.txt"
+        },
+        {
+          "action": "send",
+          "number": 10,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260826T221112Z-send-1bcde503.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260826T221112Z-send-1bcde503.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260826T221112Z-send-1bcde503.txt"
+        },
+        {
+          "action": "send",
+          "number": 11,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260826T222529Z-send-b09e20f1.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260826T222529Z-send-b09e20f1.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260826T222529Z-send-b09e20f1.txt"
+        },
+        {
+          "action": "send",
+          "number": 12,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260826T230617Z-send-803ddb42.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260826T230617Z-send-803ddb42.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-g2-gate-verifier/20260826T230617Z-send-803ddb42.txt"
         }
       ],
-      "updated_at": "2026-08-26T14:51:47+00:00"
+      "updated_at": "2026-08-26T23:07:35+00:00"
     },
     "agy-pubjudgement-handoff-20260729": {
       "created_at": "2026-07-29T04:52:22+00:00",
@@ -643,9 +804,75 @@
           "returncode": 0,
           "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260826T090631Z-send-4d7f1e43.stderr.log",
           "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260826T090631Z-send-4d7f1e43.txt"
+        },
+        {
+          "action": "send",
+          "number": 34,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260826T221117Z-send-0a8544d8.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260826T221117Z-send-0a8544d8.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260826T221117Z-send-0a8544d8.txt"
+        },
+        {
+          "action": "send",
+          "number": 35,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260826T223745Z-send-cb7b238d.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260826T223745Z-send-cb7b238d.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260826T223745Z-send-cb7b238d.txt"
+        },
+        {
+          "action": "send",
+          "number": 36,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260826T224550Z-send-ea58c09f.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260826T224550Z-send-ea58c09f.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260826T224550Z-send-ea58c09f.txt"
+        },
+        {
+          "action": "send",
+          "number": 37,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260827T071357Z-send-e50a935a.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260827T071357Z-send-e50a935a.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260827T071357Z-send-e50a935a.txt"
+        },
+        {
+          "action": "send",
+          "number": 38,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260827T072417Z-send-b00cb031.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260827T072417Z-send-b00cb031.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-publication-redteam/20260827T072417Z-send-b00cb031.txt"
         }
       ],
-      "updated_at": "2026-08-26T09:14:51+00:00"
+      "updated_at": "2026-08-27T07:26:25+00:00"
+    },
+    "agy-readiness-rerun": {
+      "created_at": "2026-08-26T23:50:57+00:00",
+      "cwd": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold",
+      "profile": "agy",
+      "provider": "agy",
+      "session_id": "2fbd0b4f-da89-4a90-bf95-7f847dfc226d",
+      "turns": [
+        {
+          "action": "start",
+          "number": 1,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-readiness-rerun/20260826T234745Z-start-508c7e8d.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-readiness-rerun/20260826T234745Z-start-508c7e8d.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-readiness-rerun/20260826T234745Z-start-508c7e8d.txt"
+        },
+        {
+          "action": "send",
+          "number": 2,
+          "provider_log": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-readiness-rerun/20260826T235602Z-send-7786bc49.agy.log",
+          "returncode": 0,
+          "stderr": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-readiness-rerun/20260826T235602Z-send-7786bc49.stderr.log",
+          "stdout": "/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold/docs/orchestration/runs/agy-readiness-rerun/20260826T235602Z-send-7786bc49.txt"
+        }
+      ],
+      "updated_at": "2026-08-26T23:58:52+00:00"
     },
     "fps-adopt-verifier": {
       "created_at": "2026-07-18T10:33:09+00:00",
