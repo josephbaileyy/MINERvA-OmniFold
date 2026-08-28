@@ -39,5 +39,119 @@ class PreserveF17BRecordTests(unittest.TestCase):
         self.assertFalse(self.destination.exists())
 
 
+import subprocess
+import os
+import sys
+
+class MeasureScriptTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="measure-script-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        
+        self.script_source = Path(__file__).parent / "measure_k0_farend_f1b_f17b.sh"
+        self.script = self.root / "measure_k0_farend_f1b_f17b.sh"
+        script_text = self.script_source.read_text()
+        script_text = script_text.replace("CANON=/pscratch/sd/j/josephrb/MINERvA-OmniFold", "CANON=${CANON}")
+        script_text = script_text.replace("CODE_ROOT=/pscratch/sd/j/josephrb/k0r2/clean", "CODE_ROOT=${CODE_ROOT}")
+        script_text += "\nexit 0\n"
+        self.script.write_text(script_text)
+        self.script.chmod(0o755)
+        self.code_root = self.root / "code"
+        self.tools_root = self.root / "tools"
+        self.measurer = self.code_root / "docs" / "orchestration" / "measure_m1_m6.py"
+        self.comparator = self.tools_root / "docs" / "orchestration" / "compare_m1_m6.py"
+        self.expected = self.tools_root / "docs" / "orchestration" / "m1m6_expected_differences.json"
+        self.preserver = self.tools_root / "docs" / "orchestration" / "preserve_f17b_record.py"
+        
+        self.measurer.parent.mkdir(parents=True)
+        self.comparator.parent.mkdir(parents=True)
+        
+        for f in [self.measurer, self.comparator, self.preserver]:
+            f.write_text("import sys; sys.exit(0)", encoding="utf-8")
+            f.chmod(0o755)
+        self.expected.write_text("{}", encoding="utf-8")
+
+        self.env = os.environ.copy()
+        self.env.update({
+            "MNV_TOOLS_ROOT": str(self.tools_root),
+            "CODE_ROOT": str(self.code_root),
+            "CANON": str(self.root / "canon"),
+            "TMPDIR": str(self.root / "tmp"),
+            "MNV_F17B_RECORD_PATH": str(self.root / "durable.json"),
+            "PY": sys.executable,
+            "MODE": "--measure"
+        })
+        Path(self.env["CODE_ROOT"]).mkdir(exist_ok=True)
+        Path(self.env["CANON"]).mkdir(exist_ok=True)
+        Path(self.env["TMPDIR"]).mkdir(exist_ok=True)
+        Path(self.tools_root).mkdir(exist_ok=True)
+        for p in [self.env["CODE_ROOT"], self.env["CANON"], self.tools_root]:
+            subprocess.run(["git", "-C", p, "init"], check=True, capture_output=True)
+            subprocess.run(["git", "-C", p, "config", "user.email", "test@test.com"], check=True, capture_output=True)
+            subprocess.run(["git", "-C", p, "config", "user.name", "Test"], check=True, capture_output=True)
+            subprocess.run(["git", "-C", p, "commit", "--allow-empty", "-m", "init"], check=True, capture_output=True)
+
+    def run_script(self):
+        return subprocess.run(["bash", str(self.script), "--measure"], env=self.env, capture_output=True, text=True)
+
+    def test_s3_fires_swapping_preserver_exits_13(self):
+        # Swap DURING invocation (wait, we need a script that writes to itself during run)
+        script_text = "import sys\nwith open(sys.argv[0], 'a') as f: f.write(' changed')\n"
+        self.preserver.write_text(script_text)
+        cp = self.run_script()
+        self.assertEqual(cp.returncode, 13)
+        self.assertIn("REFUSE: a tool changed on disk across its own invocation", cp.stdout)
+
+    def test_s3_fires_preserver_changed_before_invocation(self):
+        # We need to swap it AFTER the expected digest is captured but BEFORE the PRE-check.
+        # This is tricky in a bash script without a sleep.
+        # But wait, we can just replace the preserver's content entirely BEFORE running the script!
+        # No, the script captures EXPECTED *first*. If we change it before running, EXPECTED will just match PRE.
+        # We can simulate this by making the `PRESERVER` a script that sleeps? No, no background jobs here.
+        # Wait, the script captures EXPECTED at the very beginning. How to change it mid-flight before the preserver runs?
+        # We can make the COMPARATOR swap the preserver!
+        comp_text = "import sys\nwith open(sys.argv[6], 'a') as f: f.write(' changed')\nsys.exit(0)\n"
+        # argv[6] is --record path... wait, the comparator receives arguments.
+        # Let's just make the comparator write to the preserver.
+        self.comparator.write_text(f"import sys\nopen('{self.preserver}', 'a').write(' changed')\n")
+        cp = self.run_script()
+        self.assertEqual(cp.returncode, 13)
+        self.assertIn("REFUSE: preserver changed on disk BEFORE invocation", cp.stdout)
+
+    def test_s3_silent_unchanged_preserver_does_not_trip_bracket(self):
+        cp = self.run_script()
+        self.assertEqual(cp.returncode, 0)
+        
+    def test_s3_full_digests_trip_bracket_on_collision(self):
+        # Two files with the same first 12 hex chars of SHA-256 (5c98ec1f4916)
+        content_1 = b"blob 15930654\n"
+        content_2 = b"blob 39102528\n"
+        
+        script_1 = b"import sys\n# " + content_1 + b"\nopen(sys.argv[0], 'wb').write(b'''import sys\\n# " + content_2 + b"\\n''')"
+        self.preserver.write_bytes(script_1)
+        cp = self.run_script()
+        # Because we compare FULL digests, they differ and it trips the bracket
+        self.assertEqual(cp.returncode, 13)
+        self.assertIn("REFUSE: a tool changed on disk", cp.stdout)
+
+    def test_s4_fires_measurer_failure_short_circuits_immediately(self):
+        # Measurer fails
+        self.measurer.write_text("import sys; sys.exit(7)")
+        # Comparator asserts it is NEVER invoked!
+        self.comparator.write_text("import sys; print('COMPARATOR INVOKED'); sys.exit(1)")
+        
+        cp = self.run_script()
+        self.assertEqual(cp.returncode, 7)
+        self.assertIn("REFUSE: measurer failed", cp.stdout)
+        self.assertNotIn("COMPARATOR INVOKED", cp.stdout)
+        self.assertNotIn("COMPARATOR EXIT", cp.stdout)
+
+    def test_s4_silent_succeeding_measurer_proceeds(self):
+        cp = self.run_script()
+        self.assertEqual(cp.returncode, 0)
+        self.assertIn("COMPARATOR EXIT", cp.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()

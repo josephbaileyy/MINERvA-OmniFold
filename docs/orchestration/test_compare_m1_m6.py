@@ -47,6 +47,8 @@ def base_document(label, tree):
     return {
         "label": label,
         "tree": tree,
+        "measurement_wall_clock": "2026-08-27T10:00:00Z",
+        "branch_or_detached": "detached",
         "M-1": [
             {"file": "nd-unfolding/bootstrap_nd.py", "present": True,
              "literals": [{"name": "_ND", "line": 12, "form": "subpath",
@@ -278,6 +280,33 @@ class R2_NoDefaultsAndItFailsClosedOnAbsence(BenchCase):
 # --------------------------------------------------------------------------------------------- R3
 
 class R3_EveryFindingNamesBothSidesTheUnitAndThePopulation(BenchCase):
+    
+    def test_s2_fires_document_with_no_symbolic_ref_exits_4(self):
+        first = base_document("FIRST", "/trees/first")
+        del first["branch_or_detached"]
+        first_path = self.bench.write_doc("first", first)
+        second, = self.two()[:1]
+        code, record, err = self.bench.run([first_path, second], self.expected_ok)
+        self.assertEqual(code, cm.EXIT_REFUSAL_INPUT)
+        self.assertIn("branch_or_detached", err)
+        self.assertIn("first", err)
+        self.assertIsNone(record)
+
+    def test_s2_silent_different_identity_strings_are_carried_and_dont_appear_as_difference(self):
+        first = base_document("DETACHED", "/trees/detached")
+        first["branch_or_detached"] = "detached"
+        second = base_document("BRANCH", "/trees/branch")
+        second["branch_or_detached"] = "f17b/rgamma-repair-20260827"
+        
+        path_detached = self.bench.write_doc("detached", first)
+        path_branch = self.bench.write_doc("branch", second)
+        
+        code, record, _ = self.bench.run([path_detached, path_branch], self.expected_ok)
+        
+        self.assertEqual(record["inputs"][0]["branch_or_detached"], "detached")
+        self.assertEqual(record["inputs"][1]["branch_or_detached"], "f17b/rgamma-repair-20260827")
+        self.assertEqual(code, cm.EXIT_NO_DIFFERENCES)
+        self.assertEqual(record["findings"], [])
 
     def test_a_finding_carries_unit_population_and_each_side_s_identity(self):
         code, record, _ = self.bench.run(self.two(lambda d: d["M-3"].__setitem__("rc", 1)),
@@ -368,12 +397,11 @@ class R3_EveryFindingNamesBothSidesTheUnitAndThePopulation(BenchCase):
         self.assertEqual([s["value"] for s in finding["sides"]], [cm.ABSENT, 3])
 
     def test_the_two_identity_fields_the_input_schema_CANNOT_supply_are_named_unavailable(self):
+        # Only measuring_instrument_digest remains a gap; wall clock and symbolic ref are now required.
         _, record, _ = self.bench.run(self.two(), self.expected_ok)
-        for side in record["inputs"]:
-            self.assertEqual(side["branch_or_detached"], cm.UNAVAILABLE)
-            self.assertEqual(side["measurement_wall_clock"], cm.UNAVAILABLE)
-        self.assertIn("symbolic-ref", record["input_schema_gaps"]["branch_or_detached"])
-        self.assertIn("no timestamp", record["input_schema_gaps"]["measurement_wall_clock"])
+        self.assertIn("measuring_instrument_digest", record["input_schema_gaps"])
+        self.assertNotIn("branch_or_detached", record["input_schema_gaps"])
+        self.assertNotIn("measurement_wall_clock", record["input_schema_gaps"])
 
 
 # --------------------------------------------------------------------------------------------- R4
@@ -1348,17 +1376,93 @@ class R5_AgreementIsJointAndIsNeverComposedFromPairs(BenchCase):
 
 class R6_TheRecordCarriesItsOwnOperands(BenchCase):
 
+    def test_s1_fires_document_with_no_wall_clock_exits_4(self):
+        first = base_document("FIRST", "/trees/first")
+        del first["measurement_wall_clock"]
+        first_path = self.bench.write_doc("first", first)
+        second, = self.two()[:1]
+        code, record, err = self.bench.run([first_path, second], self.expected_ok)
+        self.assertEqual(code, cm.EXIT_REFUSAL_INPUT)
+        self.assertIn("measurement_wall_clock", err)
+        self.assertIn("first", err)
+        self.assertIsNone(record)
+
+    def test_s1_fires_document_missing_both_identity_fields_exits_4_and_names_both(self):
+        first = base_document("FIRST", "/trees/first")
+        del first["measurement_wall_clock"]
+        del first["branch_or_detached"]
+        first_path = self.bench.write_doc("first", first)
+        second, = self.two()[:1]
+        code, record, err = self.bench.run([first_path, second], self.expected_ok)
+        self.assertEqual(code, cm.EXIT_REFUSAL_INPUT)
+        self.assertIn("measurement_wall_clock", err)
+        self.assertIn("branch_or_detached", err)
+        self.assertIn("first", err)
+        self.assertIsNone(record)
+
+    def test_s1_fires_no_code_path_returns_evidence_class_on_missing_fields(self):
+        # Enumerate fixtures: missing wall_clock, missing branch_or_detached, missing both
+        fixtures = []
+        for missing in [["measurement_wall_clock"], ["branch_or_detached"], ["measurement_wall_clock", "branch_or_detached"]]:
+            doc = base_document("TEST", "/trees/test")
+            for m in missing:
+                del doc[m]
+            fixtures.append(doc)
+            
+        second, = self.two()[:1]
+        for i, fixture in enumerate(fixtures):
+            path = self.bench.write_doc(f"fix_{i}", fixture)
+            code, record, err = self.bench.run([path, second], self.expected_ok)
+            self.assertEqual(code, cm.EXIT_REFUSAL_INPUT, f"Expected 4, got {code} for missing {missing}")
+            self.assertIsNone(record)
+
+    def test_s1_fires_no_backfill_from_own_clock_or_mtime(self):
+        first = base_document("FIRST", "/trees/first")
+        del first["measurement_wall_clock"]
+        first_path = self.bench.write_doc("first", first)
+        
+        # Modify the mtime of the file so it's a known distinct time
+        import os, time
+        os.utime(first_path, (time.time() - 86400, time.time() - 86400))
+        
+        second, = self.two()[:1]
+        code, record, err = self.bench.run([first_path, second], self.expected_ok)
+        self.assertEqual(code, cm.EXIT_REFUSAL_INPUT)
+        self.assertIn("measurement_wall_clock", err)
+        self.assertIsNone(record)
+
+    def test_s1_silent_document_with_wall_clock_is_carried_verbatim(self):
+        first = base_document("CANDIDATE", "/trees/candidate")
+        first["measurement_wall_clock"] = "2026-08-27T10:00:00Z"
+        second = base_document("CANONICAL", "/trees/canonical")
+        second["measurement_wall_clock"] = "2026-08-27T10:00:00Z"
+        first_path = self.bench.write_doc("first", first)
+        second_path = self.bench.write_doc("second", second)
+        
+        _, record, _ = self.bench.run([first_path, second_path], self.expected_ok)
+        self.assertEqual(record["inputs"][0]["measurement_wall_clock"], "2026-08-27T10:00:00Z")
+        self.assertEqual(record["inputs"][1]["measurement_wall_clock"], "2026-08-27T10:00:00Z")
+
     def test_the_record_lets_a_reader_reconstruct_WHICH_files_were_compared(self):
-        first, second = self.two(lambda d: d["M-6"].__setitem__("state", "NO INVENTORY WRITE"))
+        first = base_document("CANDIDATE", "/trees/candidate")
+        first["measurement_wall_clock"] = "2026-08-27T10:00:00Z"
+        second = base_document("CANONICAL", "/trees/canonical")
+        second["M-6"]["state"] = "NO INVENTORY WRITE"
+        second["measurement_wall_clock"] = "2026-08-27T10:00:00Z"
+        first_path = self.bench.write_doc("a", first)
+        second_path = self.bench.write_doc("b", second)
+        
         out = self.bench.root / "record.json"
-        code, _, _ = self.bench.run([first, second], self.expected_ok,
+        code, _, _ = self.bench.run([first_path, second_path], self.expected_ok,
                                     extra=("--record", str(out)))
         self.assertEqual(code, cm.EXIT_DIFFERENCES_SOME_UNEXPECTED)
         record = json.loads(out.read_text(encoding="utf-8"))
         self.assertEqual([side["input_sha256"] for side in record["inputs"]],
-                         [sha256_bytes(first), sha256_bytes(second)])
+                         [sha256_bytes(first_path), sha256_bytes(second_path)])
         self.assertEqual([side["input_path"] for side in record["inputs"]],
-                         [str(pathlib.Path(first).resolve()), str(pathlib.Path(second).resolve())])
+                         [str(pathlib.Path(first_path).resolve()), str(pathlib.Path(second_path).resolve())])
+        self.assertEqual([side["measurement_wall_clock"] for side in record["inputs"]],
+                         ["2026-08-27T10:00:00Z", "2026-08-27T10:00:00Z"])
         self.assertEqual(record["instrument"]["self_sha256"],
                          sha256_bytes(_HERE / "compare_m1_m6.py"))
         self.assertEqual(record["instrument"]["version"], cm.INSTRUMENT_VERSION)

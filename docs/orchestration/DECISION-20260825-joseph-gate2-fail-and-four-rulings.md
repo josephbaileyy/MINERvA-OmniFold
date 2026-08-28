@@ -558,7 +558,7 @@ Recorded because both bear on how a repair must be scoped, and neither is a grad
 - **The drift bracket compares 12 hex characters, not a sha256.** Every `*_PRE` / `*_POST` capture is
   `sha256sum "$FILE" | cut -c1-12`, so `:199-201` is a 48-bit prefix comparison.
 - **This script's digest is pinned in two records with two different values.** §11 of this decision
-  pins `measure_k0_farend_f1b_f17b.sh` at content sha256 `c40e6b54`, 15722 bytes, which matches the
+  pins `measure_k0_farend_f1b_f17b.sh` at content sha256 `c40e6b54` (SUPERSEDED by PIN-20260827-f17b-chain-rgamma-supersession.md), 15722 bytes, which matches the
   graded tip; `receipts/RECEIPT-20260825-terminal-watch-f17b-durability.json` pins the same path at
   `2132194fe1a3ed7a…`, which does not. The receipt's pin is already superseded in fact. Any repair
   touching this file therefore has **two** pin surfaces, and the file is also a `MANIFEST.tsv` row,
@@ -611,7 +611,7 @@ the citation had already acquired a force it was never meant to have.
 | `m1m6_expected_differences.json` (**current**: §12.4's strike applied to the `notes` array only) | content sha256 | `2e5f3d52` |
 | `compare_m1_m6.py` (narrowed at `63262a3a`, graded FIT at `fba7da70`) | content sha256 | `5dc92487` |
 | `test_compare_m1_m6.py` (same) | content sha256 | `762fac14` |
-| `measure_k0_farend_f1b_f17b.sh` (post-repair) | content sha256 | `c40e6b54`, 15722 bytes |
+| `measure_k0_farend_f1b_f17b.sh` (post-repair) | content sha256 | `c40e6b54`, 15722 bytes (SUPERSEDED by PIN-20260827-f17b-chain-rgamma-supersession.md) |
 | `GRADE-20260825-f17b-comparison-instrument-fitness.md` (EXPIRED) | content sha256 | `aa1b6eee`, 41819 bytes |
 
 Commits: `a3ed8631` producer filing · `30ede740` first bracket attempt · `38a7b16b` D-A and D-B

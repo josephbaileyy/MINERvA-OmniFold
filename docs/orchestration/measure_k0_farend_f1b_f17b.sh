@@ -164,16 +164,22 @@ if [ ! -f "$COMPARATOR" ] || [ ! -f "$EXPECTED" ] || [ ! -f "$PRESERVER" ]; then
   rm -rf "$OUT"; exit 11
 fi
 
-MEASURER_PRE=$(sha256sum "$MEASURER" 2>/dev/null | cut -c1-12)
+PRESERVER_EXPECTED=$(sha256sum "$PRESERVER" 2>/dev/null | cut -d' ' -f1)
+
+MEASURER_PRE=$(sha256sum "$MEASURER" 2>/dev/null | cut -d' ' -f1)
 
 for pair in "deploy:$CODE_ROOT" "canonical:$CANON"; do
   lbl="${pair%%:*}"; tree="${pair#*:}"
   "$PY" "$MEASURER" --tree "$tree" --label "$lbl" --json > "$OUT/$lbl.json" 2>"$OUT/$lbl.err"
   rc=$?
   echo "  measured $lbl ($tree) rc=$rc  bytes=$(wc -c < "$OUT/$lbl.json" 2>/dev/null)"
-  [ "$rc" -ne 0 ] && sed 's/^/      /' "$OUT/$lbl.err" | tail -3
+  if [ "$rc" -ne 0 ]; then
+    sed 's/^/      /' "$OUT/$lbl.err" | tail -3
+    echo "  REFUSE: measurer failed on $lbl. Cannot compare incomplete inputs."
+    exit "$rc"
+  fi
 done
-MEASURER_POST=$(sha256sum "$MEASURER" 2>/dev/null | cut -c1-12)
+MEASURER_POST=$(sha256sum "$MEASURER" 2>/dev/null | cut -d' ' -f1)
 
 echo "  comparing the two trees (exit 0 none / 10 all-expected / 20 some-unexpected / 4,5 refusal):"
 # These two PRE digests are read HERE, on the line before the call -- not up beside the ruler's.
@@ -184,18 +190,18 @@ echo "  comparing the two trees (exit 0 none / 10 all-expected / 20 some-unexpec
 # before POST is caught by an adjacent PRE and missed by an early one, because the early PRE and
 # the POST both read the reverted bytes and agree with each other. A tight bracket strictly
 # dominates a loose one, so there is no trade-off here to weigh.
-COMPARATOR_PRE=$(sha256sum "$COMPARATOR" 2>/dev/null | cut -c1-12)
-EXPECTED_PRE=$(sha256sum "$EXPECTED" 2>/dev/null | cut -c1-12)
+COMPARATOR_PRE=$(sha256sum "$COMPARATOR" 2>/dev/null | cut -d' ' -f1)
+EXPECTED_PRE=$(sha256sum "$EXPECTED" 2>/dev/null | cut -d' ' -f1)
 "$PY" "$COMPARATOR" --input "$OUT/deploy.json" --input "$OUT/canonical.json" \
       --expected "$EXPECTED" --repo "$TOOLS_ROOT" --record "$OUT/f17b-record.json" > "$OUT/cmp.txt" 2>&1
 crc=$?
-COMPARATOR_POST=$(sha256sum "$COMPARATOR" 2>/dev/null | cut -c1-12)
-EXPECTED_POST=$(sha256sum "$EXPECTED" 2>/dev/null | cut -c1-12)
+COMPARATOR_POST=$(sha256sum "$COMPARATOR" 2>/dev/null | cut -d' ' -f1)
+EXPECTED_POST=$(sha256sum "$EXPECTED" 2>/dev/null | cut -d' ' -f1)
 sed 's/^/    /' "$OUT/cmp.txt" | tail -18
 echo "  COMPARATOR EXIT = $crc"
-echo "  ruler      sha256 pre=$MEASURER_PRE   post=$MEASURER_POST"
-echo "  comparator sha256 pre=$COMPARATOR_PRE   post=$COMPARATOR_POST"
-echo "  expected   sha256 pre=$EXPECTED_PRE   post=$EXPECTED_POST"
+echo "  ruler      sha256 pre=${MEASURER_PRE:0:12}   post=${MEASURER_POST:0:12}"
+echo "  comparator sha256 pre=${COMPARATOR_PRE:0:12}   post=${COMPARATOR_POST:0:12}"
+echo "  expected   sha256 pre=${EXPECTED_PRE:0:12}   post=${EXPECTED_POST:0:12}"
 if [ "$MEASURER_PRE" != "$MEASURER_POST" ] \
    || [ "$COMPARATOR_PRE" != "$COMPARATOR_POST" ] \
    || [ "$EXPECTED_PRE" != "$EXPECTED_POST" ]; then
@@ -213,8 +219,26 @@ if [ "$MODE" = "--measure" ]; then
       ;;
   esac
   echo "  publishing the completed record atomically, without clobber: $DURABLE_RECORD"
+  PRESERVER_PRE=$(sha256sum "$PRESERVER" 2>/dev/null | cut -d' ' -f1)
+  if [ "$PRESERVER_PRE" != "$PRESERVER_EXPECTED" ]; then
+    echo "  REFUSE: preserver changed on disk BEFORE invocation. Nothing published."
+    exit 13
+  fi
+  
+  [ -e "$DURABLE_RECORD" ] && RECORD_EXISTED=1 || RECORD_EXISTED=0
+
   "$PY" "$PRESERVER" --source "$OUT/f17b-record.json" --destination "$DURABLE_RECORD"
   prc=$?
+  PRESERVER_POST=$(sha256sum "$PRESERVER" 2>/dev/null | cut -d' ' -f1)
+  echo "  preserver  sha256 pre=${PRESERVER_PRE:0:12}   post=${PRESERVER_POST:0:12}"
+  if [ "$PRESERVER_PRE" != "$PRESERVER_POST" ]; then
+    echo "  REFUSE: a tool changed on disk across its own invocation, so this comparison cannot be"
+    echo "          attributed to any single revision. Nothing published; scratch kept at $OUT."
+    if [ "$RECORD_EXISTED" -eq 0 ] && [ -e "$DURABLE_RECORD" ]; then
+      rm -f "$DURABLE_RECORD"
+    fi
+    exit 13
+  fi
   if [ "$prc" -ne 0 ]; then
     echo "  REFUSE: durable publication failed; scratch output remains at $OUT for diagnosis."
     exit "$prc"

@@ -135,5 +135,70 @@ sys.path.insert(0, _OTHER)
         self.assertEqual(r["literals"], [])
 
 
+class R3_MeasurerEmitsBranchOrDetached(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.tree = pathlib.Path(self.temp.name)
+        
+        import subprocess
+        subprocess.run(["git", "init"], cwd=self.tree, check=True, capture_output=True)
+        subprocess.run(["git", "config", "user.email", "test@test.com"], cwd=self.tree, check=True)
+        subprocess.run(["git", "config", "user.name", "Test"], cwd=self.tree, check=True)
+        subprocess.run(["git", "commit", "--allow-empty", "-m", "init"], cwd=self.tree, check=True)
+
+    def test_branch_emitted_for_on_branch_tree(self):
+        import subprocess
+        subprocess.run(["git", "checkout", "-b", "my-test-branch"], cwd=self.tree, check=True, capture_output=True)
+        
+        # Test directly via m4? No, it's added at the top level of the document in main.
+        # But we can capture the output of `measure_m1_m6.py --json`
+        import json, sys
+        cp = subprocess.run([sys.executable, mm.__file__, "--tree", str(self.tree), "--label", "test", "--json"], capture_output=True, text=True, check=True)
+        doc = json.loads(cp.stdout)
+        self.assertEqual(doc["branch_or_detached"], "my-test-branch")
+
+    def test_detached_emitted_for_detached_tree(self):
+        import subprocess
+        # Detach HEAD
+        cp_rev = subprocess.run(["git", "rev-parse", "HEAD"], cwd=self.tree, check=True, capture_output=True, text=True)
+        head_sha = cp_rev.stdout.strip()
+        subprocess.run(["git", "checkout", head_sha], cwd=self.tree, check=True, capture_output=True)
+        
+        import json, sys
+        cp = subprocess.run([sys.executable, mm.__file__, "--tree", str(self.tree), "--label", "test", "--json"], capture_output=True, text=True, check=True)
+        doc = json.loads(cp.stdout)
+        self.assertEqual(doc["branch_or_detached"], "detached")
+
+
+class R6_MeasurerEmitsWallClock(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.tree = pathlib.Path(self.temp.name)
+        import subprocess
+        subprocess.run(["git", "init"], cwd=self.tree, check=True, capture_output=True)
+
+    def test_measurement_wall_clock_is_emitted_and_formatted_correctly(self):
+        import json, sys, datetime, subprocess
+        before = datetime.datetime.now(datetime.timezone.utc)
+        cp = subprocess.run([sys.executable, mm.__file__, "--tree", str(self.tree), "--label", "test", "--json"], capture_output=True, text=True, check=True)
+        doc = json.loads(cp.stdout)
+        after = datetime.datetime.now(datetime.timezone.utc)
+        
+        self.assertIn("measurement_wall_clock", doc)
+        emitted_str = doc["measurement_wall_clock"]
+        self.assertTrue(emitted_str.endswith("Z"))
+        
+        # Parse it back
+        emitted = datetime.datetime.strptime(emitted_str, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=datetime.timezone.utc)
+        
+        # Assert it's bounded by our run time
+        # Note: formatting truncates microseconds, so `before` could have microseconds while `emitted` has 0,
+        # making `emitted < before` true by a fraction of a second.
+        # So we pad `before` by 1 second.
+        self.assertTrue(before - datetime.timedelta(seconds=1) <= emitted <= after + datetime.timedelta(seconds=1))
+
+
 if __name__ == "__main__":
     unittest.main()

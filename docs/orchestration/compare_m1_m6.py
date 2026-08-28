@@ -210,7 +210,7 @@ EXIT_CODES = check_vocabulary(EXIT_VOCABULARY, RESERVED_EXIT_CODES)
 MAX_CITATION_LINES = 3
 
 MEASUREMENT_IDS = ("M-1", "M-2", "M-3", "M-4", "M-5", "M-6")
-REQUIRED_KEYS = ("label", "tree") + MEASUREMENT_IDS
+REQUIRED_KEYS = ("label", "tree", "measurement_wall_clock", "branch_or_detached") + MEASUREMENT_IDS
 PERISHABLE_ID = "M-2"          # F-17(b) singles it out; see R7
 
 # THE SHAPE OF A FIELD PATH, DECLARED ONCE. `flatten` emits `M-1[<file>].<key>` for the row
@@ -437,13 +437,13 @@ def identity_of(record):
         "input_sha256": record["sha256"],
         "input_bytes": record["bytes"],
         "input_file_mtime_utc": record["file_mtime_utc"],
-        "measurement_wall_clock": UNAVAILABLE,
+        "measurement_wall_clock": doc["measurement_wall_clock"],
         "head": m4.get("head", ABSENT),
         "is_git": m4.get("is_git", ABSENT),
         "porcelain_dirty": m4.get("dirty", ABSENT),
         "porcelain_untracked": m4.get("untracked", ABSENT),
         "porcelain_modified": m4.get("modified", ABSENT),
-        "branch_or_detached": UNAVAILABLE,
+        "branch_or_detached": doc["branch_or_detached"],
     }
 
 
@@ -922,10 +922,6 @@ def compare(records, expected):
                             "all n, and every tolerance is max-min over all n."),
         "global_agreement_inferred_from_pairs": False,
         "input_schema_gaps": {
-            "branch_or_detached": "measure_m1_m6.py --json emits no symbolic-ref state",
-            "measurement_wall_clock": ("measure_m1_m6.py --json emits no timestamp; the "
-                                       "input_file_mtime_utc below is a property of the FILE, not "
-                                       "of the measurement"),
             "measuring_instrument_digest": ("measure_m1_m6.py --json does not identify its own "
                                             "revision; field_set_differs is the only visible "
                                             "symptom of two documents from different revisions"),

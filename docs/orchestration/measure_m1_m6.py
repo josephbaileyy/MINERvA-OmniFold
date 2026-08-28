@@ -16,6 +16,7 @@ column.
 """
 import argparse
 import ast
+import datetime
 import json
 import pathlib
 import subprocess
@@ -248,7 +249,22 @@ def main():
     tree = pathlib.Path(a.tree).resolve()
     if not tree.is_dir():
         sys.exit(f"no such tree: {tree}")
-    res = {"label": a.label, "tree": str(tree), "M-1": m1(tree), "M-2": m2(tree),
+
+    # S-1: measurement_wall_clock
+    wall_clock = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    # S-2: branch_or_detached
+    rc, head = git(tree, "symbolic-ref", "-q", "--short", "HEAD")
+    if rc == 0 and head:
+        branch_or_detached = head
+    else:
+        rc2, _ = git(tree, "rev-parse", "HEAD")
+        branch_or_detached = "detached" if rc2 == 0 else "UNKNOWN"
+
+    res = {"label": a.label, "tree": str(tree),
+           "measurement_wall_clock": wall_clock,
+           "branch_or_detached": branch_or_detached,
+           "M-1": m1(tree), "M-2": m2(tree),
            "M-3": m3(tree), "M-4": m4(tree, a.upstream), "M-5": m5(tree), "M-6": m6(tree)}
     if a.json:
         print(json.dumps(res, indent=2)); return
