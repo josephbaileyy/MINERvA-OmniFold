@@ -803,6 +803,8 @@ class ClaudeRootTests(WakerTestCase):
 
     def setUp(self):
         super().setUp()
+        self.root_cwd = self.dir / "claude-root"
+        self.root_cwd.mkdir()
         self.claude = self.dir / "claude"
         self.claude.write_text("#!/bin/bash\nexit 0\n")
         self.claude.chmod(self.claude.stat().st_mode | stat.S_IXUSR)
@@ -812,6 +814,7 @@ class ClaudeRootTests(WakerTestCase):
                 "provider": "claude",
                 "profile": "claude-school",
                 "thread_id": "11111111-2222-3333-4444-555555555555",
+                "cwd": str(self.root_cwd),
             },
         )
 
@@ -831,6 +834,7 @@ class ClaudeRootTests(WakerTestCase):
         self.assertIn("--model", argv)
         self.assertTrue(env["HOME"].endswith("claude-homes/school"))
         self.assertIn("next dependency-ready campaign action", argv[-1])
+        self.assertEqual(call["cwd"], self.root_cwd.resolve())
 
     def test_preflight_checks_claude_binary_for_claude_root(self):
         self.write_config(

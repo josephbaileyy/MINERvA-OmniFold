@@ -1178,6 +1178,7 @@ def preflight(ctx: Ctx, quiet: bool = False, control_plane: bool = False) -> lis
         home = Path(agentctl.expand_path(profile["home"]))
         if not home.is_dir():
             problems.append(f"root provider home missing: {home}")
+        root_workdir(ctx)
     except (WakerError, agentctl.AgentCtlError) as exc:
         problems.append(str(exc))
     if control_plane:
@@ -1280,6 +1281,16 @@ def event_action(ctx: Ctx, event: dict) -> dict:
     return {"type": "root-resume"}
 
 
+def root_workdir(ctx: Ctx) -> Path:
+    raw = ctx.root().get("cwd")
+    if not raw:
+        return ctx.repo
+    path = Path(agentctl.expand_path(str(raw))).resolve()
+    if not path.is_dir():
+        raise WakerError(f"root working directory missing: {path}")
+    return path
+
+
 def run_action(ctx: Ctx, event: dict) -> int:
     action = event_action(ctx, event)
     log_path = ctx.logs_dir / f"{event['event_id']}.log"
@@ -1301,8 +1312,13 @@ def run_action(ctx: Ctx, event: dict) -> int:
         env = ctx.base_env()
     else:
         command, env = build_root_resume(ctx, event)
+        action_cwd = root_workdir(ctx)
 
-    result = ctx.runner(command, env=env, cwd=ctx.repo)
+    result = ctx.runner(
+        command,
+        env=env,
+        cwd=action_cwd if action.get("type") == "root-resume" else ctx.repo,
+    )
     redacted = command[:-1] + ["<prompt>"] if action.get("type") not in {"role-send", "command"} else command
     with open(log_path, "a") as handle:
         handle.write(f"=== {ctx.now_iso()} rc={result.returncode} argv={redacted}\n")

@@ -233,6 +233,11 @@ account. The recovery pattern is:
 This preserves scientific continuity while allowing provider/account
 continuity to change at an explicit, auditable boundary.
 
+The 2026-08-28 recovery applies that boundary explicitly: the former
+`codex-waker` root UUID is retired from ownership, and the tracked root binding
+names the fresh `claude-school` successor plus its isolated coordinator
+worktree. This is one root replacement, not a second co-owner of `main`.
+
 ## Poisoned-inode recovery
 
 If `status` or `tick` hangs, identify the exact watch file with bounded
