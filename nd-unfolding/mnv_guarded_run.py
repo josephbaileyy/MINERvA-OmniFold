@@ -9,34 +9,19 @@ THE DEFECT THIS CLOSES
 entrypoint was launched from, and `PYTHONPATH` cannot outrank position 0. So
 `OI-123`'s remedy -- give every leg its own checkout -- does not help, and a
 deployment-parity check can report every pinned file CURRENT while the interpreter
-imports a different file entirely.
+imports a different file entirely. The run that established this, the rules tried
+and rejected, and the order the two receipts were built in are recorded in
+`docs/orchestration/FINDING-20260828-oi136-guard-provenance.md`.
 
-That is measured, not hypothetical. Run `57266000_0` (2026-08-19/20, 3 h 08 m of
-A100) printed `deployment parity CURRENT for all pinned executing copies` and
-`5 of 5 CURRENT` against the frozen tree `gate5-data-only-frozen-377c713`, then
-failed on a guard that the frozen tree's `cstat_data_only.py` CANNOT RAISE: its
-`DATA_ONLY_WITHHELD_REQUIRED_KEYS` is empty. The message it actually printed
-carries the suffix `; the seed lives under \\`data_bootstrap_seed\\` (P6)`, which
-exists only in the PRE-fix blob at `1f6aa9c6^`. The import resolved to the
-hardcoded main checkout, 211 commits behind.
-
-WHY A NEW ENTRYPOINT AND NOT AN EDIT TO THE 59
-----------------------------------------------
-Deriving the root from `__file__` in each of the 59 is the correct END state and is
-NOT what this file does. Those are hash-pinned science files inside frozen
-provenance; a 59-file sweep needs its own per-site authorization and would be a
-larger change than the incident it repairs. What this file does is convert the
-FAIL-OPEN direction into the fail-CLOSED one, which is the whole difference
-`OI-136` records between itself and `OI-123`: OI-123 dies at exit 3 before any GPU
-work, while this family runs to completion and produces numbers. After this, so
-does this family.
+The 59 are hash-pinned science files inside frozen provenance, so this wrapper
+converts the fail-OPEN direction into the fail-CLOSED one rather than editing them.
 
 IT DOES NOT REPLACE THE PARITY CHECK AND IT IS NOT REDUNDANT WITH IT.
 `verify_executing_copy_is_committed.py` answers "are the FILES AT THESE PATHS the
 committed ones". This answers "are the MODULES THE INTERPRETER ACTUALLY LOADED
-from the tree we think we are running". Run 4 proves those are two different
-questions: the first passed honestly, five for five, while the second was false.
-Adding another `--pair` would not have caught it, and neither would a re-deploy.
+from the tree we think we are running". Those are two different questions: the
+first can pass honestly while the second is false. Adding another `--pair` would
+not catch it, and neither would a re-deploy.
 
 WHAT IT REFUSES, AND WHAT IT DELIBERATELY IGNORES
 -------------------------------------------------
@@ -45,16 +30,20 @@ CHECKOUT (a directory holding both `VALIDATION_LEDGER.md` and `nd-unfolding/`)
 whose root is neither `--expect-root` nor an explicit `--allow`. The stdlib,
 site-packages, conda and any path outside a checkout are IGNORED, because they are
 not the confusion this exists for and flagging them would make the guard something
-people switch off.
+people switch off. The marker pair must hold across checkout GENERATIONS: both
+files predate every frozen tree on scratch, and a marker introduced later would
+fail to recognise an older frozen tree and wave it through.
+
+It also refuses a script that is not itself in the expected tree. That check runs
+BEFORE `install()`, so the refusal precedes the first import as well as the work.
+`--allow` does not cover it: `--allow` declares an IMPORT tree, never an execution
+tree.
 
 IT DOES NOT CROSS A SUBPROCESS BOUNDARY, AND THAT IS MEASURED, NOT SUSPECTED.
 The wrapped `PathFinder` lives in THIS interpreter's `sys.meta_path`. A child started
 with `subprocess.run([sys.executable, ...])` gets a fresh interpreter with a clean
 `sys.meta_path`, so a rooted `insert(0, ...)` inside the CHILD is not seen and this
-wrapper exits 0. Fixture: a correct parent that resolves its own directory from
-`__file__` and then subprocess-launches a child which inserts another checkout at
-position 0 -- guarded IN-PROCESS it exits 3; guarded through the SUBPROCESS it exits 0
-and the child loads the other tree's module. Both halves are asserted in
+wrapper exits 0. Both halves are asserted in
 `tests/test_mnv_guarded_run.py::TheSubprocessBoundaryIsNotCovered`.
 
 THIS IS LIVE IN THIS REPO, NOT A TOY. `mii_adopt_unified_5d_stamped.py:124` resolves
@@ -66,43 +55,40 @@ launcher through this wrapper must check whether the work happens in the wrapped
 interpreter or in a child; if it is a child, this guard is not the check they want and
 a green run of it must not be recorded as one.
 
-The marker pair is chosen to hold across checkout GENERATIONS, not just today's:
-both files predate every frozen tree on scratch. `AGENTS.md` would have been the
-obvious marker and is the wrong one -- it was rewritten as the thin front door on
-2026-08-20, so a tree frozen on 2026-08-18 is still a real checkout that a fresh
-marker would fail to recognise, and the guard would then wave it through.
-
-IT ALSO EMITS A LOADED-CHECKOUT INVENTORY, WHICH IS A RECEIPT AND NOT A GATE
----------------------------------------------------------------------------
+TWO RECEIPTS, NEITHER OF WHICH IS A GATE
+----------------------------------------
 At the end of the wrapped run this walks `sys.modules` and reports, on STDERR under
 the prefix `[oi136-inv]`, every checkout root the interpreter ACTUALLY LOADED a
 module from, the module names under each, and the total count. It answers the
 COVERING form of the question the refusal half answers by exception: not "did an
 import escape" but "which trees did this interpreter end up holding code from".
-
-WHY IT IS NOT REDUNDANT WITH THE REFUSAL, which is the whole reason it is here.
 The refusal sees only what passes through the WRAPPED `PathFinder` AFTER `install()`
-returns. Everything imported before that -- this file itself, and anything a
-`sitecustomize` or `PYTHONSTARTUP` pulled in -- was resolved by the unwrapped finder
-and the guard is structurally blind to it. `sys.modules` is blind to none of it. So a
-green refusal-half and a two-root inventory are consistent, and the second is the one
-that would have named run 4's second tree without needing the import to still be
-pending.
+returns; everything imported before that was resolved by the unwrapped finder and the
+guard is structurally blind to it. `sys.modules` is blind to none of it, so a green
+refusal half and a two-root inventory are consistent.
+
+`--inventory <path>` (or `$MNV_GUARD_INVENTORY`) appends ONE json object per process
+recording the interpreter, both roots, the script and its checkout root, `checked`,
+the final `sys.path`, and EVERY module whose resolved origin lies inside any checkout
+-- the allowed ones as well as the refused one. `repo_origin_count` and
+`repo_origin_inventory_is_empty` are written UNCONDITIONALLY: a zero is a REPORTABLE
+STATE and never a pass, and an absent key cannot tell "no repository import occurred"
+from "the inventory did not run". Both receipts are emitted from the same `finally`
+and answer different questions.
 
 IT CANNOT REFUSE, BY CONSTRUCTION, AND THAT IS A DESIGN CONSTRAINT NOT AN ACCIDENT.
 Every lane routing compute through this wrapper depends on WHEN it refuses. So the
-emission runs from a `finally`, returns nothing, and swallows `BaseException` --
-`BaseException` and not `Exception` because a receipt must not be able to change a
-run's outcome, and a `KeyboardInterrupt` arriving inside the emission would otherwise
-replace the child's own exit status with the receipt's failure. A failed emission
-prints `INVENTORY EMISSION FAILED` and the run's verdict is untouched.
+emission runs from a `finally`, returns
+nothing, and swallows `BaseException` -- `BaseException` and not `Exception` because a
+receipt must not be able to change a run's outcome, and a `KeyboardInterrupt` arriving
+inside the emission would otherwise replace the child's own exit status with the
+receipt's failure. A failed emission prints `INVENTORY EMISSION FAILED` and the run's
+verdict is untouched.
 
-STDERR, NOT STDOUT, AND NOT A FILE. Consumers parse the child's stdout -- the two
-Gate-5 launchers grep it -- so writing there would make this wrapper a producer on a
-surface that belongs to the child, which is the same class of error the mandatory
-`--` exists to prevent. Every other diagnostic in this file is already on stderr. A
-file would need a path, a flag, a default and a failure mode for an unwritable
-directory, and would make the receipt absent exactly where nobody passed the flag.
+STDERR, NOT STDOUT. Consumers parse the child's stdout -- the two Gate-5 launchers
+grep it -- so writing there would make this wrapper a producer on a surface that
+belongs to the child, which is the same class of error the mandatory `--` exists to
+prevent. Every other diagnostic in this file is already on stderr.
 
 THE SCOPE IS ONE INTERPRETER, AND THE EMISSION SAYS SO IN ITS OWN OUTPUT. It reports
 the PARENT's `sys.modules`. A child started with `subprocess.run([sys.executable,
@@ -111,30 +97,6 @@ refusal half does not cross, for the same reason. Modules imported by the child'
 `atexit` handlers land after this runs and are not counted either, and the wrapped
 script is not itself a module unless something imported it by name. Read the
 inventory as "at least these trees", never as "only these trees".
-
-BOTH RECEIPTS EXIST AND NEITHER REPLACES THE OTHER (merge 2026-08-26). The stderr
-`[oi136-inv]` walk of `sys.modules` described above and the `--inventory` json record
-described below were developed on two lines in parallel. They answer different questions --
-which trees the interpreter ended up holding code from, versus a per-process durable record
-with the outcome and the resolved origins -- and both are emitted from the same `finally`.
-
-IT NOW ALSO REFUSES A SCRIPT THAT IS NOT IN THE EXPECTED TREE (added 2026-08-22, B-4).
-Until then this file checked only what was IMPORTED, never what was RUN. For an entrypoint with
-repository imports that failed closed by accident at the first import; for one with NONE it did not
-fail at all, and running the forbidden checkout's own copy of such an entrypoint with
-`--expect-root <clean tree>` exited 0. The check is made BEFORE `install()`, so the refusal precedes
-the first import as well as the work. `--allow` does not cover it: `--allow` declares an IMPORT tree
-and has never declared an execution tree.
-
-IT NOW EMITS A RESOLVED-ORIGIN INVENTORY (added 2026-08-22, P-1), and that is the POSITIVE half.
-`--inventory <path>` (or `$MNV_GUARD_INVENTORY`) appends ONE json object per process recording the
-interpreter, both roots, the script and its checkout root, `checked`, the final `sys.path`, and
-EVERY module whose resolved origin lies inside any checkout -- the allowed ones as well as the
-refused one. Before this, `checked` was incremented and read nowhere, so a production run emitted
-nothing that could distinguish "checked many imports, all clean" from "checked nothing", and an
-exit 0 was not evidence. `repo_origin_count` and `repo_origin_inventory_is_empty` are written
-UNCONDITIONALLY: a zero is a REPORTABLE STATE and never a pass, and an absent key cannot tell
-"no repository import occurred" from "the inventory did not run".
 
 USAGE, AND THE `--` IS MANDATORY
 --------------------------------
