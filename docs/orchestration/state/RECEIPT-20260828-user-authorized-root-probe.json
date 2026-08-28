@@ -1,0 +1,204 @@
+{
+  "authorization_boundaries_respected": {
+    "compute_launched": false,
+    "gate_decision_made": false,
+    "jobs_cancelled": false,
+    "oi_126_reopened": false,
+    "pushed": false,
+    "rehearsal_authorized": false,
+    "repair_implemented": false,
+    "scientific_result_adopted": false,
+    "shared_ledger_hand_edited": false
+  },
+  "collateral_findings": {
+    "campaign_queue": {
+      "command": "campaignctl.py run-ready --json",
+      "note": "The machine-tracked queue offers no dependency-ready item; the executed action is the one named by the governing documents, not by this queue.",
+      "result": {
+        "status": "idle"
+      }
+    },
+    "four_surface_remeasurement_at_head_7a52652": {
+      "compare_m1_m6.py": {
+        "bytes": 66599,
+        "hardcoded_unavailable_lines": [
+          440,
+          446
+        ],
+        "lines": 1084,
+        "sha256_prefix": "5dc92487"
+      },
+      "measure_k0_farend_f1b_f17b.sh": {
+        "bytes": 15722,
+        "lines": 236,
+        "matches_decision_section_11_pin": true,
+        "sha256_prefix": "c40e6b54"
+      },
+      "measure_m1_m6.py": {
+        "bytes": 13213,
+        "emits_wall_clock_or_branch_fields": 0,
+        "lines": 272,
+        "sha256_prefix": "0fcd90f7"
+      },
+      "verdict": "All four repair surfaces remain UNREPAIRED at this HEAD; the chain is in the graded state."
+    },
+    "live_state_freshness": {
+      "command": "/usr/bin/python3.11 docs/orchestration/generate_live_state.py --check-freshness",
+      "detail": "Git: fe209bce, HEAD 7a52652, HEAD^ 6828074",
+      "note": "This resolves a limitation recorded earlier in the session: the check was previously not evaluable from a depth-1 shallow task-branch checkout. It is now evaluable and the answer is STALE.",
+      "result": "STALE",
+      "run_from": "canonical main, clean worktree"
+    },
+    "resume_target_names_a_retired_uuid": {
+      "action_taken": "NONE. No UUID was changed or replaced. This is an instance of the already-open OI-73 (correct live-state.json lifecycle classification; distinguish authored input from generated output), which is BLOCKED-EXTERNAL and owned by lane C. Routed there rather than repaired here.",
+      "classification": "generated view disagrees with governing config; view is wrong, config is right",
+      "finding": "LIVE-STATE's 'Resume target' line is generated from config['orchestrator_thread_id'] (generate_live_state.py:764,772), which reads docs/orchestration/state/live-state.json:12 = '019f749a-857b-7790-8cec-bc36b22908be' -- a Codex-style id retired from ownership. The waker's ACTUAL dispatch root is a different key, waker-config.json root.thread_id = '66a7e51b-abea-42d6-b8c1-b61952d5ec2b' (claude/claude-school), identical in BOTH the canonical-main and control checkouts.",
+      "why_it_matters": "A reader of LIVE-STATE would conclude continuation resumes 019f749a. It does not: this turn was invoked against 66a7e51b, which is proof by execution that the dispatcher uses root.thread_id. The armed watch will therefore resume the correct root, but the generated field misreports it."
+    },
+    "state_dir_routing_hazard": {
+      "action": "All waker operations in this turn set WAKER_STATE_DIR explicitly.",
+      "consequence": "Any waker write must set WAKER_STATE_DIR to the shared pscratch dir or it silently targets a different state tree. This is the same class of defect as OI-136.",
+      "finding": "usagectl DEFAULT_CACHE is HERE/state/usage, i.e. relative to the script's own checkout, so the snapshot persisted into THIS checkout rather than the shared pscratch runtime state that the live ticker services. wakerctl resolves state via WAKER_STATE_DIR first (wakerctl.py:143) and only then HERE-relative."
+    },
+    "supervision_net": {
+      "actual_ticker": "single login-node process under temporary tmux fallback (login32), 60 s polls, watch_errors=0",
+      "archived_watch_count": 85,
+      "armed_watches_at_handling_time": 0,
+      "assessment": "Supervision is live but NOT durable: single point of failure, node-local, not restarted by the managed net.",
+      "cron_partition": "DOWN; managed job 57668375 PENDING PartitionDown",
+      "quarantined": 1
+    },
+    "working_checkout_moved_mid_session": {
+      "consequence": "Instrument measurements taken earlier in the session were re-measured at the new HEAD and are BYTE-IDENTICAL, so their conclusions survive.",
+      "evidence": "reflog: checkout 66db547 -> main, then merge origin/main fast-forward",
+      "now": "branch main at 7a52652, fast-forwarded from origin/main, 0 uncommitted",
+      "was": "branch codex/orchestrator-recovery-20260828 at 66db547"
+    }
+  },
+  "continuation": {
+    "armed_watch": {
+      "action": "root-resume",
+      "armed_with": "control-checkout wakerctl + config, matching the live ticker",
+      "at_utc": "2026-08-28T18:00:00+00:00",
+      "kind": "deadline",
+      "state": "armed",
+      "state_dir": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/state/waker",
+      "watch_id": "f17b-repair-decision-20260828t1030z"
+    },
+    "blocked_on_user_rationale": "Not written: an armed watch already satisfies the continuation contract, and BLOCKED-ON-USER.json additionally declares a STOP. The campaign has live continuation, so declaring a stop would be false.",
+    "blocked_on_user_written": false,
+    "preflight": "Only finding is the known cron PartitionDown (job 57668375). The deadline watch subject itself validates.",
+    "why_this_kind": "A provider-reset watch on claude-school would be UNFIRABLE: its reset time is precisely the unmeasured quantity (cache missing). Arming one would reproduce the BEN-456/478 antipattern of a watch that reads 'armed' but can never correctly fire. A wall-clock deadline needs no external subject and is firable."
+  },
+  "disposition": {
+    "actions_taken": [
+      "Read the event exactly once; no polling and no bounded wait loop.",
+      "Ran exactly one complete usage snapshot before any dispatch consideration.",
+      "Made no provider dispatch: claude-school capacity is unmeasured, so dispatching Claude workers under it would be dispatch on an unknown budget.",
+      "Consumed no Codex reset credit.",
+      "Left the dispatcher to close the event with its own done row."
+    ],
+    "capacity_claim_outcome": "NOT CORROBORATED BY MEASUREMENT",
+    "finding": "The event asserted state=RESET_BOUNDARY_REACHED for claude-school while carrying measured_state=UNKNOWN. The mandated snapshot independently returns claude-school state=UNKNOWN with status=missing ('Claude usage cache is missing'). The asserted boundary is therefore a CLOCK-DERIVED PREDICTION from observed_reset_utc, not a measured capacity. It is recorded as received and is NOT promoted to a measurement.",
+    "probe_outcome": "ROOT ALIVE AND RESPONDING"
+  },
+  "event": {
+    "action_type": "root-resume",
+    "event_id": "evt-user-authorized-root-probe-20260828t1019z",
+    "event_type": "provider-capacity",
+    "head_at_event": "027d85f80e80079cb6cc51d3847893832e957fb4",
+    "observed_at_utc": "2026-08-28T10:23:12+00:00",
+    "polled_or_waited": false,
+    "read_exactly_once": true,
+    "source": {
+      "node": "login32",
+      "pid": 522098
+    },
+    "watch_id": "user-authorized-root-probe-20260828t1019z"
+  },
+  "event_payload_as_received": {
+    "measured_state": "UNKNOWN",
+    "observed_reset_utc": "2026-08-28T01:40:00+00:00",
+    "profile": "claude-school",
+    "state": "RESET_BOUNDARY_REACHED"
+  },
+  "gate_posture_unchanged": {
+    "gate_2": "FAIL on six independently sufficient clauses at 327bc105",
+    "gate_6": "BLOCKED; no C_ML",
+    "oi_126": "RULED; PET diagnostic/method development, off the publication path",
+    "readiness": "NOT READY on F-17(b) alone",
+    "scalar_5d_covariance": "NO CANDIDATE ADOPTED"
+  },
+  "receipt_id": "RECEIPT-20260828-user-authorized-root-probe",
+  "reconciliation_precheck": {
+    "done_marker_present": false,
+    "done_row_ownership": "wakerctl.py:1409 ctx.ledger(event_id, 'done', ...) is written by the dispatcher, not by the resumed root. Dispatcher pid 522098 (wakerctl.py run --poll-seconds 60) was verified ALIVE at handling time, so this root did NOT hand-append a done row; doing so would double-record into append-only shared history.",
+    "done_row_present": false,
+    "ledger_rows_found": [
+      "2026-08-28T10:22:35Z watch-armed login36:67348 kind=provider-capacity",
+      "2026-08-28T10:23:12Z event-emitted login32:522098",
+      "2026-08-28T10:23:12Z invoked login32:522098"
+    ],
+    "markers_present": [
+      ".claim",
+      ".invoked",
+      ".json"
+    ],
+    "verdict": "NOT PREVIOUSLY RECONCILED"
+  },
+  "recorded_at_utc": "2026-08-28T10:30:00+00:00",
+  "recorded_by": {
+    "note": "Matches waker-config.json root.thread_id; the configured root responded. No UUID was replaced and no worker was reassigned.",
+    "profile": "claude-school",
+    "provider": "claude",
+    "role": "root",
+    "thread_id": "66a7e51b-abea-42d6-b8c1-b61952d5ec2b"
+  },
+  "schema_version": 1,
+  "usage_snapshot": {
+    "codex_reset_credits_consumed": 0,
+    "command": "orchestration/usagectl.py snapshot --json",
+    "gate_ok": true,
+    "observed_at_utc": "2026-08-28T10:26:28+00:00",
+    "persisted_at": "docs/orchestration/state/usage/last-valid-snapshot.json",
+    "policy_violations": [],
+    "profiles": {
+      "agy": {
+        "source": "no usage API in installed agy CLI",
+        "state": "UNKNOWN"
+      },
+      "claude-personal": {
+        "state": "UNKNOWN",
+        "status": "missing"
+      },
+      "claude-school": {
+        "state": "UNKNOWN",
+        "status": "missing",
+        "warning": "Claude usage cache is missing; capacity is unknown"
+      },
+      "claude-school-legacy": {
+        "note": "same account as claude-school; capacity must not be summed",
+        "state": "UNKNOWN",
+        "status": "missing"
+      },
+      "codex-personal": {
+        "minimum_remaining_percent": 69.0,
+        "next_reset_utc": "2026-08-28T15:26:31+00:00",
+        "state": "READY"
+      },
+      "codex-school": {
+        "minimum_remaining_percent": 32.0,
+        "next_reset_utc": "2026-08-28T14:56:41+00:00",
+        "state": "READY"
+      },
+      "codex-school2": {
+        "minimum_remaining_percent": 84.0,
+        "next_reset_utc": "2026-08-28T15:26:34+00:00",
+        "state": "READY"
+      }
+    },
+    "provider_dispatches_made": 0,
+    "rc": 0,
+    "runs": 1
+  }
+}
