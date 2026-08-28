@@ -136,7 +136,7 @@ def main():
             active_bands[b] = cb
     if set(active_bands) == set(BANDS):
         try:
-            fp.check_active_rollup(active_bands, Cact)
+            fp.require_active_rollup(active_bands, Cact)
             out["active"]["rollup_identity"] = "PASS (total == sum of 5 nonzero bands)"
         except fp.FpsGateError as e:
             fails.append(f"active rollup: {e}")

@@ -344,7 +344,7 @@ def add_watch(ctx: Ctx, watch: dict) -> None:
     watch.setdefault("armed_by", owner_string())
     watch.setdefault("unreliable", 0)
     validate_watch(ctx, watch)
-    check_array_spec_against_slurm(ctx, watch)
+    validate_array_spec_against_slurm(ctx, watch)
     save_watch(ctx, watch)
     ctx.ledger(f"evt-{watch['watch_id']}", "watch-armed", f"kind={watch['kind']}")
 
@@ -1121,7 +1121,7 @@ def slurm_known_tasks(ctx: Ctx, job_id: str) -> tuple[set[int] | None, str]:
     return known, ""
 
 
-def check_array_spec_against_slurm(ctx: Ctx, watch: dict) -> None:
+def validate_array_spec_against_slurm(ctx: Ctx, watch: dict) -> None:
     """Reject at ADD time an array watch whose tasks the array does not have.
 
     Rejects only on POSITIVE evidence: Slurm must know some task of this job and not

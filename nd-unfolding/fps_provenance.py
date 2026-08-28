@@ -421,7 +421,7 @@ def require_reported_cov(C, expected_dim, mask_hash_expected, mask_hash_actual,
     return True
 
 
-def check_active_rollup(per_band, total, tol=1e-10):
+def require_active_rollup(per_band, total, tol=1e-10):
     """The active five-band lateral rollup must have EXACTLY the 5 named bands, each with a
     finite nonzero-trace PSD-ish block, and total == sum(5 bands) within tol. A zero band or
     zero total (the 'nothing happened' failure) raises."""

@@ -103,26 +103,26 @@ def test_classify_control_and_publication():
 def test_active_rollup_ok():
     per = {b: _spd(6, i) for i, b in enumerate(fp.BANDS)}
     tot = sum(per.values())
-    assert fp.check_active_rollup(per, tot)
+    assert fp.require_active_rollup(per, tot)
 
 
 def test_active_rollup_missing_band():
     per = {b: _spd(6, i) for i, b in enumerate(fp.BANDS[:-1])}
     tot = sum(per.values())
-    assert _raises(lambda: fp.check_active_rollup(per, tot))
+    assert _raises(lambda: fp.require_active_rollup(per, tot))
 
 
 def test_active_rollup_zero_band():
     per = {b: _spd(6, i) for i, b in enumerate(fp.BANDS)}
     per["MuonResolution"] = np.zeros((6, 6))     # a band that contributes nothing
     tot = sum(per.values())
-    assert _raises(lambda: fp.check_active_rollup(per, tot))
+    assert _raises(lambda: fp.require_active_rollup(per, tot))
 
 
 def test_active_rollup_total_mismatch():
     per = {b: _spd(6, i) for i, b in enumerate(fp.BANDS)}
     tot = sum(per.values()) + _spd(6, 99)        # total != sum of the 5
-    assert _raises(lambda: fp.check_active_rollup(per, tot))
+    assert _raises(lambda: fp.require_active_rollup(per, tot))
 
 
 # --------------------------------------------------------------------------- pure-sum vs subtraction
