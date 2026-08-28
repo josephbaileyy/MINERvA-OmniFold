@@ -54,8 +54,7 @@ rsync -av \
   josephrb@dtn01.nersc.gov:/global/homes/j/josephrb/MINERvA-OmniFold/docs/orchestration/
 
 rsync -avR \
-  ./.agents/skills/persistent-orchestrator \
-  ./.claude/skills/persistent-orchestrator \
+  ./.agents/retired-skills/persistent-orchestrator \
   josephrb@dtn01.nersc.gov:/global/homes/j/josephrb/MINERvA-OmniFold/
 ```
 

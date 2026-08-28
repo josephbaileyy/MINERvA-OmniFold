@@ -1160,8 +1160,8 @@ def preflight(ctx: Ctx, quiet: bool = False, control_plane: bool = False) -> lis
     `control_plane` DEFAULTS OFF because dispatch_one() uses this function as a
     fail-closed gate: making a dispatch depend on squeue reachability or on some
     unrelated watch's subject would strand real events, and would add a Slurm round
-    trip per watch to every dispatch. The CLI turns it on; the dispatch path is
-    byte-for-byte unchanged.
+    trip per watch to every dispatch. The CLI turns it on; the dispatch path runs
+    the environment checks only.
     """
     problems: list[str] = []
     python = ctx.python_bin()
@@ -1199,9 +1199,10 @@ def preflight(ctx: Ctx, quiet: bool = False, control_plane: bool = False) -> lis
 def build_root_resume(ctx: Ctx, event: dict) -> tuple[list[str], dict]:
     """Build the resume command for whichever provider currently holds root.
 
-    The root is normally the canonical Codex thread; during a Codex capacity
-    conservation window it may be an interim Claude session (PORTING.md §6d).
-    Binary paths are always absolute (F2) and the provider home is explicit.
+    The provider is whatever `waker-config.json` `root.profile` names: a Codex
+    thread resumed with `codex exec resume`, or a Claude session resumed through
+    `agentctl.build_resume_command`. Binary paths are always absolute (F2) and
+    the provider home is explicit.
     """
     root = ctx.root()
     profile = agentctl.get_profile(ctx.profiles(), root.get("profile", "codex-personal"))
@@ -2139,7 +2140,10 @@ def main() -> int:
 
     pre = commands.add_parser(
         "preflight",
-        help="Validate binaries, root profile, CODEX_HOME, the cron ticker, and armed watch subjects",
+        help=(
+            "Validate binaries, root profile, the root provider home and working "
+            "directory, the cron ticker, and armed watch subjects"
+        ),
     )
     pre.add_argument(
         "--env-only",
