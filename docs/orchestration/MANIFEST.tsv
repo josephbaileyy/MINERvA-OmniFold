@@ -558,7 +558,7 @@ docs/orchestration/test_usagectl.py	tracked	MACHINE	test-script			generated		exa
 docs/orchestration/test_verify_f8b_attestation.py	tracked	MACHINE	test-script			generated		exact-path-only		no	4	629	30460
 docs/orchestration/test_verify_receipt_artifacts.py	tracked	MACHINE	test-script			generated		exact-path-only		no	3	169	7985
 docs/orchestration/test_verify_run_receipt_blind_spots.py	tracked	MACHINE	test-script			generated		exact-path-only		no	5	288	14714
-docs/orchestration/test_wakerctl.py	tracked	MACHINE	test-script			generated		exact-path-only	docs/orchestration/verify_hash_bindings.py	no	6	1270	54224
+docs/orchestration/test_wakerctl.py	tracked	MACHINE	test-script			generated		exact-path-only	docs/orchestration/verify_hash_bindings.py	no	6	1275	54368
 docs/orchestration/test_wakerctl_preflight_watch_health.py	tracked	MACHINE	test-script			generated		exact-path-only		no	0	397	17890
 docs/orchestration/test_watch_report_train_run.py	tracked	MACHINE	test-script			generated		exact-path-only		no	2	564	27923
 docs/orchestration/test_watch_slurm_array_resume.py	tracked	MACHINE	test-script			generated		exact-path-only		no	1	70	2995
