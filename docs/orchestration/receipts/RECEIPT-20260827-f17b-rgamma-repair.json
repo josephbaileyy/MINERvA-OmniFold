@@ -1,0 +1,7 @@
+{
+  "task": "f17b-rgamma2-repair",
+  "date": "2026-08-27",
+  "status": "COMPLETED",
+  "notes": "Implemented S-1, S-2, S-3, S-4 fixes. Preserver defect corrected with explicit containment (check before invocation and post-invocation). The earlier instruction to label missing fields as UNAVAILABLE-BY-INPUT-SCHEMA was withdrawn by the coordinating lane, and the comparator now fails closed (exit 4) if either measurement_wall_clock or branch_or_detached is missing from the input.",
+  "commit": "$(git rev-parse HEAD)"
+}
