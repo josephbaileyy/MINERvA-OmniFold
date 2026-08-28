@@ -213,7 +213,9 @@ account. The recovery pattern is:
 2. run every writer in its own worktree and land only reviewed commits.
    `agentctl start` rejects a dirty Git checkout or a directory already owned
    by another registered role, and both `start` and `send` hold a cwd-keyed
-   lock for the complete provider turn;
+   lock for the complete provider turn. When `--registry` names an external
+   runtime registry, turn receipts are stored beside it under `agent-runs/`
+   rather than dirtying the pinned control checkout;
 3. use `usagectl.py select --provider codex --json` for each **new bounded
    worker**, or let `agentctl.py start --profile auto-codex ...` perform that
    fail-closed selection and record the concrete profile; never silently

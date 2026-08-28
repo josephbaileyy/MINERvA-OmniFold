@@ -187,6 +187,14 @@ class AutoCodexProfileTests(unittest.TestCase):
 
 
 class WorktreeIsolationTests(unittest.TestCase):
+    def test_external_registry_keeps_run_receipts_out_of_control_checkout(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            registry = Path(temporary) / "runtime" / "sessions.json"
+            base = agentctl.run_base("root", "start", registry)
+        self.assertEqual(
+            base.parent.parent, registry.resolve().parent / "agent-runs"
+        )
+
     def test_new_role_rejects_registered_shared_cwd(self):
         with tempfile.TemporaryDirectory() as temporary:
             cwd = Path(temporary).resolve()

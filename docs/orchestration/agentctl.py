@@ -502,9 +502,16 @@ def run_worker(
     return session_id, result, metadata
 
 
-def run_base(role: str, action: str) -> Path:
+def run_base(
+    role: str, action: str, registry_path: Path = DEFAULT_REGISTRY
+) -> Path:
     stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    return HERE / "runs" / role / f"{stamp}-{action}-{uuid.uuid4().hex[:8]}"
+    runs_dir = (
+        HERE / "runs"
+        if registry_path.resolve() == DEFAULT_REGISTRY.resolve()
+        else registry_path.resolve().parent / "agent-runs"
+    )
+    return runs_dir / role / f"{stamp}-{action}-{uuid.uuid4().hex[:8]}"
 
 
 def start(
@@ -533,7 +540,7 @@ def start(
         assert_clean_git_start(cwd)
         with exclusive_lock(cwd_lock_path(registry_path, cwd)):
             provisional_id = str(uuid.uuid4())
-            base = run_base(role, "start")
+            base = run_base(role, "start", registry_path)
             provider_log = base.with_suffix(".agy.log") if profile["provider"] == "agy" else None
             command, env = build_start_command(
                 profile, prompt, cwd, provisional_id, provider_log=provider_log
@@ -583,7 +590,7 @@ def send(args: argparse.Namespace, profiles: dict, registry_path: Path) -> None:
         profile = get_profile(profiles, session["profile"])
         cwd = Path(session["cwd"])
         with exclusive_lock(cwd_lock_path(registry_path, cwd)):
-            base = run_base(role, "send")
+            base = run_base(role, "send", registry_path)
             provider_log = base.with_suffix(".agy.log") if profile["provider"] == "agy" else None
             command, env = build_resume_command(
                 profile,
