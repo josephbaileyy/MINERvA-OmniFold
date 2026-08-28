@@ -174,8 +174,8 @@ def main():
           f"floors at 0; a post-hoc clip is exact, matching max(0,.))")
     print(f"        all learned reweights finite (no NaN/inf): {finite_ok}; "
           f"no crash -> LGBM tolerates negative sample weights.")
-    print("        NOTE: floor is structural, not a well-posed fit in B>D; that "
-          "region is where Stay-Positive (negweight-refined) would refine.")
+    print(f"        NOTE: floor is structural, not a well-posed fit in B>D; that "
+          f"region is where Stay-Positive (negweight-refined) would refine.")
     print("\nDONE")
 
 

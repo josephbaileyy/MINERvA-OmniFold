@@ -213,7 +213,7 @@ def main():
 
     # ---------------- GATE B ----------------------------------------------------------------
     pass_gen = np.asarray(mc.pass_gen).astype(bool)
-    print("\n=== GATE B: does the SAVED checkpoint reproduce the stored push? ===")
+    print(f"\n=== GATE B: does the SAVED checkpoint reproduce the stored push? ===")
     print(f"  pass_gen {int(pass_gen.sum())} of {pass_gen.size}")
 
     # B(ii) FIRST: it needs no model, no GPU, and no tolerance. If the stored push is not exactly 1.0
@@ -339,11 +339,11 @@ def main():
     wr = w_reco * scale
     r_stored = float((wr[pass_reco] * stored_push[pass_reco]).sum() / wr[pass_reco].sum())
     r_rebuilt = float((wr[pass_reco] * rebuilt[pass_reco]).sum() / wr[pass_reco].sum())
-    print("\n=== consequence for the reported fold-forward ratio ===")
+    print(f"\n=== consequence for the reported fold-forward ratio ===")
     print(f"  artifact telemetry            {ff['ratio']:.6f}")
     print(f"  recomputed from stored push   {r_stored:.6f}  (checks my w_reco handling)")
     print(f"  recomputed from CHECKPOINT    {r_rebuilt:.6f}")
-    print("  R (required)                  1.124080")
+    print(f"  R (required)                  1.124080")
     rec["consequence"] = {"ratio_artifact": ff["ratio"], "ratio_from_stored": r_stored,
                           "ratio_from_checkpoint": r_rebuilt,
                           "w_reco_renorm_scale": scale}

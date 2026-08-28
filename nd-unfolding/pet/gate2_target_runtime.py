@@ -22,6 +22,7 @@ from pathlib import Path
 import platform
 import resource
 import socket
+import struct
 import subprocess
 import sys
 import time

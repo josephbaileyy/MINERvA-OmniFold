@@ -1,4 +1,4 @@
-from tensorflow.keras.layers import Dense, Input
+from tensorflow.keras.layers import Dense, Input, Dropout
 import tensorflow.keras.layers as layers
 from tensorflow.keras.models import Model
 import tensorflow as tf

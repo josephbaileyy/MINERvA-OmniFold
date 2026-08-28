@@ -22,6 +22,7 @@ a receipt that recorded `niter: 2, epochs: 8`. Everything added below exists so 
 the RESULT rather than its own constants; see `validate_pet_nominal_gate4.check_freeze`.
 """
 import argparse
+import functools
 import hashlib
 import io
 import json
