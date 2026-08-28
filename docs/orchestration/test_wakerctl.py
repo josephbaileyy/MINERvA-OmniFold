@@ -29,7 +29,12 @@ class FakeRunner:
     def __call__(self, argv, env=None, cwd=None, input_text=None):
         with self.lock:
             self.calls.append(
-                {"argv": list(argv), "env": dict(env) if env else None, "input": input_text}
+                {
+                    "argv": list(argv),
+                    "env": dict(env) if env else None,
+                    "cwd": Path(cwd).resolve() if cwd else None,
+                    "input": input_text,
+                }
             )
         for predicate, returncode, stdout in self.rules:
             if predicate(argv):
