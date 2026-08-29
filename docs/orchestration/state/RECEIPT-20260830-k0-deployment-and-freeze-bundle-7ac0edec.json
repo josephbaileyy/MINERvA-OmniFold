@@ -1,0 +1,282 @@
+{
+  "schema": "freeze-detectability-receipt/v1",
+  "recorded_utc": "2026-08-29T23:33:46Z",
+  "recorded_local_campaign_date": "2026-08-30 (Europe/Paris)",
+  "recorded_by": "DEPLOYMENT PRODUCER lane for the forward-only k=0 rehearsal, running on the claude-school account. This lane implemented the deployment and is therefore INELIGIBLE to perform step 3's independent full-chain grade.",
+  "authority": "PROPOSAL-20260830-forward-only-rehearsal.md sections 1 ('Make writable, deploy, and re-freeze') and 2 ('A new freeze, scoped to the new pin and its own F-1(b)'), approved as a unit -- and the deployment ruled DELEGATED -- by DECISION-20260830-joseph-accept-forward-only-rehearsal.md (commit 28d406ba). THE PIN IS 7ac0edec, NOT the proposal's 32e403b8: the decision supersedes the proposal's text on that point.",
+  "CITABLE_FOR": [
+    "That /pscratch/sd/j/josephrb/k0r2/clean was deployed detached at 7ac0edecf45bf95ce0d2e2b6c2f8130a95b3994b on 2026-08-29T23:26Z, and that A-2(a)-(g) all MET against the new declaration afterwards.",
+    "That the new local-only freeze ref refs/tags/freeze/k0-7ac0edec exists in two repositories and is explicitly present in the new recovery bundle's list-heads.",
+    "That recovery of the new pin from that bundle ALONE was TESTED, not asserted.",
+    "Detecting a LATER change to the newly pinned state, by re-running the reverification recipe below and comparing against these values."
+  ],
+  "NOT_CITABLE_FOR": [
+    "Any Gate-2 clause. GATE 2 REMAINS FAIL.",
+    "A fitness finding for the F-17(b) chain. The latest independent grade is F17B-REPAIRED-CHAIN: NOT FIT on finding N1. This deployment removes N1's MECHANISM by replacing the stale deployed measurer; it does not convert that grade into FIT. Only step 3's fresh independent grader can, and this lane is ineligible to be that grader.",
+    "Readiness, Gate-1 PASS, or authorization to submit anything. Step 4 of the sequence is conditional on all three of a fresh full-chain FIT, the section-10.1 readiness confirmation, and a Gate-1 PASS. None has happened.",
+    "Leg 6, any M(ii) leg, any member, C_ML, Gate-6 compute, a covariance construction or adoption, or any publication claim.",
+    "The new rehearsal's F-1(b). It is NOT filed here, deliberately: the new freeze EXPIRES on that filing, and it belongs to the rehearsal rather than to this deployment.",
+    "A byte-image of the frozen clone's own object store -- see limitations.",
+    "Any claim that the deployed tree CANNOT be modified. It can: .git is writable by ruling. This receipt makes a change DETECTABLE, not impossible."
+  ],
+  "superseded_pin_row_oi_123": {
+    "rule": "A pin may only be SUPERSEDED by a new dated row stating old value, new value and reason, never silently repointed (OI-123).",
+    "date": "2026-08-30",
+    "pin_name": "the deployed execution tree /pscratch/sd/j/josephrb/k0r2/clean",
+    "old_value": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+    "new_value": "7ac0edecf45bf95ce0d2e2b6c2f8130a95b3994b",
+    "reason": "At aa67c426 the deployed measure_m1_m6.py predates the measurement_wall_clock and branch_or_detached keys that the repaired compare_m1_m6.py requires, and measure_k0_farend_f1b_f17b.sh takes MEASURER from its hardcoded CODE_ROOT -- which is finding N1. Deploying the repaired pair at the same code root makes the unchanged wiring resolve the repaired measurer, dissolving N1 without an override, a PYTHONPATH substitution, an MNV_MEASURER override, a copied file, an in-place edit, or a schema exception. None of those was used.",
+    "authority_for_the_supersession": "DECISION-20260830-joseph-accept-forward-only-rehearsal.md",
+    "old_pin_not_destroyed": "aa67c426 remains recoverable from k0-clean-aa67c426-20260826T075536Z.bundle, re-verified in full immediately before the move; see RECEIPT-20260830-aa67c426-preservation-remeasurement.json."
+  },
+  "why_7ac0edec_and_not_32e403b8": {
+    "measured": "The only paths differing between 32e403b8 and 7ac0edec are three .md files (DECISION-20260830-joseph-mii-family-and-leg6.md, PROPOSAL-20260830-forward-only-rehearsal.md, RECEIPT-20260830-k0-f1b-producer-filing.md) and docs/orchestration/MANIFEST.tsv -- ZERO .py and ZERO .sh.",
+    "consequence": "mnv_source_manifest.py:70 sets SOURCE_SUFFIXES = ('.py', '.sh'), so the A-2(f) source listing digest is identical at both shas and the choice changes no measurement. Independently confirmed: nd-unfolding/mnv_source_manifest.py is the SAME BLOB f643a1ec at aa67c426, 32e403b8 and 7ac0edec.",
+    "the_four_pinned_artifacts_verified_at_7ac0edec": {
+      "docs/orchestration/measure_m1_m6.py": {"sha256": "ce52ff773c5261ed54cfc63150ef740785d5ed5aa81c9ae271d935f0efc3ed51", "bytes": 14108},
+      "docs/orchestration/compare_m1_m6.py": {"sha256": "28490539b60c4a790f77b5dd1070dc7e9d192efabebee640662d9496cf465242", "bytes": 67440},
+      "docs/orchestration/measure_k0_farend_f1b_f17b.sh": {"sha256": "ad1a8b6405e55094afbaa9cab00b0a2b7afb0fa52835653d147dad6e92b84775", "bytes": 16358},
+      "docs/orchestration/m1m6_expected_differences.json": {"sha256": "13547f3f21333ea0545b232e7ca28847401cd4318fbf13e4e75c5276765efc2c", "bytes": 11302},
+      "verdict": "all four equal the proposal's section-1 table exactly, measured from the git objects rather than from a working copy"
+    }
+  },
+  "deployed_tree": {
+    "path": "/pscratch/sd/j/josephrb/k0r2/clean",
+    "head": "7ac0edecf45bf95ce0d2e2b6c2f8130a95b3994b",
+    "head_equals_pin": true,
+    "detached": true,
+    "detachment_evidence": [
+      ".git/HEAD contains the bare sha 7ac0edecf45bf95ce0d2e2b6c2f8130a95b3994b, not a `ref:` line",
+      "git symbolic-ref -q HEAD returns rc=1",
+      "git branch --show-current is empty",
+      "refs/heads is EMPTY -- the tree carries no branch at all",
+      "the tree carries no remote"
+    ],
+    "head_tree": "5c23cad659fa5ad16aeff693d7d177eb69b80644",
+    "head_tree_cross_checked_against": "the same object computed independently in the local canonical checkout (git rev-parse 7ac0edec^{tree}) and in the clone recovered from the new bundle -- three agreements",
+    "porcelain_lines": 0,
+    "porcelain_with_ignored_lines": 0,
+    "tracked_files": 1804,
+    "ref_count": 11,
+    "refs": [
+      {"sha": "ad93836aabcc12a4ed905663fd16418c8872e659", "ref": "refs/tags/evidence/agy-review-wt-c1b63820"},
+      {"sha": "e9ca0f37b454957e1b9af53aff0a3d542f068547", "ref": "refs/tags/evidence/ben-225-ea4a4f3d"},
+      {"sha": "9ab6535587b31cf0d4a26678608eea638810d626", "ref": "refs/tags/evidence/ben-382-e477afb1"},
+      {"sha": "fb6f828803677434ddcf0f7a326c33fccb842150", "ref": "refs/tags/evidence/ben-454-anchor-comparator-ecee9ff1"},
+      {"sha": "dacf2c6c773f2961264ceb0ae1ff3081e58904f2", "ref": "refs/tags/evidence/ben-468-baseline-8e48a811"},
+      {"sha": "e956e495070b1850cd939920937cc1850fd6a385", "ref": "refs/tags/evidence/ben-482-aae49f2a"},
+      {"sha": "3424f18f5d650bc8b94be6be2219de2aa8159690", "ref": "refs/tags/evidence/prepublication-2026-08-20-0b329e8a"},
+      {"sha": "89efca85fde90e5c57d6265bbb61543a64294ee4", "ref": "refs/tags/evidence/prepublication-excluded-audit-bb16c270"},
+      {"sha": "0e6e6a49e307d73bfd8b6e899b447ec3c11e35bc", "ref": "refs/tags/evidence/prepublication-excluded-gregor-b65f9ff2"},
+      {"sha": "e895b3595658d5bf14352c5fc4b1a82fa2d13f03", "ref": "refs/tags/evidence/standing-compute-grant-22668401"},
+      {"sha": "7ac0edecf45bf95ce0d2e2b6c2f8130a95b3994b", "ref": "refs/tags/freeze/k0-7ac0edec"}
+    ],
+    "ref_set_delta_from_the_aa67c426_state": "+1 row, refs/tags/freeze/k0-7ac0edec, which points AT the deployed pin. The ten evidence tags are unchanged. DECLARATION-20260823 section 6.9 declined to add a tag to this tree because a tag is a checkout route; that reasoning was about a tag pointing at the EXCURSION commit 9db42a6d, i.e. at a wrong state. A tag pointing at the state HEAD already occupies adds no reachable state and is the durability fix for the loss recorded in the preservation receipt.",
+    "no_branch_or_remote_tracking_refs": true,
+    "permissions": [
+      "dr-xr-x--- /pscratch/sd/j/josephrb/k0r2/clean",
+      "drwxrwx--- /pscratch/sd/j/josephrb/k0r2/clean/.git"
+    ],
+    "chmod_of_dotgit_applied": false,
+    "mode_histogram_working_tree_dotgit_pruned": {
+      "directories": {"550 (dr-xr-x---)": 184},
+      "regular_files": {"440 (-r--r-----)": 1638, "550 (-r-xr-x---)": 165},
+      "symlinks": 1,
+      "total_paths_accounted": "1638 + 165 + 1 = 1804 = the tracked file count; 184 directories includes the root",
+      "writable_files_outside_dotgit": 0,
+      "writable_directories_outside_dotgit": 0
+    },
+    "mode_round_trip": "Before part 1 the same walk measured 150 directories at 550, 1421 files at 440 and 161 at 550, 0 writable. Part 1 moved them to 750/640/750 and part 5 returned every one to 550/440/550. The deltas -- 150->184 directories, 1421->1638 and 161->165 files -- are exactly the 221 paths the checkout ADDED (0 paths were deleted). `chmod a-w` removes write bits without touching execute bits, which is why the 165 executables come back at 550 and not at 440; the proposal's `-r--r-----` postcondition is the non-executable population and it holds for all 1638 of them."
+  },
+  "step_2_six_part_sequence": {
+    "part_1_make_writable": {
+      "command": "find /pscratch/sd/j/josephrb/k0r2/clean -path /pscratch/sd/j/josephrb/k0r2/clean/.git -prune -o -exec chmod u+w {} +",
+      "rc": 0,
+      "stderr_lines": 0,
+      "dotgit_pruned": "PROVEN, not asserted: writable-file count inside .git was 23 before and 23 after, and .git's own mode stayed 770. The script refused with exit 15 if they differed.",
+      "preconditions_each_with_its_own_refusal": [
+        "exit 11 unless HEAD == aa67c426afaa9b6ca91c9996637a6bade950da9a  (measured equal)",
+        "exit 12 unless git status --porcelain emits zero lines, counted with wc -l on a FILE and never as $? after a pipe  (measured 0)",
+        "exit 13 unless the target object is present  (present after the fetch below)",
+        "exit 14 unless .git mode is 770, i.e. the section-11.1.1 ruling has not been violated  (measured 770)"
+      ],
+      "scheduler_precondition": "squeue --me showed exactly one row, the long-held cron waker 57712764 (PD, BeginTime). No job of this lane's was running."
+    },
+    "part_2_fetch_and_detached_checkout": {
+      "object_absent_before": "git -C <clean> cat-file -e 7ac0edec...^{commit} returned rc=128; the tree had no remote at all",
+      "fetch": "git -C <clean> fetch --no-tags --no-write-fetch-head /pscratch/sd/j/josephrb/MINERvA-OmniFold refs/tags/freeze/k0-7ac0edec  -> rc=0",
+      "why_a_named_ref_and_not_a_bare_sha": "upload-pack refuses an unadvertised object by default, and fetching the canonical remote-tracking branch would have dragged three later commits into the store. Naming the freeze ref fetches exactly the pin's history and creates NO ref in the deploy tree -- measured: the ref count stayed 10 across the fetch.",
+      "full_sha_verified": "git -C <clean> rev-parse 7ac0edecf45bf95ce0d2e2b6c2f8130a95b3994b^{commit} echoed the full 40-character pin; cat-file -t returned `commit`",
+      "checkout": "git -C <clean> -c advice.detachedHead=false checkout --detach 7ac0edecf45bf95ce0d2e2b6c2f8130a95b3994b  -> rc=0",
+      "never_a_branch_name": true,
+      "reflog_entry": "aa67c426... 7ac0edec... ... login02 ... `checkout: moving from aa67c426afaa9b6ca91c9996637a6bade950da9a to 7ac0edecf45bf95ce0d2e2b6c2f8130a95b3994b`. NOTE: the reflog author is the deploy tree's own configured git identity (`Joseph Bailey <josephrb@login02...>`), not the acting lane. The acting lane is recorded in this receipt's `recorded_by`, and a reflog line must not be read as attribution."
+    },
+    "part_3_zero_porcelain_constitution_and_executing_identity": {
+      "porcelain_lines": 0,
+      "porcelain_with_ignored_lines": 0,
+      "collision_check_before_the_checkout": "All 221 paths the pin ADDS were tested for prior on-disk existence in the deploy tree: 0 collisions. git refuses a checkout that would clobber an untracked file but clobbers an IGNORED one silently, so this was measured rather than trusted. Independently, `status --porcelain --ignored` was 0 lines before the checkout: the tree held no untracked and no ignored file at all.",
+      "constitution_one_clause_per_invocation": {
+        "A-2(c) --require-checkout": 0,
+        "A-2(d) --require-no-nested-checkout": 0,
+        "A-2(e) --require-not-nested": 0,
+        "is_checkout": true,
+        "markers": ["VALIDATION_LEDGER.md", "nd-unfolding"],
+        "nested_checkouts": [],
+        "enclosing_checkout": null
+      },
+      "bare_invocation_control": "python3 mnv_source_manifest.py --repo <clean> with no --write and no --compare returned rc=2 `COULD NOT LOOK`, re-confirmed live rather than quoted from history. rc=2 is `we could not look` in BOTH directions and is never a pass.",
+      "committed_identity_of_every_executable_copy": {
+        "tool": "nd-unfolding/pet/verify_executing_copy_is_committed.py, the copy INSIDE the deployed tree",
+        "tool_blob_is_HEADs_blob": "c9fb9dd0c617311f3eb070d57b0a647b64ce7ca3 == git rev-parse HEAD:nd-unfolding/pet/verify_executing_copy_is_committed.py",
+        "population": "EVERY tracked .py and .sh at the pin, one --pair each -- 820 pairs, not a named subset",
+        "rc": 0,
+        "result": "820 of 820 CURRENT, 0 STALE_BUT_COMMITTED, 0 UNCOMMITTED, 0 IN_ODB_UNREACHABLE, 0 MISSING",
+        "elapsed": "0:07.07",
+        "honest_limit": "--repo was the deploy tree itself, so this answers `are these bytes HEAD's bytes for these paths` and NOT `is this tree authoritative`. The second question is answered by A-2(a) plus the independent digest cross-check below, not by this tool."
+      }
+    },
+    "part_4_new_declaration": {
+      "path": "/pscratch/sd/j/josephrb/k0r2/declarations/7ac0edec/source-manifest.json",
+      "refused_if_present": "the script exits 21 rather than overwrite; the path did not exist",
+      "file_sha256": "ca6a8f2b0c8b73be9d69b6f8d2f97e5f63b1697571954d2db8f9227c8d11a032",
+      "file_bytes": 268643,
+      "file_mode": "-r--r----- (440), matching the aa67c426 declaration's mode",
+      "schema": "mnv_source_manifest/1",
+      "built_at_utc": "2026-08-29T23:28:39.524850+00:00",
+      "head": "7ac0edecf45bf95ce0d2e2b6c2f8130a95b3994b",
+      "suffixes": [".py", ".sh"],
+      "file_count": 820,
+      "listing_sha256": "8d036d9466eaff6ad1f6b62231b09a1dd9798c095d2d0f84ea96ba01a51fc8ea",
+      "dirty_count": 0,
+      "these_two_digests_are_different_objects": "`file_sha256` hashes the JSON file's bytes; `listing_sha256` is the recorded digest over the sorted `<sha256>  <relpath>` listing. They are not interchangeable.",
+      "disclosure_the_baseline_json_carries_a_mid_deployment_constitution_block": "Per the proposal's ordering, part 4 runs BEFORE part 5's re-protection, so this file's `constitution.mode_writable` records 1003 paths and `other_writable` records 983 -- the tree AS IT STOOD MID-DEPLOYMENT. That block is NOT the A-2(c)(d)(e)(g) result. The A-2 results are the part-6 measurements recorded below, taken after protection. The declaration's load-bearing content -- the per-file digests, the listing digest, the file count and the pin -- is unaffected by mode bits. This is stated in the declaration's own `label` field as well as here.",
+      "why_820_and_not_782": "aa67c426 -> 7ac0edec adds 221 tracked paths and deletes none; 38 of the 221 are .py or .sh. 782 + 38 = 820. Falsified by any add or removal of a tracked .py or .sh, and by nothing else. DO NOT INHERIT THESE NUMBERS -- re-run before the first sbatch and again after the last leg."
+    },
+    "part_5_remove_write_permission": {
+      "command": "find <clean> -path <clean>/.git -prune -o -exec chmod a-w {} +",
+      "rc": 0,
+      "stderr_lines": 0,
+      "dotgit_pruned": "PROVEN: writable-file count inside .git 23 before and 23 after; the script refused with exit 22 if they differed",
+      "tool_attestation": "python3 nd-unfolding/mnv_source_manifest.py --repo <clean> --apply-readonly --require-readonly --write <path> returned rc=0 and printed `applied A-2(g) write protection: 0 of 1003 protected path(s) changed mode, plus 0 non-tracked writable file(s)`. Zero changes means the hand lock was EXACTLY what the tool would have applied, so the protection is tool-attested rather than argued. This step is not redundant: the tool's own docstring records that the shell recipe it used to print was wrong.",
+      "postcondition_modes": "root dr-xr-x---, .git drwxrwx---, 184 directories at 550, 1638 regular files at 440, 165 at 550, 0 writable files and 0 writable directories outside .git"
+    },
+    "part_6_every_A2_check_filed": {
+      "interpreter": "/global/u2/j/josephrb/.conda/envs/root_6_28/bin/python3, Python 3.11.14 -- NAMED, not assumed. The login /usr/bin/python3 is 3.6.15 and exits 1 with a SyntaxError on `from __future__ import annotations`, which is neither the documented rc=2 nor a clause result.",
+      "instrument": "nd-unfolding/mnv_source_manifest.py, the copy INSIDE the deployed tree, blob f643a1ec022b8b95f15cc18e036cb819052e5cf9 == git rev-parse HEAD:nd-unfolding/mnv_source_manifest.py. The --require-* flags live in THIS file and not in mnv_guarded_run.py; sending them to the guard makes argparse exit 2 before measuring anything and produces a full slate of false failures.",
+      "results": {
+        "a": {"requirement": "rev-parse HEAD equals the declared sha", "verdict": "MET", "evidence": "7ac0edecf45bf95ce0d2e2b6c2f8130a95b3994b; raw .git/HEAD is that bare sha and not a `ref:`, so DETACHED; symbolic-ref rc=1; refs/heads empty"},
+        "b": {"requirement": "git status --porcelain emits zero lines", "verdict": "MET", "evidence": "lines=0 counted with wc -l on a file; --require-clean rc=0 in its own invocation"},
+        "c": {"requirement": "a checkout by the guard's own definition", "verdict": "MET", "evidence": "--require-checkout rc=0"},
+        "d": {"requirement": "no nested checkout beneath it", "verdict": "MET", "evidence": "--require-no-nested-checkout rc=0; nested_checkouts []"},
+        "e": {"requirement": "not nested inside another checkout", "verdict": "MET", "evidence": "--require-not-nested rc=0; enclosing_checkout null"},
+        "f": {"requirement": "full source manifest over tracked *.py/*.sh, plus one digest over that list", "verdict": "MET", "evidence": "--compare against the new declaration rc=0, `SOURCE MANIFEST IDENTICAL (820 files, 8d036d9466eaff6ad1f6b62231b09a1dd9798c095d2d0f84ea96ba01a51fc8ea)`"},
+        "g": {"requirement": "write protection applied", "verdict": "MET", "evidence": "--require-readonly rc=0; mode_writable [], uid_writable [], other_writable []; and independently 0 writable files and 0 writable directories outside .git from a filesystem walk"}
+      },
+      "consolidated_invocation": "all five --require-* plus --compare in ONE invocation: rc=0, SOURCE MANIFEST IDENTICAL (820 files, 8d036d94...). Each clause was ALSO measured in a separate invocation so that one rc means one clause.",
+      "mismatch_controls": {
+        "A-2(f) fires on bad": "--compare against the SUPERSEDED /pscratch/sd/j/josephrb/k0r2/declarations/aa67c426/source-manifest.json returned rc=3 MEASURED DIFFERENCE with `SOURCE MANIFEST MOVED`, recorded fa3489e2... at HEAD aa67c426... vs live 8d036d94... at HEAD 7ac0edec..., and 25 ADDED lines printed. rc=3 is the passing answer for a firing control and is deliberately not rc=2.",
+        "A-2(g) fires on one bit on one file": "chmod u+w nd-unfolding/mnv_source_manifest.py (440 -> 640) then --require-readonly returned rc=2, `A-2(g): 1 tracked source path(s) still carry a write bit, e.g. ['nd-unfolding/mnv_source_manifest.py']`. One bit on one file is enough.",
+        "A-2(g) silent on good": "chmod a-w restored 440; --compare --require-clean --require-readonly returned rc=0 with SOURCE MANIFEST IDENTICAL (820 files, 8d036d94...). The tree ends in the state this receipt records.",
+        "A-2(g) fires on the whole writable tree": "run at part 3, while the tree was deliberately writable mid-deployment, --require-readonly returned rc=2 and BOTH arms fired: 983 non-tracked paths with a write bit and 1003 tracked-source paths with a write bit.",
+        "A-2(b)(c)(d)(e) arms fire, measured in a disposable fixture": "(c) rc=2 on a marker-less git tree; (d) rc=2 on a tree with a checkout nested beneath it, naming ['inner']; (e) rc=2 on a tree nested inside a checkout, naming the enclosing path; (b) rc=2 on a dirty tree, `--require-clean and git status --porcelain emitted 1 line(s)`. Fixture created under /pscratch/sd/j/josephrb/tmp by mktemp -d and removed.",
+        "the_limit_of_the_fixture_arms": "They prove the INSTRUMENT's arms fire. They say nothing about the deploy tree. The claim about the deploy tree rests on the rc=0 measurements taken on it, not on these controls -- a control proving the instrument works leaves the claim untested."
+      },
+      "independent_cross_check_of_the_filed_digest": "Before touching the cluster, the A-2(f) listing digest for 7ac0edec was computed OFF-CLUSTER from git objects alone (git ls-tree -r plus git cat-file blob, sorted by relpath, `<sha256>  <relpath>\\n` per line, sha256 of the concatenation): 820 files, 8d036d9466eaff6ad1f6b62231b09a1dd9798c095d2d0f84ea96ba01a51fc8ea. POSITIVE CONTROL for that script: the same code at aa67c426 reproduced 782 files and fa3489e22168954bebcc9a602338d924582fd231643bfa285b3a9225e7535420, the values the 2026-08-23 declaration and the 2026-08-30 F-1(b) filing both record. The deployed tree, and separately the clone recovered from the new bundle, then each measured 820 / 8d036d94... -- three independent agreements from three different object stores."
+    }
+  },
+  "new_freeze_ref": {
+    "name": "refs/tags/freeze/k0-7ac0edec",
+    "target": "7ac0edecf45bf95ce0d2e2b6c2f8130a95b3994b",
+    "lightweight_and_local_only": true,
+    "pushed": false,
+    "created_in_two_repositories_on_purpose": [
+      "/pscratch/sd/j/josephrb/k0r2/clean  (the deployed tree the freeze is ABOUT)",
+      "/pscratch/sd/j/josephrb/MINERvA-OmniFold  (the canonical cluster checkout, which is also the bundle source; `git bundle create` refuses a bare sha, so a name is required)"
+    ],
+    "why_two": "The aa67c426 freeze ref lived in exactly one working checkout, that checkout no longer exists, and the ref was therefore present in no live repository when this deployment began. Two copies plus explicit presence in the bundle makes the same decay detectable."
+  },
+  "bundle": {
+    "path": "/pscratch/sd/j/josephrb/k0r2/freeze-receipts/k0-clean-7ac0edec-20260829T233037Z.bundle",
+    "bytes": 82761577,
+    "sha256": "514bd46e70bb828d6116f98cbb2d660b74fd43be704dcdf067145dc578a0280d",
+    "contains_ref": "refs/tags/freeze/k0-7ac0edec",
+    "generated_from": "/pscratch/sd/j/josephrb/MINERvA-OmniFold (the canonical cluster checkout, HEAD 32e403b8 on branch main, 722 porcelain lines -- a dirty working tree does not affect a bundle, which is built from objects and refs)",
+    "generated_from_is_NOT_the_frozen_clone": "deliberate, and for the reason the 2026-08-26 receipt measured: `git bundle create` in the frozen clone did not complete in 45 minutes and had to be killed, because 19 packs totalling 2.598 GiB must be read and re-packed over Lustre.",
+    "create_rc": 0,
+    "verify_rc": 0,
+    "verify_tail": ["The bundle records a complete history.", "The bundle uses this hash algorithm: sha1"],
+    "list_heads_rows": 11,
+    "heads": [
+      {"sha": "7ac0edecf45bf95ce0d2e2b6c2f8130a95b3994b", "ref": "refs/tags/freeze/k0-7ac0edec"},
+      {"sha": "ad93836aabcc12a4ed905663fd16418c8872e659", "ref": "refs/tags/evidence/agy-review-wt-c1b63820"},
+      {"sha": "e9ca0f37b454957e1b9af53aff0a3d542f068547", "ref": "refs/tags/evidence/ben-225-ea4a4f3d"},
+      {"sha": "9ab6535587b31cf0d4a26678608eea638810d626", "ref": "refs/tags/evidence/ben-382-e477afb1"},
+      {"sha": "fb6f828803677434ddcf0f7a326c33fccb842150", "ref": "refs/tags/evidence/ben-454-anchor-comparator-ecee9ff1"},
+      {"sha": "dacf2c6c773f2961264ceb0ae1ff3081e58904f2", "ref": "refs/tags/evidence/ben-468-baseline-8e48a811"},
+      {"sha": "e956e495070b1850cd939920937cc1850fd6a385", "ref": "refs/tags/evidence/ben-482-aae49f2a"},
+      {"sha": "3424f18f5d650bc8b94be6be2219de2aa8159690", "ref": "refs/tags/evidence/prepublication-2026-08-20-0b329e8a"},
+      {"sha": "89efca85fde90e5c57d6265bbb61543a64294ee4", "ref": "refs/tags/evidence/prepublication-excluded-audit-bb16c270"},
+      {"sha": "0e6e6a49e307d73bfd8b6e899b447ec3c11e35bc", "ref": "refs/tags/evidence/prepublication-excluded-gregor-b65f9ff2"},
+      {"sha": "e895b3595658d5bf14352c5fc4b1a82fa2d13f03", "ref": "refs/tags/evidence/standing-compute-grant-22668401"}
+    ]
+  },
+  "postconditions": {
+    "pin_present_in_list_heads": true,
+    "assertion_form": "an EXACT-ROW grep for `^7ac0edecf45bf95ce0d2e2b6c2f8130a95b3994b refs/tags/freeze/k0-7ac0edec$`, count == 1, and the script refuses with exit 31 otherwise -- not a substring search, because a substring match can succeed against the wrong row in either direction",
+    "frozen_ref_set_reproduced": true,
+    "note": "This is the gate Joseph required on 2026-08-26, carried forward verbatim in intent. A `--all` bundle would still FAIL it while exiting 0: the deployed clone has no branch and no remote-tracking ref, and `merge-base --is-ancestor 7ac0edec <evidence tag>` is FALSE for all ten, so `--all` would produce a verifying, digestible bundle containing nothing to recover. The pin is therefore named EXPLICITLY and asserted present afterwards. `git bundle verify` does not cover this: it checks well-formedness and prerequisites, not that the bundle holds what you meant."
+  },
+  "tested_recovery": {
+    "method": "git clone --no-local <bundle> <tmp>/rec  (--no-local forbids object sharing, so the bundle is the only source), then fsck, then a detached checkout of the freeze ref",
+    "clone_rc": 0,
+    "fsck_rc": 0,
+    "checkout_rc": 0,
+    "recovered_head": "7ac0edecf45bf95ce0d2e2b6c2f8130a95b3994b",
+    "recovered_tree": "5c23cad659fa5ad16aeff693d7d177eb69b80644",
+    "recovered_tree_equals_deployed_head_tree": true,
+    "recovered_working_tree_porcelain_lines": 0,
+    "recovered_tracked_files": 1804,
+    "recovered_tags": 11,
+    "recovered_source_manifest": "820 tracked source files, listing sha256 8d036d9466eaff6ad1f6b62231b09a1dd9798c095d2d0f84ea96ba01a51fc8ea, HEAD 7ac0edec..., dirty 0 -- measured by running the recovered clone's OWN copy of mnv_source_manifest.py against itself",
+    "scratch": "/pscratch/sd/j/josephrb/tmp/recov7ac.iTopQ1, created by mktemp -d and removed after measurement",
+    "honest_limit_of_this_arm": "recovered_tree matching 7ac0edec^{tree} is NOT an independent confirmation -- both are the same git object. What this arm establishes is that the BUNDLE ALONE reconstructs a clean checkout at the pin. Independence comes from the separate measurement that the deployed clone's HEAD IS that commit, and from the off-cluster digest computation."
+  },
+  "limitations": [
+    "The bundle was generated from the canonical cluster checkout, not from the deployed clone's own object store, for the measured Lustre/pack reason above. Consequence: this is a recovery source for the pinned COMMIT and the deployed clone's REF SET, not a byte-image of that clone's object store. The pinned STATE is identified by HEAD + ref set + commit content, and all three are recorded here.",
+    "Reading the deployed clone with git is NOT a read-only act (DECISION-20260825 section 11.1): a git invocation there may write a lock into .git. Every read in this work set GIT_OPTIONAL_LOCKS=0 and PYTHONDONTWRITEBYTECODE=1, and every tool output was written OUTSIDE the deploy tree.",
+    "The new freeze rule is preventive prose plus A-2(a) detection, not a mechanical guarantee. It is weaker than 'the tree is read-only' sounds: .git is writable by ruling, the owner may chmod the working tree back, and root ignores mode bits. What the arrangement gives is that any deliberate move leaves a trace in A-2(a) and A-2(f).",
+    "A-2(g) is scoped by the tool to tracked sources and their containing directories -- 1003 protected paths here. No A-2 claim in this receipt is phrased over the whole tree, and loose-object modes inside .git appear in no clause."
+  ],
+  "dotgit_delta_partitioned_rather_than_summarised": {
+    "writable_files_in_dotgit_before": 23,
+    "writable_files_in_dotgit_after": 24,
+    "the_plus_one_named": "refs/tags/freeze/k0-7ac0edec, mode 660 -- the loose ref file created by `git tag`. Identified by listing all 24 writable paths, not inferred from the count.",
+    "writable_files_under_dotgit_objects": 0,
+    "packs_before": 19,
+    "packs_after": 20,
+    "the_plus_one_pack": "written by the part-2 fetch",
+    "gc_log_present": false,
+    "no_gc_or_pack_refs_was_run": true
+  },
+  "reverification_recipe": [
+    "sha256sum /pscratch/sd/j/josephrb/k0r2/freeze-receipts/k0-clean-7ac0edec-20260829T233037Z.bundle   # must equal bundle.sha256",
+    "GIT_OPTIONAL_LOCKS=0 git -C /pscratch/sd/j/josephrb/k0r2/clean rev-parse HEAD   # must equal deployed_tree.head",
+    "cat /pscratch/sd/j/josephrb/k0r2/clean/.git/HEAD   # must be that bare sha, NOT a `ref:` line",
+    "GIT_OPTIONAL_LOCKS=0 git -C /pscratch/sd/j/josephrb/k0r2/clean show-ref   # must equal deployed_tree.refs, exactly eleven rows and no others",
+    "stat -c '%A %n' /pscratch/sd/j/josephrb/k0r2/clean{,/.git}   # must equal deployed_tree.permissions",
+    "git bundle list-heads <bundle> | grep -c '^7ac0edecf45bf95ce0d2e2b6c2f8130a95b3994b refs/tags/freeze/k0-7ac0edec$'   # must be 1",
+    "git clone --no-local <bundle> <tmp> && git -C <tmp> checkout --detach freeze/k0-7ac0edec && git -C <tmp> status --porcelain   # must be empty",
+    "python3 <clean>/nd-unfolding/mnv_source_manifest.py --repo <clean> --compare /pscratch/sd/j/josephrb/k0r2/declarations/7ac0edec/source-manifest.json --write <tmp outside the tree> --require-clean --require-checkout --require-no-nested-checkout --require-not-nested --require-readonly   # must be rc=0, SOURCE MANIFEST IDENTICAL (820 files, 8d036d94...)",
+    "ANY mismatch is a finding, not a maintenance task: it means the pinned state moved."
+  ],
+  "what_was_deliberately_NOT_done": [
+    "Step 3 of the sequence. This lane implemented the deployment and is therefore ineligible to grade it; grading its own work would void the independence the whole gate rests on.",
+    "Any Slurm submission, queueing or scheduling. Step 4 is conditional on step 3 and two further decisions that have not happened.",
+    "Leg 6, any M(ii) leg, or any member.",
+    "Any gate change. Gate 2 remains FAIL and the F-17(b) chain remains NOT FIT on N1 until a fresh grader says otherwise.",
+    "The new rehearsal's F-1(b) filing. The new freeze expires on that filing and it belongs to the rehearsal.",
+    "Any edit to a .py or .sh anywhere. In particular measure_k0_farend_f1b_f17b.sh:71's `ON BRANCH -- would violate the 7.0.19 freeze` message was left alone: editing it would move the A-2(f) listing digest and falsify the declaration this deployment exists to file.",
+    "Any in-place edit, copied file, PYTHONPATH substitution, MNV_MEASURER override, or schema exception. The proposal is explicit that none of these is part of this deployment, and none was used."
+  ],
+  "gate_2": "FAIL. This receipt discharges no clause and authorizes no compute."
+}

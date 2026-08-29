@@ -4,10 +4,69 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ## Current work
 
+### 🔒 DEPLOYED AND RE-FROZEN AT `7ac0edec`, 2026-08-30 — steps 1–2 of the approved forward-only sequence. **NO COMPUTE, NO GRADE, NO GATE MOVED.**
+
+- [`FREEZE-20260830-k0-deployment-7ac0edec.md`](FREEZE-20260830-k0-deployment-7ac0edec.md)
+  — **THE DEPLOYED TREE `/pscratch/sd/j/josephrb/k0r2/clean` IS NOW FROZEN DETACHED AT
+  `7ac0edecf45bf95ce0d2e2b6c2f8130a95b3994b` UNTIL THE NEW REHEARSAL'S F-1(b) IS PRODUCER-FILED.** No
+  `checkout`, `reset`, `fetch`-and-merge, re-declaration or branch repoint in that directory, by any
+  lane. **It expires when that F-1(b) filing is COMMITTED — not when jobs merely look terminal**, and
+  it **cannot yet expire**: the rehearsal has not been submitted, so a zero-length job list is not a
+  far end. Carries the **superseded-pin row** required by `OI-123` — old `aa67c426…`, new
+  `7ac0edec…`, reason and authority — and records that the predecessor §7.0.19 freeze had **already
+  expired** (`FINDING-20260829`, plus the landed producer F-1(b) at `aa67c426`), so this replaced a
+  spent hold rather than breaking a live one. A **prose** hold: preventive by convention, detective by
+  A-2(a) **and** A-2(f), **not** a mechanical guarantee — `.git` is `drwxrwx---` **by ruling**
+  (§11.1.1), and ten `refs/tags/evidence/*` at non-pin commits leave `checkout <tag>` a live,
+  never-exercised route. **Authorizes nothing.**
+
+- [`DECLARATION-20260830-k0-deployment-7ac0edec.md`](DECLARATION-20260830-k0-deployment-7ac0edec.md)
+  — **A-2(a)–(g) all MET at the new pin, each clause in its own invocation.** `820` tracked `.py`/`.sh`,
+  listing sha256 `8d036d9466eaff6ad1f6b62231b09a1dd9798c095d2d0f84ea96ba01a51fc8ea`, declaration file
+  `ca6a8f2b…` at `/pscratch/sd/j/josephrb/k0r2/declarations/7ac0edec/source-manifest.json`, porcelain
+  **0** (and `--ignored` also 0), detached with **`refs/heads` empty and no remote**, `820 of 820`
+  executing copies **CURRENT**. `782 → 820` is arithmetic: `aa67c426 → 7ac0edec` adds 221 tracked
+  paths, deletes none, 38 of them `.py`/`.sh`. **The digest was predicted off-cluster from git objects
+  BEFORE the deployment and its predictor has a positive control at `aa67c426` (782 / `fa3489e2…`)**,
+  then confirmed by the deployed tree and again by the clone recovered from the new bundle — three
+  object stores. Firing controls recorded for **(b)(c)(d)(e)(f)(g)**, including `--compare` against the
+  superseded `aa67c426` declaration at **rc=3**. **Does NOT pass Gate 1, does NOT move Gate 2, and does
+  NOT convert `F17B-REPAIRED-CHAIN: NOT FIT` into FIT** — it removes N1's *mechanism*; the verdict is
+  step 3's, and the producing lane is ineligible to give it.
+
+- [`state/RECEIPT-20260830-k0-deployment-and-freeze-bundle-7ac0edec.json`](state/RECEIPT-20260830-k0-deployment-and-freeze-bundle-7ac0edec.json)
+  — the machine record: the six-part sequence with every command, new freeze ref
+  `refs/tags/freeze/k0-7ac0edec` **in two repositories**, bundle
+  `k0-clean-7ac0edec-20260829T233037Z.bundle` (82 761 577 B, sha256 `514bd46e…`), **exact-row**
+  `list-heads` assertion, recovery **TESTED** by `clone --no-local` → `fsck` → detached checkout
+  (porcelain 0, 1804 tracked, recovered clone re-measures 820 / `8d036d94…`), the mode round-trip, and
+  the `.git` delta **partitioned rather than summarised** (23 → 24 writable files; the +1 is *named*:
+  the new loose ref, with 0 writable files under `objects/`). Records that **no `.py`/`.sh` byte was
+  touched** and that no in-place edit, copied file, `PYTHONPATH` substitution, `MNV_MEASURER` override
+  or schema exception was used.
+
+- [`state/RECEIPT-20260830-aa67c426-preservation-remeasurement.json`](state/RECEIPT-20260830-aa67c426-preservation-remeasurement.json)
+  — **the precondition, and it PASSED before anything was made writable.** All six items of the
+  2026-08-26 receipt's `reverification_recipe` re-run and MATCHED: bundle `8ce58391…` / 79 140 251 B,
+  HEAD `aa67c426…`, ref set **exactly ten rows**, modes `dr-xr-x---` / `drwxrwx---`, pin in
+  `list-heads`, recovery clone/fsck/checkout rc=0 with tree `60120bfb…` and porcelain 0. **AND ONE
+  FINDING:** the receipt's `bundle.generated_from` path `/global/u2/j/josephrb/mnv-work/MINERvA-OmniFold`
+  **no longer exists**, so the local-only tag `refs/tags/freeze/k0-aa67c426` was present in **no live
+  cluster repository** — recoverability survived only because the recipe reads that ref out of the
+  **bundle**. Re-created at the same commit in the canonical checkout (a restoration, **not** a
+  repoint), and the generalisation is why the new freeze ref exists in two places.
+
 ### ✅ GATE 1 PASSES — round 9, 2026-08-23, 18 PASS / 0 FAIL / 0 NOT-EVALUABLE
 
 - [`DECISION-20260824-joseph-deployment-freeze-until-f1b.md`](DECISION-20260824-joseph-deployment-freeze-until-f1b.md)
-  — **THE DEPLOYED TREE IS FROZEN AT `aa67c426` UNTIL F-1(b) IS FILED.** No `checkout`, `reset`,
+  — **⚠ SUPERSEDED 2026-08-30, AND IT HAD ALREADY EXPIRED BEFORE THAT. Everything below was true
+  when written; do not read it as governing the deploy tree now.** Its expiry condition fired when
+  the producer F-1(b) at `aa67c426` was filed, and the tree is now held by
+  [`FREEZE-20260830-k0-deployment-7ac0edec.md`](FREEZE-20260830-k0-deployment-7ac0edec.md) at
+  `7ac0edec…` instead — see that document's superseded-pin row for old value, new value, reason and
+  authority (`OI-123`). Retained verbatim because it is the authority §7.0.19 was held against and
+  because annotating in place is this router's convention. **The historical statement follows.**
+  **THE DEPLOYED TREE IS FROZEN AT `aa67c426` UNTIL F-1(b) IS FILED.** No `checkout`, `reset`,
   `fetch`-and-merge, re-declaration or branch repoint in `/pscratch/sd/j/josephrb/k0r2/clean`, by any
   lane. **It expires when F-1(b) is TAKEN, not when the rehearsal "looks done"** — `combine`'s
   conjunctive `afterok` can read as queued while terminal. Contract **§7.0.19**. A **prose** hold:

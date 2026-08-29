@@ -1,0 +1,133 @@
+{
+  "schema": "freeze-detectability-receipt/v1",
+  "recorded_utc": "2026-08-29T23:23:28Z",
+  "recorded_local_campaign_date": "2026-08-30 (Europe/Paris, the timezone every commit in this sequence is dated in)",
+  "recorded_by": "DEPLOYMENT PRODUCER lane for the forward-only k=0 rehearsal, running on the claude-school account. This lane implemented the deployment and is therefore INELIGIBLE to perform step 3's independent full-chain grade.",
+  "authority": "PROPOSAL-20260830-forward-only-rehearsal.md section 1, 'Preserve aa67c426 before the deployment moves', item 1 (re-run the receipt's exact reverification recipe) and item 2 (file that remeasurement as a new dated receipt). Approved as part of the six-step sequence by DECISION-20260830-joseph-accept-forward-only-rehearsal.md (commit 28d406ba).",
+  "subject": "The 2026-08-26 preservation evidence for the superseded aa67c426 deployment, re-measured immediately BEFORE the authorized deployment moved the tree to 7ac0edec.",
+  "CITABLE_FOR": [
+    "That every one of the six items of state/RECEIPT-20260826-k0-freeze-bundle-detectability.json's `reverification_recipe` was re-run on 2026-08-29T23:23:28Z and MATCHED, so the preservation precondition of the proposal's section 1 PASSED before anything was made writable.",
+    "That the aa67c426 recovery route remained TESTED (not asserted) at that instant: clone --no-local from the bundle alone, fsck, detached checkout of the pin, zero-line porcelain.",
+    "That the local-only tag refs/tags/freeze/k0-aa67c426 was present in NO live cluster repository at that instant, and the 2026-08-26 receipt's `bundle.generated_from` path no longer exists.",
+    "The values a later party must compare against to detect a change to the aa67c426 BUNDLE, which is now the sole recovery source for that pin."
+  ],
+  "NOT_CITABLE_FOR": [
+    "Any Gate-2 clause. Gate 2 remains FAIL.",
+    "A fitness finding for the F-17(b) chain. The latest independent grade is F17B-REPAIRED-CHAIN: NOT FIT on N1 and only a fresh independent grader can move it.",
+    "The state of /pscratch/sd/j/josephrb/k0r2/clean AFTER 2026-08-29T23:26Z. That tree has been authorizedly redeployed; see RECEIPT-20260830-k0-deployment-and-freeze-bundle-7ac0edec.json.",
+    "Compute, adoption, a rehearsal, a covariance, or any publication claim."
+  ],
+  "recipe_item_results": [
+    {
+      "item": 1,
+      "recipe": "sha256sum <bundle>  # must equal bundle.sha256",
+      "expected": "8ce5839114f4ba6b9b6d231ae343988134cc752b172e5f1b521a9869555022c0",
+      "measured": "8ce5839114f4ba6b9b6d231ae343988134cc752b172e5f1b521a9869555022c0",
+      "bytes_expected": 79140251,
+      "bytes_measured": 79140251,
+      "verdict": "MATCH"
+    },
+    {
+      "item": 2,
+      "recipe": "git -C /pscratch/sd/j/josephrb/k0r2/clean rev-parse HEAD  # must equal frozen_deploy.head",
+      "expected": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+      "measured": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+      "raw_git_HEAD_content": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+      "detached": true,
+      "verdict": "MATCH"
+    },
+    {
+      "item": 3,
+      "recipe": "git -C <clean> show-ref  # must equal frozen_deploy.refs, exactly ten rows and no others",
+      "rows_measured": 10,
+      "set_equality_with_receipt": "EXACT -- all ten sha/ref pairs identical, no extra row, no missing row",
+      "verdict": "MATCH"
+    },
+    {
+      "item": 4,
+      "recipe": "stat -c '%A %n' <clean>{,/.git}  # must equal frozen_deploy.permissions",
+      "measured": ["dr-xr-x--- /pscratch/sd/j/josephrb/k0r2/clean", "drwxrwx--- /pscratch/sd/j/josephrb/k0r2/clean/.git"],
+      "chmod_of_dotgit_applied": false,
+      "ruling_honoured": "DECISION-20260825 section 11.1.1: do NOT chmod .git read-only, and revert it if it was applied. Measured NOT applied, so there was nothing to revert.",
+      "verdict": "MATCH"
+    },
+    {
+      "item": 5,
+      "recipe": "git bundle list-heads <bundle> | grep aa67c426afaa9b6ca91c9996637a6bade950da9a",
+      "list_heads_rows": 11,
+      "exact_row_present": "aa67c426afaa9b6ca91c9996637a6bade950da9a refs/tags/freeze/k0-aa67c426",
+      "heads_set_equality_with_receipt": "EXACT -- the pin plus the same ten evidence tags",
+      "verdict": "MATCH"
+    },
+    {
+      "item": 6,
+      "recipe": "git clone --no-local <bundle> <tmp> && git -C <tmp> checkout --detach freeze/k0-aa67c426 && git -C <tmp> status --porcelain  # must be empty",
+      "clone_rc": 0,
+      "fsck_rc": 0,
+      "checkout_rc": 0,
+      "recovered_head": "aa67c426afaa9b6ca91c9996637a6bade950da9a",
+      "recovered_tree": "60120bfb9fb903da8e209468ef37334e9e0e05a3",
+      "recovered_tree_equals_2026_08_26_value": true,
+      "recovered_porcelain_lines": 0,
+      "recovered_tracked_files": 1583,
+      "recovered_tags": 11,
+      "scratch": "/pscratch/sd/j/josephrb/tmp/step1recov.e0OSlm, created by mktemp -d and removed after measurement",
+      "verdict": "MATCH"
+    }
+  ],
+  "precondition_verdict": "PASS. All six recipe items matched. Per the proposal, a mismatch would have been a STOP CONDITION rather than a repair; none occurred.",
+  "an_instrument_error_of_mine_recorded_rather_than_dropped": {
+    "what_happened": "`git bundle verify <bundle>` returned rc=1 with `error: need a repository to verify a bundle` on my first attempt, because I ran it with the working directory set to a scratch directory that is not a git repository. The 2026-08-26 receipt records verify_rc=0.",
+    "why_this_is_not_a_mismatch": "It is an error about WHERE I stood, not about the bundle. `bundle verify` is not one of the six items of the recipe -- I added it. Re-run from inside a repository (/pscratch/sd/j/josephrb/MINERvA-OmniFold) it returned rc=0 with `The bundle records a complete history.`",
+    "left_visible_because": "rc=1 from a well-formed command over the wrong operand is the exact class this campaign keeps re-learning; recording only the second, green run would hide that the first number existed."
+  },
+  "preservation_items_3_and_4": {
+    "item_3_leave_unchanged": {
+      "bundle": "UNCHANGED -- /pscratch/sd/j/josephrb/k0r2/freeze-receipts/k0-clean-aa67c426-20260826T075536Z.bundle, still 79140251 bytes at the recorded digest, mode -rw-rw----.",
+      "receipt": "UNCHANGED -- docs/orchestration/state/RECEIPT-20260826-k0-freeze-bundle-detectability.json is not edited by this filing.",
+      "declaration": "UNCHANGED -- /pscratch/sd/j/josephrb/k0r2/declarations/aa67c426/source-manifest.json, mode -r--r-----, sha256 622ddc0ada33234d5b420130cd6e60e17ead8b2669b6e77436f0f57a89e2a405, listing_sha256 fa3489e22168954bebcc9a602338d924582fd231643bfa285b3a9225e7535420, file_count 782. It remains the aa67c426 comparand and was USED as a firing control (see the deployment receipt).",
+      "old_run_directory": "UNCHANGED -- nothing under /pscratch/sd/j/josephrb/k0r2/runs/ was read, written, moved or removed."
+    },
+    "item_4_never_repoint_the_freeze_tag": "HONOURED. refs/tags/freeze/k0-aa67c426 was not moved. It was RE-CREATED at the same commit aa67c426afaa9b6ca91c9996637a6bade950da9a in /pscratch/sd/j/josephrb/MINERvA-OmniFold, which is an additive restoration of the same name-to-bytes mapping, not a repoint. See the finding below for why it had to be restored."
+  },
+  "finding_the_preservation_asset_had_partly_decayed_before_i_arrived": {
+    "measured": [
+      "The 2026-08-26 receipt's `bundle.generated_from` names /global/u2/j/josephrb/mnv-work/MINERvA-OmniFold as 'the primary checkout'. That path DOES NOT EXIST on Perlmutter as of 2026-08-29T23:19Z: `ls` returns 'No such file or directory', and no directory named MINERvA-OmniFold* exists anywhere under the home to depth 3.",
+      "Consequently the local-only tag refs/tags/freeze/k0-aa67c426, which the receipt records as living in that checkout, was present in NO live cluster repository: `for-each-ref refs/tags/freeze` returned empty in both /pscratch/sd/j/josephrb/MINERvA-OmniFold and /pscratch/sd/j/josephrb/k0r2/bare.git, and the frozen deploy's own ten-ref set never contained it."
+    ],
+    "why_it_did_not_break_the_precondition": "Recipe items 5 and 6 read the ref out of the BUNDLE, not out of a checkout, and both passed. The bundle was and is a self-sufficient recovery source. The tag's absence from every working repository is a loss of convenience and of a second, independent copy -- not a loss of recoverability.",
+    "what_i_did_about_it": "Re-created refs/tags/freeze/k0-aa67c426 at aa67c426afaa9b6ca91c9996637a6bade950da9a in /pscratch/sd/j/josephrb/MINERvA-OmniFold (local-only, not pushed, matching the original's deliberate non-pushed status). It is not created in the deploy tree, because the 2026-08-26 receipt's detectability recipe asserts that tree's ref set is 'exactly ten rows and no others' and adding an eleventh row for a historical pin would falsify a passing check for no gain.",
+    "the_generalisation_this_lane_acted_on": "A single-copy, unpushed, working-checkout-resident ref is preservation only for as long as that checkout exists, and nothing in the receipt made its disappearance detectable. The new freeze ref for 7ac0edec is therefore created in TWO repositories, and its bundle is asserted to contain it, so the same decay is detectable next time.",
+    "not_attributed": "I did not determine who removed /global/u2/j/josephrb/mnv-work/, or when. This receipt records the state, not a cause."
+  },
+  "read_only_discipline": {
+    "rule_quoted": "DECISION-20260825 section 11.1: 'inspecting the frozen deploy with `git` is not a read-only act.' Any git invocation there may write a lock into .git.",
+    "mitigation": "Every git read against the deploy tree in this step ran with GIT_OPTIONAL_LOCKS=0. No output was written inside the deploy tree.",
+    "dotgit_metadata_before_and_after_step_1": {
+      ".git": {"mode": 770, "size": 4096, "mtime": "2026-08-26 01:09:29.000000000 -0700"},
+      ".git/index": {"mode": 660, "size": 193386, "mtime": "2026-08-24 04:36:13.000000000 -0700"},
+      ".git/HEAD": {"mode": 660, "size": 41, "mtime": "2026-08-24 04:34:10.000000000 -0700"},
+      "verdict": "identical before and after step 1's reads; step 1 changed nothing in the deploy tree"
+    }
+  },
+  "exact_commands_run_against_the_deploy_tree_in_step_1": [
+    "sha256sum /pscratch/sd/j/josephrb/k0r2/freeze-receipts/k0-clean-aa67c426-20260826T075536Z.bundle",
+    "stat --format='%s' <bundle>",
+    "GIT_OPTIONAL_LOCKS=0 git -C /pscratch/sd/j/josephrb/k0r2/clean rev-parse HEAD",
+    "cat /pscratch/sd/j/josephrb/k0r2/clean/.git/HEAD",
+    "GIT_OPTIONAL_LOCKS=0 git -C /pscratch/sd/j/josephrb/k0r2/clean show-ref",
+    "stat --format='%A %n' /pscratch/sd/j/josephrb/k0r2/clean /pscratch/sd/j/josephrb/k0r2/clean/.git",
+    "git bundle list-heads <bundle>",
+    "git bundle verify <bundle>   # rc=1 outside a repo, rc=0 from inside one; see the instrument-error note",
+    "git clone --no-local <bundle> <mktemp-d>/rec",
+    "git -C <tmp>/rec fsck",
+    "git -C <tmp>/rec checkout --detach freeze/k0-aa67c426",
+    "git -C <tmp>/rec rev-parse HEAD ; rev-parse HEAD^{tree} ; status --porcelain ; ls-files ; tag -l",
+    "stat --format='%n|mode=%a|size=%s|mtime=%y' <clean>/.git <clean>/.git/index <clean>/.git/HEAD",
+    "rm -rf <tmp>",
+    "GIT_OPTIONAL_LOCKS=0 git -C <clean> status --porcelain --ignored   # 0 lines: no untracked and no ignored file in the tree",
+    "the pre-deployment A-2 baseline invocation recorded in the deployment receipt"
+  ],
+  "gate_2": "FAIL. This receipt discharges no clause and authorizes no compute.",
+  "no_slurm_action": "No job was submitted, queued, cancelled or scheduled. `squeue --me` showed exactly one row throughout, the long-held cron waker 57712764 (PD, BeginTime), which is not this lane's."
+}
