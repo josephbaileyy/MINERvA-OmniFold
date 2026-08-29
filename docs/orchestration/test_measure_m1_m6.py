@@ -16,8 +16,10 @@ NOT. The over-broad arm matters concretely: `MINERvA-OmniFold-Analysis-Note` is 
 repository, and a bare `startswith` would report a hazard in a tree that has none.
 """
 import ast
+import contextlib
 import datetime
 import importlib.util
+import io
 import json
 import pathlib
 import subprocess
@@ -178,6 +180,47 @@ class MeasurementIdentityIsCapturedByTheProducer(unittest.TestCase):
         self.assertEqual(self.measure()["branch_or_detached"],
                          {"state": "detached", "name": None})
 
+    def test_a_NON_CHECKOUT_is_reported_as_such_and_carries_no_name(self):
+        """N5/M13 of the 2026-08-28 grade: the THIRD state the decision names, never produced.
+
+        `branch_or_detached` has three outcomes and two of them had arms. A state that no test ever
+        produces is a state whose emission nobody has seen, which is how `not-a-git-checkout` could
+        have been deleted outright with the suite green.
+        """
+        with tempfile.TemporaryDirectory() as outside:
+            plain = pathlib.Path(outside)
+            completed = subprocess.run(
+                [sys.executable, str(_HERE / "measure_m1_m6.py"), "--tree", str(plain),
+                 "--label", "plain", "--json"],
+                check=True, capture_output=True, text=True)
+            document = json.loads(completed.stdout)
+        self.assertEqual(document["branch_or_detached"],
+                         {"state": "not-a-git-checkout", "name": None})
+
+    def test_the_interval_is_TWO_clock_reads_and_not_ONE_STAMP_EMITTED_TWICE(self):
+        """N3 of the 2026-08-28 grade. The arm above passes on `completed_utc = started_utc`.
+
+        `utc_now()` has one-second precision, so a real run against a small fixture tree already
+        emits equal endpoints -- indistinguishable from the mutation that collapses the interval and
+        defeats the word "real" in surface 1's title. Asserting inequality against the real clock
+        would be flaky; DRIVING the clock is not, and it pins that the two stamps come from two
+        separate reads rather than one value assigned twice.
+        """
+        stamps = iter(["2026-01-01T00:00:00Z", "2026-01-01T00:00:07Z"])
+        real_utc_now = mm.utc_now
+        mm.utc_now = lambda: next(stamps)
+        self.addCleanup(setattr, mm, "utc_now", real_utc_now)
+        argv = sys.argv
+        sys.argv = ["measure_m1_m6.py", "--tree", str(self.tree), "--label", "fixture", "--json"]
+        self.addCleanup(setattr, sys, "argv", argv)
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            mm.main()
+        clock = json.loads(buffer.getvalue())["measurement_wall_clock"]
+        self.assertEqual(clock["started_utc"], "2026-01-01T00:00:00Z")
+        self.assertEqual(clock["completed_utc"], "2026-01-01T00:00:07Z",
+                         "completed_utc must be a SECOND read of the clock, not started_utc reused")
+
 
 class FarEndShellFailsClosedAroundTheRepairedSurfaces(unittest.TestCase):
 
@@ -206,6 +249,20 @@ class FarEndShellFailsClosedAroundTheRepairedSurfaces(unittest.TestCase):
         self.assertLess(invocation, after)
         self.assertLess(after, mismatch)
         self.assertLess(mismatch, failed)
+
+    def test_the_preserver_drift_branch_REFUSES_rather_than_merely_warning(self):
+        """N2 of the 2026-08-28 grade: the ordering arm above asserts the WRAPPER, not the payload.
+
+        Measured by the grader: replacing the drift branch's body with a bare `echo "NOTE: ..."` --
+        downgrading an approved refusal to a warning that lets publication stand -- left all 100
+        tests green. Surface 4's arm does not have this hole because it pins `exit "$rc"` literally,
+        so this arm pins `exit 13` the same way.
+        """
+        block = self.source[
+            self.source.index('if [ "$PRESERVER_PRE" != "$PRESERVER_POST" ]; then'):]
+        body = block[:block.index("\nfi")]
+        self.assertIn("exit 13", body,
+                      "the preserver-drift branch must REFUSE, not warn and continue")
 
 
 if __name__ == "__main__":

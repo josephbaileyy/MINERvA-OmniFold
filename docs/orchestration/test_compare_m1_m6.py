@@ -288,6 +288,47 @@ class R2_NoDefaultsAndItFailsClosedOnAbsence(BenchCase):
         self.assertEqual(code, cm.EXIT_REFUSAL_INPUT)
         self.assertIn("name does not match state", err)
 
+    def test_every_SUB_GUARD_on_the_producer_identity_has_a_firing_arm(self):
+        """N5 of the 2026-08-28 grade. Four sub-guards were correct in the shipped bytes and
+        survived mutation with the whole suite green, because the single arm above exercises only
+        the state/name agreement half. Absence of an arm is how a correct guard gets deleted.
+
+        Each case names the mutation it kills, so a future narrowing cannot quietly drop one.
+        """
+        good, _ = self.two()
+        cases = (
+            ("M4  state enum", {"state": "garbage", "name": None},
+             "invalid branch_or_detached state"),
+            ("M10 shape, extra key", {"state": "detached", "name": None, "extra": 1},
+             "must contain exactly state and name"),
+            ("M10 shape, missing key", {"state": "detached"},
+             "must contain exactly state and name"),
+            ("M10 shape, not a dict", "detached",
+             "must contain exactly state and name"),
+            ("M11 a branch must carry a NON-EMPTY name", {"state": "branch", "name": ""},
+             "name does not match state"),
+            ("M11 a branch name must be a STRING", {"state": "branch", "name": 7},
+             "name does not match state"),
+        )
+        for label, identity, message in cases:
+            with self.subTest(guard=label):
+                document = base_document("CANONICAL", "/trees/canonical")
+                document["branch_or_detached"] = identity
+                code, record, err = self.bench.run(
+                    [good, self.bench.write_doc("identity.json", document)], self.expected_ok)
+                self.assertEqual(code, cm.EXIT_REFUSAL_INPUT)
+                self.assertIsNone(record)
+                self.assertIn(message, err)
+
+    def test_the_MANDATED_schema_and_instrument_version_are_TWO_not_ONE(self):
+        """N4 of the 2026-08-28 grade. The only version assertion compared the record against the
+        module constant -- a tautology that holds for any value, so reverting the decision's
+        mandated `1 -> 2` bump left the suite green. The decision states the bump as an implemented
+        behaviour, so the literal is pinned here.
+        """
+        self.assertEqual(cm.INSTRUMENT_VERSION, "2")
+        self.assertEqual(cm.SCHEMA, "mnv_m1m6_comparison/2")
+
     def test_unreadable_json_and_a_json_list_are_both_refusals(self):
         good, _ = self.two()
         broken = self.bench.root / "broken.json"
