@@ -1,0 +1,93 @@
+{
+  "C_ML": null,
+  "authorization": {
+    "a100_hour_ceiling": 5.0,
+    "authorization_source": "Joseph's explicit GAP 1 conditional authorization in the active task",
+    "authorized_by": "Joseph",
+    "authorized_on": "2026-08-30",
+    "exactly_five_evaluations": true,
+    "no_retraining": true,
+    "unchanged_retry_authorized": false
+  },
+  "cannot_authorize": [
+    "a member re-verdict or selection of a passing subset",
+    "construction of C_ML",
+    "movement or replacement of the central value",
+    "Leg 2",
+    "an unchanged retry or any additional compute",
+    "a publication claim"
+  ],
+  "contract_id": "GATE6-GAP1-FULL-INVENTORY-20260830",
+  "input": {
+    "bytes": 9897374636,
+    "relative_path": "nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+    "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625"
+  },
+  "launchable": true,
+  "measurement": {
+    "inference_rows_total": 245764425,
+    "input_rows": 49152885,
+    "members": 5,
+    "pass_truth_rows": 49150928,
+    "quantity": "like-for-like full-inventory member normalization and extended-FPS spectra"
+  },
+  "member_artifacts": [
+    {
+      "member": 1,
+      "relative_path": "nd-unfolding/pet/fullevent_ml_ensemble/member_1/pet_fullevent_ml_member1_weights.npz",
+      "sha256": "3e08850d44f773bb50f5cb132a7a1d4d672e0ab15f1d38d785a4eddbf5179b2e",
+      "training_indices": 2000000
+    },
+    {
+      "member": 2,
+      "relative_path": "nd-unfolding/pet/fullevent_ml_ensemble/member_2/pet_fullevent_ml_member2_weights.npz",
+      "sha256": "5b8e129f9dba90659ed0fc17f322499ea41fea505add57ab957ad209152f1c13",
+      "training_indices": 2000000
+    },
+    {
+      "member": 3,
+      "relative_path": "nd-unfolding/pet/fullevent_ml_ensemble/member_3/pet_fullevent_ml_member3_weights.npz",
+      "sha256": "f6087581e320d1bfce1a968e62c737d8fac346dedb94836f7fe173980a5b55e8",
+      "training_indices": 2000000
+    },
+    {
+      "member": 4,
+      "relative_path": "nd-unfolding/pet/fullevent_ml_ensemble/member_4/pet_fullevent_ml_member4_weights.npz",
+      "sha256": "04759d0a07f120bda112b87222b0a91fd0e98a2ce402be12d37f30d06a2a0bfd",
+      "training_indices": 2000000
+    },
+    {
+      "member": 5,
+      "relative_path": "nd-unfolding/pet/fullevent_ml_ensemble/member_5/pet_fullevent_ml_member5_weights.npz",
+      "sha256": "4120a5483255847e9dceb79dc5796dd820fca419cfba8adddabc42924d82eff1",
+      "training_indices": 2000000
+    }
+  ],
+  "prohibitions_applied": {
+    "do_not_construct_C_ML": true,
+    "do_not_move_central": true,
+    "do_not_retry_unchanged": true,
+    "do_not_select_passing_subset": true,
+    "do_not_start_leg_2": true
+  },
+  "publication_result": false,
+  "resources": {
+    "allocated_a100_hours": 5.0,
+    "cpu_array": "1-5%5",
+    "cpu_only": true,
+    "gpu_array": "1-5%5",
+    "gpu_wall_hours_per_task": 1,
+    "gpus_per_task": 1,
+    "historical_expected_a100_hours": 1.21,
+    "historical_observed_max_envelope_a100_hours": 1.54
+  },
+  "schema": "gate6-gap1-full-inventory-proposal-v1",
+  "source_hashes": {
+    "nd-unfolding/mnv_guarded_run.py": "145711eb5a247faf7bb5643a47b0f8be6e7ac2f95de0c43c12d3de1105f544c7",
+    "nd-unfolding/pet/extract_fullevent_fps.py": "de0f044b612782edb58e152205b426e6dbbca7637b7f3f342a1373fe4dc7d51a",
+    "nd-unfolding/pet/fullevent_fps_dataloader.py": "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1",
+    "nd-unfolding/pet/gate6_full_inventory_root_remap.py": "680bd79ae9a7922577bc55373e05db34d7eb20a478dc45037686e86a030138a4",
+    "nd-unfolding/pet/submit_gate6_full_inventory_members.sh": "aa1e23d4aa2d9a6bd29d93b44288a20821906adcdcba2190faddfa2773e8ecda"
+  },
+  "status": "AUTHORIZED_CONDITIONAL_READY"
+}
