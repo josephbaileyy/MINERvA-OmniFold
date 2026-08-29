@@ -84,6 +84,40 @@ the nearer of PASS/FAIL.
 | | | T | **MET** — coverage guard, P1/P2 | **MET** |
 | **7** | CV-support-limited lateral selection | all | **OPEN — discharged for a THIRD artifact; see §5** | **OPEN** |
 
+> **POINTER 4, added 2026-08-30 by the stale blocker sweep lane — three cells above are measured
+> differently at HEAD `32e403b8`, and NONE of them is regraded here.** `BEN-381`: this lane measured
+> them, so the regrade is not its to make. Row text left as written.
+>
+> 1. **Cause 3 `P-ii`'s PREMISE IS FALSE at HEAD.** *"`sweep_bank_5d.py` and `analyze_universes_5d.py`
+>    have nowhere to put one"* — both have write sites now: `sweep_bank_5d.py:309-311` and
+>    `analyze_universes_5d.py:273-278`, plus `unified_throw_cov.py:569-575` and
+>    `mii_adopt_unified_5d_stamped.py:168`, wired into the only declared-member adoption path at
+>    `sbatch_finalize_5d_bkgaware_gpu.sh:557,563`. Landed `3dd5e66e`/`214acdbb` (08-18),
+>    `5afb7947` (08-19), `bd72112b` (08-20). `analyze_universes_5d.py`'s seed-line count is **8**, not
+>    zero; `sweep_bank_5d.py`'s is **13**, not one. **`P-i` is unchanged and still NOT MET** — no
+>    receipt records a value, and the wrapper's one real execution (`RUNS.tsv:308`, job `57294218`)
+>    recorded the keys as ABSENT because its inputs predate the producers. So §2d's *"graded as two, so
+>    a fix to one cannot silently discharge the other"* did exactly its job: `P-ii` moved and `P-i` did
+>    not.
+> 2. **§1's *"THE QUOTED COLUMN CANNOT MOVE BY REMEDIATION"* is sound for causes 2/3/4 and does not
+>    extend to cause 1.** Cause 1's `P` criterion is a **bank inventory**, not a stamp, and
+>    `receipt_cause1_endpoint_census_5d.json` satisfies it on X's own bank
+>    (`inputs.glob = uq_5d/universe_sweep_bkgaware/…`), pinned to X by reproducing eight of X's
+>    committed summary numbers. So cause 1's QUOTED `P` cell is `OPEN` for a reason that belongs to
+>    other causes.
+> 3. **Cause 4's `M`: §3's "measurable-but-unmeasured pending re-runnability" is narrowed, not
+>    contradicted.** Measured from committed bytes: the deflation never entered a stored object on X's
+>    path — `a0cdc019` writes raw `C_uni`/`C_block`/`C_cross` and the **raw** `sqrt_tr_unified`
+>    (`:265`, `:271`), the corrected trace is printed only (`:236-239`), and
+>    `adopt_unified_5d.py:89-90` reads only the raw diagonals, with
+>    `git log --all -S "sqrt_tr_unified" -- adopt_unified_5d.py` returning **nothing** against a working
+>    `C_unified` control. So `M`'s referent for X is a **specification** question, not a recovery or a
+>    cost question.
+>
+> Full measurements, dates, limits and the routed decisions:
+> [`FINDING-20260830-quarantine-nocompute-legs-measured.md`](FINDING-20260830-quarantine-nocompute-legs-measured.md)
+> (`OI-170`–`OI-173`).
+
 ### Counts
 
 | artifact | causes with four METs | discharged by decision |

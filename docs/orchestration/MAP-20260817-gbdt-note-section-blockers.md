@@ -68,6 +68,34 @@ annotated where anything moved.
 **Four of the six remaining causes (1, 3, 4, and 7's arithmetic part) need no cluster time.** Causes 3
 and 4 share one edit. That is the actionable shape of this gate.
 
+> **POINTER, added 2026-08-30 by the stale blocker sweep lane — the "one edit" multiplier in cause 3's
+> and cause 4's remedy cells above, and the sentence immediately preceding this block, DO NOT HOLD.
+> Row text left as written; nothing is regraded here (`BEN-381` — this lane measured it).**
+>
+> The claim is *"`BEN-106`'s stamp propagation, **one edit, which closes this leg for 2, 3 and 4 at
+> once**"*. It fails three ways, each independently:
+>
+> 1. **`BEN-106`'s propagation is a HOP** — `adopt_unified_5d.py:198-210` re-writes keys it read out of
+>    the throw root, so it can only carry what a producer already wrote. Causes 2 and 4 needed
+>    `joint_mean_shift_norm` and `fixed_seed_null_norm`, **already written** by `unified_throw_cov.py`;
+>    cause 3 needed a **seed value, which no producer wrote on either leg.** The measured cost of that
+>    difference is **four producer/wrapper edits across three days** — `3dd5e66e`, `214acdbb` (08-18),
+>    `5afb7947` (08-19), `bd72112b` (08-20) — plus `nd-unfolding/seed_offset_policy.py`, 38,048 B, which
+>    did not exist when this cell was written.
+> 2. **On CAND there were no other halves to close.** `SCOREBOARD`'s board already had cause 2's `P`
+>    MET (job `56720356`) and cause 4's `P` MET (`receipt_candidate_stamps_5d.json`, S1) on the day this
+>    was written.
+> 3. **On QUOTED no edit closes any of the three** — X predates the stamping (`SCOREBOARD` §1).
+>
+> **AND CAUSE 3's `P-i` IS NO LONGER A NO-COMPUTE ITEM.** Its remedy landed, which is what moved it: the
+> stamp exists, so the only thing left is a **product carrying a value**, and that is a producing run.
+> It cannot close on CAND or QUOTED at all — both predate the producers — so it is carried by whatever
+> run builds the next 5D product and is not a separate leg.
+>
+> Measurements and the routed decisions:
+> [`FINDING-20260830-quarantine-nocompute-legs-measured.md`](FINDING-20260830-quarantine-nocompute-legs-measured.md)
+> §1–§3, `OI-170`/`OI-171`.
+
 ---
 
 ## 3. `FINDING-20260815-the-quarantine-measured-a-different-run.md`: it does **neither**

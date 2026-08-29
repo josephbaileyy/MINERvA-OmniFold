@@ -267,6 +267,15 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   [`FINDING-20260822-clause-c-adopt-is-unreachable-under-its-own-pause.md`](FINDING-20260822-clause-c-adopt-is-unreachable-under-its-own-pause.md)
   — measured: `sbatch_finalize_5d_bkgaware_gpu.sh:347/:352` is unreachable in both regimes, so the
   condition is circular as written and the disposition is a forced choice, not a judgement call.
+- The 2026-07-12 quarantine's three no-compute legs, re-measured at HEAD `32e403b8`:
+  [`FINDING-20260830-quarantine-nocompute-legs-measured.md`](FINDING-20260830-quarantine-nocompute-legs-measured.md)
+  — cause 3's `P-ii` premise is **false** (four write sites landed 08-18…08-20, and two 08-22 records
+  restated it as live afterwards); the *"one edit closes 2, 3 and 4"* multiplier **does not hold**, and
+  cause 3's `P-i` is **no longer a no-compute leg**; cause 1 has content on all four legs **for the
+  quoted artifact**, needing only the routed `DETERMINATION §6` judgement; and cause 4's `M` is neither
+  recoverable from bytes nor closed by a run, because the deflation never entered a stored object on X's
+  path. **Regrades nothing** (`BEN-381`) — four decisions routed as `OI-170`–`OI-173`. Counts unchanged:
+  CAND `1 of 7`, QUOTED `0 of 7`.
 
 ### Documents that open items route to but this router did not list
 

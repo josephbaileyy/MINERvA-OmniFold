@@ -1,4 +1,8 @@
 source_record	lifecycle	queue	classification_rule	source_row_sha256	state_prefix
+OI-173	active	NOW	safe-default-active	b73850f3395bd9df9cc826df1676f838c47409dda19835be7a043d384c3964ff	OPEN
+OI-172	active	NOW	safe-default-active	8f7d53802301146c8d7bb6b4230a2721e1868229a183944f90e4b924f111749e	OPEN
+OI-171	active	NOW	safe-default-active	7c17e0538bcdfd2a227ca9f9f116fe26a9b836578da112d80ddf767463994019	OPEN
+OI-170	active	NOW	safe-default-active	1996d27f5805960c467aca3e059c81b9bedcfdfe7be48de3c57c50cc35c09fd6	OPEN
 OI-162	active	NOW	safe-default-active	933ce6133732fd43978c13e3b641866bdf7a804b87238c123d07638fa09204ee	OPEN
 OI-160	active	NOW	safe-default-active	1215d91ef45157d74d547a0f618378bf9d2d85067d41ead51c49048c87802ecb	OPEN
 OI-161	active	NOW	safe-default-active	7eccccc9904c9b45b75b20425baec05ae242781ad0b3c1a531f540ffda989c4d	OPEN

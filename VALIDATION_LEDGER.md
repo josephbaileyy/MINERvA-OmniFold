@@ -749,6 +749,39 @@ leg and per artifact. Three of its cells read weaker than this table implies, an
 applicability to X — is graded **`N/A — UNDECLARED`** precisely because no session outside the owning lane
 has stated it.
 
+**PER-LEG RE-MEASUREMENT, added 2026-08-30 by the stale blocker sweep lane. NO ROW ABOVE MOVES, NO LEG
+IS REGRADED, AND BOTH COUNTS ARE UNCHANGED — CAND `1 of 7`, QUOTED `0 of 7`.** `BEN-381`: this lane
+measured the legs, so the regrades are routed rather than taken. Three no-compute legs were measured at
+HEAD `32e403b8` and two of them are not what their cells say:
+
+* **Cause 3's `P-ii` premise is FALSE at HEAD** — *"the dominant arm has nowhere to put a seed stamp"*.
+  Four write sites exist (`sweep_bank_5d.py:309-311`, `analyze_universes_5d.py:273-278`,
+  `unified_throw_cov.py:569-575`, `mii_adopt_unified_5d_stamped.py:168`), landed 2026-08-18 … 08-20 and
+  wired into the only declared-member adoption path. **`P-i` did not move**: no receipt records a seed
+  value, and no artifact in play can acquire one — CAND and QUOTED both predate the producers. **So
+  `P-i` is no longer a no-compute leg**; it is carried by whatever producing run builds the next 5D
+  product. Three governing records restated the `P-ii` premise as live **after** it was false
+  (`DECISION-20260822` ruling 24, `WALKDOWN-20260822`, and this section's routed `SCOREBOARD`), which
+  makes it the fifth stale-blocker instance of the week after `OI-160`/`OI-161`/`OI-162`.
+* **The reported multiplier — one `BEN-106` stamp edit closing the provenance leg for causes 2, 3 and 4
+  together — DOES NOT HOLD.** It fails three ways: the propagation is a *hop* and cause 3's key existed
+  in no producer (four edits, not one); causes 2 and 4 already had `P` MET for CAND when it was written;
+  and on QUOTED no edit closes any of the three.
+* **Cause 1 has content on all four legs for X** — the artifact the four `\gbdtFive*` macros quote —
+  because its `P` criterion is a **bank inventory**, not a stamp, and
+  `nd-unfolding/uq_5d/receipt_cause1_endpoint_census_5d.json` satisfies it on X's own bank. What remains
+  is **one routed physics-presentation judgement** and nothing else. **This declares no discharge**, and
+  the judgement can land either way.
+* **Cause 4's `M` is neither recoverable from retained bytes nor closed by a run**, and the reason is
+  upstream of both: measured from committed bytes, the retired deflation was never written into any
+  stored object on X's path. `M`'s referent for X is a **specification** question of the `M(ii)`
+  species. Cell stays `OPEN`.
+
+Measurements, dates, limits (no test executed and no cluster read in that session) and the four routed
+decisions:
+[`docs/orchestration/FINDING-20260830-quarantine-nocompute-legs-measured.md`](docs/orchestration/FINDING-20260830-quarantine-nocompute-legs-measured.md),
+`OI-170`–`OI-173`. **Nothing here lifts the 2026-07-12 quarantine or makes adoption nearer.**
+
 ## 2026-08-07 selection-complete five-band FPS active lateral — VERIFIED-NUMERIC, gate chain PASSED
 
 Job `56431823` (`sbatch_fps_active_lateral_chain.sh`), 53:56, all four steps rc=0, on the ten

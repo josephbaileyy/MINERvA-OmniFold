@@ -311,6 +311,33 @@ The Provenance leg moved for causes 2, 3 and 4, but **only one hop up the chain*
 > [`DETERMINATION-20260817-cause1-census-and-magnitude-measured.md`](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/DETERMINATION-20260817-cause1-census-and-magnitude-measured.md "evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/DETERMINATION-20260817-cause1-census-and-magnitude-measured.md")
 > §6 states the one question a decider has to answer. Row text left as written.
 
+> **POINTER 4, added 2026-08-30 by the stale blocker sweep lane — §2's cause-3 `P` mechanism, §2's
+> cause-4 `M` reason, and §3:386-387's "one edit" multiplier all read differently at HEAD `32e403b8`.
+> No cell in the table above is regraded here (`BEN-381` — this lane measured them). Row text left as
+> written.**
+>
+> * **The mechanism §2 and `POINTER 1b` rest on is GONE.** *"`sweep_bank_5d.py` and
+>   `analyze_universes_5d.py` have nowhere to put one"* is false: `sweep_bank_5d.py:309-311` and
+>   `analyze_universes_5d.py:273-278` both write the identity keys, `unified_throw_cov.py:569-575`
+>   writes `estimator_seed`/`draw_seed`, and `mii_adopt_unified_5d_stamped.py:168,799-800` carries them
+>   to the adopted root through the only declared-member adoption path. Landed 2026-08-18 … 08-20.
+>   **`P` clause (i) is still ABSENT on both arms** — no receipt records a value, so `POINTER 1b`'s
+>   *harsher* grade stands; what changed is that the fix is now an artifact away rather than a code
+>   change away, and it needs a **producing run**, which CAND and QUOTED cannot receive.
+> * **§3:386-387's multiplier does not hold** — three independent failures, measured, in the
+>   `FINDING` below §3.
+> * **§2's cause-4 `M`: the surviving half of the narrowed sentence is narrowed further, from
+>   committed bytes.** At `a0cdc019` the deflation was written into **no** object — `:265`/`:271` store
+>   raw `C_uni`/`C_block`/`C_cross` and the raw `sqrt_tr_unified`, and the corrected trace is printed
+>   only (`:236-239`) — and `adopt_unified_5d.py:89-90` consumes only the raw diagonals, never
+>   `sqrt_tr_unified` (`git log --all -S`: zero hits, against a working `C_unified` control). So *"a
+>   bound is not the `M` leg"* is not the live obstacle; **what `M` means when the defective
+>   construction was never applied to the artifact's stored inputs** is, and that is a specification
+>   gap of the `M(ii)` species.
+>
+> [`FINDING-20260830-quarantine-nocompute-legs-measured.md`](FINDING-20260830-quarantine-nocompute-legs-measured.md),
+> `OI-170`–`OI-173`.
+
 **UPDATED 2026-08-11 after job `56695424`. READ THE PRODUCT COLUMN BEFORE READING THE VERDICTS —
 the P legs above are MET for the FOOTING-MATCHED CANDIDATE, not for the product the note quotes.**
 The stamps were verified in a ROOT written by the new `adopt_unified_5d.py`. The currently-quoted
