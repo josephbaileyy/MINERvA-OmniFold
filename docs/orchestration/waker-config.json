@@ -7,7 +7,7 @@
     "provider": "claude",
     "profile": "claude-school",
     "thread_id": "66a7e51b-abea-42d6-b8c1-b61952d5ec2b",
-    "cwd": "/global/homes/j/josephrb/MINERvA-Claude-school-main-20260828"
+    "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
   },
   "poll_seconds": 60,
   "claim_lease_seconds": 900,
