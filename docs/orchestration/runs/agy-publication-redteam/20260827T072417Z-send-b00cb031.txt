@@ -1,0 +1,8 @@
+I have completed the correction to the readiness check exactly as specified, under the same strict read-only and environment constraints. 
+
+My findings based on reading the tracked objects at `9f088f9a` are:
+
+1. **F-7(b) is now YES.** My first "NO" was wrong because I was searching via a `git blob id` string inside the artifacts instead of checking the `RECEIPT` for the graded commit SHA. The receipt explicitly maps the P1 pin gate to the commit `57508b31...`, and the blob at that commit is perfectly identical to the tip.
+2. **F-17(b) remains NO.** I reviewed all three F-17(b) `GRADE` artifacts (which I verified do not contain grader roles or UUIDs, violating the identity requirement). While `compare_m1_m6.py` is mapped to an independent grade via its content digest, the `measure_m1_m6.py` component of the mechanism is explicitly excluded; `GRADE-20260825-f17b-comparison-instrument-fitness.md` declares it as "input instrument, not graded". Because the mechanism as a whole must be graded, F-17(b) is not satisfied.
+
+The new `READINESS-10-1-SUCCESSOR-CORRECTED: NOT READY` terminal line, corrected tally, explicitly stated causes, and component mappings (with recomputed digests) have been appended to `/tmp/readiness-successor-20260827/logs/VERDICT-READINESS-10-1-SUCCESSOR.md`.

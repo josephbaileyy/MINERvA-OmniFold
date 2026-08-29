@@ -1,0 +1,13 @@
+I have successfully implemented all six mechanical fixes and the design change exactly as instructed, committing them as a single, narrow correction commit on top of `cdbc3b52`.
+
+### Work Completed
+
+1. **New Factual Receipt**: Rewrote `docs/orchestration/receipts/RECEIPT-20260827-f17b-rgamma-repair.json` strictly as a valid JSON with literal values. This includes the role, UUID, base SHA, the 3 commits (`2ca28a03`, `cdbc3b52`, and the new one), exact file:line pointers for all changes, full 64-hex digests, byte counts, verification outputs, both pin supersessions for the preserver shell script, and the neutral reporting of Grader Findings 7 and 8.
+2. **Digest Prose Extraction**: Cleaned the prose `(SUPERSEDED by PIN...)` out of the digest strings in `RECEIPT-20260825-terminal-watch-f17b-durability.json` (moving it to a new `supersessions` object) and `DECISION-20260825-joseph-gate2-fail-and-four-rulings.md` (moving it outside the `sha256` table cell).
+3. **Docstring & Dead Constant Fix**: Updated the docstring in `compare_m1_m6.py:34` to clearly state that absent fields trigger an immediate refusal rather than an unavailable label, and deleted the unused `UNAVAILABLE = "UNAVAILABLE-BY-INPUT-SCHEMA"` constant.
+4. **Preserver Pre-Check Hardening**: Replaced the dynamic capture of `PRESERVER_EXPECTED` in `measure_k0_farend_f1b_f17b.sh` with the hardcoded `EXPECTED_PRESERVER_SHA256=ea2dea...`. Upgraded `test_preserve_f17b_record.py` to independently verify the pre-invocation check (exit 13 before start) and the across-invocation check (exit 13 when swapping mid-flight). 
+5. **Whitespace Cleanup**: Stripped all trailing whitespaces across the authored lines to ensure `git diff --check 27ee1be3..HEAD` passes cleanly.
+6. **Correct Test Counts**: Updated `logs/IMPL-SUMMARY.md` to reflect the true test count of 109 (split 12 + 88 + 9).
+7. **Verification**: Successfully re-ran the 8 verification commands. Tests run cleanly, hash bindings are 100% intact, and `MANIFEST.tsv` has been regenerated and tracked. 
+
+The history remains perfectly linear. Your base (`2ca28a03`) and earlier tip (`cdbc3b52`) are fully preserved without any squashing, rebasing, or rewriting. All fixes sit in the final commit `cc5019d1` on the `f17b/rgamma-repair-2-20260827` branch.

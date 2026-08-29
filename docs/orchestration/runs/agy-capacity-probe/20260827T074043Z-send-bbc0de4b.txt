@@ -1,0 +1,23 @@
+I have successfully executed all grading steps for the F-17(b) prospective mechanism and recorded the comprehensive verdict artifact strictly to `/tmp/f17b-grade-20260827/logs/VERDICT-F17B-MECHANISM.md`.
+
+Here is a summary of the operations performed and their results:
+- **Initialization**: Created the required workspace, verified Python 3.11.14 is active through the requested `$PATH`, and verified the tip `7d13066e2a27c672e14124f87ed6ce9f31328550` exists via `git cat-file`. All work occurred inside a safe `/tmp` clone to avoid modifying any existing repo state.
+- **SHA Verification**: I recomputed the `sha256sum` hashes of all 10 coupled-surface and governing operands (including the JSON whitelist, spec, and contract). **All 10 matched the declared values.**
+- **ITEM A (Unit Tests)**: Ran `unittest discover` for the three test suites exactly as filenames. 
+  - `test_compare_m1_m6.py`: Ran 81 tests in 0.947s (OK, rc=0)
+  - `test_measure_m1_m6.py`: Ran 9 tests in 0.004s (OK, rc=0)
+  - `test_preserve_f17b_record.py`: Ran 3 tests in 0.002s (OK, rc=0)
+- **ITEM B (Controls)**: Extracted the real JSON schema dynamically by running `measure_m1_m6.py --json` inside a dummy git fixture, then ran the comparator controls:
+  - B1 (Positive-Silence): Two identical inputs correctly reported `rc=0`.
+  - B2 (Unexpected Finding): Altering `M-4.modified` correctly surfaced `rc=20`.
+  - B3 (M-2 Distinctness): Altering `M-2.python` correctly surfaced `rc=20`.
+  - B4 (Bad Input): Running with a missing file correctly issued a refusal `rc=4`.
+  - B5 (Unresolved Citation): Corrupting the citation quote in the whitelist correctly issued a refusal `rc=5`.
+  - B6 (Preservation): Writing a record correctly returned `rc=0` and was fully recoverable; a subsequent clobber attempt correctly refused with `rc=13`.
+- **ITEM C (Shell Wiring)**: Statically analyzed `measure_k0_farend_f1b_f17b.sh`. Two absent refusals were found:
+  1. The script checks `MEASURER`, `COMPARATOR`, and `EXPECTED` pre/post digests to refuse on drift, but completely forgets to do this for `PRESERVER`, meaning a swap of the preserver across its invocation is unhandled.
+  2. The script captures the `rc` of the measurer and prints errors on failure, but does not refuse/exit immediately on a non-zero measurer exit code, relying entirely on the comparator to fail downstream on bad JSON.
+- **ITEM D (Schema Gaps)**: 
+  - Missing Symbolic-ref: Benign. The clause requirement ("pinned sha" and "canonical checkout") can be independently proven via the existing `M-4.head` and `M-4.tree` fields.
+  - Missing Wall-clock Timestamp: Gap. The clause requires measurements "at submission time" and "after the path runs". Without internal temporal provenance, the artifact relies externally on the shell logs and cannot independently prove its own temporal compliance.
+- **VERDICT**: The overall grade is **NOT FIT** due to the findings identified in Items C and D.

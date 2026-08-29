@@ -1,0 +1,17 @@
+I have completed the read-only §10.1 readiness review re-run and authored the verdict according to your instructions.
+
+The full verdict document has been appended step-by-step to:
+`/tmp/f8b-readiness2-20260826/logs/VERDICT-READINESS-10-1-RERUN.md`
+
+### Summary of Execution
+- **Environment & Tip Verification:** Set up a detached git worktree for the tip `5cb9dfb99c7667e4fc6f3cb2fa929736d123097a`. Extracted the exact SHA and successfully proved via `git ls-tree` that every graded mechanism (`mnv_import_set_ratchet.py`, `verify_run_receipt_blind_spots.py`, `verify_f8b_attestation.py`, `compare_m1_m6.py`, `measure_m1_m6.py`) exists at this exact tip.
+- **Contract Clauses & Grading Checks:** Evaluated the presence and independent grading of F-7(b), F-8(b), and F-17(b) using the `REVIEW-CONTRACT-20260822` and previous verdict records preserved in tree.
+- **The Referred Question & Fail-Open Surface:** I affirmed that the attestation validator's `rc=0` is structurally identical to the old linter's failure. Emitting `rc=0` on an unauthenticated JSON file simply moves the fail-open surface from "spoofing prose" to "spoofing identities" without mechanical evidence (signatures). Consequently, the validator must also drop the zero exit, effectively blocking any F-8(b) automation from treating `rc=0` as a silent discharge. F-8(b) cannot be closed by machinery alone.
+- **Record Corrections Verification:** I independently ran the old instrument against the adversarial BREAK inputs to verify the close-out lane's corrections. I confirmed that while the specific recorded BREAK 1 text (`origin is none...`) failed with `rc=3`, the underlying keyword-stuffing class `STUFFER_THAT_WORKS` successfully achieved `rc=0`. I also confirmed that the original readiness review logged a TIP SHA (`3ae65695...`) at which the instrument did not exist. Both corrections are factually accurate and appropriately filed outside the unedited historical record.
+
+### Final Verdict Result: `NOT READY`
+Because the fail-open gate was moved rather than closed, the readiness result is unequivocally **NOT READY**.
+
+Code must change to remove the `rc=0` exit path from `verify_f8b_attestation.py` to prevent automated pipelines from bypassing the required independent human judgment.
+
+Let me know if you need any other findings or adjustments!

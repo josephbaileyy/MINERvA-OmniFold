@@ -1,0 +1,65 @@
+I am running the P8 test probe exactly as specified. The results are being streamed directly to `/tmp/grade-stack-20260826/logs/VERDICT-P8-probe.md` to ensure they are durably recorded on disk. I will report the final results once the test suite completes.
+The `probe` arm tests have completed successfully and the results have been durably written to `/tmp/grade-stack-20260826/logs/VERDICT-P8-probe.md`. 
+
+Here is the parsed outcome of the requested evaluation:
+
+### 1. Identity & Environment
+- **Grader Role**: `agy-g2-gate-verifier`
+- **Conversation UUID**: `dc93a0f8-6863-48c8-9b7b-76f22f6deae2`
+- **Python Executable**: `/global/u2/j/josephrb/.conda/envs/root_6_28/bin/python3` (Python 3.11.14)
+
+### 2. Worktree Validation
+- **HEAD**: `d0decbd35b0c4986dc31286a221220d3a29555d1`
+- **State**: detached
+- **Porcelain Count**: 2 (expected untracked scratch files)
+
+### 3. Test Execution Results (Probe Arm)
+- **RC**: `1`
+- **Total Tests**: `1813`
+- **Outcome**: `FAILED (failures=8, errors=18, skipped=11)`
+
+**Exact Qualified Errors (18)**:
+- `unittest.loader._FailedTest.test_atomic_write`
+- `unittest.loader._FailedTest.test_cml_family_completeness_fails_closed`
+- `test_conftest_tmpdir_guard_live.TmpdirGuardLive.setUpClass`
+- `unittest.loader._FailedTest.test_floor_replicate_launcher`
+- `unittest.loader._FailedTest.test_gate5_replica_driver`
+- `unittest.loader._FailedTest.test_gate5_replica_extraction`
+- `unittest.loader._FailedTest.test_gate6_floor_statistics`
+- `unittest.loader._FailedTest.test_hash_bindings`
+- `unittest.loader._FailedTest.test_legx_2x2_launcher`
+- `test_p4_repair.TmpdirGuardItself.test_guard_is_inert_when_a_tmpdir_exists`
+- `test_p4_repair.TmpdirGuardItself.test_probe_is_false_when_tempfile_raises`
+- `test_p4_repair.TmpdirGuardItself.test_probe_is_true_when_a_tmpdir_works`
+- `test_p4_repair.TmpdirGuardItself.test_tmpdir_dependent_tests_are_SKIPPED_not_errored`
+- `unittest.loader._FailedTest.test_pet_diagnostic_artifact_identity_guards`
+- `unittest.loader._FailedTest.test_reconcile_gate5_family`
+- `unittest.loader._FailedTest.test_resume_guard`
+- `unittest.loader._FailedTest.test_step1_trajectory_checkpoint_tier`
+- `unittest.loader._FailedTest.test_verify_executing_copy_is_committed`
+
+**Exact Qualified Failures (8)**:
+- `test_cstat_100rep_gates.CovarianceGatesAreScaleAware.test_module_is_importable_outside_the_cluster`
+- `test_cstat_data_only_predicates.MainGuardPosition.test_every_test_module_has_its_main_guard_last`
+- `test_g2_guards_collected.G2GuardsRun.test_guards_are_not_pytest_collectable_on_their_own` *(Classified: Pre-existing environment limitation because root_6_28 has no pytest; NOT a regression)*
+- `test_p4_resume_integration.PB2ProducingClosureResume.test_launcher_emits_exactly_the_six_producing_paths`
+- `test_p4_sweep_snapshots.SweepSnapshots.test_no_LIVE_pipeline_instances`
+- `test_p4_sweep_snapshots.SweepSnapshots.test_pipeline_sweep_matches_its_snapshot`
+- `test_p4_token_gate_scope_and_rev.Defect4b_ShellInvokedScriptsAreOnTheSurface.test_MUTATION_prefix_surface_OMITS_the_shell_invoked_scripts`
+- `test_precommit_hook_is_wired.PreCommitHookIsWired.test_the_hook_git_would_run_EXISTS_and_is_executable`
+
+### 4. Comparison & Expectation Check
+- **BASE minus PROBE (resolved in probe)**: EMPTY
+- **PROBE minus BASE (regressions in probe)**: EMPTY
+
+**I CONFIRM THE EXPECTATION:** The 4 explicitly named OI-136 ratchet arms that were red under `merge` and `pin` are now unambiguously **GREEN** under `probe`:
+- `test_oi136_failopen_inventory_ratchet.TheInventoryIsARatchet.test_the_fail_open_set_is_EXACTLY_the_recorded_one`
+- `test_oi136_failopen_inventory_ratchet.TheInventoryIsARatchet.test_this_ratchet_cannot_pass_over_an_empty_set`
+- `test_oi136_failopen_inventory_ratchet.TheProbeStillMeasures.test_it_exits_0_which_means_BOTH_its_controls_held`
+- `test_oi136_failopen_inventory_ratchet.TheProbeStillMeasures.test_its_negative_control_still_rejects_something`
+
+The failure count returns strictly to `8F / 18E` matching the base baseline precisely. There is zero regression.
+
+### 5. Reachability
+**COMPLETED:** Identity and environment export/verification, HEAD check, probe unittest execution, log retention, precise base-versus-probe comparison, explicit expectation confirmation, and proper classification of `test_g2_guards_collected`.
+**UNREACHED:** None. All instructions fulfilled entirely via local filesystem operations.

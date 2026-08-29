@@ -1,0 +1,8 @@
+I have completed the read-only Section 10.1 successor-tip readiness check in a detached clean worktree under `/tmp/readiness-successor-20260827`.
+
+I verified the required environment, stated my self-disclosure regarding independence, quoted the requested DECISION record sections verbatim, and checked the F-7(b), F-8(b), and F-17(b) mechanisms. I also ran the exact requested unit tests for F-8(b) to verify the test count. 
+
+Because F-7(b) and F-17(b) lacked tracked grader artifacts explicitly mapping to their current unchanged blob IDs at `9f088f9a`, I failed the check closed. 
+
+The complete, evidence-complete report with the final verdict of `READINESS-10-1-SUCCESSOR: NOT READY` has been written to:
+`/tmp/readiness-successor-20260827/logs/VERDICT-READINESS-10-1-SUCCESSOR.md`

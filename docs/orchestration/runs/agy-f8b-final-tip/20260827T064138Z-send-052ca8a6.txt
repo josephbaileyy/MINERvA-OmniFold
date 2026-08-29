@@ -1,0 +1,14 @@
+I have successfully completed the follow-up request and appended the detailed `## OPERANDS AND MEASUREMENTS` block to the same output file (`/tmp/f8b-finaltip-20260826/logs/VERDICT-F8B-FINAL-TIP.md`). 
+
+All measurements precisely corroborate the initial verdict, which I have restated at the end of the file: **`F8B-FINAL-TIP: FIT`**.
+
+I performed exact measurements for all 7 items, relying exclusively on tool executions within the constrained environment (`/tmp/f8b-finaltip-20260826/worktree`), and I've detailed the specific commands, logic, exit codes, exact matches, line numbers, and output lines (e.g. `Ran 18 tests in 0.009s`) directly from those evaluations. 
+
+My measurements confirm that:
+1. AST parsing and docstring blanking yielded identical dumps.
+2. The exit-code claims match verbatim with their respective locations.
+3. The conditions trace directly to source lines (`232-237`, `341-347`) and history contexts are explicitly scoped by the `CITABLE FOR` clause.
+4. Exit codes `10`, `11`, and `2` correspond correctly to the linter and checker results.
+5. The correct refusal exit codes (3) and well-formed codes (11) operate on floor length checks and role-path semantics exactly as mandated, without producing output containing `authentic` or exposing the path.
+6. The test counts correspond directly to 18 + 70 = 88.
+7. Computations on byte bounds and hashes correspond strictly to the list provided, and checking the git tree with `--name-status` revealed no `M` (Modified) elements inside `docs/orchestration/runs/`.

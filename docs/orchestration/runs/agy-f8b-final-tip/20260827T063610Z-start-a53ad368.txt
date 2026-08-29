@@ -1,0 +1,22 @@
+I have completed the single-pass, read-only evaluation of the candidate branch according to your instructions. 
+
+The evaluation was performed in a detached git worktree under `/tmp`, with no alterations to the branch, no compute launched, and strictly within the CPU-only budget constraints. 
+
+All 7 test propositions were executed, checking AST equivalence (doc-only), present-tense exit code statements, the §2 contract in the design record, return paths on instruments, named behaviors (F-8a extra-spot floor, role-path refusal), the test suite sizes/checks, and preservation of prior verdicts byte-identically. Furthermore, I explicitly confirmed that no estimators, scientific claims, launcher states, or compute codes were modified by this branch.
+
+The result of the check is a clean pass on all accounts.
+
+The verdict log has been appended to the output file as required:
+`/tmp/f8b-finaltip-20260826/logs/VERDICT-F8B-FINAL-TIP.md`
+
+### Final Verdict Results
+**`F8B-FINAL-TIP: FIT`**
+- is the candidate genuinely doc-only? **YES**
+- does every present-tense exit-code claim match source? **YES**
+- is the final current contract internally consistent? **YES**
+- is exit 0 unreachable in both instruments? **YES**
+- extra-blind-spot floor and role-path refusal-only correct? **YES**
+- all seven prior verdicts byte-identical, none edited? **YES**
+- scope clean, no science touched? **YES**
+
+REACHABILITY: I completed all 7 items (Items 1 through 7) and verified all required claims.

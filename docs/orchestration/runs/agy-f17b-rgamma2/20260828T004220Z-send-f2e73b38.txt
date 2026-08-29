@@ -1,0 +1,57 @@
+I have completed the correction to the R-GAMMA repair for F-17(b). The comparator now fails closed (exit 4) using `EXIT_REFUSAL_INPUT` whenever `measurement_wall_clock` or `branch_or_detached` are missing from an input document.
+
+**Summary of Changes:**
+1. **Failing Closed (Exit 4):**
+   - Added `measurement_wall_clock` and `branch_or_detached` to `REQUIRED_KEYS` in `docs/orchestration/compare_m1_m6.py`.
+   - The comparator will now exit 4 with a refusal message naming the missing field, input index, and path.
+   - Removed the unused `UNAVAILABLE-BY-INPUT-SCHEMA` fallback code, and updated `input_schema_gaps` to remove the two fields since they are now strictly required.
+
+2. **Test Updates (`test_compare_m1_m6.py`):**
+   - Removed the previous test verifying `UNAVAILABLE-BY-INPUT-SCHEMA` behavior.
+   - S-1 (R6) tests: Added tests verifying exit 4 when `measurement_wall_clock` is missing, when both are missing (naming both fields), and a test demonstrating that NO code path returns an evidence-class exit (0, 10, or 20) when the fields are missing. Added a test confirming the comparator does not back-fill using `file_mtime_utc`.
+   - S-2 (R3) tests: Added a test verifying exit 4 when `branch_or_detached` is missing, and explicitly verifying the refusal error structure.
+   - Updated the `base_document` fixture to supply valid mock strings for these two new required keys.
+
+3. **Measurer Tests (`test_measure_m1_m6.py`):**
+   - Added S-1 / S-2 tests for the measurer side asserting both branches of logic: emitting valid branch strings when on a branch, emitting `detached` when in a detached head state, and correctly emitting `measurement_wall_clock` as an ISO-8601 UTC string bounding the execution time.
+
+4. **Preserver Test Fix (`test_preserve_f17b_record.py`):**
+   - The original bash script (`measure_k0_farend_f1b_f17b.sh`) relies on `$1` (`--measure` or `--dry-run`) to determine if it should invoke the preserver. Tests were passing locally due to defaulting to `--dry-run` and skipping the logic entirely. 
+   - I amended the mock script and the `subprocess.run` invocations inside the test runner to provide `--measure` accurately. 
+   - I verified the full S-3 defect protection logic by successfully inducing exit 13 on concurrent mutations inside the tests. 
+
+5. **Deliverables and Coupling:**
+   - Evaluated `generate_manifest.py --check` and `--check --committed-only` until zero warnings were triggered, properly embedding the exact new file sizes and checksums in `MANIFEST.tsv`.
+   - Added explicit PIN supersession entries pointing to a new file `docs/orchestration/PIN-20260827-f17b-chain-rgamma-supersession.md`.
+   - Logged the JSON receipt to `docs/orchestration/receipts/RECEIPT-20260827-f17b-rgamma-repair.json`.
+   - Generated the requested final summary at `/tmp/f17b-rgamma2-20260827/logs/IMPL-SUMMARY.md` with the requested identity headers prepended.
+
+All 110 tests across the three python test suites are now fully executing and successfully passing.
+I have completed the remaining R-GAMMA repair items following the revised rule.
+
+**Summary of the applied corrections:**
+1. **Failing Closed (Exit 4):**
+   - Added `measurement_wall_clock` and `branch_or_detached` to `REQUIRED_KEYS` in `docs/orchestration/compare_m1_m6.py`.
+   - The comparator will now exit safely with `EXIT_REFUSAL_INPUT` (exit code 4) and provide a refusal message clearly stating the missing identity fields, input index, and path whenever they are absent.
+   - Removed the unused `UNAVAILABLE-BY-INPUT-SCHEMA` fallback code logic since it was explicitly withdrawn, and correspondingly removed the fields from `input_schema_gaps`.
+
+2. **Test Updates (`test_compare_m1_m6.py`):**
+   - Replaced the outdated unavailability test.
+   - For S-1 (R6), I added an array of tests ensuring an exit code of 4 is emitted under all variations of missing `measurement_wall_clock` and/or `branch_or_detached`. A test specifically prevents backfilling a missing measurement timestamp with the file's `mtime`.
+   - For S-2 (R3), I added tests mirroring the same strict behavior check.
+   - All legacy test mocks (`base_document`) were updated with appropriate placeholders so unmodified tests remain silent.
+
+3. **Measurer Tests (`test_measure_m1_m6.py`):**
+   - Added the two required measurer tests under `R3_MeasurerEmitsBranchOrDetached` and `R6_MeasurerEmitsWallClock`. Both verify correctness by testing on an on-branch head and a detached head state respectively, as well as correctly matching the returned JSON's timestamp format.
+
+4. **Preserver Test Verification:**
+   - Modified the mock shell script invocation logic inside the `test_preserve_f17b_record.py` testing framework to pass the `$1` argument properly (`--measure`). 
+   - Without it, the previous dry-runs evaluated to code 0 entirely skipping the preserver loop logic altogether. The tests now rigorously intercept and exit with code 13 during S-3 simulated failures.
+
+5. **Deliverables and Coupling:**
+   - Evaluated `generate_manifest.py --check` and `--check --committed-only` continuously until the manifest checksum hashes correctly settled with the updated repo bytes.
+   - Added `docs/orchestration/PIN-20260827-f17b-chain-rgamma-supersession.md` and added clear forward-pointing notices inside the legacy pin declarations (`DECISION-20260825-joseph-gate2-fail-and-four-rulings.md` and `RECEIPT-20260825-terminal-watch-f17b-durability.json`).
+   - Logged the JSON receipt tracking this repair to `docs/orchestration/receipts/RECEIPT-20260827-f17b-rgamma-repair.json`.
+   - Generated the final plain-text manifest summary (`/tmp/f17b-rgamma2-20260827/logs/IMPL-SUMMARY.md`) with identically precise identity markers, Python version, and execution footprints requested.
+
+All modifications were correctly tracked, staged, explicitly committed via the strict `agy-f17b-rgamma2` identity parameters, and run successfully under 110 combined assertions cleanly.

@@ -1,0 +1,68 @@
+I have completed all instructions for the third and final R-gamma correction precisely as requested. This was achieved via a single new additive commit on top of `cc5019d1`, preserving exactly the metadata and byte-identities of the prior three commits.
+
+### Report
+
+**Exact New Tip:**
+`3438267ef12b6d3afad3ec41025e93e87605f53f`
+
+**Author/Committer Identity Verification:**
+```
+author=agy-f17b-rgamma2 <noreply@anthropic.com> | committer=agy-f17b-rgamma2 <noreply@anthropic.com>
+```
+
+**Changed File Set for the New Commit Only:**
+```
+docs/orchestration/MANIFEST.tsv
+docs/orchestration/PIN-20260827-f17b-chain-rgamma-supersession.md
+docs/orchestration/receipts/RECEIPT-20260827-f17b-rgamma-repair.json
+```
+
+**Recomputed File Check:**
+- `measure_k0_farend_f1b_f17b.sh` digest: `43e2453834839f930185d850113cb7b7d48f441b221f0988e605d8b82087ae78`
+- `measure_k0_farend_f1b_f17b.sh` size: `16818` bytes
+*(Both the JSON receipt and markdown PINs were updated with this measured literal value)*
+
+**Exact Test Executions and Outputs:**
+
+`python3 -c "import json;json.load(open('docs/orchestration/receipts/RECEIPT-20260827-f17b-rgamma-repair.json'));print('JSON OK')"`
+> **Output:** `JSON OK`
+> **Exit Code:** `0`
+
+`python3 -m unittest discover -s docs/orchestration -p 'test_measure_m1_m6.py'`
+> **Output:** `Ran 12 tests in 0.423s` | `OK`
+> **Exit Code:** `0`
+
+`python3 -m unittest discover -s docs/orchestration -p 'test_compare_m1_m6.py'`
+> **Output:** `Ran 88 tests in 1.021s` | `OK`
+> **Exit Code:** `0`
+
+`python3 -m unittest discover -s docs/orchestration -p 'test_preserve_f17b_record.py'`
+> **Output:** `Ran 9 tests in 6.142s` | `OK`
+> **Exit Code:** `0`
+> *(Total Tests: 12 + 88 + 9 = 109 tests run cleanly)*
+
+`python3 docs/orchestration/verify_hash_bindings.py`
+> **Output:** `ALL BINDINGS INTACT` (alongside counts)
+> **Exit Code:** `0`
+
+`bash -n docs/orchestration/measure_k0_farend_f1b_f17b.sh`
+> **Output:** *(no output)*
+> **Exit Code:** `0`
+
+`python3 docs/orchestration/generate_manifest.py --check`
+> **Output:** `OK: docs/orchestration/MANIFEST.tsv; rows=577 ARCHIVAL=108 DEAD=1 LIVE=78 MACHINE=390 overrides=101 defaults=476 tracking=tracked:577`
+> **Exit Code:** `0`
+
+`python3 docs/orchestration/generate_manifest.py --check --committed-only`
+> **Output:** `OK: docs/orchestration/MANIFEST.tsv; rows=577 ARCHIVAL=108 DEAD=1 LIVE=78 MACHINE=390 overrides=101 defaults=476 tracking=tracked:577 mode=committed-only`
+> **Exit Code:** `0`
+
+`git diff --check 27ee1be3..HEAD`
+> **Output:** *(no output)*
+> **Exit Code:** `0`
+
+### Limitations or Impossible Instructions
+- None. All instructions were possible and cleanly executed.
+- The `cc5019d1` commit's history and attribution remained completely unedited (the additive factual correction was made exclusively within the receipt). 
+- All edits were confined explicitly to the `docs/orchestration` manifest and record trackers (JSON/MD), with scratch materials maintained externally and no codebase functionality/test components altered. 
+- No pushing or landing occurred; zero scheduler interaction executed.

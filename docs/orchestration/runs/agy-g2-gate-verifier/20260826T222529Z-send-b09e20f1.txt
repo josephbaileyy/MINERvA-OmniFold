@@ -1,0 +1,39 @@
+The final attestation task is complete, and the results have been durably written to `/tmp/grade-stack-20260826/logs/VERDICT-ATTEST.md`. 
+
+Here is the parsed contents of the attestation file:
+
+### 1. Identity & Environment
+- **Grader Role**: `agy-g2-gate-verifier`
+- **Conversation UUID**: `dc93a0f8-6863-48c8-9b7b-76f22f6deae2`
+
+### 2. SHAs for P1-P5 (Attestation)
+All items were **ATTESTED** from my explicit script execution records earlier in this conversation:
+- **P1 (F-7(b) pin gate)**: Used `/tmp/grade-stack-20260826/pin`. SHA: `57508b319a184cd968b191448aeaafb1bd8ed4b7`. 
+- **P2 (successor probe)**: Used `/tmp/grade-stack-20260826/probe`. SHA: `d0decbd35b0c4986dc31286a221220d3a29555d1`.
+- **P3 (FAILOPEN constants)**: Used `/tmp/grade-stack-20260826/probe`. SHA: `d0decbd35b0c4986dc31286a221220d3a29555d1`.
+- **P4 (step 4 checks)**: Used `/tmp/grade-stack-20260826/probe`. SHA: `d0decbd35b0c4986dc31286a221220d3a29555d1`.
+- **P5 (conflict resolutions)**: Used `/tmp/grade-stack-20260826/merge`. SHA: `1aa055d9cd40964cff3b3d0d63ea616d26d5f515`. 
+
+### 3. Reading Other Graders' Output
+I acknowledge and have incorporated the contents of the durable output from the other graders:
+- `/tmp/grade-stack-20260826/logs/VERDICT-P6-P7-anchor.md`
+- `/tmp/grade-stack-20260826/logs/VERDICT-P9.md`
+- `/tmp/grade-stack-20260826/logs/VERDICT-P8-probe.md` *(my own prior run)*
+
+### 4. Author Corrections
+- **(a) P6**: **AGREE**. The phrase 'STALE 6 at base' incorrectly implied the base tree already reflected the delisting state, when in fact the base tree had 52 sites and the merged tree 46. The substance of the 52 -> 46 reduction via the delisting commit stands.
+- **(b) P7**: **AGREE**. The author conflated the operation (104 rows deduped down to 101 during conflict resolution) with the tree delta (base had 97, merge ended with 101). The correction accurately reflects the physical state of the tree.
+
+### 5. OVERALL VERDICT
+
+`base   3ae656951734bc90371bd64c56ccc4ce970b1470`
+`then   1aa055d9cd40964cff3b3d0d63ea616d26d5f515   merge candidate`
+`then   57508b319a184cd968b191448aeaafb1bd8ed4b7   F-7(b) pin gate`
+`then   d0decbd35b0c4986dc31286a221220d3a29555d1   OI-136 successor probe`
+
+**OVERALL: FIT**
+**Reasoning**: Every proposition measured directly matches the physical claims of the commits, once the author's own corrections on phrasing (P6, P7) are accepted. The tests show no broad-suite regression, the conflict resolutions preserve the necessary semantics (including the strict test guards), the duplicate rows were mechanically deduped, the known unrepaired list properly shrank, the pin gate successfully prevents empty/incorrect exclusions, and the successor probe cleanly resolved the fail-open count while bringing the failing test arms back to green. As the toolchain functions exactly as asserted without regressing the base suite, the INSTRUMENT half of the requirements is met.
+
+### 6. REACHABILITY
+**COMPLETED:** Identity reporting, P1-P5 SHA attestations, reading grader logs, judging author corrections, and delivering a final overall explicit verdict with reasoning.
+**UNREACHED:** None.

@@ -1,0 +1,17 @@
+I have completed the independent soundness review of the F-8(b) redesign. 
+
+I successfully initialized the environment, verified the specified git tip (`1aa6e3dc33bac1b8ec0373ce4fedf7a2cb5dd1cb`), and performed a thorough evaluation of the instruments and prior reviews.
+
+The full verdict has been written to the required file: `/tmp/f8b-soundness-20260826/logs/VERDICT-F8B-SOUNDNESS.md`.
+
+Here is a summary of the findings:
+
+**F8B-SOUNDNESS: UNSOUND**
+
+1. **The "no green anywhere" design is structurally theatre.** By removing a success exit code, the tool forces consuming pipelines (Make, CI, bash wrappers) to treat a successful execution as a failure unless explicitly handled. Future lanes will inevitably wrap the tool to restore a `0` exit code, which entirely swallows the distinction the redesign attempted to enforce.
+2. **The original automation-bias diagnosis was overstated.** In standard engineering practice, a mechanical linter returning `rc=0` signals that pre-conditions are met and a human review can proceed, not that the review should be skipped. The readiness review that triggered this redesign made an unmeasured argument based on a tip where the instrument did not even exist.
+3. **The toolchain fails to serve the core F-8 clause.** The F-8 clause requires the receipt to state the blind spots in its "own words." The linter checks only mechanical transclusion and hardcoded keywords, while the attestation restricts reviewers to the four hardcoded spots. The reviewer assumes the linter verified the "own words" clause, while the linter relies on the reviewer to actually read it.
+4. **The disclosed residuals are not genuinely un-closeable.** The design claims it cannot authenticate identity because git commit authorship is weak. However, in this specific repository, agents write verdicts to dedicated `docs/orchestration/runs/<role>/` directories. The path structure provides a strong repo-native identity signal that the tool missed.
+5. **I discovered a third defective guard with an untested direction.** Both the `_role_key` and `_skeleton` normalizers use `\W`, which keeps underscores intact while stripping spaces and hyphens. While this closed the alias hole for `close-out lane` vs `close out lane`, it opened a massive new one for underscores. A reviewer named `close-out lane` can self-attest by reviewing `close_out_lane`. Similarly, `finding 1` and `finding_1` will bypass the duplicate check. I explicitly measured the false positive and false negative from the design doc at their relevant commits, as well as the new underscore defect.
+
+All scope checks, tests, and file bindings were re-run and passed successfully. No scientific claim or estimator was touched. GATE 2 REMAINS FAIL.
