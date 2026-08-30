@@ -310,6 +310,22 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 
 
+- **THE SEVEN k=0 ARMS DIED ON `env-pathcheck`, AND THE GUARD WAS RIGHT, 2026-08-30:**
+  [`FINDING-20260830-k0r2-env-pathcheck-submitter-declaration-omitted.md`](FINDING-20260830-k0r2-env-pathcheck-submitter-declaration-omitted.md)
+  — six tasks of `k0-7ac0edec-20260830T000215Z` failed in 8–15 s, exit `3:0`, byte-identical stderr
+  (1453 B, `md5 9fc5fa4d…24df6`); the rest cancelled at 16:35:21Z on Joseph's instruction; **~1 minute
+  of compute burned.** Cause is a **procedure omission, not a code defect**:
+  `lib_mnv_env_pathcheck.sh:37-41` specifies that home-directory PATH entries are refused until the
+  submitter predeclares them, `PACKET-20260823:122` gives the export line and `:218` calls it *"a
+  submitter-declared allowlist"*, and **`RECORD-20260830` §5 records the submission as eight `export`
+  lines with `MNV_ENV_SYSTEM_PREFIXES` absent.** **Three defects filed as `OI-179`:** `PACKET:122`
+  omits `$HOME/bin` so the documented recipe still fails; **branch (b) of the guard has no test in the
+  direction it acts** — `tests/test_k0_launcher_two_roots.py:738` asserts `[env-pathcheck] OK:` but
+  `good_env()` feeds it an allowlist derived from the running host by `_ambient_prefixes()`, so the
+  arm cannot fail, which is why Gate 1 passed 18-of-18 while the launcher could not start; and the run
+  records no environment provenance at all while pinning its tree to the byte. **NO code, launcher or
+  `MANIFEST` pin must change to re-submit.** Corrects the producer session's first diagnosis, which is
+  recorded in §4 and withdrawn by its author. Moves no gate; Gate 2 remains **FAIL**.
 - **Canonical drift during the run is a FILED FINDING, 2026-08-30:**
   [`DECISION-20260830-joseph-f17b-post-path-drift-is-a-filed-finding.md`](DECISION-20260830-joseph-f17b-post-path-drift-is-a-filed-finding.md)
   — Joseph chose option 1 of four: *"Yes do option 1, filing the correction and settling OI-178"*,
