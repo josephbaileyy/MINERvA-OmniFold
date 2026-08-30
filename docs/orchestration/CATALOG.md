@@ -671,6 +671,7 @@ Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any subm
 | Maintain queue/playbook | [`control-plane/policy.json`](control-plane/policy.json), [`control-plane/source-record-inventory.tsv`](control-plane/source-record-inventory.tsv), then `control_plane_lint.py` |
 | Maintain classifications | `MANIFEST-overrides.tsv`, then `generate_manifest.py` |
 | Operate continuation | `WAKER.md`, `wakerctl.py`, `waker-config.json`, and `profiles.json` |
+| Glance at campaign status | [`RUNBOOK-status-dashboard.md`](RUNBOOK-status-dashboard.md), then `dashboard_collector.py --print-scrontab`; the page is a view, so re-measure before deciding |
 | Build deliverables | `docs/analysis-note/build_all.sh` for note, primer, and paper |
 
 ## Frozen pre-compaction evidence

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<!--
+  MINERvA-OmniFold campaign status dashboard.
+
+  One static file, no build step, no network dependency beyond status.json.  It renders
+  whatever dashboard_collector.py wrote and refuses to imply anything the snapshot does
+  not state:
+
+    * Nothing is displayed without an age.  Ages count up between refreshes from
+      generated_at_epoch, so a page left open on a phone cannot show a frozen "7s ago".
+    * "not measured" is a neutral hatched state, never a severity and never a blank cell.
+      A partial login-node sweep is always labelled with its own coverage.
+    * Status is icon + word + color, never color alone.
+    * A failed fetch keeps the last snapshot on screen and marks it as ageing, rather
+      than blanking the page or silently showing old numbers as current.
+
+  Status colors are the fixed, pre-validated status palette (good/warning/serious/
+  critical); no categorical series palette is used, so there is nothing to re-validate.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>MINERvA-OmniFold status</title>
+<style>
+  :root {
+    --surface-0: #111110; --surface-1: #1a1a19; --surface-2: #232322;
+    --border: #333331; --text-primary: #ffffff; --text-secondary: #c3c2b7;
+    --text-muted: #8a8980;
+    --good: #0ca30c; --warning: #fab219; --serious: #ec835a; --critical: #d03b3b;
+    --accent: #3987e5; --unknown: #6f6e66;
+    --radius: 10px;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --surface-0: #f4f4f2; --surface-1: #fcfcfb; --surface-2: #eeeeeb;
+      --border: #d8d8d3; --text-primary: #0b0b0b; --text-secondary: #52514e;
+      --text-muted: #6f6e66; --accent: #2a78d6; --unknown: #6f6e66;
+    }
+  }
+  * { box-sizing: border-box; }
+  /* Long unbreakable strings -- job names carrying a full path, 30-node lists, error
+     text -- otherwise force the page wider than a phone viewport and every panel gets
+     clipped at the right edge. */
+  body, td, th, li, div, span, strong { overflow-wrap: anywhere; min-width: 0; }
+  body {
+    margin: 0; padding: 12px; background: var(--surface-0); color: var(--text-primary);
+    font: 15px/1.45 ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-text-size-adjust: 100%;
+  }
+  h1 { font-size: 1rem; margin: 0; font-weight: 600; letter-spacing: .01em; }
+  h2 {
+    font-size: .8rem; text-transform: uppercase; letter-spacing: .07em;
+    color: var(--text-secondary); margin: 0 0 8px; font-weight: 600;
+  }
+  a { color: var(--accent); }
+
+  header {
+    display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline;
+    margin-bottom: 12px;
+  }
+  header .spacer { flex: 1 1 auto; }
+  button {
+    background: var(--surface-2); color: var(--text-primary); border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px 10px; font: inherit; font-size: .8rem; cursor: pointer;
+  }
+
+  /* Hero: the snapshot's own age.  If this is stale nothing else on the page matters,
+     so it is the one number the view leads with. */
+  .hero {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 14px 16px; margin-bottom: 12px;
+  }
+  .hero-value { font-size: 2.6rem; font-weight: 600; line-height: 1; }
+  .hero-label { color: var(--text-secondary); font-size: .85rem; margin-top: 6px; }
+
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
+  section {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px;
+  }
+
+  /* Status chip: shape + word + color.  Never color alone. */
+  .chip {
+    display: inline-flex; align-items: center; gap: 5px; border-radius: 999px;
+    padding: 2px 9px; font-size: .74rem; font-weight: 600; white-space: nowrap;
+    border: 1px solid currentColor;
+  }
+  .chip .glyph { font-size: .8em; }
+  .s-good { color: var(--good); }
+  .s-warning { color: var(--warning); }
+  .s-serious { color: var(--serious); }
+  .s-critical { color: var(--critical); }
+  .s-info { color: var(--accent); }
+  /* Not measured: neutral + hatched, so it is distinguishable without color and is
+     never mistaken for a severity or for a measured-false result. */
+  .s-unknown {
+    color: var(--unknown); border-style: dashed;
+    background-image: repeating-linear-gradient(135deg,
+      rgba(128,128,120,.18) 0 3px, transparent 3px 7px);
+  }
+
+  .banner {
+    border-radius: 8px; padding: 9px 12px; margin-bottom: 12px; font-size: .85rem;
+    border: 1px solid currentColor;
+  }
+  .banner strong { font-weight: 600; }
+
+  /* Coverage meter: fill carries severity, track is a muted step of the same ramp. */
+  .meter { height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; margin: 8px 0 6px; }
+  .meter > span { display: block; height: 100%; border-radius: 999px; background: currentColor; }
+
+  table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+  th {
+    text-align: left; color: var(--text-muted); font-weight: 600; font-size: .72rem;
+    text-transform: uppercase; letter-spacing: .05em; padding: 0 8px 6px 0;
+  }
+  td { padding: 7px 8px 7px 0; border-top: 1px solid var(--border); vertical-align: top; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .95em; }
+  .note { color: var(--text-muted); font-size: .76rem; margin-top: 6px; }
+  .sub { color: var(--text-secondary); font-size: .76rem; overflow-wrap: anywhere; }
+  .empty { color: var(--text-muted); font-style: italic; font-size: .82rem; }
+
+  /* Phone: tables become stacked cards with row labels, so nothing needs sideways scroll. */
+  @media (max-width: 620px) {
+    body { padding: 9px; }
+    .hero-value { font-size: 2.1rem; }
+    h1 { flex: 1 1 100%; }
+    table, tbody, tr, td { display: block; width: 100%; max-width: 100%; }
+    thead { display: none; }
+    tr { border-top: 1px solid var(--border); padding: 8px 0; }
+    /* Grid, not flex: a fixed label track plus a `minmax(0, 1fr)` content track is what
+       actually lets long content shrink instead of widening the row. */
+    td {
+      border: 0; padding: 2px 0; display: grid; gap: 2px 8px;
+      grid-template-columns: 7em minmax(0, 1fr); align-items: start;
+    }
+    /* Every real child goes in column 2.  Without this, a cell holding a value AND a
+       `.sub` detail line puts the second child in the LABEL column, where it wraps to
+       7em and looks like a layout collapse. */
+    td > * { grid-column: 2; justify-self: start; }
+    td::before {
+      content: attr(data-label); grid-column: 1; grid-row: 1;
+      color: var(--text-muted); font-size: .72rem;
+      text-transform: uppercase; letter-spacing: .05em; padding-top: 3px;
+    }
+    td:empty { display: none; }
+    ul { padding-left: 0 !important; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>MINERvA-OmniFold</h1>
+  <span class="spacer"></span>
+  <span id="refresh-state" class="sub"></span>
+  <button id="theme-toggle" type="button">Theme</button>
+  <button id="refresh-now" type="button">Refresh</button>
+</header>
+
+<div id="fetch-banner"></div>
+<div class="hero">
+  <div id="hero-value" class="hero-value">--</div>
+  <div id="hero-label" class="hero-label">waiting for status.json</div>
+</div>
+<div id="panels" class="grid"></div>
+
+<script>
+"use strict";
+
+const STATUS_URL = "status.json";
+const REFRESH_MS = 30000;
+
+// Last successful snapshot, kept so a failed fetch can keep showing data that is
+// explicitly ageing rather than blanking the page.
+let snapshot = null;
+let fetchError = null;
+// Real client-vs-server clock offset, from the HTTP Date header of the status.json
+// response.  It is NOT (now - generated_at): that difference is the snapshot's AGE, and
+// treating it as skew makes a merely-late collector look like a broken clock.  null
+// means the header was absent, i.e. skew was not measured -- which is not "no skew".
+let clockSkew = null;
+
+const $ = (id) => document.getElementById(id);
+const esc = (value) =>
+  String(value ?? "").replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+/* ---- ages -------------------------------------------------------------- */
+
+// Every age on the page is (age when collected) + (time since collection).  Rendering
+// the collected age alone would freeze on an open tab; using the client clock alone
+// would inherit its skew.
+function liveAge(ageSeconds) {
+  if (ageSeconds === null || ageSeconds === undefined) return null;
+  return ageSeconds + sinceCollection();
+}
+
+function sinceCollection() {
+  if (!snapshot) return 0;
+  // Correct the client clock by the measured skew before differencing against the
+  // collector's own timestamp, so a wrong device clock does not distort every age.
+  const clientNow = Date.now() / 1000 - (clockSkew || 0);
+  return Math.max(0, clientNow - snapshot.generated_at_epoch);
+}
+
+function fmtAge(seconds) {
+  if (seconds === null || seconds === undefined) return "age unknown";
+  const s = Math.max(0, Math.round(seconds));
+  if (s < 60) return s + "s ago";
+  if (s < 3600) return Math.floor(s / 60) + "m " + (s % 60) + "s ago";
+  if (s < 86400) return Math.floor(s / 3600) + "h " + Math.floor((s % 3600) / 60) + "m ago";
+  return Math.floor(s / 86400) + "d " + Math.floor((s % 86400) / 3600) + "h ago";
+}
+
+function fmtDuration(seconds) {
+  if (seconds === null || seconds === undefined) return null;
+  const s = Math.max(0, Math.round(seconds));
+  if (s < 60) return s + "s";
+  if (s < 3600) return Math.floor(s / 60) + "m";
+  if (s < 86400) return Math.floor(s / 3600) + "h " + Math.floor((s % 3600) / 60) + "m";
+  return Math.floor(s / 86400) + "d " + Math.floor((s % 86400) / 3600) + "h";
+}
+
+/* ---- chips ------------------------------------------------------------- */
+
+const GLYPH = { good: "●", warning: "▲", serious: "◆",
+                critical: "✕", info: "●", unknown: "?" };
+
+function chip(kind, label, title) {
+  return `<span class="chip s-${kind}"${title ? ` title="${esc(title)}"` : ""}>` +
+         `<span class="glyph" aria-hidden="true">${GLYPH[kind]}</span>${esc(label)}</span>`;
+}
+
+function banner(kind, html) {
+  return `<div class="banner s-${kind}">${html}</div>`;
+}
+
+/* ---- render ------------------------------------------------------------ */
+
+function render() {
+  renderFetchBanner();
+  renderHero();
+  if (!snapshot) { $("panels").innerHTML = ""; return; }
+  $("panels").innerHTML = [
+    panelSources(), panelCoverage(), panelJobs(), panelTicker(), panelTmux(), panelAgents(),
+  ].join("");
+}
+
+function renderFetchBanner() {
+  const parts = [];
+  if (fetchError) {
+    parts.push(banner("critical",
+      `<strong>${GLYPH.critical} Cannot reach status.json.</strong> ${esc(fetchError)}. ` +
+      (snapshot
+        ? `Showing the last snapshot, which is <strong>${esc(fmtAge(liveAge(0)))}</strong> ` +
+          `and still ageing — these values are <strong>not current</strong>.`
+        : `No snapshot has loaded yet, so nothing below is measured.`)));
+  }
+  if (clockSkew !== null && Math.abs(clockSkew) > 120) {
+    parts.push(banner("warning",
+      `<strong>${GLYPH.warning} Clock skew ${Math.round(clockSkew)}s.</strong> ` +
+      `This device's clock disagrees with the server's, and ages have been corrected ` +
+      `by that offset. Check the device clock.`));
+  }
+  $("fetch-banner").innerHTML = parts.join("");
+}
+
+function renderHero() {
+  if (!snapshot) {
+    $("hero-value").textContent = "--";
+    $("hero-value").className = "hero-value";
+    $("hero-label").textContent = fetchError ? "no snapshot loaded" : "waiting for status.json";
+    return;
+  }
+  const age = liveAge(0);
+  const kind = fetchError ? "critical" : age > 900 ? "critical" : age > 480 ? "warning" : "good";
+  $("hero-value").textContent = fmtAge(age).replace(/ ago$/, "");
+  $("hero-value").className = "hero-value s-" + kind;
+  $("hero-label").innerHTML =
+    `since this snapshot was collected on ` +
+    `<span class="mono">${esc(snapshot.collector?.host ?? "?")}</span> ` +
+    `at ${esc(snapshot.generated_at_utc)} ` +
+    `(took ${esc(snapshot.collector?.duration_seconds ?? "?")}s)`;
+}
+
+function panelSources() {
+  const rows = (snapshot.sources || []).map((source) => {
+    let kind, label;
+    if (!source.ok) { kind = "critical"; label = "failed"; }
+    else if (source.stale === null) { kind = "unknown"; label = "not measured"; }
+    else if (source.stale) { kind = "warning"; label = "stale"; }
+    else { kind = "good"; label = "ok"; }
+    const age = source.ok ? fmtAge(liveAge(source.age_seconds)) : "not measured";
+    const detail = source.error || source.detail?.partial || "";
+    return `<tr>
+      <td data-label="Source"><span class="mono">${esc(source.name)}</span>
+        ${detail ? `<div class="sub">${esc(detail)}</div>` : ""}</td>
+      <td data-label="State">${chip(kind, label, source.error || "")}</td>
+      <td data-label="Age" class="num">${esc(age)}</td>
+    </tr>`;
+  });
+  return `<section><h2>Sources</h2>
+    <table><thead><tr><th>Source</th><th>State</th><th>Age</th></tr></thead>
+    <tbody>${rows.join("") || emptyRow(3, "no sources reported")}</tbody></table>
+    <p class="note">A source's age is the age of its data, not of this page.</p>
+  </section>`;
+}
+
+function panelCoverage() {
+  const c = snapshot.coverage || {};
+  const total = c.nodes_total ?? 0;
+  const measured = c.nodes_measured ?? 0;
+  const pct = total ? (measured / total) * 100 : 0;
+  const kind = !total ? "unknown" : c.complete ? "good" : pct >= 70 ? "warning" : "critical";
+  const unmeasured = c.unmeasured || [];
+
+  // Group by cause: eight draining nodes share one message, and repeating it eight
+  // times made this panel taller than the rest of the page.
+  const CAUSE_LABEL = {
+    draining: "draining (pam_nologin)", no_route: "no route to host",
+    timeout: "connection timed out", auth: "authentication refused",
+    unknown: "cause not identified",
+  };
+  const byCause = new Map();
+  for (const entry of unmeasured) {
+    const cause = entry.cause || "unknown";
+    if (!byCause.has(cause)) byCause.set(cause, []);
+    byCause.get(cause).push(entry);
+  }
+  const groups = [...byCause.entries()].map(([cause, entries]) => {
+    const nodes = entries.map((e) =>
+      `<span class="mono">${esc(e.node)}</span>` +
+      (e.in_maint_reservation ? '<sup title="also in a MAINT reservation">[M]</sup>' : "")
+    ).join(", ");
+    const sample = entries[0].reason_short || entries[0].reason || "no reason reported";
+    return `<li><strong>${entries.length}</strong> ${esc(CAUSE_LABEL[cause] || cause)}
+      <div class="sub">${nodes}</div>
+      <div class="note" title="${esc(entries[0].reason || "")}">${esc(sample)}</div></li>`;
+  }).join("");
+
+  return `<section><h2>Login-node coverage</h2>
+    <div><strong>${measured}/${total}</strong> login nodes measured
+      ${c.complete ? chip("good", "complete") : chip("unknown", "partial sweep")}</div>
+    <div class="meter s-${kind}"><span style="width:${pct.toFixed(1)}%"></span></div>
+    ${unmeasured.length
+      ? `<div class="sub">${unmeasured.length} not measured — the tmux panel says nothing
+           about these:</div>
+         <ul class="sub" style="margin:6px 0 0;padding-left:18px;list-style:none">${groups}</ul>
+         <div class="note">[M] = also in a MAINT reservation.</div>`
+      : `<div class="sub">Every login node in the cron partition answered.</div>`}
+    <p class="note">Node list read from <span class="mono">scontrol show partition cron</span>,
+      not hardcoded.</p>
+  </section>`;
+}
+
+function panelJobs() {
+  const JOB_KIND = { COMPLETE: "good", ACTIVE: "info", ERROR: "critical", UNOBSERVED: "unknown" };
+  const rows = (snapshot.jobs || []).map((job) => {
+    const kind = JOB_KIND[job.overall] || "unknown";
+    const label = job.overall === "UNOBSERVED" ? "not observed" : job.overall.toLowerCase();
+    const eta = job.eta || {};
+    let etaCell;
+    if (eta.kind === "time_left") {
+      etaCell = `<strong>${esc(fmtDuration(eta.seconds))}</strong> walltime left`;
+    } else if (eta.kind === "start_estimate") {
+      etaCell = `starts in ~${esc(fmtDuration(eta.seconds))} ${chip("warning", "estimate")}`;
+    } else {
+      etaCell = chip("unknown", "unknown");
+    }
+    const counts = Object.entries(job.counts || {})
+      .map(([state, n]) => `${n}×${state.toLowerCase()}`).join(", ");
+    return `<tr>
+      <td data-label="Job"><span class="mono">${esc(job.job_id)}</span>
+        <div class="sub">${esc(job.name)} · ${esc(job.partition)}</div></td>
+      <td data-label="State">${chip(kind, label)}
+        <div class="sub">${esc(counts)}</div></td>
+      <td data-label="Finishes">${etaCell}
+        <div class="sub">${esc(eta.detail || "")}</div></td>
+      <td data-label="Blocked on" class="sub">${
+        (job.blocking_reasons || []).length ? esc(job.blocking_reasons.join(", ")) : "—"}</td>
+    </tr>`;
+  });
+  return `<section style="grid-column:1/-1"><h2>Perlmutter jobs</h2>
+    <table><thead><tr><th>Job</th><th>State</th><th>Finishes / starts</th><th>Blocked on</th></tr></thead>
+    <tbody>${rows.join("") || emptyRow(4, "no jobs in the queue for this user")}</tbody></table>
+    <p class="note">A pending task's TIME_LEFT is its requested walltime, not an ETA, and is not
+      shown as one. <span class="mono">squeue --start</span> returns N/A for anything blocked on
+      Priority or Dependency, which reads as <em>unknown</em> rather than a guess.</p>
+  </section>`;
+}
+
+function panelTicker() {
+  const t = snapshot.ticker || {};
+  const receipt = t.receipt;
+  const tickSource = (snapshot.sources || []).find((s) => s.name === "waker_tick") || {};
+  let head;
+  if (!receipt) {
+    head = `<div>${chip("critical", "no tick receipt")}
+      <div class="sub">${esc(tickSource.error || "last-tick.json could not be read")}</div></div>`;
+  } else {
+    const age = liveAge(receipt.age_seconds);
+    const kind = age > 1800 ? "critical" : age > 600 ? "warning" : "good";
+    head = `<div>${chip(kind, "last tick " + fmtAge(age))}
+      <div class="sub">on <span class="mono">${esc(receipt.node)}</span>,
+        pid <span class="mono">${esc(receipt.pid)}</span>,
+        ${esc(receipt.watch_errors)} watch error(s)</div></div>`;
+  }
+  const scron = t.scron || {};
+  const scronRows = (scron.jobs || []).map((job) =>
+    `<div class="sub"><span class="mono">${esc(job.job_id)}</span> ${esc(job.state)}
+      · ${esc(job.reason)}</div>`).join("");
+  const locks = (t.daemon_locks || []).map((lock) =>
+    `<div class="sub"><span class="mono">${esc(lock.node)}</span> daemon started
+      ${esc(fmtAge(liveAge(lock.created_age_seconds)))}</div>`).join("");
+  return `<section><h2>Waker ticker</h2>
+    ${head}
+    <div style="margin-top:10px"><strong class="sub">Scheduled cron job</strong>
+      ${scron.jobs === null ? chip("unknown", "not measured", scron.error) : ""}
+      ${scronRows || `<div class="sub">no cron job in the queue</div>`}</div>
+    <div style="margin-top:8px"><strong class="sub">Daemon locks</strong>
+      ${locks || `<div class="sub">none</div>`}</div>
+    <p class="note">These are three separate facts. A cron job that keeps restarting is not
+      evidence a tick ran, and a lock records when a daemon <em>started</em>, not that it is
+      still ticking. Only the tick receipt is liveness.</p>
+  </section>`;
+}
+
+function panelTmux() {
+  const rows = (snapshot.tmux || []).filter(
+    (row) => row.state === "sessions" || row.state === "unparsed");
+  const cards = rows.map((row) => {
+    if (row.state === "unparsed") {
+      return `<tr><td data-label="Node"><span class="mono">${esc(row.node)}</span></td>
+        <td data-label="Sessions">${chip("warning", "unparsed", row.error)}</td></tr>`;
+    }
+    const sessions = row.sessions.map((session) =>
+      `<div><span class="mono">${esc(session.name)}</span>
+        <span class="sub">${esc(session.windows)} window(s)</span>
+        <div class="sub">created ${esc(session.created_local_text || "unknown")}
+          <span title="tmux prints the node's local time with no UTC offset, so no age is derived from it">(node-local, no offset)</span></div></div>`).join("");
+    return `<tr><td data-label="Node"><span class="mono">${esc(row.node)}</span></td>
+      <td data-label="Sessions">${sessions}</td></tr>`;
+  });
+  const c = snapshot.coverage || {};
+  const noneCount = (snapshot.tmux || []).filter((r) => r.state === "no_tmux_server").length;
+  return `<section><h2>tmux sessions</h2>
+    <table><thead><tr><th>Node</th><th>Sessions</th></tr></thead>
+    <tbody>${cards.join("") || emptyRow(2, "no tmux sessions on any measured node")}</tbody></table>
+    <p class="note">${noneCount} measured node(s) had no tmux server.
+      ${(c.unmeasured || []).length
+        ? `<strong>${(c.unmeasured || []).length} node(s) were not measured</strong> and could be
+           running sessions this panel cannot see.`
+        : `All nodes measured.`}</p>
+  </section>`;
+}
+
+function panelAgents() {
+  const rows = (snapshot.agents || []).map((agent) => {
+    const age = liveAge(agent.age_seconds);
+    const kind = age === null ? "unknown" : age > 86400 ? "warning" : "good";
+    return `<tr>
+      <td data-label="Session"><span class="mono">${esc(agent.name)}</span>
+        <div class="sub">${esc(agent.provider)} / ${esc(agent.profile)}</div></td>
+      <td data-label="Last turn">${chip(kind, fmtAge(age))}
+        <div class="sub">${esc(agent.turns)} turn(s), last
+          <span class="mono">${esc(agent.last_action)}</span>
+          rc=${esc(agent.last_returncode)}</div></td>
+    </tr>`;
+  });
+  return `<section><h2>LLM orchestration sessions</h2>
+    <table><thead><tr><th>Session</th><th>Last turn</th></tr></thead>
+    <tbody>${rows.join("") || emptyRow(2, "no sessions in the index")}</tbody></table>
+    <p class="note">From the waker's session index. A session's age is its last recorded
+      turn, which is not the same as an agent currently working.</p>
+  </section>`;
+}
+
+function emptyRow(span, text) {
+  return `<tr><td class="empty" colspan="${span}" data-label="">${esc(text)}</td></tr>`;
+}
+
+/* ---- fetch loop -------------------------------------------------------- */
+
+async function refresh() {
+  $("refresh-state").textContent = "refreshing…";
+  try {
+    // Cache-bust: a phone browser will happily serve a cached status.json forever.
+    const response = await fetch(`${STATUS_URL}?t=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status} ${response.statusText}`);
+    const parsed = await response.json();
+    if (typeof parsed.generated_at_epoch !== "number") {
+      throw new Error("snapshot has no generated_at_epoch");
+    }
+    // The Date header is when the SERVER answered, so it isolates clock offset from
+    // snapshot staleness.  Without it, skew stays unmeasured rather than assumed zero.
+    const served = response.headers.get("date");
+    const servedEpoch = served ? Date.parse(served) / 1000 : NaN;
+    clockSkew = Number.isFinite(servedEpoch) ? Date.now() / 1000 - servedEpoch : null;
+    snapshot = parsed;
+    fetchError = null;
+  } catch (error) {
+    fetchError = error.message || String(error);
+  }
+  $("refresh-state").textContent = fetchError ? "fetch failed" : "updated";
+  render();
+}
+
+$("refresh-now").addEventListener("click", refresh);
+$("theme-toggle").addEventListener("click", () => {
+  const root = document.documentElement;
+  root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
+});
+
+refresh();
+setInterval(refresh, REFRESH_MS);
+// Re-render on a timer so displayed ages keep counting between fetches.
+setInterval(() => { if (snapshot) { renderFetchBanner(); renderHero(); render(); } }, 1000);
+// A phone tab suspended in the background wakes with stale numbers; refetch on focus.
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") refresh();
+});
+</script>
+</body>
+</html>
