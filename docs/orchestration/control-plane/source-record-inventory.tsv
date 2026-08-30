@@ -125,4 +125,4 @@ OI-136	active	NOW	safe-default-active	cd2c348e5157a96fa89981535233b40dcbd4c934a8
 OI-137	active	NOW	safe-default-active	85713f9290390b74f9b9fb7aa554c903713857f122fdb656423681849e200b30	OPEN — filed 2026-08-20 by the close-out orchestrator. A HAZARD THAT IS PRESENTLY UNOWNED ON THE PUBLICATION CRITICAL PA
 OI-138	active	NOW	safe-default-active	9b39ee77565bf276cd001004b359ecbad16542c287ac90e807662678a3cae7c8	OPEN
 OI-139	active	NOW	safe-default-active	1ccc6f28d6820f5e7b5b83821c7f2e22ad677dd069e2348a6296d55b3b656262	OPEN
-OI-178	active	NOW	safe-default-active	6de4abce08ef9c94bc0afd5ca9d5b16790975eb86f78cdceec0fc4c0b9dacd6e	OPEN
+OI-178	retired	-	explicit-terminal-prefix	718c5d215905f47ebd8ef1699cc39665f69039824892957358477401aab5da2d	DISCHARGED 2026-08-30

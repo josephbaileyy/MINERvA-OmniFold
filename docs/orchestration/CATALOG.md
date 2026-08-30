@@ -310,6 +310,19 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 
 
+- **Canonical drift during the run is a FILED FINDING, 2026-08-30:**
+  [`DECISION-20260830-joseph-f17b-post-path-drift-is-a-filed-finding.md`](DECISION-20260830-joseph-f17b-post-path-drift-is-a-filed-finding.md)
+  — Joseph chose option 1 of four: *"Yes do option 1, filing the correction and settling OI-178"*,
+  declining a multi-day re-freeze, a repoint at a quiescent stand-in, and adding `M-4.dirty` to the
+  expected-differences file. **Rests on three artifacts read directly**: `compare_m1_m6.py:141-145`
+  (exit 20 is a finding, 4/5 are refusals), `PROPOSAL` §3 (`F-17(b)` is not-discharged only on a
+  missing `M-2` result, a schema gap, or a refusal), and `m1m6_expected_differences.json`, which says
+  a difference in `M-4.dirty` *"is the finding `F-17(b)` asks for"*. So canonical **726 → 725**
+  yields exit 20 with a retained finding and `F-17(b)` still discharges. **CORRECTS TWO OF THIS
+  LANE'S OWN RECORDS:** the close record's claim that the freeze preamble sets out the options'
+  trade-offs (it names them in one sentence with none), and `OI-178`'s framing of the collision as
+  BLOCK-shaped when it is finding-shaped. `OI-178` **DISCHARGED**. Moves no gate; Gate 2 remains
+  **FAIL**; the grader still weighs the finding.
 - **THE DECLARED CANDIDATE SHA, with A-2(a)–(g) filed against it:**
   [`DECLARATION-20260823-k0-candidate-sha.md`](DECLARATION-20260823-k0-candidate-sha.md) —
   `a54038b21fdebfc975bec452a05866ffa571a36c`, **780** tracked source files, listing sha256
