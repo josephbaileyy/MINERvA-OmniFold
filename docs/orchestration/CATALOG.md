@@ -310,6 +310,19 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 
 
+- **RE-SUBMISSION OF THE SEVEN k=0 ARMS, AUTHORIZED 2026-08-30:**
+  [`PROPOSAL-20260830-k0r2-resubmission.md`](PROPOSAL-20260830-k0r2-resubmission.md) — Joseph: *"do
+  all of it, can you continue on the runs too?"* **One added `export` line and no repository file
+  changes**, so none of the `F-14` / §7.0.7 or `OI-123` pin ceremony applies. **Measured on the
+  DEPLOYED library against the real login PATH:** `PACKET-20260823:122` as documented gives **rc 3**
+  with one `VIOLATION` on `$HOME/bin`, and the corrected **three-entry** widening gives
+  `[env-pathcheck] OK: 37 search-path entr(ies) checked` — so **this document is the operative recipe
+  and the packet is not**, until `OI-179` defect 1 is settled. Preconditions measured: canonical HEAD
+  `32e403b8`, porcelain **726**, digest `d429f0f3…` all UNCHANGED since submission, and
+  `mii/member_k000000` still empty — so the `F-17(a)` operands still describe their subject and the
+  live risk is **permitted future drift**, the dashboard lane having been released to land the OI-175
+  fix (726 → 725). Carries the residual shadowing risk the widening accepts, and the narrower
+  launcher-edit alternative it rejects. **`OI-177` ceilings stay unratified; Gate 2 remains FAIL.**
 - **THE SEVEN k=0 ARMS DIED ON `env-pathcheck`, AND THE GUARD WAS RIGHT, 2026-08-30:**
   [`FINDING-20260830-k0r2-env-pathcheck-submitter-declaration-omitted.md`](FINDING-20260830-k0r2-env-pathcheck-submitter-declaration-omitted.md)
   — six tasks of `k0-7ac0edec-20260830T000215Z` failed in 8–15 s, exit `3:0`, byte-identical stderr
