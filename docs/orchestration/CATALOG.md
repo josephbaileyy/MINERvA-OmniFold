@@ -365,6 +365,19 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   tasks (cross-run, mixed-pin — a §7 abort condition); arms 4-6 carry **no resume guard** and would
   overwrite a Gate-2-FAIL rehearsal's products in place. **Moves no gate and grades nothing**; the
   disposition decision is routed as `OI-176`. No `sbatch` was issued.
+- **The `aa67c426` products were quarantined and the seven arms WERE submitted, 2026-08-30:**
+  [`RECORD-20260830-k0-quarantine-and-seven-arm-submission.md`](RECORD-20260830-k0-quarantine-and-seven-arm-submission.md)
+  — Joseph ruled *"do option 1"* (`DECISION-20260830-joseph-quarantine-k0-member-namespace.md`,
+  `deef0e48`), a **per-instance** authorization naming an exact file set. **517 files /
+  2 733 087 821 regular-file bytes moved, never deleted**, to
+  `/pscratch/sd/j/josephrb/quarantine/20260830-k0-aa67c426-failed-rehearsal/`, with a 0-line diff on
+  both the per-file `sha256` set and the `(relpath, bytes, mtime, inode)` ledger. Canonical porcelain
+  **726** and status digest `d429f0f3…` held across **five** reads including immediately before each
+  `sbatch`. Seven job ids `57742557`, `57742558`, `57742559`, `57742560`, `57742561`, `57742633`
+  (`afterok` detector), `57742635` (conjunctive `afterok` over both uthrow arrays) — 374 tasks.
+  **Moves no gate, adopts nothing, files no Gate-2 evidence, and leg 6 was not submitted; Gate 2
+  remains FAIL.** `OI-176` is DISCHARGED; a §6 per-arm CPU-ceiling discrepancy of 1.38 CPU task-h is
+  routed as `OI-177`.
 
 ### Documents that open items route to but this router did not list
 
