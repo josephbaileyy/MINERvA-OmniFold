@@ -1,0 +1,21 @@
+{
+  "C_ML": null,
+  "automatic_retry": false,
+  "cpu_array": "1-5%5",
+  "gpu_array": "1-5%5",
+  "gpu_hours_allocated_ceiling": 5.0,
+  "head": "3c4e63e59ba7e9cd832d74d0ef42f1c6e6ad3a2c",
+  "host": "login37",
+  "jobs": {
+    "cpu_extraction_array": "57727775",
+    "gpu_inference_array": "57727774"
+  },
+  "logical_evaluations": 5,
+  "no_retraining": true,
+  "proposal_sha256": "968334e58482010552db59679f6495cb6978d6255d393984e717fb2decbb498c",
+  "publication_result": false,
+  "schema": "gate6-gap1-full-inventory-submission-v1",
+  "status": "SUBMITTED",
+  "submitted_at_utc": "2026-08-30T04:44:07.464931+00:00",
+  "unchanged_retry": false
+}
