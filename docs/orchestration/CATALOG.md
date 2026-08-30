@@ -4,7 +4,20 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ## Current work
 
-### 🔒 DEPLOYED AND RE-FROZEN AT `7ac0edec`, 2026-08-30 — steps 1–2 of the approved forward-only sequence. **NO COMPUTE, NO GRADE, NO GATE MOVED.**
+### ⛔ §10.1 READY; GATE 1 BLOCKED AT F-17(a), 2026-08-30 — no rehearsal submission
+
+- [`VERDICT-20260830-readiness-10-1-k0-7ac0edec.md`](VERDICT-20260830-readiness-10-1-k0-7ac0edec.md)
+  — **READINESS-10-1: PASS.** F-7(b), F-8(b), and F-17(b) are present at `7ac0edec` and mapped by
+  exact content identity to committed independent grades. The F-17 mapping carries an explicit
+  self-reference disclosure: the readiness checker authored the prior Step-3 grade and verifies its
+  existence/applicability rather than reissuing it.
+- [`GATE1-VERDICT-20260830-k0-7ac0edec.md`](GATE1-VERDICT-20260830-k0-7ac0edec.md)
+  — **GATE 1: BLOCK, 17 PASS / 1 FAIL / 0 NOT-EVALUABLE.** `F-17(a)` fails because the canonical
+  operand records 722 untracked entries and the checkout now has 726; the four additions are the
+  dashboard deployment after the operand completed. `OI-175` routes the replacement. No operand was
+  retaken, no compute submitted, and Gate 2 remains unchanged.
+
+### 🔒 DEPLOYED AND RE-FROZEN AT `7ac0edec`, 2026-08-30 — steps 1–2 historical filing; later grade above
 
 - [`FREEZE-20260830-k0-deployment-7ac0edec.md`](FREEZE-20260830-k0-deployment-7ac0edec.md)
   — **THE DEPLOYED TREE `/pscratch/sd/j/josephrb/k0r2/clean` IS NOW FROZEN DETACHED AT
