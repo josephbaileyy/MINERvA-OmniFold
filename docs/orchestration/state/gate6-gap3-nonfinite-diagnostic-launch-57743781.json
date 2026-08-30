@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "contract_id": "PET-G6-GAP3-NONFINITE-DIAGNOSTIC-20260830",
+  "record_kind": "nonterminal_diagnostic_launch_receipt",
+  "recorded_at_utc": "2026-08-30T16:15:37Z",
+  "state_at_recording": "PENDING",
+  "reason_at_recording": "Priority",
+  "slurm": {
+    "job_id": "57743781",
+    "job_name": "pet_g6_gap3_nfd",
+    "account": "m3246",
+    "qos": "shared",
+    "partition": "shared_milan_ss11",
+    "constraint": "cpu",
+    "submitted_at_cluster_local": "2026-08-30T09:15:31",
+    "elapsed_at_recording": "00:00:00",
+    "time_limit": "02:00:00",
+    "num_cpus": 18,
+    "cpus_per_task": 18,
+    "minimum_cpus_per_node": 18,
+    "requested_tres": {
+      "billing": 18,
+      "cpu": 18,
+      "memory_gib": 32,
+      "nodes": 1
+    },
+    "tres_per_task": {"cpu": 18},
+    "features": "cpu",
+    "gpu_requested": false,
+    "array_job": false,
+    "requeue": 0,
+    "restarts": 0
+  },
+  "resource_contract": {
+    "root_threads": 18,
+    "walltime_hours": 2,
+    "cpu_hour_allocation_ceiling": 36,
+    "memory_gib": 32,
+    "gpu": false
+  },
+  "preflight": {
+    "status": "PASS",
+    "clean_detached_checkout": true,
+    "pushed_head_verified": true,
+    "prior_invalid_artifacts_unchanged": true,
+    "new_artifact_hashes_match": true,
+    "positive_resource_guard_passed": true,
+    "negative_resource_guards_passed": 5,
+    "stable_sort_and_mapping_tests_passed": true,
+    "production_mask_path_checks_passed": true,
+    "root_import_passed": true,
+    "root_version": "6.28/12",
+    "helper_jit_passed": true,
+    "source_schema_passed": true,
+    "npz_header_passed": true,
+    "source_size_bytes": 113496440965,
+    "source_digest": "sha256:9a16331f1c02103e3b5de5e6c00139aa39393ee11eb34881bea0b9a890344e2f",
+    "npz_size_bytes": 9897374636,
+    "npz_digest": "sha256:fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "preflight_digest": "sha256:ece20b5d7a70063727292718f98b60bd35b20ccfd387c6a2b67c364fbc2df701"
+  },
+  "code": {
+    "branch": "pet-gate6-strategy-20260825",
+    "preparation_head": "c77babaab2e7a20b3f2ec31e5c54c2009e363af0",
+    "diagnostic_digest": "sha256:55028da1c32fce58e9dcf20eda84846b050fc65ed972558f17a7616e6886f98f",
+    "launcher_digest": "sha256:c84871436a9f03a0c1f6b927a3a321c682b497d0d0473b8b1101cc3e551951d7",
+    "predeclaration_digest": "sha256:679ea7f9d10f1c5f5fa1e6b9fd4ca818175070dadd69c5073a8bf63a435ecf59",
+    "proposal_digest": "sha256:3229afc3828e3b3e9db356ce685bdc0c3156ff79118f5e82e62814288e66ebf9",
+    "test_digest": "sha256:4550242e56e7f83d87b8cbcf4b8632dea0f73fe8690f1759909248472bf330b9"
+  },
+  "submission": {
+    "count": 1,
+    "authorization_token": "PET-G6-GAP3-NONFINITE-DIAGNOSTIC-20260830-ONE-SCAN",
+    "output_namespace": "gap3-nonfinite-diagnostic-c77babaa",
+    "normalized_command": "sbatch --parsable --chdir=$GAP3NFD_CODE_REPO --output=$GAP3NFD_OUTPUT_ROOT/slurm-%j.out --error=$GAP3NFD_OUTPUT_ROOT/slurm-%j.err --export=ALL,GAP3NFD_CODE_REPO=$GAP3NFD_CODE_REPO,GAP3NFD_DATA_ROOT=$GAP3NFD_DATA_ROOT,GAP3NFD_OUTPUT_ROOT=$GAP3NFD_OUTPUT_ROOT,GAP3NFD_EXPECTED_HEAD=c77babaab2e7a20b3f2ec31e5c54c2009e363af0,GAP3NFD_EXPECTED_LAUNCHER_SHA256=c84871436a9f03a0c1f6b927a3a321c682b497d0d0473b8b1101cc3e551951d7,GAP3NFD_AUTHORIZATION_TOKEN=PET-G6-GAP3-NONFINITE-DIAGNOSTIC-20260830-ONE-SCAN $GAP3NFD_CODE_REPO/nd-unfolding/pet/sbatch_gap3_nonfinite_diagnostic.sh",
+    "automatic_retry": false,
+    "further_retry": false
+  },
+  "qualification": "This is a launch receipt, not a scientific result. The prior GAP-3 result remains INVALID_OR_INCOMPLETE, and terminal accounting and result verification are still required.",
+  "non_authorization": [
+    "do_not_filter_or_repair_inputs",
+    "do_not_change_representation_or_token_cap",
+    "do_not_retrain",
+    "do_not_move_or_adopt_central_value",
+    "do_not_construct_covariance_or_uncertainty",
+    "do_not_select_gate6_member_or_start_leg2",
+    "do_not_authorize_further_compute",
+    "do_not_make_publication_claim"
+  ]
+}
