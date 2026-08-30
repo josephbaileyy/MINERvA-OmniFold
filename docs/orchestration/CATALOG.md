@@ -310,6 +310,17 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 
 
+- **THE CANONICAL CHECKOUT IS RE-QUIESCED FOR THE RE-SUBMISSION WINDOW, 2026-08-30:**
+  [`FREEZE-20260830-canonical-requiesce-k0r2-resubmission.md`](FREEZE-20260830-canonical-requiesce-k0r2-resubmission.md)
+  — a SECOND window, because the first expired by its own terms at submission authorization and
+  `CLOSE-20260830` **released the dashboard lane** to land the `OI-175` fix, which takes porcelain
+  **726 → 725**. **Nothing has drifted:** HEAD `32e403b8`, porcelain **726**, digest `d429f0f3…`
+  unchanged across a five-hour hold re-measured at `20:43:52Z`, and `mii/member_k000000` still empty.
+  So this closes a window that is open rather than repairing a violation, and the risk is **permitted
+  future drift** — deliberately the weaker claim. Prose hold, preventive by convention and detective
+  by `F-17(a)`; pushed before any operand read, and the dashboard lane asked directly, because a hold
+  peers cannot see is not a hold. A `CLOSE-*` record is owed whether the re-submission is issued or
+  abandoned.
 - **RE-SUBMISSION OF THE SEVEN k=0 ARMS, AUTHORIZED 2026-08-30:**
   [`PROPOSAL-20260830-k0r2-resubmission.md`](PROPOSAL-20260830-k0r2-resubmission.md) — Joseph: *"do
   all of it, can you continue on the runs too?"* **One added `export` line and no repository file
