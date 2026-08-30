@@ -4,7 +4,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ## Current work
 
-### ⛔ §10.1 READY; GATE 1 BLOCKED AT F-17(a), 2026-08-30 — no rehearsal submission
+### ✅ §10.1 READY; GATE 1 PASSED ROUND 2, 2026-08-30 — submission remains a separate decision
+
+- [`GATE1-VERDICT-ROUND2-20260830-k0-7ac0edec.md`](GATE1-VERDICT-ROUND2-20260830-k0-7ac0edec.md)
+  — **GATE 1: PASS, 18 PASS / 0 FAIL / 0 NOT-EVALUABLE.** PB-25 pins the rubric and complete
+  execution candidate by content digest. The additive recapture recorded the canonical checkout at
+  726 untracked entries; independent grade-time remeasurement found the same HEAD, branch and
+  **726 / 726 untracked / 0 modified**. The original pair remains the round-1 historical object.
+  No compute was submitted, Gate 2 was not moved, and submission remains a separate decision.
 
 - [`VERDICT-20260830-readiness-10-1-k0-7ac0edec.md`](VERDICT-20260830-readiness-10-1-k0-7ac0edec.md)
   — **READINESS-10-1: PASS.** F-7(b), F-8(b), and F-17(b) are present at `7ac0edec` and mapped by
@@ -12,7 +19,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   self-reference disclosure: the readiness checker authored the prior Step-3 grade and verifies its
   existence/applicability rather than reissuing it.
 - [`GATE1-VERDICT-20260830-k0-7ac0edec.md`](GATE1-VERDICT-20260830-k0-7ac0edec.md)
-  — **GATE 1: BLOCK, 17 PASS / 1 FAIL / 0 NOT-EVALUABLE.** `F-17(a)` fails because the canonical
+  — **ROUND 1 HISTORICAL BLOCK, 17 PASS / 1 FAIL / 0 NOT-EVALUABLE.** `F-17(a)` failed because the canonical
   operand records 722 untracked entries and the checkout now has 726; the four additions are the
   dashboard deployment after the operand completed. `OI-175` routes the replacement. No operand was
   retaken, no compute submitted, and Gate 2 remains unchanged.
