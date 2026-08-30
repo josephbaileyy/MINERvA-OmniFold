@@ -310,6 +310,17 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 
 
+- **THE `OI-179` REMEDIATION IS CONFIRMED IN A REAL SCHEDULED JOB, 2026-08-30:**
+  [`RECORD-20260830-oi179-remediation-confirmed.md`](RECORD-20260830-oi179-remediation-confirmed.md)
+  — `[env-pathcheck] OK`, **47 entries, 0 violations**, in all four round-2 `.out` files, on **both**
+  partitions that produced round 1's identical refusals (`shared_gpu_ss11`, `shared_milan_ss11`). The
+  four tasks then **COMPLETED** `0:0` (8:45–17:18) and wrote products: `member_k000000/` went from 0
+  entries to `boot_nd_5d/` + `seedscan_split_5d/` with **4 `.done` markers**. So the diagnosis is
+  confirmed by successful remediation, a falsifiable prediction that held — declare the allowlist,
+  change nothing else. **The 46 → 47 entry step is recorded as UNEXPLAINED** (consistent across
+  partitions, benign). **§3 says outright this is NOT a run result: 4 of 374 tasks.** `OI-179` stays
+  **OPEN on defect 1** — `PACKET:122` still measures rc 3 on `$HOME/bin`. No gate moves; `OI-177`
+  unratified; Gate 2 remains **FAIL**.
 - **ROUND 2 OF THE SEVEN k=0 ARMS IS SUBMITTED, 2026-08-30:**
   [`RECORD-20260830-k0r2-round2-submission.md`](RECORD-20260830-k0r2-round2-submission.md) — job ids
   `57753239`, `57753243`, `57753244`, `57753245`, `57753246`, `57753247`, `57753248`, run id
