@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "contract_id": "PET-G6-GAP3-NONFINITE-DIAGNOSTIC-20260830",
+  "record_kind": "terminal_diagnostic_receipt",
+  "recorded_at_utc": "2026-08-30T16:52:22Z",
+  "status": "INVALID_OR_INCOMPLETE",
+  "terminal": true,
+  "retry_authorized": false,
+  "slurm_accounting": {
+    "job_id": "57743781",
+    "job_state": "FAILED",
+    "exit_code": "1:0",
+    "submit_utc": "2026-08-30T16:15:31Z",
+    "start_utc": "2026-08-30T16:46:54Z",
+    "end_utc": "2026-08-30T16:50:37Z",
+    "elapsed": "00:03:43",
+    "elapsed_seconds": 223,
+    "allocated_cpus": 18,
+    "requested_cpus": 18,
+    "requested_memory_gib": 32,
+    "batch_max_rss_kib": 33527108,
+    "batch_max_rss_gib": 31.973941802978516,
+    "batch_total_cpu": "00:12:20.301",
+    "allocation_cpu_time_seconds": 4014,
+    "allocation_cpu_hours": 1.115,
+    "allocation_ceiling_cpu_hours": 36,
+    "gpu_requested": false,
+    "gpu_allocated": false,
+    "array_job": false,
+    "requeue": 0,
+    "restarts": 0
+  },
+  "submission": {
+    "count": 1,
+    "authorization_token": "PET-G6-GAP3-NONFINITE-DIAGNOSTIC-20260830-ONE-SCAN",
+    "authorization_exhausted": true,
+    "automatic_retry": false,
+    "further_retry": false
+  },
+  "immutable_checkout": {
+    "head": "c77babaab2e7a20b3f2ec31e5c54c2009e363af0",
+    "clean_after_failure": true,
+    "preparation_was_pushed_and_verified": true
+  },
+  "preflight": {
+    "status": "PASS",
+    "root_version": "6.28/12",
+    "root_helper_jit": true,
+    "source_schema": true,
+    "npz_p12_headers": true,
+    "stable_sort_and_mapping_fixtures": true,
+    "production_loader_and_model_path_checks": true,
+    "positive_resource_guard": true,
+    "negative_resource_guards": 5,
+    "preflight_digest": "sha256:ece20b5d7a70063727292718f98b60bd35b20ccfd387c6a2b67c364fbc2df701"
+  },
+  "runtime_verification": {
+    "source_root_size_bytes": 113496440965,
+    "source_root_digest": "sha256:9a16331f1c02103e3b5de5e6c00139aa39393ee11eb34881bea0b9a890344e2f",
+    "p12_npz_size_bytes": 9897374636,
+    "p12_npz_digest": "sha256:fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "full_input_hash_checks_passed_before_failure": true,
+    "basis": "Execution reached run_diagnostic source scanning after verify_static_inputs returned; a hash or size mismatch would have failed earlier.",
+    "selected_row_censuses_persisted": false,
+    "nonfinite_classification_completed": false,
+    "source_to_npz_alignment_completed": false,
+    "loader_mask_path_runtime_completed": false,
+    "kinematic_counts_completed": false,
+    "result_json_written": false
+  },
+  "failure": {
+    "stage": "signal affected-row source-to-NPZ mapping",
+    "exception_type": "RuntimeError",
+    "message": "selected source entry 10152799 is absent from kept order",
+    "diagnostic_line": 818,
+    "mapping_guard_line": 225,
+    "interpretation": "The independently constructed kept-entry order did not contain an affected selected source entry. The run failed closed before publishing any diagnostic result.",
+    "oom_observed": false,
+    "timeout_observed": false
+  },
+  "artifacts": {
+    "result_json": {
+      "exists": false,
+      "digest": null
+    },
+    "preflight_digest": "sha256:ece20b5d7a70063727292718f98b60bd35b20ccfd387c6a2b67c364fbc2df701",
+    "job_spec_digest": "sha256:a268476938574c676b9829e65851cd12de91e270ee92f80a16414e68b95ca0c8",
+    "stdout_digest": "sha256:d32968696509c02a0448a71c44a36cd73d8b081bcdf4667aedbe97dfca234489",
+    "stderr_digest": "sha256:0c92bb046e194338a433f9fdb88045f489d1452f1ae0929f3e4f672980501bf9",
+    "submission_marker_digest": "sha256:132b033a0a24b586784349faad03d037fa932ecfe1d397538fe60d1f296a0c3b"
+  },
+  "preserved_prior_evidence": {
+    "prior_gap3_status": "INVALID_OR_INCOMPLETE",
+    "predeclaration_digest": "sha256:fc1772058469a34293ba1d8a162c1fe3b6cd3c2ade6c7bd31a65a39bda06c648",
+    "launcher_digest": "sha256:ffadc05bd186d950b718be3f7e4e8d9e9a9563b771ea2cb3097cc6e933cd16db",
+    "launch_receipt_digest": "sha256:48a638a593eed9e3ebe9c9fc62da6c6e721816aa1bf4c49c4c2a18e229403015",
+    "terminal_receipt_digest": "sha256:42e2609ebc8c7cf4c0a9b501935b9df94a18549f5deae9e78c12b1a9cd1d09ef",
+    "result_digest": "sha256:7c8ff0dc0baa4fd03d29534a2a24558f7705d2e9cd914aa219e528071e0cbf6e"
+  },
+  "diagnostic_outcome": {
+    "aggregate_results": null,
+    "kinematic_results": null,
+    "denominator_recommendation": null,
+    "numbers_quotable": false,
+    "prior_truncation_percentages_reinterpreted_or_promoted": false
+  },
+  "non_authorization": [
+    "do_not_filter_or_repair_inputs",
+    "do_not_change_representation_or_token_cap",
+    "do_not_retrain",
+    "do_not_move_or_adopt_central_value",
+    "do_not_construct_covariance_or_uncertainty",
+    "do_not_select_gate6_member_or_start_leg2",
+    "do_not_authorize_further_compute",
+    "do_not_make_publication_claim"
+  ]
+}
