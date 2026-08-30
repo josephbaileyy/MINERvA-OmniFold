@@ -310,6 +310,22 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 
 
+- **ROUND 2 OF THE SEVEN k=0 ARMS IS SUBMITTED, 2026-08-30:**
+  [`RECORD-20260830-k0r2-round2-submission.md`](RECORD-20260830-k0r2-round2-submission.md) — job ids
+  `57753239`, `57753243`, `57753244`, `57753245`, `57753246`, `57753247`, `57753248`, run id
+  **REUSED** (`k0-7ac0edec-20260830T000215Z`) because round 1's arms produced nothing and `%A` keys
+  the logs by job id. **The positive control ran this time, in the ACTIVATED environment:**
+  `[env-pathcheck] OK: 46 search-path entr(ies) checked`, `PREAMBLE_EXIT=0` — the in-job proof the
+  proposal lacked; 46 rather than 37 because the earlier read was unactivated. Environment provenance
+  written to disk BEFORE the first `sbatch`, closing `OI-179` defect 3 for this run. Abort arm armed
+  and read three times, porcelain **726** / digest `d429f0f3` each time, never fired. **§6 says
+  outright that this record does NOT say the run worked** — no task had started, and round 1 queued
+  healthily for 22 minutes before failing in 12 seconds. Closed by
+  [`CLOSE-20260830-canonical-requiesce-k0r2-window.md`](CLOSE-20260830-canonical-requiesce-k0r2-window.md),
+  which records that the prose hold was treated as UNPROTECTED throughout — no dashboard lane was live
+  to acknowledge it — and that **what actually held was the abort arm, not the prose.** Releases the
+  dashboard lane's `OI-175` fix (726 → 725), safe because `OI-178` already ruled that drift a filed
+  finding. Deployment tree NOT released. **`OI-177` unratified; Gate 2 remains FAIL.**
 - **THE CANONICAL CHECKOUT IS RE-QUIESCED FOR THE RE-SUBMISSION WINDOW, 2026-08-30:**
   [`FREEZE-20260830-canonical-requiesce-k0r2-resubmission.md`](FREEZE-20260830-canonical-requiesce-k0r2-resubmission.md)
   — a SECOND window, because the first expired by its own terms at submission authorization and
