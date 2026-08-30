@@ -44,14 +44,32 @@ below reads 08:46 for a 15:46Z submission.
 cancellation was issued by the producing session over `ssh` on Joseph's explicit instruction, not by
 an administrator and not by a watchdog.
 
-Two accounting notes, both stated as unresolved rather than explained:
+Two accounting notes. **The first was filed WRONG on 2026-08-30 and is CORRECTED IN PLACE below,
+with the wrong version retained rather than deleted** — the error was this lane's, and it is the kind
+a reader would otherwise re-derive.
 
-- **Task 4 of `57742557` has no `sacct` row at all.** The pending bracket begins at 5 and tasks 1–3
-  are individually accounted, so task 4 is unaccounted in both directions. The producing session
-  reported it as promoted out of the array by the `%32` throttle into JobId `57744320`; **that does
-  not survive checking** — `57744320`, and the three sibling ids it named, carry `JobName=allocation`,
-  which is `salloc`'s default and not this array's name. They are not this arm's tasks. Task 4's
-  disposition remains unexplained and is not load-bearing for anything below.
+- **Task 4 of `57742557` was promoted out of the array by the `%32` throttle into its own JobId,
+  `57744320`. It is EXPLAINED, not missing.**
+  **WHAT THIS ROW SAID WHEN FIRST FILED, and it was false:** *"that does not survive checking —
+  `57744320`, and the three sibling ids it named, carry `JobName=allocation`, which is `salloc`'s
+  default and not this array's name. They are not this arm's tasks. Task 4's disposition remains
+  unexplained."*
+  **WHY IT WAS FALSE, and the mechanism is worth more than the fact.** This lane read ONE field,
+  `JobName`, and concluded about IDENTITY. Three independent measurements refute it. (i) The
+  `Account` column splits exactly along the arms' own accounts: `57744091` and `57744125` are
+  `m3246`, the two CPU arms, and `57744293` and `57744320` are `m3246_g`, the two GPU arms — matching
+  one-for-one the names the producing session read from `squeue -r -u josephrb` at 16:30Z
+  (`uthrow5d_runF`, `uthrow5d_block`, `det5dBKG`, `boot5dG`). (ii) The cancelled bracket is
+  `57742557_[5-100%32]`, and **its lower bound of 5 is itself the explanation**: tasks 1–3 ran and
+  task 4 is absent from the surviving bracket because it had already been split out. (iii) The rows
+  are ours — `User=josephrb`, accounts `m3246`/`m3246_g`.
+  **AND AN INSTRUMENT HAZARD, WHICH IS WHY TWO LANES DISAGREED WITHOUT EITHER MIS-QUERYING.** These
+  four accounting rows carry **`UID=0`** while displaying `User=josephrb`. So
+  `sacct -X -j <ids>` returns them and `sacct -X -u josephrb -j <ids>` returns **nothing**: the `-u`
+  filter matches the uid, not the User string. A `-u`-constrained query is not a superset of an
+  unconstrained one here, and an absence under `-u` is not evidence the job is not yours.
+  `scontrol show job 57742557` returned two `JobId=` records at 16:30Z and returns **zero** now, so
+  that corroboration ages out of the scheduler and cannot be re-measured later.
 - `sacct -S 08:00 -E now` lists five arms; arms 6 and 7 appear only under an explicit `-j`. A
   window query is not a population query here.
 

@@ -74,7 +74,7 @@ docs/orchestration/FINDING-20260828-oi136-guard-provenance.md	tracked	ARCHIVAL	f
 docs/orchestration/FINDING-20260828-polish-pass-residue.md	tracked	ARCHIVAL	finding		20260828	terminal		exact-path-only		yes	0	123	9726
 docs/orchestration/FINDING-20260829-f17b-deferred-surfaces-and-stale-freeze-prose.md	tracked	ARCHIVAL	finding		20260829	terminal		exact-path-only		yes	1	75	5905
 docs/orchestration/FINDING-20260830-k0-member-namespace-blocks-submission.md	tracked	LIVE	finding		20260830	open		route-only		no	6	249	15526
-docs/orchestration/FINDING-20260830-k0r2-env-pathcheck-submitter-declaration-omitted.md	tracked	LIVE	finding		20260830	open		route-only		no	3	189	12789
+docs/orchestration/FINDING-20260830-k0r2-env-pathcheck-submitter-declaration-omitted.md	tracked	LIVE	finding		20260830	open		route-only		no	3	207	14305
 docs/orchestration/FINDING-20260830-quarantine-nocompute-legs-measured.md	tracked	LIVE	finding		20260830	open		route-only		no	7	456	32045
 docs/orchestration/FINDINGS-ARCHIVE-2026-08.md	tracked	ARCHIVAL	document	2026-07-16-fe-campaign		terminal		exact-path-only	docs/orchestration/findings_row_lint.py;nd-unfolding/pet/check_canonical_designation.py	yes	4	155	365050
 docs/orchestration/FINDINGS.md	tracked	LIVE	ledger			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/findings_row_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/verify_ben_citations.py;docs/orchestration/whose_row.py;nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/orchestrate_gpu_node.sh;nd-unfolding/sbatch_bootstrap_5d_gpu.sh;nd-unfolding/tests/test_hash_bindings.py;nd-unfolding/tests/test_remedy_a_adopt_wrapper.py	no	41	130	9431
