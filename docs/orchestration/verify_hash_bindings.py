@@ -304,8 +304,22 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: match. This is a new evidence/operand freeze: no historical digest was refreshed, the archived
 #: weighted target still has to match its original digest exactly, and inventory membership is
 #: neither a scientific result nor publication adoption.
-RECEIPT_BINDING_COUNT = 140
-RECEIPT_BINDING_SHA256 = "197d29e0d1677bd6b7ac947a43f90ee29fb6f6a930948f57f263f3fc1d3d6c95"
+#: MOVED 140 -> 143 ON 2026-08-30 FOR THE TERMINAL GATE-6 GAP-1 RECEIPT.
+#: The staged inventory delta was measured as exactly three additions and zero removals:
+#:
+#:     docs/orchestration/PREDECLARATION-20260830-gate6-full-inventory-member-evaluation.md
+#:       e9dc3d5862b8a9f04cd937d9ca11e43b09efd676976a3f87b4e5a4d8d631b614
+#:     docs/orchestration/state/gate6-full-inventory-proposal-20260830.json
+#:       968334e58482010552db59679f6495cb6978d6255d393984e717fb2decbb498c
+#:     docs/orchestration/state/gate6-full-inventory-submission-57727774.json
+#:       02939ac707dd573cf757a0d8d48a605b3210f76bf10146537cff9119e0f4e6e9
+#:
+#: All three resolve and match. They bind the terminal result to its predeclared scope, executable
+#: proposal, and preserved launch record. No historical digest moved, and the new receipt leaves all
+#: five Gate-6 prohibitions unchanged. The staged inventory measured 143 rows at digest
+#: 2391b657a6808f5cf4b83e8f7d421df0f575f94e88939f0bb53f99e84884bbfd.
+RECEIPT_BINDING_COUNT = 143
+RECEIPT_BINDING_SHA256 = "2391b657a6808f5cf4b83e8f7d421df0f575f94e88939f0bb53f99e84884bbfd"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

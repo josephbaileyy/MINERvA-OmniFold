@@ -26,7 +26,10 @@ are live and unchanged: `do_not_select_passing_subset`, `do_not_construct_C_ML`,
 separate decision from Joseph, and Gate 4's estimator-arm disposition blocks construction independently
 regardless.
 
-This session added no code and launched no compute.
+GAP 1 subsequently ran under its own predeclaration and conditional authorization. Its terminal
+result is recorded in
+[`state/gate6-full-inventory-result-57727774.json`](state/gate6-full-inventory-result-57727774.json).
+No later section of this handoff may be read as reopening that completed measurement.
 
 ## 2. Gap 1 — the ensemble and the central value are not the same quantity
 
@@ -51,10 +54,22 @@ rather than be re-derived at extraction — re-deriving it over 49.2M rows *"wou
 a differently-scaled input and produce a confident wrong answer with nothing to notice it."* Preserve
 that, or the repair introduces the defect it is meant to remove.
 
-No predeclaration exists for this. Write one before running it, and predeclare whether the
-recomputed statistic is allowed to bear on the Gate-6 verdict — it plainly must not re-verdict any
-member, since `do_not_select_passing_subset` and the receipt's `WHAT_NO_ONE_MAY_DO_WITH_THIS` both
-forbid that.
+This measurement is now terminal. GPU array `57727774` and its correlated CPU extraction array
+`57727775` completed all five tasks with exit code `0:0`. The five full-inventory totals, in member
+order, are `2.0448087237149787e-37`, `2.247077502840624e-37`,
+`2.1376142198681958e-37`, `1.917341340982044e-37`, and
+`1.8195098716407951e-37 cm2/nucleon`. Their mean is `2.0332703318093275e-37` and their range is
+`4.2756763119982866e-38 cm2/nucleon`.
+
+All five products contain 49,152,885 ordered full-inventory push rows and 285 finite spectrum cells,
+with the same 262-cell reporting mask. The maximum shared-subsample relative deviation was
+`1.1290585916586148e-4` against the frozen `1e-3` tolerance. All ten OI-136 stage inventories reported
+exactly one checkout root and zero import violations. The GPU tasks used 3,969 seconds in aggregate,
+or 1.1025 A100-hours of the 5 A100-hour allocation ceiling.
+
+These numbers are a like-for-like diagnostic readout. They do not re-verdict a member and do not
+select a subset. The five receipt prohibitions remain unchanged, Gate 6 remains blocked, and no
+further compute is authorized by GAP 1 or by its terminal result.
 
 ## 3. Gap 2 — Leg X is predeclared, authorized, unrun, and absent from the strategy
 
@@ -174,7 +189,7 @@ recorded so the next session does not spend on them.
 | Leg 1 five-member ensemble | `state/gate6-member-trajectories-result-56847059.json` | Complete; `BLOCK_GATE6_ML_ENSEMBLE`. Trained in `56834281`, not `56847059`. |
 | Leg F process floor | `state/gate6-floor-replication-result-56863958.json` | TERMINAL. `F_range = 0.0645`, `FLOOR_INTERMEDIATE`. Do not re-run. |
 | Leg X 2×2 cells C, D | `PREDECLARATION-20260813-gate6-legX-2x2.md` | Not run. Authorized, precondition satisfied, absent from the strategy — reconcile first (§3). |
-| Full-inventory member evaluation | §2; `extract_fullevent_fps.py` | Not run. No predeclaration exists — write one. |
+| Full-inventory member evaluation | section 2; `state/gate6-full-inventory-result-57727774.json` | TERMINAL. Five inference and five extraction tasks completed; diagnostic only. No re-verdict, `C_ML`, central movement, Leg 2, retry, publication claim, or further compute. |
 | Reco truncation audit | §4 | Not run. No GPU required. |
 | PET-v2 equivalence retry 3 | `state/pet-v2-fixed-draw-equivalence-changed-retry3-submission-57644535.json` | SUBMITTED 2026-08-27T06:51Z; target `57644535`, training `57644536`, eval `57644537`, validation `57644538`. Live state unknown here — observe before resubmitting. |
 | Data-only `C_stat` smoke | `HANDOFF-20260819-lane-e-data-only-cstat-smoke-57266000.md` | Array `57266000` queued before the 08-19→26 maintenance; state unknown. Resubmission **not** pre-authorized. |
