@@ -355,6 +355,16 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   recoverable from bytes nor closed by a run, because the deflation never entered a stored object on X's
   path. **Regrades nothing** (`BEN-381`) — four decisions routed as `OI-170`–`OI-173`. Counts unchanged:
   CAND `1 of 7`, QUOTED `0 of 7`.
+- Why the accepted forward-only k=0 rehearsal's seven arms were not submitted on 2026-08-30:
+  [`FINDING-20260830-k0-member-namespace-blocks-submission.md`](FINDING-20260830-k0-member-namespace-blocks-submission.md)
+  — all three step-3 conditions pass and the preflight re-verifies clean, including canonical porcelain
+  **726** with a status digest byte-identical to the Gate-1 round-2 grader's reads, so the quiesce held.
+  The blocker is in the **data root**, which no Gate-1 clause and neither F-17 operand measures:
+  `mii/member_k000000` still holds the `aa67c426` rehearsal's complete products, every marker reading
+  `note:"est_seed_offset=0"`, so `mr_skip_if_complete` **adopts**. Arms 1-3 would skip all 143 of their
+  tasks (cross-run, mixed-pin — a §7 abort condition); arms 4-6 carry **no resume guard** and would
+  overwrite a Gate-2-FAIL rehearsal's products in place. **Moves no gate and grades nothing**; the
+  disposition decision is routed as `OI-176`. No `sbatch` was issued.
 
 ### Documents that open items route to but this router did not list
 

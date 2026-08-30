@@ -1,4 +1,5 @@
 source_record	lifecycle	queue	classification_rule	source_row_sha256	state_prefix
+OI-176	active	NOW	safe-default-active	3c60baa93fb29b15af6eb49c92fde384e76aa06005d49cdacf6098a51519139a	OPEN
 OI-173	active	NOW	safe-default-active	b73850f3395bd9df9cc826df1676f838c47409dda19835be7a043d384c3964ff	OPEN
 OI-174	active	NOW	safe-default-active	46e62d8dbf1f49130bcf3d2a385b4fe4582c2328836efa34c1b7ac2a5ecc6c8c	OPEN
 OI-175	retired	-	explicit-terminal-prefix	1893c9ab84ba9f51382fd77b2bcd640b2500c9ec6a5406b460be06df3b9ab0cf	DISCHARGED

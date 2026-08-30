@@ -36,6 +36,7 @@ docs/orchestration/FINDING-20260822-a-hold-that-instructed-its-own-deletion.md	L
 docs/orchestration/FINDING-20260822-clause-c-adopt-is-unreachable-under-its-own-pause.md	LIVE	open	
 docs/orchestration/FINDING-20260824-gate2-preparation-and-four-open-rulings.md	LIVE	open	
 docs/orchestration/FINDING-20260830-quarantine-nocompute-legs-measured.md	LIVE	open	
+docs/orchestration/FINDING-20260830-k0-member-namespace-blocks-submission.md	LIVE	open	
 docs/orchestration/FINDINGS.md	LIVE	open	
 docs/orchestration/GATE1-VERDICT-20260822-k0-execution-integrity.md	LIVE	open	
 docs/orchestration/GATE1-VERDICT-20260830-k0-7ac0edec.md	LIVE	open
