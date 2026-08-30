@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "contract_id": "PET-G6-GAP3-RECO-TRUNCATION-20260830",
+  "record_kind": "nonterminal_launch_receipt",
+  "recorded_at_utc": "2026-08-30T05:05:52Z",
+  "state_at_recording": "PENDING",
+  "reason_at_recording": "Priority",
+  "slurm": {
+    "job_id": "57727806",
+    "job_name": "pet_g6_gap3_trunc",
+    "account": "m3246",
+    "qos": "shared",
+    "partition": "shared_milan_ss11",
+    "constraint": "cpu",
+    "submitted_at": "2026-08-29T21:45:23",
+    "elapsed_at_recording": "00:00:00",
+    "time_limit": "04:00:00",
+    "requested_tres": {
+      "billing": 8,
+      "cpu": 8,
+      "memory_gib": 32,
+      "nodes": 1
+    },
+    "tres_per_task": {
+      "cpu": 8
+    },
+    "gpu_requested": false,
+    "array_job": false,
+    "requeue": 0,
+    "restarts": 0,
+    "scheduler_pending_fields": {
+      "num_cpus": 18,
+      "cpus_per_task": 18,
+      "min_cpus_node": 18
+    }
+  },
+  "resource_contract": {
+    "worker_threads": 8,
+    "walltime_hours": 4,
+    "cpu_hour_ceiling": 32,
+    "memory_gib": 32,
+    "gpu": false
+  },
+  "code": {
+    "branch": "pet-gate6-strategy-20260825",
+    "head": "e23a2d7ea2b981a62edda7dd0ac5a1949edce3ea",
+    "checkout_clean_at_submission": true,
+    "launcher_artifact": "nd-unfolding/pet/sbatch_gap3_reco_truncation_audit.sh",
+    "launcher_digest": "sha256:4c23d6a2e2ee770a424c92d8c9eda67ac56dc3c7b8265dfdc3add73fe4325cfe",
+    "audit_sha256": "671531dd6a43a03203d4a8024d5671a7b357edad6e1fa7ab9ad7e44a99ac1e1a",
+    "predeclaration_sha256": "b69c296a1bd9be426c8acf78bd1232b780bd3c9e2b0b7924d09d241feb8260fc"
+  },
+  "input": {
+    "path": "nd-unfolding/g2_fullevent/merged/runEventLoopOmniFold_G2_FPS_MEFHC.root",
+    "size_bytes": 113496440965,
+    "source_digest": "sha256:9a16331f1c02103e3b5de5e6c00139aa39393ee11eb34881bea0b9a890344e2f",
+    "merge_receipt_sha256": "26ea5561f47599987ebacbf594c606309146a5f23c82af8dd0e2ca299b31efa7"
+  },
+  "gate6_receipt_sha256": "8f40541f1d8fec92b0e37885b1d24b851843d06f4c220f8de5ad1bc47265b6a5",
+  "submission": {
+    "count": 1,
+    "authorization_token": "PET-G6-GAP3-RECO-TRUNCATION-20260830-ONE-SCAN",
+    "output_namespace": "gap3-reco-truncation-e23a2d7e",
+    "normalized_command": "sbatch --parsable --chdir=$GAP3_CODE_REPO --output=$GAP3_OUTPUT_ROOT/slurm-%j.out --error=$GAP3_OUTPUT_ROOT/slurm-%j.err --export=ALL,GAP3_CODE_REPO=$GAP3_CODE_REPO,GAP3_DATA_ROOT=$GAP3_DATA_ROOT,GAP3_OUTPUT_ROOT=$GAP3_OUTPUT_ROOT,GAP3_EXPECTED_HEAD=e23a2d7ea2b981a62edda7dd0ac5a1949edce3ea,GAP3_EXPECTED_LAUNCHER_SHA256=4c23d6a2e2ee770a424c92d8c9eda67ac56dc3c7b8265dfdc3add73fe4325cfe,GAP3_AUTHORIZATION_TOKEN=PET-G6-GAP3-RECO-TRUNCATION-20260830-ONE-SCAN $GAP3_CODE_REPO/nd-unfolding/pet/sbatch_gap3_reco_truncation_audit.sh",
+    "retry_submitted": false
+  },
+  "qualification": "This receipt records submission and pending scheduler state only. It is not a terminal audit result and contains no cluster or deposited-energy measurement. The launcher must still pass its runtime hash, resource, schema, and row-count checks before any result can be valid.",
+  "non_authorization": [
+    "do_not_change_representation_or_token_cap",
+    "do_not_move_or_adopt_central_value",
+    "do_not_construct_covariance_or_uncertainty",
+    "do_not_select_gate6_member_or_start_leg2",
+    "do_not_claim_equivalence_convergence_closure_or_coverage",
+    "do_not_make_publication_claim",
+    "do_not_authorize_further_compute"
+  ]
+}
