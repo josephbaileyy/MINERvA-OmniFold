@@ -1,3 +1,15 @@
+- **The canonical quiesce window is CLOSED, 2026-08-30:**
+  [`CLOSE-20260830-canonical-quiesce-window-k0-7ac0edec.md`](CLOSE-20260830-canonical-quiesce-window-k0-7ac0edec.md)
+  — the freeze expired **on its own terms** (*"when submission is authorized or the rehearsal is
+  abandoned"*), so **no new authorization is claimed**. Records this lane's *independent* remeasure of
+  the sbatch-time property `F-17(a)` actually tests: HEAD `32e403b8`, porcelain **726**, status digest
+  `d429f0f3…` — matching the operand without relying on the producer's report. Reconciles the two byte
+  figures (a 4,096 difference = one wrapper directory inode) and the three quarantine generations
+  (517 + 415 + 6 = 938). Reads the seven arms' array specs **untruncated** and confirms the arms run
+  from a tree at `7ac0edec`, detached, porcelain 0. **Corrects** the producer's walltime envelope
+  maximum from 253.5 to **300** (`boot5dG`, 100 × 3:00), which does not change the under-500 verdict.
+  **Releases the dashboard lane** (`OI-175`, porcelain 726 → 725); does **not** release the deployment
+  tree, move any gate, or decide the post-path `F-17(b)` capture, which is routed as `OI-178`.
 # Orchestration router
 
 This is a pointer-only active-tree router. It contains no scientific evidence or authorization.
