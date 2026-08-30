@@ -9,6 +9,7 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 |---|---|---|---|
 | OI-173 | NOW | safe-default-active | OPEN |
 | OI-174 | NOW | safe-default-active | OPEN |
+| OI-175 | BLOCKED-EXTERNAL | explicit-blocker | BLOCKED |
 | OI-172 | NOW | safe-default-active | OPEN |
 | OI-171 | NOW | safe-default-active | OPEN |
 | OI-170 | NOW | safe-default-active | OPEN |
