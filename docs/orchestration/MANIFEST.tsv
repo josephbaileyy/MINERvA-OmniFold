@@ -93,7 +93,7 @@ docs/orchestration/INDEX-retracted-and-superseded-values.md	tracked	LIVE	index		
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/control_plane_lint.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	54	80	19049
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	3	161	8117
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	13	110	8077
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	51	627	125153
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	51	627	125152
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	5	212	15945
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/compare_m1_m6.py;docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/measure_m1_m6.py	no	17	146	8336
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	tracked	LIVE	document		20260823	open		route-only		no	6	239	14244
@@ -583,7 +583,7 @@ docs/orchestration/test_agentctl.py	tracked	MACHINE	test-script			generated		exa
 docs/orchestration/test_campaignctl.py	tracked	MACHINE	test-script			generated		exact-path-only		no	2	105	4240
 docs/orchestration/test_compare_m1_m6.py	tracked	MACHINE	test-script			generated		exact-path-only		no	14	1711	99198
 docs/orchestration/test_dashboard_collector.py	tracked	MACHINE	test-script			generated		exact-path-only		no	1	547	26102
-docs/orchestration/test_dashboard_serve.py	intended	MACHINE	test-script			generated		exact-path-only		no	1	103	3960
+docs/orchestration/test_dashboard_serve.py	tracked	MACHINE	test-script			generated		exact-path-only		no	1	103	3960
 docs/orchestration/test_deploy_oi135_watcher_swap.py	tracked	MACHINE	test-script			generated		exact-path-only		no	5	929	46880
 docs/orchestration/test_fixtures_watch_report/PROVENANCE.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/test_watch_report_train_run.py	no	2	20	3295
 docs/orchestration/test_fixtures_watch_report/README.md	tracked	ARCHIVAL	document			terminal		exact-path-only	docs/orchestration/test_watch_report_train_run.py;omnifold_nn/setup.py	yes	12	29	1820
