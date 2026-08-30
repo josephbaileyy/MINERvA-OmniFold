@@ -9,9 +9,12 @@ the snapshot it already wrote.
     python3 dashboard_serve.py                       # http://127.0.0.1:8899
     python3 dashboard_serve.py --bind 0.0.0.0        # also reachable from a phone
 
-`--bind 0.0.0.0` exposes the page to your local network (or your Tailscale/VPN
-interface).  It is off by default because the snapshot names jobs, nodes and sessions,
-and this server has no authentication of any kind.
+`--tailscale` binds to the tailnet address ONLY, so the page is reachable from your other
+Tailscale devices and from nothing else -- not from the coffee-shop wifi you are on.
+That is the difference from `--bind 0.0.0.0`, which exposes it on every interface.  This
+server has no authentication of any kind, so which interface it listens on IS the access
+control.  Tailscale carries it over WireGuard, so plain HTTP here is encrypted in
+transit; it is not encrypted if you use `--bind 0.0.0.0` on a normal LAN.
 
 The page fetches `/status.json` on its own refresh cycle, and each fetch runs one
 `ssh <host> cat <path>`.  There is deliberately no local polling loop and no cached copy
@@ -94,19 +97,106 @@ def make_handler(host: str, remote_path: str, timeout: float):
     return Handler
 
 
+TAILSCALE_BINARIES = (
+    "tailscale",
+    "/usr/local/bin/tailscale",
+    "/opt/homebrew/bin/tailscale",
+    "/Applications/Tailscale.app/Contents/MacOS/Tailscale",
+)
+
+
+def tailscale_status() -> tuple[dict | None, str]:
+    """Parse `tailscale status --json`, trying the usual install locations."""
+    for candidate in TAILSCALE_BINARIES:
+        binary = candidate if candidate.startswith("/") else shutil.which(candidate)
+        if not binary or not Path(binary).exists():
+            continue
+        try:
+            done = subprocess.run([binary, "status", "--json"],
+                                  capture_output=True, timeout=20, check=False)
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            return None, f"{binary}: {type(exc).__name__}: {exc}"
+        if done.returncode != 0:
+            return None, f"{binary} status exited {done.returncode}: " \
+                         f"{done.stderr.decode('utf-8', 'replace').strip()[:200]}"
+        try:
+            return json.loads(done.stdout), ""
+        except json.JSONDecodeError as exc:
+            return None, f"{binary} status printed non-JSON: {exc}"
+    return None, "no tailscale binary found (looked in: " + ", ".join(TAILSCALE_BINARIES) + ")"
+
+
+def tailnet_endpoint(status: dict) -> tuple[str | None, str | None, str]:
+    """(IPv4 to bind, MagicDNS hostname, error) for this machine on the tailnet.
+
+    Binds to the IPv4 specifically rather than 0.0.0.0: the whole point of choosing
+    Tailscale over `--bind 0.0.0.0` is that the listener must not appear on any other
+    network the laptop happens to be joined to.
+    """
+    state = status.get("BackendState")
+    if state != "Running":
+        return None, None, f"Tailscale backend is {state!r}, not 'Running' -- is it connected?"
+    self_node = status.get("Self") or {}
+    addresses = self_node.get("TailscaleIPs") or []
+    ipv4 = next((a for a in addresses if ":" not in a), None)
+    if not ipv4:
+        return None, None, f"no tailnet IPv4 for this machine (got {addresses})"
+    host = (self_node.get("DNSName") or "").rstrip(".") or None
+    return ipv4, host, ""
+
+
+MOBILE_OS = {"iOS", "android"}
+
+
+def describe_peers(status: dict) -> list[str]:
+    """One line per tailnet peer, without turning a sleeping phone into an alarm.
+
+    A backgrounded iOS/Android client reports Online=false and does not answer
+    `tailscale ping`, yet it connects fine the moment you open a browser on it -- the
+    handset wakes its tunnel on demand.  Printing a bare "0 devices online" would read
+    as a broken tailnet when nothing is wrong, so the mobile case is named explicitly.
+    """
+    lines = []
+    for peer in sorted((status.get("Peer") or {}).values(),
+                       key=lambda p: (p.get("DNSName") or "")):
+        name = (peer.get("DNSName") or "?").rstrip(".").split(".")[0]
+        host_os = peer.get("OS") or "?"
+        if peer.get("Online"):
+            lines.append(f"{name} ({host_os}): online")
+        elif host_os in MOBILE_OS:
+            lines.append(f"{name} ({host_os}): reported offline -- normal while the app is "
+                         f"backgrounded; it will still reach this page when you open it")
+        else:
+            lines.append(f"{name} ({host_os}): offline")
+    return lines or ["no other devices on this tailnet"]
+
+
 class Server(socketserver.ThreadingTCPServer):
     allow_reuse_address = True
     daemon_threads = True
 
 
 def main() -> int:
+    # Line-buffer stdout: this script is often run backgrounded with output
+    # redirected, and its startup banner carries the URL to open on the phone.
+    try:
+        sys.stdout.reconfigure(line_buffering=True)
+    except (AttributeError, OSError):
+        pass
+
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--host", default="saul.nersc.gov", help="SSH host holding the snapshot")
     parser.add_argument("--remote-path", default=DEFAULT_REMOTE)
     parser.add_argument("--port", type=int, default=8899)
     parser.add_argument(
         "--bind", default="127.0.0.1",
-        help="0.0.0.0 to reach it from a phone on the same network or VPN (no auth!)",
+        help="0.0.0.0 to reach it from a phone on the same network (no auth, and not "
+             "encrypted -- prefer --tailscale)",
+    )
+    parser.add_argument(
+        "--tailscale", action="store_true",
+        help="bind to this machine's tailnet address only, and print the URL to open "
+             "on your other Tailscale devices",
     )
     parser.add_argument("--timeout", type=float, default=20.0)
     args = parser.parse_args()
@@ -118,6 +208,20 @@ def main() -> int:
         print(f"dashboard.html is not beside this script ({HERE})", file=sys.stderr)
         return 2
 
+    bind, magic_host = args.bind, None
+    if args.tailscale:
+        status, error = tailscale_status()
+        if status is None:
+            print(f"--tailscale: {error}", file=sys.stderr)
+            return 2
+        bind, magic_host, error = tailnet_endpoint(status)
+        if bind is None:
+            print(f"--tailscale: {error}", file=sys.stderr)
+            return 2
+        print(f"tailnet {status.get('MagicDNSSuffix', '?')}:")
+        for peer in describe_peers(status):
+            print(f"  {peer}")
+
     payload, error = fetch_remote(args.host, args.remote_path, args.timeout)
     if payload is None:
         # Fail loudly at startup rather than serving a page that 502s forever.
@@ -125,10 +229,17 @@ def main() -> int:
         print("\nIs the collector installed and has it run yet?", file=sys.stderr)
         return 1
     print(f"snapshot OK ({len(payload)} bytes) from {args.host}")
-    if args.bind not in ("127.0.0.1", "localhost", "::1"):
-        print(f"WARNING: serving on {args.bind} with NO authentication.")
-    print(f"  http://{'127.0.0.1' if args.bind == '0.0.0.0' else args.bind}:{args.port}/")
-    with Server((args.bind, args.port), make_handler(args.host, args.remote_path, args.timeout)) as httpd:
+    if args.tailscale:
+        print("serving on the tailnet only (not on any other network):")
+        if magic_host:
+            print(f"  http://{magic_host}:{args.port}/       <- open this on the phone")
+        print(f"  http://{bind}:{args.port}/")
+    elif bind in ("127.0.0.1", "localhost", "::1"):
+        print(f"  http://{bind}:{args.port}/")
+    else:
+        print(f"WARNING: serving on {bind} with NO authentication and no encryption.")
+        print(f"  http://{bind}:{args.port}/")
+    with Server((bind, args.port), make_handler(args.host, args.remote_path, args.timeout)) as httpd:
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:

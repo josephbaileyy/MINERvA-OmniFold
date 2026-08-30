@@ -9,6 +9,7 @@ said about when things finish. Three files:
 | [`dashboard_collector.py`](dashboard_collector.py) | Runs on a login node under `scrontab`; writes one self-describing `status.json`. |
 | [`dashboard.html`](dashboard.html) | One static file, no build step, renders `status.json` and auto-refreshes. |
 | [`dashboard_serve.py`](dashboard_serve.py) | Serves the page on your laptop, reading `status.json` over SSH. Nothing is published. |
+| [`test_dashboard_serve.py`](test_dashboard_serve.py) | 12 tests for the viewer and the tailnet binding. |
 | [`test_dashboard_collector.py`](test_dashboard_collector.py) | 57 tests; `/usr/bin/python3.11 -m unittest test_dashboard_collector`. |
 
 **What it deliberately cannot tell you.** It does not predict completion times, it does not claim a
@@ -63,18 +64,54 @@ forever. There is no local cache and no polling loop: the only copy is the one o
 the page cannot show a file that outlived the thing that produced it. With the `ControlMaster` in
 `~/.ssh/config` each refresh costs well under a second.
 
-**Phone.** Alerts already work with no further setup (§1c) — that is the "something broke" channel.
-For *glancing* on the phone without publishing anything, the same server has to become reachable
-from the phone, and the three ways differ in what you have to trust:
+**Phone — Tailscale (set up 2026-08-30).** Alerts already work with no further setup (§1c); this is
+the *glancing* path. Run the viewer with `--tailscale`:
 
-| Option | What it needs | Exposure |
-|---|---|---|
-| Same Wi-Fi | `dashboard_serve.py --bind 0.0.0.0`, then `http://<laptop-ip>:8899` from the phone | Anyone on that network; **no authentication at all** |
-| Tailscale / VPN | Tailscale on laptop and phone; `--bind` the tailnet address | Your devices only; works away from home. Recommended |
-| Termius port-forward | Termius forwards phone → a `python3 -m http.server` you start on a login node | Nothing leaves NERSC, but you must start a server on whichever login node you land on |
+```bash
+cd docs/orchestration
+python3 dashboard_serve.py --tailscale
+```
 
-All three keep the laptop or the tunnel in the loop, which is the price of not publishing. Pick one
-and the runbook step is a one-liner; none of them is wired up by default.
+It prints the URL to open on the phone:
+
+```
+tailnet tail29db9c.ts.net:
+  iphone-14 (iOS): online
+snapshot OK (20582 bytes) from saul.nersc.gov
+serving on the tailnet only (not on any other network):
+  http://josephs-macbook-pro-2.tail29db9c.ts.net:8899/       <- open this on the phone
+  http://100.69.110.31:8899/
+```
+
+`--tailscale` binds to the tailnet IPv4 **specifically**, not to `0.0.0.0`. That is the whole point
+of preferring it: this server has no authentication, so the interface it listens on *is* the access
+control. Verified by measurement, both directions:
+
+| Probe | Result |
+|---|---|
+| `curl http://100.69.110.31:8899/` (tailnet IP) | `200` |
+| `curl http://josephs-macbook-pro-2.tail29db9c.ts.net:8899/` (MagicDNS) | `200` |
+| `curl http://127.0.0.1:8899/` | **refused** |
+| `curl http://10.119.0.38:8899/` (laptop LAN address) | **refused** |
+
+So joining an untrusted network does not expose the page. Tailscale carries it over WireGuard, so
+plain HTTP is encrypted in transit — which is *not* true of `--bind 0.0.0.0` on an ordinary LAN.
+HTTPS via `tailscale serve` is not used: this tailnet reports `CertDomains: None`, i.e. HTTPS
+certificates are not enabled, and enabling them is a tailnet-wide admin change that buys nothing
+here because the transport is already encrypted.
+
+Two things that look broken and are not:
+
+- **`tailscale ping iphone-14` times out, and the phone can show as offline.** iOS suspends the
+  Tailscale client when the app is backgrounded; it stops answering pings but still brings the
+  tunnel up the moment the phone initiates a connection. Measured within one minute: the same phone
+  reported `Online: true`, then `0 devices online`, then online again. The startup banner says this
+  in words rather than printing a bare count, so a sleeping phone does not read as a broken tailnet.
+- **The laptop must be awake and running the viewer.** This is the cost of not publishing: there is
+  no cluster-side web endpoint, so if the laptop is asleep the phone gets nothing. Alerts still
+  arrive, because those are pushed from the cluster by `notifyctl`.
+
+The page costs one `ssh <host> cat` per refresh, measured at ~1.3 s with the `ControlMaster` warm.
 
 ### 1b. Install the scrontab entry
 
