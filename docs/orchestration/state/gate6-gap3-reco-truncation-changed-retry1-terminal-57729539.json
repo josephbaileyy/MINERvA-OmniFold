@@ -1,0 +1,262 @@
+{
+  "schema_version": 1,
+  "contract_id": "PET-G6-GAP3-RECO-TRUNCATION-20260830-CHANGED-RETRY1",
+  "record_kind": "terminal_changed_retry_execution_receipt",
+  "recorded_at_utc": "2026-08-30T09:46:50Z",
+  "status": "INVALID_OR_INCOMPLETE",
+  "terminal": true,
+  "slurm": {
+    "job_id": "57729539",
+    "job_name": "pet_g6_gap3_r1",
+    "state": "FAILED",
+    "exit_code": "3:0",
+    "submitted_at": "2026-08-29T22:44:35",
+    "started_at": "2026-08-29T22:57:25",
+    "ended_at": "2026-08-29T23:01:09",
+    "elapsed": "00:03:44",
+    "elapsed_seconds": 224,
+    "cpu_time_raw_seconds": 4032,
+    "allocated_cpu_hours": 1.12,
+    "total_cpu": "23:05.685",
+    "time_limit": "02:00:00",
+    "requested_tres": "billing=18,cpu=18,mem=32G,node=1",
+    "allocated_tres": "billing=18,cpu=18,energy=122084,mem=32G,node=1",
+    "allocated_cpus": 18,
+    "memory_gib": 32,
+    "batch_max_rss_kib": 30507952,
+    "batch_max_rss_gib": 29.098464965820312,
+    "constraint": "cpu",
+    "gpu_requested": false,
+    "array_job": false,
+    "requeue": 0,
+    "restarts": 0
+  },
+  "resource_contract": {
+    "root_threads": 18,
+    "walltime_hours": 2,
+    "cpu_hour_allocation_ceiling": 36,
+    "memory_gib": 32,
+    "gpu": false,
+    "within_authorized_ceiling": true
+  },
+  "failure": {
+    "stage": "scientific_domain_validation_after_complete_scan",
+    "failed_checks": [
+      "background:nonfinite_energy_count",
+      "data:nonfinite_energy_count",
+      "signal:nonfinite_energy_count"
+    ],
+    "interpretation": "The event scan and output materialization completed, but every declared population contained non-finite deposited-cluster-energy values. The predeclared fail-closed domain checks therefore make every reported truncation fraction invalid as a GAP-3 scientific result."
+  },
+  "input": {
+    "artifact": "nd-unfolding/g2_fullevent/merged/runEventLoopOmniFold_G2_FPS_MEFHC.root",
+    "size_bytes": 113496440965,
+    "source_digest": "sha256:9a16331f1c02103e3b5de5e6c00139aa39393ee11eb34881bea0b9a890344e2f",
+    "post_run_digest_recomputed_directly": true,
+    "post_run_digest_match": true
+  },
+  "selected_row_census": {
+    "signal": 20573521,
+    "data": 4116128,
+    "background": 564591,
+    "all_exact": true
+  },
+  "domain_census": {
+    "signal": {
+      "nonfinite_energy_count": 1687,
+      "negative_energy_count": 0,
+      "zero_energy_count": 53823,
+      "invalid_weight_count": 0
+    },
+    "data": {
+      "nonfinite_energy_count": 456,
+      "negative_energy_count": 0,
+      "zero_energy_count": 5977,
+      "invalid_weight_count": 0
+    },
+    "background": {
+      "nonfinite_energy_count": 223,
+      "negative_energy_count": 0,
+      "zero_energy_count": 1477,
+      "invalid_weight_count": 0
+    },
+    "mc_combined": {
+      "nonfinite_energy_count": 1910,
+      "negative_energy_count": 0,
+      "zero_energy_count": 55300,
+      "invalid_weight_count": 0
+    }
+  },
+  "computed_operands_invalid_for_scientific_interpretation": {
+    "qualification": "These values are preserved because the complete scan computed them, but the failed non-finite-energy checks make them invalid as a scientific GAP-3 measurement.",
+    "aggregate": {
+      "signal": {
+        "unweighted": {
+          "cap_event_fraction": 0.8387040798704315,
+          "discarded_cluster_fraction": 0.874100464824058,
+          "discarded_energy_fraction": 0.6214337359681218,
+          "clusters_total": 1810200194,
+          "clusters_discarded": 1582296831,
+          "energy_total_mev": 16777598153.848269,
+          "energy_discarded_mev": 10426165501.317793
+        },
+        "weighted": {
+          "cap_event_fraction": 0.8419560328333024,
+          "discarded_cluster_fraction": 0.8830434714498682,
+          "discarded_energy_fraction": 0.6377755278546449
+        }
+      },
+      "data": {
+        "unweighted": {
+          "cap_event_fraction": 0.8369722710275288,
+          "discarded_cluster_fraction": 0.8946333873334288,
+          "discarded_energy_fraction": 0.6607954034827271,
+          "clusters_total": 433456641,
+          "clusters_discarded": 387784783,
+          "energy_total_mev": 4498986919.395639,
+          "energy_discarded_mev": 2972909876.665553
+        },
+        "weighted": {
+          "cap_event_fraction": 0.8369722710275288,
+          "discarded_cluster_fraction": 0.8946333873334288,
+          "discarded_energy_fraction": 0.6607954034827271
+        }
+      },
+      "background": {
+        "unweighted": {
+          "cap_event_fraction": 0.9537311080056182,
+          "discarded_cluster_fraction": 0.9540045624137166,
+          "discarded_energy_fraction": 0.7678625322680913,
+          "clusters_total": 144669914,
+          "clusters_discarded": 138015758,
+          "energy_total_mev": 1651286881.997144,
+          "energy_discarded_mev": 1267961326.711408
+        },
+        "weighted": {
+          "cap_event_fraction": 0.9588664974155015,
+          "discarded_cluster_fraction": 0.9599120238198312,
+          "discarded_energy_fraction": 0.7777508710700132
+        }
+      },
+      "mc_combined": {
+        "unweighted": {
+          "cap_event_fraction": 0.841776408413391,
+          "discarded_cluster_fraction": 0.8800137574153342,
+          "discarded_energy_fraction": 0.6345542231818877,
+          "clusters_total": 1954870108,
+          "clusters_discarded": 1720312589,
+          "energy_total_mev": 18428885035.845413,
+          "energy_discarded_mev": 11694126828.029202
+        },
+        "weighted": {
+          "cap_event_fraction": 0.8454437201252261,
+          "discarded_cluster_fraction": 0.8897124986083023,
+          "discarded_energy_fraction": 0.6525265518946755
+        }
+      }
+    },
+    "unweighted_kinematic_extrema": {
+      "signal": {
+        "pt": {"cluster_min": 0.756114, "cluster_max": 0.955222, "energy_min": 0.482371, "energy_max": 0.751855},
+        "pparallel": {"cluster_min": 0.832005, "cluster_max": 0.942832, "energy_min": 0.553975, "energy_max": 0.736717},
+        "eavail": {"cluster_min": 0.401447, "cluster_max": 0.966587, "energy_min": 0.179368, "energy_max": 0.774377},
+        "q3": {"cluster_min": 0.352815, "cluster_max": 0.927241, "energy_min": 0.178757, "energy_max": 0.697859},
+        "pt_x_pparallel": {"cluster_min": 0.658748, "cluster_max": 0.961965, "energy_min": 0.376356, "energy_max": 0.764533}
+      },
+      "data": {
+        "pt": {"cluster_min": 0.840659, "cluster_max": 0.967133, "energy_min": 0.580390, "energy_max": 0.777348},
+        "pparallel": {"cluster_min": 0.849584, "cluster_max": 0.956150, "energy_min": 0.585317, "energy_max": 0.762890},
+        "eavail": {"cluster_min": 0.417924, "cluster_max": 0.969533, "energy_min": 0.181049, "energy_max": 0.780797},
+        "q3": {"cluster_min": 0.350971, "cluster_max": 0.937336, "energy_min": 0.173636, "energy_max": 0.719004},
+        "pt_x_pparallel": {"cluster_min": 0.747501, "cluster_max": 0.971388, "energy_min": 0.480326, "energy_max": 0.785117}
+      },
+      "background": {
+        "pt": {"cluster_min": 0.928059, "cluster_max": 0.977620, "energy_min": 0.727100, "energy_max": 0.809502},
+        "pparallel": {"cluster_min": 0.921562, "cluster_max": 0.975668, "energy_min": 0.664513, "energy_max": 0.814126},
+        "eavail": {"cluster_min": 0.620211, "cluster_max": 0.977549, "energy_min": 0.356906, "energy_max": 0.804761},
+        "q3": {"cluster_min": 0.503207, "cluster_max": 0.965015, "energy_min": 0.261986, "energy_max": 0.781257},
+        "pt_x_pparallel": {"cluster_min": 0.863686, "cluster_max": 0.979320, "energy_min": 0.535798, "energy_max": 0.873408}
+      },
+      "mc_combined": {
+        "pt": {"cluster_min": 0.782050, "cluster_max": 0.959666, "energy_min": 0.522543, "energy_max": 0.764017},
+        "pparallel": {"cluster_min": 0.837315, "cluster_max": 0.948136, "energy_min": 0.563251, "energy_max": 0.750339},
+        "eavail": {"cluster_min": 0.407601, "cluster_max": 0.968549, "energy_min": 0.183421, "energy_max": 0.780248},
+        "q3": {"cluster_min": 0.354823, "cluster_max": 0.930699, "energy_min": 0.179706, "energy_max": 0.707146},
+        "pt_x_pparallel": {"cluster_min": 0.672003, "cluster_max": 0.965690, "energy_min": 0.390238, "energy_max": 0.776537}
+      }
+    },
+    "kinematic_inventory": {
+      "pt_bins": 15,
+      "pparallel_bins": 19,
+      "eavail_bins": 7,
+      "q3_bins": 7,
+      "pt_x_pparallel_bins": 285,
+      "nonempty_pt_x_pparallel_bins": {"signal": 231, "data": 231, "background": 228, "mc_combined": 231},
+      "event_coverage": {
+        "pt_pparallel_and_joint": 1.0,
+        "signal_eavail": 0.9999881887,
+        "data_eavail": 0.9999815360,
+        "background_eavail": 0.9998760164,
+        "mc_combined_eavail": 0.9999851926,
+        "signal_q3": 0.9999897441,
+        "data_q3": 0.9999863950,
+        "background_q3": 0.9999805169,
+        "mc_combined_q3": 0.9999894976
+      }
+    }
+  },
+  "artifacts": {
+    "committed_result_artifact": "docs/orchestration/state/gate6-gap3-reco-truncation-changed-retry1-result-57729539.json.gz",
+    "committed_result_digest": "sha256:7c8ff0dc0baa4fd03d29534a2a24558f7705d2e9cd914aa219e528071e0cbf6e",
+    "committed_result_bytes": 211370,
+    "uncompressed_result_digest": "sha256:a3e7058a66e8a539ab6ccf03cc7a659efb672e967b5da16bf08e10d5c27d61ea",
+    "uncompressed_result_bytes": 1607519,
+    "external_output_namespace": "gap3-reco-truncation-r1-c1e7db84",
+    "stdout_digest": "sha256:7b492c28822293c471015483cd086b22098a54ecac9acbc37639946820fc3cd4",
+    "stdout_bytes": 711,
+    "stderr_digest": "sha256:9ea3fdd2ebefd8f5c8c14c866ff7e5842085140566c3be51e863b5f419c260db",
+    "stderr_bytes": 3344,
+    "job_spec_digest": "sha256:0b6614d6ff65be9db670f8271dd63d51f3c9204d6b1e5e246317bc23b63b97d7",
+    "job_spec_bytes": 2326
+  },
+  "code": {
+    "branch": "pet-gate6-strategy-20260825",
+    "preparation_head": "c1e7db84c5f5f45ca89435ee30a69353b3f600f7",
+    "launch_receipt_head": "7d9c0cb5e2eeeca3fb09a3d58e66871e11713997",
+    "clean_immutable_checkout": true,
+    "launcher_digest": "sha256:ffadc05bd186d950b718be3f7e4e8d9e9a9563b771ea2cb3097cc6e933cd16db",
+    "wrapper_digest": "sha256:078cf8bc7a7fd60671d55a4b23f6619f45f742dbc3aef9612efbb10e7733d852",
+    "scientific_core_digest": "sha256:671531dd6a43a03203d4a8024d5671a7b357edad6e1fa7ab9ad7e44a99ac1e1a",
+    "retry_predeclaration_digest": "sha256:fc1772058469a34293ba1d8a162c1fe3b6cd3c2ade6c7bd31a65a39bda06c648",
+    "proposal_digest": "sha256:5755e6b324a8a010139139acbab121db8acb113f07f8ac88724fb2de1f9939d0",
+    "test_digest": "sha256:21481a4ff4b2596ebe9f73165afe4d4ffc449b2118c8f3d26c816bee5df6e876"
+  },
+  "original_artifacts_preserved_unchanged": {
+    "predeclaration_digest": "sha256:b69c296a1bd9be426c8acf78bd1232b780bd3c9e2b0b7924d09d241feb8260fc",
+    "launcher_digest": "sha256:4c23d6a2e2ee770a424c92d8c9eda67ac56dc3c7b8265dfdc3add73fe4325cfe",
+    "failed_job_launch_receipt_digest": "sha256:ade8f875f68ab4b2775effda66a48c49eca38666e43c5c60ddd8d10cd6acf8e9",
+    "failed_job_terminal_receipt_digest": "sha256:4fcb7a58e0208558630bd631ac356c089c5c14329f84551935622a7ff47fbb80"
+  },
+  "direct_verification": {
+    "slurm_accounting": "PASS",
+    "source_sha256": "PASS",
+    "selected_row_censuses": "PASS",
+    "finite_domain": "FAIL",
+    "nonnegative_domain": "PASS",
+    "result_json": "PASS",
+    "logs": "PASS"
+  },
+  "submission_count": 1,
+  "retry_submitted": false,
+  "further_retry_authorized": false,
+  "valid_gap3_result_exists": false,
+  "non_authorization": [
+    "do_not_change_representation_or_token_cap",
+    "do_not_move_or_adopt_central_value",
+    "do_not_construct_covariance_or_uncertainty",
+    "do_not_select_gate6_member_or_start_leg2",
+    "do_not_claim_equivalence_convergence_closure_or_coverage",
+    "do_not_make_publication_claim",
+    "do_not_authorize_further_compute"
+  ]
+}

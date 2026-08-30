@@ -106,13 +106,24 @@ calorimeter clusters rather than typed reconstructed objects. The defensible for
 the cluster level is *upstream* of the reconstruction layer, so nothing is discarded by construction —
 an argument the 12-token cap weakens and this measurement would either restore or retire.
 
-**Terminal execution update (2026-08-30):** the hash-bound contract and implementation were committed,
-and exactly one CPU-only job, `57727806`, was submitted. It failed closed after 8 seconds, before hashing
+**Terminal execution update (2026-08-30):** the original hash-bound contract, launcher, and failed-job
+receipts remain unchanged. Its one CPU-only job, `57727806`, failed closed after 8 seconds, before hashing
 the ROOT input or scanning an event: the request recorded `cpu=8,billing=8`, while the CPU partition
-allocated 18 CPUs and exposed 18 CPUs per task; the launcher required exactly 8. No result JSON exists,
-so no cluster-count, deposited-energy, or kinematic-dependence fraction was measured. The exact terminal
-receipt is `state/gate6-gap3-reco-truncation-terminal-57727806.json`. There is no unchanged retry
-authorization.
+allocated 18 CPUs and exposed 18 CPUs per task; the launcher required exactly 8. Its exact terminal
+receipt is `state/gate6-gap3-reco-truncation-terminal-57727806.json`.
+
+Joseph then authorized exactly one changed retry. A separate predeclaration, proposal, wrapper, launcher,
+tests, token, output namespace, and clean immutable checkout were committed and pushed before submission.
+Job `57729539` requested and received 18 CPUs, 32 GiB, two hours, the `cpu` constraint, no GPU, and 18
+ROOT threads. It scanned the exact censuses — signal `20,573,521`, data `4,116,128`, background `564,591`
+— and wrote the complete aggregate and kinematic operand inventory, but failed the predeclared scientific
+domain validation because deposited cluster energy contained `1,687`, `456`, and `223` non-finite entries,
+respectively. Negative-energy and invalid-weight counts were zero in all three populations. Therefore the
+terminal state is `INVALID_OR_INCOMPLETE`: the computed fractions are retained as invalid operands, not a
+scientific GAP-3 result. The exact receipt is
+`state/gate6-gap3-reco-truncation-changed-retry1-terminal-57729539.json`; the complete result is
+`state/gate6-gap3-reco-truncation-changed-retry1-result-57729539.json.gz`. The authorized retry is exhausted,
+the failure is terminal, and no further retry or compute is authorized.
 
 ## 5. Correction to the record
 
@@ -183,7 +194,7 @@ recorded so the next session does not spend on them.
 | Leg F process floor | `state/gate6-floor-replication-result-56863958.json` | TERMINAL. `F_range = 0.0645`, `FLOOR_INTERMEDIATE`. Do not re-run. |
 | Leg X 2×2 cells C, D | `PREDECLARATION-20260813-gate6-legX-2x2.md` | Not run. Authorized, precondition satisfied, absent from the strategy — reconcile first (§3). |
 | Full-inventory member evaluation | §2; `extract_fullevent_fps.py` | Not run. No predeclaration exists — write one. |
-| Reco truncation audit | §4; `state/gate6-gap3-reco-truncation-terminal-57727806.json` | One CPU-only job `57727806` failed closed before ROOT I/O; no measurement and no retry authorization. |
+| Reco truncation audit | §4; `state/gate6-gap3-reco-truncation-changed-retry1-terminal-57729539.json` | Changed retry `57729539` completed the scan but is `INVALID_OR_INCOMPLETE`: non-finite deposited energy counts were 1,687 signal, 456 data, and 223 background. No valid GAP-3 result and no further retry or compute authorization. |
 | PET-v2 equivalence retry 3 | `state/pet-v2-fixed-draw-equivalence-changed-retry3-submission-57644535.json` | SUBMITTED 2026-08-27T06:51Z; target `57644535`, training `57644536`, eval `57644537`, validation `57644538`. Live state unknown here — observe before resubmitting. |
 | Data-only `C_stat` smoke | `HANDOFF-20260819-lane-e-data-only-cstat-smoke-57266000.md` | Array `57266000` queued before the 08-19→26 maintenance; state unknown. Resubmission **not** pre-authorized. |
 
