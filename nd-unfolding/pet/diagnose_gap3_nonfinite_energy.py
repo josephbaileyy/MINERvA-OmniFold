@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+from dataclasses import dataclass
 import hashlib
 import importlib.util
 import json
@@ -52,6 +53,7 @@ EXPECTED_NPZ_ROWS = {
     "data": 4_116_128,
     "background": 564_591,
 }
+EXPECTED_SIGNAL_SOURCE_ROWS = 49_906_108
 EXPECTED_NONFINITE_ENTRIES = {
     "signal": 1_687,
     "data": 456,
@@ -146,8 +148,16 @@ INVENTORIES = {
 }
 
 CPP_HELPERS = r"""
+#include <algorithm>
 #include <cmath>
+#include <cstdint>
+#include <stdexcept>
+#include <string>
+#include <vector>
 #include "ROOT/RVec.hxx"
+#include "TFile.h"
+#include "TTreeReader.h"
+#include "TTreeReaderValue.h"
 namespace gap3diag {
 bool has_nonfinite(const ROOT::VecOps::RVec<double>& values) {
   for (const double value : values) {
@@ -155,8 +165,86 @@ bool has_nonfinite(const ROOT::VecOps::RVec<double>& values) {
   }
   return false;
 }
+
+struct PrefixMapResult {
+  std::vector<ULong64_t> npz_rows;
+  ULong64_t source_rows;
+  ULong64_t selected_rows;
+  ULong64_t kept_rows;
+  ULong64_t selected_not_keep;
+};
+
+bool in_domain(const double pt, const double pparallel) {
+  return std::isfinite(pt) && std::isfinite(pparallel) &&
+         pt >= 0.0 && pt <= 30.0 && pparallel >= 0.0 && pparallel <= 120.0;
+}
+
+PrefixMapResult map_signal_prefixes(
+    const std::string& source_path,
+    const std::vector<ULong64_t>& requested_targets) {
+  std::vector<ULong64_t> targets = requested_targets;
+  if (!std::is_sorted(targets.begin(), targets.end())) {
+    throw std::runtime_error("affected signal targets are not sorted");
+  }
+  if (std::adjacent_find(targets.begin(), targets.end()) != targets.end()) {
+    throw std::runtime_error("affected signal targets are not unique");
+  }
+
+  TFile source(source_path.c_str(), "READ");
+  if (source.IsZombie()) throw std::runtime_error("cannot open source ROOT");
+  TTreeReader reader("mc_signal_reco", &source);
+  TTreeReaderValue<UChar_t> sim_pass(reader, "sim_pass");
+  TTreeReaderValue<double> sim(reader, "sim");
+  TTreeReaderValue<double> sim_pz(reader, "sim_pz");
+  TTreeReaderValue<double> mc(reader, "MC");
+  TTreeReaderValue<double> mc_pz(reader, "MC_pz");
+
+  PrefixMapResult result{{}, 0, 0, 0, 0};
+  result.npz_rows.reserve(targets.size());
+  std::size_t target_index = 0;
+  while (reader.Next()) {
+    const auto source_entry = static_cast<ULong64_t>(reader.GetCurrentEntry());
+    const bool selected = *sim_pass != 0 && in_domain(*sim, *sim_pz);
+    const bool pass_truth = in_domain(*mc, *mc_pz);
+    const bool keep = selected || pass_truth;
+    result.source_rows += 1;
+    result.selected_rows += selected ? 1 : 0;
+    result.selected_not_keep += selected && !keep ? 1 : 0;
+
+    if (target_index < targets.size() && targets[target_index] == source_entry) {
+      if (!selected) {
+        throw std::runtime_error(
+            "affected signal target is not selected in the source stream: " +
+            std::to_string(source_entry));
+      }
+      if (!keep) {
+        throw std::runtime_error(
+            "affected signal target is not kept in the source stream: " +
+            std::to_string(source_entry));
+      }
+      result.npz_rows.push_back(result.kept_rows);
+      target_index += 1;
+    }
+    result.kept_rows += keep ? 1 : 0;
+  }
+  if (target_index != targets.size()) {
+    throw std::runtime_error(
+        "not every affected signal target was found in the source stream");
+  }
+  return result;
+}
 }
 """
+
+
+@dataclass(frozen=True)
+class SourceScan:
+    """Bounded source rows and their production-order NPZ mapping."""
+
+    npz_indices: np.ndarray
+    selected_rows: int
+    kept_rows: int
+    affected_rows: dict[str, np.ndarray]
 
 
 def sha256_file(path: Path, chunk_size: int = 16 * 1024 * 1024) -> str:
@@ -196,6 +284,58 @@ def classify_nonfinite(value: float) -> str | None:
     if value == -math.inf:
         return "negative_infinity"
     return None
+
+
+def evaluate_signal_predicates(
+    sim: float,
+    sim_pz: float,
+    sim_pass: int,
+    mc: float,
+    mc_pz: float,
+) -> tuple[bool, bool, bool]:
+    """Evaluate the production signal selection and retention predicates."""
+    pass_reco = (
+        sim_pass != 0
+        and math.isfinite(sim)
+        and math.isfinite(sim_pz)
+        and 0.0 <= sim <= 30.0
+        and 0.0 <= sim_pz <= 120.0
+    )
+    pass_truth = (
+        math.isfinite(mc)
+        and math.isfinite(mc_pz)
+        and 0.0 <= mc <= 30.0
+        and 0.0 <= mc_pz <= 120.0
+    )
+    return pass_reco or pass_truth, pass_reco, pass_truth
+
+
+def map_prefixes_from_predicates(
+    rows: Iterable[tuple[int, bool, bool]], target_entries: Iterable[int]
+) -> tuple[list[int], int]:
+    """Map selected target entries to retained-row prefixes in one ordered stream."""
+    targets = list(target_entries)
+    if targets != sorted(set(targets)):
+        raise ValueError("target entries must be sorted and unique")
+    target_index = 0
+    kept_rows = 0
+    npz_rows: list[int] = []
+    for source_entry, is_selected, is_kept in rows:
+        if is_selected and not is_kept:
+            raise RuntimeError(f"selected source entry {source_entry} is not kept")
+        if target_index < len(targets) and targets[target_index] == source_entry:
+            if not is_selected:
+                raise RuntimeError(
+                    f"affected source entry {source_entry} is not selected"
+                )
+            if not is_kept:
+                raise RuntimeError(f"affected source entry {source_entry} is not kept")
+            npz_rows.append(kept_rows)
+            target_index += 1
+        kept_rows += int(is_kept)
+    if target_index != len(targets):
+        raise RuntimeError("not every affected source entry was found")
+    return npz_rows, kept_rows
 
 
 def production_sort(columns: Iterable[Iterable[float]]) -> np.ndarray:
@@ -471,23 +611,12 @@ def run_preflight(args: argparse.Namespace) -> dict[str, Any]:
     }
 
 
-def _to_vector_list(values: np.ndarray) -> list[list[float]]:
-    return [list(value) for value in values]
-
-
-def _scan_source_inventory(
-    root: Any, source: Path, name: str, config: dict[str, Any]
-) -> tuple[np.ndarray, int, dict[str, np.ndarray]]:
+def _collect_affected_rows(
+    root: Any, source: Path, config: dict[str, Any]
+) -> dict[str, np.ndarray]:
     dataframe = root.RDataFrame(config["tree"], str(source)).Define(
         "__gap3_selected", config["selection"]
     )
-    kept_payload = dataframe.Filter(config["keep"]).AsNumpy(
-        ["rdfentry_", "__gap3_selected"]
-    )
-    kept_entries = np.asarray(kept_payload["rdfentry_"], dtype=np.uint64)
-    selected_count = int(np.count_nonzero(kept_payload["__gap3_selected"]))
-    kept_entries.sort()
-
     branches = [
         "rdfentry_",
         "part_reco_E",
@@ -509,7 +638,54 @@ def _scan_source_inventory(
         else np.asarray(values)[order]
         for key, values in affected.items()
     }
-    return kept_entries, selected_count, sorted_affected
+    return sorted_affected
+
+
+def _stream_signal_prefixes(
+    root: Any, source: Path, source_entries: np.ndarray
+) -> tuple[np.ndarray, int, int]:
+    if source_entries.size > EXPECTED_NONFINITE_ENTRIES["signal"]:
+        raise RuntimeError("affected signal target count exceeds the frozen bound")
+    targets = root.std.vector("ULong64_t")()
+    for source_entry in source_entries:
+        targets.push_back(int(source_entry))
+    mapping = root.gap3diag.map_signal_prefixes(str(source), targets)
+    if int(mapping.source_rows) != EXPECTED_SIGNAL_SOURCE_ROWS:
+        raise RuntimeError("signal source-row census mismatch in streaming mapper")
+    if int(mapping.selected_not_keep) != 0:
+        raise RuntimeError("signal stream contains selected rows that are not kept")
+    return (
+        np.asarray(list(mapping.npz_rows), dtype=np.int64),
+        int(mapping.selected_rows),
+        int(mapping.kept_rows),
+    )
+
+
+def _scan_source_inventory(
+    root: Any, source: Path, name: str, config: dict[str, Any]
+) -> SourceScan:
+    affected_rows = _collect_affected_rows(root, source, config)
+    source_entries = np.asarray(affected_rows["rdfentry_"], dtype=np.uint64)
+    if name == "signal":
+        npz_indices, selected_rows, kept_rows = _stream_signal_prefixes(
+            root, source, source_entries
+        )
+        return SourceScan(npz_indices, selected_rows, kept_rows, affected_rows)
+
+    dataframe = root.RDataFrame(config["tree"], str(source)).Define(
+        "__gap3_selected", config["selection"]
+    )
+    kept_payload = dataframe.Filter(config["keep"]).AsNumpy(
+        ["rdfentry_", "__gap3_selected"]
+    )
+    kept_entries = np.asarray(kept_payload["rdfentry_"], dtype=np.uint64)
+    selected_rows = int(np.count_nonzero(kept_payload["__gap3_selected"]))
+    kept_entries.sort()
+    npz_indices = np.asarray(
+        [npz_row_for_source_entry(kept_entries, int(entry)) for entry in source_entries],
+        dtype=np.int64,
+    )
+    return SourceScan(npz_indices, selected_rows, int(kept_entries.size), affected_rows)
 
 
 def _read_npz_rows(
@@ -625,16 +801,15 @@ def _summarize_distribution(values: list[int]) -> dict[str, Any]:
 def _diagnose_population(
     name: str,
     config: dict[str, Any],
-    kept_entries: np.ndarray,
+    npz_indices: np.ndarray,
+    kept_rows: int,
     source_rows: dict[str, np.ndarray],
     stored_rows: dict[str, np.ndarray],
     loader: Any,
 ) -> dict[str, Any]:
     source_entries = np.asarray(source_rows["rdfentry_"], dtype=np.uint64)
-    npz_indices = np.asarray(
-        [npz_row_for_source_entry(kept_entries, int(entry)) for entry in source_entries],
-        dtype=np.int64,
-    )
+    if npz_indices.shape != source_entries.shape:
+        raise RuntimeError(f"{name} source-to-NPZ mapping length mismatch")
     aggregate = _empty_counts()
     kinematics = _kinematic_template()
     records: list[dict[str, Any]] = []
@@ -779,7 +954,7 @@ def _diagnose_population(
         )
 
     return {
-        "kept_npz_rows": int(kept_entries.size),
+        "kept_npz_rows": kept_rows,
         "aggregate": aggregate,
         "multiplicity_distributions": {
             "raw_vector_length": _summarize_distribution(raw_lengths),
@@ -801,7 +976,8 @@ def run_diagnostic(args: argparse.Namespace) -> dict[str, Any]:
     static = verify_static_inputs(args)
     import ROOT  # type: ignore[import-not-found]
 
-    ROOT.EnableImplicitMT(args.threads)
+    if ROOT.IsImplicitMTEnabled():
+        ROOT.DisableImplicitMT()
     _declare_root_helpers(ROOT)
     schema = _verify_root_schema(ROOT, static["source"])
     header = _npz_header(static["npz"])
@@ -811,22 +987,28 @@ def run_diagnostic(args: argparse.Namespace) -> dict[str, Any]:
     populations: dict[str, Any] = {}
     checks: dict[str, bool] = {}
     for name, config in INVENTORIES.items():
-        kept, selected_count, source_rows = _scan_source_inventory(
+        source_scan = _scan_source_inventory(
             ROOT, static["source"], name, config
         )
-        indices = np.asarray(
-            [npz_row_for_source_entry(kept, int(entry)) for entry in source_rows["rdfentry_"]],
-            dtype=np.int64,
-        )
-        stored = _read_npz_rows(static["npz"], config, indices)
+        stored = _read_npz_rows(static["npz"], config, source_scan.npz_indices)
         population = _diagnose_population(
-            name, config, kept, source_rows, stored, loader
+            name,
+            config,
+            source_scan.npz_indices,
+            source_scan.kept_rows,
+            source_scan.affected_rows,
+            stored,
+            loader,
         )
-        population["selected_rows"] = selected_count
-        population["affected_selected_events"] = int(len(source_rows["rdfentry_"]))
+        population["selected_rows"] = source_scan.selected_rows
+        population["affected_selected_events"] = int(
+            len(source_scan.affected_rows["rdfentry_"])
+        )
         populations[name] = population
-        checks[f"{name}:npz_rows"] = int(kept.size) == EXPECTED_NPZ_ROWS[name]
-        checks[f"{name}:selected_rows"] = selected_count == EXPECTED_SELECTED_ROWS[name]
+        checks[f"{name}:npz_rows"] = source_scan.kept_rows == EXPECTED_NPZ_ROWS[name]
+        checks[f"{name}:selected_rows"] = (
+            source_scan.selected_rows == EXPECTED_SELECTED_ROWS[name]
+        )
         checks[f"{name}:nonfinite_entries"] = (
             population["aggregate"]["nonfinite_entries"]
             == EXPECTED_NONFINITE_ENTRIES[name]
@@ -875,7 +1057,11 @@ def run_diagnostic(args: argparse.Namespace) -> dict[str, Any]:
             "npz_sha256": EXPECTED_NPZ_SHA256,
             "verified_hashes": static["verified_hashes"],
         },
-        "runtime": {"root_threads": args.threads, "root_version": str(ROOT.gROOT.GetVersion())},
+        "runtime": {
+            "source_identity_threads": 1,
+            "implicit_multithreading": False,
+            "root_version": str(ROOT.gROOT.GetVersion()),
+        },
         "schema": schema,
         "npz_header": header,
         "production_path": static["production_path"],
@@ -925,6 +1111,24 @@ def run_self_tests() -> None:
     assert npz_row_for_source_entry(kept, 8) == 2
     padded = production_pad(([2.0, 1.0], [20.0, 10.0]), cap=3)
     assert padded.tolist() == [[2.0, 20.0], [1.0, 10.0], [0.0, 0.0]]
+    real_keep, real_selected, real_truth = evaluate_signal_predicates(
+        -9999.0,
+        -9999.0,
+        0,
+        0.2756309263353958,
+        5.606105907302817,
+    )
+    assert (real_keep, real_selected, real_truth) == (True, False, True)
+    npz_rows, kept_rows = map_prefixes_from_predicates(
+        (
+            (10_152_798, True, True),
+            (10_152_799, real_selected, real_keep),
+            (10_152_800, True, True),
+        ),
+        (10_152_800,),
+    )
+    assert npz_rows == [2]
+    assert kept_rows == 3
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -933,7 +1137,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--data-root", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--expected-head")
-    parser.add_argument("--threads", type=int, choices=(18,), default=18)
+    parser.add_argument("--threads", type=int, choices=(1,), default=1)
     parser.add_argument("--preflight-only", action="store_true")
     parser.add_argument("--self-test", action="store_true")
     for name in (

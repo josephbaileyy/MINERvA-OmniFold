@@ -23,6 +23,11 @@ PROPOSAL_PATH = (
     REPO_ROOT
     / "docs/orchestration/state/gate6-gap3-nonfinite-diagnostic-proposal-20260830.json"
 )
+REPAIR_PROPOSAL_PATH = (
+    REPO_ROOT
+    / "docs/orchestration/state/"
+    "gate6-gap3-nonfinite-mapping-repair-proposal-20260831.json"
+)
 PRESERVED_HASHES = {
     REPO_ROOT
     / "docs/orchestration/"
@@ -46,6 +51,29 @@ PRESERVED_HASHES = {
     / "docs/orchestration/state/"
     "gate6-gap3-reco-truncation-changed-retry1-result-57729539.json.gz": (
         "7c8ff0dc0baa4fd03d29534a2a24558f7705d2e9cd914aa219e528071e0cbf6e"
+    ),
+    REPO_ROOT
+    / "docs/orchestration/"
+    "PREDECLARATION-20260830-gate6-gap3-nonfinite-diagnostic.md": (
+        "679ea7f9d10f1c5f5fa1e6b9fd4ca818175070dadd69c5073a8bf63a435ecf59"
+    ),
+    REPO_ROOT
+    / "docs/orchestration/state/"
+    "gate6-gap3-nonfinite-diagnostic-proposal-20260830.json": (
+        "3229afc3828e3b3e9db356ce685bdc0c3156ff79118f5e82e62814288e66ebf9"
+    ),
+    PET_DIR / "sbatch_gap3_nonfinite_diagnostic.sh": (
+        "c84871436a9f03a0c1f6b927a3a321c682b497d0d0473b8b1101cc3e551951d7"
+    ),
+    REPO_ROOT
+    / "docs/orchestration/state/"
+    "gate6-gap3-nonfinite-diagnostic-launch-57743781.json": (
+        "f43a8c45c1ca5e8a35cd1da4dcfa5e62363b78c75a21395b7f09b8f9412c696e"
+    ),
+    REPO_ROOT
+    / "docs/orchestration/state/"
+    "gate6-gap3-nonfinite-diagnostic-terminal-57743781.json": (
+        "a0220ef3fcb375fdc783ef550922816669cc785a06683b569a5e9668171cbdd0"
     ),
 }
 
@@ -93,6 +121,82 @@ def test_padding_and_source_to_npz_mapping() -> None:
         pass
     else:
         raise AssertionError("unretained source entry did not fail closed")
+
+
+def test_current_entry_identity_failure_is_reproduced() -> None:
+    mislabeled_kept_entries = np.asarray(
+        [10_152_798, 10_152_800], dtype=np.uint64
+    )
+    try:
+        DIAGNOSTIC.npz_row_for_source_entry(
+            mislabeled_kept_entries, 10_152_799
+        )
+    except RuntimeError as error:
+        assert str(error) == (
+            "selected source entry 10152799 is absent from kept order"
+        )
+    else:
+        raise AssertionError("the failed materialized mapping did not reproduce")
+
+    keep, selected, truth = DIAGNOSTIC.evaluate_signal_predicates(
+        -9999.0,
+        -9999.0,
+        0,
+        0.2756309263353958,
+        5.606105907302817,
+    )
+    assert (keep, selected, truth) == (True, False, True)
+    try:
+        DIAGNOSTIC.map_prefixes_from_predicates(
+            [(10_152_799, selected, keep)], [10_152_799]
+        )
+    except RuntimeError as error:
+        assert str(error) == "affected source entry 10152799 is not selected"
+    else:
+        raise AssertionError("contradictory affected-entry identity did not fail closed")
+
+
+def test_streaming_prefix_mapping_covers_real_entry() -> None:
+    real_keep, real_selected, _truth = DIAGNOSTIC.evaluate_signal_predicates(
+        -9999.0,
+        -9999.0,
+        0,
+        0.2756309263353958,
+        5.606105907302817,
+    )
+    rows = (
+        (10_152_798, True, True),
+        (10_152_799, real_selected, real_keep),
+        (10_152_800, True, True),
+    )
+    npz_rows, kept_rows = DIAGNOSTIC.map_prefixes_from_predicates(
+        rows, [10_152_800]
+    )
+    assert npz_rows == [2]
+    assert kept_rows == 3
+
+
+def test_signal_mapping_is_streaming_and_single_threaded() -> None:
+    source = DIAGNOSTIC_PATH.read_text(encoding="utf-8")
+    scan_source = source.split("def _scan_source_inventory", maxsplit=1)[1]
+    signal_branch = scan_source.split('if name == "signal":', maxsplit=1)[1].split(
+        "dataframe =", maxsplit=1
+    )[0]
+    assert "_stream_signal_prefixes" in signal_branch
+    assert "kept_payload" not in signal_branch
+    assert "ROOT.EnableImplicitMT" not in source
+    assert 'choices=(1,)' in source
+
+
+def test_repair_proposal_has_no_compute_authorization() -> None:
+    proposal = json.loads(REPAIR_PROPOSAL_PATH.read_text(encoding="utf-8"))
+    assert proposal["status"] == "PREPARATION_ONLY"
+    assert proposal["authorization"]["compute_authorized"] is False
+    assert proposal["authorization"]["submission_count_authorized"] == 0
+    assert proposal["repair"]["signal_mapping"] == (
+        "single-threaded streaming retained-prefix count over affected source entries"
+    )
+    assert proposal["resource_estimate"]["allocation_cpu_hour_ceiling"] == 36
 
 
 def test_hash_bound_production_mask_path() -> None:
@@ -199,6 +303,10 @@ if __name__ == "__main__":
     test_preserved_invalid_result_artifacts_are_unchanged()
     test_exact_production_stable_sort_and_nonfinite_classes()
     test_padding_and_source_to_npz_mapping()
+    test_current_entry_identity_failure_is_reproduced()
+    test_streaming_prefix_mapping_covers_real_entry()
+    test_signal_mapping_is_streaming_and_single_threaded()
+    test_repair_proposal_has_no_compute_authorization()
     test_hash_bound_production_mask_path()
     test_proposal_scope_resources_and_denominator_rule()
     test_positive_and_negative_launcher_resource_guards()

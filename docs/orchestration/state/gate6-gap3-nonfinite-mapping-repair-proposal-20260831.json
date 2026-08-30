@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "contract_id": "PET-G6-GAP3-NONFINITE-MAPPING-REPAIR-20260831",
+  "record_kind": "read_only_diagnosis_and_repair_proposal",
+  "recorded_at_utc": "2026-08-30T23:44:26Z",
+  "status": "PREPARATION_ONLY",
+  "authorization": {
+    "compute_authorized": false,
+    "submission_count_authorized": 0,
+    "retry_authorized": false,
+    "proposal_is_launchable": false
+  },
+  "failed_run": {
+    "job_id": "57743781",
+    "status": "INVALID_OR_INCOMPLETE",
+    "failure": "selected source entry 10152799 is absent from kept order",
+    "result_json_written": false,
+    "terminal_receipt_digest": "sha256:a0220ef3fcb375fdc783ef550922816669cc785a06683b569a5e9668171cbdd0"
+  },
+  "direct_root_entry": {
+    "tree": "mc_signal_reco",
+    "entry": 10152799,
+    "sim_pass": 0,
+    "sim": -9999.0,
+    "sim_pz": -9999.0,
+    "MC": 0.2756309263353958,
+    "MC_pz": 5.606105907302817
+  },
+  "exact_production_evaluation": {
+    "dumper_artifact": "nd-unfolding/pet/dump_pointcloud_inputs.py",
+    "dumper_digest": "sha256:c8fa219f0ca2537bddc8ad824a0d225c3b67cd76cab1cab1bc391f5bdd7cac5d",
+    "function": "select_signal_row",
+    "result": {
+      "keep": true,
+      "pass_reco": false,
+      "pass_truth": true
+    },
+    "retention_implementation": "The dumper loops TTree entries in ascending order, calls select_signal_row, skips only when keep is false, and increments its NPZ row counter after writing each kept row."
+  },
+  "diagnostic_predicates": {
+    "selected": "sim_pass != 0 && std::isfinite(sim) && std::isfinite(sim_pz) && sim >= 0.0 && sim <= 30.0 && sim_pz >= 0.0 && sim_pz <= 120.0",
+    "keep": "selected || (std::isfinite(MC) && std::isfinite(MC_pz) && MC >= 0.0 && MC <= 30.0 && MC_pz >= 0.0 && MC_pz <= 120.0)",
+    "entry_10152799": {"selected": false, "keep": true}
+  },
+  "shared_predicate_action": {
+    "action": "one sequential RDataFrame Histo1D evaluation of selected + 2*keep",
+    "tree_rows": 49906108,
+    "neither": 753223,
+    "selected_and_not_keep": 0,
+    "not_selected_and_keep": 28579364,
+    "selected_and_keep": 20573521,
+    "kept_rows": 49152885
+  },
+  "rdfentry_probe": {
+    "filter": "rdfentry_ == 10152799",
+    "sequential": {
+      "sim_pass": 0,
+      "sim": -9999.0,
+      "sim_pz": -9999.0,
+      "MC": 0.2756309263353958,
+      "MC_pz": 5.606105907302817
+    },
+    "implicit_mt_two_threads": {
+      "sim_pass": 0,
+      "sim": -9999.0,
+      "sim_pz": -9999.0,
+      "MC": 0.7635349278392893,
+      "MC_pz": 2.800730701971195
+    },
+    "conclusion": "rdfentry_ did not identify the same TTree row under implicit multithreading. Sequential RDataFrame and direct TTree evaluation agreed."
+  },
+  "cause_determination": {
+    "rdfentry_with_implicit_multithreading": "CONFIRMED",
+    "separate_asnumpy_actions_required_for_failure": false,
+    "sorting_required_for_failure": false,
+    "memory_pressure_required_for_failure": false,
+    "basis": {
+      "separate_actions": "The mismatch reproduced inside one bounded AsNumpy action.",
+      "sorting": "The mismatch reproduced without sorting any output.",
+      "memory": "The mismatch reproduced with a one-row result and bounded memory. The failed job's 31.973941802978516 GiB MaxRSS remains a separate resource concern."
+    }
+  },
+  "repair": {
+    "source_identity_mode": "single-threaded direct TTree entry order",
+    "signal_mapping": "single-threaded streaming retained-prefix count over affected source entries",
+    "signal_target_bound": 1687,
+    "full_signal_kept_index_materialized": false,
+    "prefix_definition": "The NPZ row is the count of production-kept source rows strictly before the selected affected source entry.",
+    "production_predicates": "The streaming helper applies the same pass_reco, pass_truth, and keep operands as select_signal_row.",
+    "fail_closed_checks": [
+      "targets_sorted_and_unique",
+      "every target found",
+      "every target selected",
+      "every selected target kept",
+      "selected_and_not_keep_is_zero",
+      "selected census matches 20573521",
+      "kept census matches 49152885"
+    ],
+    "old_launcher_reusable": false,
+    "new_hash_bound_launcher_required_after_separate_authorization": true
+  },
+  "repair_artifacts": {
+    "diagnostic_artifact": "nd-unfolding/pet/diagnose_gap3_nonfinite_energy.py",
+    "diagnostic_digest": "sha256:df6dd10517fac383055da24b845855b686bbbe08bffb82f4a20348fd7a4b7038",
+    "test_artifact": "nd-unfolding/pet/test_gap3_nonfinite_diagnostic.py",
+    "test_digest": "sha256:a125e53aa8506bb47e11502c2cf7a09c83742ffd86f3d48ff9008878ac0d31df"
+  },
+  "tests": {
+    "negative": "Reproduce entry 10152799 as an affected identity and require failure because its exact production predicates are not selected.",
+    "positive": "Retain entry 10152799 as a truth-only row and verify it increments the prefix before the next selected affected target.",
+    "no_full_materialization": "Assert the signal branch uses the streaming helper and does not construct kept_payload.",
+    "cpp_synthetic_root_fixture": "PASS",
+    "implicit_mt_disabled": true
+  },
+  "resource_estimate": {
+    "estimate_only": true,
+    "source_identity_threads": 1,
+    "requested_cpus_if_later_authorized": 18,
+    "requested_memory_gib_if_later_authorized": 32,
+    "requested_walltime_hours_if_later_authorized": 2,
+    "allocation_cpu_hour_ceiling": 36,
+    "estimated_wall_minutes": 15,
+    "estimated_allocation_cpu_hours": 4.5,
+    "largest_single_npz_member_uncompressed_bytes": 7078015440,
+    "largest_single_npz_member_uncompressed_gib": 6.591915562748909,
+    "gpu": false,
+    "qualification": "The scheduler previously enforced 18 CPUs for a 32 GiB request. The two-hour request is a ceiling, not a runtime prediction. No resource request is authorized by this estimate."
+  },
+  "preserved_artifacts": {
+    "prior_invalid_result_digest": "sha256:7c8ff0dc0baa4fd03d29534a2a24558f7705d2e9cd914aa219e528071e0cbf6e",
+    "failed_diagnostic_predeclaration_digest": "sha256:679ea7f9d10f1c5f5fa1e6b9fd4ca818175070dadd69c5073a8bf63a435ecf59",
+    "failed_diagnostic_proposal_digest": "sha256:3229afc3828e3b3e9db356ce685bdc0c3156ff79118f5e82e62814288e66ebf9",
+    "failed_diagnostic_launcher_digest": "sha256:c84871436a9f03a0c1f6b927a3a321c682b497d0d0473b8b1101cc3e551951d7",
+    "failed_diagnostic_launch_receipt_digest": "sha256:f43a8c45c1ca5e8a35cd1da4dcfa5e62363b78c75a21395b7f09b8f9412c696e",
+    "failed_diagnostic_terminal_receipt_digest": "sha256:a0220ef3fcb375fdc783ef550922816669cc785a06683b569a5e9668171cbdd0"
+  },
+  "non_authorization": [
+    "do_not_submit_compute",
+    "do_not_retry_job_57743781",
+    "do_not_reinterpret_or_promote_truncation_percentages",
+    "do_not_filter_or_repair_scientific_inputs",
+    "do_not_change_representation_or_token_cap",
+    "do_not_retrain",
+    "do_not_move_or_adopt_central_value",
+    "do_not_construct_covariance_or_uncertainty",
+    "do_not_select_gate6_member_or_start_leg2",
+    "do_not_make_publication_claim"
+  ]
+}
