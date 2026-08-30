@@ -101,3 +101,49 @@ class PeerDescriptionTest(unittest.TestCase):
 
     def test_an_empty_tailnet_says_so(self):
         self.assertEqual(ds.describe_peers({}), ["no other devices on this tailnet"])
+
+
+CLUSTER = {
+    "generated_at_epoch": 1788067877,
+    "sources": [{"name": "slurm_queue", "ok": True, "age_seconds": 2.0,
+                 "measured_on": "login03"}],
+    "jobs": [],
+}
+LOCAL = {
+    "sources": [{"name": "local_llm_sessions", "ok": True, "age_seconds": 0.1,
+                 "measured_on": "this device"}],
+    "local_sessions": {"sessions": [{"session": "79c94fcc"}], "transcripts_scanned": 279},
+}
+
+
+class MergeTest(unittest.TestCase):
+    def test_both_halves_keep_their_own_measured_on(self):
+        merged = ds.merge_local(CLUSTER, LOCAL, "")
+        origins = {s["name"]: s["measured_on"] for s in merged["sources"]}
+        self.assertEqual(origins["slurm_queue"], "login03")
+        self.assertEqual(origins["local_llm_sessions"], "this device")
+
+    def test_local_sessions_are_attached(self):
+        merged = ds.merge_local(CLUSTER, LOCAL, "")
+        self.assertEqual(merged["local_sessions"]["transcripts_scanned"], 279)
+
+    def test_a_failed_local_collection_becomes_a_failed_source_not_an_absent_panel(self):
+        # Absence would render as "no local sessions", which is a claim we did not make.
+        merged = ds.merge_local(CLUSTER, None, "boom")
+        local = next(s for s in merged["sources"] if s["name"] == "local_llm_sessions")
+        self.assertFalse(local["ok"])
+        self.assertIn("boom", local["error"])
+        self.assertIsNone(local["stale"])
+        self.assertIsNone(merged["local_sessions"])
+
+    def test_merging_does_not_mutate_the_cluster_snapshot(self):
+        before = len(CLUSTER["sources"])
+        ds.merge_local(CLUSTER, LOCAL, "")
+        self.assertEqual(len(CLUSTER["sources"]), before)
+
+    def test_the_local_collector_runs_and_returns_sessions(self):
+        # Real subprocess against the real home directories on this machine.
+        local, error = ds.collect_local()
+        self.assertIsNotNone(local, error)
+        self.assertIn("local_sessions", local)
+        self.assertIsInstance(local["local_sessions"]["transcripts_scanned"], int)

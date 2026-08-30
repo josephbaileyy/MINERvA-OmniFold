@@ -9,8 +9,8 @@ said about when things finish. Three files:
 | [`dashboard_collector.py`](dashboard_collector.py) | Runs on a login node under `scrontab`; writes one self-describing `status.json`. |
 | [`dashboard.html`](dashboard.html) | One static file, no build step, renders `status.json` and auto-refreshes. |
 | [`dashboard_serve.py`](dashboard_serve.py) | Serves the page on your laptop, reading `status.json` over SSH. Nothing is published. |
-| [`test_dashboard_serve.py`](test_dashboard_serve.py) | 12 tests for the viewer and the tailnet binding. |
-| [`test_dashboard_collector.py`](test_dashboard_collector.py) | 57 tests; `/usr/bin/python3.11 -m unittest test_dashboard_collector`. |
+| [`test_dashboard_serve.py`](test_dashboard_serve.py) | 17 tests for the viewer, the tailnet binding and the local merge. |
+| [`test_dashboard_collector.py`](test_dashboard_collector.py) | 72 tests; `/usr/bin/python3.11 -m unittest test_dashboard_collector`. |
 
 **What it deliberately cannot tell you.** It does not predict completion times, it does not claim a
 job is running because a job exists, and it never reports a login node as session-free when that node
@@ -63,6 +63,20 @@ It fails loudly at startup if the snapshot cannot be read, rather than serving a
 forever. There is no local cache and no polling loop: the only copy is the one on the cluster, so
 the page cannot show a file that outlived the thing that produced it. With the `ControlMaster` in
 `~/.ssh/config` each refresh costs well under a second.
+
+**Viewing it.** `--tailscale` listens on loopback *and* on the tailnet address, so:
+
+| Where | URL |
+|---|---|
+| The machine running the server | `http://127.0.0.1:8899/` |
+| Any other device on the tailnet (phone, a second PC) | `http://josephs-macbook-pro-2.tail29db9c.ts.net:8899/` |
+
+To add a **second computer**, install Tailscale on it, sign into the same tailnet, and open that
+MagicDNS URL — nothing on this side changes, and it does not need the repo, Python or NERSC access.
+It does need the laptop awake and running the server, because that is where the SSH read happens.
+Measured: loopback, the tailnet IP and the MagicDNS name all return `200`, while the laptop's LAN
+address (`10.119.0.38`) is **refused** — loopback adds no exposure, since only this machine can
+reach it.
 
 **Phone — Tailscale (set up 2026-08-30).** Alerts already work with no further setup (§1c); this is
 the *glancing* path. Run the viewer with `--tailscale`:
@@ -176,7 +190,7 @@ topic.
 
 ```bash
 cd /pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration
-/usr/bin/python3.11 -m unittest test_dashboard_collector      # 57 tests
+/usr/bin/python3.11 -m unittest test_dashboard_collector      # 72 tests
 /usr/bin/python3.11 dashboard_collector.py --state-dir state/waker --out /tmp/status.json
 ```
 
@@ -186,6 +200,54 @@ page at a snapshot with `sources[].ok = false` and confirm the affected panels r
 **"not measured"** rather than `0s` or a green tick.
 
 ---
+
+## 2b. The LLM panels
+
+**LLM account capacity** comes from [`usagectl.py`](usagectl.py) `snapshot`, called by the collector
+on the cluster. Nothing about capacity is computed here — usagectl already owns the codex
+app-server call, the Claude status-line cache and its staleness policy, and
+`profile_account_groups`, which records that two profile names can be **aliases of one account whose
+capacity must not be summed**. The panel groups those into a single row and says so, so
+`claude-school` and `claude-school-legacy` cannot be read as two independent budgets.
+
+Measured 2026-08-30, and worth knowing before you trust the panel:
+
+| Provider | What is measurable | Why |
+|---|---|---|
+| codex | live, per-window (5-hour and 7-day remaining %, reset times) | `live codex app-server account/rateLimits/read` |
+| claude | **usually `not measured`** | it reads a status-line cache whose policy calls it stale past 1800 s; the cache was 2 d old |
+| agy | never | `no usage API in installed agy CLI` |
+
+`not measured` is not "has capacity". To make the Claude rows real, install the recorder once per
+profile and then use that profile at least once inside the staleness window:
+
+```bash
+python3 docs/orchestration/usagectl.py install-claude-statusline --profile claude-school
+```
+
+Also note `usagectl` must run where the **real account homes** are. On the cluster it reports
+`gate_ok: true` with 0 policy violations; run locally it rejects every profile with *"Account home
+contains a symlink below login home"*, because the local homes are symlinks. That is why this panel
+is collected cluster-side.
+
+**LLM sessions on this device** is measured by `dashboard_serve.py`, not by the cluster collector —
+a session can only be seen where it runs. The viewer shells out to
+`dashboard_collector.py --local-only` and merges the result, so there is one implementation of the
+scan and both halves keep their own `measured_on` and their own age. A failed local collection
+becomes a **failed source**, never an absent panel, because an absent panel would read as "no local
+sessions".
+
+It scans `~/.claude`, `~/.claude-personal`, `~/.claude-school` and `~/claude-homes/*/.claude`.
+Scanning only `~/.claude` reported nothing while two sessions were live — Claude Code uses a
+separate `CLAUDE_CONFIG_DIR` per account, and the active ones were under the other two. A
+transcript's age is when the session last **wrote**: evidence of activity, not proof a process is
+alive. Only sessions inside 24 h are listed and the total scanned is printed beside the count
+(e.g. "11 of 279"), so the filtered view cannot be read as a complete one.
+
+The project column shows Claude Code's encoded directory with only the leading `-Users-<account>-`
+stripped. It is *not* decoded into a path: the encoding replaces `/` with `-` and is therefore
+lossy, and splitting on `-` turned this repo into the plausible-looking but fictional
+`MINERvA/OmniFold`.
 
 ## 3. Why the design is shaped this way
 
@@ -218,6 +280,9 @@ Each item is a measurement from 2026-08-29/30, not a preference.
   **8 `draining`** (pam_nologin, "System is going down") and **1 `no_route`** (`login17`, also in the
   `debug` `MAINT` reservation). The 24-line legal banner is stripped from the reason and arrives on
   stderr, so it never reaches the session parser.
+- **The collector's own node is read without ssh.** login03 turned up among the *unmeasured* nodes
+  with "timeout after 18s" because the sweep was ssh-ing to itself under load. The local tmux socket
+  is in the filesystem; a network round trip for it is pure risk. Coverage went 28/40 back to 31/40.
 - **Job state is not re-implemented.** Classification calls
   [`slurm_array_status.build_snapshot()`](slurm_array_status.py), including its `UNOBSERVED` branch —
   the one that exists because leg F rendered `ACTIVE` for 24 h after finishing (`BEN-323`). A failure
@@ -234,4 +299,9 @@ Each item is a measurement from 2026-08-29/30, not a preference.
 - Coverage is whole-node: a node that answers but whose `tmux ls` output cannot be parsed is
   `unparsed`, which is neither "measured false" nor "not measured", and is shown as its own state.
 - The collector reports the queue for the invoking user only (`squeue --me`).
+- The local-session scan finds **Claude Code** transcripts only. Codex sessions are not covered:
+  there is no `~/codex-homes/*/.codex` on this laptop to read, so the panel's claim is scoped to
+  Claude and does not imply anything about codex sessions.
+- The usage panel costs ~13 s of the collector's ~25 s runtime, because usagectl spawns a codex
+  app-server per profile. `--no-usage` skips it.
 - Nothing here verifies that a job's *science* is progressing — only what Slurm and the artifacts say.

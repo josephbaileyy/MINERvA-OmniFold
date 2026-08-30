@@ -32,6 +32,7 @@ import shutil
 import socketserver
 import subprocess
 import sys
+import threading
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -57,6 +58,50 @@ def fetch_remote(host: str, remote_path: str, timeout: float) -> tuple[bytes | N
     except json.JSONDecodeError as exc:
         return None, f"remote file is not JSON: {exc}"
     return done.stdout, ""
+
+
+def collect_local(timeout: float = 30.0) -> tuple[dict | None, str]:
+    """Run the collector's local-only mode on THIS machine.
+
+    LLM sessions can only be seen where they run, so the cluster snapshot cannot carry
+    them.  Reusing `dashboard_collector.py --local-only` keeps one implementation of the
+    scan and of the Source/age bookkeeping rather than a second copy here.
+    """
+    argv = [sys.executable, str(HERE / "dashboard_collector.py"), "--local-only"]
+    try:
+        done = subprocess.run(argv, capture_output=True, timeout=timeout, check=False)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return None, f"{type(exc).__name__}: {exc}"
+    if done.returncode != 0:
+        return None, (done.stderr.decode("utf-8", "replace").strip()[:300]
+                      or f"exited {done.returncode}")
+    try:
+        return json.loads(done.stdout), ""
+    except json.JSONDecodeError as exc:
+        return None, f"--local-only printed non-JSON: {exc}"
+
+
+def merge_local(cluster: dict, local: dict | None, local_error: str) -> dict:
+    """Add the locally-measured panels to the cluster snapshot.
+
+    Both halves keep their own `measured_on` and their own age, so the page never
+    implies that one host observed everything.  A failed local collection becomes a
+    FAILED SOURCE rather than an absent panel -- absence would render as "no local
+    sessions", which is a claim we did not measure.
+    """
+    merged = dict(cluster)
+    merged["sources"] = list(cluster.get("sources") or [])
+    if local is None:
+        merged["sources"].append({
+            "name": "local_llm_sessions", "ok": False, "age_seconds": None,
+            "error": local_error or "local collection failed", "stale": None,
+            "stale_after_seconds": None, "detail": {}, "measured_on": "this device",
+        })
+        merged["local_sessions"] = None
+        return merged
+    merged["sources"].extend(local.get("sources") or [])
+    merged["local_sessions"] = local.get("local_sessions")
+    return merged
 
 
 def make_handler(host: str, remote_path: str, timeout: float):
@@ -89,8 +134,15 @@ def make_handler(host: str, remote_path: str, timeout: float):
                     # A JSON body with an explicit error, so the page renders its
                     # "cannot reach status.json" banner rather than a blank panel.
                     self._send(502, json.dumps({"error": error}).encode(), "application/json")
-                else:
-                    self._send(200, payload, "application/json")
+                    return
+                try:
+                    cluster = json.loads(payload)
+                except json.JSONDecodeError as exc:
+                    self._send(502, json.dumps({"error": str(exc)}).encode(), "application/json")
+                    return
+                local, local_error = collect_local()
+                merged = merge_local(cluster, local, local_error)
+                self._send(200, json.dumps(merged).encode(), "application/json")
                 return
             self._send(404, b"not found", "text/plain")
 
@@ -208,16 +260,21 @@ def main() -> int:
         print(f"dashboard.html is not beside this script ({HERE})", file=sys.stderr)
         return 2
 
-    bind, magic_host = args.bind, None
+    binds, magic_host = [args.bind], None
     if args.tailscale:
         status, error = tailscale_status()
         if status is None:
             print(f"--tailscale: {error}", file=sys.stderr)
             return 2
-        bind, magic_host, error = tailnet_endpoint(status)
-        if bind is None:
+        tailnet_ip, magic_host, error = tailnet_endpoint(status)
+        if tailnet_ip is None:
             print(f"--tailscale: {error}", file=sys.stderr)
             return 2
+        # Loopback as well as the tailnet address, so the machine running the server can
+        # still use http://127.0.0.1 -- binding the tailnet IP alone made localhost
+        # refuse the connection, which is a surprising way to lose the local view.
+        # Loopback adds no exposure: it is reachable only from this machine.
+        binds = ["127.0.0.1", tailnet_ip]
         print(f"tailnet {status.get('MagicDNSSuffix', '?')}:")
         for peer in describe_peers(status):
             print(f"  {peer}")
@@ -230,20 +287,36 @@ def main() -> int:
         return 1
     print(f"snapshot OK ({len(payload)} bytes) from {args.host}")
     if args.tailscale:
-        print("serving on the tailnet only (not on any other network):")
+        print("serving on this machine and on the tailnet (no other network):")
         if magic_host:
-            print(f"  http://{magic_host}:{args.port}/       <- open this on the phone")
-        print(f"  http://{bind}:{args.port}/")
-    elif bind in ("127.0.0.1", "localhost", "::1"):
-        print(f"  http://{bind}:{args.port}/")
+            print(f"  http://{magic_host}:{args.port}/       <- other devices (phone, PC)")
+        for address in binds:
+            print(f"  http://{address}:{args.port}/")
+    elif binds[0] in ("127.0.0.1", "localhost", "::1"):
+        print(f"  http://{binds[0]}:{args.port}/")
     else:
-        print(f"WARNING: serving on {bind} with NO authentication and no encryption.")
-        print(f"  http://{bind}:{args.port}/")
-    with Server((bind, args.port), make_handler(args.host, args.remote_path, args.timeout)) as httpd:
+        print(f"WARNING: serving on {binds[0]} with NO authentication and no encryption.")
+        print(f"  http://{binds[0]}:{args.port}/")
+
+    handler = make_handler(args.host, args.remote_path, args.timeout)
+    servers = []
+    try:
+        for address in binds:
+            try:
+                servers.append(Server((address, args.port), handler))
+            except OSError as exc:
+                print(f"cannot bind {address}:{args.port}: {exc}", file=sys.stderr)
+        if not servers:
+            return 1
+        for httpd in servers[1:]:
+            threading.Thread(target=httpd.serve_forever, daemon=True).start()
         try:
-            httpd.serve_forever()
+            servers[0].serve_forever()
         except KeyboardInterrupt:
             print("\nstopped")
+    finally:
+        for httpd in servers:
+            httpd.server_close()
     return 0
 
 

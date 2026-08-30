@@ -5,6 +5,7 @@ written to match the parser.  A fixture derived from the rule cannot disagree wi
 """
 
 import json
+import os
 import re
 import sys
 import tempfile
@@ -545,3 +546,163 @@ class EtaWordingTest(unittest.TestCase):
         detail = dc.classify_eta(rows, {}, NOW)["detail"]
         self.assertIn("blocked on Priority", detail)
         self.assertNotIn("no reason reported", detail)
+
+
+# Verbatim from `usagectl.py snapshot --json` on Perlmutter, 2026-08-30.
+USAGE_SNAPSHOT = json.dumps({
+    "gate_ok": True,
+    "observed_at_utc": "2026-08-30T05:31:00+00:00",
+    "policy_violations": [],
+    "profiles": {
+        "codex-personal": {
+            "provider": "codex", "plan_type": "plus", "status": "ok",
+            "source": "live codex app-server account/rateLimits/read",
+            "observed_at_utc": "2026-08-30T05:31:00+00:00",
+            "capacity": {"state": "EXHAUSTED", "minimum_remaining_percent": 0.0},
+            "windows": {
+                "five_hour": {"remaining_percent": 0.0, "used_percent": 100.0,
+                              "resets_at_epoch": NOW + 600,
+                              "resets_at_utc": "2026-08-30T09:41:04+00:00"},
+                "seven_day": {"remaining_percent": 69.0, "used_percent": 31.0,
+                              "resets_at_epoch": NOW + 500000,
+                              "resets_at_utc": "2026-09-05T22:01:01+00:00"},
+            },
+        },
+        "claude-school": {
+            "provider": "claude", "status": "stale", "age_seconds": 191481,
+            "source": "Claude status-line cache",
+            "account_id": "claude-school", "capacity_is_shared": True,
+            "account_aliases": ["claude-school", "claude-school-legacy"],
+            "capacity": {"state": "UNKNOWN",
+                         "reason": "no fresh actionable capacity measurement"},
+            "warnings": ["Claude five_hour snapshot is stale; that window is unknown"],
+            "windows": {},
+        },
+    },
+})
+
+
+class LlmAccountsTest(unittest.TestCase):
+    def collect(self, rc=0, out=USAGE_SNAPSHOT):
+        runner = FakeRunner().add("usagectl.py", rc, out)
+        return dc.collect_llm_accounts(runner, FrozenClock(NOW))
+
+    def test_a_live_codex_window_is_reported_with_its_reset(self):
+        result, source = self.collect()
+        self.assertTrue(source.ok)
+        codex = next(a for a in result["accounts"] if a["profile"] == "codex-personal")
+        self.assertEqual(codex["state"], "EXHAUSTED")
+        five = next(w for w in codex["windows"] if w["name"] == "five_hour")
+        self.assertEqual(five["remaining_percent"], 0.0)
+        self.assertEqual(five["resets_in_seconds"], 600)
+
+    def test_a_shared_account_is_flagged_so_capacity_is_not_summed(self):
+        # usagectl's own policy: aliases of one account "must not be summed".
+        result, _ = self.collect()
+        claude = next(a for a in result["accounts"] if a["profile"] == "claude-school")
+        self.assertTrue(claude["capacity_is_shared"])
+        self.assertEqual(claude["shares_account_with"], ["claude-school-legacy"])
+
+    def test_a_stale_claude_cache_keeps_usagectls_own_age(self):
+        result, _ = self.collect()
+        claude = next(a for a in result["accounts"] if a["profile"] == "claude-school")
+        self.assertEqual(claude["age_seconds"], 191481)
+        self.assertEqual(claude["state"], "UNKNOWN")
+
+    def test_a_live_measurement_gets_its_age_from_the_snapshot_time(self):
+        result, _ = self.collect()
+        codex = next(a for a in result["accounts"] if a["profile"] == "codex-personal")
+        self.assertIsNotNone(codex["age_seconds"])
+
+    def test_a_failed_usagectl_fails_the_source_and_yields_no_accounts(self):
+        result, source = self.collect(rc=2, out="Traceback: boom")
+        self.assertEqual(result, {})
+        self.assertFalse(source.ok)
+
+    def test_usage_can_be_skipped_without_inventing_a_source(self):
+        runner = FakeRunner()
+        runner.add("--me -h -r -o", 0, "")
+        runner.add("--start", 0, "")
+        runner.add("show partition cron", 0, CRON_PARTITION)
+        runner.add("show reservation", 0, RESERVATIONS)
+        runner.add("tmux ls", 1, "", TMUX_NO_SOCKET)
+        runner.add("squeue", 0, "")
+        with tempfile.TemporaryDirectory() as tmp:
+            status = dc.build_status(Path(tmp), runner=runner, clock=FrozenClock(NOW),
+                                     with_usage=False)
+        self.assertEqual(status["llm_accounts"], {})
+        self.assertNotIn("llm_usage", [s["name"] for s in status["sources"]])
+
+
+class LocalSessionsTest(unittest.TestCase):
+    def test_the_encoded_project_is_not_turned_into_a_fake_path(self):
+        # Regression: splitting on '-' produced "MINERvA/OmniFold", which reads as a
+        # real two-segment path. The encoding is lossy, so no path is reconstructed.
+        decoded = dc.decode_project("-Users-josephbailey-local-research-MINERvA-OmniFold")
+        self.assertEqual(decoded, "local-research-MINERvA-OmniFold")
+        self.assertNotIn("/", decoded)
+
+    def test_an_unrecognised_prefix_is_left_alone(self):
+        self.assertEqual(dc.decode_project("-opt-weird-place"), "-opt-weird-place")
+
+    def test_sessions_outside_the_window_are_excluded_but_still_counted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / ".claude-school" / "projects" / "-Users-x-proj"
+            root.mkdir(parents=True)
+            fresh, old = root / "aaaaaaaa-1.jsonl", root / "bbbbbbbb-2.jsonl"
+            fresh.write_text("{}")
+            old.write_text("{}")
+            os.utime(fresh, (NOW - 10, NOW - 10))
+            os.utime(old, (NOW - 200000, NOW - 200000))
+            result, source = dc.collect_local_sessions(
+                FrozenClock(NOW), roots=(str(Path(tmp) / ".claude-school"),))
+        self.assertEqual(len(result["sessions"]), 1)
+        self.assertEqual(result["sessions"][0]["session"], "aaaaaaaa")
+        # A filtered view must not be readable as a complete one.
+        self.assertEqual(result["transcripts_scanned"], 2)
+        self.assertTrue(source.ok)
+
+    def test_a_glob_root_expands(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            for home in ("personal", "school"):
+                d = Path(tmp) / "claude-homes" / home / ".claude" / "projects" / "-Users-x-p"
+                d.mkdir(parents=True)
+                f = d / f"{home[0] * 8}-1.jsonl"
+                f.write_text("{}")
+                os.utime(f, (NOW - 5, NOW - 5))
+            result, _ = dc.collect_local_sessions(
+                FrozenClock(NOW), roots=(str(Path(tmp) / "claude-homes" / "*" / ".claude"),))
+        self.assertEqual(len(result["sessions"]), 2)
+
+    def test_a_missing_root_is_not_an_error(self):
+        result, source = dc.collect_local_sessions(
+            FrozenClock(NOW), roots=("/nonexistent/claude",))
+        self.assertTrue(source.ok)
+        self.assertEqual(result["sessions"], [])
+        self.assertEqual(result["transcripts_scanned"], 0)
+
+    def test_local_status_labels_where_it_was_measured(self):
+        status = dc.build_local_status(FrozenClock(NOW))
+        self.assertEqual(status["sources"][0]["measured_on"], "this device")
+        self.assertIn("local_sessions", status)
+
+
+class LocalNodeProbeTest(unittest.TestCase):
+    def test_the_collectors_own_node_is_read_without_ssh(self):
+        runner = FakeRunner().add("tmux ls", 0, TMUX_SESSIONS)
+        row = dc.probe_node("login03", runner, FrozenClock(NOW), 8.0, hostname="login03")
+        self.assertEqual(row["probed_via"], "local")
+        self.assertNotIn("ssh", runner.calls[0])
+        self.assertEqual(row["state"], "sessions")
+
+    def test_another_node_still_goes_over_ssh(self):
+        runner = FakeRunner().add("tmux ls", 0, TMUX_SESSIONS)
+        row = dc.probe_node("login24", runner, FrozenClock(NOW), 8.0, hostname="login03")
+        self.assertEqual(row["probed_via"], "ssh")
+        self.assertIn("ssh", runner.calls[0])
+        self.assertIn("ControlPath=none", runner.calls[0])
+
+    def test_a_fqdn_matches_the_short_hostname(self):
+        self.assertTrue(dc.is_local_node("login03.nersc.gov", "login03"))
+        self.assertTrue(dc.is_local_node("login03", "login03.nersc.gov"))
+        self.assertFalse(dc.is_local_node("login04", "login03"))

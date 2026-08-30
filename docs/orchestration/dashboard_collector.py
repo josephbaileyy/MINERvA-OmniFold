@@ -59,6 +59,10 @@ DEFAULT_STALE_SECONDS = {
     "login_sweep": 900,
     "waker_tick": 1800,
     "agent_sessions": 86400,
+    # A codex window is read live; a Claude window comes from the status-line cache,
+    # whose own policy calls it stale past 1800 s.  Judge the panel on the same scale.
+    "llm_usage": 1800,
+    "local_llm_sessions": 300,
 }
 
 # Runner signature: argv -> (returncode, stdout, stderr).  The streams stay SEPARATE
@@ -272,11 +276,28 @@ def parse_tmux_ls(text: str, clock: Clock) -> list[dict]:
     return sessions
 
 
-def probe_node(node: str, runner: Runner, clock: Clock, timeout: float) -> dict:
+def is_local_node(node: str, hostname: str | None = None) -> bool:
+    """Is `node` the machine we are running on?  Compared on the short name only."""
+    host = (hostname if hostname is not None else socket.gethostname()).split(".")[0]
+    return node.split(".")[0] == host
+
+
+def probe_node(
+    node: str,
+    runner: Runner,
+    clock: Clock,
+    timeout: float,
+    hostname: str | None = None,
+) -> dict:
     """Probe one login node for tmux sessions.
 
     `-o ControlPath=none` is mandatory: with a ControlMaster in play every ssh collapses
     onto one node and the sweep silently measures that node 40 times.
+
+    The node we are already running on is read WITHOUT ssh.  Measured 2026-08-30: the
+    collector's own node (login03) appeared among the unmeasured ones with "timeout
+    after 18s" because it was ssh-ing to itself under load -- a network round trip, and
+    a failure mode, for a socket sitting in the local filesystem.
     """
     # Neither `-q` nor `LogLevel=ERROR`: both suppress the diagnostic that says WHY a
     # node could not be measured.  Measured on 2026-08-30: with them, login17 and
@@ -284,7 +305,8 @@ def probe_node(node: str, runner: Runner, clock: Clock, timeout: float) -> dict:
     # "No route to host" and pam_nologin's "System is going down" respectively -- two
     # different causes that the dashboard should not conflate.  The banner they also
     # let through lands on stderr and never reaches the session parser.
-    argv = [
+    local = is_local_node(node, hostname)
+    argv = ["tmux", "ls"] if local else [
         "ssh",
         "-o", "BatchMode=yes",
         "-o", f"ConnectTimeout={int(timeout)}",
@@ -302,6 +324,7 @@ def probe_node(node: str, runner: Runner, clock: Clock, timeout: float) -> dict:
         "probe_seconds": round(elapsed, 1),
         "sessions": [],
         "error": None,
+        "probed_via": "local" if local else "ssh",
     }
     if rc == 0:
         row["state"] = "sessions"
@@ -398,7 +421,9 @@ def sweep_tmux(
     rows: list[dict] = []
     if nodes:
         with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
-            futures = {pool.submit(probe_node, node, runner, clock, timeout): node for node in nodes}
+            futures = {
+                pool.submit(probe_node, node, runner, clock, timeout): node for node in nodes
+            }
             for future in concurrent.futures.as_completed(futures):
                 rows.append(future.result())
     rows.sort(key=lambda row: row["node"])
@@ -721,6 +746,190 @@ def collect_agents(state_dir: Path, clock: Clock) -> tuple[list[dict], Source]:
     return agents, source
 
 
+# ---------------------------------------------------------------------------
+# LLM accounts, and LLM sessions running on this machine
+
+
+def collect_llm_accounts(runner: Runner, clock: Clock, timeout: float = 40.0) -> tuple[dict, Source]:
+    """Per-account provider capacity, from `usagectl.py snapshot`.
+
+    usagectl already owns every hard part of this -- the codex app-server call, the
+    Claude status-line cache and its staleness policy, and `profile_account_groups`,
+    which records that two profile names can be ALIASES OF ONE ACCOUNT whose capacity
+    "must not be summed".  This function only reshapes its output for display; it
+    computes no capacity of its own.
+    """
+    source = Source("llm_usage")
+    started = clock.now()
+    rc, text = both(runner(
+        [sys.executable, str(HERE / "usagectl.py"), "snapshot", "--json",
+         "--timeout", "25"], timeout))
+    if "{" not in text:
+        return {}, source.fail(f"usagectl snapshot rc={rc}: {text.strip()[:200]}")
+    try:
+        snapshot = json.loads(text[text.index("{"):])
+    except (ValueError, json.JSONDecodeError) as exc:
+        return {}, source.fail(f"usagectl printed non-JSON: {type(exc).__name__}: {exc}")
+
+    accounts: list[dict] = []
+    for name, profile in sorted((snapshot.get("profiles") or {}).items()):
+        capacity = profile.get("capacity") or {}
+        windows = []
+        for window_name, window in sorted((profile.get("windows") or {}).items()):
+            if not isinstance(window, dict):
+                continue
+            windows.append({
+                "name": window_name,
+                "remaining_percent": window.get("remaining_percent"),
+                "used_percent": window.get("used_percent"),
+                "resets_at_utc": window.get("resets_at_utc"),
+                "resets_in_seconds": (
+                    None if not window.get("resets_at_epoch")
+                    else max(0, round(window["resets_at_epoch"] - clock.now()))
+                ),
+            })
+        # `age_seconds` is usagectl's own age for a cached measurement (Claude); a live
+        # one (codex) has none, so fall back to the snapshot's observation time.
+        age = profile.get("age_seconds")
+        if age is None:
+            observed = profile.get("observed_at_utc") or snapshot.get("observed_at_utc")
+            try:
+                age = clock.now() - dt.datetime.fromisoformat(
+                    str(observed).replace("Z", "+00:00")).timestamp()
+            except (ValueError, TypeError):
+                age = None
+        accounts.append({
+            "profile": name,
+            "provider": str(profile.get("provider", "unknown"))[:24],
+            "plan": str(profile.get("plan_type") or "")[:24] or None,
+            "state": str(capacity.get("state", "UNKNOWN"))[:24],
+            "reason": str(capacity.get("reason") or "")[:200] or None,
+            "minimum_remaining_percent": capacity.get("minimum_remaining_percent"),
+            "windows": windows,
+            "age_seconds": None if age is None else round(age, 1),
+            "measurement": str(profile.get("source") or "")[:120] or None,
+            # Two profiles can be one account; the UI must not present them as two
+            # independent budgets.
+            "account_id": profile.get("account_id") or name,
+            "shares_account_with": [
+                alias for alias in (profile.get("account_aliases") or []) if alias != name
+            ],
+            "capacity_is_shared": bool(profile.get("capacity_is_shared")),
+            "warnings": [str(w)[:160] for w in (profile.get("warnings") or [])][:4],
+        })
+
+    result = {
+        "accounts": accounts,
+        "gate_ok": snapshot.get("gate_ok"),
+        "policy_violations": [str(v)[:200] for v in (snapshot.get("policy_violations") or [])][:8],
+        "observed_at_utc": snapshot.get("observed_at_utc"),
+    }
+    source.succeed(clock.now() - started, accounts=len(accounts),
+                   measured=sum(1 for a in accounts if a["state"] != "UNKNOWN"))
+    return result, source
+
+
+# Every Claude config directory this machine might run a session under.  Measured
+# 2026-08-30: sessions live under ~/.claude, ~/.claude-personal and ~/.claude-school as
+# separate CLAUDE_CONFIG_DIRs, plus the per-profile homes.  Scanning only ~/.claude
+# reported "no local sessions" while two were live -- the covering-search trap.
+LOCAL_SESSION_ROOTS = (
+    "~/.claude",
+    "~/.claude-personal",
+    "~/.claude-school",
+    "~/claude-homes/*/.claude",
+)
+LOCAL_SESSION_WINDOW = 86400.0
+
+
+# A home prefix worth stripping so the useful part of a project name is visible.
+HOME_PREFIX = re.compile(r"^-(Users|home|global-u2|global-homes)-[^-]+-")
+
+
+def decode_project(encoded: str) -> str:
+    """Shorten Claude Code's encoded project directory WITHOUT inventing a path.
+
+    The encoding replaces '/' with '-', which is lossy: a directory whose own name
+    contains a dash is indistinguishable from a separator.  Splitting on '-' turned
+    `-Users-josephbailey-local-research-MINERvA-OmniFold` into "MINERvA/OmniFold",
+    which reads as a real two-segment path and is not one.  So only the leading
+    `-Users-<account>-` prefix is stripped -- unambiguous, since it is anchored -- and
+    the rest is shown verbatim, dashes and all.
+    """
+    stripped = HOME_PREFIX.sub("", encoded)
+    return (stripped or encoded)[:80]
+
+
+def expand_root(pattern: str) -> list[Path]:
+    """Expand one configured session root, which may contain a glob."""
+    expanded = Path(pattern).expanduser()
+    if not any(ch in pattern for ch in "*?"):
+        return [expanded]
+    parts = expanded.parts
+    for index, part in enumerate(parts):
+        if any(ch in part for ch in "*?"):
+            base = Path(*parts[:index])
+            return sorted(base.glob(str(Path(*parts[index:]))))
+    return [expanded]
+
+
+def collect_local_sessions(
+    clock: Clock,
+    roots: "tuple[str, ...]" = LOCAL_SESSION_ROOTS,
+    window_seconds: float = LOCAL_SESSION_WINDOW,
+) -> tuple[dict, Source]:
+    """LLM sessions on THIS machine, from their transcript files.
+
+    A transcript's mtime is when the session last WROTE, which is evidence of activity
+    and not of a live process -- so that is what the field is called.  Only sessions
+    inside `window_seconds` are listed, and the total scanned is reported beside the
+    count, so a filtered view cannot be read as a complete one.
+    """
+    source = Source("local_llm_sessions")
+    started = clock.now()
+    rows, scanned, errors = [], 0, []
+    for pattern in roots:
+        for base in expand_root(pattern):
+            projects = base / "projects"
+            if not projects.is_dir():
+                continue
+            try:
+                transcripts = list(projects.glob("*/*.jsonl"))
+            except OSError as exc:
+                errors.append(f"{projects}: {exc}")
+                continue
+            for transcript in transcripts:
+                scanned += 1
+                try:
+                    stat = transcript.stat()
+                except OSError:
+                    continue
+                age = clock.now() - stat.st_mtime
+                if age > window_seconds:
+                    continue
+                rows.append({
+                    # The config dir is the account the session runs under, which is
+                    # what ties a session to a row in the LLM accounts panel.
+                    "config_dir": base.name if base.name.startswith(".claude") else base.parent.name,
+                    "project": decode_project(transcript.parent.name),
+                    "session": transcript.stem[:8],
+                    "last_write_age_seconds": round(age, 1),
+                    "size_bytes": stat.st_size,
+                })
+    rows.sort(key=lambda row: row["last_write_age_seconds"])
+    result = {
+        "sessions": rows,
+        "transcripts_scanned": scanned,
+        "window_seconds": window_seconds,
+        "roots": list(roots),
+        "errors": errors,
+    }
+    source.succeed(clock.now() - started, shown=len(rows), scanned=scanned)
+    if errors:
+        source.detail["scan_errors"] = len(errors)
+    return result, source
+
+
 def collect_sweep(runner: Runner, clock: Clock, timeout: float) -> tuple[list[dict], dict, Source]:
     source = Source("login_sweep")
     started = clock.now()
@@ -746,12 +955,34 @@ def collect_sweep(runner: Runner, clock: Clock, timeout: float) -> tuple[list[di
 # Snapshot
 
 
+def build_local_status(clock: Clock | None = None, stale_after: dict[str, int] | None = None) -> dict:
+    """The panels that can only be measured on the machine the user is sitting at.
+
+    `dashboard_serve.py` runs this locally and merges it into the cluster snapshot, so
+    each panel is labelled with where it was measured rather than implying one host saw
+    everything.
+    """
+    clock = clock or Clock()
+    stale_after = stale_after or DEFAULT_STALE_SECONDS
+    local, source = collect_local_sessions(clock)
+    generated = clock.now()
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "generated_at_utc": utc_iso(generated),
+        "generated_at_epoch": int(generated),
+        "measured_on": socket.gethostname(),
+        "sources": [dict(source.to_json(stale_after), measured_on="this device")],
+        "local_sessions": local,
+    }
+
+
 def build_status(
     state_dir: Path,
     runner: Runner = run_command,
     clock: Clock | None = None,
     sweep_timeout: float = 8.0,
     stale_after: dict[str, int] | None = None,
+    with_usage: bool = True,
 ) -> dict:
     clock = clock or Clock()
     stale_after = stale_after or DEFAULT_STALE_SECONDS
@@ -761,8 +992,11 @@ def build_status(
     tmux_rows, coverage, sweep_source = collect_sweep(runner, clock, sweep_timeout)
     ticker, tick_source = collect_ticker(state_dir, runner, clock)
     agents, agent_source = collect_agents(state_dir, clock)
-
     sources = [jobs_source, sweep_source, tick_source, agent_source]
+    llm: dict = {}
+    if with_usage:
+        llm, usage_source = collect_llm_accounts(runner, clock)
+        sources.append(usage_source)
     generated = clock.now()
     return {
         "schema_version": SCHEMA_VERSION,
@@ -773,7 +1007,11 @@ def build_status(
             "duration_seconds": round(generated - started, 1),
             "state_dir": str(state_dir),
         },
-        "sources": [source.to_json(stale_after) for source in sources],
+        "sources": [
+            dict(source.to_json(stale_after), measured_on=socket.gethostname())
+            for source in sources
+        ],
+        "llm_accounts": llm,
         "jobs": jobs,
         "tmux": tmux_rows,
         "coverage": coverage,
@@ -900,6 +1138,12 @@ def main() -> int:
     )
     parser.add_argument("--alert-window-seconds", type=int, default=DEFAULT_ALERT_WINDOW_SECONDS)
     parser.add_argument(
+        "--local-only", action="store_true",
+        help="collect only what must be measured on this device (LLM sessions) and exit",
+    )
+    parser.add_argument("--no-usage", action="store_true",
+                        help="skip the usagectl account-capacity call")
+    parser.add_argument(
         "--keep-paths", action="store_true",
         help="do NOT shorten absolute filesystem paths (default is to shorten them, "
              "because portal.nersc.gov serves the output to the open internet)",
@@ -910,9 +1154,14 @@ def main() -> int:
         print("\n".join(scrontab_block(args, Path(args.state_dir))))
         return 0
 
+    if args.local_only:
+        print(json.dumps(build_local_status(), indent=2 if args.pretty else None, sort_keys=True))
+        return 0
+
     status = build_status(
         Path(args.state_dir).expanduser(),
         sweep_timeout=args.sweep_timeout,
+        with_usage=not args.no_usage,
     )
     if not args.keep_paths:
         status = redact_paths(status)
@@ -964,7 +1213,8 @@ def shorten_path(match: "re.Match[str]") -> str:
 def redact_paths(value):
     """Recursively shorten absolute filesystem paths in a snapshot.
 
-    Applied by default because the intended destination is a public web path.  Use
+    Applied by default even though the science gateway was declined and nothing is
+    published, so that enabling any delivery path later cannot leak by omission.  Use
     `--keep-paths` for a local copy where the full paths are useful.
     """
     if isinstance(value, str):

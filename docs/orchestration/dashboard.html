@@ -108,7 +108,12 @@
   .banner strong { font-weight: 600; }
 
   /* Coverage meter: fill carries severity, track is a muted step of the same ramp. */
-  .meter { height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; margin: 8px 0 6px; }
+  /* The track needs a visible edge: a 0%-remaining window otherwise renders as NO bar,
+     which is indistinguishable from "no measurement". An empty track is a reading. */
+  .meter {
+    height: 8px; border-radius: 999px; background: var(--surface-2);
+    border: 1px solid var(--border); overflow: hidden; margin: 8px 0 6px;
+  }
   .meter > span { display: block; height: 100%; border-radius: 999px; background: currentColor; }
 
   table { width: 100%; border-collapse: collapse; font-size: .84rem; }
@@ -248,7 +253,8 @@ function render() {
   renderHero();
   if (!snapshot) { $("panels").innerHTML = ""; return; }
   $("panels").innerHTML = [
-    panelSources(), panelCoverage(), panelJobs(), panelTicker(), panelTmux(), panelAgents(),
+    panelSources(), panelCoverage(), panelAccounts(), panelJobs(),
+    panelTicker(), panelTmux(), panelAgents(), panelLocalSessions(),
   ].join("");
 }
 
@@ -300,6 +306,7 @@ function panelSources() {
     const detail = source.error || source.detail?.partial || "";
     return `<tr>
       <td data-label="Source"><span class="mono">${esc(source.name)}</span>
+        <div class="sub">measured on ${esc(source.measured_on || "unknown host")}</div>
         ${detail ? `<div class="sub">${esc(detail)}</div>` : ""}</td>
       <td data-label="State">${chip(kind, label, source.error || "")}</td>
       <td data-label="Age" class="num">${esc(age)}</td>
@@ -356,6 +363,107 @@ function panelCoverage() {
       : `<div class="sub">Every login node in the cron partition answered.</div>`}
     <p class="note">Node list read from <span class="mono">scontrol show partition cron</span>,
       not hardcoded.</p>
+  </section>`;
+}
+
+function panelAccounts() {
+  const llm = snapshot.llm_accounts;
+  const usageSource = (snapshot.sources || []).find((s) => s.name === "llm_usage");
+  if (!llm || !llm.accounts) {
+    return `<section style="grid-column:1/-1"><h2>LLM account capacity</h2>
+      <div>${chip("unknown", "not measured", usageSource?.error || "")}</div>
+      <div class="sub">${esc(usageSource?.error || "no usage snapshot in this status.json")}</div>
+    </section>`;
+  }
+
+  // One row per PROFILE, but grouped by account: two profile names can be aliases of a
+  // single provider account whose capacity must not be added together.
+  const groups = new Map();
+  for (const account of llm.accounts) {
+    const key = account.account_id || account.profile;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(account);
+  }
+
+  const STATE_KIND = {
+    READY: "good", LOW: "warning", EXHAUSTED: "critical",
+    AUTH_REQUIRED: "serious", UNKNOWN: "unknown",
+  };
+  const rows = [...groups.values()].map((members) => {
+    const head = members[0];
+    const kind = STATE_KIND[head.state] || "unknown";
+    const label = head.state === "UNKNOWN" ? "not measured" : head.state.toLowerCase();
+    const names = members.map((m) => esc(m.profile)).join(", ");
+    const shared = head.capacity_is_shared || members.length > 1;
+
+    const windows = (head.windows || []).map((w) => {
+      const pct = w.remaining_percent;
+      const wkind = pct === null || pct === undefined ? "unknown"
+                  : pct <= 0 ? "critical" : pct < 20 ? "warning" : "good";
+      const width = Math.max(0, Math.min(100, pct ?? 0));
+      const resets = w.resets_in_seconds === null || w.resets_in_seconds === undefined
+        ? "reset time unknown"
+        : `resets in ${fmtDuration(w.resets_in_seconds)}`;
+      return `<div style="margin-top:6px">
+        <div class="sub">${esc(w.name.replace("_", "-"))}:
+          <strong>${pct === null || pct === undefined ? "unknown" : pct + "%"}</strong> left
+          · ${esc(resets)}</div>
+        <div class="meter s-${wkind}"><span style="width:${width}%"></span></div>
+      </div>`;
+    }).join("");
+
+    return `<tr>
+      <td data-label="Account"><span class="mono">${names}</span>
+        <div class="sub">${esc(head.provider)}${head.plan ? " · " + esc(head.plan) : ""}</div>
+        ${shared ? `<div class="sub">${chip("info", "one shared account")}
+           capacity is not additive across these names</div>` : ""}</td>
+      <td data-label="State">${chip(kind, label, head.reason || "")}
+        ${head.reason ? `<div class="sub">${esc(head.reason)}</div>` : ""}</td>
+      <td data-label="Windows">${windows || `<span class="sub">no window measured</span>`}</td>
+      <td data-label="Measured" class="num">${esc(fmtAge(liveAge(head.age_seconds)))}
+        <div class="sub">${esc(head.measurement || "")}</div></td>
+    </tr>`;
+  });
+
+  const violations = (llm.policy_violations || []).length;
+  return `<section style="grid-column:1/-1"><h2>LLM account capacity</h2>
+    <table><thead><tr><th>Account</th><th>State</th><th>Windows</th><th>Measured</th></tr></thead>
+    <tbody>${rows.join("") || emptyRow(4, "no accounts reported")}</tbody></table>
+    <p class="note">From <span class="mono">usagectl.py snapshot</span>.
+      A Claude window comes from the status-line cache and reads <em>not measured</em> when that
+      cache is stale — which is not the same as having capacity.
+      ${violations ? `<strong>${violations} policy violation(s) reported.</strong>` : ""}</p>
+  </section>`;
+}
+
+function panelLocalSessions() {
+  const local = snapshot.local_sessions;
+  const source = (snapshot.sources || []).find((s) => s.name === "local_llm_sessions");
+  if (!local) {
+    return `<section><h2>LLM sessions on this device</h2>
+      <div>${chip("unknown", "not measured", source?.error || "")}</div>
+      <div class="sub">${esc(source?.error || "this snapshot carries no local measurement")}</div>
+      <p class="note">Local sessions are measured by the viewer on the device you are
+        reading this on, not by the cluster collector.</p>
+    </section>`;
+  }
+  const rows = (local.sessions || []).map((session) => {
+    const age = liveAge(session.last_write_age_seconds);
+    const kind = age < 300 ? "good" : age < 3600 ? "info" : "unknown";
+    return `<tr>
+      <td data-label="Session"><span class="mono nowrap">${esc(session.session)}</span>
+        <div class="sub">${esc(session.config_dir)} · ${esc(session.project)}</div></td>
+      <td data-label="Last wrote">${chip(kind, fmtAge(age))}
+        <div class="sub">${(session.size_bytes / 1e6).toFixed(1)} MB transcript</div></td>
+    </tr>`;
+  });
+  const window = fmtDuration(local.window_seconds);
+  return `<section><h2>LLM sessions on this device</h2>
+    <table><thead><tr><th>Session</th><th>Last wrote</th></tr></thead>
+    <tbody>${rows.join("") || emptyRow(2, `no transcript written in the last ${window}`)}</tbody></table>
+    <p class="note">${(local.sessions || []).length} of ${local.transcripts_scanned} transcripts
+      wrote within ${window}. A transcript's age is when the session last <em>wrote</em> —
+      evidence of activity, not proof a process is alive.</p>
   </section>`;
 }
 
