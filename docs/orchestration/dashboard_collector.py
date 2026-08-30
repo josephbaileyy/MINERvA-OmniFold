@@ -552,14 +552,18 @@ def classify_eta(rows: list[dict], starts: dict[str, str], now: float) -> dict:
                 "stale rather than an ETA"
             ),
         }
+    named = [r for r in reasons if r != "no reason reported by Slurm"]
+    if named:
+        why = f"; blocked on {', '.join(named)}"
+    elif reasons:
+        why = "; Slurm reported no blocking reason"
+    else:
+        why = ""
     return {
         "kind": "unknown",
         "seconds": None,
         "text": None,
-        "detail": (
-            "squeue --start returns N/A for these tasks"
-            + (f"; blocked on {', '.join(reasons)}" if reasons else "")
-        ),
+        "detail": "squeue --start returns N/A for these tasks" + why,
     }
 
 
@@ -1005,7 +1009,10 @@ def scrontab_block(args, state_dir: Path) -> list[str]:
     block -- preserves these lines.
     """
     log = state_dir / "logs" / "dashboard-collector.log"
-    out = args.out or "/global/cfs/cdirs/m3246/www/mnv-status/status.json"
+    # Default to a private path on the cluster, NOT the project web space: the science
+    # gateway would make m3246 publicly servable for the whole group, which is a posture
+    # change nobody asked that group for.  dashboard_serve.py reads this over SSH.
+    out = args.out or str(HERE / "state" / "dashboard" / "status.json")
     return [
         SCRON_BEGIN,
         "#SCRON -q cron",

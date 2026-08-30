@@ -1,4 +1,4 @@
-# RUNBOOK — campaign status dashboard (collector, scrontab, gateway)
+# RUNBOOK — campaign status dashboard (collector, scrontab, local viewer)
 
 **What this is.** A glanceable status page for the MINERvA-OmniFold campaign: what is queued or
 running on Perlmutter, what the tmux/LLM-orchestration sessions are doing, and what may honestly be
@@ -8,7 +8,8 @@ said about when things finish. Three files:
 |---|---|
 | [`dashboard_collector.py`](dashboard_collector.py) | Runs on a login node under `scrontab`; writes one self-describing `status.json`. |
 | [`dashboard.html`](dashboard.html) | One static file, no build step, renders `status.json` and auto-refreshes. |
-| [`test_dashboard_collector.py`](test_dashboard_collector.py) | 55 tests; `/usr/bin/python3.11 -m unittest test_dashboard_collector`. |
+| [`dashboard_serve.py`](dashboard_serve.py) | Serves the page on your laptop, reading `status.json` over SSH. Nothing is published. |
+| [`test_dashboard_collector.py`](test_dashboard_collector.py) | 57 tests; `/usr/bin/python3.11 -m unittest test_dashboard_collector`. |
 
 **What it deliberately cannot tell you.** It does not predict completion times, it does not claim a
 job is running because a job exists, and it never reports a login node as session-free when that node
@@ -18,85 +19,62 @@ could not be reached. Each of those is a measured failure mode, recorded below.
 
 ## 1. Setup you have to run yourself
 
-### 1a. Provision the science gateway (once)
+### 1a. Delivery — the science gateway is DECLINED
 
-**Measured 2026-08-30, not assumed.** `portal.nersc.gov/cfs/<project>/` needs **no ticket and no
-NERSC action**: the URL space already resolves and serves `/global/cfs/cdirs/<project>/www`.
-338 projects already have such a directory. What was measured:
+**Decision, Joseph, 2026-08-30: do not create `/global/cfs/cdirs/m3246/www`.** The reason is that
+the project web space is a group resource, and standing it up for a personal dashboard is not this
+lane's call to make. The stronger form of the objection, which the measurements support: creating
+`www` does not merely occupy a directory, it **switches on public web serving for the whole
+project** — every probe below returned `200` to a laptop with no credential, no VPN and no NERSC
+login, and the portal generates directory listings, so afterwards anything any group member drops
+under `www` is world-readable whether or not they realise it. That is a posture change for
+everyone in m3246, and it needs the PI, not a dashboard.
+
+The investigation is kept because it answers the question if the group ever *does* want a gateway:
 
 | Probe | Result | Meaning |
 |---|---|---|
-| `curl https://portal.nersc.gov/cfs/act/` (`www` is `drwxrwxr-x`) | `200` | Serving is automatic. |
+| `curl https://portal.nersc.gov/cfs/act/` (`www` is `drwxrwxr-x`) | `200` | Serving is automatic; no ticket, no NERSC action. 338 projects have a `www`. |
 | `curl https://portal.nersc.gov/cfs/callat/` (`www` is `drwxr-s---`) | `403` | World read+execute is required. |
 | `curl https://portal.nersc.gov/cfs/m3246/` (no `www`) | `403` | Only the directory is missing. |
-| `curl https://portal.nersc.gov/cfs/act/dr6_data/` (no `index.html`) | `200`, `<title>Index of…` | **The portal generates directory listings.** |
-| `curl https://portal.nersc.gov/~josephrb/` | `404` | There is no per-user portal space; the project `www` is the only route. |
+| `curl https://portal.nersc.gov/cfs/act/dr6_data/` (no `index.html`) | `200`, `<title>Index of…` | **The portal lists directories**, so an "unguessable" subdirectory is not secret unless every parent has an `index.html`. |
+| `curl https://portal.nersc.gov/~josephrb/` | `404` | There is no per-user NERSC web space to use instead. |
 
-Two consequences, both load-bearing:
+**What is used instead.** The collector writes to a private path on the cluster and nothing is
+published:
 
-1. **The gateway is public.** Every `200` above was fetched from a laptop with no authentication, no
-   VPN and no NERSC credential. Anything placed there is world-readable.
-2. **An unguessable directory name is only private if every parent has an `index.html`**, because
-   otherwise the portal lists the parent and the "secret" name is in the listing.
-
-So the provisioning is:
-
-```bash
-# m3246 is the shared project directory and is owned by the PI (bnachman).  Creating a
-# PUBLIC web directory in it is a decision about the project, not just your account.
-mkdir -p /global/cfs/cdirs/m3246/www
-
-# Suppress the directory listing of www's children BEFORE creating the status directory,
-# or the next step's name is published in a listing.
-cat > /global/cfs/cdirs/m3246/www/index.html <<'HTML'
-<!DOCTYPE html><html><head><title>m3246</title></head>
-<body>Nothing to see here.</body></html>
-HTML
-
-# An unguessable directory: this URL is the only access control there is.
-STATUS_DIR="mnv-status-$(python3 -c 'import secrets;print(secrets.token_urlsafe(24))')"
-mkdir -p "/global/cfs/cdirs/m3246/www/$STATUS_DIR"
-echo "$STATUS_DIR"          # save this; it is your capability URL
-
-# The dashboard IS the index page of that directory, which also suppresses its listing.
-cp /pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/dashboard.html \
-   "/global/cfs/cdirs/m3246/www/$STATUS_DIR/index.html"
-
-chmod 0755 /global/cfs/cdirs/m3246/www "/global/cfs/cdirs/m3246/www/$STATUS_DIR"
-chmod 0644 /global/cfs/cdirs/m3246/www/index.html \
-           "/global/cfs/cdirs/m3246/www/$STATUS_DIR/index.html"
+```
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/state/dashboard/status.json
 ```
 
-Then verify, from a device that is **not** on NERSC:
+That path is gitignored (regenerated every 5 minutes) and is outside `state/waker/`, which the
+collector refuses to write into because it holds `notification-secrets.json`.
+
+[`dashboard_serve.py`](dashboard_serve.py) then serves the page **on your laptop**, reading the
+snapshot over SSH on each refresh:
 
 ```bash
-curl -o /dev/null -w '%{http_code}\n' "https://portal.nersc.gov/cfs/m3246/$STATUS_DIR/"
-curl -s "https://portal.nersc.gov/cfs/m3246/" | grep -ci 'index of'   # MUST print 0
+cd docs/orchestration      # a local checkout; dashboard.html must sit beside the script
+python3 dashboard_serve.py            # http://127.0.0.1:8899
 ```
 
-The second command is the one that matters: a non-zero count means the listing is live and the
-capability URL is not secret.
+It fails loudly at startup if the snapshot cannot be read, rather than serving a page that 502s
+forever. There is no local cache and no polling loop: the only copy is the one on the cluster, so
+the page cannot show a file that outlived the thing that produced it. With the `ControlMaster` in
+`~/.ssh/config` each refresh costs well under a second.
 
-**What is exposed even so:** job ids, job names, partitions, Slurm states and reasons, login-node
-names, tmux session names, and orchestration session names and ages. Absolute filesystem paths are
-shortened to their final segment by default (`--keep-paths` disables this), because the account name
-appears as the second-to-last segment of a checkout root. `state/waker/` is never read except for
-`last-tick.json`, `agent-sessions-v2.json` and the `daemon-*.lock` names, and the collector refuses
-to write its output anywhere under the state directory. Verified: `grep -c josephrb status.json` → `0`.
+**Phone.** Alerts already work with no further setup (§1c) — that is the "something broke" channel.
+For *glancing* on the phone without publishing anything, the same server has to become reachable
+from the phone, and the three ways differ in what you have to trust:
 
-**If the gateway is not acceptable** — it is the PI's shared project space and the page would be
-public — the fallback is to keep `status.json` on the cluster and not serve it at all:
+| Option | What it needs | Exposure |
+|---|---|---|
+| Same Wi-Fi | `dashboard_serve.py --bind 0.0.0.0`, then `http://<laptop-ip>:8899` from the phone | Anyone on that network; **no authentication at all** |
+| Tailscale / VPN | Tailscale on laptop and phone; `--bind` the tailnet address | Your devices only; works away from home. Recommended |
+| Termius port-forward | Termius forwards phone → a `python3 -m http.server` you start on a login node | Nothing leaves NERSC, but you must start a server on whichever login node you land on |
 
-```bash
-# Laptop: pull the snapshot next to a local copy of dashboard.html and open it.
-scp saul.nersc.gov:/pscratch/sd/j/josephrb/mnv-status/status.json ./status.json
-python3 -m http.server 8899   # then open http://127.0.0.1:8899/dashboard.html
-```
-
-A `file://` copy will not work: the page uses `fetch`, which needs an HTTP origin. On the phone this
-fallback gives you alerts only (§1c) plus Termius, which is what the existing ntfy body
-(`"Open Termius for details."`) already assumes. There is no per-user NERSC web space to fall back
-to — `portal.nersc.gov/~josephrb/` is a `404`.
+All three keep the laptop or the tunnel in the loop, which is the price of not publishing. Pick one
+and the runbook step is a one-liner; none of them is wired up by default.
 
 ### 1b. Install the scrontab entry
 
@@ -106,7 +84,7 @@ Print the block rather than letting a tool rewrite your table:
 cd /pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration
 /usr/bin/python3.11 dashboard_collector.py --print-scrontab \
     --state-dir /pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/state/waker \
-    --out "/global/cfs/cdirs/m3246/www/$STATUS_DIR/status.json"
+    --out .../state/dashboard/status.json      # this is already the default
 ```
 
 It emits, with its own markers so that `wakerctl install-cron` — which strips only
@@ -161,7 +139,7 @@ topic.
 
 ```bash
 cd /pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration
-/usr/bin/python3.11 -m unittest test_dashboard_collector      # 55 tests
+/usr/bin/python3.11 -m unittest test_dashboard_collector      # 57 tests
 /usr/bin/python3.11 dashboard_collector.py --state-dir state/waker --out /tmp/status.json
 ```
 

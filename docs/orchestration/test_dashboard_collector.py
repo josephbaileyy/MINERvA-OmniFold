@@ -527,3 +527,21 @@ class RedactionTest(unittest.TestCase):
         # Redaction must not eat the fields the dashboard exists to show.
         kept = dc.redact_paths({"node": "login32", "job_id": "57727774", "reason": "Priority"})
         self.assertEqual(kept, {"node": "login32", "job_id": "57727774", "reason": "Priority"})
+
+
+class EtaWordingTest(unittest.TestCase):
+    def test_an_unnamed_reason_does_not_read_as_blocked_on_no_reason(self):
+        rows = [{"state": "PENDING", "time_left_seconds": None, "time_left_text": "",
+                 "reason": "None", "token": "1"}]
+        detail = dc.classify_eta(rows, {"1": "N/A"}, NOW)["detail"]
+        self.assertIn("Slurm reported no blocking reason", detail)
+        self.assertNotIn("blocked on no reason", detail)
+
+    def test_a_real_reason_is_still_named(self):
+        rows = [{"state": "PENDING", "time_left_seconds": None, "time_left_text": "",
+                 "reason": "Priority", "token": "1"},
+                {"state": "PENDING", "time_left_seconds": None, "time_left_text": "",
+                 "reason": "None", "token": "2"}]
+        detail = dc.classify_eta(rows, {}, NOW)["detail"]
+        self.assertIn("blocked on Priority", detail)
+        self.assertNotIn("no reason reported", detail)

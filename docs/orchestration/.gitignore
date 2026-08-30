@@ -10,3 +10,5 @@ runs/**/*.stderr.log
 # reproducible receipts live in the campaign ledger commits.
 state/waker/
 state/campaign-queue/
+# Regenerated every 5 min by dashboard_collector.py under scrontab.
+state/dashboard/

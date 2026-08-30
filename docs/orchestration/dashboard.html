@@ -119,6 +119,9 @@
   td { padding: 7px 8px 7px 0; border-top: 1px solid var(--border); vertical-align: top; }
   td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .95em; }
+  /* A node or job name is an identifier: break it and it stops being readable.
+     Long paths still wrap, because they are not .nowrap. */
+  .nowrap { white-space: nowrap; overflow-wrap: normal; }
   .note { color: var(--text-muted); font-size: .76rem; margin-top: 6px; }
   .sub { color: var(--text-secondary); font-size: .76rem; overflow-wrap: anywhere; }
   .empty { color: var(--text-muted); font-style: italic; font-size: .82rem; }
@@ -441,7 +444,7 @@ function panelTmux() {
         <span class="sub">${esc(session.windows)} window(s)</span>
         <div class="sub">created ${esc(session.created_local_text || "unknown")}
           <span title="tmux prints the node's local time with no UTC offset, so no age is derived from it">(node-local, no offset)</span></div></div>`).join("");
-    return `<tr><td data-label="Node"><span class="mono">${esc(row.node)}</span></td>
+    return `<tr><td data-label="Node"><span class="mono nowrap">${esc(row.node)}</span></td>
       <td data-label="Sessions">${sessions}</td></tr>`;
   });
   const c = snapshot.coverage || {};
