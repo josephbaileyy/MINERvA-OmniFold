@@ -829,6 +829,53 @@ class TheENVIRONMENTIsItsOwnRootAndIsVerifiedBEFOREItIsSourced(LauncherFixture):
                 self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
                 self.assertIn("REPOSITORY CHECKOUT path", cp.stderr)
 
+    # THE ARM PRODUCTION NEEDED AND DID NOT HAVE (OI-179, added 2026-08-30). The two arms below are
+    # the ALLOWLIST branch, which is a different branch from the contamination check above and was
+    # untested in both directions until six tasks of `k0-7ac0edec-20260830T000215Z` died on it.
+    #
+    # WHY THE POSITIVE CONTROL COULD NOT CATCH IT, and this is the part worth keeping in mind before
+    # editing `good_env`: `_ambient_prefixes()` predeclares EVERY directory already on this host's
+    # three search paths, so the fixture's default allowlist covers whatever the fixture's own
+    # environment carries. That is deliberate and it is right for the contamination arm -- a fixed
+    # list would refuse a correct configuration on every host but the author's. But it means the
+    # allowlist branch is UNFALSIFIABLE under `good_env()` alone: an entry cannot be undeclared if
+    # the declaration is derived from the entries. The production submission had no
+    # `MNV_ENV_SYSTEM_PREFIXES` at all, which is a state the fixture cannot reach by default. So the
+    # probe below is carved OUT of the ambient list explicitly, rather than the list being replaced
+    # with a literal one.
+    def test_an_UNDECLARED_non_checkout_entry_is_REFUSED(self):
+        """The 2026-08-30 production failure, reproduced. Undeclared, outside the env root, and NOT
+        inside a checkout -- so the contamination arm cannot be what fires here."""
+        probe = pathlib.Path(self._tmp.name) / "undeclared_bin"
+        probe.mkdir()
+        probe_real = os.path.realpath(str(probe))
+        env = self.good_env()
+        env["MNV_ENV_SYSTEM_PREFIXES"] = " ".join(
+            d for d in env["MNV_ENV_SYSTEM_PREFIXES"].split()
+            if not (probe_real == d or probe_real.startswith(d.rstrip("/") + "/")))
+        env["PATH"] = f"{probe}:{env['PATH']}"
+        cp = self.run_launcher(LAUNCHERS[0][0], env)
+        self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
+        self.assertIn("outside the declared environment", cp.stderr)
+        self.assertIn(str(probe), cp.stderr)
+        # It must be THIS entry that fires, not a collateral one the carve-out exposed.
+        self.assertEqual(cp.stderr.count("[env-pathcheck] VIOLATION"), 1, cp.stderr)
+        self.assertNotIn("REPOSITORY CHECKOUT path", cp.stderr)
+        # And the refusal must come AFTER the closure bound, or it is a different failure.
+        self.assertIn("[env-preflight] OK:", cp.stdout)
+
+    def test_the_SAME_entry_is_ALLOWED_once_the_submitter_DECLARES_it(self):
+        """The opposite direction, and the mechanism the production submission omitted. Without this
+        arm the one above is satisfied by a guard that refuses everything."""
+        probe = pathlib.Path(self._tmp.name) / "declared_bin"
+        probe.mkdir()
+        env = self.good_env()
+        env["PATH"] = f"{probe}:{env['PATH']}"
+        env["MNV_ENV_SYSTEM_PREFIXES"] = env["MNV_ENV_SYSTEM_PREFIXES"] + " " + str(probe)
+        cp = self.run_launcher(LAUNCHERS[0][0], env)
+        self.assertNotIn("[env-pathcheck] VIOLATION", cp.stderr)
+        self.assertIn("[env-pathcheck] OK:", cp.stdout, cp.stdout + cp.stderr)
+
     # ---- THE MEMBER LIBRARY ----------------------------------------------------------------------
     def test_a_WRONG_TREE_member_library_fails_BEFORE_it_is_sourced(self):
         """Round 4: the containment check ran AFTER the source in all eight. It now precedes it."""
