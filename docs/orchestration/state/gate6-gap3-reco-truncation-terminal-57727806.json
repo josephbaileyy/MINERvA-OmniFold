@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "contract_id": "PET-G6-GAP3-RECO-TRUNCATION-20260830",
+  "record_kind": "terminal_execution_receipt",
+  "recorded_at_utc": "2026-08-30T05:17:09Z",
+  "status": "FAILED_CLOSED_BEFORE_SCAN",
+  "slurm": {
+    "job_id": "57727806",
+    "job_name": "pet_g6_gap3_trunc",
+    "state": "FAILED",
+    "exit_code": "3:0",
+    "submitted_at": "2026-08-29T21:45:23",
+    "started_at": "2026-08-29T22:16:34",
+    "ended_at": "2026-08-29T22:16:42",
+    "elapsed_seconds": 8,
+    "cpu_time_raw_seconds": 144,
+    "total_cpu": "00:00.057",
+    "time_limit": "04:00:00",
+    "requested_tres": {
+      "billing": 8,
+      "cpu": 8,
+      "memory_gib": 32,
+      "nodes": 1
+    },
+    "allocated_tres": {
+      "billing": 18,
+      "cpu": 18,
+      "memory_gib": 32,
+      "nodes": 1
+    },
+    "allocated_cpus": 18,
+    "node": "nid004136",
+    "gpu_requested": false,
+    "array_job": false,
+    "restarts": 0
+  },
+  "failure": {
+    "stage": "launcher_resource_guard",
+    "stderr": "[gap3-launch][FAIL] expected exactly 8 CPUs",
+    "stderr_digest": "sha256:06e8a18a6680d7615516bdf8796c73ce5415e1d7d2b4b3d7cdf68a25cd067f4b",
+    "stdout_bytes": 0,
+    "stdout_digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "root_hash_pass_started": false,
+    "root_file_opened": false,
+    "event_scan_started": false,
+    "result_json_written": false,
+    "job_spec_written": false
+  },
+  "measurement": {
+    "selected_events_scanned": 0,
+    "clusters_scanned": 0,
+    "deposited_energy_scanned_mev": 0,
+    "discarded_cluster_fraction": null,
+    "discarded_energy_fraction": null,
+    "kinematic_dependence": null,
+    "valid_gap3_result_exists": false
+  },
+  "code": {
+    "branch": "pet-gate6-strategy-20260825",
+    "submission_head": "e23a2d7ea2b981a62edda7dd0ac5a1949edce3ea",
+    "launcher_artifact": "nd-unfolding/pet/sbatch_gap3_reco_truncation_audit.sh",
+    "launcher_digest": "sha256:4c23d6a2e2ee770a424c92d8c9eda67ac56dc3c7b8265dfdc3add73fe4325cfe",
+    "audit_digest": "sha256:671531dd6a43a03203d4a8024d5671a7b357edad6e1fa7ab9ad7e44a99ac1e1a",
+    "predeclaration_digest": "sha256:b69c296a1bd9be426c8acf78bd1232b780bd3c9e2b0b7924d09d241feb8260fc"
+  },
+  "input": {
+    "path": "nd-unfolding/g2_fullevent/merged/runEventLoopOmniFold_G2_FPS_MEFHC.root",
+    "size_bytes": 113496440965,
+    "source_digest": "sha256:9a16331f1c02103e3b5de5e6c00139aa39393ee11eb34881bea0b9a890344e2f",
+    "runtime_digest_recomputed": false
+  },
+  "submission_count": 1,
+  "retry_submitted": false,
+  "retry_authorized": false,
+  "interpretation": "The execution establishes only that the exact-8-CPU launcher contract is incompatible with the observed 18-CPU minimum allocation on this partition. It contains no GAP-3 representation measurement.",
+  "non_authorization": [
+    "do_not_change_representation_or_token_cap",
+    "do_not_move_or_adopt_central_value",
+    "do_not_construct_covariance_or_uncertainty",
+    "do_not_select_gate6_member_or_start_leg2",
+    "do_not_claim_equivalence_convergence_closure_or_coverage",
+    "do_not_make_publication_claim",
+    "do_not_authorize_further_compute"
+  ]
+}
