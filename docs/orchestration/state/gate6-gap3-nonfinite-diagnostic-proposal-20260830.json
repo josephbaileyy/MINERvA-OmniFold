@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "contract_id": "PET-G6-GAP3-NONFINITE-DIAGNOSTIC-20260830",
+  "record_kind": "bounded_diagnostic_proposal",
+  "status": "AUTHORIZED_PENDING_PREFLIGHT",
+  "authorization": {
+    "authorization_token": "PET-G6-GAP3-NONFINITE-DIAGNOSTIC-20260830-ONE-SCAN",
+    "maximum_submissions": 1,
+    "automatic_retry": false,
+    "further_retry": false
+  },
+  "resources": {
+    "constraint": "cpu",
+    "cpus": 18,
+    "root_threads": 18,
+    "walltime_hours": 2,
+    "cpu_hour_allocation_ceiling": 36,
+    "memory_gib": 32,
+    "gpus": 0,
+    "nodes": 1,
+    "tasks": 1
+  },
+  "source_root": {
+    "artifact": "nd-unfolding/g2_fullevent/merged/runEventLoopOmniFold_G2_FPS_MEFHC.root",
+    "size_bytes": 113496440965,
+    "digest": "sha256:9a16331f1c02103e3b5de5e6c00139aa39393ee11eb34881bea0b9a890344e2f"
+  },
+  "stored_pet_input": {
+    "artifact": "nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+    "size_bytes": 9897374636,
+    "digest": "sha256:fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "producer_receipt_digest": "sha256:d466a0c18deaafa2ae645002c8dbc9b9879476adb45a40a85c0bae9e0129d25e"
+  },
+  "expected_counts": {
+    "selected_rows": {"signal": 20573521, "data": 4116128, "background": 564591},
+    "npz_rows": {"signal": 49152885, "data": 4116128, "background": 564591},
+    "nonfinite_raw_energy_entries": {"signal": 1687, "data": 456, "background": 223, "total": 2366}
+  },
+  "frozen_diagnostic": {
+    "cap": 12,
+    "production_sort": "float32 then np.argsort(-energy, kind=stable)",
+    "classifications": ["nan", "positive_infinity", "negative_infinity"],
+    "multiplicities": [
+      "raw_vector_length",
+      "finite_positive",
+      "capped_finite_positive",
+      "stored_finite_positive",
+      "pet_energy_not_equal_zero_mask"
+    ],
+    "alignment_checks": ["cloud", "view", "time", "reco_scalars", "weight_where_present", "signal_pass_reco"],
+    "mask_checks": [
+      "loader_nonfinite_to_zero",
+      "loader_energy_not_equal_zero",
+      "model_energy_not_equal_zero",
+      "pre_mask_dense_encoding",
+      "local_neighbor_path",
+      "first_body_attention",
+      "body_remasking",
+      "film_remasking",
+      "class_attention_mask"
+    ],
+    "denominator_pass_recommendation": "FINITE_POSITIVE_PET_ELIGIBLE_CLUSTERS"
+  },
+  "kinematic_edges_gev": {
+    "pt": [0, 0.07, 0.15, 0.25, 0.33, 0.4, 0.47, 0.55, 0.7, 0.85, 1.0, 1.25, 1.5, 2.5, 4.5, 30],
+    "pparallel": [0, 0.75, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 9, 10, 15, 20, 40, 60, 120],
+    "eavail": [0, 0.1, 0.2, 0.4, 0.8, 1.5, 3, 100],
+    "q3": [0, 0.2, 0.4, 0.6, 0.8, 1.2, 2, 100],
+    "pt_pparallel_cartesian_grid": true
+  },
+  "preserved_prior_evidence": {
+    "status": "INVALID_OR_INCOMPLETE",
+    "predeclaration_digest": "sha256:fc1772058469a34293ba1d8a162c1fe3b6cd3c2ade6c7bd31a65a39bda06c648",
+    "launcher_digest": "sha256:ffadc05bd186d950b718be3f7e4e8d9e9a9563b771ea2cb3097cc6e933cd16db",
+    "launch_receipt_digest": "sha256:48a638a593eed9e3ebe9c9fc62da6c6e721816aa1bf4c49c4c2a18e229403015",
+    "terminal_receipt_digest": "sha256:42e2609ebc8c7cf4c0a9b501935b9df94a18549f5deae9e78c12b1a9cd1d09ef",
+    "result_digest": "sha256:7c8ff0dc0baa4fd03d29534a2a24558f7705d2e9cd914aa219e528071e0cbf6e"
+  },
+  "entry_checks": [
+    "clean_pushed_immutable_checkout",
+    "source_and_npz_full_sha256",
+    "producer_and_prior_receipt_hashes",
+    "new_source_hashes",
+    "root_import_helper_jit_and_schema",
+    "npz_header_shapes",
+    "stable_sort_self_test",
+    "positive_resource_guard",
+    "negative_resource_guards",
+    "empty_output_namespace"
+  ],
+  "non_authorization": [
+    "do_not_filter_or_repair_inputs",
+    "do_not_change_representation_or_token_cap",
+    "do_not_retrain",
+    "do_not_move_or_adopt_central_value",
+    "do_not_construct_covariance_or_uncertainty",
+    "do_not_select_gate6_member_or_start_leg2",
+    "do_not_authorize_further_compute",
+    "do_not_make_publication_claim"
+  ]
+}
