@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "contract_id": "PET-G6-GAP3-RECO-TRUNCATION-20260830-CHANGED-RETRY1",
+  "record_kind": "changed_retry_proposal",
+  "status": "AUTHORIZED_PENDING_PREFLIGHT",
+  "changed_retry_number": 1,
+  "authorization": {
+    "original_authorization_exhausted": true,
+    "changed_retry_authorized": true,
+    "authorization_token": "PET-G6-GAP3-RECO-TRUNCATION-20260830-CHANGED-RETRY1-ONE-SCAN",
+    "maximum_submissions": 1,
+    "automatic_retry": false,
+    "unchanged_retry": false,
+    "further_retry": false
+  },
+  "observed_failure_basis": {
+    "job_id": "57727806",
+    "status": "FAILED_CLOSED_BEFORE_SCAN",
+    "requested_cpu_tres": 8,
+    "observed_partition_minimum_cpus": 18,
+    "event_scan_started": false,
+    "result_written": false
+  },
+  "change_control": {
+    "changed_axes": [
+      "requested_cpus:8->18",
+      "root_threads:8->18",
+      "walltime_hours:4->2",
+      "authorization_token",
+      "output_namespace",
+      "launcher_and_wrapper_identity"
+    ],
+    "scientific_operands_changed": false,
+    "scientific_core_reused_without_edit": true
+  },
+  "resources": {
+    "constraint": "cpu",
+    "cpus": 18,
+    "root_threads": 18,
+    "walltime_hours": 2,
+    "cpu_hour_allocation_ceiling": 36,
+    "memory_gib": 32,
+    "gpus": 0,
+    "nodes": 1,
+    "tasks": 1
+  },
+  "input": {
+    "path": "nd-unfolding/g2_fullevent/merged/runEventLoopOmniFold_G2_FPS_MEFHC.root",
+    "size_bytes": 113496440965,
+    "source_digest": "sha256:9a16331f1c02103e3b5de5e6c00139aa39393ee11eb34881bea0b9a890344e2f",
+    "merge_receipt_digest": "sha256:26ea5561f47599987ebacbf594c606309146a5f23c82af8dd0e2ca299b31efa7"
+  },
+  "populations": {
+    "signal": {
+      "tree": "mc_signal_reco",
+      "selection": "sim_pass != 0 && std::isfinite(sim) && std::isfinite(sim_pz) && sim >= 0.0 && sim <= 30.0 && sim_pz >= 0.0 && sim_pz <= 120.0",
+      "expected_rows": 20573521,
+      "weight": "w_reco",
+      "axes": {"pt": "sim", "pparallel": "sim_pz", "eavail": "sim_eavail", "q3": "sim_q3"}
+    },
+    "data": {
+      "tree": "data",
+      "selection": "measured_pass != 0 && std::isfinite(measured) && std::isfinite(measured_pz) && measured >= 0.0 && measured <= 30.0 && measured_pz >= 0.0 && measured_pz <= 120.0",
+      "expected_rows": 4116128,
+      "weight": "1.0",
+      "axes": {"pt": "measured", "pparallel": "measured_pz", "eavail": "measured_eavail", "q3": "measured_q3"}
+    },
+    "background": {
+      "tree": "mc_background",
+      "selection": "sim_background_pass != 0 && std::isfinite(sim_background) && std::isfinite(sim_background_pz) && sim_background >= 0.0 && sim_background <= 30.0 && sim_background_pz >= 0.0 && sim_background_pz <= 120.0",
+      "expected_rows": 564591,
+      "weight": "w_bkg",
+      "axes": {"pt": "sim_background", "pparallel": "sim_background_pz", "eavail": "sim_background_eavail", "q3": "sim_background_q3"}
+    }
+  },
+  "scientific_contract": {
+    "cluster_branch": "part_reco_E",
+    "rank_order": "stable_descending_energy",
+    "cap": 12,
+    "primary": "unweighted_micro_fractions",
+    "secondary": "analysis_weighted_micro_fractions",
+    "metrics": [
+      "cap_event_fraction",
+      "discarded_cluster_fraction",
+      "discarded_energy_fraction"
+    ],
+    "pt_edges_gev": [0, 0.07, 0.15, 0.25, 0.33, 0.4, 0.47, 0.55, 0.7, 0.85, 1.0, 1.25, 1.5, 2.5, 4.5, 30],
+    "pparallel_edges_gev": [0, 0.75, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 9, 10, 15, 20, 40, 60, 120],
+    "eavail_edges_gev": [0, 0.1, 0.2, 0.4, 0.8, 1.5, 3, 100],
+    "q3_edges_gev": [0, 0.2, 0.4, 0.6, 0.8, 1.2, 2, 100],
+    "pt_pparallel_cartesian_grid": true,
+    "invalid_if_nonfinite_or_negative_energy": true,
+    "invalid_if_nonfinite_or_negative_weight": true,
+    "invalid_if_nonpositive_denominator": true,
+    "invalid_if_row_census_mismatch": true
+  },
+  "preserved_original_artifacts": {
+    "predeclaration_digest": "sha256:b69c296a1bd9be426c8acf78bd1232b780bd3c9e2b0b7924d09d241feb8260fc",
+    "launcher_digest": "sha256:4c23d6a2e2ee770a424c92d8c9eda67ac56dc3c7b8265dfdc3add73fe4325cfe",
+    "launch_receipt_digest": "sha256:ade8f8755fa8cab04934e3828c651a9b131fe0a029c144533b52a2b671acf8e9",
+    "terminal_receipt_digest": "sha256:4fcb7a58102e2c3e9f41808bc9bb68e8884a24b4602eac79252476e3f42fbb80",
+    "audit_core_digest": "sha256:671531dd6a43a03203d4a8024d5671a7b357edad6e1fa7ab9ad7e44a99ac1e1a",
+    "audit_test_digest": "sha256:674efffbafe90a115e677a58f475b307feae076b727d30af9a832a3a71fa3293"
+  },
+  "entry_checks": [
+    "clean_immutable_checkout",
+    "pushed_head_matches_checkout",
+    "original_artifact_hashes_match",
+    "retry_artifact_hashes_match",
+    "gate6_receipt_hash_and_prohibitions_match",
+    "source_size_and_full_sha256_match",
+    "merge_receipt_hash_and_source_fields_match",
+    "root_import_and_helper_jit_pass",
+    "source_schema_and_branch_types_pass",
+    "positive_resource_guard_test_passes",
+    "negative_resource_guard_tests_fail_closed",
+    "new_output_namespace_is_empty"
+  ],
+  "terminal_requirements": [
+    "direct_slurm_accounting",
+    "runtime_input_sha256",
+    "selected_row_censuses",
+    "finite_nonnegative_domains",
+    "positive_denominators",
+    "result_json_and_log_digests"
+  ],
+  "non_authorization": [
+    "do_not_change_representation_or_token_cap",
+    "do_not_move_or_adopt_central_value",
+    "do_not_construct_covariance_or_uncertainty",
+    "do_not_select_gate6_member_or_start_leg2",
+    "do_not_claim_equivalence_convergence_closure_or_coverage",
+    "do_not_make_publication_claim",
+    "do_not_authorize_further_compute"
+  ]
+}
