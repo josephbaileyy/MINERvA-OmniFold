@@ -1,0 +1,278 @@
+{
+  "label": "deploy",
+  "tree": "/pscratch/sd/j/josephrb/k0r2/clean",
+  "measurement_wall_clock": {
+    "started_utc": "2026-08-30T07:01:40Z",
+    "completed_utc": "2026-08-30T07:01:42Z"
+  },
+  "branch_or_detached": {
+    "state": "detached",
+    "name": null
+  },
+  "M-1": [
+    {
+      "file": "nd-unfolding/bootstrap_nd.py",
+      "present": true,
+      "literals": [],
+      "first_insert": 28,
+      "repo_modules_after": [
+        {
+          "module": "omnifold_nn_core",
+          "line": 29
+        },
+        {
+          "module": "xsec_nd",
+          "line": 30
+        },
+        {
+          "module": "seed_offset_policy",
+          "line": 31
+        }
+      ],
+      "n_after": 3
+    },
+    {
+      "file": "nd-unfolding/seedscan_split.py",
+      "present": true,
+      "literals": [],
+      "first_insert": 37,
+      "repo_modules_after": [
+        {
+          "module": "omnifold_nn_core",
+          "line": 38
+        },
+        {
+          "module": "xsec_nd",
+          "line": 39
+        },
+        {
+          "module": "seed_offset_policy",
+          "line": 41
+        }
+      ],
+      "n_after": 3
+    },
+    {
+      "file": "nd-unfolding/unified_throw_cov.py",
+      "present": true,
+      "literals": [
+        {
+          "name": "_DATA_ROOT",
+          "line": 69,
+          "form": "exact",
+          "value": "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+        }
+      ],
+      "first_insert": 61,
+      "repo_modules_after": [
+        {
+          "module": "flux_universe",
+          "line": 71
+        },
+        {
+          "module": "seed_offset_policy",
+          "line": 72
+        },
+        {
+          "module": "compare_unified_throw",
+          "line": 73
+        },
+        {
+          "module": "uq_math",
+          "line": 74
+        },
+        {
+          "module": "unfold_2d_omnifold_unbinned",
+          "line": 220
+        }
+      ],
+      "n_after": 5
+    },
+    {
+      "file": "nd-unfolding/unified_throw_cov_5d.py",
+      "present": true,
+      "literals": [],
+      "first_insert": 42,
+      "repo_modules_after": [
+        {
+          "module": "unified_throw_cov",
+          "line": 44
+        },
+        {
+          "module": "omnifold_nn_core",
+          "line": 55
+        },
+        {
+          "module": "xsec_nd",
+          "line": 56
+        }
+      ],
+      "n_after": 3
+    },
+    {
+      "file": "nd-unfolding/unfold_nd_omnifold_unbinned.py",
+      "present": true,
+      "literals": [
+        {
+          "name": "_DATA_ROOT",
+          "line": 73,
+          "form": "exact",
+          "value": "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+        }
+      ],
+      "first_insert": 77,
+      "repo_modules_after": [
+        {
+          "module": "unfold_2d_omnifold_unbinned",
+          "line": 78
+        },
+        {
+          "module": "flux_universe",
+          "line": 79
+        },
+        {
+          "module": "xsec_nd",
+          "line": 80
+        },
+        {
+          "module": "seed_offset_policy",
+          "line": 1123
+        }
+      ],
+      "n_after": 4
+    },
+    {
+      "file": "nd-unfolding/sweep_bank_5d.py",
+      "present": true,
+      "literals": [
+        {
+          "name": "_DATA_ROOT",
+          "line": 59,
+          "form": "exact",
+          "value": "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+        }
+      ],
+      "first_insert": 51,
+      "repo_modules_after": [
+        {
+          "module": "unfold_2d_omnifold_unbinned",
+          "line": 83
+        },
+        {
+          "module": "unfold_nd_omnifold_unbinned",
+          "line": 84
+        },
+        {
+          "module": "unfold_nd_omnifold_unbinned",
+          "line": 232
+        },
+        {
+          "module": "omnifold_nn_core",
+          "line": 233
+        },
+        {
+          "module": "xsec_nd",
+          "line": 234
+        },
+        {
+          "module": "flux_universe",
+          "line": 295
+        }
+      ],
+      "n_after": 6
+    },
+    {
+      "file": "nd-unfolding/combine_cov_nd.py",
+      "present": true,
+      "literals": [],
+      "first_insert": null,
+      "repo_modules_after": [],
+      "n_after": 0
+    },
+    {
+      "file": "nd-unfolding/analyze_universes_5d.py",
+      "present": true,
+      "literals": [],
+      "first_insert": null,
+      "repo_modules_after": [],
+      "n_after": 0
+    },
+    {
+      "file": "nd-unfolding/mii_adopt_unified_5d_stamped.py",
+      "present": true,
+      "literals": [],
+      "first_insert": 149,
+      "repo_modules_after": [
+        {
+          "module": "seed_offset_policy",
+          "line": 255
+        },
+        {
+          "module": "seed_offset_policy",
+          "line": 769
+        }
+      ],
+      "n_after": 2
+    },
+    {
+      "file": "nd-unfolding/adopt_unified_5d.py",
+      "present": true,
+      "literals": [
+        {
+          "name": "_REPO",
+          "line": 35,
+          "form": "exact",
+          "value": "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+        }
+      ],
+      "first_insert": 38,
+      "repo_modules_after": [],
+      "n_after": 0
+    }
+  ],
+  "M-2": {
+    "importable": 127,
+    "stdlib_collisions": [],
+    "python": "3.11.14"
+  },
+  "M-3": {
+    "present": true,
+    "rc": 0,
+    "all_intact": true
+  },
+  "M-4": {
+    "is_git": true,
+    "head": "7ac0edecf45bf95ce0d2e2b6c2f8130a95b3994b",
+    "dirty": 0,
+    "untracked": 0,
+    "modified": 0
+  },
+  "M-5": {
+    "n": 8,
+    "missing": [],
+    "repo_assign": [],
+    "activator_from_code_root": [],
+    "activator_from_env_root": [
+      "sbatch_bootstrap_5d_gpu.sh",
+      "sbatch_finalize_5d_bkgaware_gpu.sh",
+      "sbatch_seedscan_split_5d.sh",
+      "sbatch_sweep_bank_5d_run_bkgaware_gpu.sh",
+      "sbatch_unfold_5d_detector_bkgaware_gpu.sh",
+      "sbatch_uthrow_block_5d.sh",
+      "sbatch_uthrow_combine_5d_fast.sh",
+      "sbatch_uthrow_run_5d_fast.sh"
+    ]
+  },
+  "M-6": {
+    "present": true,
+    "n_lines": 740,
+    "counts_resolutions": true,
+    "inventory_write_lines": [
+      548
+    ],
+    "else_zero_default_lines": [
+      548
+    ],
+    "state": "WRITTEN BUT DEFAULTED -- a containment-path zero is a default, not a measurement"
+  }
+}
