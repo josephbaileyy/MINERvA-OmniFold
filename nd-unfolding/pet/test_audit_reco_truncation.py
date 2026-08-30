@@ -85,6 +85,7 @@ def test_launcher_resource_and_authorization_contract() -> None:
     assert "#SBATCH --gres" not in launcher
     assert "PET-G6-GAP3-RECO-TRUNCATION-20260830-ONE-SCAN" in launcher
     assert "EXPECTED_GATE6_RECEIPT_SHA256" in launcher
+    assert 'set +u\nsource "$DATA_ROOT/setup_salloc_env.sh"\nset -u' in launcher
 
 
 if __name__ == "__main__":

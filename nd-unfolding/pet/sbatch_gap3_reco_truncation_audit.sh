@@ -75,7 +75,11 @@ if grep -Eiq 'gres/gpu=[1-9]|Gres=gpu(:|=)' <<<"$JOB_SPEC"; then
 fi
 printf '%s\n' "$JOB_SPEC" >"$OUTPUT_ROOT/job-spec-${SLURM_JOB_ID}.txt"
 
+# Conda activation reads optional variables that may be unset. Limit nounset
+# suspension to the trusted environment setup, then restore fail-closed mode.
+set +u
 source "$DATA_ROOT/setup_salloc_env.sh"
+set -u
 PYTHON_BIN=$(command -v python3 || true)
 [[ -n "$PYTHON_BIN" && -x "$PYTHON_BIN" ]] || die "python3 is not executable"
 "$PYTHON_BIN" -c 'import ROOT' || die "python3 cannot import ROOT"
