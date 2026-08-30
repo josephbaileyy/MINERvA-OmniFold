@@ -92,7 +92,7 @@ docs/orchestration/INDEX-retracted-and-superseded-values.md	tracked	LIVE	index		
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/control_plane_lint.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	54	80	19049
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	3	161	8117
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	13	108	7966
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	51	618	123903
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	51	620	124216
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	5	212	15945
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/compare_m1_m6.py;docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/measure_m1_m6.py	no	17	146	8336
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	tracked	LIVE	document		20260823	open		route-only		no	6	239	14244
@@ -369,6 +369,8 @@ docs/orchestration/state/canonical-namespace-field-pins-20260817.json	tracked	MA
 docs/orchestration/state/cluster-ignored-set-walk-20260812.json	tracked	MACHINE	state-artifact		20260812	generated		exact-path-only	nd-unfolding/uq_5d/sbatch_digest_quoted_products.sh;nd-unfolding/uq_5d/sbatch_hpss_protect_quoted_products.sh	yes	4	497	16680
 docs/orchestration/state/cluster-local-fork-freeze-20260812.json	tracked	MACHINE	state-artifact		20260812	generated		exact-path-only	nd-unfolding/tests/test_cstat_data_only_predicates.py	yes	5	306	17689
 docs/orchestration/state/declaration-v-5d-covering-search-20260822.sh	tracked	MACHINE	state-artifact		20260822	open		exact-path-only		no	3	148	7795
+docs/orchestration/state/f17a-k0-7ac0edec-20260830T000215Z-canonical.json	tracked	MACHINE	state-artifact		20260830	generated		exact-path-only		yes	0	278	6111
+docs/orchestration/state/f17a-k0-7ac0edec-20260830T000215Z-deploy.json	tracked	MACHINE	state-artifact		20260830	generated		exact-path-only		yes	0	278	6097
 docs/orchestration/state/f17b-k0-aa67c426-20260824T145751Z.json	tracked	MACHINE	state-artifact		20260824	generated		exact-path-only	docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/test_compare_m1_m6.py	yes	11	1239	53226
 docs/orchestration/state/g2-dump-submit-20260719.json	tracked	MACHINE	state-artifact		20260719	generated		exact-path-only	nd-unfolding/pet/atomic_write.py	yes	9	37	1354
 docs/orchestration/state/g2-gate1-all12-validation-20260719.json	tracked	MACHINE	state-artifact		20260719	generated		exact-path-only	nd-unfolding/pet/dump_pointcloud_inputs.py;nd-unfolding/pet/merge_g2_gate1_mefhc.sh	yes	8	296	14362
