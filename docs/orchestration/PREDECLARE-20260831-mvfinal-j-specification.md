@@ -107,11 +107,32 @@ reader/verifier owns the invariant, and whether an existing digest binding must 
   bound digest.
 - **The binary price claim has a third route and therefore does not hold without a qualification.**
   `mii_adopt_unified_5d_stamped.py` already runs the pinned writer unchanged, reopens its output
-  `UPDATE`, and writes additional ROOT keys (`:717-762`, called at `:767-811`). Its current SHA-256
-  `e5bc51a4…` occurs in two later grading reports, but neither occurrence is a paired receipt or shell
-  binding (`docs/orchestration/runs/agy-publication-redteam/20260826-stackgrade-VERDICT-P9.md:38-48`;
-  `docs/orchestration/runs/agy-g2-gate-verifier/20260826-stackgrade-VERDICT-P1-P8.md:330-332`). A
-  2026-08-31 run of `python3 docs/orchestration/verify_hash_bindings.py` exits 0, and a search of the
+  `UPDATE`, and writes additional ROOT keys (`:717-762`, called at `:767-811`).
+
+  > **CORRECTED 2026-08-31, and the original undercount is left above rather than rewritten.** This
+  > bullet first said the wrapper's SHA-256 `e5bc51a4…` "occurs in two later grading reports", and the
+  > orchestrator's summary of it went further and said **zero** sha256-adjacent references. Both are
+  > wrong. The count was produced by a grep scoped to `*.json` under `nd-unfolding/` and
+  > `docs/orchestration/state/` and then reported as though unscoped. **Measured over `*.md` and
+  > `*.json` across `docs/` and `nd-unfolding/`, the digest is recorded in FOUR records:**
+  > `GATE1-VERDICT-ROUND4-20260823-k0-execution-integrity.md` (an identity table listing it beside
+  > `adopt_unified_5d.py`'s `e1260e8d…`), `RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings.md:336` (named
+  > as a `CHILD_GUARD` tree binding), and the two `20260826-stackgrade` verdicts.
+  > `VERDICT-20260821-clausec-rerun-production-dimension.md` additionally tracks the wrapper across two
+  > EARLIER digests. Found by the `claude-school` k=0 lane; re-measured here before this correction.
+  >
+  > **THE DISTINCTION THAT ACTUALLY DECIDES R1-C IS ENFORCED PIN versus RECORDED OBSERVATION, and the
+  > conclusion survives.** None of those four is executable. `PINNED_WRITER` is bound to
+  > `adopt_unified_5d.py` alone (`nd-unfolding/mii_adopt_unified_5d_stamped.py:152`), and
+  > `assert_pinned_writer_is_intact` (`:218`, called at `:767`) reads that digest FROM THE RECEIPT
+  > rather than from a literal — its docstring says a literal "would be a second binding that can
+  > drift from the first". **No code compares the wrapper's own bytes**, so editing it refuses nothing
+  > at run time and triggers no supersession chain. What it does cost is **four verdict and receipt
+  > records that would become stale descriptions of a moved file**, which is a documentation debt to
+  > schedule, not a gate to clear. R1-C's price is therefore NOT "zero references" — it is **no
+  > enforced pin cost, plus four records to re-issue or annotate.**
+
+  A 2026-08-31 run of `python3 docs/orchestration/verify_hash_bindings.py` exits 0, and a search of the
   verifier's JSON/shell inputs finds no current-wrapper binding. This is consistent with the
   repository's own path inventory saying only `adopt_unified_5d.py` is pinned among this path's files
   (`docs/orchestration/REVIEW-CONTRACT-20260822-k0-execution-integrity.md:88-102`). Extending that

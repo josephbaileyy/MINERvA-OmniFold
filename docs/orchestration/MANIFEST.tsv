@@ -90,7 +90,7 @@ docs/orchestration/FREEZE-20260830-k0-deployment-7ac0edec.md	tracked	LIVE	docume
 docs/orchestration/GATE1-VERDICT-20260822-k0-execution-integrity.md	tracked	LIVE	document		20260822	open		route-only		no	2	739	47701
 docs/orchestration/GATE1-VERDICT-20260830-k0-7ac0edec.md	tracked	LIVE	document		20260830	open		route-only		no	4	190	11249
 docs/orchestration/GATE1-VERDICT-ROUND2-20260830-k0-7ac0edec.md	tracked	LIVE	document		20260830	open		route-only		no	4	204	13734
-docs/orchestration/GATE1-VERDICT-ROUND4-20260823-k0-execution-integrity.md	tracked	LIVE	document		20260823	open		route-only		no	7	549	34687
+docs/orchestration/GATE1-VERDICT-ROUND4-20260823-k0-execution-integrity.md	tracked	LIVE	document		20260823	open		route-only		no	8	549	34687
 docs/orchestration/GATE1-VERDICT-ROUND5-20260823-k0-execution-integrity.md	tracked	LIVE	document		20260823	open		route-only		no	3	620	42325
 docs/orchestration/GATE1-VERDICT-ROUND6-20260823-k0-execution-integrity.md	tracked	LIVE	document		20260823	open		route-only		no	4	415	29173
 docs/orchestration/GATE1-VERDICT-ROUND7-20260823-k0-execution-integrity.md	tracked	LIVE	document		20260823	open		route-only		no	3	439	29917
@@ -147,7 +147,7 @@ docs/orchestration/PREDECLARE-20260811-construction-contract-receipt.md	tracked	
 docs/orchestration/PREDECLARE-20260812-stamped-footing-adoption-candidate.md	tracked	ARCHIVAL	predeclaration		20260812	terminal		exact-path-only	nd-unfolding/sbatch_adopt_stamped_footing.sh	yes	4	68	4313
 docs/orchestration/PREDECLARE-20260817-candidate-stamp-receipt-causes-3-4.md	tracked	ARCHIVAL	predeclaration		20260817	terminal		exact-path-only	nd-unfolding/mii_anchor_comparator.py;nd-unfolding/receipt_candidate_stamps_5d.py	yes	3	131	8755
 docs/orchestration/PREDECLARE-20260817-cause1-endpoint-census-and-magnitude.md	tracked	ARCHIVAL	predeclaration		20260817	terminal		exact-path-only	nd-unfolding/receipt_cause1_endpoint_census_5d.py	yes	2	158	10120
-docs/orchestration/PREDECLARE-20260831-mvfinal-j-specification.md	tracked	ARCHIVAL	predeclaration		20260831	terminal		exact-path-only		yes	0	429	24400
+docs/orchestration/PREDECLARE-20260831-mvfinal-j-specification.md	tracked	ARCHIVAL	predeclaration		20260831	terminal		exact-path-only		yes	0	450	26106
 docs/orchestration/PROCEDURE-gbdtFive-macro-update.md	tracked	LIVE	procedure			open		route-only		no	9	176	16639
 docs/orchestration/PROMPTS-20260811-four-session-closeout.md	tracked	LIVE	document		20260811	open		route-only	docs/orchestration/waker_fired_but_unread.sh	no	9	396	26920
 docs/orchestration/PROMPTS-20260820-publication-closeout-orchestrator.md	tracked	ARCHIVAL	document		20260820	terminal		exact-path-only		yes	1	157	9827
@@ -166,7 +166,7 @@ docs/orchestration/RECEIPT-20260812-hpss-space-audit.md	tracked	ARCHIVAL	documen
 docs/orchestration/RECEIPT-20260820-oi50-hashverify.md	tracked	ARCHIVAL	document		20260820	terminal		exact-path-only	2d-unfolding/HANDOFF_bkg_negweight/build_negweight_hpss_manifest.py;2d-unfolding/HANDOFF_bkg_negweight/hpss_preserve_negweight.sh;2d-unfolding/HANDOFF_bkg_negweight/hpss_recover_negweight.sh	yes	8	167	7895
 docs/orchestration/RECEIPT-20260821-negweight-hpss-durability.md	tracked	ARCHIVAL	document		20260821	terminal		exact-path-only	2d-unfolding/HANDOFF_bkg_negweight/hpss_preserve_negweight.sh;docs/analysis-note/check_dead_containment.py	yes	5	408	23906
 docs/orchestration/RECEIPT-20260822-k0-n1-and-guarded-arms.md	tracked	LIVE	document		20260822	open		route-only		no	8	317	19645
-docs/orchestration/RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings.md	tracked	LIVE	document		20260824	open		route-only	docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/verify_run_receipt_blind_spots.py	no	8	1001	62470
+docs/orchestration/RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings.md	tracked	LIVE	document		20260824	open		route-only	docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/verify_run_receipt_blind_spots.py	no	9	1001	62470
 docs/orchestration/RECEIPT-20260830-k0-f1b-producer-filing.md	tracked	ARCHIVAL	document		20260830	terminal		exact-path-only		yes	3	146	7215
 docs/orchestration/RECONCILIATION-20260817-gbdtfive-macros-vs-rebuilt-candidate.md	tracked	LIVE	document		20260817	open		route-only	docs/orchestration/live_doc_indexed.py	no	5	295	15939
 docs/orchestration/RECORD-20260830-k0-quarantine-and-seven-arm-submission.md	tracked	LIVE	document		20260830	open		route-only	nd-unfolding/mnv_env_provenance.py	no	6	318	21951
@@ -200,7 +200,7 @@ docs/orchestration/USER-DECISIONS.md	tracked	LIVE	document			open		route-only		n
 docs/orchestration/VALIDATOR-TOLERANCE-UNITS-20260808.md	tracked	ARCHIVAL	document		20260808	terminal		exact-path-only	nd-unfolding/tests/test_validator_units_auditor.py	yes	3	97	6335
 docs/orchestration/VERDICT-20260820-lanec-remedy-a-FAIL.md	tracked	ARCHIVAL	verdict		20260820	terminal		exact-path-only		yes	0	147	11066
 docs/orchestration/VERDICT-20260820-lanec-remedy-a-ROUND2-PASS-WITH-SCOPE.md	tracked	ARCHIVAL	verdict		20260820	terminal		exact-path-only		yes	0	166	12905
-docs/orchestration/VERDICT-20260821-clausec-rerun-production-dimension.md	tracked	ARCHIVAL	verdict		20260821	terminal		exact-path-only		yes	2	646	46467
+docs/orchestration/VERDICT-20260821-clausec-rerun-production-dimension.md	tracked	ARCHIVAL	verdict		20260821	terminal		exact-path-only		yes	3	646	46467
 docs/orchestration/VERDICT-20260821-expiry-c-real-path-present-seed.md	tracked	ARCHIVAL	verdict		20260821	superseded	docs/orchestration/VERDICT-20260821-clausec-rerun-production-dimension.md	exact-path-only		yes	4	267	19245
 docs/orchestration/VERDICT-20260825-gate2-k0-rehearsal-nine-clauses.md	tracked	LIVE	verdict		20260825	open		route-only		no	6	493	30751
 docs/orchestration/VERDICT-20260830-readiness-10-1-k0-7ac0edec.md	tracked	LIVE	verdict		20260830	open		route-only		no	3	130	7268
@@ -276,7 +276,7 @@ docs/orchestration/runs/agy-f8b-soundness/20260826-f8b-soundness-VERDICT.md	trac
 docs/orchestration/runs/agy-f8b-soundness/20260827T000237Z-start-0fb88cfd.txt	tracked	MACHINE	run-artifact	agy-f8b-soundness	20260827	generated		exact-path-only		yes	1	17	2733
 docs/orchestration/runs/agy-g2-gate-verifier/20260826-readiness-10-1-VERDICT.md	tracked	MACHINE	run-artifact	agy-g2-gate-verifier	20260826	generated		exact-path-only		yes	4	99	8136
 docs/orchestration/runs/agy-g2-gate-verifier/20260826-stackgrade-VERDICT-ATTEST.md	tracked	MACHINE	run-artifact	agy-g2-gate-verifier	20260826	generated		exact-path-only		yes	1	32	2865
-docs/orchestration/runs/agy-g2-gate-verifier/20260826-stackgrade-VERDICT-P1-P8.md	tracked	MACHINE	run-artifact	agy-g2-gate-verifier	20260826	generated		exact-path-only		yes	2	333	28689
+docs/orchestration/runs/agy-g2-gate-verifier/20260826-stackgrade-VERDICT-P1-P8.md	tracked	MACHINE	run-artifact	agy-g2-gate-verifier	20260826	generated		exact-path-only		yes	1	333	28689
 docs/orchestration/runs/agy-g2-gate-verifier/20260826-stackgrade-VERDICT-P8-probe.md	tracked	MACHINE	run-artifact	agy-g2-gate-verifier	20260826	generated		exact-path-only		yes	1	57	4392
 docs/orchestration/runs/agy-g2-gate-verifier/20260826T141845Z-send-c3a948fb.agy.log.txt	tracked	MACHINE	run-artifact	agy-g2-gate-verifier	20260826	generated		exact-path-only		yes	1	171	28136
 docs/orchestration/runs/agy-g2-gate-verifier/20260826T144936Z-send-1dbf4872.txt	tracked	MACHINE	run-artifact	agy-g2-gate-verifier	20260826	generated		exact-path-only		yes	2	50	3193
@@ -285,7 +285,7 @@ docs/orchestration/runs/agy-g2-gate-verifier/20260826T222529Z-send-b09e20f1.txt	
 docs/orchestration/runs/agy-g2-gate-verifier/20260826T230617Z-send-803ddb42.txt	tracked	MACHINE	run-artifact	agy-g2-gate-verifier	20260826	generated		exact-path-only		yes	1	43	4267
 docs/orchestration/runs/agy-g2-gate-verifier/baseline.unittest.txt	tracked	MACHINE	run-artifact	agy-g2-gate-verifier		generated		exact-path-only		yes	1	100	7741
 docs/orchestration/runs/agy-g2-gate-verifier/candidate.unittest.txt	tracked	MACHINE	run-artifact	agy-g2-gate-verifier		generated		exact-path-only		yes	1	100	7747
-docs/orchestration/runs/agy-publication-redteam/20260826-stackgrade-VERDICT-P9.md	tracked	MACHINE	run-artifact	agy-publication-redteam	20260826	generated		exact-path-only		yes	2	80	5964
+docs/orchestration/runs/agy-publication-redteam/20260826-stackgrade-VERDICT-P9.md	tracked	MACHINE	run-artifact	agy-publication-redteam	20260826	generated		exact-path-only		yes	1	80	5964
 docs/orchestration/runs/agy-publication-redteam/20260826T090631Z-send-4d7f1e43.txt	tracked	MACHINE	run-artifact	agy-publication-redteam	20260826	generated		exact-path-only		yes	2	50	4402
 docs/orchestration/runs/agy-publication-redteam/20260826T134152Z-send-31c9ce39.agy.log.txt	tracked	MACHINE	run-artifact	agy-publication-redteam	20260826	generated		exact-path-only		yes	1	332	65546
 docs/orchestration/runs/agy-publication-redteam/20260826T221117Z-send-0a8544d8.txt	tracked	MACHINE	run-artifact	agy-publication-redteam	20260826	generated		exact-path-only		yes	1	5	471
