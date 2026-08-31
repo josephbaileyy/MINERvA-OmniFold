@@ -149,7 +149,7 @@ docs/orchestration/PROMPTS-20260820-publication-closeout-orchestrator.md	tracked
 docs/orchestration/PROPOSAL-20260815-instrumented-and-corrected-foldforward-closure.md	tracked	ARCHIVAL	document		20260815	terminal		exact-path-only	nd-unfolding/pet/closure_foldforward_instrumented.py;nd-unfolding/pet/sbatch_foldforward_instrumented_closure.sh	yes	4	168	11735
 docs/orchestration/PROPOSAL-20260828-f17b-four-surface-repair.md	tracked	ARCHIVAL	document		20260828	terminal		exact-path-only		yes	2	114	7730
 docs/orchestration/PROPOSAL-20260830-forward-only-rehearsal.md	tracked	ARCHIVAL	document		20260830	terminal		exact-path-only		yes	13	347	21765
-docs/orchestration/PROPOSAL-20260830-k0r2-resubmission.md	tracked	LIVE	document		20260830	open		route-only		no	4	157	10055
+docs/orchestration/PROPOSAL-20260830-k0r2-resubmission.md	tracked	LIVE	document		20260830	open		route-only		no	4	161	10410
 docs/orchestration/PROVENANCE-20260822-declaration-v-scalar5d-blocks.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/state/declaration-v-5d-covering-search-20260822.sh	no	4	367	28401
 docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md	tracked	LIVE	document		20260810	open		route-only	docs/open-items/verify_open_items_restructure.py	no	8	398	26929
 docs/orchestration/PUBLICATION-READINESS-20260822.md	tracked	LIVE	document		20260822	open		route-only		no	5	1352	101099

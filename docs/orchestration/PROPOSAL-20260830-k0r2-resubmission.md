@@ -141,8 +141,12 @@ Two operational notes from the failed attempt, both cheap to honour:
 - **`OI-177` is open and is Joseph's** — §6's per-arm CPU ceilings for arms 2, 5 and 6, which three
   prior actuals exceed by 1.38 CPU task-h in total. A re-submission runs the same arms against the
   same unratified ceilings.
-- **`OI-179` defects 1 and 2** are filed and unrepaired: `PACKET:122` still carries the two-entry
-  line that measurement above shows fails, and correcting it is Joseph's call.
+- **`OI-179` defect 1** is filed and unrepaired: `PACKET:122` still carries the two-entry line that
+  measurement above shows fails, and correcting it is Joseph's call.
+  **CORRECTED 2026-08-30: this bullet said "defects 1 and 2" and that was wrong when written.**
+  Defect 2, the missing branch-(b) test arm, was already repaired at `b512760d` — two commits before
+  this document existed. This lane wrote a stale sentence about its own completed work, which is the
+  cheapest kind of error to make and the easiest to propagate.
 - **Gate 2 remains FAIL** on the six clauses at `327bc105`, none of which this touches. Even a
   complete successful run does not turn this rehearsal's Gate 2 into PASS.
 - The **quarantine branch gates adoption independently of this run** and nothing today moved it.
