@@ -310,6 +310,20 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 
 
+- **THE GATE-THAT-CANNOT-FAIL AUDITOR IS BLIND ON 15 FILES, 2026-08-31 (`OI-180`):**
+  [`FINDING-20260831-strip-noncode-inverts-on-a-closing-triple-quote.md`](FINDING-20260831-strip-noncode-inverts-on-a-closing-triple-quote.md)
+  — `audit_gates_that_cannot_fail.py:59` reads a **closing** triple quote at line start as an
+  **opening** docstring, so the terminator of an assigned multi-line string inverts the state machine
+  for the rest of the file. Measured over 473 Python files: **15 lose more than half their code, 3,730
+  non-blank lines invisible**, worst `test_k0_launcher_two_roots.py` at **5.0%** (978 → 49). **Not
+  confined to fixtures** — `mii_adopt_unified_5d_stamped.py` 48.6% (an adoption path),
+  `mii_root_payload_classes.py` 48.8%, `pet/cstat_data_only.py` 49.2%, `conftest.py` 41.6%. **So any
+  0-hits over an affected file is unfounded.** CORRECTS the sibling finding's §1, which attributed the
+  sweep's zero to the detector binding alone. **An authorized detector was written, passed 8-of-8
+  power, and was deliberately NOT SHIPPED**: it returns 0 on the real file because the stripper already
+  blanked its subject, and 170 REVIEW hits elsewhere — its power arm passed only because `run_power`
+  feeds RAW lines, making fixture and reality different objects. Shipping it would have added a gate
+  that cannot fail inside the instrument built to find them. Moves no gate; Gate 2 remains **FAIL**.
 - **THE BEN-039 DETECTOR IS TRIPLE-BOUND, 2026-08-31:**
   [`FINDING-20260831-ben039-detector-is-triple-bound.md`](FINDING-20260831-ben039-detector-is-triple-bound.md)
   — `audit_gates_that_cannot_fail.py` is HEALTHY (`--power-only` rc 0, all seven detectors fire) and

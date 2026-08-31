@@ -39,6 +39,21 @@ self-proving and its design argument is correct.
 `--severity ALL`: **rc 0**, and a case-insensitive grep of the whole report for
 `ambient|pathcheck|SYSTEM_PREFIXES|test_k0_launcher` returns **0**. It is blind to `OI-179` defect 2.
 
+> ### ⚠ CORRECTED 2026-08-31 — THAT ZERO HAS A SECOND AND SUFFICIENT CAUSE, filed as `OI-180`
+>
+> This section attributed the sweep's zero to the triple binding of §2. **The triple binding is real
+> and stands** — §2 measured it by importing the module and calling `d_tautological_datum` on
+> single-line probes with a positive control that fires, and that method never involves the sweep's
+> comment stripper.
+>
+> **But no detector of any design could have hit that file.** `strip_noncode` reads a CLOSING triple
+> quote at line start as an OPENING docstring, so `test_k0_launcher_two_roots.py` is **5.0% visible**
+> to the auditor — 978 non-blank lines reduced to 49, with `_ambient_prefixes`, `good_env` and
+> `subprocess.run` all blanked. Two independent causes were collapsed into one here, and the
+> consequence of leaving it uncorrected is that a reader would expect repairing the detector to make
+> the sweep see the instance. **It would not.** See
+> `FINDING-20260831-strip-noncode-inverts-on-a-closing-triple-quote.md`.
+
 ## 2. WHY it is blind — three binding constraints, and a positive control
 
 ```python
