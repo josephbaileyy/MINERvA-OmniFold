@@ -19,7 +19,7 @@ import zipfile
 import numpy as np
 
 
-CONTRACT_ID = "PET-G6-GAP3-NONFINITE-DIAGNOSTIC-20260830"
+CONTRACT_ID = "PET-G6-GAP3-NONFINITE-DIAGNOSTIC-REPAIRED-20260831"
 SOURCE_RELATIVE_PATH = Path(
     "nd-unfolding/g2_fullevent/merged/"
     "runEventLoopOmniFold_G2_FPS_MEFHC.root"
@@ -233,6 +233,48 @@ PrefixMapResult map_signal_prefixes(
   }
   return result;
 }
+
+struct SignalEntryResult {
+  ULong64_t entry;
+  int sim_pass;
+  double sim;
+  double sim_pz;
+  double mc;
+  double mc_pz;
+  bool selected;
+  bool pass_truth;
+  bool keep;
+};
+
+SignalEntryResult inspect_signal_entry(
+    const std::string& source_path,
+    const ULong64_t requested_entry) {
+  TFile source(source_path.c_str(), "READ");
+  if (source.IsZombie()) throw std::runtime_error("cannot open source ROOT");
+  TTreeReader reader("mc_signal_reco", &source);
+  TTreeReaderValue<UChar_t> sim_pass(reader, "sim_pass");
+  TTreeReaderValue<double> sim(reader, "sim");
+  TTreeReaderValue<double> sim_pz(reader, "sim_pz");
+  TTreeReaderValue<double> mc(reader, "MC");
+  TTreeReaderValue<double> mc_pz(reader, "MC_pz");
+  while (reader.Next()) {
+    const auto source_entry = static_cast<ULong64_t>(reader.GetCurrentEntry());
+    if (source_entry != requested_entry) continue;
+    const bool selected = *sim_pass != 0 && in_domain(*sim, *sim_pz);
+    const bool pass_truth = in_domain(*mc, *mc_pz);
+    return SignalEntryResult{
+        source_entry,
+        static_cast<int>(*sim_pass),
+        *sim,
+        *sim_pz,
+        *mc,
+        *mc_pz,
+        selected,
+        pass_truth,
+        selected || pass_truth};
+  }
+  throw std::runtime_error("requested signal entry was not found");
+}
 }
 """
 
@@ -387,6 +429,23 @@ def inspect_source_paths(code_root: Path) -> dict[str, Any]:
     required = {
         "production_float32_conversion": "np.array([list(c) for c in cols], np.float32).T" in dumper,
         "production_stable_sort": 'np.argsort(-arr[:, 0], kind="stable")' in dumper,
+        "production_pass_truth_predicate": (
+            "pass_truth = in_fps_domain(MC, MC_pz)" in dumper
+        ),
+        "production_pass_reco_predicate": (
+            "pass_reco = (int(sim_pass) != 0) and in_fps_domain(sim, sim_pz)"
+            in dumper
+        ),
+        "production_keep_predicate": (
+            "return (pass_truth or pass_reco), bool(pass_reco), bool(pass_truth)"
+            in dumper
+        ),
+        "production_retained_order": (
+            "for i in range(n):" in dumper
+            and "keep, pr, ptru = select_signal_row" in dumper
+            and "if not keep:" in dumper
+            and "k += 1" in dumper
+        ),
         "loader_nonfinite_to_zero": (
             "nan=0.0, posinf=0.0, neginf=0.0" in loader
         ),
@@ -484,6 +543,40 @@ def verify_static_inputs(args: argparse.Namespace) -> dict[str, Any]:
             / "docs/orchestration/state/"
             "gate6-gap3-reco-truncation-changed-retry1-result-57729539.json.gz",
             args.expected_prior_result_sha256,
+        ),
+        "mapping_repair_proposal": (
+            code_root
+            / "docs/orchestration/state/"
+            "gate6-gap3-nonfinite-mapping-repair-proposal-20260831.json",
+            args.expected_mapping_repair_proposal_sha256,
+        ),
+        "failed_diagnostic_predeclaration": (
+            code_root
+            / "docs/orchestration/"
+            "PREDECLARATION-20260830-gate6-gap3-nonfinite-diagnostic.md",
+            args.expected_failed_diagnostic_predeclaration_sha256,
+        ),
+        "failed_diagnostic_proposal": (
+            code_root
+            / "docs/orchestration/state/"
+            "gate6-gap3-nonfinite-diagnostic-proposal-20260830.json",
+            args.expected_failed_diagnostic_proposal_sha256,
+        ),
+        "failed_diagnostic_launcher": (
+            code_root / "nd-unfolding/pet/sbatch_gap3_nonfinite_diagnostic.sh",
+            args.expected_failed_diagnostic_launcher_sha256,
+        ),
+        "failed_diagnostic_launch_receipt": (
+            code_root
+            / "docs/orchestration/state/"
+            "gate6-gap3-nonfinite-diagnostic-launch-57743781.json",
+            args.expected_failed_diagnostic_launch_receipt_sha256,
+        ),
+        "failed_diagnostic_terminal_receipt": (
+            code_root
+            / "docs/orchestration/state/"
+            "gate6-gap3-nonfinite-diagnostic-terminal-57743781.json",
+            args.expected_failed_diagnostic_terminal_receipt_sha256,
         ),
     }
     verified = {
@@ -596,16 +689,24 @@ def run_preflight(args: argparse.Namespace) -> dict[str, Any]:
     static = verify_static_inputs(args)
     import ROOT  # type: ignore[import-not-found]
 
+    if ROOT.IsImplicitMTEnabled():
+        ROOT.DisableImplicitMT()
+    if ROOT.IsImplicitMTEnabled():
+        raise RuntimeError("ROOT implicit multithreading remains enabled")
     _declare_root_helpers(ROOT)
     schema = _verify_root_schema(ROOT, static["source"])
     header = _npz_header(static["npz"])
     run_self_tests()
+    real_preflight = _run_repaired_real_preflight(ROOT, static["source"])
     return {
         "status": "PASS",
         "hashes": static["verified_hashes"],
         "production_path": static["production_path"],
         "root_version": str(ROOT.gROOT.GetVersion()),
         "root_helper_jit": True,
+        "implicit_multithreading": False,
+        "source_identity_threads": 1,
+        "real_preflight": real_preflight,
         "schema": schema,
         "npz_header": header,
     }
@@ -659,6 +760,69 @@ def _stream_signal_prefixes(
         int(mapping.selected_rows),
         int(mapping.kept_rows),
     )
+
+
+def _run_repaired_real_preflight(root: Any, source: Path) -> dict[str, Any]:
+    """Verify the repaired identity and prefix mapping on the bound ROOT input."""
+    config = INVENTORIES["signal"]
+    affected_rows = _collect_affected_rows(root, source, config)
+    source_entries = np.asarray(affected_rows["rdfentry_"], dtype=np.uint64)
+    nonfinite_entries = sum(
+        int(np.count_nonzero(~np.isfinite(np.asarray(values, dtype=np.float64))))
+        for values in affected_rows["part_reco_E"]
+    )
+    if nonfinite_entries != EXPECTED_NONFINITE_ENTRIES["signal"]:
+        raise RuntimeError("signal non-finite entry census mismatch in real preflight")
+    if np.any(source_entries == 10_152_799):
+        raise RuntimeError("truth-only entry 10152799 was mislabeled as selected")
+
+    npz_rows, selected_rows, kept_rows = _stream_signal_prefixes(
+        root, source, source_entries
+    )
+    if selected_rows != EXPECTED_SELECTED_ROWS["signal"]:
+        raise RuntimeError("signal selected-row census mismatch in real preflight")
+    if kept_rows != EXPECTED_NPZ_ROWS["signal"]:
+        raise RuntimeError("signal retained-row census mismatch in real preflight")
+    if npz_rows.size != source_entries.size:
+        raise RuntimeError("signal streaming-prefix mapping length mismatch")
+    if npz_rows.size and np.any(np.diff(npz_rows) <= 0):
+        raise RuntimeError("signal streaming-prefix mapping is not strictly ordered")
+
+    real_entry = root.gap3diag.inspect_signal_entry(str(source), 10_152_799)
+    observed = {
+        "entry": int(real_entry.entry),
+        "sim_pass": int(real_entry.sim_pass),
+        "sim": float(real_entry.sim),
+        "sim_pz": float(real_entry.sim_pz),
+        "MC": float(real_entry.mc),
+        "MC_pz": float(real_entry.mc_pz),
+        "selected": bool(real_entry.selected),
+        "pass_truth": bool(real_entry.pass_truth),
+        "keep": bool(real_entry.keep),
+    }
+    expected = {
+        "entry": 10_152_799,
+        "sim_pass": 0,
+        "sim": -9999.0,
+        "sim_pz": -9999.0,
+        "MC": 0.2756309263353958,
+        "MC_pz": 5.606105907302817,
+        "selected": False,
+        "pass_truth": True,
+        "keep": True,
+    }
+    if observed != expected:
+        raise RuntimeError(f"real-entry regression mismatch: {observed}")
+    return {
+        "real_entry_10152799": observed,
+        "signal_source_rows": EXPECTED_SIGNAL_SOURCE_ROWS,
+        "signal_selected_rows": selected_rows,
+        "signal_kept_rows": kept_rows,
+        "signal_affected_events": int(source_entries.size),
+        "signal_nonfinite_entries": nonfinite_entries,
+        "streaming_prefix_targets": int(npz_rows.size),
+        "complete_kept_index_materialized": False,
+    }
 
 
 def _scan_source_inventory(
@@ -978,6 +1142,8 @@ def run_diagnostic(args: argparse.Namespace) -> dict[str, Any]:
 
     if ROOT.IsImplicitMTEnabled():
         ROOT.DisableImplicitMT()
+    if ROOT.IsImplicitMTEnabled():
+        raise RuntimeError("ROOT implicit multithreading remains enabled")
     _declare_root_helpers(ROOT)
     schema = _verify_root_schema(ROOT, static["source"])
     header = _npz_header(static["npz"])
@@ -1155,6 +1321,12 @@ def _parser() -> argparse.ArgumentParser:
         "prior_launch_receipt",
         "prior_terminal_receipt",
         "prior_result",
+        "mapping_repair_proposal",
+        "failed_diagnostic_predeclaration",
+        "failed_diagnostic_proposal",
+        "failed_diagnostic_launcher",
+        "failed_diagnostic_launch_receipt",
+        "failed_diagnostic_terminal_receipt",
     ):
         parser.add_argument(f"--expected-{name.replace('_', '-')}-sha256")
     parser.add_argument(
@@ -1162,7 +1334,7 @@ def _parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path(
             "docs/orchestration/"
-            "PREDECLARATION-20260830-gate6-gap3-nonfinite-diagnostic.md"
+            "PREDECLARATION-20260831-gate6-gap3-nonfinite-diagnostic-repaired.md"
         ),
     )
     parser.add_argument(
@@ -1170,13 +1342,13 @@ def _parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path(
             "docs/orchestration/state/"
-            "gate6-gap3-nonfinite-diagnostic-proposal-20260830.json"
+            "gate6-gap3-nonfinite-diagnostic-repaired-proposal-20260831.json"
         ),
     )
     parser.add_argument(
         "--test-relative-path",
         type=Path,
-        default=Path("nd-unfolding/pet/test_gap3_nonfinite_diagnostic.py"),
+        default=Path("nd-unfolding/pet/test_gap3_nonfinite_diagnostic_repaired.py"),
     )
     return parser
 
@@ -1207,6 +1379,12 @@ def main() -> int:
         "prior_launch_receipt",
         "prior_terminal_receipt",
         "prior_result",
+        "mapping_repair_proposal",
+        "failed_diagnostic_predeclaration",
+        "failed_diagnostic_proposal",
+        "failed_diagnostic_launcher",
+        "failed_diagnostic_launch_receipt",
+        "failed_diagnostic_terminal_receipt",
     ):
         required[f"expected_{name}_sha256"] = getattr(
             args, f"expected_{name}_sha256"
