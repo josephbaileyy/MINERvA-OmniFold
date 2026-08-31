@@ -87,6 +87,50 @@ existing ceilings, which the measurements clear.
 strictly-under-500 CPU-hours, so this remains inside the delegated authority's competence and does not
 escalate to a new class of decision.
 
+## 3b. ⚠ THE SECOND SAMPLE ARRIVED AND IT BREACHES THIS AMENDMENT'S OWN ARM-5 CEILING
+
+Measured 2026-08-31 from round 2, which runs the identical launchers at identical populations. §4's
+caveat was not caution; it was correct, and it now has numbers.
+
+| arm | aa67c426 mean/task | round-2 mean/task | change | round-2 n |
+|---|---:|---:|---:|---:|
+| bootstrap | 9.2 min | 8.9 min | −3% | 75/100 |
+| seed split | 13.6 min | 14.6 min | +7% | 14/24 |
+| **detector** | **43.8 min** | **43.5 min** | **−0.7%** | **19/19 COMPLETE** |
+| sweep | 9.1 min | 9.1 min | 0% | 24/169 |
+| **uthrow run** | **46.4 min** | **69.5 min** | **+50%** | 13/40 |
+| **uthrow block** | **85.7 min** | **99.5 min** | **+16%** | 11/21 |
+
+**The detector arm is complete in BOTH runs at n=19 and agrees to 0.9% — 13.88 against 13.76
+A100-h.** So the measurement method is sound and GPU-partition arms are highly reproducible.
+
+**The CPU-partition arms are not.** Projecting round 2 at its observed mean:
+
+- **arm 5 uthrow run: 69.5 min × 40 tasks ≈ 46.3 CPU-h, against this amendment's PROPOSED ceiling of
+  40.** It would be **breached by the very next run**.
+- arm 6 uthrow block: 99.5 × 21 ≈ 34.8 CPU-h — inside 40.
+- arm 2 seed split: 14.6 × 24 ≈ 5.8 CPU-h — inside 8.
+
+**So ratifying this table today would repeat §6's defect, at lower severity but in the same shape:** a
+ceiling set from one sample, breached by the next run, and `OI-177` refiles itself. That is the outcome
+§4 predicted before the data existed.
+
+**PROJECTION, NOT MEASUREMENT — the honest limits.** Arm 5's figure rests on **13 of 40** completed
+tasks, and early tasks in a `%40` array need not represent the whole population. The likely mechanism
+for the CPU slowdown is contention: round 2 ran several of our own arms concurrently on shared
+partitions, and the queue showed `(Resources)` repeatedly. **That is itself the argument against a
+single-sample ceiling** — a budget must survive the scheduler it actually meets, not the quietest run
+it was measured on.
+
+**REVISED PROPOSAL for arm 5: 60 CPU-h**, not 40 — about 30% above the round-2 projection of 46.3 and
+94% above the `aa67c426` measurement, which is wide but is the only figure covering both observed
+regimes. Sums would become **70 GPU / 113 CPU**, still far inside strictly-under-500.
+
+**AND THE RECOMMENDATION IS NOW TO WAIT**, not to ratify either number. Round 2 finishes on its own and
+costs nothing to await: this row blocks no gate, and round 2 is running inside the CURRENT §6 ceilings
+on every arm except the three already filed. Ratify from n=2 complete populations, not from n=1 plus a
+13-task projection.
+
 ## 4. What this does NOT settle, and one thing that will improve it
 
 **Arm 4 is the thinnest margin at 17%** and is left unchanged deliberately: it is not breached, and
