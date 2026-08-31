@@ -48,6 +48,11 @@ _STRONG_ASSERT = re.compile(r"\b(?:==|!=|<=|>=|array_equal|allclose|isclose|star
 _WEAK_ONLY = re.compile(r"\b(?:isfinite|len|is not None|is None|shape|any|all|> 0|>= 0)\b")
 _PATIENCE = re.compile(r"\bpatience\s*=\s*(\d+)")
 _EPOCHS = re.compile(r"\bepochs?\s*=\s*(\d+)")
+_ENV_READ = re.compile(r"\bos\.(?:environ|getenv)\b")
+_DEF_ANY = re.compile(r"^(\s*)def\s+(\w+)\s*\(")
+_SUBPROC = re.compile(r"\b(?:subprocess\.(?:run|Popen|check_output|check_call)|Popen)\s*\(")
+_ENV_KWARG = re.compile(r"\benv\s*=")
+
 _TAUT_NAME = re.compile(
     r"^\s*(\w*(?:achieved|measured|class_ratio|_ratio|realized)\w*)\s*=\s*"
     r"(?:\w+)\.get\(|^\s*\w+\[[\"'](\w*(?:achieved|measured|class_ratio)\w*)[\"']\]\s*=\s*\w+\[")
@@ -292,6 +297,106 @@ def d_tautological_datum(path, lines):
     return out
 
 
+def d_environment_derived_expectation(path, lines):
+    """OI-179 defect 2: a test derives the value it feeds the system under test FROM THE AMBIENT
+    ENVIRONMENT, so the system cannot disagree with it.
+
+    THIS IS THE SAME CLASS AS BEN-039 AND THE EXISTING DETECTOR CANNOT SEE IT. `d_tautological_datum`
+    is bound on three axes measured 2026-08-31: it matches one line at a time, its left-hand side must
+    contain `achieved|measured|class_ratio|_ratio|realized`, and its right-hand side must be `.get(`
+    or a dict index. The real instance satisfies none of them --
+    `nd-unfolding/tests/test_k0_launcher_two_roots.py:269` reads
+    `MNV_ENV_SYSTEM_PREFIXES: self._ambient_prefixes()`, where `_ambient_prefixes()` walks the live
+    `PATH`/`PYTHONPATH`/`LD_LIBRARY_PATH` and predeclares every directory it finds. The guard under
+    test then checks those same variables against that allowlist, so the allowlist can never be
+    violated and the arm cannot fail. Six production tasks died on the branch it was meant to cover.
+
+    STRUCTURAL, NOT LEXICAL, ON PURPOSE. Keying on names would repeat the mistake this detector
+    exists to correct: the next instance arrives in a fourth vocabulary and is invisible again. The
+    shape hunted here is a value flowing OUT of the environment and INTO what the system under test
+    is judged against, whatever anyone called it.
+
+    DELIBERATELY NARROW ON TWO AXES, both measured. Producers are FUNCTIONS whose body reads the
+    environment, not bare names assigned from it: the first draft also registered `env` from
+    `env = dict(os.environ)`, and then every `env,` and `env)` in the file matched -- 242 findings
+    across the repo, almost all noise, which is how a detector becomes a report nobody reads. And a
+    use must be a real CALL, `name(`, not a mention. The cost of both narrowings is stated rather than
+    hidden: a tautology built by dict-index assignment rather than a helper call is NOT caught here.
+
+    HEURISTIC, hence REVIEW. The producer-call and the subprocess handoff are correlated at FILE
+    scope, not by dataflow, because these detectors see a line at a time. Deriving a value from the
+    environment is legitimate in a fixture -- `_ambient_prefixes()`'s own comment argues for it, to
+    avoid a hardcoded list that would refuse a correct configuration on every host but the author's.
+    That argument is right about portability and wrong about falsifiability, and only a human can say
+    which one a given call is buying. So this reports and does not convict.
+    """
+    out = []
+    # SCOPED TO TESTS, because deriving a value from the environment and handing it to a child is
+    # ordinary in production code and only becomes unfalsifiable when something then ASSERTS on the
+    # child's verdict. And the `<power:...>` prefix is accepted deliberately: `run_power` supplies a
+    # SYNTHETIC path, so a path-shaped precondition that the power harness cannot satisfy makes the
+    # detector unprovable -- which is this file's own subject. The first draft of this detector had
+    # exactly that bug and was caught by its own power arm.
+    base = os.path.basename(path)
+    if "test" not in base and not base.startswith("<power:"):
+        return out
+
+    # Does this file hand an environment mapping to a child process at all? If not, there is no
+    # system under test on the receiving end and the shape does not apply.
+    hands_env = False
+    for i, l in enumerate(lines):
+        if _SUBPROC.search(l):
+            for j in range(i, min(i + 4, len(lines))):
+                if _ENV_KWARG.search(lines[j]):
+                    hands_env = True
+                    break
+        if hands_env:
+            break
+    if not hands_env:
+        return out
+
+    # Producers: any def whose BODY reads the ambient environment, plus any name assigned from it.
+    producers = set()
+    for i, l in enumerate(lines):
+        m = _DEF_ANY.match(l)
+        if m:
+            indent, name = len(m.group(1)), m.group(2)
+            for j in range(i + 1, len(lines)):
+                nxt = lines[j]
+                if nxt.strip() and (len(nxt) - len(nxt.lstrip())) <= indent and _DEF_ANY.match(nxt):
+                    break
+                if _ENV_READ.search(nxt):
+                    producers.add(name)
+                    break
+    if not producers:
+        return out
+
+    # Uses: the producer's value must be placed UNDER A NAMED KEY -- a dict-literal entry or a
+    # subscript assignment. NOT a plain `x = producer()`.
+    #
+    # WHY THE KEY IS THE SIGNAL, measured. `good_env` itself reads `os.environ`, so it is a producer,
+    # and it is CALLED about 35 times in the real file. Flagging every call gave 36 hits on one file
+    # for one genuine defect -- the fixture being USED is not the defect. What makes it unfalsifiable
+    # is that a value derived from the environment is stored under the specific key the system under
+    # test will consult as its expectation. The key names the expectation; a bare assignment is just
+    # fixture construction.
+    for i, l in enumerate(lines):
+        if _DEF_ANY.match(l):
+            continue
+        for name in producers:
+            call = r"(?:self\.|cls\.)?\b" + re.escape(name) + r"\s*\("
+            keyed = (re.search(r"""^\s*["'][^"']+["']\s*:\s*[^:]*""" + call, l)
+                     or re.search(r"\w+\s*\[[^\]]+\]\s*=\s*[^=]*" + call, l))
+            if keyed:
+                out.append(("REVIEW", path, i + 1, l.strip(),
+                            f"`{name}` is derived from the ambient environment and its value is fed "
+                            f"to the system under test in this file: the expectation cannot disagree "
+                            f"with the environment being judged, so this arm may be unable to fail "
+                            f"(OI-179 defect 2; same class as BEN-039)"))
+                break
+    return out
+
+
 DETECTORS = [
     ("unreachable-trigger", d_unreachable_trigger),
     ("absolute-floor-in-tolerance", d_absolute_floor_in_tolerance),
@@ -300,6 +405,7 @@ DETECTORS = [
     ("nonemptiness-gate", d_nonemptiness_gate),
     ("strong-name-weak-body", d_strong_name_weak_body),
     ("tautological-datum", d_tautological_datum),
+    ("environment-derived-expectation", d_environment_derived_expectation),
 ]
 
 # ---------------------------------------------------------------------------------------------
@@ -334,6 +440,27 @@ POWER = {
     ]),
     "tautological-datum": ("train_fullevent_nominal.py (pre-BEN-039)", [
         '    class_ratio = target_meta.get("step1_class_ratio")',
+    ]),
+    "environment-derived-expectation": ("test_k0_launcher_two_roots.py:231-269 (OI-179 defect 2)", [
+        "    @staticmethod",
+        "    def _ambient_prefixes():",
+        '        out = []',
+        '        for var in ("PATH", "PYTHONPATH", "LD_LIBRARY_PATH"):',
+        '            for e in os.environ.get(var, "").split(":"):',
+        '                out.append(os.path.realpath(e))',
+        '        return " ".join(out)',
+        "",
+        "    def good_env(self, **over):",
+        "        env = dict(os.environ)",
+        "        env.update({",
+        '            "MNV_ENV_SYSTEM_PREFIXES": self._ambient_prefixes(),',
+        "        })",
+        "        return env",
+        "",
+        "    def run_launcher(self, sh, env):",
+        '        cp = subprocess.run(["bash", sh],',
+        "                            capture_output=True, text=True, env=env)",
+        "        return cp",
     ]),
 }
 

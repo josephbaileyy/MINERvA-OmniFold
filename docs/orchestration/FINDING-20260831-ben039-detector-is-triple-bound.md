@@ -98,6 +98,31 @@ unversioned filesystem state. No regex, no dataflow analysis and no AST pass can
 **Therefore defect 3 stops being audit hygiene and becomes the only mechanism that can detect this
 class at all.** It is now load-bearing for two distinct failures, not one.
 
+## 3b. THE DETECTOR IS SHIPPED, 2026-08-31, and it met §4's criterion
+
+Joseph authorized it; it was blocked on `OI-180` and landed once the stripper was repaired.
+`environment-derived-expectation`, registered as the eighth detector, `REVIEW` severity.
+
+**STRUCTURAL, not lexical.** Producers are FUNCTIONS whose body reads `os.environ`/`os.getenv`. A use
+counts only when the producer's value is placed **under a named key** — a dict-literal entry or a
+subscript assignment — in a file that hands an environment mapping to a child process.
+
+**THE KEY IS THE SIGNAL, and that was measured rather than reasoned.** Two earlier drafts were
+rejected on their own numbers: flagging any name assigned from the environment gave **242** findings,
+because `env = dict(os.environ)` makes `env` a producer and every `env,` matched; flagging any
+producer CALL gave **36 hits on the one real file**, because `good_env` itself reads `os.environ` and
+is called about 35 times. Neither would have been read. **A fixture being USED is not the defect. What
+makes it unfalsifiable is that an environment-derived value is stored under the specific key the
+system under test consults as its expectation** — the key names the expectation.
+
+**Final precision: exactly 1 hit repo-wide, `test_k0_launcher_two_roots.py:269`, the real instance.**
+Total sweep findings 47 → 48.
+
+**A LOW COUNT IS NOT PROOF OF RARITY** and the producer session's caution is recorded here: the
+pattern is precise rather than broad, so a tautology built by dict-index rather than a helper call is
+still not caught (§4 of the sibling finding records that cost). One instance is plausible, not
+established.
+
 ## 4. THE ACCEPTANCE CRITERION for any detector written later
 
 The tool's own docstring supplies it: *"Every real instance above is now FIXED, so a sweep of the
