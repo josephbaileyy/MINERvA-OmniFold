@@ -24,7 +24,7 @@ docs/orchestration/CLAIM-CLM-007.md	tracked	ARCHIVAL	document			terminal		exact-
 docs/orchestration/CLAIM-CLM-008.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	1114
 docs/orchestration/CLAIM-CLM-009.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	1564
 docs/orchestration/CLAIM-CLM-010.md	tracked	ARCHIVAL	document			terminal		exact-path-only	docs/open-items/verify_open_items_restructure.py	yes	4	53	8551
-docs/orchestration/CLAIM-CLM-011.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	1714
+docs/orchestration/CLAIM-CLM-011.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	3	33	1714
 docs/orchestration/CLAIM-CLM-012.md	tracked	ARCHIVAL	document			terminal		exact-path-only	docs/open-items/verify_open_items_restructure.py	yes	5	97	20772
 docs/orchestration/CLAIMS.md	tracked	LIVE	ledger	fe-fps-campaign		open		route-only	docs/orchestration/generate_manifest.py;docs/orchestration/whose_row.py;nd-unfolding/pet/extract_fullevent_fps.py;nd-unfolding/tests/test_fullevent_extract.py	no	26	23	11557
 docs/orchestration/CLOSE-20260830-canonical-quiesce-window-k0-7ac0edec.md	tracked	LIVE	document		20260830	open		route-only		no	7	99	5623
@@ -216,7 +216,7 @@ docs/orchestration/compare_m1_m6.py	tracked	MACHINE	script			generated		exact-pa
 docs/orchestration/control-plane/owners.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	3	13	747
 docs/orchestration/control-plane/playbook.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	3	26	8403
 docs/orchestration/control-plane/policy.json	tracked	LIVE	machine-data			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/test_usagectl.py;docs/orchestration/usagectl.py	no	9	69	1674
-docs/orchestration/control-plane/source-record-inventory.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/control_plane_lint.py	no	9	132	22956
+docs/orchestration/control-plane/source-record-inventory.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/control_plane_lint.py	no	9	132	23034
 docs/orchestration/control-plane/work-items.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	3	14	2407
 docs/orchestration/control_plane_lint.py	tracked	LIVE	script			open		route-only		no	9	846	44313
 docs/orchestration/dashboard.html	tracked	MACHINE	artifact			generated		exact-path-only	docs/orchestration/dashboard_serve.py	no	6	638	29854
