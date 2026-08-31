@@ -30,8 +30,10 @@ Static only: no imports of the audited code, no execution, so it is safe to run 
 defeated by an import side effect.
 """
 import argparse
+import io
 import os
 import re
+import tokenize
 
 # ---------------------------------------------------------------------------------------------
 # Detectors. Each returns a list of (severity, path, lineno, line, why).
@@ -54,15 +56,12 @@ _TAUT_NAME = re.compile(
 _PY_DOC = re.compile(r"^\s*(\"\"\"|''')")
 
 
-def strip_noncode(lines, is_python):
-    """Blank comments and docstrings, PRESERVING line numbers.
+def _strip_noncode_regex(lines, is_python):
+    """The ORIGINAL line-regex stripper, retained ONLY as a fallback for source `tokenize` refuses.
 
-    MENTION vs USE. Without this the sweep's loudest hits are the ledger prose and the regression tests
-    that exist *because* of these defects: it flags a comment reading "EarlyStopping(patience=10) cannot
-    fire inside epochs=8" as an instance of the very thing that sentence documents. This session already
-    paid for that lesson once today, on a test that failed on its own rationale comment, so the fix is
-    applied here rather than rediscovered -- `_executable_lines()` in
-    test_pet_fullevent_nominal_launcher.py is the same idiom.
+    It is kept because a file that will not tokenize still has to be swept, and a blanked-nothing
+    fallback would silently widen the sweep instead of narrowing it. **It carries the OI-180 defect**
+    -- see `strip_noncode` -- so callers reaching it get a `[audit]` warning rather than silence.
     """
     out = []
     doc_q = None
@@ -85,6 +84,76 @@ def strip_noncode(lines, is_python):
             out.append("" if l.lstrip().startswith("#") else re.sub(r"\s#\s.*", "", l))
     return out
 
+
+REGEX_FALLBACK_FILES = []
+
+
+def strip_noncode(lines, is_python):
+    """Blank comments and docstrings, PRESERVING line numbers. Tokenizer-based since OI-180.
+
+    MENTION vs USE. Without this the sweep's loudest hits are the ledger prose and the regression tests
+    that exist *because* of these defects: it flags a comment reading "EarlyStopping(patience=10) cannot
+    fire inside epochs=8" as an instance of the very thing that sentence documents.
+
+    WHY THIS IS NOT A REGEX ANY MORE -- OI-180, 2026-08-31. The previous implementation asked whether a
+    line's first non-space characters were a triple quote and, if so, treated it as OPENING a docstring.
+    **The TERMINATOR of an assigned multi-line string is also such a line.** So
+
+        STUB = \'\'\'echo hello        <- not matched; the line starts with STUB
+        ...
+        \'\'\'                        <- MATCHED, and read as an OPENING docstring
+
+    flipped the state machine on and inverted the sense of every later triple quote. Measured across
+    473 Python files with at least 40 non-blank lines: **15 lost more than half their code and 3,730
+    non-blank lines were invisible to every detector**, worst `test_k0_launcher_two_roots.py` at **5.0%
+    survival** -- 978 non-blank lines reduced to 49, with the subject of an authorized new detector
+    among the casualties. It was not confined to fixtures: `mii_adopt_unified_5d_stamped.py`, an
+    ADOPTION path, was 48.6% visible. **Every "0 hits" this tool reported over an affected file was
+    unfounded**, which made the auditor built to find gates that cannot fail into one, a level below
+    the `--min-files` bug this file's own docstring already records.
+
+    `tokenize` is the correct instrument because it is the thing that KNOWS what a string literal is;
+    the question "does this quote open or close" is not answerable one line at a time. A docstring is
+    identified structurally -- a STRING token that begins a logical line and is followed by a NEWLINE --
+    so an assigned literal like the shell stub above is now PRESERVED, which it always should have been:
+    those stubs carry the shell patterns the `size-only-completeness` detector exists to find.
+
+    COLUMN-AWARE for single-line tokens, so a trailing comment does not take the code beside it.
+    Multi-line tokens blank whole lines, as before, to keep line numbers exact.
+    """
+    if not is_python:
+        return _strip_noncode_regex(lines, is_python)
+    src = "\n".join(lines)
+    try:
+        toks = list(tokenize.generate_tokens(io.StringIO(src).readline))
+    except (tokenize.TokenError, IndentationError, SyntaxError, ValueError):
+        return _strip_noncode_regex(lines, is_python)
+
+    out = list(lines)
+
+    def blank(tok):
+        (r0, c0), (r1, c1) = tok.start, tok.end
+        if r0 == r1:
+            l = out[r0 - 1]
+            out[r0 - 1] = l[:c0] + (" " * (c1 - c0)) + l[c1:]
+        else:
+            out[r0 - 1] = out[r0 - 1][:c0]
+            for r in range(r0, r1):
+                out[r] = ""
+
+    prev_meaningful = tokenize.NEWLINE          # start of file behaves like a fresh logical line
+    for k, tok in enumerate(toks):
+        if tok.type == tokenize.COMMENT:
+            blank(tok)
+            continue
+        if tok.type == tokenize.STRING and prev_meaningful in (
+                tokenize.NEWLINE, tokenize.NL, tokenize.INDENT, tokenize.DEDENT, tokenize.ENCODING):
+            nxt = next((x for x in toks[k + 1:] if x.type not in (tokenize.COMMENT,)), None)
+            if nxt is not None and nxt.type in (tokenize.NEWLINE, tokenize.NL, tokenize.ENDMARKER):
+                blank(tok)
+        if tok.type not in (tokenize.COMMENT,):
+            prev_meaningful = tok.type
+    return out
 
 def d_unreachable_trigger(path, lines):
     """BEN-043: a guard whose firing condition cannot be met given the configured bound."""
@@ -269,9 +338,70 @@ POWER = {
 }
 
 
-def run_power():
-    print("=== POWER TEST: every detector must fire on the real pre-fix source ===")
+def run_stripper_power():
+    """THE STRIPPER MUST PROVE ITSELF TOO, because everything downstream reads its output.
+
+    It had NO power arm until OI-180, and that is exactly how it went wrong: it silently blanked 95%
+    of a file for eight days and every detector reported clean over the remains. A preprocessing step
+    with no test is a gate that cannot fail wearing a helper's clothes -- the detectors were provably
+    powerful over an input that was provably wrong.
+
+    Arm 2 is the regression for OI-180 itself and is the reason this function exists.
+    """
+    print("=== STRIPPER POWER: the preprocessing every detector depends on ===")
     ok = True
+
+    def check(label, got, want):
+        nonlocal ok
+        good = got == want
+        ok &= good
+        print(f"  {label:52s} {'OK' if good else '*** FAIL ***'}")
+        if not good:
+            print(f"      expected {want!r}\n      got      {got!r}")
+
+    # 1. a real docstring is removed
+    src = ['def f():', '    """vanish"""', '    return 1']
+    out = strip_noncode(src, True)
+    check("a docstring is blanked", out[1].strip(), "")
+
+    # 2. OI-180 REGRESSION. The terminator of an assigned multi-line string must NOT be read as
+    #    opening a docstring. Everything after it stayed visible.
+    src = ['S = \'\'\'echo hi', 'if [[ -s "$OUT" ]]; then skip; fi', '\'\'\'', 'REAL_CODE = 1',
+           'def g():', '    return REAL_CODE']
+    out = strip_noncode(src, True)
+    check("code AFTER an assigned multi-line string survives", out[3].strip(), "REAL_CODE = 1")
+    check("a def after it survives", out[4].strip(), "def g():")
+    check("shell text INSIDE the literal survives", out[1].strip(), 'if [[ -s "$OUT" ]]; then skip; fi')
+
+    # 3. column-aware: a trailing comment must not take the code beside it
+    out = strip_noncode(['x = 1  # gone'], True)
+    check("a trailing comment leaves its code", out[0].strip(), "x = 1")
+
+    # 4. line numbers are exact, or every reported lineno is wrong
+    src = ['"""doc', 'spanning', 'lines"""', 'a = 1']
+    out = strip_noncode(src, True)
+    check("line count is preserved", len(out), len(src))
+    check("code after a multi-line docstring survives", out[3].strip(), "a = 1")
+
+    # 5. a survival FLOOR on a synthetic file that is mostly code. The old stripper scored 5% on a
+    #    real file; anything of that shape must now be caught here rather than in production.
+    src = ['import os'] + [f'x{i} = {i}' for i in range(40)] + ["S = \'\'\'stub", "body", "\'\'\'"] + ['y = 2']
+    out = strip_noncode(src, True)
+    nz_in = sum(1 for l in src if l.strip())
+    nz_out = sum(1 for l in out if l.strip())
+    surv = 100.0 * nz_out / nz_in
+    good = surv >= 90.0
+    ok &= good
+    print(f"  {'survival floor on a code-only synthetic':52s} {'OK' if good else '*** FAIL ***'} ({surv:.1f}%)")
+
+    print("stripper power PASSED" if ok else "stripper power FAILED -- no detector output is trustworthy")
+    print()
+    return ok
+
+
+def run_power():
+    ok = run_stripper_power()
+    print("=== POWER TEST: every detector must fire on the real pre-fix source ===")
     by_name = dict(DETECTORS)
     for name, (origin, lines) in POWER.items():
         hits = by_name[name]("<power:" + name + ">", lines)

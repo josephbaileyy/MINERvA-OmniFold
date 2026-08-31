@@ -103,7 +103,49 @@ Joseph authorized it, with a power arm, on 2026-08-31. It was written, its `POWE
 **The detector is therefore BLOCKED ON §1, not abandoned.** Its acceptance criterion is already
 recorded at `FINDING-20260831-ben039-detector-is-triple-bound.md` §4 and stands unchanged.
 
-## 5. Proposed repair — NOT AUTHORIZED, NOT APPLIED
+## 5. REPAIR APPLIED 2026-08-31 on Joseph's authorization (*"Yes can you fix them all?"*)
+
+**All three proposed steps are done.** `strip_noncode` is now `tokenize`-based, the stripper has its
+own power arm, and the sweep was re-run and its delta measured.
+
+**Measured survival after the repair**, same files as §2: `test_k0_launcher_two_roots.py`
+**5.0% → 74.9%** (49 → 733 of 978); `test_n2_child_boundary.py` 17.7% → 75.9%;
+`test_measure_m1_m6.py` 27.8% → 78.7%; `agreement_windows_receipt.py` 12.3% → 67.6%;
+`mii_adopt_unified_5d_stamped.py` 48.6% → 40.8%; `conftest.py` 41.6% → 40.6%. **The last two went
+DOWN and that is correct, not a regression** — the old stripper left real docstrings visible while the
+state machine was inverted, so prose was being swept as code. The new one blanks docstrings properly
+and preserves assigned string literals, which is why the shell text inside a `STUB = '''…'''` block
+now survives: those literals carry the patterns `size-only-completeness` exists to find, and the old
+stripper was destroying them.
+
+**Line counts are preserved exactly** on every file checked, which every detector depends on because
+it reports `lines[ln - 1]`.
+
+**THE RE-SWEEP COST, which was the reason this was a decision: it is small. Net +1 finding, 46 → 47.**
+Four additions, all `strong-name-weak-body`: `docs/orchestration/agentctl.py:132`
+(`assert_clean_git_start`), `nd-unfolding/mii_adopt_unified_5d_stamped.py:456`
+(`assert_diag_matches_sqrt_tr_old`, on an ADOPTION path), `nd-unfolding/p4_lib.py:1489`
+(`check_projection_matrix_matches_recipe`), `nd-unfolding/pet/extract_fullevent_fps.py:405`
+(`assert_truth_denominator_coverage`) — each an `assert_*`/`check_*` function whose body asserts only
+presence or finiteness. Three removals, of which two are confirmed **mention-vs-use false positives**
+now correctly treated as data: `test_validator_units_auditor.py:74`, which is the literal string
+`"    b = d >= -1e-30\n"` inside a fixture *about* this auditor, and
+`unfold_nd_omnifold_unbinned.py:834`, an f-string message.
+
+**ATTRIBUTION OF THE DELTA IS PARTIAL AND THIS DOCUMENT DOES NOT PRETEND OTHERWISE.** One removal,
+`measure_joint_vs_additive_nuisance_retrain.py:114`, is unexplained: the line is visible under both
+strippers. And the precise mechanism of the four additions is not established — the first check tried
+compared the COUNT of visible body lines rather than their identity, which is an asymmetric
+comparison, and the counts were equal while the sets need not be. The delta is reported as measured;
+the causal story for 5 of the 7 changed rows is not claimed.
+
+**Fail-closed verified by sabotage, not by reading:** breaking one stripper assertion makes the sweep
+exit **1** and print *"stripper power FAILED -- no detector output is trustworthy"* and
+*"refusing to report a sweep whose detectors are not shown to fire"*. Restored, and
+`--power-only` returns 0 with 8 stripper arms and 7 detector arms.
+
+## 5b. The original proposal, retained
+
 
 1. **Fix the stripper** so a triple quote is classified by whether it opens or closes, e.g. by
    tracking whether the line's quote count is odd and whether the line has code before the quote, or
