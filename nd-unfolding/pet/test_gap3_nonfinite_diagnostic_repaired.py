@@ -142,6 +142,25 @@ def test_exact_stable_sort_and_nonfinite_classes() -> None:
     assert DIAGNOSTIC.classify_nonfinite(-math.inf) == "negative_infinity"
 
 
+def test_root_vector_materialization_avoids_array_protocol() -> None:
+    class RootVectorFixture:
+        def __init__(self) -> None:
+            self.values = (1.0, math.nan, math.inf, -math.inf)
+
+        def __len__(self) -> int:
+            return len(self.values)
+
+        def __iter__(self):
+            return iter(self.values)
+
+        def __array__(self, *_args, **_kwargs):
+            raise OverflowError("ROOT vector buffer conversion failed")
+
+    materialized = DIAGNOSTIC.materialize_float64_vector(RootVectorFixture())
+    assert materialized.shape == (4,)
+    assert np.isfinite(materialized).tolist() == [True, False, False, False]
+
+
 def test_signal_mapping_is_streaming_and_implicit_mt_is_absent() -> None:
     source = DIAGNOSTIC_PATH.read_text(encoding="utf-8")
     scan_source = source.split("def _scan_source_inventory", maxsplit=1)[1]
@@ -267,6 +286,7 @@ if __name__ == "__main__":
     test_preserved_failed_artifacts_are_unchanged()
     test_real_entry_predicates_and_mapping_regressions()
     test_exact_stable_sort_and_nonfinite_classes()
+    test_root_vector_materialization_avoids_array_protocol()
     test_signal_mapping_is_streaming_and_implicit_mt_is_absent()
     test_production_loader_and_model_paths_are_bound()
     test_launchable_proposal_and_artifact_bindings()

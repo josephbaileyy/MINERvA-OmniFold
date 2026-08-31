@@ -400,6 +400,15 @@ def production_pad(columns: Iterable[Iterable[float]], cap: int = CAP) -> np.nda
     return output
 
 
+def materialize_float64_vector(values: Any) -> np.ndarray:
+    """Copy a ROOT vector through iteration without invoking its NumPy buffer shim."""
+    return np.fromiter(
+        (float(value) for value in values),
+        dtype=np.float64,
+        count=len(values),
+    )
+
+
 def npz_row_for_source_entry(kept_entries: np.ndarray, source_entry: int) -> int:
     """Map a ROOT entry to its filtered NPZ row and fail if it was not retained."""
     index = int(np.searchsorted(kept_entries, source_entry))
@@ -768,7 +777,7 @@ def _run_repaired_real_preflight(root: Any, source: Path) -> dict[str, Any]:
     affected_rows = _collect_affected_rows(root, source, config)
     source_entries = np.asarray(affected_rows["rdfentry_"], dtype=np.uint64)
     nonfinite_entries = sum(
-        int(np.count_nonzero(~np.isfinite(np.asarray(values, dtype=np.float64))))
+        int(np.count_nonzero(~np.isfinite(materialize_float64_vector(values))))
         for values in affected_rows["part_reco_E"]
     )
     if nonfinite_entries != EXPECTED_NONFINITE_ENTRIES["signal"]:
@@ -995,11 +1004,11 @@ def _diagnose_population(
         raise RuntimeError(f"{name} loader output remains non-finite")
 
     for row, source_entry in enumerate(source_entries):
-        energy = np.asarray(source_rows["part_reco_E"][row], dtype=np.float64)
-        pos = np.asarray(source_rows["part_reco_pos"][row], dtype=np.float64)
-        z = np.asarray(source_rows["part_reco_z"][row], dtype=np.float64)
-        view = np.asarray(source_rows["part_reco_view"][row], dtype=np.float64)
-        time = np.asarray(source_rows["part_reco_time"][row], dtype=np.float64)
+        energy = materialize_float64_vector(source_rows["part_reco_E"][row])
+        pos = materialize_float64_vector(source_rows["part_reco_pos"][row])
+        z = materialize_float64_vector(source_rows["part_reco_z"][row])
+        view = materialize_float64_vector(source_rows["part_reco_view"][row])
+        time = materialize_float64_vector(source_rows["part_reco_time"][row])
         lengths = {len(energy), len(pos), len(z), len(view), len(time)}
         if len(lengths) != 1:
             raise RuntimeError(f"{name} entry {source_entry} has unaligned raw vectors")

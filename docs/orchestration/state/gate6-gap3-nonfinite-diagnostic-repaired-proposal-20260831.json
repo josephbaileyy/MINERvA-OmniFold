@@ -17,6 +17,16 @@
     "new_output_namespace": "gap3-nonfinite-diagnostic-repaired-<preparation-head-12>",
     "prior_failed_artifacts_mutable": false
   },
+  "preflight_history": [
+    {
+      "preparation_head": "9838256247dbb39a6769ba1390bb62f720de374a",
+      "submission_occurred": false,
+      "result_written": false,
+      "status": "FAILED_BEFORE_SUBMISSION",
+      "failure": "ROOT vector NumPy buffer conversion raised OverflowError before the sequential predicate census",
+      "disposition": "preserve the checkout and namespace; use iterator-based vector materialization in a new pushed preparation"
+    }
+  ],
   "resources": {
     "constraint": "cpu",
     "allocated_cpus": 18,
@@ -92,7 +102,7 @@
   "artifact_bindings": {
     "diagnostic": {
       "path": "nd-unfolding/pet/diagnose_gap3_nonfinite_energy.py",
-      "digest": "sha256:e4db4f96ff6e8a03171d2402c0e87972262ea393f414dbba13cb8d59975a7a1d"
+      "digest": "sha256:cc808341d8acea8d692b44589d9cff2b1a0b5375ba490fe5dad0c5b470a29035"
     },
     "predeclaration": {
       "path": "docs/orchestration/PREDECLARATION-20260831-gate6-gap3-nonfinite-diagnostic-repaired.md",
@@ -100,7 +110,7 @@
     },
     "test": {
       "path": "nd-unfolding/pet/test_gap3_nonfinite_diagnostic_repaired.py",
-      "digest": "sha256:ed63797fa6b4f3d8dde6d154ae11c20de87d09d3253fc97841848681f5dffe66"
+      "digest": "sha256:aaf2fba6b562c66d08be05d46190a31d33dce93ec9a92b32958c2fb5216fb2ff"
     },
     "guard": {
       "path": "nd-unfolding/mnv_guarded_run.py",
