@@ -310,6 +310,20 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 
 
+- **THE BEN-039 DETECTOR IS TRIPLE-BOUND, 2026-08-31:**
+  [`FINDING-20260831-ben039-detector-is-triple-bound.md`](FINDING-20260831-ben039-detector-is-triple-bound.md)
+  — `audit_gates_that_cannot_fail.py` is HEALTHY (`--power-only` rc 0, all seven detectors fire) and
+  **blind to `OI-179` defect 2** (sweep grep returns 0). Bound on **three** axes, not one: span, left-hand
+  vocabulary, and right-hand call shape. **Row 3 of its table is the proof** — supplying BEN-039's own
+  `measured` vocabulary is STILL silent, because `self._ambient_prefixes()` is a method call and the
+  pattern requires `.get(`. Positive control fires, so the nulls are evidence. **FOLDED INTO `OI-179`
+  rather than filed as a new class**, on Joseph's delegation: the row's remaining open content already
+  IS this, the class was named in 2026-08-07 as BEN-039, and a new `OI-*` or `BEN-*` ten-block costs the
+  same freeness ceremony for a row that belongs to an open one. **The `mkdir` half is unreachable by any
+  source-line detector**, so defect 3 becomes the only mechanism that can detect the class at all —
+  load-bearing for two failures now. Supplies the acceptance criterion: any new detector must FIRE in
+  `--power-only` on a reconstruction of pre-`b512760d` `good_env()`, or it is itself a gate that cannot
+  fail inside the instrument built to find them. Moves no gate; Gate 2 remains **FAIL**.
 - **THE `OI-179` REMEDIATION IS CONFIRMED IN A REAL SCHEDULED JOB, 2026-08-30:**
   [`RECORD-20260830-oi179-remediation-confirmed.md`](RECORD-20260830-oi179-remediation-confirmed.md)
   — `[env-pathcheck] OK`, **47 entries, 0 violations**, in all four round-2 `.out` files, on **both**
