@@ -118,8 +118,29 @@ seconds. **It is cheap and it is the whole lesson of this incident.**
 
 **AND RECORD THE ENVIRONMENT THIS TIME.** `OI-179` defect 3: the previous run pinned its tree at five
 timestamps and recorded nothing about its environment, so the omission was only provable because §5
-happened to list the eight exports. Emit the three search-path variables and
-`MNV_ENV_SYSTEM_PREFIXES` into the run directory, or the next failure of this class is unauditable.
+happened to list the eight exports.
+
+**AN INSTRUMENT NOW EXISTS FOR THIS, 2026-08-31: `nd-unfolding/mnv_env_provenance.py`.** Round 2's
+provenance was written BY HAND, which is exactly as perishable as the allowlist it documents. Use the
+tool instead, after the exports and before the first `sbatch`:
+
+```bash
+python3 $MNV_CODE_ROOT/nd-unfolding/mnv_env_provenance.py --emit  "$R/submission-environment.json"
+# ... and on any later leg, re-submission, or post-mortem:
+python3 $MNV_CODE_ROOT/nd-unfolding/mnv_env_provenance.py --check "$R/submission-environment.json"
+```
+
+`--check` exits **3** on drift and names what moved, including a GAINED search-path entry — which is
+the shape of `OI-179` defect 1, where a `mkdir` put `$HOME/bin` on `PATH` with no edit to any tracked
+file. **It compares against the RECORDED BASELINE and refuses (exit 2) if the baseline is absent**,
+rather than falling back to comparing the environment with itself; that fallback would always pass and
+would read as coverage, which is defect 2's shape.
+
+**THE LIMIT OF THE CHOSEN SHAPE, stated rather than buried:** this is a separate tool a submitter must
+remember to invoke. An emitter inlined into each launcher preamble could not be skipped, but that
+would edit eight pinned launchers and trigger the `F-14` / §7.0.7 coupling and `OI-123` supersession.
+Joseph chose the new-files shape on 2026-08-31 with that trade-off named. **So defect 3 is
+INSTRUMENTED, not yet ENFORCED**, and the enforcement question stays open.
 
 ## 4. The arms
 

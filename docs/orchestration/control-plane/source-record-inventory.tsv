@@ -1,7 +1,7 @@
 source_record	lifecycle	queue	classification_rule	source_row_sha256	state_prefix
 OI-181	active	NOW	safe-default-active	e394ab1b24f2056ca0f6100ec453fa4af2d5ce5ff527e6617b95583f9d9892a4	TRAP DEFUSED 2026-08-31 — the structural question stays open with OI-73
 OI-180	active	NOW	safe-default-active	36b25aa9d1ea66bd87d47283c4862e1c6c4bed60690aa43bc91311b5d27946b8	REPAIRED 2026-08-31 — awaiting a decision only on the triage of what it now reveals
-OI-179	active	NOW	safe-default-active	5df9bf58464b138574692d994c41a9ee99c6ebfc4101017c54ffa8ef65b7f74f	OPEN
+OI-179	active	NOW	safe-default-active	9da44978304da1528fe18de48c10d8db679b9dfd266942c7e7afc2f9778457df	OPEN
 OI-177	active	NOW	safe-default-active	9653c2141dbc41b71c0ff2dae8d5a6c59dec35a47a34aa7137ea45b91f2e12f6	OPEN
 OI-176	retired	-	explicit-terminal-prefix	34517ff3b245dd1e7ad19779e7f4edf1d501da6d5897ec1d5566dc510fc384a5	DISCHARGED
 OI-173	active	NOW	safe-default-active	b73850f3395bd9df9cc826df1676f838c47409dda19835be7a043d384c3964ff	OPEN
