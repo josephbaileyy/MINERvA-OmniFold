@@ -310,6 +310,23 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 
 
+- **THE QUARANTINE IS GRADED AGAINST THE CANDIDATE, NOT THE JULY ARTIFACT, 2026-08-31:**
+  [`DECISION-20260831-joseph-quarantine-graded-against-the-candidate.md`](DECISION-20260831-joseph-quarantine-graded-against-the-candidate.md)
+  — Joseph: *"Okay it sounds like the correct ruling"*, *"Okay do that"*, and **confirmed directly to the
+  recording lane as *"yes its my ruling"*** before the record was written. The seven causes are graded
+  against `stamped_bkgaware_meancentered_20260812.root` (sha `4f168e83…`, CV `dbcd5359…`, job
+  `56720356`). **`CRITERIA §0` already makes discharge a (cause × artifact) property** — *"a class has no
+  construction… discharge for **which** matrix?"* — so choosing the subject is sanctioned, not a
+  workaround. **Against X the provenance leg is unsatisfiable IN PRINCIPLE**, verified by measurement:
+  the g2 input's mtime AND ctime are both `2026-07-13 02:15:41 −0700`, while `fixed_seed_null_norm`
+  first enters git at `07c18aee` `2026-07-14 14:43:19 −0700` — the artifact predates its own stamping
+  code by ~36.5 h and equal ctime rules out a restore, so no stamp for X can ever exist. **X IS
+  RETAINED**: `adopt_unified_5d.py` opens the July product `RECREATE`, so deletion would do what that
+  guard exists to prevent; X also backs `values.tex` today and is the only baseline against which the
+  candidate's "flux fix alone" claim is checkable. Demotion only AFTER adoption and re-pointing.
+  **ADOPTS NOTHING, discharges no cause, changes no count** — CAND `1 of 7`, QUOTED `0 of 7`; Gate 2
+  remains **FAIL**. §6 corrects a withdrawn framing: `07c18aee` shows X was DELIBERATELY adopted, so
+  nobody erred.
 - **`OI-177` PER-ARM CEILINGS, AMENDMENT PREPARED FOR SIGNATURE, 2026-08-31:**
   [`AMENDMENT-20260831-oi177-per-arm-ceilings.md`](AMENDMENT-20260831-oi177-per-arm-ceilings.md)
   — **PREPARED, NOT RATIFIED; `OI-177` stays OPEN.** §6's estimate column is inherited verbatim from
