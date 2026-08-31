@@ -310,6 +310,20 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 
 
+- **`OI-177` PER-ARM CEILINGS, AMENDMENT PREPARED FOR SIGNATURE, 2026-08-31:**
+  [`AMENDMENT-20260831-oi177-per-arm-ceilings.md`](AMENDMENT-20260831-oi177-per-arm-ceilings.md)
+  — **PREPARED, NOT RATIFIED; `OI-177` stays OPEN.** §6's estimate column is inherited verbatim from
+  `PLAN-20260822-oneMember-mii-staged.md:220-224`, a 2026-08-22 prior, and §6's own detector row admits
+  it is *"from the older 24-task population"* while declaring **19** tasks — an asymmetric comparison,
+  not a slipped number. Measured `aa67c426` actuals over DISTINCT task identities, all seven
+  populations complete: bootstrap **15.38** A100-h, seed split **5.43** CPU-h, detector **13.88**,
+  sweep **25.54**, uthrow run **30.94**, uthrow block **30.01**, combine **0.42** — **total overrun
+  1.38 CPU task-h**, reconciling with the row. Arm 5's prior underestimated by **45%**. Proposes
+  minimal change: measured actuals into the estimate column, and raise only the **three** breached
+  ceilings (2 → 8, 5 → 40, 6 → 40 CPU-h). Sums 70 GPU / 93 CPU, far under the strictly-under-500
+  delegated thresholds. **Flags that ratifying on ONE run repeats the shape of the defect at lower
+  severity** — round 2 will supply a second independent measurement of the identical arms, and holding
+  costs nothing because the row blocks no gate. Moves no gate; Gate 2 remains **FAIL**.
 - **THE GATE-THAT-CANNOT-FAIL AUDITOR IS BLIND ON 15 FILES, 2026-08-31 (`OI-180`):**
   [`FINDING-20260831-strip-noncode-inverts-on-a-closing-triple-quote.md`](FINDING-20260831-strip-noncode-inverts-on-a-closing-triple-quote.md)
   — `audit_gates_that_cannot_fail.py:59` reads a **closing** triple quote at line start as an
