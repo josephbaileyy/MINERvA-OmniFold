@@ -24,6 +24,14 @@ three-entry line is what will actually be exported, while `PACKET:122` still doc
 two-entry line that §1 measures as FAILING. Correcting the packet is Joseph's call and stays open at
 `OI-179`. Until it is made, **this document is the operative recipe and the packet is not.**
 
+**RESOLVED 2026-08-30, so the divergence above no longer exists.** Joseph authorized the correction
+and `PACKET-20260823-round5-f2a-f17a-repair.md` §3 now carries a marked note giving the three-entry
+line, with `:218`'s count corrected. **The two documents agree and the packet may be followed again.**
+The packet's transcript was deliberately left byte-unchanged: it was FAITHFUL when run, and it is what
+round 1 followed. **The packet never contained an error — `$HOME/bin` entered the login `PATH` when
+that directory was created on 2026-08-26, three days after the packet, via `/etc/profile:171`, which
+adds it conditionally on the directory EXISTING. No file this campaign tracks or pins was edited.**
+
 ## 0. What changed since the failed submission, and what did not
 
 | property | at submission 15:46Z | measured now (~16:5xZ) | consequence |
@@ -141,8 +149,9 @@ Two operational notes from the failed attempt, both cheap to honour:
 - **`OI-177` is open and is Joseph's** — §6's per-arm CPU ceilings for arms 2, 5 and 6, which three
   prior actuals exceed by 1.38 CPU task-h in total. A re-submission runs the same arms against the
   same unratified ceilings.
-- **`OI-179` defect 1** is filed and unrepaired: `PACKET:122` still carries the two-entry line that
-  measurement above shows fails, and correcting it is Joseph's call.
+- **`OI-179` defect 1 is REPAIRED 2026-08-30** — see the resolution note under ## Authority. What
+  keeps the row open is **defect 3**, not defect 1: environment provenance was recorded for this run
+  BY HAND, and no launcher, gate or instrument emits it, so the next run reproduces the gap.
   **CORRECTED 2026-08-30: this bullet said "defects 1 and 2" and that was wrong when written.**
   Defect 2, the missing branch-(b) test arm, was already repaired at `b512760d` — two commits before
   this document existed. This lane wrote a stale sentence about its own completed work, which is the

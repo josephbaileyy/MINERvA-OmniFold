@@ -113,6 +113,42 @@ seconds.
 
 **The shipped bytes of the deployed launcher**, not a replica and not the fixture:
 
+> ### ⚠ CORRECTION 2026-08-30 — THE `MNV_ENV_SYSTEM_PREFIXES` LINE BELOW IS NO LONGER SUFFICIENT
+>
+> **Do not copy the transcript's export line. Use this one:**
+>
+> ```bash
+> export MNV_ENV_SYSTEM_PREFIXES="/usr /bin /sbin /lib /lib64 /etc /opt /global/common/software \
+> $HOME/.local/bin $HOME/.nvm $HOME/bin"
+> ```
+>
+> **THE TRANSCRIPT BELOW IS FAITHFUL AND WAS CORRECT WHEN RUN. It is left byte-unchanged on
+> purpose** — it is what round 1 of the k=0 rehearsal followed on 2026-08-30, so a reader must be
+> able to see the exact text that was followed. **This packet did not contain an error; it went stale
+> because a directory was created.**
+>
+> The mechanism, measured rather than reasoned: `/etc/profile:171` iterates
+> `for dir in $HOME/bin/$CPU $HOME/bin $HOME/.local/bin/$CPU $HOME/.local/bin` and adds each to
+> `PATH` **conditionally on the directory existing**. On 2026-08-23 `$HOME/bin` **did not exist** —
+> it was created **2026-08-26 01:40:39 PDT** (oldest content `2026-08-25 23:28`), and `~/.bashrc`
+> has not been touched since `2026-08-24 22:12:43`. So `$HOME/bin` entered every login `PATH`
+> **with no edit to any file this campaign tracks, pins or reviews.**
+>
+> **The entry count below is the corroboration.** This transcript records **45** entries with the
+> two-entry list on 2026-08-23; the same control re-run on 2026-08-30 with the three-entry list
+> records **46**. The difference is exactly the one directory that appeared in between.
+>
+> Measured 2026-08-30 against the deployed
+> `k0r2/clean/nd-unfolding/lib_mnv_env_pathcheck.sh` on the real login `PATH`: the two-entry line
+> returns **rc 3** with one `VIOLATION` on `/global/homes/j/josephrb/bin`; the three-entry line
+> returns `[env-pathcheck] OK`. Round 1 followed the two-entry line and six tasks died in 8–15 s.
+>
+> **THE GENERAL POINT, which outlives this line:** a submitter-declared allowlist is a **snapshot of
+> a directory listing**, and nothing in this campaign detects when it has gone stale. Evidence:
+> `FINDING-20260830-k0r2-env-pathcheck-submitter-declaration-omitted.md`, `OI-179`,
+> `RECORD-20260830-oi179-remediation-confirmed.md`.
+
+
 ```
 $ ssh saul.nersc.gov
 $ export MNV_CODE_ROOT=/pscratch/sd/j/josephrb/k0r2/clean
@@ -215,5 +251,9 @@ successes is not evidence.
 - **The env root is a real directory today, not a shared immutable tree.** A shared tree is permitted
   by the design and is **not** what is deployed; if one is adopted, note that a shared tree makes the
   digest manifest **more** load-bearing, since it is mutable by an owner outside the deployment.
-- **`MNV_ENV_SYSTEM_PREFIXES` is a submitter-declared allowlist.** The two `$HOME` entries above are
+- **`MNV_ENV_SYSTEM_PREFIXES` is a submitter-declared allowlist.** The `$HOME` entries above are
   predeclared **explicitly** and deliberately are not defaults.
+  **CORRECTED 2026-08-30: this sentence read "The two `$HOME` entries" and the count is now
+  THREE** — `$HOME/bin` joined the login `PATH` when that directory was created on 2026-08-26,
+  three days after this packet. The count was right when written. See the correction note in §3;
+  a count in prose is exactly the kind of assertion an external `mkdir` can falsify.
