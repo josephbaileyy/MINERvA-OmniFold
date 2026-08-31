@@ -131,6 +131,35 @@ costs nothing to await: this row blocks no gate, and round 2 is running inside t
 on every arm except the three already filed. Ratify from n=2 complete populations, not from n=1 plus a
 13-task projection.
 
+## 3c. ⚠ THE TWO ARM-5 FIGURES MAY BE TWO SCHEDULER REGIMES, NOT TWO SAMPLES OF ONE QUANTITY
+
+Observed while round 2 finished, and it weakens §3b's projection as much as it weakens §6's prior.
+
+Round 2's throughput over six consecutive hourly reads: **+29, +31, +70, +42, +3, +2** completed tasks.
+The +70 hour is when `sweep5dBKGrun`'s `%48` array ran wide; the +3 and +2 hours are the tail, where
+`squeue` showed **2 tasks RUNNING** and every remaining task `PENDING` with `Reason=Resources` while
+`ArrayTaskThrottle` stood at 40, 10 and 24. **Nothing we control was throttling it — Slurm simply was
+not allocating.**
+
+**So elapsed-per-task on the CPU arms is partly a measurement of cluster contention, not of the
+work.** `aa67c426` gave arm 5 46.4 min/task and round 2 gave 69.6 min/task; if those two runs met
+different scheduler regimes, the pair is not two draws from one distribution and neither the 40 nor the
+60 CPU-h ceiling is derived from a stable quantity. **A budget must survive the scheduler it actually
+meets** — which argues for the higher figure, not the more precise one.
+
+**The GPU arms are the control that makes this argument checkable rather than rhetorical:**
+`det5dBKG` ran 19/19 in both runs and agreed to **0.9%** (13.88 against 13.76 A100-h), and `boot5dG`'s
+mean moved only −3%. **GPU-partition arms reproduced; CPU-partition arms did not.** That asymmetry is
+what a contention explanation predicts and a work-content explanation does not.
+
+**CONSEQUENCE FOR RATIFICATION.** Ratifying any per-arm CPU ceiling from elapsed time alone bakes a
+scheduler snapshot into a budget. Two honest options, neither chosen here: set the CPU ceilings from
+the WORST observed regime and say so, or express them in a contention-independent unit — CPU-seconds
+of actual work rather than wall-clock task-hours — which would need `sacct`'s `TotalCPU`/`CPUTime`
+rather than `Elapsed` and is a change to §6's stated convention, so it is Joseph's call and not a
+correction. **`Elapsed` was used throughout this document because it is §6's own convention; that
+choice is now a known limitation rather than an assumption.**
+
 ## 4. What this does NOT settle, and one thing that will improve it
 
 **Arm 4 is the thinnest margin at 17%** and is left unchanged deliberately: it is not breached, and
