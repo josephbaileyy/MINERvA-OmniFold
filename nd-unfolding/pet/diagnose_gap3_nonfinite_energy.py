@@ -151,6 +151,7 @@ CPP_HELPERS = r"""
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -174,9 +175,112 @@ struct PrefixMapResult {
   ULong64_t selected_not_keep;
 };
 
+struct AffectedRow {
+  ULong64_t source_entry;
+  ULong64_t npz_row;
+  std::vector<double> energy;
+  std::vector<double> position;
+  std::vector<double> z;
+  std::vector<double> view;
+  std::vector<double> time;
+  double pt;
+  double pparallel;
+  double eavail;
+  double q3;
+  double weight;
+  bool has_weight;
+};
+
+struct InventoryScanResult {
+  std::vector<AffectedRow> affected;
+  ULong64_t source_rows;
+  ULong64_t selected_rows;
+  ULong64_t kept_rows;
+  ULong64_t selected_not_keep;
+  ULong64_t nonfinite_entries;
+};
+
 bool in_domain(const double pt, const double pparallel) {
   return std::isfinite(pt) && std::isfinite(pparallel) &&
          pt >= 0.0 && pt <= 30.0 && pparallel >= 0.0 && pparallel <= 120.0;
+}
+
+ULong64_t count_nonfinite(const std::vector<double>& values) {
+  ULong64_t count = 0;
+  for (const double value : values) count += std::isfinite(value) ? 0 : 1;
+  return count;
+}
+
+InventoryScanResult scan_inventory(
+    const std::string& source_path,
+    const std::string& tree_name,
+    const std::string& pass_branch,
+    const std::string& pt_branch,
+    const std::string& pparallel_branch,
+    const std::string& eavail_branch,
+    const std::string& q3_branch,
+    const std::string& weight_branch,
+    const std::string& truth_pt_branch,
+    const std::string& truth_pparallel_branch) {
+  TFile source(source_path.c_str(), "READ");
+  if (source.IsZombie()) throw std::runtime_error("cannot open source ROOT");
+  TTreeReader reader(tree_name.c_str(), &source);
+  TTreeReaderValue<UChar_t> pass(reader, pass_branch.c_str());
+  TTreeReaderValue<double> pt(reader, pt_branch.c_str());
+  TTreeReaderValue<double> pparallel(reader, pparallel_branch.c_str());
+  TTreeReaderValue<double> eavail(reader, eavail_branch.c_str());
+  TTreeReaderValue<double> q3(reader, q3_branch.c_str());
+  TTreeReaderValue<std::vector<double>> energy(reader, "part_reco_E");
+  TTreeReaderValue<std::vector<double>> position(reader, "part_reco_pos");
+  TTreeReaderValue<std::vector<double>> z(reader, "part_reco_z");
+  TTreeReaderValue<std::vector<int>> view(reader, "part_reco_view");
+  TTreeReaderValue<std::vector<double>> time(reader, "part_reco_time");
+  std::unique_ptr<TTreeReaderValue<double>> weight;
+  std::unique_ptr<TTreeReaderValue<double>> truth_pt;
+  std::unique_ptr<TTreeReaderValue<double>> truth_pparallel;
+  if (!weight_branch.empty()) {
+    weight = std::make_unique<TTreeReaderValue<double>>(reader, weight_branch.c_str());
+  }
+  if (!truth_pt_branch.empty() && !truth_pparallel_branch.empty()) {
+    truth_pt = std::make_unique<TTreeReaderValue<double>>(
+        reader, truth_pt_branch.c_str());
+    truth_pparallel = std::make_unique<TTreeReaderValue<double>>(
+        reader, truth_pparallel_branch.c_str());
+  }
+
+  InventoryScanResult result{{}, 0, 0, 0, 0, 0};
+  result.affected.reserve(2000);
+  while (reader.Next()) {
+    const auto source_entry = static_cast<ULong64_t>(reader.GetCurrentEntry());
+    const bool selected = *pass != 0 && in_domain(*pt, *pparallel);
+    const bool pass_truth = truth_pt && truth_pparallel
+        ? in_domain(**truth_pt, **truth_pparallel)
+        : false;
+    const bool keep = selected || pass_truth;
+    const ULong64_t event_nonfinite = count_nonfinite(*energy);
+    result.source_rows += 1;
+    result.selected_rows += selected ? 1 : 0;
+    result.selected_not_keep += selected && !keep ? 1 : 0;
+    if (selected && event_nonfinite != 0) {
+      result.affected.push_back(AffectedRow{
+          source_entry,
+          result.kept_rows,
+          *energy,
+          *position,
+          *z,
+          std::vector<double>(view->begin(), view->end()),
+          *time,
+          *pt,
+          *pparallel,
+          *eavail,
+          *q3,
+          weight ? **weight : 0.0,
+          static_cast<bool>(weight)});
+      result.nonfinite_entries += event_nonfinite;
+    }
+    result.kept_rows += keep ? 1 : 0;
+  }
+  return result;
 }
 
 PrefixMapResult map_signal_prefixes(
@@ -284,8 +388,11 @@ class SourceScan:
     """Bounded source rows and their production-order NPZ mapping."""
 
     npz_indices: np.ndarray
+    source_rows: int
     selected_rows: int
     kept_rows: int
+    selected_not_keep: int
+    nonfinite_entries: int
     affected_rows: dict[str, np.ndarray]
 
 
@@ -721,80 +828,27 @@ def run_preflight(args: argparse.Namespace) -> dict[str, Any]:
     }
 
 
-def _collect_affected_rows(
-    root: Any, source: Path, config: dict[str, Any]
-) -> dict[str, np.ndarray]:
-    dataframe = root.RDataFrame(config["tree"], str(source)).Define(
-        "__gap3_selected", config["selection"]
-    )
-    branches = [
-        "rdfentry_",
-        "part_reco_E",
-        "part_reco_pos",
-        "part_reco_z",
-        "part_reco_view",
-        "part_reco_time",
-        *config["axes"],
-    ]
-    if config["weight"]:
-        branches.append(config["weight"])
-    affected = dataframe.Filter("__gap3_selected").Filter(
-        "gap3diag::has_nonfinite(part_reco_E)"
-    ).AsNumpy(branches)
-    order = np.argsort(affected["rdfentry_"], kind="stable")
-    sorted_affected = {
-        key: np.asarray(values, dtype=object)[order]
-        if np.asarray(values).dtype == object
-        else np.asarray(values)[order]
-        for key, values in affected.items()
-    }
-    return sorted_affected
-
-
-def _stream_signal_prefixes(
-    root: Any, source: Path, source_entries: np.ndarray
-) -> tuple[np.ndarray, int, int]:
-    if source_entries.size > EXPECTED_NONFINITE_ENTRIES["signal"]:
-        raise RuntimeError("affected signal target count exceeds the frozen bound")
-    targets = root.std.vector("ULong64_t")()
-    for source_entry in source_entries:
-        targets.push_back(int(source_entry))
-    mapping = root.gap3diag.map_signal_prefixes(str(source), targets)
-    if int(mapping.source_rows) != EXPECTED_SIGNAL_SOURCE_ROWS:
-        raise RuntimeError("signal source-row census mismatch in streaming mapper")
-    if int(mapping.selected_not_keep) != 0:
-        raise RuntimeError("signal stream contains selected rows that are not kept")
-    return (
-        np.asarray(list(mapping.npz_rows), dtype=np.int64),
-        int(mapping.selected_rows),
-        int(mapping.kept_rows),
-    )
-
-
 def _run_repaired_real_preflight(root: Any, source: Path) -> dict[str, Any]:
     """Verify the repaired identity and prefix mapping on the bound ROOT input."""
     config = INVENTORIES["signal"]
-    affected_rows = _collect_affected_rows(root, source, config)
-    source_entries = np.asarray(affected_rows["rdfentry_"], dtype=np.uint64)
-    nonfinite_entries = sum(
-        int(np.count_nonzero(~np.isfinite(materialize_float64_vector(values))))
-        for values in affected_rows["part_reco_E"]
-    )
-    if nonfinite_entries != EXPECTED_NONFINITE_ENTRIES["signal"]:
+    source_scan = _scan_source_inventory(root, source, "signal", config)
+    source_entries = np.asarray(source_scan.affected_rows["rdfentry_"], dtype=np.uint64)
+    if source_scan.nonfinite_entries != EXPECTED_NONFINITE_ENTRIES["signal"]:
         raise RuntimeError("signal non-finite entry census mismatch in real preflight")
     if np.any(source_entries == 10_152_799):
         raise RuntimeError("truth-only entry 10152799 was mislabeled as selected")
 
-    npz_rows, selected_rows, kept_rows = _stream_signal_prefixes(
-        root, source, source_entries
-    )
-    if selected_rows != EXPECTED_SELECTED_ROWS["signal"]:
+    if source_scan.selected_rows != EXPECTED_SELECTED_ROWS["signal"]:
         raise RuntimeError("signal selected-row census mismatch in real preflight")
-    if kept_rows != EXPECTED_NPZ_ROWS["signal"]:
+    if source_scan.kept_rows != EXPECTED_NPZ_ROWS["signal"]:
         raise RuntimeError("signal retained-row census mismatch in real preflight")
-    if npz_rows.size != source_entries.size:
+    if source_scan.source_rows != EXPECTED_SIGNAL_SOURCE_ROWS:
+        raise RuntimeError("signal source-row census mismatch in real preflight")
+    if source_scan.selected_not_keep != 0:
+        raise RuntimeError("signal selected-and-not-kept census is nonzero")
+    if source_scan.npz_indices.size != source_entries.size:
         raise RuntimeError("signal streaming-prefix mapping length mismatch")
-    if npz_rows.size and np.any(np.diff(npz_rows) <= 0):
+    if source_scan.npz_indices.size and np.any(np.diff(source_scan.npz_indices) <= 0):
         raise RuntimeError("signal streaming-prefix mapping is not strictly ordered")
 
     real_entry = root.gap3diag.inspect_signal_entry(str(source), 10_152_799)
@@ -825,11 +879,12 @@ def _run_repaired_real_preflight(root: Any, source: Path) -> dict[str, Any]:
     return {
         "real_entry_10152799": observed,
         "signal_source_rows": EXPECTED_SIGNAL_SOURCE_ROWS,
-        "signal_selected_rows": selected_rows,
-        "signal_kept_rows": kept_rows,
+        "signal_selected_rows": source_scan.selected_rows,
+        "signal_kept_rows": source_scan.kept_rows,
+        "signal_selected_and_not_kept": source_scan.selected_not_keep,
         "signal_affected_events": int(source_entries.size),
-        "signal_nonfinite_entries": nonfinite_entries,
-        "streaming_prefix_targets": int(npz_rows.size),
+        "signal_nonfinite_entries": source_scan.nonfinite_entries,
+        "streaming_prefix_targets": int(source_scan.npz_indices.size),
         "complete_kept_index_materialized": False,
     }
 
@@ -837,28 +892,54 @@ def _run_repaired_real_preflight(root: Any, source: Path) -> dict[str, Any]:
 def _scan_source_inventory(
     root: Any, source: Path, name: str, config: dict[str, Any]
 ) -> SourceScan:
-    affected_rows = _collect_affected_rows(root, source, config)
-    source_entries = np.asarray(affected_rows["rdfentry_"], dtype=np.uint64)
-    if name == "signal":
-        npz_indices, selected_rows, kept_rows = _stream_signal_prefixes(
-            root, source, source_entries
+    pass_branch = {
+        "signal": "sim_pass",
+        "data": "measured_pass",
+        "background": "sim_background_pass",
+    }[name]
+    truth_axes = ("MC", "MC_pz") if name == "signal" else ("", "")
+    scan = root.gap3diag.scan_inventory(
+        str(source),
+        config["tree"],
+        pass_branch,
+        *config["axes"],
+        config["weight"] or "",
+        *truth_axes,
+    )
+    vector_fields = {
+        "part_reco_E": "energy",
+        "part_reco_pos": "position",
+        "part_reco_z": "z",
+        "part_reco_view": "view",
+        "part_reco_time": "time",
+    }
+    affected_rows: dict[str, Any] = {
+        "rdfentry_": np.asarray(
+            [int(row.source_entry) for row in scan.affected], dtype=np.uint64
         )
-        return SourceScan(npz_indices, selected_rows, kept_rows, affected_rows)
-
-    dataframe = root.RDataFrame(config["tree"], str(source)).Define(
-        "__gap3_selected", config["selection"]
+    }
+    for branch, member in vector_fields.items():
+        vectors = np.empty(len(scan.affected), dtype=object)
+        for index, row in enumerate(scan.affected):
+            vectors[index] = np.asarray(list(getattr(row, member)), dtype=np.float64)
+        affected_rows[branch] = vectors
+    for branch, member in zip(config["axes"], ("pt", "pparallel", "eavail", "q3")):
+        affected_rows[branch] = np.asarray(
+            [float(getattr(row, member)) for row in scan.affected], dtype=np.float64
+        )
+    if config["weight"]:
+        affected_rows[config["weight"]] = np.asarray(
+            [float(row.weight) for row in scan.affected], dtype=np.float64
+        )
+    return SourceScan(
+        np.asarray([int(row.npz_row) for row in scan.affected], dtype=np.int64),
+        int(scan.source_rows),
+        int(scan.selected_rows),
+        int(scan.kept_rows),
+        int(scan.selected_not_keep),
+        int(scan.nonfinite_entries),
+        affected_rows,
     )
-    kept_payload = dataframe.Filter(config["keep"]).AsNumpy(
-        ["rdfentry_", "__gap3_selected"]
-    )
-    kept_entries = np.asarray(kept_payload["rdfentry_"], dtype=np.uint64)
-    selected_rows = int(np.count_nonzero(kept_payload["__gap3_selected"]))
-    kept_entries.sort()
-    npz_indices = np.asarray(
-        [npz_row_for_source_entry(kept_entries, int(entry)) for entry in source_entries],
-        dtype=np.int64,
-    )
-    return SourceScan(npz_indices, selected_rows, int(kept_entries.size), affected_rows)
 
 
 def _read_npz_rows(

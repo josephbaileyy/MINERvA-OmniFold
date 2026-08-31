@@ -163,12 +163,12 @@ def test_root_vector_materialization_avoids_array_protocol() -> None:
 
 def test_signal_mapping_is_streaming_and_implicit_mt_is_absent() -> None:
     source = DIAGNOSTIC_PATH.read_text(encoding="utf-8")
-    scan_source = source.split("def _scan_source_inventory", maxsplit=1)[1]
-    signal_branch = scan_source.split('if name == "signal":', maxsplit=1)[1].split(
-        "dataframe =", maxsplit=1
-    )[0]
-    assert "_stream_signal_prefixes" in signal_branch
-    assert "kept_payload" not in signal_branch
+    assert "gap3diag.scan_inventory" in source
+    assert "result.affected.push_back" in source
+    assert "result.kept_rows" in source
+    assert "RDataFrame" not in source
+    assert "AsNumpy" not in source
+    assert "kept_payload" not in source
     assert "ROOT.EnableImplicitMT" not in source
     assert "ROOT.DisableImplicitMT" in source
     assert 'choices=(1,)' in source

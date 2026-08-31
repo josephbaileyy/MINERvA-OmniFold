@@ -25,6 +25,14 @@
       "status": "FAILED_BEFORE_SUBMISSION",
       "failure": "ROOT vector NumPy buffer conversion raised OverflowError before the sequential predicate census",
       "disposition": "preserve the checkout and namespace; use iterator-based vector materialization in a new pushed preparation"
+    },
+    {
+      "preparation_head": "c0683c96f4a82cdff5214de5fd1f782ff7cdc3db",
+      "submission_occurred": false,
+      "result_written": false,
+      "status": "FAILED_BEFORE_SUBMISSION",
+      "failure": "AsNumpy retained invalid PyROOT vector views that could not be iterated after the action",
+      "disposition": "preserve the checkout and namespace; replace RDataFrame and AsNumpy with one direct C++ TTree streaming scan"
     }
   ],
   "resources": {
@@ -102,7 +110,7 @@
   "artifact_bindings": {
     "diagnostic": {
       "path": "nd-unfolding/pet/diagnose_gap3_nonfinite_energy.py",
-      "digest": "sha256:cc808341d8acea8d692b44589d9cff2b1a0b5375ba490fe5dad0c5b470a29035"
+      "digest": "sha256:47abd3965be92acd46a9d02a83c1625aafd7a6c39499c78c032b08f5baf168b3"
     },
     "predeclaration": {
       "path": "docs/orchestration/PREDECLARATION-20260831-gate6-gap3-nonfinite-diagnostic-repaired.md",
@@ -110,7 +118,7 @@
     },
     "test": {
       "path": "nd-unfolding/pet/test_gap3_nonfinite_diagnostic_repaired.py",
-      "digest": "sha256:aaf2fba6b562c66d08be05d46190a31d33dce93ec9a92b32958c2fb5216fb2ff"
+      "digest": "sha256:d8d2e5a4b2427e0b5168f9ea52ebd9bcdbaf212b6df2a17924de5d09bd3443ca"
     },
     "guard": {
       "path": "nd-unfolding/mnv_guarded_run.py",
