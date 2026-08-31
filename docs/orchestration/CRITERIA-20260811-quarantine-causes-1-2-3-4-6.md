@@ -410,8 +410,10 @@ prevent. **Declaring the first discharge of the 2026-07-12 quarantine is a decis
 publication consequences and is routed, not taken.**
 
 **Every T leg is MET and mutation-verified.** What remains is concentrated:
-causes 2, 3 and 4 need only **provenance in the adopted product**, which is one edit — BEN-106's stamp
-propagation — closing the same leg for all three at once. Cause 4 additionally needs its magnitude. Cause 1
+~~causes 2, 3 and 4 need only **provenance in the adopted product**, which is one edit — BEN-106's stamp
+propagation — closing the same leg for all three at once.~~ **Cause 3's `P-i` is RUN-CARRIED by the next
+producing run, not a standalone no-compute leg; the narrow true residue is that the BEN-106 hop was one
+edit and did serve causes 2 and 4.** Cause 4 additionally needs its magnitude. Cause 1
 needs a static audit of X's path plus one measurement. Cause 6 needs a cluster rebuild it has never had.
 **Nothing here makes adoption nearer** — `values.tex` is untouched and the quarantine stands at **zero of
 seven** for this artifact.

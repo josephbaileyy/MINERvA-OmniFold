@@ -9,8 +9,8 @@ OI-173	active	NOW	safe-default-active	b73850f3395bd9df9cc826df1676f838c47409dda1
 OI-174	active	NOW	safe-default-active	46e62d8dbf1f49130bcf3d2a385b4fe4582c2328836efa34c1b7ac2a5ecc6c8c	OPEN
 OI-175	retired	-	explicit-terminal-prefix	1893c9ab84ba9f51382fd77b2bcd640b2500c9ec6a5406b460be06df3b9ab0cf	DISCHARGED
 OI-172	active	NOW	safe-default-active	9c150f4d0a989040b9ee5f271c0d10f3b5807df8c0b7b0ed89270f962098edc5	OPEN
-OI-171	active	NOW	safe-default-active	7c17e0538bcdfd2a227ca9f9f116fe26a9b836578da112d80ddf767463994019	OPEN
-OI-170	active	NOW	safe-default-active	1996d27f5805960c467aca3e059c81b9bedcfdfe7be48de3c57c50cc35c09fd6	OPEN
+OI-171	retired	-	explicit-terminal-prefix	fa3fffb13b0ba23bf4534d00733e5d26e522090b93bcd13a864f5478701da097	DISCHARGED
+OI-170	retired	-	explicit-terminal-prefix	ec9a5a3a9e5401064563a01babd43ae69a6d85c51ec5f0f45978f6355707d010	DISCHARGED
 OI-162	active	NOW	safe-default-active	137eb0d278f7d52107e34fd819639680943dd7b09b187364c6c41929938b8808	OPEN
 OI-160	active	NOW	safe-default-active	1215d91ef45157d74d547a0f618378bf9d2d85067d41ead51c49048c87802ecb	OPEN
 OI-161	active	NOW	safe-default-active	7eccccc9904c9b45b75b20425baec05ae242781ad0b3c1a531f540ffda989c4d	OPEN

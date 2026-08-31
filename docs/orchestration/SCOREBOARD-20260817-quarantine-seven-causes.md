@@ -532,6 +532,15 @@ anyone has said about this board's SHAPE.** I had them in a single `P` cell, whi
 | **P-i** | **nothing RECORDS the seed value** — no product, no receipt. B ran a covering search over every tracked `*.json`/`*.tsv`/`*.txt`/`*.md`: **zero hits.** | **add a stamp** | — |
 | **P-ii** | **nothing COULD record it on the dominant arm** — `sweep_bank_5d.py` and `analyze_universes_5d.py` have **nowhere to put one** | a **new write site**, not a stamp | **YES — P-ii survives P-i's fix** |
 
+> **GRADED 2026-08-31 — `P-ii` SATISFIED (`OI-170`).** Independently re-measured at HEAD
+> `76df49b4`: `sweep_bank_5d.py:277,309-311,358,365-367` passes a required, non-defaulted estimator
+> seed and writes all three identity keys; `analyze_universes_5d.py:134-169,273-278` collects those
+> keys from every universe, fails closed on absent, mixed, or disagreeing populations, and writes
+> the coherent values; `unified_throw_cov.py:569-575` writes the g2 identity. Because `P-ii` asks
+> only whether the code can carry the identity, it is the explicit code-capability exception to the
+> framework's (cause × artifact) scope. It supplies no provenance to either existing artifact.
+> **`P-i` is untouched and remains NOT MET.** No cause, count, or gate moves.
+
 **Why one cell was dangerous:** a future *"stamp added, `P` satisfied"* would close the cell **while the
 dominant arm is still ungraded.** P-i is satisfiable by an edit; P-ii is not, and the arm it concerns is the
 dominant block. **Graded as two, so a fix to one cannot silently discharge the other.**
