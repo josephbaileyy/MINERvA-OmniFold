@@ -7,6 +7,7 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 
 | source record | derived queue | classification rule | source state prefix |
 |---|---|---|---|
+| OI-181 | NOW | safe-default-active | OPEN |
 | OI-180 | NOW | safe-default-active | OPEN |
 | OI-179 | NOW | safe-default-active | OPEN |
 | OI-177 | NOW | safe-default-active | OPEN |
