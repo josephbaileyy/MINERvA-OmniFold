@@ -25,6 +25,133 @@ catalogue subsections were broadened on 2026-06-03 for completeness.
 - Foundational: Andreassen et al. OmniFold **arXiv:1911.09107**; H1 demonstrations
   **arXiv:2108.12376**, **arXiv:2303.13620** (all already in `technote.bib`).
 
+### Key reference (2026) — the first LHC full-phase-space measurement
+
+**Greif, *A High- and Variable-Dimensional Measurement of the Z+jets Differential Cross
+Section with the ATLAS Experiment and Artificial Intelligence*, PhD thesis (UC Irvine),
+`arXiv:2608.28449`, submitted 28 Aug 2026, 313 pp.** Read and extracted 2026-09-01.
+ATLAS Z(→μμ)+jets unfolded differential in the full phase space of every final-state
+charged particle: **6 min / 843 max / 150 mean dimensions per event**, 140.1 fb⁻¹, 247k
+selected data events. Supersedes the 24-observable Multifold round (`ATLAS:2024jets`).
+
+> **CITABLE FOR** method, construction, prescription and qualitative results.
+> **NOT CITABLE FOR** approved ATLAS numbers. §6.1 (p. 172): the analysis is *in ATLAS
+> review*, the paper is *expected September 2026*, and a conference note has been released;
+> Figures 6.19–6.22 are watermarked **ATLAS Internal** and 6.23–6.24 **ATLAS Simulation
+> Internal**. Cite the conference note or the paper, not the thesis, for any number.
+
+Two lane briefs carry the full extraction and the actions each implies:
+[`docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-pet.md`](docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-pet.md)
+(PET/FPS) and
+[`docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md`](docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md)
+(scalar-5D covariance). What it adds beyond the 2025 references above:
+
+- **A complete UQ prescription for a variable-dimensional unfold** (§6.4). Every source is
+  a **full OmniFold re-run from scratch** on the perturbed input; the uncertainty is the
+  **signed difference** `Δ_ku = σ̂_ku − σ̂_k`; the total is the **quadrature sum over
+  uncorrelated sources**. 12 experimental + 9 theoretical sources. Note this is a *block
+  sum over sources*, not a unified throw — cross-source correlation is dropped by
+  assumption.
+- **Lateral/vertical in their vocabulary** (§6.4): experimental uncertainties *"do not
+  shift the particle-level quantities"* → uncertainties on the (unbinned equivalent of the)
+  response matrix; theoretical ones are *"a shift in the particle-level prior."* Their claim
+  worth having on file: *"unfolding is broadly insensitive to choice of prior so the theory
+  uncertainties are all sub-leading"*, with footnote 38 — that treatment is *"the reason
+  some unfolded measurements can actually be more accurate than forward folded
+  measurements."*
+- **`C_ML` analogue** (§6.4.2). Ten seed-varied OmniFold runs; **the central value is the
+  event-by-event mean over the ten**; the uncertainty is the **std of bin counts** across
+  them; **per-member binning for the nominal only** — systematics use mean weights. Because
+  the nominal *is* the ensemble mean, it cannot sit outside its own family, and
+  mean-centering vs CV-centering coincide. Third independent instance of the ensemble-mean
+  convention this file already recommends (see the ensemble-mean audit finding below), and
+  the first to carry the systematics rule.
+- **ML noise is reducible, not a fixed tax** (§6.3.2). Pretraining ParT on an auxiliary
+  MC-vs-MC task (~14M events, ten independent checkpoints per level) took the ensemble from
+  **100 members to 10** and cut the method bias *"dramatically … especially in the tails"*.
+  Their assessment: without it the method bias is *"likely too large to make a publishable
+  measurement"* in some observables.
+- **Statistical uncertainty** (§6.4): Poisson(λ=1) multiplication of event weights, **100**
+  replicas for data stat and **25** for MC-training stat; the uncertainty is *"the variance
+  in the result produced by this ensemble of bootstraps."* **No** treatment of a
+  nominal-to-bootstrap-mean offset and **no** centering diagnostic anywhere — five mentions
+  of "bootstrap" in 313 pages. Nothing here bears on `OI-126`.
+- **`OmniSequential`** (§6.4, pp. 208–209): a deliberately **non-ML** Gaussian-kernel
+  reweighter (Scott's-rule binning, log binning above skewness 2, pick the worst
+  `z = (χ² − ndof)/√(2 ndof)`, iterate to `z < 2` on all observables), built *"to avoid
+  over-reliance on ML based likelihood ratio estimation techniques."* It is what constructs
+  both of their unfolding uncertainties — i.e. they refuse to estimate an ML method's bias
+  with the same ML machinery.
+- **Hidden-variable uncertainty recipe** (§6.4.1): reweight the alternative generator's
+  *particle level* to the nominal's *particle level* in observables that are functions of
+  the phase space the unfold already sees, so only genuinely hidden variables survive; then
+  re-unfold and difference.
+- **The high-dimensional hidden-variable advantage was tested and DID NOT HOLD** (§6.4.1,
+  §6.5.2): *"naively an Omnifold based measurement should be less sensitive to hidden
+  variables … but this expectation is not borne out."* Their hidden-variable uncertainties
+  came out slightly **larger** than 1D IBU's. Causes: OmniFold is data-limited in tails
+  (the step-1 networks train on data; IBU bins over them), and the dominant hidden variable
+  — truth π/K/p fractions, unconstrained at detector level under the pion-mass assumption —
+  stays hidden at full phase space (Fig. 6.20: the unfold returns the prior *exactly*).
+  Net (§6.5.3): full phase space cost *"almost no reduction in precision"* vs 24-D — a tie,
+  not a gain. **The defensible motivation for FPS is flexibility and information
+  preservation, not hidden-variable immunity.**
+- **The validation instrument** (§6.5.1): binned χ² vs pseudodata truth **using the full
+  covariance**, across **26 observables**, p-value each — it *"allows the method bias and
+  uncertainty model to be jointly assessed."* Three details: **exclude from Σ any systematic
+  held at nominal in the pseudodata** (they drop the experimental block); Gaussian-smooth a
+  band built from an independent sample before it fills Σ, **except** where the band has real
+  sharp structure (jet mass, exempted and documented); judge on the correlated χ², not per
+  bin (their `mj1` has method bias above total uncertainty in several bins and still returns
+  p ≈ 0.26). All 26 clear p > 0.05, minimum 0.0556. *(Table 6.3 is internally consistent:
+  five p-values recomputed from its own χ² and DoF reproduce to four decimals.)*
+- **A release protocol for an unbinned product** (§6.7), which is the practical answer to
+  the unbinned-GoF open problem below — not a solution to it. The public spectra ship with
+  two binding usage requirements: **≥5,000 effective events in every bin** of any histogram
+  a user builds, and **the user must re-run the pseudodata measurement and compute a χ²/p in
+  their own binning and phase space.** Rationale: observables sensitive to unconstrained
+  truth-level information *"will fail this check, indicating that the observables cannot be
+  constrained with this measurement."* An unbinned result cannot be certified once, so they
+  ship the test as an obligation on the consumer.
+- **Classifier choice** (§5.6.3): *"Neural networks … are not required and may even be
+  sub-optimal. Simpler and computationally cheaper methods such as boosted decision trees
+  can also be used to estimate likelihood ratios"* — scoped to *"low- and fixed-dimensional
+  measurements."* External support for the LightGBM choice; see the GBDT/NN audit finding
+  below. **The scope clause is load-bearing: it does not reach the full-event PET case.**
+- **ParT vs PET, head to head** (§6.3.1): they benchmarked ParT, PET, L-GATr and LundNet and
+  chose ParT — *"ParT has overall better performance especially in the `Nch` observable.
+  Notably PET is more accurate in the `mj2` observable"*, plus faster training. A split
+  decision, not a refutation of PET. **The transferable part is the criterion: they ranked
+  architectures by method bias in the unfolded observables, not by classifier AUC.**
+- **Nobody is doing a coverage study, including them.** `coverag` appears **once** in the
+  whole thesis and it is about detector acceptance in the forward region. §6.5.1: *"running
+  sufficient bootstraps to observe this is computationally infeasible"*, so they use the
+  asymptotic χ² and a p-value. *(Scope: case-insensitive search over the `pdftotext -layout`
+  extraction; figure-embedded text would not be captured.)* This does not make the coverage
+  demand on `C_stat` wrong — it calibrates it as a standard **above** current field practice
+  rather than a gap relative to the literature.
+- **First explicit background subtraction in an unbinned measurement** (§6.3.3): *"This is
+  the first unbinned and high-dimensional cross section measurement to explicitly subtract a
+  background."* A classifier separates detector-level data from itself with the background
+  MC appended at **negative weight**, estimating `p_{D−B}(x)/p_D(x)`. **This is the same
+  construction as our `app:negweight`** and it means `sec_method.tex`'s survey of background
+  handling is now dated — filed as `OI-183`.
+- **Open problems they name** (§6.7): acceptance effects in unbinned unfolding when the
+  selection involves jets (*"proposed … but have not yet been applied in a real analysis"*),
+  and cost — **~25,000 transformer fine-tunings, ~400,000 A100 GPU-hours**, as stated.
+- **Census (Table 5.1)** — twelve unbinned-unfolding measurements, all OmniFold. **Six are
+  absent from `technote.bib` and from this file**: ATLAS dijets `2502.02062`, CMS min-bias
+  `2505.17850`, H1 `2412.14092`, STAR `2307.07718` and `2403.13921`, ALEPH `2507.14349`.
+  Filed as `OI-184`. **MINERvA does not appear** (correctly — unpublished), and **T2K
+  `2504.06857` is the only neutrino entry**, but Greif's table lists it among *experimental*
+  measurements while this file and `sec_method.tex` describe it as a **mock-data** study on
+  public ND280 simulation. That classification conflict touches our precedence claim and is
+  part of `OI-184`; his table is *"adapted from Ref. [208]"* (the Practical Guide), so the
+  label may propagate from there rather than originate with him.
+- The world-record dimensionality before this measurement is a **preliminary H1 full-phase-space
+  DIS result** reaching *"a few hundred"* dimensions (their Ref. [82], no arXiv id given).
+  Every other entry in Table 5.1 is Multifold — a fixed-length list of 4 to 24 observables.
+
 ### Broader OmniFold / ML-unfolding landscape
 
 OmniFold (full event as input) vs MultiFold (a chosen observable set) vs UniFold (one
@@ -44,6 +171,16 @@ Experimental maturity (per the Practical Guide synthesis): H1 pioneered OmniFold
 data (DIS, the two H1 refs above); the original paper demonstrated it on an LHC
 jet-substructure example; **T2K (arXiv:2504.06857) is the first neutrino application**, and
 the Practical Guide collects real-data results across major experiments from ~2021–2025.
+
+> **UPDATED 2026-09-01 from `arXiv:2608.28449` Table 5.1.** The census is now **twelve**
+> measurements, all OmniFold, and six of them are cited nowhere in this repo (see the 2026
+> key reference above; filed as `OI-184`). Two corrections to the sentence above: the
+> highest-dimensional result is a **preliminary H1 full-phase-space DIS** unfold at *"a few
+> hundred"* dimensions, and as of Aug 2026 **ATLAS has an unpublished full-phase-space
+> Z+jets measurement at 843 dimensions**. **T2K remains the only neutrino entry**, but
+> Greif's table classes it as an *experimental* measurement where this file calls it a
+> mock-data study on simulation; that conflict is unresolved here and bears on our
+> precedence claim.
 This analysis is, to our knowledge, the **first OmniFold application to MINERvA / to a
 muon-kinematics + available-energy 3D neutrino cross section**.
 
@@ -88,6 +225,12 @@ muon-kinematics + available-energy 3D neutrino cross section**.
 - Open problem. χ² on binned projections is used but "less ideal." Suggested unbinned
   alternatives: **Wasserstein distance**, **permutation tests**. No settled standard for
   rank-deficient covariance.
+- **UPDATED 2026-09-01.** Still open, and `arXiv:2608.28449` does not solve it either —
+  it uses the binned χ² and states a true frequentist check is computationally infeasible
+  (`coverag` appears **once** in 313 pages, about detector acceptance). What it adds is a
+  practical route *around* the problem: run the binned χ² in **many projections** (26), and
+  **ship the test as an obligation on the consumer** of the unbinned product rather than
+  certifying the product once. See the 2026 key reference above.
 
 ### How THIS analysis compares (audit, 2026-06-03)
 
@@ -166,6 +309,11 @@ consistent with the documented full-stats closure residual (0.046%).
 Tool: `2d-unfolding/uq/classifier_calibration.py` (subsampled step-1 reco classifier,
 data vs MC reco; reliability + GBDT-vs-NN, ~2 min, no full unfold). Addresses the "all
 published OmniFold uses NNs; this uses LightGBM" referee concern.
+**UPDATED 2026-09-01: there is now an EXTERNAL answer too.** `arXiv:2608.28449` §5.6.3
+states that NNs *"are not required and may even be sub-optimal"* for likelihood-ratio
+estimation, and that *"boosted decision trees can also be used"* — scoped to *"low- and
+fixed-dimensional measurements."* That scope clause fits the scalar unfolds and
+**deliberately does not reach the full-event PET case**.
 
 - Step-1 reco AUC ~0.537 (GBDT) / 0.534 (small MLP): data and MC reco are nearly
   indistinguishable in (pt,pz) — the MC models the data well, so the OmniFold reweight
