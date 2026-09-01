@@ -87,9 +87,33 @@ TRIPWIRE against commenting out a guarded call to hide it, not part of the guard
 authorizes de-pinning the boundary totals. Quietly de-pinning an unrelated tripwire on the way past
 would be scope creep under someone else's authorization, so it was left alone.
 
-## 4. ⚠ THE IMPLEMENTATION IS BROADER THAN THE RATIFIED WORDS, BY EXACTLY ONE MODULE
+## 4. ✅ RESOLVED — the implementation is broader than the ratified words, and that is intended
 
-**This is the one place the shipped work departs from §2, and it is Joseph's to reverse.**
+**RESOLVED 2026-09-01 BY JOSEPH, IN HIS OWN TURN, ON BEING SHOWN THIS SECTION:**
+
+> I don't think I meant it literally
+
+**So the shipped criterion stands and §4 is closed.** The stdlib-only phrasing in §2 was descriptive of
+the tool that prompted the row (`mnv_env_provenance.py`, which genuinely imports only the standard
+library), not a criterion he was fixing. The binding criterion is the one in §5 and
+`exclusion_criterion` (5): **an excluded preflight tool's repository imports must be a SUBSET of
+`{mnv_guarded_run}`.** No code, test or declaration changes as a result of this ruling — the
+enforcement shipped in this form; what changed is that its authorization is no longer provisional.
+
+**WHY THIS WAS WORTH ASKING RATHER THAN ASSUMING, given the answer was the convenient one.** The
+convenient reading and the correct reading coincided here, which is exactly the condition under which
+a lane should not be the one to decide. The two readings led to materially different work — the literal
+one obliges routing `mnv_source_manifest.py` through the guard or granting it a named exception, which
+is a change to a tool ruling 21 already accepted. That is not a judgment call a producing lane makes on
+its own behalf, and the cost of asking was one sentence.
+
+**The record below is kept unchanged as the state at ratification.** It is what he was shown when he
+ruled, and deleting it would remove the evidence that the departure was disclosed before it was blessed
+rather than discovered afterwards.
+
+---
+
+**AS FILED — the disclosure that prompted the ruling above.**
 
 §2 gives the exclusion ground as *"imports only the standard library"*. **Implemented as written,
 that criterion is unsatisfiable by the set ruling 21 already accepted.** Measured 2026-09-01 with
@@ -115,9 +139,10 @@ made falsifiable:
 > guard has nothing to contain but itself.**
 
 All three entries satisfy it as measured. It is **more permissive than §2's words by exactly one
-module, the guard**, and strictly stricter than no criterion at all. **If Joseph reads §2 as binding
-literally, the remedy is not to re-read this record: it is to route `mnv_source_manifest.py` through
-the guard or to grant it a named exception, and this lane will do either on his word.**
+module, the guard**, and strictly stricter than no criterion at all. ~~**If Joseph reads §2 as binding literally, the remedy is not to re-read this record: it is to route
+`mnv_source_manifest.py` through the guard or to grant it a named exception, and this lane will do
+either on his word.**~~ — **ANSWERED at the top of this section: he did not mean it literally. No
+remedy is owed and nothing is routed differently.**
 
 ## 5. What now enforces the ruling
 

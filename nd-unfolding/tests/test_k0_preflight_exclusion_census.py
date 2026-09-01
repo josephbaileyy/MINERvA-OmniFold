@@ -340,7 +340,9 @@ class TheExclusionCriterionIsMeasuredNotAsserted(unittest.TestCase):
     honest about what they measure.
 
     THE CRITERION WAS CORRECTED BY MEASUREMENT, WHICH IS WORTH STATING BECAUSE IT SUPERFICIALLY
-    RESEMBLES RELAXING A RULE TO MAKE A TEST PASS. OI-185 as filed gave the ground as `imports only
+    RESEMBLES RELAXING A RULE TO MAKE A TEST PASS. The departure was disclosed to Joseph before it was
+    blessed, and he ruled on it 2026-09-01: "I don't think I meant it literally". So the criterion
+    below is ratified, not merely shipped. OI-185 as filed gave the ground as `imports only
     the standard library`. Measured: mnv_env_provenance.py and verify_executing_copy_is_committed.py
     have repo_origin_count 0, but mnv_source_manifest.py has 1 -- it imports `MARKERS, is_checkout`
     from mnv_guarded_run itself (mnv_source_manifest.py:61). A stdlib-only rule would therefore have

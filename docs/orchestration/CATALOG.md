@@ -506,14 +506,15 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   v1 declaration is now **refused as could-not-look** rather than read under v2 semantics. **NEW ENFORCEMENT:**
   every declared exclusion must be structurally complete, resolve to its declared path, appear exactly
   `per_launcher` times, and be **A-3 `--pair` bound in every launcher** — the last was true of all three tools
-  and asserted by nobody, which is `F-7(a)`'s complaint about the exclusion itself. **⚠ ONE DEPARTURE FROM THE
-  RATIFIED WORDS IS FLAGGED, NOT ABSORBED (§4):** the recommendation gave the ground as *"imports only the
+  and asserted by nobody, which is `F-7(a)`'s complaint about the exclusion itself. **✅ THE ONE DEPARTURE FROM THE
+  RATIFIED WORDS IS RESOLVED (§4) — Joseph, 2026-09-01: *"I don't think I meant it literally"*, so the
+  shipped criterion stands and no code changed. AS DISCLOSED BEFORE HE RULED:** the recommendation gave the ground as *"imports only the
   standard library"*, and **implemented literally that is unsatisfiable by the set ruling 21 already
   accepted** — measured, `mnv_source_manifest.py` has `repo_origin_count` **1**, importing `MARKERS,
   is_checkout` from `mnv_guarded_run` itself. A stdlib-only rule would have fired on a ratified entry **on
   every correct tree**. The rule was **not relaxed to fit**; the question was restated to the CIRCULARITY
   ground the declaration always gave, made falsifiable as *repository imports ⊆ {`mnv_guarded_run`}* — broader
-  than the ratified words **by exactly one module**, and his to reverse. **THE PROMISE IS NOW TWO TESTS:** a
+  than the ratified words **by exactly one module** — disclosed before the ruling, and ratified by it. **THE PROMISE IS NOW TWO TESTS:** a
   principled fourth preflight tool passes with no ruling (boundary 46, `guarded` still 14) and the same
   launcher bytes without the declaration entry still fail. Census suite **25/25**, up from 13. **NO LAUNCHER
   WAS EDITED** — no `F-14`/§7.0.7 coupling, no `OI-123` supersession. **MOVES NO GATE:** Gate 2 remains FAIL,

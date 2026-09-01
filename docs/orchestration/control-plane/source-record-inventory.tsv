@@ -1,7 +1,7 @@
 source_record	lifecycle	queue	classification_rule	source_row_sha256	state_prefix
 OI-187	active	NOW	safe-default-active	7b3861f98d5d918ada0bad05927a1516bcc4284569a372a3653c030b1671e041	RULED 2026-09-01 BY JOSEPH — (a) UPGRADE, NOT A SUBMISSION BLOCKER, and (b) THE DEPENDENCY IS RETAINED BY CHOICE — "keep
 OI-186	active	NOW	safe-default-active	2eee4f9d1140ecf106fed1cb3bf5c59f05a94247e67d02119f39991065753dd4	OPEN
-OI-185	retired	-	explicit-terminal-prefix	7b252a516f7d7d39834300ce40eda0d85c3e92e3ef9de872d8c01382b1574bd1	DISCHARGED 2026-09-01 — RATIFIED AND RESTRUCTURED. Joseph ruled in his own turn: "Okay I like your recommendation for OI
+OI-185	retired	-	explicit-terminal-prefix	6e212c982f2864fbc83fbe82ceddbfc129b93295cda51725b2976f6330d4acf6	DISCHARGED 2026-09-01 — RATIFIED AND RESTRUCTURED. Joseph ruled in his own turn: "Okay I like your recommendation for OI
 OI-184	active	NOW	safe-default-active	8f82ddd8abf0b2866b952d8cb5f46173e7aa8713203b8e6694dab8d2e13a442e	OPEN
 OI-183	active	NOW	safe-default-active	2a367a48274713e3e2c51d4a7aa49a9e02df24c1e7a6141acad52bf6f8027adc	OPEN
 OI-182	active	NOW	safe-default-active	397784efd2e1604c1830aad8eefe2fe6bb6b4e447915dad571e632a3c47884a5	OPEN — FIX PRICED 2026-08-31 and DEFERRED; the remedy costs 23 pin supersessions
