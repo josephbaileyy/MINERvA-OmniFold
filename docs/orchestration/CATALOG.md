@@ -324,6 +324,21 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   counts stay CAND `1 of 7` / QUOTED `0 of 7`. Supplies the n=2 complete populations that make
   `OI-177` ratifiable — and kills the 40 CPU-h figure the amendment first proposed, since arm 5
   measured **49.11**.
+- **JOSEPH RULES THE TWO MAGNITUDE LEGS — `OI-172` AND `OI-173`, 2026-09-01:**
+  [`DECISION-20260901-joseph-oi172-oi173-magnitude-legs.md`](DECISION-20260901-joseph-oi172-oi173-magnitude-legs.md)
+  — Joseph in his own turn, directly, not relayed: ***"Okay I agree with your recommendations, I authorize you spend the
+  hours and drafting to investigate and fix the causes"***. **Ruling 1 (`OI-172`, cause 1's `M`): MATERIAL ENOUGH TO NEED
+  ITS OWN STATEMENT IN THE NOTE — so CAUSE 1 DOES NOT CLOSE and the note acquires a new obligation.** The unfavourable
+  branch, which the row named first. Grounds: the trace moves `3.1%`/`5.9%` while per-band ratios run median `2.0261`,
+  p90 `4.3256`, max `5.8024`; the effect CHANGES SIGN (`MaCCQE` ep0 `0.6377`, `MaRES` ep1 `0.6111` are understated, so a
+  consumer assuming conservatism is wrong on those bands); and the supporting measurement is diagonal-only with `Flux`,
+  `2p2h` and `__Normalization_flat` excluded. **Ruling 2 (`OI-173`, cause 4's `M`): specify `M` against the class of
+  object the defect actually REACHED — the reported ratio, not the stored covariance — and if the printed `jit_trace` is
+  unrecoverable then `M` is NOT MET (unmeasured), NOT `N/A`.** Follows `SCOREBOARD` §2c's rule *"do not let measurability
+  choose the specification"*, and explicitly REFUSES the available `N/A`-on-the-merits shortcut, whose payoff would be its
+  own premise. **The recommendations are this lane's and are restated verbatim in the record so nobody mistakes them for
+  his reasoning; he adopted the conclusions.** Discharges nothing, adopts nothing, moves no gate; cause 4's `M` becomes
+  SPECIFIED, not satisfied, and may yet grade NOT MET.
 - **THE `P` LEG IS ALREADY SATISFIED AND `M` IS THE BLOCKER — §4.2 DISSOLVED, 2026-09-01:**
   [`FINDING-20260901-p-leg-status-measured-against-the-candidate.md`](FINDING-20260901-p-leg-status-measured-against-the-candidate.md)
   — `CRITERIA-20260811` §4.2 says the `P` leg of causes 1–4 is *"currently unsatisfiable from the repository"* and
