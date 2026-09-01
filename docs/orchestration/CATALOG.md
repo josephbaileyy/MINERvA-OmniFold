@@ -367,6 +367,42 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   quotes is VALIDATED, every quarantined object is one it declines to use. Found by the `claude-school` lane, re-read
   here. **Deliberately does NOT settle** whether `OI-172`'s note obligation reaches the Letter — that is ruled separately
   in `OI-187`'s row on a CODE-PATH argument, because this lane's artifact-scope reasoning was true but not sufficient.
+- **THE REDEPLOY'S PRECONDITION DELTA, AND A CORRECTION ON WHEN THE OTHER EIGHT ARMS BREAK, 2026-09-01:**
+  [`FINDING-20260901-k0r2-redeploy-precondition-delta.md`](FINDING-20260901-k0r2-redeploy-precondition-delta.md)
+  — the measurement `DECISION-20260901-joseph-authorizes-k0r2-redeploy.md` §2's *"and reconcile the other issues"*
+  obliges. **All eight k=0 launchers gained one fail-closed requirement at `865b42d7`** — `MNV_ENV_PROVENANCE`, refusing
+  both unset AND set-but-empty (`:?`), needing a baseline emitted by `mnv_env_provenance.py --emit` **before** the first
+  `sbatch`, with no default by design. Per-launcher line numbers in §2; **`sbatch_finalize_5d_bkgaware_gpu.sh` is in the
+  set, so leg 6's preconditions move too.** **THE CORRECTION:** this lane had reported a **submit-time** refusal. Wrong,
+  and wrong in the direction that UNDERSTATES the hazard — `sbatch` does not evaluate the body, so a launcher with the
+  variable unset **submits cleanly and every task then dies on the node**, `OI-179` round 1's exact shape. §3's residual
+  gap is stated rather than left implied: **no submit-time gate exists**, confirmed with the enforcing lane; *"defect 3
+  is enforced"* must not be read as "caught before jobs queue". §4 resolves eight of the ninth launcher's nine `MNV_*`
+  values from `submission-environment-round2.txt` — the values the 374/374 run actually used, not proposals — and flags
+  that **the same file's `MNV_EST_SEED_OFFSET=0` line is a TRAP**: the estimator-seed launcher refuses at `:154-157` if
+  that variable is set at all. §5 keeps three items genuinely OPEN as rulings, not lookups: the `RUN_ID` and its two
+  run-scoped paths; what `MNV_ENV_PROVENANCE` points at, since round 2 used a hand-written file and `--emit` did not yet
+  exist; and whether a ninth arm may share the completed run's `RUN_ID` at all. §6 is marked SECOND-HAND — recovered
+  from a credit-exhausted delegate's log, re-measure before citing. Authorizes no submission; **Gate 2 remains FAIL**.
+- **JOSEPH AUTHORIZES THE k=0 REDEPLOY `7ac0edec` → `main`, AND THE ORDER IS PART OF THE RULING, 2026-09-01:**
+  [`DECISION-20260901-joseph-authorizes-k0r2-redeploy.md`](DECISION-20260901-joseph-authorizes-k0r2-redeploy.md)
+  — Joseph, his own turn: ***"Yes redeploy it and reconcile the other issues"***. **The deployed tree
+  `/pscratch/sd/j/josephrb/k0r2/clean` may advance from `7ac0edec` to ONE NAMED COMMIT** — a sha, never the definite
+  description *"current `main`"*, which re-points the moment `main` moves (it moved `83666a09`→`050dbb72` inside one
+  peer session). **THE ORDERING CONSTRAINT IS PART OF THE RULING AND MUST TRAVEL WITH IT:**
+  `FREEZE-20260830-k0-deployment-7ac0edec.md` §1 is **LIVE** — its expiry is *"when that rehearsal's F-1(b) producer
+  filing is committed — not when its jobs merely look terminal"*, and **no round-2 filing exists**
+  (`RECEIPT-20260830-k0-f1b-producer-filing.md` is scoped by its own box to `aa67c426`). So the round-2 F-1(b) is filed
+  FIRST, the freeze expires on its own terms, and only then does the authorization take effect. **This record must NOT
+  be cited to cut a live hold short**, nor to refuse a future Joseph-level `OI-123` supersession — the independently
+  checked limb is *"no COMMITTED route existed at the time of the check"*, deliberately narrower than "nothing else can
+  expire it". Rationale: moving first destroys the far end of a completed **374/374, zero-failure, ~36 h** run,
+  recoverable only by re-running everything. §5a carries the preservation prerequisites MEASURED read-only before the
+  move — freeze ref present in BOTH repos, bundle `82,761,577 B` / `514bd46e…`, `list-heads` exact-row count 1 — and the
+  terminality measurement with its covering control (374 measured reconciles with 374 declared, closing the `sacct -X`
+  promoted-task hazard). §7 states plainly that **this record goes back in front of him**, because a lane that receives
+  an authorization and rewrites its timing has ratified its own drafting. Authorizes NO submission, no leg 6, no M(ii),
+  no adoption; **Gate 2 remains FAIL**.
 - **JOSEPH RULES THE TWO MAGNITUDE LEGS — `OI-172` AND `OI-173`, 2026-09-01:**
   [`DECISION-20260901-joseph-oi172-oi173-magnitude-legs.md`](DECISION-20260901-joseph-oi172-oi173-magnitude-legs.md)
   — Joseph in his own turn, directly, not relayed: ***"Okay I agree with your recommendations, I authorize you spend the
