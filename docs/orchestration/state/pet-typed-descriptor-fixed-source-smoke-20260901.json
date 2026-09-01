@@ -1,0 +1,155 @@
+{
+  "checks": {
+    "aligned_serialization": "PASS",
+    "finite_numpy_cpu_reference_forward": "PASS",
+    "row_count": 32,
+    "same_row_mapping": "PASS",
+    "self_round_trip": "PASS"
+  },
+  "code_commit": "c6dbf7612f93d8202787be9b13a375f235d5c17f",
+  "enabled_branches": {
+    "count": 75,
+    "ordered_names": [
+      "ev_run",
+      "ev_subrun",
+      "ev_gate",
+      "cluster_energy",
+      "cluster_pos",
+      "cluster_z",
+      "cluster_view",
+      "cluster_time",
+      "cluster_isMuontrack",
+      "cluster_energy_sz",
+      "cluster_pos_sz",
+      "cluster_z_sz",
+      "cluster_view_sz",
+      "cluster_time_sz",
+      "cluster_isMuontrack_sz",
+      "MasterAnaDev_leptonE",
+      "MasterAnaDev_minos_trk_p",
+      "muon_thetaX",
+      "muon_thetaY",
+      "isMinosMatchTrack",
+      "MasterAnaDev_minos_trk_is_ok",
+      "MasterAnaDev_minos_trk_qp",
+      "vtx",
+      "gamma1_E",
+      "gamma1_dEdx",
+      "gamma1_time",
+      "gamma1_energy_trkr",
+      "gamma1_energy_ecal",
+      "gamma1_energy_hcal",
+      "gamma1_energy_scal_X",
+      "gamma1_energy_scal_UV",
+      "gamma1_evis_trkr",
+      "gamma1_evis_ecal",
+      "gamma1_evis_hcal",
+      "gamma1_evis_scal_X",
+      "gamma1_evis_scal_UV",
+      "gamma2_E",
+      "gamma2_dEdx",
+      "gamma2_time",
+      "gamma2_energy_trkr",
+      "gamma2_energy_ecal",
+      "gamma2_energy_hcal",
+      "gamma2_energy_scal_X",
+      "gamma2_energy_scal_UV",
+      "gamma2_evis_trkr",
+      "gamma2_evis_ecal",
+      "gamma2_evis_hcal",
+      "gamma2_evis_scal_X",
+      "gamma2_evis_scal_UV",
+      "gamma1_direction",
+      "gamma2_direction",
+      "MasterAnaDev_BlobX",
+      "MasterAnaDev_BlobY",
+      "MasterAnaDev_BlobZ",
+      "MasterAnaDev_BlobT",
+      "MasterAnaDev_BlobTPos",
+      "MasterAnaDev_BlobTotalE",
+      "MasterAnaDev_BlobIs3D",
+      "MasterAnaDev_BlobNClusters",
+      "MasterAnaDev_BlobX_sz",
+      "MasterAnaDev_BlobY_sz",
+      "MasterAnaDev_BlobZ_sz",
+      "MasterAnaDev_BlobT_sz",
+      "MasterAnaDev_BlobTPos_sz",
+      "MasterAnaDev_BlobTotalE_sz",
+      "MasterAnaDev_BlobIs3D_sz",
+      "MasterAnaDev_BlobNClusters_sz",
+      "n_prongs",
+      "prong_part_score",
+      "prong_part_mass",
+      "prong_part_charge",
+      "prong_part_pid",
+      "prong_dEdXMean",
+      "prong_part_pos",
+      "prong_part_E"
+    ],
+    "sha256": "a5704bb33229b51d7ed3e185374032d487427133a186c7198eaee29e52b21f69"
+  },
+  "entries": {
+    "first": 0,
+    "inclusive": true,
+    "last": 15,
+    "per_source": 16
+  },
+  "fixed_sample_telemetry": {
+    "classification": "FIXED_SAMPLE_TELEMETRY_NOT_AN_ESTIMATE",
+    "object_counts": {
+      "blobs": {
+        "data": 208,
+        "mc": 155
+      },
+      "photons": {
+        "data": 8,
+        "mc": 3
+      },
+      "prongs": {
+        "data": 23,
+        "mc": 29
+      }
+    }
+  },
+  "non_authorization": [
+    "No production normalization or production output is authorized.",
+    "No Keras integration, training, GPU use, or inventory inference is authorized.",
+    "No additional tuple entry or file access is authorized.",
+    "No Gap 3 retry, C_ML construction, Gate 6 action, central-value move, Leg 2 action, or publication claim is authorized."
+  ],
+  "normalization": {
+    "fit_inventory_row_selection_sha256": "e719779976b77cdc84ece1296f47c019bfc1d20af7894fa90d1d866bcfccb4ad",
+    "fit_rows": "fixed MC source-tree entries 0--15 only",
+    "status": "SMOKE_ONLY_NOT_PRODUCTION_NOT_PERSISTED"
+  },
+  "receipt_schema": "pet-typed-source-smoke-receipt-v1",
+  "result": "PASS",
+  "scope": {
+    "helper_parity_evidence": "Parity with the current P12 and event helper implementations is established separately by synthetic tests.",
+    "not_established": "No existing G2 production artifact was directly compared, so this receipt makes no real-row production-artifact byte-parity claim.",
+    "real_row_evidence": "Fixed-entry source mapping, aligned serialization, and self-round-trip passed for the two bound sources."
+  },
+  "sources": [
+    {
+      "basename": "MasterAnaDev_data_AnaTuple_run00010068_Playlist.root",
+      "manifest": "2d-unfolding/playlist_manifests/1B_Data.txt",
+      "manifest_line": 1,
+      "manifest_sha256": "91fa4a24774bfa800cd021dd712e61c777f600a7fa0c77ef1f54dad289764b1e",
+      "playlist": "1B",
+      "role": "data",
+      "uuid": "bcd43694-ef17-11f0-9717-17a6e183beef"
+    },
+    {
+      "basename": "MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root",
+      "manifest": "2d-unfolding/playlist_manifests/1A_MC.txt",
+      "manifest_line": 1,
+      "manifest_sha256": "4100dca453de1beef0213a0feac1fe4faa77d769f2dd5f36f4e11c6cea4894f8",
+      "playlist": "1A",
+      "role": "mc",
+      "uuid": "c0347da6-2a99-11ef-9717-31a7e183beef"
+    }
+  ],
+  "starting_commit": "65e179eb6d7fedc080e58fd0ff13387b41b590a2",
+  "tree": "MasterAnaDev",
+  "typed_descriptor_schema_sha256": "60966a9090b4e86d45f181e913e5d1ab1761c9256a882f8160025dbd489afd08"
+}
