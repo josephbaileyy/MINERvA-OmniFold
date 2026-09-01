@@ -1,0 +1,1761 @@
+{
+  "classification": "FIXED_SAMPLE_TELEMETRY_NOT_AN_ESTIMATE",
+  "contract_diagnostics": {
+    "classification": "FIXED_SAMPLE_DIAGNOSTICS_NOT_SEMANTIC_DECISIONS",
+    "photon_direction": {
+      "maximum_absolute_deviation_from_one": 2.9571084692037175e-08,
+      "maximum_norm": 1.0000000295710847,
+      "minimum_norm": 0.9999999723394454,
+      "valid_vector_count": 11
+    },
+    "prong_charge": {
+      "declared_categories": [
+        -1,
+        0,
+        1
+      ],
+      "observed_codes_outside_declared_categories": {
+        "2": 22
+      },
+      "observed_valid_code_counts": {
+        "0": 25,
+        "1": 3,
+        "2": 22
+      },
+      "valid_charge_raw_pid_pair_counts": {
+        "charge=0,raw_pid=0": 2,
+        "charge=0,raw_pid=13": 8,
+        "charge=0,raw_pid=8": 15,
+        "charge=1,raw_pid=3": 3,
+        "charge=2,raw_pid=3": 22
+      }
+    },
+    "prong_structure": {
+      "present_tokens_with_invalid_raw_pid": {
+        "data": 2,
+        "mc": 0
+      },
+      "present_tokens_with_valid_energy_at_most_1e_6": {
+        "data": 2,
+        "mc": 2
+      },
+      "present_tokens_with_valid_mass_minus_one": {
+        "data": 6,
+        "mc": 6
+      },
+      "present_tokens_with_valid_raw_pid_zero": {
+        "data": 0,
+        "mc": 2
+      },
+      "present_tokens_with_valid_score_minus_one": {
+        "data": 2,
+        "mc": 0
+      }
+    }
+  },
+  "descriptor_schema_sha256": "60966a9090b4e86d45f181e913e5d1ab1761c9256a882f8160025dbd489afd08",
+  "families": {
+    "blobs": {
+      "counts": {
+        "data": {
+          "counts_sha256": "06d1f95b2c0b62ee8e7c33fc17300b44b47dde3cba9b7c01fea31d4cc3097287",
+          "maximum_per_row": 90,
+          "minimum_per_row": 0,
+          "object_count": 208,
+          "row_count": 16,
+          "rows_with_objects": 13
+        },
+        "mc": {
+          "counts_sha256": "8587a5caa3d71c3f8662de3cc38c7657e36ec81255790770310fe54476dc6a84",
+          "maximum_per_row": 42,
+          "minimum_per_row": 0,
+          "object_count": 155,
+          "row_count": 16,
+          "rows_with_objects": 10
+        }
+      },
+      "fields": {
+        "cluster_count": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "cluster_count",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "count",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 102.0,
+                  "minimum": 1.0,
+                  "sum": 928.0,
+                  "sum_of_squares": 23680.0,
+                  "valid_count": 208
+                }
+              ],
+              "present_token_count": 208,
+              "stored_token_count": 208,
+              "values_and_masks_sha256": "b68f0bcdae040b8dacff2005243c78cc7dfbe8cf1ad22e951267b59d4d58c2ef"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 27.0,
+                  "minimum": 1.0,
+                  "sum": 372.0,
+                  "sum_of_squares": 2882.0,
+                  "valid_count": 155
+                }
+              ],
+              "present_token_count": 155,
+              "stored_token_count": 155,
+              "values_and_masks_sha256": "044756047bbe81f7d1d763672e9960ae07552c30befbc9501a01daa493f58921"
+            }
+          }
+        },
+        "is_3d": {
+          "contract": {
+            "categories": [
+              0,
+              1
+            ],
+            "kind": "categorical",
+            "mask_policy": "independent",
+            "name": "is_3d",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "raw categorical code",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 1.0,
+                  "minimum": 0.0,
+                  "sum": 78.0,
+                  "sum_of_squares": 78.0,
+                  "valid_count": 208
+                }
+              ],
+              "present_token_count": 208,
+              "stored_token_count": 208,
+              "valid_code_support": [
+                {
+                  "codes": [
+                    {
+                      "code": 0,
+                      "count": 130
+                    },
+                    {
+                      "code": 1,
+                      "count": 78
+                    }
+                  ],
+                  "component": 0
+                }
+              ],
+              "values_and_masks_sha256": "272d83fab19176c5f2b3c78d42b7ccbff8e76cf846dd53122d2ff860019f6922"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 1.0,
+                  "minimum": 0.0,
+                  "sum": 34.0,
+                  "sum_of_squares": 34.0,
+                  "valid_count": 155
+                }
+              ],
+              "present_token_count": 155,
+              "stored_token_count": 155,
+              "valid_code_support": [
+                {
+                  "codes": [
+                    {
+                      "code": 0,
+                      "count": 121
+                    },
+                    {
+                      "code": 1,
+                      "count": 34
+                    }
+                  ],
+                  "component": 0
+                }
+              ],
+              "values_and_masks_sha256": "ee4b1385da72f8a55d4fa5a381b6fbc837bbda5a790ec65ca48aa5b92abafa0b"
+            }
+          }
+        },
+        "position": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "all_components",
+            "name": "position",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native length (physical unit unresolved)",
+            "width": 3
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 1054.5318603515625,
+                  "minimum": -1141.3065185546875,
+                  "sum": 14484.838673114777,
+                  "sum_of_squares": 48003053.75420834,
+                  "valid_count": 208
+                },
+                {
+                  "component": 1,
+                  "invalid_count": 0,
+                  "maximum": 1198.5430908203125,
+                  "minimum": -1610.557373046875,
+                  "sum": 12059.214485168457,
+                  "sum_of_squares": 42166239.08745065,
+                  "valid_count": 208
+                },
+                {
+                  "component": 2,
+                  "invalid_count": 0,
+                  "maximum": 9038.2763671875,
+                  "minimum": 4735.1064453125,
+                  "sum": 1547929.4487304688,
+                  "sum_of_squares": 11739489484.540539,
+                  "valid_count": 208
+                }
+              ],
+              "present_token_count": 208,
+              "stored_token_count": 208,
+              "values_and_masks_sha256": "7383b4d741cb29ed310246844db05cb48e97e08884bd1a6bd8fa3429ffe030b4"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 1051.354248046875,
+                  "minimum": -941.123779296875,
+                  "sum": 530.3239192962646,
+                  "sum_of_squares": 23487144.241138965,
+                  "valid_count": 155
+                },
+                {
+                  "component": 1,
+                  "invalid_count": 0,
+                  "maximum": 815.8218994140625,
+                  "minimum": -1000.6458129882812,
+                  "sum": -10714.173805236816,
+                  "sum_of_squares": 18715672.053031188,
+                  "valid_count": 155
+                },
+                {
+                  "component": 2,
+                  "invalid_count": 0,
+                  "maximum": 9038.2763671875,
+                  "minimum": 4578.72705078125,
+                  "sum": 1133383.9814453125,
+                  "sum_of_squares": 8507410638.835169,
+                  "valid_count": 155
+                }
+              ],
+              "present_token_count": 155,
+              "stored_token_count": 155,
+              "values_and_masks_sha256": "430b6c307477288f24c82d4790b3e8e9773b982f288f7f0faa1599fbaf0e28c8"
+            }
+          }
+        },
+        "time": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "time",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native time (physical unit unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 8910.79296875,
+                  "minimum": 1225.0933837890625,
+                  "sum": 1040399.7219238281,
+                  "sum_of_squares": 6192940986.029665,
+                  "valid_count": 208
+                }
+              ],
+              "present_token_count": 208,
+              "stored_token_count": 208,
+              "values_and_masks_sha256": "edcde9f02396f18fb615fa34d9b575339889932e86466c026add3f6095bb934d"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 9480.505859375,
+                  "minimum": 513.6463012695312,
+                  "sum": 792125.5331420898,
+                  "sum_of_squares": 5569301735.415722,
+                  "valid_count": 155
+                }
+              ],
+              "present_token_count": 155,
+              "stored_token_count": 155,
+              "values_and_masks_sha256": "24e0a588267fd6ce5ec7aaed08134e64c8a54f172b9cae57d70af9b814695eb3"
+            }
+          }
+        },
+        "time_position": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "time_position",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native time-position (unit unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 1054.5318603515625,
+                  "minimum": -1054.5318603515625,
+                  "sum": 10989.45866727829,
+                  "sum_of_squares": 63477866.84638913,
+                  "valid_count": 208
+                }
+              ],
+              "present_token_count": 208,
+              "stored_token_count": 208,
+              "values_and_masks_sha256": "29b3dbd6fa946f2c84a5ad9d4bdd2260804b3b67f8cab20ea14f162846f00b70"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 1051.354248046875,
+                  "minimum": -1025.2113037109375,
+                  "sum": 1897.105094909668,
+                  "sum_of_squares": 36457652.864286736,
+                  "valid_count": 155
+                }
+              ],
+              "present_token_count": 155,
+              "stored_token_count": 155,
+              "values_and_masks_sha256": "e7ea815bddf25d06df3e2f037833c394203ec8ade6d0d96f1a1c932222e103c0"
+            }
+          }
+        },
+        "total_energy": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "total_energy",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native energy (physical unit unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 856.8927612304688,
+                  "minimum": 1.0029115676879883,
+                  "sum": 7811.94932281971,
+                  "sum_of_squares": 2158472.7141974904,
+                  "valid_count": 208
+                }
+              ],
+              "present_token_count": 208,
+              "stored_token_count": 208,
+              "values_and_masks_sha256": "4d05df889f63d413fecb365a1b9f1f099ad5c14a5c4f22119b25b8d7fb0e373c"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 210.74679565429688,
+                  "minimum": 1.0034273862838745,
+                  "sum": 3038.5275917053223,
+                  "sum_of_squares": 248447.93989441573,
+                  "valid_count": 155
+                }
+              ],
+              "present_token_count": 155,
+              "stored_token_count": 155,
+              "values_and_masks_sha256": "18b47bed144057e33edc314e20987f6e9ab0a7f2640e6c6c7496f6f3bf84574c"
+            }
+          }
+        }
+      }
+    },
+    "photons": {
+      "counts": {
+        "data": {
+          "counts_sha256": "ced4231467431f995a4adc51ecfa8855b8d2fe650570712826d579b81f711b9e",
+          "maximum_per_row": 2,
+          "minimum_per_row": 0,
+          "object_count": 8,
+          "row_count": 16,
+          "rows_with_objects": 4
+        },
+        "mc": {
+          "counts_sha256": "29c652a1bad42529d3a814372a8161d040532adc909f4700ff3c16b3636dfe76",
+          "maximum_per_row": 2,
+          "minimum_per_row": 0,
+          "object_count": 3,
+          "row_count": 16,
+          "rows_with_objects": 2
+        }
+      },
+      "fields": {
+        "dedx": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "dedx",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native dE/dx (physical unit unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 3,
+                  "maximum": 16.032251358032227,
+                  "minimum": 4.341620445251465,
+                  "sum": 51.47184181213379,
+                  "sum_of_squares": 653.6809865307805,
+                  "valid_count": 5
+                }
+              ],
+              "present_token_count": 8,
+              "stored_token_count": 8,
+              "values_and_masks_sha256": "f0de606229f8cad06ea9eae2bbc994c7819a634aeb78dd17f5d644a912c83222"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 2,
+                  "maximum": 14.898846626281738,
+                  "minimum": 14.898846626281738,
+                  "sum": 14.898846626281738,
+                  "sum_of_squares": 221.97563079346673,
+                  "valid_count": 1
+                }
+              ],
+              "present_token_count": 3,
+              "stored_token_count": 3,
+              "values_and_masks_sha256": "308a13a94a5619cba1a1d2d7484902611bb292f77d10b78ea417a51339d2aae8"
+            }
+          }
+        },
+        "direction": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "all_components",
+            "name": "direction",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "unitless",
+            "width": 3
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 0.4822806119918823,
+                  "minimum": -0.6069444417953491,
+                  "sum": 1.0688545405864716,
+                  "sum_of_squares": 1.253346351946079,
+                  "valid_count": 8
+                },
+                {
+                  "component": 1,
+                  "invalid_count": 0,
+                  "maximum": 0.33259323239326477,
+                  "minimum": -0.7036343216896057,
+                  "sum": -0.5888268517692268,
+                  "sum_of_squares": 0.9859444291863957,
+                  "valid_count": 8
+                },
+                {
+                  "component": 2,
+                  "invalid_count": 0,
+                  "maximum": 0.9498481154441833,
+                  "minimum": 0.6140103340148926,
+                  "sum": 6.737536430358887,
+                  "sum_of_squares": 5.760709113843831,
+                  "valid_count": 8
+                }
+              ],
+              "present_token_count": 8,
+              "stored_token_count": 8,
+              "values_and_masks_sha256": "4cf22e40a2e86de0b436d310a0e9ca6e15fd70f1884868f3c71273721a423ec0"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 0.6436560153961182,
+                  "minimum": 0.2666400074958801,
+                  "sum": 1.3844653367996216,
+                  "sum_of_squares": 0.7102264980046371,
+                  "valid_count": 3
+                },
+                {
+                  "component": 1,
+                  "invalid_count": 0,
+                  "maximum": 0.39259326457977295,
+                  "minimum": -0.6564814448356628,
+                  "sum": -0.2471676543354988,
+                  "sum_of_squares": 0.5853769347939775,
+                  "valid_count": 3
+                },
+                {
+                  "component": 2,
+                  "invalid_count": 0,
+                  "maximum": 0.8802748918533325,
+                  "minimum": 0.3933688700199127,
+                  "sum": 2.153856009244919,
+                  "sum_of_squares": 1.7043965535512315,
+                  "valid_count": 3
+                }
+              ],
+              "present_token_count": 3,
+              "stored_token_count": 3,
+              "values_and_masks_sha256": "e44ece467e62b4b6e9faf7d17f5def0feb872c4b2ef38068a7ee66edf67b7800"
+            }
+          }
+        },
+        "energy_ecal": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "energy_ecal",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native energy (calibration unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 247.617431640625,
+                  "minimum": 0.0,
+                  "sum": 621.6592693328857,
+                  "sum_of_squares": 133012.9764644243,
+                  "valid_count": 8
+                }
+              ],
+              "present_token_count": 8,
+              "stored_token_count": 8,
+              "values_and_masks_sha256": "cca7d26e51079dfd66893de525b6badc88f55df3bf38eb13b29d7034cf1ff67a"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 582.3583984375,
+                  "minimum": 0.0,
+                  "sum": 582.3583984375,
+                  "sum_of_squares": 339141.30423069,
+                  "valid_count": 3
+                }
+              ],
+              "present_token_count": 3,
+              "stored_token_count": 3,
+              "values_and_masks_sha256": "2cb36359aae9d786b77978359c8e5119fc94d5ba8110f58765678287a33e22fb"
+            }
+          }
+        },
+        "energy_hcal": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "energy_hcal",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native energy (calibration unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 0.0,
+                  "minimum": 0.0,
+                  "sum": 0.0,
+                  "sum_of_squares": 0.0,
+                  "valid_count": 8
+                }
+              ],
+              "present_token_count": 8,
+              "stored_token_count": 8,
+              "values_and_masks_sha256": "b7edc6301182f009ca891438e3a4bd9fdce8fdd3670ae4843c4a032f0ff3b72d"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 0.0,
+                  "minimum": 0.0,
+                  "sum": 0.0,
+                  "sum_of_squares": 0.0,
+                  "valid_count": 3
+                }
+              ],
+              "present_token_count": 3,
+              "stored_token_count": 3,
+              "values_and_masks_sha256": "a33a2e39a42d7007e6fc02ad56497c42c3eb15ca5976b49735df7784f10d27e0"
+            }
+          }
+        },
+        "energy_scal_uv": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "energy_scal_uv",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native energy (calibration unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 253.658935546875,
+                  "minimum": 0.0,
+                  "sum": 497.92728996276855,
+                  "sum_of_squares": 91656.58220402978,
+                  "valid_count": 8
+                }
+              ],
+              "present_token_count": 8,
+              "stored_token_count": 8,
+              "values_and_masks_sha256": "66a88a4e01d7d8d8113c3832894f6a14b83653a664f81a3fbcaa23be00531f29"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 0.0,
+                  "minimum": 0.0,
+                  "sum": 0.0,
+                  "sum_of_squares": 0.0,
+                  "valid_count": 3
+                }
+              ],
+              "present_token_count": 3,
+              "stored_token_count": 3,
+              "values_and_masks_sha256": "a33a2e39a42d7007e6fc02ad56497c42c3eb15ca5976b49735df7784f10d27e0"
+            }
+          }
+        },
+        "energy_scal_x": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "energy_scal_x",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native energy (calibration unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 0.0,
+                  "minimum": 0.0,
+                  "sum": 0.0,
+                  "sum_of_squares": 0.0,
+                  "valid_count": 8
+                }
+              ],
+              "present_token_count": 8,
+              "stored_token_count": 8,
+              "values_and_masks_sha256": "b7edc6301182f009ca891438e3a4bd9fdce8fdd3670ae4843c4a032f0ff3b72d"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 0.0,
+                  "minimum": 0.0,
+                  "sum": 0.0,
+                  "sum_of_squares": 0.0,
+                  "valid_count": 3
+                }
+              ],
+              "present_token_count": 3,
+              "stored_token_count": 3,
+              "values_and_masks_sha256": "a33a2e39a42d7007e6fc02ad56497c42c3eb15ca5976b49735df7784f10d27e0"
+            }
+          }
+        },
+        "energy_tracker": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "energy_tracker",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native energy (calibration unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 251.59024047851562,
+                  "minimum": 0.0,
+                  "sum": 841.2849817276001,
+                  "sum_of_squares": 148794.857623393,
+                  "valid_count": 8
+                }
+              ],
+              "present_token_count": 8,
+              "stored_token_count": 8,
+              "values_and_masks_sha256": "79db8060429b0184a8cb080fea613146fe0ae5bf8e00d2647cb36f098c198a33"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 61.0771598815918,
+                  "minimum": 0.0,
+                  "sum": 92.25363159179688,
+                  "sum_of_squares": 4702.391847498744,
+                  "valid_count": 3
+                }
+              ],
+              "present_token_count": 3,
+              "stored_token_count": 3,
+              "values_and_masks_sha256": "8acd567fcbbc38d166cb2e143f62584e31ffbff47ab297851aa7cdcaf6af7b28"
+            }
+          }
+        },
+        "evis_ecal": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "evis_ecal",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native energy (calibration unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 76.5030517578125,
+                  "minimum": 0.0,
+                  "sum": 192.06576490402222,
+                  "sum_of_squares": 12696.64877994563,
+                  "valid_count": 8
+                }
+              ],
+              "present_token_count": 8,
+              "stored_token_count": 8,
+              "values_and_masks_sha256": "68edd3cd6e48967a8bb8af353287fe3ad3ba2858e1c7c591f808b10a02c6e40a"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 179.9235076904297,
+                  "minimum": 0.0,
+                  "sum": 179.9235076904297,
+                  "sum_of_squares": 32372.46861962811,
+                  "valid_count": 3
+                }
+              ],
+              "present_token_count": 3,
+              "stored_token_count": 3,
+              "values_and_masks_sha256": "c645e40b8a9c4d2c66ff96707d4008b60befb2923af98312ffd4bfcef16be979"
+            }
+          }
+        },
+        "evis_hcal": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "evis_hcal",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native energy (calibration unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 0.0,
+                  "minimum": 0.0,
+                  "sum": 0.0,
+                  "sum_of_squares": 0.0,
+                  "valid_count": 8
+                }
+              ],
+              "present_token_count": 8,
+              "stored_token_count": 8,
+              "values_and_masks_sha256": "b7edc6301182f009ca891438e3a4bd9fdce8fdd3670ae4843c4a032f0ff3b72d"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 0.0,
+                  "minimum": 0.0,
+                  "sum": 0.0,
+                  "sum_of_squares": 0.0,
+                  "valid_count": 3
+                }
+              ],
+              "present_token_count": 3,
+              "stored_token_count": 3,
+              "values_and_masks_sha256": "a33a2e39a42d7007e6fc02ad56497c42c3eb15ca5976b49735df7784f10d27e0"
+            }
+          }
+        },
+        "evis_scal_uv": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "evis_scal_uv",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native energy (calibration unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 28.282371520996094,
+                  "minimum": 0.0,
+                  "sum": 55.517714977264404,
+                  "sum_of_squares": 1139.4492042025552,
+                  "valid_count": 8
+                }
+              ],
+              "present_token_count": 8,
+              "stored_token_count": 8,
+              "values_and_masks_sha256": "ed75310accdd786d0dc89ca1b04af3f1cada4dcd0d7c59ec668cd13dcb70e08a"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 0.0,
+                  "minimum": 0.0,
+                  "sum": 0.0,
+                  "sum_of_squares": 0.0,
+                  "valid_count": 3
+                }
+              ],
+              "present_token_count": 3,
+              "stored_token_count": 3,
+              "values_and_masks_sha256": "a33a2e39a42d7007e6fc02ad56497c42c3eb15ca5976b49735df7784f10d27e0"
+            }
+          }
+        },
+        "evis_scal_x": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "evis_scal_x",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native energy (calibration unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 0.0,
+                  "minimum": 0.0,
+                  "sum": 0.0,
+                  "sum_of_squares": 0.0,
+                  "valid_count": 8
+                }
+              ],
+              "present_token_count": 8,
+              "stored_token_count": 8,
+              "values_and_masks_sha256": "b7edc6301182f009ca891438e3a4bd9fdce8fdd3670ae4843c4a032f0ff3b72d"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 0.0,
+                  "minimum": 0.0,
+                  "sum": 0.0,
+                  "sum_of_squares": 0.0,
+                  "valid_count": 3
+                }
+              ],
+              "present_token_count": 3,
+              "stored_token_count": 3,
+              "values_and_masks_sha256": "a33a2e39a42d7007e6fc02ad56497c42c3eb15ca5976b49735df7784f10d27e0"
+            }
+          }
+        },
+        "evis_tracker": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "evis_tracker",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native energy (calibration unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 173.69932556152344,
+                  "minimum": 0.0,
+                  "sum": 575.9863033294678,
+                  "sum_of_squares": 70028.3416887469,
+                  "valid_count": 8
+                }
+              ],
+              "present_token_count": 8,
+              "stored_token_count": 8,
+              "values_and_masks_sha256": "3ebddae982eec6ef53f6e0d1168a90e0b1b74fa09829482a1ba90a95b00c1f16"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 41.28633117675781,
+                  "minimum": 0.0,
+                  "sum": 62.29342269897461,
+                  "sum_of_squares": 2145.859036259717,
+                  "valid_count": 3
+                }
+              ],
+              "present_token_count": 3,
+              "stored_token_count": 3,
+              "values_and_masks_sha256": "2f3501e7cd47d3ab7ef8a50940565353e7e0cadfd1f15c47a32e8f9b8d25aaeb"
+            }
+          }
+        },
+        "time": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "time",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native time (physical unit unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 8781.390625,
+                  "minimum": 1231.5794677734375,
+                  "sum": 39838.299560546875,
+                  "sum_of_squares": 256001713.2251232,
+                  "valid_count": 8
+                }
+              ],
+              "present_token_count": 8,
+              "stored_token_count": 8,
+              "values_and_masks_sha256": "4cc4b105b1de08098f47417a8efdf3a4394c18f5cc6ac204289d8dc61791c7cf"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 7210.859375,
+                  "minimum": 2453.34375,
+                  "sum": 16872.234375,
+                  "sum_of_squares": 109971102.98266602,
+                  "valid_count": 3
+                }
+              ],
+              "present_token_count": 3,
+              "stored_token_count": 3,
+              "values_and_masks_sha256": "9192d840c684a8d26547616c1f0b4c4a6d2c7961d6a5a1c421f946cb4df88f1f"
+            }
+          }
+        }
+      }
+    },
+    "prongs": {
+      "counts": {
+        "data": {
+          "counts_sha256": "557eff7b46018c2f0b976de09151943aab5ccee89ac4e16cccc61f20bab10627",
+          "maximum_per_row": 2,
+          "minimum_per_row": 1,
+          "object_count": 23,
+          "row_count": 16,
+          "rows_with_objects": 16
+        },
+        "mc": {
+          "counts_sha256": "64124946fe50d1833ff9776a3a3a839b6de7fb69136caf9778bc6e94e994f575",
+          "maximum_per_row": 4,
+          "minimum_per_row": 1,
+          "object_count": 29,
+          "row_count": 16,
+          "rows_with_objects": 16
+        }
+      },
+      "fields": {
+        "charge": {
+          "contract": {
+            "categories": [
+              -1,
+              0,
+              1
+            ],
+            "kind": "categorical",
+            "mask_policy": "independent",
+            "name": "charge",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "raw charge code",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 2,
+                  "maximum": 2.0,
+                  "minimum": 0.0,
+                  "sum": 22.0,
+                  "sum_of_squares": 42.0,
+                  "valid_count": 21
+                }
+              ],
+              "present_token_count": 23,
+              "stored_token_count": 23,
+              "valid_code_support": [
+                {
+                  "codes": [
+                    {
+                      "code": 0,
+                      "count": 9
+                    },
+                    {
+                      "code": 1,
+                      "count": 2
+                    },
+                    {
+                      "code": 2,
+                      "count": 10
+                    }
+                  ],
+                  "component": 0
+                }
+              ],
+              "values_and_masks_sha256": "3b4468b9901b2cb89b4f2625a70e22531f5bb262c5aea76298e0d10855a52af0"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 2.0,
+                  "minimum": 0.0,
+                  "sum": 25.0,
+                  "sum_of_squares": 49.0,
+                  "valid_count": 29
+                }
+              ],
+              "present_token_count": 29,
+              "stored_token_count": 29,
+              "valid_code_support": [
+                {
+                  "codes": [
+                    {
+                      "code": 0,
+                      "count": 16
+                    },
+                    {
+                      "code": 1,
+                      "count": 1
+                    },
+                    {
+                      "code": 2,
+                      "count": 12
+                    }
+                  ],
+                  "component": 0
+                }
+              ],
+              "values_and_masks_sha256": "d388ec1fe925efd0ea5a45f30c4957362589b1cfbb1f76a2f6516a807dc0e8fe"
+            }
+          }
+        },
+        "dedx": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "dedx",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native dE/dx (physical unit unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 18,
+                  "maximum": 26.694047927856445,
+                  "minimum": 3.2653746604919434,
+                  "sum": 67.27345514297485,
+                  "sum_of_squares": 1404.7249473658637,
+                  "valid_count": 5
+                }
+              ],
+              "present_token_count": 23,
+              "stored_token_count": 23,
+              "values_and_masks_sha256": "2fd47d78afd40e22f8dd2afdd9361689736d9369e756603a3b65f652e8202dbe"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 24,
+                  "maximum": 5.329123497009277,
+                  "minimum": 3.9419994354248047,
+                  "sum": 22.86448097229004,
+                  "sum_of_squares": 105.85704810380821,
+                  "valid_count": 5
+                }
+              ],
+              "present_token_count": 29,
+              "stored_token_count": 29,
+              "values_and_masks_sha256": "fc26595a2e51992e21603dbaa0f7c684dd8968f649b1805f5c5d80c8a53b6a69"
+            }
+          }
+        },
+        "four_momentum": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "all_components",
+            "name": "four_momentum",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native momentum/energy (unit unresolved)",
+            "width": 4
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 735.5635986328125,
+                  "minimum": -1594.646728515625,
+                  "sum": 1840.0093688964844,
+                  "sum_of_squares": 5735204.761381602,
+                  "valid_count": 23
+                },
+                {
+                  "component": 1,
+                  "invalid_count": 0,
+                  "maximum": 755.7909545898438,
+                  "minimum": -3487.439697265625,
+                  "sum": -8195.015571117401,
+                  "sum_of_squares": 18421109.80406351,
+                  "valid_count": 23
+                },
+                {
+                  "component": 2,
+                  "invalid_count": 0,
+                  "maximum": 38322.01953125,
+                  "minimum": 0.0,
+                  "sum": 115473.8197479248,
+                  "sum_of_squares": 2119574517.0793357,
+                  "valid_count": 23
+                },
+                {
+                  "component": 3,
+                  "invalid_count": 0,
+                  "maximum": 38484.703125,
+                  "minimum": 0.0,
+                  "sum": 119966.3685913086,
+                  "sum_of_squares": 2148266546.159075,
+                  "valid_count": 23
+                }
+              ],
+              "present_token_count": 23,
+              "stored_token_count": 23,
+              "values_and_masks_sha256": "bc47f65ceed672add21456aa90d67727572631011315776df900684e994025ca"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 2701.7451171875,
+                  "minimum": -625.6978149414062,
+                  "sum": 5422.794868469238,
+                  "sum_of_squares": 11095680.434658654,
+                  "valid_count": 29
+                },
+                {
+                  "component": 1,
+                  "invalid_count": 0,
+                  "maximum": 478.1189880371094,
+                  "minimum": -870.266845703125,
+                  "sum": -2746.940139770508,
+                  "sum_of_squares": 4762214.831384728,
+                  "valid_count": 29
+                },
+                {
+                  "component": 2,
+                  "invalid_count": 0,
+                  "maximum": 11270.744140625,
+                  "minimum": 0.0,
+                  "sum": 83923.41487121582,
+                  "sum_of_squares": 497620439.69824153,
+                  "valid_count": 29
+                },
+                {
+                  "component": 3,
+                  "invalid_count": 0,
+                  "maximum": 11327.6689453125,
+                  "minimum": 0.0,
+                  "sum": 91188.39093017578,
+                  "sum_of_squares": 522427018.5045081,
+                  "valid_count": 29
+                }
+              ],
+              "present_token_count": 29,
+              "stored_token_count": 29,
+              "values_and_masks_sha256": "71282186105ef10dd5cf902cdbe12ea2b1cab7a8e912d3c5fe36a65a3f8f0248"
+            }
+          }
+        },
+        "mass": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "mass",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native energy (physical unit unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 938.2720336914062,
+                  "minimum": -1.0,
+                  "sum": 5953.259796142578,
+                  "sum_of_squares": 4535742.168194132,
+                  "valid_count": 23
+                }
+              ],
+              "present_token_count": 23,
+              "stored_token_count": 23,
+              "values_and_masks_sha256": "53b690550fa037bdd6e3e574c46f9f6cfe89c138d40c42385b8bc9f67450d5fe"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 938.2720336914062,
+                  "minimum": -1.0,
+                  "sum": 10750.278266906738,
+                  "sum_of_squares": 8948677.891077595,
+                  "valid_count": 29
+                }
+              ],
+              "present_token_count": 29,
+              "stored_token_count": 29,
+              "values_and_masks_sha256": "d5d0ced32febfd0eebef134022062ae828638cb36c725edf9c6cc00ec2065c7b"
+            }
+          }
+        },
+        "position": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "all_components",
+            "name": "position",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native length (physical unit unresolved)",
+            "width": 3
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 816.0131225585938,
+                  "minimum": -1000.3237915039062,
+                  "sum": -89.99186706542969,
+                  "sum_of_squares": 5217354.836253457,
+                  "valid_count": 23
+                },
+                {
+                  "component": 1,
+                  "invalid_count": 0,
+                  "maximum": 1003.6581420898438,
+                  "minimum": -642.8318481445312,
+                  "sum": 2353.9233322143555,
+                  "sum_of_squares": 3907483.2172805434,
+                  "valid_count": 23
+                },
+                {
+                  "component": 2,
+                  "invalid_count": 0,
+                  "maximum": 9608.6572265625,
+                  "minimum": 0.0,
+                  "sum": 158743.55224609375,
+                  "sum_of_squares": 1246918893.095084,
+                  "valid_count": 23
+                }
+              ],
+              "present_token_count": 23,
+              "stored_token_count": 23,
+              "values_and_masks_sha256": "6de916aa5c4f44af59ee5bd5d6ac4f0ea72043175a1f568ea1317cc9c1b307fb"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 254.84791564941406,
+                  "minimum": -1036.75,
+                  "sum": -6376.748208999634,
+                  "sum_of_squares": 4989150.34156807,
+                  "valid_count": 29
+                },
+                {
+                  "component": 1,
+                  "invalid_count": 0,
+                  "maximum": 873.6815185546875,
+                  "minimum": -770.4511108398438,
+                  "sum": 3087.2992935180664,
+                  "sum_of_squares": 6227588.311094868,
+                  "valid_count": 29
+                },
+                {
+                  "component": 2,
+                  "invalid_count": 0,
+                  "maximum": 8499.3642578125,
+                  "minimum": 0.0,
+                  "sum": 188420.80419921875,
+                  "sum_of_squares": 1358011873.2755425,
+                  "valid_count": 29
+                }
+              ],
+              "present_token_count": 29,
+              "stored_token_count": 29,
+              "values_and_masks_sha256": "0c7ab4ce5694e3ae70b6532f311630b7a1c558f6defde1bd300ab5eb8353e6f1"
+            }
+          }
+        },
+        "raw_pid": {
+          "contract": {
+            "categories": [
+              0,
+              3,
+              8,
+              9,
+              13
+            ],
+            "kind": "categorical",
+            "mask_policy": "independent",
+            "name": "raw_pid",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "raw uninterpreted categorical code",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 2,
+                  "maximum": 13.0,
+                  "minimum": 3.0,
+                  "sum": 128.0,
+                  "sum_of_squares": 1104.0,
+                  "valid_count": 21
+                }
+              ],
+              "present_token_count": 23,
+              "stored_token_count": 23,
+              "valid_code_support": [
+                {
+                  "codes": [
+                    {
+                      "code": 3,
+                      "count": 12
+                    },
+                    {
+                      "code": 8,
+                      "count": 5
+                    },
+                    {
+                      "code": 13,
+                      "count": 4
+                    }
+                  ],
+                  "component": 0
+                }
+              ],
+              "values_and_masks_sha256": "65af075754381c54f7bc193cfd27e4973f51a8378682847502796a209aad1b9e"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 13.0,
+                  "minimum": 0.0,
+                  "sum": 171.0,
+                  "sum_of_squares": 1433.0,
+                  "valid_count": 29
+                }
+              ],
+              "present_token_count": 29,
+              "stored_token_count": 29,
+              "valid_code_support": [
+                {
+                  "codes": [
+                    {
+                      "code": 0,
+                      "count": 2
+                    },
+                    {
+                      "code": 3,
+                      "count": 13
+                    },
+                    {
+                      "code": 8,
+                      "count": 10
+                    },
+                    {
+                      "code": 13,
+                      "count": 4
+                    }
+                  ],
+                  "component": 0
+                }
+              ],
+              "values_and_masks_sha256": "af4d27f2d691f9ebce2f0e94f364aff0232f91854d08a08987750bfc7c224de2"
+            }
+          }
+        },
+        "score": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "score",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "unitless",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 1.0,
+                  "minimum": -1.0,
+                  "sum": 13.891907952725887,
+                  "sum_of_squares": 16.714449033169505,
+                  "valid_count": 23
+                }
+              ],
+              "present_token_count": 23,
+              "stored_token_count": 23,
+              "values_and_masks_sha256": "eeb87abf8ce47611356a0b9bdc491dae0fb3fa219c5ecc7de9bf7e59583dff85"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 1.0,
+                  "minimum": 0.0,
+                  "sum": 18.53447275236249,
+                  "sum_of_squares": 16.677246402269333,
+                  "valid_count": 29
+                }
+              ],
+              "present_token_count": 29,
+              "stored_token_count": 29,
+              "values_and_masks_sha256": "aa2a3a8f62cc9f671afacf9f4e6a093dbc85fca9f12181d994eb8c7ae20d5969"
+            }
+          }
+        },
+        "time": {
+          "contract": {
+            "categories": [],
+            "kind": "continuous",
+            "mask_policy": "independent",
+            "name": "time",
+            "sentinels": [
+              -999.0,
+              -9999.0
+            ],
+            "unit": "tuple-native time (physical unit unresolved)",
+            "width": 1
+          },
+          "fixed_sample_observations": {
+            "data": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 8903.51171875,
+                  "minimum": 0.0,
+                  "sum": 124003.41333007812,
+                  "sum_of_squares": 828232283.5415864,
+                  "valid_count": 23
+                }
+              ],
+              "present_token_count": 23,
+              "stored_token_count": 23,
+              "values_and_masks_sha256": "047b095b74733f617edf41e53791b5bcc85f5d4ca21217e5158e8cb76e8760d1"
+            },
+            "mc": {
+              "components": [
+                {
+                  "component": 0,
+                  "invalid_count": 0,
+                  "maximum": 9456.9267578125,
+                  "minimum": 0.0,
+                  "sum": 116960.19873046875,
+                  "sum_of_squares": 693120951.786886,
+                  "valid_count": 29
+                }
+              ],
+              "present_token_count": 29,
+              "stored_token_count": 29,
+              "values_and_masks_sha256": "d62bcdab93dbea58324278dc5c89c00b387ac09a4fa04d1892ad96ccc679eae4"
+            }
+          }
+        }
+      }
+    }
+  },
+  "probe_sha256": "0b71483705847995425d741700fff6abc399ff482c81b00cbad05ae3c66fb3da",
+  "result": "PASS",
+  "schema": "pet-typed-semantic-fixed-sample-v1",
+  "scope": {
+    "established": "Field-level mask support, categorical codes, and raw-scale telemetry for the already-bound entries 0--15 in each source.",
+    "not_established": [
+      "physical units or calibration",
+      "population support or category completeness",
+      "production normalization",
+      "production-scale multiplicity or segment-sum behavior",
+      "scientific performance or coverage"
+    ]
+  },
+  "source_smoke": {
+    "bound_manifests": [
+      {
+        "path": "2d-unfolding/playlist_manifests/1B_Data.txt",
+        "role": "data",
+        "sha256": "91fa4a24774bfa800cd021dd712e61c777f600a7fa0c77ef1f54dad289764b1e"
+      },
+      {
+        "path": "2d-unfolding/playlist_manifests/1A_MC.txt",
+        "role": "mc",
+        "sha256": "4100dca453de1beef0213a0feac1fe4faa77d769f2dd5f36f4e11c6cea4894f8"
+      }
+    ],
+    "combined_manifest_sha256": "f60157bed032badf29fb10dadf4a7d402730498f2664195635663293e94186d1",
+    "committed_receipt": "docs/orchestration/state/pet-typed-descriptor-fixed-source-smoke-20260901.json",
+    "entries": {
+      "first": 0,
+      "inclusive": true,
+      "last": 15
+    },
+    "row_count": 32,
+    "rows_by_role": {
+      "data": 16,
+      "mc": 16
+    },
+    "schema": "pet-typed-source-smoke-v1",
+    "shard_sha256": "8fc88dd46e2e56ff2e661295df0f3a77cd2cfbc3af66ad5c04d4c3b73035fc44",
+    "sources": [
+      {
+        "basename": "MasterAnaDev_data_AnaTuple_run00010068_Playlist.root",
+        "ordinal": 1,
+        "uuid": "bcd43694-ef17-11f0-9717-17a6e183beef"
+      },
+      {
+        "basename": "MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root",
+        "ordinal": 2,
+        "uuid": "c0347da6-2a99-11ef-9717-31a7e183beef"
+      }
+    ],
+    "starting_commit": "65e179eb6d7fedc080e58fd0ff13387b41b590a2",
+    "tree": "MasterAnaDev"
+  }
+}
