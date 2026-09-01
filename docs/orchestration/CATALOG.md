@@ -324,6 +324,21 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   counts stay CAND `1 of 7` / QUOTED `0 of 7`. Supplies the n=2 complete populations that make
   `OI-177` ratifiable — and kills the 40 CPU-h figure the amendment first proposed, since arm 5
   measured **49.11**.
+- **THE DELEGATED COMPUTE CEILING IS DENOMINATED IN TASK-HOURS, 2026-09-01:**
+  [`DECISION-20260901-joseph-delegated-ceiling-unit-is-task-hours.md`](DECISION-20260901-joseph-delegated-ceiling-unit-is-task-hours.md)
+  — Joseph, in his own turn, asked directly which unit the standing per-arm ceiling uses: ***"It is task
+  hours"***. The `500 GPU-h / 500 CPU-h` delegation was written unqualified, and arm 5 of the k=0 round-2
+  rehearsal reconciles **only under one reading**: `49.11` task-hours (elapsed summed over 40 tasks) versus
+  `2455.51` core-hours at `AllocCPUS=50`. **Under task-hours every one of the seven arms is far inside 500,
+  the largest being 49.11**; under core-hours `uthrow5d_runF` and `uthrow5d_block` would each have breached
+  the CPU delegation, by ~4.9× and ~2.7×. **They did not — the ruling resolves the wording in the direction
+  the campaign's own arithmetic already assumed.** The distinction was known and simply never reached the
+  delegation sentence: `SCOREBOARD-20260817:223` writes *"`55.182` CPU task-hours (`2759.1` CPU-core-hours)"*
+  explicitly. **RATIFIES NOTHING** — `OI-177` stays OPEN and unsigned (§3's 40 CPU-h for arm 5 is dead on the
+  49.11 actual; §3b's 60 awaits his signature), no gate moves, nothing is adopted, counts hold at CAND
+  `1 of 7` / QUOTED `0 of 7`. **Carries one caveat forward:** `DEFECT-20260825:172-176` records the 500
+  threshold as a Codex session's claim about its own authority and NOT Joseph speaking — this decision fixes
+  its UNIT, not its provenance.
 - **THE QUARANTINE IS GRADED AGAINST THE CANDIDATE, NOT THE JULY ARTIFACT, 2026-08-31:**
   [`DECISION-20260831-joseph-quarantine-graded-against-the-candidate.md`](DECISION-20260831-joseph-quarantine-graded-against-the-candidate.md)
   — Joseph: *"Okay it sounds like the correct ruling"*, *"Okay do that"*, and **confirmed directly to the

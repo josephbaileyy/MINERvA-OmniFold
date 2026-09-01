@@ -11,7 +11,7 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-181 | NOW | safe-default-active | TRAP DEFUSED 2026-08-31 — the structural question stays open with OI-73 |
 | OI-180 | NOW | safe-default-active | REPAIRED 2026-08-31 — awaiting a decision only on the triage of what it now reveals |
 | OI-179 | NOW | safe-default-active | OPEN |
-| OI-177 | NOW | safe-default-active | OPEN — amendment PREPARED 2026-08-31, awaiting Joseph's signature |
+| OI-177 | NOW | safe-default-active | OPEN — amendment PREPARED 2026-08-31, awaiting Joseph's signature; UNIT SETTLED 2026-09-01 as TASK-HOURS (DECISION-20260 |
 | OI-173 | NOW | safe-default-active | OPEN |
 | OI-174 | NOW | safe-default-active | OPEN |
 | OI-172 | NOW | safe-default-active | OPEN |
