@@ -1,5 +1,7 @@
 path	class	event_status	canonical_successor
 docs/orchestration/BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md	LIVE	open	
+docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md	LIVE	open	
+docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-pet.md	LIVE	open	
 docs/orchestration/CATALOG.md	LIVE	open	
 docs/orchestration/CLAIM-CLM-001.md	ARCHIVAL	terminal	
 docs/orchestration/CLAIM-CLM-002.md	ARCHIVAL	terminal	
@@ -129,3 +131,4 @@ docs/orchestration/AMENDMENT-20260831-oi177-per-arm-ceilings.md	LIVE	open
 docs/orchestration/DECISION-20260831-joseph-quarantine-graded-against-the-candidate.md	LIVE	open	
 docs/orchestration/RECORD-20260901-k0r2-round2-outcome.md	LIVE	open	
 docs/orchestration/DECISION-20260901-joseph-delegated-ceiling-unit-is-task-hours.md	LIVE	open
+docs/orchestration/DECISION-20260901-joseph-ratifies-oi177-per-arm-ceilings.md	LIVE	terminal	

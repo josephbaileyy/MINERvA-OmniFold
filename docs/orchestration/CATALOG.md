@@ -339,6 +339,28 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `1 of 7` / QUOTED `0 of 7`. **Carries one caveat forward:** `DEFECT-20260825:172-176` records the 500
   threshold as a Codex session's claim about its own authority and NOT Joseph speaking — this decision fixes
   its UNIT, not its provenance.
+- **✅ JOSEPH RATIFIES THE `OI-177` PER-ARM CEILINGS, 2026-09-01 — `OI-177` DISCHARGED:**
+  [`DECISION-20260901-joseph-ratifies-oi177-per-arm-ceilings.md`](DECISION-20260901-joseph-ratifies-oi177-per-arm-ceilings.md)
+  — Joseph, in his own turn: ***"I sign"***. **RATIFIED, in task-hours:** arm 2 seed split **8 CPU** (+3),
+  arm 5 uthrow run **60 CPU** (+30), arm 6 uthrow block **40 CPU** (+10); arms 1, 3, 4 and 7 unchanged at
+  20 GPU / 20 GPU / 30 GPU / 5 CPU. **Sums 70 GPU / 113 CPU**, up from `PROPOSAL-20260830` §6's 70/70.
+  **Every ratified ceiling exceeds BOTH observed actuals on its own arm** — checked per arm, not on the
+  sums, since a sum can hold while a member is breached. Basis is **n=2 complete populations**:
+  `aa67c426` (2026-08-24) and round 2 (374/374, zero failures, finished 2026-09-01T08:57:51Z), summed over
+  DISTINCT task identities. **`PROPOSAL-20260830-forward-only-rehearsal.md` IS NOT EDITED** — `ARCHIVAL`,
+  `terminal`, `immutable:yes`, 14 inbound refs; it stands as the 2026-08-30 record and is superseded by
+  reference. **Three disclosures made BEFORE signature and carried into the discharge rather than dropped:**
+  arm 6's `40` is the least well-supported of the three (its `+3.3%` round-over-round is two unlike
+  distributions whose sums coincide — R1 `39.4/52.2/518.3` min against R2 `40.5/81.9/289.0`, R1's mean
+  carried by one 8.6-hour outlier); arm 4 holds at 30 on the thinnest margin and was deliberately not
+  proposed for change; and **a denominator correction** — arm 4's headroom was quoted as `12.4%` over the
+  *ceiling* while the amendment's other headroom figures are over the *actual*, where it is `14.2%`.
+  **The ceilings are set from the WORST OBSERVED REGIME, not a forecast:** §3c/§3e measure that
+  CPU-partition arms reproduce in neither elapsed nor `TotalCPU` (arm 5 moved +58.7% and +50.4%), so a
+  third run may exceed them — that would be a new `OI-*`, not a defect in this signature. **MOVES NO
+  GATE:** Gate 2 remains FAIL, leg 6 stays prohibited, nothing is adopted, no compute is authorized,
+  counts hold at CAND `1 of 7` / QUOTED `0 of 7`. Largest ceiling `60` against a `500` delegation
+  threshold whose provenance caveat (`DEFECT-20260825:172-176`, not Joseph's words) still stands.
 - **THE QUARANTINE IS GRADED AGAINST THE CANDIDATE, NOT THE JULY ARTIFACT, 2026-08-31:**
   [`DECISION-20260831-joseph-quarantine-graded-against-the-candidate.md`](DECISION-20260831-joseph-quarantine-graded-against-the-candidate.md)
   — Joseph: *"Okay it sounds like the correct ruling"*, *"Okay do that"*, and **confirmed directly to the
@@ -603,6 +625,20 @@ deliberately, because this file is a pointer-only router and not an exhaustive i
   carry no ensemble-size key on any artifact. **Records/provenance only — it adopts nothing and
   changes no uncertainty model.** Re-runnable covering search beside it at
   [`state/declaration-v-5d-covering-search-20260822.sh`](state/declaration-v-5d-covering-search-20260822.sh).
+
+- [`BRIEF-20260901-greif-fps-thesis-implications-for-pet.md`](BRIEF-20260901-greif-fps-thesis-implications-for-pet.md)
+  and [`BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md`](BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md)
+  — added 2026-09-01, the two lane extractions of **`arXiv:2608.28449`** (Greif, ATLAS full-phase-space
+  Z+jets, 843 dimensions), routed to by `OI-183` and `OI-184`. **Read the citability box first: the
+  measurement is in ATLAS review and its thesis figures are ATLAS Internal, so the METHOD is citable
+  and the NUMBERS are not.** Between them they carry: the ATLAS `C_ML` construction (ensemble mean as
+  the central value, so the nominal cannot sit outside its own family); pretraining as the lever that
+  took their seed ensemble from 100 members to 10; the closure instrument (full-covariance χ² in 26
+  projections, with the rule that a systematic held at nominal in the pseudodata must be EXCLUDED from
+  Σ); and the finding that **the high-dimensional hidden-variable advantage was tested and did not
+  hold**. **Neither bears on `OI-126`** — that thesis mentions the bootstrap five times in 313 pages
+  and carries no centering diagnostic — and **neither is evidence that any coverage gap here is a gap
+  relative to the field**: `coverag` appears once in it, about detector acceptance.
 
 ### START HERE for the remaining publication work
 

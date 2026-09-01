@@ -1,13 +1,19 @@
 # AMENDMENT 2026-08-31 — `PROPOSAL-20260830-forward-only-rehearsal.md` §6 per-arm budgets
-# PREPARED FOR SIGNATURE. **NOT RATIFIED. `OI-177` REMAINS OPEN.**
+# ✅ **RATIFIED 2026-09-01 BY JOSEPH — *"I sign"*. `OI-177` DISCHARGED.**
+# (Header before that date read: PREPARED FOR SIGNATURE. NOT RATIFIED. `OI-177` REMAINS OPEN.)
 
-**CITABLE FOR:** the measured `aa67c426` actuals in §2 and the method that produced them; the
-provenance of §6's current estimate column; this table AS PROPOSED; and §3e's three-unit
-reconciliation and two-round floor/median comparison. **All hour figures in this document are
-TASK-HOURS** per the 2026-09-01 ruling — bare `CPU-h`/`A100-h` cells mean task-hours throughout.
-**NOT CITABLE FOR:**
-ratification — **this document does not amend anything and `OI-177` is not discharged by it**; any
-gate movement; leg 6; the M(ii) family; or adoption. **Gate 2 remains FAIL.**
+**CITABLE FOR:** the measured `aa67c426` and round-2 actuals in §2/§3d and the method that produced
+them; the provenance of §6's original estimate column; §3e's three-unit reconciliation and two-round
+floor/median comparison; and **the ratified per-arm ceilings — see §5.** **All hour figures in this
+document are TASK-HOURS** per the 2026-09-01 ruling — bare `CPU-h`/`A100-h` cells mean task-hours
+throughout. **NOT CITABLE FOR:** any gate movement; leg 6; the M(ii) family; adoption of any
+covariance; or any authorization to launch. **Gate 2 remains FAIL, nothing is adopted, CAND `1 of 7`
+/ QUOTED `0 of 7`.**
+
+**⚠ READ §5 BEFORE §3.** Sections 0–4 were written *before* signature and argue toward a
+recommendation; §3's proposed `40` for arm 5 is **dead** and §3b/§3d supersede it. §5 records what was
+actually signed. One figure quoted at signature time — arm 4's *"12.4% headroom"* — used a different
+denominator from every other headroom figure here; §5 states both and neither changes a decision.
 
 ## 0. Why §6 needs amending rather than re-reading
 
@@ -321,3 +327,42 @@ the *current* ceilings by a wide margin on every arm except the three named.
 
 **`OI-177` IS NOT DISCHARGED BY THIS DOCUMENT.** Ratification is Joseph's signature, and the
 producing lane that submitted the arms does not grade its own budget.
+
+## 5. ✅ RATIFIED — Joseph, 2026-09-01
+
+> *"I sign"*
+
+His own turn, in response to the recommendation **arm 2 -> 8, arm 5 -> 60, arm 6 -> 40 task-hours, sum
+70 GPU / 113 CPU**, put to him together with the disclosure that arm 6's figure is the least
+well-supported of the three and that arm 4 was deliberately not proposed for change.
+
+| arm | R1 | R2 | §6 ceiling | **RATIFIED** | headroom /actual |
+|---|---:|---:|---:|---:|---:|
+| 1 bootstrap | 15.38 | 14.86 | 20 GPU | **20 GPU** | 34.6% |
+| 2 seed split | 5.43 | 5.83 | 5 CPU | **8 CPU** | 37.2% |
+| 3 detector | 13.88 | 13.76 | 20 GPU | **20 GPU** | 45.3% |
+| 4 sweep | 25.54 | 26.28 | 30 GPU | **30 GPU** | 14.2% |
+| 5 uthrow run | 30.94 | **49.11** | 30 CPU | **60 CPU** | 22.2% |
+| 6 uthrow block | 30.01 | 31.01 | 30 CPU | **40 CPU** | 29.0% |
+| 7 combine | 0.42 | 0.58 | 5 CPU | **5 CPU** | 762% |
+| **sum** | | | 70 / 70 | **70 GPU / 113 CPU** | |
+
+**Every ratified ceiling exceeds BOTH observed actuals on its own arm**, checked per arm rather than
+on the sums, since a sum can hold while a member is breached. `20+20+30 = 70`; `8+60+40+5 = 113`.
+
+**Headroom here is `(ceiling − actual) / actual`, the convention of §3's table.** The `12.4%` quoted
+for arm 4 at signature time was `(30 − 26.28) / 30`, divided by the **ceiling** — the same margin on
+the other denominator. Both are recorded in
+`DECISION-20260901-joseph-ratifies-oi177-per-arm-ceilings.md`; neither changes any decision, and arm 4
+was not proposed for change under either reading.
+
+**`PROPOSAL-20260830-forward-only-rehearsal.md` §6 IS NOT EDITED.** That file is `ARCHIVAL`,
+`terminal`, `immutable:yes` with 14 inbound references; it stands as the record of what was authorized
+on 2026-08-30, and this section supersedes its ceiling columns by reference from 2026-09-01.
+
+**Full record, including what the signature does not reach:**
+`DECISION-20260901-joseph-ratifies-oi177-per-arm-ceilings.md`. In short: no gate moves, leg 6 stays
+prohibited, no covariance is adopted, no compute is authorized, and these ceilings are set from the
+**worst observed regime** rather than from a forecast — §3c and §3e establish that CPU-partition arms
+are not reproducible in either elapsed or `TotalCPU` across scheduler regimes, so a third run may
+exceed them. That would be a new `OI-*`, not a defect in this signature.
