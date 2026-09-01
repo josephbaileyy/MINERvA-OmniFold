@@ -850,8 +850,6 @@ class TheP4RatchetReadsWhatTheRunProduced(LauncherFixture):
         self.assertIn("zero inventory records", r.stderr)
 
 
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
 
 
 class NoPythonRunsBeforeTheActivator(LauncherFixture):
@@ -1323,3 +1321,19 @@ class EveryTrackedSourcedFileIsGitBoundBEFOREAnyOfThemIsSourced(LauncherFixture)
                 gate = next(i for i, l in enumerate(lines) if l.startswith("for _mnv_rel in "))
                 head = [l for l in lines[:gate] if l.strip().startswith(("source ", ". "))]
                 self.assertEqual(head, [], f"{sh}: sources something before the parity gate: {head}")
+
+
+# THIS BLOCK MUST STAY LAST IN THE FILE, AND THAT IS NOT A STYLE PREFERENCE.
+# `unittest.main()` calls sys.exit(), so ANY class defined below it is never even DEFINED under
+# direct execution -- the module body stops here. It sat at line 853 of 1325 from the file's first
+# commit (ae42ae8d) until 2026-09-01, and rounds 5, 6 and 7 each APPENDED a test class after it:
+#   f3c27870  TheENVIRONMENTIsItsOwnRootAndIsVerifiedBEFOREItIsSourced      17 tests
+#   502d5dcd  NoPythonRunsBeforeTheActivator                                 4 tests
+#   60cf728d  EveryTrackedSourcedFileIsGitBoundBEFOREAnyOfThemIsSourced     10 tests
+# So `python3 tests/test_k0_launcher_two_roots.py` collected 33 of 64 and exited 0. A TRUNCATED RUN
+# IS SILENT: it reports "OK", so every record citing this suite's pass count via that route was
+# citing 33. The 31 were run by importing the module when this was found; all 31 passed, so nothing
+# was broken -- what was lost was three rounds of believing they had been exercised.
+# Append new classes ABOVE this line.
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

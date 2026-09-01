@@ -446,12 +446,42 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   and the tool needs 3.7+, so the check cannot run where the comparison would be exact); **HOME** cannot be
   asserted (six launchers set `--export=ALL,HOME=…` and three re-export it, so asserting it would have made
   three **refuse themselves** on every correct run); and an **added `MNV_*` is what activation does**. All
-  three are reported as observations. **64/64** in `test_k0_launcher_two_roots.py`, **13/13** in the census
-  suite, **25** self-test arms in the tool. All eight parse under the **real target interpreter, bash
+  three are reported as observations. ~~**64/64** in `test_k0_launcher_two_roots.py`~~ **— CORRECTED 2026-09-01: that run collected
+  33.** `unittest.main()` sat at line 853 of 1325 with three classes after it, so direct execution
+  skipped 31 tests and still printed `OK`; 64 was a count of `def test_` lines, not of the runner's
+  report. Placement fixed; the file now genuinely reports **Ran 64 … OK** and all 31 pass. Census
+  suite **25/25** (was 13/13, extended under `OI-185`), **25** self-test arms in the tool. All eight parse under the **real target interpreter, bash
   4.4.23 on saul**. **⚠ ONE CONSEQUENCE IS ROUTED TO JOSEPH AS `OI-185` RATHER THAN ABSORBED:** ruling 21's
   guarding boundary moves **14/30 → 14/38** (guarded unchanged at 14, unclassified at 0). The census
   **fired** rather than absorbing it, which is `F-7(a)`'s complaint answered. **MOVES NO GATE:** Gate 2
   remains FAIL, leg 6 prohibited, nothing adopted, nothing submitted, CAND `1 of 7` / QUOTED `0 of 7`.
+- **✅ JOSEPH RATIFIES `OI-185`, 2026-09-01 — `OI-185` DISCHARGED, THE BOUNDARY STANDS AT 14/38 AND THE
+  AUTHORED TOTALS ARE GONE:**
+  [`DECISION-20260901-joseph-ratifies-oi185-invariants.md`](DECISION-20260901-joseph-ratifies-oi185-invariants.md)
+  — Joseph, in his own turn: ***"Okay I like your recommendation for OI-185, do it"***. **The record
+  reproduces the accepted recommendation VERBATIM**, because a ruling of that form takes 100% of its content
+  from the recommendation and a later summary would let the producing lane set the scope of his ruling after
+  the fact. **BOTH HALVES SHIPPED. (1)** ruling 21's boundary is ratified at **14 guarded / 38**. **(2)** the
+  four authored totals — `excluded_preflight` 24, `non_comment_python3_invocations` 54,
+  `inline_interpreter_probes` 16, `launchers` 8 — are **REMOVED, NOT BUMPED**; the census derives and prints
+  them. **THREE PINS SURVIVE:** `guarded == 14` (ruling 21's actual subject), `unclassified == 0`, and
+  `commented_out_python3_lines == 18` — the last a TRIPWIRE deliberately left pinned, since the ruling
+  authorized de-pinning the BOUNDARY totals and nothing else. Schema `mnv_preflight_exclusions/1 → /2`, and a
+  v1 declaration is now **refused as could-not-look** rather than read under v2 semantics. **NEW ENFORCEMENT:**
+  every declared exclusion must be structurally complete, resolve to its declared path, appear exactly
+  `per_launcher` times, and be **A-3 `--pair` bound in every launcher** — the last was true of all three tools
+  and asserted by nobody, which is `F-7(a)`'s complaint about the exclusion itself. **⚠ ONE DEPARTURE FROM THE
+  RATIFIED WORDS IS FLAGGED, NOT ABSORBED (§4):** the recommendation gave the ground as *"imports only the
+  standard library"*, and **implemented literally that is unsatisfiable by the set ruling 21 already
+  accepted** — measured, `mnv_source_manifest.py` has `repo_origin_count` **1**, importing `MARKERS,
+  is_checkout` from `mnv_guarded_run` itself. A stdlib-only rule would have fired on a ratified entry **on
+  every correct tree**. The rule was **not relaxed to fit**; the question was restated to the CIRCULARITY
+  ground the declaration always gave, made falsifiable as *repository imports ⊆ {`mnv_guarded_run`}* — broader
+  than the ratified words **by exactly one module**, and his to reverse. **THE PROMISE IS NOW TWO TESTS:** a
+  principled fourth preflight tool passes with no ruling (boundary 46, `guarded` still 14) and the same
+  launcher bytes without the declaration entry still fail. Census suite **25/25**, up from 13. **NO LAUNCHER
+  WAS EDITED** — no `F-14`/§7.0.7 coupling, no `OI-123` supersession. **MOVES NO GATE:** Gate 2 remains FAIL,
+  nothing adopted, CAND `1 of 7` / QUOTED `0 of 7`.
 - **✅ JOSEPH RATIFIES THE `OI-177` PER-ARM CEILINGS, 2026-09-01 — `OI-177` DISCHARGED:**
   [`DECISION-20260901-joseph-ratifies-oi177-per-arm-ceilings.md`](DECISION-20260901-joseph-ratifies-oi177-per-arm-ceilings.md)
   — Joseph, in his own turn: ***"I sign"***. **RATIFIED, in task-hours:** arm 2 seed split **8 CPU** (+3),
