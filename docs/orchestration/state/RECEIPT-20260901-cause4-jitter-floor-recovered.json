@@ -1,0 +1,29 @@
+{
+  "THE_CRITICAL_SCOPE_LIMIT": "THIS RUN'S PRODUCT NO LONGER EXISTS. The log's last line is '[combine] wrote uq_5d/unified_throw_cov_5d.root'. That path's current occupant is 2677168123 bytes with mtime 2026-07-13 02:15:41 -0700 -- measured this session, matching Lane D's 2026-08-17 finding. The path was reused and overwritten 12 days after this run. So these numbers describe a SUPERSEDED occupant, not the artifact adopted today.",
+  "consequence_for_the_ledger": "VALIDATION_LEDGER.md:1192 attributes 'jitter-corrected trace ratio 1.539' to the adopted covariance. The adopted throw ROOT's own committed operands (VL44, ledger:488 and :1021, read from the adopted ROOT directly) are sqrt_tr_unified 4.4607819710748654e-38 / sqrt_tr_block 3.4032639007214586e-38, whose RAW sqrt-trace ratio is 1.3107. A jitter-corrected ratio can never EXCEED its raw ratio, so 1.539 cannot describe the adopted artifact. The ledger quotes a superseded product's number under the adopted product's name.",
+  "derived_values": {
+    "jit_trace": 3.731e-78,
+    "jitter_corrected_sqrt_trace_ratio": 1.539,
+    "magnitude_of_the_defect_on_the_reported_ratio_pct": -0.11,
+    "raw_sqrt_trace_ratio": 1.541,
+    "sqrt_jit_trace": 1.932e-39,
+    "sqrt_tr_block": 2.6749e-38,
+    "sqrt_tr_unified_raw": 4.1209e-38
+  },
+  "internal_consistency": "Every printed number re-derives from the printed operands: 4.1209/2.6749 = 1.5406 -> 1.541; sqrt((4.1209e-38)^2 - 3.731e-78) = 4.1164e-38; 4.1164/2.6749 = 1.5389 -> 1.539; sqrt(3.731e-78) = 1.932e-39. Four for four.",
+  "not_citable_for": "Discharging cause 4, moving any gate, adopting anything, or grading the M cell. Gate 2 remains FAIL; CAND 1 of 7, QUOTED 0 of 7.",
+  "read_host": "login28",
+  "read_utc": "2026-09-01T18:20:05Z",
+  "schema": "mnv_recovered_log/1",
+  "slurm_job": "55286276",
+  "source_bytes": 969,
+  "source_inode": "882725372313993217",
+  "source_mtime_local": "2026-07-01 23:54:25 -0700",
+  "source_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/uthrow5d_comb_55286276.out",
+  "source_sha256_measured_on_cluster": "a34b554dcc4c18a4a7baaf1320afcc744538ec1e9084d8c4ad1a68103cbc8cdf",
+  "transcript_matches_cluster_digest": true,
+  "transcript_sha256_recomputed_here": "a34b554dcc4c18a4a7baaf1320afcc744538ec1e9084d8c4ad1a68103cbc8cdf",
+  "verbatim": "[bank] 12 knob bands, 100 flux universes, 32849103 events, edges [14, 16, 7, 7, 6]\n[combine] reported bins = 10694\n[combine] 160 throws from 20 slabs\n[block] 12 knobs + flux (100 univ, sqrt-tr=4.184e-39)\n\n[null] jitter floor ||x_cv(s+7)-x_cv||^2 = 3.731e-78  (= 2*sum sigma_jit^2); sqrt = 1.932e-39\n\n===== Unified-throw vs block-sum =====\n  sqrt-trace  unified=4.1209e-38  block=2.6749e-38  raw ratio=1.541\n  jitter-corrected unified sqrt-trace=4.1164e-38  corrected ratio=1.539\n  sqrt-trace cross-term (unified-block) = 3.1348e-38  (117.2% of block)\n  per-bin sigma ratio unified/block: median=0.830\n  (the jitter-corrected ratio is the block-sum-vs-unified test: throws re-unfold at independent seeds while block units share the CV seed, so subtract the jitter floor before comparing. ratio>>1 => the unfolding combines bands NONLINEARLY and the block-sum underestimates; ratio~1 => block-sum is a good approximation.)\n[combine] wrote uq_5d/unified_throw_cov_5d.root\n",
+  "what": "The ONLY surviving printed jitter floor (cause 4's retired jit_trace deflation) for a 5D unified-throw run, recovered from purgeable scratch and made durable.",
+  "why": "OI-173 (Joseph, 2026-09-01) rules that if the printed jit_trace value is NOT recoverable from committed bytes, cause 4's M leg is NOT MET (unmeasured) rather than N/A. This receipt is the committed copy. Lane D flagged the value as perishable on 2026-08-17 (8a6cf176, 'recoverable today, not necessarily next month'); it survived 15 more days."
+}

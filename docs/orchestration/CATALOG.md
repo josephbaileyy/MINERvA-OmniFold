@@ -491,6 +491,26 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   guarding boundary moves **14/30 → 14/38** (guarded unchanged at 14, unclassified at 0). The census
   **fired** rather than absorbing it, which is `F-7(a)`'s complaint answered. **MOVES NO GATE:** Gate 2
   remains FAIL, leg 6 prohibited, nothing adopted, nothing submitted, CAND `1 of 7` / QUOTED `0 of 7`.
+- **🔎 CAUSE 4's JITTER FLOOR RECOVERED, 2026-09-01 — AND THE LEDGER'S `1.539` DESCRIBES A DELETED
+  PRODUCT:**
+  [`FINDING-20260901-cause4-jitter-floor-recovered.md`](FINDING-20260901-cause4-jitter-floor-recovered.md)
+  — Joseph authorized the measurement he had left unowned (***"You can take it"***). **`jit_trace =
+  3.731e-78`**, with the full print block `raw ratio=1.541` / `corrected ratio=1.539`, so **the
+  magnitude of cause 4's defect on the reported ratio is −0.11%**. Every printed number re-derives from
+  its printed operands, four for four. Recovered from the one surviving scratch log Lane D found at
+  `8a6cf176` and warned was perishable; it survived 15 more days and is now durable at
+  `state/RECEIPT-20260901-cause4-jitter-floor-recovered.json`, whose transcript **re-hashes to the
+  cluster-measured sha256**. **⚠ THE LARGER FINDING: the recovered numbers belong to a product that no
+  longer exists.** That run wrote `uq_5d/unified_throw_cov_5d.root`; the path's current occupant is
+  2.68 GB at `2026-07-13`, twelve days later. The adopted ROOT's own committed operands give a **raw**
+  sqrt-trace ratio of **1.3107**, and a corrected ratio can never exceed its raw one — so
+  `VALIDATION_LEDGER.md:1192` prints a superseded occupant's number under the adopted product's name.
+  **A CONVENIENT ALTERNATIVE READING WAS REFUTED BY THE MEASUREMENT** and is recorded as such: the only
+  arithmetically-possible reading beforehand was a *trace* ratio, under which the value inverted
+  cleanly — the log shows it is a *sqrt-trace* ratio, and adopting the other would have been
+  measurability choosing the specification. **GRADES NOTHING:** the `M` cell is not moved, Gate 2
+  remains FAIL, CAND `1 of 7` / QUOTED `0 of 7`. Read-only throughout — isolated worktree exited clean,
+  three read-only cluster reads, nothing on the cluster mutated.
 - **✅ JOSEPH RATIFIES `OI-185`, 2026-09-01 — `OI-185` DISCHARGED, THE BOUNDARY STANDS AT 14/38 AND THE
   AUTHORED TOTALS ARE GONE:**
   [`DECISION-20260901-joseph-ratifies-oi185-invariants.md`](DECISION-20260901-joseph-ratifies-oi185-invariants.md)
