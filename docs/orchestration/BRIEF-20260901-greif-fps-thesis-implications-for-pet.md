@@ -259,14 +259,28 @@ an answer to it.
 
 **Nobody in this space is doing a coverage study, including them.** The string `coverag` appears
 **once** in the extracted text of the whole thesis, and it is about detector acceptance in the forward
-region — not statistical coverage. *(Scope: a case-insensitive search over the `pdftotext -layout`
-extraction of the full PDF; text rendered inside figure images would not be captured, though body
-text is.)* Their own statement (§6.5.1) is that *"running sufficient bootstraps to observe this is
+region — not statistical coverage. *(Covering control, run 2026-09-01, because a null over a
+PDF is a claim about the extraction until proven otherwise: the `pdftotext -layout` output carries
+**313 form-feed page breaks for a 313-page document**, so nothing is truncated; **88 figure captions
+resolve with their body text**, so captions are not the casualty here; and single-occurrence body
+terms DO resolve at comparable rarity — positive controls `skewness` (1), `pion mass` (2), `Scott`
+(2) and `843` (3) all returned non-zero. The count is therefore a statement about the thesis, not
+about the extraction. What it still cannot see is text rendered inside figure IMAGES, which would
+not carry a coverage study.)* Their own statement (§6.5.1) is that *"running sufficient bootstraps to observe this is
 computationally infeasible"*, so they use the asymptotic χ² and a p-value instead.
 
 **This does not make the coverage demand on `C_stat` wrong.** It calibrates it: that demand is a
 standard *above* current field practice, not a baseline this project is failing to clear. Useful to
 know before more effort is spent treating it as a gap relative to the literature.
+
+**On `OI-126`, state it precisely rather than flatly.** This thesis does not touch the ruling —
+Joseph ruled on 2026-08-20, that ruling is a fourth move rather than a choice among the refuted
+branches, and no external document reopens it. What the finding above *does* bear on is how the
+**coverage condition** for any future reconsideration should be DESCRIBED. `AGENTS.md` records that
+reconsideration needs estimator-equivalence **plus** coverage; this finding means that bar is one
+this campaign set **above** field practice, not a deficiency measured against it. **Anyone who wrote
+"the field expects coverage here and we lack it" would be wrong.** A wording constraint, not a reason
+to reopen anything.
 
 **Two problems they name as open (§6.7):** acceptance effects in unbinned unfolding when the event
 selection involves jets — *"methods … have been proposed but have not yet been applied in a real

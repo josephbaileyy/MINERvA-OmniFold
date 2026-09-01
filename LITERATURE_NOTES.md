@@ -75,7 +75,9 @@ Two lane briefs carry the full extraction and the actions each implies:
   replicas for data stat and **25** for MC-training stat; the uncertainty is *"the variance
   in the result produced by this ensemble of bootstraps."* **No** treatment of a
   nominal-to-bootstrap-mean offset and **no** centering diagnostic anywhere — five mentions
-  of "bootstrap" in 313 pages. Nothing here bears on `OI-126`.
+  of "bootstrap" in 313 pages. Nothing here bears on the `OI-126` **ruling** — but the coverage
+  finding above does constrain how the coverage condition for any future reconsideration is
+  DESCRIBED: that bar is above field practice, not a deficiency measured against it.
 - **`OmniSequential`** (§6.4, pp. 208–209): a deliberately **non-ML** Gaussian-kernel
   reweighter (Scott's-rule binning, log binning above skewness 2, pick the worst
   `z = (χ² − ndof)/√(2 ndof)`, iterate to `z < 2` on all observables), built *"to avoid
@@ -126,8 +128,11 @@ Two lane briefs carry the full extraction and the actions each implies:
 - **Nobody is doing a coverage study, including them.** `coverag` appears **once** in the
   whole thesis and it is about detector acceptance in the forward region. §6.5.1: *"running
   sufficient bootstraps to observe this is computationally infeasible"*, so they use the
-  asymptotic χ² and a p-value. *(Scope: case-insensitive search over the `pdftotext -layout`
-  extraction; figure-embedded text would not be captured.)* This does not make the coverage
+  asymptotic χ² and a p-value. *(Covering control run 2026-09-01, because a
+  null over a PDF is a claim about the extraction until proven otherwise: **313 form-feed page breaks
+  for 313 pages**, **88 figure captions resolve with their body text**, and single-occurrence body
+  terms DO resolve at comparable rarity — `skewness` 1, `pion mass` 2, `Scott` 2, `843` 3.
+  Figure-IMAGE text is still unseen, but would not carry a coverage study.)* This does not make the coverage
   demand on `C_stat` wrong — it calibrates it as a standard **above** current field practice
   rather than a gap relative to the literature.
 - **First explicit background subtraction in an unbinned measurement** (§6.3.3): *"This is

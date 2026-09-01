@@ -136,9 +136,12 @@ ensemble mean (which is what `LITERATURE_NOTES.md`'s ensemble-mean audit finding
 on T2K and Practical Guide grounds, and which this thesis independently supports), or the offset stays
 and must keep being reported as its own object — which is what `\gbdtFiveMeanShift` already does.
 
-**Explicit non-claim:** none of this bears on `OI-126`. Greif's bootstrap treatment is one paragraph
-and five mentions in 313 pages, with **no** discussion of a nominal sitting outside its bootstrap
-family and **no** centering diagnostic. There is nothing in this thesis that addresses that anomaly.
+**Explicit non-claim:** none of this bears on the `OI-126` **ruling**. Greif's bootstrap treatment is
+one paragraph and five mentions in 313 pages, with **no** discussion of a nominal sitting outside its
+bootstrap family and **no** centering diagnostic — nothing here addresses that anomaly. **One
+qualification, because the flat version is too strong:** the coverage finding (PET brief §8) does
+bear on how the coverage condition for any future reconsideration is DESCRIBED — that bar is one this
+campaign set above field practice, not a deficiency measured against it.
 
 ---
 
@@ -168,7 +171,8 @@ consistent — five of its p-values recomputed from its own χ² and DoF reprodu
 **Relation to what we already have.** Our GoF is the binned truncated-spectral χ² on a rank-deficient
 covariance, and `LITERATURE_NOTES.md` files binning-independent GoF as an open problem. Greif does not
 solve that either — he uses the binned χ² and says a true frequentist check is computationally
-infeasible (`coverag` appears **once** in the whole thesis, and it is about detector acceptance). What
+infeasible (`coverag` appears **once** in the whole thesis, and it is about detector acceptance;
+covering control in the PET brief §8). What
 he adds is **breadth**: the same test in 26 projections rather than one, which is a cheap and
 meaningful strengthening for a 5D product that must project into many spaces.
 
