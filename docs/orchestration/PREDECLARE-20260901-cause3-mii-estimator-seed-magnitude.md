@@ -292,6 +292,45 @@ or direct ROOT reads add a scheduler task or change the per-fit execution shape,
 void and the run must return for a new pre-execution cost declaration. The `01:30:00` request must never
 be multiplied by 12; twelve local fits share one allocation in two waves.
 
+## 6b. PREFLIGHT RESULT 2026-09-01 — the footing EXISTS and §6's cost derivation is VOID by its own terms
+
+Run before submission, as §7 requires. **Both halves of §6's stated uncertainty resolved, one
+favourably and one not.**
+
+**FAVOURABLE — the candidate footing is available, and it is not a packed input at all.** The bkgaware
+arm does not read `of_inputs_5d.npz`; it reads ROOT directly.
+`sbatch_unfold_5d_detector_bkgaware_gpu.sh:278-279` sets
+`OMNIFILE = runEventLoopOmniFold_5D_MEFHC_universes_full_bkgaware.root` and
+`FLUX_MC = 2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root`, and passes them as `--omnifile` /
+`--mcfile` at `:294` and `:308`. **The `OMNIFILE` exists on the cluster at 171,117,093,365 bytes.** So
+§2's falsifier — *"a fallback to `of_inputs_5d.npz`"* — is avoided, and there is no packed-input schema
+to design.
+
+**UNFAVOURABLE — and it is the branch §6 wrote itself a rule for.** §6's cost derivation assumed the
+packed shape: *"12 local estimator fits at `CONC=6`: two waves… about 20 minutes per wave"*, giving
+`0.667` GPU task-h. **Reading the 171 GB ROOT directly is a different per-fit execution shape.**
+Measured on the arm that performs exactly this operation on exactly this footing — `det5dBKG`, job
+`57753244`, one bkgaware unfold per task:
+
+```
+n = 19    mean 43.5 min    min 41.9    max 45.5    total 13.76 task-h
+```
+
+A tight distribution, so it transfers reliably. **Twelve replicas at 43.5 min is ≈ 8.7 GPU task-hours,
+about 13× the declared `0.667`**, and the scheduler shape becomes a 12-task array plus a combine —
+**13 scheduler tasks, not 2.**
+
+§6's own rule fires: *"If candidate-footing preparation or direct ROOT reads add a scheduler task or
+change the per-fit execution shape, this cost derivation is void and the run must return for a new
+pre-execution cost declaration."* **Both triggers are met. THE RUN WAS NOT LAUNCHED.**
+
+**What is unaffected.** §1's quantity, §2's footing checks, §3's threshold and its non-tuning
+justification, §4's branches and §5's limits all stand — none of them depends on the execution shape.
+`8.7` GPU task-hours is still **inside** the ratified arm-1 envelope of 20 GPU task-hours, so this is a
+mis-declaration to correct, not an affordability problem. **A corrected pre-execution cost declaration
+is required before the first estimator fit, and Joseph authorized the launch against `0.667`, not
+against `8.7`.**
+
 ## 7. Terminal instruction
 
 This file predeclares; it does not launch. No result belongs in this file. Any outcome goes only into

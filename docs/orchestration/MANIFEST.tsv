@@ -156,7 +156,7 @@ docs/orchestration/PREDECLARE-20260812-stamped-footing-adoption-candidate.md	tra
 docs/orchestration/PREDECLARE-20260817-candidate-stamp-receipt-causes-3-4.md	tracked	ARCHIVAL	predeclaration		20260817	terminal		exact-path-only	nd-unfolding/mii_anchor_comparator.py;nd-unfolding/receipt_candidate_stamps_5d.py	yes	3	131	8755
 docs/orchestration/PREDECLARE-20260817-cause1-endpoint-census-and-magnitude.md	tracked	ARCHIVAL	predeclaration		20260817	terminal		exact-path-only	nd-unfolding/receipt_cause1_endpoint_census_5d.py	yes	2	158	10120
 docs/orchestration/PREDECLARE-20260831-mvfinal-j-specification.md	tracked	ARCHIVAL	predeclaration		20260831	terminal		exact-path-only		yes	0	450	26106
-docs/orchestration/PREDECLARE-20260901-cause3-mii-estimator-seed-magnitude.md	tracked	LIVE	predeclaration		20260901	open		route-only		no	2	300	16102
+docs/orchestration/PREDECLARE-20260901-cause3-mii-estimator-seed-magnitude.md	tracked	LIVE	predeclaration		20260901	open		route-only		no	2	339	18540
 docs/orchestration/PREDECLARE-20260901-cause7-discharge-criteria.md	tracked	LIVE	predeclaration		20260901	open		route-only		no	2	192	12889
 docs/orchestration/PROCEDURE-gbdtFive-macro-update.md	tracked	LIVE	procedure			open		route-only		no	9	176	16639
 docs/orchestration/PROMPTS-20260811-four-session-closeout.md	tracked	LIVE	document		20260811	open		route-only	docs/orchestration/waker_fired_but_unread.sh	no	9	396	26920
