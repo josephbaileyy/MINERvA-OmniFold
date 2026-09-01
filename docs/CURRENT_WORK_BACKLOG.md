@@ -7,7 +7,7 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 
 | source record | derived queue | classification rule | source state prefix |
 |---|---|---|---|
-| OI-187 | NOW | safe-default-active | OPEN |
+| OI-187 | NOW | safe-default-active | RULED 2026-09-01 BY JOSEPH — (a) UPGRADE, NOT A SUBMISSION BLOCKER, and (b) THE DEPENDENCY IS RETAINED BY CHOICE — "keep |
 | OI-186 | NOW | safe-default-active | OPEN |
 | OI-185 | NOW | safe-default-active | OPEN |
 | OI-184 | NOW | safe-default-active | OPEN |

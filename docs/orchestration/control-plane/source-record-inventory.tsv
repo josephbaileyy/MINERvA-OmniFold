@@ -1,5 +1,5 @@
 source_record	lifecycle	queue	classification_rule	source_row_sha256	state_prefix
-OI-187	active	NOW	safe-default-active	dac0c0ae7842862172180decea5d55a60c84774300cb3b9db435abeb37efe018	OPEN
+OI-187	active	NOW	safe-default-active	7b3861f98d5d918ada0bad05927a1516bcc4284569a372a3653c030b1671e041	RULED 2026-09-01 BY JOSEPH — (a) UPGRADE, NOT A SUBMISSION BLOCKER, and (b) THE DEPENDENCY IS RETAINED BY CHOICE — "keep
 OI-186	active	NOW	safe-default-active	2eee4f9d1140ecf106fed1cb3bf5c59f05a94247e67d02119f39991065753dd4	OPEN
 OI-185	active	NOW	safe-default-active	622a62a8b7aa4682a623b286fd02ab8501bb96d40d02d102f83025da911ee567	OPEN
 OI-184	active	NOW	safe-default-active	8f82ddd8abf0b2866b952d8cb5f46173e7aa8713203b8e6694dab8d2e13a442e	OPEN

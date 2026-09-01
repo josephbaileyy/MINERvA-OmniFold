@@ -324,6 +324,19 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   counts stay CAND `1 of 7` / QUOTED `0 of 7`. Supplies the n=2 complete populations that make
   `OI-177` ratifiable — and kills the 40 CPU-h figure the amendment first proposed, since arm 5
   measured **49.11**.
+- **THE SCALAR-5D COVARIANCE IS A CLAIM UPGRADE — AND THE DEPENDENCY IS KEPT BY CHOICE, 2026-09-01:**
+  [`DECISION-20260901-joseph-oi187-upgrade-not-blocker.md`](DECISION-20260901-joseph-oi187-upgrade-not-blocker.md)
+  — Joseph, his own turn: ***"Yes it's an upgrade, keep the covariance work going. The intention is to be done with the
+  uncertainties before publication"***. **(a)** The quarantine gates ONE CLAIM UPGRADE — the joint high-`E_avail`/high-`W`
+  generator deficit from central value to significance — **not the Letter as scoped**: `paper_body.tex:145-148` says
+  *"Every non-two-dimensional result in this Letter is a central value… no superseded or historical covariance is used
+  here."* **(b)** The dependency is nevertheless RETAINED; the covariance work is not stood down. **Both halves travel
+  together** — "upgrade" naturally misreads as "can slip", and it cannot slip by default. What changes is the KIND of
+  dependency: **elective, not structural**. The gap that would have collapsed (a): the Letter DOES quote a covariance at
+  `paper_body.tex:53-55`, and it is `AGENTS.md:25`'s **VALIDATED** 2D standalone construction — every object the Letter
+  quotes is VALIDATED, every quarantined object is one it declines to use. Found by the `claude-school` lane, re-read
+  here. **Deliberately does NOT settle** whether `OI-172`'s note obligation reaches the Letter — that is ruled separately
+  in `OI-187`'s row on a CODE-PATH argument, because this lane's artifact-scope reasoning was true but not sufficient.
 - **JOSEPH RULES THE TWO MAGNITUDE LEGS — `OI-172` AND `OI-173`, 2026-09-01:**
   [`DECISION-20260901-joseph-oi172-oi173-magnitude-legs.md`](DECISION-20260901-joseph-oi172-oi173-magnitude-legs.md)
   — Joseph in his own turn, directly, not relayed: ***"Okay I agree with your recommendations, I authorize you spend the
