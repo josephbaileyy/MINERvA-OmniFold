@@ -206,12 +206,14 @@ class TypedDescriptorKerasTest(unittest.TestCase):
 
     def test_masked_numerical_values_have_no_influence(self) -> None:
         changed = _copy_inputs(self.inputs)
+        float32_maximum = np.finfo(np.float32).max
         for contract in typed.FAMILY_CONTRACTS:
             values_key = f"{contract.name}_values"
             masks_key = f"{contract.name}_masks"
-            changed[values_key][~changed[masks_key]] = np.float32(1.0e20)
-        observed = self.model(changed, training=False)
-        np.testing.assert_array_equal(np.asarray(self.output), np.asarray(observed))
+            changed[values_key][~changed[masks_key]] = float32_maximum
+        observed = np.asarray(self.model(changed, training=False))
+        self.assertTrue(np.all(np.isfinite(observed)))
+        np.testing.assert_array_equal(np.asarray(self.output), observed)
 
     def test_forward_and_trainable_gradients_are_finite_on_cpu(self) -> None:
         tensor_inputs = {
@@ -226,9 +228,13 @@ class TypedDescriptorKerasTest(unittest.TestCase):
         gradients = tape.gradient(loss, self.model.trainable_variables)
         self.assertTrue(np.all(np.isfinite(np.asarray(output))))
         self.assertTrue(gradients)
+        has_nonzero_gradient = False
         for gradient in gradients:
             self.assertIsNotNone(gradient)
-            self.assertTrue(np.all(np.isfinite(np.asarray(gradient))))
+            gradient_array = np.asarray(gradient)
+            self.assertTrue(np.all(np.isfinite(gradient_array)))
+            has_nonzero_gradient |= bool(np.any(gradient_array != 0.0))
+        self.assertTrue(has_nonzero_gradient)
         for variable in self.model.trainable_variables:
             self.assertIn("CPU", variable.handle.device.upper())
 
@@ -242,6 +248,44 @@ class TypedDescriptorKerasTest(unittest.TestCase):
             np.asarray(self.output), np.asarray(observed), rtol=0.0, atol=0.0
         )
         self.assertEqual(recovered.get_config(), self.model.get_config())
+
+    def test_fresh_process_load_round_trip_is_exact(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            directory = Path(temporary_directory)
+            model_path = directory / "typed-adapter.keras"
+            inputs_path = directory / "inputs.npz"
+            expected_path = directory / "expected.npy"
+            self.model.save(model_path)
+            np.savez(inputs_path, **self.inputs)
+            np.save(expected_path, np.asarray(self.output))
+            script = "\n".join(
+                [
+                    "import os",
+                    "import sys",
+                    "import numpy as np",
+                    "os.environ.setdefault('CUDA_VISIBLE_DEVICES', '-1')",
+                    f"sys.path.insert(0, {str(PET_ROOT)!r})",
+                    "import typed_descriptor_keras as keras_adapter",
+                    f"with np.load({str(inputs_path)!r}) as archive:",
+                    "    inputs = {name: archive[name] for name in archive.files}",
+                    "model = keras_adapter.load_keras_typed_descriptor_adapter("
+                    f"{str(model_path)!r})",
+                    "observed = np.asarray(model(inputs, training=False))",
+                    f"expected = np.load({str(expected_path)!r})",
+                    "assert np.all(np.isfinite(observed))",
+                    "np.testing.assert_array_equal(expected, observed)",
+                ]
+            )
+            environment = os.environ.copy()
+            environment.pop("PYTHONPATH", None)
+            completed = subprocess.run(
+                [sys.executable, "-c", script],
+                check=False,
+                capture_output=True,
+                text=True,
+                env=environment,
+            )
+        self.assertEqual(completed.returncode, 0, completed.stderr)
 
     def test_detector_and_truth_schema_widths_are_unchanged(self) -> None:
         detector_before = self.detector_event_block.tobytes()

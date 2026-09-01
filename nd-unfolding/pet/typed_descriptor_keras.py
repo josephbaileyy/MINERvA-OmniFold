@@ -324,10 +324,9 @@ def _keras_types() -> tuple[Any, type[Any], type[Any]]:
                         self.family_normalization.scales[field.name],
                         dtype=tf.float32,
                     )
-                    normalized = (field_values - means) / scales
-                    prepared.append(
-                        tf.where(field_masks, normalized, tf.zeros_like(normalized))
-                    )
+                    safe_values = tf.where(field_masks, field_values, means)
+                    normalized = (safe_values - means) / scales
+                    prepared.append(normalized)
                 else:
                     categories = tf.constant(field.categories, dtype=tf.float32)
                     matches = tf.equal(field_values[..., None], categories)
