@@ -136,6 +136,24 @@ ensemble mean (which is what `LITERATURE_NOTES.md`'s ensemble-mean audit finding
 on T2K and Practical Guide grounds, and which this thesis independently supports), or the offset stays
 and must keep being reported as its own object — which is what `\gbdtFiveMeanShift` already does.
 
+> **MEASURED AND ANSWERED 2026-09-01 — THIS SECTION IS NOT A ROUTE TO MEAN-CENTERING.** A reader
+> could take §4 as opening the option of redefining the 5D central value as an ensemble mean, which
+> would make the two centerings coincide as they do for Greif. **They do not coincide here, and the
+> governing test is predeclared.** `uq_math.py:119-138` records the F7 rule from
+> `CORRECTED_UQ_PRODUCTION_STATUS.md`, set before the data: `||mean_shift||` against the sampling
+> floor `sqrt(Tr C)/sqrt(N)`, threshold `F7_FLOOR_MULTIPLE = 2.0`. Measured on the candidate's own
+> stamps, **`4.510x` the floor — `f7_cv_centered_required` returns `True`.** So mean-centering alone
+> is disqualified for the CANDIDATE too, not only for the July artifact.
+>
+> **And the analogy itself fails at the ensembles.** Greif centers over a BOOTSTRAP/SEED ensemble, a
+> nuisance one legitimately averages over; our shift is against the joint **SYSTEMATIC THROW**
+> ensemble (`unified_throw_cov.py:288`: *"Systematic throws all use the SAME estimator seed"*).
+> Defining a central value as the mean over systematic throws would fold systematics into the central
+> value, which is not what the thesis does. Full measurement, including a 24-member seed-ensemble pull
+> that rules out ML stochasticity as the offset's cause:
+> [`FINDING-20260901-f7-floor-ratio-and-seed-pull-measured.md`](FINDING-20260901-f7-floor-ratio-and-seed-pull-measured.md).
+> §4's reframing stands as a reframing; it is not a remedy, exactly as the section itself says.
+
 **Explicit non-claim:** none of this bears on the `OI-126` **ruling**. Greif's bootstrap treatment is
 one paragraph and five mentions in 313 pages, with **no** discussion of a nominal sitting outside its
 bootstrap family and **no** centering diagnostic — nothing here addresses that anomaly. **One

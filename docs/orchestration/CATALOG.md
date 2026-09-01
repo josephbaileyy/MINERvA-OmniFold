@@ -324,6 +324,25 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   counts stay CAND `1 of 7` / QUOTED `0 of 7`. Supplies the n=2 complete populations that make
   `OI-177` ratifiable — and kills the 40 CPU-h figure the amendment first proposed, since arm 5
   measured **49.11**.
+- **THE F7 PREDECLARED TEST, MEASURED ON THE CANDIDATE — MEAN-CENTERING ALONE IS DISQUALIFIED THERE TOO, 2026-09-01:**
+  [`FINDING-20260901-f7-floor-ratio-and-seed-pull-measured.md`](FINDING-20260901-f7-floor-ratio-and-seed-pull-measured.md)
+  — Run to settle whether [`BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md`](BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md)
+  §4 opens a route to redefining the 5D central value as an ensemble mean. **It does not.** `uq_math.py:119-138`
+  carries the F7 rule PREDECLARED in `CORRECTED_UQ_PRODUCTION_STATUS.md` before the data: `||mean_shift||` against
+  the sampling floor `sqrt(Tr C)/sqrt(N)`, threshold `F7_FLOOR_MULTIPLE = 2.0`. **Measured on
+  `stamped_bkgaware_meancentered_20260812.root`'s own stamps: `4.510x` the floor, `f7_cv_centered_required` = `True`**
+  — so the disqualification covers the CANDIDATE, not only the July artifact, which independently supports cause 2's
+  2026-08-12 discharge having REQUIRED the CV-centered variant. **The Greif analogy fails at the ensembles:** he centers
+  over a bootstrap/seed family, our shift is against the joint **systematic throw** family
+  (`unified_throw_cov.py:288`), and averaging systematic throws into a central value is not what the thesis does.
+  A 24-member seed-ensemble pull (median `0.588` vs the 3D reference `0.63`, on a `cv>0` support of exactly `10694`)
+  **removes ML stochasticity as the offset's cause rather than supporting the redefinition.** Scope limits stated:
+  `ssplit5d` varies the train/test split ONLY (`estimator_seed=42` throughout), so no scan anywhere varies both; these
+  are REHEARSAL products, measurable but not quotable. **Records a statistic deliberately NOT computed** — an ad-hoc
+  per-bin throw pull — because a predeclared test governs and choosing a statistic after seeing the data is the
+  failure mode this campaign files against others. **Corrects this lane's own withdrawn `28%`-of-`sqrt(Tr C)` heuristic,
+  which used the wrong denominator and pointed the opposite way.** Discharges nothing, moves no gate; `OI-186` files a
+  `7%` gap between `uq_math`'s comment and the artifact's stamps.
 - **THE DELEGATED COMPUTE CEILING IS DENOMINATED IN TASK-HOURS, 2026-09-01:**
   [`DECISION-20260901-joseph-delegated-ceiling-unit-is-task-hours.md`](DECISION-20260901-joseph-delegated-ceiling-unit-is-task-hours.md)
   — Joseph, in his own turn, asked directly which unit the standing per-arm ceiling uses: ***"It is task
