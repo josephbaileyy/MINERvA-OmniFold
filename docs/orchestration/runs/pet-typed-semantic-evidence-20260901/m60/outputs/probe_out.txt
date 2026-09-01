@@ -1,0 +1,253 @@
+ROOT 6.28/12 python 3.11.14
+=====PHASE_A_META=====
+{
+ "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1B/MasterAnaDev_data_AnaTuple_run00010068_Playlist.root": {
+  "__entries__": 17930,
+  "n_prongs": {
+   "title": "n_prongs/I",
+   "class": ""
+  },
+  "prong_nParticles": {
+   "title": "prong_nParticles[n_prongs]/I",
+   "class": ""
+  },
+  "prong_part_score": {
+   "title": "prong_part_score[n_prongs]/D",
+   "class": ""
+  },
+  "prong_part_mass": {
+   "title": "prong_part_mass[n_prongs]/D",
+   "class": ""
+  },
+  "prong_part_charge": {
+   "title": "prong_part_charge[n_prongs]/I",
+   "class": ""
+  },
+  "prong_part_pid": {
+   "title": "prong_part_pid[n_prongs]/I",
+   "class": ""
+  },
+  "prong_dEdXMean": {
+   "title": "prong_dEdXMean[n_prongs]/D",
+   "class": ""
+  },
+  "prong_part_E": {
+   "title": "prong_part_E",
+   "class": "vector<vector<double> >"
+  },
+  "prong_part_pos": {
+   "title": "prong_part_pos",
+   "class": "vector<vector<double> >"
+  },
+  "gamma1_direction": {
+   "title": "gamma1_direction[3]/D",
+   "class": ""
+  },
+  "gamma2_direction": {
+   "title": "gamma2_direction[3]/D",
+   "class": ""
+  },
+  "gamma1_time": {
+   "title": "gamma1_time/D",
+   "class": ""
+  },
+  "gamma1_E": {
+   "title": "gamma1_E/D",
+   "class": ""
+  },
+  "gamma1_P": {
+   "title": "gamma1_P/D",
+   "class": ""
+  },
+  "gamma1_px": {
+   "title": "gamma1_px/D",
+   "class": ""
+  },
+  "gamma1_py": {
+   "title": "gamma1_py/D",
+   "class": ""
+  },
+  "gamma1_pz": {
+   "title": "gamma1_pz/D",
+   "class": ""
+  },
+  "gamma1_dEdx": {
+   "title": "gamma1_dEdx/D",
+   "class": ""
+  },
+  "MasterAnaDev_BlobX": {
+   "title": "MasterAnaDev_BlobX[MasterAnaDev_BlobX_sz]/D",
+   "class": ""
+  },
+  "MasterAnaDev_BlobY": {
+   "title": "MasterAnaDev_BlobY[MasterAnaDev_BlobY_sz]/D",
+   "class": ""
+  },
+  "MasterAnaDev_BlobZ": {
+   "title": "MasterAnaDev_BlobZ[MasterAnaDev_BlobZ_sz]/D",
+   "class": ""
+  },
+  "MasterAnaDev_BlobT": {
+   "title": "MasterAnaDev_BlobT[MasterAnaDev_BlobT_sz]/D",
+   "class": ""
+  },
+  "MasterAnaDev_BlobTPos": {
+   "title": "MasterAnaDev_BlobTPos[MasterAnaDev_BlobTPos_sz]/D",
+   "class": ""
+  },
+  "MasterAnaDev_BlobTotalE": {
+   "title": "MasterAnaDev_BlobTotalE[MasterAnaDev_BlobTotalE_sz]/D",
+   "class": ""
+  },
+  "MasterAnaDev_BlobIs3D": {
+   "title": "MasterAnaDev_BlobIs3D[MasterAnaDev_BlobIs3D_sz]/I",
+   "class": ""
+  },
+  "MasterAnaDev_BlobNClusters": {
+   "title": "MasterAnaDev_BlobNClusters[MasterAnaDev_BlobNClusters_sz]/I",
+   "class": ""
+  },
+  "MasterAnaDev_BlobX_sz": {
+   "title": "MasterAnaDev_BlobX_sz/I",
+   "class": ""
+  },
+  "MasterAnaDev_BlobTPos_sz": {
+   "title": "MasterAnaDev_BlobTPos_sz/I",
+   "class": ""
+  },
+  "MasterAnaDev_BlobView": null,
+  "MasterAnaDev_BlobTPosPerCluster": {
+   "title": "MasterAnaDev_BlobTPosPerCluster[MasterAnaDev_BlobTPosPerCluster_sz]/D",
+   "class": ""
+  },
+  "vtx": {
+   "title": "vtx[4]/D",
+   "class": ""
+  }
+ },
+ "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1A/MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root": {
+  "__entries__": 186439,
+  "n_prongs": {
+   "title": "n_prongs/I",
+   "class": ""
+  },
+  "prong_nParticles": {
+   "title": "prong_nParticles[n_prongs]/I",
+   "class": ""
+  },
+  "prong_part_score": {
+   "title": "prong_part_score[n_prongs]/D",
+   "class": ""
+  },
+  "prong_part_mass": {
+   "title": "prong_part_mass[n_prongs]/D",
+   "class": ""
+  },
+  "prong_part_charge": {
+   "title": "prong_part_charge[n_prongs]/I",
+   "class": ""
+  },
+  "prong_part_pid": {
+   "title": "prong_part_pid[n_prongs]/I",
+   "class": ""
+  },
+  "prong_dEdXMean": {
+   "title": "prong_dEdXMean[n_prongs]/D",
+   "class": ""
+  },
+  "prong_part_E": {
+   "title": "prong_part_E",
+   "class": "vector<vector<double> >"
+  },
+  "prong_part_pos": {
+   "title": "prong_part_pos",
+   "class": "vector<vector<double> >"
+  },
+  "gamma1_direction": {
+   "title": "gamma1_direction[3]/D",
+   "class": ""
+  },
+  "gamma2_direction": {
+   "title": "gamma2_direction[3]/D",
+   "class": ""
+  },
+  "gamma1_time": {
+   "title": "gamma1_time/D",
+   "class": ""
+  },
+  "gamma1_E": {
+   "title": "gamma1_E/D",
+   "class": ""
+  },
+  "gamma1_P": {
+   "title": "gamma1_P/D",
+   "class": ""
+  },
+  "gamma1_px": {
+   "title": "gamma1_px/D",
+   "class": ""
+  },
+  "gamma1_py": {
+   "title": "gamma1_py/D",
+   "class": ""
+  },
+  "gamma1_pz": {
+   "title": "gamma1_pz/D",
+   "class": ""
+  },
+  "gamma1_dEdx": {
+   "title": "gamma1_dEdx/D",
+   "class": ""
+  },
+  "MasterAnaDev_BlobX": {
+   "title": "MasterAnaDev_BlobX[MasterAnaDev_BlobX_sz]/D",
+   "class": ""
+  },
+  "MasterAnaDev_BlobY": {
+   "title": "MasterAnaDev_BlobY[MasterAnaDev_BlobY_sz]/D",
+   "class": ""
+  },
+  "MasterAnaDev_BlobZ": {
+   "title": "MasterAnaDev_BlobZ[MasterAnaDev_BlobZ_sz]/D",
+   "class": ""
+  },
+  "MasterAnaDev_BlobT": {
+   "title": "MasterAnaDev_BlobT[MasterAnaDev_BlobT_sz]/D",
+   "class": ""
+  },
+  "MasterAnaDev_BlobTPos": {
+   "title": "MasterAnaDev_BlobTPos[MasterAnaDev_BlobTPos_sz]/D",
+   "class": ""
+  },
+  "MasterAnaDev_BlobTotalE": {
+   "title": "MasterAnaDev_BlobTotalE[MasterAnaDev_BlobTotalE_sz]/D",
+   "class": ""
+  },
+  "MasterAnaDev_BlobIs3D": {
+   "title": "MasterAnaDev_BlobIs3D[MasterAnaDev_BlobIs3D_sz]/I",
+   "class": ""
+  },
+  "MasterAnaDev_BlobNClusters": {
+   "title": "MasterAnaDev_BlobNClusters[MasterAnaDev_BlobNClusters_sz]/I",
+   "class": ""
+  },
+  "MasterAnaDev_BlobX_sz": {
+   "title": "MasterAnaDev_BlobX_sz/I",
+   "class": ""
+  },
+  "MasterAnaDev_BlobTPos_sz": {
+   "title": "MasterAnaDev_BlobTPos_sz/I",
+   "class": ""
+  },
+  "MasterAnaDev_BlobView": null,
+  "MasterAnaDev_BlobTPosPerCluster": {
+   "title": "MasterAnaDev_BlobTPosPerCluster[MasterAnaDev_BlobTPosPerCluster_sz]/D",
+   "class": ""
+  },
+  "vtx": {
+   "title": "vtx[4]/D",
+   "class": ""
+  }
+ }
+}
+=====PHASE_A_RC=0

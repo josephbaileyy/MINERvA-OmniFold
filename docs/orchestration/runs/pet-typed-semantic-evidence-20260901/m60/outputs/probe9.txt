@@ -1,0 +1,12 @@
+##### 1A_DATA entries 15259
+  joint (slot1,slot2) states  A=absent Z=zeroE P=present: {'AA': 12561, 'PP': 2533, 'ZP': 36, 'PZ': 69, 'ZZ': 60}
+  gate-passing photon count (E>1e-5): {0: 12621, 2: 2533, 1: 105}
+    -> count==1 events: 105 = 0.688% of entries
+  zero-E slot profile: {'all_10_components_zero': 225, 'energy4_sum_zero': 225, 'time_FILLED': 225, 'dEdx_other': 142, 'P_is_zero': 225, 'dEdx_is_-999': 83}
+  zero-E slot direction norm: n=225 min=1.000000000000 max=1.000000000000
+##### 1A_MC entries 20000
+  joint (slot1,slot2) states  A=absent Z=zeroE P=present: {'ZP': 48, 'AA': 16542, 'PP': 3226, 'ZZ': 74, 'PZ': 110}
+  gate-passing photon count (E>1e-5): {1: 158, 0: 16616, 2: 3226}
+    -> count==1 events: 158 = 0.790% of entries
+  zero-E slot profile: {'all_10_components_zero': 306, 'energy4_sum_zero': 306, 'time_FILLED': 306, 'dEdx_other': 181, 'P_is_zero': 306, 'dEdx_is_-999': 125}
+  zero-E slot direction norm: n=306 min=1.000000000000 max=1.000000000000

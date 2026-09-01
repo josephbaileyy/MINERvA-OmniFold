@@ -1,0 +1,18 @@
+##### 1A_DATA entries 15259
+  gamma1_E classes (n=15259): {'== -9999 (absence)': 12561, '> 1e-5 (present)': 2602, '== 0.0 exactly': 96}
+  gamma2_E classes (n=15259): {'== -9999 (absence)': 12561, '> 1e-5 (present)': 2569, '== 0.0 exactly': 129}
+  borderline-slot direction check: {'slot1 borderline: dir all -9999? False': 96, 'slot2 borderline: dir all -9999? False': 129}
+  prong_part_E[3] classes, pid  -999: {'E3 == 0.0': 771}
+  prong_part_E[3] classes, pid     0: {'E3 == 0.0': 814}
+  prong_part_E[3] classes, pid     3: {'E3 > 1e-5': 12222, 'E3 == 0.0': 23}
+  prong_part_E[3] classes, pid     8: {'E3 > 1e-5': 4765, 'E3 == 0.0': 5}
+  prong_part_E[3] classes, pid    13: {'E3 > 1e-5': 3829}
+##### 1A_MC entries 20000
+  gamma1_E classes (n=20000): {'== 0.0 exactly': 122, '== -9999 (absence)': 16542, '> 1e-5 (present)': 3336}
+  gamma2_E classes (n=20000): {'> 1e-5 (present)': 3274, '== -9999 (absence)': 16542, '== 0.0 exactly': 184}
+  borderline-slot direction check: {'slot1 borderline: dir all -9999? False': 122, 'slot2 borderline: dir all -9999? False': 184}
+  prong_part_E[3] classes, pid  -999: {'E3 == 0.0': 1417}
+  prong_part_E[3] classes, pid     0: {'E3 == 0.0': 1925}
+  prong_part_E[3] classes, pid     3: {'E3 > 1e-5': 14180, 'E3 == 0.0': 29}
+  prong_part_E[3] classes, pid     8: {'E3 > 1e-5': 9836, 'E3 == 0.0': 17}
+  prong_part_E[3] classes, pid    13: {'E3 > 1e-5': 7494}

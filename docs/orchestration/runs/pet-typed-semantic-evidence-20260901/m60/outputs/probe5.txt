@@ -1,0 +1,18 @@
+##### 1A_DATA entries 15259 present photons 5171
+  hcal non-zero counts: NONE
+  energy_hcal min/max=[0.0, 0.0]   evis_hcal min/max=[0.0, 0.0]
+  sum5 (incl hcal) == E exactly: 5171/5171
+  sum4 (excl hcal) == E exactly: 5171/5171   worst |sum4-E| = 0 MeV
+  energy_ecal/evis_ecal distinct rounded ratios (top 5): [(3.2367, 1670)]   evis_ecal==0 in 3501
+##### 1A_MC entries 20000 present photons 6610
+  hcal non-zero counts: NONE
+  energy_hcal min/max=[0.0, 0.0]   evis_hcal min/max=[0.0, 0.0]
+  sum5 (incl hcal) == E exactly: 6610/6610
+  sum4 (excl hcal) == E exactly: 6610/6610   worst |sum4-E| = 0 MeV
+  energy_ecal/evis_ecal distinct rounded ratios (top 5): [(3.2367, 2189)]   evis_ecal==0 in 4421
+##### 1F_DATA entries 11880 present photons 3990
+  hcal non-zero counts: NONE
+  energy_hcal min/max=[0.0, 0.0]   evis_hcal min/max=[0.0, 0.0]
+  sum5 (incl hcal) == E exactly: 3990/3990
+  sum4 (excl hcal) == E exactly: 3990/3990   worst |sum4-E| = 0 MeV
+  energy_ecal/evis_ecal distinct rounded ratios (top 5): [(3.2367, 1288)]   evis_ecal==0 in 2702

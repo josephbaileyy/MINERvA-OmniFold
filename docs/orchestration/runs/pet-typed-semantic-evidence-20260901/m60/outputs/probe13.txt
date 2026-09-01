@@ -1,0 +1,22 @@
+##### 1A_DATA
+  ZP events: n=36  P-slot sum(evis_*)>0 in 36  min=4.248641186701631
+  PZ events: n=69  P-slot sum(evis_*)>0 in 69
+  ZZ events: n=60  both sums zero in 60
+  per-subdetector energy/evis ratio over PRESENT slots (distinct rounded, top 3):
+     energy_trkr      [(1.326, 201), (1.470779, 3), (1.483632, 3)]
+     energy_ecal      [(3.2367, 1670)]
+     energy_hcal      no nonzero evis
+     energy_scal_X    [(5.1474, 995)]
+     energy_scal_UV   [(8.9688, 1610)]
+  present slots with evis==0 but energy!=0: NONE
+##### 1A_MC
+  ZP events: n=48  P-slot sum(evis_*)>0 in 48  min=1.7105637949611436
+  PZ events: n=110  P-slot sum(evis_*)>0 in 110
+  ZZ events: n=74  both sums zero in 74
+  per-subdetector energy/evis ratio over PRESENT slots (distinct rounded, top 3):
+     energy_trkr      [(1.326, 263), (1.475579, 4), (1.475569, 3)]
+     energy_ecal      [(3.2367, 2189)]
+     energy_hcal      no nonzero evis
+     energy_scal_X    [(5.1474, 1228)]
+     energy_scal_UV   [(8.9688, 2010)]
+  present slots with evis==0 but energy!=0: NONE
