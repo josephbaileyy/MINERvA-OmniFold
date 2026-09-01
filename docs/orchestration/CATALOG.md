@@ -324,6 +324,20 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   counts stay CAND `1 of 7` / QUOTED `0 of 7`. Supplies the n=2 complete populations that make
   `OI-177` ratifiable — and kills the 40 CPU-h figure the amendment first proposed, since arm 5
   measured **49.11**.
+- **CAUSE 7 FINALLY HAS DISCHARGE CRITERIA — DRAFTED, NOTHING GRADED, 2026-09-01:**
+  [`PREDECLARE-20260901-cause7-discharge-criteria.md`](PREDECLARE-20260901-cause7-discharge-criteria.md)
+  — `CRITERIA-20260811` is titled for causes 1, 2, 3, 4 and 6; **cause 7 had none at all**, appearing only in its §4.1 as
+  a finding that its recorded discharge is for a DIFFERENT PRODUCT. Drafted under Joseph's 2026-09-01 authorization
+  (*"I authorize you spend the hours and drafting to investigate and fix the causes"*). **Four legs, every one OPEN;
+  the word MET does not appear in the document.** §0 separates FOUR artifact names so the FPS object cause 7 was
+  discharged against (266 bins, job `56431823`, `OI-5` resolving it FPS-only) cannot be substituted for the 5D
+  candidate. **The defect IS on the candidate's path** — `adopt_unified_5d.py:17-20` states the nine detector-lateral
+  bands *"are left untouched — the throw does not cover them"*, so the laterals ride through inside
+  `hCov_combined5d_total`. **THE M THRESHOLD IS DELIBERATELY LEFT OPEN FOR JOSEPH**, in the form
+  `nd-unfolding/uq_math.py:128-137` uses for `F7_FLOOR_MULTIPLE`: no pre-observation materiality rule exists and the
+  ratio is diagnostic and unbounded, so *any* cutoff written now would be tuned to already-visible data. He must either
+  rule a principled threshold before M is graded or rule M measurement-only. Grades nothing, discharges nothing,
+  adopts nothing, moves no gate.
 - **THE SCALAR-5D COVARIANCE IS A CLAIM UPGRADE — AND THE DEPENDENCY IS KEPT BY CHOICE, 2026-09-01:**
   [`DECISION-20260901-joseph-oi187-upgrade-not-blocker.md`](DECISION-20260901-joseph-oi187-upgrade-not-blocker.md)
   — Joseph, his own turn: ***"Yes it's an upgrade, keep the covariance work going. The intention is to be done with the
