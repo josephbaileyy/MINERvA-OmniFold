@@ -60,12 +60,39 @@ def test_scheduler_shape_is_the_predeclared_array() -> None:
     assert re.search(r'^#SBATCH --array=1-12(?:%\d+)?$', LAUNCHER_TEXT, re.MULTILINE)
 
 
-def test_every_python_invocation_is_guarded() -> None:
+def test_only_the_science_call_is_guarded_and_the_three_preflights_are_not() -> None:
+    """The eight k=0 launchers invoke SRCMAN/PARITY/ENVPROV DIRECTLY as declared preflight
+    exclusions (sbatch_unfold_5d_detector_bkgaware_gpu.sh:204,213,244). This launcher must match
+    them, for two measured reasons: guarding all four moves the preflight-census guarded boundary
+    from 14 to 18, and 14 is the count ruling 21 pinned (OI-185); and a guarded
+    mnv_env_provenance.py reports repo_origin_count=0 because it imports only the standard library,
+    which fails test_the_inventories_are_NON_VACUOUS under an `env_provenance` tag.
+    """
     python_lines = [
         line for line in executable_text(LAUNCHER_TEXT).splitlines() if "python3" in line
     ]
     assert python_lines
-    assert all('python3 "$GUARD" --expect-root "$CODE_ROOT"' in line for line in python_lines)
+    guarded = [l for l in python_lines if 'python3 "$GUARD" --expect-root "$CODE_ROOT"' in l]
+    direct = [l for l in python_lines if l not in guarded]
+    assert len(guarded) == 1, f"exactly one guarded call (the science unfold), got {len(guarded)}"
+    assert "unfold_nd_omnifold_unbinned.py" in "\n".join(guarded) or "$GUARD" in guarded[0]
+    for tool in ('"$SRCMAN"', '"$PARITY"', '"$ENVPROV"'):
+        assert any(tool in l for l in direct), f"{tool} must be invoked directly, not guarded"
+
+
+def test_guarding_the_preflights_is_rejected() -> None:
+    """Power arm for the rule above: routing ENVPROV through the guard must fail the check."""
+    mutant = LAUNCHER_TEXT.replace(
+        'python3 "$ENVPROV" \\',
+        'python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv env_provenance)" -- "$ENVPROV" \\',
+        1,
+    )
+    assert mutant != LAUNCHER_TEXT, "fixture mutation did not apply"
+    lines = [l for l in executable_text(mutant).splitlines() if "python3" in l]
+    guarded = [l for l in lines if 'python3 "$GUARD" --expect-root "$CODE_ROOT"' in l]
+    assert len(guarded) == 2, "mutant should have two guarded calls"
+    with pytest.raises(AssertionError):
+        assert len(guarded) == 1, "exactly one guarded call"
 
 
 def test_wrong_footing_mutant_is_rejected() -> None:

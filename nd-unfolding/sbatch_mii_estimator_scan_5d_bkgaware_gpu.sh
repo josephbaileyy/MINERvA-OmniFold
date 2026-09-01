@@ -82,7 +82,17 @@ mnv_inv() {
 
 # These integrity and provenance tools are routed through the same import guard as the science
 # process. This launcher therefore adds no preflight exclusion to mnv_preflight_exclusions.json.
-python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv source_manifest)" -- "$SRCMAN" \
+# DECLARED PREFLIGHT EXCLUSIONS -- THE THREE CALLS BELOW ARE DELIBERATELY NOT ROUTED THROUGH
+# mnv_guarded_run.py, AND THAT IS NOT AN OVERSIGHT. The eight k=0 launchers invoke SRCMAN, PARITY and
+# ENVPROV directly (see sbatch_unfold_5d_detector_bkgaware_gpu.sh:204,213,244) and
+# mnv_preflight_exclusions.json declares that set with falsifiable counts. Guarding them here instead
+# would (a) move the guarded boundary from 14 to 18, and 14 is the number ruling 21 pinned -- see
+# OI-185 -- and (b) FAIL test_the_inventories_are_NON_VACUOUS: measured,
+# `mnv_guarded_run.py --expect-root <repo> -- mnv_env_provenance.py --self-test` gives checked=12 but
+# repo_origin_count=0, because that tool imports only the standard library, and the test asserts
+# repo_origin_count > 0 with one exemption that an `env_provenance` tag does not match.
+# ONLY THE SCIENCE CALL AT THE BOTTOM IS GUARDED. Measured by the claude-school k=0 lane.
+python3 "$SRCMAN" \
   --repo "$CODE_ROOT" --compare "$SRCMAN_RECORD" \
   --require-clean --require-checkout --require-no-nested-checkout \
   --require-not-nested --require-readonly || {
@@ -90,7 +100,7 @@ python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv source_manife
   exit 3
 }
 
-python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv parity)" -- "$PARITY" \
+python3 "$PARITY" \
   --repo "$CODE_ROOT" \
   --pair "${CODE_ROOT}/nd-unfolding/unfold_nd_omnifold_unbinned.py=nd-unfolding/unfold_nd_omnifold_unbinned.py" \
   --pair "${CODE_ROOT}/nd-unfolding/sbatch_mii_estimator_scan_5d_bkgaware_gpu.sh=nd-unfolding/sbatch_mii_estimator_scan_5d_bkgaware_gpu.sh" \
@@ -104,7 +114,7 @@ python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv parity)" -- "
 }
 
 _mnv_ep=0
-python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv env_provenance)" -- "$ENVPROV" \
+python3 "$ENVPROV" \
   --check-inherited "$ENVPROV_RECORD" \
   --record "${INVDIR}/env-provenance.${SLURM_JOB_NAME:-nojob}.${SLURM_JOB_ID:-nojid}.${SLURM_ARRAY_TASK_ID:-na}.json" \
   || _mnv_ep=$?
