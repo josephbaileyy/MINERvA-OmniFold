@@ -13,9 +13,9 @@ docs/orchestration/AUTHORIZATION-20260813-gate4-estimator-disposition.md	tracked
 docs/orchestration/AUTHORIZATION-20260815-foldforward-closure-run.md	tracked	ARCHIVAL	document		20260815	terminal		exact-path-only	nd-unfolding/pet/sbatch_foldforward_instrumented_closure.sh	yes	6	59	2891
 docs/orchestration/B1-NORMALIZATION-FIX-DESIGN.md	tracked	ARCHIVAL	document			terminal		exact-path-only	nd-unfolding/pet/closure_b1_rate_injection.py;nd-unfolding/pet/fullevent_fps_dataloader.py;nd-unfolding/pet/validate_gate2_target_receipt.py;nd-unfolding/tests/test_b1_normalization_fix.py	yes	11	388	24602
 docs/orchestration/BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/state/oi137-covering-search-20260822.sh	no	7	397	26997
-docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md	tracked	LIVE	document		20260901	open		route-only		no	6	223	14049
+docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md	tracked	LIVE	document		20260901	open		route-only		no	6	226	14356
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-pet.md	tracked	LIVE	document		20260901	open		route-only		no	5	296	19292
-docs/orchestration/CATALOG.md	tracked	LIVE	router			open		always	docs/orchestration/control_plane_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	25	1093	94241
+docs/orchestration/CATALOG.md	tracked	LIVE	router			open		always	docs/orchestration/control_plane_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	25	1096	94577
 docs/orchestration/CLAIM-CLM-001.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	686
 docs/orchestration/CLAIM-CLM-002.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	515
 docs/orchestration/CLAIM-CLM-003.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	818
@@ -85,7 +85,7 @@ docs/orchestration/FINDING-20260830-k0r2-env-pathcheck-submitter-declaration-omi
 docs/orchestration/FINDING-20260830-quarantine-nocompute-legs-measured.md	tracked	LIVE	finding		20260830	open		route-only		no	7	456	32045
 docs/orchestration/FINDING-20260831-ben039-detector-is-triple-bound.md	tracked	LIVE	finding		20260831	open		route-only		no	4	158	10263
 docs/orchestration/FINDING-20260831-strip-noncode-inverts-on-a-closing-triple-quote.md	tracked	LIVE	finding		20260831	open		route-only		no	4	164	10634
-docs/orchestration/FINDING-20260901-f7-floor-ratio-and-seed-pull-measured.md	tracked	LIVE	finding		20260901	open		route-only		no	4	105	6280
+docs/orchestration/FINDING-20260901-f7-floor-ratio-and-seed-pull-measured.md	tracked	LIVE	finding		20260901	open		route-only		no	4	135	8512
 docs/orchestration/FINDINGS-ARCHIVE-2026-08.md	tracked	ARCHIVAL	document	2026-07-16-fe-campaign		terminal		exact-path-only	docs/orchestration/findings_row_lint.py;nd-unfolding/pet/check_canonical_designation.py	yes	4	155	365050
 docs/orchestration/FINDINGS.md	tracked	LIVE	ledger			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/findings_row_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/verify_ben_citations.py;docs/orchestration/whose_row.py;nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/orchestrate_gpu_node.sh;nd-unfolding/sbatch_bootstrap_5d_gpu.sh;nd-unfolding/tests/test_hash_bindings.py;nd-unfolding/tests/test_remedy_a_adopt_wrapper.py	no	42	130	9431
 docs/orchestration/FLAG-20260824-gregor-pet2-worktree-unpreserved.md	tracked	ARCHIVAL	document		20260824	terminal		exact-path-only		yes	0	51	2954

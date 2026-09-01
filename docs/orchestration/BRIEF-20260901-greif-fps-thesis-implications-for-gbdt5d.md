@@ -142,7 +142,10 @@ and must keep being reported as its own object — which is what `\gbdtFiveMeanS
 > governing test is predeclared.** `uq_math.py:119-138` records the F7 rule from
 > `CORRECTED_UQ_PRODUCTION_STATUS.md`, set before the data: `||mean_shift||` against the sampling
 > floor `sqrt(Tr C)/sqrt(N)`, threshold `F7_FLOOR_MULTIPLE = 2.0`. Measured on the candidate's own
-> stamps, **`4.510x` the floor — `f7_cv_centered_required` returns `True`.** So mean-centering alone
+> stamps, **`4.510x` the floor — `f7_cv_centered_required` returns `True`.** *(Operand correction,
+> same day: `4.510x` pairs the UPSTREAM shift with the CANDIDATE's `sqrt_tr_new`. The like-for-like
+> adopted-ensemble ratio is `VALIDATION_LEDGER.md:390` VL33's **`5.3478x`**, and the candidate carries
+> no mean shift of its own. Verdict unchanged: `5.3478 > 4.8288 > 4.510 > 2.0`.)* So mean-centering alone
 > is disqualified for the CANDIDATE too, not only for the July artifact.
 >
 > **And the analogy itself fails at the ensembles.** Greif centers over a BOOTSTRAP/SEED ensemble, a

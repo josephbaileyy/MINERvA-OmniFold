@@ -31,6 +31,27 @@ functions rather than a re-implementation:
 | **`||mean_shift|| / floor`** | **`4.510x`** (threshold `2.0`) |
 | **`f7_cv_centered_required`** | **`True`** |
 
+> **CORRECTED 2026-09-01, SAME DAY, BY THE `claude-school` k=0 LANE — THE RATIO ABOVE PAIRS OPERANDS
+> FROM TWO DIFFERENT OBJECTS, AND THE LIKE-FOR-LIKE NUMBER ALREADY EXISTED.** The table above is left
+> as written because it is what this lane measured and published.
+>
+> `upstream_joint_mean_shift_norm` says *upstream* in its own name. Its value
+> `1.878696733368378e-38` is `VALIDATION_LEDGER.md:390` **VL33** — the post-J28 **adopted throw
+> ensemble's** shift — and VL33 carries its own matching denominator, `√Tr = 4.443673650575504e-38`,
+> for a ratio of **`5.3478x`**. This lane instead divided that upstream numerator by the CANDIDATE's
+> `sqrt_tr_new` `5.269625166386846e-38`, which belongs to the combined adopted covariance. **`4.510x`
+> is therefore an upstream numerator over a new-covariance denominator, not a like-for-like ratio**,
+> and the phrase *"measured on the candidate's own stamps"* invites exactly the reading it should not.
+>
+> **The candidate carries NO mean shift of its own** — measured: its keys include
+> `upstream_joint_mean_shift_norm` and `joint_mean_shift_norm_checked` but no `joint_mean_shift_norm`.
+> So there is no candidate-own like-for-like ratio to quote, and **`5.3478x` (VL33) is the number that
+> should be cited for the adopted ensemble.**
+>
+> **THE VERDICT IS UNCHANGED AND STRENGTHENED.** `5.3478 > 4.8288 > 4.510 > 2.0`. Every available
+> pairing disqualifies mean-centering alone, which is also `VALIDATION_LEDGER.md:404`'s own conclusion
+> — *"No verdict moves."* What was wrong was the operand pairing, not the finding.
+
 **So mean-centering alone is disqualified for the CANDIDATE, not only for the July artifact.** This is
 consistent with, and independently supports, cause 2's 2026-08-12 discharge for the candidate, which
 required the CV-centered variant rather than waiving it.
@@ -90,6 +111,15 @@ after seeing the data is the failure mode this campaign repeatedly files against
 not become acceptable when the lane doing it agrees with the expected answer.
 
 ## 6. A correction to this lane's own reasoning, recorded rather than quietly dropped
+
+**AND THE NUMBER WAS NEVER RIGHT EITHER, not only its denominator — added on the school lane's
+catch.** The withdrawn heuristic used `28%`, taken from the NOTE MACROS: `\gbdtFiveMeanShift`
+`1.65e-38` over `\gbdtFiveAdoptTrace` `5.81e-38`. That is itself a cross-object pairing, of a
+throw-level shift against a combined-covariance trace. The candidate's own operands give **`35.65%`**
+and the ledger's pre-J28 VL32 case gives **`37.1%`**. So the heuristic was wrong twice over — wrong
+denominator *scale* (floor vs trace) and wrong operand *pairing* — and the record says so rather than
+correcting only the half this lane found itself.
+
 
 Before finding the predeclared rule, this lane argued from `||mean_shift|| / sqrt(Tr C) = 28%` that the
 nominal sat *"comfortably inside"* the throw ensemble. **That was wrong, and it pointed the opposite

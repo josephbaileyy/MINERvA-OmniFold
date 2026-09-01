@@ -330,7 +330,10 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   §4 opens a route to redefining the 5D central value as an ensemble mean. **It does not.** `uq_math.py:119-138`
   carries the F7 rule PREDECLARED in `CORRECTED_UQ_PRODUCTION_STATUS.md` before the data: `||mean_shift||` against
   the sampling floor `sqrt(Tr C)/sqrt(N)`, threshold `F7_FLOOR_MULTIPLE = 2.0`. **Measured on
-  `stamped_bkgaware_meancentered_20260812.root`'s own stamps: `4.510x` the floor, `f7_cv_centered_required` = `True`**
+  `stamped_bkgaware_meancentered_20260812.root`'s stamps: `4.510x` the floor, `f7_cv_centered_required` = `True`**
+  — *corrected same day by the `claude-school` lane: `4.510x` pairs the UPSTREAM shift with the candidate's
+  `sqrt_tr_new`, so it is not like-for-like; the adopted-ensemble ratio is `VALIDATION_LEDGER.md:390` VL33's
+  **`5.3478x`**, and the candidate carries no mean shift of its own. Verdict unchanged: `5.3478 > 4.8288 > 4.510 > 2.0`*
   — so the disqualification covers the CANDIDATE, not only the July artifact, which independently supports cause 2's
   2026-08-12 discharge having REQUIRED the CV-centered variant. **The Greif analogy fails at the ensembles:** he centers
   over a bootstrap/seed family, our shift is against the joint **systematic throw** family
