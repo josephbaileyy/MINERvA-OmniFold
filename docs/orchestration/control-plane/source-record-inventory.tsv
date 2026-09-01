@@ -1,4 +1,5 @@
 source_record	lifecycle	queue	classification_rule	source_row_sha256	state_prefix
+OI-187	active	NOW	safe-default-active	02713a5903409d54ff4bb32b696f42d64c854b739d47870e33896cc672696623	OPEN
 OI-186	active	NOW	safe-default-active	2eee4f9d1140ecf106fed1cb3bf5c59f05a94247e67d02119f39991065753dd4	OPEN
 OI-185	active	NOW	safe-default-active	622a62a8b7aa4682a623b286fd02ab8501bb96d40d02d102f83025da911ee567	OPEN
 OI-184	active	NOW	safe-default-active	8f82ddd8abf0b2866b952d8cb5f46173e7aa8713203b8e6694dab8d2e13a442e	OPEN
@@ -9,10 +10,10 @@ OI-180	active	NOW	safe-default-active	36b25aa9d1ea66bd87d47283c4862e1c6c4bed6069
 OI-179	retired	-	explicit-terminal-prefix	a6e1426890b1385a8f0fd64f37fa8415a291fc9dba33e6ca8f69d3ca62973e16	DISCHARGED 2026-09-01 — DEFECT 3 IS ENFORCED, which was the sole thing holding this row open. Joseph authorized it in hi
 OI-177	retired	-	explicit-terminal-prefix	78273ec3c82962d11374e24c73e5a7b025fa6fd3985f5c79b325f6e4fac0411f	DISCHARGED 2026-09-01 BY JOSEPH'S SIGNATURE. He ratified the amended per-arm ceilings in his own turn — "I sign" — recor
 OI-176	retired	-	explicit-terminal-prefix	34517ff3b245dd1e7ad19779e7f4edf1d501da6d5897ec1d5566dc510fc384a5	DISCHARGED
-OI-173	active	NOW	safe-default-active	b73850f3395bd9df9cc826df1676f838c47409dda19835be7a043d384c3964ff	OPEN
+OI-173	active	NOW	safe-default-active	331024b5407646eef62b81d8e22d5846abe26e63b38cfa21cd5fc0b418cd0f0e	RULED 2026-09-01 BY JOSEPH — M IS SPECIFIED AGAINST THE CLASS OF OBJECT THE DEFECT REACHED, the reported ratio, NOT the
 OI-174	active	NOW	safe-default-active	46e62d8dbf1f49130bcf3d2a385b4fe4582c2328836efa34c1b7ac2a5ecc6c8c	OPEN
 OI-175	retired	-	explicit-terminal-prefix	1893c9ab84ba9f51382fd77b2bcd640b2500c9ec6a5406b460be06df3b9ab0cf	DISCHARGED
-OI-172	active	NOW	safe-default-active	9c150f4d0a989040b9ee5f271c0d10f3b5807df8c0b7b0ed89270f962098edc5	OPEN
+OI-172	active	NOW	safe-default-active	c2350453fe9535823d9231f133516480e77a58c6bcfe96b37e6da2cb2a37ef39	RULED 2026-09-01 BY JOSEPH — MATERIAL ENOUGH TO NEED ITS OWN STATEMENT IN THE NOTE, the unfavourable branch this row nam
 OI-171	retired	-	explicit-terminal-prefix	fa3fffb13b0ba23bf4534d00733e5d26e522090b93bcd13a864f5478701da097	DISCHARGED
 OI-170	retired	-	explicit-terminal-prefix	ec9a5a3a9e5401064563a01babd43ae69a6d85c51ec5f0f45978f6355707d010	DISCHARGED
 OI-162	active	NOW	safe-default-active	137eb0d278f7d52107e34fd819639680943dd7b09b187364c6c41929938b8808	OPEN
