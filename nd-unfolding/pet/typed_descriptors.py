@@ -32,7 +32,8 @@ PRODUCTION_NORMALIZATION_FITTING_POLICY = (
     "for data, validation, inference, and all representation controls."
 )
 SMOKE_NORMALIZATION_FITTING_POLICY = (
-    "SMOKE ONLY: fit valid continuous values from the supplied synthetic rows. "
+    "SMOKE ONLY: fit valid continuous values from the explicitly supplied smoke "
+    "rows. "
     "This artifact is not valid for production, training, or scientific inference."
 )
 
@@ -877,7 +878,7 @@ def fit_frozen_normalization_for_smoke(
     *,
     fit_inventory_row_selection_digest: str,
 ) -> FrozenNormalization:
-    """Fit a synthetic-only normalization object for reference CPU smoke tests.
+    """Fit a smoke-only normalization object for reference CPU smoke tests.
 
     This entry point is intentionally unsuitable for production. Production
     normalization must be fitted by an inventory-aware caller using only its
@@ -887,9 +888,9 @@ def fit_frozen_normalization_for_smoke(
     Parameters
     ----------
     batch : TypedDescriptorBatch
-        Synthetic descriptor rows.
+        Explicitly predeclared method-development smoke rows.
     fit_inventory_row_selection_digest : str
-        Digest identifying the exact synthetic fitting rows.
+        Digest identifying the exact smoke fitting rows.
 
     Returns
     -------
@@ -988,6 +989,21 @@ def save_descriptor_shard(
     destination = Path(path)
     if destination.suffix != ".npz":
         raise ValueError("Typed descriptor shard path must end in .npz")
+    arrays = descriptor_shard_arrays(batch, shard_provenance)
+    atomic_savez_compressed(str(destination), arrays)
+
+
+def descriptor_shard_arrays(
+    batch: TypedDescriptorBatch,
+    shard_provenance: ShardProvenance,
+) -> dict[str, np.ndarray]:
+    """Return object-free arrays for embedding descriptors in an aligned shard.
+
+    This is the same serialization contract used by :func:`save_descriptor_shard`.
+    It lets a same-row producer place the existing event block, generic P12 tokens,
+    and typed descriptors in one atomic artifact instead of constructing a sidecar.
+    """
+
     allowed_ordinals = {
         source_file.ordinal for source_file in shard_provenance.source_files
     }
@@ -1025,7 +1041,64 @@ def save_descriptor_shard(
             arrays[f"{contract.name}.mask.{field.name}"] = np.asarray(
                 family.masks[field.name], dtype=np.bool_
             )
-    atomic_savez_compressed(str(destination), arrays)
+    return arrays
+
+
+def descriptor_batch_from_arrays(
+    stored: Mapping[str, np.ndarray],
+) -> tuple[TypedDescriptorBatch, ShardProvenance]:
+    """Recover descriptors and shard provenance from object-free arrays."""
+
+    if str(np.asarray(stored["schema_version"]).item()) != SCHEMA_VERSION:
+        raise ValueError("Unsupported typed-descriptor schema version")
+    if str(np.asarray(stored["schema_json"]).item()) != _schema_json():
+        raise ValueError("Typed-descriptor field contract does not match this reader")
+    if str(np.asarray(stored["schema_digest"]).item()) != descriptor_schema_digest():
+        raise ValueError("Typed-descriptor schema digest does not match this reader")
+    shard_provenance = ShardProvenance.from_dict(
+        json.loads(str(np.asarray(stored["shard_provenance_json"]).item()))
+    )
+    provenance = RowProvenance(
+        source_file_ordinal=np.asarray(
+            stored["row.source_file_ordinal"], dtype=np.uint32
+        ),
+        source_tree=np.asarray(stored["row.source_tree"], dtype=np.uint8),
+        source_entry=np.asarray(stored["row.source_entry"], dtype=np.uint64),
+    )
+    families: dict[str, RaggedFamilyBatch] = {}
+    for contract in FAMILY_CONTRACTS:
+        family_name = contract.name
+        families[family_name] = RaggedFamilyBatch(
+            name=family_name,
+            offsets=np.asarray(stored[f"{family_name}.offsets"], dtype=np.int64),
+            counts=np.asarray(stored[f"{family_name}.counts"], dtype=np.int64),
+            enabled=np.asarray(stored[f"{family_name}.enabled"], dtype=np.bool_),
+            token_mask=np.asarray(
+                stored[f"{family_name}.token_mask"], dtype=np.bool_
+            ),
+            values={
+                field.name: np.asarray(
+                    stored[f"{family_name}.raw.{field.name}"],
+                    dtype=field.storage_dtype,
+                )
+                for field in contract.fields
+            },
+            masks={
+                field.name: np.asarray(
+                    stored[f"{family_name}.mask.{field.name}"], dtype=np.bool_
+                )
+                for field in contract.fields
+            },
+        )
+    batch = TypedDescriptorBatch(provenance=provenance, families=families)
+    allowed_ordinals = {
+        source_file.ordinal for source_file in shard_provenance.source_files
+    }
+    if not set(int(value) for value in provenance.source_file_ordinal).issubset(
+        allowed_ordinals
+    ):
+        raise ValueError("Loaded rows reference a file absent from shard metadata")
+    return batch, shard_provenance
 
 
 def load_descriptor_shard(
@@ -1045,60 +1118,7 @@ def load_descriptor_shard(
     """
 
     with np.load(Path(path), allow_pickle=False) as stored:
-        if str(stored["schema_version"].item()) != SCHEMA_VERSION:
-            raise ValueError("Unsupported typed-descriptor schema version")
-        if str(stored["schema_json"].item()) != _schema_json():
-            raise ValueError(
-                "Typed-descriptor field contract does not match this reader"
-            )
-        if str(stored["schema_digest"].item()) != descriptor_schema_digest():
-            raise ValueError(
-                "Typed-descriptor schema digest does not match this reader"
-            )
-        shard_provenance = ShardProvenance.from_dict(
-            json.loads(str(stored["shard_provenance_json"].item()))
-        )
-        provenance = RowProvenance(
-            source_file_ordinal=np.asarray(
-                stored["row.source_file_ordinal"], dtype=np.uint32
-            ),
-            source_tree=np.asarray(stored["row.source_tree"], dtype=np.uint8),
-            source_entry=np.asarray(stored["row.source_entry"], dtype=np.uint64),
-        )
-        families: dict[str, RaggedFamilyBatch] = {}
-        for contract in FAMILY_CONTRACTS:
-            family_name = contract.name
-            families[family_name] = RaggedFamilyBatch(
-                name=family_name,
-                offsets=np.asarray(stored[f"{family_name}.offsets"], dtype=np.int64),
-                counts=np.asarray(stored[f"{family_name}.counts"], dtype=np.int64),
-                enabled=np.asarray(stored[f"{family_name}.enabled"], dtype=np.bool_),
-                token_mask=np.asarray(
-                    stored[f"{family_name}.token_mask"], dtype=np.bool_
-                ),
-                values={
-                    field.name: np.asarray(
-                        stored[f"{family_name}.raw.{field.name}"],
-                        dtype=field.storage_dtype,
-                    )
-                    for field in contract.fields
-                },
-                masks={
-                    field.name: np.asarray(
-                        stored[f"{family_name}.mask.{field.name}"], dtype=np.bool_
-                    )
-                    for field in contract.fields
-                },
-            )
-    batch = TypedDescriptorBatch(provenance=provenance, families=families)
-    allowed_ordinals = {
-        source_file.ordinal for source_file in shard_provenance.source_files
-    }
-    if not set(int(value) for value in provenance.source_file_ordinal).issubset(
-        allowed_ordinals
-    ):
-        raise ValueError("Loaded rows reference a file absent from shard metadata")
-    return batch, shard_provenance
+        return descriptor_batch_from_arrays(stored)
 
 
 @dataclass(frozen=True)
@@ -1240,7 +1260,7 @@ class ReferenceTypedDescriptorEncoder:
         projection_dim: int = 8,
         seed: int = 0,
     ) -> tuple["ReferenceTypedDescriptorEncoder", FrozenNormalization]:
-        """Fit synthetic rows and initialize the reference CPU smoke encoder."""
+        """Fit supplied smoke rows and initialize the reference CPU encoder."""
 
         normalization = fit_frozen_normalization_for_smoke(
             batch,
