@@ -1193,6 +1193,35 @@ comparison — all of which had landed on disk but were never written up.
   `uq_5d/universe_stage2_5d/uq_universe_5d_covariance_combined_uthrow.root`,
   adopted median per-bin fraction **13.69%** over the 10550 bins PET also
   reports (per `products/pet/unified5d/pet_vs_gbdt_uncertainty_5d_summary.json`).
+
+  > **⚠ CORRECTED 2026-09-01 — THE `1.539` ABOVE DOES NOT DESCRIBE THE ADOPTED ARTIFACT.** The
+  > sentence is left byte-unchanged because it is what was written on 2026-07-02; this note says what
+  > is wrong with it. **`1.539` is the jitter-corrected sqrt-trace ratio of the 2026-07-01 OCCUPANT of
+  > `uq_5d/unified_throw_cov_5d.root`, a product that no longer exists.** Recovered verbatim from that
+  > run's own log (Slurm `55286276`, `uthrow5d_comb_55286276.out`, mtime `2026-07-01 23:54:25 -0700`),
+  > now committed at `docs/orchestration/state/RECEIPT-20260901-cause4-jitter-floor-recovered.json`
+  > with its cluster-measured sha256 reproduced from the embedded transcript:
+  > `sqrt-trace unified=4.1209e-38 block=2.6749e-38 raw ratio=1.541`, `corrected ratio=1.539`,
+  > `jitter floor = 3.731e-78`. **THAT PATH WAS REUSED AND OVERWRITTEN TWELVE DAYS LATER** — its
+  > current occupant is 2 677 168 123 B at `2026-07-13 02:15:41 -0700`, measured on the cluster
+  > 2026-09-01.
+  >
+  > **THE ADOPTED ARTIFACT'S OWN OPERANDS CONTRADICT `1.539`, and the contradiction is arithmetic, not
+  > interpretive.** `VL44` above (`:488`, restated at `:1021` as *"read from the adopted ROOT
+  > directly"*) records `sqrt_tr_unified = 4.4607819710748654e-38` and
+  > `sqrt_tr_block = 3.4032639007214586e-38` — a **RAW** sqrt-trace ratio of **1.3107**. A
+  > jitter-corrected ratio can never EXCEED its raw ratio, because the correction subtracts a
+  > non-negative `jit_trace`. `1.539 > 1.3107`, so `1.539` cannot be the adopted artifact's corrected
+  > ratio under any reading.
+  >
+  > **WHAT IS ACTUALLY KNOWN FOR THE ADOPTED ARTIFACT: its raw sqrt-trace ratio is `1.3107`, and NO
+  > jitter-corrected ratio is known for it at all.** Whether the 2026-07-13 run passed `--null` — i.e.
+  > whether a jitter floor was ever computed for the adopted product — is an open question
+  > (`8a6cf176`, Lane D, unresolved there and still unresolved here). **Do not substitute `1.3107` for
+  > `1.539` as though it were the same quantity: one is raw and the other is corrected.**
+  >
+  > Full record: `docs/orchestration/FINDING-20260901-cause4-jitter-floor-recovered.md`. This note
+  > corrects an attribution; it discharges no quarantine cause, adopts nothing, and moves no gate.
 - **PET 5D vs GBDT uncertainty comparison (2026-06-29/30) — INDICATIVE,
   2M-train anchor**: **PASS (comparison recomputed from saved
   covariances)**.
@@ -1213,7 +1242,9 @@ comparison — all of which had landed on disk but were never written up.
   reports PET's own unified-throw study (160 throws, frozen reweighter)
   gives sqrt-tr unified **1.5933e-37** vs sqrt-tr block **2.7897e-38** —
   **unified/block ratio 5.711** (median per-bin sigma ratio 1.216), far
-  larger than the GBDT-side 5D ratio (1.539) or the qualitative 4D
+  larger than the GBDT-side 5D ratio (1.539 — **⚠ see the 2026-09-01 correction above: that number
+  belongs to a superseded 2026-07-01 product, not to the adopted GBDT covariance, whose known RAW
+  sqrt-trace ratio is 1.3107**) or the qualitative 4D
   precedent. This is a frozen-reweighter lower bound (omits the
   retraining-response nonlinearity) and is explicitly not adopted into any
   published PET 5D uncertainty pending investigation of why it is so much

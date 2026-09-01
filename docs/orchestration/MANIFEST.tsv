@@ -89,7 +89,7 @@ docs/orchestration/FINDING-20260830-k0r2-env-pathcheck-submitter-declaration-omi
 docs/orchestration/FINDING-20260830-quarantine-nocompute-legs-measured.md	tracked	LIVE	finding		20260830	open		route-only		no	7	456	32045
 docs/orchestration/FINDING-20260831-ben039-detector-is-triple-bound.md	tracked	LIVE	finding		20260831	open		route-only		no	4	158	10263
 docs/orchestration/FINDING-20260831-strip-noncode-inverts-on-a-closing-triple-quote.md	tracked	LIVE	finding		20260831	open		route-only		no	4	164	10634
-docs/orchestration/FINDING-20260901-cause4-jitter-floor-recovered.md	tracked	LIVE	finding		20260901	open		route-only		no	3	129	7707
+docs/orchestration/FINDING-20260901-cause4-jitter-floor-recovered.md	tracked	LIVE	finding		20260901	open		route-only		no	4	129	7707
 docs/orchestration/FINDING-20260901-f7-floor-ratio-and-seed-pull-measured.md	tracked	LIVE	finding		20260901	open		route-only		no	4	135	8512
 docs/orchestration/FINDING-20260901-k0r2-redeploy-precondition-delta.md	tracked	LIVE	finding		20260901	open		route-only		no	2	175	10638
 docs/orchestration/FINDING-20260901-p-leg-status-measured-against-the-candidate.md	tracked	LIVE	finding		20260901	open		route-only		no	2	70	4782
@@ -402,7 +402,7 @@ docs/orchestration/state/RECEIPT-20260830-aa67c426-preservation-remeasurement.js
 docs/orchestration/state/RECEIPT-20260830-k0-7ac0edec-legs-1-5-submission.json	tracked	MACHINE	state-artifact		20260830	open		exact-path-only		no	3	450	24007
 docs/orchestration/state/RECEIPT-20260830-k0-deployment-and-freeze-bundle-7ac0edec.json	tracked	MACHINE	state-artifact		20260830	open		exact-path-only		no	6	282	31577
 docs/orchestration/state/RECEIPT-20260830-quarantine-k0-aa67c426-member-namespace.json	tracked	MACHINE	state-artifact		20260830	open		exact-path-only		no	4	5152	213764
-docs/orchestration/state/RECEIPT-20260901-cause4-jitter-floor-recovered.json	tracked	MACHINE	state-artifact		20260901	generated		exact-path-only		yes	3	29	3836
+docs/orchestration/state/RECEIPT-20260901-cause4-jitter-floor-recovered.json	tracked	MACHINE	state-artifact		20260901	generated		exact-path-only		yes	4	29	3836
 docs/orchestration/state/RECEIPT-foldforward-instrumented-closure-20260815.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only	nd-unfolding/pet/sbatch_foldforward_instrumented_closure.sh	yes	5	432	26144
 docs/orchestration/state/RECEIPT-vl100-shape-corrected-foldforward-20260815.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-vl100-shape-correction-scan-20260815.py;nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh	yes	8	355	17212
 docs/orchestration/state/annealed-nominal-complete-56563761.json	tracked	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh;nd-unfolding/tests/test_hash_bindings.py	yes	14	262	20808
