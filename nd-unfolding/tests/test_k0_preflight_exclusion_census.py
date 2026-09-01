@@ -70,7 +70,7 @@ class ThePreflightExclusionIsPinnedAndCanFail(unittest.TestCase):
         """The arm the other two are worthless without."""
         p = self.run_census()
         self.assertEqual(p.returncode, OK, f"stdout={p.stdout}\nstderr={p.stderr}")
-        self.assertIn("14 guarded + 16 declared-preflight + 16 interpreter-probe + 0 unclassified",
+        self.assertIn("14 guarded + 24 declared-preflight + 16 interpreter-probe + 0 unclassified",
                       p.stdout)
 
     def test_ARM_silent_on_the_REAL_tree_too_not_only_the_copy(self):
@@ -177,14 +177,24 @@ class ThePreflightExclusionIsPinnedAndCanFail(unittest.TestCase):
         self.assertEqual(totals["guarded"] + totals["excluded"] + totals["probe"],
                          c["non_comment_python3_invocations"])
 
-    def test_ruling_21s_14_of_30_boundary_is_asserted_by_a_TEST_for_the_first_time(self):
-        """F-7(a)'s finding was that no test asserted 14, 30 or 16. This is that test."""
+    def test_ruling_21s_guarding_boundary_is_asserted_by_a_TEST(self):
+        """F-7(a)'s finding was that no test asserted these numbers. This is that test.
+
+        THE BOUNDARY MOVED 2026-09-01, from 14/30 to 14/38, and it is asserted here at its new
+        value rather than loosened. `OI-179` defect-3 enforcement -- authorized by Joseph the same
+        day -- adds one preflight tool invocation per launcher (`mnv_env_provenance.py`), so the
+        declared exclusion set goes 16 -> 24. **The GUARDED count is untouched at 14: no science
+        invocation changed, which is the thing ruling 21 was actually about.** This check FIRED on
+        that change rather than absorbing it, which is F-7(a)'s complaint answered -- and the
+        widening is flagged in the declaration's `authority` field and in `OI-179` for Joseph,
+        because ruling 21 accepted a boundary and this moves it.
+        """
         _, totals = mpc.census(self.decl, self.nd)
-        self.assertEqual(totals["guarded"], 14)
-        self.assertEqual(totals["excluded"], 16)
-        # 30 is the GUARDING boundary and it is unchanged; round 6 added a third category
-        # (interpreter capability probes) which is counted separately and deliberately not folded in.
-        self.assertEqual(totals["guarded"] + totals["excluded"], 30)
+        self.assertEqual(totals["guarded"], 14, "the GUARDED count must not move without a ruling")
+        self.assertEqual(totals["excluded"], 24)
+        # Round 6's third category (interpreter capability probes) stays counted separately and
+        # deliberately not folded in.
+        self.assertEqual(totals["guarded"] + totals["excluded"], 38)
         self.assertEqual(totals["unknown"], 0)
 
 

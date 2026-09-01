@@ -144,7 +144,22 @@ PARITY="${CODE_ROOT}/nd-unfolding/pet/verify_executing_copy_is_committed.py"
 SRCMAN="${CODE_ROOT}/nd-unfolding/mnv_source_manifest.py"
 INVDIR="${MNV_GUARD_INVENTORY_DIR:?set MNV_GUARD_INVENTORY_DIR to a run-scoped directory for the OI-136 resolved-origin records. It has no default: a guarded run that emits no record establishes nothing, and a defaulted path would put one run over another.}"
 SRCMAN_RECORD="${MNV_SOURCE_MANIFEST:?set MNV_SOURCE_MANIFEST to the A-2(f) source manifest recorded from MNV_CODE_ROOT before the first sbatch. It has no default: comparing against a manifest generated now would compare the tree to itself.}"
-for _mnv_tool in "$GUARD" "$PARITY" "$SRCMAN"; do
+# --- OI-179 DEFECT 3, ENFORCED 2026-09-01 on Joseph's authorization ("go ahead with defect-3
+# --- enforcement"). Round 1's seven arms died on an environment variable the submission never
+# --- exported, and that omission was only PROVABLE because a record happened to quote the eight
+# --- export lines it DID use. Nothing emitted the environment. Round 2 then recorded it BY HAND,
+# --- which means the next run reproduces the gap by default: an instrument a submitter has to
+# --- remember is not a control, it is a habit.
+# --- IT IS ALSO THE ONLY POSSIBLE INSTRUMENT FOR DEFECT 1. `$HOME/bin` reached PATH because a
+# --- `mkdir` on 2026-08-26 satisfied a conditional in /etc/profile:171 -- no edit to any file this
+# --- campaign tracks, pins or reviews, so no source-line detector can ever reach it. Only a
+# --- recorded-and-compared environment can.
+# --- NO DEFAULT, for the same reason MNV_SOURCE_MANIFEST has none: a baseline generated now would
+# --- compare the environment with itself. That is OI-179 defect 2's own shape one level up, and it
+# --- would read as coverage while proving nothing.
+ENVPROV="${CODE_ROOT}/nd-unfolding/mnv_env_provenance.py"
+ENVPROV_RECORD="${MNV_ENV_PROVENANCE:?set MNV_ENV_PROVENANCE to the submission-environment baseline written by mnv_env_provenance.py --emit BEFORE the first sbatch. It has no default: OI-179 round 1 recorded no environment at all, and a defaulted path would let this run emit its own baseline and then agree with it.}"
+for _mnv_tool in "$GUARD" "$PARITY" "$SRCMAN" "$ENVPROV"; do
   # `! -L` because a symlink can point out of the code root while every path check still passes.
   [[ -s "$_mnv_tool" && ! -L "$_mnv_tool" ]] || {
     echo "[oi136] FAIL: required tool missing or a symlink: $_mnv_tool" >&2
@@ -188,9 +203,39 @@ python3 "$PARITY" --repo "$CODE_ROOT" \
   --pair "${CODE_ROOT}/nd-unfolding/lib_member_resume.sh=nd-unfolding/lib_member_resume.sh" \
   --pair "${GUARD}=nd-unfolding/mnv_guarded_run.py" \
   --pair "${PARITY}=nd-unfolding/pet/verify_executing_copy_is_committed.py" \
-  --pair "${SRCMAN}=nd-unfolding/mnv_source_manifest.py"  || {
+  --pair "${SRCMAN}=nd-unfolding/mnv_source_manifest.py" \
+  --pair "${ENVPROV}=nd-unfolding/mnv_env_provenance.py"  || {
   echo "[oi136] FAIL: deployment parity -- the executing copies are not the committed ones in $CODE_ROOT" >&2
   exit 3; }
+# OI-179 DEFECT 3. ONE invocation does both jobs, and the count is the reason: ruling 21 pins the
+# preflight interpreter census, so a second call would widen the declared exclusion set twice as far
+# for nothing. `--record` writes THIS task's own environment -- so a later investigation reads what
+# the task HAD rather than inferring it from the submitter's record -- and it is written even when
+# the check then fails, because a refused task is exactly the one whose environment matters.
+# It lands as `.json` beside the `.jsonl` inventories deliberately: mnv_import_set_ratchet.py globs
+# `**/*.jsonl`, so this is run-scoped and per-task attributable without joining that population.
+# WHAT IS ASSERTED: every MNV_* variable the submission baseline DECLARES must have reached this
+# task with the same value. Dropped or changed is exit 3 and the variable is named. WHAT IS ONLY
+# OBSERVED: HOME (six of these eight launchers override it on purpose via --export=ALL,HOME=... and
+# three re-export it, so asserting it would make them refuse themselves), MNV_* variables ADDED
+# since submission (activation adds variables), and the three search paths.
+# THE SEARCH PATHS CANNOT BE ASSERTED HERE, and that is measured rather than conceded: job 57819105
+# on 2026-09-01 showed a compute node's PRE-activation PATH is byte-identical to the login node's --
+# but this line cannot run there, because that node's pre-conda interpreter is 3.6.15 and this needs
+# 3.7+, measured in the same job. It therefore runs POST-activation, where the paths legitimately
+# differ (round 2: 47 entries against the submitter's 27). A guard that fires on every correct run
+# is not a guard. The submitter-side `--check` still compares all of it, and is the only thing that
+# can see defect 1's mkdir, because that is a login-environment fact.
+# THE EXIT CODE IS PROPAGATED, NOT COLLAPSED: 2 is "could not look", 3 is "measured drift", and a
+# check that could not run is not a check that passed.
+python3 "$ENVPROV" --check-inherited "$ENVPROV_RECORD" \
+  --record "${INVDIR}/env-provenance.${SLURM_JOB_NAME:-nojob}.${SLURM_JOB_ID:-nojid}.${SLURM_ARRAY_TASK_ID:-na}.json"
+_mnv_ep=$?
+if [[ $_mnv_ep -ne 0 ]]; then
+  echo "[oi179] FAIL: the submission environment did not reach this task intact (see above)." >&2
+  exit $_mnv_ep
+fi
+unset _mnv_ep
 echo "[oi136] executing-copy parity CURRENT, source manifest identical, inventories -> ${INVDIR}"
 
 # SOURCED RELATIVE TO THIS SCRIPT, NOT THROUGH ${REPO}. A launcher frozen at a sha that sources its

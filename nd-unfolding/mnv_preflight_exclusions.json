@@ -1,54 +1,60 @@
 {
-  "authority": "Joseph, ruling 21 of 2026-08-22 -- the 14/30 guarding boundary is ACCEPTED. This file records that boundary; it does not widen or narrow it.",
-  "commented_out_count_history": "9 at b49bc360 (the pin's first value). 17 from PR-02: the verify-before-source gate carries one comment line per launcher quoting the measured pre-conda interpreter (/usr/bin/python3 == Python 3.6.15), 8 launchers, +8. RAISED DELIBERATELY AND WITH ITS REASON, never to make a check pass -- and note what did NOT move: guarded stayed 14, declared-preflight stayed 16, unclassified stayed 0. The guarding boundary was untouched by PR-02, which is the thing this file exists to say.",
-  "commented_out_python3_lines": 18,
-  "counts": {
-    "excluded_preflight": 16,
-    "guarded": 14,
-    "inline_interpreter_probes": 16,
-    "launchers": 8,
-    "non_comment_python3_invocations": 46,
-    "unclassified": 0
-  },
-  "counts_are_derived_not_authored": "Every number above is reproduced by mnv_preflight_census.py against the launcher bytes. 16 = 2 per launcher x 8; 14 is NOT one per launcher (unfold and uthrow_block have 2, finalize has 5), which is why 'one per launcher' would have been the wrong shape to assume. Round 6 adds 16 = 2 per launcher x 8 interpreter capability probes (the probe itself, and one failure-branch line carrying both `command -v python3` and `python3 -V`), a THIRD category: not guarded (there is no repository import to contain) and not a preflight TOOL (it invokes no repository file).",
-  "excluded_inline_probes": [
-    {
-      "match_any": [
-        "python3 -c 'import sys; sys.exit(0 if sys.version_info",
-        "command -v python3",
-        "python3 -V"
-      ],
-      "per_launcher": 2,
-      "role": "INTERPRETER CAPABILITY PROBE, added round 6. It asks whether the ACTIVE python3 can run the preflight tools at all, and prints the answer in the failure branch. It invokes the interpreter itself, never a repository module, so mnv_guarded_run.py has nothing to contain -- routing it through the guard would assert that an interpreter resolves its own imports inside the code root, which is meaningless.",
-      "why_it_exists": "Round 5 shipped one launcher whose Python preflight tools ran BEFORE the activator; on the un-activated 3.6.15 interpreter they die with a SyntaxError and the launcher reported 'the execution tree is not the tree that was approved' -- a wrong diagnosis of a right refusal."
-    }
-  ],
-  "excluded_tools": [
-    {
-      "per_launcher": 1,
-      "resolves_to": "nd-unfolding/mnv_source_manifest.py",
-      "role": "A-2(f): compares the executing tree's source manifest against the declared record.",
-      "shell_var": "SRCMAN"
+    "authority": "Joseph, ruling 21 of 2026-08-22 -- the 14/30 guarding boundary is ACCEPTED. This file records that boundary; it does not widen or narrow it. WIDENED 2026-09-01 TO 14/38, AND FLAGGED RATHER THAN ABSORBED: OI-179 defect-3 enforcement, authorized by Joseph the same day, adds one preflight tool call per launcher. The GUARDED count is untouched at 14 -- no science invocation changed -- but the declared exclusion set grows 16 -> 24 and the boundary 30 -> 38. Ruling 21 accepted a boundary, and this moves it, so it is stated here and in OI-179 as a consequence of that authorization for him to see, not as a bookkeeping bump. F-7(a)'s whole complaint was that a seventeenth exclusion could appear with nothing failing; something did fail, which is the check working.",
+    "commented_out_count_history": "9 at b49bc360 (the pin's first value). 17 from PR-02: the verify-before-source gate carries one comment line per launcher quoting the measured pre-conda interpreter (/usr/bin/python3 == Python 3.6.15), 8 launchers, +8. RAISED DELIBERATELY AND WITH ITS REASON, never to make a check pass -- and note what did NOT move: guarded stayed 14, declared-preflight stayed 16, unclassified stayed 0. The guarding boundary was untouched by PR-02, which is the thing this file exists to say. 18 unchanged at OI-179 enforcement (2026-09-01): the added block carries no commented-out python3 line.",
+    "commented_out_python3_lines": 18,
+    "counts": {
+        "excluded_preflight": 24,
+        "guarded": 14,
+        "inline_interpreter_probes": 16,
+        "launchers": 8,
+        "non_comment_python3_invocations": 54,
+        "unclassified": 0
     },
-    {
-      "per_launcher": 1,
-      "resolves_to": "nd-unfolding/pet/verify_executing_copy_is_committed.py",
-      "role": "A-2: proves the executing copy is committed and matches the named commit.",
-      "shell_var": "PARITY"
-    }
-  ],
-  "launchers": [
-    "sbatch_bootstrap_5d_gpu.sh",
-    "sbatch_seedscan_split_5d.sh",
-    "sbatch_unfold_5d_detector_bkgaware_gpu.sh",
-    "sbatch_sweep_bank_5d_run_bkgaware_gpu.sh",
-    "sbatch_uthrow_run_5d_fast.sh",
-    "sbatch_uthrow_block_5d.sh",
-    "sbatch_uthrow_combine_5d_fast.sh",
-    "sbatch_finalize_5d_bkgaware_gpu.sh"
-  ],
-  "schema": "mnv_preflight_exclusions/1",
-  "what_this_pins": "The set of python3 invocations in the eight k=0 launchers that are DELIBERATELY not routed through mnv_guarded_run.py, and the counts that make the exclusion falsifiable. Before this file the exclusion was implicit: nothing named the sixteen, and nothing failed if a seventeenth appeared (Gate-1 F-7(a)).",
-  "why_that_last_number_is_here": "A census that does not exclude comments reports 47, and commenting out a guarded call is a way to REMOVE a guard while leaving the line visible. The number is pinned so that a change in it is a finding rather than a rounding difference between two instruments.",
-  "why_these_are_excluded": "They ARE the preflight. mnv_guarded_run.py checks that imports resolve inside --expect-root; the two preflight tools are what establish that the executing copy IS the declared root. Routing them through the guard would make the check depend on the thing it is checking. They are excluded from the GUARD; they are NOT excluded from binding -- both are --pair'd and both are covered by the source manifest, asserted separately."
+    "counts_are_derived_not_authored": "Every number above is reproduced by mnv_preflight_census.py against the launcher bytes. 16 = 2 per launcher x 8; 14 is NOT one per launcher (unfold and uthrow_block have 2, finalize has 5), which is why 'one per launcher' would have been the wrong shape to assume. Round 6 adds 16 = 2 per launcher x 8 interpreter capability probes (the probe itself, and one failure-branch line carrying both `command -v python3` and `python3 -V`), a THIRD category: not guarded (there is no repository import to contain) and not a preflight TOOL (it invokes no repository file). OI-179 enforcement (2026-09-01) adds 8 = 1 per launcher x 8: mnv_env_provenance.py, invoked as `--check-inherited <baseline> --record <path>`. ONE call and not two by design -- an earlier draft emitted and checked separately, which would have moved excluded_preflight to 32 and the boundary to 46 for no gain, so the tool grew a --record companion instead. Neither guarded (14) nor unclassified (0) moved.",
+    "excluded_inline_probes": [
+        {
+            "match_any": [
+                "python3 -c 'import sys; sys.exit(0 if sys.version_info",
+                "command -v python3",
+                "python3 -V"
+            ],
+            "per_launcher": 2,
+            "role": "INTERPRETER CAPABILITY PROBE, added round 6. It asks whether the ACTIVE python3 can run the preflight tools at all, and prints the answer in the failure branch. It invokes the interpreter itself, never a repository module, so mnv_guarded_run.py has nothing to contain -- routing it through the guard would assert that an interpreter resolves its own imports inside the code root, which is meaningless.",
+            "why_it_exists": "Round 5 shipped one launcher whose Python preflight tools ran BEFORE the activator; on the un-activated 3.6.15 interpreter they die with a SyntaxError and the launcher reported 'the execution tree is not the tree that was approved' -- a wrong diagnosis of a right refusal."
+        }
+    ],
+    "excluded_tools": [
+        {
+            "per_launcher": 1,
+            "resolves_to": "nd-unfolding/mnv_source_manifest.py",
+            "role": "A-2(f): compares the executing tree's source manifest against the declared record.",
+            "shell_var": "SRCMAN"
+        },
+        {
+            "per_launcher": 1,
+            "resolves_to": "nd-unfolding/pet/verify_executing_copy_is_committed.py",
+            "role": "A-2: proves the executing copy is committed and matches the named commit.",
+            "shell_var": "PARITY"
+        },
+        {
+            "per_launcher": 1,
+            "resolves_to": "nd-unfolding/mnv_env_provenance.py",
+            "role": "OI-179 defect 3: asserts every MNV_* the submission baseline declares reached this task, and records the task's own environment. Excluded on the same ground as the two above -- it imports only the standard library, so mnv_guarded_run.py has no repository import to contain and routing it through the guard would assert nothing. Its executing copy IS bound, by an A-3 --pair entry in all eight launchers, which is the protection that actually applies to a preflight tool.",
+            "shell_var": "ENVPROV"
+        }
+    ],
+    "launchers": [
+        "sbatch_bootstrap_5d_gpu.sh",
+        "sbatch_seedscan_split_5d.sh",
+        "sbatch_unfold_5d_detector_bkgaware_gpu.sh",
+        "sbatch_sweep_bank_5d_run_bkgaware_gpu.sh",
+        "sbatch_uthrow_run_5d_fast.sh",
+        "sbatch_uthrow_block_5d.sh",
+        "sbatch_uthrow_combine_5d_fast.sh",
+        "sbatch_finalize_5d_bkgaware_gpu.sh"
+    ],
+    "schema": "mnv_preflight_exclusions/1",
+    "what_this_pins": "The set of python3 invocations in the eight k=0 launchers that are DELIBERATELY not routed through mnv_guarded_run.py, and the counts that make the exclusion falsifiable. Before this file the exclusion was implicit: nothing named the sixteen, and nothing failed if a seventeenth appeared (Gate-1 F-7(a)).",
+    "why_that_last_number_is_here": "A census that does not exclude comments reports 47, and commenting out a guarded call is a way to REMOVE a guard while leaving the line visible. The number is pinned so that a change in it is a finding rather than a rounding difference between two instruments.",
+    "why_these_are_excluded": "They ARE the preflight. mnv_guarded_run.py checks that imports resolve inside --expect-root; the two preflight tools are what establish that the executing copy IS the declared root. Routing them through the guard would make the check depend on the thing it is checking. They are excluded from the GUARD; they are NOT excluded from binding -- both are --pair'd and both are covered by the source manifest, asserted separately."
 }

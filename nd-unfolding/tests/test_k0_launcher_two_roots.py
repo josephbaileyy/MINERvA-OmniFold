@@ -171,6 +171,7 @@ class LauncherFixture(unittest.TestCase):
 
         # REAL tools, byte-copied. The launchers refuse a symlink here on purpose.
         for src, dst in ((ND / "mnv_guarded_run.py", cnd / "mnv_guarded_run.py"),
+                         (ND / "mnv_env_provenance.py", cnd / "mnv_env_provenance.py"),
                          (ND / "mnv_source_manifest.py", cnd / "mnv_source_manifest.py"),
                          (ND / "lib_mnv_env_preflight.sh", cnd / "lib_mnv_env_preflight.sh"),
                          (ND / "lib_mnv_env_pathcheck.sh", cnd / "lib_mnv_env_pathcheck.sh"),
@@ -203,6 +204,12 @@ class LauncherFixture(unittest.TestCase):
                             "--require-clean"], capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
 
+        # ---- OI-179 DEFECT 3: the submission-environment baseline -------------------------------
+        # OUTSIDE the code root, because the code root goes read-only under A-2(g) below and because
+        # a real baseline is written on a login node before `sbatch`, not into the tree.
+        self.envprov = tmp / "submission-environment.json"
+        self.write_baseline()
+
         self.rogue = tmp / "rogue-lib"
         self.rogue.mkdir()
         shutil.copy2(cnd / "lib_member_resume.sh", self.rogue)
@@ -212,6 +219,46 @@ class LauncherFixture(unittest.TestCase):
         # or the whole suite leaks read-only temp trees.
         self.addCleanup(lambda: self.set_protection(False))
         self.set_protection(True)
+
+    def write_baseline(self, env=None, **over):
+        """Record a baseline the way a submitter does, with optional perturbation.
+
+        THE POSITIVE ARM THIS ENABLES IS WEAK ON PURPOSE AND THE NEGATIVES CARRY THE POWER. A
+        baseline emitted from the same dict the launcher then runs with agrees by construction --
+        that is OI-179 defect 2's shape, and pretending otherwise would repeat it. So the positive
+        arm only establishes that a MATCHING baseline does not block a correct run, and every claim
+        about the guard having power comes from `over=` perturbations below.
+        """
+        sys.path.insert(0, str(ND))
+        try:
+            import mnv_env_provenance as prov
+        finally:
+            sys.path.pop(0)
+        base = dict(self.good_env()) if env is None else dict(env)
+        for k, v in over.items():
+            if v is None:
+                base.pop(k, None)
+            else:
+                base[k] = v
+        prov.emit(str(self.envprov), base)
+
+    @staticmethod
+    def _lines(sh):
+        return (ND / sh).read_text().splitlines()
+
+    def mandatory_vars(self, sh):
+        """The `MNV_*` names a launcher declares with `${VAR:?...}`, READ FROM THE LAUNCHER.
+
+        Derived rather than enumerated. A literal tuple is a universal claim implemented as the list
+        of names its own commit added: it passes forever while a variable added later goes unswept.
+        The non-empty assertion matters as much as the regex -- a pattern that matches nothing would
+        make every sweep below vacuous and green.
+        """
+        import re
+        found = set(re.findall(r"\$\{(MNV_[A-Z0-9_]+):\?", (ND / sh).read_text()))
+        self.assertTrue(found, f"{sh}: the mandatory-variable regex matched NOTHING, so every "
+                               f"sweep over it would be vacuously green")
+        return sorted(found)
 
     def set_protection(self, on):
         """Apply or undo A-2(g) over the fixture's SOURCE. `.git` is skipped for the same reason the
@@ -248,13 +295,15 @@ class LauncherFixture(unittest.TestCase):
         env = dict(os.environ, SLURM_ARRAY_TASK_ID="1", SLURM_JOB_NAME="fx", SLURM_JOB_ID="1",
                    PYTHONDONTWRITEBYTECODE="1")
         for k in ("MNV_CODE_ROOT", "MNV_DATA_ROOT", "MNV_LAUNCHER_DIR", "MNV_EST_SEED_OFFSET",
-                  "MNV_GUARD_INVENTORY_DIR", "MNV_SOURCE_MANIFEST", "MNV_GUARD_INVENTORY"):
+                  "MNV_GUARD_INVENTORY_DIR", "MNV_SOURCE_MANIFEST", "MNV_GUARD_INVENTORY",
+                  "MNV_ENV_PROVENANCE"):
             env.pop(k, None)
         env.update({
             "MNV_CODE_ROOT": str(self.code), "MNV_DATA_ROOT": str(self.data),
             "MNV_LAUNCHER_DIR": str(self.code / "nd-unfolding"),
             "MNV_GUARD_INVENTORY_DIR": str(self.invdir),
             "MNV_SOURCE_MANIFEST": str(self.manifest),
+            "MNV_ENV_PROVENANCE": str(self.envprov),
             "MNV_EST_SEED_OFFSET": "0",
             # The three roots, all mandatory and none defaulted.
             "MNV_ENV_ROOT": str(self.env),
@@ -271,7 +320,23 @@ class LauncherFixture(unittest.TestCase):
         env.update(over)
         return env
 
-    def run_launcher(self, sh, env):
+    def run_launcher(self, sh, env, sync_baseline=True):
+        """Run a launcher. By DEFAULT the submission baseline is re-recorded from `env` first.
+
+        WHY THE DEFAULT IS SYNC. In production the baseline IS the environment the task inherits --
+        the submitter records it and `--export=ALL` carries it. A test that perturbs `env` after
+        setUp captured the baseline creates drift that does not exist in production, and the new
+        `OI-179` guard would then fire FIRST and mask the refusal the test is actually about. That
+        happened: `test_a_member_library_outside_the_code_root_fails_closed` began reporting exit 3
+        (environment drift) instead of exit 2 (member-library containment) -- a wrong diagnosis of a
+        right refusal, which this preamble's own comments call worse than the refusal.
+
+        Tests that MEAN to exercise the provenance guard pass `sync_baseline=False` and set the
+        baseline themselves. That keeps the perturbation explicit at the call site instead of
+        implicit in setUp ordering.
+        """
+        if sync_baseline:
+            self.write_baseline(env)
         cp = subprocess.run(["bash", str(self.code / "nd-unfolding" / sh)],
                             capture_output=True, text=True, env=env, cwd=str(self.code))
         return cp
@@ -287,16 +352,18 @@ class RootsAreMandatory(LauncherFixture):
                 text = (ND / sh).read_text()
                 self.assertNotIn(f'REPO="{CLUSTER_ROOT}"', text)
                 self.assertNotIn(f"REPO={CLUSTER_ROOT}", text)
-                for var in ("MNV_CODE_ROOT", "MNV_DATA_ROOT", "MNV_GUARD_INVENTORY_DIR",
-                            "MNV_SOURCE_MANIFEST"):
-                    self.assertIn(f"{var}:?", text, f"{sh} must take {var} mandatorily")
+                required = {"MNV_CODE_ROOT", "MNV_DATA_ROOT", "MNV_GUARD_INVENTORY_DIR",
+                            "MNV_SOURCE_MANIFEST", "MNV_ENV_PROVENANCE"}
+                declared = set(self.mandatory_vars(sh))
+                self.assertEqual(required - declared, set(),
+                                 f"{sh} must take these mandatorily: {sorted(required - declared)}")
+                for var in declared:
                     self.assertNotIn(f"{var}:-", text, "a default is the hardcode wearing a flag")
 
     def test_each_mandatory_variable_refuses_when_UNSET_and_when_EMPTY(self):
         """`${VAR:?}` and not `${VAR?}`: an exported-but-empty variable is the silent case."""
         for sh, _e, _t in LAUNCHERS:
-            for var in ("MNV_CODE_ROOT", "MNV_DATA_ROOT", "MNV_GUARD_INVENTORY_DIR",
-                        "MNV_SOURCE_MANIFEST"):
+            for var in self.mandatory_vars(sh):
                 for mode in ("unset", "empty"):
                     with self.subTest(launcher=sh, var=var, mode=mode):
                         env = self.good_env()
@@ -455,10 +522,6 @@ class ThePreflightRunsBeforeAnyScience(LauncherFixture):
     #: path and runs nothing. Anything else could carry a science invocation to an earlier line.
     ALLOWED_FUNCS = {"mnv_inv"}
 
-    @staticmethod
-    def _lines(sh):
-        return (ND / sh).read_text().splitlines()
-
     def test_the_preflight_is_textually_BEFORE_every_guarded_science_invocation(self):
         import re
         for sh, _e, _t in LAUNCHERS:
@@ -573,6 +636,176 @@ class ThePreflightRunsBeforeAnyScience(LauncherFixture):
             block = [l for l in lines[a:b + 1] if "--pair" not in l]
             digests[sh] = hashlib.sha256("\n".join(block).encode()).hexdigest()
         self.assertEqual(len(set(digests.values())), 1, f"the preambles have diverged: {digests}")
+
+
+class TheSubmissionEnvironmentIsRecordedAndCompared(LauncherFixture):
+    """`OI-179` defect 3, ENFORCED. Round 1 died on an unexported variable and the run recorded no
+    environment at all, so the omission was provable only because a prose record happened to quote
+    the eight `export` lines it did use.
+
+    THE POSITIVE ARM HERE IS DELIBERATELY THE WEAK ONE. The fixture's baseline is emitted from the
+    same dict the launcher then runs with, so it agrees by construction -- and a positive arm whose
+    expectation is derived from its own subject is exactly `OI-179` defect 2. Every claim that this
+    guard has POWER comes from the perturbation arms, and each of them is checked to fail for the
+    stated reason rather than merely to fail.
+    """
+
+    def test_POSITIVE_a_matching_baseline_does_not_block_a_correct_run(self):
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                cp = self.run_launcher(sh, self.good_env())
+                self.assertIn("[env-provenance] INHERITED OK", cp.stdout, cp.stdout + cp.stderr)
+
+    def test_the_task_RECORDS_its_own_environment_and_the_record_is_readable(self):
+        """Defect 3 as filed: the run recorded NOTHING. A guard that only compares would leave the
+        next investigation inferring the task's environment from the submitter's."""
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                shutil.rmtree(self.invdir, ignore_errors=True)
+                self.run_launcher(sh, self.good_env())
+                recs = sorted(self.invdir.glob("env-provenance.*.json"))
+                self.assertEqual(len(recs), 1, [p.name for p in recs])
+                snap = json.loads(recs[0].read_text())
+                for key in ("recorded_utc", "host", "home", "mnv", "search_paths", "digest"):
+                    self.assertIn(key, snap)
+                self.assertTrue(snap["mnv"], "a record with no MNV_* variables records nothing")
+
+    def test_the_record_does_NOT_enter_the_import_ratchet_population(self):
+        """It lives beside the `.jsonl` inventories. The ratchet globs `**/*.jsonl`, so a `.json`
+        neighbour must be invisible to it -- otherwise this instrument would corrupt another."""
+        for sh, _e, _t in LAUNCHERS[:1]:
+            shutil.rmtree(self.invdir, ignore_errors=True)
+            self.run_launcher(sh, self.good_env())
+            self.assertTrue(sorted(self.invdir.glob("env-provenance.*.json")))
+            for inv in self.inventories():
+                self.assertNotIn("env-provenance", inv.name)
+
+    def test_a_MISSING_baseline_is_COULD_NOT_LOOK_and_not_a_pass(self):
+        """The variable is set and points nowhere. Exit 2 is propagated, not collapsed into 3: a
+        check that could not run is not a check that failed, and neither is a check that passed."""
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                env = self.good_env(MNV_ENV_PROVENANCE=str(self.envprov) + ".absent")
+                cp = self.run_launcher(sh, env)
+                self.assertEqual(cp.returncode, 2, cp.stdout + cp.stderr)
+                self.assertIn("COULD NOT LOOK", cp.stderr)
+
+    def test_an_UNREADABLE_baseline_is_COULD_NOT_LOOK_and_not_a_pass(self):
+        for sh, _e, _t in LAUNCHERS[:1]:
+            self.envprov.write_text("{not json")
+            cp = self.run_launcher(sh, self.good_env(), sync_baseline=False)
+            self.assertEqual(cp.returncode, 2, cp.stdout + cp.stderr)
+            self.assertIn("COULD NOT LOOK", cp.stderr)
+
+    def test_ROUND_ONES_EXACT_SHAPE_a_DECLARED_variable_absent_from_the_task_is_REFUSED(self):
+        """A variable the submitter declared did not reach the task. That is the 2026-08-30 class.
+
+        THE VARIABLE IS A SYNTHETIC ONE ON PURPOSE. The obvious choice, `MNV_ENV_SYSTEM_PREFIXES`,
+        is consumed by `mnv_env_pathcheck` EARLIER in the same preamble -- dropping it makes the
+        launcher refuse at the pathcheck, several steps before this guard runs, and the arm would
+        pass while proving nothing about the guard under test. Measured, not assumed: the first
+        draft of this arm did exactly that and exited on
+        'declare MNV_ENV_ROOT, MNV_CONDA_PREFIX, or MNV_ENV_SYSTEM_PREFIXES'.
+        """
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                self.write_baseline(MNV_SUBMITTER_DECLARED_THIS="round-1-shape")
+                cp = self.run_launcher(sh, self.good_env(), sync_baseline=False)
+                self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
+                self.assertIn("INHERITED DRIFT", cp.stderr)
+                self.assertIn("MNV_SUBMITTER_DECLARED_THIS: DECLARED AT SUBMISSION, ABSENT HERE",
+                              cp.stderr)
+
+    def test_a_CHANGED_declared_value_is_REFUSED_and_the_variable_is_NAMED(self):
+        for sh, _e, _t in LAUNCHERS[:1]:
+            self.write_baseline(MNV_EST_SEED_OFFSET="1200")
+            cp = self.run_launcher(sh, self.good_env(), sync_baseline=False)
+            self.assertEqual(cp.returncode, 3, cp.stdout + cp.stderr)
+            self.assertIn("MNV_EST_SEED_OFFSET: 1200 -> 0", cp.stderr)
+
+    def test_a_CHANGED_HOME_is_OBSERVED_and_NOT_refused(self):
+        """SIX of these eight launchers carry `#SBATCH --export=ALL,HOME=/global/homes/j/josephrb`
+        and THREE re-export it in the body, deliberately. An earlier draft asserted HOME equality;
+        it would have made those three refuse themselves on every correct run. Reported, not
+        asserted -- and the arm exists so that decision cannot be quietly reversed."""
+        for sh, _e, _t in LAUNCHERS[:1]:
+            self.write_baseline(HOME="/home/somebody-else")
+            cp = self.run_launcher(sh, self.good_env(), sync_baseline=False)
+            self.assertIn("[env-provenance] INHERITED OK", cp.stdout, cp.stdout + cp.stderr)
+            self.assertIn("OBSERVED (not asserted) HOME", cp.stdout)
+
+    def test_an_ADDED_MNV_variable_is_OBSERVED_and_NOT_refused(self):
+        """Activation adds variables -- the fixture activator sets `MNV_TEST_ACTIVATED`, which is
+        precisely how the over-broad first draft was caught. A guard that fires on every correct
+        run is not a guard."""
+        for sh, _e, _t in LAUNCHERS[:1]:
+            cp = self.run_launcher(sh, self.good_env())
+            self.assertIn("[env-provenance] INHERITED OK", cp.stdout, cp.stdout + cp.stderr)
+            self.assertIn("MNV_TEST_ACTIVATED", cp.stdout)
+
+    def test_A_CHANGED_SEARCH_PATH_IS_NOT_REFUSED__the_opposite_direction(self):
+        """The arm that stops this guard from being noise. This line runs AFTER the activator -- it
+        must, because a compute node's pre-activation `/usr/bin/python3` is 3.6.15 (measured, job
+        57819105) and the tool needs 3.7+ -- so the task's search paths legitimately differ from the
+        submitter's. A guard that fires on every correct run trains its reader to ignore it."""
+        for sh, _e, _t in LAUNCHERS[:1]:
+            self.write_baseline(PATH="/somewhere/else:/usr/bin",
+                                LD_LIBRARY_PATH="/opt/nothing/lib")
+            cp = self.run_launcher(sh, self.good_env(), sync_baseline=False)
+            self.assertIn("[env-provenance] INHERITED OK", cp.stdout, cp.stdout + cp.stderr)
+            self.assertIn("OBSERVED (not asserted)", cp.stdout)
+
+    def test_the_tool_is_PARITY_BOUND_and_MANIFEST_COVERED_in_every_launcher(self):
+        """It executes, so its executing copy must be bound like the other three. A tool that runs
+        unbound is the hole `A-3` exists to close."""
+        rel = "nd-unfolding/mnv_env_provenance.py"
+        covered = set(json.loads(self.manifest.read_text())["files"])
+        self.assertIn(rel, covered)
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                text = (ND / sh).read_text()
+                self.assertIn(f'--pair "${{ENVPROV}}={rel}"', text)
+                self.assertIn('"$ENVPROV"', text)
+
+    def test_a_MISSING_tool_in_the_code_root_is_refused_rather_than_skipped(self):
+        """The existence loop must cover it. Without this the enforcement is skippable by deleting
+        one file -- which is how an unskippable step becomes optional again."""
+        for sh, _e, _t in LAUNCHERS[:1]:
+            self.set_protection(False)
+            (self.code / "nd-unfolding" / "mnv_env_provenance.py").unlink()
+            self.set_protection(True)
+            cp = self.run_launcher(sh, self.good_env())
+            self.assertEqual(cp.returncode, 2, cp.stdout + cp.stderr)
+            self.assertIn("mnv_env_provenance.py", cp.stderr)
+
+    def test_the_enforcement_block_is_BYTE_IDENTICAL_in_all_eight(self):
+        """Eight copies is the shape this preamble already uses on purpose. The value of the
+        duplication is entirely in this assertion -- without it, eight copies is eight chances to
+        diverge."""
+        import hashlib
+        digests = {}
+        for sh, _e, _t in LAUNCHERS:
+            lines = self._lines(sh)
+            a = next(i for i, l in enumerate(lines) if "OI-179 DEFECT 3, ENFORCED" in l)
+            b = next(i for i, l in enumerate(lines) if l.startswith("unset _mnv_ep"))
+            block = [l for l in lines[a:b + 1] if "--pair" not in l]
+            digests[sh] = hashlib.sha256("\n".join(block).encode()).hexdigest()
+        self.assertEqual(len(set(digests.values())), 1, f"the blocks have diverged: {digests}")
+
+    def test_the_derived_mandatory_set_is_the_one_we_think_it_is(self):
+        """A positive control on the derivation the UNSET/EMPTY sweep now depends on.
+
+        `mandatory_vars` replaced a literal tuple, which fixes the universal-claim-as-a-list defect
+        but introduces a new way to be vacuous: a regex that silently under-matches shrinks the
+        sweep instead of failing it. So the derived set is pinned against the seven names known to
+        be declared, and any EIGHTH is welcome -- what is not allowed is the set losing one."""
+        expected = {"MNV_CODE_ROOT", "MNV_CONDA_PREFIX", "MNV_DATA_ROOT", "MNV_ENV_PROVENANCE",
+                    "MNV_ENV_ROOT", "MNV_GUARD_INVENTORY_DIR", "MNV_SOURCE_MANIFEST"}
+        for sh, _e, _t in LAUNCHERS:
+            with self.subTest(launcher=sh):
+                declared = set(self.mandatory_vars(sh))
+                self.assertEqual(expected - declared, set(),
+                                 f"{sh}: the derivation LOST {sorted(expected - declared)}")
 
 
 class TheP4RatchetReadsWhatTheRunProduced(LauncherFixture):

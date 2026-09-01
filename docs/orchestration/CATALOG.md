@@ -339,6 +339,27 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `1 of 7` / QUOTED `0 of 7`. **Carries one caveat forward:** `DEFECT-20260825:172-176` records the 500
   threshold as a Codex session's claim about its own authority and NOT Joseph speaking — this decision fixes
   its UNIT, not its provenance.
+- **✅ `OI-179` DEFECT 3 ENFORCED ACROSS THE EIGHT k=0 LAUNCHERS, 2026-09-01 — `OI-179` DISCHARGED:**
+  [`RECORD-20260901-oi179-defect3-enforced.md`](RECORD-20260901-oi179-defect3-enforced.md)
+  — Joseph: ***"go ahead with defect-3 enforcement"***. `MNV_ENV_PROVENANCE` is now **mandatory with no
+  default** in all eight launchers, each task **records its own environment** (even when the check then
+  fails), and every `MNV_*` the submission baseline DECLARES must have reached the task. Exit codes
+  **propagated, not collapsed**: 2 could-not-look, 3 measured-drift. **The cost the 2026-08-31 shape was
+  avoiding does not exist and this was measured before acting:** the pre-source loop compares against
+  `HEAD` not a hardcoded digest, `verify_hash_bindings.py` reports ALL BINDINGS INTACT with **none of the
+  eight bound by an active run receipt**, and each `--pair` set already includes itself — **no `OI-123`
+  supersession**. **THREE ASSERTIONS WERE WRITTEN AND REMOVED, each on a measurement rather than because a
+  test was inconvenient:** search paths cannot be asserted (probe job `57819105` measured a compute node's
+  pre-activation environment byte-identical to the login node's, but its `/usr/bin/python3` is **3.6.15**
+  and the tool needs 3.7+, so the check cannot run where the comparison would be exact); **HOME** cannot be
+  asserted (six launchers set `--export=ALL,HOME=…` and three re-export it, so asserting it would have made
+  three **refuse themselves** on every correct run); and an **added `MNV_*` is what activation does**. All
+  three are reported as observations. **64/64** in `test_k0_launcher_two_roots.py`, **13/13** in the census
+  suite, **25** self-test arms in the tool. All eight parse under the **real target interpreter, bash
+  4.4.23 on saul**. **⚠ ONE CONSEQUENCE IS ROUTED TO JOSEPH AS `OI-185` RATHER THAN ABSORBED:** ruling 21's
+  guarding boundary moves **14/30 → 14/38** (guarded unchanged at 14, unclassified at 0). The census
+  **fired** rather than absorbing it, which is `F-7(a)`'s complaint answered. **MOVES NO GATE:** Gate 2
+  remains FAIL, leg 6 prohibited, nothing adopted, nothing submitted, CAND `1 of 7` / QUOTED `0 of 7`.
 - **✅ JOSEPH RATIFIES THE `OI-177` PER-ARM CEILINGS, 2026-09-01 — `OI-177` DISCHARGED:**
   [`DECISION-20260901-joseph-ratifies-oi177-per-arm-ceilings.md`](DECISION-20260901-joseph-ratifies-oi177-per-arm-ceilings.md)
   — Joseph, in his own turn: ***"I sign"***. **RATIFIED, in task-hours:** arm 2 seed split **8 CPU** (+3),

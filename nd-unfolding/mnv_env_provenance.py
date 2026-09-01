@@ -26,10 +26,25 @@ If the baseline is missing, `check` REFUSES (exit 2) rather than falling back to
 environment with itself", which would always pass and would read as coverage.
 
 WHAT THIS DELIBERATELY DOES NOT DO. It does not decide whether a difference is acceptable; it reports
-what moved and exits nonzero. It emits no verdict about any gate. It is not a launcher and it edits
-nothing: it is a separate tool invoked at submission time, chosen over inlining the emitter into the
-eight `sbatch_*` launchers precisely so that no pinned launcher changes and neither the `F-14` /
-7.0.7 coupling nor `OI-123` pin supersession applies.
+what moved and exits nonzero. It emits no verdict about any gate.
+
+**SUPERSEDED 2026-09-01 -- the paragraph that stood here said this tool is invoked at submission time
+BY HAND, "chosen over inlining the emitter into the eight `sbatch_*` launchers precisely so that no
+pinned launcher changes".** That was true of the instrument-only step and is no longer the shape:
+Joseph authorized ENFORCEMENT, and all eight launchers now call this file. The cost that sentence was
+avoiding turned out not to exist -- measured, the launchers' pre-source loop compares each library
+against `HEAD` rather than a hardcoded digest, `verify_hash_bindings.py` reports `ALL BINDINGS INTACT`
+with none of the eight bound by an active run receipt, and each launcher's `--pair` set includes
+itself, so committing the edit keeps every parity check current. No `OI-123` supersession applies. The
+sentence is kept rather than deleted because a reader of the pre-enforcement records will meet it.
+
+THE SUBMIT-SIDE AND RUN-SIDE COMPARISONS ARE DIFFERENT QUESTIONS AND ONLY ONE OF THEM IS
+LAUNCHER-ENFORCEABLE. `--check` is the submitter's: today's login environment against the last
+recorded one, and it is what would have caught defect 1's `mkdir`. `--check-inherited` is the
+launcher's: it compares only what `--export=ALL` is REQUIRED to carry intact -- `HOME` and every
+`MNV_*` -- because the task's search paths legitimately differ from the submitter's once the activator
+has run, and a check that fires on every correct run is worth exactly as much as one that never
+fires.
 
 Python 3.7+ (the floor the sibling preflight tools already assert).
 
@@ -152,6 +167,106 @@ def check(path, env=None):
     return EXIT_DRIFT
 
 
+def _diff_inherited(base, now):
+    """DROPPED or CHANGED baseline `MNV_*` declarations. Nothing else is asserted.
+
+    THE SCOPE HERE WAS NARROWED 2026-09-01 BY MEASUREMENT, NOT BY CONVENIENCE, and the reason is
+    recorded because "the test failed so I relaxed the rule" is the shape it superficially
+    resembles.
+
+    It first asserted HOME and EVERY `MNV_*` in either environment. Both extras were wrong:
+
+    * **HOME is deliberately overridden by the launchers themselves.** Six of the eight k=0
+      launchers carry `#SBATCH --export=ALL,HOME=/global/homes/j/josephrb` and three additionally
+      `export HOME=...` in the body -- a documented act against a conda-by-prefix trap. Asserting
+      equality would have made three launchers refuse themselves on every correct run.
+    * **An ADDED `MNV_*` is what activation does.** The fixture activator sets `MNV_TEST_ACTIVATED`;
+      the real one sets none today, but a rule that depends on that staying true breaks every run
+      the day it changes.
+
+    Neither of those is the failure class this exists for. The question is *did a declaration the
+    submitter made reach this task*, and that is answered by DROPS and CHANGES against the baseline.
+    Additions and HOME are reported as observations so nothing is hidden, and the submitter-side
+    `--check` still compares everything.
+    """
+    out = []
+    bm, nm = base.get("mnv", {}), now.get("mnv", {})
+    for k in sorted(bm):
+        if k not in nm:
+            out.append("%s: DECLARED AT SUBMISSION, ABSENT HERE (was %r)" % (k, bm[k]))
+        elif bm[k] != nm[k]:
+            out.append("%s: %s -> %s" % (k, bm[k], nm[k]))
+    return out
+
+
+def _observations_inherited(base, now):
+    """Reported, never asserted. See `_diff_inherited` for why each one is here."""
+    out = []
+    if base.get("home") != now.get("home"):
+        out.append("HOME %s -> %s (the launchers override HOME on purpose)"
+                   % (base.get("home"), now.get("home")))
+    added = sorted(set(now.get("mnv", {})) - set(base.get("mnv", {})))
+    if added:
+        out.append("MNV_* gained since submission (activation adds these): %s" % ", ".join(added))
+    for v in SEARCH_VARS:
+        b, n = base.get("search_paths", {}).get(v, []), now.get("search_paths", {}).get(v, [])
+        if b != n:
+            out.append("%s: %d submit-time entr(ies) -> %d here" % (v, len(b), len(n)))
+    return out
+
+
+def check_inherited(path, env=None, record=None):
+    """The launcher-side check: did the submitter's declarations reach this task intact?
+
+    WHY NOT `check`. The baseline is recorded on a login node before `sbatch`; this runs on a compute
+    node after the activator has rewritten `PATH`, `PYTHONPATH` and `LD_LIBRARY_PATH`. Comparing those
+    would report DRIFT on every correct run, and a guard that always fires is not a guard -- it is
+    noise that trains its reader to ignore it. So the search paths are OBSERVED and printed, never
+    asserted, and the assertion is confined to the fields that must survive `--export=ALL`.
+
+    WHAT THIS STILL CATCHES, which is the whole point: an `MNV_*` variable that the submitter set and
+    the task did not receive, or received differently. `OI-179`'s round-1 failure was exactly a
+    missing `MNV_ENV_SYSTEM_PREFIXES`, and under this check a baseline that HAS it and a task that
+    does not is exit 3 by name.
+    """
+    if not os.path.isfile(path):
+        print("[env-provenance] COULD NOT LOOK: no baseline at %s." % path, file=sys.stderr)
+        print("[env-provenance]   REFUSING rather than comparing the environment with itself"
+              " (OI-179 defect 2).", file=sys.stderr)
+        return EXIT_CANNOT_LOOK
+    try:
+        with open(path, encoding="utf-8") as fh:
+            base = json.load(fh)
+    except (OSError, ValueError) as exc:
+        print("[env-provenance] COULD NOT LOOK: baseline unreadable: %s" % exc, file=sys.stderr)
+        return EXIT_CANNOT_LOOK
+
+    now = snapshot(env)
+    if record:
+        with open(record, "w", encoding="utf-8") as fh:
+            json.dump(now, fh, indent=2, sort_keys=True, ensure_ascii=False)
+            fh.write("\n")
+        print("[env-provenance] recorded this task's environment to %s (digest %s)"
+              % (record, now["digest"][:16]))
+    for o in _observations_inherited(base, now):
+        print("[env-provenance] OBSERVED (not asserted) %s" % o)
+
+    diffs = _diff_inherited(base, now)
+    if not diffs:
+        print("[env-provenance] INHERITED OK: all %d MNV_* declaration(s) in %s reached this task"
+              % (len(base.get("mnv", {})), path))
+        return EXIT_OK
+    print("[env-provenance] INHERITED DRIFT: %d difference(s) against %s"
+          % (len(diffs), path), file=sys.stderr)
+    print("[env-provenance]   baseline recorded %s on %s"
+          % (base.get("recorded_utc", "<unknown>"), base.get("host", "<unknown>")), file=sys.stderr)
+    for d in diffs:
+        print("[env-provenance]   %s" % d, file=sys.stderr)
+    print("[env-provenance]   The submitter's declarations did not reach this task intact."
+          " OI-179 round 1 died on exactly this class.", file=sys.stderr)
+    return EXIT_DRIFT
+
+
 def self_test():
     """Arms in BOTH directions, and the refusal arm, because a one-directional check waves the other.
 
@@ -216,6 +331,69 @@ def self_test():
         arm("the two snapshots were taken at genuinely different times",
             s1["recorded_utc"] != s2["recorded_utc"], True)
 
+        # ---- check_inherited: the LAUNCHER-side mode. Measured on saul 2026-09-01 with job
+        # 57819105: a compute node's PRE-activation environment is byte-identical to the login
+        # node's for HOME, PATH and PYTHONPATH, and gains exactly one LD_LIBRARY_PATH entry
+        # (/opt/cray/libfabric/default/lib64). But this mode necessarily runs POST-activation,
+        # because /usr/bin/python3 on a compute node is 3.6.15 and this file needs 3.7+ -- also
+        # measured in that job, not assumed. Post-activation the search paths legitimately differ
+        # (round 2 saw 47 entries against the submitter's 27), which is why they are observed and
+        # not asserted.
+        arm("INHERITED: identical environment is CLEAN",
+            check_inherited(p, dict(base_env)), EXIT_OK)
+        # THE DISCRIMINATING ARM. Without it, `check_inherited = check` would satisfy every other
+        # arm in this block and the two modes would be indistinguishable.
+        arm("INHERITED: a CHANGED SEARCH PATH is NOT drift (this is what makes it a second mode)",
+            check_inherited(p, gained), EXIT_OK)
+        arm("INHERITED: a wholly different PATH is still NOT drift",
+            check_inherited(p, dict(base_env, PATH="/opt/conda/bin:/nowhere")), EXIT_OK)
+        arm("INHERITED: a DROPPED MNV_* variable IS drift",
+            check_inherited(p, dropped), EXIT_DRIFT)
+        arm("INHERITED: a CHANGED MNV_* value IS drift",
+            check_inherited(p, dict(base_env, MNV_ENV_ROOT="/elsewhere")), EXIT_DRIFT)
+        # THE TWO ARMS BELOW WERE ASSERTED AS DRIFT UNTIL 2026-09-01 AND ARE NOW ASSERTED AS CLEAN.
+        # The change is recorded here rather than silently reversed, because "the test failed so I
+        # relaxed the rule" is what this looks like from outside and it is not what happened:
+        #   * ADDED MNV_*  -- activation adds variables. The launcher fixture's activator sets
+        #     MNV_TEST_ACTIVATED, and a rule that survives only while the real activator sets none
+        #     is a rule waiting to fail on every task.
+        #   * CHANGED HOME -- SIX of the eight k=0 launchers carry
+        #     `#SBATCH --export=ALL,HOME=/global/homes/j/josephrb` and THREE re-export it in the
+        #     body, on purpose. Asserting HOME equality would have made those three refuse
+        #     themselves on every correct run. Measured in the launchers, not inferred.
+        # Both are still REPORTED by _observations_inherited, so nothing is hidden -- and the
+        # submitter-side `check` above still treats every one of them as drift.
+        arm("INHERITED: an ADDED MNV_* is OBSERVED, not drift (activation adds variables)",
+            check_inherited(p, added), EXIT_OK)
+        arm("INHERITED: a CHANGED HOME is OBSERVED, not drift (the launchers override HOME)",
+            check_inherited(p, dict(base_env, HOME="/home/other")), EXIT_OK)
+        arm("INHERITED: a DECLARED variable ABSENT here is drift -- the class this exists for",
+            check_inherited(p, {k: v for k, v in base_env.items() if k != "MNV_ENV_ROOT"}),
+            EXIT_DRIFT)
+        # --record writes the task's own snapshot in the SAME invocation, so the launcher makes one
+        # python3 call rather than two (ruling 21's preflight census counts them).
+        rec = os.path.join(d, "task-env.json")
+        arm("--record writes the task snapshot in the same call",
+            (check_inherited(p, dict(base_env), record=rec), os.path.isfile(rec)),
+            (EXIT_OK, True))
+        with open(rec, encoding="utf-8") as fh:
+            _r = json.load(fh)
+        arm("the recorded snapshot carries every compared field",
+            all(k in _r for k in ("recorded_utc", "host", "home", "mnv", "search_paths", "digest")),
+            True)
+        arm("--record still writes when the check FAILS (a refused task must still be recorded)",
+            (check_inherited(p, dropped, record=rec), os.path.isfile(rec)), (EXIT_DRIFT, True))
+        arm("INHERITED: a MISSING baseline REFUSES rather than passing",
+            check_inherited(os.path.join(d, "absent.json"), dict(base_env)), EXIT_CANNOT_LOOK)
+        # An unreadable baseline is a THIRD state, distinct from absent and from clean.
+        bad = os.path.join(d, "corrupt.json")
+        with open(bad, "w", encoding="utf-8") as fh:
+            fh.write("{not json")
+        arm("INHERITED: an UNREADABLE baseline REFUSES rather than passing",
+            check_inherited(bad, dict(base_env)), EXIT_CANNOT_LOOK)
+        arm("full check REFUSES an unreadable baseline too", check(bad, dict(base_env)),
+            EXIT_CANNOT_LOOK)
+
     print("self-test PASSED" if ok else "self-test FAILED")
     return ok
 
@@ -226,6 +404,14 @@ def main():
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--emit", metavar="PATH", help="record the current environment to PATH")
     g.add_argument("--check", metavar="PATH", help="compare the current environment against PATH")
+    g.add_argument("--check-inherited", metavar="PATH", dest="check_inherited",
+                   help="launcher-side: assert every MNV_* the baseline at PATH declares reached"
+                        " this process; HOME, added MNV_* and search paths are observed only")
+    ap.add_argument("--record", metavar="PATH",
+                    help="with --check-inherited, also write this process's own snapshot to PATH."
+                         " ONE invocation does both deliberately: the launcher preflight census"
+                         " (ruling 21) counts python3 calls, so two calls would widen the declared"
+                         " exclusion set twice as far for no gain")
     g.add_argument("--self-test", action="store_true")
     a = ap.parse_args()
     if a.self_test:
@@ -236,6 +422,8 @@ def main():
               % (a.emit, len(snap["mnv"]),
                  sum(len(v) for v in snap["search_paths"].values()), snap["digest"][:16]))
         return EXIT_OK
+    if a.check_inherited:
+        return check_inherited(a.check_inherited, record=a.record)
     return check(a.check)
 
 

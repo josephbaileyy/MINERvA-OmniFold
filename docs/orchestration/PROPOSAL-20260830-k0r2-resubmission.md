@@ -136,11 +136,42 @@ file. **It compares against the RECORDED BASELINE and refuses (exit 2) if the ba
 rather than falling back to comparing the environment with itself; that fallback would always pass and
 would read as coverage, which is defect 2's shape.
 
-**THE LIMIT OF THE CHOSEN SHAPE, stated rather than buried:** this is a separate tool a submitter must
-remember to invoke. An emitter inlined into each launcher preamble could not be skipped, but that
-would edit eight pinned launchers and trigger the `F-14` / §7.0.7 coupling and `OI-123` supersession.
-Joseph chose the new-files shape on 2026-08-31 with that trade-off named. **So defect 3 is
-INSTRUMENTED, not yet ENFORCED**, and the enforcement question stays open.
+**✅ ENFORCED 2026-09-01 — the paragraph below is SUPERSEDED and is kept because a reader of the
+2026-08-31 records will meet it.** It said: *"this is a separate tool a submitter must remember to
+invoke. An emitter inlined into each launcher preamble could not be skipped, but that would edit
+eight pinned launchers and trigger the `F-14` / §7.0.7 coupling and `OI-123` supersession. Joseph
+chose the new-files shape on 2026-08-31 with that trade-off named. So defect 3 is INSTRUMENTED, not
+yet ENFORCED."*
+
+**THE COST IT WAS AVOIDING DOES NOT EXIST, and that was measured rather than argued.** The launchers'
+pre-source loop compares each library against **`HEAD`**, not against a hardcoded digest, so a
+committed edit keeps it green; `verify_hash_bindings.py` reports `ALL BINDINGS INTACT` with **none of
+the eight bound by an active run receipt** (which is precisely what blocks the `OI-123` launchers, and
+does not apply here); and each launcher's `--pair` set already includes itself. **No pin is
+superseded and no `OI-123` ceremony is triggered.** `F-14` / §7.0.7 still applies exactly as it
+applies to any commit — `generate_manifest.py --check` exiting 0 at the graded sha — which is a
+condition on this change, not a cost peculiar to it.
+
+**WHAT THE LAUNCHERS NOW DO, in all eight, byte-identically:** `MNV_ENV_PROVENANCE` is **mandatory
+with no default** (`:?`, so an exported-but-empty value refuses too); the task **records its own
+environment** to `${MNV_GUARD_INVENTORY_DIR}/env-provenance.<job>.<jobid>.<task>.json`; and
+`--check-inherited` asserts that `HOME` and every `MNV_*` reached the task intact, propagating **2 for
+"could not look"** and **3 for "measured drift"** rather than collapsing them.
+
+**WHY `--check-inherited` AND NOT `--check` INSIDE A LAUNCHER.** The baseline is recorded on a login
+node before `sbatch`; the launcher's check necessarily runs **after** the activator, because a compute
+node's pre-activation `/usr/bin/python3` is **3.6.15** and this tool needs 3.7+ — both measured
+directly in job `57819105` on 2026-09-01, not assumed. Post-activation the search paths legitimately
+differ (round 2 saw 47 entries against the submitter's 27), so they are **observed and printed, never
+asserted**. A guard that fires on every correct run is not a guard. The same job measured that a
+compute node's *pre*-activation environment is byte-identical to the login node's for `HOME`, `PATH`
+and `PYTHONPATH` and gains exactly one `LD_LIBRARY_PATH` entry
+(`/opt/cray/libfabric/default/lib64`) — which is why the `HOME`/`MNV_*` half is asserted strictly.
+
+**THE SUBMIT-SIDE STEP ABOVE IS STILL REQUIRED AND IS NOW ALSO UNSKIPPABLE** — not because the
+submitter is reminded, but because every launcher refuses without the baseline the `--emit` produces.
+`--check` remains the submitter's own cross-submission comparison and is the only thing that can catch
+defect 1's `mkdir`; the launcher cannot, because that is a login-environment fact.
 
 ## 4. The arms
 
