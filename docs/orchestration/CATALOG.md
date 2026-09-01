@@ -367,6 +367,22 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   quotes is VALIDATED, every quarantined object is one it declines to use. Found by the `claude-school` lane, re-read
   here. **Deliberately does NOT settle** whether `OI-172`'s note obligation reaches the Letter — that is ruled separately
   in `OI-187`'s row on a CODE-PATH argument, because this lane's artifact-scope reasoning was true but not sufficient.
+- **PSCRATCH READ STALLS MAKE `A-2(b)` UNMEASURABLE — THE REDEPLOY IS BLOCKED BY A FILESYSTEM, NOT A DECISION, 2026-09-01:**
+  [`FINDING-20260901-pscratch-read-stalls-block-a2b.md`](FINDING-20260901-pscratch-read-stalls-block-a2b.md)
+  — `git status --porcelain` **does not return** on either cluster checkout, while `find` (1803 files), `git ls-files`
+  (1804), `rev-parse`, `cat-file` and all metadata are **instant**. A complete per-file sweep — **1803 attempts,
+  terminal marker written, so NOT a blind result** — found **10 files (0.55%)** whose content reads time out, ordinary
+  small text files across four unrelated directories. **INTERMITTENT, and an earlier reading of it as a dead Lustre
+  target is CORRECTED here:** two of the ten later read clean twice. **And it is worsening** — the sweep got `rc=124`
+  where the retest gets no return at all, i.e. **uninterruptible sleep, where `timeout` cannot interrupt its own
+  child**; that is also what has held another lane's processes for **2 h 30 m+**. **THE CONSEQUENCE:** `A-2(b)` is
+  `dirty_count` from exactly that command, so round-2 `F-1(b)` cannot be filed by the precedent route, so
+  `FREEZE-20260830-k0-deployment-7ac0edec.md` §1 cannot expire, so the authorized redeploy cannot proceed. **No
+  substitute measurement is offered and none should be improvised.** §5: three of the ten are executable science
+  inputs, so the tree is **unsafe to launch from** independently of the freeze. §6 carries the method caution both
+  lanes nearly fell for — **an empty sweep result is not a negative result** — with the two rules that follow. Already
+  banked and not to be redone: A-2(a) is taken (raw sha in `.git/HEAD`, DETACHED), and bundle-alone recovery of
+  `7ac0edec` passes **all six** declared checks. Authorizes nothing; **Gate 2 remains FAIL**.
 - **THE REDEPLOY'S PRECONDITION DELTA, AND A CORRECTION ON WHEN THE OTHER EIGHT ARMS BREAK, 2026-09-01:**
   [`FINDING-20260901-k0r2-redeploy-precondition-delta.md`](FINDING-20260901-k0r2-redeploy-precondition-delta.md)
   — the measurement `DECISION-20260901-joseph-authorizes-k0r2-redeploy.md` §2's *"and reconcile the other issues"*
