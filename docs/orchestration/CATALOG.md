@@ -324,6 +324,18 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   counts stay CAND `1 of 7` / QUOTED `0 of 7`. Supplies the n=2 complete populations that make
   `OI-177` ratifiable — and kills the 40 CPU-h figure the amendment first proposed, since arm 5
   measured **49.11**.
+- **THE `P` LEG IS ALREADY SATISFIED AND `M` IS THE BLOCKER — §4.2 DISSOLVED, 2026-09-01:**
+  [`FINDING-20260901-p-leg-status-measured-against-the-candidate.md`](FINDING-20260901-p-leg-status-measured-against-the-candidate.md)
+  — `CRITERIA-20260811` §4.2 says the `P` leg of causes 1–4 is *"currently unsatisfiable from the repository"* and
+  proposes its own remedy: *"the cheap fix is a receipt, not a re-run."* **That receipt was written 2026-08-17 and is
+  committed; nobody marked §4.2 satisfied.** Measured off three tracked, predeclared receipts: cause 1 `P` **MET**
+  (branch `C1`, per-band census, `Flux` exactly 100 contiguous); causes 3 and 4 `P` **MET FOR THE CANDIDATE**
+  (branch `S1`, both arms carrying all six self-checked stamps and all three `upstream_*` values, zero mismatches)
+  **while both July negative controls returned every stamp ABSENT** — `(cause × artifact)` scoping working as §0
+  describes. **Neither receipt discharges anything, and both say the blocker is `M` in their own words.** So
+  `OI-172` and `OI-173` are not parallel blockers but the `M` leg itself, confirming the `claude-school` lane's
+  ordering over this lane's. Remaining: cause 1 → `OI-172` (free); cause 3 → `M(ii)` needs its own measurement,
+  **~1 GPU-node-hour**; cause 4 → `OI-173` (free); **cause 7 has NO criteria at all** and needs them written.
 - **THE F7 PREDECLARED TEST, MEASURED ON THE CANDIDATE — MEAN-CENTERING ALONE IS DISQUALIFIED THERE TOO, 2026-09-01:**
   [`FINDING-20260901-f7-floor-ratio-and-seed-pull-measured.md`](FINDING-20260901-f7-floor-ratio-and-seed-pull-measured.md)
   — Run to settle whether [`BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md`](BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md)
