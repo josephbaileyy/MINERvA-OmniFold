@@ -44,6 +44,43 @@ unlabelled one.
 > denominated in TASK-HOURS: the sum of `ElapsedRaw` over the arm's tasks. It is NOT core-hours and
 > not `AllocCPUS`-weighted.**
 
+## THERE ARE THREE READINGS, NOT TWO — added 2026-09-01 after this record first landed
+
+The version of this record committed at `08eebe86` contrasted **task-hours** against **core-hours**
+and excluded the latter as *"not core-hours and not AllocCPUS-weighted"*. **That exclusion clause is
+incomplete**, and the `claude-school` k=0 lane found the gap: `sacct`'s **`TotalCPU`** — CPU actually
+consumed — is arguably the most literal reading of the words *"CPU-hours"*, and it is **neither** of
+the two columns above nor `AllocCPUS`-weighted, so the exclusion as written does not name it.
+
+Re-measured independently here, summing `TotalCPU` over **step** rows (the allocation row under
+`sacct -X` reports `00:00:00`, because that accounting lives at step level — a method difference worth
+recording, since `-X` is the correct flag for *counting tasks* and the wrong one for *this* quantity):
+
+| arm | task-h (**governing**) | `TotalCPU`-h | core-h |
+|---|---:|---:|---:|
+| 5 `uthrow5d_runF` | **49.11** | 1528.40 | 2455.51 |
+| 6 `uthrow5d_block` | **31.01** | 922.64 | 1364.33 |
+
+School's figures reproduce to the digit over 80 and 42 step rows.
+
+**So the ruling selects the only one of three readings under which this rehearsal sat inside the
+delegation.** Under `TotalCPU` arms 5 and 6 would exceed 500 by ~3.1× and ~1.8×; under core-hours by
+~4.9× and ~2.7×. **This does not weaken the ruling** — the unit was ambiguous, Joseph resolved it, and
+resolving it in the permissive direction is a choice he is entitled to make. It is recorded because a
+later lane reaching for the literal reading must find it *answered*, not believe it has found a
+challenge nobody considered.
+
+**What settles it is this record's POSITIVE clause, not its exclusion clause:** *"the sum of
+`ElapsedRaw` over the arm's tasks"* names one quantity and admits no other. The exclusion list was
+never the operative sentence. Full three-column treatment: `AMENDMENT-20260831-oi177-per-arm-ceilings.md`
+§3e.
+
+**And the school lane refuted its own proposed remedy in the same pass**, which is worth carrying
+because it closes a route a future reader would otherwise try: §3c had proposed re-expressing CPU
+ceilings in *"CPU-seconds of actual work rather than wall-clock task-hours"*. Measured, it does not
+help — arm 5 went `1015.97 → 1528.40` `TotalCPU`-h between rounds, **+50.4%**, against **+58.7%** in
+elapsed. A `TotalCPU` ceiling would have been breached just as badly. **The unit switch buys nothing.**
+
 ## What it settles, measured
 
 Round 2 of the k=0 rehearsal, jobs `57753239`–`57753248`, all seven arms at full population:
