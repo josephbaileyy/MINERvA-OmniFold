@@ -2,7 +2,10 @@
 # PREPARED FOR SIGNATURE. **NOT RATIFIED. `OI-177` REMAINS OPEN.**
 
 **CITABLE FOR:** the measured `aa67c426` actuals in §2 and the method that produced them; the
-provenance of §6's current estimate column; and this table AS PROPOSED. **NOT CITABLE FOR:**
+provenance of §6's current estimate column; this table AS PROPOSED; and §3e's three-unit
+reconciliation and two-round floor/median comparison. **All hour figures in this document are
+TASK-HOURS** per the 2026-09-01 ruling — bare `CPU-h`/`A100-h` cells mean task-hours throughout.
+**NOT CITABLE FOR:**
 ratification — **this document does not amend anything and `OI-177` is not discharged by it**; any
 gate movement; leg 6; the M(ii) family; or adoption. **Gate 2 remains FAIL.**
 
@@ -185,10 +188,14 @@ already executing. §3b's revised **60 CPU-h** survives with 22% headroom and is
 complete first are the ones that got nodes first — a selection effect, not noise. **Do not project a
 CPU ceiling from a partial array.**
 
-**§3c's contention hypothesis is confirmed by the completed data.** GPU arms across two runs: −3.4%,
+**§3c's contention hypothesis is supported by the completed data.** GPU arms across two runs: −3.4%,
 −0.9%, +2.9%. CPU arms: +7.4%, **+58.7%**, +3.3%, +38%. The one arm that moved enormously is the one
 whose tail ran at two-way concurrency on `Reason=Resources` for eleven hours. **A work-content
-explanation does not produce that split; contention does.**
+explanation does not produce that split; contention does.** **⚠ §3e sharpens this and partly corrects
+it:** the per-task *floor* reproduces to ±6% on every arm with n>1, which is the strong form of the
+argument, but `TotalCPU` rose +50.4% alongside elapsed on arm 5 — so this is on-node interference that
+*burns* CPU, not queue waiting. Read §3e before citing this paragraph, and do not read arm 6's +3.3%
+as reproducibility.
 
 **AND THE CPU SUM NOW EXCEEDS §6's DECLARED TOTAL:** 86.53 CPU-h against a stated sum of ceilings of
 70. Every arm remains far inside the strictly-under-500 delegated thresholds, so no authority boundary
@@ -196,10 +203,105 @@ moves — but §6's sum row no longer describes this rehearsal and should be res
 figures.
 
 **REVISED RECOMMENDATION, superseding §3b's "wait":** the reason to wait was the absence of a second
-complete population. It now exists. **Ratify arm 2 at 8, arm 5 at 60, arm 6 at 40 CPU-h**, restate the
-estimate column with the round-2 actuals, and restate the sum row as **70 GPU / 113 CPU**. The one
-judgement left is arm 4: it holds at 30 with only 12.4% headroom on a rising trend, and this document
-still does not propose raising an unbreached ceiling.
+complete population. It now exists. **Ratify arm 2 at 8, arm 5 at 60, arm 6 at 40 CPU task-hours**,
+restate the estimate column with the round-2 actuals, and restate the sum row as **70 GPU / 113 CPU**.
+The one judgement left is arm 4: it holds at 30 with only 12.4% headroom on a rising trend, and this
+document still does not propose raising an unbreached ceiling. **Unit per the 2026-09-01 ruling —
+task-hours; see §3e, which also records that arm 6's figure is the least well-supported of the
+three.**
+
+## 3e. THE UNIT IS RULED, AND §3c's PROPOSED REMEDY IS NOW MEASURED AND REFUTED
+
+**Joseph ruled the unit on 2026-09-01:** *"It is task hours"* — the delegated per-arm ceiling is the
+sum of `ElapsedRaw` over the arm's tasks. Recorded by the personal-account orchestrator at
+`DECISION-20260901-joseph-delegated-ceiling-unit-is-task-hours.md`. **Every figure in this document is
+already in that unit** (§1 states the convention at `:36-37`; the table cells write it bare as
+`CPU-h`, which is why the question could be asked at all), so the ruling changes no number here. It
+changes what they mean, and it is what makes them signable.
+
+**Re-derived independently rather than relayed**, `sacct -X` over jobs `57753239`–`57753248`, all
+seven arms, distinct identities only. All three units, so a later lane does not have to ask again:
+
+| arm | AllocCPUS | **task-h (governing)** | core-h (`ElapsedRaw`×`AllocCPUS`) | `TotalCPU`-h (CPU actually consumed) |
+|---|---:|---:|---:|---:|
+| boot5dG | 32 | **14.86** | 475.64 | 311.74 |
+| ssplit5d | 36 | **5.83** | 210.02 | 132.42 |
+| det5dBKG | 32 | **13.76** | 440.37 | 70.82 |
+| uthrow5d_runF | 50 | **49.11** | 2455.51 | 1528.40 |
+| uthrow5d_block | 44 | **31.01** | 1364.33 | 922.64 |
+| sweep5dBKGrun | 32 | **26.28** | 840.81 | 529.69 |
+| uthrow5d_combF | 50 | **0.58** | 28.82 | 17.99 |
+
+**THERE ARE THREE READINGS, NOT TWO, AND THE RULING SELECTS THE ONLY ONE UNDER WHICH THIS REHEARSAL
+WAS INSIDE THE DELEGATION.** The decision record names task-hours and excludes core-hours. It does not
+name `TotalCPU` — CPU seconds actually consumed, which is arguably the most literal reading of the
+phrase *"CPU-hours"* — and under **that** reading `uthrow5d_runF` at `1528.40` and `uthrow5d_block` at
+`922.64` are also over 500, by 3.1x and 1.8x. The ruling's **positive** clause settles it anyway
+(*"the sum of `ElapsedRaw`"* admits no other reading), so this is a completeness note and not a
+challenge to it. It is recorded here so that a later lane reaching for the literal reading finds it
+already answered rather than believing it has found something.
+
+### §3c asked for a contention-independent unit. `TotalCPU` is not one.
+
+`:158` proposed expressing CPU ceilings in *"CPU-seconds of actual work rather than wall-clock
+task-hours"* and left it unmeasured. **It is now measured, and it does not work.** Round 1 against
+round 2, same arms, same populations, complete in both:
+
+| arm | part | task-h R1 -> R2 | `TotalCPU`-h R1 -> R2 |
+|---|---|---:|---:|
+| boot5dG | GPU | 15.38 -> 14.86 (**-3.4%**) | 311.93 -> 311.74 (**-0.1%**) |
+| det5dBKG | GPU | 13.88 -> 13.76 (**-0.9%**) | 70.57 -> 70.82 (**+0.4%**) |
+| sweep5dBKGrun | GPU | 25.54 -> 26.28 (**+2.9%**) | 524.22 -> 529.69 (**+1.0%**) |
+| ssplit5d | CPU | 5.43 -> 5.83 (**+7.4%**) | 116.50 -> 132.42 (**+13.7%**) |
+| uthrow5d_runF | CPU | 30.94 -> 49.11 (**+58.7%**) | 1015.97 -> 1528.40 (**+50.4%**) |
+| uthrow5d_block | CPU | 30.01 -> 31.01 (**+3.3%**) | 848.32 -> 922.64 (**+8.8%**) |
+
+**Arm 5 moved +50.4% in the unit that was supposed to be immune.** A `TotalCPU` ceiling would have
+been breached just as badly as an elapsed one, so switching units buys nothing and would cost a change
+to §6's convention. **The honest option is the one §3c listed first: set the CPU ceilings from the
+worst observed regime and say so.** That is what §3b's 60 does.
+
+### The reproducible statistic is the per-task MINIMUM — and it must not be used as a ceiling
+
+| arm | part | min R1 -> R2 | median R1 -> R2 | mean R1 -> R2 |
+|---|---|---:|---:|---:|
+| boot5dG | GPU | 8.9 -> 8.5 (**-3.9%**) | -3.6% | -3.4% |
+| det5dBKG | GPU | 42.7 -> 41.9 (**-1.9%**) | -0.4% | -0.9% |
+| sweep5dBKGrun | GPU | 8.6 -> 8.5 (**-1.4%**) | +2.2% | +2.9% |
+| ssplit5d | CPU | 8.4 -> 8.5 (**+0.2%**) | **+22.0%** | +7.4% |
+| uthrow5d_runF | CPU | 33.0 -> 34.7 (**+5.2%**) | **+75.1%** | **+58.7%** |
+| uthrow5d_block | CPU | 39.4 -> 40.5 (**+2.8%**) | **+56.9%** | +3.3% |
+
+Minutes per task. `uthrow5d_combF` is excluded: at n=1 its minimum *is* its mean, so it carries no
+floor statistic — its +36.0% appears in all three columns and is one task, not a distribution.
+
+**Every arm with n>1 reproduces its floor to within +/-6%, in both partitions, while the CPU arms'
+medians move by +22% to +75%.** The fastest task in each arm is doing the same work it did before; the
+distribution above it is what lengthened. **That is what makes the work-content explanation
+untenable** — if each task were doing more work, the fastest task would slow too, and it did not.
+
+**But this REFINES the contention claim rather than confirming the version stated earlier.** §3c and
+`RECORD-20260901`:49 argued contention against work-content; the floor evidence supports that. What
+the `TotalCPU` growth adds is that the interference **burns CPU** rather than merely delaying the
+process — a descheduled task would show flat `TotalCPU` and rising elapsed, and arm 5 shows both
+rising together. On a `shared` partition that is consistent with spin/poll or cache interference, not
+with queue waiting. **The earlier wording implied waiting. It should be read as on-node interference.**
+
+**The floor is a DIAGNOSTIC, never a ceiling.** A budget must cover the bill actually incurred, which
+is mean x n, not min x n. Its use is to answer *"did this arm's work change, or only its
+environment?"* — and here the answer is: only its environment.
+
+### One correction to this document's own round-2 reading
+
+**`uthrow5d_block`'s +3.3% is not reproducibility, and §3d should not be read as claiming it is.** Its
+two distributions are far apart and their sums coincide: R1 min/median/max `39.4 / 52.2 / 518.3` min
+against R2 `40.5 / 81.9 / 289.0`. Round 1's mean was carried by a single 8.6-hour outlier (sd `99.9`
+min on a mean of `85.7`); round 2's median is 57% higher with a shorter tail. **Two unstable
+distributions that happen to sum alike are not two agreeing measurements** — same shape as this
+campaign's *two-quantities-agreeing-at-printed-precision* hazard. The proposed 40 CPU-h still covers
+both observed sums (`30.01`, `31.01`), so the recommendation does not change; its **support** is
+weaker than §3d implied and a third sample would be worth having before this arm's ceiling is treated
+as well-founded.
 
 ## 4. What this does NOT settle, and one thing that will improve it
 

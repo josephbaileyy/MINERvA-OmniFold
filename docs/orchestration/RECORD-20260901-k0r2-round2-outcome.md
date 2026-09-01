@@ -51,6 +51,17 @@ and §3c of the amendment records the throughput trace — six consecutive hourl
 +70, +42, +3, +2, with `squeue` showing 2 tasks running and the rest on `Reason=Resources` while
 `ArrayTaskThrottle` stood at 40, 10 and 24.
 
+**⚠ SHARPENED AND PARTLY CORRECTED 2026-09-01, `AMENDMENT §3e`.** Two measurements were added after
+this paragraph was written. **The strong evidence is the per-task FLOOR:** every arm with n>1
+reproduces its fastest task to within ±6% across the two rounds (`33.0`→`34.7` min on arm 5) while the
+CPU arms' medians move +22% to +75% — if each task were doing more work the fastest would slow too,
+and it does not. **The complication is `TotalCPU`:** arm 5 consumed +50.4% more actual CPU time
+(`1015.97`→`1528.40` h), so this is on-node interference that *burns* CPU, not queue waiting, and
+"contention" above should be read in that narrower sense. **`TotalCPU` is therefore NOT the
+contention-independent unit** §3c hoped for. **And arm 6's `+3.3%` in the table above is not
+reproducibility** — R1 `39.4/52.2/518.3` against R2 `40.5/81.9/289.0` min are two unlike distributions
+whose sums coincide.
+
 **(b) The amendment's own projection was LOW.** §3b projected arm 5 at **46.3** CPU-h from 13 of 40
 completed tasks; the true figure is **49.11**, so the partial-array projection understated by 5.7%.
 Recorded because the projection was used to argue against ratifying, and it argued correctly but for a
