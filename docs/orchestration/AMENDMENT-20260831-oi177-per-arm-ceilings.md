@@ -160,6 +160,47 @@ rather than `Elapsed` and is a change to §6's stated convention, so it is Josep
 correction. **`Elapsed` was used throughout this document because it is §6's own convention; that
 choice is now a known limitation rather than an assumption.**
 
+## 3d. ✅ n=2 COMPLETE POPULATIONS — the run finished, so this is now ratifiable
+
+Round 2 completed **374 of 374 with zero failures** on 2026-09-01T08:57:51Z
+(`RECORD-20260901-k0r2-round2-outcome.md`). Every arm ran its **full declared population in both
+runs**, so the comparison below is two complete measurements, not a measurement against a projection.
+
+| arm | `aa67c426` | **round 2** | change | §6 ceiling | §3 proposed | **verdict on the PROPOSAL** |
+|---|---:|---:|---:|---:|---:|---|
+| 1 bootstrap | 15.38 | **14.86** | −3.4% | 20 GPU | 20 | holds, 35% headroom |
+| 2 seed split | 5.43 | **5.83** | +7.4% | 5 CPU | 8 | holds, 37% headroom |
+| 3 detector | 13.88 | **13.76** | **−0.9%** | 20 GPU | 20 | holds, 45% headroom |
+| 4 sweep | 25.54 | **26.28** | +2.9% | 30 GPU | 30 | holds, **only 12.4%** |
+| 5 uthrow run | 30.94 | **49.11** | **+58.7%** | 30 CPU | 40 | **BREACHED — 49.11 > 40** |
+| 6 uthrow block | 30.01 | **31.01** | +3.3% | 30 CPU | 40 | holds, 29% headroom |
+| 7 combine | 0.42 | **0.58** | +38% | 5 CPU | 5 | holds |
+
+**THE 40 CPU-h FIGURE §3 PROPOSED FOR ARM 5 IS DEAD.** The measured round-2 actual is **49.11**. Had
+this amendment been ratified when first written, it would have been breached by the run that was
+already executing. §3b's revised **60 CPU-h** survives with 22% headroom and is the figure to ratify.
+
+**§3b's projection was low, and honesty about that matters more than the 6%.** It projected 46.3 from
+13 of 40 tasks; the truth is 49.11. Partial-array projections understate here, because the tasks that
+complete first are the ones that got nodes first — a selection effect, not noise. **Do not project a
+CPU ceiling from a partial array.**
+
+**§3c's contention hypothesis is confirmed by the completed data.** GPU arms across two runs: −3.4%,
+−0.9%, +2.9%. CPU arms: +7.4%, **+58.7%**, +3.3%, +38%. The one arm that moved enormously is the one
+whose tail ran at two-way concurrency on `Reason=Resources` for eleven hours. **A work-content
+explanation does not produce that split; contention does.**
+
+**AND THE CPU SUM NOW EXCEEDS §6's DECLARED TOTAL:** 86.53 CPU-h against a stated sum of ceilings of
+70. Every arm remains far inside the strictly-under-500 delegated thresholds, so no authority boundary
+moves — but §6's sum row no longer describes this rehearsal and should be restated with the per-arm
+figures.
+
+**REVISED RECOMMENDATION, superseding §3b's "wait":** the reason to wait was the absence of a second
+complete population. It now exists. **Ratify arm 2 at 8, arm 5 at 60, arm 6 at 40 CPU-h**, restate the
+estimate column with the round-2 actuals, and restate the sum row as **70 GPU / 113 CPU**. The one
+judgement left is arm 4: it holds at 30 with only 12.4% headroom on a rising trend, and this document
+still does not propose raising an unbreached ceiling.
+
 ## 4. What this does NOT settle, and one thing that will improve it
 
 **Arm 4 is the thinnest margin at 17%** and is left unchanged deliberately: it is not breached, and

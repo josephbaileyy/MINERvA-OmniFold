@@ -310,6 +310,20 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 
 
+- **ROUND 2 COMPLETED 374 OF 374 WITH ZERO FAILURES, 2026-09-01:**
+  [`RECORD-20260901-k0r2-round2-outcome.md`](RECORD-20260901-k0r2-round2-outcome.md) — queue empty at
+  `08:57:51Z` after ~36 h. **374 distinct task identities COMPLETED, 0 FAILED, 0 CANCELLED**, all seven
+  arms at full declared population. Round 1 of the same run died with six tasks in 8–15 s on `OI-179`;
+  the only change was one exported variable. **Products verified READABLE, not merely marked**: 143
+  `.done`, and 185 `.npz` opened with every member read, 0 unreadable — though the first read reported
+  two failures and **the reader was wrong, not the files** (`allow_pickle=False` is a numpy default;
+  all 61 `uq_5d` products carry object arrays). **The canonical operand never moved for the entire
+  run** — porcelain 726 / digest `d429f0f3` at submission and identically 36 h later — and the deploy
+  tree stayed frozen at `7ac0edec`, porcelain 0. **§5 says outright that a completed run is not a
+  passed gate:** Gate 2 remains **FAIL** on six clauses, no cause is discharged, nothing is adopted,
+  counts stay CAND `1 of 7` / QUOTED `0 of 7`. Supplies the n=2 complete populations that make
+  `OI-177` ratifiable — and kills the 40 CPU-h figure the amendment first proposed, since arm 5
+  measured **49.11**.
 - **THE QUARANTINE IS GRADED AGAINST THE CANDIDATE, NOT THE JULY ARTIFACT, 2026-08-31:**
   [`DECISION-20260831-joseph-quarantine-graded-against-the-candidate.md`](DECISION-20260831-joseph-quarantine-graded-against-the-candidate.md)
   — Joseph: *"Okay it sounds like the correct ruling"*, *"Okay do that"*, and **confirmed directly to the
