@@ -87,10 +87,20 @@ mnv_inv() {
 # ENVPROV directly (see sbatch_unfold_5d_detector_bkgaware_gpu.sh:204,213,244) and
 # mnv_preflight_exclusions.json declares that set with falsifiable counts. Guarding them here instead
 # would (a) move the guarded boundary from 14 to 18, and 14 is the number ruling 21 pinned -- see
-# OI-185 -- and (b) FAIL test_the_inventories_are_NON_VACUOUS: measured,
-# `mnv_guarded_run.py --expect-root <repo> -- mnv_env_provenance.py --self-test` gives checked=12 but
-# repo_origin_count=0, because that tool imports only the standard library, and the test asserts
+# OI-185, RATIFIED by Joseph 2026-09-01 at 14 guarded / 38 -- and (b) FAIL
+# test_the_inventories_are_NON_VACUOUS: measured, `mnv_guarded_run.py --expect-root <repo> --
+# mnv_env_provenance.py --self-test` gives checked=12 but repo_origin_count=0, and the test asserts
 # repo_origin_count > 0 with one exemption that an `env_provenance` tag does not match.
+#
+# DO NOT RE-DERIVE THE EXCLUSION FROM "IT IMPORTS ONLY THE STANDARD LIBRARY." An earlier version of
+# this comment gave that as the reason. It is a TRUE statement about mnv_env_provenance.py -- measured
+# repo_origin_count=0 -- but it is NOT the criterion, and a reader who applies it as one gets the
+# wrong answer on the very next tool: mnv_source_manifest.py measures repo_origin_count=1, importing
+# MARKERS and is_checkout from mnv_guarded_run, and it is a RATIFIED exclusion. THE BINDING CRITERION
+# IS CIRCULARITY, NOT PURITY: an excluded preflight tool's repository imports must be a SUBSET OF
+# {mnv_guarded_run} -- the guard has nothing to contain but itself. Joseph ruled 2026-09-01 that the
+# "standard library" phrasing was descriptive of the tool that prompted the row, not a criterion he
+# was fixing. Flagged by minerva-omnifold-38, the lane that shipped the criterion.
 # ONLY THE SCIENCE CALL AT THE BOTTOM IS GUARDED. Measured by the claude-school k=0 lane.
 python3 "$SRCMAN" \
   --repo "$CODE_ROOT" --compare "$SRCMAN_RECORD" \
