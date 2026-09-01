@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import sys
 import tempfile
+import types
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import numpy as np
 
@@ -128,7 +131,9 @@ def _spec(role: str, ordinal: int) -> smoke.FixedSourceSpec:
         role_code=smoke.ROLE_DATA if role == "data" else smoke.ROLE_MC,
         playlist="1B" if role == "data" else "1A",
         manifest_relative_path=f"manifest/{role}.txt",
+        expected_manifest_sha256="a" * 64,
         expected_basename=f"{role}.root",
+        expected_uuid=f"uuid-{role}",
         shard_file_ordinal=ordinal,
     )
 
@@ -146,7 +151,7 @@ def _shard() -> typed.ShardProvenance:
 
 
 class FixedSourceMappingTest(unittest.TestCase):
-    """Prove the mapper retains current generic/event bytes and typed semantics."""
+    """Test mapping plus synthetic parity with the current helper code."""
 
     def setUp(self) -> None:
         self.records = _records()
@@ -332,14 +337,30 @@ class FixedSourceRoundTripTest(unittest.TestCase):
     def test_manifest_resolution_uses_only_first_committed_entry(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
-            for spec in smoke.FIXED_SOURCES:
+            test_specs = []
+            for original in smoke.FIXED_SOURCES:
+                contents = (
+                    f"/routed/{original.expected_basename}\n"
+                    "/not/read/other.root\n"
+                )
+                spec = smoke.FixedSourceSpec(
+                    role=original.role,
+                    role_code=original.role_code,
+                    playlist=original.playlist,
+                    manifest_relative_path=original.manifest_relative_path,
+                    expected_manifest_sha256=hashlib.sha256(
+                        contents.encode("utf-8")
+                    ).hexdigest(),
+                    expected_basename=original.expected_basename,
+                    expected_uuid=original.expected_uuid,
+                    shard_file_ordinal=original.shard_file_ordinal,
+                )
+                test_specs.append(spec)
                 manifest = root / spec.manifest_relative_path
                 manifest.parent.mkdir(parents=True, exist_ok=True)
-                manifest.write_text(
-                    f"/routed/{spec.expected_basename}\n/not/read/other.root\n",
-                    encoding="utf-8",
-                )
-            resolved = smoke.resolve_fixed_sources(root)
+                manifest.write_text(contents, encoding="utf-8")
+            with mock.patch.object(smoke, "FIXED_SOURCES", tuple(test_specs)):
+                resolved = smoke.resolve_fixed_sources(root)
             provenance = smoke._shard_provenance(
                 resolved, {"data": "uuid-data", "mc": "uuid-mc"}
             )
@@ -351,6 +372,111 @@ class FixedSourceRoundTripTest(unittest.TestCase):
             provenance.production_provenance,
             tuple(sorted(provenance.production_provenance)),
         )
+
+    def test_manifest_hash_and_source_uuid_fail_closed(self) -> None:
+        contents = "/routed/data.root\n"
+        spec = smoke.FixedSourceSpec(
+            role="data",
+            role_code=smoke.ROLE_DATA,
+            playlist="1B",
+            manifest_relative_path="manifest/data.txt",
+            expected_manifest_sha256=hashlib.sha256(
+                contents.encode("utf-8")
+            ).hexdigest(),
+            expected_basename="data.root",
+            expected_uuid="uuid-data",
+            shard_file_ordinal=1,
+        )
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            manifest = root / spec.manifest_relative_path
+            manifest.parent.mkdir(parents=True)
+            manifest.write_text(contents + "changed\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
+                smoke._resolve_source(root, spec)
+
+        with self.assertRaisesRegex(ValueError, "ROOT UUID mismatch"):
+            smoke._require_source_uuid("wrong-uuid", spec.expected_uuid)
+
+    def test_reader_rejects_uuid_before_tree_or_entry_access(self) -> None:
+        class FakeUuid:
+            def AsString(self) -> str:
+                return "wrong-uuid"
+
+        class FakeFile:
+            def __init__(self) -> None:
+                self.tree_requested = False
+                self.closed = False
+
+            def IsZombie(self) -> bool:
+                return False
+
+            def GetUUID(self) -> FakeUuid:
+                return FakeUuid()
+
+            def Get(self, _name: str) -> object:
+                self.tree_requested = True
+                raise AssertionError("Tree access occurred before UUID validation")
+
+            def Close(self) -> None:
+                self.closed = True
+
+        fake_file = FakeFile()
+        fake_root = types.SimpleNamespace(
+            TFile=types.SimpleNamespace(Open=lambda *_args: fake_file)
+        )
+        with mock.patch.dict(sys.modules, {"ROOT": fake_root}):
+            with self.assertRaisesRegex(ValueError, "ROOT UUID mismatch"):
+                smoke.PyRootFixedEntryReader("source.root", "expected-uuid")
+        self.assertFalse(fake_file.tree_requested)
+        self.assertTrue(fake_file.closed)
+
+    def test_pinned_source_hashes_and_uuids(self) -> None:
+        expected = {
+            "data": (
+                "91fa4a24774bfa800cd021dd712e61c777f600a7fa0c77ef1f54dad289764b1e",
+                "bcd43694-ef17-11f0-9717-17a6e183beef",
+            ),
+            "mc": (
+                "4100dca453de1beef0213a0feac1fe4faa77d769f2dd5f36f4e11c6cea4894f8",
+                "c0347da6-2a99-11ef-9717-31a7e183beef",
+            ),
+        }
+        for spec in smoke.FIXED_SOURCES:
+            self.assertEqual(
+                (spec.expected_manifest_sha256, spec.expected_uuid),
+                expected[spec.role],
+            )
+
+    def test_receipt_separates_real_row_and_synthetic_parity_claims(self) -> None:
+        summary = {
+            "status": "PASS",
+            "tree": smoke.TREE_NAME,
+            "entries": [0, 15],
+            "rows": 32,
+            "sources": [],
+            "enabled_branch_sha256": smoke.required_branch_digest(),
+            "typed_descriptor_schema_sha256": typed.descriptor_schema_digest(),
+            "normalization_fit_digest": "c" * 64,
+            "object_counts": {"photons": {"data": 1, "mc": 2}},
+        }
+        receipt = smoke.build_smoke_receipt(summary, code_commit="d" * 40)
+        self.assertIn(
+            "fixed-entry source mapping",
+            receipt["scope"]["real_row_evidence"].lower(),
+        )
+        self.assertIn("synthetic tests", receipt["scope"]["helper_parity_evidence"])
+        self.assertIn("No existing G2", receipt["scope"]["not_established"])
+        self.assertEqual(
+            receipt["fixed_sample_telemetry"]["classification"],
+            "FIXED_SAMPLE_TELEMETRY_NOT_AN_ESTIMATE",
+        )
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            path = Path(temporary_directory) / "receipt.json"
+            smoke.write_smoke_receipt(path, receipt)
+            recovered = json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(recovered, receipt)
 
 
 if __name__ == "__main__":

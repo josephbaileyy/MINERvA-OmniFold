@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Fixed real-row source-to-contract smoke for PET typed descriptors.
 
-This module is deliberately not a production producer. It reads exactly entries
-0--15 from two manifest-routed source tuples, builds the existing generic P12
-and 13-column detector event representations in the same row operation as the
-typed descriptors, and exercises one object-free round trip plus the NumPy CPU
-reference encoder. It has no configurable entry range, training path, ROOT scan,
-truth-descriptor path, or GPU dependency.
+This module is deliberately not a production producer. Its real-row run proves
+fixed-entry source mapping, aligned serialization, and self-round-trip for
+entries 0--15 from two manifest-routed tuples. Synthetic tests separately
+establish parity with the current P12 and event helper implementations. No
+existing G2 production artifact is read or compared. The runner has no
+configurable entry range, training path, ROOT scan, truth-descriptor path, or
+GPU dependency.
 """
 
 from __future__ import annotations
@@ -21,11 +22,12 @@ from typing import Mapping, Protocol, Sequence
 
 import numpy as np
 
-from atomic_write import atomic_savez_compressed
+from atomic_write import atomic_savez_compressed, atomic_write
 import typed_descriptors as typed
 
 
 SOURCE_SMOKE_SCHEMA_VERSION = "pet-typed-source-smoke-v1"
+SMOKE_RECEIPT_SCHEMA_VERSION = "pet-typed-source-smoke-receipt-v1"
 STARTING_COMMIT = "65e179eb6d7fedc080e58fd0ff13387b41b590a2"
 TREE_NAME = "MasterAnaDev"
 FIXED_ENTRIES = tuple(range(16))
@@ -44,7 +46,9 @@ class FixedSourceSpec:
     role_code: np.uint8
     playlist: str
     manifest_relative_path: str
+    expected_manifest_sha256: str
     expected_basename: str
+    expected_uuid: str
     shard_file_ordinal: int
 
 
@@ -54,9 +58,13 @@ FIXED_SOURCES = (
         role_code=ROLE_DATA,
         playlist="1B",
         manifest_relative_path="2d-unfolding/playlist_manifests/1B_Data.txt",
+        expected_manifest_sha256=(
+            "91fa4a24774bfa800cd021dd712e61c777f600a7fa0c77ef1f54dad289764b1e"
+        ),
         expected_basename=(
             "MasterAnaDev_data_AnaTuple_run00010068_Playlist.root"
         ),
+        expected_uuid="bcd43694-ef17-11f0-9717-17a6e183beef",
         shard_file_ordinal=1,
     ),
     FixedSourceSpec(
@@ -64,9 +72,13 @@ FIXED_SOURCES = (
         role_code=ROLE_MC,
         playlist="1A",
         manifest_relative_path="2d-unfolding/playlist_manifests/1A_MC.txt",
+        expected_manifest_sha256=(
+            "4100dca453de1beef0213a0feac1fe4faa77d769f2dd5f36f4e11c6cea4894f8"
+        ),
         expected_basename=(
             "MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root"
         ),
+        expected_uuid="c0347da6-2a99-11ef-9717-31a7e183beef",
         shard_file_ordinal=2,
     ),
 )
@@ -199,6 +211,7 @@ class ResolvedSource:
     spec: FixedSourceSpec
     path: str
     manifest_bytes: bytes
+    manifest_sha256: str
 
 
 @dataclass(frozen=True)
@@ -242,12 +255,18 @@ class SourceContractBatch:
 class PyRootFixedEntryReader:
     """Fail-closed PyROOT reader restricted to the predeclared branches and rows."""
 
-    def __init__(self, source_path: str) -> None:
+    def __init__(self, source_path: str, expected_uuid: str) -> None:
         import ROOT  # type: ignore[import-not-found]
 
         self._file = ROOT.TFile.Open(source_path, "READ")
         if not self._file or self._file.IsZombie():
             raise OSError(f"Could not open source ROOT file: {source_path}")
+        self.source_uuid = str(self._file.GetUUID().AsString())
+        try:
+            _require_source_uuid(self.source_uuid, expected_uuid)
+        except ValueError:
+            self._file.Close()
+            raise
         self._tree = self._file.Get(TREE_NAME)
         if self._tree is None:
             self._file.Close()
@@ -264,7 +283,6 @@ class PyRootFixedEntryReader:
         self._tree.SetBranchStatus("*", 0)
         for name in REQUIRED_BRANCHES:
             self._tree.SetBranchStatus(name, 1)
-        self.source_uuid = str(self._file.GetUUID().AsString())
         self.accessed_entries: list[int] = []
 
     def close(self) -> None:
@@ -316,25 +334,37 @@ def resolve_fixed_sources(repo_root: str | Path) -> tuple[ResolvedSource, ...]:
     """Resolve exactly the first line of each committed fixed-source manifest."""
 
     root = Path(repo_root)
-    resolved: list[ResolvedSource] = []
-    for spec in FIXED_SOURCES:
-        manifest_path = root / spec.manifest_relative_path
-        manifest_bytes = manifest_path.read_bytes()
-        lines = manifest_bytes.decode("utf-8").splitlines()
-        if not lines or not lines[0].strip() or lines[0].lstrip().startswith("#"):
-            raise ValueError(
-                f"Manifest {spec.manifest_relative_path} has no source on line 1"
-            )
-        source_path = lines[0].strip()
-        if Path(source_path).name != spec.expected_basename:
-            raise ValueError(
-                f"First source in {spec.manifest_relative_path} is not the fixed "
-                f"{spec.playlist}/{spec.expected_basename} file"
-            )
-        resolved.append(
-            ResolvedSource(spec=spec, path=source_path, manifest_bytes=manifest_bytes)
+    return tuple(_resolve_source(root, spec) for spec in FIXED_SOURCES)
+
+
+def _resolve_source(root: Path, spec: FixedSourceSpec) -> ResolvedSource:
+    """Resolve one source only after its complete manifest bytes match."""
+
+    manifest_path = root / spec.manifest_relative_path
+    manifest_bytes = manifest_path.read_bytes()
+    manifest_sha256 = hashlib.sha256(manifest_bytes).hexdigest()
+    if manifest_sha256 != spec.expected_manifest_sha256:
+        raise ValueError(
+            f"Manifest {spec.manifest_relative_path} SHA-256 mismatch: "
+            f"expected {spec.expected_manifest_sha256}, got {manifest_sha256}"
         )
-    return tuple(resolved)
+    lines = manifest_bytes.decode("utf-8").splitlines()
+    if not lines or not lines[0].strip() or lines[0].lstrip().startswith("#"):
+        raise ValueError(
+            f"Manifest {spec.manifest_relative_path} has no source on line 1"
+        )
+    source_path = lines[0].strip()
+    if Path(source_path).name != spec.expected_basename:
+        raise ValueError(
+            f"First source in {spec.manifest_relative_path} is not the fixed "
+            f"{spec.playlist}/{spec.expected_basename} file"
+        )
+    return ResolvedSource(
+        spec=spec,
+        path=source_path,
+        manifest_bytes=manifest_bytes,
+        manifest_sha256=manifest_sha256,
+    )
 
 
 def build_fixed_source_batch(
@@ -524,7 +554,9 @@ def run_fixed_real_smoke(
     source_batches: dict[str, SourceContractBatch] = {}
     source_uuids: dict[str, str] = {}
     for source in resolved_sources:
-        with PyRootFixedEntryReader(source.path) as reader:
+        with PyRootFixedEntryReader(
+            source.path, source.spec.expected_uuid
+        ) as reader:
             source_batches[source.spec.role] = build_fixed_source_batch(
                 reader, source.spec
             )
@@ -571,6 +603,7 @@ def run_fixed_real_smoke(
                 "playlist": source.spec.playlist,
                 "manifest": source.spec.manifest_relative_path,
                 "manifest_line": 1,
+                "manifest_sha256": source.manifest_sha256,
                 "basename": source.spec.expected_basename,
                 "uuid": source_uuids[source.spec.role],
             }
@@ -592,8 +625,117 @@ def run_fixed_real_smoke(
             for family_name in typed.CONTRACT_BY_NAME
         },
         "smoke_normalization_fit": "fixed MC entries 0--15 only; not persisted",
+        "normalization_fit_digest": fit_digest,
+        "enabled_branch_sha256": required_branch_digest(),
+        "typed_descriptor_schema_sha256": typed.descriptor_schema_digest(),
         "output": str(Path(output_path)),
     }
+
+
+def required_branch_digest() -> str:
+    """Return the digest of the exact ordered enabled-branch list."""
+
+    serialized = json.dumps(
+        REQUIRED_BRANCHES, ensure_ascii=True, separators=(",", ":")
+    )
+    return hashlib.sha256(serialized.encode("ascii")).hexdigest()
+
+
+def build_smoke_receipt(
+    summary: Mapping[str, object],
+    *,
+    code_commit: str,
+) -> dict[str, object]:
+    """Build the durable, non-scientific receipt for one passing fixed smoke."""
+
+    if len(code_commit) != 40 or any(
+        character not in "0123456789abcdef" for character in code_commit
+    ):
+        raise ValueError("code_commit must be a full lowercase Git SHA-1")
+    if summary.get("status") != "PASS":
+        raise ValueError("A durable smoke receipt requires a PASS result")
+    sources = summary.get("sources")
+    if not isinstance(sources, list):
+        raise ValueError("Smoke summary sources must be a list")
+    return {
+        "receipt_schema": SMOKE_RECEIPT_SCHEMA_VERSION,
+        "result": "PASS",
+        "code_commit": code_commit,
+        "starting_commit": STARTING_COMMIT,
+        "scope": {
+            "real_row_evidence": (
+                "Fixed-entry source mapping, aligned serialization, and "
+                "self-round-trip passed for the two bound sources."
+            ),
+            "helper_parity_evidence": (
+                "Parity with the current P12 and event helper implementations "
+                "is established separately by synthetic tests."
+            ),
+            "not_established": (
+                "No existing G2 production artifact was directly compared, so "
+                "this receipt makes no real-row production-artifact byte-parity claim."
+            ),
+        },
+        "sources": sources,
+        "tree": summary["tree"],
+        "entries": {
+            "first": int(summary["entries"][0]),  # type: ignore[index]
+            "last": int(summary["entries"][1]),  # type: ignore[index]
+            "inclusive": True,
+            "per_source": len(FIXED_ENTRIES),
+        },
+        "enabled_branches": {
+            "count": len(REQUIRED_BRANCHES),
+            "ordered_names": list(REQUIRED_BRANCHES),
+            "sha256": summary["enabled_branch_sha256"],
+        },
+        "typed_descriptor_schema_sha256": summary[
+            "typed_descriptor_schema_sha256"
+        ],
+        "normalization": {
+            "status": "SMOKE_ONLY_NOT_PRODUCTION_NOT_PERSISTED",
+            "fit_rows": "fixed MC source-tree entries 0--15 only",
+            "fit_inventory_row_selection_sha256": summary[
+                "normalization_fit_digest"
+            ],
+        },
+        "fixed_sample_telemetry": {
+            "classification": "FIXED_SAMPLE_TELEMETRY_NOT_AN_ESTIMATE",
+            "object_counts": summary["object_counts"],
+        },
+        "checks": {
+            "row_count": summary["rows"],
+            "same_row_mapping": "PASS",
+            "aligned_serialization": "PASS",
+            "self_round_trip": "PASS",
+            "finite_numpy_cpu_reference_forward": "PASS",
+        },
+        "non_authorization": [
+            "No production normalization or production output is authorized.",
+            "No Keras integration, training, GPU use, or inventory inference "
+            "is authorized.",
+            "No additional tuple entry or file access is authorized.",
+            "No Gap 3 retry, C_ML construction, Gate 6 action, central-value move, "
+            "Leg 2 action, or publication claim is authorized.",
+        ],
+    }
+
+
+def write_smoke_receipt(
+    path: str | Path,
+    receipt: Mapping[str, object],
+) -> None:
+    """Write a validated smoke receipt by temporary file and atomic replace."""
+
+    destination = Path(path)
+    if destination.suffix != ".json":
+        raise ValueError("Smoke receipt path must end in .json")
+    serialized = json.dumps(receipt, indent=2, sort_keys=True) + "\n"
+
+    def _write(temporary_path: str) -> None:
+        Path(temporary_path).write_text(serialized, encoding="utf-8")
+
+    atomic_write(str(destination), _write, suffix=".json")
 
 
 def _build_p12(raw: Mapping[str, object]) -> np.ndarray:
@@ -950,6 +1092,15 @@ def _nonnegative_count(value: object, name: str) -> int:
     return count
 
 
+def _require_source_uuid(actual_uuid: str, expected_uuid: str) -> None:
+    """Reject a ROOT source identity mismatch before any entry is read."""
+
+    if actual_uuid != expected_uuid:
+        raise ValueError(
+            f"ROOT UUID mismatch: expected {expected_uuid}, got {actual_uuid}"
+        )
+
+
 def _require_finite(name: str, values: np.ndarray) -> None:
     if not np.all(np.isfinite(values)):
         raise ValueError(f"{name} contains non-finite transformed values")
@@ -961,8 +1112,15 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo-root", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--receipt")
+    parser.add_argument("--code-commit")
     args = parser.parse_args()
+    if bool(args.receipt) != bool(args.code_commit):
+        parser.error("--receipt and --code-commit must be supplied together")
     summary = run_fixed_real_smoke(args.repo_root, args.output)
+    if args.receipt:
+        receipt = build_smoke_receipt(summary, code_commit=args.code_commit)
+        write_smoke_receipt(args.receipt, receipt)
     print(json.dumps(summary, sort_keys=True, indent=2))
     return 0
 
