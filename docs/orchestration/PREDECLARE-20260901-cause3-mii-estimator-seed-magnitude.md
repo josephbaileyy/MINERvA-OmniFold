@@ -331,6 +331,37 @@ mis-declaration to correct, not an affordability problem. **A corrected pre-exec
 is required before the first estimator fit, and Joseph authorized the launch against `0.667`, not
 against `8.7`.**
 
+## 6c. CORRECTED PRE-EXECUTION COST DECLARATION 2026-09-01 — authorized by Joseph against THIS number
+
+§6b voided §6's derivation. This replaces it, and Joseph authorized the relaunch **against the figure
+below**, having been shown the 13× correction first:
+
+> *"relaunch it"* — Joseph, 2026-09-01, after being told the real cost is ≈`8.7` GPU task-hours and
+> 13 scheduler tasks rather than the `0.667` and 2 he had originally approved.
+
+| | |
+|---|---|
+| scientific replicas | **12** (estimator seeds `1..12`, CV unfold, no data draw) |
+| scheduler tasks | **13** — a 12-task GPU array plus one CPU combine |
+| per-replica basis | `det5dBKG` job `57753244`, the same operation on the same footing: mean **43.5 min**, min `41.9`, max `45.5`, n=19 |
+| **expected GPU cost** | **≈ 8.7 GPU task-hours** |
+| expected CPU combine | ≈ `0.08` CPU task-hours |
+| walltime request | `--time=01:30:00` per GPU task — **2× the observed max**, matching `det5dBKG`'s shape |
+| worst-case ceiling | `12 × 1.5 = 18` GPU task-hours if every task ran to its limit |
+
+**The ceiling is stated as well as the estimate, because the ceiling is what a breach would be measured
+against.** `18` sits inside the ratified arm-1 envelope of **20 GPU task-hours**, but with only 10%
+headroom — so **if any task is resubmitted after a failure, this declaration is void again** and the
+arithmetic must be redone before the retry, not after.
+
+**Why the data-draw seed needs no flag on this footing.** §1 fixes the data/MC draw seed at `0`. The
+old packed scan achieved that with `bootstrap_nd.py --fixed-data-seed 0`, because a bootstrap replica
+draws. **A CV unfold does not draw at all** — `sbatch_unfold_5d_detector_bkgaware_gpu.sh:290-295` runs
+the CV arm with no draw parameter — so "one fixed data/MC draw" holds by construction here, and §2's
+check 5 (*"only the estimator seed changes"*) is satisfied by passing only `--seed`. **This is a
+footing difference, not a relaxation**, and it is recorded so no reader treats the missing flag as an
+omission.
+
 ## 7. Terminal instruction
 
 This file predeclares; it does not launch. No result belongs in this file. Any outcome goes only into
