@@ -324,6 +324,22 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   counts stay CAND `1 of 7` / QUOTED `0 of 7`. Supplies the n=2 complete populations that make
   `OI-177` ratifiable — and kills the 40 CPU-h figure the amendment first proposed, since arm 5
   measured **49.11**.
+- **CAUSE 3's `M(ii)` PREDECLARED — THRESHOLD FIXED FROM PUBLICATION PRECISION, BEFORE ANY NUMBER EXISTS, 2026-09-01:**
+  [`PREDECLARE-20260901-cause3-mii-estimator-seed-magnitude.md`](PREDECLARE-20260901-cause3-mii-estimator-seed-magnitude.md)
+  — `CRITERIA` flags cause 3's `M(ii)` UNRESOLVED and rules `\gbdtAiEstTrace` CANNOT SERVE on footing (`:194`), so the
+  magnitude needs its own measurement on the candidate's bkgaware, post-J28 footing. **`M(i)` is NOT re-opened: it is
+  already satisfied**, the candidate's `upstream_fixed_seed_null_norm` `5.8223488501140625e-50` against `tol 1e-12`.
+  **THE ACCEPTANCE THRESHOLD IS SET, AND IT IS PRINCIPLED RATHER THAN TUNED:** `f_agg ≤ 4.15%` and `f_med ≤ 2.74%`,
+  derived from the precision at which the affected quantities are already PRINTED — an omitted independent contribution
+  `S` enters in quadrature, and requiring `U' − U` to stay under half the last printed unit gives
+  `S/U ≤ sqrt(2δ + δ²)`. **Re-derived independently at review: `5.81` at 3 s.f. → `4.1496%`, `13.36` at 4 s.f. →
+  `2.7361%`, reproducing both.** The boundary is a property of how the numbers are printed, not of what the measurement
+  will return, which is what makes it non-tuned. **It also argues F7's floor rule does NOT transfer** — under a true zero
+  seed response `C_seed` is zero, so `sqrt(Tr C)/sqrt(12)` is no noise floor for it and would import systematic
+  covariance into an estimator-noise test. Six exhaustive branches including `NOT MET — BOTH`. Cost re-derived:
+  `0.667` GPU + `0.050` CPU task-hours, inside the ratified arm-1 (20 GPU) and arm-7 (5 CPU) envelopes under
+  `DECISION-20260901-joseph-delegated-ceiling-unit-is-task-hours.md`. **Declares only; measures nothing, and the scan
+  had not run when this landed.**
 - **CAUSE 7 FINALLY HAS DISCHARGE CRITERIA — DRAFTED, NOTHING GRADED, 2026-09-01:**
   [`PREDECLARE-20260901-cause7-discharge-criteria.md`](PREDECLARE-20260901-cause7-discharge-criteria.md)
   — `CRITERIA-20260811` is titled for causes 1, 2, 3, 4 and 6; **cause 7 had none at all**, appearing only in its §4.1 as
