@@ -1,0 +1,36 @@
+##### 1A_D entries 8000
+   energy_trkr      distinct FULL-PRECISION doubles=2401   min=1.3259999999999998 max=1.4887641332252441 rel_spread=0.116
+   energy_ecal      distinct FULL-PRECISION doubles=3      min=3.2366999999999995 max=3.2367000000000004 rel_spread=2.74e-16
+   energy_scal_X    distinct FULL-PRECISION doubles=3      min=5.1473999999999984 max=5.1474000000000002 rel_spread=3.45e-16
+   energy_scal_UV   distinct FULL-PRECISION doubles=3      min=8.9687999999999981 max=8.9688000000000017 rel_spread=3.96e-16
+##### 1A_M entries 8000
+   energy_trkr      distinct FULL-PRECISION doubles=2157   min=1.3259999999999998 max=1.4887623967346133 rel_spread=0.116
+   energy_ecal      distinct FULL-PRECISION doubles=3      min=3.2366999999999995 max=3.2367000000000004 rel_spread=2.74e-16
+   energy_scal_X    distinct FULL-PRECISION doubles=3      min=5.1473999999999984 max=5.1474000000000002 rel_spread=3.45e-16
+   energy_scal_UV   distinct FULL-PRECISION doubles=3      min=8.9687999999999981 max=8.9688000000000017 rel_spread=3.96e-16
+##### 1G_D entries 8000
+   energy_trkr      distinct FULL-PRECISION doubles=1617   min=1.3259999999999998 max=1.4887636445296655 rel_spread=0.116
+   energy_ecal      distinct FULL-PRECISION doubles=3      min=3.2366999999999995 max=3.2367000000000004 rel_spread=2.74e-16
+   energy_scal_X    distinct FULL-PRECISION doubles=3      min=5.1473999999999984 max=5.1474000000000002 rel_spread=3.45e-16
+   energy_scal_UV   distinct FULL-PRECISION doubles=3      min=8.9687999999999981 max=8.9688000000000017 rel_spread=3.96e-16
+##### 1G_M entries 8000
+   energy_trkr      distinct FULL-PRECISION doubles=3449   min=1.3259999999999998 max=1.488865703393301 rel_spread=0.116
+   energy_ecal      distinct FULL-PRECISION doubles=3      min=3.2366999999999995 max=3.2367000000000004 rel_spread=2.74e-16
+   energy_scal_X    distinct FULL-PRECISION doubles=3      min=5.1473999999999984 max=5.1474000000000002 rel_spread=3.45e-16
+   energy_scal_UV   distinct FULL-PRECISION doubles=3      min=8.9687999999999981 max=8.9688000000000017 rel_spread=3.96e-16
+##### 1P_D entries 8000
+   energy_trkr      distinct FULL-PRECISION doubles=1774   min=1.3259999999999998 max=1.4887594463436988 rel_spread=0.116
+   energy_ecal      distinct FULL-PRECISION doubles=3      min=3.2366999999999995 max=3.2367000000000004 rel_spread=2.74e-16
+   energy_scal_X    distinct FULL-PRECISION doubles=3      min=5.1473999999999984 max=5.1474000000000002 rel_spread=3.45e-16
+   energy_scal_UV   distinct FULL-PRECISION doubles=3      min=8.9687999999999981 max=8.9688000000000017 rel_spread=3.96e-16
+##### 1P_M entries 8000
+   energy_trkr      distinct FULL-PRECISION doubles=3477   min=1.3259999999999998 max=1.4888302161533202 rel_spread=0.116
+   energy_ecal      distinct FULL-PRECISION doubles=3      min=3.2366999999999995 max=3.2367000000000004 rel_spread=2.74e-16
+   energy_scal_X    distinct FULL-PRECISION doubles=3      min=5.1473999999999984 max=5.1474000000000002 rel_spread=3.45e-16
+   energy_scal_UV   distinct FULL-PRECISION doubles=3      min=8.9687999999999981 max=8.9688000000000017 rel_spread=3.96e-16
+
+===== POOLED OVER ALL 6 FILES (1A, 1G, 1P; data and MC) =====
+   energy_trkr      distinct=14860   min=1.3259999999999998 max=1.488865703393301 rel_spread=0.116
+   energy_ecal      distinct=3       min=3.2366999999999995 max=3.2367000000000004 rel_spread=2.74e-16
+   energy_scal_X    distinct=3       min=5.1473999999999984 max=5.1474000000000002 rel_spread=3.45e-16
+   energy_scal_UV   distinct=3       min=8.9687999999999981 max=8.9688000000000017 rel_spread=3.96e-16

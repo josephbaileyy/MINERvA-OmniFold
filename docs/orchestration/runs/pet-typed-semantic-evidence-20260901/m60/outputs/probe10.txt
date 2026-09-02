@@ -1,0 +1,12 @@
+##### 1A_DATA entries 15259 PP events 2533
+   ordering in PP: {'E1 > E2': 2281, 'E1 == E2': 0, 'E1 < E2 (ORDERING VIOLATED)': 252}
+   (E1-E2)/max relative margin: min=-0.987886 p05=-0.257377 med=0.641714 max=0.997647
+   alternative orderings over the same PP events: {'P1 >= P2': '2281/2533', 'evis_trkr1 >= evis_trkr2': '2177/2533', 'dist_vtx1 <= dist_vtx2': '1518/2533'}
+##### 1A_MC entries 20000 PP events 3226
+   ordering in PP: {'E1 > E2': 2933, 'E1 == E2': 0, 'E1 < E2 (ORDERING VIOLATED)': 293}
+   (E1-E2)/max relative margin: min=-0.911 p05=-0.253924 med=0.658521 max=0.999119
+   alternative orderings over the same PP events: {'P1 >= P2': '2933/3226', 'evis_trkr1 >= evis_trkr2': '2782/3226', 'dist_vtx1 <= dist_vtx2': '1952/3226'}
+##### 1B_DATA entries 17930 PP events 3095
+   ordering in PP: {'E1 > E2': 2792, 'E1 == E2': 0, 'E1 < E2 (ORDERING VIOLATED)': 303}
+   (E1-E2)/max relative margin: min=-0.946974 p05=-0.220886 med=0.644047 max=0.999564
+   alternative orderings over the same PP events: {'P1 >= P2': '2792/3095', 'evis_trkr1 >= evis_trkr2': '2634/3095', 'dist_vtx1 <= dist_vtx2': '1798/3095'}

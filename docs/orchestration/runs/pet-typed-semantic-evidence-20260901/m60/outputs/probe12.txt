@@ -1,0 +1,19 @@
+POOLED PP = 8854
+
+### RESIDUAL (sum_evis puts slot2 higher) : n=233
+   |sum_evis margin| p10=0.01998 p25=0.03993 med=0.1123 p75=0.344 p90=0.771 max=0.9772
+      margin < 0.001  :     0/233   =   0.0%
+      margin < 0.01   :    14/233   =   6.0%
+      margin < 0.05   :    72/233   =  30.9%
+      margin < 0.1    :   112/233   =  48.1%
+   |E margin|      med=0.3607 p90=0.7777
+   ECAL pattern: {'ecal1==0': '178/233 = 76.4%', 'ecal2==0': '190/233 = 81.5%', 'both_ecal==0': '155/233 = 66.5%', 'only_slot2_has_ecal': '23/233 = 9.9%', 'only_slot1_has_ecal': '35/233 = 15.0%'}
+
+### AGREEING (sum_evis puts slot1 higher) : n=8621
+   |sum_evis margin| p10=0.1895 p25=0.3904 med=0.6303 p75=0.8164 p90=0.9186 max=0.9993
+      margin < 0.001  :     1/8621  =   0.0%
+      margin < 0.01   :    36/8621  =   0.4%
+      margin < 0.05   :   187/8621  =   2.2%
+      margin < 0.1    :   396/8621  =   4.6%
+   |E margin|      med=0.66 p90=0.9315
+   ECAL pattern: {'ecal1==0': '5076/8621 = 58.9%', 'ecal2==0': '6419/8621 = 74.5%', 'both_ecal==0': '4455/8621 = 51.7%', 'only_slot2_has_ecal': '621/8621 = 7.2%', 'only_slot1_has_ecal': '1964/8621 = 22.8%'}

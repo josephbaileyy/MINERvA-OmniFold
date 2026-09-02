@@ -1,0 +1,24 @@
+##### 1A_DATA PP=2533  E-violations=252  (missing: none)
+   E            slot1>slot2 in  2281/ 2533 =  90.05%   ties=0       agrees-with-violation 252/252
+   sum_energy   slot1>slot2 in  2281/ 2533 =  90.05%   ties=0       agrees-with-violation 252/252
+   sum_evis     slot1>slot2 in  2459/ 2533 =  97.08%   ties=0       agrees-with-violation 49/252
+   E_Old        slot1>slot2 in     0/ 2533 =   0.00%   ties=2533    agrees-with-violation 0/252
+   evis_trkr    slot1>slot2 in  2040/ 2533 =  80.54%   ties=137     agrees-with-violation 36/252
+   dEdx         slot1>slot2 in  1601/ 2533 =  63.21%   ties=170     agrees-with-violation 121/252
+   time         slot1>slot2 in  1145/ 2533 =  45.20%   ties=0       agrees-with-violation 133/252
+##### 1A_MC PP=3226  E-violations=293  (missing: none)
+   E            slot1>slot2 in  2933/ 3226 =  90.92%   ties=0       agrees-with-violation 293/293
+   sum_energy   slot1>slot2 in  2933/ 3226 =  90.92%   ties=0       agrees-with-violation 293/293
+   sum_evis     slot1>slot2 in  3149/ 3226 =  97.61%   ties=0       agrees-with-violation 48/293
+   E_Old        slot1>slot2 in     0/ 3226 =   0.00%   ties=3226    agrees-with-violation 0/293
+   evis_trkr    slot1>slot2 in  2641/ 3226 =  81.87%   ties=141     agrees-with-violation 40/293
+   dEdx         slot1>slot2 in  2030/ 3226 =  62.93%   ties=200     agrees-with-violation 124/293
+   time         slot1>slot2 in  1546/ 3226 =  47.92%   ties=0       agrees-with-violation 154/293
+##### 1B_DATA PP=3095  E-violations=303  (missing: none)
+   E            slot1>slot2 in  2792/ 3095 =  90.21%   ties=0       agrees-with-violation 303/303
+   sum_energy   slot1>slot2 in  2792/ 3095 =  90.21%   ties=0       agrees-with-violation 303/303
+   sum_evis     slot1>slot2 in  3013/ 3095 =  97.35%   ties=0       agrees-with-violation 54/303
+   E_Old        slot1>slot2 in     0/ 3095 =   0.00%   ties=3095    agrees-with-violation 0/303
+   evis_trkr    slot1>slot2 in  2475/ 3095 =  79.97%   ties=159     agrees-with-violation 40/303
+   dEdx         slot1>slot2 in  1951/ 3095 =  63.04%   ties=226     agrees-with-violation 114/303
+   time         slot1>slot2 in  1383/ 3095 =  44.68%   ties=0       agrees-with-violation 168/303

@@ -1,0 +1,74 @@
+##### 1A_DATA entries 2000 gamma1 photons 335
+  RECIPE (0.97*e_trkr+3.1880501*evis_ecal+0.97*e_scal_UV+0.97*e_scal_X) vs gamma_E, rel.diff over 668 photons:
+     min=-0.03 p05=-0.03 med=-0.03 p95=-0.0150307 max=-0.0150307   |rel|<1e-9 in 0/668
+  PLAIN SUM(energy_trkr+ecal+hcal+scal_X+scal_UV) vs gamma_E rel.diff:
+     min=0 med=0 max=0   |rel|<1e-9 in 668/668
+  EXACT -999/-9999 OCCURRENCES (denominator = values scanned):
+     gamma1_E == -9999                    1650
+     gamma1_dEdx == -999                    53
+     gamma1_dEdx == -9999                 1650
+     gamma1_direction sentinel            4950
+     gamma1_energy_ecal == -9999          1650
+     gamma1_energy_hcal == -9999          1650
+     gamma1_energy_scal_UV == -9999       1650
+     gamma1_energy_scal_X == -9999        1650
+     gamma1_energy_trkr == -9999          1650
+     gamma1_evis_ecal == -9999            1650
+     gamma1_evis_hcal == -9999            1650
+     gamma1_evis_scal_UV == -9999         1650
+     gamma1_evis_scal_X == -9999          1650
+     gamma1_evis_trkr == -9999            1650
+     gamma1_time == -9999                 1650
+     gamma2_E == -9999                    1650
+     gamma2_dEdx == -999                   114
+     gamma2_dEdx == -9999                 1650
+     gamma2_direction sentinel            4950
+     gamma2_energy_ecal == -9999          1650
+     gamma2_energy_hcal == -9999          1650
+     gamma2_energy_scal_UV == -9999       1650
+     gamma2_energy_scal_X == -9999        1650
+     gamma2_energy_trkr == -9999          1650
+     gamma2_evis_ecal == -9999            1650
+     gamma2_evis_hcal == -9999            1650
+     gamma2_evis_scal_UV == -9999         1650
+     gamma2_evis_scal_X == -9999          1650
+     gamma2_evis_trkr == -9999            1650
+     gamma2_time == -9999                 1650
+  denominators: {'MasterAnaDev_BlobT': 16389, 'MasterAnaDev_BlobTPos': 16389, 'MasterAnaDev_BlobTotalE': 16389, 'MasterAnaDev_BlobX': 16389, 'MasterAnaDev_BlobY': 16389, 'MasterAnaDev_BlobZ': 16389, 'gamma_E': 4000, 'gamma_dEdx': 4000, 'gamma_dir': 12000, 'gamma_energy_ecal': 4000, 'gamma_energy_hcal': 4000, 'gamma_energy_scal_UV': 4000, 'gamma_energy_scal_X': 4000, 'gamma_energy_trkr': 4000, 'gamma_evis_ecal': 4000, 'gamma_evis_hcal': 4000, 'gamma_evis_scal_UV': 4000, 'gamma_evis_scal_X': 4000, 'gamma_evis_trkr': 4000, 'gamma_time': 4000, 'prong_E_c0': 2892, 'prong_E_c1': 2892, 'prong_E_c2': 2892, 'prong_E_c3': 2892, 'prong_pos_c0': 2892, 'prong_pos_c1': 2892, 'prong_pos_c2': 2892, 'prong_pos_c3': 2892, 'vtx_c0': 2000, 'vtx_c1': 2000, 'vtx_c2': 2000, 'vtx_c3': 2000}
+##### 1A_MC entries 2000 gamma1 photons 359
+  RECIPE (0.97*e_trkr+3.1880501*evis_ecal+0.97*e_scal_UV+0.97*e_scal_X) vs gamma_E, rel.diff over 710 photons:
+     min=-0.03 p05=-0.03 med=-0.03 p95=-0.0150307 max=-0.0150307   |rel|<1e-9 in 0/710
+  PLAIN SUM(energy_trkr+ecal+hcal+scal_X+scal_UV) vs gamma_E rel.diff:
+     min=0 med=0 max=0   |rel|<1e-9 in 710/710
+  EXACT -999/-9999 OCCURRENCES (denominator = values scanned):
+     gamma1_E == -9999                    1624
+     gamma1_dEdx == -999                    75
+     gamma1_dEdx == -9999                 1624
+     gamma1_direction sentinel            4872
+     gamma1_energy_ecal == -9999          1624
+     gamma1_energy_hcal == -9999          1624
+     gamma1_energy_scal_UV == -9999       1624
+     gamma1_energy_scal_X == -9999        1624
+     gamma1_energy_trkr == -9999          1624
+     gamma1_evis_ecal == -9999            1624
+     gamma1_evis_hcal == -9999            1624
+     gamma1_evis_scal_UV == -9999         1624
+     gamma1_evis_scal_X == -9999          1624
+     gamma1_evis_trkr == -9999            1624
+     gamma1_time == -9999                 1624
+     gamma2_E == -9999                    1624
+     gamma2_dEdx == -999                   142
+     gamma2_dEdx == -9999                 1624
+     gamma2_direction sentinel            4872
+     gamma2_energy_ecal == -9999          1624
+     gamma2_energy_hcal == -9999          1624
+     gamma2_energy_scal_UV == -9999       1624
+     gamma2_energy_scal_X == -9999        1624
+     gamma2_energy_trkr == -9999          1624
+     gamma2_evis_ecal == -9999            1624
+     gamma2_evis_hcal == -9999            1624
+     gamma2_evis_scal_UV == -9999         1624
+     gamma2_evis_scal_X == -9999          1624
+     gamma2_evis_trkr == -9999            1624
+     gamma2_time == -9999                 1624
+  denominators: {'MasterAnaDev_BlobT': 24966, 'MasterAnaDev_BlobTPos': 24966, 'MasterAnaDev_BlobTotalE': 24966, 'MasterAnaDev_BlobX': 24966, 'MasterAnaDev_BlobY': 24966, 'MasterAnaDev_BlobZ': 24966, 'gamma_E': 4000, 'gamma_dEdx': 4000, 'gamma_dir': 12000, 'gamma_energy_ecal': 4000, 'gamma_energy_hcal': 4000, 'gamma_energy_scal_UV': 4000, 'gamma_energy_scal_X': 4000, 'gamma_energy_trkr': 4000, 'gamma_evis_ecal': 4000, 'gamma_evis_hcal': 4000, 'gamma_evis_scal_UV': 4000, 'gamma_evis_scal_X': 4000, 'gamma_evis_trkr': 4000, 'gamma_time': 4000, 'prong_E_c0': 3478, 'prong_E_c1': 3478, 'prong_E_c2': 3478, 'prong_E_c3': 3478, 'prong_pos_c0': 3478, 'prong_pos_c1': 3478, 'prong_pos_c2': 3478, 'prong_pos_c3': 3478, 'vtx_c0': 2000, 'vtx_c1': 2000, 'vtx_c2': 2000, 'vtx_c3': 2000}
