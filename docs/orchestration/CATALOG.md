@@ -16,6 +16,17 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ## Current work
 
+### Decisions awaiting Joseph — cause 7's subject and magnitude, cause 3's seed scan, the stop rule
+
+- [`PACKET-20260902-joseph-six-rulings-cause7-cause3-stop.md`](PACKET-20260902-joseph-six-rulings-cause7-cause3-stop.md)
+  - **UNSIGNED RECOMMENDATION, authorizing nothing.** Six rulings put to Joseph: reject cause-7
+  discharge on G's bytes and retain G; authorize exactly one successor `Y`; make cause 7's `M`
+  measurement-and-disclosure rather than a smallness gate; require a value-of-information note before
+  any cause-3 seed scan (**suspending**, not voiding, the 2026-09-01 *"relaunch it"* authorization);
+  set a date/resource stop whose default outcome is the central-value Letter; and keep PET diagnostic
+  unless `OI-126`'s estimator-equivalence-plus-coverage ladder passes. Gate 2 remains FAIL; counts
+  hold at CAND `1 of 7`, QUOTED `0 of 7`.
+
 ### PET typed-descriptor semantic evidence
 
 - [`../../nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md`](../../nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md)
