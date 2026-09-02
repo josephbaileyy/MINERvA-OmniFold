@@ -525,6 +525,30 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   HEAD**, four write sites existing, which is a live board asserting an untrue impossibility and needs its own route.
   **Counts unchanged:** CAND `1 of 7`, QUOTED `0 of 7`; Gate 2 FAIL; nothing graded, adopted, or discharged.
 
+- **THE `QUOTED`-COLUMN PERMANENCE CLAIM IS `P`-SCOPED, NOT COLUMN-WIDE — the clean-lane ruling the pointer remedy waited on, 2026-09-02:**
+  [`RULING-20260902-quoted-column-permanence-is-p-scoped.md`](RULING-20260902-quoted-column-permanence-is-p-scoped.md)
+  — `SCOREBOARD:5`'s *"THE QUOTED COLUMN CANNOT MOVE BY REMEDIATION"* binds the QUOTED-side `P` legs of causes 2/3/4
+  (`:68`, `:72`, `:73`, `:77`) **and nothing else**; it does not reach `:69` or `:78`-QUOTED. Bucket (ii) stays **4**,
+  not 6, so `DECISION-20260902-joseph-rules-no-fourth-grade-token` §4's deferral is discharged and its §1/§5 are
+  undisturbed. **ONE GROUND CARRIES IT AND IT IS TEXTUAL:** §1 states its premise over `P` cells at `:134` (*"Every
+  `P` cell in the QUOTED column is `OPEN` for one reason"*) and draws its conclusion over the column at `:143`, nine
+  lines apart in its own section. §1 is fourteen lines and has **exactly one premise and one measurement, both
+  `P`/stamp-scoped**; the wide phrasing at `:5`, `:132` and `:143` is one conclusion stated three times, and
+  repetition is not evidence. **AUTHORITY IS BOUNDED AND SAYS SO:** the scope determination is the ruling lane's;
+  Joseph authorized the filing (*"route it to me"*, *"Do your recommendations"*) and did **not** separately
+  adjudicate the question — §0 states this so the record cannot be cited as his ruling. **ADVERSARIALLY REVIEWED
+  OVER SEVEN ROUNDS by both `BEN-381`-recused lanes, neither of which endorses the conclusion:** two grounds were
+  WITHDRAWN — a build-time/reader-side criterion, refuted because `§0:49` gives `P` three routes (*"stamp, receipt
+  **or hash**"*), and `CRITERIA:341` as a leg-wise partition, which its own author confirmed was the narrow form —
+  one rewritten, one restated to **stamp** scope, a finding trimmed twice, one corrected outright, and **the
+  load-bearing ground was missing from the document until the `38` lane found it** after a line-by-line verification
+  pass had cleared it. **FIVE FINDINGS ROUTED, NONE RESOLVED, all beyond the ruling lane's recusal** — chiefly (a)
+  `CRITERIA §3:255` grades cause 2's `M` **MET** for X on `5.3478×` while `SCOREBOARD:69` files that same number and
+  BEN id under **CAND** with QUOTED bare `OPEN`, and (d) `DECISION-20260831 §2(b)` is headed *"the provenance leg is
+  unsatisfiable IN PRINCIPLE"* but argues **only stamps**, which is the same defect one level down in the document
+  supplying §1's authority — surfaced, **not** filed against a ruling Joseph confirmed. **Counts unchanged:** CAND
+  `1 of 7`, QUOTED `0 of 7`; Gate 2 FAIL; nothing graded, adopted or discharged; `values.tex` untouched.
+
 - **THE TWO-LANE CONSENSUS ON CAUSE 4's `M`, AND ITS SUPERSESSION WITHIN THE HOUR, 2026-09-02:**
   [`DECISION-20260902-two-lane-consensus-cause4-M-and-its-supersession.md`](DECISION-20260902-two-lane-consensus-cause4-M-and-its-supersession.md)
   — filed under Joseph's **PROSPECTIVE** approval, *"I want you guys to come to a consensus and I approve that
