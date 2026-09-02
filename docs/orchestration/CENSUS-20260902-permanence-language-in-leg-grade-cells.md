@@ -119,6 +119,50 @@ distinct forms:** `MET`, `OPEN`, `UNRESOLVED` (in `CRITERIA`), `PARTIAL`, `INAPP
 IT CANNOT BECOME `MET`"*) are **not** counted as separate tokens; they are the annotation convention
 working as intended.
 
+> ### ⚠ AMENDED 2026-09-02, SAME DAY, after the `5d` lane verified this census against the bytes
+>
+> That lane independently re-derived the column mapping from the `:61` header before reading a row,
+> confirmed all four bucket-(ii) rows, the positive control, both exclusions and the denominator of 46.
+> **Two things came out of the verification. Neither changes §2's counts or §5's conclusion.**
+>
+> **A. AN OPEN SCOPE QUESTION — bucket (ii) was scoped to `P` legs, and that was a CHOICE.** The
+> headline claim does not say `P`. `SCOREBOARD:5-8` reads: *"**THE QUOTED COLUMN CANNOT MOVE BY
+> REMEDIATION** … X predates the stamping, so **'X gets replaced, not repaired.'** That is a structural
+> fact about the deliverable, not a grading…"* — **an artifact-level mechanism, which on its own words is
+> column-wide** and would also catch `:69` (cause 2 `M` QUOTED, bare `OPEN`) and `:78`'s QUOTED cell
+> (cause 4 `M` QUOTED, bare `OPEN`), making the count **6**.
+>
+> **The counter is real, which is why this is a flag and not an erratum:** the claim's *evidence* is
+> entirely stamp-specific — 4 keys against 13, every named stamp `ABSENT` — and stamps are the `P`
+> criterion. *"Cannot move by remediation"* says the cell cannot be fixed by fixing the artifact; for `M`
+> the question is whether a magnitude measurement can be **taken** on X's inputs, which is not obviously
+> blocked by X being unrepairable. **`P`-only is defensible and may well be right.**
+>
+> **Resolving it means judging whether `M` is measurable on X, which is grading a cause-4 leg, so
+> `BEN-381` bites both lanes exactly as it did on the cell.** Routed to a clean lane; resolved by
+> neither. **Credited to the `5d` lane.**
+>
+> **It does not change §5's answer, and if anything strengthens it:** at 6 the hits are *more* uniformly
+> one column under one statement, so *grep-scale not read-scale* holds harder. The decision-relevant
+> number — cells a fourth token would uniquely help that nothing else already covers — **remains 1, and
+> that one is already annotated.**
+>
+> **B. AN ATTRIBUTION DEFECT IN §4, THIS LANE'S OWN.** §4 says of `:73` that *"that premise was measured
+> FALSE at HEAD"* **without saying by whom, and against a moving target.** Corrected:
+>
+> - **The measurement is the stale blocker sweep lane's, not this lane's.** Recorded at
+>   `VALIDATION_LEDGER.md:756-758` under `BEN-381`, taken at HEAD **`32e403b8`**, naming four write
+>   sites: `sweep_bank_5d.py:309-311`, `analyze_universes_5d.py:273-278`,
+>   `unified_throw_cov.py:569-575`, `mii_adopt_unified_5d_stamped.py:168`, landed 2026-08-18…08-20.
+> - **"at HEAD" was the wrong form** — a sha, never a moving ref. This lane relayed a dated claim as a
+>   present-tense one.
+> - **Spot-checked here rather than re-relayed:** `nd-unfolding/unified_throw_cov.py:569` at
+>   **`bae4c6c1`** writes `ROOT.TParameter("int")("estimator_seed", …)`. So the premise *"the dominant
+>   arm has nowhere to put a seed stamp"* is **still false at this sha**, on one of the four sites.
+> - **`:73` therefore deserves its own route, not an exclusions footnote** — a live board asserts an
+>   impossibility that is not true, and it is load-bearing for cause 3's `P-ii` remedy. The `5d` lane is
+>   flagging it to Joseph by name. **Not fixed here; not this census's cell.**
+
 ## 7. What this record does not do
 
 It grades nothing, moves no cell, relabels nothing, proposes no token for any specific cell, changes no
