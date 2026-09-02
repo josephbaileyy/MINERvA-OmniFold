@@ -487,6 +487,30 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   gated on the provenance residual; the historical-ratio reading still undisposed; nothing adopted, `values.tex`
   untouched.
 
+- **JOSEPH RULES `CRITERIA` §0'S VOCABULARY STANDS — NO FOURTH GRADE TOKEN, 2026-09-02:**
+  [`DECISION-20260902-joseph-rules-no-fourth-grade-token.md`](DECISION-20260902-joseph-rules-no-fourth-grade-token.md)
+  — ***"okay I also agree"***. `MET`/`OPEN`/`UNRESOLVED` and discharge-on-four-`MET`s are unchanged; the
+  *permanently unmeetable* state is carried in cell prose by the annotation convention instead.
+  **A CENSUS DECIDED IT, AND IT WAS RUN BEFORE THE RULING RATHER THAN AFTER** — the enumeration was first offered as
+  the COST of ruling for a token and was re-framed as the INPUT to it, on the ground that the case for a token is
+  empirical. Filed `0d946c1a`, amended `ac846f37`, **verified against the bytes by the `5d` lane** including column
+  mapping, every hit, both exclusions and the denominator. **46** graded cells; bucket (i) permanence carried in the
+  cell = **1**; bucket (ii) permanence asserted but cell bare = **4**. **THE SHAPE, NOT THE COUNT, DEFEATED THE
+  TOKEN:** by the pre-set rule 4 is "several" and the token had a case — and the census lane reported that against
+  its own stated lean — but all four are the QUOTED-side `P` legs of causes 2/3/4 under ONE statement at
+  `SCOREBOARD:5`, in a warning box preceding every cell. **Harm is grep-scale, not read-scale**, and the population
+  a token would uniquely help that nothing else covers is **ONE**, already annotated. **The census's own NEGATIVE
+  CONTROL is the strongest evidence:** `:74` reads *"`OPEN` and NOT CURRENTLY MEASURABLE"*, costed and temporary on
+  its face — the board already distinguishes temporary from permanent in cell language. **No code parses any token**,
+  so a token buys convention not enforcement; and the scheme **declares three and runs seven**, so a fourth patches
+  the smallest leak. **TWO THINGS DEFERRED OR ROUTED, both stated so they do not evaporate:** the agreed pointer
+  remedy is NOT applied, because annotating exactly the four `P` cells would silently settle whether §1's permanence
+  claim is `P`-scoped or column-wide — `:5` says "the QUOTED COLUMN" with an artifact-level mechanism, which would
+  also reach `:69` and `:78`-QUOTED — and settling that is a grade on a cause-4 leg, beyond both measuring lanes
+  under `BEN-381`; and `SCOREBOARD:73`'s premise *"value CANNOT be recorded on the dominant arm"* is **FALSE at
+  HEAD**, four write sites existing, which is a live board asserting an untrue impossibility and needs its own route.
+  **Counts unchanged:** CAND `1 of 7`, QUOTED `0 of 7`; Gate 2 FAIL; nothing graded, adopted, or discharged.
+
 - **THE TWO-LANE CONSENSUS ON CAUSE 4's `M`, AND ITS SUPERSESSION WITHIN THE HOUR, 2026-09-02:**
   [`DECISION-20260902-two-lane-consensus-cause4-M-and-its-supersession.md`](DECISION-20260902-two-lane-consensus-cause4-M-and-its-supersession.md)
   — filed under Joseph's **PROSPECTIVE** approval, *"I want you guys to come to a consensus and I approve that

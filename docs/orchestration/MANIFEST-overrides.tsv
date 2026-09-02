@@ -4,6 +4,7 @@ docs/orchestration/BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md	LIVE
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md	LIVE	open	
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-pet.md	LIVE	open	
 docs/orchestration/CATALOG.md	LIVE	open	
+docs/orchestration/CENSUS-20260902-permanence-language-in-leg-grade-cells.md	LIVE	open	
 docs/orchestration/CLAIM-CLM-001.md	ARCHIVAL	terminal	
 docs/orchestration/CLAIM-CLM-002.md	ARCHIVAL	terminal	
 docs/orchestration/CLAIM-CLM-003.md	ARCHIVAL	terminal	
@@ -40,7 +41,9 @@ docs/orchestration/DECISION-20260901-joseph-oi187-upgrade-not-blocker.md	LIVE	op
 docs/orchestration/DECISION-20260901-joseph-ratifies-oi177-per-arm-ceilings.md	LIVE	terminal	
 docs/orchestration/DECISION-20260901-joseph-ratifies-oi185-invariants.md	LIVE	terminal	
 docs/orchestration/DECISION-20260902-joseph-applies-oi173-cause4-m.md	LIVE	open	
+docs/orchestration/DECISION-20260902-joseph-rules-no-fourth-grade-token.md	LIVE	open	
 docs/orchestration/DECISION-20260902-joseph-rules-oi173-referent-is-the-candidate.md	LIVE	open	
+docs/orchestration/DECISION-20260902-two-lane-consensus-cause4-M-and-its-supersession.md	LIVE	open	
 docs/orchestration/DECLARATION-20260822-k0-submission-sha.md	LIVE	open	
 docs/orchestration/DECLARATION-20260823-k0-candidate-aa67c426.md	LIVE	open	
 docs/orchestration/DECLARATION-20260823-k0-candidate-sha.md	LIVE	open	
@@ -147,5 +150,3 @@ docs/orchestration/state/declaration-v-5d-covering-search-20260822.sh	MACHINE	op
 docs/orchestration/state/live-state-last-known.json	LIVE	open	
 docs/orchestration/state/live-state.json	LIVE	open	
 docs/orchestration/state/oi137-covering-search-20260822.sh	MACHINE	open	
-docs/orchestration/DECISION-20260902-two-lane-consensus-cause4-M-and-its-supersession.md	LIVE	open	
-docs/orchestration/CENSUS-20260902-permanence-language-in-leg-grade-cells.md	LIVE	open	
