@@ -19,7 +19,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 ### Decisions awaiting Joseph — cause 7's subject and magnitude, cause 3's seed scan, the stop rule
 
 - [`PACKET-20260902-joseph-six-rulings-cause7-cause3-stop.md`](PACKET-20260902-joseph-six-rulings-cause7-cause3-stop.md)
-  - **UNSIGNED RECOMMENDATION, rev. 2, authorizing nothing.** Six rulings put to Joseph, each with an
+  - **UNSIGNED RECOMMENDATION, rev. 3, authorizing nothing.** Six rulings put to Joseph, each with an
   exhaustive branch set and a fallback state: grade `(cause 7, G)` permanently OPEN on the direct byte
   evidence and retain G; authorize exactly one successor `Y` as a **separate** grade cell, cause 7
   only, **specification only**; select the no-smallness criterion for cause 7's `M` **without** a note

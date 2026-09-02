@@ -1,4 +1,4 @@
-# DECISION PACKET 2026-09-02 (rev. 2) — six rulings reserved for Joseph: cause 7's subject and
+# DECISION PACKET 2026-09-02 (rev. 3) — six rulings reserved for Joseph: cause 7's subject and
 # magnitude, cause 3's seed scan, the campaign stop rule, and PET's posture
 
 **STATUS: RECOMMENDATION ONLY. UNSIGNED. Nothing below is a ruling until Joseph rules it.**
@@ -29,6 +29,19 @@ cause 7 only; (iii) `R3` no longer creates a note obligation and no longer grade
 construction"*; (vii) §0 and §7 add exhaustive branches and an owning record with a fallback state for
 each ruling, because *"sign or reject"* is not an operational branch set.
 
+**REVISION 3, 2026-09-02 — five narrow corrections from a second audit, all adopted.** Rev. 2's six
+rulings are substantively unchanged; what was wrong was the §0 branch table contradicting the rulings
+it summarises, and §7's placeholder routing. (i) `R5`(b) said *"stop now, submit as scoped"*, which
+contradicted `R5`'s own statement that submission remains a separate decision — it now reads *stop now
+and select the scoped Letter; submission remains separately authorized*. (ii) `R2`(b) and §7 called
+cause 7 *"ungradable"* without a successor, which is **false** — G remains the historical grading
+subject; both now say no successor `Y`, with `(cause 7, G)` in the state `R1` or its fallback selects.
+(iii) `R2`(c) now carries the same four guards as (a): separate cell, cause 7 only, specification only,
+no cross-artifact aggregation. (iv) `R1`'s fallback said lanes *"may keep spending on it"*, which read
+as a resource grant; it now reads *work remains open; no new compute or resource authority follows*.
+(v) §7's `DECISION-2026xxxx` placeholders are replaced by records that exist today, and §8's *"two
+blanks"* is corrected to **three**, matching §9.
+
 ---
 
 ## §0. How to rule — the branches, and what happens to each if you rule nothing
@@ -39,11 +52,11 @@ of degrading.
 
 | | branches | fallback if unruled |
 |---|---|---|
-| `R1` | **(a)** grade `(cause 7, G)` permanently OPEN · **(b)** leave it OPEN-pending-work · **(c)** reject and require a different cause-7 route on G's bytes | **(b)** — the leg stays OPEN and lanes may keep spending on it |
-| `R2` | **(a)** authorize one successor `Y`, **specification only** · **(b)** authorize none — cause 7 has no gradable subject and stays open forever · **(c)** authorize a different subject by name | **(b)** by default: no successor exists, and cause 7 is ungradable |
+| `R1` | **(a)** grade `(cause 7, G)` permanently OPEN · **(b)** leave it OPEN-pending-work · **(c)** reject and require a different cause-7 route on G's bytes | **(b)** — **work remains open; no new compute or resource authority follows** |
+| `R2` | **(a)** authorize one successor `Y` — separate cell, cause 7 only, **specification only**, no cross-artifact aggregation · **(b)** authorize none · **(c)** authorize a different successor by name, **under the same four guards as (a)** | **(b)** — no successor `Y`; `(cause 7, G)` remains in the state `R1` or its fallback selects, and **G stays the historical grading subject** |
 | `R3` | **(a)** `M` carries no smallness requirement · **(b)** set a numerical threshold yourself · **(c)** leave the threshold open | **(c)** — `M` stays OPEN *regardless of any measured value*, per the predeclaration's own terminal sentence |
 | `R4` | **(a)** retain the 2026-09-01 authorization · **(b)** suspend it pending a Joseph-signed VOI note **and** a separate committed reauthorization · **(c)** withdraw it outright | **(a)** — the authorization stands and the scan may be submitted at any time |
-| `R5` | **(a)** no stop; continue open-ended · **(b)** stop now, submit as scoped · **(c)** a future stop with **every** field in §8 filled | **(a)** — open-ended continuation, which is the current state |
+| `R5` | **(a)** no stop; continue open-ended · **(b)** stop now and select the scoped Letter — **submission remains separately authorized** · **(c)** a future stop with **every** field in §8 filled | **(a)** — open-ended continuation, which is the current state |
 | `R6` | **(a)** reaffirm · **(b)** decline to reaffirm | **(b)**, and it changes nothing: `OI-126`'s ruling stands on its own authority either way |
 
 **Why one packet rather than six rows.** Five of the six questions are already reserved for you in
@@ -315,14 +328,20 @@ omission.** It cross-cuts `OI-126`, `OI-172`, `OI-173`, `OI-187` and the live qu
 would put a lane's proposal in the routed queue. Each ruling therefore routes to the record that will
 own it **once signed**:
 
-| | owning record once signed | where the substance lives now | fallback if unruled |
+| | owning record once signed — **all exist today** | where the substance lives now | fallback if unruled |
 |---|---|---|---|
-| `R1` | a new `DECISION-2026xxxx` record + the cause-7 cell in `SCOREBOARD-20260817-quarantine-seven-causes.md` | `PREDECLARE-20260901-cause7-discharge-criteria.md` §0, §2 | leg stays OPEN-pending-work |
-| `R2` | the same `DECISION`, plus an amendment note **on** `DECISION-20260831-joseph-quarantine-graded-against-the-candidate.md` §1 | same predeclaration §0, §2 | no successor; cause 7 ungradable |
-| `R3` | the same `DECISION`; the criterion belongs in `CRITERIA-20260811` §0's four-leg frame | same predeclaration §1 `M`, §2 | `M` OPEN regardless of any measured value |
+| `R1` | `docs/orchestration/PREDECLARE-20260901-cause7-discharge-criteria.md` §2 bullet 2 (the sentence reserving the question), by an appended dated ruling section; **and** the cause-7 grade row at `docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md:85` | same predeclaration §0, §2 | work remains open; no new compute or resource authority follows |
+| `R2` | the same predeclaration §2 bullet 2; an amendment note **on** `docs/orchestration/DECISION-20260831-joseph-quarantine-graded-against-the-candidate.md` §1; and a **new** `(cause 7, Y)` row beside `SCOREBOARD…:85`, which is **not** edited | same predeclaration §0, §2 | no successor `Y`; `(cause 7, G)` in the state `R1` or its fallback selects |
+| `R3` | `docs/orchestration/PREDECLARE-20260901-cause7-discharge-criteria.md` §1 `M` — the *"the threshold is **LEFT OPEN**"* passage is the exact text the ruling replaces — and §2 bullet 3 | same predeclaration §1 `M`, §2 | `M` OPEN regardless of any measured value |
 | `R4` | an amendment to `PREDECLARE-20260901-cause3-mii-estimator-seed-magnitude.md` §6c | that document §4, §5, §6c | §6c authorization stands; scan submittable |
 | `R5` | an amendment to `DECISION-20260901-joseph-oi187-upgrade-not-blocker.md` half (b); `OI-187`'s row | `OI-187`; `paper_body.tex:145-148` | open-ended continuation |
 | `R6` | `OI-126`'s row; `AGENTS.md`'s PET line | `OI-126`; `VL132`; the Gate-6 receipt | unchanged — `OI-126` stands either way |
+
+**No placeholder records.** Every owning record named above exists at `52cbda90`; none is a
+`DECISION-2026xxxx` to be invented later. If you would rather these rulings live in a standalone
+`DECISION` record, that record must first be created **and routed** — a `MANIFEST-overrides.tsv` row
+and a `CATALOG.md` entry — or it is invisible to the router and owns nothing. Naming it here before it
+exists would be the placeholder this table is meant to avoid.
 
 **Owner eligibility.** `BEN-381` disqualifies a lane that measured a leg from grading it. This lane
 measured the cause-3 launch absence and re-read every artifact cited here, so it must not grade any
@@ -345,8 +364,8 @@ proposed defaults are this lane's recommendation, not a ruling.
 | **failed and retried tasks** | **counted in full**, including `FAILED`, `CANCELLED` and `TIMEOUT`. A failed task spends; excluding it would make the ceiling unreachable by retrying |
 | **jobs already running at the stop** | allowed to run to completion, their spend counted; **no new submission after the stop** |
 
-**Two blanks only you can fill: the date, and the two ceiling numbers** (GPU task-hours and CPU
-task-hours). Context rather than recommendation, and from the untracked snapshot, so re-measure before
+**Three blanks only you can fill: the date, the GPU task-hour ceiling, and the CPU task-hour
+ceiling.** (§9 counts them the same way; a date without both ceilings does not define branch (c).) Context rather than recommendation, and from the untracked snapshot, so re-measure before
 relying on it: pscratch stood at **80.0%** of 20 TiB on 2026-09-02, against the **79.9%** committed in
 `OI-131`.
 
