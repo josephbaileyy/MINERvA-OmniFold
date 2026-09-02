@@ -91,6 +91,7 @@ docs/orchestration/P5-P6-20260822-entrypoint-set-and-blind-spots.md	LIVE	open
 docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	LIVE	open	
 docs/orchestration/PACKET-20260823-round5-f2a-f17a-repair.md	LIVE	open	
 docs/orchestration/PACKET-20260823-round7-f2a-parity-and-f17a-filing.md	LIVE	open	
+docs/orchestration/PACKET-20260901-pet-typed-descriptor-semantic-evidence.md	LIVE	open	""
 docs/orchestration/PLAN-20260822-oneMember-mii-staged.md	LIVE	open	
 docs/orchestration/PLAYBOOK.md	LIVE	open	""
 docs/orchestration/PREDECLARATION-20260812-fullevent-cstat-100-replicas.md	ARCHIVAL	superseded	docs/orchestration/PREDECLARATION-20260813-gate5-coherent-replicas-n50.md
@@ -114,6 +115,7 @@ docs/orchestration/RECORD-20260830-k0r2-round2-submission.md	LIVE	open
 docs/orchestration/RECORD-20260830-oi179-remediation-confirmed.md	LIVE	open	
 docs/orchestration/RECORD-20260901-k0r2-round2-outcome.md	LIVE	open	
 docs/orchestration/RECORD-20260901-oi179-defect3-enforced.md	LIVE	terminal	
+docs/orchestration/REVIEW-20260902-pet-typed-semantic-evidence.md	LIVE	open	""
 docs/orchestration/REVIEW-CONTRACT-20260822-k0-execution-integrity.md	LIVE	open	
 docs/orchestration/RUNBOOK-20260822-b1-lift-preflight.md	LIVE	open	
 docs/orchestration/RUNBOOK-status-dashboard.md	LIVE	open	

@@ -16,6 +16,20 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ## Current work
 
+### PET typed-descriptor semantic evidence
+
+- [`../../nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md`](../../nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md)
+  - current PET typed-descriptor status and unresolved semantic gates.
+- [`PACKET-20260901-pet-typed-descriptor-semantic-evidence.md`](PACKET-20260901-pet-typed-descriptor-semantic-evidence.md)
+  - fixed-sample evidence packet; the semantic gate is **BLOCKED, NARROWED**, with no replacement
+  category, sentinel, filtering, unit, or calibration rule adopted.
+- [`runs/pet-typed-semantic-evidence-20260901/fixed-sample-telemetry.json`](runs/pet-typed-semantic-evidence-20260901/fixed-sample-telemetry.json)
+  and [`runs/pet-typed-semantic-evidence-20260901/m60/ARTIFACTS.tsv`](runs/pet-typed-semantic-evidence-20260901/m60/ARTIFACTS.tsv)
+  - archived fixed-sample telemetry and M60 artifact index. The M60 layer remains single-source raw
+  evidence; routing does not make it independent verification or semantic adoption.
+- [`REVIEW-20260902-pet-typed-semantic-evidence.md`](REVIEW-20260902-pet-typed-semantic-evidence.md)
+  - independent artifact and method review; it is not an independent measurement reproduction.
+
 ### ✅ §10.1 READY; GATE 1 PASSED ROUND 2, 2026-08-30 — submission remains a separate decision
 
 - [`GATE1-VERDICT-ROUND2-20260830-k0-7ac0edec.md`](GATE1-VERDICT-ROUND2-20260830-k0-7ac0edec.md)
