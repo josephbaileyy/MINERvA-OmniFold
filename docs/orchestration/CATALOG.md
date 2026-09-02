@@ -18,7 +18,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ### Decisions awaiting Joseph — cause 7's subject and magnitude, cause 3's seed scan, the stop rule
 
-- [`DECISION-20260902-joseph-rules-cause7-cause3-and-the-campaign-stop.md`](DECISION-20260902-joseph-rules-cause7-cause3-and-the-campaign-stop.md)
+- [`DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md`](DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md)
   - **✅ IN FORCE.** Joseph's 2026-09-02 ruling on all six packet recommendations: `(cause 7, G)` is
   permanently OPEN and G is retained; exactly one successor `Y` is authorized as a **separate** cell,
   cause 7 only, **specification only**; cause 7's `M` carries no smallness requirement; the cause-3

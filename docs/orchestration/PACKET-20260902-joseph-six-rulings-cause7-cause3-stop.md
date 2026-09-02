@@ -4,7 +4,7 @@
 # ✅ **RULED IN FULL 2026-09-02 BY JOSEPH — *"Okay I rule all of the recommended rulings"*, with the
 # stop set to `2026-09-30` and ceilings `500` GPU / `500` CPU task-hours.**
 # **The authoritative record is
-# [`DECISION-20260902-joseph-rules-cause7-cause3-and-the-campaign-stop.md`](DECISION-20260902-joseph-rules-cause7-cause3-and-the-campaign-stop.md).**
+# [`DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md`](DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md).**
 # **Read that for what is in force. This file is retained as the recommendation that was put to him —
 # the reasoning under each ruling is this lane's, not his — and its §0 branch table is now spent: he
 # took `R1`(a), `R2`(a), `R3`(a), `R4`(b), `R5`(c) and `R6`(a).**
