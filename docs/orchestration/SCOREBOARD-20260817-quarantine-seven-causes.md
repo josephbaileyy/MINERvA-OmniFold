@@ -75,7 +75,7 @@ the nearer of PASS/FAIL.
 | | | T | **MET** — N5, re-derived | **MET** |
 | **4** | scalar jitter subtraction | C | **MET** | **MET** |
 | | | P | **MET** — `receipt_candidate_stamps_5d.json`, S1 | **OPEN** — stamps `ABSENT` |
-| | | M | **OPEN — reason corrected today; see §3** | **OPEN** |
+| | | M | **OPEN — AND IT CANNOT BECOME `MET`.** Referent re-issued to CAND 2026-09-02 (`OI-173`, Joseph); no **committed** revision of `unified_throw_cov.py` carries both the jitter-floor print and the flux fix `081ae4ac`, so no revision able to produce CAND's fluxfix input could print the unified/block ratio. Applied on his direct instruction by a lane that is **not independent** for this cell — see `DECISION-20260902-joseph-applies-oi173-cause4-m.md`. Supersedes §3's search-based ground and its refusal at `:670`. `OPEN` is the nearest token `§0` defines; there is none for *permanently unmeetable* | **OPEN** |
 | | | T | **MET** — N6 (caught a defect nothing else did), N7 | **MET** |
 | **5** | frozen PET weights | all | **N/A ON ITS MERITS** — established 2026-08-17, declaration **LANDED** in `VL66` at `d1c5f90` (§4) | **N/A, same** |
 | **6** | incomplete statistical projection | C | **PARTIAL** — BEN-110 detects all-zero rows; ensemble leg + corrected upstream input untouched | **PARTIAL** |

@@ -1,4 +1,5 @@
 path	class	event_status	canonical_successor
+docs/orchestration/AMENDMENT-20260831-oi177-per-arm-ceilings.md	LIVE	open	
 docs/orchestration/BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md	LIVE	open	
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md	LIVE	open	
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-pet.md	LIVE	open	
@@ -16,6 +17,8 @@ docs/orchestration/CLAIM-CLM-010.md	ARCHIVAL	terminal
 docs/orchestration/CLAIM-CLM-011.md	ARCHIVAL	terminal	
 docs/orchestration/CLAIM-CLM-012.md	ARCHIVAL	terminal	
 docs/orchestration/CLAIMS.md	LIVE	open	
+docs/orchestration/CLOSE-20260830-canonical-quiesce-window-k0-7ac0edec.md	LIVE	open	
+docs/orchestration/CLOSE-20260830-canonical-requiesce-k0r2-window.md	LIVE	open	
 docs/orchestration/CONFIRMATION-20260823-builder-response-to-gate1-round4.md	LIVE	open	
 docs/orchestration/CONVENTION-document-retention.md	LIVE	open
 docs/orchestration/CONVENTION-receipt-ingredients.md	LIVE	open
@@ -28,8 +31,20 @@ docs/orchestration/DECISION-20260824-joseph-deployment-freeze-until-f1b.md	LIVE	
 docs/orchestration/DECISION-20260824-joseph-f6b-scoped-out-of-gate2.md	LIVE	open	
 docs/orchestration/DECISION-20260825-joseph-gate2-fail-and-four-rulings.md	LIVE	open	
 docs/orchestration/DECISION-20260828-joseph-f17b-four-surface-repair.md	LIVE	open	""
+docs/orchestration/DECISION-20260830-joseph-f17b-post-path-drift-is-a-filed-finding.md	LIVE	open	
+docs/orchestration/DECISION-20260831-joseph-quarantine-graded-against-the-candidate.md	LIVE	open	
+docs/orchestration/DECISION-20260901-joseph-authorizes-k0r2-redeploy.md	LIVE	open	
+docs/orchestration/DECISION-20260901-joseph-delegated-ceiling-unit-is-task-hours.md	LIVE	open
+docs/orchestration/DECISION-20260901-joseph-oi172-oi173-magnitude-legs.md	LIVE	open
+docs/orchestration/DECISION-20260901-joseph-oi187-upgrade-not-blocker.md	LIVE	open
+docs/orchestration/DECISION-20260901-joseph-ratifies-oi177-per-arm-ceilings.md	LIVE	terminal	
+docs/orchestration/DECISION-20260901-joseph-ratifies-oi185-invariants.md	LIVE	terminal	
+docs/orchestration/DECISION-20260902-joseph-applies-oi173-cause4-m.md	LIVE	open	
+docs/orchestration/DECISION-20260902-joseph-rules-oi173-referent-is-the-candidate.md	LIVE	open	
 docs/orchestration/DECLARATION-20260822-k0-submission-sha.md	LIVE	open	
+docs/orchestration/DECLARATION-20260823-k0-candidate-aa67c426.md	LIVE	open	
 docs/orchestration/DECLARATION-20260823-k0-candidate-sha.md	LIVE	open	
+docs/orchestration/DECLARATION-20260830-k0-deployment-7ac0edec.md	LIVE	open	
 docs/orchestration/DEFECT-20260825-generate-manifest-dirty-warning-nondiscriminating.md	LIVE	open	
 docs/orchestration/DETERMINATION-20260811-cause5-binding-half.md	LIVE	open	
 docs/orchestration/DISCIPLINE-20260825-f14-coupling-comparator-repair-lane.md	LIVE	open	
@@ -37,9 +52,19 @@ docs/orchestration/DISCIPLINE-20260825-f14-manifest-coupling-omissions.md	LIVE	o
 docs/orchestration/FINDING-20260822-a-hold-that-instructed-its-own-deletion.md	LIVE	open	
 docs/orchestration/FINDING-20260822-clause-c-adopt-is-unreachable-under-its-own-pause.md	LIVE	open	
 docs/orchestration/FINDING-20260824-gate2-preparation-and-four-open-rulings.md	LIVE	open	
-docs/orchestration/FINDING-20260830-quarantine-nocompute-legs-measured.md	LIVE	open	
 docs/orchestration/FINDING-20260830-k0-member-namespace-blocks-submission.md	LIVE	open	
+docs/orchestration/FINDING-20260830-k0r2-env-pathcheck-submitter-declaration-omitted.md	LIVE	open	
+docs/orchestration/FINDING-20260830-quarantine-nocompute-legs-measured.md	LIVE	open	
+docs/orchestration/FINDING-20260831-ben039-detector-is-triple-bound.md	LIVE	open	
+docs/orchestration/FINDING-20260831-strip-noncode-inverts-on-a-closing-triple-quote.md	LIVE	open	
+docs/orchestration/FINDING-20260901-cause4-jitter-floor-recovered.md	LIVE	open	
+docs/orchestration/FINDING-20260901-f7-floor-ratio-and-seed-pull-measured.md	LIVE	open
+docs/orchestration/FINDING-20260901-k0r2-redeploy-precondition-delta.md	LIVE	open	
+docs/orchestration/FINDING-20260901-p-leg-status-measured-against-the-candidate.md	LIVE	open
+docs/orchestration/FINDING-20260901-pscratch-read-stalls-block-a2b.md	LIVE	open	
 docs/orchestration/FINDINGS.md	LIVE	open	
+docs/orchestration/FREEZE-20260830-canonical-requiesce-k0r2-resubmission.md	LIVE	open	
+docs/orchestration/FREEZE-20260830-k0-deployment-7ac0edec.md	LIVE	open	
 docs/orchestration/GATE1-VERDICT-20260822-k0-execution-integrity.md	LIVE	open	
 docs/orchestration/GATE1-VERDICT-20260830-k0-7ac0edec.md	LIVE	open
 docs/orchestration/GATE1-VERDICT-ROUND2-20260830-k0-7ac0edec.md	LIVE	open
@@ -60,13 +85,18 @@ docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	LIVE	open
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	LIVE	open	
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	LIVE	open	
 docs/orchestration/P5-P6-20260822-entrypoint-set-and-blind-spots.md	LIVE	open	
+docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	LIVE	open	
 docs/orchestration/PACKET-20260823-round5-f2a-f17a-repair.md	LIVE	open	
 docs/orchestration/PACKET-20260823-round7-f2a-parity-and-f17a-filing.md	LIVE	open	
 docs/orchestration/PLAN-20260822-oneMember-mii-staged.md	LIVE	open	
 docs/orchestration/PLAYBOOK.md	LIVE	open	""
 docs/orchestration/PREDECLARATION-20260812-fullevent-cstat-100-replicas.md	ARCHIVAL	superseded	docs/orchestration/PREDECLARATION-20260813-gate5-coherent-replicas-n50.md
+docs/orchestration/PREDECLARE-20260901-cause3-mii-estimator-seed-magnitude.md	LIVE	open
+docs/orchestration/PREDECLARE-20260901-cause7-discharge-criteria.md	LIVE	open
 docs/orchestration/PROCEDURE-gbdtFive-macro-update.md	LIVE	open	
 docs/orchestration/PROMPTS-20260811-four-session-closeout.md	LIVE	open	
+docs/orchestration/PROPOSAL-20260830-k0r2-resubmission.md	LIVE	open	
+docs/orchestration/PROPOSAL-20260902-oi173-reissue-cause4-M-referent.md	LIVE	open	
 docs/orchestration/PROVENANCE-20260822-declaration-v-scalar5d-blocks.md	LIVE	open	
 docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md	LIVE	open	
 docs/orchestration/PUBLICATION-READINESS-20260822.md	LIVE	open	
@@ -74,9 +104,16 @@ docs/orchestration/RANK-AND-INVERSION-20260810.md	LIVE	open
 docs/orchestration/READING-ORDER-20260824-k0-package-annotations.md	LIVE	open	
 docs/orchestration/README.md	DEAD	superseded	docs/orchestration/CATALOG.md
 docs/orchestration/RECEIPT-20260822-k0-n1-and-guarded-arms.md	LIVE	open	
+docs/orchestration/RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings.md	LIVE	open	
 docs/orchestration/RECONCILIATION-20260817-gbdtfive-macros-vs-rebuilt-candidate.md	LIVE	open	
+docs/orchestration/RECORD-20260830-k0-quarantine-and-seven-arm-submission.md	LIVE	open	
+docs/orchestration/RECORD-20260830-k0r2-round2-submission.md	LIVE	open	
+docs/orchestration/RECORD-20260830-oi179-remediation-confirmed.md	LIVE	open	
+docs/orchestration/RECORD-20260901-k0r2-round2-outcome.md	LIVE	open	
+docs/orchestration/RECORD-20260901-oi179-defect3-enforced.md	LIVE	terminal	
 docs/orchestration/REVIEW-CONTRACT-20260822-k0-execution-integrity.md	LIVE	open	
 docs/orchestration/RUNBOOK-20260822-b1-lift-preflight.md	LIVE	open	
+docs/orchestration/RUNBOOK-status-dashboard.md	LIVE	open	
 docs/orchestration/SCHEDULING-STRATEGY.md	LIVE	open	
 docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	LIVE	open	
 docs/orchestration/SESSION-WORKFLOW.md	LIVE	open	""
@@ -98,51 +135,15 @@ docs/orchestration/control-plane/policy.json	LIVE	open	""
 docs/orchestration/control-plane/source-record-inventory.tsv	MACHINE	generated	""
 docs/orchestration/control-plane/work-items.tsv	LIVE	open	""
 docs/orchestration/control_plane_lint.py	LIVE	open	""
+docs/orchestration/dashboard.html	MACHINE	generated	
 docs/orchestration/state/RECEIPT-20260822-quarantine-member-k000000-stale-replicas.json	MACHINE	open	
 docs/orchestration/state/RECEIPT-20260826-b1-adoption-gate-preconditions-remeasured.json	MACHINE	open	
 docs/orchestration/state/RECEIPT-20260826-k0-freeze-bundle-detectability.json	MACHINE	open	
+docs/orchestration/state/RECEIPT-20260830-aa67c426-preservation-remeasurement.json	MACHINE	open	
+docs/orchestration/state/RECEIPT-20260830-k0-7ac0edec-legs-1-5-submission.json	MACHINE	open	
+docs/orchestration/state/RECEIPT-20260830-k0-deployment-and-freeze-bundle-7ac0edec.json	MACHINE	open	
+docs/orchestration/state/RECEIPT-20260830-quarantine-k0-aa67c426-member-namespace.json	MACHINE	open	
 docs/orchestration/state/declaration-v-5d-covering-search-20260822.sh	MACHINE	open	
 docs/orchestration/state/live-state-last-known.json	LIVE	open	
 docs/orchestration/state/live-state.json	LIVE	open	
 docs/orchestration/state/oi137-covering-search-20260822.sh	MACHINE	open	
-docs/orchestration/DECLARATION-20260823-k0-candidate-aa67c426.md	LIVE	open	
-docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	LIVE	open	
-docs/orchestration/RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings.md	LIVE	open	
-docs/orchestration/DECLARATION-20260830-k0-deployment-7ac0edec.md	LIVE	open	
-docs/orchestration/FREEZE-20260830-k0-deployment-7ac0edec.md	LIVE	open	
-docs/orchestration/state/RECEIPT-20260830-aa67c426-preservation-remeasurement.json	MACHINE	open	
-docs/orchestration/state/RECEIPT-20260830-k0-deployment-and-freeze-bundle-7ac0edec.json	MACHINE	open	
-docs/orchestration/RUNBOOK-status-dashboard.md	LIVE	open	
-docs/orchestration/dashboard.html	MACHINE	generated	
-docs/orchestration/RECORD-20260830-k0-quarantine-and-seven-arm-submission.md	LIVE	open	
-docs/orchestration/state/RECEIPT-20260830-quarantine-k0-aa67c426-member-namespace.json	MACHINE	open	
-docs/orchestration/state/RECEIPT-20260830-k0-7ac0edec-legs-1-5-submission.json	MACHINE	open	
-docs/orchestration/CLOSE-20260830-canonical-quiesce-window-k0-7ac0edec.md	LIVE	open	
-docs/orchestration/DECISION-20260830-joseph-f17b-post-path-drift-is-a-filed-finding.md	LIVE	open	
-docs/orchestration/FINDING-20260830-k0r2-env-pathcheck-submitter-declaration-omitted.md	LIVE	open	
-docs/orchestration/PROPOSAL-20260830-k0r2-resubmission.md	LIVE	open	
-docs/orchestration/FREEZE-20260830-canonical-requiesce-k0r2-resubmission.md	LIVE	open	
-docs/orchestration/RECORD-20260830-k0r2-round2-submission.md	LIVE	open	
-docs/orchestration/CLOSE-20260830-canonical-requiesce-k0r2-window.md	LIVE	open	
-docs/orchestration/RECORD-20260830-oi179-remediation-confirmed.md	LIVE	open	
-docs/orchestration/FINDING-20260831-ben039-detector-is-triple-bound.md	LIVE	open	
-docs/orchestration/FINDING-20260831-strip-noncode-inverts-on-a-closing-triple-quote.md	LIVE	open	
-docs/orchestration/AMENDMENT-20260831-oi177-per-arm-ceilings.md	LIVE	open	
-docs/orchestration/DECISION-20260831-joseph-quarantine-graded-against-the-candidate.md	LIVE	open	
-docs/orchestration/RECORD-20260901-k0r2-round2-outcome.md	LIVE	open	
-docs/orchestration/DECISION-20260901-joseph-delegated-ceiling-unit-is-task-hours.md	LIVE	open
-docs/orchestration/DECISION-20260901-joseph-ratifies-oi177-per-arm-ceilings.md	LIVE	terminal	
-docs/orchestration/RECORD-20260901-oi179-defect3-enforced.md	LIVE	terminal	
-docs/orchestration/FINDING-20260901-f7-floor-ratio-and-seed-pull-measured.md	LIVE	open
-docs/orchestration/FINDING-20260901-p-leg-status-measured-against-the-candidate.md	LIVE	open
-docs/orchestration/DECISION-20260901-joseph-oi172-oi173-magnitude-legs.md	LIVE	open
-docs/orchestration/DECISION-20260901-joseph-oi187-upgrade-not-blocker.md	LIVE	open
-docs/orchestration/PREDECLARE-20260901-cause7-discharge-criteria.md	LIVE	open
-docs/orchestration/PREDECLARE-20260901-cause3-mii-estimator-seed-magnitude.md	LIVE	open
-docs/orchestration/DECISION-20260901-joseph-authorizes-k0r2-redeploy.md	LIVE	open	
-docs/orchestration/FINDING-20260901-k0r2-redeploy-precondition-delta.md	LIVE	open	
-docs/orchestration/DECISION-20260901-joseph-ratifies-oi185-invariants.md	LIVE	terminal	
-docs/orchestration/FINDING-20260901-cause4-jitter-floor-recovered.md	LIVE	open	
-docs/orchestration/FINDING-20260901-pscratch-read-stalls-block-a2b.md	LIVE	open	
-docs/orchestration/DECISION-20260902-joseph-rules-oi173-referent-is-the-candidate.md	LIVE	open	
-docs/orchestration/PROPOSAL-20260902-oi173-reissue-cause4-M-referent.md	LIVE	open	

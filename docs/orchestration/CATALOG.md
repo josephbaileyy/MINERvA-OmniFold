@@ -460,6 +460,33 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   printed and persisted downstream — a different quantity, adopted-combined across inflation, with no `jit_trace` in its
   path). Three corrections across two lanes, each retracted in place rather than deleted. §5 records BOTH live readings
   at their real strength, including the one neither lane could refute. **Grades nothing and moves no cell.**
+- **JOSEPH OVERRIDES THE INDEPENDENCE OBJECTION; THE CAND `M` CELL IS ANNOTATED, 2026-09-02:**
+  [`DECISION-20260902-joseph-applies-oi173-cause4-m.md`](DECISION-20260902-joseph-applies-oi173-cause4-m.md)
+  — Joseph, directly to the `5d` lane with the two-lane consensus and its objection in front of him: ***"apply it"***.
+  **The lanes had declined on INDEPENDENCE, NOT authority** — `BEN-381` is a property of who measured, and being named
+  by the authority does not confer it; it names the two parties who lack it. **The disclosure is on the record rather
+  than left to be discovered:** the applying lane verified the same-file dependency the argument turns on, so the grade
+  is weaker for who applied it and a reader should discount it on that ground. **WHAT MOVED — one annotation, at
+  `SCOREBOARD-20260817-quarantine-seven-causes.md:78`, CAND column only.** The token stays **`OPEN`**:
+  `CRITERIA-20260811:246` defines `MET`/`OPEN`/`UNRESOLVED`, Joseph's *"`NOT MET` (unmeasured)"* is not among them, and
+  a fourth token is a `§0` change and his call. Discharge needs four `MET`s either way, so nothing rides on the token
+  but meaning — and `OPEN` refuses `N/A` exactly as `NOT MET` would. **What the cell gains is the PERMANENCE and its
+  ground:** no **committed** revision of `unified_throw_cov.py` holds both the jitter print and the flux fix, so no
+  revision able to produce CAND's fluxfix input could print the unified/block ratio. **A VOCABULARY GAP IS FLAGGED, NOT
+  PAPERED OVER** — `OPEN` normally means *awaiting work* and is here annotated to mean *permanently unmeetable*.
+  **THIS SUPERSEDES A CONSIDERED REFUSAL, not an empty cell:** `SCOREBOARD` §3 (`:568`) declined this exact cell at
+  `:670` — *"the cell stays `OPEN` and I am declining to move it in either direction"* — on a SEARCH-BASED null
+  (`:606`/`:609`). What changed is the GROUND, from an empty search to committed bytes with a positive control, so the
+  refusal is superseded on evidence rather than overruled on authority. **A NEAR-MISS CAUGHT BY THE `-38` LANE:** `5d`
+  had claimed `CRITERIA-20260811:257` in writing, but `:244` reads *"Honest state per cause, **for X**"* and `:341`
+  carves out only the `P` legs — that cell is X's, and editing it would have been the
+  adopted-artifact-versus-candidate error one layer down, the same error the `OI-173` re-issue existed to correct.
+  **AND THE TWO CONTROL DOCUMENTS DISAGREE ABOUT THIS LEG:** `CRITERIA:257` grades it `UNRESOLVED`, `SCOREBOARD:78`
+  grades it `OPEN`, and `:246` makes those distinct. **Left standing**, filed as a finding owned by neither lane.
+  **Counts unchanged:** CAND `1 of 7`, QUOTED `0 of 7`; **Gate 2 FAIL**; cause 4's verdict untouched and still jointly
+  gated on the provenance residual; the historical-ratio reading still undisposed; nothing adopted, `values.tex`
+  untouched.
+
 - **THE `P` LEG IS ALREADY SATISFIED AND `M` IS THE BLOCKER — §4.2 DISSOLVED, 2026-09-01:**
   [`FINDING-20260901-p-leg-status-measured-against-the-candidate.md`](FINDING-20260901-p-leg-status-measured-against-the-candidate.md)
   — `CRITERIA-20260811` §4.2 says the `P` leg of causes 1–4 is *"currently unsatisfiable from the repository"* and
