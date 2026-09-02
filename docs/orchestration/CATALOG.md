@@ -487,6 +487,23 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   gated on the provenance residual; the historical-ratio reading still undisposed; nothing adopted, `values.tex`
   untouched.
 
+- **THE TWO-LANE CONSENSUS ON CAUSE 4's `M`, AND ITS SUPERSESSION WITHIN THE HOUR, 2026-09-02:**
+  [`DECISION-20260902-two-lane-consensus-cause4-M-and-its-supersession.md`](DECISION-20260902-two-lane-consensus-cause4-M-and-its-supersession.md)
+  — filed under Joseph's **PROSPECTIVE** approval, *"I want you guys to come to a consensus and I approve that
+  resolution"*, which is flagged at the top of the record because **he approved content that did not exist when he
+  approved it**: every word is the two lanes' and none of it is his reasoning. **§3.1 IS SUPERSEDED IN FACT** — the
+  consensus was that the cell does not move, he overrode within the hour, and the record is filed with the reversal
+  visible rather than rewritten. **On `BEN-381`:** he HAD the authority and this record must not be cited for saying
+  otherwise; the lanes declined on **independence**, which is a property of who measured and cannot be conferred
+  retroactively — *he MAY, and the lanes said he SHOULD NOT*. He then overrode it knowingly, so the grade is weaker for
+  having been applied by a measuring lane. **Carries the four binding constraints on any future application** — the
+  vocabulary limit; that `CRITERIA` §3's table is **X's** (`:244`, `:341`) so the candidate cell is `SCOREBOARD:78`;
+  that the verdict is jointly gated and does not clear on `M`; and the `5d` lane's artifact-bound-versus-artifact-free
+  argument **recorded and deliberately not applied**. **§5 is a FINDING owned by neither lane:** the grading scheme is
+  declared at three tokens (`CRITERIA:246`) and is running six — `PARTIAL` (5 uses) was never declared and `N/A` appears
+  in three spellings — while **no code parses any of them**, so the scheme is purely communicative and the
+  `CRITERIA:257`-versus-`SCOREBOARD:78` split on one leg stands unresolved. Discharges nothing, moves no cell, changes
+  no count; **Gate 2 remains FAIL**.
 - **THE `P` LEG IS ALREADY SATISFIED AND `M` IS THE BLOCKER — §4.2 DISSOLVED, 2026-09-01:**
   [`FINDING-20260901-p-leg-status-measured-against-the-candidate.md`](FINDING-20260901-p-leg-status-measured-against-the-candidate.md)
   — `CRITERIA-20260811` §4.2 says the `P` leg of causes 1–4 is *"currently unsatisfiable from the repository"* and
