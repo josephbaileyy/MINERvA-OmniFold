@@ -19,13 +19,18 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 ### Decisions awaiting Joseph — cause 7's subject and magnitude, cause 3's seed scan, the stop rule
 
 - [`PACKET-20260902-joseph-six-rulings-cause7-cause3-stop.md`](PACKET-20260902-joseph-six-rulings-cause7-cause3-stop.md)
-  - **UNSIGNED RECOMMENDATION, authorizing nothing.** Six rulings put to Joseph: reject cause-7
-  discharge on G's bytes and retain G; authorize exactly one successor `Y`; make cause 7's `M`
-  measurement-and-disclosure rather than a smallness gate; require a value-of-information note before
-  any cause-3 seed scan (**suspending**, not voiding, the 2026-09-01 *"relaunch it"* authorization);
-  set a date/resource stop whose default outcome is the central-value Letter; and keep PET diagnostic
-  unless `OI-126`'s estimator-equivalence-plus-coverage ladder passes. Gate 2 remains FAIL; counts
-  hold at CAND `1 of 7`, QUOTED `0 of 7`.
+  - **UNSIGNED RECOMMENDATION, rev. 2, authorizing nothing.** Six rulings put to Joseph, each with an
+  exhaustive branch set and a fallback state: grade `(cause 7, G)` permanently OPEN on the direct byte
+  evidence and retain G; authorize exactly one successor `Y` as a **separate** grade cell, cause 7
+  only, **specification only**; select the no-smallness criterion for cause 7's `M` **without** a note
+  obligation or an automatic grade; decide the cause-3 seed scan's authorization (retain / suspend /
+  withdraw — recommended: suspend, with a separate committed reauthorization required, since the scan
+  **does** grade `M(ii)`); set a fully defined date/resource stop whose default outcome is the
+  central-value Letter; and keep PET diagnostic unless `OI-126`'s estimator-equivalence-plus-coverage
+  ladder passes. `R2` prospectively **amends** `DECISION-20260831` §1 for cause 7 only; `R5`
+  conditionally **supersedes** `OI-187` half (b). Cross-cuts `OI-126`, `OI-172`, `OI-173`, `OI-187`,
+  `OI-188`; §7 gives each ruling an owning record. Gate 2 remains FAIL; counts hold at CAND `1 of 7`,
+  QUOTED `0 of 7`.
 
 ### PET typed-descriptor semantic evidence
 
