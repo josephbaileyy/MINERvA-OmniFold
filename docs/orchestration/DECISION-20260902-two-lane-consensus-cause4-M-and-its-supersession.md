@@ -169,6 +169,56 @@ rather than on newly available evidence. **This lane first cited that sentence a
 cause-1 text — the line numbers came from `grep -n` over a piped `sed` subrange, so they were relative
 offsets wearing absolute costumes. Corrected on the `5d` lane's catch.**
 
+> ### ⚠ CORRECTED 2026-09-02, SAME DAY — §5 ABOVE IS MISCHARACTERISED. Read this before citing it.
+>
+> **The original §5 text is left byte-unchanged above; this block overrides its FRAMING, not its
+> measurements.** The `5d` lane diagnosed it after Joseph asked that lane why the discrepancy was not
+> theirs to resolve. **His question is what surfaced it. Both lanes filed it undiagnosed.**
+>
+> **IT IS NOT TWO LIVE DOCUMENTS ACCIDENTALLY AT ODDS. It is a later, artifact-separated board
+> deliberately superseding an earlier mixed-artifact table.** Four checks, each re-verified by this lane
+> against the bytes rather than taken on report:
+>
+> 1. **Not a vocabulary fork.** `SCOREBOARD:30-33` is a warning box — *"⚠ THIS BOARD USES TWO GRADES ITS
+>    OWN CRITERIA DO NOT DEFINE"* — which quotes `CRITERIA §3:246` as *"the whole vocabulary"* and then
+>    **declares its own two extras**, `PARTIAL` and lane B's `INAPPLICABLE`. **The drift is disclosed,
+>    not silent.**
+> 2. **Not a stale copy.** `CRITERIA:257` last moved at `8d0034f1` (2026-08-11); the board was created at
+>    `2a92c711` (2026-08-17), **six days later**, and read the earlier table directly — `:151`: *"§3's
+>    table grades `M` MET, citing only M(i)"*.
+> 3. **It was commissioned to do exactly this.** `:155`: *"That is the drift this board was commissioned
+>    to find."*
+> 4. **The two tokens are semantically distinguished on purpose.** `:173`: *"unresolved says nobody has
+>    decided, open-and-costed says the decision is made and the work is small and unstarted."*
+>
+> So *"two control documents disagree about one leg"* **overstates it** and would send a reader hunting a
+> conflict that was a considered supersession. **`CRITERIA:257` is not live for CAND** and must not be
+> re-litigated as though it were.
+>
+> **WHAT SURVIVES IS REAL, SMALLER, AND INTERNAL TO `SCOREBOARD`.** By its own `:173` definition `OPEN`
+> means *the decision is made and the work is small and unstarted* — but `SCOREBOARD` §3 at `:670`
+> **explicitly declined to decide** cause 4's `M`, *"declining to move it in either direction"*, and a leg
+> nobody has decided is `UNRESOLVED` under that same sentence. **So cause 4's `M` may carry the wrong
+> token by the board's own semantics.** Credited to the `5d` lane.
+>
+> **AND THE 2026-09-02 ANNOTATION SHARPENS IT RATHER THAN SETTLING IT.** *"Cannot become `MET`"* is
+> neither *"nobody has decided"* nor *"decided, work small and unstarted"*. **It is a third state the
+> scheme has no token for.**
+>
+> **THIS REVERSES THIS LANE'S RECOMMENDATION TO JOSEPH ON THE FOURTH TOKEN, recorded because he asked
+> for that recommendation and may act on it.** The recommendation above rested on *"the three are
+> undefined, so define them before adding a fourth; `UNRESOLVED` is the home for permanence"*. **Both
+> halves are wrong.** `:173` already defines the distinction, and **neither definition fits** a decided,
+> permanently unmeetable leg. What survives of the original argument is only that no code parses these
+> tokens — which makes the scheme purely communicative, and is therefore a reason to get the WORDS right
+> rather than a reason to leave the gap. **Corrected recommendation, still a lane opinion and still not a
+> ruling: a fourth token IS justified**, declared in `CRITERIA` §0 where the vocabulary lives rather than
+> in a board warning box, and paired with a MANDATORY reason clause so the *"on committed revisions"*
+> qualifier cannot be stripped by the token.
+>
+> **NEITHER LANE MAY MAKE THE TOKEN CHOICE ON CAUSE 4's `M`.** `BEN-381` bites exactly as it did on the
+> cell: both lanes measured evidence bearing on that leg.
+
 ## 6. What this decision does not do
 
 It discharges nothing, changes neither count, moves no gate, adopts nothing, and does not touch
