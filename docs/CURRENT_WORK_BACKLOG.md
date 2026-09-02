@@ -14,7 +14,7 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-182 | NOW | safe-default-active | OPEN — FIX PRICED 2026-08-31 and DEFERRED; the remedy costs 23 pin supersessions |
 | OI-181 | NOW | safe-default-active | TRAP DEFUSED 2026-08-31 — the structural question stays open with OI-73 |
 | OI-180 | NOW | safe-default-active | REPAIRED 2026-08-31 — awaiting a decision only on the triage of what it now reveals |
-| OI-173 | NOW | safe-default-active | RULED 2026-09-01 BY JOSEPH — M IS SPECIFIED AGAINST THE CLASS OF OBJECT THE DEFECT REACHED, the reported ratio, NOT the |
+| OI-173 | NOW | safe-default-active | RE-ISSUED 2026-09-02 BY JOSEPH — THE REFERENT IS THE STAMPED CANDIDATE. He ruled in his own turn: "okay do c", where (c) |
 | OI-174 | NOW | safe-default-active | OPEN |
 | OI-172 | NOW | safe-default-active | RULED 2026-09-01 BY JOSEPH — MATERIAL ENOUGH TO NEED ITS OWN STATEMENT IN THE NOTE, the unfavourable branch this row nam |
 | OI-162 | NOW | safe-default-active | OPEN |

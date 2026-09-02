@@ -434,6 +434,32 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   own premise. **The recommendations are this lane's and are restated verbatim in the record so nobody mistakes them for
   his reasoning; he adopted the conclusions.** Discharges nothing, adopts nothing, moves no gate; cause 4's `M` becomes
   SPECIFIED, not satisfied, and may yet grade NOT MET.
+- **JOSEPH RE-ISSUES `OI-173` — THE `M` REFERENT IS THE STAMPED CANDIDATE, 2026-09-02:**
+  [`DECISION-20260902-joseph-rules-oi173-referent-is-the-candidate.md`](DECISION-20260902-joseph-rules-oi173-referent-is-the-candidate.md)
+  — Joseph in his own turn, directly, not relayed: ***"okay do c"***, where `(c)` is the `5d` lane's *"`M` is specified
+  against the reported ratio of the STAMPED CANDIDATE"*. **Supersedes the referent of Ruling 2 above and NOTHING ELSE of
+  it** — the class is still the reported ratio, the `N/A` shortcut is still REFUSED, no recomputation is authorized.
+  **He authorized a different branch first and it is recorded rather than omitted:** *"Can you do (a)?"* aimed `M` at the
+  ADOPTED artifact; implementation halted on the `5d` objection and nothing under `(a)` was ever committed. **Why `(a)`
+  was wrong — TWO CORRECT RULINGS COMPOSING INTO A DEFECT:** `DECISION-20260831` §1 fixes the SUBJECT (the stamped
+  candidate), Ruling 2 fixes the REFERENT CLASS, and the pair left `M` pointed at an object the framework does not grade.
+  Three objects existed and the choice put to him had two. **The measurement, replacing a refuted one:** no committed
+  revision of `unified_throw_cov.py` holds BOTH the jitter print and the J28 flux fix — `081ae4ac` modifies that file
+  itself with `grep -c` `0`, and `merge-base --is-ancestor 07c18aee 081ae4ac` is TRUE — so a tree old enough to print the
+  floor cannot produce the candidate's input. The earlier stamp-based route is REFUTED because `git log -S` dates the
+  oldest COMMIT, not the oldest EXISTENCE (`VALIDATION_LEDGER.md:484`). **THE GRADE IS DERIVED AND ROUTED, NOT APPLIED:**
+  the chain yields `NOT MET (unmeasured)`, but this lane took the measurement so `BEN-381` routes the regrade; the cell
+  stays `OPEN`, counts hold at CAND `1 of 7` / QUOTED `0 of 7`, **Gate 2 remains FAIL**, and Reading B is left undisposed.
+  **A covering log sweep must NOT be launched for this.**
+- **THE SUPPORTING ANALYSIS FOR THE `OI-173` RE-ISSUE — the `5d` lane's, adopted unchanged, 2026-09-02:**
+  [`PROPOSAL-20260902-oi173-reissue-cause4-M-referent.md`](PROPOSAL-20260902-oi173-reissue-cause4-M-referent.md)
+  — filed under its own lane's authorship because it reached the third-object problem independently and first, and
+  because its **drafting history is the useful artifact**: §3a retracts that lane's stamp inference on the other lane's
+  counterexample, §3b restores the conclusion on the flux-fix route with that lane's same-file strengthening, and the
+  chain paragraph retracts a universal on the near-miss at `adopt_unified_5d.py:158-160,177-178` (a sqrt-trace ratio IS
+  printed and persisted downstream — a different quantity, adopted-combined across inflation, with no `jit_trace` in its
+  path). Three corrections across two lanes, each retracted in place rather than deleted. §5 records BOTH live readings
+  at their real strength, including the one neither lane could refute. **Grades nothing and moves no cell.**
 - **THE `P` LEG IS ALREADY SATISFIED AND `M` IS THE BLOCKER — §4.2 DISSOLVED, 2026-09-01:**
   [`FINDING-20260901-p-leg-status-measured-against-the-candidate.md`](FINDING-20260901-p-leg-status-measured-against-the-candidate.md)
   — `CRITERIA-20260811` §4.2 says the `P` leg of causes 1–4 is *"currently unsatisfiable from the repository"* and
