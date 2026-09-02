@@ -504,6 +504,21 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   in three spellings — while **no code parses any of them**, so the scheme is purely communicative and the
   `CRITERIA:257`-versus-`SCOREBOARD:78` split on one leg stands unresolved. Discharges nothing, moves no cell, changes
   no count; **Gate 2 remains FAIL**.
+- **PERMANENCE-LANGUAGE CENSUS OVER THE LEG-GRADE CELLS — commissioned to DECIDE the fourth-token question, 2026-09-02:**
+  [`CENSUS-20260902-permanence-language-in-leg-grade-cells.md`](CENSUS-20260902-permanence-language-in-leg-grade-cells.md)
+  — Joseph: *"yes do it"*. **The framing inverted mid-question and that is the point of the record:** enumeration was
+  first put to him as the COST of adding a fourth grading token and was re-put as the INPUT to the ruling, so the census
+  decides rather than follows. **Result: 46 graded cells; 1 asserts permanence AND carries it in the cell
+  (`SCOREBOARD:78`, cause 4 `M` CAND — the mandated positive control, and the search returned it); 4 assert permanence
+  only elsewhere in the record while reading bare `OPEN` (`:68`, `:72`, `:73`, `:77` — all the QUOTED `P` leg, governed
+  by `:5`/`:143` "THE QUOTED COLUMN CANNOT MOVE BY REMEDIATION").** By the pre-set decision rule `4` is "several" and the
+  fourth token has an empirical case — **but the four are one column under one statement made twice and prominently, so
+  the harm is grep-scale rather than read-scale, and the population a fourth token would help that nothing else covers
+  is ONE, already annotated.** Reported by the lane that had argued FOR the token, against its own position. **Carries
+  its exclusions with reasons** — cause 1 and cause 6 are carved out by `:102-106`; cause 3's `P-ii` says "CANNOT" but
+  names a remedy **and its premise was measured FALSE at HEAD**; cause 3's `M` reads "NOT CURRENTLY MEASURABLE", which is
+  the census's own negative control that the board already distinguishes temporary from permanent. Also corrects this
+  lane's earlier "six tokens" to **seven**. **Grades nothing, moves no cell, changes no count; Gate 2 remains FAIL.**
 - **THE `P` LEG IS ALREADY SATISFIED AND `M` IS THE BLOCKER — §4.2 DISSOLVED, 2026-09-01:**
   [`FINDING-20260901-p-leg-status-measured-against-the-candidate.md`](FINDING-20260901-p-leg-status-measured-against-the-candidate.md)
   — `CRITERIA-20260811` §4.2 says the `P` leg of causes 1–4 is *"currently unsatisfiable from the repository"* and
