@@ -18,6 +18,17 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ### Decisions awaiting Joseph — cause 7's subject and magnitude, cause 3's seed scan, the stop rule
 
+- [`DECISION-20260902-joseph-rules-cause7-cause3-and-the-campaign-stop.md`](DECISION-20260902-joseph-rules-cause7-cause3-and-the-campaign-stop.md)
+  - **✅ IN FORCE.** Joseph's 2026-09-02 ruling on all six packet recommendations: `(cause 7, G)` is
+  permanently OPEN and G is retained; exactly one successor `Y` is authorized as a **separate** cell,
+  cause 7 only, **specification only**; cause 7's `M` carries no smallness requirement; the cause-3
+  seed-scan authorization is **SUSPENDED** pending a signed VOI note **and** a separate committed
+  reauthorization; the campaign stops on **`2026-09-30`** or at **`500` GPU / `500` CPU task-hours**,
+  whichever fires first, defaulting to the central-value Letter; and PET stays diagnostic. `R2`
+  prospectively amends `DECISION-20260831` §1 for cause 7 only; `R5` conditionally supersedes
+  `OI-187` half (b). **Adopts nothing, discharges nothing, authorizes no submission and no spend.**
+  Gate 2 remains FAIL; counts hold at CAND `1 of 7`, QUOTED `0 of 7`. §4 lists six downstream
+  applications this lane is `BEN-381`-disqualified from performing.
 - [`PACKET-20260902-joseph-six-rulings-cause7-cause3-stop.md`](PACKET-20260902-joseph-six-rulings-cause7-cause3-stop.md)
   - **UNSIGNED RECOMMENDATION, rev. 3, authorizing nothing.** Six rulings put to Joseph, each with an
   exhaustive branch set and a fallback state: grade `(cause 7, G)` permanently OPEN on the direct byte
