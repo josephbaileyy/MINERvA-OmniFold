@@ -65,16 +65,16 @@ the nearer of PASS/FAIL.
 | | | M | **MEASURED, not MET** — `receipt_cause1_endpoint_census_5d.json` | **MEASURED** (on X's own bank) |
 | | | T | **MET** — N1/N2, re-verified M1/M2 | **MET** |
 | **2** | CV centering | C | **MET** | **MET** |
-| | | P | **MET** — job `56720356`, path+sha256 | **OPEN** — stamps `ABSENT` |
+| | | P | **MET** — job `56720356`, path+sha256 | **OPEN** — stamps `ABSENT`. §1 permanence applies — **`P`-scoped**, `RULING-20260902`, on the **stamp route only** (`§0:49` gives `P` three); the non-stamp routes are UNMEASURED for this cause |
 | | | M | **MET** — `5.3478×` floor (corrected from `4.83×`, BEN-109) | **OPEN** |
 | | | T | **MET** — `f7_cv_centered_required`, N3/N4 | **MET** |
 | **3** | varying estimator seeds | C | **PARTIAL — scoped; INAPPLICABLE to the dominant block** | **PARTIAL — same scope** |
-| | | P-i | value not RECORDED anywhere — **PARTIAL**, remedy = add a stamp (§2d) | **OPEN** |
-| | | P-ii | value CANNOT be recorded on the dominant arm — **OPEN**, remedy = a new write site; **survives P-i's fix** (§2d) | **OPEN** |
+| | | P-i | value not RECORDED anywhere — **PARTIAL**, remedy = add a stamp (§2d) | **OPEN** — §1 permanence applies — **`P`-scoped**, `RULING-20260902`, on the **stamp route only** (`§0:49` gives `P` three); the non-stamp routes are UNMEASURED for this cause |
+| | | P-ii | value CANNOT be recorded on the dominant arm — **OPEN**, remedy = a new write site; **survives P-i's fix** (§2d) | **OPEN** — §1 permanence applies — **`P`-scoped**, `RULING-20260902`, but **via X's un-rebuildability, NOT via this row's CAND-side premise**, which POINTER 4 measured FALSE at HEAD (four write sites exist) |
 | | | M | **OPEN and NOT CURRENTLY MEASURABLE — see §2 and §2b** | **OPEN, same** |
 | | | T | **MET** — N5, re-derived | **MET** |
 | **4** | scalar jitter subtraction | C | **MET** | **MET** |
-| | | P | **MET** — `receipt_candidate_stamps_5d.json`, S1 | **OPEN** — stamps `ABSENT` |
+| | | P | **MET** — `receipt_candidate_stamps_5d.json`, S1 | **OPEN** — stamps `ABSENT`. §1 permanence applies — **`P`-scoped**, `RULING-20260902`, on the **stamp route only** (`§0:49` gives `P` three); cause 4's non-stamp route is MEASURED closed (`:78` CAND) |
 | | | M | **OPEN — AND IT CANNOT BECOME `MET`.** Referent re-issued to CAND 2026-09-02 (`OI-173`, Joseph); no **committed** revision of `unified_throw_cov.py` carries both the jitter-floor print and the flux fix `081ae4ac`, so no revision able to produce CAND's fluxfix input could print the unified/block ratio. Applied on his direct instruction by a lane that is **not independent** for this cell — see `DECISION-20260902-joseph-applies-oi173-cause4-m.md`. Supersedes §3's search-based ground and its refusal at `:670`. `OPEN` is the nearest token `§0` defines; there is none for *permanently unmeetable* | **OPEN** |
 | | | T | **MET** — N6 (caught a defect nothing else did), N7 | **MET** |
 | **5** | frozen PET weights | all | **N/A ON ITS MERITS** — established 2026-08-17, declaration **LANDED** in `VL66` at `d1c5f90` (§4) | **N/A, same** |
