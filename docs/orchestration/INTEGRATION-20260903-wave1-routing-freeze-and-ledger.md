@@ -315,3 +315,49 @@ python3 docs/orchestration/r5_meter.py --self-test
 (cd nd-unfolding && python3 -m pytest -q tests/test_mnv_guarded_run.py)      # default TMPDIR
 python3 docs/orchestration/generate_live_state.py --check-freshness           # expect STALE: the hold stands
 ```
+
+## 7. Reviewer round 2 (2026-09-03) — verdict BLOCK on `320d7c0a`, and what this revision changed
+
+`320d7c0a` is **withdrawn**. Four commits were added on top of it; every reviewer mutation below
+is now a named regression test at the tip.
+
+| reviewer BLOCK | resolution | commit | proof |
+|---|---|---|---|
+| **R5 meter misclassifies Perlmutter GPU jobs** (Partition-only; `regular` + `gres/gpu=1` for 499 h metered as CPU, and a 2-GPU-hour proposal passed) | GPU work is identified by `AllocTRES` `gres/gpu=N` (generic or typed) with the partition prefix only as a fallback | `824b521b` | fixture `perlmutter_regular_gpu.sacct`: 499.0 GPU / 0.0 CPU; `check --gpu-task-hours 2` → exit 5 (replayed by the integrator) |
+| **R5 meter drops a task that started 1 s before t0** | straddling tasks are clipped to their post-t0 runtime; tasks ending at or before t0 are omitted | `824b521b` | 3599 s metered in the reviewer's mutation; start = t0 → full; 18 meter tests |
+| **campaignctl receipt validator fail-open on t0 and future dates** | `t0_utc` must equal the ruled instant `2026-09-02T13:44:27Z` and `decision_record` the exact path; a receipt more than 60 s ahead of the queue clock is refused; every receipt fixture's midnight t0 corrected | `e58aa8ff` | the reviewer's midnight-t0 and one-day-ahead mutations → exit 6; a cross-module test pins the same instant and record in both modules |
+| **terminal validators bypass the guard** (`require_guard=False`) | compute validators must route through `nd-unfolding/mnv_guarded_run.py` under the producer's rules; the guard's own refusal resolves to `otherwise`, never the pass branch; the suite copies the real guard into each fixture repo | `e58aa8ff` | the reviewer's outside-checkout-import validator is refused at staging; guarded, its exit 3 lands on `unexpected-terminal-result` |
+| **wall limit applied twice** (1 s each, 2.09 s observed) | one deadline per execution; the validator gets only the remainder; nothing left → validator not started, `otherwise`, reason recorded | `e58aa8ff` | 1 s wall, 2 s producer: 1.10 s measured; 0.4 s producer left the validator ~0.5 s |
+| **LIVE-STATE: misspelt lifecycle/promotion read HEALTHY; two copies of the schema** | the registry config names `policy.json`; lifecycles and queues are read from its `routing` block, not restated; every token is validated before any row is skipped, so `promtoed` and `activ` are CONTRADICTORY; non-active rows must carry `-`; a missing policy is UNAVAILABLE | `73dbd1cd` | both reviewer mutations verbatim; real registry HEALTHY, 13 / 137 unchanged; 65 tests |
+
+Suite at the tip: **124 orchestration tests** on CPython 3.12 and on uv-managed 3.11.15 (+9 subtests).
+
+### 7.1 The one BLOCK this lane cannot clear — an authorization request to Joseph
+
+"Immutable deployment/import guards" is graded BLOCK on two grounds. The validator bypass is
+closed above. **The 45 fail-open entrypoints (`OI-136`) remain unrepaired, and the reviewer has
+now blocked on them twice.** They are not repaired here because:
+
+1. they are hash-pinned science files inside frozen provenance, and `mnv_guarded_run.py`'s header
+   records that the wrapper exists precisely so they need not be edited;
+2. `test_oi136_failopen_inventory_ratchet.py` pins their count as an identity and states that a
+   repaired site is *also* red until the constant is updated in a reviewed commit — the repair is
+   designed to be a deliberate, authorized act, not a sweep;
+3. `FREEZE-20260830-k0-deployment-7ac0edec.md` is live, so editing deployed launchers changes the
+   pinned bytes the freeze protects and forces a redeploy.
+
+**Requested ruling:** authorize a repair of the 45 sites (replace each absolute `sys.path.insert(0,
+<cluster root>)` with a `__file__`-relative root, updating the two ratchet constants in the same
+commit and naming every site), **or** rule that the guard is the accepted mechanism and the
+inventory ratchet the accepted control, so the reviewer can grade the property against that ruling.
+Until one of those lands, this branch's position is that the guard is the only door: no compute
+item can be staged unless both its producer and its validator route through it.
+
+### 7.2 Proposed tip, revised again
+
+The last commit of `wave1-integration-20260903` as force-pushed after this record. §5.6 and §6.2
+commands apply; add:
+
+```
+python3 docs/orchestration/r5_meter.py measure --from-file docs/orchestration/test_fixtures_r5_meter/perlmutter_regular_gpu.sacct --now 2026-09-10T00:00:00Z
+```
