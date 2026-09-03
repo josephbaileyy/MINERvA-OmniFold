@@ -26,6 +26,15 @@
   },
   "unassigned_owner_queue": "WAITING-JOSEPH",
   "unassigned_action_prefix": "Designate an accountable owner, then: ",
+  "routing": {
+    "migration_open": true,
+    "unregistered_record": "fail",
+    "lifecycles": ["active", "deferred", "retired"],
+    "queues": ["NOW", "WAITING-JOSEPH", "BLOCKED-DECISION",
+               "BLOCKED-INTERNAL", "BLOCKED-EXTERNAL"],
+    "authority_kinds": ["record", "self-filed", "unassigned", "migration-carried-forward"],
+    "terminal_criterion_kinds": ["commit", "measure", "ruling", "build", "never"]
+  },
   "source_classification": {
     "overrides": {
       "OI-80": {
