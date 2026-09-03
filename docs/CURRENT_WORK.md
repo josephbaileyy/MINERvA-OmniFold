@@ -6,8 +6,8 @@
 
 Policy selects the top 15 promoted leaves by impact, urgency,
 and effective queue. Unassigned roles are automatically routed to `WAITING-JOSEPH`. Ties use
-numeric OI id and sub-item. Source lifecycle and queue are derived from explicit OI state
-language; terminal and deferred records never enter this page.
+numeric OI id and sub-item. Source lifecycle and queue are DECLARED in `work-items.tsv`,
+never derived from OI state prose; terminal and deferred records never enter this page.
 
 | item | queue | accountable owner | basis | next action | evidence route |
 |---|---|---|---|---|---|
@@ -30,5 +30,6 @@ language; terminal and deferred records never enter this page.
 - Rendered membership is capped at 15; overflow is generated at `docs/CURRENT_WORK_OVERFLOW.md`.
 - An unassigned owner cannot render as `NOW`.
 - Queue order and tie-breaking come only from the checked-in policy, never table position.
-- `policy.json` classifies explicit source state; humans declare only promotion, impact,
-  urgency, and accountability in `work-items.tsv`.
+- Lifecycle and queue are read from the declared register only. No wording in
+  `docs/OPEN_ITEMS.md` outside a record's id token can change either one.
+- A source record with no register row fails the commit; there is no permissive default.

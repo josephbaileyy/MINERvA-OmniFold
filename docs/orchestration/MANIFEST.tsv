@@ -246,10 +246,10 @@ docs/orchestration/campaignctl.py	tracked	MACHINE	script			generated		exact-path
 docs/orchestration/compare_m1_m6.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/test_compare_m1_m6.py	no	42	1101	67440
 docs/orchestration/control-plane/owners.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	4	13	747
 docs/orchestration/control-plane/playbook.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	4	26	8403
-docs/orchestration/control-plane/policy.json	tracked	LIVE	machine-data			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/test_usagectl.py;docs/orchestration/usagectl.py	no	11	78	2100
-docs/orchestration/control-plane/source-record-inventory.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/control_plane_lint.py	no	11	138	24363
+docs/orchestration/control-plane/policy.json	tracked	LIVE	machine-data			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/test_usagectl.py;docs/orchestration/usagectl.py	no	11	38	1060
+docs/orchestration/control-plane/source-record-inventory.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/control_plane_lint.py	no	11	138	25003
 docs/orchestration/control-plane/work-items.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	6	140	29668
-docs/orchestration/control_plane_lint.py	tracked	LIVE	script			open		route-only		no	11	1204	65649
+docs/orchestration/control_plane_lint.py	tracked	LIVE	script			open		route-only		no	11	1207	65446
 docs/orchestration/dashboard.html	tracked	MACHINE	artifact			generated		exact-path-only	docs/orchestration/dashboard_serve.py	no	6	638	29854
 docs/orchestration/dashboard_collector.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/dashboard_serve.py	no	9	1282	52589
 docs/orchestration/dashboard_serve.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/dashboard_collector.py	no	2	324	14238

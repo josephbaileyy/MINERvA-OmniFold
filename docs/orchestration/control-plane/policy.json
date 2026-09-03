@@ -34,45 +34,5 @@
                "BLOCKED-INTERNAL", "BLOCKED-EXTERNAL"],
     "authority_kinds": ["record", "self-filed", "unassigned", "migration-carried-forward"],
     "terminal_criterion_kinds": ["commit", "measure", "ruling", "build", "never"]
-  },
-  "source_classification": {
-    "overrides": {
-      "OI-80": {
-        "lifecycle": "retired",
-        "queue": "-",
-        "rule": "pointer-to-canonical-OI-122"
-      }
-    },
-    "ordered_rules": [
-      {
-        "name": "explicit-terminal-prefix",
-        "pattern": "^(WITHDRAWN|DISCHARGED|CLOSED(?:\\s|$)|PREMISE FALSE|SUPERSEDED|BOTH ACTIONS EXECUTED)",
-        "lifecycle": "retired",
-        "queue": "-"
-      },
-      {
-        "name": "explicit-deferred-prefix",
-        "pattern": "^(FROZEN|DEFERRED)",
-        "lifecycle": "deferred",
-        "queue": "-"
-      },
-      {
-        "name": "explicit-user-decision",
-        "pattern": "WAITING-USER|NEEDS JOSEPH'S RULING",
-        "lifecycle": "active",
-        "queue": "WAITING-JOSEPH"
-      },
-      {
-        "name": "explicit-blocker",
-        "pattern": "\\bBLOCKED\\b",
-        "lifecycle": "active",
-        "queue": "BLOCKED-EXTERNAL"
-      }
-    ],
-    "default": {
-      "lifecycle": "active",
-      "queue": "NOW",
-      "rule": "safe-default-active"
-    }
   }
 }
