@@ -1,40 +1,36 @@
 {
-  "schema_version": 1,
-  "campaign": "Publication closeout: adopted scalar-5D covariance; PET method development is separate",
-  "current_dag_node": "The publication critical path is the adopted scalar-5D covariance, and no scalar-5D covariance candidate is adopted. GATE 2 REMAINS FAIL. Authority: Joseph delegated, directly and to the codex-school Codex session, any PASS or BLOCK decision, plus per-arm compute decisions only where each arm is strictly under 500 GPU-hours and strictly under 500 CPU-hours; earlier 'held by Joseph' / 'Joseph alone re-evaluates' wording is preserved in the records as the authority AT THE TIME and is not current. That session exercised it at 327bc105: FAIL, BLOCK, on SIX independently sufficient NOT DISCHARGED clauses -- F-2(b), F-3(b), F-5(b) no producer filing; F-7(b) no rehearsal pin on a ref; F-8(b) no run receipt; F-17(b) :1471 half impossible for this rehearsal and not backfillable. The section 10.1 SUCCESSOR-TIP readiness re-run has now RUN at 9f088f9a (see decision section 10.4): READINESS-10-1-SUCCESSOR-CORRECTED: NOT READY, with F-7(b) YES and F-8(b) YES and F-17(b) NO. DO NOT COMMISSION ANOTHER SECTION 10.1 READINESS CHECK -- F-7(b) and F-8(b) readiness are satisfied at this tip and re-asking wastes an arm. That ONE open readiness item -- a narrow independent grade of the F-17(b) prospective mechanism -- HAS NOW RUN, on the WHOLE eight-file coupled chain rather than two files, and returned F17B-MECHANISM-CORRECTED: NOT FIT (see decision section 10.5). DO NOT COMMISSION ANOTHER F-17(b) MECHANISM GRADE OF THE UNREPAIRED CHAIN: the answer is recorded, and that prohibition is scoped to the UNREPAIRED chain ONLY. SUPERSEDED 2026-08-28 AT 46691bbc: Joseph approved the bounded four-surface repair (DECISION-20260828-joseph-f17b-four-surface-repair.md) and it LANDED, so all four findings below are REPAIRED IN CODE -- which is not a gate discharge. SPEC R6 real measurement wall-clock: measure_m1_m6.py:268-275 emits started_utc and completed_utc, and compare_m1_m6.py:209 IDENTITY_KEYS with validators at :416-441 requires, validates and carries the interval. SPEC R3 detached-or-branch identity: measure_m1_m6.py:177 emits structured branch / detached / not-a-git-checkout, carried without re-observing the tree. Plus the preserver digest bracket and the immediate measurer short-circuit on nonzero rc. THE PRE-REPAIR CITATIONS compare_m1_m6.py:440 AND :446 WERE EXACT AT 6a96cc62, where both lines literally read UNAVAILABLE; they no longer describe the file and MUST NOT BE REQUOTED. Post-repair digests, verified at 46691bbc with a negative control: measure_m1_m6.py ce52ff77.../14108 B; compare_m1_m6.py 28490539.../67440 B; measure_k0_farend_f1b_f17b.sh ad1a8b64.../16358 B. Record schema and instrument version move 1 to 2, and predecessor documents lacking producer-captured identity fields are REFUSED, never silently upgraded. THE REPAIR IS NOT FIT FOR PROSPECTIVE USE UNTIL A FRESH INDEPENDENT FULL-CHAIN GRADE LANDS: the approving decision requires one, from a reviewer who is neither the implementer nor agy-capacity-probe, fixtures only, forbidden from running measure_k0_farend_f1b_f17b.sh. That grade was COMMISSIONED 2026-08-28 by the personal-account session into runs/agy-f17b-repair-grade/ and ITS VERDICT HAS LANDED: b9261b83 on 2026-08-28, '[f17b] Land the independent grade: NOT FIT', with a further full-chain grade recorded at 974f3ddd on 2026-08-30. So F-17(b) IS GRADED -- read the exact verdicts AT THOSE COMMITS rather than inferring a state from this field, and do not read 'graded' as repaired-and-therefore-fit. CORRECTED 2026-08-31 under OI-181: this clause previously asserted the opposite and was republished verbatim by every regeneration, because the generator carries this prose forward without revalidating it; the wrong wording is quoted in full in the OI-181 row and is deliberately NOT reproduced here, so that a reader or a grep of this operative field cannot mistake the record of the error for the instruction. Even a FIT authorizes only a PROPOSAL for a new forward-only rehearsal; Gate 2 remains FAIL and readiness remains NOT READY. The measuring-instrument digest remains an explicit input-schema gap, outside the approved repair. No repair beyond those four approved surfaces is authorized by this view. The dirty-warning delivery is GRADED AND LANDED (DEFECT section 8) and closes its instrument/grade subtask only, with no Gate-2 credit and no discharge of OI-70's remaining classification work. F-8(b) tooling landed; landing tooling is NOT an F-8(b) receipt and NOT a discharge. OI-126 is RULED: PET is diagnostic/method development, off the publication path. No science compute is authorized by this state view.",
-  "state": "Direct scheduler observation at 2026-08-26T07:33:48Z found exactly one job: 57575105, QOS=cron, CronJob=Yes, the five-minute waker ticker. No science Slurm job was queued or running. Interactive note and PET tmux sessions existed on login21; session activity is not scheduler production and uncommitted work is not live evidence. The k=0 rehearsal jobs listed below are terminal and are retained so the generator re-measures their receipts. Re-query the scheduler before acting because this sentence is authored, time-stamped prose rather than a live probe.",
-  "scope_notes": [
-    "This authored input is a routing view, not evidence or authorization. The generated dashboard's Compute and Wake sections are direct probes; CURRENT_WORK.md and the governing OI-* row control the queue.",
-    "PET remains diagnostic and method-development, not a publication uncertainty product. No full-event PET total covariance is adopted. The exact Gate-6 prohibitions remain the five keys in state/gate6-member-trajectories-result-56847059.json and must not be paraphrased.",
-    "Long-lived task worktrees do not automatically inherit a regenerated dashboard from main. On Perlmutter, run /usr/bin/python3.11 docs/orchestration/generate_live_state.py --check-freshness in the canonical main checkout, then observe Slurm directly; the system python3 is too old for this script.",
-    "The waker ticker monitors external terminal events and campaign-queue readiness. A running cron allocation is not science production and does not imply that an agent campaign is actively advancing."
-  ],
-  "orchestrator_thread_id": "019f749a-857b-7790-8cec-bc36b22908be",
-  "owners": [
+  "schema_version": 2,
+  "measurement_ttl_seconds": {
+    "compute": 300,
+    "wake": 300,
+    "provider_capacity": 3600
+  },
+  "route_registry": {
+    "work_items": "docs/orchestration/control-plane/work-items.tsv",
+    "source_inventory": "docs/orchestration/control-plane/source-record-inventory.tsv",
+    "open_items": "docs/OPEN_ITEMS.md"
+  },
+  "evidence_routes": [
     {
-      "role": "standard-p4-verifier",
-      "uuid": "019f74cb-b85d-7ba0-96c5-dfbd09e59159",
-      "purpose": "Independent scalar-5D P4 verifier; Packet B final PASS owner, UUID retained for continuity"
+      "label": "Current work",
+      "path": "docs/CURRENT_WORK.md"
     },
     {
-      "role": "agent-A-standard",
-      "uuid": "14951826-0680-4e57-ac92-8a9970bc07f7",
-      "purpose": "Standard-P4 continuity owner; UUID preserved through the school-account migration"
+      "label": "Governing open-item records",
+      "path": "docs/OPEN_ITEMS.md"
     },
     {
-      "role": "agent-C-fps",
-      "uuid": "4580f42d-77db-4f59-88c4-1b2854f24d82",
-      "purpose": "FPS selection-shift continuity owner; P3F-PET source-production input"
+      "label": "Validation ledger",
+      "path": "VALIDATION_LEDGER.md"
     },
     {
-      "role": "agent-B-p5b",
-      "uuid": "46e4af3e-c3f2-4fa5-abc7-f0da72817282",
-      "purpose": "Publication PET owner; same UUID migrated to flat Claude School and Gate-6 disposition returned"
+      "label": "Run history",
+      "path": "docs/orchestration/RUNS.tsv"
     },
     {
-      "role": "agy-publication-redteam",
-      "uuid": "440f42ef-c271-4f77-a410-a4a999166f44",
-      "purpose": "Owner-neutral launcher, inventory, and provenance verifier"
+      "label": "Gate-6 prohibitions",
+      "path": "docs/orchestration/state/gate6-member-trajectories-result-56847059.json",
+      "json_field": "prohibitions_applied"
     }
   ],
   "jobs": [
@@ -86,33 +82,6 @@
       "single_job": true,
       "receipt": "docs/orchestration/state/k0r2-combine-job-active-57527875.json"
     }
-  ],
-  "blockers": [
-    "[PUBLICATION CRITICAL PATH] No scalar-5D covariance candidate is adopted. Corrected block-sum and unified-throw candidates remain quarantined; every non-2D publication covariance must project from the eventual adopted trunk. WITNESS: VALIDATION_LEDGER.md corrected 5D UQ quarantine; docs/OPEN_ITEMS.md; docs/CURRENT_WORK.md.",
-    "[PUBLICATION CRITICAL PATH] Gate 2 remains FAIL on the six clauses of the delegated re-evaluation at 327bc105, each alone sufficient, so no merge, grade or inference can turn THIS rehearsal's Gate 2 into PASS. Readiness remains NOT READY on F-17(b) ALONE; F-7(b) and F-8(b) readiness ARE satisfied at this tip -- do not re-ask them, and do not re-run section 10.1 on the unrepaired chain. The F-17(b) prospective mechanism has now been GRADED on the whole eight-file coupled chain and is NOT FIT: SPEC R6 (no measurement wall-clock emitted; compare_m1_m6.py:440 UNAVAILABLE) and SPEC R3 (no detached-or-branch identity; compare_m1_m6.py:446 UNAVAILABLE) are each independently sufficient; the preserver is not digest-bracketed in measure_k0_farend_f1b_f17b.sh; the missing short-circuit on measurer nonzero rc is hardening only because the chain stays fail-closed through comparator refusal outside the 0|10|20 gate at :208. Note for scoping any repair: compare_m1_m6.py:426-448 HARDCODES both UNAVAILABLE fields in identity_of(), so repairing measure_m1_m6.py alone cannot discharge R3 or R6. WITNESS: decision sections 10.4 and 10.5; runs/agy-publication-redteam/20260827-readiness-10-1-successor-VERDICT.md (sha256 a02140fa...48f39, 14034 B); runs/agy-capacity-probe/20260827-f17b-mechanism-VERDICT.md (sha256 1a101389...472f72, 13699 B, grader output and NOT an exact replay receipt -- its supplement abbreviates fixture paths as /tmp/...).",
-    "[OFF THE PUBLICATION CRITICAL PATH -- PET METHOD DEVELOPMENT] No PET total covariance is adopted. Gate 6 remains controlled by the exact prohibitions_applied keys in docs/orchestration/state/gate6-member-trajectories-result-56847059.json; PET fixed-draw work cannot construct C_ML, move a central value, or authorize a publication uncertainty. WITNESS: docs/OPEN_ITEMS.md OI-126 ruling; nd-unfolding/PET_UQ_REMEDIATION_STATUS.md; the Gate-6 receipt."
-  ],
-  "next_authorized_action": "Read docs/CURRENT_WORK.md, then the exact governing row in docs/OPEN_ITEMS.md, then the governing decision or contract clause -- generated views are routing only, never evidence or authorization. The next step on the scalar-5D publication path is to PROPOSE, for a separate decision by the delegated authority, ONE bounded repair of EXACTLY these four surfaces, and nothing else: (1) emit a real measurement wall-clock, satisfying SPEC R6; (2) emit detached-or-branch identity, satisfying SPEC R3; (3) digest-bracket the PRESERVER across its own invocation in measure_k0_farend_f1b_f17b.sh; (4) short-circuit immediately on a nonzero measurer rc. Surfaces 1 and 2 require BOTH instruments, because compare_m1_m6.py:426-448 hardcodes both fields to UNAVAILABLE-BY-INPUT-SCHEMA and the measurer alone cannot discharge them. Any change to measure_k0_farend_f1b_f17b.sh invalidates TWO existing pins of that path -- content sha256 c40e6b54 / 15722 bytes in decision section 11, and 2132194f... in receipts/RECEIPT-20260825-terminal-watch-f17b-durability.json, which is already superseded in fact -- and the file is a MANIFEST.tsv row, so F-14 / section 7.0.7 coupling applies and a pin must be SUPERSEDED by a new dated row stating old value, new value and reason, never silently repointed (OI-123). That repair must then be followed by a FRESH INDEPENDENT FULL-CHAIN GRADE by a reviewer that is neither the implementer nor agy-capacity-probe, which already graded this chain. DO NOT re-grade the unrepaired chain, DO NOT re-run section 10.1 on it, and DO NOT re-grade the dirty-warning delivery; all three are settled. Even a FIT on the post-repair grade would authorize only proposing a NEW forward-only rehearsal, because three of the six Gate-2 clauses need PRODUCER FILINGS that do not exist and F-17(b)'s :1471 half is impossible for this rehearsal by construction. GATE 2 REMAINS FAIL, readiness remains NOT READY, and no rehearsal is authorized. No scalar-5D covariance is adopted; every non-2D publication covariance must project from the eventual adopted trunk. This view authorizes no compute, repair, rehearsal, adoption, covariance construction, F-14 discharge, readiness finding, scheduler write, quotation of any barred product, or publication claim.",
-  "canonical_science": [
-    "docs/CURRENT_WORK.md",
-    "docs/OPEN_ITEMS.md",
-    "docs/orchestration/DECISION-20260825-joseph-gate2-fail-and-four-rulings.md",
-    "docs/orchestration/DEFECT-20260825-generate-manifest-dirty-warning-nondiscriminating.md",
-    "VALIDATION_LEDGER.md",
-    "nd-unfolding/ND_OMNIFOLD_STATUS.md",
-    "nd-unfolding/PET_UQ_REMEDIATION_STATUS.md",
-    "docs/orchestration/state/gate6-member-trajectories-result-56847059.json"
-  ],
-  "append_only_history": [
-    "docs/orchestration/RUNS.tsv",
-    "docs/orchestration/QUIET-PERIODS.tsv",
-    "nd-unfolding/ND_OMNIFOLD_RUN_LOG.md"
-  ],
-  "archival_index_only": [
-    "docs/orchestration/MIGRATION-HANDOFF.md",
-    "docs/orchestration/MIGRATION-DELTA.md",
-    "docs/orchestration/MIGRATION-TAKEOVER-STATUS.md",
-    "superseded followup prompts"
   ],
   "wake": {
     "waker": true

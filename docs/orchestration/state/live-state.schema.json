@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/minerva-omnifold/live-state.schema.json",
+  "title": "LIVE-STATE measurement configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "measurement_ttl_seconds",
+    "route_registry",
+    "evidence_routes",
+    "jobs",
+    "wake"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "measurement_ttl_seconds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["compute", "wake", "provider_capacity"],
+      "properties": {
+        "compute": {"type": "integer", "minimum": 1},
+        "wake": {"type": "integer", "minimum": 1},
+        "provider_capacity": {"type": "integer", "minimum": 1}
+      }
+    },
+    "route_registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["work_items", "source_inventory", "open_items"],
+      "properties": {
+        "work_items": {"type": "string", "minLength": 1},
+        "source_inventory": {"type": "string", "minLength": 1},
+        "open_items": {"type": "string", "minLength": 1}
+      }
+    },
+    "evidence_routes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "path"],
+        "properties": {
+          "label": {"type": "string", "minLength": 1},
+          "path": {"type": "string", "minLength": 1},
+          "json_field": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "jobs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["job_id", "tasks", "receipt"],
+        "properties": {
+          "job_id": {"type": "string", "pattern": "^[0-9]+$"},
+          "tasks": {"type": "string", "minLength": 1},
+          "receipt": {"type": "string", "minLength": 1},
+          "leg": {"type": "string", "minLength": 1},
+          "single_job": {"type": "boolean"}
+        }
+      }
+    },
+    "wake": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["waker"],
+      "properties": {
+        "waker": {"const": true}
+      }
+    }
+  }
+}

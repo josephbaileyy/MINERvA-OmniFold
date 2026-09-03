@@ -152,6 +152,7 @@ docs/orchestration/state/RECEIPT-20260830-k0-deployment-and-freeze-bundle-7ac0ed
 docs/orchestration/state/RECEIPT-20260830-quarantine-k0-aa67c426-member-namespace.json	MACHINE	open	
 docs/orchestration/state/declaration-v-5d-covering-search-20260822.sh	MACHINE	open	
 docs/orchestration/state/live-state-last-known.json	LIVE	open	
+docs/orchestration/state/live-state.schema.json	LIVE	open	""
 docs/orchestration/state/live-state.json	LIVE	open	
 docs/orchestration/state/oi137-covering-search-20260822.sh	MACHINE	open	
 docs/orchestration/RULING-20260902-quoted-column-permanence-is-p-scoped.md	LIVE	open	
