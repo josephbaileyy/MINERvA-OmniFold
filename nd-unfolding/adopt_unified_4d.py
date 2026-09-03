@@ -27,11 +27,13 @@ nonlinear cross-term is real (the high-pT / low-E_avail corner, top 1% of bins =
   python adopt_unified_4d.py        # writes uq_4d/.../uq_universe_4d_covariance_combined_uthrow.root
 """
 import argparse
+import os
 import sys
 
 import numpy as np
 
-_REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+# OI-136: root derived from __file__, never the hardcoded cluster root
+_REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
     if _p not in sys.path:
         sys.path.insert(0, _p)

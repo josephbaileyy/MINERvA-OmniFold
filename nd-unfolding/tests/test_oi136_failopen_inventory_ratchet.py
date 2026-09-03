@@ -191,8 +191,100 @@ PROBE = os.path.join("docs", "orchestration", "state",
 # the arms that require the probe CLI to complete are expected to remain RED until the positive
 # control is refreshed by its owner. Recording a measured inventory and an uncertified instrument as
 # two separate facts is the point -- collapsing them in either direction is the error.
-FAILOPEN_COUNT = 45
-FAILOPEN_SHA256 = "4201aceed0604f92a3ec88591fd4e471cb723323fb01b88184024d97d6c36c8b"
+#
+# THE PARAGRAPH ABOVE HAS SINCE BEEN OVERTAKEN, AND WHAT OVERTOOK IT IS NOT THIS COMMIT.
+# Observed 2026-09-03 at base 71839696, BEFORE any edit in this commit: the probe CLI exits **0**,
+# prints `positive controls IN the set` and `negative control -- rejected 23`, and prints NO
+# `CANNOT CHECK` line at all. The stale control it named -- `3d-unfolding/unfold_3d_omnifold_unbinned.py`
+# -- is not in `POSITIVE_CONTROLS` any more; the 08-26 successor probe carries
+# `nd-unfolding/adopt_unified_5d.py` and `2d-unfolding/unfold_2d_omnifold_unbinned.py`, both of
+# which are still in the fail-open set and are excluded from repair for their own recorded reasons.
+# So the instrument is certified and every arm of this file is green. Recorded as an observation of
+# the probe's exit and stdout, not as a claim that this lane refreshed anything.
+#
+# ===== 45 -> 9 on 2026-09-03: THE 36 AUTHORIZED ENTRYPOINT REPAIRS =====
+# Authorization: Joseph, 2026-09-03, "I authorize it", against the request in
+# `docs/orchestration/INTEGRATION-20260903-wave1-routing-freeze-and-ledger.md` section 7.1 -- which
+# asked either for this repair or for a ruling that the guard is the accepted mechanism and this
+# inventory the accepted control. The first branch was taken. Both constants below move in the SAME
+# commit as the repair, which is the rule this file's docstring states and which the 2026-08-20,
+# 08-22 and 08-23 sweeps each broke; the notes above record that history.
+#
+# EVERY REPAIRED SITE, as the rule requires. Each now derives the root that feeds
+# `sys.path.insert(0, ...)` from its own `__file__` -- `parents[1]` equivalent for
+# `nd-unfolding/*.py`, `parents[2]` for `nd-unfolding/pet/*.py` -- with NO absolute fallback:
+#
+#   nd-unfolding/adopt_unified_4d.py                nd-unfolding/nn_dump_inputs.py
+#   nd-unfolding/build_fps_prior_genie_5d.py        nd-unfolding/pet/d2_oracle.py
+#   nd-unfolding/build_fps_prior_nuwro.py           nd-unfolding/pet/inversion_screen.py
+#   nd-unfolding/build_fps_prior_nuwro_5d.py        nd-unfolding/pet/push_vs_acceptance.py
+#   nd-unfolding/compare_ascencio_fine.py           nd-unfolding/pet_lateral_band.py
+#   nd-unfolding/compare_ascencio_fullcov.py        nd-unfolding/pet_lateral_band_5d.py
+#   nd-unfolding/compare_le_evolution.py            nd-unfolding/pet_lateral_correction.py
+#   nd-unfolding/dump_td_q3.py                      nd-unfolding/pet_systematics.py
+#   nd-unfolding/dump_w_source_fps.py               nd-unfolding/pet_systematics_5d.py
+#   nd-unfolding/eavailW_covariance.py              nd-unfolding/pet_unified_throw_5d.py
+#   nd-unfolding/eavail_generator_significance.py   nd-unfolding/plot_control_corner.py
+#   nd-unfolding/excess_eavail_W.py                 nd-unfolding/project_cov_nd.py
+#   nd-unfolding/fps_3prior_envelope_5d.py          nd-unfolding/q3_excess_projection.py
+#   nd-unfolding/fps_acceptance.py                  nd-unfolding/q3_vs_ascencio_metrics.py
+#   nd-unfolding/fps_extension_validation.py        nd-unfolding/rescale_flux_universes.py
+#   nd-unfolding/fps_gbdt_prior_reunfold_5d.py      nd-unfolding/sweep_bank.py
+#   nd-unfolding/fps_pilot_compare.py               nd-unfolding/unified_throw.py
+#   nd-unfolding/fps_prior_envelope.py
+#   nd-unfolding/make_control_plots.py
+#
+# TWO SHAPES, because 24 of the 36 also used the literal as a DATA root and OI-123, not this
+# repair, owns data roots. Where the rooted name fed the insert AND NOTHING ELSE (12 files) the
+# name itself was re-rooted and the literal leaves the file. Where it also feeds argparse defaults
+# or output paths (24 files) a separate `_CODE_ROOT` was derived for the insert and the data
+# literal was left exactly where it was -- ruling 17's two-root design. That is why the probe's
+# CANDIDATE count moves only 118 -> 106 while the FAIL-OPEN set moves 45 -> 9.
+#
+# PROVED A NO-OP ON THE CANONICAL CHECKOUT BEFORE APPLYING, the same discipline the 08-23 sweep
+# used: each derived expression was evaluated with `__file__` bound to
+# `<cluster root>/<repo-relative path>` and compared to the literal it replaced -- 36 of 36
+# byte-identical. So behaviour on the tree that produced the existing products is unchanged, and
+# the repair bites only on trees that are NOT that one, which is the hazard.
+#
+# AND MUTATION-TESTED IN THE OTHER DIRECTION, because a repaired form that the instrument cannot
+# see is worse than the defect. Re-planting the cluster literal on the derived assignment in each
+# of the 36 is still classified FAIL-OPEN by this probe AND by
+# `test_oi136_rooted_insert_ratchet.py`'s AST scanner -- 36 of 36, both instruments. Three files
+# (`compare_ascencio_fullcov.py`, `q3_excess_projection.py`, `q3_vs_ascencio_metrics.py`) needed
+# their loop tuple written with `os.path.join` instead of an f-string to get there: each has a
+# local `f = ROOT.TFile.Open(f"{_REPO}/...")`, so the one-letter name `f` is rooted and this
+# probe's `\bf\b` test then matches the `f"` prefix of every f-string, tainting the LOOP VARIABLE.
+# The defect was already gone in all three before that change; only the instrument's view of it
+# was not, and the mutation arm shows the new form is not a blind spot.
+#
+# THE 9 THAT REMAIN, each with its class -- this is the whole residual set, and none of the three
+# classes is a decision this commit could take:
+#   probe record (3), editing one falsifies the record it is:
+#     docs/orchestration/state/probe-oi120c-loader-purity-perturbation-20260814.py
+#     docs/orchestration/state/probe-oi22-leakage-real-input-20260814.py
+#     docs/orchestration/state/probe-oi22-schema-parity-real-input-20260814.py
+#   2D arm Joseph ruled 2026-08-23 to leave -- dormant insert inside main(), sha256 pinned in
+#   three places needing three different treatments, live one advanced only by a Gate-2 re-run:
+#     2d-unfolding/unfold_2d_omnifold_unbinned.py
+#   receipt-bound (5): `docs/orchestration/verify_hash_bindings.py` pins their bytes and the
+#   pre-commit hook runs it, so editing any one of them reports BINDINGS BROKEN -- measured, not
+#   inferred. Needs the binding owner's process, not a commit:
+#     nd-unfolding/adopt_unified_5d.py
+#     nd-unfolding/pet/dump_pointcloud_inputs.py
+#     nd-unfolding/pet/fullevent_fps_dataloader.py
+#     nd-unfolding/pet/train_fullevent_nominal.py
+#     nd-unfolding/pet/validate_pet_nominal_gate4.py
+#
+# 9 IS NOT A TARGET EITHER, and two of the nine are this probe's own positive controls -- so the
+# set cannot reach 0 without first giving the instrument new controls. Superseded pair, retained
+# as an as-of referent:
+#   merged tree, 2026-08-26   45 / 4201aceed0604f92a3ec88591fd4e471cb723323fb01b88184024d97d6c36c8b
+#
+# BOTH VALUES BELOW WERE TAKEN FROM THE PROBE'S OWN OUTPUT, digested exactly as
+# `test_the_fail_open_set_is_EXACTLY_the_recorded_one` digests it, never computed by hand.
+FAILOPEN_COUNT = 9
+FAILOPEN_SHA256 = "0939e1595e1bf5ed7896436d2ca1e090c47525258880bac20f7b3eb5f312a350"
 
 # The probe's own positive controls, restated here so this file does not inherit its blind
 # spots. Relative to the repo root, as the probe prints them.

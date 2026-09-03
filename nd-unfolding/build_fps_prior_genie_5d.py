@@ -16,12 +16,15 @@ Ratio clipped to [0.2, 5]; cells where either side is empty fall back to 1.
   python build_fps_prior_genie_5d.py --omnifile runEventLoopOmniFold_PC_FPS_MEFHC.root
 """
 import argparse
+import os
 import sys
 
 import numpy as np
 
 _REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
-for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
+# OI-136: root derived from __file__, never the hardcoded cluster root
+_CODE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+for _p in (f"{_CODE_ROOT}/2d-unfolding", f"{_CODE_ROOT}/nd-unfolding"):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 from fps_acceptance import PT_EXT, PZ_EXT

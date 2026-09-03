@@ -12,13 +12,16 @@ Usage (ROOT env):
       --axes eavail --out of_inputs_3d.npz
 """
 import argparse
+import os
 import sys
 
 import numpy as np
 import ROOT
 
 _REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
-for p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
+# OI-136: root derived from __file__, never the hardcoded cluster root
+_CODE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+for p in (f"{_CODE_ROOT}/2d-unfolding", f"{_CODE_ROOT}/nd-unfolding"):
     if p not in sys.path:
         sys.path.insert(0, p)
 import unfold_2d_omnifold_unbinned as u2d  # noqa: E402

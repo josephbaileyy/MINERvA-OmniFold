@@ -27,12 +27,15 @@ flux/model-dominated), so this correction is small but removes the one zero in t
   python pet_lateral_correction.py     # updates products/pet/pet_4d_covariance_combined.root
 """
 import argparse
+import os
 import sys
 
 import numpy as np
 
 _REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
-for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
+# OI-136: root derived from __file__, never the hardcoded cluster root
+_CODE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+for _p in (f"{_CODE_ROOT}/2d-unfolding", f"{_CODE_ROOT}/nd-unfolding"):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 

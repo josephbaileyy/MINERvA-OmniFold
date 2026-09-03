@@ -40,7 +40,9 @@ import sys
 import numpy as np
 
 ND = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding"
-sys.path.insert(0, os.path.join(ND, "pet"))
+# OI-136: root derived from __file__, never the hardcoded cluster root
+_CODE_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(_CODE_ROOT, "nd-unfolding", "pet"))
 PC = os.path.join(ND, "pet/powered_closure")
 ART = os.path.join(PC, "POWERED_CLOSURE_ARTIFACT.slurm-56381674.npz")
 REP = os.path.join(PC, "POWERED_CLOSURE_REPORT.slurm-56381674.json")

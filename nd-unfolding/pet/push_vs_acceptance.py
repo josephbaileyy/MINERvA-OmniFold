@@ -28,7 +28,9 @@ import sys
 import numpy as np
 
 ND = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding"
-sys.path.insert(0, os.path.join(ND, "pet"))
+# OI-136: root derived from __file__, never the hardcoded cluster root
+_CODE_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(_CODE_ROOT, "nd-unfolding", "pet"))
 import fullevent_fps_dataloader as fe  # noqa: E402
 
 ART = os.path.join(ND, "pet/fullevent_nominal/pet_fullevent_nominal_weights.npz")

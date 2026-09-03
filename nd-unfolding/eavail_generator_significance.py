@@ -25,7 +25,8 @@ import sys
 
 import numpy as np
 
-_REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+# OI-136: root derived from __file__, never the hardcoded cluster root
+_REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
     if _p not in sys.path:
         sys.path.insert(0, _p)
