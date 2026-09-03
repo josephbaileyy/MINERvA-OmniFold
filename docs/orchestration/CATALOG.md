@@ -24,6 +24,9 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   or rejected output to commits, tests, and reasons. Proposes a tip for an independent acceptance
   reviewer; grades nothing. Enforces `DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md`
   over the original plan. Moves no gate or count, adopts nothing, launches nothing.
+- [`R5-METER.md`](R5-METER.md)
+  - Usage and fail-closed semantics for the R5 task-hour accounting boundary. The meter authorizes
+    nothing; every run still requires its own declaration and authorization.
 
 
 ### PET Gate-6 branch preservation — removal proposed, NOT executed
