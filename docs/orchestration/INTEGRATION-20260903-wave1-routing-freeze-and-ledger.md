@@ -267,3 +267,51 @@ for f in docs/CURRENT_WORK.md docs/CURRENT_WORK_BACKLOG.md docs/CURRENT_WORK_OVE
 ```
 
 This record grades nothing, including itself.
+
+## 6. Reviewer round 1 (2026-09-03) — verdict BLOCK on `82f23914`, and what this revision changed
+
+The independent acceptance reviewer graded `82f23914` **BLOCK** on five properties and PASS on
+six. `82f23914` is **withdrawn**: the branch was reset to `8df9eb88` (the ledger commit) and the
+commits below were added; the `[generated]` regeneration commit is gone. Every resolution below was
+re-verified at the new tip; nothing below moves a gate, count, adoption, grade, or claim.
+
+| reviewer BLOCK | resolution | commit | proof |
+|---|---|---|---|
+| **R5 — no operational meter** | `r5_meter.py` implements decision §3 verbatim: t0 = the commit instant of `9ce59a59` (`2026-09-02T13:44:27Z`); task-hours over distinct task identities, step and array-bracket rows excluded; GPU/CPU by partition; failed tasks counted in full; inclusive `>=` ceilings; OR trigger; UTC; a missing, stale (>24 h) or malformed receipt is a **stop** (fail-closed). `check` exits 0/3/4/5. **No receipt is committed** — this host has no `sacct`, and a fabricated receipt would be a false measurement; the first measurement is a Perlmutter act (`R5-METER.md`) | `a0bde16a` | 16 tests (+9 subtests) on 3.12 and 3.11; `--self-test` PASS; the rows-vs-identities fixture reproduces the amendment's 447-rows/374-tasks inflation |
+| **Campaign contracts declarative, not enforced** | (1) a bound `terminal_validator` always runs after the producer and **alone** resolves the terminal branch — the reviewer's exit-0-no-validator mutation now lands on the failure branch; (2) producer, validator, decision authority pairwise distinct; (3) compute producers must route through `nd-unfolding/mnv_guarded_run.py` and every binding must be byte-identical to its HEAD blob at staging and again before execution; (4) timeouts bounded by `maximum_cost.wall_hours`, and a **fail-closed R5 gate** on the meter receipt before any compute executes (missing/malformed/stale/fired/past stop date/headroom-exhausting each refuse with exit 6, item left retryable); (5) exactly-once, preserve-first, no automatic retraining kept | `06adaa53`, `f03b8468` | 31 tests on 3.12 and 3.11, including `MeterReceiptInteroperability`, which feeds the meter's real output to the gate (the two modules were written in parallel and had drifted on the `unit` value — caught by that test) |
+| **Sensor-only LIVE-STATE: registry omissions read HEALTHY** | completeness in both directions: every `OPEN_ITEMS` record must be inventoried and every inventoried record must have a register row; either omission is CONTRADICTORY and withholds all routes. Both reviewer mutations are regression tests | `35c93775` | 61 tests; real registry 137 = 137 = 137, HEALTHY, 13 routes |
+| **Sensor-only LIVE-STATE: regenerated despite the owner hold** | the regeneration is **withdrawn**. `LIVE-STATE.md` is the committed base file and reads STALE under the integrated generator, which is the lawful state until `OI-73`'s owner disposes of decision §5's hold. §2.3(c)'s reasoning for regenerating is superseded by the reviewer's reading, which is the stricter one | branch reset | `--check-freshness` → STALE at the tip, by design |
+| **Generated-file reproduction** | the five views, the inventory and MANIFEST reproduce byte-clean by their writers (unchanged finding); LIVE-STATE is no longer claimed reproduced | — | §5.6 commands |
+| **Immutable deployment/import guards** | the part inside this integration's authority: `campaignctl` now refuses unguarded, dirty or untracked executables (above), and the guard suites pass on macOS with the default `TMPDIR` after the tests resolve their temp root (10 + 2 failures were `/var` vs `/private/var`, not guard defects). **The 45 fail-open entrypoints are NOT repaired** — see §6.1 | `f808edd2` | `test_mnv_guarded_run.py` 99 passed; `test_k0_launcher_two_roots.py` + `test_k0_5ab_separated_roots.py` 68 passed |
+
+Known conflicts the reviewer listed, and their state now:
+
+| item | state |
+|---|---|
+| `AGENTS.md` routes to a removed live-state section | **resolved**, `ec7d24f8`: the authorized action is routed to `docs/CURRENT_WORK.md` and the governing `OI-*` row; `LIVE-STATE.md` is named as measurements and route health. Holds in both the STALE and the redesigned view |
+| two queue tokens unpriced | **left to the `policy.json` owner, deliberately.** An attempt to price them by equivalence (`BLOCKED-DECISION`=40, `BLOCKED-INTERNAL`=30) was reverted because S4's self-test *proves* that an unpriced token is refused with a named error — the fail-closed behaviour is designed, and pricing is a routing decision the register's owner reserved |
+| Python 3.11 unavailable | the deployment interpreter is still absent from `/usr/bin`; a `uv`-managed CPython 3.11.15 ran the full orchestration suite: **108 passed** |
+
+### 6.1 Left out, with the reason — the reviewer and Joseph decide, not this lane
+
+**The 45 fail-open entrypoints (`OI-136`) are not repaired here.** They are hash-pinned science
+files inside frozen provenance; `test_oi136_failopen_inventory_ratchet.py` pins their count as an
+identity and states that a repaired site is *also* red until the constants are updated in the same
+reviewed commit, and `mnv_guarded_run.py`'s header records that the wrapper exists precisely so
+those files need not be edited. `FREEZE-20260830-k0-deployment-7ac0edec.md` remains live. Editing
+them is a change to deployed, pinned launchers and needs its own authorization and redeploy; the
+integration's authority does not extend to it. What this branch does instead is make the guard the
+only door: a compute item cannot be staged without routing through `mnv_guarded_run.py`.
+
+### 6.2 Proposed tip, revised
+
+The proposed tip is the last commit of `wave1-integration-20260903` as force-pushed to `origin`
+after this record (the branch was reset, so the previous remote tip `82f23914` is intentionally
+gone from it). The §5.6 commands apply unchanged, plus:
+
+```
+python3 -m pytest -q docs/orchestration/test_r5_meter.py
+python3 docs/orchestration/r5_meter.py --self-test
+(cd nd-unfolding && python3 -m pytest -q tests/test_mnv_guarded_run.py)      # default TMPDIR
+python3 docs/orchestration/generate_live_state.py --check-freshness           # expect STALE: the hold stands
+```
