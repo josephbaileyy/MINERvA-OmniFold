@@ -65,6 +65,13 @@ class CampaignQueueTests(unittest.TestCase):
         guard = self.repo / "nd-unfolding" / "mnv_guarded_run.py"
         guard.parent.mkdir()
         guard.write_bytes(REAL_GUARD.read_bytes())
+        # The guard refuses to install (COULD NOT LOOK, exit 2) unless its tracked subprocess
+        # shim sits beside it, so the fixture checkout carries the shim as the real one does.
+        shim_dir = guard.parent / "mnv_guard_shim"
+        shim_dir.mkdir(parents=True, exist_ok=True)
+        (shim_dir / "sitecustomize.py").write_bytes(
+            (REAL_GUARD.parent / "mnv_guard_shim" / "sitecustomize.py").read_bytes()
+        )
         # `mnv_guarded_run.py` recognises a checkout by the marker PAIR, so the fixture
         # repository needs both markers before `--expect-root` can name it.
         (self.repo / "VALIDATION_LEDGER.md").write_text("fixture ledger\n")
