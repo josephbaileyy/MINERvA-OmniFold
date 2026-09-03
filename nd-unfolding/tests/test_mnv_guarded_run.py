@@ -52,7 +52,7 @@ class GuardFixture(unittest.TestCase):
 
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
-        tmp = pathlib.Path(self._tmp.name)
+        tmp = pathlib.Path(self._tmp.name).resolve()
         self.good = make_checkout(tmp, "expected-tree")
         self.bad = make_checkout(tmp, "stale-tree")
         write(self.good / "nd-unfolding" / "victim.py", "MARK = 'RIGHT TREE'\n")
@@ -214,7 +214,7 @@ class CannotCheckIsNotClean(GuardFixture):
 class MarkerSemantics(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
-        self.tmp = pathlib.Path(self._tmp.name)
+        self.tmp = pathlib.Path(self._tmp.name).resolve()
         self.addCleanup(self._tmp.cleanup)
 
     def test_markers_are_conjunctive_so_nd_unfolding_is_not_its_own_root(self):
@@ -264,7 +264,7 @@ class TheSubprocessBoundaryIsNotCovered(unittest.TestCase):
 
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
-        tmp = pathlib.Path(self._tmp.name)
+        tmp = pathlib.Path(self._tmp.name).resolve()
         self.good = make_checkout(tmp, "expected-tree")
         self.bad = make_checkout(tmp, "stale-tree")
         write(self.good / "nd-unfolding" / "victim.py", "MARK = 'RIGHT TREE'\n")
@@ -325,7 +325,7 @@ class ScriptContainment(unittest.TestCase):
 
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
-        tmp = pathlib.Path(self._tmp.name)
+        tmp = pathlib.Path(self._tmp.name).resolve()
         self.good = make_checkout(tmp, "expected-tree")
         self.bad = make_checkout(tmp, "forbidden-tree")
         # NO repository import anywhere in it. Only stdlib, and it announces which copy ran.
@@ -747,7 +747,7 @@ class TenModuleFixture(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self._tmp.cleanup)
-        tmp = pathlib.Path(self._tmp.name)
+        tmp = pathlib.Path(self._tmp.name).resolve()
         self.tree = make_checkout(tmp, "one-tree")
         nd = self.tree / "nd-unfolding"
         for leaf in self.TRANSITIVE:
@@ -883,7 +883,7 @@ class TheDefectMutationFires(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self._tmp.cleanup)
-        tmp = pathlib.Path(self._tmp.name)
+        tmp = pathlib.Path(self._tmp.name).resolve()
         self.first = make_checkout(tmp, "first-tree")
         self.second = make_checkout(tmp, "second-tree")
         write(self.first / "nd-unfolding" / "here.py", "NAME = 'first'\n")
@@ -1224,7 +1224,7 @@ class TheInventoryReportsOneInterpreterAndSaysSo(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self._tmp.cleanup)
-        tmp = pathlib.Path(self._tmp.name)
+        tmp = pathlib.Path(self._tmp.name).resolve()
         self.good = make_checkout(tmp, "parent-tree")
         self.other = make_checkout(tmp, "child-only-tree")
         write(self.other / "nd-unfolding" / "hidden.py", "NAME = 'hidden'\n")
@@ -1391,7 +1391,7 @@ class TheNamespacePackageExclusionIsDeclaredNotSilent(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self._tmp.cleanup)
-        tmp = pathlib.Path(self._tmp.name)
+        tmp = pathlib.Path(self._tmp.name).resolve()
         self.tree = make_checkout(tmp, "ns-tree")
         # deliberately NO __init__.py -- that is what makes it a namespace package,
         # and the fixture is the producer of that condition rather than a restatement
@@ -1511,7 +1511,7 @@ class TheCaptureReportsHowTheRootWasCHOSEN(unittest.TestCase):
 
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
-        tmp = pathlib.Path(self._tmp.name)
+        tmp = pathlib.Path(self._tmp.name).resolve()
         self.good = make_checkout(tmp, "expected-tree")
         self.other = make_checkout(tmp, "another-tree")
         self.plain = tmp / "not-a-checkout"
@@ -1608,7 +1608,7 @@ class TheCaptureCannotGoMISSINGSilently(unittest.TestCase):
 
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
-        tmp = pathlib.Path(self._tmp.name)
+        tmp = pathlib.Path(self._tmp.name).resolve()
         self.good = make_checkout(tmp, "expected-tree")
         self.bad = make_checkout(tmp, "stale-tree")
         write(self.good / "nd-unfolding" / "victim.py", "MARK = 'RIGHT'\n")

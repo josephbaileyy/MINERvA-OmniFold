@@ -101,7 +101,7 @@ class LauncherFixture(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self._tmp.cleanup)
-        tmp = pathlib.Path(self._tmp.name)
+        tmp = pathlib.Path(self._tmp.name).resolve()
         self.code = tmp / "code-root"
         self.data = tmp / "data-root"
         self.invdir = tmp / "inventories"
