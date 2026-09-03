@@ -92,12 +92,26 @@ ticker ignores it until you approve its digest from an interactive TTY. The
 queue starts empty. It executes at most one ready item per five-minute tick,
 never invokes a shell, and never calls an LLM. It binds the repository HEAD
 plus each command entrypoint and any explicitly listed input files; drift
-makes the item permanently `stale`. For compute, the contract, guard, guarded
-target, validator, and explicit bindings must all be committed at `HEAD`, with
-working-tree bytes identical to their committed blobs. This check runs during
-staging and again immediately before a claim. A claim without a terminal
-receipt becomes `outcome-unknown` and is never retried automatically. A newly
-staged item sends one deduplicated ntfy approval alert on the next ticker pass.
+makes the item permanently `stale`. For compute, the contract, guard, the
+guard's subprocess shim, guarded target, validator, and explicit bindings must
+all be committed at `HEAD`, with working-tree bytes identical to their committed
+blobs. This check runs during staging and again immediately before a claim. A
+claim without a terminal receipt becomes `outcome-unknown` and is never retried
+automatically. A newly staged item sends one deduplicated ntfy approval alert on
+the next ticker pass.
+
+**Compute is admissible only from the canonical state directory.** The R5
+headroom check, the reservation inventory, the admission lock, and the claim are
+all properties of ONE directory, `docs/orchestration/state/campaign-queue` under
+the queue's own repository. A queue started with any other `--state-dir` (or
+`CAMPAIGN_QUEUE_STATE_DIR`) may still stage, approve, and run **non-compute**
+items, but a compute item there is exit 6 and a `refused` outcome with the reason
+`non-canonical state dir cannot admit compute`. This is not tidiness: two queues
+under two `--state-dir` values read the same committed receipt, take separate
+locks, scan separate inventories, and each admitted a six-hour item the other had
+never counted — the same 502-against-500 projection as an over-committed queue,
+reached by splitting the queue instead. The refusal happens **before** any lock
+is taken, because a lock file in a second state directory excludes nobody.
 
 From Termius:
 
@@ -156,7 +170,8 @@ consequence.
 
 Compute producers must route through `nd-unfolding/mnv_guarded_run.py`, either
 directly or through an allowed Python interpreter. The guarded target after
-the mandatory `--` is also bound. A typical command tail is:
+the mandatory `--` is also bound, and so is the guard's subprocess shim
+`nd-unfolding/mnv_guard_shim/sitecustomize.py`. A typical command tail is:
 
 ```bash
 /usr/bin/python3.11 nd-unfolding/mnv_guarded_run.py \
@@ -181,6 +196,19 @@ rewrites import resolution before the guard is installed. The item JSON lives
 in the state directory rather than in Git, so these checks run again inside
 `validate_unchanged`: an argv hand-edited after staging, with its digest
 recomputed, is refused at approval and at the tick.
+
+**Binding the guard binds its subprocess shim.** Wherever the guard is required
+— every compute producer and every terminal validator —
+`nd-unfolding/mnv_guard_shim/sitecustomize.py` is bound under exactly the same
+rules: tracked, HEAD-identical at staging, and re-verified in
+`validate_unchanged` before execution. The shim is not one of the guard's inputs,
+it is the guard's other half: `install()` prepends its directory to `PYTHONPATH`
+and every inheriting Python child loads the guard *through it*, so a child's
+guard is whatever bytes sit at that path when the child starts. Bound only the
+guard and the target, replacing **only** the shim after staging left the proposal
+digest, the guard, and the target all intact while a child loaded the wrong tree,
+and the run returned 0. An untracked or absent shim is refused at staging; a shim
+replaced after staging makes the item `stale` and it does not run.
 
 **For a compute item the terminal validator obeys exactly the producer's
 rules**, at staging and again before the claim: it must route through
@@ -239,25 +267,51 @@ lets the tests commit a receipt inside a temporary repository; it can no longer
 point the queue at a file the repository does not record.
 
 Order the work accordingly: **meter and commit the receipt first, then stage,
-then approve, then let the ticker run it.** A receipt commit moves `HEAD`, and
-an item staged against an earlier `HEAD` is `stale` under the drift rule that
-already governs every binding, so an item staged before its receipt has to be
-staged again.
+then approve, then let the ticker run it, then meter and commit again.** A
+receipt commit moves `HEAD`, and an item staged against an earlier `HEAD` is
+`stale` under the drift rule that already governs every binding, so an item
+staged before its receipt has to be staged again — which is also why the
+post-run reconciliation receipt must be committed *before* the next item is
+staged, not between its staging and its tick.
 
 **R5 admission is atomic and reserved.** A ceiling belongs to the queue, not to
 an item. Besides the receipt's spend and this item's `maximum_cost`, the
 headroom check counts the full declared `maximum_cost` of every other compute
-item that is not in a terminal outcome: `staged`, `approved`, and claimed or
-running (`outcome-unknown`) all reserve, while `refused`, `failed`,
-`succeeded`, `stale`, and `revoked` release the reservation. Refusal is
-inclusive in either column — spend plus reservations plus this item meeting the
-ceiling is already a refusal — and the reason names the items holding the
-reservation. With 490 GPU task-hours recorded, two six-hour items each
-projected 496 and both were admitted, although together they project 502; now
-the second is refused while the first is in flight. The refusal is retryable
-and not consumed, so when the whole queue is over-committed every affected item
-is refused until a human revokes one or the measurer commits a fresh receipt —
-that release is never something a tick decides for itself.
+item whose hours are not yet accounted for. Refusal is inclusive in either
+column — spend plus reservations plus this item meeting the ceiling is already a
+refusal — and the reason names the items holding the reservation and why. With
+490 GPU task-hours recorded, two six-hour items each projected 496 and both were
+admitted, although together they project 502; now the second is refused while
+the first is in flight.
+
+**A reservation is released by accounting, not by finishing.** `staged`,
+`approved`, and claimed-or-running (`outcome-unknown`) items reserve because they
+have not spent yet or are spending now. An item that **ran** — succeeded, failed,
+timed out, launcher error: anything after a claim — keeps reserving its **full
+declared `maximum_cost`** until a committed receipt whose `measured_at_utc` is
+strictly **later than that item's outcome timestamp** exists, i.e. until the meter
+has had the chance to see its spend. R5 §3 counts a task in full however it ended,
+and lets a job running at the stop finish with its spend counted, so hours are
+real from the claim onwards and stay uncounted until an accounting query looks
+after the item stopped. Only an item that **never ran** releases at once: `refused`
+and `stale` are written before the claim, and `revoked` and never-claimed items
+never had one. Releasing a terminal outcome immediately let the second six-hour
+item in against a receipt that had never looked at the first, and actual spend
+could reach 502 under a receipt that stayed valid for 24 hours.
+
+**So: after any compute item finishes, re-run the meter on Perlmutter and commit
+its receipt before the next compute item can be admitted. That is the
+reconciliation step.** Concretely, the finished item's full declared maximum
+still counts against the ceiling until that receipt lands, and the next compute
+item is refused for those hours with the reason naming it `terminal, not yet
+remeasured`. Do not work around it by revoking the finished item — the point of
+the hold is that its spend is real and unmeasured, and the only honest release is
+a fresh measurement.
+
+Refusal is retryable and not consumed, so when the whole queue is over-committed
+every affected item is refused until a human revokes one that never ran or the
+measurer commits a fresh receipt — that release is never something a tick decides
+for itself.
 
 The headroom check and the claim that admits the item happen under **one
 exclusive lock**, `state/campaign-queue/admission.lock`, an `O_EXCL` file

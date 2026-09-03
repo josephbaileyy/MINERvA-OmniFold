@@ -15,15 +15,33 @@ started.
 
 R5 admission is ATOMIC and RESERVED, not per-item.  A ceiling is a property of
 the whole queue, so the headroom check counts the receipt's spend, this item's
-``maximum_cost`` AND the ``maximum_cost`` of every other compute item that is
-not in a terminal outcome; the check and the claim that admits the item happen
-under one exclusive lock, so two tickers cannot both admit against the same
-headroom.  The receipt itself must be committed: an R5 measurement that lives
-only in a working tree, or in ``/tmp``, is not evidence and cannot authorize
-compute.  On a compute arm the guard argv must pin ``--expect-root`` to this
-repository and must not carry ``--allow`` or any interpreter/PYTHONPATH escape,
-because those turn the guard's own positive control into a pass for the wrong
-tree.
+``maximum_cost`` AND the ``maximum_cost`` of every other compute item whose
+hours are not yet accounted for; the check and the claim that admits the item
+happen under one exclusive lock, so two tickers cannot both admit against the
+same headroom.  A reservation is released by ACCOUNTING, not by finishing: an
+item that RAN keeps reserving its full declared maximum until a committed
+receipt measured LATER than its terminal outcome exists, because until the meter
+has had the chance to see that spend nothing in the accounting covers it.  Only
+an item that never ran -- refused, stale, revoked, never claimed -- releases at
+once.  Re-metering after every compute item is therefore the reconciliation
+step, not an optional tidy-up.
+
+Because both the lock and that reservation inventory are properties of ONE
+queue, compute admission is possible only from the CANONICAL state directory,
+``<repo>/docs/orchestration/state/campaign-queue``.  A queue pointed elsewhere
+by ``--state-dir`` may still stage, approve and run non-compute items, but it
+refuses compute admission: two queues sharing one receipt while holding separate
+locks and separate inventories each admitted an item the other never counted.
+
+The receipt itself must be committed: an R5 measurement that lives only in a
+working tree, or in ``/tmp``, is not evidence and cannot authorize compute.  On
+a compute arm the guard argv must pin ``--expect-root`` to this repository and
+must not carry ``--allow`` or any interpreter/PYTHONPATH escape, because those
+turn the guard's own positive control into a pass for the wrong tree.  Binding
+the guard binds its subprocess shim as well: the guard reaches inheriting Python
+children only through ``nd-unfolding/mnv_guard_shim/sitecustomize.py``, so an
+unbound shim is a mutable half of the guard and replacing it alone let a child
+load the wrong tree while the run returned 0.
 """
 
 from __future__ import annotations
@@ -47,12 +65,23 @@ from typing import Callable, Iterator
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent.parent.resolve()
-DEFAULT_STATE = HERE / "state" / "campaign-queue"
+#: Repository-relative location of the ONE queue whose lock and reservation inventory
+#: cover the whole campaign.  It is stated relative to a repository root, not as an
+#: absolute path, because the queue's own repository is what makes a state directory
+#: canonical: a test's temporary checkout has its own canonical directory.
+CANONICAL_STATE_RELATIVE = Path("docs/orchestration/state/campaign-queue")
+DEFAULT_STATE = REPO / CANONICAL_STATE_RELATIVE
 ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 PYTHON = Path("/usr/bin/python3.11")
 ALLOWED_PYTHONS = {PYTHON, Path(sys.executable).resolve()}
 GUARD_PATH = Path("nd-unfolding/mnv_guarded_run.py")
+#: The guard's subprocess half.  ``mnv_guarded_run.py`` reaches an inheriting Python
+#: child only by prepending this directory to ``PYTHONPATH``, so the child's guard is
+#: whatever bytes sit at this path when the child starts.  Binding the guard without
+#: binding this file leaves the enforcing half mutable, which is why it is bound
+#: everywhere the guard is.
+GUARD_SHIM_PATH = Path("nd-unfolding/mnv_guard_shim/sitecustomize.py")
 DEFAULT_R5_RECEIPT = Path("docs/orchestration/state/r5-meter-receipt.json")
 R5_STOP_DATE = dt.datetime(2026, 9, 30, tzinfo=dt.timezone.utc)
 # R5 §3 fixes the baseline at "the commit instant of this record", so the instant is
@@ -139,12 +168,24 @@ R5_SPEND_KEYS = frozenset(
 )
 R5_FIRED_KEYS = frozenset({"date", "gpu", "cpu", "any"})
 
-#: States in which a compute item still holds its declared task-hours against the R5
-#: ceilings.  ``outcome-unknown`` is the claimed-or-running case: the claim exists and
-#: no terminal receipt has been written, so the spend it may already have incurred is
-#: not in any receipt yet and must stay reserved.  The complement -- refused, failed,
-#: succeeded, stale and revoked -- is terminal and releases the reservation.
+#: States in which a compute item holds its declared task-hours against the R5
+#: ceilings whatever any receipt says.  ``staged`` and ``approved`` have not spent
+#: yet and may spend at any tick; ``outcome-unknown`` is the claimed-or-running case,
+#: where the claim exists and no terminal receipt has been written.  A TERMINAL state
+#: is not automatically a release: see :func:`reservation_hold`.
 RESERVING_STATES = frozenset({"staged", "approved", "outcome-unknown"})
+#: Field :func:`write_outcome` stamps with the queue clock, and therefore the instant
+#: an item's terminal outcome was recorded.  A receipt must be measured strictly after
+#: it before that item's reservation is released.
+OUTCOME_INSTANT_FIELD = "completed_at_utc"
+#: Reason a finished compute item still reserves: it ran, so it may have spent, and no
+#: committed receipt has been measured since it stopped.
+UNREMEASURED_HOLD = "terminal, not yet remeasured"
+#: Refusal for a queue whose state directory is not the campaign's single canonical
+#: one.  The lock and the reservation inventory are properties of that ONE directory,
+#: so a second directory cannot see -- and cannot be seen by -- the reservations that
+#: bound the ceiling.
+NON_CANONICAL_STATE_REASON = "non-canonical state dir cannot admit compute"
 ADMISSION_LOCK_NAME = "admission.lock"
 ADMISSION_LOCK_LOG = "admission-lock.log"
 #: Interpreter flags that change where imports come from, and therefore defeat the
@@ -535,6 +576,25 @@ class Queue:
         self.state = state.resolve()
         self.clock = clock
 
+    @property
+    def canonical_state(self) -> Path:
+        """Return the one state directory that may admit compute for this repo."""
+        return (self.repo / CANONICAL_STATE_RELATIVE).resolve()
+
+    def state_is_canonical(self) -> bool:
+        """Report whether this queue IS the campaign-global queue of its repository.
+
+        Returns
+        -------
+        bool
+            ``True`` only when the resolved state directory is
+            ``<repo>/docs/orchestration/state/campaign-queue``.  The comparison is
+            on resolved paths so a spelling with ``..``, a relative path or a
+            symlinked temporary root is recognised, and so a directory that merely
+            looks similar is not.
+        """
+        return self.state == self.canonical_state
+
     def path(self, family: str, item_id: str) -> Path:
         validate_id(item_id)
         return self.state / family / f"{item_id}.json"
@@ -704,7 +764,8 @@ def command_bindings(
     require_guard : bool, optional
         Require the command to route through ``nd-unfolding/mnv_guarded_run.py``
         in its production form (see :func:`validate_guarded_argv`) and bind the
-        guarded target after the mandatory ``--``.
+        guarded target after the mandatory ``--`` together with the guard's
+        subprocess shim ``nd-unfolding/mnv_guard_shim/sitecustomize.py``.
     role : str, optional
         Name of the command's role, used in guard refusal messages so a producer
         refusal and a terminal-validator refusal are distinguishable.
@@ -761,6 +822,20 @@ def command_bindings(
             raise QueueError(f"guarded target is not a repository .py file: {target}")
         argv[separator_index + 1] = str(target)
         bound.append(target)
+        # The shim is the guard's other half, not one of its inputs.  `install()`
+        # prepends its directory to PYTHONPATH and every inheriting Python child
+        # loads the guard through it, so a child's guard is whatever bytes are at
+        # this path when the child starts.  Bound here, it obeys the guard's own
+        # rules -- tracked, HEAD-identical at staging, re-verified before execution
+        # -- and swapping only the shim can no longer send a child to another tree.
+        shim = (repo / GUARD_SHIM_PATH).resolve()
+        if not shim.is_file():
+            raise QueueError(
+                f"guarded {role} command requires the guard's subprocess shim "
+                f"{GUARD_SHIM_PATH.as_posix()}, which is how the guard reaches "
+                "inheriting Python children"
+            )
+        bound.append(shim)
     for value in explicit:
         path = resolve_repo_path(repo, value)
         if not path.is_file():
@@ -1135,31 +1210,96 @@ def committed_r5_receipt(queue: Queue) -> tuple[Path | None, str | None]:
     return receipt_path, None
 
 
-def reserved_task_hours(
-    queue: Queue, item: dict
-) -> tuple[dict[str, float], list[str]]:
-    """Sum the task-hours other non-terminal compute items hold in reserve.
+def terminal_outcome_instant(queue: Queue, item_id: str) -> dt.datetime:
+    """Return the instant a queue item's terminal outcome was recorded.
 
-    A ceiling is a property of the whole queue, not of one item.  Checking only
-    ``spend + this item`` lets each of two items pass while their combined
-    projection is over the ceiling, so every other compute item that is not in a
-    terminal outcome reserves its full declared ``maximum_cost`` here.  When the
-    total reservation leaves no headroom the refusal is retryable and applies to
-    every affected item: releasing it is a human act -- revoke an item, or meter
-    a fresh receipt -- and never something a tick decides for itself.
+    Raises
+    ------
+    QueueError
+        If the outcome cannot be read or carries no parseable
+        ``completed_at_utc``.  Refusing beats guessing: an undated terminal
+        outcome must not read as "old enough that the meter has seen it", so the
+        refusal is loud and names the item rather than releasing its hours.
+    """
+    outcome = read_object(queue.path("outcomes", item_id))
+    return parse_utc(
+        outcome.get(OUTCOME_INSTANT_FIELD),
+        field=f"outcome {item_id} {OUTCOME_INSTANT_FIELD}",
+    )
+
+
+def reservation_hold(
+    queue: Queue, item: dict, measured_at: dt.datetime
+) -> str | None:
+    """Return why ``item`` still reserves its declared task-hours, or ``None``.
+
+    A reservation is released by ACCOUNTING, not by finishing.  R5 §3 counts a
+    failed, cancelled or timed-out task in full and lets jobs running at the stop
+    run to completion with their spend counted, so the hours an item consumed are
+    real from the moment it was claimed and stay uncounted until an accounting
+    query looks after it stopped.  An item that reached a terminal outcome by
+    RUNNING -- succeeded, failed, timed out, launcher error: anything after a
+    claim -- therefore keeps its full declared maximum reserved until a committed
+    receipt whose ``measured_at_utc`` is strictly LATER than its outcome exists,
+    i.e. until the meter has had the chance to see that spend.  An item that never
+    ran has no claim, so refused, stale, revoked and never-claimed items release
+    at once.
 
     Parameters
     ----------
     queue : Queue
-        Queue whose items and outcome records define the current states.
+        Queue whose claims and outcome records date the item.
+    item : dict
+        Compute item whose reservation is being classified.
+    measured_at : dt.datetime
+        ``measured_at_utc`` of the committed receipt admission is checking
+        against.
+
+    Returns
+    -------
+    str or None
+        A short reason the reservation is held, used verbatim in the refusal so
+        the held hours are attributable; ``None`` when the item releases.
+    """
+    state = state_of(queue, item)
+    if state in RESERVING_STATES:
+        return state
+    if not queue.path("claims", item["id"]).exists():
+        return None
+    if measured_at > terminal_outcome_instant(queue, str(item["id"])):
+        return None
+    return UNREMEASURED_HOLD
+
+
+def reserved_task_hours(
+    queue: Queue, item: dict, measured_at: dt.datetime
+) -> tuple[dict[str, float], list[str]]:
+    """Sum the task-hours other compute items hold in reserve.
+
+    A ceiling is a property of the whole queue, not of one item.  Checking only
+    ``spend + this item`` lets each of two items pass while their combined
+    projection is over the ceiling, so every other compute item that
+    :func:`reservation_hold` still holds reserves its full declared
+    ``maximum_cost`` here.  When the total reservation leaves no headroom the
+    refusal is retryable and applies to every affected item: releasing it is a
+    human act -- revoke an item, or meter and commit a fresh receipt -- and never
+    something a tick decides for itself.
+
+    Parameters
+    ----------
+    queue : Queue
+        Queue whose items, claims and outcome records define the current states.
     item : dict
         Item being admitted, excluded from its own reservation total.
+    measured_at : dt.datetime
+        ``measured_at_utc`` of the committed receipt admission is checking
+        against, which is what releases a finished item's reservation.
 
     Returns
     -------
     tuple[dict[str, float], list[str]]
-        Reserved task-hours per metered resource, and the sorted ids of the
-        items holding them.
+        Reserved task-hours per metered resource, and the sorted holders, each
+        given as ``"<id> (<reason>)"``.
     """
     reservations = {resource: 0.0 for resource in R5_METERED_RESOURCES}
     reserving: list[str] = []
@@ -1172,7 +1312,8 @@ def reserved_task_hours(
         maximum_cost = contract.get("maximum_cost")
         if not isinstance(maximum_cost, dict):
             continue
-        if state_of(queue, other) not in RESERVING_STATES:
+        hold = reservation_hold(queue, other, measured_at)
+        if hold is None:
             continue
         for resource in R5_METERED_RESOURCES:
             if resource not in maximum_cost:
@@ -1185,12 +1326,38 @@ def reserved_task_hours(
             reservations[resource] += require_nonnegative_number(
                 maximum_cost[resource], field=f"maximum_cost.{resource}"
             )
-        reserving.append(str(other["id"]))
+        reserving.append(f"{other['id']} ({hold})")
     return reservations, sorted(reserving)
+
+
+def non_canonical_state_refusal(queue: Queue) -> str | None:
+    """Return the refusal for a queue that may not admit compute, or ``None``.
+
+    The admission lock, the reservation inventory and the R5 headroom check are
+    all properties of ONE state directory.  Two queues under different
+    ``--state-dir`` values read the same committed receipt, take separate locks,
+    scan separate inventories, and each admit an item the other never counted --
+    the reviewer's mutation, where two queues sharing one receipt each admitted a
+    six-hour item.  Compute admission is therefore possible only from the
+    canonical directory; a queue elsewhere may still stage, approve and run
+    non-compute items.
+    """
+    if queue.state_is_canonical():
+        return None
+    return (
+        f"{NON_CANONICAL_STATE_REASON}: the lock and the reservation inventory "
+        f"are properties of {queue.canonical_state}, not of {queue.state}"
+    )
 
 
 def r5_refusal_reason(queue: Queue, item: dict) -> str | None:
     """Return the compute-prohibition reason, or ``None`` when R5 permits a run."""
+    # First, because a headroom answer computed from a partial inventory is not a
+    # weaker answer, it is a different question.  This queue can only count the
+    # reservations its own state directory holds.
+    non_canonical = non_canonical_state_refusal(queue)
+    if non_canonical is not None:
+        return non_canonical
     receipt_path, refusal = committed_r5_receipt(queue)
     if receipt_path is None:
         return refusal
@@ -1233,7 +1400,7 @@ def r5_refusal_reason(queue: Queue, item: dict) -> str | None:
     maximum_cost = contract["maximum_cost"]
     if not isinstance(maximum_cost, dict):
         raise QueueError("validated campaign contract lost maximum_cost")
-    reservations, reserving = reserved_task_hours(queue, item)
+    reservations, reserving = reserved_task_hours(queue, item, measured_at)
     for resource in R5_METERED_RESOURCES:
         spent = float(spend[resource])
         reserved = reservations[resource]
@@ -1349,12 +1516,19 @@ def ready_item(queue: Queue) -> dict | None:
 
 
 def write_outcome(queue: Queue, item: dict, status: str, **extra: object) -> dict:
+    """Record a terminal outcome, stamped with the instant it became terminal.
+
+    ``completed_at_utc`` is not decoration: :func:`reservation_hold` compares a
+    receipt's ``measured_at_utc`` against it to decide whether the meter has yet
+    had the chance to see this item's spend, so it is written for every outcome
+    and never omitted.
+    """
     value = {
         "schema_version": 1,
         "id": item["id"],
         "proposal_digest": item["proposal_digest"],
         "status": status,
-        "completed_at_utc": queue.clock(),
+        OUTCOME_INSTANT_FIELD: queue.clock(),
         **extra,
     }
     outcome_path = queue.path("outcomes", item["id"])
@@ -1719,6 +1893,11 @@ def admission_lock(queue: Queue, item: dict) -> Iterator[Path]:
 def admit(queue: Queue, item: dict) -> tuple[int, dict] | None:
     """Check R5 headroom and claim ``item`` under one exclusive lock.
 
+    A compute item is admissible only from the canonical state directory, and
+    that is settled BEFORE the lock: a lock file in a second state directory
+    excludes nobody, so taking one there would manufacture the appearance of the
+    exclusion it cannot provide.
+
     Parameters
     ----------
     queue : Queue
@@ -1732,6 +1911,12 @@ def admit(queue: Queue, item: dict) -> tuple[int, dict] | None:
         ``None`` when the item is admitted and its claim exists; otherwise the
         exit code and value the tick must return without running anything.
     """
+    if item["kind"] == "compute":
+        non_canonical = non_canonical_state_refusal(queue)
+        if non_canonical is not None:
+            return 6, write_outcome(
+                queue, item, "refused", reason=non_canonical, consumed=False
+            )
     try:
         with admission_lock(queue, item):
             if item["kind"] == "compute":
@@ -1793,7 +1978,16 @@ def run_ready(queue: Queue) -> tuple[int, dict]:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--state-dir", default=os.environ.get("CAMPAIGN_QUEUE_STATE_DIR", str(DEFAULT_STATE)))
+    parser.add_argument(
+        "--state-dir",
+        default=os.environ.get("CAMPAIGN_QUEUE_STATE_DIR", str(DEFAULT_STATE)),
+        help=(
+            "queue state directory; only the canonical "
+            f"{CANONICAL_STATE_RELATIVE.as_posix()} may admit compute items, "
+            "since the admission lock and the reservation inventory are "
+            "properties of that one directory (default: %(default)s)"
+        ),
+    )
     sub = parser.add_subparsers(dest="action", required=True)
     p = sub.add_parser("stage")
     p.add_argument("--id", required=True)

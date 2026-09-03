@@ -67,9 +67,12 @@ class CampaignQueueTests(unittest.TestCase):
         guard.write_bytes(REAL_GUARD.read_bytes())
         # The guard refuses to install (COULD NOT LOOK, exit 2) unless its tracked subprocess
         # shim sits beside it, so the fixture checkout carries the shim as the real one does.
+        # It is COMMITTED like the guard below, because the shim is the guard's enforcing half
+        # in every inheriting child and the queue binds it under the guard's own rules.
         shim_dir = guard.parent / "mnv_guard_shim"
         shim_dir.mkdir(parents=True, exist_ok=True)
-        (shim_dir / "sitecustomize.py").write_bytes(
+        self.shim = shim_dir / "sitecustomize.py"
+        self.shim.write_bytes(
             (REAL_GUARD.parent / "mnv_guard_shim" / "sitecustomize.py").read_bytes()
         )
         # `mnv_guarded_run.py` recognises a checkout by the marker PAIR, so the fixture
@@ -127,6 +130,7 @@ class CampaignQueueTests(unittest.TestCase):
                 "brief_producer.py",
                 "VALIDATION_LEDGER.md",
                 "nd-unfolding/mnv_guarded_run.py",
+                "nd-unfolding/mnv_guard_shim/sitecustomize.py",
             ],
             check=True,
         )
@@ -134,11 +138,15 @@ class CampaignQueueTests(unittest.TestCase):
             ["git", "-C", str(self.repo), "commit", "-qm", "initial"],
             check=True,
         )
+        # Compute is admissible only from the CANONICAL state directory of the queue's
+        # own repository, so the fixture queue lives at the temporary checkout's
+        # canonical path rather than at an arbitrary directory beside it.
         self.queue = campaignctl.Queue(
             repo=self.repo,
-            state=self.root / "state",
+            state=self.repo / campaignctl.CANONICAL_STATE_RELATIVE,
             clock=lambda: "2026-09-29T12:00:00+00:00",
         )
+        self.assertTrue(self.queue.state_is_canonical())
         self.receipts = 0
         # The R5 receipt is evidence, so it must be COMMITTED before it can admit
         # anything. Every test therefore commits its receipt into the fixture
@@ -157,6 +165,7 @@ class CampaignQueueTests(unittest.TestCase):
         timeout_seconds: int = 30,
         guarded: bool = True,
         argv: list[str] | None = None,
+        queue: campaignctl.Queue | None = None,
     ) -> dict:
         target = script or "work.py"
         if argv is None:
@@ -164,7 +173,7 @@ class CampaignQueueTests(unittest.TestCase):
             if kind == "compute" and guarded:
                 argv = self.guarded_argv(target)
         return campaignctl.stage(
-            self.queue,
+            queue or self.queue,
             item_id,
             "test item",
             kind,
@@ -175,6 +184,37 @@ class CampaignQueueTests(unittest.TestCase):
             timeout_seconds,
             contract,
         )
+
+    def other_queue(self, name: str = "second-queue-state") -> campaignctl.Queue:
+        """Return a queue on the SAME repository at a non-canonical state directory.
+
+        This is the second half of the reviewer's mutation: one repository, one
+        committed receipt, and a second "campaign-global" lock and inventory that
+        the canonical queue cannot see. The helper asserts nothing about
+        ``state_is_canonical``: a precondition check here would refuse the
+        mutation before it reached the behaviour the test is about.
+        """
+        return campaignctl.Queue(
+            repo=self.repo, state=self.root / name, clock=self.queue.clock
+        )
+
+    def finish_item(
+        self, item_id: str, at_utc: str, status: str = "succeeded"
+    ) -> dict:
+        """Record a terminal outcome for a claimed item, stamped at ``at_utc``.
+
+        ``write_outcome`` is campaignctl's only writer of an outcome record, so the
+        fixture calls it rather than restating the record's shape -- a hand-written
+        outcome could only ever agree with what this suite assumed.
+        """
+        previous = self.queue.clock
+        self.queue.clock = lambda: at_utc
+        try:
+            return campaignctl.write_outcome(
+                self.queue, self.queue.item(item_id), status, returncode=0
+            )
+        finally:
+            self.queue.clock = previous
 
     def guarded_argv(
         self,
@@ -250,9 +290,16 @@ class CampaignQueueTests(unittest.TestCase):
             )
         return path.name
 
-    def approve(self, item: dict[str, object]) -> dict:
+    def approve(
+        self,
+        item: dict[str, object],
+        queue: campaignctl.Queue | None = None,
+    ) -> dict:
         return campaignctl.approve(
-            self.queue, item["id"], item["proposal_digest"], interactive=False
+            queue or self.queue,
+            item["id"],
+            item["proposal_digest"],
+            interactive=False,
         )
 
     def run_ready(
@@ -1038,18 +1085,213 @@ class CampaignQueueTests(unittest.TestCase):
             ["alpha"],
         )
 
-    def test_a_terminal_outcome_releases_its_reservation(self) -> None:
-        """A reservation that outlived its item would be a permanent refusal."""
-        receipt = self.install_receipt("near-gpu-ceiling")
-        self._alpha_in_flight_with_beta_ready(receipt)
-        campaignctl.write_outcome(
-            self.queue, self.queue.item("alpha"), "succeeded", returncode=0
+    def test_a_ran_reservation_lives_until_a_receipt_remeasures_it(self) -> None:
+        """The reviewer's mutation: 490 recorded, two six-hour items, alpha terminal.
+
+        A terminal outcome released the reservation the instant it was written,
+        while the same receipt stayed valid for 24 h -- so beta was admitted
+        against accounting that had never looked at alpha, and actual spend can
+        reach 502. R5 §3 counts a task in full however it ended and lets a job
+        running at the stop finish with its spend counted, so what releases
+        alpha's hours is the METER seeing them, not alpha stopping. Until a
+        committed receipt is measured strictly after alpha's outcome, alpha keeps
+        reserving its full declared maximum.
+        """
+        before = self.install_receipt(
+            "near-gpu-ceiling", measured_at_utc="2026-09-29T06:00:00+00:00"
         )
+        after = self.install_receipt(
+            "near-gpu-ceiling", measured_at_utc="2026-09-29T10:00:00+00:00"
+        )
+        self._alpha_in_flight_with_beta_ready(before)
+        self.finish_item("alpha", "2026-09-29T08:00:00+00:00")
+        self.assertEqual(
+            campaignctl.state_of(self.queue, self.queue.item("alpha")), "succeeded"
+        )
+
+        rc, outcome = self.run_ready(before)
+
+        self.assertEqual(
+            (rc, outcome["status"], outcome["id"]), (6, "refused", "beta")
+        )
+        self.assertIn("gpu_task_hours ceiling would be reached", outcome["reason"])
+        self.assertIn("490 + 6 + 6 >= 500", outcome["reason"])
+        self.assertIn(
+            "reserved by alpha (terminal, not yet remeasured)", outcome["reason"]
+        )
+        self.assertFalse(self.queue.path("claims", "beta").exists())
+        self.assertFalse((self.repo / "validator-ran").exists())
+
+        # The reconciliation step: a receipt measured AFTER alpha's outcome is the
+        # first accounting query that could have seen alpha's spend, so it -- and
+        # only it -- releases the reservation.
+        rc, outcome = self.run_ready(after)
+
+        self.assertEqual(
+            (rc, outcome["status"], outcome["id"]), (0, "succeeded", "beta")
+        )
+        self.assertTrue(self.queue.path("claims", "beta").exists())
+
+    def test_an_item_that_never_ran_releases_its_reservation_at_once(self) -> None:
+        """The opposite direction, or every reservation would be permanent.
+
+        An item that never reached a claim has no spend for any receipt to
+        account for, so revoked, refused, stale and never-claimed items release
+        immediately. Only the run half waits for the meter.
+        """
+        receipt = self.install_receipt("near-gpu-ceiling")
+        alpha_contract = self.six_hour_contract("alpha")
+        beta_contract = self.six_hour_contract("beta")
+        alpha = self.stage("alpha", kind="compute", contract=alpha_contract)
+        self.approve(alpha)
+        beta = self.stage("beta", kind="compute", contract=beta_contract)
+        self.approve(beta)
+
+        with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": receipt}):
+            held = campaignctl.r5_refusal_reason(
+                self.queue, self.queue.item(beta["id"])
+            )
+        self.assertIn("reserved by alpha (approved)", str(held))
+
+        campaignctl.revoke(self.queue, "alpha", interactive=False)
+        self.assertEqual(
+            campaignctl.state_of(self.queue, self.queue.item("alpha")), "revoked"
+        )
+        with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": receipt}):
+            self.assertIsNone(
+                campaignctl.r5_refusal_reason(
+                    self.queue, self.queue.item(beta["id"])
+                )
+            )
 
         rc, outcome = self.run_ready(receipt)
 
+        self.assertEqual(
+            (rc, outcome["status"], outcome["id"]), (0, "succeeded", "beta")
+        )
+
+    def test_a_refusal_before_the_claim_releases_its_reservation(self) -> None:
+        """A refused item never spent, so it must not pin the ceiling for 24 h."""
+        receipt = self.install_receipt("near-gpu-ceiling")
+        alpha_contract = self.six_hour_contract("alpha")
+        beta_contract = self.six_hour_contract("beta")
+        alpha = self.stage("alpha", kind="compute", contract=alpha_contract)
+        beta = self.stage("beta", kind="compute", contract=beta_contract)
+        # `admit` refuses BEFORE the claim through exactly this call, so the fixture
+        # is built by the producer of the record rather than restating its shape.
+        campaignctl.write_outcome(
+            self.queue, alpha, "refused", reason="fixture refusal", consumed=False
+        )
+        self.assertEqual(campaignctl.state_of(self.queue, alpha), "refused")
+        self.assertFalse(self.queue.path("claims", "alpha").exists())
+
+        with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": receipt}):
+            self.assertIsNone(
+                campaignctl.r5_refusal_reason(
+                    self.queue, self.queue.item(beta["id"])
+                )
+            )
+
+    def test_only_the_canonical_state_dir_can_admit_compute(self) -> None:
+        """The reviewer's mutation: two queues, one receipt, a six-hour item each.
+
+        "Campaign-global" was scoped to whatever ``--state-dir`` named, so each
+        queue took its own lock, scanned its own inventory, and admitted an item
+        the other had never counted -- 490 recorded and 502 projected again, this
+        time by splitting the queue instead of releasing a reservation. The
+        canonical directory of the queue's own repository is the only one whose
+        inventory can be complete, so it alone admits compute.
+        """
+        receipt = self.install_receipt("near-gpu-ceiling")
+        alpha_contract = self.six_hour_contract("alpha")
+        beta_contract = self.six_hour_contract("beta")
+        other = self.other_queue()
+        alpha = self.stage("alpha", kind="compute", contract=alpha_contract)
+        self.approve(alpha)
+        beta = self.stage(
+            "beta", kind="compute", contract=beta_contract, queue=other
+        )
+        self.approve(beta, queue=other)
+
+        rc, outcome = self.run_ready(receipt)
+
+        self.assertEqual(
+            (rc, outcome["status"], outcome["id"]), (0, "succeeded", "alpha")
+        )
+
+        with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": receipt}):
+            rc_other, outcome_other = campaignctl.run_ready(other)
+
+        self.assertEqual((rc_other, outcome_other["status"]), (6, "refused"))
+        self.assertEqual(outcome_other["id"], "beta")
+        self.assertIn(
+            "non-canonical state dir cannot admit compute", outcome_other["reason"]
+        )
+        self.assertFalse(other.path("claims", "beta").exists())
+        # No lock is taken there either: a lock file in a second state directory
+        # excludes nobody, so taking one would manufacture the appearance of an
+        # exclusion it cannot provide.
+        self.assertFalse((other.state / campaignctl.ADMISSION_LOCK_NAME).exists())
+
+    def test_a_non_canonical_state_dir_still_runs_non_compute_items(self) -> None:
+        """The refusal must act only where it was aimed: non-compute is unaffected."""
+        other = self.other_queue()
+        item = self.stage("one", queue=other)
+        self.approve(item, queue=other)
+
+        rc, outcome = campaignctl.run_ready(other)
+
         self.assertEqual((rc, outcome["status"]), (0, "succeeded"))
-        self.assertEqual(outcome["id"], "beta")
+        self.assertEqual((self.repo / "ran").read_text(), "yes")
+        self.assertTrue(other.path("claims", "one").exists())
+
+    def test_two_canonical_queues_on_one_repo_share_the_admission_lock(self) -> None:
+        """One repository has ONE campaign queue, so a second view of it is that queue.
+
+        The state directory is compared after resolution, so a spelling with a
+        ``..`` segment is the same queue and takes the same lock.
+        """
+        contract = self.write_contract(
+            commit=True, validator_script="validator_success.py"
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        self.approve(item)
+        twin = campaignctl.Queue(
+            repo=self.repo,
+            state=(
+                self.repo
+                / "docs"
+                / "orchestration"
+                / ".."
+                / "orchestration"
+                / "state"
+                / "campaign-queue"
+            ),
+            clock=self.queue.clock,
+        )
+        self.assertTrue(twin.state_is_canonical())
+        self.assertEqual(twin.state, self.queue.state)
+        lock = twin.state / campaignctl.ADMISSION_LOCK_NAME
+        lock.parent.mkdir(parents=True, exist_ok=True)
+        lock.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "id": "another-item",
+                    "owner": "twin-host:4242",
+                    "acquired_at_utc": "2026-09-29T11:59:50+00:00",
+                }
+            )
+        )
+
+        rc, value = self.run_ready()
+
+        self.assertEqual((rc, value["status"]), (5, "outcome-unknown"))
+        self.assertIn("admission lock held by twin-host:4242", value["reason"])
+        self.assertFalse(self.queue.path("claims", item["id"]).exists())
+        self.assertFalse((self.repo / "ran").exists())
 
     def test_a_held_admission_lock_admits_nothing(self) -> None:
         """A concurrent lock holder means this ticker cannot know, so it claims nothing."""
@@ -1307,6 +1549,88 @@ class CampaignQueueTests(unittest.TestCase):
                         argv=self.guarded_argv("work.py", extra=extra),
                     )
                 self.assertFalse(self.queue.path("items", item_id).exists())
+
+    def test_the_guard_shim_is_bound_and_a_swap_refuses_before_execution(self) -> None:
+        """The reviewer's mutation: replace ONLY the shim after staging.
+
+        ``command_bindings`` bound the guard and the guarded target but not
+        ``nd-unfolding/mnv_guard_shim/sitecustomize.py``, which is the file every
+        inheriting Python child loads the guard through. Swapping it alone left the
+        proposal digest, the guard and the target all intact, so a child could load
+        the wrong tree and the run still returned 0. Bound, the shim obeys the
+        guard's own rule and the item does not run at all.
+        """
+        contract = self.write_contract(
+            commit=True, validator_script="validator_success.py"
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        self.approve(item)
+
+        self.shim.write_text("import sys\nsys.path.insert(0, '/elsewhere')\n")
+
+        # The observable consequence first, because that is what the mutation
+        # produced: unbound, this tick returned 0 with the item run.
+        rc, outcome = self.run_ready()
+
+        self.assertEqual((rc, outcome["status"]), (4, "stale"))
+        self.assertIn("mnv_guard_shim/sitecustomize.py", outcome["error"])
+        self.assertFalse((self.repo / "ran").exists())
+        self.assertFalse((self.repo / "validator-ran").exists())
+        self.assertFalse(self.queue.path("claims", item["id"]).exists())
+
+        with self.assertRaisesRegex(
+            campaignctl.QueueError,
+            r"bound file changed after staging: "
+            r"nd-unfolding/mnv_guard_shim/sitecustomize\.py",
+        ):
+            campaignctl.validate_unchanged(self.queue, item)
+        bound = {binding["path"] for binding in item["bindings"]}
+        self.assertIn("nd-unfolding/mnv_guarded_run.py", bound)
+        self.assertIn("nd-unfolding/mnv_guard_shim/sitecustomize.py", bound)
+
+    def test_an_untracked_or_missing_guard_shim_is_refused_at_staging(self) -> None:
+        """At staging the shim obeys the guard's rules too: tracked, then present."""
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                str(self.repo),
+                "rm",
+                "-q",
+                "--cached",
+                "nd-unfolding/mnv_guard_shim/sitecustomize.py",
+            ],
+            check=True,
+        )
+        subprocess.run(
+            ["git", "-C", str(self.repo), "commit", "-qm", "untrack the shim"],
+            check=True,
+        )
+        self.assertTrue(self.shim.is_file())
+        untracked = self.named_contract(
+            "untracked-shim", validator_script="validator_success.py"
+        )
+
+        with self.assertRaisesRegex(
+            campaignctl.QueueError,
+            r"must be committed at repository HEAD: "
+            r"nd-unfolding/mnv_guard_shim/sitecustomize\.py",
+        ):
+            self.stage("untracked-shim", kind="compute", contract=untracked)
+        self.assertFalse(self.queue.path("items", "untracked-shim").exists())
+
+        self.shim.unlink()
+        missing = self.named_contract(
+            "missing-shim", validator_script="validator_success.py"
+        )
+
+        with self.assertRaisesRegex(
+            campaignctl.QueueError, "requires the guard's subprocess shim"
+        ):
+            self.stage("missing-shim", kind="compute", contract=missing)
+        self.assertFalse(self.queue.path("items", "missing-shim").exists())
 
     def test_a_clean_guarded_argv_is_accepted(self) -> None:
         """The refusals must stay silent on the argv a correct arm actually has."""
