@@ -3,6 +3,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from collections.abc import Callable
 from pathlib import Path
@@ -17,6 +18,10 @@ R5_FIXTURES = {
     name: FIXTURE_DIR / f"r5-meter-{name}.json"
     for name in ("healthy", "stale", "fired", "headroom-exhausting", "malformed")
 }
+#: The real OI-136 guard, copied into every fixture repository rather than restated.
+#: A hand-written stand-in would be a second implementation of the rule under test,
+#: and its refusals would only ever agree with whatever this suite assumed.
+REAL_GUARD = campaignctl.REPO / campaignctl.GUARD_PATH
 
 
 class CampaignQueueTests(unittest.TestCase):
@@ -52,13 +57,23 @@ class CampaignQueueTests(unittest.TestCase):
         )
         guard = self.repo / "nd-unfolding" / "mnv_guarded_run.py"
         guard.parent.mkdir()
-        guard.write_text(
-            "import runpy\n"
+        guard.write_bytes(REAL_GUARD.read_bytes())
+        # `mnv_guarded_run.py` recognises a checkout by the marker PAIR, so the fixture
+        # repository needs both markers before `--expect-root` can name it.
+        (self.repo / "VALIDATION_LEDGER.md").write_text("fixture ledger\n")
+        # A second checkout outside the fixture repository, holding the logic the
+        # reviewer's mutated validator reaches for. This is the OI-136 shape: an
+        # uncommitted tree whose module decides the terminal branch.
+        self.outside = self.root / "outside-checkout"
+        (self.outside / "nd-unfolding").mkdir(parents=True)
+        (self.outside / "VALIDATION_LEDGER.md").write_text("other ledger\n")
+        (self.outside / "decisive_criterion.py").write_text("VERDICT = 0\n")
+        self.sneaky_validator = self.repo / "sneaky_validator.py"
+        self.sneaky_validator.write_text(
             "import sys\n"
-            "separator = sys.argv.index('--')\n"
-            "script = sys.argv[separator + 1]\n"
-            "sys.argv = [script, *sys.argv[separator + 2:]]\n"
-            "runpy.run_path(script, run_name='__main__')\n"
+            f"sys.path.insert(0, {str(self.outside)!r})\n"
+            "import decisive_criterion\n"
+            "raise SystemExit(decisive_criterion.VERDICT)\n"
         )
         self.validator_success = self.repo / "validator_success.py"
         self.validator_success.write_text(
@@ -82,6 +97,8 @@ class CampaignQueueTests(unittest.TestCase):
         )
         self.timeout_script = self.repo / "timeout.py"
         self.timeout_script.write_text("import time\ntime.sleep(2)\n")
+        self.brief_script = self.repo / "brief_producer.py"
+        self.brief_script.write_text("import time\ntime.sleep(0.4)\n")
         subprocess.run(
             [
                 "git",
@@ -91,7 +108,10 @@ class CampaignQueueTests(unittest.TestCase):
                 "work.py",
                 "validator_failure.py",
                 "validator_success.py",
+                "sneaky_validator.py",
                 "timeout.py",
+                "brief_producer.py",
+                "VALIDATION_LEDGER.md",
                 "nd-unfolding/mnv_guarded_run.py",
             ],
             check=True,
@@ -120,14 +140,7 @@ class CampaignQueueTests(unittest.TestCase):
         target = script or "work.py"
         argv = [sys.executable, target]
         if kind == "compute" and guarded:
-            argv = [
-                sys.executable,
-                "nd-unfolding/mnv_guarded_run.py",
-                "--expect-root",
-                str(self.repo),
-                "--",
-                target,
-            ]
+            argv = self.guarded_argv(target)
         return campaignctl.stage(
             self.queue,
             item_id,
@@ -141,17 +154,33 @@ class CampaignQueueTests(unittest.TestCase):
             contract,
         )
 
+    def guarded_argv(self, target: str) -> list[str]:
+        """Return the argv a compute command must have: routed through the guard."""
+        return [
+            sys.executable,
+            "nd-unfolding/mnv_guarded_run.py",
+            "--expect-root",
+            str(self.repo),
+            "--",
+            target,
+        ]
+
     def write_contract(
         self,
         *,
         commit: bool = False,
         validator_script: str = "validator_failure.py",
+        guarded_validator: bool = True,
         mutate: Callable[[dict[str, object]], None] | None = None,
     ) -> str:
         contract = json.loads(CONTRACT_FIXTURE.read_text())
         terminal_validator = contract["terminal_validator"]
         assert isinstance(terminal_validator, dict)
-        terminal_validator["argv"] = [sys.executable, validator_script]
+        terminal_validator["argv"] = (
+            self.guarded_argv(validator_script)
+            if guarded_validator
+            else [sys.executable, validator_script]
+        )
         if mutate is not None:
             mutate(contract)
         path = self.repo / "campaign-contract.json"
@@ -174,11 +203,29 @@ class CampaignQueueTests(unittest.TestCase):
     def run_ready(
         self, receipt: str = "healthy"
     ) -> tuple[int, dict[str, object]]:
-        with mock.patch.dict(
-            os.environ,
-            {"CAMPAIGN_R5_RECEIPT": str(R5_FIXTURES[receipt])},
-        ):
+        path = R5_FIXTURES.get(receipt, Path(receipt))
+        with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": str(path)}):
             return campaignctl.run_ready(self.queue)
+
+    def mutated_receipt(self, **changes: object) -> str:
+        """Write the healthy receipt with fields replaced, and return its path.
+
+        Parameters
+        ----------
+        **changes : object
+            Receipt fields to overwrite, named exactly as the meter writes them.
+
+        Returns
+        -------
+        str
+            Path to the mutated receipt, outside the fixture directory so the
+            checked-in receipts keep the ruled values.
+        """
+        receipt = json.loads(R5_FIXTURES["healthy"].read_text())
+        receipt.update(changes)
+        path = self.root / f"receipt-{len(list(self.root.glob('receipt-*.json')))}.json"
+        path.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
+        return str(path)
 
     def test_stage_approve_and_run_exactly_once(self):
         item = self.stage()
@@ -452,6 +499,75 @@ class CampaignQueueTests(unittest.TestCase):
                 guarded=False,
             )
 
+    def test_unguarded_terminal_validator_is_refused_at_stage(self) -> None:
+        """The reviewer's mutation, at staging: the validator bypassed the guard."""
+        contract = self.write_contract(
+            commit=True,
+            validator_script="sneaky_validator.py",
+            guarded_validator=False,
+        )
+
+        with self.assertRaisesRegex(
+            campaignctl.QueueError, "terminal validator must route through"
+        ):
+            self.stage(
+                "validator-failure-fixture", kind="compute", contract=contract
+            )
+
+    def test_guarded_validator_refusal_resolves_to_the_otherwise_branch(self) -> None:
+        """A validator importing decisive logic from another tree cannot pass.
+
+        Unguarded, the mutated validator exits 0 and would select the pass branch
+        with the outside tree's verdict. Guarded, the guard's own MEASURED
+        VIOLATION is an unclassified terminal result, so it must land on
+        ``otherwise`` and never on ``terminal-validator-passed``.
+        """
+        unguarded = subprocess.run(
+            [sys.executable, "sneaky_validator.py"],
+            cwd=self.repo,
+            check=False,
+        )
+        self.assertEqual(unguarded.returncode, 0)
+
+        contract = self.write_contract(
+            commit=True, validator_script="sneaky_validator.py"
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        bound = {binding["path"] for binding in item["bindings"]}
+        self.assertIn("sneaky_validator.py", bound)
+        self.assertIn("nd-unfolding/mnv_guarded_run.py", bound)
+        self.approve(item)
+
+        rc, outcome = self.run_ready()
+
+        self.assertEqual((rc, outcome["status"]), (3, "failed"))
+        self.assertEqual(outcome["validator_returncode"], 3)
+        self.assertEqual(outcome["terminal_branch"], "unexpected-terminal-result")
+        self.assertEqual(outcome["required_actions"][0]["action"], "preserve")
+        self.assertIn(
+            "IMPORT TREE VIOLATION",
+            Path(str(outcome["validator_log"])).read_text(),
+        )
+
+    def test_dirty_terminal_validator_is_refused_before_the_claim(self) -> None:
+        """The validator target is bound, so it obeys the producer's drift rule."""
+        contract = self.write_contract(
+            commit=True, validator_script="validator_success.py"
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        self.assertIn(
+            "validator_success.py",
+            {binding["path"] for binding in item["bindings"]},
+        )
+        self.validator_success.write_text("raise SystemExit('dirty validator')\n")
+
+        with self.assertRaisesRegex(campaignctl.QueueError, "changed after staging"):
+            campaignctl.validate_unchanged(self.queue, item)
+
     def test_dirty_compute_binding_is_refused_at_stage_and_validation(self) -> None:
         contract = self.write_contract(commit=True)
         self.script.write_text("raise SystemExit('dirty before staging')\n")
@@ -500,6 +616,85 @@ class CampaignQueueTests(unittest.TestCase):
                 timeout_seconds=2,
             )
 
+    def test_one_wall_deadline_covers_producer_and_validator(self) -> None:
+        """A 1 s wall spent entirely by the producer leaves no second allowance.
+
+        The reviewer's mutation declared a 1 s wall and observed 2.09 s: the
+        producer was allowed 1 s and the validator another 1 s. One deadline
+        means the run must end inside the declared wall, and the validator that
+        never started must resolve to ``otherwise`` with its reason recorded.
+        """
+        def one_second_wall(value: dict[str, object]) -> None:
+            maximum_cost = value["maximum_cost"]
+            assert isinstance(maximum_cost, dict)
+            maximum_cost["wall_hours"] = 1 / 3600
+
+        contract = self.write_contract(
+            commit=True,
+            validator_script="validator_success.py",
+            mutate=one_second_wall,
+        )
+        item = self.stage(
+            "validator-failure-fixture",
+            kind="compute",
+            contract=contract,
+            script="timeout.py",
+            timeout_seconds=1,
+        )
+        self.approve(item)
+
+        started = time.monotonic()
+        rc, outcome = self.run_ready()
+        elapsed = time.monotonic() - started
+
+        self.assertEqual((rc, outcome["status"]), (3, "failed"))
+        self.assertIsNone(outcome["producer_returncode"])
+        self.assertIsNone(outcome["validator_returncode"])
+        self.assertTrue(outcome["wall_budget_exhausted"])
+        self.assertEqual(
+            outcome["validator_error"], "wall budget exhausted before validation"
+        )
+        self.assertEqual(outcome["terminal_branch"], "unexpected-terminal-result")
+        self.assertEqual(outcome["required_actions"][0]["action"], "preserve")
+        self.assertFalse(outcome["automatic_retraining"])
+        self.assertFalse((self.repo / "validator-ran").exists())
+        self.assertLess(elapsed, 1.5)
+
+    def test_validator_receives_only_the_budget_the_producer_left(self) -> None:
+        """0.4 s of a 1 s wall leaves the validator the remainder, not a fresh 1 s."""
+        def one_second_wall(value: dict[str, object]) -> None:
+            maximum_cost = value["maximum_cost"]
+            assert isinstance(maximum_cost, dict)
+            maximum_cost["wall_hours"] = 1 / 3600
+
+        contract = self.write_contract(
+            commit=True,
+            validator_script="validator_success.py",
+            mutate=one_second_wall,
+        )
+        item = self.stage(
+            "validator-failure-fixture",
+            kind="compute",
+            contract=contract,
+            script="brief_producer.py",
+            timeout_seconds=1,
+        )
+        self.approve(item)
+
+        rc, outcome = self.run_ready()
+
+        self.assertEqual((rc, outcome["status"]), (0, "succeeded"))
+        self.assertEqual(outcome["producer_returncode"], 0)
+        self.assertEqual(outcome["validator_returncode"], 0)
+        self.assertFalse(outcome["wall_budget_exhausted"])
+        validator_budget = float(outcome["validator_timeout_seconds"])
+        # The producer's 0.4 s sleep plus interpreter and guard start-up leaves
+        # roughly 0.5 s. The bounds are wide because the machine is shared; what
+        # they exclude is the defect, which handed the validator the full 1 s.
+        self.assertLess(validator_budget, 0.8)
+        self.assertGreater(validator_budget, 0.1)
+        self.assertLess(validator_budget, float(item["timeout_seconds"]))
+
     def test_missing_or_malformed_r5_receipt_is_retryable_refusal(self) -> None:
         contract = self.write_contract(
             commit=True,
@@ -541,6 +736,54 @@ class CampaignQueueTests(unittest.TestCase):
         self._assert_r5_refusal(
             "headroom-exhausting", "gpu_task_hours ceiling would be reached"
         )
+
+    def test_r5_receipt_metered_from_another_t0_refuses_compute(self) -> None:
+        """The reviewer's mutation: midnight instead of the ruled commit instant.
+
+        ``r5_meter`` refuses that receipt and campaignctl accepted it, so the two
+        modules disagreed about which interval had been metered.
+        """
+        self._assert_r5_refusal(
+            self.mutated_receipt(t0_utc="2026-09-02T00:00:00+00:00"),
+            "t0_utc does not match the ruled instant",
+        )
+
+    def test_r5_receipt_naming_another_decision_record_refuses_compute(self) -> None:
+        self._assert_r5_refusal(
+            # A plausibly shaped record that is not the ruling this stop comes
+            # from. Deliberately not the path of any real document, so the
+            # manifest does not read this mutation as a reference to one.
+            self.mutated_receipt(
+                decision_record=(
+                    "docs/orchestration/DECISION-20260902-some-other-ruling.md"
+                )
+            ),
+            "decision_record does not match the ruling record",
+        )
+
+    def test_future_dated_r5_receipt_refuses_compute(self) -> None:
+        """A receipt dated one day after the queue clock was accepted as fresh."""
+        self._assert_r5_refusal(
+            self.mutated_receipt(measured_at_utc="2026-09-30T12:00:00+00:00"),
+            "receipt is dated in the future",
+        )
+
+    def test_r5_receipt_inside_the_tolerated_skew_allows_compute(self) -> None:
+        """The future check must stay silent on the skew a correct run can show."""
+        contract = self.write_contract(
+            commit=True,
+            validator_script="validator_success.py",
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        self.approve(item)
+
+        rc, outcome = self.run_ready(
+            self.mutated_receipt(measured_at_utc="2026-09-29T12:00:30+00:00")
+        )
+
+        self.assertEqual((rc, outcome["status"]), (0, "succeeded"))
 
     def test_healthy_r5_receipt_allows_compute(self) -> None:
         contract = self.write_contract(
@@ -597,6 +840,14 @@ class MeterReceiptInteroperability(unittest.TestCase):
         validated = campaignctl.validate_r5_receipt(receipt)
         self.assertEqual(validated["fired"]["any"], False)
         self.assertTrue(str(validated["unit"]).startswith("task-hours"))
+
+    def test_both_modules_pin_the_same_ruled_instant_and_record(self) -> None:
+        """The pinned R5 constants are one ruling, so they must not drift apart."""
+        import r5_meter
+
+        self.assertEqual(campaignctl.R5_T0, r5_meter.T0_UTC)
+        self.assertEqual(campaignctl.R5_STOP_DATE, r5_meter.STOP_DATE_UTC)
+        self.assertEqual(campaignctl.R5_DECISION_RECORD, r5_meter.DECISION_RECORD)
 
 if __name__ == "__main__":
     unittest.main()

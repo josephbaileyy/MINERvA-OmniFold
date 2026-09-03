@@ -5,9 +5,13 @@ Staging is not authorization.  A staged item becomes runnable only after a
 human reviews its complete digest and approves it from an interactive TTY.
 The ticker executes at most one ready item per invocation, without a shell.
 Compute items also require a committed campaign contract, a guarded producer,
-an independently bound terminal validator, and a fresh R5 meter receipt. The
-validator always runs after the producer and alone selects an exhaustive
-terminal branch with a decision consequence.
+an independently bound terminal validator that is guarded under exactly the
+same rules as the producer, and a fresh R5 meter receipt pinned to the ruled
+instant.  The validator always runs after the producer and alone selects an
+exhaustive terminal branch with a decision consequence.  One wall deadline
+covers the whole execution: the producer and the validator share
+``maximum_cost.wall_hours``, and a validator with no budget left is not
+started.
 """
 
 from __future__ import annotations
@@ -25,6 +29,7 @@ import socket
 import subprocess
 import sys
 import tempfile
+import time
 from typing import Callable
 
 
@@ -38,8 +43,22 @@ ALLOWED_PYTHONS = {PYTHON, Path(sys.executable).resolve()}
 GUARD_PATH = Path("nd-unfolding/mnv_guarded_run.py")
 DEFAULT_R5_RECEIPT = Path("docs/orchestration/state/r5-meter-receipt.json")
 R5_STOP_DATE = dt.datetime(2026, 9, 30, tzinfo=dt.timezone.utc)
+# R5 §3 fixes the baseline at "the commit instant of this record", so the instant is
+# a property of the commit that landed the decision record, not of its filename date.
+# Derived from `git log -1 --format=%cI 9ce59a59` = 2026-09-02T15:44:27+02:00, which is
+# 2026-09-02T13:44:27Z.  A receipt metered from any other t0 counted a different
+# interval and is not this stop's receipt, so only this exact instant is accepted.
+R5_T0 = dt.datetime(2026, 9, 2, 13, 44, 27, tzinfo=dt.timezone.utc)
+R5_DECISION_RECORD = (
+    "docs/orchestration/"
+    "DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md"
+)
 R5_CEILINGS = {"gpu_task_hours": 500.0, "cpu_task_hours": 500.0}
 R5_MAX_AGE = dt.timedelta(hours=24)
+# A receipt cannot have measured the future.  Clock skew between the metering host and
+# the queue host is real and small; anything beyond this is a fabricated or misdated
+# measurement and must not buy freshness the meter never observed.
+R5_MAX_FUTURE_SKEW = dt.timedelta(seconds=60)
 
 CONTRACT_KEYS = frozenset(
     {
@@ -550,7 +569,35 @@ def command_bindings(
     explicit: list[str],
     *,
     require_guard: bool = False,
+    role: str = "compute producer",
 ) -> list[dict[str, str]]:
+    """Resolve one command to repository paths and return its file bindings.
+
+    Parameters
+    ----------
+    repo : Path
+        Repository root every resolved path must lie inside.
+    argv : list[str]
+        Argument vector, rewritten in place with resolved absolute paths.
+    explicit : list[str]
+        Additional repository files to bind.
+    require_guard : bool, optional
+        Require the command to route through ``nd-unfolding/mnv_guarded_run.py``
+        and bind the guarded target after the mandatory ``--``.
+    role : str, optional
+        Name of the command's role, used in guard refusal messages so a producer
+        refusal and a terminal-validator refusal are distinguishable.
+
+    Returns
+    -------
+    list[dict[str, str]]
+        One ``{"path", "sha256"}`` binding per bound file, ordered by path.
+
+    Raises
+    ------
+    QueueError
+        If a path escapes the repository or a guard rule is not satisfied.
+    """
     require_argv(argv, field="command")
     executable = Path(argv[0])
     bound: list[Path] = []
@@ -575,16 +622,17 @@ def command_bindings(
         command_file_index = 1 if Path(argv[0]).resolve() in ALLOWED_PYTHONS else 0
         if Path(argv[command_file_index]).resolve() != guard:
             raise QueueError(
-                "compute producer must route through "
-                "nd-unfolding/mnv_guarded_run.py"
+                f"{role} must route through nd-unfolding/mnv_guarded_run.py"
             )
         try:
             separator_index = argv.index("--", command_file_index + 1)
         except ValueError as exc:
-            raise QueueError("guarded compute command requires '-- <script>'") from exc
+            raise QueueError(
+                f"guarded {role} command requires '-- <script>'"
+            ) from exc
         if separator_index + 1 >= len(argv):
             raise QueueError(
-                "guarded compute command requires a target script after '--'"
+                f"guarded {role} command requires a target script after '--'"
             )
         target = resolve_repo_path(repo, argv[separator_index + 1])
         if target.suffix != ".py" or not target.is_file():
@@ -691,8 +739,16 @@ def stage(
                 terminal_validator["argv"], field="terminal_validator.argv"
             )
         )
+        # The validator alone resolves the terminal branch, so it is the LAST place
+        # that may import its decisive logic from another tree.  It therefore routes
+        # through the guard under exactly the producer's rules: guarded, committed at
+        # HEAD, working-tree identical, and bound.
         validator_bindings = command_bindings(
-            queue.repo, validator_command, [], require_guard=False
+            queue.repo,
+            validator_command,
+            [],
+            require_guard=kind == "compute",
+            role="compute terminal validator",
         )
         bindings = merge_bindings(bindings, validator_bindings)
         validator_cwd = resolve_repo_path(
@@ -709,9 +765,12 @@ def stage(
                 raise QueueError("validated campaign contract lost maximum_cost")
             maximum_wall_seconds = float(maximum_cost["wall_hours"]) * 3600
             if timeout_seconds > maximum_wall_seconds:
+                # The wall budget is shared by the producer and the validator, so a
+                # staged per-command timeout larger than the whole budget could never
+                # be honoured by either command.
                 raise QueueError(
-                    "producer and terminal validator timeout exceeds "
-                    "maximum_cost.wall_hours"
+                    "staged timeout exceeds maximum_cost.wall_hours, which is the "
+                    "single deadline the producer and terminal validator share"
                 )
     if kind == "compute":
         for binding in bindings:
@@ -772,7 +831,9 @@ def validate_r5_receipt(value: object) -> dict[str, object]:
     receipt = require_object(value, field="R5 meter receipt", keys=R5_RECEIPT_KEYS)
     if receipt["schema_version"] != 1:
         raise QueueError("R5 meter receipt schema_version must be 1")
-    require_text(receipt["decision_record"], field="R5 meter decision_record")
+    decision_record = require_text(
+        receipt["decision_record"], field="R5 meter decision_record"
+    )
     t0 = parse_utc(receipt["t0_utc"], field="R5 meter t0_utc")
     stop_date = parse_utc(
         receipt["stop_date_utc"], field="R5 meter stop_date_utc"
@@ -780,6 +841,12 @@ def validate_r5_receipt(value: object) -> dict[str, object]:
     measured_at = parse_utc(
         receipt["measured_at_utc"], field="R5 meter measured_at_utc"
     )
+    if decision_record != R5_DECISION_RECORD:
+        raise QueueError(
+            "R5 meter decision_record does not match the ruling record"
+        )
+    if t0 != R5_T0:
+        raise QueueError("R5 meter t0_utc does not match the ruled instant")
     if stop_date != R5_STOP_DATE:
         raise QueueError("R5 meter stop_date_utc does not match the ruled stop")
     if measured_at < t0:
@@ -900,6 +967,14 @@ def r5_refusal_reason(queue: Queue, item: dict) -> str | None:
     measured_at = parse_utc(
         receipt["measured_at_utc"], field="R5 meter measured_at_utc"
     )
+    # Freshness is bounded on BOTH sides.  An age-only bound waves through a receipt
+    # dated after the queue clock, which is the one direction in which a stale
+    # measurement can be made to look permanently fresh.
+    if measured_at - now > R5_MAX_FUTURE_SKEW:
+        return (
+            "receipt is dated in the future: measured_at_utc is later than the "
+            "queue clock"
+        )
     if now - measured_at > R5_MAX_AGE:
         return "R5 receipt stale: measured_at_utc is older than 24 hours"
 
@@ -1052,7 +1127,7 @@ def run_logged_command(
     *,
     cwd: Path,
     env: dict[str, str],
-    timeout_seconds: int,
+    timeout_seconds: float,
     log_path: Path,
     proposal_digest: str,
 ) -> tuple[int | None, str | None]:
@@ -1081,16 +1156,45 @@ def run_logged_command(
 
 
 def normalized_terminal_validator(
-    queue: Queue, contract: dict[str, object]
+    queue: Queue, contract: dict[str, object], *, require_guard: bool
 ) -> tuple[list[str], Path]:
-    """Resolve the validator command and working directory from a contract."""
+    """Resolve the validator command and working directory from a contract.
+
+    Parameters
+    ----------
+    queue : Queue
+        Queue whose repository root bounds every resolved path.
+    contract : dict[str, object]
+        Contract already accepted by :func:`validate_campaign_contract`.
+    require_guard : bool
+        Require the validator to route through the OI-136 guard, as compute
+        items do.  A refusal here is a launch failure and therefore resolves to
+        the contract's ``otherwise`` branch, never to a pass.
+
+    Returns
+    -------
+    tuple[list[str], Path]
+        The resolved argument vector and the validator working directory.
+
+    Raises
+    ------
+    QueueError
+        If the command, its guarded target, or the working directory is not a
+        repository path satisfying the compute rules.
+    """
     terminal_validator = contract["terminal_validator"]
     if not isinstance(terminal_validator, dict):
         raise QueueError("validated campaign contract lost terminal_validator")
     argv = list(
         require_argv(terminal_validator["argv"], field="terminal_validator.argv")
     )
-    command_bindings(queue.repo, argv, [], require_guard=False)
+    command_bindings(
+        queue.repo,
+        argv,
+        [],
+        require_guard=require_guard,
+        role="compute terminal validator",
+    )
     cwd = resolve_repo_path(
         queue.repo,
         require_text(terminal_validator["cwd"], field="terminal_validator.cwd"),
@@ -1099,19 +1203,33 @@ def normalized_terminal_validator(
 
 
 def run_compute_item(queue: Queue, item: dict, env: dict[str, str]) -> tuple[int, dict]:
-    """Run a producer and its mandatory independent terminal validator."""
+    """Run a producer and its mandatory independent terminal validator.
+
+    ``maximum_cost.wall_hours`` is ONE deadline for the whole execution, not a
+    per-command allowance: the deadline is fixed when the producer starts, the
+    producer is capped by whichever of ``timeout_seconds`` and the remaining
+    budget is smaller, and the validator receives exactly what the producer left.
+    A validator with no budget left is not started, which is a terminal result
+    the contract's ``otherwise`` branch must cover.
+    """
     contract = item["campaign_contract"]
     if not isinstance(contract, dict):
         raise QueueError("validated compute item lost its campaign contract")
-    timeout_seconds = int(item["timeout_seconds"])
+    maximum_cost = contract["maximum_cost"]
+    if not isinstance(maximum_cost, dict):
+        raise QueueError("validated campaign contract lost maximum_cost")
+    timeout_seconds = float(item["timeout_seconds"])
+    wall_seconds = float(maximum_cost["wall_hours"]) * 3600
+    deadline = time.monotonic() + wall_seconds
     logs_dir = queue.state / "logs"
     producer_log = logs_dir / f"{item['id']}.producer.log"
     validator_log = logs_dir / f"{item['id']}.validator.log"
+    producer_timeout = min(timeout_seconds, deadline - time.monotonic())
     producer_returncode, producer_error = run_logged_command(
         item["argv"],
         cwd=resolve_repo_path(queue.repo, item["cwd"]),
         env=env,
-        timeout_seconds=timeout_seconds,
+        timeout_seconds=producer_timeout,
         log_path=producer_log,
         proposal_digest=item["proposal_digest"],
     )
@@ -1122,27 +1240,40 @@ def run_compute_item(queue: Queue, item: dict, env: dict[str, str]) -> tuple[int
         if producer_returncode is not None
         else "TIMEOUT_OR_NOT_STARTED"
     )
-    try:
-        validator_argv, validator_cwd = normalized_terminal_validator(queue, contract)
-    except QueueError as exc:
+    validator_timeout = deadline - time.monotonic()
+    wall_budget_exhausted = validator_timeout <= 0
+    if wall_budget_exhausted:
         validator_returncode = None
-        validator_error = f"command could not be started: {exc}"
+        validator_error = "wall budget exhausted before validation"
         validator_log.write_text(validator_error + "\n")
     else:
-        validator_returncode, validator_error = run_logged_command(
-            validator_argv,
-            cwd=validator_cwd,
-            env=validator_env,
-            timeout_seconds=timeout_seconds,
-            log_path=validator_log,
-            proposal_digest=item["proposal_digest"],
-        )
+        try:
+            validator_argv, validator_cwd = normalized_terminal_validator(
+                queue, contract, require_guard=True
+            )
+        except QueueError as exc:
+            validator_returncode = None
+            validator_error = f"command could not be started: {exc}"
+            validator_log.write_text(validator_error + "\n")
+        else:
+            validator_returncode, validator_error = run_logged_command(
+                validator_argv,
+                cwd=validator_cwd,
+                env=validator_env,
+                timeout_seconds=validator_timeout,
+                log_path=validator_log,
+                proposal_digest=item["proposal_digest"],
+            )
     status = "succeeded" if validator_returncode == 0 else "failed"
     extra: dict[str, object] = {
         "producer_returncode": producer_returncode,
         "validator_returncode": validator_returncode,
         "producer_log": str(producer_log),
         "validator_log": str(validator_log),
+        "wall_seconds": round(wall_seconds, 3),
+        "producer_timeout_seconds": round(producer_timeout, 3),
+        "validator_timeout_seconds": round(max(validator_timeout, 0.0), 3),
+        "wall_budget_exhausted": wall_budget_exhausted,
         **terminal_plan(contract, validator_returncode),
     }
     if producer_error is not None:

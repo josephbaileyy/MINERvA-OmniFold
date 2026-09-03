@@ -35,13 +35,6 @@
   },
   "schema_version": 1,
   "scientific_question": "Does the candidate satisfy the terminal validation criterion?",
-  "terminal_validator": {
-    "argv": [
-      "/usr/bin/python3.11",
-      "validator_failure.py"
-    ],
-    "cwd": "."
-  },
   "terminal_branches": [
     {
       "condition": "All jobs complete and the terminal validator passes.",
@@ -89,5 +82,16 @@
       ]
     }
   ],
+  "terminal_validator": {
+    "argv": [
+      "/usr/bin/python3.11",
+      "nd-unfolding/mnv_guarded_run.py",
+      "--expect-root",
+      "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+      "--",
+      "validator_failure.py"
+    ],
+    "cwd": "."
+  },
   "validator_version": "fixture-terminal-validator/1"
 }

@@ -21,7 +21,7 @@
     "argv_or_path": [
       "sacct",
       "--starttime",
-      "2026-09-02T00:00:00"
+      "2026-09-02T13:44:27"
     ],
     "kind": "scheduler-accounting",
     "raw_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
@@ -39,6 +39,6 @@
     "task_count": 2
   },
   "stop_date_utc": "2026-09-30T00:00:00+00:00",
-  "t0_utc": "2026-09-02T00:00:00+00:00",
+  "t0_utc": "2026-09-02T13:44:27+00:00",
   "unit": "task-hours"
 }

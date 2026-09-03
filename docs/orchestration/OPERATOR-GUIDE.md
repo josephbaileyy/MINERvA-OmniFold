@@ -140,13 +140,15 @@ preservation behavior; retry policy; and this required validator command:
 
 ```json
 "terminal_validator": {
-  "argv": ["/usr/bin/python3.11", "path/to/validator.py"],
+  "argv": [
+    "/usr/bin/python3.11", "nd-unfolding/mnv_guarded_run.py",
+    "--expect-root", "/path/to/repository", "--", "path/to/validator.py"
+  ],
   "cwd": "."
 }
 ```
 
-The validator working directory is repository-relative. Its command entrypoint
-is resolved and bound by the same rules as any other command. Producer,
+The validator working directory is repository-relative. Producer,
 independent-validator, and decision-authority identities must be pairwise
 distinct after case folding. Exactly one `otherwise` branch covers every
 unclassified terminal result, and every branch must name a decision
@@ -161,26 +163,64 @@ the mandatory `--` is also bound. A typical command tail is:
   --expect-root /path/to/repository -- path/to/producer.py <args>
 ```
 
+**For a compute item the terminal validator obeys exactly the producer's
+rules**, at staging and again before the claim: it must route through
+`mnv_guarded_run.py`, and the guarded target after `--` must be a repository
+`.py` file committed at `HEAD` with identical working-tree bytes, bound like
+any other input. An unguarded validator command is refused at staging. This is
+not decoration: the validator alone resolves the terminal branch, so it is the
+last place decisive logic can be imported from another checkout, and a
+committed validator that imports from an uncommitted directory outside the
+checkout previously produced a `succeeded` terminal outcome. When the guard
+refuses (exit 3, a measured import-tree violation) that is an unclassified
+terminal result and resolves to `otherwise`, never to the pass branch.
+
 The queue runs the producer first and then always runs `terminal_validator`,
 including after producer failure, timeout, or launch failure. The validator
 receives `CAMPAIGN_PRODUCER_RETURNCODE`; the sentinel
 `TIMEOUT_OR_NOT_STARTED` represents the two cases without a process return
-code. Producer and validator each receive the staged `timeout_seconds` limit,
-which for compute cannot exceed `maximum_cost.wall_hours * 3600`. Only the
-validator return code selects the terminal branch. A validator timeout or
-launch failure selects `otherwise`. The outcome records both return codes and
-both log paths.
+code. Only the validator return code selects the terminal branch. A validator
+timeout or launch failure selects `otherwise`. The outcome records both return
+codes and both log paths.
+
+**`maximum_cost.wall_hours` is ONE deadline for the whole execution, not an
+allowance for each command.** The deadline is fixed when the producer starts:
+the producer is capped by whichever of the staged `timeout_seconds` and the
+remaining budget is smaller, and the validator then receives exactly what the
+producer left. If nothing is left the validator is **not started**, and the
+outcome resolves to `otherwise` with `wall_budget_exhausted` true and the
+reason `wall budget exhausted before validation`; the preserve-first actions
+and the decision referral still apply. The staged `timeout_seconds` for a
+compute item still cannot exceed `maximum_cost.wall_hours * 3600`, since a
+per-command timeout larger than the shared budget could never be honoured. The
+outcome records `wall_seconds`, `producer_timeout_seconds`, and
+`validator_timeout_seconds`, so a receipt shows how the one budget was split.
 
 Immediately before claiming a compute item, the queue reads
 `docs/orchestration/state/r5-meter-receipt.json`. Tests may override that path
 with `CAMPAIGN_R5_RECEIPT`. Exit code 6 and a `refused` outcome result if the
-receipt is missing or malformed, is more than 24 hours old, reports
-`fired.any`, has reached the stop date, or shows that current spend plus either
-declared maximum task-hour cost would meet or exceed its ceiling. This check is
-a prohibition, not spending authority. Refusal occurs before the claim and
-does not consume the item, so a later tick may retry against a fresh receipt.
-The refusal reason identifies the rule that fired. Non-compute items do not
-consult this meter.
+receipt is missing or malformed, is more than 24 hours old, is dated later than
+the queue clock by more than 60 seconds of tolerated skew, reports `fired.any`,
+has reached the stop date, or shows that current spend plus either declared
+maximum task-hour cost would meet or exceed its ceiling. Freshness is bounded on
+both sides on purpose: an age-only bound accepted a receipt dated a day after
+the queue clock, which is how a stale measurement can be made to look
+permanently fresh.
+
+The receipt must also be **this** stop's receipt, not merely a well-formed one.
+`t0_utc` must equal `2026-09-02T13:44:27Z` exactly — the commit instant of
+`9ce59a59`, the commit that landed
+`DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md`, which §3 names
+as the baseline — and `decision_record` must equal
+`docs/orchestration/DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md`
+exactly. Anything else metered a different interval or a different ruling.
+`campaignctl.py` and `r5_meter.py` pin the same instant, record, and stop date,
+and a cross-module test fails if the two ever drift apart.
+
+This check is a prohibition, not spending authority. Refusal occurs before the
+claim and does not consume the item, so a later tick may retry against a fresh
+receipt. The refusal reason identifies the rule that fired. Non-compute items do
+not consult this meter.
 
 The safe terminal policy is enforced rather than inferred: preservation mode
 is `preserve-first`, automatic retraining is false, and a retry requires new

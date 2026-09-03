@@ -61,7 +61,7 @@ docs/orchestration/DECISION-20260901-joseph-oi187-upgrade-not-blocker.md	tracked
 docs/orchestration/DECISION-20260901-joseph-ratifies-oi177-per-arm-ceilings.md	tracked	LIVE	document		20260901	terminal		route-only		no	4	107	6495
 docs/orchestration/DECISION-20260901-joseph-ratifies-oi185-invariants.md	tracked	LIVE	document		20260901	terminal		route-only	nd-unfolding/mnv_preflight_census.py	no	5	196	12169
 docs/orchestration/DECISION-20260902-joseph-applies-oi173-cause4-m.md	tracked	LIVE	document		20260902	open		route-only		no	4	118	7537
-docs/orchestration/DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md	tracked	LIVE	document		20260902	open		route-only	docs/orchestration/r5_meter.py	no	12	234	15997
+docs/orchestration/DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md	tracked	LIVE	document		20260902	open		route-only	docs/orchestration/campaignctl.py;docs/orchestration/r5_meter.py	no	14	234	15997
 docs/orchestration/DECISION-20260902-joseph-rules-no-fourth-grade-token.md	tracked	LIVE	document		20260902	open		route-only		no	3	97	6399
 docs/orchestration/DECISION-20260902-joseph-rules-oi173-referent-is-the-candidate.md	tracked	LIVE	document		20260902	open		route-only		no	3	135	9332
 docs/orchestration/DECISION-20260902-two-lane-consensus-cause4-M-and-its-supersession.md	tracked	LIVE	document		20260902	open		route-only		no	2	227	15549
@@ -127,7 +127,7 @@ docs/orchestration/INTEGRATION-20260903-wave1-routing-freeze-and-ledger.md	track
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/control_plane_lint.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	60	80	19049
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	3	161	8117
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	17	161	12373
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	54	725	141356
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	54	725	141390
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	6	214	16307
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/compare_m1_m6.py;docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/measure_m1_m6.py	no	17	146	8336
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	tracked	LIVE	document		20260823	open		route-only		no	6	239	14244
@@ -135,7 +135,7 @@ docs/orchestration/MIGRATION-DELTA.md	tracked	ARCHIVAL	document			terminal		exac
 docs/orchestration/MIGRATION-HANDOFF.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	5	146	9653
 docs/orchestration/MIGRATION-TAKEOVER-STATUS.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	8	157	20741
 docs/orchestration/OMNIFOLD-DOSSIER.md	tracked	ARCHIVAL	document	fe-fps-campaign		terminal		exact-path-only	nd-unfolding/pet/feature_rank_arms.py;nd-unfolding/pet/feature_rank_summarize.py	yes	4	106	7764
-docs/orchestration/OPERATOR-GUIDE.md	tracked	ARCHIVAL	document			terminal		exact-path-only	docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py	yes	7	249	12389
+docs/orchestration/OPERATOR-GUIDE.md	tracked	ARCHIVAL	document			terminal		exact-path-only	docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py	yes	7	289	14882
 docs/orchestration/P5-P6-20260822-entrypoint-set-and-blind-spots.md	tracked	LIVE	document		20260822	open		route-only		no	3	160	8870
 docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	tracked	LIVE	document		20260823	open		route-only		no	3	149	8296
 docs/orchestration/PACKET-20260823-round5-f2a-f17a-repair.md	tracked	LIVE	document		20260823	open		route-only		no	9	259	16441
@@ -244,7 +244,7 @@ docs/orchestration/agent_session_notify.py	tracked	MACHINE	script			generated		e
 docs/orchestration/agentctl.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py	no	13	983	34900
 docs/orchestration/audit_gates_that_cannot_fail.py	tracked	MACHINE	script			generated		exact-path-only	nd-unfolding/tests/test_cannot_fail_auditor.py	no	9	625	31531
 docs/orchestration/audit_validator_tolerance_units.py	tracked	MACHINE	script			generated		exact-path-only	nd-unfolding/tests/test_validator_units_auditor.py	no	4	231	10090
-docs/orchestration/campaignctl.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/wakerctl.py	no	7	1310	50407
+docs/orchestration/campaignctl.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/wakerctl.py	no	7	1441	56250
 docs/orchestration/compare_m1_m6.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/test_compare_m1_m6.py	no	41	1101	67440
 docs/orchestration/control-plane/owners.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	4	13	747
 docs/orchestration/control-plane/playbook.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	4	26	8403
@@ -276,7 +276,7 @@ docs/orchestration/oi130_quoted_value_inventory.py	tracked	MACHINE	script			gene
 docs/orchestration/pending/PENDING-20260819-remedy-A-adopt-blocked-on-ben106-rebinding.patch	tracked	ARCHIVAL	artifact		20260819	terminal		exact-path-only	nd-unfolding/mii_adopt_unified_5d_stamped.py;nd-unfolding/mii_root_payload_classes.py;nd-unfolding/tests/test_uq_remediation.py	yes	3	103	7206
 docs/orchestration/preserve_f17b_record.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/measure_k0_farend_f1b_f17b.sh	no	11	66	2354
 docs/orchestration/profiles.json	tracked	MACHINE	machine-data			generated		exact-path-only	docs/orchestration/agentctl.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/test_agentctl.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_usagectl.py;docs/orchestration/usagectl.py;docs/orchestration/wakerctl.py	no	13	90	2163
-docs/orchestration/r5_meter.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/campaignctl.py;docs/orchestration/test_campaignctl.py	no	4	861	27357
+docs/orchestration/r5_meter.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/campaignctl.py;docs/orchestration/test_campaignctl.py	no	5	861	27357
 docs/orchestration/receipts/RECEIPT-20260825-actionable-digest-deployment.json	tracked	MACHINE	machine-data		20260825	generated		exact-path-only		no	0	51	2442
 docs/orchestration/receipts/RECEIPT-20260825-approval-queue-deployment.json	tracked	MACHINE	machine-data		20260825	generated		exact-path-only		no	0	55	2441
 docs/orchestration/receipts/RECEIPT-20260825-terminal-watch-f17b-durability.json	tracked	MACHINE	machine-data		20260825	generated		exact-path-only		no	7	39	3438
@@ -667,7 +667,7 @@ docs/orchestration/state/vl100-nominal-residual-field-20260815.json	tracked	MACH
 docs/orchestration/state/vl100-own-run-foldforward-20260815.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-vl100-shape-correction-scan-20260815.py	yes	3	1537	31600
 docs/orchestration/test_agent_session_notify.py	tracked	MACHINE	test-script			generated		exact-path-only		no	1	104	4694
 docs/orchestration/test_agentctl.py	tracked	MACHINE	test-script			generated		exact-path-only		no	1	421	16200
-docs/orchestration/test_campaignctl.py	tracked	MACHINE	test-script			generated		exact-path-only		no	3	602	23557
+docs/orchestration/test_campaignctl.py	tracked	MACHINE	test-script			generated		exact-path-only		no	3	853	34761
 docs/orchestration/test_compare_m1_m6.py	tracked	MACHINE	test-script			generated		exact-path-only		no	14	1711	99198
 docs/orchestration/test_dashboard_collector.py	tracked	MACHINE	test-script			generated		exact-path-only		no	4	708	34022
 docs/orchestration/test_dashboard_serve.py	tracked	MACHINE	test-script			generated		exact-path-only		no	1	149	5981
@@ -677,7 +677,7 @@ docs/orchestration/test_fixtures_campaign_contract/r5-meter-headroom-exhausting.
 docs/orchestration/test_fixtures_campaign_contract/r5-meter-healthy.json	tracked	MACHINE	machine-data			generated		exact-path-only		no	0	44	1014
 docs/orchestration/test_fixtures_campaign_contract/r5-meter-malformed.json	tracked	MACHINE	machine-data			generated		exact-path-only		no	0	36	888
 docs/orchestration/test_fixtures_campaign_contract/r5-meter-stale.json	tracked	MACHINE	machine-data			generated		exact-path-only		no	0	40	966
-docs/orchestration/test_fixtures_campaign_contract/validator-failed-after-jobs-complete.json	tracked	MACHINE	machine-data			generated		exact-path-only	docs/orchestration/test_campaignctl.py	no	2	93	2647
+docs/orchestration/test_fixtures_campaign_contract/validator-failed-after-jobs-complete.json	tracked	MACHINE	machine-data			generated		exact-path-only	docs/orchestration/test_campaignctl.py	no	2	97	2773
 docs/orchestration/test_fixtures_r5_meter/mixed.sacct	tracked	ARCHIVAL	artifact			terminal		exact-path-only	docs/orchestration/test_campaignctl.py;docs/orchestration/test_r5_meter.py	yes	2	15	1283
 docs/orchestration/test_fixtures_r5_meter/perlmutter_regular_gpu.sacct	tracked	ARCHIVAL	artifact			terminal		exact-path-only	docs/orchestration/test_r5_meter.py	yes	1	1	143
 docs/orchestration/test_fixtures_r5_meter/rows_vs_identities.sacct	tracked	ARCHIVAL	artifact			terminal		exact-path-only	docs/orchestration/test_r5_meter.py	yes	1	447	36525
