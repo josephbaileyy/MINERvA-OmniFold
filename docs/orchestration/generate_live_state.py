@@ -45,16 +45,32 @@ LAST_KNOWN_PATH = HERE / "state" / "live-state-last-known.json"
 LEGACY_PROSE_FIELDS = frozenset(
     {"current_dag_node", "state", "next_authorized_action"}
 )
-ALLOWED_ROUTE_QUEUES = frozenset({"NOW", "WAITING-JOSEPH", "BLOCKED-EXTERNAL"})
+# The structured-routing interface frozen 2026-09-03
+# (INTEGRATION-20260903-wave1-routing-freeze-and-ledger.md §1). The queue vocabulary is OWNED by
+# control-plane/policy.json `routing.queues`; it is restated here so the closed live-state schema
+# need not route to policy.json, and test_generate_live_state_routes.py binds the two so drift fails
+# a test rather than silently withholding routes.
+ALLOWED_ROUTE_QUEUES = frozenset(
+    {"NOW", "WAITING-JOSEPH", "BLOCKED-DECISION", "BLOCKED-INTERNAL", "BLOCKED-EXTERNAL"}
+)
+ROUTED_LIFECYCLE = "active"
+ROUTED_PROMOTION = "promoted"
+UNSET = "-"
 WORK_ITEM_COLUMNS = (
     "item",
     "source_record",
-    "queue_override",
+    "lifecycle",
+    "queue",
+    "promotion",
     "owner_id",
     "impact",
     "urgency",
+    "artifact",
     "next_action",
+    "authority",
+    "terminal_criterion",
     "evidence",
+    "state_digest",
 )
 SOURCE_INVENTORY_COLUMNS = (
     "source_record",
@@ -245,15 +261,26 @@ def inspect_route_registry(
         parent = re.match(r"OI-\d+", item)
         if parent is None or source.split("#", 1)[0] != parent.group(0):
             contradictions.append(f"{item}: source record {source!r} has a different parent")
-        if record["lifecycle"] != "active":
+        # Lifecycle is a property of the SOURCE RECORD. A sub-item row (`OI-131(a)`) carries
+        # UNSET and inherits its record's lifecycle; a record's own row must agree with the
+        # inventory, which control_plane_lint.py --write derives from the same register.
+        lifecycle = row["lifecycle"]
+        if lifecycle != UNSET and lifecycle != record["lifecycle"]:
             contradictions.append(
-                f"{item}: source record {source!r} is {record['lifecycle']}"
+                f"{item}: register lifecycle {lifecycle!r} contradicts inventory "
+                f"{record['lifecycle']!r}"
             )
-        queue = row["queue_override"]
-        if queue == "-":
-            queue = record["queue"]
+        if record["lifecycle"] != ROUTED_LIFECYCLE:
+            continue  # deferred/retired rows are inventory, never routes
+        if row["promotion"] != ROUTED_PROMOTION:
+            continue  # backlog rows are inventory, never routes
+        queue = row["queue"]
+        if item == source and queue != record["queue"]:
+            contradictions.append(
+                f"{item}: register queue {queue!r} contradicts inventory {record['queue']!r}"
+            )
         if queue not in ALLOWED_ROUTE_QUEUES:
-            contradictions.append(f"{item}: invalid effective queue {queue!r}")
+            contradictions.append(f"{item}: invalid declared queue {queue!r}")
         routes.append(Route(item, queue, source))
 
     if contradictions:
