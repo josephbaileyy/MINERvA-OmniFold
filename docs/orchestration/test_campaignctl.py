@@ -574,5 +574,29 @@ class CampaignQueueTests(unittest.TestCase):
         self.assertFalse((self.repo / "ran").exists())
 
 
+
+class MeterReceiptInteroperability(unittest.TestCase):
+    """The receipt r5_meter.py actually writes is the receipt campaignctl reads."""
+
+    def test_a_receipt_measured_by_r5_meter_is_accepted(self) -> None:
+        import r5_meter
+
+        fixture = Path(campaignctl.__file__).resolve().parent / "test_fixtures_r5_meter" / "mixed.sacct"
+        with tempfile.TemporaryDirectory() as directory:
+            receipt_path = Path(directory) / "receipt.json"
+            rc = r5_meter.main(
+                [
+                    "measure",
+                    "--from-file", str(fixture),
+                    "--now", "2026-09-10T00:00:00Z",
+                    "--write", str(receipt_path),
+                ]
+            )
+            self.assertEqual(rc, 0)
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+        validated = campaignctl.validate_r5_receipt(receipt)
+        self.assertEqual(validated["fired"]["any"], False)
+        self.assertTrue(str(validated["unit"]).startswith("task-hours"))
+
 if __name__ == "__main__":
     unittest.main()

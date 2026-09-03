@@ -817,7 +817,10 @@ def validate_r5_receipt(value: object) -> dict[str, object]:
                 f"R5 meter headroom.{resource} is inconsistent with spend"
             )
 
-    if receipt["unit"] != "task-hours":
+    unit = require_text(receipt["unit"], field="R5 meter unit")
+    # r5_meter.py writes the unit token followed by its definition ("task-hours: sum of
+    # ElapsedRaw over distinct task identities; ..."); only the token is load-bearing here.
+    if unit != "task-hours" and not unit.startswith("task-hours:"):
         raise QueueError("R5 meter unit must be 'task-hours'")
     require_text(receipt["measured_on_host"], field="R5 meter measured_on_host")
     source = require_object(
