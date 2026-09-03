@@ -53,10 +53,14 @@ a validated central value and a quarantined covariance at the same time.
   "bootstrap-centering" as a settled mechanism. `live-state.json`'s blocker kept the
   "as a determined cause" qualifier; this front door had dropped it, which is how a true caution
   became a false claim about what Joseph said.
-- `OI-136`: 59 `.py` files put the hardcoded cluster root at `sys.path[0]`, so an entrypoint can import
-  another checkout's modules while deployment parity truthfully reports every pinned file `CURRENT`.
-  This cost 3 h 08 m of A100 on `57266000_0`. `PYTHONPATH` cannot outrank position 0 and a re-deploy
-  does not fix it. Route new compute through `nd-unfolding/mnv_guarded_run.py`.
+- `OI-136`: a `.py` file that puts the hardcoded cluster root at `sys.path[0]` imports another
+  checkout's modules while deployment parity truthfully reports every pinned file `CURRENT`. This
+  cost 3 h 08 m of A100 on `57266000_0`. `PYTHONPATH` cannot outrank position 0 and a re-deploy does
+  not fix it. The fail-open set was 59, then 45; **36 were repaired under
+  `AUTHORIZATION-20260903-oi136-failopen-repair.md` and 9 remain** (three probe records, the
+  published 2D arm, five receipt-bound files) — re-measure with
+  `docs/orchestration/state/probe-oi136-sys-path-hijack-20260826.py`, never quote a count from here.
+  Route new compute through `nd-unfolding/mnv_guarded_run.py`.
 
 ## Complete work that should not be repeated
 
