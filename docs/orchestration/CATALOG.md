@@ -16,6 +16,15 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ## Current work
 
+### Wave 1 integration — frozen routing interface, conflict matrix, ledger (2026-09-03)
+
+- [`INTEGRATION-20260903-wave1-routing-freeze-and-ledger.md`](INTEGRATION-20260903-wave1-routing-freeze-and-ledger.md)
+  - **The structured-routing interface is frozen (§1) before any Wave 1 code lands**; the
+  conflict/dependency matrix (§2) is built from the return envelopes only, and §5 maps every accepted
+  or rejected output to commits, tests, and reasons. Proposes a tip for an independent acceptance
+  reviewer; grades nothing. Enforces `DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md`
+  over the original plan. Moves no gate or count, adopts nothing, launches nothing.
+
 ### Decisions awaiting Joseph — cause 7's subject and magnitude, cause 3's seed scan, the stop rule
 
 - [`DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md`](DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md)
