@@ -8,7 +8,8 @@
   "route_registry": {
     "work_items": "docs/orchestration/control-plane/work-items.tsv",
     "source_inventory": "docs/orchestration/control-plane/source-record-inventory.tsv",
-    "open_items": "docs/OPEN_ITEMS.md"
+    "open_items": "docs/OPEN_ITEMS.md",
+    "policy": "docs/orchestration/control-plane/policy.json"
   },
   "evidence_routes": [
     {

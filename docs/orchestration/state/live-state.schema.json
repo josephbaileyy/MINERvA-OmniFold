@@ -29,11 +29,12 @@
     "route_registry": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["work_items", "source_inventory", "open_items"],
+      "required": ["work_items", "source_inventory", "open_items", "policy"],
       "properties": {
         "work_items": {"type": "string", "minLength": 1},
         "source_inventory": {"type": "string", "minLength": 1},
-        "open_items": {"type": "string", "minLength": 1}
+        "open_items": {"type": "string", "minLength": 1},
+        "policy": {"type": "string", "minLength": 1}
       }
     },
     "evidence_routes": {

@@ -46,16 +46,16 @@ LEGACY_PROSE_FIELDS = frozenset(
     {"current_dag_node", "state", "next_authorized_action"}
 )
 # The structured-routing interface frozen 2026-09-03
-# (INTEGRATION-20260903-wave1-routing-freeze-and-ledger.md §1). The queue vocabulary is OWNED by
-# control-plane/policy.json `routing.queues`; it is restated here so the closed live-state schema
-# need not route to policy.json, and test_generate_live_state_routes.py binds the two so drift fails
-# a test rather than silently withholding routes.
-ALLOWED_ROUTE_QUEUES = frozenset(
-    {"NOW", "WAITING-JOSEPH", "BLOCKED-DECISION", "BLOCKED-INTERNAL", "BLOCKED-EXTERNAL"}
-)
+# (INTEGRATION-20260903-wave1-routing-freeze-and-ledger.md §1). The lifecycle and queue
+# vocabularies are OWNED by control-plane/policy.json `routing`, which the registry config names
+# as `policy`; the generator reads them from there rather than restating them (reviewer round 2:
+# two copies of the schema enforced different subsets). Promotion has no policy field; it is the
+# register's own two-token vocabulary, mirrored from control_plane_lint.py.
 ROUTED_LIFECYCLE = "active"
 ROUTED_PROMOTION = "promoted"
+PROMOTION_TOKENS = frozenset({"promoted", "backlog"})
 UNSET = "-"
+ROUTE_REGISTRY_KEYS = frozenset({"work_items", "source_inventory", "open_items", "policy"})
 WORK_ITEM_COLUMNS = (
     "item",
     "source_record",
@@ -149,7 +149,7 @@ def validate_config(config: dict[str, Any]) -> None:
             raise ValueError(f"measurement_ttl_seconds.{name} must be a positive integer")
 
     registry = _require_mapping(config.get("route_registry"), "route_registry")
-    if set(registry) != {"work_items", "source_inventory", "open_items"}:
+    if set(registry) != ROUTE_REGISTRY_KEYS:
         raise ValueError("route_registry has unexpected or missing fields")
     if not all(isinstance(value, str) and value for value in registry.values()):
         raise ValueError("route_registry paths must be non-empty strings")
@@ -217,17 +217,38 @@ def _source_rows(path: pathlib.Path) -> dict[str, tuple[str, str]]:
     return records
 
 
+def _routing_vocabulary(policy_path: pathlib.Path) -> tuple[frozenset[str], frozenset[str]]:
+    """Return (lifecycles, queues) declared by policy.json's `routing` block."""
+    policy = json.loads(policy_path.read_text(encoding="utf-8"))
+    routing = policy.get("routing") if isinstance(policy, dict) else None
+    if not isinstance(routing, dict):
+        raise ValueError(f"{policy_path}: no `routing` block")
+    vocab = []
+    for key in ("lifecycles", "queues"):
+        values = routing.get(key)
+        if (
+            not isinstance(values, list)
+            or not values
+            or not all(isinstance(v, str) and v and v != UNSET for v in values)
+        ):
+            raise ValueError(f"{policy_path}: routing.{key} must be a non-empty list of tokens")
+        vocab.append(frozenset(values))
+    return vocab[0], vocab[1]
+
+
 def inspect_route_registry(
     *,
     work_items_path: pathlib.Path,
     source_inventory_path: pathlib.Path,
     open_items_path: pathlib.Path,
+    policy_path: pathlib.Path,
 ) -> RouteSnapshot:
     """Measure route-registry availability and internal consistency."""
     try:
         work_items = _read_tsv(work_items_path, WORK_ITEM_COLUMNS)
         inventory_rows = _read_tsv(source_inventory_path, SOURCE_INVENTORY_COLUMNS)
         source_rows = _source_rows(open_items_path)
+        lifecycles, queues = _routing_vocabulary(policy_path)
     except (OSError, ValueError, csv.Error) as exc:
         return RouteSnapshot("UNAVAILABLE", f"{type(exc).__name__}: {exc}")
 
@@ -284,23 +305,42 @@ def inspect_route_registry(
         # Lifecycle is a property of the SOURCE RECORD. A sub-item row (`OI-131(a)`) carries
         # UNSET and inherits its record's lifecycle; a record's own row must agree with the
         # inventory, which control_plane_lint.py --write derives from the same register.
-        lifecycle = row["lifecycle"]
+        # Every token is validated against the frozen vocabulary BEFORE any row is skipped, so a
+        # misspelt token ("promtoed", "activ") is a contradiction and never a silent non-route
+        # (reviewer round 2 mutations).
+        lifecycle, promotion, queue = row["lifecycle"], row["promotion"], row["queue"]
+        if lifecycle != UNSET and lifecycle not in lifecycles:
+            contradictions.append(f"{item}: invalid lifecycle {lifecycle!r}")
+            continue
+        if promotion != UNSET and promotion not in PROMOTION_TOKENS:
+            contradictions.append(f"{item}: invalid promotion {promotion!r}")
+            continue
+        if queue != UNSET and queue not in queues:
+            contradictions.append(f"{item}: invalid queue {queue!r}")
+            continue
+        if record["lifecycle"] not in lifecycles:
+            contradictions.append(f"{item}: inventory lifecycle {record['lifecycle']!r} invalid")
+            continue
         if lifecycle != UNSET and lifecycle != record["lifecycle"]:
             contradictions.append(
                 f"{item}: register lifecycle {lifecycle!r} contradicts inventory "
                 f"{record['lifecycle']!r}"
             )
         if record["lifecycle"] != ROUTED_LIFECYCLE:
+            if (promotion, queue) != (UNSET, UNSET):
+                contradictions.append(
+                    f"{item}: non-active row must carry '-' promotion and queue"
+                )
             continue  # deferred/retired rows are inventory, never routes
-        if row["promotion"] != ROUTED_PROMOTION:
+        if promotion == UNSET or queue == UNSET:
+            contradictions.append(f"{item}: active row must declare promotion and queue")
+            continue
+        if promotion != ROUTED_PROMOTION:
             continue  # backlog rows are inventory, never routes
-        queue = row["queue"]
         if item == source and queue != record["queue"]:
             contradictions.append(
                 f"{item}: register queue {queue!r} contradicts inventory {record['queue']!r}"
             )
-        if queue not in ALLOWED_ROUTE_QUEUES:
-            contradictions.append(f"{item}: invalid declared queue {queue!r}")
         routes.append(Route(item, queue, source))
 
     if contradictions:
@@ -350,6 +390,7 @@ def route_registry_snapshot(config: dict[str, Any], repo_root: pathlib.Path) -> 
         work_items_path=paths["work_items"],
         source_inventory_path=paths["source_inventory"],
         open_items_path=paths["open_items"],
+        policy_path=paths["policy"],
     )
 
 

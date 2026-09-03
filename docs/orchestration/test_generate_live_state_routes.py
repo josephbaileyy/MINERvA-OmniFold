@@ -10,7 +10,7 @@ import unittest
 
 import generate_live_state
 from generate_live_state import (
-    ALLOWED_ROUTE_QUEUES,
+    PROMOTION_TOKENS,
     Route,
     RouteSnapshot,
     inspect_route_registry,
@@ -28,6 +28,14 @@ INVENTORY_HEADER = (
     "\tstate_prefix\n"
 )
 OPEN_ROW = "| OI-181 | OPEN | owner | blocker | action | detail | 2026-09-02 |"
+POLICY = {
+    "routing": {
+        "lifecycles": ["active", "deferred", "retired"],
+        "queues": [
+            "NOW", "WAITING-JOSEPH", "BLOCKED-DECISION", "BLOCKED-INTERNAL", "BLOCKED-EXTERNAL",
+        ],
+    }
+}
 
 
 def register_row(
@@ -52,11 +60,13 @@ def write_registry(
     state_prefix: str = "OPEN",
     rows: str | None = None,
     inventory_lifecycle: str = "active",
-) -> tuple[pathlib.Path, pathlib.Path, pathlib.Path]:
+) -> tuple[pathlib.Path, pathlib.Path, pathlib.Path, pathlib.Path]:
     """Write the smallest internally consistent route registry."""
     work_items = directory / "work-items.tsv"
     source_inventory = directory / "source-record-inventory.tsv"
     open_items = directory / "OPEN_ITEMS.md"
+    policy = directory / "policy.json"
+    policy.write_text(json.dumps(POLICY), encoding="utf-8")
     work_items.write_text(
         WORK_HEADER + (register_row() if rows is None else rows),
         encoding="utf-8",
@@ -69,7 +79,7 @@ def write_registry(
         encoding="utf-8",
     )
     open_items.write_text(open_row + "\n", encoding="utf-8")
-    return work_items, source_inventory, open_items
+    return work_items, source_inventory, open_items, policy
 
 
 def minimal_config() -> dict:
@@ -84,6 +94,7 @@ def minimal_config() -> dict:
             "work_items": "work-items.tsv",
             "source_inventory": "source-record-inventory.tsv",
             "open_items": "OPEN_ITEMS.md",
+            "policy": "policy.json",
         },
         "evidence_routes": [{"label": "Open items", "path": "OPEN_ITEMS.md"}],
         "jobs": [],
@@ -92,12 +103,13 @@ def minimal_config() -> dict:
 
 
 class RouteRegistryHealthTests(unittest.TestCase):
-    def inspect(self, paths: tuple[pathlib.Path, pathlib.Path, pathlib.Path]):
-        work_items, source_inventory, open_items = paths
+    def inspect(self, paths):
+        work_items, source_inventory, open_items, policy = paths
         return inspect_route_registry(
             work_items_path=work_items,
             source_inventory_path=source_inventory,
             open_items_path=open_items,
+            policy_path=policy,
         )
 
     def test_positive_sources_produce_a_structured_route(self):
@@ -123,6 +135,7 @@ class RouteRegistryHealthTests(unittest.TestCase):
                 work_items_path=root / "missing-work-items.tsv",
                 source_inventory_path=root / "missing-inventory.tsv",
                 open_items_path=root / "missing-open-items.md",
+                policy_path=root / "missing-policy.json",
             )
         self.assertEqual(snapshot.health, "UNAVAILABLE")
         self.assertEqual(snapshot.routes, ())
@@ -141,21 +154,62 @@ class FrozenRegisterInterfaceTests(unittest.TestCase):
     """The generator consumes the register exactly as frozen on 2026-09-03."""
 
     def inspect(self, paths):
-        work_items, source_inventory, open_items = paths
+        work_items, source_inventory, open_items, policy = paths
         return inspect_route_registry(
             work_items_path=work_items,
             source_inventory_path=source_inventory,
             open_items_path=open_items,
+            policy_path=policy,
         )
 
-    def test_queue_vocabulary_is_bound_to_policy_json(self):
+    def test_vocabulary_is_read_from_the_repository_policy(self):
         policy_path = (
             pathlib.Path(generate_live_state.__file__).resolve().parent
             / "control-plane"
             / "policy.json"
         )
-        policy = json.loads(policy_path.read_text(encoding="utf-8"))
-        self.assertEqual(ALLOWED_ROUTE_QUEUES, frozenset(policy["routing"]["queues"]))
+        lifecycles, queues = generate_live_state._routing_vocabulary(policy_path)
+        self.assertEqual(lifecycles, frozenset({"active", "deferred", "retired"}))
+        self.assertEqual(len(queues), 5)
+        self.assertIn("BLOCKED-INTERNAL", queues)
+        self.assertEqual(PROMOTION_TOKENS, frozenset({"promoted", "backlog"}))
+
+    def test_misspelt_promotion_is_contradictory_not_a_silent_non_route(self):
+        with tempfile.TemporaryDirectory() as directory:
+            snapshot = self.inspect(
+                write_registry(pathlib.Path(directory), rows=register_row(promotion="promtoed"))
+            )
+        self.assertEqual(snapshot.health, "CONTRADICTORY")
+        self.assertIn("invalid promotion 'promtoed'", snapshot.detail)
+        self.assertEqual(snapshot.routes, ())
+
+    def test_misspelt_lifecycle_is_contradictory_not_a_silent_non_route(self):
+        with tempfile.TemporaryDirectory() as directory:
+            snapshot = self.inspect(
+                write_registry(pathlib.Path(directory), rows=register_row(lifecycle="activ"))
+            )
+        self.assertEqual(snapshot.health, "CONTRADICTORY")
+        self.assertIn("invalid lifecycle 'activ'", snapshot.detail)
+        self.assertEqual(snapshot.routes, ())
+
+    def test_non_active_row_with_a_queue_is_contradictory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            snapshot = self.inspect(
+                write_registry(
+                    pathlib.Path(directory),
+                    rows=register_row(lifecycle="retired", queue="NOW", promotion="-"),
+                    inventory_lifecycle="retired",
+                )
+            )
+        self.assertEqual(snapshot.health, "CONTRADICTORY")
+        self.assertIn("non-active row must carry", snapshot.detail)
+
+    def test_missing_policy_is_unavailable(self):
+        with tempfile.TemporaryDirectory() as directory:
+            paths = write_registry(pathlib.Path(directory))
+            paths[3].unlink()
+            snapshot = self.inspect(paths)
+        self.assertEqual(snapshot.health, "UNAVAILABLE")
 
     def test_backlog_rows_are_inventory_not_routes(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -207,7 +261,7 @@ class FrozenRegisterInterfaceTests(unittest.TestCase):
         self.assertEqual(accepted.health, "HEALTHY")
         self.assertEqual(accepted.routes[0].queue, "BLOCKED-INTERNAL")
         self.assertEqual(rejected.health, "CONTRADICTORY")
-        self.assertIn("invalid declared queue", rejected.detail)
+        self.assertIn("invalid queue 'SOMEDAY'", rejected.detail)
 
     def test_unregistered_source_record_withholds_routes(self):
         extra = "| OI-182 | OPEN | owner | blocker | action | detail | 2026-09-03 |"
