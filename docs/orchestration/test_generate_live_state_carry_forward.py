@@ -176,7 +176,7 @@ class ComputeRowsCarry(unittest.TestCase):
         store.host, store.observed_at = LAPTOP, T_LATER
         text = dashboard(snapshot=UNOBSERVED_JOB, usage=UNREADABLE_USAGE, usage_rc=3,
                          host=LAPTOP, observed_at=T_LATER, store=store)
-        self.assertIn("STATE UNAVAILABLE — NOT A LIVENESS CLAIM", text)
+        self.assertIn("**UNAVAILABLE** / 5 min from observed time", text)
         self.assertIn("THIS HOST COULD NOT LOOK", text)
         # The bolded state word is the one a reader takes as the finding, so the
         # carried state must never appear in that position.
@@ -221,11 +221,11 @@ class UsageGateIsNotBlockedByAnUnreadableProfile(unittest.TestCase):
         self.assertIn(f"measured on `{LAPTOP}`", text)
         self.assertIn("THIS HOST COULD NOT LOOK", text)
 
-    def test_the_warning_COUNT_is_labelled_host_dependent_when_a_profile_is_unreadable(self):
+    def test_warning_measurement_reports_unavailable_profile_sources(self):
         store = new_store(host=CLUSTER, observed_at=T_CLUSTER)
         text = dashboard(snapshot=OBSERVED_JOB, usage=UNREADABLE_USAGE, usage_rc=3,
                          host=CLUSTER, observed_at=T_CLUSTER, store=store)
-        self.assertIn("this COUNT is a property of THIS host", text)
+        self.assertIn("2 measured; 3 profile source(s) unavailable on this host", text)
 
     def test_agy_unknown_is_a_measured_absence_and_is_never_carried(self):
         store = new_store(host=CLUSTER, observed_at=T_CLUSTER)
@@ -262,9 +262,9 @@ class TheDirtCountIsNotCampaignState(unittest.TestCase):
         store = new_store(host=LAPTOP, observed_at=T_LATER)
         text = dashboard(snapshot=OBSERVED_JOB, usage=READABLE_USAGE, usage_rc=0,
                          host=LAPTOP, observed_at=T_LATER, store=store, dirty=726)
-        self.assertIn("GENERATING CHECKOUT", text)
-        self.assertIn(f"on `{LAPTOP}` had 726 uncommitted worktree entries", text)
-        self.assertIn("never campaign state", text)
+        self.assertIn("Git checkout", text)
+        self.assertIn(f"`{T_LATER}` on `{LAPTOP}`", text)
+        self.assertIn("726 local worktree entries", text)
 
     def test_the_bare_unattributed_phrasing_is_gone(self):
         store = new_store(host=LAPTOP, observed_at=T_LATER)
@@ -276,7 +276,7 @@ class TheDirtCountIsNotCampaignState(unittest.TestCase):
         store = new_store(host=CLUSTER, observed_at=T_CLUSTER)
         text = dashboard(snapshot=OBSERVED_JOB, usage=READABLE_USAGE, usage_rc=0,
                          host=CLUSTER, observed_at=T_CLUSTER, store=store)
-        self.assertIn(f"- Observed: `{T_CLUSTER}` on host `{CLUSTER}`", text)
+        self.assertIn(f"`{T_CLUSTER}` on `{CLUSTER}`", text)
 
 
 class StoreMechanics(unittest.TestCase):

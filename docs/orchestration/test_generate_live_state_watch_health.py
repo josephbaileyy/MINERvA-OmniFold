@@ -242,7 +242,7 @@ class WakeSectionEndToEndTests(unittest.TestCase):
 
     def test_dashboard_is_LOUD_on_the_real_failing_watch_and_stale_tick(self):
         text = self.dashboard(UNHEALTHY_WATCH, STALE_TICK)
-        self.assertIn("THE SUPERVISION NET IS NOT HEALTHY IN THIS SNAPSHOT", text)
+        self.assertIn("Wake health: **UNHEALTHY**", text)
         self.assertIn("DOES NOT EXIST", text)
         self.assertIn("45.6 h old", text)
         print("\n--- LOUD render ---")
@@ -252,8 +252,8 @@ class WakeSectionEndToEndTests(unittest.TestCase):
 
     def test_dashboard_is_QUIET_on_the_healthy_watch_and_fresh_tick(self):
         text = self.dashboard(HEALTHY_WATCH, FRESH_TICK, now=NOW + 180)
-        self.assertNotIn("THE SUPERVISION NET IS NOT HEALTHY", text)
-        self.assertNotIn("NOT A LIVE VIEW IN THIS SNAPSHOT.** One or more entries", text)
+        self.assertNotIn("Wake health: **UNHEALTHY**", text)
+        self.assertNotIn("Wake health: **UNKNOWN**", text)
         self.assertIn("subject OBSERVED in Slurm", text)
         self.assertIn("FRESH, 3 min old", text)
         print("\n--- QUIET render ---")
@@ -263,7 +263,7 @@ class WakeSectionEndToEndTests(unittest.TestCase):
 
     def test_dashboard_without_slurm_says_NO_EVIDENCE_and_does_not_crash(self):
         text = self.dashboard(UNHEALTHY_WATCH, STALE_TICK, missing=True)
-        self.assertIn("NOT A LIVE VIEW IN THIS SNAPSHOT", text)
+        self.assertIn("Wake health: **UNKNOWN**", text)
         self.assertIn("NO EVIDENCE", text)
         self.assertNotIn("subject OBSERVED", text)
         self.assertNotIn("FRESH,", text)

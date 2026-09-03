@@ -1,6 +1,6 @@
 import unittest
 
-from generate_live_state import MAX_LINES, render
+from generate_live_state import MAX_LINES, render, validate_config
 
 
 class LiveStateTests(unittest.TestCase):
@@ -61,11 +61,10 @@ class LiveStateTests(unittest.TestCase):
         self.assertIn("UNJUDGED", text)
         self.assertLessEqual(len(text.splitlines()), MAX_LINES)
 
-    def test_uuid_mismatch_fails(self):
-        config, sessions, usage, jobs = self.fixtures()
-        sessions["sessions"]["worker"]["session_id"] = "replacement"
-        with self.assertRaisesRegex(RuntimeError, "UUID mismatch"):
-            render(config, sessions, usage, 0, jobs, {"head": "abc", "dirty_count": 0}, {"tmux": "INACTIVE", "event": "absent", "invoked": "absent", "completed": "absent"}, "now")
+    def test_legacy_authored_state_is_rejected(self):
+        config, _, _, _ = self.fixtures()
+        with self.assertRaisesRegex(ValueError, "legacy authored operational prose"):
+            validate_config(config)
 
 
 if __name__ == "__main__":
