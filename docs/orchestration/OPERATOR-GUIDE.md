@@ -126,6 +126,25 @@ Scientific authorization is a separate gate. Approval means only “execute
 this exact already-authorized command”; it cannot adopt a result, lift an
 `OI-*` hold, authorize material compute, or waive `mnv_guarded_run.py`.
 
+Compute items additionally require `--contract <path>`. The contract must be
+committed at the staged `HEAD` and its `campaign_id` must equal the queue item
+id. Schema version 1 requires the scientific question; exact candidate and
+input ids, locations, and SHA-256 digests; exhaustive return-code branches;
+the decision consequence, unlocks, and prohibitions for every branch; maximum
+GPU task-hours, CPU task-hours, and wall hours; output namespace; producer,
+independent-validator, and decision-authority identities; validator version;
+preservation behavior; and retry policy. Producer and validator identities
+must differ. Exactly one `otherwise` branch covers every unclassified terminal
+result, and every branch must name a decision consequence.
+
+The safe terminal policy is enforced rather than inferred: preservation mode
+is `preserve-first`, automatic retraining is false, and a retry requires new
+authorization. The fixture at
+`test_fixtures_campaign_contract/validator-failed-after-jobs-complete.json`
+shows the branch where all jobs complete but the terminal validator fails.
+Its queue outcome preserves the declared evidence first, records the decision
+consequence, and becomes terminal, so a later tick cannot rerun it.
+
 An agent stages work with a command such as:
 
 ```bash

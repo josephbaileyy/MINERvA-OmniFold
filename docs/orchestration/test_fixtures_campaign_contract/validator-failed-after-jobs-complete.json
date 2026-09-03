@@ -1,0 +1,86 @@
+{
+  "campaign_id": "validator-failure-fixture",
+  "candidate": {
+    "id": "candidate-a",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "uri": "fixtures/candidate-a.root"
+  },
+  "decision_authority": "role:fixture-decision-authority",
+  "independent_validator": "role:fixture-independent-validator",
+  "inputs": [
+    {
+      "id": "input-events",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "uri": "fixtures/input-events.root"
+    }
+  ],
+  "maximum_cost": {
+    "cpu_task_hours": 1.0,
+    "gpu_task_hours": 1.0,
+    "wall_hours": 2.0
+  },
+  "output_namespace": "outputs/validator-failure-fixture",
+  "preservation_behavior": {
+    "artifacts": [
+      "output_namespace",
+      "producer_log",
+      "terminal_validator_report"
+    ],
+    "mode": "preserve-first"
+  },
+  "producer": "role:fixture-producer",
+  "retry_policy": {
+    "automatic_retraining": false,
+    "requires_new_authorization": true
+  },
+  "schema_version": 1,
+  "scientific_question": "Does the candidate satisfy the terminal validation criterion?",
+  "terminal_branches": [
+    {
+      "condition": "All jobs complete and the terminal validator passes.",
+      "decision": "Record the validator pass for independent grading.",
+      "forbids": [
+        "automatic adoption",
+        "gate movement without the decision authority"
+      ],
+      "id": "terminal-validator-passed",
+      "return_codes": [
+        0
+      ],
+      "unlocks": [
+        "independent grading of the preserved result"
+      ]
+    },
+    {
+      "condition": "All jobs complete and the terminal validator fails.",
+      "decision": "Preserve every declared artifact and stop for failure review.",
+      "forbids": [
+        "automatic retraining",
+        "artifact adoption",
+        "gate movement"
+      ],
+      "id": "terminal-validator-failed",
+      "return_codes": [
+        23
+      ],
+      "unlocks": [
+        "diagnosis from the preserved outputs and validator report"
+      ]
+    },
+    {
+      "condition": "Any terminal result not classified above.",
+      "decision": "Preserve available evidence and stop for terminal classification.",
+      "forbids": [
+        "automatic retraining",
+        "artifact adoption",
+        "gate movement"
+      ],
+      "id": "unexpected-terminal-result",
+      "return_codes": "otherwise",
+      "unlocks": [
+        "manual terminal-result classification"
+      ]
+    }
+  ],
+  "validator_version": "fixture-terminal-validator/1"
+}

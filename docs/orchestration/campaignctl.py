@@ -4,6 +4,8 @@
 Staging is not authorization.  A staged item becomes runnable only after a
 human reviews its complete digest and approves it from an interactive TTY.
 The ticker executes at most one ready item per invocation, without a shell.
+Compute items also require a committed campaign contract whose terminal
+branches all resolve to a decision consequence.
 """
 
 from __future__ import annotations
@@ -13,6 +15,7 @@ import contextlib
 import datetime as dt
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -26,8 +29,39 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent.parent.resolve()
 DEFAULT_STATE = HERE / "state" / "campaign-queue"
 ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$")
+SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 PYTHON = Path("/usr/bin/python3.11")
 ALLOWED_PYTHONS = {PYTHON, Path(sys.executable).resolve()}
+
+CONTRACT_KEYS = frozenset(
+    {
+        "schema_version",
+        "campaign_id",
+        "scientific_question",
+        "candidate",
+        "inputs",
+        "terminal_branches",
+        "maximum_cost",
+        "output_namespace",
+        "producer",
+        "independent_validator",
+        "decision_authority",
+        "validator_version",
+        "preservation_behavior",
+        "retry_policy",
+    }
+)
+ARTIFACT_IDENTITY_KEYS = frozenset({"id", "uri", "sha256"})
+TERMINAL_BRANCH_KEYS = frozenset(
+    {"id", "return_codes", "condition", "decision", "unlocks", "forbids"}
+)
+MAXIMUM_COST_KEYS = frozenset(
+    {"gpu_task_hours", "cpu_task_hours", "wall_hours"}
+)
+PRESERVATION_KEYS = frozenset({"mode", "artifacts"})
+RETRY_POLICY_KEYS = frozenset(
+    {"automatic_retraining", "requires_new_authorization"}
+)
 
 
 class QueueError(RuntimeError):
@@ -95,6 +129,251 @@ def read_object(path: Path) -> dict:
     return value
 
 
+def require_object(
+    value: object,
+    *,
+    field: str,
+    keys: frozenset[str],
+) -> dict[str, object]:
+    """Return an object after checking its complete key set."""
+    if not isinstance(value, dict) or not all(isinstance(key, str) for key in value):
+        raise QueueError(f"{field} must be an object")
+    actual = set(value)
+    missing = sorted(keys - actual)
+    unknown = sorted(actual - keys)
+    if missing:
+        raise QueueError(f"{field} is missing required field(s): {', '.join(missing)}")
+    if unknown:
+        raise QueueError(f"{field} has unknown field(s): {', '.join(unknown)}")
+    return value
+
+
+def require_text(value: object, *, field: str) -> str:
+    """Return a nonempty text field with surrounding whitespace removed."""
+    if not isinstance(value, str) or not value.strip():
+        raise QueueError(f"{field} must be a nonempty string")
+    return value.strip()
+
+
+def require_text_list(value: object, *, field: str) -> list[str]:
+    """Return an explicit list whose entries are nonempty strings."""
+    if not isinstance(value, list):
+        raise QueueError(f"{field} must be an array")
+    values = [require_text(entry, field=f"{field} entry") for entry in value]
+    if len(values) != len(set(values)):
+        raise QueueError(f"{field} contains duplicate entries")
+    return values
+
+
+def validate_artifact_identity(value: object, *, field: str) -> dict[str, object]:
+    """Validate an immutable candidate or input identity."""
+    artifact = require_object(value, field=field, keys=ARTIFACT_IDENTITY_KEYS)
+    require_text(artifact["id"], field=f"{field}.id")
+    require_text(artifact["uri"], field=f"{field}.uri")
+    sha256 = require_text(artifact["sha256"], field=f"{field}.sha256")
+    if not SHA256_RE.fullmatch(sha256):
+        raise QueueError(f"{field}.sha256 must be 64 lowercase hexadecimal characters")
+    return artifact
+
+
+def validate_campaign_contract(
+    value: object,
+    *,
+    expected_campaign_id: str | None = None,
+) -> dict[str, object]:
+    """Validate the complete pre-execution contract for a compute campaign.
+
+    Parameters
+    ----------
+    value : object
+        Decoded JSON value to validate.
+    expected_campaign_id : str or None, optional
+        Queue item identifier that the contract must name when supplied.
+
+    Returns
+    -------
+    dict[str, object]
+        The validated contract object.
+
+    Raises
+    ------
+    QueueError
+        If a required field or cross-field safety rule is not satisfied.
+    """
+    contract = require_object(value, field="campaign contract", keys=CONTRACT_KEYS)
+    if contract["schema_version"] != 1:
+        raise QueueError("campaign contract schema_version must be 1")
+
+    campaign_id = require_text(contract["campaign_id"], field="campaign_id")
+    validate_id(campaign_id)
+    if expected_campaign_id is not None and campaign_id != expected_campaign_id:
+        raise QueueError(
+            f"campaign contract id {campaign_id!r} does not match queue item "
+            f"{expected_campaign_id!r}"
+        )
+    require_text(contract["scientific_question"], field="scientific_question")
+    validate_artifact_identity(contract["candidate"], field="candidate")
+
+    inputs = contract["inputs"]
+    if not isinstance(inputs, list) or not inputs:
+        raise QueueError("inputs must be a nonempty array")
+    input_identities = [
+        validate_artifact_identity(entry, field=f"inputs[{index}]")
+        for index, entry in enumerate(inputs)
+    ]
+    input_ids = [str(identity["id"]) for identity in input_identities]
+    input_uris = [str(identity["uri"]) for identity in input_identities]
+    if len(input_ids) != len(set(input_ids)):
+        raise QueueError("inputs contain duplicate ids")
+    if len(input_uris) != len(set(input_uris)):
+        raise QueueError("inputs contain duplicate uris")
+
+    terminal_branches = contract["terminal_branches"]
+    if not isinstance(terminal_branches, list) or not terminal_branches:
+        raise QueueError("terminal_branches must be a nonempty array")
+    branch_ids: set[str] = set()
+    claimed_return_codes: set[int] = set()
+    fallback_count = 0
+    for index, value_branch in enumerate(terminal_branches):
+        field = f"terminal_branches[{index}]"
+        branch = require_object(value_branch, field=field, keys=TERMINAL_BRANCH_KEYS)
+        branch_id = require_text(branch["id"], field=f"{field}.id")
+        validate_id(branch_id)
+        if branch_id in branch_ids:
+            raise QueueError(f"duplicate terminal branch id: {branch_id}")
+        branch_ids.add(branch_id)
+
+        return_codes = branch["return_codes"]
+        if return_codes == "otherwise":
+            fallback_count += 1
+        elif isinstance(return_codes, list) and return_codes:
+            if any(
+                isinstance(code, bool) or not isinstance(code, int)
+                for code in return_codes
+            ):
+                raise QueueError(f"{field}.return_codes must contain only integers")
+            if len(return_codes) != len(set(return_codes)):
+                raise QueueError(f"{field}.return_codes contains duplicates")
+            overlap = claimed_return_codes.intersection(return_codes)
+            if overlap:
+                raise QueueError(
+                    "return code(s) assigned to multiple terminal branches: "
+                    + ", ".join(str(code) for code in sorted(overlap))
+                )
+            claimed_return_codes.update(return_codes)
+        else:
+            raise QueueError(
+                f"{field}.return_codes must be a nonempty integer array or 'otherwise'"
+            )
+
+        require_text(branch["condition"], field=f"{field}.condition")
+        require_text(branch["decision"], field=f"{field}.decision")
+        require_text_list(branch["unlocks"], field=f"{field}.unlocks")
+        require_text_list(branch["forbids"], field=f"{field}.forbids")
+    if fallback_count != 1:
+        raise QueueError(
+            "terminal_branches must contain exactly one 'otherwise' branch so every "
+            "possible terminal result has a decision consequence"
+        )
+
+    maximum_cost = require_object(
+        contract["maximum_cost"], field="maximum_cost", keys=MAXIMUM_COST_KEYS
+    )
+    costs: dict[str, float] = {}
+    for key in sorted(MAXIMUM_COST_KEYS):
+        amount = maximum_cost[key]
+        if isinstance(amount, bool) or not isinstance(amount, (int, float)):
+            raise QueueError(f"maximum_cost.{key} must be numeric")
+        costs[key] = float(amount)
+        if not math.isfinite(costs[key]) or costs[key] < 0:
+            raise QueueError(f"maximum_cost.{key} must be finite and nonnegative")
+    if costs["wall_hours"] <= 0:
+        raise QueueError("maximum_cost.wall_hours must be positive")
+    if costs["gpu_task_hours"] == 0 and costs["cpu_task_hours"] == 0:
+        raise QueueError("maximum_cost must allow positive GPU or CPU task-hours")
+
+    require_text(contract["output_namespace"], field="output_namespace")
+    producer = require_text(contract["producer"], field="producer")
+    validator = require_text(
+        contract["independent_validator"], field="independent_validator"
+    )
+    if producer.casefold() == validator.casefold():
+        raise QueueError("producer and independent_validator identities must differ")
+    require_text(contract["decision_authority"], field="decision_authority")
+    require_text(contract["validator_version"], field="validator_version")
+
+    preservation = require_object(
+        contract["preservation_behavior"],
+        field="preservation_behavior",
+        keys=PRESERVATION_KEYS,
+    )
+    if preservation["mode"] != "preserve-first":
+        raise QueueError("preservation_behavior.mode must be 'preserve-first'")
+    preserved_artifacts = require_text_list(
+        preservation["artifacts"], field="preservation_behavior.artifacts"
+    )
+    if not preserved_artifacts:
+        raise QueueError("preservation_behavior.artifacts must be nonempty")
+
+    retry_policy = require_object(
+        contract["retry_policy"], field="retry_policy", keys=RETRY_POLICY_KEYS
+    )
+    if retry_policy["automatic_retraining"] is not False:
+        raise QueueError("retry_policy.automatic_retraining must be false")
+    if retry_policy["requires_new_authorization"] is not True:
+        raise QueueError("retry_policy.requires_new_authorization must be true")
+    return contract
+
+
+def terminal_plan(
+    contract: dict[str, object], returncode: int | None
+) -> dict[str, object]:
+    """Resolve a process result to its required preservation and decision actions."""
+    branches = contract["terminal_branches"]
+    if not isinstance(branches, list):
+        raise QueueError("validated campaign contract lost terminal_branches")
+    selected: dict[str, object] | None = None
+    fallback: dict[str, object] | None = None
+    for value_branch in branches:
+        if not isinstance(value_branch, dict):
+            raise QueueError("validated campaign contract has a non-object branch")
+        if value_branch["return_codes"] == "otherwise":
+            fallback = value_branch
+        elif returncode in value_branch["return_codes"]:
+            selected = value_branch
+            break
+    branch = selected or fallback
+    if branch is None:
+        raise QueueError("validated campaign contract has no fallback branch")
+
+    preservation = contract["preservation_behavior"]
+    retry_policy = contract["retry_policy"]
+    if not isinstance(preservation, dict) or not isinstance(retry_policy, dict):
+        raise QueueError("validated campaign contract lost terminal policy objects")
+    return {
+        "terminal_branch": branch["id"],
+        "decision_consequence": branch["decision"],
+        "unlocks": branch["unlocks"],
+        "forbids": branch["forbids"],
+        "required_actions": [
+            {
+                "action": "preserve",
+                "mode": preservation["mode"],
+                "artifacts": preservation["artifacts"],
+            },
+            {
+                "action": "refer-decision",
+                "authority": contract["decision_authority"],
+                "consequence": branch["decision"],
+            },
+        ],
+        "automatic_retraining": retry_policy["automatic_retraining"],
+        "retry_requires_new_authorization": retry_policy[
+            "requires_new_authorization"
+        ],
+    }
+
+
 class Queue:
     def __init__(self, repo: Path = REPO, state: Path = DEFAULT_STATE, clock=utc_now):
         self.repo = repo.resolve()
@@ -126,6 +405,23 @@ class Queue:
         if result.returncode != 0:
             raise QueueError(f"cannot resolve repository HEAD: {result.stdout.strip()}")
         return result.stdout.strip()
+
+    def committed_file_sha256(self, path: Path) -> str:
+        """Return the SHA-256 of a file as committed at the queue's HEAD."""
+        relative = inside(path, self.repo).relative_to(self.repo).as_posix()
+        result = subprocess.run(
+            ["git", "-C", str(self.repo), "show", f"HEAD:{relative}"],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        if result.returncode != 0:
+            raise QueueError(
+                "campaign contract must be committed at repository HEAD: "
+                f"{relative}"
+            )
+        return hashlib.sha256(result.stdout).hexdigest()
 
 
 def validate_id(value: str) -> None:
@@ -176,7 +472,11 @@ def proposal_payload(item: dict) -> dict:
         "schema_version", "id", "description", "kind", "argv", "cwd",
         "depends_on", "bindings", "git_head", "timeout_seconds",
     )
-    return {key: item[key] for key in keys}
+    payload = {key: item[key] for key in keys}
+    for key in ("campaign_contract_path", "campaign_contract"):
+        if key in item:
+            payload[key] = item[key]
+    return payload
 
 
 def stage(
@@ -189,6 +489,7 @@ def stage(
     bind: list[str],
     argv: list[str],
     timeout_seconds: int,
+    campaign_contract: str | None = None,
 ) -> dict:
     validate_id(item_id)
     if not description.strip():
@@ -200,10 +501,32 @@ def stage(
         if dependency == item_id:
             raise QueueError("an item cannot depend on itself")
         queue.item(dependency)
+
+    contract: dict[str, object] | None = None
+    contract_path: Path | None = None
+    if campaign_contract is None:
+        if kind == "compute":
+            raise QueueError("compute items require a committed campaign contract")
+    else:
+        contract_path = resolve_repo_path(queue.repo, campaign_contract)
+        if not contract_path.is_file():
+            raise QueueError(f"campaign contract is not a file: {contract_path}")
+        contract = validate_campaign_contract(
+            read_object(contract_path), expected_campaign_id=item_id
+        )
+        committed_sha256 = queue.committed_file_sha256(contract_path)
+        if sha256_file(contract_path) != committed_sha256:
+            raise QueueError(
+                "campaign contract differs from the file committed at HEAD"
+            )
+
     command = list(argv)
     if command and command[0] == "--":
         command = command[1:]
-    bindings = command_bindings(queue.repo, command, bind)
+    bound_inputs = list(bind)
+    if contract_path is not None:
+        bound_inputs.append(str(contract_path))
+    bindings = command_bindings(queue.repo, command, bound_inputs)
     cwd_path = resolve_repo_path(queue.repo, cwd)
     if not cwd_path.is_dir():
         raise QueueError(f"cwd is not a directory: {cwd_path}")
@@ -221,6 +544,9 @@ def stage(
         "created_at_utc": queue.clock(),
         "created_by": f"{os.environ.get('USER', 'unknown')}@{socket.gethostname()}",
     }
+    if contract is not None and contract_path is not None:
+        item["campaign_contract_path"] = str(contract_path.relative_to(queue.repo))
+        item["campaign_contract"] = contract
     item["proposal_digest"] = digest(proposal_payload(item))
     atomic_json(queue.path("items", item_id), item, exclusive=True)
     return item
@@ -232,6 +558,18 @@ def validate_unchanged(queue: Queue, item: dict) -> None:
         raise QueueError("proposal JSON does not match its digest")
     if queue.git_head() != item["git_head"]:
         raise QueueError("repository HEAD changed after staging")
+    contract = item.get("campaign_contract")
+    if item.get("kind") == "compute" and not isinstance(contract, dict):
+        raise QueueError("compute items require a committed campaign contract")
+    if contract is not None:
+        if not isinstance(contract, dict):
+            raise QueueError("embedded campaign contract must be an object")
+        validate_campaign_contract(contract, expected_campaign_id=item["id"])
+        contract_path = item.get("campaign_contract_path")
+        if not isinstance(contract_path, str):
+            raise QueueError("campaign contract path is missing")
+        if read_object(resolve_repo_path(queue.repo, contract_path)) != contract:
+            raise QueueError("embedded campaign contract differs from its bound file")
     for binding in item["bindings"]:
         path = resolve_repo_path(queue.repo, binding["path"])
         if not path.is_file() or sha256_file(path) != binding["sha256"]:
@@ -387,15 +725,48 @@ def run_ready(queue: Queue) -> tuple[int, dict]:
                 timeout=int(item["timeout_seconds"]),
             )
         status = "succeeded" if result.returncode == 0 else "failed"
+        contract = item.get("campaign_contract")
+        contract_fields = (
+            terminal_plan(contract, result.returncode)
+            if isinstance(contract, dict)
+            else {}
+        )
         outcome = write_outcome(
-            queue, item, status, returncode=result.returncode, log=str(log_path)
+            queue,
+            item,
+            status,
+            returncode=result.returncode,
+            log=str(log_path),
+            **contract_fields,
         )
         return (0 if result.returncode == 0 else 3), outcome
     except subprocess.TimeoutExpired:
-        outcome = write_outcome(queue, item, "failed", error="command timed out", log=str(log_path))
+        contract = item.get("campaign_contract")
+        contract_fields = (
+            terminal_plan(contract, None) if isinstance(contract, dict) else {}
+        )
+        outcome = write_outcome(
+            queue,
+            item,
+            "failed",
+            error="command timed out",
+            log=str(log_path),
+            **contract_fields,
+        )
         return 3, outcome
     except Exception as exc:
-        outcome = write_outcome(queue, item, "failed", error=f"launcher error: {exc}", log=str(log_path))
+        contract = item.get("campaign_contract")
+        contract_fields = (
+            terminal_plan(contract, None) if isinstance(contract, dict) else {}
+        )
+        outcome = write_outcome(
+            queue,
+            item,
+            "failed",
+            error=f"launcher error: {exc}",
+            log=str(log_path),
+            **contract_fields,
+        )
         return 3, outcome
 
 
@@ -410,6 +781,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--cwd", default=".")
     p.add_argument("--depends-on", action="append", default=[])
     p.add_argument("--bind", action="append", default=[])
+    p.add_argument("--contract")
     p.add_argument("--timeout-seconds", type=int, default=600)
     p.add_argument("argv", nargs=argparse.REMAINDER)
     p = sub.add_parser("show")
@@ -430,8 +802,18 @@ def main(argv: list[str] | None = None) -> int:
     queue = Queue(state=Path(args.state_dir))
     try:
         if args.action == "stage":
-            value = stage(queue, args.id, args.description, args.kind, args.cwd,
-                          args.depends_on, args.bind, args.argv, args.timeout_seconds)
+            value = stage(
+                queue,
+                args.id,
+                args.description,
+                args.kind,
+                args.cwd,
+                args.depends_on,
+                args.bind,
+                args.argv,
+                args.timeout_seconds,
+                args.contract,
+            )
             print(json.dumps(value, indent=2, sort_keys=True))
             return 0
         if args.action == "show":
