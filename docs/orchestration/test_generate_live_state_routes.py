@@ -209,6 +209,25 @@ class FrozenRegisterInterfaceTests(unittest.TestCase):
         self.assertEqual(rejected.health, "CONTRADICTORY")
         self.assertIn("invalid declared queue", rejected.detail)
 
+    def test_unregistered_source_record_withholds_routes(self):
+        extra = "| OI-182 | OPEN | owner | blocker | action | detail | 2026-09-03 |"
+        with tempfile.TemporaryDirectory() as directory:
+            paths = write_registry(pathlib.Path(directory))
+            paths[2].write_text(OPEN_ROW + "\n" + extra + "\n", encoding="utf-8")
+            snapshot = self.inspect(paths)
+        self.assertEqual(snapshot.health, "CONTRADICTORY")
+        self.assertIn("absent from the inventory: OI-182", snapshot.detail)
+        self.assertEqual(snapshot.routes, ())
+
+    def test_deleted_register_row_withholds_routes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            paths = write_registry(pathlib.Path(directory))
+            paths[0].write_text(WORK_HEADER, encoding="utf-8")
+            snapshot = self.inspect(paths)
+        self.assertEqual(snapshot.health, "CONTRADICTORY")
+        self.assertIn("no register row: OI-181", snapshot.detail)
+        self.assertEqual(snapshot.routes, ())
+
     def test_removed_queue_override_column_is_refused(self):
         legacy = (
             "item\tsource_record\tqueue_override\towner_id\timpact\turgency"

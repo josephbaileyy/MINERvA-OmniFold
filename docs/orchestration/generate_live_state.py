@@ -246,6 +246,26 @@ def inspect_route_registry(
                     f"{key}: inventory state prefix contradicts its hashed source row"
                 )
 
+    # Completeness in both directions, so an omission cannot read as HEALTHY: every source record
+    # in OPEN_ITEMS must be inventoried, and every inventoried record must have a register row.
+    # (Reviewer mutations 2026-09-03: an unregistered OI and a deleted register row both rendered
+    # HEALTHY before this check existed.)
+    unregistered = sorted(set(source_rows) - set(inventory))
+    if unregistered:
+        contradictions.append(
+            f"{len(unregistered)} source record(s) absent from the inventory: "
+            + ", ".join(unregistered[:5])
+            + ("" if len(unregistered) <= 5 else f" and {len(unregistered) - 5} more")
+        )
+    registered = {row["source_record"] for row in work_items}
+    unrouted = sorted(set(inventory) - registered)
+    if unrouted:
+        contradictions.append(
+            f"{len(unrouted)} inventory record(s) with no register row: "
+            + ", ".join(unrouted[:5])
+            + ("" if len(unrouted) <= 5 else f" and {len(unrouted) - 5} more")
+        )
+
     routes: list[Route] = []
     seen_items: set[str] = set()
     for row in work_items:
