@@ -422,6 +422,11 @@ class TheExclusionCriterionIsMeasuredNotAsserted(unittest.TestCase):
             if not tgt.exists():
                 tgt.write_text("synthetic marker for the criterion-5 power arm\n")
         shutil.copy2(self.GUARD, nd / "mnv_guarded_run.py")
+        # The guard refuses to run (COULD NOT LOOK, exit 2) unless its tracked subprocess shim sits
+        # beside it, so a synthetic checkout must carry the shim as a real one does.
+        shim = self.GUARD.parent / "mnv_guard_shim"
+        (nd / "mnv_guard_shim").mkdir()
+        shutil.copy2(shim / "sitecustomize.py", nd / "mnv_guard_shim" / "sitecustomize.py")
         (nd / "helper_mod.py").write_text("VALUE = 1\n")
         (nd / "clean_tool.py").write_text(
             "import argparse, json, sys\n"
