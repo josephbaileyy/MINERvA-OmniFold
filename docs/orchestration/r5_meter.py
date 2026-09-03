@@ -41,8 +41,9 @@ STOP_DATE_UTC = datetime(2026, 9, 30, tzinfo=timezone.utc)
 GPU_TASK_HOURS_CEILING = 500.0
 CPU_TASK_HOURS_CEILING = 500.0
 UNIT = (
-    "task-hours: sum of ElapsedRaw over distinct task identities; "
-    ".batch/.extern/step and array-bracket rows excluded"
+    "task-hours: sum of post-t0 ElapsedRaw over distinct task identities; "
+    "tasks straddling t0 are clipped at t0; .batch/.extern/step and "
+    "array-bracket rows excluded"
 )
 DEFAULT_RECEIPT_PATH = Path("docs/orchestration/state/r5-meter-receipt.json")
 SACCT_FIELDS = (
@@ -73,18 +74,21 @@ class TaskRecord:
         Plain Slurm job ID or concrete array-task ID.
     state : str
         Normalized Slurm state.
-    elapsed_seconds : int
+    elapsed_seconds : float
         Elapsed wall-clock seconds charged to this task.
     partition : str
-        Slurm partition used to classify GPU versus CPU task-hours.
+        Slurm partition, used as a secondary GPU classification signal.
+    is_gpu : bool
+        Whether AllocTRES or the partition identifies a GPU allocation.
     start : datetime
         Task start instant in UTC.
     """
 
     task_id: str
     state: str
-    elapsed_seconds: int
+    elapsed_seconds: float
     partition: str
+    is_gpu: bool
     start: datetime
 
 
@@ -170,6 +174,36 @@ def _parse_elapsed(value: str, *, line_number: int) -> int:
     return elapsed
 
 
+def _alloc_tres_has_gpu(value: str, *, line_number: int) -> bool:
+    if not value.strip():
+        return False
+
+    for entry in value.split(","):
+        key, separator, count_text = entry.strip().partition("=")
+        normalized_key = key.strip().lower()
+        if normalized_key != "gres/gpu" and not normalized_key.startswith(
+            "gres/gpu:"
+        ):
+            continue
+        if not separator:
+            raise MeterError(
+                f"line {line_number}: invalid AllocTRES GPU entry {entry!r}"
+            )
+        try:
+            count = int(count_text.strip())
+        except ValueError as exc:
+            raise MeterError(
+                f"line {line_number}: invalid AllocTRES GPU count {count_text!r}"
+            ) from exc
+        if count < 0:
+            raise MeterError(
+                f"line {line_number}: AllocTRES GPU count cannot be negative"
+            )
+        if count > 0:
+            return True
+    return False
+
+
 def _parse_sacct_dump(raw_text: str) -> dict[str, TaskRecord]:
     tasks: dict[str, TaskRecord] = {}
     reader = csv.reader(io.StringIO(raw_text), delimiter="|")
@@ -184,26 +218,54 @@ def _parse_sacct_dump(raw_text: str) -> dict[str, TaskRecord]:
                 f"found {len(row)}"
             )
 
-        job_id, _, state_text, elapsed_text, partition, start_text, _, _ = row
+        (
+            job_id,
+            _,
+            state_text,
+            elapsed_text,
+            partition,
+            start_text,
+            _,
+            alloc_tres,
+        ) = row
         if TASK_ID_RE.fullmatch(job_id) is None:
             continue
 
         start = _parse_sacct_start(start_text, line_number=line_number)
-        if start is None or start < T0_UTC:
+        if start is None:
             continue
+
+        elapsed_seconds = _parse_elapsed(elapsed_text, line_number=line_number)
+        if start < T0_UTC:
+            elapsed_seconds = max(
+                0.0,
+                elapsed_seconds - (T0_UTC - start).total_seconds(),
+            )
+            if elapsed_seconds == 0.0:
+                continue
+
+        is_gpu = _alloc_tres_has_gpu(
+            alloc_tres,
+            line_number=line_number,
+        ) or partition.lower().startswith("gpu")
 
         record = TaskRecord(
             task_id=job_id,
             state=_normalize_state(state_text, line_number=line_number),
-            elapsed_seconds=_parse_elapsed(elapsed_text, line_number=line_number),
+            elapsed_seconds=elapsed_seconds,
             partition=partition,
+            is_gpu=is_gpu,
             start=start,
         )
         existing = tasks.get(job_id)
         if existing is None:
             tasks[job_id] = record
             continue
-        if (existing.partition, existing.start) != (record.partition, record.start):
+        if (existing.partition, existing.is_gpu, existing.start) != (
+            record.partition,
+            record.is_gpu,
+            record.start,
+        ):
             raise MeterError(
                 f"line {line_number}: conflicting rows for task identity {job_id}"
             )
@@ -217,7 +279,7 @@ def _calculate_spend(tasks: dict[str, TaskRecord]) -> dict[str, object]:
     cpu_seconds = 0
     by_state: Counter[str] = Counter()
     for task in tasks.values():
-        if task.partition.lower().startswith("gpu"):
+        if task.is_gpu:
             gpu_seconds += task.elapsed_seconds
         else:
             cpu_seconds += task.elapsed_seconds
@@ -704,16 +766,16 @@ def _build_parser() -> argparse.ArgumentParser:
 
 def _run_self_test() -> bool:
     rows = [
-        "1|at-boundary|COMPLETED|3600|gpu-main|2026-09-02T13:44:27|"
-        "2026-09-02T14:44:27|gpu=1",
-        "1|duplicate|COMPLETED|3600|gpu-main|2026-09-02T13:44:27|"
-        "2026-09-02T14:44:27|gpu=1",
-        "1.batch|step|COMPLETED|3600|gpu-main|2026-09-02T13:44:27|"
-        "2026-09-02T14:44:27|gpu=1",
+        "1|at-boundary|COMPLETED|3600|regular|2026-09-02T13:44:27|"
+        "2026-09-02T14:44:27|cpu=32,gres/gpu=1",
+        "1|duplicate|COMPLETED|3600|regular|2026-09-02T13:44:27|"
+        "2026-09-02T14:44:27|cpu=32,gres/gpu=1",
+        "1.batch|step|COMPLETED|3600|regular|2026-09-02T13:44:27|"
+        "2026-09-02T14:44:27|cpu=32,gres/gpu=1",
         "2_7|failed|FAILED|1800|regular|2026-09-02T13:44:28|"
         "2026-09-02T14:14:28|cpu=1",
-        "3|before|COMPLETED|9999|gpu-main|2026-09-02T13:44:26|"
-        "2026-09-02T16:31:05|gpu=1",
+        "3|straddling|COMPLETED|3600|regular|2026-09-02T13:44:26|"
+        "2026-09-02T14:44:26|gres/gpu:a100=1",
         "4|pending|PENDING|0|regular|Unknown|Unknown|cpu=1",
     ]
     receipt = build_receipt(
@@ -726,10 +788,10 @@ def _run_self_test() -> bool:
     if not isinstance(spend, dict):
         return False
     positive_control = (
-        spend["task_count"] == 2
-        and spend["gpu_task_hours"] == 1.0
+        spend["task_count"] == 3
+        and spend["gpu_task_hours"] == (3600 + 3599) / 3600.0
         and spend["cpu_task_hours"] == 0.5
-        and spend["by_state"] == {"COMPLETED": 1, "FAILED": 1}
+        and spend["by_state"] == {"COMPLETED": 2, "FAILED": 1}
     )
     negative_control = not _fired_status(
         now=parse_iso_utc("2026-09-29T23:59:59Z"),

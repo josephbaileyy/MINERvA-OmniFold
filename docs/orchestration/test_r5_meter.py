@@ -16,6 +16,7 @@ from docs.orchestration import r5_meter
 
 FIXTURES = Path(__file__).with_name("test_fixtures_r5_meter")
 MIXED_FIXTURE = FIXTURES / "mixed.sacct"
+PERLMUTTER_GPU_FIXTURE = FIXTURES / "perlmutter_regular_gpu.sacct"
 ROW_INFLATION_FIXTURE = FIXTURES / "rows_vs_identities.sacct"
 
 
@@ -60,17 +61,61 @@ class R5MeterMeasurementTests(unittest.TestCase):
         self.assertNotIn("20001_[1-100]", spend["metered_task_ids"])
         self.assertEqual(spend["metered_task_ids"].count("20001"), 1)
 
-    def test_partition_prefix_splits_gpu_from_cpu_without_core_weighting(self) -> None:
+    def test_partition_prefix_remains_a_secondary_gpu_signal(self) -> None:
         spend = self.build_fixture_receipt()["spend"]
 
         self.assertAlmostEqual(spend["gpu_task_hours"], 3.5)
         self.assertAlmostEqual(spend["cpu_task_hours"], 8.5)
 
-    def test_t0_boundary_is_inclusive(self) -> None:
-        spend = self.build_fixture_receipt()["spend"]
+    def test_alloc_tres_typed_gpu_and_empty_value_classification(self) -> None:
+        raw_text = "\n".join(
+            (
+                "23000|typed|COMPLETED|3600|shared|2026-09-02T13:44:27|"
+                "2026-09-02T14:44:27| billing=1, gres/gpu:a100=1 ,cpu=32",
+                "23001|cpu|COMPLETED|10800|regular|2026-09-02T13:44:27|"
+                "2026-09-02T16:44:27|billing=1,cpu=32",
+                "23002|empty|COMPLETED|7200|regular|2026-09-02T13:44:27|"
+                "2026-09-02T15:44:27|",
+                "23003|partition|COMPLETED|14400|gpu_shared|"
+                "2026-09-02T13:44:27|2026-09-02T17:44:27|",
+                "23004|zero-gpu|COMPLETED|18000|regular|"
+                "2026-09-02T13:44:27|2026-09-02T18:44:27|"
+                "cpu=32,gres/gpu=0",
+            )
+        )
+        receipt = r5_meter.build_receipt(
+            raw_text + "\n",
+            now=r5_meter.parse_iso_utc("2026-09-10T00:00:00Z"),
+            source_kind="file",
+            source_location="alloc-tres.sacct",
+        )
 
-        self.assertNotIn("20000", spend["metered_task_ids"])
-        self.assertIn("20001", spend["metered_task_ids"])
+        self.assertEqual(receipt["spend"]["gpu_task_hours"], 5.0)
+        self.assertEqual(receipt["spend"]["cpu_task_hours"], 10.0)
+
+    def test_t0_straddling_and_boundary_elapsed_are_clipped(self) -> None:
+        raw_text = "\n".join(
+            (
+                "24000|straddling|COMPLETED|3600|regular|"
+                "2026-09-02T13:44:26|2026-09-02T14:44:26|cpu=1",
+                "24001|ends-at-t0|COMPLETED|3600|regular|"
+                "2026-09-02T12:44:27|2026-09-02T13:44:27|cpu=1",
+                "24002|starts-at-t0|COMPLETED|3600|regular|"
+                "2026-09-02T13:44:27|2026-09-02T14:44:27|cpu=1",
+            )
+        )
+        receipt = r5_meter.build_receipt(
+            raw_text + "\n",
+            now=r5_meter.parse_iso_utc("2026-09-10T00:00:00Z"),
+            source_kind="file",
+            source_location="t0-boundaries.sacct",
+        )
+        spend = receipt["spend"]
+
+        self.assertEqual(spend["cpu_task_hours"], (3599 + 3600) / 3600.0)
+        self.assertEqual(spend["metered_task_ids"], ["24000", "24002"])
+        self.assertTrue(receipt["unit"].startswith("task-hours:"))
+        self.assertIn("tasks straddling t0 are clipped at t0", receipt["unit"])
 
     def test_failures_and_running_tasks_count_but_pending_does_not(self) -> None:
         spend = self.build_fixture_receipt()["spend"]
@@ -281,6 +326,22 @@ class R5MeterCheckTests(unittest.TestCase):
 
         self.assertEqual(
             self.run_check("--gpu-task-hours", "5"),
+            5,
+        )
+
+    def test_alloc_tres_gpu_on_regular_partition_blocks_proposal(self) -> None:
+        receipt = r5_meter.build_receipt(
+            PERLMUTTER_GPU_FIXTURE.read_text(encoding="utf-8"),
+            now=self.now,
+            source_kind="file",
+            source_location=str(PERLMUTTER_GPU_FIXTURE),
+        )
+        self.receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+
+        self.assertEqual(receipt["spend"]["gpu_task_hours"], 499.0)
+        self.assertEqual(receipt["spend"]["cpu_task_hours"], 0.0)
+        self.assertEqual(
+            self.run_check("--gpu-task-hours", "2"),
             5,
         )
 
