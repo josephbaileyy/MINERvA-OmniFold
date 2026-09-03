@@ -39,21 +39,26 @@ BEFORE `install()`, so the refusal precedes the first import as well as the work
 `--allow` does not cover it: `--allow` declares an IMPORT tree, never an execution
 tree.
 
-IT DOES NOT CROSS A SUBPROCESS BOUNDARY, AND THAT IS MEASURED, NOT SUSPECTED.
-The wrapped `PathFinder` lives in THIS interpreter's `sys.meta_path`. A child started
-with `subprocess.run([sys.executable, ...])` gets a fresh interpreter with a clean
-`sys.meta_path`, so a rooted `insert(0, ...)` inside the CHILD is not seen and this
-wrapper exits 0. Both halves are asserted in
-`tests/test_mnv_guarded_run.py::TheSubprocessBoundaryIsNotCovered`.
+IT CROSSES PYTHON SUBPROCESS BOUNDARIES THAT INHERIT THE ENVIRONMENT, AND DECLARES
+THE ONES IT CANNOT. `install()` prepends the tracked `mnv_guard_shim/` directory to
+`PYTHONPATH` and records the absolute guard module, expected root, allow-list and
+inventory path in `MNV_GUARD_*`. At child-interpreter startup, `sitecustomize.py`
+loads this module from that absolute path and calls `install(expect_root, allow)`
+before the child script runs. The installed meta-path finder checks the RESOLVED
+ORIGIN, so a later `sys.path.insert(0, ...)` in the child does not outrank it.
 
-THIS IS LIVE IN THIS REPO, NOT A TOY. `mii_adopt_unified_5d_stamped.py:124` resolves
-`adopt_unified_5d.py` from its own `_HERE` -- correctly -- and then runs it AS A
-SUBPROCESS, deliberately, so that the bytes whose sha256 is pinned are the bytes that
-execute. `adopt_unified_5d.py` is one of the fail-open 59. So wrapping that adoption
-path in this guard would print a clean banner and refuse nothing. Anyone routing a
-launcher through this wrapper must check whether the work happens in the wrapped
-interpreter or in a child; if it is a child, this guard is not the check they want and
-a green run of it must not be recorded as one.
+Every covered child in an inventoried run appends its OWN record with
+`propagated_from` naming the parent pid and `depth` incremented once per Python
+boundary. This is the live shape of `mii_adopt_unified_5d_stamped.py`, which launches
+the receipt-bound, fail-open `adopt_unified_5d.py` as a subprocess and cannot edit
+that child in place.
+
+The declared uncovered boundaries are exact: Python started with `-S`, `-I` or `-E`
+does not load the shim from inherited `PYTHONPATH`; a child launched with a cleared
+environment such as `env={}` receives none of the propagation variables; and a
+non-Python child has no Python `sitecustomize` startup. Each is measured in
+`tests/test_mnv_guarded_run.py::TheSubprocessBoundaryIsCovered`. These are coverage
+limits, never clean guard results.
 
 TWO RECEIPTS, NEITHER OF WHICH IS A GATE
 ----------------------------------------
@@ -73,30 +78,28 @@ the final `sys.path`, and EVERY module whose resolved origin lies inside any che
 -- the allowed ones as well as the refused one. `repo_origin_count` and
 `repo_origin_inventory_is_empty` are written UNCONDITIONALLY: a zero is a REPORTABLE
 STATE and never a pass, and an absent key cannot tell "no repository import occurred"
-from "the inventory did not run". Both receipts are emitted from the same `finally`
-and answer different questions.
+from "the inventory did not run". The CLI parent emits both receipts from one
+`finally`; a propagated child emits them from its shutdown hook, or immediately
+before an import refusal terminates it. They answer different questions.
 
 IT CANNOT REFUSE, BY CONSTRUCTION, AND THAT IS A DESIGN CONSTRAINT NOT AN ACCIDENT.
-Every lane routing compute through this wrapper depends on WHEN it refuses. So the
-emission runs from a `finally`, returns
-nothing, and swallows `BaseException` -- `BaseException` and not `Exception` because a
-receipt must not be able to change a run's outcome, and a `KeyboardInterrupt` arriving
-inside the emission would otherwise replace the child's own exit status with the
-receipt's failure. A failed emission prints `INVENTORY EMISSION FAILED` and the run's
-verdict is untouched.
+Every lane routing compute through this wrapper depends on WHEN it refuses. The text
+emission returns nothing and swallows `BaseException` -- `BaseException` and not
+`Exception` because a receipt must not be able to change a run's outcome. A failed
+emission prints `INVENTORY EMISSION FAILED` and the run's verdict is untouched. The
+CLI invokes it from a `finally`; the shim invokes it from the child-finalization paths
+described above.
 
 STDERR, NOT STDOUT. Consumers parse the child's stdout -- the two Gate-5 launchers
 grep it -- so writing there would make this wrapper a producer on a surface that
 belongs to the child, which is the same class of error the mandatory `--` exists to
 prevent. Every other diagnostic in this file is already on stderr.
 
-THE SCOPE IS ONE INTERPRETER, AND THE EMISSION SAYS SO IN ITS OWN OUTPUT. It reports
-the PARENT's `sys.modules`. A child started with `subprocess.run([sys.executable,
-...])` is a fresh interpreter and NOTHING it imports appears -- the same boundary the
-refusal half does not cross, for the same reason. Modules imported by the child's own
-`atexit` handlers land after this runs and are not counted either, and the wrapped
-script is not itself a module unless something imported it by name. Read the
-inventory as "at least these trees", never as "only these trees".
+EACH INVENTORY RECORD COVERS ONE INTERPRETER, AND THE EMISSION SAYS SO IN ITS OWN
+OUTPUT. It reports only that process's `sys.modules`; a covered child writes a
+separate record rather than appearing in its parent's record. The wrapped script is
+not itself a module unless something imported it by name. Read each record as "at
+least these trees", never as "only these trees".
 
 USAGE, AND THE `--` IS MANDATORY
 --------------------------------
@@ -142,6 +145,17 @@ CANNOT_CHECK_EXIT = 2
 #: Environment fallback for `--inventory`. A flag OR an env var, because the launcher that needs the
 #: record and the wrapper invocation that emits it are edited by different hands.
 INVENTORY_ENV = "MNV_GUARD_INVENTORY"
+
+#: Propagation contract consumed by `mnv_guard_shim/sitecustomize.py`. The module path is absolute
+#: because resolving this module through the child's import path would recreate the ambiguity the
+#: guard exists to refuse.
+MODULE_ENV = "MNV_GUARD_MODULE"
+EXPECT_ROOT_ENV = "MNV_GUARD_EXPECT_ROOT"
+ALLOW_ENV = "MNV_GUARD_ALLOW"
+PARENT_PID_ENV = "MNV_GUARD_PARENT_PID"
+DEPTH_ENV = "MNV_GUARD_DEPTH"
+SHIM_DIR = pathlib.Path(__file__).resolve().parent / "mnv_guard_shim"
+CHILD_PREFIX = "[oi136 child]"
 
 #: The two `verdict` values a GREEN run can carry. They exist because they must be DISTINGUISHABLE:
 #: an exit 0 from a process that inspected repository imports and approved every one of them, and an
@@ -254,10 +268,21 @@ class GuardedPathFinder:
     checked is the one the import system would actually have used.
     """
 
-    def __init__(self, inner, expect_root: str, allowed: frozenset[str]):
+    def __init__(self, inner, expect_root: str, allowed: frozenset[str],
+                 propagated_from: int | None, depth: int):
         self._inner = inner
         self.expect_root = expect_root
         self.allowed = allowed
+        self.propagated_from = propagated_from
+        self.depth = depth
+        self.propagation = "not-armed"
+        self.chained_sitecustomize = {
+            "found": False,
+            "executed": False,
+            "origin": None,
+        }
+        self.violation: ImportTreeViolation | None = None
+        self.on_violation = None
         self.checked = 0
         #: P-1: EVERY module whose resolved origin lies inside ANY checkout, including
         #: `--expect-root`. The allowed ones are the POSITIVE evidence and they were previously
@@ -294,7 +319,16 @@ class GuardedPathFinder:
                 "allowed": root in self.allowed,
             })
         if root not in self.allowed:
-            raise ImportTreeViolation(fullname, origin, root, self.expect_root)
+            violation = ImportTreeViolation(fullname, origin, root, self.expect_root)
+            if self.propagated_from is not None:
+                self.violation = violation
+                _report(violation, prefix=CHILD_PREFIX)
+                if self.on_violation is not None:
+                    self.on_violation()
+                sys.stdout.flush()
+                sys.stderr.flush()
+                os._exit(VIOLATION_EXIT)
+            raise violation
         return spec
 
     def invalidate_caches(self):
@@ -303,13 +337,61 @@ class GuardedPathFinder:
             inv()
 
 
+def _lineage_from_environment() -> tuple[int | None, int]:
+    """Return the current process's inherited guard parent and depth."""
+    parent_text = os.environ.get(PARENT_PID_ENV)
+    depth_text = os.environ.get(DEPTH_ENV)
+    if parent_text is None and depth_text is None:
+        return None, 0
+    try:
+        parent_pid = int(parent_text) if parent_text is not None else None
+        depth = int(depth_text) if depth_text is not None else 0
+    except ValueError as exc:
+        raise RuntimeError("invalid inherited OI-136 guard lineage") from exc
+    if parent_pid is None or parent_pid <= 0 or depth <= 0:
+        raise RuntimeError("incomplete inherited OI-136 guard lineage")
+    return parent_pid, depth
+
+
+def _arm_child_environment(expect_root: str, allow: tuple[str, ...]) -> None:
+    """Arm inheriting Python children through the tracked sitecustomize shim."""
+    shim = SHIM_DIR.resolve()
+    shim_file = shim / "sitecustomize.py"
+    module = pathlib.Path(__file__).resolve()
+    if not shim_file.is_file():
+        raise RuntimeError(f"OI-136 subprocess shim is missing: {shim_file}")
+    if not module.is_file():
+        raise RuntimeError(f"OI-136 guard module is missing: {module}")
+
+    existing_pythonpath = os.environ.get("PYTHONPATH")
+    shim_text = str(shim)
+    if existing_pythonpath is None:
+        os.environ["PYTHONPATH"] = shim_text
+    elif existing_pythonpath != shim_text and not existing_pythonpath.startswith(
+            shim_text + os.pathsep):
+        os.environ["PYTHONPATH"] = shim_text + os.pathsep + existing_pythonpath
+
+    _, current_depth = _lineage_from_environment()
+    os.environ[MODULE_ENV] = str(module)
+    os.environ[EXPECT_ROOT_ENV] = expect_root
+    os.environ[ALLOW_ENV] = os.pathsep.join(allow)
+    os.environ.setdefault(INVENTORY_ENV, "")
+    os.environ[PARENT_PID_ENV] = str(os.getpid())
+    os.environ[DEPTH_ENV] = str(current_depth + 1)
+
+
 def install(expect_root: str, allow=()) -> GuardedPathFinder:
-    """Wrap the path-based finder in place. Returns the installed guard."""
-    allowed = frozenset({expect_root, *(str(pathlib.Path(a).resolve()) for a in allow)})
+    """Wrap the path-based finder and arm inheriting Python child processes."""
+    expect = str(pathlib.Path(expect_root).resolve())
+    allow_roots = tuple(str(pathlib.Path(path).resolve()) for path in allow)
+    allowed = frozenset({expect, *allow_roots})
+    propagated_from, depth = _lineage_from_environment()
     for i, finder in enumerate(sys.meta_path):
         if getattr(finder, "__name__", None) == "PathFinder" or type(finder).__name__ == "PathFinder":
-            guard = GuardedPathFinder(finder, expect_root, allowed)
+            guard = GuardedPathFinder(finder, expect, allowed, propagated_from, depth)
             sys.meta_path[i] = guard
+            _arm_child_environment(expect, allow_roots)
+            guard.propagation = "armed"
             return guard
     # No PathFinder is not a clean tree, it is an interpreter we do not understand.
     raise RuntimeError("no PathFinder in sys.meta_path; refusing to run unguarded")
@@ -459,12 +541,10 @@ def _emit_inventory(expect_root: str, refused: "ImportTreeViolation | None" = No
                        f"{refused.found_root} was NEVER LOADED and is correctly absent above. A "
                        f"refusal's inventory is what got in BEFORE the refusal, never what would "
                        f"have.")
-        say.append(f"{INVENTORY_PREFIX} SCOPE -- THIS INTERPRETER ONLY, stated here so the line "
-                   f"above is not read as coverage it does not have. A child started with "
-                   f"subprocess.run([sys.executable, ...]) is a fresh interpreter and NOTHING it "
-                   f"imports is counted, the same boundary the refusal half does not cross. Nor "
-                   f"is anything imported after this point, including by the child's own atexit "
-                   f"handlers. Read it as 'AT LEAST these trees', never as 'only these trees'.")
+        say.append(f"{INVENTORY_PREFIX} SCOPE -- THIS INTERPRETER ONLY. Covered Python children "
+                   f"write separate records with their own pid and depth; they never appear in "
+                   f"this process's module list. Anything imported after this emission is not "
+                   f"counted. Read it as 'AT LEAST these trees', never as 'only these trees'.")
         print("\n".join(say), file=out)
     except BaseException as err:  # a receipt must not be able to fail a run
         try:
@@ -548,6 +628,12 @@ def write_inventory(dest, guard, script, expect_root, allow, outcome, violation=
         "checked": (guard.checked if guard is not None else 0),
         "checked_provenance": (CHECKED_MEASURED if guard is not None else CHECKED_NOT_MEASURED),
         "guard_installed": guard is not None,
+        "propagation": (guard.propagation if guard is not None else "not-armed"),
+        "propagated_from": (guard.propagated_from if guard is not None else None),
+        "depth": (guard.depth if guard is not None else 0),
+        "chained_sitecustomize": (guard.chained_sitecustomize if guard is not None else {
+            "found": False, "executed": False, "origin": None,
+        }),
         # Which protection refused, or null when nothing did. An exit code cannot carry this.
         "refusal_site": site,
         # Free text from --label, so an artifact says WHICH ARM produced it. Two arms of the same
@@ -601,19 +687,19 @@ def _safe_inventory(*a, **kw) -> bool:
         return False
 
 
-def _report(exc: ImportTreeViolation) -> None:
+def _report(exc: ImportTreeViolation, prefix: str = "[oi136]") -> None:
     print(
-        "\n[oi136] IMPORT TREE VIOLATION -- REFUSING BEFORE THE WORK RUNS.\n"
-        f"[oi136]   module        {exc.module}\n"
-        f"[oi136]   resolved to   {exc.origin}\n"
-        f"[oi136]   which is in   {exc.found_root}\n"
-        f"[oi136]   expected      {exc.expect_root}\n"
-        "[oi136] A HARDCODED sys.path.insert(0, ...) IS THE USUAL CAUSE, and a re-deploy will\n"
-        "[oi136] NOT fix it: an absolute insert at position 0 is not escaped by launching from\n"
-        "[oi136] another checkout and cannot be outranked by PYTHONPATH. Deployment parity can\n"
-        "[oi136] report every pinned file CURRENT while this is false -- that is OI-136, and it\n"
-        "[oi136] cost 3 h 08 m of A100 on 57266000_0. Fix the insert in the importing file, or\n"
-        "[oi136] pass --allow if this tree is genuinely intended.\n",
+        f"\n{prefix} IMPORT TREE VIOLATION -- REFUSING BEFORE THE WORK RUNS.\n"
+        f"{prefix}   module        {exc.module}\n"
+        f"{prefix}   resolved to   {exc.origin}\n"
+        f"{prefix}   which is in   {exc.found_root}\n"
+        f"{prefix}   expected      {exc.expect_root}\n"
+        f"{prefix} A HARDCODED sys.path.insert(0, ...) IS THE USUAL CAUSE, and a re-deploy will\n"
+        f"{prefix} NOT fix it: an absolute insert at position 0 is not escaped by launching from\n"
+        f"{prefix} another checkout and cannot be outranked by PYTHONPATH. Deployment parity can\n"
+        f"{prefix} report every pinned file CURRENT while this is false -- that is OI-136, and it\n"
+        f"{prefix} cost 3 h 08 m of A100 on 57266000_0. Fix the insert in the importing file, or\n"
+        f"{prefix} pass --allow if this tree is genuinely intended.\n",
         file=sys.stderr,
     )
 
@@ -635,7 +721,7 @@ def main(argv=None) -> int:
                          "easy to confuse in a directory of records.")
     ap.add_argument("rest", nargs=argparse.REMAINDER)
     args = ap.parse_args(sys.argv[1:] if argv is None else argv)
-    dest = args.inventory
+    dest = os.path.abspath(args.inventory) if args.inventory else None
     guard = None
     script = None
 
@@ -702,7 +788,14 @@ def main(argv=None) -> int:
                         site=SITE_SCRIPT_CONTAINMENT, label=args.label)
         return VIOLATION_EXIT
 
-    guard = install(str(expect), args.allow)
+    os.environ[INVENTORY_ENV] = "" if dest is None else str(dest)
+    try:
+        guard = install(str(expect), args.allow)
+    except RuntimeError as exc:
+        print(f"[oi136] COULD NOT LOOK: guard installation failed: {exc}", file=sys.stderr)
+        _safe_inventory(dest, None, script, str(expect), args.allow,
+                        "cannot-check:guard-installation-failed", label=args.label)
+        return CANNOT_CHECK_EXIT
 
     # Replicate what `python <script>` does and runpy.run_path does NOT: the script's
     # own directory at sys.path[0]. Silently differing from direct execution would be

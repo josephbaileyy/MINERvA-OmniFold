@@ -107,6 +107,7 @@ class LauncherFixture(unittest.TestCase):
         self.invdir = tmp / "inventories"
         cnd = self.code / "nd-unfolding"
         (cnd / "pet").mkdir(parents=True)
+        (cnd / "mnv_guard_shim").mkdir(parents=True)
         (self.code / "lib").mkdir(parents=True)
         (self.data / "nd-unfolding").mkdir(parents=True)
 
@@ -171,6 +172,8 @@ class LauncherFixture(unittest.TestCase):
 
         # REAL tools, byte-copied. The launchers refuse a symlink here on purpose.
         for src, dst in ((ND / "mnv_guarded_run.py", cnd / "mnv_guarded_run.py"),
+                         (ND / "mnv_guard_shim" / "sitecustomize.py",
+                          cnd / "mnv_guard_shim" / "sitecustomize.py"),
                          (ND / "mnv_env_provenance.py", cnd / "mnv_env_provenance.py"),
                          (ND / "mnv_source_manifest.py", cnd / "mnv_source_manifest.py"),
                          (ND / "lib_mnv_env_preflight.sh", cnd / "lib_mnv_env_preflight.sh"),

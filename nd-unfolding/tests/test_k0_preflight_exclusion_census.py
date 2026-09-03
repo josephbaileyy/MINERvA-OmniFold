@@ -13,7 +13,7 @@ The mutations are applied to a COPY of the launchers, never to the tree under re
 WHAT THESE ARMS DO NOT COVER, stated so the Gate-1 record does not over-read them: this is a
 byte-level census. It cannot see a guard defeated at runtime, and it says nothing about python
 invoked as anything but the literal token `python3`. Those belong to the dynamic arms of
-`test_k0_launcher_two_roots.py` and to `test_mnv_guarded_run.TheSubprocessBoundaryIsNotCovered`.
+`test_k0_launcher_two_roots.py` and to `test_mnv_guarded_run.TheSubprocessBoundaryIsCovered`.
 """
 import json
 import pathlib

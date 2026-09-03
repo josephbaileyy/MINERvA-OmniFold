@@ -46,9 +46,10 @@ EXIT CODES: 0 clean, 2 could not look, 3 violation. A count that DISAGREES is a 
 direction: a set that shrank is as much a finding as one that grew.
 
 WHAT IT CANNOT SAY. It reads launcher bytes; it does not run them. A guarded call whose guard is
-defeated at runtime (a wrong --expect-root, a subprocess boundary) is outside its reach and belongs
-to `test_mnv_guarded_run.TheSubprocessBoundaryIsNotCovered` and the dynamic arms of the launcher
-suite. It also says nothing about python invoked as anything other than the literal token `python3`.
+defeated at runtime (a wrong --expect-root or a declared uncovered child boundary) is outside its
+reach and belongs to `test_mnv_guarded_run.TheSubprocessBoundaryIsCovered` and the dynamic arms of
+the launcher suite. It also says nothing about python invoked as anything other than the literal
+token `python3`.
 """
 import argparse
 import json

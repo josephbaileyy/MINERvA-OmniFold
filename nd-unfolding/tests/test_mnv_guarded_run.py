@@ -22,10 +22,12 @@ import unittest
 
 HERE = pathlib.Path(__file__).resolve().parent
 GUARD = HERE.parent / "mnv_guarded_run.py"
+SHIM = HERE.parent / "mnv_guard_shim" / "sitecustomize.py"
 REPO = HERE.parents[1]
 
 sys.path.insert(0, str(HERE.parent))
 import mnv_guarded_run as mgr  # noqa: E402
+import mnv_import_set_ratchet as ratchet  # noqa: E402
 
 
 def make_checkout(base: pathlib.Path, name: str) -> pathlib.Path:
@@ -210,6 +212,18 @@ class CannotCheckIsNotClean(GuardFixture):
                             str(self.good / "nope.py"))
         self.assertEqual(rec["outcome"], "cannot-check:no-such-script")
 
+    def test_a_deployment_missing_its_shim_exits_2_and_records_the_failed_install(self):
+        deployed_guard = self.good / "nd-unfolding" / "deployed_guard.py"
+        deployed_guard.write_bytes(GUARD.read_bytes())
+        inv = pathlib.Path(self._tmp.name) / "cc" / "missing-shim.jsonl"
+        cp = run(deployed_guard, "--expect-root", self.good, "--inventory", inv,
+                 "--", self.entry)
+        self.assertEqual(cp.returncode, mgr.CANNOT_CHECK_EXIT, cp.stdout + cp.stderr)
+        self.assertIn("guard installation failed", cp.stderr)
+        rec = json.loads(inv.read_text().strip())
+        self.assertEqual(rec["outcome"], "cannot-check:guard-installation-failed")
+        self.assertEqual(rec["propagation"], "not-armed")
+
 
 class MarkerSemantics(unittest.TestCase):
     def setUp(self):
@@ -246,20 +260,14 @@ class MarkerSemantics(unittest.TestCase):
         self.assertNotIn("AGENTS.md", mgr.MARKERS)
 
 
-class TheSubprocessBoundaryIsNotCovered(unittest.TestCase):
-    """PIN THE LIMIT, so a green guarded run is never read as more than it is.
+class TheSubprocessBoundaryIsCovered(unittest.TestCase):
+    """Cover inheriting Python children and pin every declared propagation limit.
 
-    The guard wraps THIS interpreter's `PathFinder`. A child interpreter starts with a
-    clean `sys.meta_path`, so a hijack that happens inside a subprocess is invisible to
-    it. Both directions are asserted: in-process the guard fires, through a subprocess it
-    does not. Asserting only the failure would leave "maybe the fixture is broken" open;
-    asserting only the pass would leave the limit undocumented in the only place that
-    cannot rot.
-
-    THIS IS THE SHAPE OF THIS REPO'S ADOPTION PATH, NOT A CONTRIVANCE:
-    `mii_adopt_unified_5d_stamped.py` resolves `adopt_unified_5d.py` from its own
-    `__file__` and runs it as a subprocess on purpose, and `adopt_unified_5d.py` is one
-    of the fail-open 59.
+    The parent scripts use the live adoption shape: derive a child beside themselves,
+    then launch it through `subprocess.run([sys.executable, child])`. The child carries
+    the OI-136 defect by inserting a foreign checkout at position zero before importing
+    a module. The sitecustomize shim must install early enough to refuse that resolved
+    origin, and every interpreter must leave a separately identifiable inventory.
     """
 
     def setUp(self):
@@ -269,29 +277,46 @@ class TheSubprocessBoundaryIsNotCovered(unittest.TestCase):
         self.bad = make_checkout(tmp, "stale-tree")
         write(self.good / "nd-unfolding" / "victim.py", "MARK = 'RIGHT TREE'\n")
         write(self.bad / "nd-unfolding" / "victim.py", "MARK = 'WRONG TREE'\n")
-        # The CHILD carries the defect: an absolute insert(0, <other checkout>).
-        write(self.good / "nd-unfolding" / "child.py",
-              "import sys\n"
-              f"sys.path.insert(0, {str(self.bad / 'nd-unfolding')!r})\n"
-              "import victim\n"
-              "print('CHILD-LOADED', victim.MARK)\n")
-        # The PARENT is correct: it derives its own directory, exactly as the fix asks.
+        self.inventory = tmp / "inventory" / "guard.jsonl"
+        self.bad_child = write(
+            self.good / "nd-unfolding" / "child_bad.py",
+            "import sys\n"
+            f"sys.path.insert(0, {str(self.bad / 'nd-unfolding')!r})\n"
+            "import victim\n"
+            "print('CHILD-LOADED', victim.MARK)\n",
+        )
+        self.clean_child = write(
+            self.good / "nd-unfolding" / "child_clean.py",
+            "import victim\n"
+            "print('CHILD-LOADED', victim.MARK)\n",
+        )
         self.parent_sub = write(
             self.good / "nd-unfolding" / "parent_sub.py",
             "import os, subprocess, sys\n"
             "_HERE = os.path.dirname(os.path.abspath(__file__))\n"
             "if _HERE not in sys.path: sys.path.insert(0, _HERE)\n"
             "raise SystemExit(subprocess.run(\n"
-            "    [sys.executable, os.path.join(_HERE, 'child.py')]).returncode)\n")
+            "    [sys.executable, os.path.join(_HERE, 'child_bad.py')]).returncode)\n",
+        )
         self.parent_in = write(
             self.good / "nd-unfolding" / "parent_in.py",
             "import os, runpy, sys\n"
             "_HERE = os.path.dirname(os.path.abspath(__file__))\n"
             "if _HERE not in sys.path: sys.path.insert(0, _HERE)\n"
-            "runpy.run_path(os.path.join(_HERE, 'child.py'), run_name='__main__')\n")
+            "runpy.run_path(os.path.join(_HERE, 'child_bad.py'), run_name='__main__')\n",
+        )
 
     def tearDown(self):
         self._tmp.cleanup()
+
+    def guarded(self, parent=None):
+        target = self.parent_sub if parent is None else parent
+        return run(GUARD, "--expect-root", self.good, "--inventory", self.inventory,
+                   "--", target)
+
+    def records(self):
+        return [json.loads(line) for line in self.inventory.read_text().splitlines()
+                if line.strip()]
 
     def test_IN_PROCESS_the_guard_fires_which_proves_the_fixture_hijacks(self):
         p = run(GUARD, "--expect-root", self.good, "--", self.parent_in)
@@ -300,17 +325,180 @@ class TheSubprocessBoundaryIsNotCovered(unittest.TestCase):
         self.assertIn("IMPORT TREE VIOLATION", p.stderr)
         self.assertNotIn("CHILD-LOADED", p.stdout)
 
-    def test_THROUGH_A_SUBPROCESS_the_same_hijack_is_NOT_caught(self):
-        """Exit 0 and the WRONG module loaded. Recorded so nobody assumes otherwise."""
-        p = run(GUARD, "--expect-root", self.good, "--", self.parent_sub)
-        self.assertEqual(p.returncode, 0,
+    def test_live_subprocess_shape_refuses_the_child_hijack_and_records_its_parent(self):
+        p = self.guarded()
+        self.assertEqual(p.returncode, mgr.VIOLATION_EXIT,
                          f"stdout:\n{p.stdout}\nstderr:\n{p.stderr}")
+        self.assertIn("[oi136 child] IMPORT TREE VIOLATION", p.stderr)
+        self.assertNotIn("CHILD-LOADED", p.stdout)
+        records = self.records()
+        self.assertEqual({record["depth"] for record in records}, {0, 1})
+        parent = next(record for record in records if record["depth"] == 0)
+        child = next(record for record in records if record["depth"] == 1)
+        self.assertEqual(parent["propagation"], "armed")
+        self.assertEqual(child["propagated_from"], parent["pid"])
+        self.assertEqual(child["violation"]["module"], "victim")
+        self.assertEqual(child["propagation"], "armed")
+
+    def test_a_grandchild_is_refused_and_records_depth_two(self):
+        write(
+            self.good / "nd-unfolding" / "middle.py",
+            "import os, subprocess, sys\n"
+            "_HERE = os.path.dirname(os.path.abspath(__file__))\n"
+            "raise SystemExit(subprocess.run(\n"
+            "    [sys.executable, os.path.join(_HERE, 'child_bad.py')]).returncode)\n",
+        )
+        parent = write(
+            self.good / "nd-unfolding" / "parent_grand.py",
+            "import os, subprocess, sys\n"
+            "_HERE = os.path.dirname(os.path.abspath(__file__))\n"
+            "raise SystemExit(subprocess.run(\n"
+            "    [sys.executable, os.path.join(_HERE, 'middle.py')]).returncode)\n",
+        )
+        p = self.guarded(parent)
+        self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+        records = {record["depth"]: record for record in self.records()}
+        self.assertEqual(set(records), {0, 1, 2})
+        self.assertEqual(records[1]["propagated_from"], records[0]["pid"])
+        self.assertEqual(records[2]["propagated_from"], records[1]["pid"])
+        self.assertEqual(records[2]["violation"]["module"], "victim")
+
+    def test_a_clean_child_passes_and_has_its_own_ratchet_identity(self):
+        parent = write(
+            self.good / "nd-unfolding" / "parent_clean.py",
+            "import os, subprocess, sys\n"
+            "_HERE = os.path.dirname(os.path.abspath(__file__))\n"
+            "raise SystemExit(subprocess.run(\n"
+            "    [sys.executable, os.path.join(_HERE, 'child_clean.py')]).returncode)\n",
+        )
+        p = self.guarded(parent)
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        self.assertIn("CHILD-LOADED RIGHT TREE", p.stdout)
+        records = self.records()
+        parent_record = next(record for record in records if record["depth"] == 0)
+        child_record = next(record for record in records if record["depth"] == 1)
+        self.assertEqual(child_record["propagated_from"], parent_record["pid"])
+        self.assertEqual(child_record["propagation"], "armed")
+
+        keys = {ratchet.entrypoint_key(record) for record in records}
+        self.assertEqual(keys, {
+            "nd-unfolding/parent_clean.py",
+            "nd-unfolding/child_clean.py",
+        })
+        pins = {
+            "entrypoints": {
+                ratchet.entrypoint_key(record): {
+                    "modules": ratchet.import_set(record),
+                }
+                for record in records
+            },
+        }
+        declared_empty = tuple(
+            ratchet.entrypoint_key(record)
+            for record in records
+            if record["repo_origin_count"] == 0
+        )
+        violations, observed = ratchet.check(
+            records,
+            pins,
+            require_empty_allow=declared_empty,
+        )
+        self.assertEqual(violations, [])
+        self.assertEqual(set(observed), keys)
+
+    def test_an_explicit_allow_is_propagated_to_the_child(self):
+        p = run(GUARD, "--expect-root", self.good, "--allow", self.bad,
+                "--inventory", self.inventory, "--", self.parent_sub)
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
         self.assertIn("CHILD-LOADED WRONG TREE", p.stdout)
-        self.assertNotIn("IMPORT TREE VIOLATION", p.stderr)
+        child = next(record for record in self.records() if record["depth"] == 1)
+        self.assertEqual(child["allow"], [str(self.bad)])
+        victim = next(origin for origin in child["repo_origins"]
+                      if origin["fullname"] == "victim")
+        self.assertTrue(victim["allowed"])
+
+    def test_dash_S_dash_I_and_dash_E_are_measured_as_not_covered(self):
+        parent = write(
+            self.good / "nd-unfolding" / "parent_flag.py",
+            "import os, subprocess, sys\n"
+            "_HERE = os.path.dirname(os.path.abspath(__file__))\n"
+            "raise SystemExit(subprocess.run(\n"
+            "    [sys.executable, sys.argv[1], "
+            "os.path.join(_HERE, 'child_bad.py')]).returncode)\n",
+        )
+        for flag in ("-S", "-I", "-E"):
+            with self.subTest(flag=flag):
+                self.inventory.unlink(missing_ok=True)
+                p = run(GUARD, "--expect-root", self.good, "--inventory", self.inventory,
+                        "--", parent, flag)
+                self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+                self.assertIn("CHILD-LOADED WRONG TREE", p.stdout)
+                self.assertNotIn("[oi136 child] IMPORT TREE VIOLATION", p.stderr)
+                self.assertEqual([record["depth"] for record in self.records()], [0])
+
+    def test_a_child_with_a_cleared_environment_is_measured_as_not_covered(self):
+        parent = write(
+            self.good / "nd-unfolding" / "parent_empty_env.py",
+            "import os, subprocess, sys\n"
+            "_HERE = os.path.dirname(os.path.abspath(__file__))\n"
+            "raise SystemExit(subprocess.run(\n"
+            "    [sys.executable, os.path.join(_HERE, 'child_bad.py')], "
+            "env={}).returncode)\n",
+        )
+        p = self.guarded(parent)
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        self.assertIn("CHILD-LOADED WRONG TREE", p.stdout)
+        self.assertEqual([record["depth"] for record in self.records()], [0])
+
+    def test_a_non_python_child_is_measured_as_not_covered(self):
+        shell_child = write(
+            self.good / "nd-unfolding" / "child.sh",
+            "printf 'NON-PYTHON CHILD\\n'\n",
+        )
+        parent = write(
+            self.good / "nd-unfolding" / "parent_shell.py",
+            "import subprocess\n"
+            f"raise SystemExit(subprocess.run(['/bin/sh', {str(shell_child)!r}]).returncode)\n",
+        )
+        p = self.guarded(parent)
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        self.assertIn("NON-PYTHON CHILD", p.stdout)
+        self.assertEqual([record["depth"] for record in self.records()], [0])
+
+    def test_an_existing_sitecustomize_still_executes_and_is_recorded(self):
+        custom_dir = pathlib.Path(self._tmp.name).resolve() / "existing-site"
+        marker = custom_dir / "executed.txt"
+        write(
+            custom_dir / "sitecustomize.py",
+            "import os, pathlib\n"
+            f"pathlib.Path({str(marker)!r}).write_text(str(os.getpid()))\n",
+        )
+        parent = write(
+            self.good / "nd-unfolding" / "parent_existing_site.py",
+            "import os, subprocess, sys\n"
+            "_HERE = os.path.dirname(os.path.abspath(__file__))\n"
+            "env = os.environ.copy()\n"
+            f"env['PYTHONPATH'] += os.pathsep + {str(custom_dir)!r}\n"
+            "raise SystemExit(subprocess.run(\n"
+            "    [sys.executable, os.path.join(_HERE, 'child_clean.py')], "
+            "env=env).returncode)\n",
+        )
+        p = self.guarded(parent)
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        child = next(record for record in self.records() if record["depth"] == 1)
+        self.assertTrue(marker.is_file())
+        self.assertEqual(marker.read_text(), str(child["pid"]))
+        self.assertEqual(child["chained_sitecustomize"], {
+            "found": True,
+            "executed": True,
+            "origin": str(custom_dir / "sitecustomize.py"),
+        })
+        self.assertIn(str(custom_dir), child["sys_path_final"])
 
     def test_the_docstring_says_so_where_a_caller_will_read_it(self):
-        """A limit known only to a test is a limit callers will not know."""
-        self.assertIn("DOES NOT CROSS A SUBPROCESS BOUNDARY", mgr.__doc__)
+        self.assertIn("IT CROSSES PYTHON SUBPROCESS BOUNDARIES", mgr.__doc__)
+        for limit in ("`-S`, `-I` or `-E`", "`env={}`", "non-Python child"):
+            self.assertIn(limit, mgr.__doc__)
 
 
 class ScriptContainment(unittest.TestCase):
@@ -954,8 +1142,12 @@ class TheInnocentMutationStaysGreen(TenModuleFixture):
         OI-136 ratchet walks.
         """
         deployed = self.tree / "nd-unfolding" / "mnv_guarded_run.py"
+        deployed_shim = self.tree / "nd-unfolding" / "mnv_guard_shim" / "sitecustomize.py"
         deployed.write_bytes(GUARD.read_bytes())
+        deployed_shim.parent.mkdir()
+        deployed_shim.write_bytes(SHIM.read_bytes())
         self.assertEqual(deployed.read_bytes(), GUARD.read_bytes())
+        self.assertEqual(deployed_shim.read_bytes(), SHIM.read_bytes())
         cp = run(deployed, "--expect-root", self.tree, "--", self.entry)
         self.assertEqual(cp.returncode, 0, cp.stdout + cp.stderr)
         rows, total, distinct = inventory(cp.stderr)
@@ -978,8 +1170,7 @@ class TheRefusalIsUnchanged(GuardFixture):
 
         "The stdlib, site-packages, conda and any path outside a checkout are IGNORED"
 
-    plus the subprocess boundary, which the docstring says it deliberately does not
-    cross. Each gets an arm below; `conda` gets the note it needs rather than a claim.
+    Each gets an arm below; `conda` gets the note it needs rather than a claim.
     """
 
     def test_a_genuine_import_tree_violation_still_exits_3_with_the_same_banner(self):
@@ -1210,49 +1401,50 @@ class TheReceiptDoesNotTouchTheChildsStdout(TenModuleFixture):
         self.assertIn(str(self.tree), cp.stderr)
 
 
-class TheInventoryReportsOneInterpreterAndSaysSo(unittest.TestCase):
-    """The blind spot, asserted rather than described.
-
-    The emission walks the PARENT's `sys.modules`. The tool's own docstring already
-    records that the refusal half does not cross a subprocess boundary; the receipt
-    half does not either, and for the same reason. That is a limit on what a green
-    inventory means, so it is asserted here AND printed in the emission itself -- a
-    caveat that lives only in a docstring is not attached to the artifact a reader
-    holds.
-    """
+class EachInventoryReportsOneInterpreterAndSaysSo(unittest.TestCase):
+    """A propagated child gets a separate record, not a merged parent inventory."""
 
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self._tmp.cleanup)
         tmp = pathlib.Path(self._tmp.name).resolve()
         self.good = make_checkout(tmp, "parent-tree")
-        self.other = make_checkout(tmp, "child-only-tree")
-        write(self.other / "nd-unfolding" / "hidden.py", "NAME = 'hidden'\n")
-        self.child = write(self.other / "nd-unfolding" / "child.py",
-                           "import sys\n"
-                           f"sys.path.insert(0, {str(self.other / 'nd-unfolding')!r})\n"
+        self.inventory_path = tmp / "inventory" / "separate.jsonl"
+        write(self.good / "nd-unfolding" / "hidden.py", "NAME = 'hidden'\n")
+        self.child = write(self.good / "nd-unfolding" / "child.py",
                            "import hidden\n"
                            "print('CHILD LOADED', hidden.NAME)\n")
         self.parent = write(self.good / "nd-unfolding" / "parent.py",
                             "import subprocess, sys\n"
                             f"subprocess.run([sys.executable, {str(self.child)!r}], check=True)\n")
 
-    def test_a_subprocess_childs_checkout_is_NOT_in_the_parents_inventory(self):
-        cp = run(GUARD, "--expect-root", self.good, "--", self.parent)
+    def go(self):
+        return run(GUARD, "--expect-root", self.good, "--inventory", self.inventory_path,
+                   "--", self.parent)
+
+    def records(self):
+        return [json.loads(line) for line in self.inventory_path.read_text().splitlines()
+                if line.strip()]
+
+    def test_a_child_module_is_in_the_child_record_not_the_parent_record(self):
+        cp = self.go()
         self.assertEqual(cp.returncode, 0, cp.stdout + cp.stderr)
         self.assertIn("CHILD LOADED hidden", cp.stdout)
-        rows, _, _ = inventory(cp.stderr)
-        self.assertNotIn(str(self.other), rows)
+        records = {record["depth"]: record for record in self.records()}
+        parent_names = {origin["fullname"] for origin in records[0]["repo_origins"]}
+        child_names = {origin["fullname"] for origin in records[1]["repo_origins"]}
+        self.assertNotIn("hidden", parent_names)
+        self.assertIn("hidden", child_names)
 
     def test_the_emission_states_that_limit_where_the_reader_of_a_log_will_see_it(self):
-        cp = run(GUARD, "--expect-root", self.good, "--", self.parent)
+        cp = self.go()
         self.assertIn("SCOPE -- THIS INTERPRETER ONLY", cp.stderr)
-        self.assertIn("subprocess.run", cp.stderr)
+        self.assertIn("write separate records", cp.stderr)
         self.assertIn("AT LEAST these trees", cp.stderr)
 
     def test_the_docstring_says_so_too_where_a_maintainer_will_read_it(self):
         text = GUARD.read_text()
-        self.assertIn("THE SCOPE IS ONE INTERPRETER", text)
+        self.assertIn("EACH INVENTORY RECORD COVERS ONE INTERPRETER", text)
         self.assertIn("IT CANNOT REFUSE, BY CONSTRUCTION", text)
 
 
