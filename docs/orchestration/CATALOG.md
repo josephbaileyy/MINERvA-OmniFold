@@ -16,6 +16,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ## Current work
 
+### OI-136 fail-open repair — AUTHORIZED 2026-09-03 (36 of 45; 9 excluded with measured reasons)
+
+- [`AUTHORIZATION-20260903-oi136-failopen-repair.md`](AUTHORIZATION-20260903-oi136-failopen-repair.md)
+  - Joseph's authorization quoted; scope is the `__file__`-derived import root at 36 fail-open
+  entrypoints with both ratchet constants moved in the same commit. Three probe records, the
+  published 2D arm (ruled 2026-08-23), and five receipt-bound files are NOT repaired. Expires no
+  freeze; deploys nothing; moves no gate or count.
+
 ### Wave 1 integration — frozen routing interface, conflict matrix, ledger (2026-09-03)
 
 - [`INTEGRATION-20260903-wave1-routing-freeze-and-ledger.md`](INTEGRATION-20260903-wave1-routing-freeze-and-ledger.md)
