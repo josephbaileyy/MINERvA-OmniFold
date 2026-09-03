@@ -4,8 +4,10 @@
 Staging is not authorization.  A staged item becomes runnable only after a
 human reviews its complete digest and approves it from an interactive TTY.
 The ticker executes at most one ready item per invocation, without a shell.
-Compute items also require a committed campaign contract whose terminal
-branches all resolve to a decision consequence.
+Compute items also require a committed campaign contract, a guarded producer,
+an independently bound terminal validator, and a fresh R5 meter receipt. The
+validator always runs after the producer and alone selects an exhaustive
+terminal branch with a decision consequence.
 """
 
 from __future__ import annotations
@@ -23,6 +25,7 @@ import socket
 import subprocess
 import sys
 import tempfile
+from typing import Callable
 
 
 HERE = Path(__file__).resolve().parent
@@ -32,6 +35,11 @@ ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 PYTHON = Path("/usr/bin/python3.11")
 ALLOWED_PYTHONS = {PYTHON, Path(sys.executable).resolve()}
+GUARD_PATH = Path("nd-unfolding/mnv_guarded_run.py")
+DEFAULT_R5_RECEIPT = Path("docs/orchestration/state/r5-meter-receipt.json")
+R5_STOP_DATE = dt.datetime(2026, 9, 30, tzinfo=dt.timezone.utc)
+R5_CEILINGS = {"gpu_task_hours": 500.0, "cpu_task_hours": 500.0}
+R5_MAX_AGE = dt.timedelta(hours=24)
 
 CONTRACT_KEYS = frozenset(
     {
@@ -40,6 +48,7 @@ CONTRACT_KEYS = frozenset(
         "scientific_question",
         "candidate",
         "inputs",
+        "terminal_validator",
         "terminal_branches",
         "maximum_cost",
         "output_namespace",
@@ -51,6 +60,7 @@ CONTRACT_KEYS = frozenset(
         "retry_policy",
     }
 )
+TERMINAL_VALIDATOR_KEYS = frozenset({"argv", "cwd"})
 ARTIFACT_IDENTITY_KEYS = frozenset({"id", "uri", "sha256"})
 TERMINAL_BRANCH_KEYS = frozenset(
     {"id", "return_codes", "condition", "decision", "unlocks", "forbids"}
@@ -62,6 +72,33 @@ PRESERVATION_KEYS = frozenset({"mode", "artifacts"})
 RETRY_POLICY_KEYS = frozenset(
     {"automatic_retraining", "requires_new_authorization"}
 )
+R5_RECEIPT_KEYS = frozenset(
+    {
+        "schema_version",
+        "decision_record",
+        "t0_utc",
+        "stop_date_utc",
+        "ceilings",
+        "unit",
+        "measured_at_utc",
+        "measured_on_host",
+        "source",
+        "spend",
+        "fired",
+        "headroom",
+    }
+)
+R5_SOURCE_KEYS = frozenset({"kind", "argv_or_path", "raw_sha256"})
+R5_SPEND_KEYS = frozenset(
+    {
+        "gpu_task_hours",
+        "cpu_task_hours",
+        "task_count",
+        "metered_task_ids",
+        "by_state",
+    }
+)
+R5_FIRED_KEYS = frozenset({"date", "gpu", "cpu", "any"})
 
 
 class QueueError(RuntimeError):
@@ -165,6 +202,45 @@ def require_text_list(value: object, *, field: str) -> list[str]:
     return values
 
 
+def require_argv(value: object, *, field: str) -> list[str]:
+    """Return a nonempty subprocess argument vector."""
+    if not isinstance(value, list) or not value:
+        raise QueueError(f"{field} must be a nonempty array")
+    return [require_text(entry, field=f"{field} entry") for entry in value]
+
+
+def parse_utc(value: object, *, field: str) -> dt.datetime:
+    """Parse an offset-aware UTC timestamp."""
+    text = require_text(value, field=field)
+    try:
+        parsed = dt.datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise QueueError(f"{field} must be an ISO-8601 timestamp") from exc
+    if parsed.tzinfo is None:
+        raise QueueError(f"{field} must include a UTC offset")
+    return parsed.astimezone(dt.timezone.utc)
+
+
+def require_nonnegative_number(value: object, *, field: str) -> float:
+    """Return a finite nonnegative numeric value."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise QueueError(f"{field} must be numeric")
+    number = float(value)
+    if not math.isfinite(number) or number < 0:
+        raise QueueError(f"{field} must be finite and nonnegative")
+    return number
+
+
+def require_finite_number(value: object, *, field: str) -> float:
+    """Return a finite numeric value."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise QueueError(f"{field} must be numeric")
+    number = float(value)
+    if not math.isfinite(number):
+        raise QueueError(f"{field} must be finite")
+    return number
+
+
 def validate_artifact_identity(value: object, *, field: str) -> dict[str, object]:
     """Validate an immutable candidate or input identity."""
     artifact = require_object(value, field=field, keys=ARTIFACT_IDENTITY_KEYS)
@@ -228,6 +304,18 @@ def validate_campaign_contract(
     if len(input_uris) != len(set(input_uris)):
         raise QueueError("inputs contain duplicate uris")
 
+    terminal_validator = require_object(
+        contract["terminal_validator"],
+        field="terminal_validator",
+        keys=TERMINAL_VALIDATOR_KEYS,
+    )
+    require_argv(terminal_validator["argv"], field="terminal_validator.argv")
+    validator_cwd = require_text(
+        terminal_validator["cwd"], field="terminal_validator.cwd"
+    )
+    if Path(validator_cwd).is_absolute():
+        raise QueueError("terminal_validator.cwd must be repository-relative")
+
     terminal_branches = contract["terminal_branches"]
     if not isinstance(terminal_branches, list) or not terminal_branches:
         raise QueueError("terminal_branches must be a nonempty array")
@@ -281,12 +369,9 @@ def validate_campaign_contract(
     )
     costs: dict[str, float] = {}
     for key in sorted(MAXIMUM_COST_KEYS):
-        amount = maximum_cost[key]
-        if isinstance(amount, bool) or not isinstance(amount, (int, float)):
-            raise QueueError(f"maximum_cost.{key} must be numeric")
-        costs[key] = float(amount)
-        if not math.isfinite(costs[key]) or costs[key] < 0:
-            raise QueueError(f"maximum_cost.{key} must be finite and nonnegative")
+        costs[key] = require_nonnegative_number(
+            maximum_cost[key], field=f"maximum_cost.{key}"
+        )
     if costs["wall_hours"] <= 0:
         raise QueueError("maximum_cost.wall_hours must be positive")
     if costs["gpu_task_hours"] == 0 and costs["cpu_task_hours"] == 0:
@@ -297,9 +382,15 @@ def validate_campaign_contract(
     validator = require_text(
         contract["independent_validator"], field="independent_validator"
     )
-    if producer.casefold() == validator.casefold():
-        raise QueueError("producer and independent_validator identities must differ")
-    require_text(contract["decision_authority"], field="decision_authority")
+    authority = require_text(
+        contract["decision_authority"], field="decision_authority"
+    )
+    identities = [producer.casefold(), validator.casefold(), authority.casefold()]
+    if len(set(identities)) != len(identities):
+        raise QueueError(
+            "producer, independent_validator, and decision_authority identities "
+            "must be pairwise distinct"
+        )
     require_text(contract["validator_version"], field="validator_version")
 
     preservation = require_object(
@@ -375,7 +466,12 @@ def terminal_plan(
 
 
 class Queue:
-    def __init__(self, repo: Path = REPO, state: Path = DEFAULT_STATE, clock=utc_now):
+    def __init__(
+        self,
+        repo: Path = REPO,
+        state: Path = DEFAULT_STATE,
+        clock: Callable[[], str] = utc_now,
+    ) -> None:
         self.repo = repo.resolve()
         self.state = state.resolve()
         self.clock = clock
@@ -418,10 +514,22 @@ class Queue:
         )
         if result.returncode != 0:
             raise QueueError(
-                "campaign contract must be committed at repository HEAD: "
-                f"{relative}"
+                f"bound file must be committed at repository HEAD: {relative}"
             )
         return hashlib.sha256(result.stdout).hexdigest()
+
+    def require_committed_binding(self, binding: dict[str, str]) -> None:
+        """Require a binding to match the corresponding blob at ``HEAD``."""
+        path = resolve_repo_path(self.repo, binding["path"])
+        committed_sha256 = self.committed_file_sha256(path)
+        if (
+            binding["sha256"] != committed_sha256
+            or sha256_file(path) != committed_sha256
+        ):
+            raise QueueError(
+                "bound file differs from the file committed at HEAD: "
+                f"{binding['path']}"
+            )
 
 
 def validate_id(value: str) -> None:
@@ -436,9 +544,14 @@ def resolve_repo_path(repo: Path, value: str) -> Path:
     return inside(path, repo)
 
 
-def command_bindings(repo: Path, argv: list[str], explicit: list[str]) -> list[dict]:
-    if not argv or not all(isinstance(x, str) and x for x in argv):
-        raise QueueError("command must be a nonempty string array")
+def command_bindings(
+    repo: Path,
+    argv: list[str],
+    explicit: list[str],
+    *,
+    require_guard: bool = False,
+) -> list[dict[str, str]]:
+    require_argv(argv, field="command")
     executable = Path(argv[0])
     bound: list[Path] = []
     if executable.resolve() in ALLOWED_PYTHONS:
@@ -452,9 +565,32 @@ def command_bindings(repo: Path, argv: list[str], explicit: list[str]) -> list[d
     else:
         executable = resolve_repo_path(repo, argv[0])
         if not executable.is_file() or not os.access(executable, os.X_OK):
-            raise QueueError(f"command is not an executable repository file: {executable}")
+            raise QueueError(
+                f"command is not an executable repository file: {executable}"
+            )
         argv[0] = str(executable)
         bound.append(executable)
+    if require_guard:
+        guard = (repo / GUARD_PATH).resolve()
+        command_file_index = 1 if Path(argv[0]).resolve() in ALLOWED_PYTHONS else 0
+        if Path(argv[command_file_index]).resolve() != guard:
+            raise QueueError(
+                "compute producer must route through "
+                "nd-unfolding/mnv_guarded_run.py"
+            )
+        try:
+            separator_index = argv.index("--", command_file_index + 1)
+        except ValueError as exc:
+            raise QueueError("guarded compute command requires '-- <script>'") from exc
+        if separator_index + 1 >= len(argv):
+            raise QueueError(
+                "guarded compute command requires a target script after '--'"
+            )
+        target = resolve_repo_path(repo, argv[separator_index + 1])
+        if target.suffix != ".py" or not target.is_file():
+            raise QueueError(f"guarded target is not a repository .py file: {target}")
+        argv[separator_index + 1] = str(target)
+        bound.append(target)
     for value in explicit:
         path = resolve_repo_path(repo, value)
         if not path.is_file():
@@ -464,6 +600,20 @@ def command_bindings(repo: Path, argv: list[str], explicit: list[str]) -> list[d
     return [
         {"path": str(path.relative_to(repo)), "sha256": sha256_file(path)}
         for path in unique
+    ]
+
+
+def merge_bindings(*binding_groups: list[dict[str, str]]) -> list[dict[str, str]]:
+    """Merge command binding groups while requiring identical repeated hashes."""
+    merged: dict[str, str] = {}
+    for bindings in binding_groups:
+        for binding in bindings:
+            previous = merged.setdefault(binding["path"], binding["sha256"])
+            if previous != binding["sha256"]:
+                raise QueueError(f"inconsistent binding hash: {binding['path']}")
+    return [
+        {"path": path, "sha256": merged[path]}
+        for path in sorted(merged)
     ]
 
 
@@ -526,7 +676,46 @@ def stage(
     bound_inputs = list(bind)
     if contract_path is not None:
         bound_inputs.append(str(contract_path))
-    bindings = command_bindings(queue.repo, command, bound_inputs)
+    bindings = command_bindings(
+        queue.repo,
+        command,
+        bound_inputs,
+        require_guard=kind == "compute",
+    )
+    if contract is not None:
+        terminal_validator = contract["terminal_validator"]
+        if not isinstance(terminal_validator, dict):
+            raise QueueError("validated campaign contract lost terminal_validator")
+        validator_command = list(
+            require_argv(
+                terminal_validator["argv"], field="terminal_validator.argv"
+            )
+        )
+        validator_bindings = command_bindings(
+            queue.repo, validator_command, [], require_guard=False
+        )
+        bindings = merge_bindings(bindings, validator_bindings)
+        validator_cwd = resolve_repo_path(
+            queue.repo,
+            require_text(terminal_validator["cwd"], field="terminal_validator.cwd"),
+        )
+        if not validator_cwd.is_dir():
+            raise QueueError(
+                f"terminal validator cwd is not a directory: {validator_cwd}"
+            )
+        if kind == "compute":
+            maximum_cost = contract["maximum_cost"]
+            if not isinstance(maximum_cost, dict):
+                raise QueueError("validated campaign contract lost maximum_cost")
+            maximum_wall_seconds = float(maximum_cost["wall_hours"]) * 3600
+            if timeout_seconds > maximum_wall_seconds:
+                raise QueueError(
+                    "producer and terminal validator timeout exceeds "
+                    "maximum_cost.wall_hours"
+                )
+    if kind == "compute":
+        for binding in bindings:
+            queue.require_committed_binding(binding)
     cwd_path = resolve_repo_path(queue.repo, cwd)
     if not cwd_path.is_dir():
         raise QueueError(f"cwd is not a directory: {cwd_path}")
@@ -574,17 +763,185 @@ def validate_unchanged(queue: Queue, item: dict) -> None:
         path = resolve_repo_path(queue.repo, binding["path"])
         if not path.is_file() or sha256_file(path) != binding["sha256"]:
             raise QueueError(f"bound file changed after staging: {binding['path']}")
+        if item.get("kind") == "compute":
+            queue.require_committed_binding(binding)
+
+
+def validate_r5_receipt(value: object) -> dict[str, object]:
+    """Validate the complete R5 meter receipt and its internal accounting."""
+    receipt = require_object(value, field="R5 meter receipt", keys=R5_RECEIPT_KEYS)
+    if receipt["schema_version"] != 1:
+        raise QueueError("R5 meter receipt schema_version must be 1")
+    require_text(receipt["decision_record"], field="R5 meter decision_record")
+    t0 = parse_utc(receipt["t0_utc"], field="R5 meter t0_utc")
+    stop_date = parse_utc(
+        receipt["stop_date_utc"], field="R5 meter stop_date_utc"
+    )
+    measured_at = parse_utc(
+        receipt["measured_at_utc"], field="R5 meter measured_at_utc"
+    )
+    if stop_date != R5_STOP_DATE:
+        raise QueueError("R5 meter stop_date_utc does not match the ruled stop")
+    if measured_at < t0:
+        raise QueueError("R5 meter measured_at_utc precedes t0_utc")
+
+    ceilings = require_object(
+        receipt["ceilings"],
+        field="R5 meter ceilings",
+        keys=MAXIMUM_COST_KEYS - {"wall_hours"},
+    )
+    spend = require_object(
+        receipt["spend"], field="R5 meter spend", keys=R5_SPEND_KEYS
+    )
+    headroom = require_object(
+        receipt["headroom"],
+        field="R5 meter headroom",
+        keys=MAXIMUM_COST_KEYS - {"wall_hours"},
+    )
+    for resource, ruled_ceiling in R5_CEILINGS.items():
+        ceiling = require_nonnegative_number(
+            ceilings[resource], field=f"R5 meter ceilings.{resource}"
+        )
+        spent = require_nonnegative_number(
+            spend[resource], field=f"R5 meter spend.{resource}"
+        )
+        remaining = require_finite_number(
+            headroom[resource], field=f"R5 meter headroom.{resource}"
+        )
+        if ceiling != ruled_ceiling:
+            raise QueueError(
+                f"R5 meter ceilings.{resource} does not match the ruled ceiling"
+            )
+        if not math.isclose(remaining, ceiling - spent, abs_tol=1e-9):
+            raise QueueError(
+                f"R5 meter headroom.{resource} is inconsistent with spend"
+            )
+
+    if receipt["unit"] != "task-hours":
+        raise QueueError("R5 meter unit must be 'task-hours'")
+    require_text(receipt["measured_on_host"], field="R5 meter measured_on_host")
+    source = require_object(
+        receipt["source"], field="R5 meter source", keys=R5_SOURCE_KEYS
+    )
+    require_text(source["kind"], field="R5 meter source.kind")
+    argv_or_path = source["argv_or_path"]
+    if isinstance(argv_or_path, list):
+        require_argv(argv_or_path, field="R5 meter source.argv_or_path")
+    else:
+        require_text(argv_or_path, field="R5 meter source.argv_or_path")
+    raw_sha256 = require_text(
+        source["raw_sha256"], field="R5 meter source.raw_sha256"
+    )
+    if not SHA256_RE.fullmatch(raw_sha256):
+        raise QueueError(
+            "R5 meter source.raw_sha256 must be 64 lowercase hexadecimal characters"
+        )
+
+    task_count = spend["task_count"]
+    if (
+        isinstance(task_count, bool)
+        or not isinstance(task_count, int)
+        or task_count < 0
+    ):
+        raise QueueError("R5 meter spend.task_count must be a nonnegative integer")
+    metered_task_ids = require_text_list(
+        spend["metered_task_ids"], field="R5 meter spend.metered_task_ids"
+    )
+    if len(metered_task_ids) != task_count:
+        raise QueueError("R5 meter spend.task_count does not match metered_task_ids")
+    by_state = spend["by_state"]
+    if not isinstance(by_state, dict) or not all(
+        isinstance(state, str)
+        and state
+        and isinstance(count, int)
+        and not isinstance(count, bool)
+        and count >= 0
+        for state, count in by_state.items()
+    ):
+        raise QueueError(
+            "R5 meter spend.by_state must map state names to nonnegative integers"
+        )
+    if sum(by_state.values()) != task_count:
+        raise QueueError("R5 meter spend.by_state does not sum to task_count")
+
+    fired = require_object(
+        receipt["fired"], field="R5 meter fired", keys=R5_FIRED_KEYS
+    )
+    if any(not isinstance(fired[key], bool) for key in R5_FIRED_KEYS):
+        raise QueueError("R5 meter fired fields must be booleans")
+    if fired["any"] != (fired["date"] or fired["gpu"] or fired["cpu"]):
+        raise QueueError("R5 meter fired.any is inconsistent with trigger fields")
+    return receipt
+
+
+def r5_refusal_reason(queue: Queue, item: dict) -> str | None:
+    """Return the compute-prohibition reason, or ``None`` when R5 permits a run."""
+    receipt_value = os.environ.get("CAMPAIGN_R5_RECEIPT")
+    try:
+        if receipt_value is None:
+            receipt_path = queue.repo / DEFAULT_R5_RECEIPT
+        elif Path(receipt_value).is_absolute():
+            receipt_path = Path(receipt_value).resolve()
+        else:
+            receipt_path = resolve_repo_path(queue.repo, receipt_value)
+    except QueueError as exc:
+        return f"R5 receipt malformed: {exc}"
+    if not receipt_path.is_file():
+        return f"R5 receipt missing: {receipt_path}"
+    try:
+        receipt = validate_r5_receipt(read_object(receipt_path))
+    except QueueError as exc:
+        return f"R5 receipt malformed: {exc}"
+
+    now = parse_utc(queue.clock(), field="queue clock")
+    measured_at = parse_utc(
+        receipt["measured_at_utc"], field="R5 meter measured_at_utc"
+    )
+    if now - measured_at > R5_MAX_AGE:
+        return "R5 receipt stale: measured_at_utc is older than 24 hours"
+
+    fired = receipt["fired"]
+    if not isinstance(fired, dict):
+        raise QueueError("validated R5 receipt lost fired")
+    if fired["any"] is True:
+        return "R5 stop fired: receipt fired.any is true"
+    stop_date = parse_utc(
+        receipt["stop_date_utc"], field="R5 meter stop_date_utc"
+    )
+    if now >= stop_date:
+        return "R5 stop date reached: queue clock is at or after stop_date_utc"
+
+    spend = receipt["spend"]
+    ceilings = receipt["ceilings"]
+    contract = item["campaign_contract"]
+    if not all(isinstance(value, dict) for value in (spend, ceilings, contract)):
+        raise QueueError("validated compute item lost R5 accounting fields")
+    maximum_cost = contract["maximum_cost"]
+    if not isinstance(maximum_cost, dict):
+        raise QueueError("validated campaign contract lost maximum_cost")
+    for resource in ("gpu_task_hours", "cpu_task_hours"):
+        projected = float(spend[resource]) + float(maximum_cost[resource])
+        if projected >= float(ceilings[resource]):
+            return (
+                f"R5 {resource} ceiling would be reached: spend plus maximum_cost "
+                "is greater than or equal to the ceiling"
+            )
+    return None
 
 
 def state_of(queue: Queue, item: dict) -> str:
     item_id = item["id"]
     outcome_path = queue.path("outcomes", item_id)
     if outcome_path.exists():
-        return str(read_object(outcome_path).get("status", "outcome"))
+        outcome_status = str(read_object(outcome_path).get("status", "outcome"))
+        if outcome_status != "refused":
+            return outcome_status
     if queue.path("claims", item_id).exists():
         return "outcome-unknown"
     if queue.path("revocations", item_id).exists():
         return "revoked"
+    if outcome_path.exists():
+        return "refused"
     if queue.path("approvals", item_id).exists():
         return "approved"
     return "staged"
@@ -592,7 +949,7 @@ def state_of(queue: Queue, item: dict) -> str:
 
 def summary(queue: Queue) -> dict:
     values = {"staged": 0, "approved": 0, "succeeded": 0, "failed": 0,
-              "stale": 0, "revoked": 0, "outcome-unknown": 0}
+              "refused": 0, "stale": 0, "revoked": 0, "outcome-unknown": 0}
     rows = []
     for item in queue.items():
         state = state_of(queue, item)
@@ -634,7 +991,7 @@ def approve(queue: Queue, item_id: str, supplied_digest: str, interactive: bool 
 
 def revoke(queue: Queue, item_id: str, interactive: bool = True) -> dict:
     item = queue.item(item_id)
-    if state_of(queue, item) not in {"staged", "approved"}:
+    if state_of(queue, item) not in {"staged", "approved", "refused"}:
         raise QueueError(f"item cannot be revoked from state {state_of(queue, item)}")
     if interactive:
         if not sys.stdin.isatty():
@@ -659,7 +1016,10 @@ def dependencies_succeeded(queue: Queue, item: dict) -> bool:
 def ready_item(queue: Queue) -> dict | None:
     candidates = sorted(queue.items(), key=lambda x: (x["created_at_utc"], x["id"]))
     for item in candidates:
-        if state_of(queue, item) == "approved" and dependencies_succeeded(queue, item):
+        if state_of(queue, item) in {
+            "approved",
+            "refused",
+        } and dependencies_succeeded(queue, item):
             return item
     return None
 
@@ -673,8 +1033,154 @@ def write_outcome(queue: Queue, item: dict, status: str, **extra: object) -> dic
         "completed_at_utc": queue.clock(),
         **extra,
     }
-    atomic_json(queue.path("outcomes", item["id"]), value, exclusive=True)
+    outcome_path = queue.path("outcomes", item["id"])
+    replace_refusal = False
+    if outcome_path.exists():
+        existing = read_object(outcome_path)
+        replace_refusal = existing.get("status") == "refused"
+        if not replace_refusal:
+            raise QueueError(f"refusing to overwrite: {outcome_path}")
+    atomic_json(outcome_path, value, exclusive=not replace_refusal)
     return value
+
+
+def run_logged_command(
+    argv: list[str],
+    *,
+    cwd: Path,
+    env: dict[str, str],
+    timeout_seconds: int,
+    log_path: Path,
+    proposal_digest: str,
+) -> tuple[int | None, str | None]:
+    """Run one bound command and return its code plus any launch failure."""
+    try:
+        with log_path.open("w") as log:
+            log.write(f"proposal_digest={proposal_digest}\n")
+            log.write(f"argv={canonical(argv)}\n")
+            log.flush()
+            completed = subprocess.run(
+                argv,
+                cwd=cwd,
+                env=env,
+                stdin=subprocess.DEVNULL,
+                stdout=log,
+                stderr=subprocess.STDOUT,
+                text=True,
+                check=False,
+                timeout=timeout_seconds,
+            )
+        return completed.returncode, None
+    except subprocess.TimeoutExpired:
+        return None, "command timed out"
+    except (OSError, ValueError, subprocess.SubprocessError) as exc:
+        return None, f"command could not be started: {exc}"
+
+
+def normalized_terminal_validator(
+    queue: Queue, contract: dict[str, object]
+) -> tuple[list[str], Path]:
+    """Resolve the validator command and working directory from a contract."""
+    terminal_validator = contract["terminal_validator"]
+    if not isinstance(terminal_validator, dict):
+        raise QueueError("validated campaign contract lost terminal_validator")
+    argv = list(
+        require_argv(terminal_validator["argv"], field="terminal_validator.argv")
+    )
+    command_bindings(queue.repo, argv, [], require_guard=False)
+    cwd = resolve_repo_path(
+        queue.repo,
+        require_text(terminal_validator["cwd"], field="terminal_validator.cwd"),
+    )
+    return argv, cwd
+
+
+def run_compute_item(queue: Queue, item: dict, env: dict[str, str]) -> tuple[int, dict]:
+    """Run a producer and its mandatory independent terminal validator."""
+    contract = item["campaign_contract"]
+    if not isinstance(contract, dict):
+        raise QueueError("validated compute item lost its campaign contract")
+    timeout_seconds = int(item["timeout_seconds"])
+    logs_dir = queue.state / "logs"
+    producer_log = logs_dir / f"{item['id']}.producer.log"
+    validator_log = logs_dir / f"{item['id']}.validator.log"
+    producer_returncode, producer_error = run_logged_command(
+        item["argv"],
+        cwd=resolve_repo_path(queue.repo, item["cwd"]),
+        env=env,
+        timeout_seconds=timeout_seconds,
+        log_path=producer_log,
+        proposal_digest=item["proposal_digest"],
+    )
+
+    validator_env = env.copy()
+    validator_env["CAMPAIGN_PRODUCER_RETURNCODE"] = (
+        str(producer_returncode)
+        if producer_returncode is not None
+        else "TIMEOUT_OR_NOT_STARTED"
+    )
+    try:
+        validator_argv, validator_cwd = normalized_terminal_validator(queue, contract)
+    except QueueError as exc:
+        validator_returncode = None
+        validator_error = f"command could not be started: {exc}"
+        validator_log.write_text(validator_error + "\n")
+    else:
+        validator_returncode, validator_error = run_logged_command(
+            validator_argv,
+            cwd=validator_cwd,
+            env=validator_env,
+            timeout_seconds=timeout_seconds,
+            log_path=validator_log,
+            proposal_digest=item["proposal_digest"],
+        )
+    status = "succeeded" if validator_returncode == 0 else "failed"
+    extra: dict[str, object] = {
+        "producer_returncode": producer_returncode,
+        "validator_returncode": validator_returncode,
+        "producer_log": str(producer_log),
+        "validator_log": str(validator_log),
+        **terminal_plan(contract, validator_returncode),
+    }
+    if producer_error is not None:
+        extra["producer_error"] = producer_error
+    if validator_error is not None:
+        extra["validator_error"] = validator_error
+    outcome = write_outcome(queue, item, status, **extra)
+    return (0 if validator_returncode == 0 else 3), outcome
+
+
+def run_non_compute_item(
+    queue: Queue, item: dict, env: dict[str, str]
+) -> tuple[int, dict]:
+    """Run a non-compute queue item with the legacy single-command outcome."""
+    log_path = queue.state / "logs" / f"{item['id']}.log"
+    returncode, error = run_logged_command(
+        item["argv"],
+        cwd=resolve_repo_path(queue.repo, item["cwd"]),
+        env=env,
+        timeout_seconds=int(item["timeout_seconds"]),
+        log_path=log_path,
+        proposal_digest=item["proposal_digest"],
+    )
+    if returncode is None:
+        outcome = write_outcome(
+            queue,
+            item,
+            "failed",
+            error=error,
+            log=str(log_path),
+        )
+        return 3, outcome
+    status = "succeeded" if returncode == 0 else "failed"
+    outcome = write_outcome(
+        queue,
+        item,
+        status,
+        returncode=returncode,
+        log=str(log_path),
+    )
+    return (0 if returncode == 0 else 3), outcome
 
 
 def run_ready(queue: Queue) -> tuple[int, dict]:
@@ -693,6 +1199,17 @@ def run_ready(queue: Queue) -> tuple[int, dict]:
     except QueueError as exc:
         outcome = write_outcome(queue, item, "stale", error=str(exc))
         return 4, outcome
+    if item["kind"] == "compute":
+        refusal_reason = r5_refusal_reason(queue, item)
+        if refusal_reason is not None:
+            outcome = write_outcome(
+                queue,
+                item,
+                "refused",
+                reason=refusal_reason,
+                consumed=False,
+            )
+            return 6, outcome
     claim = {
         "schema_version": 1,
         "id": item["id"],
@@ -704,70 +1221,12 @@ def run_ready(queue: Queue) -> tuple[int, dict]:
         atomic_json(queue.path("claims", item["id"]), claim, exclusive=True)
     except QueueError:
         return 5, {"status": "outcome-unknown", "id": item["id"]}
-    log_path = queue.state / "logs" / f"{item['id']}.log"
-    log_path.parent.mkdir(parents=True, exist_ok=True)
+    (queue.state / "logs").mkdir(parents=True, exist_ok=True)
     env = os.environ.copy()
     env["CAMPAIGN_QUEUE_ITEM_ID"] = item["id"]
-    try:
-        with log_path.open("w") as log:
-            log.write(f"proposal_digest={item['proposal_digest']}\n")
-            log.write(f"argv={canonical(item['argv'])}\n")
-            log.flush()
-            result = subprocess.run(
-                item["argv"],
-                cwd=resolve_repo_path(queue.repo, item["cwd"]),
-                env=env,
-                stdin=subprocess.DEVNULL,
-                stdout=log,
-                stderr=subprocess.STDOUT,
-                text=True,
-                check=False,
-                timeout=int(item["timeout_seconds"]),
-            )
-        status = "succeeded" if result.returncode == 0 else "failed"
-        contract = item.get("campaign_contract")
-        contract_fields = (
-            terminal_plan(contract, result.returncode)
-            if isinstance(contract, dict)
-            else {}
-        )
-        outcome = write_outcome(
-            queue,
-            item,
-            status,
-            returncode=result.returncode,
-            log=str(log_path),
-            **contract_fields,
-        )
-        return (0 if result.returncode == 0 else 3), outcome
-    except subprocess.TimeoutExpired:
-        contract = item.get("campaign_contract")
-        contract_fields = (
-            terminal_plan(contract, None) if isinstance(contract, dict) else {}
-        )
-        outcome = write_outcome(
-            queue,
-            item,
-            "failed",
-            error="command timed out",
-            log=str(log_path),
-            **contract_fields,
-        )
-        return 3, outcome
-    except Exception as exc:
-        contract = item.get("campaign_contract")
-        contract_fields = (
-            terminal_plan(contract, None) if isinstance(contract, dict) else {}
-        )
-        outcome = write_outcome(
-            queue,
-            item,
-            "failed",
-            error=f"launcher error: {exc}",
-            log=str(log_path),
-            **contract_fields,
-        )
-        return 3, outcome
+    if item["kind"] == "compute":
+        return run_compute_item(queue, item, env)
+    return run_non_compute_item(queue, item, env)
 
 
 def build_parser() -> argparse.ArgumentParser:

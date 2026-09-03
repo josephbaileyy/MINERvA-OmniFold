@@ -11,36 +11,89 @@ from unittest import mock
 import campaignctl
 
 
-FIXTURE = (
-    Path(__file__).resolve().parent
-    / "test_fixtures_campaign_contract"
-    / "validator-failed-after-jobs-complete.json"
-)
+FIXTURE_DIR = Path(__file__).resolve().parent / "test_fixtures_campaign_contract"
+CONTRACT_FIXTURE = FIXTURE_DIR / "validator-failed-after-jobs-complete.json"
+R5_FIXTURES = {
+    name: FIXTURE_DIR / f"r5-meter-{name}.json"
+    for name in ("healthy", "stale", "fired", "headroom-exhausting", "malformed")
+}
 
 
 class CampaignQueueTests(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.temp = tempfile.TemporaryDirectory(prefix="campaign-queue-test.")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         self.repo = self.root / "repo"
         self.repo.mkdir()
-        os.system(f"git -C {self.repo} init -q")
-        os.system(f"git -C {self.repo} config user.email test@example.invalid")
-        os.system(f"git -C {self.repo} config user.name Test")
-        self.script = self.repo / "work.py"
-        self.script.write_text("from pathlib import Path\nPath('ran').write_text('yes')\n")
-        self.failure_script = self.repo / "validator_failure.py"
-        self.failure_script.write_text(
-            "from pathlib import Path\n"
-            "output = Path('outputs/validator-failure-fixture')\n"
-            "output.mkdir(parents=True)\n"
-            "(output / 'jobs-complete').write_text('all complete')\n"
-            "(output / 'validator-report').write_text('failed')\n"
-            "raise SystemExit(23)\n"
+        subprocess.run(["git", "-C", str(self.repo), "init", "-q"], check=True)
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                str(self.repo),
+                "config",
+                "user.email",
+                "test@example.invalid",
+            ],
+            check=True,
         )
         subprocess.run(
-            ["git", "-C", str(self.repo), "add", "work.py", "validator_failure.py"],
+            ["git", "-C", str(self.repo), "config", "user.name", "Test"],
+            check=True,
+        )
+        self.script = self.repo / "work.py"
+        self.script.write_text(
+            "from pathlib import Path\n"
+            "Path('ran').write_text('yes')\n"
+            "output = Path('outputs/validator-failure-fixture')\n"
+            "output.mkdir(parents=True, exist_ok=True)\n"
+            "(output / 'jobs-complete').write_text('all complete')\n"
+        )
+        guard = self.repo / "nd-unfolding" / "mnv_guarded_run.py"
+        guard.parent.mkdir()
+        guard.write_text(
+            "import runpy\n"
+            "import sys\n"
+            "separator = sys.argv.index('--')\n"
+            "script = sys.argv[separator + 1]\n"
+            "sys.argv = [script, *sys.argv[separator + 2:]]\n"
+            "runpy.run_path(script, run_name='__main__')\n"
+        )
+        self.validator_success = self.repo / "validator_success.py"
+        self.validator_success.write_text(
+            "import os\n"
+            "from pathlib import Path\n"
+            "Path('validator-ran').write_text(\n"
+            "    os.environ['CAMPAIGN_PRODUCER_RETURNCODE']\n"
+            ")\n"
+        )
+        self.failure_script = self.repo / "validator_failure.py"
+        self.failure_script.write_text(
+            "import os\n"
+            "from pathlib import Path\n"
+            "output = Path('outputs/validator-failure-fixture')\n"
+            "output.mkdir(parents=True, exist_ok=True)\n"
+            "(output / 'validator-report').write_text('failed')\n"
+            "(output / 'producer-returncode').write_text(\n"
+            "    os.environ['CAMPAIGN_PRODUCER_RETURNCODE']\n"
+            ")\n"
+            "raise SystemExit(23)\n"
+        )
+        self.timeout_script = self.repo / "timeout.py"
+        self.timeout_script.write_text("import time\ntime.sleep(2)\n")
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                str(self.repo),
+                "add",
+                "work.py",
+                "validator_failure.py",
+                "validator_success.py",
+                "timeout.py",
+                "nd-unfolding/mnv_guarded_run.py",
+            ],
             check=True,
         )
         subprocess.run(
@@ -50,7 +103,7 @@ class CampaignQueueTests(unittest.TestCase):
         self.queue = campaignctl.Queue(
             repo=self.repo,
             state=self.root / "state",
-            clock=lambda: "2026-08-25T12:00:00+00:00",
+            clock=lambda: "2026-09-29T12:00:00+00:00",
         )
 
     def stage(
@@ -61,7 +114,20 @@ class CampaignQueueTests(unittest.TestCase):
         kind: str = "write",
         contract: str | None = None,
         script: str | None = None,
+        timeout_seconds: int = 30,
+        guarded: bool = True,
     ) -> dict:
+        target = script or "work.py"
+        argv = [sys.executable, target]
+        if kind == "compute" and guarded:
+            argv = [
+                sys.executable,
+                "nd-unfolding/mnv_guarded_run.py",
+                "--expect-root",
+                str(self.repo),
+                "--",
+                target,
+            ]
         return campaignctl.stage(
             self.queue,
             item_id,
@@ -70,8 +136,8 @@ class CampaignQueueTests(unittest.TestCase):
             ".",
             depends or [],
             [],
-            [sys.executable, script or "work.py"],
-            30,
+            argv,
+            timeout_seconds,
             contract,
         )
 
@@ -79,9 +145,13 @@ class CampaignQueueTests(unittest.TestCase):
         self,
         *,
         commit: bool = False,
+        validator_script: str = "validator_failure.py",
         mutate: Callable[[dict[str, object]], None] | None = None,
     ) -> str:
-        contract = json.loads(FIXTURE.read_text())
+        contract = json.loads(CONTRACT_FIXTURE.read_text())
+        terminal_validator = contract["terminal_validator"]
+        assert isinstance(terminal_validator, dict)
+        terminal_validator["argv"] = [sys.executable, validator_script]
         if mutate is not None:
             mutate(contract)
         path = self.repo / "campaign-contract.json"
@@ -96,10 +166,19 @@ class CampaignQueueTests(unittest.TestCase):
             )
         return path.name
 
-    def approve(self, item):
+    def approve(self, item: dict[str, object]) -> dict:
         return campaignctl.approve(
             self.queue, item["id"], item["proposal_digest"], interactive=False
         )
+
+    def run_ready(
+        self, receipt: str = "healthy"
+    ) -> tuple[int, dict[str, object]]:
+        with mock.patch.dict(
+            os.environ,
+            {"CAMPAIGN_R5_RECEIPT": str(R5_FIXTURES[receipt])},
+        ):
+            return campaignctl.run_ready(self.queue)
 
     def test_stage_approve_and_run_exactly_once(self):
         item = self.stage()
@@ -190,7 +269,28 @@ class CampaignQueueTests(unittest.TestCase):
                 independent_validator=value["producer"]
             )
         )
-        with self.assertRaisesRegex(campaignctl.QueueError, "identities must differ"):
+        with self.assertRaisesRegex(campaignctl.QueueError, "pairwise distinct"):
+            self.stage(
+                "validator-failure-fixture", kind="compute", contract=contract
+            )
+
+    def test_contract_refuses_same_producer_and_decision_authority(self) -> None:
+        contract = self.write_contract(
+            mutate=lambda value: value.update(
+                decision_authority=str(value["producer"]).upper()
+            )
+        )
+        with self.assertRaisesRegex(campaignctl.QueueError, "pairwise distinct"):
+            self.stage(
+                "validator-failure-fixture", kind="compute", contract=contract
+            )
+
+    def test_contract_requires_terminal_validator(self) -> None:
+        def remove_validator(value: dict[str, object]) -> None:
+            del value["terminal_validator"]
+
+        contract = self.write_contract(mutate=remove_validator)
+        with self.assertRaisesRegex(campaignctl.QueueError, "terminal_validator"):
             self.stage(
                 "validator-failure-fixture", kind="compute", contract=contract
             )
@@ -236,7 +336,7 @@ class CampaignQueueTests(unittest.TestCase):
 
     def test_unclassified_return_code_has_a_decision_consequence(self) -> None:
         contract = campaignctl.validate_campaign_contract(
-            json.loads(FIXTURE.read_text())
+            json.loads(CONTRACT_FIXTURE.read_text())
         )
 
         plan = campaignctl.terminal_plan(contract, 99)
@@ -250,6 +350,7 @@ class CampaignQueueTests(unittest.TestCase):
     def test_successful_compute_records_its_decision_consequence(self) -> None:
         contract = self.write_contract(
             commit=True,
+            validator_script="validator_success.py",
             mutate=lambda value: value.update(campaign_id="successful-fixture"),
         )
         item = self.stage(
@@ -257,10 +358,14 @@ class CampaignQueueTests(unittest.TestCase):
         )
         self.approve(item)
 
-        rc, outcome = campaignctl.run_ready(self.queue)
+        rc, outcome = self.run_ready()
 
         self.assertEqual((rc, outcome["status"]), (0, "succeeded"))
         self.assertEqual(outcome["terminal_branch"], "terminal-validator-passed")
+        self.assertEqual(outcome["producer_returncode"], 0)
+        self.assertEqual(outcome["validator_returncode"], 0)
+        self.assertTrue(Path(outcome["producer_log"]).is_file())
+        self.assertTrue(Path(outcome["validator_log"]).is_file())
         self.assertTrue(outcome["decision_consequence"])
 
     def test_validator_failure_preserves_first_and_does_not_retrain(self) -> None:
@@ -269,13 +374,14 @@ class CampaignQueueTests(unittest.TestCase):
             "validator-failure-fixture",
             kind="compute",
             contract=contract,
-            script="validator_failure.py",
         )
         self.approve(item)
 
-        rc, outcome = campaignctl.run_ready(self.queue)
+        rc, outcome = self.run_ready()
 
         self.assertEqual((rc, outcome["status"]), (3, "failed"))
+        self.assertEqual(outcome["producer_returncode"], 0)
+        self.assertEqual(outcome["validator_returncode"], 23)
         self.assertEqual(outcome["terminal_branch"], "terminal-validator-failed")
         self.assertEqual(outcome["required_actions"][0]["action"], "preserve")
         self.assertFalse(outcome["automatic_retraining"])
@@ -283,9 +389,189 @@ class CampaignQueueTests(unittest.TestCase):
         output = self.repo / "outputs" / "validator-failure-fixture"
         self.assertEqual((output / "jobs-complete").read_text(), "all complete")
         self.assertEqual((output / "validator-report").read_text(), "failed")
+        self.assertEqual((output / "producer-returncode").read_text(), "0")
 
-        rc, value = campaignctl.run_ready(self.queue)
+        rc, value = self.run_ready()
         self.assertEqual((rc, value["status"]), (0, "idle"))
+
+    def test_validator_runs_after_producer_timeout(self) -> None:
+        contract = self.write_contract(
+            commit=True,
+            validator_script="validator_success.py",
+            mutate=lambda value: value.update(campaign_id="timeout-fixture"),
+        )
+        item = self.stage(
+            "timeout-fixture",
+            kind="compute",
+            contract=contract,
+            script="timeout.py",
+            timeout_seconds=1,
+        )
+        self.approve(item)
+
+        rc, outcome = self.run_ready()
+
+        self.assertEqual((rc, outcome["status"]), (0, "succeeded"))
+        self.assertIsNone(outcome["producer_returncode"])
+        self.assertEqual(outcome["validator_returncode"], 0)
+        self.assertEqual(
+            (self.repo / "validator-ran").read_text(),
+            "TIMEOUT_OR_NOT_STARTED",
+        )
+
+    def test_validator_launch_failure_uses_otherwise_branch(self) -> None:
+        contract = self.write_contract(
+            commit=True,
+            validator_script="validator_success.py",
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        self.approve(item)
+
+        with mock.patch.object(
+            campaignctl,
+            "run_logged_command",
+            side_effect=[(0, None), (None, "command could not be started")],
+        ):
+            rc, outcome = self.run_ready()
+
+        self.assertEqual((rc, outcome["status"]), (3, "failed"))
+        self.assertEqual(outcome["producer_returncode"], 0)
+        self.assertIsNone(outcome["validator_returncode"])
+        self.assertEqual(outcome["terminal_branch"], "unexpected-terminal-result")
+
+    def test_unguarded_compute_producer_is_refused(self) -> None:
+        contract = self.write_contract(commit=True)
+
+        with self.assertRaisesRegex(campaignctl.QueueError, "must route through"):
+            self.stage(
+                "validator-failure-fixture",
+                kind="compute",
+                contract=contract,
+                guarded=False,
+            )
+
+    def test_dirty_compute_binding_is_refused_at_stage_and_validation(self) -> None:
+        contract = self.write_contract(commit=True)
+        self.script.write_text("raise SystemExit('dirty before staging')\n")
+        with self.assertRaisesRegex(campaignctl.QueueError, "committed at HEAD"):
+            self.stage(
+                "validator-failure-fixture", kind="compute", contract=contract
+            )
+
+        subprocess.run(
+            ["git", "-C", str(self.repo), "restore", "work.py"], check=True
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        self.script.write_text("raise SystemExit('dirty after staging')\n")
+        with self.assertRaisesRegex(campaignctl.QueueError, "changed after staging"):
+            campaignctl.validate_unchanged(self.queue, item)
+
+    def test_untracked_terminal_validator_is_refused_at_stage(self) -> None:
+        untracked_validator = self.repo / "untracked_validator.py"
+        untracked_validator.write_text("raise SystemExit(0)\n")
+        contract = self.write_contract(
+            commit=True,
+            validator_script=untracked_validator.name,
+        )
+
+        with self.assertRaisesRegex(
+            campaignctl.QueueError, "committed at repository HEAD"
+        ):
+            self.stage(
+                "validator-failure-fixture", kind="compute", contract=contract
+            )
+
+    def test_compute_timeout_cannot_exceed_contract_wall_hours(self) -> None:
+        def restrict_wall_time(value: dict[str, object]) -> None:
+            maximum_cost = value["maximum_cost"]
+            assert isinstance(maximum_cost, dict)
+            maximum_cost["wall_hours"] = 1 / 3600
+
+        contract = self.write_contract(commit=True, mutate=restrict_wall_time)
+        with self.assertRaisesRegex(campaignctl.QueueError, "timeout exceeds"):
+            self.stage(
+                "validator-failure-fixture",
+                kind="compute",
+                contract=contract,
+                timeout_seconds=2,
+            )
+
+    def test_missing_or_malformed_r5_receipt_is_retryable_refusal(self) -> None:
+        contract = self.write_contract(
+            commit=True,
+            validator_script="validator_success.py",
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        self.approve(item)
+
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("CAMPAIGN_R5_RECEIPT", None)
+            rc, outcome = campaignctl.run_ready(self.queue)
+        self.assertEqual((rc, outcome["status"]), (6, "refused"))
+        self.assertIn("R5 receipt missing", outcome["reason"])
+        self.assertFalse(self.queue.path("claims", item["id"]).exists())
+        self.assertFalse((self.repo / "ran").exists())
+
+        rc, outcome = self.run_ready("malformed")
+        self.assertEqual((rc, outcome["status"]), (6, "refused"))
+        self.assertIn("R5 receipt malformed", outcome["reason"])
+        self.assertFalse(self.queue.path("claims", item["id"]).exists())
+
+        rc, outcome = self.run_ready("healthy")
+        self.assertEqual((rc, outcome["status"]), (0, "succeeded"))
+        self.assertTrue((self.repo / "ran").is_file())
+
+    def test_stale_r5_receipt_refuses_compute(self) -> None:
+        self._assert_r5_refusal("stale", "R5 receipt stale")
+
+    def test_fired_r5_receipt_refuses_compute(self) -> None:
+        self._assert_r5_refusal("fired", "R5 stop fired")
+
+    def test_r5_stop_date_refuses_compute(self) -> None:
+        self.queue.clock = lambda: "2026-09-30T00:00:00+00:00"
+        self._assert_r5_refusal("healthy", "R5 stop date reached")
+
+    def test_r5_projected_inclusive_ceiling_refuses_compute(self) -> None:
+        self._assert_r5_refusal(
+            "headroom-exhausting", "gpu_task_hours ceiling would be reached"
+        )
+
+    def test_healthy_r5_receipt_allows_compute(self) -> None:
+        contract = self.write_contract(
+            commit=True,
+            validator_script="validator_success.py",
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        self.approve(item)
+
+        rc, outcome = self.run_ready("healthy")
+
+        self.assertEqual((rc, outcome["status"]), (0, "succeeded"))
+
+    def _assert_r5_refusal(self, receipt: str, reason: str) -> None:
+        contract = self.write_contract(
+            commit=True,
+            validator_script="validator_success.py",
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        self.approve(item)
+
+        rc, outcome = self.run_ready(receipt)
+
+        self.assertEqual((rc, outcome["status"]), (6, "refused"))
+        self.assertIn(reason, outcome["reason"])
+        self.assertFalse(self.queue.path("claims", item["id"]).exists())
+        self.assertFalse((self.repo / "ran").exists())
 
 
 if __name__ == "__main__":

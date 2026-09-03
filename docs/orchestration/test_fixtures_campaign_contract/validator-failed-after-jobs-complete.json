@@ -35,6 +35,13 @@
   },
   "schema_version": 1,
   "scientific_question": "Does the candidate satisfy the terminal validation criterion?",
+  "terminal_validator": {
+    "argv": [
+      "/usr/bin/python3.11",
+      "validator_failure.py"
+    ],
+    "cwd": "."
+  },
   "terminal_branches": [
     {
       "condition": "All jobs complete and the terminal validator passes.",

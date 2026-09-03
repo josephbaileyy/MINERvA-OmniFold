@@ -91,10 +91,13 @@ Agents may stage an exact command, but staging is not authorization and the
 ticker ignores it until you approve its digest from an interactive TTY. The
 queue starts empty. It executes at most one ready item per five-minute tick,
 never invokes a shell, and never calls an LLM. It binds the repository HEAD
-plus the launcher and any explicitly listed input files; drift makes the item
-permanently `stale`. A claim without a terminal receipt becomes
-`outcome-unknown` and is never retried automatically. A newly staged item
-sends one deduplicated ntfy approval alert on the next ticker pass.
+plus each command entrypoint and any explicitly listed input files; drift
+makes the item permanently `stale`. For compute, the contract, guard, guarded
+target, validator, and explicit bindings must all be committed at `HEAD`, with
+working-tree bytes identical to their committed blobs. This check runs during
+staging and again immediately before a claim. A claim without a terminal
+receipt becomes `outcome-unknown` and is never retried automatically. A newly
+staged item sends one deduplicated ntfy approval alert on the next ticker pass.
 
 From Termius:
 
@@ -133,9 +136,51 @@ input ids, locations, and SHA-256 digests; exhaustive return-code branches;
 the decision consequence, unlocks, and prohibitions for every branch; maximum
 GPU task-hours, CPU task-hours, and wall hours; output namespace; producer,
 independent-validator, and decision-authority identities; validator version;
-preservation behavior; and retry policy. Producer and validator identities
-must differ. Exactly one `otherwise` branch covers every unclassified terminal
-result, and every branch must name a decision consequence.
+preservation behavior; retry policy; and this required validator command:
+
+```json
+"terminal_validator": {
+  "argv": ["/usr/bin/python3.11", "path/to/validator.py"],
+  "cwd": "."
+}
+```
+
+The validator working directory is repository-relative. Its command entrypoint
+is resolved and bound by the same rules as any other command. Producer,
+independent-validator, and decision-authority identities must be pairwise
+distinct after case folding. Exactly one `otherwise` branch covers every
+unclassified terminal result, and every branch must name a decision
+consequence.
+
+Compute producers must route through `nd-unfolding/mnv_guarded_run.py`, either
+directly or through an allowed Python interpreter. The guarded target after
+the mandatory `--` is also bound. A typical command tail is:
+
+```bash
+/usr/bin/python3.11 nd-unfolding/mnv_guarded_run.py \
+  --expect-root /path/to/repository -- path/to/producer.py <args>
+```
+
+The queue runs the producer first and then always runs `terminal_validator`,
+including after producer failure, timeout, or launch failure. The validator
+receives `CAMPAIGN_PRODUCER_RETURNCODE`; the sentinel
+`TIMEOUT_OR_NOT_STARTED` represents the two cases without a process return
+code. Producer and validator each receive the staged `timeout_seconds` limit,
+which for compute cannot exceed `maximum_cost.wall_hours * 3600`. Only the
+validator return code selects the terminal branch. A validator timeout or
+launch failure selects `otherwise`. The outcome records both return codes and
+both log paths.
+
+Immediately before claiming a compute item, the queue reads
+`docs/orchestration/state/r5-meter-receipt.json`. Tests may override that path
+with `CAMPAIGN_R5_RECEIPT`. Exit code 6 and a `refused` outcome result if the
+receipt is missing or malformed, is more than 24 hours old, reports
+`fired.any`, has reached the stop date, or shows that current spend plus either
+declared maximum task-hour cost would meet or exceed its ceiling. This check is
+a prohibition, not spending authority. Refusal occurs before the claim and
+does not consume the item, so a later tick may retry against a fresh receipt.
+The refusal reason identifies the rule that fired. Non-compute items do not
+consult this meter.
 
 The safe terminal policy is enforced rather than inferred: preservation mode
 is `preserve-first`, automatic retraining is false, and a retry requires new

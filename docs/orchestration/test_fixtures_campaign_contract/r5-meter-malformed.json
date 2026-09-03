@@ -1,0 +1,36 @@
+{
+  "ceilings": {
+    "cpu_task_hours": 500.0,
+    "gpu_task_hours": 500.0
+  },
+  "decision_record": "docs/orchestration/DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md",
+  "fired": {
+    "any": false,
+    "cpu": false,
+    "date": false,
+    "gpu": false
+  },
+  "measured_at_utc": "2026-09-29T12:00:00+00:00",
+  "measured_on_host": "fixture-host",
+  "schema_version": 1,
+  "source": {
+    "argv_or_path": "scheduler-export.json",
+    "kind": "scheduler-accounting",
+    "raw_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "spend": {
+    "by_state": {
+      "COMPLETED": 2
+    },
+    "cpu_task_hours": 200.0,
+    "gpu_task_hours": 100.0,
+    "metered_task_ids": [
+      "100_0",
+      "100_1"
+    ],
+    "task_count": 2
+  },
+  "stop_date_utc": "2026-09-30T00:00:00+00:00",
+  "t0_utc": "2026-09-02T00:00:00+00:00",
+  "unit": "task-hours"
+}
