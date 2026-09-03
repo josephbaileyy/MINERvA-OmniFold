@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import datetime as dt
+import hashlib
 import json
 import os
 import pathlib
@@ -13,6 +15,7 @@ import socket
 import subprocess
 import sys
 import tempfile
+from dataclasses import dataclass
 from typing import Any
 
 from slurm_array_status import build_snapshot, expand_spec
@@ -39,6 +42,46 @@ QUIET, NO_EVIDENCE, LOUD = "quiet", "no-evidence", "loud"
 # capacity survives into one regenerated from a login node. A store that did not
 # travel through git could not do that.
 LAST_KNOWN_PATH = HERE / "state" / "live-state-last-known.json"
+LEGACY_PROSE_FIELDS = frozenset(
+    {"current_dag_node", "state", "next_authorized_action"}
+)
+ALLOWED_ROUTE_QUEUES = frozenset({"NOW", "WAITING-JOSEPH", "BLOCKED-EXTERNAL"})
+WORK_ITEM_COLUMNS = (
+    "item",
+    "source_record",
+    "queue_override",
+    "owner_id",
+    "impact",
+    "urgency",
+    "next_action",
+    "evidence",
+)
+SOURCE_INVENTORY_COLUMNS = (
+    "source_record",
+    "lifecycle",
+    "queue",
+    "classification_rule",
+    "source_row_sha256",
+    "state_prefix",
+)
+
+
+@dataclass(frozen=True)
+class Route:
+    """One current-work route resolved from the structured registry."""
+
+    item: str
+    queue: str
+    source_record: str
+
+
+@dataclass(frozen=True)
+class RouteSnapshot:
+    """Measured consistency and routes for the current-work registry."""
+
+    health: str
+    detail: str
+    routes: tuple[Route, ...] = ()
 
 
 def utc_now() -> str:
@@ -47,6 +90,220 @@ def utc_now() -> str:
 
 def load_json(path: pathlib.Path) -> dict[str, Any]:
     return json.loads(path.read_text())
+
+
+def _require_mapping(value: Any, field: str) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise ValueError(f"{field} must be an object")
+    return value
+
+
+def validate_config(config: dict[str, Any]) -> None:
+    """Validate the closed version-2 measurement configuration.
+
+    The checked-in JSON Schema is the public contract. This standard-library
+    validator enforces the safety-critical portion at runtime, including the
+    prohibition on legacy authored operational prose.
+    """
+    allowed = {
+        "schema_version",
+        "measurement_ttl_seconds",
+        "route_registry",
+        "evidence_routes",
+        "jobs",
+        "wake",
+    }
+    unknown = set(config) - allowed
+    legacy = set(config) & LEGACY_PROSE_FIELDS
+    if legacy:
+        raise ValueError(
+            "legacy authored operational prose is forbidden: "
+            + ", ".join(sorted(legacy))
+        )
+    if unknown:
+        raise ValueError("unknown live-state fields: " + ", ".join(sorted(unknown)))
+    if config.get("schema_version") != 2:
+        raise ValueError("schema_version must be 2")
+
+    ttl = _require_mapping(config.get("measurement_ttl_seconds"), "measurement_ttl_seconds")
+    if set(ttl) != {"compute", "wake", "provider_capacity"}:
+        raise ValueError("measurement_ttl_seconds has unexpected or missing fields")
+    for name, value in ttl.items():
+        if not isinstance(value, int) or isinstance(value, bool) or value < 1:
+            raise ValueError(f"measurement_ttl_seconds.{name} must be a positive integer")
+
+    registry = _require_mapping(config.get("route_registry"), "route_registry")
+    if set(registry) != {"work_items", "source_inventory", "open_items"}:
+        raise ValueError("route_registry has unexpected or missing fields")
+    if not all(isinstance(value, str) and value for value in registry.values()):
+        raise ValueError("route_registry paths must be non-empty strings")
+
+    routes = config.get("evidence_routes")
+    if not isinstance(routes, list) or not routes:
+        raise ValueError("evidence_routes must be a non-empty array")
+    for index, route in enumerate(routes):
+        route = _require_mapping(route, f"evidence_routes[{index}]")
+        if not {"label", "path"} <= set(route) or set(route) - {
+            "label",
+            "path",
+            "json_field",
+        }:
+            raise ValueError(f"evidence_routes[{index}] has unexpected or missing fields")
+        if not all(isinstance(route[key], str) and route[key] for key in route):
+            raise ValueError(f"evidence_routes[{index}] values must be non-empty strings")
+
+    jobs = config.get("jobs")
+    if not isinstance(jobs, list):
+        raise ValueError("jobs must be an array")
+    required_job = {"job_id", "tasks", "receipt"}
+    allowed_job = required_job | {"leg", "single_job"}
+    for index, job in enumerate(jobs):
+        job = _require_mapping(job, f"jobs[{index}]")
+        if not required_job <= set(job) or set(job) - allowed_job:
+            raise ValueError(f"jobs[{index}] has unexpected or missing fields")
+        if not str(job["job_id"]).isdigit():
+            raise ValueError(f"jobs[{index}].job_id must contain digits only")
+
+    wake = _require_mapping(config.get("wake"), "wake")
+    if wake != {"waker": True}:
+        raise ValueError("wake must select the measured waker source")
+
+
+def _read_tsv(path: pathlib.Path, columns: tuple[str, ...]) -> list[dict[str, str]]:
+    with path.open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle, delimiter="\t")
+        if tuple(reader.fieldnames or ()) != columns:
+            raise ValueError(
+                f"{path}: columns {reader.fieldnames!r}, expected {list(columns)!r}"
+            )
+        return [
+            {key: (value or "").strip() for key, value in row.items()}
+            for row in reader
+        ]
+
+
+def _source_rows(path: pathlib.Path) -> dict[str, tuple[str, str]]:
+    matches: list[tuple[str, str, str]] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        match = re.match(r"^\|\s*(OI-\d+)\s*\|\s*([^|]+)\|", line)
+        if match:
+            state = re.sub(r"\s+", " ", re.sub(r"[*`~]", "", match.group(2)))
+            matches.append((match.group(1), state.strip()[:120].rstrip(), line))
+    totals: dict[str, int] = {}
+    for item, _, _ in matches:
+        totals[item] = totals.get(item, 0) + 1
+    seen: dict[str, int] = {}
+    records: dict[str, tuple[str, str]] = {}
+    for item, state_prefix, line in matches:
+        seen[item] = seen.get(item, 0) + 1
+        key = f"{item}#{seen[item]}" if totals[item] > 1 else item
+        records[key] = (hashlib.sha256(line.encode()).hexdigest(), state_prefix)
+    return records
+
+
+def inspect_route_registry(
+    *,
+    work_items_path: pathlib.Path,
+    source_inventory_path: pathlib.Path,
+    open_items_path: pathlib.Path,
+) -> RouteSnapshot:
+    """Measure route-registry availability and internal consistency."""
+    try:
+        work_items = _read_tsv(work_items_path, WORK_ITEM_COLUMNS)
+        inventory_rows = _read_tsv(source_inventory_path, SOURCE_INVENTORY_COLUMNS)
+        source_rows = _source_rows(open_items_path)
+    except (OSError, ValueError, csv.Error) as exc:
+        return RouteSnapshot("UNAVAILABLE", f"{type(exc).__name__}: {exc}")
+
+    contradictions: list[str] = []
+    inventory: dict[str, dict[str, str]] = {}
+    for row in inventory_rows:
+        key = row["source_record"]
+        if not key or key in inventory:
+            contradictions.append(f"duplicate or empty source record {key!r}")
+        inventory[key] = row
+        source = source_rows.get(key)
+        if source and source[0] == row["source_row_sha256"]:
+            _, actual_prefix = source
+            if actual_prefix != row["state_prefix"]:
+                contradictions.append(
+                    f"{key}: inventory state prefix contradicts its hashed source row"
+                )
+
+    routes: list[Route] = []
+    seen_items: set[str] = set()
+    for row in work_items:
+        item = row["item"]
+        source = row["source_record"]
+        if not item or item in seen_items:
+            contradictions.append(f"duplicate or empty work item {item!r}")
+        seen_items.add(item)
+        record = inventory.get(source)
+        if record is None:
+            contradictions.append(f"{item}: source record {source!r} is absent")
+            continue
+        parent = re.match(r"OI-\d+", item)
+        if parent is None or source.split("#", 1)[0] != parent.group(0):
+            contradictions.append(f"{item}: source record {source!r} has a different parent")
+        if record["lifecycle"] != "active":
+            contradictions.append(
+                f"{item}: source record {source!r} is {record['lifecycle']}"
+            )
+        queue = row["queue_override"]
+        if queue == "-":
+            queue = record["queue"]
+        if queue not in ALLOWED_ROUTE_QUEUES:
+            contradictions.append(f"{item}: invalid effective queue {queue!r}")
+        routes.append(Route(item, queue, source))
+
+    if contradictions:
+        return RouteSnapshot("CONTRADICTORY", "; ".join(contradictions))
+
+    stale = [
+        key
+        for key, record in inventory.items()
+        if source_rows.get(key, (None, None))[0] != record["source_row_sha256"]
+    ]
+    if stale:
+        preview = ", ".join(stale[:5])
+        suffix = "" if len(stale) <= 5 else f" and {len(stale) - 5} more"
+        return RouteSnapshot(
+            "STALE",
+            f"{len(stale)} source row hash mismatch(es): {preview}{suffix}",
+        )
+
+    return RouteSnapshot(
+        "HEALTHY",
+        f"{len(routes)} promoted route(s) agree with {len(inventory)} source record(s)",
+        tuple(routes),
+    )
+
+
+def _repo_path(repo_root: pathlib.Path, value: str) -> pathlib.Path:
+    path = pathlib.Path(value)
+    if path.is_absolute():
+        raise ValueError(f"repository route must be relative: {value}")
+    resolved = (repo_root / path).resolve()
+    try:
+        resolved.relative_to(repo_root.resolve())
+    except ValueError as exc:
+        raise ValueError(f"repository route escapes the checkout: {value}") from exc
+    return resolved
+
+
+def route_registry_snapshot(config: dict[str, Any], repo_root: pathlib.Path) -> RouteSnapshot:
+    registry = config["route_registry"]
+    try:
+        paths = {
+            key: _repo_path(repo_root, value) for key, value in registry.items()
+        }
+    except ValueError as exc:
+        return RouteSnapshot("CONTRADICTORY", str(exc))
+    return inspect_route_registry(
+        work_items_path=paths["work_items"],
+        source_inventory_path=paths["source_inventory"],
+        open_items_path=paths["open_items"],
+    )
 
 
 def run_text(command: list[str], *, check: bool = True) -> str:
@@ -67,32 +324,6 @@ def usage_snapshot() -> tuple[dict[str, Any], int]:
         return json.loads(result.stdout), result.returncode
     except json.JSONDecodeError:
         return {"gate_ok": False, "warnings": [f"usage snapshot unavailable (rc={result.returncode})"]}, result.returncode
-
-
-def validate_owners(config: dict[str, Any], sessions: dict[str, Any]) -> list[dict[str, str]]:
-    rows: list[dict[str, str]] = []
-    seen: set[str] = set()
-    registry = sessions.get("sessions", {})
-    for owner in config["owners"]:
-        role = owner["role"]
-        if role not in registry:
-            raise RuntimeError(f"configured owner role missing from registry: {role}")
-        record = registry[role]
-        actual = record.get("session_id")
-        if actual != owner["uuid"]:
-            raise RuntimeError(f"UUID mismatch for {role}: config={owner['uuid']} registry={actual}")
-        if actual in seen:
-            raise RuntimeError(f"duplicate configured owner UUID: {actual}")
-        seen.add(actual)
-        rows.append(
-            {
-                "role": role,
-                "provider": f"{record.get('provider','?')}/{record.get('profile','?')}",
-                "uuid": actual,
-                "purpose": owner["purpose"],
-            }
-        )
-    return rows
 
 
 def rel_link(repo_path: str) -> str:
@@ -538,8 +769,38 @@ def tick_line(last_tick: dict[str, Any], waker_ctx) -> tuple[str, str]:
         )
     return LOUD, (
         f"{prefix} -- **\u26a0 SUPERVISION NET NOT HEALTHY: {age_text}; {bound}. {detail}"
-        f" Treat no watch below as supervised.**{suffix}"
+        f"**{suffix}"
     )
+
+
+def _ttl_text(seconds: int) -> str:
+    if seconds % 3600 == 0:
+        return f"{seconds // 3600} h from observed time"
+    if seconds % 60 == 0:
+        return f"{seconds // 60} min from observed time"
+    return f"{seconds} s from observed time"
+
+
+def _render_evidence_route(
+    route: dict[str, str], repo_root: pathlib.Path
+) -> tuple[str, str]:
+    value = route["path"]
+    try:
+        path = _repo_path(repo_root, value)
+        if not path.is_file():
+            return "UNAVAILABLE", "path does not exist"
+        field = route.get("json_field")
+        if not field:
+            return "AVAILABLE", "commit-bound path"
+        payload = load_json(path)
+        field_value = payload.get(field)
+        if not isinstance(field_value, list) or not all(
+            isinstance(item, str) for item in field_value
+        ):
+            return "UNAVAILABLE", f"JSON field {field!r} is absent or not a string array"
+        return "AVAILABLE", ", ".join(f"`{item}`" for item in field_value)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        return "UNAVAILABLE", f"{type(exc).__name__}: {exc}"
 
 
 def render(
@@ -553,73 +814,60 @@ def render(
     observed_at: str,
     waker_ctx=None,
     last_known: LastKnown | None = None,
+    route_snapshot: RouteSnapshot | None = None,
+    repo_root: pathlib.Path = REPO,
 ) -> str:
-    owners = validate_owners(config, sessions)
+    del sessions
     # No store passed means carry nothing and persist nothing (OI-144). Rendering
     # must never be the thing that decides to write a measurement record.
     store = last_known if last_known is not None else LastKnown()
     host = git_state.get("host") or store.host
+    ttl = config.get(
+        "measurement_ttl_seconds",
+        {"compute": 300, "wake": 300, "provider_capacity": 3600},
+    )
+    route_state = route_snapshot or RouteSnapshot(
+        "UNAVAILABLE", "route registry was not inspected"
+    )
     lines = [
-        "# Live orchestration state",
+        "# Live orchestration measurements",
         "",
-        "> GENERATED by `generate_live_state.py`; do not hand-edit. This is the normal-turn control-plane entrypoint.",
+        "> GENERATED by `generate_live_state.py`; do not hand-edit. This file is a measurement"
+        " and routing view, never evidence or authorization.",
         "",
-        f"- Observed: `{observed_at}` on host `{host}`. Every field below was measured HERE"
-        " unless it says otherwise: a probe this host could not run now says so and carries the"
-        " last value some host did measure, with that host and time (OI-144). No single host can"
-        " measure every section, so a section that reads LAST KNOWN is not a defect in this"
-        " snapshot -- it is the part of it that would otherwise have been silently blanked.",
-        f"- Campaign: {config['campaign']}",
-        f"- Current DAG node: **{config['current_dag_node']}**",
-        f"- Declared state: **{config['state']}**",
-        f"- Git: `{git_state['head']}`; the GENERATING CHECKOUT on `{host}` had"
-        f" {git_state['dirty_count']} uncommitted worktree entries -- **a property of that one"
-        " checkout, never campaign state**. Two checkouts at one commit measured 721 and 726 on"
-        " 2026-08-21 (OI-144), and a lane's dirty tree published 4 against 1 committed (BEN-183)."
-        " Read it as \"how dirty was the tree that ran the generator\", nothing more; uncommitted"
-        " science is never live evidence, in any checkout.",
-        "- FRESHNESS TEST, and read it before comparing anything: this snapshot is **born one "
-        "commit stale by construction** -- the generator reads `HEAD`, then the commit that "
-        "carries the output moves `HEAD`. So `Git:` is normally its own commit's PARENT. "
-        "**FRESH iff `HEAD` equals `Git:` or `Git:` is `HEAD`'s parent; anything further back "
-        "is STALE.** On Perlmutter run `/usr/bin/python3.11 "
-        "docs/orchestration/generate_live_state.py --check-freshness` from canonical main "
-        "rather than from a task worktree or by eyeballing it. A rule of \"`Git:` must equal "
-        "`HEAD`\" has NO passing "
-        "state and a check that always fires is a check nobody reads (BEN-199).",
-        "- AND FRESHNESS IS NOT TRUTH: `Declared state` above is AUTHORED PROSE the generator "
-        "carries forward verbatim. Regenerating updates the timestamp and the sha; it does NOT "
-        "revalidate that text. On 2026-08-12 this field still read \"no cause is discharged\" "
-        "after cause 2 was discharged at `d75833a`, through two regenerations.",
+        "## Snapshot health",
         "",
-        "## Owners",
+        "| Source | Observed | Health | TTL | Detail |",
+        "|---|---|---|---|---|",
+        f"| Git checkout | `{observed_at}` on `{host}` | **MEASURED** | commit-bound |"
+        f" Git: `{git_state['head']}`; {git_state['dirty_count']} local worktree entries |",
+        f"| Route registry | `{observed_at}` on `{host}` | **{route_state.health}** |"
+        f" commit-bound | {route_state.detail} |",
         "",
-        "| Role | Provider/profile | UUID | Responsibility |",
-        "|---|---|---|---|",
+        "## Current-work routes",
+        "",
     ]
-    for owner in owners:
-        lines.append(f"| `{owner['role']}` | {owner['provider']} | `{owner['uuid']}` | {owner['purpose']} |")
-    lines.extend(["", "## Compute", ""])
+    if route_state.health == "HEALTHY":
+        lines.extend(["| Item | Queue | Governing source |", "|---|---|---|"])
+        for route in route_state.routes:
+            lines.append(
+                f"| `{route.item}` | `{route.queue}` |"
+                f" [`{route.source_record}`](../OPEN_ITEMS.md) |"
+            )
+    else:
+        lines.append(
+            f"- **CURRENT ROUTE UNKNOWN:** registry health is `{route_state.health}`."
+        )
+    lines.extend(["", "## Compute measurements", ""])
     # If this generator ran somewhere without Slurm, EVERY row below is a non-observation.
     # Say so above the table, because a per-row caveat is read after the eye has already
     # taken the bolded state. BEN-323.
-    if any(job["snapshot"].get("overall") == "UNOBSERVED" for job in jobs):
-        lines.extend([
-            "> **⚠ THIS TABLE IS NOT A LIVE VIEW IN THIS SNAPSHOT.** One or more rows are"
-            " `STATE UNAVAILABLE`, which means the generator could not reach Slurm from the"
-            " host it ran on — **not** that the job is running, and **not** that it is done."
-            " A `squeue`/`sacct` error in the Errors column means this file has NO state"
-            " evidence for that job and you must query Slurm yourself before acting."
-            " Until 2026-08-15 these rows rendered as **ACTIVE** (`BEN-323`): Leg F"
-            " `56863958_[2-5]` was displayed ACTIVE for over 24 h after all four tasks"
-            " COMPLETED, and a ~39 GPU-h scheduling constraint was built on it."
-            " A row that also carries a LAST KNOWN value names the host and time that measured"
-            " it (OI-144): that is the state Slurm last reported to somebody, NOT the state now,"
-            " and a job can have started, finished or failed since."
-            " **Regenerate from a host with Slurm to make this table evidence.**",
-            "",
-        ])
-    lines.extend(["| Job | State counts | Errors | Resources / placement |", "|---|---|---|---|"])
+    lines.extend(
+        [
+            "| Job | Observed | Health / TTL | State counts | Errors | Declaration |",
+            "|---|---|---|---|---|---|",
+        ]
+    )
     for job in jobs:
         receipt = job["receipt"]
         counts = ", ".join(f"{key}={value}" for key, value in job["snapshot"].get("counts", {}).items()) or "unknown"
@@ -639,17 +887,26 @@ def render(
         key = f"compute:{job['job_id']}"
         if overall == "UNOBSERVED":
             why = "; ".join(str(x) for x in job["snapshot"].get("observer_errors", []))
-            errors = f"NOT OBSERVED — {why}" if why else "NOT OBSERVED — no Slurm reply"
+            errors = f"NOT OBSERVED: {why}" if why else "NOT OBSERVED: no Slurm reply"
             resources = f"declared (not observed): {resources}"
             history = carried(store.get(key), observed_at, _fmt_compute, f"job {job['job_id']}'s Slurm state")
             lines.append(
-                f"| `{label}` | **STATE UNAVAILABLE — NOT A LIVENESS CLAIM**: {counts}."
-                f" {history} | {errors} | {resources} |"
+                f"| `{label}` | `{observed_at}` on `{host}` | **UNAVAILABLE** /"
+                f" {_ttl_text(ttl['compute'])} | {counts}. {history} | {errors} |"
+                f" {resources} |"
             )
         else:
             store.record(key, {"overall": overall, "counts": counts, "errors": errors})
-            lines.append(f"| `{label}` | **{overall}**: {counts} | {errors} | {resources} |")
-    lines.extend(["", "## Wake", ""])
+            lines.append(
+                f"| `{label}` | `{observed_at}` on `{host}` | **MEASURED** /"
+                f" {_ttl_text(ttl['compute'])} | **{overall}**: {counts} | {errors} |"
+                f" {resources} |"
+            )
+    lines.extend(["", "## Wake measurements", ""])
+    lines.append(
+        f"- Observed: `{observed_at}` on `{host}`; TTL"
+        f" {_ttl_text(ttl['wake'])}."
+    )
     if "waker_status" in wake_state:
         waker = wake_state["waker_status"]
         # `wakerctl.status()` projects each watch to six keys and `params` is NOT
@@ -686,8 +943,7 @@ def render(
         elif not store_readable:
             watches = _wakerctl().no_evidence(
                 "the waker state dir is not present or not readable on this host, so this "
-                "host knows of NO watches -- that is NOT the same as there being none. "
-                "Regenerate from the host that owns state/waker."
+                "host knows of NO watches -- that is NOT the same as there being none."
             ) + " " + carried(store.get("waker:watches"), observed_at, _fmt_watches, "the waker watch store")
             severities.append(NO_EVIDENCE)
         else:
@@ -737,23 +993,14 @@ def render(
             )
         if LOUD in severities or tick_severity == LOUD:
             lines.extend([
-                "> **\u26a0 THE SUPERVISION NET IS NOT HEALTHY IN THIS SNAPSHOT.** An armed watch"
-                " whose subject Slurm does not have, or a ticker that is stale or not runnable,"
-                " means NOTHING WILL WAKE ANYONE when the job below ends -- and the watch will"
-                " still read `armed`. A watch on a nonexistent task cannot reach"
-                " `slurm-array-complete` in either direction: it counts unreliable ticks to"
-                " `max_unreliable` and emits `monitor-error` (BEN-456, BEN-478). Re-arm the watch"
-                " with the correct `params`, or release/reinstall the tick job, before treating"
-                " any row here as supervised.",
+                "- Wake health: **UNHEALTHY** at the observed time; at least one measured watch"
+                " or ticker check was unhealthy.",
                 "",
             ])
         elif NO_EVIDENCE in severities or tick_severity == NO_EVIDENCE:
             lines.extend([
-                "> **THIS SECTION IS NOT A LIVE VIEW IN THIS SNAPSHOT.** One or more entries read"
-                " `NO EVIDENCE`, which means this host could not reach the scheduler or the waker"
-                " state dir -- **not** that the watch is fine and **not** that the ticker is"
-                " alive. Regenerate from a host with Slurm and the waker state dir to make this"
-                " section evidence.",
+                "- Wake health: **UNKNOWN** at the observed time; at least one required source"
+                " was unavailable on this host.",
                 "",
             ])
         lines.extend(
@@ -761,7 +1008,6 @@ def render(
                 f"- wakerctl watches: {watches}",
                 f"- wakerctl events: {events}",
                 tick_text,
-                f"- Resume target: `{config['orchestrator_thread_id']}` with goals disabled and full-access flag.",
             ]
         )
     else:
@@ -769,15 +1015,15 @@ def render(
             [
                 f"- tmux `{config['wake']['tmux_session']}`: **{wake_state['tmux']}**",
                 f"- Event/invoked/done markers: {wake_state['event']} / {wake_state['invoked']} / {wake_state['completed']}",
-                f"- Resume target: `{config['orchestrator_thread_id']}` with goals disabled and full-access flag.",
             ]
         )
     lines.extend(
         [
-            "- Only real external terminal events may wake the thread; quiet intervals make zero LLM calls.",
             "",
-            "## Provider capacity",
+            "## Provider-capacity measurements",
             "",
+            f"- Observed: `{observed_at}` on `{host}`; TTL"
+            f" {_ttl_text(ttl['provider_capacity'])}.",
         ]
     )
     # OI-144, the mirror image of the Compute table above. `usagectl.py` turns a
@@ -833,14 +1079,10 @@ def render(
                 store.get("usage:claude-school"), observed_at, _fmt_text,
                 "the shared Claude account's status",
             )
-            + " (school + legacy are one quota; never sum aliases)"
         )
     else:
         school_status = school.get("status", "unknown")
-        lines.append(
-            f"- Claude school shared account: {school_status}"
-            " (school + legacy are one quota; never sum aliases)"
-        )
+        lines.append(f"- Claude school shared account: {school_status}")
         if school_status not in (None, "", "unknown"):
             store.record("usage:claude-school", school_status)
     # agy is NOT carried: `unknown` here is a measured property of the installed
@@ -853,39 +1095,26 @@ def render(
     )
     warnings = usage.get("warnings", [])
     if warnings or unreadable:
-        tail = (
-            "; inspect the complete snapshot before dispatch."
-            if not unreadable
-            else f"; but {len(unreadable)} profile(s) were unreadable here, so this COUNT is a"
-                 " property of THIS host and is not comparable with another host's at the same"
-                 " commit — 12 from a laptop against 10 from a login node (OI-144). Inspect the"
-                 " complete snapshot before dispatch."
+        lines.append(
+            f"- Capacity warnings: {len(warnings)} measured;"
+            f" {len(unreadable)} profile source(s) unavailable on this host."
         )
-        lines.append(f"- Capacity warnings: {len(warnings)}{tail}")
-    lines.extend(["", "## Exact blockers", ""])
-    lines.extend(f"- {value}" for value in config["blockers"])
-    lines.extend(["", "## Next authorized action", "", config["next_authorized_action"], "", "## Source routing", "", "| Class | Sources |", "|---|---|"])
-    for label, key in (
-        ("Canonical science", "canonical_science"),
-        ("Append-only history", "append_only_history"),
-        ("Archival/index-only", "archival_index_only"),
-    ):
-        rendered = ", ".join(f"[{path}]({rel_link(path)})" if path != "superseded followup prompts" else path for path in config[key])
-        lines.append(f"| {label} | {rendered} |")
     lines.extend(
         [
             "",
-            "## Fail-closed invariants",
+            "## Stable evidence routes",
             "",
-            "- Preserve configured worker UUIDs; use `agentctl.py send`, never replacement conversations.",
-            "- A scientific result is live only after its exact receipt/summary/ledger/status commit is pushed.",
-            "- Do not double-count Claude School aliases or infer stale Claude/agy percentages.",
-            "- Never consume the protected Codex Full reset without new credit-specific authorization.",
-            "- Never use LLM polling/sleep loops; external terminal events perform at most one resume.",
-            "- Choose live interactive capacity only for ready single-node work; queue independent arrays/long work early.",
-            "",
+            "| Route | Health / TTL | Source | Structured detail |",
+            "|---|---|---|---|",
         ]
     )
+    for route in config.get("evidence_routes", []):
+        health, detail = _render_evidence_route(route, repo_root)
+        lines.append(
+            f"| {route['label']} | **{health}** / commit-bound |"
+            f" [{route['path']}]({rel_link(route['path'])}) | {detail} |"
+        )
+    lines.append("")
     if len(lines) > MAX_LINES:
         raise RuntimeError(f"dashboard exceeds {MAX_LINES} lines: {len(lines)}")
     return "\n".join(lines)
@@ -920,7 +1149,7 @@ def check_freshness(repo_root) -> int:
     if not live.exists():
         print("CANNOT CHECK :: LIVE-STATE.md absent")
         return 2
-    m = re.search(r"^- Git: `([0-9a-f]+)`", live.read_text(encoding="utf-8"), re.M)
+    m = re.search(r"Git: `([0-9a-f]+)`", live.read_text(encoding="utf-8"))
     if not m:
         print("CANNOT CHECK :: no `- Git:` line in LIVE-STATE.md")
         return 2
@@ -929,20 +1158,9 @@ def check_freshness(repo_root) -> int:
         r = subprocess.run(["git", "-C", str(repo_root), "rev-parse", "--short", spec],
                            capture_output=True, text=True)
         return r.stdout.strip() if r.returncode == 0 else None
-    # OI-73. This caveat used to print on the STALE path ONLY -- i.e. exactly where the reader
-    # was already being told not to trust the file -- and was SILENT on both FRESH paths, which
-    # are the ones a reader acts on. `FRESH` therefore read as "this file is current", and the
-    # authored fields (`state`, `blockers`, `next_authorized_action`) are carried forward
-    # VERBATIM from `state/live-state.json`, so they can assert something false while this
-    # command exits 0. That is the whole of OI-73's second half: what is machine-checked here
-    # is the SHA AND THE TIMESTAMP, and nothing else. Emitted on every outcome so the scope of
-    # a green is stated where the green is.
     def _scope_of_a_green():
-        print("  SCOPE OF THIS GREEN: only `Git:` and `Observed:` are checked. `Declared state`,")
-        print("        `Exact blockers` and `Next authorized action` are AUTHORED prose in")
-        print("        state/live-state.json, carried forward verbatim; regenerating fixes the sha")
-        print("        and the timestamp and REVALIDATES NOTHING. Re-derive them from the governing")
-        print("        OI-* record before acting on them.")
+        print("  SCOPE OF THIS GREEN: only the recorded Git relationship is checked.")
+        print("        Probe TTLs and route-registry health remain separate fields in the file.")
 
     head, parent = rev("HEAD"), rev("HEAD^")
     if recorded == head:
@@ -953,9 +1171,8 @@ def check_freshness(repo_root) -> int:
         print(f"FRESH :: Git: {recorded} is HEAD's parent ({head}) -- the normal born-stale-by-one state")
         _scope_of_a_green()
         return 0
-    print(f"STALE :: Git: {recorded}, HEAD {head}, HEAD^ {parent}. Regenerate before quoting any field.")
-    print("  NOTE: regeneration fixes the sha and timestamp; it does NOT revalidate `Declared state`,")
-    print("        which is authored prose the generator carries forward.")
+    print(f"STALE :: Git: {recorded}, HEAD {head}, HEAD^ {parent}.")
+    print("  NOTE: regeneration refreshes only measurable sources; unavailable probes stay explicit.")
     return 1
 
 
@@ -974,7 +1191,8 @@ def main() -> int:
         return check_freshness(HERE.parent.parent)
 
     config = load_json(args.config)
-    sessions = load_json(HERE / "state" / "sessions.json")
+    validate_config(config)
+    routes = route_registry_snapshot(config, REPO)
     usage, usage_rc = usage_snapshot()
     jobs = []
     for job in config["jobs"]:
@@ -1018,8 +1236,17 @@ def main() -> int:
         head=git_state["head"],
     )
     output = render(
-        config, sessions, usage, usage_rc, jobs, git_state, wake_state, observed_at,
-        waker_ctx=waker_ctx, last_known=last_known,
+        config,
+        {},
+        usage,
+        usage_rc,
+        jobs,
+        git_state,
+        wake_state,
+        observed_at,
+        waker_ctx=waker_ctx,
+        last_known=last_known,
+        route_snapshot=routes,
     )
     if args.stdout:
         # --stdout is the read-only rehearsal path, so it must not move the record
