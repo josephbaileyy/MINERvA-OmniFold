@@ -16,6 +16,18 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ## Current work
 
+### PET Gate-6 branch preservation — removal proposed, NOT executed
+
+- [`PROPOSAL-20260903-pet-gate6-branch-preservation-and-removal.md`](PROPOSAL-20260903-pet-gate6-branch-preservation-and-removal.md)
+  - **Preservation DONE; deletion NOT approved and mechanically blocked today.** Two pushed
+  `evidence/preserved-*` tags anchor 37 commits across five refs, cold-recovery tested in a
+  branchless fresh clone and on the Perlmutter checkout. Two of the five refs are checked out in live
+  worktrees, and `git branch -D` refuses a checked-out branch (power-tested both directions), so a
+  partial run that deleted the three remote refs would strand two live lanes. Carries the one hard
+  block on integration: the GAP-1 terminal receipt asserts a numeric `truth_denominator_coverage`
+  with **no producer in any tracked code**. **Adopts nothing, promotes no PET result, moves no gate
+  or count, deletes no ref.**
+
 ### Decisions awaiting Joseph — cause 7's subject and magnitude, cause 3's seed scan, the stop rule
 
 - [`DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md`](DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md)
@@ -1403,6 +1415,32 @@ and say which tree you are in.
 
 **Test reachability with `git for-each-ref --contains <sha>`, never `git branch -a --contains`,**
 which cannot see tags and will declare an anchored commit disposable.
+
+#### PET Gate-6 branch family — preserved 2026-09-03, removal PROPOSED ONLY
+
+Two tags anchor **37 commits across five refs**; no branch has been deleted and no removal
+authorization exists. Routed by
+[`PROPOSAL-20260903-pet-gate6-branch-preservation-and-removal.md`](PROPOSAL-20260903-pet-gate6-branch-preservation-and-removal.md),
+which carries the topology, the two tested cold recoveries, and the exact-ref deletion proposal.
+
+| tag | commit | covers |
+|---|---|---|
+| `evidence/preserved-pet-gate6-strategy-20260825-a05baab1` | `a05baab141e777d2c77290c3de2bf9844a11e178` | `pet-gate6-strategy-20260825` local + `origin` |
+| `evidence/preserved-pet-gate6-gap1-20260830-310d7e63` | `310d7e63d3690f1cd2df5ac3fcaf37ab0c5d39ed` | `codex/pet-gate6-gap1-full-inventory-20260830` local + `origin` |
+
+`0969e787c7773520bfb7076aa24b39ae08852c2e` — the tip of
+`origin/codex/pet-gate6-strategy-20260825` — is a strict **ancestor of both** tags and so needs none
+of its own. **Measured before tagging: no tracked file on `main` named any of the three tips**
+(control: the merge base `e428a645` was found in 4 files, so the search was covering). There was no
+discovery route to any of this work.
+
+**`truth_denominator_coverage: 1.0` in the GAP-1 terminal receipt has no producer in any tracked
+code** — see the proposal §6. Do not port that receipt verbatim; `OI-182` priced the *different*
+token `coverage_is_guarded` and does not cover it. Under `R6`, coverage is the object that reopens
+PET, so this is the route by which a quarantined PET result would become canonical.
+
+**Nothing on either tag is live evidence.** PET remains diagnostic/method-development only; Gate 6
+remains `BLOCKED`; `C_stat` remains `EXISTS — UNVERIFIED, PAIRING DECLINED`.
 
 ### The four removed artifacts with no routed citation
 
