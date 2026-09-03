@@ -260,7 +260,7 @@ docs/orchestration/deploy_oi135_watcher_swap.sh	tracked	MACHINE	shell-tool			gen
 docs/orchestration/findings_row_lint.py	tracked	MACHINE	script			generated		exact-path-only		no	3	208	10379
 docs/orchestration/followup-agent-A-standard-05.md	tracked	ARCHIVAL	followup-prompt			terminal		exact-path-only		yes	8	52	3575
 docs/orchestration/gate2_queue_hedge_controller.sh	tracked	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/verify_hash_bindings.py	no	3	331	16015
-docs/orchestration/generate_live_state.py	tracked	MACHINE	generator-script			generated		exact-path-only	docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py	no	29	1361	58901
+docs/orchestration/generate_live_state.py	tracked	MACHINE	generator-script			generated		exact-path-only	docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py	no	29	1375	59812
 docs/orchestration/generate_manifest.py	tracked	MACHINE	generator-script			generated		exact-path-only	docs/orchestration/live_doc_indexed.py	no	56	630	26640
 docs/orchestration/install_agent_notifications.py	tracked	MACHINE	script			generated		exact-path-only		no	2	139	4772
 docs/orchestration/live_doc_indexed.py	tracked	MACHINE	script			generated		exact-path-only		no	11	206	10620
@@ -692,7 +692,7 @@ docs/orchestration/test_fixtures_watch_report/train_57256638_0.err.txt	tracked	A
 docs/orchestration/test_fixtures_watch_report/train_57256638_0.out.txt	tracked	ARCHIVAL	artifact			terminal		exact-path-only		yes	1	7	733
 docs/orchestration/test_generate_live_state.py	tracked	MACHINE	test-script			generated		exact-path-only		no	0	71	3637
 docs/orchestration/test_generate_live_state_carry_forward.py	tracked	MACHINE	test-script			generated		exact-path-only		no	2	438	22147
-docs/orchestration/test_generate_live_state_routes.py	tracked	MACHINE	test-script			generated		exact-path-only		no	0	329	13370
+docs/orchestration/test_generate_live_state_routes.py	tracked	MACHINE	test-script			generated		exact-path-only		no	0	364	15415
 docs/orchestration/test_generate_live_state_watch_health.py	tracked	MACHINE	test-script			generated		exact-path-only	docs/orchestration/test_generate_live_state.py	no	1	306	13656
 docs/orchestration/test_loader_ordering_reco_before_truth_weight.py	tracked	MACHINE	test-script			generated		exact-path-only	docs/orchestration/state/probe-oi120c-loader-purity-perturbation-20260814.py;docs/orchestration/test_probe_oi120c_p4_retirement.py	no	5	250	13048
 docs/orchestration/test_measure_m1_m6.py	tracked	MACHINE	test-script			generated		exact-path-only		no	13	269	13248

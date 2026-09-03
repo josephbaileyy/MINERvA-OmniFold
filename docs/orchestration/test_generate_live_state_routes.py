@@ -72,9 +72,10 @@ def write_registry(
         encoding="utf-8",
     )
     digest = hashlib.sha256(open_row.encode()).hexdigest()
+    inventory_queue = "NOW" if inventory_lifecycle == "active" else "-"
     source_inventory.write_text(
         INVENTORY_HEADER
-        + f"OI-181\t{inventory_lifecycle}\tNOW\tdeclared\t{digest}"
+        + f"OI-181\t{inventory_lifecycle}\t{inventory_queue}\tdeclared\t{digest}"
         + f"\t{state_prefix}\n",
         encoding="utf-8",
     )
@@ -203,6 +204,40 @@ class FrozenRegisterInterfaceTests(unittest.TestCase):
             )
         self.assertEqual(snapshot.health, "CONTRADICTORY")
         self.assertIn("non-active row must carry", snapshot.detail)
+
+    def test_retired_inventory_record_with_a_queue_is_contradictory(self):
+        """Reviewer round 3: inventory lifecycle=retired, queue=NOW, paired with a correct
+        retired register row, rendered HEALTHY."""
+        with tempfile.TemporaryDirectory() as directory:
+            paths = write_registry(
+                pathlib.Path(directory),
+                rows=register_row(lifecycle="retired", queue="-", promotion="-"),
+                inventory_lifecycle="retired",
+            )
+            text = paths[1].read_text(encoding="utf-8").replace("\tretired\t-\t", "\tretired\tNOW\t")
+            paths[1].write_text(text, encoding="utf-8")
+            snapshot = self.inspect(paths)
+        self.assertEqual(snapshot.health, "CONTRADICTORY")
+        self.assertIn("non-active inventory record must carry '-' queue", snapshot.detail)
+        self.assertEqual(snapshot.routes, ())
+
+    def test_active_inventory_record_with_an_unknown_queue_is_contradictory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            paths = write_registry(pathlib.Path(directory))
+            text = paths[1].read_text(encoding="utf-8").replace("\tactive\tNOW\t", "\tactive\tSOMEDAY\t")
+            paths[1].write_text(text, encoding="utf-8")
+            snapshot = self.inspect(paths)
+        self.assertEqual(snapshot.health, "CONTRADICTORY")
+        self.assertIn("inventory queue 'SOMEDAY' invalid", snapshot.detail)
+
+    def test_unknown_inventory_classification_rule_is_contradictory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            paths = write_registry(pathlib.Path(directory))
+            text = paths[1].read_text(encoding="utf-8").replace("\tdeclared\t", "\tguessed\t")
+            paths[1].write_text(text, encoding="utf-8")
+            snapshot = self.inspect(paths)
+        self.assertEqual(snapshot.health, "CONTRADICTORY")
+        self.assertIn("classification_rule 'guessed' invalid", snapshot.detail)
 
     def test_missing_policy_is_unavailable(self):
         with tempfile.TemporaryDirectory() as directory:

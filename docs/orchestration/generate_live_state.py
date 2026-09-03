@@ -54,6 +54,7 @@ LEGACY_PROSE_FIELDS = frozenset(
 ROUTED_LIFECYCLE = "active"
 ROUTED_PROMOTION = "promoted"
 PROMOTION_TOKENS = frozenset({"promoted", "backlog"})
+CLASSIFICATION_RULES = frozenset({"declared", "migration-carried-forward"})
 UNSET = "-"
 ROUTE_REGISTRY_KEYS = frozenset({"work_items", "source_inventory", "open_items", "policy"})
 WORK_ITEM_COLUMNS = (
@@ -259,6 +260,22 @@ def inspect_route_registry(
         if not key or key in inventory:
             contradictions.append(f"duplicate or empty source record {key!r}")
         inventory[key] = row
+        # The generated inventory is validated against the same vocabulary as the register, and
+        # BEFORE any record is skipped as non-active (reviewer round 3: a retired inventory row
+        # carrying queue NOW rendered HEALTHY because non-active records were skipped first).
+        if row["lifecycle"] not in lifecycles:
+            contradictions.append(f"{key}: inventory lifecycle {row['lifecycle']!r} invalid")
+        elif row["lifecycle"] == ROUTED_LIFECYCLE:
+            if row["queue"] not in queues:
+                contradictions.append(f"{key}: inventory queue {row['queue']!r} invalid")
+        elif row["queue"] != UNSET:
+            contradictions.append(
+                f"{key}: non-active inventory record must carry '-' queue, has {row['queue']!r}"
+            )
+        if row["classification_rule"] not in CLASSIFICATION_RULES:
+            contradictions.append(
+                f"{key}: inventory classification_rule {row['classification_rule']!r} invalid"
+            )
         source = source_rows.get(key)
         if source and source[0] == row["source_row_sha256"]:
             _, actual_prefix = source
@@ -317,9 +334,6 @@ def inspect_route_registry(
             continue
         if queue != UNSET and queue not in queues:
             contradictions.append(f"{item}: invalid queue {queue!r}")
-            continue
-        if record["lifecycle"] not in lifecycles:
-            contradictions.append(f"{item}: inventory lifecycle {record['lifecycle']!r} invalid")
             continue
         if lifecycle != UNSET and lifecycle != record["lifecycle"]:
             contradictions.append(
