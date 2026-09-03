@@ -361,3 +361,37 @@ commands apply; add:
 ```
 python3 docs/orchestration/r5_meter.py measure --from-file docs/orchestration/test_fixtures_r5_meter/perlmutter_regular_gpu.sacct --now 2026-09-10T00:00:00Z
 ```
+
+## 8. Joseph's authorization (2026-09-03) and the OI-136 repair — the last BLOCK, cleared in scope
+
+Joseph answered §7.1: *"I authorize it"* — recorded verbatim with its scope in
+`AUTHORIZATION-20260903-oi136-failopen-repair.md` (`ce34a370`). `71839696` is **withdrawn**.
+
+| what | commit | proof |
+|---|---|---|
+| authorization record, scope 36 of 45, nine exclusions each measured | `ce34a370` | the nine reasons: 3 probe records; the published 2D arm (Joseph's 2026-08-23 ruling); 5 receipt-bound files on which `verify_hash_bindings.py` reports BINDINGS BROKEN for any byte change |
+| the repair: the import root derived from `__file__` at 36 entrypoints; sub-paths and data-path defaults unchanged; both ratchet constants moved in the same commit naming every site | `8ff5d843` | probe FAIL-OPEN SET = exactly the 9 exclusions (exit 0); `FAILOPEN_COUNT` 45 → 9; `KNOWN_UNREPAIRED` 46 → 10; 36/36 derived roots evaluate byte-identical to the literal on the canonical checkout; re-planting the literal is caught 36/36 by both the probe and the AST scanner; `py_compile` 36/36; `ALL BINDINGS INTACT`; 220 tests in the seven guard/ratchet/launcher suites at the worker's tree, 124 in the four fast suites re-run here |
+
+Two residuals the worker surfaced, neither in the authorized scope and neither hidden:
+
+- `nd-unfolding/pet/gate2_target_runtime.py` reaches a position-0 insert through a `pathlib`
+  binding the probe's regex does not follow, so it is in the AST scanner's list and not the
+  probe's. It stays listed as the PET lane's, unrepaired and unreclassified.
+- Two of the nine residual files are the probe's own positive controls, so the fail-open set cannot
+  reach 0 without new controls first — a probe-owner act.
+
+**Freeze consequence, stated so it is not read as an oversight.** `FREEZE-20260830-k0-deployment-7ac0edec.md`
+is not expired. The deployed cluster copies of the 36 files stay at their frozen bytes until an
+authorized redeploy under that freeze's process, after which parity will honestly report the 36 as
+changed relative to `7ac0edec`. Nothing was deployed by this integration.
+
+### 8.1 Proposed tip, final for this round
+
+The last commit of `wave1-integration-20260903` as force-pushed after this record. All prior
+command lists apply; add:
+
+```
+python3 docs/orchestration/state/probe-oi136-sys-path-hijack-20260826.py     # FAIL-OPEN SET: the 9 named in AUTHORIZATION-20260903 §2
+python3 docs/orchestration/verify_hash_bindings.py                            # ALL BINDINGS INTACT
+(cd nd-unfolding && python3 -m pytest -q tests/test_oi136_failopen_inventory_ratchet.py tests/test_oi136_rooted_insert_ratchet.py)
+```
