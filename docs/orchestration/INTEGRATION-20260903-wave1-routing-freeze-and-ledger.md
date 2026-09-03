@@ -395,3 +395,32 @@ python3 docs/orchestration/state/probe-oi136-sys-path-hijack-20260826.py     # F
 python3 docs/orchestration/verify_hash_bindings.py                            # ALL BINDINGS INTACT
 (cd nd-unfolding && python3 -m pytest -q tests/test_oi136_failopen_inventory_ratchet.py tests/test_oi136_rooted_insert_ratchet.py)
 ```
+
+## 9. Reviewer round 3 (2026-09-03) — verdict BLOCK on `d0fc1d07`, and what this revision changed
+
+`d0fc1d07` is **withdrawn**. Every reviewer mutation below is a named regression test at the tip.
+
+| reviewer BLOCK | resolution | commit | proof |
+|---|---|---|---|
+| **R5 admission not atomic** (490 recorded; two six-hour items both admitted, projection 502) | headroom counts the receipt's spend, this item's `maximum_cost`, and the `maximum_cost` of every other compute item not in a terminal outcome (staged/approved/claimed reserve; refused/failed/succeeded/stale/revoked release), inclusive in either column with the reserving items named; the check and the claim run under one `O_EXCL` admission lock (owner host:pid, stale after timeout + wall, removal logged) | `ef7882fc` | the reviewer's mutation: exactly one item admitted, the other refused naming the reserver; a terminal outcome releases; a held lock admits nothing; an undatable lock is treated as held |
+| **an uncommitted receipt can authorize compute** (a `/tmp` copy produced no refusal) | the receipt must be a repository-relative, tracked path byte-identical to its HEAD blob; `CAMPAIGN_R5_RECEIPT` may override only the relative path; absolute, outside-repo, untracked, or edited-after-commit receipts refuse with exit 6 | `ef7882fc` | the `/tmp` copy (first asserted schema-valid, so the refusal is provenance), untracked, edited-after-commit, and committed-accepted tests |
+| **guard bypass via `--allow`** (staging accepted `--allow <foreign checkout>`; the guard's positive control then loaded the wrong tree) | guarded argv on producer AND validator must carry exactly one `--expect-root` equal to the queue root, no `--allow`, no `-S`/`-I`/`-E`, no `PYTHON…=` element; enforced at staging and again in `validate_unchanged` | `ef7882fc` | the reviewer's `--allow` mutation refused on both arms and after staging; foreign `--expect-root` refused; clean argv accepted |
+| **guard cannot cross the adoption subprocess boundary** (`adopt_unified_5d.py` is run as a child; the child loaded the wrong tree and exited 0) | `mnv_guarded_run.py` now arms every environment-inheriting Python child through the tracked `nd-unfolding/mnv_guard_shim/sitecustomize.py`: the child installs the guard before its own script runs, refuses foreign resolved origins with exit 3 and `[oi136 child]`, and writes its own inventory record with `propagated_from` and `depth`; existing `sitecustomize` is preserved. **Declared uncovered, each with a test:** `-S`, `-I`, `-E` children; a cleared environment; non-Python children | `3eadd3f8` | `TheSubprocessBoundaryIsCovered`: child and grandchild refused; the exact parent-runs-child shape of `mii_adopt_unified_5d_stamped.py` refused; 200 tests in the worker's matrix; probe still exactly 9; bindings intact |
+| **retired inventory row with queue NOW read HEALTHY** | every inventory row is validated against the policy vocabulary as it is read, before any record is skipped; non-active records must carry `-`; `classification_rule` must be declared or migration-carried-forward; the fixture's inconsistent combination corrected | `ed1312f6` | the reviewer's mutation verbatim; 68 live-state tests; real registry HEALTHY 13 / 137 |
+| **`AGENTS.md` still says 59 fail-open** | the bullet routes the reader to the probe for the count and names the authorization record and the nine residual classes | `bbc70e63` | |
+| (consequence) census power tests | the guard now refuses to run without its shim (exit 2, COULD NOT LOOK); the criterion-5 synthetic checkout copies the shim as the launcher fixture does | `54e6b8fb` | 25 passed at `ef7882fc`, 2 failed at `3eadd3f8`, 25 passed here |
+
+Two fail-closed consequences the contract worker flagged, kept as specified rather than softened:
+a committed receipt moves `HEAD`, and the existing drift rule stales items staged before it, so
+metering precedes staging; and an over-committed queue refuses every affected item until an
+operator revokes one or a fresh receipt lands. Both need an operator, not a tick.
+
+### 9.1 Proposed tip, revised
+
+The last commit of `wave1-integration-20260903` as force-pushed after this record. Prior command
+lists apply; add:
+
+```
+(cd nd-unfolding && python3 -m pytest -q tests/test_mnv_guarded_run.py tests/test_k0_preflight_exclusion_census.py)
+python3 -m pytest -q docs/orchestration/test_campaignctl.py      # includes the two-six-hour-items, /tmp receipt, and --allow mutations
+```
