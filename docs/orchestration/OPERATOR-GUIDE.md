@@ -163,6 +163,25 @@ the mandatory `--` is also bound. A typical command tail is:
   --expect-root /path/to/repository -- path/to/producer.py <args>
 ```
 
+**The guard argv itself is checked, on the producer and on the validator, at
+staging and again before the claim.** The guard decides which tree an
+interpreter may import from, so its own arguments decide what it will accept,
+and a green guard run proves only as much as its argv allowed it to refuse.
+For a compute item the argv must carry exactly one `--expect-root`, before the
+mandatory `--`, given as an absolute path resolving to the queue's own
+repository root. It must **not** carry `--allow` at all: `--allow` declares an
+import tree in another checkout, and `mnv_guarded_run.py`'s own header records
+that on a production arm it is forbidden outright. Staging `--allow <foreign
+checkout>` previously let the guard resolve the cross-tree import it exists to
+refuse and exit 0 — the guard's positive control passing for the wrong tree.
+Also refused anywhere in the argv: the `-S`, `-I` and `-E` interpreter flags,
+and any element that begins with `PYTHON` and contains `=`
+(`PYTHONPATH=…`, `PYTHONSAFEPATH=…`, `PYTHONNOUSERSITE=…`), because each
+rewrites import resolution before the guard is installed. The item JSON lives
+in the state directory rather than in Git, so these checks run again inside
+`validate_unchanged`: an argv hand-edited after staging, with its digest
+recomputed, is refused at approval and at the tick.
+
 **For a compute item the terminal validator obeys exactly the producer's
 rules**, at staging and again before the claim: it must route through
 `mnv_guarded_run.py`, and the guarded target after `--` must be a repository
@@ -201,11 +220,57 @@ Immediately before claiming a compute item, the queue reads
 with `CAMPAIGN_R5_RECEIPT`. Exit code 6 and a `refused` outcome result if the
 receipt is missing or malformed, is more than 24 hours old, is dated later than
 the queue clock by more than 60 seconds of tolerated skew, reports `fired.any`,
-has reached the stop date, or shows that current spend plus either declared
-maximum task-hour cost would meet or exceed its ceiling. Freshness is bounded on
+has reached the stop date, or leaves no headroom for this item once every other
+reserving item is counted. Freshness is bounded on
 both sides on purpose: an age-only bound accepted a receipt dated a day after
 the queue clock, which is how a stale measurement can be made to look
 permanently fresh.
+
+**The receipt must be committed, and the Perlmutter measurer commits it before
+any compute can be admitted.** A measurement that exists only in a working tree
+is not evidence — `AGENTS.md` makes a result live only once its evidence has
+landed in a commit — so the receipt must be a repository-relative path inside
+this checkout, tracked, and byte-identical to its blob at `HEAD`. Anything else
+is exit 6 with the reason `receipt is not committed at HEAD`: an absolute path,
+a path outside the checkout, an untracked file, and a file edited after it was
+committed. A schema-valid receipt copied to `/tmp` previously admitted compute.
+`CAMPAIGN_R5_RECEIPT` may override only the **relative** path, which is what
+lets the tests commit a receipt inside a temporary repository; it can no longer
+point the queue at a file the repository does not record.
+
+Order the work accordingly: **meter and commit the receipt first, then stage,
+then approve, then let the ticker run it.** A receipt commit moves `HEAD`, and
+an item staged against an earlier `HEAD` is `stale` under the drift rule that
+already governs every binding, so an item staged before its receipt has to be
+staged again.
+
+**R5 admission is atomic and reserved.** A ceiling belongs to the queue, not to
+an item. Besides the receipt's spend and this item's `maximum_cost`, the
+headroom check counts the full declared `maximum_cost` of every other compute
+item that is not in a terminal outcome: `staged`, `approved`, and claimed or
+running (`outcome-unknown`) all reserve, while `refused`, `failed`,
+`succeeded`, `stale`, and `revoked` release the reservation. Refusal is
+inclusive in either column — spend plus reservations plus this item meeting the
+ceiling is already a refusal — and the reason names the items holding the
+reservation. With 490 GPU task-hours recorded, two six-hour items each
+projected 496 and both were admitted, although together they project 502; now
+the second is refused while the first is in flight. The refusal is retryable
+and not consumed, so when the whole queue is over-committed every affected item
+is refused until a human revokes one or the measurer commits a fresh receipt —
+that release is never something a tick decides for itself.
+
+The headroom check and the claim that admits the item happen under **one
+exclusive lock**, `state/campaign-queue/admission.lock`, an `O_EXCL` file
+naming its owner `host:pid`. Two tickers therefore cannot both read the same
+receipt, both find room, and both claim. A tick that finds the lock held claims
+nothing and exits 5 with `outcome-unknown` and the holder in its reason; it has
+written no outcome, so a later tick retries. A lock older than the admitting
+item's `timeout_seconds` plus its whole wall budget is stale and is removed,
+with the removal logged to `state/campaign-queue/logs/admission-lock.log` and
+to stderr before it is taken. A lock that cannot be read or dated is treated as
+held, because "we cannot tell how old this is" must never resolve as "old
+enough to break"; clearing that one is a manual act, after you have confirmed
+from `list` and the logs that no ticker is still running the item it names.
 
 The receipt must also be **this** stop's receipt, not merely a well-formed one.
 `t0_utc` must equal `2026-09-02T13:44:27Z` exactly — the commit instant of

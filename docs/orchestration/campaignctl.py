@@ -12,6 +12,18 @@ exhaustive terminal branch with a decision consequence.  One wall deadline
 covers the whole execution: the producer and the validator share
 ``maximum_cost.wall_hours``, and a validator with no budget left is not
 started.
+
+R5 admission is ATOMIC and RESERVED, not per-item.  A ceiling is a property of
+the whole queue, so the headroom check counts the receipt's spend, this item's
+``maximum_cost`` AND the ``maximum_cost`` of every other compute item that is
+not in a terminal outcome; the check and the claim that admits the item happen
+under one exclusive lock, so two tickers cannot both admit against the same
+headroom.  The receipt itself must be committed: an R5 measurement that lives
+only in a working tree, or in ``/tmp``, is not evidence and cannot authorize
+compute.  On a compute arm the guard argv must pin ``--expect-root`` to this
+repository and must not carry ``--allow`` or any interpreter/PYTHONPATH escape,
+because those turn the guard's own positive control into a pass for the wrong
+tree.
 """
 
 from __future__ import annotations
@@ -30,7 +42,7 @@ import subprocess
 import sys
 import tempfile
 import time
-from typing import Callable
+from typing import Callable, Iterator
 
 
 HERE = Path(__file__).resolve().parent
@@ -54,6 +66,14 @@ R5_DECISION_RECORD = (
     "DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md"
 )
 R5_CEILINGS = {"gpu_task_hours": 500.0, "cpu_task_hours": 500.0}
+R5_METERED_RESOURCES = ("gpu_task_hours", "cpu_task_hours")
+# A receipt is evidence, and AGENTS.md makes a result live only once its evidence has
+# landed in a commit.  A receipt reachable at an arbitrary absolute path is not that:
+# a copy under /tmp, an untracked file, or a working-tree edit made after the commit
+# all read as measurements nobody can re-derive from the repository.  So the override
+# may name a REPOSITORY-RELATIVE path only, and the file must be tracked and byte
+# identical to its blob at HEAD.
+R5_UNCOMMITTED_REASON = "receipt is not committed at HEAD"
 R5_MAX_AGE = dt.timedelta(hours=24)
 # A receipt cannot have measured the future.  Clock skew between the metering host and
 # the queue host is real and small; anything beyond this is a fabricated or misdated
@@ -119,9 +139,29 @@ R5_SPEND_KEYS = frozenset(
 )
 R5_FIRED_KEYS = frozenset({"date", "gpu", "cpu", "any"})
 
+#: States in which a compute item still holds its declared task-hours against the R5
+#: ceilings.  ``outcome-unknown`` is the claimed-or-running case: the claim exists and
+#: no terminal receipt has been written, so the spend it may already have incurred is
+#: not in any receipt yet and must stay reserved.  The complement -- refused, failed,
+#: succeeded, stale and revoked -- is terminal and releases the reservation.
+RESERVING_STATES = frozenset({"staged", "approved", "outcome-unknown"})
+ADMISSION_LOCK_NAME = "admission.lock"
+ADMISSION_LOCK_LOG = "admission-lock.log"
+#: Interpreter flags that change where imports come from, and therefore defeat the
+#: OI-136 guard from inside its own argv: ``-S`` drops ``site``, ``-I`` implies ``-s``
+#: and ``-E``, and ``-E`` discards the environment the arm was declared with.
+FORBIDDEN_INTERPRETER_LETTERS = frozenset("SIE")
+SHORT_FLAG_RE = re.compile(r"-[A-Za-z]+")
+EXPECT_ROOT_FLAG = "--expect-root"
+ALLOW_FLAG = "--allow"
+
 
 class QueueError(RuntimeError):
     pass
+
+
+class AdmissionLockHeld(QueueError):
+    """Another ticker holds the exclusive admission lock."""
 
 
 def utc_now() -> str:
@@ -563,6 +603,86 @@ def resolve_repo_path(repo: Path, value: str) -> Path:
     return inside(path, repo)
 
 
+def validate_guarded_argv(repo: Path, argv: list[str], *, role: str) -> None:
+    """Require the production form of an OI-136 guard command.
+
+    The guard decides which tree an interpreter may import from, so its own
+    argument vector decides what it will accept.  ``--allow`` widens that set to
+    another checkout and the guard's header says it is forbidden outright on a
+    production arm; an ``--expect-root`` naming a foreign tree makes the guard's
+    positive control pass for the wrong tree; and ``-S``/``-I``/``-E`` or a
+    ``PYTHON...=`` element rewrites import resolution before the guard is even
+    installed.  Each of those turns a green guard into no guard at all, so a
+    compute arm is refused for carrying any of them rather than trusted to have
+    meant something harmless.
+
+    Parameters
+    ----------
+    repo : Path
+        Resolved repository root the arm belongs to.
+    argv : list[str]
+        Complete guard argument vector, including everything after ``--``.
+    role : str
+        Name of the command's role, used in refusal messages so a producer
+        refusal and a terminal-validator refusal are distinguishable.
+
+    Raises
+    ------
+    QueueError
+        If ``--allow``, a forbidden interpreter flag or a ``PYTHON...=`` element
+        is present, or if exactly one ``--expect-root`` naming ``repo`` by
+        absolute path does not precede the mandatory ``--``.
+    """
+    for element in argv:
+        if element == ALLOW_FLAG or element.startswith(f"{ALLOW_FLAG}="):
+            raise QueueError(
+                f"guarded {role} command must not carry --allow: it declares an "
+                "import tree from another checkout and is forbidden on a "
+                "production arm"
+            )
+        if SHORT_FLAG_RE.fullmatch(element) and FORBIDDEN_INTERPRETER_LETTERS.intersection(
+            element[1:]
+        ):
+            raise QueueError(
+                f"guarded {role} command must not carry the interpreter flag "
+                f"{element}: it changes import resolution the guard is measuring"
+            )
+        if element.startswith("PYTHON") and "=" in element:
+            raise QueueError(
+                f"guarded {role} command must not set a PYTHON environment "
+                f"variable in argv: {element}"
+            )
+    head = argv[: argv.index("--")] if "--" in argv else list(argv)
+    named: list[str] = []
+    index = 0
+    while index < len(head):
+        element = head[index]
+        if element == EXPECT_ROOT_FLAG:
+            if index + 1 >= len(head):
+                raise QueueError(
+                    f"guarded {role} command requires a value after --expect-root"
+                )
+            named.append(head[index + 1])
+            index += 2
+            continue
+        if element.startswith(f"{EXPECT_ROOT_FLAG}="):
+            named.append(element.split("=", 1)[1])
+            index += 1
+            continue
+        index += 1
+    if len(named) != 1:
+        raise QueueError(
+            f"guarded {role} command must pass exactly one --expect-root before "
+            f"'--', naming the queue repository root {repo}"
+        )
+    expect_root = Path(named[0])
+    if not expect_root.is_absolute() or expect_root.resolve() != repo:
+        raise QueueError(
+            f"guarded {role} command must pass --expect-root {repo}, not "
+            f"{named[0]}"
+        )
+
+
 def command_bindings(
     repo: Path,
     argv: list[str],
@@ -583,7 +703,8 @@ def command_bindings(
         Additional repository files to bind.
     require_guard : bool, optional
         Require the command to route through ``nd-unfolding/mnv_guarded_run.py``
-        and bind the guarded target after the mandatory ``--``.
+        in its production form (see :func:`validate_guarded_argv`) and bind the
+        guarded target after the mandatory ``--``.
     role : str, optional
         Name of the command's role, used in guard refusal messages so a producer
         refusal and a terminal-validator refusal are distinguishable.
@@ -624,6 +745,7 @@ def command_bindings(
             raise QueueError(
                 f"{role} must route through nd-unfolding/mnv_guarded_run.py"
             )
+        validate_guarded_argv(repo, argv, role=role)
         try:
             separator_index = argv.index("--", command_file_index + 1)
         except ValueError as exc:
@@ -813,6 +935,26 @@ def validate_unchanged(queue: Queue, item: dict) -> None:
         if not isinstance(contract, dict):
             raise QueueError("embedded campaign contract must be an object")
         validate_campaign_contract(contract, expected_campaign_id=item["id"])
+        if item.get("kind") == "compute":
+            # The guard argv is re-checked here and not only at staging: the item
+            # JSON lives in the state directory, outside Git, so a hand-edited argv
+            # with a recomputed digest reaches the claim without passing staging
+            # again.  This runs BEFORE the binding comparison so an argv carrying
+            # --allow is refused for what it is, not for a hash that happens to
+            # have moved with it.
+            validate_guarded_argv(
+                queue.repo, list(item["argv"]), role="compute producer"
+            )
+            terminal_validator = contract["terminal_validator"]
+            if not isinstance(terminal_validator, dict):
+                raise QueueError("validated campaign contract lost terminal_validator")
+            validate_guarded_argv(
+                queue.repo,
+                require_argv(
+                    terminal_validator["argv"], field="terminal_validator.argv"
+                ),
+                role="compute terminal validator",
+            )
         contract_path = item.get("campaign_contract_path")
         if not isinstance(contract_path, str):
             raise QueueError("campaign contract path is missing")
@@ -944,20 +1086,114 @@ def validate_r5_receipt(value: object) -> dict[str, object]:
     return receipt
 
 
+def committed_r5_receipt(queue: Queue) -> tuple[Path | None, str | None]:
+    """Locate the R5 receipt and require it to be committed at ``HEAD``.
+
+    ``CAMPAIGN_R5_RECEIPT`` may override only the REPOSITORY-RELATIVE path, so a
+    test can commit a receipt inside its own temporary repository.  It cannot
+    point the queue at a file the repository does not record: an absolute path,
+    a path outside the checkout, an untracked file and a working-tree edit made
+    after the commit are all refusals, because none of them is evidence anybody
+    else can re-read.
+
+    Parameters
+    ----------
+    queue : Queue
+        Queue whose repository root and ``HEAD`` bound the receipt.
+
+    Returns
+    -------
+    tuple[Path or None, str or None]
+        The resolved receipt path and ``None``, or ``None`` and the refusal
+        reason.
+    """
+    override = os.environ.get("CAMPAIGN_R5_RECEIPT")
+    relative = DEFAULT_R5_RECEIPT if override is None else Path(override)
+    if relative.is_absolute():
+        return None, (
+            f"{R5_UNCOMMITTED_REASON}: CAMPAIGN_R5_RECEIPT must name a "
+            f"repository-relative path, not {override}"
+        )
+    try:
+        receipt_path = resolve_repo_path(queue.repo, str(relative))
+    except QueueError as exc:
+        return None, f"{R5_UNCOMMITTED_REASON}: {exc}"
+    if not receipt_path.is_file():
+        return None, f"R5 receipt missing: {receipt_path}"
+    try:
+        committed_sha256 = queue.committed_file_sha256(receipt_path)
+    except QueueError:
+        return None, (
+            f"{R5_UNCOMMITTED_REASON}: {relative.as_posix()} is not tracked at "
+            "the repository HEAD"
+        )
+    if sha256_file(receipt_path) != committed_sha256:
+        return None, (
+            f"{R5_UNCOMMITTED_REASON}: {relative.as_posix()} differs from the "
+            "blob committed at HEAD"
+        )
+    return receipt_path, None
+
+
+def reserved_task_hours(
+    queue: Queue, item: dict
+) -> tuple[dict[str, float], list[str]]:
+    """Sum the task-hours other non-terminal compute items hold in reserve.
+
+    A ceiling is a property of the whole queue, not of one item.  Checking only
+    ``spend + this item`` lets each of two items pass while their combined
+    projection is over the ceiling, so every other compute item that is not in a
+    terminal outcome reserves its full declared ``maximum_cost`` here.  When the
+    total reservation leaves no headroom the refusal is retryable and applies to
+    every affected item: releasing it is a human act -- revoke an item, or meter
+    a fresh receipt -- and never something a tick decides for itself.
+
+    Parameters
+    ----------
+    queue : Queue
+        Queue whose items and outcome records define the current states.
+    item : dict
+        Item being admitted, excluded from its own reservation total.
+
+    Returns
+    -------
+    tuple[dict[str, float], list[str]]
+        Reserved task-hours per metered resource, and the sorted ids of the
+        items holding them.
+    """
+    reservations = {resource: 0.0 for resource in R5_METERED_RESOURCES}
+    reserving: list[str] = []
+    for other in queue.items():
+        if other.get("id") == item["id"] or other.get("kind") != "compute":
+            continue
+        contract = other.get("campaign_contract")
+        if not isinstance(contract, dict):
+            continue
+        maximum_cost = contract.get("maximum_cost")
+        if not isinstance(maximum_cost, dict):
+            continue
+        if state_of(queue, other) not in RESERVING_STATES:
+            continue
+        for resource in R5_METERED_RESOURCES:
+            if resource not in maximum_cost:
+                # Refusing beats under-reserving: an item whose declared cost cannot
+                # be read must not pass as an item that reserves nothing.
+                raise QueueError(
+                    f"queue item {other['id']} has no maximum_cost.{resource} to "
+                    "reserve against the R5 ceiling"
+                )
+            reservations[resource] += require_nonnegative_number(
+                maximum_cost[resource], field=f"maximum_cost.{resource}"
+            )
+        reserving.append(str(other["id"]))
+    return reservations, sorted(reserving)
+
+
 def r5_refusal_reason(queue: Queue, item: dict) -> str | None:
     """Return the compute-prohibition reason, or ``None`` when R5 permits a run."""
-    receipt_value = os.environ.get("CAMPAIGN_R5_RECEIPT")
-    try:
-        if receipt_value is None:
-            receipt_path = queue.repo / DEFAULT_R5_RECEIPT
-        elif Path(receipt_value).is_absolute():
-            receipt_path = Path(receipt_value).resolve()
-        else:
-            receipt_path = resolve_repo_path(queue.repo, receipt_value)
-    except QueueError as exc:
-        return f"R5 receipt malformed: {exc}"
-    if not receipt_path.is_file():
-        return f"R5 receipt missing: {receipt_path}"
+    receipt_path, refusal = committed_r5_receipt(queue)
+    if receipt_path is None:
+        return refusal
     try:
         receipt = validate_r5_receipt(read_object(receipt_path))
     except QueueError as exc:
@@ -997,12 +1233,22 @@ def r5_refusal_reason(queue: Queue, item: dict) -> str | None:
     maximum_cost = contract["maximum_cost"]
     if not isinstance(maximum_cost, dict):
         raise QueueError("validated campaign contract lost maximum_cost")
-    for resource in ("gpu_task_hours", "cpu_task_hours"):
-        projected = float(spend[resource]) + float(maximum_cost[resource])
-        if projected >= float(ceilings[resource]):
+    reservations, reserving = reserved_task_hours(queue, item)
+    for resource in R5_METERED_RESOURCES:
+        spent = float(spend[resource])
+        reserved = reservations[resource]
+        declared = float(maximum_cost[resource])
+        ceiling = float(ceilings[resource])
+        if spent + reserved + declared >= ceiling:
+            held = (
+                "; reserved by " + ", ".join(reserving)
+                if reserving
+                else "; no other item holds a reservation"
+            )
             return (
-                f"R5 {resource} ceiling would be reached: spend plus maximum_cost "
-                "is greater than or equal to the ceiling"
+                f"R5 {resource} ceiling would be reached: spend plus reservations "
+                "plus maximum_cost is greater than or equal to the ceiling "
+                f"({spent:g} + {reserved:g} + {declared:g} >= {ceiling:g}){held}"
             )
     return None
 
@@ -1317,6 +1563,207 @@ def run_non_compute_item(
     return (0 if returncode == 0 else 3), outcome
 
 
+def admission_lock_seconds(item: dict) -> float:
+    """Return the age after which an admission lock for ``item`` is stale.
+
+    The bound is the item's own worst case -- its staged ``timeout_seconds`` plus
+    the whole shared wall budget -- so a lock is only ever removed after the run
+    that could have held it can no longer be running.
+
+    Parameters
+    ----------
+    item : dict
+        Queue item being admitted.
+
+    Returns
+    -------
+    float
+        Maximum age in seconds for which the lock is treated as held.
+    """
+    seconds = float(item.get("timeout_seconds") or 0)
+    contract = item.get("campaign_contract")
+    if isinstance(contract, dict):
+        maximum_cost = contract.get("maximum_cost")
+        if isinstance(maximum_cost, dict):
+            seconds += float(maximum_cost.get("wall_hours") or 0) * 3600
+    return seconds
+
+
+def log_admission_event(queue: Queue, event: dict[str, object]) -> None:
+    """Append one admission-lock event to the queue log and to stderr."""
+    log_path = queue.state / "logs" / ADMISSION_LOCK_LOG
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    with log_path.open("a") as handle:
+        handle.write(canonical(event) + "\n")
+    print(f"campaignctl: {canonical(event)}", file=sys.stderr)
+
+
+def clear_stale_admission_lock(queue: Queue, item: dict, path: Path) -> None:
+    """Remove an admission lock older than the item timeout plus wall budget.
+
+    Parameters
+    ----------
+    queue : Queue
+        Queue whose clock dates the lock and whose log records the removal.
+    item : dict
+        Item being admitted, whose timeout and wall budget bound the lock age.
+    path : Path
+        Existing lock file.
+
+    Raises
+    ------
+    AdmissionLockHeld
+        If the lock is younger than that bound, or its owner record cannot be
+        read or dated.  An unreadable lock fails CLOSED: "we cannot tell how old
+        this is" must never be resolved as "it is old enough to break".
+    """
+    try:
+        holder = read_object(path)
+        acquired = parse_utc(
+            holder.get("acquired_at_utc"), field="admission lock acquired_at_utc"
+        )
+    except QueueError as exc:
+        raise AdmissionLockHeld(
+            f"admission lock exists and cannot be dated, so it is treated as "
+            f"held: {exc}"
+        ) from exc
+    age = (
+        parse_utc(queue.clock(), field="queue clock") - acquired
+    ).total_seconds()
+    limit = admission_lock_seconds(item)
+    if age <= limit:
+        raise AdmissionLockHeld(
+            f"admission lock held by {holder.get('owner')} for item "
+            f"{holder.get('id')} since {holder.get('acquired_at_utc')}: age "
+            f"{age:g}s is within the {limit:g}s timeout plus wall budget"
+        )
+    log_admission_event(
+        queue,
+        {
+            "event": "stale-admission-lock-removed",
+            "removed_at_utc": queue.clock(),
+            "removed_by": f"{socket.gethostname()}:{os.getpid()}",
+            "age_seconds": round(age, 3),
+            "stale_after_seconds": round(limit, 3),
+            "holder": holder,
+        },
+    )
+    with contextlib.suppress(FileNotFoundError):
+        path.unlink()
+
+
+@contextlib.contextmanager
+def admission_lock(queue: Queue, item: dict) -> Iterator[Path]:
+    """Hold the queue's single exclusive admission lock.
+
+    The headroom check and the claim that admits an item must be ONE atomic act.
+    Checked separately, two tickers each read the same receipt, each find room
+    for their own item, and each create their own claim -- both admitted against
+    headroom that only covered one.  The lock is a ``O_EXCL`` file in the state
+    directory naming its owner ``host:pid``; a lock older than the admitting
+    item's timeout plus wall budget is removed after the removal is logged.
+
+    Parameters
+    ----------
+    queue : Queue
+        Queue whose state directory holds the lock.
+    item : dict
+        Item being admitted.
+
+    Yields
+    ------
+    Path
+        The held lock file, removed when the block exits.
+
+    Raises
+    ------
+    AdmissionLockHeld
+        If another ticker holds a lock that is not yet stale.
+    """
+    path = queue.state / ADMISSION_LOCK_NAME
+    path.parent.mkdir(parents=True, exist_ok=True)
+    flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
+    try:
+        descriptor = os.open(path, flags, 0o644)
+    except FileExistsError:
+        clear_stale_admission_lock(queue, item, path)
+        try:
+            descriptor = os.open(path, flags, 0o644)
+        except FileExistsError as exc:
+            raise AdmissionLockHeld(
+                "admission lock was taken by another ticker while this one was "
+                "clearing a stale lock"
+            ) from exc
+    try:
+        with os.fdopen(descriptor, "w") as handle:
+            json.dump(
+                {
+                    "schema_version": 1,
+                    "id": item["id"],
+                    "owner": f"{socket.gethostname()}:{os.getpid()}",
+                    "acquired_at_utc": queue.clock(),
+                },
+                handle,
+                indent=2,
+                sort_keys=True,
+            )
+            handle.write("\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        yield path
+    finally:
+        with contextlib.suppress(FileNotFoundError):
+            path.unlink()
+
+
+def admit(queue: Queue, item: dict) -> tuple[int, dict] | None:
+    """Check R5 headroom and claim ``item`` under one exclusive lock.
+
+    Parameters
+    ----------
+    queue : Queue
+        Queue being ticked.
+    item : dict
+        Ready item to admit.
+
+    Returns
+    -------
+    tuple[int, dict] or None
+        ``None`` when the item is admitted and its claim exists; otherwise the
+        exit code and value the tick must return without running anything.
+    """
+    try:
+        with admission_lock(queue, item):
+            if item["kind"] == "compute":
+                refusal_reason = r5_refusal_reason(queue, item)
+                if refusal_reason is not None:
+                    return 6, write_outcome(
+                        queue,
+                        item,
+                        "refused",
+                        reason=refusal_reason,
+                        consumed=False,
+                    )
+            claim = {
+                "schema_version": 1,
+                "id": item["id"],
+                "proposal_digest": item["proposal_digest"],
+                "claimed_at_utc": queue.clock(),
+                "owner": f"{socket.gethostname()}:{os.getpid()}",
+            }
+            try:
+                atomic_json(queue.path("claims", item["id"]), claim, exclusive=True)
+            except QueueError:
+                return 5, {"status": "outcome-unknown", "id": item["id"]}
+    except AdmissionLockHeld as exc:
+        return 5, {
+            "status": "outcome-unknown",
+            "id": item["id"],
+            "reason": str(exc),
+        }
+    return None
+
+
 def run_ready(queue: Queue) -> tuple[int, dict]:
     item = ready_item(queue)
     if item is None:
@@ -1333,28 +1780,9 @@ def run_ready(queue: Queue) -> tuple[int, dict]:
     except QueueError as exc:
         outcome = write_outcome(queue, item, "stale", error=str(exc))
         return 4, outcome
-    if item["kind"] == "compute":
-        refusal_reason = r5_refusal_reason(queue, item)
-        if refusal_reason is not None:
-            outcome = write_outcome(
-                queue,
-                item,
-                "refused",
-                reason=refusal_reason,
-                consumed=False,
-            )
-            return 6, outcome
-    claim = {
-        "schema_version": 1,
-        "id": item["id"],
-        "proposal_digest": item["proposal_digest"],
-        "claimed_at_utc": queue.clock(),
-        "owner": f"{socket.gethostname()}:{os.getpid()}",
-    }
-    try:
-        atomic_json(queue.path("claims", item["id"]), claim, exclusive=True)
-    except QueueError:
-        return 5, {"status": "outcome-unknown", "id": item["id"]}
+    not_admitted = admit(queue, item)
+    if not_admitted is not None:
+        return not_admitted
     (queue.state / "logs").mkdir(parents=True, exist_ok=True)
     env = os.environ.copy()
     env["CAMPAIGN_QUEUE_ITEM_ID"] = item["id"]

@@ -16,7 +16,14 @@ FIXTURE_DIR = Path(__file__).resolve().parent / "test_fixtures_campaign_contract
 CONTRACT_FIXTURE = FIXTURE_DIR / "validator-failed-after-jobs-complete.json"
 R5_FIXTURES = {
     name: FIXTURE_DIR / f"r5-meter-{name}.json"
-    for name in ("healthy", "stale", "fired", "headroom-exhausting", "malformed")
+    for name in (
+        "healthy",
+        "stale",
+        "fired",
+        "headroom-exhausting",
+        "malformed",
+        "near-gpu-ceiling",
+    )
 }
 #: The real OI-136 guard, copied into every fixture repository rather than restated.
 #: A hand-written stand-in would be a second implementation of the rule under test,
@@ -125,6 +132,12 @@ class CampaignQueueTests(unittest.TestCase):
             state=self.root / "state",
             clock=lambda: "2026-09-29T12:00:00+00:00",
         )
+        self.receipts = 0
+        # The R5 receipt is evidence, so it must be COMMITTED before it can admit
+        # anything. Every test therefore commits its receipt into the fixture
+        # repository first: a receipt commit moves HEAD, and an item staged
+        # against an older HEAD is `stale` by the drift rule that already exists.
+        self.healthy_receipt = self.install_receipt("healthy")
 
     def stage(
         self,
@@ -136,11 +149,13 @@ class CampaignQueueTests(unittest.TestCase):
         script: str | None = None,
         timeout_seconds: int = 30,
         guarded: bool = True,
+        argv: list[str] | None = None,
     ) -> dict:
         target = script or "work.py"
-        argv = [sys.executable, target]
-        if kind == "compute" and guarded:
-            argv = self.guarded_argv(target)
+        if argv is None:
+            argv = [sys.executable, target]
+            if kind == "compute" and guarded:
+                argv = self.guarded_argv(target)
         return campaignctl.stage(
             self.queue,
             item_id,
@@ -154,16 +169,44 @@ class CampaignQueueTests(unittest.TestCase):
             contract,
         )
 
-    def guarded_argv(self, target: str) -> list[str]:
-        """Return the argv a compute command must have: routed through the guard."""
-        return [
+    def guarded_argv(
+        self,
+        target: str,
+        *,
+        expect_root: str | None = None,
+        allow: str | None = None,
+        extra: list[str] | None = None,
+    ) -> list[str]:
+        """Return the argv a compute command must have: routed through the guard.
+
+        Parameters
+        ----------
+        target : str
+            Script the guard runs after the mandatory ``--``.
+        expect_root : str or None, optional
+            Value for ``--expect-root``; the queue repository root by default.
+        allow : str or None, optional
+            Foreign checkout to pass as ``--allow``, which a production arm may
+            never carry.
+        extra : list[str] or None, optional
+            Extra elements inserted before ``--``, for interpreter and
+            environment escapes.
+
+        Returns
+        -------
+        list[str]
+            The complete guard argument vector.
+        """
+        argv = [
             sys.executable,
             "nd-unfolding/mnv_guarded_run.py",
             "--expect-root",
-            str(self.repo),
-            "--",
-            target,
+            expect_root if expect_root is not None else str(self.repo),
         ]
+        if allow is not None:
+            argv += ["--allow", allow]
+        argv += list(extra or [])
+        return argv + ["--", target]
 
     def write_contract(
         self,
@@ -171,19 +214,24 @@ class CampaignQueueTests(unittest.TestCase):
         commit: bool = False,
         validator_script: str = "validator_failure.py",
         guarded_validator: bool = True,
+        validator_argv: list[str] | None = None,
+        name: str = "campaign-contract.json",
         mutate: Callable[[dict[str, object]], None] | None = None,
     ) -> str:
         contract = json.loads(CONTRACT_FIXTURE.read_text())
         terminal_validator = contract["terminal_validator"]
         assert isinstance(terminal_validator, dict)
-        terminal_validator["argv"] = (
-            self.guarded_argv(validator_script)
-            if guarded_validator
-            else [sys.executable, validator_script]
-        )
+        if validator_argv is not None:
+            terminal_validator["argv"] = validator_argv
+        else:
+            terminal_validator["argv"] = (
+                self.guarded_argv(validator_script)
+                if guarded_validator
+                else [sys.executable, validator_script]
+            )
         if mutate is not None:
             mutate(contract)
-        path = self.repo / "campaign-contract.json"
+        path = self.repo / name
         path.write_text(json.dumps(contract, indent=2, sort_keys=True) + "\n")
         if commit:
             subprocess.run(
@@ -201,31 +249,64 @@ class CampaignQueueTests(unittest.TestCase):
         )
 
     def run_ready(
-        self, receipt: str = "healthy"
+        self, receipt: str | None = None
     ) -> tuple[int, dict[str, object]]:
-        path = R5_FIXTURES.get(receipt, Path(receipt))
-        with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": str(path)}):
+        value = self.healthy_receipt if receipt is None else receipt
+        with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": value}):
             return campaignctl.run_ready(self.queue)
 
-    def mutated_receipt(self, **changes: object) -> str:
-        """Write the healthy receipt with fields replaced, and return its path.
+    def install_receipt(
+        self,
+        source: str = "healthy",
+        *,
+        commit: bool = True,
+        **changes: object,
+    ) -> str:
+        """Commit a meter receipt into the fixture repository.
 
         Parameters
         ----------
+        source : str, optional
+            Name of the checked-in receipt fixture to copy.
+        commit : bool, optional
+            Commit the receipt. ``False`` leaves it untracked, which is one of
+            the states an uncommitted measurement can be in.
         **changes : object
             Receipt fields to overwrite, named exactly as the meter writes them.
+            The checked-in fixtures keep the ruled values.
 
         Returns
         -------
         str
-            Path to the mutated receipt, outside the fixture directory so the
-            checked-in receipts keep the ruled values.
+            Repository-relative path of the receipt, the only form
+            ``CAMPAIGN_R5_RECEIPT`` accepts.
         """
-        receipt = json.loads(R5_FIXTURES["healthy"].read_text())
-        receipt.update(changes)
-        path = self.root / f"receipt-{len(list(self.root.glob('receipt-*.json')))}.json"
-        path.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
-        return str(path)
+        text = R5_FIXTURES[source].read_text()
+        if changes:
+            receipt = json.loads(text)
+            receipt.update(changes)
+            text = json.dumps(receipt, indent=2, sort_keys=True) + "\n"
+        self.receipts += 1
+        relative = f"docs/orchestration/state/r5-meter-{self.receipts}.json"
+        path = self.repo / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
+        if commit:
+            subprocess.run(
+                ["git", "-C", str(self.repo), "add", relative], check=True
+            )
+            subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    str(self.repo),
+                    "commit",
+                    "-qm",
+                    f"meter receipt {self.receipts}",
+                ],
+                check=True,
+            )
+        return relative
 
     def test_stage_approve_and_run_exactly_once(self):
         item = self.stage()
@@ -696,6 +777,7 @@ class CampaignQueueTests(unittest.TestCase):
         self.assertLess(validator_budget, float(item["timeout_seconds"]))
 
     def test_missing_or_malformed_r5_receipt_is_retryable_refusal(self) -> None:
+        malformed = self.install_receipt("malformed")
         contract = self.write_contract(
             commit=True,
             validator_script="validator_success.py",
@@ -713,28 +795,29 @@ class CampaignQueueTests(unittest.TestCase):
         self.assertFalse(self.queue.path("claims", item["id"]).exists())
         self.assertFalse((self.repo / "ran").exists())
 
-        rc, outcome = self.run_ready("malformed")
+        rc, outcome = self.run_ready(malformed)
         self.assertEqual((rc, outcome["status"]), (6, "refused"))
         self.assertIn("R5 receipt malformed", outcome["reason"])
         self.assertFalse(self.queue.path("claims", item["id"]).exists())
 
-        rc, outcome = self.run_ready("healthy")
+        rc, outcome = self.run_ready()
         self.assertEqual((rc, outcome["status"]), (0, "succeeded"))
         self.assertTrue((self.repo / "ran").is_file())
 
     def test_stale_r5_receipt_refuses_compute(self) -> None:
-        self._assert_r5_refusal("stale", "R5 receipt stale")
+        self._assert_r5_refusal(self.install_receipt("stale"), "R5 receipt stale")
 
     def test_fired_r5_receipt_refuses_compute(self) -> None:
-        self._assert_r5_refusal("fired", "R5 stop fired")
+        self._assert_r5_refusal(self.install_receipt("fired"), "R5 stop fired")
 
     def test_r5_stop_date_refuses_compute(self) -> None:
         self.queue.clock = lambda: "2026-09-30T00:00:00+00:00"
-        self._assert_r5_refusal("healthy", "R5 stop date reached")
+        self._assert_r5_refusal(self.healthy_receipt, "R5 stop date reached")
 
     def test_r5_projected_inclusive_ceiling_refuses_compute(self) -> None:
         self._assert_r5_refusal(
-            "headroom-exhausting", "gpu_task_hours ceiling would be reached"
+            self.install_receipt("headroom-exhausting"),
+            "gpu_task_hours ceiling would be reached",
         )
 
     def test_r5_receipt_metered_from_another_t0_refuses_compute(self) -> None:
@@ -744,7 +827,7 @@ class CampaignQueueTests(unittest.TestCase):
         modules disagreed about which interval had been metered.
         """
         self._assert_r5_refusal(
-            self.mutated_receipt(t0_utc="2026-09-02T00:00:00+00:00"),
+            self.install_receipt(t0_utc="2026-09-02T00:00:00+00:00"),
             "t0_utc does not match the ruled instant",
         )
 
@@ -753,7 +836,7 @@ class CampaignQueueTests(unittest.TestCase):
             # A plausibly shaped record that is not the ruling this stop comes
             # from. Deliberately not the path of any real document, so the
             # manifest does not read this mutation as a reference to one.
-            self.mutated_receipt(
+            self.install_receipt(
                 decision_record=(
                     "docs/orchestration/DECISION-20260902-some-other-ruling.md"
                 )
@@ -764,12 +847,13 @@ class CampaignQueueTests(unittest.TestCase):
     def test_future_dated_r5_receipt_refuses_compute(self) -> None:
         """A receipt dated one day after the queue clock was accepted as fresh."""
         self._assert_r5_refusal(
-            self.mutated_receipt(measured_at_utc="2026-09-30T12:00:00+00:00"),
+            self.install_receipt(measured_at_utc="2026-09-30T12:00:00+00:00"),
             "receipt is dated in the future",
         )
 
     def test_r5_receipt_inside_the_tolerated_skew_allows_compute(self) -> None:
         """The future check must stay silent on the skew a correct run can show."""
+        receipt = self.install_receipt(measured_at_utc="2026-09-29T12:00:30+00:00")
         contract = self.write_contract(
             commit=True,
             validator_script="validator_success.py",
@@ -779,13 +863,12 @@ class CampaignQueueTests(unittest.TestCase):
         )
         self.approve(item)
 
-        rc, outcome = self.run_ready(
-            self.mutated_receipt(measured_at_utc="2026-09-29T12:00:30+00:00")
-        )
+        rc, outcome = self.run_ready(receipt)
 
         self.assertEqual((rc, outcome["status"]), (0, "succeeded"))
 
-    def test_healthy_r5_receipt_allows_compute(self) -> None:
+    def test_committed_r5_receipt_allows_compute(self) -> None:
+        """The accepting direction: a TRACKED, unmodified receipt admits compute."""
         contract = self.write_contract(
             commit=True,
             validator_script="validator_success.py",
@@ -794,10 +877,65 @@ class CampaignQueueTests(unittest.TestCase):
             "validator-failure-fixture", kind="compute", contract=contract
         )
         self.approve(item)
+        tracked = subprocess.run(
+            ["git", "-C", str(self.repo), "ls-files", "--error-unmatch",
+             self.healthy_receipt],
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        self.assertEqual(tracked.returncode, 0)
 
-        rc, outcome = self.run_ready("healthy")
+        rc, outcome = self.run_ready(self.healthy_receipt)
 
         self.assertEqual((rc, outcome["status"]), (0, "succeeded"))
+
+    def test_r5_receipt_copied_outside_the_repository_is_refused(self) -> None:
+        """The reviewer's mutation: a valid receipt copied to a temporary path.
+
+        The copy is byte-identical to the committed fixture and passes every
+        schema and freshness check, so what is refused here is its PROVENANCE:
+        nothing in the repository records that this measurement was ever taken.
+        """
+        copied = self.root / "r5-meter-receipt.json"
+        copied.write_text((self.repo / self.healthy_receipt).read_text())
+        self.assertTrue(copied.is_absolute())
+        campaignctl.validate_r5_receipt(json.loads(copied.read_text()))
+
+        self._assert_r5_refusal(str(copied), "receipt is not committed at HEAD")
+
+    def test_untracked_r5_receipt_is_refused(self) -> None:
+        self._assert_r5_refusal(
+            self.install_receipt(commit=False),
+            "receipt is not committed at HEAD",
+        )
+
+    def test_r5_receipt_edited_after_commit_is_refused(self) -> None:
+        receipt = self.install_receipt()
+        contract = self.write_contract(
+            commit=True,
+            validator_script="validator_success.py",
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        self.approve(item)
+        # The committed receipt measured 100 GPU task-hours; the working tree now
+        # says 1. Byte identity with the blob at HEAD is what makes the number in
+        # the receipt the number somebody can re-read.
+        edited = json.loads((self.repo / receipt).read_text())
+        edited["spend"]["gpu_task_hours"] = 1.0
+        edited["headroom"]["gpu_task_hours"] = 499.0
+        (self.repo / receipt).write_text(
+            json.dumps(edited, indent=2, sort_keys=True) + "\n"
+        )
+
+        rc, outcome = self.run_ready(receipt)
+
+        self.assertEqual((rc, outcome["status"]), (6, "refused"))
+        self.assertIn("receipt is not committed at HEAD", outcome["reason"])
+        self.assertFalse(self.queue.path("claims", item["id"]).exists())
+        self.assertFalse((self.repo / "ran").exists())
 
     def _assert_r5_refusal(self, receipt: str, reason: str) -> None:
         contract = self.write_contract(
@@ -815,6 +953,370 @@ class CampaignQueueTests(unittest.TestCase):
         self.assertIn(reason, outcome["reason"])
         self.assertFalse(self.queue.path("claims", item["id"]).exists())
         self.assertFalse((self.repo / "ran").exists())
+
+    def six_hour_contract(self, campaign_id: str) -> str:
+        """Commit a contract declaring six GPU task-hours for ``campaign_id``."""
+        def declare(value: dict[str, object]) -> None:
+            value["campaign_id"] = campaign_id
+            value["maximum_cost"] = {
+                "cpu_task_hours": 1.0,
+                "gpu_task_hours": 6.0,
+                "wall_hours": 6.0,
+            }
+
+        return self.write_contract(
+            commit=True,
+            validator_script="validator_success.py",
+            name=f"contract-{campaign_id}.json",
+            mutate=declare,
+        )
+
+    def _alpha_in_flight_with_beta_ready(self, receipt: str) -> None:
+        """Admit a six-hour item, leave it running, then make a second one ready.
+
+        This is the two-ticker shape the reviewer's mutation had: the first item
+        is claimed and has written no terminal receipt, so whatever it may
+        already be spending is in no receipt yet.
+        """
+        alpha_contract = self.six_hour_contract("alpha")
+        alpha = self.stage("alpha", kind="compute", contract=alpha_contract)
+        self.approve(alpha)
+        with mock.patch.object(
+            campaignctl,
+            "run_compute_item",
+            side_effect=lambda queue, item, env: (
+                0,
+                {"status": "running", "id": item["id"]},
+            ),
+        ):
+            rc, value = self.run_ready(receipt)
+        self.assertEqual((rc, value["id"]), (0, "alpha"))
+        self.assertTrue(self.queue.path("claims", "alpha").exists())
+        self.assertEqual(
+            campaignctl.state_of(self.queue, self.queue.item("alpha")),
+            "outcome-unknown",
+        )
+
+        beta_contract = self.six_hour_contract("beta")
+        beta = self.stage("beta", kind="compute", contract=beta_contract)
+        self.approve(beta)
+
+    def test_two_six_hour_items_cannot_both_be_admitted(self) -> None:
+        """The reviewer's mutation: 490 GPU task-hours recorded, two six-hour items.
+
+        Each item was checked against ``spend + its own maximum_cost`` alone --
+        496 against a ceiling of 500 -- so neither was refused although their
+        combined projection is 502. A ceiling belongs to the queue, not to an
+        item, so the admitted item now holds a reservation and the second is
+        refused with that reservation named.
+        """
+        receipt = self.install_receipt("near-gpu-ceiling")
+        self._alpha_in_flight_with_beta_ready(receipt)
+
+        rc, outcome = self.run_ready(receipt)
+
+        self.assertEqual((rc, outcome["status"]), (6, "refused"))
+        self.assertEqual(outcome["id"], "beta")
+        self.assertIn("gpu_task_hours ceiling would be reached", outcome["reason"])
+        self.assertIn("490 + 6 + 6 >= 500", outcome["reason"])
+        self.assertIn("reserved by alpha", outcome["reason"])
+        self.assertFalse((self.repo / "validator-ran").exists())
+        # Exactly one of the two was admitted, and it is the one holding the
+        # reservation the other was refused against.
+        self.assertEqual(
+            sorted(
+                path.stem
+                for path in (self.queue.state / "claims").glob("*.json")
+            ),
+            ["alpha"],
+        )
+
+    def test_a_terminal_outcome_releases_its_reservation(self) -> None:
+        """A reservation that outlived its item would be a permanent refusal."""
+        receipt = self.install_receipt("near-gpu-ceiling")
+        self._alpha_in_flight_with_beta_ready(receipt)
+        campaignctl.write_outcome(
+            self.queue, self.queue.item("alpha"), "succeeded", returncode=0
+        )
+
+        rc, outcome = self.run_ready(receipt)
+
+        self.assertEqual((rc, outcome["status"]), (0, "succeeded"))
+        self.assertEqual(outcome["id"], "beta")
+
+    def test_a_held_admission_lock_admits_nothing(self) -> None:
+        """A concurrent lock holder means this ticker cannot know, so it claims nothing."""
+        contract = self.write_contract(
+            commit=True, validator_script="validator_success.py"
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        self.approve(item)
+        lock = self.queue.state / campaignctl.ADMISSION_LOCK_NAME
+        lock.parent.mkdir(parents=True, exist_ok=True)
+        lock.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "id": "another-item",
+                    "owner": "other-host:4242",
+                    "acquired_at_utc": "2026-09-29T11:59:50+00:00",
+                }
+            )
+        )
+
+        rc, value = self.run_ready()
+
+        self.assertEqual((rc, value["status"]), (5, "outcome-unknown"))
+        self.assertIn("admission lock held by other-host:4242", value["reason"])
+        self.assertFalse(self.queue.path("claims", item["id"]).exists())
+        self.assertFalse(self.queue.path("outcomes", item["id"]).exists())
+        self.assertFalse((self.repo / "ran").exists())
+        self.assertTrue(lock.is_file())
+
+    def test_an_undatable_admission_lock_is_treated_as_held(self) -> None:
+        """A lock whose age cannot be read must not be resolved as old enough."""
+        item = self.stage()
+        self.approve(item)
+        lock = self.queue.state / campaignctl.ADMISSION_LOCK_NAME
+        lock.parent.mkdir(parents=True, exist_ok=True)
+        lock.write_text("{ this is not json\n")
+
+        rc, value = campaignctl.run_ready(self.queue)
+
+        self.assertEqual((rc, value["status"]), (5, "outcome-unknown"))
+        self.assertIn("cannot be dated", value["reason"])
+        self.assertFalse(self.queue.path("claims", item["id"]).exists())
+        self.assertTrue(lock.is_file())
+
+    def test_a_stale_admission_lock_is_removed_after_logging(self) -> None:
+        """The opposite direction: a lock no live run can still hold must not block."""
+        contract = self.write_contract(
+            commit=True, validator_script="validator_success.py"
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        self.approve(item)
+        lock = self.queue.state / campaignctl.ADMISSION_LOCK_NAME
+        lock.parent.mkdir(parents=True, exist_ok=True)
+        # Six hours old against a 30 s timeout plus the contract's 2 h wall.
+        lock.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "id": "abandoned-item",
+                    "owner": "other-host:4242",
+                    "acquired_at_utc": "2026-09-29T06:00:00+00:00",
+                }
+            )
+        )
+
+        rc, outcome = self.run_ready()
+
+        self.assertEqual((rc, outcome["status"]), (0, "succeeded"))
+        log = (
+            self.queue.state / "logs" / campaignctl.ADMISSION_LOCK_LOG
+        ).read_text()
+        self.assertIn("stale-admission-lock-removed", log)
+        self.assertIn("other-host:4242", log)
+        self.assertFalse(lock.exists())
+
+    def test_allow_in_the_producer_argv_is_refused_at_stage(self) -> None:
+        """The reviewer's mutation, and why the guard cannot catch it itself.
+
+        The control below is the guard's own positive control: given ``--allow``
+        naming the outside checkout, the cross-tree import the guard exists to
+        refuse resolves and the guard exits 0. A guarded arm carrying ``--allow``
+        therefore establishes nothing, so the queue refuses the flag outright.
+        """
+        bypass = subprocess.run(
+            [
+                sys.executable,
+                "nd-unfolding/mnv_guarded_run.py",
+                "--expect-root",
+                str(self.repo),
+                "--allow",
+                str(self.outside),
+                "--",
+                "sneaky_validator.py",
+            ],
+            cwd=self.repo,
+            check=False,
+        )
+        self.assertEqual(bypass.returncode, 0)
+
+        contract = self.write_contract(
+            commit=True, validator_script="validator_success.py"
+        )
+        with self.assertRaisesRegex(
+            campaignctl.QueueError,
+            "compute producer command must not carry --allow",
+        ):
+            self.stage(
+                "validator-failure-fixture",
+                kind="compute",
+                contract=contract,
+                argv=self.guarded_argv("work.py", allow=str(self.outside)),
+            )
+        self.assertFalse(self.queue.path("items", "validator-failure-fixture").exists())
+
+    def test_allow_in_the_validator_argv_is_refused_at_stage(self) -> None:
+        contract = self.write_contract(
+            commit=True,
+            validator_argv=self.guarded_argv(
+                "sneaky_validator.py", allow=str(self.outside)
+            ),
+        )
+
+        with self.assertRaisesRegex(
+            campaignctl.QueueError,
+            "compute terminal validator command must not carry --allow",
+        ):
+            self.stage(
+                "validator-failure-fixture", kind="compute", contract=contract
+            )
+
+    def test_allow_added_after_staging_is_refused_at_validate_unchanged(self) -> None:
+        """The item JSON is state, not Git, so the argv is re-checked before the claim."""
+        contract = self.write_contract(
+            commit=True, validator_script="validator_success.py"
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        campaignctl.validate_unchanged(self.queue, item)
+
+        producer_mutation = json.loads(json.dumps(item))
+        argv = list(producer_mutation["argv"])
+        argv[argv.index("--"): argv.index("--")] = ["--allow", str(self.outside)]
+        producer_mutation["argv"] = argv
+        producer_mutation["proposal_digest"] = campaignctl.digest(
+            campaignctl.proposal_payload(producer_mutation)
+        )
+        campaignctl.atomic_json(
+            self.queue.path("items", item["id"]), producer_mutation
+        )
+        with self.assertRaisesRegex(
+            campaignctl.QueueError,
+            "compute producer command must not carry --allow",
+        ):
+            campaignctl.validate_unchanged(
+                self.queue, self.queue.item(item["id"])
+            )
+        with self.assertRaisesRegex(
+            campaignctl.QueueError,
+            "compute producer command must not carry --allow",
+        ):
+            self.approve(self.queue.item(item["id"]))
+
+        validator_mutation = json.loads(json.dumps(item))
+        terminal_validator = validator_mutation["campaign_contract"][
+            "terminal_validator"
+        ]
+        validator_argv = list(terminal_validator["argv"])
+        validator_argv[
+            validator_argv.index("--"): validator_argv.index("--")
+        ] = ["--allow", str(self.outside)]
+        terminal_validator["argv"] = validator_argv
+        validator_mutation["proposal_digest"] = campaignctl.digest(
+            campaignctl.proposal_payload(validator_mutation)
+        )
+        campaignctl.atomic_json(
+            self.queue.path("items", item["id"]), validator_mutation
+        )
+        with self.assertRaisesRegex(
+            campaignctl.QueueError,
+            "compute terminal validator command must not carry --allow",
+        ):
+            campaignctl.validate_unchanged(
+                self.queue, self.queue.item(item["id"])
+            )
+
+    def named_contract(self, item_id: str, **kwargs: object) -> str:
+        """Commit a contract whose ``campaign_id`` is ``item_id``.
+
+        Each refusal test stages its own id, so a check that stops refusing
+        fails on its own argv rather than on the item file a previous case left
+        behind.
+        """
+        return self.write_contract(
+            commit=True,
+            name=f"contract-{item_id}.json",
+            mutate=lambda value: value.update(campaign_id=item_id),
+            **kwargs,
+        )
+
+    def test_a_foreign_expect_root_is_refused_on_both_arms(self) -> None:
+        producer_contract = self.named_contract(
+            "producer-arm", validator_script="validator_success.py"
+        )
+        with self.assertRaisesRegex(
+            campaignctl.QueueError, "compute producer command must pass --expect-root"
+        ):
+            self.stage(
+                "producer-arm",
+                kind="compute",
+                contract=producer_contract,
+                argv=self.guarded_argv("work.py", expect_root=str(self.outside)),
+            )
+
+        validator_contract = self.named_contract(
+            "validator-arm",
+            validator_argv=self.guarded_argv(
+                "validator_success.py", expect_root=str(self.outside)
+            ),
+        )
+        with self.assertRaisesRegex(
+            campaignctl.QueueError,
+            "compute terminal validator command must pass --expect-root",
+        ):
+            self.stage(
+                "validator-arm", kind="compute", contract=validator_contract
+            )
+
+    def test_interpreter_and_environment_escapes_are_refused(self) -> None:
+        for index, (extra, expected) in enumerate(
+            (
+                (["-S"], "interpreter flag -S"),
+                (["-I"], "interpreter flag -I"),
+                (["-E"], "interpreter flag -E"),
+                ([f"PYTHONPATH={self.outside}"], "PYTHON environment variable"),
+                (["PYTHONSAFEPATH=0"], "PYTHON environment variable"),
+                (["PYTHONNOUSERSITE=1"], "PYTHON environment variable"),
+            )
+        ):
+            item_id = f"escape-{index}"
+            contract = self.named_contract(
+                item_id, validator_script="validator_success.py"
+            )
+            with self.subTest(extra=extra):
+                with self.assertRaisesRegex(campaignctl.QueueError, expected):
+                    self.stage(
+                        item_id,
+                        kind="compute",
+                        contract=contract,
+                        argv=self.guarded_argv("work.py", extra=extra),
+                    )
+                self.assertFalse(self.queue.path("items", item_id).exists())
+
+    def test_a_clean_guarded_argv_is_accepted(self) -> None:
+        """The refusals must stay silent on the argv a correct arm actually has."""
+        contract = self.write_contract(
+            commit=True, validator_script="validator_success.py"
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        self.assertIn("--expect-root", item["argv"])
+        self.assertNotIn("--allow", item["argv"])
+        campaignctl.validate_unchanged(self.queue, item)
+        self.approve(item)
+
+        rc, outcome = self.run_ready()
+
+        self.assertEqual((rc, outcome["status"]), (0, "succeeded"))
 
 
 
