@@ -36,20 +36,60 @@ operator's typed phrase is additional confirmation, never the authorization.
 Re-metering after every compute item, with that item's task ids in the receipt,
 is therefore the ordinary reconciliation step.
 
-Because both the lock and that reservation inventory are properties of ONE
-queue, and a queue kept inside a checkout is one queue PER CHECKOUT, the
-canonical queue lives OUTSIDE every checkout at the passwd home directory's
-``.mnv_campaign/<CAMPAIGN_KEY>/campaign-queue``.  The passwd home is a function
-of the UID, not ``$HOME`` or another per-process setting, so every clone and
-linked worktree for that UID on the host resolves the same directory.  The
-admission lock, the reservation scan and the claims are shared: two clones can no
-longer each admit a six-hour item the other never counted.  Items record the
-absolute ``repo_path`` they were staged from, and a ticker runs only its own
-repository's items while every other item still RESERVES and is listed.  A queue
-pointed elsewhere by ``--state-dir`` may still stage, approve and run non-compute
-items, but it refuses compute admission.  Admission is global per (host, uid);
-two different hosts (or two different uids) hold two queues; the committed
-receipt is the only cross-host object.
+THE ADMISSION NAMESPACE IS THE REPOSITORY'S ORIGIN REMOTE, AND EVERY ADMISSION IS
+A COMPARE-AND-SWAP ON ONE REF THERE.  A ceiling is a property of the whole
+campaign, so the inventory that bounds it has to be one object that every process
+which could spend can read and can lose a race to.  A passwd home is not that: it
+is a property of a HOST, so a queue rooted there is global only for the processes
+sharing that filesystem, and two hosts -- or two uids -- each admitted a six-hour
+item against one 490-hour receipt and projected 502 against a prohibition of 500.
+The origin remote IS that object: it is the one thing every clone on every host
+already shares, and it is where the committed receipt itself lives.  It is pinned
+in the committed ``docs/orchestration/control-plane/campaign-origin.json``, which
+carries the campaign key, the ruling record and its sha256, and the ref name; the
+queue refuses every operation -- compute or not -- when the checkout has no
+``origin``, when its URL differs from the pinned one after normalisation, or when
+the pin is not byte-identical to its blob at ``HEAD``.
+
+Every state family that decides admission -- items, approvals, claims, outcomes,
+releases, revocations, and the admission log -- lives in a git tree on
+``refs/campaign/<CAMPAIGN_KEY>/queue`` at that origin.  The passwd-home directory
+is now a CACHE of that tree plus purely local files: the producer and validator
+logs, the run directories, the admission lock and the queue's own bare git
+directory.  Every operation, under the local lock, fetches the ref, makes the
+cached families EXACTLY that tree (deleting anything the tree lacks, because a
+record only one host has is a record no other host counts), does its work, and
+lands any mutation with ``--force-with-lease`` against the sha it fetched.  A
+fetch that cannot reach the origin REFUSES: no network is no admission, because
+the reservations that bound the ceiling are in that ref and a queue that cannot
+read them cannot tell an empty campaign from a full one.  A rejected push means
+another host moved the ref: the mutation is discarded, the ref is re-read, and
+the operation refuses with a lost-race reason a later tick may retry from the
+top.  Nothing is ever merged -- merging two states each computed against headroom
+the other had not taken is exactly how 502 hours fit under 500.
+
+The admission window is therefore ONE push: the reservation scan and the claim
+that admits the item are computed against one fetched tree and land together, so
+two hosts cannot both claim against the same sha.  An outcome, release or
+revocation records something that ALREADY HAPPENED, so a push that does not land
+does not discard it: the record waits in the cache and every later operation
+retries it, while the item stays claimed in the ref and keeps RESERVING on every
+host.  An unpushed outcome releases nothing anywhere.  The reservation scan and
+the release rule are unchanged in logic, but they read the fetched tree, so a
+reservation made on any host counts on every host.  The local lock and the passwd
+home remain, for same-host serialisation only; the cross-host serialisation is
+the lease.  Items still record the absolute ``repo_path`` they were staged from,
+and a ticker runs only its own repository's items while every other item still
+reserves and is listed.  A queue pointed elsewhere by ``--state-dir`` may still
+stage, approve and run non-compute items, but it refuses compute admission,
+because the lock and the run directories are still properties of one directory.
+
+The residual is the origin itself.  The origin remote named in the pinned file is
+the namespace: a clone whose ``origin`` is a different repository is a different
+repository, and its receipts and its ceiling are its own.  The ref moves only by
+lease, so a force-push of that ref without a lease -- or any other direct write to
+it -- is a repository write from outside this tool, and no check inside this tool
+can prevent it.
 
 The receipt itself must be committed: an R5 measurement that lives only in a
 working tree, or in ``/tmp``, is not evidence and cannot authorize compute.  On
@@ -67,17 +107,22 @@ from __future__ import annotations
 import argparse
 import contextlib
 import datetime as dt
+import fcntl
 import hashlib
+import io
 import json
 import math
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import pwd
 import re
+import shutil
 import socket
 import subprocess
 import sys
+import tarfile
 import tempfile
+import threading
 import time
 from typing import Callable, Iterator, NamedTuple
 
@@ -106,6 +151,51 @@ CAMPAIGN_STATE_ROOT_NAME = ".mnv_campaign"
 #: queue and orphan every live claim and reservation in it.  Re-deriving it is a
 #: decision, and it belongs in a commit that also migrates the directory.
 CAMPAIGN_KEY = "r5-20260902-0836139b"
+#: Committed pin of the ONE repository whose ref namespace holds this campaign's
+#: admission state.  A passwd home is a property of a HOST, so a queue rooted there
+#: is global only for the processes sharing that filesystem: two hosts, or two uids,
+#: held two complete inventories that each admitted six hours against one 490-hour
+#: receipt and projected 502 against a ceiling of 500.  The origin remote is the one
+#: object every clone on every host already shares -- it is where the committed
+#: receipt itself lives -- so admission is a compare-and-swap on one ref there.  The
+#: pin is COMMITTED and checked HEAD-identical through the same identity check the
+#: receipt uses, because a working-tree edit to it would otherwise repoint the
+#: namespace without leaving a record anybody else could read.
+CAMPAIGN_ORIGIN_FILE = Path("docs/orchestration/control-plane/campaign-origin.json")
+CAMPAIGN_ORIGIN_KEYS = frozenset(
+    {
+        "schema_version",
+        "campaign_key",
+        "ruling_record",
+        "ruling_record_sha256",
+        "origin_url",
+        "queue_ref",
+    }
+)
+#: sha256 of the ruling record :data:`CAMPAIGN_KEY` is a name for.  The pin repeats it
+#: so the pinned origin and the queue key are demonstrably the same campaign's, and a
+#: pin copied from a neighbouring campaign is a refusal rather than a redirection.
+CAMPAIGN_RULING_RECORD_SHA256 = (
+    "0836139b1c9a057c194a81a94d45c9f979209a9ac293d4bc8434e6b43fc1a064"
+)
+#: The one ref at the pinned origin that carries this campaign's queue tree.  Its
+#: name is derived from the campaign key for the same reason the directory is: an
+#: amendment to the record must not silently repoint the ref and orphan live claims.
+CAMPAIGN_QUEUE_REF = f"refs/campaign/{CAMPAIGN_KEY}/queue"
+#: State families that DECIDE admission, and therefore live in the ref's tree rather
+#: than on one host.  Everything :func:`reserved_task_hours` and
+#: :func:`reservation_hold` read is here: the items and their declared costs, the
+#: approvals, the claims that open a reservation, the outcomes that date it, and the
+#: releases and revocations that close it.  A record that only one host has is a
+#: record no other host counts, which is the whole defect the ref exists to close.
+QUEUE_STATE_FAMILIES = (
+    "approvals",
+    "claims",
+    "items",
+    "outcomes",
+    "releases",
+    "revocations",
+)
 #: Leaf directory under the campaign key.  Kept as a separate component so a future
 #: campaign-global surface can sit beside the queue rather than inside it.
 QUEUE_DIRECTORY_NAME = "campaign-queue"
@@ -254,6 +344,14 @@ OUTCOME_TASK_IDS_PATH_FIELD = "scheduler_task_ids_path"
 OUTCOME_TASK_IDS_SHA256_FIELD = "scheduler_task_ids_sha256"
 #: Field carrying the reason the task ids could not be read, when they could not.
 OUTCOME_ACCOUNTING_ERROR_FIELD = "accounting_error"
+#: Field carrying the seconds the producer and the terminal validator together
+#: occupied, measured on a monotonic clock from the instant the producer was
+#: started.  ``maximum_cost.wall_hours`` is ONE deadline for both commands, and
+#: that is a property of THIS span -- not of the tick, which also fetches the
+#: campaign queue ref and pushes the claim and this outcome to it.  Recording the
+#: span makes the deadline checkable from the record instead of from a stopwatch
+#: held around the whole invocation.
+OUTCOME_EXECUTION_SECONDS_FIELD = "execution_seconds"
 #: Reason a finished compute item still reserves: it ran, so it may have spent, and no
 #: committed receipt has been measured since it stopped.
 UNREMEASURED_HOLD = "terminal, not yet remeasured"
@@ -273,12 +371,92 @@ UNIDENTIFIED_HOLD = "ran with no recorded task ids; operator release required"
 #: so a second directory cannot see -- and cannot be seen by -- the reservations that
 #: bound the ceiling.
 NON_CANONICAL_STATE_REASON = "non-canonical state dir cannot admit compute"
+#: Fields every queue item record must carry before anything reads it.  The tree
+#: now crosses HOSTS, so a record may have been written by a campaignctl that is
+#: not this one.  A record missing one of these is a refusal naming the file, not
+#: a traceback and not an item that quietly reserves nothing: :func:`summary`,
+#: :func:`ready_item` and :func:`reserved_task_hours` all index these directly,
+#: and an item whose declared cost cannot be reached must never pass as an item
+#: with no cost.
+QUEUE_ITEM_REQUIRED_FIELDS = ("id", "kind", "proposal_digest", "created_at_utc")
 #: Refusal for an item staged from another checkout.  It reserves and is listed here,
 #: because the queue is campaign-global, but its bindings and HEAD are properties of
 #: the repository it was staged from and only a ticker there can validate them.
 FOREIGN_ITEM_REASON = "item was staged from another checkout"
 ADMISSION_LOCK_NAME = "admission.lock"
 ADMISSION_LOCK_LOG = "admission-lock.log"
+#: Every path in the ref's tree: the state families plus the admission log, which is
+#: the record of what admitted what and of every lock broken to get there, and so has
+#: to reach the other hosts rather than stay on the one that wrote it.
+QUEUE_TREE_PATHS = QUEUE_STATE_FAMILIES + (f"logs/{ADMISSION_LOCK_LOG}",)
+#: The queue's own bare git directory, inside the cache.  The state commits are NEVER
+#: written through the checkout's ``.git``: campaign bookkeeping does not belong in
+#: the science repository's history, and a failed push would leave objects and a moved
+#: ref behind in it.  The checkout's ``.git`` is read for HEAD, the receipt identity,
+#: the pin identity and the origin URL, and written never.
+QUEUE_SCRATCH_GIT_NAME = "queue-git"
+#: Same-host serialisation for one cache.  It is a LOCAL file and it is not the thing
+#: that makes admission global: the cross-host serialisation is the ref lease.
+QUEUE_SYNC_LOCK_NAME = "queue-sync.lock"
+#: Index used to build a state commit.  Kept inside the queue's own git directory so
+#: it can never be confused with the checkout's index, and rebuilt from empty every
+#: time so a stale entry cannot add a path this operation did not write.
+QUEUE_STATE_INDEX_NAME = "queue-state-index"
+#: Records written locally whose push did not land.  An outcome, release or revocation
+#: that never reached the ref must be neither forgotten nor believed, so it waits here
+#: and every later operation retries it in the order it was recorded.
+QUEUE_PENDING_NAME = "pending"
+#: The only families a record may wait in.  An unpushed CLAIM is a lost race and is
+#: discarded outright -- retrying it would claim against headroom another host has
+#: already taken -- while an unpushed OUTCOME is spend that really happened, so
+#: dropping it would release a reservation nobody ever counted.
+QUEUE_PENDING_FAMILIES = frozenset({"outcomes", "releases", "revocations"})
+#: Field the returned copy of a record carries when its push has not landed yet.  It
+#: is never written into the record itself: the record is what the ref will hold, and
+#: "this host has not managed to publish it" is a property of this host and this tick.
+QUEUE_PUSH_PENDING_FIELD = "queue_push_pending"
+#: Author of every state commit.  A fixed identity, not the operator's: the commit
+#: records that campaignctl moved the ref, and the acting host, uid and pid are
+#: already in the claim, the outcome and the admission log.
+QUEUE_COMMIT_AUTHOR_NAME = "campaignctl"
+QUEUE_COMMIT_AUTHOR_EMAIL = "campaignctl@localhost"
+#: Environment variables that would redirect a ``git`` invocation away from the
+#: repository or index its arguments name.  campaignctl can run from a git hook, and a
+#: hook is handed ``GIT_INDEX_FILE`` and ``GIT_DIR`` for a DIFFERENT index and
+#: repository, so every git call this module makes clears them first.
+GIT_REDIRECTING_ENVIRONMENT = (
+    "GIT_DIR",
+    "GIT_WORK_TREE",
+    "GIT_INDEX_FILE",
+    "GIT_OBJECT_DIRECTORY",
+    "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+    "GIT_COMMON_DIR",
+    "GIT_NAMESPACE",
+)
+#: A git object name, in either hash size, as ``ls-remote`` and ``rev-parse`` print it.
+GIT_OBJECT_RE = re.compile(r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
+#: Everything ``git push`` says when the remote ref was not where the lease said it
+#: was.  All of them mean the same thing here -- another host moved the ref between
+#: this operation's fetch and its push -- and none of them may be resolved by merging.
+PUSH_REJECTION_MARKERS = (
+    "[rejected]",
+    "[remote rejected]",
+    "stale info",
+    "fetch first",
+    "non-fast-forward",
+    "cannot lock ref",
+)
+#: Refusal for an operation whose push lost the compare-and-swap.  A tick may retry
+#: from the top: re-fetch, re-scan the reservations against the tree that actually
+#: won, and refuse again on the reservation if that is what the tree now says.
+RACE_LOST_REASON = "lost the admission race"
+#: Refusals for a checkout that cannot establish the admission namespace at all.
+#: Every one of them refuses EVERY operation, compute or not: a queue that cannot
+#: prove which namespace it is in cannot be trusted to stage into it either.
+NO_ORIGIN_REASON = "checkout has no origin remote"
+ORIGIN_MISMATCH_REASON = "checkout origin is not this campaign's pinned origin"
+ORIGIN_PIN_UNCOMMITTED_REASON = "campaign origin pin is not committed at HEAD"
+ORIGIN_UNREACHABLE_REASON = "campaign origin is unreachable"
 #: Interpreter flags that change where imports come from, and therefore defeat the
 #: OI-136 guard from inside its own argv: ``-S`` drops ``site``, ``-I`` implies ``-s``
 #: and ``-E``, and ``-E`` discards the environment the arm was declared with.
@@ -294,6 +472,17 @@ class QueueError(RuntimeError):
 
 class AdmissionLockHeld(QueueError):
     """Another ticker holds the exclusive admission lock."""
+
+
+class AdmissionRaceLost(QueueError):
+    """Another host moved the campaign queue ref between this fetch and this push.
+
+    It is not an error in the operation and it is not a reason to merge: the ref
+    that won holds a complete state, and the losing mutation was computed against
+    headroom that host has now taken.  The mutation is discarded, the ref is
+    re-read, and a later tick decides again against what the origin actually
+    says -- which may well be a refusal on the reservation.
+    """
 
 
 class ReceiptAccounting(NamedTuple):
@@ -317,6 +506,24 @@ def _refuse_process_state_root() -> None:
             f"{PROHIBITED_CAMPAIGN_STATE_ROOT_ENV} is forbidden: the campaign "
             "state root is fixed by the passwd home for this uid"
         )
+
+
+def git_environment(**overrides: str) -> dict[str, str]:
+    """Return an environment in which ``git`` obeys its own arguments.
+
+    campaignctl can run from a git hook, and a hook is handed ``GIT_DIR`` and its
+    own ``GIT_INDEX_FILE`` for a different repository and a different index.
+    Those variables OUTRANK ``-C`` and ``--git-dir``, so a HEAD identity check or
+    a state commit made under them would silently measure or write the wrong
+    object.  They are cleared for every git invocation this module makes.
+    """
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if key not in GIT_REDIRECTING_ENVIRONMENT
+    }
+    environment.update(overrides)
+    return environment
 
 
 def _passwd_home() -> Path:
@@ -744,6 +951,11 @@ class Queue:
         self.repo = repo.resolve()
         self.state = (canonical_state_dir() if state is None else state).resolve()
         self.clock = clock
+        # Built on first use rather than in the constructor: constructing a Queue
+        # must not reach the network, because `list` on a laptop with no route to
+        # the origin has to be able to say WHY it refuses rather than fail while
+        # the object is being made.
+        self._sync: QueueSync | None = None
 
     def require_fixed_state_root(self) -> None:
         """Refuse a per-process root added after this queue was constructed."""
@@ -781,14 +993,30 @@ class Queue:
         return self.state / family / f"{item_id}.json"
 
     def item(self, item_id: str) -> dict:
-        return read_object(self.path("items", item_id))
+        path = self.path("items", item_id)
+        return require_queue_item(read_object(path), path)
 
     def items(self) -> list[dict]:
         self.require_fixed_state_root()
         root = self.state / "items"
         if not root.is_dir():
             return []
-        return [read_object(path) for path in sorted(root.glob("*.json"))]
+        return [
+            require_queue_item(read_object(path), path)
+            for path in sorted(root.glob("*.json"))
+        ]
+
+    def sync(self) -> QueueSync:
+        """Return this queue's compare-and-swap channel to the origin's queue ref.
+
+        One channel per cache directory per process.  The LOCK it serialises on is
+        shared with every other ``Queue`` in this process that resolves the same
+        cache, so a nested operation is re-entered rather than deadlocked.
+        """
+        self.require_fixed_state_root()
+        if self._sync is None:
+            self._sync = QueueSync(self)
+        return self._sync
 
     def git_head(self) -> str:
         result = subprocess.run(
@@ -798,6 +1026,7 @@ class Queue:
             stderr=subprocess.STDOUT,
             text=True,
             check=False,
+            env=git_environment(),
         )
         if result.returncode != 0:
             raise QueueError(f"cannot resolve repository HEAD: {result.stdout.strip()}")
@@ -812,12 +1041,37 @@ class Queue:
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             check=False,
+            env=git_environment(),
         )
         if result.returncode != 0:
             raise QueueError(
                 f"bound file must be committed at repository HEAD: {relative}"
             )
         return hashlib.sha256(result.stdout).hexdigest()
+
+    def committed_blob_id(self, path: Path) -> str:
+        """Return the git blob object name of a file as committed at ``HEAD``.
+
+        The admission log records this for the origin pin, so a reader can name
+        the exact object that decided which namespace the admission belonged to
+        without re-deriving it from a path that may since have been rewritten.
+        """
+        relative = inside(path, self.repo).relative_to(self.repo).as_posix()
+        result = subprocess.run(
+            ["git", "-C", str(self.repo), "rev-parse", f"HEAD:{relative}"],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            check=False,
+            env=git_environment(),
+        )
+        blob = result.stdout.strip()
+        if result.returncode != 0 or not GIT_OBJECT_RE.fullmatch(blob):
+            raise QueueError(
+                f"cannot resolve the blob committed at HEAD for {relative}: {blob}"
+            )
+        return blob
 
     def require_committed_binding(self, binding: dict[str, str]) -> None:
         """Require a binding to match the corresponding blob at ``HEAD``."""
@@ -831,6 +1085,771 @@ class Queue:
                 "bound file differs from the file committed at HEAD: "
                 f"{binding['path']}"
             )
+
+
+ORIGIN_URL_SCHEME_RE = re.compile(
+    r"^(?P<scheme>[A-Za-z][A-Za-z0-9+.\-]*)://(?P<host>[^/]*)(?P<path>/.*)?$"
+)
+ORIGIN_URL_SCP_RE = re.compile(
+    r"^(?:(?P<user>[^/@]+)@)?(?P<host>[^/:]+):(?P<path>.+)$"
+)
+
+
+def normalize_origin_url(value: str) -> str:
+    """Return the comparable spelling of a git remote URL.
+
+    Two spellings of ONE repository must not read as two namespaces, and two
+    repositories must not read as one.  Only the differences git itself treats as
+    cosmetic are removed: a trailing ``/``, a trailing ``.git``, and the case of
+    the scheme and the host, which URL schemes and DNS define
+    case-insensitively.  The PATH keeps its case, because a server's paths may be
+    case sensitive and folding them would merge two repositories into one
+    namespace -- which is the failure this whole check exists to prevent.
+
+    Parameters
+    ----------
+    value : str
+        Remote URL as ``git remote get-url`` prints it, or as the pin records it.
+
+    Returns
+    -------
+    str
+        The normalised spelling, for equality comparison only.  It is never
+        handed to git: every git invocation uses the URL the checkout actually
+        configured, after that URL has been proven equal to the pinned one.
+    """
+    text = require_text(value, field="origin url").rstrip("/")
+    if text.endswith(".git"):
+        text = text[: -len(".git")]
+    text = text.rstrip("/")
+    if not text:
+        raise QueueError("origin url must not be empty after normalisation")
+    scheme_match = ORIGIN_URL_SCHEME_RE.fullmatch(text)
+    if scheme_match is not None:
+        return (
+            f"{scheme_match.group('scheme').lower()}://"
+            f"{scheme_match.group('host').lower()}"
+            f"{scheme_match.group('path') or ''}"
+        )
+    scp_match = ORIGIN_URL_SCP_RE.fullmatch(text)
+    if scp_match is not None:
+        user = scp_match.group("user")
+        return (
+            f"{user + '@' if user else ''}"
+            f"{scp_match.group('host').lower()}:{scp_match.group('path')}"
+        )
+    # A local path, which is what the suite's throwaway origin is.  Nothing about
+    # it is case insensitive on any filesystem this campaign runs on, so it is
+    # compared exactly as written.
+    return text
+
+
+def checkout_origin_url(queue: Queue) -> str:
+    """Return the checkout's ``origin`` URL, or refuse.
+
+    A checkout with no ``origin`` has no admission namespace.  That is a refusal
+    rather than a fallback to the passwd home: falling back is precisely how one
+    campaign came to have as many inventories as it had hosts.
+    """
+    result = subprocess.run(
+        ["git", "-C", str(queue.repo), "remote", "get-url", "origin"],
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        check=False,
+        env=git_environment(),
+    )
+    if result.returncode != 0:
+        raise QueueError(
+            f"{NO_ORIGIN_REASON}: the campaign's admission namespace is the "
+            f"origin remote, so there is nothing to admit into: "
+            f"{result.stdout.strip()}"
+        )
+    return require_text(result.stdout, field="origin url")
+
+
+def campaign_origin(queue: Queue) -> dict[str, str]:
+    """Return the origin this queue may use, or refuse in one of four directions.
+
+    The queue refuses EVERY operation -- compute or not -- when the checkout has
+    no ``origin``; when its URL differs from the pinned one after normalisation;
+    when the pin is not committed and byte-identical to its blob at ``HEAD``; or
+    when the pin names another campaign.  A queue that cannot prove which
+    namespace it is in must not stage into it either: an item staged into the
+    wrong namespace reserves nothing where it will actually run.
+
+    Parameters
+    ----------
+    queue : Queue
+        Queue whose repository carries the pin and configures the remote.
+
+    Returns
+    -------
+    dict[str, str]
+        ``origin_url`` exactly as the checkout configured it, and the pin's
+        identity for the admission log.
+
+    Raises
+    ------
+    QueueError
+        In every one of those four directions, each naming what it measured.
+    """
+    path, pin_sha256, _head = committed_file_identity(
+        queue,
+        CAMPAIGN_ORIGIN_FILE,
+        missing_label="campaign origin pin",
+        uncommitted_reason=ORIGIN_PIN_UNCOMMITTED_REASON,
+    )
+    pin = require_object(
+        read_object(path), field="campaign origin pin", keys=CAMPAIGN_ORIGIN_KEYS
+    )
+    if pin["schema_version"] != 1:
+        raise QueueError("campaign origin pin schema_version must be 1")
+    for field, expected in (
+        ("campaign_key", CAMPAIGN_KEY),
+        ("ruling_record", R5_DECISION_RECORD),
+        ("ruling_record_sha256", CAMPAIGN_RULING_RECORD_SHA256),
+        ("queue_ref", CAMPAIGN_QUEUE_REF),
+    ):
+        actual = require_text(pin[field], field=f"campaign origin pin {field}")
+        if actual != expected:
+            raise QueueError(
+                f"campaign origin pin {field} is {actual!r}, which is not this "
+                f"campaign's {expected!r}"
+            )
+    pinned = require_text(pin["origin_url"], field="campaign origin pin origin_url")
+    configured = checkout_origin_url(queue)
+    if normalize_origin_url(configured) != normalize_origin_url(pinned):
+        raise QueueError(
+            f"{ORIGIN_MISMATCH_REASON}: origin is {configured!r} and the pin at "
+            f"{CAMPAIGN_ORIGIN_FILE.as_posix()} names {pinned!r}; a clone whose "
+            "origin is a different repository is a different repository"
+        )
+    return {
+        "origin_url": configured,
+        "pin_path": CAMPAIGN_ORIGIN_FILE.as_posix(),
+        "pin_sha256": pin_sha256,
+    }
+
+
+class _SyncLock:
+    """Same-host serialisation for one queue cache.
+
+    Re-entrant per THREAD and shared by every ``Queue`` in this process that
+    resolves the same cache: a second lock object on the same file would
+    deadlock a nested operation instead of re-entering it.  This lock does NOT
+    make admission global -- it cannot see another host at all.  It keeps two
+    processes on one host from interleaving a fetch, a mutation and a push
+    through the same working files; the cross-host serialisation is the lease.
+    """
+
+    def __init__(self, path: Path) -> None:
+        self.path = path
+        self.guard = threading.RLock()
+        self.depth = 0
+        self.descriptor: int | None = None
+
+    @contextlib.contextmanager
+    def held(self) -> Iterator[None]:
+        with self.guard:
+            if self.depth == 0:
+                self.path.parent.mkdir(parents=True, exist_ok=True)
+                self.descriptor = os.open(
+                    self.path, os.O_CREAT | os.O_RDWR, 0o644
+                )
+                fcntl.flock(self.descriptor, fcntl.LOCK_EX)
+            self.depth += 1
+            try:
+                yield
+            finally:
+                self.depth -= 1
+                if self.depth == 0 and self.descriptor is not None:
+                    fcntl.flock(self.descriptor, fcntl.LOCK_UN)
+                    os.close(self.descriptor)
+                    self.descriptor = None
+
+
+_SYNC_LOCKS: dict[Path, _SyncLock] = {}
+_SYNC_LOCKS_GUARD = threading.Lock()
+
+
+def _sync_lock(path: Path) -> _SyncLock:
+    """Return the ONE lock object for a cache path in this process."""
+    with _SYNC_LOCKS_GUARD:
+        lock = _SYNC_LOCKS.get(path)
+        if lock is None:
+            lock = _SyncLock(path)
+            _SYNC_LOCKS[path] = lock
+        return lock
+
+
+class QueueSync:
+    """The origin's queue ref is the admission namespace; this is the CAS on it.
+
+    The passwd-home directory is a CACHE of one git tree plus purely local files
+    -- the producer and validator logs, the run directories, the admission lock,
+    and this object's own git directory.  Every operation fetches the ref, makes
+    the cached state families EXACTLY that tree, does its work, and lands any
+    mutation with ``--force-with-lease`` against the sha it fetched.  A rejected
+    push means another host moved the ref: the mutation is discarded and the
+    operation refuses, because merging two states each computed against headroom
+    the other had not taken is how 502 hours fit under a ceiling of 500.
+    """
+
+    def __init__(self, queue: Queue) -> None:
+        self.queue = queue
+        self.cache = queue.state
+        self.scratch = self.cache / QUEUE_SCRATCH_GIT_NAME
+        self.lock = _sync_lock(self.cache / QUEUE_SYNC_LOCK_NAME)
+        self.depth = 0
+        #: Sha the current operation's lease is taken against; ``None`` when the
+        #: ref does not exist and the lease is against the empty value.
+        self.base: str | None = None
+        #: Sha whose tree the cache was last made equal to, and the fingerprint
+        #: it had immediately afterwards.  Together they say whether the cache is
+        #: still that tree, so an unchanged ref does not pay for a re-extraction
+        #: and a LOCALLY changed cache is reset even when the ref stood still.
+        self.cache_sha: str | None = None
+        self.fingerprint: dict[str, str] = {}
+        self.scratch_origin: str | None = None
+        #: Pin and URL this channel last proved, re-measured every refresh: a
+        #: working-tree edit to the pin must not be believed for a second
+        #: operation just because the first one passed.
+        self.origin: dict[str, str] | None = None
+
+    # -- git plumbing ----------------------------------------------------------
+
+    def git(
+        self,
+        *arguments: str,
+        check: bool = True,
+        environment: dict[str, str] | None = None,
+    ) -> subprocess.CompletedProcess:
+        """Run one git command against the queue's own bare git directory."""
+        result = subprocess.run(
+            ["git", "--git-dir", str(self.scratch), *arguments],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            check=False,
+            env=git_environment() if environment is None else environment,
+        )
+        if check and result.returncode != 0:
+            raise QueueError(
+                f"campaign queue git failed: git {' '.join(arguments)}: "
+                f"{result.stdout.strip()}"
+            )
+        return result
+
+    def author_environment(self) -> dict[str, str]:
+        """Return the environment that names campaignctl as the commit's author."""
+        return git_environment(
+            GIT_AUTHOR_NAME=QUEUE_COMMIT_AUTHOR_NAME,
+            GIT_AUTHOR_EMAIL=QUEUE_COMMIT_AUTHOR_EMAIL,
+            GIT_COMMITTER_NAME=QUEUE_COMMIT_AUTHOR_NAME,
+            GIT_COMMITTER_EMAIL=QUEUE_COMMIT_AUTHOR_EMAIL,
+        )
+
+    def ensure_scratch(self, origin_url: str) -> None:
+        """Create the queue's own bare git directory and point it at the origin."""
+        if not (self.scratch / "HEAD").is_file():
+            self.cache.mkdir(parents=True, exist_ok=True)
+            result = subprocess.run(
+                ["git", "init", "--bare", "-q", str(self.scratch)],
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                check=False,
+                env=git_environment(),
+            )
+            if result.returncode != 0:
+                raise QueueError(
+                    f"cannot create the campaign queue git directory "
+                    f"{self.scratch}: {result.stdout.strip()}"
+                )
+            # A commit that only exists here must not be collected between the
+            # push that created it and the fetch that reads it back, and this
+            # directory is never a checkout, so `add` needs an explicit worktree.
+            self.git("config", "gc.auto", "0")
+            self.git("config", "core.bare", "false")
+            self.scratch_origin = None
+        if self.scratch_origin != origin_url:
+            self.git("config", "remote.origin.url", origin_url)
+            self.scratch_origin = origin_url
+
+    def remote_head(self) -> str | None:
+        """Return the origin's current queue-ref sha, or ``None`` when it is unset.
+
+        Raises
+        ------
+        QueueError
+            If the origin cannot be reached.  No network is NO ADMISSION: the
+            reservations that bound the ceiling live in that ref, and a queue
+            that cannot read them cannot tell an empty campaign from a full one.
+        """
+        result = self.git(
+            "ls-remote", "origin", CAMPAIGN_QUEUE_REF, check=False
+        )
+        if result.returncode != 0:
+            raise QueueError(
+                f"{ORIGIN_UNREACHABLE_REASON}: {self.scratch_origin}: no "
+                f"operation is possible without {CAMPAIGN_QUEUE_REF}, because "
+                f"every reservation that bounds the R5 ceiling lives in it: "
+                f"{result.stdout.strip()}"
+            )
+        for line in result.stdout.splitlines():
+            sha, _, name = line.partition("\t")
+            if name.strip() == CAMPAIGN_QUEUE_REF and GIT_OBJECT_RE.fullmatch(
+                sha.strip()
+            ):
+                return sha.strip()
+        return None
+
+    def local_head(self) -> str | None:
+        """Return the sha the queue's own copy of the ref points at."""
+        result = self.git(
+            "rev-parse", "--verify", "--quiet", f"{CAMPAIGN_QUEUE_REF}^{{commit}}",
+            check=False,
+        )
+        sha = result.stdout.strip()
+        if result.returncode != 0 or not GIT_OBJECT_RE.fullmatch(sha):
+            return None
+        return sha
+
+    # -- the cache -------------------------------------------------------------
+
+    def state_fingerprint(self) -> dict[str, str]:
+        """Return a digest per cached state file, for mutation detection.
+
+        Covers every file under the state families rather than only ``*.json``,
+        so a path this module does not write is still noticed and still resets
+        the cache instead of being carried silently into a commit.
+        """
+        values: dict[str, str] = {}
+        for family in QUEUE_STATE_FAMILIES:
+            root = self.cache / family
+            if not root.is_dir():
+                continue
+            for path in sorted(root.rglob("*")):
+                if path.is_file():
+                    values[
+                        f"{family}/{path.relative_to(root).as_posix()}"
+                    ] = sha256_file(path)
+        log = self.cache / "logs" / ADMISSION_LOCK_LOG
+        if log.is_file():
+            values[f"logs/{ADMISSION_LOCK_LOG}"] = sha256_file(log)
+        return values
+
+    def tree_target(self, name: str) -> Path:
+        """Return where one tree entry belongs in the cache, or refuse.
+
+        Fail-closed on anything unmodelled.  A tree entry outside the families
+        this module knows would be extracted somewhere nothing reads and,
+        worse, would be dropped from the next commit -- so a queue running an
+        older campaignctl would silently delete a newer one's records.
+        """
+        parts = PurePosixPath(name).parts
+        if not parts or ".." in parts or name.startswith("/"):
+            raise QueueError(f"campaign queue tree holds an unusable path: {name!r}")
+        if len(parts) == 2 and parts[0] in QUEUE_STATE_FAMILIES:
+            return self.cache / parts[0] / parts[1]
+        if name == f"logs/{ADMISSION_LOCK_LOG}":
+            return self.cache / "logs" / ADMISSION_LOCK_LOG
+        raise QueueError(
+            f"campaign queue tree holds a path this campaignctl does not model, "
+            f"so it must not be rewritten: {name!r}"
+        )
+
+    def extract_tree(self, sha: str) -> None:
+        """Write one commit's tree into the cache's state families."""
+        result = subprocess.run(
+            ["git", "--git-dir", str(self.scratch), "archive", "--format=tar", sha],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+            env=git_environment(),
+        )
+        if result.returncode != 0:
+            raise QueueError(
+                f"cannot read the campaign queue tree at {sha}: "
+                f"{result.stderr.decode('utf-8', 'replace').strip()}"
+            )
+        with tarfile.open(fileobj=io.BytesIO(result.stdout), mode="r:") as archive:
+            for member in archive.getmembers():
+                if member.isdir():
+                    continue
+                if not member.isfile():
+                    raise QueueError(
+                        f"campaign queue tree holds an entry that is not a file: "
+                        f"{member.name!r}"
+                    )
+                target = self.tree_target(member.name)
+                source = archive.extractfile(member)
+                if source is None:
+                    raise QueueError(
+                        f"campaign queue tree entry cannot be read: {member.name!r}"
+                    )
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(source.read())
+
+    def reset_cache(self, sha: str | None) -> None:
+        """Make the cached state families EXACTLY the given tree.
+
+        A cached file the tree lacks is DELETED rather than kept.  A record only
+        one host has is a record no other host counts, and that is the whole
+        defect the ref exists to close; keeping it would rebuild, inside the
+        cache, the per-host inventory this design removed.  Everything else in
+        the directory -- the run directories, the producer and validator logs,
+        the admission lock, the pending records and this git directory -- is
+        local by construction and is left untouched.
+        """
+        for family in QUEUE_STATE_FAMILIES:
+            shutil.rmtree(self.cache / family, ignore_errors=True)
+        with contextlib.suppress(FileNotFoundError):
+            (self.cache / "logs" / ADMISSION_LOCK_LOG).unlink()
+        if sha is not None:
+            self.extract_tree(sha)
+        self.cache_sha = sha
+        self.fingerprint = self.state_fingerprint()
+
+    # -- the operation cycle ---------------------------------------------------
+
+    def refresh(self, *, force: bool = False) -> None:
+        """Steps (a) and (b): fetch the ref and make the cache equal to its tree."""
+        origin = campaign_origin(self.queue)
+        self.ensure_scratch(origin["origin_url"])
+        self.origin = origin
+        remote = self.remote_head()
+        if remote is not None and remote != self.local_head():
+            self.git(
+                "fetch",
+                "--no-tags",
+                "origin",
+                f"+{CAMPAIGN_QUEUE_REF}:{CAMPAIGN_QUEUE_REF}",
+            )
+            # Read the ref back rather than trusting the `ls-remote` answer: the
+            # origin may have moved between the two, and the lease has to be
+            # taken against the tree this operation is about to READ.
+            remote = self.local_head()
+            if remote is None:
+                raise QueueError(
+                    f"{ORIGIN_UNREACHABLE_REASON}: {CAMPAIGN_QUEUE_REF} was "
+                    "fetched but is not readable afterwards"
+                )
+        self.base = remote
+        if force or remote != self.cache_sha or self.state_fingerprint() != self.fingerprint:
+            self.reset_cache(remote)
+
+    def discard(self) -> None:
+        """Throw away a local mutation that never reached the ref."""
+        self.refresh(force=True)
+
+    def push(self, message: str) -> str:
+        """Steps (d) and (e): commit the cache's state and CAS the origin's ref.
+
+        Parameters
+        ----------
+        message : str
+            Commit subject, naming the operation and the item it acted on.
+
+        Returns
+        -------
+        str
+            The commit the ref now points at.
+
+        Raises
+        ------
+        AdmissionRaceLost
+            If the lease failed, which means another host moved the ref.
+        QueueError
+            If the commit could not be built or the push could not be delivered.
+        """
+        index = self.scratch / QUEUE_STATE_INDEX_NAME
+        with contextlib.suppress(FileNotFoundError):
+            index.unlink()
+        environment = git_environment(GIT_INDEX_FILE=str(index))
+        self.git("read-tree", "--empty", environment=environment)
+        present = [
+            path
+            for path in QUEUE_TREE_PATHS
+            if (self.cache / path).is_dir() or (self.cache / path).is_file()
+        ]
+        if present:
+            self.git(
+                "--work-tree",
+                str(self.cache),
+                "add",
+                "--all",
+                "--force",
+                "--",
+                *present,
+                environment=environment,
+            )
+        tree = self.git("write-tree", environment=environment).stdout.strip()
+        arguments = ["commit-tree", tree]
+        if self.base is not None:
+            arguments += ["-p", self.base]
+        commit = self.git(
+            *arguments, "-m", message, environment=self.author_environment()
+        ).stdout.strip()
+        if not GIT_OBJECT_RE.fullmatch(commit):
+            raise QueueError(f"campaign queue commit-tree returned {commit!r}")
+        # An absent ref leases against the EMPTY value, which git reads as "this
+        # ref must not already exist".  Without that, the first push of a
+        # campaign would be an unconditional create and two hosts starting at
+        # once would each overwrite the other's first admission.
+        lease = f"--force-with-lease={CAMPAIGN_QUEUE_REF}:{self.base or ''}"
+        result = self.git(
+            "push", "origin", f"{commit}:{CAMPAIGN_QUEUE_REF}", lease, check=False
+        )
+        if result.returncode != 0:
+            output = result.stdout.strip()
+            if any(marker in output for marker in PUSH_REJECTION_MARKERS):
+                raise AdmissionRaceLost(
+                    f"{RACE_LOST_REASON}: {CAMPAIGN_QUEUE_REF} moved away from "
+                    f"{self.base or 'the empty value'} between this operation's "
+                    f"fetch and its push, so {message!r} was computed against a "
+                    f"state another host has replaced: {output}"
+                )
+            raise QueueError(
+                f"cannot publish {message!r} to {CAMPAIGN_QUEUE_REF} at "
+                f"{self.scratch_origin}: {output}"
+            )
+        self.git("update-ref", CAMPAIGN_QUEUE_REF, commit)
+        self.base = commit
+        self.cache_sha = commit
+        self.fingerprint = self.state_fingerprint()
+        return commit
+
+    def flush_pending(self) -> list[str]:
+        """Retry every record an earlier tick wrote but could not land.
+
+        Retried in the order recorded, because a release only means anything
+        after the outcome it releases.  A retry that loses the race or cannot be
+        delivered leaves the record pending and the cache reset to the ref: the
+        item stays claimed there and therefore keeps RESERVING on every host,
+        which is the fail-closed direction and the reason an unpushed outcome
+        releases nothing anywhere.
+        """
+        root = self.cache / QUEUE_PENDING_NAME
+        if not root.is_dir():
+            return []
+        landed: list[str] = []
+        for path in sorted(root.glob("*.json")):
+            entry = read_object(path)
+            family = require_text(entry.get("family"), field="pending family")
+            item_id = require_text(entry.get("id"), field="pending id")
+            message = require_text(entry.get("message"), field="pending message")
+            record = entry.get("record")
+            if family not in QUEUE_PENDING_FAMILIES or not isinstance(record, dict):
+                raise QueueError(
+                    f"pending campaign queue record is unmodelled: {path}"
+                )
+            validate_id(item_id)
+            atomic_json(self.cache / family / f"{item_id}.json", record)
+            try:
+                self.push(message)
+            except QueueError:
+                # Including AdmissionRaceLost.  Neither forgotten nor believed:
+                # the record stays here and the next operation tries again.
+                self.discard()
+                break
+            path.unlink()
+            landed.append(f"{family}/{item_id}")
+        return landed
+
+    def defer(self, family: str, item_id: str, record: dict, message: str) -> Path:
+        """Set aside a record whose push did not land, and un-apply it locally."""
+        if family not in QUEUE_PENDING_FAMILIES:
+            raise QueueError(f"{family} records are not deferrable")
+        root = self.cache / QUEUE_PENDING_NAME
+        root.mkdir(parents=True, exist_ok=True)
+        # A sequence, because order matters: a release means nothing before the
+        # outcome it releases, and a millisecond clock could tie.
+        existing = sorted(root.glob("*.json"))
+        sequence = 1 + max(
+            (int(path.name.split("-", 1)[0]) for path in existing), default=0
+        )
+        path = root / f"{sequence:06d}-{family}-{item_id}.json"
+        atomic_json(
+            path,
+            {
+                "schema_version": 1,
+                "family": family,
+                "id": item_id,
+                "message": message,
+                "recorded_at_utc": self.queue.clock(),
+                "record": record,
+            },
+            exclusive=True,
+        )
+        try:
+            self.discard()
+        except QueueError:
+            # The origin is very likely unreachable -- that is usually WHY the
+            # push failed -- so the reset that would normally un-apply the record
+            # is not available.  Un-apply it here instead: a read on this host
+            # must not believe a record the campaign has never seen.  The next
+            # successful refresh restores whatever the ref actually holds.
+            with contextlib.suppress(FileNotFoundError):
+                (self.cache / family / f"{item_id}.json").unlink()
+        return path
+
+
+@contextlib.contextmanager
+def queue_operation(queue: Queue, message: str) -> Iterator[QueueSync]:
+    """Run one queue operation as a compare-and-swap on the origin's queue ref.
+
+    Under the local lock: fetch the ref, make the cache exactly its tree, retry
+    anything an earlier tick left pending, run the operation, and -- only if the
+    cached state actually changed -- commit and push with a lease against the
+    fetched sha.  A rejected push discards the mutation, re-reads the ref, and
+    raises :class:`AdmissionRaceLost`; nothing is ever merged.
+
+    A NESTED operation is part of the outer one's single push.  That is what
+    makes the admission window one push: the headroom scan and the claim it
+    admits are computed against one fetched tree and land together or not at
+    all, so two hosts cannot both claim against the same sha.
+
+    Parameters
+    ----------
+    queue : Queue
+        Queue whose cache and origin this operation acts on.
+    message : str
+        Commit subject naming the operation and its item.
+
+    Yields
+    ------
+    QueueSync
+        The channel, whose ``base`` is the sha this operation's lease is against.
+    """
+    sync = queue.sync()
+    with sync.lock.held():
+        if sync.depth > 0:
+            sync.depth += 1
+            try:
+                yield sync
+            finally:
+                sync.depth -= 1
+            return
+        sync.depth += 1
+        try:
+            sync.refresh()
+            sync.flush_pending()
+            before = dict(sync.fingerprint)
+            yield sync
+            if sync.state_fingerprint() != before:
+                sync.push(message)
+        except BaseException:
+            # Whatever went wrong, a mutation that did not land must not be left
+            # where the next read would count it.  A discard that cannot reach
+            # the origin is suppressed so the ORIGINAL refusal is the one raised.
+            with contextlib.suppress(Exception):
+                sync.discard()
+            raise
+        finally:
+            sync.depth -= 1
+
+
+def refresh_queue(queue: Queue) -> None:
+    """Make the cache exactly the origin's queue tree, and retry what is pending.
+
+    Every read of the queue's state is a read of the ORIGIN's tree: the ready
+    set, the item states and the reservations that bound the R5 ceiling are
+    properties of the campaign, not of the host that happens to be ticking.
+    """
+    with queue_operation(queue, f"refresh {CAMPAIGN_QUEUE_REF}"):
+        pass
+
+
+def commit_state_record(
+    queue: Queue,
+    family: str,
+    item_id: str,
+    record: dict,
+    message: str,
+    *,
+    exclusive: bool = True,
+) -> dict:
+    """Write one deferrable state record and land it on the origin's queue ref.
+
+    Outcomes, releases and revocations record something that ALREADY HAPPENED,
+    so a push that does not land must not discard them: the record waits in the
+    cache's pending area and every later operation retries it.  Until it lands
+    the item stays claimed in the ref and keeps reserving on every host, so the
+    conservative direction is the automatic one.  The returned copy then carries
+    :data:`QUEUE_PUSH_PENDING_FIELD`, which is a property of this tick and is
+    never written into the record itself.
+
+    Returns
+    -------
+    dict
+        The record, with ``queue_push_pending`` added when it has not landed.
+    """
+    sync = queue.sync()
+    try:
+        with queue_operation(queue, message):
+            atomic_json(queue.path(family, item_id), record, exclusive=exclusive)
+    except QueueError as exc:
+        if sync.depth:
+            # An enclosing operation owns the push, so deferring here would set
+            # aside a record that operation is still holding open.
+            raise
+        sync.defer(family, item_id, record, message)
+        return {**record, QUEUE_PUSH_PENDING_FIELD: str(exc)}
+    return record
+
+
+def publish_cached_state(queue: Queue, message: str) -> str | None:
+    """Land whatever the cache now holds, WITHOUT resetting it to the ref first.
+
+    Every ordinary operation resets the cache before it acts, so a record placed
+    in the cache by hand -- migrating an existing per-host queue into the ref, or
+    repairing one after an operator edit -- would be deleted before it could be
+    published.  This is the one entry point that publishes such a state, and it
+    is still a compare-and-swap: it learns the ref's current sha, leases against
+    it, and refuses on a race rather than overwriting another host's records.
+    """
+    sync = queue.sync()
+    with sync.lock.held():
+        origin = campaign_origin(queue)
+        sync.ensure_scratch(origin["origin_url"])
+        remote = sync.remote_head()
+        if remote is not None and remote != sync.local_head():
+            sync.git(
+                "fetch",
+                "--no-tags",
+                "origin",
+                f"+{CAMPAIGN_QUEUE_REF}:{CAMPAIGN_QUEUE_REF}",
+            )
+            remote = sync.local_head()
+        sync.base = remote
+        if not sync.state_fingerprint() and remote is not None:
+            # Nothing local to publish and a ref that already holds records:
+            # pushing an empty tree here would DELETE them.
+            return None
+        return sync.push(message)
+
+
+def require_queue_item(value: dict, path: Path) -> dict:
+    """Return an item record after checking the fields every reader indexes.
+
+    The queue tree crosses hosts, so a record here may have been written by a
+    campaignctl that is not this one.  A missing field is a refusal naming the
+    file: the alternative is a ``KeyError`` from inside a reservation scan, which
+    reads as a crash rather than as "this queue cannot be scanned right now".
+    """
+    missing = [field for field in QUEUE_ITEM_REQUIRED_FIELDS if field not in value]
+    if missing:
+        raise QueueError(
+            f"queue item record is missing required field(s) "
+            f"{', '.join(missing)}: {path}"
+        )
+    return value
 
 
 def validate_id(value: str) -> None:
@@ -1069,6 +2088,34 @@ def stage(
     timeout_seconds: int,
     campaign_contract: str | None = None,
 ) -> dict:
+    with queue_operation(queue, f"stage {item_id}"):
+        return _stage(
+            queue,
+            item_id,
+            description,
+            kind,
+            cwd,
+            depends_on,
+            bind,
+            argv,
+            timeout_seconds,
+            campaign_contract,
+        )
+
+
+def _stage(
+    queue: Queue,
+    item_id: str,
+    description: str,
+    kind: str,
+    cwd: str,
+    depends_on: list[str],
+    bind: list[str],
+    argv: list[str],
+    timeout_seconds: int,
+    campaign_contract: str | None = None,
+) -> dict:
+    """Stage one item into the fetched queue tree, under the caller's operation."""
     validate_id(item_id)
     if not description.strip():
         raise QueueError("description is required")
@@ -1778,6 +2825,7 @@ def summary(queue: Queue) -> dict:
     reader can tell "waiting for me" from "waiting for another checkout" without
     inferring it from a path.
     """
+    refresh_queue(queue)
     values = {"staged": 0, "approved": 0, "succeeded": 0, "failed": 0,
               "refused": 0, "stale": 0, "revoked": 0, "outcome-unknown": 0}
     rows = []
@@ -1801,6 +2849,14 @@ def approval_phrase(item: dict) -> str:
 
 
 def approve(queue: Queue, item_id: str, supplied_digest: str, interactive: bool = True) -> dict:
+    with queue_operation(queue, f"approve {item_id}"):
+        return _approve(queue, item_id, supplied_digest, interactive)
+
+
+def _approve(
+    queue: Queue, item_id: str, supplied_digest: str, interactive: bool
+) -> dict:
+    """Approve one item against the fetched tree, under the caller's operation."""
     item = queue.item(item_id)
     if state_of(queue, item) != "staged":
         raise QueueError(f"item is not staged: {state_of(queue, item)}")
@@ -1828,6 +2884,16 @@ def approve(queue: Queue, item_id: str, supplied_digest: str, interactive: bool 
 
 
 def revoke(queue: Queue, item_id: str, interactive: bool = True) -> dict:
+    """Retire an item that never ran, and land the revocation on the queue ref.
+
+    The state is read from the ORIGIN's tree, and the typed phrase is taken
+    OUTSIDE the operation: holding the ref's local lock while a human types would
+    stall every tick on the host.  The record itself cannot release a claimed
+    item -- :func:`state_of` reads the claim first and :func:`reservation_hold`
+    holds a claimed item whatever else exists -- so the window between the check
+    and the push cannot free hours that are being spent.
+    """
+    refresh_queue(queue)
     item = queue.item(item_id)
     if state_of(queue, item) not in {"staged", "approved", "refused"}:
         raise QueueError(f"item cannot be revoked from state {state_of(queue, item)}")
@@ -1839,8 +2905,9 @@ def revoke(queue: Queue, item_id: str, interactive: bool = True) -> dict:
         if input("> ").strip() != phrase:
             raise QueueError("revocation phrase did not match")
     receipt = {"schema_version": 1, "id": item_id, "revoked_at_utc": queue.clock()}
-    atomic_json(queue.path("revocations", item_id), receipt, exclusive=True)
-    return receipt
+    return commit_state_record(
+        queue, "revocations", item_id, receipt, f"revoke {item_id}"
+    )
 
 
 def queue_record_identity(queue: Queue) -> dict[str, object]:
@@ -1931,6 +2998,7 @@ def release(
     dict
         The written release record.
     """
+    refresh_queue(queue)
     item = queue.item(item_id)
     state = state_of(queue, item)
     if not queue.path("claims", item_id).exists():
@@ -2016,8 +3084,20 @@ def release(
         "released_by": f"{os.environ.get('USER', 'unknown')}@{socket.gethostname()}",
         "interactive_tty": interactive,
     }
-    atomic_json(queue.path("releases", item_id), receipt, exclusive=True)
-    log_admission_event(queue, {"event": "reservation-released", **receipt})
+    with queue_operation(queue, f"release {item_id}") as sync:
+        # One push for the record and its log line: a released reservation that
+        # no other host can see is exactly the split this ref closed, and a log
+        # line without its record would attest to a release that never happened.
+        atomic_json(queue.path("releases", item_id), receipt, exclusive=True)
+        log_admission_event(
+            queue,
+            {
+                "event": "reservation-released",
+                "queue_ref": CAMPAIGN_QUEUE_REF,
+                "fetched_ref_sha": sync.base or "",
+                **receipt,
+            },
+        )
     return receipt
 
 
@@ -2075,8 +3155,14 @@ def write_outcome(queue: Queue, item: dict, status: str, **extra: object) -> dic
         replace_refusal = existing.get("status") == "refused"
         if not replace_refusal:
             raise QueueError(f"refusing to overwrite: {outcome_path}")
-    atomic_json(outcome_path, value, exclusive=not replace_refusal)
-    return value
+    return commit_state_record(
+        queue,
+        "outcomes",
+        str(item["id"]),
+        value,
+        f"outcome {item['id']} {status}",
+        exclusive=not replace_refusal,
+    )
 
 
 def run_logged_command(
@@ -2255,8 +3341,9 @@ def run_compute_item(queue: Queue, item: dict, env: dict[str, str]) -> tuple[int
     task_ids_path = run_directory / TASK_IDS_FILE_NAME
     command_env = env.copy()
     command_env[CAMPAIGN_TASK_IDS_FILE_ENV] = str(task_ids_path)
-    deadline = time.monotonic() + wall_seconds
-    producer_timeout = min(timeout_seconds, deadline - time.monotonic())
+    started = time.monotonic()
+    deadline = started + wall_seconds
+    producer_timeout = min(timeout_seconds, deadline - started)
     producer_returncode, producer_error = run_logged_command(
         item["argv"],
         cwd=resolve_repo_path(queue.repo, item["cwd"]),
@@ -2317,6 +3404,7 @@ def run_compute_item(queue: Queue, item: dict, env: dict[str, str]) -> tuple[int
         "wall_budget_exhausted": wall_budget_exhausted,
         RUN_DIRECTORY_FIELD: str(run_directory),
         OUTCOME_TASK_IDS_PATH_FIELD: str(task_ids_path),
+        OUTCOME_EXECUTION_SECONDS_FIELD: round(time.monotonic() - started, 3),
         **terminal_plan(contract, validator_returncode),
     }
     if accounting_error is None:
@@ -2332,6 +3420,12 @@ def run_compute_item(queue: Queue, item: dict, env: dict[str, str]) -> tuple[int
     if validator_error is not None:
         extra["validator_error"] = validator_error
     outcome = write_outcome(queue, item, status, **extra)
+    if QUEUE_PUSH_PENDING_FIELD in outcome:
+        # The run happened, but the campaign does not know it yet.  A terminal
+        # exit code here would report that the accounting landed: it has not, the
+        # item is still claimed and RESERVING in the ref, and every later
+        # operation retries the push before it does anything else.
+        return 5, outcome
     return (0 if validator_returncode == 0 else 3), outcome
 
 
@@ -2356,7 +3450,9 @@ def run_non_compute_item(
             error=error,
             log=str(log_path),
         )
-        return 3, outcome
+        return (
+            5 if QUEUE_PUSH_PENDING_FIELD in outcome else 3
+        ), outcome
     status = "succeeded" if returncode == 0 else "failed"
     outcome = write_outcome(
         queue,
@@ -2365,6 +3461,8 @@ def run_non_compute_item(
         returncode=returncode,
         log=str(log_path),
     )
+    if QUEUE_PUSH_PENDING_FIELD in outcome:
+        return 5, outcome
     return (0 if returncode == 0 else 3), outcome
 
 
@@ -2395,11 +3493,20 @@ def admission_lock_seconds(item: dict) -> float:
 
 
 def log_admission_event(queue: Queue, event: dict[str, object]) -> None:
-    """Append one admission-lock event to the queue log and to stderr."""
-    log_path = queue.state / "logs" / ADMISSION_LOCK_LOG
-    log_path.parent.mkdir(parents=True, exist_ok=True)
-    with log_path.open("a") as handle:
-        handle.write(canonical(event) + "\n")
+    """Append one admission event to the campaign's log and to stderr.
+
+    The log lives in the queue ref's tree, so an event recorded OUTSIDE an
+    operation takes its own compare-and-swap: an append only this host had would
+    be reset away by the next fetch, and the record of a lock broken here is
+    exactly the thing another host has to be able to read.  Inside an operation
+    it joins that operation's single push, so the event and the record it
+    attests to land together or not at all.
+    """
+    with queue_operation(queue, f"log {event.get('event', 'admission-event')}"):
+        log_path = queue.state / "logs" / ADMISSION_LOCK_LOG
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        with log_path.open("a") as handle:
+            handle.write(canonical(event) + "\n")
     print(f"campaignctl: {canonical(event)}", file=sys.stderr)
 
 
@@ -2525,9 +3632,18 @@ def admission_lock(queue: Queue, item: dict) -> Iterator[Path]:
 
 
 def admit(queue: Queue, item: dict) -> tuple[int, dict] | None:
-    """Check R5 headroom and claim ``item`` under one exclusive lock.
+    """Check R5 headroom and claim ``item`` in ONE push against the queue ref.
 
-    A compute item is admissible only from the canonical state directory, and
+    The reservation scan and the claim that admits the item are computed against
+    ONE fetched tree and land together, leased against the sha they were computed
+    from.  So two hosts cannot both claim against the same sha: the second push
+    is rejected, its claim is discarded, and the tick refuses with the race
+    reason for a later tick to retry -- by which time the winner's claim is in
+    the tree and the reservation scan sees it.  Nothing is ever merged: merging
+    two claims each admitted against headroom the other had not taken is exactly
+    how 502 hours fit under a ceiling of 500.
+
+    A compute item is admissible only from the canonical cache directory, and
     that is settled BEFORE the lock: a lock file in a second state directory
     excludes nobody, so taking one there would manufacture the appearance of the
     exclusion it cannot provide.
@@ -2542,8 +3658,9 @@ def admit(queue: Queue, item: dict) -> tuple[int, dict] | None:
     Returns
     -------
     tuple[int, dict] or None
-        ``None`` when the item is admitted and its claim exists; otherwise the
-        exit code and value the tick must return without running anything.
+        ``None`` when the item is admitted and its claim is in the ref;
+        otherwise the exit code and value the tick must return without running
+        anything.
     """
     if item["kind"] == "compute":
         non_canonical = non_canonical_state_refusal(queue)
@@ -2551,40 +3668,62 @@ def admit(queue: Queue, item: dict) -> tuple[int, dict] | None:
             return 6, write_outcome(
                 queue, item, "refused", reason=non_canonical, consumed=False
             )
+    item_id = str(item["id"])
+    refusal: str | None = None
+    claim_conflict = False
     try:
         with admission_lock(queue, item):
-            if item["kind"] == "compute":
-                refusal_reason = r5_refusal_reason(queue, item)
-                if refusal_reason is not None:
-                    return 6, write_outcome(
-                        queue,
-                        item,
-                        "refused",
-                        reason=refusal_reason,
-                        consumed=False,
-                    )
             try:
-                run_directory = create_claim_run_directory(queue, item["id"])
-            except QueueError as exc:
-                return 6, write_outcome(
-                    queue,
-                    item,
-                    "refused",
-                    reason=str(exc),
-                    consumed=False,
+                with queue_operation(queue, f"claim {item_id}") as sync:
+                    if item["kind"] == "compute":
+                        refusal = r5_refusal_reason(queue, item)
+                    if refusal is None:
+                        try:
+                            run_directory = create_claim_run_directory(
+                                queue, item_id
+                            )
+                        except QueueError as exc:
+                            refusal = str(exc)
+                    if refusal is None:
+                        claim = {
+                            "schema_version": 1,
+                            "id": item["id"],
+                            "proposal_digest": item["proposal_digest"],
+                            "claimed_at_utc": queue.clock(),
+                            "owner": f"{socket.gethostname()}:{os.getpid()}",
+                            RUN_DIRECTORY_FIELD: str(run_directory),
+                            **queue_record_identity(queue),
+                        }
+                        try:
+                            atomic_json(
+                                queue.path("claims", item_id),
+                                claim,
+                                exclusive=True,
+                            )
+                        except QueueError:
+                            claim_conflict = True
+                        if not claim_conflict and item["kind"] == "compute":
+                            log_admission_event(
+                                queue, admission_evidence(queue, item_id, sync)
+                            )
+            except AdmissionRaceLost as exc:
+                # The run directory is part of the discarded mutation: leaving it
+                # would refuse the retry for a claim that never existed anywhere.
+                with contextlib.suppress(OSError):
+                    os.rmdir(queue_run_directory(queue, item_id))
+                return 5, {
+                    "status": "race-lost",
+                    "id": item["id"],
+                    "reason": str(exc),
+                }
+            if refusal is not None:
+                outcome = write_outcome(
+                    queue, item, "refused", reason=refusal, consumed=False
                 )
-            claim = {
-                "schema_version": 1,
-                "id": item["id"],
-                "proposal_digest": item["proposal_digest"],
-                "claimed_at_utc": queue.clock(),
-                "owner": f"{socket.gethostname()}:{os.getpid()}",
-                RUN_DIRECTORY_FIELD: str(run_directory),
-                **queue_record_identity(queue),
-            }
-            try:
-                atomic_json(queue.path("claims", item["id"]), claim, exclusive=True)
-            except QueueError:
+                return (
+                    5 if QUEUE_PUSH_PENDING_FIELD in outcome else 6
+                ), outcome
+            if claim_conflict:
                 return 5, {"status": "outcome-unknown", "id": item["id"]}
     except AdmissionLockHeld as exc:
         return 5, {
@@ -2595,7 +3734,51 @@ def admit(queue: Queue, item: dict) -> tuple[int, dict] | None:
     return None
 
 
+def admission_evidence(
+    queue: Queue, item_id: str, sync: QueueSync
+) -> dict[str, object]:
+    """Return what an admission is attributable to, for the admission log.
+
+    The pinned file's committed blob is recorded because it, and not a path,
+    decided WHICH namespace this admission belonged to: a reader who later finds
+    two clones disagreeing about their origin can name the exact object each one
+    admitted under.  The fetched sha is recorded beside it because it is the
+    state the headroom was computed against and the value the lease was taken on.
+    """
+    origin = sync.origin if sync.origin is not None else campaign_origin(queue)
+    return {
+        "event": "compute-admitted",
+        "id": item_id,
+        "admitted_at_utc": queue.clock(),
+        "queue_ref": CAMPAIGN_QUEUE_REF,
+        "origin_url": origin["origin_url"],
+        "campaign_origin_pin": origin["pin_path"],
+        "campaign_origin_blob": queue.committed_blob_id(
+            resolve_repo_path(queue.repo, origin["pin_path"])
+        ),
+        "campaign_origin_sha256": origin["pin_sha256"],
+        "fetched_ref_sha": sync.base or "",
+        **queue_record_identity(queue),
+    }
+
+
 def run_ready(queue: Queue) -> tuple[int, dict]:
+    """Tick the queue once against the state the ORIGIN's queue ref holds."""
+    try:
+        return _run_ready(queue)
+    except AdmissionRaceLost as exc:
+        # A tick may retry from the top.  Nothing was merged and nothing was
+        # consumed: the ref that won holds a complete state, and the next tick
+        # decides again against it -- possibly with a refusal on the reservation
+        # the winner now holds.
+        return 5, {"status": "race-lost", "reason": str(exc)}
+
+
+def _run_ready(queue: Queue) -> tuple[int, dict]:
+    # (a) and (b) before anything is read: the ready set, the item states and
+    # the reservations that bound the ceiling are properties of the campaign, and
+    # this host's cache is only a copy of them.
+    refresh_queue(queue)
     item = ready_item(queue)
     if item is None:
         # Only THIS repository's claimed-without-outcome items make this tick
@@ -2613,12 +3796,12 @@ def run_ready(queue: Queue) -> tuple[int, dict]:
     approval = read_object(queue.path("approvals", item["id"]))
     if approval.get("proposal_digest") != item["proposal_digest"]:
         outcome = write_outcome(queue, item, "stale", error="approval digest mismatch")
-        return 4, outcome
+        return (5 if QUEUE_PUSH_PENDING_FIELD in outcome else 4), outcome
     try:
         validate_unchanged(queue, item)
     except QueueError as exc:
         outcome = write_outcome(queue, item, "stale", error=str(exc))
-        return 4, outcome
+        return (5 if QUEUE_PUSH_PENDING_FIELD in outcome else 4), outcome
     not_admitted = admit(queue, item)
     if not_admitted is not None:
         return not_admitted
@@ -2631,11 +3814,12 @@ def run_ready(queue: Queue) -> tuple[int, dict]:
 
 
 def default_state_dir() -> Path:
-    """Return the state directory a bare invocation uses.
+    """Return the cache directory a bare invocation uses.
 
-    ``CAMPAIGN_QUEUE_STATE_DIR`` may select a noncanonical queue for non-compute
-    work.  It cannot change the canonical root or make that queue eligible for
-    compute admission.
+    ``CAMPAIGN_QUEUE_STATE_DIR`` may select a noncanonical cache for non-compute
+    work.  It cannot change the canonical root, make that queue eligible for
+    compute admission, or change the admission namespace: the namespace is the
+    pinned origin's queue ref, and every cache is a copy of it.
     """
     override = os.environ.get("CAMPAIGN_QUEUE_STATE_DIR")
     return Path(override) if override else canonical_state_dir()
@@ -2647,12 +3831,15 @@ def build_parser() -> argparse.ArgumentParser:
         "--state-dir",
         default=None,
         help=(
-            "queue state directory; defaults to $CAMPAIGN_QUEUE_STATE_DIR or the "
-            "campaign-global passwd home / "
+            "local CACHE of the campaign queue tree; defaults to "
+            "$CAMPAIGN_QUEUE_STATE_DIR or the passwd home / "
             f"{CAMPAIGN_STATE_ROOT_NAME} / {CAMPAIGN_KEY} / {QUEUE_DIRECTORY_NAME}, "
             "which is the ONLY directory that may admit compute items, since the "
-            "admission lock and the reservation inventory are properties of that "
-            "one directory for every checkout owned by the uid on the host"
+            "admission lock and the run directories are properties of that one "
+            "directory for every checkout owned by the uid on the host.  The "
+            f"admission NAMESPACE is not this directory: it is {CAMPAIGN_QUEUE_REF} "
+            "at the origin pinned in "
+            f"{CAMPAIGN_ORIGIN_FILE.as_posix()}, and every cache is a copy of it"
         ),
     )
     sub = parser.add_subparsers(dest="action", required=True)

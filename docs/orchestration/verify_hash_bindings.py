@@ -212,9 +212,25 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: THE OTHER HALF OF PR-06 MOVED NOTHING: the three updated evidence/*.json are clean on their own
 #: (rc=0), which was checked separately so that one change could not be credited to the other.
 #: CLUSTER NOTE, carried forward and re-based: that checkout resolves untracked scratch receipts and
-#: read 120 against 118. It will now read 121 against 119. Pre-existing and per-tree; unchanged here.
-RECEIPT_BINDING_COUNT = 119
-RECEIPT_BINDING_SHA256 = "09301df6f3bcc110fbe2ce347c0c1c5019416056f139f397caaefc0c8773f240"
+#: read 120 against 118. It will now read 122 against 120. Pre-existing and per-tree; unchanged here.
+#: 119 -> 120: `docs/orchestration/control-plane/campaign-origin.json` pins the ONE repository whose
+#: refs namespace holds the R5 campaign queue, and it repeats the ruling record and that record's
+#: sha256 so the pinned origin and the campaign key are demonstrably the same campaign's. That pair
+#: has exactly the shape this collector harvests, so the pin's own claim about the ruling record is
+#: now verified here rather than only inside campaignctl.
+#: THE DELTA WAS ENUMERATED BEFORE THE CONSTANT MOVED, and it is one row and only one row:
+#:   ADDED   docs/orchestration/DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md
+#:           0836139b1c9a057c194a81a94d45c9f979209a9ac293d4bc8434e6b43fc1a064
+#:   REMOVED (none)
+#: measured by recomputing `receipt_inventory` with the new file EXCLUDED, which reproduces
+#: 119 / 09301df6 exactly -- so nothing else in this commit moved the inventory, and the new file is
+#: the whole cause.
+#: AND IT IS POWER-TESTED: flipping the last hex digit of the pin's `ruling_record_sha256` makes this
+#: file report
+#:   MISMATCH docs/orchestration/DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md
+#: and *** BINDINGS BROKEN ***, measured before the bump and then reverted, not argued.
+RECEIPT_BINDING_COUNT = 120
+RECEIPT_BINDING_SHA256 = "0b29b654ea4a6586bc9ac8fae08158450a7b0a898e7859d1b2ceb88fb6111fa8"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

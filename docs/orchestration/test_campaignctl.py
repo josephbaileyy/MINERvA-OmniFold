@@ -1,3 +1,4 @@
+import contextlib
 import json
 import os
 import subprocess
@@ -6,7 +7,7 @@ import tempfile
 import threading
 import time
 import unittest
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from unittest import mock
@@ -53,8 +54,8 @@ class CampaignQueueTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(prefix="campaign-queue-test.")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
-        # Production derives the canonical root from the passwd database. Patch the
-        # one lookup seam so tests never read or write the operator's actual queue.
+        # Production derives the cache root from the passwd database. Patch the one
+        # lookup seam so tests never read or write the operator's actual queue.
         self.passwd_home = self.root / "passwd-home"
         passwd_home = mock.patch.object(
             campaignctl, "_passwd_home", return_value=self.passwd_home
@@ -62,9 +63,30 @@ class CampaignQueueTests(unittest.TestCase):
         passwd_home.start()
         self.addCleanup(passwd_home.stop)
         self.state_root = self.passwd_home / campaignctl.CAMPAIGN_STATE_ROOT_NAME
+        # The ADMISSION NAMESPACE is the origin remote, and every admission is a
+        # compare-and-swap on one ref there, so every test needs a real origin. It
+        # is a throwaway bare repository under the temporary root: the fixture's
+        # pinned campaign-origin.json carries this path, while the file committed in
+        # the real repository carries the real URL.
+        self.origin = self.root / "campaign-origin"
+        subprocess.run(
+            ["git", "init", "--bare", "-q", str(self.origin)], check=True
+        )
         self.repo = self.root / "repo"
         self.repo.mkdir()
         subprocess.run(["git", "-C", str(self.repo), "init", "-q"], check=True)
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                str(self.repo),
+                "remote",
+                "add",
+                "origin",
+                str(self.origin),
+            ],
+            check=True,
+        )
         subprocess.run(
             [
                 "git",
@@ -160,12 +182,16 @@ class CampaignQueueTests(unittest.TestCase):
         self.brief_script.write_text(
             write_task_ids(PRODUCER_TASK_IDS) + "import time\ntime.sleep(0.4)\n"
         )
+        self.origin_pin = self.repo / campaignctl.CAMPAIGN_ORIGIN_FILE
+        self.origin_pin.parent.mkdir(parents=True, exist_ok=True)
+        self.write_origin_pin()
         subprocess.run(
             [
                 "git",
                 "-C",
                 str(self.repo),
                 "add",
+                campaignctl.CAMPAIGN_ORIGIN_FILE.as_posix(),
                 "work.py",
                 "compute_work.py",
                 "validator_failure.py",
@@ -239,6 +265,281 @@ class CampaignQueueTests(unittest.TestCase):
             contract,
         )
 
+    def put_state(
+        self,
+        family: str,
+        item_id: str,
+        record: dict[str, object],
+        *,
+        queue: campaignctl.Queue | None = None,
+        exclusive: bool = False,
+    ) -> dict[str, object]:
+        """Write one state record into the cache AND land it on the queue ref.
+
+        A record that lives only in a host's cache is exactly what the ref model
+        refuses to believe: the next operation fetches the ref and makes the cache
+        equal to it, so a hand-written record would be deleted before the
+        behaviour under test could see it. Every fixture that plants a claim, a
+        mutated item or a legacy record therefore publishes it, which is also the
+        migration path an operator has for a pre-ref queue.
+        """
+        queue = queue or self.queue
+        campaignctl.atomic_json(
+            queue.path(family, item_id), record, exclusive=exclusive
+        )
+        campaignctl.publish_cached_state(
+            queue, f"fixture: {family} {item_id}"
+        )
+        return record
+
+    def write_origin_pin(
+        self,
+        *,
+        repo: Path | None = None,
+        origin_url: str | None = None,
+        commit: bool = False,
+        **changes: object,
+    ) -> Path:
+        """Write the pinned campaign origin into a fixture checkout.
+
+        The pin is what makes the origin remote the admission namespace, so it is
+        a first-class fixture object rather than a detail: the reviewer's mutation
+        needs two checkouts that pin the SAME origin, and the mismatch tests need
+        one that pins another.
+
+        Parameters
+        ----------
+        repo : Path or None, optional
+            Checkout to write into; the fixture repository by default.
+        origin_url : str or None, optional
+            URL to pin; the throwaway bare origin by default.
+        commit : bool, optional
+            Commit it. The initial fixture commit already carries it, so this is
+            for the tests that rewrite it.
+        **changes : object
+            Pin fields to overwrite, named exactly as campaignctl reads them.
+
+        Returns
+        -------
+        Path
+            The written file.
+        """
+        repo = repo or self.repo
+        pin: dict[str, object] = {
+            "schema_version": 1,
+            "campaign_key": campaignctl.CAMPAIGN_KEY,
+            "ruling_record": campaignctl.R5_DECISION_RECORD,
+            "ruling_record_sha256": campaignctl.CAMPAIGN_RULING_RECORD_SHA256,
+            "origin_url": (
+                str(self.origin) if origin_url is None else origin_url
+            ),
+            "queue_ref": campaignctl.CAMPAIGN_QUEUE_REF,
+        }
+        pin.update(changes)
+        path = repo / campaignctl.CAMPAIGN_ORIGIN_FILE
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(pin, indent=2, sort_keys=True) + "\n")
+        if commit:
+            relative = campaignctl.CAMPAIGN_ORIGIN_FILE.as_posix()
+            subprocess.run(
+                ["git", "-C", str(repo), "add", relative], check=True
+            )
+            subprocess.run(
+                ["git", "-C", str(repo), "commit", "-qm", "repin origin"],
+                check=True,
+            )
+        return path
+
+    def queue_ref_sha(self) -> str | None:
+        """Return the sha the throwaway origin's queue ref points at, or ``None``."""
+        result = subprocess.run(
+            [
+                "git",
+                "-C",
+                str(self.origin),
+                "rev-parse",
+                "--verify",
+                "--quiet",
+                campaignctl.CAMPAIGN_QUEUE_REF,
+            ],
+            stdout=subprocess.PIPE,
+            text=True,
+            check=False,
+        )
+        sha = result.stdout.strip()
+        return sha or None
+
+    def queue_ref_paths(self) -> list[str]:
+        """Return every path in the tree the origin's queue ref points at."""
+        sha = self.queue_ref_sha()
+        if sha is None:
+            return []
+        result = subprocess.run(
+            ["git", "-C", str(self.origin), "ls-tree", "-r", "--name-only", sha],
+            stdout=subprocess.PIPE,
+            text=True,
+            check=True,
+        )
+        return sorted(line for line in result.stdout.splitlines() if line)
+
+    def queue_ref_record(self, path: str) -> dict[str, object]:
+        """Return one record as the origin's queue ref actually holds it."""
+        sha = self.queue_ref_sha()
+        assert sha is not None, "the queue ref does not exist"
+        result = subprocess.run(
+            ["git", "-C", str(self.origin), "show", f"{sha}:{path}"],
+            stdout=subprocess.PIPE,
+            text=True,
+            check=True,
+        )
+        return json.loads(result.stdout)
+
+    def move_queue_ref_from_another_host(self, marker: str) -> str:
+        """Move the origin's queue ref the way ANOTHER HOST would.
+
+        A commit built in its own git directory and pushed straight into the bare
+        origin, never through this process's queue. That is the only thing a lease
+        can be lost to, and emulating it with a local mutation would exercise the
+        wrong mechanism. It keeps the parent commit's whole tree and ADDS one
+        item, so what the loser refetches afterwards is a complete state rather
+        than an empty one.
+
+        Parameters
+        ----------
+        marker : str
+            Item id the foreign commit records, so the two states are
+            distinguishable afterwards.
+
+        Returns
+        -------
+        str
+            The sha the ref now points at.
+        """
+        scratch = self.root / f"foreign-git-{marker}.git"
+        if not (scratch / "HEAD").is_file():
+            subprocess.run(
+                ["git", "init", "--bare", "-q", str(scratch)], check=True
+            )
+        environment = dict(os.environ)
+        environment["GIT_INDEX_FILE"] = str(scratch / f"index-{marker}")
+        environment.update(
+            GIT_AUTHOR_NAME="another-host",
+            GIT_AUTHOR_EMAIL="another@host.invalid",
+            GIT_COMMITTER_NAME="another-host",
+            GIT_COMMITTER_EMAIL="another@host.invalid",
+        )
+
+        def git(*arguments: str) -> str:
+            result = subprocess.run(
+                ["git", "--git-dir", str(scratch), *arguments],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                check=True,
+                env=environment,
+            )
+            return result.stdout.strip()
+
+        parent = self.queue_ref_sha()
+        if parent is not None:
+            git(
+                "fetch",
+                "--no-tags",
+                str(self.origin),
+                f"+{campaignctl.CAMPAIGN_QUEUE_REF}:"
+                f"{campaignctl.CAMPAIGN_QUEUE_REF}",
+            )
+            git("read-tree", parent)
+        else:
+            git("read-tree", "--empty")
+        record = self.root / f"foreign-record-{marker}.json"
+        record.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "id": marker,
+                    "kind": "read-only",
+                    "description": "written by another host",
+                    "argv": ["/usr/bin/true"],
+                    "cwd": ".",
+                    "depends_on": [],
+                    "bindings": [],
+                    "repo_path": str(self.root / "another-host-checkout"),
+                    "git_head": "0" * 40,
+                    "timeout_seconds": 30,
+                    "created_at_utc": "2026-09-29T11:00:00+00:00",
+                    "created_by": "another-host",
+                    "proposal_digest": "f" * 64,
+                }
+            )
+            + "\n"
+        )
+        blob = git("hash-object", "-w", str(record))
+        git(
+            "update-index",
+            "--add",
+            "--cacheinfo",
+            f"100644,{blob},items/{marker}.json",
+        )
+        tree = git("write-tree")
+        arguments = ["commit-tree", tree]
+        if parent is not None:
+            arguments += ["-p", parent]
+        commit = git(*arguments, "-m", f"another host wrote {marker}")
+        git(
+            "push",
+            str(self.origin),
+            f"{commit}:{campaignctl.CAMPAIGN_QUEUE_REF}",
+            "--force",
+        )
+        return commit
+
+    @contextlib.contextmanager
+    def host(self, name: str) -> Iterator[campaignctl.Queue]:
+        """Yield a queue on its OWN passwd home, serving its own clone.
+
+        This is the reviewer's mutation, built from the implementation's sole test
+        seam: `_passwd_home` is the one lookup that decides where the cache lives,
+        so patching it differently for each queue emulates two hosts (or two
+        uids) exactly as production would resolve them. The patch stays active for
+        the whole block because `state_is_canonical` re-derives the directory on
+        every call, so the queue must be USED under the same home it was built
+        under.
+        """
+        home = self.root / f"passwd-home-{name}"
+        with mock.patch.object(campaignctl, "_passwd_home", return_value=home):
+            queue = campaignctl.Queue(
+                repo=self.clone_repo(name), clock=self.queue.clock
+            )
+            self.assertTrue(queue.state_is_canonical())
+            yield queue
+
+    def clone_repo(self, name: str) -> Path:
+        """Clone the fixture repository and point the clone at the SAME origin.
+
+        `git clone` copies the fixture's remote configuration, which points at the
+        fixture repository rather than at the bare origin, so the clone is
+        repointed. That is what a real second host has: its own checkout of the
+        same commits, its own passwd home, and the one origin they share.
+        """
+        target = self.root / name
+        subprocess.run(
+            ["git", "clone", "-q", str(self.repo), str(target)], check=True
+        )
+        subprocess.run(
+            ["git", "-C", str(target), "remote", "set-url", "origin",
+             str(self.origin)],
+            check=True,
+        )
+        for key, value in (
+            ("user.email", "test@example.invalid"),
+            ("user.name", "Test"),
+        ):
+            subprocess.run(
+                ["git", "-C", str(target), "config", key, value], check=True
+            )
+        return target
+
     def other_queue(self, name: str = "second-queue-state") -> campaignctl.Queue:
         """Return a queue on the SAME repository at a non-canonical state directory.
 
@@ -263,15 +564,9 @@ class CampaignQueueTests(unittest.TestCase):
         state directory, so if the canonical directory is still derived from the
         repository this queue silently gets one of its own.
         """
-        target = self.root / name
-        subprocess.run(
-            ["git", "clone", "-q", str(self.repo), str(target)], check=True
+        return campaignctl.Queue(
+            repo=self.clone_repo(name), clock=self.queue.clock
         )
-        for key, value in (("user.email", "test@example.invalid"), ("user.name", "Test")):
-            subprocess.run(
-                ["git", "-C", str(target), "config", key, value], check=True
-            )
-        return campaignctl.Queue(repo=target, clock=self.queue.clock)
 
     def commit_script(self, name: str, body: str) -> str:
         """Write and commit a producer script, returning its repository path.
@@ -539,9 +834,7 @@ class CampaignQueueTests(unittest.TestCase):
     def test_claim_without_outcome_is_never_retried(self):
         item = self.stage()
         self.approve(item)
-        campaignctl.atomic_json(
-            self.queue.path("claims", item["id"]), {"id": item["id"]}, exclusive=True
-        )
+        self.put_state("claims", item["id"], {"id": item["id"]}, exclusive=True)
         rc, value = campaignctl.run_ready(self.queue)
         self.assertEqual((rc, value["status"]), (5, "outcome-unknown"))
         self.assertFalse((self.repo / "ran").exists())
@@ -562,7 +855,7 @@ class CampaignQueueTests(unittest.TestCase):
         item["proposal_digest"] = campaignctl.digest(
             campaignctl.proposal_payload(item)
         )
-        campaignctl.atomic_json(self.queue.path("items", item["id"]), item)
+        self.put_state("items", item["id"], item)
 
         with self.assertRaisesRegex(campaignctl.QueueError, "require.*contract"):
             self.approve(item)
@@ -922,9 +1215,7 @@ class CampaignQueueTests(unittest.TestCase):
         )
         self.approve(item)
 
-        started = time.monotonic()
         rc, outcome = self.run_ready()
-        elapsed = time.monotonic() - started
 
         self.assertEqual((rc, outcome["status"]), (3, "failed"))
         self.assertIsNone(outcome["producer_returncode"])
@@ -937,7 +1228,14 @@ class CampaignQueueTests(unittest.TestCase):
         self.assertEqual(outcome["required_actions"][0]["action"], "preserve")
         self.assertFalse(outcome["automatic_retraining"])
         self.assertFalse((self.repo / "validator-ran").exists())
-        self.assertLess(elapsed, 1.5)
+        # The span the wall governs is the producer plus the validator, which the
+        # outcome records. The TICK is a different operand: it also fetches the
+        # campaign queue ref and pushes the claim and this outcome to it, so a
+        # stopwatch held around the invocation would measure those too and would
+        # stop discriminating the two-deadline defect from queue latency.
+        self.assertLess(
+            outcome[campaignctl.OUTCOME_EXECUTION_SECONDS_FIELD], 1.5
+        )
 
     def test_validator_receives_only_the_budget_the_producer_left(self) -> None:
         """0.4 s of a 1 s wall leaves the validator the remainder, not a fresh 1 s."""
@@ -2012,7 +2310,7 @@ class CampaignQueueTests(unittest.TestCase):
         item = self.stage("alpha", kind="compute", contract=contract)
         legacy = json.loads(json.dumps(item))
         del legacy["repo_path"]
-        campaignctl.atomic_json(self.queue.path("items", "alpha"), legacy)
+        self.put_state("items", "alpha", legacy)
 
         rc, value = self.run_ready()
 
@@ -2025,6 +2323,468 @@ class CampaignQueueTests(unittest.TestCase):
         ):
             self.approve(self.queue.item("alpha"))
 
+    def test_two_passwd_homes_cannot_both_admit_against_one_receipt(self) -> None:
+        """The round-7 mutation: two hosts, one origin, one 490-hour receipt.
+
+        ``campaign_state_root`` is global only for processes that share a passwd
+        home filesystem, so the declared ``(host, uid)`` residual let two hosts
+        each admit six task-hours against one 490-hour receipt and project 502
+        against a prohibition of 500. Built here from the implementation's sole
+        test seam: two DIFFERENT ``_passwd_home`` values, hence two caches, two
+        locks and two reservation inventories -- with one origin remote and the
+        same receipt committed in both clones.
+
+        Exactly one is admitted. The other refuses NAMING the reservation the
+        winner holds, its producer never ran, and the claim that reserves those
+        hours is one record in one tree at the origin, not one per host.
+        """
+        receipt = self.install_receipt("near-gpu-ceiling")
+
+        with self.host("alpha") as alpha:
+            alpha_contract = self.six_hour_contract("alpha", repo=alpha.repo)
+            item = self.stage(
+                "alpha", kind="compute", contract=alpha_contract, queue=alpha
+            )
+            self.approve(item, queue=alpha)
+            with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": receipt}):
+                rc_alpha, outcome_alpha = campaignctl.run_ready(alpha)
+            alpha_cache = alpha.state
+
+        with self.host("beta") as beta:
+            beta_contract = self.six_hour_contract("beta", repo=beta.repo)
+            item = self.stage(
+                "beta", kind="compute", contract=beta_contract, queue=beta
+            )
+            self.approve(item, queue=beta)
+            with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": receipt}):
+                rc_beta, outcome_beta = campaignctl.run_ready(beta)
+            beta_cache = beta.state
+
+        # Two hosts really were emulated: two caches, so two locks and two
+        # inventories. What they now share is the ref, not the directory.
+        self.assertNotEqual(alpha_cache, beta_cache)
+        self.assertEqual(
+            (rc_alpha, outcome_alpha["status"], outcome_alpha["id"]),
+            (0, "succeeded", "alpha"),
+        )
+        self.assertEqual((rc_beta, outcome_beta["status"]), (6, "refused"))
+        self.assertEqual(outcome_beta["id"], "beta")
+        self.assertIn(
+            "gpu_task_hours ceiling would be reached", outcome_beta["reason"]
+        )
+        self.assertIn("490 + 6 + 6 >= 500", outcome_beta["reason"])
+        self.assertIn("reserved by alpha", outcome_beta["reason"])
+        # Beta's producer never ran, and beta never claimed.
+        self.assertFalse((beta_cache / "runs" / "beta").exists())
+        self.assertNotIn("claims/beta.json", self.queue_ref_paths())
+        self.assertIn("claims/alpha.json", self.queue_ref_paths())
+        # And the reservation that refused beta is ONE record, in the tree at the
+        # origin, holding the state directory of the host that took it.
+        claim = self.queue_ref_record("claims/alpha.json")
+        self.assertEqual(claim["state_dir"], str(alpha_cache))
+
+    def test_a_lost_lease_discards_the_claim_and_refuses_the_tick(self) -> None:
+        """A ref moved between the fetch and the push is a refusal, never a merge.
+
+        The admission window is one push, so the only way two hosts could both
+        claim against one fetched sha is if a rejected push were resolved by
+        merging. It is not: the mutation is discarded, the ref is re-read, the
+        tick refuses with the race reason, and a later tick decides again against
+        the state that actually won.
+        """
+        receipt = self.install_receipt("healthy")
+        contract = self.named_contract(
+            "validator-failure-fixture", validator_script="validator_success.py"
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        self.approve(item)
+        fetched = self.queue_ref_sha()
+        real_push = campaignctl.QueueSync.push
+        interference: list[str] = []
+
+        def push_after_another_host_moved_the_ref(sync, message):
+            if message.startswith("claim ") and not interference:
+                interference.append(
+                    self.move_queue_ref_from_another_host("foreign-item")
+                )
+            return real_push(sync, message)
+
+        with mock.patch.object(
+            campaignctl.QueueSync,
+            "push",
+            autospec=True,
+            side_effect=push_after_another_host_moved_the_ref,
+        ):
+            rc, value = self.run_ready(receipt)
+
+        self.assertEqual((rc, value["status"]), (5, "race-lost"))
+        self.assertIn(campaignctl.RACE_LOST_REASON, value["reason"])
+        self.assertIn(fetched or "the empty value", value["reason"])
+        # Discarded, not merged: no claim anywhere, no run directory, and the ref
+        # is exactly where the other host left it.
+        self.assertEqual(self.queue_ref_sha(), interference[0])
+        self.assertNotIn(
+            "claims/validator-failure-fixture.json", self.queue_ref_paths()
+        )
+        self.assertFalse(
+            self.queue.path("claims", item["id"]).exists()
+        )
+        self.assertFalse(
+            (self.queue.state / "runs" / item["id"]).exists()
+        )
+        self.assertFalse((self.repo / "validator-ran").exists())
+        # The winner's tree is what this host now holds. Only the CLAIM was
+        # discarded: the item and its approval had already landed, so they are
+        # still there, beside the record the other host added, and the item is
+        # approved rather than consumed -- which is what makes the retry possible.
+        rows = {
+            row["id"]: row
+            for row in campaignctl.summary(self.queue)["items"]
+        }
+        self.assertEqual(
+            sorted(rows), ["foreign-item", "validator-failure-fixture"]
+        )
+        self.assertEqual(rows["validator-failure-fixture"]["state"], "approved")
+        self.assertFalse(rows["foreign-item"]["runs_here"])
+        self.assertEqual(
+            campaignctl.ready_item(self.queue)["id"], "validator-failure-fixture"
+        )
+
+    def test_a_retry_after_a_lost_lease_admits_from_the_winning_tree(self) -> None:
+        """The refusal is retryable: the next tick decides against what won.
+
+        The race is lost on the OUTCOME push here, so the item's own records
+        survive in the winner's tree and the retry has something to admit. That
+        is the whole difference between a refusal and a consumed item.
+        """
+        receipt = self.install_receipt("healthy")
+        contract = self.named_contract(
+            "validator-failure-fixture", validator_script="validator_success.py"
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        self.approve(item)
+        real_push = campaignctl.QueueSync.push
+        interference: list[str] = []
+
+        def push_after_another_host_moved_the_ref(sync, message):
+            if message.startswith("outcome ") and not interference:
+                interference.append(
+                    self.move_queue_ref_from_another_host("foreign-item")
+                )
+            return real_push(sync, message)
+
+        with mock.patch.object(
+            campaignctl.QueueSync,
+            "push",
+            autospec=True,
+            side_effect=push_after_another_host_moved_the_ref,
+        ):
+            rc, outcome = self.run_ready(receipt)
+
+        # The run happened and its outcome could not land, so the tick reports
+        # UNRESOLVED rather than a terminal code, and the item stays claimed and
+        # reserving in the ref.
+        self.assertEqual(rc, 5)
+        self.assertIn(campaignctl.QUEUE_PUSH_PENDING_FIELD, outcome)
+        self.assertIn("claims/validator-failure-fixture.json", self.queue_ref_paths())
+        self.assertNotIn(
+            "outcomes/validator-failure-fixture.json", self.queue_ref_paths()
+        )
+        self.assertEqual(
+            campaignctl.state_of(self.queue, self.queue.item(item["id"])),
+            "outcome-unknown",
+        )
+
+        # The next tick retries the pending push from the top, against the tree
+        # that won, and it lands.
+        rc_retry, value_retry = self.run_ready(receipt)
+
+        self.assertIn("outcomes/validator-failure-fixture.json", self.queue_ref_paths())
+        self.assertEqual(
+            self.queue_ref_record("outcomes/validator-failure-fixture.json")[
+                "status"
+            ],
+            "succeeded",
+        )
+        self.assertEqual((rc_retry, value_retry["status"]), (0, "idle"))
+        self.assertEqual(
+            sorted(
+                path.name
+                for path in (
+                    self.queue.state / campaignctl.QUEUE_PENDING_NAME
+                ).glob("*.json")
+            ),
+            [],
+        )
+
+    def test_an_unpushed_outcome_keeps_the_item_claimed_and_reserving(self) -> None:
+        """An outcome that never reached the ref releases nothing, anywhere.
+
+        The origin disappears while the producer is running, so the claim is in
+        the ref and the outcome cannot be. The hours were spent, so the honest
+        state is the conservative one: the item stays claimed, keeps its full
+        declared maximum reserved on every host, and the record waits to be
+        retried rather than being dropped or believed.
+        """
+        receipt = self.install_receipt("near-gpu-ceiling")
+        contract = self.six_hour_contract("alpha")
+        item = self.stage("alpha", kind="compute", contract=contract)
+        self.approve(item)
+        moved = self.origin.with_name("campaign-origin.unreachable")
+        real_command = campaignctl.run_logged_command
+
+        def unplug_the_origin(*arguments: object, **keywords: object):
+            if ".producer." in Path(str(keywords["log_path"])).name:
+                self.origin.rename(moved)
+            return real_command(*arguments, **keywords)
+
+        with mock.patch.object(
+            campaignctl, "run_logged_command", side_effect=unplug_the_origin
+        ):
+            rc, outcome = self.run_ready(receipt)
+
+        self.assertEqual(rc, 5)
+        self.assertIn(campaignctl.QUEUE_PUSH_PENDING_FIELD, outcome)
+        pending = sorted(
+            (self.queue.state / campaignctl.QUEUE_PENDING_NAME).glob("*.json")
+        )
+        self.assertEqual(
+            [path.name for path in pending], ["000001-outcomes-alpha.json"]
+        )
+        self.assertEqual(
+            campaignctl.read_object(pending[0])["record"]["status"], "succeeded"
+        )
+        # Nothing local claims the item is finished.
+        self.assertFalse(self.queue.path("outcomes", "alpha").exists())
+
+        moved.rename(self.origin)
+        # It is still claimed in the ref, so it still reserves: a second
+        # six-hour item is refused for alpha's hours even though alpha has in
+        # fact finished, because nothing has metered them.
+        other_contract = self.six_hour_contract("beta")
+        beta = self.stage("beta", kind="compute", contract=other_contract)
+        with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": receipt}):
+            campaignctl.refresh_queue(self.queue)
+            self.assertIn("claims/alpha.json", self.queue_ref_paths())
+            self.assertIn("outcomes/alpha.json", self.queue_ref_paths())
+            self.assertEqual(
+                campaignctl.state_of(self.queue, self.queue.item("alpha")),
+                "succeeded",
+            )
+            reason = campaignctl.r5_refusal_reason(
+                self.queue, self.queue.item("beta")
+            )
+        self.assertIsNotNone(reason)
+        self.assertIn("490 + 6 + 6 >= 500", reason)
+        self.assertIn(campaignctl.UNREMEASURED_HOLD, reason)
+        self.assertEqual(
+            sorted(
+                path.name
+                for path in (
+                    self.queue.state / campaignctl.QUEUE_PENDING_NAME
+                ).glob("*.json")
+            ),
+            [],
+        )
+
+    def test_an_unreachable_origin_refuses_every_operation(self) -> None:
+        """No network is no admission, and no staging, approving or listing either.
+
+        Every reservation that bounds the ceiling lives in the ref, so a queue
+        that cannot read it cannot tell an empty campaign from a full one. It
+        must not guess in the direction that spends.
+        """
+        contract = self.named_contract(
+            "validator-failure-fixture", validator_script="validator_success.py"
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        self.approve(item)
+        landed = self.queue_ref_sha()
+        self.origin.rename(self.origin.with_name("campaign-origin.unreachable"))
+
+        for description, operation in (
+            ("list", lambda: campaignctl.summary(self.queue)),
+            ("run-ready", lambda: campaignctl.run_ready(self.queue)),
+            ("stage", lambda: self.stage("second")),
+            (
+                "approve",
+                lambda: campaignctl.approve(
+                    self.queue, item["id"], item["proposal_digest"],
+                    interactive=False,
+                ),
+            ),
+            ("revoke", lambda: campaignctl.revoke(
+                self.queue, item["id"], interactive=False
+            )),
+        ):
+            with self.subTest(operation=description):
+                with self.assertRaisesRegex(
+                    campaignctl.QueueError, campaignctl.ORIGIN_UNREACHABLE_REASON
+                ):
+                    operation()
+
+        # Nothing was written: no claim, no outcome, no producer, and the ref is
+        # exactly where the last successful operation left it.
+        self.assertFalse(self.queue.path("claims", item["id"]).exists())
+        self.assertFalse(self.queue.path("outcomes", item["id"]).exists())
+        self.assertFalse(self.queue.path("items", "second").exists())
+        self.assertFalse((self.repo / "ran").exists())
+        self.origin.with_name("campaign-origin.unreachable").rename(self.origin)
+        self.assertEqual(self.queue_ref_sha(), landed)
+
+    def test_an_origin_that_is_not_the_pinned_one_refuses_every_operation(
+        self,
+    ) -> None:
+        """A clone whose origin is a different repository is a different repository.
+
+        Its receipts are its own, and admitting from it against this campaign's
+        ceiling would count another campaign's spend as headroom. The comparison
+        is on the NORMALISED URL, so a trailing ``.git`` or a differently-cased
+        host is the same namespace and a different path is not.
+        """
+        elsewhere = self.root / "somewhere-else.git"
+        subprocess.run(["git", "init", "--bare", "-q", str(elsewhere)], check=True)
+        subprocess.run(
+            ["git", "-C", str(self.repo), "remote", "set-url", "origin",
+             str(elsewhere)],
+            check=True,
+        )
+
+        with self.assertRaisesRegex(
+            campaignctl.QueueError, campaignctl.ORIGIN_MISMATCH_REASON
+        ):
+            campaignctl.summary(self.queue)
+
+        # A cosmetic difference git itself ignores is ignored here too, and the
+        # spellings used live are ones that still RESOLVE, so the operation runs
+        # rather than passing the comparison and then failing to reach anything.
+        for spelling in (f"{self.origin}/", f"{self.origin}//", str(self.origin)):
+            with self.subTest(spelling=spelling):
+                subprocess.run(
+                    ["git", "-C", str(self.repo), "remote", "set-url", "origin",
+                     spelling],
+                    check=True,
+                )
+                self.assertEqual(
+                    campaignctl.summary(self.queue)["counts"]["staged"], 0
+                )
+        # The remaining cosmetic classes are asserted on the comparison itself,
+        # because a `.git` suffix or a differently-cased host cannot be handed to
+        # git as a local directory that exists.
+        for pinned, configured in (
+            ("https://GitHub.COM/Owner/Repo.git/", "https://github.com/Owner/Repo"),
+            ("git@GITHUB.com:Owner/Repo.git", "git@github.com:Owner/Repo"),
+            (f"{self.origin}.git", str(self.origin)),
+        ):
+            with self.subTest(pinned=pinned):
+                self.assertEqual(
+                    campaignctl.normalize_origin_url(pinned),
+                    campaignctl.normalize_origin_url(configured),
+                )
+        # And the differences that are NOT cosmetic stay different: the path's
+        # case, and a second `.git` that names another directory entirely.
+        self.assertNotEqual(
+            campaignctl.normalize_origin_url("https://github.com/Owner/Repo"),
+            campaignctl.normalize_origin_url("https://github.com/owner/repo"),
+        )
+        self.assertNotEqual(
+            campaignctl.normalize_origin_url(f"{self.origin}.git.git"),
+            campaignctl.normalize_origin_url(str(self.origin)),
+        )
+
+    def test_a_checkout_with_no_origin_refuses_every_operation(self) -> None:
+        """With no origin there is no admission namespace to reserve in."""
+        subprocess.run(
+            ["git", "-C", str(self.repo), "remote", "remove", "origin"], check=True
+        )
+        with self.assertRaisesRegex(
+            campaignctl.QueueError, campaignctl.NO_ORIGIN_REASON
+        ):
+            campaignctl.summary(self.queue)
+
+    def test_an_uncommitted_origin_pin_refuses_every_operation(self) -> None:
+        """A working-tree edit must not be able to repoint the namespace.
+
+        The pin is checked through the same identity check the R5 receipt uses,
+        so an untracked pin, a working-tree edit at the same ``HEAD``, and a pin
+        naming another campaign are all refusals rather than redirections.
+        """
+        elsewhere = self.root / "somewhere-else.git"
+        subprocess.run(["git", "init", "--bare", "-q", str(elsewhere)], check=True)
+        self.write_origin_pin(origin_url=str(elsewhere))
+        subprocess.run(
+            ["git", "-C", str(self.repo), "remote", "set-url", "origin",
+             str(elsewhere)],
+            check=True,
+        )
+
+        with self.assertRaisesRegex(
+            campaignctl.QueueError, "differs from the blob committed at HEAD"
+        ):
+            campaignctl.summary(self.queue)
+
+        # Committing it does not help: it now names a repository that is not this
+        # campaign's, which the key and the ruling digest in the pin contradict.
+        self.write_origin_pin(
+            origin_url=str(elsewhere), commit=True, campaign_key="r5-other-0000"
+        )
+        with self.assertRaisesRegex(
+            campaignctl.QueueError, "campaign origin pin campaign_key"
+        ):
+            campaignctl.summary(self.queue)
+
+        # And an absent pin is a refusal, not a fallback to the passwd home.
+        subprocess.run(
+            ["git", "-C", str(self.repo), "rm", "-q",
+             campaignctl.CAMPAIGN_ORIGIN_FILE.as_posix()],
+            check=True,
+        )
+        subprocess.run(
+            ["git", "-C", str(self.repo), "commit", "-qm", "drop the pin"],
+            check=True,
+        )
+        with self.assertRaisesRegex(
+            campaignctl.QueueError, "campaign origin pin missing"
+        ):
+            campaignctl.summary(self.queue)
+
+    def test_the_pinned_origin_file_in_this_repository_is_this_campaigns(
+        self,
+    ) -> None:
+        """The committed pin is the production one, checked against the module.
+
+        The fixture writes its own pin, so nothing else in this suite would
+        notice if the checked-in file drifted from the campaign key, the ruling
+        record and the ref name campaignctl derives.
+        """
+        pin = json.loads(
+            (campaignctl.REPO / campaignctl.CAMPAIGN_ORIGIN_FILE).read_text()
+        )
+        self.assertEqual(pin["campaign_key"], campaignctl.CAMPAIGN_KEY)
+        self.assertEqual(pin["queue_ref"], campaignctl.CAMPAIGN_QUEUE_REF)
+        self.assertEqual(pin["ruling_record"], campaignctl.R5_DECISION_RECORD)
+        self.assertEqual(
+            pin["ruling_record_sha256"], campaignctl.CAMPAIGN_RULING_RECORD_SHA256
+        )
+        self.assertEqual(
+            sorted(pin), sorted(campaignctl.CAMPAIGN_ORIGIN_KEYS)
+        )
+        # The digest the campaign key is a NAME for is the ruling record's, and
+        # the key's second component is its first eight hex digits.
+        record = campaignctl.REPO / pin["ruling_record"]
+        self.assertEqual(
+            campaignctl.sha256_file(record), pin["ruling_record_sha256"]
+        )
+        self.assertTrue(
+            campaignctl.CAMPAIGN_KEY.endswith(pin["ruling_record_sha256"][:8])
+        )
+
     def test_home_environment_cannot_change_the_passwd_state_root(self) -> None:
         """A mutable process home must not be another spelling of a root override."""
         with mock.patch.dict(os.environ, {"HOME": str(self.root / "other-home")}):
@@ -2036,13 +2796,20 @@ class CampaignQueueTests(unittest.TestCase):
     def test_only_the_canonical_state_dir_can_admit_compute(self) -> None:
         """The earlier reviewer's mutation: two ``--state-dir`` values, one receipt.
 
-        "Campaign-global" was scoped to whatever ``--state-dir`` named, so each
-        queue took its own lock, scanned its own inventory, and admitted an item
-        the other had never counted -- 490 recorded and 502 projected, this time by
-        splitting the queue instead of releasing a reservation. Only the canonical
-        directory's inventory can be complete, so it alone admits compute.
+        "Campaign-global" was once scoped to whatever ``--state-dir`` named, so
+        each queue took its own lock, scanned its own inventory, and admitted an
+        item the other had never counted -- 490 recorded and 502 projected, this
+        time by splitting the queue instead of releasing a reservation.
+
+        The inventory is no longer what this test can vary: both directories are
+        caches of ONE ref, so the second queue's item reserves in the first
+        queue's headroom scan whatever directory it was staged from. The refusal
+        under test here is the directory's own -- the LOCK and the run
+        directories are still per-directory, and a lock file in a second one
+        excludes nobody -- so the receipt is deliberately one with headroom to
+        spare, or a shared-reservation refusal would mask it.
         """
-        receipt = self.install_receipt("near-gpu-ceiling")
+        receipt = self.install_receipt("healthy")
         alpha_contract = self.six_hour_contract("alpha")
         beta_contract = self.six_hour_contract("beta")
         other = self.other_queue()
@@ -2282,9 +3049,7 @@ class CampaignQueueTests(unittest.TestCase):
         producer_mutation["proposal_digest"] = campaignctl.digest(
             campaignctl.proposal_payload(producer_mutation)
         )
-        campaignctl.atomic_json(
-            self.queue.path("items", item["id"]), producer_mutation
-        )
+        self.put_state("items", item["id"], producer_mutation)
         with self.assertRaisesRegex(
             campaignctl.QueueError,
             "compute producer command must not carry --allow",
@@ -2310,9 +3075,7 @@ class CampaignQueueTests(unittest.TestCase):
         validator_mutation["proposal_digest"] = campaignctl.digest(
             campaignctl.proposal_payload(validator_mutation)
         )
-        campaignctl.atomic_json(
-            self.queue.path("items", item["id"]), validator_mutation
-        )
+        self.put_state("items", item["id"], validator_mutation)
         with self.assertRaisesRegex(
             campaignctl.QueueError,
             "compute terminal validator command must not carry --allow",

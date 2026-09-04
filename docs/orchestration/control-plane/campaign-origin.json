@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "campaign_key": "r5-20260902-0836139b",
+  "ruling_record": "docs/orchestration/DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md",
+  "ruling_record_sha256": "0836139b1c9a057c194a81a94d45c9f979209a9ac293d4bc8434e6b43fc1a064",
+  "origin_url": "https://github.com/josephbaileyy/MINERvA-OmniFold",
+  "queue_ref": "refs/campaign/r5-20260902-0836139b/queue"
+}
