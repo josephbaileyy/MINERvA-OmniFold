@@ -212,6 +212,47 @@ because which tools exist is a property of the machine and cannot be committed. 
 committed wrapper delegates its decision to `mnv_guard_shim/wrapper_exec.py`, which loads
 THIS module and calls these same functions -- the wrappers own no grammar.
 
+ROUND 8 HOOKS THE LOWEST PYTHON-VISIBLE LAYER, BECAUSE COVERAGE ENUMERATED BY PUBLIC API IS NOT
+COVERAGE. Round 7's table listed sixteen primitives; round 8's reviewer went under the list.
+`_posixsubprocess.fork_exec` is the last Python-visible layer before the kernel on POSIX -- every
+one of `subprocess.Popen`, `multiprocessing`'s `spawnv_passfds` (both the `spawn` and the
+`forkserver` start methods) and `concurrent.futures` ends up there -- and a DIRECT call to it
+running `python3 -I <child>` ran, printed its sentinel, loaded the wrong tree and wrote no record.
+Every signature above it was unchanged, so nothing in the public table was wrong; the table was
+simply not the floor. The floor is hooked now, in BOTH bindings CPython gives it: the module
+attribute `_posixsubprocess.fork_exec`, and the `from _posixsubprocess import fork_exec as
+_fork_exec` alias `subprocess` holds at module level -- which is the one `Popen._execute_child`
+actually calls, so patching only the first would have left `subprocess` on the old path. Both exist
+in 3.11, 3.12 and 3.13 and both are patched; see `_FORK_EXEC_BINDINGS`. The scan there is the same
+`(real executable, argv[1:])` classification and the same environment contract as everywhere else,
+with two shapes peculiar to that layer: the executable arrives as `executable_list`, a list of
+CANDIDATE paths tried in order, so the file scanned is the first one that EXISTS -- which is the one
+the kernel will run; and the environment arrives as a list of `NAME=VALUE` BYTES, which is parsed,
+re-armed and written back as bytes, or refused when `_scan_launch` says so. A call whose shape
+cannot be read at all is `LAUNCH_REASON_KERNEL_FLOOR`, which names the layer.
+
+THE PUBLIC HOOKS ARE KEPT AND THE FLOOR DOES NOT SCAN TWICE. The public primitives are still where
+a launch is REPAIRED, because they are where the argv positions are known well enough to insert
+`env` contract operands or to swap in the restricted-bash spelling; the floor is what catches a
+caller that never visits them. A launch `_prepare_launch` has already read is handed down as an
+approved ticket (`_ApprovedLaunch`, per thread) and the lower layer consumes it instead of
+re-reading -- which is not an optimisation. Re-scanning a launch this guard itself REWROTE refuses
+it: the rewrite runs with `PATH` set to the wrapper directories only, and a second scan resolving
+`ls` through that `PATH` finds no system prefix and refuses a correct program. That was already
+live before round 8 wherever `subprocess.Popen` chose `os.posix_spawn` over `fork_exec`
+(`close_fds=False`), and the ticket closes it in the one place both layers pass through.
+
+`multiprocessing.set_executable` IS NOT ADVERSARIAL AND IS HOOKED WHERE THE CHOICE IS MADE. A direct
+`fork_exec` call is something only an attacker writes; `set_executable` is public API a launcher may
+reasonably reach for, and it names the file every `spawn` and `forkserver` child will exec. Since
+`multiprocessing` builds that child's argv itself -- `[exe, *interpreter flags, "-c",
+"<spawn_main>"]` -- the chosen file must be a PYTHON INTERPRETER this guard admits, and anything
+else is `LAUNCH_REASON_UNPROVEN` at the moment it is set rather than a puzzle at spawn time. The
+hook is installed lazily, when `multiprocessing.spawn` is imported, so a guarded process that never
+uses `multiprocessing` does not pay for it. `fork` needs no hook -- the forked child IS this
+interpreter, with this guard installed -- and `forkserver` launches through `spawnv_passfds` and is
+therefore covered by the floor; both are asserted rather than assumed.
+
 THE FOUR DECLARED RESIDUALS, AFTER THE CLOSURE AND ALL THREE HALVES, ARE NONE OF THEM AN
 UNSCANNED PYTHON LAUNCH. (1) TRUST BY LOCATION: a leaf tool, a read-only `git`, `sbatch` and
 the real bash are admitted because the file was found in a named system prefix and carries
@@ -222,12 +263,19 @@ the residual for shells. (3) AN `sbatch` JOB SCRIPT is read statically because i
 no shell of ours does, and its residual is the static model's -- which is a REFUSAL and
 never an unguarded run: a job script whose command words, interpreter options or sbatch
 options are built at run time is refused and not read. (4) AN ADMITTED PYTHON CHILD is
-guarded by the shim on `PYTHONPATH` and by these hooks in turn. All four are written into
+guarded by the shim on `PYTHONPATH` and by these hooks in turn, DOWN TO
+`_posixsubprocess.fork_exec`. What remains is a caller that reaches the kernel WITHOUT that
+layer -- `ctypes`/`cffi` calling `execve` or `posix_spawn` in libc directly, a C extension
+doing the same, or a rebuilt interpreter whose `_posixsubprocess` is not the module object
+this process patched. That one is NAMED AND NOT COVERED, and it is the only residual here
+whose measurement is a run that SUCCEEDS: a ctypes `execve` of `python3 -I` loads the wrong
+tree, and the control that says so asserts exactly that. All four are written into
 EVERY inventory record as `declared_gap` so a ratchet reader sees the coverage boundary
 without reading this file, and they are measured -- not asserted -- in
 `tests/test_mnv_guarded_run.py::TheSubprocessBoundaryIsCovered`,
-`TheClosedChildModelRefusesWhatItCannotProve` and
-`TheRestrictedShellIsTheSecondLayerAndRefusesOnItsOwn`, beside the covered counterparts they
+`TheClosedChildModelRefusesWhatItCannotProve`,
+`TheRestrictedShellIsTheSecondLayerAndRefusesOnItsOwn` and
+`TheKernelFloorIsHookedAndTheResidualIsBelowIt`, beside the covered counterparts they
 must be distinguished from. Read `declared_gap` together with `path_shim` and `shell`: when
 either is not armed, one of the enforcing halves did not run.
 
@@ -316,6 +364,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 
 MARKERS = ("VALIDATION_LEDGER.md", "nd-unfolding")
 
@@ -453,8 +502,20 @@ DECLARED_GAP = (
     "residual is the static model's. That residual is a REFUSAL and never an unguarded run: a job "
     "script whose command words, interpreter options, wrapper options or sbatch options are built "
     "at run time is REFUSED and not read, and the cost is a submission that must be respelled. "
-    "(4) AN ADMITTED PYTHON CHILD is guarded by the shim on PYTHONPATH and by these same hooks in "
-    "turn, so its own launches are subject to everything above one level down")
+    "(4) AN ADMITTED PYTHON CHILD IS GUARDED BY THE SHIM ON PYTHONPATH AND BY THESE HOOKS IN TURN, "
+    "DOWN TO _posixsubprocess.fork_exec -- the last Python-visible layer before the kernel on "
+    "POSIX, hooked in BOTH of the bindings CPython gives it (_posixsubprocess.fork_exec and the "
+    "`from _posixsubprocess import fork_exec as _fork_exec` alias subprocess holds), so "
+    "subprocess.Popen, multiprocessing's spawnv_passfds (spawn AND forkserver), "
+    "concurrent.futures and a DIRECT caller are all scanned with the executable and argv they "
+    "pass; multiprocessing.set_executable is classified where the choice is made rather than only "
+    "where it is used. WHAT REMAINS IS A CALLER THAT REACHES THE KERNEL WITHOUT THAT LAYER: ctypes "
+    "or cffi calling execve/posix_spawn/fork+exec in libc directly, a C extension doing the same, "
+    "or a REBUILT INTERPRETER whose _posixsubprocess is not the module object this process "
+    "patched. That is NAMED AND NOT COVERED -- it is measured rather than asserted, in "
+    "tests/test_mnv_guarded_run.py::TheKernelFloorIsHookedAndTheResidualIsBelowIt, where a ctypes "
+    "execve of `python3 -I` RUNS -- and it is a different claim from the three above: an "
+    "in-process caller that declines every Python-visible launch API there is")
 
 #: THE PATH HALF'S OWN CONTRACT, as a tuple, because it has to be RE-ARMED in exactly the two
 #: places the propagation contract is. A restricted shell's `PATH` is the wrapper directories, so a
@@ -638,6 +699,8 @@ class GuardedPathFinder:
         spec = self._inner.find_spec(fullname, path, target)
         if spec is None:
             return None
+        if fullname == _MULTIPROCESSING_SPAWN_MODULE:
+            self._arm_multiprocessing_when_it_loads(spec)
         origin = getattr(spec, "origin", None)
         if not origin or origin in ("built-in", "frozen", "namespace"):
             return spec
@@ -672,6 +735,41 @@ class GuardedPathFinder:
                 os._exit(VIOLATION_EXIT)
             raise violation
         return spec
+
+    def _arm_multiprocessing_when_it_loads(self, spec) -> None:
+        """Hook `multiprocessing.spawn.set_executable` the moment that module finishes executing.
+
+        WHY THE IMPORT HOOK RATHER THAN AN IMPORT. `set_executable` names the file every `spawn` and
+        `forkserver` child is exec'd from, so it has to be classified -- but importing
+        `multiprocessing.spawn` from `install()` to reach it would pull `socket`, `pickle` and a
+        dozen more modules into EVERY guarded process, including the ones `sitecustomize` starts
+        during interpreter startup, and would move the `checked` count every inventory record
+        reports. This finder already sees every import, so the cheap and honest place to arm the
+        hook is the one import that makes it relevant.
+
+        IT WRAPS THE LOADER, NOT THE FINDER'S ANSWER, because the module's attributes do not exist
+        until `exec_module` has run: a patch applied at `find_spec` time would be overwritten by the
+        module's own `def set_executable`. The wrapper runs the real `exec_module` FIRST and hooks
+        after it returns, so an import that raises leaves nothing half-armed.
+        """
+        loader = getattr(spec, "loader", None)
+        exec_module = getattr(loader, "exec_module", None)
+        if exec_module is None or getattr(exec_module, "_mnv_guard_armed", False):
+            return
+
+        def armed(module):
+            exec_module(module)
+            _install_multiprocessing_guards(self)
+
+        armed._mnv_guard_armed = True
+        try:
+            loader.exec_module = armed
+        except (AttributeError, TypeError):
+            #: A LOADER THAT WILL NOT TAKE THE ATTRIBUTE IS NOT A REFUSAL. The launch itself is
+            #: still covered by the `fork_exec` floor, which is where the enforcement lives; what
+            #: is lost is only WHERE the refusal lands. Raising here would turn an unusual loader
+            #: into a process that cannot import multiprocessing at all.
+            return
 
     def invalidate_caches(self):
         inv = getattr(self._inner, "invalidate_caches", None)
@@ -1275,6 +1373,21 @@ LAUNCH_REASON_UNPARSED = "a-launch-argv-or-command-string-this-guard-cannot-pars
 #: whose shebang resolves to one of those. Everything else refuses with THIS reason.
 LAUNCH_REASON_UNPROVEN = "a-child-this-guard-cannot-prove-keeps-its-launches-guarded"
 
+#: ROUND 8's REASON, AND IT NAMES A LAYER RATHER THAN A CONSTRUCT. Round 8's reviewer went UNDER the
+#: public API. `_posixsubprocess.fork_exec` is the last Python-visible layer before the kernel on
+#: POSIX -- `subprocess.Popen`, `multiprocessing`'s `spawnv_passfds` and `concurrent.futures` all
+#: end up there -- and a DIRECT call to it with `python3 -I <child>` ran, printed its sentinel and
+#: left no record: the exact defect round 7 closed for `subprocess`, `os.exec*` and `os.spawn*`,
+#: reached one floor down and with every signature unchanged. The floor is hooked now, in both of
+#: its bindings, so every caller above it is scanned with the executable and argv it passes. THIS
+#: reason is what the floor itself raises when it is handed a call whose SHAPE it cannot read -- no
+#: argument vector, an empty candidate-executable list, or an environment member that is not
+#: `NAME=VALUE` -- and it names the layer so a reader of a record can tell a refusal issued at the
+#: floor from one a public primitive issued. It is fail-closed for the same reason
+#: `LAUNCH_REASON_UNPARSED` is: an unreadable call cannot be scanned, and an unscanned Python launch
+#: is the defect this file exists for.
+LAUNCH_REASON_KERNEL_FLOOR = "a-fork_exec-call-at-the-kernel-floor-this-guard-cannot-read"
+
 
 class _LaunchRefusal(Exception):
     """A launch this guard cannot SCAN, and therefore will not allow.
@@ -1651,6 +1764,8 @@ _LAUNCH_HEADLINES = {
     LAUNCH_REASON_UNPARSED: "THIS LAUNCH CANNOT BE PARSED, SO IT CANNOT BE SCANNED",
     LAUNCH_REASON_UNPROVEN: ("THIS CHILD CANNOT BE PROVEN TO KEEP ITS OWN PYTHON LAUNCHES "
                              "GUARDED"),
+    LAUNCH_REASON_KERNEL_FLOOR: ("THIS CALL AT THE _posixsubprocess.fork_exec FLOOR CANNOT BE "
+                                 "READ, SO IT CANNOT BE SCANNED"),
 }
 
 _LAUNCH_EXPLANATIONS = {
@@ -1683,6 +1798,16 @@ _LAUNCH_EXPLANATIONS = {
                              "work through a shell script this guard can read, or through "
                              "mnv_guarded_run.py; do not widen the leaf table to make a launcher "
                              "pass."),
+    LAUNCH_REASON_KERNEL_FLOOR: ("_posixsubprocess.fork_exec is the last Python-visible layer "
+                                 "before the kernel, and this guard hooks it so that a caller "
+                                 "which skips subprocess, os.exec* and os.spawn* is scanned "
+                                 "anyway. The call it was handed does not have the shape this "
+                                 "interpreter's fork_exec documents -- no argument vector, an "
+                                 "empty executable_list, or an environment member that is not "
+                                 "NAME=VALUE -- so the executable, the argv or the propagation "
+                                 "contract reaching the child cannot be read. Route the launch "
+                                 "through subprocess or os.posix_spawn, whose argv positions this "
+                                 "guard can also repair."),
 }
 
 
@@ -1700,6 +1825,11 @@ LAUNCH_OUTCOMES = {
     LAUNCH_REASON_UNMODELLED: "refused:launch-unmodelled-launch-grammar",
     LAUNCH_REASON_UNPARSED: "refused:launch-unmodelled-launch-grammar",
     LAUNCH_REASON_UNPROVEN: "refused:launch-unmodelled-launch-grammar",
+    #: THE FLOOR SHARES THE SECOND OUTCOME for the reason the paragraph above gives: "this guard
+    #: could not establish that this launch stays guarded" is the same claim to a ratchet reader
+    #: whether the obstacle was an unmodelled option or an unreadable call at the kernel floor. The
+    #: `reason` field carries which.
+    LAUNCH_REASON_KERNEL_FLOOR: "refused:launch-unmodelled-launch-grammar",
 }
 
 
@@ -3941,6 +4071,241 @@ def _scan_shell_string(text: str, env, depth: int = 0) -> bool:
     return launches_python
 
 
+#: THE TWO BINDINGS OF THE KERNEL FLOOR, and BOTH have to be patched or the patch is decorative.
+#: `_posixsubprocess.fork_exec` is the module attribute -- the one
+#: `multiprocessing.util.spawnv_passfds` calls, because it does `import _posixsubprocess` and then
+#: `_posixsubprocess.fork_exec(...)` -- and
+#: `subprocess._fork_exec` is a SEPARATE name bound once at import by
+#: `from _posixsubprocess import fork_exec as _fork_exec`, which is what `Popen._execute_child`
+#: calls. Rebinding the first does not touch the second: that is what a `from ... import` means.
+#: MEASURED, NOT REMEMBERED: both names exist on 3.11.15, 3.12.2 and 3.13.7, and
+#: `tests/test_mnv_guarded_run.py::TheKernelFloorIsHookedAndTheResidualIsBelowIt` re-derives the
+#: pair and the callsite from THIS interpreter's own `subprocess` source rather than from this
+#: tuple, so a CPython that adds or moves a binding is red on the test rather than silently
+#: unhooked. A name absent from an interpreter is skipped, not invented.
+_FORK_EXEC_BINDINGS = (
+    ("_posixsubprocess", "fork_exec"),
+    ("subprocess", "_fork_exec"),
+)
+
+#: `fork_exec`'s POSITIONAL layout. It is a C function that takes NO KEYWORD ARGUMENTS, so there is
+#: no signature to bind against and no parameter name to read -- the positions are the contract.
+#: These four are the ones a scan needs, and they are identical in 3.11, 3.12 and 3.13:
+#:   0  args             the argument vector, argv[0] included and a DISPLAY NAME as everywhere else
+#:   1  executable_list  CANDIDATE files, bytes, tried in order -- `os._execvpe`'s semantics
+#:   4  cwd              the launch's working directory, or None for this process's
+#:   5  env_list         [b"NAME=VALUE", ...], or None meaning "execv, inherit this environment"
+#: A call whose shape does not match is REFUSED with `LAUNCH_REASON_KERNEL_FLOOR` rather than read
+#: at these offsets anyway: an interpreter that reordered them would otherwise have this guard
+#: parsing an fd as an environment, which is the "right pattern over the wrong rows" failure.
+_FORK_EXEC_ARGV_INDEX = 0
+_FORK_EXEC_EXECUTABLE_LIST_INDEX = 1
+_FORK_EXEC_CWD_INDEX = 4
+_FORK_EXEC_ENV_LIST_INDEX = 5
+_FORK_EXEC_MINIMUM_ARITY = 6
+
+
+def _fork_exec_executable(executable_list) -> str:
+    """The file the KERNEL will run, out of `fork_exec`'s candidate list.
+
+    `executable_list` IS A LIST BECAUSE THE `p` SEMANTICS LIVE HERE. `subprocess` hands down one
+    entry for a path with a directory in it and one entry PER `PATH` DIRECTORY for a bare name, and
+    the C code execs the first that works -- so "the executable" is the first candidate that
+    exists, not the first candidate. Scanning `[0]` unconditionally would let a launch put a
+    nonexistent path in front of a real interpreter and be classified on a file that never runs.
+    When none of them exists the launch will fail with ENOENT whatever this returns, so the first
+    is used and the refusal (if any) names a file the caller did write.
+    """
+    candidates = [_text_argument(candidate) for candidate in executable_list]
+    if not candidates:
+        raise _LaunchRefusal(LAUNCH_REASON_KERNEL_FLOOR,
+                             "fork_exec was handed an empty executable_list, so there is no file "
+                             "to classify")
+    for candidate in candidates:
+        if os.path.exists(candidate):
+            return candidate
+    return candidates[0]
+
+
+def _environment_from_fork_exec(env_list) -> "dict | None":
+    """`[b"NAME=VALUE", ...]` as a mapping; None stays None, which means "inherit, via execv".
+
+    THE None IS NOT AN EMPTY ENVIRONMENT AND THE DISTINCTION IS LOAD-BEARING. `subprocess` sets
+    `env_list = None` when the caller passed no `env=` and says so in its own comment ("Use execv
+    instead of execve"), and this guard's whole environment contract already spells that state
+    None -- `_rearm_launch_environment(None, ...)` returns None, and
+    `_environment_reaching_child_is_armed(None)` reads `os.environ`. Turning None into
+    `dict(os.environ)` here would convert every inherit-launch into an explicit one and make this
+    layer's answer differ from every other layer's for the same launch.
+
+    A MEMBER WITHOUT A `=` IS A REFUSAL, not a skipped entry: the propagation contract is read out
+    of this list, and an entry this guard cannot parse is an entry it cannot say is armed.
+    """
+    if env_list is None:
+        return None
+    mapping = {}
+    for entry in env_list:
+        text = os.fsdecode(entry) if isinstance(entry, (bytes, bytearray)) else str(entry)
+        name, separator, value = text.partition("=")
+        if not separator or not name:
+            raise _LaunchRefusal(LAUNCH_REASON_KERNEL_FLOOR,
+                                 f"fork_exec was handed the environment member {text!r}, which is "
+                                 f"not NAME=VALUE, so the propagation contract reaching the child "
+                                 f"cannot be read")
+        mapping[name] = value
+    return mapping
+
+
+def _read_fork_exec_call(call_args: tuple, call_kwargs: dict) -> tuple:
+    """`fork_exec`'s positional call, read as `(argv, executable, cwd, environment)` or REFUSED.
+
+    THE SHAPE IS VALIDATED RATHER THAN TRUSTED, and that is not defensive padding. `fork_exec` is a
+    C function that takes NO KEYWORD ARGUMENTS, so there is no signature to bind against and no
+    parameter name to read -- the positions ARE the contract, and this guard's copy of them is a
+    constant. If an interpreter reordered them, reading at these offsets anyway would have the guard
+    parsing a file descriptor as an environment and answering confidently about the wrong object.
+    So each field is checked for the KIND it must be, and a mismatch is
+    `LAUNCH_REASON_KERNEL_FLOOR`: a vector where a vector belongs, `None`/`str`/`bytes` for the
+    working directory, and `None` or `NAME=VALUE` members for the environment. This function is
+    where every one of those refusals is spelled, so the wrapper below has no second copy.
+    """
+    if call_kwargs or len(call_args) < _FORK_EXEC_MINIMUM_ARITY:
+        raise _LaunchRefusal(
+            LAUNCH_REASON_KERNEL_FLOOR,
+            f"fork_exec was called with {len(call_args)} positional and {len(call_kwargs)} keyword "
+            f"arguments; it takes no keyword arguments and this guard reads the argv, the "
+            f"executable_list, the cwd and the environment at positions {_FORK_EXEC_ARGV_INDEX}, "
+            f"{_FORK_EXEC_EXECUTABLE_LIST_INDEX}, {_FORK_EXEC_CWD_INDEX} and "
+            f"{_FORK_EXEC_ENV_LIST_INDEX}, so this call cannot be read")
+    raw_argv = call_args[_FORK_EXEC_ARGV_INDEX]
+    if raw_argv is None or isinstance(raw_argv, (str, bytes, bytearray)):
+        raise _LaunchRefusal(
+            LAUNCH_REASON_KERNEL_FLOOR,
+            f"fork_exec's argument vector is {type(raw_argv).__name__} and not a vector, so the "
+            f"arguments the child receives cannot be read")
+    cwd = call_args[_FORK_EXEC_CWD_INDEX]
+    if cwd is not None and not isinstance(cwd, (str, bytes, bytearray, os.PathLike)):
+        raise _LaunchRefusal(
+            LAUNCH_REASON_KERNEL_FLOOR,
+            f"fork_exec's working directory is {type(cwd).__name__} and not a path, so a relative "
+            f"operand of this launch cannot be resolved against the directory it will run in")
+    try:
+        argv = _launch_argv(raw_argv)
+        executable = _fork_exec_executable(call_args[_FORK_EXEC_EXECUTABLE_LIST_INDEX])
+        env = _environment_from_fork_exec(call_args[_FORK_EXEC_ENV_LIST_INDEX])
+    except TypeError as err:
+        raise _LaunchRefusal(
+            LAUNCH_REASON_KERNEL_FLOOR,
+            f"fork_exec's argv, executable_list or environment could not be walked as the kind it "
+            f"must be ({err})") from None
+    return argv, executable, cwd, env
+
+
+def _fork_exec_environment_list(mapping) -> list:
+    """A mapping back into the `[b"NAME=VALUE", ...]` shape the C code requires.
+
+    BYTES, ALWAYS, and encoded with `os.fsencode` rather than `str.encode`: that is what
+    `subprocess` does one layer up, and a re-armed environment that round-tripped through a
+    different codec would hand the child different bytes than the caller's own path would have.
+    """
+    return [os.fsencode(str(name)) + b"=" + os.fsencode(str(value))
+            for name, value in mapping.items()]
+
+
+class _ApprovedLaunch:
+    """One launch `_prepare_launch` has already read, handed down to the layer beneath it.
+
+    WHY A TICKET AND NOT A FLAG. The public primitives are where a launch is REPAIRED -- their argv
+    positions are known well enough to insert `env` operands or to substitute the restricted-bash
+    spelling -- and the lower layers (`_posixsubprocess.fork_exec`, and `os.posix_spawn` when
+    `subprocess.Popen` chooses it) then see the REPAIRED argv. Re-scanning that is not merely
+    wasteful, it REFUSES A CORRECT LAUNCH: the restricted rewrite runs with `PATH` set to the
+    guard's wrapper directories only, and a second scan resolving `ls` through that `PATH` finds no
+    system prefix, so `_check_leaf` refuses it. `subprocess.run("ls", shell=True, close_fds=False)`
+    was refused exactly that way before this existed.
+
+    A FLAG WOULD SUPPRESS MORE THAN IT APPROVED. The ticket carries the argv it was issued for and
+    is consumed ONCE, so a lower layer launching something ELSE while an approval is outstanding --
+    a `preexec_fn` in the forked child, a thread that never went through the public hook -- does
+    not match and is scanned. It is per-thread for the same reason: an approval in one thread must
+    not wave through another thread's launch.
+    """
+
+    __slots__ = ("argv", "consumed")
+
+    def __init__(self, argv: tuple):
+        self.argv = argv
+        self.consumed = False
+
+
+_APPROVED_LAUNCHES = threading.local()
+
+
+def _approved_launches() -> list:
+    """This thread's outstanding approvals, innermost last."""
+    stack = getattr(_APPROVED_LAUNCHES, "stack", None)
+    if stack is None:
+        stack = []
+        _APPROVED_LAUNCHES.stack = stack
+    return stack
+
+
+def _launch_identity(arguments) -> tuple:
+    """The argv, normalised the one way both layers normalise it, as a comparable value."""
+    return tuple(_launch_argv(arguments))
+
+
+def _approve_launch(arguments) -> _ApprovedLaunch:
+    """Record that THIS argv has been scanned, for the layer below to consume. Always paired."""
+    ticket = _ApprovedLaunch(_launch_identity(arguments))
+    _approved_launches().append(ticket)
+    return ticket
+
+
+def _withdraw_launch_approval(ticket: _ApprovedLaunch) -> None:
+    """Drop `ticket` whether or not it was consumed. Removed BY IDENTITY, never by value.
+
+    Two launches with the same argv are two tickets, and `list.remove` would delete the wrong one.
+    """
+    stack = _approved_launches()
+    for index in range(len(stack) - 1, -1, -1):
+        if stack[index] is ticket:
+            del stack[index]
+            return
+
+
+def _consume_approved_launch(arguments) -> bool:
+    """Whether a layer above already scanned exactly this argv. Consumes the approval."""
+    identity = _launch_identity(arguments)
+    for ticket in reversed(_approved_launches()):
+        if not ticket.consumed and ticket.argv == identity:
+            ticket.consumed = True
+            return True
+    return False
+
+
+def _refuse_the_launch(refusal: _LaunchRefusal, guard: GuardedPathFinder, argv, executable,
+                       env=None):
+    """Record a launch refusal on the guard, report it, and exit 3. EVERY layer refuses here.
+
+    It exists because the floor can refuse BEFORE it has an executable to name -- an unreadable
+    `fork_exec` call has no classified file -- and a second copy of this block would be a second
+    place for the record's shape to drift from `write_inventory`'s reader.
+    """
+    launched = getattr(refusal, "executable", None)
+    if not launched:
+        launched = _resolve_executable(executable, env) if executable is not None else None
+    record = {
+        "executable": launched,
+        "offending_flag": refusal.offending,
+        "argv": list(argv),
+        "reason": refusal.reason,
+    }
+    guard.launch_refusal = record
+    _report_launch(record)
+    raise SystemExit(VIOLATION_EXIT) from None
+
+
 def _scan_launch(argv, env, guard: GuardedPathFinder, cwd=None, executable=None):
     """The argv to launch and the environment to launch it with; raise to refuse.
 
@@ -4035,14 +4400,28 @@ def _prepare_launch(executable, arguments, env, guard: GuardedPathFinder, cwd=No
 
     `executable` IS THE REAL EXECUTABLE AND NOT `argv[0]`. See `_scan_launch`.
 
+    IT CHECKS FOR AN APPROVAL BEFORE IT SCANS ANYTHING, which is round 8's addition and is what
+    makes a second, lower hook safe to add. `_posixsubprocess.fork_exec` and -- when
+    `subprocess.Popen` chooses it -- `os.posix_spawn` are both reached FROM a public primitive that
+    has already been through here, and what they are handed is the argv this function REWROTE. A
+    second reading of that argv refuses it, because the restricted rewrite runs with a `PATH` the
+    scan resolves nothing through. See `_ApprovedLaunch`.
+
     `cwd` IS THE LAUNCH'S WORKING DIRECTORY AND NOT THIS PROCESS'S, where the caller gave one. It
     matters because a relative operand -- `bash ./stage.sh`, `source ./setup.sh` -- names a
     different file under a different cwd, and a scan that resolved it against the wrong directory
     would read the wrong bytes and report on a program that does not run. The primitives that have
     no `cwd` parameter (`os.exec*`, `posix_spawn`) pass None, which means this process's own.
     """
-    armed_env = _rearm_launch_environment(env, guard)
     argv = _launch_argv(arguments)
+    if _consume_approved_launch(argv):
+        #: ALREADY READ ONE LAYER UP, and re-reading it here would REFUSE IT. See `_ApprovedLaunch`:
+        #: what reaches this point is the argv a public primitive already scanned and possibly
+        #: rewrote, and the restricted rewrite carries a `PATH` that a second scan resolves nothing
+        #: through. The caller's environment and argv are returned exactly as handed in, because the
+        #: layer that issued the approval is the one that armed them.
+        return env, argv
+    armed_env = _rearm_launch_environment(env, guard)
     try:
         launch_argv, restricted = _scan_launch(argv, armed_env, guard, cwd, executable)
     except _LaunchRefusal as refusal:
@@ -4055,16 +4434,7 @@ def _prepare_launch(executable, arguments, env, guard: GuardedPathFinder, cwd=No
             #: written while it is set says so; see `write_inventory`.
             guard.static_scan = "disabled-for-test"
             return _static_scan_disabled_launch(argv, armed_env, guard, cwd, executable)
-        launched = getattr(refusal, "executable", None)
-        refusal_record = {
-            "executable": launched or _resolve_executable(executable, armed_env),
-            "offending_flag": refusal.offending,
-            "argv": argv,
-            "reason": refusal.reason,
-        }
-        guard.launch_refusal = refusal_record
-        _report_launch(refusal_record)
-        raise SystemExit(VIOLATION_EXIT) from None
+        _refuse_the_launch(refusal, guard, argv, executable, armed_env)
     return (restricted if restricted is not None else armed_env), launch_argv
 
 
@@ -4161,7 +4531,18 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
                 #: is what makes the rewrite the thing that runs; keeping it would exec the shell
                 #: the caller asked for with the restricted argv, which is the worst of both.
                 bound.arguments["executable"] = None
-        return original_popen_init(*bound.args, **bound.kwargs)
+        #: THE APPROVAL, ISSUED AROUND THE ORIGINAL CALL AND NOWHERE WIDER. `_execute_child` reaches
+        #: either `_posixsubprocess.fork_exec` or `os.posix_spawn` (the latter whenever
+        #: `close_fds=False`), and round 8 hooks both -- so without this the layer below re-reads a
+        #: launch THIS layer rewrote, under the restricted `PATH` the rewrite carries, and refuses
+        #: it. `armed_argv` is the identity to approve in all three shapes: for a rewritten launch
+        #: it is what was written back, and for an untouched one it is value-identical to the argv
+        #: CPython builds -- including the `[shell, "-c", string]` a surviving `shell=True` makes.
+        ticket = _approve_launch(armed_argv)
+        try:
+            return original_popen_init(*bound.args, **bound.kwargs)
+        finally:
+            _withdraw_launch_approval(ticket)
 
     subprocess.Popen.__init__ = guarded_popen_init
 
@@ -4312,7 +4693,11 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
         if armed_env is None and armed_argv == [shell, "-c", command]:
             return original_system(command)
         process = subprocess.Popen.__new__(subprocess.Popen)
-        original_popen_init(process, armed_argv, env=armed_env)
+        ticket = _approve_launch(armed_argv)
+        try:
+            original_popen_init(process, armed_argv, env=armed_env)
+        finally:
+            _withdraw_launch_approval(ticket)
         status = process.wait()
         #: `os.system` RETURNS A WAIT STATUS AND NOT AN EXIT CODE -- `os.waitstatus_to_exitcode`'s
         #: input, not its output -- and a caller doing `os.system(...) != 0` reads either. The two
@@ -4320,6 +4705,178 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
         return (-status) & 0x7F if status < 0 else (status & 0xFF) << 8
 
     os.system = guarded_system
+
+    def wrap_the_kernel_floor(module_name: str, attribute: str) -> None:
+        """Hook one binding of `_posixsubprocess.fork_exec`: the floor beneath every primitive here.
+
+        WHY A FLOOR AT ALL, WHEN THE SIXTEEN PRIMITIVES ABOVE ARE HOOKED. Because coverage
+        enumerated by public API is not coverage. Round 8's reviewer called this function directly
+        with `python3 -I <hijacking child>`, every signature above it unchanged, and the child ran:
+        it is the last Python-visible layer before the kernel on POSIX, and `subprocess`,
+        `multiprocessing`'s `spawnv_passfds` and `concurrent.futures` are all callers OF it rather
+        than alternatives TO it. So this is where a launch can no longer be missed by a caller
+        nobody thought of, and the primitives above are kept for the argv positions they give a
+        REPAIR rather than for the coverage they were carrying.
+
+        IT DOES NOT RE-SCAN WHAT A LAYER ABOVE ALREADY SCANNED -- see `_ApprovedLaunch`. The ticket
+        is checked before anything is parsed, so a repaired launch reaches the C function exactly as
+        the layer above built it.
+
+        A FLOOR AROUND A FLOOR IS STRUCTURALLY IMPOSSIBLE, and that is what `_mnv_guard_floor`
+        buys. The two bindings name ONE C function, so if the second visit ever found the first
+        visit's wrapper -- a CPython that re-exported the alias, or a table that listed the same
+        attribute twice -- it would wrap it, and then every `subprocess` launch would be scanned
+        twice: the second time against the restricted `PATH` its own rewrite carries, which refuses
+        a correct program. The marker makes that a no-op instead. It is the same concern
+        `_WRAPPED_OS_PRIMITIVES` answers by snapshotting before anything is replaced.
+        """
+        module = sys.modules.get(module_name)
+        if module is None:
+            return
+        original = getattr(module, attribute, None)
+        if original is None or getattr(original, "_mnv_guard_floor", False):
+            return
+
+        @functools.wraps(original)
+        def guarded(*call_args, **call_kwargs):
+            try:
+                argv, executable, cwd, env = _read_fork_exec_call(call_args, call_kwargs)
+            except _LaunchRefusal as refusal:
+                #: NO EXECUTABLE TO NAME, and that is the honest record: the call's shape could not
+                #: be read, so the file it would have run was never established. `argv` is empty
+                #: for the same reason -- reporting the raw arguments here would put whatever
+                #: object sat at position 0 into a json record.
+                _refuse_the_launch(refusal, guard, [], None)
+            if _consume_approved_launch(argv):
+                return original(*call_args, **call_kwargs)
+            armed_env, armed_argv = _prepare_launch(executable, argv, env, guard, cwd)
+            positional = list(call_args)
+            if armed_argv != argv:
+                #: THE CALLER'S OWN OBJECTS SURVIVE AN UNCHANGED LAUNCH. `argv` here is the decoded
+                #: reading of position 0; writing it back unconditionally would hand the C function
+                #: `str` where the caller passed `bytes`. That round-trips losslessly through
+                #: `os.fsdecode`/`fsencode`, but it is a change to what the caller wrote for no
+                #: reason, and this file's rule is that a repair is written back and nothing else
+                #: is.
+                positional[_FORK_EXEC_ARGV_INDEX] = armed_argv
+            if armed_argv[:1] != argv[:1]:
+                #: THE EXECUTABLE MOVES WITH THE ARGV, and at this layer it is a CANDIDATE LIST of
+                #: one: a rewritten launch runs the restricted bash by absolute path, and leaving
+                #: the caller's candidates in place would exec the program the caller asked for
+                #: with the argv the guard chose -- the worst of both, exactly as at `Popen`.
+                positional[_FORK_EXEC_EXECUTABLE_LIST_INDEX] = (os.fsencode(armed_argv[0]),)
+            if armed_env is not None and armed_env is not env:
+                #: WRITTEN BACK ONLY WHEN IT CHANGED. An untouched `env=` keeps the caller's own
+                #: bytes rather than this guard's round-trip of them, and an untouched None stays
+                #: None -- which at this layer means `execv`, i.e. inherit, and is not the same
+                #: launch as an explicit copy of `os.environ`.
+                positional[_FORK_EXEC_ENV_LIST_INDEX] = _fork_exec_environment_list(armed_env)
+            return original(*positional, **call_kwargs)
+
+        guarded._mnv_guard_floor = True
+        setattr(module, attribute, guarded)
+
+    for module_name, attribute in _FORK_EXEC_BINDINGS:
+        wrap_the_kernel_floor(module_name, attribute)
+
+    _install_multiprocessing_guards(guard)
+
+
+#: `multiprocessing.spawn` -- the module that owns the executable EVERY `spawn` and `forkserver`
+#: child is exec'd from. `multiprocessing.set_executable` and `BaseContext.set_executable` both
+#: resolve to `multiprocessing.spawn.set_executable` at CALL time, so hooking the one function
+#: covers all three spellings; `get_executable` is only a reader of what it stored.
+_MULTIPROCESSING_SPAWN_MODULE = "multiprocessing.spawn"
+
+
+def _classify_a_chosen_interpreter(chosen: str, guard: GuardedPathFinder) -> None:
+    """`multiprocessing.set_executable(chosen)`: admit a Python interpreter, refuse anything else.
+
+    WHY THE RULE HERE IS NARROWER THAN `_scan_resolved_command`'s SIX CLASSES. `set_executable`
+    names a FILE and no argv: `multiprocessing` builds the child's command line itself, as
+    `[chosen, *this interpreter's flags, "-c", "<spawn_main ...>"]`. So the only thing that file can
+    correctly be is a PYTHON INTERPRETER -- a leaf tool, a shell script or a `git` handed `-c
+    "from multiprocessing.spawn import spawn_main"` is not a launch anyone meant, and the classes
+    this guard admits by REWRITING (a shell) cannot be rewritten here at all, because there is no
+    argv to rewrite and `multiprocessing` will not consult one. A shell admitted by reading its
+    script and then exec'd with multiprocessing's own argv would be the one admitted shell in this
+    file that ran unrestricted.
+
+    IT IS NOT THE ONLY LAYER AND IT IS NOT LOAD-BEARING ALONE. The launch itself goes through
+    `spawnv_passfds` to `_posixsubprocess.fork_exec`, which this guard also hooks, so a bad choice
+    is refused at spawn time even with this hook removed. What this adds is WHERE the refusal lands:
+    at the line that made the choice, with the chosen file named, instead of at a launch whose argv
+    `multiprocessing` assembled. Round 8's finding is that `set_executable` is public API a
+    launcher may reasonably reach for -- unlike a direct `fork_exec` call -- so the diagnostic
+    matters.
+    """
+    context = _ScanContext(os.getcwd())
+    launches_python = _scan_resolved_command([chosen], os.environ, context)
+    if launches_python and not context.rewrite:
+        return
+    raise _LaunchRefusal(
+        LAUNCH_REASON_UNPROVEN,
+        f"multiprocessing.set_executable({chosen!r}) chooses the file every spawn and forkserver "
+        f"child is exec'd from, and multiprocessing appends its own `-c <spawn_main>` argv to it, "
+        f"so the file must be a Python interpreter this guard admits and this is not one",
+        executable=_resolve_executable(chosen, None))
+
+
+def _guarded_set_executable(original, guard: GuardedPathFinder):
+    """`multiprocessing.spawn.set_executable`, wrapped so the CHOICE is classified where it is made.
+
+    The original still runs, and runs LAST: a refusal must leave `_python_exe` as it was, or a
+    refused choice would be recorded in the module even though the launch never happened.
+    """
+
+    @functools.wraps(original)
+    def guarded(executable):
+        if executable is None:
+            #: `set_executable(None)` NAMES NO FILE, so there is nothing to classify and refusing it
+            #: would refuse a reset. It is not a hole either: `_python_exe = None` cannot produce a
+            #: working launch, and the `spawnv_passfds` that follows hands the floor an
+            #: `executable_list` of `[None]`, which is refused there with
+            #: `LAUNCH_REASON_KERNEL_FLOOR`.
+            return original(executable)
+        try:
+            chosen = _text_argument(executable)
+        except TypeError as err:
+            _refuse_the_launch(
+                _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                               f"multiprocessing.set_executable was handed "
+                               f"{type(executable).__name__} ({err}), which names no file this "
+                               f"guard can classify"),
+                guard, [], None)
+        try:
+            _classify_a_chosen_interpreter(chosen, guard)
+        except _LaunchRefusal as refusal:
+            _refuse_the_launch(refusal, guard, [chosen], chosen)
+        return original(executable)
+
+    guarded._mnv_guard_set_executable = True
+    return guarded
+
+
+def _install_multiprocessing_guards(guard: GuardedPathFinder) -> None:
+    """Hook `multiprocessing.spawn.set_executable` if that module is loaded, else when it loads.
+
+    LAZILY, AND THE LAZINESS IS THE POINT. Importing `multiprocessing.spawn` from `install()` would
+    pull `socket`, `pickle` and a dozen more modules into EVERY guarded process -- including the
+    ones started from `sitecustomize` during interpreter startup -- to hook a function most of them
+    never call, and it would move the `checked` count every inventory record reports. So the module
+    is hooked if it is already there, and otherwise `GuardedPathFinder` arms it at the moment the
+    program imports it. The other two start methods need no hook of their own and are asserted, not
+    assumed: `fork` produces a child that IS this interpreter with this guard installed, and
+    `forkserver` launches through `spawnv_passfds` and is therefore covered by the `fork_exec`
+    floor.
+    """
+    module = sys.modules.get(_MULTIPROCESSING_SPAWN_MODULE)
+    if module is None:
+        return
+    original = getattr(module, "set_executable", None)
+    if original is None or getattr(original, "_mnv_guard_set_executable", False):
+        return
+    module.set_executable = _guarded_set_executable(original, guard)
 
 
 def _arm_restricted_shell() -> "tuple[str, dict]":
