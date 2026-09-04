@@ -136,7 +136,7 @@ docs/orchestration/MIGRATION-DELTA.md	tracked	ARCHIVAL	document			terminal		exac
 docs/orchestration/MIGRATION-HANDOFF.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	5	146	9653
 docs/orchestration/MIGRATION-TAKEOVER-STATUS.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	8	157	20741
 docs/orchestration/OMNIFOLD-DOSSIER.md	tracked	ARCHIVAL	document	fe-fps-campaign		terminal		exact-path-only	nd-unfolding/pet/feature_rank_arms.py;nd-unfolding/pet/feature_rank_summarize.py	yes	4	106	7764
-docs/orchestration/OPERATOR-GUIDE.md	tracked	ARCHIVAL	document			terminal		exact-path-only	docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py	yes	7	634	35968
+docs/orchestration/OPERATOR-GUIDE.md	tracked	ARCHIVAL	document			terminal		exact-path-only	docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py	yes	7	675	39042
 docs/orchestration/P5-P6-20260822-entrypoint-set-and-blind-spots.md	tracked	LIVE	document		20260822	open		route-only		no	3	160	8870
 docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	tracked	LIVE	document		20260823	open		route-only		no	3	149	8296
 docs/orchestration/PACKET-20260823-round5-f2a-f17a-repair.md	tracked	LIVE	document		20260823	open		route-only		no	9	259	16441

@@ -166,6 +166,47 @@ admission lock held; an SSH key with a passphrase and no agent behaves the same 
 only if `BatchMode` is set in the operator's SSH config, which is worth checking
 before the first unattended tick on a new host.
 
+**The push destination is checked where the push happens, and every git call
+runs with a cleared configuration environment.** A remote has *two* URLs: `git
+remote get-url origin` prints the fetch one, while a push resolves its
+destination through `remote.origin.pushurl` and `url.<base>.pushInsteadOf`, which
+only `git remote get-url --push origin` expands. Under that asymmetry `ls-remote`
+and `fetch` keep answering from the pinned origin while the lease-protected push
+lands in another repository — every host fetching the same base, each pushing to
+its own destination, each seeing a successful lease. So the queue's own git
+directory `queue-git`, which is the thing that fetches and pushes, has **both**
+of its URLs proved equal to the pin after it is configured and again before every
+fetch and every push, and refuses any local key under `remote.origin.*` or
+`url.*` that campaignctl did not itself write (it writes exactly `gc.auto`,
+`core.bare` and `remote.origin.url`), plus `core.sshCommand`, `core.hooksPath` and
+a `credential.helper` spelled as a `!` shell command. Those refusals read `the
+campaign queue does not push to this campaign's pinned origin` and `the campaign
+queue's git configuration was written from outside campaignctl`. A checkout whose
+`origin` fetches from the pin and pushes elsewhere is refused on the same footing
+as a mismatched fetch URL, with `checkout origin does not push to this campaign's
+pinned origin`. The push then names the literal pinned URL rather than the remote,
+and each `compute-admitted` log line records `push_url` — the destination
+`get-url --push` resolved in `queue-git` — beside `origin_url`.
+
+The environment is the other half, and it changes what an operator must
+configure. `GIT_CONFIG_COUNT` with its `GIT_CONFIG_KEY_<n>`/`GIT_CONFIG_VALUE_<n>`
+pairs, `GIT_CONFIG_PARAMETERS`, `GIT_CONFIG_GLOBAL`, `GIT_CONFIG_SYSTEM`,
+`GIT_CONFIG_NOSYSTEM`, the legacy `GIT_CONFIG`, and the program-selecting family
+`GIT_SSH`, `GIT_SSH_COMMAND`, `GIT_SSH_VARIANT`, `GIT_PAGER`, `GIT_EDITOR`,
+`GIT_SEQUENCE_EDITOR`, `GIT_EXTERNAL_DIFF`, `GIT_ASKPASS`, `GIT_EXEC_PATH` and
+`GIT_PROXY_COMMAND` are **removed** from every git invocation this tool makes, and
+`GIT_CONFIG_GLOBAL=/dev/null` with `GIT_CONFIG_NOSYSTEM=1` are **set**, so only
+repository-local configuration applies. They are cleared rather than refused
+because git *exports* `GIT_CONFIG_PARAMETERS` to its hooks and campaignctl is
+invoked from one, so refusing on presence would refuse every correct run. The
+practical consequence: **`~/.gitconfig` and `/etc/gitconfig` are no longer read by
+this tool.** A credential helper configured globally will not be seen — put it in
+`queue-git`'s own local config (`git --git-dir <cache>/queue-git config
+credential.helper osxkeychain`; a `!`-prefixed value is refused), and put SSH
+identity and `BatchMode` in `~/.ssh/config` rather than in `GIT_SSH_COMMAND` or
+`core.sshCommand`, both of which are now cleared or refused. A missing credential
+still surfaces as `campaign origin is unreachable` rather than as a hang.
+
 **Inspecting the ref.** These read the campaign's actual state without going
 through the tool:
 
