@@ -1,4 +1,8 @@
 {
+  "accounting": {
+    "expects_scheduler_tasks": true,
+    "task_ids_file": "outputs/validator-failure-fixture/scheduler-task-ids.json"
+  },
   "campaign_id": "validator-failure-fixture",
   "candidate": {
     "id": "candidate-a",

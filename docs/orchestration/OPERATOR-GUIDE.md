@@ -100,18 +100,51 @@ claim without a terminal receipt becomes `outcome-unknown` and is never retried
 automatically. A newly staged item sends one deduplicated ntfy approval alert on
 the next ticker pass.
 
-**Compute is admissible only from the canonical state directory.** The R5
-headroom check, the reservation inventory, the admission lock, and the claim are
-all properties of ONE directory, `docs/orchestration/state/campaign-queue` under
-the queue's own repository. A queue started with any other `--state-dir` (or
+**The queue is campaign-global and lives outside every checkout.** The canonical
+directory is
+
+```
+${MNV_CAMPAIGN_STATE_ROOT:-~/.mnv_campaign}/r5-20260902-0836139b/campaign-queue
+```
+
+where the middle component names this campaign: `20260902` is the ruling record's
+date and `0836139b` the first eight hex digits of its SHA-256. Every clone and
+linked worktree on the host resolves that same path, so the admission lock, the
+reservation inventory, the claims, and the outcomes are shared. It is a constant,
+not a digest recomputed per run: amending the decision record must not repoint the
+queue and orphan live claims, so re-deriving it is a commit that also migrates the
+directory.
+
+**Compute is admissible only from that directory.** The R5 headroom check, the
+reservation inventory, the admission lock, and the claim are all properties of ONE
+directory. A queue started with any other `--state-dir` (or
 `CAMPAIGN_QUEUE_STATE_DIR`) may still stage, approve, and run **non-compute**
 items, but a compute item there is exit 6 and a `refused` outcome with the reason
-`non-canonical state dir cannot admit compute`. This is not tidiness: two queues
-under two `--state-dir` values read the same committed receipt, take separate
-locks, scan separate inventories, and each admitted a six-hour item the other had
-never counted — the same 502-against-500 projection as an over-committed queue,
-reached by splitting the queue instead. The refusal happens **before** any lock
-is taken, because a lock file in a second state directory excludes nobody.
+`non-canonical state dir cannot admit compute`. The refusal happens **before** any
+lock is taken, because a lock file in a second state directory excludes nobody.
+
+This is not tidiness, and it is not only about `--state-dir`. Two queues in two
+directories read the same committed receipt, take separate locks, scan separate
+inventories, and each admit a six-hour item the other never counted — 502 against
+a ceiling of 500. That was first reached by pointing `--state-dir` elsewhere and
+then, with the canonical directory still derived from the queue's repository, by
+`git clone`: a clone has the same commits, the same committed receipt, the same
+contracts and the same `HEAD`, so its ticker considered its own copy of the
+directory canonical and admitted against hours another checkout had already
+reserved. `MNV_CAMPAIGN_STATE_ROOT` exists so the test suite can give one host a
+temporary root; it is read from the environment every invocation, so it cannot
+give one checkout a queue of its own.
+
+**An item records the absolute `repo_path` it was staged from**, and only a ticker
+in that repository runs it. Another checkout's item is skipped rather than
+validated: its binding hashes, `cwd` and `git_head` are properties of its own
+tree, and marking it `stale` against this tree's files would consume an item
+nobody misbehaved over. It still **reserves** its declared `maximum_cost` and it
+is still listed — `list` prints `here` or the owning checkout's path in a fourth
+column, and `status --json` carries `repo_path` and `runs_here` per row. An item
+staged before this rule, with no recorded `repo_path`, is never runnable anywhere
+and keeps reserving; approving one is refused. `validate_unchanged` still refuses
+on `HEAD` drift in the owning repository, exactly as before.
 
 From Termius:
 
@@ -139,6 +172,17 @@ version if protection from a compromised same-account agent is required.
 /usr/bin/python3.11 campaignctl.py revoke --id <item-id>
 ```
 
+An item that **ran** cannot be revoked; if its spend can never be identified (see
+the release rule below), the operator act is instead
+
+```bash
+/usr/bin/python3.11 campaignctl.py release --id <item-id> --reason '<why>'
+```
+
+which asks you to type `RELEASE <item-id>`, records the reason, and appends a
+`reservation-released` line to `logs/admission-lock.log`. It is refused for an
+item that never ran, and refused while an item may still be spending.
+
 Scientific authorization is a separate gate. Approval means only “execute
 this exact already-authorized command”; it cannot adopt a result, lift an
 `OI-*` hold, authorize material compute, or waive `mnv_guarded_run.py`.
@@ -150,7 +194,8 @@ input ids, locations, and SHA-256 digests; exhaustive return-code branches;
 the decision consequence, unlocks, and prohibitions for every branch; maximum
 GPU task-hours, CPU task-hours, and wall hours; output namespace; producer,
 independent-validator, and decision-authority identities; validator version;
-preservation behavior; retry policy; and this required validator command:
+preservation behavior; retry policy; the accounting declaration below; and this
+required validator command:
 
 ```json
 "terminal_validator": {
@@ -167,6 +212,37 @@ independent-validator, and decision-authority identities must be pairwise
 distinct after case folding. Exactly one `otherwise` branch covers every
 unclassified terminal result, and every branch must name a decision
 consequence.
+
+Schema version 1 also requires an **accounting declaration**, which is what makes
+the arm's spend identifiable:
+
+```json
+"accounting": {
+  "task_ids_file": "outputs/<namespace>/scheduler-task-ids.json",
+  "expects_scheduler_tasks": true
+}
+```
+
+`task_ids_file` is repository-relative, and **the producer MUST write it from its
+own `sbatch` output**: a JSON array of the scheduler task identities it submitted,
+in exactly the form `r5_meter.py` publishes in `spend.metered_task_ids` — a job id
+with an optional array-task suffix, `^[0-9]+(?:_[0-9]+)?$`, e.g.
+`["5775320_0", "5775320_1"]`. Write it as soon as the ids exist, not when the
+tasks finish: `sbatch` returns them immediately, and a producer killed by the wall
+deadline before writing them leaves an item nothing can account for.
+`expects_scheduler_tasks` is `false` only for a compute arm that submits nothing;
+that arm must still write the file, holding `[]`.
+
+Between the producer and the validator the queue reads that file, records the ids
+in the outcome as `scheduler_task_ids` together with the SHA-256 of the file's
+exact bytes, and removes any earlier run's copy **before** the producer starts, so
+a stale file cannot credit this item with another item's tasks. A file that is
+missing, unreadable, not a JSON array of task identities, empty while tasks are
+expected, or populated while they are not is a **refusal**: the validator is not
+started, the outcome resolves to the contract's `otherwise` branch with the reason
+in `accounting_error`, the preserve-first actions and the decision referral still
+apply — and because no identity was recorded, the reservation becomes permanent
+until an operator releases it.
 
 Compute producers must route through `nd-unfolding/mnv_guarded_run.py`, either
 directly or through an allowed Python interpreter. The guarded target after
@@ -267,60 +343,86 @@ lets the tests commit a receipt inside a temporary repository; it can no longer
 point the queue at a file the repository does not record.
 
 Order the work accordingly: **meter and commit the receipt first, then stage,
-then approve, then let the ticker run it, then meter and commit again.** A
-receipt commit moves `HEAD`, and an item staged against an earlier `HEAD` is
-`stale` under the drift rule that already governs every binding, so an item
-staged before its receipt has to be staged again — which is also why the
-post-run reconciliation receipt must be committed *before* the next item is
-staged, not between its staging and its tick.
+then approve, then let the ticker run it, then meter and commit again — with the
+finished item's task ids in the new receipt.** A receipt commit moves `HEAD`, and
+an item staged against an earlier `HEAD` is `stale` under the drift rule that
+already governs every binding, so an item staged before its receipt has to be
+staged again — which is also why the post-run reconciliation receipt must be
+committed *before* the next item is staged, not between its staging and its tick.
 
-**R5 admission is atomic and reserved.** A ceiling belongs to the queue, not to
-an item. Besides the receipt's spend and this item's `maximum_cost`, the
-headroom check counts the full declared `maximum_cost` of every other compute
-item whose hours are not yet accounted for. Refusal is inclusive in either
+**R5 admission is atomic and reserved.** A ceiling belongs to the campaign, not to
+an item and not to a checkout. Besides the receipt's spend and this item's
+`maximum_cost`, the headroom check counts the full declared `maximum_cost` of every
+other compute item in the campaign-global queue whose hours are not yet accounted
+for — including items staged from other checkouts. Refusal is inclusive in either
 column — spend plus reservations plus this item meeting the ceiling is already a
 refusal — and the reason names the items holding the reservation and why. With
 490 GPU task-hours recorded, two six-hour items each projected 496 and both were
 admitted, although together they project 502; now the second is refused while
 the first is in flight.
 
-**A reservation is released by accounting, not by finishing.** `staged`,
-`approved`, and claimed-or-running (`outcome-unknown`) items reserve because they
-have not spent yet or are spending now. An item that **ran** — succeeded, failed,
-timed out, launcher error: anything after a claim — keeps reserving its **full
-declared `maximum_cost`** until a committed receipt whose `measured_at_utc` is
-strictly **later than that item's outcome timestamp** exists, i.e. until the meter
-has had the chance to see its spend. R5 §3 counts a task in full however it ended,
-and lets a job running at the stop finish with its spend counted, so hours are
-real from the claim onwards and stay uncounted until an accounting query looks
-after the item stopped. Only an item that **never ran** releases at once: `refused`
-and `stale` are written before the claim, and `revoked` and never-claimed items
-never had one. Releasing a terminal outcome immediately let the second six-hour
-item in against a receipt that had never looked at the first, and actual spend
-could reach 502 under a receipt that stayed valid for 24 hours.
+**A reservation is released by counted spend, not by finishing and not by a later
+timestamp.** `staged`, `approved`, and claimed-or-running (`outcome-unknown`) items
+reserve because they have not spent yet or are spending now. An item that **ran** —
+succeeded, failed, timed out, launcher error: anything after a claim — keeps
+reserving its **full declared `maximum_cost`** until a committed receipt
 
-**So: after any compute item finishes, re-run the meter on Perlmutter and commit
-its receipt before the next compute item can be admitted. That is the
-reconciliation step.** Concretely, the finished item's full declared maximum
-still counts against the ceiling until that receipt lands, and the next compute
-item is refused for those hours with the reason naming it `terminal, not yet
-remeasured`. Do not work around it by revoking the finished item — the point of
-the hold is that its spend is real and unmeasured, and the only honest release is
-a fresh measurement.
+1. is measured strictly **later than that item's outcome timestamp** — the meter
+   had the chance to see the spend — **and**
+2. lists **every** identity in that item's `scheduler_task_ids` in
+   `spend.metered_task_ids` — the meter demonstrably **did** see it.
+
+R5 §3 counts a task in full however it ended, and lets a job running at the stop
+finish with its spend counted, so hours are real from the claim onwards. Releasing
+on the outcome alone let the second six-hour item in against a receipt that had
+never looked at the first. Releasing on the timestamp alone was the same defect
+one step further out: a **fresh** receipt, measured after the outcome and still
+reporting 490 GPU task-hours with none of the item's tasks among its metered
+identities, released those six hours and admitted the next item — 502 against 500,
+under a measurement that provably had not counted them. A later `measured_at_utc`
+proves the meter **ran**; only inclusion proves it counted **these** tasks. The
+refusal names the holder and the missing ids: `reserved by alpha (ran, task ids not
+yet in a receipt: 5775320_0)`.
+
+Two cases sit outside that rule, one on each side:
+
+- An arm declaring `expects_scheduler_tasks` false submits nothing, so there is no
+  identity for any receipt to list; clause 1 alone releases it. It must still have
+  written its empty `[]` file.
+- An item that ran and recorded **no** `scheduler_task_ids` — the file was missing
+  or malformed, the launcher failed, the producer was killed before writing it —
+  can never satisfy clause 2, so it reserves its full declared maximum
+  **permanently**, with the reason `ran with no recorded task ids; operator release
+  required`. No tick clears it. Only `release --id <item> --reason '<why>'` from a
+  TTY does, and that is a human accepting an unmeasurable spend; `revoke` remains
+  for items that never ran.
+
+**So the reconciliation loop is: run → meter on Perlmutter → commit a receipt
+listing that item's task ids → next admission.** Concretely, the finished item's
+full declared maximum still counts against the ceiling until such a receipt lands,
+and the next compute item is refused for those hours — with the reason naming it
+`terminal, not yet remeasured` when the receipt predates the outcome, or `ran, task
+ids not yet in a receipt` when it postdates the outcome without counting the tasks.
+Metering a window that excludes the item's tasks does not advance this; re-run the
+meter over the campaign window so its ids appear. Do not work around the hold by
+revoking the finished item — the point of it is that its spend is real and
+unmeasured, and the only honest release is a measurement that includes it.
 
 Refusal is retryable and not consumed, so when the whole queue is over-committed
-every affected item is refused until a human revokes one that never ran or the
-measurer commits a fresh receipt — that release is never something a tick decides
+every affected item is refused until a human revokes one that never ran, releases
+one whose spend can never be identified, or the measurer commits a receipt that
+counts the finished item's tasks — that release is never something a tick decides
 for itself.
 
 The headroom check and the claim that admits the item happen under **one
-exclusive lock**, `state/campaign-queue/admission.lock`, an `O_EXCL` file
-naming its owner `host:pid`. Two tickers therefore cannot both read the same
-receipt, both find room, and both claim. A tick that finds the lock held claims
+exclusive lock**, `admission.lock` in the campaign-global queue directory, an
+`O_EXCL` file naming its owner `host:pid`. Two tickers therefore cannot both read
+the same receipt, both find room, and both claim — including two tickers in two
+clones, which contend for that one file. A tick that finds the lock held claims
 nothing and exits 5 with `outcome-unknown` and the holder in its reason; it has
 written no outcome, so a later tick retries. A lock older than the admitting
 item's `timeout_seconds` plus its whole wall budget is stale and is removed,
-with the removal logged to `state/campaign-queue/logs/admission-lock.log` and
+with the removal logged to `logs/admission-lock.log` beside it and
 to stderr before it is taken. A lock that cannot be read or dated is treated as
 held, because "we cannot tell how old this is" must never resolve as "old
 enough to break"; clearing that one is a manual act, after you have confirmed

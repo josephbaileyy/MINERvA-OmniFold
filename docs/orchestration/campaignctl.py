@@ -18,20 +18,31 @@ the whole queue, so the headroom check counts the receipt's spend, this item's
 ``maximum_cost`` AND the ``maximum_cost`` of every other compute item whose
 hours are not yet accounted for; the check and the claim that admits the item
 happen under one exclusive lock, so two tickers cannot both admit against the
-same headroom.  A reservation is released by ACCOUNTING, not by finishing: an
-item that RAN keeps reserving its full declared maximum until a committed
-receipt measured LATER than its terminal outcome exists, because until the meter
-has had the chance to see that spend nothing in the accounting covers it.  Only
-an item that never ran -- refused, stale, revoked, never claimed -- releases at
-once.  Re-metering after every compute item is therefore the reconciliation
-step, not an optional tidy-up.
+same headroom.  A reservation is released by COUNTED SPEND -- not by finishing,
+and not by a receipt that merely carries a later timestamp.  An item that RAN
+keeps reserving its full declared maximum until a committed receipt is measured
+after its outcome AND lists every scheduler task identity that item recorded in
+``spend.metered_task_ids``: a fresh receipt still reporting the same spend proves
+only that the meter ran, never that it saw these tasks.  So a contract declares
+an ``accounting.task_ids_file``, the producer writes its scheduler task
+identities there, campaignctl reads that file before the validator and records
+the ids in the outcome.  An item that never ran releases at once; an item that
+ran and recorded NO ids -- missing or malformed file, crash, launcher error,
+timeout -- never releases automatically and is cleared only by an operator
+``revoke`` or ``release --reason``.  Re-metering after every compute item, with
+that item's task ids in the receipt, is therefore the reconciliation step.
 
 Because both the lock and that reservation inventory are properties of ONE
-queue, compute admission is possible only from the CANONICAL state directory,
-``<repo>/docs/orchestration/state/campaign-queue``.  A queue pointed elsewhere
-by ``--state-dir`` may still stage, approve and run non-compute items, but it
-refuses compute admission: two queues sharing one receipt while holding separate
-locks and separate inventories each admitted an item the other never counted.
+queue, and a queue kept inside a checkout is one queue PER CHECKOUT, the
+canonical queue lives OUTSIDE every checkout at
+``${MNV_CAMPAIGN_STATE_ROOT:-~/.mnv_campaign}/<CAMPAIGN_KEY>/campaign-queue``.
+Every clone and linked worktree on the host resolves that same directory, so the
+admission lock, the reservation scan and the claims are shared: two clones can no
+longer each admit a six-hour item the other never counted.  Items record the
+absolute ``repo_path`` they were staged from, and a ticker runs only its own
+repository's items while every other item still RESERVES and is listed.  A queue
+pointed elsewhere by ``--state-dir`` may still stage, approve and run non-compute
+items, but it refuses compute admission.
 
 The receipt itself must be committed: an R5 measurement that lives only in a
 working tree, or in ``/tmp``, is not evidence and cannot authorize compute.  On
@@ -60,19 +71,44 @@ import subprocess
 import sys
 import tempfile
 import time
-from typing import Callable, Iterator
+from typing import Callable, Iterator, NamedTuple
 
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent.parent.resolve()
-#: Repository-relative location of the ONE queue whose lock and reservation inventory
-#: cover the whole campaign.  It is stated relative to a repository root, not as an
-#: absolute path, because the queue's own repository is what makes a state directory
-#: canonical: a test's temporary checkout has its own canonical directory.
-CANONICAL_STATE_RELATIVE = Path("docs/orchestration/state/campaign-queue")
-DEFAULT_STATE = REPO / CANONICAL_STATE_RELATIVE
+#: Environment override for the host directory that holds the campaign's queue.  It
+#: exists so the suite can point one host at a temporary root; it is not a way to
+#: give a checkout a queue of its own, because the value is read once per process and
+#: every checkout on the host reads the same variable.
+CAMPAIGN_STATE_ROOT_ENV = "MNV_CAMPAIGN_STATE_ROOT"
+#: Default host root, OUTSIDE every checkout.  A queue kept under
+#: ``<repo>/docs/orchestration/state`` is one queue per clone and per linked worktree,
+#: which is how two "campaign-global" inventories came to exist on one host.  The
+#: directory name is spelled with an underscore on purpose: ``generate_manifest.py``
+#: reads a hyphen-joined campaign word appearing anywhere in a file as that file's
+#: campaign attribution (its ``CAMPAIGN_RE``), and a state directory must not
+#: fabricate one for this module, its tests or the operator guide.
+DEFAULT_CAMPAIGN_STATE_ROOT = Path("~/.mnv_campaign")
+#: Identity of the ONE campaign this queue serves, spelled so it cannot be confused
+#: with a neighbouring one: ``20260902`` is the ruling record's date and ``0836139b``
+#: the first eight hex digits of its sha256 --
+#: ``shasum -a 256 docs/orchestration/DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md``
+#: = ``0836139b1c9a057c194a81a94d45c9f979209a9ac293d4bc8434e6b43fc1a064``, measured at
+#: ``180527b0``.  It is a NAME derived from that digest, deliberately not a digest
+#: recomputed at run time: an amendment to the record must not silently repoint the
+#: queue and orphan every live claim and reservation in it.  Re-deriving it is a
+#: decision, and it belongs in a commit that also migrates the directory.
+CAMPAIGN_KEY = "r5-20260902-0836139b"
+#: Leaf directory under the campaign key.  Kept as a separate component so a future
+#: campaign-global surface can sit beside the queue rather than inside it.
+QUEUE_DIRECTORY_NAME = "campaign-queue"
 ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+#: Scheduler task identity, in exactly the form ``r5_meter.py`` meters and publishes
+#: in ``spend.metered_task_ids``: a job id, optionally with an array-task suffix.  The
+#: two patterns must stay identical or a producer could declare ids no receipt could
+#: ever list, so a cross-module test compares them rather than trusting this comment.
+TASK_ID_RE = re.compile(r"^[0-9]+(?:_[0-9]+)?$")
 PYTHON = Path("/usr/bin/python3.11")
 ALLOWED_PYTHONS = {PYTHON, Path(sys.executable).resolve()}
 GUARD_PATH = Path("nd-unfolding/mnv_guarded_run.py")
@@ -126,9 +162,11 @@ CONTRACT_KEYS = frozenset(
         "validator_version",
         "preservation_behavior",
         "retry_policy",
+        "accounting",
     }
 )
 TERMINAL_VALIDATOR_KEYS = frozenset({"argv", "cwd"})
+ACCOUNTING_KEYS = frozenset({"task_ids_file", "expects_scheduler_tasks"})
 ARTIFACT_IDENTITY_KEYS = frozenset({"id", "uri", "sha256"})
 TERMINAL_BRANCH_KEYS = frozenset(
     {"id", "return_codes", "condition", "decision", "unlocks", "forbids"}
@@ -178,14 +216,38 @@ RESERVING_STATES = frozenset({"staged", "approved", "outcome-unknown"})
 #: an item's terminal outcome was recorded.  A receipt must be measured strictly after
 #: it before that item's reservation is released.
 OUTCOME_INSTANT_FIELD = "completed_at_utc"
+#: Field :func:`run_compute_item` stamps with the scheduler task identities the
+#: producer declared, read from the contract's ``accounting.task_ids_file``.  Its
+#: PRESENCE distinguishes "this item's spend is identifiable" from "this item ran and
+#: nothing can say which tasks were its", which are released by different acts.
+OUTCOME_TASK_IDS_FIELD = "scheduler_task_ids"
+#: Field carrying the sha256 of the task-ids file exactly as read, so the ids in an
+#: outcome can be traced back to bytes rather than to this program's parse of them.
+OUTCOME_TASK_IDS_SHA256_FIELD = "scheduler_task_ids_sha256"
+#: Field carrying the reason the task ids could not be read, when they could not.
+OUTCOME_ACCOUNTING_ERROR_FIELD = "accounting_error"
 #: Reason a finished compute item still reserves: it ran, so it may have spent, and no
 #: committed receipt has been measured since it stopped.
 UNREMEASURED_HOLD = "terminal, not yet remeasured"
+#: Reason a finished compute item still reserves although a LATER receipt exists: the
+#: receipt does not list this item's scheduler task identities, so it measured an
+#: interval that did not include this item's spend.  A later timestamp proves the
+#: meter ran; only inclusion proves it counted these tasks.
+UNCOUNTED_HOLD = "ran, task ids not yet in a receipt"
+#: Reason a finished compute item reserves PERMANENTLY: it ran, and no scheduler task
+#: identity was ever recorded for it, so no receipt can ever demonstrate inclusion.
+#: Only an operator act -- ``revoke`` before a claim, ``release --reason`` after one --
+#: clears it, and that act is a human accepting an unmeasurable spend.
+UNIDENTIFIED_HOLD = "ran with no recorded task ids; operator release required"
 #: Refusal for a queue whose state directory is not the campaign's single canonical
 #: one.  The lock and the reservation inventory are properties of that ONE directory,
 #: so a second directory cannot see -- and cannot be seen by -- the reservations that
 #: bound the ceiling.
 NON_CANONICAL_STATE_REASON = "non-canonical state dir cannot admit compute"
+#: Refusal for an item staged from another checkout.  It reserves and is listed here,
+#: because the queue is campaign-global, but its bindings and HEAD are properties of
+#: the repository it was staged from and only a ticker there can validate them.
+FOREIGN_ITEM_REASON = "item was staged from another checkout"
 ADMISSION_LOCK_NAME = "admission.lock"
 ADMISSION_LOCK_LOG = "admission-lock.log"
 #: Interpreter flags that change where imports come from, and therefore defeat the
@@ -203,6 +265,56 @@ class QueueError(RuntimeError):
 
 class AdmissionLockHeld(QueueError):
     """Another ticker holds the exclusive admission lock."""
+
+
+class ReceiptAccounting(NamedTuple):
+    """What a committed receipt proves about spend, for the reservation scan.
+
+    Both fields are required together because either alone releases a reservation
+    it has not accounted for: ``measured_at`` alone releases an item the meter
+    never saw (a fresh query over the wrong interval, or over rows this item's
+    tasks are not in), and inclusion alone would release an item whose ids appear
+    in a receipt taken BEFORE it stopped and therefore before its final spend.
+    """
+
+    measured_at: dt.datetime
+    metered_task_ids: frozenset[str]
+
+
+def campaign_state_root() -> Path:
+    """Return the host directory that holds this campaign's queue.
+
+    Returns
+    -------
+    Path
+        ``$MNV_CAMPAIGN_STATE_ROOT`` when set, otherwise ``~/.mnv_campaign``, with
+        ``~`` expanded.
+
+    Raises
+    ------
+    QueueError
+        If the override is empty or relative.  A relative root resolves against
+        the process working directory, so two tickers started from two checkouts
+        would silently hold two roots -- exactly the split this directory exists
+        to remove -- and the failure would look like an empty queue rather than
+        like a misconfiguration.
+    """
+    override = os.environ.get(CAMPAIGN_STATE_ROOT_ENV)
+    if override is None:
+        return DEFAULT_CAMPAIGN_STATE_ROOT.expanduser()
+    if not override.strip():
+        raise QueueError(f"{CAMPAIGN_STATE_ROOT_ENV} is set but empty")
+    root = Path(override).expanduser()
+    if not root.is_absolute():
+        raise QueueError(
+            f"{CAMPAIGN_STATE_ROOT_ENV} must be an absolute path, not {override}"
+        )
+    return root
+
+
+def canonical_state_dir() -> Path:
+    """Return the ONE queue directory every checkout on this host shares."""
+    return (campaign_state_root() / CAMPAIGN_KEY / QUEUE_DIRECTORY_NAME).resolve()
 
 
 def utc_now() -> str:
@@ -513,6 +625,22 @@ def validate_campaign_contract(
         raise QueueError("retry_policy.automatic_retraining must be false")
     if retry_policy["requires_new_authorization"] is not True:
         raise QueueError("retry_policy.requires_new_authorization must be true")
+
+    # The accounting block is what makes this item's spend IDENTIFIABLE.  Without it
+    # a reservation can only be released by a timestamp, and a receipt whose
+    # measured_at is later than an outcome may still have metered an interval or a
+    # set of rows this item's tasks are not in -- the reviewer's mutation, where a
+    # fresh receipt still reporting 490 hours admitted a second six-hour item.
+    accounting = require_object(
+        contract["accounting"], field="accounting", keys=ACCOUNTING_KEYS
+    )
+    task_ids_file = require_text(
+        accounting["task_ids_file"], field="accounting.task_ids_file"
+    )
+    if Path(task_ids_file).is_absolute():
+        raise QueueError("accounting.task_ids_file must be repository-relative")
+    if not isinstance(accounting["expects_scheduler_tasks"], bool):
+        raise QueueError("accounting.expects_scheduler_tasks must be a boolean")
     return contract
 
 
@@ -569,27 +697,32 @@ class Queue:
     def __init__(
         self,
         repo: Path = REPO,
-        state: Path = DEFAULT_STATE,
+        state: Path | None = None,
         clock: Callable[[], str] = utc_now,
     ) -> None:
         self.repo = repo.resolve()
-        self.state = state.resolve()
+        self.state = (canonical_state_dir() if state is None else state).resolve()
         self.clock = clock
 
     @property
     def canonical_state(self) -> Path:
-        """Return the one state directory that may admit compute for this repo."""
-        return (self.repo / CANONICAL_STATE_RELATIVE).resolve()
+        """Return the one state directory that may admit compute on this host.
+
+        It is a property of the HOST and the campaign, not of this repository: a
+        directory inside a checkout is one directory per clone and per linked
+        worktree, and two of those each considered its own queue canonical.
+        """
+        return canonical_state_dir()
 
     def state_is_canonical(self) -> bool:
-        """Report whether this queue IS the campaign-global queue of its repository.
+        """Report whether this queue IS the campaign-global queue.
 
         Returns
         -------
         bool
-            ``True`` only when the resolved state directory is
-            ``<repo>/docs/orchestration/state/campaign-queue``.  The comparison is
-            on resolved paths so a spelling with ``..``, a relative path or a
+            ``True`` only when the resolved state directory is the resolved
+            ``<state root>/<campaign key>/campaign-queue``.  The comparison is on
+            resolved paths so a spelling with ``..``, a relative path or a
             symlinked temporary root is recognised, and so a directory that merely
             looks similar is not.
         """
@@ -865,7 +998,7 @@ def merge_bindings(*binding_groups: list[dict[str, str]]) -> list[dict[str, str]
 def proposal_payload(item: dict) -> dict:
     keys = (
         "schema_version", "id", "description", "kind", "argv", "cwd",
-        "depends_on", "bindings", "git_head", "timeout_seconds",
+        "depends_on", "bindings", "repo_path", "git_head", "timeout_seconds",
     )
     payload = {key: item[key] for key in keys}
     for key in ("campaign_contract_path", "campaign_contract"):
@@ -984,6 +1117,11 @@ def stage(
         "cwd": str(cwd_path.relative_to(queue.repo)) or ".",
         "depends_on": sorted(set(depends_on)),
         "bindings": bindings,
+        # The queue is campaign-global, so an item has to say which checkout its
+        # bindings, cwd and HEAD are properties of.  Only a ticker in that
+        # repository can validate them; every other ticker still counts the item's
+        # reservation and lists it.
+        "repo_path": str(queue.repo),
         "git_head": queue.git_head(),
         "timeout_seconds": timeout_seconds,
         "created_at_utc": queue.clock(),
@@ -997,10 +1135,41 @@ def stage(
     return item
 
 
+def item_repo_path(item: dict) -> str | None:
+    """Return the checkout an item was staged from, or ``None`` when unrecorded."""
+    value = item.get("repo_path")
+    return value if isinstance(value, str) and value.strip() else None
+
+
+def runs_in_this_repo(queue: Queue, item: dict) -> bool:
+    """Report whether ``queue`` is the checkout that may execute ``item``.
+
+    An item with no recorded ``repo_path`` is NOT this repository's: it predates
+    the campaign-global queue, so nothing says which bindings its hashes were
+    taken from.  Failing closed leaves it reserving and listed, which is the
+    conservative half; the alternative would let any ticker validate another
+    checkout's bindings against its own files.
+    """
+    recorded = item_repo_path(item)
+    if recorded is None:
+        return False
+    return Path(recorded).resolve() == queue.repo
+
+
 def validate_unchanged(queue: Queue, item: dict) -> None:
     expected = item.get("proposal_digest")
+    if item_repo_path(item) is None:
+        raise QueueError(
+            "item does not record the checkout it was staged from, so its "
+            "bindings cannot be attributed to a repository"
+        )
     if expected != digest(proposal_payload(item)):
         raise QueueError("proposal JSON does not match its digest")
+    if not runs_in_this_repo(queue, item):
+        raise QueueError(
+            f"{FOREIGN_ITEM_REASON}: {item_repo_path(item)}, while this queue "
+            f"serves {queue.repo}"
+        )
     if queue.git_head() != item["git_head"]:
         raise QueueError("repository HEAD changed after staging")
     contract = item.get("campaign_contract")
@@ -1228,32 +1397,91 @@ def terminal_outcome_instant(queue: Queue, item_id: str) -> dt.datetime:
     )
 
 
+def outcome_task_ids(queue: Queue, item_id: str) -> list[str] | None:
+    """Return the scheduler task identities an outcome recorded, or ``None``.
+
+    ``None`` is not an empty list.  ``[]`` is a MEASUREMENT -- the producer wrote
+    its task-ids file and it held no tasks, which a contract may declare with
+    ``expects_scheduler_tasks`` false -- while ``None`` means nothing was ever
+    recorded, so no receipt can demonstrate that this item's spend was counted.
+    The two are released by different acts, so they must not collapse.
+
+    Raises
+    ------
+    QueueError
+        If the recorded value is present but is not a list of task identities.
+        A malformed field must not read as "no ids", which releases on a
+        timestamp alone.
+    """
+    outcome = read_object(queue.path("outcomes", item_id))
+    if OUTCOME_TASK_IDS_FIELD not in outcome:
+        return None
+    task_ids = require_text_list(
+        outcome[OUTCOME_TASK_IDS_FIELD],
+        field=f"outcome {item_id} {OUTCOME_TASK_IDS_FIELD}",
+    )
+    for task_id in task_ids:
+        if not TASK_ID_RE.fullmatch(task_id):
+            raise QueueError(
+                f"outcome {item_id} {OUTCOME_TASK_IDS_FIELD} contains a value "
+                f"that is not a scheduler task identity: {task_id}"
+            )
+    return task_ids
+
+
+def expects_scheduler_tasks(item: dict) -> bool:
+    """Report whether ``item``'s contract declares that it schedules tasks.
+
+    Fails CLOSED at ``True``: an item whose declaration cannot be read must be
+    treated as one whose spend has to be demonstrated in a receipt, never as one
+    that releases on a timestamp alone.
+    """
+    contract = item.get("campaign_contract")
+    if not isinstance(contract, dict):
+        return True
+    accounting = contract.get("accounting")
+    if not isinstance(accounting, dict):
+        return True
+    declared = accounting.get("expects_scheduler_tasks")
+    return True if not isinstance(declared, bool) else declared
+
+
 def reservation_hold(
-    queue: Queue, item: dict, measured_at: dt.datetime
+    queue: Queue, item: dict, accounting: ReceiptAccounting
 ) -> str | None:
     """Return why ``item`` still reserves its declared task-hours, or ``None``.
 
-    A reservation is released by ACCOUNTING, not by finishing.  R5 §3 counts a
-    failed, cancelled or timed-out task in full and lets jobs running at the stop
-    run to completion with their spend counted, so the hours an item consumed are
-    real from the moment it was claimed and stay uncounted until an accounting
-    query looks after it stopped.  An item that reached a terminal outcome by
-    RUNNING -- succeeded, failed, timed out, launcher error: anything after a
-    claim -- therefore keeps its full declared maximum reserved until a committed
-    receipt whose ``measured_at_utc`` is strictly LATER than its outcome exists,
-    i.e. until the meter has had the chance to see that spend.  An item that never
-    ran has no claim, so refused, stale, revoked and never-claimed items release
-    at once.
+    A reservation is released by COUNTED SPEND, not by finishing and not by a
+    later timestamp.  R5 §3 counts a failed, cancelled or timed-out task in full
+    and lets jobs running at the stop run to completion with their spend counted,
+    so the hours an item consumed are real from the moment it was claimed.  An
+    item that reached a terminal outcome by RUNNING therefore keeps its full
+    declared maximum reserved until a committed receipt
+
+    * is measured strictly LATER than that item's outcome -- the meter had the
+      chance to see the spend -- AND
+    * lists EVERY scheduler task identity the item recorded in
+      ``spend.metered_task_ids`` -- the meter demonstrably DID see it.
+
+    The second clause is the reviewer's mutation: a receipt measured after the
+    outcome, still reporting 490 GPU task-hours and listing none of the item's
+    tasks, satisfies the timestamp and proves only that a query ran.  An item
+    whose contract declares ``expects_scheduler_tasks`` false schedules nothing,
+    so there is no identity to look for and the timestamp is the whole test.  An
+    item that ran and recorded NO ids at all can never satisfy the second clause,
+    so it reserves permanently until an operator releases it -- see
+    :func:`release`.  An item that never ran has no claim, so refused, stale,
+    revoked and never-claimed items release at once.
 
     Parameters
     ----------
     queue : Queue
-        Queue whose claims and outcome records date the item.
+        Queue whose claims, outcomes and release records date the item.
     item : dict
         Compute item whose reservation is being classified.
-    measured_at : dt.datetime
-        ``measured_at_utc`` of the committed receipt admission is checking
-        against.
+    accounting : ReceiptAccounting
+        What the committed receipt admission is checking against proves: when it
+        was measured, and which task identities it counted.
 
     Returns
     -------
@@ -1264,15 +1492,26 @@ def reservation_hold(
     state = state_of(queue, item)
     if state in RESERVING_STATES:
         return state
-    if not queue.path("claims", item["id"]).exists():
+    item_id = str(item["id"])
+    if not queue.path("claims", item_id).exists():
         return None
-    if measured_at > terminal_outcome_instant(queue, str(item["id"])):
+    if queue.path("releases", item_id).exists():
         return None
-    return UNREMEASURED_HOLD
+    if accounting.measured_at <= terminal_outcome_instant(queue, item_id):
+        return UNREMEASURED_HOLD
+    task_ids = outcome_task_ids(queue, item_id)
+    if task_ids is None:
+        return UNIDENTIFIED_HOLD
+    if not expects_scheduler_tasks(item):
+        return None
+    uncounted = sorted(set(task_ids) - accounting.metered_task_ids)
+    if uncounted:
+        return f"{UNCOUNTED_HOLD}: {', '.join(uncounted)}"
+    return None
 
 
 def reserved_task_hours(
-    queue: Queue, item: dict, measured_at: dt.datetime
+    queue: Queue, item: dict, accounting: ReceiptAccounting
 ) -> tuple[dict[str, float], list[str]]:
     """Sum the task-hours other compute items hold in reserve.
 
@@ -1280,10 +1519,13 @@ def reserved_task_hours(
     ``spend + this item`` lets each of two items pass while their combined
     projection is over the ceiling, so every other compute item that
     :func:`reservation_hold` still holds reserves its full declared
-    ``maximum_cost`` here.  When the total reservation leaves no headroom the
-    refusal is retryable and applies to every affected item: releasing it is a
-    human act -- revoke an item, or meter and commit a fresh receipt -- and never
-    something a tick decides for itself.
+    ``maximum_cost`` here.  The scan covers the campaign-global queue, so an item
+    staged from ANOTHER checkout reserves here too even though no ticker in this
+    repository will ever run it.  When the total reservation leaves no headroom
+    the refusal is retryable and applies to every affected item: releasing it is a
+    human act -- revoke an item, release one whose spend can never be identified,
+    or meter and commit a receipt that lists its task ids -- and never something a
+    tick decides for itself.
 
     Parameters
     ----------
@@ -1291,9 +1533,9 @@ def reserved_task_hours(
         Queue whose items, claims and outcome records define the current states.
     item : dict
         Item being admitted, excluded from its own reservation total.
-    measured_at : dt.datetime
-        ``measured_at_utc`` of the committed receipt admission is checking
-        against, which is what releases a finished item's reservation.
+    accounting : ReceiptAccounting
+        What the committed receipt admission is checking against proves, which is
+        what releases a finished item's reservation.
 
     Returns
     -------
@@ -1312,7 +1554,7 @@ def reserved_task_hours(
         maximum_cost = contract.get("maximum_cost")
         if not isinstance(maximum_cost, dict):
             continue
-        hold = reservation_hold(queue, other, measured_at)
+        hold = reservation_hold(queue, other, accounting)
         if hold is None:
             continue
         for resource in R5_METERED_RESOURCES:
@@ -1334,13 +1576,15 @@ def non_canonical_state_refusal(queue: Queue) -> str | None:
     """Return the refusal for a queue that may not admit compute, or ``None``.
 
     The admission lock, the reservation inventory and the R5 headroom check are
-    all properties of ONE state directory.  Two queues under different
-    ``--state-dir`` values read the same committed receipt, take separate locks,
-    scan separate inventories, and each admit an item the other never counted --
-    the reviewer's mutation, where two queues sharing one receipt each admitted a
-    six-hour item.  Compute admission is therefore possible only from the
-    canonical directory; a queue elsewhere may still stage, approve and run
-    non-compute items.
+    all properties of ONE state directory.  Two queues in different directories
+    read the same committed receipt, take separate locks, scan separate
+    inventories, and each admit an item the other never counted -- the reviewer's
+    mutation, reached first by two ``--state-dir`` values and then by two CLONES
+    of one repository, each with a queue of its own inside it.  That is why the
+    canonical directory is a property of the host and the campaign rather than of
+    a checkout: every clone and linked worktree resolves the same one.  Compute
+    admission is possible only from there; a queue elsewhere may still stage,
+    approve and run non-compute items.
     """
     if queue.state_is_canonical():
         return None
@@ -1400,7 +1644,17 @@ def r5_refusal_reason(queue: Queue, item: dict) -> str | None:
     maximum_cost = contract["maximum_cost"]
     if not isinstance(maximum_cost, dict):
         raise QueueError("validated campaign contract lost maximum_cost")
-    reservations, reserving = reserved_task_hours(queue, item, measured_at)
+    metered_task_ids = spend["metered_task_ids"]
+    if not isinstance(metered_task_ids, list):
+        raise QueueError("validated R5 receipt lost spend.metered_task_ids")
+    reservations, reserving = reserved_task_hours(
+        queue,
+        item,
+        ReceiptAccounting(
+            measured_at=measured_at,
+            metered_task_ids=frozenset(str(value) for value in metered_task_ids),
+        ),
+    )
     for resource in R5_METERED_RESOURCES:
         spent = float(spend[resource])
         reserved = reservations[resource]
@@ -1439,13 +1693,29 @@ def state_of(queue: Queue, item: dict) -> str:
 
 
 def summary(queue: Queue) -> dict:
+    """Report every item in the campaign-global queue, whose ever it is.
+
+    An item staged from another checkout is LISTED here and counted in the state
+    tally, because it holds a reservation this queue's headroom check enforces.
+    ``runs_here`` says whether a ticker in this repository may execute it, so a
+    reader can tell "waiting for me" from "waiting for another checkout" without
+    inferring it from a path.
+    """
     values = {"staged": 0, "approved": 0, "succeeded": 0, "failed": 0,
               "refused": 0, "stale": 0, "revoked": 0, "outcome-unknown": 0}
     rows = []
     for item in queue.items():
         state = state_of(queue, item)
         values[state] = values.get(state, 0) + 1
-        rows.append({"id": item["id"], "state": state, "digest": item["proposal_digest"]})
+        rows.append(
+            {
+                "id": item["id"],
+                "state": state,
+                "digest": item["proposal_digest"],
+                "repo_path": item_repo_path(item) or "",
+                "runs_here": runs_in_this_repo(queue, item),
+            }
+        )
     return {"counts": values, "items": rows}
 
 
@@ -1496,6 +1766,76 @@ def revoke(queue: Queue, item_id: str, interactive: bool = True) -> dict:
     return receipt
 
 
+def release(
+    queue: Queue, item_id: str, reason: str, interactive: bool = True
+) -> dict:
+    """Clear the reservation of an item that RAN and cannot be accounted for.
+
+    An item that ran and recorded no scheduler task identities -- it crashed
+    before its task-ids file was read, the launcher never started, the producer
+    timed out -- can never satisfy the inclusion half of the release rule, so it
+    reserves its full declared maximum forever.  That is deliberate: those hours
+    were probably spent and nothing in any receipt can be pointed at.  The only
+    way out is a human deciding to carry an unmeasurable spend, so this is an
+    operator act with a typed phrase, a recorded reason and a log line, and it is
+    NEVER something a tick performs.
+
+    ``revoke`` remains the act for an item that never ran; this one is refused
+    for those, and refused for an item that is still ``staged``, ``approved`` or
+    claimed-and-running, because such an item may be spending right now.
+
+    Parameters
+    ----------
+    queue : Queue
+        Queue holding the item, its claim and its outcome.
+    item_id : str
+        Item whose reservation is being cleared.
+    reason : str
+        Operator's reason, recorded verbatim.  Required: a release with no stated
+        reason is indistinguishable from a mistake.
+    interactive : bool, optional
+        Require the typed phrase from a TTY.  ``False`` is for the suite only.
+
+    Returns
+    -------
+    dict
+        The written release record.
+    """
+    item = queue.item(item_id)
+    state = state_of(queue, item)
+    stated = require_text(reason, field="release reason")
+    if not queue.path("claims", item_id).exists():
+        raise QueueError(
+            f"item {item_id} was never claimed, so it holds no ran-reservation "
+            "to release; revoke retires an item that never ran"
+        )
+    if state in RESERVING_STATES:
+        raise QueueError(
+            f"item {item_id} is {state}, so it may be spending now: its "
+            "reservation is not an operator's to clear"
+        )
+    if interactive:
+        if not sys.stdin.isatty():
+            raise QueueError("release requires an interactive TTY")
+        print(json.dumps(queue.item(item_id), indent=2, sort_keys=True))
+        phrase = f"RELEASE {item_id}"
+        print(f"Type exactly: {phrase}")
+        if input("> ").strip() != phrase:
+            raise QueueError("release phrase did not match")
+    receipt = {
+        "schema_version": 1,
+        "id": item_id,
+        "reason": stated,
+        "state_at_release": state,
+        "released_at_utc": queue.clock(),
+        "released_by": f"{os.environ.get('USER', 'unknown')}@{socket.gethostname()}",
+        "interactive_tty": interactive,
+    }
+    atomic_json(queue.path("releases", item_id), receipt, exclusive=True)
+    log_admission_event(queue, {"event": "reservation-released", **receipt})
+    return receipt
+
+
 def dependencies_succeeded(queue: Queue, item: dict) -> bool:
     for dependency in item["depends_on"]:
         outcome_path = queue.path("outcomes", dependency)
@@ -1505,8 +1845,19 @@ def dependencies_succeeded(queue: Queue, item: dict) -> bool:
 
 
 def ready_item(queue: Queue) -> dict | None:
+    """Return the next item THIS repository may run, or ``None``.
+
+    The queue is campaign-global, so it also holds items staged from other
+    checkouts.  Their bindings, ``cwd`` and ``git_head`` are properties of the
+    repository they were staged from and only a ticker there can validate them,
+    so this ticker skips them: it must not mark another checkout's item ``stale``
+    against its own files, and it must not run one.  They keep reserving and they
+    stay listed.
+    """
     candidates = sorted(queue.items(), key=lambda x: (x["created_at_utc"], x["id"]))
     for item in candidates:
+        if not runs_in_this_repo(queue, item):
+            continue
         if state_of(queue, item) in {
             "approved",
             "refused",
@@ -1575,6 +1926,117 @@ def run_logged_command(
         return None, f"command could not be started: {exc}"
 
 
+def declared_task_ids_path(queue: Queue, contract: dict[str, object]) -> Path:
+    """Resolve the contract's ``accounting.task_ids_file`` inside the repository."""
+    accounting = contract["accounting"]
+    if not isinstance(accounting, dict):
+        raise QueueError("validated campaign contract lost accounting")
+    return resolve_repo_path(
+        queue.repo,
+        require_text(accounting["task_ids_file"], field="accounting.task_ids_file"),
+    )
+
+
+def prepared_task_ids_path(queue: Queue, contract: dict[str, object]) -> Path:
+    """Return the task-ids file's path with any earlier run's copy removed.
+
+    The file is this run's OUTPUT, and the ids in it are what release this item's
+    reservation, so a copy left by an earlier item at the same declared path
+    would credit this item with another item's tasks -- a release backed by
+    somebody else's spend.  Deleting rather than refusing is deliberate: the
+    earlier item's ids and the sha256 of the bytes they came from are already in
+    ITS outcome, so nothing is lost, while refusing on a pre-existing file would
+    fire on a correct rerun and would have to be cleared by hand.
+
+    Raises
+    ------
+    QueueError
+        If the declared path cannot be made ready -- a directory sits there, or
+        the removal fails.  The producer is not started in that case: a run whose
+        spend could not be identified afterwards must not begin.
+    """
+    path = declared_task_ids_path(queue, contract)
+    if path.is_dir():
+        raise QueueError(
+            f"accounting.task_ids_file is a directory: {path}"
+        )
+    try:
+        path.unlink()
+    except FileNotFoundError:
+        pass
+    except OSError as exc:
+        raise QueueError(
+            f"earlier task-ids file cannot be removed: {path}: {exc}"
+        ) from exc
+    return path
+
+
+def read_declared_task_ids(
+    queue: Queue, contract: dict[str, object]
+) -> tuple[list[str], str, None] | tuple[None, None, str]:
+    """Read the scheduler task identities the producer declared.
+
+    This runs after the producer and BEFORE the terminal validator, because the
+    ids are what let a later receipt demonstrate that this item's spend was
+    counted.  Without them the reservation can only be released by a timestamp,
+    and a receipt measured after an outcome may have metered rows this item's
+    tasks are not in.
+
+    The file must be a JSON array of scheduler task identities in the exact form
+    ``r5_meter.py`` publishes (:data:`TASK_ID_RE`).  It must be nonempty when the
+    contract declares ``expects_scheduler_tasks``, and empty when it does not:
+    both directions are refusals, because "the producer scheduled nothing" and
+    "the producer's ids were never written" are different facts and only the
+    declaration says which one this arm is allowed to report.
+
+    Returns
+    -------
+    tuple[list[str], str, None] or tuple[None, None, str]
+        The sorted ids and the sha256 of the file's exact bytes, or ``None``,
+        ``None`` and the refusal reason.
+    """
+    accounting = contract["accounting"]
+    if not isinstance(accounting, dict):
+        raise QueueError("validated campaign contract lost accounting")
+    expects = accounting["expects_scheduler_tasks"]
+    try:
+        path = declared_task_ids_path(queue, contract)
+    except QueueError as exc:
+        return None, None, f"declared task-ids file is not a repository path: {exc}"
+    if not path.is_file():
+        return None, None, (
+            "declared task-ids file was not written by the producer: "
+            f"{accounting['task_ids_file']}"
+        )
+    raw = path.read_bytes()
+    try:
+        value = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        return None, None, f"declared task-ids file is not JSON: {exc}"
+    try:
+        task_ids = require_text_list(value, field="declared task ids")
+    except QueueError as exc:
+        return None, None, f"declared task-ids file is malformed: {exc}"
+    for task_id in task_ids:
+        if not TASK_ID_RE.fullmatch(task_id):
+            return None, None, (
+                "declared task-ids file holds a value that is not a scheduler "
+                f"task identity: {task_id}"
+            )
+    if expects is True and not task_ids:
+        return None, None, (
+            "declared task-ids file is empty while the contract declares "
+            "accounting.expects_scheduler_tasks true"
+        )
+    if expects is False and task_ids:
+        return None, None, (
+            "declared task-ids file lists scheduler tasks while the contract "
+            "declares accounting.expects_scheduler_tasks false: "
+            + ", ".join(sorted(task_ids))
+        )
+    return sorted(task_ids), hashlib.sha256(raw).hexdigest(), None
+
+
 def normalized_terminal_validator(
     queue: Queue, contract: dict[str, object], *, require_guard: bool
 ) -> tuple[list[str], Path]:
@@ -1631,6 +2093,14 @@ def run_compute_item(queue: Queue, item: dict, env: dict[str, str]) -> tuple[int
     budget is smaller, and the validator receives exactly what the producer left.
     A validator with no budget left is not started, which is a terminal result
     the contract's ``otherwise`` branch must cover.
+
+    Between the two commands the producer's declared task-ids file is read.  Its
+    ids are recorded in the outcome and are what a later receipt must list before
+    this item's reservation is released, so a file that is missing, malformed, or
+    disagrees with ``accounting.expects_scheduler_tasks`` is a refusal: the
+    validator is NOT started, the outcome resolves to the contract's
+    ``otherwise`` branch with the reason recorded, and -- because no ids were
+    recorded -- the reservation is permanent until an operator releases it.
     """
     contract = item["campaign_contract"]
     if not isinstance(contract, dict):
@@ -1640,10 +2110,30 @@ def run_compute_item(queue: Queue, item: dict, env: dict[str, str]) -> tuple[int
         raise QueueError("validated campaign contract lost maximum_cost")
     timeout_seconds = float(item["timeout_seconds"])
     wall_seconds = float(maximum_cost["wall_hours"]) * 3600
-    deadline = time.monotonic() + wall_seconds
     logs_dir = queue.state / "logs"
     producer_log = logs_dir / f"{item['id']}.producer.log"
     validator_log = logs_dir / f"{item['id']}.validator.log"
+    try:
+        prepared_task_ids_path(queue, contract)
+    except QueueError as exc:
+        # Nothing has run yet, and nothing will: a run whose spend could not be
+        # attributed afterwards must not start.  This is still a terminal result,
+        # so it resolves through the contract's own otherwise branch.
+        outcome = write_outcome(
+            queue,
+            item,
+            "failed",
+            producer_returncode=None,
+            producer_error="not started: the declared task-ids file is unusable",
+            validator_returncode=None,
+            validator_error="not started: the declared task-ids file is unusable",
+            wall_seconds=round(wall_seconds, 3),
+            wall_budget_exhausted=False,
+            **{OUTCOME_ACCOUNTING_ERROR_FIELD: str(exc)},
+            **terminal_plan(contract, None),
+        )
+        return 3, outcome
+    deadline = time.monotonic() + wall_seconds
     producer_timeout = min(timeout_seconds, deadline - time.monotonic())
     producer_returncode, producer_error = run_logged_command(
         item["argv"],
@@ -1652,6 +2142,9 @@ def run_compute_item(queue: Queue, item: dict, env: dict[str, str]) -> tuple[int
         timeout_seconds=producer_timeout,
         log_path=producer_log,
         proposal_digest=item["proposal_digest"],
+    )
+    task_ids, task_ids_sha256, accounting_error = read_declared_task_ids(
+        queue, contract
     )
 
     validator_env = env.copy()
@@ -1662,7 +2155,13 @@ def run_compute_item(queue: Queue, item: dict, env: dict[str, str]) -> tuple[int
     )
     validator_timeout = deadline - time.monotonic()
     wall_budget_exhausted = validator_timeout <= 0
-    if wall_budget_exhausted:
+    if accounting_error is not None:
+        # The accounting refusal comes first because it is about whether this run
+        # can ever be accounted for, which no validator verdict can repair.
+        validator_returncode = None
+        validator_error = f"not started: {accounting_error}"
+        validator_log.write_text(validator_error + "\n")
+    elif wall_budget_exhausted:
         validator_returncode = None
         validator_error = "wall budget exhausted before validation"
         validator_log.write_text(validator_error + "\n")
@@ -1696,6 +2195,14 @@ def run_compute_item(queue: Queue, item: dict, env: dict[str, str]) -> tuple[int
         "wall_budget_exhausted": wall_budget_exhausted,
         **terminal_plan(contract, validator_returncode),
     }
+    if accounting_error is None:
+        # Recorded whenever they could be read, including on a failing validator:
+        # the tasks spent whatever they spent, and the release rule needs their
+        # identities to demonstrate that a later receipt counted them.
+        extra[OUTCOME_TASK_IDS_FIELD] = task_ids
+        extra[OUTCOME_TASK_IDS_SHA256_FIELD] = task_ids_sha256
+    else:
+        extra[OUTCOME_ACCOUNTING_ERROR_FIELD] = accounting_error
     if producer_error is not None:
         extra["producer_error"] = producer_error
     if validator_error is not None:
@@ -1836,6 +2343,9 @@ def admission_lock(queue: Queue, item: dict) -> Iterator[Path]:
     headroom that only covered one.  The lock is a ``O_EXCL`` file in the state
     directory naming its owner ``host:pid``; a lock older than the admitting
     item's timeout plus wall budget is removed after the removal is logged.
+    Because the state directory is campaign-global rather than per checkout, this
+    is one lock for every clone and worktree on the host: two tickers in two
+    clones contend for the same file, which is the whole point.
 
     Parameters
     ----------
@@ -1952,7 +2462,15 @@ def admit(queue: Queue, item: dict) -> tuple[int, dict] | None:
 def run_ready(queue: Queue) -> tuple[int, dict]:
     item = ready_item(queue)
     if item is None:
-        unknown = [row for row in summary(queue)["items"] if row["state"] == "outcome-unknown"]
+        # Only THIS repository's claimed-without-outcome items make this tick
+        # unknown.  Another checkout's in-flight item is not this ticker's
+        # business: it reserves and is listed, but reporting it here would make
+        # every tick on every clone exit 5 while any one clone was running.
+        unknown = [
+            row
+            for row in summary(queue)["items"]
+            if row["state"] == "outcome-unknown" and row["runs_here"]
+        ]
         if unknown:
             return 5, {"status": "outcome-unknown", "items": [x["id"] for x in unknown]}
         return 0, {"status": "idle"}
@@ -1976,16 +2494,30 @@ def run_ready(queue: Queue) -> tuple[int, dict]:
     return run_non_compute_item(queue, item, env)
 
 
+def default_state_dir() -> Path:
+    """Return the state directory a bare invocation uses.
+
+    Resolved per invocation rather than at import: the campaign root comes from
+    the environment, and a module-level default would freeze whatever was set
+    when this file was first imported.
+    """
+    override = os.environ.get("CAMPAIGN_QUEUE_STATE_DIR")
+    return Path(override) if override else canonical_state_dir()
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--state-dir",
-        default=os.environ.get("CAMPAIGN_QUEUE_STATE_DIR", str(DEFAULT_STATE)),
+        default=None,
         help=(
-            "queue state directory; only the canonical "
-            f"{CANONICAL_STATE_RELATIVE.as_posix()} may admit compute items, "
-            "since the admission lock and the reservation inventory are "
-            "properties of that one directory (default: %(default)s)"
+            "queue state directory; defaults to $CAMPAIGN_QUEUE_STATE_DIR or the "
+            f"campaign-global ${CAMPAIGN_STATE_ROOT_ENV} (or "
+            f"{DEFAULT_CAMPAIGN_STATE_ROOT.as_posix()}) / {CAMPAIGN_KEY} / "
+            f"{QUEUE_DIRECTORY_NAME}, which is the ONLY directory that may admit "
+            "compute items, since the admission lock and the reservation "
+            "inventory are properties of that one directory for every checkout on "
+            "the host"
         ),
     )
     sub = parser.add_subparsers(dest="action", required=True)
@@ -2006,6 +2538,15 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--digest", required=True)
     p = sub.add_parser("revoke")
     p.add_argument("--id", required=True)
+    p = sub.add_parser(
+        "release",
+        help=(
+            "clear the reservation of an item that RAN and recorded no scheduler "
+            "task ids, accepting an unmeasurable spend; requires a reason"
+        ),
+    )
+    p.add_argument("--id", required=True)
+    p.add_argument("--reason", required=True)
     sub.add_parser("list")
     sub.add_parser("status").add_argument("--json", action="store_true")
     sub.add_parser("run-ready").add_argument("--json", action="store_true")
@@ -2014,8 +2555,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    queue = Queue(state=Path(args.state_dir))
     try:
+        queue = Queue(
+            state=Path(args.state_dir) if args.state_dir else default_state_dir()
+        )
         if args.action == "stage":
             value = stage(
                 queue,
@@ -2040,13 +2583,26 @@ def main(argv: list[str] | None = None) -> int:
         if args.action == "revoke":
             print(json.dumps(revoke(queue, args.id), indent=2, sort_keys=True))
             return 0
+        if args.action == "release":
+            print(
+                json.dumps(
+                    release(queue, args.id, args.reason), indent=2, sort_keys=True
+                )
+            )
+            return 0
         if args.action in {"list", "status"}:
             value = summary(queue)
             if args.action == "status" and args.json:
                 print(canonical(value))
             else:
                 for row in value["items"]:
-                    print(f"{row['id']}\t{row['state']}\t{row['digest'][:12]}")
+                    # The checkout is printed for every row, not only foreign
+                    # ones: an operator reading one queue from several clones must
+                    # be able to see whose item each is without a second command.
+                    where = "here" if row["runs_here"] else row["repo_path"]
+                    print(
+                        f"{row['id']}\t{row['state']}\t{row['digest'][:12]}\t{where}"
+                    )
                 print("counts " + canonical(value["counts"]))
             return 0
         if args.action == "run-ready":

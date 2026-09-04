@@ -29,6 +29,27 @@ R5_FIXTURES = {
 #: A hand-written stand-in would be a second implementation of the rule under test,
 #: and its refusals would only ever agree with whatever this suite assumed.
 REAL_GUARD = campaignctl.REPO / campaignctl.GUARD_PATH
+#: Where the checked-in fixture contract says the producer writes its scheduler task
+#: identities. Read from the fixture rather than retyped, so a contract change cannot
+#: leave the producer scripts writing to a path nothing reads.
+TASK_IDS_RELATIVE = json.loads(CONTRACT_FIXTURE.read_text())["accounting"][
+    "task_ids_file"
+]
+#: The identities the fixture producers declare. Deliberately absent from every
+#: checked-in receipt fixture's `metered_task_ids`, so a receipt only counts them when
+#: a test puts them there.
+PRODUCER_TASK_IDS = ["7001_0"]
+#: Producer prologue: the scheduler task identities an arm reports. The real producer
+#: writes these from its sbatch output; here they are literal, and the file is what
+#: campaignctl reads between the producer and the validator.
+def write_task_ids(task_ids: list[str], *, relative: str = TASK_IDS_RELATIVE) -> str:
+    """Return producer source that writes ``task_ids`` to the declared path."""
+    return (
+        "from pathlib import Path\n"
+        f"_ids = Path({relative!r})\n"
+        "_ids.parent.mkdir(parents=True, exist_ok=True)\n"
+        f"_ids.write_text({json.dumps(json.dumps(task_ids))})\n"
+    )
 
 
 class CampaignQueueTests(unittest.TestCase):
@@ -36,6 +57,16 @@ class CampaignQueueTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(prefix="campaign-queue-test.")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
+        # The canonical queue is a property of the HOST, not of a checkout, so the
+        # suite gives this host a temporary campaign root. Without the override every
+        # test would read the operator's real `~/.mnv_campaign`.
+        self.state_root = self.root / "campaign-state"
+        environment = mock.patch.dict(
+            os.environ,
+            {campaignctl.CAMPAIGN_STATE_ROOT_ENV: str(self.state_root)},
+        )
+        environment.start()
+        self.addCleanup(environment.stop)
         self.repo = self.root / "repo"
         self.repo.mkdir()
         subprocess.run(["git", "-C", str(self.repo), "init", "-q"], check=True)
@@ -61,6 +92,7 @@ class CampaignQueueTests(unittest.TestCase):
             "output = Path('outputs/validator-failure-fixture')\n"
             "output.mkdir(parents=True, exist_ok=True)\n"
             "(output / 'jobs-complete').write_text('all complete')\n"
+            + write_task_ids(PRODUCER_TASK_IDS)
         )
         guard = self.repo / "nd-unfolding" / "mnv_guarded_run.py"
         guard.parent.mkdir()
@@ -112,10 +144,18 @@ class CampaignQueueTests(unittest.TestCase):
             ")\n"
             "raise SystemExit(23)\n"
         )
+        # Both slow producers declare their task ids BEFORE they sleep, which is what
+        # a real arm does: `sbatch` returns the ids long before the tasks end. A
+        # producer that is killed before writing them is a separate case, and it has
+        # its own test.
         self.timeout_script = self.repo / "timeout.py"
-        self.timeout_script.write_text("import time\ntime.sleep(2)\n")
+        self.timeout_script.write_text(
+            write_task_ids(PRODUCER_TASK_IDS) + "import time\ntime.sleep(2)\n"
+        )
         self.brief_script = self.repo / "brief_producer.py"
-        self.brief_script.write_text("import time\ntime.sleep(0.4)\n")
+        self.brief_script.write_text(
+            write_task_ids(PRODUCER_TASK_IDS) + "import time\ntime.sleep(0.4)\n"
+        )
         subprocess.run(
             [
                 "git",
@@ -138,15 +178,18 @@ class CampaignQueueTests(unittest.TestCase):
             ["git", "-C", str(self.repo), "commit", "-qm", "initial"],
             check=True,
         )
-        # Compute is admissible only from the CANONICAL state directory of the queue's
-        # own repository, so the fixture queue lives at the temporary checkout's
-        # canonical path rather than at an arbitrary directory beside it.
+        # Compute is admissible only from the CANONICAL state directory, which is now
+        # outside every checkout: the queue takes its default state directory rather
+        # than being pointed at one, exactly as a ticker does.
         self.queue = campaignctl.Queue(
             repo=self.repo,
-            state=self.repo / campaignctl.CANONICAL_STATE_RELATIVE,
             clock=lambda: "2026-09-29T12:00:00+00:00",
         )
         self.assertTrue(self.queue.state_is_canonical())
+        self.assertFalse(
+            str(self.queue.state).startswith(str(self.repo) + os.sep),
+            "the canonical queue must not live inside a checkout",
+        )
         self.receipts = 0
         # The R5 receipt is evidence, so it must be COMMITTED before it can admit
         # anything. Every test therefore commits its receipt into the fixture
@@ -167,13 +210,16 @@ class CampaignQueueTests(unittest.TestCase):
         argv: list[str] | None = None,
         queue: campaignctl.Queue | None = None,
     ) -> dict:
+        queue = queue or self.queue
         target = script or "work.py"
         if argv is None:
             argv = [sys.executable, target]
             if kind == "compute" and guarded:
-                argv = self.guarded_argv(target)
+                # `--expect-root` names the QUEUE'S repository, which for a clone is
+                # the clone: one campaign-global queue serves several checkouts.
+                argv = self.guarded_argv(target, expect_root=str(queue.repo))
         return campaignctl.stage(
-            queue or self.queue,
+            queue,
             item_id,
             "test item",
             kind,
@@ -188,9 +234,9 @@ class CampaignQueueTests(unittest.TestCase):
     def other_queue(self, name: str = "second-queue-state") -> campaignctl.Queue:
         """Return a queue on the SAME repository at a non-canonical state directory.
 
-        This is the second half of the reviewer's mutation: one repository, one
-        committed receipt, and a second "campaign-global" lock and inventory that
-        the canonical queue cannot see. The helper asserts nothing about
+        This is one half of the reviewer's mutation: one repository, one committed
+        receipt, and a second "campaign-global" lock and inventory that the
+        canonical queue cannot see. The helper asserts nothing about
         ``state_is_canonical``: a precondition check here would refuse the
         mutation before it reached the behaviour the test is about.
         """
@@ -198,23 +244,40 @@ class CampaignQueueTests(unittest.TestCase):
             repo=self.repo, state=self.root / name, clock=self.queue.clock
         )
 
-    def finish_item(
-        self, item_id: str, at_utc: str, status: str = "succeeded"
-    ) -> dict:
-        """Record a terminal outcome for a claimed item, stamped at ``at_utc``.
+    def clone_queue(self, name: str = "clone") -> campaignctl.Queue:
+        """Clone the fixture repository and return a queue serving the clone.
 
-        ``write_outcome`` is campaignctl's only writer of an outcome record, so the
-        fixture calls it rather than restating the record's shape -- a hand-written
-        outcome could only ever agree with what this suite assumed.
+        This is the other half of the reviewer's mutation, and the one a
+        per-checkout queue could not survive: `git clone` gives a second checkout
+        with the SAME commits -- the same receipt, the same contracts, the same
+        `HEAD` -- and therefore, under the old rule, a second directory that its
+        own ticker considered canonical. The returned queue takes the DEFAULT
+        state directory, so if the canonical directory is still derived from the
+        repository this queue silently gets one of its own.
         """
-        previous = self.queue.clock
-        self.queue.clock = lambda: at_utc
-        try:
-            return campaignctl.write_outcome(
-                self.queue, self.queue.item(item_id), status, returncode=0
+        target = self.root / name
+        subprocess.run(
+            ["git", "clone", "-q", str(self.repo), str(target)], check=True
+        )
+        for key, value in (("user.email", "test@example.invalid"), ("user.name", "Test")):
+            subprocess.run(
+                ["git", "-C", str(target), "config", key, value], check=True
             )
-        finally:
-            self.queue.clock = previous
+        return campaignctl.Queue(repo=target, clock=self.queue.clock)
+
+    def commit_script(self, name: str, body: str) -> str:
+        """Write and commit a producer script, returning its repository path.
+
+        Committing moves `HEAD`, so call this BEFORE staging anything: an item
+        staged against an earlier `HEAD` is `stale` by the drift rule.
+        """
+        path = self.repo / name
+        path.write_text(body)
+        subprocess.run(["git", "-C", str(self.repo), "add", name], check=True)
+        subprocess.run(
+            ["git", "-C", str(self.repo), "commit", "-qm", f"add {name}"], check=True
+        )
+        return name
 
     def guarded_argv(
         self,
@@ -264,7 +327,16 @@ class CampaignQueueTests(unittest.TestCase):
         validator_argv: list[str] | None = None,
         name: str = "campaign-contract.json",
         mutate: Callable[[dict[str, object]], None] | None = None,
+        repo: Path | None = None,
     ) -> str:
+        """Write, and optionally commit, a contract into ``repo``.
+
+        ``repo`` defaults to the fixture checkout. A contract belongs to ONE
+        checkout -- its guard argv names that checkout by absolute path -- so a
+        second checkout gets its own contract rather than a copy of this one's,
+        which is also what a real clone would need.
+        """
+        repo = repo or self.repo
         contract = json.loads(CONTRACT_FIXTURE.read_text())
         terminal_validator = contract["terminal_validator"]
         assert isinstance(terminal_validator, dict)
@@ -272,20 +344,18 @@ class CampaignQueueTests(unittest.TestCase):
             terminal_validator["argv"] = validator_argv
         else:
             terminal_validator["argv"] = (
-                self.guarded_argv(validator_script)
+                self.guarded_argv(validator_script, expect_root=str(repo))
                 if guarded_validator
                 else [sys.executable, validator_script]
             )
         if mutate is not None:
             mutate(contract)
-        path = self.repo / name
+        path = repo / name
         path.write_text(json.dumps(contract, indent=2, sort_keys=True) + "\n")
         if commit:
+            subprocess.run(["git", "-C", str(repo), "add", path.name], check=True)
             subprocess.run(
-                ["git", "-C", str(self.repo), "add", path.name], check=True
-            )
-            subprocess.run(
-                ["git", "-C", str(self.repo), "commit", "-qm", "add contract"],
+                ["git", "-C", str(repo), "commit", "-qm", "add contract"],
                 check=True,
             )
         return path.name
@@ -361,6 +431,24 @@ class CampaignQueueTests(unittest.TestCase):
                 check=True,
             )
         return relative
+
+    def install_counting_receipt(
+        self, source: str, task_ids: list[str], **changes: object
+    ) -> str:
+        """Commit a receipt whose ``spend`` COUNTS ``task_ids``.
+
+        Only the identity columns move: the metered hours stay exactly as the
+        fixture recorded them, because the reviewer's mutation is a receipt that
+        reports the SAME spend and still releases a reservation. What changes
+        between the two receipts in those tests is only whether the item's tasks
+        are among the rows the meter counted.
+        """
+        spend = dict(json.loads(R5_FIXTURES[source].read_text())["spend"])
+        identities = sorted(set(spend["metered_task_ids"]) | set(task_ids))
+        spend["metered_task_ids"] = identities
+        spend["task_count"] = len(identities)
+        spend["by_state"] = {"COMPLETED": len(identities)}
+        return self.install_receipt(source, spend=spend, **changes)
 
     def test_stage_approve_and_run_exactly_once(self):
         item = self.stage()
@@ -610,11 +698,24 @@ class CampaignQueueTests(unittest.TestCase):
             "validator-failure-fixture", kind="compute", contract=contract
         )
         self.approve(item)
+        # Both commands are mocked, so the STAND-IN producer writes the task-ids
+        # file the real one would: it is written inside the fake call rather than
+        # beforehand, because the queue removes any earlier copy before the
+        # producer starts, and without it the accounting refusal would preempt the
+        # launch failure this test is about.
+        declared = self.repo / TASK_IDS_RELATIVE
+        calls: list[list[str]] = []
+
+        def command(argv: list[str], **_: object) -> tuple[int | None, str | None]:
+            calls.append(list(argv))
+            if len(calls) == 1:
+                declared.parent.mkdir(parents=True, exist_ok=True)
+                declared.write_text(json.dumps(PRODUCER_TASK_IDS))
+                return 0, None
+            return None, "command could not be started"
 
         with mock.patch.object(
-            campaignctl,
-            "run_logged_command",
-            side_effect=[(0, None), (None, "command could not be started")],
+            campaignctl, "run_logged_command", side_effect=command
         ):
             rc, outcome = self.run_ready()
 
@@ -622,6 +723,9 @@ class CampaignQueueTests(unittest.TestCase):
         self.assertEqual(outcome["producer_returncode"], 0)
         self.assertIsNone(outcome["validator_returncode"])
         self.assertEqual(outcome["terminal_branch"], "unexpected-terminal-result")
+        self.assertEqual(
+            outcome[campaignctl.OUTCOME_TASK_IDS_FIELD], PRODUCER_TASK_IDS
+        )
 
     def test_unguarded_compute_producer_is_refused(self) -> None:
         contract = self.write_contract(commit=True)
@@ -1008,7 +1112,7 @@ class CampaignQueueTests(unittest.TestCase):
         self.assertFalse(self.queue.path("claims", item["id"]).exists())
         self.assertFalse((self.repo / "ran").exists())
 
-    def six_hour_contract(self, campaign_id: str) -> str:
+    def six_hour_contract(self, campaign_id: str, repo: Path | None = None) -> str:
         """Commit a contract declaring six GPU task-hours for ``campaign_id``."""
         def declare(value: dict[str, object]) -> None:
             value["campaign_id"] = campaign_id
@@ -1023,6 +1127,7 @@ class CampaignQueueTests(unittest.TestCase):
             validator_script="validator_success.py",
             name=f"contract-{campaign_id}.json",
             mutate=declare,
+            repo=repo,
         )
 
     def _alpha_in_flight_with_beta_ready(self, receipt: str) -> None:
@@ -1085,31 +1190,57 @@ class CampaignQueueTests(unittest.TestCase):
             ["alpha"],
         )
 
+    def _alpha_ran_with_beta_ready(self, receipt: str) -> None:
+        """Run a six-hour item to a REAL terminal outcome, then ready a second one.
+
+        Alpha is executed by the queue rather than handed a written outcome, so the
+        ``scheduler_task_ids`` the release rule reads are the ids alpha's own
+        producer declared and campaignctl actually recorded. Both contracts are
+        committed before anything is staged, because a contract commit moves
+        ``HEAD`` and an item staged against an earlier one is ``stale``.
+        """
+        alpha_contract = self.six_hour_contract("alpha")
+        beta_contract = self.six_hour_contract("beta")
+        alpha = self.stage("alpha", kind="compute", contract=alpha_contract)
+        self.approve(alpha)
+
+        rc, outcome = self.run_ready(receipt)
+
+        self.assertEqual(
+            (rc, outcome["status"], outcome["id"]), (0, "succeeded", "alpha")
+        )
+        self.assertEqual(
+            outcome[campaignctl.OUTCOME_TASK_IDS_FIELD], PRODUCER_TASK_IDS
+        )
+        beta = self.stage("beta", kind="compute", contract=beta_contract)
+        self.approve(beta)
+
     def test_a_ran_reservation_lives_until_a_receipt_remeasures_it(self) -> None:
-        """The reviewer's mutation: 490 recorded, two six-hour items, alpha terminal.
+        """490 recorded, two six-hour items, alpha terminal: the timestamp half.
 
         A terminal outcome released the reservation the instant it was written,
         while the same receipt stayed valid for 24 h -- so beta was admitted
         against accounting that had never looked at alpha, and actual spend can
         reach 502. R5 §3 counts a task in full however it ended and lets a job
         running at the stop finish with its spend counted, so what releases
-        alpha's hours is the METER seeing them, not alpha stopping. Until a
-        committed receipt is measured strictly after alpha's outcome, alpha keeps
-        reserving its full declared maximum.
+        alpha's hours is the METER seeing them, not alpha stopping.
         """
-        before = self.install_receipt(
-            "near-gpu-ceiling", measured_at_utc="2026-09-29T06:00:00+00:00"
-        )
-        after = self.install_receipt(
-            "near-gpu-ceiling", measured_at_utc="2026-09-29T10:00:00+00:00"
-        )
-        self._alpha_in_flight_with_beta_ready(before)
-        self.finish_item("alpha", "2026-09-29T08:00:00+00:00")
+        receipt = self.install_receipt("near-gpu-ceiling")
+        self._alpha_ran_with_beta_ready(receipt)
         self.assertEqual(
             campaignctl.state_of(self.queue, self.queue.item("alpha")), "succeeded"
         )
+        # The admitting receipt was measured at the same instant alpha's outcome was
+        # recorded, so the meter cannot have seen alpha's final spend.
+        self.assertEqual(
+            campaignctl.terminal_outcome_instant(self.queue, "alpha"),
+            campaignctl.parse_utc(
+                json.loads((self.repo / receipt).read_text())["measured_at_utc"],
+                field="fixture receipt",
+            ),
+        )
 
-        rc, outcome = self.run_ready(before)
+        rc, outcome = self.run_ready(receipt)
 
         self.assertEqual(
             (rc, outcome["status"], outcome["id"]), (6, "refused", "beta")
@@ -1120,17 +1251,416 @@ class CampaignQueueTests(unittest.TestCase):
             "reserved by alpha (terminal, not yet remeasured)", outcome["reason"]
         )
         self.assertFalse(self.queue.path("claims", "beta").exists())
-        self.assertFalse((self.repo / "validator-ran").exists())
 
-        # The reconciliation step: a receipt measured AFTER alpha's outcome is the
-        # first accounting query that could have seen alpha's spend, so it -- and
-        # only it -- releases the reservation.
-        rc, outcome = self.run_ready(after)
+    def test_a_later_receipt_that_never_counted_the_item_releases_nothing(
+        self,
+    ) -> None:
+        """The reviewer's mutation: a FRESH receipt still reporting 490 admitted beta.
+
+        Release was decided by the timestamp alone, so a receipt taken after
+        alpha's outcome -- still reporting 490 GPU task-hours, still listing only
+        the three tasks it listed before -- released alpha's six hours and beta ran:
+        502 against a ceiling of 500, under a measurement that had demonstrably not
+        counted alpha. A later ``measured_at_utc`` proves the meter RAN; only
+        ``spend.metered_task_ids`` proves it counted THESE tasks. So the receipt
+        must list every identity alpha's outcome recorded, and the refusal names
+        alpha with the ids that are missing.
+        """
+        admitting = self.install_receipt("near-gpu-ceiling")
+        uncounted = self.install_receipt(
+            "near-gpu-ceiling", measured_at_utc="2026-09-29T12:00:30+00:00"
+        )
+        counting = self.install_counting_receipt(
+            "near-gpu-ceiling",
+            PRODUCER_TASK_IDS,
+            measured_at_utc="2026-09-29T12:00:30+00:00",
+        )
+        self._alpha_ran_with_beta_ready(admitting)
+        # The timestamp clause is SATISFIED by the mutation's receipt, so what
+        # refuses beta below can only be the inclusion clause.
+        uncounted_receipt = json.loads((self.repo / uncounted).read_text())
+        self.assertGreater(
+            campaignctl.parse_utc(
+                uncounted_receipt["measured_at_utc"], field="fixture receipt"
+            ),
+            campaignctl.terminal_outcome_instant(self.queue, "alpha"),
+        )
+        self.assertEqual(uncounted_receipt["spend"]["gpu_task_hours"], 490.0)
+        self.assertNotIn(
+            PRODUCER_TASK_IDS[0], uncounted_receipt["spend"]["metered_task_ids"]
+        )
+
+        rc, outcome = self.run_ready(uncounted)
+
+        self.assertEqual(
+            (rc, outcome["status"], outcome["id"]), (6, "refused", "beta")
+        )
+        self.assertIn("gpu_task_hours ceiling would be reached", outcome["reason"])
+        self.assertIn("490 + 6 + 6 >= 500", outcome["reason"])
+        self.assertIn(
+            f"reserved by alpha (ran, task ids not yet in a receipt: "
+            f"{PRODUCER_TASK_IDS[0]})",
+            outcome["reason"],
+        )
+        self.assertFalse(self.queue.path("claims", "beta").exists())
+
+        # The reconciliation step, and the direction that must NOT be refused: the
+        # same hours, the same instant, alpha's ids among the metered identities.
+        rc, outcome = self.run_ready(counting)
 
         self.assertEqual(
             (rc, outcome["status"], outcome["id"]), (0, "succeeded", "beta")
         )
         self.assertTrue(self.queue.path("claims", "beta").exists())
+
+    def test_an_item_expecting_no_tasks_releases_on_the_timestamp_alone(self) -> None:
+        """An arm that schedules nothing has no identity for a receipt to list.
+
+        Requiring inclusion for every item would make ``expects_scheduler_tasks``
+        false unsatisfiable: the producer correctly reports no tasks, no receipt can
+        ever list them, and the item would reserve its declared maximum forever. So
+        for a declared-no-tasks arm the timestamp is the whole test -- and the empty
+        file is still REQUIRED, because "scheduled nothing" and "never wrote its
+        ids" are different facts.
+        """
+        empty_producer = self.commit_script(
+            "no_task_producer.py",
+            write_task_ids([]) + "from pathlib import Path\n"
+            "Path('ran').write_text('yes')\n",
+        )
+        admitting = self.install_receipt("near-gpu-ceiling")
+        later = self.install_receipt(
+            "near-gpu-ceiling", measured_at_utc="2026-09-29T12:00:30+00:00"
+        )
+
+        def declare_no_tasks(value: dict[str, object]) -> None:
+            value["campaign_id"] = "alpha"
+            value["maximum_cost"] = {
+                "cpu_task_hours": 1.0,
+                "gpu_task_hours": 6.0,
+                "wall_hours": 6.0,
+            }
+            accounting = value["accounting"]
+            assert isinstance(accounting, dict)
+            accounting["expects_scheduler_tasks"] = False
+
+        alpha_contract = self.write_contract(
+            commit=True,
+            validator_script="validator_success.py",
+            name="contract-alpha.json",
+            mutate=declare_no_tasks,
+        )
+        beta_contract = self.six_hour_contract("beta")
+        alpha = self.stage(
+            "alpha", kind="compute", contract=alpha_contract, script=empty_producer
+        )
+        self.approve(alpha)
+
+        rc, outcome = self.run_ready(admitting)
+
+        self.assertEqual((rc, outcome["status"]), (0, "succeeded"))
+        self.assertEqual(outcome[campaignctl.OUTCOME_TASK_IDS_FIELD], [])
+        beta = self.stage("beta", kind="compute", contract=beta_contract)
+        self.approve(beta)
+
+        rc, outcome = self.run_ready(later)
+
+        self.assertEqual(
+            (rc, outcome["status"], outcome["id"]), (0, "succeeded", "beta")
+        )
+
+    def test_a_missing_task_ids_file_refuses_and_reserves_permanently(self) -> None:
+        """A producer whose ids were never written can never be accounted for.
+
+        This is the reviewer's third case -- crashed before the file was read,
+        launcher error, timeout. The validator is not started, the outcome resolves
+        through the contract's own ``otherwise`` branch with the reason recorded,
+        and because no identity was recorded no receipt can ever demonstrate that
+        this item's spend was counted. The reservation is therefore PERMANENT, in
+        both directions: a fresh receipt listing every other task does not clear it.
+        """
+        silent_producer = self.commit_script(
+            "silent_producer.py",
+            "from pathlib import Path\nPath('ran').write_text('yes')\n",
+        )
+        admitting = self.install_receipt("near-gpu-ceiling")
+        counting = self.install_counting_receipt(
+            "near-gpu-ceiling",
+            PRODUCER_TASK_IDS,
+            measured_at_utc="2026-09-29T12:00:30+00:00",
+        )
+        alpha_contract = self.six_hour_contract("alpha")
+        beta_contract = self.six_hour_contract("beta")
+        alpha = self.stage(
+            "alpha", kind="compute", contract=alpha_contract, script=silent_producer
+        )
+        self.approve(alpha)
+
+        rc, outcome = self.run_ready(admitting)
+
+        self.assertEqual((rc, outcome["status"], outcome["id"]), (3, "failed", "alpha"))
+        self.assertEqual(outcome["producer_returncode"], 0)
+        self.assertIsNone(outcome["validator_returncode"])
+        self.assertEqual(outcome["terminal_branch"], "unexpected-terminal-result")
+        self.assertEqual(outcome["required_actions"][0]["action"], "preserve")
+        self.assertIn(
+            "was not written by the producer",
+            outcome[campaignctl.OUTCOME_ACCOUNTING_ERROR_FIELD],
+        )
+        self.assertNotIn(campaignctl.OUTCOME_TASK_IDS_FIELD, outcome)
+        self.assertFalse((self.repo / "validator-ran").exists())
+
+        beta = self.stage("beta", kind="compute", contract=beta_contract)
+        self.approve(beta)
+
+        rc, outcome = self.run_ready(counting)
+
+        self.assertEqual(
+            (rc, outcome["status"], outcome["id"]), (6, "refused", "beta")
+        )
+        self.assertIn(
+            "reserved by alpha (ran with no recorded task ids; operator release "
+            "required)",
+            outcome["reason"],
+        )
+
+    def test_an_operator_release_clears_an_unaccountable_reservation(self) -> None:
+        """The only way out of a permanent hold, and it is a human act.
+
+        ``release`` is refused without a TTY, refused for an item that never ran
+        (that is ``revoke``'s job) and refused while an item may still be spending;
+        it records the operator's reason and logs the release. Only then does the
+        next item get the hours.
+        """
+        silent_producer = self.commit_script(
+            "silent_producer.py",
+            "from pathlib import Path\nPath('ran').write_text('yes')\n",
+        )
+        # Measured AFTER the outcome this run will write, so the timestamp clause is
+        # satisfied and the hold under test is the unidentifiable-spend one.
+        receipt = self.install_receipt(
+            "near-gpu-ceiling", measured_at_utc="2026-09-29T12:00:30+00:00"
+        )
+        alpha_contract = self.six_hour_contract("alpha")
+        beta_contract = self.six_hour_contract("beta")
+        alpha = self.stage(
+            "alpha", kind="compute", contract=alpha_contract, script=silent_producer
+        )
+        self.approve(alpha)
+        self.assertEqual(self.run_ready(receipt)[0], 3)
+        beta = self.stage("beta", kind="compute", contract=beta_contract)
+        self.approve(beta)
+        with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": receipt}):
+            self.assertIn(
+                "operator release required",
+                str(
+                    campaignctl.r5_refusal_reason(
+                        self.queue, self.queue.item(beta["id"])
+                    )
+                ),
+            )
+
+        with self.assertRaisesRegex(campaignctl.QueueError, "never claimed"):
+            campaignctl.release(
+                self.queue, "beta", "beta never ran", interactive=False
+            )
+        with self.assertRaisesRegex(campaignctl.QueueError, "release reason"):
+            campaignctl.release(self.queue, "alpha", "   ", interactive=False)
+        with mock.patch.object(
+            campaignctl.sys.stdin, "isatty", return_value=False
+        ):
+            with self.assertRaisesRegex(
+                campaignctl.QueueError, "release requires an interactive TTY"
+            ):
+                campaignctl.release(self.queue, "alpha", "carrying the spend")
+
+        record = campaignctl.release(
+            self.queue,
+            "alpha",
+            "sacct shows no tasks for this arm; carrying the six hours",
+            interactive=False,
+        )
+
+        self.assertEqual(record["state_at_release"], "failed")
+        self.assertIn("carrying the six hours", record["reason"])
+        log = (
+            self.queue.state / "logs" / campaignctl.ADMISSION_LOCK_LOG
+        ).read_text()
+        self.assertIn("reservation-released", log)
+        self.assertIn("alpha", log)
+
+        rc, outcome = self.run_ready(receipt)
+
+        self.assertEqual(
+            (rc, outcome["status"], outcome["id"]), (0, "succeeded", "beta")
+        )
+
+    def test_a_task_ids_file_disagreeing_with_the_declaration_is_refused(self) -> None:
+        """Empty while tasks are expected, populated while they are not, malformed.
+
+        Each is a refusal with the reason recorded, and none of them runs the
+        validator: the ids are what makes the spend identifiable, so a run that
+        cannot report them honestly must not be able to reach a pass branch.
+        """
+        cases = (
+            ("empty-while-expected", write_task_ids([]), True, "is empty while"),
+            (
+                "tasks-while-none-expected",
+                write_task_ids(PRODUCER_TASK_IDS),
+                False,
+                "lists scheduler tasks while",
+            ),
+            (
+                "not-json",
+                "from pathlib import Path\n"
+                f"_ids = Path({TASK_IDS_RELATIVE!r})\n"
+                "_ids.parent.mkdir(parents=True, exist_ok=True)\n"
+                "_ids.write_text('{ not json')\n",
+                True,
+                "is not JSON",
+            ),
+            (
+                "not-a-task-identity",
+                write_task_ids(["not-a-task-id"]),
+                True,
+                "not a scheduler task identity",
+            ),
+        )
+        for item_id, body, expects, expected in cases:
+            with self.subTest(case=item_id):
+                producer = self.commit_script(f"{item_id}_producer.py", body)
+
+                def declare(value: dict[str, object], expects: bool = expects) -> None:
+                    value["campaign_id"] = item_id
+                    accounting = value["accounting"]
+                    assert isinstance(accounting, dict)
+                    accounting["expects_scheduler_tasks"] = expects
+
+                contract = self.write_contract(
+                    commit=True,
+                    validator_script="validator_success.py",
+                    name=f"contract-{item_id}.json",
+                    mutate=declare,
+                )
+                item = self.stage(
+                    item_id, kind="compute", contract=contract, script=producer
+                )
+                self.approve(item)
+
+                rc, outcome = self.run_ready()
+
+                self.assertEqual((rc, outcome["status"]), (3, "failed"))
+                self.assertEqual(
+                    outcome["terminal_branch"], "unexpected-terminal-result"
+                )
+                self.assertIn(
+                    expected, outcome[campaignctl.OUTCOME_ACCOUNTING_ERROR_FIELD]
+                )
+                self.assertNotIn(campaignctl.OUTCOME_TASK_IDS_FIELD, outcome)
+                self.assertFalse((self.repo / "validator-ran").exists())
+
+    def test_an_earlier_runs_task_ids_are_never_credited_to_this_item(self) -> None:
+        """A stale file at the declared path would release on somebody else's spend.
+
+        The path is declared by the contract, so two items can name the same one --
+        and the ids in it are what release a reservation. Left in place, an item
+        whose producer wrote nothing would inherit the previous item's identities
+        and release against spend that was never its own. The file is this run's
+        output, so the queue removes any earlier copy before the producer starts.
+        """
+        silent_producer = self.commit_script(
+            "silent_producer.py",
+            "from pathlib import Path\nPath('ran').write_text('yes')\n",
+        )
+        receipt = self.install_receipt("near-gpu-ceiling")
+        contract = self.named_contract(
+            "stale-ids", validator_script="validator_success.py"
+        )
+        stale = self.repo / TASK_IDS_RELATIVE
+        stale.parent.mkdir(parents=True, exist_ok=True)
+        stale.write_text(json.dumps(PRODUCER_TASK_IDS))
+        item = self.stage(
+            "stale-ids", kind="compute", contract=contract, script=silent_producer
+        )
+        self.approve(item)
+
+        rc, outcome = self.run_ready(receipt)
+
+        self.assertEqual((rc, outcome["status"]), (3, "failed"))
+        self.assertNotIn(campaignctl.OUTCOME_TASK_IDS_FIELD, outcome)
+        self.assertIn(
+            "was not written by the producer",
+            outcome[campaignctl.OUTCOME_ACCOUNTING_ERROR_FIELD],
+        )
+        self.assertFalse(stale.exists())
+
+    def test_an_unusable_task_ids_path_stops_the_run_before_the_producer(self) -> None:
+        """If the ids can never be read, the producer must not spend at all.
+
+        A directory at the declared path cannot be replaced by the producer's file,
+        so this run could never be accounted for. Refusing after the producer had
+        run would leave real spend with no identity; refusing before it means
+        nothing was consumed but the item, and the outcome still resolves through
+        the contract's own ``otherwise`` branch.
+        """
+        receipt = self.install_receipt("healthy")
+        contract = self.named_contract(
+            "blocked-ids", validator_script="validator_success.py"
+        )
+        (self.repo / TASK_IDS_RELATIVE).mkdir(parents=True, exist_ok=True)
+        item = self.stage("blocked-ids", kind="compute", contract=contract)
+        self.approve(item)
+
+        rc, outcome = self.run_ready(receipt)
+
+        self.assertEqual((rc, outcome["status"]), (3, "failed"))
+        self.assertIsNone(outcome["producer_returncode"])
+        self.assertIsNone(outcome["validator_returncode"])
+        self.assertEqual(outcome["terminal_branch"], "unexpected-terminal-result")
+        self.assertEqual(outcome["required_actions"][0]["action"], "preserve")
+        self.assertIn(
+            "is a directory", outcome[campaignctl.OUTCOME_ACCOUNTING_ERROR_FIELD]
+        )
+        self.assertNotIn(campaignctl.OUTCOME_TASK_IDS_FIELD, outcome)
+        self.assertFalse((self.repo / "ran").exists())
+        self.assertFalse((self.repo / "validator-ran").exists())
+
+    def test_contract_requires_a_usable_accounting_declaration(self) -> None:
+        """Without it a reservation could only ever be released by a timestamp."""
+        def remove_accounting(value: dict[str, object]) -> None:
+            del value["accounting"]
+
+        contract = self.write_contract(commit=True, mutate=remove_accounting)
+        with self.assertRaisesRegex(campaignctl.QueueError, "accounting"):
+            self.stage(
+                "validator-failure-fixture", kind="compute", contract=contract
+            )
+
+        def absolute_path(value: dict[str, object]) -> None:
+            accounting = value["accounting"]
+            assert isinstance(accounting, dict)
+            accounting["task_ids_file"] = "/tmp/scheduler-task-ids.json"
+
+        contract = self.write_contract(commit=True, mutate=absolute_path)
+        with self.assertRaisesRegex(
+            campaignctl.QueueError, "task_ids_file must be repository-relative"
+        ):
+            self.stage(
+                "validator-failure-fixture", kind="compute", contract=contract
+            )
+
+        def unstated_expectation(value: dict[str, object]) -> None:
+            accounting = value["accounting"]
+            assert isinstance(accounting, dict)
+            accounting["expects_scheduler_tasks"] = "yes"
+
+        contract = self.write_contract(commit=True, mutate=unstated_expectation)
+        with self.assertRaisesRegex(
+            campaignctl.QueueError, "expects_scheduler_tasks must be a boolean"
+        ):
+            self.stage(
+                "validator-failure-fixture", kind="compute", contract=contract
+            )
 
     def test_an_item_that_never_ran_releases_its_reservation_at_once(self) -> None:
         """The opposite direction, or every reservation would be permanent.
@@ -1192,15 +1722,174 @@ class CampaignQueueTests(unittest.TestCase):
                 )
             )
 
+    def test_two_clones_cannot_both_admit_against_one_receipt(self) -> None:
+        """The reviewer's mutation: TWO CLONES of one repository, one receipt.
+
+        The canonical directory was derived from the queue's own repository, so a
+        clone -- same commits, same committed receipt, same contracts, same
+        ``HEAD`` -- got a canonical directory of its own and its ticker considered
+        that queue canonical. Two of them each took a lock nobody else could see,
+        each scanned an inventory the other was absent from, and each admitted a
+        six-hour item against 490 recorded hours: 502 against a ceiling of 500,
+        reached by cloning instead of by pointing ``--state-dir`` elsewhere. The
+        canonical directory is therefore a property of the HOST and the campaign,
+        and both checkouts resolve the same one.
+        """
+        receipt = self.install_receipt("near-gpu-ceiling")
+        alpha_contract = self.six_hour_contract("alpha")
+        # Cloned AFTER the receipt commit, so ONE committed receipt is evidence in
+        # both checkouts: nothing about the clone is second-class.
+        clone = self.clone_queue()
+        self.assertNotEqual(clone.repo, self.queue.repo)
+        self.assertEqual(clone.state, self.queue.state)
+        self.assertTrue(clone.state_is_canonical())
+        self.assertEqual(
+            json.loads((clone.repo / receipt).read_text()),
+            json.loads((self.repo / receipt).read_text()),
+        )
+
+        alpha = self.stage("alpha", kind="compute", contract=alpha_contract)
+        self.approve(alpha)
+
+        rc, outcome = self.run_ready(receipt)
+
+        self.assertEqual(
+            (rc, outcome["status"], outcome["id"]), (0, "succeeded", "alpha")
+        )
+
+        # Now the second checkout stages and approves its own six-hour item against
+        # the same 490 hours. Its contract is committed in the clone, because a
+        # contract's guard argv names its own checkout by absolute path.
+        beta_contract = self.six_hour_contract("beta", repo=clone.repo)
+        beta = self.stage(
+            "beta", kind="compute", contract=beta_contract, queue=clone
+        )
+        self.approve(beta, queue=clone)
+
+        with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": receipt}):
+            rc_clone, outcome_clone = campaignctl.run_ready(clone)
+
+        self.assertEqual((rc_clone, outcome_clone["status"]), (6, "refused"))
+        self.assertEqual(outcome_clone["id"], "beta")
+        self.assertIn(
+            "gpu_task_hours ceiling would be reached", outcome_clone["reason"]
+        )
+        self.assertIn("490 + 6 + 6 >= 500", outcome_clone["reason"])
+        # The refusal names the reserver, which is an item in ANOTHER checkout.
+        self.assertIn("reserved by alpha", outcome_clone["reason"])
+        self.assertFalse(clone.path("claims", "beta").exists())
+        self.assertFalse((clone.repo / "validator-ran").exists())
+        self.assertEqual(
+            sorted(
+                path.stem for path in (self.queue.state / "claims").glob("*.json")
+            ),
+            ["alpha"],
+        )
+
+    def test_two_clones_cannot_both_hold_the_admission_lock(self) -> None:
+        """One campaign, one lock file, however many checkouts of the repository."""
+        receipt = self.install_receipt("healthy")
+        alpha_contract = self.six_hour_contract("alpha")
+        clone = self.clone_queue()
+        beta_contract = self.six_hour_contract("beta", repo=clone.repo)
+        alpha = self.stage("alpha", kind="compute", contract=alpha_contract)
+        self.approve(alpha)
+        beta = self.stage(
+            "beta", kind="compute", contract=beta_contract, queue=clone
+        )
+        self.approve(beta, queue=clone)
+
+        # The lock is taken through campaignctl's own context manager in this
+        # repository, then a ticker in the clone is asked to admit.
+        with campaignctl.admission_lock(self.queue, alpha) as lock:
+            self.assertEqual(lock, clone.state / campaignctl.ADMISSION_LOCK_NAME)
+            with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": receipt}):
+                rc_clone, value_clone = campaignctl.run_ready(clone)
+
+        self.assertEqual((rc_clone, value_clone["status"]), (5, "outcome-unknown"))
+        self.assertIn("admission lock held by", value_clone["reason"])
+        self.assertIn(str(os.getpid()), value_clone["reason"])
+        self.assertFalse(clone.path("claims", "beta").exists())
+        self.assertFalse(clone.path("outcomes", "beta").exists())
+
+    def test_an_item_from_another_checkout_reserves_but_never_runs_here(self) -> None:
+        """A shared queue holds other checkouts' items; a ticker must not run them.
+
+        Their bindings, ``cwd`` and ``git_head`` are properties of the repository
+        they were staged from, so validating them here would compare another
+        checkout's hashes against this checkout's files -- and marking them
+        ``stale`` on that comparison would consume items nobody misbehaved over.
+        They are skipped, they stay listed, and they keep reserving.
+        """
+        receipt = self.install_receipt("healthy")
+        clone = self.clone_queue()
+        contract = self.six_hour_contract("alpha", repo=clone.repo)
+        alpha = self.stage(
+            "alpha", kind="compute", contract=contract, queue=clone
+        )
+        self.approve(alpha, queue=clone)
+
+        rc, value = self.run_ready(receipt)
+
+        self.assertEqual((rc, value["status"]), (0, "idle"))
+        self.assertIsNone(campaignctl.ready_item(self.queue))
+        self.assertFalse(self.queue.path("outcomes", "alpha").exists())
+        rows = {row["id"]: row for row in campaignctl.summary(self.queue)["items"]}
+        self.assertFalse(rows["alpha"]["runs_here"])
+        self.assertEqual(rows["alpha"]["repo_path"], str(clone.repo))
+        self.assertEqual(rows["alpha"]["state"], "approved")
+        with self.assertRaisesRegex(
+            campaignctl.QueueError, "staged from another checkout"
+        ):
+            campaignctl.validate_unchanged(self.queue, self.queue.item("alpha"))
+        # And the clone's own ticker does run it, so the skip is about ownership
+        # rather than about the item.
+        self.assertEqual(campaignctl.ready_item(clone)["id"], "alpha")
+
+    def test_an_item_with_no_recorded_checkout_never_runs_and_still_reserves(
+        self,
+    ) -> None:
+        """An item from before the shared queue cannot be attributed to a checkout.
+
+        Nothing records which tree its binding hashes were taken from, so no
+        ticker may validate them. It fails closed: never runnable, still listed,
+        still reserving, and its approval is refused rather than silently accepted.
+        """
+        contract = self.six_hour_contract("alpha")
+        item = self.stage("alpha", kind="compute", contract=contract)
+        legacy = json.loads(json.dumps(item))
+        del legacy["repo_path"]
+        campaignctl.atomic_json(self.queue.path("items", "alpha"), legacy)
+
+        rc, value = self.run_ready()
+
+        self.assertEqual((rc, value["status"]), (0, "idle"))
+        rows = {row["id"]: row for row in campaignctl.summary(self.queue)["items"]}
+        self.assertFalse(rows["alpha"]["runs_here"])
+        self.assertEqual(rows["alpha"]["repo_path"], "")
+        with self.assertRaisesRegex(
+            campaignctl.QueueError, "does not record the checkout"
+        ):
+            self.approve(self.queue.item("alpha"))
+
+    def test_the_campaign_state_root_must_be_absolute(self) -> None:
+        """A relative root resolves per working directory, which is a split queue."""
+        for value in ("", "   ", "relative/campaign-state"):
+            with self.subTest(value=value):
+                with mock.patch.dict(
+                    os.environ, {campaignctl.CAMPAIGN_STATE_ROOT_ENV: value}
+                ):
+                    with self.assertRaises(campaignctl.QueueError):
+                        campaignctl.canonical_state_dir()
+
     def test_only_the_canonical_state_dir_can_admit_compute(self) -> None:
-        """The reviewer's mutation: two queues, one receipt, a six-hour item each.
+        """The earlier reviewer's mutation: two ``--state-dir`` values, one receipt.
 
         "Campaign-global" was scoped to whatever ``--state-dir`` named, so each
         queue took its own lock, scanned its own inventory, and admitted an item
-        the other had never counted -- 490 recorded and 502 projected again, this
-        time by splitting the queue instead of releasing a reservation. The
-        canonical directory of the queue's own repository is the only one whose
-        inventory can be complete, so it alone admits compute.
+        the other had never counted -- 490 recorded and 502 projected, this time by
+        splitting the queue instead of releasing a reservation. Only the canonical
+        directory's inventory can be complete, so it alone admits compute.
         """
         receipt = self.install_receipt("near-gpu-ceiling")
         alpha_contract = self.six_hour_contract("alpha")
@@ -1245,11 +1934,11 @@ class CampaignQueueTests(unittest.TestCase):
         self.assertEqual((self.repo / "ran").read_text(), "yes")
         self.assertTrue(other.path("claims", "one").exists())
 
-    def test_two_canonical_queues_on_one_repo_share_the_admission_lock(self) -> None:
-        """One repository has ONE campaign queue, so a second view of it is that queue.
+    def test_two_canonical_queues_share_the_admission_lock(self) -> None:
+        """One campaign has ONE queue, so a second spelling of it is that queue.
 
-        The state directory is compared after resolution, so a spelling with a
-        ``..`` segment is the same queue and takes the same lock.
+        The state directory is compared after resolution, so a path with a ``..``
+        segment is the same queue and takes the same lock.
         """
         contract = self.write_contract(
             commit=True, validator_script="validator_success.py"
@@ -1261,13 +1950,11 @@ class CampaignQueueTests(unittest.TestCase):
         twin = campaignctl.Queue(
             repo=self.repo,
             state=(
-                self.repo
-                / "docs"
-                / "orchestration"
+                self.state_root
                 / ".."
-                / "orchestration"
-                / "state"
-                / "campaign-queue"
+                / self.state_root.name
+                / campaignctl.CAMPAIGN_KEY
+                / campaignctl.QUEUE_DIRECTORY_NAME
             ),
             clock=self.queue.clock,
         )
@@ -1681,6 +2368,50 @@ class MeterReceiptInteroperability(unittest.TestCase):
         self.assertEqual(campaignctl.R5_T0, r5_meter.T0_UTC)
         self.assertEqual(campaignctl.R5_STOP_DATE, r5_meter.STOP_DATE_UTC)
         self.assertEqual(campaignctl.R5_DECISION_RECORD, r5_meter.DECISION_RECORD)
+
+    def test_both_modules_accept_the_same_task_identities(self) -> None:
+        """The release rule compares two lists of ids, so one grammar governs both.
+
+        A producer allowed to declare an identity ``r5_meter`` would never publish
+        could never be released by any receipt; a producer allowed LESS than the
+        meter publishes would silently drop tasks from its own accounting.
+        """
+        import r5_meter
+
+        self.assertEqual(
+            campaignctl.TASK_ID_RE.pattern, r5_meter.TASK_ID_RE.pattern
+        )
+
+    def test_a_metered_receipts_identities_are_what_the_queue_reads(self) -> None:
+        """The ids campaignctl compares against come from a real metered receipt."""
+        import r5_meter
+
+        fixture = (
+            Path(campaignctl.__file__).resolve().parent
+            / "test_fixtures_r5_meter"
+            / "mixed.sacct"
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            receipt_path = Path(directory) / "receipt.json"
+            self.assertEqual(
+                r5_meter.main(
+                    [
+                        "measure",
+                        "--from-file", str(fixture),
+                        "--now", "2026-09-10T00:00:00Z",
+                        "--write", str(receipt_path),
+                    ]
+                ),
+                0,
+            )
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+        validated = campaignctl.validate_r5_receipt(receipt)
+        spend = validated["spend"]
+        assert isinstance(spend, dict)
+        metered = spend["metered_task_ids"]
+        assert isinstance(metered, list) and metered
+        for task_id in metered:
+            self.assertTrue(campaignctl.TASK_ID_RE.fullmatch(str(task_id)))
 
 if __name__ == "__main__":
     unittest.main()
