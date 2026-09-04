@@ -51,6 +51,31 @@ queue refuses every operation -- compute or not -- when the checkout has no
 ``origin``, when its URL differs from the pinned one after normalisation, or when
 the pin is not byte-identical to its blob at ``HEAD``.
 
+A REMOTE HAS TWO URLS, AND THE PIN HAS TO HOLD FOR BOTH OF THEM IN THE REPOSITORY
+THAT PUSHES.  ``git remote get-url origin`` prints the FETCH url; a push resolves
+its destination through ``remote.origin.pushurl`` and ``url.<base>.pushInsteadOf``,
+which only ``get-url --push`` expands.  Under that asymmetry ``ls-remote`` and
+``fetch`` answered from the pinned origin while the lease-protected push landed in
+a second repository -- every host fetching one base, each pushing to its own
+diverted destination, each seeing a successful lease, and the admission log
+recording the pinned url either way, which is finding 4's split inventory
+returning through a different door.  Three environment variables reached it, all
+of them configuration injection: ``GIT_CONFIG_COUNT`` with its indexed pairs,
+``GIT_CONFIG_PARAMETERS`` -- which is exactly what git EXPORTS TO ITS CHILDREN, so
+a hook-invoked campaignctl inherits it as it inherits ``GIT_DIR`` -- and
+``GIT_CONFIG_GLOBAL``.  So: every git invocation this module makes runs with the
+whole configuration-injecting and program-selecting family REMOVED and with both
+file scopes pointed at nothing, leaving only repository-local configuration; the
+queue's own git directory, which is the thing that fetches and pushes, has BOTH of
+its urls proved equal to the pin after ``ensure_scratch`` and again before every
+fetch and every push, and refuses any local key under ``remote.origin.*`` or
+``url.*`` it did not itself write, plus a hooks path, an ssh command or a shell
+credential helper; the push names the literal pinned url rather than the remote;
+and the admission log records that resolved destination beside the origin url.
+The last two are belt and braces -- an ``insteadOf`` rewrite applies to a
+command-line url too, so the cleared environment and the configuration check are
+the load-bearing halves.
+
 Every state family that decides admission -- items, approvals, claims, outcomes,
 releases, revocations, and the admission log -- lives in a git tree on
 ``refs/campaign/<CAMPAIGN_KEY>/queue`` at that origin.  The passwd-home directory
@@ -411,6 +436,30 @@ QUEUE_TREE_PATHS = QUEUE_STATE_FAMILIES + (f"logs/{ADMISSION_LOCK_LOG}",)
 #: ref behind in it.  The checkout's ``.git`` is read for HEAD, the receipt identity,
 #: the pin identity and the origin URL, and written never.
 QUEUE_SCRATCH_GIT_NAME = "queue-git"
+#: EVERY local configuration key campaignctl writes into that git directory.  It is an
+#: enumeration rather than a pattern because it is the allowlist the destination check
+#: subtracts: any key in a namespace that can re-point a push and is not one of these
+#: is configuration this module did not write, and is refused instead of obeyed.
+QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS = frozenset(
+    {"gc.auto", "core.bare", "remote.origin.url"}
+)
+#: The namespaces in which ONE key silently sends a push somewhere else:
+#: ``remote.origin.pushurl`` and ``remote.origin.proxy`` under the first,
+#: ``url.<base>.insteadof`` and ``url.<base>.pushinsteadof`` under the second.  The
+#: rule is a namespace and not a list of those four because a rule spelled as a list
+#: has to be extended for every key git adds, and the failure of the missing entry is
+#: a diverted push that reports success.
+QUEUE_SCRATCH_GUARDED_CONFIG_PREFIXES = ("remote.origin.", "url.")
+#: Keys outside those namespaces that install a PROGRAM into the queue's own git
+#: invocations: an ssh command for the transport, and a hooks directory whose
+#: ``pre-push`` runs on the way out.  Neither changes the destination ``get-url
+#: --push`` prints, so neither is caught by comparing urls.
+QUEUE_SCRATCH_FORBIDDEN_CONFIG_KEYS = frozenset({"core.sshcommand", "core.hookspath"})
+#: A credential helper is admitted -- an https origin needs one, and global
+#: configuration is now out of scope -- EXCEPT in the spelling git runs as a shell
+#: command.  A leading ``!`` is that spelling.
+CREDENTIAL_HELPER_KEY = "credential.helper"
+CREDENTIAL_HELPER_SHELL_PREFIX = "!"
 #: Same-host serialisation for one cache.  It is a LOCAL file and it is not the thing
 #: that makes admission global: the cross-host serialisation is the ref lease.
 QUEUE_SYNC_LOCK_NAME = "queue-sync.lock"
@@ -456,6 +505,63 @@ GIT_REDIRECTING_ENVIRONMENT = (
     "GIT_COMMON_DIR",
     "GIT_NAMESPACE",
 )
+#: Environment variables that make ``git`` load configuration nobody committed, or run
+#: a program nobody named, and so decide where a push GOES.  Three of them landed the
+#: lease-protected queue push in a SECOND bare repository while ``ls-remote`` and
+#: ``fetch`` still answered from the pinned origin, because ``remote.origin.pushurl``
+#: and ``url.<base>.pushInsteadOf`` are expanded for a push -- even for a push to an
+#: explicit URL on the command line -- and are invisible to ``git remote get-url``,
+#: which prints only the FETCH url.  The configuration-injecting family is three
+#: spellings of one capability:
+#:
+#: * the indexed pairs ``GIT_CONFIG_COUNT`` with ``GIT_CONFIG_KEY_<n>`` and
+#:   ``GIT_CONFIG_VALUE_<n>``, which are command-line ``-c`` options in disguise;
+#: * ``GIT_CONFIG_PARAMETERS``, the serialised form, which is exactly what git
+#:   EXPORTS TO ITS CHILDREN -- so a hook-invoked campaignctl inherits it the way it
+#:   inherits ``GIT_DIR``, which is why this module could not be trusted to run
+#:   under an inherited environment at all;
+#: * the scope-substituting ``GIT_CONFIG_GLOBAL``, ``GIT_CONFIG_SYSTEM``,
+#:   ``GIT_CONFIG_NOSYSTEM`` and the legacy ``GIT_CONFIG``, each of which replaces a
+#:   whole configuration file with one the caller chose.
+#:
+#: The rest are the program-selecting family the OI-136 guard lane already refuses for
+#: a read-only ``git``: each hands git an arbitrary program to run, so any allowlist
+#: over the argv is worth nothing while one of them is set.  The guard refused them and
+#: this lane passed all of them straight through.
+GIT_INJECTING_ENVIRONMENT = (
+    "GIT_CONFIG_COUNT",
+    "GIT_CONFIG_PARAMETERS",
+    "GIT_CONFIG_GLOBAL",
+    "GIT_CONFIG_SYSTEM",
+    "GIT_CONFIG_NOSYSTEM",
+    "GIT_CONFIG",
+    "GIT_SSH",
+    "GIT_SSH_COMMAND",
+    "GIT_SSH_VARIANT",
+    "GIT_PAGER",
+    "GIT_EDITOR",
+    "GIT_SEQUENCE_EDITOR",
+    "GIT_EXTERNAL_DIFF",
+    "GIT_ASKPASS",
+    "GIT_EXEC_PATH",
+    "GIT_PROXY_COMMAND",
+)
+#: The one member of that family whose names are NUMBERED, and so cannot be listed.
+#: The suffix is deliberately not required to be a number: removing a variable git
+#: would have ignored costs nothing, and re-implementing git's own parse of the index
+#: is how a filter comes to wave one through.
+GIT_INJECTING_ENVIRONMENT_INDEXED_RE = re.compile(r"^GIT_CONFIG_(?:KEY|VALUE)_")
+#: SET, not merely cleared.  Removing ``GIT_CONFIG_GLOBAL`` restores ``~/.gitconfig``,
+#: a file every other tool running as this uid may append ``pushInsteadOf`` to, and
+#: removing ``GIT_CONFIG_NOSYSTEM`` restores ``/etc/gitconfig``.  Pointing both file
+#: scopes at nothing leaves only REPOSITORY-LOCAL configuration -- the one scope
+#: :meth:`QueueSync.verify_push_destination` can enumerate, and therefore refuse.  The
+#: cost is real and is stated in OPERATOR-GUIDE: a credential helper or an SSH command
+#: configured globally is no longer visible to this tool.
+GIT_ISOLATED_CONFIGURATION_ENVIRONMENT = {
+    "GIT_CONFIG_GLOBAL": os.devnull,
+    "GIT_CONFIG_NOSYSTEM": "1",
+}
 #: A git object name, in either hash size, as ``ls-remote`` and ``rev-parse`` print it.
 GIT_OBJECT_RE = re.compile(r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
 #: What ``git push`` says when the remote ref was not where the lease said it was.
@@ -482,6 +588,27 @@ NO_ORIGIN_REASON = "checkout has no origin remote"
 ORIGIN_MISMATCH_REASON = "checkout origin is not this campaign's pinned origin"
 ORIGIN_PIN_UNCOMMITTED_REASON = "campaign origin pin is not committed at HEAD"
 ORIGIN_UNREACHABLE_REASON = "campaign origin is unreachable"
+#: A remote has TWO urls, and ``get-url`` prints only the fetch one.  A checkout whose
+#: origin fetches from the pin and pushes elsewhere is a checkout whose operator has
+#: told git the namespace is somewhere else, so it is refused on the same footing as a
+#: mismatched fetch url even though this tool never pushes through the checkout.
+ORIGIN_PUSH_MISMATCH_REASON = (
+    "checkout origin does not push to this campaign's pinned origin"
+)
+#: Measured where it MATTERS: in the queue's own git directory, the repository that
+#: actually fetches and pushes.  Both of its urls are re-read before every fetch and
+#: every push, because the destination is a property of that repository's
+#: configuration and of the environment, neither of which the checkout's answer
+#: covers.
+QUEUE_PUSH_MISMATCH_REASON = (
+    "the campaign queue does not push to this campaign's pinned origin"
+)
+#: The queue creates and configures its own git directory, so every key in it that
+#: could re-point a push is one this module wrote or one that arrived from outside it.
+#: The second case is a refusal rather than a value to interpret.
+QUEUE_SCRATCH_CONFIG_REASON = (
+    "the campaign queue's git configuration was written from outside campaignctl"
+)
 #: Interpreter flags that change where imports come from, and therefore defeat the
 #: OI-136 guard from inside its own argv: ``-S`` drops ``site``, ``-I`` implies ``-s``
 #: and ``-E``, and ``-E`` discards the environment the arm was declared with.
@@ -534,7 +661,7 @@ def _refuse_process_state_root() -> None:
 
 
 def git_environment(**overrides: str) -> dict[str, str]:
-    """Return an environment in which ``git`` obeys its own arguments.
+    """Return an environment in which ``git`` obeys its own arguments AND its own pin.
 
     campaignctl can run from a git hook, and a hook is handed ``GIT_DIR`` and its
     own ``GIT_INDEX_FILE`` for a different repository and a different index.
@@ -543,12 +670,26 @@ def git_environment(**overrides: str) -> dict[str, str]:
     object.  They are cleared for every git invocation this module makes, and
     terminal prompting is disabled so a missing credential refuses instead of
     hanging an unattended tick.
+
+    The same inheritance decides WHERE A PUSH GOES.  A hook exports
+    ``GIT_CONFIG_PARAMETERS`` to its children, and every member of
+    :data:`GIT_INJECTING_ENVIRONMENT` can install a ``pushurl`` or a
+    ``pushInsteadOf`` that diverts the lease-protected queue push to another
+    repository while ``ls-remote`` and ``fetch`` still answer from the pinned
+    origin -- a diverted push that reports success, and an admission log that
+    records the pinned url either way.  The whole family is therefore removed,
+    the numbered half by :data:`GIT_INJECTING_ENVIRONMENT_INDEXED_RE`, and
+    :data:`GIT_ISOLATED_CONFIGURATION_ENVIRONMENT` is SET, so the only
+    configuration any of these invocations can read is repository-local.
     """
     environment = {
         key: value
         for key, value in os.environ.items()
         if key not in GIT_REDIRECTING_ENVIRONMENT
+        and key not in GIT_INJECTING_ENVIRONMENT
+        and not GIT_INJECTING_ENVIRONMENT_INDEXED_RE.match(key)
     }
+    environment.update(GIT_ISOLATED_CONFIGURATION_ENVIRONMENT)
     # The ticker is unattended.  A credential prompt on the fetch or the push
     # would HANG it with the admission lock held, which is worse than any
     # refusal: a refusal is retried at the next tick and says why, a hang holds
@@ -1243,40 +1384,95 @@ def normalize_origin_url(value: str) -> str:
     return text
 
 
-def checkout_origin_url(queue: Queue) -> str:
-    """Return the checkout's ``origin`` URL, or refuse.
+class RemoteUrls(NamedTuple):
+    """One remote's two urls, which are two DIFFERENT measurements of it.
+
+    ``git remote get-url`` prints the fetch url.  ``git remote get-url --push``
+    is the only spelling that expands ``remote.<name>.pushurl`` and
+    ``url.<base>.pushInsteadOf``, which is what a push resolves its destination
+    through.  Reading only the first is the asymmetry round 8 found: ls-remote and
+    fetch answered from the pinned origin while the push landed in a second
+    repository, and every check in this module agreed the pin was satisfied.
+    """
+
+    fetch: str
+    push: str
+
+
+def read_remote_urls(
+    arguments: Sequence[str], *, no_remote_reason: str
+) -> RemoteUrls:
+    """Return both urls of the ``origin`` remote of one repository.
+
+    Parameters
+    ----------
+    arguments : Sequence[str]
+        Leading git arguments that select the repository -- ``-C <path>`` for a
+        checkout, ``--git-dir <path>`` for the queue's own git directory.
+    no_remote_reason : str
+        Refusal to raise when the remote does not resolve at all.
+
+    Returns
+    -------
+    RemoteUrls
+        Both urls, exactly as git printed them.
+
+    Raises
+    ------
+    QueueError
+        If either read fails.  ``stderr`` is kept SEPARATE from ``stdout`` here,
+        unlike the refusal-quoting calls elsewhere in this module: these two
+        answers are PARSED and compared against the pin, and a warning git wrote
+        to stderr would be read as part of a url.
+    """
+    urls: list[str] = []
+    for direction, flags in (("fetch", ()), ("push", ("--push",))):
+        result = subprocess.run(
+            ["git", *arguments, "remote", "get-url", *flags, "origin"],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False,
+            env=git_environment(),
+        )
+        if result.returncode != 0:
+            raise QueueError(
+                f"{no_remote_reason}: the campaign's admission namespace is the "
+                f"origin remote, so there is nothing to admit into: reading its "
+                f"{direction} url failed: {result.stderr.strip()}"
+            )
+        urls.append(require_text(result.stdout, field=f"origin {direction} url"))
+    return RemoteUrls(fetch=urls[0], push=urls[1])
+
+
+def checkout_origin_urls(queue: Queue) -> RemoteUrls:
+    """Return the checkout's ``origin`` urls in both directions, or refuse.
 
     A checkout with no ``origin`` has no admission namespace.  That is a refusal
     rather than a fallback to the passwd home: falling back is precisely how one
     campaign came to have as many inventories as it had hosts.
     """
-    result = subprocess.run(
-        ["git", "-C", str(queue.repo), "remote", "get-url", "origin"],
-        stdin=subprocess.DEVNULL,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-        check=False,
-        env=git_environment(),
+    return read_remote_urls(
+        ["-C", str(queue.repo)], no_remote_reason=NO_ORIGIN_REASON
     )
-    if result.returncode != 0:
-        raise QueueError(
-            f"{NO_ORIGIN_REASON}: the campaign's admission namespace is the "
-            f"origin remote, so there is nothing to admit into: "
-            f"{result.stdout.strip()}"
-        )
-    return require_text(result.stdout, field="origin url")
 
 
 def campaign_origin(queue: Queue) -> dict[str, str]:
-    """Return the origin this queue may use, or refuse in one of four directions.
+    """Return the origin this queue may use, or refuse in one of five directions.
 
     The queue refuses EVERY operation -- compute or not -- when the checkout has
-    no ``origin``; when its URL differs from the pinned one after normalisation;
-    when the pin is not committed and byte-identical to its blob at ``HEAD``; or
-    when the pin names another campaign.  A queue that cannot prove which
-    namespace it is in must not stage into it either: an item staged into the
-    wrong namespace reserves nothing where it will actually run.
+    no ``origin``; when its fetch URL differs from the pinned one after
+    normalisation; when its PUSH url differs from it, which is a separate
+    measurement and the one round 8 found unmeasured; when the pin is not
+    committed and byte-identical to its blob at ``HEAD``; or when the pin names
+    another campaign.  A queue that cannot prove which namespace it is in must
+    not stage into it either: an item staged into the wrong namespace reserves
+    nothing where it will actually run.
+
+    This is the CHECKOUT's answer, and the checkout is not what pushes.  The
+    binding check is :meth:`QueueSync.verify_push_destination`, in the queue's own
+    git directory.
 
     Parameters
     ----------
@@ -1318,15 +1514,25 @@ def campaign_origin(queue: Queue) -> dict[str, str]:
                 f"campaign's {expected!r}"
             )
     pinned = require_text(pin["origin_url"], field="campaign origin pin origin_url")
-    configured = checkout_origin_url(queue)
-    if normalize_origin_url(configured) != normalize_origin_url(pinned):
+    configured = checkout_origin_urls(queue)
+    if normalize_origin_url(configured.fetch) != normalize_origin_url(pinned):
         raise QueueError(
-            f"{ORIGIN_MISMATCH_REASON}: origin is {configured!r} and the pin at "
-            f"{CAMPAIGN_ORIGIN_FILE.as_posix()} names {pinned!r}; a clone whose "
-            "origin is a different repository is a different repository"
+            f"{ORIGIN_MISMATCH_REASON}: origin is {configured.fetch!r} and the "
+            f"pin at {CAMPAIGN_ORIGIN_FILE.as_posix()} names {pinned!r}; a clone "
+            "whose origin is a different repository is a different repository"
+        )
+    # The push url is compared SEPARATELY because it is a separate value: a
+    # `pushurl`, or a `url.<base>.pushInsteadOf` that matches the pin, leaves the
+    # fetch url identical to the pin and sends every push elsewhere.
+    if normalize_origin_url(configured.push) != normalize_origin_url(pinned):
+        raise QueueError(
+            f"{ORIGIN_PUSH_MISMATCH_REASON}: origin fetches from "
+            f"{configured.fetch!r}, which is the pin, but pushes to "
+            f"{configured.push!r}; a remote has two urls and only "
+            "`get-url --push` expands pushurl and url.<base>.pushInsteadOf"
         )
     return {
-        "origin_url": configured,
+        "origin_url": configured.fetch,
         "pin_path": CAMPAIGN_ORIGIN_FILE.as_posix(),
         "pin_sha256": pin_sha256,
     }
@@ -1416,6 +1622,12 @@ class QueueSync:
         #: working-tree edit to the pin must not be believed for a second
         #: operation just because the first one passed.
         self.origin: dict[str, str] | None = None
+        #: Where this git directory's pushes actually GO, as ``get-url --push``
+        #: resolves it there.  Re-measured before every fetch and every push, and
+        #: recorded in the admission log beside the origin url: the fetch url was
+        #: what that record used to carry, and it is the one value that stays
+        #: equal to the pin while the push is diverted.
+        self.push_url: str | None = None
 
     # -- git plumbing ----------------------------------------------------------
 
@@ -1442,6 +1654,140 @@ class QueueSync:
             )
         return result
 
+    def scratch_config(self) -> list[tuple[str, str]]:
+        """Return the queue git directory's LOCAL configuration, key by value.
+
+        ``-z`` rather than line splitting because a configuration value may
+        contain a newline, and a parser that split on newlines would read one
+        such value as a second key -- a key an attacker chooses.  ``stderr`` is
+        kept apart from ``stdout`` for the same reason it is in
+        :func:`read_remote_urls`: this output is parsed, not quoted.
+        """
+        result = subprocess.run(
+            [
+                "git",
+                "--git-dir",
+                str(self.scratch),
+                "config",
+                "--list",
+                "--local",
+                "-z",
+            ],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False,
+            env=git_environment(),
+        )
+        if result.returncode != 0:
+            raise QueueError(
+                f"cannot read the campaign queue's own git configuration at "
+                f"{self.scratch}, so its push destination is unproven: "
+                f"{result.stderr.strip()}"
+            )
+        entries: list[tuple[str, str]] = []
+        for chunk in result.stdout.split("\0"):
+            if not chunk:
+                continue
+            key, _, value = chunk.partition("\n")
+            entries.append((key, value))
+        return entries
+
+    def refuse_unwritten_scratch_config(self) -> None:
+        """Refuse configuration in the queue's git directory it did not write.
+
+        The url comparison reads what git resolves NOW.  This reads what could
+        resolve it somewhere else NEXT time and what could run a program on the
+        way: a ``pushurl`` written behind the queue's back, an ``insteadOf``
+        rewrite, an ssh command, a hooks directory, a proxy, or a credential
+        helper spelled as a shell command.  The queue creates this directory
+        itself and writes exactly
+        :data:`QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS`, so in the two namespaces that
+        decide a destination anything else came from outside this module -- and
+        an unmodelled key there is refused rather than interpreted, because the
+        way to be wrong about it is a push that lands elsewhere and reports
+        success.
+        """
+        for key, value in self.scratch_config():
+            lowered = key.lower()
+            if lowered in QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS:
+                continue
+            if any(
+                lowered.startswith(prefix)
+                for prefix in QUEUE_SCRATCH_GUARDED_CONFIG_PREFIXES
+            ):
+                raise QueueError(
+                    f"{QUEUE_SCRATCH_CONFIG_REASON}: {self.scratch} sets {key} "
+                    f"to {value!r}, and campaignctl writes only "
+                    f"{sorted(QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS)} there; a key "
+                    "under remote.origin.* or url.* decides where a push goes"
+                )
+            if lowered in QUEUE_SCRATCH_FORBIDDEN_CONFIG_KEYS:
+                raise QueueError(
+                    f"{QUEUE_SCRATCH_CONFIG_REASON}: {self.scratch} sets {key} "
+                    f"to {value!r}, which installs a program in the queue's own "
+                    "git invocations"
+                )
+            if lowered == CREDENTIAL_HELPER_KEY and value.startswith(
+                CREDENTIAL_HELPER_SHELL_PREFIX
+            ):
+                raise QueueError(
+                    f"{QUEUE_SCRATCH_CONFIG_REASON}: {self.scratch} sets {key} "
+                    f"to {value!r}, which git runs as a shell command"
+                )
+
+    def verify_push_destination(self) -> str:
+        """Prove this git directory pushes to the PIN, and return where it pushes.
+
+        The measurement is taken HERE, in the repository that fetches and pushes,
+        rather than in the checkout: the destination is decided by this
+        directory's local configuration and by the environment the push runs
+        under, and the checkout's answer covers neither.  Both urls are read,
+        because ``get-url`` prints only the fetch one and a diverted push leaves
+        it identical to the pin.  It runs after :meth:`ensure_scratch` and again
+        before every fetch and every push, so a key written between two
+        operations is caught by the second, and it is read with the SAME
+        environment the push will use -- an environment measured with any other
+        one is a measurement of a different command.
+
+        Returns
+        -------
+        str
+            The push destination as ``get-url --push`` resolves it, which is
+            what the admission log records.
+
+        Raises
+        ------
+        QueueError
+            If the directory has not been pointed at the pin yet, if either url
+            is not the pin after normalisation, or if the local configuration
+            holds a key the queue did not write.
+        """
+        if self.scratch_origin is None:
+            raise QueueError(
+                f"{QUEUE_PUSH_MISMATCH_REASON}: {self.scratch} has not been "
+                "pointed at the pinned origin yet, so nothing about its "
+                "destination has been proved"
+            )
+        self.refuse_unwritten_scratch_config()
+        urls = read_remote_urls(
+            ["--git-dir", str(self.scratch)],
+            no_remote_reason=QUEUE_PUSH_MISMATCH_REASON,
+        )
+        pinned = normalize_origin_url(self.scratch_origin)
+        for direction, url in (("fetch", urls.fetch), ("push", urls.push)):
+            if normalize_origin_url(url) != pinned:
+                raise QueueError(
+                    f"{QUEUE_PUSH_MISMATCH_REASON}: {self.scratch} resolves its "
+                    f"{direction} url to {url!r} and the pin names "
+                    f"{self.scratch_origin!r}; the lease protects one ref at one "
+                    "repository, and a push to any other one is admitted by a "
+                    "lease nobody else can lose"
+                )
+        self.push_url = urls.push
+        return urls.push
+
     def author_environment(self) -> dict[str, str]:
         """Return the environment that names campaignctl as the commit's author."""
         return git_environment(
@@ -1452,7 +1798,13 @@ class QueueSync:
         )
 
     def ensure_scratch(self, origin_url: str) -> None:
-        """Create the queue's own bare git directory and point it at the origin."""
+        """Create the queue's own bare git directory, point it at the pin, prove it.
+
+        The proof is taken unconditionally, including on the path that finds the
+        directory already pointed at ``origin_url`` and writes nothing: what has
+        to be re-measured is not what this process last wrote but what the
+        directory says NOW, and anything else may have written it since.
+        """
         if not (self.scratch / "HEAD").is_file():
             self.cache.mkdir(parents=True, exist_ok=True)
             result = subprocess.run(
@@ -1478,6 +1830,7 @@ class QueueSync:
         if self.scratch_origin != origin_url:
             self.git("config", "remote.origin.url", origin_url)
             self.scratch_origin = origin_url
+        self.verify_push_destination()
 
     def remote_head(self) -> str | None:
         """Return the origin's current queue-ref sha, or ``None`` when it is unset.
@@ -1624,6 +1977,10 @@ class QueueSync:
         self.origin = origin
         remote = self.remote_head()
         if remote is not None and remote != self.local_head():
+            # Re-measured immediately before the fetch, not only after
+            # `ensure_scratch`: the tree this operation reads is the tree its
+            # lease will be taken against, so it must come from the pin.
+            self.verify_push_destination()
             self.git(
                 "fetch",
                 "--no-tags",
@@ -1672,6 +2029,9 @@ class QueueSync:
         QueueError
             If the commit could not be built or the push could not be delivered.
         """
+        # Before the commit is even built: this is the invocation the whole check
+        # exists for, and a refusal here must leave the ref untouched.
+        self.verify_push_destination()
         index = self.scratch / QUEUE_STATE_INDEX_NAME
         with contextlib.suppress(FileNotFoundError):
             index.unlink()
@@ -1707,8 +2067,20 @@ class QueueSync:
         # campaign would be an unconditional create and two hosts starting at
         # once would each overwrite the other's first admission.
         lease = f"--force-with-lease={CAMPAIGN_QUEUE_REF}:{self.base or ''}"
+        # The DESTINATION IS THE LITERAL PINNED STRING, not the remote name, so
+        # that reading `remote.origin.pushurl` is not the only thing standing
+        # between the lease and another repository.  Belt and braces: an
+        # `url.<base>.pushInsteadOf` rewrites a command-line url too, which is
+        # why the cleared environment and the configuration check above are the
+        # load-bearing halves and this is the third.  The remote name stays for
+        # the fetch, where the refspec is explicit and the answer is verified by
+        # re-reading the ref.
         result = self.git(
-            "push", "origin", f"{commit}:{CAMPAIGN_QUEUE_REF}", lease, check=False
+            "push",
+            self.scratch_origin,
+            f"{commit}:{CAMPAIGN_QUEUE_REF}",
+            lease,
+            check=False,
         )
         if result.returncode != 0:
             output = result.stdout.strip()
@@ -1944,6 +2316,7 @@ def publish_cached_state(queue: Queue, message: str) -> str | None:
         sync.ensure_scratch(origin["origin_url"])
         remote = sync.remote_head()
         if remote is not None and remote != sync.local_head():
+            sync.verify_push_destination()
             sync.git(
                 "fetch",
                 "--no-tags",
@@ -3874,14 +4247,27 @@ def admission_evidence(
     two clones disagreeing about their origin can name the exact object each one
     admitted under.  The fetched sha is recorded beside it because it is the
     state the headroom was computed against and the value the lease was taken on.
+
+    ``push_url`` is recorded BESIDE ``origin_url`` because the two can differ and
+    only the second one used to be here.  ``origin_url`` is the checkout's fetch
+    url; ``push_url`` is where the queue's own git directory actually delivers,
+    as ``get-url --push`` resolves it there.  Every host diverted by a
+    configuration injection recorded the pinned url and pushed somewhere else, so
+    the log agreed with itself across hosts that had never shared a ref.
     """
     origin = sync.origin if sync.origin is not None else campaign_origin(queue)
+    if sync.push_url is None:
+        # Measure it rather than record an empty field: the destination is what
+        # this record exists to attribute the admission to.  `ensure_scratch`
+        # ends in the proof, so this either sets it or refuses.
+        sync.ensure_scratch(origin["origin_url"])
     return {
         "event": "compute-admitted",
         "id": item_id,
         "admitted_at_utc": queue.clock(),
         "queue_ref": CAMPAIGN_QUEUE_REF,
         "origin_url": origin["origin_url"],
+        "push_url": require_text(sync.push_url, field="queue push url"),
         "campaign_origin_pin": origin["pin_path"],
         "campaign_origin_blob": queue.committed_blob_id(
             resolve_repo_path(queue.repo, origin["pin_path"])
