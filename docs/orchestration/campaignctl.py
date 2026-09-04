@@ -118,6 +118,15 @@ GUARD_PATH = Path("nd-unfolding/mnv_guarded_run.py")
 #: binding this file leaves the enforcing half mutable, which is why it is bound
 #: everywhere the guard is.
 GUARD_SHIM_PATH = Path("nd-unfolding/mnv_guard_shim/sitecustomize.py")
+# Every file the guard executes in a child or a PATH-resolved interpreter launch: the
+# sitecustomize shim, the interpreter wrappers and the scanner they delegate to.  All are
+# bound under the guard's own rules; a swap of any one of them after staging is a stale item.
+GUARD_SHIM_PATHS = (
+    GUARD_SHIM_PATH,
+    Path("nd-unfolding/mnv_guard_shim/scan_argv.py"),
+    Path("nd-unfolding/mnv_guard_shim/bin/python3"),
+    Path("nd-unfolding/mnv_guard_shim/bin/python"),
+)
 DEFAULT_R5_RECEIPT = Path("docs/orchestration/state/r5-meter-receipt.json")
 R5_STOP_DATE = dt.datetime(2026, 9, 30, tzinfo=dt.timezone.utc)
 # R5 §3 fixes the baseline at "the commit instant of this record", so the instant is
@@ -961,14 +970,15 @@ def command_bindings(
         # this path when the child starts.  Bound here, it obeys the guard's own
         # rules -- tracked, HEAD-identical at staging, re-verified before execution
         # -- and swapping only the shim can no longer send a child to another tree.
-        shim = (repo / GUARD_SHIM_PATH).resolve()
-        if not shim.is_file():
-            raise QueueError(
-                f"guarded {role} command requires the guard's subprocess shim "
-                f"{GUARD_SHIM_PATH.as_posix()}, which is how the guard reaches "
-                "inheriting Python children"
-            )
-        bound.append(shim)
+        for shim_path in GUARD_SHIM_PATHS:
+            shim = (repo / shim_path).resolve()
+            if not shim.is_file():
+                raise QueueError(
+                    f"guarded {role} command requires the guard's subprocess shim "
+                    f"{shim_path.as_posix()}, which is how the guard reaches "
+                    "inheriting Python children and PATH-resolved interpreters"
+                )
+            bound.append(shim)
     for value in explicit:
         path = resolve_repo_path(repo, value)
         if not path.is_file():

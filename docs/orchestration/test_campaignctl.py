@@ -102,11 +102,15 @@ class CampaignQueueTests(unittest.TestCase):
         # It is COMMITTED like the guard below, because the shim is the guard's enforcing half
         # in every inheriting child and the queue binds it under the guard's own rules.
         shim_dir = guard.parent / "mnv_guard_shim"
-        shim_dir.mkdir(parents=True, exist_ok=True)
+        (shim_dir / "bin").mkdir(parents=True, exist_ok=True)
+        real_shim_dir = REAL_GUARD.parent / "mnv_guard_shim"
+        for rel in ("sitecustomize.py", "scan_argv.py", "bin/python3", "bin/python"):
+            source = real_shim_dir / rel
+            target = shim_dir / rel
+            target.write_bytes(source.read_bytes())
+            target.chmod(source.stat().st_mode & 0o777)
         self.shim = shim_dir / "sitecustomize.py"
-        self.shim.write_bytes(
-            (REAL_GUARD.parent / "mnv_guard_shim" / "sitecustomize.py").read_bytes()
-        )
+        self.path_wrapper = shim_dir / "bin" / "python3"
         # `mnv_guarded_run.py` recognises a checkout by the marker PAIR, so the fixture
         # repository needs both markers before `--expect-root` can name it.
         (self.repo / "VALIDATION_LEDGER.md").write_text("fixture ledger\n")
@@ -171,6 +175,9 @@ class CampaignQueueTests(unittest.TestCase):
                 "VALIDATION_LEDGER.md",
                 "nd-unfolding/mnv_guarded_run.py",
                 "nd-unfolding/mnv_guard_shim/sitecustomize.py",
+                "nd-unfolding/mnv_guard_shim/scan_argv.py",
+                "nd-unfolding/mnv_guard_shim/bin/python3",
+                "nd-unfolding/mnv_guard_shim/bin/python",
             ],
             check=True,
         )
@@ -2276,6 +2283,30 @@ class CampaignQueueTests(unittest.TestCase):
         bound = {binding["path"] for binding in item["bindings"]}
         self.assertIn("nd-unfolding/mnv_guarded_run.py", bound)
         self.assertIn("nd-unfolding/mnv_guard_shim/sitecustomize.py", bound)
+
+    def test_the_path_wrapper_and_scanner_are_bound_and_a_wrapper_swap_refuses(self) -> None:
+        """The guard also executes the PATH interpreter wrappers and their scanner, so they
+        are bound exactly like the sitecustomize shim: swapping only ``bin/python3`` after
+        staging is a stale item that never runs."""
+        contract = self.write_contract(
+            commit=True, validator_script="validator_success.py"
+        )
+        item = self.stage(
+            "validator-failure-fixture", kind="compute", contract=contract
+        )
+        bound = {binding["path"] for binding in item["bindings"]}
+        for rel in (
+            "nd-unfolding/mnv_guard_shim/scan_argv.py",
+            "nd-unfolding/mnv_guard_shim/bin/python3",
+            "nd-unfolding/mnv_guard_shim/bin/python",
+        ):
+            self.assertIn(rel, bound)
+        self.approve(item)
+        self.path_wrapper.write_text("#!/bin/sh\nexec \"$MNV_GUARD_REAL_PYTHON\" \"$@\"\n")
+        rc, outcome = self.run_ready()
+        self.assertEqual((rc, outcome["status"]), (4, "stale"))
+        self.assertIn("mnv_guard_shim/bin/python3", outcome["error"])
+        self.assertFalse((self.repo / "ran").exists())
 
     def test_an_untracked_or_missing_guard_shim_is_refused_at_staging(self) -> None:
         """At staging the shim obeys the guard's rules too: tracked, then present."""
