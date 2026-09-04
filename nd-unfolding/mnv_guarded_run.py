@@ -2137,6 +2137,27 @@ def _locate_executable(executable, env=None) -> str:
     return shutil.which(text, path=path_value) or text
 
 
+def _locate_command_word(word: str, env, context: "_ScanContext") -> str:
+    """Where a command word will be FOUND, honouring the launch's working directory.
+
+    MEASURED, NOT ANTICIPATED: `subprocess.run(["./stage.sh"], cwd=<dir>)` from a guarded parent
+    resolved `./stage.sh` against THIS process's cwd, found nothing, and refused the launch for
+    having no readable shebang -- a refusal that is fail-closed and also about the wrong file, which
+    is the class of error where a check is right about an object nobody asked about. A word with a
+    separator in it is a PATH and is resolved against the launch's cwd (and then the directory of
+    the script being scanned, for the reason on `_resolve_shell_operand`); a bare word is a PATH
+    lookup and `_locate_executable` owns it.
+    """
+    if os.sep in word and not os.path.isabs(word):
+        for base in (context.cwd, context.script_dir):
+            if not base:
+                continue
+            candidate = os.path.join(base, word)
+            if os.path.exists(candidate):
+                return candidate
+    return _locate_executable(word, env)
+
+
 def _read_shebang(path: str) -> "list[str] | None":
     """The `#!` line of `path`, split into words, or None when there is no readable shebang.
 
@@ -2525,8 +2546,8 @@ def _scan_resolved_command(command: list[str], env, context: _ScanContext) -> bo
     and `_resolve_launch_command` has already walked past them to the command they run.
     """
     word = _text_argument(command[0])
-    located = _locate_executable(word, env)
-    target = _resolve_executable(word, env)
+    located = _locate_command_word(word, env, context)
+    target = _resolve_executable(located, env)
     name = _executable_basename(word)
 
     if _is_python_executable(target) or _is_python_executable(word):
