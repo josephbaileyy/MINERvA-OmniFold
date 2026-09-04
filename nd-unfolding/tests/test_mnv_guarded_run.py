@@ -3010,6 +3010,29 @@ class TheWrapperDirectoryIsWhatARestrictedShellMayREACH(Round7Fixture):
             if record["depth"] == 1:
                 self.assertEqual(record["propagation"], "armed")
 
+    def test_a_shell_STARTED_BY_a_restricted_shell_re_enters_restricted_mode(self):
+        """`bash inner.sh` and `sh -c ...` from inside a restricted script.
+
+        THE MOST ORDINARY LINE IN A LAUNCHER IS THE ONE THAT WOULD UNDO THE WHOLE THING. A
+        restricted shell resolves `bash` through the only PATH it has, which is the wrapper
+        directory -- so what it reaches is the committed `bin/bash`, and that wrapper's whole job is
+        to exec the pinned real bash with `-r` again. A wrapper that forwarded plainly would buy an
+        unrestricted shell for the cost of one word.
+
+        THE PROOF IS IN THE GRANDCHILD AND NOT IN THE CHILD. `inner.sh` runs and says so, which
+        rules out "the wrapper refused everything"; and the `/bin/ls` on its second line is refused
+        with bash's own slash message, which is only possible if the shell running `inner.sh` is
+        itself restricted. `sh -c` is there because `sh` is a second committed name over the same
+        body, and a body reached under one name and not the other is how a wrapper set drifts.
+        """
+        write(self.nd / "inner.sh", "echo INNER-RAN\n/bin/ls\n")
+        parent = self.bash_parent("reentry", "bash inner.sh\nsh -c 'echo SH-WRAPPER-RAN'\n")
+        result = self.guarded(parent)
+        self.assertNotIn("[oi136 launch]", result.stderr, result.stdout + result.stderr)
+        self.assertIn("INNER-RAN", result.stdout)
+        self.assertIn("SH-WRAPPER-RAN", result.stdout)
+        self.assertIn("/bin/ls: restricted: cannot specify `/' in command names", result.stderr)
+
     def test_a_program_the_wrapper_directory_does_not_hold_is_COMMAND_NOT_FOUND(self):
         """`awk`, `perl`, `make`: refused statically, and NOT PRESENT at all to the shell.
 
