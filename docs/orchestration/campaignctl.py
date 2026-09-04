@@ -216,14 +216,30 @@ GUARD_PATH = Path("nd-unfolding/mnv_guarded_run.py")
 #: binding this file leaves the enforcing half mutable, which is why it is bound
 #: everywhere the guard is.
 GUARD_SHIM_PATH = Path("nd-unfolding/mnv_guard_shim/sitecustomize.py")
-# Every file the guard executes in a child or a PATH-resolved interpreter launch: the
-# sitecustomize shim, the interpreter wrappers and the scanner they delegate to.  All are
-# bound under the guard's own rules; a swap of any one of them after staging is a stale item.
+# Every file the guard executes in a child or a PATH-resolved launch: the sitecustomize
+# shim, the interpreter wrappers, the scanner they delegate to, and -- since the guard
+# began running every admitted shell as restricted bash whose PATH is the wrapper
+# directory -- the wrappers for the shells and tools that directory has to hold.  All are
+# bound under the guard's own rules; a swap of any one of them after staging is a stale
+# item.  The list is `mnv_guarded_run.COMMITTED_SHIM_FILES`, spelled here as repository
+# paths: a file added to `bin/` and not bound is a file the queue cannot detect a swap of.
 GUARD_SHIM_PATHS = (
     GUARD_SHIM_PATH,
     Path("nd-unfolding/mnv_guard_shim/scan_argv.py"),
+    Path("nd-unfolding/mnv_guard_shim/wrapper_exec.py"),
     Path("nd-unfolding/mnv_guard_shim/bin/python3"),
     Path("nd-unfolding/mnv_guard_shim/bin/python"),
+    Path("nd-unfolding/mnv_guard_shim/bin/_wrapper_body"),
+    Path("nd-unfolding/mnv_guard_shim/bin/bash"),
+    Path("nd-unfolding/mnv_guard_shim/bin/sh"),
+    Path("nd-unfolding/mnv_guard_shim/bin/git"),
+    Path("nd-unfolding/mnv_guard_shim/bin/sbatch"),
+    Path("nd-unfolding/mnv_guard_shim/bin/srun"),
+    Path("nd-unfolding/mnv_guard_shim/bin/sacct"),
+    Path("nd-unfolding/mnv_guard_shim/bin/squeue"),
+    Path("nd-unfolding/mnv_guard_shim/bin/sinfo"),
+    Path("nd-unfolding/mnv_guard_shim/bin/scancel"),
+    Path("nd-unfolding/mnv_guard_shim/bin/sstat"),
 )
 DEFAULT_R5_RECEIPT = Path("docs/orchestration/state/r5-meter-receipt.json")
 R5_STOP_DATE = dt.datetime(2026, 9, 30, tzinfo=dt.timezone.utc)

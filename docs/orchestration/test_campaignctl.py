@@ -32,6 +32,16 @@ R5_FIXTURES = {
 #: A hand-written stand-in would be a second implementation of the rule under test,
 #: and its refusals would only ever agree with whatever this suite assumed.
 REAL_GUARD = campaignctl.REPO / campaignctl.GUARD_PATH
+#: EVERY committed shim file, DERIVED FROM WHAT THE QUEUE BINDS rather than listed again.
+#: The guard executes all of them -- the sitecustomize half, the interpreter wrappers, the
+#: two scanners they delegate to, and the shell and tool wrappers a restricted child's PATH
+#: consists of -- so a fixture carrying a subset would measure a narrower guard than the
+#: one the queue stages. Deriving it here is what makes `test_the_path_wrapper_and_scanner_
+#: are_bound_and_a_wrapper_swap_refuses` a live control instead of a copy of this list.
+SHIM_FILES = tuple(
+    path.relative_to(Path("nd-unfolding/mnv_guard_shim")).as_posix()
+    for path in campaignctl.GUARD_SHIM_PATHS
+)
 #: The identities the fixture producers declare. Deliberately absent from every
 #: checked-in receipt fixture's `metered_task_ids`, so a receipt only counts them when
 #: a test puts them there.
@@ -126,7 +136,7 @@ class CampaignQueueTests(unittest.TestCase):
         shim_dir = guard.parent / "mnv_guard_shim"
         (shim_dir / "bin").mkdir(parents=True, exist_ok=True)
         real_shim_dir = REAL_GUARD.parent / "mnv_guard_shim"
-        for rel in ("sitecustomize.py", "scan_argv.py", "bin/python3", "bin/python"):
+        for rel in SHIM_FILES:
             source = real_shim_dir / rel
             target = shim_dir / rel
             target.write_bytes(source.read_bytes())
@@ -201,10 +211,7 @@ class CampaignQueueTests(unittest.TestCase):
                 "brief_producer.py",
                 "VALIDATION_LEDGER.md",
                 "nd-unfolding/mnv_guarded_run.py",
-                "nd-unfolding/mnv_guard_shim/sitecustomize.py",
-                "nd-unfolding/mnv_guard_shim/scan_argv.py",
-                "nd-unfolding/mnv_guard_shim/bin/python3",
-                "nd-unfolding/mnv_guard_shim/bin/python",
+                *[f"nd-unfolding/mnv_guard_shim/{rel}" for rel in SHIM_FILES],
             ],
             check=True,
         )
@@ -3314,12 +3321,8 @@ class CampaignQueueTests(unittest.TestCase):
             "validator-failure-fixture", kind="compute", contract=contract
         )
         bound = {binding["path"] for binding in item["bindings"]}
-        for rel in (
-            "nd-unfolding/mnv_guard_shim/scan_argv.py",
-            "nd-unfolding/mnv_guard_shim/bin/python3",
-            "nd-unfolding/mnv_guard_shim/bin/python",
-        ):
-            self.assertIn(rel, bound)
+        for rel in SHIM_FILES:
+            self.assertIn(f"nd-unfolding/mnv_guard_shim/{rel}", bound)
         self.approve(item)
         self.path_wrapper.write_text("#!/bin/sh\nexec \"$MNV_GUARD_REAL_PYTHON\" \"$@\"\n")
         rc, outcome = self.run_ready()

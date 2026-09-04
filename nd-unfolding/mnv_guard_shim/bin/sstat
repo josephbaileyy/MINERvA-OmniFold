@@ -1,0 +1,21 @@
+#!/bin/sh
+# OI-136: the committed PATH wrapper for `sstat`, role `forward`.
+#
+# A WRAPPER ONLY INTERCEPTS THE NAME IT IS INSTALLED UNDER, so there is one file per name -- and
+# each of them adds no logic. It names its ROLE and its NAME and hands both to `_wrapper_body`
+# beside it, which is the single implementation; a fix to the body cannot miss a name, and a role
+# added here without a handler in `wrapper_exec.py` refuses rather than forwards.
+set -u
+self=$0
+case "$self" in
+    */*) ;;
+    *)   self=$(command -v "$self" 2>/dev/null || true) ;;
+esac
+if [ -z "$self" ]; then
+    printf '\n[oi136 launch] AN OI-136 PATH WRAPPER CANNOT LOCATE ITSELF -- REFUSING.\n' >&2
+    exit 3
+fi
+MNV_GUARD_WRAPPER_ROLE=forward
+MNV_GUARD_WRAPPER_NAME=sstat
+export MNV_GUARD_WRAPPER_ROLE MNV_GUARD_WRAPPER_NAME
+exec "$(dirname "$self")/_wrapper_body" "$@"

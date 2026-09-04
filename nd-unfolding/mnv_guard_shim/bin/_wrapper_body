@@ -1,0 +1,69 @@
+#!/bin/sh
+# OI-136: the shared body of every committed non-interpreter PATH wrapper.
+#
+# WHAT IT IS FOR. A guarded process runs every admitted shell as `bash -r` whose PATH is the guard's
+# wrapper directories and nothing else, so the set of programs a shell program can reach is exactly
+# the set this directory holds a file for. This body is that file, once, for `bash`, `sh`, `git`,
+# `sbatch`, `srun` and the five Slurm clients: each of them is four lines that name a ROLE and exec
+# this. One body means one implementation -- a fix here reaches every name, and there is no second
+# copy of the argv handling to drift.
+#
+# IT OWNS NO GRAMMAR AND MAKES NO DECISION. Everything it does is locate the shim, find the real
+# interpreter the contract recorded, and hand the role and the argv to `wrapper_exec.py`, which
+# calls the GUARD'S OWN `_scan_git`, `_scan_sbatch` and `_parse_shell_invocation` and then `exec`s.
+# Re-answering any of those in shell would be the guard's tables retyped; see wrapper_exec.py.
+#
+# IT FAILS CLOSED. Every step that cannot be completed exits 3 with an `[oi136 launch]` message.
+#
+# POSIX sh ON PURPOSE, for the reason recorded in `python3` beside it: this runs in front of every
+# such launch on a login node and a compute node, under dash as readily as bash.
+set -u
+
+prefix='[oi136 launch]'
+refuse() {
+    printf '\n%s %s -- REFUSING BEFORE LAUNCH.\n%s   %s\n' \
+        "$prefix" "$1" "$prefix" "$2" >&2
+    printf '%s This is an OI-136 PATH wrapper. It stands in front of the real tool so that a\n' \
+        "$prefix" >&2
+    printf '%s restricted shell can reach it at all, and so that what it is asked to do is read\n' \
+        "$prefix" >&2
+    printf '%s first. Fix the launcher rather than removing the wrapper.\n' "$prefix" >&2
+    exit 3
+}
+
+[ -n "${MNV_GUARD_WRAPPER_ROLE-}" ] || refuse "AN OI-136 PATH WRAPPER WAS CALLED WITH NO ROLE" \
+    "MNV_GUARD_WRAPPER_ROLE is unset; the committed wrappers set it before exec'ing this body"
+role=$MNV_GUARD_WRAPPER_ROLE
+name=${MNV_GUARD_WRAPPER_NAME:-}
+unset MNV_GUARD_WRAPPER_ROLE
+unset MNV_GUARD_WRAPPER_NAME
+
+self=$0
+case "$self" in
+    */*) ;;
+    *)   self=$(command -v "$self" 2>/dev/null || true) ;;
+esac
+[ -n "$self" ] || refuse "AN OI-136 PATH WRAPPER CANNOT LOCATE ITSELF" \
+    "argv[0]=$0 is neither a path nor resolvable on PATH"
+[ -n "$name" ] || name=$(basename "$self")
+bin_dir=$(cd "$(dirname "$self")" 2>/dev/null && pwd -P) || bin_dir=''
+[ -n "$bin_dir" ] || refuse "AN OI-136 PATH WRAPPER CANNOT LOCATE ITSELF" \
+    "cannot resolve the directory of $self"
+shim_dir=$(cd "$bin_dir/.." 2>/dev/null && pwd -P) || shim_dir=''
+[ -n "$shim_dir" ] || refuse "AN OI-136 PATH WRAPPER CANNOT LOCATE THE SHIM" \
+    "cannot resolve $bin_dir/.."
+
+executor="$shim_dir/wrapper_exec.py"
+[ -f "$executor" ] || refuse "THE TRACKED WRAPPER EXECUTOR IS MISSING" \
+    "expected $executor, which carries the decision this wrapper delegates"
+
+# THE INTERPRETER IS THE ONE THE CONTRACT RECORDED, never one resolved through PATH: inside a
+# restricted shell the only PATH is this directory, so a lookup would find the interpreter wrapper
+# and the decision would be made by a process that was itself waiting for a decision.
+real=${MNV_GUARD_REAL_PYTHON:-}
+[ -n "$real" ] && [ -x "$real" ] || refuse "NO INTERPRETER FOR THE OI-136 WRAPPER EXECUTOR" \
+    "MNV_GUARD_REAL_PYTHON is unset or not executable, so the guard's own grammar cannot be loaded"
+
+# -I -S deliberately: this process must not install the guard (it would emit an inventory record for
+# a decision that ran no science) and must not depend on site-packages. See wrapper_exec.py.
+exec "$real" -I -S "$executor" --role "$role" --name "$name" -- "$@"

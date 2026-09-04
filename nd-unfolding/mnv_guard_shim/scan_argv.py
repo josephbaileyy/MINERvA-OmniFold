@@ -101,6 +101,17 @@ def main(argv: "list[str] | None" = None) -> int:
         return _refuse("PYTHON STARTUP FLAGS BYPASS THE IMPORT SHIM",
                        f"offending flag {flag} in {arguments!r}: "
                        f"{guard._LAUNCH_EXPLANATIONS[guard.LAUNCH_REASON_FLAGS]}")
+    # ROUND 7: THE VARIABLES THAT MAKE THE FLAG SCAN BESIDE THE POINT. `PYTHONHOME` and
+    # `PYTHONEXECUTABLE` decide which standard library and which binary the interpreter uses, and
+    # `LD_PRELOAD`/`DYLD_INSERT_LIBRARIES` run code before `sitecustomize` does -- so a wrapper that
+    # exec'd the interpreter with any of them set would be standing in front of a launch whose
+    # startup it did not read. They cannot reach a RESTRICTED child, which strips them; this wrapper
+    # is also reached from an admitted NON-shell child, which was never handed one.
+    hostile = next((name for name in guard._WRAPPER_HOSTILE_ENV_VARS if os.environ.get(name)), None)
+    if hostile is not None:
+        return _refuse("THE INTERPRETER WOULD START UNDER AN ENVIRONMENT THE SHIM CANNOT SURVIVE",
+                       f"${hostile} is set, and it decides which interpreter, which standard "
+                       f"library or which shared object runs before sitecustomize does")
     missing = guard._environment_reaching_child_is_armed(None)
     if missing is not None:
         return _refuse("THE CHILD WOULD START WITHOUT THE PROPAGATION CONTRACT",

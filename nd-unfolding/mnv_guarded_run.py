@@ -107,14 +107,16 @@ exactly six things:
      "absolute path" arm of the old declared gap: what guards a Python child is the
      shim on `PYTHONPATH`, not the wrapper on `PATH`, so there was never a reason to
      treat `/usr/bin/python3 -I` as beyond reach;
-  2. a modelled SHELL -- `sh`, `bash`, `dash`, and `zsh` only behind `-f`/`--no-rcs`.
-     A `-c` string is scanned as before AND A SCRIPT FILE OPERAND IS READ AND SCANNED
+  2. a modelled SHELL -- `sh`, `bash` and `dash`, all three REWRITTEN to run as restricted
+     bash. A `-c` string is scanned as before AND A SCRIPT FILE OPERAND IS READ AND SCANNED
      WITH THE SAME SCANNER. A shell with no operand and no `-c` reads its program
      from stdin and is refused; so are `-l`/`--login`, `-i`, `-s`, `--rcfile`,
-     `--init-file`, and any shell launch made with `$BASH_ENV` or `$ENV` set, because
-     each of them runs a startup file this guard was never handed. `ksh`, `mksh`,
-     `fish`, `csh` and `tcsh` are refused as unmodelled shells rather than treated as
-     unknown binaries;
+     `--init-file`, `+r`, an `-o`/`-O` value this file does not model, and any shell
+     launch made with `$BASH_ENV` or `$ENV` set, because each of them runs a startup file
+     this guard was never handed or asks for the restriction not to hold. `zsh` joined
+     `ksh`, `mksh`, `fish`, `csh` and `tcsh` as a refused shell when the rewrite arrived:
+     an admitted zsh program would have to run under `bash -r`, which is a different
+     language, or under a zsh restricted mode this file does not model;
   3. `git`, on an allowlist of subcommands that cannot reach a hook, a pager, an
      external diff or a transport GIVEN THE ARGV ALONE -- plus a refusal when the
      child's environment carries `GIT_EXTERNAL_DIFF`, `GIT_SSH_COMMAND`, `GIT_PAGER`
@@ -178,19 +180,56 @@ in front of every interpreter a child ADMITTED by the closure above resolves thr
 asked to do is carry the whole claim for a child nobody read. A run whose records say
 `path_shim: not-armed` is now narrower by that second chance rather than open.
 
-THE TWO DECLARED RESIDUALS, AFTER THE CLOSURE AND BOTH HALVES, ARE NEITHER OF THEM AN
-UNSCANNED PYTHON LAUNCH. (1) TRUST BY LOCATION: a leaf tool or a read-only `git` is
-admitted because its executable was found in a named system prefix and carries no
-shebang, so a tampered system prefix -- or a repository-local `.git` configuration
-naming an external program -- is outside this guard. (2) A COMMAND WORD BUILT AT RUN
-TIME is REFUSED and not read, so the residual there is a refused launch and never an
-unguarded one; the cost is a correct launcher that has to be respelled. Both are
-written into EVERY inventory record as `declared_gap` so a ratchet reader sees the
-coverage boundary without reading this file, and they are measured -- not asserted --
-in `tests/test_mnv_guarded_run.py::TheSubprocessBoundaryIsCovered` and
-`TheClosedChildModelRefusesWhatItCannotProve`, beside the covered counterparts they
-must be distinguished from. Read `declared_gap` together with `path_shim`: when
-`path_shim` is not `armed` the second chance above did not run.
+ROUND 7 CLASSIFIES BY THE EXECUTABLE THE KERNEL WILL RUN, NOT BY `argv[0]`. Every POSIX
+exec primitive takes the file to execute separately from the argv, and `argv[0]` is a
+DISPLAY NAME -- `subprocess.run(["ls", "-I", "child.py"], executable=sys.executable)` was
+classified as a leaf tool called `ls` while Python ran with `-I`. So the scan is now over
+`(the real executable, argv[1:])` for all sixteen wrapped primitives: `executable=` for
+`subprocess.*` (and with `shell=True` the shell is the executable and `executable=`
+replaces it), the path argument for `os.execv`/`execve`/`spawn*`/`posix_spawn*`, the name
+resolved on the CHILD's PATH for the `p` spellings, and `/bin/sh` for `os.system`.
+
+AND EVERY ADMITTED SHELL NOW RUNS AS RESTRICTED BASH WITH A WRAPPER-ONLY PATH, which is the
+change that stops this file's model of shell syntax from being the residual. Rounds 5, 6 and
+7 each found a construct the model got wrong -- an unparsed `env` prefix, an unread script
+file, a `"$FLAG"` in an argument, a `cd` the resolver did not follow -- and each time the
+answer was a better model. It is now a smaller claim instead: `install()` pins a real bash
+from a named system prefix and records its sha256, and `_scan_launch` REWRITES every
+admitted shell launch to `<that bash> -r [--posix] <surviving options> <-c string|script>`
+with `PATH` set to the guard's wrapper directories and nothing else. Bash's own restricted
+mode then refuses a command name with a slash, `cd`, `exec`, a `PATH`/`SHELL`/`ENV` or
+`BASH_ENV` assignment, `command -p`, `hash -p`, `enable -f`, output redirection and
+`set +r`; and everything the wrapper directory does not hold is `command not found`. The
+static scanner stays as the FIRST refuser, and for an `sbatch` job script -- which runs on a
+compute node, in another process tree -- it stays the ONLY one.
+
+THE WRAPPER DIRECTORY IS THEREFORE WHAT A SHELL PROGRAM MAY REACH. Beside `python`/`python3`
+it carries committed wrappers for `bash` and `sh` (re-enter restricted mode), `git` (the
+read-only allowlist and the hostile-environment rule, then exec), `sbatch` and `srun` (scan
+what they will run, then exec) and the five reporting Slurm clients; and `install()`
+generates one forwarder per leaf tool that exists under a named system prefix ON THIS HOST,
+because which tools exist is a property of the machine and cannot be committed. Every
+committed wrapper delegates its decision to `mnv_guard_shim/wrapper_exec.py`, which loads
+THIS module and calls these same functions -- the wrappers own no grammar.
+
+THE FOUR DECLARED RESIDUALS, AFTER THE CLOSURE AND ALL THREE HALVES, ARE NONE OF THEM AN
+UNSCANNED PYTHON LAUNCH. (1) TRUST BY LOCATION: a leaf tool, a read-only `git`, `sbatch` and
+the real bash are admitted because the file was found in a named system prefix and carries
+no shebang, so a tampered system prefix -- or a repository-local `.git` configuration naming
+an external program -- is outside this guard. (2) THE RESTRICTED-SHELL GUARANTEE IS BASH'S
+OWN, documented in the bash manual section 6.10, so a defect in bash's restricted mode is
+the residual for shells. (3) AN `sbatch` JOB SCRIPT is read statically because it runs where
+no shell of ours does, and its residual is the static model's -- which is a REFUSAL and
+never an unguarded run: a job script whose command words, interpreter options or sbatch
+options are built at run time is refused and not read. (4) AN ADMITTED PYTHON CHILD is
+guarded by the shim on `PYTHONPATH` and by these hooks in turn. All four are written into
+EVERY inventory record as `declared_gap` so a ratchet reader sees the coverage boundary
+without reading this file, and they are measured -- not asserted -- in
+`tests/test_mnv_guarded_run.py::TheSubprocessBoundaryIsCovered`,
+`TheClosedChildModelRefusesWhatItCannotProve` and
+`TheRestrictedShellIsTheSecondLayerAndRefusesOnItsOwn`, beside the covered counterparts they
+must be distinguished from. Read `declared_gap` together with `path_shim` and `shell`: when
+either is not armed, one of the enforcing halves did not run.
 
 TWO RECEIPTS, NEITHER OF WHICH IS A GATE
 ----------------------------------------
@@ -317,6 +356,25 @@ PATH_SHIM_DIRS_ENV = "MNV_GUARD_PATH_SHIM_DIRS"
 WRAPPER_NAME_ENV = "MNV_GUARD_WRAPPER_NAME"
 PATH_SHIM_DIR = SHIM_DIR / "bin"
 SCAN_ARGV_FILE = SHIM_DIR / "scan_argv.py"
+WRAPPER_EXEC_FILE = SHIM_DIR / "wrapper_exec.py"
+
+#: THE DYNAMIC HALF'S CONTRACT, exported by `install()` and read by the committed wrappers.
+#: `MNV_GUARD_REAL_BASH` is the bash the guard pinned at arm time -- the wrappers must not resolve
+#: one of their own, or the shell that enforces the restriction would be chosen by whatever `PATH`
+#: happened to say. `MNV_GUARD_SYSTEM_PREFIXES` is `_SYSTEM_EXECUTABLE_PREFIXES` as a string,
+#: because a wrapper that retyped the prefix list would be a second implementation of arm (1) of
+#: `DECLARED_GAP` and the two copies would drift.
+REAL_BASH_ENV = "MNV_GUARD_REAL_BASH"
+SYSTEM_PREFIXES_ENV = "MNV_GUARD_SYSTEM_PREFIXES"
+
+#: A KNOB THAT EXISTS FOR THE TEST SUITE AND FOR NOTHING ELSE, and it is named so that a reader of a
+#: record cannot miss it. Round 7's design requires the two layers -- the static scanner and the
+#: restricted shell -- to be shown REFUSING INDEPENDENTLY, and a layer cannot be shown to refuse on
+#: its own while the layer in front of it refuses first. Setting this makes `_scan_launch` swallow
+#: its own `_LaunchRefusal` and hand the launch on to the shell rewrite, so what refuses next is
+#: bash. It does NOT disable the rewrite, the environment contract or the import guard, and every
+#: record written while it is set says `static_scan: disabled-for-test`.
+STATIC_SCAN_DISABLED_ENV = "MNV_GUARD_TEST_ONLY_DISABLE_STATIC_SCAN"
 
 #: Wrapper basenames the tracked `bin/` already carries. Any other `sys.executable` basename --
 #: `python3.11`, `python3.12` -- gets a generated delegator at arm time, because a wrapper only
@@ -324,32 +382,94 @@ SCAN_ARGV_FILE = SHIM_DIR / "scan_argv.py"
 #: file puts in front of a science script.
 TRACKED_WRAPPER_NAMES = ("python3", "python")
 
+#: EVERY COMMITTED FILE THE PATH HALF EXECUTES, relative to `mnv_guard_shim/`. This tuple is the
+#: single list: `_path_shim_digests` hashes it into every record, `docs/orchestration/campaignctl.py`
+#: binds the same paths through `GUARD_SHIM_PATHS`, and the campaign fixture copies them. A file
+#: added to `bin/` and not to this tuple is a file the queue does not bind and no record pins, which
+#: is the state the round-5 wrapper-swap control exists to make impossible.
+COMMITTED_SHIM_FILES = (
+    "sitecustomize.py",
+    "scan_argv.py",
+    "wrapper_exec.py",
+    "bin/python3",
+    "bin/python",
+    "bin/_wrapper_body",
+    "bin/bash",
+    "bin/sh",
+    "bin/git",
+    "bin/sbatch",
+    "bin/srun",
+    "bin/sacct",
+    "bin/squeue",
+    "bin/sinfo",
+    "bin/scancel",
+    "bin/sstat",
+)
+
+#: The basenames the committed `bin/` occupies. A generated forwarder is NOT written for any of
+#: them: the committed file is the one that must win, and two files of one name in two directories
+#: on one PATH is a question about ordering that nobody should have to answer.
+COMMITTED_WRAPPER_NAMES = frozenset(
+    name[len("bin/"):] for name in COMMITTED_SHIM_FILES if name.startswith("bin/")
+)
+
 #: THE COVERAGE BOUNDARY, AS A STRING IN EVERY RECORD. A gap stated only in a docstring is invisible
 #: to the ratchet readers that consume these records, and a reader who cannot see the boundary reads
-#: a green record as total coverage. Read it beside `path_shim`: when that is not `armed` the
-#: boundary is wider than this sentence, because the PATH-wrapper half did not run.
+#: a green record as total coverage. Read it beside `path_shim` and `shell`: when either is not
+#: armed the boundary is wider than this sentence, because one of the two enforcing halves did not
+#: run.
 #:
-#: REWRITTEN FOR ROUND 6, AND NEITHER ARM IS AN UNSCANNED PYTHON LAUNCH ANY MORE. The predecessor
-#: sentence named "an ABSOLUTE PATH with -S, -I or -E, or a cleared PATH or environment", and the
-#: reviewer's finding was that it was BOTH incomplete and operationally fail-open: three shell
-#: SCRIPT FILES reached the wrong-tree import by routes it did not describe, and the absolute-path
-#: arm it did describe was a fully admitted run. Both are closed -- a path to an interpreter goes
-#: through the same flag grammar as a bare name, and a shell's script file is read. What is left is
-#: TRUST BY LOCATION and REFUSAL, and the second one is not a hole.
+#: REWRITTEN FOR ROUND 7, AND THE ARM THAT LEFT IS THE STATIC MODEL OF SHELL SYNTAX. The round-6
+#: sentence named two residuals, TRUST BY LOCATION and REFUSAL, and it was silent about the thing
+#: that actually carried the weight: every claim about a shell child rested on this file's model of
+#: shell syntax being right. It was not. Round 7's reviewer walked through it three times -- an
+#: `executable=` that the classification ignored, a `"$FLAG"` in an argument rather than in a
+#: command word, and a `cd` the resolver did not model -- and each of the three ran the wrong-tree
+#: import and wrote no child record. So the model stopped being the enforcement: an admitted shell
+#: is REWRITTEN to run as `bash -r` with a PATH holding the guard's wrapper directories and nothing
+#: else, and what a shell program can reach is now bounded by bash's own restricted mode rather than
+#: by how well this file parses. The static scanner stays as the first refuser -- and stays the ONLY
+#: enforcement for an `sbatch` job script, which runs where no shell of ours does -- so its residual
+#: is named separately and honestly as arm (3).
 DECLARED_GAP = (
-    "TWO RESIDUALS, AND NEITHER IS AN UNSCANNED PYTHON LAUNCH. (1) TRUST BY LOCATION: a leaf tool "
-    "(ls, cat, mkdir, tar, sacct, ... -- see _LEAF_TOOL_BASENAMES) or a read-only `git` is admitted "
-    "because its executable was found in a named system prefix (/bin, /usr/bin, /sbin, /usr/sbin, "
-    "/usr/local/bin, /usr/local/sbin, /opt/homebrew/bin, /opt/local/bin, /opt/slurm/bin, "
-    "/usr/global/bin) and carries no shebang; nothing about its behaviour is read. So a TAMPERED "
-    "SYSTEM PREFIX, or a repository-local .git configuration naming an external program "
-    "(diff.external, a hook, core.pager), is outside this guard: those are files rather than an "
-    "argv, and the environment variables that do the same job (GIT_EXTERNAL_DIFF, GIT_SSH_COMMAND, "
-    "GIT_PAGER, ...) are refused where they can be seen. (2) COMMAND WORDS BUILT AT RUN TIME: a "
-    "shell script or -c string whose command word comes from a variable, a command substitution, a "
-    "glob or tilde expansion is REFUSED and not read, so the residual for it is A REFUSED LAUNCH "
-    "AND NEVER AN UNGUARDED ONE -- the cost is a correct launcher that must be respelled, not a "
-    "wrong-tree import that runs")
+    "FOUR RESIDUALS, AND NONE OF THEM IS AN UNSCANNED PYTHON LAUNCH. (1) TRUST BY LOCATION: a leaf "
+    "tool (ls, cat, mkdir, tar, ... -- see _LEAF_TOOL_BASENAMES), a read-only `git`, `sbatch`, and "
+    "THE REAL bash THE RESTRICTED REWRITE RUNS are executed because their file was found under a "
+    "named system prefix (/bin, /usr/bin, /sbin, /usr/sbin, /usr/local/bin, /usr/local/sbin, "
+    "/opt/homebrew/bin, /opt/local/bin, /opt/slurm/bin, /usr/global/bin) and carries no shebang; "
+    "nothing about its behaviour is read. So a TAMPERED SYSTEM PREFIX, or a repository-local .git "
+    "configuration naming an external program (diff.external, a hook, core.pager), is outside this "
+    "guard: those are files rather than an argv, and the environment variables that do the same job "
+    "(GIT_EXTERNAL_DIFF, GIT_SSH_COMMAND, GIT_PAGER, ...) are refused where they can be seen. "
+    "(2) THE RESTRICTED-SHELL GUARANTEE IS BASH'S OWN. Every admitted shell launch is rewritten to "
+    "`<that bash> -r [--posix] ...` with PATH set to the guard's wrapper directories only, so a "
+    "command name with a slash, `cd`, `exec`, a PATH/SHELL/ENV/BASH_ENV assignment, `command -p`, "
+    "`hash -p`, `enable -f`, output redirection and `set +r` are refused BY BASH, and every other "
+    "program is `command not found`. The residual for shells is therefore a defect in bash's "
+    "restricted mode as documented in the bash manual section 6.10 -- not this file's model of "
+    "shell syntax, which is now the first refuser rather than the enforcement. (3) AN sbatch JOB "
+    "SCRIPT RUNS ON THE CLUSTER, OUTSIDE THIS PROCESS TREE, where no restricted shell and no "
+    "wrapper directory of ours exists -- so for it the static model IS the enforcement and its "
+    "residual is the static model's. That residual is a REFUSAL and never an unguarded run: a job "
+    "script whose command words, interpreter options, wrapper options or sbatch options are built "
+    "at run time is REFUSED and not read, and the cost is a submission that must be respelled. "
+    "(4) AN ADMITTED PYTHON CHILD is guarded by the shim on PYTHONPATH and by these same hooks in "
+    "turn, so its own launches are subject to everything above one level down")
+
+#: THE PATH HALF'S OWN CONTRACT, as a tuple, because it has to be RE-ARMED in exactly the two
+#: places the propagation contract is. A restricted shell's `PATH` is the wrapper directories, so a
+#: wrapper that could not find the real interpreter, the real bash or the system prefixes would be
+#: the only thing on `PATH` and unable to run anything -- and an `env -i` in front of the shell wipes
+#: all four. `PROPAGATION_ENV_VARS` is deliberately NOT widened to hold them: those four are what a
+#: CHILD INTERPRETER needs to install the guard, and `_environment_reaching_child_is_armed` refuses
+#: a launch that lacks one. A missing `MNV_GUARD_REAL_PYTHON` does not make a child unguarded, it
+#: makes a wrapper unable to resolve -- a different failure with a different verdict.
+PATH_HALF_ENV_VARS = (
+    REAL_PYTHON_ENV,
+    PATH_SHIM_DIRS_ENV,
+    SYSTEM_PREFIXES_ENV,
+    REAL_BASH_ENV,
+)
 
 PROPAGATION_ENV_VARS = (
     MODULE_ENV,
@@ -493,6 +613,16 @@ class GuardedPathFinder:
         #: until then, because a record written before arming must not claim the half ran.
         self.path_shim = "not-armed"
         self.path_shim_sha256 = _path_shim_digests()
+        #: THE DYNAMIC HALF'S STATE, recorded for the same reason `path_shim` is: a deployment whose
+        #: named prefixes hold no bash still guards imports and still refuses at every launch site,
+        #: but it refuses EVERY shell launch, and that is a different guard from this one. A reader
+        #: of the record must be able to see which. `real_bash` pins the bytes that enforced.
+        self.shell = "not-armed"
+        self.real_bash = {"path": None, "sha256": None}
+        #: `enabled`, or `disabled-for-test` when `MNV_GUARD_TEST_ONLY_DISABLE_STATIC_SCAN` made the
+        #: static half stand down so the restricted shell could be measured on its own. A record
+        #: written in that state is not evidence about a production run and says so.
+        self.static_scan = "enabled"
         self.shim_sha256 = _sha256_or_none(str(SHIM_DIR / "sitecustomize.py"))
         self.on_violation = None
         self.checked = 0
@@ -598,6 +728,107 @@ def _arm_child_environment(expect_root: str, allow: tuple[str, ...]) -> "tuple[s
     return _arm_path_shim()
 
 
+def _sha256_of_committed_shim_files() -> dict:
+    """sha256 of every committed file the PATH half executes, keyed by its path under the shim.
+
+    ONE LIST AND NOT FIFTEEN CALL SITES: `COMMITTED_SHIM_FILES` is what `campaignctl` binds and what
+    the campaign fixture copies, so hashing anything else here would let a record pin a set the
+    queue does not bind. A file that cannot be read hashes to None rather than raising, because a
+    record must be writable on the path where the deployment is broken.
+    """
+    return {name: _sha256_or_none(str(SHIM_DIR / name)) for name in COMMITTED_SHIM_FILES}
+
+
+def _resolve_real_bash() -> "tuple[str | None, str]":
+    """The real bash every admitted shell launch is rewritten onto, and its sha256, or why not.
+
+    IT IS LOOKED FOR IN A NAMED LIST AND NOT ON `PATH`. The whole point of the rewrite is that the
+    shell stops being chosen by the environment the guarded program controls; resolving it through
+    `PATH` would put the enforcer back under the control of the thing it enforces against. This is
+    arm (1) of `DECLARED_GAP` -- trust by location -- applied to the one binary the dynamic half
+    depends on, and it is pinned by sha256 in every record so a reader can see WHICH bash ran.
+
+    A TEXT FILE WITH A SHEBANG IS NOT A bash. `/usr/local/bin/bash` is a wrapper script on some
+    sites, and running `-r` under a wrapper enforces nothing, so a candidate with a `#!` is skipped
+    exactly as a leaf tool with a shebang is not trusted by its name.
+
+    Returns `(path or None, state)`. None is not an exception: a deployment with no bash under any
+    named prefix still guards imports and still refuses at every launch site -- it simply refuses
+    EVERY shell launch, which is narrower and must be READABLE rather than inferred from silence.
+    """
+    for candidate in _REAL_BASH_CANDIDATES:
+        if not (os.path.isfile(candidate) and os.access(candidate, os.X_OK)):
+            continue
+        try:
+            with open(candidate, "rb") as handle:
+                if handle.read(2) == b"#!":
+                    continue
+        except OSError:
+            continue
+        return candidate, "restricted"
+    return None, ("not-armed:no bash under any of "
+                  f"{', '.join(_REAL_BASH_CANDIDATES)}; every shell launch refuses")
+
+
+def _path_without_shim_dirs(path_value) -> str:
+    """`path_value` with the guard's own wrapper directories removed.
+
+    WHY A SCAN MUST NOT RESOLVE THROUGH THE WRAPPERS. Round 7 puts a forwarder for every leaf tool
+    on `PATH`, so `shutil.which("ls")` from a guarded process finds the guard's own file -- which is
+    not under a system prefix, so `_check_leaf` would refuse `ls` and the guard would refuse every
+    correct launcher on the machine. The scan asks "which real program is this", and the real
+    program is the one `PATH` names once this guard's own directories are taken out; the wrappers
+    are what the CHILD resolves, and they are deliberately in front of it. `bin/python3` performs
+    exactly this subtraction in shell for exactly this reason.
+    """
+    if isinstance(path_value, bytes):
+        path_value = os.fsdecode(path_value)
+    text = os.environ.get("PATH") if path_value is None else str(path_value)
+    if text is None:
+        text = os.defpath
+    shim_dirs = {entry for entry in (os.environ.get(PATH_SHIM_DIRS_ENV) or "").split(os.pathsep)
+                 if entry}
+    if not shim_dirs:
+        return text
+    return os.pathsep.join(entry for entry in text.split(os.pathsep) if entry not in shim_dirs)
+
+
+def _restricted_shell_environment(env) -> dict:
+    """The environment an admitted shell launch runs with. PATH is the wrapper directories, ONLY.
+
+    THIS IS THE HALF THAT MAKES `-r` MEAN SOMETHING. Restricted bash refuses a command name with a
+    slash, so every program the script runs is resolved through `PATH` -- and if `PATH` is the
+    guard's wrapper directory and nothing else, the set of programs the script can reach is exactly
+    the set this guard wrote a wrapper for. Anything else is `command not found`, which is a refusal
+    the shell issues without this guard having to model the syntax that reached it. That is the
+    whole of round 7's answer to "the static model of shell syntax is the residual": it is not, any
+    more; the residual is bash's own restricted mode.
+
+    The propagation contract and the shim-first `PYTHONPATH` are KEPT, because a Python child the
+    script starts must still arrive guarded. The stripped set is `_RESTRICTED_SHELL_STRIPPED_ENV_VARS`
+    plus every `BASH_FUNC_*`, each of which is a program or a lookup that would run before, or
+    instead of, what the wrapper directory allows.
+    """
+    source = dict(os.environ if env is None else env)
+    for name in _RESTRICTED_SHELL_STRIPPED_ENV_VARS:
+        source.pop(name, None)
+    for name in [n for n in source
+                 if any(n.startswith(p) for p in _RESTRICTED_SHELL_STRIPPED_ENV_PREFIXES)]:
+        source.pop(name, None)
+    source["PATH"] = os.environ.get(PATH_SHIM_DIRS_ENV) or str(PATH_SHIM_DIR.resolve())
+    source["PYTHONPATH"] = _shim_first_pythonpath(source.get("PYTHONPATH"))
+    for name in PATH_HALF_ENV_VARS:
+        #: RE-ARMED FROM THIS PROCESS, never copied from the caller's `env=`. The wrappers ARE the
+        #: PATH now, so a caller who passed an `env=` without these would hand the restricted shell
+        #: a directory of wrappers none of which can resolve anything.
+        value = os.environ.get(name)
+        if value is None:
+            source.pop(name, None)
+        else:
+            source[name] = value
+    return source
+
+
 def _path_shim_digests() -> dict:
     """sha256 of every tracked file the PATH half executes, or None where one cannot be read.
 
@@ -608,14 +839,12 @@ def _path_shim_digests() -> dict:
     change to another contract's semantics rather than a fix here. What binds these bytes is
     therefore this digest, recorded per run beside `shim_sha256`, which is the same instrument the
     sitecustomize half already uses. `scan_argv.py` IS manifest-covered and is digested anyway:
-    reading two of the three from one place and the third from another is how a reader ends up
-    comparing unlike things.
+    reading some of the set from one place and the rest from another is how a reader ends up
+    comparing unlike things. Round 7 added ten more committed wrappers -- `bash`, `sh`,
+    `git`, `sbatch`, `srun` and the five Slurm clients -- and the one list they all come
+    from is `COMMITTED_SHIM_FILES`, so a wrapper with no digest is not a state this reaches.
     """
-    return {
-        "bin/python3": _sha256_or_none(str(PATH_SHIM_DIR / "python3")),
-        "bin/python": _sha256_or_none(str(PATH_SHIM_DIR / "python")),
-        "scan_argv.py": _sha256_or_none(str(SCAN_ARGV_FILE)),
-    }
+    return _sha256_of_committed_shim_files()
 
 
 def _arm_path_shim() -> "tuple[str, dict]":
@@ -644,6 +873,8 @@ def _arm_path_shim() -> "tuple[str, dict]":
         return f"not-armed:the tracked interpreter wrapper is missing at {wrapper}", digests
     if not SCAN_ARGV_FILE.is_file():
         return f"not-armed:the tracked argv scanner is missing at {SCAN_ARGV_FILE}", digests
+    if not WRAPPER_EXEC_FILE.is_file():
+        return f"not-armed:the tracked wrapper executor is missing at {WRAPPER_EXEC_FILE}", digests
     state = "armed"
     directories = [str(PATH_SHIM_DIR.resolve())]
     basename = _executable_basename(sys.executable)
@@ -655,7 +886,17 @@ def _arm_path_shim() -> "tuple[str, dict]":
             # that difference is exactly what a reader must not have to guess at.
             state = (f"armed-tracked-names-only:no wrapper for {basename} could be generated "
                      f"({err})")
+    # THE COMMITTED DIRECTORY PREPENDS THE GENERATED ONE, deliberately: the committed `bash`, `sh`,
+    # `git` and Slurm wrappers are the ones that must win, and the generated set is only the leaf
+    # tools this HOST happens to carry. Which leaf tools exist is a property of the machine and can
+    # never be committed, which is why they are generated rather than tracked.
+    try:
+        directories.append(_generated_forwarder_dir())
+    except OSError as err:
+        state = (f"armed-no-leaf-forwarders:{err}; a restricted shell reaches no leaf tool and "
+                 f"every one of them is `command not found`")
     os.environ[REAL_PYTHON_ENV] = sys.executable
+    os.environ[SYSTEM_PREFIXES_ENV] = os.pathsep.join(_SYSTEM_EXECUTABLE_PREFIXES)
     inherited = [entry for entry in (os.environ.get(PATH_SHIM_DIRS_ENV) or "").split(os.pathsep)
                  if entry]
     os.environ[PATH_SHIM_DIRS_ENV] = os.pathsep.join(directories)
@@ -698,6 +939,71 @@ def _generated_wrapper_dir(basename: str, tracked: pathlib.Path) -> str:
     return directory
 
 
+def _locate_a_system_tool(basename: str) -> "str | None":
+    """The absolute path of a leaf tool under a named system prefix, or None.
+
+    THE PREFIXES ARE SEARCHED IN ORDER AND `PATH` IS NOT CONSULTED, which is the same rule
+    `_check_leaf` applies and for the same reason: a leaf is trusted because of the directory it was
+    found in, and a `PATH` lookup inside a guarded process would find this guard's own wrappers
+    first. A SHEBANG TEXT FILE IS NOT A LEAF -- `/usr/bin/shasum` is a Perl script on macOS and
+    `/usr/bin/which` is a shell script on several distributions -- so no forwarder is written for
+    it, and inside a restricted shell it is `command not found` rather than a program nobody read.
+    """
+    for prefix in _SYSTEM_EXECUTABLE_PREFIXES:
+        candidate = os.path.join(prefix, basename)
+        if not (os.path.isfile(candidate) and os.access(candidate, os.X_OK)):
+            continue
+        try:
+            with open(candidate, "rb") as handle:
+                if handle.read(2) == b"#!":
+                    return None              # a script, and a script is read rather than trusted
+        except OSError:
+            return None
+        return candidate
+    return None
+
+
+def _generated_forwarder_dir() -> str:
+    """One forwarder per leaf tool that exists under a system prefix ON THIS HOST.
+
+    WHY THEY ARE GENERATED AND NOT COMMITTED, which is the same argument `_generated_wrapper_dir`
+    already makes for the versioned interpreter name: WHICH leaf tools exist, and WHERE, is a
+    property of the machine. `/sbin/sha256sum` on this laptop, `/usr/bin/sha256sum` on Perlmutter,
+    `shasum` as a Perl script on one and absent on the other -- a committed file would either bake
+    in one host's answer or have to search at run time, and searching at run time in shell is the
+    prefix list retyped. So `install()` resolves each name ONCE, here, and writes a forwarder whose
+    body is a single `exec` of an absolute path.
+
+    A NAME WITH NO FORWARDER IS `command not found` INSIDE THE RESTRICTED SHELL, and that is the
+    intended state rather than a gap: the restricted shell's `PATH` is these directories only, so
+    the set of programs a shell program can reach is exactly the set this guard resolved and can
+    name. `awk`, `perl` and `make` are absent from `_LEAF_TOOL_BASENAMES`, so they are absent here.
+    """
+    directory = tempfile.mkdtemp(prefix=f"mnv-guard-tools-{os.getpid()}-")
+    for basename in sorted(_LEAF_TOOL_BASENAMES):
+        if basename in COMMITTED_WRAPPER_NAMES:
+            continue                         # the committed wrapper is the one that must win
+        resolved = _locate_a_system_tool(basename)
+        if resolved is None:
+            continue
+        forwarder = pathlib.Path(directory) / basename
+        forwarder.write_text(
+            "#!/bin/sh\n"
+            f"# GENERATED at arm time by {__file__} for this process only. Not tracked, not\n"
+            "# evidence: it exists so that a restricted shell, whose PATH is the guard's wrapper\n"
+            "# directories and nothing else, can still reach the leaf tools _LEAF_TOOL_BASENAMES\n"
+            "# names. The path below was resolved ONCE, from a named system prefix, and the file\n"
+            "# it names carries no shebang -- that is the whole of what admits it.\n"
+            f"exec {shlex.quote(resolved)} \"$@\"\n",
+            encoding="utf-8",
+        )
+        forwarder.chmod(0o755)
+    #: Best-effort removal, for the reason recorded on `_generated_wrapper_dir`: an `os.exec*`
+    #: replacement never runs `atexit`, and a child outliving its parent must not lose `ls`.
+    atexit.register(shutil.rmtree, directory, True)
+    return directory
+
+
 def _text_argument(value) -> str:
     """Return a JSON-safe representation of a process argument."""
     raw = os.fspath(value)
@@ -717,9 +1023,7 @@ def _resolve_executable(executable, env=None) -> str:
     """Resolve a launch executable using the environment that launch will receive."""
     text = _text_argument(executable)
     path_value = None if env is None else env.get("PATH")
-    if isinstance(path_value, bytes):
-        path_value = os.fsdecode(path_value)
-    found = shutil.which(text, path=path_value)
+    found = shutil.which(text, path=_path_without_shim_dirs(path_value))
     candidate = found or text
     try:
         return str(pathlib.Path(candidate).resolve())
@@ -1020,38 +1324,60 @@ _WRAPPER_SPECS = {
                                    "--delimiter", "-a", "--arg-file", "-E", "-e", "--eof"})},
 }
 
-#: Shells this guard MODELS: their option grammar is parsed, their `-c` string is scanned, and their
-#: SCRIPT FILE OPERAND IS READ AND SCANNED WITH THE SAME SCANNER. `zsh` is modelled only behind
-#: `-f`/`--no-rcs`, because without it zsh reads `.zshenv` even non-interactively -- a startup file
-#: this guard cannot see, running before the script's first line.
-_SHELL_BASENAMES = frozenset({"sh", "bash", "zsh", "dash"})
+#: Shells this guard MODELS: their option grammar is parsed, their `-c` string is scanned, their
+#: SCRIPT FILE OPERAND IS READ AND SCANNED WITH THE SAME SCANNER -- and, since round 7, the launch
+#: is REWRITTEN to run the pinned real bash in restricted mode. `zsh` LEFT THIS SET when the rewrite
+#: arrived and the reason is the rewrite: a `zsh -f` program admitted by the static scan would then
+#: have to run under `bash -r`, which is a different language, or under zsh with no restricted mode
+#: this guard models. Neither is a shell whose enforcement can be stated, so zsh joins the refused.
+_SHELL_BASENAMES = frozenset({"sh", "bash", "dash"})
+
+#: The two of the three whose requested semantics are POSIX. They are rewritten to `bash -r --posix`
+#: so the program keeps the dialect it was written for while the enforcement is bash's own.
+_POSIX_SHELL_BASENAMES = frozenset({"sh", "dash"})
 
 #: Shells that are RECOGNISED AS SHELLS AND REFUSED, which is not the same as being unknown. Their
-#: option grammars and startup-file rules differ from the four above in ways this file does not
-#: model, and the fail-closed rule is that a shell whose grammar is unmodelled cannot be read --
-#: naming them keeps a reader from concluding that `csh` simply was not thought of.
-_UNMODELLED_SHELL_BASENAMES = frozenset({"ksh", "ksh93", "mksh", "pdksh", "fish", "csh", "tcsh",
-                                         "rc", "es", "xonsh", "elvish", "nu"})
+#: option grammars, startup-file rules and restricted modes differ from the three above in ways this
+#: file does not model, and the fail-closed rule is that a shell whose grammar is unmodelled cannot
+#: be read -- naming them keeps a reader from concluding that `csh` simply was not thought of.
+_UNMODELLED_SHELL_BASENAMES = frozenset({"zsh", "ksh", "ksh93", "mksh", "pdksh", "fish", "csh",
+                                         "tcsh", "rc", "es", "xonsh", "elvish", "nu"})
 
 #: `c` is in the set because a cluster is what carries it -- `bash -ec <string>` is the spelling a
 #: launcher uses, and a table that listed every OTHER short flag but not `c` refused exactly the
 #: invocations it was written to read (measured on `bash -c` itself).
-_SHELL_FLAG_CHARS = "abcCefhklmnptuvxBDPT"
+_SHELL_FLAG_CHARS = "abcCefhklmnprtuvxBDPT"
 #: THE SHORT FLAGS THAT REFUSE, and each for a different reason a reader should not have to guess:
 #: `-l` runs the login startup files, `-i` runs the interactive ones, and `-s` reads the program
 #: from STDIN. In all three cases a program this guard cannot read runs before -- or instead of --
 #: the one it was handed, so there is nothing to scan.
 _SHELL_REFUSING_FLAG_CHARS = "ils"
 _SHELL_VALUE_OPTIONS = frozenset({"-o", "+o", "-O", "+O"})
+
+#: `set -o` NAMES AND `shopt -O` NAMES THIS GUARD MODELS, and the value of one of these options is
+#: no longer SKIPPED. Skipping it was the fail-open shape `_parse_env` was rebuilt for one level up:
+#: `-o` can name an option that undoes the restriction the rewrite installs, and a parser that walks
+#: past the value cannot tell `-o errexit` from `-o privileged`. Everything not listed refuses, so
+#: adding one is a deliberate edit with a control rather than a silent widening.
+_SHELL_MODELLED_SET_O_OPTIONS = frozenset({
+    "errexit", "nounset", "pipefail", "xtrace", "verbose", "noglob", "noclobber", "notify",
+    "errtrace", "functrace", "monitor", "hashall", "braceexpand", "onecmd", "physical",
+})
+_SHELL_MODELLED_SHOPT_OPTIONS = frozenset({
+    "extglob", "globstar", "nullglob", "dotglob", "failglob", "nocasematch", "nocaseglob",
+    "inherit_errexit", "lastpipe", "huponexit", "checkwinsize", "expand_aliases", "xpg_echo",
+})
+#: The shopt name that IS the restriction. `bash -O restricted_shell` / `+O restricted_shell` is the
+#: one spelling that could ask the rewrite to undo itself, so it is refused by name rather than by
+#: falling off the modelled list -- a reader who sees the refusal should see WHY.
+_SHOPT_RESTRICTED_SHELL = "restricted_shell"
 #: `--rcfile`/`--init-file` NAME A STARTUP FILE THIS GUARD DOES NOT READ, so they refuse rather than
 #: consume their value. They were previously in `_SHELL_VALUE_OPTIONS`, which skipped the value and
 #: left the startup file unexamined.
 _SHELL_REFUSING_VALUE_OPTIONS = frozenset({"--rcfile", "--init-file"})
-_SHELL_FLAG_LONG = frozenset({"--noprofile", "--norc", "--no-rcs", "--posix", "--noediting",
+_SHELL_FLAG_LONG = frozenset({"--noprofile", "--norc", "--posix", "--noediting",
                               "--verbose", "--debugger", "--restricted"})
 _SHELL_REFUSING_LONG = frozenset({"--login", "--interactive"})
-#: The two spellings that make `zsh` skip `.zshenv` and the rest of its startup files.
-_ZSH_NO_STARTUP_OPTIONS = frozenset({"-f", "--no-rcs"})
 
 #: STARTUP-FILE VARIABLES: a non-interactive `bash` sources `$BASH_ENV` and a POSIX `sh` sources
 #: `$ENV` BEFORE the script's first line. Whatever they name is a shell program this guard was never
@@ -1116,6 +1442,38 @@ _RSYNC_REMOTE_SHELL_OPTIONS = ("-e", "--rsh", "--rsync-path")
 _SYSTEM_EXECUTABLE_PREFIXES = (
     "/bin", "/usr/bin", "/sbin", "/usr/sbin", "/usr/local/bin", "/usr/local/sbin",
     "/opt/homebrew/bin", "/opt/local/bin", "/opt/slurm/bin", "/usr/global/bin",
+)
+
+#: WHERE THE REAL bash IS LOOKED FOR, first found wins. `install()` pins one of these and its
+#: sha256, and every admitted shell launch is rewritten to run THAT file with `-r`. The list is a
+#: constant rather than a `PATH` lookup on purpose: the shell that enforces the restriction must not
+#: be chosen by the same `PATH` the restriction exists to control. No bash under any of them means
+#: the dynamic half cannot be armed, and then every shell launch refuses -- see `_resolve_real_bash`.
+_REAL_BASH_CANDIDATES = (
+    "/bin/bash", "/usr/bin/bash", "/usr/local/bin/bash", "/opt/homebrew/bin/bash",
+)
+
+#: THE ENVIRONMENT VARIABLES A RESTRICTED SHELL MAY NOT CARRY, and each is a program or a lookup it
+#: would otherwise run or consult before the guard sees anything. `SHELLOPTS`/`BASHOPTS` are applied
+#: at startup and can re-enable what `-r` disables; `BASH_ENV`/`ENV` name a startup file; `CDPATH`
+#: makes a literal `cd` operand resolve somewhere the static scan did not model; `BASH_FUNC_*` is an
+#: exported shell FUNCTION, so a name the scan read as `ls` runs the caller's code; `LD_PRELOAD`,
+#: `DYLD_INSERT_LIBRARIES` and `DYLD_LIBRARY_PATH` inject code into every child; `PYTHONHOME` and
+#: `PYTHONEXECUTABLE` change which interpreter and which standard library a Python child gets.
+_RESTRICTED_SHELL_STRIPPED_ENV_VARS = (
+    "SHELLOPTS", "BASHOPTS", "BASH_ENV", "ENV", "CDPATH", "LD_PRELOAD",
+    "DYLD_INSERT_LIBRARIES", "DYLD_LIBRARY_PATH", "PYTHONHOME", "PYTHONEXECUTABLE",
+)
+_RESTRICTED_SHELL_STRIPPED_ENV_PREFIXES = ("BASH_FUNC_",)
+
+#: THE SAME QUESTION AT THE OTHER WRAPPER. A restricted child cannot carry these -- they are
+#: stripped above -- but `bin/python3` is also reached from an admitted NON-SHELL child, which was
+#: never handed a restricted environment. `PYTHONHOME` and `PYTHONEXECUTABLE` decide which stdlib
+#: and which binary the interpreter uses, and the two library-injection variables run code before
+#: `sitecustomize` does, so a wrapper that execs the interpreter with any of them set would be
+#: standing in front of a launch it did not read.
+_WRAPPER_HOSTILE_ENV_VARS = (
+    "PYTHONHOME", "PYTHONEXECUTABLE", "LD_PRELOAD", "DYLD_INSERT_LIBRARIES",
 )
 
 #: `git` SUBCOMMANDS THAT, GIVEN THE ARGV ALONE, CANNOT RUN A CONFIGURED EXTERNAL PROGRAM. This is
@@ -1556,11 +1914,21 @@ def _parse_shell_invocation(argv: list[str], env=None) -> dict:
       {"kind": "string", "text": ...}   -- `-c`: scan the string
       {"kind": "script", "path": ...}   -- a file operand: read it and scan it
 
-    THE REFUSALS ARE ALL ONE SHAPE: a shell program would run that this guard was not handed.
-    `-l`/`--login` and `-i`/`--interactive` run startup files; `--rcfile`/`--init-file` name one;
-    `-s` and a bare invocation read the program from STDIN, which does not exist yet at scan time;
-    `$BASH_ENV`/`$ENV` in the child's environment name one that runs before the script's first
-    line; and `zsh` reads `.zshenv` unless `-f`/`--no-rcs` says otherwise.
+    ROUND 7 ADDED THE OTHER THREE KEYS, AND THEY ARE WHAT THE REWRITE IS BUILT FROM. `options` is
+    the caller's option tokens THAT SURVIVE -- `-e`, `-u`, `-o pipefail` -- with `-c` and `-r`
+    removed, because the rewrite re-emits those itself; `posix` says the requested shell was `sh` or
+    `dash` (or asked for `--posix`), which becomes `bash -r --posix`; `args` is everything after the
+    `-c` string or the script operand, which is the child program's own `$0`/`$@` and is forwarded
+    verbatim. A parse that dropped them would silently change what the program computes, and a
+    guard that changes a result is worse than one that refuses.
+
+    THE REFUSALS ARE ALL ONE SHAPE: a shell program would run, or a restriction would not hold, that
+    this guard was not handed. `-l`/`--login` and `-i`/`--interactive` run startup files;
+    `--rcfile`/`--init-file` name one; `-s` and a bare invocation read the program from STDIN, which
+    does not exist at scan time; `$BASH_ENV`/`$ENV` in the child's environment name one that runs
+    before the script's first line; `+r` and `-O restricted_shell` ask for the restriction the
+    rewrite installs to be absent; and an `-o`/`-O` value this file does not model may be any of
+    those under a name nobody read.
     """
     basename = _executable_basename(_text_argument(argv[0]))
     source = os.environ if env is None else env
@@ -1570,7 +1938,8 @@ def _parse_shell_invocation(argv: list[str], env=None) -> dict:
                                  f"${name} names a shell startup file this guard cannot read")
     index = 1
     options_done = False
-    suppresses_startup = False
+    options: list[str] = []
+    posix = basename in _POSIX_SHELL_BASENAMES
     while index < len(argv):
         token = argv[index]
         if token == "--":
@@ -1579,10 +1948,6 @@ def _parse_shell_invocation(argv: list[str], env=None) -> dict:
             break
         if token == "-" or not token.startswith(("-", "+")):
             break
-        if token in _ZSH_NO_STARTUP_OPTIONS:
-            suppresses_startup = True
-            index += 1
-            continue
         if token in _SHELL_REFUSING_VALUE_OPTIONS or token in _SHELL_REFUSING_LONG:
             raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN, token)
         if token.startswith("--") and token.partition("=")[0] in _SHELL_REFUSING_VALUE_OPTIONS:
@@ -1590,32 +1955,48 @@ def _parse_shell_invocation(argv: list[str], env=None) -> dict:
         if token in _SHELL_VALUE_OPTIONS:
             if index + 1 >= len(argv):
                 raise _LaunchRefusal(LAUNCH_REASON_UNPARSED, f"{token} with no value")
+            value = argv[index + 1]
+            _refuse_an_unmodelled_shell_option_value(token, value)
+            if value == "posix":
+                posix = posix or token == "-o"
+            options.extend([token, value])
             index += 2
             continue
         if token in _SHELL_FLAG_LONG:
+            if token == "--posix":
+                posix = True
+            if token != "--restricted":      # the rewrite emits `-r` itself; never twice
+                options.append(token)
             index += 1
             continue
         if token.startswith("--"):
             raise _LaunchRefusal(LAUNCH_REASON_UNMODELLED, token)
         cluster = token[1:]
+        if token.startswith("+"):
+            #: `+r` IS THE ONE SPELLING THAT ASKS FOR THE RESTRICTION NOT TO HOLD. Every other `+`
+            #: cluster is an option this file does not model, and both refuse -- but they refuse
+            #: with different words, because a reader of `+r` must not go looking for a table.
+            if "r" in cluster:
+                raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                                     f"{token} turns off the restricted mode every admitted shell "
+                                     f"launch is rewritten to run under")
+            raise _LaunchRefusal(LAUNCH_REASON_UNMODELLED, token)
         refusing = [c for c in cluster if c in _SHELL_REFUSING_FLAG_CHARS]
         if refusing:
             raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN, f"{token} (-{refusing[0]})")
         if not set(cluster) <= set(_SHELL_FLAG_CHARS):
             raise _LaunchRefusal(LAUNCH_REASON_UNMODELLED, token)
-        if "f" in cluster:
-            suppresses_startup = True
+        surviving = "".join(c for c in cluster if c not in "cr")
         if "c" in cluster:
             if index + 1 >= len(argv):
                 raise _LaunchRefusal(LAUNCH_REASON_UNPARSED, f"{token} with no command string")
-            if basename == "zsh" and not suppresses_startup:
-                raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
-                                     "zsh reads .zshenv unless -f/--no-rcs is given")
-            return {"kind": "string", "text": argv[index + 1]}
+            if surviving:
+                options.append(f"-{surviving}")
+            return {"kind": "string", "text": argv[index + 1], "options": options,
+                    "posix": posix, "args": list(argv[index + 2:])}
+        if surviving:
+            options.append(f"-{surviving}")
         index += 1
-    if basename == "zsh" and not suppresses_startup:
-        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
-                             "zsh reads .zshenv unless -f/--no-rcs is given")
     if index >= len(argv):
         #: A SHELL WITH NO OPERAND READS ITS PROGRAM FROM STDIN. `sh <<EOF ...` and
         #: `subprocess.run(["bash"], input=...)` are the two spellings, and in both the program
@@ -1627,7 +2008,28 @@ def _parse_shell_invocation(argv: list[str], env=None) -> dict:
     if operand == "-" and not options_done:
         raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
                              "`-` makes the shell read its program from stdin")
-    return {"kind": "script", "path": operand}
+    return {"kind": "script", "path": operand, "options": options, "posix": posix,
+            "args": list(argv[index + 1:])}
+
+
+def _refuse_an_unmodelled_shell_option_value(option: str, value: str) -> None:
+    """`-o`/`+o`/`-O`/`+O`'s VALUE, checked instead of skipped.
+
+    THE PREDECESSOR SKIPPED IT, which is the same shape as an unmodelled `env` option whose value is
+    the command word: the parse walked past a token that decides what the shell does. `-o` names a
+    `set` option and `-O` a `shopt`, and one of those names IS the restriction -- `restricted_shell`
+    -- so the value is where a launch would ask the rewrite to undo itself.
+    """
+    if value == _SHOPT_RESTRICTED_SHELL:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                             f"{option} {value} toggles the restricted mode every admitted shell "
+                             f"launch is rewritten to run under")
+    modelled = (_SHELL_MODELLED_SET_O_OPTIONS if option in ("-o", "+o")
+                else _SHELL_MODELLED_SHOPT_OPTIONS)
+    if value == "posix" and option in ("-o", "+o"):
+        return
+    if value not in modelled:
+        raise _LaunchRefusal(LAUNCH_REASON_UNMODELLED, f"{option} {value}")
 
 
 def _shell_command_string(argv: list[str]) -> "str | None":
@@ -2051,9 +2453,11 @@ def _resolve_launch_command(argv: list[str], env) -> "dict | None":
     stripped: "str | None" = None
     assignments: dict[str, str] = {}
     unset: set[str] = set()
+    wrappers: list[str] = []
     for _ in range(_MAX_WRAPPER_DEPTH):
         name = _executable_basename(_resolve_executable(command[0], env))
         if name in _ENV_BASENAMES:
+            wrappers.append(name)
             parsed = _parse_env(command)
             if parsed is None:
                 return None
@@ -2069,6 +2473,7 @@ def _resolve_launch_command(argv: list[str], env) -> "dict | None":
             continue
         spec = _WRAPPER_SPECS.get(name)
         if spec is not None:
+            wrappers.append(name)
             index = _parse_wrapper(command, spec)
             if index is None:
                 return None
@@ -2076,12 +2481,42 @@ def _resolve_launch_command(argv: list[str], env) -> "dict | None":
             command = command[index:]
             continue
         return {"command": command, "inject_at": offset, "clears": clears,
-                "stripped": stripped, "assignments": assignments, "unset": unset}
+                "stripped": stripped, "assignments": assignments, "unset": unset,
+                "wrappers": wrappers}
     raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
                          f"launch wrappers nested deeper than {_MAX_WRAPPER_DEPTH}")
 
 
-def _contract_operands(resolved: dict) -> "tuple[list[str], dict]":
+def _refuse_an_unreadable_wrapper_prefix(tokens: list, resolved: dict, context: _ScanContext
+                                         ) -> None:
+    """The wrapper prefix's own tokens, and `xargs`'s command. Round 7, part of C(2).
+
+    A WRAPPER PREFIX IS ALL DECISION AND NO DATA. `timeout "$T" python3 x.py`, `nice "$N" python3`,
+    `env "$A" python3` -- every token before the command word either IS an option or is the value of
+    one, and an option's value can be the command word (that is the whole reason `_parse_env` is
+    fail-closed). So a token built at run time anywhere in the prefix means the walk that found the
+    command word read a token nobody can predict, and the command word it landed on is a guess.
+
+    `xargs` IS SEPARATE AND STRICTER: it APPENDS words read from its standard input to the command,
+    so its child's argv is built at run time BY CONSTRUCTION, whatever the argv says. That is
+    harmless for a leaf tool -- `xargs rm` gets more files -- and it is the reviewer's finding for
+    anything else, because `xargs python3` gets a SCRIPT nobody read.
+    """
+    if context.in_shell:
+        stop = resolved["inject_at"]
+        _refuse_runtime_tokens(tokens, "launch wrapper token", stop=stop)
+    if "xargs" not in resolved.get("wrappers", ()):
+        return
+    head = _executable_basename(_text_argument(resolved["command"][0]))
+    if head not in _LEAF_TOOL_BASENAMES:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
+                             f"xargs appends words read at run time to `{head}`, so the argv this "
+                             f"scan read is not the argv that runs; only a leaf tool may be run "
+                             f"that way")
+
+
+def _contract_operands(resolved: dict, restricted_shell: bool = False
+                       ) -> "tuple[list[str], dict]":
     """The `NAME=VALUE` operands that re-arm an `env` launch, and the environment they produce.
 
     THE OPERANDS ARE THE ARGV SPELLING OF `_rearm_launch_environment`, and they are inserted rather
@@ -2089,12 +2524,19 @@ def _contract_operands(resolved: dict) -> "tuple[list[str], dict]":
     contract in front of the command word repairs `-i`, `-u MNV_GUARD_MODULE` and an explicit
     `PYTHONPATH=...` alike while leaving every other operand the caller wrote exactly where it was.
 
-    PATH IS DELIBERATELY NOT RESTORED. `env -i` clears it, and putting it back would overrule the
-    caller on something that is not this guard's contract -- the interpreter itself needs no PATH.
-    What is lost is the PATH-wrapper half for that child's own descendants -- the SECOND chance to
-    refuse, not the coverage: the closed child model reads what the child will run before it starts,
-    so a cleared PATH costs redundancy rather than opening a route. This was the
-    `clears PATH or the environment` arm of the pre-round-6 `DECLARED_GAP`, and it is no longer one.
+    PATH IS DELIBERATELY NOT RESTORED FOR AN INTERPRETER. `env -i` clears it, and putting it back
+    would overrule the caller on something that is not this guard's contract -- the interpreter
+    itself needs no PATH. What is lost is the PATH-wrapper half for that child's own descendants --
+    the SECOND chance to refuse, not the coverage: the closed child model reads what the child will
+    run before it starts, so a cleared PATH costs redundancy rather than opening a route. This was
+    the `clears PATH or the environment` arm of the pre-round-6 `DECLARED_GAP`, and it is not one.
+
+    `restricted_shell` IS THE ONE CASE WHERE IT MUST BE, and the reason is that PATH stops being the
+    caller's business there. An admitted shell is rewritten to run under `bash -r` with a PATH that
+    is the guard's wrapper directories and nothing else -- that PATH is not a convenience, it is the
+    enforcement -- so an `env -i` in front of it has to be repaired with the PATH as well as with
+    the contract, or the restricted shell starts with no PATH at all and every line of a correct
+    program is `command not found`.
 
     The returned environment view is what the caller checks with
     `_environment_reaching_child_is_armed`: if this process's own `os.environ` has already lost the
@@ -2116,6 +2558,15 @@ def _contract_operands(resolved: dict) -> "tuple[list[str], dict]":
     pythonpath = _shim_first_pythonpath(inherited)
     operands.append(f"PYTHONPATH={pythonpath}")
     view["PYTHONPATH"] = pythonpath
+    if restricted_shell:
+        wrapper_path = os.environ.get(PATH_SHIM_DIRS_ENV) or str(PATH_SHIM_DIR.resolve())
+        operands.append(f"PATH={wrapper_path}")
+        view["PATH"] = wrapper_path
+        for name in PATH_HALF_ENV_VARS:
+            value = os.environ.get(name)
+            if value is not None:
+                operands.append(f"{name}={value}")
+                view[name] = value
     return operands, view
 
 
@@ -2132,9 +2583,7 @@ def _locate_executable(executable, env=None) -> str:
     """
     text = _text_argument(executable)
     path_value = None if env is None else env.get("PATH")
-    if isinstance(path_value, bytes):
-        path_value = os.fsdecode(path_value)
-    return shutil.which(text, path=path_value) or text
+    return shutil.which(text, path=_path_without_shim_dirs(path_value)) or text
 
 
 def _locate_command_word(word: str, env, context: "_ScanContext") -> str:
@@ -2145,17 +2594,32 @@ def _locate_command_word(word: str, env, context: "_ScanContext") -> str:
     having no readable shebang -- a refusal that is fail-closed and also about the wrong file, which
     is the class of error where a check is right about an object nobody asked about. A word with a
     separator in it is a PATH and is resolved against the launch's cwd (and then the directory of
-    the script being scanned, for the reason on `_resolve_shell_operand`); a bare word is a PATH
+    the other candidate working directories, for the reason on `_scan_every_resolution`); a bare
+    word is a PATH
     lookup and `_locate_executable` owns it.
     """
     if os.sep in word and not os.path.isabs(word):
-        for base in (context.cwd, context.script_dir):
-            if not base:
-                continue
+        for base in _candidate_directories(context):
             candidate = os.path.join(base, word)
             if os.path.exists(candidate):
                 return candidate
     return _locate_executable(word, env)
+
+
+def _candidate_directories(context: "_ScanContext") -> list:
+    """Every directory a relative operand of this scan may be resolved against, launch cwd first.
+
+    The launch's own working directory leads because it is the one the shell starts in; the rest are
+    what `cd` added and the directories of the scripts this scan has opened. Order matters only for
+    the diagnostics -- every entry is tried and every hit is scanned.
+    """
+    ordered = [context.cwd] if context.cwd else []
+    for path in sorted(context.dirs.paths):
+        if path not in ordered:
+            ordered.append(path)
+    if context.script_dir and context.script_dir not in ordered:
+        ordered.append(context.script_dir)
+    return ordered
 
 
 def _read_shebang(path: str) -> "list[str] | None":
@@ -2303,29 +2767,136 @@ def _scan_git(command: list[str], env, target: str) -> None:
     raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN, f"git {subcommand}", executable=target)
 
 
+class _CandidateDirectories:
+    """THE SET OF DIRECTORIES A RELATIVE OPERAND MIGHT BE RESOLVED AGAINST. Round 7, finding 3.
+
+    THE FINDING THIS EXISTS FOR, VERBATIM: "A preceding cd can make the scanner inspect the wrong
+    script. :2448 explicitly does not model cd. With a benign child.sh in the launch directory and a
+    malicious one under sub/: `cd sub` / `bash child.sh` -- the guard scanned the benign file; the
+    shell executed the malicious file." The predecessor resolved an operand against ONE directory
+    and then, when that missed, against the scanned script's own directory -- two guesses, neither
+    of them the shell's answer, and the first of them was a file that existed.
+
+    A SET AND NOT A VARIABLE, AND IT ONLY GROWS. `cd` inside an `if` happens on one branch and not
+    on the other, and this scan does not model conditional structure -- so BOTH the directory before
+    the `cd` and the one after it are directories the operand may be resolved against, and the
+    fail-closed reading is that every one of them is read and scanned. `popd` therefore adds nothing
+    and removes nothing: removing would shrink the set on the strength of structure nobody modelled.
+
+    UNKNOWN IS A THIRD STATE AND NOT AN EMPTY SET. `cd "$D"`, `cd` with no operand (`$HOME`), `cd -`
+    (`$OLDPWD`), `cd ~user`, and `CDPATH` anywhere all make the shell's working directory something
+    decided after this scan ends. An empty set would make every relative operand "not found", which
+    reads as a file that is absent; `known = False` makes it a REFUSAL that names the construct.
+    """
+
+    __slots__ = ("known", "paths", "why")
+
+    def __init__(self, start: str):
+        self.known = True
+        self.why = ""
+        self.paths = {_realpath_or_self(start)}
+
+    def add(self, path: str) -> None:
+        self.paths.add(_realpath_or_self(path))
+
+    def mark_unknown(self, why: str) -> None:
+        self.known = False
+        self.why = self.why or why
+
+
+class _ProgramFileUses:
+    """Every path a shell PROGRAM writes, and every path it runs. Round 7's write-then-execute rule.
+
+    TWO SETS AND A LATE CHECK, because the order of the lines does not bound the defect. A script
+    that writes `stage.sh` on line 3 and runs it on line 9 is the obvious spelling; one that runs it
+    on line 3 and writes it on line 9 is the same program the second time round, and a scan that
+    only looked backwards would read the first run and never the second. So both sets are collected
+    over the WHOLE program -- sourced files included, because they are the same program -- and the
+    intersection is taken once, at the end, by `_refuse_write_then_execute`.
+
+    `runtime_target` IS THE OTHER HALF. A write whose target is `$OUT` names a path this scan cannot
+    compare with anything, so the intersection is empty for the wrong reason. Paired with ANY
+    relative script or `source` operand it is a refusal: the operand's identity is decided by the
+    directory, the target's by the expansion, and nothing here can rule out that they meet.
+    """
+
+    __slots__ = ("written", "runtime_target", "executed", "relative_executed")
+
+    def __init__(self):
+        self.written: set[str] = set()
+        self.runtime_target: "str | None" = None
+        self.executed: set[str] = set()
+        self.relative_executed: list[str] = []
+
+
+def _realpath_or_self(path: str) -> str:
+    """`os.path.realpath`, and the input back when the filesystem will not answer.
+
+    EVERY RESOLUTION IS REALPATHED, so a symlink that points out of the candidate set is still
+    scanned BY ITS TARGET rather than by the name that reached it -- the bytes that run are the
+    target's. A failure here is not a refusal on its own: the caller decides, and it decides on
+    whether the file exists, which is a question this function does not answer.
+    """
+    try:
+        return os.path.realpath(path)
+    except OSError:
+        return path
+
+
 class _ScanContext:
     """The state a scan carries across nesting: where it is, how deep, and what it has read.
 
-    `defined` and `seen` are SHARED DOWNWARDS AND NOT COPIED, deliberately. A function defined in a
-    sourced file is callable in the file that sourced it, so the names have to travel; and `seen` is
-    what makes `a.sh` sourcing `b.sh` sourcing `a.sh` a refusal instead of a hang.
+    `defined`, `seen`, `dirs`, `uses` and `rewrite` are SHARED DOWNWARDS AND NOT COPIED,
+    deliberately. A function defined in a sourced file is callable in the file that sourced it, so
+    the names have to travel; `seen` is what makes `a.sh` sourcing `b.sh` sourcing `a.sh` a refusal
+    instead of a hang; `dirs` travels because a `cd` in a sourced file changes the sourcing file's
+    working directory too; `uses` travels because a sourced file is part of the same program; and
+    `rewrite` travels because the ONE thing the whole scan produces for its caller -- the restricted
+    argv the launch is rewritten to -- is decided at the outermost shell and read at the top.
+
+    `in_shell` SAYS WHICH LANGUAGE THE TOKENS CAME FROM, and it is not cosmetic. A `$` inside a
+    shell program is an expansion and is refused wherever it could select a program or an option; a
+    `$` inside an argv element is the character `$` and refusing it would refuse
+    `subprocess.run(["python3", "x.py", "$MODE"])`, which launches nothing this guard cannot see.
     """
 
-    __slots__ = ("cwd", "depth", "defined", "seen", "script_dir")
+    __slots__ = ("cwd", "depth", "defined", "seen", "script_dir", "dirs", "uses", "in_shell",
+                 "rewrite")
 
-    def __init__(self, cwd: str, depth: int = 0, defined=None, seen=None, script_dir=None):
+    def __init__(self, cwd: str, depth: int = 0, defined=None, seen=None, script_dir=None,
+                 dirs=None, uses=None, in_shell=False, rewrite=None):
         self.cwd = cwd
         self.depth = depth
         self.defined: set[str] = set() if defined is None else defined
         self.seen: set[str] = set() if seen is None else seen
         self.script_dir = script_dir
+        self.dirs = _CandidateDirectories(cwd) if dirs is None else dirs
+        self.uses = _ProgramFileUses() if uses is None else uses
+        self.in_shell = in_shell
+        #: A ONE-SLOT BOX AND NOT A PLAIN ATTRIBUTE, so that a nested context writing the rewrite is
+        #: visible to the outermost one that has to return it. `_ScanContext` is copied at every
+        #: `deeper()`, and a copied attribute would leave the top-level caller reading its own None.
+        self.rewrite: list = [] if rewrite is None else rewrite
 
-    def deeper(self, script_dir=None) -> "_ScanContext":
+    def deeper(self, script_dir=None, in_shell=None) -> "_ScanContext":
         if self.depth >= _MAX_WRAPPER_DEPTH:
             raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
                                  f"shell programs nested deeper than {_MAX_WRAPPER_DEPTH}")
         return _ScanContext(self.cwd, self.depth + 1, self.defined, self.seen,
-                            script_dir if script_dir is not None else self.script_dir)
+                            script_dir if script_dir is not None else self.script_dir,
+                            self.dirs, self.uses,
+                            self.in_shell if in_shell is None else in_shell,
+                            self.rewrite)
+
+    def record_rewrite(self, argv: list) -> None:
+        """The restricted argv for the OUTERMOST admitted shell. Written once and never replaced.
+
+        The outermost is the one that runs: `bash a.sh` where `a.sh` runs `bash b.sh` is one launch
+        this process makes and one this guard rewrites, and `b.sh`'s own launch is made by the
+        restricted shell through the committed `bin/bash` wrapper rather than by this code.
+        """
+        if not self.rewrite:
+            self.rewrite.append(argv)
 
 
 #: Shell builtins and reserved words that RUN NO PROGRAM NAMED BY THEIR ARGUMENTS. They are listed
@@ -2337,8 +2908,12 @@ class _ScanContext:
 #: `_SHELL_DECLARING_BUILTINS`, because the inert check runs FIRST and `local PATH=/usr/bin` inside a
 #: function changes PATH for every command that function calls. A name in both tables is admitted by
 #: the first, which is how a declaring builtin becomes a fail-open by being listed twice.
+#: `cd` AND `pushd` LEFT THIS TABLE IN ROUND 7 for the same reason `local` never joined it. They run
+#: no program, so "inert" was true of what they EXECUTE and false of what they DECIDE: they change
+#: which file a later relative operand names, which is finding 3. `popd` stays, because the
+#: candidate set only grows and popping removes nothing from it.
 _SHELL_INERT_BUILTINS = frozenset({
-    ":", "true", "false", "cd", "pwd", "pushd", "popd", "dirs", "echo", "printf", "read", "set",
+    ":", "true", "false", "pwd", "popd", "dirs", "echo", "printf", "read", "set",
     "shopt", "shift", "umask", "ulimit", "wait", "return", "break", "continue", "exit", "logout",
     "let", "test", "[", "[[", "getopts", "jobs", "fg", "bg", "kill", "disown", "suspend", "times",
     "type", "help", "history", "bind", "complete", "compgen", "compopt", "caller", "mapfile",
@@ -2413,6 +2988,123 @@ def _refuse_a_word_built_at_runtime(word: str, role: str) -> None:
                              f"the {role} {word!r} is a glob pattern")
 
 
+#: `git` SUBCOMMANDS WHOSE OPERANDS AFTER A LITERAL `--` SELECT NO PROGRAM AND NO OPTION. This is
+#: the one exemption from round 7's runtime-token rule, and it exists because it is the shape the
+#: campaign's provenance code is written in: `git rev-parse "$REF"`, `git cat-file -p "$BLOB"`,
+#: `git ls-files -- "$PATHSPEC"`. None of these subcommands has ANY option that names a program, so
+#: an expansion in an operand can change WHICH object is read and never WHAT runs. `log`, `show`,
+#: `diff`, `diff-index`, `diff-tree` and `diff-files` are DELIBERATELY ABSENT: each takes
+#: `--ext-diff`, `--pager` or an `-c` override, so an expanded operand there can select a program.
+_GIT_LITERAL_OPERAND_SUBCOMMANDS = frozenset({
+    "rev-parse", "ls-files", "hash-object", "cat-file", "merge-base", "rev-list", "describe",
+    "name-rev", "for-each-ref", "symbolic-ref", "check-ignore", "status",
+})
+
+
+def _is_a_word_built_at_runtime(word: str) -> bool:
+    """Whether `_refuse_a_word_built_at_runtime` would refuse `word`. One rule, two questions."""
+    try:
+        _refuse_a_word_built_at_runtime(word, "word")
+    except _LaunchRefusal:
+        return True
+    return False
+
+
+def _refuse_runtime_tokens(tokens, role: str, *, start: int = 0, stop: "int | None" = None) -> None:
+    """Refuse an expansion anywhere in `tokens[start:stop]`. Round 7, finding 2.
+
+    THE FINDING THIS EXISTS FOR, VERBATIM: "Shell-expanded Python flags bypass the static scan.
+    :2655 rejects runtime-built command words, but not runtime-built arguments. `FLAG=-I` /
+    `/usr/bin/python3 "$FLAG" child.py`. This also ran successfully outside the shim contract with
+    no refusal or child record." The predecessor asked its question of ONE token -- the command word
+    -- on the theory that the word is the answer. It is not: an interpreter's OPTIONS decide whether
+    the shim installs, a wrapper's options decide which word is the command, and `sbatch`'s decide
+    which file is the batch script. Every one of those is a token whose expansion selects a program
+    or an option, and every one of them is refused here.
+
+    WHAT IS DELIBERATELY NOT COVERED, because the tokens after it are DATA rather than a decision: a
+    script's own argv (`python3 x.py "$@"`), a leaf tool's operands (`ls "$DIR"`), and the operands
+    of the `git` subcommands in `_GIT_LITERAL_OPERAND_SUBCOMMANDS`. Refusing those would refuse
+    correct launchers over an expansion that cannot reach an interpreter.
+    """
+    for token in tokens[start:len(tokens) if stop is None else stop]:
+        _refuse_a_word_built_at_runtime(token, role)
+
+
+def _refuse_runtime_python_tokens(command: list) -> None:
+    """Every token of a Python launch up to AND INCLUDING its first operand must be literal.
+
+    THE WALK IS CPYTHON'S OWN OPTION GRAMMAR, the same one `_forbidden_python_flag` follows and for
+    the same reason: the boundary between "an option this guard must read" and "the child program's
+    own argv" is decided by that grammar and by nothing else. `python3 x.py "$@"` is a script with
+    arguments and is admitted; `python3 "$@"` is an interpreter whose SCRIPT is chosen at run time
+    and is refused; `python3 -m "$MOD"` and `python3 -c "$CODE"` are the same defect spelled with an
+    option's value.
+    """
+    _refuse_a_word_built_at_runtime(command[0], "interpreter path")
+    index = 1
+    while index < len(command):
+        argument = command[index]
+        _refuse_a_word_built_at_runtime(argument, "python interpreter option")
+        index += 1
+        if argument in ("-", "--"):
+            return
+        if not argument.startswith("-"):
+            return                           # the script operand: everything after it is its argv
+        if argument.startswith("--"):
+            if argument in _VALUE_TAKING_LONG_FLAGS and index < len(command):
+                _refuse_a_word_built_at_runtime(command[index], "python option value")
+                index += 1
+            continue
+        cluster = argument[1:]
+        for position, character in enumerate(cluster):
+            if character in _PROGRAM_ENDING_SHORT_FLAGS:
+                if position == len(cluster) - 1 and index < len(command):
+                    #: `-c CODE` and `-m MODULE`: the VALUE is what runs, so it is the operand this
+                    #: rule is about, and every token after it belongs to the child program.
+                    _refuse_a_word_built_at_runtime(command[index], "python -c/-m value")
+                return
+            if character in _VALUE_TAKING_SHORT_FLAGS:
+                if position == len(cluster) - 1 and index < len(command):
+                    _refuse_a_word_built_at_runtime(command[index], "python option value")
+                    index += 1
+                break
+
+
+def _refuse_runtime_git_tokens(command: list) -> None:
+    """Every token of a `git` launch, except the operands a literal-operand subcommand takes.
+
+    The allowlist over subcommands is worth nothing if an expansion can supply a global option --
+    `git "$G" status` where `$G` is `-c core.pager=...` is the whole allowlist defeated in one
+    token -- so the walk to the subcommand is literal-only, and so is the subcommand itself.
+    """
+    _refuse_runtime_tokens(command, "git option", start=0, stop=1)
+    index = 1
+    while index < len(command):
+        token = command[index]
+        _refuse_a_word_built_at_runtime(token, "git global option")
+        if token == "--":
+            index += 1
+            break
+        if not token.startswith("-"):
+            break
+        index += 2 if token in _GIT_GLOBAL_VALUE_OPTIONS else 1
+    if index >= len(command):
+        return
+    subcommand = command[index]
+    _refuse_a_word_built_at_runtime(subcommand, "git subcommand")
+    rest = command[index + 1:]
+    if subcommand in _GIT_LITERAL_OPERAND_SUBCOMMANDS:
+        #: The operands after a literal `--` name objects and paths, never programs and never
+        #: options, so an expansion in them cannot change what runs. Before the `--` an option is
+        #: still possible, so those tokens stay literal-only.
+        if "--" in rest:
+            rest = rest[:rest.index("--")]
+        else:
+            rest = [token for token in rest if token.startswith("-")]
+    _refuse_runtime_tokens(rest, f"git {subcommand} argument")
+
+
 def _read_shell_script(path: str) -> str:
     """The text of a shell script, or a refusal. An unreadable program cannot be a scanned one."""
     try:
@@ -2425,7 +3117,7 @@ def _read_shell_script(path: str) -> str:
 
 
 def _scan_shell_script_file(path: str, env, context: _ScanContext) -> bool:
-    """Read a shell SCRIPT FILE and scan it with the same scanner a `-c` string gets.
+    """Read ONE shell SCRIPT FILE and scan it with the same scanner a `-c` string gets.
 
     THE WHOLE OF ROUND 6's FIRST FINDING IS THAT THIS FUNCTION DID NOT EXIST. `bash script.sh` was
     admitted unread; the three mutations the reviewer wrote were ordinary shell lines in an ordinary
@@ -2434,38 +3126,179 @@ def _scan_shell_script_file(path: str, env, context: _ScanContext) -> bool:
 
     A CYCLE IS A REFUSAL, not a recursion limit reached the slow way: `a.sh` sourcing `b.sh`
     sourcing `a.sh` is a program whose text this scan cannot enumerate.
+
+    THE SCRIPT'S OWN DIRECTORY JOINS THE CANDIDATE SET. A script that runs `bash helper.sh` beside
+    itself is the ordinary shape, and the shell resolves that against its working directory -- which
+    this scan does not know exactly and therefore over-approximates. Adding the directory can only
+    put more files in front of the scanner.
     """
-    resolved = os.path.abspath(path)
+    resolved = _realpath_or_self(os.path.abspath(path))
     if resolved in context.seen:
         raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
                              f"the shell script {resolved} is reached from itself; a cyclic "
                              f"program cannot be read to the end")
     context.seen.add(resolved)
-    inner = context.deeper(script_dir=os.path.dirname(resolved))
+    context.dirs.add(os.path.dirname(resolved))
+    inner = context.deeper(script_dir=os.path.dirname(resolved), in_shell=True)
     return _scan_shell_program(_read_shell_script(resolved), env, inner)
 
 
-def _resolve_shell_operand(word: str, context: _ScanContext) -> str:
-    """A shell operand's path, resolved against the launch cwd and then the script's directory.
+def _scan_every_resolution(word: str, env, context: _ScanContext, role: str) -> bool:
+    """Read and scan EVERY file a relative shell operand could name. Round 7, finding 3.
 
-    TWO CANDIDATES, AND SEARCHING BOTH IS THE FAIL-CLOSED DIRECTION. `source ./setup.sh` resolves
-    against the shell's working directory, which is the `cwd=` of the launch when one was given and
-    this process's otherwise; but a launcher `cd`s, and this scan does not execute the `cd`. Looking
-    in the script's own directory as well means the file gets READ AND SCANNED in the case where the
-    first candidate misses -- scanning more files is never the direction that admits something
-    unscanned. When neither exists the caller refuses, because an operand naming no readable file is
-    a program this guard cannot see.
+    THE PREDECESSOR RETURNED ONE PATH AND THE SHELL RAN ANOTHER. `cd sub` then `bash child.sh` has
+    two answers on a tree that holds both `child.sh` and `sub/child.sh`, and the old resolver
+    returned the first one that existed -- the benign one, while the shell ran the malicious one.
+    There is no way to pick correctly without executing the `cd`, so this picks ALL of them: every
+    candidate directory that actually holds the file is read and scanned, and a refusal in any one
+    of them refuses the launch. The cost is a launcher refused for a file it was never going to run,
+    which is the direction this whole file errs in.
+
+    AN UNKNOWN DIRECTORY SET REFUSES A RELATIVE OPERAND OUTRIGHT. `cd "$D"` means the shell's
+    working directory is chosen after this scan ends, so "every file it could name" is unbounded and
+    scanning a sample of it would establish nothing.
     """
     if os.path.isabs(word):
-        return word
-    first = os.path.join(context.cwd, word)
-    if os.path.exists(first):
-        return first
-    if context.script_dir:
-        second = os.path.join(context.script_dir, word)
-        if os.path.exists(second):
-            return second
-    return first
+        return _scan_shell_script_file(word, env, context)
+    if not context.dirs.known:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
+                             f"the relative {role} {word!r} cannot be resolved: {context.dirs.why}")
+    candidates = _candidate_directories(context)
+    existing = []
+    for base in candidates:
+        candidate = os.path.join(base, word)
+        if os.path.exists(candidate):
+            resolved = _realpath_or_self(candidate)
+            if resolved not in existing:
+                existing.append(resolved)
+    if not existing:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                             f"the {role} {word!r} names no readable file under any candidate "
+                             f"working directory ({', '.join(candidates)}), so its launches cannot "
+                             f"be scanned")
+    launches_python = False
+    for resolved in existing:
+        if resolved in context.seen:
+            continue                         # already read on another candidate's path
+        launches_python = _scan_shell_script_file(resolved, env, context) or launches_python
+    return launches_python
+
+
+def _record_script_operand(word: str, context: _ScanContext) -> None:
+    """Remember a path this program RUNS, for the write-then-execute check at the end."""
+    if os.path.isabs(word):
+        context.uses.executed.add(_realpath_or_self(word))
+        return
+    context.uses.relative_executed.append(word)
+    for base in _candidate_directories(context):
+        context.uses.executed.add(_realpath_or_self(os.path.join(base, word)))
+
+
+def _refuse_write_then_execute(context: _ScanContext) -> None:
+    """A path this program WRITES and also RUNS is a program this scan did not read. Round 7, C(4).
+
+    THE SCAN READS BYTES THAT ARE NOT THE BYTES THAT RUN. Everything above establishes what a script
+    file contains AT SCAN TIME; a line earlier in the same program that copies, moves, links,
+    downloads or redirects onto that same path replaces those bytes before the shell reaches them,
+    and the scan's answer is then about a file that no longer exists. It is not a race this guard
+    can win by re-reading -- the write happens after the launch is admitted -- so the composition is
+    refused instead.
+
+    A RUNTIME WRITE TARGET IS THE SAME DEFECT WITH THE PATH HIDDEN. `cp new "$OUT"` names a path
+    this scan cannot compare with anything, so the intersection is empty for the wrong reason;
+    paired with any relative script or `source` operand, whose identity is also decided later, the
+    two cannot be shown apart and the program refuses.
+    """
+    collision = sorted(context.uses.written & context.uses.executed)
+    if collision:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
+                             f"{collision[0]} is both written and run by the same program, so the "
+                             f"bytes this scan read are not the bytes that would run")
+    if context.uses.runtime_target is not None and context.uses.relative_executed:
+        raise _LaunchRefusal(
+            LAUNCH_REASON_UNPARSED,
+            f"the write target {context.uses.runtime_target!r} is built at run time and the "
+            f"program runs the relative script {context.uses.relative_executed[0]!r}; neither path "
+            f"is decided at scan time, so they cannot be shown to be different files")
+
+
+#: COMMANDS WHOSE OPERANDS ARE A WRITE, keyed by basename, with the OPTIONS that carry a target
+#: separately. Each of them can replace a file this scan read -- `cp new stage.sh`, `tee stage.sh`,
+#: `sed -i`, `curl -o stage.sh`, `install`, `dd of=stage.sh`. The list is short and every name on it
+#: is a name whose write this file is asserting without reading anything, exactly as
+#: `_LEAF_TOOL_BASENAMES` is; a writer NOT on it is covered by the redirection rule or by nothing,
+#: and "or by nothing" is why the intersection is not the only control -- the restricted shell
+#: refuses redirection outright and refuses every command this list does not name a wrapper for.
+_WRITER_BASENAMES = frozenset({"cp", "mv", "ln", "install", "tee", "sed", "chmod", "dd", "rsync",
+                               "curl", "wget", "touch", "cat", "gzip", "gunzip", "tar", "zstd",
+                               "xz", "sha256sum", "shasum", "md5sum"})
+#: Writers whose target is named by an OPTION rather than by trailing position.
+_WRITER_TARGET_OPTIONS = {"curl": ("-o", "--output"), "wget": ("-O", "--output-document"),
+                          "sed": ("-i", "--in-place")}
+#: Writers whose target is EVERY operand rather than the last one. `tee a b c` writes all three,
+#: `sed -i` edits all of them, and `chmod +x a b` changes all of them.
+_WRITERS_OVER_EVERY_OPERAND = frozenset({"tee", "sed", "chmod", "touch"})
+
+
+def _record_write_targets(tokens: list, context: _ScanContext) -> None:
+    """Remember every path a simple command WRITES, for `_refuse_write_then_execute`.
+
+    NOT A SECURITY CHECK ON ITS OWN and deliberately not spelled as one: writing a file is what a
+    science step does. What it feeds is the COMPOSITION check -- a write and a run of the same path
+    -- so a target recorded here costs nothing unless the same program also runs it.
+    """
+    name = _executable_basename(_text_argument(tokens[0]))
+    if name not in _WRITER_BASENAMES:
+        return
+    options = _WRITER_TARGET_OPTIONS.get(name, ())
+    operands, index = [], 1
+    while index < len(tokens):
+        token = tokens[index]
+        if token in options:
+            if index + 1 < len(tokens):
+                operands.append(tokens[index + 1])
+                index += 2
+                continue
+            index += 1
+            continue
+        if any(token.startswith(f"{option}=") for option in options):
+            operands.append(token.partition("=")[2])
+            index += 1
+            continue
+        if name == "sed" and token.startswith("-i") and len(token) > 2:
+            index += 1                       # `sed -i.bak`: the suffix, not a target
+            continue
+        if name == "dd" and token.startswith("of="):
+            operands.append(token.partition("=")[2])
+            index += 1
+            continue
+        if token.startswith("-"):
+            index += 1
+            continue
+        operands.append(token)
+        index += 1
+    if not operands:
+        return
+    targets = operands if name in _WRITERS_OVER_EVERY_OPERAND or name in _WRITER_TARGET_OPTIONS \
+        else operands[-1:]
+    for target in targets:
+        _record_one_write_target(target, context)
+
+
+def _record_one_write_target(target: str, context: _ScanContext) -> None:
+    """One write target, resolved against every candidate directory, or flagged as runtime-built."""
+    if not target:
+        return
+    try:
+        _refuse_a_word_built_at_runtime(target, "write target")
+    except _LaunchRefusal:
+        context.uses.runtime_target = target
+        return
+    if os.path.isabs(target):
+        context.uses.written.add(_realpath_or_self(target))
+        return
+    for base in _candidate_directories(context):
+        context.uses.written.add(_realpath_or_self(os.path.join(base, target)))
 
 
 def _scan_sbatch(command: list[str], env, context: _ScanContext, target: str) -> bool:
@@ -2534,7 +3367,66 @@ def _scan_sbatch(command: list[str], env, context: _ScanContext, target: str) ->
                              "sbatch with no script operand reads its batch script from stdin, "
                              "which does not exist at scan time", executable=target)
     _refuse_a_word_built_at_runtime(positional, "sbatch script operand")
-    return _scan_shell_script_file(_resolve_shell_operand(positional, context), env, context)
+    _record_script_operand(positional, context)
+    return _scan_every_resolution(positional, env, context, "sbatch script operand")
+
+
+def _restricted_shell_argv(parsed: dict, script: "str | None" = None) -> list:
+    """The argv an admitted shell launch is REWRITTEN to. Round 7, part B.
+
+    THE SHELL BECOMES THE ENFORCER AND THE STATIC MODEL STOPS BEING THE RESIDUAL. Everything above
+    reads a shell program and decides whether it can be proven safe; what it proves is bounded by
+    how well this file models shell syntax, and rounds 5, 6 and 7 each found a construct it modelled
+    wrongly. So an admitted shell no longer runs as the caller spelled it: it runs as
+    `<pinned real bash> -r [--posix] <surviving options> <-c string | script> <args>` with a `PATH`
+    holding the guard's wrapper directories and nothing else. What a program can then reach is the
+    set this guard wrote a wrapper for, and everything else is `command not found` -- issued by
+    bash, from bash's own documented restricted mode (manual section 6.10), which is what the
+    residual for shells now is.
+
+    THE CALLER'S OPTIONS SURVIVE AND THE CALLER'S OPERANDS SURVIVE, because a guard that changes
+    what a program computes is worse than one that refuses it: `-e` and `-u` change a script's
+    behaviour on error, `--posix` keeps `sh` semantics for a program written in them, and the words
+    after the `-c` string are the program's own `$0` and `$@`.
+    """
+    #: THE PINNED ONE, AND THE SAME RESOLUTION WHEN NOTHING PINNED. `install()` exports the pin so
+    #: that the committed wrappers -- which run in another process, with no guard installed -- read
+    #: the SAME bash this process chose. A scan running before or without `install()` has no pin and
+    #: resolves it here instead; both go through `_resolve_real_bash`, so the answer cannot differ.
+    real_bash = os.environ.get(REAL_BASH_ENV) or _resolve_real_bash()[0]
+    if not real_bash:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                             "no bash under any named system prefix, so an admitted shell launch "
+                             "cannot be run in restricted mode and is refused instead")
+    #: LONG OPTIONS FIRST, AND THIS IS MEASURED RATHER THAN STYLISTIC. bash 3.2 -- the bash macOS
+    #: ships and the one this rewrite runs on here -- parses its GNU long options only BEFORE the
+    #: short-option cluster, so `bash -r --posix -c ...` exits 2 with "--: invalid option" while
+    #: `bash --posix -r -c ...` runs. A rewrite that produced the first spelling would turn every
+    #: admitted `sh` launch into a usage error, which is a guard that breaks correct runs.
+    long_options, short_options = [], []
+    index = 0
+    while index < len(parsed["options"]):
+        token = parsed["options"][index]
+        if token in _SHELL_VALUE_OPTIONS:
+            short_options.extend(parsed["options"][index:index + 2])
+            index += 2
+            continue
+        (long_options if token.startswith("--") else short_options).append(token)
+        index += 1
+    if parsed["posix"] and "--posix" not in long_options:
+        long_options.append("--posix")
+    argv = [real_bash, *long_options, "-r", *short_options]
+    if parsed["kind"] == "string":
+        argv.extend(["-c", parsed["text"]])
+    else:
+        argv.append(parsed["path"] if script is None else script)
+    argv.extend(parsed["args"])
+    return argv
+
+
+def _shebang_shell_invocation(shebang: list, script: str, env) -> dict:
+    """A `#!/bin/sh -e` script, parsed as the shell invocation the kernel will actually make."""
+    return _parse_shell_invocation([shebang[0], *shebang[1:], script], env)
 
 
 def _scan_resolved_command(command: list[str], env, context: _ScanContext) -> bool:
@@ -2568,18 +3460,27 @@ def _scan_resolved_command(command: list[str], env, context: _ScanContext) -> bo
     name = _executable_basename(word)
 
     if _is_python_executable(target) or _is_python_executable(word):
-        _refuse_a_word_built_at_runtime(word, "interpreter path")
+        if context.in_shell:
+            _refuse_runtime_python_tokens(command)
+        else:
+            _refuse_a_word_built_at_runtime(word, "interpreter path")
         flag = _forbidden_python_flag(command)
         if flag is not None:
             raise _LaunchRefusal(LAUNCH_REASON_FLAGS, flag, executable=target)
         return True
     if name in _SHELL_BASENAMES:
         parsed = _parse_shell_invocation(command, env)
+        if context.in_shell:
+            #: The shell's OPTIONS, never its `-c` string: the string is scanned as a program of its
+            #: own, which is a strictly stronger treatment than refusing it for holding a `$`, and
+            #: refusing it would refuse `bash -c 'echo $HOME'`. The script PATH is checked below.
+            _refuse_runtime_tokens(parsed["options"], "shell option")
+        context.record_rewrite(_restricted_shell_argv(parsed))
         if parsed["kind"] == "string":
-            return _scan_shell_program(parsed["text"], env, context.deeper())
+            return _scan_shell_program(parsed["text"], env, context.deeper(in_shell=True))
         _refuse_a_word_built_at_runtime(parsed["path"], "shell script operand")
-        return _scan_shell_script_file(_resolve_shell_operand(parsed["path"], context), env,
-                                       context)
+        _record_script_operand(parsed["path"], context)
+        return _scan_every_resolution(parsed["path"], env, context, "shell script operand")
     if name in _UNMODELLED_SHELL_BASENAMES:
         raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
                              f"{name} is a shell whose option and startup-file grammar this guard "
@@ -2593,9 +3494,16 @@ def _scan_resolved_command(command: list[str], env, context: _ScanContext) -> bo
                              f"{name} relaunches an interpreter through machinery this scan cannot "
                              f"see", executable=target)
     if name == "git":
+        if context.in_shell:
+            _refuse_runtime_git_tokens(command)
         _scan_git(command, env, target)
         return False
     if name == "sbatch":
+        #: EVERY TOKEN, and not only the operand. `sbatch` is the one class where the static model
+        #: IS the enforcement -- the batch script runs on a compute node, outside this process tree,
+        #: where no restricted shell and no wrapper directory of ours exists -- so an option built
+        #: at run time is an option nobody will ever read. See arm (3) of `DECLARED_GAP`.
+        _refuse_runtime_tokens(command, "sbatch token")
         return _scan_sbatch(command, env, context, target)
     shebang = _read_shebang(target)
     if name in _LEAF_TOOL_BASENAMES and shebang is None:
@@ -2643,13 +3551,57 @@ def _scan_resolved_command(command: list[str], env, context: _ScanContext) -> bo
                                  executable=inner_resolved)
         return True
     if inner_name in _SHELL_BASENAMES:
-        parsed = _parse_shell_invocation([interpreter, *options, target], env)
+        parsed = _shebang_shell_invocation([interpreter, *options], target, env)
+        #: THE SHEBANG'S LAUNCH IS REWRITTEN TOO, and the argv it is rewritten to names the SCRIPT
+        #: rather than the shebang's implicit operand: `./stage.sh` becomes
+        #: `<real bash> -r <shebang options> /abs/stage.sh <the caller's arguments>`. A shebang that
+        #: was not rewritten would be the one admitted shell in the file that ran unrestricted, and
+        #: `./stage.sh` is the spelling round 6's reviewer used.
+        context.record_rewrite(_restricted_shell_argv(parsed, script=target) + list(command[1:]))
         if parsed["kind"] == "string":
-            return _scan_shell_program(parsed["text"], env, context.deeper())
+            return _scan_shell_program(parsed["text"], env, context.deeper(in_shell=True))
+        _record_script_operand(target, context)
         return _scan_shell_script_file(target, env, context)
     raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
                          f"the shebang of {target} names {interpreter}, which is neither an "
                          f"interpreter, a shell nor env", executable=target)
+
+
+def _track_a_directory_change(tokens: list, context: _ScanContext) -> None:
+    """`cd`/`pushd`: add a candidate working directory, or mark the set UNKNOWN. Round 7, C(3).
+
+    THE SCAN DOES NOT EXECUTE THE PROGRAM, so it cannot know which branch's `cd` happened. It
+    therefore ACCUMULATES: after `cd sub` the operand `child.sh` may name the file in the launch
+    directory or the one in `sub/`, and both are read. The alternative -- following the `cd` and
+    replacing the directory -- is what the predecessor did implicitly by resolving against one
+    directory, and it is what made the reviewer's benign `child.sh` the file that was scanned while
+    the malicious one ran.
+
+    THE FOUR SPELLINGS THAT MAKE IT UNKNOWN are the ones whose destination is not in the token: a
+    runtime-built operand, no operand at all (`$HOME`), `-` (`$OLDPWD`) and `~user` (the password
+    database). None of them can be resolved here, and an unknown destination makes every later
+    relative operand a refusal rather than a guess.
+    """
+    operands = [token for token in tokens[1:] if not token.startswith("-")]
+    if not operands:
+        context.dirs.mark_unknown(f"`{tokens[0]}` with no operand moves to $HOME, which this scan "
+                                  f"cannot resolve")
+        return
+    operand = operands[0]
+    if operand == "-":
+        context.dirs.mark_unknown("`cd -` moves to $OLDPWD, which this scan cannot resolve")
+        return
+    if operand.startswith("~"):
+        context.dirs.mark_unknown(f"`{tokens[0]} {operand}` depends on tilde expansion")
+        return
+    if _is_a_word_built_at_runtime(operand):
+        context.dirs.mark_unknown(f"`{tokens[0]} {operand}` names a directory built at run time")
+        return
+    if os.path.isabs(operand):
+        context.dirs.add(operand)
+        return
+    for base in list(_candidate_directories(context)):
+        context.dirs.add(os.path.join(base, operand))
 
 
 def _scan_shell_simple_command(tokens: list[str], env, context: _ScanContext,
@@ -2675,6 +3627,13 @@ def _scan_shell_simple_command(tokens: list[str], env, context: _ScanContext,
         name, appends, value = assignment.group(1), assignment.group(2), assignment.group(3)
         if _is_protected_shell_variable(name):
             raise _LaunchRefusal(LAUNCH_REASON_ENV, tokens[index])
+        if name == "CDPATH":
+            #: NOT A REFUSAL AND DELIBERATELY NOT ONE. `CDPATH` does not disarm anything -- it makes
+            #: a LITERAL `cd` operand resolve somewhere this scan did not model, which is exactly
+            #: the state `_CandidateDirectories.known = False` names. An absolute script operand is
+            #: still resolvable and still admitted; a relative one refuses.
+            context.dirs.mark_unknown(f"{tokens[index]} makes a literal `cd` operand resolve "
+                                      f"against a path this scan cannot enumerate")
         #: `NAME+=VALUE` IS AN ASSIGNMENT AND NOT A COMMAND WORD. Read as a command word it would
         #: still have refused -- as an unprovable child -- but the reason would have named a
         #: nonexistent executable instead of the variable, which is a check that is right about the
@@ -2701,6 +3660,9 @@ def _scan_shell_simple_command(tokens: list[str], env, context: _ScanContext,
         #: A CALL TO A FUNCTION DEFINED IN THIS PROGRAM. Its body was scanned as ordinary lines, so
         #: the call adds nothing this scan has not already read.
         return False
+    if word in ("cd", "pushd"):
+        _track_a_directory_change(tokens, context)
+        return False
     if word in _SHELL_INERT_BUILTINS:
         return False
     if word in _SHELL_DECLARING_BUILTINS:
@@ -2710,6 +3672,9 @@ def _scan_shell_simple_command(tokens: list[str], env, context: _ScanContext,
                 continue
             assignment = _SHELL_ASSIGNMENT_RE.match(operand)
             declared = assignment.group(1) if assignment else operand
+            if declared == "CDPATH" and assignment is not None:
+                context.dirs.mark_unknown(f"{word} {operand} makes a literal `cd` operand resolve "
+                                          f"against a path this scan cannot enumerate")
             if not _is_protected_shell_variable(declared):
                 continue
             if assignment is not None or unexports:
@@ -2753,7 +3718,8 @@ def _scan_shell_simple_command(tokens: list[str], env, context: _ScanContext,
                                  f"{word} with {len(operands)} operands: only a single literal "
                                  f"path can be read and scanned")
         _refuse_a_word_built_at_runtime(operands[0], f"{word} operand")
-        return _scan_shell_script_file(_resolve_shell_operand(operands[0], context), env, context)
+        _record_script_operand(operands[0], context)
+        return _scan_every_resolution(operands[0], env, context, f"{word} operand")
     if word == "trap":
         handler = next((t for t in tokens[1:] if not t.startswith("-")), None)
         if handler is None or handler in ("", "-"):
@@ -2768,9 +3734,11 @@ def _scan_shell_simple_command(tokens: list[str], env, context: _ScanContext,
                              " can reset PATH and PYTHONPATH for every later line")
 
     _refuse_a_word_built_at_runtime(word, "command word")
+    _record_write_targets(tokens, context)
     resolved = _resolve_launch_command(tokens, env)
     if resolved is None:
         return False
+    _refuse_an_unreadable_wrapper_prefix(tokens, resolved, context)
     if substituted:
         #: A COMMAND SUBSTITUTION IN A SIMPLE COMMAND WHOSE COMMAND WORD IS A SHELL, AN INTERPRETER,
         #: A WRAPPER OR `source` decides part of that command's argv at run time -- so the argv this
@@ -2808,6 +3776,13 @@ def _scan_shell_program(text: str, env, context: _ScanContext) -> bool:
     would refuse `bash -c 'ls'` from a process that had disarmed itself, which is a launch with no
     interpreter in it and nothing to guard.
     """
+    #: THE TOKENS BELOW CAME FROM A SHELL, and that is what turns a `$` from a character into an
+    #: expansion. Set here rather than at every construction site, so a path that reaches this
+    #: function by any route gets the shell reading of its tokens.
+    context.in_shell = True
+    if (os.environ if env is None else env).get("CDPATH"):
+        context.dirs.mark_unknown("$CDPATH is set in the child environment, so a literal `cd` "
+                                  "operand may resolve anywhere on it")
     try:
         lines = _drop_heredoc_bodies(_shell_logical_lines(text))
     except ValueError as err:
@@ -2832,7 +3807,14 @@ def _scan_shell_program(text: str, env, context: _ScanContext) -> bool:
             case_depth += 1
         elif first == "esac":
             case_depth = max(0, case_depth - 1)
-        for command, terminator in _split_simple_commands_with_terminators(tokens):
+        commands, redirections = _split_simple_commands_with_terminators(tokens)
+        for target in redirections:
+            #: A REDIRECTION TARGET IS A WRITE. The restricted shell refuses redirection outright,
+            #: so this is not what stops it -- it is what makes `echo ... > stage.sh` and
+            #: `bash stage.sh` in one program a REFUSAL rather than a scan of bytes that are about
+            #: to be replaced, which is the case the static half still owns for `sbatch`.
+            _record_one_write_target(target, context)
+        for command, terminator in commands:
             if case_depth and terminator == ")":
                 continue                     # a `case` PATTERN, not a command
             substituted = any(_SUBSTITUTION_PLACEHOLDER in token for token in command)
@@ -2841,25 +3823,38 @@ def _scan_shell_program(text: str, env, context: _ScanContext) -> bool:
     return launches_python
 
 
-def _split_simple_commands_with_terminators(tokens: list[str]) -> "list[tuple[list[str], str]]":
-    """`_split_simple_commands`, with the OPERATOR that ended each command kept beside it.
+def _split_simple_commands_with_terminators(tokens: list[str]
+                                            ) -> "tuple[list[tuple[list[str], str]], list[str]]":
+    """`_split_simple_commands`, with the OPERATOR that ended each command and the WRITE TARGETS.
 
-    ONE CONSUMER, ONE REASON: `case`. A pattern list -- `stage2) python3 x.py ;;` -- tokenises so
-    that `stage2` is a simple command of its own, and an unknown one-word command is a refusal. The
-    operator that ended it is `)`, which is the only thing in the token stream that distinguishes a
-    pattern from a command, so the scanner needs to see it. Everything else ignores the terminator.
+    ONE CONSUMER FOR THE TERMINATOR, ONE REASON: `case`. A pattern list -- `stage2) python3 x.py ;;`
+    -- tokenises so that `stage2` is a simple command of its own, and an unknown one-word command is
+    a refusal. The operator that ended it is `)`, which is the only thing in the token stream that
+    distinguishes a pattern from a command, so the scanner needs to see it.
+
+    THE SECOND RETURN VALUE IS ROUND 7's, and it is the token this function has always DROPPED. A
+    redirection's target has to leave the command -- otherwise it ends the startup-flag scan early,
+    which is the measured escape recorded on `_SHELL_PUNCTUATION` -- but dropping it made the one
+    path a program writes to invisible to the scan. An OUTPUT redirection's target is a write; an
+    input redirection's is a read and is not collected.
     """
     commands: "list[tuple[list[str], str]]" = []
+    written: list[str] = []
     current: list[str] = []
+    pending_write = False
     skip_next = False
     for token in tokens:
         if skip_next:
             skip_next = False
+            if pending_write:
+                written.append(token)
+            pending_write = False
             continue
         if token and set(token) <= _SHELL_PUNCTUATION:
             if "<" in token or ">" in token:
                 if current and current[-1].isdigit():
                     current.pop()
+                pending_write = ">" in token
                 skip_next = True
                 continue
             if current:
@@ -2869,7 +3864,7 @@ def _split_simple_commands_with_terminators(tokens: list[str]) -> "list[tuple[li
         current.append(token)
     if current:
         commands.append((current, ""))
-    return commands
+    return commands, written
 
 
 def _scan_shell_string(text: str, env, depth: int = 0) -> bool:
@@ -2877,61 +3872,109 @@ def _scan_shell_string(text: str, env, depth: int = 0) -> bool:
 
     `_scan_shell_program` is where the work is; this spelling keeps the name the shim, the controls
     and the docstring above all refer to, and it is what makes a string and a SCRIPT FILE provably
-    the same scan rather than two implementations that agree today.
+    the same scan rather than two implementations that agree today. The write-then-execute
+    composition is checked HERE and not inside `_scan_shell_program`, because it is a property of
+    the WHOLE program and `_scan_shell_program` is also the recursion.
     """
-    return _scan_shell_program(text, env, _ScanContext(os.getcwd(), depth))
+    context = _ScanContext(os.getcwd(), depth, in_shell=True)
+    launches_python = _scan_shell_program(text, env, context)
+    _refuse_write_then_execute(context)
+    return launches_python
 
 
-def _scan_launch(argv: list[str], env, guard: GuardedPathFinder, cwd=None) -> list[str]:
-    """Return the argv to launch, re-armed if that is what the contract needs; raise to refuse.
+def _scan_launch(argv, env, guard: GuardedPathFinder, cwd=None, executable=None):
+    """The argv to launch and the environment to launch it with; raise to refuse.
+
+    Returns `(argv, environment or None)`. None means "the caller's environment, unchanged"; a
+    mapping means an ADMITTED SHELL, whose environment this guard replaces outright -- see
+    `_restricted_shell_environment`.
+
+    IT CLASSIFIES BY THE EXECUTABLE THE KERNEL WILL RUN, NEVER BY argv[0]. Round 7's first finding
+    is that it used to do the opposite: `subprocess.run(["ls", "-I", "child.py"],
+    executable=sys.executable)` was classified as `ls`, admitted as a leaf tool, and ran Python with
+    `-I`. `argv[0]` is a DISPLAY NAME -- every exec primitive in POSIX takes it separately from the
+    file to execute, and `env -a`, `exec -a` and `bash -c cmd name` all exist to set it to something
+    else. So the caller hands this function the real executable and the scan is over
+    `(executable, argv[1:])`; the positions still line up with the caller's argv, which is what lets
+    an argv repair be written back at the index it was computed at.
 
     THE ORDER IS THE CHEAPEST CORRECT ONE. The wrapper prefixes are resolved first, because until
     they are there is no executable to ask questions about; the resolved child is then CLASSIFIED
     (`_scan_resolved_command`), which reads a shell's string or script file, flag-scans an
-    interpreter, and refuses a child whose coverage cannot be established; and the environment
-    question is asked LAST, after any argv repair, so a repaired launch is not refused for the state
-    it was repaired out of.
-
-    A NON-PYTHON CHILD IS NO LONGER WAVED THROUGH, AND THAT IS ROUND 6's CHANGE. It used to be:
-    "it inherits the re-armed contract AND the wrapper directory on PATH, which is what makes an
-    ordinary interpreter it launches guarded" -- true only for a child that resolves the interpreter
-    through PATH, and the reviewer wrote three shell scripts that decline to. A child is admitted now
-    only when this guard could read what it will run.
+    interpreter, and refuses a child whose coverage cannot be established; the write-then-execute
+    composition is checked once the whole program has been read; and the environment question is
+    asked LAST, after any argv repair, so a repaired launch is not refused for the state it was
+    repaired out of.
     """
-    resolved = _resolve_launch_command(argv, env)
+    argv = list(argv)
+    scan_argv = list(argv)
+    if executable is not None:
+        scan_argv[0:1] = [_text_argument(executable)]
+    resolved = _resolve_launch_command(scan_argv, env)
     if resolved is None:
-        return argv
+        return argv, None
     command = resolved["command"]
     target = _resolve_executable(command[0], env)
     context = _ScanContext(os.fspath(cwd) if cwd is not None else os.getcwd())
-    if not _scan_resolved_command(command, env, context):
-        return argv
+    _refuse_an_unreadable_wrapper_prefix(scan_argv, resolved, context)
+    launches_python = _scan_resolved_command(command, env, context)
+    _refuse_write_then_execute(context)
+    rewrite = context.rewrite[0] if context.rewrite else None
+    prefix_end = resolved["inject_at"]
+    if rewrite is not None and prefix_end is None:
+        #: The shell came out of an `env -S` STRING, so there is no argv position its rewrite could
+        #: replace. Refused rather than re-quoted, for the reason on `_scan_shell_program`.
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                             "a shell reached through an `env -S` string cannot be rewritten into "
+                             "restricted mode, and an admitted shell that is not restricted is not "
+                             "a shell this guard can account for", executable=target)
+    tail = list(rewrite) if rewrite is not None else argv[prefix_end:] if prefix_end else argv
+    head = argv[:prefix_end] if prefix_end else []
+    restricted = _restricted_shell_environment(env) if rewrite is not None else None
     if resolved["clears"] or resolved["stripped"] is not None:
+        #: THE REPAIR RUNS FOR A SHELL EVEN WHEN NOTHING PYTHON IS IN IT, and that is round 7's
+        #: change here. `env -i bash -c ...` used to be left alone when the string held no
+        #: interpreter -- correct then, because the shell inherited the machine's PATH. It is not
+        #: correct now: the restricted shell's PATH is the guard's wrapper directories, and an
+        #: `env -i` that wiped it would leave a correct program with no `ls`.
         disarming = resolved["stripped"] or "env -i"
-        if resolved["inject_at"] is None:
-            #: The command came out of an `env -S` STRING, so there is no argv position to insert
-            #: the contract at. Refused rather than rewritten, for the reason on
-            #: `_scan_shell_program`.
+        if prefix_end is None:
+            if not launches_python and rewrite is None:
+                return argv, restricted
             raise _LaunchRefusal(LAUNCH_REASON_ENV, disarming, executable=target)
-        operands, view = _contract_operands(resolved)
-        missing = _environment_reaching_child_is_armed(view)
-        if missing is not None:
-            raise _LaunchRefusal(LAUNCH_REASON_ENV, missing, executable=target)
+        if not launches_python and rewrite is None:
+            return argv, restricted
+        operands, view = _contract_operands(resolved, restricted_shell=rewrite is not None)
+        if launches_python:
+            missing = _environment_reaching_child_is_armed(view)
+            if missing is not None:
+                raise _LaunchRefusal(LAUNCH_REASON_ENV, missing, executable=target)
         guard.launch_env = "argv-re-armed"
-        return [*argv[:resolved["inject_at"]], *operands, *argv[resolved["inject_at"]:]]
-    missing = _environment_reaching_child_is_armed(env)
+        return [*head, *operands, *tail], restricted
+    if not launches_python:
+        return ([*head, *tail] if rewrite is not None else argv), restricted
+    missing = _environment_reaching_child_is_armed(restricted if restricted is not None else env)
     if missing is not None:
         raise _LaunchRefusal(LAUNCH_REASON_ENV, missing, executable=target)
-    return argv
+    return ([*head, *tail] if rewrite is not None else argv), restricted
 
 
 def _prepare_launch(executable, arguments, env, guard: GuardedPathFinder, cwd=None):
-    """Re-arm a launch, or refuse a Python child that could not install the guard.
+    """Re-arm a launch, or refuse a child that could not be proven to keep its launches guarded.
 
     Returns `(environment, argv)`. The environment is re-armed FIRST so that the armed copy is what
-    every later check reads, and the argv comes back possibly REWRITTEN -- see `_contract_operands`.
-    A caller that ignores the returned argv would silently drop an argv-level repair, which is why
-    every wrapped primitive below writes both back.
+    every later check reads, and the argv comes back possibly REWRITTEN -- either with `env`
+    contract operands inserted (`_contract_operands`) or, for an admitted shell, replaced outright
+    with the restricted-bash spelling (`_restricted_shell_argv`). A caller that ignores the returned
+    argv would silently drop both, which is why every wrapped primitive below writes them back.
+
+    THE RETURNED ENVIRONMENT IS NOW SOMETIMES NON-None FOR A CALLER THAT PASSED None, which is new
+    in round 7 and is the reason the primitives below had to learn the `*e` spellings of themselves:
+    an admitted shell runs with a `PATH` this guard chose, and `os.execv` has no parameter to say so
+    -- so the launch is routed through `os.execve` instead. A caller's `env=` is never discarded, it
+    is the base the restricted environment is built from.
+
+    `executable` IS THE REAL EXECUTABLE AND NOT `argv[0]`. See `_scan_launch`.
 
     `cwd` IS THE LAUNCH'S WORKING DIRECTORY AND NOT THIS PROCESS'S, where the caller gave one. It
     matters because a relative operand -- `bash ./stage.sh`, `source ./setup.sh` -- names a
@@ -2942,8 +3985,17 @@ def _prepare_launch(executable, arguments, env, guard: GuardedPathFinder, cwd=No
     armed_env = _rearm_launch_environment(env, guard)
     argv = _launch_argv(arguments)
     try:
-        return armed_env, _scan_launch(argv, armed_env, guard, cwd)
+        launch_argv, restricted = _scan_launch(argv, armed_env, guard, cwd, executable)
     except _LaunchRefusal as refusal:
+        if os.environ.get(STATIC_SCAN_DISABLED_ENV):
+            #: THE TEST-ONLY KNOB. It exists so the two layers can be shown refusing INDEPENDENTLY:
+            #: with the static scanner in front, a reproducer never reaches the restricted shell, so
+            #: "the shell would have refused it too" would be an assertion nobody measured. It
+            #: swallows the static refusal and hands the launch on to whatever rewrite the scan had
+            #: already established -- so what refuses next is bash, in its own words. Every record
+            #: written while it is set says so; see `write_inventory`.
+            guard.static_scan = "disabled-for-test"
+            return _static_scan_disabled_launch(argv, armed_env, guard, cwd, executable)
         launched = getattr(refusal, "executable", None)
         refusal_record = {
             "executable": launched or _resolve_executable(executable, armed_env),
@@ -2954,10 +4006,65 @@ def _prepare_launch(executable, arguments, env, guard: GuardedPathFinder, cwd=No
         guard.launch_refusal = refusal_record
         _report_launch(refusal_record)
         raise SystemExit(VIOLATION_EXIT) from None
+    return (restricted if restricted is not None else armed_env), launch_argv
+
+
+def _static_scan_disabled_launch(argv, armed_env, guard, cwd, executable):
+    """The launch a REFUSED argv becomes when the test-only knob is set: rewritten, not refused.
+
+    The rewrite has to be recomputed rather than remembered, because the refusal may have come from
+    anywhere in the scan. What is recomputed is ONLY the classification of the outermost command --
+    is it a shell, and if so with which options -- which is the part that decides how the child
+    RUNS rather than whether it may. Nothing here reads the program.
+    """
+    scan_argv = list(argv)
+    if executable is not None:
+        scan_argv[0:1] = [_text_argument(executable)]
+    try:
+        resolved = _resolve_launch_command(scan_argv, armed_env)
+        if resolved is None:
+            return armed_env, argv
+        command = resolved["command"]
+        name = _executable_basename(_text_argument(command[0]))
+        prefix_end = resolved["inject_at"] or 0
+        if name in _SHELL_BASENAMES:
+            parsed = _parse_shell_invocation(command, armed_env)
+            rewrite = _restricted_shell_argv(parsed)
+        else:
+            target = _resolve_executable(command[0], armed_env)
+            shebang = _read_shebang(target)
+            if not shebang or _executable_basename(shebang[0]) not in _SHELL_BASENAMES:
+                return armed_env, argv
+            parsed = _shebang_shell_invocation(shebang, target, armed_env)
+            rewrite = _restricted_shell_argv(parsed, script=target) + list(command[1:])
+    except _LaunchRefusal:
+        return armed_env, argv
+    return _restricted_shell_environment(armed_env), [*argv[:prefix_end], *rewrite]
+
+
+#: THE `os` PRIMITIVES THIS FILE REPLACES, snapshotted before any of them is replaced. Two reasons,
+#: and the second is round 7's. (1) A wrapper must call the ORIGINAL and not whatever is at the name
+#: when it runs, or a second `install()` in the same interpreter builds a wrapper around a wrapper.
+#: (2) `os.execv` HAS NO ENVIRONMENT PARAMETER, and an admitted shell must be launched with a PATH
+#: this guard chose -- so the `v` spelling is routed through the ORIGINAL `ve` spelling, which is a
+#: call this module cannot make through `os.` without re-entering its own wrapper.
+_WRAPPED_OS_PRIMITIVES = (
+    "execv", "execve", "execvp", "execvpe", "posix_spawn", "posix_spawnp",
+    "spawnv", "spawnvp", "spawnve", "spawnvpe", "spawnl", "spawnlp", "spawnle", "spawnlpe",
+)
 
 
 def _install_launch_guards(guard: GuardedPathFinder) -> None:
-    """Wrap process-launch primitives for this guarded interpreter."""
+    """Wrap process-launch primitives for this guarded interpreter.
+
+    EVERY ONE OF THEM CLASSIFIES BY THE EXECUTABLE THE KERNEL WILL RUN. That is round 7's first
+    finding and it is not a `subprocess` detail: `os.execv(path, argv)`, `os.spawnv(mode, file,
+    args)` and `os.posix_spawn(path, argv, env)` all take the file separately from `argv`, and
+    `argv[0]` is a display name in every one of them. The table below therefore says, for each
+    primitive, WHICH parameter is the executable and which is the argv, and `_prepare_launch` is
+    handed the first.
+    """
+    originals = {name: getattr(os, name) for name in _WRAPPED_OS_PRIMITIVES if hasattr(os, name)}
     original_popen_init = subprocess.Popen.__init__
     popen_signature = inspect.signature(original_popen_init)
 
@@ -2969,6 +4076,10 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
         shell = bound.arguments.get("shell", False)
         executable = bound.arguments.get("executable")
         if shell:
+            #: WITH `shell=True` THE SHELL IS THE EXECUTABLE, and `executable=` REPLACES it -- that
+            #: is what CPython does (`subprocess.py`: `args = [unix_shell, "-c"] + args`, with
+            #: `executable` overriding `unix_shell`), so a scan that read the caller's string as the
+            #: program would be reading an argument to a shell it never identified.
             executable = executable or os.environ.get("COMSPEC") or "/bin/sh"
             argv = [executable, "-c", *_launch_argv(command)]
         else:
@@ -2976,14 +4087,21 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
             executable = executable or argv[0]
         armed_env, armed_argv = _prepare_launch(executable, argv, env, guard,
                                                 bound.arguments.get("cwd"))
-        if env is not None:
+        if armed_env is not None:
             bound.arguments["env"] = armed_env
-        # AN ARGV-LEVEL REPAIR IS ONLY REAL IF IT IS WRITTEN BACK. `shell=True` is excluded because
-        # its `argv` is one this wrapper SYNTHESIZED around the caller's string -- `_scan_launch`
-        # refuses a string it would have had to rewrite, so it never returns a repaired one here --
-        # and a `str` `args` names a program with no wrapper prefix to insert into.
-        if not shell and armed_argv != argv and not isinstance(command, (str, bytes, os.PathLike)):
+        if armed_argv != argv:
+            # AN ARGV-LEVEL REPAIR IS ONLY REAL IF IT IS WRITTEN BACK, and round 7 made the repair
+            # reach `shell=True` as well: an admitted shell is REWRITTEN to `<real bash> -r ...`,
+            # which is an argv and not a string, so the launch stops being a `shell=True` launch and
+            # becomes the explicit one CPython would have built. The string still runs, under `-c`,
+            # with the caller's own `$0`/`$@` behind it.
             bound.arguments["args"] = armed_argv
+            bound.arguments["shell"] = False
+            if armed_argv[:1] != argv[:1]:
+                #: `executable=` NAMED THE OLD argv[0] AND WOULD OVERRIDE THE NEW ONE. Dropping it
+                #: is what makes the rewrite the thing that runs; keeping it would exec the shell
+                #: the caller asked for with the restricted argv, which is the worst of both.
+                bound.arguments["executable"] = None
         return original_popen_init(*bound.args, **bound.kwargs)
 
     subprocess.Popen.__init__ = guarded_popen_init
@@ -2997,8 +4115,9 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
         argv_parameter: str,
         env_index: int | None = None,
         env_parameter: str | None = None,
+        env_fallback=None,
     ) -> None:
-        original = getattr(os, name, None)
+        original = originals.get(name)
         if original is None:
             return
 
@@ -3017,33 +4136,46 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
                 env = positional[env_index]
             else:
                 env = call_kwargs[env_parameter]
-            armed_env, armed_argv = _prepare_launch(
-                executable,
-                argv,
-                env,
-                guard,
-            )
+            armed_env, armed_argv = _prepare_launch(executable, argv, env, guard)
+            original_argv = _launch_argv(argv)
+            if armed_argv[:1] != original_argv[:1]:
+                executable = armed_argv[0]
+                if len(positional) > executable_index:
+                    positional[executable_index] = executable
+                else:
+                    call_kwargs[executable_parameter] = executable
+            if armed_argv != original_argv:
+                if len(positional) > argv_index:
+                    positional[argv_index] = armed_argv
+                else:
+                    call_kwargs[argv_parameter] = armed_argv
             if env_parameter is not None:
                 if env_index is not None and len(positional) > env_index:
                     positional[env_index] = armed_env
                 else:
                     call_kwargs[env_parameter] = armed_env
-            if armed_argv != _launch_argv(argv):
-                if len(positional) > argv_index:
-                    positional[argv_index] = armed_argv
-                else:
-                    call_kwargs[argv_parameter] = armed_argv
-            return original(*positional, **call_kwargs)
+                return original(*positional, **call_kwargs)
+            if armed_env is None:
+                return original(*positional, **call_kwargs)
+            #: NO ENVIRONMENT PARAMETER AND AN ENVIRONMENT TO PASS. The `v` spelling is routed
+            #: through the ORIGINAL `ve` spelling of itself, which is the same system call with the
+            #: environment named explicitly -- the alternative, mutating `os.environ` and hoping the
+            #: exec succeeds, leaves a failed exec's parent holding an environment nobody chose.
+            argv_now = (positional[argv_index] if len(positional) > argv_index
+                        else call_kwargs[argv_parameter])
+            return env_fallback(executable, argv_now, armed_env, positional, call_kwargs)
 
         setattr(os, name, guarded)
 
     wrap_vector_launch("execv", executable_index=0, executable_parameter="path",
-                       argv_index=1, argv_parameter="argv")
+                       argv_index=1, argv_parameter="argv",
+                       env_fallback=lambda ex, av, en, pos, kw: originals["execve"](ex, av, en))
     wrap_vector_launch("execve", executable_index=0, executable_parameter="path",
                        argv_index=1, argv_parameter="argv", env_index=2,
                        env_parameter="env")
     wrap_vector_launch("execvp", executable_index=0, executable_parameter="file",
-                       argv_index=1, argv_parameter="args")
+                       argv_index=1, argv_parameter="args",
+                       env_fallback=lambda ex, av, en, pos, kw: originals["execvpe"](ex, av, en))
     wrap_vector_launch("execvpe", executable_index=0, executable_parameter="file",
                        argv_index=1, argv_parameter="args", env_index=2,
                        env_parameter="env")
@@ -3051,16 +4183,27 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
         wrap_vector_launch(name, executable_index=0, executable_parameter="path",
                            argv_index=1, argv_parameter="argv", env_index=2,
                            env_parameter="env")
-    for name in ("spawnv", "spawnvp"):
-        wrap_vector_launch(name, executable_index=1, executable_parameter="file",
-                           argv_index=2, argv_parameter="args")
-    for name in ("spawnve", "spawnvpe"):
-        wrap_vector_launch(name, executable_index=1, executable_parameter="file",
-                           argv_index=2, argv_parameter="args", env_index=3,
-                           env_parameter="env")
 
-    def wrap_spawnl(name: str, *, has_env: bool) -> None:
-        original = getattr(os, name, None)
+    def _spawn_mode(positional, call_kwargs):
+        return positional[0] if positional else call_kwargs["mode"]
+
+    wrap_vector_launch("spawnv", executable_index=1, executable_parameter="file",
+                       argv_index=2, argv_parameter="args",
+                       env_fallback=lambda ex, av, en, pos, kw: originals["spawnve"](
+                           _spawn_mode(pos, kw), ex, av, en))
+    wrap_vector_launch("spawnvp", executable_index=1, executable_parameter="file",
+                       argv_index=2, argv_parameter="args",
+                       env_fallback=lambda ex, av, en, pos, kw: originals["spawnvpe"](
+                           _spawn_mode(pos, kw), ex, av, en))
+    wrap_vector_launch("spawnve", executable_index=1, executable_parameter="file",
+                       argv_index=2, argv_parameter="args", env_index=3,
+                       env_parameter="env")
+    wrap_vector_launch("spawnvpe", executable_index=1, executable_parameter="file",
+                       argv_index=2, argv_parameter="args", env_index=3,
+                       env_parameter="env")
+
+    def wrap_spawnl(name: str, *, has_env: bool, vector: str) -> None:
+        original = originals.get(name)
         if original is None:
             return
         signature = inspect.signature(original)
@@ -3073,30 +4216,68 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
             env = arguments[-1] if has_env else None
             argv = arguments[:-1] if has_env else arguments
             armed_env, armed_argv = _prepare_launch(executable, argv, env, guard)
+            if armed_argv[:1] != _launch_argv(argv)[:1]:
+                bound.arguments["file"] = armed_argv[0]
+                executable = armed_argv[0]
             if has_env:
                 bound.arguments["args"] = (*armed_argv, armed_env)
-            elif armed_argv != _launch_argv(argv):
+                return original(*bound.args, **bound.kwargs)
+            if armed_argv != _launch_argv(argv):
                 bound.arguments["args"] = tuple(armed_argv)
-            return original(*bound.args, **bound.kwargs)
+            if armed_env is None:
+                return original(*bound.args, **bound.kwargs)
+            return originals[vector](bound.arguments["mode"], executable, list(armed_argv),
+                                     armed_env)
 
         setattr(os, name, guarded)
 
-    for name in ("spawnl", "spawnlp"):
-        wrap_spawnl(name, has_env=False)
-    for name in ("spawnle", "spawnlpe"):
-        wrap_spawnl(name, has_env=True)
+    wrap_spawnl("spawnl", has_env=False, vector="spawnve")
+    wrap_spawnl("spawnlp", has_env=False, vector="spawnvpe")
+    wrap_spawnl("spawnle", has_env=True, vector="spawnve")
+    wrap_spawnl("spawnlpe", has_env=True, vector="spawnvpe")
 
     original_system = os.system
 
     @functools.wraps(original_system)
     def guarded_system(command):
+        """`os.system`: `/bin/sh -c <string>`, and therefore an admitted shell like any other.
+
+        IT NO LONGER CALLS `os.system`. Round 7 makes every admitted shell run as restricted bash
+        with the guard's own PATH, and `os.system` has no parameter for either -- it runs
+        `/bin/sh -c` with this process's environment and nothing can be said to it. So the rewritten
+        argv is spawned directly, through the ORIGINAL `Popen.__init__` so the scan does not run
+        twice, and the wait status is re-encoded into the shape `os.system`'s callers read.
+        """
         shell = os.environ.get("COMSPEC") or "/bin/sh"
-        # The argv is discarded deliberately: `os.system` takes a STRING, and `_scan_launch`
-        # refuses a string it would have to rewrite rather than returning a repaired one.
-        _prepare_launch(shell, [shell, "-c", command], None, guard)
-        return original_system(command)
+        armed_env, armed_argv = _prepare_launch(shell, [shell, "-c", command], None, guard)
+        if armed_env is None and armed_argv == [shell, "-c", command]:
+            return original_system(command)
+        process = subprocess.Popen.__new__(subprocess.Popen)
+        original_popen_init(process, armed_argv, env=armed_env)
+        status = process.wait()
+        #: `os.system` RETURNS A WAIT STATUS AND NOT AN EXIT CODE -- `os.waitstatus_to_exitcode`'s
+        #: input, not its output -- and a caller doing `os.system(...) != 0` reads either. The two
+        #: encodings are re-derived here rather than guessed: a negative `returncode` is a signal.
+        return (-status) & 0x7F if status < 0 else (status & 0xFF) << 8
 
     os.system = guarded_system
+
+
+def _arm_restricted_shell() -> "tuple[str, dict]":
+    """Pin the bash every admitted shell launch is rewritten onto, and export it for the wrappers.
+
+    IT RETURNS A STATE RATHER THAN RAISING, for the reason recorded on `_arm_path_shim`: a
+    deployment with no bash under any named prefix still guards imports and still refuses at every
+    launch site. What it loses is the ability to run a shell AT ALL -- `_restricted_shell_argv`
+    refuses without a pinned bash -- and that is narrower, not open, and it must be READABLE in the
+    record rather than inferred from a run that suddenly refuses `bash -c ls`.
+    """
+    path, state = _resolve_real_bash()
+    if path is None:
+        os.environ.pop(REAL_BASH_ENV, None)
+        return state, {"path": None, "sha256": None}
+    os.environ[REAL_BASH_ENV] = path
+    return state, {"path": path, "sha256": _sha256_or_none(path)}
 
 
 def install(expect_root: str, allow=()) -> GuardedPathFinder:
@@ -3110,6 +4291,7 @@ def install(expect_root: str, allow=()) -> GuardedPathFinder:
             guard = GuardedPathFinder(finder, expect, allowed, propagated_from, depth)
             sys.meta_path[i] = guard
             guard.path_shim, guard.path_shim_sha256 = _arm_child_environment(expect, allow_roots)
+            guard.shell, guard.real_bash = _arm_restricted_shell()
             _install_launch_guards(guard)
             guard.propagation = "armed"
             return guard
@@ -3365,6 +4547,16 @@ def write_inventory(dest, guard, script, expect_root, allow, outcome, violation=
         # what binds them rather than the A-2(f) source manifest.
         "path_shim_sha256": (guard.path_shim_sha256 if guard is not None
                              else _path_shim_digests()),
+        # THE DYNAMIC HALF, as a state and the bytes that enforced it. `restricted` means every
+        # admitted shell in this process ran as `<real_bash> -r` with a PATH holding the guard's
+        # wrapper directories and nothing else, so what a shell program could reach was the set this
+        # guard wrote a wrapper for; anything else names why it did not, and then every shell launch
+        # was REFUSED rather than run unrestricted. Read it beside `declared_gap` arm (2).
+        "shell": (guard.shell if guard is not None else "not-armed"),
+        "real_bash": (guard.real_bash if guard is not None else {"path": None, "sha256": None}),
+        # `enabled`, or `disabled-for-test`. A record carrying the second is a measurement of the
+        # RESTRICTED SHELL on its own and is not evidence about a production run.
+        "static_scan": (guard.static_scan if guard is not None else "enabled"),
         # THE COVERAGE BOUNDARY IN THE RECORD ITSELF (P-3's rule applied to a GAP rather than to a
         # count): a ratchet reader consuming these records cannot open the module docstring, and a
         # boundary it cannot see is one it reads as absent. Written on every path, including the
