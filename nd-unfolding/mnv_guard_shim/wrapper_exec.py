@@ -47,6 +47,11 @@ import pathlib
 import sys
 
 PREFIX = "[oi136 launch]"
+#: A DIFFERENT PREFIX FOR A DIFFERENT CLAIM. `[oi136 launch]` means THIS GUARD REFUSED, and every
+#: control in this repository greps for it -- so a host that simply has no Slurm must not print it,
+#: or "no sbatch installed" reads as "the guard refused the submission". `command not found` is what
+#: the shell would have said, and 127 is what it would have exited.
+TOOL_PREFIX = "[oi136 wrapper]"
 REFUSED = 3
 NO_SUCH_TOOL = 127
 
@@ -93,7 +98,7 @@ def _exec_the_system_tool(guard, name: str, arguments: list) -> int:
     """
     resolved = guard._locate_a_system_tool(name)
     if resolved is None:
-        print(f"{PREFIX} {name}: no such tool under any of "
+        print(f"{TOOL_PREFIX} {name}: no such tool under any of "
               f"{', '.join(guard._SYSTEM_EXECUTABLE_PREFIXES)}", file=sys.stderr, flush=True)
         return NO_SUCH_TOOL
     os.execv(resolved, [name, *arguments])
