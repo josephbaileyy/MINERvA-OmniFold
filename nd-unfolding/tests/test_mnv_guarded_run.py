@@ -4014,6 +4014,334 @@ class TheKernelFloorIsHookedAndTheResidualIsBelowIt(Round8Fixture):
                          mgr.__doc__)
 
 
+class TheApprovalIsBoundToTheFileAndNotOnlyToTheArgv(Round8Fixture):
+    """ROUND 9: the ticket round 8 introduced was keyed on the ARGV, and the argv is not the file.
+
+    THE FINDING VERBATIM: "`_ApprovedLaunch` is keyed on the ARGV ALONE. Round 8's whole finding was
+    that the argv is not the executable. So while an approval is outstanding, any code that runs IN
+    THAT THREAD during the window can call `_posixsubprocess.fork_exec` with the SAME argv but a
+    DIFFERENT executable_list and the floor will consume the ticket and skip the scan. The ticket's
+    own docstring claims the opposite. For a different thread that is true (the stack is
+    thread-local). For a `preexec_fn`, which CPython runs in the forked child between fork and exec
+    with the parent's thread-local stack inherited, it is FALSE whenever the argv is the same."
+
+    WHY THE REPRODUCER BELOW USES A `fileno()` AND NOT A `preexec_fn`. `preexec_fn` is now refused
+    at the `Popen` hook, before anything is scanned -- so a `preexec_fn` reproducer would measure
+    THAT refusal and would pass with the identity fix reverted. The window is not specific to
+    `preexec_fn`: it is every piece of caller code CPython runs between the ticket being issued and
+    the ticket being spent, and `stdout.fileno()`, called from `Popen._get_handles` inside
+    `Popen.__init__`, is the same window reached deterministically and without a fork. A `__del__`
+    or a weakref finalizer landing there is the same shape again. So the two halves of the fix get
+    one arm each: this class's first arm fails with the identity reverted, and its second fails with
+    the `preexec_fn` refusal reverted.
+
+    THE ARGV IS `['ls', '-I', child]`, which is round 7's finding 1 wearing round 8's ticket. It is
+    APPROVED, honestly, as the leaf tool `ls` -- `-I` is an `ls` option and `_check_leaf` admits a
+    system-prefix `ls`. Handed to `fork_exec` with `executable_list=[sys.executable]` the kernel then
+    runs PYTHON with that argv, which is `python -I <hijacking child>`: an isolated interpreter, no
+    shim, the wrong tree. The scan would refuse it in a line; the ticket was what stopped the scan
+    from running.
+    """
+
+    #: The malicious argv, spelled once: approvable as `ls`, catastrophic as `python`.
+    SPENT_ARGV = "['ls', '-I', CHILD]"
+
+    def test_a_callback_INSIDE_the_window_cannot_spend_the_ticket_on_a_DIFFERENT_FILE(self):
+        """THE REPRODUCER. One argv, two files, one ticket -- and the ticket must not match.
+
+        THE OUTER LAUNCH IS THE LEGITIMATE ONE and it is what issues the approval:
+        `Popen(['ls', '-I', child], stdout=<object>)`. CPython calls `stdout.fileno()` from
+        `_get_handles`, inside `Popen.__init__` -- which is inside this guard's own
+        `_approve_launch`/`_withdraw_launch_approval` window, in the same thread, so the approval
+        stack is the very one the floor will read. From there the reproducer calls the floor
+        directly with the approved argv and `executable_list=[sys.executable]`.
+
+        WHAT PROVES THE FIX IS LOAD-BEARING is that this arm FAILS without it: keyed on the argv
+        alone the ticket matches, the floor returns before it parses anything, and the isolated
+        interpreter runs -- sentinel present, `HIJACK-LOADED WRONG TREE` on stdout, exit 0, no
+        record of a refusal. With the file in the key the two halves disagree, the floor scans, and
+        what it scans is a Python interpreter with `-I` in its argv.
+        """
+        child, sentinel = self.hijacking_child("window_child")
+        parent = write(
+            self.nd / "parent_window_spends_ticket.py",
+            "import os, subprocess, sys, _posixsubprocess\n"
+            "EXE = sys.executable\n"
+            f"CHILD = {str(child)!r}\n"
+            f"ARGV = {self.SPENT_ARGV}\n"
+            "\n"
+            "class SpendsTheTicket:\n"
+            "    #: Reached from Popen._get_handles, INSIDE Popen.__init__, with the approval for\n"
+            "    #: ARGV outstanding on this thread's stack.\n"
+            "    def fileno(self):\n"
+            "        env_list = [os.fsencode(k) + b'=' + os.fsencode(v)\n"
+            "                    for k, v in os.environ.items()]\n"
+            "        errpipe_read, errpipe_write = os.pipe()\n"
+            "        argv = ARGV\n"
+            "        pid = _posixsubprocess.fork_exec(\n"
+            + self.FORK_EXEC_CALL +
+            "        os.close(errpipe_write)\n"
+            "        os.close(errpipe_read)\n"
+            "        _, status = os.waitpid(pid, 0)\n"
+            "        print('TICKET-SPENT', os.waitstatus_to_exitcode(status))\n"
+            "        return os.open(os.devnull, os.O_WRONLY)\n"
+            "\n"
+            "proc = subprocess.Popen(ARGV, stdout=SpendsTheTicket())\n"
+            "proc.wait()\n"
+            "print('OUTER-EXIT', proc.returncode)\n")
+        result = self.guarded(parent)
+        self.assertNotIn("TICKET-SPENT", result.stdout,
+                         "the floor consumed the approval and launched a file the approval was "
+                         "not issued for -- this is the finding, not a refusal")
+        self.assertNotIn("OUTER-EXIT", result.stdout,
+                         "the parent got past the call, so nothing was refused")
+        record = self.assertRefusedStatically(result, sentinel, mgr.LAUNCH_REASON_FLAGS, "-I")
+        self.assertEqual(record["launch_refusal"]["executable"],
+                         os.path.realpath(sys.executable),
+                         "the refusal names a file other than the one the kernel would have run, "
+                         "so the floor scanned argv[0] rather than the executable_list")
+
+    def test_the_SAME_argv_through_the_SAME_route_is_ADMITTED_when_the_FILE_matches(self):
+        """The direction that makes the arm above an identity check and not an `ls` ban.
+
+        WITHOUT THIS ARM the reproducer above would also pass against a guard that had simply
+        stopped issuing tickets, or one that refused every `ls` with a `-I` in it. Here the outer
+        launch is the same `Popen(['ls', '-I', child], stdout=<object>)` and the callback inside the
+        window calls the floor with the argv AND the file the approval was issued for -- `ls`, found
+        the way the child would find it, on the child's own PATH. That must be waved through: it is
+        the launch the layer above already read.
+        """
+        child, sentinel = self.hijacking_child("window_match_child")
+        parent = write(
+            self.nd / "parent_window_matching_file.py",
+            "import os, shutil, subprocess, sys, _posixsubprocess\n"
+            "EXE = sys.executable\n"
+            f"CHILD = {str(child)!r}\n"
+            f"ARGV = {self.SPENT_ARGV}\n"
+            "#: THE CHILD'S OWN PATH, wrapper directories included -- which is how the layer below\n"
+            "#: resolves a bare name, and therefore what the approval was keyed on.\n"
+            "LS = shutil.which('ls')\n"
+            "\n"
+            "class SpendsTheTicket:\n"
+            "    def fileno(self):\n"
+            "        env_list = [os.fsencode(k) + b'=' + os.fsencode(v)\n"
+            "                    for k, v in os.environ.items()]\n"
+            "        errpipe_read, errpipe_write = os.pipe()\n"
+            "        argv = ARGV\n"
+            "        pid = _posixsubprocess.fork_exec(\n"
+            "            argv, [os.fsencode(LS)], True, (errpipe_write,), None, env_list,\n"
+            "            -1, -1, -1, -1, -1, -1, errpipe_read, errpipe_write,\n"
+            "            False, False, -1, None, None, None, -1, None, False)\n"
+            "        os.close(errpipe_write)\n"
+            "        os.close(errpipe_read)\n"
+            "        os.waitpid(pid, 0)\n"
+            "        print('MATCHING-FILE-RAN')\n"
+            "        return os.open(os.devnull, os.O_WRONLY)\n"
+            "\n"
+            "proc = subprocess.Popen(ARGV, stdout=SpendsTheTicket())\n"
+            "proc.wait()\n"
+            "print('OUTER-EXIT', proc.returncode)\n")
+        result = self.guarded(parent)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("MATCHING-FILE-RAN", result.stdout, result.stdout + result.stderr)
+        self.assertNotIn("[oi136 launch]", result.stderr)
+        self.assertNotIn("HIJACK-LOADED", result.stdout)
+        self.assertFalse(sentinel.exists(),
+                         "the hijacking child ran, so `ls` was not what the kernel was given")
+        self.assertIsNone(self.records()[0]["launch_refusal"], self.records()[0])
+
+    # ---- the construct itself: `preexec_fn` -------------------------------------------------
+
+    def test_preexec_fn_is_REFUSED_AT_THE_POPEN_HOOK_with_its_own_reason(self):
+        """`subprocess.run(..., preexec_fn=f)`: refused, and `f` never runs.
+
+        THE SENTINEL IS WRITTEN BY `f` ITSELF, which is what makes this an assertion about the
+        construct rather than about the child. `preexec_fn` runs in the forked child between `fork`
+        and `exec`, so a sentinel it writes exists if and only if the fork happened -- and it must
+        not. The child here is the CLEAN child, admitted by every other arm in this file, so the
+        refusal cannot be attributed to anything the child is.
+        """
+        clean = self.clean_child("preexec_clean_child")
+        forked = self.tmp / "preexec-fn-ran"
+        parent = write(
+            self.nd / "parent_preexec_refused.py",
+            "import pathlib, subprocess, sys\n"
+            "def before_exec():\n"
+            f"    pathlib.Path({str(forked)!r}).write_text('ran')\n"
+            f"code = subprocess.run([sys.executable, {str(clean)!r}],\n"
+            "                       preexec_fn=before_exec).returncode\n"
+            "print('PREEXEC-EXIT', code)\n")
+        result = self.guarded(parent)
+        self.assertNotIn("PREEXEC-EXIT", result.stdout,
+                         "the launch returned, so preexec_fn was not refused")
+        record = self.assertRefusedStatically(result, forked, mgr.LAUNCH_REASON_PREEXEC,
+                                              "preexec_fn")
+        self.assertNotIn("CHILD-LOADED", result.stdout)
+        self.assertEqual(record["outcome"], mgr.launch_outcome(record["launch_refusal"]))
+        self.assertEqual(record["launch_refusal"]["executable"],
+                         mgr._resolve_executable(sys.executable, None),
+                         "the refusal does not name the file the launch would have run")
+
+    def test_THE_SAME_LAUNCH_WITHOUT_preexec_fn_STILL_RUNS(self):
+        """The direction the refusal above acts in, measured: `preexec_fn` is the whole difference.
+
+        A one-directional check waves the other way through, and here the other way is a guard that
+        had started refusing `subprocess.run([python, child])` outright -- which would pass the arm
+        above for a reason that has nothing to do with `preexec_fn`. Same parent, same child, the
+        keyword removed: admitted, with a record from a second interpreter that installed the guard.
+        """
+        clean = self.clean_child("preexec_control_child")
+        parent = write(
+            self.nd / "parent_preexec_control.py",
+            "import subprocess, sys\n"
+            f"code = subprocess.run([sys.executable, {str(clean)!r}]).returncode\n"
+            "print('ARM-EXIT', code)\n")
+        self.assertAdmittedWithAGuardedChild(self.guarded(parent), "ARM-EXIT 0")
+
+    def test_NO_non_test_FILE_IN_THIS_REPOSITORY_passes_preexec_fn(self):
+        """The census the refusal was priced against, run rather than remembered.
+
+        WHY IT IS A TEST AND NOT A SENTENCE IN A COMMIT MESSAGE. "Refusing this costs nothing"
+        is a claim about the tree, and a claim about the tree measured once decays -- a launcher
+        added next month makes the refusal a false refusal, and the only place that would surface
+        is here. `git grep` over `*.py` searches TRACKED files, which is the population the claim
+        is about.
+
+        THE POSITIVE CONTROL IS THE GUARD'S OWN HITS. A search that matched nothing at all would
+        satisfy "no caller" vacuously -- an inference from absence needs a covering search -- so
+        the module that discusses and refuses `preexec_fn` must be among the hits, and the arm is
+        red if it is not.
+        """
+        found = subprocess.run(["git", "grep", "-n", "preexec_fn", "--", "*.py"],
+                               cwd=REPO, capture_output=True, text=True)
+        self.assertIn(found.returncode, (0, 1), found.stderr)
+        hits = [line for line in found.stdout.splitlines() if line.strip()]
+        self.assertTrue([line for line in hits
+                         if line.startswith("nd-unfolding/mnv_guarded_run.py:")],
+                        f"the guard's own mentions of preexec_fn are not in the census, so the "
+                        f"search covers something other than this tree: {hits}")
+        callers = [line for line in hits
+                   if not line.startswith("nd-unfolding/mnv_guarded_run.py:")
+                   and "/tests/" not in line.split(":", 1)[0]]
+        self.assertEqual(callers, [],
+                         "a non-test file passes preexec_fn, so LAUNCH_REASON_PREEXEC is now a "
+                         "FALSE REFUSAL of a real launcher: fix the launcher (cwd=/env=/"
+                         "start_new_session=/pass_fds= all reach this layer) rather than the guard")
+
+    # ---- the silent direction: what the ticket must STILL wave through ----------------------
+
+    #: EVERY SPELLING WHOSE TICKET IS CONSUMED ONE LAYER DOWN, and each takes a different route to
+    #: the consume site: `close_fds=False` sends `Popen` to `os.posix_spawn` instead of `fork_exec`,
+    #: the BARE NAME is the one whose file the two sides have to resolve identically (see
+    #: `_launch_file_identity` -- resolved the scan's way at one end and the producer's way at the
+    #: other, they name two different files and the floor re-scans its own layer's repair), and
+    #: `os.system` issues its approval around a call to the ORIGINAL `Popen.__init__`.
+    STILL_ADMITTED = {
+        "shell=True through fork_exec":
+            "code = subprocess.run('ls victim.py', shell=True, cwd=ND).returncode",
+        "shell=True through os.posix_spawn":
+            "code = subprocess.run('ls victim.py', shell=True, cwd=ND, "
+            "close_fds=False).returncode",
+        "a BARE NAME with no shell":
+            "code = subprocess.run(['ls', 'victim.py'], cwd=ND).returncode",
+        "os.system":
+            "os.chdir(ND); code = os.system('ls victim.py')",
+    }
+
+    def test_the_launches_THIS_GUARD_ALREADY_READ_are_still_waved_through_at_the_floor(self):
+        """Four routes to the consume site, and a ticket that stopped matching refuses all four.
+
+        THIS IS THE POWER ARM FOR THE IDENTITY. An identity whose two sides disagree is invisible in
+        every refusal arm above -- a mismatch only ever causes the floor to scan MORE -- and what it
+        breaks is exactly this: a launch the layer above rewrote, re-read one layer down against the
+        restricted `PATH` its own rewrite carries. `subprocess.run("ls", shell=True,
+        close_fds=False)` is the spelling that was live before round 8 and the one round 8 fixed;
+        the bare-name row is the one round 9's change would have broken.
+        """
+        for name, call in self.STILL_ADMITTED.items():
+            with self.subTest(spelling=name):
+                self.inventory.unlink(missing_ok=True)
+                parent = write(
+                    self.nd / f"parent_admitted_{abs(hash(name)) % 100000}.py",
+                    "import os, subprocess\n"
+                    f"ND = {str(self.nd)!r}\n"
+                    f"{call}\n"
+                    "print('ADMITTED-EXIT', code)\n")
+                result = self.guarded(parent)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertIn("ADMITTED-EXIT 0", result.stdout, result.stdout + result.stderr)
+                self.assertIn("victim.py", result.stdout,
+                              "`ls` printed nothing, so this row exited 0 without running")
+                self.assertNotIn("[oi136 launch]", result.stderr)
+                self.assertIsNone(self.records()[0]["launch_refusal"], self.records()[0])
+
+    def test_every_multiprocessing_START_METHOD_and_the_POOL_still_run_a_GUARDED_child(self):
+        """The stdlib's own callers of the consume site, re-measured against the new identity.
+
+        `spawn`, `forkserver` and `ProcessPoolExecutor` all reach `fork_exec` through
+        `Popen`/`spawnv_passfds` with a ticket outstanding, so each of them spends one on every
+        correct run. They are measured HERE as well as in
+        `TheKernelFloorIsHookedAndTheResidualIsBelowIt` because a break caused by the identity has
+        to be attributable to the identity: an arm that is red in both classes is a broken floor,
+        and one that is red only here is a key whose two sides disagree.
+        """
+        arms = {
+            "spawn": "'spawn'",
+            "forkserver": "'forkserver'",
+        }
+        for name, context in arms.items():
+            with self.subTest(arm=name):
+                self.inventory.unlink(missing_ok=True)
+                parent = write(
+                    self.nd / f"parent_identity_mp_{name}.py",
+                    "import multiprocessing\n"
+                    "def work():\n"
+                    f"    print('{name.upper()}-CHILD-RAN')\n"
+                    "if __name__ == '__main__':\n"
+                    f"    proc = multiprocessing.get_context({context}).Process(target=work)\n"
+                    "    proc.start()\n"
+                    "    proc.join()\n"
+                    "    print('ARM-EXIT', proc.exitcode)\n")
+                self.assertAdmittedWithAGuardedChild(self.guarded(parent), "ARM-EXIT 0")
+        with self.subTest(arm="ProcessPoolExecutor"):
+            self.inventory.unlink(missing_ok=True)
+            parent = write(
+                self.nd / "parent_identity_mp_pool.py",
+                "import concurrent.futures, multiprocessing\n"
+                "def work(value):\n"
+                "    return value * 2\n"
+                "if __name__ == '__main__':\n"
+                "    ctx = multiprocessing.get_context('spawn')\n"
+                "    with concurrent.futures.ProcessPoolExecutor(max_workers=1,\n"
+                "            mp_context=ctx) as pool:\n"
+                "        print('POOL-RESULT', pool.submit(work, 21).result())\n"
+                "    print('ARM-EXIT 0')\n")
+            self.assertAdmittedWithAGuardedChild(self.guarded(parent), "ARM-EXIT 0")
+
+    # ---- the docstring, which was the thing that was FALSE ----------------------------------
+
+    def test_the_ticket_DOCSTRING_no_longer_claims_a_preexec_fn_DOES_NOT_MATCH(self):
+        """The superseded sentence is GONE, and what replaced it says what the code does.
+
+        THE DOCSTRING WAS THE DEFECT'S COVER. It asserted that "a lower layer launching something
+        ELSE while an approval is outstanding -- a `preexec_fn` in the forked child, a thread that
+        never went through the public hook -- does not match and is scanned", which was true of the
+        thread half (the stack is thread-local) and false of the `preexec_fn` half whenever the argv
+        was the same. A reviewer reading the ticket had no reason to look. So the sentence is
+        asserted ABSENT rather than merely improved, and the replacement claims are pinned to the
+        arms above.
+        """
+        doc = mgr._ApprovedLaunch.__doc__
+        self.assertNotIn("a `preexec_fn` in the forked child", doc)
+        self.assertNotIn("does not match and is scanned. It is per-thread", doc)
+        self.assertIn("THE IDENTITY IS (ARGV, FILE) AND NOT THE ARGV", doc)
+        self.assertIn("LAUNCH_REASON_PREEXEC", doc)
+        self.assertIn("IT IS PER-THREAD", doc, "the thread half of the claim was TRUE and is lost")
+        self.assertIn("_launch_file_identity", doc)
+        # And the header carries the same correction, for a reader who never opens the class.
+        self.assertIn("THE TICKET IS KEYED ON (ARGV, FILE)", mgr.__doc__)
+
+
 class TheStartupFlagScanFollowsCPythonsOptionGrammar(unittest.TestCase):
     """A TABLE OVER THE SCANNER ITSELF, called directly, and it is deliberately in-process.
 

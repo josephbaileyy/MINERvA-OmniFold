@@ -242,6 +242,15 @@ it: the rewrite runs with `PATH` set to the wrapper directories only, and a seco
 live before round 8 wherever `subprocess.Popen` chose `os.posix_spawn` over `fork_exec`
 (`close_fds=False`), and the ticket closes it in the one place both layers pass through.
 
+THE TICKET IS KEYED ON (ARGV, FILE), because the argv is not the executable -- which is round 8's
+own finding applied to round 8's own mechanism. Keyed on the argv alone, anything that got to run
+inside the window IN THIS THREAD could spend the approval on a different file: CPython calls
+`preexec_fn` in the forked child with the approval stack inherited, and a `__del__`, a weakref
+finalizer or a `fileno()` reached from inside `Popen.__init__` is the same shape. So the issue site
+records the file the layer below will actually exec, resolved through the ARMED environment, and
+both halves must be equal before the floor skips its scan; `preexec_fn` is refused outright beside
+that (`LAUNCH_REASON_PREEXEC`).
+
 `multiprocessing.set_executable` IS NOT ADVERSARIAL AND IS HOOKED WHERE THE CHOICE IS MADE. A direct
 `fork_exec` call is something only an attacker writes; `set_executable` is public API a launcher may
 reasonably reach for, and it names the file every `spawn` and `forkserver` child will exec. Since
@@ -1388,6 +1397,23 @@ LAUNCH_REASON_UNPROVEN = "a-child-this-guard-cannot-prove-keeps-its-launches-gua
 #: is the defect this file exists for.
 LAUNCH_REASON_KERNEL_FLOOR = "a-fork_exec-call-at-the-kernel-floor-this-guard-cannot-read"
 
+#: ROUND 9's REASON, AND IT NAMES A CONSTRUCT THAT RUNS CALLER CODE INSIDE THIS GUARD'S OWN WINDOW.
+#: `preexec_fn` is arbitrary caller code that CPython runs in the forked child, after `fork` and
+#: before `exec` -- which is to say inside an already-armed process, holding this thread's
+#: `_ApprovedLaunch` stack by inheritance, at the one moment an approval for the launch in progress
+#: is outstanding. So it is not merely "a callback": it is the only place in `subprocess` where a
+#: caller gets to run between a ticket being issued and the ticket being spent, and round 9's
+#: finding is that a launch from there was matched on argv alone. Binding the ticket to the FILE
+#: closes the matching hole; this reason closes the construct, because the guarantee it costs is not
+#: worth what it buys. CPython's own documentation calls `preexec_fn` unsafe in the presence of
+#: threads (and it is disabled outright in subinterpreters), the launch it wants can always be
+#: spelled with `cwd`/`env`/`start_new_session`/`pass_fds`, and no non-test file in this repository
+#: passes it -- measured with `git grep -n preexec_fn -- '*.py'`, whose only hit was this module's
+#: own prose. It is refused AT the `Popen` hook rather than inside the scan so that the test-only
+#: static-scan knob cannot swallow it: the knob exists to hand a REFUSED argv on to the restricted
+#: shell, and there is no shell reading in this refusal to hand anywhere.
+LAUNCH_REASON_PREEXEC = "a-preexec-fn-runs-caller-code-inside-this-guards-approval-window"
+
 
 class _LaunchRefusal(Exception):
     """A launch this guard cannot SCAN, and therefore will not allow.
@@ -1766,6 +1792,8 @@ _LAUNCH_HEADLINES = {
                              "GUARDED"),
     LAUNCH_REASON_KERNEL_FLOOR: ("THIS CALL AT THE _posixsubprocess.fork_exec FLOOR CANNOT BE "
                                  "READ, SO IT CANNOT BE SCANNED"),
+    LAUNCH_REASON_PREEXEC: ("preexec_fn RUNS CALLER CODE IN THE FORKED CHILD, INSIDE THIS "
+                            "GUARD'S OWN LAUNCH APPROVAL"),
 }
 
 _LAUNCH_EXPLANATIONS = {
@@ -1808,6 +1836,16 @@ _LAUNCH_EXPLANATIONS = {
                                  "contract reaching the child cannot be read. Route the launch "
                                  "through subprocess or os.posix_spawn, whose argv positions this "
                                  "guard can also repair."),
+    LAUNCH_REASON_PREEXEC: ("preexec_fn is called IN THE FORKED CHILD, between fork and exec: "
+                            "arbitrary caller code running inside a process this guard has "
+                            "already armed, holding this thread's launch approval by "
+                            "inheritance, at the one instant an approval for the launch in "
+                            "progress is outstanding. Code reached there can fork again, execve "
+                            "directly or unwind this guard's state, and none of that is readable "
+                            "from an argv. CPython's own documentation calls preexec_fn unsafe in "
+                            "the presence of threads. Spell the intent with cwd=, env=, "
+                            "start_new_session=, pass_fds= or umask= -- all of which this layer "
+                            "sees -- or do the work in the parent before the launch."),
 }
 
 
@@ -1830,6 +1868,11 @@ LAUNCH_OUTCOMES = {
     #: whether the obstacle was an unmodelled option or an unreadable call at the kernel floor. The
     #: `reason` field carries which.
     LAUNCH_REASON_KERNEL_FLOOR: "refused:launch-unmodelled-launch-grammar",
+    #: AND SO DOES `preexec_fn`, for the same reason once more: a construct whose contents this
+    #: guard cannot read is a launch whose coverage it could not establish. It is not the FLAGS
+    #: outcome, which would tell a ratchet reader that a startup flag was found -- nothing was
+    #: scanned here at all.
+    LAUNCH_REASON_PREEXEC: "refused:launch-unmodelled-launch-grammar",
 }
 
 
@@ -4212,6 +4255,66 @@ def _fork_exec_environment_list(mapping) -> list:
             for name, value in mapping.items()]
 
 
+def _launch_file_identity(executable, env=None) -> "str | None":
+    """The FILE a launch will hand the kernel, as ONE comparable value -- or None if unnameable.
+
+    THIS IS THE HALF OF A TICKET THAT ROUND 8's FINDING SAYS MUST BE THERE. Round 8's whole result
+    was that THE ARGV IS NOT THE EXECUTABLE: `os.execv`, `os.posix_spawn` and `fork_exec` all take
+    the file separately, and `argv[0]` is a display name. An approval keyed on the argv alone is
+    therefore keyed on the display name, and anything that runs inside the window -- a `preexec_fn`
+    in the forked child, a `__del__` or a `fileno()` reached from inside `Popen.__init__`, all of
+    which inherit this thread's approval stack -- could spend the ticket on a DIFFERENT file with
+    the same argv. `['ls', '-I', child]` approved as the leaf tool it is, then handed to
+    `fork_exec` with `executable_list=[sys.executable]`, is round 7's finding 1 reached through
+    round 8's ticket, and it is measured in
+    `TheApprovalIsBoundToTheFileAndNotOnlyToTheArgv`.
+
+    A BARE NAME IS RESOLVED ON THE CHILD'S OWN PATH, SHIM DIRECTORIES INCLUDED, and that is the one
+    place this function must NOT reuse the scan's resolver as-is. `_resolve_executable` answers the
+    SCAN's question -- "which real program is this" -- and to answer it it SUBTRACTS this guard's
+    wrapper directories, deliberately. The ticket asks a different question: "which file will the
+    layer below exec", and the layer below is `subprocess` building one candidate per
+    `os.get_exec_path(env)` entry -- wrapper directories and all, because they are in front of the
+    child's PATH on purpose -- and exec'ing the first that works. Resolving `ls` the scan's way
+    here would name `/bin/ls` at the issue site while the floor was handed the generated forwarder:
+    two names for one launch, no match, and the floor would re-scan its own layer's repair and
+    refuse a correct `subprocess.run(['ls', ...])` -- the very failure the ticket exists to prevent,
+    reintroduced by the key meant to sharpen it, and visible in NO refusal arm because a mismatch
+    only ever makes the floor scan MORE. `TheApprovalIsBoundToTheFileAndNotOnlyToTheArgv`'s
+    bare-name row is the arm that fails when this paragraph is ignored. So the candidate list is built
+    the way the producer builds it and read by `_fork_exec_executable`, which is the SAME function
+    the floor reads its own `executable_list` with, and `_resolve_executable` is then applied to the
+    located path -- where, having a directory component, it only resolves and cannot subtract.
+
+    `os.path.realpath` LAST, so two spellings of one file are one identity: the layer above may name
+    `/usr/bin/python3` and the layer below a symlink chain ending at the same inode, and a ticket
+    that treated those as different files would refuse every correct launch through a symlinked
+    interpreter.
+
+    None IS "THIS CANNOT BE NAMED" AND IT IS NEVER A WILDCARD. `_consume_approved_launch` requires
+    both halves to be EQUAL, so a None recorded here matches only a launch whose file is equally
+    unnameable -- which is the fail-closed direction: the floor's unreadable-call path has no file,
+    and an approval issued for a real file must not be spendable there.
+    """
+    if executable is None:
+        return None
+    try:
+        text = _text_argument(executable)
+    except (TypeError, ValueError):
+        return None
+    if not text:
+        return None
+    try:
+        if os.path.dirname(text):
+            located = text
+        else:
+            candidates = [os.path.join(directory, text) for directory in os.get_exec_path(env)]
+            located = _fork_exec_executable(candidates) if candidates else text
+        return os.path.realpath(_resolve_executable(located, env))
+    except (OSError, TypeError, ValueError, _LaunchRefusal):
+        return None
+
+
 class _ApprovedLaunch:
     """One launch `_prepare_launch` has already read, handed down to the layer beneath it.
 
@@ -4224,17 +4327,36 @@ class _ApprovedLaunch:
     system prefix, so `_check_leaf` refuses it. `subprocess.run("ls", shell=True, close_fds=False)`
     was refused exactly that way before this existed.
 
-    A FLAG WOULD SUPPRESS MORE THAN IT APPROVED. The ticket carries the argv it was issued for and
-    is consumed ONCE, so a lower layer launching something ELSE while an approval is outstanding --
-    a `preexec_fn` in the forked child, a thread that never went through the public hook -- does
-    not match and is scanned. It is per-thread for the same reason: an approval in one thread must
-    not wave through another thread's launch.
+    A FLAG WOULD SUPPRESS MORE THAN IT APPROVED. The ticket carries an IDENTITY and is consumed
+    ONCE, so a lower layer launching something else while an approval is outstanding does not match
+    and is scanned.
+
+    THE IDENTITY IS (ARGV, FILE) AND NOT THE ARGV, WHICH IS ROUND 9's CORRECTION. Keyed on the argv
+    alone it contradicted round 8's own finding -- the argv is not the executable -- and the earlier
+    version of this docstring claimed the opposite of what the code did: it said a `preexec_fn`
+    "does not match and is scanned", which held for a different THREAD (the stack is thread-local)
+    and was FALSE for anything running inside the window in THIS thread. CPython runs `preexec_fn`
+    in the forked child between `fork` and `exec`, with this thread's approval stack inherited; a
+    `__del__`, a weakref finalizer or a `fileno()` called from inside `Popen.__init__` is the same
+    shape. Any of them could call `fork_exec` with the approved argv and `executable_list` naming a
+    different file, and the floor would spend the ticket and skip the scan. Both halves must now be
+    equal, so the argv is only half a key and the file -- `_launch_file_identity`, computed at the
+    issue site through the ARMED environment, which is the one the child will receive -- is the
+    other. `preexec_fn` is refused outright as well (`LAUNCH_REASON_PREEXEC`): the identity closes
+    the matching hole, but arbitrary caller code running after `fork` inside an armed process is
+    worth refusing on its own terms.
+
+    IT IS PER-THREAD for the reason it always was: an approval in one thread must not wave through
+    another thread's launch.
     """
 
-    __slots__ = ("argv", "consumed")
+    __slots__ = ("argv", "executable", "consumed")
 
-    def __init__(self, argv: tuple):
+    def __init__(self, argv: tuple, executable: "str | None"):
         self.argv = argv
+        #: The resolved, realpath'd file the layer below is expected to exec. None means "the issue
+        #: site could not name a file", and it matches only an equally unnameable one.
+        self.executable = executable
         self.consumed = False
 
 
@@ -4250,14 +4372,23 @@ def _approved_launches() -> list:
     return stack
 
 
-def _launch_identity(arguments) -> tuple:
-    """The argv, normalised the one way both layers normalise it, as a comparable value."""
-    return tuple(_launch_argv(arguments))
+def _launch_identity(arguments, executable=None, env=None) -> tuple:
+    """`(argv, file)`, each normalised the one way both layers normalise it, as a comparable value.
+
+    ONE FUNCTION FOR BOTH SIDES, deliberately: an issue site and a consume site that each computed
+    their own half would be two implementations of one key, and the first thing they would diverge
+    on is exactly the bare-name resolution `_launch_file_identity` spells out.
+    """
+    return tuple(_launch_argv(arguments)), _launch_file_identity(executable, env)
 
 
-def _approve_launch(arguments) -> _ApprovedLaunch:
-    """Record that THIS argv has been scanned, for the layer below to consume. Always paired."""
-    ticket = _ApprovedLaunch(_launch_identity(arguments))
+def _approve_launch(arguments, executable=None, env=None) -> _ApprovedLaunch:
+    """Record that THIS argv AND THIS FILE have been scanned, for the layer below. Always paired.
+
+    `env` IS THE ARMED ENVIRONMENT AND NOT THE CALLER'S, at every issue site, because it is the one
+    the child will receive and therefore the one the layer below will resolve a bare name through.
+    """
+    ticket = _ApprovedLaunch(*_launch_identity(arguments, executable, env))
     _approved_launches().append(ticket)
     return ticket
 
@@ -4265,7 +4396,8 @@ def _approve_launch(arguments) -> _ApprovedLaunch:
 def _withdraw_launch_approval(ticket: _ApprovedLaunch) -> None:
     """Drop `ticket` whether or not it was consumed. Removed BY IDENTITY, never by value.
 
-    Two launches with the same argv are two tickets, and `list.remove` would delete the wrong one.
+    Two launches with the same argv and file are two tickets, and `list.remove` would delete the
+    wrong one.
     """
     stack = _approved_launches()
     for index in range(len(stack) - 1, -1, -1):
@@ -4274,11 +4406,16 @@ def _withdraw_launch_approval(ticket: _ApprovedLaunch) -> None:
             return
 
 
-def _consume_approved_launch(arguments) -> bool:
-    """Whether a layer above already scanned exactly this argv. Consumes the approval."""
-    identity = _launch_identity(arguments)
+def _consume_approved_launch(arguments, executable=None, env=None) -> bool:
+    """Whether a layer above already scanned exactly this argv AND this file. Consumes it.
+
+    BOTH HALVES, AND EQUALITY RATHER THAN A SUBSUMPTION. There is no wildcard here and no "the
+    ticket did not record a file, so anything matches": an approval whose file could not be named
+    matches only a launch whose file cannot be named either. See `_launch_file_identity`.
+    """
+    argv, launched = _launch_identity(arguments, executable, env)
     for ticket in reversed(_approved_launches()):
-        if not ticket.consumed and ticket.argv == identity:
+        if not ticket.consumed and ticket.argv == argv and ticket.executable == launched:
             ticket.consumed = True
             return True
     return False
@@ -4414,12 +4551,17 @@ def _prepare_launch(executable, arguments, env, guard: GuardedPathFinder, cwd=No
     no `cwd` parameter (`os.exec*`, `posix_spawn`) pass None, which means this process's own.
     """
     argv = _launch_argv(arguments)
-    if _consume_approved_launch(argv):
+    if _consume_approved_launch(argv, executable, env):
         #: ALREADY READ ONE LAYER UP, and re-reading it here would REFUSE IT. See `_ApprovedLaunch`:
         #: what reaches this point is the argv a public primitive already scanned and possibly
         #: rewrote, and the restricted rewrite carries a `PATH` that a second scan resolves nothing
         #: through. The caller's environment and argv are returned exactly as handed in, because the
         #: layer that issued the approval is the one that armed them.
+        #: THE FILE IS HALF THE KEY, which is round 9's correction: `executable` is passed here, not
+        #: just `argv`, because the argv is not the executable and an approval matched on the argv
+        #: alone was spendable by anything running inside the window on a DIFFERENT file. `env` is
+        #: the environment the layer above ARMED and wrote back, so a bare name resolves here to the
+        #: same file it resolved to there.
         return env, argv
     armed_env = _rearm_launch_environment(env, guard)
     try:
@@ -4514,6 +4656,27 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
         else:
             argv = _launch_argv(command)
             executable = executable or argv[0]
+        if bound.arguments.get("preexec_fn") is not None:
+            #: REFUSED BEFORE ANYTHING IS SCANNED, because what it runs is not a launch this guard
+            #: can read at all. CPython calls `preexec_fn` IN THE FORKED CHILD, after `fork` and
+            #: before `exec` -- so it executes arbitrary caller code inside a process this guard has
+            #: already armed, holding this thread's `_ApprovedLaunch` stack by inheritance, at the
+            #: one instant an approval for the launch in progress is outstanding. That window is
+            #: round 9's finding, and binding the ticket to the file (`_launch_file_identity`) is
+            #: only the matching half of the answer: code that gets to run there can also fork
+            #: again, `execve` directly, or unwind this guard's own state, and none of that is
+            #: reachable by reading an argv. The launch a caller wants it for is spelled by
+            #: `cwd`, `env`, `start_new_session`, `pass_fds` and `umask`, all of which this layer
+            #: sees; CPython's own documentation calls `preexec_fn` unsafe with threads. Measured
+            #: before it was refused: no non-test file in this repository passes it.
+            _refuse_the_launch(
+                _LaunchRefusal(LAUNCH_REASON_PREEXEC,
+                               f"subprocess.Popen was given preexec_fn="
+                               f"{bound.arguments['preexec_fn']!r}, which CPython runs in the "
+                               f"forked child between fork and exec -- inside this armed process "
+                               f"and inside this thread's outstanding launch approval",
+                               executable=_resolve_executable(executable, env)),
+                guard, argv, executable, env)
         armed_env, armed_argv = _prepare_launch(executable, argv, env, guard,
                                                 bound.arguments.get("cwd"))
         if armed_env is not None:
@@ -4538,7 +4701,16 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
         #: it. `armed_argv` is the identity to approve in all three shapes: for a rewritten launch
         #: it is what was written back, and for an untouched one it is value-identical to the argv
         #: CPython builds -- including the `[shell, "-c", string]` a surviving `shell=True` makes.
-        ticket = _approve_launch(armed_argv)
+        #: AND THE FILE BESIDE IT, which is round 9's correction. `launch_file` is what the layer
+        #: below will actually exec, read off the write-backs above rather than guessed: a rewritten
+        #: launch runs `armed_argv[0]` (the restricted bash, by absolute path, with the caller's
+        #: `executable=` dropped just above precisely so that it does), and an unrewritten one runs
+        #: the `executable` this hook already normalised -- the caller's `executable=` where it gave
+        #: one, the shell for a `shell=True` launch, `argv[0]` otherwise, which is CPython's own
+        #: `if executable is None: executable = args[0]`. `armed_env` is the environment written
+        #: back, so a bare name resolves through the PATH the child will really have.
+        launch_file = armed_argv[0] if armed_argv[:1] != argv[:1] else executable
+        ticket = _approve_launch(armed_argv, launch_file, armed_env)
         try:
             return original_popen_init(*bound.args, **bound.kwargs)
         finally:
@@ -4693,7 +4865,11 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
         if armed_env is None and armed_argv == [shell, "-c", command]:
             return original_system(command)
         process = subprocess.Popen.__new__(subprocess.Popen)
-        ticket = _approve_launch(armed_argv)
+        #: `armed_argv[0]` IS THE FILE HERE and there is no second candidate: the call below passes
+        #: no `executable=`, so CPython's `executable = args[0]` names exactly this -- the real
+        #: `bash` of a restricted rewrite, or the `/bin/sh` this wrapper chose when only the
+        #: environment changed.
+        ticket = _approve_launch(armed_argv, armed_argv[0], armed_env)
         try:
             original_popen_init(process, armed_argv, env=armed_env)
         finally:
@@ -4747,7 +4923,14 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
                 #: for the same reason -- reporting the raw arguments here would put whatever
                 #: object sat at position 0 into a json record.
                 _refuse_the_launch(refusal, guard, [], None)
-            if _consume_approved_launch(argv):
+            if _consume_approved_launch(argv, executable, env):
+                #: THE EXECUTABLE IS PART OF WHAT IS MATCHED, and at this layer it is the file
+                #: `_fork_exec_executable` says the kernel will actually run -- the first candidate
+                #: that exists, not `argv[0]`. An approval issued upstairs for one file is therefore
+                #: not spendable on another with the same argv, which is round 9's finding: this
+                #: `return` is the line that skips the scan, and before the file was keyed it could
+                #: be reached by anything running inside the window with `executable_list` of its
+                #: own choosing.
                 return original(*call_args, **call_kwargs)
             armed_env, armed_argv = _prepare_launch(executable, argv, env, guard, cwd)
             positional = list(call_args)
