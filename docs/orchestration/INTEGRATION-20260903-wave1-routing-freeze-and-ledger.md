@@ -495,7 +495,24 @@ by the PATH wrapper and `srun /abs/python3 -I x.py` is the residual. The wrapper
 
 The last commit of `wave1-integration-20260903` as force-pushed after this record.
 
-## 12. Reviewer round 6 (2026-09-04) — finding 4, and the launch model it replaced
+## 12. Reviewer round 6 (2026-09-04) — verdict BLOCK on `744660d8`, and what this revision changed
+
+`744660d8` is **withdrawn**. Round 6 carried four BLOCKs: three against the queue's R5 enforcement
+(findings 1–3, the table below) and one against the guard's coverage of shell script files
+(finding 4, the rest of this section, written by the guard lane and adopted as written).
+
+| reviewer BLOCK | resolution | commit | proof |
+|---|---|---|---|
+| **the "global" queue can still be split** (two clones, two `MNV_CAMPAIGN_STATE_ROOT` values, both six-hour items admitted against one 490-hour receipt) | the state root is a function of the **uid**: `pwd.getpwuid(os.getuid()).pw_dir/.mnv_campaign/<key>/campaign-queue`, read through one in-process function the suite patches; no environment variable, option, file or working directory changes it; a process whose environment still carries `MNV_CAMPAIGN_STATE_ROOT` is refused on every queue operation, naming the variable; claims and outcomes record `state_dir`, `uid` and `hostname` | `2692a67a` | reviewer mutation rerun: both clones refuse while the variable is set; with it absent exactly one item is admitted; a process whose `$HOME` differs from the passwd home still resolves the passwd home |
+| **concurrent items corrupt task-id attribution** (shared `accounting.task_ids_file`; both outcomes recorded `8202_0` with one digest) | contract schema **v2**: `accounting.task_ids_file` is refused as queue-owned, and a v1 contract refuses with the same message; on claim the queue creates `<state>/runs/<item>/` with an exclusive `mkdir`, records it in the claim, and hands `<run dir>/scheduler-task-ids.json` to producer **and** validator as `MNV_CAMPAIGN_TASK_IDS_FILE`; nothing is deleted before a run; the outcome records path, ids, digest and run directory | `5eac935e` | reviewer interleaving rerun: alpha records `7101_0`, beta `8202_0`, different digests, each under its own run directory; a contract carrying `task_ids_file` refuses with the v2 message; guarded producers still launch (the campaign suite runs real ones) |
+| **`release` bypassed receipt inclusion for identifiable spend** (a succeeded alpha with its id absent from the receipt was released by a typed phrase; beta was admitted) | `release` refuses when the outcome recorded **any** task id (only a committed receipt listing them releases it), refuses an `expects_scheduler_tasks: false` item (it releases on the timestamp), and applies only to a claimed, terminal, id-less run; `--reason` is gone — `--record <docs/orchestration/DECISION-*.md or AUTHORIZATION-*.md>` must be committed at HEAD with worktree-identical bytes (the receipt's own identity check, reused, not a second one) and contain `RELEASE-RESERVATION <item> outcome-sha256 <digest of the canonical outcome>`; the TTY phrase is in addition, never instead | `4c8667ca` | reviewer mutation rerun: succeeded alpha with `7101_0` absent from the receipt — release refuses and beta stays refused; an id-less item: an uncommitted record refuses, a committed record naming the wrong outcome digest refuses, the correct committed record releases and beta is admitted; an expects-false item refuses as nothing-to-release |
+
+**Residual for finding 1, stated exactly:** admission is global per (host, uid). Two hosts, or
+two uids, hold two queues; the committed receipt is the only cross-host object. The queue claims
+nothing beyond that.
+
+**Finding 4** — the closed child model — follows in the guard lane's own words.
+
 
 The reviewer's finding, verbatim: *"The guard's stated residual is incomplete and remains
 operationally fail-open. Shell script files are not scanned; the implementation relies entirely on
@@ -542,3 +559,38 @@ session exports `GIT_EDITOR=true` — **every** guarded `git` launch refuses, in
 read-only spellings. None of the allowlisted subcommands opens an editor, so `GIT_EDITOR` and
 `GIT_SEQUENCE_EDITOR` are the two members of that set whose presence is not itself a route; narrowing
 the set is a judgement about how much to trust the allowlist and is **not taken here**.
+
+### 12.1 Proposed tip, revised
+
+The last commit of `wave1-integration-20260903` as force-pushed after this record. Verified there,
+clean worktree, macOS default `TMPDIR`:
+
+| check | result |
+|---|---|
+| pre-commit hook | 12 checks passed |
+| `generate_manifest.py --check --committed-only` | OK, fixed point |
+| control-plane and R5 meter self-tests | PASS, PASS |
+| `probe-oi136-sys-path-hijack-20260826.py` | exit 0; FAIL-OPEN SET exactly 9 |
+| `verify_hash_bindings.py` | ALL BINDINGS INTACT |
+| nine-suite matrix on 3.11 (guard, k0 two-roots, N2 boundary, census, both ratchets, campaign, meter, routes) | 426 passed, 862 subtests passed, 1 failed: `TheRefusalIsUnchanged::test_site_packages_is_still_ignored_and_absent`, which fails identically at `744660d8` because the ephemeral `uv` build environment has an empty `site-packages` (the arm is vacuous) and passes under the system interpreter — an environment artefact, not a regression |
+| `docs/orchestration` whole-directory run | the same 40 environment-dependent failures and errors as at `744660d8`; none new, none fixed |
+| `generate_live_state.py --check-freshness` | STALE — deliberate; the OI-73 owner hold stands |
+
+**Twelve real `git` spellings in non-test code are now refused under the guard** (`log`, `show`
+and `diff` without `--no-ext-diff`; `git config user.name`). They are pinned as a live census in
+the guard suite and listed there by `path:line`. None of them runs inside a guarded process today —
+the queue is not itself guarded, its producers and validators are — and none is respelled here;
+that is each owner's edit, not the integrator's.
+
+**Dispatch record.** Findings 1–3 were implemented by codex-personal, which hit its usage limit
+after its third commit and before its report; the integrator ran its verification (79 campaign
+tests, the whole-directory diff against `744660d8`, both self-tests) and regenerated the MANIFEST
+its last commit left stale. Finding 4 was implemented by claude-school, which committed eight times
+(including this section's finding-4 text) before the dispatch's wall clock ended; the integrator
+ran the matrix on that branch and again on the integrated tip. Worker branches `w1r8-contract` and
+`w1r8-guard` remain local as provenance.
+
+**What this round did not do:** no receipt committed; no compute, scheduler or cluster contact; no
+ref deleted; `main` untouched; no OI-* row edited (OI-136's row still says the guard does not cross
+a subprocess boundary, and that sentence is now false in the direction of understatement); the
+`GIT_EDITOR` narrowing above is left untaken; LIVE-STATE.md not regenerated.
