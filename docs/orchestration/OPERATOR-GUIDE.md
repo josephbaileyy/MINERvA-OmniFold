@@ -104,16 +104,17 @@ the next ticker pass.
 directory is
 
 ```
-${MNV_CAMPAIGN_STATE_ROOT:-~/.mnv_campaign}/r5-20260902-0836139b/campaign-queue
+<passwd-home>/.mnv_campaign/r5-20260902-0836139b/campaign-queue
 ```
 
 where the middle component names this campaign: `20260902` is the ruling record's
 date and `0836139b` the first eight hex digits of its SHA-256. Every clone and
-linked worktree on the host resolves that same path, so the admission lock, the
-reservation inventory, the claims, and the outcomes are shared. It is a constant,
-not a digest recomputed per run: amending the decision record must not repoint the
-queue and orphan live claims, so re-deriving it is a commit that also migrates the
-directory.
+linked worktree owned by that UID on the host resolves that same path from the
+system passwd database, not from `$HOME` or another per-process setting. The
+admission lock, the reservation inventory, the claims, and the outcomes are
+shared. It is a constant, not a digest recomputed per run: amending the decision
+record must not repoint the queue and orphan live claims, so re-deriving it is a
+commit that also migrates the directory.
 
 **Compute is admissible only from that directory.** The R5 headroom check, the
 reservation inventory, the admission lock, and the claim are all properties of ONE
@@ -131,9 +132,15 @@ then, with the canonical directory still derived from the queue's repository, by
 `git clone`: a clone has the same commits, the same committed receipt, the same
 contracts and the same `HEAD`, so its ticker considered its own copy of the
 directory canonical and admitted against hours another checkout had already
-reserved. `MNV_CAMPAIGN_STATE_ROOT` exists so the test suite can give one host a
-temporary root; it is read from the environment every invocation, so it cannot
-give one checkout a queue of its own.
+reserved. `MNV_CAMPAIGN_STATE_ROOT` is retired and its presence refuses every
+queue operation rather than being ignored. An operator who set it expected it to
+change the queue, so silently proceeding would conceal a split-root
+misconfiguration.
+
+Admission is global per `(host, uid)`. Two different hosts or two different UIDs
+hold two queues; the committed receipt is the only cross-host object. Each claim
+and outcome records the resolved state directory, UID, and hostname so this
+boundary is explicit in the durable queue records.
 
 **An item records the absolute `repo_path` it was staged from**, and only a ticker
 in that repository runs it. Another checkout's item is skipped rather than

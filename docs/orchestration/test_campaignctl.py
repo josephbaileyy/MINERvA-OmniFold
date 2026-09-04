@@ -57,16 +57,15 @@ class CampaignQueueTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(prefix="campaign-queue-test.")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
-        # The canonical queue is a property of the HOST, not of a checkout, so the
-        # suite gives this host a temporary campaign root. Without the override every
-        # test would read the operator's real `~/.mnv_campaign`.
-        self.state_root = self.root / "campaign-state"
-        environment = mock.patch.dict(
-            os.environ,
-            {campaignctl.CAMPAIGN_STATE_ROOT_ENV: str(self.state_root)},
+        # Production derives the canonical root from the passwd database. Patch the
+        # one lookup seam so tests never read or write the operator's actual queue.
+        self.passwd_home = self.root / "passwd-home"
+        passwd_home = mock.patch.object(
+            campaignctl, "_passwd_home", return_value=self.passwd_home
         )
-        environment.start()
-        self.addCleanup(environment.stop)
+        passwd_home.start()
+        self.addCleanup(passwd_home.stop)
+        self.state_root = self.passwd_home / campaignctl.CAMPAIGN_STATE_ROOT_NAME
         self.repo = self.root / "repo"
         self.repo.mkdir()
         subprocess.run(["git", "-C", str(self.repo), "init", "-q"], check=True)
@@ -644,6 +643,15 @@ class CampaignQueueTests(unittest.TestCase):
         self.assertTrue(Path(outcome["producer_log"]).is_file())
         self.assertTrue(Path(outcome["validator_log"]).is_file())
         self.assertTrue(outcome["decision_consequence"])
+        expected_identity = {
+            "state_dir": str(self.queue.state),
+            "uid": os.getuid(),
+            "hostname": campaignctl.socket.gethostname(),
+        }
+        claim = campaignctl.read_object(self.queue.path("claims", item["id"]))
+        for field, expected in expected_identity.items():
+            self.assertEqual(claim[field], expected)
+            self.assertEqual(outcome[field], expected)
 
     def test_validator_failure_preserves_first_and_does_not_retrain(self) -> None:
         contract = self.write_contract(commit=True)
@@ -1730,62 +1738,75 @@ class CampaignQueueTests(unittest.TestCase):
             )
 
     def test_two_clones_cannot_both_admit_against_one_receipt(self) -> None:
-        """The reviewer's mutation: TWO CLONES of one repository, one receipt.
-
-        The canonical directory was derived from the queue's own repository, so a
-        clone -- same commits, same committed receipt, same contracts, same
-        ``HEAD`` -- got a canonical directory of its own and its ticker considered
-        that queue canonical. Two of them each took a lock nobody else could see,
-        each scanned an inventory the other was absent from, and each admitted a
-        six-hour item against 490 recorded hours: 502 against a ceiling of 500,
-        reached by cloning instead of by pointing ``--state-dir`` elsewhere. The
-        canonical directory is therefore a property of the HOST and the campaign,
-        and both checkouts resolve the same one.
-        """
+        """Two clones cannot split the queue with per-process root values."""
         receipt = self.install_receipt("near-gpu-ceiling")
-        alpha_contract = self.six_hour_contract("alpha")
-        # Cloned AFTER the receipt commit, so ONE committed receipt is evidence in
-        # both checkouts: nothing about the clone is second-class.
-        clone = self.clone_queue()
-        self.assertNotEqual(clone.repo, self.queue.repo)
-        self.assertEqual(clone.state, self.queue.state)
-        self.assertTrue(clone.state_is_canonical())
+        alpha_queue = self.clone_queue("alpha-clone")
+        beta_queue = self.clone_queue("beta-clone")
+        self.assertEqual(alpha_queue.state, beta_queue.state)
+        self.assertTrue(alpha_queue.state_is_canonical())
+        self.assertTrue(beta_queue.state_is_canonical())
         self.assertEqual(
-            json.loads((clone.repo / receipt).read_text()),
+            json.loads((alpha_queue.repo / receipt).read_text()),
+            json.loads((beta_queue.repo / receipt).read_text()),
+        )
+        self.assertEqual(
+            json.loads((alpha_queue.repo / receipt).read_text()),
             json.loads((self.repo / receipt).read_text()),
         )
 
-        alpha = self.stage("alpha", kind="compute", contract=alpha_contract)
-        self.approve(alpha)
+        # Both values formerly made their process's queue look canonical. Their
+        # presence now refuses operations on queues constructed before the value
+        # appeared, so setting one cannot silently redirect either process.
+        for queue, state_root in (
+            (alpha_queue, self.root / "split-alpha"),
+            (beta_queue, self.root / "split-beta"),
+        ):
+            with self.subTest(state_root=state_root):
+                with mock.patch.dict(
+                    os.environ,
+                    {
+                        campaignctl.PROHIBITED_CAMPAIGN_STATE_ROOT_ENV: str(
+                            state_root
+                        )
+                    },
+                ):
+                    with self.assertRaisesRegex(
+                        campaignctl.QueueError,
+                        campaignctl.PROHIBITED_CAMPAIGN_STATE_ROOT_ENV,
+                    ):
+                        campaignctl.summary(queue)
 
-        rc, outcome = self.run_ready(receipt)
+        alpha_contract = self.six_hour_contract("alpha", repo=alpha_queue.repo)
+        alpha = self.stage(
+            "alpha", kind="compute", contract=alpha_contract, queue=alpha_queue
+        )
+        self.approve(alpha, queue=alpha_queue)
+
+        with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": receipt}):
+            rc, outcome = campaignctl.run_ready(alpha_queue)
 
         self.assertEqual(
             (rc, outcome["status"], outcome["id"]), (0, "succeeded", "alpha")
         )
 
-        # Now the second checkout stages and approves its own six-hour item against
-        # the same 490 hours. Its contract is committed in the clone, because a
-        # contract's guard argv names its own checkout by absolute path.
-        beta_contract = self.six_hour_contract("beta", repo=clone.repo)
+        beta_contract = self.six_hour_contract("beta", repo=beta_queue.repo)
         beta = self.stage(
-            "beta", kind="compute", contract=beta_contract, queue=clone
+            "beta", kind="compute", contract=beta_contract, queue=beta_queue
         )
-        self.approve(beta, queue=clone)
+        self.approve(beta, queue=beta_queue)
 
         with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": receipt}):
-            rc_clone, outcome_clone = campaignctl.run_ready(clone)
+            rc_beta, outcome_beta = campaignctl.run_ready(beta_queue)
 
-        self.assertEqual((rc_clone, outcome_clone["status"]), (6, "refused"))
-        self.assertEqual(outcome_clone["id"], "beta")
+        self.assertEqual((rc_beta, outcome_beta["status"]), (6, "refused"))
+        self.assertEqual(outcome_beta["id"], "beta")
         self.assertIn(
-            "gpu_task_hours ceiling would be reached", outcome_clone["reason"]
+            "gpu_task_hours ceiling would be reached", outcome_beta["reason"]
         )
-        self.assertIn("490 + 6 + 6 >= 500", outcome_clone["reason"])
-        # The refusal names the reserver, which is an item in ANOTHER checkout.
-        self.assertIn("reserved by alpha", outcome_clone["reason"])
-        self.assertFalse(clone.path("claims", "beta").exists())
-        self.assertFalse((clone.repo / "validator-ran").exists())
+        self.assertIn("490 + 6 + 6 >= 500", outcome_beta["reason"])
+        self.assertIn("reserved by alpha", outcome_beta["reason"])
+        self.assertFalse(beta_queue.path("claims", "beta").exists())
+        self.assertFalse((beta_queue.repo / "validator-ran").exists())
         self.assertEqual(
             sorted(
                 path.stem for path in (self.queue.state / "claims").glob("*.json")
@@ -1879,15 +1900,13 @@ class CampaignQueueTests(unittest.TestCase):
         ):
             self.approve(self.queue.item("alpha"))
 
-    def test_the_campaign_state_root_must_be_absolute(self) -> None:
-        """A relative root resolves per working directory, which is a split queue."""
-        for value in ("", "   ", "relative/campaign-state"):
-            with self.subTest(value=value):
-                with mock.patch.dict(
-                    os.environ, {campaignctl.CAMPAIGN_STATE_ROOT_ENV: value}
-                ):
-                    with self.assertRaises(campaignctl.QueueError):
-                        campaignctl.canonical_state_dir()
+    def test_home_environment_cannot_change_the_passwd_state_root(self) -> None:
+        """A mutable process home must not be another spelling of a root override."""
+        with mock.patch.dict(os.environ, {"HOME": str(self.root / "other-home")}):
+            self.assertEqual(
+                campaignctl.campaign_state_root(),
+                self.passwd_home / campaignctl.CAMPAIGN_STATE_ROOT_NAME,
+            )
 
     def test_only_the_canonical_state_dir_can_admit_compute(self) -> None:
         """The earlier reviewer's mutation: two ``--state-dir`` values, one receipt.

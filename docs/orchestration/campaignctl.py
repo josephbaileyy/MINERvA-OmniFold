@@ -34,15 +34,18 @@ that item's task ids in the receipt, is therefore the reconciliation step.
 
 Because both the lock and that reservation inventory are properties of ONE
 queue, and a queue kept inside a checkout is one queue PER CHECKOUT, the
-canonical queue lives OUTSIDE every checkout at
-``${MNV_CAMPAIGN_STATE_ROOT:-~/.mnv_campaign}/<CAMPAIGN_KEY>/campaign-queue``.
-Every clone and linked worktree on the host resolves that same directory, so the
+canonical queue lives OUTSIDE every checkout at the passwd home directory's
+``.mnv_campaign/<CAMPAIGN_KEY>/campaign-queue``.  The passwd home is a function
+of the UID, not ``$HOME`` or another per-process setting, so every clone and
+linked worktree for that UID on the host resolves the same directory.  The
 admission lock, the reservation scan and the claims are shared: two clones can no
 longer each admit a six-hour item the other never counted.  Items record the
 absolute ``repo_path`` they were staged from, and a ticker runs only its own
 repository's items while every other item still RESERVES and is listed.  A queue
 pointed elsewhere by ``--state-dir`` may still stage, approve and run non-compute
-items, but it refuses compute admission.
+items, but it refuses compute admission.  Admission is global per (host, uid);
+two different hosts (or two different uids) hold two queues; the committed
+receipt is the only cross-host object.
 
 The receipt itself must be committed: an R5 measurement that lives only in a
 working tree, or in ``/tmp``, is not evidence and cannot authorize compute.  On
@@ -65,6 +68,7 @@ import json
 import math
 import os
 from pathlib import Path
+import pwd
 import re
 import socket
 import subprocess
@@ -76,19 +80,18 @@ from typing import Callable, Iterator, NamedTuple
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent.parent.resolve()
-#: Environment override for the host directory that holds the campaign's queue.  It
-#: exists so the suite can point one host at a temporary root; it is not a way to
-#: give a checkout a queue of its own, because the value is read once per process and
-#: every checkout on the host reads the same variable.
-CAMPAIGN_STATE_ROOT_ENV = "MNV_CAMPAIGN_STATE_ROOT"
-#: Default host root, OUTSIDE every checkout.  A queue kept under
+#: A former per-process root override split the queue when two processes supplied
+#: different values.  Its presence is now a refusal: silently ignoring a variable
+#: an operator expected to work would conceal the unsafe configuration.
+PROHIBITED_CAMPAIGN_STATE_ROOT_ENV = "MNV_CAMPAIGN_STATE_ROOT"
+#: Directory below the passwd database's home, OUTSIDE every checkout.  A queue kept under
 #: ``<repo>/docs/orchestration/state`` is one queue per clone and per linked worktree,
 #: which is how two "campaign-global" inventories came to exist on one host.  The
 #: directory name is spelled with an underscore on purpose: ``generate_manifest.py``
 #: reads a hyphen-joined campaign word appearing anywhere in a file as that file's
 #: campaign attribution (its ``CAMPAIGN_RE``), and a state directory must not
 #: fabricate one for this module, its tests or the operator guide.
-DEFAULT_CAMPAIGN_STATE_ROOT = Path("~/.mnv_campaign")
+CAMPAIGN_STATE_ROOT_NAME = ".mnv_campaign"
 #: Identity of the ONE campaign this queue serves, spelled so it cannot be confused
 #: with a neighbouring one: ``20260902`` is the ruling record's date and ``0836139b``
 #: the first eight hex digits of its sha256 --
@@ -290,35 +293,42 @@ class ReceiptAccounting(NamedTuple):
     metered_task_ids: frozenset[str]
 
 
+def _refuse_process_state_root() -> None:
+    """Refuse a legacy per-process root before it can split the queue."""
+    if PROHIBITED_CAMPAIGN_STATE_ROOT_ENV in os.environ:
+        raise QueueError(
+            f"{PROHIBITED_CAMPAIGN_STATE_ROOT_ENV} is forbidden: the campaign "
+            "state root is fixed by the passwd home for this uid"
+        )
+
+
+def _passwd_home() -> Path:
+    """Return this UID's home directory from the system passwd database."""
+    try:
+        return Path(pwd.getpwuid(os.getuid()).pw_dir)
+    except (KeyError, OSError) as exc:
+        raise QueueError(f"cannot resolve passwd home for uid {os.getuid()}") from exc
+
+
 def campaign_state_root() -> Path:
-    """Return the host directory that holds this campaign's queue.
+    """Return the UID-derived host directory that holds this campaign's queue.
 
     Returns
     -------
     Path
-        ``$MNV_CAMPAIGN_STATE_ROOT`` when set, otherwise ``~/.mnv_campaign``, with
-        ``~`` expanded.
+        The passwd database home for ``os.getuid()``, with ``.mnv_campaign``
+        appended.  ``$HOME`` is deliberately irrelevant because it is mutable per
+        process and could split the queue.
 
     Raises
     ------
     QueueError
-        If the override is empty or relative.  A relative root resolves against
-        the process working directory, so two tickers started from two checkouts
-        would silently hold two roots -- exactly the split this directory exists
-        to remove -- and the failure would look like an empty queue rather than
-        like a misconfiguration.
+        If the retired per-process root override is present or the passwd home
+        cannot be resolved.  Ignoring the retired variable would hide an operator
+        configuration that no longer has its expected effect.
     """
-    override = os.environ.get(CAMPAIGN_STATE_ROOT_ENV)
-    if override is None:
-        return DEFAULT_CAMPAIGN_STATE_ROOT.expanduser()
-    if not override.strip():
-        raise QueueError(f"{CAMPAIGN_STATE_ROOT_ENV} is set but empty")
-    root = Path(override).expanduser()
-    if not root.is_absolute():
-        raise QueueError(
-            f"{CAMPAIGN_STATE_ROOT_ENV} must be an absolute path, not {override}"
-        )
-    return root
+    _refuse_process_state_root()
+    return _passwd_home() / CAMPAIGN_STATE_ROOT_NAME
 
 
 def canonical_state_dir() -> Path:
@@ -709,9 +719,14 @@ class Queue:
         state: Path | None = None,
         clock: Callable[[], str] = utc_now,
     ) -> None:
+        _refuse_process_state_root()
         self.repo = repo.resolve()
         self.state = (canonical_state_dir() if state is None else state).resolve()
         self.clock = clock
+
+    def require_fixed_state_root(self) -> None:
+        """Refuse a per-process root added after this queue was constructed."""
+        _refuse_process_state_root()
 
     @property
     def canonical_state(self) -> Path:
@@ -721,6 +736,7 @@ class Queue:
         directory inside a checkout is one directory per clone and per linked
         worktree, and two of those each considered its own queue canonical.
         """
+        self.require_fixed_state_root()
         return canonical_state_dir()
 
     def state_is_canonical(self) -> bool:
@@ -735,9 +751,11 @@ class Queue:
             symlinked temporary root is recognised, and so a directory that merely
             looks similar is not.
         """
+        self.require_fixed_state_root()
         return self.state == self.canonical_state
 
     def path(self, family: str, item_id: str) -> Path:
+        self.require_fixed_state_root()
         validate_id(item_id)
         return self.state / family / f"{item_id}.json"
 
@@ -745,6 +763,7 @@ class Queue:
         return read_object(self.path("items", item_id))
 
     def items(self) -> list[dict]:
+        self.require_fixed_state_root()
         root = self.state / "items"
         if not root.is_dir():
             return []
@@ -1776,6 +1795,15 @@ def revoke(queue: Queue, item_id: str, interactive: bool = True) -> dict:
     return receipt
 
 
+def queue_record_identity(queue: Queue) -> dict[str, object]:
+    """Return the host and UID identity that delimit this queue's scope."""
+    return {
+        "state_dir": str(queue.state),
+        "uid": os.getuid(),
+        "hostname": socket.gethostname(),
+    }
+
+
 def release(
     queue: Queue, item_id: str, reason: str, interactive: bool = True
 ) -> dict:
@@ -1890,6 +1918,7 @@ def write_outcome(queue: Queue, item: dict, status: str, **extra: object) -> dic
         "proposal_digest": item["proposal_digest"],
         "status": status,
         OUTCOME_INSTANT_FIELD: queue.clock(),
+        **queue_record_identity(queue),
         **extra,
     }
     outcome_path = queue.path("outcomes", item["id"])
@@ -2455,6 +2484,7 @@ def admit(queue: Queue, item: dict) -> tuple[int, dict] | None:
                 "proposal_digest": item["proposal_digest"],
                 "claimed_at_utc": queue.clock(),
                 "owner": f"{socket.gethostname()}:{os.getpid()}",
+                **queue_record_identity(queue),
             }
             try:
                 atomic_json(queue.path("claims", item["id"]), claim, exclusive=True)
@@ -2507,9 +2537,9 @@ def run_ready(queue: Queue) -> tuple[int, dict]:
 def default_state_dir() -> Path:
     """Return the state directory a bare invocation uses.
 
-    Resolved per invocation rather than at import: the campaign root comes from
-    the environment, and a module-level default would freeze whatever was set
-    when this file was first imported.
+    ``CAMPAIGN_QUEUE_STATE_DIR`` may select a noncanonical queue for non-compute
+    work.  It cannot change the canonical root or make that queue eligible for
+    compute admission.
     """
     override = os.environ.get("CAMPAIGN_QUEUE_STATE_DIR")
     return Path(override) if override else canonical_state_dir()
@@ -2522,12 +2552,11 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help=(
             "queue state directory; defaults to $CAMPAIGN_QUEUE_STATE_DIR or the "
-            f"campaign-global ${CAMPAIGN_STATE_ROOT_ENV} (or "
-            f"{DEFAULT_CAMPAIGN_STATE_ROOT.as_posix()}) / {CAMPAIGN_KEY} / "
-            f"{QUEUE_DIRECTORY_NAME}, which is the ONLY directory that may admit "
-            "compute items, since the admission lock and the reservation "
-            "inventory are properties of that one directory for every checkout on "
-            "the host"
+            "campaign-global passwd home / "
+            f"{CAMPAIGN_STATE_ROOT_NAME} / {CAMPAIGN_KEY} / {QUEUE_DIRECTORY_NAME}, "
+            "which is the ONLY directory that may admit compute items, since the "
+            "admission lock and the reservation inventory are properties of that "
+            "one directory for every checkout owned by the uid on the host"
         ),
     )
     sub = parser.add_subparsers(dest="action", required=True)
