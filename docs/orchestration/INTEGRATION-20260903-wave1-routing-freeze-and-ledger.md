@@ -657,3 +657,104 @@ integrated tip. Worker branches `w1r9-contract` and `w1r9-guard` remain local as
 **What this round did not do:** no receipt committed; no push to `refs/campaign/*` at the real
 origin (the pin names it; nothing has been written there); no compute, scheduler or cluster
 contact; no ref deleted; `main` untouched; no OI-* row edited; LIVE-STATE.md not regenerated.
+
+## 14. Reviewer round 8 (2026-09-04) — verdict BLOCK on `9c2969fa`, and what this revision changed
+
+`9c2969fa` is **withdrawn**. Round 8 carried two findings, and they are the narrowest of the eight
+rounds: a configuration asymmetry in the queue's push destination, and a coverage claim in §13 that
+the guard's public-API enumeration did not support.
+
+**§13 is corrected, not merely extended.** Its residual paragraph was written as exhaustive
+("stated exactly and no wider"), and residual (4) said an admitted Python child is guarded by the
+shim and these hooks in turn. The reviewer reached the kernel below the enumerated primitives —
+`_posixsubprocess.fork_exec` directly, and `multiprocessing.set_executable`, which is public API —
+and a `python3 -I` child ran with no refusal and no record. Residual (4) as written implied
+coverage the code did not have. It is replaced below, and the layer it names is now hooked.
+
+| reviewer BLOCK | resolution | commit | proof |
+|---|---|---|---|
+| **the push destination is not the pinned one** (`GIT_CONFIG_COUNT`, `GIT_CONFIG_PARAMETERS`, `GIT_CONFIG_GLOBAL` each landed the lease-protected push in a second bare repository while `ls-remote` and `fetch` still answered from the pin; `stage()` returned success and the pinned origin's queue ref did not exist afterwards) | the asymmetry is closed at both ends. **The environment:** every git invocation the module makes runs with `GIT_INJECTING_ENVIRONMENT` removed — the six configuration-injecting names, the numbered `GIT_CONFIG_KEY_*`/`GIT_CONFIG_VALUE_*` half by pattern because it cannot be enumerated, and the ten program-selecting names the guard lane already refuses — and with `GIT_CONFIG_GLOBAL=/dev/null` and `GIT_CONFIG_NOSYSTEM=1` **set**, so only repository-local configuration applies, which is the one scope the destination check can enumerate. **The destination:** `QueueSync` reads both `git remote get-url origin` and `git remote get-url --push origin` **in the scratch bare repository that actually pushes**, and refuses unless both normalise equal to the pin; it refuses any key under `remote.origin.*` or `url.*` that the queue did not itself write (a namespace rule, not a list, so a key git adds later cannot slip through), and `core.hookspath`, `core.sshcommand`, and a `!`-spelled `credential.helper` outright; the push goes to the literal pinned URL rather than to the remote name, and the admission log records the resolved push destination beside `origin_url` | `08d184ea`, `a8ebd393`, `95c0976c` | each of the three environment vectors and both configuration routes measured against a diverted second origin, with a no-injection control that lands on the pinned origin and a positive control proving the injection really diverts an unsanitised push; the diverted repository holds no refs afterwards; campaign suite 98 passed (+36 subtests), was 91 |
+
+**One deliberate departure from the integrator's brief, and it matches the reviewer's own remedy.**
+The brief said the three environment vectors must *refuse on presence*. The lane made them **inert**
+instead, and it is right: git **exports** `GIT_CONFIG_PARAMETERS` to its hooks, and campaignctl is a
+supported hook invocation, so refusing on presence would refuse every correct run from a hook — the
+same reason `GIT_REDIRECTING_ENVIRONMENT` has always cleared `GIT_DIR` rather than refusing it. The
+reviewer's stated remedy was to add the family to that clearing set, which is what was done. The
+"must refuse" half is measured on the two routes clearing cannot reach: a `pushurl` written into the
+scratch repository behind the queue's back, and a checkout whose own config sets one. Measured
+separately, either layer catches all three vectors without the other.
+
+**An operational consequence, reported rather than smoothed over.** `~/.gitconfig` and
+`/etc/gitconfig` are now invisible to campaignctl, and the pinned origin is an `https://` URL. If a
+ticker host's credentials come from a **global** helper (the macOS keychain, the `gh` helper), its
+first unattended tick will refuse with `campaign origin is unreachable` rather than authenticate.
+That is fail-closed and correct, and the remedy is in OPERATOR-GUIDE — a non-`!` helper in the
+queue's own local config, or an SSH identity with `BatchMode` in `~/.ssh/config` — but **it must be
+done on each ticker host before the first unattended tick**, and this lane could not verify which
+mechanism the Perlmutter checkout uses.
+
+| reviewer BLOCK | resolution | commit | proof |
+|---|---|---|---|
+| **the record claims coverage the code does not have** (`_posixsubprocess.fork_exec` and `multiprocessing.set_executable` both started a `python3 -I` child with no refusal and no record, while the reviewer's controls through `subprocess.run`, `os.posix_spawn` and `executable=` all refused) | **the floor is hooked, so coverage stops being an enumeration of public APIs.** `_posixsubprocess.fork_exec` is wrapped in **both** bindings CPython gives it — the module attribute that `multiprocessing.util.spawnv_passfds` calls, and the `_fork_exec` alias `subprocess` binds at import, which rebinding the first does not touch — so `subprocess.Popen`, multiprocessing's spawn **and** forkserver, `concurrent.futures` and a direct caller are all scanned with the executable and argv they pass. `multiprocessing.set_executable` is classified where the choice is made. A covering search of each interpreter's stdlib finds `fork_exec` named in exactly two files, both hooked; a floor around a floor is a no-op by marker | `37e05a84`, `a31ab5f6` | both reproducers inverted (exit 3, refusal reason, record, sentinel absent); the reviewer's three controls unchanged; every start method and `ProcessPoolExecutor` still runs with a depth-1 guarded-child record; the four argument positions re-derived in the test by parsing `Popen._execute_child`'s own callsite; identical on 3.11, 3.12 and 3.13 |
+| *(integrator finding on that work, not the reviewer's)* **the new approval ticket was keyed on the argv alone** — round 8's own lesson is that the argv is not the executable, and the ticket's docstring claimed a `preexec_fn` launch "does not match and is scanned", which is false whenever the argv is the same | the approval is keyed on **`(argv, realpath of the resolved file)`**, computed by one function at every issue and consume site so the two halves cannot drift, with `None` matching only an equally unnameable file and never acting as a wildcard; `preexec_fn` is refused outright at the `Popen` hook with its own reason | `9d14e7c0` | the gap reproduced as a regression test and **proven load-bearing by reverting each half separately**: with the argv-only key restored the callback test goes red printing `HIJACK-LOADED WRONG TREE`, and with the `preexec_fn` check removed only its own test goes red; the reproducer uses `stdout.fileno()`, which `Popen._get_handles` calls inside the window in the same thread, rather than a `preexec_fn` that the new refusal would catch first and so would have measured the wrong half; no launcher in the repository passes `preexec_fn`, measured over tracked and untracked files, and a census arm goes red if one grows |
+
+**Residual (4) replaced, and this is the correction §13 needed.** It now reads: an admitted Python
+child is guarded by the shim and these hooks in turn **down to `_posixsubprocess.fork_exec`, the
+last Python-visible layer before the kernel on POSIX**; what remains is a caller that reaches the
+kernel without that layer — `ctypes` or `cffi` calling `execve`/`posix_spawn` in libc directly, a C
+extension doing the same, or a rebuilt interpreter whose `_posixsubprocess` is not the module object
+this process patched. That is named and not covered, and it is **measured rather than asserted**: a
+test runs a `ctypes` `execve` of `python3 -I` and pins that it succeeds. Residuals (1) to (3) are
+unchanged. Four residuals, not five.
+
+### 14.1 Proposed tip, revised
+
+The last commit of `wave1-integration-20260903` as force-pushed after this record. Verified there,
+clean worktree, macOS default `TMPDIR`:
+
+| check | result |
+|---|---|
+| pre-commit hook | 12 checks passed |
+| `generate_manifest.py --check --committed-only` | OK, fixed point, 727 rows |
+| control-plane and R5 meter self-tests | PASS, PASS |
+| `probe-oi136-sys-path-hijack-20260826.py` | exit 0; FAIL-OPEN SET exactly 9 |
+| `verify_hash_bindings.py` | ALL BINDINGS INTACT |
+| nine-suite matrix on 3.11 | 500 passed, 1 skipped, 985 subtests, 1 failed — `test_site_packages_is_still_ignored_and_absent`, the same `uv` artefact recorded in §12.1 and §13.1 (empty `site-packages` in the ephemeral build environment; passes under the system interpreter) |
+| `docs/orchestration` whole-directory run | the same 40 environment-dependent failures and errors as at `744660d8`, `656ff895` and `9c2969fa`; none new, none fixed |
+| `generate_live_state.py --check-freshness` | STALE — deliberate; the OI-73 owner hold stands |
+
+**Dispatch record.** Both round-8 pieces ran on claude-school in parallel off `9c2969fa`, detached.
+Both reported cleanly this time. The integrator then read the guard lane's new approval ticket,
+found the argv-only key described above, and dispatched a third, narrow piece to the same lane;
+that fix and its load-bearing proof are `9d14e7c0`. Worker branches `w1r10-contract` and
+`w1r10-guard` remain local as provenance.
+
+**What this round did not do:** no receipt committed; nothing pushed to `refs/campaign/*` at the
+real origin (`ls-remote` still shows none); no compute, scheduler or cluster contact; no ref
+deleted; `main` untouched; no OI-* row edited; LIVE-STATE.md not regenerated.
+
+### 14.2 What the next round should grade against
+
+Eight rounds have moved from missing mechanism (no meter, no atomic admission, no shell coverage)
+to replaced models (restricted bash, the origin-ref lease) to, in this round, one configuration
+asymmetry and one private C primitive. Each remaining finding has been smaller and deeper in the
+interpreter than the last, and the next one down is `ctypes`, which residual (4) now names and
+measures rather than claims.
+
+That is convergence, but the criterion the rounds are graded against has no floor: an in-process
+adversary who declines every Python-visible API can always reach lower. This lane therefore
+proposes, and does **not** assume, the boundary the next verdict should be given against:
+
+* **In scope, and expected to hold absolutely:** a cooperating launcher that reaches a wrong tree,
+  a wrong interpreter or an unaccounted spend through any documented or ordinarily-used route —
+  every public launch API, every shell spelling, the scheduler clients, and the whole of the
+  queue's accounting.
+* **Out of scope, by declaration and recorded as residuals (1) to (4):** code inside an already
+  guarded process that deliberately bypasses the interpreter to reach the kernel (`ctypes`, `cffi`,
+  a C extension, a rebuilt interpreter), and files rather than argv on a trusted system prefix (a
+  tampered prefix, a repository-local `.git` configuration).
+
+The lane asks the reviewer to grade the next revision against that boundary and to say plainly
+either that it is met, or which specific route the boundary must still be widened to cover. The
+remaining hardening below that line belongs to OI-136's owner and its row, not to this integration.
