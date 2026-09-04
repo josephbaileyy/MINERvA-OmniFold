@@ -2866,6 +2866,151 @@ class TheLaunchGrammarIsParsedAndFailsClosed(unittest.TestCase):
                          [["python3", "-I", "y.py"]])
 
 
+class TheGitAllowlistIsMEASUREDAgainstWhatThisRepoActuallyRuns(unittest.TestCase):
+    """THE CENSUS OF EVERY `git` SPELLING IN NON-TEST CODE, WITH THE SITE THAT WRITES IT.
+
+    WHY A COMMITTED TABLE AND NOT A DERIVATION. An allowlist checked against itself cannot disagree
+    with itself; the population here comes from the PRODUCERS -- a grep of `subprocess` over
+    non-test `nd-unfolding/` and `docs/orchestration/` on 2026-09-04 at `397a2cef` -- so the table
+    is evidence about the repository rather than a restatement of `_GIT_READ_ONLY_SUBCOMMANDS`.
+
+    AND THE REFUSED HALF IS THE POINT OF KEEPING IT. Twelve of the fifty-nine spellings this
+    repository writes are REFUSED by the rule: seven `git show`, three `git diff`/`git log` without
+    `--no-ext-diff`, and one `git config user.name`. That is a real cost and it is recorded as a
+    LIVE ASSERTION rather than as prose in a commit message, so:
+
+      * widening the allowlist to admit one of them turns this table red and forces the row to be
+        moved deliberately rather than absorbed;
+      * and nobody has to re-derive the list from memory to know what the closure costs.
+
+    NONE OF THE TWELVE IS REACHED FROM A GUARDED PROCESS IN THE SIX-SUITE MATRIX -- measured, all
+    382 tests passing -- because the launchers route the guard at science entrypoints and run these
+    provenance tools outside it (ruling 21's preflight exclusion). "Not reached today" is not "safe
+    to reach", which is why the sites are named.
+    """
+
+    #: (site, argv after `git`) -- admitted.
+    ADMITTED = (
+        ("nd-unfolding/tools_p4_sweep_pipeline_rc.py:31", ["ls-files", "*.sh"]),
+        ("nd-unfolding/receipt_construction_contract_5d.py:218", ["rev-parse", "HEAD"]),
+        ("nd-unfolding/receipt_construction_contract_5d.py:219", ["status", "--porcelain"]),
+        ("nd-unfolding/p4_check_verifier_token.py:94", ["ls-files", "--error-unmatch", "f"]),
+        ("nd-unfolding/p4_check_verifier_token.py:97", ["rev-parse", "HEAD:f"]),
+        ("nd-unfolding/p4_check_verifier_token.py:98", ["hash-object", "f"]),
+        ("nd-unfolding/seed_offset_policy.py:420",
+         ["-C", "/repo", "ls-files", "*.sh", "**/*.sh"]),
+        ("nd-unfolding/p4_evidence.py:280", ["hash-object", "f"]),
+        ("nd-unfolding/p4_evidence.py:295", ["rev-parse", "abc:f"]),
+        ("nd-unfolding/pet/check_canonical_designation.py:402", ["-C", "/repo", "ls-files"]),
+        ("nd-unfolding/pet/acceptance_map_fullevent_fps.py:130",
+         ["rev-parse", "--short", "HEAD"]),
+        ("nd-unfolding/pet/verify_executing_copy_is_committed.py:97",
+         ["-C", "/repo", "rev-parse", "--git-dir"]),
+        ("nd-unfolding/pet/verify_executing_copy_is_committed.py:110",
+         ["-C", "/repo", "cat-file", "-e", "oid^{blob}"]),
+        ("nd-unfolding/pet/ff_revision_gate.py:79",
+         ["-C", "/repo", "cat-file", "-e", "r^{commit}"]),
+        ("nd-unfolding/mnv_source_manifest.py:95", ["-C", "/repo", "ls-files", "-z"]),
+        ("nd-unfolding/mnv_source_manifest.py:120", ["-C", "/repo", "status", "--porcelain"]),
+        ("nd-unfolding/p4_lib.py:542", ["ls-files"]),
+        ("nd-unfolding/p4_lib.py:945", ["ls-tree", "-r", "--name-only", "rev"]),
+        ("nd-unfolding/p4_lib.py:1012", ["hash-object", "--", "p"]),
+        ("nd-unfolding/p4_lib.py:1036", ["merge-base", "--is-ancestor", "a", "b"]),
+        ("docs/orchestration/measure_m1_m6.py:179",
+         ["-C", "/repo", "symbolic-ref", "--quiet", "--short", "HEAD"]),
+        ("docs/orchestration/measure_m1_m6.py:198",
+         ["-C", "/repo", "rev-list", "--left-right", "--count", "a...HEAD"]),
+        ("docs/orchestration/control_plane_lint.py:230",
+         ["-C", "/repo", "ls-files", "-z", "--", "a"]),
+        ("docs/orchestration/verify_hash_bindings.py:476", ["-C", "/repo", "ls-files", "-z"]),
+        ("docs/orchestration/verify_ben_citations.py:98", ["ls-files", "*.py", "*.sh"]),
+        ("docs/orchestration/campaignctl.py:755", ["-C", "/repo", "rev-parse", "HEAD"]),
+        ("docs/orchestration/agentctl.py:135",
+         ["-C", "/repo", "rev-parse", "--is-inside-work-tree"]),
+        ("docs/orchestration/agentctl.py:146",
+         ["-C", "/repo", "status", "--porcelain", "--untracked-files=all"]),
+        ("docs/orchestration/generate_manifest.py:55", ["ls-files"]),
+        ("docs/orchestration/verify_receipt_artifacts.py:66", ["rev-parse", "--show-toplevel"]),
+        ("docs/orchestration/verify_receipt_artifacts.py:115",
+         ["ls-tree", "-r", "rev", "--name-only"]),
+        ("docs/orchestration/verify_receipt_artifacts.py:156",
+         ["rev-parse", "--verify", "--quiet", "rev"]),
+        ("docs/orchestration/generate_live_state.py:1330", ["status", "--short"]),
+        ("docs/orchestration/state/gen_manifest_run_bound_addendum.py:171",
+         ["-C", "/repo", "rev-parse", "HEAD"]),
+    )
+
+    #: (site, argv after `git`, the phrase the refusal must name) -- REFUSED, and left refused.
+    REFUSED_REAL_LAUNCHERS = (
+        ("nd-unfolding/p4_evidence.py:291", ["log", "--format=%H", "--", "f"], "--no-ext-diff"),
+        ("nd-unfolding/pet/verify_executing_copy_is_committed.py:126",
+         ["-C", "/repo", "log", "--all", "--oneline", "--no-abbrev-commit", "--find-object=oid"],
+         "--no-ext-diff"),
+        ("nd-unfolding/pet/ff_revision_gate.py:106", ["-C", "/repo", "show", "r:f"],
+         "--no-ext-diff"),
+        ("docs/orchestration/verify_ben_citations.py:142", ["show", "tag:f"], "--no-ext-diff"),
+        ("docs/orchestration/campaignctl.py:770", ["-C", "/repo", "show", "HEAD:f"],
+         "--no-ext-diff"),
+        ("docs/orchestration/state/verify_manifest_precedes_artifacts.py:52",
+         ["-C", "/repo", "show", "-s", "--format=%ct", "sha"], "--no-ext-diff"),
+        ("docs/orchestration/verify_receipt_artifacts.py:119", ["show", "rev:f"],
+         "--no-ext-diff"),
+        ("docs/orchestration/whose_row.py:509", ["config", "user.name"], "git config"),
+        ("docs/orchestration/whose_row.py:544", ["show", "HEAD:f"], "--no-ext-diff"),
+        ("docs/orchestration/whose_row.py:787",
+         ["-C", "/repo", "diff", "--name-only", "--diff-filter=U"], "--no-ext-diff"),
+        ("docs/orchestration/live_doc_indexed.py:98",
+         ["diff", "--cached", "--name-status"], "--no-ext-diff"),
+        ("docs/orchestration/live_doc_indexed.py:103", ["show", ":OVERRIDES"], "--no-ext-diff"),
+    )
+
+    def clean(self):
+        return {k: v for k, v in os.environ.items()
+                if k not in mgr._GIT_EXTERNAL_PROGRAM_ENV_VARS}
+
+    def test_every_git_spelling_this_repo_writes_is_admitted_or_LISTED_as_refused(self):
+        for site, arguments in self.ADMITTED:
+            with self.subTest(site=site, git=" ".join(arguments)):
+                mgr._scan_git(["git", *arguments], self.clean(), "/usr/bin/git")
+        for site, arguments, phrase in self.REFUSED_REAL_LAUNCHERS:
+            with self.subTest(site=site, git=" ".join(arguments)):
+                with self.assertRaises(mgr._LaunchRefusal) as caught:
+                    mgr._scan_git(["git", *arguments], self.clean(), "/usr/bin/git")
+                self.assertEqual(caught.exception.reason, mgr.LAUNCH_REASON_UNPROVEN)
+                self.assertIn(phrase, caught.exception.offending)
+
+    def test_the_census_covers_both_directions_and_neither_half_is_empty(self):
+        """Power arm. A table with an empty half would make the test above vacuous in that
+        direction -- and the refused half is the one a later widening would silently empty."""
+        self.assertGreaterEqual(len(self.ADMITTED), 30)
+        self.assertEqual(len(self.REFUSED_REAL_LAUNCHERS), 12)
+        sites = [site for site, *_ in self.ADMITTED] + \
+                [site for site, *_ in self.REFUSED_REAL_LAUNCHERS]
+        for site in sites:
+            path = site.rsplit(":", 1)[0]
+            self.assertTrue((REPO / path).is_file(),
+                            f"{site} no longer exists; re-measure the census rather than "
+                            f"deleting the row")
+
+    def test_a_hostile_GIT_variable_refuses_an_otherwise_admitted_spelling(self):
+        """The environment half, which an argv allowlist is worth nothing without.
+
+        `GIT_EXTERNAL_DIFF` alone turns `git diff-tree` into a launcher of an arbitrary program, so
+        each of the eleven variables is checked BEFORE the subcommand -- and the arm below shows the
+        same `git rev-parse HEAD` that the census admits being refused because of one of them.
+        """
+        for name in mgr._GIT_EXTERNAL_PROGRAM_ENV_VARS:
+            with self.subTest(variable=name):
+                environment = dict(self.clean(), **{name: "/tmp/anything"})
+                with self.assertRaises(mgr._LaunchRefusal) as caught:
+                    mgr._scan_git(["git", "rev-parse", "HEAD"], environment, "/usr/bin/git")
+                self.assertIn(name, caught.exception.offending)
+                # An EMPTY value is not a program: the silent direction, so the check has power
+                # rather than firing on the variable's mere existence.
+                mgr._scan_git(["git", "rev-parse", "HEAD"],
+                              dict(self.clean(), **{name: ""}), "/usr/bin/git")
+
+
 class ThePathWrapperAndItsScannerAreCalledDIRECTLY(unittest.TestCase):
     """The PATH wrapper and `scan_argv.py` as UNITS, not only through a bash child.
 
