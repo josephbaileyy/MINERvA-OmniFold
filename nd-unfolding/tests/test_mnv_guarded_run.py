@@ -3223,6 +3223,797 @@ class TheRecordSaysWHICHShellRanAndWHICHBytesEnforced(Round7Fixture):
         self.assertEqual(bound, declared)
 
 
+class Round8Fixture(Round7Fixture):
+    """Round 7's fixture, unchanged, plus what round 8's two reproducers need.
+
+    IT REUSES ROUND 7's SHAPE FOR THE REASON ROUND 7 REUSED ROUND 6's: the defect is the same class
+    -- an unscanned `python3 -I` reaching a foreign tree -- so an arm that passed there and fails
+    here has to differ in the LAYER it was reached through and not in the scaffolding.
+
+    THE `fork_exec` ARGUMENT LIST IS SPELLED ONCE, HERE, AND IT IS THE ONE `multiprocessing` USES.
+    `_posixsubprocess.fork_exec` takes no keyword arguments, so a reproducer has to pass all
+    twenty-three positionally; copying `multiprocessing.util.spawnv_passfds`'s own call rather than
+    inventing one is what makes this a fixture built from the PRODUCER. If CPython changes the
+    arity, this call raises `TypeError` from the C function and
+    `test_the_floor_reads_the_positions_THIS_INTERPRETERS_OWN_CALLSITE_PASSES` says which position
+    moved.
+    """
+
+    #: Positions 0, 1, 4 and 5 are the argv, the candidate executables, the cwd and the environment
+    #: -- the four this guard reads. The rest are fds, signal and credential settings that no scan
+    #: looks at, spelled exactly as `spawnv_passfds` spells them.
+    FORK_EXEC_CALL = (
+        "    argv, [os.fsencode(EXE)], True, (errpipe_write,), None, env_list,\n"
+        "    -1, -1, -1, -1, -1, -1, errpipe_read, errpipe_write,\n"
+        "    False, False, -1, None, None, None, -1, None, False)\n"
+    )
+
+    def fork_exec_parent(self, name: str, binding: str, *, argv: str = "[EXE, '-I', CHILD]",
+                         env_list: str = None, child: str = None):
+        """A parent that calls `fork_exec` DIRECTLY through `binding`, visiting no public API.
+
+        `binding` is `_posixsubprocess.fork_exec` or `subprocess._fork_exec` -- two SEPARATE names
+        for one C function, because `subprocess` binds its own with
+        `from _posixsubprocess import fork_exec as _fork_exec`. A guard that patched only the module
+        attribute would leave `subprocess.Popen` on the unpatched path, so each is a row.
+        """
+        if child is None:
+            child_path, sentinel = self.hijacking_child(f"{name}_child")
+        else:
+            child_path, sentinel = pathlib.Path(child), None
+        if env_list is None:
+            env_list = ("[os.fsencode(k) + b'=' + os.fsencode(v) "
+                        "for k, v in os.environ.items()]")
+        parent = write(
+            self.nd / f"parent_{name}.py",
+            "import os, subprocess, sys, _posixsubprocess\n"
+            f"EXE = sys.executable\n"
+            f"CHILD = {str(child_path)!r}\n"
+            f"argv = {argv}\n"
+            f"env_list = {env_list}\n"
+            "errpipe_read, errpipe_write = os.pipe()\n"
+            f"pid = {binding}(\n"
+            + self.FORK_EXEC_CALL +
+            "os.close(errpipe_write)\n"
+            "os.close(errpipe_read)\n"
+            "_, status = os.waitpid(pid, 0)\n"
+            "print('FORK-EXEC-EXIT', os.waitstatus_to_exitcode(status))\n")
+        return parent, sentinel
+
+    def assertAdmittedWithAGuardedChild(self, result, expected_stdout: str):
+        """Exit 0, the child's own output, no launch refusal, and a depth-1 record from the child.
+
+        THE DEPTH-1 RECORD IS THE ASSERTION THAT MATTERS. Exit 0 with only the parent's record would
+        also be what an admitted-but-UNGUARDED child produces, which is the reviewer's finding in
+        the silent direction; a record at depth 1 is a second interpreter that installed this guard
+        and said so.
+        """
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn(expected_stdout, result.stdout)
+        self.assertNotIn("[oi136 launch]", result.stderr)
+        records = self.records()
+        self.assertIn(1, [record["depth"] for record in records],
+                      "no record at depth 1: the child ran without installing the guard")
+        for record in records:
+            if record["depth"] == 1:
+                self.assertIsNotNone(record["propagated_from"], record)
+                self.assertEqual(record["propagation"], "armed", record)
+            self.assertIsNone(record["launch_refusal"], record)
+
+
+class TheKernelFloorIsHookedAndTheResidualIsBelowIt(Round8Fixture):
+    """ROUND 8: coverage enumerated by PUBLIC API is not coverage, so the floor is hooked.
+
+    THE FINDING VERBATIM: "The finding-1 fix enumerates coverage by public API. I reached the kernel
+    outside it, signature unchanged: `_posixsubprocess.fork_exec -> python3 -I <hijacking child>`:
+    ran; sentinel present, HIJACK-LOADED printed, no refusal, no record.
+    `multiprocessing.set_executable` (public API): an executable of the launcher's choosing ran, no
+    scan, no record. Controls: same argv via `subprocess.run`, `os.posix_spawn`,
+    `executable=sys.executable`: all exit 3, python-startup-flags-bypass-the-shim, sentinel absent.
+    ... the uncovered case is the one where -I drops site, so there is no shim to fall back on --
+    the exact defect finding 1 closed for the public primitives."
+
+    THE TWO HALVES OF THE FINDING ARE NOT THE SAME KIND OF THING and the fix treats them
+    differently, which the reviewer priced honestly and this class keeps. A direct `fork_exec` call
+    is adversarial-only, and what it demands is a FLOOR: hook the last Python-visible layer, in both
+    of the bindings CPython gives it, so that no list of public primitives is the boundary.
+    `multiprocessing.set_executable` is public API a launcher may reasonably reach for, so beside
+    the floor it is classified WHERE THE CHOICE IS MADE, with the chosen file named.
+
+    AND THE RESIDUAL IS RESTATED AS WHAT IS ACTUALLY LEFT: a caller that reaches the kernel without
+    that layer at all. That one is measured here as a run that SUCCEEDS -- see
+    `test_a_ctypes_execve_of_an_isolated_interpreter_IS_THE_DECLARED_RESIDUAL` -- because a residual
+    nobody demonstrated is a residual nobody can size.
+    """
+
+    # ---- the reviewer's first reproducer, in both bindings ----------------------------------
+
+    FORK_EXEC_BINDINGS = {
+        "_posixsubprocess.fork_exec": "_posixsubprocess.fork_exec",
+        "subprocess._fork_exec": "subprocess._fork_exec",
+    }
+
+    def test_a_DIRECT_fork_exec_of_an_isolated_interpreter_is_REFUSED_in_both_bindings(self):
+        """THE REPRODUCER. `fork_exec(argv=[python, '-I', child], ...)` from a guarded parent.
+
+        BOTH BINDINGS ARE ROWS BECAUSE THEY ARE TWO NAMES. `subprocess` holds its own reference,
+        made once at import by `from _posixsubprocess import fork_exec as _fork_exec`, and that is
+        the one `Popen._execute_child` calls -- so a guard that rebound only the module attribute
+        would have refused a direct call and left `subprocess` itself on the unpatched path.
+        """
+        for name, binding in self.FORK_EXEC_BINDINGS.items():
+            with self.subTest(binding=name):
+                self.inventory.unlink(missing_ok=True)
+                parent, sentinel = self.fork_exec_parent(
+                    f"fe_{name.replace('.', '_')}", binding)
+                record = self.assertRefusedStatically(
+                    self.guarded(parent), sentinel, mgr.LAUNCH_REASON_FLAGS, "-I")
+                self.assertNotIn("FORK-EXEC-EXIT", self.guarded(parent).stdout,
+                                 "the parent got past the call, so nothing was refused")
+                self.assertEqual(record["declared_gap"], mgr.DECLARED_GAP)
+
+    def test_the_floor_scans_multiprocessings_OWN_launcher_which_is_how_forkserver_is_covered(self):
+        """`multiprocessing.util.spawnv_passfds` is the function `forkserver` launches through.
+
+        WHY THIS ARM IS THE FORKSERVER'S COVERAGE. `ForkServer.ensure_running` builds
+        `[exe] + interpreter flags + ['-c', cmd]` and hands it to `util.spawnv_passfds`, which calls
+        `_posixsubprocess.fork_exec` -- so the forkserver's launch is not a separate boundary, it is
+        a caller of the one this class hooks. Both halves of that are measured rather than asserted:
+        the composition is read out of THIS interpreter's own `multiprocessing` source below, and
+        the refusal is measured here by handing `spawnv_passfds` the reviewer's argv directly.
+        """
+        import inspect
+        import multiprocessing.forkserver
+        import multiprocessing.util
+        forkserver_source = inspect.getsource(multiprocessing.forkserver)
+        self.assertIn("util.spawnv_passfds(", forkserver_source,
+                      "forkserver no longer launches through spawnv_passfds, so this arm no "
+                      "longer measures the forkserver's coverage")
+        self.assertIn("_posixsubprocess.fork_exec(",
+                      inspect.getsource(multiprocessing.util.spawnv_passfds),
+                      "spawnv_passfds no longer calls fork_exec, so the floor is no longer under "
+                      "it")
+        child, sentinel = self.hijacking_child("mp_launcher_child")
+        parent = write(
+            self.nd / "parent_mp_launcher.py",
+            "import os, sys, multiprocessing.util as mu\n"
+            f"pid = mu.spawnv_passfds(os.fsencode(sys.executable),\n"
+            f"    [sys.executable, '-I', {str(child)!r}], ())\n"
+            "os.waitpid(pid, 0)\n"
+            "print('SPAWNV-PASSFDS-RETURNED')\n")
+        self.assertRefusedStatically(self.guarded(parent), sentinel,
+                                     mgr.LAUNCH_REASON_FLAGS, "-I")
+
+    # ---- the reviewer's second reproducer: multiprocessing.set_executable --------------------
+
+    def test_set_executable_to_a_NON_PYTHON_is_refused_WHERE_THE_CHOICE_IS_MADE(self):
+        """The reviewer's public-API half: an executable of the launcher's choosing used to run.
+
+        `set_executable` names the file every `spawn` and `forkserver` child is exec'd from, and
+        `multiprocessing` then appends its OWN argv (`-c 'from multiprocessing.spawn import
+        spawn_main; ...'`). So the file must be a Python interpreter, and this `.sh` -- whose body
+        is a `touch` this guard would happily admit inside a shell script -- is refused for what it
+        is being asked to be, at the line that chose it, with the chosen path named.
+        """
+        sentinel = self.tmp / "non-python-executable-ran"
+        chosen = write(self.nd / "chosen_exec.sh", f"#!/bin/sh\ntouch {sentinel}\n")
+        chosen.chmod(0o755)
+        parent = write(
+            self.nd / "parent_setexec_nonpython.py",
+            "import multiprocessing\n"
+            f"multiprocessing.set_executable({str(chosen)!r})\n"
+            "def work():\n"
+            "    pass\n"
+            "if __name__ == '__main__':\n"
+            "    proc = multiprocessing.get_context('spawn').Process(target=work)\n"
+            "    proc.start()\n"
+            "    proc.join()\n"
+            "    print('SETEXEC-EXIT', proc.exitcode)\n")
+        record = self.assertRefusedStatically(self.guarded(parent), sentinel,
+                                              mgr.LAUNCH_REASON_UNPROVEN, "set_executable")
+        self.assertIn(str(chosen), record["launch_refusal"]["offending_flag"])
+        self.assertEqual(record["launch_refusal"]["executable"], str(chosen.resolve()))
+
+    def test_set_executable_to_A_PYTHON_WITH_dash_I_is_refused_and_names_the_FLAG(self):
+        """The second arm of the same finding: the chosen file IS Python, and it isolates.
+
+        A `#!<python> -I` file is the spelling that makes `set_executable` reach `-I` without a
+        launcher writing `-I` anywhere -- multiprocessing builds the argv, so the flag has to come
+        from the file. The refusal is the FLAG refusal and not the set_executable one, which is the
+        only evidence that the shebang was read rather than the name trusted.
+        """
+        chosen = write(self.nd / "python_isolated_shim", f"#!{sys.executable} -I\n")
+        chosen.chmod(0o755)
+        sentinel = self.tmp / "isolated-shim-child-ran"
+        parent = write(
+            self.nd / "parent_setexec_isolated.py",
+            "import multiprocessing\n"
+            f"multiprocessing.set_executable({str(chosen)!r})\n"
+            "def work():\n"
+            "    pass\n"
+            "if __name__ == '__main__':\n"
+            "    proc = multiprocessing.get_context('spawn').Process(target=work)\n"
+            "    proc.start()\n"
+            "    proc.join()\n"
+            "    print('SETEXEC-EXIT', proc.exitcode)\n")
+        self.assertRefusedStatically(self.guarded(parent), sentinel,
+                                     mgr.LAUNCH_REASON_FLAGS, "-I")
+
+    def test_the_floor_still_refuses_when_set_executable_ITSELF_IS_BYPASSED(self):
+        """`multiprocessing.spawn._python_exe = ...`, the module global `set_executable` writes.
+
+        WHY THIS ARM EXISTS. The `set_executable` hook is where the refusal LANDS, not what holds
+        the boundary -- and a class that only measured the hook could not tell those apart. Writing
+        the global directly declines the public API entirely, exactly as the reviewer's `fork_exec`
+        call declined `subprocess`, and what refuses then is the floor: same exit, same record, and
+        a `forkserver` launch is refused through the same path.
+        """
+        chosen = write(self.nd / "python_isolated_global", f"#!{sys.executable} -I\n")
+        chosen.chmod(0o755)
+        sentinel = self.tmp / "isolated-global-child-ran"
+        for method in ("spawn", "forkserver"):
+            with self.subTest(start_method=method):
+                self.inventory.unlink(missing_ok=True)
+                parent = write(
+                    self.nd / f"parent_global_{method}.py",
+                    "import multiprocessing, multiprocessing.spawn as spawn, os\n"
+                    f"spawn._python_exe = os.fsencode({str(chosen)!r})\n"
+                    "def work():\n"
+                    "    pass\n"
+                    "if __name__ == '__main__':\n"
+                    f"    proc = multiprocessing.get_context({method!r}).Process(target=work)\n"
+                    "    proc.start()\n"
+                    "    proc.join()\n"
+                    "    print('GLOBAL-EXIT', proc.exitcode)\n")
+                self.assertRefusedStatically(self.guarded(parent), sentinel,
+                                             mgr.LAUNCH_REASON_FLAGS, "-I")
+
+    def test_the_floor_IS_INSTALLED_IN_A_CHILD_TOO_and_a_grandchild_is_refused_there(self):
+        """The floor travels with the contract, and that is measured rather than inferred.
+
+        `install()` installs the floor, and a covered child calls `install()` from
+        `sitecustomize` -- so "the child has it too" follows from the code. It is asserted anyway,
+        one boundary out, because every round of this review has found a claim that followed from
+        the code and was false in the tree: the child here is ADMITTED, installs the guard, and its
+        OWN direct `fork_exec` call is what gets refused. The evidence is the depth: a REFUSED-launch
+        record at depth 1 is a second interpreter that refused, and the parent's record at depth 0 is
+        clean.
+        """
+        grandchild, sentinel = self.hijacking_child("floor_grandchild")
+        child = write(
+            self.nd / "child_calls_the_floor.py",
+            "import os, sys, _posixsubprocess\n"
+            "EXE = sys.executable\n"
+            f"CHILD = {str(grandchild)!r}\n"
+            "argv = [EXE, '-I', CHILD]\n"
+            "env_list = [os.fsencode(k) + b'=' + os.fsencode(v) for k, v in os.environ.items()]\n"
+            "errpipe_read, errpipe_write = os.pipe()\n"
+            "pid = _posixsubprocess.fork_exec(\n"
+            + self.FORK_EXEC_CALL +
+            "os.close(errpipe_write)\n"
+            "os.close(errpipe_read)\n"
+            "_, status = os.waitpid(pid, 0)\n"
+            "print('CHILD-FORK-EXEC-EXIT', os.waitstatus_to_exitcode(status))\n")
+        parent = write(
+            self.nd / "parent_child_floor.py",
+            "import subprocess, sys\n"
+            f"raise SystemExit(subprocess.run([sys.executable, {str(child)!r}]).returncode)\n")
+        result = self.guarded(parent)
+        self.assertEqual(result.returncode, mgr.VIOLATION_EXIT, result.stdout + result.stderr)
+        self.assertNotIn("HIJACK-LOADED", result.stdout)
+        self.assertNotIn("CHILD-FORK-EXEC-EXIT", result.stdout)
+        self.assertFalse(sentinel.exists(),
+                         "the grandchild ran, so the child interpreter had no floor")
+        by_depth = {record["depth"]: record for record in self.records()}
+        self.assertEqual(sorted(by_depth), [0, 1], self.records())
+        self.assertIsNone(by_depth[0]["launch_refusal"],
+                          "the PARENT refused, so this arm did not reach the child's own floor")
+        self.assertEqual(by_depth[1]["verdict"], "REFUSED launch")
+        self.assertEqual(by_depth[1]["refusal_site"], mgr.SITE_LAUNCH)
+        self.assertEqual(by_depth[1]["launch_refusal"]["reason"], mgr.LAUNCH_REASON_FLAGS)
+        self.assertIsNotNone(by_depth[1]["propagated_from"])
+
+    # ---- the reviewer's controls, which must still refuse ------------------------------------
+
+    #: THE REVIEWER'S OWN CONTROL SET, verbatim in shape: the SAME argv, through the public
+    #: primitives round 7 closed. They are here so the floor cannot be credited with a refusal one
+    #: of them was already making, and so a regression in either layer is attributable.
+    CONTROL_SPELLINGS = {
+        "subprocess.run": "raise SystemExit(subprocess.run([EXE, '-I', CHILD]).returncode)",
+        "subprocess.run executable=": (
+            "raise SystemExit(subprocess.run(['ls', '-I', CHILD],\n"
+            "    executable=sys.executable).returncode)"),
+        "os.posix_spawn": ("pid = os.posix_spawn(EXE, [EXE, '-I', CHILD], dict(os.environ))\n"
+                           "_, status = os.waitpid(pid, 0)\n"
+                           "raise SystemExit(os.waitstatus_to_exitcode(status))"),
+    }
+
+    def test_the_reviewers_controls_are_still_refused_at_the_public_primitives(self):
+        for name, call in self.CONTROL_SPELLINGS.items():
+            with self.subTest(control=name):
+                self.inventory.unlink(missing_ok=True)
+                child, sentinel = self.hijacking_child(f"ctl_{name.split('.')[0]}_{len(name)}")
+                parent = write(
+                    self.nd / f"parent_ctl_{abs(hash(name)) % 100000}.py",
+                    "import os, subprocess, sys\n"
+                    "EXE = sys.executable\n"
+                    f"CHILD = {str(child)!r}\n"
+                    f"{call}\n")
+                self.assertRefusedStatically(self.guarded(parent), sentinel,
+                                             mgr.LAUNCH_REASON_FLAGS, "-I")
+
+    # ---- the silent direction: what must STILL RUN -------------------------------------------
+
+    def test_every_multiprocessing_START_METHOD_and_the_POOL_still_run_a_GUARDED_child(self):
+        """THE POWER ARM. A floor that refused every `fork_exec` would pass every arm above.
+
+        `spawn` and `forkserver` both launch through `spawnv_passfds` -> `fork_exec`, so both now
+        pass through the new hook on every correct run; `ProcessPoolExecutor` is here beside them
+        because it is the spelling this repository's launchers actually use, and it reaches the same
+        place by a different route. Each must be ADMITTED and each must leave a record from a second
+        interpreter that installed the guard -- exit 0 alone would also be what an unguarded child
+        produces.
+        """
+        arms = {
+            "spawn": ("import multiprocessing\n"
+                      "def work():\n"
+                      "    print('SPAWN-CHILD-RAN')\n"
+                      "if __name__ == '__main__':\n"
+                      "    proc = multiprocessing.get_context('spawn').Process(target=work)\n"
+                      "    proc.start()\n"
+                      "    proc.join()\n"
+                      "    print('ARM-EXIT', proc.exitcode)\n"),
+            "forkserver": ("import multiprocessing\n"
+                           "def work():\n"
+                           "    print('FORKSERVER-CHILD-RAN')\n"
+                           "if __name__ == '__main__':\n"
+                           "    ctx = multiprocessing.get_context('forkserver')\n"
+                           "    proc = ctx.Process(target=work)\n"
+                           "    proc.start()\n"
+                           "    proc.join()\n"
+                           "    print('ARM-EXIT', proc.exitcode)\n"),
+            "ProcessPoolExecutor": (
+                "import concurrent.futures, multiprocessing\n"
+                "def work(value):\n"
+                "    return value * 2\n"
+                "if __name__ == '__main__':\n"
+                "    ctx = multiprocessing.get_context('spawn')\n"
+                "    with concurrent.futures.ProcessPoolExecutor(max_workers=1,\n"
+                "            mp_context=ctx) as pool:\n"
+                "        print('POOL-RESULT', pool.submit(work, 21).result())\n"
+                "    print('ARM-EXIT 0')\n"),
+        }
+        for name, body in arms.items():
+            with self.subTest(arm=name):
+                self.inventory.unlink(missing_ok=True)
+                parent = write(self.nd / f"parent_power_{name}.py", body)
+                self.assertAdmittedWithAGuardedChild(self.guarded(parent), "ARM-EXIT 0")
+
+    def test_the_fork_start_method_INHERITS_the_guard_and_its_own_launches_are_refused(self):
+        """`fork` needs no hook, and this is the measurement rather than the assertion.
+
+        A forked child IS this interpreter -- same `sys.meta_path`, same wrapped primitives, same
+        patched `fork_exec` -- so what proves the inheritance is a REFUSAL issued from inside the
+        fork child, not a claim about how `fork` works. The child's `python3 -I` launch is refused,
+        `Process.exitcode` carries this guard's exit 3 out of it, and the hijack sentinel is absent.
+        """
+        child, sentinel = self.hijacking_child("fork_inherit_child")
+        parent = write(
+            self.nd / "parent_fork_inherit.py",
+            "import multiprocessing, subprocess, sys\n"
+            "def work():\n"
+            f"    subprocess.run([sys.executable, '-I', {str(child)!r}])\n"
+            "if __name__ == '__main__':\n"
+            "    proc = multiprocessing.get_context('fork').Process(target=work)\n"
+            "    proc.start()\n"
+            "    proc.join()\n"
+            "    print('FORK-CHILD-EXITCODE', proc.exitcode)\n")
+        result = self.guarded(parent)
+        self.assertIn(f"FORK-CHILD-EXITCODE {mgr.VIOLATION_EXIT}", result.stdout,
+                      result.stdout + result.stderr)
+        self.assertIn("[oi136 launch]", result.stderr)
+        self.assertNotIn("HIJACK-LOADED", result.stdout)
+        self.assertFalse(sentinel.exists(),
+                         "the fork child's isolated launch ran, so the guard was not inherited")
+
+    def test_a_CLEAN_child_launched_AT_THE_FLOOR_ITSELF_still_runs_and_is_guarded(self):
+        """The floor's own silent direction: a correct `fork_exec` call is admitted and re-armed.
+
+        Without this the floor could be a function that refuses every direct call, which would pass
+        every refusal arm in this class and break `multiprocessing` on every correct run. The child
+        is the ordinary clean child, launched with no isolating flag, and it must leave a depth-1
+        record -- so the environment this layer wrote back is one the shim could still read.
+        """
+        clean = self.clean_child("floor_clean_child")
+        parent, _ = self.fork_exec_parent("fe_clean", "_posixsubprocess.fork_exec",
+                                          argv="[EXE, CHILD]", child=str(clean))
+        result = self.guarded(parent)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("CHILD-LOADED RIGHT TREE", result.stdout)
+        self.assertIn("FORK-EXEC-EXIT 0", result.stdout)
+        self.assertNotIn("[oi136 launch]", result.stderr)
+        self.assertIn(1, [record["depth"] for record in self.records()],
+                      "the child ran without installing the guard")
+
+    def test_an_ENVIRONMENT_LIST_that_strips_the_contract_is_RE_ARMED_at_the_floor(self):
+        """The floor's environment half, in the direction that REPAIRS rather than refuses.
+
+        `fork_exec` receives the environment as `[b"NAME=VALUE", ...]`, so the contract this guard
+        exported has to be read out of a list of bytes and, when the caller assembled a list without
+        it, written back into one. That write-back is the only path in this file that BUILDS an
+        `env_list`, and nothing else here exercises it: the refusal arms never reach it and the
+        inherited-environment arms have nothing to repair. The measurement is the child's own
+        record -- a depth-1 record means an interpreter that started from THIS list found the
+        contract and the shim-first `PYTHONPATH` in it and installed the guard.
+        """
+        clean = self.clean_child("floor_rearm_child")
+        parent, _ = self.fork_exec_parent(
+            "fe_rearm", "_posixsubprocess.fork_exec", argv="[EXE, CHILD]", child=str(clean),
+            # PATH ONLY: no MNV_GUARD_* and no PYTHONPATH, which is the state
+            # `_environment_reaching_child_is_armed` refuses when it cannot be repaired from this
+            # process's own os.environ -- and here it can be.
+            env_list="[b'PATH=' + os.fsencode(os.environ['PATH'])]")
+        result = self.guarded(parent)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("CHILD-LOADED RIGHT TREE", result.stdout)
+        self.assertIn("FORK-EXEC-EXIT 0", result.stdout)
+        self.assertNotIn("[oi136 launch]", result.stderr)
+        records = self.records()
+        self.assertIn(1, [record["depth"] for record in records],
+                      "the child started from the stripped list without installing the guard")
+        self.assertEqual([record["launch_env"] for record in records if record["depth"] == 0],
+                         ["re-armed"],
+                         "the parent's record does not say the environment was re-armed, so the "
+                         "child was guarded by something other than this layer's repair")
+
+    def test_set_executable_to_THIS_interpreter_is_ADMITTED_which_is_the_other_direction(self):
+        """`set_executable(sys.executable)` is what a correct launcher does, and it must pass.
+
+        It is the same call the stdlib itself makes at `multiprocessing.spawn` import time, so a
+        hook that refused it would refuse `import multiprocessing`.
+        """
+        parent = write(
+            self.nd / "parent_setexec_ok.py",
+            "import multiprocessing, sys\n"
+            "multiprocessing.set_executable(sys.executable)\n"
+            "def work():\n"
+            "    print('CHOSEN-INTERPRETER-CHILD-RAN')\n"
+            "if __name__ == '__main__':\n"
+            "    proc = multiprocessing.get_context('spawn').Process(target=work)\n"
+            "    proc.start()\n"
+            "    proc.join()\n"
+            "    print('ARM-EXIT', proc.exitcode)\n")
+        self.assertAdmittedWithAGuardedChild(self.guarded(parent), "ARM-EXIT 0")
+
+    def test_a_launch_THIS_GUARD_REWROTE_is_not_RE_SCANNED_one_layer_down(self):
+        """THE COST OF A FLOOR, PAID ONCE: an approved launch is not read again underneath.
+
+        A rewritten shell launch runs with `PATH` set to the guard's wrapper directories and nothing
+        else, so a second scan of it resolves `ls` to a forwarder that is in no system prefix and
+        `_check_leaf` refuses a correct program. This was already LIVE before round 8 wherever
+        `subprocess.Popen` chose `os.posix_spawn` over `fork_exec` -- `close_fds=False` is the
+        documented trigger -- and it is the verdict this arm changes: both spellings of the same
+        launch now run. Both are here because they take different routes out of `Popen` and only
+        one of them is the new hook.
+        """
+        routes = {"through fork_exec": "", "through os.posix_spawn": ", close_fds=False"}
+        for name, extra in routes.items():
+            with self.subTest(route=name):
+                self.inventory.unlink(missing_ok=True)
+                parent = write(
+                    self.nd / f"parent_ticket_{len(extra)}.py",
+                    "import subprocess\n"
+                    f"code = subprocess.run('ls victim.py', shell=True, cwd={str(self.nd)!r}"
+                    f"{extra}).returncode\n"
+                    "print('SHELL-EXIT', code)\n")
+                result = self.guarded(parent)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertIn("SHELL-EXIT 0", result.stdout)
+                self.assertNotIn("[oi136 launch]", result.stderr)
+                self.assertIsNone(self.records()[0]["launch_refusal"])
+
+    # ---- fail-closed at the floor: a call whose shape cannot be read -------------------------
+
+    def test_a_fork_exec_call_this_guard_CANNOT_READ_refuses_and_NAMES_the_layer(self):
+        """Two shapes, and both would otherwise have started an unguarded interpreter.
+
+        `fork_exec` takes no keyword arguments and has no introspectable signature, so its
+        parameters are POSITIONS and this guard's copy of them is a constant. A call with fewer
+        arguments than the four it reads cannot be read at all; an environment member that is not
+        `NAME=VALUE` means the propagation contract reaching the child cannot be read, and the
+        second one is not hypothetical -- `[b'NOEQUALS']` as the whole environment is a child with
+        no contract and no shim-first `PYTHONPATH`, which is the finding one more time.
+
+        THE REASON CONSTANT NAMES THE LAYER, which is the point: every other refusal in this file
+        could have come from any of three places, and `LAUNCH_REASON_KERNEL_FLOOR` says the floor
+        itself declined to guess.
+        """
+        child, sentinel = self.hijacking_child("shape_child")
+        arms = {
+            "too few arguments to read": (
+                "import _posixsubprocess, sys\n"
+                f"_posixsubprocess.fork_exec([sys.executable, {str(child)!r}],\n"
+                "    [sys.executable.encode()], True)\n"),
+            "an environment member that is not NAME=VALUE": (
+                "import os, sys, _posixsubprocess\n"
+                f"argv = [sys.executable, {str(child)!r}]\n"
+                "errpipe_read, errpipe_write = os.pipe()\n"
+                "_posixsubprocess.fork_exec(\n"
+                "    argv, [os.fsencode(sys.executable)], True, (errpipe_write,), None,\n"
+                "    [b'NOEQUALS'],\n"
+                "    -1, -1, -1, -1, -1, -1, errpipe_read, errpipe_write,\n"
+                "    False, False, -1, None, None, None, -1, None, False)\n"),
+        }
+        for name, body in arms.items():
+            with self.subTest(shape=name):
+                self.inventory.unlink(missing_ok=True)
+                sentinel.unlink(missing_ok=True)
+                parent = write(self.nd / f"parent_shape_{len(name)}.py", body)
+                record = self.assertRefusedStatically(self.guarded(parent), sentinel,
+                                                      mgr.LAUNCH_REASON_KERNEL_FLOOR)
+                self.assertIn("fork_exec", record["launch_refusal"]["offending_flag"])
+                self.assertEqual(record["outcome"],
+                                 mgr.launch_outcome(record["launch_refusal"]))
+
+    # ---- the bindings and positions, re-derived from THIS interpreter ------------------------
+
+    def test_BOTH_fork_exec_bindings_exist_on_this_interpreter_and_name_ONE_function(self):
+        """The producer's own answer to "how many bindings are there", not this guard's tuple.
+
+        A pristine interpreter is asked, in a subprocess, because the test process has imported the
+        guard module and a later `install()` anywhere would make the same question return the
+        wrapper. Both names must exist and both must be the SAME C function -- which is exactly why
+        patching one does not patch the other.
+        """
+        probe = run("-c",
+                    "import _posixsubprocess, subprocess\n"
+                    "print('BINDINGS',\n"
+                    "      hasattr(_posixsubprocess, 'fork_exec'),\n"
+                    "      hasattr(subprocess, '_fork_exec'),\n"
+                    "      subprocess._fork_exec is _posixsubprocess.fork_exec)\n")
+        self.assertEqual(probe.returncode, 0, probe.stderr)
+        self.assertIn("BINDINGS True True True", probe.stdout)
+        self.assertEqual(
+            mgr._FORK_EXEC_BINDINGS,
+            (("_posixsubprocess", "fork_exec"), ("subprocess", "_fork_exec")),
+            "the guard's binding table no longer matches the two names this interpreter has")
+
+    def test_the_floor_reads_the_positions_THIS_INTERPRETERS_OWN_CALLSITE_PASSES(self):
+        """The four offsets, re-derived from `subprocess.Popen._execute_child`'s own source.
+
+        THE FIXTURE IS BUILT FROM THE PRODUCER AND NOT FROM THE RULE. `fork_exec` takes no keyword
+        arguments, so the guard's `_FORK_EXEC_*_INDEX` constants are a transcription of CPython's
+        callsite -- and a transcription checked against itself cannot disagree with itself. So the
+        callsite is parsed and the ARGUMENT EXPRESSIONS are read: an interpreter that inserted a
+        parameter is red here, naming the position that moved, rather than silently having this
+        guard parse a file descriptor as an environment.
+        """
+        import ast
+        import inspect
+        import textwrap
+        source = textwrap.dedent(inspect.getsource(subprocess.Popen._execute_child))
+        calls = [node for node in ast.walk(ast.parse(source))
+                 if isinstance(node, ast.Call)
+                 and isinstance(node.func, ast.Name) and node.func.id == "_fork_exec"]
+        self.assertEqual(len(calls), 1, "expected exactly one _fork_exec callsite to read")
+        arguments = [ast.unparse(argument) for argument in calls[0].args]
+        self.assertEqual(calls[0].keywords, [], "fork_exec is called with keywords now")
+        expected = {
+            mgr._FORK_EXEC_ARGV_INDEX: "args",
+            mgr._FORK_EXEC_EXECUTABLE_LIST_INDEX: "executable_list",
+            mgr._FORK_EXEC_CWD_INDEX: "cwd",
+            mgr._FORK_EXEC_ENV_LIST_INDEX: "env_list",
+        }
+        for index, name in expected.items():
+            self.assertEqual(arguments[index], name,
+                             f"position {index} of fork_exec is {arguments[index]!r} on this "
+                             f"interpreter and the guard reads it as {name!r}")
+        self.assertGreaterEqual(len(arguments), mgr._FORK_EXEC_MINIMUM_ARITY)
+        self.assertEqual(len(arguments), 23,
+                         "fork_exec's arity changed; Round8Fixture.FORK_EXEC_CALL spells all of "
+                         "them positionally and has to change with it")
+
+    def test_install_REPLACES_both_bindings_and_NEITHER_wrapper_wraps_the_OTHER(self):
+        """The patch is measured on the module objects, and so is the absence of a double layer.
+
+        WHY THE SECOND HALF MATTERS AS MUCH AS THE FIRST. The two bindings name one C function, so a
+        careless second patch would wrap the first wrapper -- and then every `subprocess` launch
+        would be scanned twice, the second time against the restricted `PATH` its own rewrite
+        carries, which REFUSES a correct program. Each wrapper's `__wrapped__` must therefore be the
+        original C function and not the other wrapper.
+        """
+        probe = write(
+            self.nd / "probe_bindings.py",
+            "import _posixsubprocess, subprocess, sys\n"
+            f"sys.path.insert(0, {str(self.nd)!r})\n"
+            "before = (_posixsubprocess.fork_exec, subprocess._fork_exec)\n"
+            "import mnv_guarded_run as mgr\n"
+            f"mgr.install({str(self.good)!r})\n"
+            "after = (_posixsubprocess.fork_exec, subprocess._fork_exec)\n"
+            "print('REPLACED', [a is not b for a, b in zip(before, after)])\n"
+            "print('MARKED', [getattr(f, '_mnv_guard_floor', False) for f in after])\n"
+            "print('WRAPS_THE_ORIGINAL',\n"
+            "      [getattr(f, '__wrapped__', None) is b for f, b in zip(after, before)])\n")
+        result = run(probe)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("REPLACED [True, True]", result.stdout)
+        self.assertIn("MARKED [True, True]", result.stdout)
+        self.assertIn("WRAPS_THE_ORIGINAL [True, True]", result.stdout)
+
+    def test_the_STDLIB_ITSELF_binds_fork_exec_in_exactly_the_two_places_this_guard_PATCHES(self):
+        """A COVERING SEARCH, because "we patched every binding" is an absence claim.
+
+        THE CLASS AND THE COUNT TOGETHER. The search is over every `.py` file under this
+        interpreter's own `stdlib` path, excluding the test trees and `site-packages`; what it
+        counts is FILES THAT MENTION `fork_exec` AT ALL, which is wider than "files that bind it"
+        and therefore cannot miss a binding by being too clever about what a binding looks like. On
+        3.11, 3.12 and 3.13 the answer is two files -- `subprocess.py`, which makes the alias, and
+        `multiprocessing/util.py`, which reaches the module attribute -- and both are covered by
+        `_FORK_EXEC_BINDINGS`.
+
+        WHAT IT CANNOT SAY: it reads the stdlib, so a THIRD-PARTY module that binds its own alias
+        before this guard installs is outside it. That is the same shape as arm (1) of
+        `DECLARED_GAP` -- a file rather than an argv -- and the floor still covers the launch,
+        because a private alias made by `from _posixsubprocess import fork_exec` after `install()`
+        picks up the wrapper and one made before it reaches the same C function this guard's own
+        wrapper calls only if nothing rebinds it. It is named here rather than left to be assumed.
+        """
+        import sysconfig
+        stdlib = pathlib.Path(sysconfig.get_paths()["stdlib"])
+        skip = ("site-packages", "/test/", "/tests/", "/idlelib/", "/lib2to3/")
+        mentions = {}
+        for module in stdlib.rglob("*.py"):
+            text = str(module)
+            if any(part in text for part in skip):
+                continue
+            try:
+                body = module.read_text(errors="replace")
+            except OSError:
+                continue
+            if "fork_exec" in body:
+                mentions[str(module.relative_to(stdlib))] = [
+                    line.strip() for line in body.splitlines() if "fork_exec" in line]
+        self.assertEqual(sorted(mentions), ["multiprocessing/util.py", "subprocess.py"],
+                         f"the stdlib mentions fork_exec somewhere new; every mention has to be "
+                         f"covered by mgr._FORK_EXEC_BINDINGS or added to it: {sorted(mentions)}")
+        # THE ALIAS, READ RATHER THAN REMEMBERED: `subprocess` binds it under exactly one name and
+        # that name is the second entry of the guard's table.
+        aliases = [line for line in mentions["subprocess.py"]
+                   if line.startswith("from _posixsubprocess import fork_exec as ")]
+        self.assertEqual(aliases, ["from _posixsubprocess import fork_exec as _fork_exec"],
+                         mentions["subprocess.py"])
+        self.assertIn(("subprocess", "_fork_exec"), mgr._FORK_EXEC_BINDINGS)
+        # And `multiprocessing` reaches the MODULE ATTRIBUTE, which is the first entry.
+        self.assertTrue(any("_posixsubprocess.fork_exec(" in line
+                            for line in mentions["multiprocessing/util.py"]),
+                        mentions["multiprocessing/util.py"])
+        self.assertIn(("_posixsubprocess", "fork_exec"), mgr._FORK_EXEC_BINDINGS)
+
+    def test_every_launch_reason_has_a_headline_an_explanation_AND_an_outcome(self):
+        """The three tables a refusal is printed and recorded from, checked for completeness.
+
+        WHY THIS IS WORTH A CONTROL. `_report_launch` indexes `_LAUNCH_HEADLINES` and
+        `_LAUNCH_EXPLANATIONS` by reason with `[]`, and `mnv_guard_shim/wrapper_exec.py` does the
+        same -- so a reason constant added without its three rows turns a REFUSAL into a `KeyError`
+        raised out of the guard, which is the one failure mode a fail-closed file cannot have. The
+        enumeration comes from the module's own `LAUNCH_REASON_*` names rather than from a list
+        anybody maintains.
+        """
+        reasons = {name: value for name, value in vars(mgr).items()
+                   if name.startswith("LAUNCH_REASON_") and isinstance(value, str)}
+        self.assertGreaterEqual(len(reasons), 6, reasons)
+        self.assertIn("LAUNCH_REASON_KERNEL_FLOOR", reasons)
+        self.assertEqual(len(set(reasons.values())), len(reasons),
+                         "two launch reasons share a string, so a record cannot distinguish them")
+        for name, reason in sorted(reasons.items()):
+            with self.subTest(reason=name):
+                self.assertIn(reason, mgr._LAUNCH_HEADLINES)
+                self.assertIn(reason, mgr._LAUNCH_EXPLANATIONS)
+                self.assertIn(reason, mgr.LAUNCH_OUTCOMES)
+                self.assertTrue(mgr.launch_outcome({"reason": reason}).startswith("refused:"))
+
+    # ---- the residual, measured as a run that SUCCEEDS --------------------------------------
+
+    def test_a_ctypes_execve_of_an_isolated_interpreter_IS_THE_DECLARED_RESIDUAL(self):
+        """THE ONE ARM HERE THAT ASSERTS A HIJACK RAN, because that is what a residual is.
+
+        `ctypes` calls `execve` in libc directly: no `subprocess`, no `os.exec*`, no
+        `_posixsubprocess`, nothing Python-visible that this guard could have hooked. The child runs
+        with `-I`, loads the wrong tree and prints so -- and the record the parent leaves must
+        describe that boundary in `declared_gap`, because a ratchet reader consuming records is the
+        one who would otherwise read "four residuals, none of them an unscanned Python launch" as a
+        claim this route refutes.
+
+        IT IS DELIBERATELY NOT A REFUSAL. Refusing `ctypes` would mean refusing every `CDLL`, which
+        is neither possible from here nor honest: what is left is named, sized and written into
+        every record instead.
+        """
+        child, sentinel = self.hijacking_child("ctypes_child")
+        execve = ("libc = ctypes.CDLL(None, use_errno=True)\n"
+                  "argv = (ctypes.c_char_p * 4)(sys.executable.encode(), b'-I',\n"
+                  f"    {str(child)!r}.encode(), None)\n"
+                  "envp_values = [f'{k}={v}'.encode() for k, v in os.environ.items()]\n"
+                  "envp = (ctypes.c_char_p * (len(envp_values) + 1))(*envp_values, None)\n"
+                  "libc.execve(sys.executable.encode(), argv, envp)\n")
+        # IN PLACE, which is the sharpest statement of the residual: `execve` replaces the process
+        # image, so the guarded parent's own `finally` never runs and the run leaves NO record at
+        # all. A reader of the inventory does not see a narrower run here, they see nothing.
+        in_place = write(self.nd / "parent_ctypes_inplace.py",
+                         "import ctypes, os, sys\n" + execve +
+                         "print('EXECVE-FAILED', ctypes.get_errno())\n")
+        result = self.guarded(in_place)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("HIJACK-LOADED WRONG TREE", result.stdout,
+                      "the ctypes execve did NOT reach the wrong tree, so this arm is no longer "
+                      "measuring the declared residual and the residual's text has to change")
+        self.assertTrue(sentinel.exists(), "the isolated child did not run")
+        self.assertNotIn("[oi136 launch]", result.stderr)
+        self.assertEqual(self.records(), [],
+                         "an in-place execve left a record, so it did not replace the image and "
+                         "this arm measures something else")
+        # AND FORKED, so a record SURVIVES to be read. `os.fork` is not an exec and this guard does
+        # not wrap it; the child reaches the kernel through libc and the parent lives to write the
+        # boundary down, which is the shape a launcher would actually have.
+        self.inventory.unlink(missing_ok=True)
+        sentinel.unlink(missing_ok=True)
+        forked = write(self.nd / "parent_ctypes_forked.py",
+                       "import ctypes, os, sys\n"
+                       "pid = os.fork()\n"
+                       "if pid == 0:\n"
+                       "    " + execve.replace("\n", "\n    ").rstrip() + "\n"
+                       "    os._exit(97)\n"
+                       "_, status = os.waitpid(pid, 0)\n"
+                       "print('FORKED-EXECVE-EXIT', os.waitstatus_to_exitcode(status))\n")
+        result = self.guarded(forked)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("HIJACK-LOADED WRONG TREE", result.stdout)
+        self.assertIn("FORKED-EXECVE-EXIT 0", result.stdout)
+        self.assertTrue(sentinel.exists())
+        self.assertNotIn("[oi136 launch]", result.stderr)
+        # THE RECORD IS WHERE A READER MEETS THIS BOUNDARY, so the residual has to be IN it and has
+        # to name this route rather than gesture at one.
+        record = self.records()[0]
+        self.assertEqual(record["declared_gap"], mgr.DECLARED_GAP)
+        self.assertIn("_posixsubprocess.fork_exec", record["declared_gap"])
+        self.assertIn("ctypes", record["declared_gap"])
+        self.assertIn("NAMED AND NOT COVERED", record["declared_gap"])
+        # AND THE SUPERSEDED SENTENCE IS GONE rather than softened: round 7's residual (4) said an
+        # admitted Python child was covered "by these same hooks in turn" and stopped there, which
+        # is the sentence the reviewer read as implying coverage this guard did not have.
+        self.assertNotIn("so its own launches are subject to everything above one level down",
+                         record["declared_gap"])
+
+    def test_the_residual_is_the_ONLY_uncovered_route_among_the_ones_measured_here(self):
+        """The census, so "named and not covered" is a count and not a mood.
+
+        Every route this class launches through is either refused (and its sentinel absent) or is
+        the declared residual. There is exactly ONE of the second kind, and it is the ctypes one; a
+        second uncovered route appearing here without the residual text changing is the failure this
+        arm exists to make loud.
+        """
+        self.assertIn("ctypes", mgr.DECLARED_GAP)
+        self.assertIn("or cffi", mgr.DECLARED_GAP)
+        self.assertIn("REBUILT INTERPRETER", mgr.DECLARED_GAP)
+        # FOUR RESIDUALS, STILL: round 8 REPLACED arm (4), it did not add a fifth. A count that
+        # drifted would make the docstring and the record disagree about the boundary.
+        self.assertTrue(mgr.DECLARED_GAP.startswith("FOUR RESIDUALS"), mgr.DECLARED_GAP[:40])
+        for arm in ("(1) TRUST BY LOCATION", "(2) THE RESTRICTED-SHELL GUARANTEE",
+                    "(3) AN sbatch JOB", "(4) AN ADMITTED PYTHON CHILD"):
+            self.assertIn(arm, mgr.DECLARED_GAP)
+        self.assertNotIn("(5)", mgr.DECLARED_GAP)
+
+    def test_the_docstring_says_where_the_floor_is_and_a_caller_reads_it_there(self):
+        """The header's claims about round 8, each pinned by an arm above."""
+        self.assertIn("ROUND 8 HOOKS THE LOWEST PYTHON-VISIBLE LAYER", mgr.__doc__)
+        self.assertIn("THE PUBLIC HOOKS ARE KEPT AND THE FLOOR DOES NOT SCAN TWICE", mgr.__doc__)
+        self.assertIn("`multiprocessing.set_executable` IS NOT ADVERSARIAL", mgr.__doc__)
+        self.assertIn("`_FORK_EXEC_BINDINGS`", mgr.__doc__)
+        self.assertIn("`LAUNCH_REASON_KERNEL_FLOOR`", mgr.__doc__)
+        # The superseded sentence, gone from the header as well as from the record.
+        self.assertNotIn("guarded by the shim on `PYTHONPATH` and by these hooks in turn. All four",
+                         mgr.__doc__)
+
+
 class TheStartupFlagScanFollowsCPythonsOptionGrammar(unittest.TestCase):
     """A TABLE OVER THE SCANNER ITSELF, called directly, and it is deliberately in-process.
 
