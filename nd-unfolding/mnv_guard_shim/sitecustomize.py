@@ -116,7 +116,11 @@ def _install() -> None:
         emitted = True
         violation = guard.violation
         if guard.launch_refusal is not None:
-            outcome = "refused:launch-python-startup-flags"
+            # THE OUTCOME IS DERIVED BY THE GUARD AND NOT RETYPED HERE. A child that refused a
+            # launch it could not PARSE records a different outcome from one that refused a `-I`,
+            # and a copy of that mapping in this file would be the second implementation that
+            # disagrees after the first is fixed.
+            outcome = guard_module.launch_outcome(guard.launch_refusal)
             site = guard_module.SITE_LAUNCH
         elif violation is not None:
             outcome = "refused:import-tree-violation"

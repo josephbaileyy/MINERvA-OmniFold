@@ -1,0 +1,21 @@
+#!/bin/sh
+# OI-136: the PATH interpreter wrapper under its second tracked name.
+#
+# A WRAPPER ONLY INTERCEPTS THE NAME IT IS INSTALLED UNDER. A script that runs `python child.py`
+# reaches this file; one that runs `python3 child.py` reaches `python3` beside it; a versioned
+# `python3.11` reaches the delegator `install()` generates at arm time. All three are the SAME
+# wrapper: this file adds no logic, it only tells the body which interpreter name to resolve, so a
+# fix to the body cannot miss a name.
+set -u
+self=$0
+case "$self" in
+    */*) ;;
+    *)   self=$(command -v "$self" 2>/dev/null || true) ;;
+esac
+if [ -z "$self" ]; then
+    printf '\n[oi136 launch] THE PATH INTERPRETER WRAPPER CANNOT LOCATE ITSELF -- REFUSING.\n' >&2
+    exit 3
+fi
+MNV_GUARD_WRAPPER_NAME=python
+export MNV_GUARD_WRAPPER_NAME
+exec "$(dirname "$self")/python3" "$@"

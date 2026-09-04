@@ -1,0 +1,132 @@
+#!/bin/sh
+# OI-136: the PATH interpreter wrapper. THE SECOND LAUNCH SITE, WHICH sitecustomize CANNOT REACH.
+#
+# WHAT IT IS FOR. `mnv_guarded_run.py` owns the launch sites inside a guarded INTERPRETER. It does
+# not own the ones inside a bash script that interpreter starts: `python3 -I child.py` in a shell
+# script runs isolated, ignores the inherited shim, and imports whatever `sys.path[0]` says --
+# which is OI-136 with no guard installed and no record written. `install()` therefore prepends the
+# directory holding this file to PATH, so that launch resolves HERE first.
+#
+# WHAT IT DOES, IN ORDER:
+#   1. re-injects the shim-first PYTHONPATH when the inherited one lost it (derivable, so repaired);
+#   2. resolves the real interpreter OF ITS OWN NAME through PATH with the shim directories
+#      removed -- MNV_GUARD_REAL_PYTHON is the recorded FALLBACK and not a substitution, because a
+#      wrapper that silently changed WHICH interpreter runs would break a run in a way no record
+#      would explain;
+#   3. delegates the argv decision to mnv_guard_shim/scan_argv.py, which loads the guard's OWN
+#      option grammar rather than a copy retyped in shell;
+#   4. execs the real interpreter with the argv untouched.
+#
+# IT FAILS CLOSED. Every step that cannot be completed exits 3 with an `[oi136 launch]` message --
+# a missing scanner, an unresolvable interpreter, a missing contract. An unscanned Python launch is
+# the defect this file exists for, so "could not check" may not be spelled "ran anyway".
+#
+# WHAT IT CANNOT COVER, and this is `DECLARED_GAP` in `mnv_guarded_run.py`: a child that invokes the
+# interpreter by an ABSOLUTE PATH consults no PATH and therefore no wrapper, and a child that clears
+# PATH or the environment removes the wrapper directory along with the contract.
+#
+# POSIX sh ON PURPOSE. This runs in front of every interpreter launch on a login node and a compute
+# node, under dash as readily as bash, and a bashism here would be a wrapper that works on the
+# machine it was written on. Tested by tests/test_mnv_guarded_run.py, not by inspection.
+set -u
+
+prefix='[oi136 launch]'
+refuse() {
+    printf '\n%s %s -- REFUSING BEFORE LAUNCH.\n%s   %s\n' \
+        "$prefix" "$1" "$prefix" "$2" >&2
+    printf '%s This is the OI-136 PATH interpreter wrapper. It stands in front of the real\n' \
+        "$prefix" >&2
+    printf '%s interpreter so a non-Python child cannot start an unguarded one. Fix the\n' \
+        "$prefix" >&2
+    printf '%s launcher rather than removing the wrapper.\n' "$prefix" >&2
+    exit 3
+}
+
+# --- locate this wrapper, and through it the tracked shim directory -------------------------
+self=$0
+case "$self" in
+    */*) ;;
+    *)   self=$(command -v "$self" 2>/dev/null || true) ;;
+esac
+[ -n "$self" ] || refuse "THE PATH INTERPRETER WRAPPER CANNOT LOCATE ITSELF" \
+    "argv[0]=$0 is neither a path nor resolvable on PATH"
+bin_dir=$(cd "$(dirname "$self")" 2>/dev/null && pwd -P) || bin_dir=''
+[ -n "$bin_dir" ] || refuse "THE PATH INTERPRETER WRAPPER CANNOT LOCATE ITSELF" \
+    "cannot resolve the directory of $self"
+shim_dir=$(cd "$bin_dir/.." 2>/dev/null && pwd -P) || shim_dir=''
+[ -n "$shim_dir" ] || refuse "THE PATH INTERPRETER WRAPPER CANNOT LOCATE THE SHIM" \
+    "cannot resolve $bin_dir/.."
+
+# The name to resolve: this wrapper's own, or the one a generated delegator handed it. UNSET before
+# the exec below, or a grandchild's `python3` would resolve the delegator's name instead of its own.
+name=${MNV_GUARD_WRAPPER_NAME:-$(basename "$self")}
+unset MNV_GUARD_WRAPPER_NAME
+
+# --- 1. re-inject the shim-first PYTHONPATH ------------------------------------------------
+case ${PYTHONPATH-} in
+    "$shim_dir") ;;
+    "$shim_dir":*) ;;
+    *) if [ -n "${PYTHONPATH-}" ]; then
+           PYTHONPATH="$shim_dir:$PYTHONPATH"
+       else
+           PYTHONPATH="$shim_dir"
+       fi
+       export PYTHONPATH ;;
+esac
+
+# --- 2. resolve the real interpreter of the same name --------------------------------------
+# IN A FUNCTION, AND CALLED IN A SUBSHELL, FOR ONE REASON: splitting PATH needs `set --`, and
+# `set --` REPLACES THE POSITIONAL PARAMETERS. Doing it inline clobbered "$@" -- so the scan below
+# read PATH entries instead of the caller's argv and the exec ran the first PATH entry as a script
+# (measured: "can't find '__main__' module in ...", with the isolating flag never scanned at all).
+# That is a fail-open in a guard, produced by a shell idiom, which is why it is recorded here.
+find_real_interpreter() {
+    fr_name=$1
+    fr_shim_dirs=$2
+    fr_bin_dir=$3
+    fr_ifs=$IFS
+    IFS=:
+    # shellcheck disable=SC2086
+    set -- ${PATH-}
+    IFS=$fr_ifs
+    for fr_dir in "$@"; do
+        [ -n "$fr_dir" ] || fr_dir=.
+        case ":$fr_shim_dirs:" in
+            *":$fr_dir:"*) continue ;;
+        esac
+        fr_candidate="$fr_dir/$fr_name"
+        [ -f "$fr_candidate" ] && [ -x "$fr_candidate" ] || continue
+        fr_dir_real=$(cd "$(dirname "$fr_candidate")" 2>/dev/null && pwd -P) || continue
+        # A shim directory reached under a second spelling is still a shim directory: exec'ing it
+        # would re-enter this wrapper, and a wrapper that can call itself is a hang, not a guard.
+        case ":$fr_shim_dirs:" in
+            *":$fr_dir_real:"*) continue ;;
+        esac
+        [ "$fr_dir_real" = "$fr_bin_dir" ] && continue
+        printf '%s' "$fr_candidate"
+        return 0
+    done
+    return 1
+}
+
+shim_dirs=${MNV_GUARD_PATH_SHIM_DIRS:-$bin_dir}
+real=$(find_real_interpreter "$name" "$shim_dirs" "$bin_dir") || real=''
+if [ -z "$real" ]; then
+    real=${MNV_GUARD_REAL_PYTHON:-}
+fi
+[ -n "$real" ] && [ -x "$real" ] || refuse "NO REAL INTERPRETER FOR $name COULD BE RESOLVED" \
+    "PATH holds no executable $name outside the shim directories ($shim_dirs) and \
+MNV_GUARD_REAL_PYTHON is unset or not executable"
+
+# --- 3. scan the argv with the guard's own grammar -----------------------------------------
+scanner="$shim_dir/scan_argv.py"
+[ -f "$scanner" ] || refuse "THE TRACKED ARGV SCANNER IS MISSING" \
+    "expected $scanner, which carries the launch decision this wrapper delegates"
+# -I -S deliberately: this scan must not install the guard (it would emit an inventory record for a
+# process that ran no science) and must not depend on site-packages. See scan_argv.py's docstring.
+"$real" -I -S "$scanner" -- "$@"
+status=$?
+[ "$status" -eq 0 ] || exit "$status"
+
+# --- 4. hand over, argv untouched ----------------------------------------------------------
+exec "$real" "$@"

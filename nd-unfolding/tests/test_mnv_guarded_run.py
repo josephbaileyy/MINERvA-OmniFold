@@ -21,10 +21,12 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import unittest.mock
 
 HERE = pathlib.Path(__file__).resolve().parent
 GUARD = HERE.parent / "mnv_guarded_run.py"
-SHIM = HERE.parent / "mnv_guard_shim" / "sitecustomize.py"
+SHIM_TREE = HERE.parent / "mnv_guard_shim"
+SHIM = SHIM_TREE / "sitecustomize.py"
 REPO = HERE.parents[1]
 
 sys.path.insert(0, str(HERE.parent))
@@ -43,6 +45,21 @@ def write(path: pathlib.Path, text: str) -> pathlib.Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text)
     return path
+
+
+def deploy_shim(destination: pathlib.Path) -> pathlib.Path:
+    """Copy the WHOLE tracked shim into a fixture checkout: sitecustomize, scanner and `bin/`.
+
+    THE GUARD HAS TWO HALVES AND A FIXTURE CARRYING ONE MEASURES THE WRONG TREE. Before the PATH
+    wrappers existed this copied a single file; a fixture that kept doing so would report
+    `path_shim: not-armed`, and every control below that asserts a bash child's `python3 -I` is
+    REFUSED would have passed for the opposite reason -- the wrapper was missing, not the flag
+    scanned. `copytree` is used for the mode bits: a wrapper copied without its executable bit is
+    skipped by PATH lookup, which is the same vacuous pass one level down.
+    """
+    shutil.copytree(SHIM_TREE, destination, dirs_exist_ok=True,
+                    ignore=shutil.ignore_patterns("__pycache__"))
+    return destination
 
 
 def run(*args, **kw):
@@ -285,8 +302,8 @@ class TheSubprocessBoundaryIsCovered(unittest.TestCase):
             self.good / "nd-unfolding" / "mnv_guard_shim" / "sitecustomize.py"
         )
         self.deployed_guard.write_bytes(GUARD.read_bytes())
-        self.deployed_shim.parent.mkdir()
-        self.deployed_shim.write_bytes(SHIM.read_bytes())
+        deploy_shim(self.deployed_shim.parent)
+        self.deployed_bin = self.deployed_shim.parent / "bin"
         self.bad_child = write(
             self.good / "nd-unfolding" / "child_bad.py",
             "import sys\n"
@@ -520,22 +537,188 @@ class TheSubprocessBoundaryIsCovered(unittest.TestCase):
         self.assertEqual(set(records), {0, 1})
         self.assertEqual(records[1]["violation"]["module"], "victim")
 
-    def test_a_bash_child_running_python_dash_I_is_the_declared_gap(self):
-        sentinel = pathlib.Path(self._tmp.name) / "isolated-shell-child-ran"
+    def isolated_child(self, name: str):
+        """A child that records having run, then commits the OI-136 defect under isolation."""
+        sentinel = pathlib.Path(self._tmp.name) / f"{name}-ran"
         isolated = write(
-            self.good / "nd-unfolding" / "child_isolated.py",
+            self.good / "nd-unfolding" / f"{name}.py",
             "import pathlib, sys\n"
             f"pathlib.Path({str(sentinel)!r}).write_text('ran')\n"
             f"sys.path.insert(0, {str(self.bad / 'nd-unfolding')!r})\n"
             "import victim\n"
             "print('ISOLATED-LOADED', victim.MARK)\n",
         )
+        return isolated, sentinel
+
+    def test_a_bash_child_running_python_dash_I_VIA_PATH_is_refused_by_the_wrapper(self):
+        """WAS THE DECLARED GAP UNTIL THE PATH WRAPPERS LANDED; it is now covered and MEASURED.
+
+        A bash script runs `python3 -I child.py`. The guarded interpreter owns no launch site
+        inside bash, so the argv scan cannot see this -- but the launch resolves `python3` through
+        PATH, and `install()` put the tracked wrapper directory in front of it. The wrapper scans
+        the argv with the guard's own grammar and refuses before the interpreter starts.
+
+        THE SENTINEL IS WHAT MAKES THIS A REFUSAL RATHER THAN A LATE CATCH: an exit 3 alone cannot
+        tell a launch that never happened from one caught after the wrong tree was loaded.
+        """
+        isolated, sentinel = self.isolated_child("child_isolated")
+        for flag in ("-I", "-S", "-E", "-IS"):
+            with self.subTest(flag=flag):
+                self.inventory.unlink(missing_ok=True)
+                sentinel.unlink(missing_ok=True)
+                shell_child = write(
+                    self.good / "nd-unfolding" / "child_isolated.sh",
+                    f"python3 {flag} {shlex.quote(str(isolated))}\n",
+                )
+                parent = write(
+                    self.good / "nd-unfolding" / "parent_isolated_shell.py",
+                    "import subprocess\n"
+                    f"raise SystemExit(subprocess.run(['/bin/bash', {str(shell_child)!r}])"
+                    ".returncode)\n",
+                )
+                p = self.guarded(parent)
+                self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+                self.assertIn("[oi136 launch]", p.stderr)
+                self.assertIn("PATH interpreter wrapper", p.stderr)
+                self.assertFalse(sentinel.exists(), "the isolated child ran anyway")
+                self.assertNotIn("ISOLATED-LOADED", p.stdout)
+                # The parent's own record is still written, and it says the half that fired was
+                # armed -- a refusal by a wrapper the record called `not-armed` would be a lie.
+                self.assertEqual([record["depth"] for record in self.records()], [0])
+                self.assertEqual(self.records()[0]["path_shim"], "armed")
+
+    def test_a_bash_child_running_python_VIA_PATH_is_GUARDED_by_the_wrapper(self):
+        """The silent direction, and the one that decides whether the wrapper is usable at all.
+
+        The same launch without an isolating flag must reach the interpreter, and the interpreter
+        must be GUARDED: the depth-1 record and the `[oi136 child]` import refusal are the
+        evidence, and the exit code on its own is not -- a wrapper that refused everything would
+        also exit 3 here.
+        """
         shell_child = write(
-            self.good / "nd-unfolding" / "child_isolated.sh",
-            f"python3 -I {shlex.quote(str(isolated))}\n",
+            self.good / "nd-unfolding" / "child_via_path.sh",
+            f"python3 {shlex.quote(str(self.bad_child))}\n",
         )
         parent = write(
-            self.good / "nd-unfolding" / "parent_isolated_shell.py",
+            self.good / "nd-unfolding" / "parent_via_path.py",
+            "import subprocess\n"
+            f"raise SystemExit(subprocess.run(['/bin/bash', {str(shell_child)!r}]).returncode)\n",
+        )
+        p = self.guarded(parent)
+        self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+        self.assertIn("[oi136 child] IMPORT TREE VIOLATION", p.stderr)
+        self.assertNotIn("[oi136 launch]", p.stderr)
+        self.assertNotIn("CHILD-LOADED", p.stdout)
+        records = {record["depth"]: record for record in self.records()}
+        self.assertEqual(set(records), {0, 1})
+        self.assertEqual(records[1]["violation"]["module"], "victim")
+
+    def test_a_bash_child_running_a_CLEAN_script_via_PATH_is_unaffected(self):
+        """A wrapper on PATH must not change what a correct run computes."""
+        shell_child = write(
+            self.good / "nd-unfolding" / "child_clean_via_path.sh",
+            f"python3 {shlex.quote(str(self.clean_child))}\n",
+        )
+        parent = write(
+            self.good / "nd-unfolding" / "parent_clean_via_path.py",
+            "import subprocess\n"
+            f"raise SystemExit(subprocess.run(['/bin/bash', {str(shell_child)!r}]).returncode)\n",
+        )
+        p = self.guarded(parent)
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        self.assertIn("CHILD-LOADED RIGHT TREE", p.stdout)
+        self.assertNotIn("[oi136 launch]", p.stderr)
+        self.assertEqual({record["depth"] for record in self.records()}, {0, 1})
+
+    def test_the_wrapper_execs_the_interpreter_THE_CALLER_ASKED_FOR(self):
+        """A wrapper must not silently change WHICH interpreter runs.
+
+        `MNV_GUARD_REAL_PYTHON` is a recorded FALLBACK, not a substitution: the wrapper resolves
+        its own name through PATH with the shim directories removed, so a script asking for a
+        different `python3` than the parent's `sys.executable` still gets that one. The fixture
+        puts a DECOY interpreter first on the child's PATH -- a shell script that prints its own
+        identity and execs the real one -- and the decoy must be what runs.
+        """
+        decoy_dir = pathlib.Path(self._tmp.name).resolve() / "decoy-bin"
+        decoy_dir.mkdir()
+        decoy = decoy_dir / "python3"
+        decoy.write_text("#!/bin/sh\n"
+                         "printf 'DECOY-INTERPRETER\\n' >&2\n"
+                         f"exec {shlex.quote(sys.executable)} \"$@\"\n")
+        decoy.chmod(0o755)
+        shell_child = write(
+            self.good / "nd-unfolding" / "child_decoy.sh",
+            f"export PATH={shlex.quote(str(decoy_dir))}:$PATH\n"
+            f"python3 {shlex.quote(str(self.clean_child))}\n",
+        )
+        parent = write(
+            self.good / "nd-unfolding" / "parent_decoy.py",
+            "import subprocess\n"
+            f"raise SystemExit(subprocess.run(['/bin/bash', {str(shell_child)!r}]).returncode)\n",
+        )
+        p = self.guarded(parent)
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        self.assertIn("CHILD-LOADED RIGHT TREE", p.stdout)
+        self.assertIn("DECOY-INTERPRETER", p.stderr,
+                      "the wrapper substituted its own interpreter for the caller's")
+        self.assertEqual({record["depth"] for record in self.records()}, {0, 1})
+
+    def test_a_VERSIONED_interpreter_name_is_covered_by_a_GENERATED_wrapper(self):
+        """`python3.12 -I child.py` from a bash child: the name the tracked `bin/` does not carry.
+
+        A wrapper intercepts only the NAME it is installed under, and a cluster module file puts
+        `python3.11`/`python3.12` in front of a science script. `install()` therefore generates a
+        delegator for the basename of `sys.executable` when the tracked pair does not cover it --
+        so this fixture runs the guard THROUGH a versioned symlink to make that basename versioned,
+        which is the only way to exercise the generated half rather than assert it.
+        """
+        versioned_name = f"python3.{sys.version_info.minor}"
+        versioned_dir = pathlib.Path(self._tmp.name).resolve() / "versioned-bin"
+        versioned_dir.mkdir()
+        versioned = versioned_dir / versioned_name
+        versioned.symlink_to(sys.executable)
+        isolated, sentinel = self.isolated_child("child_versioned")
+        shell_child = write(
+            self.good / "nd-unfolding" / "child_versioned.sh",
+            f"{versioned_name} -I {shlex.quote(str(isolated))}\n",
+        )
+        parent = write(
+            self.good / "nd-unfolding" / "parent_versioned.py",
+            "import subprocess\n"
+            f"raise SystemExit(subprocess.run(['/bin/bash', {str(shell_child)!r}]).returncode)\n",
+        )
+        environment = dict(os.environ, PYTHONDONTWRITEBYTECODE="1",
+                           PATH=f"{versioned_dir}{os.pathsep}{os.environ['PATH']}")
+        p = subprocess.run(
+            [str(versioned), str(self.deployed_guard), "--expect-root", str(self.good),
+             "--inventory", str(self.inventory), "--", str(parent)],
+            capture_output=True, text=True, env=environment,
+        )
+        self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+        self.assertIn("[oi136 launch]", p.stderr)
+        self.assertFalse(sentinel.exists(), "the isolated child ran anyway")
+        record = self.records()[0]
+        self.assertEqual(record["path_shim"], "armed")
+        generated = [d for d in record["path_shim_dirs"] if str(self.deployed_bin) != d]
+        self.assertEqual(len(generated), 1, record["path_shim_dirs"])
+        self.assertTrue(generated[0].startswith(tempfile.gettempdir()), generated)
+
+    def test_the_absolute_path_isolated_launch_is_THE_DECLARED_RESIDUAL_GAP(self):
+        """THE RESIDUAL, MEASURED. A bash child running `<absolute python> -I child.py`.
+
+        An absolute path consults no PATH, so no wrapper stands in front of it, and the argv was
+        built inside a process this interpreter does not guard. The run therefore SUCCEEDS with the
+        wrong tree loaded, and that is the boundary this guard declares rather than hides -- read
+        beside the two controls above, which cover the same launch by NAME and by flagless PATH
+        lookup. `declared_gap` names it in the record so a ratchet reader sees the same boundary.
+        """
+        isolated, sentinel = self.isolated_child("child_absolute_isolated")
+        shell_child = write(
+            self.good / "nd-unfolding" / "child_absolute_isolated.sh",
+            f"{shlex.quote(sys.executable)} -I {shlex.quote(str(isolated))}\n",
+        )
+        parent = write(
+            self.good / "nd-unfolding" / "parent_absolute_isolated.py",
             "import subprocess\n"
             f"raise SystemExit(subprocess.run(['/bin/bash', {str(shell_child)!r}]).returncode)\n",
         )
@@ -545,6 +728,9 @@ class TheSubprocessBoundaryIsCovered(unittest.TestCase):
         self.assertIn("ISOLATED-LOADED WRONG TREE", p.stdout)
         self.assertNotIn("[oi136 child]", p.stderr)
         self.assertEqual([record["depth"] for record in self.records()], [0])
+        record = self.records()[0]
+        self.assertIn("ABSOLUTE PATH", record["declared_gap"])
+        self.assertIn("clears PATH or the environment", record["declared_gap"])
 
     def test_os_execv_into_python_dash_I_is_refused_before_replacement(self):
         sentinel = pathlib.Path(self._tmp.name) / "execv-isolated-child-ran"
@@ -783,51 +969,348 @@ class TheSubprocessBoundaryIsCovered(unittest.TestCase):
                 self.assertNotIn("[oi136 launch]", p.stderr)
                 self.assertEqual({record["depth"] for record in self.records()}, {0, 1})
 
-    @unittest.skipUnless(shutil.which("env"), "no `env` on this platform")
-    def test_a_python_child_launched_THROUGH_env_is_scanned_and_re_armed(self):
-        """`env` is a launch-site alias, and `env -i` is the cleared environment in argv.
+    def env_launch(self, arguments, name="parent_env_bin"):
+        """Run a parent that launches `env <arguments>` and return the completed process."""
+        argv = [shutil.which("env"), *[str(a) for a in arguments]]
+        parent = write(
+            self.good / "nd-unfolding" / f"{name}.py",
+            "import subprocess\n"
+            f"raise SystemExit(subprocess.run({argv!r}).returncode)\n",
+        )
+        return self.guarded(parent)
 
-        The `env=` keyword spelling is re-armed; this spelling cannot be, because the stripping
-        happens in the launched process. Refusing it is what keeps "a Python child of a guarded
-        interpreter either starts guarded or does not start" true, rather than true-except-for-env.
-        BOTH DIRECTIONS ARE HERE: an unrelated `-u` and an ordinary assignment must still run.
+    @unittest.skipUnless(shutil.which("env"), "no `env` on this platform")
+    def test_a_python_child_launched_THROUGH_env_is_REFUSED_on_a_flag(self):
+        """ROUND 5, VERBATIM: `env -- python -I` and `env -S 'python -I ...'`.
+
+        Both reached the wrong-tree import, exited 0, and emitted only the parent's inventory,
+        because the parser modelled a subset of `env`'s options and LEFT AN UNRECOGNISED PREFIX
+        UNSCANNED. `--` is the plainest spelling of that hole and `-S` is the one that hides the
+        whole command inside a string; the third row is the attached-value form, and the fourth
+        proves the refusal survives a legitimate `-u` in front of it.
         """
         child, sentinel = self.sentinel_child("child_through_env")
-        env_bin = shutil.which("env")
         cases = (
-            (["-I", str(child)], False, mgr.LAUNCH_REASON_FLAGS),
-            (["-i", sys.executable, str(child)], False, mgr.LAUNCH_REASON_ENV),
-            (["-u", "MNV_GUARD_MODULE", sys.executable, str(child)], False,
-             mgr.LAUNCH_REASON_ENV),
-            (["PYTHONPATH=/nowhere", sys.executable, str(child)], False, mgr.LAUNCH_REASON_ENV),
-            (["FOO=bar", sys.executable, str(self.clean_child)], True, None),
-            (["-u", "MNV_UNRELATED_VAR", sys.executable, str(self.clean_child)], True, None),
+            ["--", sys.executable, "-I", str(child)],
+            ["-S", f"{shlex.quote(sys.executable)} -I {shlex.quote(str(child))}"],
+            [f"--split-string={shlex.quote(sys.executable)} -I {shlex.quote(str(child))}"],
+            ["-uFOO", sys.executable, "-I", str(child)],
+            ["-C", str(self.good), "--", sys.executable, "-E", str(child)],
         )
-        for arguments, should_run, reason in cases:
+        for arguments in cases:
             with self.subTest(arguments=arguments):
                 self.inventory.unlink(missing_ok=True)
                 sentinel.unlink(missing_ok=True)
-                argv = ([env_bin, sys.executable, *arguments] if arguments[0] == "-I"
-                        else [env_bin, *arguments])
+                p = self.env_launch(arguments)
+                self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+                self.assertIn("[oi136 launch]", p.stderr)
+                self.assertFalse(sentinel.exists(), "the refused child was launched")
+                self.assertNotIn("CHILD-LOADED", p.stdout)
+                record = self.records()[0]
+                self.assertEqual(record["verdict"], "REFUSED launch")
+                self.assertEqual(record["refusal_site"], mgr.SITE_LAUNCH)
+                self.assertEqual(record["launch_refusal"]["reason"], mgr.LAUNCH_REASON_FLAGS)
+                self.assertIn(record["launch_refusal"]["offending_flag"], ("-I", "-E"))
+
+    @unittest.skipUnless(shutil.which("env"), "no `env` on this platform")
+    def test_an_env_OPTION_THIS_PARSER_DOES_NOT_MODEL_refuses_instead_of_passing(self):
+        """FAIL-CLOSED, WHICH IS THE WHOLE ROUND-5 REPAIR: unparsed is a refusal, never a pass.
+
+        `--bogus` stands for every option this table does not list, including the ones a future
+        coreutils adds. The refusal is deliberately independent of what the command word turns out
+        to be -- an unmodelled option may CONSUME that word, so the parser does not know whether a
+        Python child is behind it, and answering anyway is how round 5 happened.
+        """
+        child, sentinel = self.sentinel_child("child_unmodelled_env")
+        cases = (
+            (["--bogus", sys.executable, str(child)], mgr.LAUNCH_REASON_UNMODELLED, "--bogus"),
+            (["-P", "/usr/bin", sys.executable, str(child)], mgr.LAUNCH_REASON_UNMODELLED, "-P"),
+            (["--unknown=1", sys.executable, str(child)], mgr.LAUNCH_REASON_UNMODELLED,
+             "--unknown=1"),
+            (["-u"], mgr.LAUNCH_REASON_UNPARSED, "-u with no value"),
+        )
+        for arguments, reason, offending in cases:
+            with self.subTest(arguments=arguments):
+                self.inventory.unlink(missing_ok=True)
+                sentinel.unlink(missing_ok=True)
+                p = self.env_launch(arguments, name="parent_unmodelled_env")
+                self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+                self.assertIn("[oi136 launch]", p.stderr)
+                self.assertFalse(sentinel.exists(), "the refused launch happened anyway")
+                record = self.records()[0]
+                self.assertEqual(record["verdict"], "REFUSED launch")
+                self.assertEqual(record["outcome"],
+                                 "refused:launch-unmodelled-launch-grammar")
+                self.assertEqual(record["refusal_site"], mgr.SITE_LAUNCH)
+                self.assertEqual(record["launch_refusal"]["reason"], reason)
+                self.assertEqual(record["launch_refusal"]["offending_flag"], offending)
+
+    @unittest.skipUnless(shutil.which("env"), "no `env` on this platform")
+    def test_an_env_ARGV_that_strips_the_contract_is_RE_ARMED_and_the_child_is_guarded(self):
+        """`env -i -- python ...`: the cleared environment in argv, REPAIRED rather than refused.
+
+        This is the argv spelling of `env={}`, which is already re-armed, and the repair is the
+        same one: the contract goes in as `NAME=VALUE` operands immediately before the command
+        word, where `env` applies them last-wins. The EVIDENCE that it worked is not the exit code
+        -- a refusal is also exit 3 -- it is that the child RAN, wrote its own depth-1 record, and
+        was stopped at the IMPORT site with `[oi136 child]`. A launch refusal would have produced
+        no child record at all.
+
+        THREE ARMS PREVIOUSLY REFUSED HERE AND NOW RE-ARM (`-i`, `-u MNV_GUARD_MODULE`,
+        `PYTHONPATH=`), and that is a widening: the guard used to decline the launch, and now the
+        child starts guarded and its imports are measured.
+        """
+        cases = (
+            ["-i", "--", sys.executable, str(self.bad_child)],
+            ["-i", sys.executable, str(self.bad_child)],
+            ["-u", "MNV_GUARD_MODULE", sys.executable, str(self.bad_child)],
+            ["PYTHONPATH=/nowhere", sys.executable, str(self.bad_child)],
+        )
+        for arguments in cases:
+            with self.subTest(arguments=arguments):
+                self.inventory.unlink(missing_ok=True)
+                p = self.env_launch(arguments, name="parent_rearmed_env")
+                self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+                self.assertIn("[oi136 child] IMPORT TREE VIOLATION", p.stderr)
+                self.assertNotIn("[oi136 launch]", p.stderr)
+                self.assertNotIn("CHILD-LOADED", p.stdout)
+                records = {record["depth"]: record for record in self.records()}
+                self.assertEqual(set(records), {0, 1})
+                self.assertEqual(records[0]["launch_env"], "argv-re-armed")
+                self.assertEqual(records[1]["violation"]["module"], "victim")
+                self.assertEqual(records[1]["propagated_from"], records[0]["pid"])
+
+    @unittest.skipUnless(shutil.which("env"), "no `env` on this platform")
+    def test_a_cleared_env_IN_FRONT_OF_a_shell_string_is_re_armed_THROUGH_the_shell(self):
+        """`env -i bash -c "python3 child.py"`: nothing inside the string is wrong.
+
+        The clearing is OUTSIDE the `-c` string, so a scan of the string alone returns clean and
+        the interpreter inside it would start with no contract -- a fail-open reachable with two
+        modelled features and no unmodelled ones. The repair goes in front of the SHELL, which
+        inherits it and passes it down, and the evidence is the child's own depth-1 record.
+        """
+        p = self.env_launch(
+            ["-i", "/bin/bash", "-c", f"python3 {shlex.quote(str(self.bad_child))}"],
+            name="parent_cleared_shell_string")
+        self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+        self.assertIn("[oi136 child] IMPORT TREE VIOLATION", p.stderr)
+        self.assertNotIn("CHILD-LOADED", p.stdout)
+        records = {record["depth"]: record for record in self.records()}
+        self.assertEqual(set(records), {0, 1})
+        self.assertEqual(records[0]["launch_env"], "argv-re-armed")
+        self.assertEqual(records[1]["violation"]["module"], "victim")
+
+    @unittest.skipUnless(shutil.which("env"), "no `env` on this platform")
+    def test_a_cleared_env_in_front_of_a_shell_string_WITHOUT_python_is_left_alone(self):
+        """The silent direction of the arm above: `env -i bash -c 'echo ...'` has nothing to guard.
+
+        Requiring the contract for every shell string would refuse launches with no interpreter in
+        them, which is the fail-closed rule applied where it buys nothing and costs a correct run.
+        """
+        p = self.env_launch(["-i", "/bin/bash", "-c", "echo SHELL-ONLY"],
+                            name="parent_cleared_shell_only")
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        self.assertIn("SHELL-ONLY", p.stdout)
+        self.assertNotIn("[oi136 launch]", p.stderr)
+        self.assertEqual([record["depth"] for record in self.records()], [0])
+
+    @unittest.skipUnless(shutil.which("env"), "no `env` on this platform")
+    def test_a_cleared_env_INSIDE_a_split_string_is_refused_because_it_cannot_be_rewritten(self):
+        """The one `env` arm that is refused rather than repaired, and why.
+
+        `env -i -S 'python child.py'` needs the same repair as the row above, but the command word
+        lives inside a STRING. Inserting an operand there would mean re-quoting somebody else's
+        shell program, so the launch is refused instead -- the boundary between "repair" and
+        "refuse" is whether the tokens are ours to insert between, and it is measured here rather
+        than described.
+        """
+        child, sentinel = self.sentinel_child("child_split_cleared")
+        p = self.env_launch(
+            ["-i", "-S", f"{shlex.quote(sys.executable)} {shlex.quote(str(child))}"],
+            name="parent_split_cleared")
+        self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+        self.assertIn("[oi136 launch]", p.stderr)
+        self.assertFalse(sentinel.exists(), "the refused child was launched")
+        record = self.records()[0]
+        self.assertEqual(record["launch_refusal"]["reason"], mgr.LAUNCH_REASON_ENV)
+        self.assertEqual(record["launch_refusal"]["offending_flag"], "env -i")
+
+    @unittest.skipUnless(shutil.which("env"), "no `env` on this platform")
+    def test_a_clean_env_launch_in_every_modelled_spelling_still_runs(self):
+        """THE DIRECTION THAT GETS A GUARD SWITCHED OFF. A fail-closed parser is only usable if
+        the forms it models actually run, so every option in the table appears here in a launch
+        that must reach the child and exit 0."""
+        cases = (
+            ["FOO=bar", sys.executable, str(self.clean_child)],
+            ["-u", "MNV_UNRELATED_VAR", sys.executable, str(self.clean_child)],
+            ["--", sys.executable, str(self.clean_child)],
+            ["-C", str(self.good), sys.executable, str(self.clean_child)],
+            ["-v", sys.executable, str(self.clean_child)],
+            ["-S", f"{shlex.quote(sys.executable)} {shlex.quote(str(self.clean_child))}"],
+        )
+        #: `--argv0=`/`-a` are NOT here and that is a measurement, not an omission: the BSD `env`
+        #: macOS ships rejects them ("illegal option -- a"), so an end-to-end row would test the
+        #: platform rather than the parser. They are modelled because coreutils has them, and they
+        #: are pinned where a parser can be asked directly --
+        #: `TheLaunchGrammarIsParsedAndFailsClosed.COMMAND_WORD`.
+        for arguments in cases:
+            with self.subTest(arguments=arguments):
+                self.inventory.unlink(missing_ok=True)
+                p = self.env_launch(arguments, name="parent_clean_env")
+                self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+                self.assertIn("CHILD-LOADED RIGHT TREE", p.stdout)
+                self.assertNotIn("[oi136 launch]", p.stderr)
+                self.assertEqual({record["depth"] for record in self.records()}, {0, 1})
+
+    def test_a_python_child_behind_a_LAUNCH_WRAPPER_is_scanned_through_the_wrapper(self):
+        """`nohup`, `nice`, `stdbuf`, `timeout`: each runs a LATER WORD, exactly as `env` does.
+
+        A guard that modelled only `env` would have the same hole under a different name, and
+        `timeout` is the sharpest case because its DURATION operand sits between the options and
+        the command -- a parser that stopped at the first non-option token would scan `5` as the
+        executable and wave the interpreter behind it through.
+        """
+        child, sentinel = self.sentinel_child("child_behind_wrapper")
+        cases = (
+            ("nohup", ["-I"]),
+            ("nice", ["-n", "5", "-I"]),
+            ("stdbuf", ["-oL", "-I"]),
+            ("timeout", ["-k", "1", "30", "-S"]),
+        )
+        measured = []
+        for wrapper, arguments in cases:
+            binary = shutil.which(wrapper)
+            if binary is None:
+                # SKIPPED PER ARM AND NOT PER TEST, deliberately: `timeout` and `stdbuf` are GNU
+                # coreutils and are absent on a stock macOS, and `self.skipTest` here would mark
+                # the WHOLE method skipped -- discarding the arms that did run and leaving no
+                # record that they had. The power arm below refuses the vacuous case.
+                continue
+            with self.subTest(wrapper=wrapper):
+                measured.append(wrapper)
+                self.inventory.unlink(missing_ok=True)
+                sentinel.unlink(missing_ok=True)
+                #: The flag is the LAST wrapper argument, so the interpreter word sits between the
+                #: wrapper's own operands and the flag -- the shape a naive scan gets wrong.
+                *prefix, flag = arguments
+                argv = [binary, *prefix, sys.executable, flag, str(child)]
                 parent = write(
-                    self.good / "nd-unfolding" / "parent_env_bin.py",
+                    self.good / "nd-unfolding" / "parent_wrapper.py",
                     "import subprocess\n"
                     f"raise SystemExit(subprocess.run({argv!r}).returncode)\n",
                 )
                 p = self.guarded(parent)
-                if should_run:
-                    self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
-                    self.assertIn("CHILD-LOADED RIGHT TREE", p.stdout)
-                    self.assertNotIn("[oi136 launch]", p.stderr)
-                    self.assertEqual({record["depth"] for record in self.records()}, {0, 1})
-                    continue
                 self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
                 self.assertIn("[oi136 launch]", p.stderr)
                 self.assertFalse(sentinel.exists(), "the refused child was launched")
                 record = self.records()[0]
-                self.assertEqual(record["verdict"], "REFUSED launch")
-                self.assertEqual(record["refusal_site"], mgr.SITE_LAUNCH)
-                self.assertEqual(record["launch_refusal"]["reason"], reason)
+                self.assertEqual(record["launch_refusal"]["reason"], mgr.LAUNCH_REASON_FLAGS)
+                self.assertEqual(record["launch_refusal"]["offending_flag"], flag)
+        self.assertTrue(measured, "no launch wrapper was present, so this test measured nothing; "
+                                  "the grammar table in TheLaunchGrammarIsParsedAndFailsClosed is "
+                                  "then the only evidence and this arm must not read as a pass")
+
+    def test_a_SHELL_STRING_that_launches_an_isolated_interpreter_is_refused(self):
+        """`bash -c "python3 -I child.py"`: a command STRING, which no argv scan can see.
+
+        The reviewer's finding has this spelling too, and it is the one a Slurm launcher actually
+        writes. Every row is a real shape: a bare command, one behind `cd x &&`, one behind a
+        newline that `shlex` alone would have swallowed, one whose redirection would have ended the
+        flag scan early, and one whose interpreter is named by ABSOLUTE PATH.
+        """
+        child, sentinel = self.sentinel_child("child_shell_string")
+        quoted = shlex.quote(str(child))
+        strings = (
+            f"python3 -I {quoted}",
+            f"cd {shlex.quote(str(self.good))} && python3 -I {quoted}",
+            f"echo starting\npython3 -I {quoted}",
+            f"python3 2>/dev/null -I {quoted}",
+            f"{shlex.quote(sys.executable)} -I {quoted}",
+            f"nohup python3 -I {quoted} &",
+        )
+        for shell in ("/bin/sh", "/bin/bash"):
+            for text in strings:
+                with self.subTest(shell=shell, text=text):
+                    self.inventory.unlink(missing_ok=True)
+                    sentinel.unlink(missing_ok=True)
+                    parent = write(
+                        self.good / "nd-unfolding" / "parent_shell_string.py",
+                        "import subprocess\n"
+                        f"raise SystemExit(subprocess.run([{shell!r}, '-c', {text!r}])"
+                        ".returncode)\n",
+                    )
+                    p = self.guarded(parent)
+                    self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+                    self.assertIn("[oi136 launch]", p.stderr)
+                    self.assertFalse(sentinel.exists(), "the refused child was launched")
+                    record = self.records()[0]
+                    self.assertEqual(record["launch_refusal"]["reason"],
+                                     mgr.LAUNCH_REASON_FLAGS)
+                    self.assertEqual(record["launch_refusal"]["offending_flag"], "-I")
+
+    def test_a_SHELL_STRING_that_strips_the_contract_or_will_not_tokenise_is_refused(self):
+        """The other two shell-string refusals: a disarming prefix, and a string nothing can read.
+
+        A leading `NAME=VALUE` is that command's environment in every shell, so
+        `PYTHONPATH=/nowhere python3 child.py` disarms the child exactly as `env` would; and an
+        unbalanced quote is a string the tokenizer cannot split, which is refused rather than
+        skipped for the same reason an unmodelled option is.
+        """
+        child, sentinel = self.sentinel_child("child_shell_env")
+        quoted = shlex.quote(str(child))
+        cases = (
+            (f"PYTHONPATH=/nowhere python3 {quoted}", mgr.LAUNCH_REASON_ENV),
+            (f"MNV_GUARD_MODULE= python3 {quoted}", mgr.LAUNCH_REASON_ENV),
+            (f"env -i python3 {quoted}", mgr.LAUNCH_REASON_ENV),
+            (f"python3 'unbalanced {quoted}", mgr.LAUNCH_REASON_UNPARSED),
+            (f"nice --bogus python3 {quoted}", mgr.LAUNCH_REASON_UNMODELLED),
+        )
+        for text, reason in cases:
+            with self.subTest(text=text):
+                self.inventory.unlink(missing_ok=True)
+                sentinel.unlink(missing_ok=True)
+                parent = write(
+                    self.good / "nd-unfolding" / "parent_shell_env.py",
+                    "import subprocess\n"
+                    f"raise SystemExit(subprocess.run(['/bin/bash', '-c', {text!r}])"
+                    ".returncode)\n",
+                )
+                p = self.guarded(parent)
+                self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+                self.assertIn("[oi136 launch]", p.stderr)
+                self.assertFalse(sentinel.exists(), "the refused child was launched")
+                self.assertEqual(self.records()[0]["launch_refusal"]["reason"], reason)
+
+    def test_a_clean_SHELL_STRING_still_runs_and_the_child_is_guarded(self):
+        """The silent direction for the shell-string scan, in both `-c` and `shell=True` spellings.
+
+        A string launching an ordinary interpreter must reach the child, and the child must be
+        GUARDED -- which the depth-1 record proves and the exit code alone does not.
+        """
+        quoted = shlex.quote(str(self.clean_child))
+        bodies = {
+            "sh -c": ("import subprocess\n"
+                      f"raise SystemExit(subprocess.run(['/bin/sh', '-c', 'python3 {quoted}'])"
+                      ".returncode)\n"),
+            "bash -lc": ("import subprocess\n"
+                         f"raise SystemExit(subprocess.run(['/bin/bash', '-lc', "
+                         f"'python3 {quoted}']).returncode)\n"),
+            "shell=True": ("import subprocess\n"
+                           f"raise SystemExit(subprocess.run('python3 {quoted}', shell=True)"
+                           ".returncode)\n"),
+            "redirect": ("import subprocess\n"
+                         f"raise SystemExit(subprocess.run(['/bin/sh', '-c', "
+                         f"'python3 {quoted} 2>&1']).returncode)\n"),
+        }
+        for name, body in bodies.items():
+            with self.subTest(spelling=name):
+                self.inventory.unlink(missing_ok=True)
+                parent = write(self.good / "nd-unfolding" / "parent_clean_shell.py", body)
+                p = self.guarded(parent)
+                self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+                self.assertIn("CHILD-LOADED RIGHT TREE", p.stdout)
+                self.assertNotIn("[oi136 launch]", p.stderr)
+                self.assertEqual({record["depth"] for record in self.records()}, {0, 1})
 
     def test_a_parent_that_DELETES_the_contract_cannot_launch_a_python_child(self):
         """The last fail-open route at a launch site is this process's own `os.environ`.
@@ -921,13 +1404,125 @@ class TheSubprocessBoundaryIsCovered(unittest.TestCase):
         self.assertIn("IT CROSSES PROCESS BOUNDARIES", mgr.__doc__)
         self.assertIn("Direct Python launches using `-S`, `-I` or `-E`", mgr.__doc__)
         self.assertIn("including `env={}`", mgr.__doc__)
-        self.assertIn("THE ONE DECLARED PROCESS-BOUNDARY GAP", mgr.__doc__)
-        self.assertIn("non-Python child that itself launches\n`python -I`", mgr.__doc__)
-        # The three claims the tests above measure. A claim in the header that no control pins is
-        # the shape this whole file exists to prevent, so each of them is named here.
+        # THE RESIDUAL, STATED WHERE A CALLER READS IT, and stated as ONE sentence naming both of
+        # its arms -- the absolute path and the cleared environment. The header used to declare a
+        # WIDER gap ("a non-Python child that itself launches `python -I`"); the PATH wrappers
+        # closed the PATH-lookup half of it, so a header still claiming the wide version would
+        # understate the guard exactly as the narrow version would overstate it.
+        self.assertIn("THE ONE DECLARED RESIDUAL GAP", mgr.__doc__)
+        self.assertIn("invokes\nthe interpreter by an ABSOLUTE PATH", mgr.__doc__)
+        self.assertIn("clears `PATH` or\nthe environment", mgr.__doc__)
+        # The claims the tests above measure. A claim in the header that no control pins is the
+        # shape this whole file exists to prevent, so each of them is named here.
         self.assertIn("The scan follows CPython's OWN option grammar", mgr.__doc__)
         self.assertIn("either starts guarded or does not start", mgr.__doc__)
-        self.assertIn("The same one gap covers", mgr.__doc__)
+        self.assertIn("AN UNMODELLED SPELLING REFUSES", mgr.__doc__)
+        self.assertIn("INTERPRETER WRAPPERS ON PATH COVER THE SECOND LAUNCH SITE", mgr.__doc__)
+        self.assertIn("`declared_gap`", mgr.__doc__)
+        self.assertIn("`path_shim: armed`", mgr.__doc__)
+
+    def test_the_declared_gap_and_the_path_shim_state_are_in_EVERY_record(self):
+        """THE COVERAGE BOUNDARY TRAVELS WITH THE EVIDENCE, on every exit path.
+
+        A ratchet reader consumes records, not docstrings. `declared_gap` is therefore written on
+        the green path, the launch-refusal path, the import-refusal path and the no-guard
+        cannot-check path -- and `path_shim` beside it, because when that is not `armed` the
+        boundary is wider than the sentence.
+        """
+        child, _ = self.sentinel_child("child_gap_fields")
+        arms = {
+            "green": self.clean_child,
+            "import-refusal": self.bad_child,
+        }
+        for name, target in arms.items():
+            with self.subTest(arm=name):
+                self.inventory.unlink(missing_ok=True)
+                parent = write(
+                    self.good / "nd-unfolding" / "parent_gap_fields.py",
+                    "import subprocess, sys\n"
+                    f"raise SystemExit(subprocess.run([sys.executable, {str(target)!r}])"
+                    ".returncode)\n",
+                )
+                self.guarded(parent)
+                records = self.records()
+                self.assertTrue(records)
+                for record in records:
+                    self.assertEqual(record["declared_gap"], mgr.DECLARED_GAP)
+                    self.assertEqual(record["path_shim"], "armed")
+                    self.assertIn(str(self.deployed_bin), record["path_shim_dirs"])
+
+        self.inventory.unlink(missing_ok=True)
+        parent = write(
+            self.good / "nd-unfolding" / "parent_gap_refusal.py",
+            "import subprocess, sys\n"
+            f"raise SystemExit(subprocess.run([sys.executable, '-I', {str(child)!r}])"
+            ".returncode)\n",
+        )
+        self.guarded(parent)
+        self.assertEqual(self.records()[0]["declared_gap"], mgr.DECLARED_GAP)
+
+        # NO GUARD AT ALL: the widest boundary of the four, so the field must not go missing here.
+        self.inventory.unlink(missing_ok=True)
+        cannot = run(self.deployed_guard, "--expect-root", self.good,
+                     "--inventory", self.inventory, "--", self.good / "nd-unfolding" / "absent.py")
+        self.assertEqual(cannot.returncode, mgr.CANNOT_CHECK_EXIT, cannot.stderr)
+        record = self.records()[0]
+        self.assertEqual(record["declared_gap"], mgr.DECLARED_GAP)
+        self.assertEqual(record["path_shim"], "not-armed")
+
+    def test_the_recorded_wrapper_digest_is_of_the_WRAPPER_THAT_RAN(self):
+        """The operand, not just the value -- the same control `shim_sha256` already has.
+
+        The wrappers are tracked, but the A-2(f) source manifest binds `.py`/`.sh` files and a
+        `sh` script installed on PATH as `python3` cannot carry a suffix. So the digest in the
+        record is what binds those bytes, and a digest read off THIS repo's copy rather than the
+        deployed one would pin the wrong file. The deployed wrapper is mutated by one comment line
+        so that only one of the two can be the answer.
+        """
+        deployed_wrapper = self.deployed_bin / "python3"
+        deployed_wrapper.write_bytes(
+            deployed_wrapper.read_bytes() + b"\n# fixture mutation: behaviour-neutral\n")
+        deployed = hashlib.sha256(deployed_wrapper.read_bytes()).hexdigest()
+        repo_wrapper = hashlib.sha256((SHIM_TREE / "bin" / "python3").read_bytes()).hexdigest()
+        self.assertNotEqual(deployed, repo_wrapper, "the mutation must change the digest")
+        parent = write(
+            self.good / "nd-unfolding" / "parent_wrapper_digest.py",
+            "import subprocess, sys\n"
+            f"raise SystemExit(subprocess.run([sys.executable, {str(self.clean_child)!r}])"
+            ".returncode)\n",
+        )
+        p = self.guarded(parent)
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        for record in self.records():
+            self.assertEqual(record["path_shim_sha256"]["bin/python3"], deployed)
+            self.assertNotEqual(record["path_shim_sha256"]["bin/python3"], repo_wrapper)
+            self.assertEqual(
+                record["path_shim_sha256"]["scan_argv.py"],
+                hashlib.sha256((self.deployed_shim.parent / "scan_argv.py").read_bytes())
+                .hexdigest())
+
+    def test_a_deployment_MISSING_the_path_wrappers_says_so_instead_of_claiming_coverage(self):
+        """A NARROWER GUARD IS A REPORTABLE STATE AND NOT A SILENT ONE.
+
+        `sitecustomize.py` and `bin/` fail independently: a tree carrying only the first still gets
+        the whole in-interpreter contract, so refusing the run would trade a narrower guard for no
+        run at all. What may NOT happen is a record that reads like full coverage -- so the state
+        names the missing file, and the same record's `declared_gap` is then an understatement the
+        reader can see rather than one they cannot.
+        """
+        shutil.rmtree(self.deployed_bin)
+        parent = write(
+            self.good / "nd-unfolding" / "parent_no_bin.py",
+            "import subprocess, sys\n"
+            f"raise SystemExit(subprocess.run([sys.executable, {str(self.clean_child)!r}])"
+            ".returncode)\n",
+        )
+        p = self.guarded(parent)
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        self.assertIn("CHILD-LOADED RIGHT TREE", p.stdout)
+        for record in self.records():
+            self.assertTrue(record["path_shim"].startswith("not-armed:"), record["path_shim"])
+            self.assertIn("bin/python3", record["path_shim"])
 
 
 class TheStartupFlagScanFollowsCPythonsOptionGrammar(unittest.TestCase):
@@ -996,6 +1591,455 @@ class TheStartupFlagScanFollowsCPythonsOptionGrammar(unittest.TestCase):
     def test_the_scan_reads_argv_and_never_this_interpreters_own_flags(self):
         """argv[0] is the executable, so a `-S` there is a path fragment and not a flag."""
         self.assertIsNone(mgr._forbidden_python_flag(["/opt/python-SIE/bin/python3", "x.py"]))
+
+
+class TheLaunchGrammarIsParsedAndFailsClosed(unittest.TestCase):
+    """A TABLE OVER THE WRAPPER GRAMMARS THEMSELVES, called directly and deliberately in-process.
+
+    Same reasoning as the class above: `_parse_env`, `_parse_wrapper` and `_shell_command_string`
+    are pure functions of an argv, the interesting inputs are the ones the two `env`
+    implementations make ambiguous, and enumerating fifty of them end-to-end would be fifty
+    subprocess launches to re-measure three functions. The END-TO-END ANCHORS are in
+    `TheSubprocessBoundaryIsCovered`: the round-5 forms, the unmodelled option, the re-armed
+    forms, the shell strings and the clean spellings each have a live refusal or a live run.
+
+    THREE DIRECTIONS ARE REQUIRED HERE, not two. A parser that only finds the command word passes
+    while mis-parsing the options in front of it; one that only refuses the unmodelled passes while
+    refusing everything; and one that never REPAIRS turns a correct `env -i` launch into a refusal,
+    which is how a guard gets routed around.
+    """
+
+    def parse(self, argv):
+        return mgr._parse_env(argv)
+
+    COMMAND_WORD = (
+        # (argv, command, index of the command word)
+        (["env", "python", "x.py"], ["python", "x.py"], 1),
+        (["env", "--", "python", "-I", "x.py"], ["python", "-I", "x.py"], 2),
+        (["env", "-i", "python", "x.py"], ["python", "x.py"], 2),
+        (["env", "--ignore-environment", "python", "x.py"], ["python", "x.py"], 2),
+        (["env", "-u", "FOO", "python", "x.py"], ["python", "x.py"], 3),
+        (["env", "-uFOO", "python", "x.py"], ["python", "x.py"], 2),
+        (["env", "--unset=FOO", "python", "x.py"], ["python", "x.py"], 2),
+        (["env", "-C", "/tmp", "python", "x.py"], ["python", "x.py"], 3),
+        (["env", "--chdir=/tmp", "python", "x.py"], ["python", "x.py"], 2),
+        (["env", "-0", "python", "x.py"], ["python", "x.py"], 2),
+        (["env", "--null", "-v", "--debug", "python", "x.py"], ["python", "x.py"], 4),
+        (["env", "--default-signal", "python", "x.py"], ["python", "x.py"], 2),
+        (["env", "--default-signal=INT", "python", "x.py"], ["python", "x.py"], 2),
+        (["env", "--ignore-signal=INT", "python", "x.py"], ["python", "x.py"], 2),
+        (["env", "--block-signal=INT", "python", "x.py"], ["python", "x.py"], 2),
+        (["env", "--list-signal-handling", "python", "x.py"], ["python", "x.py"], 2),
+        (["env", "-a", "zero", "python", "x.py"], ["python", "x.py"], 3),
+        (["env", "--argv0=zero", "python", "x.py"], ["python", "x.py"], 2),
+        (["env", "FOO=bar", "BAZ=qux", "python", "x.py"], ["python", "x.py"], 3),
+        # `--` ends OPTIONS and not operands: an assignment behind it is still an assignment,
+        # which is how both `env` implementations read it (measured against /usr/bin/env).
+        (["env", "--", "FOO=bar", "python", "x.py"], ["python", "x.py"], 3),
+        # A command word that LOOKS like an option is the command word once `--` has been seen.
+        (["env", "--", "-weird-binary"], ["-weird-binary"], 2),
+    )
+
+    UNMODELLED = (
+        ["env", "--bogus", "python", "x.py"],
+        ["env", "--isolate", "python", "x.py"],
+        ["env", "-P", "/usr/bin", "python", "x.py"],     # changes the utility search path
+        ["env", "-Zfoo", "python", "x.py"],
+        ["env", "--unknown=1", "python", "x.py"],
+    )
+
+    UNPARSEABLE = (
+        ["env", "-u"],
+        ["env", "-C"],
+        ["env", "-S"],
+        ["env", "-S", "python 'unbalanced"],
+    )
+
+    def test_the_command_word_is_found_behind_every_modelled_option(self):
+        for argv, command, index in self.COMMAND_WORD:
+            with self.subTest(argv=argv):
+                parsed = self.parse(argv)
+                self.assertIsNotNone(parsed, argv)
+                self.assertEqual(parsed["command"], command)
+                self.assertEqual(parsed["index"], index)
+                self.assertEqual(argv[parsed["index"]], command[0])
+
+    def test_an_unmodelled_option_refuses_and_names_itself(self):
+        for argv in self.UNMODELLED:
+            with self.subTest(argv=argv):
+                with self.assertRaises(mgr._LaunchRefusal) as caught:
+                    self.parse(argv)
+                self.assertEqual(caught.exception.reason, mgr.LAUNCH_REASON_UNMODELLED)
+                self.assertIn(caught.exception.offending, argv)
+
+    def test_a_prefix_that_cannot_be_parsed_refuses_rather_than_passing(self):
+        for argv in self.UNPARSEABLE:
+            with self.subTest(argv=argv):
+                with self.assertRaises(mgr._LaunchRefusal) as caught:
+                    self.parse(argv)
+                self.assertEqual(caught.exception.reason, mgr.LAUNCH_REASON_UNPARSED)
+
+    def test_a_split_string_is_parsed_as_env_arguments_and_not_assumed_to_be_the_command(self):
+        """`-S` can carry options and assignments, so the split result re-enters the parser."""
+        parsed = self.parse(["env", "-S", "-i FOO=bar python -I x.py"])
+        self.assertEqual(parsed["command"], ["python", "-I", "x.py"])
+        self.assertTrue(parsed["clears"])
+        self.assertEqual(parsed["assignments"], {"FOO": "bar"})
+        # NO INJECTION POINT: the command word no longer corresponds to a position in the argv the
+        # caller passed, and inserting an operand at a made-up index is how a repair corrupts.
+        self.assertIsNone(parsed["index"])
+
+    def test_a_SHORT_OPTION_CLUSTER_is_walked_and_a_clustered_dash_i_still_CLEARS(self):
+        """`env [-0iv]` is the BSD usage line, so a cluster is a legal spelling of these flags.
+
+        BOTH DIRECTIONS WERE WRONG IN THE FIRST VERSION AND BOTH ARE PINNED HERE. A parser that
+        knew only `-i` REFUSED the correct `env -iv python x.py`; and the fix's first ordering
+        tested the plain-flag table before the clearing table -- `-i` is in both -- so `-iv` parsed
+        as an ordinary flag and reported `clears=False`, which is a CLEARED ENVIRONMENT READ AS AN
+        ARMED ONE. Measured, not hypothetical, in both directions.
+        """
+        for argv in (["env", "-iv", "python", "x.py"], ["env", "-vi", "python", "x.py"],
+                     ["env", "-0i", "python", "x.py"], ["env", "-i", "python", "x.py"]):
+            with self.subTest(argv=argv):
+                parsed = self.parse(argv)
+                self.assertEqual(parsed["command"], ["python", "x.py"])
+                self.assertTrue(parsed["clears"], f"{argv} cleared the environment unnoticed")
+        for argv in (["env", "-0v", "python", "x.py"], ["env", "-v0", "python", "x.py"]):
+            with self.subTest(argv=argv):
+                self.assertFalse(self.parse(argv)["clears"])
+        attached = self.parse(["env", "-uFOO", "-vi", "python", "x.py"])
+        self.assertEqual(attached["command"], ["python", "x.py"])
+        self.assertEqual(attached["unset"], {"FOO"})
+        self.assertTrue(attached["clears"])
+        self.assertEqual(self.parse(["env", "-Spython -I x.py"])["command"],
+                         ["python", "-I", "x.py"])
+
+    def test_an_UNMODELLED_JOB_LAUNCHER_is_an_ordinary_child_and_says_so(self):
+        """`srun`/`mpirun` are NOT parsed, and the coverage that replaces parsing is named here.
+
+        Their option grammars are large enough that a fail-closed parser would refuse correct
+        submissions, so they are treated as ordinary non-Python children -- which means the
+        interpreter behind them is covered by the PATH WRAPPER and not by this scan. The control
+        exists because the alternative reading ("srun is modelled too") is the one a reader would
+        assume from the fail-closed rule, and it is false.
+        """
+        for text in ("srun -n 1 --gpus=1 python3 -I x.py",
+                     "mpirun -np 4 python3 -I x.py"):
+            with self.subTest(text=text):
+                self.assertFalse(mgr._scan_shell_string(text, None))
+        # And the launchers this repo's own guarded code actually runs must not be refused.
+        for text in ("cd /repo && git log --format='%H %cI' -- x.sh | head -1",
+                     "sacct -j 123_4 -o State,ExitCode -P --noheader",
+                     "md5sum /repo/bin/x | cut -d' ' -f1"):
+            with self.subTest(text=text):
+                self.assertFalse(mgr._scan_shell_string(text, None))
+
+    def test_a_wrapper_prefix_OUTSIDE_a_shell_string_still_disarms_what_is_INSIDE_it(self):
+        """`env -i bash -c 'python3 x.py'`: the string is clean and the interpreter is not guarded.
+
+        The clearing happens OUTSIDE the `-c` string, so a scan of the string alone sees nothing
+        wrong; the interpreter inside it would nonetheless start with no contract. So the shell
+        string reports whether it launches an interpreter, and the contract checks then run for
+        that launch exactly as for a direct one -- repaired where the argv allows it, refused where
+        it does not. A string with NO interpreter in it (`bash -c 'ls'`) is left alone, because
+        requiring the contract there would refuse a launch with nothing to guard.
+        """
+        self.assertTrue(mgr._scan_shell_string("python3 x.py", None))
+        self.assertTrue(mgr._scan_shell_string("cd /tmp && nohup python3 x.py", None))
+        self.assertTrue(mgr._scan_shell_string("bash -c 'python3 x.py'", None))
+        self.assertFalse(mgr._scan_shell_string("ls -l", None))
+        self.assertFalse(mgr._scan_shell_string("cd /tmp && echo hi", None))
+        self.assertFalse(mgr._scan_shell_string("bash -c 'ls'", None))
+
+    def test_an_env_that_LAUNCHES_NOTHING_is_not_a_refusal(self):
+        """The fail-closed rule is about what cannot be READ, never about what reads as empty."""
+        for argv in (["env"], ["env", "-i"], ["env", "FOO=bar"], ["env", "--"]):
+            with self.subTest(argv=argv):
+                self.assertIsNone(self.parse(argv))
+
+    def test_the_disarming_operands_are_recognised_and_the_innocent_ones_are_not(self):
+        contract = dict(os.environ, MNV_GUARD_MODULE="/abs/guard.py")
+        with unittest.mock.patch.dict(os.environ, contract, clear=True):
+            self.assertIsNotNone(mgr._parse_env(["env", "-u", "MNV_GUARD_MODULE", "python"])
+                                 ["stripped"])
+            self.assertIsNotNone(mgr._parse_env(["env", "PYTHONPATH=/nowhere", "python"])
+                                 ["stripped"])
+            self.assertIsNone(mgr._parse_env(["env", "-u", "SOMETHING_ELSE", "python"])
+                              ["stripped"])
+            self.assertIsNone(mgr._parse_env(["env", "FOO=bar", "python"])["stripped"])
+
+    WRAPPERS = (
+        # (argv, command)
+        (["nohup", "python", "-I", "x.py"], ["python", "-I", "x.py"]),
+        (["nice", "-n", "5", "python", "x.py"], ["python", "x.py"]),
+        (["nice", "-n5", "python", "x.py"], ["python", "x.py"]),
+        (["nice", "--adjustment=5", "python", "x.py"], ["python", "x.py"]),
+        (["nice", "-5", "python", "x.py"], ["python", "x.py"]),
+        (["stdbuf", "-oL", "-eL", "python", "x.py"], ["python", "x.py"]),
+        (["stdbuf", "--output=L", "python", "x.py"], ["python", "x.py"]),
+        # The DURATION operand: a scan stopping at the first non-option token would read `30` as
+        # the executable and never reach the interpreter behind it.
+        (["timeout", "30", "python", "-I", "x.py"], ["python", "-I", "x.py"]),
+        (["timeout", "-k", "5", "--signal=TERM", "30", "python", "x.py"], ["python", "x.py"]),
+        (["time", "-p", "python", "x.py"], ["python", "x.py"]),
+        (["exec", "-a", "zero", "python", "x.py"], ["python", "x.py"]),
+        (["xargs", "-0", "-n", "1", "python", "x.py"], ["python", "x.py"]),
+        # AN OPTIONAL-ARGUMENT OPTION MUST NOT EAT THE COMMAND WORD. GNU `xargs -i` takes its
+        # replacement string ATTACHED, so the bare form consumes nothing -- treating it as
+        # value-taking scanned `x.py` as the executable and let the interpreter through.
+        (["xargs", "-i", "python", "-I", "x.py"], ["python", "-I", "x.py"]),
+        (["xargs", "-i{}", "python", "-I", "x.py"], ["python", "-I", "x.py"]),
+        (["xargs", "-e", "python", "-I", "x.py"], ["python", "-I", "x.py"]),
+        (["xargs", "-I", "{}", "python", "-I", "x.py"], ["python", "-I", "x.py"]),
+    )
+
+    def test_every_modelled_wrapper_resolves_to_the_command_it_runs(self):
+        for argv, command in self.WRAPPERS:
+            with self.subTest(argv=argv):
+                spec = mgr._WRAPPER_SPECS[argv[0]]
+                index = mgr._parse_wrapper(argv, spec)
+                self.assertEqual(argv[index:], command)
+
+    def test_an_unmodelled_wrapper_option_refuses(self):
+        for argv in (["nohup", "-x", "python"], ["nice", "--bogus", "python"],
+                     ["timeout", "--unknown=1", "30", "python"], ["xargs", "--bogus", "python"]):
+            with self.subTest(argv=argv):
+                with self.assertRaises(mgr._LaunchRefusal) as caught:
+                    mgr._parse_wrapper(argv, mgr._WRAPPER_SPECS[argv[0]])
+                self.assertEqual(caught.exception.reason, mgr.LAUNCH_REASON_UNMODELLED)
+
+    def test_a_wrapper_that_only_REPORTS_launches_nothing(self):
+        self.assertIsNone(mgr._parse_wrapper(["command", "-v", "python3"],
+                                             mgr._WRAPPER_SPECS["command"]))
+        self.assertIsNone(mgr._parse_wrapper(["timeout", "30"], mgr._WRAPPER_SPECS["timeout"]))
+
+    def test_exec_dash_c_clears_the_environment_and_is_refused_as_such(self):
+        with self.assertRaises(mgr._LaunchRefusal) as caught:
+            mgr._parse_wrapper(["exec", "-c", "python", "x.py"], mgr._WRAPPER_SPECS["exec"])
+        self.assertEqual(caught.exception.reason, mgr.LAUNCH_REASON_ENV)
+
+    SHELL_STRINGS = (
+        (["bash", "-c", "python3 x.py"], "python3 x.py"),
+        (["sh", "-c", "python3 x.py"], "python3 x.py"),
+        (["bash", "-lc", "python3 x.py"], "python3 x.py"),
+        (["bash", "-e", "-c", "python3 x.py"], "python3 x.py"),
+        (["bash", "-o", "pipefail", "-c", "python3 x.py"], "python3 x.py"),
+        (["bash", "--norc", "-c", "python3 x.py"], "python3 x.py"),
+    )
+
+    def test_the_command_string_is_found_behind_every_modelled_shell_option(self):
+        for argv, text in self.SHELL_STRINGS:
+            with self.subTest(argv=argv):
+                self.assertEqual(mgr._shell_command_string(argv), text)
+
+    def test_a_shell_running_a_SCRIPT_has_no_string_and_is_not_refused(self):
+        for argv in (["bash", "script.sh"], ["sh", "-e", "script.sh"],
+                     ["bash", "--", "script.sh"], ["bash"]):
+            with self.subTest(argv=argv):
+                self.assertIsNone(mgr._shell_command_string(argv))
+
+    def test_an_unmodelled_shell_option_refuses_because_it_may_eat_the_string(self):
+        for argv in (["bash", "--bogus", "-c", "python3 x.py"],
+                     ["bash", "-Z", "-c", "python3 x.py"], ["bash", "-c"]):
+            with self.subTest(argv=argv):
+                with self.assertRaises(mgr._LaunchRefusal):
+                    mgr._shell_command_string(argv)
+
+    def test_an_unquoted_newline_is_a_command_separator_and_a_quoted_one_is_not(self):
+        """The measured `shlex` hole: a newline is whitespace, so the separator disappears."""
+        self.assertEqual(mgr._unquoted_lines("cd x\npython3 -I y.py"),
+                         ["cd x", "python3 -I y.py"])
+        self.assertEqual(mgr._unquoted_lines("python3 -c 'a\nb'"), ["python3 -c 'a\nb'"])
+        with self.assertRaises(ValueError):
+            mgr._unquoted_lines("python3 'unbalanced")
+
+    def test_simple_commands_splits_on_operators_and_drops_redirection_targets(self):
+        self.assertEqual(mgr._simple_commands("cd x && python3 -I y.py"),
+                         [["cd", "x"], ["python3", "-I", "y.py"]])
+        self.assertEqual(mgr._simple_commands("a | b ; c & d || e"),
+                         [["a"], ["b"], ["c"], ["d"], ["e"]])
+        # A REDIRECTION TARGET READ AS AN ARGUMENT ENDS THE FLAG SCAN EARLY, which is the round-5
+        # defect in a shell's spelling. Both the operator and its target must go, and so must the
+        # file-descriptor digit in front of it.
+        self.assertEqual(mgr._simple_commands("python3 > /tmp/out -I y.py"),
+                         [["python3", "-I", "y.py"]])
+        self.assertEqual(mgr._simple_commands("python3 2>/dev/null -I y.py"),
+                         [["python3", "-I", "y.py"]])
+        self.assertEqual(mgr._simple_commands("python3 &> /tmp/log -I y.py"),
+                         [["python3", "-I", "y.py"]])
+        self.assertEqual(mgr._simple_commands("{ python3 -I y.py; }"),
+                         [["python3", "-I", "y.py"]])
+
+
+class ThePathWrapperAndItsScannerAreCalledDIRECTLY(unittest.TestCase):
+    """The PATH wrapper and `scan_argv.py` as UNITS, not only through a bash child.
+
+    WHY DIRECTLY. `TheSubprocessBoundaryIsCovered` exercises these through a guarded parent, a
+    bash script and a PATH lookup, which is the shape that matters -- and it is also three layers
+    that can each refuse first. A mutation to the wrapper's own decision would be masked by any of
+    them, so its arms are measured here where the wrapper IS the process under test.
+
+    THE WRAPPER'S CONTRACT: exit 0 and exec for a launch that may proceed, exit 3 and an
+    `[oi136 launch]` line for one that may not, and never a launch it did not scan.
+    """
+
+    WRAPPER = SHIM_TREE / "bin" / "python3"
+    SCANNER = SHIM_TREE / "scan_argv.py"
+
+    def armed(self, **overrides):
+        """The environment `install()` exports, with named variables dropped when set to None."""
+        environment = dict(
+            os.environ,
+            PYTHONDONTWRITEBYTECODE="1",
+            PYTHONPATH=str(SHIM_TREE),
+            MNV_GUARD_MODULE=str(GUARD),
+            MNV_GUARD_EXPECT_ROOT=str(REPO),
+            MNV_GUARD_ALLOW="",
+            MNV_GUARD_INVENTORY="",
+            MNV_GUARD_PARENT_PID=str(os.getpid()),
+            MNV_GUARD_DEPTH="1",
+            MNV_GUARD_REAL_PYTHON=sys.executable,
+            MNV_GUARD_PATH_SHIM_DIRS=str(SHIM_TREE / "bin"),
+        )
+        for name, value in overrides.items():
+            if value is None:
+                environment.pop(name, None)
+            else:
+                environment[name] = value
+        return environment
+
+    def wrapper(self, *arguments, wrapper=None, **overrides):
+        return subprocess.run([str(wrapper or self.WRAPPER), *[str(a) for a in arguments]],
+                              capture_output=True, text=True, env=self.armed(**overrides))
+
+    def test_the_wrapper_is_tracked_and_executable(self):
+        """A wrapper without its executable bit is skipped by PATH lookup, silently."""
+        for path in (self.WRAPPER, SHIM_TREE / "bin" / "python", self.SCANNER):
+            with self.subTest(path=path.name):
+                self.assertTrue(path.is_file(), path)
+        self.assertTrue(os.access(self.WRAPPER, os.X_OK), self.WRAPPER)
+        self.assertTrue(os.access(SHIM_TREE / "bin" / "python", os.X_OK))
+        tracked = subprocess.run(
+            ["git", "-C", str(REPO), "ls-files", "--", "nd-unfolding/mnv_guard_shim"],
+            capture_output=True, text=True, check=True).stdout.split()
+        for expected in ("nd-unfolding/mnv_guard_shim/bin/python3",
+                         "nd-unfolding/mnv_guard_shim/bin/python",
+                         "nd-unfolding/mnv_guard_shim/scan_argv.py",
+                         "nd-unfolding/mnv_guard_shim/sitecustomize.py"):
+            with self.subTest(path=expected):
+                self.assertIn(expected, tracked)
+
+    def test_a_clean_launch_passes_THROUGH_the_wrapper_to_the_real_interpreter(self):
+        result = self.wrapper("-c", "import sys; print('WRAPPED', sys.executable)")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("WRAPPED", result.stdout)
+        self.assertNotIn("[oi136 launch]", result.stderr)
+
+    def test_every_isolating_spelling_is_refused_by_the_wrapper_itself(self):
+        for arguments in (["-I", "-c", "print(1)"], ["-S", "-c", "print(1)"],
+                          ["-E", "-c", "print(1)"], ["-IS", "-c", "print(1)"],
+                          ["-W", "ignore", "-I", "-c", "print(1)"]):
+            with self.subTest(arguments=arguments):
+                result = self.wrapper(*arguments)
+                self.assertEqual(result.returncode, 3, result.stdout + result.stderr)
+                self.assertIn("[oi136 launch]", result.stderr)
+                self.assertNotIn("1\n", result.stdout)
+
+    def test_an_option_VALUE_containing_S_I_or_E_still_reaches_the_interpreter(self):
+        """The direction that gets a guard removed: the wrapper must not refuse a correct launch."""
+        with tempfile.TemporaryDirectory() as cache:
+            result = self.wrapper(f"-Xpycache_prefix={cache}/PYC-CACHE", "-c", "print('RAN')")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("RAN", result.stdout)
+
+    def test_a_MISSING_contract_variable_refuses_instead_of_launching_unguarded(self):
+        for name in ("MNV_GUARD_MODULE", "MNV_GUARD_EXPECT_ROOT", "MNV_GUARD_PARENT_PID"):
+            with self.subTest(dropped=name):
+                result = self.wrapper("-c", "print('MUST NOT RUN')", **{name: None})
+                self.assertEqual(result.returncode, 3, result.stdout + result.stderr)
+                self.assertIn("[oi136 launch]", result.stderr)
+                self.assertNotIn("MUST NOT RUN", result.stdout)
+
+    def test_a_MISSING_pythonpath_is_RE_INJECTED_rather_than_refused(self):
+        """PYTHONPATH is derivable from the wrapper's own location, so it is repaired.
+
+        The distinction is the same one the guard makes everywhere: a variable this process can
+        RE-DERIVE is re-armed, and one it cannot is refused. The child proves the repair by
+        reporting the guard it installed.
+        """
+        probe = ("import sys; "
+                 "print('GUARDED', any(type(f).__name__ == 'GuardedPathFinder' "
+                 "for f in sys.meta_path))")
+        result = self.wrapper("-c", probe, PYTHONPATH=None)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("GUARDED True", result.stdout)
+
+    def test_the_delegating_wrapper_does_not_LEAK_its_name_to_the_child(self):
+        """`MNV_GUARD_WRAPPER_NAME` must not survive the exec.
+
+        A leaked value would make a grandchild's `python3` resolve the delegator's name instead of
+        its own -- so the body unsets it, and this is the control for that one line.
+        """
+        result = self.wrapper(
+            "-c", "import os; print('LEAK', os.environ.get('MNV_GUARD_WRAPPER_NAME'))",
+            wrapper=SHIM_TREE / "bin" / "python")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("LEAK None", result.stdout)
+
+    def test_a_deployment_missing_the_SCANNER_refuses_rather_than_guessing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            deployed = deploy_shim(pathlib.Path(tmp) / "mnv_guard_shim")
+            (deployed / "scan_argv.py").unlink()
+            result = self.wrapper("-c", "print('MUST NOT RUN')",
+                                  wrapper=deployed / "bin" / "python3",
+                                  MNV_GUARD_PATH_SHIM_DIRS=str(deployed / "bin"))
+        self.assertEqual(result.returncode, 3, result.stdout + result.stderr)
+        self.assertIn("TRACKED ARGV SCANNER IS MISSING", result.stderr)
+        self.assertNotIn("MUST NOT RUN", result.stdout)
+
+    def scan(self, *arguments, **overrides):
+        return subprocess.run(
+            [sys.executable, "-I", "-S", str(self.SCANNER), "--guard", str(GUARD), "--",
+             *[str(a) for a in arguments]],
+            capture_output=True, text=True, env=self.armed(**overrides))
+
+    def test_the_scanner_answers_the_same_question_the_guard_does(self):
+        """It OWNS NO GRAMMAR: the verdicts below must be `_forbidden_python_flag`'s own.
+
+        Called directly, so a mutation to the scanner is visible here even though the wrapper and
+        the bash child would each refuse first in the end-to-end arms.
+        """
+        for arguments in (["-I", "x.py"], ["-S", "x.py"], ["-E", "x.py"], ["-OI", "x.py"],
+                          ["-W", "ignore", "-I", "x.py"], ["--isolated", "x.py"]):
+            with self.subTest(arguments=arguments, expected="refused"):
+                result = self.scan(*arguments)
+                self.assertEqual(result.returncode, 3, result.stdout + result.stderr)
+                self.assertIn("[oi136 launch]", result.stderr)
+                self.assertEqual(mgr._forbidden_python_flag(["python", *arguments]) is not None,
+                                 True)
+        for arguments in (["x.py"], ["-u", "x.py"], ["-Xpycache_prefix=/tmp/C", "x.py"],
+                          ["-c", "print('-I')"], ["-m", "mod", "-I"], []):
+            with self.subTest(arguments=arguments, expected="clean"):
+                result = self.scan(*arguments)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertIsNone(mgr._forbidden_python_flag(["python", *arguments]))
+
+    def test_the_scanner_refuses_when_it_cannot_reach_the_grammar_at_all(self):
+        """A scan that did not answer is not an answer, so it is a refusal."""
+        missing = subprocess.run(
+            [sys.executable, "-I", "-S", str(self.SCANNER), "--guard", "/nonexistent/guard.py",
+             "--", "x.py"],
+            capture_output=True, text=True, env=self.armed())
+        self.assertEqual(missing.returncode, 3, missing.stdout + missing.stderr)
+        self.assertIn("COULD NOT LOAD THE GUARD'S OWN GRAMMAR", missing.stderr)
+
+    def test_the_scanner_refuses_a_child_that_would_start_without_the_contract(self):
+        result = subprocess.run(
+            [sys.executable, "-I", "-S", str(self.SCANNER), "--", "x.py"],
+            capture_output=True, text=True,
+            env=self.armed(MNV_GUARD_MODULE=None))
+        self.assertEqual(result.returncode, 3, result.stdout + result.stderr)
+        self.assertIn("WITHOUT THE PROPAGATION CONTRACT", result.stderr)
 
 
 class ScriptContainment(unittest.TestCase):

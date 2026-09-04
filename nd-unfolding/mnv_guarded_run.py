@@ -64,23 +64,78 @@ option's VALUE is never read as a flag (`-Xpycache_prefix=/tmp/CACHE` is not an
 `-E`) and a flag after a value is never missed (`-W ignore -I` is refused).
 
 An explicitly supplied environment, including `env={}`, is copied and re-armed
-with the propagation contract and shim-first `PYTHONPATH`. Where the contract
-cannot be re-armed it is REFUSED instead of launched: a Python child whose ARGV
-strips it -- `env -i`, `env -u MNV_GUARD_MODULE`, `env PYTHONPATH=...` -- and a
-Python child of a process that deleted a `MNV_GUARD_*` variable or overwrote
-`PYTHONPATH` in its own `os.environ` after `install()`. So a Python child of a
-guarded interpreter either starts guarded or does not start. Non-Python children
-are never refused: they inherit the re-armed contract, which is what makes an
-ordinary Python interpreter they launch guarded.
+with the propagation contract and shim-first `PYTHONPATH`. An ARGV that strips the
+contract is re-armed too where the argv is ours to rewrite: `env -i`,
+`env -u MNV_GUARD_MODULE` and `env PYTHONPATH=...` are repaired by INSERTING the
+contract as `NAME=VALUE` operands immediately before `env`'s command word, which
+is the argv spelling of the same repair `env={}` already gets and leaves the
+launch running instead of refused. Where the repair is impossible the launch is
+REFUSED instead: a command that arrived inside a STRING this guard will not
+rewrite (`env -S`, `sh -c`), and a Python child of a process that deleted a
+`MNV_GUARD_*` variable or overwrote `PYTHONPATH` in its own `os.environ` after
+`install()` -- there is nothing left to re-arm from. So a Python child of a
+guarded interpreter either starts guarded or does not start.
 
-THE ONE DECLARED PROCESS-BOUNDARY GAP is a non-Python child that itself launches
-`python -I`. The guarded interpreter owns only the first launch site, while the
-second launch occurs inside the non-Python process and isolated mode ignores the
-inherited shim. The same one gap covers every other way that second launch can
-defeat the contract -- clearing the environment, or unsetting `PYTHONPATH` --
-because they share the single cause: the launching process is one this
-interpreter does not guard. The measured gap and all covered counterparts are
-pinned in `tests/test_mnv_guarded_run.py::TheSubprocessBoundaryIsCovered`.
+THE LAUNCH ARGV IS PARSED, NOT PATTERN-MATCHED, AND AN UNMODELLED SPELLING REFUSES.
+Round 5 of review reached the wrong-tree import through `env -- python -I ...` and
+`env -S 'python -I ...'`: the earlier parser modelled a subset of `env`'s options and
+LEFT AN UNRECOGNISED PREFIX UNSCANNED, so both forms exited 0 and emitted only the
+parent's inventory. "Unparsed" is now a REFUSAL and never a pass. `_parse_env`
+implements the whole coreutils/BSD grammar -- `--`, `-i`/`--ignore-environment`,
+`-u NAME`/`-uNAME`/`--unset=NAME`, `-C DIR`/`--chdir=DIR`, `-0`/`--null`,
+`-v`/`--debug`, `-S STRING`/`--split-string=STRING`, the four signal options,
+`--argv0=NAME`/`-a NAME`, then `NAME=VALUE` assignments, then the command -- and the
+same fail-closed rule covers the other launch wrappers a science launcher reaches
+for: `nohup`, `nice`, `stdbuf`, `timeout`, `time`, `command`, `exec` and `xargs`.
+The resolved command is then subject to the SAME Python-flag scan and re-arming as a
+direct launch, however deep the wrapper nesting.
+
+`srun`, `mpirun` and the other job launchers are DELIBERATELY NOT in that table, and
+saying so is part of the contract. Their option grammars are large enough that a
+fail-closed parser would refuse correct submissions, so they are treated as ordinary
+non-Python children: they inherit the re-armed contract AND the wrapper directory on
+`PATH`, so `srun python3 -I x.py` is refused by the wrapper rather than by the argv
+scan, and `srun /abs/python3 -I x.py` is the declared gap below. What is NOT true of
+them is that this file parsed them.
+
+`sh -c`, `bash -c` and `zsh -c` carry a COMMAND STRING rather than an argv, so the
+string is tokenised with `shlex`, split into simple commands at `;`, `&&`, `||`,
+`|`, `&` and unquoted newlines, and every simple command whose executable is a
+Python interpreter is scanned by the same grammar. A string the tokenizer cannot
+parse is refused rather than skipped, and so is a shell option this parser does not
+model, for the reason above. An interpreter named by an ABSOLUTE PATH counts as
+Python: `/usr/bin/python3.11 -I` is the same request as `python3 -I`.
+
+INTERPRETER WRAPPERS ON PATH COVER THE SECOND LAUNCH SITE. `install()` also prepends
+`mnv_guard_shim/bin/` -- tracked wrappers named `python3` and `python`, plus one
+generated at arm time for the basename of `sys.executable` when that is neither --
+and exports `MNV_GUARD_REAL_PYTHON`, `MNV_GUARD_PATH_SHIM_DIRS`. Each wrapper is
+POSIX `sh`: it re-injects the shim-first `PYTHONPATH`, delegates the argv scan to
+`mnv_guard_shim/scan_argv.py` running under the guard's OWN grammar rather than a
+retyped copy of it, refuses `-S`/`-I`/`-E` in every spelling, and otherwise `exec`s
+the real interpreter of the same name resolved through `PATH` with the shim
+directories removed (`MNV_GUARD_REAL_PYTHON` is the recorded fallback, not a
+substitution: a wrapper must not silently change WHICH interpreter runs). This is
+what covers a bash child running `python3 -I child.py`. Every inventory record says
+`path_shim: armed`; a deployment whose tree lacks `bin/` records `not-armed:<why>`
+instead, because a missing half must be READABLE and never inferred from silence.
+The wrappers are tracked, but a `sh` script installed on `PATH` as `python3` cannot
+carry a `.sh` suffix -- the suffix would be part of the name it intercepts -- so the
+A-2(f) source manifest does not bind them and `path_shim_sha256` in every record
+does instead. See `_path_shim_digests`.
+
+THE ONE DECLARED RESIDUAL GAP, AFTER BOTH HALVES, is a non-Python child that invokes
+the interpreter by an ABSOLUTE PATH with `-S`, `-I` or `-E`, or that clears `PATH` or
+the environment before invoking it. Neither half can reach it: the argv is built
+inside a process this interpreter does not guard, an absolute path consults no `PATH`
+and therefore no wrapper, and a cleared environment removes both the wrapper
+directory and the contract. It is written into EVERY inventory record as
+`declared_gap` so a ratchet reader sees the coverage boundary without reading this
+file, and it is measured -- not asserted -- in
+`tests/test_mnv_guarded_run.py::TheSubprocessBoundaryIsCovered`, beside the covered
+counterparts it must be distinguished from. Read `declared_gap` together with
+`path_shim`: when `path_shim` is not `armed` the boundary is WIDER than that
+sentence, because the `PATH`-wrapper half did not run.
 
 TWO RECEIPTS, NEITHER OF WHICH IS A GATE
 ----------------------------------------
@@ -141,14 +196,17 @@ third convention:
     2 -- COULD NOT LOOK (bad usage, or --expect-root is not a checkout)
     3 -- MEASURED VIOLATION: an import resolved outside the expected tree, the script itself
          lies in a checkout that is not --expect-root, or a Python child would have started
-         without the guard -- a startup flag that prevents shim installation, or an argv or
-         environment that strips the propagation contract
+         without the guard -- a startup flag that prevents shim installation, an argv or
+         environment that strips the propagation contract, or a launch prefix whose grammar
+         this guard does not model and therefore CANNOT scan (fail-closed: unparsed is a
+         refusal, never a pass)
 2 is deliberately not 3, so "we could not check" can never be read as "we checked
 and it was clean".
 """
 from __future__ import annotations
 
 import argparse
+import atexit
 import datetime
 import functools
 import hashlib
@@ -158,9 +216,11 @@ import os
 import pathlib
 import re
 import runpy
+import shlex
 import shutil
 import subprocess
 import sys
+import tempfile
 
 MARKERS = ("VALIDATION_LEDGER.md", "nd-unfolding")
 
@@ -187,6 +247,36 @@ DEPTH_ENV = "MNV_GUARD_DEPTH"
 SHIM_DIR = pathlib.Path(__file__).resolve().parent / "mnv_guard_shim"
 CHILD_PREFIX = "[oi136 child]"
 LAUNCH_PREFIX = "[oi136 launch]"
+
+#: The PATH half of the contract. `MNV_GUARD_REAL_PYTHON` is a RECORDED FALLBACK and not a
+#: substitution: the wrapper resolves the interpreter of its own name through `PATH` with the shim
+#: directories removed first, so a run that asked for `/opt/env/bin/python3` does not silently get
+#: this process's `sys.executable`. `MNV_GUARD_PATH_SHIM_DIRS` is what lets the wrapper subtract
+#: itself from `PATH` -- and what lets an inheriting `install()` drop its parent's generated
+#: directory instead of growing `PATH` by one entry per process boundary.
+#: `MNV_GUARD_WRAPPER_NAME` is set by a delegating wrapper and UNSET by the one it delegates to,
+#: because a leaked value would make a grandchild's `python3` resolve the parent's name instead.
+REAL_PYTHON_ENV = "MNV_GUARD_REAL_PYTHON"
+PATH_SHIM_DIRS_ENV = "MNV_GUARD_PATH_SHIM_DIRS"
+WRAPPER_NAME_ENV = "MNV_GUARD_WRAPPER_NAME"
+PATH_SHIM_DIR = SHIM_DIR / "bin"
+SCAN_ARGV_FILE = SHIM_DIR / "scan_argv.py"
+
+#: Wrapper basenames the tracked `bin/` already carries. Any other `sys.executable` basename --
+#: `python3.11`, `python3.12` -- gets a generated delegator at arm time, because a wrapper only
+#: intercepts the NAME it is installed under and the versioned name is the one a cluster module
+#: file puts in front of a science script.
+TRACKED_WRAPPER_NAMES = ("python3", "python")
+
+#: THE COVERAGE BOUNDARY, AS A STRING IN EVERY RECORD. A gap stated only in a docstring is invisible
+#: to the ratchet readers that consume these records, and a reader who cannot see the boundary reads
+#: a green record as total coverage. Read it beside `path_shim`: when that is not `armed` the
+#: boundary is wider than this sentence, because the PATH-wrapper half did not run.
+DECLARED_GAP = ("a non-Python child that invokes the interpreter by an ABSOLUTE PATH with -S, -I or "
+                "-E, or that clears PATH or the environment before invoking it: the argv is built "
+                "inside a process this interpreter does not guard, an absolute path consults no "
+                "PATH and therefore no wrapper, and a cleared environment removes both the wrapper "
+                "directory and the propagation contract")
 
 PROPAGATION_ENV_VARS = (
     MODULE_ENV,
@@ -326,6 +416,10 @@ class GuardedPathFinder:
         self.violation: ImportTreeViolation | None = None
         self.launch_refusal: dict | None = None
         self.launch_env = "not-re-armed"
+        #: The PATH-wrapper half's state, set by `install()` through `_arm_path_shim`. "not-armed"
+        #: until then, because a record written before arming must not claim the half ran.
+        self.path_shim = "not-armed"
+        self.path_shim_sha256 = _path_shim_digests()
         self.shim_sha256 = _sha256_or_none(str(SHIM_DIR / "sitecustomize.py"))
         self.on_violation = None
         self.checked = 0
@@ -398,8 +492,13 @@ def _lineage_from_environment() -> tuple[int | None, int]:
     return parent_pid, depth
 
 
-def _arm_child_environment(expect_root: str, allow: tuple[str, ...]) -> None:
-    """Arm inheriting Python children through the tracked sitecustomize shim."""
+def _arm_child_environment(expect_root: str, allow: tuple[str, ...]) -> "tuple[str, dict]":
+    """Arm inheriting Python children through the tracked sitecustomize shim and the PATH wrappers.
+
+    Returns `(path_shim state, wrapper digests)`. The state is a RECORDED FIELD and not a boolean:
+    the sitecustomize half and the PATH half fail independently, and a deployment carrying only the
+    first is a NARROWER guard rather than a broken one. See `_arm_path_shim`.
+    """
     shim = SHIM_DIR.resolve()
     shim_file = shim / "sitecustomize.py"
     module = pathlib.Path(__file__).resolve()
@@ -423,6 +522,107 @@ def _arm_child_environment(expect_root: str, allow: tuple[str, ...]) -> None:
     os.environ.setdefault(INVENTORY_ENV, "")
     os.environ[PARENT_PID_ENV] = str(os.getpid())
     os.environ[DEPTH_ENV] = str(current_depth + 1)
+    return _arm_path_shim()
+
+
+def _path_shim_digests() -> dict:
+    """sha256 of every tracked file the PATH half executes, or None where one cannot be read.
+
+    WHY THE DIGESTS ARE IN THE RECORD AND NOT ONLY IN GIT. The wrappers are tracked, but the A-2(f)
+    source manifest binds `.py` and `.sh` files -- and a POSIX `sh` script installed on `PATH` as
+    `python3` cannot carry a suffix, because the suffix would be part of the name it intercepts. So
+    the manifest does not cover `bin/python3` or `bin/python`, and widening its suffix rule is a
+    change to another contract's semantics rather than a fix here. What binds these bytes is
+    therefore this digest, recorded per run beside `shim_sha256`, which is the same instrument the
+    sitecustomize half already uses. `scan_argv.py` IS manifest-covered and is digested anyway:
+    reading two of the three from one place and the third from another is how a reader ends up
+    comparing unlike things.
+    """
+    return {
+        "bin/python3": _sha256_or_none(str(PATH_SHIM_DIR / "python3")),
+        "bin/python": _sha256_or_none(str(PATH_SHIM_DIR / "python")),
+        "scan_argv.py": _sha256_or_none(str(SCAN_ARGV_FILE)),
+    }
+
+
+def _arm_path_shim() -> "tuple[str, dict]":
+    """Put the interpreter wrappers in front of `PATH`; return the state to record.
+
+    THE SECOND LAUNCH SITE, WHICH `sitecustomize` CANNOT REACH. A non-Python child -- a bash script
+    on a Slurm arm -- runs `python3 -I child.py`, and isolated mode ignores the inherited shim, so
+    the contract this process exported cannot install anything. The wrapper intercepts that launch
+    by NAME: it is found through `PATH`, refuses the isolating flags with the guard's own grammar,
+    and otherwise `exec`s the interpreter the caller asked for.
+
+    A WRAPPER ONLY INTERCEPTS THE NAME IT IS INSTALLED UNDER, which is why the versioned basename of
+    `sys.executable` is generated at arm time when the tracked pair does not already cover it: a
+    cluster module file puts `python3.11` in front of a science script, and a `bin/` holding only
+    `python3` and `python` would watch that launch go past.
+
+    IT RETURNS A STATE RATHER THAN RAISING. A deployed tree that carries `sitecustomize.py` and not
+    `bin/` still gets the whole first half of the contract, and refusing the run would convert a
+    narrower guard into no run at all -- while a SILENT narrowing is what the campaign refuses. So
+    the state goes into every inventory record beside `declared_gap`, where a reader who did not
+    run the command can see which half was armed.
+    """
+    wrapper = PATH_SHIM_DIR / "python3"
+    digests = _path_shim_digests()
+    if not wrapper.is_file():
+        return f"not-armed:the tracked interpreter wrapper is missing at {wrapper}", digests
+    if not SCAN_ARGV_FILE.is_file():
+        return f"not-armed:the tracked argv scanner is missing at {SCAN_ARGV_FILE}", digests
+    state = "armed"
+    directories = [str(PATH_SHIM_DIR.resolve())]
+    basename = _executable_basename(sys.executable)
+    if basename and basename not in TRACKED_WRAPPER_NAMES:
+        try:
+            directories.insert(0, _generated_wrapper_dir(basename, wrapper.resolve()))
+        except OSError as err:
+            # Tracked names still intercept `python3`/`python`; the VERSIONED name does not, and
+            # that difference is exactly what a reader must not have to guess at.
+            state = (f"armed-tracked-names-only:no wrapper for {basename} could be generated "
+                     f"({err})")
+    os.environ[REAL_PYTHON_ENV] = sys.executable
+    inherited = [entry for entry in (os.environ.get(PATH_SHIM_DIRS_ENV) or "").split(os.pathsep)
+                 if entry]
+    os.environ[PATH_SHIM_DIRS_ENV] = os.pathsep.join(directories)
+    # A PARENT'S GENERATED DIRECTORY IS DROPPED RATHER THAN KEPT IN FRONT. Re-prepending at every
+    # process boundary would grow PATH by one entry per depth and leave a torn-down temp directory
+    # ahead of the live one; the inherited list is exactly the set that is safe to remove.
+    superseded = set(directories) | set(inherited)
+    entries = [entry for entry in (os.environ.get("PATH") or os.defpath).split(os.pathsep)
+               if entry not in superseded]
+    os.environ["PATH"] = os.pathsep.join([*directories, *entries])
+    return state, digests
+
+
+def _generated_wrapper_dir(basename: str, tracked: pathlib.Path) -> str:
+    """A per-process directory holding one delegating wrapper named `basename`.
+
+    IT DELEGATES RATHER THAN DUPLICATES. The wrapper body is the tracked file, and this writes four
+    lines that hand it the NAME to resolve -- so a fix to the body reaches the generated wrapper
+    too, and there is no second copy of the logic to drift. `MNV_GUARD_WRAPPER_NAME` is exported
+    here and UNSET by the body before it execs, or a grandchild's `python3` would resolve this
+    name instead of its own.
+    """
+    directory = tempfile.mkdtemp(prefix=f"mnv-guard-bin-{os.getpid()}-")
+    generated = pathlib.Path(directory) / basename
+    generated.write_text(
+        "#!/bin/sh\n"
+        f"# GENERATED at arm time by {__file__} for this process only. Not tracked, not evidence:\n"
+        "# it exists because a wrapper intercepts only the NAME it is installed under, and the\n"
+        "# tracked bin/ carries python3 and python. The body it delegates to IS tracked.\n"
+        f"MNV_GUARD_WRAPPER_NAME={shlex.quote(basename)}\n"
+        "export MNV_GUARD_WRAPPER_NAME\n"
+        f"exec {shlex.quote(str(tracked))} \"$@\"\n",
+        encoding="utf-8",
+    )
+    generated.chmod(0o755)
+    #: Best-effort removal, and deliberately not a guarantee: an `os.exec*` replacement never runs
+    #: atexit, and a child outliving its parent must not lose its interpreter. Losing this
+    #: directory costs the VERSIONED name only -- the tracked directory is still on PATH behind it.
+    atexit.register(shutil.rmtree, directory, True)
+    return directory
 
 
 def _text_argument(value) -> str:
@@ -596,55 +796,161 @@ def _rearm_launch_environment(env, guard: GuardedPathFinder):
         # caught by `_environment_reaching_child_is_armed`, which refuses the launch rather than
         # letting an empty value read as an armed one.
         armed[name] = os.environ.get(name, "")
-    existing_pythonpath = env.get("PYTHONPATH")
-    if isinstance(existing_pythonpath, bytes):
-        existing_pythonpath = os.fsdecode(existing_pythonpath)
-    shim_text = str(SHIM_DIR.resolve())
-    entries = [] if not existing_pythonpath else str(existing_pythonpath).split(os.pathsep)
-    retained = []
-    for entry in entries:
-        try:
-            is_shim = pathlib.Path(entry or os.curdir).resolve() == SHIM_DIR.resolve()
-        except OSError:
-            is_shim = False
-        if not is_shim:
-            retained.append(entry)
-    armed["PYTHONPATH"] = os.pathsep.join([shim_text, *retained])
+    armed["PYTHONPATH"] = _shim_first_pythonpath(env.get("PYTHONPATH"))
     guard.launch_env = "re-armed"
     return armed
 
 
+def _shim_first_pythonpath(existing) -> str:
+    """The shim directory, then every entry of `existing` that is not already the shim.
+
+    ONE IMPLEMENTATION, TWO CALLERS -- the `env=` keyword repair and the `env` ARGV repair. They
+    have to agree: an argv-level re-arm that assembled PYTHONPATH differently from the keyword-level
+    one would make the same launch guarded in one spelling and not in the other, which is the class
+    of divergence this whole file exists to refuse.
+    """
+    if isinstance(existing, bytes):
+        existing = os.fsdecode(existing)
+    entries = [] if not existing else str(existing).split(os.pathsep)
+    shim = SHIM_DIR.resolve()
+    retained = []
+    for entry in entries:
+        try:
+            is_shim = pathlib.Path(entry or os.curdir).resolve() == shim
+        except OSError:
+            is_shim = False
+        if not is_shim:
+            retained.append(entry)
+    return os.pathsep.join([str(shim), *retained])
+
+
 #: `env` is the ARGV spelling of two things this guard already refuses in their keyword spelling:
 #: "the real executable is a later word" and, for `env -i`, THE CLEARED ENVIRONMENT the reviewer's
-#: finding names. Neither existing check sees it -- the flag scan resolves a non-Python executable,
-#: and `_rearm_launch_environment` is handed `env=None` because the stripping happens in the
-#: launched process rather than in the caller -- so an unhandled `env -i python3 child.py` from a
-#: guarded interpreter reproduces the finding verbatim. No tracked launcher uses `env` today
-#: (measured over `*.py` and `*.sh`), so handling it costs only the parser below.
+#: finding names. Neither the flag scan nor `_rearm_launch_environment` sees it on its own -- the
+#: scan resolves a non-Python executable, and the keyword re-arm is handed `env=None` because the
+#: stripping happens in the launched process rather than in the caller -- so an unhandled
+#: `env -i python3 child.py` from a guarded interpreter reproduces the finding verbatim.
 _ENV_BASENAMES = frozenset({"env"})
 
-#: `env`'s OWN option grammar, split by whether an option consumes a value. An option this table
-#: does not list leaves the launch UNPARSED and therefore unscanned, which is deliberate: GNU
-#: coreutils and the BSD `env` macOS ships do not agree on the option set, and a parser that
-#: guessed would either read an option's value as a startup flag or refuse a correct
-#: `env -u LD_PRELOAD ./binary`. An unparsed prefix stays in the declared gap; a MIS-parsed one
-#: would be a wrong answer.
-_ENV_FLAG_OPTIONS = frozenset({"-i", "--ignore-environment", "-0", "--null", "-v", "--debug"})
-_ENV_VALUE_OPTIONS = frozenset({"-u", "--unset", "-C", "--chdir", "-S", "--split-string",
-                                "-P", "-a"})
-_ENV_CLEARING_OPTIONS = frozenset({"-", "-i", "--ignore-environment"})
-_ENV_UNSET_PREFIXES = ("-u", "--unset=")
-_ENV_OTHER_ATTACHED_PREFIXES = ("--chdir=", "--split-string=", "-C", "-P", "-S", "-a")
 
-#: WHY the launch was refused, as a field. Both refusals are the same SITE (this wrapper owns one
+class _LaunchRefusal(Exception):
+    """A launch this guard cannot SCAN, and therefore will not allow.
+
+    THE ROUND-5 FINDING WAS THE ABSENCE OF THIS CLASS. The previous parser returned None for an
+    `env` prefix whose options it did not model, and None meant "leave the launch alone" -- so
+    `env -- python -I child.py` and `env -S 'python -I child.py'` were LEFT UNSCANNED, ran the
+    wrong-tree import, and exited 0 with only the parent's inventory to show for it. Every
+    not-modelled and not-parseable path now raises this instead, which makes "we could not read
+    this launch" a refusal rather than a pass. The cost is the opposite direction -- a correct
+    `env --some-new-option ./binary` is refused -- and that cost is deliberate and cheap to fix:
+    add the option to the table below, with a control.
+    """
+
+    def __init__(self, reason: str, offending: str, executable: "str | None" = None):
+        self.reason = reason
+        self.offending = offending
+        #: The executable the refusal is ABOUT, when the walk got far enough to know it -- the
+        #: resolved interpreter rather than the `env`/`bash` word in front of it. The record's
+        #: `executable` field otherwise names the wrapper, which answers a different question than
+        #: the one a reader of a refusal asks.
+        self.executable = executable
+        super().__init__(f"{reason}: {offending}")
+
+
+#: `env`'s FULL option grammar, coreutils and the BSD `env` macOS ships, as the union of the two.
+#: The union is the fail-closed direction: modelling an option the local `env` lacks costs a launch
+#: nobody makes, while omitting one the local `env` HAS is exactly the round-5 defect.
+#: `-P utilpath` is deliberately NOT modelled and therefore refuses: it changes the search path
+#: `env` uses to find the utility, so a parser that accepted it would resolve the executable
+#: through a PATH the launch does not use and answer confidently about the wrong file.
+_ENV_FLAG_OPTIONS = frozenset({
+    "-i", "--ignore-environment", "-0", "--null", "-v", "--debug",
+    "--list-signal-handling",
+})
+_ENV_VALUE_OPTIONS = frozenset({
+    "-u", "--unset", "-C", "--chdir", "-S", "--split-string", "-a", "--argv0",
+})
+#: Long options whose value, when present, is ATTACHED with `=`. coreutils takes no separate word
+#: for these, so `--ignore-signal INT` means "ignore every signal, then run INT".
+_ENV_OPTIONAL_VALUE_LONG = frozenset({"--default-signal", "--ignore-signal", "--block-signal"})
+_ENV_CLEARING_OPTIONS = frozenset({"-", "-i", "--ignore-environment"})
+_ENV_SPLIT_STRING_OPTIONS = frozenset({"-S", "--split-string"})
+_ENV_UNSET_OPTIONS = frozenset({"-u", "--unset"})
+
+#: Launch wrappers that are not `env`: each runs a LATER WORD as the real command, so an unhandled
+#: one hides a Python child exactly as `env` did. Same fail-closed rule -- an option not in the
+#: table refuses -- and the same reason. `positionals` is how many non-option operands come BEFORE
+#: the command (`timeout DURATION COMMAND`); `print_only` options make the wrapper report instead
+#: of exec, so they launch nothing and are allowed; `clearing` options wipe the environment.
+_WRAPPER_SPECS = {
+    "nohup": {"flags": frozenset(), "values": frozenset()},
+    "nice": {"flags": frozenset(), "values": frozenset({"-n", "--adjustment"}),
+             "numeric_short": True},
+    "stdbuf": {"flags": frozenset(),
+               "values": frozenset({"-i", "--input", "-o", "--output", "-e", "--error"})},
+    "timeout": {"flags": frozenset({"--preserve-status", "--foreground", "-v", "--verbose"}),
+                "values": frozenset({"-s", "--signal", "-k", "--kill-after"}),
+                "positionals": 1},
+    "time": {"flags": frozenset({"-p", "--portability", "-a", "--append", "-v", "--verbose",
+                                 "-q", "--quiet"}),
+             "values": frozenset({"-o", "--output", "-f", "--format"})},
+    "command": {"flags": frozenset({"-p"}), "values": frozenset(),
+                "print_only": frozenset({"-v", "-V"})},
+    "exec": {"flags": frozenset({"-l"}), "values": frozenset({"-a"}),
+             "clearing": frozenset({"-c"})},
+    # `-i`, `-e`, `--replace` and `--eof` appear in BOTH tables, which is not a mistake: GNU xargs
+    # gives them OPTIONAL arguments, so the bare spelling consumes nothing and only the ATTACHED
+    # spelling (`-i{}`, `-eEOF`) carries a value. Listing them as value-taking only would make
+    # `xargs -i python3 x.py` eat the interpreter word and scan `x.py` instead -- an option's value
+    # swallowing the command is the same fail-open the `env` parser was rebuilt for.
+    "xargs": {"flags": frozenset({"-0", "--null", "-r", "--no-run-if-empty", "-t", "--verbose",
+                                  "-x", "--exit", "-p", "--interactive", "-o", "--open-tty",
+                                  "-i", "-e", "--replace", "--eof"}),
+              "values": frozenset({"-n", "--max-args", "-P", "--max-procs", "-s", "--max-chars",
+                                   "-L", "--max-lines", "-I", "-i", "--replace", "-d",
+                                   "--delimiter", "-a", "--arg-file", "-E", "-e", "--eof"})},
+}
+
+#: Shells whose `-c` argument is a COMMAND STRING and not an argv. Their own option grammar is
+#: modelled for the same fail-closed reason as `env`'s: an unmodelled option can consume the token
+#: that holds the command string, and reading the wrong token as the command is worse than refusing.
+_SHELL_BASENAMES = frozenset({"sh", "bash", "zsh", "dash", "ksh", "mksh"})
+#: `c` is in the set because a cluster is what carries it -- `bash -lc <string>` is the spelling a
+#: login-shell launcher uses, and a table that listed every OTHER short flag but not `c` refused
+#: exactly the invocations it was written to read (measured on `bash -c` itself).
+_SHELL_FLAG_CHARS = "abcCefhiklmnpstuvxBDPT"
+_SHELL_VALUE_OPTIONS = frozenset({"-o", "+o", "-O", "+O", "--rcfile", "--init-file"})
+_SHELL_FLAG_LONG = frozenset({"--login", "--noprofile", "--norc", "--posix", "--noediting",
+                              "--interactive", "--verbose", "--debugger", "--restricted"})
+
+#: Shell-string operator characters, CLASSIFIED BY SHAPE RATHER THAN ENUMERATED. A token made only
+#: of these is an operator: one containing `<` or `>` is a redirection, whose TARGET must be dropped
+#: with it, and anything else (`;`, `&&`, `||`, `|`, `&`, `(`, `)`, `{`, `}`, `;;`, `|&`) ends a
+#: simple command. Enumerating the spellings instead was WRONG IN THE FAIL-OPEN DIRECTION and the
+#: two measured escapes are why this is a character class: `python3 2>/dev/null -I x.py` tokenises
+#: with a bare `2` that ended the flag scan before the `-I`, and bash's `&>` is a spelling no
+#: redirection list I wrote contained. A leading file-descriptor digit is dropped with the operator
+#: for the same reason.
+_SHELL_PUNCTUATION = frozenset(";&|<>(){}")
+
+#: How deep a wrapper chain is followed before the launch is refused as unreadable. `env nice nohup
+#: timeout 5 python -I x` is four; a chain longer than this is not a launcher, and an unbounded walk
+#: over an argv that can be shaped by a child is not a walk this file should contain.
+_MAX_WRAPPER_DEPTH = 8
+
+#: WHY the launch was refused, as a field. Every refusal here is the same SITE (this wrapper owns one
 #: launch boundary) and the same exit code, and the repo's own rule -- see the `SITE_*` block --
 #: is that a reader must not have to parse which check fired out of prose.
 LAUNCH_REASON_FLAGS = "python-startup-flags-bypass-the-shim"
 LAUNCH_REASON_ENV = "the-launch-argv-or-environment-strips-the-propagation-contract"
+LAUNCH_REASON_UNMODELLED = "a-launch-wrapper-option-this-guard-does-not-model"
+LAUNCH_REASON_UNPARSED = "a-launch-argv-or-command-string-this-guard-cannot-parse"
 
 _LAUNCH_HEADLINES = {
     LAUNCH_REASON_FLAGS: "PYTHON STARTUP FLAGS BYPASS THE IMPORT SHIM",
     LAUNCH_REASON_ENV: "THE CHILD WOULD START WITHOUT THE PROPAGATION CONTRACT",
+    LAUNCH_REASON_UNMODELLED: "THIS LAUNCH PREFIX USES AN OPTION THIS GUARD DOES NOT MODEL",
+    LAUNCH_REASON_UNPARSED: "THIS LAUNCH CANNOT BE PARSED, SO IT CANNOT BE SCANNED",
 }
 
 _LAUNCH_EXPLANATIONS = {
@@ -652,62 +958,374 @@ _LAUNCH_EXPLANATIONS = {
                           "handled by a launcher-design change, not a guard exception."),
     LAUNCH_REASON_ENV: ("The interpreter would start with no MNV_GUARD_* contract or no shim-first "
                         "PYTHONPATH, so it could not install the guard. An environment passed as "
-                        "`env=` IS re-armed; one stripped in argv or deleted from this process's "
-                        "own os.environ cannot be, so the launch is refused instead."),
+                        "`env=` is re-armed, and so is an `env NAME=VALUE`/`env -i`/`env -u` argv "
+                        "this guard can rewrite; one arriving inside a STRING, or deleted from "
+                        "this process's own os.environ, cannot be, so the launch is refused."),
+    LAUNCH_REASON_UNMODELLED: ("An unmodelled option is not a safe option: its VALUE may be the "
+                               "command word, so the scan would read the wrong token and answer "
+                               "confidently about the wrong file. Round 5 reached the wrong-tree "
+                               "import through exactly this hole, when an unmodelled prefix was "
+                               "LEFT UNSCANNED instead of refused. Add the option to "
+                               "_ENV_FLAG_OPTIONS/_ENV_VALUE_OPTIONS or _WRAPPER_SPECS, with a "
+                               "control, rather than switching the guard off."),
+    LAUNCH_REASON_UNPARSED: ("A command string that shlex cannot tokenise, a value-taking option "
+                             "with no value, or a wrapper chain deeper than this file follows. "
+                             "None of them can be scanned, and an unscanned Python launch is the "
+                             "defect this guard exists for."),
 }
 
 
-def _is_env_executable(executable: str) -> bool:
-    """Return whether an executable is the `env` command rather than the program it runs."""
-    return pathlib.Path(executable).name in _ENV_BASENAMES
+#: The `outcome` string each launch-refusal reason records. TWO OUTCOMES AND NOT FOUR: the pair that
+#: refuses a launch this guard READ keeps the outcome downstream controls already name, and the pair
+#: that refuses a launch it COULD NOT READ gets its own, because those are the two different claims
+#: a reader of a record has to be able to tell apart. The reason field carries the finer detail.
+LAUNCH_OUTCOMES = {
+    LAUNCH_REASON_FLAGS: "refused:launch-python-startup-flags",
+    LAUNCH_REASON_ENV: "refused:launch-python-startup-flags",
+    LAUNCH_REASON_UNMODELLED: "refused:launch-unmodelled-launch-grammar",
+    LAUNCH_REASON_UNPARSED: "refused:launch-unmodelled-launch-grammar",
+}
 
 
-def _env_command_argv(argv: list[str]) -> "tuple[list[str], str | None] | None":
-    """Split an `env ...` launch into the command it runs and the token that disarms the child.
+def launch_outcome(refusal: "dict | None") -> str:
+    """The `outcome` for a launch refusal. Shared with the shim, which records the same states."""
+    reason = (refusal or {}).get("reason", LAUNCH_REASON_FLAGS)
+    return LAUNCH_OUTCOMES.get(reason, "refused:launch-python-startup-flags")
 
-    Returns `(command argv, disarming token or None)`, or None when the prefix cannot be parsed or
-    launches nothing at all -- see `_ENV_VALUE_OPTIONS` for why an unparsed prefix is left alone.
+
+def _executable_basename(word: str) -> str:
+    """The basename a wrapper table is keyed by, `.exe` suffix removed."""
+    name = pathlib.Path(word).name
+    if name.lower().endswith(".exe"):
+        name = name[:-4]
+    return name
+
+
+def _split_string_tokens(text: str, option: str) -> list[str]:
+    """`env -S`'s STRING, split the way `env` splits it. A string that will not split REFUSES.
+
+    coreutils' `-S` has its own escape layer (`\\c`, `\\_`, `${VAR}`) on top of shell-like quoting.
+    `shlex` in POSIX mode covers the quoting, which is the part that decides WHERE THE WORDS ARE --
+    and the words are all this scan needs. What it does not model (variable expansion) can only
+    make a token longer or shorter, never turn a non-interpreter word into `python -I`; and a
+    string it cannot tokenise at all is refused rather than guessed.
+    """
+    try:
+        return shlex.split(text, posix=True)
+    except ValueError as err:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPARSED, f"{option} {text!r}: {err}") from err
+
+
+def _parse_env(argv: list[str]) -> "dict | None":
+    """Parse an `env ...` launch. Returns None when it launches nothing; REFUSES the unmodelled.
+
+    The result is `{"command", "index", "clears", "stripped", "assignments"}`:
+      command      -- the argv `env` would exec, `command[0]` being the executable word
+      index        -- where in THIS argv the command word sits, so the contract can be re-armed by
+                      inserting `NAME=VALUE` operands there; None when the command came out of a
+                      `-S` string, which this guard will not rewrite
+      clears       -- `-i`, `--ignore-environment` or the legacy bare `-` was given
+      stripped     -- the first operand that removes or overwrites a contract variable
+      assignments  -- every `NAME=VALUE` operand, last-wins, so a repair can PRESERVE an explicit
+                      PYTHONPATH with the shim in front rather than overwriting the caller's value
+      unset        -- every `-u NAME`, so a repair does not silently restore a variable the caller
+                      deliberately removed; only the contract's own variables are put back
     """
     index = 1
-    stripped = None
+    options_done = False
+    clears = False
+    stripped: "str | None" = None
+    assignments: dict[str, str] = {}
+    unset: set[str] = set()
     while index < len(argv):
         token = argv[index]
-        if token in _ENV_CLEARING_OPTIONS:
-            stripped = stripped or token
-            index += 1
-            continue
-        if token in _ENV_FLAG_OPTIONS:
-            index += 1
-            continue
-        if token in _ENV_VALUE_OPTIONS:
-            if index + 1 >= len(argv):
-                return None                  # a value-taking option with no value: not parseable
-            if (token in ("-u", "--unset")
-                    and _breaks_propagation_contract(argv[index + 1], None)):
-                stripped = stripped or f"{token} {argv[index + 1]}"
-            index += 2
-            continue
-        attached = next((p for p in _ENV_UNSET_PREFIXES
-                         if token.startswith(p) and len(token) > len(p)), None)
-        if attached is not None:
-            if _breaks_propagation_contract(token[len(attached):], None):
-                stripped = stripped or token
-            index += 1
-            continue
-        if any(token.startswith(p) and len(token) > len(p)
-               for p in _ENV_OTHER_ATTACHED_PREFIXES):
-            index += 1
-            continue
-        if token.startswith("-"):
-            return None                      # an option this parser does not model: do not guess
+        if not options_done:
+            if token == "--":
+                options_done = True          # `--` ends OPTIONS; operands still parse below
+                index += 1
+                continue
+            if token in _ENV_CLEARING_OPTIONS:
+                clears = True
+                index += 1
+                continue
+            if token in _ENV_FLAG_OPTIONS or token in _ENV_OPTIONAL_VALUE_LONG:
+                index += 1
+                continue
+            if token in _ENV_VALUE_OPTIONS:
+                if index + 1 >= len(argv):
+                    raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
+                                         f"{token} with no value")
+                value = argv[index + 1]
+                if token in _ENV_SPLIT_STRING_OPTIONS:
+                    return _parse_env_split_string(token, value, argv[index + 2:],
+                                                   clears, stripped, assignments, unset)
+                if token in _ENV_UNSET_OPTIONS:
+                    unset.add(value)
+                    if _breaks_propagation_contract(value, None):
+                        stripped = stripped or f"{token} {value}"
+                index += 2
+                continue
+            if token.startswith("--") and "=" in token:
+                name, _, value = token.partition("=")
+                if name in _ENV_OPTIONAL_VALUE_LONG:
+                    index += 1
+                    continue
+                if name in _ENV_SPLIT_STRING_OPTIONS:
+                    return _parse_env_split_string(name, value, argv[index + 1:],
+                                                   clears, stripped, assignments, unset)
+                if name in _ENV_VALUE_OPTIONS:
+                    if name in _ENV_UNSET_OPTIONS:
+                        unset.add(value)
+                        if _breaks_propagation_contract(value, None):
+                            stripped = stripped or token
+                    index += 1
+                    continue
+                raise _LaunchRefusal(LAUNCH_REASON_UNMODELLED, token)
+            if token.startswith("-") and len(token) > 2 and not token.startswith("--"):
+                #: A SHORT-OPTION CLUSTER, walked character by character exactly as
+                #: `_forbidden_python_flag` walks CPython's. The BSD usage line is literally
+                #: `env [-0iv] ...`, so `-iv` is a legal spelling and a parser that only understood
+                #: `-i` would refuse a correct launch -- the direction that gets a guard removed.
+                #: An attached value ENDS the cluster (`-uFOO`, `-Spython x.py`), which is why the
+                #: walk breaks rather than continuing through the value's characters.
+                consumed = 1
+                position = 1
+                while position < len(token):
+                    character = token[position]
+                    #: CLEARING IS TESTED BEFORE PLAIN FLAGS, and the order is a MEASURED bug fix:
+                    #: `-i` is in both tables, so testing `_ENV_FLAG_OPTIONS` first consumed it as
+                    #: an ordinary flag and `env -iv python x.py` came back with `clears=False` --
+                    #: a cleared environment read as an armed one, which is the fail-open direction.
+                    if f"-{character}" in _ENV_CLEARING_OPTIONS:
+                        clears = True
+                        position += 1
+                        continue
+                    if f"-{character}" in _ENV_FLAG_OPTIONS:
+                        position += 1
+                        continue
+                    option = f"-{character}"
+                    if option not in _ENV_VALUE_OPTIONS:
+                        raise _LaunchRefusal(LAUNCH_REASON_UNMODELLED, token)
+                    value = token[position + 1:]
+                    if not value:
+                        if index + 1 >= len(argv):
+                            raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
+                                                 f"{option} with no value")
+                        value, consumed = argv[index + 1], 2
+                    if option in _ENV_SPLIT_STRING_OPTIONS:
+                        return _parse_env_split_string(option, value, argv[index + consumed:],
+                                                       clears, stripped, assignments, unset)
+                    if option in _ENV_UNSET_OPTIONS:
+                        unset.add(value)
+                        if _breaks_propagation_contract(value, None):
+                            stripped = stripped or token
+                    break
+                index += consumed
+                continue
+            if token.startswith("-"):
+                raise _LaunchRefusal(LAUNCH_REASON_UNMODELLED, token)
         name, separator, value = token.partition("=")
-        if separator:
+        if separator and name:
+            assignments[name] = value
             if _breaks_propagation_contract(name, value):
                 stripped = stripped or token
             index += 1
             continue
-        return argv[index:], stripped
-    return None                              # `env` with no command word launches nothing
+        return {"command": argv[index:], "index": index, "clears": clears,
+                "stripped": stripped, "assignments": assignments, "unset": unset}
+    #: `env` with options and assignments but NO command word prints the environment and execs
+    #: nothing, so there is no launch to scan. Parsed successfully and deliberately not refused --
+    #: the fail-closed rule is about what this guard cannot READ, never about what it read as empty.
+    return None
+
+
+def _parse_env_split_string(option: str, text: str, remainder: list[str], clears: bool,
+                           stripped: "str | None", assignments: dict,
+                           unset: "set[str]") -> "dict | None":
+    """Continue parsing at `-S STRING`'s split result, which may itself hold options.
+
+    coreutils lets `-S` carry the whole invocation -- `env -S '-i python x.py'` is legal -- so the
+    split tokens are re-parsed as `env`'s own argument list rather than assumed to be the command.
+    `index` is dropped to None on this path: the command word no longer corresponds to a position
+    in the argv the caller passed, and inserting an operand at a made-up index is how a repair
+    becomes a corruption.
+    """
+    tokens = _split_string_tokens(text, option)
+    parsed = _parse_env(["env", *tokens, *remainder])
+    if parsed is None:
+        return None
+    parsed["index"] = None
+    parsed["clears"] = parsed["clears"] or clears
+    parsed["stripped"] = stripped or parsed["stripped"]
+    merged = dict(assignments)
+    merged.update(parsed["assignments"])
+    parsed["assignments"] = merged
+    parsed["unset"] = set(unset) | parsed["unset"]
+    return parsed
+
+
+def _parse_wrapper(argv: list[str], spec: dict) -> "int | None":
+    """The index of the command word in a non-`env` launch wrapper, or None when none is launched.
+
+    Fail-closed on the same rule as `_parse_env`: an option this spec does not list REFUSES,
+    because its value may be the command word.
+    """
+    index = 1
+    while index < len(argv):
+        token = argv[index]
+        if token == "--":
+            index += 1
+            break
+        if token == "-" or not token.startswith(("-", "+")):
+            break
+        if token in spec.get("print_only", frozenset()):
+            return None                      # reports instead of exec: nothing is launched
+        if token in spec.get("clearing", frozenset()):
+            raise _LaunchRefusal(LAUNCH_REASON_ENV, token)
+        if token in spec["flags"]:
+            index += 1
+            continue
+        if token in spec["values"]:
+            if index + 1 >= len(argv):
+                raise _LaunchRefusal(LAUNCH_REASON_UNPARSED, f"{token} with no value")
+            index += 2
+            continue
+        if token.startswith("--") and "=" in token:
+            name = token.partition("=")[0]
+            if name in spec["values"] or name in spec["flags"]:
+                index += 1
+                continue
+            raise _LaunchRefusal(LAUNCH_REASON_UNMODELLED, token)
+        if len(token) > 2 and not token.startswith("--") and token[:2] in spec["values"]:
+            index += 1
+            continue
+        if spec.get("numeric_short") and re.fullmatch(r"[-+]-?\d+", token):
+            index += 1                       # `nice -5`, `nice --5`: the legacy adjustment forms
+            continue
+        raise _LaunchRefusal(LAUNCH_REASON_UNMODELLED, token)
+    index += spec.get("positionals", 0)      # `timeout DURATION COMMAND`
+    if index >= len(argv):
+        return None
+    return index
+
+
+def _shell_command_string(argv: list[str]) -> "str | None":
+    """The `-c` COMMAND STRING in a shell invocation, or None when the shell runs no string.
+
+    Fail-closed on an unmodelled shell option for the reason on `_SHELL_VALUE_OPTIONS`: an option
+    that consumes a word could consume the command string, and scanning the wrong token is worse
+    than refusing. A shell invoked on a SCRIPT FILE has no string here and is not refused -- what
+    that script does at ITS launch sites is the PATH wrapper's half of the contract.
+    """
+    index = 1
+    while index < len(argv):
+        token = argv[index]
+        if token == "--":
+            return None                      # everything after is the script and its argv
+        if token == "-" or not token.startswith(("-", "+")):
+            return None
+        if token in _SHELL_VALUE_OPTIONS:
+            if index + 1 >= len(argv):
+                raise _LaunchRefusal(LAUNCH_REASON_UNPARSED, f"{token} with no value")
+            index += 2
+            continue
+        if token in _SHELL_FLAG_LONG:
+            index += 1
+            continue
+        if token.startswith("--"):
+            raise _LaunchRefusal(LAUNCH_REASON_UNMODELLED, token)
+        cluster = token[1:]
+        if "c" in cluster:
+            if not set(cluster) <= set(_SHELL_FLAG_CHARS):
+                raise _LaunchRefusal(LAUNCH_REASON_UNMODELLED, token)
+            if index + 1 >= len(argv):
+                raise _LaunchRefusal(LAUNCH_REASON_UNPARSED, f"{token} with no command string")
+            return argv[index + 1]
+        if not set(cluster) <= set(_SHELL_FLAG_CHARS):
+            raise _LaunchRefusal(LAUNCH_REASON_UNMODELLED, token)
+        index += 1
+    return None
+
+
+def _unquoted_lines(text: str) -> list[str]:
+    """Split a command string at NEWLINES THAT ARE NOT INSIDE QUOTES.
+
+    `shlex` treats a newline as ordinary whitespace, so `"cd x\\npython3 -I y.py"` tokenises to
+    `['cd', 'x', 'python3', '-I', 'y.py']` and the `python3` reads as an ARGUMENT to `cd` -- the
+    separator is gone and the isolated launch is invisible. `shlex.lineno` cannot repair it either:
+    it counts the LINES THE LEXER HAS READ, not the position of the token it just yielded, so on
+    that string it flags the boundary one token early (measured, not assumed).
+
+    This is a quote-state scan and deliberately not a second tokenizer: it decides nothing about
+    words, options or commands. An unbalanced quote raises, and the caller turns that into a
+    refusal, because a string this cannot split is a string nothing can scan.
+    """
+    parts: list[str] = []
+    current: list[str] = []
+    quote: "str | None" = None
+    escaped = False
+    for character in text:
+        if escaped:
+            current.append(character)
+            escaped = False
+            continue
+        if character == "\\" and quote != "'":
+            current.append(character)
+            escaped = True
+            continue
+        if quote is not None:
+            if character == quote:
+                quote = None
+            current.append(character)
+            continue
+        if character in "\"'":
+            quote = character
+            current.append(character)
+            continue
+        if character == "\n":
+            parts.append("".join(current))
+            current = []
+            continue
+        current.append(character)
+    if quote is not None:
+        raise ValueError(f"no closing quotation in {text!r}")
+    parts.append("".join(current))
+    return parts
+
+
+def _simple_commands(text: str) -> list[list[str]]:
+    """Every SIMPLE COMMAND in a shell command string, tokenised, redirections removed.
+
+    Split at `;`, `&&`, `||`, `|`, `&`, subshell parentheses and unquoted newlines, because each of
+    those starts a command whose first word is an executable -- and a Python interpreter behind any
+    of them is a launch this guard owns. Redirection operators take their target with them so that
+    a redirection cannot end the startup-flag scan early.
+    """
+    commands: list[list[str]] = []
+    for line in _unquoted_lines(text):
+        lexer = shlex.shlex(line, posix=True, punctuation_chars=True)
+        lexer.whitespace_split = True
+        tokens = list(lexer)                 # ValueError here is the caller's refusal
+        current: list[str] = []
+        skip_next = False
+        for token in tokens:
+            if skip_next:
+                skip_next = False
+                continue
+            if token and set(token) <= _SHELL_PUNCTUATION:
+                if "<" in token or ">" in token:
+                    if current and current[-1].isdigit():
+                        current.pop()        # the file descriptor belongs to the redirection
+                    skip_next = True         # drop the operator AND its target
+                    continue
+                if current:
+                    commands.append(current)
+                current = []
+                continue
+            current.append(token)
+        if current:
+            commands.append(current)
+    return commands
 
 
 def _report_launch(refusal: dict) -> None:
@@ -724,45 +1342,229 @@ def _report_launch(refusal: dict) -> None:
     )
 
 
-def _prepare_launch(executable, arguments, env, guard: GuardedPathFinder):
-    """Re-arm a launch environment, or refuse a Python child that could not install the guard.
+def _resolve_launch_command(argv: list[str], env) -> "dict | None":
+    """The command a launch will actually exec, after every wrapper prefix this guard models.
 
-    THE THREE REFUSALS AND THE ONE REPAIR ARE ORDERED, and the order is the cheapest correct one:
-    the environment is re-armed FIRST so that the armed copy is what every later check reads, then
-    the executable is resolved THROUGH that environment, and only a resolved PYTHON child is
-    scanned. A non-Python child is never refused here -- it inherits the re-armed contract, which
-    is what makes an ordinary interpreter it launches guarded, and the isolated one it may launch
-    instead is the module docstring's single declared gap.
+    Returns None when the launch execs nothing (`env` with no command word, `command -v`), and the
+    same shape `_parse_env` documents otherwise, with `inject_at` counted in the ORIGINAL argv so a
+    repair lands where `env` will read it. Raises `_LaunchRefusal` for a prefix this guard cannot
+    read -- an unmodelled option, a value-taking option with no value, or nesting deeper than
+    `_MAX_WRAPPER_DEPTH`.
+    """
+    command = list(argv)
+    if not command:
+        return None
+    offset: "int | None" = 0
+    clears = False
+    stripped: "str | None" = None
+    assignments: dict[str, str] = {}
+    unset: set[str] = set()
+    for _ in range(_MAX_WRAPPER_DEPTH):
+        name = _executable_basename(_resolve_executable(command[0], env))
+        if name in _ENV_BASENAMES:
+            parsed = _parse_env(command)
+            if parsed is None:
+                return None
+            clears = clears or parsed["clears"]
+            stripped = stripped or parsed["stripped"]
+            merged = dict(assignments)
+            merged.update(parsed["assignments"])
+            assignments = merged
+            unset |= parsed["unset"]
+            index = parsed["index"]
+            offset = None if index is None or offset is None else offset + index
+            command = parsed["command"]
+            continue
+        spec = _WRAPPER_SPECS.get(name)
+        if spec is not None:
+            index = _parse_wrapper(command, spec)
+            if index is None:
+                return None
+            offset = None if offset is None else offset + index
+            command = command[index:]
+            continue
+        return {"command": command, "inject_at": offset, "clears": clears,
+                "stripped": stripped, "assignments": assignments, "unset": unset}
+    raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
+                         f"launch wrappers nested deeper than {_MAX_WRAPPER_DEPTH}")
+
+
+def _contract_operands(resolved: dict) -> "tuple[list[str], dict]":
+    """The `NAME=VALUE` operands that re-arm an `env` launch, and the environment they produce.
+
+    THE OPERANDS ARE THE ARGV SPELLING OF `_rearm_launch_environment`, and they are inserted rather
+    than substituted: `env` applies assignments in order and the LAST one wins, so appending the
+    contract in front of the command word repairs `-i`, `-u MNV_GUARD_MODULE` and an explicit
+    `PYTHONPATH=...` alike while leaving every other operand the caller wrote exactly where it was.
+
+    PATH IS DELIBERATELY NOT RESTORED. `env -i` clears it, and putting it back would overrule the
+    caller on something that is not this guard's contract -- the interpreter itself needs no PATH.
+    What is lost is the PATH-wrapper half for that child's own non-Python descendants, which is the
+    `clears PATH or the environment` arm of `DECLARED_GAP` and is stated there rather than here.
+
+    The returned environment view is what the caller checks with
+    `_environment_reaching_child_is_armed`: if this process's own `os.environ` has already lost the
+    contract, the operands carry empty values and the repair MUST fail rather than launch a child
+    that reads an empty `MNV_GUARD_MODULE` as an armed one.
+    """
+    assignments = resolved["assignments"]
+    operands, view = [], {}
+    for name in PROPAGATION_ENV_VARS:
+        value = os.environ.get(name, "")
+        operands.append(f"{name}={value}")
+        view[name] = value
+    if "PYTHONPATH" in assignments:
+        inherited = assignments["PYTHONPATH"]
+    elif resolved["clears"] or "PYTHONPATH" in resolved["unset"]:
+        inherited = ""
+    else:
+        inherited = os.environ.get("PYTHONPATH", "")
+    pythonpath = _shim_first_pythonpath(inherited)
+    operands.append(f"PYTHONPATH={pythonpath}")
+    view["PYTHONPATH"] = pythonpath
+    return operands, view
+
+
+def _scan_shell_string(text: str, env, depth: int = 0) -> bool:
+    """Scan a shell COMMAND STRING; raise to refuse, and return whether it launches an interpreter.
+
+    THE RETURN VALUE IS LOAD-BEARING AND IS NOT A CONVENIENCE. `env -i bash -c 'python3 x.py'`
+    holds no isolating flag and no disarming operand INSIDE the string -- the clearing happens
+    outside it -- so a scan that only raised would have returned quietly and launched a shell whose
+    interpreter starts unguarded. The caller therefore has to know whether the contract still has
+    to reach this child, and it may not simply assume it does: requiring the contract for EVERY
+    shell string would refuse `bash -c 'ls'` from a process that had disarmed itself, which is a
+    launch with no interpreter in it and nothing to guard.
+
+    A `-c` string is not an argv, so nothing above can see the interpreter inside it: round 5's
+    `bash -c "python3 -I child.py"` is the same request as `python3 -I child.py` at a launch site,
+    and it was invisible. Every simple command is resolved through the same wrapper grammar, and a
+    LEADING `NAME=VALUE` prefix is read as that command's environment because every shell applies
+    it that way -- `PYTHONPATH=/nowhere python3 x.py` disarms the child exactly as `env` would.
+
+    A STRING IS REFUSED AND NEVER REPAIRED. Rewriting a command string means re-quoting somebody
+    else's shell program, and a guard that edits a shell string can change what a run computes.
+    The argv spelling is repaired because the tokens are ours to insert between; this one is not.
+    """
+    try:
+        commands = _simple_commands(text)
+    except ValueError as err:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPARSED, f"{text!r}: {err}") from err
+    launches_python = False
+    for command in commands:
+        stripped = None
+        index = 0
+        while index < len(command):
+            name, separator, value = command[index].partition("=")
+            if not separator or not name:
+                break
+            if _breaks_propagation_contract(name, value):
+                stripped = stripped or command[index]
+            index += 1
+        command = command[index:]
+        if not command:
+            continue
+        resolved = _resolve_launch_command(command, env)
+        if resolved is None:
+            continue
+        target = _resolve_executable(resolved["command"][0], env)
+        if _executable_basename(target) in _SHELL_BASENAMES:
+            nested = _shell_command_string(resolved["command"])
+            if nested is not None:
+                if depth >= _MAX_WRAPPER_DEPTH:
+                    raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
+                                         f"shell strings nested deeper than {_MAX_WRAPPER_DEPTH}")
+                launches_python = _scan_shell_string(nested, env, depth + 1) or launches_python
+            continue
+        if not _is_python_executable(target):
+            continue
+        launches_python = True
+        flag = _forbidden_python_flag(resolved["command"])
+        if flag is not None:
+            raise _LaunchRefusal(LAUNCH_REASON_FLAGS, flag, executable=target)
+        disarming = stripped or resolved["stripped"]
+        if resolved["clears"] and disarming is None:
+            disarming = "env -i"
+        if disarming is not None:
+            raise _LaunchRefusal(LAUNCH_REASON_ENV, disarming, executable=target)
+    return launches_python
+
+
+def _scan_launch(argv: list[str], env, guard: GuardedPathFinder) -> list[str]:
+    """Return the argv to launch, re-armed if that is what the contract needs; raise to refuse.
+
+    THE ORDER IS THE CHEAPEST CORRECT ONE. The wrapper prefixes are resolved first, because until
+    they are there is no executable to ask questions about; a shell `-c` string is scanned next,
+    because a shell is not a Python child and its string holds launches of its own; only a resolved
+    PYTHON command is flag-scanned; and the environment question is asked LAST, after any argv
+    repair, so a repaired launch is not refused for the state it was repaired out of.
+
+    A non-Python child is not refused here. It inherits the re-armed contract AND the wrapper
+    directory on `PATH`, which is what makes an ordinary interpreter it launches guarded; what
+    remains is `DECLARED_GAP`.
+    """
+    resolved = _resolve_launch_command(argv, env)
+    if resolved is None:
+        return argv
+    command = resolved["command"]
+    target = _resolve_executable(command[0], env)
+    text = (_shell_command_string(command)
+            if _executable_basename(target) in _SHELL_BASENAMES else None)
+    if text is not None:
+        # A SHELL STRING IS NOT A PYTHON CHILD, BUT IT CAN HOLD ONE, and the wrapper prefix in
+        # front of the SHELL is what would disarm it: `env -i bash -c 'python3 x.py'` clears the
+        # environment outside the string, so the string itself is clean and the interpreter inside
+        # it starts unguarded. The scan therefore reports whether an interpreter is in there, and
+        # the contract checks below run for that case exactly as they do for a direct launch.
+        if not _scan_shell_string(text, env):
+            return argv
+    elif _is_python_executable(target):
+        flag = _forbidden_python_flag(command)
+        if flag is not None:
+            raise _LaunchRefusal(LAUNCH_REASON_FLAGS, flag, executable=target)
+    else:
+        return argv
+    if resolved["clears"] or resolved["stripped"] is not None:
+        disarming = resolved["stripped"] or "env -i"
+        if resolved["inject_at"] is None:
+            #: The command came out of an `env -S` STRING, so there is no argv position to insert
+            #: the contract at. Refused rather than rewritten, for the reason on `_scan_shell_string`.
+            raise _LaunchRefusal(LAUNCH_REASON_ENV, disarming, executable=target)
+        operands, view = _contract_operands(resolved)
+        missing = _environment_reaching_child_is_armed(view)
+        if missing is not None:
+            raise _LaunchRefusal(LAUNCH_REASON_ENV, missing, executable=target)
+        guard.launch_env = "argv-re-armed"
+        return [*argv[:resolved["inject_at"]], *operands, *argv[resolved["inject_at"]:]]
+    missing = _environment_reaching_child_is_armed(env)
+    if missing is not None:
+        raise _LaunchRefusal(LAUNCH_REASON_ENV, missing, executable=target)
+    return argv
+
+
+def _prepare_launch(executable, arguments, env, guard: GuardedPathFinder):
+    """Re-arm a launch, or refuse a Python child that could not install the guard.
+
+    Returns `(environment, argv)`. The environment is re-armed FIRST so that the armed copy is what
+    every later check reads, and the argv comes back possibly REWRITTEN -- see `_contract_operands`.
+    A caller that ignores the returned argv would silently drop an argv-level repair, which is why
+    every wrapped primitive below writes both back.
     """
     armed_env = _rearm_launch_environment(env, guard)
     argv = _launch_argv(arguments)
-    resolved = _resolve_executable(executable, armed_env)
-    scan_argv, stripped = argv, None
-    if _is_env_executable(resolved):
-        split = _env_command_argv(argv)
-        if split is not None:
-            scan_argv, stripped = split
-            resolved = _resolve_executable(scan_argv[0], armed_env)
-    if not _is_python_executable(resolved):
-        return armed_env
-    if stripped is not None:
-        reason, offending = LAUNCH_REASON_ENV, stripped
-    else:
-        offending, reason = _forbidden_python_flag(scan_argv), LAUNCH_REASON_FLAGS
-        if offending is None:
-            offending = _environment_reaching_child_is_armed(armed_env)
-            reason = LAUNCH_REASON_ENV
-    if offending is None:
-        return armed_env
-    refusal = {
-        "executable": resolved,
-        "offending_flag": offending,
-        "argv": argv,
-        "reason": reason,
-    }
-    guard.launch_refusal = refusal
-    _report_launch(refusal)
-    raise SystemExit(VIOLATION_EXIT)
+    try:
+        return armed_env, _scan_launch(argv, armed_env, guard)
+    except _LaunchRefusal as refusal:
+        launched = getattr(refusal, "executable", None)
+        refusal_record = {
+            "executable": launched or _resolve_executable(executable, armed_env),
+            "offending_flag": refusal.offending,
+            "argv": argv,
+            "reason": refusal.reason,
+        }
+        guard.launch_refusal = refusal_record
+        _report_launch(refusal_record)
+        raise SystemExit(VIOLATION_EXIT) from None
 
 
 def _install_launch_guards(guard: GuardedPathFinder) -> None:
@@ -783,9 +1585,15 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
         else:
             argv = _launch_argv(command)
             executable = executable or argv[0]
-        armed_env = _prepare_launch(executable, argv, env, guard)
+        armed_env, armed_argv = _prepare_launch(executable, argv, env, guard)
         if env is not None:
             bound.arguments["env"] = armed_env
+        # AN ARGV-LEVEL REPAIR IS ONLY REAL IF IT IS WRITTEN BACK. `shell=True` is excluded because
+        # its `argv` is one this wrapper SYNTHESIZED around the caller's string -- `_scan_launch`
+        # refuses a string it would have had to rewrite, so it never returns a repaired one here --
+        # and a `str` `args` names a program with no wrapper prefix to insert into.
+        if not shell and armed_argv != argv and not isinstance(command, (str, bytes, os.PathLike)):
+            bound.arguments["args"] = armed_argv
         return original_popen_init(*bound.args, **bound.kwargs)
 
     subprocess.Popen.__init__ = guarded_popen_init
@@ -819,7 +1627,7 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
                 env = positional[env_index]
             else:
                 env = call_kwargs[env_parameter]
-            armed_env = _prepare_launch(
+            armed_env, armed_argv = _prepare_launch(
                 executable,
                 argv,
                 env,
@@ -830,6 +1638,11 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
                     positional[env_index] = armed_env
                 else:
                     call_kwargs[env_parameter] = armed_env
+            if armed_argv != _launch_argv(argv):
+                if len(positional) > argv_index:
+                    positional[argv_index] = armed_argv
+                else:
+                    call_kwargs[argv_parameter] = armed_argv
             return original(*positional, **call_kwargs)
 
         setattr(os, name, guarded)
@@ -869,9 +1682,11 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
             arguments = bound.arguments["args"]
             env = arguments[-1] if has_env else None
             argv = arguments[:-1] if has_env else arguments
-            armed_env = _prepare_launch(executable, argv, env, guard)
+            armed_env, armed_argv = _prepare_launch(executable, argv, env, guard)
             if has_env:
-                bound.arguments["args"] = (*argv, armed_env)
+                bound.arguments["args"] = (*armed_argv, armed_env)
+            elif armed_argv != _launch_argv(argv):
+                bound.arguments["args"] = tuple(armed_argv)
             return original(*bound.args, **bound.kwargs)
 
         setattr(os, name, guarded)
@@ -886,6 +1701,8 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
     @functools.wraps(original_system)
     def guarded_system(command):
         shell = os.environ.get("COMSPEC") or "/bin/sh"
+        # The argv is discarded deliberately: `os.system` takes a STRING, and `_scan_launch`
+        # refuses a string it would have to rewrite rather than returning a repaired one.
         _prepare_launch(shell, [shell, "-c", command], None, guard)
         return original_system(command)
 
@@ -902,7 +1719,7 @@ def install(expect_root: str, allow=()) -> GuardedPathFinder:
         if getattr(finder, "__name__", None) == "PathFinder" or type(finder).__name__ == "PathFinder":
             guard = GuardedPathFinder(finder, expect, allowed, propagated_from, depth)
             sys.meta_path[i] = guard
-            _arm_child_environment(expect, allow_roots)
+            guard.path_shim, guard.path_shim_sha256 = _arm_child_environment(expect, allow_roots)
             _install_launch_guards(guard)
             guard.propagation = "armed"
             return guard
@@ -1146,6 +1963,21 @@ def write_inventory(dest, guard, script, expect_root, allow, outcome, violation=
         "guard_installed": guard is not None,
         "propagation": (guard.propagation if guard is not None else "not-armed"),
         "launch_env": (guard.launch_env if guard is not None else "not-re-armed"),
+        # THE SECOND HALF OF THE PROCESS-BOUNDARY CONTRACT, as a state and never a boolean. `armed`
+        # means a non-Python child's `python3 -I` is refused by the wrapper on PATH; anything else
+        # names why it is not, and widens `declared_gap` below by exactly that much.
+        "path_shim": (guard.path_shim if guard is not None else "not-armed"),
+        "path_shim_dirs": [d for d in (os.environ.get(PATH_SHIM_DIRS_ENV) or "").split(os.pathsep)
+                           if d],
+        # The bytes the PATH half would execute. See `_path_shim_digests` for why this record is
+        # what binds them rather than the A-2(f) source manifest.
+        "path_shim_sha256": (guard.path_shim_sha256 if guard is not None
+                             else _path_shim_digests()),
+        # THE COVERAGE BOUNDARY IN THE RECORD ITSELF (P-3's rule applied to a GAP rather than to a
+        # count): a ratchet reader consuming these records cannot open the module docstring, and a
+        # boundary it cannot see is one it reads as absent. Written on every path, including the
+        # ones with no guard, because a run that could not look has the widest boundary of all.
+        "declared_gap": DECLARED_GAP,
         "propagated_from": (guard.propagated_from if guard is not None else None),
         "depth": (guard.depth if guard is not None else 0),
         "shim_sha256": (guard.shim_sha256 if guard is not None
@@ -1336,7 +2168,7 @@ def main(argv=None) -> int:
         # but the record must be written for it, or every entrypoint that ends in `sys.exit()` would
         # emit no inventory at all and F-4 would count them as missing.
         if guard.launch_refusal is not None:
-            outcome, site = "refused:launch-python-startup-flags", SITE_LAUNCH
+            outcome, site = launch_outcome(guard.launch_refusal), SITE_LAUNCH
         else:
             outcome = f"child-systemexit:{exc.code!r}"
         raise
