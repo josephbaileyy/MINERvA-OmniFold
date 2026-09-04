@@ -425,3 +425,36 @@ lists apply; add:
 (cd nd-unfolding && python3 -m pytest -q tests/test_mnv_guarded_run.py tests/test_k0_preflight_exclusion_census.py)
 python3 -m pytest -q docs/orchestration/test_campaignctl.py      # includes the two-six-hour-items, /tmp receipt, and --allow mutations
 ```
+
+## 10. Reviewer round 4 (2026-09-04) — verdict BLOCK on `4270bb0c`, and what this revision changed
+
+`4270bb0c` is **withdrawn**. Every reviewer mutation below is a named regression test at the tip.
+
+| reviewer BLOCK | resolution | commit | proof |
+|---|---|---|---|
+| **reservations released before their spend reaches a receipt** (alpha terminal, receipt still 490, beta admitted → 502) | an item that RAN keeps reserving its full `maximum_cost` until a committed receipt whose `measured_at_utc` is later than the item's terminal outcome exists; items that never ran (refused, stale, revoked, unclaimed) release at once; outcomes carry their timestamp | `9ee0d600` | reviewer mutation: beta refused naming "alpha (terminal, not yet remeasured)"; a receipt measured after alpha's outcome admits beta; the old blessing test rewritten |
+| **lock and reservations scoped to a user-selectable `--state-dir`** (two queues, one receipt, both admitted) | compute admission (R5 check, reservation scan, lock, claim) requires the queue's state dir to be the canonical `<repo>/docs/orchestration/state/campaign-queue`; any other state dir refuses compute with exit 6 and may run only non-compute items | `9ee0d600` | reviewer mutation: canonical queue admits alpha, the other refuses beta; two canonical queues share the lock; a `..`-spelled canonical path resolves to the same lock |
+| **the shim is unbound and mutable** (replacing only the shim after staging let a child load the wrong tree, rc 0) | `nd-unfolding/mnv_guard_shim/sitecustomize.py` is bound wherever the guard is bound: tracked, HEAD-identical at staging, re-verified in `validate_unchanged`; the fixture commits it | `9ee0d600` | reviewer mutation: shim swap after staging → `(4, "stale")`, nothing ran, no claim; untracked shim refused at staging |
+| **`-S`/`-I`/`-E`, cleared env, non-Python children declared uncovered** | the guard wraps 21 launch primitives (`subprocess.Popen`, `os.posix_spawn*`, `os.exec*`, `os.spawn*`, `os.system`) in every guarded interpreter: a Python child carrying `-S`/`-I`/`-E` — standalone, clustered, or hidden behind an option value, scanned with CPython's option grammar — is REFUSED before launch (exit 3, `[oi136 launch]`, a `REFUSED launch` inventory record); a child launched with a cleared or shim-less environment, or through `env -i` / `env -u` / `env PYTHONPATH=…`, is RE-ARMED; a parent that deletes the contract from its own environment cannot launch a Python child; non-Python children inherit the re-armed environment, so the Python they run is guarded; the shim verifies the guard module lies inside the expected root and both records carry the digest of the shim that ran | `5c522fa0` | 122 guard tests incl. each former gap; 240 in the seven-file matrix at the worker's tree; four mutation runs each killed the tests that exist for them; probe still exactly 9; bindings intact |
+
+**The one declared gap that remains, stated so it is graded as what it is:** a non-Python child
+that itself defeats the contract at its own launch site — a shell script that runs `python -I`, or
+that clears its environment before running Python. Both are one cause (the guard is not in the
+shell) and are measured by two tests that assert the wrong tree loads with exit 0. Closing it means
+guarding the shell, which is a different instrument; the campaign queue's argv rules already forbid
+those shapes on the producer and validator arms it admits.
+
+Consequences surfaced by the workers, not hidden: `tests/test_n2_child_boundary.py` needed its
+fixture to carry the shim (red at `4270bb0c`, green here); and the OI-136 row in `OPEN_ITEMS.md`
+still states that the guard does not cross a subprocess boundary — true when written, stale since
+`3eadd3f8`. That row is its owner's; this integration edits no `OI-*` row and records the
+staleness here instead.
+
+### 10.1 Proposed tip, revised
+
+The last commit of `wave1-integration-20260903` as force-pushed after this record. Add:
+
+```
+python3 -m pytest -q docs/orchestration/test_campaignctl.py   # remeasure, canonical-state-dir, shim-swap mutations
+(cd nd-unfolding && python3 -m pytest -q tests/test_mnv_guarded_run.py tests/test_n2_child_boundary.py)
+```
