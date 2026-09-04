@@ -39,13 +39,15 @@ BEFORE `install()`, so the refusal precedes the first import as well as the work
 `--allow` does not cover it: `--allow` declares an IMPORT tree, never an execution
 tree.
 
-IT CROSSES PYTHON SUBPROCESS BOUNDARIES THAT INHERIT THE ENVIRONMENT, AND DECLARES
-THE ONES IT CANNOT. `install()` prepends the tracked `mnv_guard_shim/` directory to
-`PYTHONPATH` and records the absolute guard module, expected root, allow-list and
-inventory path in `MNV_GUARD_*`. At child-interpreter startup, `sitecustomize.py`
-loads this module from that absolute path and calls `install(expect_root, allow)`
-before the child script runs. The installed meta-path finder checks the RESOLVED
-ORIGIN, so a later `sys.path.insert(0, ...)` in the child does not outrank it.
+IT CROSSES PROCESS BOUNDARIES AND FAILS CLOSED AT PYTHON LAUNCHES. `install()`
+prepends the tracked `mnv_guard_shim/` directory to `PYTHONPATH`, records the
+absolute guard module, expected root, allow-list and inventory path in
+`MNV_GUARD_*`, and wraps the process-launch primitives owned by the interpreter.
+At child-interpreter startup, `sitecustomize.py` verifies that the recorded guard
+module is inside the expected checkout, loads it, and calls
+`install(expect_root, allow)` before the child script runs. The installed
+meta-path finder checks the RESOLVED ORIGIN, so a later
+`sys.path.insert(0, ...)` in the child does not outrank it.
 
 Every covered child in an inventoried run appends its OWN record with
 `propagated_from` naming the parent pid and `depth` incremented once per Python
@@ -53,12 +55,32 @@ boundary. This is the live shape of `mii_adopt_unified_5d_stamped.py`, which lau
 the receipt-bound, fail-open `adopt_unified_5d.py` as a subprocess and cannot edit
 that child in place.
 
-The declared uncovered boundaries are exact: Python started with `-S`, `-I` or `-E`
-does not load the shim from inherited `PYTHONPATH`; a child launched with a cleared
-environment such as `env={}` receives none of the propagation variables; and a
-non-Python child has no Python `sitecustomize` startup. Each is measured in
-`tests/test_mnv_guarded_run.py::TheSubprocessBoundaryIsCovered`. These are coverage
-limits, never clean guard results.
+Direct Python launches using `-S`, `-I` or `-E`, standalone or combined with other
+short flags, are refused at the launch site because each option prevents reliable
+shim startup. In particular, `-I` implies isolated mode and ignores the shim; a
+legitimate need for `-I` requires a launcher-design change, not a guard exception.
+The scan follows CPython's OWN option grammar rather than approximating it, so an
+option's VALUE is never read as a flag (`-Xpycache_prefix=/tmp/CACHE` is not an
+`-E`) and a flag after a value is never missed (`-W ignore -I` is refused).
+
+An explicitly supplied environment, including `env={}`, is copied and re-armed
+with the propagation contract and shim-first `PYTHONPATH`. Where the contract
+cannot be re-armed it is REFUSED instead of launched: a Python child whose ARGV
+strips it -- `env -i`, `env -u MNV_GUARD_MODULE`, `env PYTHONPATH=...` -- and a
+Python child of a process that deleted a `MNV_GUARD_*` variable or overwrote
+`PYTHONPATH` in its own `os.environ` after `install()`. So a Python child of a
+guarded interpreter either starts guarded or does not start. Non-Python children
+are never refused: they inherit the re-armed contract, which is what makes an
+ordinary Python interpreter they launch guarded.
+
+THE ONE DECLARED PROCESS-BOUNDARY GAP is a non-Python child that itself launches
+`python -I`. The guarded interpreter owns only the first launch site, while the
+second launch occurs inside the non-Python process and isolated mode ignores the
+inherited shim. The same one gap covers every other way that second launch can
+defeat the contract -- clearing the environment, or unsetting `PYTHONPATH` --
+because they share the single cause: the launching process is one this
+interpreter does not guard. The measured gap and all covered counterparts are
+pinned in `tests/test_mnv_guarded_run.py::TheSubprocessBoundaryIsCovered`.
 
 TWO RECEIPTS, NEITHER OF WHICH IS A GATE
 ----------------------------------------
@@ -74,8 +96,9 @@ refusal half and a two-root inventory are consistent.
 
 `--inventory <path>` (or `$MNV_GUARD_INVENTORY`) appends ONE json object per process
 recording the interpreter, both roots, the script and its checkout root, `checked`,
-the final `sys.path`, and EVERY module whose resolved origin lies inside any checkout
--- the allowed ones as well as the refused one. `repo_origin_count` and
+the final `sys.path`, the executed shim's `shim_sha256`, and EVERY module whose
+resolved origin lies inside any checkout -- the allowed ones as well as the refused
+one. `repo_origin_count` and
 `repo_origin_inventory_is_empty` are written UNCONDITIONALLY: a zero is a REPORTABLE
 STATE and never a pass, and an absent key cannot tell "no repository import occurred"
 from "the inventory did not run". The CLI parent emits both receipts from one
@@ -116,8 +139,10 @@ EXIT CODES follow `verify_executing_copy_is_committed.py` rather than inventing 
 third convention:
     0 or the child's own status -- the child ran; its SystemExit is preserved
     2 -- COULD NOT LOOK (bad usage, or --expect-root is not a checkout)
-    3 -- MEASURED VIOLATION: an import resolved outside the expected tree, OR the script itself
-         lies in a checkout that is not --expect-root
+    3 -- MEASURED VIOLATION: an import resolved outside the expected tree, the script itself
+         lies in a checkout that is not --expect-root, or a Python child would have started
+         without the guard -- a startup flag that prevents shim installation, or an argv or
+         environment that strips the propagation contract
 2 is deliberately not 3, so "we could not check" can never be read as "we checked
 and it was clean".
 """
@@ -125,11 +150,16 @@ from __future__ import annotations
 
 import argparse
 import datetime
+import functools
 import hashlib
+import inspect
 import json
 import os
 import pathlib
+import re
 import runpy
+import shutil
+import subprocess
 import sys
 
 MARKERS = ("VALIDATION_LEDGER.md", "nd-unfolding")
@@ -156,6 +186,16 @@ PARENT_PID_ENV = "MNV_GUARD_PARENT_PID"
 DEPTH_ENV = "MNV_GUARD_DEPTH"
 SHIM_DIR = pathlib.Path(__file__).resolve().parent / "mnv_guard_shim"
 CHILD_PREFIX = "[oi136 child]"
+LAUNCH_PREFIX = "[oi136 launch]"
+
+PROPAGATION_ENV_VARS = (
+    MODULE_ENV,
+    EXPECT_ROOT_ENV,
+    ALLOW_ENV,
+    INVENTORY_ENV,
+    PARENT_PID_ENV,
+    DEPTH_ENV,
+)
 
 #: The two `verdict` values a GREEN run can carry. They exist because they must be DISTINGUISHABLE:
 #: an exit 0 from a process that inspected repository imports and approved every one of them, and an
@@ -170,6 +210,7 @@ CHILD_PREFIX = "[oi136 child]"
 VERDICT_INSPECTED = "REPOSITORY-ORIGINS-INSPECTED"
 VERDICT_EMPTY = "EMPTY-REPOSITORY-ORIGIN-SET -- THE GUARD REFUSED NOTHING BECAUSE IT SAW NOTHING"
 VERDICT_REFUSED = "REFUSED -- AN IMPORT RESOLVED OUTSIDE THE EXPECTED TREE"
+VERDICT_REFUSED_LAUNCH = "REFUSED launch"
 
 #: FOUND BY RUNNING IT, 2026-08-22, on the real N-1 arm against the canonical checkout. A B-4
 #: script-containment refusal raises no `ImportTreeViolation`, so the verdict fell through to
@@ -190,6 +231,7 @@ VERDICT_REFUSED_SCRIPT = ("REFUSED -- THE SCRIPT ITSELF LIES IN A CHECKOUT THAT 
 SITE_NONE = None
 SITE_SCRIPT_CONTAINMENT = "b4-script-containment"
 SITE_IMPORT_RESOLUTION = "import-tree-violation"
+SITE_LAUNCH = "launch-python-startup-flags"
 
 #: `checked` provenance. A ZERO IS NOT SELF-EXPLANATORY and F-9 now makes zero the EXPECTED value on
 #: the containment path, which is precisely when a defaulted zero would pass unnoticed. Two states
@@ -282,6 +324,9 @@ class GuardedPathFinder:
             "origin": None,
         }
         self.violation: ImportTreeViolation | None = None
+        self.launch_refusal: dict | None = None
+        self.launch_env = "not-re-armed"
+        self.shim_sha256 = _sha256_or_none(str(SHIM_DIR / "sitecustomize.py"))
         self.on_violation = None
         self.checked = 0
         #: P-1: EVERY module whose resolved origin lies inside ANY checkout, including
@@ -380,8 +425,475 @@ def _arm_child_environment(expect_root: str, allow: tuple[str, ...]) -> None:
     os.environ[DEPTH_ENV] = str(current_depth + 1)
 
 
+def _text_argument(value) -> str:
+    """Return a JSON-safe representation of a process argument."""
+    raw = os.fspath(value)
+    if isinstance(raw, bytes):
+        return os.fsdecode(raw)
+    return str(raw)
+
+
+def _launch_argv(arguments) -> list[str]:
+    """Normalize a process argument vector without changing what is launched."""
+    if isinstance(arguments, (str, bytes, os.PathLike)):
+        return [_text_argument(arguments)]
+    return [_text_argument(argument) for argument in arguments]
+
+
+def _resolve_executable(executable, env=None) -> str:
+    """Resolve a launch executable using the environment that launch will receive."""
+    text = _text_argument(executable)
+    path_value = None if env is None else env.get("PATH")
+    if isinstance(path_value, bytes):
+        path_value = os.fsdecode(path_value)
+    found = shutil.which(text, path=path_value)
+    candidate = found or text
+    try:
+        return str(pathlib.Path(candidate).resolve())
+    except OSError:
+        return candidate
+
+
+def _is_python_executable(executable: str) -> bool:
+    """Return whether an executable is the current or a Python interpreter."""
+    try:
+        if pathlib.Path(executable).resolve() == pathlib.Path(sys.executable).resolve():
+            return True
+    except OSError:
+        pass
+    basename = pathlib.Path(executable).name
+    if basename.lower().endswith(".exe"):
+        basename = basename[:-4]
+    return re.fullmatch(r"python[0-9.]*", basename, flags=re.IGNORECASE) is not None
+
+
+#: The three startup options that prevent reliable shim installation, as CPython spells them in a
+#: short-option CLUSTER: `-IS`, `-Es` and `-OI` are the same request as `-I`, `-E` and `-I`.
+FORBIDDEN_STARTUP_FLAG_CHARS = "SIE"
+
+#: CPython short options that CONSUME A VALUE, and the two of those that also END option parsing.
+#: The distinction is not pedantry: a scan that walks a value's characters is wrong in BOTH
+#: directions, and the naive "stop at the first non-flag token" scan this replaced was measured
+#: wrong in both. `-Xpycache_prefix=/tmp/CACHE` read as an `-E` and REFUSED A CORRECT LAUNCH, which
+#: is how a guard gets switched off; and `-W ignore -I child.py` -- the option's value in the NEXT
+#: token -- ended the scan at `ignore` and LAUNCHED THE ISOLATED CHILD, which is the reviewer's
+#: finding with a different spelling. After `-c` or `-m` every later token belongs to the child
+#: program, so a `-I` there is the child's own argument and refusing it would be the first error
+#: again. Both directions are pinned in `TheStartupFlagScanFollowsCPythonsOptionGrammar`.
+_VALUE_TAKING_SHORT_FLAGS = "cmWX"
+_PROGRAM_ENDING_SHORT_FLAGS = "cm"
+
+#: The one long option that takes a separate value. Its value cannot be a startup flag, so the
+#: token after it is skipped rather than read.
+_VALUE_TAKING_LONG_FLAGS = ("--check-hash-based-pycs",)
+
+#: NOT CPython spellings -- `python --isolated` exits with "unknown option". Refused anyway: a
+#: launcher that grew them is asking for isolation, and refusing a launch CPython would reject
+#: costs nothing.
+_FORBIDDEN_LONG_FLAGS = ("--isolated", "--ignore-environment", "--no-site")
+
+
+def _forbidden_python_flag(argv: list[str]) -> str | None:
+    """Return the first startup flag that prevents reliable shim installation.
+
+    The walk follows CPython's own option grammar rather than approximating it, for the reason
+    recorded on `_VALUE_TAKING_SHORT_FLAGS`: the approximation was measured to fail open on
+    `-W ignore -I` and to refuse the correct `-Xpycache_prefix=/tmp/CACHE`.
+    """
+    index = 1
+    while index < len(argv):
+        argument = argv[index]
+        index += 1
+        if argument in ("-", "--") or not argument.startswith("-"):
+            return None                      # the script, `-` for stdin, or the end of the options
+        if argument.startswith("--"):
+            if argument in _FORBIDDEN_LONG_FLAGS:
+                return argument
+            if argument in _VALUE_TAKING_LONG_FLAGS:
+                index += 1
+            continue
+        cluster = argument[1:]
+        for position, character in enumerate(cluster):
+            if character in FORBIDDEN_STARTUP_FLAG_CHARS:
+                return argument
+            if character in _PROGRAM_ENDING_SHORT_FLAGS:
+                return None                  # -c/-m: every later token is the child's own argv
+            if character in _VALUE_TAKING_SHORT_FLAGS:
+                if position == len(cluster) - 1:
+                    index += 1               # the value is the NEXT token, and is not a flag
+                break                        # the rest of THIS token is the value
+    return None
+
+
+def _pythonpath_starts_with_shim(pythonpath) -> bool:
+    """Return whether PYTHONPATH's first entry resolves to the tracked shim."""
+    if not isinstance(pythonpath, (str, bytes)):
+        return False
+    text = os.fsdecode(pythonpath) if isinstance(pythonpath, bytes) else pythonpath
+    if not text:
+        return False
+    try:
+        first = pathlib.Path(text.split(os.pathsep, 1)[0]).resolve()
+        return first == SHIM_DIR.resolve()
+    except OSError:
+        return False
+
+
+def _breaks_propagation_contract(name: str, value: "str | None") -> bool:
+    """Return whether setting `name` to `value` (None for unset) disarms an inheriting child.
+
+    The two halves are not interchangeable. A `MNV_GUARD_*` variable must arrive with THIS
+    process's value, because the child reads the guard module path and the expected root out of it.
+    `PYTHONPATH` must arrive with the shim FIRST, because a later entry does not get imported as
+    `sitecustomize`.
+    """
+    if name in PROPAGATION_ENV_VARS:
+        return value != os.environ.get(name)
+    if name == "PYTHONPATH":
+        return not _pythonpath_starts_with_shim(value)
+    return False
+
+
+def _environment_reaching_child_is_armed(env) -> "str | None":
+    """Return the contract variable a Python child would start WITHOUT, or None when armed.
+
+    THE LAST FAIL-OPEN ROUTE AT A LAUNCH SITE, and it is not the `env=` keyword: it is this
+    process's OWN `os.environ`. `install()` exports the contract, but a script that deletes a
+    `MNV_GUARD_*` variable, or overwrites `PYTHONPATH`, disarms every later launch -- the inherited
+    environment is then missing the contract and there is nothing in the call to re-arm FROM. A
+    Python child in that state starts unguarded and writes no record, which is the reviewer's
+    finding reached by deleting a variable instead of by passing one. So it is REFUSED, and a
+    correct run cannot reach it: `install()` sets all four, and an explicit `env=` is re-armed
+    before this check reads it.
+
+    `MNV_GUARD_ALLOW` and `MNV_GUARD_INVENTORY` are deliberately NOT required to be non-empty --
+    both are legitimately empty (no `--allow`, no `--inventory`) and requiring them would refuse
+    correct launches.
+    """
+    source = os.environ if env is None else env
+    for name in (MODULE_ENV, EXPECT_ROOT_ENV, PARENT_PID_ENV, DEPTH_ENV):
+        if not source.get(name):
+            return name
+    if not _pythonpath_starts_with_shim(source.get("PYTHONPATH")):
+        return "PYTHONPATH"
+    return None
+
+
+def _rearm_launch_environment(env, guard: GuardedPathFinder):
+    """Copy and repair an explicitly supplied child environment when necessary."""
+    if env is None:
+        return None
+    needs_rearm = any(env.get(name) != os.environ.get(name)
+                      for name in PROPAGATION_ENV_VARS)
+    needs_rearm = needs_rearm or not _pythonpath_starts_with_shim(env.get("PYTHONPATH"))
+    if not needs_rearm:
+        return env
+
+    armed = dict(env)
+    for name in PROPAGATION_ENV_VARS:
+        # ABSENT IS COPIED AS ABSENT, never invented: `os.environ` is the only place this process
+        # holds the contract, so a variable missing there cannot be re-derived here. That state is
+        # caught by `_environment_reaching_child_is_armed`, which refuses the launch rather than
+        # letting an empty value read as an armed one.
+        armed[name] = os.environ.get(name, "")
+    existing_pythonpath = env.get("PYTHONPATH")
+    if isinstance(existing_pythonpath, bytes):
+        existing_pythonpath = os.fsdecode(existing_pythonpath)
+    shim_text = str(SHIM_DIR.resolve())
+    entries = [] if not existing_pythonpath else str(existing_pythonpath).split(os.pathsep)
+    retained = []
+    for entry in entries:
+        try:
+            is_shim = pathlib.Path(entry or os.curdir).resolve() == SHIM_DIR.resolve()
+        except OSError:
+            is_shim = False
+        if not is_shim:
+            retained.append(entry)
+    armed["PYTHONPATH"] = os.pathsep.join([shim_text, *retained])
+    guard.launch_env = "re-armed"
+    return armed
+
+
+#: `env` is the ARGV spelling of two things this guard already refuses in their keyword spelling:
+#: "the real executable is a later word" and, for `env -i`, THE CLEARED ENVIRONMENT the reviewer's
+#: finding names. Neither existing check sees it -- the flag scan resolves a non-Python executable,
+#: and `_rearm_launch_environment` is handed `env=None` because the stripping happens in the
+#: launched process rather than in the caller -- so an unhandled `env -i python3 child.py` from a
+#: guarded interpreter reproduces the finding verbatim. No tracked launcher uses `env` today
+#: (measured over `*.py` and `*.sh`), so handling it costs only the parser below.
+_ENV_BASENAMES = frozenset({"env"})
+
+#: `env`'s OWN option grammar, split by whether an option consumes a value. An option this table
+#: does not list leaves the launch UNPARSED and therefore unscanned, which is deliberate: GNU
+#: coreutils and the BSD `env` macOS ships do not agree on the option set, and a parser that
+#: guessed would either read an option's value as a startup flag or refuse a correct
+#: `env -u LD_PRELOAD ./binary`. An unparsed prefix stays in the declared gap; a MIS-parsed one
+#: would be a wrong answer.
+_ENV_FLAG_OPTIONS = frozenset({"-i", "--ignore-environment", "-0", "--null", "-v", "--debug"})
+_ENV_VALUE_OPTIONS = frozenset({"-u", "--unset", "-C", "--chdir", "-S", "--split-string",
+                                "-P", "-a"})
+_ENV_CLEARING_OPTIONS = frozenset({"-", "-i", "--ignore-environment"})
+_ENV_UNSET_PREFIXES = ("-u", "--unset=")
+_ENV_OTHER_ATTACHED_PREFIXES = ("--chdir=", "--split-string=", "-C", "-P", "-S", "-a")
+
+#: WHY the launch was refused, as a field. Both refusals are the same SITE (this wrapper owns one
+#: launch boundary) and the same exit code, and the repo's own rule -- see the `SITE_*` block --
+#: is that a reader must not have to parse which check fired out of prose.
+LAUNCH_REASON_FLAGS = "python-startup-flags-bypass-the-shim"
+LAUNCH_REASON_ENV = "the-launch-argv-or-environment-strips-the-propagation-contract"
+
+_LAUNCH_HEADLINES = {
+    LAUNCH_REASON_FLAGS: "PYTHON STARTUP FLAGS BYPASS THE IMPORT SHIM",
+    LAUNCH_REASON_ENV: "THE CHILD WOULD START WITHOUT THE PROPAGATION CONTRACT",
+}
+
+_LAUNCH_EXPLANATIONS = {
+    LAUNCH_REASON_FLAGS: ("-S, -I and -E prevent reliable sitecustomize propagation. -I must be "
+                          "handled by a launcher-design change, not a guard exception."),
+    LAUNCH_REASON_ENV: ("The interpreter would start with no MNV_GUARD_* contract or no shim-first "
+                        "PYTHONPATH, so it could not install the guard. An environment passed as "
+                        "`env=` IS re-armed; one stripped in argv or deleted from this process's "
+                        "own os.environ cannot be, so the launch is refused instead."),
+}
+
+
+def _is_env_executable(executable: str) -> bool:
+    """Return whether an executable is the `env` command rather than the program it runs."""
+    return pathlib.Path(executable).name in _ENV_BASENAMES
+
+
+def _env_command_argv(argv: list[str]) -> "tuple[list[str], str | None] | None":
+    """Split an `env ...` launch into the command it runs and the token that disarms the child.
+
+    Returns `(command argv, disarming token or None)`, or None when the prefix cannot be parsed or
+    launches nothing at all -- see `_ENV_VALUE_OPTIONS` for why an unparsed prefix is left alone.
+    """
+    index = 1
+    stripped = None
+    while index < len(argv):
+        token = argv[index]
+        if token in _ENV_CLEARING_OPTIONS:
+            stripped = stripped or token
+            index += 1
+            continue
+        if token in _ENV_FLAG_OPTIONS:
+            index += 1
+            continue
+        if token in _ENV_VALUE_OPTIONS:
+            if index + 1 >= len(argv):
+                return None                  # a value-taking option with no value: not parseable
+            if (token in ("-u", "--unset")
+                    and _breaks_propagation_contract(argv[index + 1], None)):
+                stripped = stripped or f"{token} {argv[index + 1]}"
+            index += 2
+            continue
+        attached = next((p for p in _ENV_UNSET_PREFIXES
+                         if token.startswith(p) and len(token) > len(p)), None)
+        if attached is not None:
+            if _breaks_propagation_contract(token[len(attached):], None):
+                stripped = stripped or token
+            index += 1
+            continue
+        if any(token.startswith(p) and len(token) > len(p)
+               for p in _ENV_OTHER_ATTACHED_PREFIXES):
+            index += 1
+            continue
+        if token.startswith("-"):
+            return None                      # an option this parser does not model: do not guess
+        name, separator, value = token.partition("=")
+        if separator:
+            if _breaks_propagation_contract(name, value):
+                stripped = stripped or token
+            index += 1
+            continue
+        return argv[index:], stripped
+    return None                              # `env` with no command word launches nothing
+
+
+def _report_launch(refusal: dict) -> None:
+    """Print a fail-closed Python-launch refusal."""
+    reason = refusal.get("reason", LAUNCH_REASON_FLAGS)
+    print(
+        f"\n{LAUNCH_PREFIX} {_LAUNCH_HEADLINES[reason]} -- REFUSING BEFORE LAUNCH.\n"
+        f"{LAUNCH_PREFIX}   executable     {refusal['executable']}\n"
+        f"{LAUNCH_PREFIX}   offending flag {refusal['offending_flag']}\n"
+        f"{LAUNCH_PREFIX}   argv           {refusal['argv']!r}\n"
+        f"{LAUNCH_PREFIX} {_LAUNCH_EXPLANATIONS[reason]}\n",
+        file=sys.stderr,
+        flush=True,
+    )
+
+
+def _prepare_launch(executable, arguments, env, guard: GuardedPathFinder):
+    """Re-arm a launch environment, or refuse a Python child that could not install the guard.
+
+    THE THREE REFUSALS AND THE ONE REPAIR ARE ORDERED, and the order is the cheapest correct one:
+    the environment is re-armed FIRST so that the armed copy is what every later check reads, then
+    the executable is resolved THROUGH that environment, and only a resolved PYTHON child is
+    scanned. A non-Python child is never refused here -- it inherits the re-armed contract, which
+    is what makes an ordinary interpreter it launches guarded, and the isolated one it may launch
+    instead is the module docstring's single declared gap.
+    """
+    armed_env = _rearm_launch_environment(env, guard)
+    argv = _launch_argv(arguments)
+    resolved = _resolve_executable(executable, armed_env)
+    scan_argv, stripped = argv, None
+    if _is_env_executable(resolved):
+        split = _env_command_argv(argv)
+        if split is not None:
+            scan_argv, stripped = split
+            resolved = _resolve_executable(scan_argv[0], armed_env)
+    if not _is_python_executable(resolved):
+        return armed_env
+    if stripped is not None:
+        reason, offending = LAUNCH_REASON_ENV, stripped
+    else:
+        offending, reason = _forbidden_python_flag(scan_argv), LAUNCH_REASON_FLAGS
+        if offending is None:
+            offending = _environment_reaching_child_is_armed(armed_env)
+            reason = LAUNCH_REASON_ENV
+    if offending is None:
+        return armed_env
+    refusal = {
+        "executable": resolved,
+        "offending_flag": offending,
+        "argv": argv,
+        "reason": reason,
+    }
+    guard.launch_refusal = refusal
+    _report_launch(refusal)
+    raise SystemExit(VIOLATION_EXIT)
+
+
+def _install_launch_guards(guard: GuardedPathFinder) -> None:
+    """Wrap process-launch primitives for this guarded interpreter."""
+    original_popen_init = subprocess.Popen.__init__
+    popen_signature = inspect.signature(original_popen_init)
+
+    @functools.wraps(original_popen_init)
+    def guarded_popen_init(*call_args, **call_kwargs):
+        bound = popen_signature.bind(*call_args, **call_kwargs)
+        command = bound.arguments["args"]
+        env = bound.arguments.get("env")
+        shell = bound.arguments.get("shell", False)
+        executable = bound.arguments.get("executable")
+        if shell:
+            executable = executable or os.environ.get("COMSPEC") or "/bin/sh"
+            argv = [executable, "-c", *_launch_argv(command)]
+        else:
+            argv = _launch_argv(command)
+            executable = executable or argv[0]
+        armed_env = _prepare_launch(executable, argv, env, guard)
+        if env is not None:
+            bound.arguments["env"] = armed_env
+        return original_popen_init(*bound.args, **bound.kwargs)
+
+    subprocess.Popen.__init__ = guarded_popen_init
+
+    def wrap_vector_launch(
+        name: str,
+        *,
+        executable_index: int,
+        executable_parameter: str,
+        argv_index: int,
+        argv_parameter: str,
+        env_index: int | None = None,
+        env_parameter: str | None = None,
+    ) -> None:
+        original = getattr(os, name, None)
+        if original is None:
+            return
+
+        @functools.wraps(original)
+        def guarded(*call_args, **call_kwargs):
+            positional = list(call_args)
+            executable = (positional[executable_index]
+                          if len(positional) > executable_index
+                          else call_kwargs[executable_parameter])
+            argv = (positional[argv_index]
+                    if len(positional) > argv_index
+                    else call_kwargs[argv_parameter])
+            if env_parameter is None:
+                env = None
+            elif env_index is not None and len(positional) > env_index:
+                env = positional[env_index]
+            else:
+                env = call_kwargs[env_parameter]
+            armed_env = _prepare_launch(
+                executable,
+                argv,
+                env,
+                guard,
+            )
+            if env_parameter is not None:
+                if env_index is not None and len(positional) > env_index:
+                    positional[env_index] = armed_env
+                else:
+                    call_kwargs[env_parameter] = armed_env
+            return original(*positional, **call_kwargs)
+
+        setattr(os, name, guarded)
+
+    wrap_vector_launch("execv", executable_index=0, executable_parameter="path",
+                       argv_index=1, argv_parameter="argv")
+    wrap_vector_launch("execve", executable_index=0, executable_parameter="path",
+                       argv_index=1, argv_parameter="argv", env_index=2,
+                       env_parameter="env")
+    wrap_vector_launch("execvp", executable_index=0, executable_parameter="file",
+                       argv_index=1, argv_parameter="args")
+    wrap_vector_launch("execvpe", executable_index=0, executable_parameter="file",
+                       argv_index=1, argv_parameter="args", env_index=2,
+                       env_parameter="env")
+    for name in ("posix_spawn", "posix_spawnp"):
+        wrap_vector_launch(name, executable_index=0, executable_parameter="path",
+                           argv_index=1, argv_parameter="argv", env_index=2,
+                           env_parameter="env")
+    for name in ("spawnv", "spawnvp"):
+        wrap_vector_launch(name, executable_index=1, executable_parameter="file",
+                           argv_index=2, argv_parameter="args")
+    for name in ("spawnve", "spawnvpe"):
+        wrap_vector_launch(name, executable_index=1, executable_parameter="file",
+                           argv_index=2, argv_parameter="args", env_index=3,
+                           env_parameter="env")
+
+    def wrap_spawnl(name: str, *, has_env: bool) -> None:
+        original = getattr(os, name, None)
+        if original is None:
+            return
+        signature = inspect.signature(original)
+
+        @functools.wraps(original)
+        def guarded(*call_args, **call_kwargs):
+            bound = signature.bind(*call_args, **call_kwargs)
+            executable = bound.arguments["file"]
+            arguments = bound.arguments["args"]
+            env = arguments[-1] if has_env else None
+            argv = arguments[:-1] if has_env else arguments
+            armed_env = _prepare_launch(executable, argv, env, guard)
+            if has_env:
+                bound.arguments["args"] = (*argv, armed_env)
+            return original(*bound.args, **bound.kwargs)
+
+        setattr(os, name, guarded)
+
+    for name in ("spawnl", "spawnlp"):
+        wrap_spawnl(name, has_env=False)
+    for name in ("spawnle", "spawnlpe"):
+        wrap_spawnl(name, has_env=True)
+
+    original_system = os.system
+
+    @functools.wraps(original_system)
+    def guarded_system(command):
+        shell = os.environ.get("COMSPEC") or "/bin/sh"
+        _prepare_launch(shell, [shell, "-c", command], None, guard)
+        return original_system(command)
+
+    os.system = guarded_system
+
+
 def install(expect_root: str, allow=()) -> GuardedPathFinder:
-    """Wrap the path-based finder and arm inheriting Python child processes."""
+    """Wrap import resolution and every owned process-launch boundary."""
     expect = str(pathlib.Path(expect_root).resolve())
     allow_roots = tuple(str(pathlib.Path(path).resolve()) for path in allow)
     allowed = frozenset({expect, *allow_roots})
@@ -391,6 +903,7 @@ def install(expect_root: str, allow=()) -> GuardedPathFinder:
             guard = GuardedPathFinder(finder, expect, allowed, propagated_from, depth)
             sys.meta_path[i] = guard
             _arm_child_environment(expect, allow_roots)
+            _install_launch_guards(guard)
             guard.propagation = "armed"
             return guard
     # No PathFinder is not a clean tree, it is an interpreter we do not understand.
@@ -578,12 +1091,14 @@ def _sha256_or_none(path: str) -> str | None:
         return None
 
 
-def _verdict(outcome, origins, violation) -> str:
+def _verdict(outcome, origins, violation, launch_refusal=None) -> str:
     """The one-line human summary. It must never contradict `outcome`.
 
     ORDER MATTERS AND IS THE WHOLE POINT: a refusal outranks emptiness, because a refused run is
     empty for a reason that has nothing to do with what the entrypoint imports.
     """
+    if launch_refusal is not None:
+        return VERDICT_REFUSED_LAUNCH
     if violation is not None:
         return VERDICT_REFUSED
     if str(outcome).startswith("refused"):
@@ -610,6 +1125,7 @@ def write_inventory(dest, guard, script, expect_root, allow, outcome, violation=
         return None
     origins = list(guard.repo_origins) if guard is not None else []
     outside = [o for o in origins if not o["under_expect_root"]]
+    launch_refusal = guard.launch_refusal if guard is not None else None
     record = {
         "schema": "mnv_guard_inventory/1",
         "written_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -629,8 +1145,11 @@ def write_inventory(dest, guard, script, expect_root, allow, outcome, violation=
         "checked_provenance": (CHECKED_MEASURED if guard is not None else CHECKED_NOT_MEASURED),
         "guard_installed": guard is not None,
         "propagation": (guard.propagation if guard is not None else "not-armed"),
+        "launch_env": (guard.launch_env if guard is not None else "not-re-armed"),
         "propagated_from": (guard.propagated_from if guard is not None else None),
         "depth": (guard.depth if guard is not None else 0),
+        "shim_sha256": (guard.shim_sha256 if guard is not None
+                         else _sha256_or_none(str(SHIM_DIR / "sitecustomize.py"))),
         "chained_sitecustomize": (guard.chained_sitecustomize if guard is not None else {
             "found": False, "executed": False, "origin": None,
         }),
@@ -646,7 +1165,9 @@ def write_inventory(dest, guard, script, expect_root, allow, outcome, violation=
         "repo_origins_outside_expect_root": len(outside),
         "repo_origins": origins,
         "outcome": outcome,
-        "verdict": _verdict(outcome, origins, violation),
+        "verdict": _verdict(outcome, origins, violation, launch_refusal),
+        "offending_argv": (None if launch_refusal is None else launch_refusal["argv"]),
+        "launch_refusal": launch_refusal,
         "violation": (None if violation is None else {
             "module": violation.module, "origin": violation.origin,
             "found_root": violation.found_root, "expect_root": violation.expect_root}),
@@ -814,7 +1335,10 @@ def main(argv=None) -> int:
         # The child's own status is preserved (see EXIT CODES above), so this is NOT an error path --
         # but the record must be written for it, or every entrypoint that ends in `sys.exit()` would
         # emit no inventory at all and F-4 would count them as missing.
-        outcome = f"child-systemexit:{exc.code!r}"
+        if guard.launch_refusal is not None:
+            outcome, site = "refused:launch-python-startup-flags", SITE_LAUNCH
+        else:
+            outcome = f"child-systemexit:{exc.code!r}"
         raise
     except BaseException as exc:                      # noqa: BLE001 - re-raised immediately
         outcome = f"child-exception:{type(exc).__name__}"

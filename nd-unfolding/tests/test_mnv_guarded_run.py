@@ -15,6 +15,8 @@ import hashlib
 import json
 import os
 import pathlib
+import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -278,6 +280,13 @@ class TheSubprocessBoundaryIsCovered(unittest.TestCase):
         write(self.good / "nd-unfolding" / "victim.py", "MARK = 'RIGHT TREE'\n")
         write(self.bad / "nd-unfolding" / "victim.py", "MARK = 'WRONG TREE'\n")
         self.inventory = tmp / "inventory" / "guard.jsonl"
+        self.deployed_guard = self.good / "nd-unfolding" / "mnv_guarded_run.py"
+        self.deployed_shim = (
+            self.good / "nd-unfolding" / "mnv_guard_shim" / "sitecustomize.py"
+        )
+        self.deployed_guard.write_bytes(GUARD.read_bytes())
+        self.deployed_shim.parent.mkdir()
+        self.deployed_shim.write_bytes(SHIM.read_bytes())
         self.bad_child = write(
             self.good / "nd-unfolding" / "child_bad.py",
             "import sys\n"
@@ -311,7 +320,8 @@ class TheSubprocessBoundaryIsCovered(unittest.TestCase):
 
     def guarded(self, parent=None):
         target = self.parent_sub if parent is None else parent
-        return run(GUARD, "--expect-root", self.good, "--inventory", self.inventory,
+        return run(self.deployed_guard, "--expect-root", self.good,
+                   "--inventory", self.inventory,
                    "--", target)
 
     def records(self):
@@ -319,7 +329,7 @@ class TheSubprocessBoundaryIsCovered(unittest.TestCase):
                 if line.strip()]
 
     def test_IN_PROCESS_the_guard_fires_which_proves_the_fixture_hijacks(self):
-        p = run(GUARD, "--expect-root", self.good, "--", self.parent_in)
+        p = run(self.deployed_guard, "--expect-root", self.good, "--", self.parent_in)
         self.assertEqual(p.returncode, mgr.VIOLATION_EXIT,
                          f"stdout:\n{p.stdout}\nstderr:\n{p.stderr}")
         self.assertIn("IMPORT TREE VIOLATION", p.stderr)
@@ -407,7 +417,7 @@ class TheSubprocessBoundaryIsCovered(unittest.TestCase):
         self.assertEqual(set(observed), keys)
 
     def test_an_explicit_allow_is_propagated_to_the_child(self):
-        p = run(GUARD, "--expect-root", self.good, "--allow", self.bad,
+        p = run(self.deployed_guard, "--expect-root", self.good, "--allow", self.bad,
                 "--inventory", self.inventory, "--", self.parent_sub)
         self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
         self.assertIn("CHILD-LOADED WRONG TREE", p.stdout)
@@ -417,26 +427,42 @@ class TheSubprocessBoundaryIsCovered(unittest.TestCase):
                       if origin["fullname"] == "victim")
         self.assertTrue(victim["allowed"])
 
-    def test_dash_S_dash_I_and_dash_E_are_measured_as_not_covered(self):
+    def test_dash_S_dash_I_and_dash_E_standalone_and_combined_are_refused(self):
+        sentinel = pathlib.Path(self._tmp.name) / "flag-child-ran"
+        child = write(
+            self.good / "nd-unfolding" / "child_flagged.py",
+            "import pathlib, sys\n"
+            f"pathlib.Path({str(sentinel)!r}).write_text('ran')\n"
+            f"sys.path.insert(0, {str(self.bad / 'nd-unfolding')!r})\n"
+            "import victim\n",
+        )
         parent = write(
             self.good / "nd-unfolding" / "parent_flag.py",
             "import os, subprocess, sys\n"
             "_HERE = os.path.dirname(os.path.abspath(__file__))\n"
             "raise SystemExit(subprocess.run(\n"
-            "    [sys.executable, sys.argv[1], "
-            "os.path.join(_HERE, 'child_bad.py')]).returncode)\n",
+            f"    [sys.executable, sys.argv[1], {str(child)!r}]).returncode)\n",
         )
-        for flag in ("-S", "-I", "-E"):
+        for flag in ("-S", "-I", "-E", "-IS", "-Es", "-OI"):
             with self.subTest(flag=flag):
                 self.inventory.unlink(missing_ok=True)
-                p = run(GUARD, "--expect-root", self.good, "--inventory", self.inventory,
-                        "--", parent, flag)
-                self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
-                self.assertIn("CHILD-LOADED WRONG TREE", p.stdout)
-                self.assertNotIn("[oi136 child] IMPORT TREE VIOLATION", p.stderr)
-                self.assertEqual([record["depth"] for record in self.records()], [0])
+                sentinel.unlink(missing_ok=True)
+                p = run(self.deployed_guard, "--expect-root", self.good,
+                        "--inventory", self.inventory, "--", parent, flag)
+                self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+                self.assertIn("[oi136 launch]", p.stderr)
+                self.assertFalse(sentinel.exists(), "the refused child was launched")
+                records = self.records()
+                self.assertEqual([record["depth"] for record in records], [0])
+                self.assertEqual(records[0]["verdict"], "REFUSED launch")
+                self.assertEqual(
+                    records[0]["outcome"],
+                    "refused:launch-python-startup-flags",
+                )
+                self.assertIn(flag, records[0]["offending_argv"])
+                self.assertEqual(records[0]["refusal_site"], mgr.SITE_LAUNCH)
 
-    def test_a_child_with_a_cleared_environment_is_measured_as_not_covered(self):
+    def test_a_child_with_a_cleared_environment_is_rearmed_and_refused(self):
         parent = write(
             self.good / "nd-unfolding" / "parent_empty_env.py",
             "import os, subprocess, sys\n"
@@ -446,23 +472,419 @@ class TheSubprocessBoundaryIsCovered(unittest.TestCase):
             "env={}).returncode)\n",
         )
         p = self.guarded(parent)
-        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
-        self.assertIn("CHILD-LOADED WRONG TREE", p.stdout)
-        self.assertEqual([record["depth"] for record in self.records()], [0])
+        self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+        self.assertIn("[oi136 child] IMPORT TREE VIOLATION", p.stderr)
+        records = {record["depth"]: record for record in self.records()}
+        self.assertEqual(set(records), {0, 1})
+        self.assertEqual(records[0]["launch_env"], "re-armed")
+        self.assertEqual(records[1]["violation"]["module"], "victim")
 
-    def test_a_non_python_child_is_measured_as_not_covered(self):
+    def test_a_child_with_pythonpath_lacking_the_shim_is_rearmed_and_refused(self):
+        unrelated = pathlib.Path(self._tmp.name).resolve() / "unrelated-pythonpath"
+        unrelated.mkdir()
+        parent = write(
+            self.good / "nd-unfolding" / "parent_bad_pythonpath.py",
+            "import os, subprocess, sys\n"
+            "_HERE = os.path.dirname(os.path.abspath(__file__))\n"
+            "env = os.environ.copy()\n"
+            f"env['PYTHONPATH'] = {str(unrelated)!r}\n"
+            "raise SystemExit(subprocess.run(\n"
+            "    [sys.executable, os.path.join(_HERE, 'child_bad.py')], "
+            "env=env).returncode)\n",
+        )
+        p = self.guarded(parent)
+        self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+        records = {record["depth"]: record for record in self.records()}
+        self.assertEqual(records[0]["launch_env"], "re-armed")
+        self.assertEqual(records[1]["violation"]["module"], "victim")
+
+    def test_a_bash_child_running_python_inherits_the_shim_and_is_refused(self):
+        child_code = (
+            "import sys; "
+            f"sys.path.insert(0, {str(self.bad / 'nd-unfolding')!r}); "
+            "import victim"
+        )
         shell_child = write(
             self.good / "nd-unfolding" / "child.sh",
-            "printf 'NON-PYTHON CHILD\\n'\n",
+            f"python3 -c {shlex.quote(child_code)}\n",
         )
         parent = write(
             self.good / "nd-unfolding" / "parent_shell.py",
             "import subprocess\n"
-            f"raise SystemExit(subprocess.run(['/bin/sh', {str(shell_child)!r}]).returncode)\n",
+            f"raise SystemExit(subprocess.run(['/bin/bash', {str(shell_child)!r}]).returncode)\n",
+        )
+        p = self.guarded(parent)
+        self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+        self.assertIn("[oi136 child] IMPORT TREE VIOLATION", p.stderr)
+        records = {record["depth"]: record for record in self.records()}
+        self.assertEqual(set(records), {0, 1})
+        self.assertEqual(records[1]["violation"]["module"], "victim")
+
+    def test_a_bash_child_running_python_dash_I_is_the_declared_gap(self):
+        sentinel = pathlib.Path(self._tmp.name) / "isolated-shell-child-ran"
+        isolated = write(
+            self.good / "nd-unfolding" / "child_isolated.py",
+            "import pathlib, sys\n"
+            f"pathlib.Path({str(sentinel)!r}).write_text('ran')\n"
+            f"sys.path.insert(0, {str(self.bad / 'nd-unfolding')!r})\n"
+            "import victim\n"
+            "print('ISOLATED-LOADED', victim.MARK)\n",
+        )
+        shell_child = write(
+            self.good / "nd-unfolding" / "child_isolated.sh",
+            f"python3 -I {shlex.quote(str(isolated))}\n",
+        )
+        parent = write(
+            self.good / "nd-unfolding" / "parent_isolated_shell.py",
+            "import subprocess\n"
+            f"raise SystemExit(subprocess.run(['/bin/bash', {str(shell_child)!r}]).returncode)\n",
         )
         p = self.guarded(parent)
         self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
-        self.assertIn("NON-PYTHON CHILD", p.stdout)
+        self.assertTrue(sentinel.is_file())
+        self.assertIn("ISOLATED-LOADED WRONG TREE", p.stdout)
+        self.assertNotIn("[oi136 child]", p.stderr)
+        self.assertEqual([record["depth"] for record in self.records()], [0])
+
+    def test_os_execv_into_python_dash_I_is_refused_before_replacement(self):
+        sentinel = pathlib.Path(self._tmp.name) / "execv-isolated-child-ran"
+        isolated = write(
+            self.good / "nd-unfolding" / "execv_isolated.py",
+            "import pathlib\n"
+            f"pathlib.Path({str(sentinel)!r}).write_text('ran')\n",
+        )
+        parent = write(
+            self.good / "nd-unfolding" / "parent_execv_isolated.py",
+            "import os, sys\n"
+            f"os.execv(sys.executable, [sys.executable, '-I', {str(isolated)!r}])\n",
+        )
+        p = self.guarded(parent)
+        self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+        self.assertIn("[oi136 launch]", p.stderr)
+        self.assertFalse(sentinel.exists())
+        record = self.records()[0]
+        self.assertEqual(record["verdict"], "REFUSED launch")
+        self.assertEqual(record["refusal_site"], mgr.SITE_LAUNCH)
+
+    def test_a_clean_child_runs_under_every_wrapped_launch_primitive(self):
+        command = f"{shlex.quote(sys.executable)} {shlex.quote(str(self.clean_child))}"
+        bodies = {
+            "Popen": (
+                "raise SystemExit(subprocess.Popen(\n"
+                f"    [sys.executable, {str(self.clean_child)!r}]).wait())\n"
+            ),
+            "Popen-shell": (
+                f"raise SystemExit(subprocess.Popen({command!r}, shell=True).wait())\n"
+            ),
+            "posix_spawn": (
+                f"pid = os.posix_spawn(sys.executable, [sys.executable, "
+                f"{str(self.clean_child)!r}], {{}})\n"
+                "_, status = os.waitpid(pid, 0)\n"
+                "raise SystemExit(os.waitstatus_to_exitcode(status))\n"
+            ),
+            "posix_spawnp": (
+                f"pid = os.posix_spawnp(sys.executable, [sys.executable, "
+                f"{str(self.clean_child)!r}], {{}})\n"
+                "_, status = os.waitpid(pid, 0)\n"
+                "raise SystemExit(os.waitstatus_to_exitcode(status))\n"
+            ),
+            "execv": f"os.execv(sys.executable, [sys.executable, {str(self.clean_child)!r}])\n",
+            "execve": (
+                f"os.execve(sys.executable, [sys.executable, {str(self.clean_child)!r}], {{}})\n"
+            ),
+            "execvp": (
+                f"os.execvp(sys.executable, [sys.executable, {str(self.clean_child)!r}])\n"
+            ),
+            "execvpe": (
+                f"os.execvpe(sys.executable, [sys.executable, {str(self.clean_child)!r}], {{}})\n"
+            ),
+            "execl": f"os.execl(sys.executable, sys.executable, {str(self.clean_child)!r})\n",
+            "execle": (
+                f"os.execle(sys.executable, sys.executable, {str(self.clean_child)!r}, {{}})\n"
+            ),
+            "execlp": (
+                f"os.execlp(sys.executable, sys.executable, {str(self.clean_child)!r})\n"
+            ),
+            "execlpe": (
+                f"os.execlpe(sys.executable, sys.executable, {str(self.clean_child)!r}, {{}})\n"
+            ),
+            "spawnv": (
+                f"raise SystemExit(os.spawnv(os.P_WAIT, sys.executable, "
+                f"[sys.executable, {str(self.clean_child)!r}]))\n"
+            ),
+            "spawnve": (
+                f"raise SystemExit(os.spawnve(os.P_WAIT, sys.executable, "
+                f"[sys.executable, {str(self.clean_child)!r}], {{}}))\n"
+            ),
+            "spawnvp": (
+                f"raise SystemExit(os.spawnvp(os.P_WAIT, sys.executable, "
+                f"[sys.executable, {str(self.clean_child)!r}]))\n"
+            ),
+            "spawnvpe": (
+                f"raise SystemExit(os.spawnvpe(os.P_WAIT, sys.executable, "
+                f"[sys.executable, {str(self.clean_child)!r}], {{}}))\n"
+            ),
+            "spawnl": (
+                f"raise SystemExit(os.spawnl(os.P_WAIT, sys.executable, "
+                f"sys.executable, {str(self.clean_child)!r}))\n"
+            ),
+            "spawnle": (
+                f"raise SystemExit(os.spawnle(os.P_WAIT, sys.executable, "
+                f"sys.executable, {str(self.clean_child)!r}, {{}}))\n"
+            ),
+            "spawnlp": (
+                f"raise SystemExit(os.spawnlp(os.P_WAIT, sys.executable, "
+                f"sys.executable, {str(self.clean_child)!r}))\n"
+            ),
+            "spawnlpe": (
+                f"raise SystemExit(os.spawnlpe(os.P_WAIT, sys.executable, "
+                f"sys.executable, {str(self.clean_child)!r}, {{}}))\n"
+            ),
+            "system": f"raise SystemExit(os.system({command!r}))\n",
+        }
+        for name, body in bodies.items():
+            with self.subTest(primitive=name):
+                self.inventory.unlink(missing_ok=True)
+                parent = write(
+                    self.good / "nd-unfolding" / f"parent_{name.replace('-', '_')}.py",
+                    "import os, subprocess, sys\n" + body,
+                )
+                result = self.guarded(parent)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertIn("CHILD-LOADED RIGHT TREE", result.stdout)
+                self.assertTrue(self.records(), f"no inventory for {name}")
+
+    def test_parent_and_child_records_carry_the_same_shim_digest(self):
+        parent = write(
+            self.good / "nd-unfolding" / "parent_digest.py",
+            "import subprocess, sys\n"
+            f"raise SystemExit(subprocess.run([sys.executable, "
+            f"{str(self.clean_child)!r}]).returncode)\n",
+        )
+        result = self.guarded(parent)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        records = {record["depth"]: record for record in self.records()}
+        expected = hashlib.sha256(self.deployed_shim.read_bytes()).hexdigest()
+        self.assertEqual(records[0]["shim_sha256"], expected)
+        self.assertEqual(records[1]["shim_sha256"], expected)
+
+    def test_the_recorded_digest_is_of_the_shim_THAT_RAN(self):
+        """The operand, not just the value: the deployed shim is made to DIFFER from this repo's.
+
+        With a byte-identical copy the test above cannot tell "the digest of the shim that
+        installed this guard" from "the digest of some other file with the same contents", so a
+        digest read off the wrong path would pass it. Here the two differ by one comment line and
+        only one of them can be the answer -- which is what makes a MUTATED shim visible in the
+        evidence rather than merely claimed to be.
+        """
+        self.deployed_shim.write_bytes(
+            self.deployed_shim.read_bytes() + b"\n# fixture mutation: behaviour-neutral\n")
+        deployed = hashlib.sha256(self.deployed_shim.read_bytes()).hexdigest()
+        repo_shim = hashlib.sha256(SHIM.read_bytes()).hexdigest()
+        self.assertNotEqual(deployed, repo_shim, "the mutation must actually change the digest")
+        parent = write(
+            self.good / "nd-unfolding" / "parent_digest_operand.py",
+            "import subprocess, sys\n"
+            f"raise SystemExit(subprocess.run([sys.executable, "
+            f"{str(self.clean_child)!r}]).returncode)\n",
+        )
+        result = self.guarded(parent)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        records = {record["depth"]: record for record in self.records()}
+        for depth in (0, 1):
+            self.assertEqual(records[depth]["shim_sha256"], deployed)
+            self.assertNotEqual(records[depth]["shim_sha256"], repo_shim)
+
+    def test_the_shim_refuses_a_guard_module_outside_expect_root(self):
+        env = dict(
+            os.environ,
+            PYTHONPATH=str(self.deployed_shim.parent),
+            MNV_GUARD_MODULE=str(GUARD),
+            MNV_GUARD_EXPECT_ROOT=str(self.good),
+            MNV_GUARD_ALLOW="",
+            MNV_GUARD_INVENTORY="",
+        )
+        result = subprocess.run(
+            [sys.executable, "-c", "print('must not run')"],
+            capture_output=True,
+            text=True,
+            env=env,
+        )
+        self.assertEqual(result.returncode, mgr.VIOLATION_EXIT, result.stdout + result.stderr)
+        self.assertIn("GUARD MODULE OUTSIDE EXPECTED ROOT", result.stderr)
+        self.assertNotIn("must not run", result.stdout)
+
+    def sentinel_child(self, name: str):
+        """A child that RECORDS HAVING RUN before committing the OI-136 defect.
+
+        The sentinel is what separates "refused" from "ran and was then refused": an exit 3 alone
+        cannot tell a launch that never happened from a child that loaded the wrong tree and was
+        caught afterwards, and only the first is a launch-site refusal.
+        """
+        sentinel = pathlib.Path(self._tmp.name) / f"{name}-ran"
+        child = write(
+            self.good / "nd-unfolding" / f"{name}.py",
+            "import pathlib, sys\n"
+            f"pathlib.Path({str(sentinel)!r}).write_text('ran')\n"
+            f"sys.path.insert(0, {str(self.bad / 'nd-unfolding')!r})\n"
+            "import victim\n"
+            "print('CHILD-LOADED', victim.MARK)\n",
+        )
+        return child, sentinel
+
+    def test_a_flag_after_an_option_VALUE_is_still_refused(self):
+        """`-W ignore -I`: the value sits in the NEXT token, which used to end the scan.
+
+        MEASURED FAIL-OPEN, not hypothetical: the first implementation stopped at the first token
+        that did not start with `-`, so `ignore` ended the walk and the `-I` behind it launched an
+        isolated, unguarded child. That is the reviewer's finding with a different spelling.
+        """
+        child, sentinel = self.sentinel_child("child_after_value")
+        for argv in (["-W", "ignore", "-I"], ["-X", "dev", "-S"],
+                     ["--check-hash-based-pycs", "always", "-E"]):
+            with self.subTest(argv=argv):
+                self.inventory.unlink(missing_ok=True)
+                sentinel.unlink(missing_ok=True)
+                parent = write(
+                    self.good / "nd-unfolding" / "parent_after_value.py",
+                    "import subprocess, sys\n"
+                    f"raise SystemExit(subprocess.run([sys.executable, *{argv!r}, "
+                    f"{str(child)!r}]).returncode)\n",
+                )
+                p = self.guarded(parent)
+                self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+                self.assertIn("[oi136 launch]", p.stderr)
+                self.assertFalse(sentinel.exists(), "the refused child was launched")
+                record = self.records()[0]
+                self.assertEqual(record["verdict"], "REFUSED launch")
+                self.assertEqual(record["launch_refusal"]["offending_flag"], argv[-1])
+                self.assertEqual(record["launch_refusal"]["reason"],
+                                 mgr.LAUNCH_REASON_FLAGS)
+
+    def test_an_option_VALUE_that_contains_S_I_or_E_is_not_a_forbidden_flag(self):
+        """The opposite direction, and it is the direction that gets a guard switched off.
+
+        `-Xpycache_prefix=/tmp/PYC-CACHE` contains an uppercase `E`, and the first implementation
+        refused it. A guard that refuses correct launches is one people route around.
+        """
+        cache = pathlib.Path(self._tmp.name).resolve() / "PYC-CACHE"
+        for option in (f"-Xpycache_prefix={cache}", "-WError::UserWarning"):
+            with self.subTest(option=option):
+                self.inventory.unlink(missing_ok=True)
+                parent = write(
+                    self.good / "nd-unfolding" / "parent_option_value.py",
+                    "import subprocess, sys\n"
+                    f"raise SystemExit(subprocess.run([sys.executable, {option!r}, "
+                    f"{str(self.clean_child)!r}]).returncode)\n",
+                )
+                p = self.guarded(parent)
+                self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+                self.assertIn("CHILD-LOADED RIGHT TREE", p.stdout)
+                self.assertNotIn("[oi136 launch]", p.stderr)
+                self.assertEqual({record["depth"] for record in self.records()}, {0, 1})
+
+    @unittest.skipUnless(shutil.which("env"), "no `env` on this platform")
+    def test_a_python_child_launched_THROUGH_env_is_scanned_and_re_armed(self):
+        """`env` is a launch-site alias, and `env -i` is the cleared environment in argv.
+
+        The `env=` keyword spelling is re-armed; this spelling cannot be, because the stripping
+        happens in the launched process. Refusing it is what keeps "a Python child of a guarded
+        interpreter either starts guarded or does not start" true, rather than true-except-for-env.
+        BOTH DIRECTIONS ARE HERE: an unrelated `-u` and an ordinary assignment must still run.
+        """
+        child, sentinel = self.sentinel_child("child_through_env")
+        env_bin = shutil.which("env")
+        cases = (
+            (["-I", str(child)], False, mgr.LAUNCH_REASON_FLAGS),
+            (["-i", sys.executable, str(child)], False, mgr.LAUNCH_REASON_ENV),
+            (["-u", "MNV_GUARD_MODULE", sys.executable, str(child)], False,
+             mgr.LAUNCH_REASON_ENV),
+            (["PYTHONPATH=/nowhere", sys.executable, str(child)], False, mgr.LAUNCH_REASON_ENV),
+            (["FOO=bar", sys.executable, str(self.clean_child)], True, None),
+            (["-u", "MNV_UNRELATED_VAR", sys.executable, str(self.clean_child)], True, None),
+        )
+        for arguments, should_run, reason in cases:
+            with self.subTest(arguments=arguments):
+                self.inventory.unlink(missing_ok=True)
+                sentinel.unlink(missing_ok=True)
+                argv = ([env_bin, sys.executable, *arguments] if arguments[0] == "-I"
+                        else [env_bin, *arguments])
+                parent = write(
+                    self.good / "nd-unfolding" / "parent_env_bin.py",
+                    "import subprocess\n"
+                    f"raise SystemExit(subprocess.run({argv!r}).returncode)\n",
+                )
+                p = self.guarded(parent)
+                if should_run:
+                    self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+                    self.assertIn("CHILD-LOADED RIGHT TREE", p.stdout)
+                    self.assertNotIn("[oi136 launch]", p.stderr)
+                    self.assertEqual({record["depth"] for record in self.records()}, {0, 1})
+                    continue
+                self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+                self.assertIn("[oi136 launch]", p.stderr)
+                self.assertFalse(sentinel.exists(), "the refused child was launched")
+                record = self.records()[0]
+                self.assertEqual(record["verdict"], "REFUSED launch")
+                self.assertEqual(record["refusal_site"], mgr.SITE_LAUNCH)
+                self.assertEqual(record["launch_refusal"]["reason"], reason)
+
+    def test_a_parent_that_DELETES_the_contract_cannot_launch_a_python_child(self):
+        """The last fail-open route at a launch site is this process's own `os.environ`.
+
+        `install()` exports the contract, so a launch inherits it -- unless the run deleted it.
+        There is then nothing to re-arm FROM, an inherited-environment launch has no `env=` to
+        repair, and the child would start unguarded and write no record. So it is refused.
+        """
+        child, sentinel = self.sentinel_child("child_disarmed")
+        for statement, offending in (
+                ("del os.environ['MNV_GUARD_MODULE']", "MNV_GUARD_MODULE"),
+                ("del os.environ['MNV_GUARD_EXPECT_ROOT']", "MNV_GUARD_EXPECT_ROOT"),
+                ("os.environ['PYTHONPATH'] = '/nowhere'", "PYTHONPATH")):
+            with self.subTest(statement=statement):
+                self.inventory.unlink(missing_ok=True)
+                sentinel.unlink(missing_ok=True)
+                parent = write(
+                    self.good / "nd-unfolding" / "parent_disarmed.py",
+                    "import os, subprocess, sys\n"
+                    f"{statement}\n"
+                    f"raise SystemExit(subprocess.run([sys.executable, "
+                    f"{str(child)!r}]).returncode)\n",
+                )
+                p = self.guarded(parent)
+                self.assertEqual(p.returncode, mgr.VIOLATION_EXIT, p.stdout + p.stderr)
+                self.assertIn("[oi136 launch]", p.stderr)
+                self.assertFalse(sentinel.exists(), "the refused child was launched")
+                record = self.records()[0]
+                self.assertEqual(record["verdict"], "REFUSED launch")
+                self.assertEqual(record["launch_refusal"]["offending_flag"], offending)
+                self.assertEqual(record["launch_refusal"]["reason"], mgr.LAUNCH_REASON_ENV)
+
+    @unittest.skipUnless(shutil.which("env"), "no `env` on this platform")
+    def test_a_bash_child_that_clears_the_environment_is_THE_SAME_declared_gap(self):
+        """The declared gap generalized, and measured in its second spelling.
+
+        `python -I` is not the only way the second launch site can defeat the contract; clearing
+        the environment does it too. Both have the SAME single cause -- the launching process is
+        one this interpreter does not guard -- which is why the header declares one gap and not
+        two, and why that sentence has to be measured rather than asserted.
+        """
+        child, sentinel = self.sentinel_child("child_cleared_by_shell")
+        shell_child = write(
+            self.good / "nd-unfolding" / "child_cleared.sh",
+            f"{shlex.quote(shutil.which('env'))} -i "
+            f"{shlex.quote(sys.executable)} {shlex.quote(str(child))}\n",
+        )
+        parent = write(
+            self.good / "nd-unfolding" / "parent_cleared_shell.py",
+            "import subprocess\n"
+            f"raise SystemExit(subprocess.run(['/bin/bash', {str(shell_child)!r}]).returncode)\n",
+        )
+        p = self.guarded(parent)
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        self.assertTrue(sentinel.is_file())
+        self.assertIn("CHILD-LOADED WRONG TREE", p.stdout)
+        self.assertNotIn("[oi136 child]", p.stderr)
         self.assertEqual([record["depth"] for record in self.records()], [0])
 
     def test_an_existing_sitecustomize_still_executes_and_is_recorded(self):
@@ -496,9 +918,84 @@ class TheSubprocessBoundaryIsCovered(unittest.TestCase):
         self.assertIn(str(custom_dir), child["sys_path_final"])
 
     def test_the_docstring_says_so_where_a_caller_will_read_it(self):
-        self.assertIn("IT CROSSES PYTHON SUBPROCESS BOUNDARIES", mgr.__doc__)
-        for limit in ("`-S`, `-I` or `-E`", "`env={}`", "non-Python child"):
-            self.assertIn(limit, mgr.__doc__)
+        self.assertIn("IT CROSSES PROCESS BOUNDARIES", mgr.__doc__)
+        self.assertIn("Direct Python launches using `-S`, `-I` or `-E`", mgr.__doc__)
+        self.assertIn("including `env={}`", mgr.__doc__)
+        self.assertIn("THE ONE DECLARED PROCESS-BOUNDARY GAP", mgr.__doc__)
+        self.assertIn("non-Python child that itself launches\n`python -I`", mgr.__doc__)
+        # The three claims the tests above measure. A claim in the header that no control pins is
+        # the shape this whole file exists to prevent, so each of them is named here.
+        self.assertIn("The scan follows CPython's OWN option grammar", mgr.__doc__)
+        self.assertIn("either starts guarded or does not start", mgr.__doc__)
+        self.assertIn("The same one gap covers", mgr.__doc__)
+
+
+class TheStartupFlagScanFollowsCPythonsOptionGrammar(unittest.TestCase):
+    """A TABLE OVER THE SCANNER ITSELF, called directly, and it is deliberately in-process.
+
+    Every behavioural test in this file runs a real subprocess because the thing under test is an
+    exit code. This one is not behavioural: `_forbidden_python_flag` is a pure function of an argv,
+    and the interesting inputs are the ones CPython's option grammar makes ambiguous. Enumerating
+    them end-to-end would be ~30 subprocess launches to re-measure one function; the two end-to-end
+    ANCHORS -- one per direction -- are
+    `TheSubprocessBoundaryIsCovered.test_a_flag_after_an_option_VALUE_is_still_refused` and
+    `...test_an_option_VALUE_that_contains_S_I_or_E_is_not_a_forbidden_flag`, so the function's
+    verdict is tied to a real refusal at both ends.
+
+    BOTH DIRECTIONS ARE REQUIRED. A scan that only fires on bad input passes while waving through
+    every spelling it does not model, and a scan that only stays silent on good input is satisfied
+    by refusing nothing.
+    """
+
+    REFUSED = (
+        (["python3", "-S", "x.py"], "-S"),
+        (["python3", "-I", "x.py"], "-I"),
+        (["python3", "-E", "x.py"], "-E"),
+        (["python3", "-IS", "x.py"], "-IS"),
+        (["python3", "-Es", "x.py"], "-Es"),
+        (["python3", "-OI", "x.py"], "-OI"),
+        (["python3", "-SW", "ignore", "x.py"], "-SW"),
+        # The value in the NEXT token: the flag behind it must still be seen.
+        (["python3", "-W", "ignore", "-I", "x.py"], "-I"),
+        (["python3", "-X", "dev", "-S", "x.py"], "-S"),
+        (["python3", "--check-hash-based-pycs", "always", "-I", "x.py"], "-I"),
+        # The value ATTACHED to the same token: the flag after it must still be seen.
+        (["python3", "-Wignore", "-I", "x.py"], "-I"),
+        # Not CPython spellings; refused anyway, since CPython would reject them too.
+        (["python3", "--isolated", "x.py"], "--isolated"),
+        (["python3", "--no-site", "x.py"], "--no-site"),
+    )
+
+    ALLOWED = (
+        ["python3", "x.py"],
+        ["python3", "-u", "x.py"],
+        ["python3", "-B", "-O", "x.py"],
+        # An option's VALUE is not a flag, in either spelling.
+        ["python3", "-WError::UserWarning", "x.py"],
+        ["python3", "-W", "error::DeprecationWarning", "x.py"],
+        ["python3", "-Xpycache_prefix=/tmp/PYC-CACHE", "x.py"],
+        ["python3", "-X", "importtime", "x.py"],
+        ["python3", "--check-hash-based-pycs", "always", "x.py"],
+        # After -c and -m every later token is the CHILD PROGRAM's argv, never a startup flag.
+        ["python3", "-c", "print('-I')"],
+        ["python3", "-m", "mod", "-I"],
+        ["python3", "x.py", "-I"],
+        ["python3", "-"],
+    )
+
+    def test_every_isolating_spelling_is_refused_and_named(self):
+        for argv, offending in self.REFUSED:
+            with self.subTest(argv=argv):
+                self.assertEqual(mgr._forbidden_python_flag(argv), offending)
+
+    def test_no_correct_launch_is_refused(self):
+        for argv in self.ALLOWED:
+            with self.subTest(argv=argv):
+                self.assertIsNone(mgr._forbidden_python_flag(argv))
+
+    def test_the_scan_reads_argv_and_never_this_interpreters_own_flags(self):
+        """argv[0] is the executable, so a `-S` there is a path fragment and not a flag."""
+        self.assertIsNone(mgr._forbidden_python_flag(["/opt/python-SIE/bin/python3", "x.py"]))
 
 
 class ScriptContainment(unittest.TestCase):
@@ -849,13 +1346,17 @@ class EveryRefusalSiteHasAControlThatNamesItsOutcome(unittest.TestCase):
 
     def test_every_refusal_SITE_constant_is_named_by_some_control(self):
         corpus = self._corpus()
-        for name in ("SITE_SCRIPT_CONTAINMENT", "SITE_IMPORT_RESOLUTION"):
+        for name in ("SITE_SCRIPT_CONTAINMENT", "SITE_IMPORT_RESOLUTION", "SITE_LAUNCH"):
             self.assertIn(name, corpus, f"{name} has no control")
 
-    def test_the_two_site_constants_are_distinct_and_neither_is_None(self):
-        self.assertNotEqual(mgr.SITE_SCRIPT_CONTAINMENT, mgr.SITE_IMPORT_RESOLUTION)
-        self.assertIsNotNone(mgr.SITE_SCRIPT_CONTAINMENT)
-        self.assertIsNotNone(mgr.SITE_IMPORT_RESOLUTION)
+    def test_the_refusal_site_constants_are_distinct_and_none_is_reserved(self):
+        sites = {
+            mgr.SITE_SCRIPT_CONTAINMENT,
+            mgr.SITE_IMPORT_RESOLUTION,
+            mgr.SITE_LAUNCH,
+        }
+        self.assertEqual(len(sites), 3)
+        self.assertNotIn(None, sites)
         self.assertIsNone(mgr.SITE_NONE)
 
 
@@ -1409,6 +1910,11 @@ class EachInventoryReportsOneInterpreterAndSaysSo(unittest.TestCase):
         self.addCleanup(self._tmp.cleanup)
         tmp = pathlib.Path(self._tmp.name).resolve()
         self.good = make_checkout(tmp, "parent-tree")
+        self.deployed_guard = self.good / "nd-unfolding" / "mnv_guarded_run.py"
+        deployed_shim = self.good / "nd-unfolding" / "mnv_guard_shim" / "sitecustomize.py"
+        self.deployed_guard.write_bytes(GUARD.read_bytes())
+        deployed_shim.parent.mkdir()
+        deployed_shim.write_bytes(SHIM.read_bytes())
         self.inventory_path = tmp / "inventory" / "separate.jsonl"
         write(self.good / "nd-unfolding" / "hidden.py", "NAME = 'hidden'\n")
         self.child = write(self.good / "nd-unfolding" / "child.py",
@@ -1419,7 +1925,8 @@ class EachInventoryReportsOneInterpreterAndSaysSo(unittest.TestCase):
                             f"subprocess.run([sys.executable, {str(self.child)!r}], check=True)\n")
 
     def go(self):
-        return run(GUARD, "--expect-root", self.good, "--inventory", self.inventory_path,
+        return run(self.deployed_guard, "--expect-root", self.good,
+                   "--inventory", self.inventory_path,
                    "--", self.parent)
 
     def records(self):

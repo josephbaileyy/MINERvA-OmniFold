@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import atexit
+import hashlib
 import importlib.util
 import os
 import pathlib
@@ -17,6 +18,35 @@ def _load_guard(module_path: str):
     module = importlib.util.module_from_spec(spec)
     sys.modules[module_name] = module
     spec.loader.exec_module(module)
+    return module
+
+
+def _sha256(path: pathlib.Path) -> str:
+    """Return the digest of the shim bytes that installed this child guard."""
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _verify_guard_location(module_path: str, expect_root: str) -> pathlib.Path:
+    """Refuse a propagated guard module outside the expected checkout."""
+    module = pathlib.Path(module_path).resolve()
+    root = pathlib.Path(expect_root).resolve()
+    try:
+        module.relative_to(root)
+    except ValueError:
+        print(
+            "[oi136 child] GUARD MODULE OUTSIDE EXPECTED ROOT -- REFUSING STARTUP.\n"
+            f"[oi136 child]   module        {module}\n"
+            f"[oi136 child]   expected      {root}",
+            file=sys.stderr,
+            flush=True,
+        )
+        os._exit(3)
+    if not module.is_file():
+        raise RuntimeError(f"cannot read OI-136 guard module at {module}")
     return module
 
 
@@ -69,12 +99,14 @@ def _install() -> None:
     if not module_path or not expect_root:
         return
 
-    guard_module = _load_guard(module_path)
+    verified_module = _verify_guard_location(module_path, expect_root)
+    guard_module = _load_guard(str(verified_module))
     allow_text = os.environ.get("MNV_GUARD_ALLOW", "")
     allow = [path for path in allow_text.split(os.pathsep) if path]
     inventory = os.environ.get("MNV_GUARD_INVENTORY") or None
     script = _script_path()
     guard = guard_module.install(expect_root, allow)
+    guard.shim_sha256 = _sha256(pathlib.Path(__file__).resolve())
     emitted = False
 
     def emit_child_inventory() -> None:
@@ -83,10 +115,15 @@ def _install() -> None:
             return
         emitted = True
         violation = guard.violation
-        outcome = ("refused:import-tree-violation" if violation is not None
-                   else "propagated-child-exit-unobserved")
-        site = (guard_module.SITE_IMPORT_RESOLUTION if violation is not None
-                else guard_module.SITE_NONE)
+        if guard.launch_refusal is not None:
+            outcome = "refused:launch-python-startup-flags"
+            site = guard_module.SITE_LAUNCH
+        elif violation is not None:
+            outcome = "refused:import-tree-violation"
+            site = guard_module.SITE_IMPORT_RESOLUTION
+        else:
+            outcome = "propagated-child-exit-unobserved"
+            site = guard_module.SITE_NONE
         guard_module._safe_inventory(
             inventory,
             guard,

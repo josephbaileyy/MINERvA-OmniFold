@@ -110,7 +110,11 @@ class N2ChildBoundary(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self._tmp.cleanup)
-        tmp = pathlib.Path(self._tmp.name)
+        # RESOLVED, as `test_mnv_guarded_run.py` resolves its own fixture root. On macOS
+        # `tempfile` hands back `/var/...` while the guard records `checkout_root_of` of a RESOLVED
+        # origin under `/private/var/...`, so an unresolved root makes arm G compare two spellings
+        # of one directory and fail for a reason that has nothing to do with the boundary.
+        tmp = pathlib.Path(self._tmp.name).resolve()
 
         # The DISPOSABLE EXPECTED CHECKOUT. The fixture writer lives INSIDE it, which is the whole
         # point of ruling 19: B-4 passes, so a refusal can only have come from the import.
@@ -134,6 +138,13 @@ class N2ChildBoundary(unittest.TestCase):
         # longer be attributable to the writer's own insert.
         self.guard = self.expected / "nd-unfolding" / "mnv_guarded_run.py"
         shutil.copy2(GUARD, self.guard)
+        # The guard refuses to run (COULD NOT LOOK, exit 2) unless its tracked subprocess shim sits
+        # beside it, so this checkout must carry the shim as a real one does. Without it arms B, C
+        # and G measured exit 2 -- "we could not check" read as the refusal they exist to pin, which
+        # is the one substitution the guard's own exit codes are designed to prevent.
+        (self.expected / "nd-unfolding" / "mnv_guard_shim").mkdir()
+        shutil.copy2(GUARD.parent / "mnv_guard_shim" / "sitecustomize.py",
+                     self.expected / "nd-unfolding" / "mnv_guard_shim" / "sitecustomize.py")
 
         self.uthrow = tmp / "scratch" / "throwaway_uthrow.root"
         self.combined = tmp / "scratch" / "throwaway_combined.root"
