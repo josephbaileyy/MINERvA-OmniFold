@@ -220,25 +220,34 @@ distinct after case folding. Exactly one `otherwise` branch covers every
 unclassified terminal result, and every branch must name a decision
 consequence.
 
-Schema version 1 also requires an **accounting declaration**, which is what makes
-the arm's spend identifiable:
+Schema version 2 requires an **accounting declaration**, which states whether
+the arm is expected to create identifiable scheduler spend:
 
 ```json
 "accounting": {
-  "task_ids_file": "outputs/<namespace>/scheduler-task-ids.json",
   "expects_scheduler_tasks": true
 }
 ```
 
-`task_ids_file` is repository-relative, and **the producer MUST write it from its
-own `sbatch` output**: a JSON array of the scheduler task identities it submitted,
-in exactly the form `r5_meter.py` publishes in `spend.metered_task_ids` — a job id
-with an optional array-task suffix, `^[0-9]+(?:_[0-9]+)?$`, e.g.
+The task-ids path is queue-owned since schema v2. A contract containing
+`accounting.task_ids_file`, including a schema-v1 contract, is refused. At claim
+time the queue exclusively creates `<state>/runs/<item-id>/`, records it in the
+claim, and passes the absolute
+`<state>/runs/<item-id>/scheduler-task-ids.json` path to both producer and
+validator as `MNV_CAMPAIGN_TASK_IDS_FILE`. An existing run directory refuses the
+claim because the path would not be exclusive to this execution.
+
+**The producer MUST write `MNV_CAMPAIGN_TASK_IDS_FILE` from its own `sbatch`
+output**: a JSON array of the scheduler task identities it submitted, in exactly
+the form `r5_meter.py` publishes in `spend.metered_task_ids`, a job id with an
+optional array-task suffix, `^[0-9]+(?:_[0-9]+)?$`, for example
 `["5775320_0", "5775320_1"]`. Write it as soon as the ids exist, not when the
 tasks finish: `sbatch` returns them immediately, and a producer killed by the wall
 deadline before writing them leaves an item nothing can account for.
 `expects_scheduler_tasks` is `false` only for a compute arm that submits nothing;
-that arm must still write the file, holding `[]`.
+that arm must still write the queue-owned file, holding `[]`. The outcome records
+the run directory, task-ids path, parsed identities, and SHA-256 of the exact
+bytes.
 
 Between the producer and the validator the queue reads that file, records the ids
 in the outcome as `scheduler_task_ids` together with the SHA-256 of the file's

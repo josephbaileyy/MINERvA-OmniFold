@@ -1,7 +1,6 @@
 {
   "accounting": {
-    "expects_scheduler_tasks": true,
-    "task_ids_file": "outputs/validator-failure-fixture/scheduler-task-ids.json"
+    "expects_scheduler_tasks": true
   },
   "campaign_id": "validator-failure-fixture",
   "candidate": {
@@ -37,7 +36,7 @@
     "automatic_retraining": false,
     "requires_new_authorization": true
   },
-  "schema_version": 1,
+  "schema_version": 2,
   "scientific_question": "Does the candidate satisfy the terminal validation criterion?",
   "terminal_branches": [
     {

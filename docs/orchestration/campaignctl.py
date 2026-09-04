@@ -23,10 +23,11 @@ and not by a receipt that merely carries a later timestamp.  An item that RAN
 keeps reserving its full declared maximum until a committed receipt is measured
 after its outcome AND lists every scheduler task identity that item recorded in
 ``spend.metered_task_ids``: a fresh receipt still reporting the same spend proves
-only that the meter ran, never that it saw these tasks.  So a contract declares
-an ``accounting.task_ids_file``, the producer writes its scheduler task
-identities there, campaignctl reads that file before the validator and records
-the ids in the outcome.  An item that never ran releases at once; an item that
+only that the meter ran, never that it saw these tasks.  The queue gives each
+claim an exclusive run directory and passes its task-ids file to the producer
+and validator in ``MNV_CAMPAIGN_TASK_IDS_FILE``.  campaignctl reads that file
+before the validator and records the ids in the outcome.  An item that never ran
+releases at once; an item that
 ran and recorded NO ids -- missing or malformed file, crash, launcher error,
 timeout -- never releases automatically and is cleared only by an operator
 ``revoke`` or ``release --reason``.  Re-metering after every compute item, with
@@ -178,7 +179,7 @@ CONTRACT_KEYS = frozenset(
     }
 )
 TERMINAL_VALIDATOR_KEYS = frozenset({"argv", "cwd"})
-ACCOUNTING_KEYS = frozenset({"task_ids_file", "expects_scheduler_tasks"})
+ACCOUNTING_KEYS = frozenset({"expects_scheduler_tasks"})
 ARTIFACT_IDENTITY_KEYS = frozenset({"id", "uri", "sha256"})
 TERMINAL_BRANCH_KEYS = frozenset(
     {"id", "return_codes", "condition", "decision", "unlocks", "forbids"}
@@ -229,10 +230,21 @@ RESERVING_STATES = frozenset({"staged", "approved", "outcome-unknown"})
 #: it before that item's reservation is released.
 OUTCOME_INSTANT_FIELD = "completed_at_utc"
 #: Field :func:`run_compute_item` stamps with the scheduler task identities the
-#: producer declared, read from the contract's ``accounting.task_ids_file``.  Its
+#: producer wrote to the queue-owned file for this claim.  Its
 #: PRESENCE distinguishes "this item's spend is identifiable" from "this item ran and
 #: nothing can say which tasks were its", which are released by different acts.
 OUTCOME_TASK_IDS_FIELD = "scheduler_task_ids"
+#: Environment variable through which the queue gives the producer and validator
+#: this claim's exclusive task-ids file.  It is an output capability, not a
+#: configurable queue root or a contract field.
+CAMPAIGN_TASK_IDS_FILE_ENV = "MNV_CAMPAIGN_TASK_IDS_FILE"
+#: Fixed leaf below an exclusive claim directory.  Contracts cannot name this path,
+#: because two contracts naming one file can overwrite each other's attribution.
+TASK_IDS_FILE_NAME = "scheduler-task-ids.json"
+#: Claim and outcome field naming the queue-owned directory for this run.
+RUN_DIRECTORY_FIELD = "run_dir"
+#: Outcome field naming the exact queue-owned file whose bytes were read.
+OUTCOME_TASK_IDS_PATH_FIELD = "scheduler_task_ids_path"
 #: Field carrying the sha256 of the task-ids file exactly as read, so the ids in an
 #: outcome can be traced back to bytes rather than to this program's parse of them.
 OUTCOME_TASK_IDS_SHA256_FIELD = "scheduler_task_ids_sha256"
@@ -508,8 +520,13 @@ def validate_campaign_contract(
         If a required field or cross-field safety rule is not satisfied.
     """
     contract = require_object(value, field="campaign contract", keys=CONTRACT_KEYS)
-    if contract["schema_version"] != 1:
-        raise QueueError("campaign contract schema_version must be 1")
+    if contract["schema_version"] != 2:
+        if contract["schema_version"] == 1:
+            raise QueueError(
+                "campaign contract schema_version 1 is refused: "
+                "accounting.task_ids_file is queue-owned since schema v2"
+            )
+        raise QueueError("campaign contract schema_version must be 2")
 
     campaign_id = require_text(contract["campaign_id"], field="campaign_id")
     validate_id(campaign_id)
@@ -645,19 +662,18 @@ def validate_campaign_contract(
     if retry_policy["requires_new_authorization"] is not True:
         raise QueueError("retry_policy.requires_new_authorization must be true")
 
-    # The accounting block is what makes this item's spend IDENTIFIABLE.  Without it
-    # a reservation can only be released by a timestamp, and a receipt whose
-    # measured_at is later than an outcome may still have metered an interval or a
-    # set of rows this item's tasks are not in -- the reviewer's mutation, where a
-    # fresh receipt still reporting 490 hours admitted a second six-hour item.
+    # The accounting block says whether a task identity is expected, but it cannot
+    # name the file. Two concurrent contracts sharing one path can overwrite each
+    # other's attribution, so schema v2 makes that path a queue-owned claim detail.
+    raw_accounting = contract["accounting"]
+    if isinstance(raw_accounting, dict) and "task_ids_file" in raw_accounting:
+        raise QueueError(
+            "accounting.task_ids_file is queue-owned since schema v2 and must "
+            "not appear in a contract"
+        )
     accounting = require_object(
-        contract["accounting"], field="accounting", keys=ACCOUNTING_KEYS
+        raw_accounting, field="accounting", keys=ACCOUNTING_KEYS
     )
-    task_ids_file = require_text(
-        accounting["task_ids_file"], field="accounting.task_ids_file"
-    )
-    if Path(task_ids_file).is_absolute():
-        raise QueueError("accounting.task_ids_file must be repository-relative")
     if not isinstance(accounting["expects_scheduler_tasks"], bool):
         raise QueueError("accounting.expects_scheduler_tasks must be a boolean")
     return contract
@@ -1804,6 +1820,47 @@ def queue_record_identity(queue: Queue) -> dict[str, object]:
     }
 
 
+def queue_run_directory(queue: Queue, item_id: str) -> Path:
+    """Return the only run directory the queue may assign to an item."""
+    validate_id(item_id)
+    return queue.state / "runs" / item_id
+
+
+def create_claim_run_directory(queue: Queue, item_id: str) -> Path:
+    """Create the exclusive run directory that makes task attribution private."""
+    queue.require_fixed_state_root()
+    run_directory = queue_run_directory(queue, item_id)
+    run_directory.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        os.mkdir(run_directory)
+    except FileExistsError as exc:
+        raise QueueError(
+            f"claim run directory already exists, so the claim is not exclusive: "
+            f"{run_directory}"
+        ) from exc
+    except OSError as exc:
+        raise QueueError(
+            f"cannot create claim run directory: {run_directory}: {exc}"
+        ) from exc
+    return run_directory
+
+
+def claimed_run_directory(queue: Queue, item_id: str) -> Path:
+    """Return the claim's run directory after verifying queue ownership."""
+    claim = read_object(queue.path("claims", item_id))
+    recorded = require_text(
+        claim.get(RUN_DIRECTORY_FIELD), field=f"claim {item_id} run_dir"
+    )
+    expected = queue_run_directory(queue, item_id)
+    if Path(recorded) != expected:
+        raise QueueError(
+            f"claim {item_id} run_dir is not the queue-owned path: {recorded}"
+        )
+    if not expected.is_dir():
+        raise QueueError(f"claim {item_id} run_dir is missing: {expected}")
+    return expected
+
+
 def release(
     queue: Queue, item_id: str, reason: str, interactive: bool = True
 ) -> dict:
@@ -1965,55 +2022,10 @@ def run_logged_command(
         return None, f"command could not be started: {exc}"
 
 
-def declared_task_ids_path(queue: Queue, contract: dict[str, object]) -> Path:
-    """Resolve the contract's ``accounting.task_ids_file`` inside the repository."""
-    accounting = contract["accounting"]
-    if not isinstance(accounting, dict):
-        raise QueueError("validated campaign contract lost accounting")
-    return resolve_repo_path(
-        queue.repo,
-        require_text(accounting["task_ids_file"], field="accounting.task_ids_file"),
-    )
-
-
-def prepared_task_ids_path(queue: Queue, contract: dict[str, object]) -> Path:
-    """Return the task-ids file's path with any earlier run's copy removed.
-
-    The file is this run's OUTPUT, and the ids in it are what release this item's
-    reservation, so a copy left by an earlier item at the same declared path
-    would credit this item with another item's tasks -- a release backed by
-    somebody else's spend.  Deleting rather than refusing is deliberate: the
-    earlier item's ids and the sha256 of the bytes they came from are already in
-    ITS outcome, so nothing is lost, while refusing on a pre-existing file would
-    fire on a correct rerun and would have to be cleared by hand.
-
-    Raises
-    ------
-    QueueError
-        If the declared path cannot be made ready -- a directory sits there, or
-        the removal fails.  The producer is not started in that case: a run whose
-        spend could not be identified afterwards must not begin.
-    """
-    path = declared_task_ids_path(queue, contract)
-    if path.is_dir():
-        raise QueueError(
-            f"accounting.task_ids_file is a directory: {path}"
-        )
-    try:
-        path.unlink()
-    except FileNotFoundError:
-        pass
-    except OSError as exc:
-        raise QueueError(
-            f"earlier task-ids file cannot be removed: {path}: {exc}"
-        ) from exc
-    return path
-
-
 def read_declared_task_ids(
-    queue: Queue, contract: dict[str, object]
+    path: Path, contract: dict[str, object]
 ) -> tuple[list[str], str, None] | tuple[None, None, str]:
-    """Read the scheduler task identities the producer declared.
+    """Read scheduler task identities from the queue-owned claim path.
 
     This runs after the producer and BEFORE the terminal validator, because the
     ids are what let a later receipt demonstrate that this item's spend was
@@ -2038,38 +2050,33 @@ def read_declared_task_ids(
     if not isinstance(accounting, dict):
         raise QueueError("validated campaign contract lost accounting")
     expects = accounting["expects_scheduler_tasks"]
-    try:
-        path = declared_task_ids_path(queue, contract)
-    except QueueError as exc:
-        return None, None, f"declared task-ids file is not a repository path: {exc}"
     if not path.is_file():
         return None, None, (
-            "declared task-ids file was not written by the producer: "
-            f"{accounting['task_ids_file']}"
+            f"queue-owned task-ids file was not written by the producer: {path}"
         )
     raw = path.read_bytes()
     try:
         value = json.loads(raw.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
-        return None, None, f"declared task-ids file is not JSON: {exc}"
+        return None, None, f"queue-owned task-ids file is not JSON: {exc}"
     try:
         task_ids = require_text_list(value, field="declared task ids")
     except QueueError as exc:
-        return None, None, f"declared task-ids file is malformed: {exc}"
+        return None, None, f"queue-owned task-ids file is malformed: {exc}"
     for task_id in task_ids:
         if not TASK_ID_RE.fullmatch(task_id):
             return None, None, (
-                "declared task-ids file holds a value that is not a scheduler "
+                "queue-owned task-ids file holds a value that is not a scheduler "
                 f"task identity: {task_id}"
             )
     if expects is True and not task_ids:
         return None, None, (
-            "declared task-ids file is empty while the contract declares "
+            "queue-owned task-ids file is empty while the contract declares "
             "accounting.expects_scheduler_tasks true"
         )
     if expects is False and task_ids:
         return None, None, (
-            "declared task-ids file lists scheduler tasks while the contract "
+            "queue-owned task-ids file lists scheduler tasks while the contract "
             "declares accounting.expects_scheduler_tasks false: "
             + ", ".join(sorted(task_ids))
         )
@@ -2133,13 +2140,15 @@ def run_compute_item(queue: Queue, item: dict, env: dict[str, str]) -> tuple[int
     A validator with no budget left is not started, which is a terminal result
     the contract's ``otherwise`` branch must cover.
 
-    Between the two commands the producer's declared task-ids file is read.  Its
-    ids are recorded in the outcome and are what a later receipt must list before
-    this item's reservation is released, so a file that is missing, malformed, or
-    disagrees with ``accounting.expects_scheduler_tasks`` is a refusal: the
-    validator is NOT started, the outcome resolves to the contract's
-    ``otherwise`` branch with the reason recorded, and -- because no ids were
-    recorded -- the reservation is permanent until an operator releases it.
+    Between the two commands the queue-owned task-ids file is read.  The queue
+    passes its absolute path to both commands in
+    ``MNV_CAMPAIGN_TASK_IDS_FILE``.  Its ids are recorded in the outcome and are
+    what a later receipt must list before this item's reservation is released, so
+    a file that is missing, malformed, or disagrees with
+    ``accounting.expects_scheduler_tasks`` is a refusal: the validator is NOT
+    started, the outcome resolves to the contract's ``otherwise`` branch with the
+    reason recorded, and -- because no ids were recorded -- the reservation is
+    permanent until an operator releases it.
     """
     contract = item["campaign_contract"]
     if not isinstance(contract, dict):
@@ -2152,41 +2161,25 @@ def run_compute_item(queue: Queue, item: dict, env: dict[str, str]) -> tuple[int
     logs_dir = queue.state / "logs"
     producer_log = logs_dir / f"{item['id']}.producer.log"
     validator_log = logs_dir / f"{item['id']}.validator.log"
-    try:
-        prepared_task_ids_path(queue, contract)
-    except QueueError as exc:
-        # Nothing has run yet, and nothing will: a run whose spend could not be
-        # attributed afterwards must not start.  This is still a terminal result,
-        # so it resolves through the contract's own otherwise branch.
-        outcome = write_outcome(
-            queue,
-            item,
-            "failed",
-            producer_returncode=None,
-            producer_error="not started: the declared task-ids file is unusable",
-            validator_returncode=None,
-            validator_error="not started: the declared task-ids file is unusable",
-            wall_seconds=round(wall_seconds, 3),
-            wall_budget_exhausted=False,
-            **{OUTCOME_ACCOUNTING_ERROR_FIELD: str(exc)},
-            **terminal_plan(contract, None),
-        )
-        return 3, outcome
+    run_directory = claimed_run_directory(queue, str(item["id"]))
+    task_ids_path = run_directory / TASK_IDS_FILE_NAME
+    command_env = env.copy()
+    command_env[CAMPAIGN_TASK_IDS_FILE_ENV] = str(task_ids_path)
     deadline = time.monotonic() + wall_seconds
     producer_timeout = min(timeout_seconds, deadline - time.monotonic())
     producer_returncode, producer_error = run_logged_command(
         item["argv"],
         cwd=resolve_repo_path(queue.repo, item["cwd"]),
-        env=env,
+        env=command_env,
         timeout_seconds=producer_timeout,
         log_path=producer_log,
         proposal_digest=item["proposal_digest"],
     )
     task_ids, task_ids_sha256, accounting_error = read_declared_task_ids(
-        queue, contract
+        task_ids_path, contract
     )
 
-    validator_env = env.copy()
+    validator_env = command_env.copy()
     validator_env["CAMPAIGN_PRODUCER_RETURNCODE"] = (
         str(producer_returncode)
         if producer_returncode is not None
@@ -2232,6 +2225,8 @@ def run_compute_item(queue: Queue, item: dict, env: dict[str, str]) -> tuple[int
         "producer_timeout_seconds": round(producer_timeout, 3),
         "validator_timeout_seconds": round(max(validator_timeout, 0.0), 3),
         "wall_budget_exhausted": wall_budget_exhausted,
+        RUN_DIRECTORY_FIELD: str(run_directory),
+        OUTCOME_TASK_IDS_PATH_FIELD: str(task_ids_path),
         **terminal_plan(contract, validator_returncode),
     }
     if accounting_error is None:
@@ -2478,12 +2473,23 @@ def admit(queue: Queue, item: dict) -> tuple[int, dict] | None:
                         reason=refusal_reason,
                         consumed=False,
                     )
+            try:
+                run_directory = create_claim_run_directory(queue, item["id"])
+            except QueueError as exc:
+                return 6, write_outcome(
+                    queue,
+                    item,
+                    "refused",
+                    reason=str(exc),
+                    consumed=False,
+                )
             claim = {
                 "schema_version": 1,
                 "id": item["id"],
                 "proposal_digest": item["proposal_digest"],
                 "claimed_at_utc": queue.clock(),
                 "owner": f"{socket.gethostname()}:{os.getpid()}",
+                RUN_DIRECTORY_FIELD: str(run_directory),
                 **queue_record_identity(queue),
             }
             try:

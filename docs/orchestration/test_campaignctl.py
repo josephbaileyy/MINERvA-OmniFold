@@ -3,9 +3,11 @@ import os
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import unittest
 from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from unittest import mock
 
@@ -29,12 +31,6 @@ R5_FIXTURES = {
 #: A hand-written stand-in would be a second implementation of the rule under test,
 #: and its refusals would only ever agree with whatever this suite assumed.
 REAL_GUARD = campaignctl.REPO / campaignctl.GUARD_PATH
-#: Where the checked-in fixture contract says the producer writes its scheduler task
-#: identities. Read from the fixture rather than retyped, so a contract change cannot
-#: leave the producer scripts writing to a path nothing reads.
-TASK_IDS_RELATIVE = json.loads(CONTRACT_FIXTURE.read_text())["accounting"][
-    "task_ids_file"
-]
 #: The identities the fixture producers declare. Deliberately absent from every
 #: checked-in receipt fixture's `metered_task_ids`, so a receipt only counts them when
 #: a test puts them there.
@@ -42,12 +38,12 @@ PRODUCER_TASK_IDS = ["7001_0"]
 #: Producer prologue: the scheduler task identities an arm reports. The real producer
 #: writes these from its sbatch output; here they are literal, and the file is what
 #: campaignctl reads between the producer and the validator.
-def write_task_ids(task_ids: list[str], *, relative: str = TASK_IDS_RELATIVE) -> str:
-    """Return producer source that writes ``task_ids`` to the declared path."""
+def write_task_ids(task_ids: list[str]) -> str:
+    """Return producer source that writes ids to the queue-owned claim path."""
     return (
+        "import os\n"
         "from pathlib import Path\n"
-        f"_ids = Path({relative!r})\n"
-        "_ids.parent.mkdir(parents=True, exist_ok=True)\n"
+        f"_ids = Path(os.environ[{campaignctl.CAMPAIGN_TASK_IDS_FILE_ENV!r}])\n"
         f"_ids.write_text({json.dumps(json.dumps(task_ids))})\n"
     )
 
@@ -86,6 +82,11 @@ class CampaignQueueTests(unittest.TestCase):
         )
         self.script = self.repo / "work.py"
         self.script.write_text(
+            "from pathlib import Path\n"
+            "Path('ran').write_text('yes')\n"
+        )
+        self.compute_script = self.repo / "compute_work.py"
+        self.compute_script.write_text(
             "from pathlib import Path\n"
             "Path('ran').write_text('yes')\n"
             "output = Path('outputs/validator-failure-fixture')\n"
@@ -166,6 +167,7 @@ class CampaignQueueTests(unittest.TestCase):
                 str(self.repo),
                 "add",
                 "work.py",
+                "compute_work.py",
                 "validator_failure.py",
                 "validator_success.py",
                 "sneaky_validator.py",
@@ -217,7 +219,7 @@ class CampaignQueueTests(unittest.TestCase):
         queue: campaignctl.Queue | None = None,
     ) -> dict:
         queue = queue or self.queue
-        target = script or "work.py"
+        target = script or ("compute_work.py" if kind == "compute" else "work.py")
         if argv is None:
             argv = [sys.executable, target]
             if kind == "compute" and guarded:
@@ -713,19 +715,16 @@ class CampaignQueueTests(unittest.TestCase):
             "validator-failure-fixture", kind="compute", contract=contract
         )
         self.approve(item)
-        # Both commands are mocked, so the STAND-IN producer writes the task-ids
-        # file the real one would: it is written inside the fake call rather than
-        # beforehand, because the queue removes any earlier copy before the
-        # producer starts, and without it the accounting refusal would preempt the
-        # launch failure this test is about.
-        declared = self.repo / TASK_IDS_RELATIVE
         calls: list[list[str]] = []
 
-        def command(argv: list[str], **_: object) -> tuple[int | None, str | None]:
+        def command(
+            argv: list[str], *, env: dict[str, str], **_: object
+        ) -> tuple[int | None, str | None]:
             calls.append(list(argv))
             if len(calls) == 1:
-                declared.parent.mkdir(parents=True, exist_ok=True)
-                declared.write_text(json.dumps(PRODUCER_TASK_IDS))
+                Path(env[campaignctl.CAMPAIGN_TASK_IDS_FILE_ENV]).write_text(
+                    json.dumps(PRODUCER_TASK_IDS)
+                )
                 return 0, None
             return None, "command could not be started"
 
@@ -824,19 +823,19 @@ class CampaignQueueTests(unittest.TestCase):
 
     def test_dirty_compute_binding_is_refused_at_stage_and_validation(self) -> None:
         contract = self.write_contract(commit=True)
-        self.script.write_text("raise SystemExit('dirty before staging')\n")
+        self.compute_script.write_text("raise SystemExit('dirty before staging')\n")
         with self.assertRaisesRegex(campaignctl.QueueError, "committed at HEAD"):
             self.stage(
                 "validator-failure-fixture", kind="compute", contract=contract
             )
 
         subprocess.run(
-            ["git", "-C", str(self.repo), "restore", "work.py"], check=True
+            ["git", "-C", str(self.repo), "restore", "compute_work.py"], check=True
         )
         item = self.stage(
             "validator-failure-fixture", kind="compute", contract=contract
         )
-        self.script.write_text("raise SystemExit('dirty after staging')\n")
+        self.compute_script.write_text("raise SystemExit('dirty after staging')\n")
         with self.assertRaisesRegex(campaignctl.QueueError, "changed after staging"):
             campaignctl.validate_unchanged(self.queue, item)
 
@@ -1527,9 +1526,9 @@ class CampaignQueueTests(unittest.TestCase):
             ),
             (
                 "not-json",
+                "import os\n"
                 "from pathlib import Path\n"
-                f"_ids = Path({TASK_IDS_RELATIVE!r})\n"
-                "_ids.parent.mkdir(parents=True, exist_ok=True)\n"
+                f"_ids = Path(os.environ[{campaignctl.CAMPAIGN_TASK_IDS_FILE_ENV!r}])\n"
                 "_ids.write_text('{ not json')\n",
                 True,
                 "is not JSON",
@@ -1574,71 +1573,97 @@ class CampaignQueueTests(unittest.TestCase):
                 self.assertNotIn(campaignctl.OUTCOME_TASK_IDS_FIELD, outcome)
                 self.assertFalse((self.repo / "validator-ran").exists())
 
-    def test_an_earlier_runs_task_ids_are_never_credited_to_this_item(self) -> None:
-        """A stale file at the declared path would release on somebody else's spend.
-
-        The path is declared by the contract, so two items can name the same one --
-        and the ids in it are what release a reservation. Left in place, an item
-        whose producer wrote nothing would inherit the previous item's identities
-        and release against spend that was never its own. The file is this run's
-        output, so the queue removes any earlier copy before the producer starts.
-        """
-        silent_producer = self.commit_script(
-            "silent_producer.py",
-            "from pathlib import Path\nPath('ran').write_text('yes')\n",
+    def test_concurrent_items_keep_task_ids_in_their_own_run_directories(self) -> None:
+        """Concurrent producers cannot overwrite each other's task attribution."""
+        receipt = self.install_receipt("healthy")
+        alpha_contract = self.named_contract(
+            "alpha", validator_script="validator_success.py"
         )
-        receipt = self.install_receipt("near-gpu-ceiling")
-        contract = self.named_contract(
-            "stale-ids", validator_script="validator_success.py"
+        beta_contract = self.named_contract(
+            "beta", validator_script="validator_success.py"
         )
-        stale = self.repo / TASK_IDS_RELATIVE
-        stale.parent.mkdir(parents=True, exist_ok=True)
-        stale.write_text(json.dumps(PRODUCER_TASK_IDS))
-        item = self.stage(
-            "stale-ids", kind="compute", contract=contract, script=silent_producer
+        alpha = self.stage("alpha", kind="compute", contract=alpha_contract)
+        beta = self.stage("beta", kind="compute", contract=beta_contract)
+        self.approve(alpha)
+        self.approve(beta)
+        with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": receipt}):
+            self.assertIsNone(campaignctl.admit(self.queue, alpha))
+            self.assertIsNone(campaignctl.admit(self.queue, beta))
+        (self.queue.state / "logs").mkdir(parents=True, exist_ok=True)
+
+        both_producers_have_written = threading.Barrier(2)
+        task_ids_by_item = {"alpha": ["7101_0"], "beta": ["8202_0"]}
+        child_paths: dict[str, list[Path]] = {"alpha": [], "beta": []}
+
+        def interleaved_command(
+            _argv: list[str],
+            *,
+            env: dict[str, str],
+            log_path: Path,
+            **_: object,
+        ) -> tuple[int, None]:
+            item_id = log_path.name.split(".", 1)[0]
+            task_ids_path = Path(env[campaignctl.CAMPAIGN_TASK_IDS_FILE_ENV])
+            child_paths[item_id].append(task_ids_path)
+            if ".producer." in log_path.name:
+                task_ids_path.write_text(json.dumps(task_ids_by_item[item_id]))
+                both_producers_have_written.wait(timeout=5)
+            return 0, None
+
+        child_env = os.environ.copy()
+        with mock.patch.object(
+            campaignctl, "run_logged_command", side_effect=interleaved_command
+        ):
+            with ThreadPoolExecutor(max_workers=2) as pool:
+                futures = {
+                    item["id"]: pool.submit(
+                        campaignctl.run_compute_item, self.queue, item, child_env
+                    )
+                    for item in (alpha, beta)
+                }
+                outcomes = {
+                    item_id: future.result()[1]
+                    for item_id, future in futures.items()
+                }
+
+        for item_id, task_ids in task_ids_by_item.items():
+            outcome = outcomes[item_id]
+            expected_run_dir = self.queue.state / "runs" / item_id
+            expected_task_ids_path = (
+                expected_run_dir / campaignctl.TASK_IDS_FILE_NAME
+            )
+            self.assertEqual(
+                outcome[campaignctl.OUTCOME_TASK_IDS_FIELD], task_ids
+            )
+            self.assertEqual(
+                outcome[campaignctl.RUN_DIRECTORY_FIELD], str(expected_run_dir)
+            )
+            self.assertEqual(
+                outcome[campaignctl.OUTCOME_TASK_IDS_PATH_FIELD],
+                str(expected_task_ids_path),
+            )
+            self.assertEqual(child_paths[item_id], [expected_task_ids_path] * 2)
+        self.assertNotEqual(
+            outcomes["alpha"][campaignctl.OUTCOME_TASK_IDS_SHA256_FIELD],
+            outcomes["beta"][campaignctl.OUTCOME_TASK_IDS_SHA256_FIELD],
         )
-        self.approve(item)
 
-        rc, outcome = self.run_ready(receipt)
-
-        self.assertEqual((rc, outcome["status"]), (3, "failed"))
-        self.assertNotIn(campaignctl.OUTCOME_TASK_IDS_FIELD, outcome)
-        self.assertIn(
-            "was not written by the producer",
-            outcome[campaignctl.OUTCOME_ACCOUNTING_ERROR_FIELD],
-        )
-        self.assertFalse(stale.exists())
-
-    def test_an_unusable_task_ids_path_stops_the_run_before_the_producer(self) -> None:
-        """If the ids can never be read, the producer must not spend at all.
-
-        A directory at the declared path cannot be replaced by the producer's file,
-        so this run could never be accounted for. Refusing after the producer had
-        run would leave real spend with no identity; refusing before it means
-        nothing was consumed but the item, and the outcome still resolves through
-        the contract's own ``otherwise`` branch.
-        """
+    def test_an_existing_run_directory_refuses_the_claim(self) -> None:
+        """A claim cannot be exclusive when its queue-owned directory exists."""
         receipt = self.install_receipt("healthy")
         contract = self.named_contract(
             "blocked-ids", validator_script="validator_success.py"
         )
-        (self.repo / TASK_IDS_RELATIVE).mkdir(parents=True, exist_ok=True)
+        (self.queue.state / "runs" / "blocked-ids").mkdir(parents=True)
         item = self.stage("blocked-ids", kind="compute", contract=contract)
         self.approve(item)
 
         rc, outcome = self.run_ready(receipt)
 
-        self.assertEqual((rc, outcome["status"]), (3, "failed"))
-        self.assertIsNone(outcome["producer_returncode"])
-        self.assertIsNone(outcome["validator_returncode"])
-        self.assertEqual(outcome["terminal_branch"], "unexpected-terminal-result")
-        self.assertEqual(outcome["required_actions"][0]["action"], "preserve")
-        self.assertIn(
-            "is a directory", outcome[campaignctl.OUTCOME_ACCOUNTING_ERROR_FIELD]
-        )
-        self.assertNotIn(campaignctl.OUTCOME_TASK_IDS_FIELD, outcome)
+        self.assertEqual((rc, outcome["status"]), (6, "refused"))
+        self.assertIn("claim run directory already exists", outcome["reason"])
+        self.assertFalse(self.queue.path("claims", item["id"]).exists())
         self.assertFalse((self.repo / "ran").exists())
-        self.assertFalse((self.repo / "validator-ran").exists())
 
     def test_contract_requires_a_usable_accounting_declaration(self) -> None:
         """Without it a reservation could only ever be released by a timestamp."""
@@ -1651,14 +1676,28 @@ class CampaignQueueTests(unittest.TestCase):
                 "validator-failure-fixture", kind="compute", contract=contract
             )
 
-        def absolute_path(value: dict[str, object]) -> None:
+        def legacy_task_ids_path(value: dict[str, object]) -> None:
             accounting = value["accounting"]
             assert isinstance(accounting, dict)
-            accounting["task_ids_file"] = "/tmp/scheduler-task-ids.json"
+            accounting["task_ids_file"] = "outputs/shared-task-ids.json"
 
-        contract = self.write_contract(commit=True, mutate=absolute_path)
+        contract = self.write_contract(commit=True, mutate=legacy_task_ids_path)
         with self.assertRaisesRegex(
-            campaignctl.QueueError, "task_ids_file must be repository-relative"
+            campaignctl.QueueError,
+            "accounting.task_ids_file is queue-owned since schema v2",
+        ):
+            self.stage(
+                "validator-failure-fixture", kind="compute", contract=contract
+            )
+
+        contract = self.write_contract(
+            commit=True,
+            mutate=lambda value: value.update(schema_version=1),
+        )
+        with self.assertRaisesRegex(
+            campaignctl.QueueError,
+            "schema_version 1 is refused: accounting.task_ids_file is queue-owned "
+            "since schema v2",
         ):
             self.stage(
                 "validator-failure-fixture", kind="compute", contract=contract
