@@ -458,3 +458,33 @@ The last commit of `wave1-integration-20260903` as force-pushed after this recor
 python3 -m pytest -q docs/orchestration/test_campaignctl.py   # remeasure, canonical-state-dir, shim-swap mutations
 (cd nd-unfolding && python3 -m pytest -q tests/test_mnv_guarded_run.py tests/test_n2_child_boundary.py)
 ```
+
+## 11. Reviewer round 5 (2026-09-04) — verdict BLOCK on `180527b0`, and what this revision changed
+
+`180527b0` is **withdrawn**. **A claim in §10 is retracted:** it said the queue's argv rules already
+forbid the launch shapes of the declared gap. The reviewer drove `env -- python -I` through a fully
+admitted item whose outer argv satisfied every queue rule, and the item reported success. The queue
+validates the arm it launches; it cannot see what the arm's script launches. That is the guard's
+job, and the guard's `env` grammar was incomplete.
+
+| reviewer BLOCK | resolution | commit | proof |
+|---|---|---|---|
+| **reservations release without evidence the spend was counted** (a fresh receipt still at 490, listing none of alpha's tasks, admitted beta) | contract schema v1 gains a required `accounting` object (`task_ids_file`, `expects_scheduler_tasks`); between producer and validator the queue reads the task-ids file (scheduler identities in the meter's exact grammar, cross-module tested), records them in the outcome with the file's digest, and removes any earlier copy first; missing, malformed, empty-when-expected or populated-when-not resolves through `otherwise`. Release requires a committed receipt measured after the outcome **and** listing every one of the item's ids; an arm that expects no tasks releases on the timestamp; an item that ran with no recorded ids never releases automatically — only `revoke` or the new interactive `release --id --reason` | `823e9c48` | reviewer mutation: beta refused naming alpha "not yet in a receipt"; a receipt listing alpha's ids admits beta; each accounting failure and the operator path tested; each fix mutation-verified by reverting it alone |
+| **the queue is canonical only per checkout** (two clones each admitted) | the canonical queue lives outside every checkout at `${MNV_CAMPAIGN_STATE_ROOT:-~/.mnv_campaign}/<key>/campaign-queue`, key derived in a comment from the ruling record's sha256; every clone and worktree resolves one directory, so the lock, reservation scan and claims are shared; items record their `repo_path` and a ticker runs only its own repo's items while all reserve | `823e9c48` | reviewer mutation: two `git clone`s, one receipt, two six-hour items at 490 — exactly one admitted; two tickers cannot both hold the lock |
+| **the guard's `env` parser was fail-open** (`env -- python -I`, `env -S 'python -I …'`) | `env` parsed with the full coreutils/BSD grammar and **fail-closed on anything unmodelled**; `-S` strings split and rescanned; `sh -c`/`bash -c` strings tokenised and each simple command scanned; `nohup`/`nice`/`stdbuf`/`timeout`/`time`/`command`/`exec` prefixes followed; absolute interpreter paths count as Python; a launch that strips the contract (`env -i`, `env -u`, `env PYTHONPATH=…`) is re-armed; PATH interpreter wrappers `mnv_guard_shim/bin/{python3,python}` with `scan_argv.py` refuse `-S/-I/-E` and re-inject the contract for non-Python children that launch Python via PATH | `fcf60b25` | both reviewer forms refused (exit 3, `[oi136 launch]`, REFUSED-launch record); bash child running `python3 -I` via PATH refused by the wrapper; bash child running `python3 x.py` via PATH guarded and its foreign import refused; 169 guard tests, 401 in the ten-suite matrix at the worker's tree; two further fail-opens found by measurement and pinned (`env -iv`; `env -i bash -c '…'`) |
+| (integrator) the wrappers and scanner were unbound | all four shim files bound wherever the guard is bound; fixture commits them | `6f4686d7` | swapping only `bin/python3` after approval → `(4, "stale")`, nothing run |
+
+**The residual, stated exactly and measured:** a non-Python child that invokes the interpreter by
+an **absolute path** with `-S`/`-I`/`-E`, or that clears `PATH` or the environment before doing so.
+The argv is built inside a process this interpreter does not guard; an absolute path consults no
+`PATH` and therefore no wrapper; a cleared environment removes both the wrapper directory and the
+contract. Every inventory record now carries a `declared_gap` field naming it. Closing it requires
+guarding the shell or the kernel, not Python. `srun`/`mpirun` are deliberately not modelled as
+wrappers (a fail-closed parser would refuse correct submissions); `srun python3 -I x.py` is caught
+by the PATH wrapper and `srun /abs/python3 -I x.py` is the residual. The wrappers carry no `.py`/
+`.sh` suffix, so the A-2(f) source manifest does not list them; every record carries
+`path_shim_sha256` instead, and the campaign queue binds them.
+
+### 11.1 Proposed tip, revised
+
+The last commit of `wave1-integration-20260903` as force-pushed after this record.
