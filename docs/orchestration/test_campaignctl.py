@@ -401,6 +401,189 @@ class CampaignQueueTests(unittest.TestCase):
         )
         return json.loads(result.stdout)
 
+    def diverted_origin(self, name: str = "diverted-origin") -> Path:
+        """Create the SECOND bare repository a diverted push lands in.
+
+        The reviewer's harness shape. The pin keeps naming ``self.origin``, so
+        ``ls-remote`` and ``fetch`` keep answering from it and every check that
+        reads only the fetch direction keeps passing; the one measurement that
+        tells the two repositories apart is which of them a PUSH reached.
+        """
+        path = self.root / name
+        subprocess.run(["git", "init", "--bare", "-q", str(path)], check=True)
+        return path
+
+    def refs_in(self, repo: Path) -> list[str]:
+        """Return every ref one bare repository holds."""
+        result = subprocess.run(
+            ["git", "--git-dir", str(repo), "for-each-ref", "--format=%(refname)"],
+            stdout=subprocess.PIPE,
+            text=True,
+            check=True,
+        )
+        return sorted(line for line in result.stdout.splitlines() if line)
+
+    def scratch_git_dir(self) -> Path:
+        """Return the queue's own git directory: the repository that pushes."""
+        return self.queue.state / campaignctl.QUEUE_SCRATCH_GIT_NAME
+
+    def write_scratch_config(self, key: str, value: str) -> None:
+        """Write one local key into that directory BEHIND the queue's back.
+
+        Deliberately not through campaignctl: the case under test is
+        configuration this module did not write, so installing it with the
+        module would be a fixture of something else.
+        """
+        subprocess.run(
+            ["git", "--git-dir", str(self.scratch_git_dir()), "config", key, value],
+            check=True,
+        )
+
+    def unset_scratch_config(self, key: str) -> None:
+        """Remove one such key, so the next arm measures only the next key."""
+        subprocess.run(
+            [
+                "git",
+                "--git-dir",
+                str(self.scratch_git_dir()),
+                "config",
+                "--unset",
+                key,
+            ],
+            check=True,
+        )
+
+    def unsanitised_queue_push(self, ref: str) -> subprocess.CompletedProcess:
+        """Push the queue ref as campaignctl did BEFORE the environment was cleared.
+
+        The POSITIVE CONTROL for every environment vector below: the same git
+        directory, the same refspec, the same pinned url, with only the
+        sanitation removed. Without it a test could pass because the injection
+        was MALFORMED rather than because it was neutralised --
+        ``GIT_CONFIG_PARAMETERS`` has a quoting format git rejects outright, and
+        a rejected variable makes every push fail, which reads like a fix.
+        """
+        return subprocess.run(
+            [
+                "git",
+                "--git-dir",
+                str(self.scratch_git_dir()),
+                "push",
+                str(self.origin),
+                f"{campaignctl.CAMPAIGN_QUEUE_REF}:{ref}",
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            check=False,
+        )
+
+    def assert_cycle_lands_on_the_pin(self, item_id: str, diverted: Path) -> None:
+        """Run one whole stage/approve/run cycle and prove WHERE its pushes went.
+
+        Each of those operations ends in a ``--force-with-lease`` push, and the
+        finding was that every one of them landed in a second repository while
+        the lease reported success. So the assertion is in both directions: the
+        pinned origin's queue ref holds the records, and the diverted repository
+        holds nothing at all.
+
+        Checked after EACH operation rather than once at the end. ``stage``
+        returning success while the pinned origin's queue ref does not exist is
+        the reviewer's exact observation, and a later operation destroys the
+        evidence for it: the next one resets the cache to the pinned ref, so a
+        diverted item is deleted locally and the failure arrives as a missing
+        file inside ``approve`` instead of as a push that went elsewhere.
+        """
+        item = self.stage(item_id)
+        self.assertIn(f"items/{item_id}.json", self.queue_ref_paths())
+        self.assertEqual(self.refs_in(diverted), [])
+
+        self.approve(item)
+        self.assertIn(f"approvals/{item_id}.json", self.queue_ref_paths())
+        self.assertEqual(self.refs_in(diverted), [])
+
+        rc, outcome = campaignctl.run_ready(self.queue)
+
+        self.assertEqual(
+            (rc, outcome["status"], outcome["id"]), (0, "succeeded", item_id)
+        )
+        paths = self.queue_ref_paths()
+        self.assertIn(f"claims/{item_id}.json", paths)
+        self.assertIn(f"outcomes/{item_id}.json", paths)
+        self.assertEqual(self.refs_in(diverted), [])
+
+    def assert_injection_is_inert(
+        self, item_id: str, injection: dict[str, str], diverted: Path
+    ) -> None:
+        """Prove one configuration-injecting environment cannot move the push.
+
+        Four arms, because the interesting way for this test to fail is to pass
+        for the wrong reason:
+
+        * the CLEARING, measured on ``git_environment`` itself: no member of the
+          family survives with the injected value, and both file scopes are
+          pinned at nothing rather than merely unset;
+        * the EFFECT, and it is the FIRST operation this queue has ever done, so
+          that the arm reproduces the reviewer's shape exactly. The lease of a
+          first push is against the empty value, which the diverted repository
+          satisfies, so a diverted cycle here returns success and leaves the
+          pinned origin's queue ref NOT EXISTING. Run second, the same arm would
+          instead lose its lease at the diverted repository -- a failure, but of
+          the wrong mechanism, and one that hides what a fresh host does;
+        * the no-injection CONTROL the reviewer's harness had -- the same cycle
+          with nothing set lands on the pinned origin;
+        * and the POSITIVE CONTROL last, so the arms above can assert an empty
+          repository first: the same push, same git directory, same pinned url,
+          with the sanitation removed, lands in the diverted repository.
+
+        campaignctl CLEARS these rather than refusing on their presence, which
+        is the one thing it must not do: git EXPORTS ``GIT_CONFIG_PARAMETERS``
+        to its hooks and campaignctl is invoked from one, so a refusal on
+        presence would refuse every correct run from a hook.
+        """
+        control_ref = "refs/campaign/positive-control"
+
+        with mock.patch.dict(os.environ, injection):
+            environment = campaignctl.git_environment()
+            for key, value in injection.items():
+                self.assertNotEqual(
+                    environment.get(key),
+                    value,
+                    f"{key} reached git carrying the injected value",
+                )
+            for key in campaignctl.GIT_INJECTING_ENVIRONMENT:
+                if key in campaignctl.GIT_ISOLATED_CONFIGURATION_ENVIRONMENT:
+                    continue
+                self.assertNotIn(key, environment)
+            for key in environment:
+                self.assertIsNone(
+                    campaignctl.GIT_INJECTING_ENVIRONMENT_INDEXED_RE.match(key),
+                    f"{key} is a numbered member of the family",
+                )
+            self.assertEqual(
+                {
+                    key: environment[key]
+                    for key in campaignctl.GIT_ISOLATED_CONFIGURATION_ENVIRONMENT
+                },
+                campaignctl.GIT_ISOLATED_CONFIGURATION_ENVIRONMENT,
+            )
+
+            self.assert_cycle_lands_on_the_pin(item_id, diverted)
+
+        self.assert_cycle_lands_on_the_pin(f"{item_id}-control", diverted)
+
+        with mock.patch.dict(os.environ, injection):
+            control = self.unsanitised_queue_push(control_ref)
+
+        self.assertEqual(control.returncode, 0, control.stdout)
+        self.assertEqual(
+            self.refs_in(diverted),
+            [control_ref],
+            "the injection must really divert a push, or the arm above proves "
+            "nothing about anything",
+        )
+        self.assertNotIn(control_ref, self.refs_in(self.origin))
+
     def move_queue_ref_from_another_host(self, marker: str) -> str:
         """Move the origin's queue ref the way ANOTHER HOST would.
 
@@ -2816,6 +2999,248 @@ class CampaignQueueTests(unittest.TestCase):
 
         self.assertEqual(item["git_head"], own_head)
         self.assertIn("items/under-a-hook.json", self.queue_ref_paths())
+
+    def test_git_config_count_cannot_divert_the_lease_protected_push(self) -> None:
+        """The indexed pairs: command-line ``-c`` options in disguise.
+
+        ``GIT_CONFIG_COUNT`` with ``GIT_CONFIG_KEY_<n>`` and
+        ``GIT_CONFIG_VALUE_<n>`` installs ``url.<diverted>.pushInsteadOf``, which
+        every push expands and no ``get-url`` prints, so the fetch, the
+        reservation scan and the lease all keep answering from the pinned origin
+        while the records land in another repository.
+        """
+        diverted = self.diverted_origin()
+        self.assert_injection_is_inert(
+            "count",
+            {
+                "GIT_CONFIG_COUNT": "1",
+                "GIT_CONFIG_KEY_0": f"url.{diverted}.pushInsteadOf",
+                "GIT_CONFIG_VALUE_0": str(self.origin),
+            },
+            diverted,
+        )
+
+    def test_git_config_parameters_cannot_divert_the_lease_protected_push(
+        self,
+    ) -> None:
+        """The serialised form, and the one that arrives WITHOUT anyone setting it.
+
+        ``GIT_CONFIG_PARAMETERS`` is what git exports to its own children, so a
+        campaignctl invoked from a hook inherits it exactly as it inherits
+        ``GIT_DIR`` -- which is why this file's hook test and this one are the
+        same finding measured on two variables.
+        """
+        diverted = self.diverted_origin()
+        self.assert_injection_is_inert(
+            "parameters",
+            {
+                "GIT_CONFIG_PARAMETERS": (
+                    f"'url.{diverted}.pushinsteadof'='{self.origin}'"
+                )
+            },
+            diverted,
+        )
+
+    def test_git_config_global_cannot_divert_the_lease_protected_push(self) -> None:
+        """A whole configuration file, substituted by one variable.
+
+        This is also why the two file scopes are SET rather than cleared:
+        clearing ``GIT_CONFIG_GLOBAL`` restores ``~/.gitconfig``, which every
+        other tool running as this uid may append a ``pushInsteadOf`` to.
+        """
+        diverted = self.diverted_origin()
+        injected = self.root / "injected-global.gitconfig"
+        injected.write_text(
+            f'[url "{diverted}"]\n\tpushInsteadOf = {self.origin}\n'
+        )
+        self.assert_injection_is_inert(
+            "global", {"GIT_CONFIG_GLOBAL": str(injected)}, diverted
+        )
+
+    def test_a_pushurl_in_the_queues_own_git_directory_refuses(self) -> None:
+        """The place clearing the environment cannot reach: local configuration.
+
+        The queue creates and configures its own git directory, which makes it
+        the one repository whose configuration this module can enumerate -- and
+        the one whose configuration decides where the queue's pushes go. A
+        ``pushurl`` written there is invisible to ``git remote get-url`` and to
+        ``ls-remote``, so a diverted host fetches the same base as every other,
+        pushes to its own destination, and sees a successful lease.
+
+        It is refused before the commit is built, so no operation succeeds --
+        not a read like ``summary``, which also fetches -- and the ref the
+        pinned origin holds does not move.
+        """
+        diverted = self.diverted_origin()
+        # A landed operation first: the git directory the diversion is written
+        # into is the one the queue creates on its first operation.
+        self.assert_cycle_lands_on_the_pin("before", diverted)
+        landed = self.queue_ref_sha()
+        self.write_scratch_config("remote.origin.pushurl", str(diverted))
+
+        for label, operation in (
+            ("summary", lambda: campaignctl.summary(self.queue)),
+            ("refresh", lambda: campaignctl.refresh_queue(self.queue)),
+            ("stage", lambda: self.stage("after")),
+        ):
+            with self.subTest(operation=label):
+                with self.assertRaisesRegex(
+                    campaignctl.QueueError,
+                    campaignctl.QUEUE_SCRATCH_CONFIG_REASON,
+                ):
+                    operation()
+
+        self.assertEqual(self.refs_in(diverted), [])
+        self.assertEqual(self.queue_ref_sha(), landed)
+        self.assertNotIn("items/after.json", self.queue_ref_paths())
+
+        # The control, in the direction the check must NOT act: with the key
+        # gone the same cycle lands on the pinned origin again.
+        self.unset_scratch_config("remote.origin.pushurl")
+        self.assert_cycle_lands_on_the_pin("after", diverted)
+
+    def test_the_queues_git_directory_admits_only_the_keys_it_writes(self) -> None:
+        """A namespace rule, and the direction it has to keep admitting.
+
+        ``remote.origin.pushurl`` is one spelling of the diversion; an
+        ``insteadOf`` rewrite is another; a proxy is a third; and ``mirror`` is
+        the one nobody would have listed, which is why the rule is the two
+        NAMESPACES that decide a destination minus the keys campaignctl writes,
+        rather than a list of the keys somebody thought of. An ssh command and a
+        hooks path change no url at all and so are named separately.
+
+        The last arm is the opposite direction: an https origin needs a
+        credential helper, global configuration is out of scope now, and a
+        helper that is not a shell command is the documented way to supply one --
+        a check that refused it would refuse every correct unattended tick.
+        """
+        diverted = self.diverted_origin()
+        self.assert_cycle_lands_on_the_pin("one", diverted)
+        hooks = self.root / "injected-hooks"
+        hooks.mkdir()
+
+        for key, value in (
+            ("remote.origin.pushurl", str(diverted)),
+            (f"url.{diverted}.pushInsteadOf", str(self.origin)),
+            (f"url.{diverted}.insteadOf", str(self.origin)),
+            ("remote.origin.proxy", "http://127.0.0.1:1"),
+            ("remote.origin.mirror", "true"),
+            ("core.sshCommand", "/bin/false"),
+            ("core.hooksPath", str(hooks)),
+            ("credential.helper", "!/bin/echo password=x"),
+        ):
+            with self.subTest(key=key):
+                self.write_scratch_config(key, value)
+                with self.assertRaisesRegex(
+                    campaignctl.QueueError,
+                    campaignctl.QUEUE_SCRATCH_CONFIG_REASON,
+                ):
+                    campaignctl.summary(self.queue)
+                self.unset_scratch_config(key)
+                self.assertEqual(
+                    campaignctl.summary(self.queue)["counts"]["staged"], 0
+                )
+
+        self.write_scratch_config("credential.helper", "osxkeychain")
+        self.assertEqual(campaignctl.summary(self.queue)["counts"]["staged"], 0)
+        self.assertEqual(self.refs_in(diverted), [])
+
+    def test_a_checkout_that_pushes_somewhere_else_is_refused_too(self) -> None:
+        """``get-url`` prints one of TWO urls, and the checkout has both as well.
+
+        campaignctl never pushes through the checkout, so this refusal is not
+        what protects the ref -- :meth:`QueueSync.verify_push_destination` is.
+        It is here because the checkout is where the pin is read and where the
+        finding's exact call, ``git remote get-url origin``, is made: a checkout
+        whose operator has told git the namespace is elsewhere is refused on the
+        same footing as one whose fetch url disagrees.
+        """
+        diverted = self.diverted_origin()
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                str(self.repo),
+                "config",
+                "remote.origin.pushurl",
+                str(diverted),
+            ],
+            check=True,
+        )
+
+        # The asymmetry itself: the fetch url is still byte-for-byte the pin.
+        urls = campaignctl.checkout_origin_urls(self.queue)
+        self.assertEqual(urls.fetch, str(self.origin))
+        self.assertEqual(urls.push, str(diverted))
+
+        for label, operation in (
+            ("summary", lambda: campaignctl.summary(self.queue)),
+            ("stage", lambda: self.stage("after")),
+        ):
+            with self.subTest(operation=label):
+                with self.assertRaisesRegex(
+                    campaignctl.QueueError,
+                    campaignctl.ORIGIN_PUSH_MISMATCH_REASON,
+                ):
+                    operation()
+
+        self.assertEqual(self.refs_in(diverted), [])
+        self.assertIsNone(self.queue_ref_sha())
+
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                str(self.repo),
+                "config",
+                "--unset",
+                "remote.origin.pushurl",
+            ],
+            check=True,
+        )
+        self.assert_cycle_lands_on_the_pin("after", diverted)
+
+    def test_the_admission_log_records_where_the_queue_actually_pushes(self) -> None:
+        """``origin_url`` alone cannot attribute an admission to a repository.
+
+        It is the checkout's FETCH url, and that is exactly the value which
+        stayed equal to the pin on every diverted host: each one recorded the
+        pinned origin and pushed elsewhere, so the logs agreed across hosts that
+        had never shared a ref. ``push_url`` is the destination the repository
+        that pushes resolves, read there with ``get-url --push``.
+        """
+        receipt = self.install_receipt("healthy")
+        contract = self.six_hour_contract("alpha")
+        item = self.stage("alpha", kind="compute", contract=contract)
+        self.approve(item)
+
+        rc, outcome = self.run_ready(receipt)
+
+        self.assertEqual((rc, outcome["status"]), (0, "succeeded"))
+        events = [
+            json.loads(line)
+            for line in (
+                self.queue.state / "logs" / campaignctl.ADMISSION_LOCK_LOG
+            ).read_text().splitlines()
+            if line
+        ]
+        admitted = [event for event in events if event["event"] == "compute-admitted"]
+        self.assertEqual(len(admitted), 1)
+        self.assertEqual(admitted[0]["origin_url"], str(self.origin))
+        self.assertEqual(admitted[0]["push_url"], str(self.origin))
+        # Bound to the measurement, not to the pin it happens to equal: this is
+        # the same call, in the same repository, that the check makes.
+        self.assertEqual(
+            admitted[0]["push_url"],
+            campaignctl.read_remote_urls(
+                ["--git-dir", str(self.scratch_git_dir())],
+                no_remote_reason=campaignctl.QUEUE_PUSH_MISMATCH_REASON,
+            ).push,
+        )
+        # And the log line is in the REF, not only in this host's cache.
+        self.assertIn(
+            f"logs/{campaignctl.ADMISSION_LOCK_LOG}", self.queue_ref_paths()
+        )
 
     def test_a_refused_write_is_not_set_aside_for_retry(self) -> None:
         """Only a failed PUSH is retried; a failed write is refused outright.
