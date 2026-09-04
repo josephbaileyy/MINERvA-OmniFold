@@ -2333,12 +2333,16 @@ class _ScanContext:
 #: wrongly present admits an unscanned launch. `eval`, `exec`, `source`, `.`, `command`, `alias`,
 #: `hash`, `trap`, `export`, `unset`, `declare`, `typeset` and `readonly` are NOT here: every one of
 #: them either runs something or changes what a later name resolves to, and each has its own handler.
+#: `local` IS DELIBERATELY NOT HERE even though it looks like `declare`: it is handled by
+#: `_SHELL_DECLARING_BUILTINS`, because the inert check runs FIRST and `local PATH=/usr/bin` inside a
+#: function changes PATH for every command that function calls. A name in both tables is admitted by
+#: the first, which is how a declaring builtin becomes a fail-open by being listed twice.
 _SHELL_INERT_BUILTINS = frozenset({
     ":", "true", "false", "cd", "pwd", "pushd", "popd", "dirs", "echo", "printf", "read", "set",
-    "shopt", "shift", "unalias_placeholder", "umask", "ulimit", "wait", "sleep_placeholder",
-    "return", "break", "continue", "exit", "logout", "let", "test", "[", "[[", "getopts", "jobs",
-    "fg", "bg", "kill", "disown", "suspend", "times", "type", "help", "history", "bind",
-    "complete", "compgen", "compopt", "caller", "mapfile", "readarray", "local", "wait", "trap_p",
+    "shopt", "shift", "umask", "ulimit", "wait", "return", "break", "continue", "exit", "logout",
+    "let", "test", "[", "[[", "getopts", "jobs", "fg", "bg", "kill", "disown", "suspend", "times",
+    "type", "help", "history", "bind", "complete", "compgen", "compopt", "caller", "mapfile",
+    "readarray",
 })
 
 #: Reserved words in COMMAND POSITION that are followed by another command. Each is stripped and the
@@ -2355,6 +2359,16 @@ _SHELL_ITERATION_WORDS = frozenset({"for", "select"})
 
 #: Environment-manipulating builtins whose operands are examined for a protected assignment.
 _SHELL_DECLARING_BUILTINS = frozenset({"export", "declare", "typeset", "readonly", "local"})
+#: `export -n NAME` UN-EXPORTS a variable, which removes it from every later child's environment --
+#: the same effect as `unset` from a child's point of view, and it is not an assignment, so the
+#: assignment rule alone would wave it through.
+_SHELL_UNEXPORT_OPTIONS = frozenset({"-n"})
+
+#: `NAME=VALUE` and `NAME+=VALUE` in command position. A regex rather than `partition("=")` because
+#: the append form has to be recognised AS AN ASSIGNMENT: `partition` gives the name `PATH+`, which
+#: matches no protected name, so `PATH+=/tmp/bin` read as a command word and refused for the wrong
+#: reason.
+_SHELL_ASSIGNMENT_RE = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)(\+?)=(.*)$", re.DOTALL)
 
 #: Tools that relaunch an interpreter through machinery of their own -- a new `PATH`, a new
 #: `PYTHONPATH`, a shim of their own, or a resolved virtualenv. Each is refused because the
@@ -2649,12 +2663,18 @@ def _scan_shell_simple_command(tokens: list[str], env, context: _ScanContext,
     index = 0
     stripped: "str | None" = None
     while index < len(tokens):
-        name, separator, value = tokens[index].partition("=")
-        if not separator or not name or name.endswith(("+", "!")):
+        assignment = _SHELL_ASSIGNMENT_RE.match(tokens[index])
+        if assignment is None:
             break
+        name, appends, value = assignment.group(1), assignment.group(2), assignment.group(3)
         if _is_protected_shell_variable(name):
             raise _LaunchRefusal(LAUNCH_REASON_ENV, tokens[index])
-        if _breaks_propagation_contract(name, value):
+        #: `NAME+=VALUE` IS AN ASSIGNMENT AND NOT A COMMAND WORD. Read as a command word it would
+        #: still have refused -- as an unprovable child -- but the reason would have named a
+        #: nonexistent executable instead of the variable, which is a check that is right about the
+        #: wrong object. An append cannot be compared to this process's value, so it is treated as
+        #: disarming whenever the name is one the contract depends on.
+        if _breaks_propagation_contract(name, None if appends else value):
             stripped = stripped or tokens[index]
         index += 1
     tokens = tokens[index:]
@@ -2678,10 +2698,15 @@ def _scan_shell_simple_command(tokens: list[str], env, context: _ScanContext,
     if word in _SHELL_INERT_BUILTINS:
         return False
     if word in _SHELL_DECLARING_BUILTINS:
+        unexports = any(operand in _SHELL_UNEXPORT_OPTIONS for operand in tokens[1:])
         for operand in tokens[1:]:
-            declared = operand.partition("=")[0].lstrip("+")
-            if not operand.startswith("-") and _is_protected_shell_variable(declared) \
-                    and "=" in operand:
+            if operand.startswith("-"):
+                continue
+            assignment = _SHELL_ASSIGNMENT_RE.match(operand)
+            declared = assignment.group(1) if assignment else operand
+            if not _is_protected_shell_variable(declared):
+                continue
+            if assignment is not None or unexports:
                 raise _LaunchRefusal(LAUNCH_REASON_ENV, f"{word} {operand}")
         return False
     if word == "unset":

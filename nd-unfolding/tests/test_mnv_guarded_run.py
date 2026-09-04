@@ -2504,6 +2504,100 @@ class TheLaunchGrammarIsParsedAndFailsClosed(unittest.TestCase):
                 self.assertIn(caught.exception.reason,
                               (mgr.LAUNCH_REASON_UNPROVEN, mgr.LAUNCH_REASON_UNPARSED))
 
+    #: SHELL SYNTAX THAT MUST NOT HIDE A LAUNCH. Every row puts `python3 -I` somewhere the
+    #: tokeniser makes it stop being the first word of a simple command, or changes what a later
+    #: word resolves to. The control-flow rows are the ones that found a real fail-open shape while
+    #: this was being written: `if ... ; then python3 -I y.py; fi` tokenises so that `then` is the
+    #: command word and `python3 -I y.py` are its ARGUMENTS, which no flag scan would look at.
+    HIDDEN_LAUNCHES = (
+        "if [ -f x ]; then python3 -I y.py; fi",
+        "for f in a b; do python3 -I $f; done",
+        "while read l; do python3 -I x.py; done < f",
+        "case $x in a) python3 -I y.py ;; b) echo hi ;; esac",
+        "python3 -I x.py | cat",
+        "exec python3 -I x.py",
+        "time python3 -I x.py",
+        "nice -n 5 python3 -I x.py",
+        "OUT=`python3 -I x.py`",
+        "! python3 -I x.py",
+        "{ python3 -I x.py; }",
+        "( cd /tmp && python3 -I x.py )",
+        "python3 -I x.py &",
+        "cd /tmp; command python3 -I x.py",
+        "xargs python3 -I x.py",
+        "trap 'python3 -I x.py' EXIT",
+        # lookup changed on an EARLIER line than the launch
+        "PATH+=:/tmp/bin\npython3 x.py",
+        "export -n PATH\npython3 x.py",
+        "local PATH=/usr/bin\npython3 x.py",
+        "LD_PRELOAD=/tmp/a.so python3 x.py",
+        "PYTHONSAFEPATH=1 python3 x.py",
+        "MNV_GUARD_MODULE=/tmp/fake.py\npython3 x.py",
+        # a function that SHADOWS the interpreter name; the body is what refuses
+        'python3() { /usr/bin/python3 -I "$@"; }\npython3 x.py',
+        # a program from stdin, and a shell whose grammar is not modelled
+        "sh -s < prog.sh",
+        "ksh script.sh",
+        "srun --export=NONE python3 x.py",
+    )
+
+    #: THE SILENT DIRECTION, which decides whether the closure is usable rather than merely safe.
+    #: Every row is ordinary launcher shell with NO interpreter in it, and every one must scan
+    #: clean -- a rule that refused `case`, a function call or `$(date)` would make the guard
+    #: something people switch off, which is the failure mode this whole file is written against.
+    ORDINARY_SHELL = (
+        "ls -l | wc -l",
+        "cd /tmp && mkdir -p a/b",
+        "if [ -f x ]; then cat x; fi",
+        "for f in a b; do echo $f; done",
+        "case $x in a) echo hi ;; b) cat y ;; esac",
+        "helper() { echo hi; }\nhelper",
+        "STAMP=$(date -u +%s)\necho $STAMP",
+        "set -euo pipefail\ncd /tmp\nmkdir -p out",
+        "module list",
+        "trap 'rm -f /tmp/x' EXIT",
+        "git rev-parse HEAD",
+    )
+
+    #: CORRECT PYTHON LAUNCHES, which must be REPORTED as Python launches -- not merely
+    #: not-refused. The return value is what tells the caller the contract still has to reach the
+    #: child, so a row that scanned clean but returned False would launch an unguarded interpreter
+    #: from a process that had disarmed itself.
+    ORDINARY_PYTHON = (
+        "python3 x.py",
+        "cd /tmp && python3 x.py",
+        "nohup python3 x.py &",
+        "python3 - <<EOF\nimport sys\nEOF",
+        "srun -n 1 python3 x.py",
+    )
+
+    def test_the_shell_scanner_is_closed_in_THREE_directions_over_ordinary_shell_syntax(self):
+        """One table per direction, and three directions are required rather than two.
+
+        A scanner that only refuses the hidden launches passes while refusing everything; one that
+        only admits ordinary shell passes while missing every launch; and one that does both while
+        returning False for a correct `python3 x.py` would let a disarmed parent start an unguarded
+        interpreter, because the return value is what asks for the contract.
+
+        THE ENVIRONMENT IS SUPPLIED because the `git` row depends on it -- this machine exports
+        `GIT_EDITOR=true`, and a fixture reading the ambient environment would be measuring the
+        harness. See `test_the_git_spellings_this_repo_RUNS_are_admitted_and_the_dangerous_ones_are_not`.
+        """
+        clean = {k: v for k, v in os.environ.items()
+                 if k not in mgr._GIT_EXTERNAL_PROGRAM_ENV_VARS}
+        for text in self.HIDDEN_LAUNCHES:
+            with self.subTest(hidden=text):
+                with self.assertRaises(mgr._LaunchRefusal):
+                    mgr._scan_shell_string(text, clean)
+        for text in self.ORDINARY_SHELL:
+            with self.subTest(ordinary=text):
+                self.assertFalse(mgr._scan_shell_string(text, clean),
+                                 "reported a Python launch where there is none")
+        for text in self.ORDINARY_PYTHON:
+            with self.subTest(python=text):
+                self.assertTrue(mgr._scan_shell_string(text, clean),
+                                "a Python launch that the caller will not ask a contract for")
+
     def test_a_LEAF_NAME_that_resolves_to_a_SCRIPT_is_scanned_and_never_trusted_by_name(self):
         """A file named `ls` with `#!/bin/sh` and `python3 -I` in it, FIRST on PATH.
 
